@@ -13,6 +13,10 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# Don't try to install the manpage file if it can't be built due to missing utilities.
+# However, the distribution tarball should always contain a recent manpage. We ensure
+# this by adding a dist-hook rule below.
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -314,11 +318,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-
-# Don't try to install the manpage file if it can't be built due to missing utilities.
-# However, the distribution tarball should always contain a recent manpage. We ensure
-# this by adding a dist-hook rule below.
-@BUILD_MANPAGE_TRUE@man_MANS = dvisvgm.1
+man_MANS = dvisvgm.1
 EXTRA_DIST = $(man_MANS) \
 	conf-dblatex-man.xsl \
 	conf-dblatex-pdf.xsl \
@@ -327,13 +327,13 @@ EXTRA_DIST = $(man_MANS) \
 	tweak-dblatex-pdf.xsl \
 	tweak-db-refentry.xsl
 
-CONF_DBLATEX_MAN = $(dvisvgm_srcdir)/doc/conf-dblatex-man.xsl
-CONF_DBLATEX_PDF = $(dvisvgm_srcdir)/doc/conf-dblatex-pdf.xsl
-TWEAK_DBLATEX_PDF = $(dvisvgm_srcdir)/doc/tweak-dblatex-pdf.xsl
-TWEAK_DB_ARTICLE = $(dvisvgm_srcdir)/doc/tweak-db-article.xsl
-TWEAK_DB_REFENTRY = $(dvisvgm_srcdir)/doc/tweak-db-refentry.xsl
-GEN_DBLATEX_STY = $(dvisvgm_srcdir)/doc/generate-dvisvgm-sty.xsl
-DB_VARS = man.endnotes.list.enabled=0 man.endnotes.are.numbered=0 man.authors.section.enabled=0
+@BUILD_MANPAGE_TRUE@CONF_DBLATEX_MAN = $(dvisvgm_srcdir)/doc/conf-dblatex-man.xsl
+@BUILD_MANPAGE_TRUE@CONF_DBLATEX_PDF = $(dvisvgm_srcdir)/doc/conf-dblatex-pdf.xsl
+@BUILD_MANPAGE_TRUE@TWEAK_DBLATEX_PDF = $(dvisvgm_srcdir)/doc/tweak-dblatex-pdf.xsl
+@BUILD_MANPAGE_TRUE@TWEAK_DB_ARTICLE = $(dvisvgm_srcdir)/doc/tweak-db-article.xsl
+@BUILD_MANPAGE_TRUE@TWEAK_DB_REFENTRY = $(dvisvgm_srcdir)/doc/tweak-db-refentry.xsl
+@BUILD_MANPAGE_TRUE@GEN_DBLATEX_STY = $(dvisvgm_srcdir)/doc/generate-dvisvgm-sty.xsl
+@BUILD_MANPAGE_TRUE@DB_VARS = man.endnotes.list.enabled=0 man.endnotes.are.numbered=0 man.authors.section.enabled=0
 all: all-am
 
 .SUFFIXES:
@@ -421,6 +421,7 @@ ctags CTAGS:
 
 cscope cscopelist:
 
+@BUILD_MANPAGE_TRUE@dist-hook:
 
 distdir: $(BUILT_SOURCES)
 	$(MAKE) $(AM_MAKEFLAGS) distdir-am
@@ -505,6 +506,8 @@ dvi: dvi-am
 
 dvi-am:
 
+@BUILD_MANPAGE_FALSE@html: html-am
+
 html-am:
 
 info: info-am
@@ -547,6 +550,8 @@ mostlyclean: mostlyclean-am
 
 mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
+@BUILD_MANPAGE_FALSE@pdf: pdf-am
+
 pdf-am:
 
 ps: ps-am
@@ -575,74 +580,76 @@ uninstall-man: uninstall-man1
 .PRECIOUS: Makefile
 
 
-dvisvgm.1: dvisvgm-man.xml $(CONF_DBLATEX_MAN)
-	xmlto -m $(CONF_DBLATEX_MAN) $(addprefix --stringparam , $(DB_VARS)) man $<
+@BUILD_MANPAGE_TRUE@dvisvgm.1: dvisvgm-man.xml $(CONF_DBLATEX_MAN)
+@BUILD_MANPAGE_TRUE@	xmlto -m $(CONF_DBLATEX_MAN) $(addprefix --stringparam , $(DB_VARS)) man $<
 
-dvisvgm.pdf: dvisvgm-man.xml dvisvgm.sty $(CONF_DBLATEX_PDF) $(TWEAK_DBLATEX_PDF)
-	mv $< $<.tmp
-	xsltproc -o $< $(TWEAK_DBLATEX_PDF) $<.tmp
-	dblatex -bxetex --texstyle=./dvisvgm.sty -p $(CONF_DBLATEX_PDF) $<
-	mv $<.tmp $<
-	mv $(basename $<).pdf $@
+@BUILD_MANPAGE_TRUE@dvisvgm.pdf: dvisvgm-man.xml dvisvgm.sty $(CONF_DBLATEX_PDF) $(TWEAK_DBLATEX_PDF)
+@BUILD_MANPAGE_TRUE@	mv $< $<.tmp
+@BUILD_MANPAGE_TRUE@	xsltproc -o $< $(TWEAK_DBLATEX_PDF) $<.tmp
+@BUILD_MANPAGE_TRUE@	dblatex -bxetex --texstyle=./dvisvgm.sty -p $(CONF_DBLATEX_PDF) $<
+@BUILD_MANPAGE_TRUE@	mv $<.tmp $<
+@BUILD_MANPAGE_TRUE@	mv $(basename $<).pdf $@
 
-dvi-pdf: dvisvgm.dvi
-	dvipdfm $<
-	rm -f $<
+@BUILD_MANPAGE_TRUE@dvi-pdf: dvisvgm.dvi
+@BUILD_MANPAGE_TRUE@	dvipdfm $<
+@BUILD_MANPAGE_TRUE@	rm -f $<
 
-dvisvgm.dvi: dvisvgm.1
-	groff -Tdvi -mandoc ./$< >$@
+@BUILD_MANPAGE_TRUE@dvisvgm.dvi: dvisvgm.1
+@BUILD_MANPAGE_TRUE@	groff -Tdvi -mandoc ./$< >$@
 
-dvisvgm.html: dvisvgm-man.xml db2html.xsl
-	xsltproc -o $@ db2html.xsl $<
+@BUILD_MANPAGE_TRUE@dvisvgm.html: dvisvgm-man.xml db2html.xsl
+@BUILD_MANPAGE_TRUE@	xsltproc -o $@ db2html.xsl $<
 
-dvisvgm.epub: dvisvgm-article.xml
-	a2x -darticle -fepub -L --icons --icons-dir=. $<
-	mv $(basename $<).epub $@
+@BUILD_MANPAGE_TRUE@dvisvgm.md: dvisvgm-man.xml db2md.xsl
+@BUILD_MANPAGE_TRUE@	xsltproc -o $@ db2md.xsl $<
 
-.SECONDARY: dvisvgm-article.xml dvisvgm-man.xml dvisvgm.sty
+@BUILD_MANPAGE_TRUE@dvisvgm.epub: dvisvgm-article.xml
+@BUILD_MANPAGE_TRUE@	a2x -darticle -fepub -L --icons --icons-dir=. $<
+@BUILD_MANPAGE_TRUE@	mv $(basename $<).epub $@
 
-dvisvgm-man.xml: dvisvgm.txt $(TWEAK_DB_REFENTRY)
-	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -dmanpage -o $@.tmp $<
-	xsltproc -o $@ $(TWEAK_DB_REFENTRY) $@.tmp
-	rm $@.tmp
+@BUILD_MANPAGE_TRUE@.SECONDARY: dvisvgm-article.xml dvisvgm-man.xml dvisvgm.sty
 
-dvisvgm-article.xml: dvisvgm.txt $(TWEAK_DB_ARTICLE)
-	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -darticle -o $@.tmp $<
-	xsltproc -o $@ $(TWEAK_DB_ARTICLE) $@.tmp
-	rm $@.tmp
-	sed -i "s/{VERSION}/@VERSION@/" $@
+@BUILD_MANPAGE_TRUE@dvisvgm-man.xml: dvisvgm.txt $(TWEAK_DB_REFENTRY)
+@BUILD_MANPAGE_TRUE@	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -dmanpage -o $@.tmp $<
+@BUILD_MANPAGE_TRUE@	xsltproc -o $@ $(TWEAK_DB_REFENTRY) $@.tmp
+@BUILD_MANPAGE_TRUE@	rm $@.tmp
 
-dvisvgm.sty: dvisvgm-man.xml $(GEN_DBLATEX_STY)
-	xsltproc -o dvisvgm.sty $(GEN_DBLATEX_STY) $<
+@BUILD_MANPAGE_TRUE@dvisvgm-article.xml: dvisvgm.txt $(TWEAK_DB_ARTICLE)
+@BUILD_MANPAGE_TRUE@	asciidoc -a icons -a 'iconsdir=.' -a badges -a 'revnumber=@VERSION@' --unsafe -bdocbook -darticle -o $@.tmp $<
+@BUILD_MANPAGE_TRUE@	xsltproc -o $@ $(TWEAK_DB_ARTICLE) $@.tmp
+@BUILD_MANPAGE_TRUE@	rm $@.tmp
+@BUILD_MANPAGE_TRUE@	sed -i "s/{VERSION}/@VERSION@/" $@
 
-dvisvgm.txt: dvisvgm.txt.in ../configure.ac
-	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
-	if [ $< -nt ../configure.ac ]; \
-	then touch -r $< $@; \
-	else touch -r ../configure.ac $@; \
-	fi
+@BUILD_MANPAGE_TRUE@dvisvgm.sty: dvisvgm-man.xml $(GEN_DBLATEX_STY)
+@BUILD_MANPAGE_TRUE@	xsltproc -o dvisvgm.sty $(GEN_DBLATEX_STY) $<
 
-epub: dvisvgm.epub
-html: dvisvgm.html
-man: dvisvgm.1
-pdf: dvisvgm.pdf
+@BUILD_MANPAGE_TRUE@dvisvgm.txt: dvisvgm.txt.in ../configure.ac
+@BUILD_MANPAGE_TRUE@	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
+@BUILD_MANPAGE_TRUE@	if [ $< -nt ../configure.ac ]; \
+@BUILD_MANPAGE_TRUE@	then touch -r $< $@; \
+@BUILD_MANPAGE_TRUE@	else touch -r ../configure.ac $@; \
+@BUILD_MANPAGE_TRUE@	fi
+
+@BUILD_MANPAGE_TRUE@epub: dvisvgm.epub
+@BUILD_MANPAGE_TRUE@html: dvisvgm.html
+@BUILD_MANPAGE_TRUE@man: dvisvgm.1
+@BUILD_MANPAGE_TRUE@md: dvisvgm.md
+@BUILD_MANPAGE_TRUE@pdf: dvisvgm.pdf
 
 clean:
-	rm -f dvisvgm.pdf dvisvgm.html dvisvgm-man.xml dvisvgm-article.xml dvisvgm.txt dvisvgm.sty dvisvgm.dvi dvisvgm.epub
+	rm -f dvisvgm.pdf dvisvgm.html dvisvgm.md dvisvgm-man.xml dvisvgm-article.xml dvisvgm.txt dvisvgm.sty dvisvgm.dvi dvisvgm.epub
 
 distclean-local:
-	rm -f dvisvgm.pdf dvisvgm.html dvisvgm-man.xml dvisvgm-article.xml dvisvgm.txt dvisvgm.sty dvisvgm.dvi dvisvgm.epub dvisvgm.1
+	rm -f dvisvgm.pdf dvisvgm.html dvisvgm.md dvisvgm-man.xml dvisvgm-article.xml dvisvgm.txt dvisvgm.sty dvisvgm.dvi dvisvgm.epub dvisvgm.1
 
 # Ensure that distribution tarballs always contain a recent manpage, i.e.
 # let "make dist" and "make distcheck" fail if dvisvgm.1 can't be built.
-dist-hook:
-	@if test ! -f $(dvisvgm_srcdir)/doc/dvisvgm.1; then \
-		echo "----------------------------------------------------------------"; \
-		echo "manpage file dvisvgm.1 could not be built because one or more of"; \
-		echo "the following utilities are missing: asciidoc, xmlto, xsltproc  "; \
-		echo "----------------------------------------------------------------"; \
-		false; \
-	fi
+@BUILD_MANPAGE_FALSE@dist-hook:
+@BUILD_MANPAGE_FALSE@	@echo "----------------------------------------------------------------"; \
+@BUILD_MANPAGE_FALSE@	echo  "manpage file dvisvgm.1 could not be built because one or more of"; \
+@BUILD_MANPAGE_FALSE@	echo  "the following utilities are missing: asciidoc, xmlto, xsltproc  "; \
+@BUILD_MANPAGE_FALSE@	echo  "----------------------------------------------------------------"; \
+@BUILD_MANPAGE_FALSE@	false;
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

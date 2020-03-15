@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2019-11-12
+.\"      Date: 2020-03-08
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.8.2
+.\"    Source: dvisvgm 2.9
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "2019\-11\-12" "dvisvgm 2\&.8\&.2" "dvisvgm Manual"
+.TH "DVISVGM" "1" "2020\-03\-08" "dvisvgm 2\&.9" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -46,10 +46,12 @@ SVG is a vector\-based graphics format and therefore dvisvgm tries to convert th
 .sp
 However, TeX\(cqs main source for font descriptions is Metafont, which produces bitmap output (GF files)\&. That\(cqs why not all obtainable TeX fonts are available in a scalable format\&. In these cases, dvisvgm tries to vectorize Metafont\(cqs output by tracing the glyph bitmaps\&. The results are not as perfect as most (manually optimized) PFB or OTF counterparts, but are nonetheless really nice in most cases\&.
 .sp
-When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR elements (\fB<font>\fR\&...\fB</font>\fR) to embed the font data into the SVG files\&. Unfortunately, only few SVG renderers support these elements yet\&. Most web browsers and vector graphics applications don\(cqt evaluate them properly so that the text components of the resulting graphics might look strange\&. In order to create more compatible SVG files, command\-line option \fB\-\-no\-fonts\fR can be given to replace the font elements by plain graphics paths\&.
+When running dvisvgm without option \fB\-\-no\-fonts\fR, it creates \fIfont\fR elements (\fB<font>\fR\&...\fB</font>\fR) to embed the font data into the SVG files\&. Unfortunately, only few SVG renderers support these elements yet\&. Most web browsers and vector graphics applications don\(cqt evaluate them properly so that the text components of the resulting graphics might look strange\&. In order to create more compatible SVG files, command\-line option \fB\-\-no\-fonts\fR can be given to replace the font elements by plain graphics paths\&. Most web browsers (but only few external SVG renderers) also suppport WOFF and WOFF2 fonts that can be used instead of the default SVG fonts\&. Option \fB\-\-font\-format\fR offers the functionality to change the format applied to the fonts being embedded\&.
 .SH "OPTIONS"
 .sp
 dvisvgm provides a POSIX\-compliant command\-line interface with short and long option names\&. They may be given before and/or after the name of the file to be converted\&. Also, the order of specifying the options is not significant, i\&.e\&. you can add them in any order without changing dvisvgm\(cqs behavior\&. Certain options accept or require additional parameters which are directly appended to or separated by whitespace from a short option (e\&.g\&. \fB\-v0\fR or \fB\-v 0\fR)\&. Long options require an additional equals sign (\fB=\fR) between option name and argument but without any surrounding whitespace (e\&.g\&. \fB\-\-verbosity=0\fR)\&. Multiple short options that don\(cqt expect a further parameter can be combined after a single dash (e\&.g\&. \fB\-ejs\fR rather than \fB\-e \-j \-s\fR)\&.
+.sp
+Long option names may also be shortened by omitting trailing characters\&. As long as the shortened name is unambiguous, it\(cqs recognized and applied\&. For example, option \fB\-\-exact\-bbox\fR can be shortened to \fB\-\-exact\fR, \fB\-\-exa\fR, or \fB\-\-ex\fR\&. In case of an ambiguous abbreviation, dvisvgm prints an error message together with all matching option names\&.
 .PP
 \fB\-b, \-\-bbox\fR=\fIfmt\fR
 .RS 4
@@ -159,6 +161,85 @@ only affects the bounding box and does not transform the page content\&. Hence, 
 .sp .5v
 .RE
 .RE
+.RE
+.PP
+\fB\-B, \-\-bitmap\-format\fR=\fIfmt\fR
+.RS 4
+This option sets the image format used to embed bitmaps extracted from PostScript or PDF data\&. By default, dvisvgm embeds all bitmaps as JPEG images because it\(cqs the most compact of the two formats supported by SVG\&. To select the alternative lossless PNG format,
+\fB\-\-bitmap\-format=png\fR
+can be used\&. There are some more format variants dvisvgm currently supports even though
+\fBjpeg\fR
+and
+\fBpng\fR
+should be sufficient in most cases\&. The following list gives an overview of the known format names which correspond to names of Ghostscript output devices\&.
+.TS
+tab(:);
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt
+lt lt.
+T{
+\fBnone\fR
+T}:T{
+disable processing of bitmap images
+T}
+T{
+\fBjpeg\fR
+T}:T{
+color JPEG format
+T}
+T{
+\fBjpeggray\fR
+T}:T{
+grayscale JPEG format
+T}
+T{
+\fBpng\fR
+T}:T{
+grayscale or 24\-bit color PNG format depending on current color space
+T}
+T{
+\fBpnggray\fR
+T}:T{
+grayscale PNG format
+T}
+T{
+\fBpngmono\fR
+T}:T{
+black\-and\-white PNG format
+T}
+T{
+\fBpngmonod\fR
+T}:T{
+dithered black\-and\-white PNG format
+T}
+T{
+\fBpng16\fR
+T}:T{
+4\-bit color PNG format
+T}
+T{
+\fBpng256\fR
+T}:T{
+8\-bit color PNG format
+T}
+T{
+\fBpng16m\fR
+T}:T{
+24\-bit color PNG format
+T}
+.TE
+.sp 1
+Since the collection of supported output devices can vary among local Ghostscript installations, not all formats may be available in some environments\&. dvisvgm quits with a PostScript error message if the selected output format requires a locally unsupported output device\&.
+.sp
+The two JPEG format specifiers accept an optional parameter to set the IJG quality level which must directly follow the format specifier separated by a colon, e\&.g\&.
+\fB\-\-bitmap\-format=jpeg:50\fR\&. The quality value is an integer between 0 and 100\&. Higher values result in better image quality but lower compression rates and therefore larger files\&. The default quality level is 75 which is applied if no quality parameter is given or if it\(cqs set to 0\&.
 .RE
 .PP
 \fB\-C, \-\-cache\fR[=\fIdir\fR]
@@ -317,7 +398,7 @@ dvipdfm (\m[blue]https://ctan.org/tex-archive/dviware/dvipdfm\m[])\&.
 .RS 4
 Tells dvisvgm to create overlapping grid segments when approximating color gradient fills (also see option
 \fB\-\-grad\-segments\fR
-below)\&. By default, adjacent segments don\(cqt overlap but only touch each other like separate tiles\&. However, this alignment can lead to visible gaps between the segments because the background color usually influences the color at the boundary of the segments if the SVG renderer uses anti\-aliasing to create smooth contours\&. One way to avoid this and to create seamlessly touching color regions is to enlarge the segments so that they extent into the area of their right and bottom neighbors\&. Since the latter are drawn on top of the overlapping parts, the visible size of all segments keeps unchanged\&. Just the former gaps disappear as the background is now completely covered by the correct colors\&. Currently, dvisvgm computes the overlapping segments separately for each patch of the mesh (a patch mesh may consist of multiple patches of the same type)\&. Therefore, there still might be visible gaps at the seam of two adjacent patches\&.
+below)\&. By default, adjacent segments don\(cqt overlap but only touch each other like separate tiles\&. However, this alignment can lead to visible gaps between the segments because the background color usually influences the color at the boundary of the segments if the SVG renderer uses anti\-aliasing to create smooth contours\&. One way to avoid this and to create seamlessly touching color regions is to enlarge the segments so that they extend into the area of their right and bottom neighbors\&. Since the latter are drawn on top of the overlapping parts, the visible size of all segments keeps unchanged\&. Just the former gaps disappear as the background is now completely covered by the correct colors\&. Currently, dvisvgm computes the overlapping segments separately for each patch of the mesh (a patch mesh may consist of multiple patches of the same type)\&. Therefore, there still might be visible gaps at the seam of two adjacent patches\&.
 .RE
 .PP
 \fB\-\-grad\-segments\fR=\fInumber\fR
@@ -341,6 +422,15 @@ If the size of the segments created to approximate gradient color fills falls be
 Prints a short summary of all available command\-line options\&. The optional
 \fImode\fR
 parameter is an integer value between 0 and 2\&. It selects the display variant of the help text\&. Mode 0 lists all options divided into categories with section headers\&. This is also the default if dvisvgm is called without parameters\&. Mode 1 lists all options ordered by the short option names, while mode 2 sorts the lines by the long option names\&.
+.sp
+A values in brackets after the description text indicate the default parameter of the option\&. They are applied if an option with a mandatory parameter is not used or if an optional parameter is omitted\&. For example, option
+\fB\-\-bbox\fR
+requires a size parameter which defaults to
+\fBmin\fR
+if
+\fB\-\-bbox\fR
+is not used\&. Option
+\fB\-\-zip\fR, which isn\(cqt applied by default, accepts an optional compression level parameter\&. If it\(cqs omitted, the stated default value 9 is used\&.
 .RE
 .PP
 \fB\-\-keep\fR
@@ -1591,4 +1681,4 @@ Please report bugs using the bug tracker at GitHub (\m[blue]https://github.com/m
 Written by Martin Gieseking <\m[blue]\fBmartin\&.gieseking@uos\&.de\fR\m[]>
 .SH "COPYING"
 .sp
-Copyright \(co 2005\-2019 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.
+Copyright \(co 2005\-2020 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.

@@ -1,3 +1,354 @@
+2020-03-13  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * NEWS: 
+  updated NEWS and vc/README 
+
+2020-03-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.1: 
+  added generated man page to repo 
+
+2020-03-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  fixed xshow, yshow, and xyshow for multi-byte characters 
+
+2020-03-10  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Matrix.cpp: 
+  replaced istream::ignore() with istream::get()
+to make gcc on NetBSD 
+  happy 
+
+  * .travis.yml: 
+  travis: added packages required to build man page 
+
+  * .appveyor.yml, .travis.yml, configure.ac, src/Doxyfile, src/version.hpp: 
+  set version to 2.9 
+
+2020-03-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  create image files in tmpdir instead of cwd 
+
+  * src/PsSpecialHandler.cpp: 
+  fixed mime type of JPEG images 
+
+  * src/utility.hpp: 
+  base64_copy: added parameter to set line length 
+
+  * src/XMLNode.cpp: 
+  wrap lines with base64 image data (200 chars/line) 
+
+  * doc/Makefile.am: 
+  make install: use existing dvisvgm.1 if it can't be rebuilt
+However, 
+  "make dist" and "make distcheck" should still fail if the man page
+can't 
+  be built in order to ensure the tarball always contains a recent version. 
+
+  * src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp: 
+  some code cleanup 
+
+2020-03-08  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in, src/PSInterpreter.cpp: 
+  added bitmap format 'none' to disable image processing 
+
+2020-03-07  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PSInterpreter.cpp, src/PSInterpreter.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.hpp, src/psdefs.cpp: 
+  added image support for various JPEG and PNG variants 
+
+  * doc/dvisvgm.txt.in, src/CommandLine.hpp, src/dvisvgm.cpp, 
+    src/options.xml: 
+  added command-line option --bitmap-format 
+
+  * doc/generate-dvisvgm-sty.xsl: 
+  manual page: reduce distance of table rows 
+
+2020-03-05  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/xxHash/xxh3.h, libs/xxHash/xxhash.c, libs/xxHash/xxhash.h, 
+    tests/HashFunctionTest.cpp: 
+  updated xxhash to version 0.7.3 
+
+2020-03-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GlyphTracerMessages.hpp: 
+  suppress tracer messages if no font info available 
+
+  * src/MetafontWrapper.cpp, src/MetafontWrapper.hpp: 
+  added fallback method to get GF resolution applied by Metafont 
+
+2020-02-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  fixed potential segfault 
+
+  * src/Bezier.cpp, src/BoundingBox.cpp, src/Font.cpp, src/FontWriter.cpp, 
+    src/Matrix.cpp, src/TensorProductPatch.cpp, src/TriangularPatch.cpp: 
+  replaced fabs() with std::abs() 
+
+2020-02-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLNode.cpp: 
+  fixed copy constructor of XMLElement 
+
+  * src/PSInterpreter.cpp, src/PSInterpreter.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.hpp, src/psdefs.cpp, tests/PSInterpreterTest.cpp: 
+  fixed broken handling of PS tiling patterns 
+
+  * src/PSPattern.cpp: 
+  simplified loop expression 
+
+  * src/XMLNode.cpp, src/optimizer/RedundantElementRemover.cpp: 
+  don't remove clipPath elements if referenced in patterns 
+
+  * src/PsSpecialHandler.cpp: 
+  don't add clip path to path elements in pattern definitions 
+
+2020-02-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  store image counter in globaldict 
+
+  * src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/XMLNode.cpp, 
+    src/XMLNode.hpp, src/dvisvgm.cpp: 
+  don't keep encoded image data in memory
+To prevent memory issues, add 
+  the base64-encoded image data when serializing
+the XML tree. 
+
+  * src/PsSpecialHandler.cpp: 
+  prevent access to invalid vector component 
+
+  * src/XMLNode.cpp, src/XMLNode.hpp: 
+  prevent deep destructor recursion of XML nodes 
+
+  * src/psdefs.cpp: 
+  PS handler: prevent write access to protected pattern dictionary 
+
+2020-02-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  don't access DataSource for shading types < 4 
+
+2020-02-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  apply clip path to image if present 
+
+  * src/optimizer/TransformSimplifier.cpp: 
+  TransformSimplifier: prevent width/height from getting negative 
+
+  * src/Font.cpp, src/GraphicsPath.hpp, src/PsSpecialHandler.cpp, 
+    tests/GraphicsPathTest.cpp: 
+  changed signature of GraphicsPath::computeBBox() 
+
+2020-02-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  image operator: reset output device correctly 
+
+2020-02-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp, src/psdefs.cpp: 
+  stop image processing if PNG devices are unavailable
+Handling of PS 
+  operator 'image' relies on the GS output devices 'png16m' and
+'pnggray' 
+  (depending on the current color space). If they are unavailable, 
+  the
+image processing is stopped now instead of leaving GS with an 
+  internal error. 
+
+  * src/PsSpecialHandler.cpp: 
+  adapt bounding box to enclose embedded bitmaps 
+
+2020-02-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/EPSToSVG.hpp, src/ImageToSVG.cpp, src/ImageToSVG.hpp, 
+    src/PDFToSVG.hpp: 
+  fixed getCurrentPageNumber() for EPS and PDF files 
+
+  * src/FilePath.cpp, src/FilePath.hpp, tests/FilePathTest.cpp: 
+  FilePath::suffix("") now removes the suffix if present 
+
+  * src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/psdefs.cpp: 
+  sync location and base name of temporary PNG files with SVG file 
+
+  * src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/dvisvgm.cpp, 
+    src/psdefs.cpp: 
+  remove temporary PNG files if --keep is not given 
+
+2020-02-15  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/psdefs.cpp: 
+  added evaluation of PS Level 1 image operators 
+
+2020-02-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Matrix.cpp, tests/MatrixTest.cpp: 
+  fixed row/column issue in Matrix::invert() 
+
+  * src/FontWriter.cpp, src/utility.hpp: 
+  added wrapper function for util::base64_copy() 
+
+  * src/PSInterpreter.cpp, src/PSInterpreter.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.hpp, src/psdefs.cpp, tests/PSInterpreterTest.cpp: 
+  added processing of PS image operator 
+
+2020-02-12  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in: 
+  manpage: added info on default values listed by --help 
+
+2020-01-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicsPath.hpp: 
+  arcto: use template type for rx and ry instead of double 
+
+2020-01-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PageSize.cpp: 
+  replaced floor(x+0.5) with round(x) 
+
+2020-01-06  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Ghostscript.cpp: 
+  added check for libgs.dylib.N (Mac only) 
+
+2020-01-02  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * Makefile.am, README, README.md, configure.ac, doc/Makefile.am, 
+    doc/conf-dblatex-man.xsl, doc/conf-dblatex-pdf.xsl, doc/db2html.xsl, 
+    doc/dvisvgm.txt.in, doc/tweak-db-article.xsl, doc/tweak-db-refentry.xsl, 
+    doc/tweak-dblatex-pdf.xsl, libs/Makefile.am, 
+    libs/ff-woff/fontforge/tmpfile2.cpp, src/AGLTable.hpp, 
+    src/BasicDVIReader.cpp, src/BasicDVIReader.hpp, src/Bezier.cpp, 
+    src/Bezier.hpp, src/BgColorSpecialHandler.cpp, 
+    src/BgColorSpecialHandler.hpp, src/Bitmap.cpp, src/Bitmap.hpp, 
+    src/BoundingBox.cpp, src/BoundingBox.hpp, src/CLCommandLine.cpp, 
+    src/CLCommandLine.hpp, src/CLOption.hpp, src/CMap.cpp, src/CMap.hpp, 
+    src/CMapManager.cpp, src/CMapManager.hpp, src/CMapReader.cpp, 
+    src/CMapReader.hpp, src/Calculator.cpp, src/Calculator.hpp, 
+    src/CharMapID.cpp, src/CharMapID.hpp, src/Character.hpp, src/Color.cpp, 
+    src/Color.hpp, src/ColorSpecialHandler.cpp, src/ColorSpecialHandler.hpp, 
+    src/CommandLine.hpp, src/DLLoader.cpp, src/DLLoader.hpp, 
+    src/DVIActions.hpp, src/DVIReader.cpp, src/DVIReader.hpp, 
+    src/DVIToSVG.cpp, src/DVIToSVG.hpp, src/DVIToSVGActions.cpp, 
+    src/DVIToSVGActions.hpp, src/Directory.cpp, src/Directory.hpp, 
+    src/DvisvgmSpecialHandler.cpp, src/DvisvgmSpecialHandler.hpp, 
+    src/EPSFile.cpp, src/EPSFile.hpp, src/EPSToSVG.hpp, 
+    src/EllipticalArc.cpp, src/EllipticalArc.hpp, src/EmSpecialHandler.cpp, 
+    src/EmSpecialHandler.hpp, src/EncFile.cpp, src/EncFile.hpp, 
+    src/FileFinder.cpp, src/FileFinder.hpp, src/FilePath.cpp, 
+    src/FilePath.hpp, src/FileSystem.cpp, src/FileSystem.hpp, 
+    src/FixWord.hpp, src/Font.cpp, src/Font.hpp, src/FontCache.cpp, 
+    src/FontCache.hpp, src/FontEncoding.cpp, src/FontEncoding.hpp, 
+    src/FontEngine.cpp, src/FontEngine.hpp, src/FontManager.cpp, 
+    src/FontManager.hpp, src/FontMap.cpp, src/FontMap.hpp, 
+    src/FontMetrics.cpp, src/FontMetrics.hpp, src/FontStyle.hpp, 
+    src/FontWriter.cpp, src/FontWriter.hpp, src/GFGlyphTracer.cpp, 
+    src/GFGlyphTracer.hpp, src/GFReader.cpp, src/GFReader.hpp, 
+    src/GFTracer.cpp, src/GFTracer.hpp, src/Ghostscript.cpp, 
+    src/Ghostscript.hpp, src/Glyph.hpp, src/GlyphTracerMessages.hpp, 
+    src/GraphicsPath.hpp, src/HashFunction.cpp, src/HashFunction.hpp, 
+    src/HtmlSpecialHandler.cpp, src/HtmlSpecialHandler.hpp, 
+    src/HyperlinkManager.cpp, src/HyperlinkManager.hpp, src/ImageToSVG.cpp, 
+    src/ImageToSVG.hpp, src/InputBuffer.cpp, src/InputBuffer.hpp, 
+    src/InputReader.cpp, src/InputReader.hpp, src/JFM.cpp, src/JFM.hpp, 
+    src/Length.cpp, src/Length.hpp, src/MD5HashFunction.hpp, src/Makefile.am, 
+    src/MapLine.cpp, src/MapLine.hpp, src/Matrix.cpp, src/Matrix.hpp, 
+    src/Message.cpp, src/Message.hpp, src/MessageException.hpp, 
+    src/MetafontWrapper.cpp, src/MetafontWrapper.hpp, src/MiKTeXCom.cpp, 
+    src/MiKTeXCom.hpp, src/NoPsSpecialHandler.cpp, 
+    src/NoPsSpecialHandler.hpp, src/NumericRanges.hpp, src/PDFParser.cpp, 
+    src/PDFParser.hpp, src/PDFToSVG.hpp, src/PSFilter.hpp, 
+    src/PSInterpreter.cpp, src/PSInterpreter.hpp, src/PSPattern.cpp, 
+    src/PSPattern.hpp, src/PSPreviewFilter.cpp, src/PSPreviewFilter.hpp, 
+    src/PageRanges.cpp, src/PageRanges.hpp, src/PageSize.cpp, 
+    src/PageSize.hpp, src/Pair.hpp, src/PapersizeSpecialHandler.cpp, 
+    src/PapersizeSpecialHandler.hpp, src/PathClipper.cpp, 
+    src/PathClipper.hpp, src/PdfSpecialHandler.cpp, 
+    src/PdfSpecialHandler.hpp, src/PreScanDVIReader.cpp, 
+    src/PreScanDVIReader.hpp, src/Process.cpp, src/Process.hpp, 
+    src/PsSpecialHandler.cpp, src/PsSpecialHandler.hpp, src/RangeMap.cpp, 
+    src/RangeMap.hpp, src/SVGCharHandler.cpp, src/SVGCharHandler.hpp, 
+    src/SVGCharHandlerFactory.cpp, src/SVGCharHandlerFactory.hpp, 
+    src/SVGCharPathHandler.cpp, src/SVGCharPathHandler.hpp, 
+    src/SVGCharTspanTextHandler.cpp, src/SVGCharTspanTextHandler.hpp, 
+    src/SVGOutput.cpp, src/SVGOutput.hpp, src/SVGSingleCharTextHandler.cpp, 
+    src/SVGSingleCharTextHandler.hpp, src/SVGTree.cpp, src/SVGTree.hpp, 
+    src/ShadingPatch.cpp, src/ShadingPatch.hpp, src/SignalHandler.cpp, 
+    src/SignalHandler.hpp, src/SourceInput.cpp, src/SourceInput.hpp, 
+    src/SpecialActions.hpp, src/SpecialHandler.hpp, src/SpecialManager.cpp, 
+    src/SpecialManager.hpp, src/StreamReader.cpp, src/StreamReader.hpp, 
+    src/StreamWriter.cpp, src/StreamWriter.hpp, src/Subfont.cpp, 
+    src/Subfont.hpp, src/System.cpp, src/System.hpp, src/TFM.cpp, 
+    src/TFM.hpp, src/TTFAutohint.cpp, src/TTFAutohint.hpp, 
+    src/TensorProductPatch.cpp, src/TensorProductPatch.hpp, src/Terminal.cpp, 
+    src/Terminal.hpp, src/ToUnicodeMap.cpp, src/ToUnicodeMap.hpp, 
+    src/TpicSpecialHandler.cpp, src/TpicSpecialHandler.hpp, 
+    src/TriangularPatch.cpp, src/TriangularPatch.hpp, src/TrueTypeFont.cpp, 
+    src/TrueTypeFont.hpp, src/Unicode.cpp, src/Unicode.hpp, 
+    src/VFActions.hpp, src/VFReader.cpp, src/VFReader.hpp, 
+    src/VectorIterator.hpp, src/VectorStream.hpp, src/XMLDocument.cpp, 
+    src/XMLDocument.hpp, src/XMLNode.cpp, src/XMLNode.hpp, src/XMLString.cpp, 
+    src/XMLString.hpp, src/XXHashFunction.hpp, src/ZLibOutputStream.hpp, 
+    src/dvisvgm.cpp, src/ffwrapper.c, src/ffwrapper.h, src/macros.hpp, 
+    src/optimizer/AttributeExtractor.cpp, 
+    src/optimizer/AttributeExtractor.hpp, src/optimizer/DependencyGraph.hpp, 
+    src/optimizer/GroupCollapser.cpp, src/optimizer/GroupCollapser.hpp, 
+    src/optimizer/OptimizerModule.hpp, 
+    src/optimizer/RedundantElementRemover.cpp, 
+    src/optimizer/RedundantElementRemover.hpp, 
+    src/optimizer/SVGOptimizer.cpp, src/optimizer/SVGOptimizer.hpp, 
+    src/optimizer/TextSimplifier.cpp, src/optimizer/TextSimplifier.hpp, 
+    src/optimizer/TransformSimplifier.cpp, 
+    src/optimizer/TransformSimplifier.hpp, src/optimizer/WSNodeRemover.cpp, 
+    src/optimizer/WSNodeRemover.hpp, src/options.dtd, src/options.xml, 
+    src/psdefs.cpp, src/utility.cpp, src/utility.hpp, src/version.hpp, 
+    src/version.hpp.in, src/windows.hpp, tests/BezierTest.cpp, 
+    tests/BitmapTest.cpp, tests/BoundingBoxTest.cpp, 
+    tests/CMapManagerTest.cpp, tests/CMapReaderTest.cpp, tests/CMapTest.cpp, 
+    tests/CalculatorTest.cpp, tests/ColorSpecialTest.cpp, 
+    tests/ColorTest.cpp, tests/CommandLineTest.cpp, tests/DVIReaderTest.cpp, 
+    tests/DependencyGraphTest.cpp, tests/DirectoryTest.cpp, 
+    tests/DvisvgmSpecialTest.cpp, tests/EllipticalArcTest.cpp, 
+    tests/EmSpecialTest.cpp, tests/FileFinderTest.cpp, 
+    tests/FilePathTest.cpp, tests/FileSystemTest.cpp, 
+    tests/FontCacheTest.cpp, tests/FontManagerTest.cpp, 
+    tests/FontMapTest.cpp, tests/GFGlyphTracerTest.cpp, 
+    tests/GFReaderTest.cpp, tests/GhostscriptTest.cpp, 
+    tests/GraphicsPathTest.cpp, tests/HashFunctionTest.cpp, 
+    tests/JFMReaderTest.cpp, tests/LengthTest.cpp, tests/Makefile.am, 
+    tests/MapLineTest.cpp, tests/MatrixTest.cpp, 
+    tests/MessageExceptionTest.cpp, tests/PDFParserTest.cpp, 
+    tests/PSInterpreterTest.cpp, tests/PageRagesTest.cpp, 
+    tests/PageSizeTest.cpp, tests/PairTest.cpp, 
+    tests/PapersizeSpecialTest.cpp, tests/RangeMapTest.cpp, 
+    tests/SVGOutputTest.cpp, tests/ShadingPatchTest.cpp, 
+    tests/SpecialManagerTest.cpp, tests/SplittedCharInputBufferTest.cpp, 
+    tests/StreamInputBufferTest.cpp, tests/StreamReaderTest.cpp, 
+    tests/StreamWriterTest.cpp, tests/StringMatcherTest.cpp, 
+    tests/SubfontTest.cpp, tests/TFMReaderTest.cpp, 
+    tests/TensorProductPatchTest.cpp, tests/ToUnicodeMapTest.cpp, 
+    tests/TpicSpecialTest.cpp, tests/TriangularPatchTest.cpp, 
+    tests/UnicodeTest.cpp, tests/UtilityTest.cpp, 
+    tests/VectorIteratorTest.cpp, tests/VectorStreamTest.cpp, 
+    tests/XMLNodeTest.cpp, tests/XMLStringTest.cpp, tests/check-conv, 
+    tests/create-makefile, tests/data/Makefile.am, tests/genhashcheck.py, 
+    tests/normalize.xsl, tests/testmain.cpp: 
+  updated year in copyright statements to 2020 
+
+2019-12-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.txt.in: 
+  few additions to the manual page 
+
 2019-12-07  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 

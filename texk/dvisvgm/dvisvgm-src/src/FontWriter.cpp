@@ -2,7 +2,7 @@
 ** FontWriter.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -145,7 +145,7 @@ static void writeSFD (const string &sfdname, const PhysicalFont &font, const set
 
 	// ensure that the sum of the SFD's Ascent and Descent values equals the font's units per EM
 	double yext = font.ascent()+font.descent();
-	double scale = double(font.unitsPerEm())/(yext != 0 ? yext : fabs(font.ascent()));
+	double scale = double(font.unitsPerEm())/(yext != 0 ? yext : abs(font.ascent()));
 	sfd <<
 		"Ascent: " << font.ascent()*scale << "\n"
 		"Descent: " << font.descent()*scale << "\n"
@@ -260,7 +260,7 @@ bool FontWriter::writeCSSFontFace (FontFormat format, const set<int> &charcodes,
 			os << "@font-face{"
 				<< "font-family:" << _font.name() << ';'
 				<< "src:url(data:" << info->mimetype << ";base64,";
-			util::base64_copy(istreambuf_iterator<char>(ifs), istreambuf_iterator<char>(), ostreambuf_iterator<char>(os));
+			util::base64_copy(ifs, os);
 			os << ") format('" << info->formatstr_long << "');}\n";
 			ifs.close();
 			if (!PhysicalFont::KEEP_TEMP_FILES)

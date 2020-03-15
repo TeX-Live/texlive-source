@@ -2,7 +2,7 @@
 ** GraphicsPathTest.cpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -109,8 +109,7 @@ TEST(GraphicsPathTest, computeBBox) {
 	path.cubicto(5,5,30,10,90,70);
 	path.lineto(20,30);
 	path.closepath();
-	BoundingBox bbox;
-	path.computeBBox(bbox);
+	BoundingBox bbox = path.computeBBox();
 	EXPECT_EQ(bbox, BoundingBox(5, 5, 100, 100));
 }
 

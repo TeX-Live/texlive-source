@@ -29,7 +29,9 @@ svn status | sed -n 's/^\!//p'  # rerun, should be empty now
 cd ..
 
 Update our ./configure.ac from upstream dvisvgm-src/configure.ac.
-(See patch-04-configure-* for reference, but they won't apply as-is.)
+See patch-04-configure for reference, but they won't apply as-is.
+Probably simpler to check the previous original dvisvgm/configure.ac
+vs. the new, and then install the changes in our configure.ac by hand.
 
 # patch to integrate into TL build; will probably need adjusting also.
 patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles 

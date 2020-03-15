@@ -2,7 +2,7 @@
 ** XMLNode.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2019 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -19,15 +19,18 @@
 *************************************************************************/
 
 #include <algorithm>
-#include <map>
+#include <fstream>
 #include <list>
+#include <map>
 #include <sstream>
+#include "FileSystem.hpp"
 #include "utility.hpp"
 #include "XMLNode.hpp"
 #include "XMLString.hpp"
 
 using namespace std;
 
+bool XMLNode::KEEP_ENCODED_FILES=false;
 bool XMLElement::WRITE_NEWLINES=true;
 
 
@@ -69,7 +72,7 @@ XMLElement::XMLElement (string name) : _name(std::move(name)) {
 XMLElement::XMLElement (const XMLElement &node)
 	: XMLNode(node), _name(node._name), _attributes(node._attributes)
 {
-	for (XMLNode *child=_firstChild.get(); child; child = child->next())
+	for (XMLNode *child=node._firstChild.get(); child; child = child->next())
 		insertLast(child->clone());
 }
 
@@ -81,6 +84,14 @@ XMLElement::XMLElement (XMLElement &&node) noexcept
 	_firstChild(std::move(node._firstChild)),
 	_lastChild(node._lastChild)
 {
+}
+
+
+XMLElement::~XMLElement () {
+	// explicitly remove child nodes by iteration to prevent deep recursion
+	unique_ptr<XMLNode> child = std::move(_firstChild);
+	while (child && child->next())
+		child->removeNext();
 }
 
 
@@ -315,8 +326,10 @@ unique_ptr<XMLNode> XMLElement::remove (XMLNode *child) {
 bool XMLElement::getDescendants (const char *name, const char *attrName, vector<XMLElement*> &descendants) const {
 	for (XMLNode *child = _firstChild.get(); child; child = child->next()) {
 		if (XMLElement *elem = child->toElement()) {
-			if ((!name || elem->name() == name) && (!attrName || elem->hasAttribute(attrName)))
-				descendants.push_back(elem);
+			if (!name || !name[0] || (name[0] != '!' && elem->name() == name) || (name[0] == '!' && elem->name() != name+1)) {
+				if (!attrName || elem->hasAttribute(attrName))
+					descendants.push_back(elem);
+			}
 			elem->getDescendants(name, attrName, descendants);
 		}
 	}
@@ -347,8 +360,30 @@ XMLElement* XMLElement::getFirstDescendant (const char *name, const char *attrNa
 
 ostream& XMLElement::write (ostream &os) const {
 	os << '<' << _name;
-	for (const auto &attrib : _attributes)
-		os << ' ' << attrib.name << "='" << attrib.value << '\'';
+	for (const auto &attrib : _attributes) {
+		os << ' ';
+		if (attrib.name.front() != '@')
+			os << attrib.name << "='" << attrib.value << '\'';
+		else {
+			os << attrib.name.substr(1) << "='";
+			size_t pos = attrib.value.find("base64,");
+			if (pos == string::npos)
+				os << attrib.value;
+			else {
+				os << attrib.value.substr(0, pos+7);
+				string fname = attrib.value.substr(pos+7);
+				ifstream ifs(fname, ios::binary);
+				if (ifs) {
+					os << '\n';
+					util::base64_copy(ifs, os, 200);
+					ifs.close();
+					if (!KEEP_ENCODED_FILES)
+						FileSystem::remove(fname);
+				}
+			}
+			os << "'";
+		}
+	}
 	if (empty())
 		os << "/>";
 	else {

@@ -27,7 +27,7 @@ bibtex-x - maintained here, contains
   bibtexu
     old info: http://omega.enstb.org/yannis/bibtexu/
 
-chktex 1.7.6 - checked 15sep16
+chktex 1.7.6 - checked 15mar20
   http://mirror.ctan.org/support/chktex/
   http://download.savannah.gnu.org/releases/chktex/
 
@@ -40,8 +40,8 @@ detex 2.8.5 - checked 03feb19
 
 dtl - maintained here, by Takuji
 
-dvi2tty 6.0.0 - checked 05mar16
-  https://github.com/t-tk/dvi2tty
+dvi2tty 6.0.0 - checked 15mar20
+  https://github.com/t-tk/dvi2tty/releases
 
 dvidvi - maintained here
 
@@ -63,17 +63,17 @@ dvipos - maintained here, by us
 
 dvipsk - maintained here, by us
 
-dvisvgm 2.8.2 - checked 10dec19
+dvisvgm 2.9 - checked 15mar20
   https://dvisvgm.de/Downloads/
 
 gregorio 5.2.1 - checked 19dec19
   CTAN/support/gregoriotex/gregorio-5.2.1.zip
 
-gsftopk - from Paul Vojta's xdvi?
+gsftopk - from Paul Vojta's xdvi.
 
 kpathsea - maintained here, by us
 
-lcdf-typetools 2.108 - checked 28jan19
+lcdf-typetools 2.108 - checked 15mar20
   http://www.lcdf.org/type/
 
 makeindexk - maintained here, by us
@@ -84,23 +84,23 @@ makejvf - by Japanese TeX Development Community (Takuji, Hironobu et al.)
 mendexk - by Japanese TeX Development Community (Takuji, Hironobu et al.)
   https://github.com/texjporg/tex-jp-build
 
-musixtnt 2016-01-30 - checked 10feb16
+musixtnt 2016-01-30 - checked 15mar20
   http://mirror.ctan.org/macros/musixtnt/
 
 ps2pk - maintained here, by us
 
 psutils 1.23 - checked 16jan14
-  https://github.com/rrthomas/psutils/archive/v1.23.tar.gz
+  https://github.com/rrthomas/psutils/releases/
 
 ptexenc - maintained here, by us (Akira et al.)
   but also: https://github.com/texjporg/tex-jp-build
 
 seetexk - maintained here, by us (Takuji, Hironobu et al.)
 
-tex4htk - checked 25apr11
-  http://tug.org/tex4ht/
+tex4htk - part of tex4ht, needs full release
+  https://tug.org/tex4ht/
 
-texlive - scripts maintained here, by us
+texlive - scripts and files maintained here, by us
 
 ttf2pk2 - maintained here, by us
 
@@ -134,7 +134,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
        xetex - http://tug.org/xetex/
    
-xdvik 22.87.03 - checked 6apr16
+xdvik 22.87.04 - checked 15mar20
   http://sourceforge.net/projects/xdvi/files/xdvik/
   Procedure for updating xdvik from sourceforge release:
 tar xf ...
@@ -146,5 +146,5 @@ patch -p1 </tmp/c
 reautoconf
 add import entry to ChangeLog, update texk/README
 remove unpacked ../xdvik-*
-make sure it builds
+make sure it builds.
 commit.
