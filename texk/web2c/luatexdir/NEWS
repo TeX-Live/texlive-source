@@ -1,3 +1,18 @@
+==============================================================
+LuaTeX 1.12.0 2020-03-15
+==============================================================
+
+This is the release for TeX live 2020.
+--shell-restricted now forbids loading of dso (dll/so object)
+Scaled virtual font
+Aadditional primitives  \eTeXglue[stretch|shrink]order for querying order the etex way.
+Extra features runtoks
+tex.getmodenames() (as these can differ per engine/version)
+Permit nested runtoks in more complex situations of nesting (HH)
+More accurate and correct test for tex.[set|get]math
+Minor clean-up and bugs fixed
+
+
 
 ==============================================================
 LuaTeX 1.11.1 2019-10-28
