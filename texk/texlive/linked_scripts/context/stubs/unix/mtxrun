@@ -3806,7 +3806,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["l-os"] = package.loaded["l-os"] or true
 
--- original size: 19102, stripped down to: 10192
+-- original size: 19120, stripped down to: 10208
 
 if not modules then modules={} end modules ['l-os']={
  version=1.001,
@@ -4101,7 +4101,7 @@ function os.uuid()
 end
 local d
 function os.timezone(delta)
- d=d or tonumber(tonumber(date("%H")-date("!%H")))
+ d=d or ((tonumber(date("%H")) or 0)-(tonumber(date("!%H")) or 0))
  if delta then
   if d>0 then
    return format("+%02i:00",d)
@@ -6563,7 +6563,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-str"] = package.loaded["util-str"] or true
 
--- original size: 45188, stripped down to: 22734
+-- original size: 45153, stripped down to: 22734
 
 if not modules then modules={} end modules ['util-str']={
  version=1.001,
@@ -10079,7 +10079,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["util-soc-imp-copas"] = package.loaded["util-soc-imp-copas"] or true
 
--- original size: 25959, stripped down to: 14893
+-- original size: 26186, stripped down to: 14893
 
 
 local socket=socket or require("socket")
@@ -13961,7 +13961,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["trac-inf"] = package.loaded["trac-inf"] or true
 
--- original size: 9973, stripped down to: 7492
+-- original size: 10184, stripped down to: 7500
 
 if not modules then modules={} end modules ['trac-inf']={
  version=1.001,
@@ -13995,10 +13995,11 @@ local function resettiming(instance)
 end
 local ticks=clock
 local seconds=function(n) return n or 0 end
-if lua.getpreciseticks then
+if os.type~="windows" then
+elseif lua.getpreciseticks then
  ticks=lua.getpreciseticks
  seconds=lua.getpreciseseconds
-elseif FFISUPPORTED and ffi and os.type=="windows" then
+elseif FFISUPPORTED then
  local okay,kernel=pcall(ffi.load,"kernel32")
  if kernel then
   local tonumber=ffi.number or tonumber
@@ -14136,12 +14137,12 @@ function statistics.show()
   end)
   if LUATEXENGINE=="luametatex" then
    register("used engine",function()
-    return format("%s version %s, functionality level %s, format id %s",
-     LUATEXENGINE,LUATEXVERSION,LUATEXFUNCTIONALITY,LUATEXFORMATID)
+    return format("%s version: %s, functionality level: %s, format id: %s, compiler: %s",
+     LUATEXENGINE,LUATEXVERSION,LUATEXFUNCTIONALITY,LUATEXFORMATID,status.used_compiler)
    end)
   else
    register("used engine",function()
-    return format("%s version %s with functionality level %s, banner: %s",
+    return format("%s version: %s, functionality level: %s, banner: %s",
      LUATEXENGINE,LUATEXVERSION,LUATEXFUNCTIONALITY,lower(status.banner))
    end)
   end
@@ -14149,7 +14150,7 @@ function statistics.show()
    return format("%s of %s + %s",status.cs_count,status.hash_size,status.hash_extra)
   end)
   register("callbacks",statistics.callbacks)
-  if TEXENGINE=="luajittex" and JITSUPPORTED then
+  if JITSUPPORTED then
    local jitstatus=jit.status
    if jitstatus then
     local jitstatus={ jitstatus() }
@@ -14183,7 +14184,7 @@ function statistics.show()
 end
 function statistics.memused() 
  local round=math.round or math.floor
- return format("%s MB, ctx: %s MB, max: %s MB)",
+ return format("%s MB, ctx: %s MB, max: %s MB",
   round(collectgarbage("count")/1000),
   round(status.luastate_bytes/1000000),
   status.luastate_bytes_max and round(status.luastate_bytes_max/1000000) or "unknown"
@@ -20789,7 +20790,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["data-ini"] = package.loaded["data-ini"] or true
 
--- original size: 11019, stripped down to: 7086
+-- original size: 10847, stripped down to: 7086
 
 if not modules then modules={} end modules ['data-ini']={
  version=1.001,
@@ -25784,7 +25785,7 @@ do -- create closure to overcome 200 locals limit
 
 package.loaded["luat-fmt"] = package.loaded["luat-fmt"] or true
 
--- original size: 13964, stripped down to: 10026
+-- original size: 13843, stripped down to: 9991
 
 if not modules then modules={} end modules ['luat-fmt']={
  version=1.001,
@@ -25820,9 +25821,6 @@ local function secondaryflags(arguments)
  end
  if arguments.errors then
   flags[#flags+1]="--c:errors"
- end
- if arguments.jit then
-  flags[#flags+1]="--c:jiton"
  end
  if arguments.ansi then
   flags[#flags+1]="--c:ansi"
@@ -25991,9 +25989,9 @@ function environment.make_format(formatname)
  if silent then
   specification.redirect="> temp.log"
  end
- statistics.starttiming()
+ statistics.starttiming("format")
  local result=runner(specification)
- local runtime=statistics.stoptiming()
+ statistics.stoptiming("format")
  if silent then
   os.remove("temp.log")
  end
@@ -26011,7 +26009,7 @@ function environment.make_format(formatname)
  report_format("secondary flags  : %s",secondaryflags)
   end
  report_format("context file     : %s",fulltexsourcename)
- report_format("run time         : %.3f seconds",runtime)
+ report_format("run time         : %.3f seconds",statistics.elapsed("format"))
  report_format("return value     : %s",result==0 and "okay" or "error")
  report_format()
  lfs.chdir(startupdir)
@@ -26117,8 +26115,8 @@ end -- of closure
 
 -- used libraries    : l-bit32.lua l-lua.lua l-macro.lua l-sandbox.lua l-package.lua l-lpeg.lua l-function.lua l-string.lua l-table.lua l-io.lua l-number.lua l-set.lua l-os.lua l-file.lua l-gzip.lua l-md5.lua l-sha.lua l-url.lua l-dir.lua l-boolean.lua l-unicode.lua l-math.lua util-str.lua util-tab.lua util-fil.lua util-sac.lua util-sto.lua util-prs.lua util-fmt.lua util-soc-imp-reset.lua util-soc-imp-socket.lua util-soc-imp-copas.lua util-soc-imp-ltn12.lua util-soc-imp-mime.lua util-soc-imp-url.lua util-soc-imp-headers.lua util-soc-imp-tp.lua util-soc-imp-http.lua util-soc-imp-ftp.lua util-soc-imp-smtp.lua trac-set.lua trac-log.lua trac-inf.lua trac-pro.lua util-lua.lua util-deb.lua util-tpl.lua util-sbx.lua util-mrg.lua util-env.lua luat-env.lua util-zip.lua lxml-tab.lua lxml-lpt.lua lxml-mis.lua lxml-aux.lua lxml-xml.lua trac-xml.lua data-ini.lua data-exp.lua data-env.lua data-tmp.lua data-met.lua data-res.lua data-pre.lua data-inp.lua data-out.lua data-fil.lua data-con.lua data-use.lua data-zip.lua data-tre.lua data-sch.lua data-lua.lua data-aux.lua data-tmf.lua data-lst.lua libs-ini.lua luat-sta.lua luat-fmt.lua
 -- skipped libraries : -
--- original bytes    : 1038245
--- stripped bytes    : 409841
+-- original bytes    : 1038373
+-- stripped bytes    : 409980
 
 -- end library merge
 
