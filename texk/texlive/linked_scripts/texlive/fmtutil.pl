@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 53340 2020-01-06 23:55:32Z preining $
+# $Id: fmtutil.pl 54303 2020-03-14 22:04:10Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 53340 2020-01-06 23:55:32Z preining $';
-my $lastchdate = '$Date: 2020-01-07 00:55:32 +0100 (Tue, 07 Jan 2020) $';
+my $svnid = '$Id: fmtutil.pl 54303 2020-03-14 22:04:10Z karl $';
+my $lastchdate = '$Date: 2020-03-14 23:04:10 +0100 (Sat, 14 Mar 2020) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 53340 $';
+my $svnrev = '$Revision: 54303 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -626,7 +626,7 @@ sub rebuild_one_format {
     $texargs = $addargs;
   }
   if ($pool) {
-    chomp (my $poolfile = `kpsewhich -progname=$eng $pool.poo 2>$nul`);
+    chomp (my $poolfile = `kpsewhich -progname=$eng $pool.pool 2>$nul`);
     if ($poolfile && -f $poolfile) {
       print_verbose("attempting to create localized format "
                     . "using pool=$pool and tcx=$tcx.\n");

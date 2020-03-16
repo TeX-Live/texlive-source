@@ -81,7 +81,7 @@ ln -s . $clisp_toolsdir/lib/64  # for Solaris 64-bit
 # when running configure for clisp.
 
 # may be able to omit iconv if have new enough in libc or elsewhere.
-libiconv_ver=libiconv-1.15
+libiconv_ver=libiconv-1.16
 cd $clisp_basedir
 $wget http://ftp.gnu.org/gnu/libiconv/$libiconv_ver.tar.gz
 gzip -dc $libiconv_ver.tar.gz | tar xf -
