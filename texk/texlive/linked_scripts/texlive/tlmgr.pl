@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54286 2020-03-13 22:01:43Z karl $
+# $Id: tlmgr.pl 54357 2020-03-16 20:54:33Z karl $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54286 $';
-my $datrev = '$Date: 2020-03-13 23:01:43 +0100 (Fri, 13 Mar 2020) $';
+my $svnrev = '$Revision: 54357 $';
+my $datrev = '$Date: 2020-03-16 21:54:33 +0100 (Mon, 16 Mar 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2833,7 +2833,8 @@ sub action_update {
           " collection, not auto-installing it!\n");
         next;
       } else {
-        tlwarn("\n$prg: $pkg mentioned, but neither new nor forcibly removed\n");
+        tlwarn("\n$prg: $pkg mentioned, but neither new nor forcibly removed");
+        tlwarn("\n$prg: perhaps try tlmgr search or tlmgr info.\n");
         next;
       }
       # install new packages
@@ -3517,7 +3518,7 @@ sub action_update {
   }
 
   # infra update and tlmgr restart on w32 is done by the updater batch script
-  if (win32() && !$opts{"list"} && @critical) {
+  if (win32() && $opts{'self'} && !$opts{"list"} && @critical) {
     info("$prg: Preparing TeX Live infrastructure update...\n");
     for my $f (@infra_files_to_be_removed) {
       debug("file scheduled for removal $f\n");
@@ -10010,7 +10011,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54286 2020-03-13 22:01:43Z karl $
+$Id: tlmgr.pl 54357 2020-03-16 20:54:33Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -14,10 +14,6 @@ catch {rename send {}}
 # on windows, a wrapper takes care of this.
 if {$::tcl_platform(platform) ne "windows"} {
   set texbin [file dirname [file normalize [info script]]]
-  set savedir [pwd]
-  cd $texbin
-  set texbin [pwd]
-  cd $savedir
   # prepend texbin to PATH, unless it is already the _first_
   # path component
   set dirs [split $::env(PATH) ":"]
@@ -25,7 +21,6 @@ if {$::tcl_platform(platform) ne "windows"} {
     set ::env(PATH) "${texbin}:$::env(PATH)"
   }
   unset texbin
-  unset savedir
   unset dirs
 }
 
@@ -364,6 +359,12 @@ proc start_tlmgr {{args ""}} {
   # to process initial tlmgr output before continuing.
   unset -nocomplain ::done_waiting
   do_debug "opening tlmgr"
+  # -gui -. -gui-lang
+  for {set i 0} {$i < [llength $args]} {incr i} {
+    if {[lindex $args $i] eq "-lang"} {
+      set args [lreplace $args $i $i "-gui-lang"]
+    }
+  }
   set cmd [list "|tlmgr" {*}$args "--machine-readable" "shell" 2>>$::err_file]
   if [catch {open $cmd w+} ::tlshl] {
     tk_messageBox -message [get_stacktrace]
@@ -1578,17 +1579,6 @@ proc restore_backups_dialog {} {
 
 proc update_tlmgr_w32 {} {
   close_tlmgr
-  # cannot overwrite runscript.dll because it is in use.
-  # move it aside instead and put a copy in its place.
-  set runbk [file join $::instroot "temp" "runbk"]
-  if [file exists $runbk] {
-    file delete -force $runbk
-  }
-  file mkdir $runbk
-  file rename -force -- "${::instroot}/bin/win32/runscript.dll"  $runbk
-  file copy "$runbk/runscript.dll" "${::instroot}/bin/win32"
-  # tell tlmgr via an environment variable that it was invoked by tlshell
-  set ::env(from_tcl) 1
   # don't try pipes or capturing, because of
   # tlmgr's acrobatics with nested command prompts
   wm iconify .
@@ -2163,6 +2153,13 @@ proc populate_main {} {
   # top of main window
   ppack [ttk::frame .topf] -in .bg -side top -anchor w -fill x
 
+  if $::ddebug {
+    ppack [ttk::label .topf.test -text [info nameofexecutable]]
+    ppack [ttk::label .topf.test2 -text $::progname]
+    ppack [ttk::label .topf.test3 -text \
+           [string range $::env(PATH) 0 59]]
+  }
+
   # left frame
   pack [ttk::frame .topfl] -in .topf -side left -anchor nw
 
@@ -2397,7 +2394,7 @@ proc initialize {} {
     if {$ans ne "yes"} {exit}
   }
 
-  start_tlmgr
+  start_tlmgr {*}$::argv
   if {$::tcl_platform(platform) eq "windows"} {
     run_cmd_waiting "option multiuser"
     set ::multiuser 0
