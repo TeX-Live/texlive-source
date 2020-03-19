@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # This is texloganalyser, for parsing of TeX logs
-# Copyright (c) 2006-2014 Thomas van Oudenhove
+# Copyright (c) 2006-2020 Thomas van Oudenhove
 # All rights reserved
 
 # README - important notice:
@@ -38,8 +38,8 @@ use strict;
 use Getopt::Long;
 Getopt::Long::Configure ("bundling");
 
-my $version = "0.9";
-my $copyright = "2006-2014";
+my $version = "0.10";
+my $copyright = "2006-2020";
 my $opt = {
     help => '',
     version => '',
@@ -49,6 +49,7 @@ my $opt = {
     o => '',
     u => '',
     v => '',
+    c => '',
     p => '',
     f => '',
     w => '',
@@ -65,6 +66,7 @@ GetOptions(
     'version' => \$opt->{version},
     'last' => \$opt->{last},
     'a' => \$opt->{a},
+    'c' => \$opt->{c},
     'h' => \$opt->{h},
     'o' => \$opt->{o},
     'u' => \$opt->{u},
@@ -105,8 +107,10 @@ analyze();
 
 sub analyze {
     my $line;
+    my ($cbox, $chead);
     my $output;
     my $test = 0;
+    my $png = 0;
 
     open my $source, "<", $texlog;
     while (defined ($line = <$source>)) {
@@ -114,7 +118,9 @@ sub analyze {
         # default: display summary
         summary($line);
         #          and page numbers ('n' option)
-        pagenumber($line) if $opt->{n};
+        my $pn = pagenumber($line);
+        print '['.$pn.']' if ($opt->{n} and $pn);
+        $png = $pn if $pn;
 
         if ($opt->{e}) {
             if ($line =~ m/Here is how much/) {
@@ -124,7 +130,19 @@ sub analyze {
             $output .= $line if $test;
         }
         # look for boxes warnings
-        if ($opt->{o} and $opt->{h}) {
+        if ($opt->{c} and $opt->{o} and $opt->{h}) {
+            if ($line =~ m/\\hbox/ and $line =~ m/Overfull/) {
+                $line =~ m/^Overfull \\hbox \((\d+\.\d+)pt too wide\) (in paragraph|detected) at lines? ([0-9\-]+)$/;
+                $cbox->{$1} = 'Page '.$png.': '.$line;
+                $chead = 'Overfull hboxes classified:';
+            }
+        } elsif ($opt->{c} and $opt->{u} and $opt->{h}) {
+            if ($line =~ m/\\hbox/ and $line =~ m/Underfull/) {
+                $line =~ m/^Underfull \\hbox \(badness (\d+)\) (in paragraph|detected) at lines? ([0-9\-]+)$/;
+                $cbox->{$1} = 'Page '.$png.': '.$line;
+                $chead = 'Underfull hboxes classified:';
+            }
+        } elsif ($opt->{o} and $opt->{h}) {
             $output = $line if ($line =~ m/\\hbox/ and
                 $line =~ m/Overfull/);
         } elsif ($opt->{u} and $opt->{h}) {
@@ -195,14 +213,21 @@ sub analyze {
         print "$output" if defined $output;
     }
     print "\n";
+    if ($opt->{c} and $opt->{h} and ($opt->{u} or $opt->{o})) {
+        print "$chead\n";
+        foreach my $key (sort {$a <=> $b} keys %{$cbox}) {
+            print $cbox->{$key};
+        }
+        print "\n";
+    }
     print_abstract();
     close $source;
 }
 
 sub pagenumber {
     my $logline = shift;
-    if ($logline =~ m/.*(\[[0-9]+)/) {
-        print $1."]";
+    if ($logline =~ m/.*\[([0-9]+)(\]|$)/) {
+        return $1;
     }
 }
 
@@ -244,26 +269,28 @@ sub options {
 
 sub print_abstract {
     print "The log contained ".$abstract->{warnings}." warnings";
-    print " and $abstract->{badboxes} bad boxes" if $opt->{a}; 
-    print ".\n";    
+    print " and $abstract->{badboxes} bad boxes" if $opt->{a};
+    print ".\n";
 }
 
 sub printversion {
-    print "This is texloganalyser, version $version\n";
+    print "This is texloganalyser (Perl script), version $version\n";
     print "\t Copyright $copyright Thomas van Oudenhove\n";
+    print "\t License: BSD\n";
 }
 
 sub printhelp {
     printversion();
-    print "Usage: texloganalyser ".options()." <TeX log>\n";
+    print "\nUsage: texloganalyser ".options()." <TeX log>\n";
     print "\t Displays selective infos of LaTeX logs\n";
-    print "These flags may be used:\n";
+    print "\nThese flags may be used:\n";
     print "\t a: displays number of warnings about bad boxes\n";
+    print "\t c: displays the boxes warning by size (at the end)\n";
     print "\t e: displays the end of the log\n";
     print "\t f: outputs the LaTeX Font Infos\n";
     print "\t h: outputs only warnings about horizontal boxes\n";
     print "\t i: displays 'images' (pdf, [e]ps, png, jpg) used\n";
-    print "\t n: displays page numbers\n";    
+    print "\t n: displays page numbers\n";
     print "\t o: outputs only warnings about overfull boxes\n";
     print "\t p: outputs the LaTeX Packages infos\n";
     print "\t r: displays warnings about references\n";
@@ -271,8 +298,8 @@ sub printhelp {
     print "\t t: displays .tex files used\n";
     print "\t u: outputs only warnings about underfull boxes\n";
     print "\t v: outputs only warnings about vertical boxes\n";
-    print "\t w: displays all Warnings\n";
-    print "You may want to have a look at `perldoc texloganalyser`.\n";
+    print "\t w: displays all Warnings\n\n";
+    print "More documentation is available with `perldoc texloganalyser`.\n";
 }
 
 __END__
@@ -288,7 +315,7 @@ texloganalyser -- displays selective infos from TeX log files
 
 =head2 SYNOPSIS
 
-texloganalyser [-aefhinoprstuvw] tex_log_file
+texloganalyser [-acefhinoprstuvw] tex_log_file
 
 texloganalyser [--version]
 
@@ -309,6 +336,8 @@ Various options may be used to select which information from the TeX log you wan
 =item B<--last>: the Log file may content several logs; in this case, consider only the last one.
 
 =item B<-a>: counts number of badboxes.
+
+=item B<-c>: classify boxes warnings by size (needs h&o,u or v&o,u) at the end.
 
 =item B<-e>: displays the end of the log, about the TeX's memory.
 
@@ -350,9 +379,13 @@ Markus Hennig submitted some new options (-a and -n) at the end of 2009.
 
 Akim Demaille submitted a patch for 'last' option, June 2012.
 
+Paulo Ney de Souza had the idea of -c option to better handle hboxes, March 2020.
+
 =head3 Changelog
 
 =over
+
+=item v0.10: added option -c, to classify boxes warnings by size (Paulo Ney de Souza's idea).
 
 =item v0.9: added option --last, if log file contains several compilations (Akim Demaille's patch).
 
