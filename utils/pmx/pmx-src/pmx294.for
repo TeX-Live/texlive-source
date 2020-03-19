@@ -828,7 +828,7 @@ c   nmidsec  section starts and stops based on PLAYING macros (not recording).
 c 
 ccccccccccccccccccccccccc
 c
-	data date /'27 Jan 20'/
+	data date /'17 Mar 20'/
 	data version /'2.94'/
 c
 ccccccccccccccccccccccccc
@@ -1189,12 +1189,13 @@ c
       return
       end
       subroutine addask(taskn,waskn,elaskn,
-     *                  fixednew,scaldold,tglp1,isudsp)
+     *                  fixednew,scaldold,tglp1,scfac,isudsp)
       parameter (nm=24)
       logical isudsp
       common /comas1/ naskb,task(40),wask(40),elask(40)
       common /comudsp/udsp(50),tudsp(50),nudsp,udoff(nm,20),nudoff(nm)
       common /comtol/ tol
+      scoarg = scaldold*scfac
       if (isudsp) then
 c
 c  Find which udsp we're dealing with
@@ -1258,7 +1259,7 @@ c 130330 start
 c        fixednew = fixednew+waskn
 c        scaldold = scaldold+elaskn
         fixednew = fixednew+waskn-oldwask
-        scaldold = scaldold+elaskn-oldelask
+        scaldold = scoarg+elaskn-oldelask
 c 130330 end
       end if
       return
@@ -11210,7 +11211,6 @@ c
           call stop1()
         end if
         ismidi = .true.
-      print*,'#11087 Calling getmidi from g1etnote'
         call getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *               mtrdenl,nv,.true.)
       else if (charq .eq. 'M') then
@@ -12067,7 +12067,6 @@ c
 c           bsXobXbaXclXflXreXctXvo
 c
 1     call getchar(lineq,iccount,durq)
-      print*,'#11946 In getmidi,durg:',durq
       if (durq .eq. 't') then
 c
 c  Tempo in beats ber minute
@@ -12138,7 +12137,6 @@ c
               call stop1()
             end if
             midinst(ivx) = midinum(iname)-1
-      print*,'#12012 in getmidi, inst=',instq
           else
 c
 c  Expect a number, followed by ":" if that is followed by another number.
@@ -12200,7 +12198,6 @@ c
           end if
           call readnum(lineq,iccount,durq,fnum)
           midibal(ivx) = nint(fnum)-1
-      print*,'#12077 set midibal to',midibal(ivx)
           if (midibal(ivx).lt.0 .or. midibal(ivx).gt.127) then
             call errmsg(lineq,iccount-1,ibarcnt-ibaroff+nbars+1,
      *           'Midi balance must be in range 1-128!')
@@ -12210,8 +12207,6 @@ c
 8       continue
         if (.not. first) then
           call inst2chan(midbc,midibal,midchan,nv,iinsiv,twoline)
-      print*,'#12086 midbc0,1,midibal1,2:',
-     *midbc(0),midbc(1),midibal(1),midibal(2)
         end if
         go to 1
       else if (durq .eq. 'T') then 
@@ -15157,7 +15152,6 @@ c
 c
 c  Midi controls.  
 c
-      print*,'#14928 Calling getmidi from getnote'
         call getmidi(noinst,lineq,iccount,ibarcnt,ibaroff,nbars,lenbar,
      *               mtrdenl,nv,.false.)
       else if (charq .eq. 'M') then
@@ -17707,7 +17701,7 @@ c
         end if
         if (poefa(iline)*poenom*esk .lt. ptsneed) then
           call addask(to(in),ptsneed,poefa(iline)*esk,
-     *           fixednew,poefa(iline)*scaldold,0.,.false.)
+     *           fixednew,scaldold,0.,poefa(iline),.false.)
         end if
 99      continue
         if (btest(iornq(ivx,ip),26)) then
@@ -17716,7 +17710,7 @@ c  User-defined space.  Warning, "zero" may change value in addask!
 c
           zero = 0.
           call addask(to(in),ptsneed,zero,
-     *                fixednew,scaldold,tglp1,.true.)
+     *                fixednew,scaldold,tglp1,1.,.true.)
         end if
 c
 c  End of big manual loop over "in" for accidental checking
@@ -25794,7 +25788,6 @@ c
         write(51,'(a,$)')'MTrk'//byteq(4)//byteq(3)//byteq(2)//byteq(1)
      *    //char(0)//char(12*16+icmm(icm))//char(midinst(iinsiv(iv)))
      *    //char(0)//char(11*16+icmm(icm))//char(10)//char(midbc(icm))
-      print*,'#25294 In writemidi, midbc:',midbc(icm)
         if (debugmidi) write(52,'(a4,z2,a7,11z4)')'icm=',icm,
      *    ' "MTrk"',ichar(byteq(4)),ichar(byteq(3)),ichar(byteq(2)),
      *    ichar(byteq(1)),0,12*16+icmm(icm),midinst(iinsiv(iv)),

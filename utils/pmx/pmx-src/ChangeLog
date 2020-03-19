@@ -1,6 +1,7 @@
 2.94
   Allow moving dots on main and chord note in 2-note termolos
   Add definitions of \hbp and \hbpp to pmx.tex
+  Correct scaldold bug (17-03-2020)
 2.91
   Tweak: insert \stdstemfalse before every user-shortened or lengthened
   stem. 

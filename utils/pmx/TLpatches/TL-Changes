@@ -2,11 +2,5 @@ Changes applied to the pmx-2.9.4 tree as obtained from:
 	http://www.ctan.org/tex-archive/support/pmx/
 
 Remove:
-	Makefile.in
-	aclocal.m4
-	arith.h
-	configure
-	depcomp
-	install-sh
-	missing
-	test-driver
+	Makefile.in aclocal.m4 arith.h configure depcomp install-sh
+	missing test-driver

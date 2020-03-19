@@ -1,3 +1,8 @@
+2020-03-19  Karl Berry  <karl@tug.org>
+
+	* import updated pmx-2.9.4 (no change in version number, but new
+	date, with one bug fix).
+
 2020-02-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	* import pmx-2.9.4.
