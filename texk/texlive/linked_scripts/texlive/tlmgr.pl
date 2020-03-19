@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54357 2020-03-16 20:54:33Z karl $
+# $Id: tlmgr.pl 54386 2020-03-18 03:27:17Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54357 $';
-my $datrev = '$Date: 2020-03-16 21:54:33 +0100 (Mon, 16 Mar 2020) $';
+my $svnrev = '$Revision: 54386 $';
+my $datrev = '$Date: 2020-03-18 04:27:17 +0100 (Wed, 18 Mar 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -813,6 +813,7 @@ sub do_cmd_and_check {
   # tlmgr front ends (MacOSX's TeX Live Utility) can read it
   # and show it to the user before the possibly long delay.
   info("running $cmd ...\n");
+  logpackage("running $cmd");
   my ($out, $ret);
   if ($opts{"dry-run"}) {
     $ret = $F_OK;
@@ -828,11 +829,13 @@ sub do_cmd_and_check {
   }
   if ($ret == $F_OK) {
     info("done running $cmd.\n");
+    logpackage("success, output: $out");
     ddebug("--output of $cmd:\n$out\n--end of output of $cmd.");
     return ($F_OK);
   } else {
     info("\n");
     tlwarn("$prg: $cmd failed (status $ret), output:\n$out\n");
+    logpackage("error, status: $ret, output: $out");
     return ($F_ERROR);
   }
 }
@@ -10011,7 +10014,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54357 2020-03-16 20:54:33Z karl $
+$Id: tlmgr.pl 54386 2020-03-18 03:27:17Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
