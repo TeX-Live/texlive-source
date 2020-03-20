@@ -1,12 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.21"
+VERSION = "0.22"
 
 --[[
      musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
      autosp as pre-processors (and deletes intermediate files)
 
-     (c) Copyright 2011-2018 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-2020 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
 
      This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,10 @@ VERSION = "0.21"
 --[[
 
   ChangeLog:
+
+     version 0.22  2020-03-20 RDT
+       add -X option
+       add -version, --version, -help, --help options
 
      version 0.21  2018-07-27  RDT
        add -P option.
@@ -134,8 +138,8 @@ Usage:  [texlua] musixtex.lua { option | basename[.mtx | .pmx | .aspc | .tex | .
         The normal route after preprocessing goes tex-dvi-ps-pdf, but shorter 
         routes are also available, see the options. The default processing route
         for .tex files is etex-musixflx-etex.
-Options: -v  version
-         -h  help
+Options: -v, --version  version
+         -h, --help   help
          -l  latex source
          -p  direct tex-pdf (pdftex etc)
          -F fmt  use fmt as the TeX processor
@@ -146,6 +150,7 @@ Options: -v  version
          -m  stop at pmx
          -M prepmxx use prepmxx as the mtx preprocessor
          -A autospx use autospx as the aspc preprocessor
+         -X pmxabx use pmxabx as the pmx preprocessor
          -t  stop at tex/mid
          -s  stop at dvi
          -g  stop at ps
@@ -289,9 +294,9 @@ function report_error(filename)
 end 
 
 function process_option(this_arg)
-  if this_arg == "-v" then
+  if this_arg == "-v" or this_arg == "-version" or this_arg == "--version" then
     os.exit(0)
-  elseif this_arg == "-h" then
+  elseif this_arg == "-h" or this_arg == "-help" or this_arg == "--help" then 
     usage()
     os.exit(0)
   elseif this_arg == "-l" then 
@@ -345,6 +350,9 @@ function process_option(this_arg)
   elseif this_arg == "-P" then
     narg = narg+1
     ps2pdf = arg[narg]
+  elseif this_arg == "-X" then
+    narg = narg+1
+    pmx = arg[narg]
   else
     print("! Unknown option "..this_arg.." ignored")
   end
