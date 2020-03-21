@@ -3,15 +3,16 @@
 <!-- Copyright (C) 2015-2020 Martin Gieseking <martin.gieseking@uos.de> -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:param name="xetex.font">
-		<xsl:text>\setmainfont{Source Sans Pro}&#10;</xsl:text>
+		<xsl:text>\setmainfont{Source Serif Pro}&#10;</xsl:text>
 		<xsl:text>\setsansfont{Source Sans Pro}&#10;</xsl:text>
-		<xsl:text>\setmonofont{Source Code Pro}&#10;</xsl:text>
+		<xsl:text>\setmonofont[Scale=0.9]{Source Code Pro}&#10;</xsl:text>
 	</xsl:param>
 
 	<xsl:param name="doc.toc.show">0</xsl:param>
 	<xsl:param name="refentry.numbered">0</xsl:param>
 	<xsl:param name="figure.caution">caution</xsl:param>
 	<xsl:param name="figure.note">note</xsl:param>
+	<xsl:param name="literal.layout.options"/>
 	<xsl:param name="table.default.tabstyle">tabular</xsl:param>
 	<xsl:param name="table.in.float">0</xsl:param>
 	<xsl:param name="term.breakline">1</xsl:param>
@@ -55,7 +56,7 @@
 		<xsl:text>\phantomsection\pdfbookmark[3]{</xsl:text>
 		<xsl:choose>
 			<xsl:when test="contains(emphasis, '--')">
-				<xsl:value-of select="concat('-{}-', substring-after(emphasis, '--'))"/>
+				<xsl:value-of select="substring-after(emphasis, '--')"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="emphasis"/>

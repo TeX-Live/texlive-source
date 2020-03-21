@@ -1,3 +1,49 @@
+2020-03-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Matrix.cpp: 
+  fixed parsing of "scale(s)"
+fixes #131 
+
+  * .appveyor.yml, .travis.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.9.1 
+
+  * NEWS: 
+  updated NEWS 
+
+2020-03-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/Calculator.cpp, tests/CalculatorTest.cpp: 
+  calculator: allow to omit '*' before '(' 
+
+2020-03-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.1, doc/dvisvgm.txt.in, src/DvisvgmSpecialHandler.cpp, 
+    tests/DvisvgmSpecialTest.cpp: 
+  added macro {?(expr)} to enable math expressions in raw specials
+closes 
+  #130 
+
+2020-03-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/Makefile.am, doc/conf-dblatex-pdf.xsl, doc/dvisvgm.txt.in, 
+    doc/generate-dvisvgm-sty.xsl, doc/tweak-dblatex-tex.py: 
+  optimize line breaks and code blocks in pdf manpage 
+
+2020-03-16  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/conf-dblatex-pdf.xsl: 
+  small font changes in pdf version of manual page
+- changed body font to 
+  Source Serif Pro
+- scaled monospace font by 0.9 
+
+  * src/PageRanges.cpp, src/PageRanges.hpp: 
+  removed redundant #includes 
+
+  * src/NumericRanges.hpp: 
+  replaced explicit iterator type with auto 
+
 2020-03-13  Martin Gieseking  <martin.gieseking@uos.de>
 
   * NEWS: 
