@@ -4,14 +4,15 @@
 # Public Domain
 #
 # This file controls CI testing on Travis-CI 
-# https://travis-ci.org/TeX-Live/texlive-source/
+#   https://travis-ci.org/TeX-Live/texlive-source/
 # via a git-svn checkout of the TeX Live source directory
 # which is pushed to Github
-# https://github.com/TeX-Live/texlive-source
+#   https://github.com/TeX-Live/texlive-source
 # The cron job that does the git svn up and git push is
-# running on texlive.info.
-
-# To get binaries:
+# running on texlive.info; see norbert cron there. Run cmd as norbert:
+#   /home/norbert/git-svn-repos/git-svn-syncer --new texlive-source
+#
+# To make and retrieve new binaries:
 # * go to https://github.com/TeX-Live/texlive-source/commits/master
 #   and check that all commits you want are there (max waiting time 30min).
 # * go to https://github.com/TeX-Live/texlive-source/releases

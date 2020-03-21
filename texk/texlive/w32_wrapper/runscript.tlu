@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 53431 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2020-01-17 06:29:55 +0100 (Fri, 17 Jan 2020) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 54353 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2020-03-16 21:32:20 +0100 (Mon, 16 Mar 2020) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -860,15 +860,15 @@ if not ARGV then
   local ext = string.match(string.lower(progfullname), '%.[^\\/.]*$') or ''
   if (ext == '.lua') or (ext == '.tlu') or (ext == '.texlua') then -- lua script
     arg[0] = progfullname
-  elseif (ext == '.tcl' and guimode) then -- tcl script; use built-in tclkit?
+  elseif (ext == '.tcl' and guimode) then -- tcl script; use built-in tcl/tk?
     local try_extern_tcl =
         (kpse.var_value('TEXLIVE_WINDOWS_TRY_EXTERNAL_TCL') == '1') and
         not is_restricted_progname
     local TCLEXENAME, TCLEXE
     if try_extern_tcl then
-      TCLEXENAME, TCLEXE = check_command(extension_map['.tcl'][1], PATH)
+      TCLEXE, TCLEXENAME = check_command(extension_map['.tcl'][1], PATH)
     end
-    if try_extern_tcl and not TCLEXENAME then
+    if try_extern_tcl and not TCLEXE then
       local exttcl_warn = [[
 External Tcl missing or outdated. Please install a recent Tcl, or configure
 TeX Live to always use the builtin Tcl for gui scripts:
@@ -879,9 +879,17 @@ Meanwhile, continuing with built-in Tcl...
     else -- did find something
       ARGV = {[0]=TCLEXE, TCLEXENAME}
     end
-    if not TCLEXENAME then
-      ARGV = {[0]=TEXDIR..'/tlpkg/tltcl/tclkit.exe', 'tclkit.exe'}
-      PATH = prepend_path(PATH, TEXDIR:gsub('/','\\')..'\\tlpkg\\tltcl')
+    if not TCLEXE then
+      -- kit: tlpkg/tltcl/tclkit.exe
+      -- regular wish: tlpkg/tltcl/bin/wish.exe
+      -- we ignore the fact that a non-kit tcl/tk provides wish AND tclsh
+      if lfs.isfile(TEXDIR..'/tlpkg/tltcl/tclkit.exe') then
+        ARGV = {[0]=TEXDIR..'/tlpkg/tltcl/tclkit.exe', 'tclkit.exe'}
+        PATH = prepend_path(PATH, TEXDIR:gsub('/','\\')..'\\tlpkg\\tltcl')
+      elseif lfs.isfile(TEXDIR..'/tlpkg/tltcl/bin/wish.exe') then
+        ARGV = {[0]=TEXDIR..'/tlpkg/tltcl/bin/wish.exe', 'wish.exe'}
+        PATH = prepend_path(PATH, TEXDIR:gsub('/','\\')..'\\tlpkg\\tltcl\\bin')
+      end
     end
     table.insert(ARGV, _q(progfullname:gsub('/','\\')))
     if (argline and argline ~= '') then argline = '-- '..argline end
@@ -901,7 +909,7 @@ end
 if ARGV then
   table.insert(ARGV, argline) -- pass through original arguments
   if string.find (table.concat(ARGV, ' '), 'perl.exe') and extperl_warn then
-
+  
     show_error(extperl_warn)
   end
   local ret = assert(os.spawn(ARGV))
