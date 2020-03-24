@@ -38,7 +38,7 @@ use strict;
 use Getopt::Long;
 Getopt::Long::Configure ("bundling");
 
-my $version = "0.10";
+my $version = "0.11";
 my $copyright = "2006-2020";
 my $opt = {
     help => '',
@@ -132,13 +132,13 @@ sub analyze {
         # look for boxes warnings
         if ($opt->{c} and $opt->{o} and $opt->{h}) {
             if ($line =~ m/\\hbox/ and $line =~ m/Overfull/) {
-                $line =~ m/^Overfull \\hbox \((\d+\.\d+)pt too wide\) (in paragraph|detected) at lines? ([0-9\-]+)$/;
+                $line =~ m/^Overfull \\hbox \((\d+\.\d+)pt too wide\) .*$/;
                 $cbox->{$1} = 'Page '.$png.': '.$line;
                 $chead = 'Overfull hboxes classified:';
             }
         } elsif ($opt->{c} and $opt->{u} and $opt->{h}) {
             if ($line =~ m/\\hbox/ and $line =~ m/Underfull/) {
-                $line =~ m/^Underfull \\hbox \(badness (\d+)\) (in paragraph|detected) at lines? ([0-9\-]+)$/;
+                $line =~ m/^Underfull \\hbox \(badness (\d+)\) .*$/;
                 $cbox->{$1} = 'Page '.$png.': '.$line;
                 $chead = 'Underfull hboxes classified:';
             }
@@ -384,6 +384,8 @@ Paulo Ney de Souza had the idea of -c option to better handle hboxes, March 2020
 =head3 Changelog
 
 =over
+
+=item v0.11: bug fix for -c option (regexp was too specific)
 
 =item v0.10: added option -c, to classify boxes warnings by size (Paulo Ney de Souza's idea).
 
