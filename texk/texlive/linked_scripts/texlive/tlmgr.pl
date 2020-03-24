@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54386 2020-03-18 03:27:17Z preining $
+# $Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54386 $';
-my $datrev = '$Date: 2020-03-18 04:27:17 +0100 (Wed, 18 Mar 2020) $';
+my $svnrev = '$Revision: 54446 $';
+my $datrev = '$Date: 2020-03-21 17:45:22 +0100 (Sat, 21 Mar 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -649,6 +649,8 @@ for the full story.\n";
     debug("Cannot open package log file for appending: $packagelogfile\n");
     debug("Will not log package installation/removal/update for this run\n");
     $packagelogfile = "";
+  } else {
+    debug("appending to package log file: $packagelogfile\n");
   }
 
   $loadmediasrcerror = "Cannot load TeX Live database from ";
@@ -827,15 +829,22 @@ sub do_cmd_and_check {
   } else {
     ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
   }
+  # Although it is quite verbose to report all the output from every
+  # fmtutil (especially) run, it's the only way to know what's normal
+  # when something fails. Prefix each line to make them easy to see
+  # (and filter out/in).
+  (my $prefixed_out = $out) =~ s/^/(cmd)/gm;
+  $prefixed_out =~ s/\n+$//; # trailing newlines don't seem interesting
+  my $outmsg = "output:\n$prefixed_out\n--end of output of $cmd.\n";
   if ($ret == $F_OK) {
     info("done running $cmd.\n");
-    logpackage("success, output: $out");
-    ddebug("--output of $cmd:\n$out\n--end of output of $cmd.");
+    logpackage("success, $outmsg");
+    ddebug("$cmd $outmsg");
     return ($F_OK);
   } else {
     info("\n");
     tlwarn("$prg: $cmd failed (status $ret), output:\n$out\n");
-    logpackage("error, status: $ret, output: $out");
+    logpackage("error, status: $ret, $outmsg");
     return ($F_ERROR);
   }
 }
@@ -10014,7 +10023,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54386 2020-03-18 03:27:17Z preining $
+$Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
