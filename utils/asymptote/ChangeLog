@@ -1,3 +1,39 @@
+commit 1566850db2aac0b78ec9806e35af514e7a185e63
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 24 23:30:17 2020 -0600
+
+    Fix export bug.
+
+commit 48777621e61327bf6c8e3492739066495693b91c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 21 23:44:05 2020 -0600
+
+    Add triple perp=O argument to rmf(path3, real[] t); don't cache previous perp.
+
+commit 5a3fd21eddb4b6416a664581cfa9bf324b8889b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 10 14:56:11 2020 -0600
+
+    Detect failure of TeX pipe.
+
+commit f9bc3f2bbdbb382a1cbf15b7b977608900b2d804
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 4 22:44:32 2020 -0700
+
+    Update asygl.
+
+commit 98f09b5f3bf009702c56ecca6378277c0e0d7e11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 4 22:00:02 2020 -0700
+
+    Improve nondegenerate sphere.
+
+commit cfa1c9f263e911be76719413e10abed2a2ad25cd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 3 21:44:25 2020 -0700
+
+    Increment version to 2.65.
+
 commit df95759c3752e7fc902894ce73ba86d91e16a5e9
 Merge: 396d060c ae3dc713
 Author: John Bowman <bowman@ualberta.ca>

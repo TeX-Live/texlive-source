@@ -1,6 +1,15 @@
+Release Notes for Version 2.65
+
+A bug in rendering 2D preview images of a 3D scene was fixed.
+The 100-error TeX limit is gracefully detected, rather than hanging.
+A more accurate Bezier approximation to the sphere was implemented.
+An initial perpendicular direction can now be specified for the
+rotation minimizing frame for a path3; the previous direction is
+no longer cached between calls.
+
 Release Notes for Version 2.64
 
-Discontinuities were removed from the rotating minimizing frame used for
+Discontinuities were removed from the rotation minimizing frame used for
 constructing tubes. A work around was implemented for an incorrect
 declaration in obsolete versions of the NetBSD readline header file.
 
