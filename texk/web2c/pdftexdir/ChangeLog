@@ -1,3 +1,7 @@
+2020-03-27  Karl Berry  <karl@tug.org>
+
+	* TeX Live 2020, pdftex 1.40.21.
+
 2020-02-29  Akira Kakuto  <kakuto@w32tex.org>
 
 	Add pdftoepdf-poppler0.86.0.cc to support system poppler 0.86.0.

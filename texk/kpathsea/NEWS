@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.3.2 (for TeX Live 2020)
+6.3.2 (for TeX Live 2020, 27 March 2020)
 * New option --cnf-line for kpsewhich (and tex and mf) to support
   arbitrary configuration settings on the command line.
 * Warn about unusual program name qualifiers.

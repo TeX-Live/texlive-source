@@ -1,4 +1,4 @@
-pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020)
+pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020) (March 27, 2020)
 - changes:
   - new primitive \pdfmajorversion; this merely changes the version
     number in the PDF output, has no effect on PDF content.
