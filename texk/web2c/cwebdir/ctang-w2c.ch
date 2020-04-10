@@ -778,20 +778,20 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
 
 @ @<Set up the comparison of temporary output@>=
   char x[BUFSIZ],y[BUFSIZ];
-  int x_size,y_size,comparison;
+  int x_size,y_size,comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  @<Compare the temporary output to the previous output@>@;
+  if (temporary_output) @<Compare the temporary output...@>@;
 
   fclose(C_file); C_file=NULL;
   fclose(check_file); check_file=NULL;
 
 @ We hope that this runs fast on most systems.
 
-@<Compare the temp...@>=
+@<Compare the temporary output to the previous output@>=
 do {
   x_size = fread(x,1,BUFSIZ,C_file);
   y_size = fread(y,1,BUFSIZ,check_file);

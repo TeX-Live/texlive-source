@@ -1,3 +1,8 @@
+2020-03-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man,
+	* ctwill.man: Add new option '-t' to CWEB.
+
 2020-02-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweb.man,

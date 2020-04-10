@@ -1,3 +1,9 @@
+2020-03-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin,
+	* help.h: Add new option '-t' to CWEB.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.

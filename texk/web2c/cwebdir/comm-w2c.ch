@@ -854,6 +854,7 @@ overflow(
 @d show_happiness flags['h'] /* should lack of errors be announced? */
 @y
 @d show_happiness flags['h'] /* should lack of errors be announced? */
+@d temporary_output flags['t'] /* should temporary output take precedence? */
 @d make_xrefs flags['x'] /* should cross references be output? */
 @z
 
@@ -874,6 +875,7 @@ const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
 @x
 show_banner=show_happiness=show_progress=1;
 @y
+temporary_output=1; /* Check temporary output for changes */
 @z
 
 @x

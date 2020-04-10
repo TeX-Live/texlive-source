@@ -195,6 +195,7 @@ extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
 @d show_banner flags['b'] /* should the banner line be printed? */
 @d show_progress flags['p'] /* should progress reports be printed? */
 @d show_happiness flags['h'] /* should lack of errors be announced? */
+@d temporary_output flags['t'] /* should temporary output take precedence? */
 @d make_xrefs flags['x'] /* should cross references be output? */
 
 @<Common code...@>=

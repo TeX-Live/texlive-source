@@ -426,6 +426,7 @@ msgstr ""
 "h [+] stampa un messaggio di \"buon fine\"\n"
 "p [+] mostra andamento elaborazione\n"
 "s [-] mostra statistiche\n"
+"t [+] compare temporary output for changes\n"
 
 #: comm-i18n.ch:287
 msgid ""
@@ -443,6 +444,7 @@ msgstr ""
 "x [+] include indici\n"
 "lX [] usa macro in lingua X contenute in Xcwebmac.tex\n"
 "s [-] mostra statistiche\n"
+"t [+] compare temporary output for changes\n"
 
 #: comm-i18n.ch:290
 msgid ""
@@ -461,6 +463,7 @@ msgstr ""
 "P [-] include 'proofmac.tex' invece di 'ctwimac.tex'\n"
 "lX [] usa macro in lingua X contenute in X{ctwi|proof}mac.tex\n"
 "s [-] mostra statistiche\n"
+"t [+] compare temporary output for changes\n"
 
 #: ctang-i18n.ch:131 cweav-i18n.ch:53 cweav-i18n.ch:119
 msgid "! Use @l in limbo only"

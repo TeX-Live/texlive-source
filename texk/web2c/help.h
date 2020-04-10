@@ -62,6 +62,7 @@ const_string CTANGLEHELP[] = {
     "+/-q        shortcut for '-bhp'; also '--quiet' (default)",
     "+/-v        shortcut for '+bhp'; also '--verbose'",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL
@@ -87,6 +88,7 @@ const_string CWEAVEHELP[] = {
     "-x          omit indices, section names, table of contents",
     "+lX         use macros for language X as of Xcwebmac.tex",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL
@@ -113,6 +115,7 @@ const_string CTWILLHELP[] = {
     "+P          \\input ctproofmac.tex instead of ctwimac.tex",
     "+/-lX       use macros for language X as of Xct{wi|proof}mac.tex",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL

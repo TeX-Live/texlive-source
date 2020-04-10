@@ -425,6 +425,7 @@ msgstr ""
 "h [+] Bestätige einen fehlerfreien Lauf\n"
 "p [+] Zeige einen Zwischenbericht\n"
 "s [-] Melde die Verbrauchsstatistik\n"
+"t [+] Vergleiche temporäre Ausgabe nach Änderungen\n"
 
 #: comm-i18n.ch:287
 msgid ""
@@ -442,6 +443,7 @@ msgstr ""
 "x [+] Füge Indexe und Inhaltsverzeichnisse ein\n"
 "lX [] Verwende die Makros für Sprache X aus Xcwebmac.tex\n"
 "s [-] Melde die Verbrauchsstatistik\n"
+"t [+] Vergleiche temporäre Ausgabe nach Änderungen\n"
 
 #: comm-i18n.ch:290
 msgid ""
@@ -460,6 +462,7 @@ msgstr ""
 "P [-] Benutze 'proofmac.tex' statt 'ctwimac.tex'\n"
 "lX [] Verwende die Makros für Sprache X aus X{ctwimac|proofmac}.tex\n"
 "s [-] Melde die Verbrauchsstatistik\n"
+"t [+] Vergleiche temporäre Ausgabe nach Änderungen\n"
 
 #: ctang-i18n.ch:131 cweav-i18n.ch:53 cweav-i18n.ch:119
 msgid "! Use @l in limbo only"
