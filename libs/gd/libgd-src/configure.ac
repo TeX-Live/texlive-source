@@ -18,45 +18,20 @@ AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 
-# This is not used anywhere.  However, Makefile.netware searches
-# through configure for these definitions to find the version numbers.
-# (Assuming anyone still uses Netware, that should be changed to use
-# gd.h via getver.pl instead.)
-GDLIB_MAJOR=gd_MAJOR
-GDLIB_MINOR=gd_MINOR
-GDLIB_REVISION=gd_REVISION
-GDLIB_EXTRA=gd_EXTRA
-GDLIB_VERSION=gd_PKG_VERSION
+dnl Keep the libtool version details in an external script so cmake can
+dnl access the values too.
+define([lt_gv], [config/getlib.sh ]$1)
+m4_define([gd_LT_CURRENT], esyscmd(lt_gv(CURRENT)))
+m4_define([gd_LT_REVISION], esyscmd(lt_gv(REVISION)))
+m4_define([gd_LT_AGE], esyscmd(lt_gv(AGE)))
 
-AC_SUBST(GDLIB_MAJOR)
-AC_SUBST(GDLIB_MINOR)
-AC_SUBST(GDLIB_REVISION)
-AC_SUBST(GDLIB_EXTRA)
-AC_SUBST(GDLIB_VERSION)
+GDLIB_LT_CURRENT=gd_LT_CURRENT
+GDLIB_LT_REVISION=gd_LT_REVISION
+GDLIB_LT_AGE=gd_LT_AGE
 
-# Dynamic library version information
-# See http://www.gnu.org/software/libtool/manual/libtool.html#Updating-version-info
-
-GDLIB_LT_CURRENT=3
-dnl This is the version where the soname (current above) changes.  We use it
-dnl to reset the revision base back to zero.  It's a bit of a pain, but some
-dnl systems restrict the revision range below to [0..255] (like OS X).
-GDLIB_PREV_MAJOR=2
-GDLIB_PREV_MINOR=2
-dnl This isn't 100% correct, but it tends to be a close enough approximation
-dnl for how we manage the codebase.  It's rare to do a release that doesn't
-dnl modify the library since this project is centered around the library.
-GDLIB_LT_REVISION=$(( ((GDLIB_MAJOR - GDLIB_PREV_MAJOR) << 6) | ((GDLIB_MINOR - GDLIB_PREV_MINOR) << 3) | GDLIB_REVISION ))
-GDLIB_LT_AGE=0
 AC_SUBST(GDLIB_LT_CURRENT)
 AC_SUBST(GDLIB_LT_REVISION)
 AC_SUBST(GDLIB_LT_AGE)
-
-#Expanded by tests later in this file. TBB 2.0.26
-#2.0.28: GIF is standard now. Doesn't depend on anything else,
-#so we always build it.
-FEATURES="GD_GIF GD_GIFANIM GD_OPENPOLYGON"
-AC_SUBST(FEATURES)
 
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz -Wall -Werror subdir-objects])
 AC_CONFIG_HEADERS([src/config.h:src/config.hin])
@@ -85,13 +60,8 @@ dnl Keep in sync with cmake/modules/AC_HEADER_STDC.cmake.
 AC_HEADER_STDC
 AC_CHECK_HEADERS_ONCE(m4_flatten([
 	dirent.h
-	errno.h
 	inttypes.h
-	limits.h
-	stddef.h
 	stdint.h
-	stdlib.h
-	string.h
 	strings.h
 	unistd.h
 	sys/stat.h
@@ -114,14 +84,12 @@ AC_CHECK_HEADERS(iconv.h,
       AC_MSG_RESULT(no))])
 
 # Checks for typedefs, structures, and compiler characteristics.
-#AC_C_CONST
 #AC_TYPE_SIZE_T
 
 # Checks for library functions.
 #AC_FUNC_ERROR_AT_LINE
 #AC_FUNC_MALLOC
 #AC_FUNC_REALLOC
-#AC_FUNC_VPRINTF
 #AC_CHECK_FUNCS([floor memset sqrt strchr strdup strtol])
 
 dnl do we need to specify -lm explicitly?
@@ -129,6 +97,21 @@ AC_CHECK_FUNC(sin,,[AC_CHECK_LIB(m,sin)])
 
 AX_PTHREAD()
 AX_OPENMP()
+
+dnl We should default this to off in future releases.
+AC_MSG_CHECKING([whether to support gd image formats])
+AC_ARG_ENABLE([gd-formats],
+  [AS_HELP_STRING([--disable-gd-formats], [Disable support for the legacy/testing gd image formats])],
+  [gd_enable_gd_formats=$enableval],
+  [gd_enable_gd_formats=yes])
+AC_MSG_RESULT([$gd_enable_gd_formats])
+if test "$gd_enable_gd_formats" = yes; then
+  gd_ac_value=1
+else
+  gd_ac_value=0
+fi
+AC_DEFINE_UNQUOTED([ENABLE_GD_FORMATS], [$gd_ac_value], [Whether to support gd image formats])
+AM_CONDITIONAL([ENABLE_GD_FORMATS], test "$gd_enable_gd_formats" = yes)
 
 dnl Helper macro for working with external libraries.
 dnl GD_LIB_CHECK([SYM], [FEATURE], [name], [...test...])
@@ -173,7 +156,6 @@ m4_define([GD_LIB_CHECK], [dnl
 
     if test "$gd_found_lib" = "yes"; then
       AC_DEFINE([HAVE_$1], [1], [Define if you have $3])
-      AS_VAR_APPEND([FEATURES], [" GD_$2"])
       dnl Merge the flags into the main LIBS/CPPFLAGS.
       $1][_LIBS="$gd_lib_ldflags $][$1][_LIBS"
       $1][_CFLAGS="$gd_lib_cflags $][$1][_CFLAGS"
@@ -233,6 +215,14 @@ if test "$gd_with_LIBFREETYPE" = "yes"; then
   AC_DEFINE([HAVE_FT2BUILD_H], [1], [Define if you have the ft2build.h header.])
 fi
 
+dnl Check for Raqm support.
+GD_LIB_PKG_CHECK([LIBRAQM], [RAQM], [raqm], [raqm], [
+  AC_CHECK_LIB([raqm], [raqm_create], [dnl
+    AS_VAR_APPEND([LIBRAQM_LIBS], [" -lraqm -lfreetype"])
+    gd_found_lib=yes
+  ])
+])
+
 dnl Check for fontconfig support.
 GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
   AC_CHECK_LIB([fontconfig], [FcInit], [dnl
@@ -242,7 +232,7 @@ GD_LIB_PKG_CHECK([LIBFONTCONFIG], [FONTCONFIG], [fontconfig], [fontconfig], [
 ])
 
 dnl Check for jpeg support.
-GD_LIB_CHECK([LIBJPEG], [JPEG], [jpeg], [
+GD_LIB_PKG_CHECK([LIBJPEG], [JPEG], [jpeg], [libjpeg], [
   AC_CHECK_LIB([jpeg], [jpeg_set_defaults], [dnl
     AS_VAR_APPEND([LIBJPEG_LIBS], [" -ljpeg"])
     gd_found_lib=yes
@@ -310,6 +300,7 @@ dnl report configuration
 AC_MSG_RESULT([
 ** Configuration summary for $PACKAGE $VERSION:
 
+   Support for gd/gd2 images:        $gd_enable_gd_formats
    Support for Zlib:                 $gd_with_LIBZ
    Support for PNG library:          $gd_with_LIBPNG
    Support for JPEG library:         $gd_with_LIBJPEG
@@ -319,6 +310,7 @@ AC_MSG_RESULT([
    Support for Fontconfig library:   $gd_with_LIBFONTCONFIG
    Support for Xpm library:          $gd_with_LIBXPM
    Support for liq library:          $gd_with_LIBIMAGEQUANT
+   Support for complex text:         $gd_with_LIBRAQM
    Support for pthreads:             $ax_pthread_ok
 ])
 
@@ -326,7 +318,6 @@ AC_CONFIG_FILES([Makefile
                 src/Makefile
                 tests/Makefile
                 config/Makefile
-                config/gdlib-config
                 config/gdlib.pc])
 
 AC_OUTPUT

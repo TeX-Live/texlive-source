@@ -1,3 +1,10 @@
+2020-04-10  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import libgd-2.3.0 source tree from:
+	  https://github.com/libgd/libgd/releases
+	* patch-01-win32: Adapted.
+	* patch-02-no-stdcall: Adapted.
+
 2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libgd-2.2.5 source tree from:

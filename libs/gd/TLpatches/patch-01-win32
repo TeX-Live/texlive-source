@@ -1,17 +1,65 @@
-diff -ur libgd-2.2.5.orig/src/gdft.c libgd-2.2.5/src/gdft.c
---- libgd-2.2.5.orig/src/gdft.c	Wed Aug 30 20:05:55 2017
-+++ libgd-2.2.5/src/gdft.c	Thu Aug 31 07:35:10 2017
-@@ -1683,6 +1683,16 @@
+diff -ur libgd-2.3.0/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
+--- libgd-2.3.0/src/gd_interpolation.c	Sun Mar 22 22:42:38 2020
++++ libgd-src/src/gd_interpolation.c	Mon Mar 30 07:00:26 2020
+@@ -1988,19 +1988,19 @@
+ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
+ {
+ 	unsigned char r, g, b, a;
+-	int ct;
++	int ct, i;
+ 
+ 	b = (unsigned char)tcolor;
+-	g = (unsigned char)tcolor >> 8;
+-	r = (unsigned char)tcolor >> 16;
+-	a = (unsigned char)tcolor >> 24;
++	g = (unsigned char)(tcolor >> 8);
++	r = (unsigned char)(tcolor >> 16);
++	a = (unsigned char)(tcolor >> 24);
+ 
+ 	b = CLAMP(b, 0, 255);
+ 	g = CLAMP(g, 0, 255);
+ 	r = CLAMP(r, 0, 255);
+ 	a = CLAMP(a, 0, 127);
+ 
+-	for (int i = 0; i < im->colorsTotal; i++) {
++	for (i = 0; i < im->colorsTotal; i++) {
+ 	    if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
+ 			return i;
+ 		}
+diff -ur libgd-2.3.0/src/gdft.c libgd-src/src/gdft.c
+--- libgd-2.3.0/src/gdft.c	Sun Mar 22 22:42:38 2020
++++ libgd-src/src/gdft.c	Mon Mar 30 07:01:24 2020
+@@ -1519,6 +1519,8 @@
+ 		}
+ 
+ 		if (render) {
++			FT_Pos pen_x;
++			FT_Pos pen_y;
+ 			FT_Activate_Size (platform_specific);
+ 
+ 			/* load glyph again into the slot (erase previous one)  - this time with scaling */
+@@ -1552,8 +1554,8 @@
+ 			bm = (FT_BitmapGlyph) image;
+ 			/* position rounded down to nearest pixel at current dpi
+ 			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
+-			FT_Pos pen_x = penf.x + info[i].x_offset;
+-			FT_Pos pen_y = penf.y - info[i].y_offset;
++			pen_x = penf.x + info[i].x_offset;
++			pen_y = penf.y - info[i].y_offset;
+ 			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
+ 					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
+ 					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
+@@ -1787,6 +1789,16 @@
  	 */
  	*fontpath = NULL;
  	fontsearchpath = getenv ("GDFONTPATH");
 +#ifdef _WIN32
 +        if (!fontsearchpath) {
-+          char *ffptr = getenv ("SYSTEMROOT");
++          char *ffptr = getenv ("WINDIR");
 +          if (ffptr) {
-+            fontsearchpath = malloc (strlen(ffptr) + strlen("\\fonts") + 1);
++            fontsearchpath = malloc (strlen(ffptr) + strlen("\\Fonts") + 1);
 +            strcpy(fontsearchpath, ffptr);
-+            strcat(fontsearchpath, "\\fonts");
++            strcat(fontsearchpath, "\\Fonts");
 +          }
 +        }
 +#endif

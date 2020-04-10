@@ -1,3 +1,8 @@
+2020-04-10  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import libgd-2.3.0.
+	* version.ac: Adapted.
+
 2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import libgd-2.2.5.
