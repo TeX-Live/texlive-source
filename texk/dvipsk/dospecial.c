@@ -286,7 +286,7 @@ GetKeyVal(char *str, int *tno) /* returns NULL if none found, else next scan poi
      /* str : starting point for scan */
      /* tno : table entry number of keyword, or -1 if keyword not found */
 {
-   register char *s;
+   unsigned char *s;
    register int i;
    register char t;
 

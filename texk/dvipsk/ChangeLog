@@ -1,3 +1,7 @@
+2020-04-10  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dospecial.c: Support \special{psfile=non-ascii-name}.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.
