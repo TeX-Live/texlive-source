@@ -1,3 +1,7 @@
+2020-04-10  Karl Berry  <karl@tug.org>
+
+	* version.ac: now 6.3.3/dev since TL'20 is released.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.

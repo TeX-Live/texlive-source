@@ -1,3 +1,7 @@
+2020-04-10  Karl Berry  <karl@tug.org>
+
+	* version.ac: 2020/dev.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* tardate.ac (tex_live_tardate): 2020-03-27 for TL'20.
