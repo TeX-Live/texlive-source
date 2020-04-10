@@ -21,7 +21,7 @@ gd 2.3.0 - checked 10apr20
 gmp 6.2.0 - checked 20jan20
   http://ftp.gnu.org/gnu/gmp/
 
-graphite2 1.3.13 - checked 21dec18
+graphite2 1.3.14 - checked 10apr20
   http://sourceforge.net/projects/silgraphite/files/graphite2/
   (requires C++11)
 
