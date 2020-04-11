@@ -1,3 +1,8 @@
+2020-04-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Rearrange 'common variables'.
+
 2020-03-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

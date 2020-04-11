@@ -176,10 +176,10 @@ extern int phase;
 /*:5*//*7:*/
 #line 79 "cwebdir/comm-w2c.h"
 
-char section_text[longest_name+1];
-char*section_text_end= section_text+longest_name;
-char*id_first;
-char*id_loc;
+extern char section_text[];
+extern char*section_text_end;
+extern char*id_first;
+extern char*id_loc;
 
 /*:7*//*8:*/
 #line 94 "cwebdir/comm-w2c.h"
@@ -832,7 +832,7 @@ if((C_file= fopen(output_file_name,"r"))!=NULL){
 #line 779 "cwebdir/ctang-w2c.ch"
 
 char x[BUFSIZ],y[BUFSIZ];
-int x_size,y_size,comparison;
+int x_size,y_size,comparison= false;
 
 if((check_file= fopen(check_file_name,"r"))==NULL)
 fatal(_("! Cannot open output file "),check_file_name);
