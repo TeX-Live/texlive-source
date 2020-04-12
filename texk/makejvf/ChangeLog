@@ -1,3 +1,13 @@
+2020-04-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c, write.c, makejvf.h:
+	Add -O option: Omit entries in VF for characters with default metric.
+	* version.h, configure{,.ac}: Bump version.
+	* tests/skipjfmp_omit.vf: New test files.
+	* Makefile.am, makejvf.test: Add new tests.
+	Thanks to @aminophen for help.
+	https://github.com/texjporg/tex-jp-build/issues/99
+
 2020-02-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c, main.c: Update references Unicode blocks Blocks-13.0.0.txt

@@ -11,7 +11,7 @@
 
 FILE *vfp,*afp=NULL;
 char *atfmname,*vtfmname,*afmname,*vfname,*kanatfm,*jistfm,*ucsqtfm,*usertable;
-int kanatume=-1,chotai=0,baseshift=0,minute=0,useset3=0,hankana=0,fidzero=0,enhanced=0;
+int kanatume=-1,chotai=0,baseshift=0,minute=0,useset3=0,hankana=0,fidzero=0,enhanced=0,omitzw=0;
 int pstfm_nt;
 long ucs=0;
 
@@ -25,7 +25,7 @@ int main(int argc, char ** argv)
 	kpse_set_program_name(argv[0], "makejvf");
 	set_enc_string("sjis", "euc");
 
-	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hiet:")) != -1)
+	while ((c = getopt (argc, argv, "k:K:Ca:b:mu:3J:U:Hiet:O")) != -1)
 		switch (c) {
 
 		case 'k':
@@ -93,6 +93,9 @@ int main(int argc, char ** argv)
 		case 'e':
 			enhanced=1;
 			break;
+		case 'O':
+			omitzw=1;
+			break;
 		case 't':
 			usertable = xstrdup(optarg);
 			break;
@@ -103,7 +106,7 @@ int main(int argc, char ** argv)
 
 	if (kanatume>=0 && !afp) {
 		fprintf(stderr,"No AFM file for kanatume.\n");
-		exit(100);
+		exit(101);
 	}
 
 	if (argc - optind != 2) {
@@ -127,7 +130,7 @@ int main(int argc, char ** argv)
 	}
 	if (FILESTRCASEEQ(&vtfmname[0], &atfmname_base[0])) {
 		fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
-		exit(100);
+		exit(102);
 	}
 
 	if (kanatfm) {
@@ -136,7 +139,7 @@ int main(int argc, char ** argv)
 		}
 		if (FILESTRCASEEQ(&kanatfm[0], &atfmname_base[0])) {
 			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
-			exit(100);
+			exit(102);
 		}
 	}
 
@@ -161,7 +164,7 @@ int main(int argc, char ** argv)
 
 	if (jistfm && ucsqtfm) {
 		fprintf(stderr,"Options -J and -U at the same time? I'm confused.\n");
-		exit(100);
+		exit(110);
 	}
 
 	if (jistfm) {
@@ -170,7 +173,7 @@ int main(int argc, char ** argv)
 		}
 		if (FILESTRCASEEQ(&jistfm[0], &atfmname_base[0])) {
 			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
-			exit(100);
+			exit(102);
 		}
 	}
 
@@ -180,10 +183,14 @@ int main(int argc, char ** argv)
 		}
 		if (FILESTRCASEEQ(&ucsqtfm[0], &atfmname_base[0])) {
 			fprintf(stderr,"Invalid usage: input TFM and output TFM must be different.\n");
-			exit(100);
+			exit(102);
 		}
 	}
 
+	if (omitzw && usertable) {
+		fprintf(stderr,"Invalid usage: conflict options -O and -t.\n");
+		exit(120);
+	}
 	if (usertable) {
 		get_usertable(usertable);
 	}
@@ -194,7 +201,7 @@ int main(int argc, char ** argv)
 	}
 	if (ucs==ENTRY_CUSTOM && usertable_charset_max<1) {
 		fprintf(stderr,"No custom charset definition in usertable.\n");
-		exit(101);
+		exit(130);
 	}
 
 	tfmget(atfmname);
@@ -255,6 +262,7 @@ void usage(void)
 	fputs2("-e           Enhanced mode; the horizontal shift amount is determined\n", stderr);
 	fputs2("             from the glue/kern table of <TFMfile> input\n", stderr);
 	fputs2("-t <CNFfile> Use <CNFfile> as a configuration file\n", stderr);
+	fputs2("-O           Omit entries in VF for characters with default metric\n", stderr);
 	fputs2("-u <Charset> UCS mode\n", stderr);
 	fputs2("             <Charset> gb : GB,  cns : CNS,  ks : KS\n", stderr);
 	fputs2("                       jis : JIS,  jisq : JIS quote only\n", stderr);
