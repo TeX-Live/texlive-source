@@ -1,5 +1,11 @@
 2020-04-13  Andreas Scherer  <https://ascherer.github.io>
 
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Move reference to global variable 'use_language'
+	from 'main' to section 'Extensions'.
+
+2020-04-13  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.h: Add comment for section 6 in CWEB programs.
 
 2020-04-11  Andreas Scherer  <https://ascherer.github.io>
