@@ -41,7 +41,14 @@ typedef uint16_t sixteen_bits;
 extern int program; /* \.{CWEAVE} or \.{CTANGLE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
 
-@ @d _(STRING) gettext(STRING)
+@ You may have noticed that almost all \.{"strings"} in the \.{CWEB} sources
+are placed in the context of the `|_|'~macro.  This is just a shortcut for the
+`|gettext|' function from the ``GNU~gettext utilities.'' For systems that do
+not have this library installed, we wrap things for neutral behavior without
+internationalization.
+
+@d _(STRING) gettext(STRING)
+
 @<Include files@>=
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
