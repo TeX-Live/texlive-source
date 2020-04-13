@@ -246,8 +246,6 @@ can also be replaced by a string. For example,
 $$\.{@@\$printf "<stdio.h>" \\zip@@>}$$
 will generate a mini-index entry like `\\{printf}, \.{<stdio.h>}.'.
 
-\vfill\eject
-
 A special ``proofmode'' is provided so that you can check \.{CTWILL}'s
 conclusions about cross-references. Run \.{CTWILL} with the
 flag \.{+P}, and \TeX\ will produce a specially formatted document
