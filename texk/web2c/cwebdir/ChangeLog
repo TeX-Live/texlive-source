@@ -1,3 +1,8 @@
+2020-04-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Fix uppercase spelling for COMMON module.
+
 2020-04-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch: Print CTWILL user manual on two pages.

@@ -1908,7 +1908,7 @@ static void skip_limbo(void);@/
 static void squash(scrap_pointer,short,eight_bits,short,short);@/
 static void update_node(name_pointer p);@/
 
-@* Language setting.  This global variable is defined and set in \.{common} by
+@* Language setting.  This global variable is defined and set in \.{COMMON} by
 the `\.{+l}' (or `\.{-l}') commandline option.
 
 @<Global var...@>=
