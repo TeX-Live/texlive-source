@@ -4,6 +4,7 @@ bibexport/bibexport.sh
 checklistings/checklistings.sh
 ctanbib/ctanbib
 dtxgen/dtxgen
+git-latexdiff/git-latexdiff
 installfont/installfont-tl
 latexfileversion/latexfileversion
 listbib/listbib

@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
+# $Id: tlmgr.pl 54643 2020-04-11 00:19:37Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54446 $';
-my $datrev = '$Date: 2020-03-21 17:45:22 +0100 (Sat, 21 Mar 2020) $';
+my $svnrev = '$Revision: 54643 $';
+my $datrev = '$Date: 2020-04-11 02:19:37 +0200 (Sat, 11 Apr 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6625,8 +6625,16 @@ sub action_shell {
         init_local_db();
         print "OK\n";
       } elsif ($what eq "remote") {
-        init_tlmedia_or_die();
-        print "OK\n";
+        my ($ret, $err) = init_tlmedia();
+        if ($ret) {
+          print("OK\n");
+        } else {
+          if ($::machinereadable) {
+            # replace \n with \\n to get single line
+            $err =~ s/\n/\\n/g;
+          }
+          print("ERROR $err\n");
+        }
       } else {
         print "ERROR can only load 'local' or 'remote', not $what\n";
       }
@@ -10023,7 +10031,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
+$Id: tlmgr.pl 54643 2020-04-11 00:19:37Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
