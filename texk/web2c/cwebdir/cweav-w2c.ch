@@ -1909,7 +1909,7 @@ static void squash(scrap_pointer,short,eight_bits,short,short);@/
 static void update_node(name_pointer p);@/
 
 @* Language setting.  This global variable is defined and set in \.{COMMON} by
-the `\.{+l}' (or `\.{-l}') commandline option.
+the `\.{+l}' (or `\.{-l}') command-line option.
 
 @<Global var...@>=
 extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
