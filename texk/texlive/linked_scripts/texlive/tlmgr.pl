@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54643 2020-04-11 00:19:37Z preining $
+# $Id: tlmgr.pl 54766 2020-04-16 11:50:17Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54643 $';
-my $datrev = '$Date: 2020-04-11 02:19:37 +0200 (Sat, 11 Apr 2020) $';
+my $svnrev = '$Revision: 54766 $';
+my $datrev = '$Date: 2020-04-16 13:50:17 +0200 (Thu, 16 Apr 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7358,6 +7358,9 @@ sub load_options_from_config {
         tlwarn("$prg: $fn: unknown value for no-checksums: $val\n");
       }
 
+    } elsif ($key eq "tkfontscale") {
+      $config{'tkfontscale'} = $val;
+
     } elsif ($sysmode) {
       # keys here are only allowed in sys mode
       if ($key eq "allowed-actions") {
@@ -9271,6 +9274,9 @@ command-line option.
 =item C<require-verification>, value 0 or 1 (default 0), same as
 command-line option.
 
+=item C<tkfontscale>, value any float.
+Controls the scaling of fonts in the Tk based frontends.
+
 =item C<update-exclude>, value: comma-separated list of packages
 (no space allowed). Same as the command line option C<--exclude>
 for the action C<update>.
@@ -10031,7 +10037,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54643 2020-04-11 00:19:37Z preining $
+$Id: tlmgr.pl 54766 2020-04-16 11:50:17Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
