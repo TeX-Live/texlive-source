@@ -124,7 +124,7 @@ use warnings;
 #   Test for already running previewer gets wrong answer if another
 #     process has the viewed file in its command line
 
-## Copyright John Collins 1998-2019
+## Copyright John Collins 1998-2020
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -162,6 +162,32 @@ use warnings;
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+## 16 Apr 2020 John Collins  Correct contents of "All targets (...) are up-to-date" message
+##                           V. 4.69a.
+## 12 Mar 2020 John Collins  Version is 4.69
+##  7 Feb 2020 John Collins  Report rc files read
+##  6 Feb 2020 John Collins  Fix bug when -cd and -outdir are used, and outdir is
+##                             same as document directory.  (Bug is caused by
+##                             problem in perl module Cwd.)
+##  2,3 Feb 2020 John Collins  Correction in find_basename.
+## 31 Jan 2020 John Collins  Cleanup sub exit_msg1: incorrect comment etc.
+##                           Extra @file_not_found entry for message from
+##                             \input on not-found-file
+##                           Remove use of $extension_treatment: Too hard to
+##                             check.  Always use what was called 'unix' method.
+##                           When command-line-specified tex file not found,
+##                             test for cusdep to make it, then try kpsewhich,
+##                             and only if all 3 fail report an error.
+## 15 Jan 2020 John Collins  Add -MSWinBackSlash -MSWinBackSlash- options to
+##                             control whether directory separator '\' is
+##                             used for filenames on command line for
+##                             called programs under MSWin.
+##  3 Jan 2020 John Collins  Add -E option to default command for xdvipdfmx, to
+##                             match call made by xetex (see XeTeX_ext.c in
+##                             xetex source).  This forces xdvipdfmx to always
+##                             try to embed fonts, ignoring licensing flags, etc.
+##
+## Current version (4.67, 26 Dec 2019) to CTAN
 ## 26 Dec 2019 John Collins  Change place of setting of $view_file
 ##                           Make fully consistent set of options for engines:
 ##                               -latex, -latex=...,
@@ -254,8 +280,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.67';
-$version_details = "$My_name, John Collins, 26 Dec. 2019";
+$version_num = '4.69a';
+$version_details = "$My_name, John Collins, 17 Apr. 2020";
 
 use Config;
 use File::Basename;
@@ -293,7 +319,7 @@ use FileHandle;
 use File::Find;
 use List::Util qw( max );
 use Cwd;            # To be able to change cwd
-use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd
+#use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd.  NO NEED, and it messes up -cd -outdir=
 use Digest::MD5;
 
 #use strict;
@@ -337,6 +363,7 @@ $log_wrap = 79;
 @file_not_found = (
     '^No file\\s*(.*)\\.$',
     '^\\! LaTeX Error: File `([^\\\']*)\\\' not found\\.',
+    '^\\! I can\\\'t find file `([^\\\']*)\\\'\\.',
     '.*?:\\d*: LaTeX Error: File `([^\\\']*)\\\' not found\\.',
     '^LaTeX Warning: File `([^\\\']*)\\\' not found',
     '^Package .* [fF]ile `([^\\\']*)\\\' not found',
@@ -653,7 +680,7 @@ $dvips_silent_switch  = '-q';
 $ps2pdf = 'ps2pdf  %O %S %D';
 
 ## Command to convert xdv file to pdf file
-$xdvipdfmx  = 'xdvipdfmx -o %D %O %S';
+$xdvipdfmx  = 'xdvipdfmx -E -o %D %O %S';
 $xdvipdfmx_silent_switch  = '-q';
 
 
@@ -668,13 +695,6 @@ $print_type = 'auto';   # When printing, print the postscript file.
                         # Possible values: 'dvi', 'ps', 'pdf', 'auto', 'none'
                         # 'auto' ==> set print type according to the printable
                         # file(s) being made: priority 'ps', 'pdf', 'dvi'
-
-## Which treatment of default extensions and filenames with
-##   multiple extensions is used, for given filename on
-##   tex/latex's command line?  See sub find_basename for the
-##   possibilities. 
-## Current tex's treat extensions like UNIX teTeX:
-$extension_treatment = 'unix';
 
 # Viewers.  These are system dependent, so default to none:
 $pdf_previewer = $ps_previewer  = $ps_previewer_landscape  = $dvi_previewer  = $dvi_previewer_landscape = "NONE";
@@ -914,6 +934,8 @@ elsif ( $^O eq "cygwin" ) {
     # NT executables.
     $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || '.';
 
+    # Which rc files did I read?
+    @rc_files_read = ();
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
     ## We could stay with MSWin files here, since cygwin perl understands them
@@ -1676,7 +1698,6 @@ sub read_first_rc_file_in_list {
                  "   and in that case it should be a regular text file, not a directory.\n";
         }
         elsif ( -e $rc_file ) {
-            #print "===Reading rc file \"$rc_file\" ...\n";
             process_rc_file( $rc_file );
             return;
         }
@@ -1801,6 +1822,8 @@ while ($_ = $ARGV[0])
      shift; 
   }
   elsif ( /^-MP$/ ) { $dependents_phony = 1; }
+  elsif ( /-MSWinBackSlash$/ ) { $MSWin_back_slash = 1; }
+  elsif ( /-MSWinBackSlash-$/ ) { $MSWin_back_slash = 0; }
   elsif (/^-new-viewer$/) {
       $new_viewer_always = 1; 
   }
@@ -1989,6 +2012,9 @@ while ($_ = $ARGV[0])
      push @command_line_file_list, $_ ; 
   }
 }
+
+show_array( "Rc files read:", @rc_files_read )
+    unless ( $silent && ! $diagnostics );
 
 if ( $bad_options > 0 ) {
     &exit_help( "Bad options specified" );
@@ -2413,7 +2439,7 @@ foreach $filename ( @file_list )
        ($filename, $path) = fileparse( $filename );
        warn "$My_name: Changing directory to '$path'\n"
           if !$silent;
-       pushd( $path );
+       pushd( dirname_no_tail( $path ) );
     }
     else {
         $path = '';
@@ -2880,6 +2906,8 @@ sub set_dirs_etc {
     # Normalize versions terminating in directory/path separator
     # and versions referring to current directory
     # These actions in a subroutine so they can be used elsewhere.
+    $out_dir = dirname_no_tail( $out_dir );
+    $aux_dir = dirname_no_tail( $aux_dir );
     $out_dir1 = $out_dir;
     $aux_dir1 = $aux_dir;
     foreach ( $aux_dir1, $out_dir1 ) {
@@ -3410,84 +3438,76 @@ sub find_basename {
     #  2 - Where to place base file
     #  3 - Where to place tex file
     #  Returns non-zero if tex file does not exist
-    #
-    # The rules for determining this depend on the implementation of TeX.
-    # The variable $extension_treatment determines which rules are used.
 
-    # !!!!!!!! I still need to implement use of kpsewhich to match behavior
-    # of (pdf)latex correctly.
+    my $fail = 0;
+    local ( $given_name, $base_name, $ext, $path, $tex_name, $source_name );
+    $given_name = $_[0];
+    $source_name = '';
+    $tex_name = $given_name;   # Default name if I don't find the tex file
+    ($base_name, $path, $ext) = fileparseB( $given_name );
 
-  local($given_name, $base_name, $ext, $path, $tex_name);
-  $given_name = $_[0];
-  if ( "$extension_treatment" eq "miktex_old" ) {
-       # Miktex v. 1.20d: 
-       #   1. If the filename has an extension, then use it.
-       #   2. Else append ".tex".
-       #   3. The basename is obtained from the filename by
-       #      removing the path component, and the extension, if it
-       #      exists.  If a filename has a multiple extension, then
-       #      all parts of the extension are removed. 
-       #   4. The names of generated files (log, aux) are obtained by
-       #      appending .log, .aux, etc to the basename.  Note that
-       #      these are all in the CURRENT directory, and the drive/path
-       #      part of the originally given filename is ignored.
-       #
-       #   Thus when the given filename is "\tmp\a.b.c", the tex
-       #   filename is the same, and the basename is "a".
+    # Treatment of extensions (in TeXLive 2019), with omission of path search:
+    # Exists: always means exists as a file, i.e., not as a directory.
+    #  A. Finding of tex file:
+    #   1. If extension is .tex and given_name.tex exists, use it.
+    #   2. Else if given_name.tex exists, use it.
+    #   3. Else if givne_name exists, use it.
+    # B. The base filename is obtained by deleting the path
+    #    component and the extension.
+    # C. The names of generated files (log, aux) are obtained by appending
+    #    .log, .aux, etc to the basename.  Note that these are all in the
+    #    CURRENT directory (or the output or aux directory, as appropriate).
+    #    The drive/path part of the originally given filename is ignored.
 
-       ($base_name, $path, $ext) = fileparse( $given_name, '\..*' );
-       if ( "$ext" eq "") { $tex_name = "$given_name.tex"; }
-       else { $tex_name = $given_name; }
-       $_[1] = $base_name;
-       $_[2] = $tex_name;
-  }
-  elsif ( "$extension_treatment" eq "unix" ) {
-       # unix (at least TeXLive 2016) =>
-       #  A. Finding of tex file:
-       #   1. If filename.tex exists, use it,
-       #   2. else if kpsewhich finds filename.tex, use it
-       #   3. else if filename exists, use it,
-       #   4. else if kpsewhich finds filename, use it.
-       #   (Probably can unify the above by
-       #       1'. If kpsewhich finds filename.tex, use result.
-       #       2'. else if kpsewhich finds filename, use result.
-       #       3'. else report file not found.
-       # B. The base filename is obtained by deleting the path
-       #    component and, if an extension exists, the last
-       #    component of the extension, even if the extension is
-       #    null.  (A name ending in "." has a null extension.)
-       # C. The names of generated files (log, aux) are obtained by
-       #    appending .log, .aux, etc to the basename.  Note that
-       #    these are all in the CURRENT directory, and the drive/path
-       #    part of the originally given filename is ignored.
-       #
-       #   Thus when the given filename is "/tmp/a.b.c", there are two
-       #   cases: 
-       #      a.  /tmp/a.b.c.tex exists.  Then this is the tex file,
-       #          and the basename is "a.b.c".
-       #      b.  /tmp/a.b.c.tex does not exist.  Then the tex file is
-       #          "/tmp/a.b.c", and the basename is "a.b".
-       #   But there are also modifications of this when a file can be
-       #   found by kpsewhich.
+    # Here we'll do:
+    # 1. Find the tex file by the above method, if possible.
+    # 2. If not, find a custom dependency with a source file that exists to
+    #      make the tex file so that after the tex file is made, the above
+    #      rules find the tex file.
+    # 3. If that also fails, use kpsewhich on given_name to find the tex
+    #      file
+    # 4. If that also fails, report non-existent tex file.
 
-      if ( -f "$given_name.tex" ) {
-         $tex_name = "$given_name.tex";
-      }
-      else {
-         $tex_name = "$given_name";
-      }
-      ($base_name, $path, $ext) = fileparse( $tex_name, '\.[^\.]*' );
-      $_[1] = $base_name;
-      $_[2] = $tex_name;
-  }
-  else {
-     die "$My_name: Incorrect configuration gives \$extension_treatment=",
-         "'$extension_treatment'\n";
-  }
-   if ($diagnostics) {
-      print "Given='$given_name', tex='$tex_name', base='$base_name'\n";
-  }
-  return ! -e $tex_name;
+
+    if ( ($ext eq '.tex') && (-f $given_name) ) {
+       $tex_name = "$given_name";
+    }
+    elsif ( -f "$given_name.tex" ) {
+       $tex_name = "$given_name.tex";
+       $base_name .= $ext;
+    }
+    elsif ( -f $given_name ) {
+       $tex_name = $given_name;
+    }
+    elsif ( ($ext eq '.tex') && find_cus_dep( $given_name, $source_name ) ) {
+       $tex_name = $given_name;
+    }
+    elsif ( find_cus_dep( "$given_name.tex", \$source_name ) ) {
+       $tex_name = "$given_name.tex";
+       $base_name .= $ext;
+    }
+    elsif ( ($ext =~ /^\..+/) && find_cus_dep( $given_name, $source_name ) ) {
+       $tex_name = $given_name;
+    }
+    else {
+        my @kpse_result = kpsewhich( $given_name );
+        if ($#kpse_result < 0) {
+            $fail = 1;
+        }
+        else {
+            $tex_name = $kpse_result[0];
+            ($base_name) = fileparseB( $tex_name );
+        }
+    }
+
+    $_[1] = $base_name;
+    $_[2] = $tex_name;
+
+    if ($diagnostics) {
+       print "Given='$given_name', tex='$tex_name', base='$base_name', ext= $ext, source='$source_name'\n";
+    }
+    return $fail;
+
 } #END find_basename
 
 #************************************************************
@@ -3728,8 +3748,8 @@ sub process_rc_file {
     #    Exit with code 2 if is a syntax error or other problem.
     my $rc_file = $_[0];
     my $ret_code = 0;
-    warn "$My_name: Executing Perl code in file '$rc_file'...\n" 
-        if  $diagnostics;
+    push @rc_files_read, $rc_file;
+
     # I could use the do command of perl, but the preceeding -r test
     # to get good diagnostics gets the wrong result under cygwin
     # (e.g., on /cygdrive/c/latexmk/LatexMk)
@@ -3878,10 +3898,9 @@ sub traceback {
 
 sub exit_msg1
 {
-  # exit_msg1( error_message, retcode [, action])
+  # exit_msg1( error_message, retcode )
   #    1. display error message
-  #    2. if action set, then restore aux file
-  #    3. exit with retcode
+  #    2. exit with retcode
   warn "\n------------\n";
   warn "$My_name: $_[0].\n";
   warn "-- Use the -f option to force complete processing.\n";
@@ -3985,6 +4004,10 @@ sub print_help
   "   -M     - Show list of dependent files after processing\n",
   "   -MF file - Specifies name of file to receives list dependent files\n",
   "   -MP    - List of dependent files includes phony target for each source file.\n",
+  "   -MSWinBackSlash  under MSWin use backslash (\\) for directory separators\n",
+  "                    for filenames given to called programs\n",
+  "   -MSWinBackSlash-  under MSWin use forward slash (/) for directory separators\n",
+  "                     for filenames given to called programs\n",
   "   -new-viewer    - in -pvc mode, always start a new viewer\n",
   "   -new-viewer-   - in -pvc mode, start a new viewer only if needed\n",
   "   -nobibtex      - never use bibtex\n",
@@ -5396,6 +5419,30 @@ sub parse_fls {
 
 #************************************************************
 
+sub dirname_no_tail {
+    my $dirname = $_[0];
+#    print "DNT1 = '$dirname'\n";
+    foreach ($dirname) {
+        # Normalize name to use / to separate directory components:
+        #   (Note both / and \ are allowed under MSWin.)
+        s(\\)(/)g;
+        # Change multiple trailing / to single /
+        #   (Note internal // or \\ can have special meaning on MSWin)
+        s(/+$)(/);
+        # Remove trailing /,
+        # BUT **not** if that changes the semantics, i.e., if name is "/" or "C:/".
+        if ( m(/$) ) {
+            if ( ( ! m(^/+$) ) && ( ! m(:/+$) ) ) {
+                s(/$)();
+            }
+        }
+    }
+#    print "DNT2 = '$dirname'\n";
+    return $dirname;
+}
+
+#************************************************************
+
 sub clean_filename {
     # Convert quoted filename as found in log file to filename without quotes
     # Allows arbitrarily embedded double-quoted substrings, includes the
@@ -5427,13 +5474,17 @@ sub normalize_filename {
    # (Note both / and \ are allowed under MSWin.)
    foreach ($cwd, $file,  @dirs) {
        s(\\)(/)g;
+       $_ = dirname_no_tail( $_ );
    }
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
    foreach my $dir ( @dirs, '.', $cwd ) {
-     if ( $file =~ s(^\Q$dir\E/)() ) {
-        last;
+       if ( $dir =~ /^\s*$/ ) {
+           next;
+       }
+       if ( $file =~ s(^\Q$dir\E/)() ) {
+           last;
      }
    }
    return $file;
@@ -6172,6 +6223,7 @@ sub rdb_set_latex_deps {
     }
  
     &parse_log;
+
     my $missing_dirs = 'none';      # Status of missing directories
     if (@missing_subdirs) {
         $missing_dirs = 'success';
@@ -6639,7 +6691,7 @@ MISSING_FILE:
             foreach my $dep (@cus_dep_list){
                my ($fromext,$toext) = split('\s+',$dep);
                if ( ( "$ext" eq "$toext" )
-                    && ( -e "$path$base.$fromext" )
+                    && ( -f "$path$base.$fromext" )
                   )  {
                   # Source file for the missing file exists
                   # So we have a real include file, and it will be made
@@ -6657,14 +6709,14 @@ MISSING_FILE:
            # and $_ doesn't have an extension
            foreach my $dep (@cus_dep_list){
               my ($fromext,$toext) = split('\s+',$dep);
-              if ( -e "$path$base.$fromext" ) {
+              if ( -f "$path$base.$fromext" ) {
                   # Source file for the missing file exists
                   # So we have a real include file, and it will be made
                   # next time by &rdb__dependents
                   $new_includes{"$path$base.$toext"} = 1;
 #                  next MISSING_FILE;
               }
-              if ( -e "$path$base.$toext" ) {
+              if ( -f "$path$base.$toext" ) {
                   # We've found the extension for the missing file,
                   # and the file exists
                   $new_includes{"$path$base.$toext"} = 1;
@@ -7265,8 +7317,10 @@ sub rdb_make {
             print "$My_name: Errors, so I did not complete making targets\n";
         }
         else {
+#            local @dests = ( keys %current_primaries, @pre_primary, @post_primary, @unusual_one_time );
+            local @rules = ( keys %current_primaries, @post_primary, @unusual_one_time );
             local @dests = ();
-            rdb_for_some( [@_], sub{ push @dests, $$Pdest if ($$Pdest); } );
+            rdb_for_some( [@rules], sub{ push @dests, $$Pdest if ($$Pdest); } );
             print "$My_name: All targets (@dests) are up-to-date\n";
         }
     }
@@ -7440,7 +7494,7 @@ sub rdb_make1 {
     $rules_applied{$rule} = 1;
     $runs++;
 
-    $pass{$rule}++; 
+    $pass{$rule}++;
     if ($bibtex_not_run > 0) {
         if ($bibtex_not_run == 1 ) {
             show_array ("$My_name: I WON'T RUN '$rule' because I don't find the following files:",
@@ -7449,7 +7503,7 @@ sub rdb_make1 {
         elsif ($bibtex_not_run == 2 ) {
             warn "$My_name: I AM CONFIGURED/INVOKED NOT TO RUN '$rule'\n"; 
         }
-        $return = &rdb_dummy_run1;
+        $return = &rdb_dummy_run0;
     }
     else {
         warn_running( "Run number $pass{$rule} of rule '$rule'" );
@@ -7822,7 +7876,7 @@ sub rdb_run1 {
 
 #-----------------
 
-sub rdb_dummy_run1 {
+sub rdb_dummy_run0 {
     # Assumes contexts for: rule.
     # Update rule state as if the rule ran successfully,
     #    but don't run the rule.
@@ -7844,7 +7898,7 @@ sub rdb_dummy_run1 {
     $$Pout_of_date = $$Pout_of_date_user = 0;
 
     return 0;
-}  # END rdb_dummy_run1
+}  # END rdb_dummy_run0
 
 #-----------------
 
@@ -9211,8 +9265,6 @@ sub create_empty_file {
 #************************************************************
 
 sub find_file1 {
-#?? Need to use kpsewhich, if possible
-
     # Usage: find_file1(name, ref_to_array_search_path)
     # Modified find_file, which doesn't die.
     # Given filename and path, return array of:
@@ -9405,6 +9457,29 @@ sub show_cus_dep {
     show_array( "Custom dependency list:", @cus_dep_list );
 }
 
+####################################################
+
+sub find_cus_dep {
+    # Usage find_cus_dep( dest, source )
+    # Given dest, if a cus_dep to make it is found, set source.
+    # Return 1 or 0 on success or failure.
+    #
+    my $dest = $_[0];
+    my ($base, $path, $ext) = fileparseB( $dest );
+    $ext =~ s/^\.//;
+    if (! $ext ) { return 0; }
+    foreach my $dep ( @cus_dep_list ) {
+        my ($fromext, $toext) = split( '\s+', $dep );
+        if ( ( "$ext" eq "$toext" ) && ( -f "$path$base.$fromext" ) ) {
+            # We have a way of making $dest
+            $_[1] = "$path$base.$fromext";
+            return 1
+        }
+    }
+    return 0;
+}
+
+####################################################
 ####################################################
 
 sub add_aux_hook {
@@ -9975,7 +10050,7 @@ sub good_cwd {
 sub pushd {
     push @dir_stack, [cwd(), $cache{cwd}];
     if ( $#_ > -1) {
-        chdir $_[0]; 
+        chdir dirname_no_tail( $_[0] ); 
         &cache_good_cwd;
     }
 }
