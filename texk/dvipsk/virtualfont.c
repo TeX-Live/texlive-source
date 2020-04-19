@@ -87,14 +87,14 @@ vfopen(register fontdesctype *fd)
 #else
    if (0 != (vffile=search(d, name, READBIN)))
 #endif
-      return(1);
+      return(VF_TEX);
    if (!noomega)
 #ifdef KPATHSEA
       if (0 != (vffile=search(ovfpath, n, READBIN)))
 #else
       if (0 != (vffile=search(d, n, READBIN)))
 #endif
-         return(2);
+         return(VF_OMEGA);
    return(0);
 }
 
@@ -159,8 +159,9 @@ virtualfont(register fontdesctype *curfnt)
    integer maxcc=255;
    register quarterword *tempr;
    fontmaptype *fm, *newf;
-   int kindfont;
-   kindfont = vfopen(curfnt);  /* 1 for TeX and pTeX, 2 for Omega */
+   int id, kindfont;
+   kindfont = vfopen(curfnt);  /* VF_TEX for TeX and pTeX, VF_OMEGA for Omega */
+   curfnt->kind = kindfont;
    if (!kindfont)
       return (0);
 #ifdef DEBUG
@@ -172,7 +173,7 @@ virtualfont(register fontdesctype *curfnt)
 /*
  *   We clear out some pointers:
  */
-   if (kindfont==2) {
+   if (kindfont==VF_OMEGA) {
       no_of_chars = VF_MEM_UNIT;
       curfnt->maxchars=VF_MEM_UNIT;
       free(curfnt->chardesc);
@@ -196,7 +197,7 @@ virtualfont(register fontdesctype *curfnt)
    check_checksum (k, curfnt->checksum, curfnt->name);
    k = (integer)(alpha * (real)vfquad());
    if (k > curfnt->designsize + 2 || k < curfnt->designsize - 2) {
-      int id = 0;
+      id = 0;
       if (!noptex) {
          tfmopen(curfnt); /* We check if parent is jfm or not. */
          id = tfm16();
@@ -218,7 +219,17 @@ virtualfont(register fontdesctype *curfnt)
       newf = vfontdef(scaledsize, cmd-242);
       if (fm)
          fm->next = newf;
-      else curfnt->localfonts = newf;
+      else {
+         curfnt->localfonts = newf;
+         id = 0;
+         if (!noptex) {
+            tfmopen(curfnt->localfonts->desc); /* We check if parent is jfm or not. */
+            id = tfm16();
+            fclose(tfmfile);
+            if (id == 9 || id == 11)
+               curfnt->kind = VF_PTEX;
+         }
+      }
       fm = newf;
       fm->next = NULL; /* FIFO */
    }

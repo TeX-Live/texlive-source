@@ -1,3 +1,8 @@
+2020-04-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {virtualfont,pprescan,scanpage,dopage}.c, dvips.h:
+	Fallback multibyte character in virtual font for (u)pTeX.
+
 2020-04-10  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dospecial.c: Support \special{psfile=non-ascii-name}.

@@ -188,8 +188,12 @@ typedef struct tfd {
    struct tfd *nextsize;
    char *scalename;
    chardesctype *chardesc;
-   int iswide;
+   int iswide, kind;
 } fontdesctype;
+
+#define VF_TEX   (1)
+#define VF_OMEGA (2)
+#define VF_PTEX  (3)
 
 /*  A fontmap associates a fontdesc with a font number.
  */
