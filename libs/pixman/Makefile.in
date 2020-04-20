@@ -662,6 +662,7 @@ libpixman_sources = \
 	@PIXMAN_TREE@/pixman/pixman-utils.c
 
 libpixman_headers = \
+	@PIXMAN_TREE@/pixman/dither/blue-noise-64x64.h \
 	@PIXMAN_TREE@/pixman/pixman.h \
 	@PIXMAN_TREE@/pixman/pixman-accessor.h \
 	@PIXMAN_TREE@/pixman/pixman-combine32.h \
