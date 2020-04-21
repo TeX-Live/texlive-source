@@ -3882,6 +3882,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -3898,6 +3899,7 @@ case $enable_luajittex in #(
 esac
 
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -3914,6 +3916,7 @@ case $enable_luahbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luahbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -3931,6 +3934,7 @@ case $enable_luajithbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luajithbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -4958,6 +4962,9 @@ if test "${enable_linked_scripts+set}" = set; then :
   enableval=$enable_linked_scripts;
 fi
 
+
+## libs/pplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pplib/
+## configure options and TL libraries required for pplib
 
 ## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
 ## configure options and TL libraries required for harfbuzz
@@ -6468,6 +6475,10 @@ $as_echo_n "checking for generic libraries to build... " >&6; }
 echo 'tldbg:_KPSE_RECURSE called: list=libs, text=generic libraries, cond=test "x$with_system_[]Kpse_pkg" != xyes && test "x$need_[]Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
+if test -x $srcdir/pplib/configure; then
+  test "x$with_system_pplib" != xyes && test "x$need_pplib" = xyes && MAKE_SUBDIRS="pplib $MAKE_SUBDIRS"
+  CONF_SUBDIRS="pplib $CONF_SUBDIRS"
+fi
 if test -x $srcdir/harfbuzz/configure; then
   test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes && MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
   CONF_SUBDIRS="harfbuzz $CONF_SUBDIRS"
@@ -7805,9 +7816,7 @@ $as_echo X/"$am_mf" |
     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "Something went wrong bootstrapping makefile fragments
-    for automatic dependency tracking.  If GNU make was not used, consider
-    re-running the configure script with MAKE=\"gmake\" (or whatever is
-    necessary).  You can also try re-running configure with the
+    for automatic dependency tracking.  Try re-running configure with the
     '--disable-dependency-tracking' option to at least be able to build
     the package (albeit without support for automatic dependency tracking).
 See \`config.log' for more details" "$LINENO" 5; }

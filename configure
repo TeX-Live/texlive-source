@@ -4702,6 +4702,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -4718,6 +4719,7 @@ case $enable_luajittex in #(
 esac
 
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -4734,6 +4736,7 @@ case $enable_luahbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luahbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -4751,6 +4754,7 @@ case $enable_luajithbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luajithbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -5778,6 +5782,9 @@ if test "${enable_linked_scripts+set}" = set; then :
   enableval=$enable_linked_scripts;
 fi
 
+
+## libs/pplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pplib/
+## configure options and TL libraries required for pplib
 
 ## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
 ## configure options and TL libraries required for harfbuzz
@@ -21273,6 +21280,13 @@ if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
 fi
 
+if $PKG_CONFIG PPLIB; then
+  PPLIB_INCLUDES=`$PKG_CONFIG PPLIB --cflags`
+  PPLIB_LIBS=`$PKG_CONFIG PPLIB --libs`
+elif test "x$need_PPLIB:$with_system_PPLIB" = xyes:yes; then
+  as_fn_error $? "did not find PPLIB" "$LINENO" 5
+fi
+
 ##tldbg _KPSE_LIB_FLAGS_SYSTEM: libpaper (paper).
 if test "x$with_libpaper_includes" != x && test "x$with_libpaper_includes" != xyes; then
   LIBPAPER_INCLUDES="-I$with_libpaper_includes"
@@ -24021,9 +24035,7 @@ $as_echo X/"$am_mf" |
     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "Something went wrong bootstrapping makefile fragments
-    for automatic dependency tracking.  If GNU make was not used, consider
-    re-running the configure script with MAKE=\"gmake\" (or whatever is
-    necessary).  You can also try re-running configure with the
+    for automatic dependency tracking.  Try re-running configure with the
     '--disable-dependency-tracking' option to at least be able to build
     the package (albeit without support for automatic dependency tracking).
 See \`config.log' for more details" "$LINENO" 5; }

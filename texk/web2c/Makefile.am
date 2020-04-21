@@ -107,6 +107,8 @@ $(proglib): ${srcdir}/lib/*.c
 @MPFR_RULE@
 ## Rebuild libxpdf
 @XPDF_RULE@
+## Rebuild pplib
+@PPLIB_RULE@
 ## Rebuild poppler
 @POPPLER_RULE@
 ## Rebuild libzzip
@@ -237,7 +239,6 @@ include $(srcdir)/luatexdir/am/libunilib.am
 include $(srcdir)/luatexdir/am/luafontforge.am
 include $(srcdir)/luatexdir/am/libluatex.am
 include $(srcdir)/luatexdir/am/luaffi.am
-include $(srcdir)/luatexdir/am/luapplib.am 
 include $(srcdir)/luatexdir/am/luatex.am
 
 

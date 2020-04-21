@@ -721,6 +721,10 @@ ZLIB_RULE
 ZLIB_DEPEND
 ZLIB_LIBS
 ZLIB_INCLUDES
+PPLIB_RULE
+PPLIB_DEPEND
+PPLIB_LIBS
+PPLIB_INCLUDES
 PTEXENC_RULE
 PTEXENC_DEPEND
 PTEXENC_LIBS
@@ -18783,6 +18787,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -18799,6 +18804,7 @@ case $enable_luajittex in #(
 esac
 
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -18815,6 +18821,7 @@ case $enable_luahbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luahbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -18832,6 +18839,7 @@ case $enable_luajithbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luajithbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -24943,6 +24951,18 @@ $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+##tldbg _KPSE_LIB_FLAGS: Setup pplib (-lpplib) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=pplib, libname=pplib, options=tree, tlincl=-IBLD/libs/pplib/include, tllib=BLD/libs/pplib/libpplib.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/pplib/include/pplib.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: pplib (pplib) tree.
+  PPLIB_INCLUDES="-I$kpse_BLD/libs/pplib/include"
+  PPLIB_LIBS="$kpse_BLD/libs/pplib/libpplib.a"
+  PPLIB_DEPEND='${top_builddir}/../../libs/pplib/libpplib.a'
+  PPLIB_RULE='# Rebuild libpplib
+$(PPLIB_DEPEND): ${top_builddir}/../../libs/pplib/include/pplib.h
+	cd ${top_builddir}/../../libs/pplib && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/pplib/include/pplib.h:
+	cd ${top_builddir}/../../libs/pplib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+
 ##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
@@ -28447,9 +28467,7 @@ $as_echo X/"$am_mf" |
     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "Something went wrong bootstrapping makefile fragments
-    for automatic dependency tracking.  If GNU make was not used, consider
-    re-running the configure script with MAKE=\"gmake\" (or whatever is
-    necessary).  You can also try re-running configure with the
+    for automatic dependency tracking.  Try re-running configure with the
     '--disable-dependency-tracking' option to at least be able to build
     the package (albeit without support for automatic dependency tracking).
 See \`config.log' for more details" "$LINENO" 5; }

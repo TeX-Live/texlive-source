@@ -64,12 +64,12 @@ nodist_EXTRA_luahbtex_SOURCES = dummy.cxx
 nodist_EXTRA_luajithbtex_SOURCES = dummy.cxx
 
 
-luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) 
+luatex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(PPLIB_INCLUDES)
 luatex_postflags = -I$(srcdir)/libmd5 -DpdfTeX -I$(srcdir)/luatexdir -I$(srcdir)/mplibdir
 luatex_postflags += -Dextra_version_info=`date +-%Y%m%d%H`
 luatex_postflags += -I$(srcdir)/synctexdir -DSYNCTEX_ENGINE_H='<synctex-luatex.h>'
 
-luahbtex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(HARFBUZZ_INCLUDES)
+luahbtex_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(HARFBUZZ_INCLUDES) $(PPLIB_INCLUDES)
 luahbtex_postflags = -I$(srcdir)/libmd5 -DpdfTeX -I$(srcdir)/luatexdir -I$(srcdir)/mplibdir
 luahbtex_postflags += -Dextra_version_info=`date +-%Y%m%d%H`
 luahbtex_postflags += -DLUATEX_HARFBUZZ_ENABLED
@@ -95,19 +95,19 @@ luahbtex_LDFLAGS = -export-dynamic
 luajithbtex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 luatex_postldadd = libmplibcore.a 
-luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)  
+luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)  $(PPLIB_LIBS)
 luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 luahbtex_postldadd = libmplibcore.a 
-luahbtex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) 
+luahbtex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) $(PPLIB_LIBS)
 luahbtex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 
-luatex_LDADD = libluatex.a libluatexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a libluapplib.a $(LUA_LIBS) $(luatex_postldadd)
-luajittex_LDADD = libluajittex.a libluajittexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitpplib.a  $(LUAJIT_LIBS) $(luatex_postldadd)
+luatex_LDADD = libluatex.a libluatexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  $(LUA_LIBS) $(luatex_postldadd)
+luajittex_LDADD = libluajittex.a libluajittexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a   $(LUAJIT_LIBS) $(luatex_postldadd)
 
-luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a libluapplib.a libluaharfbuzz.a $(LUA_LIBS) $(luahbtex_postldadd)
-luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitpplib.a libluajitharfbuzz.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
+luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  libluaharfbuzz.a $(LUA_LIBS) $(luahbtex_postldadd)
+luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitharfbuzz.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
 
 
 #not here ?

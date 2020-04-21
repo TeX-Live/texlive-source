@@ -1,3 +1,8 @@
+2020-04-07 Luigi Scarso <luigi.scarso@gmail.com>
+    * Version 1.13.0. 
+      getstring extra argument to pdfe.getstring (triggers unencoded or flag
+      return values) (HH).
+
 2020-03-09 Luigi Scarso <luigi.scarso@gmail.com>
     * texluahb / texluahbjit for luahbtex / luajithbtex
 

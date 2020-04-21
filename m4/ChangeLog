@@ -1,3 +1,8 @@
+2020-04-21 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): add pplib.
+	* Add kpse-pplib-flags.m4.
+
 2020-03-14  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4 (KPSE_SETUP): make that powerpc*, not powerpc-*.

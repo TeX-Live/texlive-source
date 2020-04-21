@@ -1246,7 +1246,14 @@ static void stack_glue_into_box(pointer b, scaled min, scaled max) {
 
 /*tex Size code corresponding to |cur_style|:  */
 
-int cur_size;
+int cur_size = 0;
+
+/*tex A few state variables: */
+
+halfword del_height = 0;
+halfword del_depth = 0;
+halfword del_width = 0;
+halfword del_shift = 0;
 
 static pointer get_delim_box(internal_font_number fnt, halfword chr, scaled v, scaled min_overlap, int horizontal, halfword att)
 {
@@ -1538,6 +1545,20 @@ static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat,
     boolean do_parts = false;
     boolean parts_done = false;
     extinfo *ext;
+
+    if (d && ! small_fam(d) && ! large_fam(d) && ! small_char(d) && ! large_char(d)) {
+        halfword b = new_null_box();
+        subtype(b) = math_v_delimiter_list;
+        height(b) = del_height;
+        depth(b) = del_depth;
+        width(b) = del_width;
+        shift_amount(b) = del_shift;
+        node_attr(b) = node_attr(d);
+        node_attr(d) = null;
+        flush_node(d);
+        return b;
+    }
+
     f = null_font;
     c = 0;
     if (d == null) {
@@ -1688,6 +1709,12 @@ static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat,
     }
     DONE:
     delete_attribute_ref(att);
+
+    del_height = height(b);
+    del_depth = depth(b);
+    del_width = width(b);
+    del_shift = shift_amount(b);
+
     return b;
 }
 
