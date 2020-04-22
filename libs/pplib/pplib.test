@@ -12,7 +12,7 @@ mkdir test
 
 cp $srcdir/$PPLIB_TREE/test/luaimage.pdf test
 
-(cd test && ../pptest1  luaimage.pdf >out1 || exit 1) \
+(cd test && ../pptest1 luaimage.pdf | sed -e 's/memused.*$//;s/memwaste.*$//;' >out1 || exit 1) \
 && (cd test && ../pptest2 luaimage.pdf >out2 || exit 1) \
 && (cd test && ../pptest3  luaimage.pdf >out3 || exit 1) || exit 1
 
