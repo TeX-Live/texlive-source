@@ -28,6 +28,18 @@ typedef char* string;
 /* we don't think that anyone needs more than 32 change files,
 @z
 
+@x
+@d print(a)  fprintf(term_out,a) /* `|print|' means write on the terminal */
+@y
+@d print(a)  fprintf(term_out,"%s",a) /* `|print|' means write on the terminal */
+@z
+
+@x
+@d print_ln(v)  {fprintf(term_out,v);term_new_line;}
+@y
+@d print_ln(v)  {fprintf(term_out,"%s",v);term_new_line;}
+@z
+
 @x -- add to global includes.
 #include <stdio.h>
 @y

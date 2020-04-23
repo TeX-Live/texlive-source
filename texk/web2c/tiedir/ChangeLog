@@ -1,6 +1,6 @@
 2018-01-18  Karl Berry  <karl@tug.org>
 
-	* tie.w (print, print_ln): printf %s instead of direct string
+	* tie-w2c.w (print, print_ln): printf %s instead of direct string
 	(from Debian).
 
 2014-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>
