@@ -1,3 +1,13 @@
+2020-04-23  Tomas Rokicki  <rokicki@gmail.com>
+        and Karl Berry  <karl@freefriends.org>
+
+	* patgen.web,
+	* pktogf.web,
+	* pktype.web: fix trivial typos and clarify public domain status.
+	No code changes.
+	(These .web files are not maintained by DEK, per
+	https://tug.org/TUGbpat/tb35-1/tb109knut.pdf page 2.)
+
 2020-04-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: Add comment for section 6.
