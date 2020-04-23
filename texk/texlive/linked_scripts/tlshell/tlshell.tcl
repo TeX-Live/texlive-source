@@ -26,7 +26,79 @@ if {$::tcl_platform(platform) ne "windows"} {
 
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
 
-# declarations and utilities shared with install-tl-gui.tcl
+# try to read a configuration variable (gui-lang, tkfontscale)
+# from tlmgr config ($TEXMF[SYS]CONFIG/tlmgr/config
+# failure results in an empty string.
+# this proc will be invoked by tltcl if tlshell is the invoker of tltcl
+proc get_config_var {k} {
+  set v ""
+  set r [join [list {^\s*} $k {\s*=\s*(\S.*)$}] ""]
+  foreach tmf {"TEXMFCONFIG" "TEXMFSYSCONFIG"} {
+    if [catch {exec kpsewhich -var-value $tmf} d] {
+        break; # apparently there is not yet a TL installation
+    }
+
+    if [catch {open [file join $d "tlmgr" "config"] r} fid] continue
+    while 1 {
+      if [chan eof $fid] {
+        break
+      }
+      if [catch {chan gets $fid} l] break
+      # we can assume that $k contains no special characters
+      if [regexp $r $l m v] {
+        set v [regsub {\s*$} $v ""]
+        break
+      } else {
+        # regexp will have unset v
+        set v ""
+      }
+    }
+    chan close $fid
+    if {$v ne ""} break
+  }
+  return $v
+}
+
+proc save_config_var {k v} {
+  if [catch {exec kpsewhich -var-value "TEXMFCONFIG"} d] {return 0}
+  set d [file join $d "tlmgr"]
+  if [catch {file mkdir $d}] {return 0} ; # mkdir on existing dir is ok
+  set fn [file join $d "config"]
+  set oldlines [list]
+  set r [join [list {^\s*} $k {\s*=\s*(\S.*)$}] ""]
+  # read current config file
+  if [file exists $fn] {
+    if [catch {open $fn r} fid] {return 0}
+    set cnt 0
+    while 1 {
+      if [catch {chan gets $fid} l] break
+      if [chan eof $fid] break
+      incr cnt
+      if {! [regexp $r $l]} {
+          lappend oldlines $l
+      }
+      if {$cnt>40} break
+    }
+    catch {chan close $fid}
+  }
+  lappend oldlines "$k = $v"
+  if [catch {open $fn w} fid] {return 0}
+  foreach l $oldlines {
+    if [catch {puts $fid $l}] {
+      catch {chan close $fid}
+      return 0
+    }
+  }
+  catch {chan close $fid}
+  return 1
+}
+
+# tltcl: declarations and utilities shared with install-tl-gui.tcl
+# tltcl likes to know who was the invoker
+set ::invoker [file tail [info script]]
+if [string match -nocase ".tcl" [string range $::invoker end-3 end]] {
+  set ::invoker [string range $::invoker 0 end-4]
+}
 source [file join $::instroot "tlpkg" "tltcl" "tltcl.tcl"]
 
 # now is a good time to ask tlmgr for the _TL_ name of our platform
@@ -53,9 +125,6 @@ set ddebug 0
 
 # menus: disable tearoff feature
 option add *Menu.tearOff 0
-
-# for busy/idle indicators
-set ::busy [__ "Idle"]
 
 proc search_nocase {needle haystack} {
   if {$needle eq ""} {return -1}
@@ -205,7 +274,44 @@ proc any_message {str type {p "."}} {
   }
 } ; # any_message
 
-### enabling and disabling user interaction
+##### tl global data ##################################################
+
+set ::last_cmd ""
+
+set ::progname [info script]
+regexp {^.*[\\/]([^\\/\.]*)(?:\....)?$} $progname dummy ::progname
+set ::procid [pid]
+
+# package repositories
+array unset ::repos
+
+# mirrors: dict of dicts of lists of urls per country per continent
+# moved to tltcl.tcl
+#set ::mirrors [dict create]
+
+# dict of (local and global) package dicts
+set ::pkgs [dict create]
+
+# platforms
+set ::platforms [dict create]
+
+set ::have_remote 0 ; # remote packages info not yet loaded
+set ::need_update_tlmgr 0
+set ::n_updates 0
+set ::tlshell_updatable 0
+
+## package data to be displayed ##
+
+# sorted display data for packages; package data stored as lists
+set ::filtered [dict create]
+
+# selecting packages for display: status and detail
+set ::stat_opt "inst"
+set ::dtl_opt "all"
+# searching packages for display; also search short descriptions?
+set ::search_desc 0
+
+### enabling and disabling user interaction based on global data
 
 proc selective_dis_enable {} {
   # disable actions which make no sense at the time
@@ -274,43 +380,6 @@ proc total_dis_enable {y_n} {
     selective_dis_enable
   }
 } ; # total_dis_enable
-
-##### tl global data ##################################################
-
-set ::last_cmd ""
-
-set ::progname [info script]
-regexp {^.*[\\/]([^\\/\.]*)(?:\....)?$} $progname dummy ::progname
-set ::procid [pid]
-
-# package repositories
-array unset ::repos
-
-# mirrors: dict of dicts of lists of urls per country per continent
-# moved to tltcl.tcl
-#set ::mirrors [dict create]
-
-# dict of (local and global) package dicts
-set ::pkgs [dict create]
-
-# platforms
-set ::platforms [dict create]
-
-set ::have_remote 0 ; # remote packages info not yet loaded
-set ::need_update_tlmgr 0
-set ::n_updates 0
-set ::tlshell_updatable 0
-
-## package data to be displayed ##
-
-# sorted display data for packages; package data stored as lists
-set ::filtered [dict create]
-
-# selecting packages for display: status and detail
-set ::stat_opt "inst"
-set ::dtl_opt "all"
-# searching packages for display; also search short descriptions?
-set ::search_desc 0
 
 ##### handling tlmgr via pipe and stderr tempfile #####################
 
@@ -539,8 +608,8 @@ proc run_cmd_waiting {cmd} {
 # with a virtual repository, which is the combined set of repositories,
 # with pinning applied if there is more than one repository.
 # But get_packages_info_remote must invoke
-# show_repositories to display updated verification info.
-# show_repositories is also invoked by initialize.
+# show_repos to display updated verification info.
+# show_repos is also invoked by initialize.
 
 # get_packages_info_local is invoked only once, at initialization.  After
 # installations and removals, the collected information is updated by
@@ -572,6 +641,18 @@ proc is_updatable {nm} {
   return [expr {$lr > 0 && $rr > 0 && $rr > $lr}]
 }
 
+proc display_updated_globals {} {
+  if {$::have_remote && $::need_update_tlmgr} {
+    .topfll.luptodate configure -text [__ "Needs updating"]
+  } elseif $::have_remote {
+    .topfll.luptodate configure -text [__ "Up to date"]
+  } else {
+    .topfll.luptodate configure -text [__ "Unknown"]
+  }
+  # ... and status of update buttons
+  selective_dis_enable
+}
+
 proc update_globals {} {
   if {! $::have_remote} return
   set ::n_updates 0
@@ -582,15 +663,7 @@ proc update_globals {} {
   set ::tlshell_updatable [is_updatable tlshell]
 
   # also update displayed status info
-  if {$::have_remote && $::need_update_tlmgr} {
-    .topfll.luptodate configure -text [__ "Needs updating"]
-  } elseif $::have_remote {
-    .topfll.luptodate configure -text [__ "Up to date"]
-  } else {
-    .topfll.luptodate configure -text [__ "Unknown"]
-  }
-  # ... and status of update buttons
-  selective_dis_enable
+  display_updated_globals
 }
 
 # The package display treeview widget in the main window has columns
@@ -682,8 +755,12 @@ proc collect_filtered {} {
     dict lappend ::filtered $nm $v
     dict lappend ::filtered $nm [dict get $pk shortdesc]
   }
-  display_packages_info
 } ; # collect_filtered
+
+proc collect_and_display_filtered {} {
+  collect_filtered
+  display_packages_info
+}
 
 proc get_platforms {} {
   # guarantee fresh start
@@ -1061,6 +1138,9 @@ proc set_repos_in_tlmgr {} {
 }; # set_repos_in_tlmgr
 
 proc show_repos {} {
+  # this proc lists the configured repository/ies
+  # in the upper left portion of the main window.
+  # it makes one call to the back end, but no need to go online.
   set w .toprepo
   foreach ch [winfo children $w] {destroy $ch}
   set nms [array names ::repos]
@@ -1171,7 +1251,7 @@ proc save_load_repo {} {
   # reload remote package information
   set ::have_remote 0
   get_packages_info_remote
-  collect_filtered
+  collect_and_display_filtered
 }
 
 proc select_mir {m} {
@@ -1329,7 +1409,7 @@ if {$::tcl_platform(platform) ne "windows"} {
     run_cmds $cmds 1
     vwait ::done_waiting
     update_local_revnumbers
-    collect_filtered
+    collect_and_display_filtered
 
   } ; # platforms_do
 
@@ -1411,7 +1491,7 @@ proc finish_restore {} {
   # We won't wait for the log dialog to close, but we will
   # update the packages display in the main window.
   update_local_revnumbers
-  collect_filtered
+  collect_and_display_filtered
 } ; # finish_restore
 
 proc restore_all {} {
@@ -1602,7 +1682,7 @@ proc update_tlmgr {} {
   update_local_revnumbers
   .topfr.linfra configure -text \
       "tlmgr: r[dict get $::pkgs texlive.infra localrev]"
-  collect_filtered
+  collect_and_display_filtered
 } ; # update_tlmgr
 
 proc update_all {} {
@@ -1628,7 +1708,7 @@ proc update_all {} {
     vwait ::done_waiting
     update_local_revnumbers
   }
-  collect_filtered
+  collect_and_display_filtered
 } ; # update_all
 
 ### doing something with some packages
@@ -1688,7 +1768,7 @@ proc install_pkgs {sel_opt {pk ""}} {
   }
   update_local_revnumbers
   if {$sel_opt eq "marked"} {mark_all 0}
-  collect_filtered
+  collect_and_display_filtered
 } ; # install_pkgs
 
 proc update_pkgs {sel_opt {pk ""}} {
@@ -1761,7 +1841,7 @@ proc update_pkgs {sel_opt {pk ""}} {
   }
   update_local_revnumbers
   if {$sel_opt eq "marked"} {mark_all 0}
-  collect_filtered
+  collect_and_display_filtered
 } ; # update_pkgs
 
 proc remove_pkgs {sel_opt {pk ""}} {
@@ -1822,7 +1902,7 @@ proc remove_pkgs {sel_opt {pk ""}} {
   }
   update_local_revnumbers
   if {$sel_opt eq "marked"} {mark_all 0}
-  collect_filtered
+  collect_and_display_filtered
 } ; # remove_pkgs
 
 # restoring packages is a rather different story, controlled by the
@@ -1908,46 +1988,25 @@ proc set_paper {p} {
   run_cmd "paper paper $p" 1
 }
 
-proc set_language_no_restart {l} {
-  set ok 1
-  if [catch {exec kpsewhich -var-value "TEXMFCONFIG"} d] {set ok 0}
-  if $ok {
-    set d [file join $d "tlmgr"]
-    if [catch {file mkdir $d}] {set ok 0}
-  }
-  set fn [file join $d "config"]
-  set oldlines [list]
-  if {$ok && ! [catch {open $fn r} fid]} {
-    set cnt 0
-    while 1 {
-      if [catch {chan gets $fid} ll] break
-      if [chan eof $fid] break
-      incr cnt
-      if {! [regexp {^\s*gui-lang} $ll]} {
-          lappend oldlines $ll
-      }
-      if {$cnt>20} break
-    }
-    catch {chan close $fid}
-  }
-  lappend oldlines "gui-lang = $l"
-  if {$ok && ! [catch {open $fn w} fid]} {
-    foreach ll $oldlines {
-      if [catch {puts $fid $ll}] {
-        set ok 0
-        break
-      }
-    }
-    catch {chan close $fid}
-  }
-  return $ok
-} ; # set_language_no_restart
+#### gui options ####
 
 proc set_language {l} {
-  if [set_language_no_restart $l] {
-    restart_self
-  } else {
-    tk_messageBox -message [__ "Cannot set default GUI language"] -icon error
+  set ::lang $l
+  load_translations
+  rebuild_interface
+  if {! [save_config_var "gui-lang" $::lang]} {
+    tk_messageBox -message [__"Cannot save language setting"]
+  }
+}
+
+proc set_fontscale {s} {
+  set ::tkfontscale $s
+  redo_fonts
+  rebuild_interface
+  if {[dict get $::pkgs texlive.infra localrev] >= 54766} {
+    if {! [save_config_var "tkfontscale" $::tkfontscale]} {
+      tk_messageBox -message [__"Cannot save font scale setting"]
+    }
   }
 }
 
@@ -1956,7 +2015,7 @@ proc set_language {l} {
 # For capturing an external command, we need a separate output channel,
 # but we reuse ::out_log.
 # stderr is bundled with stdout so ::err_log should stay empty.
-proc read_capt {} {
+proc read_capture {} {
   set l "" ; # will contain the line to be read
   if {([catch {chan gets $::capt l} len] || [chan eof $::capt])} {
     catch {chan close $::capt}
@@ -1966,7 +2025,7 @@ proc read_capt {} {
     lappend ::out_log $l
     log_widget_add $l
   }
-}; # read_capt
+}; # read_capture
 
 proc run_external {cmd mess} {
   set ::out_log {}
@@ -1982,8 +2041,14 @@ proc run_external {cmd mess} {
     tk_messageBox -message "Failure to launch $cmd"
   }
   chan configure $::capt -buffering line -blocking 0
-  chan event $::capt readable read_capt
+  chan event $::capt readable read_capture
   log_widget_init
+}
+
+proc about_cmd {} {
+  set msg "\u00a9 2017-2020 Siep Kroonenberg\n\n"
+  append msg [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]
+  tk_messageBox -message $msg
 }
 
 proc show_help {} {
@@ -2012,7 +2077,7 @@ proc show_help {} {
 proc try_loading_remote {} {
   if {[possible_repository $::repos(main)]} {
     get_packages_info_remote
-    collect_filtered
+    collect_and_display_filtered
   } else {
     set mes [__ "%s is not a local or remote repository.
 Please configure a valid repository" $::repos(main)]
@@ -2026,9 +2091,6 @@ proc populate_main {} {
   wm withdraw .
 
   wm title . "TeX Live Shell"
-
-  # width of '0', as a rough estimate of average character width
-  set ::cw [font measure TkTextFont "0"]
 
   ## menu ##
 
@@ -2049,10 +2111,10 @@ proc populate_main {} {
     .mn configure -borderwidth 1
     .mn configure -background $::default_bg
 
-    # plain_unix: avoid a RenderBadPicture error on quitting.
-    # 'send' changes the shutdown sequence,
-    # which avoids triggering the bug.
-    # 'tk appname <something>' restores 'send' and avoids the bug
+    # plain_unix: avoid a possible RenderBadPicture error on quitting
+    # when there is a menu.
+    # 'send' bypasses the bug by changing the shutdown sequence.
+    # 'tk appname <something>' restores 'send'.
     bind . <Destroy> {
       catch {tk appname appname}
     }
@@ -2099,17 +2161,34 @@ proc populate_main {} {
 
   if {[llength $::langs] > 1} {
     incr inx
-    .mn.opt add cascade -label [__ "GUI language (restarts tlshell)"] \
+    .mn.opt add cascade -label [__ "GUI language"] \
         -menu .mn.opt.lang
     menu .mn.opt.lang
     foreach l [lsort $::langs] {
       if {$l eq $::lang} {
-        .mn.opt.lang add command -label "$l *"
+        set mlabel "$l *"
       } else {
-        .mn.opt.lang add command -label "$l" -command "set_language $l"
+        set mlabel $l
       }
+      .mn.opt.lang add command -label $mlabel \
+          -command "set_language $l"
     }
   }
+
+  incr inx
+  .mn.opt add cascade -label [__ "GUI font scaling"] \
+      -menu .mn.opt.fscale
+  menu .mn.opt.fscale
+  foreach s {0.5 0.7 1 1.25 1.5 2 3 4 6 8} {
+    if {$s eq $::tkfontscale} {
+      set mlabel "$s *"
+    } else {
+      set mlabel $s
+    }
+    .mn.opt.fscale add command -label $mlabel \
+        -command "set_fontscale $s"
+  }
+
 
   if {$::tcl_platform(platform) ne "windows"} {
     incr inx
@@ -2119,10 +2198,7 @@ proc populate_main {} {
 
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0
   menu .mn.help
-  .mn.help add command -label [__ "About"] -command {
-    tk_messageBox -message [string cat "\u00a9 2017-2019 Siep Kroonenberg
-
-" [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]]}
+  .mn.help add command -label [__ "About"] -command about_cmd
   .mn.help add command -label [__ "tlmgr help"] -command show_help
 
   ## menu end
@@ -2205,16 +2281,16 @@ proc populate_main {} {
   # filter on status: inst, all, upd
   ttk::label .pkfilter.lstat -font TkHeadingFont -text [__ "Status"]
   ttk::radiobutton .pkfilter.inst -text [__ "Installed"] -value inst \
-      -variable ::stat_opt -command collect_filtered
+      -variable ::stat_opt -command collect_and_display_filtered
   ttk::radiobutton .pkfilter.alls -text [__ "All"] -value all \
       -variable ::stat_opt -command {
         if {! $::have_remote} get_packages_info_remote
-        collect_filtered
+        collect_and_display_filtered
       }
   ttk::radiobutton .pkfilter.upd -text [__ "Updatable"] -value upd \
       -variable ::stat_opt -command {
         if {! $::have_remote} get_packages_info_remote
-        collect_filtered
+        collect_and_display_filtered
       }
   grid .pkfilter.lstat -column 0 -row 0 -sticky w -padx {3 50}
   pgrid .pkfilter.inst -column 0 -row 1 -sticky w
@@ -2224,11 +2300,11 @@ proc populate_main {} {
   # filter on detail level: all, coll, schm
   ttk::label .pkfilter.ldtl -font TkHeadingFont -text [__ "Detail >> Global"]
   ttk::radiobutton .pkfilter.alld -text [__ All] -value all \
-      -variable ::dtl_opt -command collect_filtered
+      -variable ::dtl_opt -command collect_and_display_filtered
   ttk::radiobutton .pkfilter.coll -text [__ "Collections and schemes"] \
-      -value coll -variable ::dtl_opt -command collect_filtered
+      -value coll -variable ::dtl_opt -command collect_and_display_filtered
   ttk::radiobutton .pkfilter.schm -text [__ "Only schemes"] -value schm \
-      -variable ::dtl_opt -command collect_filtered
+      -variable ::dtl_opt -command collect_and_display_filtered
   pgrid .pkfilter.ldtl -column 1 -row 0 -sticky w
   pgrid .pkfilter.alld -column 1 -row 1 -sticky w
   pgrid .pkfilter.coll -column 1 -row 2 -sticky w
@@ -2320,6 +2396,28 @@ proc populate_main {} {
   wm state . normal
 }
 
+# to be invoked at initialization and after a font scaling change
+proc rebuild_interface {} {
+  foreach c [winfo children .] {catch {destroy $c}}
+
+  # for busy/idle indicators
+  set ::busy [__ "Idle"]
+  populate_main
+  # and now redisplay all data
+  if {$::tcl_platform(platform) eq "windows"} {
+    .topfr.ladmin configure -text \
+        [expr {$::multiuser ? [__ "Multi-user"] : [__ "Single-user"]}]
+  }
+  # svns for  tlmgr and tlshell
+  .topfr.linfra configure -text \
+      "tlmgr: r[dict get $::pkgs texlive.infra localrev]"
+  .topfr.lshell configure -text \
+      "tlshell: r[dict get $::pkgs tlshell localrev]"
+  show_repos
+  display_packages_info
+  display_updated_globals
+}
+
 ##### initialize ######################################################
 
 proc initialize {} {
@@ -2367,15 +2465,8 @@ proc initialize {} {
     set ::flid [open $fname w]
   }
 
-  # languages
-  set ::langs [list "en"]
-  foreach l [glob -nocomplain -directory \
-                 [file join $::instroot "tlpkg" "translations"] *.po] {
-    lappend ::langs [string range [file tail $l] 0 end-3]
-  }
-
   # store language in tlmgr configuration
-  set_language_no_restart $::lang
+  save_config_var "gui-lang" $::lang
 
   # in case we are going to do something with json:
   # add json subdirectory to auto_path, but at low priority
@@ -2401,19 +2492,11 @@ proc initialize {} {
     foreach l $::out_log {
       if [regexp {^\s*multiuser\s+([01])\s*$} $l d ::multiuser] break
     }
-    .topfr.ladmin configure -text \
-        [expr {$::multiuser ? [__ "Multi-user"] : [__ "Single-user"]}]
   }
   get_packages_info_local
+  collect_filtered
   get_repos_from_tlmgr
-  show_repos
-  # svns for  tlmgr and tlshell
-  .topfr.linfra configure -text \
-      "tlmgr: r[dict get $::pkgs texlive.infra localrev]"
-  .topfr.lshell configure -text \
-      "tlshell: r[dict get $::pkgs tlshell localrev]"
-  collect_filtered ; # invokes display_packages_info
-  selective_dis_enable
+  rebuild_interface
 }; # initialize
 
 initialize
