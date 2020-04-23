@@ -17,7 +17,9 @@ typedef int boolean;
 typedef char* string;
 @y
 @ Furthermore we include the additional types |boolean| and |string|.
-/* boolean, false, true; string; all from cpascal.h */
+/* |boolean|, |false|, |true|; |string|; all from \.{cpascal.h} */
+@s boolean int
+@s string int
 @z
 
 @x -- we need more input files.
@@ -46,7 +48,7 @@ typedef char* string;
 #include "cpascal.h"
 #include <stdio.h>
 #include <kpathsea/kpathsea.h>
-/* Also redefine usage to avoid clash with function from lib. */
+/* Also redefine |usage| to avoid clash with function from lib. */
 #define usage tieusage
 @z
 

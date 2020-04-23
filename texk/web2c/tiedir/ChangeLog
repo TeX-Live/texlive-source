@@ -1,3 +1,7 @@
+2020-04-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctie-w2c.ch: Fix typographic deviations from original tie.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
 	* tie-w2c.w (print, print_ln): printf %s instead of direct string
