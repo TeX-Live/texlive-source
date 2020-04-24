@@ -1,4 +1,4 @@
-from match import Match
+from zzipdoc.match import Match
 
 class FunctionPrototype:
     """ takes a single function prototype line (cut from some source file)

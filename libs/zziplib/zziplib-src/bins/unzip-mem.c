@@ -231,9 +231,12 @@ static void zzip_mem_entry_direntry(ZZIP_MEM_ENTRY* entry)
     if (*name == '\n') name++;
 
     if (option_verbose) {
+	long percentage;
+
+	percentage = usize ? (L (100 - (csize*100/usize))) : 0;	/* 0% if file size is 0 */
 	printf("%8li%c %s %8li%c%3li%%  %s  %8lx  %s %s\n", 
 	       L usize, exp, comprlevel[compr], L csize, exp, 
-	       L (100 - (csize*100/usize)),
+	       percentage,
 	       _zzip_ctime(&mtime), crc32, name, comment);
     } else {
 	printf(" %8li%c %s   %s %s\n", 
@@ -317,7 +320,7 @@ main (int argc, char ** argv)
     }
     if (! strcmp (argv[1], "--version"))
     {
-	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+	printf (__FILE__ " version " ZZIP_PACKAGE_NAME " " ZZIP_PACKAGE_VERSION "\n");
 	return 0;
     }
 

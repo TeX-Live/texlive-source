@@ -22,10 +22,11 @@ changelog = @top_srcdir@/ChangeLog
 
 EXTRA_DIST = make-doc.py $(doc_FILES) $(htm_FILES) $(SDL_RWOPS) \
              make-doc.pl make-dbk.pl   mksite.sh mksite.pl body.htm \
+             dbk2man.py dir2index.py \
              $(zzipdoc_FILES) sdocbook.css \
              zziplib-manpages.dbk zziplib-master.dbk \
              zziplib-manpages.tar
-CLEANFILES = *.pc *.omf *.tar *.html *.xml
+CLEANFILES = *.pc *.omf *.tar *.html *.xml changes.htm
 DISTCLEANFILES = zziplib.spec 
 
 zzipdoc_FILES = makedocs.py               zzipdoc/__init__.py \
@@ -149,27 +150,23 @@ manpages.tar : zziplib.xml zzipmmapped.xml zzipfseeko.xml
 	;       chmod 664 man3/*.3  \
 	; echo '$(PAX_TAR_CREATE) "$@" man3/' \
 	;       $(PAX_TAR_CREATE) "$@" man3/  \
-	; echo '$(DELETE); rm man3/*.3 ; rmdir man3' \
-	;       $(DELETE); rm man3/*.3 ; rmdir man3  \
 	; fi ; true
 	@ if test "$(XMLTO)" = ":" \
 	; then echo going to regenerate "$@" in subdir "'"man"'" \
 	; echo 'test ! -d man3 || rm man3/* ; test -d man3 || mkdir man3' \
 	;       test ! -d man3 || rm man3/* ; test -d man3 || mkdir man3  \
-	; echo     '$(srcdir)/dbk2man.py -d man3 zziplib.xml' \
-	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zziplib.xml  \
-	; echo     '$(srcdir)/dbk2man.py -d man3 zzipmmapped.xml' \
-	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zzipmmapped.xml  \
-	; echo     '$(srcdir)/dbk2man.py -d man3 zzipfseeko.xml' \
-	; $(PYTHON) $(srcdir)/dbk2man.py -d man3 zzipfseeko.xml  \
+	; echo     '$(srcdir)/dbk2man.py -o man3 man zziplib.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o man3 man zziplib.xml  \
+	; echo     '$(srcdir)/dbk2man.py -o man3 man zzipmmapped.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o man3 man zzipmmapped.xml  \
+	; echo     '$(srcdir)/dbk2man.py -o man3 man zzipfseeko.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o man3 man zzipfseeko.xml  \
 	; if test -d man3/man3; then mv man3 man3_ \
 	;   mv man3_/man3 man3; rm -r man3_; fi \
 	; echo 'chmod 664 man3/*.3' \
 	;       chmod 664 man3/*.3  \
 	; echo '$(PAX_TAR_CREATE) "$@" man3/' \
 	;       $(PAX_TAR_CREATE) "$@" man3/  \
-	; echo '$(DELETE); rm man3/*.3 ; rmdir man3' \
-	;       $(DELETE); rm man3/*.3 ; rmdir man3  \
 	; fi ; true
 	@ if test -s $@ \
 	; then echo cp $@ zziplib-$@ "(saved)"; cp $@ zziplib-$@ \
@@ -182,7 +179,7 @@ htmpages.tar : zziplib.xml zzipmmapped.xml zzipfseeko.xml zziplib-manpages.dbk
 	: "html format of the manpages - put into zziplib/htdocs/man/*"
 	@ if test "$(XMLTO)" != ":" \
 	; then echo going to regenerate "$@" in subdir "'"html"'" \
-	; echo 'test ! -d html || rm /* ; test -d html || mkdir html' \
+	; echo 'test ! -d html || rm html/* ; test -d html || mkdir html' \
 	;       test ! -d html || rm html/* ; test -d html || mkdir html  \
 	; echo 'cp $(srcdir)/zziplib-manpages.dbk zziplib-manpages.xml' \
 	;       cp $(srcdir)/zziplib-manpages.dbk zziplib-manpages.xml \
@@ -190,8 +187,23 @@ htmpages.tar : zziplib.xml zzipmmapped.xml zzipfseeko.xml zziplib-manpages.dbk
 	;       $(XMLTO) -o html html zziplib-manpages.xml | tee written.lst \
 	; echo '$(PAX_TAR_CREATE) $@ html/*.*' \
 	;       $(PAX_TAR_CREATE) $@ html/*.*  \
-	; echo '$(DELETE); rm html/*.* ; rmdir html' \
-	;       $(DELETE); rm html/*.* ; rmdir html  \
+	; fi ; true
+	@ if test "$(XMLTO)" = ":" \
+	; then echo going to regenerate "$@" in subdir "'"html"'" \
+	; echo 'test ! -d html || rm html/* ; test -d html || mkdir html' \
+	;       test ! -d html || rm html/* ; test -d html || mkdir html  \
+	; echo 'cp $(srcdir)/zziplib-manpages.dbk zziplib-manpages.xml' \
+	;       cp $(srcdir)/zziplib-manpages.dbk zziplib-manpages.xml \
+	; echo     '$(srcdir)/dbk2man.py -o html html zziplib.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o html html zziplib.xml  \
+	; echo     '$(srcdir)/dbk2man.py -o html html zzipmmapped.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o html html zzipmmapped.xml  \
+	; echo     '$(srcdir)/dbk2man.py -o html html zzipfseeko.xml' \
+	; $(PYTHON) $(srcdir)/dbk2man.py -o html html zzipfseeko.xml  \
+	; echo     '$(srcdir)/dir2index.py -o html html ' \
+	; $(PYTHON) $(srcdir)/dir2index.py -o html html   \
+	; echo '$(PAX_TAR_CREATE) $@ html/*.*' \
+	;       $(PAX_TAR_CREATE) $@ html/*.*  \
 	; fi ; true
 	@ if test -s $@ \
 	; then echo cp $@ zziplib-$@ "(saved)"; cp $@ zziplib-$@ \

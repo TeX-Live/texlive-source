@@ -19,6 +19,7 @@
 #include <stdio.h>
 #endif
 
+#include <zzip/zzip32.h>
 #include <zzip/__dirent.h>
 
 #ifndef offsetof

@@ -1,5 +1,4 @@
-from match import Match
-import string
+from zzipdoc.match import Match
 
 class dbk2htm_conversion:
     mapping = { "<screen>" : "<pre>", "</screen>" : "</pre>",
@@ -9,7 +8,7 @@ class dbk2htm_conversion:
         pass
     def section2html(self, text):
         for str in self.mapping:
-            text = string.replace(text, str, self.mapping[str])
+            text = text.replace(str, self.mapping[str])
         return text
     def paramdef2html(self, text):
         s = Match()

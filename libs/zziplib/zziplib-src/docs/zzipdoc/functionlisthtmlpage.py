@@ -1,5 +1,18 @@
-from options import *
-from match import Match
+from __future__ import print_function
+
+from zzipdoc.options import *
+from zzipdoc.match import Match
+
+import os
+import os.path
+
+def short(filename):
+    while filename.startswith("../"):
+        filename = filename[3:]
+    if filename.startswith(os.sep):
+        parts = ["",""] + filename.split(os.sep)
+        return os.path.join(parts[-2], parts[-1])
+    return filename
 
 class FunctionListHtmlPage:
     """ The main part here is to create a TOC (table of contents) at the
@@ -11,9 +24,9 @@ class FunctionListHtmlPage:
     _null_table100 =  '<table border="0" width="100%"' \
                      ' cellpadding="0" cellspacing="0">'
     _ul_start = '<table width="100%">'
-    _ul_end = '</table>'
+    _ul_end = '</table>' + "\n"
     _li_start = '<tr><td valign="top">'
-    _li_end = '</td></tr>'
+    _li_end = '</td></tr>' + "\n"
     http_opengroup = "http://www.opengroup.org/onlinepubs/000095399/functions/"
     http_zlib = "http://www.zlib.net/manual.html"
     def __init__(self, o = None):
@@ -26,8 +39,8 @@ class FunctionListHtmlPage:
         if self.o is None: self.o = Options()
         self.not_found_in_anchors = []
     def cut(self):
-        self.text += ("<dt>"+self._ul_start+self.head+self._ul_end+"</dt>"+
-                      "<dd>"+self._ul_start+self.body+self._ul_end+"</dd>")
+        self.text += ("<dt>"+self._ul_start+self.head+self._ul_end+"</dt>"+"\n"+
+                      "<dd>"+self._ul_start+self.body+self._ul_end+"</dd>"+"\n")
         self.head = ""
         self.body = ""
     def add(self, entry):
@@ -35,7 +48,7 @@ class FunctionListHtmlPage:
         head_text = entry.head_xml_text()
         body_text = entry.body_xml_text(name)
         if not head_text:
-            print "no head_text for", name
+            print("no head_text for " + name)
             return
         try:
             prespec = entry.head_get_prespec()
@@ -43,20 +56,20 @@ class FunctionListHtmlPage:
             callspec = entry.head_get_callspec()
             head_text = ("<code><b><function>"+namespec+"</function></b>"
                          +callspec+" : "+prespec+"</code>")
-        except Exception, e:
+        except Exception as e:
             pass
         try:
             extraline = ""
             title = entry.get_title()
-            filename = entry.get_filename().replace("../","")
+            filename = short(entry.get_filename())
             if title:
                 subtitle = '&nbsp;<em>'+title+'</em>'
                 extraline = (self._null_table100+'<td> '+subtitle+' </td>'+
                              '<td align="right"> '+
                              '<em><small>'+filename+'</small></em>'+
-                             '</td></table>')
+                             '</td></table>' + "\n")
             body_text = extraline + body_text
-        except Exception, e:
+        except Exception as e:
             pass
         def link(text):
             return (text & Match("<function>(\w*)</function>")
@@ -102,7 +115,7 @@ class FunctionListHtmlPage:
         text &= (Match("(?s)<link>(\w+)</link>")
                  >> (lambda x: self.resolve_internal(x.group(1))))
         if len(self.not_found_in_anchors):
-            print "not found in anchors: ", self.not_found_in_anchors
+            print("not found in anchors: {}".format(self.not_found_in_anchors))
         return (text & Match("(?s)<link>([^<>]*)</link>")
                 >> "<code>\\1</code>")
     def resolve_external(self, func, sect):

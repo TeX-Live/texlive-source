@@ -19,11 +19,11 @@
 #include <stdlib.h>
 
 /* if your system does not have strnlen: */
-zzip__new__ static size_t
+static size_t
 _zzip_strnlen(const char *p, size_t maxlen)
 {
     const char * stop = (char *)memchr(p, '\0', maxlen);
-    return stop ? stop - p : maxlen;
+    return stop ? (size_t)(stop - p) : maxlen;
 }
 #endif
 
@@ -31,6 +31,7 @@ _zzip_strnlen(const char *p, size_t maxlen)
 #if defined ZZIP_HAVE_STRNDUP || defined strndup
 #define _zzip_strndup strndup
 #else
+#include <stdlib.h>
 
 /* if your system does not have strndup: */
 zzip__new__ static char *
@@ -42,7 +43,7 @@ _zzip_strndup(char const *p, size_t maxlen)
     } else 
     {
         size_t len = _zzip_strnlen(p, maxlen);
-        char* r = malloc(len + 1);
+        char* r = (char *)malloc(len + 1);
         if (r == NULL)
             return NULL; /* errno = ENOMEM */
         r[len] = '\0';

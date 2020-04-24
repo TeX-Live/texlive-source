@@ -16,10 +16,9 @@
 #include "unzzipcat-zip.h"
 #include "unzzip-states.h"
 
-static int exitcode(int e)
-{
-    return EXIT_ERRORS;
-}
+/* Functions in unzzip.c: */
+extern int exitcode(int);
+extern FILE* create_fopen(char*, char*, int);
 
 static void unzzip_big_entry_fprint(ZZIP_ENTRY* entry, FILE* out)
 {
@@ -51,35 +50,6 @@ static void unzzip_cat_file(FILE* disk, char* name, FILE* out)
 	
 	zzip_entry_fclose (file);
     }
-}
-
-static void makedirs(const char* name)
-{
-      char* p = strrchr(name, '/');
-      if (p) {
-          char* dir_name = _zzip_strndup(name, p-name);
-          makedirs(dir_name);
-          free (dir_name);
-      } 
-      if (_zzip_mkdir(name, 0775) == -1 && errno != EEXIST) 
-      {
-          DBG3("while mkdir %s : %s", name, strerror(errno));
-      }
-      errno = 0;
-}
-
-static FILE* create_fopen(char* name, char* mode, int subdirs)
-{
-   if (subdirs)
-   {
-      char* p = strrchr(name, '/');
-      if (p) {
-          char* dir_name = _zzip_strndup(name, p-name);
-          makedirs(dir_name); 
-          free (dir_name);
-      }
-   }
-   return fopen(name, mode);      
 }
 
 

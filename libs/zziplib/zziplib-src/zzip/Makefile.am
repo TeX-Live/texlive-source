@@ -66,6 +66,7 @@ EXTRA_DIST =  $(WCC10_DIST) _msvc.sed
 CONFIG_CLEAN_FILES = _config.h 
 MAINTAINERCLEANFILES = _msvc.h
 CLEANFILES = $(WCC10_CLEAN)  *.pc *.omf *~ *.tmp *.tmp.*
+DISTCLEANFILES = *-uninstalled.sh _msvc.in zziplib.pc.in
 
 # here is some backward compatibility with version 0.10.* of zziplib
 install-data-hook : install-zzipHEADERS

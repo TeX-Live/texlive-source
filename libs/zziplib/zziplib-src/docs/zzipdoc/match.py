@@ -3,7 +3,14 @@
 # @creator (C) 2003 Guido U. Draheim
 # @license http://creativecommons.org/licenses/by-nc-sa/2.0/de/
 
+from __future__ import print_function
+
 import re
+
+try:
+    basestring
+except NameError:
+    basestring = str
 
 # ---------------------------------------------------------- Regex Match()
 # beware, stupid python interprets backslashes in replace-parts only partially!
@@ -48,7 +55,7 @@ class MatchReplace:
     def __rlshift__(self, count):
         self.count = count ; return self
 
-class Match(str):
+class Match:
     """ A Match is actually a mix of a Python Pattern and MatchObject """
     def __init__(self, pattern = None, flags = None):
         """ flags is a string: 'i' for case-insensitive etc.; it is just
@@ -57,7 +64,6 @@ class Match(str):
     def __call__(self, pattern, flags = None):
         assert isinstance(pattern, str) or pattern is None
         assert isinstance(flags, str) or flags is None
-        str.__init__(self, pattern)
         self.replaced = 0 # set by subn() inside MatchReplace
         self.found = None # set by search() to a MatchObject
         self.pattern = pattern
@@ -67,6 +73,8 @@ class Match(str):
             else:
                 self.regex = re.compile(self.pattern)
         return self
+    def __repr__(self):
+        return self.pattern
     def __truth__(self):
         return self.found is not None
     def __and__(self, string):
@@ -90,14 +98,14 @@ class Match(str):
 if __name__ == "__main__":
     # matching:
     if "foo" & Match("oo"):
-        print "oo"
+        print("oo")
     x = Match()
     if "foo" & x("(o+)"):
-        print x[1]
+        print(x[1])
     # replacing:
     y = "fooboo" & Match("oo") >> "ee"
-    print y
+    print(y)
     r = Match("oo") >> "ee"
-    print "fooboo" & r
+    print("fooboo" & r)
     s = MatchReplace("oo", "ee")
-    print "fooboo" & s
+    print("fooboo" & s)

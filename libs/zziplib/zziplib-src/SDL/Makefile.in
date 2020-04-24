@@ -103,9 +103,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/ac_compile_check_sizeof.m4 \
 	$(top_srcdir)/m4/ax_cflags_warn_all.m4 \
 	$(top_srcdir)/m4/ax_check_aligned_access_required.m4 \
 	$(top_srcdir)/m4/ax_check_enable_debug.m4 \
-	$(top_srcdir)/m4/ax_configure_args.m4 \
 	$(top_srcdir)/m4/ax_create_pkgconfig_info.m4 \
-	$(top_srcdir)/m4/ax_enable_builddir.m4 \
 	$(top_srcdir)/m4/ax_expand_prefix.m4 \
 	$(top_srcdir)/m4/ax_maintainer_mode_auto_silent.m4 \
 	$(top_srcdir)/m4/ax_not_enable_frame_pointer.m4 \
@@ -304,6 +302,8 @@ PAX_TAR_CREATE = @PAX_TAR_CREATE@
 PAX_TAR_EXTRACT = @PAX_TAR_EXTRACT@
 PERL = @PERL@
 PKG_CONFIG = @PKG_CONFIG@
+PKG_CONFIG_LIBDIR = @PKG_CONFIG_LIBDIR@
+PKG_CONFIG_PATH = @PKG_CONFIG_PATH@
 PYTHON = @PYTHON@
 RANLIB = @RANLIB@
 RELEASE_INFO = @RELEASE_INFO@
@@ -337,7 +337,6 @@ am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
 am__tar = @am__tar@
 am__untar = @am__untar@
-ax_enable_builddir_sed = @ax_enable_builddir_sed@
 bindir = @bindir@
 build = @build@
 build_alias = @build_alias@
@@ -393,10 +392,10 @@ zzipsdldir = ${includedir}/SDL_rwops_zzip
 zzipsdl_DATA = SDL_rwops_zzip.c SDL_rwops_zzip.h
 EXTRA_DIST = $(sdl_DATA)
 zzcatsdl_SOURCES = SDL_rwops_zzcat.c SDL_rwops_zzip.c
-ZZIP_CFLAGS = `export PKG_CONFIG_PATH=../zzip; pkg-config zziplib --cflags` 
-ZZIP_LIBS = `export PKG_CONFIG_PATH=../zzip; pkg-config zziplib --libs`
-SDL_CFLAGS = `export PKG_CONFIG_PATH=.; pkg-config sdl --cflags` 
-SDL_LIBS = `export PKG_CONFIG_PATH=.; pkg-config sdl --libs`
+ZZIP_CFLAGS = `export PKG_CONFIG_PATH=../zzip; $(PKG_CONFIG) zziplib --cflags` 
+ZZIP_LIBS = `export PKG_CONFIG_PATH=../zzip; $(PKG_CONFIG) zziplib --libs`
+SDL_CFLAGS = `export PKG_CONFIG_PATH=.; $(PKG_CONFIG) sdl --cflags` 
+SDL_LIBS = `export PKG_CONFIG_PATH=.; $(PKG_CONFIG) sdl --libs`
 CLEANFILES = *.pc *.omf
 pkgconfig_HEADERS = SDL_rwops_zzip.pc
 ERRNULL = 2>/dev/null

@@ -1,7 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: UTF-8 -*-
-from match import Match
-from htm2dbk import *
+from __future__ import print_function
+
+from zzipdoc.match import Match
+from zzipdoc.htm2dbk import *
 
 class FunctionListReference:
     """ Creating a docbook-style <reference> list of <refentry> parts
@@ -19,7 +21,7 @@ class FunctionListReference:
         description = entry.body_xml_text(name)
         funcsynopsis = entry.head_xml_text()
         if not funcsynopsis:
-            print "no funcsynopsis for", name
+            print("no funcsynopsis for " + name)
             return
         if self.entry is None:
             self.entry = FunctionListRefEntry(entry, self.o)

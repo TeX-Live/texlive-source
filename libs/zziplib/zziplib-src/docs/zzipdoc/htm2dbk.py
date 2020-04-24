@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 """
 this file converts simple html text into a docbook xml variant. 
@@ -7,10 +7,10 @@ want is the docbook-to-pdf converter and similar technology being
 present in the world of docbook-to-anything converters. """
 
 from datetime import date
-import match
+from zzipdoc.match import Match
 import sys
 
-m = match.Match
+m = Match
 
 class htm2dbk_conversion_base:
     regexlist = [
@@ -146,8 +146,8 @@ def htm2dbk_files(args):
             doc.filename = filename
             doc.add(f.read())
             f.close()
-        except IOError, e:
-            print >> sys.stderr, "can not open "+filename
+        except IOError:
+            print("can not open "+filename, file=sys.stderr)
     return doc.value()
 
 def html2docbook(text):
@@ -155,4 +155,15 @@ def html2docbook(text):
     return htm2dbk_conversion().convert2(text)
 
 if __name__ == "__main__":
-    print htm2dbk_files(sys.argv[1:])
+    from optparse import OptionParser
+    cmdline = OptionParser("%prog [options] files...")
+    cmdline.add_option("-o", "--into", metavar="FILE", default="")
+    opt, args = cmdline.parse_args()
+    result = htm2dbk_files(args)
+    if not opt.into:
+        print(result)
+    else:
+        f = open(opt.into, "w")
+        f.write(result)
+        f.close()
+

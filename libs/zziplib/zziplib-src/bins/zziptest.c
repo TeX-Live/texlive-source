@@ -54,7 +54,7 @@ int main(int argc, char ** argv)
 	    printf ("zziptest [testfile]\n - selftest defaults to 'test.zip'");
 	    return 0;
 	}else if (! strcmp (argv[1], "--version")) {
-	    printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+	    printf (__FILE__ " version " ZZIP_PACKAGE_NAME " " ZZIP_PACKAGE_VERSION "\n");
 	    return 0;
 	}else if (! strcmp (argv[1], "--quick")) {
 	    quick = 1;

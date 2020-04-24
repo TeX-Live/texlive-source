@@ -1,3 +1,19 @@
+2020-04-14  gdraheim@github
+    * The testbuilds allow to compile and test for different os via docker
+    * The testbuilds allow to compare new cmake to automake install results
+    * Found fixes to bring base, sdl, manpages and site docs to same level
+    * release 0.13.71
+
+2020-04-14  gdraheim@github
+    * there have been tons of bugfixes over the last two years ...
+    * Thanks go to Patrick Steinhardt (then at Aservo) for python3 updates
+    * Thanks go to Josef Moellers (working at SUSE Labs) for many CVE fixes
+    * and of course all the other patches that came in via github issues.
+    * I have cleaned up sources to only uses Python3 (as needed by 2020).
+    * !!! The old automake/autconf/libtool system will be dumped soon!!!
+    * The build system was ported to 'cmake' .. (last tested cmake 3.10.2)
+    * release 0.13.70
+
 2018-03-15  guidod  <guidod@gmx.de>
     * fix a number of CVEs reported with special *.zip PoC files
     * man-pages are generated with new dbk2man.py - docbook xmlto is optional now

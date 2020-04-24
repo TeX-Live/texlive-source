@@ -70,7 +70,7 @@ static const char* comprlevel[] = {
 zzip_char_t *
 zzip_compr_str(int compr)
 {
-    if (0 <= compr && compr < LENGTH(comprlevel))
+    if (0 <= compr && (unsigned) compr < LENGTH(comprlevel))
     {
         return comprlevel[compr];
     } else if (0 < compr && compr < 256) 

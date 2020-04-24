@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current zziplib version
-m4_define([zziplib_version], [0.13.69])
+m4_define([zziplib_version], [0.13.71])

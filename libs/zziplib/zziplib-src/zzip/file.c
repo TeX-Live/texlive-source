@@ -18,6 +18,7 @@
 
 #include <zzip/format.h>
 #include <zzip/fetch.h>
+#include <zzip/zzip32.h>
 #include <zzip/__debug.h>
 
 #if 0

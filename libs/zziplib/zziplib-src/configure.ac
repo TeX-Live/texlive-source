@@ -7,7 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 # =======================================================================
 AC_CANONICAL_SYSTEM
 dnl AM_ENABLE_MULTILIB([Makefile],[$host])
-AX_ENABLE_BUILDDIR
+dnl AX_ENABLE_BUILDDIR
 AC_SET_DEFAULT_PATHS_SYSTEM
 # -----------------------------------------------------------------------
 AC_ARG_ENABLE([thread-safe],
@@ -88,7 +88,7 @@ AX_CREATE_PKGCONFIG_INFO(dnl
 AX_PAX_TAR_CREATE
 AX_PAX_TAR_EXTRACT
 AC_PATH_PROGS(PERL, perl5 perl, echo no perl found for)
-AC_PATH_PROGS(PYTHON, python, echo no python found for)
+AC_PATH_PROGS(PYTHON, python3, echo no python found for)
 AC_PATH_PROGS(MKZIP, zip pkzip, :)
 AC_PATH_PROGS(XMLTO, xmlto, :)
 
@@ -252,6 +252,7 @@ case "$enable_mmap" in
       AC_MSG_RESULT(no (just a bit slower)) ;;
 esac
 # ---------------------------------------------------------------
+PKG_PROG_PKG_CONFIG
 AC_MSG_CHECKING(whether making SDL parts)
 SDL=""
 SDL_GENERATE=""
@@ -261,13 +262,18 @@ AC_ARG_ENABLE(sdl, AC_HELP_STRING(
 if test "$enable_sdl" = "no" ; then
    AC_MSG_RESULT([no, disabled])
 else
-   enable_sdl=`pkg-config --modversion sdl 2>/dev/null`
-   if test -z "$enable_sdl"; then
-      enable_sdl=`sdl-config --version 2>/dev/null`
-      SDL_GENERATE="sdl-uninstalled.pc"
-      enable_sdl="$enable_sdl (sdl-config)"
+   enable_sdl1=`$PKG_CONFIG --modversion sdl 2>/dev/null`
+   if test -z "$enable_sdl1"; then
+      enable_sdl2=`$PKG_CONFIG --modversion sdl2 2>/dev/null`
+      if test -z "$enable_sdl2"; then
+        enable_sdl3=`sdl-config --version 2>/dev/null`
+        SDL_GENERATE="sdl-uninstalled.pc"
+        enable_sdl="$enable_sdl3 (sdl-config)"
+      else
+        enable_sdl="$enable_sdl2 (pkgconfig sdl2)"
+      fi
    else
-      enable_sdl="$enable_sdl (pkgconfig)"
+      enable_sdl="$enable_sdl1 (pkgconfig sdl)"
    fi
    enable_sdl="$enable_sdl."
    case ".$enable_sdl" in
