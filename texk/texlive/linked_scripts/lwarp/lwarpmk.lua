@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2020 Brian Dunn
 
-printversion = "v0.83"
+printversion = "v0.84"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -379,7 +379,7 @@ function removeaux ()
 -- Remove auxiliary files:
 -- All .aux files are removed since there may be many bbl*.aux files.
 -- Also removes sourcename_html.pdf, sourcename_html.html,
--- and sourcename_html.sidetoc.
+-- and sourcename_html.sidetoc, plus comment_*.cut.
 --
 os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
@@ -393,7 +393,8 @@ os.execute ( rmname .. " *.aux " ..
     sourcename .. "_html.pdf " ..
     sourcename .. "_html.html " ..
     sourcename .. "_html.sidetoc " ..
-    " *_html_inc.* "
+    " *_html_inc.* " ..
+    " comment_*.cut"
     )
 end
 
