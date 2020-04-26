@@ -1,3 +1,10 @@
+2020-04-26  Akira Kakuto  <kakuto@w32tex.org>
+
+	* readable.c, knj.c: Support very long input path name,
+	longer than _MAX_PATH for Windows, if it really exists and
+	input name is given in full-absolute path in a command line.
+	(Windows only).
+
 2020-04-10  Karl Berry  <karl@tug.org>
 
 	* version.ac: now 6.3.3/dev since TL'20 is released.

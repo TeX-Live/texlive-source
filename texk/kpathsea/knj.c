@@ -116,12 +116,35 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
-
+    unsigned char *fnn;
+    unsigned char *p;
     assert(filename && mode);
-
-    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
+/*
+  Support very long input path name, longer than _MAX_PATH for
+  Windows, if it really exists and input name is given in
+  full-absolute path in a command line.
+*/
+    fnn = xmalloc(strlen(filename) + 10);
+    if ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\')) {
+       filename += 2;
+       strcpy (fnn, "\\\\?\\UNC\\");
+       strcat (fnn, filename);
+    } else if (filename[1] == ':') {
+       strcpy (fnn, "\\\\?\\");
+       strcat (fnn, filename);
+    } else {
+       strcpy (fnn, filename);
+    }
+    for (p = fnn; *p; p++) {
+      if (*p == '/')
+         *p = '\\';
+    }
+    
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, fnn, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
+    free (fnn);
     if (f == NULL)
         FATAL_PERROR(filename);
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
@@ -149,12 +172,35 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
-
+    unsigned char *fnn;
+    unsigned char *p;
     assert(filename && mode);
+/*
+  Support very long input path name, longer than _MAX_PATH for
+  Windows, if it really exists and input name is given in
+  full-absolute path in a command line.
+*/
+    fnn = xmalloc(strlen(filename) + 10);
+    if ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\')) {
+       filename += 2;
+       strcpy (fnn, "\\\\?\\UNC\\");
+       strcat (fnn, filename);
+    } else if (filename[1] == ':') {
+       strcpy (fnn, "\\\\?\\");
+       strcat (fnn, filename);
+    } else {
+       strcpy (fnn, filename);
+    }
+    for (p = fnn; *p; p++) {
+      if (*p == '/')
+         *p = '\\';
+    }
 
-    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, fnn, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
+    free (fnn);
     if (f != NULL) {
         if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
             DEBUGF_START ();
