@@ -1,3 +1,13 @@
+2020-04-26  Karl Berry  <karl@freefriends.org>
+
+	* am/xetex.am (xetex_cppflags, xetex_ldadd, xetex_dependencies):
+	use pplib instead of poppler.
+
+2020-04-26  Akira Kakuto  <kakuto@w32tex.org>
+
+	* XeTeX_ext.c,
+	* pdfimage.cpp: use pplib instead of poppler.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.

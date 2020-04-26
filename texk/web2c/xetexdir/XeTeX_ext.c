@@ -38,9 +38,11 @@ authorization from the copyright holders.
 
 #include <w2c/config.h>
 
-#ifndef POPPLER_VERSION
-#include <poppler-config.h>
-#endif
+/* 
+ * From TeX Live 2021, we use pplib by Pawe\l Jackowski instead of
+ * libpoppler
+ */
+#include <ppapi.h>
 
 #include <png.h>
 #include <zlib.h>
@@ -170,7 +172,7 @@ void initversionstring(char **versions)
         "Compiled with Graphite2 version %d.%d.%d; using %d.%d.%d\n"
         "Compiled with HarfBuzz version %s; using %s\n"
         "Compiled with libpng version %s; using %s\n"
-        "Compiled with poppler version %s\n"
+        "Compiled with pplib version %s\n"
 #ifdef XETEX_MAC
         "Using Mac OS X Core Text and Cocoa frameworks\n"
 #else
@@ -187,7 +189,7 @@ void initversionstring(char **versions)
             + strlen(hb_version_string())
             + strlen(PNG_LIBPNG_VER_STRING)
             + strlen(png_libpng_ver)
-            + strlen(POPPLER_VERSION)
+            + strlen(pplib_version)
 #ifndef XETEX_MAC
             + 6 * 3 /* for fontconfig version #s (won't really need 3 digits per field!) */
 #endif
@@ -217,7 +219,7 @@ void initversionstring(char **versions)
         GR2_VERSION_MAJOR, GR2_VERSION_MINOR, GR2_VERSION_BUGFIX,
         grMajor, grMinor, grBugfix,
         HB_VERSION_STRING, hb_version_string(),
-        PNG_LIBPNG_VER_STRING, png_libpng_ver, POPPLER_VERSION
+        PNG_LIBPNG_VER_STRING, png_libpng_ver, pplib_version
 #ifndef XETEX_MAC
         ,
         FC_VERSION / 10000, (FC_VERSION % 10000) / 100, FC_VERSION % 100,
