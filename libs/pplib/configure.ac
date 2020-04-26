@@ -37,6 +37,19 @@ KPSE_LARGEFILE([PPLIB])
 
 KPSE_ZLIB_FLAGS
 
+AM_CONDITIONAL([build], [test "x$enable_build" != xno])
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+KPSE_ADD_FLAGS([zlib])
+AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
+KPSE_RESTORE_FLAGS
+
+echo timestamp >config.force
+fi
+
+
+
 if test "x$ac_cv_header_stdc" = xyes; then
   PPLIB_DEFINES="$PPLIB_DEFINES -DHAVE_UNISTD_H"
 fi

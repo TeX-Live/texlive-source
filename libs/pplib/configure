@@ -13915,6 +13915,36 @@ $as_echo "#define z_const /**/" >>confdefs.h
 esac
 
 
+ if test "x$enable_build" != xno; then
+  build_TRUE=
+  build_FALSE='#'
+else
+  build_TRUE='#'
+  build_FALSE=
+fi
+
+
+if test "x$enable_build" != xno || test -f config.force; then
+
+eval CPPFLAGS=\"$ZLIB_INCLUDES \$CPPFLAGS\"
+eval LIBS=\"$ZLIB_LIBS \$LIBS\"
+
+ac_fn_c_check_func "$LINENO" "zlibVersion" "ac_cv_func_zlibVersion"
+if test "x$ac_cv_func_zlibVersion" = xyes; then :
+
+else
+  as_fn_error $? "zlib not found" "$LINENO" 5
+fi
+
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS
+
+
+echo timestamp >config.force
+fi
+
+
+
 if test "x$ac_cv_header_stdc" = xyes; then
   PPLIB_DEFINES="$PPLIB_DEFINES -DHAVE_UNISTD_H"
 fi
@@ -14067,6 +14097,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then
+  as_fn_error $? "conditional \"build\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${build_TRUE}" && test -z "${build_FALSE}"; then

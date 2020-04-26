@@ -22,7 +22,7 @@ NEVER_NAMES += $(NEVER_NAMES_SUB) $(NEVER_NAMES_LT)
 
 SUBDIRS = . include
 
-AM_CPPFLAGS = -I$(top_srcdir)/$(PPLIB_TREE)/src -I$(top_srcdir)/$(PPLIB_TREE)/src/util $(PPLIB_DEFINES)
+AM_CPPFLAGS = -I$(top_srcdir)/$(PPLIB_TREE)/src -I$(top_srcdir)/$(PPLIB_TREE)/src/util $(ZLIB_INCLUDES) $(PPLIB_DEFINES)
 AM_CFLAGS = $(WARNING_CFLAGS)  $(PPLIB_CFLAGS)
 
 noinst_LIBRARIES = libpplib.a
