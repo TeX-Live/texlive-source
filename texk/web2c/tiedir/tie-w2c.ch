@@ -138,6 +138,12 @@ static boolean
 e_of_ch_preamble (file_index i)
 @z
 
+@x l.1005
+a line to write and |test_input| ist set to |none|.
+@y
+a line to write and |test_input| is set to |none|.
+@z
+
 @x
 void usage()
 {
@@ -147,6 +153,12 @@ static
 void usage (void)
 {
    print("Usage: tie -m|-c outfile master changefile(s)");
+@z
+
+@x l.1169
+change files.  The names fo the file parameters will be inserted into
+@y
+change files.  The names of the file parameters will be inserted into
 @z
 
 @x
@@ -164,6 +176,12 @@ int main (int argc, string *argv)
   print(banner); /* print a ``banner line'' */
   print_ln(versionstring);  /* Web2C version */
   print_ln(copyright); /* include the copyright notice */
+@z
+
+@x l.1256
+Additionaly we report the history to the user, although this may not
+@y
+Additionally we report the history to the user, although this may not
 @z
 
 @x
