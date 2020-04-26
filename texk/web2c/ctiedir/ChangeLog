@@ -1,3 +1,7 @@
+2020-04-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctie-k.ch: Fix several typos in ctie.w.
+
 2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* ctie-k.ch: Avoid useless char subscript warnings.

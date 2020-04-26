@@ -117,6 +117,12 @@ the \.{kpathsea} headers do the right thing.
 @d xisupper(c) (isupper((unsigned char)c)&&((unsigned char)c<0200))
 @z
 
+@x l.155
+This variable must be initialized.
+@y
+This variable must be initialised.
+@z
+
 @x l.173 The kpathsea include files must be first.
 #include <stdio.h>
 @y
@@ -143,6 +149,12 @@ too.
 @^system dependencies@>
 @z
 
+@x l.190
+files) are treated the same way.  To organize the
+@y
+files) are treated the same way.  To organise the
+@z
+
 @x l.284 way too short!
 @d max_file_name_length 60
 @y
@@ -157,12 +169,24 @@ static boolean
 get_line (file_index i, boolean do_includes)
 @z
 
+@x l.361
+replacement part of a change file, or in an incomplerte check if the
+@y
+replacement part of a change file, or in an incomplete check if the
+@z
+
 Handle input lines with CRLF
 
 @x l.376
         if ((*(k++) = c) != ' ') inp_desc->limit = k;
 @y
         if ((*(k++) = c) != ' ' && c != '\r') inp_desc->limit = k;
+@z
+
+@x l.386
+    @<Increment the line number and print a progess report at
+@y
+    @<Increment the line number and print a progress report at
 @z
 
 @x l.436
@@ -288,6 +312,12 @@ void pfatal_error (const char *s, const char *t)
     out_file=fopen(out_name, "w");
 @y
     out_file=fopen(out_name, "wb");
+@z
+
+@x l.739
+@ The name of the file and the file desciptor are stored in
+@y
+@ The name of the file and the file descriptor are stored in
 @z
 
 @x l.747 Use the kpathsea library to do this
