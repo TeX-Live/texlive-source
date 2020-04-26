@@ -1,0 +1,15 @@
+% Copyright (C) 2020 Japanese TeX Development Community
+% You may freely use, modify and/or distribute this file.
+
+\documentclass{ujarticle}
+
+% for dvipdfmx
+\AtBeginDvi{\special{pdf:mapline upjf-r unicode HaranoAjiMincho-Regular.otf}}
+\AtBeginDvi{\special{pdf:mapline upjf-g unicode HaranoAjiGothic-Regular.otf}}
+
+\begin{document}
+\pagestyle{empty}
+\font\upjf=upjf at 10pt
+\upjf あいうえおｱｲｳｴｵ、雪𠮟。
+\end{document}
+

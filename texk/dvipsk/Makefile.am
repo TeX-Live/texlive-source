@@ -117,7 +117,7 @@ TESTS = afm2tfm-test.pl
 afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
-	test-overflow-buffers.test
+	test-overflow-buffers.test uptex-vf.test
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-overflow-buffers.log: dvips$(EXEEXT)
@@ -182,6 +182,12 @@ EXTRA_DIST += overflow-color-push.dvi overflow-color-push.tex \
               overflow-epsfile.dvi overflow-epsfile.tex \
               overflow-psbox.dvi overflow-psbox.tex
 DISTCLEANFILES += overflow-color-push.ps overflow-epsfile.ps overflow-psbox.ps
+## uptex-vf.test
+EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdata/upjf.map \
+              testdata/upjf.tfm testdata/upjf-g.tfm testdata/upjf-r.tfm \
+              testdata/upjf_full.vf testdata/upjf_omit.vf \
+              testdata/upjf_full.cnf testdata/upjf_omit.cnf
+DISTCLEANFILES += upjf.vf upjf_full.ps upjf_omit.ps
 
 EXTRA_DIST += \
 	NEWS \

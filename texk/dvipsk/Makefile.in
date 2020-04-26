@@ -657,6 +657,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -719,7 +720,8 @@ dvips_TEXINFOS = contrib/config.proto dvips.help
 DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
 	eepic-nan.ps pfbincl.ps *badnews* same-name.out dvipstst.ps \
 	missfont.log mtest.ps overflow-color-push.ps \
-	overflow-epsfile.ps overflow-psbox.ps
+	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjf_full.ps \
+	upjf_omit.ps
 enc_DATA = dvips-all.enc
 prolog_DATA = $(prologues)
 dist_prologues = \
@@ -752,7 +754,11 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/dvipstst.xdv testdata/dvipstst.xps \
 	overflow-color-push.dvi overflow-color-push.tex \
 	overflow-epsfile.dvi overflow-epsfile.tex overflow-psbox.dvi \
-	overflow-psbox.tex NEWS TODO testdata/intoverflow.dvi \
+	overflow-psbox.tex testdata/Makefile_upjf testdata/upjf.tex \
+	testdata/upjf.dvi testdata/upjf.map testdata/upjf.tfm \
+	testdata/upjf-g.tfm testdata/upjf-r.tfm testdata/upjf_full.vf \
+	testdata/upjf_omit.vf testdata/upjf_full.cnf \
+	testdata/upjf_omit.cnf NEWS TODO testdata/intoverflow.dvi \
 	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
 	contrib/afm-extra contrib/colorsep.lpro contrib/configs \
 	contrib/crop.lpr contrib/latex209 contrib/treen.sh \
@@ -764,7 +770,7 @@ CLEANFILES = $(prologues) texc.lpro
 TEST_EXTENSIONS = .pl .test
 TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
-	test-overflow-buffers.test
+	test-overflow-buffers.test uptex-vf.test
 AM_TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea; export \
 	TEXMFCNF; TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG; \
 	TEXFONTS=$(srcdir)/testdata; export TEXFONTS; \

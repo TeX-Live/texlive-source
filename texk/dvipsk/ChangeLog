@@ -1,7 +1,23 @@
+2020-04-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.{am,in}, uptex-vf.test,
+	testdata/Makefile_upjf, testdata/upjf{,-r,-g}.tfm,
+	testdata/upjf.{tex,dvi,map}, testdata/upjf_{full,omit}.vf,
+	testdata/upjf_{full,omit}.cnf:
+	Add a new test for fallback of virtual fonts.
+
 2020-04-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {virtualfont,pprescan,scanpage,dopage}.c, dvips.h:
 	Fallback multibyte character in virtual font for (u)pTeX.
+	https://github.com/texjporg/tex-jp-build/issues/99
+
+	A new rule for virtual fonts are implemented:
+	If a virtual font has no entry of a codepoint and the first
+	MAPFONT designates a (u)pTeX TFM(JFM), then we designate the
+	glyph (usually with a fullwidth metric) of the same codepoint
+	in the TFM(JFM) with the smallest font ID.
+	The new rule helps to shrink size of Japanese virtual fonts.
 
 2020-04-10  Akira Kakuto  <kakuto@w32tex.org>
 
