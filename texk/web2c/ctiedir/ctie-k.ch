@@ -541,9 +541,9 @@ The directories to be searched for come from three sources:
 @ The simple file searching is replaced by the `path searching'
 mechanism that the \Kpathsea/ library provides.
 
-We set |kpse_program_name| to |"ctie"|.  This means if the variable
-|CWEBINPUTS.ctie| is present in \.{texmf.cnf} (or |CWEBINPUTS_ctie| in
-the environment) its value will be used as the search path for
+We set |kpse_program_name| to `\.{ctie}'.  This means if the variable
+\.{CWEBINPUTS.ctie} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_ctie}
+in the environment) its value will be used as the search path for
 filenames.  This allows different flavors of \.{CTIE} to have
 different search paths.
 
