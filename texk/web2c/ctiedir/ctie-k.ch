@@ -35,7 +35,7 @@ int main (int argc, string *argv)
 @x l.105 Set up kpathsea stuff
     @<Initialise parameters@>;
 @y
-    @<Set up |PROGNAME| feature and initialize the search path mechanism@>;
+    @<Set up |PROGNAME| feature and initialise the search path mechanism@>;
     @<Initialise parameters@>;
 @z
 
@@ -63,7 +63,7 @@ This version uses the \Kpathsea/ mechanism for searching files.
 The directories to be searched for come from three sources:
 
  (a)~a user-set environment variable \.{CWEBINPUTS}
-    (overriden by \.{CWEBINPUTS\_ctie});\par
+    (overridden by \.{CWEBINPUTS\_ctie});\par
  (b)~a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
     e.g. \.{CWEBINPUTS=.:$TEXMF/texmf/cweb//}
     or \.{CWEBINPUTS.ctie=.:$TEXMF/texmf/cweb//};\hangindent=2\parindent\par
@@ -81,7 +81,7 @@ the environment) its value will be used as the search path for
 filenames.  This allows different flavors of \.{CTIE} to have
 different search paths.
 
-@<Set up |PROGNAME| feature and initialize the search path mechanism@>=
+@<Set up |PROGNAME| feature and initialise the search path mechanism@>=
 kpse_set_program_name(argv[0], "ctie");
 
 @ We include the additional types |boolean| and |string|.  \.{CTIE}
