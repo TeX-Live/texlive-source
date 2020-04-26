@@ -4633,24 +4633,22 @@ xe_tangle = WEBINPUTS=.:$(srcdir)/xetexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh
 libxetex = libxetex.a
 xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir $(ICU_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(TECKIT_INCLUDES) $(HARFBUZZ_INCLUDES) \
-	$(GRAPHITE2_INCLUDES) $(POPPLER_INCLUDES) $(LIBPNG_INCLUDES) \
-	$(ZLIB_INCLUDES) -I$(srcdir)/libmd5 $(am__append_109) \
+	$(GRAPHITE2_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) \
+	$(PPLIB_INCLUDES) -I$(srcdir)/libmd5 $(am__append_109) \
 	$(am__append_111)
 xetex_ldadd = $(libxetex) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) \
-	$(ICU_LIBS) $(ICU_LIBS_EXTRA) $(TECKIT_LIBS) $(POPPLER_LIBS) \
-	$(LIBPNG_LIBS) $(FREETYPE2_LIBS) $(ZLIB_LIBS) libmd5.a \
+	$(ICU_LIBS) $(ICU_LIBS_EXTRA) $(TECKIT_LIBS) $(LIBPNG_LIBS) \
+	$(FREETYPE2_LIBS) $(ZLIB_LIBS) $(PPLIB_LIBS) libmd5.a \
 	$(am__append_112)
 xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(ICU_DEPEND) \
 	$(TECKIT_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) \
-	$(POPPLER_DEPEND) $(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) \
-	$(ZLIB_DEPEND) libmd5.a
+	$(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) $(ZLIB_DEPEND) \
+	$(PPLIB_DEPEND) libmd5.a
 @XETEX_MACOSX_TRUE@xetex_LDFLAGS = -framework ApplicationServices -framework Cocoa
 xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_151)
 xetex_CFLAGS = $(WARNING_CFLAGS)
 xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
-
-# We must create libxetex.a etc before building the xetex_OBJECTS
 xetex_prereq = $(libxetex) xetexdir/etex_version.h xetexdir/xetex_version.h
 xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
