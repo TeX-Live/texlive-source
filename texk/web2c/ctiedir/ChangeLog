@@ -2,6 +2,7 @@
 
 	* ctie-k.ch: Fix several typos in ctie.w.
 	Use British English also in the changefile.
+	Make the result TeXable, preserving section numbers.
 
 2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
