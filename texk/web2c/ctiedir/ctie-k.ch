@@ -64,6 +64,7 @@ need to define them here.
 
 @s boolean int
 @s string int
+@s const_string int
 @z
 
 @x l.129 The kpathsea include files find the right header file for these.
