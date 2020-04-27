@@ -26,9 +26,6 @@
 
 First comes general stuff:
 
-@d ctangle 0
-@d cweave 1
-@d ctwill 2
 
 @s boolean int
 @s uint8_t int
@@ -38,7 +35,10 @@ First comes general stuff:
 typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
-extern int program; /* \.{CWEAVE} or \.{CTANGLE} or \.{CTWILL}? */
+typedef enum {
+  ctangle, cweave, ctwill
+} cweb;
+extern cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
 
 @ You may have noticed that almost all \.{"strings"} in the \.{CWEB} sources

@@ -62,10 +62,6 @@ typedef bool boolean;
 /*:90*/
 #line 59 "cwebdir/common.w"
 
-#define ctangle 0
-#define cweave 1
-#define ctwill 2 \
-
 #define and_and 04
 #define lt_lt 020
 #define gt_gt 021
@@ -188,8 +184,11 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 /*2:*/
 #line 73 "cwebdir/common.w"
 
-#line 56 "cwebdir/comm-w2c.ch"
-int program;
+#line 53 "cwebdir/comm-w2c.ch"
+typedef enum{
+ctangle,cweave,ctwill
+}cweb;
+cweb program;
 #line 76 "cwebdir/common.w"
 
 /*:2*//*6:*/

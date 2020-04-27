@@ -1,3 +1,8 @@
+2020-04-27  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h: Use enum'erated program identifiers.
+
 2020-04-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweav-w2c.ch,
