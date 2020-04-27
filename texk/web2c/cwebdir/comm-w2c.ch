@@ -48,7 +48,6 @@
 @x
 typedef short boolean;
 @y
-typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 @z
