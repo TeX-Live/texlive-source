@@ -2,6 +2,7 @@
 
 	* comm-w2c.ch,
 	* comm-w2c.h: Use enum'erated program identifiers.
+	Reshuffle typedef's to fix formatting in §7 of COMMON.
 
 2020-04-16  Andreas Scherer  <https://ascherer.github.io>
 

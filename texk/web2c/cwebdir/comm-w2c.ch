@@ -43,11 +43,17 @@
 @d cweave 1
 @y
 |program|. And \.{CTWILL} adds some extra twists.
-
 @z
 
 @x
 typedef short boolean;
+@y
+typedef bool boolean;
+typedef uint8_t eight_bits;
+typedef uint16_t sixteen_bits;
+@z
+
+@x
 boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
 @y
 typedef enum {
@@ -273,8 +279,6 @@ if ((found_filename=kpse_find_cweb(change_file_name))==NULL || @|
 @x
 typedef unsigned short sixteen_bits;
 @y
-typedef uint8_t eight_bits;
-typedef uint16_t sixteen_bits;
 @z
 
 @x
