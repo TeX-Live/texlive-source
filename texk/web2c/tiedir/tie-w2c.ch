@@ -46,10 +46,64 @@ typedef char* string;
 #include <stdio.h>
 @y
 #include "cpascal.h"
-#include <stdio.h>
 #include <kpathsea/kpathsea.h>
 /* Also redefine |usage| to avoid clash with function from lib. */
 #define usage tieusage
+@z
+
+Section 16: Remove redundant #include directives.
+
+@x l.483
+This should cause no trouble in any \Cl\ program.
+@^system dependencies@>
+
+@<Global |#include|s@>=
+#ifdef __STDC__
+#include <stdlib.h>
+#else
+#include <malloc.h>
+#endif
+@y
+This should cause no trouble in any \Cl\ program.
+The \.{kpathsea} include files handle the definition of |malloc()|,
+too.
+@^system dependencies@>
+@z
+
+Sections 18 and 19: use enum as requested in tie.w
+
+@x l.530
+#define search 0
+#define test 1
+#define reading 2
+#define ignore 3
+typedef int in_file_modes; /* should be |enum(search,test,reading,ignore)| */
+#define unknown 0
+#define master 1
+#define chf 2
+typedef int file_types; /* should be |enum(unknown,master,chf)| */
+@y
+typedef enum {
+    search,
+    test,
+    reading,
+    ignore } in_file_modes;
+typedef enum {
+    unknown,
+    master,
+    chf } file_types;
+@z
+
+@x l.548
+#define normal 0
+#define pre 1
+#define post 2
+typedef int out_md_type; /* should be |enum(normal,pre,post)| */
+@y
+typedef enum {
+    normal,
+    pre,
+    post } out_md_type;
 @z
 
 @x l.617
@@ -142,6 +196,26 @@ e_of_ch_preamble (file_index i)
 a line to write and |test_input| ist set to |none|.
 @y
 a line to write and |test_input| is set to |none|.
+@z
+
+Section 48: fix indentation of nested loop.
+
+@x l.1044
+if (prod_chf==chf) {
+  loop @+ {
+    @<Test for normal, |break| when done@>@;
+    @<Test for pre, |break| when done@>@;
+    @<Test for post, |break| when done@>@;
+  }
+} else
+@y
+if (prod_chf==chf)
+  loop @+ {
+    @<Test for normal, |break| when done@>@;
+    @<Test for pre, |break| when done@>@;
+    @<Test for post, |break| when done@>@;
+  }
+else
 @z
 
 @x
