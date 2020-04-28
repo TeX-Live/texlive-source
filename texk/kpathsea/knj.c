@@ -118,19 +118,23 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
     int i;
     unsigned char *fnn;
     unsigned char *p;
+    size_t len;
+
     assert(filename && mode);
+    len = strlen(filename);
 /*
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
 */
-    fnn = xmalloc(strlen(filename) + 10);
-    if ((filename[0] == '/' && filename[1] == '/') ||
-        (filename[0] == '\\' && filename[1] == '\\' && filename[2] != '?')) {
+    fnn = xmalloc(len + 10);
+    if (len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\' &&
+         filename[2] != '?'))) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
-    } else if (filename[1] == ':') {
+    } else if (len > 2 && filename[1] == ':') {
        strcpy (fnn, "\\\\?\\");
        strcat (fnn, filename);
     } else {
@@ -174,19 +178,23 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
     int i;
     unsigned char *fnn;
     unsigned char *p;
+    size_t len;
+
     assert(filename && mode);
+    len = strlen(filename);
 /*
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
 */
-    fnn = xmalloc(strlen(filename) + 10);
-    if ((filename[0] == '/' && filename[1] == '/') ||
-        (filename[0] == '\\' && filename[1] == '\\' && filename[2] != '?')) {
+    fnn = xmalloc(len + 10);
+    if (len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\' &&
+         filename[2] != '?'))) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
-    } else if (filename[1] == ':') {
+    } else if (len > 2 && filename[1] == ':') {
        strcpy (fnn, "\\\\?\\");
        strcat (fnn, filename);
     } else {

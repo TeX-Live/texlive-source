@@ -43,19 +43,20 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   wchar_t *fnw;
   unsigned char *fnn;
   unsigned char *p;
+  size_t len = strlen(fn);
 
-  fnn = xmalloc(strlen(fn) + 10);
+  fnn = xmalloc(len + 10);
 /*
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
 */
-  if ((fn[0] == '/' && fn[1] == '/') ||
-      (fn[0] == '\\' && fn[1] == '\\' && fn[2] != '?')) {
+  if (len > 2 && ((fn[0] == '/' && fn[1] == '/') ||
+      (fn[0] == '\\' && fn[1] == '\\' && fn[2] != '?'))) {
     fn += 2;
     strcpy (fnn, "\\\\?\\UNC\\");
     strcat (fnn, fn);
-  } else if (fn[1] == ':') {
+  } else if (len > 2 && fn[1] == ':') {
     strcpy (fnn, "\\\\?\\");
     strcat (fnn, fn);
   } else {
