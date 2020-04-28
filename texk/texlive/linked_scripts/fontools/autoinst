@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20200129';
+my $VERSION = '20200428';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -127,7 +127,7 @@ for my $full (keys %ABBREV) {
     you want mapped to the "sb" code. Then add the name "hemibold" to
     the right hand side of the "sb" entry in the NFSS_WEIGHT table:
 
-        sb  =>  [ qw( semibold demi demibold medium hemibold ) ],
+        sb  =>  [ qw( semibold demibold medium hemibold ) ],
 
     In this case, since it's in last position, it's only mapped to "sb"
     if none of the other fonts are present. Put it earlier in the list
@@ -154,7 +154,7 @@ my @NFSS_WEIGHT = (
     el  =>  [ qw( extralight 200 ) ],
     l   =>  [ qw( light 300 ) ],
     sl  =>  [ qw( semilight blond ) ],
-    ''  =>  [ qw( regular text book 400 ) ],
+    ''  =>  [ qw( regular normal text book 400 ) ],
     sb  =>  [ qw( semibold demibold 600 medium 500 ) ],
     b   =>  [ qw( bold 700 ) ],
     eb  =>  [ qw( extrabold 800 ) ],
@@ -1132,7 +1132,7 @@ sub parse_options {
 
     Getopt::Long::GetOptions(
         'help|?'              =>  sub { print $USAGE; exit },
-        'version'             =>  sub { print "$VERSION\n"; exit },
+        'version'             =>  sub { exit },
         'doc'                 =>  sub { Pod::Usage::pod2usage(-verbose => 2) },
         'encoding=s'          => \$ARGV{encoding},
         'ts1!'                => \$ARGV{textcomp},
@@ -1203,13 +1203,17 @@ sub parse_options {
     delete $STYLE{Orn}           unless $ARGV{ornaments};
     delete @STYLE{qw(Numr Dnom)} unless $ARGV{fractions};
     $ARGV{inferiors} ||= 'auto';
-    if    ($ARGV{inferiors} eq 'auto') { $STYLE{Inf}{reqd} = ['auto'] }
+    if    ($ARGV{inferiors} eq 'none') { delete $STYLE{Inf} }
+    elsif ($ARGV{inferiors} eq 'auto') { $STYLE{Inf}{reqd} = ['auto'] }
     elsif ($ARGV{inferiors} eq 'subs') { $STYLE{Inf}{reqd} = ['subs'] }
     elsif ($ARGV{inferiors} eq 'sinf') { $STYLE{Inf}{reqd} = ['sinf'] }
     elsif ($ARGV{inferiors} eq 'dnom') { $STYLE{Inf}{reqd} = ['dnom'] }
     else  {
-        $ARGV{inferiors} = 'none';
-        delete $STYLE{Inf}
+        # apparently we mistook the first argument (font name) for
+        # an optional argument to -inferiors; let's undo that
+        unshift @ARGV, $ARGV{inferiors};
+        $ARGV{inferiors} = 'auto';
+        $STYLE{Inf}{reqd} = ['auto'];
     }
 
     $ARGV{encoding} =~ s/\s+//xmsg;
@@ -1247,6 +1251,9 @@ sub parse_options {
                         :                                   'rm'
                         ;
         }
+
+        # return 'Success' to avoid empty warning
+        1;
     } or warn "[WARNING]   $@";
 
     # If the user didn't explicitly say anything about ligatures,
@@ -1404,6 +1411,11 @@ sub parse_basicinfo {
     $data{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
     $data{family}    =~ s/[^A-Za-z]+//xmsg;
 
+    # remove Adobe's SmallText size, to avoid mistaking it for Text weight
+    $data{family}    =~ s/(?: SmallText | SmText )\z//xmsi;
+    $data{subfamily} =~ s/(?: SmallText | SmText )\z//xmsi;
+    $data{fullname}  =~ s/(?: SmallText | SmText )\z//xmsi;
+
     # Sometimes the relevant info is in Fullname, sometimes in Subfamily;
     # so we need to test against both
     my $fullinfo = lc "$data{subfamily} | $data{fullname}";
@@ -1476,7 +1488,7 @@ sub parse_basicinfo {
             $info->{shape}  = $UNABBREVIATE{ lc($2) } // lc($2);
         }
 
-        $shapes = join '|', mqrs( qw(sc smallcaps) );
+        $shapes = join '|', mqrs( qw(smallcaps sc smcp caps) );
         if ( $info->{family} =~ m/(.+?) ( -? ${shapes}) \z/xmsi ) {
             $info->{family}       = $1;
             $info->{is_smallcaps} = 1;
@@ -2840,7 +2852,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20200129.
+This document describes B<autoinst> version 20200428.
 
 
 =head1 RECENT CHANGES
@@ -2848,6 +2860,11 @@ This document describes B<autoinst> version 20200129.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2020-04-28>
+
+Fix a bug where the first font argument would be mistaken for
+an argument to I<-inferiors>.
 
 =item I<2020-01-29>
 

@@ -2184,6 +2184,8 @@ proc populate_main {} {
   .mn.opt add cascade -label [__ "GUI font scaling"] \
       -menu .mn.opt.fscale
   menu .mn.opt.fscale
+  .mn.opt.fscale add command -label \
+      "[__ "Current"]:  [format {%.2f} $::tkfontscale]"
   foreach s {0.6 0.8 1 1.2 1.6 2 2.5 3 3.8 5 6 7.5 9} {
     .mn.opt.fscale add command -label $s -command "set_fontscale $s"
   }
@@ -2407,6 +2409,7 @@ proc populate_main {} {
   wm protocol . WM_DELETE_WINDOW {cancel_or_destroy .q .}
   wm resizable . 1 1
   wm state . normal
+  raise .
 }
 
 # to be invoked at initialization and after a font scaling change
@@ -2509,7 +2512,6 @@ proc initialize {} {
   get_packages_info_local
   collect_filtered
   get_repos_from_tlmgr
-  rebuild_interface
 }; # initialize
 
 initialize
