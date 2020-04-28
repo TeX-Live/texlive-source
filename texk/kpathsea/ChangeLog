@@ -1,4 +1,4 @@
-2020-04-26  Akira Kakuto  <kakuto@w32tex.org>
+2020-04-28  Akira Kakuto  <kakuto@w32tex.org>
 
 	* readable.c, knj.c: Support very long input path name,
 	longer than _MAX_PATH for Windows, if it really exists and

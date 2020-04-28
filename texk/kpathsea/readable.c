@@ -51,7 +51,7 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   full-absolute path in a command line.
 */
   if ((fn[0] == '/' && fn[1] == '/') ||
-      (fn[0] == '\\' && fn[1] == '\\')) {
+      (fn[0] == '\\' && fn[1] == '\\' && fn[2] != '?')) {
     fn += 2;
     strcpy (fnn, "\\\\?\\UNC\\");
     strcat (fnn, fn);

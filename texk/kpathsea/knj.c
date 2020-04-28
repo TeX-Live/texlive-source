@@ -126,7 +126,7 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
 */
     fnn = xmalloc(strlen(filename) + 10);
     if ((filename[0] == '/' && filename[1] == '/') ||
-        (filename[0] == '\\' && filename[1] == '\\')) {
+        (filename[0] == '\\' && filename[1] == '\\' filename[2] != '?')) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
@@ -182,7 +182,7 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
 */
     fnn = xmalloc(strlen(filename) + 10);
     if ((filename[0] == '/' && filename[1] == '/') ||
-        (filename[0] == '\\' && filename[1] == '\\')) {
+        (filename[0] == '\\' && filename[1] == '\\' && filename[2] != '?')) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
