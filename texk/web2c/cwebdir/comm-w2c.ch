@@ -82,6 +82,15 @@ common_init(void)
 @z
 
 @x
+\.{ctype.h} header file.
+
+@<Include files@>=
+#include <ctype.h>
+@y
+\.{ctype.h} header file, included through the \Kpathsea/ interface.
+@z
+
+@x
 @d not_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
 @y
 @d non_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
@@ -111,6 +120,13 @@ char *id_loc; /* just after the current identifier in the buffer */
 @y
 @d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
 @d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
+@z
+
+@x
+@ @<Include files@>=
+#include <stdio.h>
+@y
+@ Most of the standard \CEE/ interface comes from \Kpathsea/.
 @z
 
 @x
@@ -323,6 +339,12 @@ The remainder of the \.{@@i} line after the file name is ignored.
         err_print("! Include file name too long"); goto restart;}
 @y
         err_print(_("! Include file name too long")); goto restart;}
+@z
+
+@x
+@<Include...@>=
+#include <stdlib.h> /* declaration of |getenv| and |exit| */
+@y
 @z
 
 @x
@@ -1127,13 +1149,10 @@ extern char* strcpy(); /* copy one string to another */
 extern int strncmp(); /* compare up to $n$ string characters */
 extern char* strncpy(); /* copy up to $n$ string characters */
 @y
-@ For string handling we include the {\mc ANSI C} system header file instead
-of predeclaring the standard system functions |strlen|, |strcmp|, |strcpy|,
-|strncmp|, and |strncpy|.
+@ For string handling we include the {\mc ANSI C} system header file---through
+the \Kpathsea/ interface---instead of predeclaring the standard system
+functions |strlen|, |strcmp|, |strcpy|, |strncmp|, and |strncpy|.
 @^system dependencies@>
-
-@<Include...@>=
-#include <string.h>
 @z
 
 @x
@@ -1176,12 +1195,12 @@ static void check_change(void);@/
 static void prime_the_change_buffer(void);@/
 
 @* Standard C library interfaces.  This updated version of \.{CWEB} uses
-standard C types for boolean values, pointers, and objects with fixed sizes.
+standard C types for boolean values, pointers, and objects with fixed sizes
+(already in \Kpathsea/).
 
 @<Include files@>=
 #include <stdbool.h> /* type definition of |bool| */
 #include <stddef.h> /* type definition of |ptrdiff_t| */
-#include <stdint.h> /* type definition of |uint8_t| et al. */
 
 @ The |scan_args| and |cb_show_banner| routines and the |bindtextdomain|
 argument string need a few extra variables.
