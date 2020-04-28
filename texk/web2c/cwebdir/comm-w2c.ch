@@ -1170,7 +1170,7 @@ section should have the same number as the original ``\&{82.~Index},'' and
 additional material follows below.
 
 @* Function declarations. Here are declarations---conforming to
-{\mc ANSI~C}---of all functions in this code that appear in |"common.h"|
+{\mc ANSI~C}---of all functions in this code that appear in \.{common.h}
 and thus should agree with \.{CTANGLE} and \.{CWEAVE}.
 
 @<Predecl...@>=
@@ -1184,7 +1184,7 @@ void print_section_name(name_pointer);@/
 void reset_input(void);@/
 void sprint_section_name(char *,name_pointer);@/
 
-@ The following functions are private to |"common.w"|.
+@ The following functions are private to \.{common.w}.
 
 @<Predecl...@>=
 static boolean input_ln(FILE *);@/
@@ -1274,7 +1274,7 @@ resulting \.{*.po} files to the maintainers at \.{tex-k@@tug.org}.
 does \\{not} set |HAVE_GETTEXT| at build-time, so \.{i18n} is ``off'' by
 default.  If you want to create \.{CWEB} executables with NLS support, you
 have to recompile the \TeX~Live sources with a positive value for
-|HAVE_GETTEXT| both in \.{"comm-w2c.ch"} and \.{"comm-w2c.h"}.  Also you
+|HAVE_GETTEXT| both in \.{comm-w2c.ch} and \.{comm-w2c.h}.  Also you
 have to ``compile'' the NLS catalogs provided for \.{CWEB} in the source
 tree with \.{msgfmt} and store the resulting \.{.mo} files at an appropriate
 place in the file system.
@@ -1348,7 +1348,7 @@ This allows different flavors of \.{CWEB} to have different search paths.
 kpse_set_program_name(argv[0], "cweb");
 
 @ When the files you expect are not found, the thing to do is to enable
-`kpathsea' runtime debugging by assigning to the |kpathsea_debug| variable a
+\Kpathsea/ runtime debugging by assigning to the |kpathsea_debug| variable a
 small number via the `\.{-d}' option. The meaning of this number is shown
 below. To set more than one debugging option, simply sum the corresponding
 numbers.
