@@ -919,8 +919,8 @@ temporary_output=1; /* Check temporary output for changes */
 file.  It may have an extension, or it may omit the extension to get |".w"| or
 |".web"| added.  The \TEX/ output file name is formed by replacing the \.{CWEB}
 @y
-file.  It may have an extension, or it may omit the extension to get |".w"|.
-The \TEX/ output file name is formed by replacing the \.{CWEB}
+file.  It may have an extension, or it may omit the extension to get |".w"|
+added.  The \TEX/ output file name is formed by replacing the \.{CWEB}
 @z
 
 @x
