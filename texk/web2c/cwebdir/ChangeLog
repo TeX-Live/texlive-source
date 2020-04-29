@@ -1,3 +1,7 @@
+2020-04-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Purge irrelevant mention of .web extension.
+
 2020-04-28  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Purge standard headers already in KPathSea.

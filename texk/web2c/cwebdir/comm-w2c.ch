@@ -916,6 +916,14 @@ temporary_output=1; /* Check temporary output for changes */
 @z
 
 @x
+file.  It may have an extension, or it may omit the extension to get |".w"| or
+|".web"| added.  The \TEX/ output file name is formed by replacing the \.{CWEB}
+@y
+file.  It may have an extension, or it may omit the extension to get |".w"|.
+The \TEX/ output file name is formed by replacing the \.{CWEB}
+@z
+
+@x
 An omitted change file argument means that |"/dev/null"| should be used,
 when no changes are desired.
 @y
