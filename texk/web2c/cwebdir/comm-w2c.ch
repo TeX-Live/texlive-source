@@ -1382,9 +1382,9 @@ cb_usagehelp(program==ctangle ? CTANGLEHELP :
   program==cweave ? CWEAVEHELP : CTWILLHELP, NULL);
 @.--help@>
 
-@ Special variants from \Kpathsea/ for i18n/t10n.
+@ Special variants from Web2c's `\.{lib/usage.c}', adapted for \.{i18n}/\.{t10n}.
 We simply filter the strings through the catalogs (if available).
-
+@s const_string int
 @c
 static void cb_usage (const_string str)
 {
