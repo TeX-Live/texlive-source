@@ -259,8 +259,12 @@ Additionally we report the history to the user, although this may not
 @z
 
 @x
+@<Print the job |history|@>=
 {string msg;
 @y
+@s const_string int
+
+@<Print the job |history|@>=
 {const_string msg;
 @z
 
