@@ -1,4 +1,5 @@
 #include "mendex.h"
+#include "version.h"
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 
@@ -18,8 +19,6 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #define DEFAULT_INDEXDICTS "."
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
-
-#define VERSION "version 0.54"
 
 int main(int argc, char **argv)
 {
@@ -174,6 +173,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-t log  take log as the error log file.\n");
 				fprintf(stderr,"-p no   set the starting page number of index.\n");
 				fprintf(stderr,"idx...  input files.\n");
+				fprintf(stderr,"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 				exit(0);
 				break;
 			}

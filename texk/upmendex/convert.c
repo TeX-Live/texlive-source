@@ -12,6 +12,9 @@
 #include "kp.h"
 
 #define BUFFERLEN 4096
+#define BUFFERLEN1 256
+#define BUFFERLEN2 (BUFFERLEN1*3)
+#define BUFFERLEN3 (BUFFERLEN2+50)
 
 struct dictionary{
 UChar* dic[2];
@@ -118,8 +121,8 @@ static int dcomp(const void *bf1, const void *bf2);
 static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 {
 	int i,j,k;
-	char buff[256],buff2[256];
-	UChar ubuff[256],ubuff2[256];
+	char buff[BUFFERLEN1],buff2[BUFFERLEN1];
+	UChar ubuff[BUFFERLEN1],ubuff2[BUFFERLEN1];
 	FILE *fp;
 
 	if(kpse_in_name_ok(filename))
@@ -143,7 +146,7 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 			i--;
 			continue;
 		}
-		multibyte_to_widechar(ubuff,256,buff2);
+		multibyte_to_widechar(ubuff,BUFFERLEN1,buff2);
 		dicval[i].dic[0]=u_xstrdup(ubuff);
 		for (;((buff[j]==' ')||(buff[j]=='\t'));j++);
 		for (k=0;((buff[j]!='\r')&&(buff[j]!='\n')&&(buff[j]!=' ')&&(buff[j]!='\t'));j++,k++) {
@@ -155,7 +158,7 @@ static int dicvalread(const char *filename, struct dictionary *dicval, int line)
 			i--;
 			continue;
 		}
-		multibyte_to_widechar(ubuff,256,buff2);
+		multibyte_to_widechar(ubuff,BUFFERLEN1,buff2);
 		convert(ubuff,ubuff2);
 		dicval[i].dic[1]=u_xstrdup(ubuff2);
 	}
@@ -173,7 +176,7 @@ static int dcomp(const void *bf1, const void *bf2)
 	const struct dictionary *buff2 = (const struct dictionary *) bf2;
 	int i;
 
-	for (i=0;i<256;i++) {
+	for (i=0;i<BUFFERLEN1;i++) {
 		if (((*buff1).dic[0][i]==L'\0')&&((*buff2).dic[0][i]==L'\0')) return 0;
 		else if (((*buff1).dic[0][i]==L'\0')&&((*buff2).dic[0][i]!=L'\0')) return 1;
 		else if (((*buff1).dic[0][i]!=L'\0')&&((*buff2).dic[0][i]==L'\0')) return -1;
@@ -187,7 +190,7 @@ static int dcomp(const void *bf1, const void *bf2)
 int convert(UChar *buff1, UChar *buff2)
 {
 	int i=0,j=0,k;
-	char errbuff[BUFFERLEN],errbuff2[BUFFERLEN];
+	char errbuff[BUFFERLEN2],errbuff2[BUFFERLEN3];
 	int wclen;
 	UChar buff3[3];
 
@@ -270,10 +273,10 @@ int convert(UChar *buff1, UChar *buff2)
 							j+=wclen;
 						}
 						else {
-							widechar_to_multibyte(errbuff2,BUFFERLEN,&buff1[i]);
-							snprintf(errbuff,BUFFERLEN,"\nError: %s is no entry in dictionary file ",errbuff2);
-							fputs(errbuff,efp);
-							if (efp!=stderr) fputs(errbuff,stderr);
+							widechar_to_multibyte(errbuff,BUFFERLEN2,&buff1[i]);
+							snprintf(errbuff2,BUFFERLEN3,"\nError: %s is no entry in dictionary file ",errbuff);
+							fputs(errbuff2,efp);
+							if (efp!=stderr) fputs(errbuff2,stderr);
 							return -1;
 						}
 					}
