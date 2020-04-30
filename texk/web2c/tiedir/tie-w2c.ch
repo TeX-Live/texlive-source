@@ -17,7 +17,7 @@ typedef int boolean;
 typedef char* string;
 @y
 @ Furthermore we include the additional types |boolean| and |string|.
-/* |boolean|, |false|, |true|; |string|; all from \.{cpascal.h} */
+/* |boolean|, |false|, |true|; |string|; all from \.{<kpathsea/simpletypes.h>} */
 @s boolean int
 @s string int
 @z
@@ -45,10 +45,9 @@ typedef char* string;
 @x -- add to global includes.
 #include <stdio.h>
 @y
-#include "cpascal.h"
+#include "cpascal.h" /* |decr| and |incr| */
 #include <kpathsea/kpathsea.h>
-/* Also redefine |usage| to avoid clash with function from lib. */
-#define usage tieusage
+#define usage tieusage /* Also redefine |usage| to avoid clash with function from lib. */
 @z
 
 Section 16: Remove redundant #include directives.
