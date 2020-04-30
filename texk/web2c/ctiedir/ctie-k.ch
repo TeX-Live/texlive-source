@@ -65,8 +65,8 @@ the original \.{WEB} system) with the standard \.{CWEB} behaviour, and
 so uses the |char| type for input and output.
 
 The \.{kpathsea} library (version 3.4.5 and higher) defines the |true|,
-|false|, |boolean| and |string| types in \.{kpathsea/types.h}, so we do not
-actually need to define them here.
+|false|, |boolean| and |string| types in \.{<kpathsea/simpletypes.h>},
+so we do not actually need to define them here.
 
 @s boolean int
 @s string int
@@ -87,7 +87,8 @@ extern char* strncpy(); /* copy up to $n$ string characters */
 extern char *strerror();
 @y
 @ We don't need to predeclare any string handling functions here, as
-the \.{kpathsea} headers do the right thing.
+the \.{kpathsea} headers do the right thing by including \.{<string.h>}
+behind the scenes.
 @z
 
 @x l.149
@@ -108,7 +109,7 @@ predefined as we include the \.{stdio.h} definitions.
 @<Global \&{\#include}s@>=
 #include <stdio.h>
 @y
-predefined as we include the \.{stdio.h} definitions
+predefined as we include the \.{<stdio.h>} definitions
 through the \.{kpathsea} interface.
 
 @<Global \&{\#include}s@>=
@@ -329,6 +330,16 @@ char *s, *t;
 void pfatal_error (const char *s, const char *t)
 @z
 
+@x l.713
+@ We need an include file for the above.
+
+@<Global \&{\#include}s@>=
+#include <errno.h>
+@y
+@ The \.{<errno.h>} include file for the above comes via the \.{kpathsea}
+interface.
+@z
+
 @x l.731 Use binary mode for output files
     out_file=fopen(out_name, "w");
 @y
@@ -482,9 +493,7 @@ usage_error (void)
 @x l.1119 Add Web2C version to banner string
 printf("%s\n", banner); /* print a ``banner line'' */
 @y
-{
-    printf("%s (%s)\n", banner, kpathsea_version_string); /* print a ``banner line'' */
-}
+printf("%s (%s)\n", banner, kpathsea_version_string); /* print a ``banner line'' */
 @z
 
 Section 63: use 'none' more than once.
@@ -556,8 +565,8 @@ print_version_and_exit (const_string name, const_string version)
     puts ("both the CTIE copyright and the GNU General Public Licence.");
     puts ("For more information about these matters, see the files");
     puts ("named COPYING and the CTIE source.");
-    puts ("Primary authors of CTIE: Julian Gilbey.");
-    puts ("Kpathsea written by Karl Berry and others.\n");
+    puts ("Primary author of CTIE: Julian Gilbey.");
+    puts ("Kpathsea written by Karl Berry and others.");
 
     exit (0);
 }
