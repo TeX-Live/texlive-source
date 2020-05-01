@@ -2432,6 +2432,7 @@ proc rebuild_interface {} {
   show_repos
   display_packages_info
   display_updated_globals
+  if {$::tcl_platform(platform) eq "windows"} {wm deiconify .}
 }
 
 ##### initialize ######################################################
