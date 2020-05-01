@@ -20,6 +20,7 @@ mendex_SOURCES = \
 	ktable.h \
 	main.c \
 	mendex.h \
+	version.h \
 	pageread.c \
 	qsort.c \
 	qsort.h \

@@ -1,4 +1,5 @@
 #include "mendex.h"
+#include "version.h"
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 #include <ptexenc/ptexenc.h>
@@ -18,8 +19,6 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #define DEFAULT_INDEXDICTS "."
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
-
-#define VERSION "version 3.2 [16-Jan-2020]"
 
 int main(int argc, char **argv)
 {
@@ -191,11 +190,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2020 Japanese TeX Development Community\n");
 				fprintf(stderr,"usage:\n");
-				fprintf(stderr,"%% mendex [-ilqrcgfEJS"
-#ifdef WIN32
-					       "T"
-#endif
-					       "U] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--] [idx0 idx1 ...]\n");
+				fprintf(stderr,"%% mendex [-ilqrcgfEJSU] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
 				fprintf(stderr,"-i      use stdin as the input file.\n");
 				fprintf(stderr,"-l      use letter ordering.\n");
@@ -216,6 +211,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-U      UTF-8 mode.\n");
 				fprintf(stderr,"-I enc  internal encoding for keywords (enc: euc or utf8).\n");
 				fprintf(stderr,"idx...  input files.\n");
+				fprintf(stderr,"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 				exit(0);
 				break;
 			}

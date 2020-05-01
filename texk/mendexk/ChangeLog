@@ -1,3 +1,9 @@
+2020-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c, version.h, Makefile.{am.in}: Add bug report addresses
+	on command line help.
+	* main.c: Remove option "T" from command line help (w32 only).
+
 2020-01-16  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac,
