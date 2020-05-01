@@ -1,6 +1,12 @@
+2020-05-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, config.h.in, dvidvi.c:
+	Add TL version to banner and bug report address to usage.
+	* tests/playout.2, tests/playout.3: Adapt.
+
 2018-05-16  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
-	* tests/palyout.2, tests/palyout.3: Adapt.
+	* tests/playout.2, tests/playout.3: Adapt.
 
 2018-05-15  Karl Berry  <karl@freefriends.org>
 
