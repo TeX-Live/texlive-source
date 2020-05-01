@@ -10,8 +10,8 @@ $(dviout_util_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
 bin_PROGRAMS = dvispc chkdvifont
 
-dvispc_SOURCES  = dvispc.c
-chkdvifont_SOURCES = chkdvifont.c dd.h msvcdir.h
+dvispc_SOURCES  = dvispc.c common.h
+chkdvifont_SOURCES = chkdvifont.c dd.h msvcdir.h common.h
 
 LDADD = $(KPATHSEA_LIBS)
 dvispc_LDADD = $(PTEXENC_LIBS) $(LDADD)
