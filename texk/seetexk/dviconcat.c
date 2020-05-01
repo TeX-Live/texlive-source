@@ -52,11 +52,7 @@ extern int optind;
 #include "search.h"
 #include <stdio.h>
 #include <ctype.h>
-
-#if defined(WIN32) && defined(KPATHSEA)
-#undef fopen
-#define fopen  fsyscp_fopen
-#endif
+#include "common.h"
 
 char *ProgName;
 
@@ -440,8 +436,12 @@ main(int argc, char **argv)
 		case '?':
 usage:
 			(void) fprintf(stderr,
+				"dviconcat  in SeeTeX Ver.%s (%s)\n", VERSION, TL_VERSION);
+			(void) fprintf(stderr,
 			    "Usage: %s [-m mag] [-o outfile] [files]\n",
 			    ProgName);
+			(void) fprintf(stderr,
+				"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 			(void) fflush(stderr);
 			exit(1);
 		}

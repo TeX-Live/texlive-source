@@ -1,3 +1,10 @@
+2020-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac: SeeTeX Ver.20200501
+	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c, common.h,
+	Makefile.{in,am}, config.h.in, error.h:
+	Show version number and bug report address in usage.
+
 2019-02-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dviconcat.c: Set DVI ID to 3 if at least one input DVI file

@@ -58,11 +58,7 @@ extern int optind;
 #include "search.h"
 #include <stdio.h>
 #include <ctype.h>
-
-#if defined(WIN32) && defined(KPATHSEA)
-#undef fopen
-#define fopen  fsyscp_fopen
-#endif
+#include "common.h"
 
 #define white(x) ((x) == ' ' || (x) == '\t' || (x) == ',')
 
@@ -571,9 +567,13 @@ main(int argc, char **argv)
 
 		case '?':
 usage:
+			(void) fprintf(stderr,
+				"dviselect  in SeeTeX Ver.%s (%s)\n", VERSION, TL_VERSION);
 			(void) fprintf(stderr, "\
 Usage: %s [-s] [-i infile] [-o outfile] pages [...] [infile [outfile]]\n",
 				ProgName);
+			(void) fprintf(stderr,
+				"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 			(void) fflush(stderr);
 			exit(1);
 		}

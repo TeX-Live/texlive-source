@@ -56,11 +56,7 @@ extern int   optind;
 #include <stdio.h>
 #include <ctype.h>
 #include "seek.h"
-
-#if defined(WIN32) && defined(KPATHSEA)
-#undef fopen
-#define fopen  fsyscp_fopen
-#endif
+#include "common.h"
 
 #define white(x) ((x) == ' ' || (x) == '\t' || (x) == ',')
 
@@ -686,9 +682,13 @@ main(int argc, char **argv)
 
 		case '?':
 usage:
+			(void) fprintf(stderr,
+				"dvitodvi  in SeeTeX Ver.%s (%s)\n", VERSION, TL_VERSION);
 			(void) fprintf(stderr, "\
 Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infile [outfile]]\n",
 				ProgName);
+			(void) fprintf(stderr,
+				"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 			(void) fflush(stderr);
 			exit(1);
 		}

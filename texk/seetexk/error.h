@@ -30,8 +30,3 @@ void	error(int quit, int e, const char *fmt, ...);
 void	panic(const char *fmt, ...);
 
 void	SetErrorTrap(void (*fn)(int quit, const char *text));
-
-#if defined(WIN32) && defined(KPATHSEA)
-#undef vfprintf
-#define vfprintf  win32_vfprintf
-#endif

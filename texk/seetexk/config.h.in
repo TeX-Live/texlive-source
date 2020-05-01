@@ -133,6 +133,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define to the current TeX Live version string. */
+#undef TL_VERSION
+
 /* Version number of package */
 #undef VERSION
 
