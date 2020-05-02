@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.12",       --TAGVERSION
-    date          = "2020-02-02", --TAGDATE
+    version       = "3.13",       --TAGVERSION
+    date          = "2020-05-01", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -42,7 +42,7 @@ This file is a wrapper for the luaotfload font names module
 (luaotfload-database.lua). It is part of the luaotfload bundle, please
 see the luaotfload documentation for more info. Report bugs to
 
-    \url{https://github.com/lualatex/luaotfload/issues}.
+    \url{https://github.com/latex3/luaotfload/issues}.
 
 --doc]]--
 
@@ -141,7 +141,7 @@ this. (Postponing the loading of the lualibs code is not an option
 because the functionality is needed by basics-gen itself.)
 --doc]]--
 
-local dummy_function = function ( ) end
+local function dummy_function ( ) end
 local backup = {
     write     = texio.write,
     write_nl  = texio.write_nl,
@@ -177,7 +177,7 @@ fonts.names      = fontsnames
 
 local require_init = { }
 
-local loadmodule = function (name)
+local function loadmodule (name)
     local v = require ("luaotfload-" .. name)
     if v then
         local mod = { }
@@ -204,7 +204,7 @@ loadmodule "resolvers"     --- Font lookup
 
 local logreport
 
-local init_modules = function ()
+local function init_modules ()
     --- NB we don’t command the logger at this point.
     local todo = #require_init
     local ret  = true
@@ -322,7 +322,7 @@ Enter 'luaotfload-tool --help' for a larger list of options.
 ]]
 }
 
-local help_msg = function (version)
+local function help_msg (version)
     local template      = help_messages[version]
     local paths         = config.luaotfload.paths
     local names_plain   = paths.index_path_lua
@@ -340,10 +340,10 @@ local about = [[
 %s:
         Luaotfload font management and diagnostic utility.
         License: GNU GPL v2.0.
-        Report problems to <https://github.com/lualatex/luaotfload/issues>
+        Report problems to <https://github.com/latex3/luaotfload/issues>
 ]]
 
-local version_msg = function ( )
+local function version_msg ( )
     local out   = function (...) texiowrite_nl (stringformat (...)) end
     local uname = os.uname ()
     local meta  = fonts.names.getmetadata ()
@@ -398,7 +398,7 @@ local currentdepth      = 0
 local counterstack      = { } -- counters per level
 local counterformat     = "%d"
 
-local format_counter = function (stack)
+local function format_counter (stack)
     local acc = { }
     for lvl=1, #stack do
         acc[#acc+1] = stringformat(counterformat, stack[lvl])
@@ -406,7 +406,7 @@ local format_counter = function (stack)
     return tableconcat(acc, ".")
 end
 
-local print_heading = function (title, level)
+local function print_heading (title, level)
     if not title then return end
     local structuredata
     if currentdepth == level then -- top is current
@@ -447,7 +447,7 @@ local baseindent = "    "
 
 --doc]]--
 
-local show_info_table show_info_table = function (t, depth)
+local function show_info_table (t, depth)
     depth           = depth or 0
     local indent    = stringrep (baseindent, depth)
     local keys      = tablesortedkeys (t)
@@ -466,7 +466,7 @@ local show_info_table show_info_table = function (t, depth)
     end
 end
 
-local show_info_items = function (fontinfo)
+local function show_info_items (fontinfo)
     print_heading (fontinfo.fullname, 1)
     texiowrite_nl ""
     show_info_table (fontinfo)
@@ -480,7 +480,7 @@ local p_word       = C(p_wordchar^1)
 local p_words      = Ct(p_word * (p_whitespace * p_word)^0)
 
 --- string -> int -> string list
-local reflow = function (text, width)
+local function reflow (text, width)
     local words
     local t_text = type (text)
     if t_text == "string" then
@@ -521,7 +521,7 @@ local reflow = function (text, width)
 end
 
 --- string -> 'a -> string list
-local print_field = function (key, val)
+local function print_field (key, val)
     val = tostring(val)
     local lhs    = stringformat(key_fmt, key) .. fieldseparator .. " "
     local wd_lhs = #lhs
@@ -558,7 +558,7 @@ local general_fields = {
     { "capheight",           "l", "capital height"      },
 }
 
-local display_general = function (fullinfo)
+local function display_general (fullinfo)
     texiowrite_nl ""
     print_heading("General Information", 2)
     texiowrite_nl ""
@@ -609,7 +609,7 @@ local display_general = function (fullinfo)
     end
 end
 
-local print_features = function (features)
+local function print_features (features)
     for tag, data in next, features do
         print_heading(tag, 4)
         for script, languages in next, data do
@@ -628,11 +628,11 @@ local print_features = function (features)
     end
 end
 
-local display_feature_set = function (set)
+local function display_feature_set (set)
     print_features(set)
 end
 
-local display_features_type = function (id, feat)
+local function display_features_type (id, feat)
     if feat and next (feat) then
         print_heading(id, 3)
         display_feature_set(feat)
@@ -641,7 +641,7 @@ local display_features_type = function (id, feat)
     return false
 end
 
-local display_features = function (features)
+local function display_features (features)
     texiowrite_nl ""
     print_heading("Features", 2)
 
@@ -661,7 +661,7 @@ local display_features = function (features)
     end
 end
 
-local show_full_info = function (path, subfont)
+local function show_full_info (path, subfont)
     local rawinfo, warn = fonts.handlers.otf.readers.loadfont (path, subfont)
     if not rawinfo then
         texiowrite_nl(stringformat([[cannot open font %s]], path))
@@ -671,8 +671,7 @@ local show_full_info = function (path, subfont)
     display_features(rawinfo.resources.features)
 end
 
-local subfont_by_name
-subfont_by_name = function (lst, askedname, n)
+local function subfont_by_name (lst, askedname, n)
     for n = 1, #lst do
         local font = lst[n]
         if fonts.names.sanitize_fontname (font.fullname) == askedname then
@@ -690,7 +689,7 @@ The font info knows two levels of detail:
         returned by readers.loadfont().
 --doc]]--
 
-local show_font_info = function (basename, askedname, detail, subfont)
+local function show_font_info (basename, askedname, detail, subfont)
     local filenames = fonts.names.data().files
     local index     = filenames.base[basename]
     local fullname  = filenames.full[index]
@@ -763,7 +762,7 @@ action_pending.generate = false --- this is the default action
 
 local actions = { } --- (jobspec -> (bool * bool)) list
 
-actions.loglevel = function (job)
+function actions.loglevel (job)
     local lvl = job.log_level
     if lvl then
         luaotfload.log.set_loglevel(lvl)
@@ -773,7 +772,7 @@ actions.loglevel = function (job)
     return true, true
 end
 
-actions.config = function (job)
+function actions.config (job)
     local defaults            = luaotfload.default_config
     local vars                = config.actions.read (job.extra_config)
     config.luaotfload         = config.actions.apply (defaults, vars)
@@ -787,22 +786,22 @@ actions.config = function (job)
     return true, true
 end
 
-actions.version = function (job)
+function actions.version (job)
     version_msg()
     return true, false
 end
 
-actions.dumpconf = function (job)
+function actions.dumpconf (job)
     config.actions.dump ()
     return true, false
 end
 
-actions.help = function (job)
+function actions.help (job)
     help_msg (job.help_version or "luaotfload-tool")
     return true, false
 end
 
-actions.blacklist = function (job)
+function actions.blacklist (job)
     fonts.names.read_blacklist()
     local n = 0
     for n, entry in next, tablesortedkeys(fonts.names.blacklist) do
@@ -811,7 +810,7 @@ actions.blacklist = function (job)
     return true, false
 end
 
-actions.generate = function (job)
+function actions.generate (job)
     local _ = fonts.names.update ({ }, job.force_reload, job.dry_run)
     local namedata = fonts.names.data ()
     if namedata then
@@ -847,7 +846,7 @@ local bisect_status_fmt  = [[
 --doc]]--
 
 --- state list -> bool
-local write_bisect_status = function (data)
+local function write_bisect_status (data)
     local payload = tableserialize (data, true)
     local status  = stringformat (bisect_status_fmt,
                                   osdate ("%Y-%m-d %H:%M:%S", os.time ()),
@@ -871,7 +870,7 @@ end
 --doc]]--
 
 --- unit -> state list
-local read_bisect_status = function ()
+local function read_bisect_status ()
     logreport ("info", 4, "bisect",
                "Testing for status file: %q.",
                bisect_status_file)
@@ -900,7 +899,7 @@ end
 
 --doc]]--
 
-local bisect_start = function ()
+local function bisect_start ()
     if lfsisfile (bisect_status_file) then
         logreport ("info", 0, "bisect",
                    "Bisect session in progress.",
@@ -929,7 +928,7 @@ end
 
 --doc]]--
 
-local bisect_stop = function ()
+local function bisect_stop ()
     logreport ("info", 3, "bisect",
                "Erasing bisection state at %s.",
                bisect_status_file)
@@ -962,7 +961,7 @@ end
 
 --doc]]--
 
-local bisect_terminate = function (nsteps, culprit)
+local function bisect_terminate (nsteps, culprit)
     logreport ("info", 1, "bisect",
                "Bisection completed after %d steps.", nsteps)
     logreport ("info", 0, "bisect",
@@ -978,7 +977,7 @@ end
 
 --doc]]--
 
-local list_remainder = function (lo, hi)
+local function list_remainder (lo, hi)
     local fonts = fonts.names.font_slice (lo, hi)
     logreport ("info", 0, "bisect", "%d fonts left.", hi - lo + 1)
     for i = 1, #fonts do
@@ -997,7 +996,7 @@ end
 
 --doc]]--
 
-local bisect_set = function (outcome)
+local function bisect_set (outcome)
     local status = read_bisect_status ()
     if not status then
         return false, false
@@ -1063,7 +1062,7 @@ end
 
 --doc]]--
 
-local bisect_status = function ()
+local function bisect_status ()
     local status = read_bisect_status ()
     if not status then
         return false, false
@@ -1092,7 +1091,7 @@ end
 
 --doc]]--
 
-local bisect_run = function ()
+local function bisect_run ()
     local status = read_bisect_status ()
     if not status then
         return false, false
@@ -1121,7 +1120,7 @@ local bisect_modes = {
     run     = bisect_run,
 }
 
-actions.bisect = function (job)
+function actions.bisect (job)
     local mode   = job.bisect
     local runner = bisect_modes[mode]
     if not runner then
@@ -1131,7 +1130,7 @@ actions.bisect = function (job)
     return runner (job)
 end
 
-actions.flush = function (job)
+function actions.flush (job)
     local success = fonts.names.flush_lookup_cache()
     if success then
         local success = fonts.names.save_lookups()
@@ -1143,7 +1142,7 @@ actions.flush = function (job)
     return false, false
 end
 
-local cache_directives = function ()
+local function cache_directives ()
     --- These exist only after initialization.
     return {
         ["purge"] = fonts.names.purge_cache,
@@ -1152,7 +1151,7 @@ local cache_directives = function ()
     }
 end
 
-actions.cache = function (job)
+function actions.cache (job)
     local directive = cache_directives()[job.cache]
     if not directive or type(directive) ~= "function" then
         logreport ("info", 2, "cache",
@@ -1165,7 +1164,7 @@ actions.cache = function (job)
     return false, false
 end
 
-actions.query = function (job)
+function actions.query (job)
 
     require "luaotfload-features"
 
@@ -1239,36 +1238,26 @@ end
 ---
 ---         --list=<criterion>          --fields=<f1>,<f2>,<f3>,...<fn>
 
-local get_fields get_fields = function (entry, fields, acc, n)
-    if not acc then
-        return get_fields (entry, fields, { }, 1)
-    end
-
-    local field = fields [n]
-    if field then
+local function get_fields (entry, fields)
+    local acc = {}
+    for n, field in ipairs(fields) do
         local chain = stringsplit (field, "->")
         local tmp   = entry
-        for i = 1, #chain - 1 do
+        for i = 1, #chain do
             tmp = tmp [chain [i]]
             if not tmp then
                 --- invalid field
                 break
             end
         end
-        if tmp then
-            local value = tmp [chain [#chain]]
-            acc[#acc+1] = value or false
-        else
-            acc[#acc+1] = false
-        end
-        return get_fields (entry, fields, acc, n+1)
+        acc[n] = tmp or false
     end
     return acc
 end
 
 local separator = "\t" --- could be “,” for csv
 
-local format_fields format_fields = function (fields, acc, n)
+local function format_fields (fields, acc, n)
     if not acc then
         return format_fields(fields, { }, 1)
     end
@@ -1285,8 +1274,7 @@ local format_fields format_fields = function (fields, acc, n)
     return tableconcat(acc, separator)
 end
 
-local set_primary_field
-set_primary_field = function (fields, addme, acc, n)
+local function set_primary_field (fields, addme, acc, n)
     if not acc then
         return set_primary_field(fields, addme, { addme }, 1)
     end
@@ -1301,7 +1289,17 @@ set_primary_field = function (fields, addme, acc, n)
     return acc
 end
 
-actions.list = function (job)
+local function sane_pattern (p)
+    local l = lpeg or require'lpeg'
+    local special = l.Cg(l.P'*' * l.Cc'.*')
+    local pattern = l.Cs(l.Cc'^' * (special + (1 - special)^1/fonts.names.sanitize_fontname)^0 * l.Cc'$')
+    function sane_pattern (p)
+        return pattern:match(p)
+    end
+    return sane_pattern(p)
+end
+
+function actions.list (job)
     local criterion     = job.criterion
     local asked_fields  = job.asked_fields
     local name_index    = fonts.names.data ()
@@ -1336,6 +1334,7 @@ actions.list = function (job)
     else
         criterion = stringexplode(criterion, ":") --> { field, value }
         local asked_value  = criterion[2]
+        local sane_asked_pattern = sane_pattern(criterion[2])
         criterion          = criterion[1]
         asked_fields       = set_primary_field(asked_fields, criterion)
 
@@ -1347,8 +1346,9 @@ actions.list = function (job)
             logreport (false, 2, "list", "Restricting to value %s", asked_value)
             for i=1, nmappings do
                 local entry = mappings[i]
-                if  entry[criterion]
-                and tostring(entry[criterion]) == asked_value
+                local entryvalue = tostring(entry[criterion])
+                if entryvalue
+                and (entryvalue == asked_value or entryvalue:match(sane_asked_pattern))
                 then
                     targets[#targets+1] = entry
                 end
@@ -1405,7 +1405,7 @@ actions.list = function (job)
     return true, true
 end
 
-actions.diagnose = function (job)
+function actions.diagnose (job)
     --- diagnostics are loaded on demand
     local diagnose = require "luaotfload-diagnostics.lua"
     return diagnose (job)
@@ -1417,7 +1417,7 @@ local finalizers = { }
 
 --- returns false if at least one of the actions failed, mainly
 --- for closing io channels
-local finalize = function ()
+local function finalize ()
     local success = true
     for _, fun in next, finalizers do
         if type (fun) == "function" then
@@ -1437,7 +1437,7 @@ environment.* namespace that could eliminate the dependency on
 alt_getopt.
 --]]--
 
-local process_cmdline = function ( ) -- unit -> jobspec
+local function process_cmdline ( ) -- unit -> jobspec
     local result = { -- jobspec
         force_reload = nil,
         full_info    = false,
@@ -1612,7 +1612,7 @@ local process_cmdline = function ( ) -- unit -> jobspec
     return result
 end
 
-local main = function ( ) -- unit -> int
+local function main ( ) -- unit -> int
     if init_modules () == false then return -42 end
 
     local retval    = 0
