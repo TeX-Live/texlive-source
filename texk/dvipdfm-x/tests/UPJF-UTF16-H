@@ -1,0 +1,71 @@
+%!PS-Adobe-3.0 Resource-CMap
+%%DocumentNeededResources: ProcSet (CIDInit)
+%%IncludeResource: ProcSet (CIDInit)
+%%BeginResource: CMap (UPJF-UTF16-H)
+%%Title: (UPJF-UTF16-H test sample)
+%%Version: 1.000
+%%Copyright: -----------------------------------------------------------
+%%Copyright: Copyright 2017-2020 Japanese TeX Development Community
+%%Copyright:
+%%Copyright: You may freely use, modify and/or distribute this file.
+%%Copyright: -----------------------------------------------------------
+%%EndComments
+
+/CIDInit /ProcSet findresource begin
+
+12 dict begin
+
+begincmap
+
+/CIDSystemInfo 3 dict dup begin
+  /Registry (Adobe) def
+  /Ordering (Japan1) def
+  /Supplement 7 def
+end def
+
+/CMapName /UPJF-UTF16-H def
+/CMapVersion 1.000 def
+/CMapType 1 def
+
+/WMode 0 def
+
+3 begincodespacerange
+  <0000>     <D7FF>
+  <D800DC00> <DBFFDFFF>
+  <E000>     <FFFF>
+endcodespacerange
+
+1 beginnotdefrange
+<0000> <001f> 1
+endnotdefrange
+
+3 begincidchar
+<6674> 2646
+<96ea> 2695
+<d842df9f> 13803
+endcidchar
+
+14 begincidrange
+<2600> <2603> 8215
+<3000> <3002> 633
+<3005> <3007> 657
+<3008> <3011> 682
+<3014> <3015> 676
+<3016> <3017> 16197
+<3018> <3019> 12129
+<3033> <3035> 12108
+<3041> <3093> 842
+<3094> <3096> 7958
+<3099> <309a> 16326
+<309b> <309c> 643
+<309d> <309e> 653
+<ff61> <ff9f> 327
+endcidrange
+
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+
+%%EndResource
+%%EOF

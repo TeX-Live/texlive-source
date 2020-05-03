@@ -413,12 +413,12 @@ void vf_set_char(int32_t ch, int vf_font)
     dvi_vf_init (default_font);
     if (ch >= vf_fonts[vf_font].num_chars ||
 	!(start = (vf_fonts[vf_font].ch_pkt)[ch])) {
-      if (tfm_is_jfm((vf_fonts[vf_font].dev_fonts[0]).tfm_id) &&
+      if (tfm_is_jfm(vf_fonts[vf_font].dev_fonts[0].tfm_id) &&
           ch < 0x1000000 && dpx_conf.compat_mode != dpx_mode_xdv_mode) {
         /* fallback multibyte character for (u)pTeX */
         if (dpx_conf.verbose_level > 0)
-	  WARN ("Fallback multibyte character in virtual font: name=%s char=0x%06x(%d)",
-	    vf_fonts[vf_font].tex_name, ch, ch);
+	  WARN ("Fallback multibyte character in virtual font: VF:%s char=0x%06x(%d) to TFM:%s",
+	    vf_fonts[vf_font].tex_name, ch, ch, vf_fonts[vf_font].dev_fonts[0].name);
         dvi_set (ch);
         dvi_vf_finish();
         return;

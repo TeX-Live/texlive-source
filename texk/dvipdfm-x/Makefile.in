@@ -628,6 +628,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -817,11 +818,11 @@ cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
-	ttc*.pdf
+	ttc*.pdf upjf.vf upjf*.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
 	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
-	xdvipdfm-ttc.test
+	xdvipdfm-ttc.test dvipdfmx-upjf.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
 	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
@@ -837,7 +838,11 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/picpdf.xbb tests/bookm.dvi tests/bookm.tex \
 	tests/paper.dvi tests/paper.tex tests/ptex.dvi tests/resrc.dvi \
 	tests/resrc.tex tests/reverse.dvi tests/ttc.dvi tests/ttc.tex \
-	tests/test.ttc tests/fullmap.dvi tests/fullmap.tex
+	tests/test.ttc tests/upjf.dvi tests/upjf.tex tests/upjf.map \
+	tests/Makefile_upjf tests/upjf_full.cnf tests/upjf_omit.cnf \
+	tests/upjf_full.vf tests/upjf_omit.vf tests/upjf-r.tfm \
+	tests/upjf-g.tfm tests/upjf.tfm tests/UPJF-UTF16-H \
+	tests/fullmap.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

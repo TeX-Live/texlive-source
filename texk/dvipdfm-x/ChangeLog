@@ -1,3 +1,12 @@
+2020-05-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvipdfmx-upjf.test, Makefile.{am,in},
+	tests/Makefile_upjf, tests/upjf{,-r,-g}.tfm,
+	tests/upjf.{tex,dvi,map}, tests/upjf_{full,omit}.vf,
+	tests/upjf_{full,omit}.cnf, tests/UPJF-UTF16-H:
+	Add a new test for fallback of virtual fonts.
+	* vf.c: Tweak debugging message for fallback of virtual fonts.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.
@@ -7,6 +16,14 @@
 	* tfm.c, tfm.h, vf.c: Fallback multibyte character
 	in virtual font for (u)pTeX.
 	* configure.ac: version 20200315.
+	https://github.com/texjporg/tex-jp-build/issues/99
+
+	A new rule for virtual fonts are implemented:
+	If a virtual font has no entry of a codepoint and the first
+	MAPFONT designates a (u)pTeX TFM(JFM), then we designate the
+	glyph (usually with a fullwidth metric) of the same codepoint
+	in the TFM(JFM) with the smallest font ID.
+	The new rule helps to shrink size of Japanese virtual fonts.
 
 2020-02-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
