@@ -1959,7 +1959,7 @@ begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| 
   cur_cs := warning_index; {for possible runaway error}
   {mimick |call_func| from pdfTeX}
   if scan_toks(false, true) <> 0 then do_nothing; {actually do the scanning}
-  {s := tokens_to_string(def_ref);}
+  {|s := tokens_to_string(def_ref);|}
   old_setting := selector; selector:=new_string;
   show_token_list(link(def_ref),null,pool_size-pool_ptr);
   selector := old_setting;
