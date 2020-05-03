@@ -12,7 +12,7 @@
 	Fallback multibyte character in virtual font for (u)pTeX.
 	https://github.com/texjporg/tex-jp-build/issues/99
 
-	A new rule for virtual fonts are implemented:
+	A new rule for virtual fonts is implemented:
 	If a virtual font has no entry of a codepoint and the first
 	MAPFONT designates a (u)pTeX TFM(JFM), then we designate the
 	glyph (usually with a fullwidth metric) of the same codepoint
