@@ -378,6 +378,9 @@ for i:=0 to @'377 do id_class[i] := legal_id_char;
 @z
 
 @x [38] File opening.
+@
+@^system dependencies@>
+@:PASCAL H}{\ph@>
 The \ph\ compiler with which the present version of \TeX\ was prepared has
 extended the rules of \PASCAL\ in a very convenient way. To open file~|f|,
 we can write
