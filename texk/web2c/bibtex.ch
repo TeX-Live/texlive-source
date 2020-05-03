@@ -415,7 +415,8 @@ end;
 @y
 @ File opening will be done in C. But we want an auxiliary function to
 change a \BibTeX\ string into a C string, to keep string pool stuff
-out of the C code in @.{lib/openclose.c}.
+out of the C code in \.{lib/openclose.c}.
+@.lib/openclose.c@>
 
 @d no_file_path = -1
 
