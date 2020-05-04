@@ -4427,7 +4427,7 @@ var j:small_number; {write stream number}
 @* \[54/web2c] System-dependent changes for Web2c.
 Here are extra variables for Web2c.  (This numbering of the
 system-dependent section allows easy integration of Web2c and e-\TeX, etc.)
-@^<system dependencies@>
+@^system dependencies@>
 
 @<Glob...@>=
 @!edit_name_start: pool_pointer; {where the filename to switch to starts}
