@@ -672,8 +672,8 @@ undump_checked_things(0, pool_ptr, str_start_macro(too_big_char), str_ptr+1-too_
   if is_native_font(k) or (font_mapping[k]<>0) then
     begin print_file_name(font_name[k],"","");
     print_err("Can't \dump a format with native fonts or font-mappings");
-    help3("You really, really don't want to do this.")
-    ("It won't work, and only confuses me.")
+    help3("You really, really don't want to do this.")@/
+    ("It won't work, and only confuses me.")@/
     ("(Load them at runtime, not as part of the format file.)");
     error;
     end
