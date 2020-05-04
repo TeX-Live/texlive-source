@@ -415,18 +415,6 @@ for j:=1 to n do append_to_name(TEX_format_default[j]);
 @y
 @z
 
-@x [29.526] - scan a bgroup/egroup-delimited file name
-  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
-  begin_name;
-  for i:=str_start[s] to str_start[s+1]-1 do
-    dummy := more_name(str_pool[i]); {add each read character to the current file name}
-@y
-  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
-  begin_name;
-  for i:=str_start_macro(s) to str_start_macro(s+1)-1 do
-    dummy := more_name(str_pool[i]); {add each read character to the current file name}
-@z
-
 @x [29.536] l.10331
   wlog(' (');
   fputs(translate_filename, log_file);
@@ -951,4 +939,16 @@ effective_char_info:=null_character;
 exit:end;
 @#
 @<Declare subroutines for |new_character|@>@;
+@z
+
+@x [54/web2c.1407] - scan a bgroup/egroup-delimited file name
+  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
+  begin_name;
+  for i:=str_start[s] to str_start[s+1]-1 do
+    dummy := more_name(str_pool[i]); {add each read character to the current file name}
+@y
+  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
+  begin_name;
+  for i:=str_start_macro(s) to str_start_macro(s+1)-1 do
+    dummy := more_name(str_pool[i]); {add each read character to the current file name}
 @z

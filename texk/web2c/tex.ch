@@ -1493,30 +1493,6 @@ aligning:begin print(" while scanning preamble"); info(p):=right_brace_token+"}"
 absorbing:begin print(" while scanning text"); info(p):=right_brace_token+"}";
 @z
 
-@x [25.366] expansion depth check
-The |expand| subroutine is used when |cur_cmd>max_command|. It removes a
-@y
-@ Sometimes, recursive calls to the following |expand| routine may
-cause exhaustion of the run-time calling stack, resulting in
-forced execution stops by the operating system. To diminish the chance
-of this happening, a counter is used to keep track of the recursion
-depth, in conjunction with a constant called |expand_depth|.
-
-This does not catch all possible infinite recursion loops, just the ones
-that exhaust the application calling stack. The actual maximum value of
-|expand_depth| is outside of our control, but the initial setting of
-|10000| should be enough to prevent problems.
-@^system dependencies@>
-
-@<Global...@>=
-expand_depth_count:integer;
-
-@ @<Set init...@>=
-expand_depth_count:=0;
-
-@ The |expand| subroutine is used when |cur_cmd>max_command|. It removes a
-@z
-
 @x [25.366]
 begin cv_backup:=cur_val; cvl_backup:=cur_val_level; radix_backup:=radix;
 @y
@@ -1930,53 +1906,6 @@ end;
   end;
 done: end_name; name_in_progress:=false;
 warning_index := save_warning_index; {restore |warning_index|}
-end;
-
-@ When |scan_file_name| starts it looks for a |left_brace|
-(skipping \.{\\relax}es, as other \.{\\toks}-like primitives).
-If a |left_brace| is found, then the procedure scans a file
-name contained in a balanced token list, expanding tokens as
-it goes. When the scanner finds the balanced token list, it
-is converted into a string and fed character-by-character to
-|more_name| to do its job the same as in the ``normal'' file
-name scanning.
-
-@p procedure scan_file_name_braced;
-var
-  @!save_scanner_status: small_number; {|scanner_status| upon entry}
-  @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}}
-  @!save_cur_cs: pointer;
-  @!s: str_number; {temp string}
-  @!p: pointer; {temp pointer}
-  @!i: integer; {loop tally}
-  @!save_stop_at_space: boolean; {this should be in tex.ch}
-  @!dummy: boolean;
-    {Initialising}
-begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| to |absorbing|}
-  save_def_ref := def_ref; {|scan_toks| uses |def_ref| to point to the token list just read}
-  save_cur_cs := cur_cs; {we set |cur_cs| back a few tokens to use in runaway errors}
-    {Scanning a token list}
-  cur_cs := warning_index; {for possible runaway error}
-  {mimick |call_func| from pdfTeX}
-  if scan_toks(false, true) <> 0 then do_nothing; {actually do the scanning}
-  {|s := tokens_to_string(def_ref);|}
-  old_setting := selector; selector:=new_string;
-  show_token_list(link(def_ref),null,pool_size-pool_ptr);
-  selector := old_setting;
-  s := make_string;
-  {turns the token list read in a string to input}
-    {Restoring some variables}
-  delete_token_ref(def_ref); {remove the token list from memory}
-  def_ref := save_def_ref; {and restore |def_ref|}
-  cur_cs := save_cur_cs; {restore |cur_cs|}
-  scanner_status := save_scanner_status; {restore |scanner_status|}
-    {Passing the read string to the input machinery}
-  save_stop_at_space := stop_at_space; {save |stop_at_space|}
-  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
-  begin_name;
-  for i:=str_start[s] to str_start[s+1]-1 do
-    dummy := more_name(str_pool[i]); {add each read character to the current file name}
-  stop_at_space := save_stop_at_space; {restore |stop_at_space|}
 end;
 @z
 
@@ -4990,6 +4919,76 @@ end;
 begin
     get_nullstr := "";
 end;
+
+
+@* \[54/web2c] More changes for Web2c.
+% Related to [25.366] expansion depth check
+Sometimes, recursive calls to the |expand| routine may
+cause exhaustion of the run-time calling stack, resulting in
+forced execution stops by the operating system. To diminish the chance
+of this happening, a counter is used to keep track of the recursion
+depth, in conjunction with a constant called |expand_depth|.
+
+This does not catch all possible infinite recursion loops, just the ones
+that exhaust the application calling stack. The actual maximum value of
+|expand_depth| is outside of our control, but the initial setting of
+|10000| should be enough to prevent problems.
+@^system dependencies@>
+
+@<Global...@>=
+expand_depth_count:integer;
+
+@ @<Set init...@>=
+expand_depth_count:=0;
+
+@ % Related to [29.526] expansion depth check
+When |scan_file_name| starts it looks for a |left_brace|
+(skipping \.{\\relax}es, as other \.{\\toks}-like primitives).
+If a |left_brace| is found, then the procedure scans a file
+name contained in a balanced token list, expanding tokens as
+it goes. When the scanner finds the balanced token list, it
+is converted into a string and fed character-by-character to
+|more_name| to do its job the same as in the ``normal'' file
+name scanning.
+
+@p procedure scan_file_name_braced;
+var
+  @!save_scanner_status: small_number; {|scanner_status| upon entry}
+  @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}}
+  @!save_cur_cs: pointer;
+  @!s: str_number; {temp string}
+  @!p: pointer; {temp pointer}
+  @!i: integer; {loop tally}
+  @!save_stop_at_space: boolean; {this should be in tex.ch}
+  @!dummy: boolean;
+    {Initialising}
+begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| to |absorbing|}
+  save_def_ref := def_ref; {|scan_toks| uses |def_ref| to point to the token list just read}
+  save_cur_cs := cur_cs; {we set |cur_cs| back a few tokens to use in runaway errors}
+    {Scanning a token list}
+  cur_cs := warning_index; {for possible runaway error}
+  {mimick |call_func| from pdfTeX}
+  if scan_toks(false, true) <> 0 then do_nothing; {actually do the scanning}
+  {|s := tokens_to_string(def_ref);|}
+  old_setting := selector; selector:=new_string;
+  show_token_list(link(def_ref),null,pool_size-pool_ptr);
+  selector := old_setting;
+  s := make_string;
+  {turns the token list read in a string to input}
+    {Restoring some variables}
+  delete_token_ref(def_ref); {remove the token list from memory}
+  def_ref := save_def_ref; {and restore |def_ref|}
+  cur_cs := save_cur_cs; {restore |cur_cs|}
+  scanner_status := save_scanner_status; {restore |scanner_status|}
+    {Passing the read string to the input machinery}
+  save_stop_at_space := stop_at_space; {save |stop_at_space|}
+  stop_at_space := false; {set |stop_at_space| to false to allow spaces in file names}
+  begin_name;
+  for i:=str_start[s] to str_start[s+1]-1 do
+    dummy := more_name(str_pool[i]); {add each read character to the current file name}
+  stop_at_space := save_stop_at_space; {restore |stop_at_space|}
+end;
+
 
 @* \[55] Index.
 @z
