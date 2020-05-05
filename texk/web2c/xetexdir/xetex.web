@@ -24443,8 +24443,8 @@ collected:
       if (native_font(main_pp) = main_f) then begin
         main_p := link(main_pp);
 
-        { Skip nodes that should be invisible to inter-word spacing,
-          so that e.g. \.{\\nobreak\\ } doesn't prevent contextual measurement.
+	{ Skip nodes that should be invisible to inter-word spacing, so that
+          e.g., `\.{\\nobreak\\ }' doesn't prevent contextual measurement.
           This loop is guaranteed to end safely because it'll eventually hit
           |tail|, which is a |native_word| node, if nothing else intervenes. }
         while node_is_invisible_to_interword_space(main_p) do
