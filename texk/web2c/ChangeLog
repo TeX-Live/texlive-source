@@ -1,3 +1,11 @@
+2020-05-04  Andreas Scherer  <https://ascherer.github.io>
+
+	* tex.ch: Restore section numbering from tex.web.
+
+2020-05-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* bibtex.ch: Restore section numbering from bibtex.web.
+
 2020-04-28  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: Purge standard headers already in KPathSea.

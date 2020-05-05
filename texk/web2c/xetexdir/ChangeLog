@@ -1,3 +1,10 @@
+2020-05-04  Andreas Scherer  <https://ascherer.github.io>
+
+	* xetex.ch,
+	* xetex.web: Restore section numbering from xetex.web.
+	XeTeX can format itself, both stand-alone and as TL variant
+	(only \beginR and \endR are problematic).
+
 2020-04-26  Karl Berry  <karl@freefriends.org>
 
 	* am/xetex.am (xetex_cppflags, xetex_ldadd, xetex_dependencies):
