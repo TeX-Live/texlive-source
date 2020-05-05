@@ -12,7 +12,7 @@
 % (12/21/87) ETM Brought up to TeX 2.7
 % (01/14/88) ETM Brought up to TeX 2.9
 % (02/20/88) PAM Revised format and module numbers
-% (03/01/88) ETM Eliminated some unused variables and unnecesary tests
+% (03/01/88) ETM Eliminated some unused variables and unnecessary tests
 % (05/09/88) ETM Added yet another casting bug fix
 % (06/21/88) ETM Brought up to TeX version 2.93
 % (12/11/88) ETM Brought up to TeX version 2.94
@@ -554,7 +554,7 @@ tini@/
 @!font_max:integer; {maximum internal font number; ok to exceed |max_quarterword|
   and must be at most |font_base|+|max_font_max|}
 @!font_k:integer; {loop variable for initialization}
-@!hyph_size:integer; {maximun number of hyphen exceptions}
+@!hyph_size:integer; {maximum number of hyphen exceptions}
 @!trie_size:integer; {space for hyphenation patterns; should be larger for
   \.{INITEX} than it is in production versions of \TeX.  50000 is
   needed for English, German, and Portuguese.}
@@ -975,7 +975,7 @@ So they have been simplified here in the obvious way.
 @^inner loop@>@^system dependencies@>
 
 The \.{WEB} source for \TeX\ defines |hi(#)==#+min_halfword| which can be
-simplified when |min_halfword=0|.  The Web2C implemetation of \TeX\ can use
+simplified when |min_halfword=0|.  The Web2C implementation of \TeX\ can use
 |hi(#)==#| together with |min_halfword<0| as long as |max_halfword| is
 sufficiently large.
 
@@ -2511,7 +2511,7 @@ have spliced appropriate character, kern, and box nodes into the
 horizontal list.
 %
 % 91/05/08 \charsubdefmax bug detected by Bernd Raichle
-Because the user can change character substitions or
+Because the user can change character substitutions or
 \.{\\charsubdefmax} on the fly, we have to test a again
 for valid substitutions.
 %
@@ -2708,7 +2708,7 @@ and |v:=hyf_next[v]|; repeat, if necessary, until |v=min_trie_op|.
 @ For more than 255 trie op codes, the three fields |trie_link|, |trie_char|,
 and |trie_op| will no longer fit into one memory word; thus using web2c
 we define |trie| as three array instead of an array of records.
-The variant will be implented by reusing the opcode field later on with
+The variant will be implemented by reusing the opcode field later on with
 another macro.
 
 @d trie_link(#)==trie_trl[#] {``downward'' link in a trie}
@@ -3897,7 +3897,7 @@ for k:=0 to hyph_size do if hyph_word[k]<>0 then
 @y  24061
 dump_int(hyph_count);
 if hyph_next <= hyph_prime then hyph_next:=hyph_size;
-dump_int(hyph_next);{minumum value of |hyphen_size| needed}
+dump_int(hyph_next);{minimum value of |hyphen_size| needed}
 for k:=0 to hyph_size do if hyph_word[k]<>0 then
   begin dump_int(k+65536*hyph_link[k]);
         {assumes number of hyphen exceptions does not exceed 65535}
@@ -4608,7 +4608,7 @@ command line option (or an entry in the configuration file) before any
 @!mltex_p: boolean;
 
 @ The boolean variable |mltex_enabled_p| is used to enable ML\TeX's
-character substitution.  It is initialised to |false|.  When loading
+character substitution.  It is initialized to |false|.  When loading
 a \.{FMT} it is set to the value of the boolean |mltex_p| saved in
 the \.{FMT} file.  Additionally it is set to the value of |mltex_p|
 in Ini\TeX.
@@ -4714,7 +4714,7 @@ construct for |c| generating appropriate \.{DVI} code using the
 character substitution definition for this character.  If a valid
 character substitution exists \.{DVI} code is created as if
 |make_accent| was used.  In all other cases the status of the
-substituion for this character has been changed between the creation
+substitution for this character has been changed between the creation
 of the character node in the hlist and the output of the page---the
 created \.{DVI} code will be correct but the visual result will be
 undefined.
@@ -4731,14 +4731,14 @@ within a \.{\\leaders} box.
   begin
   @<Get substitution information, check it, goto |found|
   if all is ok, otherwise goto |continue|@>;
-found: @<Print character substition tracing log@>;
+found: @<Print character substitution tracing log@>;
   @<Rebuild character using substitution information@>;
   end
 
 
 @ The global variables for the code to substitute a virtual character
 can be declared as local.  Nonetheless we declare them as global to
-avoid stack overflows because |hlist_out| can be called recursivly.
+avoid stack overflows because |hlist_out| can be called recursively.
 
 @<Glob...@>=
 @!accent_c,@!base_c,@!replace_c:integer;
@@ -4751,7 +4751,7 @@ avoid stack overflows because |hlist_out| can be called recursivly.
 
 
 @ Get the character substitution information in |char_sub_code| for
-the character |c|.  The current code checks that the substition
+the character |c|.  The current code checks that the substitution
 exists and is valid and all substitution characters exist in the
 font, so we can {\it not\/} substitute a character used in a
 substitution.  This simplifies the code because we have not to check
@@ -4787,7 +4787,7 @@ for cycles in all character substitution definitions.
 
 @ For |tracinglostchars>99| the substitution is shown in the log file.
 
-@<Print character substition tracing log@>=
+@<Print character substitution tracing log@>=
  if tracing_lost_chars>99 then
    begin begin_diagnostic;
    print_nl("Using character substitution: ");
@@ -4961,7 +4961,7 @@ var
   @!i: integer; {loop tally}
   @!save_stop_at_space: boolean; {this should be in tex.ch}
   @!dummy: boolean;
-    {Initialising}
+    {Initializing}
 begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| to |absorbing|}
   save_def_ref := def_ref; {|scan_toks| uses |def_ref| to point to the token list just read}
   save_cur_cs := cur_cs; {we set |cur_cs| back a few tokens to use in runaway errors}

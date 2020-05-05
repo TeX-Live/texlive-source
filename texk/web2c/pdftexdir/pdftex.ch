@@ -156,7 +156,7 @@ continue:
   begin
   @<Get substitution information, check it, goto |found|
   if all is ok, otherwise goto |continue|@>;
-found: @<Print character substition tracing log@>;
+found: @<Print character substitution tracing log@>;
   @<(\pdfTeX) Rebuild character using substitution information@>;
   end
 
