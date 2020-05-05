@@ -172,6 +172,7 @@
 %       "reflectedabout((.5[l,r],0),(.5[l,r],1));";
 %     input cmbx10
 %+++++++++++++++++++++++++++++++++++++++++++++++++
+\TeXXeTstate=1
 \def\XeT{X\kern-.125em\lower.424ex\hbox{E}\kern-.1667emT}
 \def\TeXXeT{\TeX-{}-\XeT} % for TeX--XeT
 \def\TeXeT{\TeX-{\revrm\beginR\TeX\endR}} % for TeX-XeT
