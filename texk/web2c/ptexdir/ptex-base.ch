@@ -6323,14 +6323,60 @@ undump_things(char_base[null_font], font_ptr+1-null_font);
   ctype_base[null_font]:=0; char_base[null_font]:=0; width_base[null_font]:=0;
 @z
 
-@x [53.????] do_extension, inhibit_glue_flag
-begin case cur_chr of
-open_node:@<Implement \.{\\openout}@>;
+@x [53.????] new_write_whatsit, inhibit_glue_flag
+write_stream(tail):=cur_val;
+end;
 @y
-begin inhibit_glue_flag:=false;
-case cur_chr of
-open_node:@<Implement \.{\\openout}@>;
+write_stream(tail):=cur_val;
+inhibit_glue_flag:=false;
+end;
 @z
+
+@x [53.????] Implement \special, inhibit_glue_flag
+@<Implement \.{\\special}@>=
+begin new_whatsit(special_node,write_node_size); write_stream(tail):=null;
+p:=scan_toks(false,true); write_tokens(tail):=def_ref;
+end
+@y
+@<Implement \.{\\special}@>=
+begin new_whatsit(special_node,write_node_size); write_stream(tail):=null;
+p:=scan_toks(false,true); write_tokens(tail):=def_ref;
+inhibit_glue_flag:=false;
+end
+@z
+
+@x [53.????] Implement \immediate, inhibit_glue_flag
+  begin p:=tail; do_extension; {append a whatsit node}
+  out_what(tail); {do the action immediately}
+  flush_node_list(tail); tail:=p; link(p):=null;
+  end
+@y
+  begin k:=inhibit_glue_flag;
+  p:=tail; do_extension; {append a whatsit node}
+  out_what(tail); {do the action immediately}
+  flush_node_list(tail); tail:=p; link(p):=null;
+  inhibit_glue_flag:=k;
+  end
+@z
+
+@x [53.????] fix_language, inhibit_glue_flag
+if l<>clang then
+  begin new_whatsit(language_node,small_node_size);
+@y
+if l<>clang then
+  begin inhibit_glue_flag:=false;
+  new_whatsit(language_node,small_node_size);
+@z
+
+@x [53.????] set_language, inhibit_glue_flag
+if abs(mode)<>hmode then report_illegal_case
+else begin new_whatsit(language_node,small_node_size);
+@y
+if abs(mode)<>hmode then report_illegal_case
+else begin inhibit_glue_flag:=false;
+  new_whatsit(language_node,small_node_size);
+@z
+
 
 @x [53.1376] l.26309 - pTeX:
 @<Glob...@> =
