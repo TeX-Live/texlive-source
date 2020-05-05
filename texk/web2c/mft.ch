@@ -838,75 +838,6 @@ pr3("%")("%")("%")(set_format);@/
 pr4("%")("%")("%")("%")(mft_comment);@/
 pr1("#")(sharp);@/
 pr4("g")("o")("o")("d")(special_tag);@/
-
-@ Store primitives specific for \MF.
-
-@<Store all the prim...@>=
-if not metapost then begin
-  pr12("a")("u")("t")("o")("r")("o")("u")("n")("d")("i")("n")("g")(internal);@/
-  pr7("c")("h")("a")("r")("f")("a")("m")(internal);@/
-  pr8("d")("r")("o")("p")("p")("i")("n")("g")(command);@/
-  pr7("d")("i")("s")("p")("l")("a")("y")(command);@/
-  pr6("f")("i")("l")("l")("i")("n")(internal);@/
-  pr11("g")("r")("a")("n")("u")("l")("a")("r")("i")("t")("y")(internal);@/
-  pr8("i")("n")("w")("i")("n")("d")("o")("w")(bbinary);@/
-  pr4("h")("p")("p")("p")(internal);@/
-  pr7("k")("e")("e")("p")("i")("n")("g")(command);@/
-  pr10("n")("u")("m")("s")("p")("e")("c")("i")("a")("l")(command);@/
-  pr10("o")("p")("e")("n")("w")("i")("n")("d")("o")("w")(command);@/
-  pr9("s")("m")("o")("o")("t")("h")("i")("n")("g")(internal);@/
-  pr4("v")("p")("p")("p")(internal);@/
-  pr11("t")("o")("t")("a")("l")("w")("e")("i")("g")("h")("t")(op);@/
-  pr12("t")("r")("a")("c")("i")("n")("g")("e")("d")("g")("e")("s")(internal);@/
-  pr10("w")("i")("t")("h")("w")("e")("i")("g")("h")("t")(command);@/
-end;
-
-@ Store primitives specific for \MP.
-
-@<Store all the prim...@>=
-if metapost then begin
-  pr9("a")("r")("c")("l")("e")("n")("g")("t")("h")(op);@/
-  pr7("a")("r")("c")("t")("i")("m")("e")(command);@/
-  pr8("b")("l")("u")("e")("p")("a")("r")("t")(op);@/
-  pr7("b")("o")("u")("n")("d")("e")("d")(op);@/
-  pr4("b")("t")("e")("x")(btex_code);@/
-  pr4("c")("l")("i")("p")(command);@/
-  pr7("c")("l")("i")("p")("p")("e")("d")(op);@/
-  pr9("c")("l")("o")("s")("e")("f")("r")("o")("m")(input_command);@/
-  pr5("c")("o")("l")("o")("r")(type_name);@/
-  pr6("d")("a")("s")("h")("e")("d")(command);@/
-  pr8("d")("a")("s")("h")("p")("a")("r")("t")(op);@/
-  pr4("e")("t")("e")("x")(etex_marker);@/
-  pr6("f")("i")("l")("l")("e")("d")(op);@/
-  pr8("f")("o")("n")("t")("p")("a")("r")("t")(op);@/
-  pr8("f")("o")("n")("t")("s")("i")("z")("e")(op);@/
-  pr9("g")("r")("e")("e")("n")("p")("a")("r")("t")(op);@/
-  pr6("i")("n")("f")("o")("n")("t")(binary);@/
-  pr8("l")("i")("n")("e")("j")("o")("i")("n")(internal);@/
-  pr7("l")("i")("n")("e")("c")("a")("p")(internal);@/
-  pr8("l")("l")("c")("o")("r")("n")("e")("r")(op);@/
-  pr8("l")("r")("c")("o")("r")("n")("e")("r")(op);@/
-  pr10("m")("i")("t")("e")("r")("l")("i")("m")("i")("t")(internal);@/
-  pr8("m")("p")("x")("b")("r")("e")("a")("k")(bold);@/
-  pr8("p")("a")("t")("h")("p")("a")("r")("t")(op);@/
-  pr7("p")("e")("n")("p")("a")("r")("t")(op);@/
-  pr9("p")("r")("o")("l")("o")("g")("u")("e")("s")(internal);@/
-  pr7("r")("e")("d")("p")("a")("r")("t")(op);@/
-  pr8("r")("e")("a")("d")("f")("r")("o")("m")(input_command);@/
-  pr9("s")("e")("t")("b")("o")("u")("n")("d")("s")(command);@/
-  pr7("s")("t")("r")("o")("k")("e")("d")(op);@/
-  pr8("t")("e")("x")("t")("p")("a")("r")("t")(op);@/
-  pr7("t")("e")("x")("t")("u")("a")("l")(op);@/
-  pr16("t")("r")("a")("c")("i")("n")("g")
-    ("l")("o")("s")("t")("c")("h")("a")("r")("s")(internal);@/
-  pr11("t")("r")("u")("e")("c")("o")("r")("n")("e")("r")("s")(internal);@/
-  pr8("u")("l")("c")("o")("r")("n")("e")("r")(op);@/
-  pr8("u")("r")("c")("o")("r")("n")("e")("r")(op);@/
-  pr11("v")("e")("r")("b")("a")("t")("i")("m")("t")("e")("x")(verbatim_code);@/
-  pr6("w")("i")("t")("h")("i")("n")(bbinary);@/
-  pr9("w")("i")("t")("h")("c")("o")("l")("o")("r")(command);@/
-  pr5("w")("r")("i")("t")("e")(command);@/
-end;
 @z
 
 % The code below follows ideas from the section 646 of `mp.web'.
@@ -979,43 +910,6 @@ else write(tex_file,'\input mftmac');
 @y
   string_token:@<Translate a string token@>;
   verbatim_code,btex_code:@<Copy \TeX\ material@>;
-@z
-
-% Here an extra section is added.
-%
-% `btex' token is translated to `\mftbeginB' and
-% `verbatimtex' to `\mftbeginV'.
-% `etex' is translated to `\mftend'.
-% These \TeX\ macros are defined in \.{mptmac.tex}.
-@x [98]
-@ @<Do special actions at the start of a line@>=
-@y
-@ @<Copy \TeX\ material@>=
-  begin out4("\")("m")("f")("t"); out5("b")("e")("g")("i")("n");
-    if cur_type=verbatim_code then begin
-      out("V");
-      scanner_status:=verbatimtex_flushing;
-    end else if cur_type=btex_code then begin
-      out("B");
-      scanner_status:=btex_flushing;
-    end;
-    out("{"); out_name(cur_tok); out("}");
-    get_next;
-    while cur_type<>etex_marker do begin
-      if cur_type=indentation then begin out(" "); end
-      else if cur_type=end_of_line then begin
-        flush_buffer(out_ptr,false);
-        empty_buffer:=true;
-      end
-      else copy(id_first);
-      get_next;
-    end;
-    out4("\")("m")("f")("t"); out3("e")("n")("d");
-    out("{"); out_name(cur_tok); out("}");
-    if scanner_status=verbatimtex_flushing then out("$");
-    scanner_status:=normal;
-  end
-@ @<Do special actions at the start of a line@>=
 @z
 
 % [112] Print newline at end of run, exit based upon value of history,
@@ -1207,4 +1101,104 @@ long_options[current_option].name := 0;
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
+
+@ Store primitives specific for \MF.
+
+@<Store all the prim...@>=
+if not metapost then begin
+  pr12("a")("u")("t")("o")("r")("o")("u")("n")("d")("i")("n")("g")(internal);@/
+  pr7("c")("h")("a")("r")("f")("a")("m")(internal);@/
+  pr8("d")("r")("o")("p")("p")("i")("n")("g")(command);@/
+  pr7("d")("i")("s")("p")("l")("a")("y")(command);@/
+  pr6("f")("i")("l")("l")("i")("n")(internal);@/
+  pr11("g")("r")("a")("n")("u")("l")("a")("r")("i")("t")("y")(internal);@/
+  pr8("i")("n")("w")("i")("n")("d")("o")("w")(bbinary);@/
+  pr4("h")("p")("p")("p")(internal);@/
+  pr7("k")("e")("e")("p")("i")("n")("g")(command);@/
+  pr10("n")("u")("m")("s")("p")("e")("c")("i")("a")("l")(command);@/
+  pr10("o")("p")("e")("n")("w")("i")("n")("d")("o")("w")(command);@/
+  pr9("s")("m")("o")("o")("t")("h")("i")("n")("g")(internal);@/
+  pr4("v")("p")("p")("p")(internal);@/
+  pr11("t")("o")("t")("a")("l")("w")("e")("i")("g")("h")("t")(op);@/
+  pr12("t")("r")("a")("c")("i")("n")("g")("e")("d")("g")("e")("s")(internal);@/
+  pr10("w")("i")("t")("h")("w")("e")("i")("g")("h")("t")(command);@/
+end;
+
+@ Store primitives specific for \MP.
+
+@<Store all the prim...@>=
+if metapost then begin
+  pr9("a")("r")("c")("l")("e")("n")("g")("t")("h")(op);@/
+  pr7("a")("r")("c")("t")("i")("m")("e")(command);@/
+  pr8("b")("l")("u")("e")("p")("a")("r")("t")(op);@/
+  pr7("b")("o")("u")("n")("d")("e")("d")(op);@/
+  pr4("b")("t")("e")("x")(btex_code);@/
+  pr4("c")("l")("i")("p")(command);@/
+  pr7("c")("l")("i")("p")("p")("e")("d")(op);@/
+  pr9("c")("l")("o")("s")("e")("f")("r")("o")("m")(input_command);@/
+  pr5("c")("o")("l")("o")("r")(type_name);@/
+  pr6("d")("a")("s")("h")("e")("d")(command);@/
+  pr8("d")("a")("s")("h")("p")("a")("r")("t")(op);@/
+  pr4("e")("t")("e")("x")(etex_marker);@/
+  pr6("f")("i")("l")("l")("e")("d")(op);@/
+  pr8("f")("o")("n")("t")("p")("a")("r")("t")(op);@/
+  pr8("f")("o")("n")("t")("s")("i")("z")("e")(op);@/
+  pr9("g")("r")("e")("e")("n")("p")("a")("r")("t")(op);@/
+  pr6("i")("n")("f")("o")("n")("t")(binary);@/
+  pr8("l")("i")("n")("e")("j")("o")("i")("n")(internal);@/
+  pr7("l")("i")("n")("e")("c")("a")("p")(internal);@/
+  pr8("l")("l")("c")("o")("r")("n")("e")("r")(op);@/
+  pr8("l")("r")("c")("o")("r")("n")("e")("r")(op);@/
+  pr10("m")("i")("t")("e")("r")("l")("i")("m")("i")("t")(internal);@/
+  pr8("m")("p")("x")("b")("r")("e")("a")("k")(bold);@/
+  pr8("p")("a")("t")("h")("p")("a")("r")("t")(op);@/
+  pr7("p")("e")("n")("p")("a")("r")("t")(op);@/
+  pr9("p")("r")("o")("l")("o")("g")("u")("e")("s")(internal);@/
+  pr7("r")("e")("d")("p")("a")("r")("t")(op);@/
+  pr8("r")("e")("a")("d")("f")("r")("o")("m")(input_command);@/
+  pr9("s")("e")("t")("b")("o")("u")("n")("d")("s")(command);@/
+  pr7("s")("t")("r")("o")("k")("e")("d")(op);@/
+  pr8("t")("e")("x")("t")("p")("a")("r")("t")(op);@/
+  pr7("t")("e")("x")("t")("u")("a")("l")(op);@/
+  pr16("t")("r")("a")("c")("i")("n")("g")
+    ("l")("o")("s")("t")("c")("h")("a")("r")("s")(internal);@/
+  pr11("t")("r")("u")("e")("c")("o")("r")("n")("e")("r")("s")(internal);@/
+  pr8("u")("l")("c")("o")("r")("n")("e")("r")(op);@/
+  pr8("u")("r")("c")("o")("r")("n")("e")("r")(op);@/
+  pr11("v")("e")("r")("b")("a")("t")("i")("m")("t")("e")("x")(verbatim_code);@/
+  pr6("w")("i")("t")("h")("i")("n")(bbinary);@/
+  pr9("w")("i")("t")("h")("c")("o")("l")("o")("r")(command);@/
+  pr5("w")("r")("i")("t")("e")(command);@/
+end;
+
+@ Here an extra section is added.
+% `btex' token is translated to `\mftbeginB' and
+% `verbatimtex' to `\mftbeginV'.
+% `etex' is translated to `\mftend'.
+% These \TeX\ macros are defined in \.{mptmac.tex}.
+@<Copy \TeX\ material@>=
+  begin out4("\")("m")("f")("t"); out5("b")("e")("g")("i")("n");
+    if cur_type=verbatim_code then begin
+      out("V");
+      scanner_status:=verbatimtex_flushing;
+    end else if cur_type=btex_code then begin
+      out("B");
+      scanner_status:=btex_flushing;
+    end;
+    out("{"); out_name(cur_tok); out("}");
+    get_next;
+    while cur_type<>etex_marker do begin
+      if cur_type=indentation then begin out(" "); end
+      else if cur_type=end_of_line then begin
+        flush_buffer(out_ptr,false);
+        empty_buffer:=true;
+      end
+      else copy(id_first);
+      get_next;
+    end;
+    out4("\")("m")("f")("t"); out3("e")("n")("d");
+    out("{"); out_name(cur_tok); out("}");
+    if scanner_status=verbatimtex_flushing then out("$");
+    scanner_status:=normal;
+  end
 @z
