@@ -1176,6 +1176,7 @@ end;
 `\.{verbatimtex}' to `\.{\\mftbeginV}'.
 `\.{etex}' is translated to `\.{\\mftend}'.
 These \TeX\ macros are defined in \.{mptmac.tex}.
+@.mptmac@>
 @<Copy \TeX\ material@>=
   begin out4("\")("m")("f")("t"); out5("b")("e")("g")("i")("n");
     if cur_type=verbatim_code then begin
