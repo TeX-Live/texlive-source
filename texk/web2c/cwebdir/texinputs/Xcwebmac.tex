@@ -39,3 +39,62 @@
 \def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
 
 %\let\K=\leftarrow % "honest" alternative to standard assignment operator
+
+% Move contents page to the front
+%
+% Code from knuth.drv in https://github.com/oberdiek/latex-tds
+% Works with pdftex (with active links) and xetex (with active
+% links only for '\let\pdf+').
+%
+\ifx\detokenize\undefined\endinput\fi
+\newread\testread
+\openin\testread=\contentsfile\relax
+\ifeof\testread % First run
+\else % Second run
+  \let\ORGcon\con
+  \def\con{%
+    \begingroup
+      \let\end\relax
+      \ORGcon
+    \endgroup
+    \let\con\end
+  }%
+  \expandafter\let\csname ORGN\expandafter\endcsname
+                  \csname N\endcsname
+  \expandafter\outer\expandafter\def\csname N\endcsname{%
+    \con
+    \advance\pageno by -1\relax
+    \expandafter\let\csname N\expandafter\endcsname
+                    \csname ORGN\endcsname
+    \csname N\endcsname
+  }%
+  \begingroup
+    \def\num{0}%
+    \edef\x{\jobname}%
+    \edef\y{\detokenize{tex}}%
+    \ifx\x\y
+      \def\num{1}%
+    \else
+      \edef\y{\detokenize{mf}}%
+      \ifx\x\y
+        \def\num{1}%
+      \fi
+    \fi
+  \expandafter\endgroup\ifnum\num=1 %
+    \def\contentspagenumber{2}%
+    \let\ORGpageno\pageno
+    \def\pageno{%
+      \let\pageno\ORGpageno
+      \expandafter\let\csname ORGN\expandafter\endcsname
+                      \csname N\endcsname
+      \expandafter\outer\expandafter\def\csname N\endcsname{%
+        \con
+        \advance\pageno by -1\relax
+        \expandafter\let\csname N\expandafter\endcsname
+                        \csname ORGN\endcsname
+        \csname N\endcsname
+      }%
+      \pageno
+    }%
+  \fi
+\fi
