@@ -2,8 +2,9 @@
 
 	Imported TECkit-2.5.10 source tree (teckit) from
 	https://github.com/silnrsi/teckit/archive/2.5.10.tar.gz.
-	patch-02-warning, patch-03-warnings,patch-05-static, and
-	patch patch-06-dont-build-sfconv: Adapted.
+	patch-02-warning, patch-03-warnings, patch-05-static: Reduce
+	to a single patch-07-warnings-and-static for convenience.
+	patch-06-dont-build-sfconv: Adapted.
 
 2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
 
