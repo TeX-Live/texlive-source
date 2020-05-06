@@ -59,8 +59,8 @@ poppler 0.68.0 - checked 20aug18
   http://poppler.freedesktop.org/ - used by xetex
   (requires C++11)
 
-teckit 2.5.9 - checked 03may19
-  https://github.com/silnrsi/teckit/archive/2.5.9.tar.gz
+teckit 2.5.10 - checked 06may20
+  https://github.com/silnrsi/teckit/archive/2.5.10.tar.gz
 
 xpdf 4.02 - checked 29sep19
   http://www.xpdfreader.com/download.html
