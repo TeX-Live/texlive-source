@@ -11,7 +11,7 @@
 	Imported TECkit-2.5.9 source tree (teckit) from
 	https://github.com/silnrsi/teckit/archive/2.5.9.tar.gz.
 	patch-02-warning, patch-03-warnings,patch-05-static, and
-	patch patch-06-dont-build-sfconv: Adapted.
+	patch-06-dont-build-sfconv: Adapted.
 	patch-04-pragmas: Removed.
 
 2018-07-24  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
