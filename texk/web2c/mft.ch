@@ -1172,10 +1172,10 @@ if metapost then begin
 end;
 
 @ Here an extra section is added.
-% `btex' token is translated to `\mftbeginB' and
-% `verbatimtex' to `\mftbeginV'.
-% `etex' is translated to `\mftend'.
-% These \TeX\ macros are defined in \.{mptmac.tex}.
+`\.{btex}' token is translated to `\.{\\mftbeginB}' and
+`\.{verbatimtex}' to `\.{\\mftbeginV}'.
+`\.{etex}' is translated to `\.{\\mftend}'.
+These \TeX\ macros are defined in \.{mptmac.tex}.
 @<Copy \TeX\ material@>=
   begin out4("\")("m")("f")("t"); out5("b")("e")("g")("i")("n");
     if cur_type=verbatim_code then begin
