@@ -28,7 +28,7 @@
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [p22] --- Andreas Scherer, March 2016
 
-\ifx\undefined\documentclass\input Xcwebmac.tex
+\ifx\undefined\botofcontents\input cwebmac.tex
 \else\endinput\fi % LaTeX will use other macros
 
 \def\.#1{\leavevmode\hbox{\tentex % typewriter type for strings
@@ -155,3 +155,5 @@
    \centerline{\covernote}
    \bigskip
    \leftline{\sc\today, ore \hours}}} % timestamps the contents page
+
+\input Xcwebmac.tex % Some formatting alternatives and PDF trickery

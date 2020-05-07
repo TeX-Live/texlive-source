@@ -30,7 +30,7 @@
 
 % french translations --- Denis Roegel, 18 September 1994
 
-\ifx\undefined\documentclass\input Xcwebmac.tex
+\ifx\undefined\botofcontents\input cwebmac.tex
 \else\endinput\fi % LaTeX will use other macros
 
 \def\.#1{\leavevmode\hbox{\tentex % typewriter type for strings
@@ -135,3 +135,5 @@
    \centerline{\covernote}
    \bigskip
    \leftline{\sc\today\ \`a \hours}}} % timestamps the contents page
+
+\input Xcwebmac.tex % Some formatting alternatives and PDF trickery
