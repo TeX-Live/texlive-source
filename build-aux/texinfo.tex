@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2020-05-02.00}
+\def\texinfoversion{2020-05-05.16}
 %
 % Copyright 1985, 1986, 1988, 1990-2019 Free Software Foundation, Inc.
 %
@@ -2499,7 +2499,7 @@ end
 \def\it{\fam=\itfam \setfontstyle{it}}
 \def\sl{\fam=\slfam \setfontstyle{sl}}
 \def\bf{\fam=\bffam \setfontstyle{bf}}\def\bfstylename{bf}
-\def\tt{\fam=\ttfam \setfontstyle{tt}}
+\def\tt{\fam=\ttfam \setfontstyle{tt}}\def\ttstylename{tt}
 
 % Texinfo sort of supports the sans serif font style, which plain TeX does not.
 % So we set up a \sf.
@@ -3661,10 +3661,26 @@ end
 \fi
 
 % Quotes.
-\chardef\quotedblleft="5C
-\chardef\quotedblright=`\"
 \chardef\quoteleft=`\`
 \chardef\quoteright=`\'
+
+% only change font for tt for correct kerning and to avoid using
+% \ecfont unless necessary.
+\def\quotedblleft{%
+  \ifx\curfontstyle\ttstylename
+    {\ecfont\char"10}%
+  \else
+    {\char"5C}%
+  \fi
+}
+
+\def\quotedblright{%
+  \ifx\curfontstyle\ttstylename
+    {\ecfont\char"11}%
+  \else
+    {\char`\"}%
+  \fi
+}
 
 
 \message{page headings,}
