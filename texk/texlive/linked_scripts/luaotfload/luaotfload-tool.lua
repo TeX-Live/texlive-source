@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.13",       --TAGVERSION
-    date          = "2020-05-01", --TAGDATE
+    version       = "3.14",       --TAGVERSION
+    date          = "2020-05-06", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -1334,7 +1334,6 @@ function actions.list (job)
     else
         criterion = stringexplode(criterion, ":") --> { field, value }
         local asked_value  = criterion[2]
-        local sane_asked_pattern = sane_pattern(criterion[2])
         criterion          = criterion[1]
         asked_fields       = set_primary_field(asked_fields, criterion)
 
@@ -1343,6 +1342,7 @@ function actions.list (job)
         --- firstly, build a list of fonts to operate on
         local targets = { }
         if asked_value then --- only those whose value matches
+            local sane_asked_pattern = sane_pattern(asked_value)
             logreport (false, 2, "list", "Restricting to value %s", asked_value)
             for i=1, nmappings do
                 local entry = mappings[i]
