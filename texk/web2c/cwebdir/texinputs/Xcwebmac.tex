@@ -52,6 +52,7 @@
 \else % Second run
   \let\ORGcon\con
   \def\con{%
+    \ifnum\pageno=1 \global\titletrue\fi
     \begingroup
       \let\end\relax
       \ORGcon
