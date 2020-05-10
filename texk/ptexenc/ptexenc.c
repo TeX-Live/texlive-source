@@ -822,7 +822,7 @@ long input_line2(FILE *fp, unsigned char *buff, long pos,
         }
     }
 
-    buffer[last] = '\0';
+    if (i != EOF || first != last) buffer[last] = '\0';
     if (i == EOF || i == '\n' || i == '\r') injis = false;
     if (lastchar != NULL) *lastchar = i;
 

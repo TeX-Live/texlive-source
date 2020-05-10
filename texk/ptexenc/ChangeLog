@@ -1,3 +1,8 @@
+2020-05-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptexenc.c: Fix a bug of end of line in input_line2().
+	https://github.com/texjporg/tex-jp-build/issues/100
+
 2020-04-10  Karl Berry  <karl@tug.org>
 
 	* version.ac: now 1.3.9/dev since TL'19 is released.
