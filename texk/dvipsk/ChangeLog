@@ -1,3 +1,9 @@
+2020-05-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-vf.test, testdata/upjf.{tex,dvi,tfm},
+	testdata/upjf_{full,omit}.vf, testdata/upjf_{full,omit}.cnf:
+	Update the test.
+
 2020-04-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* Makefile.{am,in}, uptex-vf.test,
