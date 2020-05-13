@@ -26,7 +26,8 @@
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [2018] --- Andreas Scherer, Octobre 2018
 
-\ifx\undefined\botofcontents\input cwebmac.tex\fi
+\ifx\undefined\botofcontents\input cwebmac.tex
+\else\endinput\fi % LaTeX will use other macros
 
 \xdef\fmtversion{\fmtversion[2018]}
 
@@ -38,5 +39,3 @@
 \def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
 
 %\let\K=\leftarrow % "honest" alternative to standard assignment operator
-
-\input pdfwebtocfront
