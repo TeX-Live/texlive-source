@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -90,6 +90,7 @@ texmf_shell_scripts = \
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \
+	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
 	wordcount/wordcount.sh
 

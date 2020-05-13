@@ -34,6 +34,7 @@ texlive-extra/texlinks.sh
 texosquery/texosquery.sh
 texosquery/texosquery-jre5.sh
 texosquery/texosquery-jre8.sh
+tikztosvg/tikztosvg
 typeoutfileinfo/typeoutfileinfo.sh
 wordcount/wordcount.sh
 a2ping/a2ping.pl
