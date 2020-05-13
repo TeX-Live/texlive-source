@@ -30,8 +30,7 @@
 
 % french translations --- Denis Roegel, 18 September 1994
 
-\ifx\undefined\botofcontents\input cwebmac.tex
-\else\endinput\fi % LaTeX will use other macros
+\ifx\undefined\botofcontents\input cwebmac.tex\fi
 
 \def\.#1{\leavevmode\hbox{\tentex % typewriter type for strings
   \ifx\Cstringchars\undefined\else\Cstringchars\fi % special string characters
