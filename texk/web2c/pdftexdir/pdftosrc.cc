@@ -24,19 +24,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <ctype.h>
 
-#ifdef POPPLER_VERSION
-#define GString GooString
-#define xpdfVersion POPPLER_VERSION
-#include <dirent.h>
-#include <goo/GooString.h>
-#include <goo/gmem.h>
-#include <goo/gfile.h>
-#else
 #include <aconf.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#endif
 #include <assert.h>
 
 #include "Object.h"
@@ -181,7 +172,7 @@ int main(int argc, char *argv[])
                     obj1.free();
                     obj2.free();
                 }
-#if defined(POPPLER_VERSION) || defined(XPDF304)
+#if defined(XPDF304)
                 while (str->getChar() != EOF) ;
 #else /* xpdf 4.00 */
                 lexer->skipToEOF();

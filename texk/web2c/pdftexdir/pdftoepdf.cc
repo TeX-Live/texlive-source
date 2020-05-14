@@ -31,19 +31,10 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include <ctype.h>
 
-#ifdef POPPLER_VERSION
-#include <dirent.h>
-#include <poppler-config.h>
-#include <goo/GooString.h>
-#include <goo/gmem.h>
-#include <goo/gfile.h>
-#define GString GooString
-#else
 #include <aconf.h>
 #include <GString.h>
 #include <gmem.h>
 #include <gfile.h>
-#endif
 #include <assert.h>
 
 #include "Object.h"
@@ -682,11 +673,7 @@ static void writeEncodings()
     }
     for (r = encodingList; r != 0; r = n) {
         n = r->next;
-#ifdef POPPLER_VERSION
-        r->font->decRefCnt();
-#else
         delete r->font;
-#endif
         delete r;
     }
 }
@@ -725,11 +712,7 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
     PdfDocument *pdf_doc;
     Page *page;
     PDFRectangle *pagebox;
-#ifdef POPPLER_VERSION
-    int pdf_major_version_found, pdf_minor_version_found;
-#else
     float pdf_version_found, pdf_version_wanted;
-#endif
     // initialize
     if (!isInit) {
         globalParams = new GlobalParams();
@@ -744,22 +727,6 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
     // this works only for PDF 1.x -- but since any versions of PDF newer
     // than 1.x will not be backwards compatible to PDF 1.x, pdfTeX will
     // then have to changed drastically anyway.
-#ifdef POPPLER_VERSION
-    pdf_major_version_found = pdf_doc->doc->getPDFMajorVersion();
-    pdf_minor_version_found = pdf_doc->doc->getPDFMinorVersion();
-    if ((pdf_major_version_found > major_pdf_version_wanted)
-     || (pdf_minor_version_found > minor_pdf_version_wanted)) {
-        const char *msg =
-            "PDF inclusion: found PDF version <%d.%d>, but at most version <%d.%d> allowed";
-        if (pdf_inclusion_errorlevel > 0) {
-            pdftex_fail(msg, pdf_major_version_found, pdf_minor_version_found, major_pdf_version_wanted, minor_pdf_version_wanted);
-        } else if (pdf_inclusion_errorlevel < 0) {
-            ; /* do nothing */
-        } else { /* = 0, give warning */
-            pdftex_warn(msg, pdf_major_version_found, pdf_minor_version_found, major_pdf_version_wanted, minor_pdf_version_wanted);
-        }
-    }
-#else
     pdf_version_found = pdf_doc->doc->getPDFVersion();
     pdf_version_wanted = major_pdf_version_wanted + (minor_pdf_version_wanted * 0.1);
     if (pdf_version_found > pdf_version_wanted + 0.01) {
@@ -773,7 +740,6 @@ read_pdf_info(char *image_name, char *page_name, int page_num,
             pdftex_warn(msg, pdf_version_found, pdf_version_wanted);
         }
     }
-#endif
     epdf_num_pages = pdf_doc->doc->getCatalog()->getNumPages();
     if (page_name) {
         // get page by name

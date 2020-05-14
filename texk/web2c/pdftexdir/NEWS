@@ -34,27 +34,7 @@ pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
     range for Unicode; the implication is that multiple code points must
     now be separated by spaces (as has always been documented).
 
-- source: support xpdf-4 by default, or xpdf-3.04, or poppler-0.57.0
-  and older, via #defines.
-  Provide new files:
-  pdftosrc-newpoppler.cc for poppler-0.59.0 upto poppler-0.70.1.
-  pdftosrc-poppler0.71.0 for poppler-0.71.0.
-  pdftosrc-poppler0.72.0 for poppler-0.72.0 upto poppler-0.75.0.
-  pdftosrc-poppler0.76.0 for poppler-0.76.0 upto poppler-0.82.0.
-  pdftosrc-poppler0.83.0 for poppler-0.83.0 and newer. 
-  pdftoepdf-poppler0.68.0.cc for poppler-0.59.0 upto poppler-0.68.0.
-  pdftoepdf-poppler0.69.0.cc for poppler-0.69.0.
-  pdftoepdf-poppler0.70.0.cc for poppler-0.70.0 and poppler-0.70.1.
-  pdftoepdf-poppler0.71.0.cc for poppler-0.71.0.
-  pdftoepdf-poppler0.72.0.cc for poppler-0.72.0 upto poppler-0.74.0.
-  pdftoepdf-poppler0.75.0.cc for poppler-0.75.0.
-  pdftoepdf-poppler0.76.0.cc for poppler-0.76.0 upto poppler-0.82.0.
-  pdftoepdf-poppler0.83.0.cc for poppler-0.83.0 upto poppler-0.85.0.
-  pdftoepdf-poppler0.86.0.cc for poppler-0.86.0 and newer.
-  Note that pdftosrc-*.cc and pdftoepdf-*.cc should be
-  renamed as pdftosrc.cc, and pdftoepdf.cc, respectively, before
-  compilation. Further, POPPLER_VERSION should be defined properly
-  like -DPOPPLER_VERSION='"0.86.0"'.
+- source: support xpdf-4 by default, or xpdf-3.04, via #defines.
 
 ---------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.18 (TeX Live 2017)  (April 27, 2017)
