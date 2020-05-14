@@ -4513,7 +4513,7 @@ test "x$enable_web2c" = xno || {
   need_zlib=yes
 }
 
-# $Id: web2c.ac 54824 2020-04-21 18:43:36Z lscarso $
+# $Id: web2c.ac 55138 2020-05-14 17:47:47Z karl $
 # texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options for TeX and MF
 
