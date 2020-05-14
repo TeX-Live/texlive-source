@@ -1,0 +1,181 @@
+#!/bin/bash
+
+puts() 
+{
+    echo "[$1] $2"
+}
+
+error()
+{
+    puts "ERROR" "$1" r
+
+    if [ -n "$2" ]
+    then
+        exit $2
+    else
+        exit 1
+    fi
+}
+
+message()
+{
+    puts "TIKZTOSVG" "$1" g
+}
+
+showHelp()
+{
+    man tikztosvg
+    exit 0
+}
+
+showVersion()
+{
+    echo 0.1.0
+    exit 0
+}
+
+if [ -z "$(which xelatex)" ]
+then
+    error "xelatex could not be found"
+fi
+
+if [ -z "$(which pdf2svg)" ]
+then
+    error "pdf2svg could not be found"
+fi
+
+# Parsing the arguments
+PACKAGES=()
+while [ $# -gt 1 ]
+do
+    case "$1" in
+        -h|--help)
+            showHelp
+            ;;
+        -v|--version)
+            showVersion
+            ;;
+        -p|--package)
+            if [ -z "$2" ]
+            then
+                error "Unnexpected EOF"
+            else
+                PACKAGES+=("$2")
+                shift
+                shift
+            fi
+            ;;
+        -o|--output)
+            if [ -n "$OUTPUT" ]
+            then
+                error "The output path was specified multiple times"
+            else if [ -z "$2" ]
+            then
+                error "Unexpected EOF"
+                exit 1
+            else
+                OUTPUT="$2"
+                shift
+                shift
+            fi
+            fi
+            ;;
+        -q|--quit)
+            QUIET=1
+            shift
+            ;;
+        *) 
+            error "Unexpected token: \"$1\""
+            ;;
+    esac
+done
+
+case "$1" in
+    -h|--help)
+        showHelp
+        ;;
+    -v|--version)
+        showVersion
+        ;;
+    "")
+        error "No input path provided"
+        ;;
+    *)
+        INPUT="$1"
+esac
+
+if [ -z "$OUTPUT" ]
+then
+    OUTPUT="$(echo $(basename $INPUT) | cut -d "." -f1)"
+fi
+
+TEMP_DIR="$(mktemp -d)"
+TEX_FILE="$TEMP_DIR/tmp.tex"
+
+# Generate the LaTeX document
+echo "\documentclass[crop,tikz,multi=false]{standalone}" > $TEX_FILE
+
+for PACKAGE in "${PACKAGES[@]}"
+do
+    echo "\usepackage{$PACKAGE}" >> $TEX_FILE
+done
+
+echo "\begin{document}" >> $TEX_FILE
+echo "\huge" >> $TEX_FILE
+
+cat $INPUT >> $TEX_FILE
+
+if [ $? -ne 0 ]
+then
+    rm $TEMP_DIR -r
+    error "File not found: $INPUT"
+fi
+
+echo "\end{document}" >> $TEX_FILE
+
+if [ -z "$QUIET" ]
+then
+    message "Rendering the LaTeX document. . ."
+    xelatex -output-directory=$TEMP_DIR $TEX_FILE
+else
+    xelatex -halt-on-error -output-directory=$TEMP_DIR $TEX_FILE 1> /dev/null 2>&1
+fi
+
+S=$?
+if [ $S -ne 0 ]
+then
+    rm $TEMP_DIR -r
+    if [ -z "$QUIET" ]
+    then
+        error "xelatex exited with code $S" $S
+    else
+        exit $S
+    fi
+fi
+
+if [ -z "$QUIET" ]
+then
+    message "Converting the output to SVG. . ."
+fi
+
+pdf2svg "$TEMP_DIR/tmp.pdf" $OUTPUT 1
+
+S=$?
+if [ $S -ne 0 ]
+then
+    rm $TEMP_DIR -r
+    if [ -z "$QUIET" ]
+    then
+        error "pdf2svg exited with code $S" $S
+    else
+        exit $S
+    fi
+fi
+
+if [ -z "$QUIET" ]
+then
+    message "Done!"
+fi
+
+rm "$TEMP_DIR" -r
+
