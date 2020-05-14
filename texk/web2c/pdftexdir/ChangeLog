@@ -17,6 +17,14 @@
 	support; now poppler is not supported in TL.
 	See source/m4/kpse-xpdf-flags.m4 for some discussion.
 
+2020-03-28  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (load_expand_font, vf_def_font): do not call
+	copy_expand_params on null_font.
+	Original report from Robert Schlicht,
+	https://tug.org/pipermail/tex-live/2020-March/045099.html
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-March/004307.html
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020, pdftex 1.40.21.

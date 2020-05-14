@@ -17434,7 +17434,8 @@ begin
         else
             k := read_font_info(null_cs, s, "", font_size[f]);
     end;
-    copy_expand_params(k, f, e);
+    if k <> null_font then
+        copy_expand_params(k, f, e);
     load_expand_font := k;
 end;
 
@@ -17990,12 +17991,12 @@ begin
             vf_local_font_warning(f, k, "checksum mismatch");
         if ds <> font_dsize[k] then
             vf_local_font_warning(f, k, "design size mismatch");
+        if (pdf_font_step[f] <> 0) then
+            set_expand_params(k, pdf_font_auto_expand[f],
+                              pdf_font_expand_ratio[pdf_font_stretch[f]],
+                              -pdf_font_expand_ratio[pdf_font_shrink[f]],
+                              pdf_font_step[f], pdf_font_expand_ratio[f]);
     end;
-    if (pdf_font_step[f] <> 0) then
-        set_expand_params(k, pdf_font_auto_expand[f],
-                          pdf_font_expand_ratio[pdf_font_stretch[f]],
-                          -pdf_font_expand_ratio[pdf_font_shrink[f]],
-                          pdf_font_step[f], pdf_font_expand_ratio[f]);
     vf_def_font := k;
 end;
 
