@@ -1,3 +1,11 @@
+2020-05-14  Karl Berry  <karl@freefriends.org>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS),
+	(KPSE_POPPLER_SYSTEM_FLAGS): remove poppler.
+	* kpse-poppler-flags.m4: remove file.
+	* kpse-xpdf-flags.m4 (KPSE_XPDF_OPTIONS): no more system option.
+	(KPSE_XPDF_SYSTEM_FLAGS): no-op.
+
 2020-04-21 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): add pplib.

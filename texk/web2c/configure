@@ -676,10 +676,6 @@ XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
 XPDF_INCLUDES
-POPPLER_RULE
-POPPLER_DEPEND
-POPPLER_LIBS
-POPPLER_INCLUDES
 MPFR_RULE
 MPFR_DEPEND
 MPFR_LIBS
@@ -1057,8 +1053,6 @@ with_gmp_libdir
 with_system_mpfr
 with_mpfr_includes
 with_mpfr_libdir
-with_system_poppler
-with_system_xpdf
 with_system_zziplib
 with_system_teckit
 with_system_graphite2
@@ -1816,10 +1810,6 @@ Optional Packages:
   --with-mpfr-includes=DIR
                           mpfr headers installed in DIR
   --with-mpfr-libdir=DIR  mpfr library installed in DIR
-  --with-system-poppler   use installed poppler headers and library (requires
-                          pkg-config)
-  --with-system-xpdf      use installed poppler headers and library instead of
-                          xpdf library from TL (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-teckit    use installed teckit headers and library (requires
@@ -18912,7 +18902,7 @@ if test "${enable_xetex_synctex+set}" = set; then :
 fi
 
 test "x$enable_web2c:$enable_xetex" = xyes:yes && {
-  need_poppler=yes
+  need_pplib=yes
   need_libpng=yes
   need_freetype2=yes
   need_teckit=yes
@@ -19040,11 +19030,10 @@ fi
 
 
 
-# XeTeX now requires C++11 because poppler does :(.
-# XeTeX also requires C+11 because of ICU.
+# XeTeX now requires C++11 because ICU does :(.
 if test "x$enable_xetex" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++11, since XeTeX enabled" >&5
-$as_echo "$as_me: checking for C++11, since XeTeX enabled" >&6;}
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for C++11, since XeTeX is enabled" >&5
+$as_echo "$as_me: checking for C++11, since XeTeX is enabled" >&6;}
     ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -25514,54 +25503,12 @@ ${top_builddir}/../../libs/mpfr/include/mpfr.h:
 	cd ${top_builddir}/../../libs/mpfr && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-##tldbg _KPSE_LIB_FLAGS: Setup poppler (-lpoppler) flags.
-echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=poppler, libname=poppler, options=, tlincl=-IBLD/libs/poppler/include, tllib=BLD/libs/poppler/libpoppler.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/poppler/include/Stream.h.' >&5
-##tldbg _KPSE_LIB_FLAGS_TL: poppler (poppler) .
-
-# Check whether --with-system-poppler was given.
-if test "${with_system_poppler+set}" = set; then :
-  withval=$with_system_poppler;
-fi
-if test "x$with_system_poppler" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.30; then
-  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
-  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler 0.30 or better" "$LINENO" 5
-fi
-
-POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-POPPLER_INCLUDES="$POPPLER_VERSION $POPPLER_INCLUDES"
-else
-  POPPLER_INCLUDES="-I$kpse_BLD/libs/poppler/include"
-  POPPLER_LIBS="$kpse_BLD/libs/poppler/libpoppler.a"
-  POPPLER_DEPEND='${top_builddir}/../../libs/poppler/libpoppler.a'
-  POPPLER_RULE='# Rebuild libpoppler
-$(POPPLER_DEPEND): ${top_builddir}/../../libs/poppler/include/Stream.h
-	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild
-${top_builddir}/../../libs/poppler/include/Stream.h:
-	cd ${top_builddir}/../../libs/poppler && $(MAKE) $(AM_MAKEFLAGS) rebuild'
-fi
-test "x$kpse_cv_have_win32" = xno || POPPLER_LIBS="$POPPLER_LIBS -lgdi32"
-
 ##tldbg _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=xpdf, libname=xpdf, options=, tlincl=-DPDF_PARSER_ONLY -IBLD/libs/xpdf -IBLD/libs/xpdf/goo -IBLD/libs/xpdf/xpdf, tllib=BLD/libs/xpdf/libxpdf.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/xpdf/xpdf/Stream.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: xpdf (xpdf) .
-
-# Check whether --with-system-xpdf was given.
-if test "${with_system_xpdf+set}" = set; then :
-  withval=$with_system_xpdf;
-fi
+: "kpse_xpdf_options - no-op"
 if test "x$with_system_xpdf" = xyes; then
-  if $PKG_CONFIG poppler --atleast-version=0.12; then
-  XPDF_INCLUDES=`$PKG_CONFIG poppler --cflags`
-  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  as_fn_error $? "did not find poppler 0.12 or better" "$LINENO" 5
-fi
-
-POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES"
+  : "kpse_xpdf_system_flags - no-op"
 else
   XPDF_INCLUDES="-DPDF_PARSER_ONLY -I$kpse_BLD/libs/xpdf -I$kpse_BLD/libs/xpdf/goo -I$kpse_BLD/libs/xpdf/xpdf"
   XPDF_LIBS="$kpse_BLD/libs/xpdf/libxpdf.a"
@@ -25993,9 +25940,6 @@ else
   KPATHSEA_PATHS_H='${top_builddir}/..'
 fi
 
-
-eval CPPFLAGS=\"$POPPLER_INCLUDES \$CPPFLAGS\"
-eval LIBS=\"$POPPLER_LIBS \$LIBS\"
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'

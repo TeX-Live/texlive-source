@@ -1,6 +1,6 @@
 # $Id$
 # Private Autoconf macros for the TeX Live (TL) tree.
-# Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+# Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -32,7 +32,6 @@ teckit
 graphite2
 zziplib
 xpdf
-poppler
 mpfr
 gmp
 cairo
@@ -68,7 +67,6 @@ AC_REQUIRE([KPSE_PIXMAN_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_CAIRO_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_GMP_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_MPFR_SYSTEM_FLAGS])[]dnl
-AC_REQUIRE([KPSE_POPPLER_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_XPDF_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_ZZIPLIB_SYSTEM_FLAGS])[]dnl
 AC_REQUIRE([KPSE_GRAPHITE2_SYSTEM_FLAGS])[]dnl

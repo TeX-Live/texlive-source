@@ -233,10 +233,9 @@ Automake/Autoconf output in general) work with any reasonable
 
 @cindex C++11, required
 A C++11 compiler is similarly required because of the third-party
-libraries ICU and Poppler; the program @code{dvisvgm} also requires
-C++11.  It is possible to build everything else with older compilers,
-but you have to remove the C++11-dependent sources.  @xref{Build one
-package}.
+library ICU; the program @code{dvisvgm} also requires C++11.  It is
+possible to build everything else with older compilers, but you have
+to remove the C++11-dependent sources.  @xref{Build one package}.
 
 A few programs in the tree have additional requirements:
 
@@ -504,7 +503,7 @@ source directories; specifying @code{--disable} for them does not
 suffice, unfortunately.  Specifically, before running @code{configure}:
 
 @example
-rm -rf libs/icu libs/poppler libs/graphite2 texk/dvisvgm
+rm -rf libs/icu libs/graphite2 texk/dvisvgm
 @end example
 
 @vindex --enable-missing @r{to ignore dependencies}
@@ -1895,10 +1894,7 @@ to the file format specifications.
 @cindex PDF files, size of
 @cindex PostScript files, size of
 With LFS, there is no fixed limit on the size of PDF files created by
-@file{pdftex} or PostScript files created by @file{dvips}.  The size
-of PDF images included by @file{pdftex} or @file{luatex} must, however,
-be @math{<2}GB when using @file{poppler} version@tie{}0.22 or before
-(even on 64-bit systems with LFS).
+@file{pdftex} or PostScript files created by @file{dvips}.
 
 
 @node @code{--disable-missing}
@@ -2292,9 +2288,7 @@ required system libraries and bails out if tests fail.
 
 @menu
 * Configure options for @code{kpathsea}::
-* Configure options for system @code{poppler}::
 @end menu
-
 
 @node Configure options for @code{kpathsea}
 @subsection Configure options for @code{kpathsea}
@@ -2324,28 +2318,6 @@ for whether or not to run @var{cmd}, which is one of:
 @noindent to generate the specified type of file dynamically.
 The default can be overridden by the user in any case
 (@pxref{@code{kpathsea} library}).
-
-@node Configure options for system @code{poppler}
-@subsection Configure options for system @code{poppler}
-
-@cindex @code{configure} options, for system @code{poppler}
-
-@pindex poppler
-@pindex xpdf @r{as library}
-Building Xe@TeX{} requires @code{poppler}, either from the TL tree or
-system headers and library.  Building pdf@TeX{} requires either
-@code{xpdf} from the @TL{} tree or system @code{poppler} headers and
-library.
-
-@vindex --with-system-poppler
-@noindent @code{--with-system-poppler}@*Use a system version (0.18 or
-newer) of @code{poppler} for Lua@TeX{} (or LuaJIT@TeX{}) and Xe@TeX{},
-and use @file{pkg-config} to obtain the required flags.
-
-@vindex --with-system-xpdf
-@noindent @code{--with-system-xpdf}@*Use a system version (0.12 or newer)
-of @code{poppler} (and @file{pkg-config}) for pdf@TeX{} instead of
-@code{xpdf} from the TL tree.  @xref{@code{--disable-largefile}}.
 
 @node Variables for configure
 @section Variables for configure

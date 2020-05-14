@@ -1,3 +1,8 @@
+2020-05-14  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi: remove poppler references.
+	* build-tools.txt: bison 3.6.1.
+
 2020-03-13  Karl Berry  <karl@tug.org>
 
 	* tlbuild.texi: update for 2020.

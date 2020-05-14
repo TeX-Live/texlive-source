@@ -1,4 +1,10 @@
+2020-05-14  Karl Berry  <karl@freefriends.org>
+
+	* poppler: remove.
+	See source/m4/kpse-xpdf-flags.m4 for some discussion.
+
 2020-04-21 Luigi Scarso <luigi.scarso@gmail.com>
+
 	* pplib: move from luatexdir, add test.
 
 2018-08-30  Karl Berry  <karl@freefriends.org>

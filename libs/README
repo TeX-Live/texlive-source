@@ -9,9 +9,6 @@ bypassing or using the original one.
 
 See also comments in ../texk/README.
 
-pplib 2.05.0 - checked 21apr20
-  https://github.com/contextgarden/pplib
-
 cairo 1.16.0 - checked 20oct18
   http://cairographics.org/releases/
 
@@ -55,9 +52,8 @@ mpfr 4.0.2 - checked 1jan19
 pixman 0.40.0 - checked 21apr20
   http://cairographics.org/releases/
 
-poppler 0.68.0 - checked 20aug18
-  http://poppler.freedesktop.org/ - used by xetex
-  (requires C++11)
+pplib 2.05.0 - checked 21apr20
+  https://github.com/contextgarden/pplib
 
 teckit 2.5.10 - checked 06may20
   https://github.com/silnrsi/teckit/archive/2.5.10.tar.gz

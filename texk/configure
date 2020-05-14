@@ -812,8 +812,6 @@ with_system_icu
 with_system_teckit
 with_system_graphite2
 with_system_zziplib
-with_system_xpdf
-with_system_poppler
 with_system_mpfr
 with_mpfr_includes
 with_mpfr_libdir
@@ -1641,10 +1639,6 @@ Optional Packages:
   --with-system-graphite2 use installed graphite2 headers and library
                           (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
-                          pkg-config)
-  --with-system-xpdf      use installed poppler headers and library instead of
-                          xpdf library from TL (requires pkg-config)
-  --with-system-poppler   use installed poppler headers and library (requires
                           pkg-config)
   --with-system-mpfr      use installed mpfr headers and library
   --with-mpfr-includes=DIR
@@ -4007,7 +4001,7 @@ if test "${enable_xetex_synctex+set}" = set; then :
 fi
 
 test "x$enable_web2c:$enable_xetex" = xyes:yes && {
-  need_poppler=yes
+  need_pplib=yes
   need_libpng=yes
   need_freetype2=yes
   need_teckit=yes
@@ -5119,11 +5113,7 @@ test "x$need_zziplib" = xyes && {
 
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
-
-# Check whether --with-system-xpdf was given.
-if test "${with_system_xpdf+set}" = set; then :
-  withval=$with_system_xpdf;
-fi
+: "kpse_xpdf_options - no-op"
 if test "x$with_system_xpdf" = x; then
   if test -f $srcdir/../libs/xpdf/configure; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`xpdf' headers and library from TL tree" >&5
@@ -5136,40 +5126,6 @@ $as_echo "$as_me: Assuming installed \`xpdf' headers and library" >&6;}
   fi
   ac_configure_args="$ac_configure_args '--with-system-xpdf=$with_system_xpdf'"
 fi
-
-## libs/poppler/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
-## configure options and TL libraries required for poppler
-
-# Check whether --with-system-poppler was given.
-if test "${with_system_poppler+set}" = set; then :
-  withval=$with_system_poppler;
-fi
-if test "x$with_system_poppler" = x; then
-  if test -f $srcdir/../libs/poppler/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`poppler' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`poppler' headers and library from TL tree" >&6;}
-    with_system_poppler=no
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`poppler' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`poppler' headers and library" >&6;}
-    with_system_poppler=yes
-  fi
-  ac_configure_args="$ac_configure_args '--with-system-poppler=$with_system_poppler'"
-fi
-if test "x$with_system_poppler" = xyes; then
-  if test "x$with_system_zlib" = x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`zlib' headers and library" >&5
-$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
-    with_system_zlib=yes
-    ac_configure_args="$ac_configure_args '--with-system-zlib'"
-  elif test "x$with_system_zlib" != xyes; then
-    as_fn_error $? "Sorry, \`--with-system-poppler' requires \`--with-system-zlib'" "$LINENO" 5
-  fi
-fi
-
-test "x$need_poppler" = xyes && {
-  need_zlib=yes
-}
 
 ## libs/mpfr/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfr/
 ## configure options and TL libraries required for mpfr

@@ -46,10 +46,9 @@ KPSE_LT_HACK
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
-# XeTeX now requires C++11 because poppler does :(.
-# XeTeX also requires C+11 because of ICU.
+# XeTeX now requires C++11 because ICU does :(.
 if test "x$enable_xetex" = xyes; then
-  AC_MSG_NOTICE([checking for C++11, since XeTeX enabled])
+  AC_MSG_NOTICE([checking for C++11, since XeTeX is enabled])
   AX_CXX_COMPILE_STDCXX([11])
 fi
 
@@ -260,7 +259,6 @@ KPSE_PIXMAN_FLAGS
 KPSE_CAIRO_FLAGS
 KPSE_GMP_FLAGS
 KPSE_MPFR_FLAGS
-KPSE_POPPLER_FLAGS
 KPSE_XPDF_FLAGS
 KPSE_ZZIPLIB_FLAGS
 KPSE_TECKIT_FLAGS
@@ -305,7 +303,6 @@ fi
 AC_SUBST([KPATHSEA_PATHS_H])
 
 dnl Check for Object::initCmd(const char *) etc
-KPSE_ADD_FLAGS([poppler])
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([for Object::[initCmd(const char*)] etc])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <Object.h>]],

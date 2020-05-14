@@ -107,7 +107,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-options.m4 \
 	$(top_srcdir)/m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/m4/kpse-pkgs.m4 \
-	$(top_srcdir)/m4/kpse-poppler-flags.m4 \
 	$(top_srcdir)/m4/kpse-pplib-flags.m4 \
 	$(top_srcdir)/m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/m4/kpse-setup.m4 \
@@ -181,7 +180,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/libs/graphite2/ac/withenable.ac \
 	$(top_srcdir)/libs/zziplib/ac/withenable.ac \
 	$(top_srcdir)/libs/xpdf/ac/withenable.ac \
-	$(top_srcdir)/libs/poppler/ac/withenable.ac \
 	$(top_srcdir)/libs/mpfr/ac/withenable.ac \
 	$(top_srcdir)/libs/gmp/ac/withenable.ac \
 	$(top_srcdir)/libs/cairo/ac/withenable.ac \
@@ -207,7 +205,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/libs/cairo/ac/cairo.ac \
 	$(top_srcdir)/libs/gmp/ac/gmp.ac \
 	$(top_srcdir)/libs/mpfr/ac/mpfr.ac \
-	$(top_srcdir)/libs/poppler/ac/poppler.ac \
 	$(top_srcdir)/libs/xpdf/ac/xpdf.ac \
 	$(top_srcdir)/libs/zziplib/ac/zziplib.ac \
 	$(top_srcdir)/libs/graphite2/ac/graphite2.ac \
