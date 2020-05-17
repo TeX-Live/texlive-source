@@ -95,11 +95,11 @@ luahbtex_LDFLAGS = -export-dynamic
 luajithbtex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 luatex_postldadd = libmplibcore.a 
-luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS)  $(PPLIB_LIBS)
+luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS)
 luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 luahbtex_postldadd = libmplibcore.a 
-luahbtex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) $(PPLIB_LIBS)
+luahbtex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS)
 luahbtex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
 
