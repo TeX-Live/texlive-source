@@ -1,3 +1,8 @@
+2020-05-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ppltotf.ch: Avoid compiler warnings: equality comparison with
+	extraneous parentheses.
+
 2020-05-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Improved resetting inhibit_glue_flag in extensions.

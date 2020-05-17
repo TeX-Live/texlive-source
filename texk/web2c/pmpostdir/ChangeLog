@@ -1,3 +1,8 @@
+2020-05-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pmp.ch: Avoid a compiler warning: equality comparison with
+	extraneous parentheses.
+
 2020-02-23  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pmp.ch: Bump upmpost version to 2.00-0.04-u1.26.

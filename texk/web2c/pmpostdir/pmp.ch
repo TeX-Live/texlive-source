@@ -348,9 +348,9 @@ static int mp_lookup_ctype (MP mp,font_number f, integer c)
   while ( l<u ) {
     r=(l+u)/2;
     ch=ctype_char(f)(r);
-    if ( (ch==c) ) {
+    if ( ch==c ) {
       return ctype_type(f)(r);};
-    if ( (ch<c) ) l=r+1;
+    if ( ch<c ) l=r+1;
     else u=r-1;
   };
   return 0;
