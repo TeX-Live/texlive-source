@@ -1,5 +1,5 @@
-Changes applied to the harfbuzz-2.6.4/ tree as obtained from:
-	http://www.freedesktop.org/software/harfbuzz/release/
+Changes applied to the harfbuzz-2.6.6/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/2.6.6/
 
 Removed:
 	COPYING
@@ -22,5 +22,7 @@ Removed:
 Removed unused dirs:
 	docs
 	m4
+	meson-cc-tests
+	subprojects
 	test
 	util

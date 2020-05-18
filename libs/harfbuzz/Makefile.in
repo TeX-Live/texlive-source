@@ -123,6 +123,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-buffer.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-common.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-draw.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-face.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-map.$(OBJEXT) \
@@ -199,6 +200,7 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-common.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-draw.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-face.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-fallback-shape.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po \
@@ -726,6 +728,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-config.hh \
 	@HARFBUZZ_TREE@/src/hb-debug.hh \
 	@HARFBUZZ_TREE@/src/hb-dispatch.hh \
+	@HARFBUZZ_TREE@/src/hb-draw.cc @HARFBUZZ_TREE@/src/hb-draw.hh \
 	@HARFBUZZ_TREE@/src/hb-face.hh @HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh @HARFBUZZ_TREE@/src/hb-font.cc \
 	@HARFBUZZ_TREE@/src/hb-iter.hh @HARFBUZZ_TREE@/src/hb-kern.hh \
@@ -740,6 +743,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff-common.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff1-std-str.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.cc \
@@ -977,6 +981,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-common.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-draw.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-face.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1140,6 +1147,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-common.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-draw.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-face.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-fallback-shape.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po@am__quote@ # am--include-marker
@@ -1789,6 +1797,7 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-common.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-draw.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-face.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-fallback-shape.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po
@@ -1888,6 +1897,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer-serialize.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-buffer.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-common.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-draw.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-face.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-fallback-shape.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po

@@ -52,6 +52,8 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-config.hh \
 	@HARFBUZZ_TREE@/src/hb-debug.hh \
 	@HARFBUZZ_TREE@/src/hb-dispatch.hh \
+	@HARFBUZZ_TREE@/src/hb-draw.cc \
+	@HARFBUZZ_TREE@/src/hb-draw.hh \
 	@HARFBUZZ_TREE@/src/hb-face.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
@@ -71,6 +73,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff-common.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff1-std-str.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.cc \
