@@ -5995,9 +5995,9 @@ else
   build_FALSE=
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing sqrt" >&5
-$as_echo_n "checking for library containing sqrt... " >&6; }
-if ${ac_cv_search_sqrt+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing erf" >&5
+$as_echo_n "checking for library containing erf... " >&6; }
+if ${ac_cv_search_erf+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_func_search_save_LIBS=$LIBS
@@ -6010,11 +6010,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char sqrt ();
+char erf ();
 int
 main ()
 {
-return sqrt ();
+return erf ();
   ;
   return 0;
 }
@@ -6027,25 +6027,25 @@ for ac_lib in '' m; do
     LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
   fi
   if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_search_sqrt=$ac_res
+  ac_cv_search_erf=$ac_res
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext
-  if ${ac_cv_search_sqrt+:} false; then :
+  if ${ac_cv_search_erf+:} false; then :
   break
 fi
 done
-if ${ac_cv_search_sqrt+:} false; then :
+if ${ac_cv_search_erf+:} false; then :
 
 else
-  ac_cv_search_sqrt=no
+  ac_cv_search_erf=no
 fi
 rm conftest.$ac_ext
 LIBS=$ac_func_search_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_sqrt" >&5
-$as_echo "$ac_cv_search_sqrt" >&6; }
-ac_res=$ac_cv_search_sqrt
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_erf" >&5
+$as_echo "$ac_cv_search_erf" >&6; }
+ac_res=$ac_cv_search_erf
 if test "$ac_res" != no; then :
   test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
 

@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2012-2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -45,7 +47,7 @@ AC_CHECK_TYPES([uint64_t, uint128_t, __uint128_t])
 AC_CONFIG_HEADERS([config.h cairo-features.h])
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
-AC_SEARCH_LIBS([sqrt], [m])
+AC_SEARCH_LIBS([erf], [m])
 
 CAIRO_FEATURES([dnl
 [0, [fc font]],

@@ -1,3 +1,9 @@
+2020-05-18  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac ([m]): check for erf, not sqrt; the latter may
+	be implemented in hardware, so that -lm is wrongly concluded to be
+	unnecessary. E.g., on Solaris. Report from Nelson Beebe.
+
 2019-01-09  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* configure.ac: Enable pdf surface.
