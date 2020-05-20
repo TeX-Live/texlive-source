@@ -1,6 +1,6 @@
 This is dvips.info, produced by makeinfo version 6.7 from dvips.texi.
 
-This manual documents Dvips version 2020.1 (January 2020), a program to
+This manual documents Dvips version 2020.1 (May 2020), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 INFO-DIR-SECTION TeX
@@ -16,7 +16,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 2020.1 (January 2020), a program to
+This manual documents Dvips version 2020.1 (May 2020), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 
@@ -75,21 +75,13 @@ different size can be used instead, although Dvips will complain loudly
 about the poor aesthetics of the resulting output.
 
    One of the most important features is the support of virtual fonts,
-which add an entirely new level of flexibility to TeX.  Virtual fonts
-are used to give Dvips its excellent PostScript font support, handling
-all the font remapping in a natural, portable, elegant, and extensible
-way.  Dvips even comes with its own Afm2tfm program that creates the
-necessary virtual fonts and TeX font metric files automatically from the
-Adobe font metric files.
+which add an entirely new level of flexibility to TeX.  Dvips even comes
+with its own Afm2tfm program that can create the virtual fonts and TeX
+font metric files automatically from Adobe font metric files.
 
    Source is provided and freely distributable, so adding a
 site-specific feature is possible.  Adding such features is made easier
 by the highly modular structure of the program.
-
-   There is really no reason to use another driver, and the more people
-use Dvips, the less time will be spent fighting with PostScript and the
-more time will be available to create beautiful documents.  So if you
-don't use Dvips on your system, get it today.
 
    Tom Rokicki wrote and maintains the original Dvips program.
 
@@ -1632,7 +1624,7 @@ File: dvips.info,  Node: \includegraphics,  Next: EPSF macros,  Prev: Bounding b
 
 Once the figure file has a bounding box comment (see the previous
 section) you are ready to import the graphic into a LaTeX document.  For
-LaTeX 2e, you can use the epsf, graphics or graphicx packages, but the
+LaTeX2e, you can use the epsf, graphics or graphicx packages, but the
 last is recommended--it has the most flexible syntax, and is briefly
 described here.  Further information can be found in 'grfguide' or
 'epslatex', which should be included in your LaTeX distribution in DVI,
@@ -1685,7 +1677,7 @@ File: dvips.info,  Node: EPSF macros,  Next: psfile special,  Prev: \includegrap
 5.1.3 Using the EPSF macros
 ---------------------------
 
-If you are using LaTeX 2e, use the 'graphics' or 'graphicx' package.
+If you are using LaTeX2e, use the 'graphics' or 'graphicx' package.
 *Note \includegraphics::.
 
    If you are using plain TeX or LaTeX 2.09, you need 'epsf.tex' (for
@@ -2294,14 +2286,13 @@ interpreters as well.)  Various versions of both PC and Unix distillers
 are supported; Ghostscript includes limited distiller support (*note
 Ghostscript installation::).
 
-   Macros you can use in your TeX document to insert the specials in the
-first place are available from 'CTAN:/support/hypertex'.  For CTAN info,
-*note (kpathsea)unixtex.ftp::.
+   By far the most common LaTeX package used to create hyperlinked
+output is 'hyperref' (<https://ctan.org/pkg/hyperref>).  For plain TeX,
+the Eplain package has some hyperlink support
+(<https://tug.org/eplain>).
 
    This hypertext support (and original form of the documentation) was
 written by Mark Doyle and Tanmoy Bhattacharya as the 'dvihps' program.
-You can retrieve their software and additional documentation via the
-CTAN reference above.
 
 * Menu:
 
@@ -2351,9 +2342,8 @@ starting '%%BeginFont: CMR10' followed by an entry '/FontType 1 def'.
 distribution may make those fonts available in a separate optional
 package (e.g., 'tetex-extra' in Debian).  Failing that, commercial
 versions of the Computer Modern fonts are available from Blue Sky;
-public domain versions - in particular, the lm fonts, and the cm-super
-fonts, are available from CTAN sites (for CTAN info, *note
-(kpathsea)unixtex.ftp::).
+public domain versions, in particular, the lm and cm-super font
+families, are available from CTAN and in TeX distributions.
 
    You can convert a PostScript file to PDF using 'distill', which comes
 with Adobe Acrobat, or 'ps2pdf', which comes with Ghostscript.  The
@@ -2625,8 +2615,8 @@ for understanding enough about virtual fonts to use them with Dvips.  It
 isn't a reference manual on virtual fonts.  For more information: The
 primary document on virtual fonts is Donald E. Knuth, 'TUGboat' 11(1),
 Apr. 1990, pp. 13-23, "Virtual Fonts: More Fun for Grand Wizards"
-('CTAN:/info/virtual-fonts.knuth'; for CTAN info, *note
-(kpathsea)unixtex.ftp::).  (Don't be intimidated by the subtitle.)
+(<mirror.ctan.org/info/virtual-fonts.knuth>).  (Don't be intimidated by
+the subtitle.)
 
    A virtual font ('.vf') file specifies, for each character in the
 virtual font, a recipe for typesetting that character.  A VF file, like
@@ -2647,7 +2637,14 @@ when you run 'vptovf'.
 
    You can "expand" virtual fonts into their base fonts with DVIcopy
 (*note (web2c)dvicopy invocation::).  This is useful if you are using a
-DVI translator that doesn't understand vf's itself.
+DVI translator that doesn't itself understand vf's.
+
+   If a virtual font has no entry at a given codepoint and the first
+'MAPFONT' designates an (u)pTeX JFM, we designate the glyph of the same
+codepoint in the TFM(JFM) with the smallest font ID. This feature helps
+to reduce the size of Japanese virtual fonts.  For more information
+about the extensive support of Japanese in TeX, see
+<https://github.com/texjporg>.
 
 
 File: dvips.info,  Node: Encodings,  Next: Bitmap font encodings,  Prev: Virtual fonts,  Up: Font concepts
@@ -2934,8 +2931,8 @@ especially by the reencodings you can specify with those options.  You
 can also obtain special effects such as an oblique font.
 
    Alternatives to Afm2tfm for creating virtual fonts include 'fontinst'
-<http://ctan.org/pkg/fontinst>, 'lcdf-typetools', particularly
-'otftotfm' (<http://ctan.org/pkg/lcdf-typetools>), and 'afm2p'
+<https://ctan.org/pkg/fontinst>, 'lcdf-typetools', particularly
+'otftotfm' (<https://ctan.org/pkg/lcdf-typetools>), and 'afm2pl'
 (<http://tex.aanhet.net/afm2pl/>), among others.
 
 * Menu:
@@ -3474,9 +3471,10 @@ plain TeX file the command:
      \input colordvi
 For (the obsolete) LaTeX 2.09, add the 'colordvi' style option as in:
      \documentstyle[12pt,colordvi]{article}
-For LaTeX 2e, these examples are not applicable.  Instead, please see
-the documentation for the graphics package, available from
-'CTAN:doc/latex/graphics/'.  See also 'CTAN:doc/epslatex.ps'.
+For LaTeX2e, these examples are not applicable.  Instead, please see the
+documentation for the graphics package
+(<https://ctan.org/pkg/graphics>), and the epslatex document
+(<https://ctan.org/pkg/epslatex>).
 
    These macros provide two basic kinds of color macros: ones for local
 color changes (a few words, a single symbol) and one for global color
@@ -3897,7 +3895,7 @@ Index
                                                               (line  43)
 * \AA:                                   Reencoding with Afm2tfm.
                                                               (line  43)
-* \COLORNAME:                            Color macro files.   (line  30)
+* \COLORNAME:                            Color macro files.   (line  31)
 * \dot:                                  Reencoding with Afm2tfm.
                                                               (line  43)
 * \epsffile macro:                       EPSF macros.         (line  38)
@@ -3911,7 +3909,7 @@ Index
 * \leavevmode:                           EPSF macros.         (line  26)
 * \magnification:                        EPSF scaling.        (line  62)
 * \rotninety:                            Literal examples.    (line  27)
-* \textCOLORNAME:                        Color macro files.   (line  45)
+* \textCOLORNAME:                        Color macro files.   (line  46)
 * | starting output filename:            Option details.      (line 247)
 * a config command (conserve memory):    Configuration file commands.
                                                               (line  21)
@@ -3954,7 +3952,7 @@ Index
 * bbfig:                                 Bounding box.        (line  37)
 * before header, inserting code:         Including headers from TeX.
                                                               (line  28)
-* Bhattacharya, Tanmoy:                  Hypertext.           (line  21)
+* Bhattacharya, Tanmoy:                  Hypertext.           (line  22)
 * big points:                            Bounding box.        (line  11)
 * binary files, not supported:           Including graphics fails.
                                                               (line  23)
@@ -4001,8 +3999,8 @@ Index
 * color configuration:                   Color device configuration.
                                                               (line   6)
 * color macros:                          Color macro files.   (line   6)
-* color names, mixed case:               Color macro files.   (line  16)
-* color nesting level:                   Color macro files.   (line  38)
+* color names, mixed case:               Color macro files.   (line  17)
+* color nesting level:                   Color macro files.   (line  39)
 * color separations:                     Option details.      (line  31)
 * color specifications:                  Color specifications.
                                                               (line   6)
@@ -4057,7 +4055,7 @@ Index
 * copies, collated:                      Option details.      (line  51)
 * copies, duplicated page bodies:        Option details.      (line  31)
 * copies, uncollated:                    Option details.      (line  46)
-* Crayola crayon box:                    Color macro files.   (line  16)
+* Crayola crayon box:                    Color macro files.   (line  17)
 * crop.pro:                              Option details.      (line 157)
 * cropmarks:                             Option details.      (line 157)
 * current font, in PostScript:           PostScript typesetting.
@@ -4091,13 +4089,13 @@ Index
 * double-sided printing:                 Option details.      (line  37)
 * downloading fonts partially:           psfonts.map.         (line  55)
 * downloading PostScript fonts:          psfonts.map.         (line   6)
-* Doyle, Mark:                           Hypertext.           (line  21)
+* Doyle, Mark:                           Hypertext.           (line  22)
 * draft copies:                          PostScript hooks.    (line  16)
 * dual paper trays:                      Paper trays.         (line   6)
 * duplex printers:                       Including headers from the command line.
                                                               (line  13)
 * DVI magnification:                     EPSF scaling.        (line  62)
-* dvihps, hyperdvi to PostScript:        Hypertext.           (line  21)
+* dvihps, hyperdvi to PostScript:        Hypertext.           (line  22)
 * Dvips configuration file options:      Configuration file commands.
                                                               (line   6)
 * dvips-all.enc:                         Bitmap font encodings.
@@ -4256,8 +4254,7 @@ Index
 * hsize (psfile special option):         psfile special.      (line  24)
 * html specials:                         Hypertext.           (line   6)
 * html specials, and -z:                 Option details.      (line 410)
-* http://www.win.tue.nl/~dickie/idvi:    Hypertext.           (line  21)
-* http://xxx.lanl.gov/hypertex:          Hypertext.           (line  21)
+* http://xxx.lanl.gov/hypertex:          Hypertext.           (line  22)
 * Hungarian umlaut:                      Reencoding with Afm2tfm.
                                                               (line  32)
 * hyperdvi extensions, enabling:         Option details.      (line 410)
@@ -4268,7 +4265,6 @@ Index
 * hypertext support:                     Hypertext.           (line   6)
 * i config command (pages/section):      Configuration file commands.
                                                               (line  64)
-* idvi Java DVI reader:                  Hypertext.           (line  21)
 * Illustrator, workaround for:           Including graphics fails.
                                                               (line  10)
 * img:                                   Hypertext specials.  (line  52)
@@ -4291,8 +4287,9 @@ Index
 * invoking Dvips:                        Invoking Dvips.      (line   6)
 * j config command (partial font downloading): Configuration file commands.
                                                               (line  68)
-* Java DVI reader:                       Hypertext.           (line  21)
+* Japanese font metric file:             Virtual fonts.       (line  37)
 * Jeffrey, Alan:                         Invoking afm2tfm.    (line  13)
+* JFM file, and virtual font fallback:   Virtual fonts.       (line  37)
 * K config command (comment removal):    Configuration file commands.
                                                               (line  72)
 * kerning, defined:                      Metric files.        (line  15)
@@ -4422,7 +4419,7 @@ Index
 * pages, maximum printed:                Option details.      (line 209)
 * PaintType:                             Special font effects.
                                                               (line  50)
-* Pantone colors:                        Color macro files.   (line  16)
+* Pantone colors:                        Color macro files.   (line  17)
 * paper size configuration file command: Config file paper sizes.
                                                               (line   6)
 * paper size, default:                   config.ps installation.
@@ -4513,10 +4510,11 @@ Index
                                                               (line  19)
 * psfonts.map <2>:                       psfonts.map.         (line   6)
 * psheaderdir:                           Header files.        (line  12)
-* psi character missing:                 Hypertext caveats.   (line  54)
+* psi character missing:                 Hypertext caveats.   (line  53)
 * pstopk:                                Option details.      (line 384)
 * pTeX extensions:                       Option details.      (line 220)
 * pTeX extensions <1>:                   Option details.      (line 226)
+* ptex JFM:                              Virtual fonts.       (line  37)
 * q config command (quiet):              Configuration file commands.
                                                               (line 141)
 * Q config command (quiet):              Configuration file commands.
@@ -4544,7 +4542,7 @@ Index
 * resolution, setting:                   Option details.      (line  63)
 * reverse pagination:                    Option details.      (line 314)
 * rhi (psfile special option):           psfile special.      (line  46)
-* Rokicki, Tomas:                        Why Dvips.           (line  60)
+* Rokicki, Tomas:                        Why Dvips.           (line  52)
 * rotate.tex:                            ps special.          (line  33)
 * rwi (psfile special option):           psfile special.      (line  46)
 * s config command (global save/restore): Configuration file commands.
@@ -4587,7 +4585,7 @@ Index
 * small caps fonts:                      Special font effects.
                                                               (line  34)
 * Smith, Arthur:                         Hypertext specials.  (line   6)
-* spaces, dropped trailing:              Hypertext caveats.   (line  54)
+* spaces, dropped trailing:              Hypertext caveats.   (line  53)
 * specials, hypertext:                   Hypertext specials.  (line   6)
 * splines:                               Glyph files.         (line  17)
 * spooler, lacking:                      Option details.      (line 115)
@@ -4643,7 +4641,7 @@ Index
 * too-small output:                      Small or inverted.   (line   6)
 * trademark character, accessing:        Changing PostScript encodings.
                                                               (line  18)
-* trailing spaces, dropped:              Hypertext caveats.   (line  54)
+* trailing spaces, dropped:              Hypertext caveats.   (line  53)
 * TranScript:                            Option details.      (line 212)
 * transforming downloaded fonts:         psfonts.map.         (line  19)
 * trouble:                               Diagnosing problems. (line   6)
@@ -4659,6 +4657,7 @@ Index
 * unknown, paper format for -t:          papersize special.   (line  29)
 * unknown, paper format for -t <1>:      Config file paper sizes.
                                                               (line  69)
+* uptex JFM:                             Virtual fonts.       (line  37)
 * URL, definition:                       Hypertext specials.  (line  27)
 * URL, extended for TeX:                 Hypertext specials.  (line  20)
 * urx (psfile special option):           psfile special.      (line  42)
@@ -4706,84 +4705,84 @@ Index
 
 
 Tag Table:
-Node: Top520
-Node: Why Dvips1269
-Node: Installation4286
-Node: config.ps installation5289
-Node: PostScript font installation7896
-Node: Ghostscript installation8816
-Node: Diagnosing problems9753
-Node: Debug options10844
-Node: No output11848
-Node: Small or inverted13314
-Node: Printer errors14032
-Node: Long documents fail15364
-Node: Including graphics fails15705
-Node: Invoking Dvips16944
-Node: Basic usage17535
-Node: Command-line options18539
-Node: Option summary18987
-Node: Option details21236
-Node: Environment variables41202
-Node: Config files44063
-Node: Configuration file searching44733
-Node: Configuration file commands47930
-Node: Paper size and landscape55904
-Node: papersize special57529
-Node: Config file paper sizes59237
-Node: Paper trays63393
-Node: Interaction with PostScript64727
-Node: PostScript figures65380
-Node: Bounding box66106
-Node: \includegraphics69478
-Node: EPSF macros71771
-Node: EPSF scaling73740
-Node: EPSF clipping76310
-Node: psfile special76952
-Node: Dynamic creation of graphics79344
-Node: Fonts in figures80662
-Node: Header files82312
-Node: Including headers from TeX83518
-Node: Including headers from the command line85556
-Node: Headers and memory usage86655
-Node: Literal PS87866
-Node: " special88448
-Node: ps special89189
-Node: Literal headers90687
-Node: PostScript hooks91396
-Node: Literal examples93492
-Node: Hypertext94946
-Node: Hypertext caveats96175
-Node: Hypertext specials100563
-Node: PostScript fonts103197
-Node: Font concepts104314
-Node: Metric files105544
-Node: Glyph files108324
-Node: Virtual fonts110683
-Node: Encodings112509
-Node: Bitmap font encodings114911
-Node: PostScript typesetting117441
-Node: Making a font available120538
-Node: Invoking afm2tfm125572
-Node: Changing font encodings126589
-Node: Changing TeX encodings127380
-Node: Changing PostScript encodings128482
-Node: Changing both encodings129826
-Node: Reencoding with Afm2tfm130500
-Node: Encoding file format133603
-Node: Special font effects137807
-Node: Afm2tfm options140067
-Node: psfonts.map143592
-Node: Color148322
-Node: Color macro files149366
-Node: User-definable colors152559
-Node: Color subtleties153835
-Node: Ted Turner155487
-Node: Color device configuration156712
-Node: Color support details159156
-Node: Color specifications159534
-Node: Color specials160938
-Node: Index163067
+Node: Top516
+Node: Why Dvips1261
+Node: Installation3844
+Node: config.ps installation4847
+Node: PostScript font installation7454
+Node: Ghostscript installation8374
+Node: Diagnosing problems9311
+Node: Debug options10402
+Node: No output11406
+Node: Small or inverted12872
+Node: Printer errors13590
+Node: Long documents fail14922
+Node: Including graphics fails15263
+Node: Invoking Dvips16502
+Node: Basic usage17093
+Node: Command-line options18097
+Node: Option summary18545
+Node: Option details20794
+Node: Environment variables40760
+Node: Config files43621
+Node: Configuration file searching44291
+Node: Configuration file commands47488
+Node: Paper size and landscape55462
+Node: papersize special57087
+Node: Config file paper sizes58795
+Node: Paper trays62951
+Node: Interaction with PostScript64285
+Node: PostScript figures64938
+Node: Bounding box65664
+Node: \includegraphics69036
+Node: EPSF macros71328
+Node: EPSF scaling73296
+Node: EPSF clipping75866
+Node: psfile special76508
+Node: Dynamic creation of graphics78900
+Node: Fonts in figures80218
+Node: Header files81868
+Node: Including headers from TeX83074
+Node: Including headers from the command line85112
+Node: Headers and memory usage86211
+Node: Literal PS87422
+Node: " special88004
+Node: ps special88745
+Node: Literal headers90243
+Node: PostScript hooks90952
+Node: Literal examples93048
+Node: Hypertext94502
+Node: Hypertext caveats95676
+Node: Hypertext specials100032
+Node: PostScript fonts102666
+Node: Font concepts103783
+Node: Metric files105013
+Node: Glyph files107793
+Node: Virtual fonts110152
+Node: Encodings112307
+Node: Bitmap font encodings114709
+Node: PostScript typesetting117239
+Node: Making a font available120336
+Node: Invoking afm2tfm125370
+Node: Changing font encodings126390
+Node: Changing TeX encodings127181
+Node: Changing PostScript encodings128283
+Node: Changing both encodings129627
+Node: Reencoding with Afm2tfm130301
+Node: Encoding file format133404
+Node: Special font effects137608
+Node: Afm2tfm options139868
+Node: psfonts.map143393
+Node: Color148123
+Node: Color macro files149167
+Node: User-definable colors152377
+Node: Color subtleties153653
+Node: Ted Turner155305
+Node: Color device configuration156530
+Node: Color support details158974
+Node: Color specifications159352
+Node: Color specials160756
+Node: Index162885
 
 End Tag Table
 
