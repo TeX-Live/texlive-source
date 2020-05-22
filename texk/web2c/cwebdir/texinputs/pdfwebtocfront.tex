@@ -1,32 +1,44 @@
-%
-% Move contents page to the front
-%
+% pdfwebtofront.tex
 % Code from knuth.drv in https://github.com/oberdiek/latex-tds
-% Works with pdftex and xetex.
+% 2020/05/21 v1.0 by Andreas Scherer.
+%
+% This file is part of project https://github.com/ascherer/cwebbin
+% and may be distributed under the MIT License or the LaTeX Project
+% Public License.
+%
+% Move table-of-contents page to the front in PDF output.
+% Works with pdftex and xetex in connection with either 'webmac.tex'
+% for Pascal/WEB programs or 'cwebmac.tex' for C/CWEB programs.
 %
 \ifx\detokenize\undefined\endinput\fi
 \newread\testread
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
 \else % Second run
-  \let\ORGcon\con
+  \let\ORGcon\con \let\ORGtoc\topofcontents
+  \ifx\undefined\grouptitle \mark{1} % WEB: let's start with section '1'.
+  \else\def\topofcontents{\ORGtoc\gtitle={\the\grouptitle}}\fi % CWEB
+  % Redefine '\con' to be invoked before the first '\N' (starred section).
   \def\con{%
-    \ifnum\pageno=1 \global\titletrue\fi
+    \def\:{\par\hangindent 2em} % Fix for 'bibtex.web'.
     \begingroup
       \let\end\relax
-      \ORGcon
+      \ORGcon\eject
     \endgroup
     \let\con\end
   }%
+  % Redefine '\N’ to invoke redefined '\con' before switching back
+  % to original '\N'.
   \expandafter\let\csname ORGN\expandafter\endcsname
                   \csname N\endcsname
   \expandafter\outer\expandafter\def\csname N\endcsname{%
     \con
-    \advance\pageno by -1\relax
     \expandafter\let\csname N\expandafter\endcsname
                     \csname ORGN\endcsname
     \csname N\endcsname
   }%
+  % Special variant of the above for 'mf.web' and 'tex.web'.  They put
+  % their tables-of-contents on a sparce 'page 2' and start on page '3'.
   \begingroup
     \def\num{0}%
     \edef\x{\jobname}%
@@ -48,7 +60,6 @@
                       \csname N\endcsname
       \expandafter\outer\expandafter\def\csname N\endcsname{%
         \con
-        \advance\pageno by -1\relax
         \expandafter\let\csname N\expandafter\endcsname
                         \csname ORGN\endcsname
         \csname N\endcsname
