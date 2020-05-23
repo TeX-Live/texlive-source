@@ -11,6 +11,8 @@
 % for Pascal/WEB programs or 'cwebmac.tex' for C/CWEB programs.
 %
 \ifx\detokenize\undefined\endinput\fi
+\def\contentsfile{\jobname.toc} % file that gets table of contents info
+\def\readcontents{\input \contentsfile}
 \newread\testread
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
