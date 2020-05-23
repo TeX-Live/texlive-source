@@ -21,10 +21,12 @@
   % Redefine '\con' to be invoked before the first '\N' (starred section).
   \def\con{%
     \def\:{\par\hangindent 2em} % Fix for 'bibtex.web'.
-    \ifpdftex % reduce size of PDF pages for more screen space
-      \pdfpagewidth=\pagewidth  \advance\pdfpagewidth by 2cm
-      \pdfpageheight=\pageheight \advance\pdfpageheight by 3cm
-      \pdfhorigin=1cm \pdfvorigin=1cm \fi
+    % reduce size of PDF pages for more screen space
+    \pdfpagewidth=\pagewidth  \advance\pdfpagewidth by 2cm
+    \pdfpageheight=\pageheight \advance\pdfpageheight by 3cm
+    \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
+    \else \advance\pdfpageheight by 1cm \global\pageshift=-1.54cm
+      \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
     \begingroup
       \let\end\relax
       \ORGcon\eject
