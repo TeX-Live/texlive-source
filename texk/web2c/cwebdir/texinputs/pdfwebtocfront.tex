@@ -46,8 +46,10 @@
     \ifx\x\y \def\num{1}\else
     \edef\y{\detokenize{mf}}%
     \ifx\x\y \def\num{1}\else
+    \edef\y{\detokenize{pdftex}}%
+    \ifx\x\y \def\num{1}\else
     \edef\y{\detokenize{xetex}}%
-    \ifx\x\y \def\num{1}\fi\fi\fi
+    \ifx\x\y \def\num{1}\fi\fi\fi\fi
   \expandafter\endgroup\ifnum\num=1 %
     \def\contentspagenumber{2}%
     \let\ORGpageno\pageno
