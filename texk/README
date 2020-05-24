@@ -116,7 +116,8 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        aleph - maintained here
         ctie - CTAN
         cweb - https://github.com/ascherer/cwebbin
-               (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/)
+               (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
+               and ftp://ftp.cs.stanford.edu/pub/ctwill/)
        eptex - https://github.com/texjporg/tex-jp-build
                also: https://osdn.jp/projects/eptex
         etex - maintained here
