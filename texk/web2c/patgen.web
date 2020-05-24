@@ -14,10 +14,10 @@
 
 \def\title{PATGEN}
 \def\contentspagenumber{45} % should be odd
-\def\topofcontents{
-  \line{\tenit Appendix\hfil \mainfont\contentspagenumber}
+\def\topofcontents{\null
+  \titlefalse % include headline on the contents page
+  \def\rheader{\tenit Appendix\hfil \mainfont\contentspagenumber}
   \vfill
-  \null\vskip 40pt
   \centerline{\titlefont {\ttitlefont PAT}tern {\ttitlefont GEN}eration
     program}
   \vskip 8pt
@@ -585,7 +585,7 @@ at the same location.
 @ The sizes of the pattern tries may have to be adjusted depending
 on the particular application (i.e., the parameter settings and the
 size of the dictionary).  The sizes below were sufficient to generate
-the original set of english \TeX 82 hyphenation patterns (file
+the original set of English \TeX 82 hyphenation patterns (file
 \.{hyphen.tex}).
 
 @<Constants...@>=

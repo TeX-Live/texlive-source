@@ -7,7 +7,7 @@
 % First release, 0.9 version:  8 May 1985
 % Updated to reflect new pk format, 2.0 version: 25 July 1985
 % Updated again for new pk format, 2.1 version: 15 August 1985
-% Docmentation updated, 2.2 version: 17 November 1987
+% Documentation updated, 2.2 version: 17 November 1987
 %
 % slight editing to correspond with MFware report -- don, 21 October 89
 % additional editing suggested by P Breitenlohner -- don, 18 November 89
@@ -25,9 +25,9 @@
 \def\(#1){} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 \def\title{PKtype}
-\def\contentspagenumber{0}
+\def\contentspagenumber{1}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont PKtype} processor}

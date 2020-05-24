@@ -19,9 +19,9 @@
 \def\(#1){} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 \def\title{PKtoGF}
-\def\contentspagenumber{0}
+\def\contentspagenumber{1}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont PKtoGF} processor}
@@ -593,7 +593,7 @@ The packed file format is a compact representation of the data contained in a
 are almost always less than half the size of their \.{GF} counterparts.  They
 are also easier to convert into a raster representation because they do not
 have a profusion of \\{paint}, \\{skip}, and \\{new\_row} commands to be
-separately interpreted.  In addition, the \.{PK} format expressedly forbids
+separately interpreted.  In addition, the \.{PK} format expressly forbids
 \&{special} commands within a character.  The minimum bounding box for each
 character is explicit in the format, and does not need to be scanned for as in
 the \.{GF} format.  Finally, the width and escapement values are combined with
