@@ -242,7 +242,7 @@ the replacement text.
 @d parametric2=4 {second type of parametric macros have this |ilk|}
 @z
 
-@x [50] unambig_length is a variabe now
+@x [50] unambig_length is a variable now
 @!chopped_id:array [0..unambig_length] of ASCII_code; {chopped identifier}
 @y
 @!chopped_id:array [0..max_id_length] of ASCII_code; {chopped identifier}
@@ -787,7 +787,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Strict comparisions.
+@ Strict comparisons.
 @.-strict@>
 
 @<Define the option...@> =
@@ -797,7 +797,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Loose comparisions.
+@ Loose comparisons.
 @.-loose@>
 
 @<Define the option...@> =
@@ -807,7 +807,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@ Loose comparisions.
+@ Loose comparisons.
 @.-length@>
 
 @<Define the option...@> =

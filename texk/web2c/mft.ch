@@ -295,9 +295,9 @@ end
 % Now follows the simplest change -- although the bigest one.
 % The primitives of \MF\ and \MP\ are reshuffled into
 % three categories:
-%   -- primitivies common for \MF\ and \MP
-%   -- primitivies specific for \MF
-%   -- primitivies specific for \MP
+%   -- primitives common for \MF\ and \MP
+%   -- primitives specific for \MF
+%   -- primitives specific for \MP
 
 @x [65]
 @ The intended use of the macros above might not be immediately obvious,

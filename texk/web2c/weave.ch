@@ -254,7 +254,7 @@ var q:xref_number; {pointer to previous cross reference}
 begin if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @y
 If the user has sent the |no_xref| flag (the -x option of the command line),
-then it is unnecessary to keep track of cross references for identifers.
+then it is unnecessary to keep track of cross references for identifiers.
 If one were careful, one could probably make more changes around module
 100 to avoid a lot of identifier looking up.
 

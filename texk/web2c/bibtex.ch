@@ -1029,7 +1029,7 @@ if (last_cite = max_cites) then
     while (last_cite < max_cites) do
         begin
         type_list[last_cite] := empty;@/
-        cite_info[last_cite] := any_value;  {to appeas \PASCAL's boolean evaluation}
+        cite_info[last_cite] := any_value;  {to appease \PASCAL's boolean evaluation}
         incr(last_cite);
         end;
 @z
