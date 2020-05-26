@@ -17,10 +17,8 @@
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
 \else % Second run
-  \let\ORGcon\con \let\ORGtoc\topofcontents
-  \ifx\undefined\grouptitle \mark{1} % WEB: let's start with section '1'.
-  \else\def\topofcontents{\ORGtoc\gtitle={\the\grouptitle}}\fi % CWEB
   % Redefine '\con' to be invoked before the first '\N' (starred section).
+  \let\ORGcon\con
   \def\con{%
     \def\:{\par\hangindent 2em} % Fix for 'bibtex.web'.
     % reduce size of PDF pages for more screen space
@@ -31,7 +29,11 @@
       \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
     \begingroup
       \let\end\relax
-      \ORGcon\eject
+      \ORGcon
+      % let's start with section '1', the 'Introduction'.
+      \ifx\undefined\grouptitle \mark{1} % WEB
+      \else \mark{{{\tensy x}1}0{Introduction}}\fi % CWEB
+      \eject % set '\botmark' on TOC, hence '\topmark' on next page.
     \endgroup
     \let\con\end
   }%
