@@ -147,6 +147,10 @@ static struct loaded_font
   spt_t size;
   int   source;     /* Source is either DVI or VF */
   uint32_t rgba_color;
+  uint8_t  rgba_used;
+                    /* Indicates that rgba_color is used or not.
+                     * It enables full range of opacity: 0-255.
+                     */
   int      xgs_id;  /* Transparency ExtGState */
   struct tt_longMetrics *hvmt;
   int   ascent;
@@ -180,6 +184,10 @@ static struct font_def
   int    used;
   int    native; /* boolean */
   uint32_t rgba_color;   /* only used for native fonts in XeTeX */
+  uint8_t  rgba_used;
+                    /* Indicates that rgba_color is used or not.
+                     * It enables full range of opacity: 0-255.
+                     */
   uint32_t face_index;
   int    layout_dir; /* 1 = vertical, 0 = horizontal */
   int    extend;
@@ -554,6 +562,7 @@ read_font_record (int32_t tex_id)
   def_fonts[num_def_fonts].used        = 0;
   def_fonts[num_def_fonts].native      = 0;
   def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
+  def_fonts[num_def_fonts].rgba_used   = 0;
   def_fonts[num_def_fonts].face_index  = 0;
   def_fonts[num_def_fonts].layout_dir  = 0;
   def_fonts[num_def_fonts].extend      = 0x00010000; /* 1.0 */
@@ -599,6 +608,7 @@ read_native_font_record (int32_t tex_id)
 
   def_fonts[num_def_fonts].layout_dir  = 0;
   def_fonts[num_def_fonts].rgba_color  = 0xffffffff;
+  def_fonts[num_def_fonts].rgba_used   = 0;
   def_fonts[num_def_fonts].extend      = 0x00010000;
   def_fonts[num_def_fonts].slant       = 0;
   def_fonts[num_def_fonts].embolden    = 0;
@@ -606,8 +616,10 @@ read_native_font_record (int32_t tex_id)
   if (flags & XDV_FLAG_VERTICAL)
     def_fonts[num_def_fonts].layout_dir = 1;
 
-  if (flags & XDV_FLAG_COLORED)
-    def_fonts[num_def_fonts].rgba_color  = get_unsigned_quad(dvi_file);
+  if (flags & XDV_FLAG_COLORED) {
+    def_fonts[num_def_fonts].rgba_color = get_unsigned_quad(dvi_file);
+    def_fonts[num_def_fonts].rgba_used = 1;
+  }
 
   if (flags & XDV_FLAG_EXTEND)
     def_fonts[num_def_fonts].extend = get_signed_quad(dvi_file);
@@ -1492,8 +1504,9 @@ do_fnt (int32_t tex_id)
                                 def_fonts[i].point_size);
     }
     loaded_fonts[font_id].rgba_color = def_fonts[i].rgba_color;
-    /* Opacity: 0xff is fully opaque. */
-    if ((loaded_fonts[font_id].rgba_color & 0xff) == 0xff) {
+    loaded_fonts[font_id].rgba_used = def_fonts[i].rgba_used;
+    /* if rgba_used == 0, not a colored font */
+    if (loaded_fonts[font_id].rgba_used == 0) {
       loaded_fonts[font_id].xgs_id = -1;
     } else {
       pdf_obj *xgs_dict;
@@ -1716,7 +1729,7 @@ do_glyphs (int do_actual_text)
     yloc[i] = get_buffered_signed_quad();
   }
 
-  if (font->rgba_color != 0xffffffff) {
+  if (font->rgba_used == 1) {
     pdf_color color;
     pdf_color_rgbcolor(&color,
       (double)((unsigned char)(font->rgba_color >> 24) & 0xff) / 255,
@@ -1787,7 +1800,7 @@ do_glyphs (int do_actual_text)
                        glyph_width, font->font_id, -1);
   }
 
-  if (font->rgba_color != 0xffffffff) {
+  if (font->rgba_used == 1) {
     if (font->xgs_id >= 0) {
       graphics_mode(); 
       pdf_dev_grestore();

@@ -1,3 +1,10 @@
+2020-05-26  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvi.c: Introduce rgba_used in order to indicate that
+	rgba_color for a XeTeX font is used or not. It enables full
+	range of opacity, 0-255.
+	* configure.ac: Version 20200526.
+
 2020-05-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* vf.c: reduce message by '-v' less than by '-vv' for
