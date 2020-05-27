@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20200511';
+my $VERSION = '20200527';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -48,7 +48,7 @@ my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
 my $RUNNING_AS_MAIN = (__PACKAGE__ eq 'main');
 
 
-=begin Architecture
+=begin Comment
 
 ----------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ my $RUNNING_AS_MAIN = (__PACKAGE__ eq 'main');
 
 ----------------------------------------------------------------------------
 
-=end Architecture
+=end Comment
 
 =cut
 
@@ -156,8 +156,8 @@ sub get_fontinfo {
     my $basicinfo = Font::Raw::get_basicinfo($filename);
     $info->process_basicinfo($basicinfo);
 
-    my $os2_table = Font::Raw::get_os2_table($filename);
-    $info->process_os2_table($os2_table);
+    my $os2_table = Font::Raw::get_classdata($filename);
+    $info->process_classdata($os2_table);
 
     my $featuredata = Font::Raw::get_featuredata($filename);
     $info->process_featuredata($featuredata);
@@ -182,6 +182,7 @@ my $ERR_DETAIL =<<'END_ERR_DETAIL';
             Width:      %s
             Shape:      %s
             Size:       %s-%s
+            Smallcaps:  %s
 
 END_ERR_DETAIL
 
@@ -359,15 +360,19 @@ sub process_basicinfo {
         $self->{family} = $1;
         $self->{shape}  = NFSS::unabbreviate(lc($2));
     }
-    # Ditto for the smallcaps shape; here we have to test both 'family'
-    # and 'name' for hints that this is a small caps font, as some fonts
-    # (e.g., Dolly) only mention this in their name.
+    # Ditto for the smallcaps shape; here we have to test both 'family',
+    # 'subfamily' and 'name' for hints that this is a small caps font,
+    # as some fonts (e.g., Dolly) only mention this in their name.
     $shapes = join '|', Util::sort_desc_length(qw(smallcaps sc smcp caps));
-    if ($self->{family} =~ m/(.+?) -? (?: $shapes) \z/xmsi) {
+    if ($self->{family} =~ m/(.+?) (?: $shapes) \z/xmsi) {
         $self->{family}       = $1;
         $self->{is_smallcaps} = 1;
     }
-    if ($self->{name} =~ m/(.+?) -? (?: $shapes) \z/xmsi) {
+    if ($self->{subfamily} =~ m/(.+?) (?: $shapes) \z/xmsi) {
+        $self->{subfamily}         = $1;
+        $self->{is_smallcaps} = 1;
+    }
+    if ($self->{name} =~ m/(.+?) (?: $shapes) \z/xmsi) {
         $self->{name}         = $1;
         $self->{is_smallcaps} = 1;
     }
@@ -417,12 +422,13 @@ sub process_basicinfo {
 
 
 # --------------------------------------------------------------------------
-#   Extracts usWeightClass and usWidthClass from the OS/2 table.
+#   Processes the usWeightClass and usWidthClass data.
 # --------------------------------------------------------------------------
-sub process_os2_table {
-    my ($self, $os2_table) = @_;
+sub process_classdata {
+    my ($self, $classdata) = @_;
 
-    @{$self}{qw(weight_class width_class)} = unpack '@4n @6n', $os2_table;
+    $self->{weight_class} = $classdata->{weight_class};
+    $self->{width_class}  = $classdata->{width_class};
 
     return;
 }
@@ -444,34 +450,32 @@ sub process_featuredata {
 #   Extracts 'minsize' and 'maxsize' from the optical design size info.
 # --------------------------------------------------------------------------
 sub process_sizedata {
-    my ($self, $data) = @_;
+    my ($self, $sizedata) = @_;
 
-    if (my ($minsize, $maxsize)
-            = $data =~ m/[(] ([\d.]+) \s* pt, \s*
-                             ([\d.]+) \s* pt  \s* [)]]/xms) {
+    my ($minsize, $maxsize) = @$sizedata;
+
     # fix some known bugs
-        if ($self->{name} eq 'GaramondPremrPro-It'
-            && $minsize == 6 && $maxsize == 8.9) {
-            ($minsize, $maxsize) = (8.9, 14.9);
-        }
-        elsif ($self->{family} eq 'KeplerStd'
-            && $self->{subfamily} =~ m/Caption/xms
-            && $minsize == 8.9 && $maxsize == 13.9) {
-            ($minsize, $maxsize) = (6, 8.9);
-        }
-        elsif ($self->{family} eq 'KeplerStd'
-            && $self->{subfamily} =~ m/Subhead/xms
-            && $minsize == 8.9 && $maxsize == 13.9) {
-            ($minsize, $maxsize) = (13.9, 23);
-        }
-        elsif ($self->{family} eq 'KeplerStd'
-            && $self->{subfamily} =~ m/Display/xms
-            && $minsize == 8.9 && $maxsize == 13.9) {
-            ($minsize, $maxsize) = (23, 72);
-        }
-
-        @{$self}{qw(minsize maxsize)} = ($minsize, $maxsize);
+    if ($self->{name} eq 'GaramondPremrPro-It'
+        && $minsize == 6 && $maxsize == 8.9) {
+        ($minsize, $maxsize) = (8.9, 14.9);
     }
+    elsif ($self->{family} eq 'KeplerStd'
+        && $self->{subfamily} =~ m/Caption/xms
+        && $minsize == 8.9 && $maxsize == 13.9) {
+        ($minsize, $maxsize) = (6, 8.9);
+    }
+    elsif ($self->{family} eq 'KeplerStd'
+        && $self->{subfamily} =~ m/Subhead/xms
+        && $minsize == 8.9 && $maxsize == 13.9) {
+        ($minsize, $maxsize) = (13.9, 23);
+    }
+    elsif ($self->{family} eq 'KeplerStd'
+        && $self->{subfamily} =~ m/Display/xms
+        && $minsize == 8.9 && $maxsize == 13.9) {
+        ($minsize, $maxsize) = (23, 72);
+    }
+
+    @{$self}{qw(minsize maxsize)} = ($minsize, $maxsize);
 
     return;
 }
@@ -517,9 +521,9 @@ sub get_basicinfo {
 
 
 # --------------------------------------------------------------------------
-#   Returns the font's OS/2 table.
+#   Returns usWeightClass and usWidthClass from the OS/2 table.
 # --------------------------------------------------------------------------
-sub get_os2_table {
+sub get_classdata {
     my $filename = shift;
 
     my $os2_table;
@@ -532,7 +536,12 @@ sub get_os2_table {
             or die "'$cmd' failed";
     } or warn "[WARNING]   $@";
 
-    return $os2_table;
+    my ($weight_class, $width_class) = unpack '@4n @6n', $os2_table;
+
+    return {
+        weight_class => $weight_class,
+        width_class  => $width_class,
+    };
 }
 
 
@@ -579,7 +588,13 @@ sub get_sizedata {
     close $otfinfo
         or die "[ERROR]     '$cmd' failed.";
 
-    return $data;
+    my ($minsize, $maxsize)
+        = $data =~ m/[(] ([\d.]+) \s* pt, \s*
+                         ([\d.]+) \s* pt  \s* [])]/xms;
+
+    $minsize //= 0;
+    $maxsize //= 0;
+    return [ $minsize, $maxsize ];
 }
 
 
@@ -638,7 +653,7 @@ sub create_support_files {
              [ $minsize, $maxsize, $workitem->{fontname} ];
     }
 
-    create_stylefile($family, \%fddata);
+    create_stylefile($nfss_mapping, $family, \%fddata);
     while (my ($enc, $encdata) = each %fddata) {
         while (my ($sty, $stydata) = each %$encdata) {
             create_fdfile($nfss_mapping, $family, $enc, $sty, $stydata);
@@ -662,7 +677,22 @@ my %SSUB_SHAPE = (
 #   Creates a LaTeX style file.
 # --------------------------------------------------------------------------
 sub create_stylefile {
-    my ($fam, $data) = @_;
+    my ($nfss_mapping, $fam, $data) = @_;
+
+    my $testfont;
+    eval {
+        my $testenc  = $ARGV{encoding}[0];
+        my $testfig  = ( grep { exists $data->{$testenc}{$_} }
+            qw(OsF LF TOsF TLF) )[0] or die;
+        my $testweight = $nfss_mapping->{weight}{""}[0] or die;
+        my $testshape
+            = ( grep { exists $data->{$testenc}{$testfig}{$testweight}{$_} }
+                     qw(n it sl sc)
+              )[0] or die;
+        $testfont
+            = $data->{$testenc}{$testfig}{$testweight}{$testshape}[0][2]
+                or die;
+    };
 
     my %seen = %{Util::get_keys($data)};
 
@@ -687,6 +717,7 @@ END_STY_HEADER
 
     print {$STY} "\\RequirePackage{fontenc}\n";
     print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
+    print {$STY} "\\RequirePackage{ifthen}\n";
 
     print {$STY} <<'END_STY_FONTAXES_START';
 \IfFileExists{mweights.sty}{\RequirePackage{mweights}}{}
@@ -709,10 +740,12 @@ END_STY_FONTAXES_SW
         print {$STY} <<'END_STY_FONTAXES_SUP';
     \fa@naming@exception{figures}{{superior}{proportional}}{Sup}
     \fa@naming@exception{figures}{{superior}{tabular}}{Sup}
-    \def\sufigures{\@nomath\sufigures
+    \def\supfigures{\@nomath\supfigures
         \fontfigurestyle{superior}\selectfont}
-    \DeclareTextFontCommand{\textsu}{\sufigures}
-    \let\textsuperior\textsu
+    \let\sufigures\supfigures
+    \DeclareTextFontCommand{\textsup}{\supfigures}
+    \let\textsu\textsup
+    \let\textsuperior\textsup
 
 END_STY_FONTAXES_SUP
     }
@@ -721,10 +754,12 @@ END_STY_FONTAXES_SUP
         print {$STY} <<'END_STY_FONTAXES_INF';
     \fa@naming@exception{figures}{{inferior}{proportional}}{Inf}
     \fa@naming@exception{figures}{{inferior}{tabular}}{Inf}
-    \def\infigures{\@nomath\infigures
+    \def\inffigures{\@nomath\inffigures
         \fontfigurestyle{inferior}\selectfont}
-    \DeclareTextFontCommand{\textin}{\infigures}
-    \let\textinferior\textin
+    \let\infigures\inffigures
+    \DeclareTextFontCommand{\textinf}{\inffigures}
+    \let\textin\textinf
+    \let\textinferior\textinf
 
 END_STY_FONTAXES_INF
     }
@@ -771,16 +806,10 @@ END_STY_FONTAXES_DNOM
     print {$STY} "}{}\n\n";
 
     print {$STY} <<"END_STY_XKEYVAL";
-\\IfFileExists{xkeyval.sty}{
-    \\newcommand*{\\$fam\@scale}{1}
-    \\RequirePackage{xkeyval}
-    \\DeclareOptionX{scale}{\\renewcommand*{\\$fam\@scale}{##1}}
-    \\DeclareOptionX{scaled}{\\renewcommand*{\\$fam\@scale}{##1}}
-}{
-    \\let\\DeclareOptionX\\DeclareOption
-    \\let\\ExecuteOptionsX\\ExecuteOptions
-    \\let\\ProcessOptionsX\\ProcessOptions
-}
+\\RequirePackage{xkeyval}
+\\newcommand*{\\$fam\@scale}{1}
+\\DeclareOptionX{scale}{\\renewcommand*{\\$fam\@scale}{#1}}
+\\DeclareOptionX{scaled}{\\renewcommand*{\\$fam\@scale}{#1}}
 
 END_STY_XKEYVAL
 
@@ -807,12 +836,51 @@ END_STY_XKEYVAL
 }
 END_STY_MAINFONT
 
+    if ($ARGV{math}) {
+        print {$STY} <<"END_STY_MATHOPTION";
+\\newif\\if$fam\@math\\$fam\@mathfalse
+\\DeclareOptionX{math}{\\$fam\@mathtrue}
+
+\\newcommand*{\\$fam\@mathstyle}{TeX}
+\\DeclareOptionX{math-style}{\\renewcommand*{\\$fam\@mathstyle}{#1}}
+
+END_STY_MATHOPTION
+
+        if ($seen{LF} or $seen{TLF}) {
+            print {$STY} "\\newcommand*{\\$fam\@mathfigurestyle}{LF}\n";
+        }
+        elsif ($seen{OsF} or $seen{TOsF}) {
+            print {$STY} "\\newcommand*{\\$fam\@mathfigurestyle}{OsF}\n";
+        }
+
+        if ($seen{OsF} or $seen{TOsF}) {
+            print {$STY}
+                "\\DeclareOptionX{matholdstyle}\n",
+                "    {\\renewcommand*{\\$fam\@mathfigurestyle}{OsF}}\n";
+        }
+        if ($seen{LF} or $seen{TLF}) {
+            print {$STY}
+                "\\DeclareOptionX{mathlining}",
+                "    {\\renewcommand{\\$fam\@mathfigurestyle}{LF}}\n";
+        }
+        print {$STY} "\n";
+
+        if ($seen{sw}) {
+            print {$STY} <<"END_STY_MATHCALOPTION";
+\\newif\\if$fam\@mathcal\\$fam\@mathcalfalse
+\\DeclareOptionX{mathcal}{\\$fam\@mathcaltrue}
+
+END_STY_MATHCALOPTION
+        }
+    }
+
     my $defaults
         = $seen{OsF}  ? 'oldstyle,proportional'
         : $seen{TOsF} ? 'oldstyle,tabular'
         : $seen{LF}   ? 'lining,proportional'
         : $seen{TLF}  ? 'lining,tabular'
-        :               die "[ERROR]     Internal bug, please report!";
+        :               die "[ERROR]     Internal bug, please report!"
+        ;
 
     my $default_bold;
     for my $series (qw(heavy black extrabold demibold semibold bold)) {
@@ -836,17 +904,367 @@ END_STY_MAINFONT
     }
     $defaults .= ",$default_regular" if $default_regular;
 
-    print {$STY} <<"END_STYLE_REST";
+    print {$STY} <<"END_STY_PROCESSOPTIONS";
 \\ExecuteOptionsX{$defaults}
 \\ProcessOptionsX\\relax
 
+END_STY_PROCESSOPTIONS
+
+    if (defined $testfont) {
+        print {$STY} <<"END_STY_MATCHLOWERCASE";
+\\ifthenelse{\\equal{\\$fam\@scale}{MatchLowercase}}
+    {\\newlength{\\$fam\@defaultx}
+     \\settoheight{\\$fam\@defaultx}{x}
+     \\newlength{\\$fam\@xheight}
+     \\settoheight{\\$fam\@xheight}
+        {{\\font\\testfont=$testfont at \\f\@size pt\\testfont x}}
+     \\renewcommand*{\\$fam\@scale}
+        {\\strip\@pt\\dimexpr\\number\\numexpr\\number\\dimexpr\\$fam\@defaultx\\relax*65536/\\number\\dimexpr\\$fam\@xheight\\relax\\relax sp\\relax}
+    }
+    {}
+
+END_STY_MATCHLOWERCASE
+    }
+
+    print {$STY} <<"END_STYLE_REST";
 \\renewcommand*
     {\\$ARGV{nfss}default}
     {$fam-\\$fam\@figurealign\\$fam\@figurestyle}
 
-\\endinput
 END_STYLE_REST
 
+    if ($ARGV{math}) {
+        print {$STY} <<"END_STY_MATH";
+\\newif\\if$fam\@mathLATINup\\$fam\@mathLATINupfalse
+\\newif\\if$fam\@mathlatinup\\$fam\@mathlatinupfalse
+\\newif\\if$fam\@mathGREEKup\\$fam\@mathGREEKupfalse
+\\newif\\if$fam\@mathgreekup\\$fam\@mathgreekupfalse
+
+\\if$fam\@math
+    \\DeclareSymbolFont{newoperators}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+    \\SetSymbolFont{newoperators}{bold}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+
+    \\DeclareSymbolFont{newletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
+    \\SetSymbolFont{newletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
+
+    \\DeclareSymbolFontAlphabet{\\mathrm}{newoperators}
+    \\DeclareSymbolFontAlphabet{\\mathnormal}{newletters}
+
+    \\def\\operator\@font{\\mathgroup\\symnewoperators}
+    \\SetMathAlphabet{\\mathit}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
+    \\SetMathAlphabet{\\mathit}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
+
+    \\SetMathAlphabet{\\mathbf}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+    \\SetMathAlphabet{\\mathbf}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+
+    \\def\\re\@DeclareMathSymbol#1#2#3#4{%
+        \\if\\relax\\noexpand#1\\let#1=\\undefined\\fi
+        \\DeclareMathSymbol{#1}{#2}{#3}{#4}}
+
+    \\def\\re\@DeclareMathDelimiter#1#2#3#4#5#6{%
+        \\let#1=\\undefined
+        \\DeclareMathDelimiter{#1}{#2}{#3}{#4}{#5}{#6}}
+
+    \\def\\re\@DeclareMathAccent#1#2#3#4{%
+        \\let#1=\\undefined
+        \\DeclareMathAccent{#1}{#2}{#3}{#4}}
+
+    \\re\@DeclareMathSymbol{0}{\\mathalpha}{newoperators}{`0}
+    \\re\@DeclareMathSymbol{1}{\\mathalpha}{newoperators}{`1}
+    \\re\@DeclareMathSymbol{2}{\\mathalpha}{newoperators}{`2}
+    \\re\@DeclareMathSymbol{3}{\\mathalpha}{newoperators}{`3}
+    \\re\@DeclareMathSymbol{4}{\\mathalpha}{newoperators}{`4}
+    \\re\@DeclareMathSymbol{5}{\\mathalpha}{newoperators}{`5}
+    \\re\@DeclareMathSymbol{6}{\\mathalpha}{newoperators}{`6}
+    \\re\@DeclareMathSymbol{7}{\\mathalpha}{newoperators}{`7}
+    \\re\@DeclareMathSymbol{8}{\\mathalpha}{newoperators}{`8}
+    \\re\@DeclareMathSymbol{9}{\\mathalpha}{newoperators}{`9}
+
+    \\re\@DeclareMathSymbol{a}{\\mathalpha}{newletters}{`a}
+    \\re\@DeclareMathSymbol{b}{\\mathalpha}{newletters}{`b}
+    \\re\@DeclareMathSymbol{c}{\\mathalpha}{newletters}{`c}
+    \\re\@DeclareMathSymbol{d}{\\mathalpha}{newletters}{`d}
+    \\re\@DeclareMathSymbol{e}{\\mathalpha}{newletters}{`e}
+    \\re\@DeclareMathSymbol{f}{\\mathalpha}{newletters}{`f}
+    \\re\@DeclareMathSymbol{g}{\\mathalpha}{newletters}{`g}
+    \\re\@DeclareMathSymbol{h}{\\mathalpha}{newletters}{`h}
+    \\re\@DeclareMathSymbol{i}{\\mathalpha}{newletters}{`i}
+    \\re\@DeclareMathSymbol{j}{\\mathalpha}{newletters}{`j}
+    \\re\@DeclareMathSymbol{k}{\\mathalpha}{newletters}{`k}
+    \\re\@DeclareMathSymbol{l}{\\mathalpha}{newletters}{`l}
+    \\re\@DeclareMathSymbol{m}{\\mathalpha}{newletters}{`m}
+    \\re\@DeclareMathSymbol{n}{\\mathalpha}{newletters}{`n}
+    \\re\@DeclareMathSymbol{o}{\\mathalpha}{newletters}{`o}
+    \\re\@DeclareMathSymbol{p}{\\mathalpha}{newletters}{`p}
+    \\re\@DeclareMathSymbol{q}{\\mathalpha}{newletters}{`q}
+    \\re\@DeclareMathSymbol{r}{\\mathalpha}{newletters}{`r}
+    \\re\@DeclareMathSymbol{s}{\\mathalpha}{newletters}{`s}
+    \\re\@DeclareMathSymbol{t}{\\mathalpha}{newletters}{`t}
+    \\re\@DeclareMathSymbol{u}{\\mathalpha}{newletters}{`u}
+    \\re\@DeclareMathSymbol{v}{\\mathalpha}{newletters}{`v}
+    \\re\@DeclareMathSymbol{w}{\\mathalpha}{newletters}{`w}
+    \\re\@DeclareMathSymbol{x}{\\mathalpha}{newletters}{`x}
+    \\re\@DeclareMathSymbol{y}{\\mathalpha}{newletters}{`y}
+    \\re\@DeclareMathSymbol{z}{\\mathalpha}{newletters}{`z}
+
+    \\re\@DeclareMathSymbol{A}{\\mathalpha}{newletters}{`A}
+    \\re\@DeclareMathSymbol{B}{\\mathalpha}{newletters}{`B}
+    \\re\@DeclareMathSymbol{C}{\\mathalpha}{newletters}{`C}
+    \\re\@DeclareMathSymbol{D}{\\mathalpha}{newletters}{`D}
+    \\re\@DeclareMathSymbol{E}{\\mathalpha}{newletters}{`E}
+    \\re\@DeclareMathSymbol{F}{\\mathalpha}{newletters}{`F}
+    \\re\@DeclareMathSymbol{G}{\\mathalpha}{newletters}{`G}
+    \\re\@DeclareMathSymbol{H}{\\mathalpha}{newletters}{`H}
+    \\re\@DeclareMathSymbol{I}{\\mathalpha}{newletters}{`I}
+    \\re\@DeclareMathSymbol{J}{\\mathalpha}{newletters}{`J}
+    \\re\@DeclareMathSymbol{K}{\\mathalpha}{newletters}{`K}
+    \\re\@DeclareMathSymbol{L}{\\mathalpha}{newletters}{`L}
+    \\re\@DeclareMathSymbol{M}{\\mathalpha}{newletters}{`M}
+    \\re\@DeclareMathSymbol{N}{\\mathalpha}{newletters}{`N}
+    \\re\@DeclareMathSymbol{O}{\\mathalpha}{newletters}{`O}
+    \\re\@DeclareMathSymbol{P}{\\mathalpha}{newletters}{`P}
+    \\re\@DeclareMathSymbol{Q}{\\mathalpha}{newletters}{`Q}
+    \\re\@DeclareMathSymbol{R}{\\mathalpha}{newletters}{`R}
+    \\re\@DeclareMathSymbol{S}{\\mathalpha}{newletters}{`S}
+    \\re\@DeclareMathSymbol{T}{\\mathalpha}{newletters}{`T}
+    \\re\@DeclareMathSymbol{U}{\\mathalpha}{newletters}{`U}
+    \\re\@DeclareMathSymbol{V}{\\mathalpha}{newletters}{`V}
+    \\re\@DeclareMathSymbol{W}{\\mathalpha}{newletters}{`W}
+    \\re\@DeclareMathSymbol{X}{\\mathalpha}{newletters}{`X}
+    \\re\@DeclareMathSymbol{Y}{\\mathalpha}{newletters}{`Y}
+    \\re\@DeclareMathSymbol{Z}{\\mathalpha}{newletters}{`Z}
+
+    \\re\@DeclareMathSymbol{\\imath}{\\mathord}{newletters}{"7B}
+    \\re\@DeclareMathSymbol{\\jmath}{\\mathord}{newletters}{"7C}
+
+    %
+    %   A number of math symbol declarations have been commented out,
+    %   since these characters generally do not work very well when
+    %   typesetting maths (either because of spacing issues or because
+    %   they don't mix with others symbols).
+    %   The commented-out declarations have been left in this style file
+    %   in case the user does want to re-activate those characters.
+    %
+
+    \\re\@DeclareMathSymbol{!}{\\mathclose}{newoperators}{"21}
+  % \\re\@DeclareMathSymbol{+}{\\mathbin}  {newoperators}{"2B}
+    \\re\@DeclareMathSymbol{:}{\\mathrel}  {newoperators}{"3A}
+    \\re\@DeclareMathSymbol{;}{\\mathpunct}{newoperators}{"3B}
+  % \\re\@DeclareMathSymbol{=}{\\mathrel}  {newoperators}{"3D}
+    \\re\@DeclareMathSymbol{?}{\\mathclose}{newoperators}{"3F}
+
+    \\re\@DeclareMathSymbol{.}{\\mathord}  {newletters}{"3A}
+    \\re\@DeclareMathSymbol{,}{\\mathpunct}{newletters}{"3B}
+  % \\re\@DeclareMathSymbol{<}{\\mathrel}  {newletters}{"3C}
+  % \\re\@DeclareMathSymbol{/}{\\mathord}  {newletters}{"3D}
+  % \\re\@DeclareMathSymbol{>}{\\mathrel}  {newletters}{"3E}
+
+    \\re\@DeclareMathSymbol{\\mathdollar}{\\mathord}  {newoperators}{"24}
+    \\re\@DeclareMathSymbol{\\colon}     {\\mathpunct}{newoperators}{"3A}
+
+  % \\DeclareMathDelimiter{(}{\\mathopen} {newoperators}{"28}{largesymbols}{"00}
+  % \\DeclareMathDelimiter{)}{\\mathclose}{newoperators}{"29}{largesymbols}{"01}
+  % \\DeclareMathDelimiter{[}{\\mathopen} {newoperators}{"5B}{largesymbols}{"02}
+  % \\DeclareMathDelimiter{]}{\\mathclose}{newoperators}{"5D}{largesymbols}{"03}
+  % \\DeclareMathDelimiter{/}{\\mathord}  {newoperators}{"2F}{largesymbols}{"0E}
+
+    \\re\@DeclareMathAccent{\\grave}   {\\mathalpha}{newoperators}{"12}
+    \\re\@DeclareMathAccent{\\acute}   {\\mathalpha}{newoperators}{"13}
+    \\re\@DeclareMathAccent{\\check}   {\\mathalpha}{newoperators}{"14}
+    \\re\@DeclareMathAccent{\\breve}   {\\mathalpha}{newoperators}{"15}
+    \\re\@DeclareMathAccent{\\bar}     {\\mathalpha}{newoperators}{"16}
+    \\re\@DeclareMathAccent{\\mathring}{\\mathalpha}{newoperators}{"17}
+    \\re\@DeclareMathAccent{\\hat}     {\\mathalpha}{newoperators}{"5E}
+    \\re\@DeclareMathAccent{\\dot}     {\\mathalpha}{newoperators}{"5F}
+    \\re\@DeclareMathAccent{\\tilde}   {\\mathalpha}{newoperators}{"7E}
+    \\re\@DeclareMathAccent{\\ddot}    {\\mathalpha}{newoperators}{"7F}
+
+    \\re\@DeclareMathSymbol{\\Gamma}  {\\mathalpha}{newoperators}{"00}
+    \\re\@DeclareMathSymbol{\\Delta}  {\\mathalpha}{newoperators}{"01}
+    \\re\@DeclareMathSymbol{\\Theta}  {\\mathalpha}{newoperators}{"02}
+    \\re\@DeclareMathSymbol{\\Lambda} {\\mathalpha}{newoperators}{"03}
+    \\re\@DeclareMathSymbol{\\Xi}     {\\mathalpha}{newoperators}{"04}
+    \\re\@DeclareMathSymbol{\\Pi}     {\\mathalpha}{newoperators}{"05}
+    \\re\@DeclareMathSymbol{\\Sigma}  {\\mathalpha}{newoperators}{"06}
+    \\re\@DeclareMathSymbol{\\Upsilon}{\\mathalpha}{newoperators}{"07}
+    \\re\@DeclareMathSymbol{\\Phi}    {\\mathalpha}{newoperators}{"08}
+    \\re\@DeclareMathSymbol{\\Psi}    {\\mathalpha}{newoperators}{"09}
+    \\re\@DeclareMathSymbol{\\Omega}  {\\mathalpha}{newoperators}{"0A}
+
+    \\re\@DeclareMathSymbol{\\alpha}     {\\mathord}{newletters}{"0B}
+    \\re\@DeclareMathSymbol{\\beta}      {\\mathord}{newletters}{"0C}
+    \\re\@DeclareMathSymbol{\\gamma}     {\\mathord}{newletters}{"0D}
+    \\re\@DeclareMathSymbol{\\delta}     {\\mathord}{newletters}{"0E}
+    \\re\@DeclareMathSymbol{\\epsilon}   {\\mathord}{newletters}{"0F}
+    \\re\@DeclareMathSymbol{\\zeta}      {\\mathord}{newletters}{"10}
+    \\re\@DeclareMathSymbol{\\eta}       {\\mathord}{newletters}{"11}
+    \\re\@DeclareMathSymbol{\\theta}     {\\mathord}{newletters}{"12}
+    \\re\@DeclareMathSymbol{\\iota}      {\\mathord}{newletters}{"13}
+    \\re\@DeclareMathSymbol{\\kappa}     {\\mathord}{newletters}{"14}
+    \\re\@DeclareMathSymbol{\\lambda}    {\\mathord}{newletters}{"15}
+    \\re\@DeclareMathSymbol{\\mu}        {\\mathord}{newletters}{"16}
+    \\re\@DeclareMathSymbol{\\nu}        {\\mathord}{newletters}{"17}
+    \\re\@DeclareMathSymbol{\\xi}        {\\mathord}{newletters}{"18}
+    \\re\@DeclareMathSymbol{\\pi}        {\\mathord}{newletters}{"19}
+    \\re\@DeclareMathSymbol{\\rho}       {\\mathord}{newletters}{"1A}
+    \\re\@DeclareMathSymbol{\\sigma}     {\\mathord}{newletters}{"1B}
+    \\re\@DeclareMathSymbol{\\tau}       {\\mathord}{newletters}{"1C}
+    \\re\@DeclareMathSymbol{\\upsilon}   {\\mathord}{newletters}{"1D}
+    \\re\@DeclareMathSymbol{\\phi}       {\\mathord}{newletters}{"1E}
+    \\re\@DeclareMathSymbol{\\chi}       {\\mathord}{newletters}{"1F}
+    \\re\@DeclareMathSymbol{\\psi}       {\\mathord}{newletters}{"20}
+    \\re\@DeclareMathSymbol{\\omega}     {\\mathord}{newletters}{"21}
+    \\re\@DeclareMathSymbol{\\varepsilon}{\\mathord}{newletters}{"22}
+    \\re\@DeclareMathSymbol{\\vartheta}  {\\mathord}{newletters}{"23}
+    \\re\@DeclareMathSymbol{\\varpi}     {\\mathord}{newletters}{"24}
+    \\re\@DeclareMathSymbol{\\varrho}    {\\mathord}{newletters}{"25}
+    \\re\@DeclareMathSymbol{\\varsigma}  {\\mathord}{newletters}{"26}
+    \\re\@DeclareMathSymbol{\\varphi}    {\\mathord}{newletters}{"27}
+
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{TeX}}
+        {\\$fam\@mathGREEKuptrue}
+        {}
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{french}}
+        {\\$fam\@mathLATINuptrue
+         \\$fam\@mathGREEKuptrue
+         \\$fam\@mathgreekuptrue}
+        {}
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{upright}}
+        {\\$fam\@mathLATINuptrue
+         \\$fam\@mathlatinuptrue
+         \\$fam\@mathGREEKuptrue
+         \\$fam\@mathgreekuptrue}
+        {}
+
+    \\if$fam\@mathLATINup
+        \\re\@DeclareMathSymbol{A}{\\mathalpha}{newoperators}{`A}
+        \\re\@DeclareMathSymbol{B}{\\mathalpha}{newoperators}{`B}
+        \\re\@DeclareMathSymbol{C}{\\mathalpha}{newoperators}{`C}
+        \\re\@DeclareMathSymbol{D}{\\mathalpha}{newoperators}{`D}
+        \\re\@DeclareMathSymbol{E}{\\mathalpha}{newoperators}{`E}
+        \\re\@DeclareMathSymbol{F}{\\mathalpha}{newoperators}{`F}
+        \\re\@DeclareMathSymbol{G}{\\mathalpha}{newoperators}{`G}
+        \\re\@DeclareMathSymbol{H}{\\mathalpha}{newoperators}{`H}
+        \\re\@DeclareMathSymbol{I}{\\mathalpha}{newoperators}{`I}
+        \\re\@DeclareMathSymbol{J}{\\mathalpha}{newoperators}{`J}
+        \\re\@DeclareMathSymbol{K}{\\mathalpha}{newoperators}{`K}
+        \\re\@DeclareMathSymbol{L}{\\mathalpha}{newoperators}{`L}
+        \\re\@DeclareMathSymbol{M}{\\mathalpha}{newoperators}{`M}
+        \\re\@DeclareMathSymbol{N}{\\mathalpha}{newoperators}{`N}
+        \\re\@DeclareMathSymbol{O}{\\mathalpha}{newoperators}{`O}
+        \\re\@DeclareMathSymbol{P}{\\mathalpha}{newoperators}{`P}
+        \\re\@DeclareMathSymbol{Q}{\\mathalpha}{newoperators}{`Q}
+        \\re\@DeclareMathSymbol{R}{\\mathalpha}{newoperators}{`R}
+        \\re\@DeclareMathSymbol{S}{\\mathalpha}{newoperators}{`S}
+        \\re\@DeclareMathSymbol{T}{\\mathalpha}{newoperators}{`T}
+        \\re\@DeclareMathSymbol{U}{\\mathalpha}{newoperators}{`U}
+        \\re\@DeclareMathSymbol{V}{\\mathalpha}{newoperators}{`V}
+        \\re\@DeclareMathSymbol{W}{\\mathalpha}{newoperators}{`W}
+        \\re\@DeclareMathSymbol{X}{\\mathalpha}{newoperators}{`X}
+        \\re\@DeclareMathSymbol{Y}{\\mathalpha}{newoperators}{`Y}
+        \\re\@DeclareMathSymbol{Z}{\\mathalpha}{newoperators}{`Z}
+    \\fi
+
+    \\if$fam\@mathlatinup
+        \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+        \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+
+        \\re\@DeclareMathSymbol{a}{\\mathord}{upletters}{`a}
+        \\re\@DeclareMathSymbol{b}{\\mathord}{upletters}{`b}
+        \\re\@DeclareMathSymbol{c}{\\mathord}{upletters}{`c}
+        \\re\@DeclareMathSymbol{d}{\\mathord}{upletters}{`d}
+        \\re\@DeclareMathSymbol{e}{\\mathord}{upletters}{`e}
+        \\re\@DeclareMathSymbol{f}{\\mathord}{upletters}{`f}
+        \\re\@DeclareMathSymbol{g}{\\mathord}{upletters}{`g}
+        \\re\@DeclareMathSymbol{h}{\\mathord}{upletters}{`h}
+        \\re\@DeclareMathSymbol{i}{\\mathord}{upletters}{`i}
+        \\re\@DeclareMathSymbol{j}{\\mathord}{upletters}{`j}
+        \\re\@DeclareMathSymbol{k}{\\mathord}{upletters}{`k}
+        \\re\@DeclareMathSymbol{l}{\\mathord}{upletters}{`l}
+        \\re\@DeclareMathSymbol{m}{\\mathord}{upletters}{`m}
+        \\re\@DeclareMathSymbol{n}{\\mathord}{upletters}{`n}
+        \\re\@DeclareMathSymbol{o}{\\mathord}{upletters}{`o}
+        \\re\@DeclareMathSymbol{p}{\\mathord}{upletters}{`p}
+        \\re\@DeclareMathSymbol{q}{\\mathord}{upletters}{`q}
+        \\re\@DeclareMathSymbol{r}{\\mathord}{upletters}{`r}
+        \\re\@DeclareMathSymbol{s}{\\mathord}{upletters}{`s}
+        \\re\@DeclareMathSymbol{t}{\\mathord}{upletters}{`t}
+        \\re\@DeclareMathSymbol{u}{\\mathord}{upletters}{`u}
+        \\re\@DeclareMathSymbol{v}{\\mathord}{upletters}{`v}
+        \\re\@DeclareMathSymbol{w}{\\mathord}{upletters}{`w}
+        \\re\@DeclareMathSymbol{x}{\\mathord}{upletters}{`x}
+        \\re\@DeclareMathSymbol{y}{\\mathord}{upletters}{`y}
+        \\re\@DeclareMathSymbol{z}{\\mathord}{upletters}{`z}
+
+        \\re\@DeclareMathSymbol{\\imath}{\\mathord}{upletters}{"7B}
+        \\re\@DeclareMathSymbol{\\jmath}{\\mathord}{upletters}{"7C}
+    \\fi
+
+    \\if$fam\@mathGREEKup
+    \\else
+        \\re\@DeclareMathSymbol{\\Gamma}  {\\mathalpha}{newletters}{"00}
+        \\re\@DeclareMathSymbol{\\Delta}  {\\mathalpha}{newletters}{"01}
+        \\re\@DeclareMathSymbol{\\Theta}  {\\mathalpha}{newletters}{"02}
+        \\re\@DeclareMathSymbol{\\Lambda} {\\mathalpha}{newletters}{"03}
+        \\re\@DeclareMathSymbol{\\Xi}     {\\mathalpha}{newletters}{"04}
+        \\re\@DeclareMathSymbol{\\Pi}     {\\mathalpha}{newletters}{"05}
+        \\re\@DeclareMathSymbol{\\Sigma}  {\\mathalpha}{newletters}{"06}
+        \\re\@DeclareMathSymbol{\\Upsilon}{\\mathalpha}{newletters}{"07}
+        \\re\@DeclareMathSymbol{\\Phi}    {\\mathalpha}{newletters}{"08}
+        \\re\@DeclareMathSymbol{\\Psi}    {\\mathalpha}{newletters}{"09}
+        \\re\@DeclareMathSymbol{\\Omega}  {\\mathalpha}{newletters}{"0A}
+    \\fi
+
+    \\if$fam\@mathgreekup
+        \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+        \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+
+        \\re\@DeclareMathSymbol{\\alpha}     {\\mathord}{upletters}{"0B}
+        \\re\@DeclareMathSymbol{\\beta}      {\\mathord}{upletters}{"0C}
+        \\re\@DeclareMathSymbol{\\gamma}     {\\mathord}{upletters}{"0D}
+        \\re\@DeclareMathSymbol{\\delta}     {\\mathord}{upletters}{"0E}
+        \\re\@DeclareMathSymbol{\\epsilon}   {\\mathord}{upletters}{"0F}
+        \\re\@DeclareMathSymbol{\\zeta}      {\\mathord}{upletters}{"10}
+        \\re\@DeclareMathSymbol{\\eta}       {\\mathord}{upletters}{"11}
+        \\re\@DeclareMathSymbol{\\theta}     {\\mathord}{upletters}{"12}
+        \\re\@DeclareMathSymbol{\\iota}      {\\mathord}{upletters}{"13}
+        \\re\@DeclareMathSymbol{\\kappa}     {\\mathord}{upletters}{"14}
+        \\re\@DeclareMathSymbol{\\lambda}    {\\mathord}{upletters}{"15}
+        \\re\@DeclareMathSymbol{\\mu}        {\\mathord}{upletters}{"16}
+        \\re\@DeclareMathSymbol{\\nu}        {\\mathord}{upletters}{"17}
+        \\re\@DeclareMathSymbol{\\xi}        {\\mathord}{upletters}{"18}
+        \\re\@DeclareMathSymbol{\\pi}        {\\mathord}{upletters}{"19}
+        \\re\@DeclareMathSymbol{\\rho}       {\\mathord}{upletters}{"1A}
+        \\re\@DeclareMathSymbol{\\sigma}     {\\mathord}{upletters}{"1B}
+        \\re\@DeclareMathSymbol{\\tau}       {\\mathord}{upletters}{"1C}
+        \\re\@DeclareMathSymbol{\\upsilon}   {\\mathord}{upletters}{"1D}
+        \\re\@DeclareMathSymbol{\\phi}       {\\mathord}{upletters}{"1E}
+        \\re\@DeclareMathSymbol{\\chi}       {\\mathord}{upletters}{"1F}
+        \\re\@DeclareMathSymbol{\\psi}       {\\mathord}{upletters}{"20}
+        \\re\@DeclareMathSymbol{\\omega}     {\\mathord}{upletters}{"21}
+        \\re\@DeclareMathSymbol{\\varepsilon}{\\mathord}{upletters}{"22}
+        \\re\@DeclareMathSymbol{\\vartheta}  {\\mathord}{upletters}{"23}
+        \\re\@DeclareMathSymbol{\\varpi}     {\\mathord}{upletters}{"24}
+        \\re\@DeclareMathSymbol{\\varrho}    {\\mathord}{upletters}{"25}
+        \\re\@DeclareMathSymbol{\\varsigma}  {\\mathord}{upletters}{"26}
+        \\re\@DeclareMathSymbol{\\varphi}    {\\mathord}{upletters}{"27}
+    \\fi
+\\fi
+
+END_STY_MATH
+
+        if ($seen{sw}) {
+            print {$STY} <<"END_STY_MATHCAL";
+\\if$fam\@mathcal
+    \\SetMathAlphabet{\\mathcal}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{sw}
+    \\SetMathAlphabet{\\mathcal}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{sw}
+\\fi
+
+END_STY_MATHCAL
+        }
+    }
+
+    print {$STY} "\\endinput\n";
     close $STY;
 
     return;
@@ -889,7 +1307,9 @@ sub create_fdfile {
 \\fi
 
 \\DeclareFontFamily{$enc}{$fam-$sty}{@{[
-    $ARGV{nfss} eq 'tt' ? '\hyphenchar\font=-1' : ""
+    $ARGV{nfss} eq 'tt' ? '\hyphenchar\font=-1'
+    : $enc eq 'OML'     ? '\skewchar\font=127'
+    :                     q{}
 ]}}
 
 END_FD_HEADER
@@ -1076,6 +1496,9 @@ I'm using the following options:
     nfssweight:         @{[ join q{, }, @{$ARGV{nfssweight}} ]}
     nfsswidth:          @{[ join q{, }, @{$ARGV{nfsswidth}}  ]}
 
+    math:               @{[ $ARGV{math}         ? 'yes'     : 'no'     ]}
+    mathspacing:        $ARGV{mathspacing}
+
 END_ARGUMENTS
 
     if ($ARGV{fig_height} or $ARGV{fig_width}) {
@@ -1182,7 +1605,7 @@ END_FONTINFO
                        $workitem->{encoding},
                        $workitem->{figurestyle},
                        $workitem->{fdshape},
-                       join(q(, ), @{$workitem->{features}});
+                       join(q{, }, @{$workitem->{features}});
         $prevfn  = $workitem->{font}{filename};
     }
 
@@ -1317,8 +1740,8 @@ my @WIDTH = (
     c   =>  [ qw( condensed ) ],
     sc  =>  [ qw( semicondensed narrow ) ],
     ''  =>  [ qw( regular ) ],
-    sx  =>  [ qw( semiextended semiexpanded ) ],
-    x   =>  [ qw( extended expanded wide ) ],
+    sx  =>  [ qw( semiextended semiexpanded wide ) ],
+    x   =>  [ qw( extended expanded ) ],
     ex  =>  [],
     ux  =>  [],
 );
@@ -1645,7 +2068,7 @@ Possible options:
     -defaulttabular             considered 'default' for this font; see docs
     -defaultproportional
 
-    -extra="TEXT"           Add TEXT to the command for 'otftotfm'
+    -extra="EXTRA"          Add EXTRA to the otftotfm command for all fonts
     -target="DIRECTORY"     Install files into specified TEXMF tree
     -vendor="VENDOR"        Only used for naming directories
     -typeface="TYPEFACE"    Only used for naming directories
@@ -1663,6 +2086,9 @@ Possible options:
     -logfile="FILE"         Write log to "FILE" (default: <fontfamily>.log)
     -verbose                Print more data to log file
     -version                Print version number and exit
+
+    -math                   Generate basic math fonts
+    -mathspacing=AMOUNT     Letterspace the math fonts by AMOUNT/1000 em
 
     font[s]                 The fonts (.otf or .ttf format) to install.
 
@@ -1700,6 +2126,8 @@ END_USAGE
     verbose         => 0,
     nfsswidth       => [],
     nfssweight      => [],
+    math            => 0,
+    mathspacing     => 0,
 );
 
 
@@ -1765,12 +2193,14 @@ sub parse_options {
                                      NFSS::set_widths($key, @values);
                                      $ARGV{$key} = 'user-defined';
                                  },
+        'math!'               => \$ARGV{math},
+        'mathspacing=i'       => \$ARGV{mathspacing},
     )
     or die "$USAGE";
 
     if (!@ARGV) {
         Pod::Usage::pod2usage(
-            -msg => '[ERROR] No font files given, nothing to do!',
+            -msg => '[ERROR]     No font files given, nothing to do!',
             -verbose => 1);
     }
 
@@ -1827,6 +2257,7 @@ sub get_targetdirs {
 # The official names for various coding schemes.
 my %SCHEME = (
     OT1 => 'TEX TEXT',
+    OML => 'TEX MATH ITALIC',
     T1  => 'EXTENDED TEX FONT ENCODING - LATIN',
     TS1 => 'TEX TEXT COMPANION SYMBOLS 1---TS1',
     LY1 => 'TEX TYPEWRITER AND WINDOWS ANSI',
@@ -1988,6 +2419,13 @@ my %STYLE = (
         extra => '',
         name  => '',
     },
+    math => {
+        code  => { n => 'n', it => 'it', sl => 'sl' },
+        reqd  => [],
+        nice  => [ 'onum' ],
+        extra => '--math-spacing=127',
+        name  => '',
+    },
 );
 
 =begin Comment
@@ -2024,25 +2462,25 @@ my %FIGURESTYLE = (
         reqd   => [],
         nice   => [ 'kern', 'liga' ],
         extra  => '',
-        styles => [ 'normal', 'smallcaps', 'swash', 'textcomp' ],
+        styles => [ qw(normal smallcaps swash textcomp math) ],
     },
     LF => {
         reqd   => [],
         nice   => [ 'kern', 'liga' ],
         extra  => '',
-        styles => [ 'normal', 'smallcaps', 'swash', 'textcomp' ],
+        styles => [ qw(normal smallcaps swash textcomp math) ],
     },
     TOsF => {
         reqd   => [],
         nice   => [ 'kern', 'liga' ],
         extra  => '',
-        styles => [ 'normal', 'smallcaps', 'swash', 'textcomp' ],
+        styles => [ qw(normal smallcaps swash textcomp math) ],
     },
     OsF => {
         reqd   => [],
         nice   => [ 'kern', 'liga' ],
         extra  => '',
-        styles => [ 'normal', 'smallcaps', 'swash', 'textcomp' ],
+        styles => [ qw(normal smallcaps swash textcomp math) ],
     },
     Sup => {
         reqd   => [ 'sups' ],
@@ -2097,9 +2535,8 @@ sub get_all_figurestyles {
 sub get_styles {
     my $figurestyle = shift;
 
-    my $result = $FIGURESTYLE{$figurestyle}{styles} // [];
-
-    return @{$result};
+    return grep { defined $STYLE{$_} }
+                @{$FIGURESTYLE{$figurestyle}{styles}};
 }
 
 
@@ -2284,6 +2721,21 @@ sub process_encoding_options {
     }
     else {
         delete $STYLE{textcomp};
+    }
+
+    if ($ARGV{math}) {
+        if (!( grep { $_ eq 'OT1' } @{$ARGV{encoding}} )) {
+            $ARGV{encoding} = [ 'OT1', @{$ARGV{encoding}} ];
+        }
+    }
+    else {
+        delete $STYLE{math}
+    }
+
+    if ($ARGV{mathspacing}) {
+        if (defined $STYLE{math}{extra}) {
+            $STYLE{math}{extra} .= " --letterspacing=$ARGV{mathspacing}";
+        }
     }
 
     return;
@@ -2566,6 +3018,7 @@ sub expand_encodings {
         = @{$workitem}{qw(font figurestyle style)};
     my @encodings = $style eq 'textcomp'  ? qw(ts1)
                   : $figurestyle eq 'Orn' ? qw(ly1)
+                  : $style eq 'math'      ? qw(oml)
                   :                         @{$ARGV{encoding}}
                   ;
 
@@ -2600,8 +3053,12 @@ sub cleanup {
         }
     }
 
-    # Look up the NFSS code for this font's shape.
+    # Look up the NFSS code for this font's shape...
     $workitem->{fdshape} = Tables::get_fdshape($style, $font->{basicshape});
+    # ... but drop this workitem if we shouldn't generate this shape.
+    if (!defined $workitem->{fdshape}) {
+        return;
+    }
 
     # Figure out which encoding file to use for this font.
     my $try = Cwd::abs_path($workitem->{encoding});
@@ -2611,7 +3068,8 @@ sub cleanup {
     }
     else {
         ($workitem->{enc_file} = $workitem->{encoding})
-            =~ s/\A(OT1|T1|TS1|LY1|LGR|T2[ABC]|T3|TS3)\z/fontools_\L$1\E/xmsi;
+            =~ s{ \A (OT1|OML|T1|TS1|LY1|LGR|T2[ABC]|T3|TS3) \z }
+                {fontools_\L$1\E}xmsi;
     }
 
     # Ornaments have no text encoding, and don't need kerning and ligatures.
@@ -2631,9 +3089,9 @@ sub cleanup {
     # Don't create ligatures if the user doesn't want them.
     delete $feature{liga} if !$ARGV{ligatures};
 
-    # Don't create kerns and ligatures for TS* fonts.
+    # Don't create kerns and ligatures for symbol or math fonts.
     delete @feature{qw(kern liga)}
-        if $workitem->{encoding} =~ m/\A TS\d \z/xmsi;
+        if $workitem->{encoding} =~ m/\A ( TS\d | OML ) \z/xmsi;
 
     $workitem->{features} = [ sort keys %feature ];
 
@@ -2668,7 +3126,7 @@ __END__
 
     To create the documentation:
 
-    pod2man --center="Marc Penninga" --release="fontools" --section=1 \
+    pod2man --center='Marc Penninga' --release='fontools' --section=1 \
         autoinst - | groff -Tps -man - | ps2pdf - autoinst.pdf
 
 
@@ -2734,7 +3192,7 @@ Swash
 
 =item I<nw>
 
-"Upright swash"
+`Upright swash'
 
 =back
 
@@ -2752,11 +3210,11 @@ in roman, italic and slanted shapes.
 
 =item -
 
-Families with "Titling" characters;
-these "... replace the default glyphs
+Families with `Titling' characters;
+these `... replace the default glyphs
 with corresponding forms designed specifically for titling.
 These may be all-capital and/or larger on the body,
-and adjusted for viewing at larger sizes"
+and adjusted for viewing at larger sizes'
 (according to the OpenType Specification).
 
 =item -
@@ -2770,7 +3228,7 @@ An ornament family, also in roman, italic and slanted shapes.
 Of course, if your fonts don't contain italics, oldstyle digits, small caps
 etc., the corresponding shapes and families are not created.
 In addition, the creation of most families and shapes can be controlled
-by the user (see L</"COMMAND-LINE OPTIONS"> below).
+by the user (see L</COMMAND-LINE OPTIONS> below).
 
 These families use the I<FontPro> project's naming scheme:
 I<< <FontFamily>-<Suffix> >>, where I<< <Suffix> >> is:
@@ -2806,7 +3264,7 @@ normal forms for other characters
 
 =item I<Titl>
 
-Titling characters; see above.
+Titling characters; see above
 
 =item I<Orn>
 
@@ -2824,53 +3282,9 @@ denominators
 
 The individual fonts are named I<< <FontName>-<suffix>-<shape>-<enc> >>,
 where I<< <suffix> >> is the same as above (but in lowercase),
-I<< <shape> >> is either empty, "sc" or "swash",
+I<< <shape> >> is either empty, `sc' or `swash',
 and I<< <enc> >> is the encoding (also in lowercase).
-A typical name in this scheme would be "FiraSans-Light-osf-sc-ly1".
-
-
-=head2 About the log file
-
-B<autoinst> writes some info about what it thinks it's doing to a log file.
-By default this is called F<< <fontfamily>.log >>,
-but this choice can be overridden by the user;
-see the I<-logfile> command-line option in L</"COMMAND-LINE OPTIONS"> below.
-If this log file already exists, B<autoinst> will append its data to the end
-rather than overwrite it.
-Use the I<-verbose> command-line option to ask for more detailed info.
-
-
-=head2 A note for MiKTeX users
-
-Automatically installing the fonts into a suitable TEXMF tree
-(as B<autoinst> tries to do by default) only works for TeX-installations
-that use the F<kpathsea> library; with TeX distributions that implement
-their own directory searching (such as MiKTeX), B<autoinst> will complain
-that it cannot find the F<kpsewhich> program and move all generated files
-into a subdirectory C<./autoinst_output/> of the current directory.
-If you use such a TeX distribution, you should either move these files
-to their correct destinations by hand, or use the I<-target> option
-(see L</"COMMAND-LINE OPTIONS"> below) to manually specify a TEXMF tree.
-
-Also, some OpenType fonts contain so many kerning pairs that the resulting
-F<pl> and F<vpl> files are too big for MiKTeX's F<pltotf> and F<vptovf>;
-the versions that come with W32TeX (F<http://www.w32tex.org>)
-and TeXLive (F<http://tug.org/texlive>) don't seem to have this problem.
-
-
-=head2 A note for MacTeX users
-
-By default, B<autoinst> will try to install all generated files into
-the $TEXMFLOCAL tree; when this directory isn't user-writable,
-it will use the $TEXMFHOME tree instead.  Unfortunately, MacTeX's version
-of C<updmap-sys> (which is called behind the scenes) doesn't search
-in $TEXMFHOME, and hence MacTeX will not find the new fonts.
-
-To remedy this, either run B<autoinst> as root (so that it can install
-everything into $TEXMFLOCAL) or manually run C<updmap -user> to tell
-TeX about the files in $TEXMFHOME.
-The latter option does, however, have some caveats;
-see F<https://tug.org/texlive/scripts-sys-user.html>.
+A typical name in this scheme would be `FiraSans-Light-osf-sc-ly1'.
 
 
 =head2 Using the fonts in your LaTeX documents
@@ -2897,30 +3311,32 @@ yourself.
 =item C<lining>, C<oldstyle>, C<tabular>, C<proportional>
 
 Choose which figure style to use.
-The defaults are "oldstyle" and "proportional" (if available).
+The defaults are `oldstyle' and `proportional' (if available).
 
-=item C<<< scale=I<< <number> >> >>>
+=item C<<< scale=I<< <number> >> >>>, C<scale=MatchLowercase>
 
 Scale the font by a factor of I<< <number> >>.
 E.g., to increase the size of the font by 5%, use
 C<<< \usepackage[scale=1.05]{I<< <FontFamily> >>} >>>.
-May also be spelled C<scaled>.
-
-This option is only available when you have the F<xkeyval> package installed.
+The special value C<MatchLowercase> may be used to scale the font
+so that its x-height matches that of the previously active font
+(which is usually Computer Modern, unless you have loaded another
+font package before this one).
+The name C<scaled> may be used as a synonym for C<scale>.
 
 =item C<medium>, C<book>, C<text>, C<regular>
 
-Select the weight that LaTeX will use as the "regular" weight;
+Select the weight that LaTeX will use as the `regular' weight;
 the default is C<regular>.
 
 =item C<heavy>, C<black>, C<extrabold>, C<demibold>, C<semibold>, C<bold>
 
-Select the weight that LaTeX will use as the "bold" weight;
+Select the weight that LaTeX will use as the `bold' weight;
 the default is C<bold>.
 
 =back
 
-The previous two groups of options will only work if
+The last two groups of options will only work if
 you have the F<mweights> package installed.
 
 The style file will also try to load the F<fontaxes> package
@@ -2935,8 +3351,8 @@ characters:
     DECLARATION     COMMAND         SHORT FORM OF COMMAND
 
     \tlshape        \texttitling    \texttl
-    \sufigures      \textsuperior   \textsu
-    \infigures      \textinferior   \textin
+    \supfigures     \textsuperior   \textsup, \textsu
+    \inffigures     \textinferior   \textinf, \textin
 
 
 In addition, the C<\swshape> and C<\textsw> commands are redefined to place
@@ -2958,30 +3374,67 @@ standard NFSS (C<\fontfamily>, C<\fontseries>, C<\fontshape> etc.).
 By default, B<autoinst> generates text fonts with OT1, LY1 and T1
 encodings, and the generated style files use T1 as the default text encoding.
 Other encodings can be chosen using the I<-encoding> option
-(see L</"COMMAND-LINE OPTIONS"> below).
+(see L</COMMAND-LINE OPTIONS> below).
 
 
-=head3 Ornaments
+=head2 Maths
 
-Ornament fonts are regular LY1-encoded fonts, with a number of
-'regular' characters replaced by ornament glyphs.
-The OpenType specification says that fonts should only put their
-ornaments in place of the lowercase ASCII letters or the 'bullet'
-character, but some fonts put them in other positions (such as those
-of the digits) as well.
+This is an experimental feature; B<USE AT YOUR OWN RISK!>
+Test the results thoroughly before using them in real documents,
+and be warned that future versions of B<autoinst> may introduce
+incompatible changes.
 
-Ornament glyphs can be accessed like C<{\ornaments abc}> and
-C<{\ornaments\char"61}>, or equivalently
-C<\textornaments{abc}> and C<\textornaments{\char"61}>.
-To see which ornaments a font contains (and at which positions),
-run LaTeX on the file F<nfssfont.tex> (which is included in any
-standard LaTeX installation), supply the name of the ornament font
-(i.e., C<GaramondLibre-Regular-orn-u>) and say C<\table\bye>;
-this will create a table of all glyphs in that font.
+The I<-math> option tells B<autoinst> to generate basic math fonts.
+When enabled, the generated style file defines a few extra options
+to access these math fonts:
 
-Note that versions of B<autoinst> up to 20200428 handled ornaments
-differently, and fonts and style files generated by those versions
-are not compatible with files generated by newer versions.
+=over 4
+
+=item C<math>
+
+Use these fonts for the maths in your document.
+
+=item C<mathlining>, C<matholdstyle>
+
+Choose which figure style to use in maths.
+The default is `mathlining'.
+
+=item C<mathcal>
+
+Use the swash characters from your fonts as the C<\mathcal> alphabet.
+(This option only exists if your fonts actually contain swash characters
+and a C<swsh> feature to access them).
+
+=item C<<< math-style=I<< <style> >> >>>
+
+Choose the `math style' to use.
+With C<math-style=ISO>, all latin and greek letters in math are italic;
+with C<math-style=TeX> (the default), uppercase greek is upright;
+with C<math-style=french>, all greek as well as uppercase latin is upright;
+and with C<math-style=upright> all letters are upright.
+
+=back
+
+Note that this `math' option only changes digits, latin and greek letters,
+plus a few basic punctuation characters; all other mathematical symbols,
+operators, delimiters etc. are left as they were before.
+If you don't want to use TeX's default versions of those symbols,
+load another math package (such as F<mathdesign> or F<newtxmath>)
+before loading the B<autoinst>-generated style file.
+
+Finally, note that B<autoinst> doesn't check if your fonts actually contains
+all of the required characters;
+it just assumes that they do and sets up the style file accordingly.
+Even if your fonts contain greek, characters such as C<\varepsilon>
+may be missing.
+You may also find that some glyphs I<are> present in your fonts,
+but don't work well in equations or don't match with other symbols;
+edit the generated style file to remove the declarations of
+these offending characters.
+Once again: test the results before using them!
+If the characters themselves are fine but spaced too tightly,
+you may try increasing the side bearings in math fonts with
+the I<-mathspacing> option (see below), e.g. C<-mathspacing=100>.
 
 
 =head2 NFSS codes
@@ -2989,9 +3442,7 @@ are not compatible with files generated by newer versions.
 LaTeX's New Font Selection System (NFSS)
 identifies fonts by a combination of family,
 series (the concatenation of weight and width), shape and size.
-B<autoinst> parses the font's metadata
-(more precisely: the output of C<otfinfo --info>)
-to determine these parameters.
+B<autoinst> parses the font's metadata to determine these parameters.
 When this fails (usually because the font family contains uncommon weights,
 widths or shapes),
 B<autoinst> ends up with different fonts having the I<same> values
@@ -3013,16 +3464,16 @@ The mapping of shapes to NFSS codes is done using the following table:
     Oblique, Slant(ed), Incline(d)      sl
 
 (I<Exception:> Adobe Silentium Pro contains two Roman shapes;
-we map the first of these to "n", for the second one we (ab)use the "it" code
+we map the first of these to `n', for the second one we (ab)use the `it' code
 as this family doesn't contain an Italic shape.)
 
 The mapping of weights and widths to NFSS codes is a more complex,
 two-step proces.
-In the first step, all fonts are assigned a "series" name that is simply
+In the first step, all fonts are assigned a `series' name that is simply
 the concatenation of its weight and width
 (after expanding any abbreviations and converting to lowercase).
-A font with "Cond" width and "Ultra" weight will then be known
-as "ultrablackcondensed".
+A font with `Cond' width and `Ultra' weight will then be known
+as `ultrablackcondensed'.
 
 In the second step, B<autoinst> tries to map all combinations of NFSS codes
 (ul, el, l, sl, m, sb, b, eb and ub for weights;
@@ -3033,11 +3484,11 @@ and conversely it may not be possible to assign every existing font
 a unique code in a sane way (especially for the weights, some font families
 offer more choices or finer granularity than NFSS's codes can handle;
 e.g., Fira Sans contains fifteen(!) different weights,
-including an additional "Medium" weight between Regular and Semibold).
+including an additional `Medium' weight between Regular and Semibold).
 
 B<autoinst> tries hard to ensure that the most common NFSS codes
 (and high-level commands such as C<\bfseries>,
-which are built on top of those codes) will "just work".
+which are built on top of those codes) will `just work'.
 
 To see exactly which NFSS codes map to which fonts, see the log file
 (pro tip: run B<autoinst> with the I<-dryrun> option
@@ -3048,6 +3499,28 @@ to finetune the mapping between NFSS codes and fonts.
 To access specific weights or widths,
 one can always use the C<\fontseries> command with the full series name
 (i.e., C<\fontseries{demibold}\selectfont>).
+
+
+=head2 Ornaments
+
+Ornament fonts are regular LY1-encoded fonts, with a number of
+`regular' characters replaced by ornament glyphs.
+The OpenType specification says that fonts should only put their
+ornaments in place of the lowercase ASCII letters, but some fonts
+put them in other positions (such as those of the digits) as well.
+
+Ornaments can be accessed like C<{\ornaments a}> and
+C<{\ornaments\char"61}>, or equivalently
+C<\textornaments{a}> and C<\textornaments{\char"61}>.
+To see which ornaments a font contains (and at which positions),
+run LaTeX on the file F<nfssfont.tex> (which is included in any
+standard LaTeX installation), supply the name of the ornament font
+(i.e., C<GaramondLibre-Regular-orn-u>) and give the command C<\table\bye>;
+this will create a table of all glyphs in that font.
+
+Note that versions of B<autoinst> up to 20200428 handled ornaments
+differently, and fonts and style files generated by those versions
+are not compatible with files generated by newer versions.
 
 
 =head1 COMMAND-LINE OPTIONS
@@ -3091,7 +3564,7 @@ Add more details to the log file.
 
 Generate the specified encoding(s) for the text fonts.
 Multiple encodings may be specified as a comma-separated list
-(without spaces!); the default choice of encodings is "OT1,LY1,T1".
+(without spaces!); the default choice of encodings is `OT1,LY1,T1'.
 
 For each specified encoding XYZ, B<autoinst> will first see if there is
 an encoding file F<XYZ.enc> in the current directory, and if found it will
@@ -3099,7 +3572,7 @@ use that; otherwise it will use one of its built-in encoding files.
 Currently B<autoinst> comes with support for the OT1, T1/TS1, LY1, LGR,
 T2A/B/C and T3/TS3 encodings.
 (These files are called F<fontools_ot1.enc> etc. to avoid name clashes
-with other packages; the "fontools_" prefix may be omitted.)
+with other packages; the `fontools_' prefix may be omitted.)
 
 =item B<-ts1>/B<-nots1>
 
@@ -3118,15 +3591,15 @@ Installing the font as a typewriter font will cause two further changes:
 it will - by default - turn off the use of f-ligatures
 (though this can be overridden with the I<-ligatures> option),
 and it will disable hyphenation for this font.
-This latter effect cannot be disabled in B<autoinst>;
+This latter effect cannot be re-enabled in B<autoinst>;
 if you want typewriter text to be hyphenated, use the F<hyphenat> package.
 
 If none of these options is specified, B<autoinst> tries to guess:
-if the font's filename contains the string "mono"
+if the font's filename contains the string `mono'
 or if the field C<isFixedPitch> in the font's I<post> table is True,
 it will select B<-typewriter>;
-else if the filename contains "sans" it selects B<-sanserif>;
-and otherwise it will opt for B<-serif>.
+else if the filename contains `sans' it will select B<-sanserif>;
+otherwise it will opt for B<-serif>.
 
 =item B<-lining>/B<-nolining>
 
@@ -3171,12 +3644,12 @@ The default is B<-superiors>.
 =item B<-inferiors> [= B<none> | B<auto> | B<subs> | B<sinf> | B<dnom> ]
 
 The OpenType standard defines several kinds of digits that might be used
-as inferiors or subscripts: "Subscripts" (OpenType feature "subs"),
-"Scientific Inferiors" ("sinf"), and "Denominators" ("dnom").
+as inferiors or subscripts: `Subscripts' (OpenType feature `subs'),
+`Scientific Inferiors' ('sinf'), and `Denominators' ('dnom').
 This option allows the user to determine which of these styles B<autoinst>
 should use for the inferior characters.
-Alternatively, the value "auto" tells B<autoinst> to use the first value
-in "sinf", "subs" or "dnom" that is supported by the font.
+Alternatively, the value `auto' tells B<autoinst> to use the first value
+in `sinf', `subs' or `dnom' that is supported by the font.
 Saying just B<-inferiors> is equivalent to B<-inferiors=auto>;
 otherwise the default is B<-noinferiors>.
 
@@ -3196,14 +3669,25 @@ Control the creation of ornament fonts. The default is B<-ornaments>.
 =item B<-ligatures>/B<-noligatures>
 
 Some fonts create glyphs for the standard f-ligatures (ff, fi, fl, ffi, ffl),
-but don't provide a "liga" feature to access these.
+but don't provide a `liga' feature to access these.
 This option tells B<autoinst> to add extra C<LIGKERN> rules to
 the generated fonts to enable the use of these ligatures.
 The default is B<-ligatures>,
 unless the user specified the I<-typewriter> option.
 
 Specify B<-noligatures> to disable the generation of ligatures even for fonts
-that do contain a "liga" feature.
+that do contain a `liga' feature.
+
+=item B<-math>
+
+Tells B<autoinst> to create basic math fonts (see above).
+
+=item B<-mathspacing>=I<amount>
+
+Letterspace each character in the math fonts by I<amount> units,
+where 1000 units equal one em.
+In my opinion, many text fonts benefit from letterspacing by 50 to 100 units
+when used in maths; some fonts need even more. Use your own judgement!
 
 =item B<-defaultlining>/B<-defaultoldstyle>
 
@@ -3228,21 +3712,23 @@ to the commands for I<otftotfm> to suppress such kerns.
 Note that this option leads to very long commands (it adds
 one hundred I< --ligkern> options), which may cause problems on some systems.
 
-=item B<-nfssweight>=I<code>=I<weight>, B<-nfsswidth>=I<code>=I<width>
+=item B<-nfssweight>=I<code>=I<weight>
+
+=item B<-nfsswidth>=I<code>=I<width>
 
 Map the NFSS code I<code> to the given weight or width,
 overriding the built-in tables.
 Each of these options may be given multiple times,
 to override more than one NFSS code.
-Example: to map the "ul" code to the "Thin" weight,
+Example: to map the `ul' code to the `Thin' weight,
 use C<-nfssweight=ul=thin>.
-To inhibit the use of the "ul" code completely,
+To inhibit the use of the `ul' code completely,
 use C<-nfssweight=ul=>.
 
-=item B<-extra>=I<text>
+=item B<-extra>=I<extra>
 
-Append I<text> as extra options to the command lines for I<otftotfm>.
-To prevent I<text> from accidentily being interpreted as options
+Append I<extra> as extra options to the command lines for I<otftotfm>.
+To prevent I<extra> from accidentily being interpreted as options
 to B<autoinst>, it should be properly quoted.
 
 =item B<-manual>
@@ -3301,9 +3787,9 @@ F<texhash> and F<updmap> or similar).
 =item B<-typeface>=I<TYPEFACE>
 
 These options are equivalent to F<otftotfm>'s I< --vendor> and I< --typeface>
-options: they change the "vendor" and "typeface" parts of the names of the
+options: they change the `vendor' and `typeface' parts of the names of the
 subdirectories in the TEXMF tree where generated files will be stored.
-The default values are "lcdftools" and the font's FontFamily name.
+The default values are `lcdftools' and the font's FontFamily name.
 
 Note that these options change I<only> directory names,
 not the names of any generated files.
@@ -3314,6 +3800,39 @@ Control whether or not F<updmap> is called after the last call to F<otftotfm>.
 The default is B<-updmap>.
 
 =back
+
+
+=head2 A note for MiKTeX users
+
+Automatically installing the fonts into a suitable TEXMF tree
+(as B<autoinst> tries to do by default) only works for TeX-installations
+that use the F<kpathsea> library; with TeX distributions that implement
+their own directory searching (such as MiKTeX), B<autoinst> will complain
+that it cannot find the F<kpsewhich> program and move all generated files
+into a subdirectory C<./autoinst_output/> of the current directory.
+If you use such a TeX distribution, you should either move these files
+to their correct destinations by hand, or use the I<-target> option
+(see L</COMMAND-LINE OPTIONS> below) to manually specify a TEXMF tree.
+
+Also, some OpenType fonts contain so many kerning pairs that the resulting
+F<pl> and F<vpl> files are too big for MiKTeX's F<pltotf> and F<vptovf>;
+the versions that come with W32TeX (F<http://www.w32tex.org>)
+and TeXLive (F<http://tug.org/texlive>) don't seem to have this problem.
+
+
+=head2 A note for MacTeX users
+
+By default, B<autoinst> will try to install all generated files into
+the $TEXMFLOCAL tree; when this directory isn't user-writable,
+it will use the $TEXMFHOME tree instead.  Unfortunately, MacTeX's version
+of C<updmap-sys> (which is called behind the scenes) doesn't search
+in $TEXMFHOME, and hence MacTeX will not find the new fonts.
+
+To remedy this, either run B<autoinst> as root (so that it can install
+everything into $TEXMFLOCAL) or manually run C<updmap -user> to tell
+TeX about the files in $TEXMFHOME.
+The latter option does, however, have some caveats;
+see F<https://tug.org/texlive/scripts-sys-user.html>.
 
 
 =head1 SEE ALSO
@@ -3371,7 +3890,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20200511.
+This document describes B<autoinst> version 20200527.
 
 
 =head1 RECENT CHANGES
@@ -3379,6 +3898,18 @@ This document describes B<autoinst> version 20200511.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2020-05-27>
+
+Added basic (and still somewhat experimental) math support.
+Implemented the C<scale=MatchLowercase> option value
+in the generated style files.
+`Wide' fonts are mapped to the `sx' NFSS code instead of `x',
+to cater for League Mono Variable's Wide and Extended widths.
+The generated style files now use C<\textsup> and C<\textinf>
+instead of the more cryptic C<\textsu> and C<\textin> to access
+superior and inferior characters
+(though the old forms are retained for backwards compatibility).
 
 =item I<2020-05-11>
 
@@ -3479,13 +4010,13 @@ Added the I<-version> option.
 =item I<2019-05-17>
 
 Changed the way the F<-ligatures> option works:
-F<-ligatures> enables f-ligatures (even without a "liga" feature),
-F<-noligatures> now disables f-ligatures (overriding a "liga" feature).
+F<-ligatures> enables f-ligatures (even without a `liga' feature),
+F<-noligatures> now disables f-ligatures (overriding a `liga' feature).
 
 =item I<2019-05-11>
 
 Separate small caps families are now also recognised when the family name
-ends with "SC" (previously B<autoinst> only looked for "SmallCaps").
+ends with `SC' (previously B<autoinst> only looked for `SmallCaps').
 
 =item I<2019-04-22>
 
@@ -3500,7 +4031,7 @@ Fixed a bug that affected -mergesmallcaps with multiple encodings.
 Added the <-mergesmallcaps> option, to handle cases where
 the small caps fonts are in separate font families.
 Titling shape is now treated as a separate family instead of a distinct shape;
-it is generated only for fonts with the 'titl' feature.
+it is generated only for fonts with the `titl' feature.
 Only add f-ligatures to fonts when explicitly asked to (I<-ligatures>).
 
 =item I<2019-04-11>
@@ -3522,7 +4053,7 @@ In manual mode, or when we can't find a user-writable TEXMF tree,
 put all generated files into a subdirectory C<./autoinst_output/>
 instead of all over the current working directory.
 
-Added "auto" value to the I<inferiors> option,
+Added `auto' value to the I<inferiors> option,
 to tell B<autoinst> to use whatever inferior characters are available.
 
 =item I<2019-03-14>
@@ -3530,9 +4061,9 @@ to tell B<autoinst> to use whatever inferior characters are available.
 Overhauled the mapping of fonts (more specifically of weights and widths;
 the mapping of shapes didn't change) to NFSS codes.
 Instead of inventing our own codes to deal with every possible weight
-and width out there, we now create "long" codes based on the names
+and width out there, we now create `long' codes based on the names
 in the font metadata.
-Then we add "ssub" rules to the F<fd> files to map the standard NFSS codes
+Then we add `ssub' rules to the F<fd> files to map the standard NFSS codes
 to our fancy names (see the section B<NFSS codes>;
 based on discussions with Frank Mittelbach and Bob Tennent).
 
@@ -3553,26 +4084,26 @@ Added the I<-(no)mergewidths> option; tried to improve the documentation.
 
 =item I<2018-03-26>
 
-Added the "Text" weight and the I<-(no)mergewidths> option.
-Changed the NFSS codes for "Thin" and "Book" to "i" and "o", respectively.
+Added the `Text' weight and the I<-(no)mergewidths> option.
+Changed the NFSS codes for `Thin' and `Book' to `i' and `o', respectively.
 Tried to improve the documentation.
 
 =item I<2018-01-09>
 
-Added the "sl" weight for font families (such as Fira Sans) that contain both
-"Book" and "Regular" weights (reported by Bob Tennent).
-Added the "Two", "Four", "Eight" and "Hair" weights (for Fira Sans).
+Added the `sl' weight for font families (such as Fira Sans) that contain both
+`Book' and `Regular' weights (reported by Bob Tennent).
+Added the `Two', `Four', `Eight' and `Hair' weights (for Fira Sans).
 
 =item I<2017-06-16>
 
 Changed the I<-inferiors> option from a binary yes-or-no choice to allow
-the user to choose one of the "subs", "sinf" and "dnom" features.
+the user to choose one of the `subs', `sinf' and `dnom' features.
 B<autoinst> now always creates a log file.
 
 =item I<2017-03-21>
 
-Updated the F<fontools_ot1.enc> encoding file to include the "Lslash"
-and "lslash" glyphs (thanks to Bob Tennent).
+Updated the F<fontools_ot1.enc> encoding file to include the `Lslash'
+and `lslash' glyphs (thanks to Bob Tennent).
 
 =item I<2015-11-22>
 
@@ -3588,8 +4119,8 @@ Fixed a bug in the font info parsing code.
 
 =item I<2014-01-21>
 
-"Oblique" or "slanted" fonts are now mapped to NFSS code "sl" instead
-of "it"; added "ssub" rules to the F<fd> files to substitute slanted fonts
+`Oblique' or `slanted' fonts are now mapped to NFSS code `sl' instead
+of `it'; added `ssub' rules to the F<fd> files to substitute slanted fonts
 for italic ones if the latter are missing. Fixed a few bugs.
 
 =item I<2014-01-03>
@@ -3618,16 +4149,16 @@ Added C<scale> as an alias for the package option C<scaled>.
 =item I<2013-02-06>
 
 Bugfix: the directory names for map and encoding files contained
-the "vendor" instead of the "typeface".
+the `vendor' instead of the `typeface'.
 
 =item I<2013-01-03>
 
-Added extra "ssub" rules to the F<fd> files that substitute "b" for "bx".
+Added extra `ssub' rules to the F<fd> files that substitute `b' for `bx'.
 Verbose mode now also prints all generated commands before they're executed.
 
 =item I<2012-10-25>
 
-Added extra "ssub" rules to the F<fd> files that substitute italic
+Added extra `ssub' rules to the F<fd> files that substitute italic
 shapes for slanted ones.
 
 =item I<2012-09-25>
@@ -3640,7 +4171,7 @@ Documentation update.
 
 =item I<2012-03-06>
 
-Implemented the "splitting the font family into multiple subfamilies"
+Implemented the `splitting the font family into multiple subfamilies'
 emergency strategy when font info parsing fails.
 Added recognition for a number of unusual widths, weights and shapes.
 
@@ -3648,8 +4179,8 @@ Added recognition for a number of unusual widths, weights and shapes.
 
 Fixed a bug in the font parsing code,
 where possible widths, weights and shapes where tested in the wrong order;
-this led to "ExtraLight" fonts being recognised as "Light".
-Added recognition for "Narrow" and "Wide" widths.
+this led to `ExtraLight' fonts being recognised as `Light'.
+Added recognition for `Narrow' and `Wide' widths.
 Also added the I<-(no)figurekern> command-line option.
 
 =item I<2012-02-01>
@@ -3665,7 +4196,7 @@ Updated the documentation.
 =item I<2011-06-15>
 
 Fixed the font info parsing code for some fonts that are
-too lazy to spell out "Italic" in full.
+too lazy to spell out `Italic' in full.
 
 =item I<2010-04-29>
 
@@ -3711,13 +4242,13 @@ in some extended families, different combinations of
 weight and width were mapped to the same series.
 Added a work-around for incorrect size info in some Kepler fonts.
 Fixed a small bug in the generated commands for otftotfm
-(sometimes, the "onum" feature was included twice).
+(sometimes, the `onum' feature was included twice).
 Added encoding file for OT1 to the I<fontools> collection.
 
 =item I<2007-07-27>
 
 Two bugfixes: a closing brace was missing in the generated style file,
-and the NFSS series was formed as "width plus weight" instead of the reverse.
+and the NFSS series was formed as `width plus weight' instead of the reverse.
 
 =item I<2007-06-10>
 
@@ -3732,7 +4263,7 @@ Added the I< --no-updmap> option to all generated commands for F<otftotfm>
 families (suggested by Steven E. Harris).
 Tweaked the font info parsing to work around a bug in the naming of
 some FontFont fonts, where every font is in a family of its own.
-Added the "scaled" option (including the loading of F<xkeyval>)
+Added the `scaled' option (including the loading of F<xkeyval>)
 to the generated style file.
 Extended the output of the I<-verbose> option.
 
@@ -3753,14 +4284,14 @@ Filenames with spaces now work as well.
 
 =item I<2006-08-31>
 
-Made the generated style files try to include "fontaxes.sty";
+Made the generated style files try to include `fontaxes.sty';
 changed the names of the generated fonts and families
 (to make the previous change possible);
 added command-line options for most font styles and shapes;
 tweaked the filename parsing code for Cronos Pro and Gill Sans Pro;
 added runtime generation of encoding vectors for ornament fonts
 (because GaramondPremier's ornament names differ from other fonts);
-changed the NFSS-code for italic small caps and titling to "scit" and "tlit"
+changed the NFSS-code for italic small caps and titling to `scit' and `tlit'
 (to work with F<fontaxes>);
 and edited (and hopefully improved) the documentation.
 
@@ -3792,25 +4323,25 @@ and improved the layout of the generated files.
 The generated commands weren't actually executed, only printed...
 Also added a small hack to cater for fonts
 (such as some recent versions of MinionPro)
-that contain swash characters but don't provide a "swsh" feature.
+that contain swash characters but don't provide a `swsh' feature.
 
 =item I<2005-08-10>
 
-Dropped the "fontname" scheme in favor of a more verbose naming scheme,
+Dropped the `fontname' scheme in favor of a more verbose naming scheme,
 since many filenames were still more than eight characters long anyway.
 Added F<nfssext.sty>-like commands to the generated style file.
-Changed the default encoding to LY1 and added the "inferior" shape.
+Changed the default encoding to LY1 and added the `inferior' shape.
 
 =item I<2005-08-01>
 
 Rewrote (and hopefully improved) the user interface;
 changed the program to by default execute the generated F<otftotfm> command
 lines rather than writing them to a file;
-added automatic determination of the "fontname" code for the font family;
-changed the NFSS code for italic small caps to "si"; added titling shapes;
+added automatic determination of the `fontname' code for the font family;
+changed the NFSS code for italic small caps to `si'; added titling shapes;
 changed the generated style
 file to include an interface for the ornaments and to load Lehman's NFSS
-extensions F<nfssext.sty> if this is installed; corrected the "fontname" codes
+extensions F<nfssext.sty> if this is installed; corrected the `fontname' codes
 for OT1, T1, LY1 and user-specific encodings; extended the output generated by
 the I<-verbose> option; and rewrote and extended the documentation.
 
