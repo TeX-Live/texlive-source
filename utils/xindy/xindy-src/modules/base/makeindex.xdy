@@ -17,6 +17,11 @@
 (define-crossref-class "seealso")
 (markup-crossref-list :class "seealso" :open "\seealso{" :sep "; " :close "}{}")
 
+;; \hyperindexformat is a wrapper to \see and \seealso added by hyperref.
+;; We treat it like \see and \seealso
+(define-crossref-class "hyperindexformat" :unverified)
+(markup-crossref-list :class "hyperindexformat" :open "\hyperindexformat{" :sep "; " :close "}{}")
+
 ;; Subentries in cross references are seperated by comma for all
 ;; crossref classes.
 (markup-crossref-layer-list :sep ", ")

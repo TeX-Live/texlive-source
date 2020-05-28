@@ -260,14 +260,8 @@ behaviour.
 
 For more complex usage, when C<bbb> is not an identifier, no such
 compatibility definitions exist and may also not been created with
-current B<xindy>. In particular, this means that by default the LaTeX
-package C<hyperref> will create raw index files that cannot be
-processed with B<xindy>. This is not a bug, this is the unfortunate
-result of an intented incompatibility. It is currently not possible to
-get both hyperref's index links and use B<xindy>.
-
-A similar situation is reported to exist for the C<memoir> LaTeX
-class.
+current B<xindy>. Such a situation is reported to exist for the
+C<memoir> LaTeX class.
 
 Programmers who know Common Lisp and Lex and want to work on a remedy
 should please contact the author.

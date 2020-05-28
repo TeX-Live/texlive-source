@@ -1,0 +1,63 @@
+	https://sourceforge.net/p/xindy/bugs/62/	
+	https://tug.org/pipermail/tex-live/2020-May/045753.html
+
+Index: xindy-src/modules/base/makeindex.xdy
+===================================================================
+--- xindy-src/modules/base/makeindex.xdy	(revision 55307)
++++ xindy-src/modules/base/makeindex.xdy	(working copy)
+@@ -17,6 +17,11 @@
+ (define-crossref-class "seealso")
+ (markup-crossref-list :class "seealso" :open "\seealso{" :sep "; " :close "}{}")
+ 
++;; \hyperindexformat is a wrapper to \see and \seealso added by hyperref.
++;; We treat it like \see and \seealso
++(define-crossref-class "hyperindexformat" :unverified)
++(markup-crossref-list :class "hyperindexformat" :open "\hyperindexformat{" :sep "; " :close "}{}")
++
+ ;; Subentries in cross references are seperated by comma for all
+ ;; crossref classes.
+ (markup-crossref-layer-list :sep ", ")
+Index: xindy-src/user-commands/texindy.in
+===================================================================
+--- xindy-src/user-commands/texindy.in	(revision 55307)
++++ xindy-src/user-commands/texindy.in	(working copy)
+@@ -308,15 +308,9 @@ behaviour.
+ 
+ For more complex usage, when C<bbb> is not an identifier, no such
+ compatibility definitions exist and may also not been created with
+-current B<xindy>. In particular, this means that by default the LaTeX
+-package C<hyperref> will create raw index files that cannot be
+-processed with B<xindy>. This is not a bug, this is the unfortunate
+-result of an intented incompatibility. It is currently not possible to
+-get both hyperref's index links and use B<xindy>.
++current B<xindy>. Such a situation is reported to exist for the
++C<memoir> LaTeX class.
+ 
+-A similar situation is reported to exist for the C<memoir> LaTeX
+-class.
+-
+ Programmers who know Common Lisp and Lex and want to work on a remedy
+ should please contact the author.
+ 
+Index: xindy-src/user-commands/xindy.in
+===================================================================
+--- xindy-src/user-commands/xindy.in	(revision 55307)
++++ xindy-src/user-commands/xindy.in	(working copy)
+@@ -260,15 +260,9 @@ behaviour.
+ 
+ For more complex usage, when C<bbb> is not an identifier, no such
+ compatibility definitions exist and may also not been created with
+-current B<xindy>. In particular, this means that by default the LaTeX
+-package C<hyperref> will create raw index files that cannot be
+-processed with B<xindy>. This is not a bug, this is the unfortunate
+-result of an intented incompatibility. It is currently not possible to
+-get both hyperref's index links and use B<xindy>.
++current B<xindy>. Such a situation is reported to exist for the
++C<memoir> LaTeX class.
+ 
+-A similar situation is reported to exist for the C<memoir> LaTeX
+-class.
+-
+ Programmers who know Common Lisp and Lex and want to work on a remedy
+ should please contact the author.
+ 

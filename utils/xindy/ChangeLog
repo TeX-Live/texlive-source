@@ -1,5 +1,14 @@
 2020-05-28  J\"urgen Spitzm\"uller  <spitz@lyx.org>
 
+	These patches from
+	https://tug.org/pipermail/tex-live/2020-May/045760.html
+
+	* xindy-src/modules/base/makeindex.xdy
+	(define-crossref-class, markup-crossref-list): handle
+	\see and \seealso added by hyperref.
+	* xindy-src/user-commands/texindy.in,
+	* xindy-src/user-commands/xindy.in: corresponding doc updates.
+
 	* xindy-src/doc/faq-4.html,
 	* xindy-src/doc/manual-3.html: document workaround for
 	:min-range-length none being broken.
