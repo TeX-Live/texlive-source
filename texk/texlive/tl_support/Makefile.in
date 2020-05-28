@@ -287,11 +287,11 @@ dist_web2c_DATA = fmtutil.cnf
 EXTRA_DIST = updmap.help2man fmtutil.help2man
 Master_dir = $(top_srcdir)/../../../../Master
 tl_scripts_dir = $(Master_dir)/texmf-dist/scripts/texlive
-#
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
+texlinks_fmtutil = $(DESTDIR)$(web2cdir)/fmtutil.cnf
 #
 run_texlinks = $(texlinks_prog) -v \
-	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-f  $(texlinks_fmtutil) \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 
 all: all-am
@@ -696,12 +696,11 @@ xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 
 .PHONY: run-texlinks
 #
-run-texlinks: $(DESTDIR)$(bindir)/texlinks
-@WIN32_FALSE@	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
-#
-$(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
-$(DESTDIR)$(web2cdir)/fmtutil.cnf:
-	$(MAKE) $(AM_MAKEFLAGS) install
+run-texlinks:
+@WIN32_FALSE@	if test -s $(texlinks_prog) && test -s $(texlinks_fmtutil); then \
+@WIN32_FALSE@	  echo "running texlinks in `pwd` via: $(run_texlinks)"; \
+@WIN32_FALSE@	  PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks); \
+@WIN32_FALSE@	else :; fi
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

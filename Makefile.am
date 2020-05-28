@@ -53,8 +53,11 @@ world: all
 	@echo "top-level make $@: running install-strip..."
 	$(MAKE) $(AM_MAKEFLAGS) install-strip
 #
-	@echo "top-level make $@: making run-texlinks in $(texlinks_dir) ..."
-	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
+# Just in case it's not a full checkout.
+	if test -d "$(texlinks_dir)"; then \
+	  echo "top-level make $@: making run-texlinks in $(texlinks_dir) ..."; \
+	  cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks; \
+	else :; fi
 #
 	@echo "top-level make $@: running $(check_target)..."
 	$(MAKE) $(AM_MAKEFLAGS) $(check_target)

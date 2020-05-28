@@ -1,3 +1,15 @@
+2020-05-28  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (run-texlinks): do nothing if the texlinks script
+	or the needed fmtutil.cnf do not exist or are empty files. This
+	can happen with, e.g., --disable-texlive.
+	(texlinks_fmtutil): new variable for fmtutil.cnf location.
+	($(DESTDIR)$(bindir)/texlinks,
+ 	 $(DESTDIR)$(web2cdir)/fmtutil.cnf): remove targets, since we check
+ 	explicitly for the files now. make install must be run first.
+ 	Report from Andreas Scherer,
+	https://tug.org/pipermail/tlbuild/2020q1/004614.html.
+
 2020-01-31  Karl Berry  <karl@freefriends.org>
 
 	* mktexlsr.1,

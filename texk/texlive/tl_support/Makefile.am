@@ -79,18 +79,23 @@ xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 ## fmtutil.cnf file to use for the sake of distro builds.
 ## We pass along the executable extension for the sake of cygwin, so we
 ## don't create dangling symlinks there (even though they work).
-#
+##
+## The texlinks script is installed by ../linked_scripts/Makefile[.am].
+## If it doesn't exist, e.g., if --disable-texlive was given, do nothing here.
+## So we do not specify make-level dependencies, but instead check if
+## the texlinks file (normally a symlink) and fmtutil.cnf exist.
+##
 texlinks_prog = $(DESTDIR)$(bindir)/texlinks
+texlinks_fmtutil = $(DESTDIR)$(web2cdir)/fmtutil.cnf
 #
 run_texlinks = $(texlinks_prog) -v \
-	-f $(DESTDIR)$(web2cdir)/fmtutil.cnf \
+	-f  $(texlinks_fmtutil) \
 	-e "$(EXEEXT)" $(DESTDIR)$(bindir)
 #
-run-texlinks: $(DESTDIR)$(bindir)/texlinks
+run-texlinks:
 if !WIN32
-	PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks)
+	if test -s $(texlinks_prog) && test -s $(texlinks_fmtutil); then \
+	  echo "running texlinks in `pwd` via: $(run_texlinks)"; \
+	  PATH="$(DESTDIR)$(bindir):$(PATH)"; export PATH; $(run_texlinks); \
+	else :; fi
 endif !WIN32
-#
-$(DESTDIR)$(bindir)/texlinks: $(DESTDIR)$(web2cdir)/fmtutil.cnf
-$(DESTDIR)$(web2cdir)/fmtutil.cnf:
-	$(MAKE) $(AM_MAKEFLAGS) install
