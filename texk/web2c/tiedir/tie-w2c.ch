@@ -377,10 +377,8 @@ Additionally we report the history to the user, although this may not
    exit ( history == spotless  ?  0 : 1 );
 }
 @y
-@s const_string int
-
 @<Print the job |history|@>=
-{const_string msg;
+{
    switch (history) {
       case spotless: print2_nl("(%s.)", "No errors were found");
         term_new_line; break;
