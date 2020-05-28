@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 54303 2020-03-14 22:04:10Z karl $
+# $Id: fmtutil.pl 55294 2020-05-27 02:43:58Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 54303 2020-03-14 22:04:10Z karl $';
-my $lastchdate = '$Date: 2020-03-14 23:04:10 +0100 (Sat, 14 Mar 2020) $';
+my $svnid = '$Id: fmtutil.pl 55294 2020-05-27 02:43:58Z preining $';
+my $lastchdate = '$Date: 2020-05-27 04:43:58 +0200 (Wed, 27 May 2020) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 54303 $';
+my $svnrev = '$Revision: 55294 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -440,7 +440,11 @@ sub callback_build_formats {
   # unless we tried to rebuild only missing formats.
   if ($what ne "missing") {
     if ($err + $suc == 0) {
-      print_info("did not find entry for $what=$whatarg, skipped\n");
+      if ($what eq "all") {
+        print_warning("You seem to have no formats defined in your fmtutil.cnf files!\n");
+      } else {
+        print_info("Did not find entry for $what=" . ($whatarg?$whatarg:"") . " skipped\n");
+      }
     }
   }
   my $stdo = ($mktexfmtMode ? \*STDERR : \*STDOUT);
