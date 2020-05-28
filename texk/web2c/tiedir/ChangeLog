@@ -1,3 +1,7 @@
+2020-05-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Incorporated Igor Liferenko's changes.
+
 2020-04-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Fix type format in section 60.
