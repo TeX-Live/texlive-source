@@ -927,17 +927,16 @@ location references in a hierarchical form. With the commands
 <PRE>
 (markup-range [:open string] [:close string] [:sep string]
               [:class locref-class]
+              [:attr attribute]
               [:length num] [:ignore-end])
 </PRE>
 </CODE></BLOCKQUOTE>
 <P>A range consists of two location references. Markup can be specified
 with the <CODE>:open</CODE> and <CODE>:close</CODE> arguments and one separator given
 by the argument <CODE>:sep</CODE>.
-<P>Since both location references are tagged with markup defined by the
-command <CODE>markup-locref</CODE> a specialization on attributes or depth is
-not necessary. Specialization is allowed on the class they belong to,
-because the separator between two location refences may be different
-for each location class. Argument <CODE>:length</CODE> can be used to define
+<P>The markup of the separator can be specified attributes via
+the<CODE>:attr</CODE> tag.
+<P>Argument <CODE>:length</CODE> can be used to define
 different markup for different lengths. In conjunction with
 <CODE>:length</CODE> is may be useful not to print the second location
 reference at all. For example, one wishes to markup ranges of length 1

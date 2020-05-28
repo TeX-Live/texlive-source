@@ -1,13 +1,19 @@
 2020-05-28  J\"urgen Spitzm\"uller  <spitz@lyx.org>
 
-	These patches from
+	These patches from:
 	https://tug.org/pipermail/tex-live/2020-May/045760.html
 
+	* xindy-src/src/markup.lsp: support giving attributes to the
+	markup of separator with :attr.
+	* doc/manual-3.html: document this.
+	https://sourceforge.net/p/xindy/bugs/1/
+	
 	* xindy-src/modules/base/makeindex.xdy
 	(define-crossref-class, markup-crossref-list): handle
 	\see and \seealso added by hyperref.
 	* xindy-src/user-commands/texindy.in,
 	* xindy-src/user-commands/xindy.in: corresponding doc updates.
+	https://sourceforge.net/p/xindy/bugs/62/
 
 	* xindy-src/doc/faq-4.html,
 	* xindy-src/doc/manual-3.html: document workaround for
