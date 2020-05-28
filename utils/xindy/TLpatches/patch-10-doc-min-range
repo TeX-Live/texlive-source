@@ -1,0 +1,45 @@
+diff --git a/doc/faq-4.html b/doc/faq-4.html
+index 8105256..3a57b7a 100644
+--- a/doc/faq-4.html
++++ b/doc/faq-4.html
+@@ -460,11 +460,12 @@ location references. For exmaple the sequence
+ the form
+ <P>
+ <PRE>
+-  (define-location-class ... :min-range-length none)
++  (define-location-class ... :min-range-length 100000)
+ </PRE>
+-<P>The argument <CODE>:min-range-length none</CODE> avoids forming of ranges.
+-Arbitrary numbers instead of <CODE>none</CODE> define the minimum length of a
+-sequence of location references that are needed to form a range.
++<P>Arbitrary numbers define the minimum length of a sequence of location references that are needed to form a range.
++The use of a sufficiently large number (such as <CODE>:min-range-length 100000</CODE>) avoids forming of ranges
++(unless your document has more than 100.000 pages and an index entry spans all of them; in this unlikely case, just increase
++the number sufficiently).
+ <SF>xindy</SF>s default value is&nbsp;2.
+ <P>
+ <P>
+diff --git a/doc/manual-3.html b/doc/manual-3.html
+index 3520de7..e00cf79 100644
+--- a/doc/manual-3.html
++++ b/doc/manual-3.html
+@@ -185,8 +185,8 @@ strings representing separators. Separators must follow the
+ keyword argument <CODE>:sep</CODE>. If the keyword <CODE>:min-range-length</CODE> is
+ specified we define the <EM>minimum range length</EM> to be used when
+ building ranges. The argument <CODE>num</CODE> must be a positive integer
+-number or the keyword <CODE>none</CODE> in which case the building of ranges
+-is disallowed. If the switch <CODE>:var</CODE> is specified the declared class
++number. Use a sufficiently large number (such as 10000) to disallow the building of ranges.
++If the switch <CODE>:var</CODE> is specified the declared class
+ is of type <EM>variable</EM>, i.e. it is a <EM>var-location-class</EM>. Since
+ building of ranges is currently only allowed for standard classes
+ <CODE>:var</CODE> and <CODE>:min-range-length</CODE> must not be used together. The
+@@ -198,7 +198,7 @@ layers the hierarchy does contain. See command
+ <P>
+ <PRE>
+   (define-location-class "page-numbers" ("arabic-numbers")
+-                         :minimum-range-length 3)
++                         :min-range-length 3)
+ </PRE>
+ <P>Defines the location class <CODE>page-numbers</CODE> consisting of one layer
+ which is the alphabet <CODE>arabic-numbers</CODE>. Since the minimum

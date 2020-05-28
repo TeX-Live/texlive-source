@@ -1,3 +1,10 @@
+2020-05-28  J\"urgen Spitzm\"uller  <spitz@lyx.org>
+
+	* xindy-src/doc/faq-4.html,
+	* xindy-src/doc/manual-3.html: document workaround for
+	:min-range-length none being broken.
+	https://github.com/jschrod/xindy.ctan/issues/3
+
 2020-03-08  Karl Berry  <karl@tug.org>
 
 	* xindy-src/make-rules/alphabets/Makefile.am (alphabets-inc.tex):
