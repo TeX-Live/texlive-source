@@ -3,6 +3,23 @@
 % Copyright 2020 Andreas Scherer
 % This file is in the Public Domain.
 
+Limbo
+
+@x l.44 -- reformat 'covernote' on table-of-contents page
+\def\botofcontents{
+\null\vfill
+\item{$\copyright$}1989, 1992
+@y
+\def\covernote{\hsize 5in \vbox{\ninerm\noindent
+\copyright~1989, 1992
+@z
+
+@x l.61
+}
+@y
+}}
+@z
+
 Section 2
 
 @x l.113 -- improve typography
