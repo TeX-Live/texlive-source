@@ -19,10 +19,32 @@
 
 @x l.19 Add macro definitions
 \def\title{The CTIE processor}
+\def\botofcontents{%
+\vfill
+$\copyright$ 2002,2003 Julian Gilbey
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
 
 \def\title{The CTIE processor}
+\def\covernote{\vbox{\ninerm\noindent
+$\copyright$ 2002,2003 Julian Gilbey
+@z
+
+@x l.37
+}
+@y
+}}
+@z
+
+@x l.81
+@d copyright 
+    "Copyright 2002,2003 Julian Gilbey.  All rights reserved.  There is no warranty.\n\
+Run with the --version option for other important information."
+@y
+@d copyright
+    "Copyright 2002,2003 Julian Gilbey."@|
+    "  All rights reserved.  There is no warranty.\n"@|
+    "Run with the --version option for other important information."
 @z
 
 @x l.102
@@ -101,6 +123,22 @@ behind the scenes.
 This variable must be initialized.
 @y
 This variable must be initialised.
+@z
+
+@x l.158
+@d spotless 0
+@d troublesome 1
+@d fatal 2
+
+@<Global variables@>=
+int history=spotless;
+@y
+@<Global variables@>=
+typedef enum {
+    spotless,
+    troublesome,
+    fatal } return_code;
+static return_code history=spotless;
 @z
 
 @x l.170 The kpathsea include files must be first.
@@ -311,6 +349,14 @@ int wrap_up()
 int wrap_up (void)
 @z
 
+@x l.667
+    if (history > spotless) return 1;
+    else return 0;
+@y
+    if (history > spotless) return EXIT_FAILURE;
+    else return EXIT_SUCCESS;
+@z
+
 @x l.674
 int wrap_up();
 @y
@@ -490,6 +536,12 @@ usage_error (void)
     fprintf(stderr, "Usage: ctie -m|-c outfile master changefile(s)\n");
 @z
 
+@x l.1111
+    exit(1);
+@y
+    exit(EXIT_FAILURE);
+@z
+
 @x l.1119 Add Web2C version to banner string
 printf("%s\n", banner); /* print a ``banner line'' */
 @y
@@ -537,6 +589,12 @@ usage_help (void)
     const_string *message=CTIEHELP;
 @z
 
+@x l.1248
+    exit(0);
+@y
+    exit(EXIT_SUCCESS);
+@z
+
 @x l.1253
 void print_version_and_exit(name, version)
         string name, version;
@@ -568,7 +626,7 @@ print_version_and_exit (const_string name, const_string version)
     puts ("Primary author of CTIE: Julian Gilbey.");
     puts ("Kpathsea written by Karl Berry and others.");
 
-    exit (0);
+    exit (EXIT_SUCCESS);
 }
 @z
 
