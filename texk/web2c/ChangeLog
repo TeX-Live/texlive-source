@@ -1,3 +1,21 @@
+2020-05-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* bibtex.ch,
+	* dvicopy.ch,
+	* dvitype.ch,
+	* gftodvi.ch,
+	* gftopk.ch,
+	* gftype.ch,
+	* mft.ch,
+	* pktogf.ch,
+	* pltotf.ch,
+	* tangle.ch,
+	* tftopl.ch,
+	* vftovp.ch,
+	* vptovf.ch,
+	* weave.ch: 'do_nothing' for something; this improves the
+	typographic output of the WEB sources with changes applied.
+
 2020-05-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* bibtex.ch,

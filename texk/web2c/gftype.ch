@@ -426,6 +426,7 @@ itself will get a new section number.
 Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
+@d do_nothing ==        {empty statement}
 
 @<Define |parse_arguments|@> =
 procedure parse_arguments;
@@ -440,7 +441,7 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
 
     end else if getopt_return_val = "?" then begin
       usage (my_name);
