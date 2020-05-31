@@ -1,3 +1,7 @@
+2020-05-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Sanitize command for PDF outlines.
+
 2020-05-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfwebtocfront.tex: Fake headline on page after TOC.
