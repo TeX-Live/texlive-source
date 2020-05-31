@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.21
+ local version = 0.22
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -174,12 +174,20 @@ escape_chars = { -- by default " is the escape char
   {esc_char..')', '//escapedparenright//',')'    }
 }
 
-language = string.lower(args["language"])
+language = string.lower(args["language"]):sub(1, 2)
 writeLog(2,"Language = "..language.."\n",1) 
+if (indexheader[language] == nil) then
+  writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
+  language = "en"
+end  
 index_header = indexheader[language]
 if vlevel > 0 then for i=1,#index_header do writeLog(2,index_header[i].."\n",1) end end
-page_folium = folium[language]
-
+if (folium[language] == nil) then
+  writeLog(2,'Corrected the unknown language "'..language..'" for page folium to "en"'.."\n",0) 
+  page_folium = folium["en"]
+else
+  page_folium = folium[language]
+end  
 
 no_caseSensitive = args["no_casesensitive"]
 if no_caseSensitive then
