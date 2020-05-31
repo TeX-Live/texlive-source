@@ -22,17 +22,44 @@
 \def\botofcontents{%
 \vfill
 $\copyright$ 2002,2003 Julian Gilbey
+
+All rights reserved.
+
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
 
 \def\title{The CTIE processor}
+\def\topofcontents{\null\vfill
+  \centerline{\titlefont The {\ttitlefont CTIE} processor}
+  \vskip 15pt
+  \centerline{(Version 1.1 [\TeX~Live])}
+  \vfill}
 \def\covernote{\vbox{\ninerm\noindent
-$\copyright$ 2002,2003 Julian Gilbey
-@z
-
-@x l.37
-}
-@y
+Copyright \copyright\ 2002, 2003 Julian Gilbey
+\smallskip\noindent
+All rights reserved.
+\bigskip\noindent
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+\smallskip\noindent
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+\smallskip\noindent
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 }}
 @z
 

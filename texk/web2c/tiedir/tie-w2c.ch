@@ -5,18 +5,48 @@
 
 Limbo
 
+@x l.42
+  \centerline{(CWEB Version 2.4)}
+@y
+  \centerline{(CWEB Version 2.4 [\TeX~Live])}
+@z
+
 @x l.44 -- reformat 'covernote' on table-of-contents page
 \def\botofcontents{
 \null\vfill
 \item{$\copyright$}1989, 1992
-@y
-\def\covernote{\hsize 5in \vbox{\ninerm\noindent
-\copyright~1989, 1992
-@z
-
-@x l.61
+   by Technische Hochschule Darmstadt,\hfill\break
+Fachbereich Informatik, Institut f\"ur Theoretische Informatik\hfill\break
+All rights reserved.\hfill\break
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+\hfill\break
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+\hfill\break
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 }
 @y
+\def\covernote{\vbox{\noindent
+Copyright \copyright~1989, 1992
+   by Technische Hochschule Darmstadt,\hfill\break
+Fachbereich Informatik, Institut f\"ur Theoretische Informatik
+\smallskip\noindent
+All rights reserved.
+\bigskip\noindent
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+\smallskip\noindent
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+\smallskip\noindent
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
 }}
 @z
 
