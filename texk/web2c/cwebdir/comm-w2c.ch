@@ -18,7 +18,7 @@
 @x
 \def\title{Common code for CTANGLE and CWEAVE (Version 3.64)}
 @y
-\def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \sanitizecommand\Kpathsea{KPATHSEA}
+\def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
 \def\title{Common code for CTANGLE and CWEAVE (\TeX~Live)}
 @z
 
