@@ -1,3 +1,7 @@
+2020-06-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Adapt to 'pwebmac.tex 4.5.2.
+
 2020-05-31  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Sanitize command for PDF outlines.

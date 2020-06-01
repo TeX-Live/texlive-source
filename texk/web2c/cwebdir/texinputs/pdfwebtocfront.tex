@@ -1,6 +1,6 @@
 % pdfwebtofront.tex
 % Code from knuth.drv in https://github.com/oberdiek/latex-tds
-% 2020/05/21 v1.0 by Andreas Scherer.
+% 2020/05/30 v1.1 by Andreas Scherer.
 %
 % This file is part of project https://github.com/ascherer/cwebbin
 % and may be distributed under the MIT License or the LaTeX Project
@@ -12,7 +12,7 @@
 %
 \ifx\detokenize\undefined\endinput\fi
 \def\contentsfile{\jobname.toc} % file that gets table of contents info
-\def\readcontents{\input \contentsfile}
+\newif\iftexmf\texmffalse % special toc treatment for TeX, Metafont, etc.
 \newread\testread
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
@@ -31,7 +31,7 @@
       \let\end\relax
       \ORGcon
       % let's start with section '1', the 'Introduction'.
-      \ifx\undefined\grouptitle \mark{1} % WEB
+      \ifx\undefined\gdepth \mark{{{\tensy x}1}{Introduction}} % WEB
       \else \mark{{{\tensy x}1}0{Introduction}}\fi % CWEB
       \eject % set '\botmark' on TOC, hence '\topmark' on next page.
     \endgroup
@@ -48,19 +48,18 @@
     \csname N\endcsname
   }%
   % Special variant of the above for 'mf.web' and 'tex.web'.  They put
-  % their tables-of-contents on a sparce 'page 2' and start on page '3'.
+  % their tables-of-contents on a sparse 'page 2' and start on page '3'.
   \begingroup
-    \def\num{0}%
     \edef\x{\jobname}%
     \edef\y{\detokenize{tex}}%
-    \ifx\x\y \def\num{1}\else
+    \ifx\x\y \texmftrue\else
     \edef\y{\detokenize{mf}}%
-    \ifx\x\y \def\num{1}\else
+    \ifx\x\y \texmftrue\else
     \edef\y{\detokenize{pdftex}}%
-    \ifx\x\y \def\num{1}\else
+    \ifx\x\y \texmftrue\else
     \edef\y{\detokenize{xetex}}%
-    \ifx\x\y \def\num{1}\fi\fi\fi\fi
-  \expandafter\endgroup\ifnum\num=1 %
+    \ifx\x\y \texmftrue\fi\fi\fi\fi
+  \expandafter\endgroup\iftexmf %
     \def\contentspagenumber{2}%
     \let\ORGpageno\pageno
     \def\pageno{%
