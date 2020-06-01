@@ -2,6 +2,10 @@
 
 	* tie-w2c.ch: Format title page similar to CWEB.
 
+2020-05-29  Karl Berry  <karl@freefriends.org>
+
+	* tie-w2c.ch: pd not copyright.
+
 2020-05-28  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Incorporated Igor Liferenko's changes.
