@@ -3753,6 +3753,7 @@ inserted from \.{\\mkern} specifications in math formulas).
 @d kern_node=11 {|type| of a kern node}
 @d explicit=1 {|subtype| of kern nodes from \.{\\kern} and \.{\\/}}
 @d acc_kern=2 {|subtype| of kern nodes from accents}
+@d auto_kern=3 {|subtype| of kern nodes created by |get_auto_kern|}
 
 @# {memory structure for marginal kerns}
 @d margin_kern_node = 40
@@ -3776,7 +3777,6 @@ inserted from \.{\\mkern} specifications in math formulas).
 @d kn_bc_code_base == 10
 @d kn_ac_code_base == 11
 
-@d auto_kern == explicit
 
 @d no_lig_code == 6
 
@@ -4409,6 +4409,7 @@ if subtype(p)<>mu_glue then
   print_scaled(width(p));
   if subtype(p)=acc_kern then print(" (for accent)");
 @.for accent@>
+  if subtype(p)=auto_kern then print(" (for \pdfprependkern/\pdfappendkern)");
   end
 else  begin print_esc("mkern"); print_scaled(width(p)); print("mu");
   end
@@ -17240,9 +17241,9 @@ begin
             (save_tail <> null) then
     begin
         r := save_tail;
-        while (link(r) <> null) and (link(r) <> p) do
+        while (r <> null) and (link(r) <> null) and (link(r) <> p) do
             r := link(r);
-        if (link(r) = p) then
+        if (r <> null) and (link(r) = p) then
             set_char_and_font(r); {set |f| and |c| if |r| is a char or ligature}
     end;
     if (c = non_char) then

@@ -1,3 +1,9 @@
+2020-06-02  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (auto_kern): @d=3, rather than "explicit".
+	(Display kern |p|): report auto_kern message; avoid link(r)
+	when r=null. pdftex r828.
+
 2020-05-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* writepng.c: Suppress a compiler warning: '&&' within '||'
@@ -28,7 +34,7 @@
 2020-03-28  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (load_expand_font, vf_def_font): do not call
-	copy_expand_params on null_font.
+	copy_expand_params on null_font. pdftex r823.
 	Original report from Robert Schlicht,
 	https://tug.org/pipermail/tex-live/2020-March/045099.html
 	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-March/004307.html
