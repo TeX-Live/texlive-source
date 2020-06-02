@@ -4996,7 +4996,7 @@ any more details about the page-building process.
 @<Set init...@>=
 nest_ptr:=0; max_nest_stack:=0;
 mode:=vmode; head:=contrib_head; tail:=contrib_head;
-eTeX_aux:=null;
+eTeX_aux:=null; save_tail:=null;
 prev_depth:=ignore_depth; mode_line:=0;
 prev_graf:=0; shown_mode:=0;
 @<Start a new current page@>;
@@ -17241,9 +17241,9 @@ begin
             (save_tail <> null) then
     begin
         r := save_tail;
-        while (r <> null) and (link(r) <> null) and (link(r) <> p) do
+        while (link(r) <> null) and (link(r) <> p) do
             r := link(r);
-        if (r <> null) and (link(r) = p) then
+        if (link(r) = p) then
             set_char_and_font(r); {set |f| and |c| if |r| is a char or ligature}
     end;
     if (c = non_char) then
