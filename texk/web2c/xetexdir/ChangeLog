@@ -1,9 +1,3 @@
-2020-06-03  Andreas Scherer  <https://ascherer.github.io>
-
-	* xetex.ch: '\pdfTeX' is only defined in section 114, which is
-	_not_ changed for XeTeX in TeX Live, so the macro '\def'inition
-	isn't visible with '\let\maybe=\iffalse'.  Repeat in limbo.
-
 2020-05-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* xetex.ch,

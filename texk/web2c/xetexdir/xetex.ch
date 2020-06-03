@@ -35,7 +35,6 @@ authorization from the copyright holders.
 \let\maybe=\iffalse
 @y
 \let\maybe=\iftrue
-\def\pdfTeX{pdf\TeX}
 @z
 
 @x [1] m.2 l.188 - banner
