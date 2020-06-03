@@ -1,7 +1,7 @@
 project('harfbuzz', 'c', 'cpp',
-  meson_version: '>= 0.47.0',
+  meson_version: '>= 0.53.0',
   default_options : ['cpp_std=c++11'],
-  version: '2.6.6')
+  version: '2.6.7')
 
 warning('Meson is not our main build system yet, don\'t use it for packaging HarfBuzz for *nix distros for now')
 
@@ -53,8 +53,6 @@ if host_machine.cpu_family() == 'arm' and cpp.alignment('struct { char c; }') !=
     add_project_arguments('-mstructure-size-boundary=8', language : 'cpp')
   endif
 endif
-
-python3 = import('python').find_installation('python3')
 
 check_headers = [
   ['unistd.h'],
@@ -136,6 +134,9 @@ if cairo_dep.found()
     if cpp.has_header('cairo-ft.h') and \
        cpp.has_function('cairo_ft_font_face_create_for_ft_face', dependencies: cairo_dep)
       cairo_ft_dep = cairo_dep
+    else
+      # Not-found dependency
+      cairo_ft_dep = dependency('', required: false)
     endif
   endif
 else
@@ -189,11 +190,11 @@ if icu_dep.found()
   conf.set('HAVE_ICU', 1)
 endif
 
-if get_option('icu-builtin')
+if get_option('icu_builtin')
   conf.set('HAVE_ICU_BUILTIN', 1)
 endif
 
-if get_option('experimental-api')
+if get_option('experimental_api')
   conf.set('HB_EXPERIMENTAL_API', 1)
 endif
 
@@ -342,4 +343,35 @@ if not get_option('tests').disabled()
   subdir('test')
 endif
 
+if not get_option('gtk_doc').disabled()
+  subdir('docs')
+endif
+
 configure_file(output: 'config.h', configuration: conf)
+
+summary({'prefix': get_option('prefix'),
+         'bindir': get_option('bindir'),
+         'libdir': get_option('libdir'),
+         'includedir': get_option('includedir'),
+         'datadir': get_option('datadir'),
+        }, section: 'Directories')
+summary({'Builtin': true,
+         'Glib': conf.get('HAVE_GLIB', 0) == 1,
+         'ICU': conf.get('HAVE_ICU', 0) == 1,
+        }, bool_yn: true, section: 'Unicode callbacks (you want at least one)')
+summary({'FreeType': conf.get('HAVE_FREETYPE', 0) == 1,
+        }, bool_yn: true, section: 'Font callbacks (the more the merrier)')
+summary({'Cairo': conf.get('HAVE_CAIRO', 0) == 1,
+         'Fontconfig': conf.get('HAVE_FONTCONFIG', 0) == 1,
+        }, bool_yn: true, section: 'Tools used for command-line utilities')
+summary({'Graphite2': conf.get('HAVE_GRAPHITE2', 0) == 1,
+        }, bool_yn: true, section: 'Additional shapers (the more the merrier)')
+summary({'CoreText': conf.get('HAVE_CORETEXT', 0) == 1,
+         'DirectWrite': conf.get('HAVE_DIRECTWRITE', 0) == 1,
+         'GDI': conf.get('HAVE_GDI', 0) == 1,
+         'Uniscribe': conf.get('HAVE_UNISCRIBE', 0) == 1,
+        }, bool_yn: true, section: 'Platform shapers (not normally needed)')
+summary({'Documentation': conf.get('HAVE_GTK_DOC', 0) == 1,
+         'GObject bindings': conf.get('HAVE_GOBJECT', 0) == 1,
+         'Introspection': conf.get('HAVE_INTROSPECTION', 0) == 1,
+        }, bool_yn: true, section: 'Other features')

@@ -44,19 +44,13 @@ HarfBuzz release walk-through checklist:
 9. Tag the release and sign it: Eg. "git tag -s 1.4.7 -m 1.4.7".  Enter your
    GPG password again.
 
-10. Build win32 bundle.
-
-   a. Build Win32 binaries.  See [README.mingw.md](README.mingw.md).
-
-   b. Run "make dist-win" to build Win32 bundle.
+10. Build win32 bundle.  See [README.mingw.md](README.mingw.md).
 
 11. Quickly double-check the size of the .tar.xz and .zip files against their
     previous releases to make sure nothing bad happened.
     They should be in the ballpark, perhaps slightly larger.  Sometimes they
     do shrink, that's not by itself a stopper.
 
-12. Push the commit and tag out: "git push --follow-tags".  Make sure it's
-    pushed both to freedesktop repo and github.
-
-13. Go to GitHub release page [here](https://github.com/harfbuzz/harfbuzz/releases),
-    edit the tag, upload artefacts and NEWS entry and save.
+12. Push the commit and tag out: "git push --follow-tags".  Go to GitHub release
+    page [here](https://github.com/harfbuzz/harfbuzz/releases), edit the tag,
+    upload artefacts and NEWS entry and save.
