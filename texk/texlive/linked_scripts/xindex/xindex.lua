@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.22
+ local version = 0.23
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -49,6 +49,7 @@ local args = require ('xindex-lapp') [[
     -o,--output (default "")
     -l,--language (default en)
     -p,--prefix (default L)
+    -u,--use_UCA
     <input> (string)
 ]]
 
@@ -174,6 +175,8 @@ escape_chars = { -- by default " is the escape char
   {esc_char..')', '//escapedparenright//',')'    }
 }
 
+local language = "en" -- default language
+
 language = string.lower(args["language"]):sub(1, 2)
 writeLog(2,"Language = "..language.."\n",1) 
 if (indexheader[language] == nil) then
@@ -188,6 +191,39 @@ if (folium[language] == nil) then
 else
   page_folium = folium[language]
 end  
+
+use_UCA = args["use_UCA"]
+if use_UCA then
+  writeLog(1,"Will use LUA-UCA\n",1)
+  ducet = require "lua-uca.lua-uca-ducet"
+  collator = require "lua-uca.lua-uca-collator"
+  languages = require "lua-uca.lua-uca-languages"
+  collator_obj = collator.new(ducet)
+  
+  local uca_config_file = "xindex-cfg-uca.lua"
+  writeLog(2,"Loading local UCA config file "..uca_config_file,0)
+  UCA_Config_File = kpse.find_file(uca_config_file) 
+  uca_cfg = require(UCA_Config_File)
+  writeLog(2," ... done\n",0)
+  
+-- language name specified on the command line doesn't seem to be available
+-- in the config file, so we just try to find it ourselves
+  for i, a in ipairs(arg) do
+    if a == "-l" or a=="--language" then
+      language = arg[i+1]
+      break
+    end
+  end
+
+  if languages[language] then
+    print("[Lua-UCA] Loading language: " .. language)
+    collator_obj = languages[language](collator_obj)
+  end
+else
+  writeLog(1,"Will _not_ use LUA-UCA\n",1)
+end
+
+upper = unicode.utf8.upper
 
 no_caseSensitive = args["no_casesensitive"]
 if no_caseSensitive then
