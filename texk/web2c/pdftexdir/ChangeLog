@@ -1,8 +1,7 @@
 2020-06-03  Thanh Han The  <hanthethanh@gmail.com>
 
-	* pdftex.web: Initialize save_tail to avoid garbage values.
-	Remove unnecessary codes. Both from Hironobu Yamashita.
-	pdftex r829.
+	* pdftex.web: Initialize save_tail to avoid a value of 0 given at compile
+	time. Remove unnecessary codes. (from Hironobu Yamashita). pdftex r829.
 
 2020-06-02  Thanh Han The  <hanthethanh@gmail.com>
 
