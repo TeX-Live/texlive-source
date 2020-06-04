@@ -16,6 +16,11 @@
 % [0] Let bibtex.tex work with latest webmac (which defines \ET, hence
 % making E active loses).
 @x
+% Note: WEAVE will typeset an upper-case `E' in a PASCAL identifier a
+% bit strangely so that the `TeX' in the name of this program is typeset
+% correctly; if this becomes a problem remove these three lines to get
+% normal upper-case `E's in PASCAL identifiers
+\def\drop{\kern-.1667em\lower.5ex\hbox{E}\kern-.125em} % middle of TeX
 \catcode`E=13 \uppercase{\def E{e}}
 \def\\#1{\hbox{\let E=\drop\it#1\/\kern.05em}} % italic type for identifiers
 @y
