@@ -30,6 +30,7 @@ entire resulting derived work is distributed under the terms of a
 permission notice identical to this one.
 }
 @y
+\let\maybe=\iftrue
 \def\covernote{\vbox{\noindent
 Copyright \copyright~1989, 1992
    by Technische Hochschule Darmstadt,\hfill\break

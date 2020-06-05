@@ -38,7 +38,7 @@ permission notice identical to this one.
 }
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-
+\let\maybe=\iftrue
 \def\title{The CTIE processor}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CTIE} processor}
