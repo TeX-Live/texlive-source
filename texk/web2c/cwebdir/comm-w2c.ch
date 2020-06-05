@@ -802,7 +802,7 @@ int wrap_up() {
   putchar('\n');
 @y
 int wrap_up(void) {
-  if (show_progress) new_line;
+  if (show_progress || show_happiness || (history > spotless)) new_line;
 @z
 
 @x
