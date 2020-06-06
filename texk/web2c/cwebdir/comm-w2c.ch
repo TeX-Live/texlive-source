@@ -333,6 +333,7 @@ double quotes.
 The actual file lookup is done with the help of the \Kpathsea/ library;
 see section~\X90:File lookup with \Kpathsea/\X~for details. % FIXME
 The remainder of the \.{@@i} line after the file name is ignored.
+@^system dependencies@> @.CWEBINPUTS@>
 @z
 
 @x
@@ -345,6 +346,12 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @<Include...@>=
 #include <stdlib.h> /* declaration of |getenv| and |exit| */
 @y
+@z
+
+@x
+@ @<Try to open...@>= {
+@y
+@ @.CWEBINPUTS@>@<Try to open...@>= {
 @z
 
 @x
@@ -1334,6 +1341,7 @@ The directories to be searched for come from three sources:
 \item{(c)} compile-time default directories (specified in
     \.{texmf.in}),\hfil\break
     i.e., \.{\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}.\par}
+@.CWEBINPUTS@>
 
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
@@ -1351,6 +1359,7 @@ typedef bool boolean;
 \.{CWEBINPUTS.cweb} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_cweb}
 in the environment) its value will be used as the search path for filenames.
 This allows different flavors of \.{CWEB} to have different search paths.
+@.CWEBINPUTS@>
 
 @<Set up |PROGNAME| feature and initialize the search path mechanism@>=
 kpse_set_program_name(argv[0], "cweb");

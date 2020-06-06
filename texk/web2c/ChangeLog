@@ -1,3 +1,7 @@
+2020-06-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: Add index entries for the CWEBINPUTS envvar.
+
 2020-06-05  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: Fix newline blunder in case of error.
