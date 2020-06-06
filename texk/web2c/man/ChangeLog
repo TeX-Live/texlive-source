@@ -1,3 +1,7 @@
+2020-06-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* tex.man: Complete sentence about TEXINPUTS environment.
+
 2020-03-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweb.man,
