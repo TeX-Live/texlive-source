@@ -50,13 +50,18 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
+  /../, /./, \..\, \.\ should be excluded (2020/06/06)
 */
-  if (len > 2 && ((fn[0] == '/' && fn[1] == '/') ||
+  p = strstr(fn, ".\\");
+  if (!p) {
+    p = strstr(fn, "./");
+  }
+  if (!p && len > 2 && ((fn[0] == '/' && fn[1] == '/') ||
       (fn[0] == '\\' && fn[1] == '\\' && fn[2] != '?'))) {
     fn += 2;
     strcpy (fnn, "\\\\?\\UNC\\");
     strcat (fnn, fn);
-  } else if (len > 2 && fn[1] == ':') {
+  } else if (!p && len > 2 && fn[1] == ':') {
     strcpy (fnn, "\\\\?\\");
     strcat (fnn, fn);
   } else {

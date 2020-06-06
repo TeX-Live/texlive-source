@@ -1,3 +1,8 @@
+2020-06-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* readable.c, knj.c: /../, /./, \..\, \.\ should not exist
+	in \\?\ form of absolute path.
+
 2020-04-28  Akira Kakuto  <kakuto@w32tex.org>
 
 	* readable.c, knj.c: Support very long input path name,

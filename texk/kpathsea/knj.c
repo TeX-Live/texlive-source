@@ -126,15 +126,20 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
+  /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
 */
     fnn = xmalloc(len + 10);
-    if (len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+    p = strstr(filename, ".\\");
+    if (!p) {
+       p = strstr(filename, "./");
+    }
+    if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
         (filename[0] == '\\' && filename[1] == '\\' &&
          filename[2] != '?'))) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
-    } else if (len > 2 && filename[1] == ':') {
+    } else if (!p && len > 2 && filename[1] == ':') {
        strcpy (fnn, "\\\\?\\");
        strcat (fnn, filename);
     } else {
@@ -186,15 +191,20 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
   Support very long input path name, longer than _MAX_PATH for
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
+  /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
 */
     fnn = xmalloc(len + 10);
-    if (len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+    p = strstr(filename, ".\\");
+    if (!p) {
+       p = strstr(filename, "./");
+    }
+    if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
         (filename[0] == '\\' && filename[1] == '\\' &&
          filename[2] != '?'))) {
        filename += 2;
        strcpy (fnn, "\\\\?\\UNC\\");
        strcat (fnn, filename);
-    } else if (len > 2 && filename[1] == ':') {
+    } else if (!p && len > 2 && filename[1] == ':') {
        strcpy (fnn, "\\\\?\\");
        strcat (fnn, filename);
     } else {
