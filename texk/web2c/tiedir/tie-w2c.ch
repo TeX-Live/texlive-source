@@ -106,9 +106,9 @@ static int history=spotless;
 @y
 @<Global variables@>=
 typedef enum {
-    spotless,
-    troublesome,
-    fatal } return_code;
+    @!spotless,
+    @!troublesome,
+    @!fatal } return_code;
 static return_code history=spotless;
 @z
 
@@ -181,14 +181,14 @@ typedef int in_file_modes; /* should be |enum(search,test,reading,ignore)| */
 typedef int file_types; /* should be |enum(unknown,master,chf)| */
 @y
 typedef enum {
-    search,
-    test,
-    reading,
-    ignore } in_file_modes;
+    @!search,
+    @!test,
+    @!reading,
+    @!ignore } in_file_modes;
 typedef enum {
-    unknown,
-    master,
-    chf } file_types;
+    @!unknown,
+    @!master,
+    @!chf } file_types;
 @z
 
 @x l.548
@@ -198,9 +198,9 @@ typedef enum {
 typedef int out_md_type; /* should be |enum(normal,pre,post)| */
 @y
 typedef enum {
-    normal,
-    pre,
-    post } out_md_type;
+    @!normal,
+    @!pre,
+    @!post } out_md_type;
 @z
 
 Section 24
