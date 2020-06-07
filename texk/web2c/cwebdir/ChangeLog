@@ -1,7 +1,10 @@
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
-	* comm-w2c.h: Underscore 'enum'erated values in index.
+	* comm-w2c.h,
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Underscore 'enum'erated values in index.
 
 2020-06-06  Andreas Scherer  <https://ascherer.github.io>
 
