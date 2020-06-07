@@ -1,5 +1,10 @@
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctangleboot.cin,
+	* cwebboot.cin: Add date to table-of-contents page.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctangleboot.cin: Handle special 'files' as secondary output.
 
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>

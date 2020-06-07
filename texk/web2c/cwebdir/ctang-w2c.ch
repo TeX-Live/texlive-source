@@ -28,6 +28,19 @@
 @z
 
 @x
+\def\botofcontents{\vfill
+@y
+\def\covernote{\vbox{
+@z
+
+@x
+}
+@y
+}}
+\datecontentspage
+@z
+
+@x
 @s not_eq normal @q unreserve a C++ keyword @>
 @y
 @z
