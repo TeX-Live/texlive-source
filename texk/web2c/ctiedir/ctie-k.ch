@@ -113,9 +113,10 @@ replaces the complex \.{TIE} character set handling (based on that of
 the original \.{WEB} system) with the standard \.{CWEB} behaviour, and
 so uses the |char| type for input and output.
 
-The \.{kpathsea} library (version 3.4.5 and higher) defines the |true|,
-|false|, |boolean| and |string| types in \.{<kpathsea/simpletypes.h>},
-so we do not actually need to define them here.
+The \.{kpathsea} library (version 3.4.5 and higher) defines the |@!boolean|
+(with the values |@!true| and |@!false|) and |@!string| (and |@!const_string|)
+types in \.{<kpathsea/simpletypes.h>}, so we do not actually need to define
+them here.
 
 @s boolean int
 @s string int
@@ -195,8 +196,7 @@ This should cause no trouble in any \CEE/ program.
 @y
 @ And we need dynamic memory allocation.
 This should cause no trouble in any \CEE/ program.
-The \.{kpathsea} include files handle the definition of |malloc()|,
-too.
+The \.{kpathsea} include files handle the definition of |@!malloc|, too.
 @^system dependencies@>
 @z
 

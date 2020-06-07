@@ -1248,7 +1248,7 @@ if(strlen(check_file_name)) /* Delete the temporary file in case of a break */
 
 @* Internationalization.  You may have noticed that almost all \.{"strings"}
 in the \.{CWEB} sources are placed in the context of the `|_|'~macro.
-This is just a shortcut for the `|gettext|' function from the ``GNU~gettext
+This is just a shortcut for the `|@!gettext|' function from the ``GNU~gettext
 utilities.'' For systems that do not have this library installed, we wrap
 things for neutral behavior without internationalization.
 

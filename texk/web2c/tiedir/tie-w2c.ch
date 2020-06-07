@@ -77,8 +77,8 @@ Section 4
 typedef int boolean;
 typedef char* string;
 @y
-@ The types |boolean| (with values |false| and |true|) and
-|string| come from \.{<kpathsea/simpletypes.h>}.
+@ The types |@!boolean| (with values |@!false| and |@!true|) and
+|@!string| come from \.{<kpathsea/simpletypes.h>}.
 @s boolean int
 @s string int
 @z
@@ -143,7 +143,7 @@ Section 15
 #include <stdio.h>
 @y
 @<Global \&{\#include}s@>=
-#include "cpascal.h" /* |decr| and |incr| */
+#include "cpascal.h" /* |@!decr| and |@!incr| */
 #include <kpathsea/kpathsea.h>
 #define usage tieusage /* Also redefine |usage| to avoid clash with function from lib. */
 @z
@@ -162,8 +162,7 @@ This should cause no trouble in any \Cl\ program.
 #endif
 @y
 This should cause no trouble in any \Cl\ program.
-The \.{kpathsea} include files handle the definition of |malloc()|,
-too.
+The \.{kpathsea} include files handle the definition of |@!malloc|, too.
 @^system dependencies@>
 @z
 
