@@ -1,3 +1,8 @@
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h: Underscore 'enum'erated values in index.
+
 2020-06-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Add index entries for the CWEBINPUTS envvar.

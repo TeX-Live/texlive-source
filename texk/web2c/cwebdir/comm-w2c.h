@@ -36,7 +36,7 @@ typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 typedef enum {
-  ctangle, cweave, ctwill
+  @!ctangle, @!cweave, @!ctwill
 } cweb;
 extern cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
