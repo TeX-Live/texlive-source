@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.23
+ local version = 0.24
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -175,7 +175,7 @@ escape_chars = { -- by default " is the escape char
   {esc_char..')', '//escapedparenright//',')'    }
 }
 
-local language = "en" -- default language
+language = "en" -- default language
 
 language = string.lower(args["language"]):sub(1, 2)
 writeLog(2,"Language = "..language.."\n",1) 
