@@ -1,5 +1,9 @@
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctangleboot.cin: Handle special 'files' as secondary output.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctangleboot.cin,
 	* cwebboot.cin: Check accessibility to output files.
 

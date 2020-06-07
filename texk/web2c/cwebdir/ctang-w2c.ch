@@ -813,12 +813,25 @@ else {
   rename(check_file_name,C_file_name);
 }
 
-@ @<Update the secondary results...@>=
-if((C_file=fopen(output_file_name,"r"))!=NULL) {
-  @<Set up the comparison of temporary output@>@;
-  @<Create the secondary output depending on the comparison@>@;
-} else
-  rename(check_file_name,output_file_name); /* This was the first run */
+@ The author of a \.{CWEB} program may want to write the \\{secondary} output
+instead of to a file (in \.{@@(...@@>}) to \.{/dev/null} or \.{/dev/stdout} or
+\.{/dev/stderr}.  We must take care of the \\{temporary} output already written
+to a file and finally get rid of that file.
+
+@<Update the secondary results...@>=
+if(0==strcmp("/dev/stdout",output_file_name))
+  @<Redirect temporary output to \.{/dev/stdout}@>@;
+else if(0==strcmp("/dev/stderr",output_file_name))
+  @<Redirect temporary output to \.{/dev/stderr}@>@;
+else if(0==strcmp("/dev/null",output_file_name))
+  @<Redirect temporary output to \.{/dev/null}@>@;
+else { /* Hopefully a \\{regular} output file */
+  if((C_file=fopen(output_file_name,"r"))!=NULL) {
+    @<Set up the comparison of temporary output@>@;
+    @<Create the secondary output depending on the comparison@>@;
+  } else
+    rename(check_file_name,output_file_name); /* This was the first run */
+}
 
 @ Again, we use a call to |remove| before |rename|.
 
@@ -829,6 +842,40 @@ else {
   remove(output_file_name);
   rename(check_file_name,output_file_name);
 }
+
+@ @<Redirect temporary output to \.{/dev/stdout}@>={
+  @<Setup system redirection@>@;
+  do {
+    in_size = fread(in_buf,1,BUFSIZ,check_file);
+    in_buf[in_size]='\0';
+    fprintf(stdout,"%s",in_buf);
+  } while(!feof(check_file));@/
+  fclose(check_file); check_file=NULL;
+  @<Create the secondary output...@>@;
+}
+
+@ @<Redirect temporary output to \.{/dev/stderr}@>={
+  @<Setup system redirection@>@;
+  do {
+    in_size = fread(in_buf,1,BUFSIZ,check_file);
+    in_buf[in_size]='\0';
+    fprintf(stderr,"%s",in_buf);
+  } while(!feof(check_file));@/
+  fclose(check_file); check_file=NULL;
+  @<Create the secondary output...@>@;
+}
+
+@ @<Redirect temporary output to \.{/dev/null}@>={
+  int comparison=true;
+  @<Create the secondary output...@>@;
+}
+
+@ @<Setup system redirection@>=
+char in_buf[BUFSIZ+1];
+int in_size,comparison=true;
+if((check_file=fopen(check_file_name,"r"))==NULL)
+  fatal("! Cannot open output file ",check_file_name);
+@.Cannot open output file@>
 
 @* Put ``version'' information in a single spot.
 Don't do this at home, kids! Push our local macro to the variable in \.{COMMON}

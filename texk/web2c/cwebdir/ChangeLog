@@ -1,5 +1,9 @@
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctang-w2c.ch: Handle special 'files' as secondary output.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.ch,
 	* ctang-w2c.ch,
 	* cweav-w2c.ch,
