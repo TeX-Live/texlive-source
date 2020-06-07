@@ -125,8 +125,10 @@ char **av@t\2\2@>) /* argument values */
 
 @x
 @d max_scraps 2000 /* number of tokens in \CEE/ texts being parsed */
+@d stack_size 400 /* number of simultaneous output levels */
 @y
 @d max_scraps 10000 /* number of tokens in \CEE/ texts being parsed */
+@d stack_size 2000 /* number of simultaneous output levels */
 @z
 
 @x

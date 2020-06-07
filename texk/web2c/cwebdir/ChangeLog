@@ -1,6 +1,13 @@
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Check accessibility to designated output files.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
 	* comm-w2c.h,
 	* ctang-w2c.ch,
 	* cweav-w2c.ch,

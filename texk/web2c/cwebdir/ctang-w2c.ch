@@ -312,9 +312,12 @@ fclose(C_file); C_file=NULL;
 for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     an_output_file--;
     sprint_section_name(output_file_name,*an_output_file);
+    if ((C_file=fopen(output_file_name,"a"))==NULL)
+      fatal(_("! Cannot open output file "),output_file_name);
+@.Cannot open output file@>
+    else fclose(C_file); /* Test accessability */
     if((C_file=fopen(check_file_name,"wb"))==NULL)
       fatal(_("! Cannot open output file "),check_file_name);
-@.Cannot open output file@>
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;

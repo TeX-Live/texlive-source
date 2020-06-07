@@ -2,13 +2,13 @@
 #line 58 "cwebdir/common.w"
 
 /*85:*/
-#line 1216 "cwebdir/comm-w2c.ch"
+#line 1223 "cwebdir/comm-w2c.ch"
 
 #include <stdbool.h>  
 #include <stddef.h>  
 
 /*:85*//*88:*/
-#line 1257 "cwebdir/comm-w2c.ch"
+#line 1264 "cwebdir/comm-w2c.ch"
 
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
@@ -25,7 +25,7 @@
 #endif
 
 /*:88*//*90:*/
-#line 1348 "cwebdir/comm-w2c.ch"
+#line 1355 "cwebdir/comm-w2c.ch"
 
 typedef bool boolean;
 #define HAVE_BOOLEAN
@@ -316,7 +316,7 @@ char change_buffer[buf_size];
 char*change_limit;
 
 /*:11*//*86:*/
-#line 1231 "cwebdir/comm-w2c.ch"
+#line 1238 "cwebdir/comm-w2c.ch"
 
 char cb_banner[max_banner];
 string texmf_locale;
@@ -388,7 +388,7 @@ static void scan_args(void);
 #line 1253 "cwebdir/common.w"
 
 /*:69*//*83:*/
-#line 1191 "cwebdir/comm-w2c.ch"
+#line 1198 "cwebdir/comm-w2c.ch"
 
 boolean get_line(void);
 name_pointer id_lookup(const char*,const char*,char);
@@ -401,7 +401,7 @@ void reset_input(void);
 void sprint_section_name(char*,name_pointer);
 
 /*:83*//*84:*/
-#line 1204 "cwebdir/comm-w2c.ch"
+#line 1211 "cwebdir/comm-w2c.ch"
 
 static boolean input_ln(FILE*);
 static int web_strcmp(char*,int,char*,int);
@@ -411,7 +411,7 @@ static void check_change(void);
 static void prime_the_change_buffer(void);
 
 /*:84*//*98:*/
-#line 1450 "cwebdir/comm-w2c.ch"
+#line 1457 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
@@ -451,7 +451,7 @@ root= NULL;
 #line 77 "cwebdir/comm-w2c.ch"
 
 /*91:*/
-#line 1364 "cwebdir/comm-w2c.ch"
+#line 1371 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -459,7 +459,7 @@ kpse_set_program_name(argv[0],"cweb");
 #line 78 "cwebdir/comm-w2c.ch"
 
 /*89:*/
-#line 1313 "cwebdir/comm-w2c.ch"
+#line 1320 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
 texmf_locale= kpse_var_expand("${TEXMFLOCALEDIR}");
@@ -492,6 +492,10 @@ temporary_output= 1;
 
 scan_args();
 if(program==ctangle){
+if((C_file= fopen(C_file_name,"a"))==NULL)
+fatal(_("! Cannot open output file "),C_file_name);
+
+else fclose(C_file);
 strcpy(check_file_name,C_file_name);
 if(check_file_name[0]!='\0'){
 char*dot_pos= strrchr(check_file_name,'.');
@@ -503,6 +507,9 @@ fatal(_("! Cannot open output file "),check_file_name);
 
 }
 else{
+if((tex_file= fopen(tex_file_name,"a"))==NULL)
+fatal(_("! Cannot open output file "),tex_file_name);
+else fclose(tex_file);
 strcpy(check_file_name,tex_file_name);
 if(check_file_name[0]!='\0'){
 char*dot_pos= strrchr(check_file_name,'.');
@@ -1335,7 +1342,7 @@ puts(_("(That was a fatal error, my friend.)"));
 #line 818 "cwebdir/comm-w2c.ch"
 
 /*87:*/
-#line 1242 "cwebdir/comm-w2c.ch"
+#line 1249 "cwebdir/comm-w2c.ch"
 
 if(C_file)fclose(C_file);
 if(tex_file)fclose(tex_file);
@@ -1364,7 +1371,7 @@ const char*s,const char*t)
 #line 1182 "cwebdir/common.w"
 {
 #line 872 "cwebdir/comm-w2c.ch"
-if(*s)fputs(s,stdout);
+if(*s)err_print(s);
 #line 1184 "cwebdir/common.w"
 err_print(t);
 history= fatal_message;exit(wrap_up());
@@ -1419,7 +1426,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*74:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*94:*/
-#line 1389 "cwebdir/comm-w2c.ch"
+#line 1396 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1431,7 +1438,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*96:*/
-#line 1431 "cwebdir/comm-w2c.ch"
+#line 1438 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1621,7 +1628,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
 #line 1004 "cwebdir/comm-w2c.ch"
 /*:70*//*95:*/
-#line 1397 "cwebdir/comm-w2c.ch"
+#line 1404 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1654,7 +1661,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:95*//*97:*/
-#line 1439 "cwebdir/comm-w2c.ch"
+#line 1446 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {
