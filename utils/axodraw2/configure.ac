@@ -1,7 +1,7 @@
-# $Id$
-#                                               -*- Autoconf -*-
-# Process this file with autoconf to produce a configure script.
-dnl   Copyright 2018 John Collins
+dnl $Id$
+dnl                                               -*- Autoconf -*-
+dnl Process this file with autoconf to produce a configure script.
+dnl   Copyright 2018-2020 John Collins
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -15,7 +15,7 @@ AC_CONFIG_MACRO_DIR([../../m4])
 
 KPSE_BASIC([axodraw2], [no-define])
 
-AC_CHECK_LIB([m], [sqrt],,
+AC_CHECK_LIB([m], [erf],,
   AC_MSG_ERROR([*** Please install libm on your system ***]))
 AC_PROG_CC
 

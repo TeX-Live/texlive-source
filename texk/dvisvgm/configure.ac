@@ -1,4 +1,4 @@
-# $Id$
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script
 dnl for dvisvgm in TeX Live.
 dnl

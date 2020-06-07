@@ -1,3 +1,7 @@
+2020-06-07  Karl Berry  <karl@freefriends.org>
+
+	* ac/withenable.ac: omit $Id$ from generated output.
+
 2020-02-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	* Import autosp-2020-02-06.

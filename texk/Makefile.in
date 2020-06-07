@@ -417,7 +417,11 @@ NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 recurse_this = texk/
 recurse_top = ../
 
-# $Id: recurse.am 43261 2017-02-17 22:37:44Z karl $
+# am/recurse.am: Makefile fragment to configure and build subdirs.
+#
+# Copyright 2017-2020 Karl Berry <tex-live@tug.org>
+# Copyright 2013      Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
 #
 # Requires $(recurse_this) and $(recurse_top).
 # Uses CONF_SUBDIRS and MAKE_SUBDIRS (set by kpse-setup.m4).

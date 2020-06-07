@@ -3379,8 +3379,7 @@ $as_echo "$as_me: $host -> \`--disable-mfluajit-nowin'" >&6;}
 esac ;;
 esac
 
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
+## utils/autosp/ac/withenable.ac: configure.ac fragment for Tl subdir
 ## configure options and TL libraries required for autosp.
 # Check whether --enable-autosp was given.
 if test "${enable_autosp+set}" = set; then :
@@ -3398,8 +3397,7 @@ $as_echo "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
     ;;
 esac
 
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
+## utils/axodraw2/ac/withenable.ac: configure.ac fragment for TL subdir
 ## configure options and TL libraries for axodraw2.
 # Check whether --enable-axodraw2 was given.
 if test "${enable_axodraw2+set}" = set; then :
@@ -3579,9 +3577,8 @@ $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
     ;;
 esac
 
-# $Id: withenable.ac 49993 2019-02-10 19:14:27Z karl $
-# utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
-## configure options and TL libraries required for xindy
+## utils/xindy/ac/withenable.ac: configure.ac fragment for TL subdir
+## configure options and TL libraries required for xindy.
 # Check whether --enable-xindy was given.
 if test "${enable_xindy+set}" = set; then :
   enableval=$enable_xindy;
@@ -3693,9 +3690,8 @@ test "x$enable_web2c" = xno || {
   need_zlib=yes
 }
 
-# $Id: web2c.ac 55138 2020-05-14 17:47:47Z karl $
-# texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
-## configure options for TeX and MF
+# texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
+# configure options for TeX and MF
 
 # Check whether --with-banner-add was given.
 if test "${with_banner_add+set}" = set; then :

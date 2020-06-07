@@ -18594,9 +18594,8 @@ fi
 
 # Include additional code for web2c.
 
-# $Id: web2c.ac 55138 2020-05-14 17:47:47Z karl $
-# texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
-## configure options for TeX and MF
+# texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
+# configure options for TeX and MF
 
 # Check whether --with-banner-add was given.
 if test "${with_banner_add+set}" = set; then :

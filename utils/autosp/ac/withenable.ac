@@ -1,7 +1,7 @@
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id$
+## utils/autosp/ac/withenable.ac: configure.ac fragment for Tl subdir
+dnl $Id$
 dnl
-dnl Copyright 2016--2018 Karl Berry <tex-live@tug.org>
+dnl Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for autosp.

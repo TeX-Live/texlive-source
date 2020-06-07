@@ -1,11 +1,11 @@
-# $Id$
-# texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
+dnl $Id$
+# texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
 dnl
-dnl Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+dnl Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## configure options for TeX and MF
+# configure options for TeX and MF
 m4_define_default([kpse_indent_26], [26])[]dnl
 AC_ARG_WITH([banner-add],
             AS_HELP_STRING([--with-banner-add=STR],

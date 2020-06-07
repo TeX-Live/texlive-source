@@ -1,3 +1,7 @@
+2020-06-07  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: omit $Id$ from generated output.
+
 2017-02-16  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_INIT): tex-live@tug.org instead of peb.
