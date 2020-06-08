@@ -49,6 +49,7 @@ program under the conditions for verbatim copying, provided that the
 entire resulting derived work is distributed under the terms of a
 permission notice identical to this one.
 }}
+\datecontentspage
 @z
 
 Section 2
