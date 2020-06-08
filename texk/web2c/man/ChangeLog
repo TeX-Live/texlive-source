@@ -1,3 +1,10 @@
+2020-06-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctie.man,
+	* ctwill.man,
+	* cweb.man,
+	* tie.man: Detail special environments for individual programs.
+
 2020-06-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* tex.man: Complete sentence about TEXINPUTS environment.
