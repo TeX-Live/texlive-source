@@ -1,3 +1,8 @@
+2020-06-09  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdfdev.c: Another workaround for fake-bold issue.
+	(See changes 2019-06-30 and 2020-02-29)
+
 2020-05-26  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvi.c: Introduce rgba_used in order to indicate that
