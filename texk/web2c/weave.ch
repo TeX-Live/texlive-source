@@ -91,15 +91,25 @@ procedure initialize;
 @!max_names=5000; {number of identifiers, index entries, and module names;
   must be less than 10240}
 @y
-@!max_bytes=65536; {|1/ww| times the number of bytes in identifiers,
+@!max_bytes=65535; {|1/ww| times the number of bytes in identifiers,
   index entries, and module names; must be less than 65536}
-@!max_names=10220; {number of identifiers, index entries, and module names;
+@!max_names=10239; {number of identifiers, index entries, and module names;
   must be less than 10240}
 @z
 @x
+@!max_modules=2000;{greater than the total number of modules}
+@!hash_size=353; {should be prime}
 @!buf_size=100; {maximum length of input line}
+@!longest_name=400; {module names shouldn't be longer than this}
+@!long_buf_size=500; {|buf_size+longest_name|}
+@!line_length=80; {lines of \TeX\ output have at most this many characters,
 @y
-@!buf_size=3000; {maximum length of input line}
+@!max_modules=10239; {greater than the total number of modules}
+@!hash_size=8501; {should be prime}
+@!buf_size=1000; {maximum length of input line}
+@!longest_name=10000; {module names shouldn't be longer than this}
+@!long_buf_size=11000; {|buf_size+longest_name|}
+@!line_length=80; {lines of \TeX\ output have at most this many characters,
 @z
 @x
 @!max_refs=30000; {number of cross references; must be less than 65536}
@@ -110,10 +120,10 @@ procedure initialize;
 @!max_scraps=1000; {number of tokens in \PASCAL\ texts being parsed}
 @!stack_size=200; {number of simultaneous output levels}
 @y
-@!max_refs=65000; {number of cross references; must be less than 65536}
-@!max_toks=65000; {number of symbols in \PASCAL\ texts being parsed;
+@!max_refs=65535; {number of cross references; must be less than 65536}
+@!max_toks=65535; {number of symbols in \PASCAL\ texts being parsed;
   must be less than 65536}
-@!max_texts=10000; {number of phrases in \PASCAL\ texts being parsed;
+@!max_texts=10239; {number of phrases in \PASCAL\ texts being parsed;
   must be less than 10240}
 @!max_scraps=10000; {number of tokens in \PASCAL\ texts being parsed}
 @!stack_size=2000; {number of simultaneous output levels}

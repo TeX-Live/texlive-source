@@ -1,3 +1,7 @@
+2020-06-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.ch: Max out array sizes similar to CWEB.
+
 2020-06-07  Karl Berry  <karl@freefriends.org>
 
 	* ac/web2c.ac: omit $Id$ from output.
