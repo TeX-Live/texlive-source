@@ -108,7 +108,7 @@ procedure initialize;
 @!hash_size=8501; {should be prime}
 @!buf_size=1000; {maximum length of input line}
 @!longest_name=10000; {module names shouldn't be longer than this}
-@!long_buf_size=11000; {|buf_size+longest_name|}
+@!long_buf_size=buf_size+longest_name; {C arithmetic in \PASCAL\ constant}
 @!line_length=80; {lines of \TeX\ output have at most this many characters,
 @z
 @x
