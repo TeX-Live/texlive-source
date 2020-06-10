@@ -637,12 +637,15 @@ end;
 @z
 
 @x [65] max_strings=hash_size settable at runtime.
+@
+@<Globals in the outer block@>=
 @!hash_next : packed array[hash_loc] of hash_pointer;   {coalesced-list link}
 @!hash_text : packed array[hash_loc] of str_number;     {pointer to a string}
 @!hash_ilk : packed array[hash_loc] of str_ilk;         {the type of string}
 @!ilk_info : packed array[hash_loc] of integer;         {|ilk|-specific info}
 @!hash_used : hash_base..hash_max+1;    {allocation pointer for hash table}
 @y
+@ @<Globals in the outer block@>=
 @!hash_next : ^hash_pointer;   {coalesced-list link}
 @!hash_text : ^str_number;     {pointer to a string}
 @!hash_ilk : ^str_ilk;         {the type of string}
