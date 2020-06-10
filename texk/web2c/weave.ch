@@ -75,7 +75,7 @@ procedure initialize;
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
-@<Define |parse_arguments|@>
+@<Define |parse_arguments|@>@/
 @<Error handling procedures@>@/
 procedure initialize;
   var @<Local variables for initialization@>@/

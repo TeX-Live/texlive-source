@@ -1,3 +1,7 @@
+2020-06-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.ch: Missing forced line break.
+
 2020-06-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Max out array sizes similar to CWEB.
