@@ -409,12 +409,10 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@
-@<Glob...@> =
+@ @<Glob...@> =
 @!verbose: c_int_type;
 
-@
-@<Initialize the option...@> =
+@ @<Initialize the option...@> =
 verbose := false;
 
 @ This option changes how we output character codes.
@@ -432,14 +430,12 @@ incr (current_option);
 @<Type...@> =
 @!charcode_format_type = charcode_ascii..charcode_default;
 
-@
-@<Const...@> =
+@ @<Const...@> =
 @!charcode_ascii = 0;
 @!charcode_octal = 1;
 @!charcode_default = 2;
 
-@
-@<Global...@> =
+@ @<Global...@> =
 @!charcode_format: charcode_format_type;
 
 @ It starts off as the default, that is, we output letters and digits as

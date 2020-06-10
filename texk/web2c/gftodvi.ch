@@ -669,12 +669,10 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@
-@<Glob...@> =
+@ @<Glob...@> =
 @!verbose: c_int_type;
 
-@
-@<Initialize the option...@> =
+@ @<Initialize the option...@> =
 verbose := false;
 
 @ Change how far from the right edge of the character boxes we print

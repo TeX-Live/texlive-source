@@ -658,14 +658,12 @@ incr (current_option);
 @<Type...@> =
 @!charcode_format_type = charcode_ascii..charcode_default;
 
-@
-@<Const...@> =
+@ @<Const...@> =
 @!charcode_ascii = 0;
 @!charcode_octal = 1;
 @!charcode_default = 2;
 
-@
-@<Global...@> =
+@ @<Global...@> =
 @!charcode_format: charcode_format_type;
 
 @ It starts off as the default, that is, we output letters and digits as

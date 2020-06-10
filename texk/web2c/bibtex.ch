@@ -745,6 +745,10 @@ aux_not_found:
 aux_found:                      {now we're ready to read the \.{.aux} file}
 end;
 @y
+This module and the next two must be changed on those systems using
+command-line arguments.
+@^system dependencies@>
+
 @<Procedures and functions for the reading and processing of input files@>=
 procedure get_the_top_level_aux_file_name;
 label aux_found,@!aux_not_found;
@@ -1684,8 +1688,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@
-@<Glob...@> =
+@ @<Glob...@> =
 @!min_crossrefs: integer;
 
 @ Set |min_crossrefs| to two by default, so we match the
