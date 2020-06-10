@@ -141,7 +141,9 @@ end;
 @!cur_loc:integer; {how many bytes have we read?}
 @z
 
-@x [??] Use modified routines to access pk_file.
+@x [34] Use modified routines to access pk_file.
+@ We also need a function that will get a single byte from the \.{pk} file.
+
 @p function pk_byte : eight_bits ;
 var temp : eight_bits ;
 begin
@@ -151,10 +153,10 @@ begin
    pk_byte := temp ;
 end ;
 @y
-We shall use a set of simple functions to read the next byte or
+@ We shall use a set of simple functions to read the next byte or
 bytes from |pk_file|. There are seven possibilities, each of which is
 treated as a separate function in order to minimize the overhead for
-subroutine calls.  We comment out the ones we don't need
+subroutine calls.  We comment out the ones we don't need.
 @^system dependencies@>
 
 @d pk_byte==get_byte
@@ -166,6 +168,7 @@ begin if eof(pk_file) then get_byte:=0
 else  begin read(pk_file,b); incr(cur_loc); get_byte:=b;
   end;
 end;
+@#
 @{
 function signed_byte:integer; {returns the next byte, signed}
 var b:eight_bits;
@@ -173,12 +176,14 @@ begin read(pk_file,b); incr(cur_loc);
 if b<128 then signed_byte:=b @+ else signed_byte:=b-256;
 end;
 @}
+@#
 function get_two_bytes:integer; {returns the next two bytes, unsigned}
 var a,@!b:eight_bits;
 begin read(pk_file,a); read(pk_file,b);
 cur_loc:=cur_loc+2;
 get_two_bytes:=a*256+b;
 end;
+@#
 @{
 function signed_pair:integer; {returns the next two bytes, signed}
 var a,@!b:eight_bits;
@@ -187,14 +192,18 @@ cur_loc:=cur_loc+2;
 if a<128 then signed_pair:=a*256+b
 else signed_pair:=(a-256)*256+b;
 end;
-@#
+@}
+@/
+@{
 function get_three_bytes:integer; {returns the next three bytes, unsigned}
 var a,@!b,@!c:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
 cur_loc:=cur_loc+3;
 get_three_bytes:=(a*256+b)*256+c;
 end;
-@#
+@}
+@/
+@{
 function signed_trio:integer; {returns the next three bytes, signed}
 var a,@!b,@!c:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
@@ -203,6 +212,7 @@ if a<128 then signed_trio:=(a*256+b)*256+c
 else signed_trio:=((a-256)*256+b)*256+c;
 end;
 @}
+@#
 function signed_quad:integer; {returns the next four bytes, signed}
 var a,@!b,@!c,@!d:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c); read(pk_file,d);

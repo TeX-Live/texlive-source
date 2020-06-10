@@ -236,6 +236,7 @@ cur_loc:=cur_loc+2;
 if a<128 then signed_pair:=a*256+b
 else signed_pair:=(a-256)*256+b;
 end;
+@#
 @{
 function get_three_bytes:integer; {returns the next three bytes, unsigned}
 var a,@!b,@!c:eight_bits;
@@ -243,7 +244,9 @@ begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
 cur_loc:=cur_loc+3;
 get_three_bytes:=(a*256+b)*256+c;
 end;
-@#
+@{
+@/
+@}
 function signed_trio:integer; {returns the next three bytes, signed}
 var a,@!b,@!c:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
@@ -252,6 +255,7 @@ if a<128 then signed_trio:=(a*256+b)*256+c
 else signed_trio:=((a-256)*256+b)*256+c;
 end;
 @}
+@#
 function signed_quad:integer; {returns the next four bytes, signed}
 var a,@!b,@!c,@!d:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c); read(pk_file,d);

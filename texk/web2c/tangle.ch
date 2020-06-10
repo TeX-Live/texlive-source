@@ -78,7 +78,7 @@ procedure initialize;
 @x [8] Constants: increase id lengths, for TeX--XeT and tex2pdf.
 @!buf_size=100; {maximum length of input line}
 @y
-@!buf_size=3000; {maximum length of input line}
+@!buf_size=1000; {maximum length of input line}
 @z
 @x
 @!max_bytes=45000; {|1/ww| times the number of bytes in identifiers,
@@ -93,9 +93,9 @@ procedure initialize;
   strings, and module names; must be less than 65536}
 @!max_toks=65535; {|1/zz| times the number of bytes in compressed \PASCAL\ code;
   must be less than 65536}
-@!max_names=10000; {number of identifiers, strings, module names;
+@!max_names=10239; {number of identifiers, strings, module names;
   must be less than 10240}
-@!max_texts=10000; {number of replacement texts, must be less than 10240}
+@!max_texts=10239; {number of replacement texts, must be less than 10240}
 @z
 
 @x
