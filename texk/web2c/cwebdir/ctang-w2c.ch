@@ -856,7 +856,9 @@ else {
   rename(check_file_name,output_file_name);
 }
 
-@ @<Redirect temporary output to \.{/dev/stdout}@>={
+@ Copy secondary output to |stdout|.
+
+@<Redirect temporary output to \.{/dev/stdout}@>={
   @<Setup system redirection@>@;
   do {
     in_size = fread(in_buf,1,BUFSIZ,check_file);
@@ -867,7 +869,9 @@ else {
   @<Create the secondary output...@>@;
 }
 
-@ @<Redirect temporary output to \.{/dev/stderr}@>={
+@ Copy secondary output to |stderr|.
+
+@<Redirect temporary output to \.{/dev/stderr}@>={
   @<Setup system redirection@>@;
   do {
     in_size = fread(in_buf,1,BUFSIZ,check_file);
@@ -878,7 +882,9 @@ else {
   @<Create the secondary output...@>@;
 }
 
-@ @<Redirect temporary output to \.{/dev/null}@>={
+@ No copying necessary, just remove the temporary output file.
+
+@<Redirect temporary output to \.{/dev/null}@>={
   int comparison=true;
   @<Create the secondary output...@>@;
 }

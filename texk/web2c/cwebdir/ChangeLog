@@ -1,5 +1,9 @@
 2020-06-10  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctang-w2c.ch: Add short comments to new material.
+
+2020-06-10  Andreas Scherer  <https://ascherer.github.io>
+
 	* texinputs/p+cwebmac.tex: Switch on PDF creation with 'cweave -lp+'
 	followed by 'tex'+'dvipdfm' or 'xetex' on your CWEB source.
 
