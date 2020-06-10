@@ -209,6 +209,12 @@ files) are treated the same way.  To organise the
 
 Sections 10 and 11: use enum as requested in ctie.w
 
+@x l.208
+the kind of output. (this would even be necessary if we
+@y
+the kind of output. (This would even be necessary if we
+@z
+
 @x l.212
 #define search 0
 #define test 1
@@ -294,7 +300,7 @@ it cannot find them in the current directory.
 (Colon-separated paths are not supported.)
 @y
 We use the \Kpathsea/ library (in particular, the \.{CWEBINPUTS}
-variable) to search for this file.
+variable) to search for this file.@.CWEBINPUTS@>
 @z
 
 @x l.510 Don't need the same variables any longer
@@ -674,7 +680,7 @@ inserted here; then only the index itself will get a new
 module number.
 @^system dependencies@>
 @y
-@* System-dependent changes.@^system dependencies@>
+@* System-dependent changes.@^system dependencies@>@.CWEBINPUTS@>
 The \.{ctie} program from the original \.{CTIE} package uses the
 compile-time default directory or the value of the environment
 variable \.{CWEBINPUTS} as an alternative place to be searched for
@@ -702,7 +708,7 @@ We set |kpse_program_name| to `\.{ctie}'.  This means if the variable
 \.{CWEBINPUTS.ctie} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_ctie}
 in the environment) its value will be used as the search path for
 filenames.  This allows different flavors of \.{CTIE} to have
-different search paths.
+different search paths.@.CWEBINPUTS@>
 
 @<Set up |PROGNAME| feature...@>=
 kpse_set_program_name(argv[0], "ctie");
