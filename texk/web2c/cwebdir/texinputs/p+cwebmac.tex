@@ -1,0 +1,5 @@
+% 'Language' to switch on PDF creation with standard 'tex' and 'xetex'
+% created by Andreas Scherer in June 2020.  Used with 'cweave -lp+'.
+% This file is not copyrighted and can be used freely.
+\ifx\undefined\botofcontents \let\pdf+ \input cwebmac % switch on PDF
+\else\endinput\fi % too late, baby!

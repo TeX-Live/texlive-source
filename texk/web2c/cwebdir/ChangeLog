@@ -1,3 +1,8 @@
+2020-06-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/p+cwebmac.tex: Switch on PDF creation with 'cweave -lp+'
+	followed by 'tex'+'dvipdfm' or 'xetex' on your CWEB source.
+
 2020-06-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
@@ -34,7 +39,7 @@
 
 2020-06-01  Andreas Scherer  <https://ascherer.github.io>
 
-	* texinputs/pdfwebtocfront.tex: Adapt to 'pwebmac.tex 4.5.2.
+	* texinputs/pdfwebtocfront.tex: Adapt to 'pwebmac.tex 4.5.2'.
 
 2020-05-31  Andreas Scherer  <https://ascherer.github.io>
 
@@ -55,7 +60,7 @@
 
 2020-05-07  Andreas Scherer  <https://ascherer.github.io>
 
-	* texinputs/Xcwebmac.tex: Amend macros from knuth.drv (n
+	* texinputs/Xcwebmac.tex: Amend macros from knuth.drv (in
 	github.com/oberdiek/latex-tds) to move table-of-contents
 	up front in PDF output (on second TeX run).
 
