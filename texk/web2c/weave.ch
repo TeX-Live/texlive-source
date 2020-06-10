@@ -435,8 +435,7 @@ long_options[current_option].flag := address_of (no_xref);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@
-@<Global...@> =
+@ @<Global...@> =
 @!no_xref:c_int_type;
 
 @ An element with all zeros always ends the list.
