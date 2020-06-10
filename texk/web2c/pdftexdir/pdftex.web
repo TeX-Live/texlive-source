@@ -36147,7 +36147,7 @@ begin
     if pdf_link_stack_ptr < 1 then
         pdf_error("ext4", "pdf_link_stack empty, \pdfendlink used without \pdfstartlink?");
     if pdf_link_stack_top.nesting_level <> cur_s then
-        pdf_error("ext4", "\pdfendlink ended up in different nesting level than \pdfstartlink");
+        pdf_warning(0, "\pdfendlink ended up in different nesting level than \pdfstartlink", true, true);
 
     {N.B.: test for running link must be done on |link_node| and not |ref_link_node|,
      as |ref_link_node| can be set by |do_link| or |append_link| already}

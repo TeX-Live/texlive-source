@@ -1,13 +1,23 @@
+2020-06-10  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (end_link): warn instead of fatal for
+	"\pdfendlink ended up in different nesting level than \pdfstartlink".
+	pdftex r832. Suggestion from Ulrike Fischer,
+	https://tug.org/pipermail/tex-live/2018-November/042759.html.
+
 2020-06-03  Thanh Han The  <hanthethanh@gmail.com>
 
-	* pdftex.web: Initialize save_tail to avoid a value of 0 given at compile
-	time. Remove unnecessary codes. (from Hironobu Yamashita). pdftex r829.
+	* pdftex.web: Initialize save_tail to avoid a value of 0 given at
+	compile time. Remove unnecessary codes. (from Hironobu
+	Yamashita). pdftex r829.
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-May/004330.html
 
 2020-06-02  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (auto_kern): @d=3, rather than "explicit".
 	(Display kern |p|): report auto_kern message; avoid link(r)
-	when r=null. pdftex r828.
+	when r=null. pdftex r828. Report from Robert Schlict,
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-May/004317.html
 
 2020-05-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
