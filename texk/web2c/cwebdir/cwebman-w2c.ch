@@ -89,15 +89,28 @@ macros could be called \.{dkcwebmac.tex} and would be included by `\.{+ldk}'.
 @z
 
 @x
-appendices D, E, and~F, which exhibit the complete source code for
+saying `\.{pdftex}~\.{cob}'.
+@y
+saying `\.{pdftex}~\.{cob}'.%
+\footnote{$^5$}{A third way to create PDF output from \.{CWEB} input is the
+use of \.{XeTeX}, which uses \.{[x]dvipdfm[x]} in the background, but the
+``plain \TeX'' macros from \.{cwebmac.tex} otherwise.  The process works with
+a small trick in the first step:
+$$\vbox{\halign{\.{#}\hfil\cr
+cweave -lp+ cob\cr
+xetex cob\cr
+acroread cob.pdf\cr}}$$}
+@z
+
+@x
 \.{CTANGLE} and \.{CWEAVE}.
 
 \vfil\eject\titletrue
 @y
-appendices D, E, and~F, which exhibit the complete source code for
-\.{CTANGLE} and \.{CWEAVE}.\footnote{$^5$}{Actually, appendix~D contains the
-source code for \.{COMMON}, and the additional appendix~G exhibits the
-source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
+\.{CTANGLE} and \.{CWEAVE}.%
+\footnote{$^6$}{Actually, appendix~D contains the source code for \.{COMMON},
+and the additional appendix~G exhibits the source code for \.{CTWILL}, which
+is based on \.{CWEAVE}.}
 
 \eject\titletrue
 @z
@@ -111,7 +124,7 @@ source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 @x
 if you have a duplex printer. Appendices D, E, and F of the complete
 @y
-if you have a duplex printer. Appendices D, E, and F\footnote{$^6$}{And
+if you have a duplex printer. Appendices D, E, and F\footnote{$^7$}{And
 Appendix~G.} of the complete
 @z
 
@@ -119,7 +132,7 @@ Appendix~G.} of the complete
 or the \CEE/ comments of a \.{CWEB} file:
 @y
 or the \CEE/ comments of a \.{CWEB} file:%
-\footnote{$^7$}{Be careful to make that $$\vbox{\halign{\.{#}\hfil\cr
+\footnote{$^8$}{Be careful to make that $$\vbox{\halign{\.{#}\hfil\cr
 You can send email to
  \\pdfURL\{the author\}\{mailto:andreas\\UNDER/github@@freenet.de\}\cr
 or visit
