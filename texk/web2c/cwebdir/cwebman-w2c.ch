@@ -57,7 +57,8 @@ it cannot find them in the current directory.%
 \footnote{$^3$}{In this extended implementation, if an \.{@i}nclude file can
 not be found in the current directory, \.{CWEB} will use the conventions of
 the \Kpathsea/ library as outlined in section~\X90:File lookup with
-\Kpathsea/\X~of appendix~D.}% FIXME
+\Kpathsea/\X~of appendix~D to look for it.  (This is true for any other input
+or change file lookup.)}% FIXME
 @z
 
 @x
@@ -93,7 +94,7 @@ saying `\.{pdftex}~\.{cob}'.
 @y
 saying `\.{pdftex}~\.{cob}'.%
 \footnote{$^5$}{A third way to create PDF output from \.{CWEB} input is the
-use of \.{XeTeX}, which uses \.{[x]dvipdfm[x]} in the background, but the
+use of \.{XeTeX}, which uses `\.{[x]dvipdfm[x]}' in the background, but the
 ``plain \TeX'' macros from \.{cwebmac.tex} otherwise.  The process works with
 a small trick in the first step:
 $$\vbox{\halign{\.{#}\hfil\cr
