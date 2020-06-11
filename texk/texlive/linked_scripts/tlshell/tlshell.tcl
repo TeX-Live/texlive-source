@@ -2412,14 +2412,8 @@ proc populate_main {} {
   raise .
 }
 
-# to be invoked at initialization and after a font scaling change
-proc rebuild_interface {} {
-  foreach c [winfo children .] {catch {destroy $c}}
-
-  # for busy/idle indicators
-  set ::busy [__ "Idle"]
-  populate_main
-  # and now redisplay all data
+proc display_all_data {} {
+  # (re)display all data
   if {$::tcl_platform(platform) eq "windows"} {
     .topfr.ladmin configure -text \
         [expr {$::multiuser ? [__ "Multi-user"] : [__ "Single-user"]}]
@@ -2432,6 +2426,16 @@ proc rebuild_interface {} {
   show_repos
   display_packages_info
   display_updated_globals
+}
+
+# to be invoked at initialization and after a font scaling change
+proc rebuild_interface {} {
+  foreach c [winfo children .] {catch {destroy $c}}
+
+  # for busy/idle indicators
+  set ::busy [__ "Idle"]
+  populate_main
+  display_all_data
   if {$::tcl_platform(platform) eq "windows"} {wm deiconify .}
 }
 
@@ -2513,6 +2517,7 @@ proc initialize {} {
   get_packages_info_local
   collect_filtered
   get_repos_from_tlmgr
+  display_all_data
 }; # initialize
 
 initialize
