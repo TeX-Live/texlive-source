@@ -3,7 +3,7 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-16  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-20  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -23,7 +23,9 @@
 # Detailed usage information at the end of the file
 #
 
-
+# Version 1.3.1.1
+#  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
+#
 # Version 1.3.1 
 #    Bug fixes:
 #      - remove some uninitialised variable $2 warnings in string substitution in flatten function in case included file is not found
@@ -658,8 +660,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.1a  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2018 F J Tilmann
+This is LATEXDIFF 1.3.1.1 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2020 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -1971,7 +1973,7 @@ sub flatten {
 	    } else {
 	      # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
-	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9])n ;
+	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9]) ;
 	      $replacement = $inputcmd ;   # i.e. just the original command again -> make no change file does not exist
 	      $newpage="";
 	    }
