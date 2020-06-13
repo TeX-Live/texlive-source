@@ -30,7 +30,7 @@
 @x
 \def\botofcontents{\vfill
 @y
-\def\covernote{\vbox{
+\def\covernote{\vbox{%
 @z
 
 @x

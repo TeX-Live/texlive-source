@@ -1,3 +1,10 @@
+2020-06-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Purge space from 'covernote'.
+
 2020-06-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch: Add footnotes for TeX Live extensions.
