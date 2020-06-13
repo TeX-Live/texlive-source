@@ -1,3 +1,10 @@
+2020-06-12  Karl Berry  <karl@freefriends.org>
+
+	* tex-make.c (kpathsea_make_tex): do not emit any warnings for
+	filenames that we don't like, e.g., [Some Fnt]. Leave it up to
+	the caller. Suggestion from David Carlisle,
+	https://tug.org/pipermail/tex-k/2020-June/003214.html
+
 2020-06-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	* readable.c, knj.c: /../, /./, \..\, \.\ should not exist
