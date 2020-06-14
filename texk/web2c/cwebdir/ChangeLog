@@ -1,3 +1,9 @@
+2020-06-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctimac.tex: New macros for PDF output with hyperlinks
+	created with 'ctwill +lpdf' followed by 'tex'+'dvipdfm', 'pdftex',
+	or 'xetex' on your CWEB source.
+
 2020-06-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
