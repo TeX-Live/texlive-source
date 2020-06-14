@@ -1,4 +1,6 @@
 - changes:
+  - new primitives \pdfrunninglinkoff and \pdfrunninglinkon; e.g., for
+    turning off generation of links in headers and footers.
   - warn instead of aborting when "\pdfendlink ended up in
     different nesting level than \pdfstartlink". 
 

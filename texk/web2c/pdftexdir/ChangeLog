@@ -1,3 +1,21 @@
+2020-06-11  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (Create link annotations...): check for gen_running_link.
+	(pdf_running_link_{off,on}_node): new @d for new primitives.
+	(Put each ...): define them.
+	(Cases of |print_cmd_chr|...): print them.
+	(Declare act...): switch on them.
+	(Implement \.{\\pdfrunninglinkoff}, ...on): new modules to
+	implement them.
+	(Display the whatsit...),
+	(Mark a partial copy...),
+	(Wipe out the whatsit...): handle them as whatsits.
+	(gen_running_link): new global, define and initialize.
+	(Output the whatsit...): set gen_running_link according
+	to the new primitives.
+	pdftex r835. Following suggestion from Ulrike Fischer,
+	https://tug.org/pipermail/tex-live/2018-November/042759.html.
+
 2020-06-10  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (end_link): warn instead of fatal for

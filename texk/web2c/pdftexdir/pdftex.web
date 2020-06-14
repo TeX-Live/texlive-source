@@ -18657,7 +18657,7 @@ end;
 @ @<Create link annotations for the current hbox if needed@>=
 for i := 1 to pdf_link_stack_ptr do begin
     pdfassert(is_running(pdf_width(pdf_link_stack[i].link_node)));
-    if (pdf_link_stack[i].nesting_level = cur_s) then
+    if (pdf_link_stack[i].nesting_level = cur_s) and gen_running_link then
         append_link(this_box, left_edge, base_line, i);
 end
 
@@ -33570,7 +33570,9 @@ stays the same.
 @d pdf_interword_space_on_node == pdftex_first_extension_code + 37
 @d pdf_interword_space_off_node== pdftex_first_extension_code + 38
 @d pdf_fake_space_node         == pdftex_first_extension_code + 39
-@d pdftex_last_extension_code  == pdftex_first_extension_code + 39
+@d pdf_running_link_off_node   == pdftex_first_extension_code + 40
+@d pdf_running_link_on_node    == pdftex_first_extension_code + 41
+@d pdftex_last_extension_code  == pdftex_first_extension_code + 41
 
 @<Put each...@>=
 primitive("openout",extension,open_node);@/
@@ -33665,6 +33667,10 @@ primitive("pdfinterwordspaceoff",extension,pdf_interword_space_off_node);@/
 @!@:pdf_interword_space_off_}{\.{\\pdfinterwordspaceoff} primitive@>
 primitive("pdffakespace",extension,pdf_fake_space_node);@/
 @!@:pdf_fake_space_}{\.{\\pdffakespace} primitive@>
+primitive("pdfrunninglinkoff",extension,pdf_running_link_off_node);@/
+@!@:pdf_running_link_off_}{\.{\\pdfrunninglinkoff} primitive@>
+primitive("pdfrunninglinkon",extension,pdf_running_link_on_node);@/
+@!@:pdf_running_link_on_}{\.{\\pdfrunninglinkon} primitive@>
 
 @ The variable |write_loc| just introduced is used to provide an
 appropriate error message in case of ``runaway'' write texts.
@@ -33720,6 +33726,8 @@ extension: case chr_code of
   pdf_interword_space_on_node: print_esc("pdfinterwordspaceon");
   pdf_interword_space_off_node: print_esc("pdfinterwordspaceoff");
   pdf_fake_space_node: print_esc("pdffakespace");
+  pdf_running_link_off_node: print_esc("pdfrunninglinkoff");
+  pdf_running_link_on_node: print_esc("pdfrunninglinkon");
   othercases print("[unknown extension!]")
   endcases;
 
@@ -33781,6 +33789,8 @@ begin case cur_chr of
   pdf_interword_space_on_node: @<Implement \.{\\pdfinterwordspaceon}@>;
   pdf_interword_space_off_node: @<Implement \.{\\pdfinterwordspaceoff}@>;
   pdf_fake_space_node: @<Implement \.{\\pdffakespace}@>;
+  pdf_running_link_off_node: @<Implement \.{\\pdfrunninglinkoff}@>;
+  pdf_running_link_on_node: @<Implement \.{\\pdfrunninglinkon}@>;
 othercases confusion("ext1")
 @:this can't happen ext1}{\quad ext1@>
 endcases;
@@ -35105,6 +35115,18 @@ begin
     new_whatsit(pdf_fake_space_node, small_node_size);
 end
 
+@ @<Implement \.{\\pdfrunninglinkoff}@>=
+begin
+    check_pdfoutput("\pdfrunninglinkoff", true);
+    new_whatsit(pdf_running_link_off_node, small_node_size);
+end
+
+@ @<Implement \.{\\pdfrunninglinkon}@>=
+begin
+    check_pdfoutput("\pdfrunninglinkon", true);
+    new_whatsit(pdf_running_link_on_node, small_node_size);
+end
+
 @ The following function are needed for outputing article thread.
 
 @<Declare procedures needed in |do_ext...@>=
@@ -35426,6 +35448,8 @@ end;
 pdf_interword_space_on_node: print_esc("pdfinterwordspaceon");
 pdf_interword_space_off_node: print_esc("pdfinterwordspaceoff");
 pdf_fake_space_node: print_esc("pdffakespace");
+pdf_running_link_off_node: print_esc("pdfrunninglinkoff");
+pdf_running_link_on_node: print_esc("pdfrunninglinkon");
 othercases print("whatsit?")
 endcases
 
@@ -35533,6 +35557,10 @@ pdf_interword_space_off_node:
     r := get_node(small_node_size);
 pdf_fake_space_node:
     r := get_node(small_node_size);
+pdf_running_link_off_node:
+    r := get_node(small_node_size);
+pdf_running_link_on_node:
+    r := get_node(small_node_size);
 othercases confusion("ext2")
 @:this can't happen ext2}{\quad ext2@>
 endcases
@@ -35614,6 +35642,10 @@ pdf_interword_space_on_node:
 pdf_interword_space_off_node:
     free_node(p, small_node_size);
 pdf_fake_space_node:
+    free_node(p, small_node_size);
+pdf_running_link_off_node:
+    free_node(p, small_node_size);
+pdf_running_link_on_node:
     free_node(p, small_node_size);
 othercases confusion("ext3")
 @:this can't happen ext3}{\quad ext3@>
@@ -35936,6 +35968,7 @@ thread}
 @!pdf_trailer_toks: pointer; {additional keys of Trailer dictionary}
 @!pdf_trailer_id_toks: pointer; {custom Trailer ID}
 @!gen_faked_interword_space: boolean; {flag to turn on/off faked interword spaces}
+@!gen_running_link: boolean; {flag to turn on/off running link}
 
 @ @<Set init...@>=
 pdf_first_outline:= 0;
@@ -35952,6 +35985,7 @@ pdf_catalog_openaction := 0;
 pdf_trailer_toks := null;
 pdf_trailer_id_toks := null;
 gen_faked_interword_space := false;
+gen_running_link := true;
 
 @ The following procedures are needed for outputing whatsit nodes for
 \pdfTeX{}.
@@ -36650,6 +36684,10 @@ pdf_interword_space_off_node:
     gen_faked_interword_space := false;
 pdf_fake_space_node:
     pdf_insert_fake_space;
+pdf_running_link_off_node:
+    gen_running_link := false;
+pdf_running_link_on_node:
+    gen_running_link := true;
 othercases out_what(p);
 endcases
 
@@ -36731,6 +36769,10 @@ pdf_interword_space_off_node:
     gen_faked_interword_space := false;
 pdf_fake_space_node:
     pdf_insert_fake_space;
+pdf_running_link_off_node:
+    gen_running_link := false;
+pdf_running_link_on_node:
+    gen_running_link := true;
 othercases out_what(p);
 endcases
 
