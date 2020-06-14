@@ -413,10 +413,10 @@
   \hyphenpenalty 9999 % so strings can be broken (discretionary \ is inserted)
   \exhyphenpenalty 10000
   \global\ind=2 \1\ \unskip}
-\def\C#1{\5\5\quad$/\ast\,${\cmntfont #1}$\,\ast/$}
-\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
-%\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
-%\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
+%\def\C#1{\5\5\quad$/\ast\,${\cmntfont #1}$\,\ast/$}
+%\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
+\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
+\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
 \def\D{\defin{\#define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
@@ -426,8 +426,8 @@
 % \H is long Hungarian umlaut accent
 \let\I=\ne % unequal sign
 \def\J{\.{@\&}} % TANGLE's join operation
-\let\K== % assignment operator
-%\let\K=\leftarrow % "honest" alternative to standard assignment operator
+%\let\K== % assignment operator
+\let\K=\leftarrow % "honest" alternative to standard assignment operator
 % \L is Polish letter suppressed-L
 \outer\def\M#1{%
   {\xdef\secstar{#1}\let\*=\empty\xdef\secno{#1}}% remove \* from section name
@@ -674,7 +674,7 @@
   \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
   \pdfoutline goto num #3 count -\expnumber{chunk#2.#3} {#5}}}
 \let\con=\end % no table of contents
-\def\datethis{}
+\def\datethis{} \def\datecontentspage{}
 
 % To produce only a subset of pages, put the page numbers on separate
 % lines in a file called pages.tex
