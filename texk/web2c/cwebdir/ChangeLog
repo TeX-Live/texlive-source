@@ -2,7 +2,7 @@
 
 	* texinputs/pdfctimac.tex: Unified color management;
 	code compaction; simplified if-else inside \acro;
-	flat outlines/bookmarks with pdfTeX.
+	structured outlines/bookmarks with all supported TeX engines.
 
 2020-06-14  Andreas Scherer  <https://ascherer.github.io>
 

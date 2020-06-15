@@ -446,16 +446,13 @@
       \gdef\rrhead{\let\i=I\uppercase{\ignorespaces#3}}
   \fi
   \message{*\secno} % progress report
-  %\def\stripprefix##1>{}\def\gtitletoks{#3}%
-  %\edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
-  %\edef\next{\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
-   %{\noexpand\the\pageno}{\the\toksE}}}\next % \ZZ{title}{depth}{sec}{page}{ss}
-  \ifpdftex\expandafter\xdef\csname curr#1\endcsname{\secno}
+  \ifpdftex\def\stripprefix##1>{}\def\gtitletoks{#3}%
+    \edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
+    {\immediate\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
+      {\noexpand\the\pageno}{\the\toksE}}} % \ZZ{title}{depth}{sec}{page}{ss}
+    \expandafter\xdef\csname curr#1\endcsname{\secno}
     \ifnum#1>0\countB=#1 \advance\countB by-1
       \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi
-    {\let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
-      \pdfoutline goto num \secno count -\expnumber{chunk#1.\secno}
-        {\the\toksE}}
   \else\ifpdf\special{pdf: outline #1 << /Title (\the\toksE) /Dest
     [ @thispage /FitH @ypos ] >>}\fi\fi
   \startsection{\bf\ignorespaces#3.\quad}\ignorespaces}
@@ -643,8 +640,24 @@
 
 \hsize=\pagewd \vsize=\maxdimen \output={\twillout}
 
-\let\inx=\flushout % No full index at the end
-\def\fin{\parfillskip 0pt plus 1fil
+\def\contentsfile{\jobname.toc} % file that gets table of contents info
+\def\readcontents{\input \contentsfile}
+\def\readsections{\relax}%\input \jobname.scn}
+
+\newwrite\cont
+\ifpdftex
+  \immediate\openout\cont=\contentsfile
+  \immediate\write\cont{\catcode `\noexpand\@=11\relax} % \makeatletter
+\fi
+
+\def\inx{\flushout % No full index at the end
+  \ifpdftex
+    \immediate\write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
+    \immediate\closeout\cont % the contents information has been fully gathered
+  \fi
+}
+\def\fin{\ifpdftex \makebookmarks \fi
+  \parfillskip 0pt plus 1fil
   \gtitle={NAMES OF THE SECTIONS}
   \let\topsecno=\nullsec
   \message{Section names:}
@@ -668,7 +681,10 @@
         %/A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
   %\fi\fi
   \readsections}
-\def\readsections{\relax}%\input \jobname.scn}
+\def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
+\def\writebookmarkline#1#2#3#4#5{{%
+  \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
+  \pdfoutline goto num #3 count -\expnumber{chunk#2.#3} {#5}}}
 \let\con=\end % no table of contents
 \def\datethis{} \def\datecontentspage{}
 
