@@ -190,3 +190,15 @@ Started treating newlines in inline math as spaces (#45). Thanks to sgerwk.
 Fixed man page on macOS (#47). Thanks to FX Coudert.
 
 Added -v option for showing version.
+
+(Version 2.8.6) -- January, 2020
+
+Fixed buffer overflow (CVE-2019-19601 #60). Thanks to Akira Kakuto, Norbert Preining and TeX Live team.
+
+(Version 2.8.7) -- June, 2020
+
+Reduced size of .tar.bz2 package by excluding object file added by mistake.
+
+Handle forcing placement with ! (#62). Thanks to schrc3b6.
+
+Added option to print source information with -1 (#64). Thanks to Victor Cacciari Miraldo.
