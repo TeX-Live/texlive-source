@@ -332,7 +332,7 @@ else  begin if (c=">")or(c=":") then
     end
   else if (c=".")and(ext_delimiter=0) then ext_delimiter:=pool_ptr;
 @y
-else  begin if (c="/") then
+else  begin if c="/" then
     begin area_delimiter:=pool_ptr; ext_delimiter:=0;
     end
   else if c="." then ext_delimiter:=pool_ptr;
