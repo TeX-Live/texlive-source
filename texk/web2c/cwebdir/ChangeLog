@@ -1,3 +1,9 @@
+2020-06-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctimac.tex: Unified color management;
+	code compaction; simplified if-else inside \acro;
+	flat outlines/bookmarks with pdfTeX.
+
 2020-06-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfctimac.tex: New macros for PDF output with hyperlinks
