@@ -506,6 +506,12 @@
 \newcount\@n \newcount\@m \newcount\@p
 \newdimen\pageht \pageht=19cm
 \newdimen\pagewd \pagewd=13cm
+\ifacro
+  \pdfpagewidth=\pagewd  \advance\pdfpagewidth by 2cm
+  \pdfpageheight=\pageht \advance\pdfpageheight by 4cm
+  \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
+  \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
+\fi
 \newdimen\colwd \colwd=\pagewd
  \advance\colwd by -2pc \divide\colwd by 3 % for three columns
 \newdimen\fullpageht \fullpageht=\pageht \advance\fullpageht by 4pc
