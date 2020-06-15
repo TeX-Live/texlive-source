@@ -87,7 +87,7 @@
 
 #endif /* KPATHSEA */
 
-#line 91 "lex.yy.c"
+#line 90 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -1834,9 +1834,9 @@ int				fIsColumn0 = 1;			/* Are we at the begining of a line? */
 int				csb = 0;				/* depth of flex context stack */
 #endif /* FLEX_SCANNER */
 
-#line 1838 "lex.yy.c"
+#line 1837 "lex.yy.c"
 
-#line 1840 "lex.yy.c"
+#line 1839 "lex.yy.c"
 
 #define INITIAL 0
 #define Define 1
@@ -1868,7 +1868,7 @@ int				csb = 0;				/* depth of flex context stack */
  */
 #include <unistd.h>
 #endif
-
+    
 #ifndef YY_EXTRA_TYPE
 #define YY_EXTRA_TYPE void *
 #endif
@@ -2074,7 +2074,7 @@ YY_DECL
 	{
 #line 208 "detex.l"
 
-#line 2078 "lex.yy.c"
+#line 2077 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -3114,7 +3114,7 @@ YY_RULE_SETUP
 #line 505 "detex.l"
 ECHO;
 	YY_BREAK
-#line 3118 "lex.yy.c"
+#line 3117 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(Define):
 case YY_STATE_EOF(Display):
@@ -4335,7 +4335,8 @@ Echo()
 void
 IncrLineNo()
 {
-	for (char* c=yytext; *c != '\0'; c++) {
+	char *c;
+	for (c=yytext; *c != '\0'; c++) {
 		if (*c == '\n') {
 			fFileLines[csb]++; fIsColumn0=1;
 		}

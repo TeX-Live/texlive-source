@@ -1,0 +1,12 @@
+--- detex.l.orig	Mon Jun 15 20:23:15 2020
++++ detex.l	Tue Jun 16 06:09:30 2020
+@@ -732,7 +732,8 @@
+ void
+ IncrLineNo()
+ {
+-	for (char* c=yytext; *c != '\0'; c++) {
++	char *c;
++	for (c=yytext; *c != '\0'; c++) {
+ 		if (*c == '\n') {
+ 			fFileLines[csb]++; fIsColumn0=1;
+ 		}

@@ -732,7 +732,8 @@ Echo()
 void
 IncrLineNo()
 {
-	for (char* c=yytext; *c != '\0'; c++) {
+	char *c;
+	for (c=yytext; *c != '\0'; c++) {
 		if (*c == '\n') {
 			fFileLines[csb]++; fIsColumn0=1;
 		}

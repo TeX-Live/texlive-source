@@ -1,3 +1,7 @@
+2020-06-16  Akira Kakuto  <kakuto@w32tex.org>
+
+	* detex.l, detex.c: Support old compilers.
+
 2020-06-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import opendetex-2.8.7.

@@ -1,3 +1,11 @@
+2020-06-16  Akira Kakuto  <kakuto@w32tex.org>
+
+	Add patch-01-support-old-compiler.
+
+2020-06-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Adapt to opendetex-2.8.7.
+
 2019-02-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Adapt to opendetex-2.8.5.
