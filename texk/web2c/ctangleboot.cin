@@ -840,7 +840,7 @@ if(0==strcmp("/dev/stdout",output_file_name))
 char in_buf[BUFSIZ+1];
 int in_size,comparison= true;
 if((check_file= fopen(check_file_name,"r"))==NULL)
-fatal("! Cannot open output file ",check_file_name);
+fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*:107*/
@@ -880,7 +880,7 @@ else if(0==strcmp("/dev/stderr",output_file_name))
 char in_buf[BUFSIZ+1];
 int in_size,comparison= true;
 if((check_file= fopen(check_file_name,"r"))==NULL)
-fatal("! Cannot open output file ",check_file_name);
+fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*:107*/

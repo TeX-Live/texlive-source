@@ -893,7 +893,7 @@ else {
 char in_buf[BUFSIZ+1];
 int in_size,comparison=true;
 if((check_file=fopen(check_file_name,"r"))==NULL)
-  fatal("! Cannot open output file ",check_file_name);
+  fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
 @* Put ``version'' information in a single spot.

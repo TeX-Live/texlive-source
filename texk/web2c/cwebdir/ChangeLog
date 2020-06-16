@@ -1,5 +1,6 @@
 2020-06-16  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctang-w2c.ch: Translate another message string.
 	* ctwill-w2c.ch,
 	* prod-twill.w: Page breaks for CWILL format.  Fix final header.
 	* texinputs/pdfctimac.tex: Alternative comment font (9pt).
