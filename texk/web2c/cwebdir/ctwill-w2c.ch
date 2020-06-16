@@ -3213,7 +3213,7 @@ else {
   rename(check_file_name,tex_file_name);
 }
 
-@* Put ``version'' information in a single spot.
+@* Put ``version'' information in \.{COMMON}.
 Don't do this at home, kids! Push our local macro to the variable in \.{COMMON}
 for printing the |banner| and the |versionstring| from there.
 

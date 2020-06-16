@@ -61,6 +61,7 @@
 \font\ninebf=cmbx9
 \font\eightbf=cmbx8
 \font\sixbf=cmbx6
+\font\niness=cmss9
 \font\ninett=cmtt9
 \font\eighttt=cmtt8
 \hyphenchar\ninett=-1 \hyphenchar\eighttt=-1
@@ -117,7 +118,7 @@
   \textfont\ttfam=\ninett
   \def\ttx{\ninetex}%
   \normalbaselineskip=11pt
-  \let\cmntfont=\ninerm
+  \let\cmntfont=\niness%\ninerm
   \let\mc=\eightrm
   \let\sc=\sevenrm
   \let\big=\ninebig
@@ -155,7 +156,7 @@
 \def\eightbig#1{{\hbox{$\textfont0=\ninerm\textfont2=\ninesy
   \left#1\vbox to6.5pt{}\right.\nulldelimiterspace=0pt$}}}
 
-%\font\tenss=cmss10 \let\cmntfont\tenss % alternative comment font
+\font\tenss=cmss10 \let\cmntfont\tenss % alternative comment font
 \font\titlefont=cmr7 scaled\magstep4 % title on the contents page
 \font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
 
@@ -506,12 +507,6 @@
 \newcount\@n \newcount\@m \newcount\@p
 \newdimen\pageht \pageht=19cm
 \newdimen\pagewd \pagewd=13cm
-\ifacro
-  \pdfpagewidth=\pagewd  \advance\pdfpagewidth by 2cm
-  \pdfpageheight=\pageht \advance\pdfpageheight by 4cm
-  \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
-  \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
-\fi
 \newdimen\colwd \colwd=\pagewd
  \advance\colwd by -2pc \divide\colwd by 3 % for three columns
 \newdimen\fullpageht \fullpageht=\pageht \advance\fullpageht by 4pc
