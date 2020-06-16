@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 54629 $';
+my $svnrev = '$Revision: 55178 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -281,11 +281,10 @@ by C<i386>.
 
 For the OS value we need a list because what's returned is not likely to
 match our historical names, e.g., C<config.guess> returns C<linux-gnu>
-but we need C<linux>. This list contains old OSs which are not currently
+but we need C<linux>. This list contains old OSs which are no longer
 supported, just in case.
 
-If a particular platform is not found in this list we use the regexp
-C</.*-(.*$)/> as a last resort and hope it provides something useful.
+If the environment variable TEXLIVE_OS_NAME is set, it is used as-is.
 
 =cut
 
@@ -294,6 +293,8 @@ sub platform_name {
   my $guessed_platform = $orig_platform;
 
   # try to parse out some bsd variants that use amd64.
+  # We throw away everything after the "bsd" to elide version numbers,
+  # as in amd64-unknown-midnightbsd1.2.
   $guessed_platform =~ s/^x86_64-(.*-k?)(free|net)bsd/amd64-$1$2bsd/;
   my $CPU; # CPU type as reported by config.guess.
   my $OS;  # O/S type as reported by config.guess.
@@ -310,16 +311,20 @@ sub platform_name {
     $CPU = $guessed_platform =~ /hf$/ ? "armhf" : "armel";
   }
 
-  my @OSs = qw(aix cygwin darwin dragonfly freebsd hpux irix
-               kfreebsd linux netbsd openbsd solaris);
-  for my $os (@OSs) {
-    # Match word boundary at the beginning of the os name so that
-    #   freebsd and kfreebsd are distinguished.
-    # Do not match word boundary at the end of the os so that
-    #   solaris2 is matched.
-    $OS = $os if $guessed_platform =~ /\b$os/;
-  }
-  
+  if ($ENV{"TEXLIVE_OS_NAME"}) {
+    $OS = $ENV{"TEXLIVE_OS_NAME"};
+  } else {
+    my @OSs = qw(aix cygwin darwin dragonfly freebsd hpux irix
+                 kfreebsd linux midnightbsd netbsd openbsd solaris);
+    for my $os (@OSs) {
+      # Match word boundary at the beginning of the os name so that
+      #   freebsd and kfreebsd are distinguished.
+      # Do not match word boundary at the end of the os so that
+      #   solaris2 is matched.
+      $OS = $os if $guessed_platform =~ /\b$os/;
+    }
+  }  
+
   if (! $OS) {
     warn "$0: could not guess OS from config.guess string: $orig_platform";
     $OS = "unknownOS";
@@ -397,6 +402,7 @@ sub platform_desc {
     'alpha-linux'      => 'GNU/Linux on DEC Alpha',
     'amd64-freebsd'    => 'FreeBSD on x86_64',
     'amd64-kfreebsd'   => 'GNU/kFreeBSD on x86_64',
+    'amd64-midnightbsd'=> 'MidnightBSD on x86_64',
     'amd64-netbsd'     => 'NetBSD on x86_64',
     'armel-linux'      => 'GNU/Linux on ARM',
     'armhf-linux'      => 'GNU/Linux on ARMv6/RPi',
@@ -544,7 +550,7 @@ and thus honors various env variables like  C<TMPDIR>, C<TMP>, and C<TEMP>.
 
 sub initialize_global_tmpdir {
   $::tl_tmpdir = File::Temp::tempdir(CLEANUP => 1);
-  ddebug("initialize_global_tmpdir: creating global tempdir $::tl_tmpdir\n");
+  ddebug("TLUtils::initialize_global_tmpdir: creating global tempdir $::tl_tmpdir\n");
   return ($::tl_tmpdir);
 }
 
@@ -558,7 +564,7 @@ is terminated.
 sub tl_tmpdir {
   initialize_global_tmpdir() if (!defined($::tl_tmpdir));
   my $tmp = File::Temp::tempdir(DIR => $::tl_tmpdir, CLEANUP => 1);
-  ddebug("tl_tmpdir: creating tempdir $tmp\n");
+  ddebug("TLUtils::tl_tmpdir: creating tempdir $tmp\n");
   return ($tmp);
 }
 
@@ -573,7 +579,7 @@ Arguments are passed on to C<File::Temp::tempfile>.
 sub tl_tmpfile {
   initialize_global_tmpdir() if (!defined($::tl_tmpdir));
   my ($fh, $fn) = File::Temp::tempfile(@_, DIR => $::tl_tmpdir, UNLINK => 1);
-  ddebug("tl_tempfile: creating tempfile $fn\n");
+  ddebug("TLUtils::tl_tempfile: creating tempfile $fn\n");
   return ($fh, $fn);
 }
 
@@ -1503,6 +1509,10 @@ sub install_packages {
   my $totalsize = 0;
   my $donesize = 0;
   my %tlpsizes;
+  debug("TLUtils::install_packages: fromtlpdb.root=$root, media=$media,"
+        . " totlpdb.root=" . $totlpdb->root
+        . " what=$what ($totalnr), opt_src=$opt_src, opt_doc=$opt_doc\n");
+
   foreach my $p (@packs) {
     $tlpobjs{$p} = $fromtlpdb->get_package($p);
     if (!defined($tlpobjs{$p})) {
@@ -1542,10 +1552,17 @@ sub install_packages {
       &$h($n,$totalnr);
     }
     # push $package to @packs_again if download failed
+    # (and not installing from disk).
     if (!$fromtlpdb->install_package($package, $totlpdb)) {
-      tlwarn("TLUtils::install_packages: Failed to install $package\n"
-             ."Will be retried later.\n");
-      push @packs_again, $package;
+      tlwarn("TLUtils::install_packages: Failed to install $package\n");
+      if ($media eq "NET") {
+        tlwarn("                           $package will be retried later.\n");
+        push @packs_again, $package;
+      } else {
+        # return false as soon as one package failed, since we won't
+        # be trying again.
+        return 0;
+      }
     } else {
       $donesize += $tlpsizes{$package};
     }
@@ -1981,7 +1998,7 @@ sub add_link_dir_dir {
     return 0;
   }
   if (-w $to) {
-    debug ("linking files from $from to $to\n");
+    debug ("TLUtils::add_link_dir_dir: linking from $from to $to\n");
     chomp (@files = `ls "$from"`);
     my $ret = 1;
     for my $f (@files) {
@@ -2017,13 +2034,13 @@ sub add_link_dir_dir {
 sub remove_link_dir_dir {
   my ($from, $to) = @_;
   if ((-d "$to") && (-w "$to")) {
-    debug("removing links from $from to $to\n");
+    debug("TLUtils::remove_link_dir_dir: removing links from $from to $to\n");
     chomp (@files = `ls "$from"`);
     my $ret = 1;
     foreach my $f (@files) {
       next if (! -r "$to/$f");
       if ($f eq "man") {
-        debug("not considering man in $to, it should not be from us!\n");
+        debug("TLUtils::remove_link_dir_dir: not considering man in $to, it should not be from us!\n");
         next;
       }
       if ((-l "$to/$f") &&
@@ -2031,7 +2048,7 @@ sub remove_link_dir_dir {
         $ret = 0 unless unlink("$to/$f");
       } else {
         $ret = 0;
-        tlwarn ("not removing $to/$f, not a link or wrong destination!\n");
+        tlwarn ("TLUtils::remove_link_dir_dir: not removing $to/$f, not a link or wrong destination!\n");
       }
     }
     # try to remove the destination directory, it might be empty and
@@ -2039,7 +2056,7 @@ sub remove_link_dir_dir {
     # `rmdir "$to" 2>/dev/null`;
     return $ret;
   } else {
-    tlwarn ("destination $to not writable, no removal of links done!\n");
+    tlwarn ("TLUtils::remove_link_dir_dir: destination $to not writable, no removal of links done!\n");
     return 0;
   }
 }
@@ -2069,7 +2086,7 @@ sub add_remove_symlinks {
 
   # man
   my $top_man_dir = "$Master/texmf-dist/doc/man";
-  debug("$mode symlinks for man pages to $sys_man from $top_man_dir\n");
+  debug("TLUtils::add_remove_symlinks: $mode symlinks for man pages to $sys_man from $top_man_dir\n");
   if (! -d $top_man_dir) {
     ; # better to be silent?
     #info("skipping add of man symlinks, no source directory $top_man_dir\n");
@@ -2099,7 +2116,7 @@ sub add_remove_symlinks {
         }
         #`rmdir "$sys_man" 2>/dev/null` if ($mode eq "remove");
       } else {
-        tlwarn("man symlink destination ($sys_man) not writable, "
+        tlwarn("TLUtils::add_remove_symlinks: man symlink destination ($sys_man) not writable, "
           . "cannot $mode symlinks.\n");
         $errors++;
       }
@@ -2108,7 +2125,7 @@ sub add_remove_symlinks {
   
   # we collected errors in $errors, so return the negation of it
   if ($errors) {
-    info("$mode of symlinks had $errors error(s), see messages above.\n");
+    info("TLUtils::add_remove_symlinks: $mode of symlinks had $errors error(s), see messages above.\n");
     return $F_ERROR;
   } else {
     return $F_OK;
@@ -2194,9 +2211,11 @@ for newly-downloaded files; see the calls in the C<unpack> routine
 
 sub check_file_and_remove {
   my ($xzfile, $checksum, $checksize) = @_;
-  debug("check_file $xzfile, $checksum, $checksize\n");
+  my $fn_name = (caller(0))[3];
+  debug("$fn_name $xzfile, $checksum, $checksize\n");
+
   if (!$checksum && !$checksize) {
-    tlwarn("TLUtils::check_file: neither checksum nor checksize " .
+    tlwarn("$fn_name: neither checksum nor checksize " .
            "available for $xzfile, cannot check integrity"); 
     return;
   }
@@ -2211,19 +2230,20 @@ sub check_file_and_remove {
   if ($checksum && ($checksum ne "-1") && $::checksum_method) {
     my $tlchecksum = TeXLive::TLCrypto::tlchecksum($xzfile);
     if ($tlchecksum ne $checksum) {
-      tlwarn("TLUtils::check_file: checksums differ for $xzfile:\n");
-      tlwarn("TLUtils::check_file:   tlchecksum=$tlchecksum, arg=$checksum\n");
+      tlwarn("$fn_name: checksums differ for $xzfile:\n");
+      tlwarn("$fn_name:   tlchecksum=$tlchecksum, arg=$checksum\n");
+      tlwarn("$fn_name: backtrace:\n" . backtrace());
       # on Windows passing a pattern creates the tmpdir in PWD
       # which means that it will be tried to be created on the DVD
       # $check_file_tmpdir = File::Temp::tempdir("tlcheckfileXXXXXXXX");
       $check_file_tmpdir = File::Temp::tempdir();
-      tlwarn("TLUtils::check_file:   removing $xzfile, "
+      tlwarn("$fn_name:   removing $xzfile, "
              . "but saving copy in $check_file_tmpdir\n");
       copy($xzfile, $check_file_tmpdir);
       unlink($xzfile);
       return;
     } else {
-      debug("TLUtils::check_file: checksums for $xzfile agree\n");
+      debug("$fn_name: checksums for $xzfile agree\n");
       # if we have checked the checksum, we don't need to check the size, too
       return;
     }
@@ -2231,13 +2251,13 @@ sub check_file_and_remove {
   if ($checksize && ($checksize ne "-1")) {
     my $filesize = (stat $xzfile)[7];
     if ($filesize != $checksize) {
-      tlwarn("TLUtils::check_file: removing $xzfile, sizes differ:\n");
-      tlwarn("TLUtils::check_file:   tlfilesize=$filesize, arg=$checksize\n");
+      tlwarn("$fn_name: removing $xzfile, sizes differ:\n");
+      tlwarn("$fn_name:   tlfilesize=$filesize, arg=$checksize\n");
       if (!defined($check_file_tmpdir)) {
         # the tmpdir should always be undefined, since we shouldn't get
         # here if the checksums failed, but test anyway.
         $check_file_tmpdir = File::Temp::tempdir("tlcheckfileXXXXXXXX");
-        tlwarn("TLUtils::check_file:  saving copy in $check_file_tmpdir\n");
+        tlwarn("$fn_name:  saving copy in $check_file_tmpdir\n");
         copy($xzfile, $check_file_tmpdir);
       }
       unlink($xzfile);
