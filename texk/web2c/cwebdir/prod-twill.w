@@ -4,7 +4,7 @@
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
 % Version 3.6 --- May 2000
 %
-@ Here is a table of all the productions.  Each production that
+@* Table of all productions.  Each production that
 combines two or more consecutive scraps implicitly inserts a {\tt \$}
 where necessary, that is, between scraps whose abutting boundaries
 have different |mathness|.  In this way we never get double {\tt\$\$}.
