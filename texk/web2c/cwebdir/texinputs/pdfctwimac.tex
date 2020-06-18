@@ -655,7 +655,7 @@
     \immediate\write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
     \immediate\closeout\cont % the contents information has been fully gathered
   \fi}
-\def\fin{\ifacro message{Section names:}
+\def\fin{\ifacro \message{Section names:}
   \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
   \def\outsecname{Names of the sections}
   \ifpdftex \makebookmarks
