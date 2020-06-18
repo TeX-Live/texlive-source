@@ -24,8 +24,6 @@
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
 
-\def\contentspagenumber{0} % default page number for table of contents
-
 \newdimen\em \em=10pt % this "em" will not change with font size
 \parskip 0pt plus .1pt % almost no stretch between paragraphs
 \parindent 1\em % for paragraphs and for the first line of C text
@@ -641,6 +639,7 @@
 
 \hsize=\pagewd \vsize=\maxdimen \output={\twillout}
 
+\def\contentspagenumber{0} % default page number for table of contents
 \def\contentsfile{\jobname.toc} % file that gets table of contents info
 \def\readcontents{\input \contentsfile}
 \def\readsections{\input \jobname.scn}
@@ -655,11 +654,10 @@
   \ifpdftex
     \immediate\write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
     \immediate\closeout\cont % the contents information has been fully gathered
-  \fi
-}
-\def\fin{\message{Section names:}
+  \fi}
+\def\fin{\ifacro message{Section names:}
   \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
-  \ifacro \def\outsecname{Names of the sections}
+  \def\outsecname{Names of the sections}
   \ifpdftex \makebookmarks
     \pdfoutline goto num 1 count -\secno {\outsecname}
     \def\X##1:##2\X{\firstsecno##1.%
@@ -670,8 +668,7 @@
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \special{pdf: outline 0 << /Title (\the\toksE)
         /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
-  \fi\fi
-  \readsections}
+  \fi \readsections \fi}
 \def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
 \def\writebookmarkline#1#2#3#4#5{{%
   \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
