@@ -1,3 +1,8 @@
+2020-06-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Generic 'group title' on the first
+	page after the table-of-contents.
+
 2020-06-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfctimac.tex: Bookmarks for "Names of the sections".
