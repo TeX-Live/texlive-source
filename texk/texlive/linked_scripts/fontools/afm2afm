@@ -37,7 +37,7 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
-my $VERSION = "20200527";
+my $VERSION = "20200619";
 
 parse_commandline();
 
@@ -421,7 +421,7 @@ See the GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<afm2afm> version 20200527.
+This document describes B<afm2afm> version 20200619.
 
 
 =head1 RECENT CHANGES
