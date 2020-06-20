@@ -1,6 +1,6 @@
 % pdfwebtofront.tex
 % Code from knuth.drv in https://github.com/oberdiek/latex-tds
-% 2020/06/19 v1.2 by Andreas Scherer.
+% 2020/06/20 v2.0 by Andreas Scherer.
 %
 % This file is part of project https://github.com/ascherer/cwebbin
 % and may be distributed under the MIT License or the LaTeX Project
@@ -20,7 +20,6 @@
   % Redefine '\con' to be invoked before the first '\N' (starred section).
   \let\ORGcon\con
   \def\con{%
-    \def\:{\par\hangindent 2em} % Fix for 'bibtex.web'.
     % reduce size of PDF pages for more screen space
     \pdfpagewidth=\pagewidth  \advance\pdfpagewidth by 2cm
     \pdfpageheight=\pageheight \advance\pdfpageheight by 3cm
@@ -30,26 +29,13 @@
     \begingroup
       \let\end\relax
       \ORGcon
-      % let's start with section '1'; the '\gtitle' should be set,
-      % e.g. to 'Introduction', right before '\input pdfwebtocfront'.
-      \ifx\undefined\gdepth \mark{{{\tensy x}1}{\the\gtitle}} % WEB
-      \else \mark{{{\tensy x}1}0{\the\gtitle}}\fi % CWEB
-      \eject % set '\botmark' on TOC, hence '\topmark' on next page.
     \endgroup
     \let\con\end
   }%
-  % Redefine '\N’ to invoke redefined '\con' before switching back
-  % to original '\N'.
-  \expandafter\let\csname ORGN\expandafter\endcsname
-                  \csname N\endcsname
-  \expandafter\outer\expandafter\def\csname N\endcsname{%
-    \con
-    \expandafter\let\csname N\expandafter\endcsname
-                    \csname ORGN\endcsname
-    \csname N\endcsname
-  }%
-  % Special variant of the above for 'mf.web' and 'tex.web'.  They put
-  % their tables-of-contents on a sparse 'page 2' and start on page '3'.
+  % Special variant for 'mf.web' and 'tex.web' (et al.).
+  % They all define a peculiar version of '\N' in their preamble.
+  % And they put their tables-of-contents on a sparse 'page 2' and
+  % start the main body on page '3'.
   \begingroup
     \edef\x{\jobname}%
     \edef\y{\detokenize{tex}}%
@@ -62,18 +48,39 @@
     \ifx\x\y \texmftrue\fi\fi\fi\fi
   \expandafter\endgroup\iftexmf %
     \def\contentspagenumber{2}%
-    \let\ORGpageno\pageno
-    \def\pageno{%
-      \let\pageno\ORGpageno
-      \expandafter\let\csname ORGN\expandafter\endcsname
-                      \csname N\endcsname
-      \expandafter\outer\expandafter\def\csname N\endcsname{%
-        \con
-        \expandafter\let\csname N\expandafter\endcsname
-                        \csname ORGN\endcsname
-        \csname N\endcsname
-      }%
-      \pageno
+    \expandafter\let\csname ORGN\expandafter\endcsname
+                    \csname N\endcsname
+    \expandafter\outer\expandafter\def\csname N\endcsname{%
+      \titletrue \pageno=\contentspagenumber \con
+      \expandafter\let\csname N\expandafter\endcsname
+                      \csname ORGN\endcsname
+      \csname N\endcsname
+    }%
+  \else % Much more general approach for WEB and CWEB programs.
+    % In fact, '\con' will be invoked _inside_ the first '\N' right _after_
+    % '\MN', but _before_ '\eject'.  And '\topofcontents' gets in the twist
+    % as well.
+    \let\ORGtopofcontents\topofcontents
+    \def\topofcontents{%
+      \def\:{\par\hangindent 2em} % Fix for 'bibtex.web'; from '\def\fin'.
+      \ORGtopofcontents
+      \let\topofcontents\relax
+    }%
+    % Squeeze '\con' between '\MN' and '\eject' in the very first '\N'.
+    \expandafter\let\csname ORGvfil\expandafter\endcsname
+                    \csname vfil\endcsname
+    \expandafter\let\csname ORGeject\expandafter\endcsname
+                    \csname eject\endcsname
+    \expandafter\outer\expandafter\def\csname vfil\endcsname{%
+      \let\eject\relax
+      \titletrue % prepare to output the table of contents
+      \topofcontents \con
+      \advance\pageno by -1\relax
+      \expandafter\let\csname vfil\expandafter\endcsname
+                      \csname ORGvfil\endcsname
+      \expandafter\let\csname eject\expandafter\endcsname
+                      \csname ORGeject\endcsname
+      \vfil
     }%
   \fi
 \fi

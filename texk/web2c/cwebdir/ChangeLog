@@ -1,5 +1,10 @@
 2020-06-20  Andreas Scherer  <https://ascherer.github.io>
 
+	* texinputs/pdfwebtocfront.tex: Generic solution for the headers in
+	WEB and CWEB programs (with four special cases with their own '\N').
+
+2020-06-20  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.ch: Clarify triple responsibility.
 
 2020-06-19  Andreas Scherer  <https://ascherer.github.io>
