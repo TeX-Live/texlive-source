@@ -59,7 +59,6 @@
 \font\ninebf=cmbx9
 \font\eightbf=cmbx8
 \font\sixbf=cmbx6
-\font\niness=cmss9
 \font\ninett=cmtt9
 \font\eighttt=cmtt8
 \hyphenchar\ninett=-1 \hyphenchar\eighttt=-1
@@ -116,7 +115,7 @@
   \textfont\ttfam=\ninett
   \def\ttx{\ninetex}%
   \normalbaselineskip=11pt
-  \let\cmntfont=\niness%\ninerm
+  \let\cmntfont=\ninerm
   \let\mc=\eightrm
   \let\sc=\sevenrm
   \let\big=\ninebig
@@ -154,7 +153,7 @@
 \def\eightbig#1{{\hbox{$\textfont0=\ninerm\textfont2=\ninesy
   \left#1\vbox to6.5pt{}\right.\nulldelimiterspace=0pt$}}}
 
-\font\tenss=cmss10 \let\cmntfont\tenss % alternative comment font
+%\font\tenss=cmss10 \let\cmntfont\tenss % alternative comment font
 \font\titlefont=cmr7 scaled\magstep4 % title on the contents page
 \font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
 
@@ -236,7 +235,7 @@
 \let\yskip=\smallskip
 \def\?{\mathrel?}
 \def\note#1#2.{\par\penalty5000
-  \Y\noindent{\hangindent2\em\baselineskip10pt
+  \Y\noindent{\hangindent2\em\baselineskip10pt%
     \eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
 
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
@@ -405,6 +404,7 @@
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\iftenpoint\ninepoint\fi
+  \font\niness=cmss9 \let\cmntfont\niness % alternative comment font
   \rightskip=0pt plus 100pt minus 10pt % go into C mode
   \sfcode`;=3000
   \pretolerance 10000
