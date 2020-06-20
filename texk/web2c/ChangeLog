@@ -1,3 +1,7 @@
+2020-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: Regenerate boot module.
+
 2020-06-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: Regenerate boot module.

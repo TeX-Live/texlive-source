@@ -50,6 +50,19 @@
 @z
 
 @x
+to both \.{CTANGLE} and \.{CWEAVE}, which roughly concerns the following
+@y
+to \.{CTANGLE}, \.{CWEAVE}, and \.{CTWILL},
+which roughly concerns the following
+@z
+
+@x
+sometimes use \.{CWEB} to refer to either of the two component
+@y
+sometimes use \.{CWEB} to refer to either of the three component
+@z
+
+@x
 |program|.
 
 @d ctangle 0
