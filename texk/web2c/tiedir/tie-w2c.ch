@@ -52,6 +52,15 @@ permission notice identical to this one.
 \datecontentspage
 @z
 
+Section 1.
+
+@x l.105
+@d banner  "This is TIE, CWEB Version 2.4."
+@y
+@d banner  "This is TIE, CWEB Version 2.4."
+  /* will be extended by the \TeX~Live |versionstring| */
+@z
+
 Section 2
 
 @x l.113 -- improve typography
