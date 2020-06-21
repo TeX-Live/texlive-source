@@ -1,3 +1,7 @@
+2020-06-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Mention WEBINPUTS environment variable in \S59.
+
 2020-06-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Minor change in section 1

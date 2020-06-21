@@ -396,6 +396,35 @@ change files.  The names of the file parameters will be inserted into
 
 Section 59
 
+@x l.1233
+\noindent Here is where \.{TIE} starts, and where it ends.
+@y
+\noindent Here is where \.{TIE} starts, and where it ends.
+\def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
+
+This version of the \.{TIE} program uses the \Kpathsea/ library for searching
+files.  Firstly, we use the |kpse_web_format| when opening input files, which
+triggers the inspection of the \.{WEBINPUTS} environment variable.  Secondly,
+we set |kpse_program_name| to `\.{tie}'.  This means if the variable
+\.{WEBINPUTS.tie} is present in \.{texmf.cnf} (or \.{WEBINPUTS\_tie} in the
+environment) its value will be used as the search path for filenames.  This
+allows different flavors of \.{TIE} (or other \.{WEB} programs) to have
+different search paths.@.WEBINPUTS@> In all, the directories to be searched for
+come from at least two sources:
+\smallskip
+{\parindent1.5em
+\item{(a)} a user-set environment variable \.{WEBINPUTS}
+    (overridden by \.{WEBINPUTS\_tie});
+\item{(b)} a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
+    e.g., \.{WEBINPUTS=\$TEXMFDOTDIR:\$TEXMF/texmf/web//}\hfil\break
+    or \.{WEBINPUTS.tie=\$TEXMFDOTDIR:\$TEXMF/texmf/web//}.\par}
+\smallskip
+Note that, although \.{WEBINPUTS} might suggest otherwise, \.{TIE} is more or
+less language-agnostic and that it is perfectly capable of handling \.{CWEB}
+files as input as well, as long as the ``change files'' adhere to the general
+\.{@@x}, \.{@@y}, \.{@@z} convention.
+@z
+
 @x l.1236
 main(argc,argv)
         int argc; string *argv;
