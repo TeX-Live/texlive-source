@@ -13,7 +13,6 @@
 \ifx\detokenize\undefined\endinput\fi
 \def\contentsfile{\jobname.toc} % file that gets table of contents info
 \newif\iftexmf\texmffalse % special toc treatment for TeX, Metafont, etc.
-\newif\ifpdfxe\pdfxefalse % superspecial toc treatment for pdfTeX, XeTeX.
 \newread\testread
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
@@ -43,15 +42,14 @@
   \edef\y{\detokenize{mf}}%
   \ifx\x\y \texmftrue\else
   \edef\y{\detokenize{pdftex}}%
-  \ifx\x\y \texmftrue \pdfxetrue\else
+  \ifx\x\y \texmftrue\else
   \edef\y{\detokenize{xetex}}%
   \ifx\x\y \texmftrue\fi\fi\fi\fi
   \iftexmf
-    \ifpdfxe \def\contentspagenumber{1} \else \def\contentspagenumber{2} \fi
     \expandafter\let\csname ORGN\expandafter\endcsname
                     \csname N\endcsname
     \expandafter\outer\expandafter\def\csname N\endcsname{%
-      \titletrue \pageno=\contentspagenumber \con
+      \titletrue \con \pageno=2
       \expandafter\let\csname N\expandafter\endcsname
                       \csname ORGN\endcsname
       \csname N\endcsname

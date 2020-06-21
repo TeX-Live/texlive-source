@@ -1,3 +1,8 @@
+2020-06-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Fix start pageno after dynamic to.
+	MF and [{pdf|Xe}]TeX start their main body on pageno 3.
+
 2020-06-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfwebtocfront.tex: Generic solution for the headers in
