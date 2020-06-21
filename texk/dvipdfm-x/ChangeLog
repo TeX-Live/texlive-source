@@ -1,3 +1,11 @@
+2020-06-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Lower priority for Soft-hyphen U+00AD when
+	generating ToUnicode CMap.
+	* tt_cmap.c, type1c.c: Cause an error when "CFF " table is not
+	found. (Possibly due to variable font which uses unsupported
+	"CFF2" table)
+
 2020-06-09  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdfdev.c: Another workaround for fake-bold issue.
