@@ -1,7 +1,7 @@
 # HarfBuzz feature options
 option('glib', type: 'feature', value: 'auto',
   description: 'Enable GLib unicode functions')
-option('gobject', type: 'feature', value: 'disabled',
+option('gobject', type: 'feature', value: 'auto',
   description: 'Enable GObject bindings')
 option('cairo', type: 'feature', value: 'auto',
   description: 'Use Cairo graphics library')
@@ -21,18 +21,14 @@ option('coretext', type: 'feature', value: 'disabled',
   description: 'Enable CoreText shaper backend on macOS')
 
 # Common feature options
-option('tests', type : 'feature', value : 'enabled', yield : true,
+option('tests', type: 'feature', value: 'enabled', yield: true,
   description: 'Enable or disable unit tests')
-option('introspection', type : 'feature', value : 'disabled', yield : true,
-  description : 'Generate gobject-introspection bindings (.gir/.typelib files)')
-option('gtk_doc',  type : 'feature', value : 'auto', yield : true,
-  description : 'Generate documentation with gtk-doc')
+option('introspection', type: 'feature', value: 'auto', yield: true,
+  description: 'Generate gobject-introspection bindings (.gir/.typelib files)')
+option('gtk_doc',  type: 'feature', value: 'auto', yield: true,
+  description: 'Generate documentation with gtk-doc')
 
 option('icu_builtin', type: 'boolean', value: false,
   description: 'Don\'t separate ICU support as harfbuzz-icu module')
-option('with_libstdcxx', type: 'boolean', value: false,
-  description: 'Allow linking with libstdc++')
 option('experimental_api', type: 'boolean', value: false,
   description: 'Enable experimental APIs')
-option('amalgam', type: 'boolean', value: false,
-  description : 'Enable amalgam builds')

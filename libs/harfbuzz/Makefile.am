@@ -117,6 +117,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-shaper.cc \
 	@HARFBUZZ_TREE@/src/hb-static.cc \
 	@HARFBUZZ_TREE@/src/hb-string-array.hh \
+	@HARFBUZZ_TREE@/src/hb-style.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
