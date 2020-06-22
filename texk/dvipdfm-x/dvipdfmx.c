@@ -1131,8 +1131,6 @@ main (int argc, char *argv[])
   kpse_set_program_enabled(kpse_pk_format, true, kpse_src_texmf_cnf);
 #endif
   pdf_font_set_dpi(font_dpi);
-  dpx_delete_old_cache(image_cache_life);
-
   if (!dvi_filename) {
     if (verbose)
       MESG("No dvi filename specified, reading standard input.\n");
@@ -1177,6 +1175,9 @@ main (int argc, char *argv[])
       get_enc_password(oplain, uplain);
     }
   }
+
+/* moved to here because image caching was not effective */
+  dpx_delete_old_cache(image_cache_life);
 
   /* Encryption and Other Settings */
   {

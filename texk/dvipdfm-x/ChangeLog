@@ -1,3 +1,11 @@
+2020-06-22  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvipdfmx.c: Move dpx_delete_old_cache(image_cache_life)
+	because image caching did'nt work.
+	* dvi.c: Use MFOPEN() instead of fopen().
+	* dpxfile.c, pdfximage.c: Use generalized stat() to handle
+	UTF-8 names.
+
 2020-06-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_cmap.c: Lower priority for Soft-hyphen U+00AD when

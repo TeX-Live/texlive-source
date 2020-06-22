@@ -981,13 +981,13 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
 
   if ((path = dpx_find_dfont_file(filename)) != NULL &&
-      (fp = fopen(path, "rb")) != NULL)
+      (fp = MFOPEN(path, "rb")) != NULL)
     is_dfont = 1;
   else if ((path = dpx_find_type1_file(filename)) != NULL)
     is_type1 = 1;
   else if (((path = dpx_find_opentype_file(filename)) == NULL
          && (path = dpx_find_truetype_file(filename)) == NULL)
-         || (fp = fopen(path, "rb")) == NULL) {
+         || (fp = MFOPEN(path, "rb")) == NULL) {
     ERROR("Cannot proceed without the font: %s", filename);
   }
   need_more_fonts(1);

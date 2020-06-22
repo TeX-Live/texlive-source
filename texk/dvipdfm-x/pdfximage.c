@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -62,6 +62,9 @@ static int  ps_include_page (pdf_ximage *ximage,
 #define IMAGE_TYPE_BMP      6
 #define IMAGE_TYPE_JP2      7
 
+#if defined(_WIN32)
+extern int fsyscp_stat(const char *path, struct stat *buffer);
+#endif /* _WIN32 */
 
 struct attr_
 {
@@ -964,9 +967,17 @@ ps_include_page (pdf_ximage *ximage, const char *filename, load_options options)
   }
 #endif
 
+#if defined(_WIN32)
+  if (dpx_conf.file.keep_cache != -1 &&
+      (fsyscp_stat(temp, &stat_t)==0 || stat(temp, &stat_t)==0) &&
+      (fsyscp_stat(filename, &stat_o)==0 ||
+       stat(filename, &stat_o)==0) && 
+      stat_t.st_mtime > stat_o.st_mtime) {
+#else
   if (dpx_conf.file.keep_cache != -1 &&
       stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0 && 
       stat_t.st_mtime > stat_o.st_mtime) {
+#endif /* _WIN32 */
     /* cache exist */
     /*printf("\nLast file modification: %s", ctime(&stat_o.st_mtime));
       printf("Last file modification: %s", ctime(&stat_t.st_mtime));*/
