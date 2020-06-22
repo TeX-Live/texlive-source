@@ -2,7 +2,7 @@
 # Configuration validation subroutine script.
 #   Copyright 1992-2020 Free Software Foundation, Inc.
 
-timestamp='2020-06-18'
+timestamp='2020-06-20'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1146,14 +1146,6 @@ case $cpu-$vendor in
 		cpu=mipsallegrexel
 		vendor=sony
 		;;
-	s390-*)
-		cpu=s390
-		vendor=ibm
-		;;
-	s390x-*)
-		cpu=s390x
-		vendor=ibm
-		;;
 	tile*-*)
 		os=${os:-linux-gnu}
 		;;
@@ -1237,6 +1229,7 @@ case $cpu-$vendor in
 			| pyramid \
 			| riscv | riscv32 | riscv64 \
 			| rl78 | romp | rs6000 | rx \
+			| s390 | s390x \
 			| score \
 			| sh | shl \
 			| sh[1234] | sh[24]a | sh[24]ae[lb] | sh[23]e | she[lb] | sh[lb]e \
