@@ -1,3 +1,9 @@
+2020-06-22  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (EXTRA_DIST): add COPYING.LESSERv2.
+	* texmf.cnf (expand_depth, pk_dpi, strings_free): write a few
+	words about these parameters; see web2c/doc for more.
+
 2020-06-12  Karl Berry  <karl@freefriends.org>
 
 	* tex-make.c (kpathsea_make_tex): do not emit any warnings for

@@ -1,3 +1,12 @@
+2020-06-22  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (Runtime options): move from install.texi,
+	and mention expand_depth and texmf_casefold_search.
+	(Three programs): make its own chapter to reduce sectioning depth.
+	Various historical and current updates, e.g., mention (u)pTeX.
+	* doc/install.texi (Runtime options): moved.
+	* doc/ref.txi: remove some older references, use https for urls.
+
 2020-06-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: Regenerate boot module.

@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2020
-@set month-year March 2020
+@set month-year June 2020
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -44,7 +44,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 * mf: (web2c)mf invocation.                     Creating typeface families.
 * mft: (web2c)mft invocation.                   Prettyprinting Metafont source.
 * mltex: (web2c)MLTeX.                          Multi-lingual TeX.
-* mpost: (web2c)mpost invocation.               Creating technical diagrams.
+* mpost: (web2c)mpost invocation.               Generating PostScript.
 * patgen: (web2c)patgen invocation.             Creating hyphenation patterns.
 * pktogf: (web2c)pktogf invocation.             Packed to generic fonts.
 * pktype: (web2c)pktype invocation.             PK to human-readable text.
@@ -115,6 +115,7 @@ corresponds to Web2c version @value{version}, released in
 * Introduction::                A brief introduction.
 * Installation::                How to compile and install Web2c.
 * Commonalities::               Option syntax, standard options, memory dumps.
+* Three programs::              TeX, Metafont, MetaPost have much in common.
 * TeX::                         Typesetting.
 * Metafont::                    Typeface design.
 * MetaPost::                    Technical illustrations.
@@ -141,8 +142,8 @@ This manual corresponds to version @value{version} of Web2c, released in
 @cindex @TeX{}, Web2c implementation of
 @cindex Hobby, John
 @cindex Breitenlohner, Peter
-@dfn{Web2c} is the name of a @TeX{} implementation, originally for Unix,
-but now also running under DOS, Amiga, and other operating systems. By
+@dfn{Web2c} is the name of a @TeX{} implementation, originally for
+Unix, but now also running under various operating systems. By
 @dfn{@TeX{} implementation}, we mean all of the standard programs
 developed by the Stanford @TeX{} project directed by Donald E. Knuth:
 Metafont, DVItype, GFtoDVI, Bib@TeX{}, Tangle, etc., as well as @TeX{}
@@ -170,14 +171,15 @@ kpathsea, Kpathsea}, for the practical details of how to obtain Web2c.
 Different parts of the Web2c distribution have different licensing
 terms, however, reflecting the different circumstances of their
 creation; consult each source file for exact details.  The main
-practical implication for redistributors of Web2c is that the executables
-are covered by the GNU General Public License, and therefore anyone
-who gets a binary distribution must also get the sources, as explained
-by the terms of the GPL (@pxref{Copying, , , kpathsea, Kpathsea}). The
-GPL covers the Web2c executables, including @code{tex}, because the Free
-Software Foundation sponsored the initial development of the Kpathsea
-library that Web2c uses.  The basic source files from Stanford, however,
-have their own copyright terms or are in the public domain, and are not
+practical implication for redistributors of Web2c is that most of the
+executables are covered by the GNU General Public License or GNU
+Lesser General Public License, and therefore anyone who gets a binary
+distribution must also get the sources, as explained by the terms of
+the GPL (@url{https://gnu.org/licenses/}. The GPL covers the Web2c
+executables, including @code{tex}, because the Free Software
+Foundation sponsored the initial development of the Kpathsea library
+that Web2c uses.  The basic source files from Stanford, however, have
+their own copyright terms or are in the public domain, and are not
 covered by the GPL.
 
 @cindex history
@@ -189,19 +191,21 @@ covered by the GPL.
 @cindex Weber, Olaf
 History: Tomas Rokicki originated the @TeX{}-to-C system in 1987,
 working from the first change files for @TeX{} under Unix, which were
-done primarily by Howard Trickey and Pavel Curtis. Tim Morgan then took
-over development and maintenance for a number of years; the name changed
-to Web-to-C somewhere in there.  In 1990, Karl Berry became the
-maintainer.  He made many changes to the original sources, and started
-using the shorter name Web2c.  In 1997, Olaf Weber took over.  Dozens of
-other people have contributed; their names are listed in the
-@file{ChangeLog} files.
+done primarily by Howard Trickey and Pavel Curtis. Tim Morgan then
+took over development and maintenance for a number of years; the name
+changed to Web-to-C somewhere in there.  In 1990, Karl Berry became
+the maintainer.  He made many changes to the original sources, and
+started using the shorter name Web2c.  In 1997, Olaf Weber took over,
+and then in 2006, Karl started taking care of it again.  No
+significant development or changes have been needed for many
+years. Dozens of other people have contributed; their names are listed
+in the @file{ChangeLog} files.
 
 @cindex acknowledgements
 @cindex Martin, Rick
 @cindex Morris, Bob
 @cindex Stallman, Richard
-Other acknowledgements: The University of Massachusetts at Boston
+Other acknowledgements by Karl: The University of Massachusetts at Boston
 (particularly Rick Martin and Bob Morris) provided computers and ftp
 access to me for many years.  Richard Stallman at the Free Software
 Foundation employed me while I wrote the original path searching library
@@ -222,14 +226,13 @@ Further reading: @xref{References}.
 @cindex commonalities
 
 Many aspects of the @TeX{} system are the same among more than one
-program, so we describe all those pieces together, here.
+program, so we describe those pieces together, here.
 
 @menu
 * Option conventions::   -- or -, = or ` ' for values.
 * Common options::       --help --version --verbose, and TeX/MF/MP options.
 * Path searching::       Features of the common path searching library.
 * Output file location:: TEXMFOUTPUT allows output in places other than `.'.
-* Three programs::       TeX, Metafont, and MetaPost have a lot in common.
 @end menu
 
 
@@ -507,7 +510,7 @@ simply checked as given.
 
 
 @node Three programs
-@section Three programs: Metafont, MetaPost, and @TeX{}
+@chapter Three programs: Metafont, MetaPost, and @TeX{}
 
 @cindex three programs
 @cindex @TeX{}, Metafont, and MetaPost
@@ -515,12 +518,11 @@ simply checked as given.
 @cindex MetaPost, @TeX{}, and Metafont
 
 @TeX{}, Metafont, and MetaPost have a number of features in common.
-Besides the ones here, the common command-line options are described in
-the previous section.  The configuration file options that let you
-control some array sizes and other features are described in
-@ref{Runtime options}.
+Besides the ones here, command-line options and other commonalities
+are described in the previous section.
 
 @menu
+* Runtime options::             The @file{texmf.cnf} configuration file.
 * Initial and virgin::          Making memory dumps vs. production runs.
 * Memory dumps::                .fmt/.base files for fast startup.
 * Editor invocation::           The `e' response at errors.
@@ -528,8 +530,99 @@ control some array sizes and other features are described in
 @end menu
 
 
+@node Runtime options
+@section Runtime options
+
+@cindex runtime options
+
+@cindex configuration file values
+@cindex array sizes
+@flindex texmf.cnf
+Besides the configure- and compile-time options described in the
+installation section (@pxref{Installation}), you can control a number
+of parameters in the @file{texmf.cnf} runtime file read by Kpathsea
+(@pxref{Config files,,, kpathsea, Kpathsea}).
+
+The main purpose of @file{texmf.cnf} is to specify search paths, but
+array sizes and other options are also set there. Most are rather
+obscure.  Here are a few of the more interesting values:
+
+@vtable @samp
+@item main_memory
+Total words of memory available, for @TeX{}, Metafont, and MetaPost.
+Must remake the format file after changing.
+
+@item extra_mem_bot
+@cindex boxes, memory for
+@cindex glue, memory for
+@cindex breakpoints, memory for
+@cindex PiC@TeX{}, increasing memory for
+Extra space for ``large'' @TeX{} data structures (default 0): boxes,
+glue, breakpoints, et al. If you use PiC@TeX{}, you may well want to
+set this.
+
+@item expand_depth
+@cindex recursive expansion limit
+@cindex expansion limit, recursive
+@cindex runtime stack overflow
+@cindex overflow, of runtime stack
+@cindex segmentation fault
+@vindex SIGSEGV
+Limit on recursive expansion calls before @TeX{} aborts (default
+10000). If a @TeX{} program does an unterminated recursive expansion,
+@TeX{} will dutifully expand macros until the system's runtime stack
+overflows, typically with a segmentation fault (SIGSEGV). This
+parameter was introduced to minimize the chance of that unpleasant
+(though not dangerous) crash, instead allowing @TeX{} to quit with a
+more informative message.
+
+@pindex libsigsegv @r{library}
+The crash can still happen, though, if the system has an exceptionally
+small memory allocation for its stack. There is no quantitative way to
+determine the limit, and it does not seem worth implementing
+system-dependent heuristics to guess at the number, since it's highly
+improbable that any real @TeX{} code will ever need more than 10000
+recursive expansions (it has never happened). For the same reason,
+using the libsigsegv library (@url{https://gnu.org/s/libsigsegv}) does
+not seem worth the effort.
+
+@item texmf_casefold_search
+@xref{Casefolding search,,, kpathsea, Kpathsea}.
+
+@end vtable
+
+@cindex array limit, fixed
+@cindex swap space, as array limit
+@cindex reallocation of arrays
+@cindex dynamic array allocation
+Ideally all arrays would be dynamically expanded as necessary, so the
+only limiting factor would be the amount of swap space available, or
+some configurable limit much larger than can currently be supported.
+
+Unfortunately, implementing this is extremely difficult, as the fixed
+size of arrays is assumed in many places throughout the source code.
+These runtime limits are a practical compromise between the
+compile-time limits in previous versions, and truly dynamic arrays.
+(On the other hand, the Web2c Bib@TeX{} implementation does do true
+dynamic reallocation of some arrays.)
+
+@cindex modifying @file{texmf.cnf} in @TeX{} Live
+@cindex location of @file{texmf.cnf} in @TeX{} Live
+Nowadays there is rarely a reason to modify the values. But if you do
+wish to modify @file{texmf.cnf}, in @TeX{} Live the best approach is
+to put your changes, and only your changes at the top of the TL
+installation tree. That is, if the system @file{texmf.cnf} is
+installed in
+@file{/some/path/to/texlive/YYYY/texmf-dist/web2c/texmf.cnf} is put
+your custom settings in @file{/some/path/to/texlive/YYY/texmf.cnf},
+where @var{YYYY} is the year of installation (if you use that
+subdirectory; it's the default).  That way, unrelated changes to the
+system @file{texmf.cnf} can happen with normal updates, without
+affecting your local values.
+
+
 @node Initial and virgin
-@subsection Initial and virgin
+@section Initial and virgin
 
 @cindex executables, shared initial and virgin
 The @TeX{} and Metafont programs each have two main variants, called
@@ -564,7 +657,7 @@ memory dump file.
 
 
 @node Memory dumps
-@subsection Memory dumps
+@section Memory dumps
 
 @cindex memory dumps
 
@@ -584,7 +677,7 @@ code.
 
 
 @node Creating memory dumps
-@subsubsection Creating memory dumps
+@subsection Creating memory dumps
 
 @cindex memory dumps, creating
 @cindex creating memory dumps
@@ -620,7 +713,7 @@ difficulties.
 
 
 @node Determining the memory dump to use
-@subsubsection Determining the memory dump to use
+@subsection Determining the memory dump to use
 
 @cindex memory dump to use, determining
 @cindex fmt file, determining
@@ -675,7 +768,7 @@ will be used.
 
 
 @node Hardware and memory dumps
-@subsubsection Hardware and memory dumps
+@subsection Hardware and memory dumps
 
 @cindex hardware and memory dumps
 @cindex memory dumps and hardware
@@ -758,7 +851,7 @@ main ()
 
 
 @node Editor invocation
-@subsection Editor invocation
+@section Editor invocation
 
 @cindex editor invoked at error
 @cindex errors, editor invoked at
@@ -772,6 +865,7 @@ responds with @kbd{e} or @kbd{E}, the program invokes an editor.
 @vindex MFEDIT
 @vindex MPEDIT
 @opindex --with-editor=@var{cmd}
+@flindex texmf.cnf @r{for editors}
 Specifying @samp{--with-editor=@var{cmd}} to @code{configure} sets the
 default editor command string to @var{cmd}.  The environment
 variables/configuration values @code{TEXEDIT}, @code{MFEDIT}, and
@@ -785,7 +879,7 @@ and @samp{%s} is replaced by the name of the current input file.
 
 
 @node \input filenames
-@subsection @code{\input} filenames
+@section @code{\input} filenames
 
 @cindex input filenames
 @cindex filename conventions, in input files
@@ -835,7 +929,7 @@ to the appropriate search path.
 
 
 @node \input quoted filename
-@subsubsection @code{\input} quoted filename: @code{\input "some name"}
+@subsection @code{\input} quoted filename: @code{\input "some name"}
 
 @cindex @code{\input} quoted filename
 @cindex quoted filename for @code{\input}
@@ -864,7 +958,7 @@ There is no way to quote the quote character.
 
 
 @node \input braced filename
-@subsubsection @code{\input} braced filename: @code{\input@{some name@}}
+@subsection @code{\input} braced filename: @code{\input@{some name@}}
 
 @cindex @code{\input} braced (grouped) filename
 @cindex braced filename for @code{\input}
@@ -891,7 +985,7 @@ within the filename.
 
 
 @node \input filename caveats
-@subsubsection @code{\input} filename caveats
+@subsection @code{\input} filename caveats
 
 @cindex @code{\input} filename caveats
 @cindex caveats for @code{\input} filenames
@@ -1330,15 +1424,20 @@ the @samp{slides} document class, along with the @samp{beamer},
 @cindex substitutions of font glyphs
 Multi-lingual @TeX{} (@code{mltex}) is an extension of @TeX{} originally
 written by Michael Ferguson and now updated and maintained by Bernd
-Raichle.  It allows the use of non-existing glyphs in a font by
-declaring glyph substitutions.  These are restricted to substitutions of
-an accented character glyph, which need not be defined in the current
+Raichle.  With the advent of Unicode, it has become obsolete, though
+it is still supported in Web2c in the event of bugs or compilation
+bugs.
+
+ML@TeX{} allows the use of non-existing glyphs in a font by declaring
+glyph substitutions.  These are restricted to substitutions of an
+accented character glyph, which need not be defined in the current
 font, by its appropriate @code{\accent} construction using a base and
 accent character glyph, which do have to exist in the current font.
-This substitution is automatically done behind the scenes, if necessary,
-and thus ML@TeX{} additionally supports hyphenation of words containing
-an accented character glyph for fonts missing this glyph (e.g., Computer
-Modern).  Standard @TeX{} suppresses hyphenation in this case.
+This substitution is automatically done behind the scenes, if
+necessary, and thus ML@TeX{} additionally supports hyphenation of
+words containing an accented character glyph for fonts missing this
+glyph (e.g., Computer Modern).  Standard @TeX{} suppresses hyphenation
+in this case.
 
 ML@TeX{} works at @file{.fmt}-creation time: the basic idea is to
 specify the @samp{-mltex} option to @TeX{} when you @code{\dump} a
@@ -1660,6 +1759,7 @@ options}).
 @findex \immediate\write18
 @findex \write18 @r{shell escape extension}
 @findex system @r{C library function}
+@flindex texmf.cnf @r{for shell escapes}
 
 @TeX{} can execute @dfn{shell escapes}, that is, arbitrary shell
 commands.  Although tremendously useful, this also has obvious
@@ -1788,14 +1888,16 @@ partial list.
 @cindex e-@TeX{}
 @cindex primitives, new
 Adds many new primitives, including right-to-left typesetting and more
-registers.  Now frozen.
+registers.  Now frozen. More info: @url{https://ctan.org/pkg/etex}.
 
 @item Aleph
 @cindex Aleph
+@cindex Omega
 @cindex Unicode
 This adds Unicode support, right-to-left typesetting, and more.  Omega
 was the original program.  Aleph is an updated version with a variety
 of bug fixes, and includes e-@TeX{}.  Aleph is not actively maintained.
+More info: @url{https://ctan.org/pkg/aleph}, @url{https://ctan.org/pkg/omega}.
 
 @item pdf@TeX{}
 @cindex pdf@TeX{}
@@ -1807,20 +1909,29 @@ e-@TeX{} extensions, new primitives for hypertext and
 micro-typography, reading/writing from pipes, and much more.  Home
 page: @url{http://pdftex.org}.
 
-@item lua@TeX{}
-@cindex lua@TeX{}
+@item Lua@TeX{}
+@cindex Lua@TeX{}
 @cindex Lua
-Based on pdf@TeX{}, this also embeds the Lua programming language
-(@url{http://lua.org}) and opens up the @TeX{} typesetting engine to
-control from Lua.  Home page: @url{http://luatex.org}.
+Embeds the Lua programming language (@url{http://lua.org}) and opens
+up the @TeX{} typesetting engine to control from Lua.  Also supports
+Unicode input and OpenType- and system fonts. Home page:
+@url{http://luatex.org}.
 
 @item Xe@TeX{}
 @cindex Xe@TeX{}
 @cindex Unicode
 Combines support for Unicode input and OpenType- and system fonts
 with the capabilities of pdf@TeX{}.
-Home page: @url{http://tug.org/xetex}.
+Home page: @url{https://tug.org/xetex}.
 
+@item p@TeX{}
+@itemx up@TeX{}
+@cindex p@TeX{}
+@cindex up@TeX{}
+With additional support for Japanese; p@TeX{} was the original engine,
+and up@TeX{} has native Unicode support and thus is more useful for
+Chinese and Korean. More info: @url{https://ctan.org/pkg/ptex},
+@url{https://ctan.org/pkg/uptex}.
 @end table
 
 
@@ -2435,16 +2546,19 @@ configure @TeX{} to print these properly.
 
 
 @node MetaPost 
-@chapter MetaPost: Creating technical illustrations
+@chapter MetaPost: Generating PostScript
 
 @cindex MetaPost
 @cindex PostScript meets Metafont
 @cindex Metafont meets PostScript
+@cindex technical illustrations, creating
 MetaPost is a picture-drawing language similar to Metafont
 (@pxref{Metafont}), but instead of outputting bitmaps in a ``font'', it
 outputs PostScript commands.  It's primarily intended for creating
-technical illustrations.
+technical illustrations, but can also be used to create PostScript or
+OpenType fonts (@url{https://ctan.org/pkg/metatype1}).
 
+@pindex troff@r{, supported in MetaPost}
 MetaPost also provides for arbitrary integration of text and graphics in
 a natural way, using any typesetter (@TeX{} and Troff are both
 supported) and a number of other subsidiary programs, described below.
@@ -4162,45 +4276,27 @@ Virtual font creation: @file{@var{CTAN:}/fonts/utilities/fontinst}.
 In general, each file has its own copyright notice stating the copying
 permissions for that file.  Following is a summary.
 
-The Web2c system itself and most of the original WEB source files are
-public domain.
+The Stanford @TeX{} programs and Web2c system itself are in the public
+domain (@url{https://tug.org/texlive/copying.html}).  The sources may
+be copied verbatim, or used as the starting point of new software
+under different names; however, per the wishes of the authors, they
+should be modified only through a @file{.ch} file, but this is in the
+nature of a development request rather than a legal requirement.
 
-@file{tex.web}, the ML@TeX{} code, @file{mf.web}, and @file{bibtex.web},
-are copyrighted by their authors.  They may be copied verbatim, but may
-be modified only through a @file{.ch} file.
+ML@TeX{}, pdf@TeX{}, Lua@TeX{}, Xe@TeX{}, and all the other derived
+engines have used various license terms for their additions to the
+base code, often the GPL (see @url{https://www.gnu.org/licenses/#GPL}
+or (for example) the file @file{web2c/pdftexdir/COPYINGv2}. They also
+mostly make use of additional libraries with their own (compatible)
+terms. Please see each program's sources.
 
-MetaPost-related files, including @file{mp.web} itself, are copyrighted
-under X-like terms; the precise notice is included below.
-
-Finally, the Kpathsea library is covered by the GNU Lesser General
-Public License (@pxref{Introduction,,, kpathsea, Kpathsea}).  Therefore,
-the @emph{binaries} resulting from a standard Web2c compilation are also
+The Kpathsea library is covered by the GNU Lesser General Public
+License (@pxref{Introduction,,, kpathsea, Kpathsea}).  Therefore, the
+@emph{binaries} resulting from a standard Web2c compilation are also
 covered by the LGPL; so if you (re)distribute the binaries, you must
 also (offer to) distribute the complete source that went into those
-binaries.  See the file @file{LGPL} for complete details on the LGPL.
-
-The following notice must be included by the terms of the MetaPost
-copyright.
-
-@quotation
-Permission to use, copy, modify, and distribute this software and its
-documentation for any purpose and without fee is hereby granted,
-provided that the above copyright notice appear in all copies and that
-both that the copyright notice and this permission notice and warranty
-disclaimer appear in supporting documentation, and that the names of
-AT&T Bell Laboratories or any of its entities not be used in advertising
-or publicity pertaining to distribution of the software without
-specific, written prior permission.
-
-AT&T disclaims all warranties with regard to this software, including
-all implied warranties of merchantability and fitness.  In no event
-shall AT&T be liable for any special, indirect or consequential damages
-or any damages whatsoever resulting from loss of use, data or profits,
-whether in an action of contract, negligence or other tortious action,
-arising out of or in connection with the use or performance of this
-software.
-@end quotation
-
+binaries.  See @url{https://gnu.org/licenses/#LGPL} or the file
+@file{kpathsea/COPYING.LESSERv2}.
 
 @node References
 @appendix References

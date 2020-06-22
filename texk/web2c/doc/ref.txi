@@ -4,18 +4,13 @@
 Neenie Billawala.
 Write-white printing engines and tuning fonts with Metafont.
 @cite{TUGboat}, 8(1):29--32, April 1987.
-@url{http://tug.org/TUGboat/tb08-1/tb17billawala.pdf}.
-
-@item [GMS94]
-Michel Goossens, Frank Mittelbach, and Alexander Samarin.
-@cite{The @LaTeX{} Companion}.
-Addison-Wesley, Reading, MA, USA, 1994.
+@url{https://tug.org/TUGboat/tb08-1/tb17billawala.pdf}.
 
 @item [Hob89]
 John D. Hobby.
 A Metafont-like system with PS output.
 @cite{TUGboat}, 10(4):505--512, December 1989.
-@url{http://tug.org/metapost}.
+@url{https://tug.org/metapost}.
 
 @item [Hob92]
 John D. Hobby.
@@ -38,6 +33,7 @@ An authoritative reference to the C programming language, and a good
 Donald E. Knuth and Silvio Levy.
 @cite{The CWEB System of Structured Documentation, Version 3.0}.
 Addison-Wesley, Reading, MA, USA, 1993.
+@url{https://ctan.org/pkg/cweb}.
 
 @item [Knu84]
 Donald E. Knuth.
@@ -89,7 +85,7 @@ This is an updated version of Knuth:1988:ET.
 Donald Knuth.
 Virtual Fonts: More Fun for Grand Wizards.
 @cite{TUGboat}, 11(1):13--23, April 1990.
-@url{http://tug.org/TUGboat/tb11-1/tb27knut.pdf}.
+@url{https://tug.org/TUGboat/tb11-1/tb27knut.pdf}.
 
 @item [Knu92]
 Donald E. Knuth.
@@ -102,13 +98,13 @@ Leslie Lamport.
 @cite{@LaTeX{}: A Document Preparation System: User's Guide and Reference
   Manual}.
 Addison-Wesley, Reading, MA, USA, second edition, 1994.
-Reprinted with corrections in 1996.
+Reprinted with corrections, 1996.
 
 @item [Lia83]
 Franklin Mark Liang.
 Word hy-phen-a-tion by com-pu-ter.
 Technical Report STAN-CS-83-977, Stanford University, August 1983.
-@url{http://tug.org/docs/liang/liang-thesis.pdf}.
+@url{https://tug.org/docs/liang/liang-thesis.pdf}.
 
 @item [Mac91]
 Pierre A. MacKay.
@@ -118,17 +114,5 @@ In Robert A. Morris and Jacques Andre, editors, @cite{Raster Imaging and
   Digital Typography II---Papers from the second RIDT meeting, held in
   Boston, Oct. 14--16, 1991}, pages 205--215, New York, 1991. Cambridge
   University Press.
-
-@item [Spi89]
-Michael D. Spivak.
-@cite{LAMS@TeX{}, The Synthesis}.
-The @TeX{}plorators Corporation, 3701 W. Alabama, Suite 450-273, Houston, TX
-  77027, USA, 1989.
-
-@item [Spi90]
-Michael D. Spivak.
-@cite{The Joy of @TeX{}---A Gourmet Guide to Typesetting with the
-  AMS@TeX{} macro package}.
-American Mathematical Society, Providence, RI, USA, 2nd revised edition, 1990.
 
 @c end{thebibliography}

@@ -5,7 +5,7 @@
 % updated.  Instead, put your changes -- and only your changes, not an
 % entire copy! -- in ../../texmf.cnf.  That is, if this file is
 % installed in /some/path/to/texlive/2020/texmf-dist/web2c/texmf.cnf,
-% add your custom settings to /some/path/to/texlive/2020/texmf.cnf.
+% put your custom settings in /some/path/to/texlive/2020/texmf.cnf.
 % (Below, we use YYYY in place of the specific year.)
 % 
 % What follows is a super-summary of what this .cnf file can
@@ -809,8 +809,10 @@ pool_size = 6250000
 string_vacancies = 90000
 % Maximum number of strings.
 max_strings = 500000
-% min pool space left after loading .fmt
+% Min pool space left after loading .fmt.
 pool_free = 47500
+% Ensure at least this many strings are free after loading .fmt.
+strings_free = 100
 
 % Buffer size.  TeX uses the buffer to contain input lines, but macro
 % expansion works by writing material into the buffer and reparsing the
@@ -834,10 +836,19 @@ param_size = 10000      % simultaneous macro parameters, also applies to MP
 save_size  = 100000     % for saving values outside current group
 stack_size = 5000       % simultaneous input sources
 
+% Limit on recursive expansion calls so TeX has a chance to quit nicely
+% before stack space runs out. The default is 10000. Normally there is no
+% reason to change it. The web2c manual has a bit more about this.
+%expand_depth = 10000
+
 % These are Omega-specific.
 ocp_buf_size = 500000   % character buffers for ocp filters.
 ocp_stack_size = 10000  % stacks for ocp computations.
 ocp_list_size = 1000    % control for multiple ocps.
+
+% For pdftex and luatex: default resolution for bitmaps;
+% commonly set via \pdfpkresolution when needed to be changed.
+%pk_dpi = 72
 
 % These work best if they are the same as the I/O buffer size, but it
 % doesn't matter much.  Must be a multiple of 8.

@@ -1,13 +1,13 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 SUBDIRS = . doc man
 
-EXTRA_DIST = PROJECTS
+EXTRA_DIST = COPYING.LESSERv2 PROJECTS
 
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
 AM_CFLAGS = $(WARNING_CFLAGS)
