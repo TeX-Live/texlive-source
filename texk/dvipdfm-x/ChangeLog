@@ -4,7 +4,7 @@
 	because image caching did'nt work.
 	* dvi.c: Use MFOPEN() instead of fopen().
 	* dpxfile.c, pdfximage.c: Use generalized stat() to handle
-	UTF-8 names.
+	UTF-8 names (Windows only).
 
 2020-06-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
