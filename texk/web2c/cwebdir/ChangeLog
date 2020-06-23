@@ -1,3 +1,7 @@
+2020-06-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* prod-twill.w: Roll back editorial changes.
+
 2020-06-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfwebtocfront.tex: Fix start pageno after dynamic to.
