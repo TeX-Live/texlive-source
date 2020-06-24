@@ -1,0 +1,90 @@
+@$program {COMMON.W}2 \&{int}@>
+@$ctangle {COMMON.W}2 \&{int}@>
+@$ctwill {COMMON.W}2 \&{int}@>
+@$cweave {COMMON.W}2 \&{int}@>
+@$phase {COMMON.W}3 \&{int}@>
+@$common_init {COMMON.W}4 \&{void} (\,)@>
+@$id_first {COMMON.W}6 \&{char} ${*}$@>
+@$id_loc {COMMON.W}6 \&{char} ${*}$@>
+@$section_text {COMMON.W}6 \&{char} [\,][\,]@>
+@$section_text_end {COMMON.W}6 \&{char} ${*}$@>
+@$buffer {COMMON.W}7 \&{char} [\,]@>
+@$buffer_end {COMMON.W}7 \&{char} ${*}$@>
+@$limit {COMMON.W}7 \&{char} ${*}$@>
+@$loc {COMMON.W}7 \&{char} ${*}$@>
+
+@$include_depth {COMMON.W}10 \&{int}@>
+@$file {COMMON.W}10 \&{FILE} ${*}$ [\,]@>
+@$change_file {COMMON.W}10 \&{FILE} ${*}$@>
+@$file_name {COMMON.W}10 \&{char} [\,][\,]@>
+@$change_file_name {COMMON.W}10 \&{char} [\,]@>
+@$alt_file_name {COMMON.W}10 \&{char} [\,]@>
+@$line {COMMON.W}10 \&{int} [\,]@>
+@$change_line {COMMON.W}10 \&{int}@>
+@$change_depth {COMMON.W}10 \&{int}@>
+@$input_has_ended {COMMON.W}10 \&{boolean}@>
+@$changing {COMMON.W}10 \&{boolean}@>
+@$web_file_open {COMMON.W}10 \&{boolean}@>
+
+@$reset_input {COMMON.W}18 \&{void} (\,)@>
+
+@$section_count {COMMON.W}20 \&{sixteen\_bits}@>
+@$changed_section {COMMON.W}20 \&{boolean} [\,]@>
+@$change_pending {COMMON.W}20 \&{boolean}@>
+@$print_where {COMMON.W}20 \&{boolean}@>
+@$get_line {COMMON.W}21 \&{boolean} (\,)@>
+
+@$check_complete {COMMON.W}26 \&{void} (\,)@>
+@$byte_mem {COMMON.W}27 \&{char} [\,]@>
+@$byte_mem_end {COMMON.W}27 \&{char} ${*}$@>
+@$name_dir {COMMON.W}27 \&{name\_info} [\,]@>
+@$name_dir_end {COMMON.W}27 \&{name\_pointer}@>
+
+@$byte_ptr {COMMON.W}29 \&{char} ${*}$@>
+@$name_ptr {COMMON.W}29 \&{name\_pointer}@>
+
+@$h {COMMON.W}32 \&{hash\_pointer}@>
+@$hash {COMMON.W}32 \&{name\_pointer} [\,]@>
+@$hash_end {COMMON.W}32 \&{hash\_pointer}@>
+
+@$id_lookup {COMMON.W}35 \&{name\_pointer} (\,)@>
+
+@$print_section_name {COMMON.W}42 \&{void} (\,)@>
+@$sprint_section_name {COMMON.W}43 \&{void} (\,)@>
+@$print_prefix_name {COMMON.W}44 \&{void} (\,)@>
+
+@$section_lookup {COMMON.W}49 \&{name\_pointer} (\,)@>
+
+@$history {COMMON.W}56 \&{int}@>
+
+@$err_print {COMMON.W}58 \&{void} (\,)@>
+
+@$wrap_up {COMMON.W}60 \&{int} (\,)@>
+
+@$fatal {COMMON.W}64 \&{void} (\,)@>
+@$overflow {COMMON.W}65 \&{void} (\,)@>
+
+@$argc {COMMON.W}67 \&{int}@>
+@$argv {COMMON.W}67 \&{char} ${**}$@>
+@$C_file_name {COMMON.W}67 \&{char} [\,]@>
+@$tex_file_name {COMMON.W}67 \&{char} [\,]@>
+@$idx_file_name {COMMON.W}67 \&{char} [\,]@>
+@$scn_file_name {COMMON.W}67 \&{char} [\,]@>
+@$check_file_name {COMMON.W}67 \&{char} [\,]@>
+@$flags {COMMON.W}67 \&{boolean} [\,]@>
+@$use_language {COMMON.W}67 \&{const char} ${*}$@>
+
+@$C_file {COMMON.W}77 \&{FILE} ${*}$@>
+@$tex_file {COMMON.W}77 \&{FILE} ${*}$@>
+@$idx_file {COMMON.W}77 \&{FILE} ${*}$@>
+@$scn_file {COMMON.W}77 \&{FILE} ${*}$@>
+@$check_file {COMMON.W}77 \&{FILE} ${*}$@>
+@$active_file {COMMON.W}77 \&{FILE} ${*}$@>
+
+@$cb_banner {COMMON.W}86 \&{char} [\,]@>
+
+@$cb_show_banner {COMMON.W}95 \&{void} (\,)@>
+
+@$versionstring "<lib/lib.h>" \zip@>
+
+@$skip_comment {}108 =\\{copy\_comment}@>

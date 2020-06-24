@@ -1308,6 +1308,12 @@ copy_limbo(void)
 @z
 
 @x
+@ @f copy_TeX TeX
+@y
+@f copy_TeX TeX
+@z
+
+@x
 eight_bits
 copy_TeX()
 @y
@@ -2881,6 +2887,12 @@ for (c=0; c<256; c++) bucket[c]=NULL;
 @z
 
 @x
+@ @<Rest of |trans_plus| union@>=
+@y
+@<Rest of |trans_plus| union@>=
+@z
+
+@x
 collate[0]=0;
 strcpy(collate+1," \1\2\3\4\5\6\7\10\11\12\13\14\15\16\17");
 /* 16 characters + 1 = 17 */
@@ -3108,9 +3120,11 @@ created by numerous contributors over the course of a quarter century. They
 make \.{CWEB} adhere to modern coding standards and introduce new or improved
 features.
 
-Care has been taken to keep the original section numbering intact, so this new
-section should have the same number as the original ``\&{275.~Index},'' and
-additional material follows below.
+\bigskip
+\font\itt=cmitt10
+{\noindent \it Although \.{\itt CTWILL} is based on \.{\itt cweave.w}, new and
+modified material is incorporated all over the place, without taking special
+care for keeping the original section numbering intact.}
 
 @* Set {\tt CWEAVE} flags.
 At least one of these is already used in \.{COMMON}.

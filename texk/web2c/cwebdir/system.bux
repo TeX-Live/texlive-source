@@ -1,0 +1,47 @@
+@$memcmp "<string.h>" \zip@>
+@$strcat "<string.h>" \zip@>
+@$strcmp "<string.h>" \zip@>
+@$strcpy "<string.h>" \zip@>
+@$strlen "<string.h>" \zip@>
+@$strncmp "<string.h>" \zip@>
+@$strncpy "<string.h>" \zip@>
+
+@$BUFSIZ "<stdio.h>" \zip@>
+@$fclose "<stdio.h>" \zip@>
+@$feof "<stdio.h>" \zip@>
+@$fflush "<stdio.h>" \zip@>
+@$fopen "<stdio.h>" \zip@>
+@$fprintf "<stdio.h>" \zip@>
+@$fputs "<stdio.h>" \zip@>
+@$fread "<stdio.h>" \zip@>
+@$fwrite "<stdio.h>" \zip@>
+@$printf "<stdio.h>" \zip@>
+@$putc "<stdio.h>" \zip@>
+@$putchar "<stdio.h>" \zip@>
+@$puts "<stdio.h>" \zip@>
+@$rename "<stdio.h>" \zip@>
+@$remove "<stdio.h>" \zip@>
+@$sprintf "<stdio.h>" \zip@>
+@$stdout "<stdio.h>" \zip@>
+
+@$exit "<stdlib.h>" \zip@>
+
+@$isalpha "<ctype.h>" \zip@>
+@$isdigit "<ctype.h>" \zip@>
+@$islower "<ctype.h>" \zip@>
+@$isspace "<ctype.h>" \zip@>
+@$isupper "<ctype.h>" \zip@>
+@$isxdigit "<ctype.h>" \zip@>
+@$tolower "<ctype.h>" \zip@>
+@$toupper "<ctype.h>" \zip@>
+
+@$gettext "<libintl.h>" \zip@>
+@$textdomain "<libintl.h>" \zip@>
+
+@$bool "<stdbool.h>" \zip@>
+@$false "<stdbool.h>" \zip@>
+@$true "<stdbool.h>" \zip@>
+@$ptrdiff_t "<stddef.h>" \zip@>
+@$size_t "<stddef.h>" \zip@>
+@$uint8_t "<stdint.h>" \zip@>
+@$uint16_t "<stdint.h>" \zip@>
