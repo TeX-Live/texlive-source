@@ -1,3 +1,8 @@
+2020-06-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dpxfile.c, pdfximage.c: Remove unnecessary changes on
+	2020-06-22.
+
 2020-06-22  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvipdfmx.c: Move dpx_delete_old_cache(image_cache_life)

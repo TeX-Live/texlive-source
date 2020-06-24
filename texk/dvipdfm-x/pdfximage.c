@@ -968,8 +968,11 @@ ps_include_page (pdf_ximage *ximage, const char *filename, load_options options)
 #endif
 
 #if defined(_WIN32)
+/* temp is always ASCII only. So fsyscp_stat() is not necessary for
+ * temp. However, filename can be non-ASCII UTF-8.
+ */
   if (dpx_conf.file.keep_cache != -1 &&
-      (fsyscp_stat(temp, &stat_t)==0 || stat(temp, &stat_t)==0) &&
+      stat(temp, &stat_t)==0 &&
       (fsyscp_stat(filename, &stat_o)==0 ||
        stat(filename, &stat_o)==0) && 
       stat_t.st_mtime > stat_o.st_mtime) {

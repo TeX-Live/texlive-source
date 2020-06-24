@@ -1028,12 +1028,10 @@ dpx_delete_old_cache (int life)
           if (dpx_clear_cache_filter(de)) {
               struct stat sb;
               sprintf(pathname, "%s/%s", dir, de->d_name);
-#if defined(_WIN32)
-              if (fsyscp_stat(pathname, &sb) != 0)
-                  stat(pathname, &sb);
-#else
+/* Here pathname is always ASCII only. So fsyscp_stat() is
+ * not necessary for Windows.
+ */
               stat(pathname, &sb);
-#endif /* _WIN32 */
               if (sb.st_mtime < limit) {
                   remove(pathname);
                   /* printf("remove: %s\n", pathname); */
