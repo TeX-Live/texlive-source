@@ -1,3 +1,5 @@
+Section 1.
+
 @x
 @** Introduction.
 @y
@@ -36,6 +38,8 @@ faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 @d banner "This is CTWILL, Version 3.64"
 @z
 
+Section 3.
+
 @x
 @ Here is a sort of user manual for \.{CTWILL}---which is exactly like
 @y
@@ -50,6 +54,8 @@ give it the necessary hints in other places via your change file.
 @-f@>
 @-x@>
 @z
+
+Section 4.
 
 @x
 The current meaning of every identifier is initially `\.{\\uninitialized}'.
@@ -67,10 +73,14 @@ must have fewer than 50 characters.
 @ If the \TeX\ part starts
 @z
 
+Section 5.
+
 @x
 @d max_tex_chars 50 /* limit on the \TeX\ part of a meaning */
 @y
 @z
+
+Section 7.
 
 @x
 you have to change them also in the file |"common.w"|.
@@ -78,11 +88,15 @@ you have to change them also in the file |"common.w"|.
 you have to change them also in file |"common.w"|.
 @z
 
+Section 8.
+
 @x
 @ The next few sections contain stuff from the file |"common.w"| that must
 @y
 @r @ The next few sections contain stuff from the file |"common.w"| that must
 @z
+
+Section 9.
 
 @x
 internationalization.
@@ -93,6 +107,8 @@ internationalization.
 @-STRING@>
 @z
 
+Section 11.
+
 @x
 @ Code related to input routines:
 @y
@@ -100,12 +116,16 @@ internationalization.
 @-c@>
 @z
 
+Section 12.
+
 @x
 @ Code related to identifier and section name storage:
 @y
 @ Code related to identifier and section name storage:
 @-c@>
 @z
+
+Section 13.
 
 @x
 @ Code related to error handling:
@@ -114,11 +134,15 @@ internationalization.
 @-s@>
 @z
 
+Section 15.
+
 @x
 @ Code related to section numbers:
 @y
 @r @ Code related to section numbers:
 @z
+
+Section 17.
 
 @x
 @ Code relating to output:
@@ -129,12 +153,16 @@ internationalization.
 @-c@>
 @z
 
+Section 19.
+
 @x
 @* Data structures exclusive to {\tt CWEAVE}.
 @y
 @* Data structures exclusive to {\tt CWEAVE}.
 @-a@>
 @z
+
+Section 21.
 
 @x
 @ The other large memory area in \.{CWEAVE} keeps the cross-reference data.
@@ -144,17 +172,23 @@ internationalization.
 @-x@>
 @z
 
+Section 23.
+
 @x
 @ \.{CTWILL} also has special data structures to keep track of current
 @y
 @r @ \.{CTWILL} also has special data structures to keep track of current
 @z
 
+Section 28.
+
 @x
 @ The |new_meaning| routine changes the current ``permanent meaning''
 @y
 @r @ The |new_meaning| routine changes the current ``permanent meaning''
 @z
+
+Section 31.
 
 @x
 @ A new cross-reference for an identifier is formed by calling |new_xref|,
@@ -164,6 +198,8 @@ internationalization.
 @-c@>
 @z
 
+Section 39.
+
 @x
 id_lookup("do",NULL,do_like);
 @y
@@ -171,18 +207,24 @@ id_lookup("do",NULL,do_like);
 id_lookup("do",NULL,do_like);
 @z
 
+Section 40.
+
 @x
 id_lookup("undef",NULL,if_like);
 @y
 @ @<Store all...@>=
 id_lookup("undef",NULL,if_like);
 @z
+
+Section 44.
 
 @x
 @ Control codes are converted to \.{CWEAVE}'s internal
 @y
 @r @ Control codes are converted to \.{CWEAVE}'s internal
 @z
+
+Section 50.
 
 @x
 \yskip\hang |xref_roman|, |xref_wildcard|, |xref_typewriter|, |TeX_string|,
@@ -207,6 +249,8 @@ The value of |cur_section_char| will be |'('| if the section name was
 preceded by \.{@@(} instead of \.{@@<}.\par}
 @z
 
+Section 52.
+
 @x
 @ As one might expect, |get_next| consists mostly of a big switch
 @y
@@ -214,12 +258,16 @@ preceded by \.{@@(} instead of \.{@@<}.\par}
 @-c@>
 @z
 
+Section 59.
+
 @x
 @ The following code assigns values to the combinations \.{++},
 @y
 @ The following code assigns values to the combinations \.{++},
 @-c@>
 @z
+
+Section 62.
 
 @x
 @<Get a string@>= {
@@ -227,18 +275,24 @@ preceded by \.{@@(} instead of \.{@@<}.\par}
 @<Get a string@>= {@+
 @z
 
+Section 66.
+
 @x
 @ @<Put section name...@>=
 @y
 @r @ @<Put section name...@>=
 @z
 
+Section 80.
+
 @x
 with |next_control!='|'| and ends with |next_control>=format_code|. Thus, it
 @y
-with |next_control| |{}!='|'| and ends with |next_control>=format_code|.
+with |next_control| |!='|'| and ends with |next_control>=format_code|.
 Thus, it
 @z
+
+Section 88.
 
 @x
 @ Finally, when the \TEX/ and definition parts have been treated, we have
@@ -248,12 +302,16 @@ Thus, it
 \hfil\break|next_control>=begin_C|.
 @z
 
+Section 94.
+
 @x
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
 @y
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
 @-c@>
 @z
+
+Section 95.
 
 @x
 @ When we are copying \TEX/ source material, we retain line breaks
@@ -261,6 +319,8 @@ Thus, it
 @r @ When we are copying \TEX/ source material, we retain line breaks
 @z
 
+Section 97.
+
 @x
 @ When we wish to append one character |c| to the output buffer, we write
 @y
@@ -268,11 +328,15 @@ Thus, it
 @-c@>
 @z
 
+Section 101.
+
 @x
 @ We get to this section only in the unusual case that the entire output line
 @y
 @r @ We get to this section only in the unusual case that the entire output line
 @z
+
+Section 105.
 
 @x
 static eight_bits
@@ -284,6 +348,8 @@ copy_TeX(void)
 {@+
 @z
 
+Section 106.
+
 @x
 @ The |copy_comment| function issues a warning if more braces are opened than
 @y
@@ -291,17 +357,23 @@ copy_TeX(void)
 @-t@>
 @z
 
+Section 109.
+
 @x
 @ @<Copy special things when |c=='@@'...@>=
 @y
 @r @ @<Copy special things when |c=='@@'...@>=
 @z
 
+Section 112.
+
 @x
 @ Here is a list of the category codes that scraps can have.
 @y
 @r @ Here is a list of the category codes that scraps can have.
 @z
+
+Section 115.
 
 @x
 @ The token lists for translated \TEX/ output contain some special control
@@ -310,18 +382,16 @@ copy_TeX(void)
 @-n@>
 @z
 
+Section 116.
+
 @x
 \yskip\noindent All of these tokens are removed from the \TEX/ output that
 @y
 @ All of these tokens are removed from the \TEX/ output that
-@z
-
-@x
-|n| is the section number.
-@y
-|n| is the section number.
 @-n@>
 @z
+
+Section 117.
 
 @x
 @ The raw input is converted into scraps according to the following table,
@@ -339,6 +409,8 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
+Section 118.
+
 @x
 \.>&|prerangle|: \.{\\rangle}&yes\cr
 @y
@@ -349,6 +421,8 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 %\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
+
+Section 119.
 
 @x
 \.{continue}&|case_like|: \stars&maybe\cr
@@ -361,6 +435,8 @@ The raw input is converted into scraps according to the following table,
 %\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
+Section 120.
+
 @x
 \.{long}&|raw_int|: \stars&maybe\cr
 @y
@@ -371,6 +447,8 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 %\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
+
+Section 121.
 
 @x
 \.{try}&|else_like|: \stars&maybe\cr
@@ -383,6 +461,8 @@ The raw input is converted into scraps according to the following table,
 %\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
+Section 122--129.
+
 @x
 @i prod-twill.w
 @y
@@ -393,6 +473,8 @@ The raw input is converted into scraps according to the following table,
 @-in@>
 @-z@>
 @z
+
+Section 130.
 
 @x
 @* Implementing the productions.
@@ -407,11 +489,15 @@ the category codes |pp->cat,@,@,(pp+1)->cat|$,\,\,\ldots\,$
 the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @z
 
+Section 132.
+
 @x
 @ @<Set init...@>=
 @y
 @r @ @<Set init...@>=
 @z
+
+Section 133.
 
 @x
 @ Token lists in |@!tok_mem| are composed of the following kinds of
@@ -419,6 +505,8 @@ the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @ Token lists in |@!tok_mem| are composed of the following kinds of
 @-p@>
 @z
+
+Section 134.
 
 @x
 #ifdef DEAD_CODE /* not used in |main| */
@@ -430,11 +518,15 @@ the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 #ifdef DEAD_CODE /* not used in |main| */
 @z
 
+Section 135.
+
 @x
 @ @<Print token |r|...@>=
 @y
 @r @ @<Print token |r|...@>=
 @z
+
+Section 136.
 
 @x
 @ The production rules listed above are embedded directly into \.{CWEAVE},
@@ -449,6 +541,8 @@ the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @-pp@>
 @z
 
+Section 137.
+
 @x
 The code below is an exact translation of the production rules into
 @y
@@ -456,11 +550,15 @@ The code below is an exact translation of the production rules into
 @-a@>
 @z
 
+Section 139.
+
 @x
 @ Let us consider the big switch for productions now, before looking
 @y
 @r @ Let us consider the big switch for productions now, before looking
 @z
+
+Section 140.
 
 @x
   switch (pp->cat) {
@@ -571,6 +669,8 @@ The code below is an exact translation of the production rules into
     case question: @<Cases for |question|@>; @+break;
 @z
 
+Section 141.
+
 @x
 of identifiers in case labels.
 
@@ -579,6 +679,8 @@ If the first identifier is the keyword `\&{operator}', we give up;
 of identifiers in case labels.
 If the first identifier is the keyword `\&{operator}', we give up;
 @z
+
+Section 142.
 
 @x
 @ The scraps currently being parsed must be inspected for any
@@ -592,11 +694,15 @@ If the first identifier is the keyword `\&{operator}', we give up;
 \hfil\break|make_reserved|, hence |tok_loc| has been set.
 @z
 
+Section 147.
+
 @x
 { token_pointer j;
 @y
 {@+ token_pointer j;
 @z
+
+Section 148.
 
 @x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
@@ -613,11 +719,15 @@ If the first identifier is the keyword `\&{operator}', we give up;
 {@+
 @z
 
+Section 152.
+
 @x
 @ @<Cases for |lpar|@>=
 @y
 @r @ @<Cases for |lpar|@>=
 @z
+
+Section 166.
 
 @x
 @ Outdent after parameter declarations with option \.{-i}.
@@ -625,11 +735,15 @@ If the first identifier is the keyword `\&{operator}', we give up;
 @r @ Outdent after parameter declarations with option \.{-i}.
 @z
 
+Section 199.
+
 @x
 @ Here's the |squash| procedure, which
 @y
 @r @ Here's the |squash| procedure, which
 @z
+
+Section 200.
 
 @x
 @ The following macro is used to append a scrap whose tokens have just
@@ -639,17 +753,23 @@ If the first identifier is the keyword `\&{operator}', we give up;
 @-c@>
 @z
 
+Section 221.
+
 @x
 @ @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
 @y
 @r @ @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
 @z
 
+Section 224.
+
 @x
 called when |stack_ptr==1|.
 @y
 called when |stack_ptr| |==1|.
 @z
+
+Section 227.
 
 @x
   text_pointer save_text_ptr;
@@ -660,17 +780,23 @@ called when |stack_ptr| |==1|.
   sixteen_bits save_next_control; /* values to be restored */
 @z
 
+Section 230.
+
 @x
 @ An identifier of length one does not have to be enclosed in braces, and it
 @y
 @r @ An identifier of length one does not have to be enclosed in braces, and it
 @z
 
+Section 231.
+
 @x
 else @<Look ahead for strongest line break, |goto reswitch|@>
 @y
 else {@<Look ahead for strongest line break, |goto reswitch|@>}
 @z
+
+Section 232.
 
 @x
 @<Look ahead for st...@>= {
@@ -683,11 +809,15 @@ else {@<Look ahead for strongest line break, |goto reswitch|@>}
 @y
 @z
 
+Section 233.
+
 @x
 @ @<Output saved...@>=
 @y
 @r @ @<Output saved...@>=
 @z
+
+Section 243.
 
 @x
 @ The output file will contain the control sequence \.{\\Y} between non-null
@@ -695,11 +825,15 @@ else {@<Look ahead for strongest line break, |goto reswitch|@>}
 @r @ The output file will contain the control sequence \.{\\Y} between non-null
 @z
 
+Section 246.
+
 @x
 @<Translate the \T...@>= do {
 @y
 @<Translate the \T...@>= do {@+
 @z
+
+Section 254.
 
 @x
 |next_control>=begin_C|. We will make the global variable |this_section|
@@ -707,11 +841,15 @@ else {@<Look ahead for strongest line break, |goto reswitch|@>}
 \hfil\break|next_control>=begin_C|. We will make the global variable |this_section|
 @z
 
+Section 255.
+
 @x
 @ @<Translate the \CEE/...@>=
 @y
 @r @ @<Translate the \CEE/...@>=
 @z
+
+Section 259.
 
 @x
 @ The |footnote| procedure gives cross-reference information about
@@ -719,17 +857,23 @@ else {@<Look ahead for strongest line break, |goto reswitch|@>}
 @r @ The |footnote| procedure gives cross-reference information about
 @z
 
+Section 263.
+
 @x
 @ @<Flag the usage of this identifier, for the mini-index@>=
 @y
 @<Flag the usage of this identifier, for the mini-index@>=
 @z
 
+Section 264.
+
 @x
 @ @<Output information about usage of id's defined in other sections@>=
 @y
 @r @ @<Output information about usage of id's defined in other sections@>=
 @z
+
+Section 270.
 
 @x
 the index section itself---NOT!
@@ -739,6 +883,8 @@ sixteen_bits k_section; /* runs through the sections */
 @y
 the index section itself---NOT!
 @z
+
+Section 271.
 
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
@@ -754,6 +900,8 @@ name_pointer blink[max_names]; /* links in the buckets */
 sixteen_bits k_section; /* runs through the sections */
 @z
 
+Section 273.
+
 @x
 @ During the sorting phase we shall use the |cat| and |trans| arrays from
 @y
@@ -762,11 +910,15 @@ sixteen_bits k_section; /* runs through the sections */
 @-k@>
 @z
 
+Section 276.
+
 @x
 $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
 @y
 |collate[0]| $<$|collate[1]|$<\cdots<$|collate[100]|.
 @z
+
+Section 283.
 
 @x
     else {char *j;
@@ -774,11 +926,15 @@ $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
     else {@+char *j;
 @z
 
+Section 290.
+
 @x
 @ Because on some systems the difference between two pointers is a |long|
 @y
 @r @ Because on some systems the difference between two pointers is a |long|
 @z
+
+Section 291.
 
 @x
 \bigskip
@@ -789,6 +945,8 @@ care for keeping the original section numbering intact.}
 @y
 @z
 
+Section 293.
+
 @x
 @* Function declarations.  Here are declarations---conforming to
 @y
@@ -796,11 +954,15 @@ care for keeping the original section numbering intact.}
 @-DEAD_CODE@>
 @z
 
+Section 294.
+
 @x
 extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
 @y
 extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
 @z
+
+Section 300.
 
 @x
 @** Index.
