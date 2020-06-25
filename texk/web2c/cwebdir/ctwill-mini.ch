@@ -222,6 +222,12 @@ preceded by \.{@@(} instead of \.{@@<}.\par}
 @z
 
 @x
+@<Get a string@>= {
+@y
+@<Get a string@>= {@+
+@z
+
+@x
 @ @<Put section name...@>=
 @y
 @r @ @<Put section name...@>=
@@ -266,6 +272,16 @@ Thus, it
 @ We get to this section only in the unusual case that the entire output line
 @y
 @r @ We get to this section only in the unusual case that the entire output line
+@z
+
+@x
+static eight_bits
+copy_TeX(void)
+{
+@y
+static eight_bits
+copy_TeX(void)
+{@+
 @z
 
 @x
@@ -577,10 +593,24 @@ If the first identifier is the keyword `\&{operator}', we give up;
 @z
 
 @x
+{ token_pointer j;
+@y
+{@+ token_pointer j;
+@z
+
+@x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
 @y
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
 @-b@>
+@z
+
+@x
+  int l) /* 0, 1, or 2 */
+{
+@y
+  int l) /* 0, 1, or 2 */
+{@+
 @z
 
 @x
