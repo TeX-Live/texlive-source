@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -1256,10 +1256,11 @@ pdf_dev_currentcolor (pdf_color *color, int is_fill)
 #endif /* 0 */
 
 /*
+ * FIXME: Please use a macro instead of using 0x20!
  * mask == 0 means stroking color, mask == 0x20 nonstroking color
  *
  * force == 1 means that operators will be generated even if
- *   the color is the same as the current graphics state color
+ * the color is the same as the current graphics state color
  */
 void
 pdf_dev_set_color (const pdf_color *color, char mask, int force)
@@ -1269,34 +1270,16 @@ pdf_dev_set_color (const pdf_color *color, char mask, int force)
   pdf_gstate *gs  = m_stack_top(&gs_stack);
   pdf_color *current = mask ? &gs->fillcolor : &gs->strokecolor;
 
-  ASSERT(pdf_color_is_valid(color));
-
   if (!(pdf_dev_get_param(PDF_DEV_PARAM_COLORMODE) &&
-	(force || pdf_color_compare(color, current))))
+      (force || pdf_color_compare(color, current))))
     /* If "color" is already the current color, then do nothing
      * unless a color operator is forced
      */
     return;
 
   graphics_mode();
-  len = pdf_color_to_string(color, fmt_buf, mask);
-  fmt_buf[len++] = ' ';
-  switch (pdf_color_type(color)) {
-  case  PDF_COLORSPACE_TYPE_RGB:
-    fmt_buf[len++] = 'R' | mask;
-    fmt_buf[len++] = 'G' | mask;
-    break;
-  case  PDF_COLORSPACE_TYPE_CMYK:
-    fmt_buf[len++] = 'K' | mask;
-    break;
-  case  PDF_COLORSPACE_TYPE_GRAY:
-    fmt_buf[len++] = 'G' | mask;
-    break;
-  default: /* already verified the given color */
-    break;
-  }
+  len = pdf_color_set_color(color, fmt_buf, FORMAT_BUFF_LEN, mask);
   pdf_doc_add_page_content(fmt_buf, len);  /* op: RG K G rg k g etc. */
-
   pdf_color_copycolor(current, color);
 }
 

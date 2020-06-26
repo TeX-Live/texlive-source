@@ -1,3 +1,12 @@
+2020-06-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfcolor.[ch], pdfdoc.c, pdfdraw.c, spc_util.c: An extension
+	to the color support. All color-spaces can be supported (only
+	for pdf: color commands). ColorSpace can be specified by a
+	name key (e.g. DeviceRGB) or an object reference which is a
+	reference to an object defining ColorSpace itself.
+	* configure.ac: Version 20200627.
+
 2020-06-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dpxfile.c, pdfximage.c: Remove unnecessary changes on
