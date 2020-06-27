@@ -57,6 +57,7 @@
 
 #include "dvipdfmx.h"
 
+#define SPC_PDFM_SUPPORT_ANNOT_TRANS 1
 
 /* PLEASE REMOVE THIS */
 struct resource_map {
@@ -641,7 +642,39 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
   return  dict;
 }
 
-#define SPC_PDFM_SUPPORT_ANNOT_TRANS 1
+static void
+set_rect (pdf_rect *rect, pdf_coord cp1, pdf_coord cp2, pdf_coord cp3, pdf_coord cp4)
+{
+  rect->llx = cp1.x;
+  if (cp2.x < rect->llx)
+    rect->llx = cp2.x;
+  if (cp3.x < rect->llx)
+    rect->llx = cp3.x;
+  if (cp4.x < rect->llx)
+    rect->llx = cp4.x;
+  rect->urx = cp1.x;
+  if (cp2.x > rect->urx)
+    rect->urx = cp2.x;
+  if (cp3.x > rect->urx)
+    rect->urx = cp3.x;
+  if (cp4.x > rect->urx)
+    rect->urx = cp4.x;
+  rect->lly = cp1.y;
+  if (cp2.y < rect->lly)
+    rect->lly = cp2.y;
+  if (cp3.y < rect->lly)
+    rect->lly = cp3.y;
+  if (cp4.y < rect->lly)
+    rect->lly = cp4.y;
+  rect->ury = cp1.y;
+  if (cp2.y > rect->ury)
+    rect->ury = cp2.y;
+  if (cp3.y > rect->ury)
+    rect->ury = cp3.y;
+  if (cp4.y > rect->ury)
+    rect->ury = cp4.y;
+}
+
 static int
 spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
 {
@@ -715,35 +748,8 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
     pdf_dev_transform(&cp1, NULL);
     pdf_dev_transform(&cp2, NULL);
     pdf_dev_transform(&cp3, NULL);
-    pdf_dev_transform(&cp4, NULL);
-    rect.llx = cp1.x;
-    if (cp2.x < rect.llx)
-      rect.llx = cp2.x;
-    if (cp3.x < rect.llx)
-      rect.llx = cp3.x;
-    if (cp4.x < rect.llx)
-      rect.llx = cp4.x;
-    rect.urx = cp1.x;
-    if (cp2.x > rect.urx)
-      rect.urx = cp2.x;
-    if (cp3.x > rect.urx)
-      rect.urx = cp3.x;
-    if (cp4.x > rect.urx)
-      rect.urx = cp4.x;
-    rect.lly = cp1.y;
-    if (cp2.y < rect.lly)
-      rect.lly = cp2.y;
-    if (cp3.y < rect.lly)
-      rect.lly = cp3.y;
-    if (cp4.y < rect.lly)
-      rect.lly = cp4.y;
-    rect.ury = cp1.y;
-    if (cp2.y > rect.ury)
-      rect.ury = cp2.y;
-    if (cp3.y > rect.ury)
-      rect.ury = cp3.y;
-    if (cp4.y > rect.ury)
-      rect.ury = cp4.y;
+    pdf_dev_transform(&cp4, NULL);    
+    set_rect(&rect, cp1, cp2, cp3, cp4);
 #ifdef USE_QUADPOINTS
     qpoints = pdf_new_array();
     pdf_add_array(qpoints, pdf_new_number(ROUND(cp1.x, 0.01)));
@@ -841,6 +847,96 @@ spc_handler_pdfm_eann (struct spc_env *spe, struct spc_arg *args)
   return  error;
 }
 
+/* For supporting \phantom within bann-eann.
+ *
+ *   \special{pdf:xann width 50pt height 8pt depth 1pt}
+ * 
+ * tells dvipdfmx to extend the current annotation rectangle
+ * by the amount specified (witdh 50pt, height 8pt, depth 1pt)
+ * This was introduced since in the following situation
+ * 
+ *   \special{pdf:bann ...}\phantom{Some texts}\special{pdf:eann}
+ * 
+ * annotation is not created since there is no annotation
+ * rectangle calculated due to no object being put.
+ */
+static int
+spc_handler_pdfm_xann (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_rect       rect;
+  transform_info ti;
+
+  if (!spc_is_tracking_boxes(spe)) {
+    /* Silently ignore */
+    args->curptr = args->endptr;
+    return 0;
+  }
+
+  skip_white(&args->curptr, args->endptr);
+
+  transform_info_clear(&ti);
+  if (spc_util_read_dimtrns(spe, &ti, args, 0) < 0) {
+    return  -1;
+  }
+
+  if ((ti.flags & INFO_HAS_USER_BBOX) &&
+      ((ti.flags & INFO_HAS_WIDTH) || (ti.flags & INFO_HAS_HEIGHT))) {
+    spc_warn(spe, "You can't specify both bbox and width/height.");
+    return  -1;
+  }
+
+#ifdef SPC_PDFM_SUPPORT_ANNOT_TRANS
+  {
+    pdf_coord cp1, cp2, cp3, cp4;
+
+    if (ti.flags & INFO_HAS_USER_BBOX) {
+      cp1.x = spe->x_user + ti.bbox.llx;
+      cp1.y = spe->y_user + ti.bbox.lly;
+      cp2.x = spe->x_user + ti.bbox.urx;
+      cp2.y = spe->y_user + ti.bbox.lly;
+      cp3.x = spe->x_user + ti.bbox.urx;
+      cp3.y = spe->y_user + ti.bbox.ury;
+      cp4.x = spe->x_user + ti.bbox.llx;
+      cp4.y = spe->y_user + ti.bbox.ury;
+    } else {
+      cp1.x = spe->x_user;
+      cp1.y = spe->y_user - spe->mag * ti.depth;
+      cp2.x = spe->x_user + spe->mag * ti.width;
+      cp2.y = spe->y_user - spe->mag * ti.depth;
+      cp3.x = spe->x_user + spe->mag * ti.width;
+      cp3.y = spe->y_user + spe->mag * ti.height;
+      cp4.x = spe->x_user;
+      cp4.y = spe->y_user + spe->mag * ti.height;
+    }
+    pdf_dev_transform(&cp1, NULL);
+    pdf_dev_transform(&cp2, NULL);
+    pdf_dev_transform(&cp3, NULL);
+    pdf_dev_transform(&cp4, NULL);    
+    set_rect(&rect, cp1, cp2, cp3, cp4);
+  }
+#else
+  {
+    pdf_coord cp;
+
+    cp.x = spe->x_user; cp.y = spe->y_user;
+    pdf_dev_transform(&cp, NULL);
+    if (ti.flags & INFO_HAS_USER_BBOX) {
+      rect.llx = ti.bbox.llx + cp.x;
+      rect.lly = ti.bbox.lly + cp.y;
+      rect.urx = ti.bbox.urx + cp.x;
+      rect.ury = ti.bbox.ury + cp.y;
+    } else {
+      rect.llx = cp.x;
+      rect.lly = cp.y - spe->mag * ti.depth;
+      rect.urx = cp.x + spe->mag * ti.width;
+      rect.ury = cp.y + spe->mag * ti.height;
+    }
+  }
+#endif
+  pdf_doc_expand_box(&rect);
+
+  return 0;
+}
 
 /* Color:.... */
 static int
@@ -2219,6 +2315,10 @@ static struct spc_handler pdfm_handlers[] = {
 
   {"pageresources", spc_handler_pdfm_pageresources},
   {"trailerid", spc_handler_pdfm_do_nothing},
+
+  {"xannot",      spc_handler_pdfm_xann},
+  {"extendann",   spc_handler_pdfm_xann},
+  {"xann",        spc_handler_pdfm_xann}, 
 };
 
 static struct spc_handler pdft_compat_handlers[] = {

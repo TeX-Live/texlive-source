@@ -204,6 +204,17 @@ static struct font_def
 
 static int num_def_fonts = 0, max_def_fonts = 0;
 static int compute_boxes = 0, link_annot    = 1;
+/* If "catch_phantom" is non-zero, dvipdfmx try to catch phantom texts.
+ * Dvipdfmx treats DVI horizontal movement instructions (x, w, right) differently
+ * when "catch_phantom" is non-zero. Amount of horizontal move will be added to
+ * the current annotation rectangle with "height" and "depth" estimated as,
+ * 
+ *   catch_phantom=1: with current font size
+ *   catch_phantom=2: with specified height and depth
+ */
+static int    catch_phantom  = 0;
+static double phantom_height = 0.0;
+static double phantom_depth  = 0.0;
 
 #define DVI_PAGE_BUF_CHUNK              0x10000U        /* 64K should be plenty for most pages */
 
@@ -782,6 +793,20 @@ dvi_is_tracking_boxes(void)
 }
 
 void
+dvi_set_linkmode (int mode)
+{
+  catch_phantom  = mode != 0 ? 1 : 0;
+}
+
+void
+dvi_set_phantom_height (double height, double depth)
+{
+  phantom_height = height;
+  phantom_depth  = depth;
+  catch_phantom  = 2;
+}
+
+void
 dvi_do_special (const void *buffer, int32_t size)
 {
   double x_user, y_user, mag;
@@ -1104,9 +1129,10 @@ static void do_moveto (int32_t x, int32_t y)
   dvi_state.v = y;
 }
 
-/* FIXME: dvi_forward() might be a better name */
 void dvi_right (int32_t x)
 {
+  spt_t save_h, save_v;
+
   if (lr_mode >= SKIMMING) {
     lr_width += x;
     return;
@@ -1115,6 +1141,9 @@ void dvi_right (int32_t x)
   if (lr_mode == RTYPESETTING)
     x = -x;
 
+  save_h = dvi_state.h;
+  save_v = dvi_state.v;
+
   switch (dvi_state.d) {
   case 0:
     dvi_state.h += x; break;
@@ -1122,6 +1151,31 @@ void dvi_right (int32_t x)
     dvi_state.v += x; break;
   case 3:
     dvi_state.v -= x; break;
+  }
+
+  if (dvi_is_tracking_boxes() && catch_phantom > 0) {
+    pdf_rect rect;
+    spt_t    width, height, depth;
+    if (catch_phantom == 1) {
+      height = loaded_fonts[current_font].size;
+      depth  = 0.0;
+    } else {
+      height = phantom_height / dvi2pts;
+      depth  = phantom_depth  / dvi2pts;
+    }
+    switch (dvi_state.d) {
+    case 0:
+      width = dvi_state.h - save_h;
+      break;
+    case 1:
+    case 2:
+      width = dvi_state.v - save_v;
+      break;
+    default:
+      width = dvi_state.h - save_h;
+    }
+    pdf_dev_set_rect  (&rect, save_h, -save_v, width, height, depth);
+    pdf_doc_expand_box(&rect);
   }
 }
 

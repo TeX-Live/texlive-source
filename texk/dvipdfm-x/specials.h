@@ -59,6 +59,13 @@ extern int      spc_end_annot     (struct spc_env *spe);
 extern int      spc_resume_annot  (struct spc_env *spe);
 extern int      spc_suspend_annot (struct spc_env *spe);
 
+extern int      spc_is_tracking_boxes (struct spc_env *spe);
+
+/* linkmode 0: normal, 1: capture phantom texts */
+extern void     spc_set_linkmode (struct spc_env *spe, int mode);
+/* set default height of phantom texts */
+extern void     spc_set_phantom  (struct spc_env *spe, double height, double depth);
+
 extern void     spc_push_object   (const char *key, pdf_obj *value);
 extern void     spc_flush_object  (const char *key);
 extern void     spc_clear_objects (void);

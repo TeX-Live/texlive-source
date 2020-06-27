@@ -44,8 +44,41 @@ spc_handler_null (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
+static int
+spc_handler_dvipdfmx_catch_phantom (struct spc_env *spe, struct spc_arg *args)
+{
+  int mode, error;
+
+  skip_white(&args->curptr, args->endptr);
+  {
+    pdf_obj *b = parse_pdf_boolean(&args->curptr, args->endptr);
+    if (!b) {
+      WARN("A boolean value expected but not found...");
+      return -1;
+    }
+    mode = pdf_boolean_value(b);
+    pdf_release_obj(b);
+  }
+  spc_set_linkmode(spe, mode);
+
+  skip_white(&args->curptr, args->endptr);
+  if (mode == 1 && args->curptr < args->endptr) {
+    transform_info ti;
+    error = spc_util_read_dimtrns(spe, &ti, args, 0);
+    if (error)
+      return -1;
+    if (ti.flags & INFO_HAS_HEIGHT) {
+      spc_set_phantom(spe, ti.height, ti.depth);
+    }
+    skip_white(&args->curptr, args->endptr);
+  }
+
+  return 0;
+}
+
 static struct spc_handler dvipdfmx_handlers[] = {
-  {"config", spc_handler_null}, /* handled at bop */
+  {"config",        spc_handler_null}, /* handled at bop */
+  {"catch_phantom", spc_handler_dvipdfmx_catch_phantom},
 };
 
 int
