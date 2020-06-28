@@ -64,6 +64,8 @@ spc_handler_dvipdfmx_catch_phantom (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
   if (mode == 1 && args->curptr < args->endptr) {
     transform_info ti;
+
+    transform_info_clear(&ti);
     error = spc_util_read_dimtrns(spe, &ti, args, 0);
     if (error)
       return -1;

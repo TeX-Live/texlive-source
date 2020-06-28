@@ -536,19 +536,15 @@ pdf_doc_add_page_resource (const char *category,
   pdf_obj *resources;
   pdf_obj *duplicate;
 
-#if 0
-  if (!PDF_OBJ_INDIRECTTYPE(resource_ref)) {
-    WARN("Passed non indirect reference...");
-    resource_ref = pdf_ref_obj(resource_ref); /* leak */
-  }
-#endif
   resources = pdf_doc_get_page_resources(p, category);
   duplicate = pdf_lookup_dict(resources, resource_name);
-  if (duplicate && pdf_compare_reference(duplicate, resource_ref)) {
-    WARN("Conflicting page resource found (page: %d, category: %s, name: %s).",
-         pdf_doc_current_page_number(), category, resource_name);
-    WARN("Ignoring...");
-    pdf_release_obj(resource_ref);
+  if (duplicate) {
+    if (pdf_compare_reference(duplicate, resource_ref)) {
+      WARN("Possibly two different resource using the same name... (page: %d, category: %s, name: %s).",
+           pdf_doc_current_page_number(), category, resource_name);
+      WARN("Ignoring...");
+    }
+    pdf_release_obj(resource_ref); /* Discard */
   } else {
     pdf_add_dict(resources, pdf_new_name(resource_name), resource_ref);
   }
@@ -2406,9 +2402,9 @@ static pdf_color bgcolor = { -1, PDF_COLORSPACE_TYPE_GRAY, 1, NULL, { 1.0 }, -1}
 void
 pdf_doc_set_bgcolor (const pdf_color *color)
 {
-  if (color)
+  if (color) {
     pdf_color_copycolor(&bgcolor, color);
-  else { /* as clear... */
+  } else { /* as clear... */
     pdf_color_white(&bgcolor);
   }
 }

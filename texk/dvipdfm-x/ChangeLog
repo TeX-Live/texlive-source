@@ -9,6 +9,8 @@
 	area when it encounters "horizontal movement" such as DVI
 	"right". Optionally height and depth of such area can be
 	specified (default: current font size for height and depth 0).
+	* pdfcolor.c: Change prefix for ColorSpace resource name to "XC".
+	* pdfdoc.c: Add missing release object.
 
 2020-06-27  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 

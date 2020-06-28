@@ -351,7 +351,7 @@ pdf_color_set_color (const pdf_color *color, char *buffer, size_t buffer_len, ch
     {
       char res_name[16];
 
-      snprintf(res_name, 8, "CS_%d", color->res_id & 0xffff); /* TODO: Upper 16bits for category ID. See, pdfresource.c */
+      snprintf(res_name, 8, "XC%d", color->res_id & 0xffff); /* TODO: Upper 16bits for category ID. See, pdfresource.c */
       res_name[8] = 0;
       len += sprintf(buffer+len, " /%s %c%c", res_name, 'C' | mask, 'S' | mask);
       for (i = 0; i < color->num_components; i++) {
