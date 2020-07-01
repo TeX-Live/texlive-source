@@ -2797,6 +2797,8 @@ void
 pdf_doc_end_annot (void)
 {
   pdf_doc_break_annot();
+  if (breaking_state.annot_dict)
+    pdf_release_obj(breaking_state.annot_dict);
   breaking_state.annot_dict = NULL;
 }
 
@@ -2807,12 +2809,14 @@ pdf_doc_break_annot (void)
   double   g = p->opt.annot_grow;
 
   if (breaking_state.dirty) {
-    pdf_obj  *annot_dict;
+    pdf_obj  *annot_dict, *annot_copy;
     pdf_rect  rect;
 
     /* Copy dict */
-    annot_dict = pdf_new_dict();
-    pdf_merge_dict(annot_dict, breaking_state.annot_dict);
+    annot_dict = breaking_state.annot_dict;
+    annot_copy = pdf_new_dict();
+    pdf_merge_dict(annot_copy, breaking_state.annot_dict);
+    breaking_state.annot_dict = annot_copy;
     rect = breaking_state.rect;
     rect.llx -= g;
     rect.lly -= g;

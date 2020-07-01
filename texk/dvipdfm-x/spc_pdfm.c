@@ -798,11 +798,15 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   return 0;
 }
 
-/* NOTE: This can't have ident. See "Dvipdfm User's Manual". */
+/* NOTE: This can't have ident. See "Dvipdfm User's Manual".
+ * 1 Jul. 2020: ident allowed (upon request)
+ * Only first annotation can be accessed in line break cases.
+ */
 static int
 spc_handler_pdfm_bann (struct spc_env *spe, struct spc_arg *args)
 {
   struct spc_pdf_ *sd = &_pdf_stat;
+  char  *ident = NULL;
   int    error = 0;
 
   if (sd->annot_dict) {
@@ -811,19 +815,31 @@ spc_handler_pdfm_bann (struct spc_env *spe, struct spc_arg *args)
   }
 
   skip_white(&args->curptr, args->endptr);
+  if (args->curptr[0] == '@') {
+    ident = parse_opt_ident(&args->curptr, args->endptr);
+    skip_white(&args->curptr, args->endptr);
+  }
 
   sd->annot_dict = parse_pdf_dict_with_tounicode(&args->curptr, args->endptr, &sd->cd);
   if (!sd->annot_dict) {
     spc_warn(spe, "Ignoring annotation with invalid dictionary.");
+    if (ident)
+      RELEASE(ident);
     return  -1;
   } else if (!PDF_OBJ_DICTTYPE(sd->annot_dict)) {
     spc_warn(spe, "Invalid type: not a dictionary object.");
     pdf_release_obj(sd->annot_dict);
     sd->annot_dict = NULL;
+    if (ident)
+      RELEASE(ident);
     return  -1;
   }
 
-  error = spc_begin_annot(spe, sd->annot_dict);
+  error = spc_begin_annot(spe, pdf_link_obj(sd->annot_dict));
+  if (ident) {
+    spc_push_object(ident, pdf_link_obj(sd->annot_dict));
+    RELEASE(ident);
+  }
 
   return  error;
 }
@@ -1006,6 +1022,7 @@ static int
 spc_handler_pdfm_btrans (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_tmatrix     M;
+  double          x_user, y_user, xpos, ypos;
   transform_info  ti;
 
   transform_info_clear(&ti);
@@ -1013,10 +1030,16 @@ spc_handler_pdfm_btrans (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
+  /* btrans inside bcontent-econtent bug fix.
+   * I don't know if this is the only place needs to be fixed...
+   */
+  pdf_dev_get_coord(&xpos, &ypos);
+  x_user = spe->x_user - xpos;
+  y_user = spe->y_user - ypos;
   /* Create transformation matrix */
   pdf_copymatrix(&M, &(ti.matrix));
-  M.e += ((1.0 - M.a) * spe->x_user - M.c * spe->y_user);
-  M.f += ((1.0 - M.d) * spe->y_user - M.b * spe->x_user);
+  M.e += ((1.0 - M.a) * x_user - M.c * y_user);
+  M.f += ((1.0 - M.d) * y_user - M.b * x_user);
 
   pdf_dev_gsave();
   pdf_dev_concat(&M);
