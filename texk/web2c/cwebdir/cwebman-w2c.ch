@@ -65,6 +65,7 @@
         \everypar{\hskip-\parindent\everypar{}}}
 
 \outer\def\ssection #1.#2.{\penalty-500\bigskip
+        \centerline{\sectionfont\def\.##1{{\twelvett##1}}
   \ifacro\vbox to 0pt{\kern-2.5ex\relax
     \ifpdftex\pdfdest num \destcount fitbh\relax
     \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
@@ -76,7 +77,7 @@
     \gdef\bkminfo{}%
     \global\advance\destcount by 1\relax
     \kern2.5ex\relax
-  }\fi \centerline{\sectionfont\def\.##1{{\twelvett##1}} #1}\nobreak\vskip 6pt
+  }\fi #1}\nobreak\vskip 6pt
         \everypar{\hskip-\parindent\everypar{}}}
 
 \def\appA{15}
@@ -84,18 +85,16 @@
 \def\appC{17}
 
 \def\Appendix#1{\leavevmode
-  \ifnum\csname app#1\endcsname>0 %
-    \ifacro\ifpdftex
-      \pdfstartlink attr{/Border[0 0 0]} goto num\csname app#1\endcsname\relax
-      \Blue\hbox{Appendix}~#1\Black
-      \pdfendlink
-    \else
-      \setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{\hbox{Appendix}~#1}%
-      \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
-        depth \thedepth << /Type /Annot /Subtype /Link /Border [0 0 0]
-        /A << /S /GoTo /D (\csname app#1\endcsname) >> >>}\box0\relax
-    \fi\else Appendix~#1\fi
-  \else Appendix~#1\fi}
+  \ifacro\ifpdftex
+    \pdfstartlink attr{/Border[0 0 0]} goto num\csname app#1\endcsname\relax
+    \Blue\hbox{Appendix}~#1\Black
+    \pdfendlink
+  \else
+    \setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{\hbox{Appendix}~#1}%
+    \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
+      depth \thedepth << /Type /Annot /Subtype /Link /Border [0 0 0]
+      /A << /S /GoTo /D (\csname app#1\endcsname) >> >>}\box0\relax
+  \fi\else Appendix~#1\fi}
 
 \newcount\subdestcount \subdestcount=151\relax
 
