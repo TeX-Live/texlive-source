@@ -1,3 +1,7 @@
+2020-07-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* xetex.web: Fix |code| snippets in {comments}.
+
 2020-07-03  David Jones  <dmj@ams.org>
 
 	* XeTeXOTMath.cpp: New implementation of get_ot_math_kern().

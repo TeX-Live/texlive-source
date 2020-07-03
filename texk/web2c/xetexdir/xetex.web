@@ -18415,7 +18415,7 @@ is at least as high as the baseline plus four-fifths of the x-height.
 @<Construct a sub/superscript combination box |x|...@>=
 begin
 save_f:=cur_f;
-      
+
     script_head := subscr(q);
 
     @<Fetch first character of a sub/superscript@>;
@@ -18474,15 +18474,15 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
 
     this_math_style := sub_style(cur_style);
 
-    { Loop through the sub_mlist looking for the first character-like
+    { Loop through the |sub_mlist| looking for the first character-like
       thing.  Ignore kerns or glue so that, for example, changing
       $P_j$ to $P_{\!j}$ will have a predictable effect.  Intercept
-      style_nodes and execute them.  If we encounter a choice_node,
+      |style_nodes| and execute them.  If we encounter a |choice_node|,
       follow the appropriate branch.  Anything else halts the search
       and inhibits OpenType kerning. }
 
     { Don't try to do anything clever if the nucleus of the
-      script_head is empty, e.g., $P_{^j}$ and the such. }
+      |script_head| is empty, e.g., $P_{^j}$ and the such. }
 
     if math_type(script_head) = sub_mlist then
         begin
@@ -18518,7 +18518,7 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
                                 2: script_ptr := script_mlist(script_ptr);
                                 3: script_ptr := script_script_mlist(script_ptr);
                             end
-                        else 
+                        else
                             script_ptr := link(script_ptr);
                 end;
         end;
@@ -18548,7 +18548,7 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
             @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
         end;
 
-    { The remaining case is math_type(script_head) = sub_box.
+    { The remaining case is |math_type(script_head) = sub_box|.
       Although it would be possible to deconstruct the box node to
       find the first glyph, it will most likely be from a text font
       without MATH kerning, so there's probably no point. }
