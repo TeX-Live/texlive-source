@@ -47,34 +47,18 @@
 
 \newcount\destcount \destcount=1\relax
 
-\def\bkminfo{}
+\def\subsections{0}
 \outer\def\section #1.{\penalty-500\bigskip
         \centerline{\sectionfont\def\.##1{{\twelvett##1}}
   \ifacro\vbox to 0pt{\kern-2.5ex\relax
     \ifpdftex\pdfdest num \destcount fitbh\relax
     \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
     \def\.##1{##1}\def\TeX{TeX}%
-    \ifx\bkminfo\empty\def\sectitle{#1}\else\def\sectitle{#1 (\bkminfo)}\fi
-    \ifpdftex\pdfoutline goto num \destcount {\sectitle}\relax
-    \else\special{pdf: outline 0 << /Title (\sectitle)
+    \ifpdftex\pdfoutline goto num \destcount
+      \ifnum\subsections>0 count -\subsections\fi {#1}\relax
+    \else\special{pdf: outline 0 << /Title (#1)
       /A << /S /GoTo /D (\the\destcount) >> >>}\fi
-    \gdef\bkminfo{}%
-    \global\advance\destcount by 1\relax
-    \kern2.5ex\relax
-  }\fi #1}\nobreak\vskip 6pt
-        \everypar{\hskip-\parindent\everypar{}}}
-
-\outer\def\ssection #1.#2.{\penalty-500\bigskip
-        \centerline{\sectionfont\def\.##1{{\twelvett##1}}
-  \ifacro\vbox to 0pt{\kern-2.5ex\relax
-    \ifpdftex\pdfdest num \destcount fitbh\relax
-    \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
-    \def\.##1{##1}\def\TeX{TeX}%
-    \ifx\bkminfo\empty\def\sectitle{#1}\else\def\sectitle{#1 (\bkminfo)}\fi
-    \ifpdftex\pdfoutline goto num \destcount count -#2 {\sectitle}\relax
-    \else\special{pdf: outline 0 << /Title (\sectitle)
-      /A << /S /GoTo /D (\the\destcount) >> >>}\fi
-    \gdef\bkminfo{}%
+    \gdef\subsections{0}%
     \global\advance\destcount by 1\relax
     \kern2.5ex\relax
   }\fi #1}\nobreak\vskip 6pt
@@ -235,11 +219,10 @@ is based on \.{CWEAVE}.}
 @z
 
 @x
-\def\runninghead{APPENDIX A --- {\tentt CWEB} FILE FORMAT}
 \section Appendix A: Excerpts from a \.{CWEB} Program.
 @y
-\def\runninghead{APPENDIX A --- {\tentt CWEB} FILE FORMAT}
-\ssection Appendix A: Excerpts from a \.{CWEB} Program.4.
+\def\subsections{4}
+\section Appendix A: Excerpts from a \.{CWEB} Program.
 \subsection CWEB file format.
 @z
 
