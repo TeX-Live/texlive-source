@@ -18316,8 +18316,16 @@ var p,@!x,@!y,@!z:pointer; {temporary registers for box construction}
 @!script_c:pointer; {temprary native character for sub/superscript}
 @!script_g:quarterword; {temporary register for sub/superscript native glyph id}
 @!script_f:internal_font_number; {temporary register for sub/superscript font}
+    @!sup_g: quarterword;           { superscript native glyph id}
+    @!sup_f: internal_font_number;  { superscript font }
+    @!sub_g: quarterword;           { subscript native glyph id }
+    @!sub_f: internal_font_number;  { subscript font }
 @!t:integer; {subsidiary size code}
 @!save_f:internal_font_number;
+    @!script_head: pointer;             { scratch var for OpenType s*scripts }
+    @!script_ptr: pointer;              { scratch var for OpenType s*scripts }
+    @!saved_math_style: small_number;   { scratch var for OpenType s*scripts }
+    @!this_math_style: small_number;    { scratch var for OpenType s*scripts }
 begin p:=new_hlist(q);
 script_c:=null; script_g:=0; script_f:=0; sup_kern:=0; sub_kern:=0;
 if is_char_node(p) or is_glyph_node(p) then
@@ -18348,6 +18356,13 @@ should not exceed the baseline plus four-fifths of the x-height.
 
 @<Construct a subscript box |x| when there is no superscript@>=
 begin
+    script_head := subscr(q);
+
+    @<Fetch first character of a sub/superscript@>;
+
+    sub_g := script_g;
+    sub_f := script_f;
+
 save_f:=cur_f;
 x:=clean_box(subscr(q),sub_style(cur_style));
 cur_f:=save_f;
@@ -18367,6 +18382,14 @@ one-fourth of the x-height.
 
 @<Construct a superscript box |x|@>=
 begin
+
+    script_head := supscr(q);
+
+    @<Fetch first character of a sub/superscript@>;
+
+    sup_g := script_g;
+    sup_f := script_f;
+
 save_f:=cur_f;
 x:=clean_box(supscr(q),sup_style(cur_style));
 cur_f:=save_f;
@@ -18392,6 +18415,14 @@ is at least as high as the baseline plus four-fifths of the x-height.
 @<Construct a sub/superscript combination box |x|...@>=
 begin
 save_f:=cur_f;
+      
+    script_head := subscr(q);
+
+    @<Fetch first character of a sub/superscript@>;
+
+    sub_g := script_g;
+    sub_f := script_f;
+
 y:=clean_box(subscr(q),sub_style(cur_style));
 cur_f:=save_f;
 width(y):=width(y)+script_space;
@@ -18414,7 +18445,12 @@ if clr>0 then
 if is_new_mathfont(cur_f) then begin
   @<Attach subscript OpenType math kerning@>@/
   @<Attach superscript OpenType math kerning@>
-  end;
+  end
+    else
+        begin
+            sup_kern := 0;
+            sub_kern := 0;
+        end;
 shift_amount(x):=sup_kern+delta-sub_kern; {superscript is |delta| to the right of the subscript}
 p:=new_kern((shift_up-depth(x))-(height(y)-shift_down)); link(x):=p; link(p):=y;
 x:=vpack(x,natural); shift_amount(x):=shift_down;
@@ -18428,44 +18464,129 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
 @d sup_cmd=0 {superscript kern type for |get_ot_math_kern|}
 @d sub_cmd=1 {subscript kern type for |get_ot_math_kern|}
 
-@<Attach subscript OpenType math kerning@>=
-begin if math_type(subscr(q))=math_char then
-  begin save_f:=cur_f;
-  fetch(subscr(q));
-  if is_new_mathfont(cur_f) then
-    begin script_c:=new_native_character(cur_f, qo(cur_c));
-    script_g:=get_native_glyph(script_c, 0);
-    script_f:=cur_f;
-  end else
-    begin script_g:=0; script_f:=0
-    end;
-  cur_f:=save_f;
-  end;
-if is_glyph_node(p) then
-  sub_kern:=get_ot_math_kern(native_font(p), native_glyph(p), script_f, script_g, sub_cmd, shift_down);
+@d is_valid_pointer(#) == ((# >= mem_min) and (# <= mem_end))
 
-if sub_kern<>0 then p:=attach_hkern_to_new_hlist(q, sub_kern);
+@ @<Fetch first character of a sub/superscript@> =
+    script_c := null;
+
+    script_g := qi(0);
+    script_f := null_font;
+
+    this_math_style := sub_style(cur_style);
+
+    { Loop through the sub_mlist looking for the first character-like
+      thing.  Ignore kerns or glue so that, for example, changing
+      $P_j$ to $P_{\!j}$ will have a predictable effect.  Intercept
+      style_nodes and execute them.  If we encounter a choice_node,
+      follow the appropriate branch.  Anything else halts the search
+      and inhibits OpenType kerning. }
+
+    { Don't try to do anything clever if the nucleus of the
+      script_head is empty, e.g., $P_{^j}$ and the such. }
+
+    if math_type(script_head) = sub_mlist then
+        begin
+            script_ptr := info(script_head);
+
+            script_head := null;
+
+            while is_valid_pointer(script_ptr) do
+                begin
+                    case type(script_ptr) of
+                        kern_node, glue_node: do_nothing;
+
+                        style_node: begin
+                            this_math_style := subtype(script_ptr);
+                        end;
+
+                        choice_node: do_nothing; { see below }
+
+                        ord_noad, op_noad, bin_noad, rel_noad, open_noad,
+                            close_noad, punct_noad: begin
+                                script_head := nucleus(script_ptr);
+                                script_ptr  := null;
+                        end;
+
+                        othercases script_ptr := null { end the search }
+                    endcases;
+
+                    if is_valid_pointer(script_ptr) then
+                        if type(script_ptr) = choice_node then
+                            case this_math_style div 2 of
+                                0: script_ptr := display_mlist(script_ptr);
+                                1: script_ptr := text_mlist(script_ptr);
+                                2: script_ptr := script_mlist(script_ptr);
+                                3: script_ptr := script_script_mlist(script_ptr);
+                            end
+                        else 
+                            script_ptr := link(script_ptr);
+                end;
+        end;
+
+    if is_valid_pointer(script_head) and math_type(script_head) = math_char then
+        begin
+            save_f := cur_f;
+
+            saved_math_style := cur_style;
+            cur_style := this_math_style;
+
+            @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
+
+            fetch(script_head);
+
+            if is_new_mathfont(cur_f) then
+                begin
+                    script_c := new_native_character(cur_f, qo(cur_c));
+                    script_g := get_native_glyph(script_c, 0);
+                    script_f := cur_f; { script font }
+                end;
+
+            cur_f := save_f;
+
+            cur_style := saved_math_style;
+
+            @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
+        end;
+
+    { The remaining case is math_type(script_head) = sub_box.
+      Although it would be possible to deconstruct the box node to
+      find the first glyph, it will most likely be from a text font
+      without MATH kerning, so there's probably no point. }
+
+@ @<Attach subscript OpenType math kerning@> =
+begin
+    if is_glyph_node(p) then
+        begin
+            sub_kern := get_ot_math_kern(native_font(p),
+                                         native_glyph(p),
+                                         sub_f,
+                                         sub_g,
+                                         sub_cmd,
+                                         shift_down);
+
+            if sub_kern <> 0 then
+                p := attach_hkern_to_new_hlist(q, sub_kern);
+        end;
+
 end;
 
-@ @<Attach superscript OpenType math kerning@>=
-begin if math_type(supscr(q))=math_char then
-  begin save_f:=cur_f;
-  fetch(supscr(q));
-  if is_new_mathfont(cur_f) then
-    begin script_c:=new_native_character(cur_f, qo(cur_c));
-    script_g:=get_native_glyph(script_c, 0);
-    script_f:=cur_f;
-  end else
-    begin script_g:=0; script_f:=0
-    end;
-  cur_f:=save_f;
-  end;
-if is_glyph_node(p) then
-  sup_kern:=get_ot_math_kern(native_font(p), native_glyph(p), script_f, script_g, sup_cmd, shift_up);
+@ @<Attach superscript OpenType math kerning@> =
+begin
+    { if there is a superscript the kern will be added to |shift_amount(x)| }
 
-if (sup_kern<>0) and (math_type(subscr(q))=empty) then
-  {if there is a superscript the kern will be added to |shift_amount(x)|}
-  p:=attach_hkern_to_new_hlist(q, sup_kern);
+    if math_type(subscr(q)) = empty then
+        if is_glyph_node(p) then
+            begin
+                sup_kern := get_ot_math_kern(native_font(p),
+                                             native_glyph(p),
+                                             sup_f,
+                                             sup_g,
+                                             sup_cmd,
+                                             shift_up);
+
+                if sup_kern <> 0 then
+                    p := attach_hkern_to_new_hlist(q, sup_kern);
+            end;
 end;
 
 @ We have now tied up all the loose ends of the first pass of |mlist_to_hlist|.
