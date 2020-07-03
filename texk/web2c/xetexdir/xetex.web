@@ -18477,7 +18477,7 @@ The following definitions should be kept in sync with \.{XeTeXOTMath.cpp}.
     { Loop through the |sub_mlist| looking for the first character-like
       thing.  Ignore kerns or glue so that, for example, changing
       $P_j$ to $P_{\!j}$ will have a predictable effect.  Intercept
-      |style_nodes| and execute them.  If we encounter a |choice_node|,
+      |style_node|s and execute them.  If we encounter a |choice_node|,
       follow the appropriate branch.  Anything else halts the search
       and inhibits OpenType kerning. }
 
