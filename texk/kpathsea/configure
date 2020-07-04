@@ -14045,6 +14045,7 @@ else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdarg.h>
+                                                  #include <stdio.h>
                                                   char buf[16];
                                                   va_list ap;
 int

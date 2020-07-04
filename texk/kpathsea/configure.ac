@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -78,6 +80,7 @@ fi
 AC_CACHE_CHECK([for $snfunc and $vsnfunc],
                [kpse_cv_have_snfuncs],
                [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
+                                                  #include <stdio.h>
                                                   char buf[16];
                                                   va_list ap;]],
                                                 [[$snfunc (buf, 16, "%s", "abc");

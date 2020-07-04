@@ -1,3 +1,9 @@
+2020-07-04  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (snprintf): #include <stdio.h> to placate
+	new arm64 Mac compiler, since apparently that's the standard
+	place for the [v]snprintf declaration. We'll see. Report from Dick.
+
 2020-06-22  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (EXTRA_DIST): add COPYING.LESSERv2.
