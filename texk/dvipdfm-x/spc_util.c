@@ -428,6 +428,7 @@ spc_util_read_colorspec (struct spc_env *spe, pdf_color *colorspec, struct spc_a
     return -1;
   }
 
+  pdf_color_black(colorspec); /* As initialization... */
   if (syntax)
     return spc_read_color_color(spe, colorspec, ap);
   else

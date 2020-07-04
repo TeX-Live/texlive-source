@@ -173,9 +173,10 @@ pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
 {
   ASSERT(dst && src);
 
-  if (dst->type != PDF_COLORSPACE_TYPE_RGB  &&
-      dst->type != PDF_COLORSPACE_TYPE_CMYK &&
-      dst->type != PDF_COLORSPACE_TYPE_GRAY) {
+  if (src->type != PDF_COLORSPACE_TYPE_RGB  &&
+      src->type != PDF_COLORSPACE_TYPE_CMYK &&
+      src->type != PDF_COLORSPACE_TYPE_GRAY) {
+    pdf_color_copycolor(dst, src);
     return;
   }
 
@@ -185,7 +186,8 @@ pdf_color_brighten_color (pdf_color *dst, const pdf_color *src, double f)
     double f0, f1;
     int n;
 
-    n = dst->num_components = src->num_components;
+    pdf_color_copycolor(dst, src);
+    n = src->num_components;
     f1 = n == 4 ? 0.0 : f;  /* n == 4 is CMYK, others are RGB and Gray */
     f0 = 1.0-f;
 
@@ -442,8 +444,10 @@ pdf_color_clear_stack (void)
     WARN("You've mistakenly made a global color change within nested colors.");
   }
   while (color_stack.current--) {
-    free(color_stack.stroke[color_stack.current].spot_color_name);
-    free(color_stack.fill[color_stack.current].spot_color_name);
+    if (color_stack.stroke[color_stack.current].spot_color_name)
+      RELEASE(color_stack.stroke[color_stack.current].spot_color_name);
+    if (color_stack.fill[color_stack.current].spot_color_name)
+      RELEASE(color_stack.fill[color_stack.current].spot_color_name);
   }
   color_stack.current = 0;
   pdf_color_black(color_stack.stroke);

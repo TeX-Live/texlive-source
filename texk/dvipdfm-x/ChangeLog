@@ -1,3 +1,9 @@
+2020-07-04  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfcolor.c, spc_util.c: Fix a bug in pdfcolor.c.
+	Add initialization of a variable and NULL pointer check.
+	* configure.ac: Version 20200704.
+
 2020-07-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdoc.c, spc_pdfm.c: Possible fix for a bug that pdf:btrans
