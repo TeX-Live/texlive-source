@@ -1,3 +1,7 @@
+2020-07-04  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* xetex.web: Tweak indentation, etc.
+
 2020-07-03  Andreas Scherer  <https://ascherer.github.io>
 
 	* xetex.web: Fix |code| snippets in {comments}.
