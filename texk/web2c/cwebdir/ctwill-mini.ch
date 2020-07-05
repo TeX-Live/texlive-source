@@ -18,7 +18,7 @@ Section 1.
 @y
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
-\noindent \bit Editor´s Note: \it Although {\itt CTWILL} is based on
+\noindent \bit Editor's Note: \it Although {\itt CTWILL} is based on
 {\itt cweave.w}, new and modified material is incorporated all over the place,
 without taking special care to keep the original section numbering intact.
 \smallskip

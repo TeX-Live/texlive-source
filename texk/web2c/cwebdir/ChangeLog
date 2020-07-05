@@ -1,3 +1,8 @@
+2020-07-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* texinputs/pdfctwimac.tex: Fix two issues with 'ctwill.dvi/pdf'.
+
 2020-07-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch: Add links and bookmarks in PDF.
