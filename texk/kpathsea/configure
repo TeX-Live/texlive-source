@@ -14075,7 +14075,9 @@ if test "$cross_compiling" = yes; then :
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-char buf[4] = "abc";
+#include <stdarg.h>
+                                 #include <stdio.h>
+                                 char buf[4] = "abc";
 int
 main ()
 {
@@ -14104,7 +14106,9 @@ else
 else
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-char buf[4] = "abc";
+#include <stdarg.h>
+                                                 #include <stdio.h>
+                                                 char buf[4] = "abc";
 int
 main ()
 {
