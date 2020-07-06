@@ -1,3 +1,14 @@
+2020-07-06  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (<Get user's advice...>): return early if
+	interaction<>error_stop_mode; else a nested error()
+	call in unusual interactive sequences can mess up
+	the selector value, ultimately causing a segmentation fault
+	from writing to a closed stream \write15. Fix primarily
+	from David Fuchs.
+	https://tex.stackexchange.com/questions/551313/
+	https://tug.org/pipermail/tex-live/2020-June/045876.html
+
 2020-06-22  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (Runtime options): move from install.texi,

@@ -853,7 +853,26 @@ if (halt_on_error_p) then begin
 end;
 @z
 
-@x [6.84] l.1888 - Implement the switch-to-editor option.
+% Original reports:
+%   https://tex.stackexchange.com/questions/551313/
+%   https://tug.org/pipermail/tex-live/2020-June/045876.html
+%
+% This will probably be fixed by DEK in the 2021 tuneup in a different
+% way (so we'll have to remove or alter this change), but the interaction
+% sequence in the reports above causes a segmentation fault in web2c -
+% writing to the closed \write15 stream because we wrongly decrement
+% selector from 16 to 15 in term_input, due to the lack of this check in
+% a recursive error() call.
+%
+@x [6.83] l.1893 - avoid wrong interaction 
+loop@+begin continue: clear_for_error_prompt; prompt_input("? ");
+@y
+loop@+begin continue:
+if interaction<>error_stop_mode then return;
+clear_for_error_prompt; prompt_input("? ");
+@z
+
+@x [6.84] l.1904 - Implement the switch-to-editor option.
 line ready to be edited. But such an extension requires some system
 wizardry, so the present implementation simply types out the name of the
 file that should be
