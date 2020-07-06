@@ -9,9 +9,12 @@
 2020-07-03  David Jones  <dmj@ams.org>
 
 	* XeTeXOTMath.cpp: New implementation of get_ot_math_kern().
+	https://sourceforge.net/p/xetex/bugs/175/
+
 	* xetex.web: Fix bugs in
-	@<Attach subscript OpenType math kerning@> and
+	@<Attach subscript OpenType math kerning@> 
 	@<Attach superscript OpenType math kerning@>
+	(https://sourceforge.net/p/xetex/bugs/173/
 
 2020-05-04  Andreas Scherer  <https://ascherer.github.io>
 
