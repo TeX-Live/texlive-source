@@ -1381,9 +1381,10 @@ The directories to be searched for come from three sources:
 @<Include files@>=
 typedef bool boolean;
 #define HAVE_BOOLEAN
-#include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header */
+#include <kpathsea/kpathsea.h>
+    /* include every \Kpathsea/ header; |@!kpathsea_debug| */
 #include <w2c/config.h> /* \&{integer} */
-#include <lib/lib.h> /* |versionstring| */
+#include <lib/lib.h> /* |@!versionstring| */
 @#
 #define CWEB
 #include "help.h"
