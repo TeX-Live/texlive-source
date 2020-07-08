@@ -1,3 +1,8 @@
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin,
+	* help.h: Add /old/ option '-dN' to 'help' message.
+
 2020-07-06  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (<Get user's advice...>): return early if

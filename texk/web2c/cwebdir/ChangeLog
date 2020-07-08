@@ -1,7 +1,16 @@
 2020-07-08  Andreas Scherer  <https://ascherer.github.io>
 
-	* cwebman-w2c.ch: Add links to appendices D, E, F, and G.
+	* cwebman-w2c.ch,
+	* po/web2c-help.pot,
+	* po/de/web2c-help.po: Add '-dN' to 'help' message.
+
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.ch: Add special index entries for Kpathsea values.
+
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Add links to appendices D, E, F, and G.
 
 2020-07-05  Andreas Scherer  <https://ascherer.github.io>
 

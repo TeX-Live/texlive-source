@@ -140,6 +140,10 @@ output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)%
 \cwebfootnote{This extended version of \.{CWEB} adds the following options
 to the list:
 \hfil\smallskip
+\option d Set the debugging variable \\{kpathsea\_debug} to the numeric
+value $N\in[0,127)$ of this option.  See section~92 % FIXME
+of \pdfURL{appendix~D}{common-changes.pdf} for details.
+\hfil\vskip\normallineskip
 \option i Indent parameters in function declarations.  This causes the
 formal parameter declarations in function heads to be indented.  (On by
 default; \.{-i} typesets declarations flush left; some people think this

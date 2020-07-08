@@ -29,7 +29,8 @@
 
 typedef bool boolean;
 #define HAVE_BOOLEAN
-#include <kpathsea/kpathsea.h>  
+#include <kpathsea/kpathsea.h> 
+
 #include <w2c/config.h>  
 #include <lib/lib.h>  
 
@@ -411,7 +412,7 @@ static void check_change(void);
 static void prime_the_change_buffer(void);
 
 /*:84*//*98:*/
-#line 1483 "cwebdir/comm-w2c.ch"
+#line 1484 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
@@ -451,7 +452,7 @@ root= NULL;
 #line 103 "cwebdir/comm-w2c.ch"
 
 /*91:*/
-#line 1397 "cwebdir/comm-w2c.ch"
+#line 1398 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -1426,7 +1427,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*74:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*94:*/
-#line 1422 "cwebdir/comm-w2c.ch"
+#line 1423 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1438,7 +1439,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*96:*/
-#line 1464 "cwebdir/comm-w2c.ch"
+#line 1465 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1628,7 +1629,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
 #line 1030 "cwebdir/comm-w2c.ch"
 /*:70*//*95:*/
-#line 1430 "cwebdir/comm-w2c.ch"
+#line 1431 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1661,7 +1662,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:95*//*97:*/
-#line 1472 "cwebdir/comm-w2c.ch"
+#line 1473 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {
