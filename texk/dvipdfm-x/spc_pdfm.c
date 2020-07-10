@@ -1061,6 +1061,7 @@ spc_handler_pdfm_etrans (struct spc_env *spe, struct spc_arg *args)
    * starting a new page.
    */
   pdf_dev_reset_color(0);
+  pdf_dev_reset_xgstate(0);
 
   return 0;
 }
@@ -1632,6 +1633,7 @@ spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
   pdf_dev_pop_coord();
   pdf_dev_grestore();
   pdf_dev_reset_color(0);
+  pdf_dev_reset_xgstate(0);
 
   return 0;
 }
@@ -2212,6 +2214,36 @@ spc_handler_pdfm_pageresources (struct spc_env *spe, struct spc_arg *args)
 }
 
 static int
+spc_handler_pdfm_bxgstate (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_obj *object;
+
+  skip_white(&args->curptr, args->endptr);
+  object = parse_pdf_object(&args->curptr, args->endptr, NULL);
+  if (!object) {
+    spc_warn(spe, "Could not find an object definition.");
+    return -1;
+  } else if (!PDF_OBJ_DICTTYPE(object)) {
+    spc_warn(spe, "Parsed object for ExtGState not a dictionary object!");
+    pdf_release_obj(object);
+    return -1;
+  }
+  pdf_dev_xgstate_push(object);
+
+  skip_white(&args->curptr, args->endptr);
+
+  return 0;
+}
+
+static int
+spc_handler_pdfm_exgstate (struct spc_env *spe, struct spc_arg *args)
+{
+  pdf_dev_xgstate_pop();
+  skip_white(&args->curptr, args->endptr);
+  return 0;
+}
+
+static int
 spc_handler_pdft_compat_page (struct spc_env *spe, struct spc_arg *args)
 {
   skip_white(&args->curptr, args->endptr);
@@ -2342,6 +2374,9 @@ static struct spc_handler pdfm_handlers[] = {
   {"xannot",      spc_handler_pdfm_xann},
   {"extendann",   spc_handler_pdfm_xann},
   {"xann",        spc_handler_pdfm_xann}, 
+
+  {"bxgstate",    spc_handler_pdfm_bxgstate},
+  {"exgstate",    spc_handler_pdfm_exgstate},
 };
 
 static struct spc_handler pdft_compat_handlers[] = {

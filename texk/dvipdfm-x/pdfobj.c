@@ -4262,3 +4262,106 @@ pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2)
   return data1->pf != data2->pf || data1->label != data2->label
     || data1->generation != data2->generation;
 }
+
+int
+pdf_compare_object (pdf_obj *obj1, pdf_obj *obj2)
+{
+  int r = 0;
+
+  if (!obj1 && obj2) {
+    return 1;
+  } else if (obj1 && !obj2) {
+    return 1;
+  } else if (pdf_obj_typeof(obj1) != pdf_obj_typeof(obj2)) {
+    return 1;
+  }
+
+  switch (pdf_obj_typeof(obj1)) {
+  case PDF_BOOLEAN:
+    r = pdf_boolean_value(obj1) - pdf_boolean_value(obj2);
+    break;
+  case PDF_NUMBER:
+    if (pdf_number_value(obj1) < pdf_number_value(obj2)) {
+      r = -1;
+    } else if (pdf_number_value(obj1) > pdf_number_value(obj2)) {
+      r = 1;
+    } else {
+      r = 0;
+    }
+    break;
+  case PDF_STRING:
+    if (pdf_string_length(obj1) < pdf_string_length(obj2)) {
+      r = -1;
+    } else if (pdf_string_length(obj1) > pdf_string_length(obj2)) {
+      r = 1;
+    } else {
+      r = memcmp(pdf_string_value(obj1), pdf_string_value(obj2), pdf_string_length(obj1));
+    }
+    break;
+  case PDF_NAME:
+    r = strcmp(pdf_name_value(obj1), pdf_name_value(obj2));
+    break;
+  case PDF_NULL:
+    /* Always same */
+    r = 0;
+    break;
+  case PDF_INDIRECT:
+    r = pdf_compare_reference(obj1, obj2);
+    break;
+  case PDF_ARRAY:
+    if (pdf_array_length(obj1) < pdf_array_length(obj2)) {
+      r = -1;
+    } else if (pdf_array_length(obj1) > pdf_array_length(obj2)) {
+      r = 1;
+    } else {
+      int i;
+      for (i = 0; r == 0 && i < pdf_array_length(obj1); i++) {
+        pdf_obj *v1, *v2;
+        v1 = pdf_get_array(obj1, i);
+        v2 = pdf_get_array(obj2, i);
+        r  = pdf_compare_object(v1, v2); 
+      }
+    }
+    break;
+  case PDF_DICT:
+    {
+      pdf_obj *keys1, *keys2;
+      keys1 = pdf_dict_keys(obj1);
+      keys2 = pdf_dict_keys(obj2);
+      r = pdf_compare_object(keys1, keys2);
+      if (r == 0) {
+        int i;
+        for (i = 0; r == 0 && i < pdf_array_length(keys1); i++) {
+          pdf_obj *key, *v1, *v2;
+          key = pdf_get_array(keys1, i);
+          v1  = pdf_lookup_dict(obj1, pdf_name_value(key));
+          v2  = pdf_lookup_dict(obj2, pdf_name_value(key));
+          r   = pdf_compare_object(v1, v2);
+        }
+      }
+      pdf_release_obj(keys1);
+      pdf_release_obj(keys2);
+    }
+    break;
+  case PDF_STREAM:
+    /* Not seriously testing... */
+    r = pdf_compare_object(pdf_stream_dict(obj1), pdf_stream_dict(obj2));
+    if (r == 0) {
+      size_t len1, len2;
+      len1 = pdf_stream_length(obj1);
+      len2 = pdf_stream_length(obj2);
+      if (len1 < len2) {
+        r = -1;
+      } else if (len1 > len2) {
+        r = 1;
+      } else {
+        r = 0;
+      }
+    }
+    break;
+  default:
+    r = 1;
+  }
+
+  return r;
+}

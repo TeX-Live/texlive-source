@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -164,9 +164,10 @@ extern void        pdf_stream_set_predictor (pdf_obj *stream,
                                              int predictor, int32_t columns,
                                              int bpc, int colors);
 
-/* Compare label of two indirect reference object.
- */
+/* Compare labels of two indirect reference object. */
 extern int         pdf_compare_reference (pdf_obj *ref1, pdf_obj *ref2);
+/* Compare objects. */
+extern int         pdf_compare_object    (pdf_obj *obj1, pdf_obj *obj2);
 
 /* The following routines are not appropriate for pdfobj.
  */

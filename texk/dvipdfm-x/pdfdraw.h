@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -166,5 +166,9 @@ extern void pdf_dev_get_fixed_point (pdf_coord *p);
 extern void   pdf_dev_set_color     (const pdf_color *color, char mask, int force);
 #define pdf_dev_set_strokingcolor(c)     pdf_dev_set_color(c,    0, 0);
 #define pdf_dev_set_nonstrokingcolor(c)  pdf_dev_set_color(c, 0x20, 0);
+
+extern void pdf_dev_xgstate_push  (pdf_obj *object);
+extern void pdf_dev_xgstate_pop   (void);
+extern int  pdf_dev_reset_xgstate (int force);
 
 #endif /* _PDF_DRAW_H_ */

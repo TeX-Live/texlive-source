@@ -2717,6 +2717,7 @@ pdf_doc_begin_grabbing (const char *ident,
    */
   pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(1);  /* force color operators to be added to stream */
+  pdf_dev_reset_xgstate(1);
 
   return xobj_id;
 }
@@ -2763,6 +2764,7 @@ pdf_doc_end_grabbing (pdf_obj *attrib)
 
   pdf_dev_reset_fonts(1);
   pdf_dev_reset_color(0);
+  pdf_dev_reset_xgstate(0);
 
   RELEASE(fnode);
 

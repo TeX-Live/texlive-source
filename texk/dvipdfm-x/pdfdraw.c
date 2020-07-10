@@ -37,6 +37,8 @@
 #include "pdfdoc.h"
 #include "pdfdev.h"
 #include "pdfcolor.h"
+#include "pdfparse.h"
+#include "pdfobj.h"
 
 #include "pdfdraw.h"
 
@@ -880,40 +882,7 @@ pdf_dev__flushpath (pdf_path  *pa,
   return 0;
 }
 
-
-/* Graphics State */
-typedef struct pdf_gstate_
-{
-  pdf_coord   cp;
-
-  pdf_tmatrix matrix;   /* cm,  - */
-
-  pdf_color   strokecolor;
-  pdf_color   fillcolor;
-  /* colorspace here */
-
-  struct {
-    int     num_dash;
-    double  pattern[PDF_DASH_SIZE_MAX];
-    double  offset;
-  } linedash;           /* d,  D  */
-
-  double    linewidth;  /* w,  LW */
-
-  int       linecap;    /* J,  LC */
-  int       linejoin;   /* j,  LJ */
-  double    miterlimit; /* M,  ML */
-
-  int       flatness;   /* i,  FL, 0 to 100 (0 for use device-default) */
-
-  /* internal */
-  pdf_path  path;
-  int       flags;
-  /* bookkeeping the origin of the last transform applied */
-  pdf_coord pt_fixee;
-} pdf_gstate;
-
-
+/* Stack operation */
 typedef struct m_stack_elem
 {
   void                *data;
@@ -999,6 +968,79 @@ m_stack_top (m_stack *stack)
 
 #define m_stack_depth(s)    ((s)->size)
 
+/* ExtGState stack */
+static m_stack xgs_stack;
+static int     xgs_count = 0;
+
+struct xgs_res {
+  pdf_obj *object;
+  pdf_obj *accumlated;
+};
+
+static const char default_xgs[] = "\
+<< /Type /ExtGState\
+   /LW 1 /LC 0 /LJ 0 /ML 10 /D [[] 0]\
+   /RI /RelativeColorimetric /SA false /BM /Normal /SMask /None\
+   /AIS false /TK false /CA 1 /ca 1\
+   /OP false /op false /OPM 0 /FL 1\
+>>";
+
+static void
+init_xgstate (void)
+{
+  m_stack_init(&xgs_stack);
+  xgs_count = 0;
+
+  return;
+}
+
+static void
+clear_xgstate (void)
+{
+  struct xgs_res *xgs;
+
+  while ((xgs = m_stack_pop(&xgs_stack)) != NULL) {
+    pdf_release_obj(xgs->object);
+    pdf_release_obj(xgs->accumlated);
+    RELEASE(xgs);
+  }
+
+  return;  
+}
+
+/* Graphics State */
+typedef struct pdf_gstate_
+{
+  pdf_coord   cp;
+
+  pdf_tmatrix matrix;   /* cm,  - */
+
+  pdf_color   strokecolor;
+  pdf_color   fillcolor;
+  /* colorspace here */
+
+  struct {
+    int     num_dash;
+    double  pattern[PDF_DASH_SIZE_MAX];
+    double  offset;
+  } linedash;           /* d,  D  */
+
+  double    linewidth;  /* w,  LW */
+
+  int       linecap;    /* J,  LC */
+  int       linejoin;   /* j,  LJ */
+  double    miterlimit; /* M,  ML */
+
+  int       flatness;   /* i,  FL, 0 to 100 (0 for use device-default) */
+
+  /* internal */
+  pdf_path  path;
+  int       flags;
+  /* bookkeeping the origin of the last transform applied */
+  pdf_coord pt_fixee;
+  pdf_obj  *extgstate;
+} pdf_gstate;
+
 static m_stack gs_stack;
 
 static void
@@ -1027,6 +1069,8 @@ init_a_gstate (pdf_gstate *gs)
   gs->pt_fixee.x = 0;
   gs->pt_fixee.y = 0;
 
+  gs->extgstate  = NULL;
+
   return;
 }
 
@@ -1034,6 +1078,8 @@ static void
 clear_a_gstate (pdf_gstate *gs)
 {
   clear_a_path(&gs->path);
+  if (gs->extgstate)
+    pdf_release_obj(gs->extgstate);
   memset(gs, 0, sizeof(pdf_gstate));
 
   return;
@@ -1075,6 +1121,156 @@ copy_a_gstate (pdf_gstate *gs1, pdf_gstate *gs2)
   gs1->pt_fixee.x = gs2->pt_fixee.x;
   gs1->pt_fixee.y = gs2->pt_fixee.y;
 
+  gs1->extgstate  = gs2->extgstate ? pdf_link_obj(gs2->extgstate) : NULL;
+
+  return;
+}
+
+static int
+pdf_dev_set_xgstate (pdf_obj *diff, pdf_obj *accumlated)
+{
+  m_stack    *gss = &gs_stack;
+  pdf_gstate *gs  = m_stack_top(gss);
+  char        buf[64], res_name[16];
+  int         len = 0, id;
+
+  id = xgs_count;
+  snprintf(res_name, 16, "DPX_GS%d", id);
+  res_name[15] = '\0';
+  len += snprintf(buf, 64, " /%s gs", res_name);
+  pdf_doc_add_page_content(buf, len);
+  pdf_doc_add_page_resource("ExtGState", res_name, pdf_link_obj(diff));
+  if (gs->extgstate)
+    pdf_release_obj(gs->extgstate);
+  gs->extgstate = pdf_link_obj(accumlated);
+  xgs_count++;
+
+  return 0;
+}
+
+int
+pdf_dev_reset_xgstate (int force)
+{
+  m_stack        *gss = &gs_stack;
+  pdf_gstate     *gs;
+  pdf_obj        *current, *target, *keys, *diff;
+  struct xgs_res *xgs;
+  int             i;
+
+  gs  = m_stack_top(gss);
+  xgs = m_stack_top(&xgs_stack);
+  if (xgs) {
+    target  = pdf_link_obj(xgs->accumlated);
+  } else {
+    const char *ptr, *endptr;
+
+    if (!gs->extgstate && !force)
+      return 0;
+    ptr     = default_xgs;
+    endptr  = ptr + strlen(ptr);
+    target  = parse_pdf_dict(&ptr, endptr, NULL);
+  }
+  if (gs->extgstate) {
+    current = pdf_link_obj(gs->extgstate);
+  } else {
+    const char *ptr, *endptr;
+    ptr     = default_xgs;
+    endptr  = ptr + strlen(ptr);
+    current = parse_pdf_dict(&ptr, endptr, NULL);
+  }
+
+  diff = pdf_new_dict();
+  keys = pdf_dict_keys(target);
+  for (i = 0; i < pdf_array_length(keys); i++) {
+    pdf_obj *key, *value1, *value2;
+    int      is_diff = 0;
+
+    key     = pdf_get_array(keys, i);
+    value1  = pdf_lookup_dict(target,  pdf_name_value(key));
+    value2  = pdf_lookup_dict(current, pdf_name_value(key));
+    is_diff = pdf_compare_object(value1, value2);
+    if (is_diff) {
+      pdf_add_dict(diff, pdf_link_obj(key), pdf_link_obj(value1));
+    }
+  }
+  pdf_release_obj(keys);
+  pdf_dev_set_xgstate(diff, target);
+  pdf_release_obj(diff);
+  pdf_release_obj(current);
+  pdf_release_obj(target);
+
+  return 0;
+}
+
+void
+pdf_dev_xgstate_push (pdf_obj *object)
+{
+  struct xgs_res *target, *current;
+  pdf_obj        *accumlated;
+
+  target = NEW(1, struct xgs_res);
+  target->object = object;
+  current = m_stack_top(&xgs_stack);
+  if (!current) {
+    const char *ptr, *endptr;
+    ptr    = default_xgs;
+    endptr = ptr + strlen(default_xgs);
+    accumlated = parse_pdf_dict(&ptr, endptr, NULL);
+  } else {
+    accumlated = pdf_new_dict();
+    pdf_merge_dict(accumlated, current->accumlated);    
+  }
+  pdf_merge_dict(accumlated, object);
+  target->accumlated = accumlated;
+  m_stack_push(&xgs_stack, target);
+
+  pdf_dev_set_xgstate(target->object, target->accumlated);
+
+  return;
+}
+
+void
+pdf_dev_xgstate_pop (void)
+{
+  struct xgs_res *current, *target;
+  pdf_obj        *accumlated, *revert, *keys;
+  int             i;
+
+  current = m_stack_pop(&xgs_stack);
+  target  = m_stack_top(&xgs_stack); 
+  if (!current) {
+    WARN("Too many pop operation for ExtGState!");
+    return;
+  }
+  if (!target) {
+    const char *ptr, *endptr;
+    ptr    = default_xgs;
+    endptr = ptr + strlen(default_xgs);
+    accumlated = parse_pdf_dict(&ptr, endptr, NULL);
+  } else {
+    accumlated = pdf_link_obj(target->accumlated);
+  }
+  keys   = pdf_dict_keys(current->object);  
+  revert = pdf_new_dict();
+  for (i = 0; i < pdf_array_length(keys); i++) {
+    pdf_obj *key, *value;
+    key   = pdf_get_array(keys, i);
+    value = pdf_lookup_dict(accumlated, pdf_name_value(key));
+    if (!value) {
+      WARN("No previous ExtGState entry known for \"%s\", ignoring...", pdf_name_value(key));
+    } else {
+      pdf_add_dict(revert, pdf_link_obj(key), pdf_link_obj(value));
+    }
+  }
+  pdf_dev_set_xgstate(revert, accumlated);
+  pdf_release_obj(revert);
+  pdf_release_obj(keys);
+  pdf_release_obj(accumlated);
+
+  pdf_release_obj(current->object);
+  pdf_release_obj(current->accumlated);
+  RELEASE(current);
+
   return;
 }
     
@@ -1089,6 +1285,7 @@ pdf_dev_init_gstates (void)
   init_a_gstate(gs);
 
   m_stack_push(&gs_stack, gs); /* Initial state */
+  init_xgstate();
 
   return;
 }
@@ -1105,6 +1302,9 @@ pdf_dev_clear_gstates (void)
     clear_a_gstate(gs);
     RELEASE(gs);
   }
+
+  clear_xgstate();
+
   return;
 }
 
