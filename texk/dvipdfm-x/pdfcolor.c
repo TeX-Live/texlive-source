@@ -407,10 +407,11 @@ pdf_color_compare (const pdf_color *color1, const pdf_color *color2)
     return -1;
   }
 
-  while (n--)
+  n = color1->num_components;
+  while (--n >= 0) {
     if (color1->values[n] != color2->values[n])
       return -1;
-
+  }
   if (color1->spot_color_name && color2->spot_color_name)
     return strcmp(color1->spot_color_name, color2->spot_color_name);
 

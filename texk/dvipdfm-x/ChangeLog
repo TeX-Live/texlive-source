@@ -4,6 +4,8 @@
 	ExtGState can be manipulated with a dedicated stack.
 	Add new specials pdf:bxgstate and pdf:exgstate to push/pop
 	ExtGState into/from the stack.
+	* pdfcolor.c: Fix a bug that assignment was missing
+	in pdf_color_compare().
 	* configure.ac: Version 20200711.
 
 2020-07-04  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
