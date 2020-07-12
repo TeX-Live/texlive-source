@@ -1,12 +1,12 @@
-diff -ur mpfr-4.0.2/src/mparam_h.in mpfr-src/src/mparam_h.in
---- mpfr-4.0.2/src/mparam_h.in	Mon Jan 07 22:53:20 2019
-+++ mpfr-src/src/mparam_h.in	Fri Feb 01 13:50:51 2019
-@@ -32,6 +32,8 @@
-    for example with gcc -dM -E -xc /dev/null
-    As of gcc 4.2, you can also use: -march=native or -mtune=native */
+diff -ur mpfr-4.1.0/src/mparam_h.in mpfr-src/src/mparam_h.in
+--- mpfr-4.1.0/src/mparam_h.in	Thu Jan 09 03:11:13 2020
++++ mpfr-src/src/mparam_h.in	Sun Jul 12 16:40:20 2020
+@@ -31,6 +31,8 @@
+ /* Note: the different macros used here are those defined by gcc,
+    for example with gcc -mtune=native -dM -E -xc /dev/null */
  
 +#elif 1 /* no processor specific optimization for TeX Live */
 +#define MPFR_TUNE_CASE "default"
- #elif defined (__tune_pentium4__) /* Threshold for Pentium 4 */
- #define MPFR_TUNE_CASE "src/x86_64/pentium4/mparam.h"
- #include "x86_64/pentium4/mparam.h"
+ #elif (defined (__tune_core2__) || defined (__tune_nocona__)) && defined (__x86_64) /* 64-bit Core 2 or Xeon */
+ #define MPFR_TUNE_CASE "src/x86_64/core2/mparam.h"
+ #include "x86_64/core2/mparam.h"

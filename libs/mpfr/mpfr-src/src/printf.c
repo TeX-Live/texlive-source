@@ -1,6 +1,6 @@
 /* Formatted output functions (printf functions family).
 
-Copyright 2007-2019 Free Software Foundation, Inc.
+Copyright 2007-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -29,17 +29,6 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #if defined(HAVE_STDARG) && !defined(MPFR_USE_MINI_GMP)
 
 #include <stdarg.h>
-
-#ifndef HAVE_VA_COPY
-# ifdef HAVE___VA_COPY
-#  define va_copy(dst,src) __va_copy(dst, src)
-# else
-/* autoconf manual advocates this fallback.
-   This is also the solution chosen by gmp */
-#  define va_copy(dst,src) \
-  do { memcpy(&(dst), &(src), sizeof(va_list)); } while (0)
-# endif /* HAVE___VA_COPY */
-#endif /* HAVE_VA_COPY */
 
 #include "mpfr-impl.h"
 

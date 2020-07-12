@@ -1,6 +1,6 @@
 /* mpfr_cmpabs -- compare the absolute values of two FP numbers
 
-Copyright 1999, 2001-2004, 2006-2019 Free Software Foundation, Inc.
+Copyright 1999, 2001-2004, 2006-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -23,7 +23,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #include "mpfr-impl.h"
 
 /* Return a positive value if abs(b) > abs(c), 0 if abs(b) = abs(c), and
-   a negative value if abs(b) < abs(c). Neither b nor c may be NaN. */
+   a negative value if abs(b) < abs(c). */
 
 int
 mpfr_cmpabs (mpfr_srcptr b, mpfr_srcptr c)

@@ -1,6 +1,6 @@
 /* mpfr_round_nearest_away -- round to nearest away
 
-Copyright 2012-2019 Free Software Foundation, Inc.
+Copyright 2012-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -137,8 +137,14 @@ mpfr_round_nearest_away_end (mpfr_t rop, int inex)
   mpfr_prec_t n;
   MPFR_SAVE_EXPO_DECL (expo);
 
-  /* Get back the hidden context. */
-  ext = ((mpfr_size_limb_extended_t *) MPFR_MANT(rop)) - MANTISSA;
+  /* Get back the hidden context.
+     Note: The cast to void * prevents the compiler from emitting a warning
+     (or error), such as:
+       cast increases required alignment of target type
+     with the -Wcast-align GCC option. Correct alignment is a consequence
+     of the code that built rop.
+  */
+  ext = ((mpfr_size_limb_extended_t *) (void *) MPFR_MANT(rop)) - MANTISSA;
 
   /* Create tmp with the result of the function. */
   tmp[0] = rop[0];

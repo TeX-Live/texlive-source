@@ -1,6 +1,6 @@
 /* mpfr_atan -- arc-tangent of a floating-point number
 
-Copyright 2001-2019 Free Software Foundation, Inc.
+Copyright 2001-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -64,13 +64,14 @@ set_table (mpfr_t y, const mp_limb_t x[3])
   mp_limb_t *yp = MPFR_MANT(y);
 
   MPFR_UNSIGNED_MINUS_MODULO (sh, p);
+  MPFR_ASSERTD (n >= 1 && n <= 3);
   mpn_copyi (yp, x + 3 - n, n);
   yp[0] &= ~MPFR_LIMB_MASK(sh);
   MPFR_SET_EXP(y, 0);
 }
 #endif
 
-/* If x = p/2^r, put in y an approximation of atan(x)/x using 2^m terms
+/* If x = p/2^r, put in y an approximation to atan(x)/x using 2^m terms
    for the series expansion, with an error of at most 1 ulp.
    Assumes 0 < x < 1, thus 1 <= p < 2^r.
    More precisely, p consists of the floor(r/2) bits of the binary expansion
@@ -98,14 +99,17 @@ mpfr_atan_aux (mpfr_ptr y, mpz_ptr p, unsigned long r, int m, mpz_t *tab)
   mpfr_prec_t accu[MPFR_PREC_BITS], log2_nb_terms[MPFR_PREC_BITS];
   mpfr_prec_t precy = MPFR_PREC(y);
 
-  MPFR_ASSERTD(mpz_cmp_ui (p, 0) != 0);
-  MPFR_ASSERTD (m+1 <= MPFR_PREC_BITS);
+  MPFR_ASSERTD (mpz_sgn (p) > 0);
+  MPFR_ASSERTD (m > 0);
+  MPFR_ASSERTD (m <= MPFR_PREC_BITS - 1);
 
 #if GMP_NUMB_BITS == 64
   /* tabulate values for small precision and small value of r (which are the
      most expensive to compute) */
   if (precy <= 192)
     {
+      unsigned long u;
+
       switch (r)
         {
         case 1:
@@ -120,13 +124,15 @@ mpfr_atan_aux (mpfr_ptr y, mpz_ptr p, unsigned long r, int m, mpz_t *tab)
           return;
         case 4:
           /* p has at most 2 bits: 1 <= p <= 3 */
-          MPFR_ASSERTD(1 <= mpz_get_ui (p) && mpz_get_ui (p) <= 3);
-          set_table (y, atan_table[1 + mpz_get_ui (p)]);
+          u = mpz_get_ui (p);
+          MPFR_ASSERTD(1 <= u && u <= 3);
+          set_table (y, atan_table[1 + u]);
           return;
         case 8:
           /* p has at most 4 bits: 1 <= p <= 15 */
-          MPFR_ASSERTD(1 <= mpz_get_ui (p) && mpz_get_ui (p) <= 15);
-          set_table (y, atan_table[4 + mpz_get_ui (p)]);
+          u = mpz_get_ui (p);
+          MPFR_ASSERTD(1 <= u && u <= 15);
+          set_table (y, atan_table[4 + u]);
           return;
         }
     }
@@ -150,10 +156,11 @@ mpfr_atan_aux (mpfr_ptr y, mpz_ptr p, unsigned long r, int m, mpz_t *tab)
       MPFR_ASSERTD (r > n);
       r -= n;
     }
-  /* since |p/2^r| < 1, and p is a non-zero integer, necessarily r > 0 */
 
+  /* Since |p/2^r| < 1, and p is a non-zero integer, necessarily r > 0. */
   MPFR_ASSERTD (mpz_sgn (p) > 0);
   MPFR_ASSERTD (m > 0);
+  MPFR_ASSERTD (r > 0);
 
   /* check if p=1 (special case) */
   l = 0;
@@ -486,7 +493,7 @@ mpfr_atan (mpfr_ptr atan, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
       mpfr_add (arctgt, arctgt, sk, MPFR_RNDN);
 
       /* argument reduction */
-      mpfr_mul_2exp (arctgt, arctgt, red, MPFR_RNDN);
+      mpfr_mul_2ui (arctgt, arctgt, red, MPFR_RNDN);
 
       if (comparison > 0)
         { /* atan(x) = Pi/2-atan(1/x) for x > 0 */

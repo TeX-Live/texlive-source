@@ -1,6 +1,6 @@
 /* __gmpfr_invert_limb -- implement GMP's invert_limb (which is not in GMP API)
 
-Copyright 2016-2019 Free Software Foundation, Inc.
+Copyright 2016-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -29,12 +29,13 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* umul_hi(h, x, y) puts in h the high part of x*y */
 #ifdef HAVE_MULX_U64
 #include <immintrin.h>
-#define umul_hi(h, x, y) _mulx_u64 (x, y, (unsigned long long *) &h)
+#define umul_hi(h, x, y) _mulx_u64 (x, y, (unsigned long long *) &(h))
 #else
 #define umul_hi(h, x, y)                        \
   do {                                          \
     mp_limb_t _l;                               \
     umul_ppmm (h, _l, x, y);                    \
+    (void) _l;  /* unused variable */           \
   } while (0)
 #endif
 

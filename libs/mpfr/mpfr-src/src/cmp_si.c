@@ -1,7 +1,7 @@
 /* mpfr_cmp_si_2exp -- compare a floating-point number with a signed
 machine integer multiplied by a power of 2
 
-Copyright 1999, 2001-2019 Free Software Foundation, Inc.
+Copyright 1999, 2001-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -49,6 +49,7 @@ mpfr_cmp_si_2exp (mpfr_srcptr b, long int i, mpfr_exp_t f)
   else if (MPFR_SIGN(b) != si || i == 0)
     return MPFR_INT_SIGN (b);
   else /* b and i are of same sign si */
+#ifdef MPFR_LONG_WITHIN_LIMB
     {
       mpfr_exp_t e;
       unsigned long ai;
@@ -91,6 +92,22 @@ mpfr_cmp_si_2exp (mpfr_srcptr b, long int i, mpfr_exp_t f)
           return si;
       return 0;
     }
+#else
+  {
+      mpfr_t uu;
+      int ret;
+      MPFR_SAVE_EXPO_DECL (expo);
+
+      mpfr_init2 (uu, sizeof (unsigned long) * CHAR_BIT);
+      /* Warning: i*2^f might be outside the current exponent range! */
+      MPFR_SAVE_EXPO_MARK (expo);
+      mpfr_set_si_2exp (uu, i, f, MPFR_RNDZ);
+      MPFR_SAVE_EXPO_FREE (expo);
+      ret = mpfr_cmp (b, uu);
+      mpfr_clear (uu);
+      return ret;
+  }
+#endif /* MPFR_LONG_WITHIN_LIMB */
 }
 
 #undef mpfr_cmp_si

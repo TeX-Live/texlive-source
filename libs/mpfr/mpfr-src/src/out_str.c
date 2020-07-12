@@ -1,6 +1,6 @@
 /* mpfr_out_str -- output a floating-point number to a stream
 
-Copyright 1999, 2001-2002, 2004, 2006-2019 Free Software Foundation, Inc.
+Copyright 1999, 2001-2002, 2004, 2006-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -39,9 +39,9 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
   char *s, *s0;
   size_t l;
   mpfr_exp_t e;
-  int err;
+  int err, r;
 
-  MPFR_ASSERTN (base >= 2 && base <= 62);
+  MPFR_ASSERTN ((base >= -36 && base <= -2) || (base >= 2 && base <= 62));
 
   if (MPFR_UNLIKELY (MPFR_IS_SINGULAR (op)))
     {
@@ -76,19 +76,13 @@ mpfr_out_str (FILE *stream, int base, size_t n_digits, mpfr_srcptr op,
   e--;  /* due to the leading digit */
 
   /* outputs exponent */
-  if (e)
-    {
-      int r;
+  r = fprintf (stream, (base <= 10 ?
+                        "e%" MPFR_EXP_FSPEC "d" :
+                        "@%" MPFR_EXP_FSPEC "d"), (mpfr_eexp_t) e);
 
-      MPFR_ASSERTN(e >= LONG_MIN);
-      MPFR_ASSERTN(e <= LONG_MAX);
+  /* Check error from fprintf or integer overflow (wrapping) on size_t */
+  if (MPFR_UNLIKELY (r < 0 || l + r < l))
+    return 0;
 
-      r = fprintf (stream, (base <= 10 ? "e%ld" : "@%ld"), (long) e);
-      if (MPFR_UNLIKELY (r < 0))
-        return 0;
-
-      l += r;
-    }
-
-  return l;
+  return l + r;
 }

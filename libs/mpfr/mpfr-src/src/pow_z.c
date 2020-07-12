@@ -1,6 +1,6 @@
 /* mpfr_pow_z -- power function x^z with z a MPZ
 
-Copyright 2005-2019 Free Software Foundation, Inc.
+Copyright 2005-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -82,13 +82,13 @@ mpfr_pow_pos_z (mpfr_ptr y, mpfr_srcptr x, mpz_srcptr z, mpfr_rnd_t rnd, int cr)
       err = prec - 1 - (mpfr_prec_t) i;
 
       MPFR_BLOCK (flags,
-                  inexmul = mpfr_mul (res, x, x, rnd2);
+                  inexmul = mpfr_sqr (res, x, rnd2);
                   MPFR_ASSERTD (i >= 2);
                   if (mpz_tstbit (absz, i - 2))
                     inexmul |= mpfr_mul (res, res, x, rnd1);
                   for (i -= 3; i >= 0 && !MPFR_BLOCK_EXCEP; i--)
                     {
-                      inexmul |= mpfr_mul (res, res, res, rnd2);
+                      inexmul |= mpfr_sqr (res, res, rnd2);
                       if (mpz_tstbit (absz, i))
                         inexmul |= mpfr_mul (res, res, x, rnd1);
                     });

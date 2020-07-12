@@ -1,6 +1,6 @@
 /* mpfr_init2 -- initialize a floating-point number with given precision
 
-Copyright 2001-2019 Free Software Foundation, Inc.
+Copyright 2001-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -33,8 +33,8 @@ mpfr_init2 (mpfr_ptr x, mpfr_prec_t p)
   MPFR_STAT_STATIC_ASSERT( MP_SIZE_T_MAX >= (MPFR_PREC_MAX/MPFR_BYTES_PER_MP_LIMB) );
 
   /* Check for correct GMP_NUMB_BITS and MPFR_BYTES_PER_MP_LIMB */
-  MPFR_STAT_STATIC_ASSERT( GMP_NUMB_BITS == MPFR_BYTES_PER_MP_LIMB * CHAR_BIT
-                      && sizeof(mp_limb_t) == MPFR_BYTES_PER_MP_LIMB );
+  MPFR_STAT_STATIC_ASSERT(GMP_NUMB_BITS == MPFR_BYTES_PER_MP_LIMB * CHAR_BIT);
+  MPFR_STAT_STATIC_ASSERT(sizeof(mp_limb_t) == MPFR_BYTES_PER_MP_LIMB);
   /* Check for mp_bits_per_limb (a global variable inside GMP library) */
   MPFR_ASSERTN (mp_bits_per_limb == GMP_NUMB_BITS);
 

@@ -1,6 +1,6 @@
 /* mpfr_odd_p -- check for odd integers
 
-Copyright 2001-2019 Free Software Foundation, Inc.
+Copyright 2001-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -63,7 +63,7 @@ mpfr_odd_p (mpfr_srcptr y)
   yp = MPFR_MANT(y);
   /* if expo is a multiple of GMP_NUMB_BITS, t is bit 0 */
   if (expo % GMP_NUMB_BITS == 0 ? (yp[yn] & 1) == 0
-      : yp[yn] << ((expo % GMP_NUMB_BITS) - 1) != MPFR_LIMB_HIGHBIT)
+      : MPFR_LIMB_LSHIFT(yp[yn], (expo % GMP_NUMB_BITS) - 1) != MPFR_LIMB_HIGHBIT)
     return 0;
   while (--yn >= 0)
     if (yp[yn] != 0)

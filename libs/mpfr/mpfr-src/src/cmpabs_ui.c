@@ -1,6 +1,6 @@
-/* mpfr_get_patches -- Patches that have been applied
+/* mpfr_cmpabs_ui -- compare the absolute value of FP to an unsigned long
 
-Copyright 2007-2019 Free Software Foundation, Inc.
+Copyright 2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,8 +22,14 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
-const char *
-mpfr_get_patches (void)
+/* Return a positive value if abs(b) > c, 0 if abs(b) = c, and
+   a negative value if abs(b) < c. */
+
+int
+mpfr_cmpabs_ui (mpfr_srcptr b, unsigned long c)
 {
-  return "";
+  mpfr_t absb;
+
+  MPFR_TMP_INIT_ABS (absb, b);
+  return mpfr_cmp_ui (absb, c);
 }

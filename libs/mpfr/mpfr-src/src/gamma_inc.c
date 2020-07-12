@@ -1,6 +1,6 @@
 /* mpfr_gamma_inc -- incomplete gamma function
 
-Copyright 2016-2019 Free Software Foundation, Inc.
+Copyright 2016-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -103,10 +103,10 @@ mpfr_gamma_inc (mpfr_ptr y, mpfr_srcptr a, mpfr_srcptr x, mpfr_rnd_t rnd)
                     }
                   else /* a = -Inf */
                     {
-                      /* gamma_inc(-Inf, x) = NaN for x < 0
-                                              +Inf for 0 <= x < 1
+                      /* gamma_inc(-Inf, x) = NaN for x <= 0
+                                              +Inf for 0 < x < 1
                                               +0 for 1 <= x */
-                      if (mpfr_cmp_ui (x, 0) < 0)
+                      if (mpfr_cmp_ui (x, 0) <= 0)
                         {
                           MPFR_SET_NAN (y);
                           MPFR_RET_NAN;

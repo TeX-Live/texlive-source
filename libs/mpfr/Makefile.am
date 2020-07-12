@@ -43,7 +43,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/clears.c \
 	@MPFR_TREE@/src/cmp.c \
 	@MPFR_TREE@/src/cmp2.c \
-	@MPFR_TREE@/src/cmp_abs.c \
+	@MPFR_TREE@/src/cmpabs.c \
 	@MPFR_TREE@/src/cmp_si.c \
 	@MPFR_TREE@/src/cmp_ui.c \
 	@MPFR_TREE@/src/comparisons.c \
@@ -88,6 +88,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/mul_2ui.c \
 	@MPFR_TREE@/src/mul_ui.c \
 	@MPFR_TREE@/src/mulders.c \
+	@MPFR_TREE@/src/nbits_ulong.c \
 	@MPFR_TREE@/src/neg.c \
 	@MPFR_TREE@/src/next.c \
 	@MPFR_TREE@/src/pool.c \
@@ -145,6 +146,7 @@ unused_sources = \
 	@MPFR_TREE@/src/check.c \
 	@MPFR_TREE@/src/cmp_d.c \
 	@MPFR_TREE@/src/cmp_ld.c \
+	@MPFR_TREE@/src/cmpabs_ui.c \
 	@MPFR_TREE@/src/copysign.c \
 	@MPFR_TREE@/src/cosh.c \
 	@MPFR_TREE@/src/cot.c \
@@ -157,6 +159,7 @@ unused_sources = \
 	@MPFR_TREE@/src/dim.c \
 	@MPFR_TREE@/src/div_2exp.c \
 	@MPFR_TREE@/src/div_d.c \
+	@MPFR_TREE@/src/dot.c \
 	@MPFR_TREE@/src/dump.c \
 	@MPFR_TREE@/src/eint.c \
 	@MPFR_TREE@/src/eq.c \
@@ -182,12 +185,12 @@ unused_sources = \
 	@MPFR_TREE@/src/gamma_inc.c \
 	@MPFR_TREE@/src/gammaonethird.c \
 	@MPFR_TREE@/src/get_d64.c \
+	@MPFR_TREE@/src/get_d128.c \
 	@MPFR_TREE@/src/get_exp.c \
 	@MPFR_TREE@/src/get_f.c \
 	@MPFR_TREE@/src/get_float128.c \
 	@MPFR_TREE@/src/get_flt.c \
 	@MPFR_TREE@/src/get_ld.c \
-	@MPFR_TREE@/src/get_patches.c \
 	@MPFR_TREE@/src/get_q.c \
 	@MPFR_TREE@/src/get_sj.c \
 	@MPFR_TREE@/src/get_ui.c \
@@ -215,6 +218,7 @@ unused_sources = \
 	@MPFR_TREE@/src/mpfr-mini-gmp.c \
 	@MPFR_TREE@/src/mul_2exp.c \
 	@MPFR_TREE@/src/mul_d.c \
+	@MPFR_TREE@/src/mul_1_extracted.c \
 	@MPFR_TREE@/src/nrandom.c \
 	@MPFR_TREE@/src/odd_p.c \
 	@MPFR_TREE@/src/out_str.c \
@@ -233,6 +237,7 @@ unused_sources = \
 	@MPFR_TREE@/src/sec.c \
 	@MPFR_TREE@/src/sech.c \
 	@MPFR_TREE@/src/set_d64.c \
+	@MPFR_TREE@/src/set_d128.c \
 	@MPFR_TREE@/src/set_exp.c \
 	@MPFR_TREE@/src/set_flt.c \
 	@MPFR_TREE@/src/set_float128.c \
@@ -251,10 +256,12 @@ unused_sources = \
 	@MPFR_TREE@/src/sinh_cosh.c \
 	@MPFR_TREE@/src/stack_interface.c \
 	@MPFR_TREE@/src/sub_d.c \
+	@MPFR_TREE@/src/sub1sp1_extracted.c \
 	@MPFR_TREE@/src/subnormal.c \
 	@MPFR_TREE@/src/sum.c \
 	@MPFR_TREE@/src/tan.c \
 	@MPFR_TREE@/src/tanh.c \
+	@MPFR_TREE@/src/total_order.c \
 	@MPFR_TREE@/src/uceil_exp2.c \
 	@MPFR_TREE@/src/uceil_log2.c \
 	@MPFR_TREE@/src/ufloor_log2.c \
