@@ -157,12 +157,14 @@ nodist_libmpfr_a_OBJECTS = @MPFR_TREE@/src/abort_prec_max.$(OBJEXT) \
 	@MPFR_TREE@/src/get_str.$(OBJEXT) \
 	@MPFR_TREE@/src/get_z.$(OBJEXT) \
 	@MPFR_TREE@/src/get_z_exp.$(OBJEXT) \
+	@MPFR_TREE@/src/get_ui.$(OBJEXT) \
 	@MPFR_TREE@/src/gmp_op.$(OBJEXT) \
 	@MPFR_TREE@/src/init.$(OBJEXT) @MPFR_TREE@/src/init2.$(OBJEXT) \
 	@MPFR_TREE@/src/inits2.$(OBJEXT) \
 	@MPFR_TREE@/src/isinteger.$(OBJEXT) \
 	@MPFR_TREE@/src/isnum.$(OBJEXT) \
 	@MPFR_TREE@/src/isqrt.$(OBJEXT) @MPFR_TREE@/src/log.$(OBJEXT) \
+	@MPFR_TREE@/src/log2.$(OBJEXT) \
 	@MPFR_TREE@/src/min_prec.$(OBJEXT) \
 	@MPFR_TREE@/src/mpfr-gmp.$(OBJEXT) \
 	@MPFR_TREE@/src/mpn_exp.$(OBJEXT) \
@@ -271,6 +273,7 @@ am__depfiles_remade = ./$(DEPDIR)/mpfrtest-mpfrtest.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_d.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_si.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_str.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/get_ui.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_z.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_z_exp.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/gmp_op.Po \
@@ -281,6 +284,7 @@ am__depfiles_remade = ./$(DEPDIR)/mpfrtest-mpfrtest.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/isnum.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/isqrt.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/log.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/log2.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/min_prec.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po \
@@ -815,6 +819,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/get_str.c \
 	@MPFR_TREE@/src/get_z.c \
 	@MPFR_TREE@/src/get_z_exp.c \
+	@MPFR_TREE@/src/get_ui.c \
 	@MPFR_TREE@/src/gmp_op.c \
 	@MPFR_TREE@/src/init.c \
 	@MPFR_TREE@/src/init2.c \
@@ -823,6 +828,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
+	@MPFR_TREE@/src/log2.c \
 	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
 	@MPFR_TREE@/src/mpn_exp.c \
@@ -937,7 +943,6 @@ unused_sources = \
 	@MPFR_TREE@/src/get_ld.c \
 	@MPFR_TREE@/src/get_q.c \
 	@MPFR_TREE@/src/get_sj.c \
-	@MPFR_TREE@/src/get_ui.c \
 	@MPFR_TREE@/src/get_uj.c \
 	@MPFR_TREE@/src/grandom.c \
 	@MPFR_TREE@/src/hypot.c \
@@ -953,7 +958,6 @@ unused_sources = \
 	@MPFR_TREE@/src/lngamma.c \
 	@MPFR_TREE@/src/log10.c \
 	@MPFR_TREE@/src/log1p.c \
-	@MPFR_TREE@/src/log2.c \
 	@MPFR_TREE@/src/logging.c \
 	@MPFR_TREE@/src/log_ui.c \
 	@MPFR_TREE@/src/min_prec.c \
@@ -1187,6 +1191,8 @@ clean-noinstLIBRARIES:
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/get_z_exp.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/get_ui.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/gmp_op.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/init.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
@@ -1202,6 +1208,8 @@ clean-noinstLIBRARIES:
 @MPFR_TREE@/src/isqrt.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/log.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/log2.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/min_prec.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1370,6 +1378,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_d.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_si.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_str.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_z.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_z_exp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/gmp_op.Po@am__quote@ # am--include-marker
@@ -1380,6 +1389,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isnum.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/isqrt.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/log.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/log2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/min_prec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po@am__quote@ # am--include-marker
@@ -2024,6 +2034,7 @@ distclean: distclean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_si.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_str.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_ui.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_z.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_z_exp.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/gmp_op.Po
@@ -2034,6 +2045,7 @@ distclean: distclean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isnum.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isqrt.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log2.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/min_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po
@@ -2174,6 +2186,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_si.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_str.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_ui.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_z.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_z_exp.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/gmp_op.Po
@@ -2184,6 +2197,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isnum.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/isqrt.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/log2.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/min_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mp_clz_tab.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/mpfr-gmp.Po

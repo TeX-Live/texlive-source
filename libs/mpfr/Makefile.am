@@ -71,6 +71,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/get_str.c \
 	@MPFR_TREE@/src/get_z.c \
 	@MPFR_TREE@/src/get_z_exp.c \
+	@MPFR_TREE@/src/get_ui.c \
 	@MPFR_TREE@/src/gmp_op.c \
 	@MPFR_TREE@/src/init.c \
 	@MPFR_TREE@/src/init2.c \
@@ -79,6 +80,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/isnum.c \
 	@MPFR_TREE@/src/isqrt.c \
 	@MPFR_TREE@/src/log.c \
+	@MPFR_TREE@/src/log2.c \
 	@MPFR_TREE@/src/min_prec.c \
 	@MPFR_TREE@/src/mpfr-gmp.c \
 	@MPFR_TREE@/src/mpn_exp.c \
@@ -193,7 +195,6 @@ unused_sources = \
 	@MPFR_TREE@/src/get_ld.c \
 	@MPFR_TREE@/src/get_q.c \
 	@MPFR_TREE@/src/get_sj.c \
-	@MPFR_TREE@/src/get_ui.c \
 	@MPFR_TREE@/src/get_uj.c \
 	@MPFR_TREE@/src/grandom.c \
 	@MPFR_TREE@/src/hypot.c \
@@ -209,7 +210,6 @@ unused_sources = \
 	@MPFR_TREE@/src/lngamma.c \
 	@MPFR_TREE@/src/log10.c \
 	@MPFR_TREE@/src/log1p.c \
-	@MPFR_TREE@/src/log2.c \
 	@MPFR_TREE@/src/logging.c \
 	@MPFR_TREE@/src/log_ui.c \
 	@MPFR_TREE@/src/min_prec.c \
