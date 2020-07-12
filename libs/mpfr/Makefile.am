@@ -65,6 +65,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/extract.c \
 	@MPFR_TREE@/src/fits_sint.c \
 	@MPFR_TREE@/src/fits_slong.c \
+	@MPFR_TREE@/src/fits_ulong.c \
 	@MPFR_TREE@/src/free_cache.c \
 	@MPFR_TREE@/src/get_d.c \
 	@MPFR_TREE@/src/get_si.c \
@@ -175,7 +176,6 @@ unused_sources = \
 	@MPFR_TREE@/src/fits_sshort.c \
 	@MPFR_TREE@/src/fits_uint.c \
 	@MPFR_TREE@/src/fits_uintmax.c \
-	@MPFR_TREE@/src/fits_ulong.c \
 	@MPFR_TREE@/src/fits_ushort.c \
 	@MPFR_TREE@/src/fma.c \
 	@MPFR_TREE@/src/fmma.c \

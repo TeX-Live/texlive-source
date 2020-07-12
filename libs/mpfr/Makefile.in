@@ -151,6 +151,7 @@ nodist_libmpfr_a_OBJECTS = @MPFR_TREE@/src/abort_prec_max.$(OBJEXT) \
 	@MPFR_TREE@/src/extract.$(OBJEXT) \
 	@MPFR_TREE@/src/fits_sint.$(OBJEXT) \
 	@MPFR_TREE@/src/fits_slong.$(OBJEXT) \
+	@MPFR_TREE@/src/fits_ulong.$(OBJEXT) \
 	@MPFR_TREE@/src/free_cache.$(OBJEXT) \
 	@MPFR_TREE@/src/get_d.$(OBJEXT) \
 	@MPFR_TREE@/src/get_si.$(OBJEXT) \
@@ -269,6 +270,7 @@ am__depfiles_remade = ./$(DEPDIR)/mpfrtest-mpfrtest.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/extract.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/fits_sint.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/fits_slong.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/fits_ulong.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/free_cache.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_d.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/get_si.Po \
@@ -813,6 +815,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/extract.c \
 	@MPFR_TREE@/src/fits_sint.c \
 	@MPFR_TREE@/src/fits_slong.c \
+	@MPFR_TREE@/src/fits_ulong.c \
 	@MPFR_TREE@/src/free_cache.c \
 	@MPFR_TREE@/src/get_d.c \
 	@MPFR_TREE@/src/get_si.c \
@@ -923,7 +926,6 @@ unused_sources = \
 	@MPFR_TREE@/src/fits_sshort.c \
 	@MPFR_TREE@/src/fits_uint.c \
 	@MPFR_TREE@/src/fits_uintmax.c \
-	@MPFR_TREE@/src/fits_ulong.c \
 	@MPFR_TREE@/src/fits_ushort.c \
 	@MPFR_TREE@/src/fma.c \
 	@MPFR_TREE@/src/fmma.c \
@@ -1179,6 +1181,8 @@ clean-noinstLIBRARIES:
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/fits_slong.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/fits_ulong.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/free_cache.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/get_d.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
@@ -1374,6 +1378,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/extract.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/fits_sint.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/fits_slong.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/fits_ulong.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/free_cache.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_d.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/get_si.Po@am__quote@ # am--include-marker
@@ -2030,6 +2035,7 @@ distclean: distclean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/extract.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_sint.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_slong.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_ulong.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/free_cache.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_si.Po
@@ -2182,6 +2188,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/extract.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_sint.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_slong.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/fits_ulong.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/free_cache.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/get_si.Po
