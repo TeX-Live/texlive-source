@@ -305,6 +305,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/scan1.c \
 	@GMP_TREE@/mpz/set.c \
+	@GMP_TREE@/mpz/set_si.c \
 	@GMP_TREE@/mpz/size.c \
 	@GMP_TREE@/mpz/set_ui.c \
 	@GMP_TREE@/mpz/sizeinbase.c \
@@ -416,7 +417,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/set_d.c \
 	@GMP_TREE@/mpz/set_f.c \
 	@GMP_TREE@/mpz/set_q.c \
-	@GMP_TREE@/mpz/set_si.c \
 	@GMP_TREE@/mpz/set_str.c \
 	@GMP_TREE@/mpz/setbit.c \
 	@GMP_TREE@/mpz/sqrtrem.c \

@@ -267,8 +267,8 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/realloc.$(OBJEXT) \
 	@GMP_TREE@/mpz/realloc2.$(OBJEXT) \
 	@GMP_TREE@/mpz/scan0.$(OBJEXT) @GMP_TREE@/mpz/scan1.$(OBJEXT) \
-	@GMP_TREE@/mpz/set.$(OBJEXT) @GMP_TREE@/mpz/size.$(OBJEXT) \
-	@GMP_TREE@/mpz/set_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/set.$(OBJEXT) @GMP_TREE@/mpz/set_si.$(OBJEXT) \
+	@GMP_TREE@/mpz/size.$(OBJEXT) @GMP_TREE@/mpz/set_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/sizeinbase.$(OBJEXT) \
 	@GMP_TREE@/mpz/sqrt.$(OBJEXT) @GMP_TREE@/mpz/sub.$(OBJEXT) \
 	@GMP_TREE@/mpz/sub_ui.$(OBJEXT) @GMP_TREE@/mpz/swap.$(OBJEXT) \
@@ -464,6 +464,7 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/scan0.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/scan1.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/set.Po \
+	@GMP_TREE@/mpz/$(DEPDIR)/set_si.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/set_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/size.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/sizeinbase.Po \
@@ -1179,6 +1180,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/scan0.c \
 	@GMP_TREE@/mpz/scan1.c \
 	@GMP_TREE@/mpz/set.c \
+	@GMP_TREE@/mpz/set_si.c \
 	@GMP_TREE@/mpz/size.c \
 	@GMP_TREE@/mpz/set_ui.c \
 	@GMP_TREE@/mpz/sizeinbase.c \
@@ -1290,7 +1292,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/set_d.c \
 	@GMP_TREE@/mpz/set_f.c \
 	@GMP_TREE@/mpz/set_q.c \
-	@GMP_TREE@/mpz/set_si.c \
 	@GMP_TREE@/mpz/set_str.c \
 	@GMP_TREE@/mpz/setbit.c \
 	@GMP_TREE@/mpz/sqrtrem.c \
@@ -1831,6 +1832,8 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/set.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/set_si.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/size.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/set_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
@@ -2043,6 +2046,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/scan0.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/scan1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/set.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/set_si.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/set_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/size.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/sizeinbase.Po@am__quote@ # am--include-marker
@@ -2777,6 +2781,7 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/scan0.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/scan1.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set_si.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/size.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/sizeinbase.Po
@@ -3003,6 +3008,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/scan0.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/scan1.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set_si.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/set_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/size.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/sizeinbase.Po

@@ -1,3 +1,7 @@
+2020-07-12  Akira Kakuto  <kakuto@w32tex.org>
+
+	* Makefile.am: Add mpz/set_si.c for mpfr-4.1.0.
+
 2020-01-20  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import gmp-6.2.0.
