@@ -8,7 +8,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.25
+ local version = 0.26
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -167,7 +167,7 @@ alphabet_upper_map = CreateCharListMap(alphabet_upper)
 local esc_char = args.escapechar
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
-  {esc_char..'"', '//escapedquote//',     '\\"{}' },
+  {esc_char..'"', '//escapedquote//',     '"'    },
   {esc_char..'@', '//escapedat//',        '@'    },
   {esc_char..'|', '//escapedvert//',      '|'    },
   {esc_char..'!', '//scapedexcl//',       '!'    },
