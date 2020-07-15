@@ -47,7 +47,7 @@ are placed in the context of the `|_|'~macro.  This is just a shortcut for the
 not have this library installed, we wrap things for neutral behavior without
 internationalization.
 
-@d _(STRING) gettext(STRING)
+@d _(S) gettext(S)
 
 @<Include files@>=
 #ifndef HAVE_GETTEXT

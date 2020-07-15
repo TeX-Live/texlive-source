@@ -1244,7 +1244,7 @@ static void prime_the_change_buffer(void);@/
 
 @* Standard C library interfaces.  This updated version of \.{CWEB} uses
 standard C types for boolean values, pointers, and objects with fixed sizes
-(already in \Kpathsea/).
+(|@!uint8_t|, |@!uint16_t|; already in \Kpathsea/).
 
 @<Include files@>=
 #include <stdbool.h> /* type definition of |bool| */
@@ -1252,8 +1252,6 @@ standard C types for boolean values, pointers, and objects with fixed sizes
 
 @ The |scan_args| and |cb_show_banner| routines and the |bindtextdomain|
 argument string need a few extra variables.
-
-@s string int
 
 @d max_banner 50
 
@@ -1285,7 +1283,7 @@ This is just a shortcut for the `|@!gettext|' function from the ``GNU~gettext
 utilities.'' For systems that do not have this library installed, we wrap
 things for neutral behavior without internationalization.
 
-@d _(STRING) gettext(STRING)
+@d _(S) gettext(S)
 
 @<Include files@>=
 #ifndef HAVE_GETTEXT
@@ -1293,7 +1291,7 @@ things for neutral behavior without internationalization.
 #endif
 @#
 #if HAVE_GETTEXT
-#include <locale.h>
+#include <locale.h> /* |@!LC_MESSAGES|, |@!LC_CTYPE| */
 #include <libintl.h>
 #else
 #define setlocale(A,B) ""
@@ -1376,18 +1374,18 @@ The directories to be searched for come from three sources:
     i.e., \.{\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}.\par}
 @.CWEBINPUTS@>
 
+@s const_string int
+@s string int
+
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
 typedef bool boolean;
 #define HAVE_BOOLEAN
-#include <kpathsea/kpathsea.h>
-    /* include every \Kpathsea/ header; |@!kpathsea_debug| */
+#include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header;
+  |@!kpathsea_debug|, |@!const_string|, |@!string| */
 #include <w2c/config.h> /* \&{integer} */
 #include <lib/lib.h> /* |@!versionstring| */
-@#
-#define CWEB
-#include "help.h"
 
 @ We set |kpse_program_name| to `\.{cweb}'.  This means if the variable
 \.{CWEBINPUTS.cweb} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_cweb}
@@ -1418,16 +1416,21 @@ Debugging output is always written to |stderr|, and begins with the string
 
 @* System dependent changes. The most volatile stuff comes at the very end.
 
-@ Modules for dealing with help messages and version info.
+Modules for dealing with help messages and version info.
 
-@<Display help message and |exit|@>=
+@<Include files@>=
+#define CWEB
+#include "help.h" /* |@!CTANGLEHELP|, |@!CWEAVEHELP|, |@!CTWILLHELP| */
+
+@ @<Display help message and |exit|@>=
 cb_usagehelp(program==ctangle ? CTANGLEHELP :
   program==cweave ? CWEAVEHELP : CTWILLHELP, NULL);
 @.--help@>
 
-@ Special variants from Web2c's `\.{lib/usage.c}', adapted for \.{i18n}/\.{t10n}.
-We simply filter the strings through the catalogs (if available).
-@s const_string int
+@ Special variants from Web2c's `\.{lib/usage.c}', adapted for
+\.{i18n}/\.{t10n}.  We simply filter the strings through the catalogs
+(if available).
+
 @c
 static void cb_usage (const_string str)
 {

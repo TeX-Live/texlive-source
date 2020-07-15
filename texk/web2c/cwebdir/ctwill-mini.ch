@@ -104,7 +104,7 @@ internationalization.
 internationalization.
 @-A@>
 @-HAVE_GETTEXT@>
-@-STRING@>
+@-S@>
 @z
 
 Section 11.

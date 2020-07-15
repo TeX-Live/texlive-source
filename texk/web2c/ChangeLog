@@ -1,3 +1,8 @@
+2020-07-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Recreate CWEB boot modules.
+
 2020-07-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin,

@@ -1,3 +1,9 @@
+2020-07-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.hch,
+	* ctwill-mini.ch: Clearer exposition re external type definitions.
+
 2020-07-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch,
