@@ -92,9 +92,9 @@ xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
-	@$(xe_tangle) xetex xetex
-xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
-	@$(xe_tangle) xetex xetex
+	@$(xe_tangle) xetex xetex-final
+xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex-final.ch tangle-sh
+	@$(xe_tangle) xetex xetex-final
 
 # Extract etex version
 $(srcdir)/xetexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
@@ -106,8 +106,8 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-## Generate xetex.ch
-xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
+## Generate xetex-final.ch
+xetex-final.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie_c) $(xetex_ch_srcs)
 xetex_ch_srcs = \
 	xetexdir/xetex.web \
@@ -121,7 +121,7 @@ xetex_ch_srcs = \
 ##
 EXTRA_DIST += $(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines
 
-DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex.ch xetex-web2c \
+DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
 	xetex.p xetex.pool xetex-tangle
 
 

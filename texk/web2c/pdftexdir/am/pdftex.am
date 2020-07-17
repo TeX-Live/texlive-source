@@ -46,9 +46,9 @@ $(pdftex_c_h): pdftex-web2c
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
 	@$(web2c) pdftex
 pdftex.p pdftex.pool: pdftex-tangle
-	@$(pdf_tangle) pdftex pdftex
-pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
-	@$(pdf_tangle) pdftex pdftex
+	@$(pdf_tangle) pdftex pdftex-final
+pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex-final.ch tangle-sh
+	@$(pdf_tangle) pdftex pdftex-final
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
@@ -62,8 +62,8 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-# Generate pdftex.ch
-pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
+# Generate pdftex-final.ch
+pdftex-final.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie_c) $(pdftex_ch_srcs)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
@@ -84,7 +84,7 @@ pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 ##
 EXTRA_DIST += $(pdftex_ch_srcs) pdftexdir/pdftex.defines
 
-DISTCLEANFILES += $(nodist_pdftex_SOURCES) pdftex.ch pdftex-web2c \
+DISTCLEANFILES += $(nodist_pdftex_SOURCES) pdftex-final.ch pdftex-web2c \
 	pdftex.p pdftex.pool pdftex-tangle
 
 EXTRA_DIST += \

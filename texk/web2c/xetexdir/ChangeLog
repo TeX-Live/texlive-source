@@ -1,3 +1,7 @@
+2020-07-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* am/xetex.am: Avoid changefile ambiguity.
+
 2020-07-04  Clerk Ma  <maqiyuan130324@vip.qq.com>
 
 	* xetex.web: Tweak indentation, etc.

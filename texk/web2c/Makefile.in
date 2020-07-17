@@ -3316,13 +3316,13 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	uptests/yuparse.* uptests/ygkhuge*.* uptrip.diffs \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	pdfprimitive-euptex.* $(nodist_pdftex_SOURCES) pdftex.ch \
+	pdfprimitive-euptex.* $(nodist_pdftex_SOURCES) pdftex-final.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
 	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
 	cnfline.log postV3.afm postV7.afm test-13.pdf test-13.xref \
 	test-15.pdf test-15.xref $(nodist_libluatex_sources) \
 	luaimage.* luajitimage.* $(nodist_xetex_SOURCES) xetex.web \
-	xetex.ch xetex-web2c xetex.p xetex.pool xetex-tangle bug73.fmt \
+	xetex-final.ch xetex-web2c xetex.p xetex.pool xetex-tangle bug73.fmt \
 	bug73.log bug73.out bug73.tex filedump.log filedump.out \
 	filedump.tex $(omegaware_programs:=.c) \
 	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
@@ -18617,9 +18617,9 @@ $(pdftex_c_h): pdftex-web2c
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
 	@$(web2c) pdftex
 pdftex.p pdftex.pool: pdftex-tangle
-	@$(pdf_tangle) pdftex pdftex
-pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex.ch tangle-sh
-	@$(pdf_tangle) pdftex pdftex
+	@$(pdf_tangle) pdftex pdftex-final
+pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex-final.ch tangle-sh
+	@$(pdf_tangle) pdftex pdftex-final
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
@@ -18633,8 +18633,8 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 	$(AM_V_GEN)grep '^@d eTeX_version_string==' $(srcdir)/pdftexdir/pdftex.web \
 	  | sed "s/^.*'-/#define ETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-# Generate pdftex.ch
-pdftex.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
+# Generate pdftex-final.ch
+pdftex-final.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
 	$(tie_c) $(pdftex_ch_srcs)
 
 # Convenience target for making the typeset output; not invoked automatically
@@ -18770,9 +18770,9 @@ xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
 	$(makecpool) xetex >$@ || rm -f $@
 
 xetex.p xetex.pool: xetex-tangle
-	@$(xe_tangle) xetex xetex
-xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex.ch tangle-sh
-	@$(xe_tangle) xetex xetex
+	@$(xe_tangle) xetex xetex-final
+xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex-final.ch tangle-sh
+	@$(xe_tangle) xetex xetex-final
 
 # Extract etex version
 $(srcdir)/xetexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
@@ -18783,7 +18783,8 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	$(AM_V_GEN)grep '^@d XeTeX_version_string==' $(srcdir)/xetexdir/xetex.web \
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
-xetex.ch: tie$(EXEEXT) $(xetex_ch_srcs)
+# Generate xetex-final.ch
+xetex-final.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie_c) $(xetex_ch_srcs)
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
 xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
