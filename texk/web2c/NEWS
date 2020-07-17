@@ -1,5 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
 
+* obscure interaction sequences try to avoid crashing.
+
+
 2020 (for TeX Live 2020, 27 March 2020)
 * \input now also accepts a group-delimited filename, e.g.,
 \input{foo.tex}. The usage with a standard space/token-delimited

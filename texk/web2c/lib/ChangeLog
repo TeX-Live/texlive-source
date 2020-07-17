@@ -1,3 +1,12 @@
+2020-07-17  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c (calledit): close only open input files,
+	not non-files resulting from terminal interactions.
+	This means looking at each element of input_stack
+	instead of only looking at the input_file array. Painful.
+	Original report from Xiao Zhang,
+	https://tex.stackexchange.com/q/552113
+
 2020-01-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	* printversion.c: Update copyright year.

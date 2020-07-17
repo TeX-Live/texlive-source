@@ -2564,7 +2564,7 @@ calledit (packedASCIIcode *filename,
 {
   char *temp, *command, *fullcmd;
   char c;
-  int sdone, ddone, i;
+  int sdone, ddone;
 
 #ifdef WIN32
   char *fp, *ffp, *env, editorname[256], buffer[256];
@@ -2575,13 +2575,76 @@ calledit (packedASCIIcode *filename,
   sdone = ddone = 0;
   filename += fnstart;
 
-  /* Close any open input files, since we're going to kill the job.  */
-  for (i = 1; i <= inopen; i++)
+  /* Close any open input files, since we're going to kill the job and
+     the editor might well want to open them for writing.  On Windows,
+     at least, that would not be allowed when the file is still open.
+     
+     Unfortunately, the input_file array contains both the open files
+     that we want to close, and junk references to non-files for
+     terminal interaction that we must not try to close.  For example,
+     consider this input sequence:
+       \input test % contains a single line \bla, that is, any undefined cs
+       i\bum x     % insert another undefined control sequence
+       e           % invoke the editor
+     At this point input_file will have an open file for test.tex,
+     and a non-file for the insert. https://tex.stackexchange.com/q/552113 
+     
+     Therefore, we have to traverse down input_stack (not input_file),
+     looking for name_field values >17, which correspond to open
+     files, and then the index_field value of that entry tells us the
+     corresponding element of input_file, which is what we need to close.
+
+     We test for >17 because name_field=0 means the terminal,
+     name_field=1..16 means \openin stream n - 1,
+     name_field=17 means an invalid stream number (for read_toks).
+     Although ... seems like we should close any opened \openin files also.
+     Whoever is reading this, please implement that? Sigh.
+     
+     Description in modules 300--304 of tex.web: "Input stacks and states."
+     
+     Here, we do not have to look at cur_input, the global variable
+     which is effectively the top of input_stack, because it will always
+     be a terminal (non-file) interaction -- the one where the user
+     typed "e" to start the edit.  */
+ {  
+  int is_ptr; /* element of input_stack, 0 < input_ptr */  
+  for (is_ptr = 0; is_ptr < inputptr; is_ptr++) {
+    if (inputstack[is_ptr].namefield <= 17) {
+        ; /* fprintf (stderr, "calledit: skipped input_stack[%d], ", is_ptr);
+             fprintf (stderr, "namefield=%d <= 17\n",
+                      inputstack[is_ptr].namefield); */
+    } else {
+      FILE *f;
+      /* when name_field > 17, index_field specifies the element of
+         the input_file array, 1 <= in_open */
+      int if_ptr = inputstack[is_ptr].indexfield;
+      if (if_ptr < 1 || if_ptr > inopen) {
+      fprintf (stderr, "%s:calledit: unexpected if_ptr=%d not in range 1..%d,",
+                 argv[0], if_ptr, inopen);
+        fprintf (stderr, "from input_stack[%d].namefield=%d\n",
+                 is_ptr, inputstack[is_ptr].namefield);
+        exit (1);
+      }
+      
 #ifdef XeTeX
-    xfclose (inputfile[i]->f, "inputfile");
+      f = inputfile[if_ptr]->f;
 #else
-    xfclose (inputfile[i], "inputfile");
+      f = inputfile[if_ptr];
 #endif
+       /* fprintf (stderr,"calledit: input_stack #%d -> input_file #%d = %x\n",
+                   is_ptr, if_ptr, f); */
+      /* Although it should never happen, if the file value happens to
+         be zero, let's not gratuitously abort.  */
+      if (f) {
+        xfclose (f, "inputfile");
+      } else {
+        fprintf (stderr, "%s:calledit: not closing unexpected zero", argv[0]);
+        fprintf (stderr, " input_file[%d] from input_stack[%d].namefield=%d\n",
+                 if_ptr, is_ptr, inputstack[is_ptr].namefield);        
+      }
+    } /* end name_field > 17 */
+  }   /* end for loop for input_stack */
+ }    /* end block for variable declarations */
 
   /* Replace the default with the value of the appropriate environment
      variable or config file value, if it's set.  */
@@ -2590,7 +2653,7 @@ calledit (packedASCIIcode *filename,
     edit_value = temp;
 
   /* Construct the command string.  The `11' is the maximum length an
-     integer might be.  */
+     integer might be (64 bits).  */
   command = xmalloc (strlen (edit_value) + fnlength + 11);
 
   /* So we can construct it as we go.  */
@@ -2611,6 +2674,7 @@ calledit (packedASCIIcode *filename,
     {
       if (c == '%')
         {
+          int i;
           switch (c = *edit_value++)
             {
 	    case 'd':
