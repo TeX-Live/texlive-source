@@ -870,7 +870,11 @@ system_default (void)
 void
 error_cleanup (void)
 {
-  pdf_close_images();  /* delete temporary files */
+  /* Fixed a stupid bug...
+   * Please don't put an ordinay function which may call ERROR() inside it.
+   * It may result in error cleanup routine being called recursively.
+   */
+  pdf_error_cleanup_cache();  /* delete temporary files */
   pdf_error_cleanup();
   if (pdf_filename) {
     if (pdf_get_output_file()) {

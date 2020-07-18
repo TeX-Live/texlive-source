@@ -1,3 +1,10 @@
+2020-07-18  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvipdfmx.c, pdfximage.[ch]: Don't call ordinary functions
+	such as pdf_close_images() which can call ERROR() in
+	error_cleanup(). This can result in a recursive call of
+	error_cleanup().
+
 2020-07-11  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdev.c, pdfdoc.c, pdfdraw.[ch], pdfobj.[ch], spc_pdfm.c:

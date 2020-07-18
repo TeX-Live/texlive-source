@@ -1056,3 +1056,20 @@ static int check_for_mp (FILE *image_file)
 
   return ((try_count > 0) ? 1 : 0);
 }
+
+/* ERROR() can't be used here otherwise the cleanup routine is recursively called. */
+#undef ERROR
+void
+pdf_error_cleanup_cache (void)
+{
+  struct ic_ *ic = &_ic;
+  int         i;
+  pdf_ximage *I;
+
+  for (i = 0; i < ic->count; i++) {
+    I = &ic->ximages[i];
+    if (I->attr.tempfile) {
+      dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
+    }
+  }
+}
