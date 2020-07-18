@@ -1,3 +1,8 @@
+2020-07-18  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c: reformat so that all function return types and names
+	both are at the beginning of a line.
+
 2020-07-17  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c (calledit): close only open input files,

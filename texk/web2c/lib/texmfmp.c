@@ -137,7 +137,8 @@
 #endif
 #endif
 
-char *generic_synctex_get_current_name (void)
+char *
+generic_synctex_get_current_name (void)
 {
   char *pwdbuf, *ret;
 #if defined(W32USYNCTEX)
@@ -174,7 +175,8 @@ FILE *Poptr;
 #define fopen fsyscp_fopen
 #define xfopen fsyscp_xfopen
 #include <wchar.h>
-int fsyscp_stat(const char *path, struct stat *buffer)
+int
+fsyscp_stat(const char *path, struct stat *buffer)
 {
   wchar_t *wpath;
   int     ret;
@@ -187,7 +189,8 @@ int fsyscp_stat(const char *path, struct stat *buffer)
   return ret;
 }
 #include <sys/stat.h>
-int fsyscp_dir_p(char *path)
+int
+fsyscp_dir_p(char *path)
 {
   struct stat stats;
   int    ret;
@@ -195,7 +198,8 @@ int fsyscp_dir_p(char *path)
   ret = fsyscp_stat(path, &stats) == 0 && S_ISDIR (stats.st_mode);
   return ret;
 }
-int fsyscp_access(const char *path, int mode)
+int
+fsyscp_access(const char *path, int mode)
 {
   wchar_t *wpath;
   int     ret;
@@ -3140,7 +3144,8 @@ makesrcspecial (strnumber srcfilename, int lineno)
 static char print_buf[PRINTF_BUF_SIZE];
 
 /* Helper for pdftex_fail. */
-static void safe_print(const char *str)
+static void
+safe_print(const char *str)
 {
     const char *c;
     for (c = str; *c; ++c)
@@ -3181,9 +3186,9 @@ char start_time_str[TIME_STR_SIZE];
 static char time_str[TIME_STR_SIZE];
     /* minimum size for time_str is 24: "D:YYYYmmddHHMMSS+HH'MM'" */
 
-static void makepdftime(time_t t, char *time_str, boolean utc)
+static void
+makepdftime(time_t t, char *time_str, boolean utc)
 {
-
     struct tm lt, gmt;
     size_t size;
     int i, off, off_hours, off_mins;
@@ -3234,7 +3239,8 @@ static void makepdftime(time_t t, char *time_str, boolean utc)
     }
 }
 
-void initstarttime(void)
+void
+initstarttime(void)
 {
     if (!start_time_set) {
         init_start_time ();
@@ -3281,7 +3287,8 @@ find_input_file(integer s)
 }
 
 #if !defined(XeTeX)
-char *makecstring(integer s)
+char *
+makecstring(integer s)
 {
     static char *cstrbuf = NULL;
     char *p;
@@ -3315,7 +3322,8 @@ char *makecstring(integer s)
     That means, file names that are legal on some operation systems
     cannot any more be used since pdfTeX version 1.30.4.
 */
-char *makecfilename(integer s)
+char *
+makecfilename(integer s)
 {
     char *name = makecstring(s);
     char *p = name;
@@ -3331,7 +3339,8 @@ char *makecfilename(integer s)
 }
 #endif /* !XeTeX */
 
-void getcreationdate(void)
+void
+getcreationdate(void)
 {
     size_t len;
 #if defined(XeTeX)
@@ -3359,7 +3368,8 @@ void getcreationdate(void)
 #endif
 }
 
-void getfilemoddate(integer s)
+void
+getfilemoddate(integer s)
 {
     struct stat file_data;
 
@@ -3402,7 +3412,8 @@ void getfilemoddate(integer s)
     xfree(file_name);
 }
 
-void getfilesize(integer s)
+void
+getfilesize(integer s)
 {
     struct stat file_data;
     int i;
@@ -3448,7 +3459,8 @@ void getfilesize(integer s)
     xfree(file_name);
 }
 
-void getfiledump(integer s, int offset, int length)
+void
+getfiledump(integer s, int offset, int length)
 {
     FILE *f;
     int read, i;
@@ -3529,7 +3541,8 @@ void getfiledump(integer s, int offset, int length)
  * hexadecimal encoded;
  * sizeof(out) should be at least lin*2+1.
  */
-void convertStringToHexString(const char *in, char *out, int lin)
+void
+convertStringToHexString(const char *in, char *out, int lin)
 {
     int i, j, k;
     char buf[3];
@@ -3547,7 +3560,8 @@ void convertStringToHexString(const char *in, char *out, int lin)
 #define DIGEST_SIZE 16
 #define FILE_BUF_SIZE 1024
 
-void getmd5sum(strnumber s, boolean file)
+void
+getmd5sum(strnumber s, boolean file)
 {
     md5_state_t state;
     md5_byte_t digest[DIGEST_SIZE];
