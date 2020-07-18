@@ -1,3 +1,7 @@
+2020-07-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdraw.c: Avoid invoking gs operation for an empty ExtGState.
+
 2020-07-18  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c, pdfximage.[ch]: Don't call ordinary functions

@@ -1155,7 +1155,7 @@ pdf_dev_reset_xgstate (int force)
   pdf_gstate     *gs;
   pdf_obj        *current, *target, *keys, *diff;
   struct xgs_res *xgs;
-  int             i;
+  int             i, need_reset = 0;
 
   gs  = m_stack_top(gss);
   xgs = m_stack_top(&xgs_stack);
@@ -1191,10 +1191,12 @@ pdf_dev_reset_xgstate (int force)
     is_diff = pdf_compare_object(value1, value2);
     if (is_diff) {
       pdf_add_dict(diff, pdf_link_obj(key), pdf_link_obj(value1));
+      need_reset = 1;
     }
   }
   pdf_release_obj(keys);
-  pdf_dev_set_xgstate(diff, target);
+  if (need_reset)
+    pdf_dev_set_xgstate(diff, target);
   pdf_release_obj(diff);
   pdf_release_obj(current);
   pdf_release_obj(target);
