@@ -1,5 +1,8 @@
 2020-07-19  Karl Berry  <karl@freefriends.org>
 
+	* doc/web2c.texi (TeX extensions): add [e][u]pTeX. Other small
+	additions to the engine descriptions.
+
 	* NEWS: mention new \tracinglostchars>=3 causing an error.
 	See pdftexdir/ChangeLog for details.
 

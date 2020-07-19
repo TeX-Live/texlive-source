@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2020
-@set month-year June 2020
+@set month-year July 2020
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -916,10 +916,10 @@ filename; there is no way to read files whose names contain a @code{"}.
 
 @cindex portable filenames
 However, for maximal portability of your document across systems, use
-only the characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and
-@samp{.}.  Do not use anything but simple filenames, since directory
-separators vary among systems; instead, add the necessary directories
-to the appropriate search path.
+only the characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and at
+most one @samp{.}.  Do not use anything but simple filenames, since
+directory separators vary among systems; instead, add the necessary
+directories to the appropriate search path.
 
 @menu
 * Quotes: \input quoted filename.   \input "some name"
@@ -1059,7 +1059,7 @@ otherwise, are available.
 * Languages and hyphenation::   TeX supports many human languages.
 * Shell escapes::               Running subprograms from TeX.
 * IPC and TeX::                 DVI output to a socket.
-* TeX extensions::              Changes to the TeX language.
+* TeX extensions::              Additional engines with additional features.
 @end menu
 
 
@@ -1875,7 +1875,7 @@ debugging.
 
 
 @node TeX extensions
-@section @TeX{} extensions
+@section Extended @TeX{} engines
 
 @cindex extensions to @TeX{}
 @cindex @TeX{}, extensions to
@@ -1904,24 +1904,29 @@ More info: @url{https://ctan.org/pkg/aleph}, @url{https://ctan.org/pkg/omega}.
 @cindex PDF
 @cindex micro-typography
 @cindex hypertext
+@pindex etex @r{is pdf@TeX{}}
 Can produce PDF as well as DVI files.  It also incorporates the
 e-@TeX{} extensions, new primitives for hypertext and
-micro-typography, reading/writing from pipes, and much more.  Home
-page: @url{http://pdftex.org}.
+micro-typography, reading/writing from pipes, and much more.  In
+@TeX{} Live, the command @command{etex} invokes pdf@TeX{} to make all
+these additions available with DVI output. Home page:
+@url{http://pdftex.org}.
 
 @item Lua@TeX{}
 @cindex Lua@TeX{}
 @cindex Lua
 Embeds the Lua programming language (@url{http://lua.org}) and opens
-up the @TeX{} typesetting engine to control from Lua.  Also supports
-Unicode input and OpenType- and system fonts. Home page:
+up the @TeX{} typesetting engine to control from Lua, starting from
+the pdf@TeX{} capabilities as a base.  Also natively supports Unicode
+input and OpenType- and system fonts. Home page:
 @url{http://luatex.org}.
 
 @item Xe@TeX{}
 @cindex Xe@TeX{}
 @cindex Unicode
 Combines support for Unicode input and OpenType- and system fonts
-with the capabilities of pdf@TeX{}.
+with the capabilities of pdf@TeX{}, with the exception of the font
+expansion part of micro-typography.
 Home page: @url{https://tug.org/xetex}.
 
 @item p@TeX{}
@@ -1932,6 +1937,15 @@ With additional support for Japanese; p@TeX{} was the original engine,
 and up@TeX{} has native Unicode support and thus is more useful for
 Chinese and Korean. More info: @url{https://ctan.org/pkg/ptex},
 @url{https://ctan.org/pkg/uptex}.
+
+@item ep@TeX{}
+@itemx eup@TeX{}
+@cindex ep@TeX{}
+@cindex eup@TeX{}
+Further extends p@TeX{} and up@TeX{} with the e-@TeX{} extensions.
+More info: @url{https://ctan.org/pkg/eptex},
+@url{https://ctan.org/pkg/euptex}.
+
 @end table
 
 

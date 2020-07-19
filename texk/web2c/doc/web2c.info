@@ -58,7 +58,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2020, released in June 2020.
+corresponds to Web2c version 2020, released in July 2020.
 
 * Menu:
 
@@ -83,7 +83,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2020 of Web2c, released in June 2020.
+This manual corresponds to version 2020 of Web2c, released in July 2020.
 
    "Web2c" is the name of a TeX implementation, originally for Unix, but
 now also running under various operating systems.  By "TeX
@@ -866,9 +866,10 @@ or other special characters, as described in the sections below.
 there is no way to read files whose names contain a '"'.
 
    However, for maximal portability of your document across systems, use
-only the characters 'a'-'z', '0'-'9', and '.'.  Do not use anything but
-simple filenames, since directory separators vary among systems;
-instead, add the necessary directories to the appropriate search path.
+only the characters 'a'-'z', '0'-'9', and at most one '.'.  Do not use
+anything but simple filenames, since directory separators vary among
+systems; instead, add the necessary directories to the appropriate
+search path.
 
 * Menu:
 
@@ -980,7 +981,7 @@ Many other books on TeX, introductory and otherwise, are available.
 * Languages and hyphenation::   TeX supports many human languages.
 * Shell escapes::               Running subprograms from TeX.
 * IPC and TeX::                 DVI output to a socket.
-* TeX extensions::              Changes to the TeX language.
+* TeX extensions::              Additional engines with additional features.
 
 
 File: web2c.info,  Node: tex invocation,  Next: Initial TeX,  Up: TeX
@@ -1596,8 +1597,8 @@ its socket operations.  This may be helpful if you are, well, debugging.
 
 File: web2c.info,  Node: TeX extensions,  Prev: IPC and TeX,  Up: TeX
 
-5.7 TeX extensions
-==================
+5.7 Extended TeX engines
+========================
 
 The base TeX program has been extended in many ways.  Here's a partial
 list.
@@ -1617,18 +1618,22 @@ Aleph
 pdfTeX
      Can produce PDF as well as DVI files.  It also incorporates the
      e-TeX extensions, new primitives for hypertext and
-     micro-typography, reading/writing from pipes, and much more.  Home
-     page: <http://pdftex.org>.
+     micro-typography, reading/writing from pipes, and much more.  In
+     TeX Live, the command 'etex' invokes pdfTeX to make all these
+     additions available with DVI output.  Home page:
+     <http://pdftex.org>.
 
 LuaTeX
      Embeds the Lua programming language (<http://lua.org>) and opens up
-     the TeX typesetting engine to control from Lua.  Also supports
-     Unicode input and OpenType- and system fonts.  Home page:
+     the TeX typesetting engine to control from Lua, starting from the
+     pdfTeX capabilities as a base.  Also natively supports Unicode
+     input and OpenType- and system fonts.  Home page:
      <http://luatex.org>.
 
 XeTeX
      Combines support for Unicode input and OpenType- and system fonts
-     with the capabilities of pdfTeX.  Home page:
+     with the capabilities of pdfTeX, with the exception of the font
+     expansion part of micro-typography.  Home page:
      <https://tug.org/xetex>.
 
 pTeX
@@ -1637,6 +1642,11 @@ upTeX
      and upTeX has native Unicode support and thus is more useful for
      Chinese and Korean.  More info: <https://ctan.org/pkg/ptex>,
      <https://ctan.org/pkg/uptex>.
+
+epTeX
+eupTeX
+     Further extends pTeX and upTeX with the e-TeX extensions.  More
+     info: <https://ctan.org/pkg/eptex>, <https://ctan.org/pkg/euptex>.
 
 
 File: web2c.info,  Node: Metafont,  Next: MetaPost,  Prev: TeX,  Up: Top
@@ -3851,11 +3861,14 @@ Index
 * Eplain:                                Formats.             (line  54)
 * epsf:                                  Online Metafont graphics.
                                                               (line  19)
+* epTeX:                                 TeX extensions.      (line  51)
 * errors, editor invoked at:             Editor invocation.   (line   6)
 * escapement, horizontal:                pktype invocation.   (line  57)
 * escapement, horizontal <1>:            gftype invocation.   (line 106)
 * escapement, vertical:                  gftype invocation.   (line 106)
 * etex for MetaPost labels:              mpost invocation.    (line  48)
+* etex is pdfTeX:                        TeX extensions.      (line  22)
+* eupTeX:                                TeX extensions.      (line  51)
 * executables, shared initial and virgin: Initial and virgin. (line   6)
 * exit status, of shell escape:          Shell escapes.       (line  34)
 * expanded plain format:                 Formats.             (line  54)
@@ -4030,8 +4043,8 @@ Index
                                                               (line   6)
 * location of texmf.cnf in TeX Live:     Runtime options.     (line  56)
 * log file, BibTeX:                      bibtex invocation.   (line  14)
-* Lua:                                   TeX extensions.      (line  28)
-* LuaTeX:                                TeX extensions.      (line  28)
+* Lua:                                   TeX extensions.      (line  30)
+* LuaTeX:                                TeX extensions.      (line  30)
 * machine dependencies:                  Hardware and memory dumps.
                                                               (line   6)
 * machine-readable, converting property lists to: pltotf invocation.
@@ -4239,7 +4252,7 @@ Index
 * ps2pk:                                 Font utilities available elsewhere.
                                                               (line  35)
 * psfonts.map, read by MetaPost:         mpost invocation.    (line  80)
-* pTeX:                                  TeX extensions.      (line  40)
+* pTeX:                                  TeX extensions.      (line  44)
 * PXL files, explained:                  Font file formats.   (line  39)
 * pxtoch:                                Font utilities available elsewhere.
                                                               (line  23)
@@ -4417,13 +4430,13 @@ Index
                                                               (line  42)
 * typesetting:                           TeX.                 (line   6)
 * Unicode:                               TeX extensions.      (line  15)
-* Unicode <1>:                           TeX extensions.      (line  34)
+* Unicode <1>:                           TeX extensions.      (line  37)
 * Unicode input:                         tex invocation.      (line  86)
 * uniterm:                               Online Metafont graphics.
                                                               (line  50)
 * unsrt.bst:                             Basic BibTeX style files.
                                                               (line  39)
-* upTeX:                                 TeX extensions.      (line  40)
+* upTeX:                                 TeX extensions.      (line  44)
 * UTF-8 input:                           tex invocation.      (line  86)
 * validation, of DVI files:              dvitype invocation.  (line   6)
 * validation, of GF files:               gftype invocation.   (line   6)
@@ -4473,7 +4486,7 @@ Index
 * xampl.bib:                             bibtex invocation.   (line  55)
 * xbfe, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
-* XeTeX:                                 TeX extensions.      (line  34)
+* XeTeX:                                 TeX extensions.      (line  37)
 * xfed, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
 * xfedor, bitmap font editor:            Font utilities available elsewhere.
@@ -4514,58 +4527,58 @@ Node: Determining the memory dump to use29969
 Node: Hardware and memory dumps31546
 Node: Editor invocation33992
 Node: \input filenames34855
-Node: \input quoted filename36396
-Node: \input braced filename37173
-Node: \input filename caveats38103
-Node: TeX39617
-Node: tex invocation40769
-Node: Initial TeX47672
-Node: Formats49036
-Node: Languages and hyphenation51962
-Node: MLTeX52392
-Node: \charsubdef54020
-Node: \tracingcharsubdef56343
-Node: TCX files56918
-Node: patgen invocation62358
-Node: Shell escapes63064
-Node: IPC and TeX66644
-Node: TeX extensions67214
-Node: Metafont68764
-Node: mf invocation70052
-Node: Initial Metafont73889
-Node: Modes75519
-Node: Online Metafont graphics77769
-Node: gftodvi invocation81194
-Node: mft invocation84014
-Node: MetaPost88012
-Node: mpost invocation88848
-Node: Initial MetaPost94024
-Node: dvitomp invocation94946
-Node: BibTeX95611
-Node: bibtex invocation95972
-Node: Basic BibTeX style files98446
-Node: WEB99776
-Node: tangle invocation100985
-Node: weave invocation103108
-Node: pooltype invocation104515
-Node: DVI utilities105645
-Node: dvicopy invocation106579
-Node: dvitype invocation107864
-Node: dvitype output example110195
-Node: Font utilities113248
-Node: Font file formats114428
-Node: gftopk invocation117697
-Node: pktogf invocation118888
-Node: pktype invocation120054
-Node: gftype invocation122877
-Node: tftopl invocation127380
-Node: pltotf invocation131973
-Node: vftovp invocation133024
-Node: vptovf invocation135259
-Node: Font utilities available elsewhere136286
-Node: Legalisms138666
-Node: References140112
-Node: Index144200
+Node: \input quoted filename36408
+Node: \input braced filename37185
+Node: \input filename caveats38115
+Node: TeX39629
+Node: tex invocation40797
+Node: Initial TeX47700
+Node: Formats49064
+Node: Languages and hyphenation51990
+Node: MLTeX52420
+Node: \charsubdef54048
+Node: \tracingcharsubdef56371
+Node: TCX files56946
+Node: patgen invocation62386
+Node: Shell escapes63092
+Node: IPC and TeX66672
+Node: TeX extensions67242
+Node: Metafont69207
+Node: mf invocation70495
+Node: Initial Metafont74332
+Node: Modes75962
+Node: Online Metafont graphics78212
+Node: gftodvi invocation81637
+Node: mft invocation84457
+Node: MetaPost88455
+Node: mpost invocation89291
+Node: Initial MetaPost94467
+Node: dvitomp invocation95389
+Node: BibTeX96054
+Node: bibtex invocation96415
+Node: Basic BibTeX style files98889
+Node: WEB100219
+Node: tangle invocation101428
+Node: weave invocation103551
+Node: pooltype invocation104958
+Node: DVI utilities106088
+Node: dvicopy invocation107022
+Node: dvitype invocation108307
+Node: dvitype output example110638
+Node: Font utilities113691
+Node: Font file formats114871
+Node: gftopk invocation118140
+Node: pktogf invocation119331
+Node: pktype invocation120497
+Node: gftype invocation123320
+Node: tftopl invocation127823
+Node: pltotf invocation132416
+Node: vftovp invocation133467
+Node: vptovf invocation135702
+Node: Font utilities available elsewhere136729
+Node: Legalisms139109
+Node: References140555
+Node: Index144643
 
 End Tag Table
 
