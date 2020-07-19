@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2020 Brian Dunn
 
-printversion = "v0.87"
+printversion = "v0.88"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -36,6 +36,7 @@ lwarpmk clean [-p project]: Remove *.aux, *.toc, *.lof/t,
     *_html.pdf, *_html.html, *_html.sidetoc
 lwarpmk cleanall [-p project]: Remove auxiliary files, project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
+lwarpmk -v: Print the version number.
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
 
@@ -890,6 +891,12 @@ print ("lwarpmk: Done.")
 
 elseif (arg[1] == nil) then
 printhelp ()
+
+-- lwarpmk -v:
+
+elseif (arg[1] == "-v" ) then
+-- The version number has already been printed
+-- by the lwarpmk intro.
 
 -- lwarpmk -h or lwarpmk --help :
 
