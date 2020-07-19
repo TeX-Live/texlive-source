@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -68,6 +69,7 @@ euptex_ch_srcs = \
 	euptexdir/pdfstrcmp-eup-pre.ch \
 	eptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
+	eptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines

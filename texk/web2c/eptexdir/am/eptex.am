@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -68,6 +69,7 @@ eptex_ch_srcs = \
 	$(eptex_ch_synctex) \
 	eptexdir/fam256.ch \
 	eptexdir/pdfutils.ch \
+	eptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(eptex_web_srcs) $(eptex_ch_srcs) eptexdir/eptex.defines

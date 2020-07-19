@@ -1,3 +1,10 @@
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* char-warning-xetex.ch: new file; see ../pdftexdir/ChangeLog.
+	Also define new procedure print_ucs_code to print U+nnnn
+	for system fonts.
+	* am/xetex.am: add it.
+
 2020-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* am/xetex.am: Avoid changefile ambiguity.

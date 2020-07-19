@@ -1,5 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 
+* pdftex, xetex, e(u)ptex: if \tracinglostchars >= 3,
+make missing characters an error (not just a log message),
+and always report the character code in hex.
+
 * obscure interaction sequences try to avoid crashing.
 
 

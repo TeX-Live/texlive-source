@@ -1,3 +1,12 @@
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* char-warning-pdftex.ch: new file to implement new feature;
+	if \tracinglostchars>=3, missing characters cause an error and not
+	just a diagnostic message. Also, always report the hex code of the
+	missing character. From David Jones, tex-implements 30jun2020.
+	* am/pdftex.am (pdftex_ch_srcs): add it.
+	* change-files.txt: update.
+
 2020-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* am/pdftex.am: Avoid changefile ambiguity.

@@ -1,13 +1,19 @@
+$Id$
+Public domain.
 How change files are applied for pdftex/pdfetex?
 
 ============================= pdftex =============================
 
-2) pdftex.ch is generated from
+2) pdftex.ch is essentially generated from (see pdftexdir/am/pdftex.am)
     ./tie -c pdftex.ch pdftex.web \
     $(srcdir)/pdftexdir/tex.ch0 \
     $(srcdir)/tex.ch \
     $(srcdir)/pdftexdir/tex.ch1 \
     $(srcdir)/pdftexdir/tex.pch
+
+There are more feature-specific change files, for synctex, including the
+pool in the binary, etc., many of which are shared between engines. They
+don't alter the basic process described here.
 
 Input:
     pdftex.web:
@@ -31,5 +37,5 @@ Input:
         change the tex banner to pdftex banner (reverse tex.ch0)
 
 Output:
-    pdftex.ch (not pdftexdir/pdftex.ch):
+    pdftex.ch (in the build dir, not pdftexdir/pdftex.ch):
         additional & system-dependent changes

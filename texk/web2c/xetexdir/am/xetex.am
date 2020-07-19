@@ -116,13 +116,14 @@ xetex_ch_srcs = \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	$(xetex_post_ch_synctex) \
+	xetexdir/char-warning-xetex.ch \
 	tex-binpool.ch
 
 ##
 EXTRA_DIST += $(xetex_web_srcs) $(xetex_ch_srcs) xetexdir/xetex.defines
 
-DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
-	xetex.p xetex.pool xetex-tangle
+DISTCLEANFILES += $(nodist_xetex_SOURCES) xetex.web xetex-final.ch \
+  xetex-web2c xetex.p xetex.pool xetex-tangle
 
 
 ## libxetex
