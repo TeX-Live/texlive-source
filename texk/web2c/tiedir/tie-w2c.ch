@@ -54,6 +54,11 @@ permission notice identical to this one.
 
 Section 1.
 
+@x l.96
+E.g.\ it will not use the |enum| type declarations.
+@y
+@z
+
 @x l.105
 @d banner  "This is TIE, CWEB Version 2.4."
 @y

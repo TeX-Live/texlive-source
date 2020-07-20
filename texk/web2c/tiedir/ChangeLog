@@ -1,3 +1,7 @@
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: We do use 'enum' in TeX Live's 'tie'.
+
 2020-06-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Mention WEBINPUTS environment variable in \S59.
