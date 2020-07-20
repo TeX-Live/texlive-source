@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -110,7 +110,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
   }
   MFCLOSE(fp);
 
-  form_id = pdf_ximage_findresource(filename, options);
+  form_id = pdf_ximage_load_image(NULL, filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Failed to load image file: %s", filename);
     return  -1;

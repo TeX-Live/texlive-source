@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -164,7 +164,7 @@ spc_handler_ps_file (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, options);
+  form_id = pdf_ximage_load_image(NULL, filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Failed to read image file: %s", filename);
     RELEASE(filename);
@@ -198,7 +198,7 @@ spc_handler_ps_plotfile (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
-  form_id = pdf_ximage_findresource(filename, options);
+  form_id = pdf_ximage_load_image(NULL, filename, options);
   if (form_id < 0) {
     spc_warn(spe, "Could not open PS file: %s", filename);
     error = -1;
@@ -709,7 +709,7 @@ spc_handler_ps_tricks_render (struct spc_env *spe, struct spc_arg *args)
       return error;
     }
 
-    form_id = pdf_ximage_findresource(gs_out, options);
+    form_id = pdf_ximage_load_image(NULL, gs_out, options);
     if (form_id < 0) {
       spc_warn(spe, "Failed to read converted PSTricks image file.");
       RELEASE(gs_in);

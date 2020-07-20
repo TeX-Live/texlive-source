@@ -123,7 +123,6 @@ spc_set_phantom (struct spc_env *spe, double height, double depth)
   dvi_set_phantom_height(height, depth);
 }
 
-static struct ht_table *named_objects = NULL;
 
 /* reserved keys */
 static const char *_rkeys[] = {
@@ -177,8 +176,6 @@ spc_lookup_reference (const char *key)
   pdf_coord   cp;
   int         k;
 
-  ASSERT(named_objects);
-
   if (!key)
     return  NULL;
 
@@ -223,7 +220,7 @@ spc_lookup_reference (const char *key)
     if (ispageref(key))
       value = pdf_doc_ref_page(atoi(key + 4));
     else {
-      value = pdf_names_lookup_reference(named_objects, key, strlen(key));
+      value = pdf_names_lookup_reference(global_names, key, strlen(key));
     }
     break;
   }
@@ -241,8 +238,6 @@ spc_lookup_object (const char *key)
   pdf_obj    *value = NULL;
   pdf_coord   cp;
   int         k;
-
-  ASSERT(named_objects);
 
   if (!key)
     return  NULL;
@@ -278,7 +273,7 @@ spc_lookup_object (const char *key)
     value = pdf_doc_docinfo();
     break;
   default:
-    value = pdf_names_lookup_object(named_objects, key, strlen(key));
+    value = pdf_names_lookup_object(global_names, key, strlen(key));
     break;
   }
 
@@ -294,25 +289,22 @@ spc_lookup_object (const char *key)
 void
 spc_push_object (const char *key, pdf_obj *value)
 {
-  ASSERT(named_objects);
-
   if (!key || !value)
     return;
 
-  pdf_names_add_object(named_objects, key, strlen(key), value);
+  pdf_names_add_object(global_names, key, strlen(key), value);
 }
 
 void
 spc_flush_object (const char *key)
 {
-  pdf_names_close_object(named_objects, key, strlen(key));
+  pdf_names_close_object(global_names, key, strlen(key));
 }
 
 void
 spc_clear_objects (void)
 {
-  pdf_delete_name_tree(&named_objects);
-  named_objects = pdf_new_name_tree();
+  /* Do nothing... */
 }
 
 
@@ -489,10 +481,6 @@ spc_exec_at_begin_document (void)
   int  error = 0;
   int  i;
 
-  ASSERT(!named_objects);
-
-  named_objects = pdf_new_name_tree();
-
   for (i = 0; known_specials[i].key != NULL; i++) {
     if (known_specials[i].bodhk_func) {
       error = known_specials[i].bodhk_func();
@@ -512,10 +500,6 @@ spc_exec_at_end_document (void)
     if (known_specials[i].eodhk_func) {
       error = known_specials[i].eodhk_func();
     }
-  }
-
-  if (named_objects) {
-    pdf_delete_name_tree(&named_objects);
   }
 
   return error;

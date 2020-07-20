@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2017 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -645,7 +645,7 @@ spc_html__img_empty (struct spc_env *spe, pdf_obj *attr)
     return  error;
   }
 
-  id = pdf_ximage_findresource(pdf_string_value(src), options);
+  id = pdf_ximage_load_image(NULL, pdf_string_value(src), options);
   if (id < 0) {
     spc_warn(spe, "Could not find/load image: %s", pdf_string_value(src)); 
     error = -1;

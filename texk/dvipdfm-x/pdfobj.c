@@ -4268,7 +4268,9 @@ pdf_compare_object (pdf_obj *obj1, pdf_obj *obj2)
 {
   int r = 0;
 
-  if (!obj1 && obj2) {
+  if (!obj1 && !obj2) {
+    return 0;
+  } else if (!obj1 && obj2) {
     return 1;
   } else if (obj1 && !obj2) {
     return 1;

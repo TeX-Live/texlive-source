@@ -1,3 +1,12 @@
+2020-07-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfdoc.[ch], pdfnames.[ch], pdfobj.c, pdfximage.[ch],
+	spc_dvips.c, spc_html.c, spc_misc.c, spc_pdfm.c, specials.c:
+	"Forward reference" of image objects is also supported.
+	Object reference by name is now available globally but not
+	only for the "special" module.
+	* configure.ac: Version 20200721.
+
 2020-07-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdraw.c: Avoid invoking gs operation for an empty ExtGState.

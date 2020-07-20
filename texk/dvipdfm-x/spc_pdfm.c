@@ -75,7 +75,6 @@ struct spc_pdf_
 {
    pdf_obj          *annot_dict;   /* pending annotation dict       */
    int               lowest_level; /* current min level of outlines */
-   struct ht_table  *resourcemap;  /* see remark below (somewhere)  */
    struct tounicode  cd;           /* For to-UTF16-BE conversion :( */
    pdf_obj          *pageresources; /* Add to all page resource dict */
 };
@@ -83,49 +82,9 @@ struct spc_pdf_
 static struct spc_pdf_  _pdf_stat = {
   NULL,
   255,
-  NULL,
   { -1, 0, NULL },
   NULL
 };
-
-/* PLEASE REMOVE THIS */
-static void
-hval_free (void *vp)
-{
-  RELEASE(vp);
-}
-
-
-static int
-addresource (struct spc_pdf_ *sd, const char *ident, int res_id)
-{
-  struct resource_map *r;
-
-  if (!ident || res_id < 0)
-    return  -1;
-
-  r = NEW(1, struct resource_map);
-  r->type   = 0; /* unused */
-  r->res_id = res_id;
-
-  ht_append_table(sd->resourcemap, ident, strlen(ident), r);
-  spc_push_object(ident, pdf_ximage_get_reference(res_id));
-
-  return 0;
-}
-
-static int
-findresource (struct spc_pdf_ *sd, const char *ident)
-{
-  struct resource_map *r;
-
-  if (!ident)
-    return  -1;
-
-  r = ht_lookup_table(sd->resourcemap, ident, strlen(ident));
-
-  return (r ? r->res_id : -1);
-}
 
 
 static int
@@ -144,9 +103,6 @@ spc_handler_pdfm__init (void *dp)
 
   sd->annot_dict   = NULL;
   sd->lowest_level = 255;
-  sd->resourcemap  = NEW(1, struct ht_table);
-  ht_init_table(sd->resourcemap, hval_free);
-
   sd->cd.taintkeys = pdf_new_array();
   for (i = 0; default_taintkeys[i] != NULL; i++) {
     pdf_add_array(sd->cd.taintkeys,
@@ -168,12 +124,6 @@ spc_handler_pdfm__clean (void *dp)
   }
   sd->lowest_level = 255;
   sd->annot_dict   = NULL;
-  if (sd->resourcemap) {
-    ht_clear_table(sd->resourcemap);
-    RELEASE(sd->resourcemap);
-  }
-  sd->resourcemap = NULL;
-
   if (sd->cd.taintkeys)
     pdf_release_obj(sd->cd.taintkeys);
   sd->cd.taintkeys = NULL;
@@ -1253,7 +1203,6 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
 {
-  struct spc_pdf_ *sd = &_pdf_stat;
   int              xobj_id;
   char            *ident = NULL;
   pdf_obj         *fspec;
@@ -1263,12 +1212,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
   if (args->curptr[0] == '@') {
     ident = parse_opt_ident(&args->curptr, args->endptr);
-    xobj_id = findresource(sd, ident);
-    if (xobj_id >= 0) {
-      spc_warn(spe, "Object reference name for image \"%s\" already used.", ident);
-      RELEASE(ident);
-      return  -1;
-    }
+    skip_white(&args->curptr, args->endptr);
   }
 
   /* 2015/12/29
@@ -1305,7 +1249,7 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     options.dict = parse_pdf_object(&args->curptr, args->endptr, NULL);
   }
 
-  xobj_id = pdf_ximage_findresource(pdf_string_value(fspec), options);
+  xobj_id = pdf_ximage_load_image(ident, pdf_string_value(fspec), options);
 
   if (xobj_id < 0) {
     spc_warn(spe, "Could not find image resource...");
@@ -1322,7 +1266,6 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     if ((dpx_conf.compat_mode == dpx_mode_compat_mode) &&
         pdf_ximage_get_subtype(xobj_id) == PDF_XOBJECT_TYPE_IMAGE)
       pdf_ximage_set_attr(xobj_id, 1, 1, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0);
-    addresource(sd, ident, xobj_id);
     RELEASE(ident);
   }
 
@@ -1511,6 +1454,7 @@ spc_handler_pdfm_close (struct spc_env *spe, struct spc_arg *args)
     spc_flush_object(ident);
     RELEASE(ident);
   } else { /* Close all? */
+    spc_warn(spe, "pdf:close without an argument no longer supported!");
     spc_clear_objects();
   }
 
@@ -1867,8 +1811,6 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
     spc_warn(spe, "Couldn't start form object.");
     return -1;
   }
-
-  spc_push_object(ident, pdf_ximage_get_reference(xobj_id));
   RELEASE(ident);
 
   return 0;
@@ -1927,11 +1869,9 @@ spc_handler_pdfm_eform (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_uxobj (struct spc_env *spe, struct spc_arg *args)
 {
-  struct spc_pdf_ *sd = &_pdf_stat;
   int              xobj_id;
   char            *ident;
   transform_info   ti;
-  load_options     options = {1, 0, NULL};
 
   skip_white(&args->curptr, args->endptr);
 
@@ -1949,18 +1889,9 @@ spc_handler_pdfm_uxobj (struct spc_env *spe, struct spc_arg *args)
     }
   }
 
-  /* Dvipdfmx was suddenly changed to use file name to identify
-   * external images. We can't use ident to find image resource
-   * here.
-   */
-  xobj_id = findresource(sd, ident);
+  xobj_id = pdf_ximage_findresource(ident);
   if (xobj_id < 0) {
-    xobj_id = pdf_ximage_findresource(ident, options);
-    if (xobj_id < 0) {
-      spc_warn(spe, "Specified (image) object doesn't exist: %s", ident);
-      RELEASE(ident);
-      return  -1;
-    }
+    xobj_id = pdf_ximage_reserve(ident);
   }
 
   pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);

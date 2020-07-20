@@ -99,7 +99,7 @@ read_thumbnail (const char *thumb_filename)
   }
   MFCLOSE(fp);
 
-  xobj_id = pdf_ximage_findresource(thumb_filename, options);
+  xobj_id = pdf_ximage_load_image(thumb_filename, thumb_filename, options);
   if (xobj_id < 0) {
     WARN("Could not read thumbnail file \"%s\".", thumb_filename);
     image_ref = NULL;
@@ -110,6 +110,8 @@ read_thumbnail (const char *thumb_filename)
   return image_ref;
 }
 
+/* Sorry no appropriate place to put this... */
+struct ht_table *global_names = NULL;
 
 typedef struct pdf_form
 {
@@ -2561,6 +2563,9 @@ pdf_open_document (const char *filename,
   pdf_init_device(settings.device.dvi2pts, settings.device.precision,
                   settings.device.ignore_colors);
 
+
+  global_names = pdf_new_name_tree();
+
   return;
 }
 
@@ -2568,6 +2573,8 @@ void
 pdf_close_document (void)
 {
   pdf_doc *p = &pdoc;
+
+  pdf_delete_name_tree(&global_names);
 
   pdf_close_device();
 
@@ -2704,10 +2711,12 @@ pdf_doc_begin_grabbing (const char *ident,
   info.bbox.urx = cropbox->urx;
   info.bbox.ury = cropbox->ury;
 
-  /* Use reference since content itself isn't available yet. */
+  /* Use reference since content itself isn't available yet.
+   * - 2020/07/21 Changed... "forward reference" support requires object itself.
+   */
   xobj_id = pdf_ximage_defineresource(ident,
                                       PDF_XOBJECT_TYPE_FORM,
-                                      &info, pdf_ref_obj(form->contents));
+                                      &info, pdf_link_obj(form->contents));
 
   p->pending_forms = fnode;
 
