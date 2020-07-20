@@ -1,3 +1,8 @@
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* tex.ch: Place Web2c changes together;
+	avoid overful hboxes in the amended table-of-contents.
+
 2020-07-19  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (TeX extensions): add [e][u]pTeX. Other small

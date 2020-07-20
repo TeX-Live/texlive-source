@@ -1,3 +1,7 @@
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.ch: Avoid overful hboxes in table-of-contents.
+
 2020-07-19  Karl Berry  <karl@freefriends.org>
 
 	* char-warning-pdftex.ch: new file to implement new feature;

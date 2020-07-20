@@ -34,7 +34,7 @@ begin if tracing_lost_chars>0 then
  end;
 end;
 @y
-procedure print_ucs_code(@!n: UnicodeScalar); { cf. print_hex }
+procedure print_ucs_code(@!n: UnicodeScalar); { cf.~|print_hex| }
     var k: 0..22; {index to current digit; we assume that $0\L n<16^{22}$}
     begin
         k := 0;

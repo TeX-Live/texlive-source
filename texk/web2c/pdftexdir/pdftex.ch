@@ -16,12 +16,8 @@
 % this program.  If not, see <http://www.gnu.org/licenses/>.
 %
 @x [0.0] l.83 - WEAVE: we want the whole file
-  \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
-  }
 \let\maybe=\iffalse
 @y 83
-  \def\?##1]{\hbox{Changes to \hbox to 1em{\hfil##1}.\ }}
-  }
 \let\maybe=\iftrue
 @z
 
