@@ -183,6 +183,12 @@ The \.{kpathsea} include files handle the definition of |@!malloc|, too.
 
 Sections 18 and 19: use enum as requested in tie.w
 
+@x l.526 Fix case glitch.
+the kind of output. (this would even be necessary if we
+@y
+the kind of output. (This would even be necessary if we
+@z
+
 @x l.530
 #define search 0
 #define test 1
