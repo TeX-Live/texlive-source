@@ -19327,8 +19327,10 @@ begin
         cur_area := "";
         cur_ext := "";
         pack_cur_name;
-        if not tex_b_openin(f) then
+        if not tex_b_openin(f) then begin
+            print_nl("! "); print(s); print(" not found.");
             pdf_error("ext5", "cannot open file for embedding");
+        end;
         print("<<");
         print(s);
         if not eof(f) then begin {at least one byte available}

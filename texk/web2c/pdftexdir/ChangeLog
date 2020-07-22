@@ -1,3 +1,8 @@
+2020-07-22  Akira Kakuto  <kakuto@w32tex.org>
+	* pdftex.web, writeimg.c: Show unfound file names in
+	fatal error messages.
+	https://tug.org/pipermail/pdftex/2020-July/009203.html
+
 2020-07-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* pdftex.ch: Avoid overful hboxes in table-of-contents.

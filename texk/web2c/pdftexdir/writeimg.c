@@ -305,7 +305,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
     cur_file_name = find_input_file(s);
     img_name(img) = cur_file_name;
     if (img_name(img) == NULL)
-        pdftex_fail("cannot find image file");
+        pdftex_fail("cannot find image file %s", makecstring(s));
     recorder_record_input(cur_file_name);
     /* type checks */
     checktypebyheader(img);
