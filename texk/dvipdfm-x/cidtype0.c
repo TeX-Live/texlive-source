@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2007-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -656,14 +656,7 @@ CIDFont_type0_dofont (CIDFont *font)
 
   cff_read_charsets(cffont);
 
-  /*
-   * DW, W, DW2 and W2:
-   * Those values are obtained from OpenType table (not TFM).
-   */
-  if (opt_flags & CIDFONT_FORCE_FIXEDPITCH) {
-    pdf_add_dict(font->fontdict,
-                 pdf_new_name("DW"), pdf_new_number(1000.0));
-  } else {
+  {
     int cid_count;
 
     if (cff_dict_known(cffont->topdict, "CIDCount")) {
@@ -689,7 +682,16 @@ CIDFont_type0_dofont (CIDFont *font)
         num_glyphs++;
       }
     }
+  }
 
+  /*
+   * DW, W, DW2 and W2:
+   * Those values are obtained from OpenType table (not TFM).
+   */
+  if (opt_flags & CIDFONT_FORCE_FIXEDPITCH) {
+    pdf_add_dict(font->fontdict,
+                 pdf_new_name("DW"), pdf_new_number(1000.0));
+  } else {
     add_CIDMetrics(info.sfont, font->fontdict, CIDToGIDMap, last_cid,
                    ((CIDFont_get_parent_id(font, 1) < 0) ? 0 : 1));
   }

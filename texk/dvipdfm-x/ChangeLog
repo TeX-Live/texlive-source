@@ -1,3 +1,11 @@
+2020-07-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cidtype0.c: Fix a bug introduced in rev.37144 that generated
+	CIDType0 font file is corrupt when the "force fixed-pitch"
+	option is enabled.
+	* pdfximage.c: "filename" was wrongly used for cached converted
+	PS images.
+
 2020-07-21  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfdoc.[ch], pdfnames.[ch], pdfobj.c, pdfximage.[ch],
