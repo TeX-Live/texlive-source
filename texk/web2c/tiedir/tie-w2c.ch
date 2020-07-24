@@ -183,6 +183,12 @@ The \.{kpathsea} include files handle the definition of |@!malloc|, too.
 
 Sections 18 and 19: use enum as requested in tie.w
 
+@x l.522
+\leavevmode |file_types| is used to describe whether a file
+@y
+\leavevmode \&{file\_types} is used to describe whether a file
+@z
+
 @x l.526 Fix case glitch.
 the kind of output. (this would even be necessary if we
 @y
@@ -209,6 +215,12 @@ typedef enum {
     @!unknown,
     @!master,
     @!chf } file_types;
+@z
+
+@x l.541
+@ A variable of type |out_md_type| will tell us in what state the output
+@y
+@ A variable of type \&{out\_md\_type} will tell us in what state the output
 @z
 
 @x l.548

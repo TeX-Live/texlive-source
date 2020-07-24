@@ -209,6 +209,12 @@ files) are treated the same way.  To organise the
 
 Sections 10 and 11: use enum as requested in ctie.w
 
+@x l.204
+\leavevmode |file_types| is used to describe whether a file
+@y
+\leavevmode \&{file\_types} is used to describe whether a file
+@z
+
 @x l.208
 the kind of output. (this would even be necessary if we
 @y
@@ -235,6 +241,12 @@ typedef enum {
     @!unknown,
     @!master,
     @!chf } file_types;
+@z
+
+@x l.223
+@ A variable of type |out_md_type| will tell us in what state the output
+@y
+@ A variable of type \&{out\_md\_type} will tell us in what state the output
 @z
 
 @x l.230 dito

@@ -1,3 +1,7 @@
+2020-07-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Format types in boldface prior to their definition.
+
 2020-07-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Fix case glitch in section 18.
