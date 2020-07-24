@@ -198,6 +198,7 @@ texmf_other_scripts = \
 	pythontex/depythontex.py \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
+	spix/spix.py \
 	splitindex/splitindex.pl \
 	srcredact/srcredact.pl \
 	sty2dtx/sty2dtx.pl \
