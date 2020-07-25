@@ -1,47 +1,41 @@
 On Linux, install the development packages for FreeType,
 Cairo, and GLib. For example, on Ubuntu / Debian, you would do:
 
-    sudo apt-get install gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev
+    sudo apt-get install meson pkg-config ragel gtk-doc-tools gcc g++ libfreetype6-dev libglib2.0-dev libcairo2-dev
 
 whereas on Fedora, RHEL, CentOS, and other Red Hat based systems you would do:
 
-    sudo yum install gcc gcc-c++ freetype-devel glib2-devel cairo-devel
+    sudo dnf install meson pkgconfig gtk-doc gcc gcc-c++ freetype-devel glib2-devel cairo-dev
 
-on Windows, consider using [vcpkg](https://github.com/Microsoft/vcpkg)
-or `meson build && ninja -Cbuild`.
+and on ArchLinux and Manjaro:
 
-on macOS, using MacPorts:
+    sudo pacman -Suy meson pkg-config ragel gcc freetype2 glib2 cairo
 
-    sudo port install freetype glib2 cairo
+then use meson to build the project like `meson build && meson test -Cbuild`.
 
-or using Homebrew:
+On macOS, `brew install pkg-config ragel gtk-doc freetype glib cairo meson` then use
+meson like above.
 
-    brew install freetype glib cairo
+On Windows, meson can build the project like above if a working MSVC's cl.exe (`vcvarsall.bat`)
+or gcc/clang is already on your path, and if you use something like `meson build --wrap-mode=default`
+it fetches and compiles most of the dependencies also.
 
-If you are using a tarball, you can now proceed to running configure and make
-as with any other standard package. That should leave you with a shared
-library in `src/`, and a few utility programs including `hb-view` and `hb-shape`
-under `util/`.
+There is also amalgam source provided with HarfBuzz which reduces whole process of building
+HarfBuzz like `g++ src/harfbuzz.cc -fno-exceptions` but there is not guarantee provided
+with buildability and reliability of features you get.
 
-If you are bootstrapping from git, you need a few more tools before you can
-run `autogen.sh` for the first time. Namely, `pkg-config` and `ragel`.
+Our CI is also good source of learning how to build HarfBuzz.
 
-Again, on Ubuntu / Debian:
+Linux packagers are advised to at least use `--buildtype=release` (or any other way
+to enable regular compiler optimization) and `-Dauto_features=enabled --wrap-mode=nodownload`
+and install any other needed packages (most distributions build harfbuzz with
+graphite support which needs to be enabled separately, `-Dgraphite=enabled`),
+and follow other best practices of packaging a meson project.
 
-    sudo apt-get install autoconf automake libtool pkg-config ragel gtk-doc-tools
-
-and on Fedora, RHEL, CentOS:
-
-    sudo yum install autoconf automake libtool pkgconfig ragel gtk-doc
-
-on the Mac, using MacPorts:
-
-    sudo port install autoconf automake libtool pkgconfig ragel gtk-doc
-
-or using Homebrew:
-
-    brew install autoconf automake libtool pkgconfig ragel gtk-doc
-
-To build the Python bindings, you also need:
-
-    brew install pygobject3
+Examples of meson built harfbuzz packages,
+* https://git.archlinux.org/svntogit/packages.git/tree/trunk?h=packages/harfbuzz
+  Which uses https://git.archlinux.org/svntogit/packages.git/tree/trunk/arch-meson?h=packages/meson
+* https://git.alpinelinux.org/aports/tree/main/harfbuzz
+  Which uses https://git.alpinelinux.org/aports/tree/main/meson/abuild-meson
+* https://github.com/msys2/MINGW-packages/blob/master/mingw-w64-harfbuzz/PKGBUILD
+* (feel free to add your distribution's source link here)

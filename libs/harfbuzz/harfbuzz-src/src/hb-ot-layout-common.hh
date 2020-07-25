@@ -1297,9 +1297,9 @@ struct CoverageFormat2
   unsigned int get_coverage (hb_codepoint_t glyph_id) const
   {
     const RangeRecord &range = rangeRecord.bsearch (glyph_id);
-    return likely (range.first <= range.last) ?
-	   (unsigned int) range.value + (glyph_id - range.first) :
-	   NOT_COVERED;
+    return likely (range.first <= range.last)
+	 ? (unsigned int) range.value + (glyph_id - range.first)
+	 : NOT_COVERED;
   }
 
   template <typename Iterator,
@@ -1717,7 +1717,7 @@ struct ClassDefFormat1
 
     startGlyph = glyph_min;
     if (unlikely (!classValue.serialize (c, glyph_count))) return_trace (false);
-    for (const hb_pair_t<hb_codepoint_t, unsigned>& gid_klass_pair : + it)
+    for (const hb_pair_t<hb_codepoint_t, unsigned> gid_klass_pair : + it)
     {
       unsigned idx = gid_klass_pair.first - glyph_min;
       classValue[idx] = gid_klass_pair.second;
@@ -2191,7 +2191,7 @@ struct VarRegionAxis
 struct VarRegionList
 {
   float evaluate (unsigned int region_index,
-			 const int *coords, unsigned int coord_len) const
+		  const int *coords, unsigned int coord_len) const
   {
     if (unlikely (region_index >= regionCount))
       return 0.;
@@ -2261,8 +2261,8 @@ struct VarData
   { return itemCount * get_row_size (); }
 
   float get_delta (unsigned int inner,
-			  const int *coords, unsigned int coord_count,
-			  const VarRegionList &regions) const
+		   const int *coords, unsigned int coord_count,
+		   const VarRegionList &regions) const
   {
     if (unlikely (inner >= itemCount))
       return 0.;
@@ -2836,7 +2836,7 @@ struct FeatureVariations
   static constexpr unsigned NOT_FOUND_INDEX = 0xFFFFFFFFu;
 
   bool find_index (const int *coords, unsigned int coord_len,
-			  unsigned int *index) const
+		   unsigned int *index) const
   {
     unsigned int count = varRecords.len;
     for (unsigned int i = 0; i < count; i++)

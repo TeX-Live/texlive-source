@@ -140,7 +140,6 @@ libharfbuzz_a_SOURCES =  \
 
 ## native OpenType Layout backend
 libharfbuzz_a_SOURCES += \
-	@HARFBUZZ_TREE@/src/hb-aat-fdsc-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-common.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
@@ -148,7 +147,6 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-just-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
-	@HARFBUZZ_TREE@/src/hb-aat-layout-lcar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-opbd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \

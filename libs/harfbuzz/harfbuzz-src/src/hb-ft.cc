@@ -92,9 +92,7 @@ static hb_ft_font_t *
 _hb_ft_font_create (FT_Face ft_face, bool symbol, bool unref)
 {
   hb_ft_font_t *ft_font = (hb_ft_font_t *) calloc (1, sizeof (hb_ft_font_t));
-
-  if (unlikely (!ft_font))
-    return nullptr;
+  if (unlikely (!ft_font)) return nullptr;
 
   ft_font->lock.init ();
   ft_font->ft_face = ft_face;
@@ -620,9 +618,12 @@ _hb_ft_font_set_funcs (hb_font_t *font, FT_Face ft_face, bool unref)
 {
   bool symbol = ft_face->charmap && ft_face->charmap->encoding == FT_ENCODING_MS_SYMBOL;
 
+  hb_ft_font_t *ft_font = _hb_ft_font_create (ft_face, symbol, unref);
+  if (unlikely (!ft_font)) return;
+
   hb_font_set_funcs (font,
 		     _hb_ft_get_font_funcs (),
-		     _hb_ft_font_create (ft_face, symbol, unref),
+		     ft_font,
 		     _hb_ft_font_destroy);
 }
 
@@ -829,6 +830,7 @@ hb_ft_font_changed (hb_font_t *font)
     return;
 
   hb_ft_font_t *ft_font = (hb_ft_font_t *) font->user_data;
+
   FT_Face ft_face = ft_font->ft_face;
 
   hb_font_set_scale (font,

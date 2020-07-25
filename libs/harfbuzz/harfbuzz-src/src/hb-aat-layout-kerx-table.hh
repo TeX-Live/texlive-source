@@ -229,9 +229,7 @@ struct KerxSubTableFormat1
 
     bool is_actionable (StateTableDriver<Types, EntryData> *driver HB_UNUSED,
 			const Entry<EntryData> &entry)
-    {
-      return Format1EntryT::performAction (entry);
-    }
+    { return Format1EntryT::performAction (entry); }
     void transition (StateTableDriver<Types, EntryData> *driver,
 		     const Entry<EntryData> &entry)
     {
@@ -484,7 +482,7 @@ struct KerxSubTableFormat4
     };
 
     driver_context_t (const KerxSubTableFormat4 *table,
-			     hb_aat_apply_context_t *c_) :
+		      hb_aat_apply_context_t *c_) :
 	c (c_),
 	action_type ((table->flags & ActionType) >> 30),
 	ankrData ((HBUINT16 *) ((const char *) &table->machine + (table->flags & Offset))),
@@ -493,9 +491,7 @@ struct KerxSubTableFormat4
 
     bool is_actionable (StateTableDriver<Types, EntryData> *driver HB_UNUSED,
 			const Entry<EntryData> &entry)
-    {
-      return entry.data.ankrActionIndex != 0xFFFF;
-    }
+    { return entry.data.ankrActionIndex != 0xFFFF; }
     void transition (StateTableDriver<Types, EntryData> *driver,
 		     const Entry<EntryData> &entry)
     {
@@ -508,11 +504,13 @@ struct KerxSubTableFormat4
 	{
 	  case 0: /* Control Point Actions.*/
 	  {
-	    /* indexed into glyph outline. */
-	    const HBUINT16 *data = &ankrData[entry.data.ankrActionIndex];
+	    /* Indexed into glyph outline. */
+	    /* Each action (record in ankrData) contains two 16-bit fields, so we must
+	       double the ankrActionIndex to get the correct offset here. */
+	    const HBUINT16 *data = &ankrData[entry.data.ankrActionIndex * 2];
 	    if (!c->sanitizer.check_array (data, 2)) return;
-	    HB_UNUSED unsigned int markControlPoint = *data++;
-	    HB_UNUSED unsigned int currControlPoint = *data++;
+	    unsigned int markControlPoint = *data++;
+	    unsigned int currControlPoint = *data++;
 	    hb_position_t markX = 0;
 	    hb_position_t markY = 0;
 	    hb_position_t currX = 0;
@@ -534,8 +532,10 @@ struct KerxSubTableFormat4
 
 	  case 1: /* Anchor Point Actions. */
 	  {
-	   /* Indexed into 'ankr' table. */
-	    const HBUINT16 *data = &ankrData[entry.data.ankrActionIndex];
+	    /* Indexed into 'ankr' table. */
+	    /* Each action (record in ankrData) contains two 16-bit fields, so we must
+	       double the ankrActionIndex to get the correct offset here. */
+	    const HBUINT16 *data = &ankrData[entry.data.ankrActionIndex * 2];
 	    if (!c->sanitizer.check_array (data, 2)) return;
 	    unsigned int markAnchorPoint = *data++;
 	    unsigned int currAnchorPoint = *data++;
@@ -553,7 +553,9 @@ struct KerxSubTableFormat4
 
 	  case 2: /* Control Point Coordinate Actions. */
 	  {
-	    const FWORD *data = (const FWORD *) &ankrData[entry.data.ankrActionIndex];
+	    /* Each action contains four 16-bit fields, so we multiply the ankrActionIndex
+	       by 4 to get the correct offset for the given action. */
+	    const FWORD *data = (const FWORD *) &ankrData[entry.data.ankrActionIndex * 4];
 	    if (!c->sanitizer.check_array (data, 4)) return;
 	    int markX = *data++;
 	    int markY = *data++;
@@ -624,7 +626,7 @@ struct KerxSubTableFormat6
   bool is_long () const { return flags & ValuesAreLong; }
 
   int get_kerning (hb_codepoint_t left, hb_codepoint_t right,
-			  hb_aat_apply_context_t *c) const
+		   hb_aat_apply_context_t *c) const
   {
     unsigned int num_glyphs = c->sanitizer.get_num_glyphs ();
     if (is_long ())

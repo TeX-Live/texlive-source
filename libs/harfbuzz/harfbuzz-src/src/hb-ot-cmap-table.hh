@@ -157,10 +157,10 @@ struct CmapSubtableFormat4
   template<typename Iterator,
 	   hb_requires (hb_is_iterator (Iterator))>
   HBINT16* serialize_idDelta_array (hb_serialize_context_t *c,
-				     Iterator it,
-				     HBUINT16 *endCode,
-				     HBUINT16 *startCode,
-				     unsigned segcount)
+				    Iterator it,
+				    HBUINT16 *endCode,
+				    HBUINT16 *startCode,
+				    unsigned segcount)
   {
     unsigned i = 0;
     hb_codepoint_t last_gid = 0, start_gid = 0, last_cp = 0xFFFF;
@@ -317,12 +317,12 @@ struct CmapSubtableFormat4
 	HBUINT16 last;
       };
 
-      const HBUINT16 *found =hb_bsearch (codepoint,
-					 this->endCount,
-					 this->segCount,
-					 2,
-					 _hb_cmp_method<hb_codepoint_t, CustomRange, unsigned>,
-					 this->segCount + 1);
+      const HBUINT16 *found = hb_bsearch (codepoint,
+					  this->endCount,
+					  this->segCount,
+					  2,
+					  _hb_cmp_method<hb_codepoint_t, CustomRange, unsigned>,
+					  this->segCount + 1);
       if (!found)
 	return false;
       unsigned int i = found - endCount;
@@ -466,8 +466,8 @@ struct CmapSubtableFormat4
        * If that is the case, just change the value to truncate
        * the subtable at the end of the blob. */
       uint16_t new_length = (uint16_t) hb_min ((uintptr_t) 65535,
-					    (uintptr_t) (c->end -
-							 (char *) this));
+					       (uintptr_t) (c->end -
+							    (char *) this));
       if (!c->try_set (&length, new_length))
 	return_trace (false);
     }
@@ -793,7 +793,7 @@ struct DefaultUVS : SortedArrayOf<UnicodeValueRange, HBUINT32>
     {
       hb_codepoint_t first = arrayZ[i].startUnicodeValue;
       hb_codepoint_t last = hb_min ((hb_codepoint_t) (first + arrayZ[i].additionalCount),
-				 (hb_codepoint_t) HB_UNICODE_MAX);
+				    (hb_codepoint_t) HB_UNICODE_MAX);
       out->add_range (first, last);
     }
   }
@@ -1360,13 +1360,13 @@ struct cmap
 
     for (const EncodingRecord& _ : encodingrec_iter)
     {
-      hb_set_t unicodes_set;
-      hb_map_t cp_glyphid_map;
-      (base+_.subtable).collect_mapping (&unicodes_set, &cp_glyphid_map);
-
       unsigned format = (base+_.subtable).u.format;
       if (!plan->glyphs_requested->is_empty ())
       {
+        hb_set_t unicodes_set;
+        hb_map_t cp_glyphid_map;
+        (base+_.subtable).collect_mapping (&unicodes_set, &cp_glyphid_map);
+
         auto table_iter =
         + hb_zip (unicodes_set.iter(), unicodes_set.iter() | hb_map(cp_glyphid_map))
         | hb_filter (plan->_glyphset, hb_second)
@@ -1380,7 +1380,7 @@ struct cmap
                     return hb_pair_t<hb_codepoint_t, hb_codepoint_t> (p_org.first, plan->glyph_map->get(p_org.second));
                   })
         ;
-  
+
         if (format == 4) c->copy (_, table_iter, 4u, base, plan, &format4objidx);
         else if (format == 12) c->copy (_, table_iter, 12u, base, plan, &format12objidx);
         else if (format == 14) c->copy (_, table_iter, 14u, base, plan, &format14objidx);
@@ -1389,6 +1389,9 @@ struct cmap
        * all codepoints in each subtable, which is more efficient */
       else
       {
+        hb_set_t unicodes_set;
+        (base+_.subtable).collect_unicodes (&unicodes_set);
+
         if (format == 4) c->copy (_, + it | hb_filter (unicodes_set, hb_first), 4u, base, plan, &format4objidx);
         else if (format == 12) c->copy (_, + it | hb_filter (unicodes_set, hb_first), 12u, base, plan, &format12objidx);
         else if (format == 14) c->copy (_, it, 14u, base, plan, &format14objidx);

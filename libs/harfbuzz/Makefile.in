@@ -806,16 +806,13 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text.hh \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
-	@HARFBUZZ_TREE@/src/hb.hh \
-	@HARFBUZZ_TREE@/src/hb-aat-fdsc-table.hh \
-	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
+	@HARFBUZZ_TREE@/src/hb.hh @HARFBUZZ_TREE@/src/hb-aat-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-common.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-bsln-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-just-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
-	@HARFBUZZ_TREE@/src/hb-aat-layout-lcar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-opbd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
