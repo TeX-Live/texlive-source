@@ -957,7 +957,7 @@ files, as UNIX knows them.
 @!style_name:array[0..max_style_name-1] of const_c_string;
 @!n_style_name:c_int_type;  {Number of values in |style_name| array.}
 @!i_style_name:c_int_type;  {The next |style_name|.}
-@!metapost:c_int_type;  {|true| for \MF, |false| for \MP}
+@!metapost:c_int_type;  {|true| for \MP, |false| for \MF}
 
 @ Look at the command line arguments and set the |name| variables accordingly.
 
@@ -1089,7 +1089,7 @@ long_options[current_option].flag := address_of (metapost);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@ |metapost| defaults to false
+@ |metapost| defaults to |false|; will become |true| for \MP.
 
 @<Initialize the option...@> =
 metapost:=false;
