@@ -1,3 +1,19 @@
+2020-07-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cmap_write.c: Change ariable names.
+	* dvipdfmx.c: Remove unused variables. Modify init sequence.
+	Page size specified as a command line option overwrites
+	settings specified by pagesize specials.
+	* pdfdev.[ch], pdfdoc.[ch], pdfencrypt.[ch], pdfobj.[ch]:
+	File static variables are now placed in a single struct.
+	* pdfparse.[ch], spc_pdfm.c: PDF parse object function is
+	called with a callback function to be called when an object of
+	unknown type is encountered.
+	* pdfximage.c: Do not include an unnecessary file.
+	* dpxconf.[ch], xbb.c: Add is_xbb in dpx_conf.
+	* dpxutil.[ch], dvi.c, dvipdfmx.c: Add dpx_util_read_length().
+	* configure.ac: Version 20200726.
+
 2020-07-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cidtype0.c: Fix a bug introduced in rev.37144 that generated

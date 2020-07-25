@@ -66,19 +66,6 @@
 #define PDFDOC_ARTICLE_ALLOC_SIZE 16
 #define PDFDOC_BEAD_ALLOC_SIZE    16
 
-static char  manual_thumb_enabled  = 0;
-static char *thumb_basename = NULL;
-
-void
-pdf_doc_enable_manual_thumbnails (void)
-{
-#if HAVE_LIBPNG
-  manual_thumb_enabled = 1;
-#else
-  WARN("Manual thumbnail is not supported without the libpng library.");
-#endif
-}
-
 static pdf_obj *
 read_thumbnail (const char *thumb_filename) 
 {
@@ -234,10 +221,12 @@ typedef struct pdf_doc
   struct {
     int    outline_open_depth;
     double annot_grow;
-  } opt;
+    int    enable_manual_thumb;
+  } options;
 
   struct form_list_node *pending_forms;
 
+  char *thumb_basename;
 } pdf_doc;
 static pdf_doc pdoc;
 
@@ -1257,7 +1246,7 @@ pdf_doc_init_bookmarks (pdf_doc *p, int bm_open_depth)
   pdf_olitem *item;
 
 #define MAX_OUTLINE_DEPTH 256u
-  p->opt.outline_open_depth =
+  p->options.outline_open_depth =
     ((bm_open_depth >= 0) ?
      bm_open_depth : MAX_OUTLINE_DEPTH - bm_open_depth);
 
@@ -1470,7 +1459,7 @@ pdf_doc_bookmarks_add (pdf_obj *dict, int is_open)
     item = item->next;
   }
 
-#define BMOPEN(b,p) (((b) < 0) ? (((p)->outlines.current_depth > (p)->opt.outline_open_depth) ? 0 : 1) : (b))
+#define BMOPEN(b,p) (((b) < 0) ? (((p)->outlines.current_depth > (p)->options.outline_open_depth) ? 0 : 1) : (b))
 
 #if 0
   item->dict    = pdf_link_obj(dict);
@@ -2381,13 +2370,13 @@ pdf_doc_finish_page (pdf_doc *p)
     currentpage->resources = NULL;
   }
 
-  if (manual_thumb_enabled) {
+  if (p->options.enable_manual_thumb) {
     char    *thumb_filename;
     pdf_obj *thumb_ref;
 
-    thumb_filename = NEW(strlen(thumb_basename)+7, char);
+    thumb_filename = NEW(strlen(p->thumb_basename)+7, char);
     sprintf(thumb_filename, "%s.%ld",
-            thumb_basename, (p->pages.num_entries % 99999) + 1L);
+            p->thumb_basename, (p->pages.num_entries % 99999) + 1L);
     thumb_ref = read_thumbnail(thumb_filename);
     RELEASE(thumb_filename);
     if (thumb_ref)
@@ -2494,22 +2483,29 @@ pdf_doc_add_page_content (const char *buffer, unsigned length)
 
 void
 pdf_open_document (const char *filename,
-                   const char *creator, const unsigned char *id1, const unsigned char *id2,
+                   const char *creator,
+                   const unsigned char *id1, const unsigned char *id2,
                    struct pdf_setting settings)
 {
   pdf_doc *p = &pdoc;
 
-  if (settings.enable_encrypt)
-    pdf_init_encryption(settings.encrypt, id1);
-
-  pdf_out_init(filename, settings.enable_encrypt,
+  pdf_out_init(filename, id1, id2,
+               settings.ver_major, settings.ver_minor, settings.object.compression_level,
+               settings.enable_encrypt,
                settings.object.enable_objstm, settings.object.enable_predictor);
   pdf_files_init();
 
   pdf_doc_init_catalog(p);
 
-  p->opt.annot_grow = settings.annot_grow_amount;
-  p->opt.outline_open_depth = settings.outline_open_depth;
+  /* After Catalog is created... */
+  if (settings.enable_encrypt) {
+    pdf_out_set_encrypt(settings.encrypt.key_size, settings.encrypt.permission,
+                        settings.encrypt.oplain, settings.encrypt.uplain,
+                        1, 1);
+  }
+
+  p->options.annot_grow = settings.annot_grow_amount;
+  p->options.outline_open_depth = settings.outline_open_depth;
 
   pdf_init_resources();
   pdf_init_colors();
@@ -2531,30 +2527,18 @@ pdf_open_document (const char *filename,
 
   pdf_doc_set_bgcolor(NULL);
 
-  if (settings.enable_encrypt) {
-    pdf_obj *encrypt = pdf_encrypt_obj();
-    pdf_set_encrypt(encrypt);
-    pdf_release_obj(encrypt);
-  }
-  if (id1 && id2) {
-    pdf_obj *id_obj = pdf_new_array();
-
-    pdf_add_array(id_obj, pdf_new_string(id1, 16));
-    pdf_add_array(id_obj, pdf_new_string(id2, 16));
-    pdf_set_id(id_obj);
-  }
-
+  p->options.enable_manual_thumb = settings.enable_manual_thumb;
   /* Create a default name for thumbnail image files */
-  if (manual_thumb_enabled) {
+  if (p->options.enable_manual_thumb) {
     if (strlen(filename) > 4 &&
         !strncmp(".pdf", filename + strlen(filename) - 4, 4)) {
       size_t len = strlen(filename) - strlen(".pdf");
-      thumb_basename = NEW(len+1, char);
-      strncpy(thumb_basename, filename, len);
-      thumb_basename[len] = 0;
+      p->thumb_basename = NEW(len+1, char);
+      strncpy(p->thumb_basename, filename, len);
+      p->thumb_basename[len] = 0;
     } else {
-      thumb_basename = NEW(strlen(filename)+1, char);
-      strcpy(thumb_basename, filename);
+      p->thumb_basename = NEW(strlen(filename)+1, char);
+      strcpy(p->thumb_basename, filename);
     }
   }
 
@@ -2598,8 +2582,8 @@ pdf_close_document (void)
   pdf_files_close();
   pdf_out_flush();
 
-  if (thumb_basename)
-    RELEASE(thumb_basename);
+  if (p->thumb_basename)
+    RELEASE(p->thumb_basename);
 
   return;
 }
@@ -2817,7 +2801,7 @@ void
 pdf_doc_break_annot (void)
 {
   pdf_doc *p = &pdoc;
-  double   g = p->opt.annot_grow;
+  double   g = p->options.annot_grow;
 
   if (breaking_state.dirty) {
     pdf_obj  *annot_dict, *annot_copy;

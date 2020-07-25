@@ -38,7 +38,6 @@
 #include "pdfdev.h"
 #include "pdfdraw.h"
 #include "pdfnames.h"
-#include "specials.h"
 
 #include "epdf.h"
 #include "mpost.h"

@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
 
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -69,6 +69,92 @@ max4 (double x1, double x2, double x3, double x4)
   return v;
 }
 
+/* Duplicate from pdfparse.c */
+static void
+skip_white (const char **pp, const char *endptr)
+{
+  while (*pp < endptr &&
+         (**pp == ' '  || **pp == '\t' || **pp == '\f' ||
+          **pp == '\r' || **pp == '\n' || **pp == '\0')) {
+    (*pp)++;
+  }
+}
+
+/* This need to allow 'true' prefix for unit and length value must be divided
+ * by current magnification.
+ */
+int
+dpx_util_read_length (double *vp, double mag, const char **pp, const char *endptr)
+{
+  char   *q;
+  const char *p = *pp;
+  double  v, u = 1.0;
+  const char *_ukeys[] = {
+#define K_UNIT__PT  0
+#define K_UNIT__IN  1
+#define K_UNIT__CM  2
+#define K_UNIT__MM  3
+#define K_UNIT__BP  4
+#define K_UNIT__PC  5
+#define K_UNIT__DD  6
+#define K_UNIT__CC  7
+#define K_UNIT__SP  8
+    "pt", "in", "cm", "mm", "bp", "pc", "dd", "cc", "sp",
+     NULL
+  };
+  int     k, error = 0;
+
+  q = parse_float_decimal(&p, endptr);
+  if (!q) {
+    *vp = 0.0; *pp = p;
+    return  -1;
+  }
+
+  v = atof(q);
+  RELEASE(q);
+
+  skip_white(&p, endptr);
+  q = parse_c_ident(&p, endptr);
+  if (q) {
+    char *qq = q; /* remember this for RELEASE, because q may be advanced */
+    if (strlen(q) >= strlen("true") &&
+        !memcmp(q, "true", strlen("true"))) {
+      u /= mag != 0.0 ? mag : 1.0; /* inverse magnify */
+      q += strlen("true");
+    }
+    if (strlen(q) == 0) { /* "true" was a separate word from the units */
+      RELEASE(qq);
+      skip_white(&p, endptr);
+      qq = q = parse_c_ident(&p, endptr);
+    }
+    if (q) {
+      for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
+      switch (k) {
+      case K_UNIT__PT: u *= 72.0 / 72.27; break;
+      case K_UNIT__IN: u *= 72.0; break;
+      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
+      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
+      case K_UNIT__BP: u *= 1.0 ; break;
+      case K_UNIT__PC: u *= 12.0 * 72.0 / 72.27 ; break;
+      case K_UNIT__DD: u *= 1238.0 / 1157.0 * 72.0 / 72.27 ; break;
+      case K_UNIT__CC: u *= 12.0 * 1238.0 / 1157.0 * 72.0 / 72.27 ; break;
+      case K_UNIT__SP: u *= 72.0 / (72.27 * 65536) ; break;
+      default:
+        WARN("Unknown unit of measure: %s", q);
+        error = -1;
+        break;
+      }
+      RELEASE(qq);
+    }
+    else {
+      WARN("Missing unit of measure after \"true\"");
+      error = -1;
+    }
+  }
+
+  *vp = v * u; *pp = p;
+  return  error;
+}
 
 #if defined(_MSC_VER)
 #define strtoll _strtoi64

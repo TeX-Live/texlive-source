@@ -2249,83 +2249,7 @@ dvi_vf_finish (void)
 
 /* Scan various specials */
 #include "dpxutil.h"
-
-/* This need to allow 'true' prefix for unit and
- * length value must be divided by current magnification.
- */
-static int
-read_length (double *vp, double mag, const char **pp, const char *endptr)
-{
-  char   *q;
-  const char *p = *pp;
-  double  v, u = 1.0;
-  const char *_ukeys[] = {
-#define K_UNIT__PT  0
-#define K_UNIT__IN  1
-#define K_UNIT__CM  2
-#define K_UNIT__MM  3
-#define K_UNIT__BP  4
-#define K_UNIT__PC  5
-#define K_UNIT__DD  6
-#define K_UNIT__CC  7
-#define K_UNIT__SP  8
-    "pt", "in", "cm", "mm", "bp", "pc", "dd", "cc", "sp",
-     NULL
-  };
-  int     k, error = 0;
-
-  q = parse_float_decimal(&p, endptr);
-  if (!q) {
-    *vp = 0.0; *pp = p;
-    return  -1;
-  }
-
-  v = atof(q);
-  RELEASE(q);
-
-  skip_white(&p, endptr);
-  q = parse_c_ident(&p, endptr);
-  if (q) {
-    char *qq = q; /* remember this for RELEASE, because q may be advanced */
-    if (strlen(q) >= strlen("true") &&
-        !memcmp(q, "true", strlen("true"))) {
-      u /= mag != 0.0 ? mag : 1.0; /* inverse magnify */
-      q += strlen("true");
-    }
-    if (strlen(q) == 0) { /* "true" was a separate word from the units */
-      RELEASE(qq);
-      skip_white(&p, endptr);
-      qq = q = parse_c_ident(&p, endptr);
-    }
-    if (q) {
-      for (k = 0; _ukeys[k] && strcmp(_ukeys[k], q); k++);
-      switch (k) {
-      case K_UNIT__PT: u *= 72.0 / 72.27; break;
-      case K_UNIT__IN: u *= 72.0; break;
-      case K_UNIT__CM: u *= 72.0 / 2.54 ; break;
-      case K_UNIT__MM: u *= 72.0 / 25.4 ; break;
-      case K_UNIT__BP: u *= 1.0 ; break;
-      case K_UNIT__PC: u *= 12.0 * 72.0 / 72.27 ; break;
-      case K_UNIT__DD: u *= 1238.0 / 1157.0 * 72.0 / 72.27 ; break;
-      case K_UNIT__CC: u *= 12.0 * 1238.0 / 1157.0 * 72.0 / 72.27 ; break;
-      case K_UNIT__SP: u *= 72.0 / (72.27 * 65536) ; break;
-      default:
-        WARN("Unknown unit of measure: %s", q);
-        error = -1;
-        break;
-      }
-      RELEASE(qq);
-    }
-    else {
-      WARN("Missing unit of measure after \"true\"");
-      error = -1;
-    }
-  }
-
-  *vp = v * u; *pp = p;
-  return  error;
-}
-
+/* For MAX_PWD_LEN */
 #include "pdfencrypt.h"
 
 static int
@@ -2486,19 +2410,19 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
         else {
           skip_white(&p, endptr);
           if (!strcmp(kp, "width")) {
-            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+            error = dpx_util_read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
               *wd = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "height")) {
-            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+            error = dpx_util_read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
               *ht = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "xoffset")) {
-            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+            error = dpx_util_read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
               *xo = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "yoffset")) {
-            error = read_length(&tmp, dvi_tell_mag(), &p, endptr);
+            error = dpx_util_read_length(&tmp, dvi_tell_mag(), &p, endptr);
             if (!error)
               *yo = tmp * dvi_tell_mag();
           } else if (!strcmp(kp, "default")) {
@@ -2519,7 +2443,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
         qchr = *p; p++;
         skip_white(&p, endptr);
       }
-      error = read_length(&tmp, 1.0, &p, endptr);
+      error = dpx_util_read_length(&tmp, 1.0, &p, endptr);
       if (!error) {
         double tmp1;
 
@@ -2527,7 +2451,7 @@ scan_special (double *wd, double *ht, double *xo, double *yo, int *lm,
         if (p < endptr && *p == ',') {
           p++; skip_white(&p, endptr);
         }
-        error = read_length(&tmp1, 1.0, &p, endptr);
+        error = dpx_util_read_length(&tmp1, 1.0, &p, endptr);
         if (!error) {
           *wd = tmp;
           *ht = tmp1;

@@ -55,14 +55,17 @@ struct pdf_enc_setting {
 struct pdf_obj_setting {
     int         enable_objstm;
     int         enable_predictor;
+    int         compression_level;
 };
 
 struct pdf_setting
 {
+    int    ver_major, ver_minor;
     double media_width, media_height;
     double annot_grow_amount;
     int    outline_open_depth;
     int    check_gotos;
+    int    enable_manual_thumb;
     int    enable_encrypt;
     struct pdf_enc_setting encrypt;
     struct pdf_dev_setting device;
@@ -71,7 +74,8 @@ struct pdf_setting
 
 extern void pdf_open_document (const char *filename,
                                const char *creator,
-                               const unsigned char *id1, const unsigned char *id2,
+                               const unsigned char *id1,
+                               const unsigned char *id2,
                                struct pdf_setting settings);
 extern void pdf_close_document(void);
 
