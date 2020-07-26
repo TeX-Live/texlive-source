@@ -694,7 +694,7 @@ pdf_out_flush (void)
 #endif /* !LIBDPX */
     if (dpx_conf.verbose_level > 0) {
       if (p->options.compression.level > 0) {
-        MESG("Compression saved %ld bytes%s\n", p->output.compression_saved);
+        MESG("Compression saved %ld bytes\n", p->output.compression_saved);
       }
     }
 #if !defined(LIBDPX)
