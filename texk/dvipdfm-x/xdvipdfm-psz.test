@@ -15,12 +15,12 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 failed=
 
 echo "*** xdvipdfmx -v -m 1.0 -o paper2.pdf <paper.dvi" && echo \
-	&& ./xdvipdfmx -v -m 1.0 -o paper2.pdf <$srcdir/tests/paper.dvi \
+	&& ./xdvipdfmx -m 1.0 -o paper2.pdf <$srcdir/tests/paper.dvi \
 	&& echo && echo "xdvipdfmx-paper tests OK" && echo \
 	|| failed="$failed xdvipdfmx-paper"	
 
 echo "*** xdvipdfmx -v -m 1.4 -o - paper >paper2m.pdf" && echo \
-	&& ./xdvipdfmx -v -m 1.4 -o - $srcdir/tests/paper >paper2m.pdf \
+	&& ./xdvipdfmx -m 1.4 -o - $srcdir/tests/paper >paper2m.pdf \
 	&& echo && echo "xdvipdfmx-paper-mag tests OK" && echo \
 	|| failed="$failed xdvipdfmx-paper-mag"	
 
