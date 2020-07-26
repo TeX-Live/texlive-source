@@ -30,12 +30,12 @@ echo "*** xdvipdfmx --showpaper" \
 	|| failed="$failed xdvipdfmx-showpaper"
 
 echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
-	&& ./xdvipdfmx -o image2.pdf $srcdir/tests/image \
+	&& ./xdvipdfmx -v -o image2.pdf $srcdir/tests/image \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
 	|| failed="$failed xdvipdfmx-image"	
 
 echo "*** xdvipdfmx -v -o xbmc2.pdf xbmc" && echo \
-	&& ./xdvipdfmx -o xbmc2.pdf  $srcdir/tests/xbmc \
+	&& ./xdvipdfmx -v -o xbmc2.pdf  $srcdir/tests/xbmc \
 	&& echo && echo "xdvipdfmx-xbmc tests OK" && echo \
 	|| failed="$failed xdvipdfmx-xbmc"
 

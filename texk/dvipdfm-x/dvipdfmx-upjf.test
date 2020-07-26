@@ -17,14 +17,14 @@ failed=
 
 echo "*** dvipdfmx: test for upjf_full.pdf" && echo \
 	&& cp $srcdir/tests/upjf_full.vf ./upjf.vf \
-	&& ./xdvipdfmx --dvipdfmx -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
+	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
 	&& mv ./upjf.pdf ./upjf_full.pdf \
 	&& echo && echo "dvipdfmx-upjf-vf_full tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf-vf_full"
 
 echo "*** dvipdfmx: test for upjf_omit.pdf" && echo \
 	&& cp $srcdir/tests/upjf_omit.vf ./upjf.vf \
-	&& ./xdvipdfmx --dvipdfmx -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
+	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
 	&& mv ./upjf.pdf ./upjf_omit.pdf \
 	&& echo && echo "dvipdfmx-upjf-vf_omit tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf-vf_omit"
