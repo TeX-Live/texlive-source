@@ -427,94 +427,133 @@ spc_handler_pdfm_put (struct spc_env *spe, struct spc_arg *ap)
  */
 #include "cmap.h"
 
-static int
-reencodestring (CMap *cmap, pdf_obj *instring)
+static size_t
+calculate_size_utf16 (const unsigned char *p, const unsigned char *endptr)
 {
-#define WBUF_SIZE 4096
-  unsigned char  wbuf[WBUF_SIZE];
-  unsigned char *obufcur;
-  const unsigned char *inbufcur;
-  int inbufleft, obufleft;
+  size_t len = 0;
 
-  if (!cmap || !instring)
-    return 0;
-
-  inbufleft = pdf_string_length(instring);
-  inbufcur  = pdf_string_value (instring);
-
-  wbuf[0]  = 0xfe;
-  wbuf[1]  = 0xff;
-  obufcur  = wbuf + 2;
-  obufleft = WBUF_SIZE - 2;
-
-  CMap_decode(cmap,
-	      &inbufcur, &inbufleft,
-	      &obufcur, &obufleft);
-
-  if (inbufleft > 0) {
-    return  -1;
+  while (p < endptr) {
+    unsigned char c = *p;
+    if (c < 0x80) {
+      len += 2;
+      p   += 1;
+    } else if (c < 0xE0) {
+      len += 2;
+      p   += 2;
+    } else if (c < 0xF0) {
+      len += 2;
+      p   += 3;
+    } else if (c < 0xF8) {
+      len += 4; /* Surrogate */
+      p   += 4;
+    } else if (c < 0xFC) {
+      len += 4; /* Surrogate */
+      p   += 5;
+    } else if (c < 0xFE) {
+      len += 4; /* Surrogate */
+      p   += 6;
+    }
   }
 
-  pdf_set_string(instring, wbuf, WBUF_SIZE - obufleft);
-
-  return 0;
+  return len;
 }
 
 static int
-maybe_reencode_utf8(pdf_obj *instring)
+reencode_string_from_utf8_to_utf16be (pdf_obj *instring)
 {
-  unsigned char       *inbuf;
-  int                  inlen;
-  int                  non_ascii = 0;
-  const unsigned char *cp;
-  unsigned char       *op;
-  unsigned char        wbuf[WBUF_SIZE];
+  int                  error = 0;
+  unsigned char       *strptr;
+  size_t               length;
+  int                  non_ascii;
+  const unsigned char *p, *endptr;
 
-  if (!instring)
-    return 0;
+  ASSERT(instring);
+  ASSERT(PDF_OBJ_STRINGTYPE(instring));
 
-  inlen = pdf_string_length(instring);
-  inbuf = pdf_string_value(instring);
+  strptr = pdf_string_value(instring);
+  length = pdf_string_length(instring);
 
   /* check if the input string is strictly ASCII */
-  for (cp = inbuf; cp < inbuf + inlen; ++cp) {
-    if (*cp > 127) {
-      non_ascii = 1;
-    }
+  p         = strptr;
+  endptr    = strptr + length;
+  non_ascii = 0;
+  for ( ; p < endptr; p++) {
+    if (*p > 127)
+      non_ascii++;
   }
   if (non_ascii == 0)
     return 0; /* no need to reencode ASCII strings */
 
-  /* Check if the input string is valid UTF8 string
-   * This routine may be called against non-text strings.
-   * We need to re-encode string only when string is a text string
-   * endcoded in UTF8.
-   */
-  if (!UC_UTF8_is_valid_string(inbuf, inbuf + inlen))
-    return 0;
-  else if (inbuf[0] == 0xfe && inbuf[1] == 0xff &&
-      UC_UTF16BE_is_valid_string(inbuf + 2, inbuf + inlen))
-    return 0; /* no need to reencode UTF16BE with BOM */
+  if (!UC_UTF8_is_valid_string(strptr, endptr)) {
+    error = -1;
+  } else {
+    unsigned char *q, *buf, *limptr;
+    size_t         len;
 
-  cp = inbuf;
-  op = wbuf;
-  *op++ = 0xfe;
-  *op++ = 0xff;
-  while (cp < inbuf + inlen) {
-    int32_t usv;
-    int     len;
+    p      = strptr;
+    /* Rough estimate of output length. */
+    len    = calculate_size_utf16(p, endptr) + 2;
+    buf    = NEW(len, unsigned char);
+    q      = buf;
+    limptr = buf + len;
+    q[0] = 0xfe; q[1] = 0xff;
+    q += 2;
+    while (p < endptr && q < limptr && !error) {
+      int32_t ucv;
+      size_t  count;
 
-    usv = UC_UTF8_decode_char((const unsigned char **)&cp, inbuf + inlen);
-    if (!UC_is_valid(usv))
-      return -1; /* out of valid Unicode range, give up (redundant) */
-    len = UC_UTF16BE_encode_char(usv, &op, wbuf + WBUF_SIZE);
-    if (len == 0)
-      return -1;
+      ucv = UC_UTF8_decode_char(&p, endptr);
+      if (!UC_is_valid(ucv)) {
+        error = -1;
+      } else {
+        count = UC_UTF16BE_encode_char(ucv, &q, limptr);
+        if (count == 0) {
+          error = -1;
+        }
+      }
+    }
+    if (!error)
+      pdf_set_string(instring, buf, q - buf);
+    RELEASE(buf);
   }
 
-  pdf_set_string(instring, wbuf, op - wbuf);
+  return error;
+}
 
-  return 0;
+static int
+reencode_string (CMap *cmap, pdf_obj *instring)
+{
+  int error = 0;
+
+  if (!instring || !PDF_OBJ_STRINGTYPE(instring))
+    return -1;
+  
+  if (cmap) {
+    unsigned char       *obuf;
+    unsigned char       *obufcur;
+    const unsigned char *inbufcur;
+    int                  inbufleft, obufleft, obufsize;
+
+    inbufleft = pdf_string_length(instring);
+    inbufcur  = pdf_string_value (instring);
+
+    obufsize  = inbufleft * 4 + 2;
+    obuf      = NEW(obufsize, unsigned char);
+    obuf[0]   = 0xfe;
+    obuf[1]   = 0xff;
+    obufcur   = obuf + 2;
+    obufleft  = obufsize - 2;
+
+    CMap_decode(cmap, &inbufcur, &inbufleft, &obufcur, &obufleft);
+
+    if (inbufleft > 0)
+      error = -1;
+    if (!error)
+      pdf_set_string(instring, obuf, obufsize - obufleft);
+    RELEASE(obuf);
+  }
+
+  return error;
 }
 
 /* The purpose of this routine is to check if given string object is
@@ -523,7 +562,7 @@ maybe_reencode_utf8(pdf_obj *instring)
  * additional dictionary entries which is considered as a text string.
  */
 static int
-needreencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
+need_reencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
 {
   int      r = 0, i;
   pdf_obj *tk;
@@ -562,18 +601,14 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
   case  PDF_STRING:
     if (cd && cd->cmap_id >= 0 && cd->taintkeys) {
       CMap *cmap = CMap_cache_get(cd->cmap_id);
-      if (needreencode(kp, vp, cd))
-        r = reencodestring(cmap, vp);
+      if (need_reencode(kp, vp, cd))
+        r = reencode_string(cmap, vp);
     } else if ((dpx_conf.compat_mode == dpx_mode_xdv_mode) && cd && cd->taintkeys) {
-      /* Please fix this... PDF string object is not always a text string.
-       * needreencode() is assumed to do a simple check if given string
-       * object is actually a text string.
-       */
-      if (needreencode(kp, vp, cd))
-        r = maybe_reencode_utf8(vp);
+      if (need_reencode(kp, vp, cd))
+        r = reencode_string_from_utf8_to_utf16be(vp);
     }
     if (r < 0) /* error occured... */
-      WARN("Failed to convert input string to UTF16...");
+      WARN("Input string conversion (to UTF16BE) failed for %s...", pdf_name_value(kp));
     break;
   case  PDF_DICT:
     r = pdf_foreach_dict(vp, modstrings, dp);
@@ -623,34 +658,10 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
 static void
 set_rect (pdf_rect *rect, pdf_coord cp1, pdf_coord cp2, pdf_coord cp3, pdf_coord cp4)
 {
-  rect->llx = cp1.x;
-  if (cp2.x < rect->llx)
-    rect->llx = cp2.x;
-  if (cp3.x < rect->llx)
-    rect->llx = cp3.x;
-  if (cp4.x < rect->llx)
-    rect->llx = cp4.x;
-  rect->urx = cp1.x;
-  if (cp2.x > rect->urx)
-    rect->urx = cp2.x;
-  if (cp3.x > rect->urx)
-    rect->urx = cp3.x;
-  if (cp4.x > rect->urx)
-    rect->urx = cp4.x;
-  rect->lly = cp1.y;
-  if (cp2.y < rect->lly)
-    rect->lly = cp2.y;
-  if (cp3.y < rect->lly)
-    rect->lly = cp3.y;
-  if (cp4.y < rect->lly)
-    rect->lly = cp4.y;
-  rect->ury = cp1.y;
-  if (cp2.y > rect->ury)
-    rect->ury = cp2.y;
-  if (cp3.y > rect->ury)
-    rect->ury = cp3.y;
-  if (cp4.y > rect->ury)
-    rect->ury = cp4.y;
+  rect->llx = min4(cp1.x, cp2.x, cp3.x, cp4.x);
+  rect->lly = min4(cp1.y, cp2.y, cp3.y, cp4.y);
+  rect->urx = max4(cp1.x, cp2.x, cp3.x, cp4.x);
+  rect->ury = max4(cp1.y, cp2.y, cp3.y, cp4.y);
 }
 
 static int

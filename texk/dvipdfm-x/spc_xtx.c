@@ -1,7 +1,7 @@
 /*  This is xdvipdfmx, an extended version of dvipdfmx,
     an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2013-2019 by the dvipdfmx project team.
+    Copyright (C) 2013-2020 by the dvipdfmx project team.
 
     Copyright (c) 2006 SIL International
     Originally written by Jonathan Kew
@@ -138,9 +138,9 @@ spc_handler_xtx_rotate (struct spc_env *spe, struct spc_arg *args)
   args->curptr = args->endptr;
 
   return  spc_handler_xtx_do_transform (spe->x_user, spe->y_user,
-      cos(value * M_PI / 180), sin(value * M_PI / 180),
-      -sin(value * M_PI / 180), cos(value * M_PI / 180),
-      0, 0);
+                                        cos(value * M_PI / 180), sin(value * M_PI / 180),
+                                        -sin(value * M_PI / 180), cos(value * M_PI / 180),
+                                        0, 0);
 }
 
 int
@@ -165,6 +165,7 @@ spc_handler_xtx_grestore (struct spc_env *spe, struct spc_arg *args)
    */
   pdf_dev_reset_fonts(0);
   pdf_dev_reset_color(0);
+  pdf_dev_reset_xgstate(0);
 
   return  0;
 }
