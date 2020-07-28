@@ -1,3 +1,7 @@
+2020-07-28  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* pdfobj.c: Simple modifications for LIBDPX.
+
 2020-07-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cmap_write.c: Change ariable names.

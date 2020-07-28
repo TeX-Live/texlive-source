@@ -215,9 +215,6 @@ struct pdf_out {
     size_t      file_position;
     int         line_position;
     size_t      compression_saved;
-#if defined(LIBDPX)
-    size_t      file_stats;
-#endif /* LIBDPX */
   } output;
 
   struct {
@@ -235,6 +232,10 @@ struct pdf_out {
   pdf_obj      *output_stream;
   pdf_obj      *current_objstm;
 };
+
+#if defined(LIBDPX)
+size_t output_file_size;
+#endif /* LIBDPX */
 
 /* Underway to reform PDF related code... For a moment place pdf_out
  * object as a static variable. */
@@ -269,7 +270,7 @@ init_pdf_out_struct (pdf_out *p)
   p->output.line_position = 0;
   p->output.compression_saved = 0;
 #if defined(LIBDPX)
-  p->output.file_stats = 0;
+  output_file_size = 0;
 #endif /* LIBDPX */
 
   p->obj.next_label = 1;
@@ -639,8 +640,7 @@ dump_xref_stream (pdf_out *p)
 long
 pdf_output_stats (void)
 {
-  pdf_out *p = current_output();
-  return p->output.file_stats;
+  return (long) output_file_size;
 }
 #endif /* LIBDPX */
 
@@ -700,7 +700,7 @@ pdf_out_flush (void)
 #if !defined(LIBDPX)
     MESG("%ld bytes written", p->output.file_position);
 #else
-    p->output.file_stats = p->output.file_position;
+    output_file_size = p->output.file_position;
 #endif /* !LIBDPX */
 
     MFCLOSE(p->output.file);
