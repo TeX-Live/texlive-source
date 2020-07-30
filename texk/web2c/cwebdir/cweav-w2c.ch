@@ -1866,12 +1866,10 @@ print_stats(void) {
 @x
 @** Index.
 @y
-@** Extensions for modern {\tt CWEB}.
-
-The following sections introduce code changes and extensions that have been
-created by numerous contributors over the course of a quarter century. They
-make \.{CWEB} adhere to modern coding standards and introduce new or improved
-features.
+@** Extensions for modern {\tt CWEB}.  The following sections introduce code
+changes and extensions that have been created by numerous contributors over the
+course of a quarter century. They make \.{CWEB} adhere to modern coding
+standards and introduce new or improved features.
 
 Care has been taken to keep the original section numbering intact, so this new
 section should have the same number as the original ``\&{250.~Index},'' and

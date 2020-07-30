@@ -2,13 +2,13 @@
 #line 58 "cwebdir/common.w"
 
 /*85:*/
-#line 1249 "cwebdir/comm-w2c.ch"
+#line 1247 "cwebdir/comm-w2c.ch"
 
 #include <stdbool.h>  
 #include <stddef.h>  
 
 /*:85*//*88:*/
-#line 1288 "cwebdir/comm-w2c.ch"
+#line 1286 "cwebdir/comm-w2c.ch"
 
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
@@ -25,7 +25,7 @@
 #endif
 
 /*:88*//*90:*/
-#line 1382 "cwebdir/comm-w2c.ch"
+#line 1380 "cwebdir/comm-w2c.ch"
 
 typedef bool boolean;
 #define HAVE_BOOLEAN
@@ -35,7 +35,7 @@ typedef bool boolean;
 #include <lib/lib.h>  
 
 /*:90*//*93:*/
-#line 1421 "cwebdir/comm-w2c.ch"
+#line 1419 "cwebdir/comm-w2c.ch"
 
 #define CWEB
 #include "help.h" 
@@ -320,7 +320,7 @@ char change_buffer[buf_size];
 char*change_limit;
 
 /*:11*//*86:*/
-#line 1262 "cwebdir/comm-w2c.ch"
+#line 1260 "cwebdir/comm-w2c.ch"
 
 char cb_banner[max_banner];
 string texmf_locale;
@@ -392,7 +392,7 @@ static void scan_args(void);
 #line 1253 "cwebdir/common.w"
 
 /*:69*//*83:*/
-#line 1224 "cwebdir/comm-w2c.ch"
+#line 1222 "cwebdir/comm-w2c.ch"
 
 boolean get_line(void);
 name_pointer id_lookup(const char*,const char*,char);
@@ -405,7 +405,7 @@ void reset_input(void);
 void sprint_section_name(char*,name_pointer);
 
 /*:83*//*84:*/
-#line 1237 "cwebdir/comm-w2c.ch"
+#line 1235 "cwebdir/comm-w2c.ch"
 
 static boolean input_ln(FILE*);
 static int web_strcmp(char*,int,char*,int);
@@ -415,7 +415,7 @@ static void check_change(void);
 static void prime_the_change_buffer(void);
 
 /*:84*//*98:*/
-#line 1487 "cwebdir/comm-w2c.ch"
+#line 1485 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
@@ -455,7 +455,7 @@ root= NULL;
 #line 103 "cwebdir/comm-w2c.ch"
 
 /*91:*/
-#line 1396 "cwebdir/comm-w2c.ch"
+#line 1394 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -463,7 +463,7 @@ kpse_set_program_name(argv[0],"cweb");
 #line 104 "cwebdir/comm-w2c.ch"
 
 /*89:*/
-#line 1344 "cwebdir/comm-w2c.ch"
+#line 1342 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
 texmf_locale= kpse_var_expand("${TEXMFLOCALEDIR}");
@@ -1346,7 +1346,7 @@ puts(_("(That was a fatal error, my friend.)"));
 #line 844 "cwebdir/comm-w2c.ch"
 
 /*87:*/
-#line 1273 "cwebdir/comm-w2c.ch"
+#line 1271 "cwebdir/comm-w2c.ch"
 
 if(C_file)fclose(C_file);
 if(tex_file)fclose(tex_file);
@@ -1430,7 +1430,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*74:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*94:*/
-#line 1425 "cwebdir/comm-w2c.ch"
+#line 1423 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1442,7 +1442,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*96:*/
-#line 1468 "cwebdir/comm-w2c.ch"
+#line 1466 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1632,7 +1632,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
 #line 1030 "cwebdir/comm-w2c.ch"
 /*:70*//*95:*/
-#line 1434 "cwebdir/comm-w2c.ch"
+#line 1432 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1665,7 +1665,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:95*//*97:*/
-#line 1476 "cwebdir/comm-w2c.ch"
+#line 1474 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {
