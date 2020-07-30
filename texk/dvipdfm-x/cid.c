@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     This program is free software; you can redistribute it and/or modify
@@ -80,6 +80,7 @@ static struct {
   {NULL,    NULL,       { 0,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0}}
 };
+#define SUP_IDX_MAX 20
 #define UCS_CC    0
 #define ACC_START 1
 #define ACC_END   4
@@ -709,6 +710,7 @@ get_cidsysinfo (const char *map_name, fontmap_opt *fmap_opt)
   int i, csi_idx = -1, n, m;
 
   sup_idx = pdf_get_version() - 10;
+  sup_idx = (sup_idx > SUP_IDX_MAX) ? SUP_IDX_MAX : sup_idx;
 
   if (!fmap_opt || !fmap_opt->charcoll)
     return NULL;

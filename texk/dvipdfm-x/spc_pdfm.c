@@ -590,7 +590,7 @@ need_reencode (pdf_obj *kp, pdf_obj *vp, struct tounicode *cd)
 }
 
 static int
-modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
+modify_strings (pdf_obj *kp, pdf_obj *vp, void *dp)
 {
   int               r = 0; /* continue */
   struct tounicode *cd = dp;
@@ -598,7 +598,7 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
   ASSERT( pdf_obj_typeof(kp) == PDF_NAME );
 
   switch (pdf_obj_typeof(vp)) {
-  case  PDF_STRING:
+  case PDF_STRING:
     if (cd && cd->cmap_id >= 0 && cd->taintkeys) {
       CMap *cmap = CMap_cache_get(cd->cmap_id);
       if (need_reencode(kp, vp, cd))
@@ -610,11 +610,24 @@ modstrings (pdf_obj *kp, pdf_obj *vp, void *dp)
     if (r < 0) /* error occured... */
       WARN("Input string conversion (to UTF16BE) failed for %s...", pdf_name_value(kp));
     break;
-  case  PDF_DICT:
-    r = pdf_foreach_dict(vp, modstrings, dp);
+  /* Array elements are also checked. */
+  case PDF_ARRAY:
+    {
+      int i;
+      for (i = 0; i < pdf_array_length(vp); i++) {
+        pdf_obj *obj;
+        obj = pdf_get_array(vp, i);
+        r   = modify_strings(kp, obj, dp);
+        if (r < 0)
+          break;
+      }
+    }
     break;
-  case  PDF_STREAM:
-    r = pdf_foreach_dict(pdf_stream_dict(vp), modstrings, dp);
+  case PDF_DICT:
+    r = pdf_foreach_dict(vp, modify_strings, dp);
+    break;
+  case PDF_STREAM:
+    r = pdf_foreach_dict(pdf_stream_dict(vp), modify_strings, dp);
     break;
   }
 
@@ -647,7 +660,7 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
         pdf_release_obj(dict);
         dict = NULL;
       } else {
-        pdf_foreach_dict(dict, modstrings, cd);
+        pdf_foreach_dict(dict, modify_strings, cd);
       }
     }
   }

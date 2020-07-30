@@ -1,3 +1,9 @@
+2020-07-31  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cid.c: Avoid accessing array elements exceeding max array index.
+	* spc_pdfm.c: Check array elements also for to-unicode conversion.
+	* tt_cmap.c: Additional changes are required for the previous CMap name fix.
+
 2020-07-29  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_pdfm.c: Improve codes in unicode conversion and
