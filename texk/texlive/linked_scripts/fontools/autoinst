@@ -40,7 +40,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20200619';
+my $VERSION = '20200729';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -129,8 +129,19 @@ sub main {
         $log->log_commands(\@commands) if $ARGV{verbose} >= 1;
 
         if (!$ARGV{dryrun}) {
+            $nfss_mapping = NFSS::invert_mapping($nfss_mapping);
             LaTeX::create_support_files(\@workitems, $family, $nfss_mapping);
             Otftotfm::run_commands(\@commands, $family, $log);
+
+            if ($ARGV{t1suffix}) {
+                Work::modify_fontnames($family, $fontlist);
+            }
+
+            print <<"END_MESSAGE_UPDMAP";
+[INFO]      Done generating fonts!
+            Please update TeX's databases (by calling 'texhash' and 'updmap'
+            or their equivalents on your system) before using these fonts.
+END_MESSAGE_UPDMAP
         }
 
         $log->close();
@@ -275,6 +286,12 @@ sub new {
 sub process_basicinfo {
     my ($self, $data) = @_;
 
+    $self->{originalfamily} = $data->{family};
+
+    for my $key (keys %{$data}) {
+        $data->{$key} =~ s/\s+//xmsg;
+    }
+
     $data->{family}    =  $data->{preferredfamily} || $data->{family};
     $data->{subfamily} =  $data->{preferredsubfamily} || $data->{subfamily};
     $data->{fullname}  =~ s/\A$data->{family}//xms;
@@ -282,9 +299,7 @@ sub process_basicinfo {
 
     # clean up family name (it's used in LaTeX command names)
     my @DIGITS = qw(Zero One Two Three Four Five Six Seven Eight Nine);
-    $data->{family}    =~ s/\A(?: Adobe | DTL | FF | ITC | LT | MT)//xms;
     $data->{family}    =~ s/(?: LT | MT)(?: Std | Pro )\z//xms;
-    $data->{family}    =~ s/ Std \z//xms;
     $data->{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
     $data->{family}    =~ s/[^A-Za-z]+//xmsg;
 
@@ -403,11 +418,6 @@ sub process_basicinfo {
         $self->{weight} = NFSS::unabbreviate(lc($2));
     }
 
-    # Strip off the "Text" from family names that contain this string.
-    # This was a crude way to fix a bug in the previous paragraph;
-    # it's unnecessary now, but we don't want to break the old behaviour.
-    $self->{family} =~ s/text \z//xmsi;
-
     $self->{basicshape} = NFSS::get_nfss_shape($self->{shape});
 
     # We define 'series' as 'weight + width'. This matches NFSS,
@@ -510,7 +520,6 @@ sub get_basicinfo {
         or die "[ERROR]     Could not fork(): $!";
     my %data = map { my ($k,$v) = m/\A\s* ([^:]+?) \s*:\s* ([^\r\n]+)/xms;
                      $k =~ s/\s+//xmsg;
-                     $v =~ s/\s+//xmsg;
                      (lc $k => $v);
                    }
                    grep { m/\A\s* [^:]+? \s*:\s* [^\r\n]+/xms } <$otfinfo>;
@@ -738,27 +747,21 @@ END_STY_MAINFONT
         :               die "[ERROR]     Internal bug, please report!"
         ;
 
-    my $default_bold;
     for my $series (qw(heavy black extrabold demibold semibold bold)) {
         if ( $seen{$series} ) {
             print {$STY}
                 "\\DeclareOptionX{$series}{\\edef\\bfseries\@$ARGV{nfss}",
                 "{$series}}\n";
-            $default_bold = $series;
         }
     }
-    $defaults .= ",$default_bold" if $default_bold;
 
-    my $default_regular;
-    for my $series (qw(medium book text regular)) {
+    for my $series (qw(medium book text normal regular)) {
         if ( $seen{$series} ) {
             print {$STY}
                 "\\DeclareOptionX{$series}{\\edef\\mdseries\@$ARGV{nfss}",
                 "{$series}}\n";
-            $default_regular = $series;
         }
     }
-    $defaults .= ",$default_regular" if $default_regular;
 
     if ($ARGV{math}) {
         print {$STY} <<"END_STY_MATHOPTION";
@@ -908,8 +911,9 @@ END_STY_FONTAXES_DNOM
     my $testfont = eval {
         my $testenc = $ARGV{encoding}[0];
         my $testfig = ( grep { exists $data->{$testenc}{$_} }
-            qw(OsF LF TOsF TLF) )[0] or die;
-        my $testweight = $nfss_mapping->{weight}{""}[0] or die;
+                             qw(OsF LF TOsF TLF) )[0] or die;
+        my $testweight = ( grep { $nfss_mapping->{$_} eq "m" }
+                                keys %{$nfss_mapping} )[0] or die;
         my $testshape
             = ( grep { exists $data->{$testenc}{$testfig}{$testweight}{$_} }
                      qw(n sc it sl)
@@ -1334,12 +1338,21 @@ sub create_fdfile {
 END_FD_HEADER
 
     while (my ($series, $fdseries) = each %$data) {
-        print {$FD} "\n%   ----  $series  ----\n\n";
+        my $nfssseries = $nfss_mapping->{$series};
+
+        my $alias = $series;
+        if (defined $nfssseries) {
+            print {$FD} "\n%   ----  $nfssseries = $series  ----\n\n";
+            $series = $nfssseries;
+        }
+        else {
+            print {$FD} "\n%   ----  $series  ----\n\n";
+        }
         while (my ($shape, $fdshape) = each %$fdseries) {
             print {$FD}
                 "\\DeclareFontShape{$enc}{$fam-$sty}{$series}{$shape}{\n";
             my @sizes = sort { $a->[0] <=> $b->[0] }
-                             @{$fdshape};
+                                @{$fdshape};
             $sizes[0][0] = $sizes[-1][1] = '';
             $sizes[$_][0] = $sizes[$_ - 1][1] for (1 .. $#sizes);
             for my $size (@sizes) {
@@ -1347,6 +1360,15 @@ END_FD_HEADER
                             "\\$fam\@\@scale $size->[2]\n";
             }
             print {$FD} "}{}\n\n";
+
+            if (defined $nfssseries) {
+                print {$FD} <<"END_ALIAS_SERIES";
+\\DeclareFontShape{$enc}{$fam-$sty}{$alias}{$shape}{
+      <-> alias * $fam-$sty/$nfssseries/$shape
+}{}
+
+END_ALIAS_SERIES
+            }
         }
 
         # ssub italic for missing slanted, or vice versa
@@ -1354,51 +1376,33 @@ END_FD_HEADER
             if (!exists $fdseries->{$shape} && exists $fdseries->{$replace}) {
                 print {$FD} <<"END_SSUB_SHAPE";
 \\DeclareFontShape{$enc}{$fam-$sty}{$series}{$shape}{
-      <-> ssub * $fam-$sty/$series/$replace
+    <-> ssub * $fam-$sty/$series/$replace
 }{}
 
 END_SSUB_SHAPE
+                if (defined $nfssseries) {
+                    print {$FD} <<"END_SSUB_ALIAS";
+\\DeclareFontShape{$enc}{$fam-$sty}{$alias}{$shape}{
+    <-> ssub * $fam-$sty/$alias/$replace
+}{}
+
+END_SSUB_ALIAS
+                }
                 $fdseries->{$shape} = 1;
             }
         }
     }
 
-    print {$FD} <<"END_COMMENT";
-%
-%  Extra 'alias' rules to map the standard NFSS codes to our fancy names
-%
-END_COMMENT
     my %seen;
-    NFSSWEIGHT:
-    for my $nfssweight (NFSS::get_all_nfss_weights()) {
-        NFSSWIDTH:
-        for my $nfsswidth (NFSS::get_all_nfss_widths()) {
-            my $nfssseries = ($nfssweight . $nfsswidth) || 'm';
-
-            for my $weight (@{$nfss_mapping->{weight}{$nfssweight}}) {
-                $weight = '' if $weight eq 'regular';
-                for my $width (@{$nfss_mapping->{width}{$nfsswidth}}) {
-                    $width = '' if $width eq 'regular';
-                    my $series = ($weight . $width) || 'regular';
-                    if ( exists $data->{$series} ) {
-                        print {$FD} "\n%   $nfssseries --> $series\n\n";
-                        for my $shape (keys %{$data->{$series}}) {
-                            print {$FD} <<"END_SSUB_SERIES";
-\\DeclareFontShape{$enc}{$fam-$sty}{$nfssseries}{$shape}{
-      <-> alias * $fam-$sty/$series/$shape
-}{}
-
-END_SSUB_SERIES
-                            $seen{$nfssseries}{$shape} = 1;
-                        }
-                        next NFSSWIDTH;
-                    }
-                }
+    while (my ($series, $nfssseries) = each %{$nfss_mapping}) {
+        if (exists $data->{$series}) {
+            for my $shape (keys %{$data->{$series}}) {
+                $seen{$nfssseries}{$shape} = 1;
             }
         }
     }
 
-    # Add ssub rules to map bx to b
+    print {$FD} "\n%   ----  Extra 'ssub' rules to map 'bx' to 'b'  ----\n\n";
     for my $shape (keys %{$seen{b}}) {
         if (!exists $seen{bx}{$shape}) {
             print {$FD} <<"END_SSUB_BX";
@@ -1506,17 +1510,18 @@ I'm using the following options:
     fractions:          @{[ $ARGV{fractions}    ? 'yes'     : 'no'     ]}
     ligatures:          @{[ $ARGV{ligatures}    ? 'yes'     : 'no'     ]}
 
-    auto/manual:        @{[ $ARGV{manual}       ? 'manual'  : 'auto'   ]}
     target:             $ARGV{target}
     extra:              $ARGV{extra}
 
-    figurekern:         @{[ $ARGV{figurekern}   ? 'keep'    : 'remove' ]}
+    figurekern:         @{[ $ARGV{figurekern} ? 'keep' : 'remove' ]}
 
     nfssweight:         @{[ join q{, }, @{$ARGV{nfssweight}} ]}
     nfsswidth:          @{[ join q{, }, @{$ARGV{nfsswidth}}  ]}
 
-    math:               @{[ $ARGV{math}         ? 'yes'     : 'no'     ]}
+    math:               @{[ $ARGV{math} ? 'yes' : 'no' ]}
     mathspacing:        $ARGV{mathspacing}
+
+    fontname suffix:    @{[ $ARGV{t1suffix} || '(none)' ]}
 
 END_ARGUMENTS
 
@@ -1741,7 +1746,7 @@ my %FULL_FORM = (
 =cut
 
 my @WEIGHT = (
-    ul  =>  [ qw( ultralight thin 100 hairline eight four two ) ],
+    ul  =>  [ qw( ultralight thin 100 hairline ) ],
     el  =>  [ qw( extralight 200 ) ],
     l   =>  [ qw( light 300 ) ],
     sl  =>  [ qw( semilight blond ) ],
@@ -1959,7 +1964,6 @@ sub get_all_shapes {
     return @allshapes;
 }
 
-#
 # --------------------------------------------------------------------------
 #   Returns a mapping of NFSS codes to weight and width names.
 # --------------------------------------------------------------------------
@@ -2046,6 +2050,34 @@ sub map_nfss_codes {
     return $mapping;
 }
 
+# --------------------------------------------------------------------------
+#   Returns a mapping of weight and width names to NFSS codes.
+# --------------------------------------------------------------------------
+sub invert_mapping {
+    my $nfss_mapping = shift;
+
+    my %to_nfss;
+    NFSSWEIGHT:
+    for my $nfssweight (NFSS::get_all_nfss_weights()) {
+        next unless @{$nfss_mapping->{weight}{$nfssweight}};
+        my $weight = $nfss_mapping->{weight}{$nfssweight}[0];
+        $weight = "" if $weight eq 'regular';
+
+        NFSSWIDTH:
+        for my $nfsswidth (NFSS::get_all_nfss_widths()) {
+            my $nfssseries = ($nfssweight . $nfsswidth) || 'm';
+
+            next unless @{$nfss_mapping->{width}{$nfsswidth}};
+            my $width = $nfss_mapping->{width}{$nfsswidth}[0];
+            $width = "" if $width eq 'regular';
+            my $series = ($weight . $width) || 'regular';
+            $to_nfss{$series} = $nfssseries;
+        }
+    }
+
+    return \%to_nfss;
+}
+
 
 ############################################################################
 
@@ -2091,8 +2123,6 @@ Possible options:
     -target="DIRECTORY"     Install files into specified TEXMF tree
     -vendor="VENDOR"        Only used for naming directories
     -typeface="TYPEFACE"    Only used for naming directories
-    -(no)updmap             Toggle running of updmap
-    -manual                 Manual mode (see documentation)
 
     -(no)figurekern         Keep or remove kerns between tabular figures
 
@@ -2108,6 +2138,8 @@ Possible options:
 
     -math                   Generate basic math fonts
     -mathspacing=AMOUNT     Letterspace the math fonts by AMOUNT/1000 em
+
+    -t1suffix=SUFFIX        Add SUFFIX to name of generated pfb fonts
 
     font[s]                 The fonts (.otf or .ttf format) to install.
 
@@ -2137,8 +2169,6 @@ END_USAGE
     target          => '',
     vendor          => 'lcdftools',
     typeface        => '',
-    updmap          => '1',     # 0 = no, 1 = yes
-    manual          => '0',     # 0 = no, 1 = yes
     dryrun          => '0',     # 0 = no, 1 = yes
     logfile         => '',
     figurekern      => '1',     # 0 = no, 1 = yes
@@ -2147,6 +2177,7 @@ END_USAGE
     nfssweight      => [],
     math            => 0,
     mathspacing     => 0,
+    t1suffix        => 'none',
 );
 
 
@@ -2186,9 +2217,7 @@ sub parse_options {
         'target=s'            => \$ARGV{target},
         'vendor=s'            => \$ARGV{vendor},
         'typeface=s'          => \$ARGV{typeface},
-        'updmap!'             => \$ARGV{updmap},
         'dryrun'              => \$ARGV{dryrun},
-        'manual'              => \$ARGV{manual},
         'figurekern!'         => \$ARGV{figurekern},
         'logfile=s'           => \$ARGV{logfile},
         'verbose+'            => \$ARGV{verbose},
@@ -2214,6 +2243,7 @@ sub parse_options {
                                  },
         'math!'               => \$ARGV{math},
         'mathspacing=i'       => \$ARGV{mathspacing},
+        't1suffix:s'          => \$ARGV{t1suffix},
     )
     or die "$USAGE";
 
@@ -2299,13 +2329,11 @@ sub create_command {
             || Util::any( map { $_ eq 'liga' } @{$workitem->{features}} );
 
     return join q( ), 'otftotfm',
-                      ($ARGV{manual} ? '--pl' : '--automatic'),
+                      '--automatic',
                       "--encoding=$workitem->{enc_file}",
                       $targetdirs,
                       '--no-updmap',
-                      ($workitem->{font}{filename} =~ m/[.]ttf\z/xmsi
-                         ? '--no-type1'
-                         : q()),
+                      '--force',
                       ($SCHEME{$workitem->{encoding}}
                          ? qq(--coding-scheme="$SCHEME{$workitem->{encoding}}")
                          : q()),
@@ -2327,44 +2355,33 @@ sub create_command {
 
 
 # --------------------------------------------------------------------------
-#   Executes (or saves to file, when $ARGV{manual} is true) all commands.
+#   Executes all commands.
 # --------------------------------------------------------------------------
 sub run_commands {
     my ($commandlist, $family, $log) = @_;
 
-    # Make sure the last command *does* call updmap.
-    $commandlist->[-1] =~ s/--no-updmap//xms if $ARGV{updmap};
-
-    if ($ARGV{manual}) {
-        open my $BAT, '>', 'autoinst.bat'
-            or die "[ERROR]     Can't create 'autoinst.bat': $!";
-        print {$BAT} "$_\n" for @{$commandlist};
-        close $BAT;
+    my $oops = 0;
+    $| = 1;     # turn on autoflush, to make a poor man's progress bar
+    print "[INFO]      Generating fonts for $family ";
+    for my $command (@{$commandlist}) {
+        print '.';
+        open my $otftotfm, '-|', "$command 2>&1"
+            or die "could not fork(): $!";
+        my $msgs = do { local $/; <$otftotfm> };
+        close $otftotfm
+            or do {
+            warn "\n$command\n\n$msgs\n";
+            $log->log("\n$command\n\n$msgs\n");
+            $oops = 1;
+        };
     }
-    else {
-        my $oops = 0;
-        $| = 1;     # turn on autoflush, to make a poor man's progress bar
-        print "[INFO]      Generating fonts for $family ";
-        for my $command (@{$commandlist}) {
-            print '.';
-            open my $otftotfm, '-|', "$command 2>&1"
-                or die "could not fork(): $!";
-            my $msgs = do { local $/; <$otftotfm> };
-            close $otftotfm
-                or do {
-                    warn "\n$command\n\n$msgs\n";
-                    $log->log("\n$command\n\n$msgs\n");
-                    $oops = 1;
-                };
-        }
-        print "\n";
-        $| = 0;
-        if ($oops) {
-            warn <<"END_OTFTOTFM_WARNING";
+    print "\n";
+    $| = 0;
+    if ($oops) {
+        warn <<"END_OTFTOTFM_WARNING";
 [ERROR]     One or more calls to 'otftotfm' returned a non-zero status code;
             please check the messages above and in the log file.
 END_OTFTOTFM_WARNING
-        }
     }
 
     return;
@@ -2631,6 +2648,7 @@ sub process_options {
     process_styles_options();
     process_encoding_options();
     process_target_options();
+    process_output_options();
 
     return;
 }
@@ -2767,21 +2785,7 @@ sub process_encoding_options {
 sub process_target_options{
 
     my $localtarget = File::Spec->catdir( Cwd::getcwd(), 'autoinst_output' );
-    if ($ARGV{manual}) {
-        warn "[WARNING]   Option '-target' overridden by '-manual'!\n"
-            if $ARGV{target};
-        $ARGV{target} = $localtarget;
-        $ARGV{updmap} = 0;
-    }
-    elsif ($ARGV{target}) {
-        $ARGV{updmap} = 0;
-        warn <<"END_WARNING_TARGET_UPDMAP";
-[WARNING]   The '-target' option may interfere with kpathsea and updmap;
-            automatic calling of updmap has been disabled.
-            Please call updmap manually.
-END_WARNING_TARGET_UPDMAP
-    }
-    elsif (!$ARGV{target}) {
+    if (!$ARGV{target}) {
         my $is_windows_os = ( $^O =~ /^MSWin/i );
         my $kpsepath = $is_windows_os
             ? eval { qx( kpsewhich -expand-var=\$TEXMFLOCAL;\$TEXMFHOME ) }
@@ -2809,7 +2813,6 @@ END_WARNING_KPSEWHICH
 
     if (!$ARGV{target}) {
         $ARGV{target} = $localtarget;
-        $ARGV{updmap} = 0;
         warn <<"END_WARNING_DUMPING_FILES";
 [WARNING]   No user-writable TEXMF-tree found!
 
@@ -2828,6 +2831,30 @@ END_WARNING_DUMPING_FILES
             If you experience any problems, try re-running autoinst
             on a target directory without spaces in its name.
 END_WARNING_SPACES_IN_PATHS
+    }
+
+    return;
+}
+
+
+# --------------------------------------------------------------------------
+#   Processes the output related options.
+# --------------------------------------------------------------------------
+sub process_output_options{
+    # If the user gave -t1suffix *without* value as the last option,
+    # Getopt::Long may mistake the next argument (a font filename)
+    # for the value of -t1suffix; we take care of this case
+    # by testing whether the value refers to an existing file
+    # and repairing things if necessary.
+    if (-e $ARGV{t1suffix}) {
+        unshift @ARGV, $ARGV{t1suffix};
+        $ARGV{t1suffix} = '';
+    }
+
+    $ARGV{t1suffix} ||= 'PS';
+
+    if ($ARGV{t1suffix} eq 'none') {
+        $ARGV{t1suffix} = '';
     }
 
     return;
@@ -3127,6 +3154,120 @@ sub cleanup {
 }
 
 
+# --------------------------------------------------------------------------
+#   Modify the font and file names of all generated .pfb files.
+# --------------------------------------------------------------------------
+sub modify_fontnames {
+    my ($family, $fontlist) = @_;
+
+    my %has_fonttype = map { ($_->{fonttype} => 1) } @{$fontlist};
+    return unless $has_fonttype{opentype};
+
+    my $pfb_dir = File::Spec->catdir(
+        $ARGV{target},
+        'fonts',
+        'type1',
+        $ARGV{vendor},
+        $ARGV{typeface} || $family);
+
+    # The otftotfm-generated map file refers to the original otf files;
+    # we need to change this to use our name-modifyd Type1 fonts instead.
+    my $mapfile = File::Spec->catfile(
+        $ARGV{target},
+        'fonts',
+        'map',
+        'dvips',
+        $ARGV{typeface} || $family,
+        $family . '.map');
+    open my $map, '<', $mapfile
+        or die "[ERROR]     Cannot open '$mapfile' for reading";
+    my $mapdata = do { local $/; <$map> };
+    close $map;
+
+    my $NOTICE = 'Converted to Type1 by autoinst/cfftot1; '
+               . 'for use with pdfTeX only! ';
+
+    my $newfam = $family . $ARGV{t1suffix};
+
+    for my $font (@{$fontlist}) {
+        next unless $font->{fonttype} eq 'opentype';
+
+        my $full_family = $font->{originalfamily};
+        if (index($full_family, $family) > -1) {
+            $full_family = $family;
+        }
+        else {
+            while ($full_family =~ m/[ ]/xms) {
+                (my $no_space = $full_family) =~ s/[ ]+//xmsg;
+                last if $no_space eq $family;
+                $full_family =~ s/[ ]\S*\z//xms;
+            }
+            $full_family ||= $family;
+        }
+        my $newfullfam = $full_family . q( ) . $ARGV{t1suffix};
+
+        my $newname = $font->{name};
+        if ($newname =~ m/$family/xms) {
+            $newname =~ s/$family/$newfam/xms;
+        }
+        else {
+            $newname =~ s/(.+?)(-|\z)/$1$ARGV{t1suffix$2}/xms;
+        }
+
+        for my $suffix (q(), q(LCDFJ)) {
+            my $oldfn = File::Spec->catfile(
+                $pfb_dir, $font->{name} . $suffix . '.pfb');
+            my $newfn = File::Spec->catfile(
+                $pfb_dir, $newname . $suffix . '.pfb');
+
+            next unless -e $oldfn;
+            if ($suffix eq 'LCDFJ' and -z $oldfn) {
+                unlink $oldfn;
+                next;
+            }
+
+            my $cmd = qq(t1disasm "$oldfn");
+            open my $t1disasm, '-|:raw', $cmd
+                or die "[ERROR]     Could not fork(): $!";
+            my @pfbdata = readline $t1disasm;
+            close $t1disasm
+                or die "[ERROR]     '$cmd' failed";
+
+            for (@pfbdata) {
+                if (m/%!PS-AdobeFont-1.0:[ ] | \/FontName[ ]/xms) {
+                    s/$font->{name}/$newname/;
+                }
+                if (m/\/Notice[ ]/xms) {
+                    s/[(]/($NOTICE/xms;
+                }
+                if (m/\/FullName[ ] | \/FamilyName[ ]/xms) {
+                    s/$full_family/$newfullfam/
+                        or s/(.+?)(-|\z)/$1$ARGV{t1suffix}$2/;
+                }
+            }
+
+            $cmd = qq(t1asm --pfb >"$newfn");
+            open my $t1asm, '|-:raw', $cmd
+                or die "[ERROR]     Could not fork(): $!";
+            print {$t1asm} @pfbdata;
+            close $t1asm
+                or die "[ERROR]     '$cmd' failed";
+
+            unlink $oldfn unless $oldfn eq $newfn;
+
+            $mapdata =~ s/$font->{name}$suffix.pfb/$newname$suffix.pfb/g;
+        }
+    }
+
+    open $map, '>', $mapfile
+        or die "[ERROR]     Cannot open '$mapfile' for writing";
+    print {$map} $mapdata;
+    close $map;
+
+    return;
+}
+
+
 ############################################################################
 
 
@@ -3291,13 +3432,9 @@ Titling characters; see above
 
 ornaments
 
-=item I<Numr>
+=item I<Numr>, I<Dnom>
 
-numerators
-
-=item I<Dnom>
-
-denominators
+numerators and denominators
 
 =back
 
@@ -3345,20 +3482,20 @@ so that its x-height matches that of the previously active font
 font package before this one).
 The name C<scaled> may be used as a synonym for C<scale>.
 
-=item C<medium>, C<book>, C<text>, C<regular>
+=item C<medium>, C<book>, C<text>, C<normal>, C<regular>
 
-Select the weight that LaTeX will use as the `regular' weight;
-the default is C<regular>.
+Select the weight that LaTeX will use as the `regular' weight.
 
 =item C<heavy>, C<black>, C<extrabold>, C<demibold>, C<semibold>, C<bold>
 
-Select the weight that LaTeX will use as the `bold' weight;
-the default is C<bold>.
+Select the weight that LaTeX will use as the `bold' weight.
 
 =back
 
 The last two groups of options will only work if
 you have the F<mweights> package installed.
+The default here is not to change LaTeX's default,
+i.e. use the `m' and `b' weights.
 
 The style file will also try to load the F<fontaxes> package
 (on CTAN), which gives easy access to various font shapes and styles.
@@ -3459,7 +3596,7 @@ these offending characters.
 Once again: test the results before using them!
 If the characters themselves are fine but spaced too tightly,
 you may try increasing the side bearings in math fonts with
-the I<-mathspacing> option (see below), e.g. C<-mathspacing=100>.
+the I<-mathspacing> option (see below), e.g. C<-mathspacing=50>.
 
 
 =head2 NFSS codes
@@ -3492,17 +3629,10 @@ The mapping of shapes to NFSS codes is done using the following table:
 we map the first of these to `n', for the second one we (ab)use the `it' code
 as this family doesn't contain an Italic shape.)
 
-The mapping of weights and widths to NFSS codes is a more complex,
-two-step proces.
-In the first step, all fonts are assigned a `series' name that is simply
-the concatenation of its weight and width
-(after expanding any abbreviations and converting to lowercase).
-A font with `Cond' width and `Ultra' weight will then be known
-as `ultrablackcondensed'.
-
-In the second step, B<autoinst> tries to map all combinations of NFSS codes
+For weights and widths, B<autoinst> tries to the standard NFSS codes
 (ul, el, l, sl, m, sb, b, eb and ub for weights;
-uc, ec, c, sc, m, sx, x, ex and ux for widths) to actual fonts.
+uc, ec, c, sc, m, sx, x, ex and ux for widths)
+as much as possible.
 Of course, not all 81 combinations of these NFSS weights and widths will map
 to existing fonts;
 and conversely it may not be possible to assign every existing font
@@ -3510,12 +3640,14 @@ a unique code in a sane way (especially for the weights, some font families
 offer more choices or finer granularity than NFSS's codes can handle;
 e.g., Fira Sans contains fifteen(!) different weights,
 including an additional `Medium' weight between Regular and Semibold).
+Therefore every font is also assigned a `series' name that is simply
+the concatenation of its weight and width
+(after expanding any abbreviations and converting to lowercase).
+A font with `Cond' width and `Ultra' weight will then be known
+as `ultrablackcondensed'.
 
-B<autoinst> tries hard to ensure that the most common NFSS codes
-(and high-level commands such as C<\bfseries>,
-which are built on top of those codes) will `just work'.
-
-To see exactly which NFSS codes map to which fonts, see the log file
+The exact mapping between fonts and NFSS codes can be found
+in the generated F<fd> files and in the log file
 (pro tip: run B<autoinst> with the I<-dryrun> option
 to check the chosen mapping beforehand).
 The I<-nfssweight> and I<-nfsswidth> command-line options can be used
@@ -3548,6 +3680,55 @@ differently, and fonts and style files generated by those versions
 are not compatible with files generated by newer versions.
 
 
+=head1 WARNINGS AND CAVEATS
+
+=head2 OpenType fonts and licensing issues
+
+Since F<pdfTeX> cannot subset otf-flavoured OpenType fonts,
+I<otftotfm> will convert such fonts to Type1 (pfb) format.
+However, many fonts (at least those licensed under the SIL Open Font License)
+do not allow distributing such converted versions under their original name.
+
+To meet these licensing requirements, B<autoinst> provides
+a C<-t1suffix> command-line option that appends
+a (user-defined) suffix to the names (both filename and internal font name)
+of all generated Type1 fonts; see L</COMMAND-LINE OPTIONS> below.
+
+
+=head2 A note for MiKTeX users
+
+Automatically installing the fonts into a suitable TEXMF tree
+(as B<autoinst> tries to do by default) only works for TeX-installations
+that use the F<kpathsea> library; with TeX distributions that implement
+their own directory searching (such as MiKTeX), B<autoinst> will complain
+that it cannot find the F<kpsewhich> program and move all generated files
+into a subdirectory C<./autoinst_output/> of the current directory.
+If you use such a TeX distribution, you should either move these files
+to their correct destinations by hand, or use the I<-target> option
+(see L</COMMAND-LINE OPTIONS> below) to manually specify a TEXMF tree.
+
+Also, some OpenType fonts contain so many kerning pairs that the resulting
+F<pl> and F<vpl> files are too big for MiKTeX's F<pltotf> and F<vptovf>;
+the versions that come with W32TeX (F<http://www.w32tex.org>)
+and TeXLive (F<http://tug.org/texlive>) don't seem to have this problem.
+
+
+=head2 A note for MacTeX users
+
+By default, B<autoinst> will try to install all generated files into
+the $TEXMFLOCAL tree; when this directory isn't user-writable,
+it will use the $TEXMFHOME tree instead.  Unfortunately, MacTeX's version
+of C<updmap-sys> doesn't search in $TEXMFHOME,
+and hence MacTeX will not find the new fonts.
+
+To remedy this, either run B<autoinst> as root (so that it can install
+everything into $TEXMFLOCAL) or manually run C<updmap -user> to tell
+TeX about the files in $TEXMFHOME.
+The latter option does, however, have some caveats;
+see F<https://tug.org/texlive/scripts-sys-user.html>.
+
+
+
 =head1 COMMAND-LINE OPTIONS
 
 B<autoinst> tries hard to do The Right Thing (TM) by default,
@@ -3560,11 +3741,9 @@ and option names may be shortened to a unique prefix
 but B<-e> is ambiguous (it may mean either B<-encoding> or B<-extra>)).
 
 
+=head2 General options
+
 =over 4
-
-=item B<-version>
-
-Print B<autoinst>'s version number and exit.
 
 =item B<-help>
 
@@ -3575,15 +3754,20 @@ Print a (relatively) short help text and exit.
 Don't generate output; just parse input fonts and write
 a log file saying what B<autoinst> would have done.
 
-=item B<-logfile>=I<filename>
-
-Write log data to F<filename> instead of the default F<< <fontfamily>.log >>.
-If the file already exists, B<autoinst> appends to it;
-it doesn't overwrite an existing file.
-
 =item B<-verbose>
 
 Add more details to the log file.
+
+=item B<-version>
+
+Print B<autoinst>'s version number and exit.
+
+=back
+
+
+=head2 Font creation options
+
+=over 4
 
 =item B<-encoding>=I<encoding[,encoding]>
 
@@ -3604,27 +3788,6 @@ with other packages; the `fontools_' prefix may be omitted.)
 Control the creation of TS1-encoded fonts. The default is B<-ts1>
 if the text encodings (see I<-encoding> above) include T1,
 B<-nots1> otherwise.
-
-=item B<-serif>/B<-sanserif>/B<-typewriter>
-
-Install the font as a serif, sanserif or typewriter font, respectively.
-This changes how you access the font in LaTeX:
-with C<\rmfamily>/C<\textrm>, C<\sffamily>/C<\textsf>
-or C<\ttfamily>/C<\texttt>.
-
-Installing the font as a typewriter font will cause two further changes:
-it will - by default - turn off the use of f-ligatures
-(though this can be overridden with the I<-ligatures> option),
-and it will disable hyphenation for this font.
-This latter effect cannot be re-enabled in B<autoinst>;
-if you want typewriter text to be hyphenated, use the F<hyphenat> package.
-
-If none of these options is specified, B<autoinst> tries to guess:
-if the font's filename contains the string `mono'
-or if the field C<isFixedPitch> in the font's I<post> table is True,
-it will select B<-typewriter>;
-else if the filename contains `sans' it will select B<-sanserif>;
-otherwise it will opt for B<-serif>.
 
 =item B<-lining>/B<-nolining>
 
@@ -3666,7 +3829,7 @@ The default is B<-superiors>.
 
 =item B<-noinferiors>
 
-=item B<-inferiors> [= B<none> | B<auto> | B<subs> | B<sinf> | B<dnom> ]
+=item B<-inferiors> [ = B<none> | B<auto> | B<subs> | B<sinf> | B<dnom> ]
 
 The OpenType standard defines several kinds of digits that might be used
 as inferiors or subscripts: `Subscripts' (OpenType feature `subs'),
@@ -3687,21 +3850,41 @@ with inferiors at all; it won't try to substitute one of the other styles. >>
 Control the creation of fonts with numerators and denominators.
 The default is B<-nofractions>.
 
-=item B<-ornaments>/B<-noornaments>
-
-Control the creation of ornament fonts. The default is B<-ornaments>.
-
 =item B<-ligatures>/B<-noligatures>
 
 Some fonts create glyphs for the standard f-ligatures (ff, fi, fl, ffi, ffl),
 but don't provide a `liga' feature to access these.
 This option tells B<autoinst> to add extra C<LIGKERN> rules to
 the generated fonts to enable the use of these ligatures.
-The default is B<-ligatures>,
-unless the user specified the I<-typewriter> option.
+The default is B<-ligatures>, except for typewriter fonts.
 
-Specify B<-noligatures> to disable the generation of ligatures even for fonts
+Specify B<-noligatures> to disable generation of ligatures even for fonts
 that do contain a `liga' feature.
+
+=item B<-ornaments>/B<-noornaments>
+
+Control the creation of ornament fonts. The default is B<-ornaments>.
+
+=item B<-serif>/B<-sanserif>/B<-typewriter>
+
+Install the font as a serif, sanserif or typewriter font, respectively.
+This changes how you access the font in LaTeX:
+with C<\rmfamily>/C<\textrm>, C<\sffamily>/C<\textsf>
+or C<\ttfamily>/C<\texttt>.
+
+Installing the font as a typewriter font will cause two further changes:
+it will - by default - turn off the use of f-ligatures
+(though this can be overridden with the I<-ligatures> option),
+and it will disable hyphenation for this font.
+This latter effect cannot be re-enabled in B<autoinst>;
+if you want typewriter text to be hyphenated, use the F<hyphenat> package.
+
+If none of these options is specified, B<autoinst> tries to guess:
+if the font's filename contains the string `mono'
+or if the field C<isFixedPitch> in the font's I<post> table is True,
+it will select B<-typewriter>;
+else if the filename contains `sans' it will select B<-sanserif>;
+otherwise it will opt for B<-serif>.
 
 =item B<-math>
 
@@ -3713,6 +3896,62 @@ Letterspace each character in the math fonts by I<amount> units,
 where 1000 units equal one em.
 In my opinion, many text fonts benefit from letterspacing by 50 to 100 units
 when used in maths; some fonts need even more. Use your own judgement!
+
+=back
+
+
+=head2 Output options
+
+=over 4
+
+=item B<-t1suffix> [ = I<SUFFIX> ]
+
+Tell B<autoinst> to modify the font names of all generated Type1-fonts,
+by adding I<SUFFIX> to the family name.
+If you use this option without specifying a I<SUFFIX> value,
+B<autoinst> will use the value ``PS''.
+The default behaviour when this option is not given
+is to not modify font names at all.
+
+See also L</OpenType fonts and licensing issues> above.
+
+=item B<-target>=I<DIRECTORY>
+
+Install all generated files into the TEXMF tree at I<DIRECTORY>.
+
+By default, B<autoinst> searches the $TEXMFLOCAL and $TEXMFHOME trees
+and installs all files into the first user-writable TEXMF tree it finds.
+If B<autoinst> cannot find such a user-writable directory
+(which shouldn't happen, since $TEXMFHOME is supposed to be user-writable)
+it will print a warning message and put all files into the subdirectory
+C<./autoinst_output/> of the current directory.
+It's then up to the user to move the generated files to a better location
+and update all relevant databases
+(usually by calling F<texhash> and F<updmap>).
+
+=item B<-vendor>=I<VENDOR>
+
+=item B<-typeface>=I<TYPEFACE>
+
+These options are equivalent to F<otftotfm>'s I< --vendor> and I< --typeface>
+options: they change the `vendor' and `typeface' parts of the names of the
+subdirectories in the TEXMF tree where generated files will be stored.
+The default values are `lcdftools' and the font's FontFamily name.
+These options change I<only> directory names,
+not the names of any generated files.
+
+=item B<-logfile>=I<filename>
+
+Write log data to F<filename> instead of the default F<< <fontfamily>.log >>.
+If the file already exists, B<autoinst> appends to it;
+it doesn't overwrite an existing file.
+
+=back
+
+
+=head2 Specialist options
+
+=over 4
 
 =item B<-defaultlining>/B<-defaultoldstyle>
 
@@ -3726,16 +3965,6 @@ They are only needed for fonts that don't provide OpenType features
 for their default figure style; and even in that case,
 B<autoinst>'s default values (B<-defaultlining> and B<-defaulttabular>)
 are usually correct.
-
-=item B<-nofigurekern>
-
-Some fonts provide kerning pairs for tabular figures.
-This is very probably not what you want
-(e.g., numbers in tables won't line up exactly).
-This option adds extra I< --ligkern> options
-to the commands for I<otftotfm> to suppress such kerns.
-Note that this option leads to very long commands (it adds
-one hundred I< --ligkern> options), which may cause problems on some systems.
 
 =item B<-nfssweight>=I<code>=I<weight>
 
@@ -3756,121 +3985,30 @@ Append I<extra> as extra options to the command lines for I<otftotfm>.
 To prevent I<extra> from accidentily being interpreted as options
 to B<autoinst>, it should be properly quoted.
 
-=item B<-manual>
+=item B<-nofigurekern>
 
-Manual mode; for users who want to post-process the generated files
-and commands. By default, B<autoinst> immediately executes all
-F<otftotfm> commands it generates;
-in manual mode, these are instead written to a file F<autoinst.bat>.
-Furthermore it tells F<otftotfm> to generate human readable (and editable)
-F<pl/vpl> files instead of the default F<tfm/vf> ones,
-and to place all generated files in a subdirectory C<./autoinst_output/>
-of the current directory, rather than install them into your TeX installation.
-
-When using this option, you need to execute the following manual steps after
-B<autoinst> has finished:
-
-=over 2
-
-=item - run F<pltotf> and F<vptovf> on the generated F<pl> and F<vf> files,
-to convert them to F<tfm/vf> format;
-
-=item - move all generated files to a proper TEXMF tree,
-and, if necessary, update the filename database;
-
-=item - tell TeX about the new F<map> file
-(usually by running C<updmap> or similar).
+Some fonts provide kerning pairs for tabular figures.
+This is very probably not what you want
+(e.g., numbers in tables won't line up exactly).
+This option adds extra I< --ligkern> options
+to the commands for I<otftotfm> to suppress such kerns.
+Note that this option leads to very long commands (it adds
+one hundred I< --ligkern> options), which may cause problems on some systems.
 
 =back
-
-Note that some options (I<-target>, I<-vendor> and I<-typeface>,
-I<-[no]updmap>) are meaningless, and hence ignored, in manual mode.
-
-=item B<-target>=I<DIRECTORY>
-
-Install all generated files into the TEXMF tree at I<DIRECTORY>.
-
-By default, B<autoinst> searches the $TEXMFLOCAL and $TEXMFHOME trees
-and installs all files into the first user-writable TEXMF tree it finds.
-If B<autoinst> cannot find such a user-writable directory
-(which shouldn't happen, since $TEXMFHOME is supposed to be user-writable)
-it will print a warning message and put all files into the subdirectory
-C<./autoinst_output/> of the current directory.
-It's then up to the user to move the generated files to a better location
-and update all relevant databases
-(usually by calling F<texhash> and F<updmap>).
-
-I<WARNING:> using this option may interfere with F<kpathsea> and F<updmap>
-(especially when the chosen directory is outside the standard TEXMF trees),
-so using I<-target> will disable the automatic call to F<updmap>
-(as if I<-noupdmap> had been given).
-It is up to the user to manually update all databases (i.e., by calling
-F<texhash> and F<updmap> or similar).
-
-=item B<-vendor>=I<VENDOR>
-
-=item B<-typeface>=I<TYPEFACE>
-
-These options are equivalent to F<otftotfm>'s I< --vendor> and I< --typeface>
-options: they change the `vendor' and `typeface' parts of the names of the
-subdirectories in the TEXMF tree where generated files will be stored.
-The default values are `lcdftools' and the font's FontFamily name.
-
-Note that these options change I<only> directory names,
-not the names of any generated files.
-
-=item B<-updmap>/B<-noupdmap>
-
-Control whether or not F<updmap> is called after the last call to F<otftotfm>.
-The default is B<-updmap>.
-
-=back
-
-
-=head2 A note for MiKTeX users
-
-Automatically installing the fonts into a suitable TEXMF tree
-(as B<autoinst> tries to do by default) only works for TeX-installations
-that use the F<kpathsea> library; with TeX distributions that implement
-their own directory searching (such as MiKTeX), B<autoinst> will complain
-that it cannot find the F<kpsewhich> program and move all generated files
-into a subdirectory C<./autoinst_output/> of the current directory.
-If you use such a TeX distribution, you should either move these files
-to their correct destinations by hand, or use the I<-target> option
-(see L</COMMAND-LINE OPTIONS> below) to manually specify a TEXMF tree.
-
-Also, some OpenType fonts contain so many kerning pairs that the resulting
-F<pl> and F<vpl> files are too big for MiKTeX's F<pltotf> and F<vptovf>;
-the versions that come with W32TeX (F<http://www.w32tex.org>)
-and TeXLive (F<http://tug.org/texlive>) don't seem to have this problem.
-
-
-=head2 A note for MacTeX users
-
-By default, B<autoinst> will try to install all generated files into
-the $TEXMFLOCAL tree; when this directory isn't user-writable,
-it will use the $TEXMFHOME tree instead.  Unfortunately, MacTeX's version
-of C<updmap-sys> (which is called behind the scenes) doesn't search
-in $TEXMFHOME, and hence MacTeX will not find the new fonts.
-
-To remedy this, either run B<autoinst> as root (so that it can install
-everything into $TEXMFLOCAL) or manually run C<updmap -user> to tell
-TeX about the files in $TEXMFHOME.
-The latter option does, however, have some caveats;
-see F<https://tug.org/texlive/scripts-sys-user.html>.
 
 
 =head1 SEE ALSO
 
-Eddie Kohler's B<TypeTools> (F<http://www.lcdf.org/type>).
+Eddie Kohler's B<TypeTools> and B<T1Utils> (F<http://www.lcdf.org/type>).
 
 B<Perl> can be obtained from F<http://www.perl.org>;
 it is included in most Linux distributions.
 For Windows, try ActivePerl (F<http://www.activestate.com>)
 or Strawberry Perl (F<http://strawberryperl.com>).
 
-B<XeTeX> (F<http://www.tug.org/xetex>) and
-B<LuaTeX> (F<http://www.luatex.org>)
+B<LuaTeX> (F<http://www.luatex.org>) and
+B<XeTeX> (F<http://www.tug.org/xetex>)
 are Unicode-aware TeX engines that can use OpenType fonts directly,
 without any (La)TeX-specific support files.
 
@@ -3915,7 +4053,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20200619.
+This document describes B<autoinst> version 20200729.
 
 
 =head1 RECENT CHANGES
@@ -3923,6 +4061,15 @@ This document describes B<autoinst> version 20200619.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2020-07-29>
+
+Some changes in the generated F<sty> and F<fd> files,
+to improve compatibility with the F<microtype> package.
+Made sure that F<pfb> fonts are always generated whenever
+the input fonts are in F<otf> format.
+Added the C<-t1suffix> command-line option,
+to modify the font and file names of those generated Type1 fonts.
 
 =item I<2020-06-19>
 
@@ -3957,6 +4104,13 @@ an argument to I<-inferiors>.
 =item I<2020-01-29>
 
 Don't create empty subdirectories in the target TEXMF tree.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2019-11-18>
 
@@ -4080,7 +4234,7 @@ Fine-tuned the decision where to put generated files;
 in particular, create $TEXMFHOME if it doesn't already exist
 and $TEXMFLOCAL isn't user-writable.
 
-In manual mode, or when we can't find a user-writable TEXMF tree,
+When we can't find a user-writable TEXMF tree,
 put all generated files into a subdirectory C<./autoinst_output/>
 instead of all over the current working directory.
 
@@ -4097,13 +4251,6 @@ in the font metadata.
 Then we add `ssub' rules to the F<fd> files to map the standard NFSS codes
 to our fancy names (see the section B<NFSS codes>;
 based on discussions with Frank Mittelbach and Bob Tennent).
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2018-08-10>
 
