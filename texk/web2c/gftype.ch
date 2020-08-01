@@ -134,6 +134,14 @@ if max_cols > max_image then max_cols := max_image;
 image_array := nil;
 @z
 
+@x [7] Purge 'final_end' label.
+so a procedure called |jump_out| has been introduced. This procedure, which
+simply transfers control to the label |final_end| at the end of the program,
+contains the only non-local |goto| statement in \.{GFtype}.
+@y
+so a procedure called |jump_out| has been introduced.
+@z
+
 @x [7] Remove jump_out, and make `abort' end with a newline.
 @d abort(#)==begin print(' ',#); jump_out;
     end

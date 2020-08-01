@@ -87,6 +87,13 @@ a non-local goto, which we can't use in C.
 @z
 
 @x [8] Make `abort' end with a newline, and remove the nonlocal goto.
+so a procedure called |jump_out| has been introduced. This procedure, which
+simply transfers control to the label |final_end| at the end of the program,
+contains the only non-local |goto| statement in \.{GFtoPK}.
+@y
+so a procedure called |jump_out| has been introduced.
+@z
+@x
 @d abort(#)==begin print(' ',#); jump_out;
     end
 @d bad_gf(#)==abort('Bad GF file: ',#,'!')

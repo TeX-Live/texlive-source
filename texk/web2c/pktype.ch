@@ -52,10 +52,15 @@ begin
 @z
 
 @x [5] Remove the unused label.
+@ If the program has to stop prematurely, it goes to the
+`|final_end|'.
+
 @d final_end=9999 {label for the end of it all}
 
 @<Labels...@>=final_end;
 @y
+@ This module is deleted, because it is only useful for
+a non-local goto, which we don't use in C.
 @z
 
 % [6] No need for |name_length| or |terminal_line_length|.  Since these

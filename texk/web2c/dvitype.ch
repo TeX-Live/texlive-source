@@ -60,6 +60,22 @@ procedure initialize; {this procedure gets things started properly}
   print_ln (version_string);
 @z
 
+@x [4] Purge non-local 'goto'.
+@ If the program has to stop prematurely, it goes to the
+`|final_end|'. Another label, |done|, is used when stopping normally.
+
+@d final_end=9999 {label for the end of it all}
+@d done=30 {go here when finished with a subtask}
+
+@<Labels...@>=final_end,done;
+@y
+@ Label |done| is used when stopping normally.
+
+@d done=30 {go here when finished with a subtask}
+
+@<Labels...@>=done;
+@z
+
 % There were no complaints that these values are too small, and adjusting
 % them dynamically requires to resize a large number of arrays and is not
 % worth the effort (if necessary one can recompile with larger values).
@@ -83,6 +99,13 @@ procedure initialize; {this procedure gets things started properly}
 @z
 
 @x [7] Remove non-local goto.
+so a procedure called |jump_out| has been introduced. This procedure, which
+simply transfers control to the label |final_end| at the end of the program,
+contains the only non-local |goto| statement in \.{DVItype}.
+@y
+so a procedure called |jump_out| has been introduced.
+@z
+@x
 @d abort(#)==begin print(' ',#); jump_out;
     end
 @d bad_dvi(#)==abort('Bad DVI file: ',#,'!')

@@ -94,12 +94,18 @@ a non-local goto, which we don't use in C.
 @z
 
 @x [8] Just exit, instead of doing a nonlocal goto.
+nested procedure, so the procedure called |jump_out| has been added to transfer
+to the very end of the program with an error message.
+
 @d abort(#)==begin print_ln(' ',#); jump_out; end
 
 @p procedure jump_out;
 begin goto final_end;
 end;
 @y
+nested procedure, so we might want to |abort|
+the program with an error message.
+
 @d abort(#)==begin verbose:=true; print_ln(#); uexit(1);
     end
 @z

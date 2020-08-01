@@ -30,6 +30,16 @@
 \def\glob{13}\def\gglob{20, 25} % these are defined in module 1
 @z
 
+@x [1.6] Purge non-local 'goto' label.
+@d end_of_MF=9998 {go here to close files and terminate gracefully}
+@y
+@z
+@x
+start_of_MF@t\hskip-2pt@>, end_of_MF@t\hskip-2pt@>,@,final_end;
+@y
+start_of_MF@t\hskip-2pt@>,@,final_end;
+@z
+
 @x [1.7] Convert `debug..gubed' and `stat..tats' into #ifdefs.
 @d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
 @d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
@@ -621,11 +631,27 @@ else
 @z
 
 @x [6.76] Eliminate non-local goto.
+@ The |jump_out| procedure just cuts across all active procedure levels and
+goes to |end_of_MF|. This is the only nontrivial |@!goto| statement in the
+whole program. It is used when there is no recovery from a particular error.
+
+Some \PASCAL\ compilers do not implement non-local |goto| statements.
+@^system dependencies@>
+In such cases the body of |jump_out| should simply be
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+
 @<Error hand...@>=
 procedure jump_out;
 begin goto end_of_MF;
 end;
 @y
+@ The |jump_out| procedure just cuts across all active procedure levels and
+simply calls
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+@^system dependencies@>
+
 @d do_final_end==begin
    update_terminal;
    ready_already:=0;

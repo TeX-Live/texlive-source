@@ -29,6 +29,18 @@
 @!random_reading:boolean; {should we skip around in the file?}
 @z
 
+@x [3] Purge non-local 'goto'.
+calls the `|jump_out|' procedure, which goes to the label |final_end|.
+
+@d final_end = 9999 {go here to wrap it up}
+@y
+calls the `|jump_out|' procedure.
+@z
+@x
+label final_end;
+@y
+@z
+
 @x [3] Set up kpathsea.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
@@ -121,6 +133,17 @@ procedure initialize; {this procedure gets things started properly}
 @z
 
 @x [23] Remove non-local goto, declare jump_out as noreturn
+so a procedure called |jump_out| has been introduced. This procedure, which
+transfers control to the label |final_end| at the end of the program,
+contains the only non-local |@!goto| statement in \.{\title}.
+@^system dependencies@>
+Some \PASCAL\ compilers do not implement non-local |goto| statements. In
+such cases the |goto final_end| in |jump_out| should simply be replaced
+by a call on some system procedure that quietly terminates the program.
+@y
+so a procedure called |jump_out| has been introduced.
+@z
+@x
 @d abort(#)==begin print_ln(' ',#,'.'); jump_out;
     end
 

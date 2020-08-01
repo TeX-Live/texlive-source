@@ -47,8 +47,12 @@ Changes for \MP\ by W.~Bzyl in July, 2001.
 % AIX defines `class' in <math.h>, so let's take this opportunity to
 % define that away.
 @x
+calls the `|jump_out|' procedure, which goes to the label |end_of_MFT|.
+
 @d end_of_MFT = 9999 {go here to wrap it up}
 @y
+calls the `|jump_out|' procedure.
+
 @d class == class_var
 @z
 

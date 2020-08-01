@@ -1,3 +1,14 @@
+2020-08-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* dvicopy.ch,
+	* dvitype.ch,
+	* gftopk.ch,
+	* gftype.ch,
+	* mf.ch,
+	* mft.ch,
+	* pktogf.ch,
+	* pktype.ch: Purge non-local 'goto' labels.
+
 2020-07-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* mft.ch: Swap \MF and \MP to match meaning of 'metapost' flag.
