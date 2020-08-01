@@ -646,11 +646,13 @@ procedure jump_out;
 begin goto end_of_MF;
 end;
 @y
-@ The |jump_out| procedure just cuts across all active procedure levels and
-simply calls
+@ The |jump_out| procedure just cuts across all active procedure levels.
+The body of |jump_out| simply calls
 `|close_files_and_terminate|;\thinspace' followed by a call on some system
 procedure that quietly terminates the program.
 @^system dependencies@>
+
+@f noreturn==procedure
 
 @d do_final_end==begin
    update_terminal;

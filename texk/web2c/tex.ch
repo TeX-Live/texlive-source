@@ -822,11 +822,29 @@ else
 % under Unix.  We call it `uexit' because there's a WEB symbol called
 % `exit' already.  We use a C macro to change `uexit' back to `exit'.
 @x [6.81] l.1852 - Eliminate nonlocal goto, since C doesn't have them.
+@ The |jump_out| procedure just cuts across all active procedure levels and
+goes to |end_of_TEX|. This is the only nontrivial |@!goto| statement in the
+whole program. It is used when there is no recovery from a particular error.
+
+Some \PASCAL\ compilers do not implement non-local |goto| statements.
+@^system dependencies@>
+In such cases the body of |jump_out| should simply be
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+
 @<Error hand...@>=
 procedure jump_out;
 begin goto end_of_TEX;
 end;
 @y
+@ The |jump_out| procedure just cuts across all active procedure levels.
+The body of |jump_out| simply calls
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+@^system dependencies@>
+
+@f noreturn==procedure
+
 @d do_final_end==begin
    update_terminal;
    ready_already:=0;

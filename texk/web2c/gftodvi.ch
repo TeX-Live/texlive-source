@@ -99,9 +99,17 @@ procedure initialize; {this procedure gets things started properly}
 @z
 
 @x [8] Add newline to end of abort() message, and exit abnormally.
+so a procedure called |jump_out| has been introduced. This procedure, which
+simply transfers control to the label |final_end| at the end of the program,
+contains the only non-local |goto| statement in \.{GFtoDVI}.
+@^system dependencies@>
+
 @d abort(#)==@+begin print(' ',#); jump_out;@+end
 @y
-@d abort(#)==@+begin write_ln (stderr, #); uexit (1);@+end
+so a procedure called |jump_out| has been introduced.
+@^system dependencies@>
+
+@d abort(#)==@+begin write_ln (stderr, #); jump_out;@+end
 @z
 
 % [8] Remove nonlocal goto.
@@ -112,7 +120,7 @@ begin goto final_end;
 end;
 @y
 @p procedure jump_out;
-begin uexit(0);
+begin uexit(1);
 end;
 @z
 

@@ -226,7 +226,7 @@ and exits back to the operating system.
 @<Error handling...@>=
 procedure jump_out;
 begin
-@t\4\4@>{here files should be closed if the operating system requires it}
+{here files should be closed if the operating system requires it}
   @<Print the job |history|@>;
   new_line;
   if (history <> spotless) and (history <> harmless_message) then

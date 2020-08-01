@@ -91,7 +91,7 @@ so a procedure called |jump_out| has been introduced. This procedure, which
 simply transfers control to the label |final_end| at the end of the program,
 contains the only non-local |goto| statement in \.{GFtoPK}.
 @y
-so a procedure called |jump_out| has been introduced.
+so we might want to |abort| the program with an error message.
 @z
 @x
 @d abort(#)==begin print(' ',#); jump_out;

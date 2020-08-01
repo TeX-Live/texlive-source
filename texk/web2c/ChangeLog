@@ -2,12 +2,17 @@
 
 	* dvicopy.ch,
 	* dvitype.ch,
+	* gftodvi.ch,
 	* gftopk.ch,
 	* gftype.ch,
 	* mf.ch,
 	* mft.ch,
+	* patgen.ch,
 	* pktogf.ch,
-	* pktype.ch: Purge non-local 'goto' labels.
+	* pktype.ch,
+	* tangle.ch,
+	* tex.ch,
+	* weave.ch: Purge non-local 'goto' labels and 'jump_out' leftovers.
 
 2020-07-25  Andreas Scherer  <https://ascherer.github.io>
 

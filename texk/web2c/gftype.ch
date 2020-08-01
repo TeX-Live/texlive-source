@@ -135,11 +135,13 @@ image_array := nil;
 @z
 
 @x [7] Purge 'final_end' label.
+Such errors might be discovered inside of subroutines inside of subroutines,
 so a procedure called |jump_out| has been introduced. This procedure, which
 simply transfers control to the label |final_end| at the end of the program,
 contains the only non-local |goto| statement in \.{GFtype}.
 @y
-so a procedure called |jump_out| has been introduced.
+Such errors might be discovered inside of subroutines inside of subroutines,
+so we might want to |abort| the program with an error message.
 @z
 
 @x [7] Remove jump_out, and make `abort' end with a newline.

@@ -156,6 +156,7 @@ begin mark_fatal; close_files_and_terminate;
 goto final_end;
 end;
 @y
+@f noreturn==procedure
 @d abort(#)==begin write_ln(stderr, ' ',#,'.'); jump_out;
     end
 
@@ -170,6 +171,11 @@ end;
 @z
 
 @x [24] Declare confusion as noreturn
+says |confusion(|indication of where we are|)|.
+@y
+says |confusion|(indication of where we are).
+@z
+@x
 procedure confusion(@!p:pckt_pointer);
 @y
 noreturn procedure confusion(@!p:pckt_pointer);
