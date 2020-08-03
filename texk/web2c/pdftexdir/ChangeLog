@@ -1,3 +1,7 @@
+2020-08-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.ch: Move pdfTeX variants of MLTeX code next to originals.
+
 2020-07-22  Akira Kakuto  <kakuto@w32tex.org>
 	* pdftex.web, writeimg.c: Show unfound file names in
 	fatal error messages.
