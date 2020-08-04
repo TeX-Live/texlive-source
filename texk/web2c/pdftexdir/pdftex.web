@@ -2505,23 +2505,23 @@ routines cited there must be modified to allow negative glue ratios.)
 @!glue_ratio=real; {one-word representation of a glue expansion factor}
 
 @* \[7b] Random numbers.
-
+%
 \font\tenlogo=logo10 % font used for the METAFONT logo
 \def\MP{{\tenlogo META}\-{\tenlogo POST}}
-
-This section is (almost) straight from MetaPost. I had to change
+%
+This section is (almost) straight from \MP. I had to change
 the types (use |integer| instead of |fraction|), but that should
 not have any influence on the actual calculations (the original
 comments refer to quantities like |fraction_four| ($2^{30}$), and
 that is the same as the numeric representation of |maxdimen|).
 
 I've copied the low-level variables and routines that are needed, but
-only those (e.g. |m_log|), not the accompanying ones like |m_exp|. Most
+only those (e.g.~|m_log|), not the accompanying ones like |m_exp|. Most
 of the following low-level numeric routines are only needed within the
 calculation of |norm_rand|. I've been forced to rename |make_fraction|
 to |make_frac| because TeX already has a routine by that name with
 a wholly different function (it creates a |fraction_noad| for math
-typesetting) -- Taco
+typesetting) -- Taco.
 
 And now let's complete our collection of numeric utility routines
 by considering random number generation.
@@ -2540,7 +2540,7 @@ been consumed.
 @!j_random:0..54; {the number of unused |randoms|}
 @!random_seed:scaled; {the default random seed}
 
-@ A small bit of metafont is needed.
+@ A small bit of \MF\ is needed.
 
 @d fraction_half==@'1000000000 {$2^{27}$, represents 0.50000000}
 @d fraction_one==@'2000000000 {$2^{28}$, represents 1.00000000}
@@ -6568,7 +6568,7 @@ for k:=j+1 to j+l-1 do
   while h>=hash_prime do h:=h-hash_prime;
   end
 
-@ Here is the subroutine that searches the primitive table for an identifier
+@ Here is the subroutine that searches the primitive table for an identifier:
 
 @p function prim_lookup(@!s:str_number):pointer; {search the primitives table}
 label found; {go here if you found it}
@@ -8972,7 +8972,7 @@ end
 
 @ The \.{\\pdfprimitive} handling. If the primitive meaning of the next
 token is an expandable command, it suffices to replace the current
-token with the primitive one and restart |expand|/
+token with the primitive one and restart |expand|.
 
 Otherwise, the token we just read has to be pushed back, as well
 as a token matching the internal form of \.{\\pdfprimitive}, that is
@@ -9762,9 +9762,9 @@ The |set_page_int| command has modifier 0 or 1, for `\.{\\deadcycles}' and
 modified by either |width_offset|, |height_offset|, or |depth_offset|.
 And the |last_item| command is modified by either |int_val|, |dimen_val|,
 |glue_val|, |input_line_no_code|, or |badness_code|.
-\pdfTeX\ adds the codes for its extensions: |pdftex_version_code|, \dots\ .
+\pdfTeX\ adds the codes for its extensions: |pdftex_version_code|, \dots.
 \eTeX\ inserts |last_node_type_code| after |glue_val| and adds
-the codes for its extensions: |eTeX_version_code|, \dots\ .
+the codes for its extensions: |eTeX_version_code|, \dots.
 
 @d last_node_type_code=glue_val+1 {code for \.{\\lastnodetype}}
 @d input_line_no_code=glue_val+2 {code for \.{\\inputlineno}}
@@ -10750,9 +10750,9 @@ end;
 
 \eTeX\ adds \.{\\eTeXrevision} such that |job_name_code| remains last.
 
-\pdfTeX\ adds \.{\\eTeXrevision}, \.{\\pdftexrevision}, \.{\\pdftexbanner},
-\.{\\pdffontname}, \.{\\pdffontobjnum}, \.{\\pdffontsize}, and \.{\\pdfpageref}
-such that |job_name_code| remains last.
+\pdfTeX\ adds \.{\\pdftexrevision}, \.{\\pdftexbanner}, \.{\\pdffontname},
+\.{\\pdffontobjnum}, \.{\\pdffontsize}, and \.{\\pdfpageref} such that
+|job_name_code| remains last.
 
 @d number_code=0 {command code for \.{\\number}}
 @d roman_numeral_code=1 {command code for \.{\\romannumeral}}
@@ -15070,10 +15070,8 @@ while font_ptr>font_base do
   end
 
 
-@* \[32a] \pdfTeX\ basic.
-
-Initialize \pdfTeX's parameters to some useful default value.
-Helpful in case one forgets to set them during initex run.
+@* \[32a] \pdfTeX\ basic.  Initialize \pdfTeX's parameters to some useful
+default value.  Helpful in case one forgets to set them during initex run.
 
 @<Initialize table entries...@>=
 pdf_h_origin := (one_hundred_inch + 50) div 100;
@@ -15198,7 +15196,7 @@ begin
     new_dummy_font := read_font_info(null_cs, "dummy", "", -1000);
 end;
 
-@ Helper for debugging purposes
+@ Helper for debugging purposes:
 
 @p procedure short_display_n(@!p, m:integer); {prints highlights of list |p|}
 var n:integer; {for replacement counts}
@@ -15268,7 +15266,7 @@ pdf_mem_ptr := 1; {the first word is not used so we can use zero as a value for 
 whether a pointer to |pdf_mem| is valid}
 pdf_mem_size := inf_pdf_mem_size; {allocated size of |pdf_mem| array}
 
-@ We use |pdf_get_mem| to allocate memory in |pdf_mem|
+@ We use |pdf_get_mem| to allocate memory in |pdf_mem|.
 
 @p function pdf_get_mem(s: integer): integer; {allocate |s| words in |pdf_mem|}
 var a: integer;
@@ -15302,7 +15300,7 @@ written bytes.
 @!sup_pdf_os_buf_size = 5000000; {arbitrary upper hard limit of |pdf_os_buf_size|}
 @!pdf_os_max_objs = 100; {maximum number of objects in object stream}
 
-@ The following macros are similar as for \.{DVI} buffer handling
+@ The following macros are similar as for \.{DVI} buffer handling:
 
 @d pdf_offset == (pdf_gone + pdf_ptr) {the file offset of last byte in PDF
 buffer that |pdf_ptr| points to}
@@ -16038,7 +16036,7 @@ end;
 can load the same font several times for various sizes. For such fonts we
 define only one font resource. The array |pdf_font_num| holds the object
 number of font resource. A negative value of an entry of |pdf_font_num|
-indicates that the corresponding font shares the font resource with the font
+indicates that the corresponding font shares the font resource with the font.
 
 @d pdf_print_resname_prefix ==
 if pdf_resname_prefix <> 0 then
@@ -16366,13 +16364,11 @@ begin
     pdf_print_nl;
 end;
 
-@* \[32d] The cross-reference table.
-
-The cross-reference table |obj_tab| is an array of |obj_tab_size| of
-|obj_entry|. Each entry contains five integer fields and represents an object
-in PDF file whose object number is the index of this entry in |obj_tab|.
-Objects in |obj_tab| maybe linked into list; objects in such a linked list have
-the same type.
+@* \[32d] The cross-reference table.  The cross-reference table |obj_tab| is an
+array of |obj_tab_size| of |obj_entry|. Each entry contains five integer fields
+and represents an object in PDF file whose object number is the index of this
+entry in |obj_tab|.  Objects in |obj_tab| maybe linked into list; objects in
+such a linked list have the same type.
 
 @<Types...@>=
 @!obj_entry = record@;@/
@@ -16950,7 +16946,7 @@ end;
 @!pdf_image_procset: integer; {collection of image types used in current page/form}
 @!pdf_text_procset: boolean; {mask of used ProcSet's in the current page/form}
 
-@ Subroutines to print out various PDF objects
+@ Subroutines to print out various PDF objects:
 
 @d is_hex_char(#) == (((# >= '0') and (# <= '9')) or
                       ((# >= 'A') and (# <= 'F')) or
@@ -17080,11 +17076,9 @@ begin
     pdf_print_nl;
 end;
 
-@* \[32e] Font processing.
-
-As \pdfTeX{} should also act as a back-end driver, it needs to support virtual
-fonts too. Information about virtual fonts can be found in the source of some
-\.{DVI}-related programs.
+@* \[32e] Font processing.  As \pdfTeX{} should also act as a back-end driver,
+it needs to support virtual fonts too. Information about virtual fonts can be
+found in the source of some \.{DVI}-related programs.
 
 Whenever we want to write out a character in a font to PDF output, we
 should check whether the used font is a new (has not been used yet),
@@ -18611,11 +18605,11 @@ begin
     flush_str(s);
 end;
 
-@ Similiar to |vlist_out|, |pdf_vlist_out| needs to be declared forward
+@ Similar to |vlist_out|, |pdf_vlist_out| needs to be declared forward.
 
 @p procedure@?pdf_vlist_out; forward;
 
-@ The implementation of procedure |pdf_hlist_out| is similiar to |hlist_out|
+@ The implementation of procedure |pdf_hlist_out| is similiar to |hlist_out|.
 
 @p @t\4@>@<Declare procedures needed in |pdf_hlist_out|, |pdf_vlist_out|@>@t@>@/
 
@@ -33854,7 +33848,7 @@ end
     read_expand_font
 
 @ The following macros are needed for further manipulation with whatsit nodes
-for \pdfTeX{} extensions (copying, destroying etc.)
+for \pdfTeX{} extensions (copying, destroying, etc.).
 
 @d add_action_ref(#) == incr(pdf_action_refcount(#)) {increase count of
 references to this action}
@@ -34131,7 +34125,7 @@ begin
 end
 
 @ \.{\\pdfxform} and \.{\\pdfrefxform} are similiar to \.{\\pdfobj} and
-  \.{\\pdfrefobj}
+  \.{\\pdfrefobj}.
 
 @<Glob...@>=
 @!pdf_last_xform: integer;
@@ -34611,7 +34605,7 @@ begin
     end
 end
 
-@ pdflastlink needs an extra global variable
+@ \.{\\pdflastlink} needs an extra global variable.
 @<Glob...@>=
 @!pdf_last_link: integer;
 
@@ -34995,7 +34989,7 @@ end
   seconds_and_micros(epochseconds,microseconds);
   init_start_time;
 
-@ Negative random seed values are silently converted to positive ones
+@ Negative random seed values are silently converted to positive ones.
 
 @<Implement \.{\\pdfsetrandomseed}@>=
 begin
@@ -39637,7 +39631,7 @@ delete_sa_ref(p);
 end;
 
 @ The |sa_restore| procedure restores the sparse array entries pointed
-at by |sa_chain|
+at by |sa_chain|.
 
 @<Declare \eTeX\ procedures for tr...@>=
 procedure sa_restore;
