@@ -6701,7 +6701,7 @@ Hironori's explanation of the previous behavior and fix continues (off-list):
 \textindent{*} When \TeX\ gets input from a token list (at module
 $\langle\,$Input from token list, |goto restart| \dots$\,\rangle$),
 \TeX\ looks at the saved |cur_tok| value $t$, and recover the command
-code (|cur_cmd|) and its fmodifier (|cur_chr|) from it:
+code (|cur_cmd|) and its modifier (|cur_chr|) from it:
 
 {\advance\leftskip by 1.5em
 \textindent{--} If |t>=cs_token_flag|, $t$ points to an |eqtb| location
@@ -15249,7 +15249,7 @@ while p>mem_min do
   update_terminal;
 end;
 
-@ Sometimes it is neccesary to allocate memory for PDF output that cannot
+@ Sometimes it is necessary to allocate memory for PDF output that cannot
 be deallocated then, so we use |pdf_mem| for this purpose.
 
 @<Constants...@>=
@@ -15288,7 +15288,7 @@ begin
 end;
 
 @* \[32b] \pdfTeX\ output low-level subroutines.
-We use the similiar subroutines to handle the output buffer for
+We use the similar subroutines to handle the output buffer for
 PDF output. When compress is used, the state of writing to buffer
 is held in |zip_write_state|. We must write the header of PDF
 output file in initialization to ensure that it will be the first
@@ -15485,7 +15485,7 @@ end;
 
 @ The PDF buffer is flushed by calling |pdf_flush|, which checks the
 variable |zip_write_state| and will compress the buffer before flushing if
-neccesary. We call |pdf_begin_stream| to begin a stream  and |pdf_end_stream|
+necessary. We call |pdf_begin_stream| to begin a stream  and |pdf_end_stream|
 to finish it. The stream contents will be compressed if compression is turn on.
 
 @p procedure pdf_flush; {flush out the |pdf_buf|}
@@ -15548,7 +15548,7 @@ begin
     pdf_end_obj;
 end;
 
-@ Basic printing procedures for PDF output are very similiar to \TeX\ basic
+@ Basic printing procedures for PDF output are very similar to \TeX\ basic
 printing ones but the output is going to PDF buffer. Subroutines with
 suffix |_ln| append a new-line character to the PDF output.
 
@@ -15736,7 +15736,7 @@ end;
 
 
 @ To print |scaled| value to PDF output we need some subroutines to ensure
-accurary.
+accuracy.
 
 @d max_integer == @"7FFFFFFF {$2^{31}-1$}
 @d call_func(#) == begin if # <> 0 then do_nothing end
@@ -15814,7 +15814,7 @@ else
     round_xn_over_d := -u;
 end;
 
-@ Next subroutines are needed for controling spacing in PDF page description.
+@ Next subroutines are needed for controlling spacing in PDF page description.
 For a given character |c| from a font |f|,
 the procedure |adv_char_width| advances |pdf_h|
 by {\it about\/} the amount |w|, which is the character width.
@@ -15928,7 +15928,7 @@ DVI}
 @!pdf_output_value: integer;
 @!pdf_draftmode_option: integer;
 @!pdf_draftmode_value: integer;
-@!pdf_cur_Tm_a: integer; {|a| value of the current text matrix, ie the current
+@!pdf_cur_Tm_a: integer; {|a| value of the current text matrix, i.e., the current
                           horizontal scaling factor}
 @!pdf_last_f: internal_font_number; {last font in PDF output page}
 @!pdf_last_fs: internal_font_number; {last font size in PDF output page}
@@ -16061,7 +16061,7 @@ begin
 
     {check whether |f| can share the font object with some |k|: we have 2 cases
     here: 1) |f| and |k| have the same tfm name (so they have been loaded at
-    different sizes, eg 'cmr10' and 'cmr10 at 11pt'); 2) |f| has been auto
+    different sizes, e.g., 'cmr10' and 'cmr10 at 11pt'); 2) |f| has been auto
     expanded from |k|}
     if isscalable(f) then begin
         i := head_tab[obj_type_font];
@@ -16378,7 +16378,7 @@ such a linked list have the same type.
 end;
 
 @ The first field contains information representing identifier of this object.
-It is usally a number for most of object types, but it may be a string number
+It is usually a number for most of object types, but it may be a string number
 for named destination or named thread.
 
 The second field of |obj_entry| contains link to the next
@@ -17628,7 +17628,7 @@ begin
         font_info[width_base[k] + i].sc :=
             font_info[width_base[k] + i].sc + round_xn_over_d(quad(k), e, 1000);
 
-    {append eg '+100ls' to font name}
+    {append, e.g., '+100ls' to font name}
     flush_str(font_name[k]);
     str_room(length(font_name[k]) + 7); {|abs(e) <= 1000|}
     old_setting := selector;
@@ -17941,7 +17941,7 @@ begin
 end;
 
 procedure vf_local_font_warning(f, k: internal_font_number; s: str_number);
-{print a warning message if an error ocurrs during processing local fonts in
+{print a warning message if an error occurs during processing local fonts in
 \.{VF} file}
 begin
     print_nl(s);
@@ -18609,7 +18609,7 @@ end;
 
 @p procedure@?pdf_vlist_out; forward;
 
-@ The implementation of procedure |pdf_hlist_out| is similiar to |hlist_out|.
+@ The implementation of procedure |pdf_hlist_out| is similar to |hlist_out|.
 
 @p @t\4@>@<Declare procedures needed in |pdf_hlist_out|, |pdf_vlist_out|@>@t@>@/
 
@@ -18921,7 +18921,7 @@ begin
 end;
 
 @ |fix_pdf_draftmode| freezes |pdfdraftmode| when something has been written to
-the output and also switches somes things off when draftmode is on.
+the output and also switches some things off when draftmode is on.
 @p procedure fix_pdf_draftmode;
 begin
     if not fixed_pdf_draftmode_set then begin
@@ -20012,7 +20012,7 @@ if is_root and (pdf_pages_attr <> null) then
     pdf_print_toks_ln(pdf_pages_attr);
 pdf_end_dict;
 
-@ The name tree is very similiar to Pages tree so its construction should be
+@ The name tree is very similar to Pages tree so its construction should be
 certain from Pages tree construction. For intermediate node |obj_info| will be
 the first name and |obj_link| will be the last name in \.{\\Limits} array.
 Note that |pdf_dest_names_ptr| will be less than |obj_ptr|, so we test if
@@ -20133,7 +20133,7 @@ if pdf_catalog_openaction <> 0 then
 pdf_end_dict
 
 @ If the same keys in a dictionary are given several times, then it is not
-defined which value is choosen by an application.  Therefore the keys
+defined which value is chosen by an application.  Therefore the keys
 |/Producer| and |/Creator| are only set if the token list
 |pdf_info_toks| converted to a string does not contain these key strings.
 
@@ -21595,7 +21595,7 @@ than the alternative of using \PASCAL's strange |forward| declaration for a
 procedure with parameters. The \PASCAL\ convention about dropping parameters
 from a post-|forward| procedure is, frankly, so intolerable to the author
 of \TeX\ that he would rather stoop to communication via a global temporary
-variable. (A similar stoopidity occurred with respect to |hlist_out| and
+variable. (A similar stupidity occurred with respect to |hlist_out| and
 |vlist_out| above, and it will occur with respect to |mlist_to_hlist| below.)
 @^Knuth, Donald Ervin@>
 @:PASCAL}{\PASCAL@>
@@ -33965,7 +33965,7 @@ begin
         print_err("Invalid negative color stack number");
 @.Invalid negative color stack number@>
         help2("I'll use default color stack 0 here.")@/
-        ("Proceed, with fingers corssed.");
+        ("Proceed, with fingers crossed.");
         error;
         cur_val := 0;
     end;
@@ -34124,7 +34124,7 @@ begin
     pdf_obj_objnum(tail) := cur_val;
 end
 
-@ \.{\\pdfxform} and \.{\\pdfrefxform} are similiar to \.{\\pdfobj} and
+@ \.{\\pdfxform} and \.{\\pdfrefxform} are similar to \.{\\pdfobj} and
   \.{\\pdfrefobj}.
 
 @<Glob...@>=
@@ -34173,7 +34173,7 @@ begin
     pdf_depth(tail) := obj_xform_depth(cur_val);
 end
 
-@ \.{\\pdfximage} and \.{\\pdfrefximage} are similiar to \.{\\pdfxform} and
+@ \.{\\pdfximage} and \.{\\pdfrefximage} are similar to \.{\\pdfxform} and
   \.{\\pdfrefxform}. As we have to scan |<rule spec>| quite often, it is better
   have a |rule_node| that holds the most recently scanned |<rule spec>|.
 
@@ -35123,7 +35123,7 @@ begin
     new_whatsit(pdf_running_link_on_node, small_node_size);
 end
 
-@ The following function are needed for outputing article thread.
+@ The following function are needed for outputting article thread.
 
 @<Declare procedures needed in |do_ext...@>=
 procedure thread_title(thread: integer);
@@ -35983,7 +35983,7 @@ pdf_trailer_id_toks := null;
 gen_faked_interword_space := false;
 gen_running_link := true;
 
-@ The following procedures are needed for outputing whatsit nodes for
+@ The following procedures are needed for outputting whatsit nodes for
 \pdfTeX{}.
 
 @<Declare procedures needed in |pdf_hlist_out|, |pdf_vlist_out|@>=
@@ -37412,7 +37412,7 @@ however, get modified in order to prevent arithmetic overflow during
 |hlist_out| when each of them is multiplied by a large |glue_set| value.
 
 Since this ``glue rounding'' depends on state variables |cur_g| and
-|cur_glue| and \TeXXeT\ is supposed to emulate the behaviour of \TeXeT\
+|cur_glue| and \TeXXeT\ is supposed to emulate the behavior of \TeXeT\
 (plus a suitable postprocessor) as close as possible the glue rounding
 cannot be postponed until (segments of) an hlist has been reversed.
 
@@ -37637,7 +37637,7 @@ begin if eTeX_ex then
   end
 
 @ Breaking a paragraph into lines while \TeXXeT\ is disabled may result
-in lines whith unpaired math nodes.  Such hlists are silently accepted
+in lines with unpaired math nodes.  Such hlists are silently accepted
 in the absence of text direction directives.
 
 @d LR_dir(#)==(subtype(#) div R_code) {text direction of a `math node'}
@@ -38680,7 +38680,7 @@ end;
 @ Parenthesized subexpressions can be inside expressions, and this
 nesting has a stack.  Seven local variables represent the top of the
 expression stack:  |p| points to pushed-down entries, if any; |l|
-specifies the type of expression currently beeing evaluated; |e| is the
+specifies the type of expression currently being evaluated; |e| is the
 expression so far and |r| is the state of its evaluation; |t| is the
 term so far and |s| is the state of its evaluation; finally |n| is the
 numerator for a combined multiplication and division, if any.
@@ -39221,7 +39221,7 @@ words contain the five types of current marks
 @d word_node_size=3 {size of an element with a word value}
 @d sa_num==sa_ptr {the register number}
 @d sa_int(#)==mem[#+2].int {an integer}
-@d sa_dim(#)==mem[#+2].sc {a dimension (a somewhat esotheric distinction)}
+@d sa_dim(#)==mem[#+2].sc {a dimension (a somewhat esoteric distinction)}
 @#
 @d mark_class_node_size=4 {size of an element for a mark class}
 @#
@@ -39513,7 +39513,7 @@ toks_register,register:
 essentially the same when the register is realized as sparse array
 element or entry in |eqtb|.  The global variable |sa_chain| is the head
 of a linked list of entries saved at the topmost level |sa_level|; the
-lists for lowel levels are kept in special save stack entries.
+lists for lower levels are kept in special save stack entries.
 
 @<Glob...@>=
 @!sa_chain: pointer; {chain of saved sparse array entries}
