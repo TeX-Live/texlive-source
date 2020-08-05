@@ -15071,7 +15071,7 @@ while font_ptr>font_base do
 
 
 @* \[32a] \pdfTeX\ basic.  Initialize \pdfTeX's parameters to some useful
-default value.  Helpful in case one forgets to set them during initex run.
+default value.  Helpful in case one forgets to set them during \.{INITEX} run.
 
 @<Initialize table entries...@>=
 pdf_h_origin := (one_hundred_inch + 50) div 100;
@@ -36561,7 +36561,7 @@ begin
 end;
 
 procedure do_snapy_comp(p, b: pointer); {do snapping compensation in vertical
-direction; searchs for the next snap node and do the compensation if found}
+direction; search for the next snap node and do the compensation if found}
 var q: pointer;
     tmp_v, g, g2: scaled;
 begin
