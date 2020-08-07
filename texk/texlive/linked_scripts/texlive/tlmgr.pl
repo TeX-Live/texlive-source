@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 55369 2020-06-01 00:32:00Z preining $
+# $Id: tlmgr.pl 56058 2020-08-06 01:41:42Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 55369 $';
-my $datrev = '$Date: 2020-06-01 02:32:00 +0200 (Mon, 01 Jun 2020) $';
+my $svnrev = '$Revision: 56058 $';
+my $datrev = '$Date: 2020-08-06 03:41:42 +0200 (Thu, 06 Aug 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2736,14 +2736,13 @@ sub action_update {
   } else {
     @todo = @ARGV;
   }
+  if ($opts{"self"} && !@critical) {
+    info("$prg: no self-updates for tlmgr available\n");
+  }
   # don't do anything if we have been invoked in a strange way
-  if (!@todo) {
-    if ($opts{"self"}) {
-      info("$prg: no self-updates for tlmgr available.\n");
-    } else {
-      tlwarn("$prg update: please specify a list of packages, --all, or --self.\n");
-      return ($F_ERROR);
-    }
+  if (!@todo && !$opts{"self"}) {
+    tlwarn("$prg update: please specify a list of packages, --all, or --self.\n");
+    return ($F_ERROR);
   }
 
   if (!($opts{"self"} && @critical) || ($opts{"self"} && $opts{"list"})) {
@@ -3585,7 +3584,9 @@ sub action_update {
   # if a real update from default disk location didn't find anything,
   # warn if nothing is updated.  Unless they said --self, in which case
   # we've already reported it.
-  if (!(@new || @updated) && ! $opts{"self"}) {
+  # But if --self --all was given, and *no* update available for
+  # critical packages, then we should report it, too!
+  if (!(@new || @updated) && ( !$opts{"self"} || @todo )) {
     if (!$::machinereadable) {
       info("$prg: no updates available\n");
       if ($remotetlpdb->media ne "NET"
@@ -10064,7 +10065,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 55369 2020-06-01 00:32:00Z preining $
+$Id: tlmgr.pl 56058 2020-08-06 01:41:42Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
