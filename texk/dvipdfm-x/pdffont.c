@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2018 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -102,7 +102,7 @@ struct pdf_font
   int      font_id;
 
   /* For simple font */
-  int      index;
+  uint32_t index;
   char    *fontname;
   char     uniqueID[7];
 
@@ -795,7 +795,7 @@ pdf_font_is_in_use (pdf_font *font)
   return ((font->reference) ? 1 : 0);
 }
 
-int
+uint32_t
 pdf_font_get_index (pdf_font *font)
 {
   ASSERT(font);

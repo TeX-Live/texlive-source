@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2018 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -87,7 +87,7 @@ extern int      pdf_font_get_flags      (pdf_font *font);
 #endif /* 0 */
 extern double   pdf_font_get_param      (pdf_font *font, int type);
 
-extern int      pdf_font_get_index      (pdf_font *font);
+extern uint32_t pdf_font_get_index      (pdf_font *font);
 
 extern int      pdf_font_set_fontname   (pdf_font *font, const char *fontname);
 extern int      pdf_font_set_flags      (pdf_font *font, int flags);
