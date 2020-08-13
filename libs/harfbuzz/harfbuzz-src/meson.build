@@ -1,9 +1,11 @@
 project('harfbuzz', 'c', 'cpp',
-  meson_version: '>= 0.53.0',
-  version: '2.7.0',
+  meson_version: '>= 0.47.0',
+  version: '2.7.1',
   default_options: [
+    'cpp_eh=none',          # Just to support msvc, we are passing -fno-rtti also anyway
+    'cpp_rtti=false',       # Just to support msvc, we are passing -fno-exceptions also anyway
     'cpp_std=c++11',
-    'wrap_mode=nofallback', # https://github.com/harfbuzz/harfbuzz/pull/2548
+    'wrap_mode=nofallback', # Use --wrap-mode=default to revert, https://github.com/harfbuzz/harfbuzz/pull/2548
   ],
 )
 
@@ -42,10 +44,10 @@ add_project_link_arguments(cpp.get_supported_link_arguments([
 ]), language: 'c')
 
 add_project_arguments(cpp.get_supported_arguments([
-  '-fno-rtti',
   '-fno-exceptions',
+  '-fno-rtti',
   '-fno-threadsafe-statics',
-  '-fvisibility-inlines-hidden', # maybe shouldn't be applied for mingw
+  '-fvisibility-inlines-hidden',
 ]), language: 'cpp')
 
 if host_machine.cpu_family() == 'arm' and cpp.alignment('struct { char c; }') != 1
@@ -75,9 +77,10 @@ freetype_dep = null_dep
 if not get_option('freetype').disabled()
   freetype_dep = dependency('freetype2', required: false)
 
-  if not freetype_dep.found() and cpp.get_id() == 'msvc'
-    freetype_dep = cpp.find_library('freetype', required: false,
-                                    has_headers: ['ft2build.h'])
+  if (not freetype_dep.found() and
+      cpp.get_id() == 'msvc' and
+      cpp.has_header('ft2build.h'))
+    freetype_dep = cpp.find_library('freetype', required: false)
   endif
 
   if not freetype_dep.found()
@@ -100,19 +103,23 @@ icu_dep = null_dep
 if not get_option('icu').disabled()
   icu_dep = dependency('icu-uc', required: false)
 
-  if not icu_dep.found() and get_option('icu').enabled()
-    icu_dep = dependency('icu-uc', required: cpp.get_id() != 'msvc')
+  if (not icu_dep.found() and
+      cpp.get_id() == 'msvc' and
+      cpp.has_header('unicode/uchar.h') and
+      cpp.has_header('unicode/unorm2.h') and
+      cpp.has_header('unicode/ustring.h') and
+      cpp.has_header('unicode/utf16.h') and
+      cpp.has_header('unicode/uversion.h') and
+      cpp.has_header('unicode/uscript.h'))
+    if get_option('buildtype') == 'debug'
+      icu_dep = cpp.find_library('icuucd', required: false)
+    else
+      icu_dep = cpp.find_library('icuuc', required: false)
+    endif
   endif
 
-  if not icu_dep.found() and cpp.get_id() == 'msvc'
-    icu_dep = cpp.find_library(get_option('buildtype') == 'debug' ? 'icuucd' : 'icuuc',
-                               required: get_option('icu'),
-                               has_headers: ['unicode/uchar.h',
-                                             'unicode/unorm2.h',
-                                             'unicode/ustring.h',
-                                             'unicode/utf16.h',
-                                             'unicode/uversion.h',
-                                             'unicode/uscript.h'])
+  if not icu_dep.found()
+    icu_dep = dependency('icu-uc', required: get_option('icu'))
   endif
 endif
 
@@ -121,9 +128,10 @@ cairo_ft_dep = null_dep
 if not get_option('cairo').disabled()
   cairo_dep = dependency('cairo', required: false)
 
-  if not cairo_dep.found() and cpp.get_id() == 'msvc'
-    cairo_dep = cpp.find_library('cairo', required: false,
-                                 has_headers: ['cairo.h'])
+  if (not cairo_dep.found() and
+      cpp.get_id() == 'msvc' and
+      cpp.has_header('cairo.h'))
+    cairo_dep = cpp.find_library('cairo', required: false)
   endif
 
   if not cairo_dep.found()
@@ -140,10 +148,10 @@ if not get_option('cairo').disabled()
     if cairo_dep.type_name() == 'internal'
       # It is true at least for the port we have
       cairo_ft_dep = cairo_dep
-    elif cairo_dep.type_name() == 'library' and \
-         cpp.has_function('cairo_ft_font_face_create_for_ft_face',
-                          prefix: '#include <cairo-ft.h>',
-                          dependencies: cairo_dep)
+    elif (cairo_dep.type_name() == 'library' and
+          cpp.has_function('cairo_ft_font_face_create_for_ft_face',
+                           prefix: '#include <cairo-ft.h>',
+                           dependencies: cairo_dep))
       cairo_ft_dep = cairo_dep
     else # including the most important type for us, 'pkgconfig'
       cairo_ft_dep = dependency('cairo-ft', required: get_option('cairo'))
@@ -219,11 +227,14 @@ endif
 gdi_uniscribe_deps = []
 # GDI (Uniscribe) (Windows)
 if host_machine.system() == 'windows' and not get_option('gdi').disabled()
-  gdi_deps_found = true
+  if (get_option('directwrite').enabled() and
+      not (cpp.has_header('usp10.h') and cpp.has_header('windows.h')))
+    error('GDI/Uniscribe was enabled explicitly, but required headers are missing.')
+  endif
 
+  gdi_deps_found = true
   foreach usplib : ['usp10', 'gdi32', 'rpcrt4']
-    dep = cpp.find_library(usplib, required: get_option('gdi'),
-                           has_headers: ['usp10.h', 'windows.h'])
+    dep = cpp.find_library(usplib, required: get_option('gdi'))
     gdi_deps_found = gdi_deps_found and dep.found()
     gdi_uniscribe_deps += dep
   endforeach
@@ -237,8 +248,11 @@ endif
 # DirectWrite (Windows)
 directwrite_dep = null_dep
 if host_machine.system() == 'windows' and not get_option('directwrite').disabled()
-  directwrite_dep = cpp.find_library('dwrite', required: get_option('directwrite'),
-                                     has_headers: ['dwrite_1.h'])
+  if get_option('directwrite').enabled() and not cpp.has_header('dwrite_1.h')
+    error('DirectWrite was enabled explicitly, but required header is missing.')
+  endif
+
+  directwrite_dep = cpp.find_library('dwrite', required: get_option('directwrite'))
 
   if directwrite_dep.found()
     conf.set('HAVE_DIRECTWRITE', 1)
@@ -341,12 +355,16 @@ if not get_option('tests').disabled()
   subdir('test')
 endif
 
-if not get_option('benchmark').disabled() and \
-    get_option('wrap_mode') != 'nodownload' and \
-    host_machine.system() != 'windows' and \
-    not meson.is_subproject() and \
-    not meson.is_cross_build()
-  subdir('perf')
+# get_option('wrap_mode') isn't available in <0.49 and this
+# is just an internal tool
+if meson.version().version_compare('>=0.49')
+  if (not get_option('benchmark').disabled() and
+      get_option('wrap_mode') != 'nodownload' and
+      host_machine.system() != 'windows' and
+      not meson.is_subproject() and
+      not meson.is_cross_build())
+    subdir('perf')
+  endif
 endif
 
 if not get_option('docs').disabled()
@@ -355,28 +373,53 @@ endif
 
 configure_file(output: 'config.h', configuration: conf)
 
-summary({'prefix': get_option('prefix'),
-         'bindir': get_option('bindir'),
-         'libdir': get_option('libdir'),
-         'includedir': get_option('includedir'),
-         'datadir': get_option('datadir'),
-        }, section: 'Directories')
-summary({'Builtin': true,
-         'Glib': conf.get('HAVE_GLIB', 0) == 1,
-         'ICU': conf.get('HAVE_ICU', 0) == 1,
-        }, bool_yn: true, section: 'Unicode callbacks (you want at least one)')
-summary({'FreeType': conf.get('HAVE_FREETYPE', 0) == 1,
-        }, bool_yn: true, section: 'Font callbacks (the more the merrier)')
-summary({'Cairo': conf.get('HAVE_CAIRO', 0) == 1,
-         'Fontconfig': conf.get('HAVE_FONTCONFIG', 0) == 1,
-        }, bool_yn: true, section: 'Dependencies used for command-line utilities')
-summary({'Graphite2': conf.get('HAVE_GRAPHITE2', 0) == 1,
-        }, bool_yn: true, section: 'Additional shapers')
-summary({'CoreText': conf.get('HAVE_CORETEXT', 0) == 1,
-         'DirectWrite': conf.get('HAVE_DIRECTWRITE', 0) == 1,
-         'GDI/Uniscribe': (conf.get('HAVE_GDI', 0) == 1) and (conf.get('HAVE_UNISCRIBE', 0) == 1),
-        }, bool_yn: true, section: 'Platform shapers (not normally needed)')
-summary({'Documentation': conf.get('HAVE_GTK_DOC', 0) == 1,
-         'GObject bindings': conf.get('HAVE_GOBJECT', 0) == 1,
-         'Introspection': conf.get('HAVE_INTROSPECTION', 0) == 1,
-        }, bool_yn: true, section: 'Other features')
+build_summary = {
+  'Directories':
+    {'prefix': get_option('prefix'),
+     'bindir': get_option('bindir'),
+     'libdir': get_option('libdir'),
+     'includedir': get_option('includedir'),
+     'datadir': get_option('datadir'),
+    },
+  'Unicode callbacks (you want at least one)':
+    {'Builtin': true,
+     'Glib': conf.get('HAVE_GLIB', 0) == 1,
+     'ICU': conf.get('HAVE_ICU', 0) == 1,
+    },
+  'Font callbacks (the more the merrier)':
+    {'FreeType': conf.get('HAVE_FREETYPE', 0) == 1,
+    },
+  'Dependencies used for command-line utilities':
+    {'Cairo': conf.get('HAVE_CAIRO', 0) == 1,
+     'Fontconfig': conf.get('HAVE_FONTCONFIG', 0) == 1,
+    },
+  'Additional shapers':
+    {'Graphite2': conf.get('HAVE_GRAPHITE2', 0) == 1,
+    },
+  'Platform shapers (not normally needed)':
+    {'CoreText': conf.get('HAVE_CORETEXT', 0) == 1,
+     'DirectWrite': conf.get('HAVE_DIRECTWRITE', 0) == 1,
+     'GDI/Uniscribe': (conf.get('HAVE_GDI', 0) == 1) and (conf.get('HAVE_UNISCRIBE', 0) == 1),
+    },
+  'Other features':
+    {'Documentation': conf.get('HAVE_GTK_DOC', 0) == 1,
+     'GObject bindings': conf.get('HAVE_GOBJECT', 0) == 1,
+     'Introspection': conf.get('HAVE_INTROSPECTION', 0) == 1,
+    },
+}
+if meson.version().version_compare('>=0.53')
+  foreach section_title, section : build_summary
+    summary(section, bool_yn: true, section: section_title)
+  endforeach
+else
+  summary = ['']
+  foreach section_title, section : build_summary
+    summary += '  @0@:'.format(section_title)
+    foreach feature, value : section
+      summary += '    @0@:'.format(feature)
+      summary += '          @0@'.format(value)
+    endforeach
+    summary += ''
+  endforeach
+  message('\n'.join(summary))
+endif

@@ -848,6 +848,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-joining-list.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-win1256.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \

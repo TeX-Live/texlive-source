@@ -104,6 +104,7 @@ hb_base_sources = files(
   'hb-ot-post-macroman.hh',
   'hb-ot-post-table.hh',
   'hb-ot-shape-complex-arabic-fallback.hh',
+  'hb-ot-shape-complex-arabic-joining-list.hh',
   'hb-ot-shape-complex-arabic-table.hh',
   'hb-ot-shape-complex-arabic-win1256.hh',
   'hb-ot-shape-complex-arabic.cc',
@@ -397,6 +398,16 @@ else
   hb_so_version = '0'
 endif
 
+if get_option('fuzzer_ldflags') != ''
+  extra_hb_cpp_args += ['-DHB_CUSTOM_MALLOC']
+  hb_sources += 'failing-alloc.c'
+  hb_subset_sources += 'failing-alloc.c'
+  hb_icu_sources += 'failing-alloc.c'
+  hb_gobject_sources += 'failing-alloc.c'
+endif
+
+darwin_versions = [hb_version_int, '@0@.0.0'.format(hb_version_int)]
+
 libharfbuzz = library('harfbuzz', hb_sources,
   include_directories: incconfig,
   dependencies: harfbuzz_deps,
@@ -404,6 +415,7 @@ libharfbuzz = library('harfbuzz', hb_sources,
   soversion: hb_so_version,
   version: version,
   install: true,
+  darwin_versions: darwin_versions,
   link_language: 'c',
 )
 
@@ -427,6 +439,7 @@ libharfbuzz_subset = library('harfbuzz-subset', hb_subset_sources,
   soversion: hb_so_version,
   version: version,
   install: true,
+  darwin_versions: darwin_versions,
   link_language: 'c',
 )
 
@@ -475,21 +488,20 @@ if get_option('tests').enabled()
   endforeach
 
   compiled_tests = {
-    'test-array': 'test-array.cc',
+    'test-algs': ['test-algs.cc', 'hb-static.cc'],
+    'test-array': ['test-array.cc'],
+    'test-iter': ['test-iter.cc', 'hb-static.cc'],
+    'test-meta': ['test-meta.cc', 'hb-static.cc'],
     'test-number': ['test-number.cc', 'hb-number.cc'],
-    'test-ot-tag': 'hb-ot-tag.cc',
-    'test-unicode-ranges': 'test-unicode-ranges.cc',
+    'test-ot-tag': ['hb-ot-tag.cc'],
+    'test-unicode-ranges': ['test-unicode-ranges.cc'],
+    'test-bimap': ['test-bimap.cc', 'hb-static.cc'],
   }
-  if cpp.get_id() != 'msvc'
-    # TODO: MSVC doesn't like these, fix them
-    compiled_tests += {
-      'test-algs': ['test-algs.cc', 'hb-static.cc'],
-      'test-bimap': ['test-bimap.cc', 'hb-static.cc'],
-      'test-iter': ['test-iter.cc', 'hb-static.cc'],
-      'test-meta': ['test-meta.cc', 'hb-static.cc'],
-    }
-  endif
   foreach name, source : compiled_tests
+    if cpp.get_id() == 'msvc' and source.contains('hb-static.cc')
+      # TODO: MSVC doesn't like tests having hb-static.cc, fix them
+      continue
+    endif
     test(name, executable(name, source,
       include_directories: incconfig,
       cpp_args: cpp_args + ['-DMAIN', '-UNDEBUG'],
@@ -528,6 +540,7 @@ if have_icu and not have_icu_builtin
     soversion: hb_so_version,
     version: version,
     install: true,
+    darwin_versions: darwin_versions,
     # ICU links to stdc++ anyway so the default linker is good
     # link_language: 'c',
   )
@@ -553,11 +566,12 @@ cmake_config = configuration_data()
 cmake_config.set('libdir', '${prefix}/@0@'.format(get_option('libdir')))
 cmake_config.set('includedir', '${prefix}/@0@'.format(get_option('includedir')))
 cmake_config.set('HB_LIBTOOL_VERSION_INFO', hb_libtool_version_info)
-cmake_config.set('have_gobject', have_gobject ? 'true' : 'false')
+cmake_config.set('have_gobject', '@0@'.format(have_gobject))
 configure_file(input: 'harfbuzz-config.cmake.in',
   output: 'harfbuzz-config.cmake',
   configuration: cmake_config,
-  install_dir: get_option('libdir') / 'cmake' / 'harfbuzz')
+  install_dir: join_paths(get_option('libdir'), 'cmake', 'harfbuzz'),
+)
 
 libharfbuzz_gobject_dep = null_dep
 if have_gobject
@@ -594,7 +608,7 @@ if have_gobject
     output: 'hb-gobject-enums.h',
     command: [find_program('fix_get_types.py'), '@INPUT@', '@OUTPUT@'],
     install: true,
-    install_dir: get_option('prefix') / get_option('includedir') / meson.project_name(),
+    install_dir: join_paths(get_option('prefix'), get_option('includedir'), meson.project_name()),
   )
 
   hb_gobject_sources += [enum_c]
@@ -613,6 +627,7 @@ if have_gobject
     soversion: hb_so_version,
     version: version,
     install: true,
+    darwin_versions: darwin_versions,
     link_language: 'c',
   )
 
@@ -631,8 +646,9 @@ if have_gobject
 
   if build_gir
     conf.set('HAVE_INTROSPECTION', 1)
-    hb_gen_files_gir = gnome.generate_gir(libharfbuzz, libharfbuzz_gobject,
+    hb_gen_files_gir = gnome.generate_gir(libharfbuzz_gobject,
       sources: [hb_headers, hb_sources, hb_gobject_headers, hb_gobject_sources, enum_h],
+      dependencies: libharfbuzz_dep,
       namespace: 'HarfBuzz',
       nsversion: '0.0',
       identifier_prefix: 'hb_',
@@ -654,10 +670,16 @@ if have_gobject
                     '--cflags-end'])
   endif
 
+  if build_gir
+    libharfbuzz_gobject_sources = hb_gen_files_gir
+  else
+    libharfbuzz_gobject_sources = hb_gobject_sources
+  endif
+
   libharfbuzz_gobject_dep = declare_dependency(
     link_with: libharfbuzz_gobject,
     include_directories: incsrc,
-    sources: build_gir ? hb_gen_files_gir : hb_gobject_sources,
+    sources: libharfbuzz_gobject_sources,
     dependencies: [glib_dep, gobject_dep])
 
   pkgmod.generate(libharfbuzz_gobject,
@@ -698,14 +720,22 @@ if get_option('tests').enabled()
   env.set('HBHEADERS', ' '.join(HBHEADERS))
 
   if cpp.get_id() != 'msvc' and not meson.is_cross_build() # ensure the local tools are usable
-    dist_check_script += ['check-libstdc++', 'check-static-inits', 'check-symbols']
+    if meson.version().version_compare('>=0.55')
+      dist_check_script += 'check-libstdc++'
+    endif
+    dist_check_script += ['check-static-inits', 'check-symbols']
   endif
 
   foreach name : dist_check_script
+    if name == 'check-symbols'
+      test_depends = defs_list
+    else
+      test_depends = []
+    endif
     test(name, find_program(name + '.py'),
       env: env,
-      depends: name == 'check-symbols' ? defs_list : [],
-      suite: ['src'] + (name == 'check-static-inits' ? ['slow'] : []),
+      depends: test_depends,
+      suite: ['src'],
     )
   endforeach
 endif
