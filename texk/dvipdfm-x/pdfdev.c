@@ -49,8 +49,6 @@
 
 #include "pdflimits.h"
 
-#include "dvi.h"
-
 #include "pdfdev.h"
 
 struct dev_param
@@ -259,13 +257,6 @@ struct pdf_dev {
   int               max_dev_fonts;
   int               num_phys_fonts;
   char              format_buffer[FORMAT_BUF_SIZE+1];
-
-  /* Just to support pdf:bcontent special...
-   * Text position adjustment inside the pdf:bcontent and pdf:econtent.
-   */
-  pdf_coord        *dev_coords;
-  int               num_dev_coords;
-  int               max_dev_coords;
 };
 
 /*
@@ -1116,11 +1107,6 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
     }
   }
 
-  if (p->num_dev_coords > 0) {
-    xpos -= bpt2spt(p, p->dev_coords[p->num_dev_coords-1].x);
-    ypos -= bpt2spt(p, p->dev_coords[p->num_dev_coords-1].y);
-  }
-
   /*
    * Kern is in units of character units, i.e., 1000 = 1 em.
    *
@@ -1261,9 +1247,6 @@ pdf_init_device (double dvi2pts, int precision, int black_and_white)
 
   p->num_dev_fonts  = p->max_dev_fonts = 0;
   p->fonts          = NULL;
-  p->num_dev_coords = 0;
-  p->max_dev_coords = 0;
-  p->dev_coords     = NULL;
 
   return;
 }
@@ -1287,9 +1270,6 @@ pdf_close_device (void)
     RELEASE(p->fonts);
     p->fonts = NULL;
   }
-  if (p->dev_coords)
-    RELEASE(p->dev_coords);
-  p->dev_coords = NULL;
   pdf_dev_clear_gstates();
 }
 
@@ -1569,11 +1549,6 @@ pdf_dev_set_rule (spt_t xpos, spt_t ypos, spt_t width, spt_t height)
   int      len = 0;
   double   width_in_bp;
 
-  if (p->num_dev_coords > 0) {
-    xpos -= bpt2spt(p, p->dev_coords[p->num_dev_coords-1].x);
-    ypos -= bpt2spt(p, p->dev_coords[p->num_dev_coords-1].y);
-  }
-
   pdf_dev_graphics_mode(p);
 
   p->format_buffer[len++] = ' ';
@@ -1791,22 +1766,15 @@ pdf_dev_set_param (int param_type, int value)
 }
 
 
+/* rect returned */
 int
-pdf_dev_put_image (int             id,
-                   transform_info *ti,
-                   double          ref_x,
-                   double          ref_y)
+pdf_dev_put_image (int id, transform_info *ti, double ref_x, double ref_y, pdf_rect *rect)
 {
   pdf_dev     *p = current_device();
   char        *res_name;
   pdf_tmatrix  M, M1;
   pdf_rect     r;
   int          len = 0;
-
-  if (p->num_dev_coords > 0) {
-    ref_x -= p->dev_coords[p->num_dev_coords-1].x;
-    ref_y -= p->dev_coords[p->num_dev_coords-1].y;
-  }
 
   pdf_copymatrix(&M, &(ti->matrix));
   M.e += ref_x; M.f += ref_y;
@@ -1839,53 +1807,22 @@ pdf_dev_put_image (int             id,
     dev_out(p, buf, len);  /* op: Do */
     RELEASE(buf);
   }
+  if (rect) {
+    pdf_rect  r1;
+
+    /* Sorry for ugly code. */
+    pdf_dev_set_rect(&r1,
+                     bpt2spt(p, r.llx), bpt2spt(p, r.lly),
+                     bpt2spt(p, r.urx - r.llx), bpt2spt(p, r.ury - r.lly), 0);
+    rect->llx = r1.llx; rect->lly = r1.lly;
+    rect->urx = r1.urx; rect->ury = r1.ury;
+  }
 
   pdf_dev_grestore();
 
   pdf_doc_add_page_resource("XObject",
                             res_name,
                             pdf_ximage_get_reference(id));
-
-  if (dvi_is_tracking_boxes()) {
-    pdf_tmatrix P;
-    int         i;
-    pdf_rect    rect;
-    pdf_coord   corner[4];
-
-    pdf_dev_set_rect(&rect, 65536 * ref_x, 65536 * ref_y,
-                     65536 * (r.urx - r.llx), 65536 * (r.ury - r.lly), 0);
-
-    corner[0].x = rect.llx; corner[0].y = rect.lly;
-    corner[1].x = rect.llx; corner[1].y = rect.ury;
-    corner[2].x = rect.urx; corner[2].y = rect.ury;
-    corner[3].x = rect.urx; corner[3].y = rect.lly;
-
-    pdf_copymatrix(&P, &(ti->matrix));
-    for (i = 0; i < 4; ++i) {
-      corner[i].x -= rect.llx;
-      corner[i].y -= rect.lly;
-      pdf_dev_transform(&(corner[i]), &P);
-      corner[i].x += rect.llx;
-      corner[i].y += rect.lly;
-    }
-
-    rect.llx = corner[0].x;
-    rect.lly = corner[0].y;
-    rect.urx = corner[0].x;
-    rect.ury = corner[0].y;
-    for (i = 0; i < 4; ++i) {
-      if (corner[i].x < rect.llx)
-        rect.llx = corner[i].x;
-      if (corner[i].x > rect.urx)
-        rect.urx = corner[i].x;
-      if (corner[i].y < rect.lly)
-        rect.lly = corner[i].y;
-      if (corner[i].y > rect.ury)
-        rect.ury = corner[i].y;
-    }
-
-    pdf_doc_expand_box(&rect);
-  }
 
   return 0;
 }
@@ -2027,41 +1964,4 @@ pdf_dev_get_font_wmode (int font_id)
   }
 
   return 0;
-}
-
-/* Saved text position compensation */
-void
-pdf_dev_get_coord (double *xpos, double *ypos)
-{
-  pdf_dev *p = current_device();
-
-  if (p->num_dev_coords > 0) {
-    *xpos = p->dev_coords[p->num_dev_coords-1].x;
-    *ypos = p->dev_coords[p->num_dev_coords-1].y;
-  } else {
-    *xpos = *ypos = 0.0;
-  }
-}
-
-void
-pdf_dev_push_coord (double xpos, double ypos)
-{
-  pdf_dev *p = current_device();
-
-  if (p->num_dev_coords >= p->max_dev_coords) {
-    p->max_dev_coords += 4;
-    p->dev_coords = RENEW(p->dev_coords, p->max_dev_coords, pdf_coord);
-  }
-  p->dev_coords[p->num_dev_coords].x = xpos;
-  p->dev_coords[p->num_dev_coords].y = ypos;
-  p->num_dev_coords++;
-}
-
-void
-pdf_dev_pop_coord (void)
-{
-  pdf_dev *p = current_device();
-
-  if (p->num_dev_coords > 0)
-    p->num_dev_coords--;
 }

@@ -107,8 +107,8 @@ extern void   pdf_dev_set_string (spt_t xpos, spt_t ypos,
                                   spt_t text_width, int font_id, int ctype);
 extern void   pdf_dev_set_rule   (spt_t xpos, spt_t ypos, spt_t width, spt_t height);
 
-/* Place XObject */
-extern int    pdf_dev_put_image  (int xobj_id, transform_info *p, double ref_x, double ref_y);
+/* Place XObject: rect returned */
+extern int    pdf_dev_put_image  (int xobj_id, transform_info *p, double ref_x, double ref_y, pdf_rect *rect);
 
 /* The design_size and ptsize required by PK font support...
  */
@@ -170,10 +170,6 @@ extern void   pdf_dev_eop (void);
  * to terminate text section. pdf_dev_flushpath() and others call this.
  */
 extern void   graphics_mode (void);
-
-extern void   pdf_dev_get_coord  (double *xpos, double *ypos);
-extern void   pdf_dev_push_coord (double xpos, double ypos);
-extern void   pdf_dev_pop_coord  (void);
 
 extern void   pdf_dev_begin_actualtext (uint16_t *unicodes, int len);
 extern void   pdf_dev_end_actualtext   (void);

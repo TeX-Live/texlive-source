@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2020 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -669,8 +669,35 @@ parse_pdf_dict_with_tounicode (const char **pp, const char *endptr, struct touni
 }
 
 static void
-set_rect (pdf_rect *rect, pdf_coord cp1, pdf_coord cp2, pdf_coord cp3, pdf_coord cp4)
+set_rect_for_annot (struct spc_env *spe, pdf_rect *rect, transform_info ti)
 {
+  pdf_coord cp, cp1, cp2, cp3, cp4;
+
+  spc_get_current_point(spe, &cp);
+
+  if (ti.flags & INFO_HAS_USER_BBOX) {
+    cp1.x = cp.x + ti.bbox.llx;
+    cp1.y = cp.y + ti.bbox.lly;
+    cp2.x = cp.x + ti.bbox.urx;
+    cp2.y = cp.y + ti.bbox.lly;
+    cp3.x = cp.x + ti.bbox.urx;
+    cp3.y = cp.y + ti.bbox.ury;
+    cp4.x = cp.x + ti.bbox.llx;
+    cp4.y = cp.y + ti.bbox.ury;
+  } else {
+    cp1.x = cp.x;
+    cp1.y = cp.y - spe->mag * ti.depth;
+    cp2.x = cp.x + spe->mag * ti.width;
+    cp2.y = cp.y - spe->mag * ti.depth;
+    cp3.x = cp.x + spe->mag * ti.width;
+    cp3.y = cp.y + spe->mag * ti.height;
+    cp4.x = cp.x;
+    cp4.y = cp.y + spe->mag * ti.height;
+  }
+  pdf_dev_transform(&cp1, NULL);
+  pdf_dev_transform(&cp2, NULL);
+  pdf_dev_transform(&cp3, NULL);
+  pdf_dev_transform(&cp4, NULL);
   rect->llx = min4(cp1.x, cp2.x, cp3.x, cp4.x);
   rect->lly = min4(cp1.y, cp2.y, cp3.y, cp4.y);
   rect->urx = max4(cp1.x, cp2.x, cp3.x, cp4.x);
@@ -721,78 +748,16 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-#ifdef SPC_PDFM_SUPPORT_ANNOT_TRANS
-  {
-    pdf_coord cp1, cp2, cp3, cp4;
-    /* QuadPoints not working? */
-#ifdef USE_QUADPOINTS
-    pdf_obj  *qpoints;
-#endif
-    if (ti.flags & INFO_HAS_USER_BBOX) {
-      cp1.x = spe->x_user + ti.bbox.llx;
-      cp1.y = spe->y_user + ti.bbox.lly;
-      cp2.x = spe->x_user + ti.bbox.urx;
-      cp2.y = spe->y_user + ti.bbox.lly;
-      cp3.x = spe->x_user + ti.bbox.urx;
-      cp3.y = spe->y_user + ti.bbox.ury;
-      cp4.x = spe->x_user + ti.bbox.llx;
-      cp4.y = spe->y_user + ti.bbox.ury;
-    } else {
-      cp1.x = spe->x_user;
-      cp1.y = spe->y_user - spe->mag * ti.depth;
-      cp2.x = spe->x_user + spe->mag * ti.width;
-      cp2.y = spe->y_user - spe->mag * ti.depth;
-      cp3.x = spe->x_user + spe->mag * ti.width;
-      cp3.y = spe->y_user + spe->mag * ti.height;
-      cp4.x = spe->x_user;
-      cp4.y = spe->y_user + spe->mag * ti.height;
-    }
-    pdf_dev_transform(&cp1, NULL);
-    pdf_dev_transform(&cp2, NULL);
-    pdf_dev_transform(&cp3, NULL);
-    pdf_dev_transform(&cp4, NULL);    
-    set_rect(&rect, cp1, cp2, cp3, cp4);
-#ifdef USE_QUADPOINTS
-    qpoints = pdf_new_array();
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp1.x, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp1.y, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp2.x, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp2.y, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp3.x, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp3.y, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp4.x, 0.01)));
-    pdf_add_array(qpoints, pdf_new_number(ROUND(cp4.y, 0.01)));
-    pdf_add_dict(annot_dict, pdf_new_name("QuadPoints"), qpoints);
-#endif    
-  }
-#else
-  {
-    pdf_coord cp;
-
-    cp.x = spe->x_user; cp.y = spe->y_user;
-    pdf_dev_transform(&cp, NULL);
-    if (ti.flags & INFO_HAS_USER_BBOX) {
-      rect.llx = ti.bbox.llx + cp.x;
-      rect.lly = ti.bbox.lly + cp.y;
-      rect.urx = ti.bbox.urx + cp.x;
-      rect.ury = ti.bbox.ury + cp.y;
-    } else {
-      rect.llx = cp.x;
-      rect.lly = cp.y - spe->mag * ti.depth;
-      rect.urx = cp.x + spe->mag * ti.width;
-      rect.ury = cp.y + spe->mag * ti.height;
-    }
-  }
-#endif
+  set_rect_for_annot(spe, &rect, ti);
 
   /* Order is important... */
   if (ident)
-    spc_push_object(ident, pdf_link_obj(annot_dict));
+    spc_push_object(spe, ident, pdf_link_obj(annot_dict));
   /* Add this reference. */
   pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
-    spc_flush_object(ident);
+    spc_flush_object(spe, ident);
     RELEASE(ident);
   }
   pdf_release_obj(annot_dict);
@@ -839,7 +804,7 @@ spc_handler_pdfm_bann (struct spc_env *spe, struct spc_arg *args)
 
   error = spc_begin_annot(spe, pdf_link_obj(sd->annot_dict));
   if (ident) {
-    spc_push_object(ident, pdf_link_obj(sd->annot_dict));
+    spc_push_object(spe, ident, pdf_link_obj(sd->annot_dict));
     RELEASE(ident);
   }
 
@@ -903,54 +868,7 @@ spc_handler_pdfm_xann (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-#ifdef SPC_PDFM_SUPPORT_ANNOT_TRANS
-  {
-    pdf_coord cp1, cp2, cp3, cp4;
-
-    if (ti.flags & INFO_HAS_USER_BBOX) {
-      cp1.x = spe->x_user + ti.bbox.llx;
-      cp1.y = spe->y_user + ti.bbox.lly;
-      cp2.x = spe->x_user + ti.bbox.urx;
-      cp2.y = spe->y_user + ti.bbox.lly;
-      cp3.x = spe->x_user + ti.bbox.urx;
-      cp3.y = spe->y_user + ti.bbox.ury;
-      cp4.x = spe->x_user + ti.bbox.llx;
-      cp4.y = spe->y_user + ti.bbox.ury;
-    } else {
-      cp1.x = spe->x_user;
-      cp1.y = spe->y_user - spe->mag * ti.depth;
-      cp2.x = spe->x_user + spe->mag * ti.width;
-      cp2.y = spe->y_user - spe->mag * ti.depth;
-      cp3.x = spe->x_user + spe->mag * ti.width;
-      cp3.y = spe->y_user + spe->mag * ti.height;
-      cp4.x = spe->x_user;
-      cp4.y = spe->y_user + spe->mag * ti.height;
-    }
-    pdf_dev_transform(&cp1, NULL);
-    pdf_dev_transform(&cp2, NULL);
-    pdf_dev_transform(&cp3, NULL);
-    pdf_dev_transform(&cp4, NULL);    
-    set_rect(&rect, cp1, cp2, cp3, cp4);
-  }
-#else
-  {
-    pdf_coord cp;
-
-    cp.x = spe->x_user; cp.y = spe->y_user;
-    pdf_dev_transform(&cp, NULL);
-    if (ti.flags & INFO_HAS_USER_BBOX) {
-      rect.llx = ti.bbox.llx + cp.x;
-      rect.lly = ti.bbox.lly + cp.y;
-      rect.urx = ti.bbox.urx + cp.x;
-      rect.ury = ti.bbox.ury + cp.y;
-    } else {
-      rect.llx = cp.x;
-      rect.lly = cp.y - spe->mag * ti.depth;
-      rect.urx = cp.x + spe->mag * ti.width;
-      rect.ury = cp.y + spe->mag * ti.height;
-    }
-  }
-#endif
+  set_rect_for_annot(spe, &rect, ti);
   pdf_doc_expand_box(&rect);
 
   return 0;
@@ -1024,7 +942,7 @@ static int
 spc_handler_pdfm_btrans (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_tmatrix     M;
-  double          x_user, y_user, xpos, ypos;
+  pdf_coord       cp;
   transform_info  ti;
 
   transform_info_clear(&ti);
@@ -1035,13 +953,11 @@ spc_handler_pdfm_btrans (struct spc_env *spe, struct spc_arg *args)
   /* btrans inside bcontent-econtent bug fix.
    * I don't know if this is the only place needs to be fixed...
    */
-  pdf_dev_get_coord(&xpos, &ypos);
-  x_user = spe->x_user - xpos;
-  y_user = spe->y_user - ypos;
+  spc_get_current_point(spe, &cp);
   /* Create transformation matrix */
   pdf_copymatrix(&M, &(ti.matrix));
-  M.e += ((1.0 - M.a) * x_user - M.c * y_user);
-  M.f += ((1.0 - M.d) * y_user - M.b * x_user);
+  M.e += ((1.0 - M.a) * cp.x - M.c * cp.y);
+  M.f += ((1.0 - M.d) * cp.y - M.b * cp.x);
 
   pdf_dev_gsave();
   pdf_dev_concat(&M);
@@ -1165,7 +1081,7 @@ spc_handler_pdfm_article (struct spc_env *spe, struct spc_arg *args)
   }
 
   pdf_doc_begin_article(ident, pdf_link_obj(info_dict));
-  spc_push_object(ident, info_dict);
+  spc_push_object(spe, ident, info_dict);
   RELEASE(ident);
 
   return 0;
@@ -1181,7 +1097,6 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
   pdf_rect         rect;
   int              page_no;
   transform_info   ti;
-  pdf_coord        cp;
 
   skip_white(&args->curptr, args->endptr);
 
@@ -1210,20 +1125,6 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
     return -1;
   }
 
-  cp.x = spe->x_user; cp.y = spe->y_user;
-  pdf_dev_transform(&cp, NULL);
-  if (ti.flags & INFO_HAS_USER_BBOX) {
-    rect.llx = ti.bbox.llx + cp.x;
-    rect.lly = ti.bbox.lly + cp.y;
-    rect.urx = ti.bbox.urx + cp.x;
-    rect.ury = ti.bbox.ury + cp.y;
-  } else {
-    rect.llx = cp.x;
-    rect.lly = cp.y - spe->mag * ti.depth;
-    rect.urx = cp.x + spe->mag * ti.width;
-    rect.ury = cp.y + spe->mag * ti.height;
-  }
-
   skip_white(&args->curptr, args->endptr);
   if (args->curptr[0] != '<') {
     article_info = pdf_new_dict();
@@ -1243,9 +1144,10 @@ spc_handler_pdfm_bead (struct spc_env *spe, struct spc_arg *args)
     pdf_release_obj(article_info);
   } else {
     pdf_doc_begin_article(article_name, pdf_link_obj(article_info));
-    spc_push_object(article_name, article_info);
+    spc_push_object(spe, article_name, article_info);
   }
   page_no = pdf_doc_current_page_number();
+  set_rect_for_annot(spe, &rect, ti);
   pdf_doc_add_bead(article_name, NULL, page_no, &rect);
 
   RELEASE(article_name);
@@ -1311,8 +1213,9 @@ spc_handler_pdfm_image (struct spc_env *spe, struct spc_arg *args)
     return  -1;
   }
 
-  if (!(ti.flags & INFO_DO_HIDE))
-    pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
+  if (!(ti.flags & INFO_DO_HIDE)) {
+    spc_put_image(spe, xobj_id, &ti, spe->x_user, spe->y_user);
+  }
 
   if (ident) {
     if ((dpx_conf.compat_mode == dpx_mode_compat_mode) &&
@@ -1503,11 +1406,11 @@ spc_handler_pdfm_close (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
   ident = parse_opt_ident(&args->curptr, args->endptr);
   if (ident) {
-    spc_flush_object(ident);
+    spc_flush_object(spe, ident);
     RELEASE(ident);
   } else { /* Close all? */
     spc_warn(spe, "pdf:close without an argument no longer supported!");
-    spc_clear_objects();
+    spc_clear_objects(spe);
   }
 
   return 0;
@@ -1532,7 +1435,7 @@ spc_handler_pdfm_object (struct spc_env *spe, struct spc_arg *args)
     RELEASE(ident);
     return  -1;
   } else {
-    spc_push_object(ident, object);
+    spc_push_object(spe, ident, object);
   }
   RELEASE(ident);
 
@@ -1547,8 +1450,10 @@ spc_handler_pdfm_content (struct spc_env *spe, struct spc_arg *args)
   skip_white(&args->curptr, args->endptr);
   if (args->curptr < args->endptr) {
     pdf_tmatrix M;
+    pdf_coord   cp;
 
-    pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user, spe->y_user);
+    spc_get_current_point(spe, &cp);
+    pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, cp.x, cp.y);
     work_buffer[len++] = ' ';
     work_buffer[len++] = 'q';
     work_buffer[len++] = ' ';
@@ -1591,15 +1496,18 @@ spc_handler_pdfm_literal (struct spc_env *spe, struct spc_arg *args)
 
   if (args->curptr < args->endptr) {
     pdf_tmatrix M;
+    pdf_coord   cp;
+
+    spc_get_current_point(spe, &cp);
     if (!direct) {
       M.a = M.d = 1.0; M.b = M.c = 0.0;
-      M.e = spe->x_user; M.f = spe->y_user;
+      M.e = cp.x; M.f = cp.y;
       pdf_dev_concat(&M);
     }
     pdf_doc_add_page_content(" ", 1);  /* op: */
     pdf_doc_add_page_content(args->curptr, (int) (args->endptr - args->curptr));  /* op: ANY */
     if (!direct) {
-      M.e = -spe->x_user; M.f = -spe->y_user;
+      M.e = -cp.x; M.f = -cp.y;
       pdf_dev_concat(&M);
     }
   }
@@ -1613,20 +1521,21 @@ static int
 spc_handler_pdfm_bcontent (struct spc_env *spe, struct spc_arg *args)
 {
   pdf_tmatrix M;
-  double xpos, ypos;
+  double      xpos, ypos;
 
   pdf_dev_gsave();
-  pdf_dev_get_coord(&xpos, &ypos);
+  spc_get_coord(spe, &xpos, &ypos);
   pdf_setmatrix(&M, 1.0, 0.0, 0.0, 1.0, spe->x_user - xpos, spe->y_user - ypos);
   pdf_dev_concat(&M);
-  pdf_dev_push_coord(spe->x_user, spe->y_user);
+  spc_push_coord(spe, spe->x_user, spe->y_user);
+
   return 0;
 }
 
 static int
 spc_handler_pdfm_econtent (struct spc_env *spe, struct spc_arg *args)
 {
-  pdf_dev_pop_coord();
+  spc_pop_coord(spe);
   pdf_dev_grestore();
   pdf_dev_reset_color(0);
   pdf_dev_reset_xgstate(0);
@@ -1767,7 +1676,7 @@ spc_handler_pdfm_stream_with_type (struct spc_env *spe, struct spc_arg *args, in
   }
 
   /* Users should explicitly close this. */
-  spc_push_object(ident, fstream);
+  spc_push_object(spe, ident, fstream);
   RELEASE(ident);
 
   return 0;
@@ -1817,6 +1726,7 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
   int             xobj_id;
   char           *ident;
   pdf_rect        cropbox;
+  pdf_coord       cp;
   transform_info  ti;
 
   skip_white(&args->curptr, args->endptr);
@@ -1862,7 +1772,8 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
     cropbox.ury = ti.height;
   }
 
-  xobj_id = pdf_doc_begin_grabbing(ident, spe->x_user, spe->y_user, &cropbox);
+  spc_get_current_point(spe, &cp);
+  xobj_id = pdf_doc_begin_grabbing(ident, cp.x, cp.y, &cropbox);
 
   if (xobj_id < 0) {
     RELEASE(ident);
@@ -1952,7 +1863,7 @@ spc_handler_pdfm_uxobj (struct spc_env *spe, struct spc_arg *args)
     xobj_id = pdf_ximage_reserve(ident);
   }
 
-  pdf_dev_put_image(xobj_id, &ti, spe->x_user, spe->y_user);
+  spc_put_image(spe, xobj_id, &ti, spe->x_user, spe->y_user);
   RELEASE(ident);
 
   return 0;

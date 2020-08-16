@@ -277,6 +277,123 @@ skip_white_spaces (unsigned char **s, unsigned char *endptr)
 }
 
 void
+dpx_stack_init (dpx_stack *stack)
+{
+  stack->size   = 0;
+  stack->top    = NULL;
+  stack->bottom = NULL;
+}
+
+void
+dpx_stack_push (dpx_stack *stack, void *data)
+{
+  stack_elem  *elem;
+
+  ASSERT(stack);
+
+  elem = NEW(1, stack_elem);
+  elem->prev = stack->top;
+  elem->data = data;
+
+  stack->top = elem;
+  if (stack->size == 0)
+    stack->bottom = elem;
+
+  stack->size++;
+
+  return;
+}
+
+void *
+dpx_stack_pop (dpx_stack *stack)
+{
+  stack_elem *elem;
+  void       *data;
+
+  ASSERT(stack);
+
+  if (stack->size == 0)
+    return NULL;
+
+  data = stack->top->data;
+  elem = stack->top;
+  stack->top = elem->prev;
+  if (stack->size == 1)
+    stack->bottom = NULL;
+  RELEASE(elem);
+
+  stack->size--;
+
+  return data;
+}
+
+void *
+dpx_stack_top (dpx_stack *stack)
+{
+  void  *data;
+
+  ASSERT(stack);
+
+  if (stack->size == 0)
+    return NULL;
+
+  data = stack->top->data;
+
+  return data;
+}
+
+void *
+dpx_stack_at (dpx_stack *stack, int pos)
+{
+  void       *data = NULL;
+  stack_elem *elem;
+
+  if (stack->size == 0)
+    return NULL;
+
+  elem = stack->top;
+  while (pos > 0) {
+    elem = elem->prev;
+    pos--;
+  }
+  if (elem)
+    data = elem->data;
+  
+  return data;
+}
+
+void
+dpx_stack_roll (dpx_stack *stack, int n, int j)
+{
+  if (n > stack->size)
+    return;
+  if (n == 1)
+    return;
+  j = j % n;
+  while (j-- > 0) {
+    int         m = n;
+    stack_elem *elem, *prev, *top;
+
+    elem = top = stack->top;
+    while (--m > 0) {
+      elem = elem->prev;
+    }
+    prev = elem->prev;
+    stack->top = top->prev;
+    elem->prev = top;
+    top->prev  = prev;
+  }
+}
+
+int
+dpx_stack_depth (dpx_stack *stack)
+{
+  ASSERT(stack);
+
+  return stack->size;
+}
+
+void
 ht_init_table (struct ht_table *ht, hval_free_func hval_free_fn)
 {
   int  i;

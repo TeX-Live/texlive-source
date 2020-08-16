@@ -83,10 +83,6 @@ extern int    pdf_dev_rlineto       (double x0 , double y0);
 extern int    pdf_dev_curveto       (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
-extern int    pdf_dev_vcurveto      (double x0 , double y0,
-                                     double x1 , double y1);
-extern int    pdf_dev_ycurveto      (double x0 , double y0,
-                                     double x1 , double y1);
 extern int    pdf_dev_rcurveto      (double x0 , double y0,
                                      double x1 , double y1,
                                      double x2 , double y2);
@@ -104,16 +100,13 @@ extern int    pdf_dev_newpath       (void);
 extern int    pdf_dev_clip          (void);
 extern int    pdf_dev_eoclip        (void);
 
-#if 0
+
 extern int    pdf_dev_rectstroke    (double x, double y,
                                      double w, double h,
                                      const pdf_tmatrix *M  /* optional */
                                     );
-#endif
-
 extern int    pdf_dev_rectfill      (double x, double y, double w, double h);
 extern int    pdf_dev_rectclip      (double x, double y, double w, double h);
-extern int    pdf_dev_rectadd       (double x, double y, double w, double h);
  
 extern int    pdf_dev_flushpath     (char p_op, int fill_rule);
 

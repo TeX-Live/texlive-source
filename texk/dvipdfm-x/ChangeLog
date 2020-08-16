@@ -1,3 +1,20 @@
+2020-08-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dpxutil.[ch]: Add stack operation.
+	* epdf.[ch], pdfdraw.[ch]: Revise Clip path support for PSTricks.
+	Revert changes related to "rectadd" introduced in rev.31262
+	and rev.31302 which cause non-conforming behavior in "clip"
+	operatation.
+	* dvi.[c], mpost.c, pdfdev.[ch], pdfdoc.[ch], pdfdraw.[ch],
+	spc_html.c, spc_misc.c. spc_pdfm.c, spc_xtx.c, specials.[ch]:
+	Revise bcontent support. Try to resolve various inconsistent
+	behaviors when special commnads are used within pdf:bcontent
+	and pdf:econtent. dev_coords and pt_fixee are removed from pdf
+	module and moved to specials.c.
+	* mpost.h, spc_html.h, spc_misc.h, spc_pdfm.h, spc_xtx.h:
+	Update copyright years.
+	* configure.ac: Version 20200816.
+
 2020-08-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* fontmap.[ch], pdffont.[ch], tt_aux.[ch], tt_cmap.[ch]:

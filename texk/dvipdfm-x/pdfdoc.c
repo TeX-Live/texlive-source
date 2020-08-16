@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2008-2020 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho, Matthias Franz, and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -1772,8 +1772,6 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
   pdf_doc  *p = &pdoc;
   pdf_page *page;
   pdf_obj  *rect_array;
-  double    xpos, ypos;
-  pdf_rect  annbox;
 
   page = doc_get_page_entry(p, page_no);
   if (!page->annots)
@@ -1783,30 +1781,26 @@ pdf_doc_add_annot (unsigned page_no, const pdf_rect *rect,
     pdf_rect  mediabox;
 
     pdf_doc_get_mediabox(page_no, &mediabox);
-    pdf_dev_get_coord(&xpos, &ypos);
-    annbox.llx = rect->llx - xpos; annbox.lly = rect->lly - ypos;
-    annbox.urx = rect->urx - xpos; annbox.ury = rect->ury - ypos;
-
-    if (annbox.llx < mediabox.llx || annbox.urx > mediabox.urx ||
-        annbox.lly < mediabox.lly || annbox.ury > mediabox.ury) {
+    if (rect->llx < mediabox.llx || rect->urx > mediabox.urx ||
+        rect->lly < mediabox.lly || rect->ury > mediabox.ury) {
       WARN("Annotation out of page boundary.");
       WARN("Current page's MediaBox: [%g %g %g %g]",
            mediabox.llx, mediabox.lly, mediabox.urx, mediabox.ury);
       WARN("Annotation: [%g %g %g %g]",
-           annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+           rect->llx, rect->lly, rect->urx, rect->ury);
       WARN("Maybe incorrect paper size specified.");
     }
-    if (annbox.llx > annbox.urx || annbox.lly > annbox.ury) {
+    if (rect->llx > rect->urx || rect->lly > rect->ury) {
       WARN("Rectangle with negative width/height: [%g %g %g %g]",
-           annbox.llx, annbox.lly, annbox.urx, annbox.ury);
+           rect->llx, rect->lly, rect->urx, rect->ury);
     }
   }
 
   rect_array = pdf_new_array();
-  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.llx, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.lly, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.urx, 0.001)));
-  pdf_add_array(rect_array, pdf_new_number(ROUND(annbox.ury, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->llx, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->lly, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->urx, 0.001)));
+  pdf_add_array(rect_array, pdf_new_number(ROUND(rect->ury, 0.001)));
   pdf_add_dict (annot_dict, pdf_new_name("Rect"), rect_array);
 
   pdf_add_array(page->annots, pdf_ref_obj(annot_dict));

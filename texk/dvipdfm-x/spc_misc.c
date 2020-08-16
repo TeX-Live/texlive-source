@@ -116,7 +116,7 @@ spc_handler_postscriptbox (struct spc_env *spe, struct spc_arg *ap)
     return  -1;
   }
 
-  pdf_dev_put_image(form_id, &ti, spe->x_user, spe->y_user);
+  spc_put_image(spe, form_id, &ti, spe->x_user, spe->y_user);
 
   return  0;
 }

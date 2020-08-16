@@ -287,7 +287,7 @@ spc_lookup_object (const char *key)
 }
 
 void
-spc_push_object (const char *key, pdf_obj *value)
+spc_push_object (struct spc_env *spe, const char *key, pdf_obj *value)
 {
   if (!key || !value)
     return;
@@ -296,21 +296,178 @@ spc_push_object (const char *key, pdf_obj *value)
 }
 
 void
-spc_flush_object (const char *key)
+spc_flush_object (struct spc_env *spe, const char *key)
 {
   pdf_names_close_object(global_names, key, strlen(key));
 }
 
 void
-spc_clear_objects (void)
+spc_clear_objects (struct spc_env *spe)
 {
   /* Do nothing... */
 }
 
+/* Migrated form pdf_dev.c
+ * No need to palce this into pdfdev.c at all.
+ */
+static dpx_stack coords;
+
+void
+spc_get_coord (struct spc_env *spe, double *x, double *y)
+{
+  ASSERT(x && y );
+
+  if (dpx_stack_depth(&coords) > 0) {
+    pdf_coord *p = dpx_stack_top(&coords);
+    *x = p->x;
+    *y = p->y;
+  } else {
+    *x = *y = 0.0;
+  }
+}
+
+void
+spc_push_coord (struct spc_env *spe, double x, double y)
+{
+  pdf_coord *p;
+
+  p = NEW(1, pdf_coord);
+  p->x = x; p->y = y;
+  dpx_stack_push(&coords, p);
+  dvi_set_compensation(x, y);
+}
+
+void
+spc_pop_coord (struct spc_env *spe)
+{
+  double     x, y;
+  pdf_coord *p;
+
+  p = dpx_stack_pop(&coords);
+  if (p)
+    RELEASE(p);
+
+  spc_get_coord(spe, &x, &y);
+  dvi_set_compensation(x, y);
+}
+
+/* Migrated from pdfdraw.c.
+ *
+ * pt_fixee is obviously not a PDF graphics state parameter.
+ *
+ */
+
+static dpx_stack pt_fixee;
+
+void
+spc_set_fixed_point (struct spc_env *spe, double x, double y)
+{
+  pdf_coord *p;
+
+  p = dpx_stack_top(&pt_fixee);
+  if (p) {
+    p->x = x;
+    p->y = y;
+  } else {
+    p = NEW(1, pdf_coord);
+    p->x = x;
+    p->y = y;
+    dpx_stack_push(&pt_fixee, p);
+  }
+}
+
+void
+spc_get_fixed_point (struct spc_env *spe, double *x, double *y)
+{
+  pdf_coord *p;
+
+  ASSERT(x && y);
+
+  p = dpx_stack_top(&pt_fixee);
+  if (p) {
+    *x = p->x;
+    *y = p->y;
+  } else {
+    *x = 0.0;
+    *y = 0.0;
+  }
+}
+
+void
+spc_put_fixed_point (struct spc_env *spe, double x, double y)
+{
+  pdf_coord *p;
+
+  p = NEW(1, pdf_coord);
+  p->x = x;
+  p->y = y;
+  dpx_stack_push(&pt_fixee, p);
+}
+
+void
+spc_dup_fixed_point (struct spc_env *spe)
+{
+  pdf_coord *p1, *p2;
+
+  p1 = dpx_stack_top(&pt_fixee);
+  p2 = NEW(1, pdf_coord);
+  if (p1) {
+    p2->x = p1->x; p2->y = p1->y;
+  } else {
+    p2->x = 0.0; p2->y = 0.0;
+  }
+  dpx_stack_push(&pt_fixee, p2);
+}
+
+void
+spc_pop_fixed_point (struct spc_env *spe)
+{
+  pdf_coord *p;
+  p = dpx_stack_pop(&pt_fixee);
+  if (p)
+    RELEASE(p);
+}
+
+void
+spc_clear_fixed_point (struct spc_env *spe)
+{
+  pdf_coord *p;
+
+  for (;;) {
+    p = dpx_stack_pop(&pt_fixee);
+    if (!p)
+      break;
+    else
+      RELEASE(p);
+  }
+}
+
+void
+spc_get_current_point (struct spc_env *spe, pdf_coord *cp)
+{
+  double xoff, yoff;
+
+  if (!spe || !cp)
+    return;
+
+  spc_get_coord(spe, &xoff, &yoff);
+  cp->x = spe->x_user - xoff;
+  cp->y = spe->y_user - yoff;
+}
+
+void
+spc_put_image (struct spc_env *spe, int res_id, transform_info *ti, double xpos, double ypos)
+{
+  double xoff, yoff;
+
+  spc_get_coord(spe, &xoff, &yoff);
+  pdf_dev_put_image(res_id, ti, xpos - xoff, ypos - yoff, &spe->info.rect);
+  spe->info.is_drawable = 1;
+}
+
 
 static int
-spc_handler_unknown (struct spc_env *spe,
-                     struct spc_arg *args)
+spc_handler_unknown (struct spc_env *spe, struct spc_arg *args)
 {
   ASSERT(spe && args);
 
@@ -334,6 +491,11 @@ init_special (struct spc_handler *special,
   spe->y_user = y_user;
   spe->mag    = mag;
   spe->pg     = pdf_doc_current_page_number(); /* _FIXME_ */
+  spe->info.is_drawable = 0;
+  spe->info.rect.llx    = 0.0;
+  spe->info.rect.lly    = 0.0;
+  spe->info.rect.urx    = 0.0;
+  spe->info.rect.ury    = 0.0;
 
   args->curptr = p;
   args->endptr = args->curptr + size;
@@ -486,6 +648,9 @@ spc_exec_at_begin_document (void)
       error = known_specials[i].bodhk_func();
     }
   }
+  
+  dpx_stack_init(&coords);
+  dpx_stack_init(&pt_fixee);
 
   return error;
 }
@@ -493,13 +658,21 @@ spc_exec_at_begin_document (void)
 int
 spc_exec_at_end_document (void)
 {
-  int  error = 0;
-  int  i;
+  int        error = 0;
+  int        i;
+  pdf_coord *p;
 
   for (i = 0; known_specials[i].key != NULL; i++) {
     if (known_specials[i].eodhk_func) {
       error = known_specials[i].eodhk_func();
     }
+  }
+
+  while ((p = dpx_stack_pop(&coords)) != NULL) {  
+    RELEASE(p);
+  }
+  while ((p = dpx_stack_pop(&pt_fixee)) != NULL) {  
+    RELEASE(p);
   }
 
   return error;
@@ -558,7 +731,8 @@ print_error (const char *name, struct spc_env *spe, struct spc_arg *ap)
 
 int
 spc_exec_special (const char *buffer, int32_t size,
-		  double x_user, double y_user, double mag)
+                  double x_user, double y_user, double mag,
+                  int *is_drawable, pdf_rect *rect)
 {
   int    error = -1;
   int    i, found;
@@ -578,10 +752,19 @@ spc_exec_special (const char *buffer, int32_t size,
     if (found) {
       error = known_specials[i].setup_func(&special, &spe, &args);
       if (!error) {
-	error = special.exec(&spe, &args);
+        error = special.exec(&spe, &args);
       }
       if (error) {
-	print_error(known_specials[i].key, &spe, &args);
+        print_error(known_specials[i].key, &spe, &args);
+      } else {
+        if (is_drawable)
+          *is_drawable = spe.info.is_drawable;
+        if (rect) {
+          rect->llx    = spe.info.rect.llx;
+          rect->lly    = spe.info.rect.lly;
+          rect->urx    = spe.info.rect.urx;
+          rect->ury    = spe.info.rect.ury;
+        }
       }
       break;
     }
