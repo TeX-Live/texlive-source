@@ -8641,7 +8641,7 @@ else  begin start_cs: k:=loc; cur_chr:=buffer[k]; cat:=cat_code(cur_chr);
     |goto found|@>
   else @<If an expanded code is present, reduce it and |goto start_cs|@>;
   {At this point, we have a single-character cs name in the buffer.
-   But if the character code is > |@"FFFF|, we treat it like a multiletter name
+   But if the character code is ${}>|@"FFFF|$, we treat it like a multiletter name
    for string purposes, because we use UTF-16 in the string pool.}
   if buffer[loc]>@"FFFF then begin
     cur_cs:=id_lookup(loc,1); incr(loc); goto found;
