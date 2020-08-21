@@ -1,3 +1,10 @@
+2020-08-21  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Changed epsilon in binary and decimal mode from 1E-52 to
+          2^-173 =~0.835E-52, so that mp_solve_rising_cubic now works as
+          expected.
+	* Fix @<Set the height and depth to zero if the bounding box is empty@>
+          in mp_set_text_box when height and depth are both -inf.
+
 2020-02-18  Luigi Scarso  <luigi.scarso@gmail.com>
 	* better mp_snprintf macro
 

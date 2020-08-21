@@ -34468,8 +34468,12 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   size_t k, kk; /* current character and character to stop at */
   four_quarters cc;     /* the |char_info| for the current character */
   mp_number h, d;  /* dimensions of the current character */
+  mp_number minus_inf_t; /* check the -inf of height and depth */
   new_number(h);
   new_number(d);
+  new_number(minus_inf_t);
+  number_clone(minus_inf_t, inf_t);
+  number_negate(minus_inf_t);
   set_number_to_zero(p->width);
   set_number_to_neg_inf(p->height);
   set_number_to_neg_inf(p->depth);
@@ -34484,6 +34488,7 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   @<Set the height and depth to zero if the bounding box is empty@>;
   free_number (h);
   free_number (d);
+  free_number (minus_inf_t);
 }
 
 
@@ -34513,7 +34518,10 @@ void mp_set_text_box (MP mp, mp_text_node p) {
 overflow.
 
 @<Set the height and depth to zero if the bounding box is empty@>=
-if (number_to_scaled(p->height) < -number_to_scaled(p->depth)) {
+if (number_equal(p->height,p->depth) && number_equal(p->height,minus_inf_t)) {
+  set_number_to_zero(p->height);
+  set_number_to_zero(p->depth);
+} else if (number_to_scaled(p->height) < -number_to_scaled(p->depth)) {
   set_number_to_zero(p->height);
   set_number_to_zero(p->depth);
 }
