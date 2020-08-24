@@ -2,8 +2,7 @@
 use v5.26;
 
 ############################# LICENCE ##################################
-# $Id: pst2pdf.pl 119 2014-09-24 12:04:09Z herbert $                   #
-# v0.19  2020-08-16 simplify the use of PSTricks with pdf              #
+# v0.20  2020-08-24 simplify the use of PSTricks with pdf              #
 # (c) Herbert Voss <hvoss@tug.org>                                     #
 #     Pablo González L <pablgonz@yahoo.com>                            #
 #                                                                      #
@@ -51,7 +50,6 @@ my $norun   = 0;        # 1->no create images
 my $noprew  = 0;        # 1->create images in nopreview mode
 my $runbibtex = 0;      # 1->runs bibtex
 my $runbiber  = 0;      # 1->runs biber and sets $runbibtex=0
-my $all = 0;            # 1->create all images and files for type
 my $xetex  = 0;         # 1->Using (Xe)LaTeX for compilation.
 my $luatex = 0;         # 1->Using dvilualatex for compilation.
 my $latexmk = 0;        # 1->Using latexmk for compiler output file.
@@ -81,9 +79,9 @@ my %opts_cmd;           # hash to store options for Getopt::Long  and log
 
 ### Script identification
 my $scriptname = 'pst2pdf';
-my $nv         = 'v0.19';
-my $date       = '2020-08-17';
-my $ident      = '$Id: pst2pdf.pl 119 2020-08-16 12:04:09Z herbert $';
+my $nv         = 'v0.20';
+my $date       = '2020-08-22';
+my $ident      = '$Id: pst2pdf.pl 119 2020-08-22 12:04:09Z herbert $';
 
 ### Log vars
 my $LogFile = "$scriptname.log";
@@ -347,7 +345,7 @@ my $result=GetOptions (
     'imgdir=s'           => \$imgdir,   # string
     'myverb=s'           => \$myverb,   # string
     'ignore=s'           => \$tmpverbenv, # string
-    'c|clear'            => \$clear,    # flag
+    'c|clear'            => \$clear,    # flag (unused)
     'ni|norun|noimages'  => \$norun,    # flag
     'np|noprew|single'   => \$noprew,   # flag
     'bibtex'             => \$runbibtex,# flag
@@ -368,7 +366,6 @@ my $result=GetOptions (
     's|svg'              => \$opts_cmd{image}{svg}, # pdftocairo
     'e|eps'              => \$opts_cmd{image}{eps}, # pdftops
     'P|ppm'              => \$opts_cmd{image}{ppm}, # pdftoppm
-    'a|all'              => \$all,      # flag
     'x|xetex'            => \$xetex,    # flag
     'luatex'             => \$luatex,   # flag
     'ns|nosource'        => \$nosource, # flag
@@ -1153,14 +1150,15 @@ if (@env_preview) {
 
 ### Pass verbatim write environments to dtxtag
 Log("Pass verbatim write environments to %<*$dtxverb> ... %</$dtxverb>");
-$document  =~ s/\\begin\{nopreview\}.+?\\end\{nopreview\}(*SKIP)(*F)|
-                ($verb_wrt)/\%<\*$dtxverb>$1\%<\/$dtxverb>/gmsx;
+$document   =~ s/\\begin\{nopreview\}.+?\\end\{nopreview\}(*SKIP)(*F)|
+                 ($verb_wrt)/\%<\*$dtxverb>$1\%<\/$dtxverb>/gmsx;
+$atbegindoc =~ s/($verb_wrt)/\%<\*$dtxverb>$1\%<\/$dtxverb>/gmsx;
 
 ### Pass verbatim environments to dtxtag
 Log("Pass verbatim environments to %<*$dtxverb> ... %</$dtxverb>");
-$document  =~ s/\\begin\{nopreview\}.+?\\end\{nopreview\}(*SKIP)(*F)|
-                \%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
-                ($verb_std)/\%<\*$dtxverb>$1\%<\/$dtxverb>/gmsx;
+$document   =~ s/\\begin\{nopreview\}.+?\\end\{nopreview\}(*SKIP)(*F)|
+                 \%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+                 ($verb_std)/\%<\*$dtxverb>$1\%<\/$dtxverb>/gmsx;
 
 ### Pass %CleanPST to dtxtag
 Log("Pass %CleanPST ... %CleanPST to %<*remove$tmp> ... %</remove$tmp>");
@@ -1409,9 +1407,7 @@ if (!$norun) {
 }
 
 ### Set -q for system command line (gs, poppler-utils, dvips)
-my $quiet = $verbose ? q{}
-          :            '-q'
-          ;
+my $quiet = $verbose ? q{} : '-q';
 
 ### Set options for ghostscript
 my %opt_gs_dev = (
@@ -1590,6 +1586,7 @@ $preamout =~ s/^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
 ### Remove %<*$dtxverb> ... %</$dtxverb> in tmpbodydoc and preamout
 $tmpbodydoc =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
 $preamout   =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
+$atbeginout =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
 
 ### Adjust nopreview environments
 $tmpbodydoc =~ s/\\begin\{nopreview\}\%$tmp
@@ -1848,10 +1845,114 @@ if (!$norun) {
 ### Constant
 my $findgraphicx = 'true';
 
+### Replacing the extracted environments with \includegraphics
+Log("Convert pstricks extracted environments to \\includegraphics for $name-pdf$ext");
+my $grap  =  "\\includegraphics[scale=1]{$name-fig-";
+my $close =  '}';
+my $imgNo =  1;
+$bodydoc  =~ s/$BP.+?$EP/$grap@{[$imgNo++]}$close/msg;
+
+### Add $atbegindoc to $preamble
+$preamble = "$atbegindoc$preamble";
+
+### Remove content in preamble
+my @tag_remove_preamble = $preamble =~ m/(?:^\%<\*remove$tmp>.+?\%<\/remove$tmp>)/gmsx;
+if (@tag_remove_preamble) {
+    Log("Removing the content between %CleanPST ... %CleanPST in preamble for $name-pdf$ext");
+    $preamble =~ s/^\%<\*remove$tmp>\s*(.+?)\s*\%<\/remove$tmp>(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
+}
+
 ### Suport for pst-exa package
 my $pstexa = qr/(?:\\ usepackage) \[\s*(.+?)\s*\] (?:\{\s*(pst-exa)\s*\} ) /x;
 my @pst_exa;
 my %pst_exa;
+
+### Search pst-exa package
+@pst_exa  = $preamble =~ m/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|$pstexa/gmsx;
+%pst_exa = map { $_ => 1 } @pst_exa;
+
+### If found comment and adjust path for graphic files
+if (@pst_exa) {
+    Log("Comment pst-exa package in preamble for $name-pdf$ext");
+    $findgraphicx = 'false';
+    $preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+                  (\\usepackage\[)\s*(swpl|tcb)\s*(\]\{pst-exa\})/\%$1$2,pdf$3/msxg;
+    # Change for [tcb] option (path for graphic files)
+    if (exists $pst_exa{tcb}) {
+        Log("Suport for \\usepackage[tcb,pdf]\{pst-exa\} for $name-pdf$ext");
+        $bodydoc =~ s/(graphic=\{)\[(scale=\d*)\]($imgdir\/$name-fig-exa-\d*)\}/$1$2\}\{$3\}/gsmx;
+    }
+}
+
+### Regex for remove (pst-?) packages in preamble
+$PALABRAS = qr/\b (?: pst-\w+ | pstricks (?: -add | -pdf )? | psfrag |psgo |vaucanson-g| auto-pst-pdf(?: -lua )? )/x;
+$FAMILIA  = qr/\{ \s* $PALABRAS (?: \s* [,] \s* $PALABRAS )* \s* \}(\%*)?/x;
+
+Log("Remove pstricks packages in preamble for $name-pdf$ext [no pst-exa]");
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               ^ $USEPACK (?: $CORCHETES )? $FAMILIA \s*//msxg;
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               (?: ^ $USEPACK \{ | \G) [^}]*? \K (,?) \s* $PALABRAS (\s*) (,?) /$1 and $3 ? ',' : $1 ? $2 : ''/gemsx;
+
+### Uncomment pst-exa package
+if (@pst_exa) {
+    Log("Uncomment pst-exa package in preamble for $name-pdf$ext");
+    $preamble =~ s/(?:\%)(\\usepackage\[\s*)(swpl|tcb)(,pdf\s*\]\{pst-exa\})/$1$2$3/msxg;
+}
+
+Log("Remove \\psset\{...\} in preamble for $name-pdf$ext");
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               \\psset\{(?:\{.*?\}|[^\{])*\}(?:[\t ]*(?:\r?\n|\r))+//gmsx;
+
+Log("Remove \\SpecialCoor in preamble for $name-pdf$ext");
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               \\SpecialCoor(?:[\t ]*(?:\r?\n|\r))+//gmsx;
+
+Log("Remove empty lines in preamble for $name-pdf$ext");
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               ^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
+$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
+               ^(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
+
+### To be sure that the package graphicx and \graphicspath is in the main
+### document and not in a verbatim write environment we make the changes
+my %tmpreplace = (
+    'graphicx'     => 'TMPGRAPHICXTMP',
+    'graphicspath' => 'TMPGRAPHICSPATHTMP',
+);
+my $findtmp     = join q{|}, map { quotemeta } sort { length $a <=> length $b } keys %tmpreplace;
+
+### We go line by line and make the changes [need /p for ${^MATCH}]
+while ($preamble =~ /\%<\*$dtxverb>(.+?)\%<\/$dtxverb> | $tmpcomment /pgmsx) {
+    my ($pos_inicial, $pos_final) = ($-[0], $+[0]);
+    my $encontrado = ${^MATCH};
+    $encontrado =~ s/($findtmp)/$tmpreplace{$1}/g;
+    substr $preamble, $pos_inicial, $pos_final-$pos_inicial, $encontrado;
+    pos ($preamble) = $pos_inicial + length $encontrado;
+}
+
+### Now we're trying to capture \graphicspath{...}
+my $graphicspath= qr/\\ graphicspath \{ ((?: $llaves )+) \}/ix;
+my @graphicspath;
+@graphicspath = $preamble =~ m/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|($graphicspath)/gmsx;
+
+if (@graphicspath) {
+    Log("Found \\graphicspath in preamble for $name-pdf$ext");
+    $findgraphicx = 'false';
+    while ($preamble =~ /$graphicspath /pgmx) {
+        my ($pos_inicial, $pos_final) = ($-[0], $+[0]);
+        my $encontrado = ${^MATCH};
+        if ($encontrado =~ /$graphicspath/) {
+            my  $argumento = $1;
+            if ($argumento !~ /\{$imgdir\/\}/) {
+                $argumento .= "\{$imgdir/\}";
+                my  $cambio = "\\graphicspath{$argumento}";
+                substr $preamble, $pos_inicial, $pos_final-$pos_inicial, $cambio;
+                pos($preamble) = $pos_inicial + length $cambio;
+            }
+        }
+    }
+}
 
 ### Possible packages that load graphicx
 my @pkgcandidates = qw (
@@ -1873,106 +1974,32 @@ my @pkgcandidates = qw (
     pst-poker gmp CJKvert asypictureb hletter tikz-network powerdot-fuberlin
     skeyval gnuplottex plantslabels fancytooltips ieeepes pst-vectorian
     phfnote overpic xtuformat stubs graphbox ucs pdfwin metalogo mwe
-    inline-images asymptote UNAMThesis authorarchive amscdx pst-pdf adjustbox
-    trimclip fixmetodonotes incgraph scanpages pst-layout alertmessage
+    inline-images asymptote UNAMThesis authorarchive amscdx adjustbox
+    trimclip fixmetodonotes incgraph scanpages alertmessage
     svg quiz2socrative realhats autopdf egplot decorule figsize tikzexternal
-    pgfcore frontespizio textglos graphicx tikz tcolorbox pst-exa
+    pgfcore frontespizio textglos graphicx tikz tcolorbox
     );
 
 my $pkgcandidates = join q{|}, map { quotemeta } sort { length $a <=> length $b } @pkgcandidates;
 $pkgcandidates = qr/$pkgcandidates/x;
 my @graphicxpkg;
 
-### \graphicspath
-my $graphicspath= qr/\\ graphicspath \{ ((?: $llaves )+) \}/ix;
-my @graphicspath;
+### Now we're trying to capture graphicx package
+@graphicxpkg = $preamble =~ m/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|($pkgcandidates)/gmsx;
 
-### Replacing the extracted environments with \includegraphics
-Log("Convert pstricks extracted environments to \\includegraphics for $name-pdf$ext");
-my $grap  =  "\\includegraphics[scale=1]{$name-fig-";
-my $close =  '}';
-my $imgNo =  1;
-$bodydoc  =~ s/$BP.+?$EP/$grap@{[$imgNo++]}$close/msg;
-
-### Add $atbegindoc to $preamble
-$preamble = "$atbegindoc$preamble";
-
-### Remove content in preamble
-my @tag_remove_preamble = $preamble =~ m/(?:^\%<\*remove$tmp>.+?\%<\/remove$tmp>)/gmsx;
-if (@tag_remove_preamble) {
-    Log("Removing the content between <*remove> ... </remove> tags in preamble for $name-pdf$ext");
-    $preamble =~ s/^\%<\*remove$tmp>\s*(.+?)\s*\%<\/remove$tmp>(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
-}
-
-### To be sure that the package is in the main document and not in a
-### verbatim write environment we make the changes using the hash and
-### range operator in a copy
-my %tmpreplace = (
-    'graphicx'     => 'TMPGRAPHICXTMP',
-    'pst-exa'      => 'TMPPSTEXATMP',
-    'graphicspath' => 'TMPGRAPHICSPATHTMP',
-);
-
-my $findtmp     = join q{|}, map { quotemeta } sort { length $a <=> length $b } keys %tmpreplace;
-my $preambletmp = $preamble;
-my @lineas = split /\n/, $preambletmp;
-
-### We remove the commented lines
-s/\%.*(?:[\t ]*(?:\r?\n|\r))?+//msg foreach @lineas;
-
-### We make the changes in the environments verbatim write
-my $DEL;
-for (@lineas) {
-    if (/\\begin\{($verbatim_w\*?)(?{ $DEL = "\Q$^N" })\}/ .. /\\end\{$DEL\}/) {
-        s/($findtmp)/$tmpreplace{$1}/g;
-    }
-}
-
-### Join lines in $preambletmp
-$preambletmp = join "\n", @lineas;
-
-### We removed the blank lines
-$preambletmp =~ s/^(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
-
-### Now we're trying to capture
-@graphicxpkg = $preambletmp =~ m/($pkgcandidates)/gmsx;
-if (@graphicxpkg) {
+if (@graphicxpkg and $findgraphicx ne 'false') {
     Log("Found graphicx package in preamble for $name-pdf$ext");
     $findgraphicx = 'false';
 }
 
-### Search graphicspath
-@graphicspath = $preambletmp =~ m/graphicspath/msx;
-if (@graphicspath) {
-    Log("Found \\graphicspath in preamble for $name-pdf$ext");
-    $findgraphicx = 'false';
-    while ($preamble =~ /$graphicspath /pgmx) {
-        my ($pos_inicial, $pos_final) = ($-[0], $+[0]);
-        my $encontrado = ${^MATCH};
-        if ($encontrado =~ /$graphicspath/) {
-            my  $argumento = $1;
-            if ($argumento !~ /\{$imgdir\/\}/) {
-                $argumento .= "\{$imgdir/\}";
-                my  $cambio = "\\graphicspath{$argumento}";
-                substr $preamble, $pos_inicial, $pos_final-$pos_inicial, $cambio;
-                pos($preamble) = $pos_inicial + length $cambio;
-            }
-        }
-    }
-}
+### Revert changes in preamble for temp <output file>
+my %tmpoutreplace = (
+    'TMPGRAPHICXTMP'     => 'graphicx',
+    'TMPGRAPHICSPATHTMP' => 'graphicspath',
+);
 
-### Search pst-exa
-@pst_exa  = $preambletmp =~ m/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|$pstexa/xg;
-%pst_exa = map { $_ => 1 } @pst_exa;
-if (@pst_exa) {
-    Log("Comment pst-exa package in preamble for $name-pdf$ext");
-    $findgraphicx = 'false';
-    $preamble =~ s/(\\usepackage\[)\s*(swpl|tcb)\s*(\]\{pst-exa\})/\%$1$2,pdf$3/msxg;
-}
-if (exists $pst_exa{tcb}) {
-    Log("Suport for \\usepackage[tcb,pdf]\{pst-exa\} for $name-pdf$ext");
-    $bodydoc =~ s/(graphic=\{)\[(scale=\d*)\]($imgdir\/$name-fig-exa-\d*)\}/$1$2\}\{$3\}/gsmx;
-}
+%replace  = (%changes_out,%tmpoutreplace);
+$find     = join q{|}, map {quotemeta} sort { length $a <=> length $b } keys %replace;
 
 ### Try to capture arara:compiler in preamble of <output file>
 my @arara_engines = qw (latex pdflatex lualatex xelatex luahbtex);
@@ -1981,28 +2008,36 @@ $arara_engines = qr/\b(?:$arara_engines)/x;
 my $arara_rule = qr /^(?:\%\s{1}arara[:]\s{1}) ($arara_engines) /msx;
 
 ### Capture graphicx.sty in .log of LaTeX file
-if ($findgraphicx eq 'true') {
+if ($findgraphicx ne 'false') {
     Log("Couldn't capture the graphicx package for $name-pdf$ext in preamble");
     my $ltxlog;
     my @graphicx;
     my $null = devnull();
+    # Copy preamble and revert changes
+    my $preambletmp = $preamble;
+    $preambletmp =~ s/($find)/$replace{$1}/g;
+    $preambletmp   =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
     Log("Creating $name-fig-$tmp$ext [only preamble]");
     if ($verbose) { say "Creating [$name-fig-$tmp$ext] with only preamble"; }
     open my $OUTfile, '>', "$name-fig-$tmp$ext";
-        print {$OUTfile} "$preamble\n\\stop";
+        print {$OUTfile} "$preambletmp\n\\stop";
     close $OUTfile;
-    # Set compiler
+    # Set compiler for arara
     if ($opts_cmd{compiler}{arara}) {
-        my @engine = $preamble =~ m/$arara_rule/msx;
+        my @engine = $atbegindoc =~ m/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|$arara_rule/msx;
         my %engine = map { $_ => 1 } @engine;
         if (%engine) {
             for my $var (@arara_engines) {
                 if (defined $engine{$var}) {
+                    Log("Found engine [$var] for arara");
                     $compiler = $var;
                 }
             }
         }
-        else { $compiler = 'pdflatex'; }
+        else {
+            Log("Not detected engine for arara, use default [pdflatex]");
+            $compiler = 'pdflatex';
+        }
     }
     if ($compiler eq 'latex') { $compiler = 'pdflatex'; }
     if ($compiler eq 'dvilualatex') { $compiler = 'lualatex'; }
@@ -2025,48 +2060,28 @@ if ($findgraphicx eq 'true') {
     else {
         Log("Not found graphicx package in $name-fig-$tmp.log");
         Log("Add \\usepackage\{graphicx\} to preamble of $name-pdf$ext");
-        $preamble= "$preamble\n\\usepackage\{graphicx\}";
+        $preamble= "$preamble\\usepackage\{graphicx\}\n";
     }
-}
-
-### Regex for clean (pst-?) in preamble
-$PALABRAS = qr/\b (?: pst-\w+ | pstricks (?: -add | -pdf )? | psfrag |psgo |vaucanson-g| auto-pst-pdf(?: -lua )? )/x;
-$FAMILIA  = qr/\{ \s* $PALABRAS (?: \s* [,] \s* $PALABRAS )* \s* \}(\%*)?/x;
-
-Log("Remove pstricks packages in preamble for $name-pdf$ext");
-$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
-               ^ $USEPACK (?: $CORCHETES )? $FAMILIA \s*//msxg;
-$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
-               (?: ^ $USEPACK \{ | \G) [^}]*? \K (,?) \s* $PALABRAS (\s*) (,?) /$1 and $3 ? ',' : $1 ? $2 : ''/gemsx;
-$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
-               \\psset\{(?:\{.*?\}|[^\{])*\}(?:[\t ]*(?:\r?\n|\r))+//gmsx;
-$preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
-               \\SpecialCoor(?:[\t ]*(?:\r?\n|\r))+//gmsx;
-$preamble =~ s/^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
-
-if (@pst_exa) {
-    Log("Uncomment pst-exa package in preamble for $name-pdf$ext");
-    $preamble =~ s/(?:\%)(\\usepackage\[\s*)(swpl|tcb)(,pdf\s*\]\{pst-exa\})/$1$2$3/msxg;
 }
 
 ### Add last lines
 if (!@graphicspath) {
     Log("Not found \\graphicspath in preamble for $name-pdf$ext");
     Log("Add \\graphicspath\{\{$imgdir/\}\} to preamble for $name-pdf$ext");
-    $preamble= "$preamble\n\\graphicspath\{\{$imgdir/\}\}";
+    $preamble= "$preamble\\graphicspath\{\{$imgdir/\}\}\n";
 }
+
 Log("Add \\usepackage\{grfext\} to preamble for $name-pdf$ext");
-$preamble = "$preamble\n\\usepackage\{grfext\}";
+$preamble = "$preamble\\usepackage\{grfext\}\n";
 Log("Add \\PrependGraphicsExtensions\*\{\.pdf\} to preamble for $name-pdf$ext");
-$preamble = "$preamble\n\\PrependGraphicsExtensions\*\{\.pdf\}";
+$preamble = "$preamble\\PrependGraphicsExtensions\*\{\.pdf\}";
 $preamble =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
-$preamble =~ s/^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
-$preamble =~ s/^(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
 
 ### Create a <output file>
 my $out_file = "$preamble\n$bodydoc\n$enddoc";
 
-### Clean \psset content in output file
+### Clean \psset{...} content in <output file>
+Log("Remove \\psset\{...\} in body for $name-pdf$ext");
 $out_file =~ s/\\begin\{nopreview\}\%$tmp.+?\\end\{nopreview\}\%$tmp(*SKIP)(*F)|
                \%<\*$dtxverb> .+? \%<\/$dtxverb>(*SKIP)(*F)|
                \\psset\{(?:\{.*?\}|[^\{])*\}(?:[\t ]*(?:\r?\n|\r))?+//gmsx;
@@ -2087,7 +2102,7 @@ $out_file =~ s/\\begin\{nopreview\}%$tmp
 
 ### Remove internal mark for verbatim and verbatim write environments
 $out_file =~ s/\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/$1/gmsx;
-%replace  = (%changes_out);
+%replace  = (%changes_out,%tmpoutreplace);
 $find     = join q{|}, map {quotemeta} sort { length $a <=> length $b } keys %replace;
 $out_file =~ s/($find)/$replace{$1}/g;
 
@@ -2115,13 +2130,20 @@ my $ltxmkopt = $xetex  ? "-pdfxe -silent -xelatex=\"xelatex $write18 -recorder %
              : $luatex ? "-pdflua -silent -lualatex=\"lualatex $write18 -recorder %O %S\""
              :           "-pdf -silent -pdflatex=\"pdflatex $write18 -recorder %O %S\""
              ;
+
 ### Set options for compiler
 $opt_compiler = $arara   ? '--log'
               : $latexmk ? "$ltxmkopt"
               :            "$write18 -interaction=nonstopmode -recorder"
               ;
 
-### Set compiler name for arara and latexmk
+### Set message in terminal
+$msg_compiler = $xetex  ? 'xelatex'
+              : $luatex ? 'lualatex'
+              :           'pdflatex'
+              ;
+
+### Set compiler message and compiler for arara and latexmk
 if ($arara) { $compiler = $msg_compiler = 'arara'; }
 if ($latexmk) { $compiler = $msg_compiler = 'latexmk'; }
 
