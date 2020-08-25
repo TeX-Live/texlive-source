@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -219,7 +219,7 @@ DISTCLEANFILES += ptests/xcmr10.tfm
 ## ptexdir/ptftopl.test
 DISTCLEANFILES += ptests/xcmr10.pl
 ## ptexdir/sample.test
-EXTRA_DIST += ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi
+EXTRA_DIST += ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ
 DISTCLEANFILES += ptests/xsample.typ
 ## ptexdir/yokotate.test
 EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
