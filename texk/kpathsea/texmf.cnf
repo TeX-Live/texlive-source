@@ -833,7 +833,7 @@ nest_size = 500         % simultaneous semantic levels (e.g., groups)
 max_in_open = 15        % simultaneous input files and error insertions, 
                         % also applies to MetaPost
 param_size = 10000      % simultaneous macro parameters, also applies to MP
-save_size  = 100000     % for saving values outside current group
+save_size  = 200000     % for saving values outside current group
 stack_size = 5000       % simultaneous input sources
 
 % Limit on recursive expansion calls so TeX has a chance to quit nicely
