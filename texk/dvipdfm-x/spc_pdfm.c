@@ -757,7 +757,6 @@ spc_handler_pdfm_annot (struct spc_env *spe, struct spc_arg *args)
   pdf_doc_add_annot(pdf_doc_current_page_number(), &rect, annot_dict, 1);
 
   if (ident) {
-    spc_flush_object(spe, ident);
     RELEASE(ident);
   }
   pdf_release_obj(annot_dict);

@@ -1,3 +1,9 @@
+2020-08-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Fix a bug exposed by the previous changes on the
+	named object (rev.55887). Remove unnecessary spc_flush_object.
+	* configure.ac: Version 20200826.
+
 2020-08-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dpxutil.[ch]: Add stack operation.
