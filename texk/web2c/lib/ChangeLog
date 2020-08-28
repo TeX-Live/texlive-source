@@ -1,3 +1,11 @@
+2020-08-28  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (input_line): always clear errno before calling getc,
+	else an EINTR errno might persist, masking a real EOF. On the other
+	hand, loop as long as we have EOF && EINTR so we don't prematurely
+	stop reading characters.
+	https://tug.org/pipermail/tex-k/2020-August/003297.html
+
 2020-07-18  Karl Berry  <karl@freefriends.org>
 
 	* texmfmp.c: reformat so that all function return types and names
