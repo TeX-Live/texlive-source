@@ -1,9 +1,9 @@
 @x
 @d my_name=='pdvitype'
-@d banner=='This is pDVItype, Version 3.6-p0.4'
+@d banner=='This is pDVItype, Version 3.6-p0.5'
 @y
 @d my_name=='updvitype'
-@d banner=='This is upDVItype, Version 3.6-p0.4-u1.26'
+@d banner=='This is upDVItype, Version 3.6-p0.5-u1.26'
 @z
 
 @x procedure initialize

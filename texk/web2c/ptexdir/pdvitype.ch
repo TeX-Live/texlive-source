@@ -1,13 +1,14 @@
 % This is a change file for DVItype.
 %
 % 09/27/95 (KA)  Supporting ASCII pTeX
+% 2020-08-24 (HY)  Support \dtou
 %
 @x
 @d my_name=='dvitype'
 @d banner=='This is DVItype, Version 3.6' {printed when the program starts}
 @y
 @d my_name=='pdvitype'
-@d banner=='This is pDVItype, Version 3.6-p0.4'
+@d banner=='This is pDVItype, Version 3.6-p0.5'
   {printed when the program starts}
 @z
 
@@ -212,9 +213,27 @@ dir: first_par:=get_byte;
 % pTeX
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
+@!hhh:integer; {|h|, rounded to the nearest pixel}
+@y
+@!hhh,@!vvv:integer; {|h|,|v| rounded to the nearest pixel}
+@z
+
+@x
 s:=0; h:=0; v:=0; w:=0; x:=0; y:=0; z:=0; hh:=0; vv:=0;
 @y
 s:=0; h:=0; v:=0; w:=0; x:=0; y:=0; z:=0; hh:=0; vv:=0; dd:=0;
+@z
+
+@x
+move_right: @<Finish a command that sets |h:=h+q|, then |goto done|@>;
+@y
+move_right:
+  if dd=0 then begin
+    @<Finish a command that sets |h:=h+q|, then |goto done|@>;
+  end else begin
+    if dd=1 then p:=q else {if dd=3 then} p:=-q;
+    @<Finish a command that sets |v:=v+p|, then |goto done|@>;
+  end;
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -266,9 +285,29 @@ endif('HEX_CHAR_CODE')
 @x
   @t\4@>@<Cases for commands |nop|, |bop|, \dots, |pop|@>@;
 @y
-  dir: begin major('dir ',p:1); dd:=p; goto done;
+  dir: begin
+    if not ptex_p then bad_dvi('dir command within normal dvi file');
+    major('dir ',p:1); dd:=p; goto done;
     end;
   @t\4@>@<Cases for commands |nop|, |bop|, \dots, |pop|@>@;
+@z
+
+@x
+@!vvv:integer; {|v|, rounded to the nearest pixel}
+@y
+@!vvv,hhh:integer; {|v|,|h| rounded to the nearest pixel}
+@z
+
+@x
+move_down: @<Finish a command that sets |v:=v+p|, then |goto done|@>;
+@y
+move_down:
+  if dd=0 then begin
+    @<Finish a command that sets |v:=v+p|, then |goto done|@>;
+  end else begin
+    if dd=1 then q:=-p else {if dd=3 then} q:=p;
+    @<Finish a command that sets |h:=h+q|, then |goto done|@>;
+  end;
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -296,9 +335,13 @@ endif('HEX_CHAR_CODE')
 @y
 @d out_space(#)==if (p>=font_space[cur_font])or(p<=-4*font_space[cur_font]) then
     begin out_text(" ");
-      if dd=0 then hh:=pixel_round(h+p) else vv:=pixel_round(v+p);
+      if dd=0 then hh:=pixel_round(h+p)
+      else if dd=1 then vv:=pixel_round(v+p)
+      else {if dd=3 then} vv:=pixel_round(v-p);
     end
-  else if dd=0 then hh:=hh+pixel_round(p) else vv:=vv+pixel_round(p);
+  else if dd=0 then hh:=hh+pixel_round(p)
+    else if dd=1 then vv:=vv+pixel_round(p)
+    else {if dd=3 then} vv:=vv-pixel_round(p);
 @z
 
 @x
@@ -306,8 +349,13 @@ endif('HEX_CHAR_CODE')
   else vv:=vv+pixel_round(p);
 @y
 @d out_vmove(#)==if abs(p)>=5*font_space[cur_font] then
-     begin if dd=0 then vv:=pixel_round(v+p) else  hh:=pixel_round(h-p) end
-  else if dd=0 then vv:=vv+pixel_round(p) else hh:=hh-pixel_round(p);
+    begin if dd=0 then vv:=pixel_round(v+p)
+      else if dd=1 then hh:=pixel_round(h-p)
+      else {if dd=3 then} hh:=pixel_round(h+p);
+    end
+  else if dd=0 then vv:=vv+pixel_round(p)
+    else if dd=1 then hh:=hh-pixel_round(p)
+    else {if dd=3 then} hh:=hh+pixel_round(p);
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -339,108 +387,17 @@ endif('HEX_CHAR_CODE')
 else hh:=hh+char_pixel_width(cur_font)(p);
 @y
 else if dd=0 then hh:=hh+char_pixel_width(cur_font)(p)
-     else vv:=vv+char_pixel_width(cur_font)(p);
+     else if dd=1 then vv:=vv+char_pixel_width(cur_font)(p)
+     else {if dd=3 then} vv:=vv-char_pixel_width(cur_font)(p);
 @z
 
 @x
 hh:=hh+rule_pixels(q); goto move_right
 @y
-if dd=0 then hh:=hh+rule_pixels(q) else vv:=vv+rule_pixels(q);
+if dd=0 then hh:=hh+rule_pixels(q)
+else if dd=1 then vv:=vv+rule_pixels(q)
+else {if dd=3 then} vv:=vv-rule_pixels(q);
 goto move_right
-@z
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% pTeX
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
-@<Finish a command that sets |h:=h+q|, then |goto done|@>=
-@y
-@<Finish a command that sets |h:=h+q|, then |goto done|@>=
-if dd=0 then begin
-@z
-
-@x
-goto done
-@y
-goto done end
-else begin
-if (v>0)and(q>0) then if v>infinity-q then
-  begin error('arithmetic overflow! parameter changed from ',
-@.arithmetic overflow...@>
-    q:1,' to ',infinity-q:1);
-  q:=infinity-v;
-  end;
-if (v<0)and(q<0) then if -v>q+infinity then
-  begin error('arithmetic overflow! parameter changed from ',
-    q:1, ' to ',(-v)-infinity:1);
-  q:=(-v)-infinity;
-  end;
-hhh:=pixel_round(v+q);
-if abs(hhh-vv)>max_drift then
-  if hhh>vv then vv:=hhh-max_drift
-  else vv:=hhh+max_drift;
-if showing then if out_mode>mnemonics_only then
-  begin print(' v:=',v:1);
-  if q>=0 then print('+');
-  print(q:1,'=',v+q:1,', vv:=',vv:1);
-  end;
-v:=v+q;
-if abs(v)>max_v_so_far then
-  begin if abs(v)>max_v+99 then
-    begin error('warning: |v|>',max_v:1,'!');
-@.warning: |v|...@>
-    max_v:=abs(v);
-    end;
-  max_v_so_far:=abs(v);
-  end;
-goto done
-end
-@z
-
-@x
-@ @<Finish a command that sets |v:=v+p|, then |goto done|@>=
-@y
-@ @<Finish a command that sets |v:=v+p|, then |goto done|@>=
-if dd=0 then begin
-@z
-
-@x
-goto done
-@y
-goto done end
-else begin
-p:=-p;
-if (h>0)and(p>0) then if h>infinity-p then
-  begin error('arithmetic overflow! parameter changed from ',
-@.arithmetic overflow...@>
-    p:1,' to ',infinity-h:1);
-  p:=infinity-h;
-  end;
-if (h<0)and(p<0) then if -h>p+infinity then
-  begin error('arithmetic overflow! parameter changed from ',
-    p:1, ' to ',(-h)-infinity:1);
-  p:=(-h)-infinity;
-  end;
-vvv:=pixel_round(h+p);
-if abs(vvv-hh)>max_drift then
-  if vvv>hh then hh:=vvv-max_drift
-  else hh:=vvv+max_drift;
-if showing then if out_mode>mnemonics_only then
-  begin print(' h:=',h:1);
-  if p>=0 then print('+');
-  print(p:1,'=',h+p:1,', hh:=',hh:1);
-  end;
-h:=h+p;
-if abs(h)>max_h_so_far then
-  begin if abs(h)>max_h+99 then
-    begin error('warning: |h|>',max_h:1,'!');
-@.warning: |h|...@>
-    max_h:=abs(h);
-    end;
-  max_h_so_far:=abs(h);
-  end;
-goto done
-end
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

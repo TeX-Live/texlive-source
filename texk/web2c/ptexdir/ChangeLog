@@ -1,3 +1,8 @@
+2020-08-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdvitype.ch: Support dtou direction. Strict check for DVI ID
+	with command 255. Version p0.5.
+
 2020-05-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ppltotf.ch: Avoid compiler warnings: equality comparison with
