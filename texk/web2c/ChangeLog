@@ -1,3 +1,8 @@
+2020-08-31  Karl Berry  <karl@freefriends.org>
+
+	* tests/expanded-overflow.tex: new (unused) informational file
+	for \expanded overflow.
+
 2020-08-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* dvicopy.ch,

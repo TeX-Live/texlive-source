@@ -1,3 +1,8 @@
+2020-08-31  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	* pdftex.web (Scan the argument for command |c|) <expanded_code>:
+	free_avail(def_ref) to avoid memory exhaustion with many \expanded.
+
 2020-08-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* pdftex.web: Pick a few obvious nits.
@@ -7,6 +12,7 @@
 	* pdftex.ch: Move pdfTeX variants of MLTeX code next to originals.
 
 2020-07-22  Akira Kakuto  <kakuto@w32tex.org>
+
 	* pdftex.web, writeimg.c: Show unfound file names in
 	fatal error messages.
 	https://tug.org/pipermail/pdftex/2020-July/009203.html
