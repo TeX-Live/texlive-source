@@ -2964,15 +2964,16 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
 	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi \
-	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
-	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
-	ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm \
-	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf \
-	$(eptex_web_srcs) $(eptex_ch_srcs) eptexdir/eptex.defines \
-	eptexdir/ChangeLog eptexdir/Changes.txt eptexdir/README.txt \
-	$(eptex_tests) eptexdir/eptrip/eptrip.diffs \
-	eptexdir/eptrip/eptrip.log eptexdir/eptrip/eptrip.tex \
-	eptexdir/eptrip/texmf.cnf eptexdir/pdfprimitive.test \
+	ptexdir/tests/samplea.typ ptexdir/tests/min10.pl \
+	ptexdir/tests/min10.tfm ptexdir/tests/tmin10.pl \
+	ptexdir/tests/tmin10.tfm ptexdir/tests/skipjfmp.pl \
+	ptexdir/tests/skipjfmp.tfm ptexdir/ptrip/ptrip.diffs \
+	ptexdir/ptrip/texmf.cnf $(eptex_web_srcs) $(eptex_ch_srcs) \
+	eptexdir/eptex.defines eptexdir/ChangeLog eptexdir/Changes.txt \
+	eptexdir/README.txt $(eptex_tests) \
+	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/eptrip.log \
+	eptexdir/eptrip/eptrip.tex eptexdir/eptrip/texmf.cnf \
+	eptexdir/pdfprimitive.test \
 	eptexdir/tests/pdfprimitive-test.tex \
 	eptexdir/tests/pdfprimitive-eptex.log $(uptex_web_srcs) \
 	$(uptex_ch_srcs) uptexdir/uptex.defines ptexdir/pbibtex.ch \
