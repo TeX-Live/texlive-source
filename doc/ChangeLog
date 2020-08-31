@@ -1,3 +1,8 @@
+2020-08-31  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Build one engine): rewrite procedure.
+	* build-tools.txt: bison 3.7.1.
+
 2020-05-14  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi: remove poppler references.

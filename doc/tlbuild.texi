@@ -441,7 +441,7 @@ library, first building any required libraries.
 
 Here is an example from start to finish for working on
 @code{dvipdfm-x}.  (Unfortunately, this does not suffice for building
-one, or a subset, of the @TeX{} engines; see the next section.)
+the @TeX{} engines; see the next section.)
 
 @example
 mkdir mydir && cd mydir  # new working directory
@@ -537,22 +537,33 @@ not suffice: wanting to build one, or a subset, of the @TeX{} engines
 (or other Web2c programs).
 
 The simplest way to do this is to disable everything and then
-explicitly specify what to make. For example, to build only Lua@TeX{}:
+explicitly specify what to make. For example, to build only the
+original @TeX{}:
 
 @example
-./configure --disable-all-pkgs  # or ./Build
-cd Work/texk/web2c              # build directory
-make luatex                     # specify target
+cd Work        # top build directory
+../configure --without-x --disable-shared --disable-all-pkgs \
+             --enable-tex --disable-synctex -C CFLAGS=-g CXXFLAGS=-g
+make
+cd texk/web2c  # cd engine build directory
+make tex       # must specify target
 @end example
 
-This works because the @code{make} automatically runs @code{configure}
-as necessary for the dependencies and target.  Furthermore, the source
-tree can be cut down to just what is needed for the given engine
-(the separate pdf@TeX{} and Lua@TeX{} source repositories do this, if
-you want to peruse examples).
+The first @code{make} run will configure everything, and even build
+the libraries, even though the packages are disabled.
+The source tree can be cut down to just what is needed for the given
+engine (the separate pdf@TeX{} and Lua@TeX{} source repositories do
+this, for example), but see caveats in previous section.
 
-We hope to improve the situation in the future.  Patches are welcome.
+If you want to debug an X-related program or shared library setup, or
+other variants, change the @code{configure} options
+accordingly. Either @code{../Build} or @code{../configure} can be run.
 
+Then it is necessary to again specify the target engine (@code{tex},
+in the above) in the @code{make}.
+
+All this is somewhat unfortunate.  We hope to improve the situation in
+the future.  Patches are welcome.
 
 @node Cross compilation
 @section Cross compilation
@@ -701,6 +712,7 @@ and @file{tie}.
 @cindex @code{xindy} cross compiling requires @code{clisp}
 Building @code{xindy} requires running the host system @code{clisp}
 binary, thus cross compilation is painful, but possible.
+
 
 @node Installing
 @chapter Installing
