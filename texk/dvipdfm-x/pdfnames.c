@@ -224,8 +224,13 @@ pdf_names_lookup_reference (struct ht_table *names, const void *key, int keylen)
   value = ht_lookup_table(names, key, keylen);
 
   if (value) {
-    if (!value->reference)
-      value->reference = pdf_ref_obj(value->object);
+    if (!value->reference) {
+      if (value->object) {
+        value->reference = pdf_ref_obj(value->object);
+      } else {
+        WARN("Can't create object ref for already released object: %s", printable_key(key, keylen));
+      }
+    }
     obj_ref = pdf_link_obj(value->reference);
   } else {
     /* A null object as dummy would create problems because as value
@@ -273,8 +278,10 @@ pdf_names_close_object (struct ht_table *names, const void *key, int keylen)
     return -1;
   }
 
-  pdf_release_obj(value->object);
-  value->object = NULL;
+  if (value->reference) {
+    pdf_release_obj(value->object);
+    value->object = NULL;
+  }
   value->closed = 1;
 
   return 0;

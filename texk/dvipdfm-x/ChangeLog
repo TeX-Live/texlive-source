@@ -1,3 +1,9 @@
+2020-09-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfnames.c: Fix an incompatible behavior introduced by the
+	previous changes on the named object (rev.55887).
+	* configure.ac: Version 20200902.
+
 2020-08-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_pdfm.c: Fix a bug exposed by the previous changes on the
