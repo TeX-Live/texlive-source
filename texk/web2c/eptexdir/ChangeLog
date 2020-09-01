@@ -1,3 +1,9 @@
+2020-09-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdfutils.ch (Scan the argument for command |c|) <expanded_code>:
+	free_avail(def_ref) to avoid memory exhaustion with many \expanded.
+	(Sync with pdftex.web and xetex.web changes r56230.)
+
 2020-07-19  Karl Berry  <karl@freefriends.org>
 
 	* char-warning-eptex.ch: new file (see ../pdftexdir/ChangeLog).

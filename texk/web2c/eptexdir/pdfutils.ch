@@ -967,6 +967,7 @@ expanded_code:
     warning_index := save_warning_index;
     scanner_status := save_scanner_status;
     ins_list(link(def_ref));
+    free_avail(def_ref);
     def_ref := save_def_ref;
     restore_cur_string;
     return;
