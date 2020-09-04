@@ -1,3 +1,11 @@
+2020-09-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Workaround for an issue that occurs when an
+	indirect object (object reference) is used for a resource
+	dictionary entry in pdf:put command. The content of an already
+	existing resource dictionary is copied to the new dictionary.
+	* configure.ac: Version 20200905.
+
 2020-09-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfnames.c: Fix an incompatible behavior introduced by the

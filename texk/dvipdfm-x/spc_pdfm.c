@@ -194,6 +194,20 @@ safeputresdict (pdf_obj *kp, pdf_obj *vp, void *dp)
   dict = pdf_lookup_dict(dp, key);
 
   if (pdf_obj_typeof(vp) == PDF_INDIRECT) {
+    /* Copy the content of old resource category dict (if exists) */
+    if (dict) {
+      pdf_obj *dst = pdf_deref_obj(vp);
+      if (dst) {
+        if (pdf_obj_typeof(dst) == PDF_DICT) {
+          pdf_foreach_dict(dict, safeputresdent, dst);
+          pdf_release_obj(dst);
+        } else {
+          WARN("Invalid type (not DICT) for page/form resource dict entry: key=\"%s\"", key);
+          pdf_release_obj(dst);
+          return  -1;
+        }
+      }
+    }
     pdf_add_dict(dp, pdf_new_name(key), pdf_link_obj(vp));
   } else if (pdf_obj_typeof(vp) == PDF_DICT) {
     if (dict)
