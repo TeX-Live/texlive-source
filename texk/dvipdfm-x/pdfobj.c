@@ -231,6 +231,8 @@ struct pdf_out {
   pdf_obj      *xref_stream;
   pdf_obj      *output_stream;
   pdf_obj      *current_objstm;
+
+  char         *free_list; /* 8192bytes each bit representing if the object is freed */
 };
 
 #if defined(LIBDPX)
@@ -284,11 +286,16 @@ init_pdf_out_struct (pdf_out *p)
   p->xref_stream    = NULL;
   p->output_stream  = NULL;
   p->current_objstm = NULL;
+
+  p->free_list = NEW(8192, char);
+  memset(p->free_list, 0, 8192);
 }
 
 static void
 clean_pdf_out_struct (pdf_out *p)
 {
+  if (p->free_list)
+    RELEASE(p->free_list);
   memset(p, 0, sizeof(pdf_out));
 }
 
@@ -3197,6 +3204,8 @@ release_objstm (pdf_obj *objstm)
   pdf_release_obj(objstm);
 }
 
+#define is_free(b,c) (((b)[(c)/8]) & (1 << (7-((c)%8))))
+
 void
 pdf_release_obj (pdf_obj *object)
 {
@@ -3221,22 +3230,25 @@ pdf_release_obj (pdf_obj *object)
      * Nothing is using this object so it's okay to remove it.
      * Nonzero "label" means object needs to be written before it's destroyed.
      */
-    if (object->label && p->output.file != NULL) {
-      if (!p->options.use_objstm || object->flags & OBJ_NO_OBJSTM ||
-          (p->options.enable_encrypt && (object->flags & OBJ_NO_ENCRYPT)) ||
-          object->generation)
-        pdf_flush_obj(p, object);
-      else {
-        if (!p->current_objstm) {
-          int *data = NEW(2*OBJSTM_MAX_OBJS+2, int);
-          data[0] = data[1] = 0;
-          p->current_objstm = pdf_new_stream(STREAM_COMPRESS);
-          set_objstm_data(p->current_objstm, data);
-          pdf_label_obj(p, p->current_objstm);
-        }
-        if (pdf_add_objstm(p, p->current_objstm, object) == OBJSTM_MAX_OBJS) {
-          release_objstm(p->current_objstm);
-          p->current_objstm = NULL;
+    if (object->label) {
+      p->free_list[object->label/8] |= (1 << (7-(object->label % 8)));
+      if (p->output.file != NULL) {
+        if (!p->options.use_objstm || object->flags & OBJ_NO_OBJSTM ||
+            (p->options.enable_encrypt && (object->flags & OBJ_NO_ENCRYPT)) ||
+            object->generation) {
+          pdf_flush_obj(p, object);
+        } else {
+          if (!p->current_objstm) {
+            int *data = NEW(2*OBJSTM_MAX_OBJS+2, int);
+            data[0] = data[1] = 0;
+            p->current_objstm = pdf_new_stream(STREAM_COMPRESS);
+            set_objstm_data(p->current_objstm, data);
+            pdf_label_obj(p, p->current_objstm);
+          }
+          if (pdf_add_objstm(p, p->current_objstm, object) == OBJSTM_MAX_OBJS) {
+            release_objstm(p->current_objstm);
+            p->current_objstm = NULL;
+          }
         }
       }
     }
@@ -3681,12 +3693,20 @@ pdf_deref_obj (pdf_obj *obj)
       pdf_release_obj(obj);
       obj = pdf_get_object(pf, obj_num, obj_gen);
     } else {
-      pdf_obj *next_obj = OBJ_OBJ(obj);
-      if (!next_obj) {
-        ERROR("Undefined object reference"); 
+      pdf_out      *p    = current_output();
+      pdf_indirect *data = obj->data;
+
+      if ((p->free_list[data->label/8] & (1 << (7-((data->label) % 8))))) {
+        pdf_release_obj(obj);
+        return NULL;
+      } else {
+        pdf_obj *next_obj = OBJ_OBJ(obj);
+        if (!next_obj) {
+          ERROR("Undefined object reference"); 
+        }
+        pdf_release_obj(obj);
+        obj = pdf_link_obj(next_obj);
       }
-      pdf_release_obj(obj);
-      obj = pdf_link_obj(next_obj);
     }
   }
 

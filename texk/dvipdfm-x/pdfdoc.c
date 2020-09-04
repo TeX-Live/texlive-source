@@ -513,7 +513,11 @@ pdf_doc_get_page_resources (pdf_doc *p, const char *category)
     pdf_add_dict(res_dict, pdf_new_name(category), resources);
   } else if (pdf_obj_typeof(resources) == PDF_INDIRECT) {
     resources = pdf_deref_obj(resources); /* FIXME: deref_obj increment link count */
-    pdf_release_obj(resources); /* FIXME: just to decrement link count */
+    if (!resources) {
+      WARN("Resource %s already released?", category);
+    } else {
+      pdf_release_obj(resources); /* FIXME: just to decrement link count */
+    }
   }
 
   return resources;
@@ -528,6 +532,10 @@ pdf_doc_add_page_resource (const char *category,
   pdf_obj *duplicate;
 
   resources = pdf_doc_get_page_resources(p, category);
+  if (!resources) {
+    WARN("Can't add object to resource %s", category);
+    return;
+  }
   duplicate = pdf_lookup_dict(resources, resource_name);
   if (duplicate) {
     if (pdf_compare_reference(duplicate, resource_ref)) {

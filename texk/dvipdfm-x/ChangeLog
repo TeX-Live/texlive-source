@@ -4,6 +4,10 @@
 	indirect object (object reference) is used for a resource
 	dictionary entry in pdf:put command. The content of an already
 	existing resource dictionary is copied to the new dictionary.
+	* pdfobj.c, pdfdoc.c: pdf_indirect stores a pointer to the
+	object itself but there is no way to know if the object is
+	released. This can result in using junk pointers. To resolve
+	this issue, a list is added to record released indirect objects.
 	* configure.ac: Version 20200905.
 
 2020-09-02  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
