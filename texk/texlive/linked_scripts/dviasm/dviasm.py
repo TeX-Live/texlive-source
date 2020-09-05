@@ -5,8 +5,8 @@
 #
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 # Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
-# Copyright (C) 2019 by Arthur Reutenauer <arthur@reutenauer.eu>
-# Copyright (C) 2019 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+# Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
+# Copyright (C) 2019-2020 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -145,6 +145,13 @@ def PutUnsigned(q):
   return (0, PutByte(q))
 
 def PutSigned(q):
+  if 0 <= q < 0x800000:               return PutUnsigned(q)
+  if q < -0x800000 or q >= 0x800000:  return (3, PutSignedQuad(q))
+  if q < -0x8000:     q += 0x1000000; return (2, Put3Bytes(q))
+  if q < -0x80:       q += 0x10000;   return (1, Put2Bytes(q))
+  return (0, PutByte(q))
+
+def PutSignedLength(q):
   if q < -0x800000 or q >= 0x800000:  return (3, PutSignedQuad(q))
   if q >= 0x8000:                     return (2, Put3Bytes(q))
   if q < -0x8000:     q += 0x1000000; return (2, Put3Bytes(q))
@@ -180,22 +187,26 @@ def GetInt(s):
   except: return -1
 
 def GetStrASCII(s): # used in Parse()
-  if len(s) > 1 and ((s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"')): return [ord(c) for c in s[1:-1].decode('unicode_escape')]
+  if len(s) > 1 and ((s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"')):
+    return [ord(c) for c in s[1:-1].decode('unicode_escape')]
   else: return ''
 
 def UCS2toJIS(c):
-  s = c.encode('iso2022-jp')
+  try:
+    s = c.encode('iso2022-jp')
+  except UnicodeEncodeError:
+    s = c.encode('raw_unicode_escape')
   if len(s) == 1: return ord(s)
   else:           return (s[3] << 8) + s[4]
 
 def GetStrUTF8(s): # used in Parse()
   if len(s) > 1 and ((s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"')):
-    t = s[1:-1]
+    t = s[1:-1].encode('raw_unicode_escape').decode('unicode_escape')
     if is_ptex: return [UCS2toJIS(c) for c in t]
     else:       return [ord(c)       for c in t]
   else:         return ''
 
-def PutStrASCII(t): # unsed in Dump()
+def PutStrASCII(t): # used in Dump()
   s = ''
   for o in t:
     if o == 92:         s += '\\\\'
@@ -206,7 +217,7 @@ def PutStrASCII(t): # unsed in Dump()
       warning('Not support characters > 65535; may skip %d.\n' % o)
   return "'%s'" % s
 
-def PutStrLatin1(t): # unsed in Dump()
+def PutStrLatin1(t): # used in Dump()
   s = ''
   for o in t:
     if o == 92:                           s += '\\\\'
@@ -221,10 +232,10 @@ def DecodeISO2022JP(c):
   try:
     s = bytes.fromhex("1b 24 42 %02x %02x" % (c//256, c%256)).decode('iso2022-jp')
   except UnicodeDecodeError:
-    s = ''
+    s = chr(c)
   return s
 
-def PutStrUTF8(t): # unsed in Dump()
+def PutStrUTF8(t): # used in Dump()
   s = ''
   if is_subfont:
     for o in t:
@@ -239,7 +250,7 @@ def PutStrUTF8(t): # unsed in Dump()
       else:               s += chr(o)
   return "'%s'" % s
 
-def PutStrSJIS(t): # unsed in Dump()
+def PutStrSJIS(t): # used in Dump()
   s = ''
   for o in t:
     if o == 92:         s += '\\\\'
@@ -628,7 +639,7 @@ class DVI(object):
         elif cmd[0] == PUT1:
           s.append(self.CmdPair([PUT1, cmd[1][0]]))
         elif cmd[0] in (RIGHT1, DOWN1):
-          s.append(self.CmdPair(cmd))
+          s.append(self.CmdPairLength(cmd))
         elif cmd[0] in (W0, X0, Y0, Z0):
           s.append(bytes.fromhex('%02x' % cmd[0]))
         elif cmd[0] == PUSH:
@@ -639,13 +650,13 @@ class DVI(object):
           s.append(bytes.fromhex('%02x' % POP))
           w, x, y, z = stack.pop()
         elif cmd[0] == W1:
-          w = cmd[1]; s.append(self.CmdPair(cmd))
+          w = cmd[1]; s.append(self.CmdPairLength(cmd))
         elif cmd[0] == X1:
-          x = cmd[1]; s.append(self.CmdPair(cmd))
+          x = cmd[1]; s.append(self.CmdPairLength(cmd))
         elif cmd[0] == Y1:
-          y = cmd[1]; s.append(self.CmdPair(cmd))
+          y = cmd[1]; s.append(self.CmdPairLength(cmd))
         elif cmd[0] == Z1:
-          z = cmd[1]; s.append(self.CmdPair(cmd))
+          z = cmd[1]; s.append(self.CmdPairLength(cmd))
         elif cmd[0] == FNT1:
           if cmd[1] < 64: s.append(bytes.fromhex('%02x' % (FNT_NUM_0 + cmd[1])))
           else:           s.append(self.CmdPair(cmd))
@@ -685,7 +696,8 @@ class DVI(object):
   def WriteFontDefinitions(self, fp):
     s = []
     for e in sorted(self.font_def.keys()):
-      if self.font_def[e]['native']:
+      try:
+        self.font_def[e]['native']
         flags = self.font_def[e]['flags']
         s.append(PutByte(NATIVE_FONT_DEF))
         s.append(PutSignedQuad(e))
@@ -698,7 +710,7 @@ class DVI(object):
         if flags & XDV_FLAG_EXTEND: s.append(PutSignedQuad(self.font_def[e]['extend']))
         if flags & XDV_FLAG_SLANT: s.append(PutSignedQuad(self.font_def[e]['slant']))
         if flags & XDV_FLAG_EMBOLDEN: s.append(PutSignedQuad(self.font_def[e]['embolden']))
-      else:
+      except KeyError:
         l, q = PutUnsigned(e)
         s.append(PutByte(FNT_DEF1 + l))
         s.append(q)
@@ -712,6 +724,10 @@ class DVI(object):
 
   def CmdPair(self, cmd):
     l, q = PutSigned(cmd[1])
+    return bytes.fromhex('%02x' % (cmd[0] + l)) + q
+
+  def CmdPairLength(self, cmd):
+    l, q = PutSignedLength(cmd[1])
     return bytes.fromhex('%02x' % (cmd[0] + l)) + q
 
   ##########################################################
@@ -1144,16 +1160,18 @@ def ProcessOptions():
 DVIasm is a Python script to support changing or creating DVI files
 via disassembling into text, editing, and then reassembling into
 binary format. It is fully documented at
+  http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf
+  http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf
 
-http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf 
-http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf"""
+Please report bugs to
+  https://github.com/aminophen/dviasm"""
 
-  version = """This is %prog-20191126
-  
+  version = """This is %prog-20200905
+
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
-Copyright (C) 2019 by Arthur Reutenauer <arthur@reutenauer.eu>
-Copyright (C) 2019 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
+Copyright (C) 2019-2020 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1188,7 +1206,7 @@ the Free Software Foundation, either version 3 of the License, or
   (options, args) = parser.parse_args()
   if not options.unit in ['sp', 'pt', 'bp', 'mm', 'cm', 'in']:
     parser.error("invalid unit name '%s'!" % options.unit)
-  if options.tabsize < 0: 
+  if options.tabsize < 0:
     parser.error("negative tabsize!")
   if not options.encoding in ['ascii', 'latin1', 'utf8', 'sjis']:
     parser.error("invalid encoding '%s'!" % options.encoding)
@@ -1235,4 +1253,4 @@ if __name__ == '__main__':
   else: # dump -> dvi
     aDVI.Parse(args[0], encoding=options.encoding)
     if options.output: aDVI.Save(options.output)
-    else:              aDVI.SaveToFile(sys.stdout)
+    else:              aDVI.SaveToFile(sys.stdout.buffer)
