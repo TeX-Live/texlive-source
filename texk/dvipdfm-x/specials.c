@@ -528,6 +528,8 @@ static struct {
   int (*eodhk_func) (void);
   int (*bophk_func) (void);
   int (*eophk_func) (void);
+  int (*bofhk_func) (void);
+  int (*eofhk_func) (void);
   int (*check_func) (const char *, int);
   int (*setup_func) (struct spc_handler *, struct spc_env *, struct spc_arg *);
 } known_specials[] = {
@@ -537,11 +539,15 @@ static struct {
    spc_pdfm_at_end_document,
    NULL,
    spc_pdfm_at_end_page,
+   NULL,
+   NULL,
    spc_pdfm_check_special,
    spc_pdfm_setup_handler
   },
 
   {"x:",
+   NULL,
+   NULL,
    NULL,
    NULL,
    NULL,
@@ -555,6 +561,8 @@ static struct {
    NULL,
    NULL,
    NULL,
+   NULL,
+   NULL,
    spc_dvipdfmx_check_special,
    spc_dvipdfmx_setup_handler
   },
@@ -564,11 +572,15 @@ static struct {
    spc_dvips_at_end_document,
    spc_dvips_at_begin_page,
    spc_dvips_at_end_page,
+   NULL,
+   NULL,
    spc_dvips_check_special,
    spc_dvips_setup_handler
   },
 
   {"color",
+   NULL,
+   NULL,
    NULL,
    NULL,
    NULL,
@@ -582,6 +594,8 @@ static struct {
    spc_tpic_at_end_document,
    spc_tpic_at_begin_page,
    spc_tpic_at_end_page,
+   NULL,
+   NULL,
    spc_tpic_check_special,
    spc_tpic_setup_handler
   },
@@ -591,21 +605,63 @@ static struct {
    spc_html_at_end_document,
    spc_html_at_begin_page,
    spc_html_at_end_page,
+   NULL,
+   NULL,
    spc_html_check_special,
    spc_html_setup_handler
   },
 
-  {"unknown",
+  {"compat",
+   spc_misc_at_begin_document,
+   spc_misc_at_end_document,
+   spc_misc_at_begin_page,
    NULL,
-   NULL,
-   NULL,
-   NULL,
+   spc_misc_at_begin_form,
+   spc_misc_at_end_form,
    spc_misc_check_special,
    spc_misc_setup_handler
   },
 
   {NULL} /* end */
 };
+
+int
+spc_begin_form (struct spc_env *spe, const char *ident, pdf_coord cp, pdf_rect *cropbox)
+{
+  int  error = 0;
+  int  i, xobj_id;
+
+  xobj_id = pdf_doc_begin_grabbing(ident, cp.x, cp.y, cropbox);
+
+  if (xobj_id < 0) {
+    error = -1;
+  } else {
+    for (i = 0; known_specials[i].key != NULL; i++) {
+      if (known_specials[i].bofhk_func) {
+        error = known_specials[i].bofhk_func();
+      }
+    }
+  }
+
+  return error;
+}
+
+int
+spc_end_form (struct spc_env *spe, pdf_obj *attr)
+{
+  int  error = 0;
+  int  i;
+
+  pdf_doc_end_grabbing(attr);
+
+  for (i = 0; known_specials[i].key != NULL; i++) {
+    if (known_specials[i].eofhk_func) {
+      error = known_specials[i].eofhk_func();
+    }
+  }
+
+  return error;
+}
 
 int
 spc_exec_at_begin_page (void)

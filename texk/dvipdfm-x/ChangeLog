@@ -1,3 +1,13 @@
+2020-09-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: pdf:bcolor and pdf:scolor now accept new
+	keywords "fill" and "stroke" to indicate either of fill/stroke
+	color is specified.
+	* spc_misc.[ch], specials.[ch]: New special commands for
+	pdfcolorstack are added. This is a compatibility feature to
+	pdfcolorstack in pdftex.
+	* configure.ac: Version 20200906.
+
 2020-09-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_pdfm.c: Workaround for an issue that occurs when an

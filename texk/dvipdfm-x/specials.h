@@ -63,6 +63,9 @@ extern int      spc_end_annot     (struct spc_env *spe);
 extern int      spc_resume_annot  (struct spc_env *spe);
 extern int      spc_suspend_annot (struct spc_env *spe);
 
+extern int      spc_begin_form    (struct spc_env *spe, const char *ident, pdf_coord cp, pdf_rect *cropbox);
+extern int      spc_end_form      (struct spc_env *spe, pdf_obj *attr);
+
 extern int      spc_is_tracking_boxes (struct spc_env *spe);
 
 /* linkmode 0: normal, 1: capture phantom texts */

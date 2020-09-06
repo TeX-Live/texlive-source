@@ -26,7 +26,11 @@
 #include "specials.h"
 
 extern int spc_misc_check_special (const char *buffer, int size);
-extern int spc_misc_setup_handler (struct spc_handler *handle,
-				   struct spc_env *spe, struct spc_arg *args);
+extern int spc_misc_setup_handler (struct spc_handler *handle, struct spc_env *spe, struct spc_arg *args);
+extern int spc_misc_at_begin_document (void);
+extern int spc_misc_at_end_document (void);
+extern int spc_misc_at_begin_page (void);
+extern int spc_misc_at_begin_form (void);
+extern int spc_misc_at_end_form (void);
 
 #endif /* _SPC_MISC_H_ */

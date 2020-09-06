@@ -891,23 +891,38 @@ spc_handler_pdfm_xann (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
 {
-  int       error;
-  pdf_color fc, sc;
+  int        error = 0;
+  pdf_color  fc, sc;
   pdf_color *pfc, *psc;
 
   pdf_color_get_current(&psc, &pfc);
-  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
-  if (!error) {
-    if (ap->curptr < ap->endptr) {
-      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
-    } else {
-      pdf_color_copycolor(&sc, &fc);
+  if (ap->curptr <= ap->endptr + strlen("fill") &&
+      !memcmp(ap->curptr, "fill", strlen("fill"))) {
+    ap->curptr += strlen("fill");
+    skip_white(&ap->curptr, ap->endptr);
+    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+    pdf_color_copycolor(&sc, psc);
+  } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
+             !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
+    ap->curptr += strlen("stroke");
+    skip_white(&ap->curptr, ap->endptr);
+    error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+    pdf_color_copycolor(&fc, pfc);
+  } else {
+    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+    if (!error) {
+      if (ap->curptr < ap->endptr) {
+        error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+      } else {
+        pdf_color_copycolor(&sc, &fc);
+      }
     }
   }
 
-  if (error)
+  if (error) {
     spc_warn(spe, "Invalid color specification?");
-  else {
+  } else {
+    skip_white(&ap->curptr, ap->endptr);
     pdf_color_push(&sc, &fc); /* save currentcolor */
   }
 
@@ -921,24 +936,39 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
 static int
 spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
 {
-  int       error;
-  pdf_color fc, sc;
+  int        error = 0;
+  pdf_color  fc, sc;
   pdf_color *pfc, *psc;
 
   pdf_color_get_current(&psc, &pfc);
-  error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
-  if (!error) {
-    if (ap->curptr < ap->endptr) {
-      error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
-    } else {
-      pdf_color_copycolor(&sc, &fc);
+  if (ap->curptr <= ap->endptr + strlen("fill") &&
+      !memcmp(ap->curptr, "fill", strlen("fill"))) {
+    ap->curptr += strlen("fill");
+    skip_white(&ap->curptr, ap->endptr);
+    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+    pdf_color_copycolor(&sc, psc);
+  } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
+             !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
+    ap->curptr += strlen("stroke");
+    skip_white(&ap->curptr, ap->endptr);
+    error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+    pdf_color_copycolor(&fc, pfc);
+  } else {
+    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+    if (!error) {
+      if (ap->curptr < ap->endptr) {
+        error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+      } else {
+        pdf_color_copycolor(&sc, &fc);
+      }
     }
   }
 
-  if (error)
+  if (error) {
     spc_warn(spe, "Invalid color specification?");
-  else
+  } else {
     pdf_color_set(&sc, &fc);
+  }
 
   return  error;
 }
@@ -1736,7 +1766,7 @@ spc_handler_pdfm_fstream (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
 {
-  int             xobj_id;
+  int             error;
   char           *ident;
   pdf_rect        cropbox;
   pdf_coord       cp;
@@ -1786,16 +1816,14 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
   }
 
   spc_get_current_point(spe, &cp);
-  xobj_id = pdf_doc_begin_grabbing(ident, cp.x, cp.y, &cropbox);
+  error = spc_begin_form(spe, ident, cp, &cropbox);
 
-  if (xobj_id < 0) {
-    RELEASE(ident);
+  if (error)
     spc_warn(spe, "Couldn't start form object.");
-    return -1;
-  }
+
   RELEASE(ident);
 
-  return 0;
+  return error;
 }
 
 /* An extra dictionary after exobj must be merged to the form dictionary,
@@ -1805,6 +1833,7 @@ spc_handler_pdfm_bform (struct spc_env *spe, struct spc_arg *args)
 static int
 spc_handler_pdfm_eform (struct spc_env *spe, struct spc_arg *args)
 {
+  int              error;
   pdf_obj         *attrib = NULL;
   struct spc_pdf_ *sd     = &_pdf_stat;
 
@@ -1821,9 +1850,9 @@ spc_handler_pdfm_eform (struct spc_env *spe, struct spc_arg *args)
   if (sd->pageresources) {
     pdf_foreach_dict(sd->pageresources, forallresourcecategory, NULL);
   }
-  pdf_doc_end_grabbing(attrib);
+  error = spc_end_form(spe, attrib);
 
-  return 0;
+  return error;
 }
 
 /* Saved XObjects can be used as follows:
