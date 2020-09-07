@@ -95,7 +95,7 @@ pdfcolorstack__init (void *dp)
   struct spc_stack *sd = dp;
   int  i;
 
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < PDFCOLORSTACK_MAX_STACK; i++) {
     sd->stacks[i].page    = 0;
     sd->stacks[i].direct  = 0;
     dpx_stack_init(&sd->stacks[i].stack);
@@ -356,7 +356,7 @@ spc_misc_at_begin_page (void)
   struct spc_stack *sd = &spc_stack;
   int  i;
 
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < PDFCOLORSTACK_MAX_STACK; i++) {
     dpx_stack *stk = &sd->stacks[i].stack;
 
     if (sd->stacks[i].page) {
