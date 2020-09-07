@@ -1,6 +1,8 @@
 2020-09-07  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_misc.c: Fix a bug that the upper limit of stack id is wrong.
+	* Update copyright years and README. Remove outdated
+	information from README.
 
 2020-09-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
