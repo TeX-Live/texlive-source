@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.3e"
+local version = "v0.3f"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -43,7 +43,7 @@ local mode = parameters.mode
 local build_file = parameters.build_file 
 
 -- handle output formats
-local allowed_output_formats = {xhtml = true, html5=true, odt = true, docbook=true, tei=true}
+local allowed_output_formats = {xhtml = true, html5=true, odt = true, docbook=true, tei=true, jats=true}
 -- formatter is Lua library which must provide at least prepare_parameters
 -- and process_build_sequence functions
 local formatter
