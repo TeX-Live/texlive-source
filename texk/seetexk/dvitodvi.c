@@ -1,4 +1,4 @@
-/* Copyright (c) 1987, 1989, 2012 University of Maryland Department of
+/* Copyright (c) 1987, 1989, 2012, 2020 University of Maryland Department of
    Computer Science.
    
    Permission is hereby granted, free of charge, to any person obtaining
@@ -60,8 +60,6 @@ extern int   optind;
 
 #define white(x) ((x) == ' ' || (x) == '\t' || (x) == ',')
 
-#define MAXDVIPAGES 1000 /* max (absolute) pages in DVI file */
-
 char  *ProgName;
 
 /* Globals */
@@ -105,8 +103,8 @@ const char	*DVIFileName;		/* name of input DVI file */
 FILE	*inf;			/* the input file itself */
 FILE	*outf;			/* the output DVI file */
 
-long	StartOfPage[MAXDVIPAGES];	/* The file positions of the
-					   input pages */
+long	*StartOfPage;		/* The file positions of the input pages */
+long	StartOfPageSpace;	/* Number of entries of StartOfPage array */
 
 long	StartOfLastPage;	/* The file position just before we
 				   started the last page */
@@ -131,7 +129,8 @@ i32	Count[10];		/* the 10 \count variables */
 /* save some string space: we use this a lot */
 char	writeerr[] = "error writing DVI file";
 #ifndef KPATHSEA
-char	*malloc(), *realloc();
+void	*malloc(), *realloc();
+void	free();
 #endif
 
 static void WriteFont(struct fontinfo *fi);
@@ -739,7 +738,13 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 	ptexdvi = 0;
 #endif
 	InputPageNumber = 0;
+	StartOfPageSpace = 32;
 	StartOfLastPage = -1;
+	StartOfPage = malloc(sizeof(long) * StartOfPageSpace);
+	if (!StartOfPage) {
+		error(1, -1, "cannot allocate list of pages; out of memory");
+	}
+
 	HandlePreAmble();
 	ScanDVIFile();
 	if (fseek(inf, 16L, 1) == -1)
@@ -753,6 +758,7 @@ Usage: %s [-q] [-i infile] [-o outfile] [-w width] [-h height] <pagespecs> [infi
 	PageSpecs = ParseSpecs(specstring, 1);
 
 	HandleDVIFile();
+	free(StartOfPage);
 	if (WritingPage)
 	   EndPage(1);
 	HandlePostAmble();
@@ -1186,11 +1192,23 @@ PutEmptyPage(void)
 static void
 ScanDVIFile(void)
 {
+	long *tmp;
+
 	UseThisPage = 0;
 
 	StartOfPage[InputPageNumber] = ftell(inf);
 	while (HandlePage(0, 0, 0, 0)) {  /* scan DVI file */
-	        StartOfPage[++InputPageNumber] = ftell(inf);
+		++InputPageNumber;
+		if (InputPageNumber >= StartOfPageSpace) {
+			StartOfPageSpace *= 2;
+			tmp = realloc(StartOfPage, sizeof(long) * StartOfPageSpace);
+			if (!tmp) {
+				error(1, -1, "cannot grow list of pages; out of memory");
+			}
+			StartOfPage = tmp;
+		}
+
+		StartOfPage[InputPageNumber] = ftell(inf);
 	}
 }
 

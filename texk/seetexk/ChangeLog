@@ -1,3 +1,14 @@
+2020-09-08  Karl Berry  <karl@freefriends.org>
+
+	* dvitodvi.man,
+	* dvibook.man: insert date, mention maintained as part of TL.
+
+2020-05-01  Manuel Stoeckl  <texlive@mstoeckl.com>
+
+	* dvitodvi.c,
+	* dvibook.c (MAXDVIPAGES): remove; dynamically allocate.
+	https://tug.org/pipermail/tex-live/2020-September/046051.html
+
 2020-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac: SeeTeX Ver.20200501
