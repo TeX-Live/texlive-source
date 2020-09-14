@@ -162,6 +162,34 @@ use warnings;
 ##
 ## 12 Jan 2012 STILL NEED TO DOCUMENT some items below
 ##
+## 13 Sep 2020 John Collins  V. 4.70a.  Updates in comments about bibtex.
+## 28 Aug 2020 John Collins  Correct $biber and $bibtex to use %S not %B
+## 24 Aug 2020 John Collins  Make sure bibtex/biber rules when created for
+##                           missing bbl file have correct path for source
+##                           and destination when out/aux dir used.
+## 16 Jun 2020 John Collins  Warning when bibtex fudge is used.
+##                           Change default $bibtex_fudge to 0.  This is safe with
+##                           at least bibtex in TeXLive 2019 or later, and in current
+##                           MiKTeX.  This version of latexmk is distributed in TeXLive
+##                           and MiKTeX with a recent enough version of bibtex.
+##                           Previously, there was a bug in bibtex that prevented it
+##                           working correctly when -output-directory is used.  Latexmk
+##                           took special action to evade the bug, but at the expense
+##                           of problems when a .bib file is specified in a directory
+##                           relative to the document directory.
+##                           V. 4.69c
+##  9 Jun 2020 John Collins  Fix problems with excess calls to parse_log, and messages
+##                             about changing rule structure when .fdb_latexmk file
+##                             does not exist.
+##                           Making quoting (or not) of output and aux directories 
+##                             for option to *latex obey $quote_filenames.
+##  8 Jun 2020 John Collins  Engine detection: note that recent lualatex
+##                           uses luaHBtex, not luatex.  So I modified the one
+##                           place that the name of the $engine is used.
+##  6 May 2020 John Collins  Add diagnostic for changed environment variables
+## 27 Apr 2020 John Collins  Put ./ for latexmkrc files in current directory
+##                           V. 4.69b
+## Current version (4.69a, 17 Apr 2020) to CTAN
 ## 16 Apr 2020 John Collins  Correct contents of "All targets (...) are up-to-date" message
 ##                           V. 4.69a.
 ## 12 Mar 2020 John Collins  Version is 4.69
@@ -280,8 +308,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.69a';
-$version_details = "$My_name, John Collins, 17 Apr. 2020";
+$version_num = '4.70a';
+$version_details = "$My_name, John Collins, 13 September 2020";
 
 use Config;
 use File::Basename;
@@ -623,11 +651,15 @@ foreach (
 
 
 ## Command to invoke biber & bibtex
-$biber  = 'biber %O %B';
-$bibtex  = 'bibtex %O %B';
+$biber  = 'biber %O %S';
+$bibtex  = 'bibtex %O %S';
 # Switch(es) to make biber & bibtex silent:
-$bibtex_fudge = 1; # Use hack to get bibtex working in old versions that
-                   #    don't handle output-directory.
+$bibtex_fudge = 0; # Don't use hack to get bibtex working in old versions that
+                   #    don't handle output-directory.  When this version of
+                   #    latexmk is part of a distribution of TeX, the
+                   #    accompanying bibtex should also be recent enough
+                   #    (e.g., TeXLive 2019 or later, current MiKTeX) not to
+                   #    need the  hack/fudge.
 $biber_silent_switch  = '--onlylog';
 $bibtex_silent_switch  = '-terse';
 $bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
@@ -1739,7 +1771,7 @@ if ( $auto_rc_use && ($HOME ne "" ) ) {
 }
 if ( $auto_rc_use ) { 
     # Rc file in current directory:
-    read_first_rc_file_in_list( "latexmkrc", ".latexmkrc" );
+    read_first_rc_file_in_list( "./latexmkrc", "./.latexmkrc" );
 }
 
 ## Process command line args.
@@ -2213,15 +2245,16 @@ if ( $recorder ) {
 #   possible cd to the document directory, since the directories can be
 #   relative to the document.
 
+$q = $quote_filenames ? '"' : '';
 if ( $out_dir ) {
-    add_option( "-output-directory=\"$out_dir\"",
+    add_option( "-output-directory=$q$out_dir$q",
                 \$latex, \$pdflatex, \$lualatex, \$xelatex );
 }
 if ( $aux_dir && ($aux_dir ne $out_dir) ) {
     # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
     # option is sufficient, especially because the -aux-directory exists
     # only in MiKTeX, not in TeXLive.
-    add_option( "-aux-directory=\"$aux_dir\"",
+    add_option( "-aux-directory=$q$aux_dir$q",
                 \$latex, \$pdflatex, \$lualatex, \$xelatex );
 }
 
@@ -2666,7 +2699,7 @@ foreach $filename ( @file_list )
                       sub{ if ( $$Ptest_kind == 1 ) { $$Ptest_kind = 3;} }
         );
         if ( -e $log_name ) {
-            rdb_for_some( [keys %possible_primaries], \&rdb_set_latex_deps );
+            rdb_for_some( [keys %current_primaries], \&rdb_set_latex_deps );
         }
     }
     foreach $rule ( &rdb_accessible ) {
@@ -2896,6 +2929,9 @@ sub ensure_path {
         }
         else {
             $ENV{$var} = $_ . $search_path_separator;
+        }
+        if (!$silent) {
+            print "Set environment variable $var='$ENV{$var}'\n";
         }
     }
 }
@@ -4292,11 +4328,13 @@ sub run_bibtex {
     local %ENV = %ENV;
     my ( $base, $path, $ext ) = fileparseA( $$Psource );
     if ( $path && $bibtex_fudge ) {
-        # Since (e.g.,) 'bibtex output/main.aux' doesn't find subsidiary .aux
-        #   files, as from \@include{chap.aux}, we change directory to the
-        #   directory of the top-level .aux file to run bibtex.  But we have to
-        #   fix search paths for .bib and .bst, since they may be specified
-        #   relative to the document directory.
+        # Up to TeXLive 2018, the following was true; situation has changed since.
+        #   When an output directory is specified and with a bibtex from 2018 or
+        #   earlier, running 'bibtex output/main.aux' doesn't find subsidiary .aux
+        #   files, as from \@include{chap.aux}.  To evade the bug, we change
+        #   directory to the directory of the top-level .aux file to run bibtex.
+        #   But we have to fix search paths for .bib and .bst, since they may be
+        #   specified relative to the document directory.
         my $cwd = good_cwd();
         foreach ( 'BIBINPUTS', 'BSTINPUTS' ) {
             if ( exists $ENV{$_} ) {
@@ -4308,7 +4346,16 @@ sub run_bibtex {
         }
         pushd( $path );
         if (!$silent) {
-            print "$My_name: changed directory to '$path'\n",
+            print "$My_name: ==========WARNING:=================\n",
+                  "I am taking action to evade a bug/feature in older versions of bibtex\n",
+                  "This may give problems under some situations, symptomized by bibtex not\n",
+                 "finding a .bib file or an aux file.\n",
+                "Provided you have a recent version of bibtex (about 2019 or later) you\n",
+                "can avoid the problems by  putting '\$bibtex_fudge = 0;' in an\n",
+                "initialization file (a latexmrc file for $my_name.\n",
+                  "\n",
+                  "Here my bug-evading action:\n",
+                  "I temporarily changed directory to '$path'\n",
                   "Set BIBINPUTS='$ENV{BIBINPUTS}'\n",
                   "Set BSTINPUTS='$ENV{BSTINPUTS}'\n";
         }
@@ -4568,6 +4615,8 @@ sub parse_log {
     if ( ! open( $log_file, "<$log_name" ) ) {
         return 0;
     }
+    print "$My_name: Examining '$log_name'\n"
+        if not $silent;
     if ($log_file_binary) { binmode $log_file; }
 # Collect lines of log file
     my @lines = ();
@@ -4608,6 +4657,7 @@ sub parse_log {
             # LuaTeX sometimes at 80. Xetex 80 or longer with non-ascii characters.
             while ( ( ($len == $log_wrap)
                       || ( ($engine eq 'LuaTeX') && ($len == $log_wrap+1) )
+                      || ( ($engine eq 'LuaHBTeX') && ($len == $log_wrap+1) )
                       || ( ($engine eq 'XeTeX') &&  ($len >= $log_wrap+1) )
                     )
                     && !eof($log_file) ) {
@@ -4867,10 +4917,15 @@ LINE:
             next LINE;
         }
         elsif ( /^No file (.*?\.bbl)./ ) {
-                #  When (pdf)latex is run with an -output-directory 
-                #    or an -aux_directory, the file name does not contain
-                #    the output path; fix this, after removing quotes:
-            my $bbl_file = normalize_force_directory( $aux_dir1, $1 );
+            my $bbl_file = clean_filename($1);
+            my $aux_file = $bbl_file;
+            $aux_file =~ s/\.bbl$/\.aux/;
+            # When aux dir used (may equal out dir), name of missing file fails
+            # to have correct directory.  If corresponding aux file exists,
+            # with name prefixed by aux dir, then apply prefix to bbl_file.
+            if (-e  $aux_dir1 . $aux_file) {
+                $bbl_file = $aux_dir1 . $bbl_file;
+            }
             warn "$My_name: Non-existent bbl file '$bbl_file'\n $_\n";
             $dependents{$bbl_file} = 0;
             push @bbl_files, $bbl_file;
@@ -7720,6 +7775,7 @@ sub rdb_run1 {
 
     # Find any internal command
     my @int_args = @$PAint_cmd;
+    
     my $int_cmd = shift @int_args;
     my @int_args_for_printing = @int_args;
     foreach (@int_args_for_printing) {
@@ -8993,7 +9049,12 @@ sub show_array {
 #  Then print rest of @_, one item per line preceeded by some space
     warn "$_[0]\n";
     shift;
-    if ($#_ >= 0) {  foreach (@_){ warn "  $_\n";} }
+    if ($#_ >= 0) {
+        foreach (@_){
+           if (defined $_ ) { warn "  $_\n"; }
+           else { warn "  undef\n"; }
+        }
+    }
     else { warn "  NONE\n"; }
 }
 
