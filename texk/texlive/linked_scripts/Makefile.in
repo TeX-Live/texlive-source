@@ -371,6 +371,7 @@ texmf_other_scripts = \
 	latexindent/latexindent.pl \
 	latexmk/latexmk.pl \
 	latexpand/latexpand \
+	light-latex-make/llmk.lua \
 	lilyglyphs/lily-glyph-commands.py \
 	lilyglyphs/lily-image-commands.py \
 	lilyglyphs/lily-rebuild-pdfs.py \
