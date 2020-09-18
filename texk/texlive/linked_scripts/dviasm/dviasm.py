@@ -455,7 +455,7 @@ class DVI(object):
       if o == SET_RULE:
         s.append([SET_RULE, [p, SignedQuad(fp)]])
       elif o in (PUT1, PUT2, PUT3, PUT4):
-        s.append([PUT1, p])
+        s.append([PUT1, [p]])
       elif o == PUT_RULE:
         s.append([PUT_RULE, [p, SignedQuad(fp)]])
       elif o == NOP:
@@ -492,7 +492,7 @@ class DVI(object):
       elif o < FNT_NUM_0 + 64 or o in (FNT1, FNT2, FNT3, FNT4):
         s.append([FNT1, p])
       elif o in (XXX1, XXX2, XXX3, XXX4):
-        q = fp.read(p).decode('utf8')
+        q = fp.read(p)
         s.append([XXX1, q])
       elif o in (FNT_DEF1, FNT_DEF2, FNT_DEF3, FNT_DEF4):
         self.DefineFont(p, fp)
@@ -644,10 +644,20 @@ class DVI(object):
           if cmd[1] < 64: s.append(bytes.fromhex('%02x' % (FNT_NUM_0 + cmd[1])))
           else:           s.append(self.CmdPairU(cmd))
         elif cmd[0] == XXX1:
-          cmd1 = cmd[1].encode('utf8')
-          l = len(cmd[1])
-          if l < 256: s.append(bytes.fromhex('%02x' % XXX1) + bytes.fromhex('%02x' % l) + cmd1)
-          else:       s.append(bytes.fromhex('%02x' % XXX4) + PutSignedQuad(l) + cmd1)
+          if options.xxx_encoding == "none":
+            l = len(cmd[1]) # leave encoding untouched
+          else:
+            cmd1 = cmd[1].encode(options.xxx_encoding)
+            l = len(cmd1)
+          if l < 256:
+            s.append(bytes.fromhex('%02x' % XXX1) + bytes.fromhex('%02x' % l))
+          else:
+            s.append(bytes.fromhex('%02x' % XXX4) + PutSignedQuad(l))
+          if options.xxx_encoding == "none":
+            for o in cmd[1]:
+              s.append(bytes.fromhex('%02x' % ord(o)))
+          else:
+              s.append(cmd1)
         elif cmd[0] == DIR:
           s.append(bytes.fromhex('%02x' % DIR) + bytes.fromhex('%02x' % cmd[1]))
         elif cmd[0] == BEGIN_REFLECT:
@@ -806,7 +816,10 @@ class DVI(object):
         else:
           self.cur_page.append([SET1, ol])
       elif key == 'put':
-        self.cur_page.append([PUT1, GetStr(val)])
+        ol = GetStr(val)
+        if len(ol) != 1:
+          warning('only one character is allowed for put!')
+        self.cur_page.append([PUT1, ol])
       elif key == 'setrule':
         v = val.split(' ')
         if len(v) != 2:
@@ -937,7 +950,10 @@ class DVI(object):
           fp.write("push:\n")
           indent += tabsize
         elif cmd[0] == XXX1:
-          fp.write("xxx: %s\n" % repr(cmd[1]))
+          if options.xxx_encoding == "none":
+            fp.write("xxx: %s\n" % PutStrASCII(cmd[1])) # leave encoding untouched
+          else:
+            fp.write("xxx: '%s'\n" % cmd[1].decode(options.xxx_encoding))
         elif cmd[0] == DIR:
           fp.write("dir: %d\n" % cmd[1])
         elif cmd[0] == BEGIN_REFLECT:
@@ -1147,7 +1163,7 @@ binary format. It is fully documented at
 Please report bugs to
   https://github.com/aminophen/dviasm"""
 
-  version = """This is %prog-20200912
+  version = """This is %prog-20200918
 
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
@@ -1172,6 +1188,10 @@ the Free Software Foundation, either version 3 of the License, or
                     action="store", type="string", dest="encoding",
                     metavar="STR",
                     help="encoding for input/output [default=%default]")
+  parser.add_option("-x", "--xxx-encoding",
+                    action="store", type="string", dest="xxx_encoding",
+                    metavar="STR",
+                    help="encoding for interpreting xxx strings [default=%default]")
   parser.add_option("-t", "--tabsize",
                     action="store", type="int", dest="tabsize",
                     metavar="INT",
@@ -1183,12 +1203,14 @@ the Free Software Foundation, either version 3 of the License, or
                     action="append", type="string", dest="subfont",
                     metavar="STR",
                     help="the list of fonts with UCS2 subfont scheme (comma separated); disable internal subfont list if STR is empty")
-  parser.set_defaults(unit='pt', encoding='utf8', tabsize=2)
+  parser.set_defaults(unit='pt', encoding='utf8', xxx_encoding='none', tabsize=2)
   (options, args) = parser.parse_args()
   if not options.unit in ['sp', 'pt', 'bp', 'mm', 'cm', 'in']:
     parser.error("invalid unit name '%s'!" % options.unit)
   if options.tabsize < 0:
     parser.error("negative tabsize!")
+  if not options.xxx_encoding in ['none', 'utf8', 'sjis', 'eucjp']:
+    parser.error("invalid xxx-encoding '%s'!" % options.xxx_encoding)
   if not options.encoding in ['ascii', 'latin1', 'utf8', 'sjis', 'eucjp']:
     parser.error("invalid encoding '%s'!" % options.encoding)
   if options.ptex:
