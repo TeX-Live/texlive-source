@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 56058 2020-08-06 01:41:42Z preining $
+# $Id: tlmgr.pl 56372 2020-09-18 05:52:26Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 56058 $';
-my $datrev = '$Date: 2020-08-06 03:41:42 +0200 (Thu, 06 Aug 2020) $';
+my $svnrev = '$Revision: 56372 $';
+my $datrev = '$Date: 2020-09-18 07:52:26 +0200 (Fri, 18 Sep 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -3958,7 +3958,7 @@ sub show_one_package_csv {
     } elsif ($d eq "installed") {
       push @out, $is_installed;
     } elsif ($d eq "relocatable") {
-      push @out, ($tlp->relocatable ? 1 : 0);
+      push @out, ($tlp->relocated ? 1 : 0);
     } elsif ($d eq "cat-version") {
       push @out, ($tlp->cataloguedata->{'version'} || "");
     } elsif ($d eq "cat-date") {
@@ -10065,7 +10065,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 56058 2020-08-06 01:41:42Z preining $
+$Id: tlmgr.pl 56372 2020-09-18 05:52:26Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
