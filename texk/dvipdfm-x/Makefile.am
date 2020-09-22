@@ -26,7 +26,6 @@ xdvipdfmx_SOURCES = \
 	cid_basefont.h \
 	cid.c \
 	cid.h \
-	cid_p.h \
 	cidtype0.c \
 	cidtype0.h \
 	cidtype2.c \

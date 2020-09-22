@@ -370,6 +370,8 @@ dpx_stack_roll (dpx_stack *stack, int n, int j)
   if (n == 1)
     return;
   j = j % n;
+  if (j < 0)
+    j = n + j;
   while (j-- > 0) {
     int         m = n;
     stack_elem *elem, *prev, *top;

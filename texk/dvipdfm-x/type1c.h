@@ -25,7 +25,7 @@
 
 #include   "pdffont.h"
 
-extern int  pdf_font_open_type1c (pdf_font *font);
+extern int  pdf_font_open_type1c (pdf_font *font, const char *ident, int index, int encoding_id, int embedding);
 extern int  pdf_font_load_type1c (pdf_font *font);
 
 #endif /* _TYPE1C_H_ */

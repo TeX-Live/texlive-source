@@ -115,9 +115,7 @@ extern int    pdf_dev_concat        (const pdf_tmatrix *M);
 extern void   pdf_dev_dtransform    (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_idtransform   (pdf_coord *p, const pdf_tmatrix *M);
 extern void   pdf_dev_transform     (pdf_coord *p, const pdf_tmatrix *M);
-#if 0
 extern void   pdf_dev_itransform    (pdf_coord *p, const pdf_tmatrix *M);
-#endif
 
 extern int    pdf_dev_gsave         (void);
 extern int    pdf_dev_grestore      (void);

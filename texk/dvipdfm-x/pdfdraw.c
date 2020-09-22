@@ -63,10 +63,12 @@ inversematrix (pdf_tmatrix *W, const pdf_tmatrix *M)
     return -1; /* result is undefined. */
   }
 
-  W->a =  (M->d) / det;  W->b = -(M->b) / det;
-  W->c = -(M->c) / det;  W->d =  (M->a) / det;
-  W->e =  (M->c) * (M->f) - (M->d) * (M->e);
-  W->f =  (M->b) * (M->e) - (M->a) * (M->f);
+  W->a  =  (M->d) / det;  W->b = -(M->b) / det;
+  W->c  = -(M->c) / det;  W->d =  (M->a) / det;
+  W->e  =  (M->c) * (M->f) - (M->d) * (M->e);
+  W->f  =  (M->b) * (M->e) - (M->a) * (M->f);
+  W->e /= det;
+  W->f /= det;
 
   return 0;
 }
@@ -134,7 +136,6 @@ pdf_coord__transform (pdf_coord *p, const pdf_tmatrix *M)
   return 0;
 }
 
-#if 0
 static /* __inline__ */ int
 pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -152,7 +153,6 @@ pdf_coord__itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return 0;
 }
-#endif
 
 static /* __inline__ */ int
 pdf_coord__dtransform (pdf_coord *p, const pdf_tmatrix *M)
@@ -1759,7 +1759,6 @@ pdf_dev_transform (pdf_coord *p, const pdf_tmatrix *M)
   return;
 }
 
-#if 0
 void
 pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 {
@@ -1773,7 +1772,6 @@ pdf_dev_itransform (pdf_coord *p, const pdf_tmatrix *M)
 
   return;
 }
-#endif
 
 int
 pdf_dev_arc  (double c_x , double c_y, double r,

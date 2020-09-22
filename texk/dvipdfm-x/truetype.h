@@ -25,7 +25,7 @@
 
 #include   "pdffont.h"
 
-extern int  pdf_font_open_truetype (pdf_font *font);
+extern int  pdf_font_open_truetype (pdf_font *font, const char *ident, int index, int encoding_id, int embedding);
 extern int  pdf_font_load_truetype (pdf_font *font);
 
 #endif /* _TRUETYPE_H_ */

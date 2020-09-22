@@ -1,3 +1,16 @@
+2020-09-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cid.[ch], cidtype0.[ch], cidtype2.[ch], pdfdev.c,
+	pdffont.[ch], pkfont.[ch], truetype.[ch], type0.[ch],
+	type1.[ch], type1c.[ch]: Revise font related code and largely
+	simplify it. Type0 and CIDFont now use the same struct as
+	simple fonts.
+	* Makefile.am, cid_p.h: Remove cid_p.h.
+	* pdfdraw.[ch]: Fix a bug in calculation of determinant.
+	Enable few functions for future improvement.
+	* dpxutil.c: Fix a bug in the roll operation.
+	* configure.ac: Version 20200922.
+
 2020-09-07  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_misc.c: Fix a bug that the upper limit of stack id is wrong.
