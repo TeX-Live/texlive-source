@@ -987,6 +987,7 @@ pdf_font_load_font (const char *ident, double font_scale, fontmap_rec *mrec)
     strcpy(font->ident, ident);
     font->encoding_id = encoding_id;
     font->filename    = NEW(strlen(fontname) + 1, char);
+    font->point_size  = font_scale;
     strcpy(font->filename, fontname);
     font->index       = (mrec && mrec->opt.index) ? mrec->opt.index : 0;
     font->flags      |= (mrec && (mrec->opt.flags & FONTMAP_OPT_NOEMBED)) ? PDF_FONT_FLAG_NOEMBED : 0;
@@ -996,7 +997,7 @@ pdf_font_load_font (const char *ident, double font_scale, fontmap_rec *mrec)
       font->subtype = PDF_FONT_FONTTYPE_TYPE1C;
     } else if (pdf_font_open_truetype(font, font->filename, font->index, font->encoding_id, (font->flags & PDF_FONT_FLAG_NOEMBED) ? 0 : 1) >= 0) {
       font->subtype = PDF_FONT_FONTTYPE_TRUETYPE;
-    } else if (pdf_font_open_pkfont(font,font->filename, font->index, font->encoding_id, (font->flags & PDF_FONT_FLAG_NOEMBED) ? 0 : 1, font->point_size) >= 0) {
+    } else if (pdf_font_open_pkfont(font, font->filename, font->index, font->encoding_id, (font->flags & PDF_FONT_FLAG_NOEMBED) ? 0 : 1, font->point_size) >= 0) {
       font->subtype = PDF_FONT_FONTTYPE_TYPE3;
     } else {
       pdf_clean_font_struct(font);

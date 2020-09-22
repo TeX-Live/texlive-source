@@ -1,7 +1,3 @@
-2020-09-22  Akira Kakuto  <kakuto@w32tex.org>
-
-	* xdvipdfmx.test: Disable PK test temporarily.
-
 2020-09-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cid.[ch], cidtype0.[ch], cidtype2.[ch], pdfdev.c,
