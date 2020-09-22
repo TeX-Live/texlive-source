@@ -34,10 +34,13 @@ echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
 	|| failed="$failed xdvipdfmx-image"	
 
-echo "*** xdvipdfmx -v -o xbmc2.pdf xbmc" && echo \
-	&& ./xdvipdfmx -v -o xbmc2.pdf  $srcdir/tests/xbmc \
-	&& echo && echo "xdvipdfmx-xbmc tests OK" && echo \
-	|| failed="$failed xdvipdfmx-xbmc"
+#
+# disable PK test temporarily
+#
+#echo "*** xdvipdfmx -v -o xbmc2.pdf xbmc" && echo \
+#	&& ./xdvipdfmx -v -o xbmc2.pdf  $srcdir/tests/xbmc \
+#	&& echo && echo "xdvipdfmx-xbmc tests OK" && echo \
+#	|| failed="$failed xdvipdfmx-xbmc"
 
 test -z "$failed" && exit 0
 echo
