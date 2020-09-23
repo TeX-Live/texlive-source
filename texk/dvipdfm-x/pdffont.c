@@ -490,12 +490,14 @@ pdf_close_fonts (void)
 
     font = &font_cache.fonts[font_id];
     if ((font->flags & PDF_FONT_FLAG_IS_ALIAS) ||
-        (font->flags & PDF_FONT_FLAG_IS_REENCODE)) {
+        (font->flags & PDF_FONT_FLAG_IS_REENCODE) ||
+        !font->reference) {
       continue;
     }
     if (font->subtype == PDF_FONT_FONTTYPE_CIDTYPE0 ||
-        font->subtype == PDF_FONT_FONTTYPE_CIDTYPE2)
+        font->subtype == PDF_FONT_FONTTYPE_CIDTYPE2) {
       continue;
+    }
 
     if (dpx_conf.verbose_level > 0) {
       if (font->subtype != PDF_FONT_FONTTYPE_TYPE0) {
@@ -567,7 +569,8 @@ pdf_close_fonts (void)
     pdf_font *font = &font_cache.fonts[font_id];
 
     if ((font->flags & PDF_FONT_FLAG_IS_ALIAS) ||
-        (font->flags & PDF_FONT_FLAG_IS_REENCODE)) {
+        (font->flags & PDF_FONT_FLAG_IS_REENCODE) ||
+        !font->reference) {
       continue;
     }
 
@@ -585,7 +588,8 @@ pdf_close_fonts (void)
     font = &font_cache.fonts[font_id];
 
     if ((font->flags & PDF_FONT_FLAG_IS_ALIAS) ||
-        (font->flags & PDF_FONT_FLAG_IS_REENCODE)) {
+        (font->flags & PDF_FONT_FLAG_IS_REENCODE) ||
+        !font->reference) {
       pdf_clean_font_struct(font);
       continue;
     }

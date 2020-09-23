@@ -1,3 +1,10 @@
+2020-09-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdffont.c: Fix a bug introduced by the recent font related
+	changes which can cause a problem when there is a font
+	defined but not used.
+	* configure.ac: Version 20200924.
+
 2020-09-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cid.[ch], cidtype0.[ch], cidtype2.[ch], pdfdev.c,
