@@ -1,7 +1,11 @@
 2020-09-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: Call kpse_in_name_ok() in find_input_file() for
-	getfilemoddate(), getfilesize(), getfiledump() and getmd5sum().
+	getfilemoddate(), getfilesize(), getfiledump() and getmd5sum(),
+	instead of in each separate routine. Doing it in the latter
+	means we always check an absolute filename, and thus fail with
+	openin_any=p. Original report from Adrian,
+	https://tug.org/pipermail/tex-live/2020-September/046127.html
 
 2020-08-28  Karl Berry  <karl@tug.org>
 
