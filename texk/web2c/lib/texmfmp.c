@@ -3303,6 +3303,9 @@ find_input_file(integer s)
         }
         xfree (pathname);
     }
+    if (! kpse_in_name_ok(filename)) {
+       return NULL;                /* no permission */
+    }
     return kpse_find_tex(filename);
 }
 
@@ -3397,9 +3400,6 @@ getfilemoddate(integer s)
     if (file_name == NULL) {
         return;                 /* empty string */
     }
-    if (! kpse_in_name_ok(file_name)) {
-       return;                  /* no permission */
-    }
 
     recorder_record_input(file_name);
     /* get file status */
@@ -3441,9 +3441,6 @@ getfilesize(integer s)
     char *file_name = find_input_file(s);
     if (file_name == NULL) {
         return;                 /* empty string */
-    }
-    if (! kpse_in_name_ok(file_name)) {
-       return;                  /* no permission */
     }
 
     recorder_record_input(file_name);
@@ -3509,9 +3506,6 @@ getfiledump(integer s, int offset, int length)
     file_name = find_input_file(s);
     if (file_name == NULL) {
         return;                 /* empty string */
-    }
-    if (! kpse_in_name_ok(file_name)) {
-       return;                  /* no permission */
     }
 
     /* read file data */
@@ -3601,9 +3595,6 @@ getmd5sum(strnumber s, boolean file)
         file_name = find_input_file(s);
         if (file_name == NULL) {
             return;             /* empty string */
-        }
-        if (! kpse_in_name_ok(file_name)) {
-           return;              /* no permission */
         }
 
         /* in case of error the empty string is returned,

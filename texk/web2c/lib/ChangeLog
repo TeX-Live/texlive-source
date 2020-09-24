@@ -1,3 +1,8 @@
+2020-09-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: Call kpse_in_name_ok() in find_input_file() for
+	getfilemoddate(), getfilesize(), getfiledump() and getmd5sum().
+
 2020-08-28  Karl Berry  <karl@tug.org>
 
 	* texmfmp.c (input_line): always clear errno before calling getc,
