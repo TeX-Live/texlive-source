@@ -231,8 +231,12 @@ struct pdf_out {
   pdf_obj      *xref_stream;
   pdf_obj      *output_stream;
   pdf_obj      *current_objstm;
-
-  char         *free_list; /* 8192bytes each bit representing if the object is freed */
+  /* The following flag bits are (8,338,607+1)/8 bytes data
+   * each bit represenging if the object is freed.
+   * Where the value 8,338,607 is taken from PDF ref. manual, v.1.7,
+   * Appendix C, "Implementation Limits". 
+   */
+  char         *free_list;
 };
 
 #if defined(LIBDPX)
@@ -287,8 +291,8 @@ init_pdf_out_struct (pdf_out *p)
   p->output_stream  = NULL;
   p->current_objstm = NULL;
 
-  p->free_list = NEW(8192, char);
-  memset(p->free_list, 0, 8192);
+  p->free_list = NEW((PDF_NUM_INDIRECT_MAX+1)/8, char);
+  memset(p->free_list, 0, (PDF_NUM_INDIRECT_MAX+1)/8);
 }
 
 static void
@@ -913,6 +917,9 @@ pdf_label_obj (pdf_out *p, pdf_obj *object)
    * Don't change label on an already labeled object. Ignore such calls.
    */
   if (object->label == 0) {
+    if (p->obj.next_label == PDF_NUM_INDIRECT_MAX) {
+      ERROR("Number of indirect object has reached its maximum value!");
+    }
     object->label      = p->obj.next_label++;
     object->generation = 0;
   }
@@ -1444,7 +1451,7 @@ write_array (pdf_out *p, pdf_array *array)
         type1 = type2;
         pdf_write_obj(p, array->values[i]);
       } else
-        WARN("PDF array element #ld undefined.", i);
+        WARN("PDF array element %ld undefined.", i);
     }
   }
   pdf_out_char(p, ']');

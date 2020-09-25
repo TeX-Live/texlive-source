@@ -36,6 +36,7 @@
  * PDF_NAME_LEN_MAX: see, Appendix C of PDF Ref. v1.3, 2nd. ed.
  * This is Acrobat implementation limit.
  */
-#define PDF_NAME_LEN_MAX 127
+#define PDF_NAME_LEN_MAX     127
+#define PDF_NUM_INDIRECT_MAX 8388607ul
 
 #endif /* _PDFLIMITS_H_ */

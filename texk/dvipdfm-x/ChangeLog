@@ -1,3 +1,13 @@
+2020-09-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfobj.c: Fix a bug that the max number of indirect objects
+	is wrongly set, causing a problem when too many indirect
+	objects are created.
+	* pdflimit.h: Add PDF_NUM_INDIRECT_MAX indicating the maximum
+	number of indirect objects which can be allocated as described
+	in PDF Ref. v.1.7 and ISO 32000-1.
+	* configure.ac: Version 20200926.
+
 2020-09-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdffont.c: Fix a bug introduced by the recent font related
