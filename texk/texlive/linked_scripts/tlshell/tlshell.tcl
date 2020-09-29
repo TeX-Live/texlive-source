@@ -905,17 +905,19 @@ proc get_packages_info_remote {} {
 
   unset -nocomplain ::loaded
   track_err
+  set catv "rcat-version"
+  if {[dict get $::pkgs texlive.infra localrev] < 56458} { set catv "cat-version" }
   if [catch {run_cmd \
-    "info --data name,localrev,remoterev,cat-version,category,shortdesc"}] {
+    "info --data name,remoterev,$catv,category,shortdesc"}] {
     do_debug [get_stacktrace]
     tk_messageBox -message [__ "A configured repository is unavailable."]
     return 0
   }
   vwait ::done_waiting
   set ::loaded 1
-  set re {^([^,]+),([0-9]+),([0-9]+),([^,]*),([^,]*),(.*)$}
+  set re {^([^,]+),([0-9]+),([^,]*),([^,]*),(.*)$}
   foreach l $::out_log {
-    if [regexp $re $l m nm lrev rrev rcatv catg pdescr] {
+    if [regexp $re $l m nm rrev rcatv catg pdescr] {
       # double-quotes in short description: remove outer, unescape inner
       if {[string index $pdescr 0] eq "\""} {
         set pdescr [string range $pdescr 1 end-1]
@@ -942,7 +944,9 @@ proc get_packages_info_remote {} {
 ## update ::pkgs after installing packages without going online again.
 proc update_local_revnumbers {} {
   do_debug "update_local_revnumbers"
-  run_cmd_waiting "info --only-installed --data name,localrev,cat-version"
+  set catv "lcat-version"
+  if {[dict get $::pkgs texlive.infra localrev] < 56458} { set catv "cat-version" }
+  run_cmd_waiting "info --only-installed --data name,localrev,$catv"
   set re {^([^,]+),([0-9]+),(.*)$}
   dict for {pk pk_dict} $::pkgs {
     do_debug "zeroing local data for $pk"
@@ -955,6 +959,7 @@ proc update_local_revnumbers {} {
       set pk_dict [dict get $::pkgs $pk]
       dict set pk_dict "localrev" $lr
       dict set pk_dict "lcatv" $lv
+      dict set pk_dict "rcatv" $lv
       dict set ::pkgs $pk $pk_dict
     }
   }
