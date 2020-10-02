@@ -27,6 +27,7 @@ M.debug = {
 }
 M.verbosity_level = 1
 M.silent = false
+M.dry_run = false
 
 llmk.core = M
 end
@@ -38,7 +39,7 @@ local M = {}
 
 -- program information
 M.prog_name = 'llmk'
-M.version = '0.1.0'
+M.version = '0.2.0'
 M.copyright = 'Copyright 2018-2020'
 M.author = 'Takuto ASAKURA (wtsnjp)'
 M.llmk_toml = 'llmk.toml'
@@ -76,7 +77,7 @@ M.program_spec = {
   aux_file = {'string', {true, nil}},
   aux_empty_size = {'integer', {false, nil}},
   command = {'string', {false, ''}}, -- '' default because it must be string
-  generated_target = {'bool', {false, false}},
+  generated_target = {'boolean', {false, false}},
   opts = {'*[string]', {true, nil}},
   postprocess = {'string', {false, nil}},
   target = {'string', {true, '%S'}},
@@ -208,14 +209,14 @@ local function checked_value(k, v, expected)
 
   if expected == 'integer' then
     error_if_wrong_type(v, 'number')
-  elseif expected == 'bool' then
+  elseif expected == 'boolean' then
     error_if_wrong_type(v, 'boolean')
   elseif expected == 'string' then
     error_if_wrong_type(v, 'string')
   elseif expected == '[string]' then
     error_if_wrong_type(v, 'table')
 
-    if v[1] then -- it is not an empty array
+    if v[1] ~= nil then -- it is not an empty array
       error_if_wrong_type(v[1], 'string')
     end
   elseif expected == '*[string]' then
@@ -224,7 +225,7 @@ local function checked_value(k, v, expected)
     else
       error_if_wrong_type(v, 'table')
 
-      if v[1] then -- it is not an empty array
+      if v[1] ~= nil then -- it is not an empty array
         error_if_wrong_type(v[1], 'string')
       end
     end
@@ -278,22 +279,31 @@ local function type_check(tab)
 end
 
 local function version_check(given_version)
-  if given_version then
-    local given_major, given_minor = given_version:match('^(%d+)%.(%d+)')
-    if not given_major or not given_minor then
-      llmk.util.err_print('warning', 'In valid llmk_version: ' .. given_version)
-      return
-    else
-      given_major, given_minor = tonumber(given_major), tonumber(given_minor)
-    end
-
-    local major, minor = llmk.const.version:match('^(%d+)%.(%d+)')
-    major, minor = tonumber(major), tonumber(minor)
-    if major < given_major or (major == given_major and minor < given_minor) then
-      llmk.util.err_print('warning',
-        'This program is older than specified "llmk_version"')
-    end
+  if not given_version then -- nothing to do
+    return
   end
+
+  -- parse the given version to the llmk_version key
+  local given_major, given_minor = given_version:match('^(%d+)%.(%d+)')
+  if not given_major or not given_minor then
+    llmk.util.err_print('warning', 'In valid llmk_version: ' .. given_version)
+    return
+  else
+    given_major, given_minor = tonumber(given_major), tonumber(given_minor)
+  end
+
+  -- the version of this program
+  local major, minor = llmk.const.version:match('^(%d+)%.(%d+)')
+  major, minor = tonumber(major), tonumber(minor)
+
+  -- warn if this program is older than the given version
+  if major < given_major or (major == given_major and minor < given_minor) then
+    llmk.util.err_print('warning',
+      'This program (v%d.%d) is older than the specified llmk_version (v%d.%d)',
+      major, minor, given_major, given_minor)
+  end
+
+  -- Note: no breaking change has been made (yet)
 end
 
 function M.check(tab)
@@ -464,6 +474,11 @@ function M.parse_toml(toml, file_info)
 
   local function step(n)
     n = n or 1
+    for i = 0, n-1 do
+      if char(i):match(nl) then
+        line = line + 1
+      end
+    end
     cursor = cursor + n
   end
 
@@ -580,7 +595,6 @@ function M.parse_toml(toml, file_info)
           num = num .. char()
         end
       elseif char():match(nl) then
-        line = line + 1
         break
       elseif char():match(ws) or char() == '#' then
         break
@@ -604,10 +618,8 @@ function M.parse_toml(toml, file_info)
 
     while(bounds()) do
       if char() == ']' then
-        line = line + 1
         break
       elseif char():match(nl) then
-        line = line + 1
         step()
         skip_ws()
       elseif char() == '#' then
@@ -682,10 +694,6 @@ function M.parse_toml(toml, file_info)
       while(not char():match(nl)) do
         step()
       end
-    end
-
-    if char():match(nl) then
-      line = line + 1
     end
 
     if char() == '=' then
@@ -1148,11 +1156,33 @@ local function silencer(cmd)
   else
     redirect_code = ' >/dev/null 2>&1'
   end
-  silencer = function() return cmd .. redirect_code end
-  return cmd .. redirect_code
+  silencer = function(cmd) return cmd .. redirect_code end
+  return silencer(cmd)
 end
 
-local function run_program(name, prog, fn, fdb)
+local function run_program(name, prog, fn, fdb, postprocess)
+  -- preparation for dry run
+  local function concat_cond(tab)
+    local res
+    for i, v in ipairs(tab) do
+      if i == 1 then
+        res = v
+      else
+        res = res .. '; ' .. v
+      end
+    end
+    return res
+  end
+  local cond = {}
+
+  if postprocess then
+    cond[#cond + 1] = 'as postprocess'
+  end
+
+  if prog.aux_file then
+    cond[#cond + 1] = 'possibly with rerunning'
+  end
+
   -- does command specified?
   if #prog.command < 1 then
     llmk.util.err_print('warning',
@@ -1161,7 +1191,7 @@ local function run_program(name, prog, fn, fdb)
   end
 
   -- does target exist?
-  if not lfs.isfile(prog.target) then
+  if not llmk.core.dry_run and not lfs.isfile(prog.target) then
     llmk.util.dbg_print('run',
       'Skiping "%s" because target (%s) does not exist',
       prog.command, prog.target)
@@ -1169,15 +1199,32 @@ local function run_program(name, prog, fn, fdb)
   end
 
   -- is the target modified?
-  if prog.generated_target and file_mtime(prog.target) < start_time then
-    llmk.util.dbg_print('run',
-      'Skiping "%s" because target (%s) is not updated',
-      prog.command, prog.target)
-    return false
+  if prog.generated_target then
+    if llmk.core.dry_run then
+      cond[#cond + 1] = string.format('if the target file "%s" has been generated',
+        prog.target)
+    elseif file_mtime(prog.target) < start_time then
+      llmk.util.dbg_print('run',
+        'Skiping "%s" because target (%s) is not updated',
+        prog.command, prog.target)
+      return false
+    end
+  else
+    if llmk.core.dry_run then
+      cond[#cond + 1] = string.format('if the target file "%s" exists', prog.target)
+    end
   end
 
   local cmd = construct_cmd(prog, fn, prog.target)
-  llmk.util.err_print('info', 'Running command: ' .. cmd)
+  if llmk.core.dry_run then
+    print('Dry running: ' .. cmd)
+    if #cond > 0 then
+      llmk.util.err_print('info', '<-- ' .. concat_cond(cond))
+    end
+    return false
+  else
+    llmk.util.err_print('info', 'Running command: ' .. cmd)
+  end
 
   -- redirect stdout and stderr to NULL in silent mode
   if llmk.core.silent then
@@ -1195,7 +1242,8 @@ local function run_program(name, prog, fn, fdb)
   return true
 end
 
-local function process_program(programs, name, fn, fdb, config)
+local function process_program(programs, name, fn, fdb, config, postprocess)
+  local postprocess = postprocess or false
   local prog = programs[name]
   local should_rerun
 
@@ -1204,7 +1252,7 @@ local function process_program(programs, name, fn, fdb, config)
   local exe_count = 0
   while true do
     exe_count = exe_count + 1
-    run = run_program(name, prog, fn, fdb)
+    run = run_program(name, prog, fn, fdb, postprocess)
 
     -- if the run is skipped, break immediately
     if not run then break end
@@ -1217,9 +1265,9 @@ local function process_program(programs, name, fn, fdb, config)
   end
 
   -- go to the postprocess process
-  if prog.postprocess and run then
+  if prog.postprocess and (run or llmk.core.dry_run) then
     llmk.util.dbg_print('run', 'Going to postprocess "%s"', prog.postprocess)
-    process_program(programs, prog.postprocess, fn, fdb, config)
+    process_program(programs, prog.postprocess, fn, fdb, config, true)
   end
 end
 
@@ -1253,12 +1301,16 @@ local lfs = require("lfs")
 
 -- fn is filepath of target to remove.
 local function remove(fn)
-  local ok = os.remove(fn)
-  
-  if ok ~= true then
-    llmk.util.err_print('error', 'Failed to remove "%s"', fn)
+  if llmk.core.dry_run then
+    print(string.format('Dry running: removing file "%s"', fn))
   else
-    llmk.util.err_print('info', 'Removed "%s"', fn)
+    local ok = os.remove(fn)
+
+    if ok ~= true then
+      llmk.util.err_print('error', 'Failed to remove "%s"', fn)
+    else
+      llmk.util.err_print('info', 'Removed "%s"', fn)
+    end
   end
 end
 
@@ -1302,12 +1354,13 @@ Options:
   -d CAT, --debug=CAT   Activate debug output restricted to CAT.
   -D, --debug           Activate all debug output (equal to "--debug=all").
   -h, --help            Print this help message.
+  -n, --dry-run         Show what would have been executed.
   -q, --quiet           Suppress most messages.
   -s, --silent          Silence messages from called programs.
   -v, --verbose         Print additional information.
   -V, --version         Print the version number.
 
-Please report bugs to <tkt.asakura@gmail.com>.
+Please report bugs to <https://github.com/wtsnjp/llmk/issues>.
 ]]
 
 local version_text = [[
@@ -1405,6 +1458,9 @@ local function read_options()
       llmk.core.verbosity_level = 2
     elseif (curr_arg == '-s') or (curr_arg == '--silent') then
       llmk.core.silent = true
+    -- dry run
+    elseif (curr_arg == '-n') or (curr_arg == '--dry-run') then
+      llmk.core.dry_run = true
     -- problem
     else
       llmk.util.err_print('error', 'unknown option: ' .. curr_arg)
