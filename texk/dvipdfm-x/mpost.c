@@ -831,7 +831,7 @@ do_show (void)
 		       (spt_t)(cp.y * dev_unit_dviunit()),
 		       ustr, length * 2,
 		       (spt_t)(text_width*dev_unit_dviunit()),
-		       font->font_id, 0);
+		       font->font_id);
     RELEASE(ustr);
   } else {
 #define FWBASE ((double) (1<<20))
@@ -843,7 +843,7 @@ do_show (void)
 		       (spt_t)(cp.y * dev_unit_dviunit()),
 		       strptr, length,
 		       (spt_t)(text_width*dev_unit_dviunit()),
-		       font->font_id, 0);
+		       font->font_id);
   }
 
   if (pdf_dev_get_font_wmode(font->font_id)) {

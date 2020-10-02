@@ -1,3 +1,13 @@
+2020-10-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cid.c, cid.h: Add "const" attribute to arguments fontmap_rec
+	and fmap_opt.
+	* cmap.c: Correct calculation of min-bytes and max-bytes. Fix
+	indentation.
+	* dvi.c, mpost.c, pdfdev.[ch], pdffont.[ch]: Simplify input
+	text handling. The "mapc" option is handled in dvi.c.
+	* configure.ac: Version 20201003.
+
 2020-09-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfobj.c: Fix a bug that the max number of indirect objects

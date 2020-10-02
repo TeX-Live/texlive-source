@@ -27,20 +27,21 @@ extern CIDSysInfo CSI_IDENTITY;
 extern CIDSysInfo CSI_UNICODE;
 
 extern int  opt_flags_cidfont;
-extern void CIDFont_set_flags       (int flags);
+extern void CIDFont_set_flags (int flags);
 
 #define CIDFONT_FORCE_FIXEDPITCH (1 << 1)
 
-extern char       *CIDFont_get_usedchars   (pdf_font *font);
-extern char       *CIDFont_get_usedchars_v (pdf_font *font);
+extern char *CIDFont_get_usedchars   (pdf_font *font);
+extern char *CIDFont_get_usedchars_v (pdf_font *font);
 
-extern int         CIDFont_is_ACCFont  (pdf_font *font);
-extern int         CIDFont_is_UCSFont  (pdf_font *font);
+extern int   CIDFont_is_ACCFont  (pdf_font *font);
+extern int   CIDFont_is_UCSFont  (pdf_font *font);
 
 #include "fontmap.h"
-extern int      pdf_font_cidfont_lookup_cache (pdf_font *fonts, int count, const char *map_name, CIDSysInfo *cmap_csi, fontmap_opt *fmap_opt);
-
-extern int      pdf_font_open_cidfont (pdf_font *font, const char *map_name, CIDSysInfo *cmap_csi, fontmap_opt *fmap_opt);
-extern void     pdf_font_load_cidfont (pdf_font *font);
+extern int   pdf_font_cidfont_lookup_cache (pdf_font *fonts, int count, const char *map_name,
+                                            CIDSysInfo *cmap_csi, const fontmap_opt *fmap_opt);
+extern int   pdf_font_open_cidfont (pdf_font *font, const char *map_name,
+                                    CIDSysInfo *cmap_csi, const fontmap_opt *fmap_opt);
+extern void  pdf_font_load_cidfont (pdf_font *font);
 
 #endif /* _CID_H_ */

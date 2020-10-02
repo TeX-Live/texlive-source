@@ -218,18 +218,6 @@ struct dev_font {
   double   extend;
   double   slant;
   double   bold;  /* Boldness prameter */
-
-  /* Compatibility */
-  int      mapc;  /* Nasty workaround for Omega */
-
-  /* There are no font metric format supporting four-bytes
-   * charcter code. So we should provide an option to specify
-   * UCS group and plane.
-   */
-  int      ucs_group;
-  int      ucs_plane;
-
-  int      is_unicode;
 };
 
 /*
@@ -924,76 +912,15 @@ pdf_dev_set_font (pdf_dev *p, int font_id)
  * used as the return value of handle_multibyte_string(): str_ptr can point these.
  */
 static unsigned char sbuf0[FORMAT_BUF_SIZE];
-static unsigned char sbuf1[FORMAT_BUF_SIZE];
 
 static int
-handle_multibyte_string (struct dev_font *font,
-                         const unsigned char **str_ptr, int *str_len, int ctype)
+handle_multibyte_string (struct dev_font *font, const unsigned char **str_ptr, int *str_len)
 {
   const unsigned char *p;
-  int            i, length;
+  int                  length;
 
   p      = *str_ptr;
   length = *str_len;
-
-  /* _FIXME_ */
-  if (font->is_unicode) { /* UCS-4 */
-    if (ctype == 1) {
-      if (length * 4 >= FORMAT_BUF_SIZE) {
-        WARN("Too long string...");
-        return -1;
-      }
-      for (i = 0; i < length; i++) {
-        sbuf1[i*4  ] = font->ucs_group;
-        sbuf1[i*4+1] = font->ucs_plane;
-        sbuf1[i*4+2] = '\0';
-        sbuf1[i*4+3] = p[i];
-      }
-      length *= 4;
-    } else if (ctype == 2) {
-      int len = 0;
-
-      if (length * 2 >= FORMAT_BUF_SIZE) {
-        WARN("Too long string...");
-        return -1;
-      }
-      for (i = 0; i < length; i += 2, len += 4) {
-        sbuf1[len  ] = font->ucs_group;
-        if ((p[i] & 0xf8) == 0xd8) {
-          int c;
-          /* Check for valid surrogate pair.  */ 
-          if ((p[i] & 0xfc) != 0xd8 || i + 2 >= length || (p[i+2] & 0xfc) != 0xdc) {
-            WARN("Invalid surrogate p[%d]=%02X...", i, p[i]);
-            return -1;
-          }
-          c = (((p[i] & 0x03) << 10) | (p[i+1] << 2) | (p[i+2] & 0x03)) + 0x100;
-          sbuf1[len+1] = (c >> 8) & 0xff;
-          sbuf1[len+2] = c & 0xff;
-          i += 2;
-        } else {
-          sbuf1[len+1] = font->ucs_plane;
-          sbuf1[len+2] = p[i];
-        }
-        sbuf1[len+3] = p[i+1];
-      }
-      length = len;
-    }
-    p = sbuf1;
-  } else if (ctype == 1 && font->mapc >= 0) {
-    /* Omega workaround...
-     * Translate single-byte chars to double byte code space.
-     */
-    if (length * 2 >= FORMAT_BUF_SIZE) {
-      WARN("Too long string...");
-      return -1;
-    }
-    for (i = 0; i < length; i++) {
-      sbuf1[i*2  ] = (font->mapc & 0xff);
-      sbuf1[i*2+1] = p[i];
-    }
-    length *= 2;
-    p       = sbuf1;
-  }
 
   /*
    * Font is double-byte font. Output is assumed to be 16-bit fixed length
@@ -1002,9 +929,9 @@ handle_multibyte_string (struct dev_font *font,
    */
   if (font->enc_id >= 0) {
     const unsigned char *inbuf;
-    unsigned char *outbuf;
-    int            inbytesleft, outbytesleft;
-    CMap          *cmap;
+    unsigned char       *outbuf;
+    int                  inbytesleft, outbytesleft;
+    CMap                *cmap;
 
     cmap         = CMap_cache_get(font->enc_id);
     inbuf        = p;
@@ -1012,8 +939,7 @@ handle_multibyte_string (struct dev_font *font,
     inbytesleft  = length;
     outbytesleft = FORMAT_BUF_SIZE;
 
-    CMap_decode(cmap,
-                &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+    CMap_decode(cmap, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
     if (inbytesleft != 0) {
       WARN("CMap conversion failed. (%d bytes remains)", inbytesleft);
       return -1;
@@ -1027,23 +953,9 @@ handle_multibyte_string (struct dev_font *font,
   return 0;
 }
 
-/*
- * ctype:
- *  -1 input string contains 2-byte Freetype glyph index values
- *     (XeTeX only)
- *  0  byte-width of char can be variable and input string
- *     is properly encoded.
- *  n  Single character cosumes n bytes in input string.
- *
- * _FIXME_
- * -->
- * selectfont(font_name, point_size) and show_string(pos, string)
- */
 void
 pdf_dev_set_string (spt_t xpos, spt_t ypos,
-                    const void *instr_ptr, int instr_len,
-                    spt_t width,
-                    int   font_id, int ctype)
+                    const void *instr_ptr, int instr_len, spt_t width, int font_id)
 {
   pdf_dev             *p = current_device();
   struct dev_font     *font;
@@ -1074,7 +986,7 @@ pdf_dev_set_string (spt_t xpos, spt_t ypos,
   length  = instr_len;
 
   if (font->format == PDF_FONTTYPE_COMPOSITE) {
-    if (handle_multibyte_string(font, &str_ptr, &length, ctype) < 0) {
+    if (handle_multibyte_string(font, &str_ptr, &length) < 0) {
       ERROR("Error in converting input string...");
       return;
     }
@@ -1451,33 +1363,10 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   font->extend     = 1.0;
   font->slant      = 0.0;
   font->bold       = 0.0;
-  font->mapc       = -1;
-  font->is_unicode = 0;
-  font->ucs_group  = 0;
-  font->ucs_plane  = 0;
-
   if (mrec) {
     font->extend = mrec->opt.extend;
     font->slant  = mrec->opt.slant;
     font->bold   = mrec->opt.bold;
-    if (mrec->opt.mapc >= 0)
-      font->mapc = (mrec->opt.mapc >> 8) & 0xff;
-    else {
-      font->mapc = -1;
-    }
-    if (mrec->enc_name &&
-        !strcmp(mrec->enc_name, "unicode")) {
-      font->is_unicode   = 1;
-      if (mrec->opt.mapc >= 0) {
-        font->ucs_group  = (mrec->opt.mapc >> 24) & 0xff;
-        font->ucs_plane  = (mrec->opt.mapc >> 16) & 0xff;
-      } else {
-        font->ucs_group  = 0;
-        font->ucs_plane  = 0;
-      }
-    } else {
-      font->is_unicode   = 0;
-    }
   }
 
   return  p->num_dev_fonts++;
@@ -1939,4 +1828,22 @@ pdf_dev_get_font_wmode (int font_id)
   }
 
   return 0;
+}
+
+int
+pdf_dev_font_minbytes (int font_id)
+{
+  pdf_dev         *p        = current_device();
+  struct dev_font *font;
+  int              minbytes = 1;
+
+  font = GET_FONT(p, font_id);
+  if (font && font->format == PDF_FONTTYPE_COMPOSITE) {
+    CMap *cmap;
+
+    cmap     = CMap_cache_get(font->enc_id);
+    minbytes = CMap_get_profile(cmap, CMAP_PROF_TYPE_INBYTES_MIN);
+  }
+
+  return minbytes;
 }

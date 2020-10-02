@@ -110,7 +110,7 @@ static struct {
 };
 
 static void release_opt (cid_opt *opt);
-static int  get_cidsysinfo (CIDSysInfo *csi, const char *map_name, fontmap_opt *fmap_opt);
+static int  get_cidsysinfo (CIDSysInfo *csi, const char *map_name, const fontmap_opt *fmap_opt);
 
 int opt_flags_cidfont = 0;
 
@@ -348,7 +348,8 @@ CIDFont_base_open (pdf_font *font, const char *name, cid_opt *opt)
 }
 
 int
-pdf_font_cidfont_lookup_cache (pdf_font *fonts, int count, const char *map_name, CIDSysInfo *cmap_csi, fontmap_opt *fmap_opt)
+pdf_font_cidfont_lookup_cache (pdf_font *fonts, int count, const char *map_name,
+                               CIDSysInfo *cmap_csi, const fontmap_opt *fmap_opt)
 {
   int       font_id = -1;
   pdf_font *font    = NULL;
@@ -419,7 +420,7 @@ pdf_font_cidfont_lookup_cache (pdf_font *fonts, int count, const char *map_name,
 }
 
 int
-pdf_font_open_cidfont (pdf_font *font, const char *map_name, CIDSysInfo *cmap_csi, fontmap_opt *fmap_opt)
+pdf_font_open_cidfont (pdf_font *font, const char *map_name, CIDSysInfo *cmap_csi, const fontmap_opt *fmap_opt)
 {
   cid_opt opt;
   int     has_csi;
@@ -513,7 +514,7 @@ release_opt (cid_opt *opt)
 }
 
 static int
-get_cidsysinfo (CIDSysInfo *csi, const char *map_name, fontmap_opt *fmap_opt)
+get_cidsysinfo (CIDSysInfo *csi, const char *map_name, const fontmap_opt *fmap_opt)
 {
   int has_csi = 0;
   int sup_idx;

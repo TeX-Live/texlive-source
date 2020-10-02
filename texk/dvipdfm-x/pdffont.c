@@ -689,37 +689,6 @@ pdf_font_findresource (const char *ident, double scale)
   return found ? font_id : -1;
 }
 
-#if 1
-static void
-compat_set_mapchar (int cmap_id, fontmap_rec *mrec)
-{
-  CMap *cmap;
-  int   cmap_type, minbytes;
-
-  cmap      = CMap_cache_get(cmap_id);
-  cmap_type = CMap_get_type(cmap);
-  minbytes  = CMap_get_profile(cmap, CMAP_PROF_TYPE_INBYTES_MIN);
-
-  if (cmap_type != CMAP_TYPE_IDENTITY &&
-      cmap_type != CMAP_TYPE_CODE_TO_CID &&
-      cmap_type != CMAP_TYPE_TO_UNICODE) {
-    WARN("Only 16-bit encoding supported for output encoding.");
-  }
-  /* Turn on map option. */
-  if (minbytes == 2 && mrec->opt.mapc < 0) {
-    if (dpx_conf.verbose_level > 0) {
-      MESG("\n");
-      MESG("pdf_font>> Input encoding \"%s\" requires at least 2 bytes.\n", CMap_get_name(cmap));
-      MESG("pdf_font>> The -m <00> option will be assumed for \"%s\".\n", mrec->font_name);
-    }
-    /* FIXME: The following code modifies mrec. */
-    mrec->opt.mapc = 0;
-  }
-
-  return;
-}
-#endif
-
 static int
 create_font_alias (const char *ident, int font_id)
 {
@@ -779,7 +748,7 @@ create_font_reencoded (const char *ident, int font_id, int cmap_id)
 }
 
 int
-pdf_font_load_font (const char *ident, double font_scale, fontmap_rec *mrec)
+pdf_font_load_font (const char *ident, double font_scale, const fontmap_rec *mrec)
 {
   int         font_id = -1;
   pdf_font   *font;
@@ -831,11 +800,6 @@ pdf_font_load_font (const char *ident, double font_scale, fontmap_rec *mrec)
       }
     } else if (!strstr(mrec->enc_name, ".enc") || strstr(mrec->enc_name, ".cmap")) {
       cmap_id = CMap_cache_find(mrec->enc_name);
-#if 1
-      if (cmap_id >= 0) {
-        compat_set_mapchar(cmap_id, mrec);
-      }
-#endif
     }
     if (cmap_id < 0) {
       encoding_id = pdf_encoding_findresource(mrec->enc_name);
