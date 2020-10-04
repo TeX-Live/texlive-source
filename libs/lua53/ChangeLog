@@ -1,3 +1,7 @@
+2020-10-04 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* Adapted for Lua 5.3.6 (thanks to K.Berry and A.Kakuto)
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* luaerror.test: LC_ALL=LANGUAGE=C.

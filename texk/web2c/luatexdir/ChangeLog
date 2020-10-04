@@ -1,3 +1,43 @@
+2020-07-26 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed: \tracinglostchars>=3 is an error (no fatal error)
+
+2020-07-26 Luigi Scarso <luigi.scarso@gmail.com>
+    * New value for \tracinglostchars: \tracinglostchars>=3 is a fatal error 
+
+2020-07-12 Luigi Scarso <luigi.scarso@gmail.com>
+    * Original reports:
+     https://tex.stackexchange.com/questions/551313/
+     https://tug.org/pipermail/tex-live/2020-June/045876.html
+ 
+    This will probably be fixed by DEK in the 2021 tuneup in a different
+    way (so we'll have to remove or alter this change), but the interaction
+    sequence in the reports above causes a segmentation fault in web2c -
+    writing to the closed \write15 stream because we wrongly decrement
+    selector from 16 to 15 in term_input, due to the lack of this check in
+    recursive error() call (K. Berry)
+
+
+2020-07-04 Luigi Scarso <luigi.scarso@gmail.com>
+    * little endian variants for readers. (HH)
+    * The keyword \type {norule} will hide the rule with the above variants while
+      keeping the rule related spacing.  (HH)
+
+2020-06-21 Luigi Scarso <luigi.scarso@gmail.com>
+    * pending better is_defined check plus an extra option in a scanner; also the \cs case. (HH)
+    * tex.getmark(what,wherefrom)  added (HH)
+
+2020-05-01 Luigi Scarso <luigi.scarso@gmail.com>
+    * added tex.interlinepenalties tex.clubpenalties tex.widowpenalties 
+    tex.displaywidowpenalties to complement tex.parshape (HH)
+
+2020-04-28 Luigi Scarso <luigi.scarso@gmail.com>
+    * less strict lastnode testing (HH) 
+    * some experimental math delimiter code removed (HH)
+
+2020-04-27 Luigi Scarso <luigi.scarso@gmail.com>
+    * similar treatment for shiftdown as shiftup in operators (no
+     checking) (HH)
+
 2020-04-07 Luigi Scarso <luigi.scarso@gmail.com>
     * Version 1.13.0. 
       getstring extra argument to pdfe.getstring (triggers unencoded or flag

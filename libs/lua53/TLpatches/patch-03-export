@@ -1,6 +1,6 @@
 diff -u lopcodes.h.orig lopcodes.h 
---- lopcodes.h.orig	2018-07-21 09:59:37.349687255 +0200
-+++ lopcodes.h	2018-07-21 10:07:04.413668921 +0200
+--- lopcodes.h.orig	2020-10-04 12:06:08.639690280 +0200
++++ lopcodes.h	2020-10-04 12:10:02.143921798 +0200
 @@ -278,7 +278,7 @@
    OpArgK   /* argument is a constant or register/constant */
  };
@@ -22,14 +22,15 @@ diff -u lopcodes.h.orig lopcodes.h
 
 
 diff -u lundump.h.orig lundump.h 
---- lundump.h.orig	2018-07-21 10:00:01.545686262 +0200
-+++ lundump.h	2018-07-21 10:08:12.341666136 +0200
+--- lundump.h.orig	2020-10-04 12:06:14.335597724 +0200
++++ lundump.h	2020-10-04 12:07:11.218675336 +0200
 @@ -26,7 +26,7 @@
  LUAI_FUNC LClosure* luaU_undump (lua_State* L, ZIO* Z, const char* name);
  
  /* dump one chunk; from ldump.c */
 -LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w,
-+LUA_API int luaU_dump (lua_State* L, const Proto* f, lua_Writer w,
++LUAI_API int luaU_dump (lua_State* L, const Proto* f, lua_Writer w,
                           void* data, int strip);
  
  #endif
+
