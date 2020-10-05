@@ -136,36 +136,40 @@ static unsigned      lr_width_stack_depth = 0;
 #define DVI      1
 #define VF       2
 
+struct gm {
+  spt_t advance, ascent, descent;
+};
+
 static struct loaded_font
 {
-  int      type;      /* Type is physical or virtual */
-  int      font_id;   /* id returned by dev (for PHYSICAL fonts)
-                       * or by vf module for (VIRTUAL fonts)
-                       */
-  int      subfont_id; /* id returned by subfont_locate_font() */
-  int      tfm_id;
-  spt_t    size;
-  int      source;     /* Source is either DVI or VF */
-  uint32_t rgba_color;
-  uint8_t  rgba_used;
+  int        type;      /* Type is physical or virtual */
+  int        font_id;   /* id returned by dev (for PHYSICAL fonts)
+                         * or by vf module for (VIRTUAL fonts)
+                         */
+  int        subfont_id; /* id returned by subfont_locate_font() */
+  int        tfm_id;
+  spt_t      size;
+  int        source;     /* Source is either DVI or VF */
+  uint32_t   rgba_color;
+  uint8_t    rgba_used;
                        /* Indicates that rgba_color is used or not.
                         * It enables full range of opacity: 0-255.
                         */
-  int      xgs_id;     /* Transparency ExtGState */
-  struct tt_longMetrics *hvmt;
-  int      ascent;
-  int      descent;
-  unsigned unitsPerEm;
-  cff_font *cffont;
-  unsigned numGlyphs;
-  int      layout_dir;
+  int        xgs_id;     /* Transparency ExtGState */
 
-  float    extend;
-  float    slant;
-  float    embolden;
+  /* XeTeX requires glyph metrics */
+  struct gm *gm;
+  int        shift_gid;
+  uint16_t   num_glyphs;
 
-  int      minbytes;
-  char     padbytes[4];
+  int        layout_dir;
+
+  float      extend;
+  float      slant;
+  float      embolden;
+
+  int        minbytes;
+  char       padbytes[4];
 } *loaded_fonts = NULL;
 static int num_loaded_fonts = 0, max_loaded_fonts = 0;
 
@@ -184,14 +188,13 @@ static struct font_def
   spt_t    point_size;
   spt_t    design_size;
   char    *font_name;
-  int      font_id;   /* index of _loaded_ font in loaded_fonts array */
+  int      font_id;    /* index of _loaded_ font in loaded_fonts array */
   int      used;
-  int      native; /* boolean */
-  uint32_t rgba_color;   /* only used for native fonts in XeTeX */
-  uint8_t  rgba_used;
-                    /* Indicates that rgba_color is used or not.
-                     * It enables full range of opacity: 0-255.
-                     */
+  int      native;     /* boolean */
+  uint32_t rgba_color; /* only used for native fonts in XeTeX */
+  uint8_t  rgba_used;  /* Indicates that rgba_color is used or not.
+                        * It enables full range of opacity: 0-255.
+                        */
   uint32_t face_index;
   int      layout_dir; /* 1 = vertical, 0 = horizontal */
   int      extend;
@@ -835,8 +838,7 @@ set_string (spt_t       xpos,
             const void *instr_ptr,
             int         instr_len,
             spt_t       width,
-            int         font_id,
-            int         ctype)
+            int         font_id)
 {
   xpos -= compensation.x;
   ypos -= compensation.y;
@@ -1070,10 +1072,7 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   char         *path;
   sfnt         *sfont;
   ULONG         offset = 0;
-  struct tt_head_table *head;
-  struct tt_maxp_table *maxp;
-  struct tt_hhea_table *hhea;
-  int is_dfont = 0, is_type1 = 0;
+  int           is_dfont = 0, is_type1 = 0;
 
   if (dpx_conf.verbose_level > 0)
     MESG("<%s@%.2fpt", filename, ptsize * dvi2pts);
@@ -1107,11 +1106,13 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].size     = ptsize;
   loaded_fonts[cur_id].type     = NATIVE;
   loaded_fonts[cur_id].minbytes = pdf_dev_font_minbytes(loaded_fonts[cur_id].font_id);
-  free(fontmap_key);
+  RELEASE(fontmap_key);
 
   if (is_type1) {
     cff_font *cffont;
     char     *enc_vec[256];
+    uint16_t  num_glyphs;
+    int       i;
 
     fp = DPXFOPEN(filename, DPX_RES_TYPE_T1FONT);
     if (!fp)
@@ -1124,22 +1125,47 @@ dvi_locate_native_font (const char *filename, uint32_t index,
     cffont = t1_load_font(enc_vec, 0, fp);
     if (!cffont)
       ERROR("Failed to read Type 1 font \"%s\".", filename);
-
-    loaded_fonts[cur_id].cffont = cffont;
-
-    if (cff_dict_known(cffont->topdict, "FontBBox")) {
-      loaded_fonts[cur_id].ascent = cff_dict_get(cffont->topdict, "FontBBox", 3);
-      loaded_fonts[cur_id].descent = cff_dict_get(cffont->topdict, "FontBBox", 1);
-    } else {
-      loaded_fonts[cur_id].ascent = 690;
-      loaded_fonts[cur_id].descent = -190;
+    for (i = 0; i < 256; i++) {
+      if (enc_vec[i])
+        RELEASE(enc_vec[i]);
     }
+    loaded_fonts[cur_id].shift_gid  = cffont->is_notdef_notzero;
+    loaded_fonts[cur_id].num_glyphs = num_glyphs = cffont->num_glyphs;
+    loaded_fonts[cur_id].gm         = NEW(num_glyphs + 1, struct gm);
+    for (i = 0; i < num_glyphs; i++) {
+      double     advance, ascent, descent;
+      cff_index *cstrings = cffont->cstrings;
+      t1_ginfo   gm;
+      uint16_t   gid;
 
-    loaded_fonts[cur_id].unitsPerEm = 1000;
-    loaded_fonts[cur_id].numGlyphs = cffont->num_glyphs;
+      /* If .notdef is not the 1st glyph in CharStrings, glyph_id given by
+       * FreeType should be increased by 1
+       */
+      gid = (cffont->is_notdef_notzero) ? i + 1 : i;
+      if (gid == num_glyphs)
+        break;
+      t1char_get_metrics(cstrings->data + cstrings->offset[gid] - 1,
+                         cstrings->offset[gid + 1] - cstrings->offset[gid],
+                         cffont->subrs[0], &gm);
 
+      advance = layout_dir == 0 ? gm.wx : gm.wy;
+      ascent  = gm.bbox.ury;
+      descent = gm.bbox.lly;
+      loaded_fonts[cur_id].gm[gid].advance = (spt_t) (ptsize * ((advance / 1000.0) * mrec->opt.extend));
+      loaded_fonts[cur_id].gm[gid].ascent  = (spt_t) (ptsize * ((ascent  / 1000.0)));
+      loaded_fonts[cur_id].gm[gid].descent = (spt_t) (ptsize * ((descent / 1000.0)));
+    }
+    cff_close(cffont);
     DPXFCLOSE(fp);
   } else {
+    struct tt_head_table  *head;
+    struct tt_maxp_table  *maxp;
+    struct tt_hhea_table  *hhea;
+    struct tt_longMetrics *gm;
+    spt_t                  ascent, descent;
+    uint16_t               num_glyphs;
+    int                    i;
+  
     if (is_dfont)
       sfont = dfont_open(fp, index);
     else
@@ -1148,36 +1174,46 @@ dvi_locate_native_font (const char *filename, uint32_t index,
       offset = ttc_read_offset(sfont, index);
     else if (sfont->type == SFNT_TYPE_DFONT)
       offset = sfont->offset;
+    
     sfnt_read_table_directory(sfont, offset);
     head = tt_read_head_table(sfont);
     maxp = tt_read_maxp_table(sfont);
     hhea = tt_read_hhea_table(sfont);
-    loaded_fonts[cur_id].ascent = hhea->ascent;
-    loaded_fonts[cur_id].descent = hhea->descent;
-    loaded_fonts[cur_id].unitsPerEm = head->unitsPerEm;
-    loaded_fonts[cur_id].numGlyphs = maxp->numGlyphs;
+    ascent  = (spt_t) (ptsize * ((double) hhea->ascent  / (double) head->unitsPerEm));
+    descent = (spt_t) (ptsize * ((double) hhea->descent / (double) head->unitsPerEm));
+    loaded_fonts[cur_id].num_glyphs = num_glyphs = maxp->numGlyphs;
     if (layout_dir == 1 && sfnt_find_table_pos(sfont, "vmtx") > 0) {
       struct tt_vhea_table *vhea = tt_read_vhea_table(sfont);
       sfnt_locate_table(sfont, "vmtx");
-      loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
+      gm = tt_read_longMetrics(sfont, maxp->numGlyphs, vhea->numOfLongVerMetrics, vhea->numOfExSideBearings);
       RELEASE(vhea);
     } else {
       sfnt_locate_table(sfont, "hmtx");
-      loaded_fonts[cur_id].hvmt = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
+      gm = tt_read_longMetrics(sfont, maxp->numGlyphs, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
     }
+    if (!gm)
+      ERROR("Failed to read TrueType/OpenType glyph metrics table.");
+    loaded_fonts[cur_id].gm = NEW(num_glyphs, struct gm);
+    for (i = 0; i < num_glyphs; i++) {
+      loaded_fonts[cur_id].gm[i].advance = (spt_t) (ptsize * ((double) gm[i].advance / (double) head->unitsPerEm) * mrec->opt.extend);
+      loaded_fonts[cur_id].gm[i].ascent  = ascent;
+      loaded_fonts[cur_id].gm[i].descent = descent;
+
+    }
+    RELEASE(gm);
     RELEASE(hhea);
     RELEASE(maxp);
     RELEASE(head);
     sfnt_close(sfont);
-    fclose(fp);
+    DPXFCLOSE(fp);
   }
 
-  free(path);
+  RELEASE(path);
 
   loaded_fonts[cur_id].layout_dir = layout_dir;
-  loaded_fonts[cur_id].extend = mrec->opt.extend;
-  loaded_fonts[cur_id].slant = mrec->opt.slant;
-  loaded_fonts[cur_id].embolden = mrec->opt.bold;
+  loaded_fonts[cur_id].extend     = mrec->opt.extend;
+  loaded_fonts[cur_id].slant      = mrec->opt.slant;
+  loaded_fonts[cur_id].embolden   = mrec->opt.bold;
 
   if (dpx_conf.verbose_level > 0)
     MESG(">");
@@ -1331,7 +1367,7 @@ dvi_set (int32_t ch)
     } else {
       wbuf[3] = (unsigned char) ch;
     }
-    set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id, 0);
+    set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id);
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
@@ -1406,7 +1442,7 @@ dvi_put (int32_t ch)
     } else {
       wbuf[3] = (unsigned char) ch;
     }
-    set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id, 0);
+    set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id);
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
 
@@ -1818,9 +1854,10 @@ static void
 do_glyphs (int do_actual_text)
 {
   struct loaded_font *font;
-  spt_t  width, height, depth, *xloc, *yloc, glyph_width = 0;
-  unsigned char wbuf[2];
-  unsigned int i, glyph_id, slen = 0;
+  spt_t               width, height, depth, *xloc, *yloc;
+  unsigned char       wbuf[2];
+  int32_t             i;
+  uint16_t            glyph_id, slen = 0;
 
   if (current_font < 0)
     ERROR("No font selected!");
@@ -1889,47 +1926,24 @@ do_glyphs (int do_actual_text)
   }
 
   for (i = 0; i < slen; i++) {
+    spt_t advance = 0;
+
     glyph_id = get_buffered_unsigned_pair(); /* freetype glyph index */
-    if (glyph_id < font->numGlyphs) {
-      unsigned advance;
-      double ascent = (double)font->ascent;
-      double descent = (double)font->descent;
-
-      if (font->cffont) {
-        cff_index *cstrings = font->cffont->cstrings;
-        t1_ginfo gm;
-
-        /* If .notdef is not the 1st glyph in CharStrings, glyph_id given by
-           FreeType should be increased by 1 */
-        if (font->cffont->is_notdef_notzero)
-          glyph_id += 1;
-
-        t1char_get_metrics(cstrings->data + cstrings->offset[glyph_id] - 1,
-                           cstrings->offset[glyph_id + 1] - cstrings->offset[glyph_id],
-                           font->cffont->subrs[0], &gm);
-
-        advance = font->layout_dir == 0 ? gm.wx : gm.wy;
-        ascent = gm.bbox.ury;
-        descent = gm.bbox.lly;
-      } else {
-        advance = font->hvmt[glyph_id].advance;
-      }
-
-      glyph_width    = (double)font->size * (double)advance / (double)font->unitsPerEm;
-      glyph_width    = glyph_width * font->extend;
-
+    if (glyph_id < font->num_glyphs) {
+      if (font->shift_gid)
+        glyph_id++;
+      advance = font->gm[glyph_id].advance;
       if (dvi_is_tracking_boxes()) {
         pdf_rect rect;
-        height = (double)font->size * ascent / (double)font->unitsPerEm;
-        depth  = (double)font->size * -descent / (double)font->unitsPerEm;
-        calc_rect(&rect, dvi_state.h + xloc[i], -dvi_state.v - yloc[i], glyph_width, height, depth);
+        height =  font->gm[glyph_id].ascent ;
+        depth  = -font->gm[glyph_id].descent;
+        calc_rect(&rect, dvi_state.h + xloc[i], -dvi_state.v - yloc[i], advance, height, depth);
         pdf_doc_expand_box(&rect);
       }
     }
-
     wbuf[0] = glyph_id >> 8;
     wbuf[1] = glyph_id & 0xff;
-    set_string(dvi_state.h + xloc[i], -dvi_state.v - yloc[i], wbuf, 2, glyph_width, font->font_id, -1);
+    set_string(dvi_state.h + xloc[i], -dvi_state.v - yloc[i], wbuf, 2, advance, font->font_id);
   }
 
   if (font->rgba_used == 1) {
@@ -2260,15 +2274,10 @@ dvi_close (void)
 
   for (i = 0; i < num_loaded_fonts; i++)
   {
-    if (loaded_fonts[i].hvmt != NULL)
-      RELEASE(loaded_fonts[i].hvmt);
+    if (loaded_fonts[i].gm != NULL)
+      RELEASE(loaded_fonts[i].gm);
 
-    loaded_fonts[i].hvmt = NULL;
-
-    if (loaded_fonts[i].cffont != NULL)
-      cff_close(loaded_fonts[i].cffont);
-
-    loaded_fonts[i].cffont = NULL;
+    loaded_fonts[i].gm = NULL;
   }
 
   if (loaded_fonts)

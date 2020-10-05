@@ -1097,9 +1097,6 @@ main (int argc, char *argv[])
     pdf_filename = NULL;
   }
 
-  MESG("%s -> %s\n", dvi_filename ? dvi_filename : "stdin",
-                     pdf_filename ? pdf_filename : "stdout");
-
   if (dpx_conf.compat_mode == dpx_mode_mpost_mode) {
     x_offset = 0.0;
     y_offset = 0.0;
@@ -1129,6 +1126,9 @@ main (int argc, char *argv[])
 
   /* moved to here because image caching was not effective */
   dpx_delete_old_cache(image_cache_life);
+
+  MESG("%s -> %s\n", dvi_filename ? dvi_filename : "stdin",
+                     pdf_filename ? pdf_filename : "stdout");
 
   /* Setup Options */
   settings.ver_major = pdf_version_major;

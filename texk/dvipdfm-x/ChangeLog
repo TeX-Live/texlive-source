@@ -1,3 +1,11 @@
+2020-10-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvipdfmx.c: Fix a bug that printing output file name is wrong.
+	* dvi.c: Change XeTeX font handling. Convert glyph metrics to
+	an internal format at load time. Don't interpret type1
+	CharStrings again and again.
+	* configure.ac: Version 20201006.
+
 2020-10-05  Karl Berry  <karl@tug.org>
 
 	* man/dvipdfmx.1: update date.
