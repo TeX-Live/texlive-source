@@ -1,3 +1,8 @@
+2020-10-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* man/dvipdfmx.1: Fix a problem in the man page as reported in
+	https://tug.org/pipermail/dvipdfmx/2020-October/000107.html.
+
 2020-10-03  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cid.c, cid.h: Add "const" attribute to arguments fontmap_rec
