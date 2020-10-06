@@ -1,3 +1,11 @@
+2020-10-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* spc_dvips.c: Add an option -dALLOWPSTRANSPARENCY in
+	GS_CALCULATOR to obtain correct results in PSTrics for XeTeX
+	in the case of newer Ghostscript such as gs-9.53.3.
+	Reported in
+	https://tug.org/pipermail/dvipdfmx/2020-October/000109.html
+
 2020-10-06  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c: Fix a bug that printing output file name is wrong.
