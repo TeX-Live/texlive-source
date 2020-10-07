@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 56458 2020-09-27 22:20:18Z preining $
+# $Id: tlmgr.pl 56566 2020-10-06 03:40:54Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 56458 $';
-my $datrev = '$Date: 2020-09-28 00:20:18 +0200 (Mon, 28 Sep 2020) $';
+my $svnrev = '$Revision: 56566 $';
+my $datrev = '$Date: 2020-10-06 05:40:54 +0200 (Tue, 06 Oct 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1507,7 +1507,9 @@ sub action_path {
       $ret |= TeXLive::TLUtils::w32_add_to_path(
         $localtlpdb->root . "/bin/win32",
         $winadminmode);
-      $ret |= TeXLive::TLWinGoo::broadcast_env();
+      # ignore this return value, since broadcase_env might return
+      # nothing in case of errors, and there is no way around it.
+      # $ret |= TeXLive::TLWinGoo::broadcast_env();
     } else {
       $ret |= TeXLive::TLUtils::add_symlinks($localtlpdb->root,
         $localtlpdb->platform(),
@@ -1520,7 +1522,9 @@ sub action_path {
       $ret |= TeXLive::TLUtils::w32_remove_from_path(
         $localtlpdb->root . "/bin/win32",
         $winadminmode);
-      $ret |= TeXLive::TLWinGoo::broadcast_env();
+      # ignore this return value, since broadcase_env might return
+      # nothing in case of errors, and there is no way around it.
+      # $ret |= TeXLive::TLWinGoo::broadcast_env();
     } else {
       # remove symlinks
       $ret |= TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
@@ -1868,6 +1872,7 @@ sub restore_one_package {
   $localtlpdb->add_tlpobj($tlpobj);
   TeXLive::TLUtils::announce_execute_actions("enable",
                                       $localtlpdb->get_package($pkg));
+  check_announce_format_triggers($pkg);
   $localtlpdb->save;
   # TODO_ERRORCHECKING we should check the return values of the
   # various calls above
@@ -10087,7 +10092,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 56458 2020-09-27 22:20:18Z preining $
+$Id: tlmgr.pl 56566 2020-10-06 03:40:54Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
