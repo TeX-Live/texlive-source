@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 55178 $';
+my $svnrev = '$Revision: 56565 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -340,10 +340,9 @@ sub platform_name {
   
   if ($OS eq "darwin") {
     # We have two versions of Mac binary sets.
-    # 10.10/Yosemite and newer (Yosemite specially left over):
-    #   -> x86_64-darwin [MacTeX]
-    # 10.6/Snow Leopard through 10.10/Yosemite:
-    #   -> x86_64-darwinlegacy if 64-bit
+    # 10.x and newer -> x86_64-darwin [MacTeX]
+    # 10.6/Snow Leopard through 10.x -> x86_64-darwinlegacy, if 64-bit
+    # x changes every year. In 2020 (Big Sur) Apple started with 11.x.
     #
     # (BTW, uname -r numbers are larger by 4 than the Mac minor version.
     # We don't use uname numbers here.)
@@ -355,13 +354,16 @@ sub platform_name {
     # returns "10.x" values), and sysctl (processor hardware).
     chomp (my $sw_vers = `sw_vers -productVersion`);
     my ($os_major,$os_minor) = split (/\./, $sw_vers);
-    if ($os_major != 10) {
+    if ($os_major < 10) {
       warn "$0: only MacOSX is supported, not $OS $os_major.$os_minor "
            . " (from sw_vers -productVersion: $sw_vers)\n";
       return "unknownmac-unknownmac";
     }
-    if ($os_minor >= $mactex_darwin) {
-      ; # current version, default is ok (x86_64-darwin).
+    if ($os_major >= 11) {
+      $CPU = "x86_64";
+      $OS = "darwin";
+    } elsif ($os_minor >= $mactex_darwin) {
+      ; # sufficiently new 10.x, default is ok (x86_64-darwin).
     } elsif ($os_minor >= 6 && $os_minor < $mactex_darwin) {
       # in between, x86 hardware only.  On 10.6 only, must check if 64-bit,
       # since if later than that, always 64-bit.
@@ -4167,6 +4169,7 @@ Compare the two passed L<TLPOBJ> objects.  Returns a hash:
   $ret{'revision'}  = "revA:revB" # if revisions differ
   $ret{'removed'}   = \[ list of files removed from A to B ]
   $ret{'added'}     = \[ list of files added from A to B ]
+  $ret{'fmttriggers'} = 1 if the fmttriggers have changed
 
 =cut
 
@@ -4196,6 +4199,51 @@ sub compare_tlpobjs {
   my @add = sort keys %added;
   $ret{'removed'} = \@rem if @rem;
   $ret{'added'} = \@add if @add;
+
+  # changed dependencies should not trigger a change without a
+  # change in revision, so for now (until we find a reason why
+  # we need to) we don't check.
+  # OTOH, execute statements like
+  #   execute AddFormat name=aleph engine=aleph options=*aleph.ini fmttriggers=cm,hyphen-base,knuth-lib,plain
+  # might change due to changes in the fmttriggers variables.
+  # Again, name/engine/options are only defined in the package's
+  # tlpsrc file, so changes here will trigger revision changes,
+  # but fmttriggers are defined outside the tlpsrc and thus do
+  # not trigger an automatic revision change. Check for that!
+  # No need to record actual changes, just record that it has changed.
+  my %triggersA;
+  my %triggersB;
+  # we sort executes after format/engine like fmtutil does, since this
+  # should be unique
+  for my $e ($tlpA->executes) {
+    if ($e =~ m/AddFormat\s+(.*)\s*/) {
+      my %r = parse_AddFormat_line("$1");
+      if (defined($r{"error"})) {
+        die "$r{'error'} when comparing packages $tlpA->name execute $e";
+      }
+      for my $t (@{$r{'fmttriggers'}}) {
+        $triggersA{"$r{'name'}:$r{'engine'}:$t"} = 1;
+      }
+    }
+  }
+  for my $e ($tlpB->executes) {
+    if ($e =~ m/AddFormat\s+(.*)\s*/) {
+      my %r = parse_AddFormat_line("$1");
+      if (defined($r{"error"})) {
+        die "$r{'error'} when comparing packages $tlpB->name execute $e";
+      }
+      for my $t (@{$r{'fmttriggers'}}) {
+        $triggersB{"$r{'name'}:$r{'engine'}:$t"} = 1;
+      }
+    }
+  }
+  for my $t (keys %triggersA) {
+    delete($triggersA{$t});
+    delete($triggersB{$t});
+  }
+  if (keys(%triggersA) || keys(%triggersB)) {
+    $ret{'fmttrigger'} = 1;
+  }
 
   return %ret;
 }
