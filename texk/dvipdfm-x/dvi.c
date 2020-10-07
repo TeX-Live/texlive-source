@@ -168,6 +168,7 @@ static struct loaded_font
   float      slant;
   float      embolden;
 
+  int        is_unicode;
   int        minbytes;
   char       padbytes[4];
 } *loaded_fonts = NULL;
@@ -1041,6 +1042,7 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
       loaded_fonts[cur_id].padbytes[2] = (mrec->opt.mapc >> 8) & 0xff; 
     }
     if (mrec->enc_name && !strcmp(mrec->enc_name, "unicode")) {
+      loaded_fonts[cur_id].is_unicode = 1;
       if (mrec->opt.mapc >= 0) {
         loaded_fonts[cur_id].padbytes[0] = (mrec->opt.mapc >> 24) & 0xff;
         loaded_fonts[cur_id].padbytes[1] = (mrec->opt.mapc >> 16) & 0xff;
@@ -1050,6 +1052,10 @@ dvi_locate_font (const char *tfm_name, spt_t ptsize)
   loaded_fonts[cur_id].minbytes = pdf_dev_font_minbytes(font_id);
   loaded_fonts[cur_id].type     = PHYSICAL;
   loaded_fonts[cur_id].font_id  = font_id;
+  if (loaded_fonts[cur_id].minbytes > 4) {
+    WARN("Input encoding requries more than 4 bytes per char... (unsupported)");
+    loaded_fonts[cur_id].minbytes = 4;
+  }
 
   if (dpx_conf.verbose_level > 0)
     MESG(">");
@@ -1106,6 +1112,10 @@ dvi_locate_native_font (const char *filename, uint32_t index,
   loaded_fonts[cur_id].size     = ptsize;
   loaded_fonts[cur_id].type     = NATIVE;
   loaded_fonts[cur_id].minbytes = pdf_dev_font_minbytes(loaded_fonts[cur_id].font_id);
+  if (loaded_fonts[cur_id].minbytes > 4) {
+    WARN("Input encoding requries more than 4 bytes per char... (unsupprted)");
+    loaded_fonts[cur_id].minbytes = 4;
+  }
   RELEASE(fontmap_key);
 
   if (is_type1) {
@@ -1314,7 +1324,7 @@ dvi_set (int32_t ch)
   struct loaded_font *font;
   spt_t               width, height, depth;
   unsigned char       wbuf[4];
-  int                 cbytes = 1;
+  int                 n, cbytes;
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -1340,12 +1350,11 @@ dvi_set (int32_t ch)
     dvi_right(width); /* Will actually move left */
 
   memcpy(wbuf, font->padbytes, 4);
-  cbytes = font->minbytes;
   switch (font->type) {
   case  PHYSICAL:
     if (ch > 65535) {
       /* FIXME: uptex specific undocumented */
-      if (tfm_is_jfm(font->tfm_id)) {
+      if (!font->is_unicode && tfm_is_jfm(font->tfm_id)) {
         wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
         wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
         wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -1356,17 +1365,21 @@ dvi_set (int32_t ch)
         wbuf[2] = (ch >>  8) & 0xff;
         wbuf[3] =  ch        & 0xff;
       }
-      cbytes  = 4;
+      n = 4;
     } else if (ch > 255) {
       wbuf[2] = (ch >> 8) & 0xff;
       wbuf[3] =  ch       & 0xff;
+      n = 2;
     } else if (font->subfont_id >= 0) {
       uint16_t uch = lookup_sfd_record(font->subfont_id, (unsigned char) ch);
       wbuf[2] = (uch >> 8) & 0xff;
       wbuf[3] =  uch       & 0xff;
+      n = 2;
     } else {
       wbuf[3] = (unsigned char) ch;
+      n = 1;
     }
+    cbytes = font->minbytes > n ? font->minbytes : n;
     set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id);
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;
@@ -1401,7 +1414,7 @@ dvi_put (int32_t ch)
   struct loaded_font *font;
   spt_t               width, height, depth;
   unsigned char       wbuf[4];
-  int                 cbytes = 1;
+  int                 n, cbytes;
 
   if (current_font < 0) {
     ERROR("No font selected!");
@@ -1410,7 +1423,6 @@ dvi_put (int32_t ch)
   font = &loaded_fonts[current_font];
 
   memcpy(wbuf, font->padbytes, 4);
-  cbytes = font->minbytes;
   switch (font->type) {
   case  PHYSICAL:
     width = tfm_get_fw_width(font->tfm_id, ch);
@@ -1420,7 +1432,7 @@ dvi_put (int32_t ch)
      */    
     if (ch > 65535) {
       /* FIXME: uptex specific undocumented */
-      if (tfm_is_jfm(font->tfm_id)) {
+      if (!font->is_unicode && tfm_is_jfm(font->tfm_id)) {
         wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
         wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
         wbuf[2] = (UTF32toUTF16LS(ch) >> 8) & 0xff;
@@ -1431,17 +1443,21 @@ dvi_put (int32_t ch)
         wbuf[2] = (ch >>  8) & 0xff;
         wbuf[3] =  ch        & 0xff;
       }
-      cbytes  = 4;
+      n = 4;
     } else if (ch > 255) {
       wbuf[2] = (ch >> 8) & 0xff;
       wbuf[3] =  ch       & 0xff;
+      n = 2;
     } else if (font->subfont_id >= 0) {
       uint16_t uch = lookup_sfd_record(font->subfont_id, (unsigned char) ch);
       wbuf[2] = (uch >> 8) & 0xff;
       wbuf[3] =  uch       & 0xff;
+      n = 2;
     } else {
       wbuf[3] = (unsigned char) ch;
+      n = 1;
     }
+    cbytes = font->minbytes > n ? font->minbytes : n;
     set_string(dvi_state.h, -dvi_state.v, wbuf + 4 - cbytes, cbytes, width, font->font_id);
     if (dvi_is_tracking_boxes()) {
       pdf_rect rect;

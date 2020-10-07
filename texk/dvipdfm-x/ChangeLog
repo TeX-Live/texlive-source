@@ -1,3 +1,14 @@
+2020-10-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvi.c: Fix problems introduced by the changes on 2020/10/03.
+	Fix a possible problem of invalid access. Fix a problem that
+	non-BMP characters are not handled properly for the "unicode"
+	encoding.
+	* spc_pdfm.c: pdf:bcolor and pdf:scolor accept both fill and
+	stroke color specified at the same time. Change the behavior
+	when an indirect object is specified for pdf:pageresources.
+	* configure.ac: Version 20201008.
+
 2020-10-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	* spc_dvips.c: Add an option -dALLOWPSTRANSPARENCY in

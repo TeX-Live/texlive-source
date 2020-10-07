@@ -272,7 +272,7 @@ int forallresourcecategory (pdf_obj *kp, pdf_obj *vp, void *dp)
             dict = pdf_deref_obj(dict);
             pdf_release_obj(dict); /* FIXME: jus to decrement link counter */
           }
-#if 1
+#if 0
           /* This will leave garbage (object "res") since object "res"
            * supplied as resource dictionary will have label but we copy the
            * content of res here and never use reference to it.
@@ -895,19 +895,27 @@ spc_handler_pdfm_bcolor (struct spc_env *spe, struct spc_arg *ap)
   pdf_color  fc, sc;
   pdf_color *pfc, *psc;
 
+  skip_white(&ap->curptr, ap->endptr);
+
   pdf_color_get_current(&psc, &pfc);
-  if (ap->curptr <= ap->endptr + strlen("fill") &&
-      !memcmp(ap->curptr, "fill", strlen("fill"))) {
-    ap->curptr += strlen("fill");
-    skip_white(&ap->curptr, ap->endptr);
-    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+  if (ap->curptr < ap->endptr &&
+      (ap->curptr[0] == 'f' || ap->curptr[0] == 's')) {
     pdf_color_copycolor(&sc, psc);
-  } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
-             !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
-    ap->curptr += strlen("stroke");
-    skip_white(&ap->curptr, ap->endptr);
-    error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     pdf_color_copycolor(&fc, pfc);
+    while (!error && ap->curptr < ap->endptr) {
+      if (ap->curptr <= ap->endptr + strlen("fill") &&
+          !memcmp(ap->curptr, "fill", strlen("fill"))) {
+        ap->curptr += strlen("fill");
+        skip_white(&ap->curptr, ap->endptr);
+        error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+      } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
+                 !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
+        ap->curptr += strlen("stroke");
+        skip_white(&ap->curptr, ap->endptr);
+        error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+      }
+      skip_white(&ap->curptr, ap->endptr);
+    }
   } else {
     error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
     if (!error) {
@@ -940,19 +948,27 @@ spc_handler_pdfm_scolor (struct spc_env *spe, struct spc_arg *ap)
   pdf_color  fc, sc;
   pdf_color *pfc, *psc;
 
+  skip_white(&ap->curptr, ap->endptr);
+
   pdf_color_get_current(&psc, &pfc);
-  if (ap->curptr <= ap->endptr + strlen("fill") &&
-      !memcmp(ap->curptr, "fill", strlen("fill"))) {
-    ap->curptr += strlen("fill");
-    skip_white(&ap->curptr, ap->endptr);
-    error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+  if (ap->curptr < ap->endptr &&
+      (ap->curptr[0] == 'f' || ap->curptr[0] == 's')) {
     pdf_color_copycolor(&sc, psc);
-  } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
-             !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
-    ap->curptr += strlen("stroke");
-    skip_white(&ap->curptr, ap->endptr);
-    error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
     pdf_color_copycolor(&fc, pfc);
+    while (!error && ap->curptr < ap->endptr) {
+      if (ap->curptr <= ap->endptr + strlen("fill") &&
+          !memcmp(ap->curptr, "fill", strlen("fill"))) {
+        ap->curptr += strlen("fill");
+        skip_white(&ap->curptr, ap->endptr);
+        error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
+      } else if (ap->curptr <= ap->endptr + strlen("stroke") &&
+                 !memcmp(ap->curptr, "stroke", strlen("stroke"))) {
+        ap->curptr += strlen("stroke");
+        skip_white(&ap->curptr, ap->endptr);
+        error = spc_util_read_pdfcolor(spe, &sc, ap, psc);
+      }
+      skip_white(&ap->curptr, ap->endptr);
+    }
   } else {
     error = spc_util_read_pdfcolor(spe, &fc, ap, pfc);
     if (!error) {
