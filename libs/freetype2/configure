@@ -584,7 +584,7 @@ PACKAGE_STRING='FreeType (TeX Live) 2.10.3'
 PACKAGE_BUGREPORT='tex-k@tug.org'
 PACKAGE_URL=''
 
-ac_unique_file="freetype-src/builds/unix/ftconfig.in"
+ac_unique_file="freetype-src/builds/unix/ftconfig.h.in"
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
