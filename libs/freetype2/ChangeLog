@@ -1,7 +1,7 @@
 2020-10-11  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import freetype-2.10.3.
-	* version.ac: Adjusted.
+	* configure.ac, version.ac: Adjusted.
 
 2020-05-10  Akira Kakuto  <kakuto@w32tex.org>
 
