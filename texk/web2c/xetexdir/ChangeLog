@@ -1,3 +1,7 @@
+2020-10-13  Akira Kakuto  <kakuto@w32tex.org>
+
+	* xetexextra.c: Sync with W32 sources.
+
 2020-08-31  Marcel Fabian Krueger  <tex@2krueger.de>
 
 	* xetex.web (Scan the argument for command |c|) <expanded_code>:
