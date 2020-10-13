@@ -34,6 +34,8 @@
 #include "dpxconf.h"
 #include "dpxfile.h"
 
+#include "unicode.h"
+
 #include "pdfobj.h"
 /* pseudo unique tag */
 #include "pdffont.h"
@@ -434,8 +436,8 @@ fix_CJK_symbols (unsigned short code)
   return alt_code;
 }
 
-static int
-cid_to_code (CMap *cmap, CID cid)
+static int32_t
+cid_to_code (CMap *cmap, CID cid, int unicode_cmap)
 {
   unsigned char  inbuf[2], outbuf[32];
   int            inbytesleft = 2, outbytesleft = 32;
@@ -452,22 +454,29 @@ cid_to_code (CMap *cmap, CID cid)
   CMap_decode_char(cmap, &p, &inbytesleft, &q, &outbytesleft);
 
   if (inbytesleft != 0)
-    return 0;
+    return -1;
   else if (outbytesleft == 31)
-    return (int) outbuf[0];
+    return (int32_t) outbuf[0];
   else if (outbytesleft == 30)
-    return (int) (outbuf[0] << 8|outbuf[1]);
-  else if (outbytesleft == 28) { /* We assume the output encoding is UTF-16. */
-    CID hi, lo;
-    hi = outbuf[0] << 8|outbuf[1];
-    lo = outbuf[2] << 8|outbuf[3];
-    if (hi >= 0xd800 && hi <= 0xdbff && lo >= 0xdc00 && lo <= 0xdfff)
-      return (int) ((hi - 0xd800) * 0x400 + 0x10000 + lo - 0xdc00);
-    else
-      return (int) (hi << 16|lo);
+    return (int32_t) (outbuf[0] << 8|outbuf[1]);
+  else if (outbytesleft == 28) {
+    if (unicode_cmap) {
+      /* We assume the output encoding is UTF-16. */
+      int32_t              uc;
+      const unsigned char *endptr;
+
+      p      = outbuf;
+      endptr = p + 4;
+      uc = UC_UTF16BE_decode_char(&p, endptr);
+      if (p != endptr)
+        WARN("CID=%u mapped to non-single Unicode characters...", cid);
+      return p == endptr ? uc : -1;
+    } else {
+      return (outbuf[0] << 24)|(outbuf[1] << 16)|(outbuf[2] << 8)|outbuf[3];
+    }
   }
 
-  return 0;
+  return -1;
 }
 
 /* #define NO_GHOSTSCRIPT_BUG 1 */
@@ -693,8 +702,8 @@ CIDFont_type2_dofont (pdf_font *font)
   if (h_used_chars) {
     used_chars = h_used_chars;
     for (cid = 1; cid <= last_cid; cid++) {
-      int            code;
-      unsigned short gid;
+      int32_t  code;
+      uint16_t gid = 0;
 
       if (!is_used_char2(h_used_chars, cid))
         continue;
@@ -703,25 +712,29 @@ CIDFont_type2_dofont (pdf_font *font)
         gid  = cid;
         code = cid;
       } else {
-        code = cid_to_code(cmap, cid);
-        gid  = tt_cmap_lookup(ttcmap, code);
+        code = cid_to_code(cmap, cid, unicode_cmap);
+        if (code < 0) {
+          WARN("Unable to map CID to code: CID=%u", cid);
+        } else {
+          gid  = tt_cmap_lookup(ttcmap, code);
 #ifdef FIX_CJK_UNIOCDE_SYMBOLS
-        if (gid == 0 && unicode_cmap) {
-          int alt_code;
+          if (gid == 0 && unicode_cmap) {
+            int alt_code;
           
-          alt_code = fix_CJK_symbols((unsigned short)code);
-          if (alt_code != code) {
-            gid = tt_cmap_lookup(ttcmap, alt_code);
-            if (gid != 0) {
-              WARN("Unicode char U+%04x replaced with U+%04x.", code, alt_code);
+            alt_code = fix_CJK_symbols((unsigned short)code);
+            if (alt_code != code) {
+              gid = tt_cmap_lookup(ttcmap, alt_code);
+              if (gid != 0) {
+                WARN("Unicode char U+%04x replaced with U+%04x.", code, alt_code);
+              }
             }
           }
-        }
 #endif /* FIX_CJK_UNIOCDE_SYMBOLS */
+        }
       }
-
       if (gid == 0) {
-        WARN("Glyph missing in font. (CID=%u, code=0x%04x)", cid, code);
+        if (code >= 0)
+          WARN("Glyph missing in font. (CID=%u, code=0x%04x)", cid, code);
       }
 
       /* TODO: duplicated glyph */
@@ -764,8 +777,8 @@ CIDFont_type2_dofont (pdf_font *font)
     }
 
     for (cid = 1; cid <= last_cid; cid++) {
-      int            code;
-      unsigned short gid;
+      int32_t  code;
+      uint16_t gid = 0;
 
       if (!is_used_char2(v_used_chars, cid))
         continue;
@@ -782,24 +795,29 @@ CIDFont_type2_dofont (pdf_font *font)
         gid  = cid;
         code = cid;
       } else {
-        code = cid_to_code(cmap, cid);
-        gid  = tt_cmap_lookup(ttcmap, code);
+        code = cid_to_code(cmap, cid, unicode_cmap);
+        if (code < 0) {
+          WARN("Unable to map CID to code: CID=%u", cid);
+        } else {
+          gid  = tt_cmap_lookup(ttcmap, code);
 #ifdef FIX_CJK_UNIOCDE_SYMBOLS
-        if (gid == 0 && unicode_cmap) {
-          int alt_code;
+          if (gid == 0 && unicode_cmap) {
+            int alt_code;
           
-          alt_code = fix_CJK_symbols((unsigned short)code);
-          if (alt_code != code) {
-            gid = tt_cmap_lookup(ttcmap, alt_code);
-            if (gid != 0) {
-              WARN("Unicode char U+%04x replaced with U+%04x.", code, alt_code);
+            alt_code = fix_CJK_symbols((unsigned short)code);
+            if (alt_code != code) {
+              gid = tt_cmap_lookup(ttcmap, alt_code);
+              if (gid != 0) {
+                WARN("Unicode char U+%04x replaced with U+%04x.", code, alt_code);
+              }
             }
           }
-        }
 #endif /* FIX_CJK_UNIOCDE_SYMBOLS */
+        }
       }
       if (gid == 0) {
-        WARN("Glyph missing in font. (CID=%u, code=0x%04x)", cid, code);
+        if (code >= 0)
+          WARN("Glyph missing in font. (CID=%u, code=0x%04x)", cid, code);
       } else if (gsub_list) {
         otl_gsub_apply(gsub_list, &gid);
       }

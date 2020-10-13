@@ -1,3 +1,11 @@
+2020-10-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* tt_cmap.c: Fix a bug that checking array indices is wrong.
+	* cidtype2.c: Warning message when CID is mapped to a sequence
+	of several Unicode characters is corrected. Fix a wrong
+	assumption introduced by xdvipdfmx.
+	* configure.ac: Version 20201014.
+
 2020-10-08  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.c: Fix problems introduced by the changes on 2020/10/03.

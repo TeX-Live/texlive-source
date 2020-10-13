@@ -434,7 +434,7 @@ lookup_cmap12 (struct cmap12 *map, ULONG cccc)
   int i;
 
   i = map->nGroups;
-  while (i-- >= 0 &&
+  while (i-- > 0 &&
 	 cccc <= map->groups[i].endCharCode) {
     if (cccc >= map->groups[i].startCharCode) {
       gid = (USHORT) ((cccc -
