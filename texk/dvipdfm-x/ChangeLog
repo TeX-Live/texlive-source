@@ -1,3 +1,15 @@
+2020-10-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cidtype0.c, cidtype2.c, type0.c: User defined CID-to-GID
+	PostScript CMap with filename of the form
+	REGISTRY-ORDERING-PSFontName can be loaded (if exist) for
+	mapping CIDs to GIDs. This feature can be used for directory
+	mapping CIDs to GIDs instead of
+	CID -> to-code CMaps -> TrueType cmap -> GID route.
+	* data/Adobe-Japan1-YuMincho-Regular: An example of CID-to-GID
+	CMap file.
+	* configure.ac: Version 20201019.
+
 2020-10-14  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* tt_cmap.c: Fix a bug that checking array indices is wrong.

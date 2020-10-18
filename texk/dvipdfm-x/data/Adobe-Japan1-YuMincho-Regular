@@ -1,0 +1,135 @@
+%!PS-Adobe-3.0 Resource-CMap
+%%DocumentNeededResources: ProcSet (CIDInit)
+%%IncludeResource: ProcSet (CIDInit)
+%%BeginResource: CMap (Adobe-Japan1-YuMincho-Regular)
+%%Title: (Adobe-Japan1-YuMincho-Regular Adobe Japan1 7)
+%%Version: 1.000
+%%EndComments
+
+/CIDInit /ProcSet findresource begin
+
+12 dict begin
+
+begincmap
+
+/CIDSystemInfo 3 dict dup begin
+  /Registry (Adobe) def
+  /Ordering (Adobe_Japan1_YuMincho_Regular) def
+  /Supplement 7 def
+end def
+
+/CMapName /Adobe-Japan1-YuMincho-Regular def
+/CMapVersion 1.000 def
+/CMapType 2 def
+
+/WMode 0 def
+
+1 begincodespacerange
+  <0000> <5AFF>
+endcodespacerange
+
+1 beginbfchar
+<0000> <0000> 
+endbfchar
+
+91 beginbfrange
+<0001> <00ff> <0003>
+<0100> <01ff> <0102>
+<0200> <02ff> <0202>
+<0300> <03ff> <0302>
+<0400> <04ff> <0402>
+<0500> <05ff> <0502>
+<0600> <06ff> <0602>
+<0700> <07ff> <0702>
+<0800> <08ff> <0802>
+<0900> <09ff> <0902>
+<0a00> <0aff> <0a02>
+<0b00> <0bff> <0b02>
+<0c00> <0cff> <0c02>
+<0d00> <0dff> <0d02>
+<0e00> <0eff> <0e02>
+<0f00> <0fff> <0f02>
+<1000> <10ff> <1002>
+<1100> <11ff> <1102>
+<1200> <12ff> <1202>
+<1300> <13ff> <1302>
+<1400> <14ff> <1402>
+<1500> <15ff> <1502>
+<1600> <16ff> <1602>
+<1700> <17ff> <1702>
+<1800> <18ff> <1802>
+<1900> <19ff> <1902>
+<1a00> <1aff> <1a02>
+<1b00> <1bff> <1b02>
+<1c00> <1cff> <1c02>
+<1d00> <1dff> <1d02>
+<1e00> <1eff> <1e02>
+<1f00> <1fff> <1f02>
+<2000> <20ff> <2002>
+<2100> <21ff> <2102>
+<2200> <22ff> <2202>
+<2300> <23ff> <2302>
+<2400> <24ff> <2402>
+<2500> <25ff> <2502>
+<2600> <26ff> <2602>
+<2700> <27ff> <2702>
+<2800> <28ff> <2802>
+<2900> <29ff> <2902>
+<2a00> <2aff> <2a02>
+<2b00> <2bff> <2b02>
+<2c00> <2cff> <2c02>
+<2d00> <2dff> <2d02>
+<2e00> <2eff> <2e02>
+<2f00> <2fff> <2f02>
+<3000> <30ff> <3002>
+<3100> <31ff> <3102>
+<3200> <32ff> <3202>
+<3300> <33ff> <3302>
+<3400> <34ff> <3402>
+<3500> <35ff> <3502>
+<3600> <36ff> <3602>
+<3700> <37ff> <3702>
+<3800> <38ff> <3802>
+<3900> <39ff> <3902>
+<3a00> <3aff> <3a02>
+<3b00> <3bff> <3b02>
+<3c00> <3cff> <3c02>
+<3d00> <3dff> <3d02>
+<3e00> <3eff> <3e02>
+<3f00> <3fff> <3f02>
+<4000> <40ff> <4002>
+<4100> <41ff> <4102>
+<4200> <42ff> <4202>
+<4300> <43ff> <4302>
+<4400> <44ff> <4402>
+<4500> <45ff> <4502>
+<4600> <46ff> <4602>
+<4700> <47ff> <4702>
+<4800> <48ff> <4802>
+<4900> <49ff> <4902>
+<4a00> <4aff> <4a02>
+<4b00> <4bff> <4b02>
+<4c00> <4cff> <4c02>
+<4d00> <4dff> <4d02>
+<4e00> <4eff> <4e02>
+<4f00> <4fff> <4f02>
+<5000> <50ff> <5002>
+<5100> <51ff> <5102>
+<5200> <52ff> <5202>
+<5300> <53ff> <5302>
+<5400> <54ff> <5402>
+<5500> <55ff> <5502>
+<5600> <56ff> <5602>
+<5700> <57ff> <5702>
+<5800> <58ff> <5802>
+<5900> <59ff> <5902>
+<5a00> <5a13> <5a02>
+endbfrange
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end
+
+%%EndResource
+%%EOF
+
