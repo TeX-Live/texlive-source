@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 55294 2020-05-27 02:43:58Z preining $
+# $Id: fmtutil.pl 56682 2020-10-17 06:08:28Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 55294 2020-05-27 02:43:58Z preining $';
-my $lastchdate = '$Date: 2020-05-27 04:43:58 +0200 (Wed, 27 May 2020) $';
+my $svnid = '$Id: fmtutil.pl 56682 2020-10-17 06:08:28Z preining $';
+my $lastchdate = '$Date: 2020-10-17 08:08:28 +0200 (Sat, 17 Oct 2020) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 55294 $';
+my $svnrev = '$Revision: 56682 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -407,32 +407,21 @@ sub callback_build_formats {
   my $nobuild = 0;
   my $notavail = 0;
   my $total = 0;
-  for my $fmt (keys %{$alldata->{'merged'}}) {
-    for my $eng (keys %{$alldata->{'merged'}{$fmt}}) {
-      next if ($fmt ne $eng);
-      $total++;
-      my $val = select_and_rebuild_format($fmt, $eng, $what, $whatarg);
-      if ($val == $FMT_DISABLED)    { $disabled++; }
-      elsif ($val == $FMT_NOTSELECTED) { $nobuild++; }
-      elsif ($val == $FMT_FAILURE)  { $err++; push (@err, "$eng/$fmt"); }
-      elsif ($val == $FMT_SUCCESS)  { $suc++; }
-      elsif ($val == $FMT_NOTAVAIL) { $notavail++; }
-      else { print_error("callback_build_format (round 1): unknown return "
-             . "from select_and_rebuild.\n"); }
-    }
-  }
-  for my $fmt (keys %{$alldata->{'merged'}}) {
-    for my $eng (keys %{$alldata->{'merged'}{$fmt}}) {
-      next if ($fmt eq $eng);
-      $total++;
-      my $val = select_and_rebuild_format($fmt, $eng, $what, $whatarg);
-      if ($val == $FMT_DISABLED)    { $disabled++; }
-      elsif ($val == $FMT_NOTSELECTED) { $nobuild++; }
-      elsif ($val == $FMT_FAILURE)  { $err++; push (@err, "$eng/$fmt"); }
-      elsif ($val == $FMT_SUCCESS)  { $suc++; }
-      elsif ($val == $FMT_NOTAVAIL) { $notavail++; }
-      else { print_error("callback_build_format (round 2): unknown return "
-             . "from select_and_rebuild.\n"); }
+  for my $swi (qw/format=engine format!=engine/) {
+    for my $fmt (keys %{$alldata->{'merged'}}) {
+      for my $eng (keys %{$alldata->{'merged'}{$fmt}}) {
+        next if ($swi eq "format=engine" && $fmt ne $eng);
+        next if ($swi eq "format!=engine" && $fmt eq $eng);
+        $total++;
+        my $val = select_and_rebuild_format($fmt, $eng, $what, $whatarg);
+        if ($val == $FMT_DISABLED)    { $disabled++; }
+        elsif ($val == $FMT_NOTSELECTED) { $nobuild++; }
+        elsif ($val == $FMT_FAILURE)  { $err++; push (@err, "$eng/$fmt"); }
+        elsif ($val == $FMT_SUCCESS)  { $suc++; }
+        elsif ($val == $FMT_NOTAVAIL) { $notavail++; }
+        else { print_error("callback_build_format (round 1): unknown return "
+               . "from select_and_rebuild.\n"); }
+      }
     }
   }
 

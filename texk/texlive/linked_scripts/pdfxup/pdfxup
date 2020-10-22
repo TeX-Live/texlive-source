@@ -2,8 +2,8 @@
 shopt -s extglob
 shopt -s lastpipe
 
-VERSION="1.60"
-VDATE="2020/06/24"
+VERSION="1.61"
+VDATE="2020/10/21"
 ## see release notes at the end of this file.
 
 
@@ -15,6 +15,7 @@ VDATE="2020/06/24"
 ##    dimtopt() and testdim()
 ##    ifinrangelist()
 ##    cleancslor()    [clean comma-sep. list of ranges]
+##    cleanup
 ## 2) script:
 ##    - set default options
 ##    - test for ghostscript and pdflatex
@@ -58,10 +59,10 @@ function defaultvalues()
   : ${dfpdfxupNOBB=""}
   : ${dfpdfxupKBB="0"}
   : ${dfpdfxupGBB="0"}
-  : ${dfpdfxupVERB=1}
-  : ${dfpdfxupDEBUG=0}
-  : ${dfpdfxupWMPERIOD=1}
-  : ${dfpdfxupALLOWOW=0}
+  : ${dfpdfxupVERB="1"}
+  : ${dfpdfxupDEBUG="0"}
+  : ${dfpdfxupWMPERIOD="1"}
+  : ${dfpdfxupALLOWOW="0"}
   : ${dfpdfxupFORCEBB=""}
 }
 
@@ -91,7 +92,7 @@ function setdefaultvalues()
     WATERMARKPERIOD=$dfpdfxupWMPERIOD;
     KBB=$dfpdfxupKBB;
     GBB=$dfpdfxupGBB;
-    ALLOWOVERWITE=$dfpdfxupALLOWOW;
+    ALLOWOVERWRITE=$dfpdfxupALLOWOW;
     SBB=0;
     x0=-1
     y0=-1
@@ -167,7 +168,6 @@ Available OPTIONS are:
 ##
 ##
 ##
-
     exit 0;
 }
 
@@ -333,6 +333,15 @@ function cleancslor()
 	 	 ;;
 	 esac
     done
+}
+
+function cleanup()
+{
+    if [[ $DEBUG == 0 ]]; then
+	myecho 1+ "-> cleaning";
+	myecho 2+ " * rm $RMopt *$filename.*"
+	rm $RMopt *$filename.* 
+    fi
 }
 
 ARGS=$@;
@@ -532,7 +541,7 @@ while [ $# != 0 ]; do
 	    OUTF=$ANS;
 	    shift;;
 	-ow)
-	    ALLOWOVERWRITE=1;
+	    ALLOWOVERWRITE="1";
 	    shift;;
 	-ihm|--innerhmargin)
 	    dimtopt $2 $dfpdfxupIHM "$1 $2";
@@ -1097,6 +1106,7 @@ fi
 
 if [[ $GBB != 0 ]]; then
     myecho 1+ "   final bounding box: x=$x y=$y X=$w Y=$h";
+    cleanup;
     exit 0;
 fi
 
@@ -1408,34 +1418,20 @@ esac
 ######################################################################
 if [[ $LATEXFAILED -eq 1 ]]; then
     myecho 1+ ": failed!"
-    if [[ $DEBUG == 0 ]]; then
-	myecho 1+ "-> cleaning";
-	myecho 2+ " * rm $RMopt $filename.* $inputfilename.*"
-	rm $RMopt $filename.* $inputfilename.*
-    fi
+    cleanup
     exit 0;
 fi
 if [[ $EMPTYBB -eq 0 ]]; then
     myecho 1+ "   final scale: "`cat $filename.scl | sed -e "s/pt$//"`"%"
 fi
-## pass "-i" option to avoid overwriting...
-## You may avoir this by running 'MVopt="-f" pdfxup ...'
-if [[ "$ALLOWOVERWRITE" ]]; then
+if [[ $ALLOWOVERWRITE -eq 1 ]]; then
     myecho 2+ " * mv $MVopt $filename.pdf \"$OUTF\""
     mv $MVopt $filename.pdf "$OUTF"
 else
     myecho 2+ " * mv $MVopt -i $filename.pdf \"$OUTF\""
-    mv $MVopt -i $filename.pdf "$OUTF"
+    mv $MVopt -i $filename.pdf "$OUTF"    
 fi
-if [[ $DEBUG == 0 ]]; then
-  myecho 1+ "-> cleaning";
-  myecho 2+ " * rm $RMopt $filename.* $inputfilename.pdf" 
-  rm $RMopt $filename.* $inputfilename.pdf
-  [[ -e $watermarkfilename.pdf ]] && \
-      myecho 2+ " * rm $RMopt $watermarkfilename.pdf" && \
-      rm $RMopt $watermarkfilename.pdf
-fi
-
+cleanup
 exit 0
 
 
@@ -1581,3 +1577,6 @@ v1.60 (2020/06/24)
    (thanks to Janis Kalofolias for pointing out the problem)
  - allow file names containing spaces 
  - better inclusion of watermarks
+
+v1.61 (2020/10/21)
+ - clean up after option '-g' (thanks to Oliver Redner)
