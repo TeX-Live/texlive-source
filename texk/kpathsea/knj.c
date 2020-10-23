@@ -127,11 +127,24 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
   /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
+  More than one directory separators should be excluded. (2020/10/24)
 */
     fnn = xmalloc(len + 10);
     p = strstr(filename, ".\\");
     if (!p) {
        p = strstr(filename, "./");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "//");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\\\");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\/");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "/\\");
     }
     if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
         (filename[0] == '\\' && filename[1] == '\\' &&
@@ -192,11 +205,24 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
   Windows, if it really exists and input name is given in
   full-absolute path in a command line.
   /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
+  More than one directory separators should be excluded. (2020/10/24)
 */
     fnn = xmalloc(len + 10);
     p = strstr(filename, ".\\");
     if (!p) {
        p = strstr(filename, "./");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "//");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\\\");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\/");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "/\\");
     }
     if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
         (filename[0] == '\\' && filename[1] == '\\' &&
