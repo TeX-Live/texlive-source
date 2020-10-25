@@ -3,7 +3,7 @@
 @d banner=='This is pBibTeX, Version 0.99d-j0.33'
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.26'
+@d banner=='This is upBibTeX, Version 0.99d-j0.33-u1.27'
 @z
 
 @x
@@ -331,9 +331,78 @@ incr(current_option);
 @ An element with all zeros always ends the list.
 @z
 
+@x procedure x_is_kanji_str
+procedure x_is_kanji_str;
+label exit;
+@y
+procedure x_is_kanji_str;
+label exit;
+var ctmp,clen:integer;
+@z
+
+@x procedure x_is_kanji_str (cont.)
+        while sp_ptr<sp_end do begin
+            if str_pool[sp_ptr]>127 then begin
+                push_lit_stk(1,stk_int);
+                return;
+            end else begin
+                incr(sp_ptr);
+            end;
+        end;
+@y
+        while sp_ptr<sp_end do begin
+            clen := multibytelen(str_pool[sp_ptr]);
+            if sp_ptr+clen<=sp_end then
+                ctmp := fromBUFF(str_pool, sp_ptr+clen, sp_ptr)
+            else
+                ctmp := str_pool[sp_ptr];
+            if is_char_kanji_upbibtex(ctmp) then begin
+                push_lit_stk(1,stk_int);
+                return;
+            end else begin
+                if sp_ptr+clen<=sp_end then
+                    sp_ptr := sp_ptr + clen
+                else
+                    incr(sp_ptr);
+            end;
+        end;
+@z
+
 @x
 exit:end;
 @y
+exit:end;
+
+@ @<Procedures and functions for handling numbers, characters, and strings@>=
+function is_char_kanji_upbibtex(@!c:integer):boolean;
+label exit;
+var k:integer;
+begin
+  { based on upTeX-1.26 kcatcode status: 16,17,19->true / 15,18->false }
+  is_char_kanji_upbibtex := true;
+  if (is_internalUPTEX) then begin { should be in sync with |kcat_code| of uptex-m.ch }
+    k := kcatcodekey(c);
+    if k=@"24 then return { Hangul Jamo }
+    else if (k>=@"67)and(k<=@"69) then return { CJK Radicals Supplement .. Ideographic Description Characters }
+    else if (k>=@"6B)and(k<=@"6C) then return { Hiragana, Katakana }
+    else if k=@"6D then return { Bopomofo }
+    else if k=@"6E then return { Hangul Compatibility Jamo }
+    else if (k>=@"6F)and(k<=@"71) then return { Kanbun .. CJK Strokes }
+    else if k=@"72 then return { Katakana Phonetic Extensions }
+    else if k=@"75 then return { CJK Unified Ideographs Extension A }
+    else if k=@"77 then return { CJK Unified Ideographs }
+    else if k=@"87 then return { Hangul Jamo Extended-A }
+    else if k=@"92 then return { Hangul Syllables }
+    else if k=@"93 then return { Hangul Jamo Extended-B }
+    else if k=@"98 then return { CJK Compatibility Ideographs }
+    else if (k>=@"103)and(k<=@"105) then return { Kana Supplement .. Small Kana Extension }
+    else if (k>=@"129)and(k<=@"12F) then return { CJK Unified Ideographs Extension B .. G }
+    else if k=@"1FE then return { Fullwidth digit and latin alphabet }
+    else if k=@"1FF then return; { Halfwidth katakana }
+    end
+  else { is_internalEUC }
+    if is_char_kanji(c) then return;
+  is_char_kanji_upbibtex := false;
 exit:end;
 
 @ @<Initialize variables depending on Kanji code@>=
