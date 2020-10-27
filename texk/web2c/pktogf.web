@@ -7,7 +7,7 @@
 % Fixed bug to include specials in character (1.0): January 1988
 % Cleaned up description (bitweight errors) no version change:  July 1990
 % Fixed bug with empty character setting min_n to 1 (1.1): 19 October 1990
-% A few typos, no version change: 22 April 2020
+% A few typos, no version change: 22 April 2020, 27 October 2020
 \def\versiondate{22 April 2020}
 %
 \font\ninerm=cmr9
@@ -539,7 +539,7 @@ should be zero, but other document file formats allow nonzero vertical
 escapement.
 
 The character width~|w| duplicates the information in the \.{TFM} file; it
-is $2^{24}$ times the ratio of the true width to the font's design size.
+is $2^{20}$ times the ratio of the true width to the font's design size.
 
 The backpointer |p| points to the character's |boc|, or to the first of
 a sequence of consecutive \\{xxx} or |yyy| or |no_op| commands that
