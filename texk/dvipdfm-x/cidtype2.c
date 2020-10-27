@@ -940,7 +940,7 @@ CIDFont_type2_dofont (pdf_font *font)
    * NOTE: All glyphs including component glyph and dummy glyph must be
    * listed in CIDSet. However, .notdef glyph should be ommitted.
    */
-  {
+  if (pdf_check_version(2, 0) < 0) {
     pdf_obj *cidset;
     char    *cidset_data;
 

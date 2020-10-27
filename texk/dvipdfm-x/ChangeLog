@@ -1,3 +1,12 @@
+2020-10-28  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cidtype0.c: Fix a bug that the conditional for deciding if
+	CIDSet should be written is inverted. CIDSet is deprecated in
+	PDF version 2.0.
+	* cidtype2.c, type1.c, type1c.c: Do not write CIDSet and
+	CharSet when the output PDF version is set to 2.0 or higher.
+	* configure.ac: Version 20201028.
+
 2020-10-19  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cidtype0.c, cidtype2.c, type0.c: User defined CID-to-GID

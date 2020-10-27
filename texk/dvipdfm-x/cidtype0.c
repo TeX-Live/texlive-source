@@ -754,7 +754,7 @@ CIDFont_type0_dofont (pdf_font *font)
   if (dpx_conf.verbose_level > 1)
     MESG("[%u/%u glyphs][%ld bytes]", num_glyphs, cs_count, destlen);
 
-  if (pdf_check_version(2, 0) >= 0) {
+  if (pdf_check_version(2, 0) < 0) {
     CIDFont_type0_add_CIDSet(font, used_chars, last_cid);
   }
 
@@ -1441,7 +1441,7 @@ CIDFont_type0_t1cdofont (pdf_font *font)
   if (dpx_conf.verbose_level > 1)
     MESG("[%u glyphs][%ld bytes]", num_glyphs, destlen);
 
-  if (pdf_check_version(2, 0) >= 0) {
+  if (pdf_check_version(2, 0) < 0) {
     CIDFont_type0_add_CIDSet(font, used_chars, last_cid);
   }
 
@@ -2110,7 +2110,7 @@ CIDFont_type0_t1dofont (pdf_font *font)
 
   cff_close(cffont);
 
-  if (pdf_check_version(2, 0) >= 0) {
+  if (pdf_check_version(2, 0) < 0) {
     CIDFont_type0_add_CIDSet(font, used_chars, last_cid);
   }
 
