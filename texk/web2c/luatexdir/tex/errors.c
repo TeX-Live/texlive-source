@@ -398,8 +398,9 @@ static void luatex_calledit (int baseptr, int linenumber)
         strcat(fullcmd, "\"");
         strcat(fullcmd, command);
     }
-#endif
+#else
     fullcmd = command;
+#endif
     /*tex Execute the command. */
     if (system (fullcmd) != 0) {
         fprintf (stderr, "! Trouble executing `%s'.\n", command);
