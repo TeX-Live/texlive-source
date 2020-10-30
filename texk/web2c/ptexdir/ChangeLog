@@ -1,3 +1,8 @@
+2020-10-30  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdvitype.ch: Strict check for DVI ID was wrong for
+	output-level <= 3; needs reconsider.
+
 2020-08-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdvitype.ch: Support dtou direction. Strict check for DVI ID
