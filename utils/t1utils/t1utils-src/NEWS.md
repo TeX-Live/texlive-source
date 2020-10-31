@@ -1,6 +1,11 @@
 T1utils NEWS
 ============
 
+## Version 1.42 – 27.Oct.2020
+
+* Compile fixes for OSes that do not declare a function.
+
+
 ## Version 1.41 – 16.Aug.2017
 
 * t1asm, t1disasm: More security fixes.

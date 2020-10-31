@@ -1,8 +1,6 @@
-	Avoid compiler warnings (gcc's -Wcast-qual).
-
-diff -ur t1utils-1.41.orig/clp.c t1utils-1.41/clp.c
---- t1utils-1.41.orig/clp.c	Thu Aug 17 00:20:27 2017
-+++ t1utils-1.41/clp.c	Mon Aug 28 15:43:58 2017
+diff -ur t1utils-1.42/clp.c t1utils-src/clp.c
+--- t1utils-1.42/clp.c	Wed Oct 28 00:08:00 2020
++++ t1utils-src/clp.c	Sat Oct 31 13:01:47 2020
 @@ -1095,22 +1095,28 @@
  parse_int(Clp_Parser* clp, const char* arg, int complain, void* user_data)
  {

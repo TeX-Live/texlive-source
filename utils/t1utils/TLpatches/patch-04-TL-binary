@@ -1,8 +1,6 @@
-	In TeX Live we treat all output files as binary.
-
-diff -ur t1utils-1.41.orig/t1ascii.c t1utils-1.41/t1ascii.c
---- t1utils-1.41.orig/t1ascii.c	Thu Aug 17 01:31:02 2017
-+++ t1utils-1.41/t1ascii.c	Mon Aug 28 15:43:58 2017
+diff -ur t1utils-1.42/t1ascii.c t1utils-src/t1ascii.c
+--- t1utils-1.42/t1ascii.c	Wed Oct 28 00:08:00 2020
++++ t1utils-src/t1ascii.c	Sat Oct 31 13:02:49 2020
 @@ -286,6 +286,7 @@
    /* As we are processing a PFB (binary) input */
    /* file, we must set its file mode to binary. */
@@ -11,9 +9,9 @@ diff -ur t1utils-1.41.orig/t1ascii.c t1utils-1.41/t1ascii.c
  #endif
  
    /* prepare font reader */
-diff -ur t1utils-1.41.orig/t1asm.c t1utils-1.41/t1asm.c
---- t1utils-1.41.orig/t1asm.c	Thu Aug 17 01:31:11 2017
-+++ t1utils-1.41/t1asm.c	Wed Aug 30 16:13:00 2017
+diff -ur t1utils-1.42/t1asm.c t1utils-src/t1asm.c
+--- t1utils-1.42/t1asm.c	Wed Oct 28 00:08:00 2020
++++ t1utils-src/t1asm.c	Sat Oct 31 13:03:47 2020
 @@ -715,8 +715,7 @@
  #if defined(_MSDOS) || defined(_WIN32)
    /* If we are processing a PFB (binary) output */
@@ -24,9 +22,9 @@ diff -ur t1utils-1.41.orig/t1asm.c t1utils-1.41/t1asm.c
  #endif
  
    /* Finally, we loop until no more input. Some special things to look for are
-diff -ur t1utils-1.41.orig/t1disasm.c t1utils-1.41/t1disasm.c
---- t1utils-1.41.orig/t1disasm.c	Thu Aug 17 01:31:24 2017
-+++ t1utils-1.41/t1disasm.c	Mon Aug 28 15:43:58 2017
+diff -ur t1utils-1.42/t1disasm.c t1utils-src/t1disasm.c
+--- t1utils-1.42/t1disasm.c	Wed Oct 28 00:08:00 2020
++++ t1utils-src/t1disasm.c	Sat Oct 31 13:04:32 2020
 @@ -727,6 +727,7 @@
    /* As we might be processing a PFB (binary) input file, we must set its file
       mode to binary. */
@@ -35,9 +33,9 @@ diff -ur t1utils-1.41.orig/t1disasm.c t1utils-1.41/t1disasm.c
  #endif
  
    /* prepare font reader */
-diff -ur t1utils-1.41.orig/t1unmac.c t1utils-1.41/t1unmac.c
---- t1utils-1.41.orig/t1unmac.c	Thu Aug 17 01:31:39 2017
-+++ t1utils-1.41/t1unmac.c	Mon Aug 28 15:43:58 2017
+diff -ur t1utils-1.42/t1unmac.c t1utils-src/t1unmac.c
+--- t1utils-1.42/t1unmac.c	Wed Oct 28 00:08:00 2020
++++ t1utils-src/t1unmac.c	Sat Oct 31 13:06:12 2020
 @@ -656,8 +655,7 @@
    _setmode(_fileno(ifp), _O_BINARY);
    /* If we are processing a PFB (binary) output */

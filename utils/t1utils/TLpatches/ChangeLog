@@ -1,3 +1,9 @@
+2020-10-31  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import t1utils-1.42.
+	* patch-03-warnings, patch-04-TL-binary, patch-05-getopt,
+	patch-07-warnings, patch-08-notuse-system-memmem: Adapted.
+
 2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* patch-08-notuse-system-memmem: Added.
@@ -6,7 +12,7 @@
 
 	Import t1utils-1.41.
 	* patch-03-warnings, patch-04-TL-binary, patch-05-getopt,
-	patch-07-warnings: Adapded.
+	patch-07-warnings: Adapted.
 
 2015-03-01  Peter Breitenlohner  <peb@mppmu.mpg.de>
 

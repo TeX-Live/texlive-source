@@ -3,6 +3,10 @@
 #ifndef T1UTILS_CONFIG_H
 #define T1UTILS_CONFIG_H
 
+/* Define to 1 if you have the declaration of `memmem', and to 0 if you don't.
+   */
+#undef HAVE_DECL_MEMMEM
+
 /* Define if intXX_t types are not available. */
 #undef HAVE_FAKE_INT_TYPES
 
@@ -96,7 +100,7 @@ char* strerror(int errno);
 #endif
 
 /* Prototype memmem if we don't have it. */
-#if !HAVE_MEMMEM
+#if !HAVE_MEMMEM || !HAVE_DECL_MEMMEM
 void* memmem(const void* haystack, size_t haystack_len,
              const void* needle, size_t needle_len);
 #endif

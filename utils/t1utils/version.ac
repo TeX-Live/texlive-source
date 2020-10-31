@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current t1utils version
-m4_define([t1utils_version], [1.41])
+m4_define([t1utils_version], [1.42])
