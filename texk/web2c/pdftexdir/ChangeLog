@@ -1,3 +1,9 @@
+2020-10-31  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_begin_string): don't output fake space
+	unless pdf_doing_string. pdftex r838-839.
+	Report from Ulrike Fischer, 18oct20.
+
 2020-08-31  Marcel Fabian Krueger  <tex@2krueger.de>
 
 	* pdftex.web (Scan the argument for command |c|) <expanded_code>:
