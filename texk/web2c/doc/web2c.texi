@@ -174,9 +174,9 @@ creation; consult each source file for exact details.  The main
 practical implication for redistributors of Web2c is that most of the
 executables are covered by the GNU General Public License or GNU
 Lesser General Public License, and therefore anyone who gets a binary
-distribution must also get the sources, as explained by the terms of
-the GPL (@url{https://gnu.org/licenses/}. The GPL covers the Web2c
-executables, including @code{tex}, because the Free Software
+distribution must also be able to get the sources, as explained by the
+terms of the GPL (@url{https://gnu.org/licenses/}. The GPL covers the
+Web2c executables, including @code{tex}, because the Free Software
 Foundation sponsored the initial development of the Kpathsea library
 that Web2c uses.  The basic source files from Stanford, however, have
 their own copyright terms or are in the public domain, and are not
