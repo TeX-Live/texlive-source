@@ -1,3 +1,8 @@
+2020-11-05  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_HEADER_TIME): remove, since it will be
+	a no-op in the next autoconf anyway, and is (hopefully) universal.
+
 2019-08-18  Akira Kakuto  <kakuto@w32tex.org>
 
 	* gsftopk.c: Add an option -dNOSAFER for Ghostscript.
