@@ -983,7 +983,18 @@ void hnj_hyphenation(halfword head, halfword tail)
         halfword hyf_font;
         halfword end_word = r;
         wordstart = r;
-        assert(is_simple_character(wordstart));
+        /*assert(is_simple_character(wordstart));*/
+        if (!(is_simple_character(wordstart))){
+         if (!(is_character(wordstart))) {
+          tex_error("the word doesn't start with a character", NULL);
+         } else if (is_ligature(wordstart)) {
+           tex_error("the word starts with a ligature", NULL);
+         } else if (is_ghost(wordstart)) {
+           tex_error("the word starts with a ghost glyph", NULL);
+         } else {
+           tex_error("the word doesn't start with a simple character", NULL);
+         }          
+        }
         hyf_font = font(wordstart);
         if (hyphen_char(hyf_font) < 0) {
             /*tex For backward compatibility we set: */
