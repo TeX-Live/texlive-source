@@ -1,3 +1,21 @@
+2020-11-08 Luigi Scarso <luigi.scarso@gmail.com> 
+    * convert assert(is_simple_character(wordstart)) to tex error
+
+2020-10-30 Luigi Scarso <luigi.scarso@gmail.com> 
+    * fixed a typo in w32 code in errors.c (A. Kakuto)
+
+2020-10-04 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed a typo in ChangeLog (thanks to A. Kakuto)
+
+2020-10-04 Luigi Scarso <luigi.scarso@gmail.com>
+    * patch for openin_any = p (A. Kakuto)
+
+2020-10-04 Luigi Scarso <luigi.scarso@gmail.com>
+    * Lua 5.3.6
+
+2020-08-21 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed a couple of bugs in metapost (see ChangeLog).
+
 2020-07-26 Luigi Scarso <luigi.scarso@gmail.com>
     * fixed: \tracinglostchars>=3 is an error (no fatal error)
 
