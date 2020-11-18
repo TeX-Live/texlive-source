@@ -18314,22 +18314,22 @@ $(mp_c_h): mp-tangle
 mp-tangle: ctangle$(EXEEXT) mplibdir/mp.w tangle-sh
 	@$(mp_ctangle_sh) mp
 
-$(mpmath_c_h): mpmath-tangle
+$(mpmath_c_h): mpmath-tangle mp-tangle
 	@$(mp_ctangle_sh) mpmath
 mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
 	@$(mp_ctangle_sh) mpmath
 
-$(mpmathbinary_c_h): mpmathbinary-tangle
+$(mpmathbinary_c_h): mpmathbinary-tangle mp-tangle
 	@$(mp_ctangle_sh) mpmathbinary
 mpmathbinary-tangle: ctangle$(EXEEXT) mplibdir/mpmathbinary.w tangle-sh
 	@$(mp_ctangle_sh) mpmathbinary
 
-$(mpmathdecimal_c_h): mpmathdecimal-tangle
+$(mpmathdecimal_c_h): mpmathdecimal-tangle mp-tangle
 	@$(mp_ctangle_sh) mpmathdecimal
 mpmathdecimal-tangle: ctangle$(EXEEXT) mplibdir/mpmathdecimal.w tangle-sh
 	@$(mp_ctangle_sh) mpmathdecimal
 
-$(mpmathdouble_c_h): mpmathdouble-tangle
+$(mpmathdouble_c_h): mpmathdouble-tangle mp-tangle
 	@$(mp_ctangle_sh) mpmathdouble
 mpmathdouble-tangle: ctangle$(EXEEXT) mplibdir/mpmathdouble.w tangle-sh
 	@$(mp_ctangle_sh) mpmathdouble

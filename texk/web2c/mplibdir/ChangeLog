@@ -1,3 +1,12 @@
+2020-11-18  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* am/libmplib.am (mpmath{,binary,decimal,double}_c_h): depend
+	on mp-tangle to try to pacify high parallelism (make -k8), which
+	Norbert reports can get
+../../../texk/web2c/mplibdir/mpmathbinary.w:38:10: fatal error: mplib.h: No such file or directory
+   38 | #include "mplib.h"
+        (per https://spot.fedorapeople.org/texlive-base-build.log).
+
 2020-08-21  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Changed epsilon in binary and decimal mode from 1E-52 to
           2^-173 =~0.835E-52, so that mp_solve_rising_cubic now works as
