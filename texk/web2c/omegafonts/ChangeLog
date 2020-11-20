@@ -1,3 +1,11 @@
+2020-11-21  Karl Berry  <karl@tug.org>
+
+	* pl-lexer.l (MAX_PTR): increase to 100000; the tests/xyarabic.opl
+	file has a COMMENT string longer than 10000 (the previous value),
+	but this did not normally cause an error exit status, unfortunately.
+	Finally did fail and was reported by Scott Norton here:
+	https://tug.org/pipermail/tex-k/2020-November/003391.html.
+
 2018-10-18  Norbert Preining  <preining@logic.at>
 
 	* ligkern_routines.c (retrieve_ligkern_table): need

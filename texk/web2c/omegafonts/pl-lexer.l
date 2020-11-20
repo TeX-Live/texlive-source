@@ -6,8 +6,9 @@
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
-Copyright (c) 2002 Roozbeh Pournader
+Copyright 2020 Karl Berry <tex-live@tug.org>
+Copyright 2002 Roozbeh Pournader
+Copyright 1994--2001 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ int line_number = 1;
 extern YYSTYPE yylval;
 
 /* POTENTIAL BUG: saved_text could be run over; should check */
-#define MAX_PTR 10000
+#define MAX_PTR 100000
 char saved_text[MAX_PTR];
 
 static void scan_int(unsigned);
