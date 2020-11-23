@@ -142,7 +142,7 @@ texmf_other_scripts = \
 	getmap/getmapdl.lua \
 	glossaries/makeglossaries \
 	glossaries/makeglossaries-lite.lua \
-	hyperxmp/hyperxmp-add-bytecount.pl
+	hyperxmp/hyperxmp-add-bytecount.pl \
 	jfmutil/jfmutil.pl \
 	ketcindy/ketcindy.pl \
 	kotex-utils/jamo-normalize.pl \
