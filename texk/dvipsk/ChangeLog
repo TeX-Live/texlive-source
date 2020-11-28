@@ -1,3 +1,9 @@
+2020-11-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* virtualfont.c:
+	Accept Japanese virtual fonts without character definitions.
+	https://github.com/texjporg/tex-jp-build/issues/99
+
 2020-05-20  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi (Virtual fonts): add brief mention of this new vf/jfm

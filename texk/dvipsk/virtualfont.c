@@ -213,7 +213,10 @@ virtualfont(register fontdesctype *curfnt)
  * Now we look for font definitions.
  */
    fm = NULL;
+   id = 0;
    while ((cmd=vfbyte())>=243) {
+      if (cmd==248 && (id == 9 || id == 11)) /* parent is jfm and no character definitions */
+         goto close_vf;
       if (cmd>246)
          badvf("unexpected command in preamble");
       newf = vfontdef(scaledsize, cmd-242);
@@ -221,8 +224,7 @@ virtualfont(register fontdesctype *curfnt)
          fm->next = newf;
       else {
          curfnt->localfonts = newf;
-         id = 0;
-         if (!noptex) {
+         if (!noptex && id==0) {
             tfmopen(curfnt->localfonts->desc); /* We check if parent is jfm or not. */
             id = tfm16();
             fclose(tfmfile);
@@ -307,6 +309,7 @@ virtualfont(register fontdesctype *curfnt)
    } while (cmd < 243);
    if (cmd != 248)
       badvf("missing postamble");
+ close_vf:
    fclose(vffile);
    curfnt->loaded = 2;
    if (maxcc+1<no_of_chars) {
