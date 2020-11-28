@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2020
-@set month-year March 2020
+@set month-year November 2020
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -1660,6 +1660,7 @@ the top level, they should be defined in an additional fragment
 @file{ac/@var{prog}.ac} included from @file{ac/withenable.ac} and
 @file{configure.ac}.
 
+@cindex @var{newprog-src}, original source subdirectory
 Usually, the new program is maintained somewhere outside of @TL{}.  In
 that case, as above, we put the upstream sources into a subdirectory
 @file{@var{prog}-src} (e.g., @file{utils/newprog/newprog-src}).  We do
@@ -1667,49 +1668,83 @@ not typically run @code{configure} in this original @code{...-src}
 directory, but only in our own directory; but we do compile using the
 source files in @code{...-src}.
 
-So, to summarize the files that we must (usually) create:
+So, to summarize the files that must (usually) be created inside a new
+TL source directory (@file{texk/newprog} or @file{utils/newprog}):
 
-@table @file
+@ftable @file
 @item ac/withenable.ac
 The @code{KPSE_ENABLE_PROG} call just explained.
 
 @item configure.ac
 @itemx Makefile.am
 By merging the contents of the original @file{configure.ac} (if
-provided) and a comparable program already in TL.  There is no magic
-recipe, it's necessary to think about needs to be done in the original
-vs.@: in @TL{}.
+provided) and a comparable program already in TL.  In the above
+example, one line that will be needed in @file{configure.ac} (can be
+added before the @code{AC_CONFIG_FILES} at the end) is:
+
+@example
+AC_SUBST([NEWPROG_TREE], [newprog-src])
+@end example
+
+@noindent and then use @code{@@NEWPROG_TREE@@} in 
+@code{Makefile.am} where needed.
+
+In general, there is no magic recipe for this part of the job. It's
+necessary to think about what needs to be done in the original vs.@:
+in @TL{}. It's useful to look at the setup for the most comparable
+programs already in TL that you can find. It's also useful to grep the
+entire @file{Build/source} tree for whatever you can think of to
+investigate how something is done. Most of the TL-specific macros are
+defined in @file{Build/source/m4/*}.
 
 @item TLpatches/TL-Changes
-Actions taken after getting the original source tree; typically
+First actions taken after getting the original source tree; typically
 removal of derived or unused common files.
 
 @item TLpatches/patch-...
 If any changes are needed to the original sources, record the patches
-here so they can be applied next time. And send them upstream so that
-perhaps they won't have to be.
+here so they can be applied next time. Also, send them upstream so
+that we don't have to maintain them forever.
 
 @item ChangeLog
 Record all TL-specific changes, now and in the future.
 
-@end table
+@end ftable
 
-Then, run GNU @code{autoreconf} in the new directory (@pxref{Build
-system tools}).  After that works, @code{svn add} the necessary files,
+@pindex autoreconf@r{, for new program}
+After populating the new TL source directory (@file{.../newprog/}, in
+the above), run GNU @code{autoreconf} there (@pxref{Build system
+tools}).  Once that works, if you are the one who's eventually going
+to commit the new package, @code{svn add} the necessary files,
 including the generated @file{Makefile.in aclocal.m4 configure}, and
 @code{svn:ignore} the Automake cache @file{autom4te.cache}.  (This is
 so people checking out the TL source tree do not have to run any
 autotools, but can simply run @code{configure}.)
 
+@pindex reautoconf@r{, for new program}
 Then, run the TL tool @code{reautoconf} in the top-level TL
-@code{source/} directory, to incorporate the new program into the
-build tree.
+@code{Build/source/} directory, to incorporate the new program into
+the build tree. It is good to then rebuild the whole tree (e.g., using
+TL's @file{Build/Build} script) to get all the necessary files generated.
 
-Then, run (and rerun) a build until the program compiles and tests
-successfully, probably involving rerunning autoreconf in the source
-directory, @code{make} in the build directory, etc.
+It will probably fail.  So then you need to keep at it until the
+program compiles and tests successfully.  The most efficient way is to
+rerun @code{autoreconf} as needed in the new source directory
+(@code{Build/source/.../newprog}), then @code{make} in the
+corresponding build directory (@code{Build/work/.../newprog}), then
+@code{make check}, etc. In the end, also make sure that the whole tree
+builds from scratch.
 
-After final success, don't forget to commit.
+After final success, don't forget to commit. (Or email the TL
+maintainers with the patch.)
+
+@cindex engine, adding new
+Caveat: adding a new @TeX{} engine is not completely different, but
+it's not all that similar, either. In that case, the work is done
+inside a new subdirectory of @file{texk/web2c/}. Many things are
+common to all the engines, other things need to be copied and possibly
+modified for each one, yet others are unique to each. No general
+recipe is possible.
 
 
 @node Adding a new generic library module
