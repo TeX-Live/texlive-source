@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2020.1
-@set month-year May 2020
+@set month-year November 2020
 
 @copying
 This manual documents Dvips version @value{version}
@@ -35,7 +35,7 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @subtitle for version @value{version}
 @subtitle @value{month-year}
 @author Tomas Rokicki
-@author @url{http://tug.org/dvips}
+@author @url{https://tug.org/dvips}
 
 @page
 @insertcopying
@@ -136,8 +136,7 @@ program.  Therefore, for the basic steps involved,
 For solutions to common installation problems and information on how to
 report a bug, see the file @file{kpathsea/BUGS} (@pxref{Bugs,,,
 kpathsea, Kpathsea}).  For solutions to Dvips-specific problems,
-@pxref{Debug options}.  Also see the Dvips home page at
-@url{http://www.radicaleye.com/dvips}.
+@pxref{Debug options}.
 
 Dvips does require some additional installation, detailed in the
 sections below.  Also, to configure color devices, @pxref{Color device
@@ -226,7 +225,7 @@ originally written by Peter Deutsch.  It can read the PostScript
 produced by Dvips and render it on your monitor, or for another device
 (e.g., an Epson printer) that does not support PostScript, or in PDF
 format.  The latest version is available via
-@url{http://ghostscript.com}.
+@url{https://ghostscript.com}.
 
 @cindex Theisen, Tim
 @pindex ghostview
@@ -239,7 +238,7 @@ Theisen, provides typical previewing capabilities (next page/previous
 page, magnification, etc.).  It requires Ghostscript to run, and files
 in structured Postscript, specifically with @samp{%%Page} comments (no
 @samp{N} in @file{config.ps}).  The current version is known as GV,
-and is available from @url{http://www.gnu.org/software/gv}.
+and is available from @url{https://www.gnu.org/software/gv}.
 
 
 @node Diagnosing problems
@@ -499,7 +498,7 @@ same fonts over and over again, it hasn't been installed properly.
 @xref{Unable to generate fonts,,, kpathsea, Kpathsea}.)
 
 Many options are available (see the next section).  For a brief summary
-of available options, just type
+of available options, run
 
 @example
 dvips --help
@@ -789,7 +788,6 @@ Specify manual feed, if supported by the output device.
 
 @item -mode @var{mode}
 @opindex -mode @var{mode}
-@opindex -mode
 @cindex mode name, specifying
 @cindex Metafont mode, specifying
 Use @var{mode} as the Metafont device name for path searching and font
@@ -1031,6 +1029,17 @@ processing; use @samp{-t@tie{}nopaper} to omit any paper size
 information in the output.  (If you just have a single page document,
 you can use @samp{-E} to get pure EPSF output.)
 @end itemize
+
+@item -title @var{string}
+@opindex -title @var{str}
+@cindex title, specifying
+@cindex output title, specifying
+@cindex document title, specifying
+@findex %%Title
+Use @var{string} as the title in the generated PostScript
+(@code{%%Title}). If not specified, the default is the basename of the
+input file; for example, running @code{dvips /foo/bar.dvi} will have a
+@code{%%Title} of @samp{bar.dvi}.
 
 @item -T @var{hsize},@var{vsize}
 @opindex -T @var{hsize},@var{vsize}
@@ -2989,8 +2998,8 @@ more, but copies are available elsewhere:
 @end display
 
 You may also want to check ``Notes on converting (La)@TeX{} documents
-to robust PDF using Rokicki's dvips and Acrobat Distiller'' by Timothy
-P. Van Zandt:@*
+to robust PDF using Rokicki's dvips and Acrobat Distiller'' by
+Timothy@tie{}P. Van Zandt:@*
 @url{http://www.emrg.com/texpdf.htmlhttp://zandtwerk.insead.fr/tex2pdf.html}.
 
 

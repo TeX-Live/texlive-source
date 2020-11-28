@@ -1,3 +1,16 @@
+2020-11-28  Akira Kakuto  <kakuto@w32tex.org>
+
+	* protos.h (titlename): new global.
+	* dvips.c (titlename): new global.
+	(helparr): new option -title.
+	(main): recognize it.
+	* output.c (initprinter) <%%Title>: use xbasename(iname) instead of
+	iname by default.
+
+2020-11-28  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi (Option details): document -title.
+
 2020-11-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* virtualfont.c:

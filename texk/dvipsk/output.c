@@ -1436,8 +1436,10 @@ initprinter(sectiontype *sect)
       if (tryepsf && isepsf == 0)
          error("We tried, but couldn't make it EPSF.");
       fprintf(bitfile, "%%%%Creator: %s\n", banner + 8);
-      if (*iname)
-         fprintf(bitfile, "%%%%Title: %s\n", iname);
+      if (*titlename)
+         fprintf(bitfile, "%%%%Title: %s\n", titlename);
+      else if (*iname)
+         fprintf(bitfile, "%%%%Title: %s\n", xbasename(iname));
 #ifdef CREATIONDATE
       jobtime = get_unique_time_if_given();
       if (jobtime == INVALID_EPOCH_VALUE) {

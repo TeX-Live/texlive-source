@@ -123,6 +123,7 @@ integer maxsecsize = 0;       /* the maximum size of a section */
 integer firstboploc;         /* where the first bop is */
 Boolean sepfiles;            /* each section in its own file? */
 int numcopies;               /* number of copies of each page to print */
+char *titlename="";          /* if given, used for %%Title */
 const char *oname;           /* output file name */
 char *iname;                 /* dvi file name */
 char *fulliname;             /* same, with current working directory */
@@ -315,6 +316,7 @@ static const char *helparr[] = {
 "-r*  Reverse order of pages          -R*  Run securely",
 "-s*  Enclose output in save/restore  -S # Max section size in pages",
 "-t s Paper format                    -T c Specify desired page size",
+"-title s Title in comment",
 "-u s PS mapfile                      -U*  Disable string param trick",
 "-v   Print version number and quit   -V*  Send downloadable PS fonts as PK",
 "-x # Override dvi magnification      -X # Horizontal resolution",
@@ -999,21 +1001,24 @@ case 'r' :
                reverse = (*p != '0');
                break;
 case 't' :
-               if (*p == 0 && argv[i+1])
-                  p = argv[++i];
-               if (strcmp(p, "landscape") == 0) {
-                  if (hpapersize || vpapersize)
-                     error(
-             "both landscape and papersize specified; ignoring landscape");
-                  else
-                     landscape = 1;
-               } else
-                  paperfmt = p;
+               if (STREQ (p, "itle") && argv[i+1]) {
+                  titlename = argv[++i];
+               } else {
+                  if (*p == 0 && argv[i+1])
+                     p = argv[++i];
+                  if (strcmp(p, "landscape") == 0) {
+                     if (hpapersize || vpapersize)
+                        error("both landscape and papersize specified; ignoring landscape");
+                     else
+                        landscape = 1;
+                  } else
+                     paperfmt = p;
+               }
                break;
 case 'v':
-                printf ("%s %s\n", banner, banner2);
-                exit (0);
-                break;
+               printf ("%s %s\n", banner, banner2);
+               exit (0);
+               break;
 case 'x' : case 'y' :
                if (*p == 0 && argv[i+1])
                   p = argv[++i];
