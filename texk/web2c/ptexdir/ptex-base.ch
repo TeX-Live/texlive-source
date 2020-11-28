@@ -4534,7 +4534,7 @@ loop@+  begin if is_char_node(s) then
       end else c:=qo(character(s));
     end
   else if type(s)=disp_node then goto continue
-  else if (type(s)=penalty_node)and(not subtype(s)=normal) then goto continue
+  else if (type(s)=penalty_node)and(subtype(s)<>normal) then goto continue
 @z
 
 @x [40.899] l.18248 - pTeX: disp_node
@@ -6108,13 +6108,12 @@ def_code: begin
     print_int(n);
     if m=0 then
       begin help1("I'm going to use 0 instead of that illegal code value.");@/
-      error;
+      error; cur_val:=0;
       end
     else
       begin help1("I'm going to use 16 instead of that illegal code value.");@/
-      error;
+      error; cur_val:=16;
       end;
-    cur_val:=m;
   end;
   if p<math_code_base then define(p,data,cur_val)
   else if p<del_code_base then define(p,data,hi(cur_val))

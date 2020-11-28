@@ -1,3 +1,8 @@
+2020-11-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Fix syntax error of "not equal".
+	Correct error recovery value of illegal catcode for upTeX.
+
 2020-10-30  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdvitype.ch: Strict check for DVI ID was wrong for
