@@ -300,7 +300,6 @@ endofpage:
  */
    return(2);
 outofmem:
-   printf("###sp:DBG000 %p\n", ffont);
    if (frp != frames) {
       curpos = frames->curp;
       curlim = frames->curl;
