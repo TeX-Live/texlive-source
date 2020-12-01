@@ -499,6 +499,7 @@ Options:
 -r*  Reverse order of pages          -R*  Run securely
 -s*  Enclose output in save/restore  -S # Max section size in pages
 -t s Paper format                    -T c Specify desired page size
+-title s Title in comment
 -u s PS mapfile                      -U*  Disable string param trick
 -v   Print version number and quit   -V*  Send downloadable PS fonts as PK
 -x # Override dvi magnification      -X # Horizontal resolution
@@ -4731,67 +4732,67 @@ Node: Invoking Dvips16446
 Node: Basic usage17037
 Node: Command-line options18035
 Node: Option summary18483
-Node: Option details20732
-Node: Environment variables40943
-Node: Config files43804
-Node: Configuration file searching44474
-Node: Configuration file commands47671
-Node: Paper size and landscape55645
-Node: papersize special57270
-Node: Config file paper sizes58978
-Node: Paper trays63134
-Node: Interaction with PostScript64468
-Node: PostScript figures65121
-Node: Bounding box65847
-Node: \includegraphics69219
-Node: EPSF macros71511
-Node: EPSF scaling73479
-Node: EPSF clipping76049
-Node: psfile special76691
-Node: Dynamic creation of graphics79083
-Node: Fonts in figures80401
-Node: Header files82051
-Node: Including headers from TeX83257
-Node: Including headers from the command line85295
-Node: Headers and memory usage86394
-Node: Literal PS87605
-Node: " special88187
-Node: ps special88928
-Node: Literal headers90426
-Node: PostScript hooks91135
-Node: Literal examples93231
-Node: Hypertext94685
-Node: Hypertext caveats95859
-Node: Hypertext specials100215
-Node: PostScript fonts102849
-Node: Font concepts103966
-Node: Metric files105196
-Node: Glyph files107976
-Node: Virtual fonts110335
-Node: Encodings112490
-Node: Bitmap font encodings114892
-Node: PostScript typesetting117422
-Node: Making a font available120519
-Node: Invoking afm2tfm125553
-Node: Changing font encodings126573
-Node: Changing TeX encodings127364
-Node: Changing PostScript encodings128466
-Node: Changing both encodings129810
-Node: Reencoding with Afm2tfm130484
-Node: Encoding file format133587
-Node: Special font effects137791
-Node: Afm2tfm options140051
-Node: psfonts.map143576
-Node: Color148306
-Node: Color macro files149350
-Node: User-definable colors152560
-Node: Color subtleties153836
-Node: Ted Turner155488
-Node: Color device configuration156713
-Node: Color support details159157
-Node: Color specifications159535
-Node: Color specials160939
-Node: Index163068
+Node: Option details20758
+Node: Environment variables40969
+Node: Config files43830
+Node: Configuration file searching44500
+Node: Configuration file commands47697
+Node: Paper size and landscape55671
+Node: papersize special57296
+Node: Config file paper sizes59004
+Node: Paper trays63160
+Node: Interaction with PostScript64494
+Node: PostScript figures65147
+Node: Bounding box65873
+Node: \includegraphics69245
+Node: EPSF macros71537
+Node: EPSF scaling73505
+Node: EPSF clipping76075
+Node: psfile special76717
+Node: Dynamic creation of graphics79109
+Node: Fonts in figures80427
+Node: Header files82077
+Node: Including headers from TeX83283
+Node: Including headers from the command line85321
+Node: Headers and memory usage86420
+Node: Literal PS87631
+Node: " special88213
+Node: ps special88954
+Node: Literal headers90452
+Node: PostScript hooks91161
+Node: Literal examples93257
+Node: Hypertext94711
+Node: Hypertext caveats95885
+Node: Hypertext specials100241
+Node: PostScript fonts102875
+Node: Font concepts103992
+Node: Metric files105222
+Node: Glyph files108002
+Node: Virtual fonts110361
+Node: Encodings112516
+Node: Bitmap font encodings114918
+Node: PostScript typesetting117448
+Node: Making a font available120545
+Node: Invoking afm2tfm125579
+Node: Changing font encodings126599
+Node: Changing TeX encodings127390
+Node: Changing PostScript encodings128492
+Node: Changing both encodings129836
+Node: Reencoding with Afm2tfm130510
+Node: Encoding file format133613
+Node: Special font effects137817
+Node: Afm2tfm options140077
+Node: psfonts.map143602
+Node: Color148332
+Node: Color macro files149376
+Node: User-definable colors152586
+Node: Color subtleties153862
+Node: Ted Turner155514
+Node: Color device configuration156739
+Node: Color support details159183
+Node: Color specifications159561
+Node: Color specials160965
+Node: Index163094
 
 End Tag Table
 
