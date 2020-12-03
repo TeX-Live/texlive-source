@@ -105,7 +105,7 @@ SRC	= detex.l
 #
 D_OBJ	= detex.o
 
-VERSION = 2.8.7
+VERSION = 2.8.9
 
 all:	${PROGS}
 

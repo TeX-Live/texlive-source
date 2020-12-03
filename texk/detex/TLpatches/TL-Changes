@@ -1,6 +1,6 @@
-Changes applied to the opendetex-2.8.7 tree as obtained from:
+Changes applied to the opendetex-2.8.9 tree as obtained from:
 	https://github.com/pkubowicz/opendetex/releases
 
 Renamed:
-	detex.1l -> detex.man
+	detex.1 -> detex.man
 

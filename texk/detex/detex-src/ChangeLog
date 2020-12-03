@@ -202,3 +202,11 @@ Reduced size of .tar.bz2 package by excluding object file added by mistake.
 Handle forcing placement with ! (#62). Thanks to schrc3b6.
 
 Added option to print source information with -1 (#64). Thanks to Victor Cacciari Miraldo.
+
+(Version 2.8.8) -- June, 2020
+
+Fixed compilation on old compilers supported by TeX Live (#65). Thanks to Akira Kakuto and Hironobu Yamashita.
+
+(Version 2.8.9) -- December, 2020
+
+Include escaped percent sign in output (#70). Thanks to Max Leonhardt.

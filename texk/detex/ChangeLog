@@ -1,3 +1,7 @@
+2020-12-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import opendetex-2.8.9.
+
 2020-11-05  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_HEADER_TIME): remove, since it will be
