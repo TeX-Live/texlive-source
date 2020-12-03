@@ -56,13 +56,8 @@
 #define	DEFAULTINPUTS	".;/emtex/texinput"
 #define	CHPATHSEP	';'
 #else
-#ifdef _WIN32
-#define	DEFAULTINPUTS	".;c:/usr/local/tex/inputs"
-#define	CHPATHSEP	';'
-#else
 #define	DEFAULTINPUTS	".:/usr/local/tex/inputs"
 #define	CHPATHSEP	':'
-#endif /* _WIN32 */
 #endif
 #endif
 

@@ -1,7 +1,3 @@
-2020-12-03  Akira Kakuto  <kakuto@w32tex.org>
-
-	Add patch-02-win32 to support Windows.
-
 2020-12-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Remove patch-01-support-old-compiler, which is applied in the upstream.
