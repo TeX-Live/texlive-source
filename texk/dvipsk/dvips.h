@@ -310,6 +310,19 @@ struct papsiz {
 #define USE_PCLOSE (801)
 #define USE_FCLOSE (802)
 
+/* output Unicode string on console in windows */
+#if defined(KPATHSEA) && defined(WIN32)
+#undef  perror
+#define fprintf_str  win32_fprintf
+#define fputs_str    win32_fputs
+#define putc_str     win32_putc
+#define perror       win32_perror
+#else
+#define fprintf_str  fprintf
+#define fputs_str    fputs
+#define putc_str     putc
+#endif
+
 /* Things that KPATHSEA knows, and are useful even without it. */
 #if !defined(KPATHSEA)
 

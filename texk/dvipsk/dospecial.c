@@ -400,7 +400,7 @@ predospecial(integer numbytes, Boolean scanning)
       p++;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      fprintf(stderr, "Preprocessing special: %s\n", p);
+      fprintf_str(stderr, "Preprocessing special: %s\n", p);
 #endif
 
 /*
@@ -632,7 +632,7 @@ if (HPS_FLAG && NEED_NEW_BOX) {
       p++;
 #ifdef DEBUG
    if (dd(D_SPECIAL))
-      fprintf(stderr, "Processing special: %s\n", p);
+      fprintf_str(stderr, "Processing special: %s\n", p);
 #endif
 
    switch (*p) {

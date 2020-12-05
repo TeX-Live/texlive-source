@@ -166,7 +166,7 @@ virtualfont(register fontdesctype *curfnt)
       return (0);
 #ifdef DEBUG
    if (dd(D_FONTS))
-      fprintf(stderr,"Loading virtual font %s at %.1fpt\n",
+      fprintf_str(stderr,"Loading virtual font %s at %.1fpt\n",
          name, (real)scaledsize/(alpha*0x100000));
 #endif /* DEBUG */
 

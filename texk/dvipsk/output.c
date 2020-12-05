@@ -252,7 +252,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
 #if defined(VMCMS) || defined (MVSXA)
          fprintf(stderr, "<%s>", trunc_s);
 #else
-         fprintf(stderr, "<%s>", realnameoffile);
+         fprintf_str(stderr, "<%s>", realnameoffile);
 #endif
          fflush(stderr);
 #if defined(VMCMS) || defined (MVSXA)

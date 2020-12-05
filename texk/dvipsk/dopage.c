@@ -136,7 +136,7 @@ dochar:
       /* try fallback */
 #ifdef DEBUG
          if (dd(D_FONTS))
-            fprintf(stderr,
+            fprintf_str(stderr,
               "Fallback pTeX vf:%s char=%d(0x%06x) to %s\n",
                curfnt->name, mychar, mychar, curfnt->localfonts->desc->name);
 #endif /* DEBUG */
