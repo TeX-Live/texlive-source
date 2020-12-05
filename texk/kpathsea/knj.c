@@ -1,7 +1,7 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
    Copyright 2010, 2016, 2018 Akira Kakuto.
-   Copyright 2013, 2016 TANAKA Takuji.
+   Copyright 2013, 2016, 2020 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -558,6 +558,23 @@ kpathsea_win32_vfprintf(kpathsea kpse, FILE *fp, const char *format, va_list arg
 }
 
 int
+kpathsea_win32_fprintf(kpathsea kpse, FILE *fp, const char *format, ...)
+{
+    int ret, count;
+    va_list argp;
+
+    count = 0;
+    va_start(argp, format);
+    ret = kpathsea_win32_vfprintf(kpse, fp, format, argp);
+    if (ret==EOF) {
+        return EOF;
+    }
+    count += ret;
+    va_end(argp);
+    return count;
+}
+
+int
 kpathsea_win32_puts(kpathsea kpse, const char *str)
 {
     if (kpathsea_win32_fputs(kpse, str, stdout)==EOF) {
@@ -611,6 +628,19 @@ kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp)
     *(kpse->st_str)++ = c;
     kpse->st_len--;
     return c;
+}
+
+void
+kpathsea_win32_perror(kpathsea kpse, const char *str)
+{
+    wchar_t *wstr;
+
+    if (kpse->File_system_codepage != CP_UTF8)
+        return perror(str);
+
+    wstr = get_wstring_from_utf8(str, wstr=NULL);
+    _wperror(wstr);
+    free(wstr);
 }
 
 int
@@ -710,6 +740,23 @@ win32_vfprintf(FILE *fp, const char *format, va_list argp)
 }
 
 int
+win32_fprintf(FILE *fp, const char *format, ...)
+{
+    int ret, count;
+    va_list argp;
+
+    count = 0;
+    va_start(argp, format);
+    ret = kpathsea_win32_vfprintf(kpse_def, fp, format, argp);
+    if (ret==EOF) {
+        return EOF;
+    }
+    count += ret;
+    va_end(argp);
+    return count;
+}
+
+int
 win32_puts(const char *str)
 {
   return kpathsea_win32_puts(kpse_def, str);
@@ -719,6 +766,12 @@ int
 win32_putc(int c, FILE *fp)
 {
   return kpathsea_win32_putc(kpse_def, c, fp);
+}
+
+void
+win32_perror(const char *str)
+{
+  kpathsea_win32_perror(kpse_def, str);
 }
 
 int

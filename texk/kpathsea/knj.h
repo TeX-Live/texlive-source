@@ -1,7 +1,7 @@
 /* knj.h: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
    Copyright 2010, 2014, 2016 Akira Kakuto.
-   Copyright 2013, 2014 TANAKA Takuji.
+   Copyright 2013, 2014, 2020 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,9 @@ extern KPSEDLL int kpathsea_win32_ungetc(kpathsea kpse, int c, FILE *fp);
 extern KPSEDLL int kpathsea_win32_fputs(kpathsea kpse, const char *str, FILE *fp);
 extern KPSEDLL int kpathsea_win32_puts(kpathsea kpse, const char *str);
 extern KPSEDLL int kpathsea_win32_vfprintf(kpathsea kpse, FILE *fp, const char *format, va_list argp);
+extern KPSEDLL int kpathsea_win32_fprintf(kpathsea kpse, FILE *fp, const char *format, ...);
 extern KPSEDLL int kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp);
+extern KPSEDLL void kpathsea_win32_perror(kpathsea kpse, const char *str);
 extern KPSEDLL int kpathsea_IS_KANJI(kpathsea kpse, const char *p);
 extern KPSEDLL char *kpathsea_get_fsyscp_from_wstring(kpathsea kpse, const wchar_t *w,char *mb);
 extern KPSEDLL wchar_t *kpathsea_get_wstring_from_fsyscp(kpathsea kpse, const char *mb,wchar_t *w);
@@ -61,7 +63,9 @@ extern KPSEDLL int win32_ungetc(int c, FILE *fp);
 extern KPSEDLL int win32_fputs(const char *str, FILE *fp);
 extern KPSEDLL int win32_puts(const char *str);
 extern KPSEDLL int win32_vfprintf(FILE *fp, const char *format, va_list argp);
+extern KPSEDLL int win32_fprintf(FILE *fp, const char *format, ...);
 extern KPSEDLL int win32_putc(int c, FILE *fp);
+extern KPSEDLL void win32_perror(const char *str);
 extern KPSEDLL int IS_KANJI(const char *p);
 extern KPSEDLL char *get_fsyscp_from_wstring(const wchar_t *w,char *mb);
 extern KPSEDLL wchar_t *get_wstring_from_fsyscp(const char *mb,wchar_t *w);
