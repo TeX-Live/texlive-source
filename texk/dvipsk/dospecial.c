@@ -817,36 +817,37 @@ case 'h':
    if (strncmp(p, "header", 6)==0) return;
 #ifdef HPS
    if (strncmp(p, "html:", 5)==0) {
-     if (! HPS_FLAG) return;
-	 		p += 5;
-			while (isspace((unsigned char)*p))
-   		p++;
-			if (*p == '<') {
-    			char               *sp = p;
-    			char               *str;
-    			int                 ii=0;int len;int lower_len;
+      if (! HPS_FLAG) return;
+      p += 5;
+      while (isspace((unsigned char)*p))
+         p++;
+      if (*p == '<') {
+         char *sp = p;
+         char *str;
+         int  ii=0, len, lower_len;
 
-    			while ((*p) && (*p != '>')) {
-						ii++;
-						p++;
-   			 }
-    		str = (char *)mymalloc(ii+2);
-   			strncpy(str,sp+1,ii-1);
-    		str[ii-1] = 0;len=strlen(str);
-				if(len>6) lower_len=6; else lower_len=len;
-				for(ii=0;ii<lower_len;ii++) str[ii]=tolower((unsigned char)str[ii]);
-				do_html(str);
-   			free(str);
-				} else
+         while ((*p) && (*p != '>')) {
+            ii++;
+            p++;
+         }
+         str = (char *)mymalloc(ii+2);
+         strncpy(str,sp+1,ii-1);
+         str[ii-1] = 0;len=strlen(str);
+         if(len>6) lower_len=6; else lower_len=len;
+         for(ii=0;ii<lower_len;ii++) str[ii]=tolower((unsigned char)str[ii]);
+         do_html(str);
+         free(str);
+      } else
 #ifdef KPATHSEA
-				  if (!kpse_tex_hush ("special"))
+         if (!kpse_tex_hush ("special"))
 #endif
-				    {
+      {
 
-    			printf("Error in html special\n");
-    			return;
-				}
-	return;
+         sprintf(errbuf,"Error in html special\n");
+         error(errbuf);
+         return;
+      }
+      return;
    }
 #else
    if (strncmp(p, "html:", 5)==0) return;
