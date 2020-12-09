@@ -179,16 +179,6 @@ int prettycolumn ;       /* the column we are at when running pretty */
 int ptexdvi ;            /* true if dvi file is extended (TATEKUMI) */
 #endif
 
-#ifdef WIN32
-void win32_fprintf(FILE *fp, const char *fmt, ...) {
-  va_list argp;
-
-  va_start(argp, fmt);
-  win32_vfprintf(fp, fmt, argp);
-  va_end(argp);
-}
-#endif
-
 /*
  *   This array holds values that indicate the length of a command, if
  *   we aren't concerned with that command (which is most of them) or

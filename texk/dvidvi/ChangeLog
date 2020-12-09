@@ -1,3 +1,8 @@
+2020-12-09  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvidvi.c: Remove definition of a function win32_fprintf()
+	which is now in Kpathsea.
+
 2020-05-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, config.h.in, dvidvi.c:
