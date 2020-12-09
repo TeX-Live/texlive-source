@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 56993 2020-11-24 18:35:36Z karl $
+# $Id: tlmgr.pl 57093 2020-12-08 14:41:33Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 56993 $';
-my $datrev = '$Date: 2020-11-24 19:35:36 +0100 (Tue, 24 Nov 2020) $';
+my $svnrev = '$Revision: 57093 $';
+my $datrev = '$Date: 2020-12-08 15:41:33 +0100 (Tue, 08 Dec 2020) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7065,7 +7065,9 @@ sub setup_one_remotetlpdb {
     # first check that the saved tlpdb is present at all
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
-      "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
+      ($is_main ? 
+        "$Master/$InfraLocation/texlive.tlpdb.main.$loc_digest" :
+        "$Master/$InfraLocation/texlive.tlpdb.$loc_digest");
     ddebug("loc_digest = $loc_digest\n");
     ddebug("loc_copy = $loc_copy_of_remote_tlpdb\n");
     if (-r $loc_copy_of_remote_tlpdb) {
@@ -7229,7 +7231,9 @@ FROZEN
   if (!$local_copy_tlpdb_used && $location =~ m;^(https?|ftp)://;) {
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
-      "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
+      ($is_main ? 
+        "$Master/$InfraLocation/texlive.tlpdb.main.$loc_digest" :
+        "$Master/$InfraLocation/texlive.tlpdb.$loc_digest");
     my $tlfh;
     if (!open($tlfh, ">:unix", $loc_copy_of_remote_tlpdb)) {
       # that should be only a debug statement, since a user without
@@ -7240,6 +7244,14 @@ FROZEN
       &debug("writing out tlpdb to $loc_copy_of_remote_tlpdb\n");
       $remotetlpdb->writeout($tlfh);
       close($tlfh);
+      # Remove all other copies of main databases in case different mirrors
+      # are used $Master/$InfraLocation/texlive.tlpdb.main.$loc_digest
+      if ($is_main) {
+        for my $fn (<"$Master/$InfraLocation/texlive.tlpdb.main.*">) {
+          next if ($fn eq $loc_copy_of_remote_tlpdb);
+          unlink($fn);
+        }
+      }
     }
   }
 
@@ -10101,7 +10113,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 56993 2020-11-24 18:35:36Z karl $
+$Id: tlmgr.pl 57093 2020-12-08 14:41:33Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
