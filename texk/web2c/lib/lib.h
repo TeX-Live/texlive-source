@@ -11,6 +11,14 @@ extern string basenamechangesuffix (const_string, const_string, const_string);
 extern string chartostring (char);
 
 /* eofeoln.c */
+/*
+ * definition of eof() contradicts corecrt_io.h in Visual Studio 2019.
+ * 2010-12-10.
+ *
+ */
+#if defined(_MSC_VER) && _MSC_VER > 1916
+#define eof(x) myeof(x)
+#endif /* _MSC_VER */
 extern boolean eof (FILE *);
 extern boolean eoln (FILE *);
 extern void readln (FILE *);
