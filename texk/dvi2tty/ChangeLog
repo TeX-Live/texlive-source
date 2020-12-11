@@ -1,3 +1,8 @@
+2020-12-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvistuff.c: Allow output of Unicode strings on Windows console.
+	It works with "-Eu -q" option. (Windows only)
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.

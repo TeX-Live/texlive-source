@@ -679,11 +679,31 @@ void printpage(void)
 
                 if (ch >= SPACE || allchar) {
 		  if (utf8 && (ch & IS_UNICODE)) {
-		    mbch = UCStoUTF8(ch & MAX_UNICODE);
-		    if (BYTE1(mbch) != 0) putc((unsigned char)BYTE1(mbch), output);
-		    if (BYTE2(mbch) != 0) putc((unsigned char)BYTE2(mbch), output);
-		    if (BYTE3(mbch) != 0) putc((unsigned char)BYTE3(mbch), output);
-		    /* always */          putc((unsigned char)BYTE4(mbch), output);
+#ifdef WIN32
+		    wchar_t wch;
+		    HANDLE hStdout;
+		    DWORD ret;
+		    const int fd = fileno(output);
+
+		    if ((fd == fileno(stdout) || fd == fileno(stderr)) && _isatty(fd)) {
+		      if (fd == fileno(stdout))
+			hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+		      else
+			hStdout = GetStdHandle(STD_ERROR_HANDLE);
+
+		      wch=(wchar_t)(ch & MAX_UNICODE); /* do not expect over BMP */
+		      WriteConsoleW(hStdout, &wch, 1, &ret, NULL);
+
+		    } else {
+#endif
+		      mbch = UCStoUTF8(ch & MAX_UNICODE);
+		      if (BYTE1(mbch) != 0) putc((unsigned char)BYTE1(mbch), output);
+		      if (BYTE2(mbch) != 0) putc((unsigned char)BYTE2(mbch), output);
+		      if (BYTE3(mbch) != 0) putc((unsigned char)BYTE3(mbch), output);
+		      /* always */          putc((unsigned char)BYTE4(mbch), output);
+#ifdef WIN32
+		    }
+#endif
 		  }
 		  else if (japan) {
 		    for (k = 0; k < kanji1; k++) {
