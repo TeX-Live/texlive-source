@@ -1023,6 +1023,12 @@ void hnj_hyphenation(halfword head, halfword tail)
                 break;
             }
             wordlen++;
+            if (wordlen >= MAX_WORD_LEN) {
+             while (r && type(r) == glyph_node) {
+               r = vlink(r);
+             }
+             goto PICKUP;
+            }
             if (lchar <= 32) {
                 if (lchar == 32) {
                     lchar = 0 ;
@@ -1140,6 +1146,7 @@ void hnj_hyphenation(halfword head, halfword tail)
                 }
             }
         }
+PICKUP:
         expstart = null ;
         explicit_hyphen = false;
         wordlen = 0;

@@ -1,3 +1,7 @@
+2020-12-12 Luigi Scarso <luigi.scarso@gmail.com> 
+    * fixed  luatex segfault with huge romannumeral overfull (H. Hagen)
+    * automake (GNU automake) 1.16.3
+
 2020-11-08 Luigi Scarso <luigi.scarso@gmail.com> 
     * convert assert(is_simple_character(wordstart)) to tex error
 
