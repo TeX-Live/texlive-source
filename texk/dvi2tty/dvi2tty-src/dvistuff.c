@@ -1021,15 +1021,15 @@ long snum(int size)
 
 void dounichar(long ch)
 {
-    char c[4] = {0}, *cc;
+    unsigned char c[4] = {0}, *cc;
 
     if (noligaturefi && 0xFB00<=ch && ch<=0xFB04) {
         switch (ch) {
-            case 0xFB00: strcpy(c,"ff");  break;
-            case 0xFB01: strcpy(c,"fi");  break;
-            case 0xFB02: strcpy(c,"fl");  break;
-            case 0xFB03: strcpy(c,"ffi"); break;
-            case 0xFB04: strcpy(c,"ffl"); break;
+            case 0xFB00: strcpy((char*)c,"ff");  break;
+            case 0xFB01: strcpy((char*)c,"fi");  break;
+            case 0xFB02: strcpy((char*)c,"fl");  break;
+            case 0xFB03: strcpy((char*)c,"ffi"); break;
+            case 0xFB04: strcpy((char*)c,"ffl"); break;
         }
         cc=c;
         while (*cc) { outchar((long)*cc); cc++; }
