@@ -853,11 +853,7 @@ void ruleaux(long rulewt, long ruleht, char ch)
 long horizontalmove(long amount)
 {
 
-#if defined(MSDOS) || defined(THINK_C)
-    if (labs(amount) > charwidth / 4L) {    /* } to make vi happy */
-#else
-    if (abs(amount) > charwidth / 4L) {
-#endif
+    if (labs(amount) > charwidth / 4L) {
         foo = 3*charwidth / 4;
         if (amount > 0)
             amount = ((amount+foo) / charwidth) * charwidth;
@@ -2009,11 +2005,7 @@ void outchar(long ch)
 
 /*     fprintf(stderr, "hor: %ld, ver: %ld\n", h, v); */
 
-#if defined(MSDOS) || defined(THINK_C)
     if (labs(v - currentline->vv) > lineheight / 2L)
-#else
-    if (abs(v - currentline->vv) > lineheight / 2L)
-#endif
         currentline = findline();
 
 #if 0
