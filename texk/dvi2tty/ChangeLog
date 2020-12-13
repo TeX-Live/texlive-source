@@ -1,3 +1,7 @@
+2020-12-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvistuff.c: Avoid compilar warnings.
+
 2020-12-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvistuff.c: Allow output of Unicode strings on Windows console.

@@ -1021,7 +1021,7 @@ long snum(int size)
 
 void dounichar(long ch)
 {
-    unsigned char c[4] = {}, *cc;
+    char c[4] = {0}, *cc;
 
     if (noligaturefi && 0xFB00<=ch && ch<=0xFB04) {
         switch (ch) {
@@ -1032,7 +1032,7 @@ void dounichar(long ch)
             case 0xFB04: strcpy(c,"ffl"); break;
         }
         cc=c;
-        while (*cc) { outchar(*cc); cc++; }
+        while (*cc) { outchar((long)*cc); cc++; }
         return;
     }
     if (ch>0x7F)
@@ -1109,7 +1109,7 @@ void dochar(unsigned char ch)
 
 void symchar(unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     long ucs;
 
     ucs = oms_to_ucs[ch];
@@ -1178,7 +1178,7 @@ void symchar(unsigned char ch)
 
 void michar(unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     long ucs;
 
     if (allchar) {
@@ -1223,7 +1223,7 @@ void michar(unsigned char ch)
 
 void normchar(char flag, unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     const unsigned short *tex_to_ucs;
     long ucs;
 
@@ -1407,7 +1407,7 @@ void normchar(char flag, unsigned char ch)
 
 void t1char(unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     long ucs;
 
     if (allchar) {
@@ -1660,7 +1660,7 @@ void t1char(unsigned char ch)
 
 void ts1char(unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     long ucs;
 
     if (allchar) {
@@ -1795,7 +1795,7 @@ void ts1char(unsigned char ch)
 
 void t2char(char flag, unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     const unsigned short *tex_to_ucs;
     long ucs;
 
@@ -1829,7 +1829,7 @@ void t2char(char flag, unsigned char ch)
         case T2BFONT: tex_to_ucs=t2b_to_ucs; break;
         case T2CFONT: tex_to_ucs=t2c_to_ucs; break;
         case X2FONT : tex_to_ucs=x2_to_ucs;  break;
-        default : exit; /* not supported */
+        default : exit(41); /* not supported */
     }
     ucs = tex_to_ucs[ch];
     if (utf8) {
@@ -1926,7 +1926,7 @@ void t2char(char flag, unsigned char ch)
 
 void ot2char(unsigned char ch)
 {
-    unsigned char c[4] = {}, *cc;
+    unsigned char c[4] = {0}, *cc;
     long ucs;
 
     if (allchar) {
@@ -2314,7 +2314,7 @@ void fontdef(int x)
     if (fnt == NULL) {
         if ((fnt = (font *) malloc(sizeof(font))) == NULL) {
             perror("fontdef");
-            exit(1);
+            exit(40);
         }
         fnt->num = fntnum;
         new = 1;
@@ -2323,7 +2323,7 @@ void fontdef(int x)
         free(fnt->name);    /* free old name */
     if ((name = (char *) malloc((namelen+1) * sizeof(char))) == NULL) {
         perror("fontdef");
-        exit(1);
+        exit(40);
     }
     
     for (i = 0; i < namelen; i++)
