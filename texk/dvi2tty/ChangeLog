@@ -1,6 +1,6 @@
 2020-12-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* dvistuff.c: Avoid compilar warnings.
+	* dvistuff.c: Avoid compiler warnings.
 
 2020-12-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
