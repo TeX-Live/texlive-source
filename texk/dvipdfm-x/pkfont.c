@@ -86,8 +86,22 @@ dpx_open_pk_font_at (const char *ident, unsigned dpi)
   FILE  *fp;
   char  *fqpn;
   kpse_glyph_file_type kpse_file_info;
-
-  fqpn = kpse_find_glyph(ident, dpi, kpse_pk_format, &kpse_file_info);
+/*
+ * ident can be such as "cmr10.pfb":
+ * https://tug.org/pipermail/dvipdfmx/2020-December/000142.html.
+ * As a workaround, we drop a suffix if it exists.
+ * Some messages still seems not to be appropriate, but PK creation
+ * works fine.
+ * 
+ */
+  char  *ident_nosuffix;
+  ident_nosuffix = xstrdup(ident);
+  fqpn = strrchr(ident_nosuffix, '.');
+  if (fqpn) {
+    *fqpn = '\0';
+  }
+  fqpn = kpse_find_glyph(ident_nosuffix, dpi, kpse_pk_format, &kpse_file_info);
+  RELEASE(ident_nosuffix);
   if (!fqpn)
     return  NULL;
   fp   = MFOPEN(fqpn, FOPEN_RBIN_MODE);

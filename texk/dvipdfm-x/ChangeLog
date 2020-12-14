@@ -1,3 +1,9 @@
+2020-12-14  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pkfont.c: Fix an incorrect argument for mktexpk.
+	https://tug.org/pipermail/dvipdfmx/2020-December/000142.html.
+	* configure.ac: Version 20201214.
+
 2020-11-11  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_html.c: Fix a bug that html-special was not working
