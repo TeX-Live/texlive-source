@@ -81,7 +81,7 @@ truedpi (const char *ident, double point_size, unsigned bdpi)
 }
 
 static FILE *
-dpx_open_pk_font_at (const char *ident, unsigned dpi)
+dpx_open_pk_font_at (const char *ident, unsigned dpi, char **pkname)
 {
   FILE  *fp;
   char  *fqpn;
@@ -90,8 +90,6 @@ dpx_open_pk_font_at (const char *ident, unsigned dpi)
  * ident can be such as "cmr10.pfb":
  * https://tug.org/pipermail/dvipdfmx/2020-December/000142.html.
  * As a workaround, we drop a suffix if it exists.
- * Some messages still seems not to be appropriate, but PK creation
- * works fine.
  * 
  */
   char  *ident_nosuffix;
@@ -101,11 +99,14 @@ dpx_open_pk_font_at (const char *ident, unsigned dpi)
     *fqpn = '\0';
   }
   fqpn = kpse_find_glyph(ident_nosuffix, dpi, kpse_pk_format, &kpse_file_info);
-  RELEASE(ident_nosuffix);
+
   if (!fqpn)
     return  NULL;
   fp   = MFOPEN(fqpn, FOPEN_RBIN_MODE);
   RELEASE(fqpn);
+  *pkname = NEW(strlen(ident_nosuffix)+12, char);
+  (void)snprintf(*pkname, strlen(ident_nosuffix)+12,  "%s.%dpk", ident_nosuffix, dpi);
+  RELEASE(ident_nosuffix);
 
   return  fp;
 }
@@ -116,6 +117,7 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
 {
   unsigned  dpi;
   FILE     *fp;
+  char     *pkname;
 
   if (!ident || point_size <= 0.0)
     return  -1;
@@ -127,7 +129,7 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
   }
 
   dpi = truedpi(ident, point_size, base_dpi);
-  fp  = dpx_open_pk_font_at(ident, dpi);
+  fp  = dpx_open_pk_font_at(ident, dpi, &pkname);
   if (!fp)
     return  -1;
   MFCLOSE(fp);
@@ -135,8 +137,7 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
   /* Type 3 fonts doesn't have FontName.
    * FontFamily is recommended for PDF 1.5.
    */
-  font->fontname = NEW(strlen(ident)+1, char);
-  strcpy(font->fontname, ident);
+  font->fontname = pkname;
 
   if (encoding_id >= 0) {
     pdf_encoding_used_by_type3(encoding_id);
@@ -499,6 +500,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
 int
 pdf_font_load_pkfont (pdf_font *font)
 {
+  char     *pkname;
   pdf_obj  *fontdict;
   char     *usedchars;
   char     *ident;
@@ -534,11 +536,11 @@ pdf_font_load_pkfont (pdf_font *font)
   ASSERT(ident && usedchars && point_size > 0.0);
 
   dpi  = truedpi(ident, point_size, base_dpi);
-  fp   = dpx_open_pk_font_at(ident, dpi);
+  fp   = dpx_open_pk_font_at(ident, dpi, &pkname);
   if (!fp) {
     ERROR("Could not find/open PK font file: %s (at %udpi)", ident, dpi);
   }
-
+  font->filename = pkname;
   memset(charavail, 0, 256);
   charprocs  = pdf_new_dict();
   /* Include bitmap as 72dpi image:
