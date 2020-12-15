@@ -1,3 +1,13 @@
+2020-12-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_pdfm.c: Fix a bug introduced in rev.56265: When the
+	resource dictionary (of some resource category) is an indirect
+	object and then pdf:put operation is done against that
+	resource category, the operation fails. Now this situation is
+	taken into account. (The content of old resource is merged
+	into new one).
+	* configure.ac: Version 20201216.
+
 2020-12-14  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pkfont.c: Fix an incorrect argument for mktexpk.
