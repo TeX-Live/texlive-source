@@ -862,6 +862,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-machine-index.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \

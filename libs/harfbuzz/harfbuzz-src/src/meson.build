@@ -1,3 +1,10 @@
+hb_version_h = configure_file(
+               command: [find_program('gen-hb-version.py'), meson.project_version(), '@OUTPUT@', '@INPUT@'],
+               input: 'hb-version.h.in',
+               output: 'hb-version.h',
+               install: true,
+               install_dir: join_paths(get_option('includedir'), meson.project_name()))
+
 # Base and default-included sources and headers
 hb_base_sources = files(
   'hb-aat-layout-ankr-table.hh',
@@ -214,9 +221,9 @@ hb_base_headers = files(
   'hb-shape.h',
   'hb-style.h',
   'hb-unicode.h',
-  'hb-version.h',
   'hb.h',
 )
+hb_base_headers += hb_version_h
 
 # Optional Sources and Headers with external deps
 
@@ -281,14 +288,6 @@ hb_gobject_headers = files(
   'hb-gobject-structs.h',
 )
 
-custom_target('hb-version.h',
-  build_by_default: true,
-  input: 'hb-version.h.in',
-  output: 'hb-version.h',
-  command: [find_program('gen-hb-version.py'), meson.project_version(),
-            '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
-)
-
 ragel = find_program('ragel', required: false)
 if not ragel.found()
   warning('You have to install ragel if you are going to develop HarfBuzz itself')
@@ -300,7 +299,7 @@ else
       build_by_default: true,
       input: rl,
       output: hh,
-      command: [ragel_helper, '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+      command: [ragel_helper, '@OUTPUT@', meson.current_source_dir(), '@INPUT@'],
     )
   endforeach
 endif
@@ -312,7 +311,7 @@ custom_target('harfbuzz.cc',
          hb_graphite2_sources + hb_uniscribe_sources + hb_gdi_sources +
          hb_directwrite_sources + hb_coretext_sources,
   command: [find_program('gen-harfbuzzcc.py'),
-            '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+            '@OUTPUT@', meson.current_source_dir(), '@INPUT@'],
 )
 
 incsrc = include_directories('.')
@@ -321,6 +320,8 @@ hb_sources = hb_base_sources + hb_base_ragel_generated_sources
 hb_headers = hb_base_headers
 
 harfbuzz_deps = [thread_dep, m_dep] + harfbuzz_extra_deps
+
+libharfbuzz_link_language = 'c'
 
 if conf.get('HAVE_FREETYPE', 0) == 1
   hb_sources += hb_ft_sources
@@ -355,6 +356,8 @@ if conf.get('HAVE_DIRECTWRITE', 0) == 1
   hb_sources += hb_directwrite_sources
   hb_headers += hb_directwrite_headers
   harfbuzz_deps += directwrite_dep
+  # hb-directwrite needs a C++ linker
+  libharfbuzz_link_language = 'cpp'
 endif
 
 if conf.get('HAVE_CORETEXT', 0) == 1
@@ -416,7 +419,7 @@ libharfbuzz = library('harfbuzz', hb_sources,
   version: version,
   install: true,
   darwin_versions: darwin_versions,
-  link_language: 'c',
+  link_language: libharfbuzz_link_language,
 )
 
 libharfbuzz_dep = declare_dependency(
@@ -632,12 +635,7 @@ if have_gobject
   )
 
   gir = find_program('g-ir-scanner', required: get_option('introspection'))
-  build_gir = gir.found()
-
-  build_gir = build_gir and not meson.is_cross_build()
-  if not build_gir and get_option('introspection').enabled()
-    error('Introspection support is requested but it isn\'t available in cross builds')
-  endif
+  build_gir = gir.found() and (not meson.is_cross_build() or get_option('introspection').enabled())
 
   build_gir = build_gir and get_option('default_library') != 'static'
   if not build_gir and get_option('introspection').enabled()

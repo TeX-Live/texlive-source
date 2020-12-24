@@ -233,7 +233,7 @@ endif ()
 if (HB_HAVE_ICU)
   add_definitions(-DHAVE_ICU)
 
-  # https://github.com/WebKit/webkit/blob/master/Source/cmake/FindICU.cmake
+  # https://github.com/WebKit/webkit/blob/fdd7733f2f30eab7fe096a9791f98c60f62f49c0/Source/cmake/FindICU.cmake
   find_package(PkgConfig)
   pkg_check_modules(PC_ICU QUIET icu-uc)
 
@@ -302,6 +302,7 @@ if (WIN32 AND HB_HAVE_DIRECTWRITE)
 endif ()
 
 if (HB_HAVE_GOBJECT)
+  add_definitions(-DHAVE_GOBJECT)
   include (FindPerl)
 
   # Use the hints from glib-2.0.pc to find glib-mkenums
