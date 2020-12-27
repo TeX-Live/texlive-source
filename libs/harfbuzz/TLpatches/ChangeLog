@@ -1,3 +1,8 @@
+2020-12-27  Akira Kakuto  <kakuto@w32tex.org>
+
+	Imported harfbuzz-2.7.4 source tree from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/2.7.4/
+
 2020-12-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	Imported harfbuzz-2.7.3 source tree from:

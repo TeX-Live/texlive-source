@@ -1,3 +1,8 @@
+2020-12-27  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.4.
+	* version.ac: Adjusted.
+
 2020-12-24  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import harfbuzz-2.7.3.
