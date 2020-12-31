@@ -9,15 +9,13 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.15",       --TAGVERSION
-    date          = "2020-09-02", --TAGDATE
+    version       = "3.16",       --TAGVERSION
+    date          = "2020-12-31", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
 
-if luatexbase and luatexbase.provides_module then
-  luatexbase.provides_module (ProvidesLuaModule)
-end  
+function luaotfload_module(module) end -- We don't log module loading here
 
 
 luaotfload                     = luaotfload or { }
@@ -70,7 +68,7 @@ do
     local revn     = tonumber (status.luatex_revision) or 0 --[[ : string ]]
 
     if status.luatex_version < minimum[1]
-       or status.luatex_version == minimum[1] and status.luatex_revision < minimum[2] then
+       or status.luatex_version == minimum[1] and tonumber(status.luatex_revision) < minimum[2] then
         texio.write_nl ("term and log",
                         string.format ("\tFATAL ERROR\n\z
                                         \tLuaotfload requires a Luatex version >= %d.%d.%d.\n\z
