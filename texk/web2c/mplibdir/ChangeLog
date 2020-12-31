@@ -1,3 +1,12 @@
+2020-12-28  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Temp, fix in mpx_copy_mpto, changed || with && to avoid a wrong final %
+
+
+2020-12-27  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Fixed some typos in manual (thank to 胡亚捷 (Hu Yajie) )
+	* Added the undocumented -T option
+	* Added  some autotools files to make reautoconf working again
+
 2020-11-26  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Added mp-tangle dependency to libmplib.am
 	  to fix parallel compilation
