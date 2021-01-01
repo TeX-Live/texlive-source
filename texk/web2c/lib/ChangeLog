@@ -1,3 +1,7 @@
+2021-01-01  Akira Kakuto  <kakuto@w32tex.org>
+
+	* printversion.c: Update copyright year.
+
 2020-12-10  Akira Kakuto  <kakuto@w32tex.org>
 
 	* lib.h: Definition of eof() contradicts corecrt_io.h
