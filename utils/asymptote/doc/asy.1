@@ -88,8 +88,14 @@ Command to autoexecute.
 .B \-compact             
 Conserve memory at the expense of speed [false].
 .TP
+.B \-compress            
+Compress images in PDF output [true].
+.TP
 .B \-d,\-debug            
 Enable debugging messages [false].
+.TP
+.B \-devicepixelratio n  
+Ratio of physical to logical pixels [1].
 .TP
 .B \-digits n            
 Default output file precision [7].
@@ -114,6 +120,9 @@ Additional frame delay [0].
 .TP
 .B \-framerate frames/s  
 Animation speed [30].
+.TP
+.B \-globalread          
+Allow read from other directory [true].
 .TP
 .B \-globalwrite         
 Allow write to other directory [false].
@@ -170,7 +179,7 @@ Mask fpu exceptions; command-line only.
 Maximum rendering tile size [(1024,768)].
 .TP
 .B \-maxviewport pair    
-Maximum viewport size [(2048,2048)].
+Maximum viewport size [(0,0)].
 .TP
 .B \-multiline           
 Input code over multiple lines at the prompt [false].
@@ -183,9 +192,6 @@ Multisampling width for screen images [4].
 .TP
 .B \-offline             
 Produce offline html files [false].
-.TP
-.B \-offscreen           
-Use offscreen rendering [false].
 .TP
 .B \-O,\-offset pair      
 PostScript offset [(0,0)].
@@ -248,7 +254,7 @@ WebGL touch screen shift mode delay [200].
 Spin speed [60].
 .TP
 .B \-svgemulation        
-Emulate unimplemented SVG shading [false].
+Emulate unimplemented SVG shading [true].
 .TP
 .B \-tabcompletion       
 Interactive prompt auto-completion [true].

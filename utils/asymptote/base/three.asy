@@ -1065,7 +1065,7 @@ triple dir(path3 p)
 
 triple dir(path3 p, path3 h)
 {
-  return 0.5*(dir(p)+dir(h));
+  return unit(dir(p)+dir(h));
 }
 
 // return the point on path3 p at arclength L
@@ -1880,6 +1880,14 @@ transform3 align(triple u)
   return c >= 0 ? identity(4) : diagonal(1,-1,-1,1);
 }
 
+// Align Label with normal in direction dir.
+Label align(Label L, triple dir)
+{
+  Label L=L.copy();
+  L.transform3(align(unit(dir)));
+  return L;
+}
+
 // return a rotation that maps X,Y to the projection plane.
 transform3 transform3(projection P=currentprojection)
 {
@@ -2554,25 +2562,6 @@ private string Format(transform3 t, string sep=" ")
     Format(t[0][3])+sep+Format(t[1][3])+sep+Format(t[2][3]);
 }
 
-void writeJavaScript(string name, string preamble, string script) 
-{
-  file out=output(name);
-  write(out,preamble);
-  if(script != "") {
-    write(out,endl);
-    file in=input(script);
-    while(true) {
-      string line=in;
-      if(eof(in)) break;
-      write(out,line,endl);
-    }
-  }
-  close(out);
-  if(settings.verbose > 1) write("Wrote "+name);
-  if(!settings.inlinetex)
-    file3.push(name);
-}
-
 pair viewportmargin(pair lambda)
 {
   return maxbound(0.5*(viewportsize-lambda),viewportmargin);
@@ -2678,13 +2667,13 @@ struct scene
 
     if(!P.absolute) {
       this.P=t*P;
+      if(this.P.autoadjust || this.P.infinity)
+        adjusted=adjusted | this.P.adjust(m,M);
       if(this.P.center && settings.render != 0) {
         triple target=0.5*(m+M);
         this.P.target=target;
         this.P.calculate();
       }
-      if(this.P.autoadjust || this.P.infinity) 
-        adjusted=adjusted | this.P.adjust(m,M);
     }
 
     bool scale=xsize != 0 || ysize != 0;

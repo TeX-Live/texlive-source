@@ -38,22 +38,19 @@ protected:
   bool Running;
   bool pipeopen;
   bool pipein;
-  const char *fatal;
 public:
-  
+
   void open(const mem::vector<string> &command, const char *hint=NULL,
-            const char *application="", const char *fatal="",
-            int out_fileno=STDOUT_FILENO);
+            const char *application="", int out_fileno=STDOUT_FILENO);
 
   bool isopen() {return pipeopen;}
 
   iopipestream(): pid(0), pipeopen(false) {}
 
   iopipestream(const mem::vector<string> &command, const char *hint=NULL,
-               const char *application="", const char *fatal="",
-               int out_fileno=STDOUT_FILENO) :
+               const char *application="", int out_fileno=STDOUT_FILENO) :
     pid(0), pipeopen(false) {
-    open(command,hint,application,fatal,out_fileno);
+    open(command,hint,application,out_fileno);
   }
 
   void eof();
@@ -64,10 +61,10 @@ public:
   }
 
   void block(bool write=false, bool read=true);
-  
+
   ssize_t readbuffer();
   string readline();
-  
+
   bool running() {return Running;}
 
   typedef iopipestream& (*imanip)(iopipestream&);
@@ -86,7 +83,7 @@ public:
                   size_t plen);
 
   string getbuffer() {return sbuffer;}
-  
+
   void wait(const char *prompt);
   int wait();
   void Write(const string &s);
@@ -104,5 +101,5 @@ public:
     return *this;
   }
 };
-  
+
 #endif

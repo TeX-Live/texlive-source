@@ -1,3 +1,1329 @@
+commit 3b88c382bf0dd59daa6427a9fc4f03c246b5d218
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 18:02:21 2020 -0700
+
+    Fix normalization in tube rendering.
+
+commit 31ab4195580be6ac65ad226d29a568c82147e166
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 15:09:09 2020 -0700
+
+    Update freeglut installation instructions.
+
+commit 7cedd768019efd0fe435fa7d7a8b281298f4d6ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 10:34:07 2020 -0700
+
+    Work around further floating point exceptions in OpenGL libraries.
+
+commit 437aef9cb8ae639727f635b51121a00fdb16423d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 01:29:47 2020 -0700
+
+    Add Label align(Label,dir) for aligning Label normal in direction dir.
+
+commit df6f1c2641fd51975a11244be7b66c477f73a856
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 21 22:15:22 2020 -0700
+
+    Add settings.compress=true option to control PDF image compression.
+
+commit a36959ecbdc74fe83720dd28a009d65e16a0302a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 21 21:48:36 2020 -0700
+
+    Implement bool isometry(transform) function.
+
+commit 1108f83337b6d6f2ac33b9fd0bb0fb47c0578065
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 21 21:18:53 2020 -0700
+
+    Fix bug2 #149 and #154 (thanks to Oliver Guibe).
+
+commit b1ab048d6cf6b703a992a296c870d3b1c5a63b3e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 21 20:54:05 2020 -0700
+
+    Skip over uninitialized elements of transposed arrays.
+
+commit 959cdd4823cb1e61b407878c89a66ae97a90e326
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 20 23:33:21 2020 -0700
+
+     Work around floating point exceptions (FE_INVALID) in OpenGL libraries.
+
+commit d541f69d20ed7d7a88e25cfe08323780796439ff
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 19 14:30:13 2020 -0700
+
+    Qualify namespace.
+
+commit f8de14a7ed23d3496188275092c731f8a0fc9aa5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Nov 19 11:51:58 2020 -0700
+
+    Restore image enccoding.
+
+commit 9606da530260600112145360c3eaadada1ed645f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 16 09:57:35 2020 -0700
+
+    Fix comment.
+
+commit f513ffde5c8540e1b45a93fd0391541a6f4aa2f7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 16 09:53:28 2020 -0700
+
+    Read null fields as undefined values in cvs mode and in line mode.
+
+commit 5402f40f5c752ed3069a8102b9a1f46a561bc8b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 15 23:35:42 2020 -0700
+
+    Fix warning message.
+
+commit e67fba800818c8713165829ee64268c445355da3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 15 00:26:51 2020 -0700
+
+    Fix more uninitialized variables.
+
+commit ea1eca1727d19625c5be8359cd88d38236eb0737
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 15 00:06:41 2020 -0700
+
+    Fix uninitialized variable.
+
+commit a9d1f7abf90309502026af608db3aed4cb405ce2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 14 23:44:25 2020 -0700
+
+    Return unbounded direction in rationalSimplex.
+
+commit ac9ece43497c23bba3d0738db5a0fb1e8e7090d8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 8 12:49:10 2020 -0700
+
+    Fix comment.
+
+commit 4d6872d552573ba947d3a524549b159d322ff284
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 8 12:39:12 2020 -0700
+
+    Add RELEASE variable.
+
+commit a3d85fb37e5a28e021f417b8355362b03f93b5d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 27 21:49:55 2020 -0600
+
+    Always define xStandard in optimal case in rationalSimplex.
+
+commit 5ced24a1d9658364e76ddc04a9b61890ee53d543
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 27 03:18:54 2020 -0600
+
+    Support logarithmic graphs of surfaces.
+
+commit e688d42e33a521facdb050c77b454b819478d3fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 23:08:36 2020 -0600
+
+    Open files without assuming an asy suffix.
+
+commit 3361214340d58235f4dbb8f24017d0cd5d94da72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 22:24:51 2020 -0600
+
+    Use ps2write instead of eps2write where possible, for compatibility with gs 9.53.
+
+commit 42b291049920c2a023ab5f3598cc917eb36297ca
+Merge: e62d0401 d9826965
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 20:18:21 2020 -0600
+
+    Merge branch 'spotrh-curl-config', standardized.
+
+commit d9826965be5768c417b790fb6ff6ba59aeb89246
+Merge: e62d0401 a055a0ae
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 20:09:49 2020 -0600
+
+    Merge branch 'curl-config' of https://github.com/spotrh/asymptote into spotrh-curl-config.
+
+commit e62d040114aaadfa9c3a6d6a70cd001cdea11e36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 20:01:06 2020 -0600
+
+    Make end argument of Margin functions optional.
+
+commit e5db49aa7b3ede25ae2cf4c08adfe2fe533420b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 25 19:59:54 2020 -0600
+
+    Expose solution to standard problem in rationalSimplex.
+
+commit 69e5f0cc8ccdb8128319c4cd8c1f13cae01ce82d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 10 00:11:57 2020 -0600
+
+    Make --version indicate if configured for OSMesa software rendering.
+
+commit d54e2ac82481e410ffa2bb52a1fb9d217d95eb98
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 7 17:39:51 2020 -0600
+
+    Add high resolution wall clock time.
+
+commit a055a0ae813e7ed443b3d48e0822e5e7199bef65
+Author: Tom Callaway <spot@fedoraproject.org>
+Date:   Fri Oct 2 18:50:51 2020 -0400
+
+    add --disable-curl option to prevent curl check and compile without optional URL support
+
+commit 27a55b7891214aa0654e7a97207c5ba762ceb1aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 14 13:48:03 2020 -0600
+
+    Fix centering of slides.
+
+commit 576b7333baf56cd833a1098dd85a22af1bbfdafb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 28 21:56:16 2020 -0600
+
+    Support null characters and null strings in replace.
+
+commit be534393f9b3404573479dc9851817e6c5fbda94
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 24 12:59:25 2020 -0600
+
+    Disable image encoding in PDF conversion.
+
+commit 1fd27cc14606206aba81bf131e0bef36e9329457
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 22 12:15:26 2020 -0600
+
+    Fix extraction of git revision.
+
+commit 8dbece952d9ddece1349215243c473bafcc7b4c6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 22 09:56:46 2020 -0600
+
+    Fix configuration without readline support.
+
+commit d6500a226b021edf99002596f7226015950dc6af
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 20 22:47:49 2020 -0600
+
+    Allow binary mode to read the entire file into a string.
+
+commit 880ef36e9878dfbcdcf28b953d11bfd392805643
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 20 21:04:51 2020 -0600
+
+    Fix getc when reading NUL character.
+
+commit e3ac2208915f6c496974a8dc3342861de4f2e2d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 15 12:52:42 2020 -0600
+
+    Fix commit 986d64236b299c1643451f4e774170cb8ebcec00.
+
+commit 6cea1c06c2054f1b7433e2d01ed6a2ec863b6726
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 13 16:06:15 2020 -0600
+
+    Update URLs.
+
+commit af12ec3b6fcca4e273dad4fdd3b431bada30608f
+Merge: 986d6423 68682879
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 9 08:29:58 2020 -0600
+
+    Merge pull request #170 from bmwiedemann/date
+    
+    Allow to override build date with SOURCE_DATE_EPOCH.
+
+commit 68682879ce9704606fb0d46734dfaba4966de9b5
+Author: Bernhard M. Wiedemann <bwiedemann@suse.de>
+Date:   Sun Aug 9 14:10:55 2020 +0200
+
+    Allow to override build date with SOURCE_DATE_EPOCH
+    
+    in order to make builds reproducible.
+    See https://reproducible-builds.org/ for why this is good
+    and https://reproducible-builds.org/specs/source-date-epoch/
+    for the definition of this variable.
+    
+    Also consistently use ISO 8601 date format to be understood everywhere.
+    This also avoids %B and %h that are locale-dependent.
+    
+    Also use UTC/gmtime to be independent of timezone.
+    
+    Also rewrite the shell `date` calls into perl to avoid
+    trouble with the different date command implementations.
+    
+    This PR was done while working on reproducible builds for openSUSE.
+
+commit 986d64236b299c1643451f4e774170cb8ebcec00
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 8 11:18:38 2020 -0600
+
+    Fix last revision.
+
+commit 4c06e580baa7051128d3e8ab4b06a0315a1eecd7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 8 01:05:57 2020 -0600
+
+    Simplify code.
+
+commit d2f6e59eb42763c2e9a1f6ca5e057f6bf13991cd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 6 22:27:33 2020 -0600
+
+    Fix last revision.
+
+commit 7ae96b7754d1025c02be514e3d31433cce52b609
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 6 22:05:07 2020 -0600
+
+    Remove -0 suffix from git version for tagged releases.
+
+commit 610c4624a7ac69ee4ccfedd6075b1cb28c14d7ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 23:39:05 2020 -0600
+
+    Fix last revision.
+
+commit dc4243ccd1c5ab766241707ab10f16d7c9738ef7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 23:34:47 2020 -0600
+
+    Backport curlProgress to libCurl < 7.32.
+
+commit 94f99a26ab9b72f3a3fbc2239f9e7b529b7166e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 22:18:03 2020 -0600
+
+    Increment version to 2.68.
+
+commit bccdb51e0cfa5b7b7bf5c08c1f9496a7ba9a012d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 17:45:17 2020 -0600
+
+    Reformat run*.in files.
+
+commit 37bf3ce87aed185a465da781db931a68aff7745d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 17:01:26 2020 -0600
+
+    Allow URL requests to be interrupted.
+
+commit 92d7b6fe3bbd0d1ee5238ac5d87469e6d17e89f4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 16:19:42 2020 -0600
+
+    Port to MSDOS.
+
+commit 9dc14b7b56eeaddae51c5f24012ac51a5faf93f9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 5 01:56:15 2020 -0600
+
+    Fix hang on quit under MSDOS.
+
+commit bfefd605c7eb661f03eba5405795d6dff3e9cd43
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 4 22:50:32 2020 -0600
+
+    Fix readline interrupt handling under MacOS X.
+
+commit 1fb62259fe1b94a5b3ef0b44ce7f7d32a3be76b3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 4 12:40:53 2020 -0600
+
+    Remove xasy link from MSDOS build.
+
+commit 5050ce7ee703ef3ec3c4d84cd420a019178c6859
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 3 14:18:29 2020 -0600
+
+    Reformat examples.
+
+commit 372ae2ca61bea75271c85549dd166b71d4dc72b4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 3 13:59:33 2020 -0600
+
+    Indent projection output.
+
+commit b552792d5adb112b469ea55e8b95ffc299969ec0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 3 13:20:15 2020 -0600
+
+    Add C++ and asy indenting and formatting Emacs lisp scripts.
+
+commit b03e2ba9dc2287c16869dc51e87fe5715eb3c2d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 23:08:08 2020 -0600
+
+    Fix last revision.
+
+commit 55406a03c263d9a33c22f823110bee247146ffdc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 22:52:47 2020 -0600
+
+    Fix compilation without libcurl.
+
+commit e0f8c79e64f4b2d14f0dbd6f95472480bd718b72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 22:50:42 2020 -0600
+
+    Reformat base files.
+
+commit ef00491a49965e998549a2df0bb6d01fb4bb7d61
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 21:13:13 2020 -0600
+
+    Reformat .cc and .h files.
+
+commit 5de4352e05ba6a03f95a128b81e702d6a3d27314
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 20:21:07 2020 -0600
+
+    Update asygl.
+
+commit 98b22e43550672e01cf257f982380efa18f4f92b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 19:15:52 2020 -0600
+
+    Document newpage.
+
+commit 083efd7710a851e2e33331bcbac9ac42cf4dabe6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 18:12:45 2020 -0600
+
+    Avoid unnecessary remesh on zoom in AsyGL.
+
+commit 23c2ac57fd6336eda71251c25a7324732e1433d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 18:00:30 2020 -0600
+
+    Force remeshing on export.
+
+commit bfc7bc0db8ca496f5ea9545024f84749ae3ea636
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 2 17:50:26 2020 -0600
+
+    Fix exporting when devicepixelratio > 1.
+
+commit 5e57b75e78b4d596cdc00d3a35a2c8c40df17f90
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 1 21:02:48 2020 -0600
+
+    Implement devicepixelratio setting.
+
+commit ef0bb9f3fd39c3528fd963b27c6989c3287faacf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 1 20:27:52 2020 -0600
+
+    Extend URL support to input().
+
+commit 45e8475ce686ca92aad94488c10824fc1f1d044f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 1 14:41:48 2020 -0600
+
+    Support importing URLs.
+
+commit 81b4d1e85225fb540c8cf64d733b810ab3ab07d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 31 18:18:57 2020 -0600
+
+    Remove obsolete code.
+
+commit 2e497032037cff813426a1ece1f42ec1ab924d68
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 29 22:58:25 2020 -0600
+
+    Fix interrupt handling under MacOS X.
+
+commit c2c8c095416e766063ad0af943d1a931d14095e0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 29 01:52:40 2020 -0600
+
+    Implement portable whitespace skipping also for pairs.
+
+commit ed3e87bb4795ac6cf648af9b4f12e2418efad11a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 29 01:35:03 2020 -0600
+
+    Implement portable way of skipping whitespace.
+    Make casts from empty strings yield uninitialized values.
+
+commit 8ba38823755e09de6463a42396e1db7291276254
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 28 21:06:49 2020 -0600
+
+    Simplify code.
+
+commit ad7054342d291ce32f71951b7e7eeea381d29efb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 28 21:05:19 2020 -0600
+
+    Fix numerical precision issue.
+
+commit 111cd165f5c7f4a0496a9efbf746d4f2a316a48c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 27 00:30:18 2020 -0600
+
+    Format documentation.
+
+commit 9193d9d8ee934b325e575d405631d4fb252b1d8d
+Merge: ef016d74 013e0cb2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 27 00:20:41 2020 -0600
+
+    Merge pull request #144 from ivankokan/master
+    
+    Obsolete *encoding modules
+
+commit 013e0cb25362e46cecb40ea468aa95e66788dd12
+Merge: aa8a5244 ef016d74
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Mon Jul 27 02:26:20 2020 +0200
+
+    Merge branch 'master' into master
+
+commit ef016d741c443e8e84ff8248a9622c820813b754
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 26 17:47:02 2020 -0600
+
+    Document that clipping has no notion of depth.
+
+commit 1b11525273e0661d3a3f4f8dc988b29982e7f5c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 26 12:15:06 2020 -0600
+
+    Fix segmentation fault caused by obsolete code.
+
+commit eb1ec4d911ee9b4c3f34a07505183291d3793e6e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 26 11:34:09 2020 -0600
+
+    Update documentation.
+
+commit 6473c8487d59a4891c406cd127b3bb2d200ebe62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 26 11:02:35 2020 -0600
+
+    Simplify code.
+
+commit 52b458f036b7f9222a084ffef4e94092342608bf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 25 20:56:11 2020 -0600
+
+    Fix copy constructors for path and path3.
+
+commit e5da02595a16d3a6adc60cd9d4589b5cf31b4fd3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 25 17:59:27 2020 -0600
+
+    Port to MacOS X.
+
+commit bb56b10d431a5acd66b28c4a4bb22ba99ef7c1c8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 24 00:09:24 2020 -0600
+
+    Improve repositioning of OpenGL window.
+
+commit 47f463e5a739c02838fd549e7a4dc3b0f8471f21
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 23 03:39:28 2020 -0600
+
+    Always reposition OpenGL window when not fitting to screen.
+
+commit 1ba366e2ba2380e17c81df2b6cd4114869745ad4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 22 20:19:12 2020 -0600
+
+    Normalize triple dir(path3, path3).
+
+commit bc0b6499e5f71b36a3177f677db5277078164dbd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 22 00:39:18 2020 -0600
+
+    Prevent xasy from hanging on asy errors.
+
+commit dee047a7596538e2012152c52a753938ea9d310b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 20 00:31:32 2020 -0600
+
+    Update asygl.
+
+commit 7574872dca70fda79c6cd65e350b57fc135bd794
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 20 00:28:29 2020 -0600
+
+    Make + and - keys zoom in and out, rather than expand and shrink viewport.
+
+commit 2066ef194ec9f7c135b165ea8b157e78320306a6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 18 22:46:22 2020 -0600
+
+    Update asygl.
+
+commit 5089b775299a17831a86c4ae38d1081de3e1282a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 18 22:45:58 2020 -0600
+
+    Improve resizing.
+
+commit 242615a1b755ea943603daad9aa6060e5f2eca1e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 18 20:44:53 2020 -0600
+
+    Workaround JSON bug by escaping colons.
+
+commit 7294cb2bf8a3fc0c182b36c9b1ee8b49cc5a8b3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 13:07:35 2020 -0600
+
+    Update asygl.
+
+commit 5a2bd75f8f8ee73c0617896f0d1183fe4c673c05
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 13:06:43 2020 -0600
+
+    Fix absolute mode.
+
+commit 55e4e0dba58565b91ae1dd1df715b49db339a305
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 12:47:08 2020 -0600
+
+    Update asygl.
+
+commit ba16a591ca3b924fb1e9db399f4c942d36341d68
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 12:46:45 2020 -0600
+
+    Reset initial zoom.
+
+commit c47728d59cb3d9a8ffb394cbffb79c2ddc631816
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 12:25:14 2020 -0600
+
+    Update asygl.
+
+commit e0281de557eb186728d66fd0c183d65a50b8f0b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 17 12:24:18 2020 -0600
+
+    Always listen for WebGL resize events.
+
+commit 99c614d893cea7dffb9a41c13c20460248944cd2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 16 23:23:58 2020 -0600
+
+    Document settings.absolute.
+
+commit af6c53a9825bc1e2dc73f8aa8a720b299d6a4e6c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 16 23:00:29 2020 -0600
+
+    Fix invalid array dimensions error.
+
+commit b5eac1db427fbc956d01b243fffc2b4f20415355
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 15 11:41:01 2020 -0600
+
+    Update example.
+
+commit 9c9caaca5c63f04bde69205e0da9e163ee256344
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 15 02:59:52 2020 -0600
+
+    Disable cd with -noglobalread.
+
+commit 0278c8841589770d71e2803e57dcfb6ce002cfcf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 15 01:00:25 2020 -0600
+
+    Allow reading from search path even with -noglobalread.
+
+commit cf7c0373f82cb7d1de78bb95d7b619e096552628
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 15 00:13:00 2020 -0600
+
+    Add examples directory to search path.
+
+commit 516d7847b2a58425c7763bbb0e79eebea7f72c15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 23:14:10 2020 -0600
+
+    Fix inpath.
+
+commit 0a5015b2f86a656a8b04d2592a606b68bb6e4d53
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 16:42:20 2020 -0600
+
+    Add missing file.
+
+commit cde71e2634cd45113f60cd9aec96f0221e1b1d58
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 16:37:57 2020 -0600
+
+    Install data file.
+
+commit 2056aa9c63bd1bf9fc7f3cdb7415aa7c1cefbe07
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 16:12:41 2020 -0600
+
+    Add -globalread setting (default true).
+
+commit 246022516af218d6ae4cebf027965479d049b8d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 10:57:38 2020 -0600
+
+    Open files using search path.
+
+commit 2e4762d4381307876a100e42116592d8aba3a75a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 01:56:07 2020 -0600
+
+    Reinstate putting clipPath definitions in <defs> section, with fix to Gouraud shading.
+
+commit 5b5c8aeddfe9e99eec14c30591713f4d128bb8cf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 01:52:54 2020 -0600
+
+    Revert "Put clipPath definitions in <defs> section."
+    
+    This reverts commit fbf03b07cfbabaeb7be861ac652f4b46fdc0e2cb.
+
+commit fbf03b07cfbabaeb7be861ac652f4b46fdc0e2cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 01:24:40 2020 -0600
+
+    Put clipPath definitions in <defs> section.
+
+commit 62bfac5dc40fe8f9ceefe2f834fdf6febd5971d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 00:56:40 2020 -0600
+
+    Use distinct clipping IDs.
+
+commit 5778d7e16e456bf9caacdadcf354ccfd41aff4c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 14 00:39:31 2020 -0600
+
+    Fix svg clipping.
+
+commit cd0faa137d52fea979e73b3748986cbcd396f882
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 13 02:23:24 2020 -0600
+
+    Remove unused svg transform.
+
+commit 29004b9576e08e6da0aae0df07ea08351e555953
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 12 16:42:38 2020 -0600
+
+    Remove duplicate </head>.
+
+commit a2eb67615714aaa43674da43b8e5be8f597dbb1f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 12 09:34:59 2020 -0600
+
+    Support compilation and 2D svg to html conversion without GLM library.
+
+commit 89ca60bd9e8ea5b23d7deea2dfdf2d54b8496d25
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 11 23:50:35 2020 -0600
+
+    Display error location in interactive mode when importing files;
+    output to stderr.
+
+commit 4c0160df84ee208b7f0b4f6480405299d4ae94d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 11 02:27:54 2020 -0600
+
+    Display error location.
+
+commit bde2b3f814ffaf77f10bf78352b34f3584523734
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 10 19:37:51 2020 -0600
+
+    Remove body margin and scrollbar.
+
+commit 7bb9309de9929be530547de88d1cdeac052f2231
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 10 12:53:41 2020 -0600
+
+    Fit 2D html output to canvas unless settings.absolute=true.
+
+commit 497363ecde2cc4856756ed54ae2723799a183674
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 10 12:49:41 2020 -0600
+
+    Show dvisvgm diagnostics.
+
+commit 97843dd13d26027a05a108e16f60f910703648b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 9 16:08:10 2020 -0600
+
+    Fix tutorial URL.
+
+commit b6d53dc435fda60c836606f8d763dbdaf56e8501
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 9 09:34:10 2020 -0600
+
+    Fix format in documentation.
+
+commit aa8a5244e46c1d04300513a4107245a3575ceedd
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Thu Jul 9 15:53:58 2020 +0200
+
+    Format docs
+
+commit 9cca9e9106e6ad4aa89389d25b11712d7ac4edec
+Merge: e0b8e3de d968c027
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Thu Jul 9 15:14:31 2020 +0200
+
+    Merge branch 'master' into master
+
+commit d968c027432b225800655e508fa00bff2da086b5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 9 00:58:10 2020 -0600
+
+    Improve logo3.
+
+commit 3fd657ee90bc66143b86d7c15a3eb28200e88611
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 7 23:06:48 2020 -0600
+
+    Work around dvisvgm bug.
+
+commit 978d0e0d8ce48a7f71d1880dea6454133c8f6698
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 7 02:01:25 2020 -0600
+
+    Increment version to 2.67.
+
+commit 695f398ded015ec27835b833f29d220794c45831
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 6 22:54:59 2020 -0600
+
+    Enable PDF transparency for SVG and HTML formats.
+
+commit 4ec6f561926704c685739dd77183e2c56929db80
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 6 22:44:19 2020 -0600
+
+    Only implement PDF transparency for PDF formats.
+
+commit f030d57672c300689ad4b955f8bd5ab897cfffc9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 6 22:34:53 2020 -0600
+
+    Remove unused code.
+
+commit c1083e547bd5c43c2baf253d5ffbf376aa1b49eb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 6 20:52:05 2020 -0600
+
+    Work around broken signals on MSWindows.
+
+commit 6e050f717ffeea7701c9de1e2b8ffe5ff9b9a7cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 6 00:04:25 2020 -0600
+
+    Fix tempdir.
+
+commit a6c626a111b49512bf8e54e4482d3aef47d63555
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 22:20:28 2020 -0600
+
+    Update documentation.
+
+commit 7b7b491898243d71f190b4ebad02e92805b8d0d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 21:34:08 2020 -0600
+
+    Document the Asymptote Web Application.
+
+commit ef354c08562686b6afdd5aafd6e63fe1edfdf0ef
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 20:20:09 2020 -0600
+
+    Remove unused variable.
+
+commit 6129a12bd26dd018d38cd96c62e8fa74b5cf36a9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 20:11:27 2020 -0600
+
+    Fix pdfreload.
+
+commit fa3122974baecf2d7743e87705f3b12c913e560b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 01:44:07 2020 -0600
+
+    Use custom tmpdir for dvisvgm to avoid permission conflicts.
+
+commit 042ab6b6973dc045ad80a5e99ecf29034f67416b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 5 00:20:44 2020 -0600
+
+    Fix pdfoffsets.
+
+commit b081ac0d5b435bcb1531fd8d6211b552f62a8679
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 4 03:26:15 2020 -0600
+
+    Update dependencies.
+
+commit bd9c1e2def171eea72ea13f7755a2601da4401f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 3 01:46:42 2020 -0600
+
+    Fix fullscreen mode. The default maxviewport value of (0,0) now specifies
+    the screen dimensions.
+
+commit 499234d65838272830fc133635729be93474ebfa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 2 22:55:56 2020 -0600
+
+    Remove X-server dependency for offscreen rendering.
+
+commit 217bb1c86beaa5daa7dbea6691a9a7afb088c355
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 2 14:36:45 2020 -0600
+
+    Remove obsolete offscreen setting.
+
+commit 1ddfc8e10bb10020c77b550217743b9b77f0a845
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 2 11:35:12 2020 -0600
+
+    Add missing conditionals; simplify code.
+
+commit c19d2327b109655e9a99c795bc2724738af3fc3c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 2 11:20:01 2020 -0600
+
+    Support offscreen rendering again when configured with --enable-offscreen.
+
+commit b800078b4d81c126cf43984b12d876e919292e7c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 2 00:14:30 2020 -0600
+
+    Work around FE_INVALID when using Gallium libGL.
+
+commit 6c6267318f959de91711984d192d96846fe11dae
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 29 01:38:31 2020 -0600
+
+    Fix warning message.
+
+commit 117081fc1c6909080df76502b15dfcb1576cd0c6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 29 01:31:13 2020 -0600
+
+    Fix warning message.
+
+commit d573cbb922fac2f8106e70afdf9637e2ce2d6d36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 29 00:48:08 2020 -0600
+
+    Fix documentation of mapTemplate.
+
+commit 9bdd507eabc2e5f9dbe2b3c2fde74c0552156372
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 29 00:39:47 2020 -0600
+
+    Illustrate how to create parametrized code by implementing a struct
+    mapping keys to values, with a specified default. Also implement mapArray,
+    simplifying the construction of general array mappings.
+
+commit 9cdbfd99e9e6bc80055c3929016d7a65e589f690
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 27 23:35:55 2020 -0600
+
+    Redefine map2 to map, T1 to mapFrom and T2 to mapTo.
+
+commit 24631469c445b7722566ccfe1b4a91e6cca70c19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 26 21:23:38 2020 -0600
+
+    Add map2 code for defining T2[] map(T2 f(T1), T1[] a).
+
+commit 503273b5f076f3a46083922b6e0f8a892001a763
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 26 04:31:57 2020 -0600
+
+    Fix bug #162: opening .asy file in Xasy crashes on MSWindows.
+
+commit 7ddc5b161a2cb3394e6ae0b986c8714fc6ff1e0e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 25 00:10:46 2020 -0600
+
+    Extend currentlight.background to 2D images; by default, use a white background for both 2D and 3D HTML images.
+
+commit 61624215084386cbba889dd008c95fcfa3f436e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 24 22:32:49 2020 -0600
+
+    Fix 2D html tags.
+
+commit 1b8c77abebeb4a3e65d1f30eda6d5b60ffe820f2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 22 14:58:38 2020 -0600
+
+    Fix xasy svg shading.
+
+commit 96cf6bb0c46c830c3676a442900e4bd968e0a50c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 22 01:38:25 2020 -0600
+
+    Fix Windows override in xasyconfig.cson.
+
+commit 448695a92747861476497f92e23e6d779596ed16
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 22 01:24:43 2020 -0600
+
+    Implement real abs2(pair) and real abs2(triple).
+
+commit 4e76a3267bb44d163378bd50f72eb6340089b469
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 22 00:04:38 2020 -0600
+
+    Fix deconstruction of png images into svg format.
+
+commit b1d4da9a0e0d69047df43c15bbe9b22f01ebb0d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 18:37:41 2020 -0600
+
+    Check array dimensions.
+
+commit 1264820193c3d27b79082431762636cb4c19b8ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 18:02:46 2020 -0600
+
+    Fix camera adjustment.
+
+commit 0353f3bd5edc99e5f83fdae04f7d14393dfa623d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 16:39:19 2020 -0600
+
+    Improve detection of TeX errors.
+
+commit d0049ae28dcd4ee1664e27dff18a43dbbc7c8521
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 01:41:57 2020 -0600
+
+    Fix CPU to CPU optimization for Bezier curves by rendering one segment at a time.
+
+commit 6cafa5abb72d1ab2f69ab6ba9fc8ba7c4417bfe6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 01:25:41 2020 -0600
+
+    Update asygl.
+
+commit 6a04bf13097bb8e196bdfcbf1f9c9b30fd5fe4b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 21 01:22:27 2020 -0600
+
+    Port CPU to GPU copying optimization to AsyGL library.
+
+commit 0fcf4e50d0fdaf43d839d15c8eea7ff99ab4ed71
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 20 00:01:45 2020 -0600
+
+    Update to new Ghostscript transparency model.
+
+commit d2e946715241e559433ae56b2cc726901b1474d6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 19 19:12:15 2020 -0600
+
+    Output 2D html images using inline svg commands.
+
+commit 239b54d06b51b52b6fb1d7a929fada19039356a9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 18 22:22:22 2020 -0600
+
+    Force PNG content to be embedded in SVG output.
+
+commit c1215bee4c483b75f547098fc0849e4f5277a404
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 18 18:55:12 2020 -0600
+
+    Fix tensor shading with latex engine and svg outformat.
+    Check for mismatched endspecial. Simplify code.
+
+commit cb9a4f90466dac50aeec00bd7dbb91cb609f5c0a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 18 00:02:18 2020 -0600
+
+    Update asygl.
+
+commit d56cfbf30c5dfd26abdd13af139f2419ae28b3b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 18 00:01:46 2020 -0600
+
+    Fix WebGL shrink and expand.
+
+commit bb772d94c88a0968f744a02faadddbc0c4d214a4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 22:00:11 2020 -0600
+
+    Increase WebGL precision of example.
+
+commit 55217bf80236b08d820ef235e84478100d094077
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 21:11:05 2020 -0600
+
+    Update asygl.
+
+commit 31d27c0d7a4dcb36f87ab2aa046371936dc6d176
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 21:10:09 2020 -0600
+
+    Extend WebGL viewport to edge of canvas; simplify code.
+
+commit 5b6237b879a56a222e9c3689181485646ab4ea51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 16:04:49 2020 -0600
+
+    Update asygl.
+
+commit 07b4ae5679569041c070c6f50c0bd8eb3e0a97aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 16:04:03 2020 -0600
+
+    Fix WebGL aspect ratio and centering.
+
+commit c209a949e54d90bdf71a4d576602a6b004b894f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 10:57:13 2020 -0600
+
+    Update asygl.
+
+commit 9e93b99175d0aa06535022dbddeaebd7b75f4377
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 10:56:39 2020 -0600
+
+    Restore aspect ratio sizing code.
+
+commit eb022a5e1fc3c8bc2008e33980a47a99d269159b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 08:30:47 2020 -0600
+
+    Update asygl.
+
+commit e773510775bf63cfb81fc44077c3651cccf49a9c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 17 08:27:04 2020 -0600
+
+    Center html output in Javascript code.
+
+commit d604442f8a09550276cf03721ab3c71047eb9f6b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 14 02:31:48 2020 -0600
+
+    Increase precision of planar Bezier surfaces in WebGL.
+
+commit 38a8732d7c292de07142e789a7abf6115a52ed82
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 2 11:49:16 2020 -0600
+
+    Revert "Center html output."
+    
+    This reverts commit 8d6fcc11cbc1118f6f4253efb8766998f83425fe.
+
+commit 3546418498d27270de2ea77a8e59a97bc90697ef
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 24 23:03:01 2020 -0600
+
+    Remove clip from slopefield module.
+
+commit 8d6fcc11cbc1118f6f4253efb8766998f83425fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 24 21:31:48 2020 -0600
+
+    Center html output.
+
+commit 56f89ede630ce95f6d0e57c5adf58bc925229ad8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 11 19:46:20 2020 -0600
+
+    Force copying of sorted transparent triangles to GPU.
+
+commit b44d17ae26dcd0f3d3ea63188f93528230390cfe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 10 22:08:53 2020 -0600
+
+    Raise logo3 camera.
+
+commit d9bbb71b151c1ff1ee920045607240ed80ead95f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 6 01:00:21 2020 -0600
+
+    Brighten default light Headlamp.
+
+commit d9b7e5f6759da978831a03be481f5b0712f77ba7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 6 00:11:21 2020 -0600
+
+    Fix previous commit.
+
+commit a81b3656d2087a9f038fdd3417698d23d0518808
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 3 21:25:09 2020 -0600
+
+    Fix copying of materials from CPU to GPU.
+
+commit d536e5e45d45c7893d6703d8ef9c56c2df0d97b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 3 10:32:42 2020 -0600
+
+    Simplify code.
+
+commit a869eb33b2549b19fd67a64031d202a2fb834cd1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 3 01:02:48 2020 -0600
+
+    Fix svg output for axialshade and radialshade.
+
+commit 90f4700de45c7b5a86c109d004209d8ef688bf88
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 3 00:21:51 2020 -0600
+
+    Work around dvisvgm --pdf limitations.
+
+commit 05faf64b39ec7ac03318a7b4c738cae9d107239a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 1 04:31:10 2020 -0600
+
+    Copy vertex and  material data from CPU to GPU only when necessary.
+
+commit 091d66b78d5f6283140d9d3f1ca776629e88360d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 29 23:27:23 2020 -0600
+
+    Make svgemulation=true by default to emulate Gouraud shading in SVG;
+    remove obsolete experimental code.
+
+commit ada6af005b220947cd64c534d2f0e64f5b860b24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Apr 29 00:20:26 2020 -0600
+
+    Improve emulation of SVG Gouraud shading with option -svgemulation.
+
+commit fa31a4f26318806e76146fcdf4d5a38493ddcd17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 27 09:04:14 2020 -0600
+
+    Fix typo in documentation.
+
+commit 154d7bbd45c8a2e3c92ed98ffdfb0d9614cab4dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 26 18:17:56 2020 -0600
+
+    Work around dvisvgm --pdf limitations; fix -fsvg -render=0.
+
+commit 90b198134af21c9989e904ee72b78779b7ecbb2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 26 15:56:54 2020 -0600
+
+    Fix segmentation fault; consolidate error messages.
+
+commit 1c15884c9505b3e2b01dfdc1bd21ace199d3b746
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 25 19:30:15 2020 -0600
+
+    Flatten a monochrome tensor patch with interior internal control points to a
+    filled cyclic path.
+
+commit cb4c2c03e7cd77adceeab539e0d173798abf9717
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 25 11:53:07 2020 -0600
+
+    Allow dvisvgm --pdf now that version 2.9.1 supports PNG images.
+
+commit 3063abbcfcf1d8b8b4fc6b67a37375bfc746f6cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 25 08:58:11 2020 -0600
+
+    Consistently use dvisvgm -v3 verbosity option.
+
+commit 21b9f1a684678f931d56c26ccb8ea7fb11f5769c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 25 00:08:59 2020 -0600
+
+    Fix export of 3D rendered bitmaps to svg.
+
+commit e0b8e3def55318505b24cd850b94efa2ac037d0b
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Thu Apr 23 00:38:59 2020 +0200
+
+    Update sourceforge URLs in FAQ
+
+commit fcd9aeb92d892f97925f6f428a00efd376bd2da7
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Thu Apr 23 00:32:10 2020 +0200
+
+    Update FAQ for international fonts question
+
+commit 825488fbb1395202f35b436df146da6f8560a6af
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Thu Apr 23 00:01:44 2020 +0200
+
+    CJK package URL
+
+commit 285f855a0312465f1c1d96757a5098061d929725
+Merge: 35428571 881b585a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 13 14:56:25 2020 -0600
+
+    Merge pull request #151 from jsonn/patch-1
+    
+    Check for libc++ directly, not for the kernel
+
+commit 881b585a2f8f0a927ce7d77c59eba0a4774ce98e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 13 14:55:49 2020 -0600
+
+    Update comment.
+
+commit 44cb71efe77b4e7e9e12367bebcc39b0eebff767
+Author: Joerg Sonnenberger <joerg@bec.de>
+Date:   Mon Apr 13 21:49:01 2020 +0200
+
+    Check for libc++ directly, not for the kernel
+
+commit 35428571776efdcaedcc9f920e927526849727a0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 13 10:13:53 2020 -0600
+
+    Fix Bezier patch bounds bug introduced in bf3be19f7f1daf5730dabbf5c89e8a4f0f451a7d.
+
+commit 7f9480e35619e4cd6e7114cd025603c2e1937586
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 13 10:10:31 2020 -0600
+
+    Revert "Fix export bug."
+    
+    This reverts commit 1566850db2aac0b78ec9806e35af514e7a185e63.
+
+commit decb4d5109744545082eb1843dcb2f1a52d4158c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 3 08:39:40 2020 -0600
+
+    Add libtirpc dependency.
+
+commit 386b93b6d4770893d01ebc2ba25637546bca9f33
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 25 22:23:40 2020 -0600
+
+    Increment version to 2.66.
+
 commit 1566850db2aac0b78ec9806e35af514e7a185e63
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Mar 24 23:30:17 2020 -0600
@@ -341,6 +1667,33 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 17 21:25:27 2020 -0700
 
     Fix test degenerate normals.
+
+commit c1a8c0a212aa32eed3a0e78b91ad1abc540795cf
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Wed Feb 12 17:25:00 2020 +0100
+
+    Update documentation
+
+commit 173d1e8c9d2de43a11053b98f0f964af658a8a02
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Wed Feb 12 14:35:31 2020 +0100
+
+    Remove latin1 module
+
+commit 525dbb95a60cc75f7f55075b8d0e1deaba981edf
+Author: ivankokan <ivan.kokan@gmail.com>
+Date:   Wed Feb 12 14:33:06 2020 +0100
+
+    Remove unicode module
+
+commit d560eaefbcffe9eb6c26db1d4fd1b365daa5799a
+Merge: 2898b83f 9beb5b6c
+Author: Ivan Kokan <ivan.kokan@gmail.com>
+Date:   Wed Feb 12 13:42:05 2020 +0100
+
+    Merge pull request #2 from vectorgraphics/master
+    
+    Sync
 
 commit 9beb5b6c72ce47c8fad8c33f14b78015c9baa40f
 Author: John Bowman <bowman@ualberta.ca>

@@ -10,7 +10,7 @@ END-INFO-DIR-ENTRY
 File: asy-faq.info, Node: Top, Next: Question 1.1, Up: (dir)
 
             ASYMPTOTE FREQUENTLY ASKED QUESTIONS
-                            25 Mar 2020
+                            2020-11-23
                           
 This is the list of Frequently Asked Questions about Asymptote (asy).
 
@@ -223,7 +223,7 @@ Question 1.2.  How do I obtain Asymptote?
 
 Binary releases are available for Linux, MacOS X, and Microsoft Windows
 platforms, in addition to full source code, from the website
-http://asymptote.sourceforge.net/.  Many Linux distributions (such as
+https://asymptote.sourceforge.io/.  Many Linux distributions (such as
 RedHat and Debian) now include an Asymptote package (check your
 distribution's documentation for further information about this).
 
@@ -234,7 +234,7 @@ Question 1.3.  Where can I ask questions about Asymptote?
 
 If you have a question, please try to find an answer in this FAQ, in the
 extensive Asymptote documentation at
-http://asymptote.sourceforge.net/doc/, or search the forum:
+https://asymptote.sourceforge.io/doc/, or search the forum:
 http://sourceforge.net/forum/forum.php?forum_id=409349.
 
 
@@ -316,7 +316,7 @@ File: asy-faq.info, Node: Question 2.3, Next: Question 2.4, Previous: Question 2
 
 Question 2.3.  What do I do if I get the error: Error: pdfetex (file pdftex.cfg): cannot open config file...texinfo.tex appears to be broken?
 
-Simply put http://asymptote.sourceforge.net/asymptote.pdf in the directory
+Simply put https://asymptote.sourceforge.io/asymptote.pdf in the directory
 doc and repeat the command make all.  Or, if you don't want to build a
 local copy of the documentation, simply proceed with make install-asy.
 
@@ -340,7 +340,7 @@ detailed guide on the topic. You can download it from
 http://dario.dse.nl/projects/asylatex/.
 
 Philippe Ivaldi has contributed an Asymptote mode for Emacs users
-http://asymptote.sourceforge.net/doc/Editing-modes.html, which includes a
+https://asymptote.sourceforge.io/doc/Editing-modes.html, which includes a
 lasy-mode that allows one to compile and view the output of one
 \begin{asy}...\end{asy} section at a time.
 
@@ -541,7 +541,7 @@ File: asy-faq.info, Node: Question 4.4, Next: Question 4.5, Previous: Question 4
 
 Question 4.4.  How can I use international fonts in Asymptote labels?
 
-See http://asymptote.sourceforge.net/doc/unicode.html.
+See https://asymptote.sourceforge.io/doc/Pens.html.
 
 
 File: asy-faq.info, Node: Question 4.5, Next: Question 4.6, Previous: Question 4.4, Up: Section 4
@@ -586,8 +586,8 @@ Question 4.9.  How can I draw some squares and circles of a fixed size and put a
 
 Fixed-size objects should be drawn on a separate picture and then added to
 currentpicture. Here is one way (see also
-http://asymptote.sourceforge.net/gallery/subpictures.asy and
-http://asymptote.sourceforge.net/gallery/mosquito.asy):
+https://asymptote.sourceforge.io/gallery/subpictures.asy and
+https://asymptote.sourceforge.io/gallery/mosquito.asy):
 
 real u=2cm;
  
@@ -904,7 +904,7 @@ label. Other possible overwrite arguments are Allow (allows overlapping
 labels; the default), Suppress (an overlapping label will not be written
 at all), SuppressQuiet, and MoveQuiet. The last two achieve the same
 result as the non-quiet types, but will not notify you which labels are
-overlapping. See:  http://asymptote.sourceforge.net/doc/Pens.html.
+overlapping. See:  https://asymptote.sourceforge.io/doc/Pens.html.
 
 In the case of a user-specified tick array, you can change which labels
 get suppressed/moved by changing the order of array entries.
@@ -948,7 +948,7 @@ corner. You can use this option to ensure multiple figures have the same
 scaling and same resulting figure size (just ensure the two coordinates
 given to fixedscaling() leaves room for any labels).
 
-See also http://asymptote.sourceforge.net/doc/Frames-and-pictures.html.
+See also https://asymptote.sourceforge.io/doc/Frames-and-pictures.html.
 
 
 File: asy-faq.info, Node: Question 6.9, Next: Question 6.10, Previous: Question 6.8, Up: Section 6
@@ -966,7 +966,7 @@ limits((0,0),(1,2),Crop);
 
 xaxis("$x$",BottomTop,LeftTicks);
 yaxis("$y$",LeftRight,RightTicks);
-See also http://asymptote.sourceforge.net/doc/graph.html.
+See also https://asymptote.sourceforge.io/doc/graph.html.
 
 
 File: asy-faq.info, Node: Question 6.10, Next: Question 6.11, Previous: Question 6.9, Up: Section 6
@@ -1051,7 +1051,7 @@ File: asy-faq.info, Node: Question 6.13, Next: Question 6.14, Previous: Question
 
 Question 6.13.  How can I make the y axis display base-2 logarithmic values?
 
-See the example http://asymptote.sourceforge.net/gallery/2D
+See the example https://asymptote.sourceforge.io/gallery/2D
 graphs/log2graph.asy.
 
 
@@ -1061,7 +1061,7 @@ Question 6.14.  How can I align the x axes of two graphs on the same figure?
 
 An easy way to do this, if the axes to be aligned have the same scaling
 and size, is illustrated in the example
-http://asymptote.sourceforge.net/gallery/2D graphs/alignedaxis.asy.
+https://asymptote.sourceforge.io/gallery/2D graphs/alignedaxis.asy.
 
 Here is a more general solution to the problem of aligning two arbitrary
 axes.  One fits the second picture to a frame based on the horizontal
@@ -1125,7 +1125,7 @@ File: asy-faq.info, Node: Question 6.15, Next: Question 6.16, Previous: Question
 Question 6.15.  How can I change the direction of the y-axis, such that negatives values are on the upper y-axis?
 
 Here is a simple example (see also the example
-http://asymptote.sourceforge.net/gallery/2D graphs/diatom.asy or the
+https://asymptote.sourceforge.io/gallery/2D graphs/diatom.asy or the
 discussion of Linear(-1) in the documentation):
 
 import graph;
@@ -1159,7 +1159,7 @@ Yes, use the parametric form
 
 y=t 
 x=(t-2)^2+1 
-See the example http://asymptote.sourceforge.net/gallery/2D
+See the example https://asymptote.sourceforge.io/gallery/2D
 graphs/parametricgraph.asy.
 
 
@@ -1382,7 +1382,7 @@ Question 7.8.  Is there a debugger for asy?
 
 Yes, Asymptote includes a line-based debugger:
 
-http://asymptote.sourceforge.net/doc/Debugger.html
+https://asymptote.sourceforge.io/doc/Debugger.html
 
 
 File: asy-faq.info, Node: Question 7.9, Next: Question 8.1, Previous: Question 7.8, Up: Section 7
@@ -1441,7 +1441,7 @@ pictures and distinguishes between true-size objects and objects that
 should scale with the picture size. The resulting linear programming
 problem is solved via the Simplex method.
 
-See the http://asymptote.sourceforge.net/gallery/dimension.asy example for
+See the https://asymptote.sourceforge.io/gallery/dimension.asy example for
 an example of how deferred drawing is used to accomodate both user and
 true-size (PostScript) coordinates.
 
@@ -1495,7 +1495,7 @@ PQ and pq. We find using routines like extension more explicit and less
 confusing to new users. But we could be persuaded to add something similar
 if someone can justify the need. In the meantime, one can always use the
 explicit built-in linear solver solve (see
-http://asymptote.sourceforge.net/doc/solve.html), which uses LU
+https://asymptote.sourceforge.io/doc/solve.html), which uses LU
 decomposition.
 
 
@@ -1578,7 +1578,7 @@ void clip(picture pic=currentpicture, real width, real height)
  
 clip(100,100);
 See also the discussion of tilings in the documentation:
-http://asymptote.sourceforge.net/doc/Pens.html.
+https://asymptote.sourceforge.io/doc/Pens.html.
 
 
 File: asy-faq.info, Node: Section 9, Previous: Section 8, Up: Top
@@ -1612,7 +1612,7 @@ import settings;
 interactiveView=false;
 batchView=false;
 in their config.asy file. See
-http://asymptote.sourceforge.net/doc/Options.html.
+https://asymptote.sourceforge.io/doc/Options.html.
 
 
 File: asy-faq.info, Node: Question 9.2, Next: Question 9.3, Previous: Question 9.1, Up: Section 9
@@ -1631,8 +1631,8 @@ Convert them to eps format and use the graphic(string) function just like
 a Label:
 
 label(graphic("file"),(0,0));
-See the example http://asymptote.sourceforge.net/gallery/orthocenter.asy
-and http://asymptote.sourceforge.net/doc/label.html.
+See the example https://asymptote.sourceforge.io/gallery/orthocenter.asy
+and https://asymptote.sourceforge.io/doc/label.html.
 
 
 File: asy-faq.info, Node: Question 9.4, Next: Question 9.5, Previous: Question 9.3, Up: Section 9

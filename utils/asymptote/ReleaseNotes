@@ -1,3 +1,68 @@
+Release Notes for Version 2.68
+
+Floating point exceptions in OpenGL libraries are now masked.
+A normalization used to render tubes was fixed.  A Label align(Label,dir)
+function was added for aligning label normals.  A new settings.compress=true
+option controls PDF image compression.  A bool isometry(transform) function
+was added.  Various bugs in the geometry module were fixed.
+The transpose function ignores uninitialized elements.
+Null fields are treated as undefined values in cvs mode and in line mode.
+Uninitialized rendering variables were fixed. A RELEASE variable was added.
+Logarithmic graphs of surfaces are supported. Files are opened
+without assuming an asy suffix.  Suport for Ghostscript 9.53 was implemented.
+The end argument of Margin functions is now optional. A function
+cputime().change.clock that returns the high-resolution elapsed wall clock
+time was added.  A --disable-curl option was added.
+The centering of slides was fixed.  Null characters and null strings are
+supported in the replace function.  Configuration without readline support
+was fixed.  In binary mode, an entire file can be read into a string.
+The getc function now works properly when reading the NUL character.
+Reproducible builds are supported.
+
+Release Notes for Version 2.67
+
+Support was added for importing and inputting URLs. Compilation and 2D SVG
+to HTML conversion no longer requires the GLM library; 2D html output is
+fit to the canvas unless settings.absolute=true. Diagnostics for dvisvgm
+were enabled; SVG clipping was fixed.  A -globalread setting (default true)
+was implemented.  Files are opened using the search path, which now
+includes the examples directory.  An invalid array dimensions error was fixed.
+A WebGL resize event listener was added; the + and - keys now zoom in and out,
+rather than expanding and shrinking the viewport. Remeshing on export is
+forced; unnecessary remeshing on zoom in AsyGL is avoided. 
+The triple dir(path3, path3) function was normalized.  The repositioning of
+OpenGL windows was fixed. The copy constructors for path and path3 were fixed.
+Asymptote errors no longer cause Xasy to hang. A numerical precision issue
+was fixed.  A portable way of skipping whitespace was implemented; casts
+from empty strings now yield uninitialized values. Interrupt handling under
+MacOS X was fixed. A devicepixelratio setting was implemented. The error
+location is displayed in the console. Segmentation faults were fixed.
+The documentation was updated and the code was reformatted. A hang on exit
+under MSWindows was fixed. Obsolete encoding modules were removed.  
+
+Release Notes for Version 2.66
+
+A bug in the Bezier patch bounds was fixed. Vertex and material data are
+copied from the CPU to GPU only when necessary. The default Headlamp light
+was brightened. WebGL output is centered in the viewport, extending to the
+canvas boundary; the precision of planar Bezier surfaces was increased  
+to avoid artifacts. Fullscreen mode has been fixed; the new default
+maxviewport=(0,0) specifies the screen dimensions. Camera adjustment was fixed.
+Problems with Xasy and interactive signals under MSWindows were fixed.
+A background color for both 2D and 3D images can be specified with
+currentlight.background. Offscreen rendering on headless machines has been
+reinstated; while the setting offscreen has been removed, one can again
+configure asy for either onscreen or offscreen rendering. Clipping was removed
+from the slopefield module. Functions mapArray, mapTemplate, real abs2(pair),
+and real abs2(triple) were implemented. The new Ghostscript transparency model
+requires Ghostscript 9.52 or later. The detection of TeX errors was improved.
+An array segmentation fault was fixed; array dimensions are checked.
+Flattened monochrome tensor patches with interior internal control points are
+now drawn as filled cyclic paths. PDF offsets were fixed, along with the
+auto-reload feature for Acroread. SVG support was improved; 2D images can now
+be output in HTML format using inline SVG code, to support the
+Asymptote Web Application, a new cloud service at http://asymptote.ualberta.ca.
+
 Release Notes for Version 2.65
 
 A bug in rendering 2D preview images of a 3D scene was fixed.
