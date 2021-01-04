@@ -426,11 +426,36 @@ static void read_cmap(void)
                  select_unicode, unicode_map_count);
 }
 
+static char *make_name(long platform_id, int len)
+{
+    char buf[1024];
+    char *p = buf;
+    int i = 0;
+
+    if (len >= sizeof(buf))
+        len = sizeof(buf) - 1;
+    while (i < len) {
+        *p = get_char();
+        i++;
+        if (*p == 0 && platform_id == 3) {
+            /* assume this is an UTF-16BE encoded string but contains english
+             * text, which is the most common case; simply copy the 2nd byte.
+             * Note: will not work for non-ascii text */
+            *p = get_char();
+            i++;
+        }
+        if (isprint(*p)) /* copy only printable chars */
+            p++;
+    }
+    *p = 0;
+    return xstrdup(buf);
+}
+
 static void read_font(void)
 {
-    long i, j, k, l, n, m, platform_id, encoding_id;
+    long i, j, k, l, n, m, platform_id, encoding_id, name_id;
     TTF_FWORD kern_value;
-    char buf[1024], *p;
+    char *p;
     dirtab_entry *pd;
     kern_entry *pk;
     mtx_entry *pm;
@@ -561,16 +586,17 @@ static void read_font(void)
         platform_id = get_ushort();
         encoding_id = get_ushort();
         (void) get_ushort();    /* skip language_id */
-        k = get_ushort();       /* name_id */
+        name_id = get_ushort(); /* name_id */
         l = get_ushort();       /* string length */
-        if ((platform_id == 1 && encoding_id == 0) &&
-            (k == 0 || k == 1 || k == 4 || k == 5 || k == 6)) {
+        if (((platform_id == 1 && encoding_id == 0) || /* legacy */
+             (platform_id == 3 || encoding_id == 1) /* most common for modern fonts */
+            ) &&
+            (name_id == 0 || name_id == 1 || name_id == 4 || name_id == 5 || name_id == 6)
+           )
+        {
             ttf_seek_off("name", j + get_ushort());
-            for (p = buf; l-- > 0; p++)
-                *p = get_char();
-            *p++ = 0;
-            p = xstrdup(buf);
-            switch (k) {
+            p = make_name(platform_id, l);
+            switch (name_id) {
             case 0:
                 Notice = p;
                 break;

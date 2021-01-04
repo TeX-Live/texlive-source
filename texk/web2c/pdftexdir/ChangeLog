@@ -1,3 +1,9 @@
+2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
+
+	* ttf2afm.c (make_name): new fn.
+	(read_font): output FontName etc. in afm.
+	Request from Doug McAllaster, mail to Thanh of 4 Jan 2021 14:17:40.
+
 2020-10-31  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_begin_string): don't output fake space
