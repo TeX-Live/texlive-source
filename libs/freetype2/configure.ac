@@ -1,6 +1,7 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2018-2020 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -20,7 +21,8 @@ AC_PROG_CC
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
-# pass explicit --host and --build, but nothing else?
+# pass explicit --host and --build, but nothing else from here.
+# Other unconditional options are passed from the Makefile[.am] here.
 if test "x$host" = x; then
   config_args=
 else
@@ -31,9 +33,7 @@ if test "x$build" != x; then
 fi
 
 AC_SUBST([config_args])
-
 AC_SUBST([FREETYPE_TREE], [freetype-src])
 
 AC_CONFIG_FILES([Makefile])
-
 AC_OUTPUT

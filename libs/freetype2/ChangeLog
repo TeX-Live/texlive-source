@@ -1,3 +1,10 @@
+2021-01-03  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (ft-config): pass --without-brotli, in hopes
+	of working around
+	https://tug.org/pipermail/tlbuild/2021q1/004768.html
+	* configure.ac: doc fix.
+
 2020-10-21  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import freetype-2.10.4.

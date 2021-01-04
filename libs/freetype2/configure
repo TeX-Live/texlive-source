@@ -4355,7 +4355,8 @@ else
 fi
 
 
-# pass explicit --host and --build, but nothing else?
+# pass explicit --host and --build, but nothing else from here.
+# Other unconditional options are passed from the Makefile[.am] here.
 if test "x$host" = x; then
   config_args=
 else
@@ -4366,12 +4367,10 @@ if test "x$build" != x; then
 fi
 
 
-
 FREETYPE_TREE=freetype-src
 
 
 ac_config_files="$ac_config_files Makefile"
-
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
