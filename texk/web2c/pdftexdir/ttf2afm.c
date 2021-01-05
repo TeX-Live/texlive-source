@@ -444,8 +444,7 @@ static char *make_name(long platform_id, int len)
             *p = get_char();
             i++;
         }
-        if (isprint(*p)) /* copy only printable chars */
-            p++;
+        p++;
     }
     *p = 0;
     return xstrdup(buf);

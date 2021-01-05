@@ -1,3 +1,8 @@
+2021-01-05  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): copy all characters, not just isprint().
+	From Akira/Mojca.
+
 2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
 
 	* ttf2afm.c (make_name): new fn.
