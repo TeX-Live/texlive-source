@@ -765,7 +765,7 @@ static void print_char_metric(FILE * f, int charcode, long glyph_index)
 {
     assert(glyph_index >= 0 && glyph_index < nglyphs);
     fprintf(f, "C %i ; WX %i ; N ", (int) charcode,
-            (int) get_ttf_funit(mtx_tab[glyph_index].wx));
+            (int) get_ttf_funit((int)mtx_tab[glyph_index].wx));
     print_glyph_name(f, glyph_index, print_glyph);
     fprintf(f, " ; B %i %i %i %i ;\n",
             (int) get_ttf_funit(mtx_tab[glyph_index].bbox[0]),
