@@ -1,3 +1,8 @@
+2021-01-06  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): let's exclude iscntrl() per Thanh,
+	but accept crlf and tab.
+
 2021-01-05  Karl Berry  <karl@freefriends.org>
 
 	* ttf2afm.c (make_name): copy all characters, not just isprint().
