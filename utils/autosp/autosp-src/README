@@ -1,5 +1,5 @@
 This is the README for the autosp package, 
-version 2020-02-06.
+version 2021-01-07.
 
 autosp is a preprocessor that generates note-spacing
 commands for MusiXTeX scores. It simplifies the creation
@@ -27,8 +27,9 @@ the output.
 
 If there is a single staff, consecutive whole-bar rest bars
 are merged into a multi-bar rest. Bar-centered rests can be
-coded using the standard \def\atnextbar notation but also
-by using the non-standard command \Cpause in a note segment.
+coded using the standard \def\atnextbar notation but also by
+using the non-standard command \Cpause (or \Cp) in a note
+segment.
 
 Spacing commands \sk and \hsk in the source are discarded,
 but not \qsk, \hqsk or \qqsk; moreover non-standard commands

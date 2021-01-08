@@ -1,6 +1,11 @@
 AUTOSP
 
-2020-02-09
+2021-01-07
+
+  allowed \Cp as an abbreviation for \Cpause
+  removed multiple declarations in autosp.c
+
+2020-03-11
 
   correct \Cpause handling at \alaligne when \TransformNotes is used 
 
