@@ -1,10 +1,10 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.22"
+VERSION = "0.23a"
 
 --[[
-     musixtex.lua: processes MusiXTeX files using prepmx and/or pmxab and/or 
-     autosp as pre-processors (and deletes intermediate files)
+     musixtex.lua: processes MusiXTeX files using xml2pmx and/or prepmx and/or pmxab 
+     and/or autosp as pre-processors (and deletes intermediate files)
 
      (c) Copyright 2011-2020 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
@@ -28,6 +28,12 @@ VERSION = "0.22"
 --[[
 
   ChangeLog:
+
+     version 0.23a 2020-08-14  RDT
+       pmxprep files now deleted by xml2pmx
+
+     version 0.23  2020-05-21 RDT
+       added support for xml2pmx pre-preprocessing
 
      version 0.22  2020-03-20 RDT
        add -X option
@@ -131,12 +137,12 @@ local orig_print = print
 function usage()
   orig_print 
 [[
-Usage:  [texlua] musixtex.lua { option | basename[.mtx | .pmx | .aspc | .tex | .ltx] } ...
+Usage:  [texlua] musixtex.lua { option | basename[ .xml | .mtx | .pmx | .aspc | .tex | .ltx] } ...
         When no extension is given, extensions are tried in the above order
-        until a source file is found. Preprocessing goes mtx-pmx-tex or 
-        aspc-etex/ltx, with the entry point determined by the extension.
+        until a source file is found. Preprocessing goes xml-pmx-tex or mtx-pmx-tex or 
+        aspc-tex, with the entry point determined by the extension.
         The normal route after preprocessing goes tex-dvi-ps-pdf, but shorter 
-        routes are also available, see the options. The default processing route
+        routes are also available, see the options. The default 3-pass processing route
         for .tex files is etex-musixflx-etex.
 Options: -v, --version  version
          -h, --help   help
@@ -148,9 +154,10 @@ Options: -v, --version  version
          -P ps2pdfxx  use ps2pdfxx as the Postscript processor
          -c  preprocess pmx file using pmxchords
          -m  stop at pmx
-         -M prepmxx use prepmxx as the mtx preprocessor
-         -A autospx use autospx as the aspc preprocessor
-         -X pmxabx use pmxabx as the pmx preprocessor
+         -M prepmxx  use prepmxx as the mtx preprocessor
+         -A autospx  use autospx as the aspc preprocessor
+         -X pmxabx  use pmxabx as the pmx preprocessor
+         -L xmlx use xmlx as the xml preprocessor
          -t  stop at tex/mid
          -s  stop at dvi
          -g  stop at ps
@@ -207,6 +214,7 @@ end
 --         dvi == false  "do not process the DVI file" (but stop after TeX)
 local dvips = "dvips -e0"
 function defaults()
+  xml2pmx = "xml2pmx"
   prepmx = "prepmx"
   pmx = "pmxab"
   autosp = "autosp"
@@ -340,6 +348,9 @@ function process_option(this_arg)
   elseif this_arg == "-A" then
     narg = narg+1
     autosp = arg[narg]
+  elseif this_arg == "-L" then
+    narg = narg+1
+    xml2pmx = arg[narg]
   elseif this_arg == "-q" then
     if not tempname then
       tempname = tempname or os.tmpname()
@@ -360,19 +371,19 @@ end
 
 function find_file(this_arg)
   basename, extension = this_arg:match"(.*)%.(.*)"  
-  extensions = {["mtx"] = true, ["pmx"] = true, ["aspc"] = true, ["tex"] = true, ["ltx"] = true}
+  extensions = {["xml"] = true, ["mtx"] = true, ["pmx"] = true, ["aspc"] = true, ["tex"] = true, ["ltx"] = true}
   if extensions[extension] then
     return basename, extension
   end
   basename, extension  = this_arg, null
-  for ext in ("mtx,pmx,aspc,tex,ltx"):gmatch"[^,]+" do
+  for ext in ("xml,mtx,pmx,aspc,tex,ltx"):gmatch"[^,]+" do
     if exists (basename .. "." .. ext) then
       extension = ext
       break
     end
   end
   if extension == null then
-    print("!! No file " .. basename .. ".[mtx|pmx|aspc|tex|ltx]")
+    print("!! No file " .. basename .. ".[xml|mtx|pmx|aspc|tex|ltx]")
     exit_code = exit_code+1
     return
   end
@@ -381,14 +392,21 @@ end
 
 function preprocess(basename,extension)
   if not (basename and extension) then return end
-  if extension == "mtx" then
+  if extension == "xml" then
+    if execute(xml2pmx .. " " .. basename .. ".xml" .. " " .. basename .. ".pmx" ) == 0 then 
+      extension = "pmx"
+    else
+      print ("!! xml2pmx preprocessing of " .. basename .. ".xml fails.")
+      return
+    end
+  elseif extension == "mtx" then
     if execute(prepmx .. " " .. basename ) == 0 then
       extension = "pmx"
     else
       print ("!! prepmx preprocessing of " .. basename .. ".mtx fails.")
       return
     end
-  end
+  end 
   if extension == "pmx" then
     local OK = true
     if pmx then 
