@@ -1,3 +1,9 @@
+2021-01-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cidtype0.c, cidtype2.c, pdffont.[ch], type0.c: Fix a bug
+	that vertical metrics are not written. Introduced in rev.56400.
+	* configure.ac: Version 20210109.
+
 2020-12-16  Karl Berry  <karl@freefriends.org>
 
 	* dvipdfmx.c (show_usage): -f loads an additional map file,
