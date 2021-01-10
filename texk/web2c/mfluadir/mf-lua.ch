@@ -19,7 +19,7 @@
 @y
 @d METAFONT_banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
 @#
-@d MFLua_version_string=='-0.9.1'
+@d MFLua_version_string=='-1.0.0-alpha'
 @#
 @d MFLua_banner=='This is MFLua, Version 2.7182818', MFLua_version_string
   {printed when MFLua starts}

@@ -195,6 +195,7 @@ include $(srcdir)/am/texmf.am
 
 ## MFLua
 include $(srcdir)/mfluadir/am/mflua.am
+include $(srcdir)/mfluadir/am/mfluaotfcc.am
 
 ## MFLuaJIT
 include $(srcdir)/mfluajitdir/am/mfluajit.am

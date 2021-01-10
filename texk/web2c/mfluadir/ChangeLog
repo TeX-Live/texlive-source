@@ -1,3 +1,8 @@
+2021-01-05 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* MFLua 1.0.0-alpha: embedding of  otfcc (see https://github.com/caryll/otfcc)
+
+
 2020-02-16 Luigi Scarso <luigi.scarso@gmail.com>
 
 	Small clean up.

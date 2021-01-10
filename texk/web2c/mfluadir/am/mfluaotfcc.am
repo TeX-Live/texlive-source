@@ -1,0 +1,306 @@
+## texk/web2c/luatexdir/am/mfluaotfcc.am: Makefile fragment for libmfluaotfcc.
+##
+## Copyright (C) 2021 Luigi Scarso <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## mfluaotfcc
+##
+EXTRA_LIBRARIES += libmfluaotfcc.a libmfluajitotfcc.a
+
+#libmfluaotfcc_a_DEPENDENCIES = $(ZLIB_DEPEND)
+#libmfluajitotfcc_a_DEPENDENCIES = $(ZLIB_DEPEND)
+
+$(libmfluaotfcc_a_OBJECTS): $(LUA_DEPEND)
+$(libmfluajitotfcc_a_OBJECTS): $(LUAJIT_DEPEND)
+
+libmfluaotfcc_a_CPPFLAGS = \
+	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-I$(top_srcdir)/mfluadir/otfcc/include \
+	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
+	-I$(top_srcdir)/mfluadir/otfcc/lib \
+	 $(LUA_INCLUDES)
+
+
+libmfluajitotfcc_a_CPPFLAGS = \
+	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-DJIT \
+	-I$(top_srcdir)/mfluadir/otfcc/include \
+	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
+	-I$(top_srcdir)/mfluadir/otfcc/lib \
+	$(LUAJIT_INCLUDES)
+
+libmfluaotfcc_a_CFLAGS = # $(WARNING_CFLAGS)
+libmfluajitotfcc_a_CFLAGS = # $(WARNING_CFLAGS)
+
+#nodist_libmfluaotfcc_a_SOURCES = $(libmfluaotfcc_sources)
+#nodist_libmfluajitotfcc_a_SOURCES = $(libmfluaotfcc_sources)
+
+libmfluaotfcc_a_SOURCES = \
+	mfluadir/otfcc/dep/extern/sdsalloc.h \
+	mfluadir/otfcc/dep/extern/emyg-dtoa/emyg-dtoa.c \
+	mfluadir/otfcc/dep/extern/emyg-dtoa/emyg-dtoa.h \
+	mfluadir/otfcc/dep/extern/json.c \
+	mfluadir/otfcc/dep/extern/json-builder.c \
+	mfluadir/otfcc/dep/extern/sds.c \
+	mfluadir/otfcc/src/aliases.h \
+	mfluadir/otfcc/src/luafunc.c \
+	mfluadir/otfcc/src/otfccbuild.c \
+	mfluadir/otfcc/src/otfccdump.c \
+	mfluadir/otfcc/src/platform.h \
+	mfluadir/otfcc/src/otfccdll.c \
+	mfluadir/otfcc/src/stopwatch.c \
+	mfluadir/otfcc/src/stopwatch.h \
+	mfluadir/otfcc/include/dep/json.h \
+	mfluadir/otfcc/include/dep/json-builder.h \
+	mfluadir/otfcc/include/dep/sds.h \
+	mfluadir/otfcc/include/dep/uthash.h \
+	mfluadir/otfcc/include/otfcc/options.h \
+	mfluadir/otfcc/include/otfcc/primitives.h \
+	mfluadir/otfcc/include/otfcc/handle.h \
+	mfluadir/otfcc/include/otfcc/vf/vf.h \
+	mfluadir/otfcc/include/otfcc/vf/vv.h \
+	mfluadir/otfcc/include/otfcc/vf/region.h \
+	mfluadir/otfcc/include/otfcc/vf/axis.h \
+	mfluadir/otfcc/include/otfcc/vf/vq.h \
+	mfluadir/otfcc/include/otfcc/sfnt.h \
+	mfluadir/otfcc/include/otfcc/glyph-order.h \
+	mfluadir/otfcc/include/otfcc/sfnt-builder.h \
+	mfluadir/otfcc/include/otfcc/logger.h \
+	mfluadir/otfcc/include/otfcc/font.h \
+	mfluadir/otfcc/include/otfcc/table/fvar.h \
+	mfluadir/otfcc/include/otfcc/table/maxp.h \
+	mfluadir/otfcc/include/otfcc/table/BASE.h \
+	mfluadir/otfcc/include/otfcc/table/post.h \
+	mfluadir/otfcc/include/otfcc/table/vmtx.h \
+	mfluadir/otfcc/include/otfcc/table/glyf.h \
+	mfluadir/otfcc/include/otfcc/table/fpgm-prep.h \
+	mfluadir/otfcc/include/otfcc/table/vhea.h \
+	mfluadir/otfcc/include/otfcc/table/gasp.h \
+	mfluadir/otfcc/include/otfcc/table/name.h \
+	mfluadir/otfcc/include/otfcc/table/hmtx.h \
+	mfluadir/otfcc/include/otfcc/table/OS_2.h \
+	mfluadir/otfcc/include/otfcc/table/CPAL.h \
+	mfluadir/otfcc/include/otfcc/table/GDEF.h \
+	mfluadir/otfcc/include/otfcc/table/TSI5.h \
+	mfluadir/otfcc/include/otfcc/table/hdmx.h \
+	mfluadir/otfcc/include/otfcc/table/table-common.h \
+	mfluadir/otfcc/include/otfcc/table/LTSH.h \
+	mfluadir/otfcc/include/otfcc/table/VORG.h \
+	mfluadir/otfcc/include/otfcc/table/cmap.h \
+	mfluadir/otfcc/include/otfcc/table/_TSI.h \
+	mfluadir/otfcc/include/otfcc/table/COLR.h \
+	mfluadir/otfcc/include/otfcc/table/CFF.h \
+	mfluadir/otfcc/include/otfcc/table/otl/coverage.h \
+	mfluadir/otfcc/include/otfcc/table/otl/classdef.h \
+	mfluadir/otfcc/include/otfcc/table/otl.h \
+	mfluadir/otfcc/include/otfcc/table/cvt.h \
+	mfluadir/otfcc/include/otfcc/table/meta.h \
+	mfluadir/otfcc/include/otfcc/table/SVG.h \
+	mfluadir/otfcc/include/otfcc/table/hhea.h \
+	mfluadir/otfcc/include/otfcc/table/VDMX.h \
+	mfluadir/otfcc/include/otfcc/table/head.h \
+	mfluadir/otfcc/include/caryll/ownership.h \
+	mfluadir/otfcc/include/caryll/element.h \
+	mfluadir/otfcc/include/caryll/buffer.h \
+	mfluadir/otfcc/include/caryll/vector.h \
+	mfluadir/otfcc/lib/consolidate/consolidate.c \
+	mfluadir/otfcc/lib/consolidate/consolidate.h \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-single.h \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-single.c \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-single.c \
+	mfluadir/otfcc/lib/consolidate/otl/chaining.c \
+	mfluadir/otfcc/lib/consolidate/otl/common.c \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-reverse.h \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-pair.h \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-single.h \
+	mfluadir/otfcc/lib/consolidate/otl/chaining.h \
+	mfluadir/otfcc/lib/consolidate/otl/GDEF.h \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-multi.c \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-reverse.c \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-cursive.h \
+	mfluadir/otfcc/lib/consolidate/otl/mark.h \
+	mfluadir/otfcc/lib/consolidate/otl/common.h \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-ligature.c \
+	mfluadir/otfcc/lib/consolidate/otl/GDEF.c \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-pair.c \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-multi.h \
+	mfluadir/otfcc/lib/consolidate/otl/gpos-cursive.c \
+	mfluadir/otfcc/lib/consolidate/otl/mark.c \
+	mfluadir/otfcc/lib/consolidate/otl/gsub-ligature.h \
+	mfluadir/otfcc/lib/support/options.c \
+	mfluadir/otfcc/lib/support/aliases.h \
+	mfluadir/otfcc/lib/support/tag.h \
+	mfluadir/otfcc/lib/support/bin-io.h \
+	mfluadir/otfcc/lib/support/unicodeconv/unicodeconv.c \
+	mfluadir/otfcc/lib/support/unicodeconv/unicodeconv.h \
+	mfluadir/otfcc/lib/support/handle.c \
+	mfluadir/otfcc/lib/support/otfcc-alloc.h \
+	mfluadir/otfcc/lib/support/util.h \
+	mfluadir/otfcc/lib/support/element-impl.h \
+	mfluadir/otfcc/lib/support/buffer/buffer.c \
+	mfluadir/otfcc/lib/support/vector-impl.h \
+	mfluadir/otfcc/lib/support/primitives.c \
+	mfluadir/otfcc/lib/support/glyph-order.c \
+	mfluadir/otfcc/lib/support/sha1/sha1.h \
+	mfluadir/otfcc/lib/support/sha1/sha1.c \
+	mfluadir/otfcc/lib/support/ttinstr/ttinstr.c \
+	mfluadir/otfcc/lib/support/ttinstr/ttinstr.h \
+	mfluadir/otfcc/lib/support/base64/base64.h \
+	mfluadir/otfcc/lib/support/base64/base64.c \
+	mfluadir/otfcc/lib/support/json/json-ident.c \
+	mfluadir/otfcc/lib/support/json/json-funcs.h \
+	mfluadir/otfcc/lib/support/json/json-ident.h \
+	mfluadir/otfcc/lib/support/aglfn/aglfn.c \
+	mfluadir/otfcc/lib/support/aglfn/aglfn.h \
+	mfluadir/otfcc/lib/otf-writer/stat.h \
+	mfluadir/otfcc/lib/otf-writer/stat.c \
+	mfluadir/otfcc/lib/otf-writer/otf-writer.c \
+	mfluadir/otfcc/lib/otf-reader/otf-reader.c \
+	mfluadir/otfcc/lib/otf-reader/unconsolidate.c \
+	mfluadir/otfcc/lib/otf-reader/unconsolidate.h \
+	mfluadir/otfcc/lib/vf/axis.c \
+	mfluadir/otfcc/lib/vf/region.c \
+	mfluadir/otfcc/lib/vf/vq.c \
+	mfluadir/otfcc/lib/logger/logger.c \
+	mfluadir/otfcc/lib/bk/bkblock.h \
+	mfluadir/otfcc/lib/bk/bkgraph.h \
+	mfluadir/otfcc/lib/bk/bkgraph.c \
+	mfluadir/otfcc/lib/bk/bkblock.c \
+	mfluadir/otfcc/lib/font/caryll-font.c \
+	mfluadir/otfcc/lib/font/caryll-sfnt-builder.c \
+	mfluadir/otfcc/lib/font/caryll-sfnt.c \
+	mfluadir/otfcc/lib/json-writer/json-writer.c \
+	mfluadir/otfcc/lib/json-reader/json-reader.c \
+	mfluadir/otfcc/lib/libcff/charstring-il.h \
+	mfluadir/otfcc/lib/libcff/cff-index.h \
+	mfluadir/otfcc/lib/libcff/cff-dict.h \
+	mfluadir/otfcc/lib/libcff/cff-value.h \
+	mfluadir/otfcc/lib/libcff/cff-string.c \
+	mfluadir/otfcc/lib/libcff/cff-opmean.c \
+	mfluadir/otfcc/lib/libcff/libcff.h \
+	mfluadir/otfcc/lib/libcff/charstring-il.c \
+	mfluadir/otfcc/lib/libcff/cff-fdselect.c \
+	mfluadir/otfcc/lib/libcff/cff-parser.c \
+	mfluadir/otfcc/lib/libcff/subr.c \
+	mfluadir/otfcc/lib/libcff/cff-charset.c \
+	mfluadir/otfcc/lib/libcff/cff-index.c \
+	mfluadir/otfcc/lib/libcff/cff-codecs.c \
+	mfluadir/otfcc/lib/libcff/cff-charset.h \
+	mfluadir/otfcc/lib/libcff/cff-util.h \
+	mfluadir/otfcc/lib/libcff/cff-writer.c \
+	mfluadir/otfcc/lib/libcff/subr.h \
+	mfluadir/otfcc/lib/libcff/cff-fdselect.h \
+	mfluadir/otfcc/lib/libcff/cff-dict.c \
+	mfluadir/otfcc/lib/libcff/cff-value.c \
+	mfluadir/otfcc/lib/table/vhea.c \
+	mfluadir/otfcc/lib/table/fvar.c \
+	mfluadir/otfcc/lib/table/cmap.c \
+	mfluadir/otfcc/lib/table/meta/read.c \
+	mfluadir/otfcc/lib/table/meta/type.c \
+	mfluadir/otfcc/lib/table/meta/build.c \
+	mfluadir/otfcc/lib/table/meta/parse.c \
+	mfluadir/otfcc/lib/table/meta/dump.c \
+	mfluadir/otfcc/lib/table/vdmx/type.c \
+	mfluadir/otfcc/lib/table/vdmx/funcs.c \
+	mfluadir/otfcc/lib/table/hhea.c \
+	mfluadir/otfcc/lib/table/fvar.h \
+	mfluadir/otfcc/lib/table/maxp.h \
+	mfluadir/otfcc/lib/table/BASE.h \
+	mfluadir/otfcc/lib/table/post.h \
+	mfluadir/otfcc/lib/table/post.c \
+	mfluadir/otfcc/lib/table/cvt.c \
+	mfluadir/otfcc/lib/table/CFF.c \
+	mfluadir/otfcc/lib/table/vmtx.h \
+	mfluadir/otfcc/lib/table/glyf.h \
+	mfluadir/otfcc/lib/table/gasp.c \
+	mfluadir/otfcc/lib/table/LTSH.c \
+	mfluadir/otfcc/lib/table/maxp.c \
+	mfluadir/otfcc/lib/table/fpgm-prep.h \
+	mfluadir/otfcc/lib/table/all.h \
+	mfluadir/otfcc/lib/table/COLR.c \
+	mfluadir/otfcc/lib/table/vmtx.c \
+	mfluadir/otfcc/lib/table/vhea.h \
+	mfluadir/otfcc/lib/table/gasp.h \
+	mfluadir/otfcc/lib/table/fpgm-prep.c \
+	mfluadir/otfcc/lib/table/name.h \
+	mfluadir/otfcc/lib/table/hmtx.h \
+	mfluadir/otfcc/lib/table/head.c \
+	mfluadir/otfcc/lib/table/OS_2.h \
+	mfluadir/otfcc/lib/table/CPAL.c \
+	mfluadir/otfcc/lib/table/CPAL.h \
+	mfluadir/otfcc/lib/table/GDEF.h \
+	mfluadir/otfcc/lib/table/TSI5.h \
+	mfluadir/otfcc/lib/table/hdmx.h \
+	mfluadir/otfcc/lib/table/_TSI.c \
+	mfluadir/otfcc/lib/table/LTSH.h \
+	mfluadir/otfcc/lib/table/VORG.h \
+	mfluadir/otfcc/lib/table/name.c \
+	mfluadir/otfcc/lib/table/cmap.h \
+	mfluadir/otfcc/lib/table/OS_2.c \
+	mfluadir/otfcc/lib/table/hdmx.c \
+	mfluadir/otfcc/lib/table/glyf/read.c \
+	mfluadir/otfcc/lib/table/glyf/glyf.c \
+	mfluadir/otfcc/lib/table/glyf/build.c \
+	mfluadir/otfcc/lib/table/_TSI.h \
+	mfluadir/otfcc/lib/table/GDEF.c \
+	mfluadir/otfcc/lib/table/COLR.h \
+	mfluadir/otfcc/lib/table/VORG.c \
+	mfluadir/otfcc/lib/table/CFF.h \
+	mfluadir/otfcc/lib/table/otl/coverage.c \
+	mfluadir/otfcc/lib/table/otl/read.c \
+	mfluadir/otfcc/lib/table/otl/private.h \
+	mfluadir/otfcc/lib/table/otl/classdef.c \
+	mfluadir/otfcc/lib/table/otl/build.c \
+	mfluadir/otfcc/lib/table/otl/parse.c \
+	mfluadir/otfcc/lib/table/otl/dump.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-single.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-single.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-common.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-single.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-reverse.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-pair.h \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/read.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/common.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/classifier.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/build.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/common.h \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/parse.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining/dump.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-single.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-mark-to-ligature.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-mark-to-single.c \
+	mfluadir/otfcc/lib/table/otl/subtables/chaining.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-multi.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-reverse.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-cursive.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-common.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-mark-to-single.h \
+	mfluadir/otfcc/lib/table/otl/subtables/common.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-ligature.c \
+	mfluadir/otfcc/lib/table/otl/subtables/extend.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-pair.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-mark-to-ligature.h \
+	mfluadir/otfcc/lib/table/otl/subtables/extend.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-multi.h \
+	mfluadir/otfcc/lib/table/otl/subtables/gpos-cursive.c \
+	mfluadir/otfcc/lib/table/otl/subtables/gsub-ligature.h \
+	mfluadir/otfcc/lib/table/otl/otl.c \
+	mfluadir/otfcc/lib/table/otl/constants.c \
+	mfluadir/otfcc/lib/table/hmtx.c \
+	mfluadir/otfcc/lib/table/otl.h \
+	mfluadir/otfcc/lib/table/cvt.h \
+	mfluadir/otfcc/lib/table/meta.h \
+	mfluadir/otfcc/lib/table/SVG.h \
+	mfluadir/otfcc/lib/table/hhea.h \
+	mfluadir/otfcc/lib/table/BASE.c \
+	mfluadir/otfcc/lib/table/VDMX.h \
+	mfluadir/otfcc/lib/table/SVG.c \
+	mfluadir/otfcc/lib/table/head.h \
+	mfluadir/otfcc/lib/table/TSI5.c 
+
+##
+#EXTRA_DIST +=
+
+## Not used
+##
+#EXTRA_DIST += 
