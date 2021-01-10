@@ -1,3 +1,9 @@
+2021-01-10  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): go back to copying all characters
+	to try to placate NetBSD. No harm in it?
+	https://tug.org/pipermail/tlbuild/2021q1/004780.html
+
 2021-01-06  Karl Berry  <karl@freefriends.org>
 
 	* ttf2afm.c (make_name): let's exclude iscntrl() per Thanh,

@@ -444,9 +444,7 @@ static char *make_name(long platform_id, int len)
             *p = get_char();
             i++;
         }
-        /* don't copy strange characters */
-        if (!iscntrl(*p) || *p == '\r' || *p == '\n' || *p == '\t')
-            p++;
+        p++;
     }
     *p = 0;
     return xstrdup(buf);
