@@ -14,7 +14,7 @@ $(libmfluaotfcc_a_OBJECTS): $(LUA_DEPEND)
 $(libmfluajitotfcc_a_OBJECTS): $(LUAJIT_DEPEND)
 
 libmfluaotfcc_a_CPPFLAGS = \
-	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
 	-I$(top_srcdir)/mfluadir/otfcc/include \
 	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
 	-I$(top_srcdir)/mfluadir/otfcc/lib \
@@ -22,7 +22,7 @@ libmfluaotfcc_a_CPPFLAGS = \
 
 
 libmfluajitotfcc_a_CPPFLAGS = \
-	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
 	-DJIT \
 	-I$(top_srcdir)/mfluadir/otfcc/include \
 	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
@@ -44,12 +44,8 @@ libmfluaotfcc_a_SOURCES = \
 	mfluadir/otfcc/dep/extern/sds.c \
 	mfluadir/otfcc/src/aliases.h \
 	mfluadir/otfcc/src/luafunc.c \
-	mfluadir/otfcc/src/otfccbuild.c \
-	mfluadir/otfcc/src/otfccdump.c \
 	mfluadir/otfcc/src/platform.h \
 	mfluadir/otfcc/src/otfccdll.c \
-	mfluadir/otfcc/src/stopwatch.c \
-	mfluadir/otfcc/src/stopwatch.h \
 	mfluadir/otfcc/include/dep/json.h \
 	mfluadir/otfcc/include/dep/json-builder.h \
 	mfluadir/otfcc/include/dep/sds.h \

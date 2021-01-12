@@ -26,7 +26,7 @@ static bool compare_json_objects(const json_value *a, const json_value *b) {
 		HASH_FIND_STR(h, k, e);
 		if (!e) {
 			NEW(e);
-			e->key = strdup(k);
+			e->key = xstrdup(k);
 			e->val = a->u.object.values[j].value;
 			e->check = false;
 			HASH_ADD_STR(h, key, e);

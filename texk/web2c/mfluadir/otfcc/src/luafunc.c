@@ -4,7 +4,7 @@
 #include "otfcc/sfnt-builder.h"
 #include "aliases.h"
 #include "platform.h"
-#include "stopwatch.h"
+//#include "stopwatch.h"
 
 #include <unistd.h>
 
@@ -14,6 +14,7 @@ extern int optind;
 int otfcc_build(int b_argc, char *b_argv[]);
 int otfcc_dump(int b_argc, char *b_argv[]);
 
+extern char *xstrdup(const char *);
 
 
 #ifndef MAIN_VER
@@ -138,8 +139,8 @@ static void build_readEntireFile(char *inPath, char **_buffer, long *_length) {
 
 
 int otfcc_build(int b_argc, char *b_argv[]) {
-	struct timespec begin;
-	time_now(&begin);
+//	struct timespec begin;
+//	time_now(&begin);
 
 	bool show_help = false;
 	bool show_version = false;
@@ -293,14 +294,14 @@ int otfcc_build(int b_argc, char *b_argv[]) {
 				build_readEntireStdin(&buffer, &length);
 			}*/
 		}
-		logStepTime;
+		//logStepTime;
 	}
 
 	json_value *jsonRoot = NULL;
 	loggedStep("Parse into JSON") {
 		jsonRoot = json_parse(buffer, length);
 		free(buffer);
-		logStepTime;
+		//logStepTime;
 		if (!jsonRoot) {
 			logError("Cannot parse JSON file \"%s\". Exit.\n", inPath);
 			exit(EXIT_FAILURE);
@@ -317,11 +318,11 @@ int otfcc_build(int b_argc, char *b_argv[]) {
 		}
 		parser->free(parser);
 		json_value_free(jsonRoot);
-		logStepTime;
+		//logStepTime;
 	}
 	loggedStep("Consolidate") {
 		otfcc_iFont.consolidate(font, options);
-		logStepTime;
+		//logStepTime;
 	}
 	loggedStep("Build") {
 		otfcc_IFontSerializer *writer = otfcc_newOTFWriter();
@@ -335,7 +336,7 @@ int otfcc_build(int b_argc, char *b_argv[]) {
 			fwrite(otf->data, sizeof(uint8_t), buflen(otf), outfile);
 			fclose(outfile);
 		}
-		logStepTime;
+		//logStepTime;
 		buffree(otf), writer->free(writer), otfcc_iFont.free(font), sdsfree(outputPath);
 	}
 	otfcc_deleteOptions(options);
@@ -421,7 +422,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 				} else if (strcmp(longopts[option_index].name, "instr-as-bytes") == 0) {
 					options->instr_as_bytes = true;
 				} else if (strcmp(longopts[option_index].name, "glyph-name-prefix") == 0) {
-					options->glyph_name_prefix = strdup(optarg);
+					options->glyph_name_prefix = xstrdup(optarg);
 				} else if (strcmp(longopts[option_index].name, "debug-wait-on-start") == 0) {
 					options->debug_wait_on_start = true;
 				}
@@ -473,9 +474,9 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 		inPath = sdsnew(b_argv[optind]);
 	}
 
-	struct timespec begin;
+//	struct timespec begin;
 
-	time_now(&begin);
+//	time_now(&begin);
 
 	otfcc_SplineFontContainer *sfnt;
 	loggedStep("Read SFNT") {
@@ -491,7 +492,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 			         inPath, (sfnt->count - 1));
 			exit(EXIT_FAILURE);
 		}
-		logStepTime;
+		//logStepTime;
 	}
 
 	otfcc_Font *font;
@@ -504,11 +505,11 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 		}
 		reader->free(reader);
 		if (sfnt) otfcc_deleteSFNT(sfnt);
-		logStepTime;
+		//logStepTime;
 	}
 	loggedStep("Consolidate") {
 		otfcc_iFont.consolidate(font, options);
-		logStepTime;
+		//logStepTime;
 	}
 	json_value *root;
 	loggedStep("Dump") {
@@ -518,7 +519,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 			logError("Font structure broken or corrupted \"%s\". Exit.\n", inPath);
 			exit(EXIT_FAILURE);
 		}
-		logStepTime;
+		//logStepTime;
 		dumper->free(dumper);
 	}
 
@@ -529,14 +530,20 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 		jsonOptions.mode = json_serialize_mode_packed;
 		jsonOptions.opts = 0;
 		jsonOptions.indent_size = 4;
+#ifdef WIN32
 		if (show_pretty || (!outputPath && isatty(fileno(stdout)))) {
 			jsonOptions.mode = json_serialize_mode_multiline;
 		}
+#else
+		if (show_pretty || (!outputPath && isatty(STDOUT_FILENO))) {
+			jsonOptions.mode = json_serialize_mode_multiline;
+		}
+#endif
 		if (show_ugly) jsonOptions.mode = json_serialize_mode_packed;
 		buflen = json_measure_ex(root, jsonOptions);
 		buf = calloc(1, buflen);
 		json_serialize_ex(buf, root, jsonOptions);
-		logStepTime;
+		//logStepTime;
 	}
 
 	loggedStep("Output") {
@@ -581,6 +588,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 				fputs(buf, stdout);
 			}
 #else
+			(void)(no_bom);
 			if (add_bom) {
 				fputc(0xEF, stdout);
 				fputc(0xBB, stdout);
@@ -589,7 +597,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 			fputs(buf, stdout);
 #endif
 		}
-		logStepTime;
+		//logStepTime;
 	}
 
 	loggedStep("Finalize") {
@@ -598,7 +606,7 @@ int otfcc_dump(int b_argc, char *b_argv[]) {
 		if (root) json_builder_free(root);
 		if (inPath) sdsfree(inPath);
 		if (outputPath) sdsfree(outputPath);
-		logStepTime;
+		//logStepTime;
 	}
 	otfcc_deleteOptions(options);
 

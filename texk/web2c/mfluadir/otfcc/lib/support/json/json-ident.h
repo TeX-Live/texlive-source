@@ -9,4 +9,5 @@
 
 bool json_ident(const json_value *a, const json_value *b);
 
+extern char *xstrdup(const char *);
 #endif

@@ -51,12 +51,12 @@ static pos_t INLINE weightAxisRegion(const vq_AxisSpan *as, const pos_t x) {
 		return (z - x) / (z - p);
 	}
 }
-static pos_t vqRegionGetWeight(const vq_Region *r, const VV *v) {
-	pos_t w = 1;
-	for (size_t j = 0; j < r->dimensions && v->length; j++) {
-		w *= weightAxisRegion(&r->spans[j], v->items[j]);
-	}
-	return w;
-}
+//static pos_t vqRegionGetWeight(const vq_Region *r, const VV *v) {
+//	pos_t w = 1;
+//	for (size_t j = 0; j < r->dimensions && v->length; j++) {
+//		w *= weightAxisRegion(&r->spans[j], v->items[j]);
+//	}
+//	return w;
+//}
 
 void vq_showRegion(const vq_Region *r) {}
