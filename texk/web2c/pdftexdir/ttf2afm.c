@@ -428,8 +428,8 @@ static void read_cmap(void)
 
 static char *make_name(long platform_id, int len)
 {
-    char buf[1024];
-    char *p = buf;
+    unsigned char buf[1024];
+    unsigned char *p = buf;
     int i = 0;
 
     if (len >= sizeof(buf))

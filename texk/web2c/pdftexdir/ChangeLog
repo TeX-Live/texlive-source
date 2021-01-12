@@ -1,3 +1,7 @@
+2021-01-11  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): better to use unsigned char.
+
 2021-01-10  Karl Berry  <karl@freefriends.org>
 
 	* ttf2afm.c (make_name): go back to copying all characters
