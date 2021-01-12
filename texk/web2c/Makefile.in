@@ -1002,10 +1002,7 @@ am_libmfluaotfcc_a_OBJECTS = mfluadir/otfcc/dep/extern/emyg-dtoa/libmfluaotfcc_a
 	mfluadir/otfcc/dep/extern/libmfluaotfcc_a-json-builder.$(OBJEXT) \
 	mfluadir/otfcc/dep/extern/libmfluaotfcc_a-sds.$(OBJEXT) \
 	mfluadir/otfcc/src/libmfluaotfcc_a-luafunc.$(OBJEXT) \
-	mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.$(OBJEXT) \
-	mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.$(OBJEXT) \
 	mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.$(OBJEXT) \
-	mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.$(OBJEXT) \
 	mfluadir/otfcc/lib/consolidate/libmfluaotfcc_a-consolidate.$(OBJEXT) \
 	mfluadir/otfcc/lib/consolidate/otl/libmfluaotfcc_a-gsub-single.$(OBJEXT) \
 	mfluadir/otfcc/lib/consolidate/otl/libmfluaotfcc_a-gpos-single.$(OBJEXT) \
@@ -2321,10 +2318,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-region.Po \
 	mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po \
 	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po \
-	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po \
 	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po \
-	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po \
-	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po \
 	mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po \
 	mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po \
 	mplibdir/$(DEPDIR)/libmputil_a-avl.Po \
@@ -3825,14 +3819,14 @@ mflua_ch_src = \
 #
 mflua_tests = mfluadir/mfluatraptest.test
 libmfluaotfcc_a_CPPFLAGS = \
-	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
 	-I$(top_srcdir)/mfluadir/otfcc/include \
 	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
 	-I$(top_srcdir)/mfluadir/otfcc/lib \
 	 $(LUA_INCLUDES)
 
 libmfluajitotfcc_a_CPPFLAGS = \
-	-D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
+	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
 	-DJIT \
 	-I$(top_srcdir)/mfluadir/otfcc/include \
 	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
@@ -3853,12 +3847,8 @@ libmfluaotfcc_a_SOURCES = \
 	mfluadir/otfcc/dep/extern/sds.c \
 	mfluadir/otfcc/src/aliases.h \
 	mfluadir/otfcc/src/luafunc.c \
-	mfluadir/otfcc/src/otfccbuild.c \
-	mfluadir/otfcc/src/otfccdump.c \
 	mfluadir/otfcc/src/platform.h \
 	mfluadir/otfcc/src/otfccdll.c \
-	mfluadir/otfcc/src/stopwatch.c \
-	mfluadir/otfcc/src/stopwatch.h \
 	mfluadir/otfcc/include/dep/json.h \
 	mfluadir/otfcc/include/dep/json-builder.h \
 	mfluadir/otfcc/include/dep/sds.h \
@@ -7011,16 +7001,7 @@ mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp):
 mfluadir/otfcc/src/libmfluaotfcc_a-luafunc.$(OBJEXT):  \
 	mfluadir/otfcc/src/$(am__dirstamp) \
 	mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp)
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.$(OBJEXT):  \
-	mfluadir/otfcc/src/$(am__dirstamp) \
-	mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp)
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.$(OBJEXT):  \
-	mfluadir/otfcc/src/$(am__dirstamp) \
-	mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp)
 mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.$(OBJEXT):  \
-	mfluadir/otfcc/src/$(am__dirstamp) \
-	mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp)
-mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.$(OBJEXT):  \
 	mfluadir/otfcc/src/$(am__dirstamp) \
 	mfluadir/otfcc/src/$(DEPDIR)/$(am__dirstamp)
 mfluadir/otfcc/lib/consolidate/$(am__dirstamp):
@@ -8879,10 +8860,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-region.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libmputil_a-avl.Po@am__quote@ # am--include-marker
@@ -14354,34 +14332,6 @@ mfluadir/otfcc/src/libmfluaotfcc_a-luafunc.obj: mfluadir/otfcc/src/luafunc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-luafunc.obj `if test -f 'mfluadir/otfcc/src/luafunc.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/luafunc.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/luafunc.c'; fi`
 
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.o: mfluadir/otfcc/src/otfccbuild.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.o -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.o `test -f 'mfluadir/otfcc/src/otfccbuild.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/otfccbuild.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/otfccbuild.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.o `test -f 'mfluadir/otfcc/src/otfccbuild.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/otfccbuild.c
-
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.obj: mfluadir/otfcc/src/otfccbuild.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.obj -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.obj `if test -f 'mfluadir/otfcc/src/otfccbuild.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/otfccbuild.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/otfccbuild.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/otfccbuild.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccbuild.obj `if test -f 'mfluadir/otfcc/src/otfccbuild.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/otfccbuild.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/otfccbuild.c'; fi`
-
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.o: mfluadir/otfcc/src/otfccdump.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.o -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.o `test -f 'mfluadir/otfcc/src/otfccdump.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/otfccdump.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/otfccdump.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.o `test -f 'mfluadir/otfcc/src/otfccdump.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/otfccdump.c
-
-mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.obj: mfluadir/otfcc/src/otfccdump.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.obj -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.obj `if test -f 'mfluadir/otfcc/src/otfccdump.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/otfccdump.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/otfccdump.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/otfccdump.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdump.obj `if test -f 'mfluadir/otfcc/src/otfccdump.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/otfccdump.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/otfccdump.c'; fi`
-
 mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.o: mfluadir/otfcc/src/otfccdll.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.o -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.o `test -f 'mfluadir/otfcc/src/otfccdll.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/otfccdll.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po
@@ -14395,20 +14345,6 @@ mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.obj: mfluadir/otfcc/src/otfccdll.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/otfccdll.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-otfccdll.obj `if test -f 'mfluadir/otfcc/src/otfccdll.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/otfccdll.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/otfccdll.c'; fi`
-
-mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.o: mfluadir/otfcc/src/stopwatch.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.o -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.o `test -f 'mfluadir/otfcc/src/stopwatch.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/stopwatch.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/stopwatch.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.o `test -f 'mfluadir/otfcc/src/stopwatch.c' || echo '$(srcdir)/'`mfluadir/otfcc/src/stopwatch.c
-
-mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.obj: mfluadir/otfcc/src/stopwatch.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.obj -MD -MP -MF mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Tpo -c -o mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.obj `if test -f 'mfluadir/otfcc/src/stopwatch.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/stopwatch.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/stopwatch.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Tpo mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/otfcc/src/stopwatch.c' object='mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/src/libmfluaotfcc_a-stopwatch.obj `if test -f 'mfluadir/otfcc/src/stopwatch.c'; then $(CYGPATH_W) 'mfluadir/otfcc/src/stopwatch.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/src/stopwatch.c'; fi`
 
 mfluadir/otfcc/lib/consolidate/libmfluaotfcc_a-consolidate.o: mfluadir/otfcc/lib/consolidate/consolidate.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -MT mfluadir/otfcc/lib/consolidate/libmfluaotfcc_a-consolidate.o -MD -MP -MF mfluadir/otfcc/lib/consolidate/$(DEPDIR)/libmfluaotfcc_a-consolidate.Tpo -c -o mfluadir/otfcc/lib/consolidate/libmfluaotfcc_a-consolidate.o `test -f 'mfluadir/otfcc/lib/consolidate/consolidate.c' || echo '$(srcdir)/'`mfluadir/otfcc/lib/consolidate/consolidate.c
@@ -20105,10 +20041,7 @@ distclean: distclean-recursive
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-region.Po
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po
 	-rm -f mplibdir/$(DEPDIR)/libmputil_a-avl.Po
@@ -20877,10 +20810,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-region.Po
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccbuild.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdump.Po
-	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-stopwatch.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po
 	-rm -f mplibdir/$(DEPDIR)/libmputil_a-avl.Po
