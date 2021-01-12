@@ -115,7 +115,7 @@ int main(int argc, char ** argv)
 	}
 
 	atfmname = xstrdup(argv[optind]);
-	if (FILESTRCASEEQ(&atfmname[strlen(atfmname)-4], ".tfm")) {
+	if (strlen(atfmname)>=4 && FILESTRCASEEQ(&atfmname[strlen(atfmname)-4], ".tfm")) {
 		atfmname[strlen(atfmname)-4] = '\0';
 	}
 
@@ -125,7 +125,7 @@ int main(int argc, char ** argv)
 	strcat(vfname,".vf");
 
 	vtfmname = xstrdup(argv[optind+1]);
-	if (FILESTRCASEEQ(&vtfmname[strlen(vtfmname)-4], ".tfm")) {
+	if (strlen(vtfmname)>=4 && FILESTRCASEEQ(&vtfmname[strlen(vtfmname)-4], ".tfm")) {
 		vtfmname[strlen(vtfmname)-4] = '\0';
 	}
 	if (FILESTRCASEEQ(&vtfmname[0], &atfmname_base[0])) {
@@ -134,7 +134,7 @@ int main(int argc, char ** argv)
 	}
 
 	if (kanatfm) {
-		if (FILESTRCASEEQ(&kanatfm[strlen(kanatfm)-4], ".tfm")) {
+		if (strlen(kanatfm)>=4 && FILESTRCASEEQ(&kanatfm[strlen(kanatfm)-4], ".tfm")) {
 			kanatfm[strlen(kanatfm)-4] = '\0';
 		}
 		if (FILESTRCASEEQ(&kanatfm[0], &atfmname_base[0])) {
@@ -168,7 +168,7 @@ int main(int argc, char ** argv)
 	}
 
 	if (jistfm) {
-		if (FILESTRCASEEQ(&jistfm[strlen(jistfm)-4], ".tfm")) {
+		if (strlen(jistfm)>=4 && FILESTRCASEEQ(&jistfm[strlen(jistfm)-4], ".tfm")) {
 			jistfm[strlen(jistfm)-4] = '\0';
 		}
 		if (FILESTRCASEEQ(&jistfm[0], &atfmname_base[0])) {
@@ -178,7 +178,7 @@ int main(int argc, char ** argv)
 	}
 
 	if (ucsqtfm) {
-		if (FILESTRCASEEQ(&ucsqtfm[strlen(ucsqtfm)-4], ".tfm")) {
+		if (strlen(ucsqtfm)>=4 && FILESTRCASEEQ(&ucsqtfm[strlen(ucsqtfm)-4], ".tfm")) {
 			ucsqtfm[strlen(ucsqtfm)-4] = '\0';
 		}
 		if (FILESTRCASEEQ(&ucsqtfm[0], &atfmname_base[0])) {

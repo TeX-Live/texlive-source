@@ -3,6 +3,7 @@
 	* cmap_read.c, t1_load.c: Fix a bug causing a segfault
 	reported as dvipdfmx-upjf.test test failure. Add missing size
 	tests for the data comparison.
+	https://tug.org/pipermail/tlbuild/2021q1/004765.html
 
 2021-01-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
