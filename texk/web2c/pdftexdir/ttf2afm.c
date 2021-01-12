@@ -435,13 +435,13 @@ static char *make_name(long platform_id, int len)
     if (len >= sizeof(buf))
         len = sizeof(buf) - 1;
     while (i < len) {
-        *p = get_char();
+        *p = (unsigned char) get_char();
         i++;
         if (*p == 0 && platform_id == 3) {
             /* assume this is an UTF-16BE encoded string but contains english
              * text, which is the most common case; simply copy the 2nd byte.
              * Note: will not work for non-ascii text */
-            *p = get_char();
+            *p = (unsigned char) get_char();
             i++;
         }
         p++;
