@@ -1,3 +1,10 @@
+2021-01-15  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvi.c, dvipdfmx.c, pdfdoc.[ch]: Experimental support for
+	dviluatex extended fnt_def. Separate annot_grow (linkmargin)
+	for horizontal and vertical direction can be specified.
+	* configure.ac: Version 20210115.
+
 2021-01-10  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cmap_read.c, t1_load.c: Fix a bug causing a segfault
