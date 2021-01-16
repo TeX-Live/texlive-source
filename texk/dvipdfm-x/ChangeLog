@@ -1,3 +1,11 @@
+2021-01-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfximage.c: Dvipdfmx behavior changed. Now it stops
+	processing and exits with non-zero exit status when image
+	inclusion fails.
+	* dvi.c: Ignore dvi_set with invalid gid when processing DVI
+	files created by dvilua[la]tex.
+
 2021-01-15  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.c, dvipdfmx.c, pdfdoc.[ch]: Experimental support for
