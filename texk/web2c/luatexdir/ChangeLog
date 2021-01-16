@@ -1,3 +1,6 @@
+2021-01-13 Luigi Scarso <luigi.scarso@gmail.com> 
+    * pdftex compatibility hack (H. Hagen)
+
 2020-12-13 Luigi Scarso <luigi.scarso@gmail.com> 
     * fixed Hyphenation issue regarding frozen glyph nodes (M.F. Krüger)
 
