@@ -5,6 +5,8 @@
 	inclusion fails.
 	* dvi.c: Ignore dvi_set with invalid gid when processing DVI
 	files created by dvilua[la]tex.
+	* dvipdfmx.c: Bump copyright year.
+	* configure.ac: Version 20210116.
 
 2021-01-15  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
