@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 57119 2020-12-12 23:40:00Z karl $
+# $Id: tlmgr.pl 57424 2021-01-15 02:30:58Z preining $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 57119 $';
-my $datrev = '$Date: 2020-12-13 00:40:00 +0100 (Sun, 13 Dec 2020) $';
+my $svnrev = '$Revision: 57424 $';
+my $datrev = '$Date: 2021-01-15 03:30:58 +0100 (Fri, 15 Jan 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -872,7 +872,7 @@ sub do_cmd_and_check {
 sub handle_execute_actions {
   my $errors = 0;
 
-  my $sysmode = ($opts{"usermode"} ? "" : "-sys");
+  my $sysmode = ($opts{"usermode"} ? "-user" : "-sys");
   my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
 
   if ($::files_changed) {
@@ -10113,7 +10113,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 57119 2020-12-12 23:40:00Z karl $
+$Id: tlmgr.pl 57424 2021-01-15 02:30:58Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
