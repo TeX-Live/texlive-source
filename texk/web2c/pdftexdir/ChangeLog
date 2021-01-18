@@ -1,3 +1,10 @@
+2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
+
+	* ttf2afm.c (make_name): yet another attempt at filtering
+	control characters, since the test font, SourceCodePro (as well
+	as many other Mac fonts), actually contains control characters
+	(24 and 25), due to UTF-16BE.
+
 2021-01-11  Karl Berry  <karl@freefriends.org>
 
 	* ttf2afm.c (make_name): better to use unsigned char.
