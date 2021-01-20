@@ -1,6 +1,7 @@
 2021-01-20  Karl Berry  <karl@freefriends.org>
 
 	* NEWS: update.
+	* ptexmac.h (undumpcharptr): use xmalloc, not malloc.
 
 2021-01-20  Marcel Fabian Krueger  <tex@2krueger.de>
 
@@ -9,7 +10,7 @@
 	* ptexlib.h ((un)dumptounicode): declare.
 	* tounicode.c ((un)dumptounicode): define.
 	* ptexmac.h ((un)dumpcharptr): #define here, from writeimg.c
-	(using generic_dump). Use xmalloc instead of malloc.
+	(using generic_dump).
 	* writeimg.c: #defines moved.
 	ntg-pdftex mail, 17 Jan 2021 21:47:33.
 

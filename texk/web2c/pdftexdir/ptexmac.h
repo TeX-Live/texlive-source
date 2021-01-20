@@ -237,7 +237,7 @@ size_t          T##_limit
     char *a;					\
     generic_undump (x);				\
     if (x>0) {					\
-      a = malloc(x);				\
+      a = xmalloc(x);				\
       undumpthings(*a,x);			\
       s = a ;					\
     } else { s = NULL; }			\
