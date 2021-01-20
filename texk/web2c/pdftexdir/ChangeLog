@@ -1,3 +1,18 @@
+2021-01-20  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: update.
+
+2021-01-20  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	(Un)dump \pdfglyphtounicode assignments in the .fmt.
+	* pdftex.web (Dump/Undump pdftex data): call (un)dumptounicode.
+	* ptexlib.h ((un)dumptounicode): declare.
+	* tounicode.c ((un)dumptounicode): define.
+	* ptexmac.h ((un)dumpcharptr): #define here, from writeimg.c
+	(using generic_dump). Use xmalloc instead of malloc.
+	* writeimg.c: #defines moved.
+	ntg-pdftex mail, 17 Jan 2021 21:47:33.
+
 2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
 
 	* ttf2afm.c (make_name): yet another attempt at filtering

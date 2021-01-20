@@ -1,5 +1,5 @@
 /* ptexmac.h: common macros for pdfTeX.
-Copyright 1996-2018 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2021 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -214,5 +214,33 @@ size_t          T##_limit
         return -1
 
 #  define str_prefix(s1, s2)  (strncmp((s1), (s2), strlen(s2)) == 0)
+
+/* (un)dumping a string means dumping the allocation size, followed
+ * by the bytes. The trailing \0 is (un)dumped as well, because that
+ * makes the code simpler.
+ */
+
+#define dumpcharptr(a)				\
+  do {						\
+    integer x;					\
+    if (a!=NULL) {				\
+      x = strlen(a)+1;				\
+      generic_dump(x);  dumpthings(*a, x);	\
+    } else {					\
+      x = 0; generic_dump(x);			\
+    }						\
+  } while (0)
+
+#define undumpcharptr(s)			\
+  do {						\
+    integer x;					\
+    char *a;					\
+    generic_undump (x);				\
+    if (x>0) {					\
+      a = malloc(x);				\
+      undumpthings(*a,x);			\
+      s = a ;					\
+    } else { s = NULL; }			\
+  } while (0)
 
 #endif                          /* PDFTEXMAC */

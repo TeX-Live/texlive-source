@@ -3,6 +3,8 @@
     turning off generation of links in headers and footers.
   - warn instead of aborting when "\pdfendlink ended up in
     different nesting level than \pdfstartlink". 
+  - dump \pdfglyphtounicode assignments in fmt file.
+  - ttf2afm outputs name information.
 
 - bugfixes:
   - avoid crash in unusual autoexpand cases.
