@@ -1,3 +1,9 @@
+2021-01-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* cidtype0.c: Fix the VORG bug reported in
+	https://tug.org/pipermail/dvipdfmx/2021-January/000193.html
+	* configure.ac: Version 20210122.
+
 2021-01-16  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfximage.c: Dvipdfmx behavior changed. Now it stops
