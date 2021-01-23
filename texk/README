@@ -63,8 +63,9 @@ dvipos - maintained here, by us
 
 dvipsk - maintained here, by us
 
-dvisvgm 2.9.1 - checked 21mar20
+dvisvgm 2.11.1 - checked 23jan21
   https://dvisvgm.de/Downloads/
+  https://github.com/mgieseki/dvisvgm
 
 gregorio 5.2.1 - checked 19dec19
   CTAN/support/gregoriotex/gregorio-5.2.1.zip
