@@ -2,7 +2,7 @@
 ** FontEncoding.hpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -32,6 +32,7 @@ struct FontEncoding {
 	virtual ~FontEncoding () =default;
 	virtual Character decode (uint32_t c) const =0;
 	virtual bool mapsToCharIndex () const =0;
+	virtual bool mapsToUnicode () const {return false;}
 	virtual const FontEncoding* findCompatibleBaseFontMap (const PhysicalFont *font, CharMapID &charmapID) const {return nullptr;}
 	static FontEncoding* encoding (const std::string &encname);
 };
@@ -49,6 +50,7 @@ class FontEncodingPair : public FontEncoding {
 		FontEncodingPair (const FontEncoding *enc1, const FontEncoding *enc2) : _enc1(enc1), _enc2(enc2) {}
 		Character decode (uint32_t c) const override;
 		bool mapsToCharIndex () const override;
+		bool mapsToUnicode () const override;
 		const FontEncoding* findCompatibleBaseFontMap (const PhysicalFont *font, CharMapID &charmapID) const override;
 		const FontEncoding* enc1 () const       {return _enc1;}
 		const FontEncoding* enc2 () const       {return _enc2;}

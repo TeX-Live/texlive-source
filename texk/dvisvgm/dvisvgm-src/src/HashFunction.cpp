@@ -2,7 +2,7 @@
 ** HashFunction.cpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -96,7 +96,7 @@ void HashFunction::update (istream &is) {
 string HashFunction::digestString () const {
 	ostringstream oss;
 	oss << hex << setfill('0');
-	for (int byte : digestValue())
+	for (int byte : digestBytes())
 		oss << setw(2) << byte;
 	return oss.str();
 }

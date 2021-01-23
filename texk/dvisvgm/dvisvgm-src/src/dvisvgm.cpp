@@ -2,7 +2,7 @@
 ** dvisvgm.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -480,16 +480,20 @@ int main (int argc, char *argv[]) {
 	}
 	catch (DVIException &e) {
 		Message::estream() << "\nDVI error: " << e.what() << '\n';
+		return -1;
 	}
 	catch (PSException &e) {
 		Message::estream() << "\nPostScript error: " << e.what() << '\n';
+		return -2;
 	}
 	catch (SignalException &e) {
 		Message::wstream().clearline();
 		Message::wstream(true) << "execution interrupted by user\n";
+		return -3;
 	}
 	catch (exception &e) {
 		Message::estream(true) << e.what() << '\n';
+		return -4;
 	}
 	return 0;
 }

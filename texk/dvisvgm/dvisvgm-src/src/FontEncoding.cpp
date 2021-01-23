@@ -2,7 +2,7 @@
 ** FontEncoding.cpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -68,6 +68,15 @@ bool FontEncodingPair::mapsToCharIndex () const {
 		return _enc2->mapsToCharIndex();
 	if (_enc1)
 		return _enc1->mapsToCharIndex();
+	return false;
+}
+
+
+bool FontEncodingPair::mapsToUnicode () const {
+	if (_enc2)
+		return _enc2->mapsToUnicode();
+	if (_enc1)
+		return _enc1->mapsToUnicode();
 	return false;
 }
 

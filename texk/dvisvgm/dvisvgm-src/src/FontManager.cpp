@@ -2,7 +2,7 @@
 ** FontManager.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -101,8 +101,14 @@ int FontManager::fontnum (int id) const {
 
 
 int FontManager::vfFirstFontNum (const VirtualFont *vf) const {
+	auto it = _vfFirstFontNumMap.find(vf);
+	return (it == _vfFirstFontNumMap.end()) ? -1 : (int) it->second;
+}
+
+
+Font* FontManager::vfFirstFont (const VirtualFont *vf) const {
 	auto it = _vfFirstFontMap.find(vf);
-	return (it == _vfFirstFontMap.end()) ? -1 : (int) it->second;
+	return (it == _vfFirstFontMap.end()) ? nullptr : it->second;
 }
 
 
@@ -221,8 +227,10 @@ int FontManager::registerFont (uint32_t fontnum, const string &name, uint32_t ch
 	else {  // register font referenced in vf file
 		const VirtualFont *vf = _vfStack.top();
 		_vfnum2id[vf][fontnum] = newid;
-		if (_vfFirstFontMap.find(vf) == _vfFirstFontMap.end()) // first fontdef of VF?
-			_vfFirstFontMap[vf] = fontnum;
+		if (_vfFirstFontNumMap.find(vf) == _vfFirstFontNumMap.end()) { // first fontdef of VF?
+			_vfFirstFontNumMap.emplace(vf, fontnum);
+			_vfFirstFontMap.emplace(vf, _fonts.back().get());
+		}
 	}
 	return newid;
 }
@@ -255,8 +263,6 @@ int FontManager::registerFont (uint32_t fontnum, string filename, int fontIndex,
 	if (id >= 0)
 		return id;
 
-	if (!filename.empty() && filename[0] == '[' && filename[filename.size()-1] == ']')
-		filename = filename.substr(1, filename.size()-2);
 	string fontname = NativeFont::uniqueName(filename, style);
 	const char *path = filename.c_str();
 	unique_ptr<Font> newfont;

@@ -2,7 +2,7 @@
 ** Font.cpp                                                             **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -495,7 +495,7 @@ const FontEncoding* PhysicalFontImpl::encoding () const {
 
 bool PhysicalFontImpl::findAndAssignBaseFontMap () {
 	const FontEncoding *enc = encoding();
-	if (enc && enc->mapsToCharIndex()) {
+	if (enc && !enc->mapsToUnicode() && enc->mapsToCharIndex()) {
 		// try to find a base font map that maps from character indexes to a suitable
 		// target encoding supported by the font file
 		if (const FontEncoding *bfmap = enc->findCompatibleBaseFontMap(this, _charmapID))
@@ -607,8 +607,13 @@ PhysicalFont::Type NativeFont::type () const {
 double NativeFont::charWidth (int c) const {
 	FontEngine::instance().setFont(*this);
 	int upem = FontEngine::instance().getUnitsPerEM();
-	double w = upem ? (scaledSize()*FontEngine::instance().getAdvance(c)/upem*_style.extend) : 0;
-	w += abs(_style.slant*charHeight(c));
+	return upem ? (scaledSize()*FontEngine::instance().getAdvance(c)/upem*_style.extend) : 0;
+}
+
+
+double NativeFont::italicCorr(int c) const {
+	double w = abs(_style.slant*charHeight(c));   // slant := tan(phi) = dx/height
+	w *= _style.extend;
 	return w;
 }
 
@@ -631,7 +636,7 @@ bool NativeFontImpl::findAndAssignBaseFontMap () {
 	FontEngine &fe = FontEngine::instance();
 	fe.setFont(*this);
 	fe.setUnicodeCharMap();
-	fe.buildCharMap(_toUnicodeMap);
+	fe.buildGidToCharCodeMap(_toUnicodeMap);
 	if (!_toUnicodeMap.addMissingMappings(fe.getNumGlyphs()))
 		Message::wstream(true) << "incomplete Unicode mapping for native font " << name() << " (" << filename() << ")\n";
 	return true;

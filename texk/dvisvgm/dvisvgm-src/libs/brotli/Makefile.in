@@ -119,8 +119,9 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libbrotli_a_AR = $(AR) $(ARFLAGS)
 libbrotli_a_LIBADD =
-am__libbrotli_a_SOURCES_DIST = common/constants.h common/context.h \
-	common/dictionary.c common/dictionary.h common/platform.h \
+am__libbrotli_a_SOURCES_DIST = common/constants.c common/constants.h \
+	common/context.c common/context.h common/dictionary.c \
+	common/dictionary.h common/platform.c common/platform.h \
 	common/transform.c common/transform.h common/version.h \
 	enc/backward_references.c enc/backward_references.h \
 	enc/backward_references_hq.c enc/backward_references_hq.h \
@@ -129,12 +130,13 @@ am__libbrotli_a_SOURCES_DIST = common/constants.h common/context.h \
 	enc/block_splitter.c enc/block_splitter.h \
 	enc/block_splitter_inc.h enc/brotli_bit_stream.c \
 	enc/brotli_bit_stream.h enc/cluster.c enc/cluster.h \
-	enc/cluster_inc.h enc/command.h enc/compress_fragment.c \
-	enc/compress_fragment.h enc/compress_fragment_two_pass.c \
+	enc/cluster_inc.h enc/command.c enc/command.h \
+	enc/compress_fragment.c enc/compress_fragment.h \
+	enc/compress_fragment_two_pass.c \
 	enc/compress_fragment_two_pass.h enc/dictionary_hash.c \
 	enc/dictionary_hash.h enc/encode.c enc/encoder_dict.c \
 	enc/encoder_dict.h enc/entropy_encode.c enc/entropy_encode.h \
-	enc/entropy_encode_static.h enc/fast_log.h \
+	enc/entropy_encode_static.h enc/fast_log.c enc/fast_log.h \
 	enc/find_match_length.h enc/hash_composite_inc.h \
 	enc/hash_forgetful_chain_inc.h enc/hash.h \
 	enc/hash_longest_match64_inc.h enc/hash_longest_match_inc.h \
@@ -150,20 +152,24 @@ am__libbrotli_a_SOURCES_DIST = common/constants.h common/context.h \
 	include/brotli/types.h
 am__dirstamp = $(am__leading_dot)dirstamp
 @HAVE_BROTLI_FALSE@am_libbrotli_a_OBJECTS =  \
+@HAVE_BROTLI_FALSE@	common/constants.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	common/context.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	common/dictionary.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	common/platform.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	common/transform.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/backward_references.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/backward_references_hq.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/bit_cost.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/block_splitter.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/brotli_bit_stream.$(OBJEXT) \
-@HAVE_BROTLI_FALSE@	enc/cluster.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/cluster.$(OBJEXT) enc/command.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/dictionary_hash.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/encode.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/encoder_dict.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/entropy_encode.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/fast_log.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/histogram.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/literal_cost.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/memory.$(OBJEXT) \
@@ -186,19 +192,21 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = common/$(DEPDIR)/dictionary.Po \
-	common/$(DEPDIR)/transform.Po \
+am__depfiles_remade = common/$(DEPDIR)/constants.Po \
+	common/$(DEPDIR)/context.Po common/$(DEPDIR)/dictionary.Po \
+	common/$(DEPDIR)/platform.Po common/$(DEPDIR)/transform.Po \
 	enc/$(DEPDIR)/backward_references.Po \
 	enc/$(DEPDIR)/backward_references_hq.Po \
 	enc/$(DEPDIR)/bit_cost.Po enc/$(DEPDIR)/block_splitter.Po \
 	enc/$(DEPDIR)/brotli_bit_stream.Po enc/$(DEPDIR)/cluster.Po \
-	enc/$(DEPDIR)/compress_fragment.Po \
+	enc/$(DEPDIR)/command.Po enc/$(DEPDIR)/compress_fragment.Po \
 	enc/$(DEPDIR)/compress_fragment_two_pass.Po \
 	enc/$(DEPDIR)/dictionary_hash.Po enc/$(DEPDIR)/encode.Po \
 	enc/$(DEPDIR)/encoder_dict.Po enc/$(DEPDIR)/entropy_encode.Po \
-	enc/$(DEPDIR)/histogram.Po enc/$(DEPDIR)/literal_cost.Po \
-	enc/$(DEPDIR)/memory.Po enc/$(DEPDIR)/metablock.Po \
-	enc/$(DEPDIR)/static_dict.Po enc/$(DEPDIR)/utf8_util.Po
+	enc/$(DEPDIR)/fast_log.Po enc/$(DEPDIR)/histogram.Po \
+	enc/$(DEPDIR)/literal_cost.Po enc/$(DEPDIR)/memory.Po \
+	enc/$(DEPDIR)/metablock.Po enc/$(DEPDIR)/static_dict.Po \
+	enc/$(DEPDIR)/utf8_util.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -402,10 +410,13 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@noinst_LIBRARIES = libbrotli.a
 @HAVE_BROTLI_FALSE@libbrotli_a_SOURCES = \
+@HAVE_BROTLI_FALSE@	common/constants.c \
 @HAVE_BROTLI_FALSE@	common/constants.h \
+@HAVE_BROTLI_FALSE@	common/context.c \
 @HAVE_BROTLI_FALSE@	common/context.h \
 @HAVE_BROTLI_FALSE@	common/dictionary.c \
 @HAVE_BROTLI_FALSE@	common/dictionary.h \
+@HAVE_BROTLI_FALSE@	common/platform.c \
 @HAVE_BROTLI_FALSE@	common/platform.h \
 @HAVE_BROTLI_FALSE@	common/transform.c \
 @HAVE_BROTLI_FALSE@	common/transform.h \
@@ -427,6 +438,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/cluster.c \
 @HAVE_BROTLI_FALSE@	enc/cluster.h \
 @HAVE_BROTLI_FALSE@	enc/cluster_inc.h \
+@HAVE_BROTLI_FALSE@	enc/command.c \
 @HAVE_BROTLI_FALSE@	enc/command.h \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.c \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.h \
@@ -440,6 +452,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/entropy_encode.c \
 @HAVE_BROTLI_FALSE@	enc/entropy_encode.h \
 @HAVE_BROTLI_FALSE@	enc/entropy_encode_static.h \
+@HAVE_BROTLI_FALSE@	enc/fast_log.c \
 @HAVE_BROTLI_FALSE@	enc/fast_log.h \
 @HAVE_BROTLI_FALSE@	enc/find_match_length.h \
 @HAVE_BROTLI_FALSE@	enc/hash_composite_inc.h \
@@ -520,7 +533,13 @@ common/$(am__dirstamp):
 common/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) common/$(DEPDIR)
 	@: > common/$(DEPDIR)/$(am__dirstamp)
+common/constants.$(OBJEXT): common/$(am__dirstamp) \
+	common/$(DEPDIR)/$(am__dirstamp)
+common/context.$(OBJEXT): common/$(am__dirstamp) \
+	common/$(DEPDIR)/$(am__dirstamp)
 common/dictionary.$(OBJEXT): common/$(am__dirstamp) \
+	common/$(DEPDIR)/$(am__dirstamp)
+common/platform.$(OBJEXT): common/$(am__dirstamp) \
 	common/$(DEPDIR)/$(am__dirstamp)
 common/transform.$(OBJEXT): common/$(am__dirstamp) \
 	common/$(DEPDIR)/$(am__dirstamp)
@@ -542,6 +561,8 @@ enc/brotli_bit_stream.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/cluster.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
+enc/command.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
 enc/compress_fragment.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/compress_fragment_two_pass.$(OBJEXT): enc/$(am__dirstamp) \
@@ -553,6 +574,8 @@ enc/encode.$(OBJEXT): enc/$(am__dirstamp) \
 enc/encoder_dict.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/entropy_encode.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
+enc/fast_log.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/histogram.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
@@ -580,7 +603,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/constants.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/context.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/dictionary.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/platform.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@common/$(DEPDIR)/transform.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/backward_references.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/backward_references_hq.Po@am__quote@ # am--include-marker
@@ -588,12 +614,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/block_splitter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/brotli_bit_stream.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/cluster.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/command.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compress_fragment.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compress_fragment_two_pass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/dictionary_hash.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/encode.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/encoder_dict.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/entropy_encode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/fast_log.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/histogram.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/literal_cost.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/memory.Po@am__quote@ # am--include-marker
@@ -767,7 +795,10 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f common/$(DEPDIR)/dictionary.Po
+		-rm -f common/$(DEPDIR)/constants.Po
+	-rm -f common/$(DEPDIR)/context.Po
+	-rm -f common/$(DEPDIR)/dictionary.Po
+	-rm -f common/$(DEPDIR)/platform.Po
 	-rm -f common/$(DEPDIR)/transform.Po
 	-rm -f enc/$(DEPDIR)/backward_references.Po
 	-rm -f enc/$(DEPDIR)/backward_references_hq.Po
@@ -775,12 +806,14 @@ distclean: distclean-am
 	-rm -f enc/$(DEPDIR)/block_splitter.Po
 	-rm -f enc/$(DEPDIR)/brotli_bit_stream.Po
 	-rm -f enc/$(DEPDIR)/cluster.Po
+	-rm -f enc/$(DEPDIR)/command.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment_two_pass.Po
 	-rm -f enc/$(DEPDIR)/dictionary_hash.Po
 	-rm -f enc/$(DEPDIR)/encode.Po
 	-rm -f enc/$(DEPDIR)/encoder_dict.Po
 	-rm -f enc/$(DEPDIR)/entropy_encode.Po
+	-rm -f enc/$(DEPDIR)/fast_log.Po
 	-rm -f enc/$(DEPDIR)/histogram.Po
 	-rm -f enc/$(DEPDIR)/literal_cost.Po
 	-rm -f enc/$(DEPDIR)/memory.Po
@@ -832,7 +865,10 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f common/$(DEPDIR)/dictionary.Po
+		-rm -f common/$(DEPDIR)/constants.Po
+	-rm -f common/$(DEPDIR)/context.Po
+	-rm -f common/$(DEPDIR)/dictionary.Po
+	-rm -f common/$(DEPDIR)/platform.Po
 	-rm -f common/$(DEPDIR)/transform.Po
 	-rm -f enc/$(DEPDIR)/backward_references.Po
 	-rm -f enc/$(DEPDIR)/backward_references_hq.Po
@@ -840,12 +876,14 @@ maintainer-clean: maintainer-clean-am
 	-rm -f enc/$(DEPDIR)/block_splitter.Po
 	-rm -f enc/$(DEPDIR)/brotli_bit_stream.Po
 	-rm -f enc/$(DEPDIR)/cluster.Po
+	-rm -f enc/$(DEPDIR)/command.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment_two_pass.Po
 	-rm -f enc/$(DEPDIR)/dictionary_hash.Po
 	-rm -f enc/$(DEPDIR)/encode.Po
 	-rm -f enc/$(DEPDIR)/encoder_dict.Po
 	-rm -f enc/$(DEPDIR)/entropy_encode.Po
+	-rm -f enc/$(DEPDIR)/fast_log.Po
 	-rm -f enc/$(DEPDIR)/histogram.Po
 	-rm -f enc/$(DEPDIR)/literal_cost.Po
 	-rm -f enc/$(DEPDIR)/memory.Po

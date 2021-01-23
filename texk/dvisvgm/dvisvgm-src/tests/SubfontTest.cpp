@@ -2,7 +2,7 @@
 ** SubfontTest.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,11 +27,11 @@ using namespace std;
 TEST(SubfontTest, collect_subfonts) {
 	try {
 		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sample")) {
-			vector<Subfont*> subfonts;
+			vector<Subfont*> subfonts = sfd->subfonts();
 			const char *ids_cmp[] = {"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "x1"};
-			int size = sizeof(ids_cmp)/sizeof(Subfont*);
-			EXPECT_EQ(sfd->subfonts(subfonts), size);
-			for (int i=0; i < size; i++) {
+			size_t size = sizeof(ids_cmp)/sizeof(Subfont*);
+			EXPECT_EQ(subfonts.size(), size);
+			for (size_t i=0; i < size; i++) {
 				EXPECT_EQ(subfonts[i]->id(), ids_cmp[i]);
 			}
 		}
@@ -44,7 +44,7 @@ TEST(SubfontTest, collect_subfonts) {
 
 TEST(SubfontTest, read_table) {
 	try {
-		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sampl")) {
+		if (SubfontDefinition *sfd = SubfontDefinition::lookup("sample")) {
 			// check scanning of single value entries
 			Subfont *subfont = sfd->subfont("02");
 			ASSERT_NE(subfont, nullptr);

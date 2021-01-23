@@ -2,7 +2,7 @@
 ** Ghostscript.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -239,10 +239,18 @@ int Ghostscript::revision () {
 string Ghostscript::revisionstr () {
 	string revstr;
 	if (int rev = revision()) {
-		revstr = to_string(rev/100) + ".";
-		if (rev % 100 < 10)
-			revstr += "0";
-	  	revstr += to_string(rev%100);
+		if (rev < 1000) {  // until GS 9.52
+			revstr = to_string(rev/100) + ".";
+			if (rev % 100 < 10)
+				revstr += "0";
+			revstr += to_string(rev%100);
+		}
+		else { // as of GS 9.52.1, see ghostpdl/base/gsmisc.c
+			int major = rev / 1000;
+			int minor = (rev - major*1000)/10;
+			int patch = rev % 10;
+			revstr = to_string(major) + "." + to_string(minor) + "." + to_string(patch);
+		}
 	}
 	return revstr;
 }
