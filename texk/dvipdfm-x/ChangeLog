@@ -1,3 +1,8 @@
+2021-01-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_misc.c: Add a compatibility special pdffontattr.
+	* configure.ac: Version 20210124.
+
 2021-01-22  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* cidtype0.c: Fix the VORG bug reported in
