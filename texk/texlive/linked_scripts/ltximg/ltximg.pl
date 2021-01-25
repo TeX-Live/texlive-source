@@ -30,7 +30,11 @@ use autodie;
 use Config;
 use Cwd;
 use if $^O eq 'MSWin32', 'Win32';
-use if $^O eq 'MSWin32', 'Win32::Console::ANSI'; # need for color :)
+use if $^O eq 'MSWin32', 'Module::Load::Conditional' => qw(can_load check_install requires);
+# Need on Windows cmd for colors, TeX Live not provide 'Win32::Console::ANSI'
+if($^O eq 'MSWin32' && check_install( module => 'Win32::Console::ANSI')) {
+    require Win32::Console::ANSI;
+}
 use Term::ANSIColor;
 
 ### Directory for work and temp files
@@ -40,18 +44,19 @@ my $workdir = cwd;
 ### Script identification
 my $scriptname = 'ltximg';
 my $program    = 'LTXimg';
-my $nv         = 'v1.9';
-my $date       = '2020-08-22';
+my $nv         = 'v2.0';
+my $date       = '2021-01-24';
 my $copyright  = <<"END_COPYRIGHT" ;
-[$date] (c) 2013-2020 by Pablo Gonzalez, pablgonz<at>yahoo.com
+[$date] - LaTeX environments to image and standalone files
 END_COPYRIGHT
 
+### Standart info in terminal
 my $title = "$program $nv $copyright";
 
 ### Log vars
 my $LogFile = "$scriptname.log";
 my $LogWrite;
-my $LogTime = strftime("%y/%m/%d %H:%M:%S", localtime);
+my $LogTime = strftime("%y-%m-%d %H:%M:%S", localtime);
 
 ### Default values
 my $skiptag  = 'noltximg'; # internal tag for regex
@@ -147,7 +152,7 @@ sub Infocolor {
 ### Write Log line and print msg (common)
 sub Infoline {
     my $msg = shift;
-    my $now = strftime("%y/%m/%d %H:%M:%S", localtime);
+    my $now = strftime("%y-%m-%d %H:%M:%S", localtime);
     if ($log) { $LogWrite->print(sprintf "[%s] * %s\n", $now, $msg); }
     say $msg;
     return;
@@ -163,7 +168,7 @@ sub Logline {
 ### Write Log line (time stamp)
 sub Log {
     my $msg = shift;
-    my $now = strftime("%y/%m/%d %H:%M:%S", localtime);
+    my $now = strftime("%y-%m-%d %H:%M:%S", localtime);
     if ($log) { $LogWrite->print(sprintf "[%s] * %s\n", $now, $msg); }
     return;
 }
@@ -187,7 +192,7 @@ sub Logarray {
 ### Extended print info for execute system commands using $ command
 sub Logrun {
     my $msg = shift;
-    my $now = strftime("%y/%m/%d %H:%M:%S", localtime);
+    my $now = strftime("%y-%m-%d %H:%M:%S", localtime);
     if ($log) { $LogWrite->print(sprintf "[%s] \$ %s\n", $now, $msg); }
     return;
 }
@@ -239,21 +244,18 @@ sub usage {
 find_ghostscript();
 
 my $usage = <<"END_OF_USAGE";
-${title}Description
-   LTXimg is a "perl" script that automates the process of extracting and
+${title}Syntax
+\$ ltximg [<options>] [--] <filename>.<tex|ltx>
+
+Description
+   ltximg is a "perl" script that automates the process of extracting and
    converting "environments" provided by tikz, pstricks and other packages
    from LaTeX file to image formats and "standalone" files using ghostscript
    and poppler-utils. Generates a one file with only extracted environments
    and other with all extracted environments converted to \\includegraphics.
 
-Syntax
-\$ ltximg [<options>] [--] <filename>.<tex|ltx>
+   By default the extracted environments are:
 
-   If used without [<options>] the extracted environments are converted
-   to pdf image format and saved in "./images" directory using pdflatex
-   and preview package for process <filename>.
-
-Default environments extract
    preview pspicture tikzpicture pgfpicture psgraph postscript PSTexample
 
 Options
@@ -261,6 +263,10 @@ Options
    the option and the value. Multiple short options can be bundling and
    if the last option takes a comma separated list you need -- at the end.
    Relative or absolute paths for directories and files is not supported.
+
+   If used without [<options>] the extracted environments are converted
+   to pdf image format and saved in "./images" directory using pdflatex
+   and preview package for process.
 
                                                                     [default]
 -h, --help            Display command line help and exit            [off]
@@ -277,25 +283,25 @@ Options
 -g, --gray            Gray scale for images using ghostscript       [off]
 -f, --force           Capture "\\psset" and "\\tikzset" to extract    [off]
 -n, --noprew          Create images files without "preview" package [off]
--r <integer>, --runs <integer>
+-r <integer>, --runs=<integer>
                       Set the number of times the compiler will run
                       on the input file for environment extraction  [1]
--d <integer>, --dpi <integer>
+-d <integer>, --dpi=<integer>
                       Dots per inch resolution for images           [150]
--m <integer>, --margins <integer>
+-m <integer>, --margins=<integer>
                       Set margins in bp for pdfcrop                 [0]
--o <filename>, --output <filename>
+-o <filename>, --output=<filename>
                       Create output file                            [off]
---imgdir <dirname>    Set name of directory to save images/files    [images]
---prefix <string>     Set prefix append to each generated files     [fig]
---myverb <macroname>  Add "\\macroname" to verbatim inline search    [myverb]
---clean (doc|pst|tkz|all|off)
+--imgdir=<dirname>    Set name of directory to save images/files    [images]
+--prefix=<string>     Set prefix append to each generated files     [fig]
+--myverb=<macroname>  Add "\\macroname" to verbatim inline search    [myverb]
+--clean=doc|pst|tkz|all|off
                       Removes specific block text in output file    [doc]
 --zip                 Compress files generated in .zip              [off]
 --tar                 Compress files generated in .tar.gz           [off]
 --srcenv              Create files with only code of environments   [off]
 --subenv              Create standalone files for environments      [off]
---shell               Enable \\write18\{SHELL COMMAND\}              [off]
+--shell               Enable \\write18\{shell command\}                [off]
 --latex               Using latex>dvips>ps2pdf for compiler input
                       and pdflatex for compiler output              [off]
 --dvips               Using latex>dvips>ps2pdf for compiler input
@@ -311,29 +317,31 @@ Options
 --norun               Run script, but no create images files        [off]
 --nopdf               Don't create a ".pdf" image files             [off]
 --nocrop              Don't run pdfcrop                             [off]
---extrenv <env1,...>  Add new environments to extract               [empty]
---skipenv <env1,...>  Skip some default environments to extract     [empty]
---verbenv <env1,...>  Add new verbatim environments                 [empty]
---writenv <env1,...>  Add new verbatim write environments           [empty]
---deltenv <env1,...>  Delete environments in output file            [empty]
+--extrenv=<env1,...>  Add new environments to extract               [empty]
+--skipenv=<env1,...>  Skip some default environments to extract     [empty]
+--verbenv=<env1,...>  Add new verbatim environments                 [empty]
+--writenv=<env1,...>  Add new verbatim write environments           [empty]
+--deltenv=<env1,...>  Delete environments in output file            [empty]
 
 Example
-\$ ltximg --latex -e -p --subenv --imgdir mypics -o test-out test-in.ltx
+\$ ltximg --latex -e -p --subenv --imgdir mypics -o test-out.ltx test-in.ltx
 
-   Create a "./mypics" directory (if it doesn't exist) with all extracted
-   environments converted to images (.pdf, .eps, .png) and standalone files
-   (.ltx), a file "test-in-fig-all.ltx" with all extracted environments and
-   the file "test-out.ltx" with all environments converted to \\includegraphics
-   using latex>dvips>ps2pdf and preview package for <input file> and pdflatex
-   for <output file>.
+   Create a "./mypics" directory (if it doesn't exist) with all
+   extracted environments converted to ".pdf", ".eps", ".png" and
+   standalone files ".ltx", a file "test-in-fig-all.ltx" with all
+   extracted environments and the file "test-out.ltx" with all
+   environments converted to \\includegraphics using latex>dvips>ps2pdf
+   and preview package for <test-in.ltx> and pdflatex for
+   <test-out.ltx>.
 
 Documentation
 For full documentation use:
 \$ texdoc ltximg
 
 Issues and reports
-Repository   : https://github.com/pablgonz/ltximg
-Bug tracker  : https://github.com/pablgonz/ltximg/issues
+Repository : https://github.com/pablgonz/ltximg
+Bug tracker: https://github.com/pablgonz/ltximg/issues
+Copyright(C) 2013-2021 by Pablo González, pablgonz<at>yahoo.com
 END_OF_USAGE
 print $usage;
 exit 0;
@@ -358,7 +366,7 @@ my $result=GetOptions (
     'dvipdf'         => \$opts_cmd{compiler}{dvipdf},  # dvipdfmx compiler
     'dvilua'         => \$opts_cmd{compiler}{dvilua},  # dvilualatex compiler
     'luatex'         => \$opts_cmd{compiler}{luatex},  # lualatex compiler
-# bolean
+# boolean
     'zip'            => \$opts_cmd{boolean}{zip},    # zip images dir
     'tar'            => \$opts_cmd{boolean}{tar},    # tar images dir
     'shell'          => \$opts_cmd{boolean}{shell},  # set write18 for compiler
@@ -1547,7 +1555,6 @@ my $delt_env = qr {
                     )
                   }x;
 
-
 ########################################################################
 # In this first part the script only detects verbatim environments and #
 # verbatim write don't distinguish between which ones are extracted,   #
@@ -1769,9 +1776,9 @@ $bodydoc =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
 
 ########################################################################
 #  All environments are now classified:                                #
-#  Extraction       ->    \begin{preview} ... \end{preview}            #
+#  Extraction       ->    \begin{preview}   ... \end{preview}          #
 #  No Extraction    ->    \begin{nopreview} ... \end{nopreview}        #
-#  Verbatim's       ->    %<\*$dtxverb> ... <\/$dtxverb>               #
+#  Verbatim's       ->    %<\*$dtxverb>     ... <\/$dtxverb>           #
 ########################################################################
 
 ### The %<*remove> ... %</remove> tags need a special treatment :)
@@ -1820,7 +1827,7 @@ while ($preamble =~ /\%<\*$dtxverb>(.+?)\%<\/$dtxverb>/pgmsx) {
     pos ($preamble) = $pos_inicial + length $encontrado;
 }
 
-### Set wraped environments for extraction
+### Set wrapped environments for extraction
 my $wrapping = "$scriptname$tmp";
 Log("Set up the environment [$wrapping] to encapsulate the extraction");
 
@@ -2030,6 +2037,7 @@ else {
 
 ### Set options for compiler
 my $opt_compiler = $opts_cmd{compiler}{arara} ? '--log'
+                 : $opts_cmd{compiler}{xetex} ? "$write18 -interaction=nonstopmode -recorder -no-pdf"
                  :                              "$write18 -interaction=nonstopmode -recorder"
                  ;
 
@@ -2355,7 +2363,7 @@ if ($STDenv) {
     }
 }
 
-### Compiler and generate PDF files
+### Compiler and generate PDF files -dALLOWPSTRANSPARENCY
 if (!$opts_cmd{boolean}{norun}) {
 Log('Generate a PDF file with all captured environments');
 my @compiler = (1..$opts_cmd{string}{runs});
@@ -2367,10 +2375,14 @@ opendir (my $DIR, $workdir);
             for (@compiler){
                 RUNOSCMD("$compiler $opt_compiler","$+{name}$+{type}",'show');
             }
+            # Using xdvipdfmx
+            if ($compiler eq 'xelatex') {
+                RUNOSCMD("xdvipdfmx $quiet -E", "-o $+{name}-$tmp.pdf $+{name}-$tmp.xdv",'show');
+            }
             # Compiling file using latex>dvips>ps2pdf
             if ($compiler eq 'dvips' or $compiler eq 'latex' or $compiler eq 'dvilualatex') {
                 RUNOSCMD("dvips $quiet -Ppdf", "-o $+{name}-$tmp.ps $+{name}-$tmp.dvi",'show');
-                RUNOSCMD("ps2pdf -sPDFSETTINGS=prepress -sAutoRotatePages=None", "$+{name}-$tmp.ps  $+{name}-$tmp.pdf",'show');
+                RUNOSCMD("ps2pdf -sPDFSETTINGS=prepress -sAutoRotatePages=None -dALLOWPSTRANSPARENCY", "$+{name}-$tmp.ps  $+{name}-$tmp.pdf",'show');
             }
             # Compiling file using latex>dvipdfmx
             if ($compiler eq 'dvipdf') {
@@ -2986,7 +2998,7 @@ if ($opts_cmd{boolean}{zip} or $opts_cmd{boolean}{tar}) {
         }
         my $imgdirtar = Archive::Tar->new();
         $imgdirtar->add_files(@savetozt);
-        $imgdirtar->write( "$archivetar.tar.gz" , 9 );
+        $imgdirtar->write("$archivetar.tar.gz", 9);
     }
 }
 
@@ -3007,3 +3019,266 @@ Infocolor('Finish', "The execution of $scriptname has been successfully complete
 Log("The execution of $scriptname has been successfully completed");
 
 __END__
+=encoding UTF-8
+
+=head1 NAME
+
+ltximg - LaTeX environments to image and standalone files
+
+=head1 SYNOPSIS
+
+B<ltximg> [E<lt>I<options>E<gt>] [S<-->] E<lt>I<filename>E<gt>.E<lt>I<tex>|I<ltx>E<gt>
+
+=head1 DESCRIPTION
+
+B<ltximg> automates the process of extracting and converting
+environments from LaTeX file to image formats and I<standalone> files
+using I<ghostscript> and I<poppler-utils>. Generates a one file with
+only extracted environments and other with all extracted environments
+converted to C<\includegraphics>.
+
+By default the extracted environments are:
+
+B<preview> B<pspicture> B<tikzpicture> B<pgfpicture> B<psgraph> B<postscript> B<PSTexample>
+
+=head1 OPTIONS
+
+Options that accept a value require either a blank space or C<=> between
+the option and the value. Multiple short options can be bundling and
+if the last option takes a comma separated list you need C<--> at the end.
+Relative or absolute paths for directories and files is not supported.
+
+If used without [E<lt>I<options>E<gt>] the extracted environments are converted
+to I<pdf> image format and saved in C<./images> directory using C<pdflatex>
+and I<preview> package for process.
+
+General script options:
+
+=over 4
+
+=item B<-h>, B<--help>
+
+Display command line help and exit.
+
+=item B<-v>, B<--version>
+
+Display current version and exit.
+
+=item B<-V>, B<--verbose>
+
+Verbose printing information.
+
+=item B<-l>, B<--log>
+
+Write C<.log> file with debug information.
+
+=item B<-t>, B<--tif>
+
+Create C<.tif> files using I<ghostscript>.
+
+=item B<-b>, B<--bmp>
+
+Create C<.bmp> files using I<ghostscript>.
+
+=item B<-j>, B<--jpg>
+
+Create C<.jpg> files using I<ghostscript>.
+
+=item B<-p>, B<--png>
+
+Create C<.png> files using I<ghostscript>.
+
+=item B<-e>, B<--eps>
+
+Create C<.eps> files using I<pdftops>.
+
+=item B<-s>, B<--svg>
+
+Create C<.svg> files using I<pdftocairo>.
+
+=item B<-P>, B<--ppm>
+
+Create C<.ppm> files using I<pdftoppm>.
+
+=item B<-g>, B<--gray>
+
+Gray scale for images using I<ghostscript>.
+
+=item B<-f>, B<--force>
+
+Capture C<\psset> and C<\tikzset> to extract.
+
+=item B<-n>, B<--noprew>
+
+Create images files without I<preview> package.
+
+=item B<-r> I<integer>, B<--runs>=I<integer>
+
+Set the number of times the compiler will run on the F<input> file for
+environment extraction (default: 1).
+
+=item B<-d> I<integer>, B<--dpi>=I<integer>
+
+Dots per inch resolution for images (default: 150).
+
+=item B<-m> I<integer>, B<--margins>=I<integer>
+
+Set margins in bp for I<pdfcrop> (default: 0).
+
+=item B<-o> F<filename>, B<--output>=F<filename>
+
+Create F<output> file.
+
+=item B<--imgdir>=I<dirname>
+
+Set name of directory to save images and files (default: images).
+
+=item B<--prefix>=I<string>
+
+Set I<prefix> append to each generated files (default: fig).
+
+=item B<--myverb>=I<macroname>
+
+Add C<\macroname> to verbatim inline search (default: myverb).
+
+=item B<--clean>=I<doc>|I<pst>|I<tkz>|I<all>|I<off>
+
+Removes specific block text in F<output> file (default: doc).
+
+=item B<--zip>
+
+Compress files generated in C<.zip> format.
+
+=item B<--tar>
+
+Compress files generated in C<.tar.gz> format.
+
+=item B<--srcenv>
+
+Create files with only code of environments.
+
+=item B<--subenv>
+
+Create standalone files for environments.
+
+=item B<--shell>
+
+Enable C<\write18{SHELL COMMAND}>.
+
+=item B<--latex>
+
+Using C<latexE<gt>dvipsE<gt>ps2pdf> for compiler F<input> and C<pdflatex> for compiler
+F<output>.
+
+=item B<--dvips>
+
+Using C<latexE<gt>dvipsE<gt>ps2pdf> for compiler F<input> and C<latexE<gt>dvipsE<gt>ps2pdf> for
+compiler F<output>.
+
+=item B<--dvilua>
+
+Using C<dvilualatexE<gt>dvipsE<gt>ps2pdf> for compiler F<input> and C<lualatex> for
+compiler F<output>.
+
+=item B<--dvipdf>
+
+Using C<latexE<gt>dvipdfmx> for compiler F<input> and C<latexE<gt>dvipdfmx> for compiler
+F<output>.
+
+=item B<--xetex>
+
+Using C<xelatex> for compiler F<input> and F<output>.
+
+=item B<--luatex>
+
+Using C<lualatex> for compiler F<input> and F<output>.
+
+=item B<--arara>
+
+Use C<arara> for compiler F<input> and F<output>.
+
+=item B<--latexmk>
+
+Using C<latexmk> for compiler F<output> file.
+
+=item B<--norun>
+
+Run script, but no create images files.
+
+=item B<--nopdf>
+
+Don't create a C<.pdf> image files.
+
+=item B<--nocrop>
+
+Don't run I<pdfcrop>.
+
+=item B<--extrenv>=I<env1,env2,...>
+
+Add new environments to extract.
+
+=item B<--skipenv>=I<env1,env2,...>
+
+Skip some default environments to extract.
+
+=item B<--verbenv>=I<env1,env2,...>
+
+Add new verbatim environments.
+
+=item B<--writenv>=I<env1,env2,...>
+
+Add new verbatim write environments.
+
+=item B<--deltenv>=I<env1,env2,...>
+
+Delete environments in F<output> file.
+
+=back
+
+=head1 EXAMPLE
+
+B<ltximg> --latex -e -p --subenv -o test-out.ltx test-in.ltx
+
+Create a C<./images> directory (if it doesn't exist) with all extracted
+environments converted to C<.pdf>, C<.eps>, C<.png> and I<standalone>
+files, a file F<test-in-fig-all.ltx> with all extracted environments
+and the file F<test-out.ltx> with all environments converted to
+C<\includegraphics> using C<latexE<gt>dvipsE<gt>ps2pdf> and I<preview>
+package for F<test-in.ltx> and C<pdflatex> for F<test-out.ltx>.
+
+=head1 DOCUMENTATION
+
+For full documentation use:
+
+texdoc B<ltximg>
+
+=head1 ISSUES AND REPORTS
+
+B<Repository> : L<https://github.com/pablgonz/ltximg>
+
+B<Bug tracker>: L<https://github.com/pablgonz/ltximg/issues>
+
+=head1 AUTHOR
+
+Pablo González Luengo, I<pablgonz@yahoo.com>.
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2013-2021 Pablo González, I<pablgonz@yahoo.com>.
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+=head1 SEE ALSO
+
+gs(1), dvips(1), ps2pdf(1), pdfcrop(1), pdftops(1), pdftocairo(1), pdftoppm(1)
+
+=cut
+

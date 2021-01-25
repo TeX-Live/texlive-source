@@ -1403,11 +1403,12 @@ proc toggle_pl_marked {pl cl} {
   set m1 [expr {[dict get $::platforms $pl "fut"] ? 0 : 1}]
   dict set ::platforms $pl "fut" $m1
   set m0 [dict get $::platforms $pl "cur"]
-  if {$m0 == $m1} {
-    .tlpl.pl set $pl "stat" [mark_sym $m0]
+  if {$m1 eq $m0} {
+    .tlpl.pl tag remove "changed" $pl
   } else {
-    .tlpl.pl set $pl "stat" "[mark_sym $m0] \u21d2 [mark_sym $m1]"
+    .tlpl.pl tag add "changed" $pl
   }
+  .tlpl.pl set $pl "stat" [mark_sym $m1]
   # any changes to apply?
   .tlpl.do state disabled
   dict for {pname pdict} $::platforms {
@@ -1449,7 +1450,7 @@ proc platforms_commit {} {
 
 } ; # platforms_commit
 
-  # the platforms dialog
+# the platforms dialog
 proc platforms_select {} {
   if {$::tcl_platform(platform) eq "windows"} return
 
@@ -1470,10 +1471,14 @@ proc platforms_select {} {
   ttk::button .tlpl.dont -text [__ "Close"] -command \
       {end_dlg "" .tlpl}
   ppack .tlpl.do -in .tlpl.but -side right
-  ppack .tlpl.dont -in .tlpl.but -side right
+  ppack .tlpl.dont -in .tlpl.but -side left
   bind .tlpl <Escape> {.tlpl.dont invoke}
 
+  pack [ttk::label .tlpl.bold -text [__ "Changed entries are bold"] \
+           -font bfont] -in .tlpl.bg -side bottom
+
   # platforms treeview; do we need a scrollbar?
+
   pack [ttk::frame .tlpl.fpl] -in .tlpl.bg -fill both -expand 1
   ttk::treeview .tlpl.pl -columns {stat plat} -show headings \
       -height [dict size $::platforms] -yscrollcommand {.tlpl.plsb set}
@@ -1481,9 +1486,13 @@ proc platforms_select {} {
   ttk::scrollbar .tlpl.plsb -orient vertical \
       -command {.tlpl.pl yview}
   ppack .tlpl.plsb -in .tlpl.fpl -side right -fill y -expand 1
-  .tlpl.pl column stat -width [expr {$::cw * 8}]
+  .tlpl.pl column stat -width [expr {$::cw * 3}]
   .tlpl.pl heading plat -text [__ "platform"] -anchor w
   .tlpl.pl column plat -width [expr {$::cw * 20}]
+
+  # tag for indicating changed entries
+  .tlpl.pl tag configure "changed" -font bfont
+
   dict for {pname pdict} $::platforms {
     dict set ::platforms $pname "fut" [dict get $pdict "cur"]
   }
@@ -1506,6 +1515,168 @@ proc platforms_select {} {
   place_dlg .tlpl .
 } ; # platforms_select
 
+### paper sizes
+
+# for the simple options:
+proc set_all_papers {p} {
+  run_cmd "paper paper $p" 1
+}
+
+# the next few procs are for the advanced paper selection dialog
+
+proc paper_diff {} {
+  # check for different values and update widgets accordingly
+  set n [lindex [array names ::papers] 0]
+  set p $::papers($n)
+  set ::allpapers $p
+  set ::paperchanges 0
+  .tlpap.do state disabled
+  foreach nm [array names ::papers] {
+  .tlpap.radios.$nm configure -font TkDefaultFont
+    if {$::papers($nm) ne $p} {set ::allpapers ""}
+    if  {$::papers($nm) ne $::prevpapers($nm)} {
+     .tlpap.radios.$nm configure -font bfont
+      set ::paperchanges 1
+      .tlpap.do state !disabled
+    }
+  }
+}
+
+proc allpapers_adv {} {
+  # ::allpapers has already been set
+  set ::paperchanges 0
+  .tlpap.do state disabled
+  foreach nm [array names ::papers] {
+    set ::papers($nm) $::allpapers
+  }
+  paper_diff
+}
+
+proc commit_papers {} {
+  foreach nm [array names ::papers] {
+    if {$::papers($nm) ne $::prevpapers($nm)} {
+      set cmd "paper $nm paper $::papers($nm)"
+      if [catch {run_cmd_waiting $cmd} res] {
+        puts "failed paper setting: $res"
+      }
+    }
+  }
+  # clean up no longer needed globals
+  foreach nm [array names ::papers] {unset -nocomplain ::papers($nm)}
+  foreach nm [array names ::prevpapers] {unset -nocomplain ::prevpapers($nm)}
+  unset -nocomplain ::allpapers
+  unset -nocomplain ::paperchanges
+}
+
+proc papersize_advanced {} {
+  # dialog for settings papersize for:
+  # all | pdftex | dvipdfmx | context | dvips | psutils | xdvi
+  # on windows, xdvi is omitted
+  # we also insert a non-existent engine to test handling of missing entries
+  # we could have handled papers somewhat like the platforms dialog,
+  # but radio buttons seem more natural,
+  # and there are not enough items to worry about scrollability.
+  # we create a grid with the radio buttons and a column 'changed'.
+
+  set ::papers(dummy) "" ; # dummy: see comment above
+  foreach nm {"pdftex" "dvipdfmx" "context" "dvips" "psutils" "xdvi"} {
+    set ::papers($nm) ""
+  }
+  if {$::tcl_platform(platform) eq "windows"} {
+    unset -nocomplain ::papers(xdvi)
+  }
+  foreach nm [array names ::papers] {
+    if {[catch {run_cmd_waiting "paper $nm paper"} ::papers($nm)] ||
+        ([llength $::err_log]<1)} {
+      unset -nocomplain ::papers($nm)
+    } else {
+      set l [lindex $::err_log 0]
+      set r [string last "): " $l]
+      if {$r<0} {
+        unset -nocomplain ::papers($nm)
+        continue
+      } else {
+        set r [expr {$r+3}]
+        set ::papers($nm) [string tolower [string range $l $r end]]
+      }
+      if {$::papers($nm) ne "a4" && $::papers($nm) ne "letter"} {
+        set $::papers($nm) ""
+      }
+    }
+  }
+  set nms [array names ::papers] ; # invalid names have now been weeded out
+  if {[llength $nms] < 1} {
+    tk_messageBox -title [__ "Error"] -message [__ "No papersizes available"]
+    # we did not yet start building the dialog, so we can just:
+    return
+  }
+  set nm0 [lindex $nms 0]
+  set ::allpapers $::papers($nm0)
+  foreach nm $nms {
+    set ::prevpapers($nm) $::papers($nm)
+    if {$::papers($nm) ne $::allpapers} {set ::allpapers ""}
+  }
+  set ::paperchanges 0
+
+  # build gui
+  create_dlg .tlpap
+  wm title .tlpap [__ "Paper sizes"]
+  if $::plain_unix {wm attributes .tlpap -type dialog}
+
+  # wallpaper frame
+  pack [ttk::frame .tlpap.bg] -expand 1 -fill both
+
+  # grid with radio buttons
+  pack [ttk::frame .tlpap.radios] -in .tlpap.bg
+
+  foreach {p c} {"a4" 1 "letter" 2} {
+    pgrid [ttk::label .tlpap.radios.head$p -text $p -font bfont] \
+        -row 0 -column $c
+  }
+  grid [ttk::separator .tlpap.radios.sep0 -orient horizontal] \
+      -row 1 -column 0 -columnspan 3 -sticky ew
+  pgrid [ttk::label .tlpap.radios.lall -text [__ "All"]] \
+      -row 2 -column 0 -sticky e
+  foreach {p c} {"a4" 1 "letter" 2} {
+    pgrid [ttk::radiobutton .tlpap.radios.${p}all -value $p \
+        -variable ::allpapers -command allpapers_adv] -row 2 -column $c
+  }
+  grid [ttk::separator .tlpap.radios.sep1 -orient horizontal] \
+      -row 3 -column 0 -columnspan 3 -sticky ew
+  set rw 3
+  foreach nm $nms {
+    incr rw
+    pgrid [ttk::label .tlpap.radios.$nm -text $nm] \
+        -row $rw -column 0 -sticky e
+    foreach {p c} {"a4" 1 "letter" 2} {
+      pgrid [ttk::radiobutton .tlpap.radios.$p$nm -value $p \
+          -variable ::papers($nm) -command paper_diff] -row $rw -column $c
+    }
+  }
+  incr rw
+  grid [ttk::separator .tlpap.radios.sep2 -orient horizontal] \
+      -row $rw -column 0 -columnspan 3 -sticky ew
+
+  # buttons
+  pack [ttk::frame .tlpap.but] -in .tlpap.bg -side bottom -fill x
+  ttk::button .tlpap.do -text [__ "Apply and close"] -command {
+    disable_dlg .tlpap
+    commit_papers
+    end_dlg "" .tlpap
+  }
+  ttk::button .tlpap.dont -text [__ "Close"] -command \
+      {end_dlg "" .tlpap}
+  ppack .tlpap.do -in .tlpap.but -side right
+  ppack .tlpap.dont -in .tlpap.but -side right
+  .tlpap.do state disabled
+  bind .tlpap <Escape> {.tlpap.dont invoke}
+
+  pack [ttk::label .tlpap.bold -text [__ "Changed entries are bold"] \
+           -font bfont] -in .tlpap.bg -side bottom
+
+  wm resizable .tlpap 0 0
+  place_dlg .tlpap .
+}
 
 ##### restore from backup #####
 
@@ -2033,10 +2204,6 @@ proc do_package_popup_menu {x y X Y} {
   focus .pkg_popup
 } ; # do_package_popup_menu
 
-proc set_paper {p} {
-  run_cmd "paper paper $p" 1
-}
-
 #### gui options ####
 
 proc set_language {l} {
@@ -2208,10 +2375,12 @@ proc populate_main {} {
   .mn.opt add cascade -label [__ "Paper ..."] -menu .mn.opt.paper
   incr inx
   menu .mn.opt.paper
-  foreach p [list A4 letter] {
+  foreach p {a4 letter} {
     .mn.opt.paper add command -label $p -command \
-        "set_paper [string tolower $p]"
+        "set_all_papers [string tolower $p]"
   }
+  .mn.opt.paper add command -label "[__ "Advanced"] ..." \
+      -command papersize_advanced
 
   if {[llength $::langs] > 1} {
     incr inx
