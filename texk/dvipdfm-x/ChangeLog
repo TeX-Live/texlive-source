@@ -1,3 +1,10 @@
+2021-01-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvipdfmx.c: Set the runtime flag suppressing error messages
+	for kpathsea library when "-q" option is used.
+	* dvipdfmx.c, xbb.c: Update copyright year.
+	https://tug.org/pipermail/dvipdfmx/2021-January/000216.html
+
 2021-01-24  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_misc.c: Add a compatibility special pdffontattr.
