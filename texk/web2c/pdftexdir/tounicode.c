@@ -479,7 +479,7 @@ integer write_tounicode(char **glyph_names, const char *tfmname,
 void dumptounicode(void)
 {
     struct avl_traverser traverse;
-    size_t count;
+    integer count;
     glyph_unicode_entry *gu;
 
     if (glyph_unicode_tree == NULL) {
@@ -504,7 +504,7 @@ void dumptounicode(void)
 void undumptounicode(void)
 {
     glyph_unicode_entry *tmp;
-    size_t remaining;
+    integer remaining;
 
     generic_undump(remaining);
 
