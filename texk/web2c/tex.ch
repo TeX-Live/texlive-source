@@ -72,10 +72,10 @@ a modified \TeX{} version.
 @z
 
 @x [1.2] l.188
-@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @y
-@d TeX_banner_k=='This is TeXk, Version 3.14159265' {printed when \TeX\ starts}
-@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
+@d TeX_banner_k=='This is TeXk, Version 3.141592653' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @#
 @d banner==TeX_banner
 @d banner_k==TeX_banner_k
@@ -871,25 +871,6 @@ if (halt_on_error_p) then begin
 end;
 @z
 
-% Original reports:
-%   https://tex.stackexchange.com/questions/551313/
-%   https://tug.org/pipermail/tex-live/2020-June/045876.html
-%
-% This will probably be fixed by DEK in the 2021 tuneup in a different
-% way (so we'll have to remove or alter this change), but the interaction
-% sequence in the reports above causes a segmentation fault in web2c -
-% writing to the closed \write15 stream because we wrongly decrement
-% selector from 16 to 15 in term_input, due to the lack of this check in
-% a recursive error() call.
-%
-@x [6.83] l.1893 - avoid wrong interaction 
-loop@+begin continue: clear_for_error_prompt; prompt_input("? ");
-@y
-loop@+begin continue:
-if interaction<>error_stop_mode then return;
-clear_for_error_prompt; prompt_input("? ");
-@z
-
 @x [6.84] l.1904 - Implement the switch-to-editor option.
 line ready to be edited. But such an extension requires some system
 wizardry, so the present implementation simply types out the name of the
@@ -916,14 +897,14 @@ been commented~out.
 @z
 
 @x [6.84] l.1903 - Implement the switch-to-editor option.
-"E": if base_ptr>0 then
+"E": if base_ptr>0 then if input_stack[base_ptr].name_field>=256 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
   slow_print(input_stack[base_ptr].name_field);
   print(" at line "); print_int(line);
   interaction:=scroll_mode; jump_out;
 @y
-"E": if base_ptr>0 then
+"E": if base_ptr>0 then if input_stack[base_ptr].name_field>=256 then
     begin edit_name_start:=str_start[edit_file.name_field];
     edit_name_length:=str_start[edit_file.name_field+1] -
                       str_start[edit_file.name_field];
@@ -1315,26 +1296,29 @@ char_sub_def_min:=256; char_sub_def_max:=-1;
 input and output, establishes the initial values of the date and time.
 @^system dependencies@>
 Since standard \PASCAL\ cannot provide such information, something special
-is needed. The program here simply specifies July 4, 1776, at noon; but
-users probably want a better approximation to the truth.
+is needed. The program here simply assumes that suitable values appear in
+the global variables \\{sys\_time}, \\{sys\_day}, \\{sys\_month}, and
+\\{sys\_year} (which are initialized to noon on 4 July 1776,
+in case the implementor is careless).
 
 @p procedure fix_date_and_time;
-begin time:=12*60; {minutes since midnight}
-day:=4; {fourth day of the month}
-month:=7; {seventh month of the year}
-year:=1776; {Anno Domini}
-end;
+begin sys_time:=12*60;
+sys_day:=4; sys_month:=7; sys_year:=1776;  {self-evident truths}
 @y
-@ The following procedure, which is called just before \TeX\ initializes its
-input and output, establishes the initial values of the date and time.
-It calls a macro-defined |date_and_time| routine.  |date_and_time|
-in turn is a C macro, which calls |get_date_and_time|, passing
-it the addresses of the day, month, etc., so they can be set by the
-routine.  |get_date_and_time| also sets up interrupt catching if that
-is conditionally compiled in the C code.
+@ The following procedure, which is called just before \TeX\ initializes
+its input and output, establishes the initial values of the date and
+time. It calls a |date_and_time| C macro (a.k.a.\ |dateandtime|), which
+calls the C function |get_date_and_time|, passing it the addresses of
+|sys_time|, etc., so they can be set by the routine. |get_date_and_time|
+also sets up interrupt catching if that is conditionally compiled in the
+C code.
+
+We have to initialize the |sys_| variables because that is what gets
+output on the first line of the log file. (New in 2021.)
 @^system dependencies@>
 
-@d fix_date_and_time==date_and_time(time,day,month,year)
+@p procedure fix_date_and_time;
+begin date_and_time(sys_time,sys_day,sys_month,sys_year);
 @z
 
 @x [17.252] l.5420 - hash_extra
@@ -2141,7 +2125,7 @@ slow_print(full_source_filename_stack[in_open]); update_terminal;
 @z
 
 @x [29.537] l.10360 - start_input: don't return filename to string pool.
-if name=str_ptr-1 then {we can conserve string pool space now}
+if name=str_ptr-1 then {conserve string pool space (but see note above)}
   begin flush_string; name:=cur_name;
   end;
 @y
@@ -2184,7 +2168,7 @@ if name=str_ptr-1 then {we can conserve string pool space now}
   {start of |lig_kern| program for left boundary character,
   |non_address| if there is none}
 @!font_bchar:array[internal_font_number] of min_quarterword..non_char;
-  {right boundary character, |non_char| if there is none}
+  {boundary character, |non_char| if there is none}
 @!font_false_bchar:array[internal_font_number] of min_quarterword..non_char;
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @y
@@ -2215,7 +2199,7 @@ if name=str_ptr-1 then {we can conserve string pool space now}
   {start of |lig_kern| program for left boundary character,
   |non_address| if there is none}
 @!font_bchar: ^nine_bits;
-  {right boundary character, |non_char| if there is none}
+  {boundary character, |non_char| if there is none}
 @!font_false_bchar: ^nine_bits;
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @z
@@ -2967,9 +2951,9 @@ $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_trie_op)|,\qquad
 @z
 
 @x [43.943] l.18346 - web2c can't parse negative lower bounds in arrays.  Sorry.
-@!init@! trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
+@!init @!trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
 @y
-@!init@! trie_op_hash:array[neg_trie_op_size..trie_op_size] of 0..trie_op_size;
+@!init @!trie_op_hash:array[neg_trie_op_size..trie_op_size] of 0..trie_op_size;
 @z
 
 @x [43.943] l.18348 - bigtrie: Larger hyphenation tries.
@@ -3085,7 +3069,7 @@ tini
 @z
 
 @x [43.590] l.18524 - Dynamically allocate & larger tries.
-@!init@!trie_taken:packed array[1..trie_size] of boolean;
+@!init @!trie_taken:packed array[1..trie_size] of boolean;
   {does a family start here?}
 @t\hskip10pt@>@!trie_min:array[ASCII_code] of trie_pointer;
   {the first possible slot for each character}
@@ -3093,7 +3077,7 @@ tini
 @t\hskip10pt@>@!trie_not_ready:boolean; {is the trie still in linked form?}
 tini
 @y
-@!init@!trie_taken: ^boolean;
+@!init @!trie_taken: ^boolean;
   {does a family start here?}
 @t\hskip10pt@>@!trie_min:array[ASCII_code] of trie_pointer;
   {the first possible slot for each character}
@@ -4309,8 +4293,8 @@ if trie_not_ready then begin {initex without format loaded}
 % running.  The best approximation is to do a core dump, then run the
 % debugger on it later.
 @x [52.1338] l.24411 - Core-dump in debugging mode on 0 input.
-    begin goto breakpoint;@\ {go to every label at least once}
-    breakpoint: m:=0; @{'BREAKPOINT'@}@\
+    begin goto breakpoint;@/ {go to every declared label at least once}
+    breakpoint: m:=0; @{'BREAKPOINT'@}@/
     end
 @y
     dump_core {do something to cause a core dump}

@@ -40,9 +40,9 @@
 @z
 
 @x
-@d banner=='This is Aleph, Version 3.14159265-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.141592653-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @y
-@d banner=='This is Aleph, Version 3.14159265-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.141592653-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @d banner_k==banner {Web2C announces itself}
 @z
 
@@ -740,13 +740,14 @@ end;
 % selector from 16 to 15 in term_input, due to the lack of this check in
 % a recursive error() call.
 %
-@x [6.83] l.1893 - avoid wrong interaction 
-loop@+begin continue: clear_for_error_prompt; prompt_input("? ");
-@y
-loop@+begin continue:
-if interaction<>error_stop_mode then return;
-clear_for_error_prompt; prompt_input("? ");
-@z
+%@x [6.83] l.1893 - avoid wrong interaction 
+%applied in 3.141592653
+%loop@+begin continue: clear_for_error_prompt; prompt_input("? ");
+%@y
+%loop@+begin continue:
+%if interaction<>error_stop_mode then return;
+%clear_for_error_prompt; prompt_input("? ");
+%@z
 
 @x [6.84] l.1904 - Implement the switch-to-editor option.
 line ready to be edited. But such an extension requires some system
@@ -774,14 +775,14 @@ been commented~out.
 @z
 
 @x [6.84] l.1903 - Implement the switch-to-editor option.
-"E": if base_ptr>0 then
+"E": if base_ptr>0 then if input_stack[base_ptr].name_field>=256 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
   slow_print(input_stack[base_ptr].name_field);
   print(" at line "); print_int(line);
   interaction:=scroll_mode; jump_out;
 @y
-"E": if base_ptr>0 then
+"E": if base_ptr>0 then if input_stack[base_ptr].name_field>=256 then
     begin edit_name_start:=str_start(edit_file.name_field);
     edit_name_length:=str_start(edit_file.name_field+1) -
     		      str_start(edit_file.name_field);
@@ -950,23 +951,24 @@ page_depth:=0; page_max_depth:=0;
 input and output, establishes the initial values of the date and time.
 @^system dependencies@>
 Since standard \PASCAL\ cannot provide such information, something special
-is needed. The program here simply specifies July 4, 1776, at noon; but
-users probably want a better approximation to the truth.
+is needed. The program here simply assumes that suitable values appear in
+the global variables \\{sys\_time}, \\{sys\_day}, \\{sys\_month}, and
+\\{sys\_year} (which are initialized to noon on 4 July 1776,
+in case the implementor is careless).
 
 @p procedure fix_date_and_time;
-begin time:=12*60; {minutes since midnight}
-day:=4; {fourth day of the month}
-month:=7; {seventh month of the year}
-year:=1776; {Anno Domini}
+begin sys_time:=12*60;
+sys_day:=4; sys_month:=7; sys_year:=1776;  {self-evident truths}
+time:=sys_time; {minutes since midnight}
+day:=sys_day; {day of the month}
+month:=sys_month; {month of the year}
+year:=sys_year; {Anno Domini}
 end;
 @y
 @ The following procedure, which is called just before \TeX\ initializes its
 input and output, establishes the initial values of the date and time.
-It calls a macro-defined |date_and_time| routine.  |date_and_time|
-in turn is a C macro, which calls |get_date_and_time|, passing
-it the addresses of the day, month, etc., so they can be set by the
-routine.  |get_date_and_time| also sets up interrupt catching if that
-is conditionally compiled in the C code.
+It calls an externally defined |date_and_time|, which also sets up
+interrupt catching. See more comments in \.{tex.ch}.
 @^system dependencies@>
 
 @d fix_date_and_time==o_date_and_time(int_base+time_code,
@@ -1624,7 +1626,7 @@ if name=str_ptr-1 then {we can try to conserve string pool space now}
 @z
 
 @x [29.537] l.10359 - start_input: don't return filename to string pool.
-if name=str_ptr-1 then {we can conserve string pool space now}
+if name=str_ptr-1 then {conserve string pool space (but see note above)}
   begin flush_string; name:=cur_name;
   end;
 @y
@@ -2009,9 +2011,9 @@ not_found:
 @z
 
 @x [43.943] l.18346 - web2c can't parse negative lower bounds in arrays.  Sorry.
-@!init@! trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
+@!init @!trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
 @y
-@!init@! trie_op_hash:array[neg_trie_op_size..trie_op_size] of 0..trie_op_size;
+@!init @!trie_op_hash:array[neg_trie_op_size..trie_op_size] of 0..trie_op_size;
 @z
 
 @x [43.944] l.18365 - web2c can't parse negative lower bounds in arrays.  Sorry
@@ -2057,7 +2059,7 @@ tini
 @z
 
 @x [43.590] l.18524 - Dynamically allocate & larger tries.
-@!init@!trie_taken:packed array[1..trie_size] of boolean;
+@!init @!trie_taken:packed array[1..trie_size] of boolean;
   {does a family start here?}
 @t\hskip10pt@>@!trie_min:array[ASCII_code] of trie_pointer;
   {the first possible slot for each character}
@@ -2065,7 +2067,7 @@ tini
 @t\hskip10pt@>@!trie_not_ready:boolean; {is the trie still in linked form?}
 tini
 @y
-@!init@!trie_taken: ^boolean;
+@!init @!trie_taken: ^boolean;
   {does a family start here?}
 @t\hskip10pt@>@!trie_min:^trie_pointer;
   {the first possible slot for each character}
@@ -2616,6 +2618,12 @@ final_end: do_final_end;
 end {|main_body|};
 @z
 
+@x
+begin @<Finish the extensions@>; new_line_char:=-1;
+@y
+begin @<Finish the extensions@>; set_new_eqtb_int(int_base+new_line_char_code,-1);
+@z
+
 @x [51.1333] l.24254 - Print new line before termination; switch to editor if necessary.
     slow_print(log_name); print_char(".");
     end;
@@ -2632,6 +2640,12 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
 @x [51.1334] l. - Remove reference to fontmemsize
   wlog_ln(', out of ',font_mem_size:1,' for ',font_max-font_base:1);@/
 @y
+@z
+
+@x
+begin c:=cur_chr; if c<>1 then new_line_char:=-1;
+@y
+begin c:=cur_chr; if c<>1 then set_new_eqtb_int(int_base+new_line_char_code,-1);
 @z
 
 @x [51.1335] l.24335 - Only do dump if ini.
@@ -2687,8 +2701,8 @@ if trie_not_ready then begin {initex without format loaded}
 % running.  The best approximation is to do a core dump, then run the
 % debugger on it later.
 @x [52.1338] l.24411 - Core-dump in debugging mode on 0 input.
-    begin goto breakpoint;@\ {go to every label at least once}
-    breakpoint: m:=0; @{'BREAKPOINT'@}@\
+    begin goto breakpoint;@/ {go to every declared label at least once}
+    breakpoint: m:=0; @{'BREAKPOINT'@}@/
     end
 @y
     dump_core {do something to cause a core dump}

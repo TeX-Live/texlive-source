@@ -304,13 +304,6 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
-@x [179] only used when debugging
-@!k:0..long_buf_size; {index into |buffer|}
-@y
-@!debug @!k:0..long_buf_size; {index into |buffer|}
-gubed@;
-@z
-
 @x [239] omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y

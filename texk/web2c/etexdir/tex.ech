@@ -35,10 +35,10 @@
 % Consequently, changes in all these files have to be coordinated.
 
 @x [1] m.2 l.188 - Web2C: extensions imply we're not e-TeX
-@d eTeX_banner=='This is e-TeX, Version 3.14159265',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.141592653',eTeX_version_string
 @y
-@d eTeX_banner_k=='This is e-TeXk, Version 3.14159265',eTeX_version_string
-@d eTeX_banner=='This is e-TeX, Version 3.14159265',eTeX_version_string
+@d eTeX_banner_k=='This is e-TeXk, Version 3.141592653',eTeX_version_string
+@d eTeX_banner=='This is e-TeX, Version 3.141592653',eTeX_version_string
 @z
 
 @x [16.215] - e-TeX last_node_type

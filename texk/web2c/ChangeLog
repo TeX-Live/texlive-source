@@ -1,3 +1,100 @@
+2021-01-29  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: mention tuneup.
+
+	* alephdir/alephextra.h,
+	* alephdir/com16bit.ch,
+	* alephdir/eobase.ch,
+	* alephdir/eocprt.ch,
+	* alephdir/eoext.ch,
+	* alephdir/eover.ch,
+	* alephdir/om16bit.ch,
+	* alephdir/omfont.ch,
+	* alephdir/omstr.ch,
+	* eptexdir/eptex.ech,
+	* eptexdir/eptexextra.h,
+	* etexdir/etex.ch,
+	* etexdir/etexextra.h,
+	* etexdir/tex.ch0,
+	* etexdir/tex.ech,
+	* euptexdir/euptex.ch0,
+	* euptexdir/euptexextra.h,
+	* lib/texmfmp.c,
+	* mf-binpool.ch,
+	* mf.ch,
+	* mfluadir/mf-lua.ch,
+	* mfluadir/mflua_version.h,
+	* mfluadir/mfluaextra.h,
+	* mfluajitdir/mf-luajit.ch,
+	* mfluajitdir/mfluajitextra.h,
+	* mft.ch,
+	* pdftexdir/pdftexextra.h,
+	* pdftexdir/tex.ch0,
+	* ptexdir/ptex-base.ch,
+	* ptexdir/ptexextra.h,
+	* tangle.ch,
+	* tangleboot.pin,
+	* tex.ch,
+	* uptexdir/uptex-m.ch,
+	* uptexdir/uptexextra.h,
+	* weave.ch,
+	* xetexdir/xetexextra.h: updates for 2021 tuneup.
+
+	* mftraptest.test,
+	* triptest.test,
+	* triptrap-sh,
+	* mfluadir/mfluatrap/mfluatrap.diffs,
+	* etexdir/etrip/etrip.diffs,
+	* triptrap/trip.diffs,
+	* triptrap/mftrap.diffs,
+	* triptrap/mptrap.diffs,
+	* eptexdir/eptrip/eptrip.diffs,
+	* uptexdir/uptrip/uptrip.diffs,
+	* euptexdir/euptrip/euptrip.diffs,
+	* mfluajitdir/mfluajittrap/mfluajittrap.diffs,
+	* ptexdir/ptrip/ptrip.diffs: trip/trap updates for 2021 tuneup.
+
+	* tangleboot.pin: update bootstrap file.
+
+	* triptrap/README,
+	* Makefile.am: doc for running triptrap.
+
+2021-01-29  Donald Knuth  <tex-k@tug.org>
+
+	2021 tuneup update. Overview:
+	  https://tug.org/TUGboat/tb42-1/tb130knuth-tuneup21.pdf
+	Bug reporting info:
+	  https://tug.org/texmfbug/
+	New TeX version is 3.141592653, MF 2.71828182.
+
+	* dvitype.web,
+	* gftodvi.web,
+	* gftopk.web,
+	* gftype.web,
+	* mf.web,
+	* mft.web,
+	* pltotf.web,
+	* pooltype.web,
+	* tangle.web,
+	* tex.web,
+	* tftopl.web,
+	* vftovp.web,
+	* vptovf.web,
+	* weave.web: new versions. BTW, these are all of the web
+	files which DEK maintains. The rest are maintained by other people:
+	bibtex.web (Oren), patgen.web and dvicopy.web (here),
+	pktype.web and pktogf.web (Tom Rokicki).
+	
+	* triptrap/mftrap.fot,
+	* triptrap/mftrap.log,
+	* triptrap/mftrapin.log,
+	* triptrap/trap.typ,
+	* triptrap/trip.fot,
+	* triptrap/trip.log,
+	* triptrap/trip.tex,
+	* triptrap/trip.typ,
+	* triptrap/tripin.log: trip and trap test updates.
+
 2020-10-27  Karl Berry  <karl@freefriends.org>
 
 	* pktogf.web: TFM widths are 2^20 times the ratio, not 2^24.

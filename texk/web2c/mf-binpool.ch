@@ -3,11 +3,11 @@
 %
 @x
 @!m,@!n:text_char; {characters input from |pool_file|}
-@!g:str_number; {garbage}
+@!g:str_number; {the string just created}
 @!a:integer; {accumulator for check sum}
 @!c:boolean; {check sum has been checked}
 @y
-@!g:str_number; {garbage}
+@!g:str_number; {the string just created}
 @z
 @x
 @ @d bad_pool(#)==begin wake_up_terminal; write_ln(term_out,#);

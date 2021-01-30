@@ -1,5 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 
+* Knuth 2021 tune-up, with fixes to all of his *.web files. Overview:
+https://tug.org/TUGboat/42-1/tb130knuth-tuneup21.pdf
+New TeX version is 3.141592653, MF 2.71828182.
+
 * pdftex, xetex, e(u)ptex: if \tracinglostchars >= 3,
 make missing characters an error (not just a log message),
 and always report the character code in hex.

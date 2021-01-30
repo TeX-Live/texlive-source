@@ -1,8 +1,8 @@
 @x [0] MFLua
 % This program is copyright (C) 1984 by D. E. Knuth; all rights are reserved.
 @y
-% This program is MFLua, strictly based on the METAFONT 2.7182818 source code.
-% What follow are the original comments of METAFONT 2.7182818.
+% This program is MFLua, strictly based on the METAFONT 2.71828182 source code.
+% What follow are the original comments of METAFONT 2.71828182.
 
 % This program is copyright (C) 1984 by D. E. Knuth; all rights are reserved.
 @z
@@ -15,13 +15,13 @@
 @z
 
 @x [1.2] MFLua
-@d banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
+@d banner=='This is METAFONT, Version 2.71828182' {printed when \MF\ starts}
 @y
-@d METAFONT_banner=='This is METAFONT, Version 2.7182818' {printed when \MF\ starts}
+@d METAFONT_banner=='This is METAFONT, Version 2.71828182' {printed when \MF\ starts}
 @#
 @d MFLua_version_string=='-1.0.0-alpha'
 @#
-@d MFLua_banner=='This is MFLua, Version 2.7182818', MFLua_version_string
+@d MFLua_banner=='This is MFLua, Version 2.71828182', MFLua_version_string
   {printed when MFLua starts}
 @#
 @d banner==MFLua_banner

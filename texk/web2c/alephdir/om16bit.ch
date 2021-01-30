@@ -74,9 +74,9 @@ author' in the documentation are to D. E. Knuth.
 @z
 %---------------------------------------
 @x [1] m.2 l.187 - Omega
-@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @y
-@d banner=='This is Omega, Version 3.14159265--1.15' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.141592653--1.15' {printed when \TeX\ starts}
 @z
 %---------------------------------------
 @x [1] m.4 l.243
@@ -1558,6 +1558,7 @@ text(frozen_cr):="cr"; eqtb[frozen_cr]:=eqtb[cur_val];@/
 primitive("crcr",car_ret,cr_cr_code);
 @!@:cr_cr_}{\.{\\crcr} primitive@>
 text(frozen_end_template):="endtemplate"; text(frozen_endv):="endtemplate";
+@.endtemplate@>
 eq_type(frozen_endv):=endv; equiv(frozen_endv):=null_list;
 eq_level(frozen_endv):=level_one;@/
 eqtb[frozen_end_template]:=eqtb[frozen_endv];
@@ -1616,7 +1617,8 @@ be between 0 and |biggest_char|, otherwise hyphenation will not be attempted.
 %---------------------------------------
 @x [40] m.892 l.17469 - Omega
 @!hc:array[0..65] of 0..256; {word to be hyphenated}
-@!hn:small_number; {the number of positions occupied in |hc|}
+@!hn:0..64; {the number of positions occupied in |hc|;
+                                  not always a |small_number|}
 @!ha,@!hb:pointer; {nodes |ha..hb| should be replaced by the hyphenated result}
 @!hf:internal_font_number; {font number of the letters in |hc|}
 @!hu:array[0..63] of 0..256; {like |hc|, before conversion to lowercase}
@@ -1626,7 +1628,8 @@ be between 0 and |biggest_char|, otherwise hyphenation will not be attempted.
 @!hyf_bchar:halfword; {boundary character after $c_n$}
 @y
 @!hc:array[0..65] of 0..too_big_char; {word to be hyphenated}
-@!hn:small_number; {the number of positions occupied in |hc|}
+@!hn:0..64; {the number of positions occupied in |hc|;
+                                  not always a |small_number|}
 @!ha,@!hb:pointer; {nodes |ha..hb| should be replaced by the hyphenated result}
 @!hf:internal_font_number; {font number of the letters in |hc|}
 @!hu:array[0..63] of 0..too_big_char; 

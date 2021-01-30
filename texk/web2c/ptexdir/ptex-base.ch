@@ -79,7 +79,7 @@
 @d pTeX_revision==".3"
 @d pTeX_version_string=='-p3.8.3' {current \pTeX\ version}
 @#
-@d pTeX_banner=='This is pTeX, Version 3.14159265',pTeX_version_string
+@d pTeX_banner=='This is pTeX, Version 3.141592653',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
   {printed when \pTeX\ starts}
 @#
@@ -793,7 +793,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d hskip=26 {horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)}
 @d vskip=27 {vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~)}
 @d mskip=28 {math glue ( \.{\\mskip} )}
-@d kern=29 {fixed space ( \.{\\kern})}
+@d kern=29 {fixed space ( \.{\\kern} )}
 @d mkern=30 {math kern ( \.{\\mkern} )}
 @d leader_ship=31 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
 @d halign=32 {horizontal table alignment ( \.{\\halign} )}
@@ -804,7 +804,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d hskip=remove_item+1 {horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)}
 @d vskip=hskip+1 {vertical glue ( \.{\\vskip}, \.{\\vfil}, etc.~)}
 @d mskip=vskip+1 {math glue ( \.{\\mskip} )}
-@d kern=mskip+1 {fixed space ( \.{\\kern})}
+@d kern=mskip+1 {fixed space ( \.{\\kern} )}
 @d mkern=kern+1 {math kern ( \.{\\mkern} )}
 @d leader_ship=mkern+1 {use a box ( \.{\\shipout}, \.{\\leaders}, etc.~)}
 @d halign=leader_ship+1 {horizontal table alignment ( \.{\\halign} )}
@@ -3357,10 +3357,20 @@ endcases;
 @z
 
 @x [33.647] l.13515 - pTeX: cur_kanji_skip, cur_xkanji_skip, last_disp
-@< Glob...@>=
+@ If the global variable |adjust_tail| is non-null, the |hpack| routine
+also removes all occurrences of |ins_node|, |mark_node|, and |adjust_node|
+items and appends the resulting material onto the list that ends at
+location |adjust_tail|.
+
+@<Glob...@>=
 @!adjust_tail:pointer; {tail of adjustment list}
 @y
-@< Glob...@>=
+@ If the global variable |adjust_tail| is non-null, the |hpack| routine
+also removes all occurrences of |ins_node|, |mark_node|, and |adjust_node|
+items and appends the resulting material onto the list that ends at
+location |adjust_tail|.
+
+@<Glob...@>=
 @!adjust_tail:pointer; {tail of adjustment list}
 @!last_disp:scaled; {displacement at end of list}
 @!cur_kanji_skip:pointer;
@@ -3754,7 +3764,7 @@ else  begin if (qo(cur_c)>=font_bc[cur_f])and(qo(cur_c)<=font_ec[cur_f]) then
   else cur_i:=null_character;
   if not(char_exists(cur_i)) then
     begin char_warning(cur_f,qo(cur_c));
-    math_type(a):=empty;
+    math_type(a):=empty; cur_i:=null_character;
     end;
   end;
 @y
@@ -3765,7 +3775,7 @@ else  begin if font_dir[cur_f]<>dir_default then
   else cur_i:=null_character;
   if not(char_exists(cur_i)) then
     begin char_warning(cur_f,qo(cur_c));
-    math_type(a):=empty;
+    math_type(a):=empty; cur_i:=null_character;
     end;
   end;
 @z
@@ -6186,18 +6196,18 @@ if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
 @z
 
 @x [49.1291] l.24467 - pTeX: show_mode
-@d show_lists=3 { \.{\\showlists} }
+@d show_lists_code=3 { \.{\\showlists} }
 @y
-@d show_lists=3 { \.{\\showlists} }
+@d show_lists_code=3 { \.{\\showlists} }
 @d show_mode=4 { \.{\\showmode} }
 @z
 
 @x [49.1291] l.24476 - pTeX: show_mode
-primitive("showlists",xray,show_lists);
-@!@:show_lists_}{\.{\\showlists} primitive@>
+primitive("showlists",xray,show_lists_code);
+@!@:show_lists_code_}{\.{\\showlists} primitive@>
 @y
-primitive("showlists",xray,show_lists);
-@!@:show_lists_}{\.{\\showlists} primitive@>
+primitive("showlists",xray,show_lists_code);
+@!@:show_lists_code_}{\.{\\showlists} primitive@>
 primitive("showmode",xray,show_mode);
 @!@:show_mode_}{\.{\\showmode} primitive@>
 @z

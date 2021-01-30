@@ -18,7 +18,7 @@
 \def\title{VF\lowercase{to}VP}
 \def\contentspagenumber{101}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont VFtoVP} processor}
@@ -145,7 +145,7 @@ purposes, when fonts designed for one output device are unavailable on another.
 @ A \.{VF} file is organized as a stream of 8-bit bytes, using conventions
 borrowed from \.{DVI} and \.{PK} files. Thus, a device driver that knows
 about \.{DVI} and \.{PK} format will already
-contain most of the mechanisms necessary to process \.{VF} files.
+contain most of the mechanisms necessary to process \.{VF} files. 
 We shall assume that \.{DVI} format is understood; the conventions in the
 \.{DVI} documentation (see, for example, {\sl \TeX: The Program}, part 31)
 are adopted here to define \.{VF} format.
@@ -189,7 +189,7 @@ is a |fix_word| relative to the design size of the virtual font.
 Thus if the local font is to be used at the same size
 as the design size of the virtual font itself, |s| will be the
 integer value $2^{20}$. The value of |s| must be positive and less than
-$2^{24}$ (thus less than 16 when considered as a |fix_word|).
+$2^{24}$ (thus less than 16 when considered as a |fix_word|). 
 The dimension~|d| is a |fix_word| in units of printer's points; hence it
 is identical to the design size found in the corresponding \.{TFM} file.
 
@@ -840,7 +840,7 @@ if vf[vf_ptr-10]>0 then {|s| is negative or exceeds $2^{24}-1$}
 a:=vf[vf_ptr-2]; l:=vf[vf_ptr-1]; vf_store(a+l); {|n[a+l]|}
 @<Print the name of the local font@>;
 @<Read the local font's \.{TFM} file and record the characters it contains@>;
-incr(font_ptr); font_start[font_ptr]:=vf_ptr;
+incr(font_ptr); font_start[font_ptr]:=vf_ptr; 
 end
 
 @ The font area may need to be separated from the font name on some systems.
@@ -1270,7 +1270,7 @@ end
 @* Outputting the TFM info.
 \TeX\ checks the information of a \.{TFM} file for validity as the
 file is being read in, so that no further checks will be needed when
-typesetting is going on. And when it finds something wrong, it justs
+typesetting is going on. And when it finds something wrong, it just
 calls the file ``bad,'' without identifying the nature of the problem,
 since \.{TFM} files are supposed to be good almost all of the time.
 
@@ -2171,7 +2171,7 @@ push:begin if top=max_stack then
   incr(top); wstack[top]:=wstack[top-1]; xstack[top]:=xstack[top-1];
   ystack[top]:=ystack[top-1]; zstack[top]:=zstack[top-1]; out('(PUSH)');
   out_ln;
-  end;
+  end;                            
 pop:if top=0 then bad_vf('More pops than pushes!')
 @.More pops than pushes@>
   else begin decr(top); out('(POP)'); out_ln;

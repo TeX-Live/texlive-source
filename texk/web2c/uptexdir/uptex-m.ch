@@ -53,7 +53,7 @@
 @d upTeX_revision==".27"
 @d upTeX_version_string=='-u1.27' {current u\pTeX\ version}
 @#
-@d upTeX_banner=='This is upTeX, Version 3.14159265',pTeX_version_string,upTeX_version_string
+@d upTeX_banner=='This is upTeX, Version 3.141592653',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
   {printed when u\pTeX\ starts}
 @z

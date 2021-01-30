@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017-2019 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -31,7 +31,7 @@ cat >filter <<-\_EOF
 	s/[1-9] hyphenation exceptions* out of [1-9].*/X hyphenation exceptions out of YYY/
 	s/[1-9][0-9]* strings of total length [1-9].*/XXXX strings of total length YYYYY/
 	s/9 ops out of [1-9][0-9]*/9 ops out of YYY/
-	s/TeX output 20..\...\...:..../TeX output 20YY.MM.DD:hhmm/
+	s/TeX output ....\...\...:..../TeX output YYYY.MM.DD:hhmm/
 	_EOF
 
 # x86 glue rounding

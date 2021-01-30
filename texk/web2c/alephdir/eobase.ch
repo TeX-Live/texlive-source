@@ -39,8 +39,9 @@
 @x limbo l.1 - this is e-TeX
 %
 % This program is copyright (C) 1982 by D. E. Knuth; all rights are reserved.
-% Copying of this file is authorized only if (1) you are D. E. Knuth, or if
-% (2) you make absolutely no changes to your copy. (The WEB system provides
+% Unlimited copying and redistribution of this file are permitted as long
+% as this file is not modified. Modifications are permitted, but only if
+% the resulting file is not named tex.web. (The WEB system provides
 % for alterations via an auxiliary file; the master file should stay intact.)
 % See Appendix H of the WEB manual for hints on how to install this program.
 % And see Appendix A of the TRIP manual for details about how to validate it.
@@ -182,11 +183,11 @@ to be known as `\Aleph'.
 @z
 %---------------------------------------
 @x [1] m.2 l.187 - e-TeX basic
-@d banner=='This is Omega, Version 3.14159265--1.15' {printed when \TeX\ starts}
+@d banner=='This is Omega, Version 3.141592653--1.15' {printed when \TeX\ starts}
 @y
-@d banner=='This is Aleph, Version 3.14159265--1.15--2.1' {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.141592653--1.15--2.1' {printed when \TeX\ starts}
 @#
-@d eTeX_version_string=='3.14159265--1.15--2.1' {current \eTeX\ version}
+@d eTeX_version_string=='3.141592653--1.15--2.1' {current \eTeX\ version}
 @d eTeX_version=2 { \.{\\eTeXversion} }
 @d eTeX_revision==".1" { \.{\\eTeXrevision} }
 @#
@@ -2361,9 +2362,9 @@ set_shape: begin q:=cur_chr; scan_optional_equals; scan_int; n:=cur_val;
 @z
 %---------------------------------------
 @x [49] m.1292 l.23581 - e-TeX show_groups
-  show_lists:print_esc("showlists");
+  show_lists_code:print_esc("showlists");
 @y
-  show_lists:print_esc("showlists");
+  show_lists_code:print_esc("showlists");
   @<Cases of |xray| for |print_cmd_chr|@>@;@/
 @z
 %---------------------------------------

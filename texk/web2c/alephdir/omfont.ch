@@ -279,7 +279,7 @@ These bytes are the character codes of individual pieces used to
   {start of |lig_kern| program for left boundary character,
   |non_address| if there is none}
 @!font_bchar:array[internal_font_number] of min_quarterword..non_char;
-  {right boundary character, |non_char| if there is none}
+  {boundary character, |non_char| if there is none}
 @!font_false_bchar:array[internal_font_number] of min_quarterword..non_char;
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @y
@@ -619,9 +619,9 @@ that do not do local optimization.
 @z
 %---------------------------------------
 @x [30] m.560 l.10888 - Omega
-@!bchar:0..256; {right boundary character, or 256}
+@!bchar:0..256; {boundary character, or 256}
 @y
-@!bchar:0..too_big_char; {right boundary character, or |too_big_char|}
+@!bchar:0..too_big_char; {boundary character, or |too_big_char|}
 @!first_two:integer;
 @z
 %---------------------------------------

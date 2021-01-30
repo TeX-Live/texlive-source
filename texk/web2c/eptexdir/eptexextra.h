@@ -7,7 +7,7 @@
 #include <eptexdir/eptex_version.h> /* for EPTEX_VERSION */
 #include <ptexdir/ptex_version.h> /* for PTEX_VERSION */
 
-#define BANNER "This is e-pTeX, Version 3.14159265-" PTEX_VERSION "-" EPTEX_VERSION "-" ETEX_VERSION
+#define BANNER "This is e-pTeX, Version 3.141592653-" PTEX_VERSION "-" EPTEX_VERSION "-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "D.E. Knuth"
 #define AUTHOR "Peter Breitenlohner"
 #define PROGRAM_HELP EPTEXHELP

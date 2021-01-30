@@ -4,11 +4,11 @@
 % Public domain.
 
 @x [1.2] l.188
-@d TeX_banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
+@d TeX_banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @#
 @d banner==eTeX_banner
 @y
-@d banner=='This is TeX, Version 3.14159265' {printed when \TeX\ starts}
+@d banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @z
 
 @x [17.236] l.4960 - first web2c, then e-TeX additional integer parameters

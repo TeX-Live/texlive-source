@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/.
 ##
-## Copyright 2017-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -157,6 +157,31 @@ AM_TESTS_ENVIRONMENT += DIFFFLAGS='$(DIFFFLAGS)'; export DIFFFLAGS;
 AM_TESTS_ENVIRONMENT += LN_S='$(LN_S)'; export LN_S;
 AM_TESTS_ENVIRONMENT += KPSEWHICH='$(KPSEWHICH)'; export KPSEWHICH;
 
+# To run, e.g., just the original trip test, in the build directory:
+#   make -C $ww TRIPTRAP=trip.diffs triptrap
+# where $ww is the web2c build directory.   
+# 
+# This will run the triptrap-sh script
+#   which then runs make TEST=triptest.test check-am,
+#   which then runs the (srcdir file) triptest.test script;
+#   its output will be in (builddir file) trip.diffs,
+#   and triptest.out if the test failed,   
+#   plus various created files in the tripdir/ subdirectory.
+# The triptest.diffs file will have the actual abs_srcdir value replaced
+#  with the constant string "SRCDIR" to minimize differences, and "../"
+#  replaced with "./" to match the canonical output. Confusing. For the
+#  real output, see triptest.log.
+# 
+# To build only tex, make -C $ww tex (i.e., in builddir) should do it.
+# Unfortunately the check-am target depends on all-am, so all engines
+# are built before any tests are run. If this is a problem, just have to
+# edit the generated Makefile in builddir to remove the dependency.
+# 
+# Other per-engine invocations (see triptrap-sh for complete list):
+#   make -C $ww mf && make -C $ww TRIPTRAP=mftrap.diffs triptrap
+#   make -C $ww etex && make -C $ww TRIPTRAP=etrip.diffs triptrap   
+#   make -C $ww ptex && make -C $ww TRIPTRAP=ptrip.diffs triptrap   
+#   
 triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 .PHONY: triptrap

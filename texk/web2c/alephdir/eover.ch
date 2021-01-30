@@ -5,9 +5,9 @@
 % * we add both \eTeX-like and \OMEGA-like
 %   commands to display the version
 @x
-@d banner=='This is Aleph, Version 3.14159265--1.15--2.1' {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.141592653--1.15--2.1' {printed when \TeX\ starts}
 @#
-@d eTeX_version_string=='3.14159265--1.15--2.1' {current \eTeX\ version}
+@d eTeX_version_string=='3.141592653--1.15--2.1' {current \eTeX\ version}
 @d eTeX_version=2 { \.{\\eTeXversion} }
 @d eTeX_revision==".1" { \.{\\eTeXrevision} }
 @#
@@ -30,7 +30,7 @@
 @d Omega_revision==".15" { \.{\\Omegarevision} }
 @d Aleph_revision==".0" { \.{\\Alephrevision} }
 @#
-@d banner=='This is Aleph, Version 3.14159265-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
+@d banner=='This is Aleph, Version 3.141592653-',Omega_version_banner,'-',eTeX_version_banner,'-',Aleph_version_banner {printed when \TeX\ starts}
 @d eTeX_banner==banner
   {printed when \eTeX\ starts}
 @z

@@ -1,7 +1,9 @@
 #! /bin/sh
+# $Id$
 # shell script to run TRIP and TRAP tests and create diffs.
 #
-#   Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+#   Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -37,19 +39,23 @@ do
   $MAKE TESTS=$tst.test check-am >$tmp 2>&1 \
     && grep "PASS: $tst.test" $tmp >/dev/null 2>&1 \
     || { echo "FAIL: $tst.test"; is_OK=false; }
+  
   sed -e "s%$abs_srcdir/%SRCDIR/%" \
       -e "s%\.\./%./%" \
       $tst.log >$file
+      
+  rm -f $tst.out # previous output file, if any.
+  
   $is_OK && {
     echo "PASS: $tst.test" >>$file
     echo "PASS: $tst.test"
+    rm -f $tmp
   } || {
     echo "FAIL: $tst.test" >>$file
+    # preserve our output file in case of failure
+    mv $tmp $tst.out
     rc=1
   }
-  rm -f $tmp
 done
 echo "$me: All done"
 exit $rc
-
-

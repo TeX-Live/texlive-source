@@ -1,4 +1,4 @@
-This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
+This is TeX, Version 3.141592653 (preloaded format=trip 1776.7.4)  4 JUL 1776 12:00
 ** &trip  trip
 (trip.tex ##
 {vertical mode: \tracingrestores}
@@ -2428,7 +2428,7 @@ deleted material, e.g., by typing `I$}'.
 ### display math mode entered at line 249
 \mathord
 .{}
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\mathord []
 \\mathord []
@@ -3021,7 +3021,7 @@ oxbreadth 9999 \showboxdepth 9999 \showlists \pagegoal =10000pt}
 ./.\.\fam1 q
 ././\rule(9.0+*)x0.4
 \mathord
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness 9.0
 \{}
 ### math mode entered at line 280
@@ -5015,14 +5015,15 @@ you'd better type `E' or `X' now and fix your file.
 <to be read again> 
                    8
 l.356 ...ef\lo#1#2U3#4#5#6#7#8#8
-                                #9#{\relax}
+                                #99#{\relax}
 I've inserted the digit you should have used after the #.
 Type `1' to delete what you did use.
 
 ! You already have nine parameters.
 l.356 ...\lo#1#2U3#4#5#6#7#8#8#9
-                                #{\relax}
-I'm going to ignore the # sign you just used.
+                                9#{\relax}
+I'm going to ignore the # sign you just used,
+as well as the token that followed it.
 
 {blank space  }
 {\ifcase}
@@ -7294,7 +7295,7 @@ Memory usage before: 334&431; after: 292&418; still untouched: 175
 (end occurred when iftrue on line 413 was incomplete) 
 Here is how much of TeX's memory you used:
  47 strings out of 1674
- 253 string characters out of 8354
+ 253 string characters out of 8367
  2825 words of memory out of 3000
  372 multiletter control sequences out of 2100
  3041 words of font info for 4 fonts, out of 20000 for 75

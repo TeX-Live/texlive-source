@@ -37,10 +37,10 @@ Changes for \MP\ by W.~Bzyl in July, 2001.
 @z
 
 @x [2] Define my_name
-@d banner=='This is MFT, Version 2.0'
+@d banner=='This is MFT, Version 2.1'
 @y
 @d my_name=='mft'
-@d banner=='This is MFT, Version 2.0'
+@d banner=='This is MFT, Version 2.1'
 @z
 
 % [3] No need for the final label in C.
@@ -463,6 +463,8 @@ pr12("t")("r")("a")("c")("i")("n")("g")
  ("s")("t")("a")("t")("s")(internal);@/
 pr13("t")("r")("a")("c")("i")("n")("g")
  ("o")("n")("l")("i")("n")("e")(internal);@/
+pr15("t")("r")("a")("c")("i")("n")("g")
+ ("r")("e")("s")("t")("o")("r")("e")("s")(internal);@/
 
 @ @<Store all the primitives@>=
 pr4("y")("e")("a")("r")(internal);@/
@@ -470,7 +472,7 @@ pr5("m")("o")("n")("t")("h")(internal);@/
 pr3("d")("a")("y")(internal);@/
 pr4("t")("i")("m")("e")(internal);@/
 pr8("c")("h")("a")("r")("c")("o")("d")("e")(internal);@/
-pr7("c")("h")("a")("r")("f")("a")("m")(internal);@/
+pr7("c")("h")("a")("r")("e")("x")("t")(internal);@/
 pr6("c")("h")("a")("r")("w")("d")(internal);@/
 pr6("c")("h")("a")("r")("h")("t")(internal);@/
 pr6("c")("h")("a")("r")("d")("p")(internal);@/
@@ -735,6 +737,8 @@ pr12("t")("r")("a")("c")("i")("n")("g")
  ("s")("t")("a")("t")("s")(internal);@/
 pr13("t")("r")("a")("c")("i")("n")("g")
  ("o")("n")("l")("i")("n")("e")(internal);@/
+pr15("t")("r")("a")("c")("i")("n")("g")
+ ("r")("e")("s")("t")("o")("r")("e")("s")(internal);@/
 
 @ @<Store all the primitives@>=
 pr4("y")("e")("a")("r")(internal);@/
@@ -742,6 +746,7 @@ pr5("m")("o")("n")("t")("h")(internal);@/
 pr3("d")("a")("y")(internal);@/
 pr4("t")("i")("m")("e")(internal);@/
 pr8("c")("h")("a")("r")("c")("o")("d")("e")(internal);@/
+pr7("c")("h")("a")("r")("e")("x")("t")(internal);@/
 pr6("c")("h")("a")("r")("w")("d")(internal);@/
 pr6("c")("h")("a")("r")("h")("t")(internal);@/
 pr6("c")("h")("a")("r")("d")("p")(internal);@/

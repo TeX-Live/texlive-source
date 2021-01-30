@@ -1,295 +1,575 @@
+#! /bin/sh -vx
+# $Id: ptriptest.test 48633 2018-09-09 17:56:55Z karl $
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
++ LC_ALL=C
++ export LC_ALL
++ LANGUAGE=C
++ export LANGUAGE
+
+testdir=$abs_srcdir/triptrap
++ testdir=SRCDIR/triptrap
+ptestdir=$abs_srcdir/ptexdir/ptrip
++ ptestdir=SRCDIR/ptexdir/ptrip
+
+TEXMFCNF=$ptestdir; export TEXMFCNF
++ TEXMFCNF=SRCDIR/ptexdir/ptrip
++ export TEXMFCNF
+
+rm -rf ptripdir
++ rm -rf ptripdir
+mkdir ptripdir
++ mkdir ptripdir
+cd ptripdir
++ cd ptripdir
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
++ dvitype_args='-output-level=2 -dpi=72.27 -page-start='\''*.*.*.*.*.*.*.*.*.*'\'''
+
+echo ">>> Running TRIP test for pTeX." >&2
++ echo '>>> Running TRIP test for pTeX.'
 >>> Running TRIP test for pTeX.
+echo ">>> See $ptestdir/ptrip.diffs for example of acceptable diffs." >&2
++ echo '>>> See SRCDIR/ptexdir/ptrip/ptrip.diffs for example of acceptable diffs.'
 >>> See SRCDIR/ptexdir/ptrip/ptrip.diffs for example of acceptable diffs.
+
+# pTeX outputs direction of boxes.
+P_SED1='s/, yoko direction//;s/yoko direction, //'
++ P_SED1='s/, yoko direction//;s/yoko direction, //'
+P_SED2='s/yoko(math) direction, //'
++ P_SED2='s/yoko(math) direction, //'
+
+is_OK=:
++ is_OK=:
+
+set -x
++ set -x
+
+echo "*** TRIP test for pTeX ***."
 + echo '*** TRIP test for pTeX ***.'
 *** TRIP test for pTeX ***.
+
+./pltotf $testdir/trip.pl trip.tfm || exit 1
 + ./pltotf SRCDIR/triptrap/trip.pl trip.tfm
+
+./tftopl ./trip.tfm trip.pl || exit 1
 + ./tftopl ./trip.tfm trip.pl
+
+diff $testdir/trip.pl trip.pl || is_OK=false
 + diff SRCDIR/triptrap/trip.pl trip.pl
+
+# get same filename in log
+$LN_S $testdir/trip.tex .
 + ln -s SRCDIR/triptrap/trip.tex .
+
+rm -f trip.log
 + rm -f trip.log
+./ptex --progname=pinitex --ini <$testdir/trip1.in >ptripin.fot
 + ./ptex --progname=pinitex --ini
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
 + test '!' -s trip.fmt
+sed "$P_SED1" trip.log >  ptripin.log || exit 1
 + sed 's/, yoko direction//;s/yoko direction, //' trip.log
+diff $testdir/tripin.log ptripin.log
 + diff SRCDIR/triptrap/tripin.log ptripin.log
 1c1
-< This is TeX, Version 3.14159265 (INITEX)  7 JAN 2014 09:09
+< This is TeX, Version 3.141592653 (INITEX)  4 JUL 1776 12:00
 ---
-> This is pTeX, Version 3.14159265-p3.6 (utf8.euc) (TeX Live 2015) (INITEX)  12 APR 2015 16:22
+> This is pTeX, Version 3.141592653-p3.8.3 (utf8.euc) (TeX Live 2021/dev) (INITEX)  27 JAN 2021 18:03
 3c3
 < (trip.tex
 ---
 > (./trip.tex
-9c9
-< A character number must be between 0 and 255.
----
-> A character number must be between 0 and 255, or KANJI code.
 91c91,92
 < ### horizontal mode entered at line 77 (language255:hyphenmin1,63)
 ---
 > ### horizontal mode entered at line 77 (language255:hyph
 > enmin1,63)
-450,453c451,454
-<  (preloaded format=trip 2014.1.7)
-< 1326 strings of total length 23646
+93a95
+> \displace 0.0
+95a98
+> \displace 0.0
+368a372
+> ....\displace 0.0
+370a375
+> ....\displace 0.0
+437,438d441
+< ....\rip 6 (ligature )
+< ....\rip 7 (ligature )
+450,453c453,456
+<  (preloaded format=trip 1776.7.4)
+< 1326 strings of total length 23633
 < 471 memory locations dumped; current usage is 96&278
 < 341 multiletter control sequences
 ---
->  (preloaded format=trip 2015.4.12)
-> 1451 strings of total length 25481
-> 485 memory locations dumped; current usage is 106&278
-> 377 multiletter control sequences
-461c462
+>  (preloaded format=trip 2021.1.27)
+> 1476 strings of total length 26143
+> 487 memory locations dumped; current usage is 108&278
+> 387 multiletter control sequences
+461c464
 < Hyphenation trie of length 273 has 9 ops out of 500
 ---
 > Hyphenation trie of length 273 has 9 ops out of 35111
+
+# May as well test non-ini second time through.
+rm -f trip.log
 + rm -f trip.log
+./ptex --progname=ptex <$testdir/trip2.in >ptrip.fot
 + ./ptex --progname=ptex
+sed "$P_SED1;$P_SED2" trip.log > ptrip.log
 + sed 's/, yoko direction//;s/yoko direction, //;s/yoko(math) direction, //' trip.log
+diff $testdir/trip.fot ptrip.fot
 + diff SRCDIR/triptrap/trip.fot ptrip.fot
 1,3c1,2
-< This is TeX, Version 3.14159265 (INITEX)
+< This is TeX, Version 3.141592653 (INITEX)
 < ** &trip  trip 
 < (trip.tex ##
 ---
-> This is pTeX, Version 3.14159265-p3.6 (utf8.euc) (TeX Live 2015) (preloaded format=ptex)
+> This is pTeX, Version 3.141592653-p3.8.3 (utf8.euc) (TeX Live 2021/dev) (preloaded format=ptex)
 > **(./trip.tex ##
 17c16
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
-> Memory usage before: 190&313; after: 114&278; still untouched: 3113
+> Memory usage before: 192&313; after: 116&278; still untouched: 3113
 75c74
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
-> Memory usage before: 452&431; after: 390&418; still untouched: 241
+> Memory usage before: 458&431; after: 396&418; still untouched: 484
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log ptrip.log 
 + diff SRCDIR/triptrap/trip.log ptrip.log
 1c1
-< This is TeX, Version 3.14159265 (preloaded format=trip 2014.1.7)  7 JAN 2014 09:59
+< This is TeX, Version 3.141592653 (preloaded format=trip 1776.7.4)  4 JUL 1776 12:00
 ---
-> This is pTeX, Version 3.14159265-p3.6 (utf8.euc) (TeX Live 2015) (preloaded format=trip 2015.4.12)  12 APR 2015 16:22
+> This is pTeX, Version 3.141592653-p3.8.3 (utf8.euc) (TeX Live 2021/dev) (preloaded format=trip 2021.1.27)  27 JAN 2021 18:03
 3c3
 < (trip.tex ##
 ---
 > (./trip.tex ##
-58a59,62
-> \openout0 = `8terminal.tex'.
-> 
-> \openout10 = `tripos.tex'.
-> 
-73c77
+73c73
 < Memory usage before: 159&313; after: 102&278; still untouched: 1613
 ---
-> Memory usage before: 190&313; after: 114&278; still untouched: 3113
-385,386c389,390
+> Memory usage before: 192&313; after: 116&278; still untouched: 3113
+113a114
+> .\displace 0.0
+198a200
+> .\displace 0.0
+253a256
+> .\displace 0.0
+308a312
+> .\displace 0.0
+349a354
+> .\displace 0.0
+385,386c390,391
 < \insert100, natural size 803.09999; split(1.0 plus 43.0,-2.0); float cos
 < t 100
 ---
 > \insert100Y, natural size 803.09999; split(1.0 plus 43.0,-2.0); float co
 > st 100
-426c430
+406a412
+> ....\displace 0.0
+409a416
+> ....\displace 0.0
+412a420
+> ....\displace 0.0
+420a429
+> .\displace 0.0
+426c435
 < \insert200, natural size 400.0; split(0.0,-2.0); float cost 100
 ---
 > \insert200Y, natural size 400.0; split(0.0,-2.0); float cost 100
-441c445
+435a445
+> .\displace 0.0
+441c451
 < \insert200, natural size 400.0; split(1.0,-1.0); float cost 100
 ---
 > \insert200Y, natural size 400.0; split(1.0,-1.0); float cost 100
-456c460
+450a461
+> .\displace 0.0
+456c467
 < \insert200, natural size 400.0; split(2.0,-1.0); float cost 100
 ---
 > \insert200Y, natural size 400.0; split(2.0,-1.0); float cost 100
-483,484c487,488
+466a478
+> .\displace 0.0
+483,484c495,496
 < \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
 < 3
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
-642c646
+588a601
+> .....\displace 0.0
+591a605
+> .....\displace 0.0
+594a609
+> .....\displace 0.0
+630a646
+> ......\displace 0.0
+633a650
+> ......\displace 0.0
+636a654
+> ......\displace 0.0
+642c660
 < Memory usage before: 747&484; after: 581&481; still untouched: 1492
 ---
-> Memory usage before: 1086&483; after: 838&480; still untouched: 1993
-647c651,652
+> Memory usage before: 1114&483; after: 860&480; still untouched: 1993
+647c665,666
 < ### internal vertical mode entered at line 150 (\output routine)
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
-693,694c698,699
+650a670
+> .\displace 0.0
+660a681
+> .\displace 0.0
+670a692
+> .\displace 0.0
+681a704
+> .\displace 0.0
+693,694c716,717
 < \insert100, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 10
 < 0
 ---
 > \insert100Y, natural size 535.4; split(1.0 plus 43.0,-2.0); float cost 1
 > 00
-701c706
+701c724
 < \insert200, natural size 2.0; split(2.0,-1.0); float cost 100
 ---
 > \insert200Y, natural size 2.0; split(2.0,-1.0); float cost 100
-714,715c719,720
+714,715c737,738
 < \insert200, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost 
 < 3
 ---
 > \insert200Y, natural size 10000.0; split(1.0 plus 43.0,-1.0); float cost
 >  3
-815c820
+815c838
 < Memory usage before: 475&470; after: 290&466; still untouched: 1473
 ---
-> Memory usage before: 690&469; after: 406&465; still untouched: 1974
-820c825,826
+> Memory usage before: 706&469; after: 414&465; still untouched: 1974
+820c843,844
 < ### internal vertical mode entered at line 150 (\output routine)
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
-915c921
+915c939
 < Memory usage before: 218&459; after: 149&458; still untouched: 1473
 ---
 > Memory usage before: 304&458; after: 194&457; still untouched: 1974
-920c926,927
+920c944,945
 < ### internal vertical mode entered at line 150 (\output routine)
 ---
 > ### internal vertical mode entered at line 150 (\output 
 > routine)
-1070c1077
+1070c1095
 < Memory usage before: 118&328; after: 102&328; still untouched: 1473
 ---
 > Memory usage before: 146&327; after: 122&327; still untouched: 1974
-1405c1412
+1405c1430
 < \vbox(16383.99998+0.0)x1000.0, glue set 16342.0fil
 ---
 > \vbox(16383.99998+0.0)x1000.0, glue set 16341.99998fil
-1504a1512
+1493a1519
 > ..\displace 0.0
-1511c1519
+1503a1530
+> ..\displace 0.0
+1504a1532
+> ..\displace 0.0
+1511c1539
 < Memory usage before: 990&376; after: 584&370; still untouched: 735
 ---
-> Memory usage before: 1486&375; after: 838&369; still untouched: 1974
-1954c1962
+> Memory usage before: 1494&375; after: 842&369; still untouched: 1974
+1887c1915
+< .\rip A
+---
+> .\displace 0.0
+1923c1951
+< .\hbox(0.0+0.0)x120.0 []
+---
+> .\hbox(0.0+0.0)x120.0, yoko(math) direction []
+1954c1982
 < (tripos.tex
 ---
 > (./tripos.tex
-2018c2026
+2018c2046
 < \vbox(16383.99998+1.0)x100.0, glue set 16239.0fil
 ---
 > \vbox(16383.99998+1.0)x100.0, glue set 16238.99998fil
-2189c2197
+2022a2051
+> ..\displace 0.0
+2058a2088
+> ..\displace 0.0
+2071a2102
+> ..\displace 0.0
+2092a2124
+> ..\displace 0.0
+2113a2146
+> ..\displace 0.0
+2123a2157
+> ..\displace 0.0
+2142a2177
+> ..\displace 0.0
+2150a2186
+> ..\displace 0.0
+2171c2207,2208
+< ..\hbox(0.0+0.0)x120.0
+---
+> ..\hbox(0.0+0.0)x120.0, yoko(math) direction
+> ...\displace 0.0
+2189c2226
 < Memory usage before: 950&531; after: 546&448; still untouched: 706
 ---
-> Memory usage before: 1454&530; after: 804&447; still untouched: 1945
-2397c2405
+> Memory usage before: 1490&530; after: 822&447; still untouched: 1945
+2397c2434
 < ! Improper alphabetic constant.
 ---
 > ! Improper alphabetic or KANJI constant.
-2533c2541
+2533c2570
 < \vbox(16383.99998+0.0)x20.0, glue set 16331.0fil
 ---
 > \vbox(16383.99998+0.0)x20.0, glue set 16330.99998fil
-2575c2583
+2544a2582
+> ..\displace 0.0
+2570c2608,2609
+< .\hbox(0.0+0.0)x15.0, glue set 0.1875, shifted 5.0
+---
+> .\hbox(0.0+0.0)x15.0, glue set 0.1875, shifted 5.0, yoko(math) direction
+> 
+2572c2611
+< ..\hbox(0.0+0.0)x0.0
+---
+> ..\hbox(0.0+0.0)x0.0, yoko(math) direction
+2575c2614
 < Memory usage before: 339&413; after: 236&405; still untouched: 706
 ---
-> Memory usage before: 489&411; after: 323&403; still untouched: 1945
-3051c3059
+> Memory usage before: 493&411; after: 325&403; still untouched: 1945
+2650,2651c2689,2690
+< Dimensions can be in units of em, ex, in, pt, pc,
+< cm, mm, dd, cc, bp, or sp; but yours is a new one!
+---
+> Dimensions can be in units of em, ex, zw, zh, in, pt, pc,
+> cm, mm, dd, cc, bp, H, Q, or sp; but yours is a new one!
+3038c3077,3078
+< ^\hbox(7.0+1.0)x2.0
+---
+> ^\hbox(7.0+1.0)x2.0, yoko(math) direction
+> ^.\displace 0.0
+3051c3091
 < \insert0, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
 ---
 > \insert0Y, natural size 0.0; split(1.0 plus 43.0,-2.0); float cost 100
-3054c3062
+3054c3094
 < .\fam0 ^^c8
 ---
 > .\fam0 È 
-3143a3152
+3056c3096
+< .\vbox(-2.0+0.0)x0.0
+---
+> .\vbox(-2.0+0.0)x0.0, yoko(math) direction
+3060c3100,3101
+< ^.\hbox(7.0+1.0)x2.0, shifted -2.0
+---
+> ^.\hbox(7.0+1.0)x2.0, shifted -2.0, yoko(math) direction
+> ^..\displace 0.0
+3140a3182
+> .....\displace 0.0
+3142a3185
+> ....|\displace 0.0
+3143a3187
 > ....\displace 0.0
-3235c3244
+3151a3196
+> .\displace 0.0
+3235c3280
 < ! \textfont 0 is undefined (character ^^c8).
 ---
 > ! \textfont 0 is undefined (character È).
-3326c3335
+3286c3331
+< .\vbox(6.0+-8.0)x0.0
+---
+> .\vbox(6.0+-8.0)x0.0, yoko(math) direction
+3326c3371
 < \vbox(10000.0+2.0)x28.0, glue set 9737.58789fil
 ---
 > \vbox(10000.0+2.0)x28.0, glue set 9737.58742fil
-3547a3557
+3329a3375
+> ..\displace 0.0
+3374c3420
+< ..\vbox(6.0+-8.0)x0.0
+---
+> ..\vbox(6.0+-8.0)x0.0, yoko(math) direction
+3385c3431,3432
+< ......\hbox(7.0+1.0)x2.0, shifted -2.0
+---
+> ......\hbox(7.0+1.0)x2.0, shifted -2.0, yoko(math) direction
+> .......\displace 0.0
+3544a3592
+> ..........\displace 0.0
+3546a3595
+> .........|\displace 0.0
+3547a3597
 > .........\displace 0.0
-3616c3626
+3564c3614,3615
+< ...\hbox(7.0+1.0)x1.99
+---
+> ...\hbox(7.0+1.0)x1.99, yoko(math) direction
+> ....\displace 0.0
+3616c3667
 < Memory usage before: 2170&521; after: 1181&459; still untouched: 175
 ---
-> Memory usage before: 3259&519; after: 1739&457; still untouched: 241
-3864c3874
+> Memory usage before: 3279&519; after: 1749&457; still untouched: 484
+3864c3915
 < \vbox(16383.99998+2.0)x100.0, glue set 16318.0fil
 ---
 > \vbox(16383.99998+2.0)x100.0, glue set 16317.99997fil
-3951c3961
+3919,3920c3970,3972
+< ...\vbox(-0.00002+13.00002)x52.5, glue set - 0.00247
+< ....\vbox(-0.00002+0.0)x0.0
+---
+> ...\vbox(-0.00002+13.00002)x52.5, glue set - 0.00247, yoko(math) directi
+> on
+> ....\vbox(-0.00002+0.0)x0.0, yoko(math) direction
+3951c4003
 < Memory usage before: 640&415; after: 397&410; still untouched: 175
 ---
-> Memory usage before: 955&413; after: 569&408; still untouched: 241
-4034c4044
+> Memory usage before: 955&413; after: 569&408; still untouched: 484
+4034c4086
 < \vbox(16383.99998+0.0)x8236.0, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x8236.0, glue set 16343.99998fil
-4053c4063
+4053c4105
 < Memory usage before: 235&401; after: 178&399; still untouched: 175
 ---
-> Memory usage before: 338&399; after: 244&397; still untouched: 241
-4420c4430
+> Memory usage before: 338&399; after: 244&397; still untouched: 484
+4420c4472
 < \vbox(16383.99998+0.0)x100.0, glue set 16332.0fil
 ---
 > \vbox(16383.99998+0.0)x100.0, glue set 16331.99998fil
-4506c4516
+4425a4478
+> ...\displace 0.0
+4447a4501
+> ...\displace 0.0
+4475a4530
+> ...\displace 0.0
+4492a4548
+> ...\displace 0.0
+4506c4562
 < Memory usage before: 651&432; after: 417&418; still untouched: 175
 ---
-> Memory usage before: 988&431; after: 594&417; still untouched: 241
-4742c4752,4753
+> Memory usage before: 1004&431; after: 602&417; still untouched: 484
+4742c4798,4799
 < \vbox(16383.99998+0.0)x205.12613, glue set 16344.0fil
 ---
 > \vbox(16383.99998+0.0)x205.12613, glue set 16343.99998fil, yoko directio
 > n
-4828c4839
+4746a4804
+> ...\displace 0.0
+4762a4821
+> .....\displace 0.0
+4777a4837
+> ......\displace 0.0
+4828c4888
 < Memory usage before: 776&458; after: 464&452; still untouched: 175
 ---
-> Memory usage before: 1170&457; after: 672&451; still untouched: 241
-5700c5711
+> Memory usage before: 1182&457; after: 678&451; still untouched: 484
+5701c5761
 < ! \textfont 0 is undefined (character ^^c8).
 ---
 > ! \textfont 0 is undefined (character È).
-6380c6391
+6381c6441
 < (tripos.tex
 ---
 > (./tripos.tex
-6501c6512
+6502c6562
 < l.429 ...^^M=13 \def^^M{\relax}#
 ---
 > l.429 ...^^M=13 \defqqM{\relax}#
-6595c6606
+6596c6656
 < Memory usage before: 819&428; after: 720&426; still untouched: 175
 ---
-> Memory usage before: 1216&428; after: 1066&426; still untouched: 241
-7155c7166
+> Memory usage before: 1228&428; after: 1074&426; still untouched: 484
+6853c6913
+< .|vbox(0.0+0.0)x0.0
+---
+> .|vbox(0.0+0.0)x0.0, yoko(math) direction
+6876a6937
+> ..|displace 0.0
+6891a6953
+> ..|displace 0.0
+6926a6989
+> .|displace 0.0
+6959a7023
+> .|displace 0.0
+6961c7025,7026
+< .|hbox(0.0+0.0)x0.0
+---
+> .|hbox(0.0+0.0)x0.0, yoko(math) direction
+> ..|displace 0.0
+6991a7057
+> .|displace 0.0
+7103a7170
+> ...|displace 0.0
+7108d7174
+< ...|ip A (ligature BB)
+7116a7183
+> ...|displace 0.0
+7125d7191
+< ...|kern2.0
+7126a7193
+> .|displace 0.0
+7136c7203
+< ...|vbox(0.0+0.0)x0.0
+---
+> ...|vbox(0.0+0.0)x0.0, yoko(math) direction
+7156c7223
 < Memory usage before: 895&439; after: 290&420; still untouched: 175
 ---
-> Memory usage before: 1332&439; after: 388&420; still untouched: 241
-7288c7299
+> Memory usage before: 1346&439; after: 394&420; still untouched: 484
+7289c7356
 < Memory usage before: 334&431; after: 292&418; still untouched: 175
 ---
-> Memory usage before: 452&431; after: 390&418; still untouched: 241
-7296,7299c7307,7310
+> Memory usage before: 458&431; after: 396&418; still untouched: 484
+7297,7300c7364,7367
 <  47 strings out of 1674
-<  253 string characters out of 8354
+<  253 string characters out of 8367
 <  2825 words of memory out of 3000
 <  372 multiletter control sequences out of 2100
 ---
->  44 strings out of 1549
->  261 string characters out of 14519
->  4259 words of memory out of 4500
->  408 multiletter control sequences out of 15000+0
-7301c7312
+>  44 strings out of 1524
+>  261 string characters out of 13857
+>  4016 words of memory out of 4500
+>  418 multiletter control sequences out of 15000+0
+7302c7369
 <  2 hyphenation exceptions out of 307
 ---
 >  1 hyphenation exception out of 659
+
+mv tripos.tex ptripos.tex
++ mv tripos.tex ptripos.tex
+diff $testdir/tripos.tex ptripos.tex || is_OK=false
++ diff SRCDIR/triptrap/tripos.tex ptripos.tex
+
+eval ./dvitype $dvitype_args trip.dvi >ptrip.typ || exit 1
 + eval ./dvitype -output-level=2 -dpi=72.27 '-page-start='\''*.*.*.*.*.*.*.*.*.*'\''' trip.dvi
+./dvitype -output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*' trip.dvi
 ++ ./dvitype -output-level=2 -dpi=72.27 '-page-start=*.*.*.*.*.*.*.*.*.*' trip.dvi
+$DIFF $DIFFFLAGS $testdir/trip.typ ptrip.typ
 + diff SRCDIR/triptrap/trip.typ ptrip.typ
 1c1
 < This is DVItype, Version 3.6
 ---
-> This is DVItype, Version 3.6 (TeX Live 2015)
+> This is DVItype, Version 3.6 (TeX Live 2021/dev)
 9c9
-< ' TeX output 2014.01.07:0959'
+< ' TeX output 1776.07.04:1200'
 ---
-> ' TeX output 2015.04.12:1622'
+> ' TeX output 2021.01.27:1803'
 419c419
 < 1121: down4 639342208 
 ---
@@ -300,5 +580,12 @@
 ---
 > 2535: y4 203921756 
 > 2540: y0 203921756 
+
+$is_OK || {
+  echo ">>> There were some errors." >&2
+  exit 1
+}
 + :
-PASS: ptexdir/ptriptest
+
+PASS ptexdir/ptriptest.test (exit status: 0)
+PASS: ptexdir/ptriptest.test

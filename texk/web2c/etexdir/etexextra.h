@@ -20,7 +20,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include <etexdir/etex_version.h> /* for ETEX_VERSION */
 
-#define BANNER "This is e-TeX, Version 3.14159265-" ETEX_VERSION
+#define BANNER "This is e-TeX, Version 3.141592653-" ETEX_VERSION
 #define COPYRIGHT_HOLDER "Peter Breitenlohner et al"
 #define AUTHOR NULL
 #define PROGRAM_HELP ETEXHELP

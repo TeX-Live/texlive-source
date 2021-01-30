@@ -102,7 +102,7 @@ end else if getoptreturnval=63 then begin usage('tangle');
 end else if(strcmp(longoptions[optionindex].name,'help')=0)then begin
 usagehelp(TANGLEHELP,nil);
 end else if(strcmp(longoptions[optionindex].name,'version')=0)then begin
-printversionandexit('This is TANGLE, Version 4.5',nil,'D.E. Knuth',nil);
+printversionandexit('This is TANGLE, Version 4.6',nil,'D.E. Knuth',nil);
 end else if(strcmp(longoptions[optionindex].name,'mixedcase')=0)then
 begin forceuppercase:=false;forcelowercase:=false;
 end else if(strcmp(longoptions[optionindex].name,'uppercase')=0)then
@@ -590,9 +590,8 @@ end;end else if buffer[1]=122 then begin primethechangebuffer;
 changing:=not changing;templine:=otherline;otherline:=line;
 line:=templine;end;end;end{:137};
 if not changing then begin{136:}begin line:=line+1;
-if not inputln(webfile)then inputhasended:=true else if limit=
-changelimit then if buffer[0]=changebuffer[0]then if changelimit>0 then
-checkchange;end{:136};if changing then goto 20;end;loc:=0;
+if not inputln(webfile)then inputhasended:=true else if changelimit>0
+then checkchange;end{:136};if changing then goto 20;end;loc:=0;
 buffer[limit]:=32;end;
 {:135}{139:}function controlcode(c:ASCIIcode):eightbits;
 begin case c of 64:controlcode:=64;39:controlcode:=12;
@@ -614,10 +613,9 @@ while true do begin if loc>limit then begin getline;
 if inputhasended then begin begin writeln(stdout);
 write(stdout,'! Input ended in mid-comment');error;end;goto 10;end;end;
 c:=buffer[loc];loc:=loc+1;{142:}if c=64 then begin c:=buffer[loc];
-if(c<>32)and(c<>9)and(c<>42)and(c<>122)and(c<>90)then loc:=loc+1 else
-begin begin writeln(stdout);
-write(stdout,'! Section ended in mid-comment');error;end;loc:=loc-1;
-goto 10;
+if(c<>32)and(c<>9)and(c<>42)then loc:=loc+1 else begin begin writeln(
+stdout);write(stdout,'! Section ended in mid-comment');error;end;
+loc:=loc-1;goto 10;
 end end else if(c=92)and(buffer[loc]<>64)then loc:=loc+1 else if c=123
 then bal:=bal+1 else if c=125 then begin if bal=0 then goto 10;
 bal:=bal-1;end{:142};end;10:end;{:141}{145:}function getnext:eightbits;
@@ -853,12 +851,12 @@ others:write(stdout,'?')end;end;end;10:end;}
 changing:=true;primethechangebuffer;changing:=not changing;
 templine:=otherline;otherline:=line;line:=templine;limit:=0;loc:=1;
 buffer[0]:=32;inputhasended:=false;{:134};
-write(stdout,'This is TANGLE, Version 4.5');
+write(stdout,'This is TANGLE, Version 4.6');
 writeln(stdout,versionstring);{183:}phaseone:=true;modulecount:=0;
 repeat nextcontrol:=skipahead;until nextcontrol=136;
 while not inputhasended do scanmodule;
-{138:}if changelimit<>0 then begin for ii:=0 to changelimit do buffer[ii
-]:=changebuffer[ii];limit:=changelimit;changing:=true;line:=otherline;
+{138:}if changelimit<>0 then begin for ii:=0 to changelimit-1 do buffer[
+ii]:=changebuffer[ii];limit:=changelimit;changing:=true;line:=otherline;
 loc:=changelimit;begin writeln(stdout);
 write(stdout,'! Change file entry did not match');error;end;end{:138};
 phaseone:=false;{:183};{for ii:=0 to 4 do maxtokptr[ii]:=tokptr[ii];}
