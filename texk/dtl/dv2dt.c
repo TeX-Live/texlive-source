@@ -146,9 +146,13 @@ COUNT fontdef ARGS((FILE * dvi,  FILE * dtl,  int n));
 COUNT preamble  ARGS((FILE * dvi,  FILE * dtl));
 COUNT postamble ARGS((FILE * dvi,  FILE * dtl));
 COUNT postpost  ARGS((FILE * dvi,  FILE * dtl));
+Void give_help (VOID);
 
 
 const char * program;  /* name of dv2dt program */
+
+#define PRINT_PROGNAME  fprintf (stderr, "%s ", program)
+
 
 int
 main
@@ -172,8 +176,15 @@ main
 
   if (argc > 1)
     open_dvi (argv[1], &dvi);
-  else if (!isatty(fileno(dvi)))
+  else
+  {
+    if (isatty(fileno(dvi)))
+    {
+      give_help();
+      return 0;
+    }
     SET_BINARY(fileno(dvi));
+  }
 
   if (argc > 2)
     open_dtl (argv[2], &dtl);
@@ -942,5 +953,18 @@ postpost
   return (1 + 4 + 1 + n223);
 }
 /* end postpost */
+
+Void
+give_help (VOID)
+{
+  fprintf (stderr,
+    "Program \"%s\" version %s (%s).\n",
+    program, VERSION, TL_VERSION);
+  fprintf (stderr, "usage:   ");
+  PRINT_PROGNAME;
+  fprintf (stderr, " dvi_file  dtl_file");
+  fprintf (stderr, "\n");
+  fprintf (stderr, "\nEmail bug reports to %s.\n", BUG_ADDRESS);
+}
 
 /* end of "dv2dt.c" */

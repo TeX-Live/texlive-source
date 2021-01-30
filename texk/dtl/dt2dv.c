@@ -377,8 +377,8 @@ main
 
   fprintf (stderr, "\n");
   fprintf (stderr,
-    "Program \"%s\" version %s compiled in %sstandard C.\n",
-    progname, VERSION, C_LEVEL);
+    "Program \"%s\" version %s (%s) compiled in %sstandard C.\n",
+    progname, VERSION, TL_VERSION, C_LEVEL);
 
   /* interpret command line arguments */
 
@@ -447,6 +447,7 @@ give_help (VOID)
     fprintf (stderr, "\n");
   }
   fprintf (stderr, "Messages, like this one, go to stderr.\n");
+  fprintf (stderr, "\nEmail bug reports to %s.\n", BUG_ADDRESS);
 }
 /* give_help */
 

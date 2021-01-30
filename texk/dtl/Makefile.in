@@ -99,7 +99,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/ltsugar.m4 \
 	$(top_srcdir)/../../m4/ltversion.m4 \
 	$(top_srcdir)/../../m4/lt~obsolete.m4 \
-	$(top_srcdir)/configure.ac
+	$(top_srcdir)/../../version.ac $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
@@ -560,7 +560,7 @@ dist_check_SCRIPTS = dtl.test
 TESTS = dtl.test
 EXTRA_DIST = edited.txt dtl.doc dvi.doc example.tex hello.tex man2ps \
 	tripvdu.tex
-CLEANFILES = testfile.*
+CLEANFILES = testfile*.*
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

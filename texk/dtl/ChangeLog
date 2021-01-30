@@ -1,3 +1,11 @@
+2021-01-30  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dv2dt.c, dt2dv.c, dtl.h, configure.ac:
+	Show usage when dv2dt is executed without arguments.
+	Show TeX Live version number and bug report address in usage.
+	* Makefile.am, dtl.test:
+	Add new tests.
+
 2019-02-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dt2dv.c: Expand buffer size.

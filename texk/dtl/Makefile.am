@@ -28,7 +28,7 @@ dtl.log: dt2dv$(EXEEXT) dv2dt$(EXEEXT)
 
 EXTRA_DIST = edited.txt
 
-CLEANFILES = testfile.*
+CLEANFILES = testfile*.*
 
 ## Not used
 ##
