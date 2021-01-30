@@ -1,3 +1,8 @@
+2021-01-30  Karl Berry  <karl@freefriends.org>
+
+	* weave.web,
+	* weave.ch (banner): should have been 4.5. Report from Wolfgang Helbig.
+
 2021-01-29  Karl Berry  <karl@freefriends.org>
 
 	* NEWS: mention tuneup.

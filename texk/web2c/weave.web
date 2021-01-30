@@ -74,7 +74,7 @@ dependencies' in the index below.
 The ``banner line'' defined here should be changed whenever \.{WEAVE}
 is modified.
 
-@d banner=='This is WEAVE, Version 4.4'
+@d banner=='This is WEAVE, Version 4.5'
 
 @ The program begins with a fairly normal header, made up of pieces that
 @^system dependencies@>

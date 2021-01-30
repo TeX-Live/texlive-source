@@ -56,10 +56,10 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is WEAVE, Version 4.4'
+@d banner=='This is WEAVE, Version 4.5'
 @y
 @d my_name=='weave'
-@d banner=='This is WEAVE, Version 4.4'
+@d banner=='This is WEAVE, Version 4.5'
 @z
 
 @x [2] No global labels, define and call parse_arguments.
