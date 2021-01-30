@@ -1,3 +1,9 @@
+2021-01-31  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* spc_misc.c: Processing of pdffontatrr special should be
+	delayed until the end of the document since the font may not
+	be loaded at the time this special is executed.
+
 2021-01-26  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvipdfmx.c: Set the runtime flag suppressing error messages
