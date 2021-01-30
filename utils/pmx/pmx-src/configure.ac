@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
+dnl   Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -31,7 +32,7 @@ AC_PROG_LN_S
 AC_PROG_MAKE_SET
 AC_PROG_RANLIB
 
-AC_SEARCH_LIBS([sqrt], [m])
+AC_SEARCH_LIBS([erf], [m])
 
 AC_CHECK_SIZEOF([long long])
 if test $ac_cv_sizeof_long_long -lt 8; then
