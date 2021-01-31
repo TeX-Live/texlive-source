@@ -1,3 +1,13 @@
+2021-01-30  Karl Berry  <karl@freefriends.org>
+
+	* odvicopy.web,
+	* odvitype.web,
+	* ofm2opl.web,
+	* opl2ofm.web,
+	* ovf2ovp.web,
+	* ovp2ovf.web: \titlefalse rather than the obsolete \titlepage{F}.
+	Found by Andreas Scherer.
+
 2018-09-09  Karl Berry  <karl@tug.org>
 
 	* ligkern.test,

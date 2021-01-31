@@ -30,7 +30,7 @@
 \def\title{OVF2OVP}
 \def\contentspagenumber{101}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont OVF2OVP} processor}
