@@ -47,7 +47,7 @@
   \def\rheader{\mainfont Appendix D\hfil \contentspagenumber}
   \centerline{\titlefont The {\ttitlefont WEAVE} processor}
   \vskip 15pt
-  \centerline{(Version 4.4)}
+  \centerline{(Version 4.5)}
   \vfill}
 \pageno=\contentspagenumber \advance\pageno by 1
 

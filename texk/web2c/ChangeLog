@@ -1,7 +1,11 @@
-2021-01-30  Karl Berry  <karl@freefriends.org>
+2021-01-31  Karl Berry  <karl@freefriends.org>
 
-	* weave.web,
-	* weave.ch (banner): should have been 4.5. Report from Wolfgang Helbig.
+	* weave.ch (banner): 4.5.
+
+2021-01-31  Donald Knuth  <tex-k@tug.org>
+
+	* weave.web (banner, title): should have been 4.5.
+	Report from Wolfgang Helbig.
 
 2021-01-29  Karl Berry  <karl@freefriends.org>
 
