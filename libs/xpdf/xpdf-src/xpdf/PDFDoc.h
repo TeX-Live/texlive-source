@@ -185,6 +185,7 @@ public:
   int getEmbeddedFileNameLength(int idx)
     { return catalog->getEmbeddedFileNameLength(idx); }
   GBool saveEmbeddedFile(int idx, const char *path);
+  GBool saveEmbeddedFileU(int idx, const char *path);
 #ifdef _WIN32
   GBool saveEmbeddedFile(int idx, const wchar_t *path, int pathLen);
 #endif

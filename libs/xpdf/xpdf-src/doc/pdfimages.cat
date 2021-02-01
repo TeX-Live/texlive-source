@@ -4,7 +4,7 @@ pdfimages(1)                General Commands Manual               pdfimages(1)
 
 NAME
        pdfimages  -  Portable  Document  Format (PDF) image extractor (version
-       4.02)
+       4.03)
 
 SYNOPSIS
        pdfimages [options] PDF-file image-root
@@ -85,7 +85,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdfimages software and documentation are copyright 1998-2019 Glyph
+       The  pdfimages software and documentation are copyright 1998-2021 Glyph
        & Cog, LLC.
 
 SEE ALSO
@@ -95,4 +95,4 @@ SEE ALSO
 
 
 
-                                  25 Sep 2019                     pdfimages(1)
+                                  28 Jan 2021                     pdfimages(1)

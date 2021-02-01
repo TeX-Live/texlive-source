@@ -3,7 +3,7 @@ xpdfrc(5)                     File Formats Manual                    xpdfrc(5)
 
 
 NAME
-       xpdfrc - configuration file for Xpdf tools (version 4.02)
+       xpdfrc - configuration file for Xpdf tools (version 4.03)
 
 DESCRIPTION
        All  of the Xpdf tools read a single configuration file.  If you have a
@@ -17,8 +17,20 @@ DESCRIPTION
        line.   Blank  lines  and  lines  starting  with  a  '#' (comments) are
        ignored.
 
-       Arguments may be quoted, using  "double-quote"  characters,  e.g.,  for
-       file names that contain spaces.
+       Arguments can be single-quoted or double-quoted, e.g., for  file  names
+       that contain spaces ("aaa bbb", 'aaa bbb').  This quoting does not pro-
+       vide any escaping, so there's no way to include a  double  quote  in  a
+       double-quoted argument or a single quote in a single-quoted argument.
+
+       Arguments  can  also be at-quoted: @"aaa bbb".  At-quoted strings allow
+       use of the DATADIR variable, which is set to the 'data' subdirectory in
+       the  xpdf install directory.  The percent sign (%) is an escape charac-
+       ter: a percent sign followed by any other character  is  replaced  with
+       that character.
+
+              @"abc %"def%" ghi" --> abc "def" ghi
+              @"${DATADIR}/foo"  --> ...install-dir.../data/foo
+              @"%${DATADIR}/foo" --> ${DATADIR}/foo
 
        The  following  sections  list all of the configuration options, sorted
        into functional groups.  There is an examples section at the end.
@@ -507,6 +519,11 @@ VIEWER SETTINGS
               etc.)  visible.  If set to "no", xpdf  opens  with  the  sidebar
               collapsed.  The default is "yes".
 
+       initialSidebarWidth width
+              Sets  the  initial sidebar width, in pixels.  This is only rele-
+              vant if initialSidebarState is  "yes".   The  default  value  is
+              zero, which tells xpdf to use an internal default size.
+
        initialSelectMode block | linear
               Sets  the  initial selection mode.  The default setting is "lin-
               ear".
@@ -526,15 +543,19 @@ VIEWER SETTINGS
               Set  the  matte  color  for  full-screen mode.  The color can be
               #RRGGBB (hexadecimal) or a named color.
 
+       selectionColor color
+              Set the selection color.  The color can be #RRGGBB (hexadecimal)
+              or a named color.
+
        reverseVideoInvertImages yes | no
-              If set to "no", xpdf's reverse-video mode inverts text and  vec-
-              tor  graphic  content,  but  not  images.  If set to "yes", xpdf
+              If  set to "no", xpdf's reverse-video mode inverts text and vec-
+              tor graphic content, but not images.   If  set  to  "yes",  xpdf
               inverts images as well.  The default is "no".
 
        popupMenuCmd title command ...
-              Add a command to the popup menu.  Title is the text to  be  dis-
-              played  in  the  menu.  Command is an Xpdf command (see the COM-
-              MANDS section of the xpdf(1) man page  for  details).   Multiple
+              Add  a  command to the popup menu.  Title is the text to be dis-
+              played in the menu.  Command is an Xpdf command  (see  the  COM-
+              MANDS  section  of  the xpdf(1) man page for details).  Multiple
               commands are separated by whitespace.
 
        maxTileWidth pixels
@@ -542,11 +563,11 @@ VIEWER SETTINGS
               ing pages.  This defaults to 1500.
 
        maxTileHeight pixels
-              Set the maximum height of tiles to be used by xpdf when  raster-
+              Set  the maximum height of tiles to be used by xpdf when raster-
               izing pages.  This defaults to 1500.
 
        tileCacheSize tiles
-              Set  the  maximum number of tiles to be cached by xpdf when ras-
+              Set the maximum number of tiles to be cached by xpdf  when  ras-
               terizing pages.  This defaults to 10.
 
        workerThreads numThreads
@@ -554,16 +575,16 @@ VIEWER SETTINGS
               izing pages.  This defaults to 1.
 
        launchCommand command
-              Sets  the  command  executed  when  you click on a "launch"-type
-              link.  The intent is for the  command  to  be  a  program/script
-              which  determines the file type and runs the appropriate viewer.
-              The command line will consist of the file to be  launched,  fol-
-              lowed  by  any  parameters  specified with the link.  Do not use
-              "%s" in "command".  By default, this is  unset,  and  Xpdf  will
+              Sets the command executed when  you  click  on  a  "launch"-type
+              link.   The  intent  is  for  the command to be a program/script
+              which determines the file type and runs the appropriate  viewer.
+              The  command  line will consist of the file to be launched, fol-
+              lowed by any parameters specified with the  link.   Do  not  use
+              "%s"  in  "command".   By  default, this is unset, and Xpdf will
               simply try to execute the file (after prompting the user).
 
        movieCommand command
-              Sets  the command executed when you click on a movie annotation.
+              Sets the command executed when you click on a movie  annotation.
               The string "%s" will be replaced with the movie file name.  This
               has no default value.
 
@@ -571,7 +592,7 @@ VIEWER SETTINGS
               Sets the default printer used in the viewer's print dialog.
 
        bind modifiers-key context command ...
-              Add  a  key  or  mouse button binding.  Modifiers can be zero or
+              Add a key or mouse button binding.  Modifiers  can  be  zero  or
               more of:
 
                   shift-
@@ -592,11 +613,13 @@ VIEWER SETTINGS
                   end
                   pgup
                   pgdn
-                  left / right / up / down        (arrow keys)
-                  f1 .. f35                       (function keys)
-                  mousePress1 .. mousePress7      (mouse buttons)
-                  mouseRelease1 .. mouseRelease7  (mouse buttons)
-                  mouseClick1 .. mouseClick7      (mouse buttons)
+                  left / right / up / down                (arrow keys)
+                  f1 .. f35                               (function keys)
+                  mousePress1 .. mousePress7              (mouse buttons)
+                  mouseRelease1 .. mouseRelease7          (mouse buttons)
+                  mouseClick1 .. mouseClick7              (mouse buttons)
+                  mouseDoubleClick1 .. mouseDoubleClick7  (mouse buttons)
+                  mouseTripleClick1 .. mouseTripleClick7  (mouse buttons)
 
               Context is either "any" or a comma-separated combination of:
 
@@ -605,14 +628,14 @@ VIEWER SETTINGS
                   overLink / offLink        (mouse over link or not)
                   scrLockOn / scrLockOff    (scroll lock on/off)
 
-              The context string can include only one  of  each  pair  in  the
+              The  context  string  can  include  only one of each pair in the
               above list.
 
-              Command  is  an  Xpdf  command  (see the COMMANDS section of the
-              xpdf(1) man page for details).  Multiple commands are  separated
+              Command is an Xpdf command (see  the  COMMANDS  section  of  the
+              xpdf(1)  man page for details).  Multiple commands are separated
               by whitespace.
 
-              The  bind  command replaces any existing binding, but only if it
+              The bind command replaces any existing binding, but only  if  it
               was defined for the exact same modifiers, key, and context.  All
               tokens (modifiers, key, context, commands) are case-sensitive.
 
@@ -630,10 +653,10 @@ VIEWER SETTINGS
               See the xpdf(1) man page for more examples.
 
        unbind modifiers-key context
-              Removes  a  key binding established with the bind command.  This
-              is most useful to remove default key bindings before  establish-
-              ing  new  ones  (e.g.,  if  the default key binding is given for
-              "any" context, and you want to create new key bindings for  mul-
+              Removes a key binding established with the bind  command.   This
+              is  most useful to remove default key bindings before establish-
+              ing new ones (e.g., if the default  key  binding  is  given  for
+              "any"  context, and you want to create new key bindings for mul-
               tiple contexts).
 
        tabStateFile path
@@ -642,24 +665,19 @@ VIEWER SETTINGS
 
 MISCELLANEOUS SETTINGS
        drawAnnotations yes | no
-              If set to "no", annotations will not be drawn or  printed.   The
+              If  set  to "no", annotations will not be drawn or printed.  The
               default value is "yes".
 
        drawFormFields yes | no
-              If  set  to "no", form fields will not be drawn or printed.  The
+              If set to "no", form fields will not be drawn or  printed.   The
               default value is "yes".
 
-       enableXFA yes | no
-              If set to "yes", an XFA form (if present) will  be  rendered  in
-              place  of  an AcroForm.  If "no", an XFA form will never be ren-
-              dered.  This defaults to "yes".
-
        printCommands yes | no
-              If set to "yes", drawing commands are printed  as  they're  exe-
+              If  set  to  "yes", drawing commands are printed as they're exe-
               cuted (useful for debugging).  This defaults to "no".
 
        errQuiet yes | no
-              If  set to "yes", this suppresses all error and warning messages
+              If set to "yes", this suppresses all error and warning  messages
               from all of the Xpdf tools.  This defaults to "no".
 
 EXAMPLES
@@ -716,7 +734,7 @@ EXAMPLES
 
 FILES
        /usr/local/etc/xpdfrc
-              This is the default location for the  system-wide  configuration
+              This  is  the default location for the system-wide configuration
               file.  Depending on build options, it may be placed elsewhere.
 
        $HOME/.xpdfrc
@@ -724,14 +742,14 @@ FILES
               read in place of the system-wide file.
 
 AUTHOR
-       The Xpdf software and documentation are  copyright  1996-2019  Glyph  &
+       The  Xpdf  software  and  documentation are copyright 1996-2021 Glyph &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdftopng(1), pdfimages(1)
        http://www.xpdfreader.com/
 
 
 
-                                  25 Sep 2019                        xpdfrc(5)
+                                  28 Jan 2021                        xpdfrc(5)

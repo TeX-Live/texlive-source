@@ -467,6 +467,9 @@ void GfxFont::readFontDescriptor(XRef *xref, Dict *fontDict) {
       } else {
 	t2 = 0;
       }
+      if (t != 0 && t < 1.9) {
+	declaredAscent = t;
+      }
       // if both Ascent and CapHeight are set, use the smaller one
       // (because the most common problem is that Ascent is too large)
       if (t2 != 0 && (t == 0 || t2 < t)) {
@@ -851,19 +854,22 @@ char *GfxFont::readEmbFontFile(XRef *xref, int *len) {
   }
   str = obj2.getStream();
 
-  size = 0;
-  buf = NULL;
+  size = 4096;
+  buf = (char *)gmalloc(size);
+  *len = 0;
   str->reset();
   do {
-    if (size > INT_MAX - 4096) {
-      error(errSyntaxError, -1, "Embedded font file is too large");
-      break;
+    if (*len > size - 4096) {
+      if (size > INT_MAX / 2) {
+	error(errSyntaxError, -1, "Embedded font file is too large");
+	break;
+      }
+      size *= 2;
+      buf = (char *)grealloc(buf, size);
     }
-    buf = (char *)grealloc(buf, size + 4096);
-    n = str->getBlock(buf + size, 4096);
-    size += n;
+    n = str->getBlock(buf + *len, 4096);
+    *len += n;
   } while (n == 4096);
-  *len = size;
   str->close();
 
   obj2.free();
@@ -947,6 +953,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
     missingWidth = builtinFont->missingWidth;
     ascent = 0.001 * builtinFont->ascent;
     descent = 0.001 * builtinFont->descent;
+    declaredAscent = ascent;
     fontBBox[0] = 0.001 * builtinFont->bbox[0];
     fontBBox[1] = 0.001 * builtinFont->bbox[1];
     fontBBox[2] = 0.001 * builtinFont->bbox[2];
@@ -955,6 +962,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
     missingWidth = 0;
     ascent = 0.75;
     descent = -0.25;
+    declaredAscent = ascent;
     fontBBox[0] = fontBBox[1] = fontBBox[2] = fontBBox[3] = 0;
   }
 
@@ -966,6 +974,7 @@ Gfx8BitFont::Gfx8BitFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
   if (builtinFont) {
     ascent = 0.001 * builtinFont->ascent;
     descent = 0.001 * builtinFont->descent;
+    declaredAscent = ascent;
     fontBBox[0] = 0.001 * builtinFont->bbox[0];
     fontBBox[1] = 0.001 * builtinFont->bbox[1];
     fontBBox[2] = 0.001 * builtinFont->bbox[2];
@@ -1459,13 +1468,20 @@ int *Gfx8BitFont::getCodeToGIDMap(FoFiTrueType *ff) {
   }
 
   // reverse map the char names through MacRomanEncoding, then map the
-  // char codes through the cmap
+  // char codes through the cmap; fall back on Unicode if that doesn't
+  // work
   if (useMacRoman) {
     for (i = 0; i < 256; ++i) {
       if ((charName = enc[i])) {
 	if ((code = globalParams->getMacRomanCharCode(charName))) {
 	  map[i] = ff->mapCodeToGID(cmap, code);
+	} else if (unicodeCmap >= 0 &&
+		   (u = globalParams->mapNameToUnicode(charName))) {
+	  map[i] = ff->mapCodeToGID(unicodeCmap, u);
 	}
+      } else if (unicodeCmap >= 0 &&
+		 (n = ctu->mapToUnicode((CharCode)i, &u, 1))) {
+	map[i] = ff->mapCodeToGID(cmap, u);
       } else {
 	map[i] = -1;
       }
@@ -1631,6 +1647,7 @@ GfxCIDFont::GfxCIDFont(XRef *xref, const char *tagA, Ref idA, GString *nameA,
   missingWidth = 0;
   ascent = 0.95;
   descent = -0.35;
+  declaredAscent = ascent;
   fontBBox[0] = fontBBox[1] = fontBBox[2] = fontBBox[3] = 0;
   collection = NULL;
   cMap = NULL;

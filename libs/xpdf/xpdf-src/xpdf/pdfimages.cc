@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
   fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 3 || printVersion || printHelp) {
-    fprintf(stderr, "pdfimages version %s\n", xpdfVersion);
+    fprintf(stderr, "pdfimages version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdfimages", "<PDF-file> <image-root>", argDesc);

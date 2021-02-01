@@ -2645,4 +2645,98 @@ Increased the width of the font name column in the pdffonts output.
 Function objects weren't checking their input/output counts properly.
   [Thanks to Pangu Lab for the bug report.]
 TextPage::findGaps() wasn't checking the x/y min/max values for int
-  overflow.  [Thanks to Taolaw for the bugf report.]
+  overflow.  [Thanks to Taolaw for the bug report.]
+
+4.03 (2021-jan-28)
+------------------
+Implemented selection extension via shift-click, and word/line
+  selection via double/triple click.
+Added default bindings for ctrl-mousewheel-up/down to zoom in/out.
+Added the "-nofonts" option to pdftohtml.
+Added the "simple2" mode to pdftotext.
+Added the "-rot" flag to xpdf, pdftoppm, and pdftopng.
+Added the "-listencodings" flag to pdftotext.
+Added the 'copyLinkTarget' command.
+Added the 'selectionColor' xpdfrc setting.
+Added the 'initialSidebarWidth' xpdfrc setting.
+Added support for @"..." strings in xpdfrc files.  This includes using
+  '%' as an escape character, and also the '${DATADIR}' variable.
+Added a help menu item that shows all of the key bindings.
+Reorganized the gradient shading rasterization code to avoid
+  transparency artifacts between triangles/patches.
+Use interpolation rather than subdivision to rasterize Gouraud
+  triangle shadings.
+Allow escaping (via the \x01 character) in command args, so that "xpdf
+  -open foo(123).pdf" works correctly.
+Extended the damaged file repair code to handle PDF files that use
+  xref streams and object streams.
+Modified pdfinfo to print the encryption algorithm used (if any).
+Handle Windows shortcut (.lnk) files in Xpdf and in the command line
+  tools.
+Display an error dialog when trying to copy text from a protected
+  file.
+Updated all four of the CJK language support packages with the latest
+  Adobe data.
+Modified pdftohtml to draw 'invisible' text over non-horizontal words.
+Catalog.pageLabels wasn't being properly initialized to NULL.  [Thanks
+  to Dhiraj for the bug report.]
+Added a sanity check for JBIG2 symbol width.  [Reported by Marc
+  Schoenefeld.]
+Fixed a bug in the fontconfig calls that was causing Xpdf to crash.
+The Type 3 font cache code wasn't correctly handling the case where a
+  Type 3 char refers to another char in the same T3 font.  [Thanks to
+  Pangu Lab for the bug report.]
+Xpdf was crashing if 'view page labels' was enabled without any
+  document open.  [Thanks to TeamSeri0us for the bug report.]
+The Type 1C-to-Type 1 font converter wasn't checking for
+  divide-by-zero with rational numbers.  [Thanks to TeamSeri0us for
+  the bug report.]
+Fixed a bug in the TrueType font parser - zero-length loca tables
+  weren't handled correctly.  [Thanks to TeamSeri0us for the bug
+  report.]
+Fixed an integer overflow bug in the transparency group setup code.
+  [Thanks to TeamSeri0us for the bug report.]
+Pdfinfo with the "-box" option was crashing on zero-page PDF files.
+  [Thanks to TeamSeri0us for the bug report.]
+The code that caches scaled images wasn't checking the rendering
+  intent.  [Thanks to Martin Muskens at Ergosoft for the bug report.]
+The JBIG2 decoder now checks for gibberish values in various segment
+  headers, but keeps any data decoded prior to that.
+Fixed two bugs in the FoFi code that handles CFF fonts.  [Thanks to
+  dsmic for the bug report.]
+Redesigned the image scaling code, for performance.
+Cleaned up the code that sanity-checks font sizes to avoid trying to
+  allocate too much memory for the font cache.
+Implemented precincts in the JPEG 2000 decoder.
+The page-up/down snapping code was calling TileMap::getPageTopY() with
+  invalid page numbers.  [Thanks to dfandrich for the bug report.]
+Added missing error-checking when parsing an annotation appearance
+  stream's bbox.
+Handled UTF-16 sequences in ToUnicode maps.
+Rewrote the code that draws static XFA forms: combined it with the
+  AcroForm code, to match Adobe's behavior.  Removed the enableXFA
+  xpdfrc setting.
+Check for indirect references in content streams and report an error.
+Doing overprint preview in tiling patterns requires tracking the
+  overprint mask at each pixel.
+Check for "decompression bombs" in Flate and LZW streams.
+The nextPageNoScroll and prevPageNoScroll commands weren't working
+  correctly in continuous mode.
+Disable stroke adjustment when drawing Type 3 characters.
+The "xpdf -open" flag now constructs an absolute path, so it's not
+  dependent on the current directory when xpdf was started.
+Check for infinite loops in Type 1C charstring subroutines.  [Thanks
+  to blbi for the bug report.]
+Fixed an incomplete test for headless CFF files.  [Thanks to Chengbin
+  for the bug report.]
+Tweaked the code that computes segment slope in SplashXPath.cc to
+  avoid problems with extremely small coordinate values.  [Thanks to
+  Chengbin for the bug report.]
+Check for an invalid segment length in PSOutputDev's PFB parse.
+  [Thanks to Chengbin for the bug report.]
+Check for JPEG 2000 segments that are only allowed in the first
+  tile-part of a tile.  [Thanks to Chengbin for the bug report.]
+Check for invalid AcroForm ListBox field top index.  [Thanks to
+  Chengbin for the bug report.]
+Check for invalid mesh shading parameters.  [Thanks to Chengbin for
+  the bug report.]

@@ -214,6 +214,7 @@ HTMLGen::HTMLGen(double backgroundResolutionA) {
   // set up the TextOutputDev
   textOutControl.mode = textOutReadingOrder;
   textOutControl.html = gTrue;
+  textOutControl.splitRotatedWords = gTrue;
   textOut = new TextOutputDev(NULL, &textOutControl, gFalse);
   if (!textOut->isOk()) {
     ok = gFalse;
@@ -492,7 +493,7 @@ void HTMLGen::appendSpans(GList *words, int firstWordIdx, int lastWordIdx,
        (spanDir >= 0) ? wordIdx <= lastWordIdx : wordIdx >= lastWordIdx;
        wordIdx += spanDir) {
     word1 = (TextWord *)words->get(wordIdx);
-    invisible = allTextInvisible || word1->isInvisible();
+    invisible = allTextInvisible || word1->isInvisible() || word1->isRotated();
     if (!drawInvisibleText && invisible) {
       continue;
     }
@@ -513,6 +514,7 @@ void HTMLGen::appendSpans(GList *words, int firstWordIdx, int lastWordIdx,
 	word1->getFontInfo() != word0->getFontInfo() ||
 	word1->getFontSize() != word0->getFontSize() ||
 	word1->isInvisible() != word0->isInvisible() ||
+	word1->isRotated() != word0->isRotated() ||
 	vertAlign1 != vertAlign0 ||
 	r1 != r0 || g1 != g0 || b1 != b0) {
       if (word0) {
@@ -717,6 +719,7 @@ HTMLGenFontDefn *HTMLGen::getFontFile(TextFontInfo *font,
       getFontDetails(font, &family, &weight, &style, &scale);
       fontSpec = GString::format("font-family:ff{0:d},{1:s}; font-weight:{2:s}; font-style:{3:s};",
 				 nextFontFaceIdx, family, weight, style);
+      ++nextFontFaceIdx;
       fontDefn = new HTMLGenFontDefn(id, fontFace, fontSpec, 1.0);
     }
     delete fontPath;

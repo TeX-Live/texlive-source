@@ -8,6 +8,17 @@
 #
 #========================================================================
 
+if (POLICY CMP0074)
+  cmake_policy(SET CMP0074 NEW)
+endif ()
+
+if (APPLE)
+  if (POLICY CMP0042)
+    cmake_policy(SET CMP0042 NEW)
+  endif ()
+  set(CMAKE_MACOSX_RPATH 1)
+endif ()
+
 include(CheckFunctionExists)
 include(CheckCXXSourceCompiles)
 include(GNUInstallDirs)
@@ -41,12 +52,12 @@ if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
     CMAKE_CXX_FLAGS_PROFILING
     CMAKE_EXE_LINKER_FLAGS_PROFILING)
   set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-      "Choose build mode - options are: None Debug Release RelWithDebInfo MinSiz
-eRel Profiling")
+      "Choose build mode - options are: None Debug Release RelWithDebInfo MinSizeRel Profiling")
 endif ()
 
 #--- set default C/C++ compiler flags for Windows
 if (WIN32)
+  option(USE_MT_IN_DEBUG "use /MT instead of /MTd in debug builds" OFF)
   foreach (var CMAKE_C_FLAGS_DEBUG CMAKE_CXX_FLAGS_DEBUG
                CMAKE_C_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELEASE
                CMAKE_C_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_MINSIZEREL
@@ -54,8 +65,13 @@ if (WIN32)
     # note: this converts /MD to /MT and /MDd to /MTd
     string(REGEX REPLACE "/MD" "/MT" ${var} "${${var}}")
   endforeach ()
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/NODEFAULTLIB:libcmt ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
-  set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/NODEFAULTLIB:libcmt ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+  if (USE_MT_IN_DEBUG)
+    string(REPLACE "/MTd" "/MT" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+    string(REPLACE "/MTd" "/MT" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG}")
+  else ()
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "/NODEFAULTLIB:libcmt ${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
+    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/NODEFAULTLIB:libcmt ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+  endif ()
   foreach (var CMAKE_C_FLAGS_DEBUG
                CMAKE_C_FLAGS_RELEASE
                CMAKE_C_FLAGS_MINSIZEREL
@@ -87,6 +103,12 @@ if (SYSTEM_XPDFRC)
   set(SYSTEM_XPDFRC_DEFINE "#define SYSTEM_XPDFRC \"${SYSTEM_XPDFRC}\"")
 else ()
   set(SYSTEM_XPDFRC_DEFINE "/* #undef SYSTEM_XPDFRC */")
+endif ()
+option(XPDFRC_DATADIR "directory to use for the DATADIR xpdfrc variable" "")
+if (XPDFRC_DATADIR)
+  set(XPDFRC_DATADIR_DEFINE "#define XPDFRC_DATADIR \"${XPDFRC_DATADIR}\"")
+else ()
+  set(XPDFRC_DATADIR_DEFINE "/* #undef SYSTEM_XPDFRC */")
 endif ()
 if (WIN32)
   option(XPDFWIDGET_PRINTING "include printing support in XpdfWidget" OFF)
@@ -194,7 +216,7 @@ if (Qt5Widgets_FOUND)
   find_package(Qt5Network)
   find_package(Qt5PrintSupport)
 else ()
-  find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
+  find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork)
 endif ()
 if(Qt5Widgets_FOUND)
   message(STATUS "Qt5 found")

@@ -1,8 +1,8 @@
-.\" Copyright 1997-2019 Glyph & Cog, LLC
-.TH pdftohtml 1 "25 Sep 2019"
+.\" Copyright 1997-2021 Glyph & Cog, LLC
+.TH pdftohtml 1 "28 Jan 2021"
 .SH NAME
 pdftohtml \- Portable Document Format (PDF) to HTML converter
-(version 4.02)
+(version 4.03)
 .SH SYNOPSIS
 .B pdftohtml
 [options]
@@ -49,6 +49,11 @@ controls the pixel size of the background image files.  The initial
 zoom level is controlled by the \'-z' option.  Specifying a larger
 \'-r' value will allow the viewer to zoom in farther without upscaling
 artifacts in the background.
+.TP
+.B \-nofonts
+Disable extraction of embedded fonts.  By default, pdftohtml extracts
+TrueType and OpenType fonts.  Disabling extraction can work around
+problems with buggy fonts.
 .TP
 .B \-skipinvisible
 Don't draw invisible text.  By default, invisible text (commonly used
@@ -109,7 +114,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftohtml software and documentation are copyright 1996-2019 Glyph
+The pdftohtml software and documentation are copyright 1996-2021 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

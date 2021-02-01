@@ -25,7 +25,7 @@
 #include "Lexer.h"
 #include "PDFDoc.h"
 #include "OptionalContent.h"
-#include "Form.h"
+#include "AcroForm.h"
 #include "BuiltinFontTables.h"
 #include "FontEncodingTables.h"
 #include "Annot.h"

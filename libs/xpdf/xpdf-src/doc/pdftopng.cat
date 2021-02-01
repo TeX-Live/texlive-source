@@ -4,7 +4,7 @@ pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 4.02)
+       (PNG) converter (version 4.03)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -48,6 +48,9 @@ OPTIONS
               with PDF files that have been  constructed  with  a  transparent
               background.  The -alpha flag cannot be used with -mono.
 
+       -rot angle
+              Rotate pages by 0 (the default), 90, 180, or 270 degrees.
+
        -freetype yes | no
               Enable  or  disable  FreeType  (a TrueType / Type 1 font raster-
               izer).  This defaults to "yes".  [config file: enableFreeType]
@@ -87,7 +90,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftopng software and documentation are copyright 1996-2019 Glyph &
+       The pdftopng software and documentation are copyright 1996-2021 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -97,4 +100,4 @@ SEE ALSO
 
 
 
-                                  25 Sep 2019                      pdftopng(1)
+                                  28 Jan 2021                      pdftopng(1)

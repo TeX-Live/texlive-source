@@ -1,17 +1,17 @@
 Xpdf
 ====
 
-version 4.02
-2019-sep-25
+version 4.03
+2021-jan-28
 
 The Xpdf software and documentation are
-copyright 1996-2019 Glyph & Cog, LLC.
+copyright 1996-2021 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
 
 The PDF data structures, operators, and specification are
-documented in ISO 32000-2:2017.
+documented in ISO 32000-2:2020.
 
 
 What is Xpdf?
@@ -326,8 +326,8 @@ were changes made to the bitstream format between that draft and the
 published spec.]
 
 ISO, International Standard -- Document Management - Portable document
-format - Part 2: PDF 2.0.  ISO 32000-2:2017.
-[The manual for PDF version 2.0.]
+format - Part 2: PDF 2.0.  ISO 32000-2:2020.
+[The specification for PDF version 2.0.]
 
 ITU, "Standardization of Group 3 facsimile terminals for document
 transmission", ITU-T Recommendation T.4, 1999.

@@ -80,12 +80,21 @@ extern GString *fileNameToUTF8(char *path);
 
 // Convert a file name from UCS-2 to UTF-8.
 extern GString *fileNameToUTF8(wchar_t *path);
+
+// Convert a file name from UTF-8 to UCS-2.  [out] has space for
+// [outSize] wchar_t elements (including the trailing zero).  Returns
+// [out].
+extern wchar_t *fileNameToUCS2(const char *path, wchar_t *out, size_t outSize);
 #endif
 
 // Open a file.  On Windows, this converts the path from UTF-8 to
-// UCS-2 and calls _wfopen (if available).  On other OSes, this simply
-// calls fopen.
+// UCS-2 and calls _wfopen().  On other OSes, this simply calls fopen().
 extern FILE *openFile(const char *path, const char *mode);
+
+// Create a directory.  On Windows, this converts the path from UTF-8
+// to UCS-2 and calls _wmkdir(), ignoring the mode argument.  On other
+// OSes, this simply calls mkdir().
+extern int makeDir(const char *path, int mode);
 
 // Just like fgets, but handles Unix, Mac, and/or DOS end-of-line
 // conventions.

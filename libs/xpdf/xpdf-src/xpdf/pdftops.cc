@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
   fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc < 2 || argc > 3 || printVersion || printHelp) {
-    fprintf(stderr, "pdftops version %s\n", xpdfVersion);
+    fprintf(stderr, "pdftops version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdftops", "<PDF-file> [<PS-file>]", argDesc);
@@ -355,7 +355,7 @@ int main(int argc, char *argv[]) {
   // write PostScript file
   psOut = new PSOutputDev(psFileName->getCString(), doc,
 			  firstPage, lastPage, mode,
-			  0, 0, 0, 0, gFalse, NULL, NULL, userUnit);
+			  0, 0, 0, 0, gFalse, NULL, NULL, userUnit, gTrue);
   if (!psOut->isOk()) {
     delete psOut;
     exitCode = 2;

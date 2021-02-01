@@ -101,6 +101,7 @@ static const char *gfxColorSpaceModeNames[] = {
 
 GfxColorSpace::GfxColorSpace() {
   overprintMask = 0x0f;
+  defaultColorSpace = gFalse;
 }
 
 GfxColorSpace::~GfxColorSpace() {
@@ -2683,12 +2684,22 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
 	  "Missing or invalid BitsPerCoordinate in shading dictionary");
     goto err2;
   }
+  if (coordBits <= 0 || coordBits > 32) {
+    error(errSyntaxError, -1,
+	  "Invalid BitsPerCoordinate in shading dictionary");
+    goto err2;
+  }
   obj1.free();
   if (dict->lookup("BitsPerComponent", &obj1)->isInt()) {
     compBits = obj1.getInt();
   } else {
     error(errSyntaxError, -1,
 	  "Missing or invalid BitsPerComponent in shading dictionary");
+    goto err2;
+  }
+  if (compBits <= 0 || compBits > 16) {
+    error(errSyntaxError, -1,
+	  "Invalid BitsPerComponent in shading dictionary");
     goto err2;
   }
   obj1.free();
@@ -2701,6 +2712,10 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
 	    "Missing or invalid BitsPerFlag in shading dictionary");
       goto err2;
     }
+    if (flagBits < 2 || flagBits > 8) {
+      error(errSyntaxError, -1, "Invalid BitsPerFlag in shading dictionary");
+      goto err2;
+    }
     obj1.free();
   } else {
     if (dict->lookup("VerticesPerRow", &obj1)->isInt()) {
@@ -2711,6 +2726,11 @@ GfxGouraudTriangleShading *GfxGouraudTriangleShading::parse(
       goto err2;
     }
     obj1.free();
+    if (vertsPerRow < 2) {
+      error(errSyntaxError, -1,
+	    "Invalid VerticesPerRow in shading dictionary");
+      goto err2;
+    }
   }
   if (dict->lookup("Decode", &obj1)->isArray() &&
       obj1.arrayGetLength() >= 6) {
@@ -2911,6 +2931,34 @@ void GfxGouraudTriangleShading::getTriangle(
   }
 }
 
+void GfxGouraudTriangleShading::getBBox(double *xMin, double *yMin,
+					double *xMax, double *yMax) {
+  double xxMin = 0;
+  double yyMin = 0;
+  double xxMax = 0;
+  double yyMax = 0;
+  if (nVertices > 0) {
+    xxMin = xxMax = vertices[0].x;
+    yyMin = yyMax = vertices[0].y;
+  }
+  for (int i = 1; i < nVertices; ++i) {
+    if (vertices[i].x < xxMin) {
+      xxMin = vertices[i].x;
+    } else if (vertices[i].x > xxMax) {
+      xxMax = vertices[i].x;
+    }
+    if (vertices[i].y < yyMin) {
+      yyMin = vertices[i].y;
+    } else if (vertices[i].y > yyMax) {
+      yyMax = vertices[i].y;
+    }
+  }
+  *xMin = xxMin;
+  *yMin = yyMin;
+  *xMax = xxMax;
+  *yMax = yyMax;
+}
+
 void GfxGouraudTriangleShading::getColor(double *in, GfxColor *out) {
   double c[gfxColorMaxComps];
   int i;
@@ -2996,11 +3044,20 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
   Object obj1, obj2;
   int i, j;
 
+  nPatchesA = 0;
+  patchesA = NULL;
+  patchesSize = 0;
+
   if (dict->lookup("BitsPerCoordinate", &obj1)->isInt()) {
     coordBits = obj1.getInt();
   } else {
     error(errSyntaxError, -1,
 	  "Missing or invalid BitsPerCoordinate in shading dictionary");
+    goto err2;
+  }
+  if (coordBits <= 0 || coordBits > 32) {
+    error(errSyntaxError, -1,
+	  "Invalid BitsPerCoordinate in shading dictionary");
     goto err2;
   }
   obj1.free();
@@ -3011,12 +3068,21 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
 	  "Missing or invalid BitsPerComponent in shading dictionary");
     goto err2;
   }
+  if (compBits <= 0 || compBits > 16) {
+    error(errSyntaxError, -1,
+	  "Invalid BitsPerComponent in shading dictionary");
+    goto err2;
+  }
   obj1.free();
   if (dict->lookup("BitsPerFlag", &obj1)->isInt()) {
     flagBits = obj1.getInt();
   } else {
     error(errSyntaxError, -1,
 	  "Missing or invalid BitsPerFlag in shading dictionary");
+    goto err2;
+  }
+  if (flagBits < 2 || flagBits > 8) {
+    error(errSyntaxError, -1, "Invalid BitsPerFlag in shading dictionary");
     goto err2;
   }
   obj1.free();
@@ -3076,9 +3142,6 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
   }
   obj1.free();
 
-  nPatchesA = 0;
-  patchesA = NULL;
-  patchesSize = 0;
   bitBuf = new GfxShadingBitBuf(str);
   while (1) {
     if (!bitBuf->getBits(flagBits, &flag)) {
@@ -3506,11 +3569,46 @@ GfxPatchMeshShading *GfxPatchMeshShading::parse(int typeA, Dict *dict,
  err2:
   obj1.free();
  err1:
+  if (patchesA) {
+    gfree(patchesA);
+  }
   return NULL;
 }
 
 GfxShading *GfxPatchMeshShading::copy() {
   return new GfxPatchMeshShading(this);
+}
+
+void GfxPatchMeshShading::getBBox(double *xMin, double *yMin,
+				  double *xMax, double *yMax) {
+  double xxMin = 0;
+  double yyMin = 0;
+  double xxMax = 0;
+  double yyMax = 0;
+  if (nPatches > 0) {
+    xxMin = patches[0].x[0][0];
+    yyMin = patches[0].y[0][0];
+  }
+  for (int i = 0; i < nPatches; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      for (int k = 0; k < 4; ++k) {
+	if (patches[i].x[j][k] < xxMin) {
+	  xxMin = patches[i].x[j][k];
+	} else if (patches[i].x[j][k] > xxMax) {
+	  xxMax = patches[i].x[j][k];
+	}
+	if (patches[i].y[j][k] < yyMin) {
+	  yyMin = patches[i].y[j][k];
+	} else if (patches[i].y[j][k] > yyMax) {
+	  yyMax = patches[i].y[j][k];
+	}
+      }
+    }
+  }
+  *xMin = xxMin;
+  *yMin = yyMin;
+  *xMax = xxMax;
+  *yMax = yyMax;
 }
 
 void GfxPatchMeshShading::getColor(double *in, GfxColor *out) {

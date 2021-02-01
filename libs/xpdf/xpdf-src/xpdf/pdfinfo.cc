@@ -102,6 +102,9 @@ int main(int argc, char *argv[]) {
   FILE *f;
   GString *metadata;
   ZxDoc *xmp;
+  int permFlags, keyLength, encVersion;
+  GBool ownerPasswordOk;
+  CryptAlgorithm encAlgorithm;
   GBool ok;
   int exitCode;
   int pg, i;
@@ -113,7 +116,7 @@ int main(int argc, char *argv[]) {
   fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 2 || printVersion || printHelp) {
-    fprintf(stderr, "pdfinfo version %s\n", xpdfVersion);
+    fprintf(stderr, "pdfinfo version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdfinfo", "<PDF-file>", argDesc);
@@ -216,15 +219,19 @@ int main(int argc, char *argv[]) {
   printf("Pages:          %d\n", doc->getNumPages());
 
   // print encryption info
-  printf("Encrypted:      ");
   if (doc->isEncrypted()) {
-    printf("yes (print:%s copy:%s change:%s addNotes:%s)\n",
+    doc->getXRef()->getEncryption(&permFlags, &ownerPasswordOk, &keyLength,
+				  &encVersion, &encAlgorithm);
+    printf("Encrypted:      %s %d-bit\n",
+	   encAlgorithm == cryptRC4 ? "RC4" : "AES",
+	   keyLength * 8);
+    printf("Permissions:    print:%s copy:%s change:%s addNotes:%s\n",
 	   doc->okToPrint(gTrue) ? "yes" : "no",
 	   doc->okToCopy(gTrue) ? "yes" : "no",
 	   doc->okToChange(gTrue) ? "yes" : "no",
 	   doc->okToAddNotes(gTrue) ? "yes" : "no");
   } else {
-    printf("no\n");
+    printf("Encrypted:      no\n");
   }
 
   // print page size
@@ -261,18 +268,18 @@ int main(int argc, char *argv[]) {
     if (multiPage) {
       for (pg = firstPage; pg <= lastPage; ++pg) {
 	page = doc->getCatalog()->getPage(pg);
-	sprintf(buf, "Page %4d MediaBox: ", pg);
+	snprintf(buf, sizeof(buf), "Page %4d MediaBox: ", pg);
 	printBox(buf, page->getMediaBox());
-	sprintf(buf, "Page %4d CropBox:  ", pg);
+	snprintf(buf, sizeof(buf), "Page %4d CropBox:  ", pg);
 	printBox(buf, page->getCropBox());
-	sprintf(buf, "Page %4d BleedBox: ", pg);
+	snprintf(buf, sizeof(buf), "Page %4d BleedBox: ", pg);
 	printBox(buf, page->getBleedBox());
-	sprintf(buf, "Page %4d TrimBox:  ", pg);
+	snprintf(buf, sizeof(buf), "Page %4d TrimBox:  ", pg);
 	printBox(buf, page->getTrimBox());
-	sprintf(buf, "Page %4d ArtBox:   ", pg);
+	snprintf(buf, sizeof(buf), "Page %4d ArtBox:   ", pg);
 	printBox(buf, page->getArtBox());
       }
-    } else {
+    } else if (doc->getNumPages() > 0) {
       page = doc->getCatalog()->getPage(firstPage);
       printBox("MediaBox:       ", page->getMediaBox());
       printBox("CropBox:        ", page->getCropBox());

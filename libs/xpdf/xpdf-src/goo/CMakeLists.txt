@@ -20,6 +20,7 @@ add_library(goo_objs OBJECT
   gmem.cc
   gmempp.cc
   parseargs.c
+  Trace.cc
 )
 
 add_library(goo

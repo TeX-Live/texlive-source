@@ -1,6 +1,6 @@
-diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
---- xpdf-4.02/goo/gfile.cc	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/goo/gfile.cc	Sun Sep 29 11:23:53 2019
+diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
+--- xpdf-4.03/goo/gfile.cc	Thu Jan 28 07:23:51 2021
++++ xpdf-src/goo/gfile.cc	Mon Feb 01 13:13:50 2021
 @@ -7,6 +7,9 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
  //
@@ -11,7 +11,7 @@ diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
  
  #include <aconf.h>
  
-@@ -54,7 +57,11 @@
+@@ -56,7 +59,11 @@
    char *s;
    GString *ret;
  
@@ -23,7 +23,7 @@ diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
      ret = new GString(s);
    else
      ret = new GString(".");
-@@ -403,6 +410,7 @@
+@@ -405,6 +412,7 @@
  #endif
  }
  
@@ -31,7 +31,7 @@ diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
  GBool openTempFile(GString **name, FILE **f,
  		   const char *mode, const char *ext) {
  #if defined(_WIN32)
-@@ -517,10 +525,11 @@
+@@ -519,10 +527,11 @@
    return gTrue;
  #endif
  }
@@ -44,24 +44,46 @@ diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
  #else
    return !mkdir(path, mode);
  #endif
-@@ -574,6 +583,8 @@
+@@ -602,6 +611,8 @@
  
  FILE *openFile(const char *path, const char *mode) {
  #if defined(_WIN32)
 +  return fopen(path, mode);
 +#if 0
-   OSVERSIONINFO version;
    wchar_t wPath[_MAX_PATH + 1];
-   char nPath[_MAX_PATH + 1];
-@@ -630,6 +641,7 @@
-     nPath[i] = '\0';
-     return fopen(nPath, mode);
-   }
+   wchar_t wMode[8];
+   int i;
+@@ -613,6 +624,7 @@
+   wMode[i] = (wchar_t)0;
+   readWindowsShortcut(wPath, _MAX_PATH + 1);
+   return _wfopen(wPath, wMode);
 +#endif /* 0 */
  #elif defined(VMS)
    return fopen(path, mode, "ctx=stm");
  #else
-@@ -690,6 +702,7 @@
+@@ -620,6 +632,7 @@
+ #endif
+ }
+ 
++#if 0
+ #ifdef _WIN32
+ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
+   size_t n = wcslen(wPath);
+@@ -665,11 +678,11 @@
+   wcscpy(wPath, target);
+ }
+ #endif
++#endif /* 0 */
+ 
+ int makeDir(const char *path, int mode) {
+ #ifdef _WIN32
+-  wchar_t wPath[_MAX_PATH + 1];
+-  return _wmkdir(fileNameToUCS2(path, wPath, sizeof(wPath) / sizeof(wchar_t)));
++  return _mkdir(path);
+ #else
+   return mkdir(path, (mode_t)mode);
+ #endif
+@@ -728,6 +741,7 @@
  #endif
  }
  
@@ -69,15 +91,28 @@ diff -ur xpdf-4.02/goo/gfile.cc xpdf-src/goo/gfile.cc
  void fixCommandLine(int *argc, char **argv[]) {
  #ifdef _WIN32
    int argcw;
-@@ -715,3 +728,4 @@
+@@ -753,3 +767,4 @@
    LocalFree(argvw);
  #endif
  }
 +#endif /* !PDF_PARSER_ONLY */
-diff -ur xpdf-4.02/goo/gfile.h xpdf-src/goo/gfile.h
---- xpdf-4.02/goo/gfile.h	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/goo/gfile.h	Sun Sep 29 11:25:19 2019
-@@ -115,6 +115,8 @@
+diff -ur xpdf-4.03/goo/gfile.h xpdf-src/goo/gfile.h
+--- xpdf-4.03/goo/gfile.h	Thu Jan 28 07:23:51 2021
++++ xpdf-src/goo/gfile.h	Mon Feb 01 13:14:50 2021
+@@ -91,12 +91,6 @@
+ // UCS-2 and calls _wfopen().  On other OSes, this simply calls fopen().
+ extern FILE *openFile(const char *path, const char *mode);
+ 
+-#ifdef _WIN32
+-// If [wPath] is a Windows shortcut (.lnk file), read the target path
+-// and store it back into [wPath].
+-extern void readWindowsShortcut(wchar_t *wPath, size_t wPathSize);
+-#endif
+-
+ // Create a directory.  On Windows, this converts the path from UTF-8
+ // to UCS-2 and calls _wmkdir(), ignoring the mode argument.  On other
+ // OSes, this simply calls mkdir().
+@@ -130,6 +124,8 @@
  
  // On Windows, this gets the Unicode command line and converts it to
  // UTF-8.  On other systems, this is a nop.
@@ -86,9 +121,9 @@ diff -ur xpdf-4.02/goo/gfile.h xpdf-src/goo/gfile.h
 +#endif /* !PDF_PARSER_ONLY */
  
  #endif
-diff -ur xpdf-4.02/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
---- xpdf-4.02/xpdf/GlobalParams.cc	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/GlobalParams.cc	Sun Sep 29 11:32:58 2019
+diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
+--- xpdf-4.03/xpdf/GlobalParams.cc	Thu Jan 28 07:23:51 2021
++++ xpdf-src/xpdf/GlobalParams.cc	Mon Feb 01 12:20:24 2021
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -114,7 +149,7 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
  #endif
  
  #if MULTITHREADED
-@@ -803,6 +810,7 @@
+@@ -787,6 +794,7 @@
    f = NULL;
    fileName = NULL;
    if (cfgFileName && cfgFileName[0]) {
@@ -122,7 +157,7 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
      fileName = new GString(cfgFileName);
      if (!(f = fopen(fileName->getCString(), "r"))) {
        delete fileName;
-@@ -835,6 +843,7 @@
+@@ -819,6 +827,7 @@
      parseFile(fileName, f);
      delete fileName;
      fclose(f);
@@ -130,7 +165,7 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
    }
  }
  
-@@ -2265,8 +2274,11 @@
+@@ -2358,8 +2367,11 @@
  				   base14->fontNum,
  				   displayFontTab[i].obliqueFactor));
        } else {
@@ -142,9 +177,9 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
        }
      }
    }
-diff -ur xpdf-4.02/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
---- xpdf-4.02/xpdf/GlobalParams.h	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/GlobalParams.h	Sun Sep 29 11:34:12 2019
+diff -ur xpdf-4.03/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
+--- xpdf-4.03/xpdf/GlobalParams.h	Thu Jan 28 07:23:51 2021
++++ xpdf-src/xpdf/GlobalParams.h	Mon Feb 01 12:23:07 2021
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -155,7 +190,7 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
  #ifndef GLOBALPARAMS_H
  #define GLOBALPARAMS_H
-@@ -219,7 +222,7 @@
+@@ -237,7 +240,7 @@
  
    // Initialize the global parameters by attempting to read a config
    // file.
@@ -164,10 +199,22 @@ diff -ur xpdf-4.02/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
    ~GlobalParams();
  
-diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
---- xpdf-4.02/xpdf/PDFDoc.cc	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/PDFDoc.cc	Sun Sep 29 11:41:09 2019
-@@ -156,20 +156,25 @@
+diff -ur xpdf-4.03/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
+--- xpdf-4.03/xpdf/PDFDoc.cc	Thu Jan 28 07:23:51 2021
++++ xpdf-src/xpdf/PDFDoc.cc	Mon Feb 01 13:01:20 2021
+@@ -114,6 +114,7 @@
+   ok = setup(ownerPassword, userPassword);
+ }
+ 
++#if 0
+ #ifdef _WIN32
+ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
+ 	       GString *userPassword, PDFCore *coreA) {
+@@ -161,23 +162,29 @@
+   ok = setup(ownerPassword, userPassword);
+ }
+ #endif
++#endif /* 0 */
  
  PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
  	       GString *userPassword, PDFCore *coreA) {
@@ -180,7 +227,7 @@ diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
 +/*
  #ifdef _WIN32
    Unicode u;
-   int n, i, j;
+   int i, j;
  #endif
 +*/
  
@@ -190,10 +237,10 @@ diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  
  #if defined(_WIN32)
 +#if 0
-   n = 0;
+   wchar_t wPath[MAX_PATH + 1];
    i = 0;
-   while (getUTF8(fileName, &i, &u)) {
-@@ -187,8 +192,11 @@
+   j = 0;
+@@ -197,8 +204,11 @@
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
      file = _wfopen(fileNameU, wfopenReadMode);
    } else {
@@ -205,7 +252,7 @@ diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  #elif defined(VMS)
    file = fopen(fileName->getCString(), fopenReadMode, "ctx=stm");
  #else
-@@ -581,6 +589,7 @@
+@@ -603,6 +613,7 @@
    GBool ret;
  
    // NB: _wfopen is only available in NT
@@ -213,7 +260,7 @@ diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    version.dwOSVersionInfoSize = sizeof(version);
    GetVersionEx(&version);
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-@@ -590,12 +599,15 @@
+@@ -612,12 +623,15 @@
      path2w[i] = 0;
      f = _wfopen(path2w, L"wb");
    } else {
@@ -229,10 +276,10 @@ diff -ur xpdf-4.02/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
    if (!f) {
      return gFalse;
    }
-diff -ur xpdf-4.02/xpdf/Page.cc xpdf-src/xpdf/Page.cc
---- xpdf-4.02/xpdf/Page.cc	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/Page.cc	Sun Sep 29 11:43:12 2019
-@@ -480,9 +480,9 @@
+diff -ur xpdf-4.03/xpdf/Page.cc xpdf-src/xpdf/Page.cc
+--- xpdf-4.03/xpdf/Page.cc	Thu Jan 28 07:23:51 2021
++++ xpdf-src/xpdf/Page.cc	Mon Feb 01 12:31:27 2021
+@@ -485,9 +485,9 @@
    delete links;
  }
  
@@ -243,33 +290,17 @@ diff -ur xpdf-4.02/xpdf/Page.cc xpdf-src/xpdf/Page.cc
    GfxState *state;
    int i;
  
-@@ -499,5 +499,5 @@
+@@ -504,5 +504,5 @@
      ctm[i] = state->getCTM()[i];
    }
    delete state;
 -}
  #endif
 +}
-diff -ur xpdf-4.02/xpdf/XFAForm.cc xpdf-src/xpdf/XFAForm.cc
---- xpdf-4.02/xpdf/XFAForm.cc	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/XFAForm.cc	Sun Sep 29 11:44:10 2019
-@@ -29,8 +29,10 @@
- #include "XFAForm.h"
- 
- #ifdef _WIN32
--#  define strcasecmp stricmp
--#  define strncasecmp strnicmp
-+#  undef strcasecmp
-+#  undef strncasecmp
-+#  define strcasecmp _stricmp
-+#  define strncasecmp _strnicmp
- #endif
- 
- //------------------------------------------------------------------------
-diff -ur xpdf-4.02/xpdf/config.h xpdf-src/xpdf/config.h
---- xpdf-4.02/xpdf/config.h	Thu Sep 26 04:54:33 2019
-+++ xpdf-src/xpdf/config.h	Sun Sep 29 11:45:39 2019
-@@ -78,11 +78,6 @@
+diff -ur xpdf-4.03/xpdf/config.h xpdf-src/xpdf/config.h
+--- xpdf-4.03/xpdf/config.h	Thu Jan 28 07:23:52 2021
++++ xpdf-src/xpdf/config.h	Mon Feb 01 12:34:28 2021
+@@ -80,11 +80,6 @@
  // popen
  //------------------------------------------------------------------------
  

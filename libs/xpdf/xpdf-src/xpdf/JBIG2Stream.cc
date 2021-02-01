@@ -1304,7 +1304,6 @@ void JBIG2Stream::readSegments() {
   Guint *refSegs;
   int c1, c2, c3;
   Guint i;
-  GBool done;
 
   done = gFalse;
   while (!done && readULong(&segNum)) {
@@ -1723,16 +1722,17 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 	    "Bad delta-height value in JBIG2 symbol dictionary");
       goto syntaxError;
     }
-    // sanity check to avoid extremely long run-times with damaged streams
-    if (dh > 1000000) {
-      error(errSyntaxError, getPos(),
-	    "Bogus delta-height value in JBIG2 symbol dictionary");
-      goto syntaxError;
-    }
     symHeight += dh;
     symWidth = 0;
     totalWidth = 0;
     j = i;
+
+    // sanity check to avoid extremely long run-times with damaged streams
+    if (symHeight > 100000) {
+      error(errSyntaxError, getPos(),
+	    "Bogus symbol height value in JBIG2 symbol dictionary");
+      goto syntaxError;
+    }
 
     // read the symbols in this height class
     while (1) {
@@ -1757,6 +1757,13 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
       if (i >= numNewSyms) {
 	error(errSyntaxError, getPos(),
 	      "Too many symbols in JBIG2 symbol dictionary");
+	goto syntaxError;
+      }
+
+      // sanity check to avoid extremely long run-times with damaged streams
+      if (symWidth > 100000) {
+	error(errSyntaxError, getPos(),
+	      "Bogus symbol width value in JBIG2 symbol dictionary");
 	goto syntaxError;
       }
 
@@ -1975,6 +1982,15 @@ void JBIG2Stream::readTextRegionSeg(Guint segNum, GBool imm,
   }
   if (w == 0 || h == 0) {
     error(errSyntaxError, getPos(), "Bad size in JBIG2 text region segment");
+    return;
+  }
+  // sanity check: if the w/h/x/y values are way out of range, it likely
+  // indicates a damaged JBIG2 stream
+  if (w / 10 > pageW || h / 10 > pageH ||
+      x / 10 > pageW || y / 10 > pageH) {
+    error(errSyntaxError, getPos(),
+	  "Bad size or position in JBIG2 text region segment");
+    done = gTrue;
     return;
   }
   extCombOp = segInfoFlags & 7;
@@ -2557,6 +2573,15 @@ void JBIG2Stream::readHalftoneRegionSeg(Guint segNum, GBool imm,
       !readUByte(&segInfoFlags)) {
     goto eofError;
   }
+  // sanity check: if the w/h/x/y values are way out of range, it likely
+  // indicates a damaged JBIG2 stream
+  if (w / 10 > pageW || h / 10 > pageH ||
+      x / 10 > pageW || y / 10 > pageH) {
+    error(errSyntaxError, getPos(),
+	  "Bad size or position in JBIG2 halftone region segment");
+    done = gTrue;
+    return;
+  }
   extCombOp = segInfoFlags & 7;
 
   // rest of the halftone region header
@@ -2718,6 +2743,15 @@ void JBIG2Stream::readGenericRegionSeg(Guint segNum, GBool imm,
   if (w == 0 || h == 0) {
     error(errSyntaxError, getPos(),
 	  "Bad bitmap size in JBIG2 generic region segment");
+    return;
+  }
+  // sanity check: if the w/h/x/y values are way out of range, it likely
+  // indicates a damaged JBIG2 stream
+  if (w / 10 > pageW || h / 10 > pageH ||
+      x / 10 > pageW || y / 10 > pageH) {
+    error(errSyntaxError, getPos(),
+	  "Bad size or position in JBIG2 generic region segment");
+    done = gTrue;
     return;
   }
   extCombOp = segInfoFlags & 7;
@@ -3621,6 +3655,15 @@ void JBIG2Stream::readGenericRefinementRegionSeg(Guint segNum, GBool imm,
   if (w == 0 || h == 0) {
     error(errSyntaxError, getPos(),
 	  "Bad size in JBIG2 generic refinement region segment");
+    return;
+  }
+  // sanity check: if the w/h/x/y values are way out of range, it likely
+  // indicates a damaged JBIG2 stream
+  if (w / 10 > pageW || h / 10 > pageH ||
+      x / 10 > pageW || y / 10 > pageH) {
+    error(errSyntaxError, getPos(),
+	  "Bad size or position in JBIG2 generic refinement region segment");
+    done = gTrue;
     return;
   }
   extCombOp = segInfoFlags & 7;

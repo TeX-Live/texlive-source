@@ -1317,6 +1317,7 @@ void LZWStream::reset() {
   eof = gFalse;
   inputBits = 0;
   clearTable();
+  totalIn = totalOut = 0;
 }
 
 GBool LZWStream::processNextCode() {
@@ -1382,6 +1383,14 @@ GBool LZWStream::processNextCode() {
       nextBits = 12;
   }
   prevCode = code;
+  totalOut += seqLength;
+
+  // check for a 'decompression bomb'
+  if (totalOut > 50000000 && totalIn < totalOut / 250) {
+    error(errSyntaxError, getPos(), "Decompression bomb in flate stream");
+    eof = gTrue;
+    return gFalse;
+  }
 
   // reset buffer
   seqIndex = 0;
@@ -1405,6 +1414,7 @@ int LZWStream::getCode() {
       return EOF;
     inputBuf = (inputBuf << 8) | (c & 0xff);
     inputBits += 8;
+    ++totalIn;
   }
   code = (inputBuf >> (inputBits - nextBits)) & ((1 << nextBits) - 1);
   inputBits -= nextBits;
@@ -2268,7 +2278,6 @@ short CCITTFaxStream::lookBits(int n) {
 GString *CCITTFaxStream::getPSFilter(int psLevel, const char *indent,
 				     GBool okToReadStream) {
   GString *s;
-  char s1[50];
 
   if (psLevel < 2) {
     return NULL;
@@ -2278,8 +2287,7 @@ GString *CCITTFaxStream::getPSFilter(int psLevel, const char *indent,
   }
   s->append(indent)->append("<< ");
   if (encoding != 0) {
-    sprintf(s1, "/K %d ", encoding);
-    s->append(s1);
+    s->appendf("/K {0:d} ", encoding);
   }
   if (endOfLine) {
     s->append("/EndOfLine true ");
@@ -2287,11 +2295,9 @@ GString *CCITTFaxStream::getPSFilter(int psLevel, const char *indent,
   if (byteAlign) {
     s->append("/EncodedByteAlign true ");
   }
-  sprintf(s1, "/Columns %d ", columns);
-  s->append(s1);
+  s->appendf("/Columns {0:d} ", columns);
   if (rows != 0) {
-    sprintf(s1, "/Rows %d ", rows);
-    s->append(s1);
+    s->appendf("/Rows {0:d} ", rows);
   }
   if (!endOfBlock) {
     s->append("/EndOfBlock false ");
@@ -4059,7 +4065,7 @@ GBool DCTStream::readQuantTables() {
       error(errSyntaxError, getPos(), "Bad DCT quantization table");
       return gFalse;
     }
-    if (index == numQuantTables) {
+    if (index >= numQuantTables) {
       numQuantTables = index + 1;
     }
     for (i = 0; i < 64; ++i) {
@@ -4951,6 +4957,8 @@ void FlateStream::reset() {
   endOfBlock = eof = gTrue;
   cmf = str->getChar();
   flg = str->getChar();
+  totalIn = 2;
+  totalOut = 0;
   if (cmf == EOF || flg == EOF)
     return;
   if ((cmf & 0x0f) != 0x08) {
@@ -5017,7 +5025,7 @@ int FlateStream::getRawChar() {
 }
 
 int FlateStream::getBlock(char *blk, int size) {
-  int n;
+  int n, k;
 
   if (pred) {
     return pred->getBlock(blk, size);
@@ -5031,11 +5039,17 @@ int FlateStream::getBlock(char *blk, int size) {
       }
       readSome();
     }
-    while (remain && n < size) {
-      blk[n++] = buf[index];
-      index = (index + 1) & flateMask;
-      --remain;
+    k = remain;
+    if (size - n < k) {
+      k = size - n;
     }
+    if (flateWindow - index < k) {
+      k = flateWindow - index;
+    }
+    memcpy(blk + n, buf + index, k);
+    n += k;
+    index = (index + k) & flateMask;
+    remain -= k;
   }
   return n;
 }
@@ -5061,7 +5075,7 @@ GBool FlateStream::isBinary(GBool last) {
 void FlateStream::readSome() {
   int code1, code2;
   int len, dist;
-  int i, j, k;
+  int src, dest, n1, n2, n3, i, j, k;
   int c;
 
   if (endOfBlock) {
@@ -5090,12 +5104,78 @@ void FlateStream::readSome() {
       if (code2 > 0 && (code2 = getCodeWord(code2)) == EOF)
 	goto err;
       dist = distDecode[code1].first + code2;
-      i = index;
-      j = (index - dist) & flateMask;
-      for (k = 0; k < len; ++k) {
-	buf[i] = buf[j];
-	i = (i + 1) & flateMask;
-	j = (j + 1) & flateMask;
+      dest = index;
+      src = (index - dist) & flateMask;
+      // the following is an optimized version of:
+      // for (k = 0; k < len; ++k) {
+      //   buf[dest] = buf[src];
+      //   dest = (dest + 1) & flateMask;
+      //   src = (src + 1) & flateMask;
+      // }
+      if (dest + len <= flateWindow) {
+	if (src + len <= flateWindow) {
+	  for (k = 0; k < len; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	} else {
+	  n1 = flateWindow - src;
+	  n2 = len - n1;
+	  for (k = 0; k < n1; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = dest + n1;
+	  src = 0;
+	  for (k = 0; k < n2; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	}
+      } else {
+	if (src + len <= flateWindow) {
+	  n1 = flateWindow - dest;
+	  n2 = len - n1;
+	  for (k = 0; k < n1; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = 0;
+	  src = src + n1;
+	  for (k = 0; k < n2; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	} else if (src < dest) {
+	  n1 = flateWindow - dest;
+	  n2 = dest - src;
+	  n3 = len - n1 - n2;
+	  for (k = 0; k < n1; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = 0;
+	  src = src + n1;
+	  for (k = 0; k < n2; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = n2;
+	  src = 0;
+	  for (k = 0; k < n3; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	} else {
+	  n1 = flateWindow - src;
+	  n2 = src - dest;
+	  n3 = len - n1 - n2;
+	  for (k = 0; k < n1; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = dest + n1;
+	  src = 0;
+	  for (k = 0; k < n2; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	  dest = 0;
+	  src = n2;
+	  for (k = 0; k < n3; ++k) {
+	    buf[dest + k] = buf[src + k];
+	  }
+	}
       }
       remain = len;
     }
@@ -5113,6 +5193,15 @@ void FlateStream::readSome() {
     blockLen -= len;
     if (blockLen == 0)
       endOfBlock = gTrue;
+    totalIn += remain;
+  }
+  totalOut += remain;
+
+  // check for a 'decompression bomb'
+  if (totalOut > 50000000 && totalIn < totalOut / 250) {
+    error(errSyntaxError, getPos(), "Decompression bomb in flate stream");
+    endOfBlock = eof = gTrue;
+    remain = 0;
   }
 
   return;
@@ -5164,6 +5253,7 @@ GBool FlateStream::startBlock() {
 	    "Bad uncompressed block length in flate stream");
     codeBuf = 0;
     codeSize = 0;
+    totalIn += 4;
 
   // compressed block with fixed codes
   } else if (blockHdr == 1) {
@@ -5358,6 +5448,7 @@ int FlateStream::getHuffmanCodeWord(FlateHuffmanTab *tab) {
     }
     codeBuf |= (c & 0xff) << codeSize;
     codeSize += 8;
+    ++totalIn;
   }
   code = &tab->codes[codeBuf & ((1 << tab->maxLen) - 1)];
   if (codeSize == 0 || codeSize < code->len || code->len == 0) {
@@ -5376,6 +5467,7 @@ int FlateStream::getCodeWord(int bits) {
       return EOF;
     codeBuf |= (c & 0xff) << codeSize;
     codeSize += 8;
+    ++totalIn;
   }
   c = codeBuf & ((1 << bits) - 1);
   codeBuf >>= bits;

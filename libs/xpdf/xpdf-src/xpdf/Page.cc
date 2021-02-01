@@ -14,6 +14,7 @@
 
 #include <stddef.h>
 #include "gmempp.h"
+#include "Trace.h"
 #include "GlobalParams.h"
 #include "Object.h"
 #include "Array.h"
@@ -26,7 +27,7 @@
 #include "Gfx.h"
 #include "GfxState.h"
 #include "Annot.h"
-#include "Form.h"
+#include "AcroForm.h"
 #endif
 #include "Error.h"
 #include "Catalog.h"
@@ -335,7 +336,7 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
   Gfx *gfx;
   Object obj;
   Annots *annotList;
-  Form *form;
+  AcroForm *form;
   int i;
 
   if (!out->checkPageSlice(this, hDPI, vDPI, rotate, useMediaBox, crop,
@@ -343,6 +344,8 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 			   printing, abortCheckCbk, abortCheckCbkData)) {
     return;
   }
+
+  traceBegin(this, "begin page");
 
   rotate += getRotate();
   if (rotate >= 360) {
@@ -404,7 +407,9 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
   }
 
   delete gfx;
-#endif
+#endif // PDF_PARSER_ONLY
+
+  traceEnd(this, "end page");
 }
 
 void Page::makeBox(double hDPI, double vDPI, int rotate,

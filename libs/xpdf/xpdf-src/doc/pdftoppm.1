@@ -1,8 +1,8 @@
-.\" Copyright 2005-2019 Glyph & Cog, LLC
-.TH pdftoppm 1 "25 Sep 2019"
+.\" Copyright 2005-2021 Glyph & Cog, LLC
+.TH pdftoppm 1 "28 Jan 2021"
 .SH NAME
 pdftoppm \- Portable Document Format (PDF) to Portable Pixmap (PPM)
-converter (version 4.02)
+converter (version 4.03)
 .SH SYNOPSIS
 .B pdftoppm
 [options]
@@ -56,6 +56,9 @@ Generate a grayscale PGM file (instead of an RGB PPM file).
 .B \-cmyk
 Generate a CMYK PAM file (instead of an RGB PPM file).
 .TP
+.BI \-rot " angle"
+Rotate pages by 0 (the default), 90, 180, or 270 degrees.
+.TP
 .BI \-freetype " yes | no"
 Enable or disable FreeType (a TrueType / Type 1 font rasterizer).
 This defaults to "yes".
@@ -107,7 +110,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftoppm software and documentation are copyright 1996-2019 Glyph
+The pdftoppm software and documentation are copyright 1996-2021 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

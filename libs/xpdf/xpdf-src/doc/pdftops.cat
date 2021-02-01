@@ -4,7 +4,7 @@ pdftops(1)                  General Commands Manual                 pdftops(1)
 
 NAME
        pdftops  - Portable Document Format (PDF) to PostScript converter (ver-
-       sion 4.02)
+       sion 4.03)
 
 SYNOPSIS
        pdftops [options] [PDF-file [PS-file]]
@@ -42,7 +42,7 @@ OPTIONS
               print on Level 1 printers.  This also  converts  all  images  to
               black  and  white.   No  more  than  one of the PostScript level
               options  (-level1,  -level1sep,  -level2,  -level2sep,  -level3,
-              -level3Sep) may be given.  [config file: psLevel]
+              -level3sep) may be given.  [config file: psLevel]
 
        -level1sep
               Generate Level 1 separable PostScript.  All colors are converted
@@ -72,9 +72,9 @@ OPTIONS
               Generate grayscale Level 3 PostScript.   All  colors,  including
               images, are converted to grayscale.  [config file: psLevel]
 
-       -level3Sep
+       -level3sep
               Generate  Level 3 separable PostScript.  The separation handling
-              is the same as for -level2Sep.  [config file: psLevel]
+              is the same as for -level2sep.  [config file: psLevel]
 
        -eps   Generate an Encapsulated PostScript (EPS)  file.   An  EPS  file
               contains a single image, so if you use this option with a multi-
@@ -201,7 +201,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdftops software and documentation are copyright 1996-2019 Glyph &
+       The  pdftops software and documentation are copyright 1996-2021 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -211,4 +211,4 @@ SEE ALSO
 
 
 
-                                  25 Sep 2019                       pdftops(1)
+                                  28 Jan 2021                       pdftops(1)

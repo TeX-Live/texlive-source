@@ -80,6 +80,7 @@ private:
 
   GBool parseCMap1(int (*getCharFunc)(void *), void *data, int nBits);
   void addMapping(CharCode code, char *uStr, int n, int offset);
+  int parseUTF16String(char *uStr, int n, Unicode *uOut);
   void addMappingInt(CharCode code, Unicode u);
   CharCodeToUnicode();
   CharCodeToUnicode(GString *tagA);

@@ -115,6 +115,7 @@ am__objects_1 = @XPDF_TREE@/goo/FixedPoint.$(OBJEXT) \
 	@XPDF_TREE@/goo/GHash.$(OBJEXT) \
 	@XPDF_TREE@/goo/GList.$(OBJEXT) \
 	@XPDF_TREE@/goo/GString.$(OBJEXT) \
+	@XPDF_TREE@/goo/Trace.$(OBJEXT) \
 	@XPDF_TREE@/goo/gfile.$(OBJEXT) @XPDF_TREE@/goo/gmem.$(OBJEXT) \
 	@XPDF_TREE@/goo/gmempp.$(OBJEXT)
 am__objects_2 = @XPDF_TREE@/fofi/FoFiBase.$(OBJEXT) \
@@ -135,7 +136,6 @@ am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Dict.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Error.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/FontEncodingTables.$(OBJEXT) \
-	@XPDF_TREE@/xpdf/Form.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Function.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Gfx.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/GfxFont.$(OBJEXT) \
@@ -163,7 +163,7 @@ am__objects_3 = @XPDF_TREE@/xpdf/AcroForm.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UnicodeMap.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UnicodeRemapping.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/UTF8.$(OBJEXT) \
-	@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT) \
+	@XPDF_TREE@/xpdf/XFAScanner.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/XRef.$(OBJEXT) \
 	@XPDF_TREE@/xpdf/Zoox.$(OBJEXT)
 nodist_libxpdf_a_OBJECTS = $(am__objects_1) $(am__objects_2) \
@@ -194,6 +194,7 @@ am__depfiles_remade = @XPDF_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/GHash.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/GList.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/GString.Po \
+	@XPDF_TREE@/goo/$(DEPDIR)/Trace.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/gfile.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/gmem.Po \
 	@XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po \
@@ -209,7 +210,6 @@ am__depfiles_remade = @XPDF_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Dict.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Error.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/FontEncodingTables.Po \
-	@XPDF_TREE@/xpdf/$(DEPDIR)/Form.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Function.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Gfx.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/GfxFont.Po \
@@ -237,7 +237,7 @@ am__depfiles_remade = @XPDF_TREE@/fofi/$(DEPDIR)/FoFiBase.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po \
-	@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po \
+	@XPDF_TREE@/xpdf/$(DEPDIR)/XFAScanner.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po
 am__mv = mv -f
@@ -483,6 +483,7 @@ goo_libGoo_a_sources = \
 	@XPDF_TREE@/goo/GHash.cc \
 	@XPDF_TREE@/goo/GList.cc \
 	@XPDF_TREE@/goo/GString.cc \
+	@XPDF_TREE@/goo/Trace.cc \
 	@XPDF_TREE@/goo/gfile.cc \
 	@XPDF_TREE@/goo/gmem.cc \
 	@XPDF_TREE@/goo/gmempp.cc
@@ -508,7 +509,6 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/Dict.cc \
 	@XPDF_TREE@/xpdf/Error.cc \
 	@XPDF_TREE@/xpdf/FontEncodingTables.cc \
-	@XPDF_TREE@/xpdf/Form.cc \
 	@XPDF_TREE@/xpdf/Function.cc \
 	@XPDF_TREE@/xpdf/Gfx.cc \
 	@XPDF_TREE@/xpdf/GfxFont.cc \
@@ -536,7 +536,7 @@ xpdf_libxpdf_a_sources = \
 	@XPDF_TREE@/xpdf/UnicodeMap.cc \
 	@XPDF_TREE@/xpdf/UnicodeRemapping.cc \
 	@XPDF_TREE@/xpdf/UTF8.cc \
-	@XPDF_TREE@/xpdf/XFAForm.cc \
+	@XPDF_TREE@/xpdf/XFAScanner.cc \
 	@XPDF_TREE@/xpdf/XRef.cc \
 	@XPDF_TREE@/xpdf/Zoox.cc
 
@@ -616,6 +616,8 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/GString.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
+@XPDF_TREE@/goo/Trace.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
+	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/gfile.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
 	@XPDF_TREE@/goo/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/goo/gmem.$(OBJEXT): @XPDF_TREE@/goo/$(am__dirstamp) \
@@ -678,8 +680,6 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/FontEncodingTables.$(OBJEXT):  \
 	@XPDF_TREE@/xpdf/$(am__dirstamp) \
-	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
-@XPDF_TREE@/xpdf/Form.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/Function.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
@@ -749,7 +749,8 @@ clean-noinstLIBRARIES:
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/UTF8.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
-@XPDF_TREE@/xpdf/XFAForm.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
+@XPDF_TREE@/xpdf/XFAScanner.$(OBJEXT):  \
+	@XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
 @XPDF_TREE@/xpdf/XRef.$(OBJEXT): @XPDF_TREE@/xpdf/$(am__dirstamp) \
 	@XPDF_TREE@/xpdf/$(DEPDIR)/$(am__dirstamp)
@@ -780,6 +781,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/GHash.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/GList.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/GString.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/Trace.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gfile.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmem.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po@am__quote@ # am--include-marker
@@ -795,7 +797,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Dict.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Error.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/FontEncodingTables.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Form.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Function.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Gfx.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/GfxFont.Po@am__quote@ # am--include-marker
@@ -823,7 +824,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XFAScanner.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po@am__quote@ # am--include-marker
 
@@ -1213,6 +1214,7 @@ distclean: distclean-recursive
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GHash.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GList.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GString.Po
+	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/Trace.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gfile.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gmem.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po
@@ -1228,7 +1230,6 @@ distclean: distclean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Dict.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Error.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/FontEncodingTables.Po
-	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Form.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Function.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Gfx.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/GfxFont.Po
@@ -1256,7 +1257,7 @@ distclean: distclean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po
-	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAScanner.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po
 	-rm -f Makefile
@@ -1316,6 +1317,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GHash.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GList.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/GString.Po
+	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/Trace.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gfile.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gmem.Po
 	-rm -f @XPDF_TREE@/goo/$(DEPDIR)/gmempp.Po
@@ -1331,7 +1333,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Dict.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Error.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/FontEncodingTables.Po
-	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Form.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Function.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Gfx.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/GfxFont.Po
@@ -1359,7 +1360,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UTF8.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeMap.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/UnicodeRemapping.Po
-	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAForm.Po
+	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XFAScanner.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/XRef.Po
 	-rm -f @XPDF_TREE@/xpdf/$(DEPDIR)/Zoox.Po
 	-rm -f Makefile
