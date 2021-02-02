@@ -1,4 +1,7 @@
-2021-01-31 Luigi Scarso <luigi.scarso@gmail.com> 
+2021-02-01 Luigi Scarso <luigi.scarso@gmail.com> 
+    * two TeX January 2021 DEK buglet fixes (H.Hagen)
+
+2021-01-31 Luigi Scarso <luigi.scarso@gmail.com>  
     * mark math glyphs as protected (in order to prevent processing
       as text in base mode) (H.Hagen)
     * removed width/ic compensation for traditional math code path
