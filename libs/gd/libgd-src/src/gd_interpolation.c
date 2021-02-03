@@ -1988,7 +1988,8 @@ BGD_DECLARE(int) gdTransformAffineGetImage(gdImagePtr *dst,
 static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 {
 	unsigned char r, g, b, a;
-	int ct, i;
+	int ct;
+	int i;
 
 	b = (unsigned char)tcolor;
 	g = (unsigned char)(tcolor >> 8);
@@ -2001,7 +2002,7 @@ static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
 	a = CLAMP(a, 0, 127);
 
 	for (i = 0; i < im->colorsTotal; i++) {
-	    if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
+		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
 			return i;
 		}
 	}

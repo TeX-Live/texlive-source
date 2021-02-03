@@ -441,13 +441,22 @@ typedef struct {
 	uint32_t cluster;
 } glyphInfo;
 
-static size_t
+static ssize_t
 textLayout(uint32_t *text, int len,
 		FT_Face face, gdFTStringExtraPtr strex,
 		glyphInfo **glyph_info)
 {
+#ifndef HAVE_LIBRAQM
+	FT_UInt glyph_index = 0, previous = 0;
+	FT_Vector delta;
+	FT_Error err;
+#endif
 	size_t count;
 	glyphInfo *info;
+
+	if (!len) {
+		return 0;
+	}
 
 #ifdef HAVE_LIBRAQM
 	size_t i;
@@ -459,19 +468,19 @@ textLayout(uint32_t *text, int len,
 		!raqm_set_par_direction (rq, RAQM_DIRECTION_DEFAULT) ||
 		!raqm_layout (rq)) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	glyphs = raqm_get_glyphs (rq, &count);
 	if (!glyphs) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * count);
 	if (!info) {
 		raqm_destroy (rq);
-		return 0;
+		return -1;
 	}
 
 	for (i = 0; i < count; i++) {
@@ -484,12 +493,9 @@ textLayout(uint32_t *text, int len,
 
 	raqm_destroy (rq);
 #else
-	FT_UInt glyph_index = 0, previous = 0;
-	FT_Vector delta;
-	FT_Error err;
 	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * len);
 	if (!info) {
-		return 0;
+		return -1;
 	}
 	for (count = 0; count < len; count++) {
 		/* Convert character code to glyph index */
@@ -508,7 +514,7 @@ textLayout(uint32_t *text, int len,
 		err = FT_Load_Glyph (face, glyph_index, FT_LOAD_DEFAULT);
 		if (err) {
 			gdFree (info);
-			return 0;
+			return -1;
 		}
 		info[count].index = glyph_index;
 		info[count].x_offset = 0;
@@ -527,7 +533,7 @@ textLayout(uint32_t *text, int len,
 #endif
 
 	*glyph_info = info;
-	return count;
+	return count <= SSIZE_MAX ? count : -1;
 }
 
 /********************************************************************/
@@ -1108,7 +1114,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	char *tmpstr = 0;
 	uint32_t *text;
 	glyphInfo *info = NULL;
-	size_t count;
+	ssize_t count;
 	int render = (im && (im->trueColor || (fg <= 255 && fg >= -255)));
 	FT_BitmapGlyph bm;
 	/* 2.0.13: Bob Ostermann: don't force autohint, that's just for testing
@@ -1409,7 +1415,7 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 
 	count = textLayout (text , i, face, strex, &info);
 
-	if (!count) {
+	if (count < 0) {
 		gdFree (text);
 		gdFree (tmpstr);
 		gdCacheDelete (tc_cache);
@@ -1568,7 +1574,9 @@ BGD_DECLARE(char *) gdImageStringFTEx (gdImage * im, int *brect, int fg, const c
 	}
 
 	gdFree(text);
-	gdFree(info);
+	if (info) {
+		gdFree(info);
+	}
 
 	/* Save the (unkerned) advance from the last character in the xshow vector */
 	if (strex && (strex->flags & gdFTEX_XSHOW) && strex->xshow) {

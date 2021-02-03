@@ -1,9 +1,13 @@
-libdir=@CMAKE_INSTALL_FULL_LIBDIR@
-includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=@CMAKE_INSTALL_PREFIX@
+libdir=${exec_prefix}/@CMAKE_INSTALL_LIBDIR@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
 
 Name: gd
 Description: GD graphics library
 Version: @GDLIB_VERSION@
+Requires:
+Requires.private: @PKG_REQUIRES_PRIVATES@
 Cflags: -I${includedir}
-Libs.private: @LIBGD_DEP_LIBS@
+Libs.private: @LIBS_PRIVATES@
 Libs: -L${libdir} -lgd

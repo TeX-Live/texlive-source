@@ -1,12 +1,8 @@
-diff -ur libgd-2.3.0/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
---- libgd-2.3.0/src/gd_interpolation.c	Sun Mar 22 22:42:38 2020
-+++ libgd-src/src/gd_interpolation.c	Mon Mar 30 07:00:26 2020
-@@ -1988,19 +1988,19 @@
- static int getPixelRgbInterpolated(gdImagePtr im, const int tcolor)
- {
- 	unsigned char r, g, b, a;
--	int ct;
-+	int ct, i;
+diff -ur libgd-2.3.1/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
+--- libgd-2.3.1/src/gd_interpolation.c	Sat Jan 30 18:30:01 2021
++++ libgd-src/src/gd_interpolation.c	Wed Feb 03 14:56:52 2021
+@@ -1992,9 +1992,9 @@
+ 	int i;
  
  	b = (unsigned char)tcolor;
 -	g = (unsigned char)tcolor >> 8;
@@ -18,18 +14,32 @@ diff -ur libgd-2.3.0/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
  
  	b = CLAMP(b, 0, 255);
  	g = CLAMP(g, 0, 255);
- 	r = CLAMP(r, 0, 255);
- 	a = CLAMP(a, 0, 127);
+diff -ur libgd-2.3.1/src/gdft.c libgd-src/src/gdft.c
+--- libgd-2.3.1/src/gdft.c	Sat Jan 30 18:30:01 2021
++++ libgd-src/src/gdft.c	Wed Feb 03 15:26:58 2021
+@@ -446,6 +446,11 @@
+ 		FT_Face face, gdFTStringExtraPtr strex,
+ 		glyphInfo **glyph_info)
+ {
++#ifndef HAVE_LIBRAQM
++	FT_UInt glyph_index = 0, previous = 0;
++	FT_Vector delta;
++	FT_Error err;
++#endif
+ 	size_t count;
+ 	glyphInfo *info;
  
--	for (int i = 0; i < im->colorsTotal; i++) {
-+	for (i = 0; i < im->colorsTotal; i++) {
- 	    if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
- 			return i;
- 		}
-diff -ur libgd-2.3.0/src/gdft.c libgd-src/src/gdft.c
---- libgd-2.3.0/src/gdft.c	Sun Mar 22 22:42:38 2020
-+++ libgd-src/src/gdft.c	Mon Mar 30 07:01:24 2020
-@@ -1519,6 +1519,8 @@
+@@ -488,9 +493,6 @@
+ 
+ 	raqm_destroy (rq);
+ #else
+-	FT_UInt glyph_index = 0, previous = 0;
+-	FT_Vector delta;
+-	FT_Error err;
+ 	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * len);
+ 	if (!info) {
+ 		return -1;
+@@ -1523,6 +1525,8 @@
  		}
  
  		if (render) {
@@ -38,7 +48,7 @@ diff -ur libgd-2.3.0/src/gdft.c libgd-src/src/gdft.c
  			FT_Activate_Size (platform_specific);
  
  			/* load glyph again into the slot (erase previous one)  - this time with scaling */
-@@ -1552,8 +1554,8 @@
+@@ -1556,8 +1560,8 @@
  			bm = (FT_BitmapGlyph) image;
  			/* position rounded down to nearest pixel at current dpi
  			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
@@ -49,7 +59,7 @@ diff -ur libgd-2.3.0/src/gdft.c libgd-src/src/gdft.c
  			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
  					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
  					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
-@@ -1787,6 +1789,16 @@
+@@ -1793,6 +1797,16 @@
  	 */
  	*fontpath = NULL;
  	fontsearchpath = getenv ("GDFONTPATH");

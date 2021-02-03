@@ -7,10 +7,6 @@
 extern "C" {
 #endif
 
-#ifdef VMS
-#	define Putchar gdPutchar
-#endif
-
 /*
   Group: Types
 
@@ -73,9 +69,6 @@ typedef struct gdIOCtx {
 } gdIOCtx;
 
 typedef struct gdIOCtx *gdIOCtxPtr;
-
-void Putword(int w, gdIOCtx *ctx);
-void Putchar(int c, gdIOCtx *ctx);
 
 void gdPutC(const unsigned char c, gdIOCtx *ctx);
 int gdPutBuf(const void *, int, gdIOCtx *);

@@ -1,4 +1,4 @@
-Changes applied to the libgd-2.3.0/ tree as obtained from:
+Changes applied to the libgd-2.3.1/ tree as obtained from:
 	https://github.com/libgd/libgd/releases
 
 Removed:
@@ -11,6 +11,7 @@ Removed:
 	config/config.rpath
 	config/config.sub
 	config/depcomp
+	config/getlib.sh
 	config/install-sh
 	config/ltmain.sh
 	config/missing
@@ -27,4 +28,3 @@ Removed:
 Removed execute permission:
 	windows/libgd.rc
 	windows/msys/deps.mk
-
