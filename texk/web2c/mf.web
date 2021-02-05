@@ -4314,7 +4314,6 @@ routines are going to work.
 @!old_setting:0..max_selector;
 @!sys_time,@!sys_day,@!sys_month,@!sys_year:integer;
     {date and time supplied by external system}
-@^system dependencies@>
 
 @ We will occasionally use |begin_diagnostic| in connection with line-number
 printing, as follows. (The parameter |s| is typically |"Path"| or
@@ -23053,7 +23052,7 @@ if (base_ident=0)or(buffer[loc]="&") then
   while (loc<limit)and(buffer[loc]=" ") do incr(loc);
   end;
 buffer[limit]:="%";@/
-fix_date_and_time; init_randoms(sys_time+sys_day);@/
+fix_date_and_time; init_randoms(sys_time+sys_day*unity);@/
 @<Initialize the print |selector|...@>;
 if loc<limit then if buffer[loc]<>"\" then start_input; {\&{input} assumed}
 end

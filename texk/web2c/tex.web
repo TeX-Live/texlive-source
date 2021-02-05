@@ -1766,8 +1766,7 @@ error messages are
 
 \hang|term_only| (when |interaction>batch_mode| and |log_file| not yet open);
 
-\hang|log_only| (when |interaction=batch_mode| and |log_file| is open,
-  or when tracing paragraphs);
+\hang|log_only| (when |interaction=batch_mode| and |log_file| is open);
 
 \hang|term_and_log| (when |interaction>batch_mode| and |log_file| is open).
 
@@ -1883,7 +1882,7 @@ var c:ASCII_code; {what the user types}
   {used to save global variables when deleting tokens}
 begin if history<error_message_issued then history:=error_message_issued;
 print_char("."); show_context;
-if interaction=error_stop_mode then if selector<>log_only then
+if interaction=error_stop_mode then
   @<Get user's advice and |return|@>;
 incr(error_count);
 if error_count=100 then
@@ -16290,6 +16289,7 @@ function finite_shrink(@!p:pointer):pointer; {recovers from infinite shrinkage}
 var q:pointer; {new glue specification}
 begin if no_shrink_error_yet then
   begin no_shrink_error_yet:=false;
+  @!stat if tracing_paragraphs>0 then end_diagnostic(true);@+tats@;
   print_err("Infinite glue shrinkage found in a paragraph");
 @.Infinite glue shrinkage...@>
   help5("The paragraph just ended includes some glue that has")@/
@@ -16298,6 +16298,7 @@ begin if no_shrink_error_yet then
   ("of any length to fit on one line. But it's safe to proceed,")@/
   ("since the offensive shrinkability has been made finite.");
   error;
+  @!stat if tracing_paragraphs>0 then begin_diagnostic;@+tats@;
   end;
 q:=new_spec(p); shrink_order(q):=normal;
 delete_glue_ref(p); finite_shrink:=q;

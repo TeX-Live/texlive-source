@@ -1954,12 +1954,6 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
     @!init if ini_version then begin store_base_file; return;end;@+tini@/
 @z
 
-@x
-fix_date_and_time; init_randoms(sys_time+sys_day);@/
-@y
-fix_date_and_time; init_randoms(internal[time]+internal[day]);@/
-@z
-
 %@x [49.1211] l.23002 - Handle %&base line.
 %if (base_ident=0)or(buffer[loc]="&") then
 %@y

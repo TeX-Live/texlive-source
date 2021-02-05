@@ -1836,6 +1836,7 @@ the \fontdimen values needed in math symbol fonts.
 {restoring \mathsurround=0.0pt}
 {restoring \fam=0}
 {horizontal mode: \par}
+
 ! Infinite glue shrinkage found in a paragraph.
 l.210 ...round60pt\hbox{$$}$\par
                                 }
