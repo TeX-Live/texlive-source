@@ -1,3 +1,7 @@
+2021-02-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftex.web: sync \tracingparagraphs fix from tex.web.
+
 2021-01-28  Marcel Fabian Krueger  <tex@2krueger.de>
 
 	* tounicode.c ((un)dumptounicode): use integer, not size_t,
