@@ -49,8 +49,9 @@ int main(int argc, char *argv[])
    }
 
    if (argc == 0 || C == 0 || W*H == 0) {
-      msg  ("pktest (ps2pk) version " PACKAGE_VERSION "\n");
-      fatal("Usage: %s -c<char> -W<width> -H<height> pkfile\n", myname);
+      msg  ("pktest (ps2pk) version " PACKAGE_VERSION " (" TL_VERSION ")\n");
+      msg  ("Usage: %s -c<char> -W<width> -H<height> pkfile\n", myname);
+      fatal("\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
    }
 
    pkname = argv[0];

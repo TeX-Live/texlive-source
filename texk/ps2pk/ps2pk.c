@@ -269,7 +269,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    afmname = argv[0]; 
 	    done = 1;
       	    break;
@@ -280,7 +280,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    encname = argv[0]; 
 	    add_option("-e", encname);
 	    done = 1;
@@ -289,7 +289,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    efactor = atof(argv[0]);
 	    add_option("-E", argv[0]);
 	    done = 1;
@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    pointsize = atof(argv[0]); 
 	    add_option("-P", argv[0]);
 	    done = 1;
@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    base_resolution = atoi(argv[0]); 
 	    add_option("-R", argv[0]);
 	    done = 1;
@@ -320,7 +320,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    slant = atof(argv[0]);
 	    add_option("-S", argv[0]);
 	    done = 1;
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    x_resolution = atoi(argv[0]); done = 1;
 	    if (y_resolution == 0) y_resolution = x_resolution;
 	    add_option("-X", argv[0]);
@@ -338,7 +338,7 @@ int main(int argc, char *argv[])
       	    if (*++argv[0] == '\0') {
       	       argc--; argv++;
       	    }
-      	    if (argv[0] == '\0') goto invalid;
+      	    if (argv[0] == NULL) goto invalid;
 	    y_resolution = atoi(argv[0]); done = 1;
 	    if (x_resolution == 0) x_resolution = y_resolution;
 	    add_option("-Y", argv[0]);
@@ -353,10 +353,11 @@ invalid:
       }
 
    if (argc < 1 || argc >2) {
-      msg  ("ps2pk version " PACKAGE_VERSION " (1992-2016)\n");
+      msg  ("ps2pk version " PACKAGE_VERSION " (" TL_VERSION ")\n");
       msg  ("Usage: %s [options] type1font [pkname]\n", myname);
       msg  ("options: -d -v -e<enc> -X<xres> -E<expansion> -S<slant>\n");
-      fatal("options: -O -P<pointsize> -Y<yres> -a<AFM> -R<baseres>\n");
+      msg  ("options: -O -P<pointsize> -Y<yres> -a<AFM> -R<baseres>\n");
+      fatal("\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
    }
 
    psname = argv[0]; argc--; argv++;

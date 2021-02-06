@@ -13729,6 +13729,11 @@ done
 ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
+
+
+$as_echo "#define TL_VERSION \"TeX Live 2021/dev\"" >>confdefs.h
+
+
 for ac_prog in kpsewhich
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.

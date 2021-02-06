@@ -32,6 +32,10 @@ AC_CHECK_FUNCS([memset])
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 dnl For tests
 AC_CHECK_PROGS([KPSEWHICH], [kpsewhich], [false])
 
