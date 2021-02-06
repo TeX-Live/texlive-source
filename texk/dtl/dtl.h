@@ -21,8 +21,6 @@
 /* version of DTL programs */
 #define VERSION "0.6.0"
 
-#define BUG_ADDRESS "tex-k@tug.org"
-
 /* Test for ANSI/ISO Standard C */
 #if (defined(__cplusplus) || defined(__STDC__) || defined(c_plusplus))
 #define STDC 1

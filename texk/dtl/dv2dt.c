@@ -964,7 +964,7 @@ give_help (VOID)
   PRINT_PROGNAME;
   fprintf (stderr, " dvi_file  dtl_file");
   fprintf (stderr, "\n");
-  fprintf (stderr, "\nEmail bug reports to %s.\n", BUG_ADDRESS);
+  fprintf (stderr, "\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
 }
 
 /* end of "dv2dt.c" */

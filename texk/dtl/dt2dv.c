@@ -447,7 +447,7 @@ give_help (VOID)
     fprintf (stderr, "\n");
   }
   fprintf (stderr, "Messages, like this one, go to stderr.\n");
-  fprintf (stderr, "\nEmail bug reports to %s.\n", BUG_ADDRESS);
+  fprintf (stderr, "\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
 }
 /* give_help */
 
