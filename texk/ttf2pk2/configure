@@ -13472,6 +13472,11 @@ fi
 ac_config_headers="$ac_config_headers config.h"
 
 
+
+
+$as_echo "#define TL_VERSION \"TeX Live 2021/dev\"" >>confdefs.h
+
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for library containing floor" >&5
 $as_echo_n "checking for library containing floor... " >&6; }
 if ${ac_cv_search_floor+:} false; then :

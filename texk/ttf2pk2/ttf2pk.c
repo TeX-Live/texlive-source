@@ -75,7 +75,7 @@ strip_equal(char *s, char *os, char *p)
 --help              print this message and exit\n\
 --version           print version number and exit\n\
 \n\
-Report bugs to tex-k@tug.org.\n\
+Report bugs to " PACKAGE_BUGREPORT ".\n\
 "
 
 static void
@@ -109,7 +109,7 @@ static void
 version(void)
 {
   fputs(ident, stdout);
-  fprintf(stdout, " (%s)\n", TeX_search_version());
+  fprintf(stdout, " (%s, %s)\n", TeX_search_version(), TL_VERSION);
   fputs(VERSION, stdout);
   exit(0);
 }

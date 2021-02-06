@@ -293,7 +293,7 @@ static void
 version(void)
 {
   fputs(ident, stdout);
-  fprintf(stdout, " (%s)\n", TeX_search_version());
+  fprintf(stdout, " (%s, %s)\n", TeX_search_version(), TL_VERSION);
   fputs(VERSION, stdout);
   exit(0);
 }
@@ -328,6 +328,8 @@ version(void)
 -y REAL             move rotated glyphs down by a factor of REAL [0.25]\n\
 --help              print this message and exit\n\
 --version           print version number and exit\n\
+\n\
+Report bugs to " PACKAGE_BUGREPORT ".\n\
 "
 
 static void
