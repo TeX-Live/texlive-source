@@ -13727,6 +13727,11 @@ test "x$enable_bibtex_x:$enable_bibtexu" = xyes:yes && need_icu=yes
 ac_config_headers="$ac_config_headers config.h"
 
 
+
+
+$as_echo "#define TL_VERSION \"TeX Live 2021/dev\"" >>confdefs.h
+
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'

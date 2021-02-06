@@ -19,6 +19,10 @@ m4_include([ac/bibtex-x.ac])
 
 AC_CONFIG_HEADERS([config.h])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 AC_PROG_CXX
 KPSE_CXX_HACK
 
