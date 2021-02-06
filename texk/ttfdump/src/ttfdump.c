@@ -583,7 +583,9 @@ print_gsub(FILE *out)
 static void
 usage(void)
 {
+  fprintf(stderr, "ttfdump %s (%s)\n", VERSION, TL_VERSION);
   fprintf(stderr, "Usage: ttfdump ttfname dumpname [options]\n");
+  fprintf(stderr, "\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
 }
 
 

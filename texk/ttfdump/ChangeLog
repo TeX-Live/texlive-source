@@ -1,3 +1,8 @@
+2021-02-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* src/ttfdump.c, configure.ac:
+	Show TeX Live version number and bug report address in usage.
+
 2019-02-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* src/ttfdump.c: Forbid too long file name.
