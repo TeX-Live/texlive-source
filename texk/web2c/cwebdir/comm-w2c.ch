@@ -847,7 +847,7 @@ template in English.
 @<Display version information and |exit|@>=
 printversionandexit(cb_banner,
   program == ctwill ? "Donald E. Knuth" : "Silvio Levy and Donald E. Knuth",
-  NULL, "Contemporary development on https://github.com/ascherer/cwebbin.\n");
+  NULL, "Contemporary development on https://github.com/ascherer/cweb.\n");
 @.--version@>
 
 @ But the ``banner'' is, at least the first part.
