@@ -1,0 +1,21 @@
+#! /bin/sh -vx
+#
+# Copyright 2021 TANAKA Takuji
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests"
+export TEXMFCNF TFMFONTS
+
+## play.dvi has no "pos:" specials
+rm -rf play.*
+cp $srcdir/tests/play.dvi .
+./dvipos -b -o play.loc play.dvi || exit 1
+diff play.loc $srcdir/tests/play.loc || exit 2
+
+if diff --ignore-matching-lines="Processing_data_and_time" play.pos play.pos; then
+  diff --ignore-matching-lines="Processing_data_and_time" play.pos $srcdir/tests/play.pos || exit 3
+else
+  echo Do not check difference of "play.pos"
+fi
+

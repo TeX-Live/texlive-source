@@ -1,3 +1,10 @@
+2021-02-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvipos.c:
+	Show bug report address in usage.
+	* dvipos.test, tests/play.{dvi,loc,pos}, tests/ptmr.tfm, Makefile.am:
+	Add a new test.
+
 2018-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* tfm.c, utils.[ch]: Support new JFM spec (3-byte characters

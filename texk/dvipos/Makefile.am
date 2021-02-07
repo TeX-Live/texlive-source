@@ -21,12 +21,21 @@ $(dvipos_OBJECTS): $(KPATHSEA_DEPEND)
 
 LDADD = $(KPATHSEA_LIBS)
 
+dist_man1_MANS = dvipos.1
+
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
-
-dist_man1_MANS = dvipos.1
 
 ## Not used
 ##
 EXTRA_DIST = miktex.mak
+
+## TESTS
+TESTS = dvipos.test
+dvipos.log: dvipos$(EXEEXT)
+EXTRA_DIST += $(TESTS)
+
+## dvipos.test
+EXTRA_DIST += tests/play.dvi tests/play.loc tests/play.pos tests/ptmr.tfm
+DISTCLEANFILES = play.dvi play.loc play.pos
 

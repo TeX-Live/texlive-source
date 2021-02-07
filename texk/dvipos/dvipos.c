@@ -17,6 +17,10 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "utils.h"
 #include "dvicore.h"
 
@@ -62,7 +66,8 @@ static void usage (void)
                   "-m,  --mag=INT        override TeX magnification by INT\n"
 //                "-r,  --resolution=INT set resolution by INT\n"
                   "-w,  --framesize=INT   set frame rule size by INT (default 6554 = .1pt)\n"
-                  "-p,  --pages=X:Y      set page ranges from X to Y\n\n");
+                  "-p,  --pages=X:Y      set page ranges from X to Y\n"
+                  "\nEmail bug reports to %s.\n", PACKAGE_BUGREPORT);
 }
 
 static struct option long_options[] = {
