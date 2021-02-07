@@ -19,6 +19,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
+#else
+#define PACKAGE_BUGREPORT "tex-k@tug.org"
 #endif
 
 #include "utils.h"
