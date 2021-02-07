@@ -1,4 +1,4 @@
-2021-02-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+2021-02-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvipos.c:
 	Show bug report address in usage.
