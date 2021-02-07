@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 3.64 --- February 2017 (works also with later versions)
+% Version 4.0 --- February 2021 (works also with later versions)
 
 % Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth
 
@@ -15,25 +15,42 @@
 % entire resulting derived work is distributed under the terms of a
 % permission notice identical to this one.
 
-% Please send comments, suggestions, etc. to levy@@math.berkeley.edu.
+% Amendments to 'common.h' resulting in this updated version were created
+% by numerous collaborators over the course of many years.
+
+% Please send comments, suggestions, etc. to tex-k@@tug.org.
 
 % The next few sections contain stuff from the file |"common.w"| that has
 % to be included in both |"ctangle.w"| and |"cweave.w"|. It appears in this
-% file |"common.h"|, which needs to be updated when |"common.w"| changes.
+% file |"common.h"|, which is also included in |"common.w"| to propagate
+% possible changes from this single source consistently.
 
-First comes general stuff:
+% First comes general stuff:
+
+@s boolean int
+@s uint8_t int
+@s uint16_t int
 
 @d ctangle 0
 @d cweave 1
 
-@<Common code for \.{CWEAVE} and \.{CTANGLE}@>=
-typedef short boolean;
-typedef char unsigned eight_bits;
+@<Common code...@>=
+typedef bool boolean;
+typedef uint8_t eight_bits;
+typedef uint16_t sixteen_bits;
 extern boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
 extern int phase; /* which phase are we in? */
 
-@ @<Include files@>=
-#include <stdio.h>
+@ Interface to the standard \CEE/ library:
+
+@<Include files@>=
+#include <ctype.h> /* definition of |@!isalpha|, |@!isdigit| and so on */
+#include <stdbool.h> /* definition of |@!bool|, |@!true| and |@!false| */
+#include <stddef.h> /* definition of |@!ptrdiff_t| */
+#include <stdint.h> /* definition of |@!uint8_t| and |@!uint16_t| */
+#include <stdlib.h> /* definition of |@!getenv| and |@!exit| */
+#include <stdio.h> /* definition of |@!printf| and friends */
+#include <string.h> /* definition of |@!strlen|, |@!strcmp| and so on */
 
 @ Code related to the character set:
 @^ASCII code dependencies@>
@@ -44,7 +61,7 @@ extern int phase; /* which phase are we in? */
 @d plus_plus 013 /* `\.{++}'\,;  corresponds to MIT's {\tentex\char'13} */
 @d minus_minus 01 /* `\.{--}'\,;  corresponds to MIT's {\tentex\char'1} */
 @d minus_gt 031 /* `\.{->}'\,;  corresponds to MIT's {\tentex\char'31} */
-@d not_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
+@d non_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
 @d lt_eq 034 /* `\.{<=}'\,;  corresponds to MIT's {\tentex\char'34} */
 @d gt_eq 035 /* `\.{>=}'\,;  corresponds to MIT's {\tentex\char'35} */
 @d eq_eq 036 /* `\.{==}'\,;  corresponds to MIT's {\tentex\char'36} */
@@ -55,28 +72,27 @@ extern int phase; /* which phase are we in? */
 @d minus_gt_ast 027 /* `\.{->*}'\,;  corresponds to MIT's {\tentex\char'27} */
 
 @<Common code...@>=
-char section_text[longest_name+1]; /* name being sought for */
-char *section_text_end = section_text+longest_name; /* end of |section_text| */
-char *id_first; /* where the current identifier begins in the buffer */
-char *id_loc; /* just after the current identifier in the buffer */
+extern char section_text[]; /* text being sought for */
+extern char *section_text_end; /* end of |section_text| */
+extern char *id_first; /* where the current identifier begins in the buffer */
+extern char *id_loc; /* just after the current identifier in the buffer */
 
 @ Code related to input routines:
-
-@d xisalpha(c) (isalpha(c)&&((eight_bits)c<0200))
-@d xisdigit(c) (isdigit(c)&&((eight_bits)c<0200))
-@d xisspace(c) (isspace(c)&&((eight_bits)c<0200))
-@d xislower(c) (islower(c)&&((eight_bits)c<0200))
-@d xisupper(c) (isupper(c)&&((eight_bits)c<0200))
-@d xisxdigit(c) (isxdigit(c)&&((eight_bits)c<0200))
+@d xisalpha(c) (isalpha((eight_bits)c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit((eight_bits)c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
+@d xislower(c) (islower((eight_bits)c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit((eight_bits)c)&&((eight_bits)c<0200))
 
 @<Common code...@>=
 extern char buffer[]; /* where each line of input goes */
 extern char *buffer_end; /* end of |buffer| */
-extern char *loc; /* points to the next character to be read from the buffer*/
+extern char *loc; /* points to the next character to be read from the buffer */
 extern char *limit; /* points to the last character in the buffer */
 
 @ Code related to identifier and section name storage:
-@d length(c) (c+1)->byte_start-(c)->byte_start /* the length of a name */
+@d length(c) (size_t)((c+1)->byte_start-(c)->byte_start) /* the length of a name */
 @d print_id(c) term_write((c)->byte_start,length((c))) /* print identifier */
 @d llink link /* left link in binary search tree for section names */
 @d rlink dummy.Rlink /* right link in binary search tree for section names */
@@ -93,7 +109,7 @@ typedef struct name_info {
       names */
     char Ilk; /* used by identifiers in \.{CWEAVE} only */
   } dummy;
-  char *equiv_or_xref; /* info corresponding to names */
+  void *equiv_or_xref; /* info corresponding to names */
 } name_info; /* contains information about an identifier or section name */
 typedef name_info *name_pointer; /* pointer into array of \&{name\_info}s */
 typedef name_pointer *hash_pointer;
@@ -106,9 +122,17 @@ extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
-extern name_pointer id_lookup(); /* looks up a string in the identifier table */
-extern name_pointer section_lookup(); /* finds section name */
-extern void print_section_name(), sprint_section_name();
+
+@ @<Predecl...@>=
+extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
+extern name_pointer id_lookup(const char *,const char *,char);
+   /* looks up a string in the identifier table */
+extern name_pointer section_lookup(char *,char *,int); /* finds section name */
+extern void init_node(name_pointer);@/
+extern void init_p(name_pointer,eight_bits);@/
+extern void print_prefix_name(name_pointer);@/
+extern void print_section_name(name_pointer);@/
+extern void sprint_section_name(char *,name_pointer);@/
 
 @ Code related to error handling:
 @d spotless 0 /* |history| value for normal jobs */
@@ -118,24 +142,30 @@ extern void print_section_name(), sprint_section_name();
 @d mark_harmless {if (history==spotless) history=harmless_message;}
 @d mark_error history=error_message
 @d confusion(s) fatal("! This can't happen: ",s)
+@.This can't happen@>
 
-@<Common...@>=
-extern history; /* indicates how bad this run was */
-extern err_print(); /* print error message and context */
-extern wrap_up(); /* indicate |history| and exit */
-extern void fatal(); /* issue error message and die */
-extern void overflow(); /* succumb because a table has overflowed */
+@<Common code...@>=
+extern int history; /* indicates how bad this run was */
+
+@ @<Predecl...@>=
+extern int wrap_up(void); /* indicate |history| and exit */
+extern void err_print(const char *); /* print error message and context */
+extern void fatal(const char *,const char *); /* issue error message and die */
+extern void overflow(const char *); /* succumb because a table has overflowed */
 
 @ Code related to file handling:
 @f line x /* make |line| an unreserved word */
-@d max_file_name_length 60
+@d max_include_depth 10 /* maximum number of source files open
+  simultaneously, not counting the change file */
+@d max_file_name_length 1024
 @d cur_file file[include_depth] /* current file */
 @d cur_file_name file_name[include_depth] /* current file name */
-@d web_file_name file_name[0] /* main source file name */
 @d cur_line line[include_depth] /* number of current line in current file */
+@d web_file file[0] /* main source file */
+@d web_file_name file_name[0] /* main source file name */
 
 @<Common code...@>=
-extern include_depth; /* current level of nesting */
+extern int include_depth; /* current level of nesting */
 extern FILE *file[]; /* stack of non-change files */
 extern FILE *change_file; /* change file */
 extern char C_file_name[]; /* name of |C_file| */
@@ -145,19 +175,20 @@ extern char scn_file_name[]; /* name of |scn_file| */
 extern char file_name[][max_file_name_length];
   /* stack of non-change file names */
 extern char change_file_name[]; /* name of change file */
-extern line[]; /* number of current line in the stacked files */
-extern change_line; /* number of current line in change file */
-extern change_depth; /* where \.{@@y} originated during a change */
+extern int line[]; /* number of current line in the stacked files */
+extern int change_line; /* number of current line in change file */
+extern int change_depth; /* where \.{@@y} originated during a change */
 extern boolean input_has_ended; /* if there is no more input */
 extern boolean changing; /* if the current line is from |change_file| */
 extern boolean web_file_open; /* if the web file is being read */
-extern reset_input(); /* initialize to read the web file and change file */
-extern get_line(); /* inputs the next line */
-extern check_complete(); /* checks that all changes were picked up */
+
+@ @<Predecl...@>=
+extern boolean get_line(void); /* inputs the next line */
+extern void check_complete(void); /* checks that all changes were picked up */
+extern void reset_input(void); /* initialize to read the web file and change file */
 
 @ Code related to section numbers:
 @<Common code...@>=
-typedef unsigned short sixteen_bits;
 extern sixteen_bits section_count; /* the current section number */
 extern boolean changed_section[]; /* is the section changed? */
 extern boolean change_pending; /* is a decision about change still unclear? */
@@ -166,7 +197,9 @@ extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
 @ Code related to command line arguments:
 @d show_banner flags['b'] /* should the banner line be printed? */
 @d show_progress flags['p'] /* should progress reports be printed? */
+@d show_stats flags['s'] /* should statistics be printed at end of run? */
 @d show_happiness flags['h'] /* should lack of errors be announced? */
+@d make_xrefs flags['x'] /* should cross references be output? */
 
 @<Common code...@>=
 extern int argc; /* copy of |ac| parameter to |main| */
@@ -178,7 +211,7 @@ extern boolean flags[]; /* an option for each 7-bit code */
 @d new_line putchar('\n') @d putxchar putchar
 @d term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)
 @d C_printf(c,a) fprintf(C_file,c,a)
-@d C_putc(c) putc(c,C_file)
+@d C_putc(c) putc(c,C_file) /* isn't \CEE/ wonderfully consistent? */
 
 @<Common code...@>=
 extern FILE *C_file; /* where output of \.{CTANGLE} goes */
@@ -188,6 +221,24 @@ extern FILE *scn_file; /* where list of sections from \.{CWEAVE} goes */
 extern FILE *active_file; /* currently active file for \.{CWEAVE} output */
 
 @ The procedure that gets everything rolling:
+@<Predecl...@>=
+extern void common_init(void);@/
+extern void print_stats(void);@/
 
-@<Common code...@>=
-extern void common_init();
+@ The following parameters were sufficient in the original \.{WEB} to
+handle \TEX/, so they should be sufficient for most applications of
+\.{CWEB}.
+
+@d max_bytes 1000000 /* the number of bytes in identifiers,
+  index entries, and section names */
+@d max_toks 1000000 /* number of bytes in compressed \CEE/ code */
+@d max_names 10239 /* number of identifiers, strings, section names;
+  must be less than 10240 */
+@d max_sections 4000 /* greater than the total number of sections */
+@d max_texts 10239 /* number of replacement texts, must be less than 10240 */
+@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
+@d stack_size 500 /* number of simultaneous levels of macro expansion */
+@d buf_size 1000 /* for \.{CWEAVE} */
+@d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
+
+@ End of \.{COMMON} interface.

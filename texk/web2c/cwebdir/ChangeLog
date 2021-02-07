@@ -1,3 +1,35 @@
+2021-02-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* README,
+	* comm-{amiga,bs,mac,os2,pc,ql,vms,w32}.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-{bs,pc,ql,vms,w32}.ch,
+	* ctang-man.ch,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* ctwill.bux,
+	* cweav-{bs,pc,ql,vms,w32}.ch,
+	* cweav-man.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cweb.1,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* examples/wmerge.w,
+	* po/{cweb,cweb-tl,web2c-help}.pot,
+	* po/de/{cweb,cweb-tl,web2c-help}.po,
+	* po/it/cweb.po,
+	* system.bux: New CWEB 4.0 and CWEBbin 2021.
+
 2020-07-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,

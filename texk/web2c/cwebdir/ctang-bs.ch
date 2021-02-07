@@ -17,59 +17,12 @@ by using "huge" pointers.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 3.64)\n"
+@d banner "This is CTANGLE (Version 4.0)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 3.64pc/big)\n"
-@z
-
-
-@x Section 4.
-@ The following parameters were sufficient in the original \.{TANGLE} to
-handle \TEX/,
-so they should be sufficient for most applications of \.{CTANGLE}.
-If you change |max_bytes|, |max_names| or |hash_size| you should also
-change them in the file |"common.w"|.
-
-@d max_bytes 90000 /* the number of bytes in identifiers,
-  index entries, and section names; used in |"common.w"| */
-@d max_toks 270000 /* number of bytes in compressed \CEE/ code */
-@d max_names 4000 /* number of identifiers, strings, section names;
-  must be less than 10240; used in |"common.w"| */
-@d max_texts 2500 /* number of replacement texts, must be less than 10240 */
-@d hash_size 353 /* should be prime; used in |"common.w"| */
-@d longest_name 10000 /* section names shouldn't be longer than this */
-@d stack_size 50 /* number of simultaneous levels of macro expansion */
-@d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
-@y
-@ The following parameters were sufficient in the original \.{TANGLE} to
-handle \TEX/,
-so they should be sufficient for most applications of \.{CTANGLE}.
-If you change |max_bytes|, |max_names| or |hash_size| you should also
-change them in the file |"common.w"|.
-
-(This is a modified version of \.{CTANGLE}, and in fact one of the parameters
-has been reduced in value.  The parameter |max_toks|
-has been reduced from 270000 [which
-was sufficient to handle \TEX/] to
-170000, so that \.{CTANGLE}
-may be run on {\mc MSDOS}
-systems that are tight on memory.  Consider, for
-instance, an 80286-based machine with several TSRs and drivers, trying
-to run \.{CTANGLE} from a makefile.)
-
-@d max_bytes 90000 /* the number of bytes in identifiers,
-  index entries, and section names; used in |"common.w"| */
-@d max_toks 170000 /* number of bytes in compressed \CEE/ code */
-@d max_names 4000 /* number of identifiers, strings, section names;
-  must be less than 10240; used in |"common.w"| */
-@d max_texts 2500 /* number of replacement texts, must be less than 10240 */
-@d hash_size 353 /* should be prime; used in |"common.w"| */
-@d longest_name 10000 /* section names shouldn't be longer than this */
-@d stack_size 50 /* number of simultaneous levels of macro expansion */
-@d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
+@d banner "This is CTANGLE (Version 4.0pc/big)"
 @z
 
 
@@ -85,7 +38,7 @@ typedef struct name_info {
       names */
     char Ilk; /* used by identifiers in \.{CWEAVE} only */
   } dummy;
-  char *equiv_or_xref; /* info corresponding to names */
+  void *equiv_or_xref; /* info corresponding to names */
 } name_info; /* contains information about an identifier or section name */
 typedef name_info *name_pointer; /* pointer into array of \&{name\_info}s */
 typedef name_pointer *hash_pointer;
@@ -98,9 +51,6 @@ extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
-extern name_pointer id_lookup(); /* looks up a string in the identifier table */
-extern name_pointer section_lookup(); /* finds section name */
-extern void print_section_name(), sprint_section_name();
 @y
 @d chunk_marker 0
 
@@ -131,9 +81,49 @@ extern char huge* byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
-extern name_pointer id_lookup(); /* looks up a string in the identifier table */
-extern name_pointer section_lookup(); /* finds section name */
-extern void print_section_name(), sprint_section_name();
+@z
+
+
+@x Section 17.
+@ The following parameters were sufficient in the original \.{WEB} to
+handle \TEX/, so they should be sufficient for most applications of
+\.{CWEB}.
+
+@d max_bytes 1000000 /* the number of bytes in identifiers,
+  index entries, and section names */
+@d max_toks 1000000 /* number of bytes in compressed \CEE/ code */
+@d max_names 10239 /* number of identifiers, strings, section names;
+  must be less than 10240 */
+@d max_sections 4000 /* greater than the total number of sections */
+@d max_texts 10239 /* number of replacement texts, must be less than 10240 */
+@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
+@d stack_size 500 /* number of simultaneous levels of macro expansion */
+@d buf_size 1000 /* for \.{CWEAVE} */
+@y
+@ The following parameters were sufficient in the original \.{WEB} to
+handle \TEX/, so they should be sufficient for most applications of
+\.{CWEB}.
+
+(This is a modified version of \.{CTANGLE}, and in fact one of the parameters
+has been reduced in value.  The parameter |max_toks|
+has been reduced from 270000 [which
+was sufficient to handle \TEX/] to
+170000, so that \.{CTANGLE}
+may be run on {\mc MSDOS}
+systems that are tight on memory.  Consider, for
+instance, an 80286-based machine with several TSRs and drivers, trying
+to run \.{CTANGLE} from a makefile.)
+
+@d max_bytes 90000 /* the number of bytes in identifiers,
+  index entries, and section names */
+@d max_toks 170000 /* number of bytes in compressed \CEE/ code */
+@d max_names 4000 /* number of identifiers, strings, section names;
+  must be less than 10240 */
+@d max_sections 4000 /* greater than the total number of sections */
+@d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
+@d stack_size 50 /* number of simultaneous levels of macro expansion */
+@d buf_size 100 /* for \.{CWEAVE} */
 @z
 
 
@@ -190,8 +180,8 @@ text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
 
 
 @x Section 49.
-out_char(cur_char)
-eight_bits cur_char;
+out_char(
+eight_bits cur_char)
 {
   char *j, *k; /* pointer into |byte_mem| */
 @y

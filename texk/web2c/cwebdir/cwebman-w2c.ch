@@ -1,25 +1,25 @@
-@q Changes for CWEB in TeX Live from numerous contributors. @>
-@q This file is in the Public Domain. @>
+@q Changes for CWEB in TeX Live from numerous contributors.              @>
+@q This file is in the Public Domain.                                    @>
 
-@q Most of the original Kpathsea changes by Wlodek Bzyl and Olaf Weber @>
-@q were merged with the set of change files of the CWEBbin project; @>
-@q see https://github.com/ascherer/cwebbin for the original parts. @>
+@q Most of the original Kpathsea changes by Wlodek Bzyl and Olaf Weber   @>
+@q were merged with the set of change files of the CWEBbin project;      @>
+@q see https://github.com/ascherer/cwebbin for the original parts.       @>
 
-@q This stripped change file {comm,ctang,cweav,ctwill}-w2c.ch has been @>
-@q created from the set of change files {comm,ctang,cweav}-patch.ch, @>
-@q {comm,ctang,cweav}-ansi.ch, {comm,ctang,cweav}-extensions.ch, @>
-@q {comm,ctang,cweav}-output.ch, {comm,ctang,cweav}-i18n.ch, and @>
-@q cweav-twill.ch for CTWILL, and {comm,ctang,cweav,ctwill}-texlive.ch @>
-@q with the 'tie' processor and is used as a monolithic changefile for @>
-@q {common,ctangle,cweave}.w in TeX Live. @>
+@q This stripped change file {comm,ctang,cweav,ctwill,cwebman}-w2c.ch    @>
+@q has been created from the elaborate set of change files               @>
+@q {comm,ctang,cweav,cwebman}-patch.ch,                                  @>
+@q {comm,cweav,cwebman}-extensions.ch, {comm,ctang,cweav}-output.ch,     @>
+@q {comm,ctang,cweav}-i18n.ch, and cweav-twill.ch for CTWILL, and        @>
+@q {comm,ctang,cweav,ctwill,cwebman}-texlive.ch with the 'tie' processor @>
+@q and is used as a monolithic changefile for {common,ctangle,cweave}.w  @>
+@q and cwebman.tex in TeX Live.                                          @>
 
-@q Please send comments, suggestions, etc. to tex-k@@tug.org. @>
+@q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
 \input cwebmac
 \acrofalse\pdffalse\pdftexfalse
 @y
-\ifx\undefined\XeTeXrevision\else\let\pdf+\fi % XeTeX produces PDF output
 \input cwebmac
 @z
 
@@ -93,32 +93,49 @@
 @z
 
 @x
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 3.64)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.0)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\tentt CWEB} USER MANUAL (3.64 [\TeX~Live])}
+\def\runninghead{{\tentt CWEB} USER MANUAL (4.0 [\TeX~Live])}
 @z
 
 @x
-\vskip 18pt\centerline{(Version 3.64 --- February 2002)}
+\vskip 18pt\centerline{(Version 4.0 --- February 2021)}
 @y
-\vskip 18pt\centerline{(Version 3.64 --- February 2002)%
-\footnote*{This document describes the extended \.{CWEB} (3.64 [\TeX~Live]).}}
+\vskip 18pt\centerline{(Version 4.0 --- February 2021)%
+\footnote*{This document describes the extended \.{CWEB} (4.0 [\TeX~Live]).}}
 @z
 
 @x
-should be sent to Levy (\.{levy@math.berkeley.edu}).
+Internet page \.{http://www-cs-faculty.stanford.edu/\char`\~knuth/cweb.html}
 @y
-should be sent to Levy (\.{levy@math.berkeley.edu}).%
-\cwebfootnote{Or rather to the ``\TeX~Live''-related mailing list
-\.{tex-k@tug.org}.}
+Internet page
+\pdfURL{\.{http://www-cs-faculty.stanford.edu/\char`\~knuth/cweb.html}}%
+          {http://www-cs-faculty.stanford.edu/\TILDE/knuth/cweb.html}
 @z
 
 @x
-email address in a \.{CWEB} file (e.g., \.{levy@@math.berkeley.edu}).
+\.{https://github.com/ascherer/cweb} with the really current news.
 @y
-email address in a \.{CWEB} file (e.g., \.{levy@@math.berkeley.edu}%
-\cwebfootnote{Or rather \.{tex-k@@tug.org}.}).
+\pdfURL{\.{https://github.com/ascherer/cweb}}%
+          {https://github.com/ascherer/cweb}
+with the really current news.
+@z
+
+@x
+should be sent to the \TeX-related mailing list \.{tex-k@tug.org}.
+@y
+should be sent to the \TeX-related mailing list
+\pdfURL{\.{tex-k@tug.org}}%
+   {mailto:tex-k@tug.org}.
+@z
+
+@x
+email address in a \.{CWEB} file (e.g., \.{tex-k@@tug.org}).
+@y
+email address in a \.{CWEB} file (e.g.,
+\pdfURL{\.{tex-k@@tug.org}}%
+   {mailto:tex-k@tug.org}).
 @z
 
 @x
@@ -127,7 +144,7 @@ it cannot find them in the current directory.
 it cannot find them in the current directory.%
 \cwebfootnote{\acrofalse In this extended implementation, if an \.{@i}nclude
 file can not be found in the current directory, \.{CWEB} will use the
-conventions of the \Kpathsea/ library as outlined in section~\X90:File lookup
+conventions of the \Kpathsea/ library as outlined in section~\X91:File lookup
 with \Kpathsea/\X~of \pdfURL{appendix~D}{common-changes.pdf} to look for it.
 % FIXME
 (This is true for any other input or change file lookup.)}
@@ -141,7 +158,7 @@ output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)%
 to the list:
 \hfil\smallskip
 \option d Set the debugging variable \\{kpathsea\_debug} to the numeric
-value $N\in[0,127]$ of this option.  See section~92 % FIXME
+value $N\in[0,127]$ of this option.  See section~93 % FIXME
 of \pdfURL{appendix~D}{common-changes.pdf} for details.
 \hfil\vskip\normallineskip
 \option i Indent parameters in function declarations.  This causes the
@@ -173,9 +190,9 @@ Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
 @x
-`\.{main(argc,argv)}'.
+`$\\{main}(\\{argc},\39\\{argv}{}$)'.
 @y
-`\.{main(argc,argv)}'.
+`$\\{main}(\\{argc},\39\\{argv}{}$)'.
 \ifx\pdf+\pdftrue\fi
 \ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
 \else \pdftextrue \pdfoutput=1\fi\fi
@@ -183,17 +200,20 @@ Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
 @x
-saying `\.{pdftex}~\.{cob}'.
+\section Hypertext and hyperdocumentation.
 @y
-saying `\.{pdftex}~\.{cob}'.%
-\cwebfootnote{A third way to create PDF output from \.{CWEB} input is the
-use of \.{XeTeX}, which uses `\.{[x]dvipdfm[x]}' in the background, but the
-``plain \TeX'' macros from \.{cwebmac.tex} otherwise.  The process works with
-a small trick in the first step:
-$$\vbox{\halign{\.{#}\hfil\cr
-cweave -lp+ cob\cr
-xetex cob\cr
-acroread cob.pdf\cr}}$$}
+\vfill\eject
+\section Hypertext and hyperdocumentation.
+@z
+
+@x
+the program sources at \.{ftp://ftp.cs.stanford.edu/pub/ctwill}.
+@y
+the program sources at
+\pdfURL{\.{ftp://ftp.cs.stanford.edu/pub/ctwill}}%
+          {ftp://ftp.cs.stanford.edu/pub/ctwill}.%
+\cwebfootnote{\TeX~Live comes with an up-to-date \.{ctwill} executable -- and
+its associated helpers -- out of the box.}
 @z
 
 @x
@@ -219,8 +239,8 @@ appendices D, E, and~F, which exhibit the complete source code for
 appendices \pdfURL{D}{common.pdf}, \pdfURL{E}{ctangle.pdf},
 and~\pdfURL{F}{cweave.pdf}, which exhibit the complete source code for
 \.{CTANGLE} and \.{CWEAVE}.%
-\cwebfootnote{Actually, \pdfURL{appendix~D}{common.pdf} contains the source
-code for \.{COMMON}, and the additional \pdfURL{appendix~G}{ctwill.pdf}
+\cwebfootnote{Actually, \pdfURL{Appendix~D}{common.pdf} contains the source
+code for \.{COMMON}, and the additional \pdfURL{Appendix~G}{ctwill.pdf}
 exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 
 \eject\titletrue
@@ -232,6 +252,13 @@ exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 \def\subsections{4}
 \section Appendix A: Excerpts from a \.{CWEB} Program.
 \subsection CWEB file format.
+@z
+
+@x
+generated sections 27--31 of the file \.{common.w}, which contains
+@y
+generated sections 27--31 of the file
+\pdfURL{\.{common.w}}{common.pdf}, which contains
 @z
 
 @x
@@ -252,12 +279,17 @@ exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 
 And here's what the same excerpt looks like when typeset.
+(Can you spot the typographical nicety used in the \.{CWEB} code?)
+\let\K=\leftarrow
 @y
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 \subsection Final document.
 
 \acrofalse\pdftexfalse\pdffalse
 And here's what the same excerpt looks like when typeset.
+(Can you spot the typographical niceties used in the \.{CWEB} code?)
+\let\K=\leftarrow
+\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 @z
 
 @x
@@ -271,9 +303,9 @@ And here's what the same excerpt looks like when typeset.
 @z
 
 @x
-  \.{ { }\\vskip 15pt \\centerline\{(Version 3.64)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.0)\}{ }\\vfill\}}\cr}$$
 @y
-  \.{ { }\\vskip 15pt \\centerline\{(Version 3.64)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.0)\}{ }\\vfill\}}\cr}$$
 @z
 
 @x
@@ -285,14 +317,9 @@ if you have a duplex printer. Appendices \pdfURL{D}{common.pdf},
 @z
 
 @x
-or the \CEE/ comments of a \.{CWEB} file:
+\point 20. Furthermore, group titles can be converted to an arbitrary
 @y
-or the \CEE/ comments of a \.{CWEB} file:%
-\cwebfootnote{Be careful to make that $$\vbox{\halign{\.{#}\hfil\cr
-You can send email to
- \\pdfURL\{the author\}\{mailto:andreas\\UNDER/github@@freenet.de\}\cr
-or visit
- \\pdfURL\{his home page\}\{https://github.com/ascherer\}\cr}}$$ in
-the $21^{\rm st}$ century.}
+\vfill\eject
+\point 20. Furthermore, group titles can be converted to an arbitrary
 @z
 

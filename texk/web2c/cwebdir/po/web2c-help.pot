@@ -1,14 +1,14 @@
 # International version of CWEB (CWEBbin, TeXLive).
-# Copyright (C) 2020 Andreas Scherer et al.
+# Copyright (C) 2021 Andreas Scherer et al.
 # This file is distributed under the same license as the CWEB package.
-# Andreas Scherer <https://ascherer.github.io>, 2020.
+# Andreas Scherer <https://ascherer.github.io>, 2021.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2020\n"
+"Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 15:10+0200\n"
+"POT-Creation-Date: 2021-02-06 15:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

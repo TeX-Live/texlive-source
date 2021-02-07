@@ -85,7 +85,7 @@ It turns out \.{CWEAVE} knows that |FILE| is a reserved word (after all,
 |FILE| is almost as common as |int|); indeed, \.{CWEAVE} knows all
 the types of the ISO standard \CEE/ library. But
 if you're using other types like {\bf caddr\_t},
-@:caddr_t}{\bf caddr_t@>
+@:caddr_t}{\bf caddr\_t@>
 which is defined in \.{/usr/include/sys/types.h}, you should let
 \.{WEAVE} know that this is a type, either by including the \.{.h} file
 at \.{WEB} time (saying \.{@@i /usr/include/sys/types.h}), or by

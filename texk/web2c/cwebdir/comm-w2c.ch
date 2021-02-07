@@ -1,31 +1,32 @@
-@q Changes for CWEB in TeX Live from numerous contributors. @>
-@q This file is in the Public Domain. @>
+@q Changes for CWEB in TeX Live from numerous contributors.              @>
+@q This file is in the Public Domain.                                    @>
 
-@q Most of the original Kpathsea changes by Wlodek Bzyl and Olaf Weber @>
-@q were merged with the set of change files of the CWEBbin project; @>
-@q see https://github.com/ascherer/cwebbin for the original parts. @>
+@q Most of the original Kpathsea changes by Wlodek Bzyl and Olaf Weber   @>
+@q were merged with the set of change files of the CWEBbin project;      @>
+@q see https://github.com/ascherer/cwebbin for the original parts.       @>
 
-@q This stripped change file {comm,ctang,cweav,ctwill}-w2c.ch has been @>
-@q created from the set of change files {comm,ctang,cweav}-patch.ch, @>
-@q {comm,ctang,cweav}-ansi.ch, {comm,ctang,cweav}-extensions.ch, @>
-@q {comm,ctang,cweav}-output.ch, {comm,ctang,cweav}-i18n.ch, and @>
-@q cweav-twill.ch for CTWILL, and {comm,ctang,cweav,ctwill}-texlive.ch @>
-@q with the 'tie' processor and is used as a monolithic changefile for @>
-@q {common,ctangle,cweave}.w in TeX Live. @>
+@q This stripped change file {comm,ctang,cweav,ctwill,cwebman}-w2c.ch    @>
+@q has been created from the elaborate set of change files               @>
+@q {comm,ctang,cweav,cwebman}-patch.ch,                                  @>
+@q {comm,cweav,cwebman}-extensions.ch, {comm,ctang,cweav}-output.ch,     @>
+@q {comm,ctang,cweav}-i18n.ch, and cweav-twill.ch for CTWILL, and        @>
+@q {comm,ctang,cweav,ctwill,cwebman}-texlive.ch with the 'tie' processor @>
+@q and is used as a monolithic changefile for {common,ctangle,cweave}.w  @>
+@q and cwebman.tex in TeX Live.                                          @>
 
-@q Please send comments, suggestions, etc. to tex-k@@tug.org. @>
+@q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 3.64)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.0)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (\TeX~Live)}
+\def\title{Common code for CTANGLE and CWEAVE (4.0 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 3.64)}
+  \centerline{(Version 4.0)}
 @y
-  \centerline{(Version 3.64 [\TeX~Live])}
+  \centerline{(Version 4.0 [\TeX~Live])}
 @z
 
 @x
@@ -37,16 +38,7 @@
 @x
 }
 @y
-}}
-\datecontentspage
-@z
-
-@x
-@s not_eq normal @q unreserve a C++ keyword @>
-@y
-@s boolean int
-@s uint8_t int
-@s uint16_t int
+}}\datecontentspage
 @z
 
 @x
@@ -63,104 +55,35 @@ sometimes use \.{CWEB} to refer to any of the three component
 @z
 
 @x
-|program|.
+@i common.h
+@y
+@i comm-w2c.h
+@z
 
-@d ctangle 0
-@d cweave 1
+@x
+|program|.
 @y
 |program|. And \.{CTWILL} adds some extra twists.
 @z
 
 @x
-typedef short boolean;
-@y
-typedef uint8_t eight_bits;
-typedef uint16_t sixteen_bits;
-@z
-
-@x
 boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
 @y
-typedef enum {
-  @!ctangle, @!cweave, @!ctwill
-} cweb;
 cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 @z
 
 @x
-void
-common_init()
-@y
-void
-common_init(void)
-@z
-
-@x
-  @<Initialize pointers@>;
-  @<Set the default options common to \.{CTANGLE} and \.{CWEAVE}@>;
-  @<Scan arguments and open output files@>;
+  @<Initialize pointers@>@;
 @y
   @<Initialize pointers@>@;
   @<Set up |PROGNAME| feature and initialize the search path mechanism@>@;
+@z
+
+@x
+  @<Set the default options common to \.{CTANGLE} and \.{CWEAVE}@>@;
+@y
   @<Set locale and bind language catalogs@>@;
   @<Set the default options common to \.{CTANGLE} and \.{CWEAVE}@>@;
-  @<Scan arguments and open output files@>@;
-@z
-
-@x
-\.{ctype.h} header file.
-
-@<Include files@>=
-#include <ctype.h>
-@y
-\.{ctype.h} header file, included through the \Kpathsea/ interface.
-@z
-
-@x
-@d not_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
-@y
-@d non_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
-@z
-
-@x
-@d minus_gt_ast 027 /* `\.{->*}'\,;  corresponds to MIT's {\tentex\char'27} */
-@y
-@d minus_gt_ast 027 /* `\.{->*}'\,;  corresponds to MIT's {\tentex\char'27} */
-
-@<Definitions...@>=
-char section_text[longest_name+1]; /* name being sought for */
-char *section_text_end = section_text+longest_name; /* end of |section_text| */
-char *id_first; /* where the current identifier begins in the buffer */
-char *id_loc; /* just after the current identifier in the buffer */
-@z
-
-@x
-@d buf_size 100 /* for \.{CWEAVE} and \.{CTANGLE} */
-@y
-@d buf_size 1000 /* for \.{CWEAVE} and \.{CTANGLE} */
-@z
-
-@x
-@d xisspace(c) (isspace(c)&&((unsigned char)c<0200))
-@d xisupper(c) (isupper(c)&&((unsigned char)c<0200))
-@y
-@d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
-@d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
-@z
-
-@x
-@ @<Include files@>=
-#include <stdio.h>
-@y
-@ Most of the standard \CEE/ interface comes from \Kpathsea/.
-@z
-
-@x
-int input_ln(fp) /* copies a line into |buffer| or returns 0 */
-FILE *fp; /* what file to read from */
-@y
-static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns 0 */
-FILE *fp@t\2\2@>) /* what file to read from */
 @z
 
 @x
@@ -176,36 +99,8 @@ FILE *fp@t\2\2@>) /* what file to read from */
 @z
 
 @x
-@d max_file_name_length 60
-@y
-@d max_file_name_length 1024
-@z
-
-@x
 char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 @y
-@z
-
-@x
-@d lines_dont_match (change_limit-change_buffer != limit-buffer ||
-  strncmp(buffer, change_buffer, limit-buffer))
-@y
-@d lines_dont_match (change_limit-change_buffer != limit-buffer || @|
-  strncmp(buffer, change_buffer, (size_t)(limit-buffer)))
-@z
-
-@x
-void
-prime_the_change_buffer()
-@y
-static void
-prime_the_change_buffer(void)
-@z
-
-@x
-  if (xisupper(buffer[1])) buffer[1]=tolower(buffer[1]);
-@y
-  if (xisupper(buffer[1])) buffer[1]=tolower((eight_bits)buffer[1]);
 @z
 
 @x
@@ -221,31 +116,9 @@ prime_the_change_buffer(void)
 @z
 
 @x
-  change_limit=change_buffer+(limit-buffer);
-  strncpy(change_buffer,buffer,limit-buffer+1);
-@y
-  change_limit=change_buffer+(ptrdiff_t)(limit-buffer);
-  strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
-@z
-
-@x
-void
-check_change() /* switches to |change_file| if the buffers match */
-@y
-static void
-check_change(void) /* switches to |change_file| if the buffers match */
-@z
-
-@x
       err_print("! Change file ended before @@y");
 @y
       err_print(_("! Change file ended before @@y"));
-@z
-
-@x
-      char xyz_code=xisupper(buffer[1])? tolower(buffer[1]): buffer[1];
-@y
-      char xyz_code=xisupper(buffer[1])? tolower((eight_bits)buffer[1]): buffer[1];
 @z
 
 @x
@@ -264,14 +137,6 @@ check_change(void) /* switches to |change_file| if the buffers match */
     err_print("of the preceding lines failed to match");
 @y
     err_print(_("of the preceding lines failed to match"));
-@z
-
-@x
-void
-reset_input()
-@y
-void
-reset_input(void)
 @z
 
 @x
@@ -310,25 +175,6 @@ if ((found_filename=kpse_find_cweb(change_file_name))==NULL || @|
 @z
 
 @x
-@d max_sections 2000 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@y
-@d max_sections 10239 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@z
-
-@x
-typedef unsigned short sixteen_bits;
-@y
-@z
-
-@x
-int get_line() /* inputs the next line */
-@y
-boolean get_line(void) /* inputs the next line */
-@z
-
-@x
       err_print("! Include file name not given");
 @y
       err_print(_("! Include file name not given"));
@@ -357,7 +203,7 @@ stop reading it and start reading from the named include file.  The
 \.{@@i} line should give a complete file name with or without
 double quotes.
 The actual file lookup is done with the help of the \Kpathsea/ library;
-see section~\X90:File lookup with \Kpathsea/\X~for details. % FIXME
+see section~\X91:File lookup with \Kpathsea/\X~for details. % FIXME
 The remainder of the \.{@@i} line after the file name is ignored.
 @^system dependencies@> @.CWEBINPUTS@>
 @z
@@ -366,18 +212,6 @@ The remainder of the \.{@@i} line after the file name is ignored.
         err_print("! Include file name too long"); goto restart;}
 @y
         err_print(_("! Include file name too long")); goto restart;}
-@z
-
-@x
-@<Include...@>=
-#include <stdlib.h> /* declaration of |getenv| and |exit| */
-@y
-@z
-
-@x
-@ @<Try to open...@>= {
-@y
-@ @.CWEBINPUTS@>@<Try to open...@>= {
 @z
 
 @x
@@ -441,95 +275,15 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @z
 
 @x
-      if (xisupper(buffer[1])) buffer[1]=tolower(buffer[1]);
-@y
-      if (xisupper(buffer[1])) buffer[1]=tolower((eight_bits)buffer[1]);
-@z
-
-@x
         err_print("! Where is the matching @@z?");
 @y
         err_print(_("! Where is the matching @@z?"));
 @z
 
 @x
-void
-check_complete(){
-  if (change_limit!=change_buffer) { /* |changing| is 0 */
-    strncpy(buffer,change_buffer,change_limit-change_buffer+1);
-    limit=buffer+(int)(change_limit-change_buffer);
-@y
-void
-check_complete(void) {
-  if (change_limit!=change_buffer) { /* |changing| is 0 */
-    strncpy(buffer,change_buffer,(size_t)(change_limit-change_buffer+1));
-    limit=buffer+(ptrdiff_t)(change_limit-change_buffer);
-@z
-
-@x
     err_print("! Change file entry did not match");
 @y
     err_print(_("! Change file entry did not match"));
-@z
-
-@x
-@d max_bytes 90000 /* the number of bytes in identifiers,
-  index entries, and section names; must be less than $2^{24}$ */
-@d max_names 4000 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@y
-@d max_bytes 1000000 /* the number of bytes in identifiers,
-  index entries, and section names; must be less than $2^{24}$ */
-@d max_names 10239 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@z
-
-@x
-@d length(c) (c+1)->byte_start-(c)->byte_start /* the length of a name */
-@y
-@d length(c) (size_t)((c+1)->byte_start-(c)->byte_start) /* the length of a name */
-@z
-
-@x
-@d hash_size 353 /* should be prime */
-@y
-@d hash_size 8501 /* should be prime */
-@z
-
-@x
-extern int names_match();
-@y
-extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
-@z
-
-@x
-name_pointer
-id_lookup(first,last,t) /* looks up a string in the identifier table */
-char *first; /* first character of string */
-char *last; /* last character of string plus one */
-char t; /* the |ilk|; used by \.{CWEAVE} only */
-{
-  char *i=first; /* position in |buffer| */
-@y
-name_pointer
-id_lookup(@t\1\1@> /* looks up a string in the identifier table */
-const char *first, /* first character of string */
-const char *last, /* last character of string plus one */
-char t@t\2\2@>) /* the |ilk|; used by \.{CWEAVE} only */
-{
-  const char *i=first; /* position in |buffer| */
-@z
-
-@x
-  l=last-first; /* compute the length */
-@y
-  l=(int)(last-first); /* compute the length */
-@z
-
-@x
-void init_p();
-@y
-extern void init_p(name_pointer,eight_bits);@/
 @z
 
 @x
@@ -541,129 +295,11 @@ extern void init_p(name_pointer,eight_bits);@/
 @z
 
 @x
-  if (program==cweave) init_p(p,t);
-@y
-  init_p(p,t);
-@z
-
-@x
-void
-print_section_name(p)
-name_pointer p;
-@y
-void
-print_section_name(
-name_pointer p)
-@z
-
-@x
-      term_write(s,ss-s); p=q->link; q=p;
-    } else {
-      term_write(s,ss+1-s); p=name_dir; q=NULL;
-@y
-      term_write(s,(size_t)(ss-s)); p=q->link; q=p;
-    } else {
-      term_write(s,(size_t)(ss+1-s)); p=name_dir; q=NULL;
-@z
-
-@x
-void
-sprint_section_name(dest,p)
-  char*dest;
-  name_pointer p;
-@y
-void
-sprint_section_name(
-  char *dest,
-  name_pointer p)
-@z
-
-@x
-    strncpy(dest,s,ss-s), dest+=ss-s;
-@y
-    strncpy(dest,s,(size_t)(ss-s)), dest+=ss-s;
-@z
-
-@x
-void
-print_prefix_name(p)
-name_pointer p;
-@y
-void
-print_prefix_name(
-name_pointer p)
-@z
-
-@x
-int web_strcmp(j,j_len,k,k_len) /* fuller comparison than |strcmp| */
-  char *j, *k; /* beginning of first and second strings */
-  int j_len, k_len; /* length of strings */
-@y
-static int web_strcmp(@t\1\1@> /* fuller comparison than |strcmp| */
-  char *j, /* beginning of first string */
-  int j_len, /* length of first string */
-  char *k, /* beginning of second string */
-  int k_len@t\2\2@>) /* length of second string */
-@z
-
-@x
-extern void init_node();
-@y
-extern void init_node(name_pointer);@/
-@z
-
-@x
-name_pointer
-add_section_name(par,c,first,last,ispref) /* install a new node in the tree */
-name_pointer par; /* parent of new node */
-int c; /* right or left? */
-char *first; /* first character of section name */
-char *last; /* last character of section name, plus one */
-int ispref; /* are we adding a prefix or a full name? */
-@y
-static name_pointer
-add_section_name(@t\1\1@> /* install a new node in the tree */
-name_pointer par, /* parent of new node */
-int c, /* right or left? */
-char *first, /* first character of section name */
-char *last, /* last character of section name, plus one */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
-@z
-
-@x
-  int name_len=last-first+ispref; /* length of section name */
-@y
-  int name_len=(int)(last-first)+ispref; /* length of section name */
-@z
-
-@x
   if (s+name_len>byte_mem_end) overflow("byte memory");
   if (name_ptr+1>=name_dir_end) overflow("name");
 @y
   if (s+name_len>byte_mem_end) overflow(_("byte memory"));
   if (name_ptr+1>=name_dir_end) overflow(_("name"));
-@z
-
-@x
-void
-extend_section_name(p,first,last,ispref)
-name_pointer p; /* name to be extended */
-char *first; /* beginning of extension text */
-char *last; /* one beyond end of extension text */
-int ispref; /* are we adding a prefix or a full name? */
-@y
-static void
-extend_section_name(@t\1\1@>
-name_pointer p, /* name to be extended */
-char *first, /* beginning of extension text */
-char *last, /* one beyond end of extension text */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
-@z
-
-@x
-  int name_len=last-first+ispref;
-@y
-  int name_len=(int)(last-first)+ispref;
 @z
 
 @x
@@ -679,115 +315,39 @@ int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
 @z
 
 @x
-name_pointer
-section_lookup(first,last,ispref) /* find or install section name in tree */
-char *first, *last; /* first and last characters of new name */
-int ispref; /* is the new name a prefix or a full name? */
-@y
-name_pointer
-section_lookup(@t\1\1@> /* find or install section name in tree */
-char *first,char *last, /* first and last characters of new name */
-int ispref@t\2\2@>) /* is the new name a prefix or a full name? */
-@z
-
-@x
-  int name_len=last-first+1;
-@y
-  int name_len=(int)(last-first)+1;
-@z
-
-@x
-      printf("\n! Ambiguous prefix: matches <");
+      fputs("\n! Ambiguous prefix: matches <",stdout);
 @y
       fputs(_("\n! Ambiguous prefix: matches <"),stdout);
 @z
 
 @x
-      printf(">\n and <");
+      fputs(">\n and <",stdout);
 @y
       fputs(_(">\n and <"),stdout);
 @z
 
 @x
-      printf("\n! New name is a prefix of <");
+      fputs("\n! New name is a prefix of <",stdout);
 @y
       fputs(_("\n! New name is a prefix of <"),stdout);
 @z
 
 @x
-      printf("\n! New name extends <");
+      fputs("\n! New name extends <",stdout);
 @y
       fputs(_("\n! New name extends <"),stdout);
 @z
 
 @x
-    printf("\n! Section name incompatible with <");
+    fputs("\n! Section name incompatible with <",stdout);
 @y
     fputs(_("\n! Section name incompatible with <"),stdout);
 @z
 
 @x
-    printf(">,\n which abbreviates <");
+    fputs(">,\n which abbreviates <",stdout);
 @y
     fputs(_(">,\n which abbreviates <"),stdout);
-@z
-
-@x
-int section_name_cmp();
-@y
-static int section_name_cmp(char **,int,name_pointer);@/
-@z
-
-@x
-int section_name_cmp(pfirst,len,r)
-char **pfirst; /* pointer to beginning of comparison string */
-int len; /* length of string */
-name_pointer r; /* section name being compared */
-@y
-static int section_name_cmp(@t\1\1@>
-char **pfirst, /* pointer to beginning of comparison string */
-int len, /* length of string */
-name_pointer r@t\2\2@>) /* section name being compared */
-@z
-
-@x
-          *pfirst=first+(ss-s);
-@y
-          *pfirst=first+(ptrdiff_t)(ss-s);
-@z
-
-@x
-      if (q!=name_dir) {len -= ss-s; s=q->byte_start; r=q; continue;}
-@y
-      if (q!=name_dir) {len -= (int)(ss-s); s=q->byte_start; r=q; continue;}
-@z
-
-@x
-|equiv_or_xref| as a pointer to a |char|.
-
-@<More elements of |name...@>=
-char *equiv_or_xref; /* info corresponding to names */
-@y
-|equiv_or_xref| as a pointer to |void|.
-
-@<More elements of |name...@>=
-void *equiv_or_xref; /* info corresponding to names */
-@z
-
-@x
-void  err_print();
-@y
-extern void err_print(const char *);@/
-@z
-
-@x
-void
-err_print(s) /* prints `\..' and location of error message */
-char *s;
-@y
-void
-err_print(@t\1\1@> /* prints `\..' and location of error message */
-const char *s@t\2\2@>)
 @z
 
 @x
@@ -801,21 +361,13 @@ else if (include_depth==0) printf(_(". (l. %d)\n"), cur_line);
 @z
 
 @x
-int wrap_up();
-extern void print_stats();
-@y
-extern int wrap_up(void);@/
-extern void print_stats(void);@/
-@z
-
-@x
-@ Some implementations may wish to pass the |history| value to the
+Some implementations may wish to pass the |history| value to the
 operating system so that it can be used to govern whether or not other
 programs are started. Here, for instance, we pass the operating system
 a status of 0 if and only if only harmless messages were printed.
 @^system dependencies@>
 @y
-@ On multi-tasking systems like the {\mc AMIGA} it is very convenient to
+On multi-tasking systems like the {\mc AMIGA} it is very convenient to
 know a little bit more about the reasons why a program failed.  The four
 levels of return indicated by the |history| value are very suitable for
 this purpose.  Here, for instance, we pass the operating system a status
@@ -831,15 +383,7 @@ can be made sensitive to these conditions.
 @z
 
 @x
-int wrap_up() {
-  putchar('\n');
-@y
-int wrap_up(void) {
-  if (show_progress || show_happiness || (history > spotless)) new_line;
-@z
-
-@x
-  @<Print the job |history|@>;
+  @<Print the job |history|@>@;
 @y
   @<Print the job |history|@>@;
   @<Remove the temporary file if not already done@>@;
@@ -858,12 +402,12 @@ int wrap_up(void) {
 @z
 
 @x
-case spotless: if (show_happiness) printf("(No errors were found.)\n"); break;
+case spotless: if (show_happiness) puts("(No errors were found.)"); break;
 case harmless_message:
-  printf("(Did you see the warning message above?)\n"); break;
+  puts("(Did you see the warning message above?)"); break;
 case error_message:
-  printf("(Pardon me, but I think I spotted something wrong.)\n"); break;
-case fatal_message: printf("(That was a fatal error, my friend.)\n");
+  puts("(Pardon me, but I think I spotted something wrong.)"); break;
+case fatal_message: puts("(That was a fatal error, my friend.)");
 @y
 case spotless:
   if (show_happiness) puts(_("(No errors were found.)")); break;
@@ -876,56 +420,9 @@ case fatal_message:
 @z
 
 @x
-void fatal(), overflow();
-@y
-extern void fatal(const char *,const char *);@/
-extern void overflow(const char *);@/
-@z
-
-@x
-@c void
-fatal(s,t)
-  char *s,*t;
-@y
-@c void
-fatal(
-  const char *s,const char *t)
-@z
-
-@x
-  if (*s) printf(s);
-@y
-  if (*s) err_print(s);
-@z
-
-@x
-@c void
-overflow(t)
-  char *t;
-@y
-@c void
-overflow(
-  const char *t)
-@z
-
-@x
   printf("\n! Sorry, %s capacity exceeded",t); fatal("","");
 @y
   printf(_("\n! Sorry, %s capacity exceeded"),t); fatal("","");
-@z
-
-@x
-@d confusion(s) fatal("! This can't happen: ",s)
-@y
-@d confusion(s) fatal(_("! This can't happen: "),s)
-@z
-
-@x
-@d show_happiness flags['h'] /* should lack of errors be announced? */
-@y
-@d show_happiness flags['h'] /* should lack of errors be announced? */
-@d temporary_output flags['t'] /* should temporary output take precedence? */
-@d make_xrefs flags['x'] /* should cross references be output? */
 @z
 
 @x
@@ -936,16 +433,10 @@ char check_file_name[max_file_name_length]; /* name of |check_file| */
 @z
 
 @x
-boolean flags[128]; /* an option for each 7-bit code */
+show_banner=show_happiness=show_progress=make_xrefs=true;@/
 @y
-boolean flags[128]; /* an option for each 7-bit code */
-const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
-@z
-
-@x
-show_banner=show_happiness=show_progress=1;
-@y
-temporary_output=1; /* Check temporary output for changes */
+make_xrefs=true;@/
+temporary_output=true; /* Check temporary output for changes */
 @z
 
 @x
@@ -966,26 +457,7 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 @z
 
 @x
-void scan_args();
-@y
-static void scan_args(void);@/
-@z
-
-@x
-void
-scan_args()
-@y
-static void
-scan_args(void)
-@z
-
-@x
-  boolean flag_change;
-@y
-@z
-
-@x
-  while (--argc > 0) {
+  strcpy(change_file_name,"/dev/null");
 @y
 @#
 #if defined DEV_NULL
@@ -998,7 +470,6 @@ scan_args(void)
   strcpy(change_file_name,"/dev/null");
 #endif
 @^system dependencies@>
-  while (--argc > 0) {
 @z
 
 @x
@@ -1018,11 +489,6 @@ scan_args(void)
 @z
 
 @x
-  if (found_change<=0) strcpy(change_file_name,"/dev/null");
-@y
-@z
-
-@x
 @ We use all of |*argv| for the |web_file_name| if there is a |'.'| in it,
 otherwise we add |".w"|. If this file can't be opened, we prepare an
 |alt_web_file_name| by adding |"web"| after the dot.
@@ -1037,34 +503,10 @@ otherwise we add |".w"|.
 @z
 
 @x
-  if (strcmp(*argv,"-")==0) found_change=-1;
-  else {
-@y
-  if (strcmp(*argv,"-")!=0) {
-@z
-
-@x
-    found_change=1;
-  }
-@y
-  }
-  found_change=1;
-@z
-
-@x
-    if (flags['x']) { /* indexes will be generated */
-@y
-    if (make_xrefs) { /* indexes will be generated */
-@z
-
-@x
-@ @<Handle flag...@>=
+@<Handle flag...@>=
 {
-  if (**argv=='-') flag_change=0;
-  else flag_change=1;
   for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
 @y
-@ @d flag_change (**argv!='-')
 @<Handle flag...@>=
 {
   if (strcmp("-help",*argv)==0 || strcmp("--help",*argv)==0)
@@ -1098,12 +540,7 @@ otherwise we add |".w"|.
 @z
 
 @x
-    flags[*dot_pos]=flag_change;
-@y
-    flags[(eight_bits)*dot_pos]=flag_change;
-@z
-
-@x
+@ @<Print usage error message and quit@>=
 {
 if (program==ctangle)
   fatal(
@@ -1115,6 +552,7 @@ else fatal(
    ,"");
 }
 @y
+@ @<Print usage error message and quit@>=
 cb_usage(program==ctangle ? "ctangle" : program==cweave ? "cweave" : "ctwill");
 @.Usage:@>
 @z
@@ -1143,12 +581,12 @@ char *found_filename; /* filename found by |kpse_find_file| */
 @ @<Scan arguments and open output files@>=
 scan_args();
 if (program==ctangle) {
-  if ((C_file=fopen(C_file_name,"w"))==NULL)
+  if ((C_file=fopen(C_file_name,"wb"))==NULL)
     fatal("! Cannot open output file ", C_file_name);
 @.Cannot open output file@>
 }
 else {
-  if ((tex_file=fopen(tex_file_name,"w"))==NULL)
+  if ((tex_file=fopen(tex_file_name,"wb"))==NULL)
     fatal("! Cannot open output file ", tex_file_name);
 }
 @y
@@ -1185,71 +623,24 @@ else {
 @z
 
 @x
-@ We predeclare several standard system functions here instead of including
-their system header files, because the names of the header files are not as
-standard as the names of the functions. (For example, some \CEE/ environments
-have \.{<string.h>} where others have \.{<strings.h>}.)
-
-@<Predecl...@>=
-extern int strlen(); /* length of string */
-extern int strcmp(); /* compare strings lexicographically */
-extern char* strcpy(); /* copy one string to another */
-extern int strncmp(); /* compare up to $n$ string characters */
-extern char* strncpy(); /* copy up to $n$ string characters */
-@y
-@ For string handling we include the {\mc ANSI C} system header file---through
-the \Kpathsea/ interface---instead of predeclaring the standard system
-functions |strlen|, |strcmp|, |strcpy|, |strncmp|, and |strncpy|.
-@^system dependencies@>
-@z
-
-@x
 @** Index.
 @y
-@** Extensions for modern \.{CWEB}.  The following sections introduce changes
-and extensions to the code that have been created by numerous contributors over
-the course of a quarter century. They make \.{CWEB} adhere to modern coding
-standards and introduce new or improved features.
+@** Extensions to \.{CWEB}.  The following sections introduce new or improved
+features that have been created by numerous contributors over the course of a
+quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
-section should have the same number as the original ``\&{82.~Index},'' and
-additional material follows below.
+material should nicely integrate with the original ``\&{85.~Index}.''
 
-@* Function declarations. Here are declarations---conforming to
-{\mc ANSI~C}---of all functions in this code that appear in \.{common.h}
-and thus should agree with \.{CTANGLE} and \.{CWEAVE}.
+@* Language setting.  This global variable is set by the argument of the
+`\.{+l}' (or `\.{-l}') command-line option.
 
-@<Predecl...@>=
-boolean get_line(void);@/
-name_pointer id_lookup(const char *,const char *,char);@/
-name_pointer section_lookup(char *,char *,int);@/
-void check_complete(void);@/
-void common_init(void);@/
-void print_prefix_name(name_pointer);@/
-void print_section_name(name_pointer);@/
-void reset_input(void);@/
-void sprint_section_name(char *,name_pointer);@/
+@<Global var...@>=
+const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
 
-@ The following functions are private to \.{common.w}.
 
-@<Predecl...@>=
-static boolean input_ln(FILE *);@/
-static int web_strcmp(char *,int,char *,int);@/
-static name_pointer add_section_name(name_pointer,int,char *,char *,int);@/
-static void extend_section_name(name_pointer,char *,char *,int);@/
-static void check_change(void);@/
-static void prime_the_change_buffer(void);@/
-
-@* Standard C library interfaces.  This updated version of \.{CWEB} uses
-standard C types for boolean values, pointers, and objects with fixed sizes
-(|@!uint8_t|, |@!uint16_t|; already in \Kpathsea/).
-
-@<Include files@>=
-#include <stdbool.h> /* type definition of |bool| */
-#include <stddef.h> /* type definition of |ptrdiff_t| */
-
-@ The |scan_args| and |cb_show_banner| routines and the |bindtextdomain|
-argument string need a few extra variables.
+@* User communation.  The |scan_args| and |cb_show_banner| routines and the
+|bindtextdomain| argument string need a few extra variables.
 
 @d max_banner 50
 
@@ -1257,7 +648,7 @@ argument string need a few extra variables.
 @d DIR_SEPARATOR    separators[1]
 @d DEVICE_SEPARATOR separators[2]
 
-@<Other...@>=
+@<Global var...@>=
 char cb_banner[max_banner];@/
 string texmf_locale;@/
 #ifndef SEPARATORS
@@ -1275,35 +666,12 @@ if(check_file) fclose(check_file);
 if(strlen(check_file_name)) /* Delete the temporary file in case of a break */
    remove(check_file_name);
 
-@* Internationalization.  You may have noticed that almost all \.{"strings"}
-in the \.{CWEB} sources are placed in the context of the `|_|'~macro.
-This is just a shortcut for the `|@!gettext|' function from the ``GNU~gettext
-utilities.'' For systems that do not have this library installed, we wrap
-things for neutral behavior without internationalization.
-
-@d _(S) gettext(S)
-
-@<Include files@>=
-#ifndef HAVE_GETTEXT
-#define HAVE_GETTEXT 0
-#endif
-@#
-#if HAVE_GETTEXT
-#include <locale.h> /* |@!LC_MESSAGES|, |@!LC_CTYPE| */
-#include <libintl.h>
-#else
-#define setlocale(A,B) ""
-#define bindtextdomain(A,B) ""
-#define textdomain(A) ""
-#define gettext(A) A
-#endif
-
-@ If translation catalogs for your personal \.{LANGUAGE} are installed at the
-appropriate place, \.{CTANGLE} and \.{CWEAVE} will talk to you in your favorite
-language.  Catalog \.{cweb} contains all strings from ``plain \.{CWEB},''
-catalog \.{cweb-tl} contains a few extra strings specific to the \TeX~Live
-interface, and catalog \.{web2c-help} contains the ``\.{--help}'' texts for
-\.{CTANGLE} and \.{CWEAVE}.
+@* Internationalization.  If translation catalogs for your personal
+\.{LANGUAGE} are installed at the appropriate place, \.{CTANGLE} and \.{CWEAVE}
+will talk to you in your favorite language.  Catalog \.{cweb} contains all
+strings from ``plain \.{CWEB},'' catalog \.{cweb-tl} contains a few extra
+strings specific to the \TeX~Live interface, and catalog \.{web2c-help}
+contains the ``\.{--help}'' texts for \.{CTANGLE} and \.{CWEAVE}.
 @.cweb.mo@>
 @.cweb-tl.mo@>
 @.web2c-help.mo@>
@@ -1339,7 +707,16 @@ There are several ways to set |TEXMFLOCALEDIR|:
     e.g., \.{TEXMFLOCALEDIR=\$TEXMFMAIN/locale}\hfil\break
     or \.{TEXMFLOCALEDIR.cweb=\$TEXMFMAIN/locale}.\par}
 
-@<Set locale...@>=
+@<Include files@>=
+#if HAVE_GETTEXT
+#include <locale.h> /* |@!LC_MESSAGES|, |@!LC_CTYPE| */
+#else
+#define setlocale(A,B) ""
+#define bindtextdomain(A,B) ""
+#define textdomain(A) ""
+#endif
+
+@ @<Set locale...@>=
 setlocale(LC_MESSAGES, setlocale(LC_CTYPE, ""));
 texmf_locale = kpse_var_expand ("${TEXMFLOCALEDIR}");
 
@@ -1429,7 +806,11 @@ cb_usagehelp(program==ctangle ? CTANGLEHELP :
 \.{i18n}/\.{t10n}.  We simply filter the strings through the catalogs
 (if available).
 
-@c
+@<Predecl...@>=
+static void cb_usage (const_string str);@/
+static void cb_usagehelp (const_string *message, const_string bug_email);@/
+
+@ @c
 static void cb_usage (const_string str)
 {
   textdomain("cweb-tl");
@@ -1481,11 +862,6 @@ void cb_show_banner (void)
   textdomain("cweb");
 @.cweb.mo@>
 }
-
-@ @<Predecl...@>=
-static void cb_usage (const_string str);@/
-static void cb_usagehelp (const_string *message, const_string bug_email);@/
-void cb_show_banner (void); /* |extern| for option \.{+b} */
 
 @** Index.
 @z

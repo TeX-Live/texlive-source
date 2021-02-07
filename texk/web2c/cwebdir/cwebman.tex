@@ -36,7 +36,7 @@
 
 \def\lheader{\mainfont\the\pageno\hfill\sc\runninghead\hfill}
 \def\rheader{\hfill\sc\runninghead\hfill\mainfont\the\pageno}
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 3.64)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.0)}
 
 % This verbatim mode assumes that ! marks are !! in the text being copied.
 \def\verbatim{\begingroup
@@ -50,7 +50,7 @@
 \null\vfill
 \centerline{\titlefont The {\ttitlefont CWEB} System of
     Structured Documentation}
-\vskip 18pt\centerline{(Version 3.64 --- February 2002)}
+\vskip 18pt\centerline{(Version 4.0 --- February 2021)}
 \vskip 24pt
 \centerline{\authorfont Donald E. Knuth and Silvio Levy}
 \vfill
@@ -87,6 +87,10 @@ for their own personal use.
 Internet page \.{http://www-cs-faculty.stanford.edu/\char`\~knuth/cweb.html}
 contains current info about \.{CWEB} and related topics.
 
+\smallskip\noindent
+From there you can also reach the \.{CWEB} development page
+\.{https://github.com/ascherer/cweb} with the really current news.
+
 \pageno=0 \titletrue\eject
 
 \titletrue
@@ -103,7 +107,7 @@ adapted to \CEE/ by Silvio Levy.  Since its creation in 1987, \.{CWEB}
 has been revised and enhanced in various ways, by both Knuth and Levy.
 We now believe that its evolution is near an end; however, bug
 reports, suggestions and comments are still welcome, and
-should be sent to Levy (\.{levy@math.berkeley.edu}).
+should be sent to the \TeX-related mailing list \.{tex-k@tug.org}.
 
 Readers who are familiar with Knuth's memo ``The \.{WEB} System of Structured
 Documentation'' will be able
@@ -521,7 +525,7 @@ specifically below.
 \@@ [LTMCrc] A double \.@ denotes the single character `\.@'. This is
 the only control code that is legal everywhere.
 Note that you must use this convention if you are giving an internet
-email address in a \.{CWEB} file (e.g., \.{levy@@math.berkeley.edu}).
+email address in a \.{CWEB} file (e.g., \.{tex-k@@tug.org}).
 
 \subsec
 Here are the codes that introduce the \TEX/ part of a section.
@@ -1151,6 +1155,8 @@ for the macros that make this work.)
 Alternatively, thanks to H\`an Th\^e\kern-.3em\raise.3ex\hbox{\'{}} Th\`anh
 and Andreas Scherer, you can generate \.{cob.pdf} in one step by simply
 saying `\.{pdftex}~\.{cob}'.
+A third way to create PDF output from \.{CWEB} input is to say
+`\.{xetex}~\.{cob}'.
 
 A more elaborate system called \.{CTWILL}, which extends the usual cross
 references of \.{CWEAVE} by preparing links from the uses of identifiers
@@ -1184,17 +1190,16 @@ appendices D, E, and~F, which exhibit the complete source code for
 
 This appendix consists
 of four listings.  The first shows the \.{CWEB} input that
-generated sections 12--15 of the file \.{common.w}, which contains
+generated sections 27--31 of the file \.{common.w}, which contains
 routines common to \.{CWEAVE} and \.{CTANGLE}.
 Note that some of the lines are indented to show the program structure;
 the indentation is ignored by \.{CWEAVE} and \.{CTANGLE}, but users find
 that \.{CWEB} files are quite readable if they have some such indentation.
 
-The second and third listings
-show corresponding parts
-of the \CEE/ code output by \.{CTANGLE} and of
-the corresponding \TEX/ code output by \.{CWEAVE}, when run on \.{common.w}.
-The fourth listing shows how that output looks when printed out.
+The second and third listings show corresponding parts of
+the \CEE/ code output by \.{CTANGLE} and of
+the \TEX/ code output by \.{CWEAVE}, when run on \.{common.w}.
+The fourth listing shows how that output looks in print.
 
 \vskip 6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
@@ -1206,14 +1211,17 @@ Since blank lines in the change file are not used for matching, we have
 the change file is exhausted. This procedure is called only when
 |changing| is 1; hence error messages will be reported correctly.
 
-@c
-void
-prime_the_change_buffer()
+@<Predecl...@>=
+static void prime_the_change_buffer(void);@/
+
+@ @c
+static void
+prime_the_change_buffer(void)
 {
   change_limit=change_buffer; /* this value is used if the change file ends */
-  @<Skip over comment lines in the change file; |return| if end of file@>;
-  @<Skip to the next nonblank line; |return| if end of file@>;
-  @<Move |buffer| and |limit| to |change_buffer| and |change_limit|@>;
+  @<Skip over comment lines in the change file; |return| if end of file@>@;
+  @<Skip to the next nonblank line; |return| if end of file@>@;
+  @<Move |buffer| and |limit| to |change_buffer| and |change_limit|@>@;
 }
 
 @ While looking for a line that begins with \.{@@x} in the change file, we
@@ -1226,7 +1234,7 @@ while(1) {
   if (!!input_ln(change_file)) return;
   if (limit<buffer+2) continue;
   if (buffer[0]!!='@@') continue;
-  if (xisupper(buffer[1])) buffer[1]=tolower(buffer[1]);
+  if (xisupper(buffer[1])) buffer[1]=tolower((eight_bits)buffer[1]);
   if (buffer[1]=='x') break;
   if (buffer[1]=='y' || buffer[1]=='z' || buffer[1]=='i') {
     loc=buffer+2;
@@ -1249,8 +1257,8 @@ do {
 
 @ @<Move |buffer| and |limit| to |change_buffer| and |change_limit|@>=
 {
-  change_limit=change_buffer-buffer+limit;
-  strncpy(change_buffer,buffer,limit-buffer+1);
+  change_limit=change_buffer+(ptrdiff_t)(limit-buffer);
+  strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
 
 !endgroup
@@ -1260,28 +1268,28 @@ do {
 \def\runninghead{APPENDIX A  --- TRANSLATION BY {\tentt CTANGLE}}
 
 Here's the portion of the \CEE/ code generated by \.{CTANGLE} that corresponds
-to the source on the preceding page.  Notice that sections~13, 14 and~15
-have been tangled into section~12.
+to the source on the preceding page.  Notice that sections~29, 30 and~31
+have been tangled into section~28.
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
 \verbatim
-/*:9*//*12:*/
-#line 247 "common.w"
+/*:24*//*28:*/
+#line 236 "common.w"
 
-void
-prime_the_change_buffer()
+static void
+prime_the_change_buffer(void)
 {
 change_limit= change_buffer;
-/*13:*/
-#line 261 "common.w"
+/*29:*/
+#line 250 "common.w"
 
 while(1){
 change_line++;
 if(!!input_ln(change_file))return;
 if(limit<buffer+2)continue;
 if(buffer[0]!!='@')continue;
-if(xisupper(buffer[1]))buffer[1]= tolower(buffer[1]);
+if(xisupper(buffer[1]))buffer[1]= tolower((eight_bits)buffer[1]);
 if(buffer[1]=='x')break;
 if(buffer[1]=='y'||buffer[1]=='z'||buffer[1]=='i'){
 loc= buffer+2;
@@ -1290,11 +1298,11 @@ err_print("!! Missing @x in change file");
 }
 }
 
-/*:13*/
-#line 252 "common.w"
-;
-/*14:*/
-#line 278 "common.w"
+/*:29*/
+#line 241 "common.w"
+
+/*30:*/
+#line 267 "common.w"
 
 do{
 change_line++;
@@ -1305,23 +1313,23 @@ return;
 }
 }while(limit==buffer);
 
-/*:14*/
-#line 253 "common.w"
-;
-/*15:*/
-#line 288 "common.w"
+/*:30*/
+#line 242 "common.w"
+
+/*31:*/
+#line 277 "common.w"
 
 {
-change_limit= change_buffer-buffer+limit;
-strncpy(change_buffer,buffer,limit-buffer+1);
+change_limit= change_buffer+(ptrdiff_t)(limit-buffer);
+strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
 
-/*:15*/
-#line 254 "common.w"
-;
+/*:31*/
+#line 243 "common.w"
+
 }
 
-/*:12*//*16:*/
+/*:28*//*33:*/
 !endgroup
 \endgroup
 \vfill\eject
@@ -1333,31 +1341,35 @@ Here is the corresponding excerpt from \.{common.tex}.
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
 \verbatim
-\M{12}Procedure \PB{\\{prime\_the\_change\_buffer}}
+\M{27}Procedure \PB{\\{prime\_the\_change\_buffer}}
 sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
 \PB{\\{changing}} is 1; hence error messages will be reported correctly.
-!vskip-.5!baselineskip
-\Y\B\&{void} \\{prime\_the\_change\_buffer}(\,)\1\1\2\2\6
+
+\Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
+\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
+\fi
+
+\M{28}\B\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{change\_limit}\K\\{change\_buffer}{}$;\C{ this value is used if the
 change file ends }\6
-\X13:Skip over comment lines in the change file; \PB{\&{return}} if end of file%
-\X;\6
-\X14:Skip to the next nonblank line; \PB{\&{return}} if end of file\X;\6
-\X15:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
-\PB{\\{change\_limit}}\X;\6
+\X29:Skip over comment lines in the change file; \PB{\&{return}} if end of file%
+\X\6
+\X30:Skip to the next nonblank line; \PB{\&{return}} if end of file\X\6
+\X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
+\PB{\\{change\_limit}}\X\6
 \4${}\}{}$\2\par
 \fi
-!vskip-.5!baselineskip
-\M{13}While looking for a line that begins with \.{@x} in the change file, we
+
+\M{29}While looking for a line that begins with \.{@x} in the change file, we
 allow lines that begin with \.{@}, as long as they don't begin with \.{@y},
 \.{@z}, or \.{@i} (which would probably mean that the change file is fouled
 up).
-!vskip-.5!baselineskip
-\Y\B\4\X13:Skip over comment lines in the change file; \PB{\&{return}} if end
+
+\Y\B\4\X29:Skip over comment lines in the change file; \PB{\&{return}} if end
 of file\X${}\E{}$\6
 \&{while} (\T{1})\5
 ${}\{{}$\1\6
@@ -1369,7 +1381,7 @@ ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\\{buffer}[\T{0}]\I\.{'@'}){}$\1\5
 \&{continue};\2\6
 \&{if} (\\{xisupper}(\\{buffer}[\T{1}]))\1\5
-${}\\{buffer}[\T{1}]\K\\{tolower}(\\{buffer}[\T{1}]);{}$\2\6
+${}\\{buffer}[\T{1}]\K\\{tolower}{}$((\&{eight\_bits}) \\{buffer}[\T{1}]);\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'x'}){}$\1\5
 \&{break};\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'y'}\V\\{buffer}[\T{1}]\E\.{'z'}\V\\{buffer}[%
@@ -1379,11 +1391,11 @@ ${}\\{loc}\K\\{buffer}+\T{2};{}$\6
 \\{err\_print}(\.{"!!\ Missing\ @x\ in\ cha}\)\.{nge\ file"});\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\par
-\U12.\fi
-!vskip-.5!baselineskip
-\M{14}Here we are looking at lines following the \.{@x}.
-!vskip-.5!baselineskip
-\Y\B\4\X14:Skip to the next nonblank line; \PB{\&{return}} if end of file\X${}%
+\U28.\fi
+
+\M{30}Here we are looking at lines following the \.{@x}.
+
+\Y\B\4\X30:Skip to the next nonblank line; \PB{\&{return}} if end of file\X${}%
 \E{}$\6
 \&{do}\5
 ${}\{{}$\1\6
@@ -1395,48 +1407,48 @@ ${}\{{}$\1\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
 \&{while} ${}(\\{limit}\E\\{buffer}){}$;\par
-\U12.\fi
-!vskip-.5!baselineskip
-\M{15}\B\X15:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}}
-and \PB{\\{change\_limit}}\X${}\E{}$\6
-${}\{{}$\1\6
-${}\\{change\_limit}\K\\{change\_buffer}-\\{buffer}+\\{limit};{}$\6
-${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39\\{limit}-\\{buffer}+%
-\T{1});{}$\6
-\4${}\}{}$\2\par
-\Us12\ET16.\fi
+\U28.\fi
 !endgroup
 \endgroup
+\medskip
+(Code for section 31 omitted for space reasons.)
 \vfil\eject
 
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 
 And here's what the same excerpt looks like when typeset.
+(Can you spot the typographical nicety used in the \.{CWEB} code?)
+\let\K=\leftarrow
 
-\M{12}Procedure \PB{\\{prime\_the\_change\_buffer}}
+\M{27}Procedure \PB{\\{prime\_the\_change\_buffer}}
 sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
 \PB{\\{changing}} is 1; hence error messages will be reported correctly.
 
-\Y\B\&{void} \\{prime\_the\_change\_buffer}(\,)\1\1\2\2\6
+\Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
+\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
+\fi
+
+\M{28}\B\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{change\_limit}\K\\{change\_buffer}{}$;\C{ this value is used if the
 change file ends }\6
-\X13:Skip over comment lines in the change file; \PB{\&{return}} if end of file%
-\X;\6
-\X14:Skip to the next nonblank line; \PB{\&{return}} if end of file\X;\6
-\X15:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
-\PB{\\{change\_limit}}\X;\6
+\X29:Skip over comment lines in the change file; \PB{\&{return}} if end of file%
+\X\6
+\X30:Skip to the next nonblank line; \PB{\&{return}} if end of file\X\6
+\X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
+\PB{\\{change\_limit}}\X\6
 \4${}\}{}$\2\par
 \fi
 
-\M{13}While looking for a line that begins with \.{@x} in the change file, we
+\M{29}While looking for a line that begins with \.{@x} in the change file, we
 allow lines that begin with \.{@}, as long as they don't begin with \.{@y},
-\.{@z}, or \.{@i} (which would probably mean that the change file is fouled up).
+\.{@z}, or \.{@i} (which would probably mean that the change file is fouled
+up).
 
-\Y\B\4\X13:Skip over comment lines in the change file; \PB{\&{return}} if end
+\Y\B\4\X29:Skip over comment lines in the change file; \PB{\&{return}} if end
 of file\X${}\E{}$\6
 \&{while} (\T{1})\5
 ${}\{{}$\1\6
@@ -1448,7 +1460,7 @@ ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\\{buffer}[\T{0}]\I\.{'@'}){}$\1\5
 \&{continue};\2\6
 \&{if} (\\{xisupper}(\\{buffer}[\T{1}]))\1\5
-${}\\{buffer}[\T{1}]\K\\{tolower}(\\{buffer}[\T{1}]);{}$\2\6
+${}\\{buffer}[\T{1}]\K\\{tolower}{}$((\&{eight\_bits}) \\{buffer}[\T{1}]);\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'x'}){}$\1\5
 \&{break};\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'y'}\V\\{buffer}[\T{1}]\E\.{'z'}\V\\{buffer}[%
@@ -1458,11 +1470,11 @@ ${}\\{loc}\K\\{buffer}+\T{2};{}$\6
 \\{err\_print}(\.{"!\ Missing\ @x\ in\ cha}\)\.{nge\ file"});\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\par
-\U12.\fi
+\U28.\fi
 
-\M{14}Here we are looking at lines following the \.{@x}.
+\M{30}Here we are looking at lines following the \.{@x}.
 
-\Y\B\4\X14:Skip to the next nonblank line; \PB{\&{return}} if end of file\X${}%
+\Y\B\4\X30:Skip to the next nonblank line; \PB{\&{return}} if end of file\X${}%
 \E{}$\6
 \&{do}\5
 ${}\{{}$\1\6
@@ -1474,16 +1486,17 @@ ${}\{{}$\1\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
 \&{while} ${}(\\{limit}\E\\{buffer}){}$;\par
-\U12.\fi
+\U28.\fi
 
-\M{15}\B\X15:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}}
+\M{31}\B\X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}}
 and \PB{\\{change\_limit}}\X${}\E{}$\6
 ${}\{{}$\1\6
-${}\\{change\_limit}\K\\{change\_buffer}-\\{buffer}+\\{limit};{}$\6
-${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39\\{limit}-\\{buffer}+%
-\T{1});{}$\6
+${}\\{change\_limit}\K\\{change\_buffer}+(\&{ptrdiff\_t})(\\{limit}-%
+\\{buffer});{}$\6
+${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39(\&{size\_t})(\\{limit}-%
+\\{buffer}+\T{1}));{}$\6
 \4${}\}{}$\2\par
-\Us12\ET16.\fi
+\Us28\ET33.\fi
 
 \vfil\eject\titletrue
 \rightskip=0pt % get out of C mode (cf. \B)
@@ -1579,7 +1592,7 @@ $$\lpile{\.{\\def\\topofcontents\{\\null\\vfill}\cr
   \.{ { }\\titlefalse \% include headline on the contents page}\cr
   \.{ { }\\def\\rheader\{\\mainfont The \{\\tt CWEAVE\}{ }processor\\hfil\}}\cr
   \.{ { }\\centerline\{\\titlefont The \{\\ttitlefont CWEAVE\}{ }processor\}}\cr
-  \.{ { }\\vskip 15pt \\centerline\{(Version 3.64)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.0)\}{ }\\vfill\}}\cr}$$
 Redefining \.{\\rheader}, which is the headline for right-hand pages,
 suffices in this case to put the desired information at the top of the
 contents page.
@@ -1704,9 +1717,8 @@ with which one can say things like the following, anywhere in the \TeX\ parts
 or the \CEE/ comments of a \.{CWEB} file:
 $$\vbox{\halign{\.{#}\hfil\cr
 You can send email to
- \\pdfURL\{the author\}\{mailto:andreas.scherer@@pobox.com\}\cr
-or visit \\pdfURL\{his home page\}\{http://www.pobox.com/%
-       \\TILDE/scherer\}.\cr}}$$
+ \\pdfURL\{the author\}\{mailto:andreas\\UNDER/github@@freenet.de\}\cr
+or visit \\pdfURL\{his home page\}\{https://github.com/ascherer\}\cr}}$$
 In a {\mc PDF} document, the first argument will appear in blue as
 clickable text; the Acrobat reader, if correctly configured, will then
 redirect those links to the user's browser and open either the

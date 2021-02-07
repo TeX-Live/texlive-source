@@ -1,14 +1,14 @@
 # International version of CWEB (CWEBbin, TeXLive).
-# Copyright (C) 2020 Andreas Scherer et al.
+# Copyright (C) 2021 Andreas Scherer et al.
 # This file is distributed under the same license as the CWEB package.
-# Andreas Scherer <https://ascherer.github.io>, 2020.
+# Andreas Scherer <https://ascherer.github.io>, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2020\n"
+"Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-07-08 15:10+0200\n"
-"PO-Revision-Date: 2020-07-08 15:10+0200\n"
+"POT-Creation-Date: 2021-02-06 15:10+0200\n"
+"PO-Revision-Date: 2021-02-06 15:58+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -18,8 +18,10 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: help.h:52
-msgid "Usage: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.c]]]"
-msgstr "Aufruf: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.c]]]"
+msgid ""
+"Usage: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.c]]]"
+msgstr ""
+"Aufruf: ctangle [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.c]]]"
 
 #: help.h:53
 msgid "  Tangle WEBFILE with CHANGEFILE into a C/C++ program."
@@ -73,17 +75,19 @@ msgstr "+s          melde die Verbrauchsstatistik"
 msgid "-t          ignore temporary output irrespective of changes"
 msgstr "-t          ignoriere temporäre Ausgabe unabhängig von Änderungen"
 
-#: help.h:65 help.h:91 help.h:118
+#: help.h:66 help.h:92 help.h:119
 msgid "--help      display this help and exit"
 msgstr "--help      zeige diesen Hilfetext und ende"
 
-#: help.h:66 help.h:92 help.h:119
+#: help.h:67 help.h:93 help.h:120
 msgid "--version   output version information and exit"
 msgstr "--version   zeige die Versionsinformation und ende"
 
 #: help.h:72
-msgid "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
-msgstr "Aufruf: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
+msgid ""
+"Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
+msgstr ""
+"Aufruf: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 
 #: help.h:73
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document."
@@ -118,8 +122,10 @@ msgid "+lX         use macros for language X as of Xcwebmac.tex"
 msgstr "+lX         benutze Macros für Sprache X aus Xcwebmac.tex"
 
 #: help.h:98
-msgid "Usage: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
-msgstr "Aufruf: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
+msgid ""
+"Usage: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
+msgstr ""
+"Aufruf: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 
 #: help.h:99
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes."

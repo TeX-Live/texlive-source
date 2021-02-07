@@ -1,14 +1,14 @@
 # International version of CWEB (CWEBbin, TeXLive).
-# Copyright (C) 2019 Andreas Scherer et al.
+# Copyright (C) 2021 Andreas Scherer et al.
 # This file is distributed under the same license as the CWEB package.
-# Andreas Scherer <https://ascherer.github.io>, 2019.
+# Andreas Scherer <https://ascherer/github.io>, 2021.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2020\n"
+"Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-01-18 16:57+0100\n"
-"PO-Revision-Date: 2019-09-22 17:08+0200\n"
+"POT-Creation-Date: 2021-02-06 15:25+0100\n"
+"PO-Revision-Date: 2021-02-06 15:57+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -598,16 +598,16 @@ msgid "Sorting:"
 msgstr "Ordinamento:"
 
 #: ctang-i18n.ch:17
-msgid "This is CTANGLE (Version 3.64 [CWEBbin 2020])"
-msgstr "Questo è CTANGLE (Versione 3.64 [CWEBbin 2020])"
+msgid "This is CTANGLE (Version 4.0 [CWEBbin 2021])"
+msgstr "Questo è CTANGLE (Versione 4.0 [CWEBbin 2021])"
 
 #: cweav-i18n.ch:17
-msgid "This is CWEAVE (Version 3.64 [CWEBbin 2020])"
-msgstr "Questo è CWEAVE (Versione 3.64 [CWEBbin 2020])"
+msgid "This is CWEAVE (Version 4.0 [CWEBbin 2021])"
+msgstr "Questo è CWEAVE (Versione 4.0 [CWEBbin 2021])"
 
 #: cweav-twill.ch:68
-msgid "This is CTWILL (Version 3.64 [CWEBbin 2020])"
-msgstr "Questo è CTWILL (Versione 3.64 [CWEBbin 2020])"
+msgid "This is CTWILL (Version 4.0 [CWEBbin 2021])"
+msgstr "Questo è CTWILL (Versione 4.0 [CWEBbin 2021])"
 
 #: cweav-i18n.ch:301 cweav-i18n.ch:309
 msgid "buffer"

@@ -14,7 +14,7 @@ Section 1.
 @z
 
 @x
-@d banner "This is CTWILL, Version 3.64"
+@d banner "This is CTWILL, Version 4.0"
 @y
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
@@ -35,10 +35,10 @@ be even more ``off'' from {\itt cweave.w}.  Care has been taken to give a
 faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 ---Enjoy!\bigskip}
 
-@d banner "This is CTWILL, Version 3.64"
+@d banner "This is CTWILL, Version 4.0"
 @z
 
-Section 3.
+Section 2.
 
 @x
 @ Here is a sort of user manual for \.{CTWILL}---which is exactly like
@@ -55,7 +55,7 @@ give it the necessary hints in other places via your change file.
 @-x@>
 @z
 
-Section 4.
+Section 3.
 
 @x
 The current meaning of every identifier is initially `\.{\\uninitialized}'.
@@ -73,30 +73,23 @@ must have fewer than 50 characters.
 @ If the \TeX\ part starts
 @z
 
-Section 5.
+Section 4.
 
 @x
 @d max_tex_chars 50 /* limit on the \TeX\ part of a meaning */
 @y
 @z
 
+Section 5.
+
+@x
+@ \.{CWEAVE} has a fairly straightforward outline.  It operates in
+@y
+@* Introduction (continued). \.{CWEAVE} has a fairly straightforward outline.
+It operates in
+@z
+
 Section 7.
-
-@x
-you have to change them also in the file |"common.w"|.
-@y
-you have to change them also in file |"common.w"|.
-@z
-
-Section 8.
-
-@x
-@ The next few sections contain stuff from the file |"common.w"| that must
-@y
-@r @ The next few sections contain stuff from the file |"common.w"| that must
-@z
-
-Section 9.
 
 @x
 internationalization.
@@ -107,25 +100,25 @@ internationalization.
 @-S@>
 @z
 
-Section 11.
+Section 9.
 
 @x
 @ Code related to input routines:
 @y
 @ Code related to input routines:
+@-c@>
+@z
+
+Section 10.
+
+@x
+@ Code related to identifier and section name storage:
+@y
+@ Code related to identifier and section name storage:
 @-c@>
 @z
 
 Section 12.
-
-@x
-@ Code related to identifier and section name storage:
-@y
-@ Code related to identifier and section name storage:
-@-c@>
-@z
-
-Section 13.
 
 @x
 @ Code related to error handling:
@@ -134,15 +127,23 @@ Section 13.
 @-s@>
 @z
 
-Section 15.
+Section 16.
 
 @x
 @ Code related to section numbers:
 @y
-@r @ Code related to section numbers:
+@ Code related to section numbers:
 @z
 
 Section 17.
+
+@x
+extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
+@y
+extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
+@z
+
+Section 18.
 
 @x
 @ Code relating to output:
@@ -153,7 +154,7 @@ Section 17.
 @-c@>
 @z
 
-Section 19.
+Section 23.
 
 @x
 @* Data structures exclusive to {\tt CWEAVE}.
@@ -162,7 +163,7 @@ Section 19.
 @-a@>
 @z
 
-Section 21.
+Section 25.
 
 @x
 @ The other large memory area in \.{CWEAVE} keeps the cross-reference data.
@@ -172,7 +173,7 @@ Section 21.
 @-x@>
 @z
 
-Section 23.
+Section 27.
 
 @x
 @ \.{CTWILL} also has special data structures to keep track of current
@@ -180,7 +181,7 @@ Section 23.
 @r @ \.{CTWILL} also has special data structures to keep track of current
 @z
 
-Section 28.
+Section 32.
 
 @x
 @ The |new_meaning| routine changes the current ``permanent meaning''
@@ -188,7 +189,7 @@ Section 28.
 @r @ The |new_meaning| routine changes the current ``permanent meaning''
 @z
 
-Section 31.
+Section 35.
 
 @x
 @ A new cross-reference for an identifier is formed by calling |new_xref|,
@@ -198,25 +199,24 @@ Section 31.
 @-c@>
 @z
 
-Section 39.
-
-@x
-id_lookup("do",NULL,do_like);
-@y
-@ @<Store all...@>=
-id_lookup("do",NULL,do_like);
-@z
-
-Section 40.
-
-@x
-id_lookup("undef",NULL,if_like);
-@y
-@ @<Store all...@>=
-id_lookup("undef",NULL,if_like);
-@z
-
 Section 44.
+
+@x
+@ We have to get \CEE/'s
+@y
+@r @ We have to get \CEE/'s
+@z
+
+Section 45.
+
+@x
+id_lookup("goto",NULL,case_like);
+@y
+@ @<Store all...@>=
+id_lookup("goto",NULL,case_like);
+@z
+
+Section 49.
 
 @x
 @ Control codes are converted to \.{CWEAVE}'s internal
@@ -224,7 +224,7 @@ Section 44.
 @r @ Control codes are converted to \.{CWEAVE}'s internal
 @z
 
-Section 50.
+Section 55.
 
 @x
 \yskip\hang |xref_roman|, |xref_wildcard|, |xref_typewriter|, |TeX_string|,
@@ -249,7 +249,7 @@ The value of |cur_section_char| will be |'('| if the section name was
 preceded by \.{@@(} instead of \.{@@<}.\par}
 @z
 
-Section 52.
+Section 56.
 
 @x
 @ As one might expect, |get_next| consists mostly of a big switch
@@ -258,7 +258,7 @@ Section 52.
 @-c@>
 @z
 
-Section 59.
+Section 63.
 
 @x
 @ The following code assigns values to the combinations \.{++},
@@ -267,7 +267,7 @@ Section 59.
 @-c@>
 @z
 
-Section 62.
+Section 66.
 
 @x
 @<Get a string@>= {
@@ -275,7 +275,7 @@ Section 62.
 @<Get a string@>= {@+
 @z
 
-Section 66.
+Section 70.
 
 @x
 @ @<Put section name...@>=
@@ -283,7 +283,7 @@ Section 66.
 @r @ @<Put section name...@>=
 @z
 
-Section 80.
+Section 84.
 
 @x
 with |next_control!='|'| and ends with |next_control>=format_code|. Thus, it
@@ -292,7 +292,7 @@ with |next_control| |!='|'| and ends with |next_control>=format_code|.
 Thus, it
 @z
 
-Section 88.
+Section 91.
 
 @x
 @ Finally, when the \TEX/ and definition parts have been treated, we have
@@ -302,7 +302,7 @@ Section 88.
 \hfil\break|next_control>=begin_C|.
 @z
 
-Section 94.
+Section 97.
 
 @x
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
@@ -311,7 +311,7 @@ Section 94.
 @-c@>
 @z
 
-Section 95.
+Section 99.
 
 @x
 @ When we are copying \TEX/ source material, we retain line breaks
@@ -319,7 +319,7 @@ Section 95.
 @r @ When we are copying \TEX/ source material, we retain line breaks
 @z
 
-Section 97.
+Section 101.
 
 @x
 @ When we wish to append one character |c| to the output buffer, we write
@@ -328,7 +328,7 @@ Section 97.
 @-c@>
 @z
 
-Section 101.
+Section 105.
 
 @x
 @ We get to this section only in the unusual case that the entire output line
@@ -336,7 +336,13 @@ Section 101.
 @r @ We get to this section only in the unusual case that the entire output line
 @z
 
-Section 105.
+Section 111.
+
+@x
+@ The |copy_TeX| routine processes the \TEX/ code at the beginning of a
+@y
+@r @ The |copy_TeX| routine processes the \TEX/ code at the beginning of a
+@z
 
 @x
 static eight_bits
@@ -348,7 +354,7 @@ copy_TeX(void)
 {@+
 @z
 
-Section 106.
+Section 112.
 
 @x
 @ The |copy_comment| function issues a warning if more braces are opened than
@@ -357,15 +363,17 @@ Section 106.
 @-t@>
 @z
 
-Section 109.
-
 @x
-@ @<Copy special things when |c=='@@'...@>=
+int bal@t\2\2@>) /* brace balance */
+{
+  char c; /* current character being copied */
 @y
-@r @ @<Copy special things when |c=='@@'...@>=
+int bal@t\2\2@>) /* brace balance */
+{@+
+  char c; /* current character being copied */
 @z
 
-Section 112.
+Section 117.
 
 @x
 @ Here is a list of the category codes that scraps can have.
@@ -373,7 +381,7 @@ Section 112.
 @r @ Here is a list of the category codes that scraps can have.
 @z
 
-Section 115.
+Section 121.
 
 @x
 @ The token lists for translated \TEX/ output contain some special control
@@ -382,7 +390,7 @@ Section 115.
 @-n@>
 @z
 
-Section 116.
+Section 122.
 
 @x
 \yskip\noindent All of these tokens are removed from the \TEX/ output that
@@ -391,7 +399,7 @@ Section 116.
 @-n@>
 @z
 
-Section 117.
+Section 123.
 
 @x
 @ The raw input is converted into scraps according to the following table,
@@ -409,7 +417,7 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Section 118.
+Section 124.
 
 @x
 \.>&|prerangle|: \.{\\rangle}&yes\cr
@@ -419,10 +427,9 @@ Section 118.
 @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-%\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Section 119.
+Section 125.
 
 @x
 \.{continue}&|case_like|: \stars&maybe\cr
@@ -432,10 +439,9 @@ Section 119.
 @r @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-%\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Section 120.
+Section 126.
 
 @x
 \.{long}&|raw_int|: \stars&maybe\cr
@@ -445,10 +451,9 @@ Section 120.
 @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-%\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Section 121.
+Section 127.
 
 @x
 \.{try}&|else_like|: \stars&maybe\cr
@@ -458,10 +463,9 @@ Section 121.
 @r @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-%\vskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Sections 122--129.
+Sections 128--135.
 
 @x l.7 line numbers refer to 'prod.w'
 @ Here is a table of all the productions.  Each production that
@@ -696,7 +700,7 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 @r @-any_other@>@-z@>@ \begingroup\dag{\bf Notes}
 @z
 
-Section 130.
+Section 136.
 
 @x
 @* Implementing the productions.
@@ -711,7 +715,7 @@ the category codes |pp->cat,@,@,(pp+1)->cat|$,\,\,\ldots\,$
 the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @z
 
-Section 132.
+Section 138.
 
 @x
 @ @<Set init...@>=
@@ -719,7 +723,7 @@ Section 132.
 @r @ @<Set init...@>=
 @z
 
-Section 133.
+Section 139.
 
 @x
 @ Token lists in |@!tok_mem| are composed of the following kinds of
@@ -728,27 +732,7 @@ Section 133.
 @-p@>
 @z
 
-Section 134.
-
-@x
-#ifdef DEAD_CODE /* not used in |main| */
-@y
-@ Debugging routine, use at your own risk.
-@-DEAD_CODE@>
-
-@c
-#ifdef DEAD_CODE /* not used in |main| */
-@z
-
-Section 135.
-
-@x
-@ @<Print token |r|...@>=
-@y
-@r @ @<Print token |r|...@>=
-@z
-
-Section 136.
+Section 142.
 
 @x
 @ The production rules listed above are embedded directly into \.{CWEAVE},
@@ -763,7 +747,7 @@ Section 136.
 @-pp@>
 @z
 
-Section 137.
+Section 143.
 
 @x
 The code below is an exact translation of the production rules into
@@ -772,7 +756,7 @@ The code below is an exact translation of the production rules into
 @-a@>
 @z
 
-Section 139.
+Section 146.
 
 @x
 @ Let us consider the big switch for productions now, before looking
@@ -780,57 +764,57 @@ Section 139.
 @r @ Let us consider the big switch for productions now, before looking
 @z
 
-Section 140.
+Section 147.
 
 @x
   switch (pp->cat) {
-    case exp: @<Cases for |exp|@>; @+break;
-    case lpar: @<Cases for |lpar|@>; @+break;
-    case unop: @<Cases for |unop|@>; @+break;
-    case ubinop: @<Cases for |ubinop|@>; @+break;
-    case binop: @<Cases for |binop|@>; @+break;
-    case cast: @<Cases for |cast|@>; @+break;
-    case sizeof_like: @<Cases for |sizeof_like|@>; @+break;
-    case int_like: @<Cases for |int_like|@>; @+break;
-    case public_like: @<Cases for |public_like|@>; @+break;
-    case colcol: @<Cases for |colcol|@>; @+break;
-    case decl_head: @<Cases for |decl_head|@>; @+break;
-    case decl: @<Cases for |decl|@>; @+break;
-    case base: @<Cases for |base|@>; @+break;
-    case struct_like: @<Cases for |struct_like|@>; @+break;
-    case struct_head: @<Cases for |struct_head|@>; @+break;
-    case fn_decl: @<Cases for |fn_decl|@>; @+break;
-    case function: @<Cases for |function|@>; @+break;
-    case lbrace: @<Cases for |lbrace|@>; @+break;
-    case if_like: @<Cases for |if_like|@>; @+break;
-    case else_like: @<Cases for |else_like|@>; @+break;
-    case else_head: @<Cases for |else_head|@>; @+break;
-    case if_clause: @<Cases for |if_clause|@>; @+break;
-    case if_head: @<Cases for |if_head|@>; @+break;
-    case do_like: @<Cases for |do_like|@>; @+break;
-    case case_like: @<Cases for |case_like|@>; @+break;
-    case catch_like: @<Cases for |catch_like|@>; @+break;
-    case tag: @<Cases for |tag|@>; @+break;
-    case stmt: @<Cases for |stmt|@>; @+break;
-    case semi: @<Cases for |semi|@>; @+break;
-    case lproc: @<Cases for |lproc|@>; @+break;
-    case section_scrap: @<Cases for |section_scrap|@>; @+break;
-    case insert: @<Cases for |insert|@>; @+break;
-    case prelangle: @<Cases for |prelangle|@>; @+break;
-    case prerangle: @<Cases for |prerangle|@>; @+break;
-    case langle: @<Cases for |langle|@>; @+break;
-    case template_like: @<Cases for |template_like|@>; @+break;
-    case new_like: @<Cases for |new_like|@>; @+break;
-    case new_exp: @<Cases for |new_exp|@>; @+break;
-    case ftemplate: @<Cases for |ftemplate|@>; @+break;
-    case for_like: @<Cases for |for_like|@>; @+break;
-    case raw_ubin: @<Cases for |raw_ubin|@>; @+break;
-    case const_like: @<Cases for |const_like|@>; @+break;
-    case raw_int: @<Cases for |raw_int|@>; @+break;
-    case operator_like: @<Cases for |operator_like|@>; @+break;
-    case typedef_like: @<Cases for |typedef_like|@>; @+break;
-    case delete_like: @<Cases for |delete_like|@>; @+break;
-    case question: @<Cases for |question|@>; @+break;
+    case exp: @<Cases for |exp|@>@; @+break;
+    case lpar: @<Cases for |lpar|@>@; @+break;
+    case unop: @<Cases for |unop|@>@; @+break;
+    case ubinop: @<Cases for |ubinop|@>@; @+break;
+    case binop: @<Cases for |binop|@>@; @+break;
+    case cast: @<Cases for |cast|@>@; @+break;
+    case sizeof_like: @<Cases for |sizeof_like|@>@; @+break;
+    case int_like: @<Cases for |int_like|@>@; @+break;
+    case public_like: @<Cases for |public_like|@>@; @+break;
+    case colcol: @<Cases for |colcol|@>@; @+break;
+    case decl_head: @<Cases for |decl_head|@>@; @+break;
+    case decl: @<Cases for |decl|@>@; @+break;
+    case base: @<Cases for |base|@>@; @+break;
+    case struct_like: @<Cases for |struct_like|@>@; @+break;
+    case struct_head: @<Cases for |struct_head|@>@; @+break;
+    case fn_decl: @<Cases for |fn_decl|@>@; @+break;
+    case function: @<Cases for |function|@>@; @+break;
+    case lbrace: @<Cases for |lbrace|@>@; @+break;
+    case if_like: @<Cases for |if_like|@>@; @+break;
+    case else_like: @<Cases for |else_like|@>@; @+break;
+    case else_head: @<Cases for |else_head|@>@; @+break;
+    case if_clause: @<Cases for |if_clause|@>@; @+break;
+    case if_head: @<Cases for |if_head|@>@; @+break;
+    case do_like: @<Cases for |do_like|@>@; @+break;
+    case case_like: @<Cases for |case_like|@>@; @+break;
+    case catch_like: @<Cases for |catch_like|@>@; @+break;
+    case tag: @<Cases for |tag|@>@; @+break;
+    case stmt: @<Cases for |stmt|@>@; @+break;
+    case semi: @<Cases for |semi|@>@; @+break;
+    case lproc: @<Cases for |lproc|@>@; @+break;
+    case section_scrap: @<Cases for |section_scrap|@>@; @+break;
+    case insert: @<Cases for |insert|@>@; @+break;
+    case prelangle: @<Cases for |prelangle|@>@; @+break;
+    case prerangle: @<Cases for |prerangle|@>@; @+break;
+    case langle: @<Cases for |langle|@>@; @+break;
+    case template_like: @<Cases for |template_like|@>@; @+break;
+    case new_like: @<Cases for |new_like|@>@; @+break;
+    case new_exp: @<Cases for |new_exp|@>@; @+break;
+    case ftemplate: @<Cases for |ftemplate|@>@; @+break;
+    case for_like: @<Cases for |for_like|@>@; @+break;
+    case raw_ubin: @<Cases for |raw_ubin|@>@; @+break;
+    case const_like: @<Cases for |const_like|@>@; @+break;
+    case raw_int: @<Cases for |raw_int|@>@; @+break;
+    case operator_like: @<Cases for |operator_like|@>@; @+break;
+    case typedef_like: @<Cases for |typedef_like|@>@; @+break;
+    case delete_like: @<Cases for |delete_like|@>@; @+break;
+    case question: @<Cases for |question|@>@; @+break;
   }
   pp++; /* if no match was found, we move to the right */
 }
@@ -842,56 +826,56 @@ Section 140.
 }
 
 @ @<Cases for |pp->cat|@>=
-    case exp: @<Cases for |exp|@>; @+break;
-    case lpar: @<Cases for |lpar|@>; @+break;
-    case unop: @<Cases for |unop|@>; @+break;
-    case ubinop: @<Cases for |ubinop|@>; @+break;
-    case binop: @<Cases for |binop|@>; @+break;
-    case cast: @<Cases for |cast|@>; @+break;
-    case sizeof_like: @<Cases for |sizeof_like|@>; @+break;
-    case int_like: @<Cases for |int_like|@>; @+break;
-    case public_like: @<Cases for |public_like|@>; @+break;
-    case colcol: @<Cases for |colcol|@>; @+break;
-    case decl_head: @<Cases for |decl_head|@>; @+break;
-    case decl: @<Cases for |decl|@>; @+break;
-    case base: @<Cases for |base|@>; @+break;
-    case struct_like: @<Cases for |struct_like|@>; @+break;
-    case struct_head: @<Cases for |struct_head|@>; @+break;
-    case fn_decl: @<Cases for |fn_decl|@>; @+break;
-    case function: @<Cases for |function|@>; @+break;
-    case lbrace: @<Cases for |lbrace|@>; @+break;
-    case if_like: @<Cases for |if_like|@>; @+break;
-    case else_like: @<Cases for |else_like|@>; @+break;
-    case else_head: @<Cases for |else_head|@>; @+break;
-    case if_clause: @<Cases for |if_clause|@>; @+break;
-    case if_head: @<Cases for |if_head|@>; @+break;
-    case do_like: @<Cases for |do_like|@>; @+break;
-    case case_like: @<Cases for |case_like|@>; @+break;
-    case catch_like: @<Cases for |catch_like|@>; @+break;
-    case tag: @<Cases for |tag|@>; @+break;
-    case stmt: @<Cases for |stmt|@>; @+break;
-    case semi: @<Cases for |semi|@>; @+break;
-    case lproc: @<Cases for |lproc|@>; @+break;
-    case section_scrap: @<Cases for |section_scrap|@>; @+break;
-    case insert: @<Cases for |insert|@>; @+break;
-    case prelangle: @<Cases for |prelangle|@>; @+break;
-    case prerangle: @<Cases for |prerangle|@>; @+break;
-    case langle: @<Cases for |langle|@>; @+break;
-    case template_like: @<Cases for |template_like|@>; @+break;
-    case new_like: @<Cases for |new_like|@>; @+break;
-    case new_exp: @<Cases for |new_exp|@>; @+break;
-    case ftemplate: @<Cases for |ftemplate|@>; @+break;
-    case for_like: @<Cases for |for_like|@>; @+break;
-    case raw_ubin: @<Cases for |raw_ubin|@>; @+break;
-    case const_like: @<Cases for |const_like|@>; @+break;
-    case raw_int: @<Cases for |raw_int|@>; @+break;
-    case operator_like: @<Cases for |operator_like|@>; @+break;
-    case typedef_like: @<Cases for |typedef_like|@>; @+break;
-    case delete_like: @<Cases for |delete_like|@>; @+break;
-    case question: @<Cases for |question|@>; @+break;
+    case exp: @<Cases for |exp|@>@; @+break;
+    case lpar: @<Cases for |lpar|@>@; @+break;
+    case unop: @<Cases for |unop|@>@; @+break;
+    case ubinop: @<Cases for |ubinop|@>@; @+break;
+    case binop: @<Cases for |binop|@>@; @+break;
+    case cast: @<Cases for |cast|@>@; @+break;
+    case sizeof_like: @<Cases for |sizeof_like|@>@; @+break;
+    case int_like: @<Cases for |int_like|@>@; @+break;
+    case public_like: @<Cases for |public_like|@>@; @+break;
+    case colcol: @<Cases for |colcol|@>@; @+break;
+    case decl_head: @<Cases for |decl_head|@>@; @+break;
+    case decl: @<Cases for |decl|@>@; @+break;
+    case base: @<Cases for |base|@>@; @+break;
+    case struct_like: @<Cases for |struct_like|@>@; @+break;
+    case struct_head: @<Cases for |struct_head|@>@; @+break;
+    case fn_decl: @<Cases for |fn_decl|@>@; @+break;
+    case function: @<Cases for |function|@>@; @+break;
+    case lbrace: @<Cases for |lbrace|@>@; @+break;
+    case if_like: @<Cases for |if_like|@>@; @+break;
+    case else_like: @<Cases for |else_like|@>@; @+break;
+    case else_head: @<Cases for |else_head|@>@; @+break;
+    case if_clause: @<Cases for |if_clause|@>@; @+break;
+    case if_head: @<Cases for |if_head|@>@; @+break;
+    case do_like: @<Cases for |do_like|@>@; @+break;
+    case case_like: @<Cases for |case_like|@>@; @+break;
+    case catch_like: @<Cases for |catch_like|@>@; @+break;
+    case tag: @<Cases for |tag|@>@; @+break;
+    case stmt: @<Cases for |stmt|@>@; @+break;
+    case semi: @<Cases for |semi|@>@; @+break;
+    case lproc: @<Cases for |lproc|@>@; @+break;
+    case section_scrap: @<Cases for |section_scrap|@>@; @+break;
+    case insert: @<Cases for |insert|@>@; @+break;
+    case prelangle: @<Cases for |prelangle|@>@; @+break;
+    case prerangle: @<Cases for |prerangle|@>@; @+break;
+    case langle: @<Cases for |langle|@>@; @+break;
+    case template_like: @<Cases for |template_like|@>@; @+break;
+    case new_like: @<Cases for |new_like|@>@; @+break;
+    case new_exp: @<Cases for |new_exp|@>@; @+break;
+    case ftemplate: @<Cases for |ftemplate|@>@; @+break;
+    case for_like: @<Cases for |for_like|@>@; @+break;
+    case raw_ubin: @<Cases for |raw_ubin|@>@; @+break;
+    case const_like: @<Cases for |const_like|@>@; @+break;
+    case raw_int: @<Cases for |raw_int|@>@; @+break;
+    case operator_like: @<Cases for |operator_like|@>@; @+break;
+    case typedef_like: @<Cases for |typedef_like|@>@; @+break;
+    case delete_like: @<Cases for |delete_like|@>@; @+break;
+    case question: @<Cases for |question|@>@; @+break;
 @z
 
-Section 141.
+Section 148.
 
 @x
 of identifiers in case labels.
@@ -902,7 +886,7 @@ of identifiers in case labels.
 If the first identifier is the keyword `\&{operator}', we give up;
 @z
 
-Section 142.
+Section 150.
 
 @x
 @ The scraps currently being parsed must be inspected for any
@@ -916,15 +900,15 @@ Section 142.
 \hfil\break|make_reserved|, hence |tok_loc| has been set.
 @z
 
-Section 147.
+Section 154.
 
 @x
-{ token_pointer j;
+@ \.{CTWILL} needs the following procedure, which appends tokens of a
 @y
-{@+ token_pointer j;
+@r @ \.{CTWILL} needs the following procedure, which appends tokens of a
 @z
 
-Section 148.
+Section 155.
 
 @x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
@@ -941,7 +925,7 @@ Section 148.
 {@+
 @z
 
-Section 152.
+Section 159.
 
 @x
 @ @<Cases for |lpar|@>=
@@ -949,15 +933,15 @@ Section 152.
 @r @ @<Cases for |lpar|@>=
 @z
 
-Section 166.
+Section 168.
 
 @x
-@ Outdent after parameter declarations with option \.{-i}.
+@ @<Cases for |decl_head|@>=
 @y
-@r @ Outdent after parameter declarations with option \.{-i}.
+@r @ @<Cases for |decl_head|@>=
 @z
 
-Section 199.
+Section 208.
 
 @x
 @ Here's the |squash| procedure, which
@@ -965,7 +949,7 @@ Section 199.
 @r @ Here's the |squash| procedure, which
 @z
 
-Section 200.
+Section 220.
 
 @x
 @ The following macro is used to append a scrap whose tokens have just
@@ -975,15 +959,23 @@ Section 200.
 @-c@>
 @z
 
-Section 221.
+Section 229.
 
 @x
-@ @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
+@ The |outer_parse| routine is to |C_parse| as |outer_xref|
 @y
-@r @ @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
+@r @ The |outer_parse| routine is to |C_parse| as |outer_xref|
 @z
 
-Section 224.
+Section 235.
+
+@x
+@ To insert token-list |p| into the output, the |push_level| subroutine
+@y
+@r @ To insert token-list |p| into the output, the |push_level| subroutine
+@z
+
+Section 237.
 
 @x
 called when |stack_ptr==1|.
@@ -991,7 +983,7 @@ called when |stack_ptr==1|.
 called when |stack_ptr| |==1|.
 @z
 
-Section 227.
+Section 241.
 
 @x
   text_pointer save_text_ptr;
@@ -1002,15 +994,7 @@ Section 227.
   sixteen_bits save_next_control; /* values to be restored */
 @z
 
-Section 230.
-
-@x
-@ An identifier of length one does not have to be enclosed in braces, and it
-@y
-@r @ An identifier of length one does not have to be enclosed in braces, and it
-@z
-
-Section 231.
+Section 244.
 
 @x
 else @<Look ahead for strongest line break, |goto reswitch|@>
@@ -1018,7 +1002,7 @@ else @<Look ahead for strongest line break, |goto reswitch|@>
 else {@<Look ahead for strongest line break, |goto reswitch|@>}
 @z
 
-Section 232.
+Section 245.
 
 @x
 @<Look ahead for st...@>= {
@@ -1031,7 +1015,7 @@ Section 232.
 @y
 @z
 
-Section 233.
+Section 246.
 
 @x
 @ @<Output saved...@>=
@@ -1039,7 +1023,15 @@ Section 233.
 @r @ @<Output saved...@>=
 @z
 
-Section 243.
+Section 250.
+
+@x
+@ The \CEE/ text enclosed in \pb\ should not contain `\.{\v}' characters,
+@y
+@r @ The \CEE/ text enclosed in \pb\ should not contain `\.{\v}' characters,
+@z
+
+Section 256.
 
 @x
 @ The output file will contain the control sequence \.{\\Y} between non-null
@@ -1047,7 +1039,7 @@ Section 243.
 @r @ The output file will contain the control sequence \.{\\Y} between non-null
 @z
 
-Section 246.
+Section 259.
 
 @x
 @<Translate the \T...@>= do {
@@ -1055,7 +1047,7 @@ Section 246.
 @<Translate the \T...@>= do {@+
 @z
 
-Section 254.
+Section 267.
 
 @x
 |next_control>=begin_C|. We will make the global variable |this_section|
@@ -1063,7 +1055,7 @@ Section 254.
 \hfil\break|next_control>=begin_C|. We will make the global variable |this_section|
 @z
 
-Section 255.
+Section 268.
 
 @x
 @ @<Translate the \CEE/...@>=
@@ -1071,7 +1063,7 @@ Section 255.
 @r @ @<Translate the \CEE/...@>=
 @z
 
-Section 259.
+Section 272.
 
 @x
 @ The |footnote| procedure gives cross-reference information about
@@ -1079,15 +1071,7 @@ Section 259.
 @r @ The |footnote| procedure gives cross-reference information about
 @z
 
-Section 263.
-
-@x
-@ @<Flag the usage of this identifier, for the mini-index@>=
-@y
-@<Flag the usage of this identifier, for the mini-index@>=
-@z
-
-Section 264.
+Section 277.
 
 @x
 @ @<Output information about usage of id's defined in other sections@>=
@@ -1095,7 +1079,7 @@ Section 264.
 @r @ @<Output information about usage of id's defined in other sections@>=
 @z
 
-Section 270.
+Section 283.
 
 @x
 the index section itself---NOT!
@@ -1106,7 +1090,7 @@ sixteen_bits k_section; /* runs through the sections */
 the index section itself---NOT!
 @z
 
-Section 271.
+Section 284.
 
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
@@ -1122,7 +1106,7 @@ name_pointer blink[max_names]; /* links in the buckets */
 sixteen_bits k_section; /* runs through the sections */
 @z
 
-Section 273.
+Section 286.
 
 @x
 @ During the sorting phase we shall use the |cat| and |trans| arrays from
@@ -1132,7 +1116,7 @@ Section 273.
 @-k@>
 @z
 
-Section 276.
+Section 289.
 
 @x
 $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
@@ -1140,7 +1124,7 @@ $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
 |collate[0]| $<$|collate[1]|$<\cdots<$|collate[100]|.
 @z
 
-Section 283.
+Section 296.
 
 @x
     else {char *j;
@@ -1148,15 +1132,17 @@ Section 283.
     else {@+char *j;
 @z
 
-Section 290.
+Section 303.
 
 @x
-@ Because on some systems the difference between two pointers is a |long|
+@ Because on some systems the difference between two pointers is a |ptrdiff_t|
+rather than an |int|, we use \.{\%ld} to print these quantities.
 @y
-@r @ Because on some systems the difference between two pointers is a |long|
+@r @ Because on some systems the difference between two pointers is a
+|ptrdiff_t| rather than an |int|, we use \.{\%ld} to print these quantities.
 @z
 
-Section 291.
+Section 304.
 
 @x
 \bigskip
@@ -1167,24 +1153,7 @@ care for keeping the original section numbering intact.}
 @y
 @z
 
-Section 293.
-
-@x
-@* Function declarations.  Here are declarations---conforming to
-@y
-@* Function declarations.  Here are declarations---conforming to
-@-DEAD_CODE@>
-@z
-
-Section 294.
-
-@x
-extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
-@y
-extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
-@z
-
-Section 300.
+Section 312.
 
 @x
 @** Index.

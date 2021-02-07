@@ -1,6 +1,6 @@
 # This file is part of CWEB.
 # It is distributed WITHOUT ANY WARRANTY, express or implied.
-# Version 3.64 --- February 2002
+# Version 4.0 --- February 2021
 
 # Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 

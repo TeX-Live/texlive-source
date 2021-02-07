@@ -1,4 +1,5 @@
 @$memcmp "<string.h>" \zip@>
+@$memcpy "<string.h>" \zip@>
 @$strcat "<string.h>" \zip@>
 @$strcmp "<string.h>" \zip@>
 @$strcpy "<string.h>" \zip@>
@@ -24,6 +25,7 @@
 @$sprintf "<stdio.h>" \zip@>
 @$stdout "<stdio.h>" \zip@>
 
+@$getenv "<stdlib.h>" \zip@>
 @$exit "<stdlib.h>" \zip@>
 
 @$isalpha "<ctype.h>" \zip@>

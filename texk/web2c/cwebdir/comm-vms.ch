@@ -13,19 +13,26 @@ modified:
 (only the two changes by BL are necessary for initial bootstrapping
  via hand-editing of common.c)
 
-@x section 5 (01-FEB-1992 ST)
-#include <ctype.h>
+@x section 3 (01-FEB-1992 ST)
+#include <ctype.h> /* definition of |@!isalpha|, |@!isdigit| and so on */
+#include <stdbool.h> /* definition of |@!bool|, |@!true| and |@!false| */
+#include <stddef.h> /* definition of |@!ptrdiff_t| */
+#include <stdint.h> /* definition of |@!uint8_t| and |@!uint16_t| */
+#include <stdlib.h> /* definition of |@!getenv| and |@!exit| */
+#include <stdio.h> /* definition of |@!printf| and friends */
+#include <string.h> /* definition of |@!strlen|, |@!strcmp| and so on */
 @y
-#include ctype /* VMS searches Textlibraries faster */
+#include ctype /* definition of |@!isalpha|, |@!isdigit| and so on */
+               /* VMS searches text libraries faster */
+#include stdbool /* definition of |@!bool|, |@!true| and |@!false| */
+#include stddef /* definition of |@!ptrdiff_t| */
+#include stdint /* definition of |@!uint8_t| and |@!uint16_t| */
+#include stdlib /* definition of |@!getenv| and |@!exit| */
+#include stdio /* definition of |@!printf| and friends */
+#include string /* definition of |@!strlen|, |@!strcmp| and so on */
 @z
 
-@x section 8  (01-FEB-1992 ST)
-#include <stdio.h>
-@y
-#include stdio /* VMS searches Textlibraries faster */
-@z
-
-@x section 61 (01-FEB-1992 ST)
+@x section 68 (01-FEB-1992 ST)
 programs are started. Here, for instance, we pass the operating system
 a status of 0 if and only if only harmless messages were printed.
 @y
@@ -37,7 +44,7 @@ A suitable status to signal an error condition to VAX/VMS could be
 print |"%SYSTEM-F-ABORT, abort"|, if |history > harmless_message|.
 @z
 
-@x section 61 (1987 BL) (01-FEB-1992 ST) (11-JAN-1993 DEK)
+@x section 68 (1987 BL) (01-FEB-1992 ST) (11-JAN-1993 DEK)
   if (history > harmless_message) return(1);
   else return(0);
 @y
@@ -52,7 +59,7 @@ print |"%SYSTEM-F-ABORT, abort"|, if |history > harmless_message|.
   else exit(SS$_NORMAL);
 @z
 
-@x section 69 (01-FEB-1992 ST)
+@x section 75 (01-FEB-1992 ST)
 An omitted change file argument means that |"/dev/null"| should be used,
 when no changes are desired.
 @y
@@ -60,14 +67,14 @@ An omitted change file argument means that the
 null device |"NL:"| should be used, when no changes are desired.
 @z
 
-@x section 70 (1987 BL) (01-FEB-1992 ST) (05-APR-1992 DEK)
-  if (found_change<=0) strcpy(change_file_name,"/dev/null");
+@x section 76 (1987 BL) (01-FEB-1992 ST) (05-APR-1992 DEK)
+  strcpy(change_file_name,"/dev/null");
 @y
-  if (found_change<=) strcpy(change_file_name,"NL:");
+  strcpy(change_file_name,"NL:");
 	/* {\tt NL:} is the VAX/VMS notation for {\tt /dev/null} */
 @z
 
-@x section 82 (01-FEB-1992 ST)
+@x section 85 (01-FEB-1992 ST)
 @** Index.
 @y
 @* VAX/VMS specific code.

@@ -1,13 +1,14 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.70 --- July 2017
+% Version 4.0 --- February 2021
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB3.70}
-\chardef\cwebversion=3 \chardef\cwebrevision=70
+\xdef\fmtversion{\fmtversion+CWEB4.0}
+\chardef\cwebversion=4 \chardef\cwebrevision=0
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
+\ifx\undefined\XeTeXrevision\else\pdftrue\fi % XeTeX produces PDF output
 \newif\ifpdftex
 \ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
 %\else \pdftextrue \pdfoutput=1 \input pdfcolor \let\setcolor\pdfsetcolor \fi\fi
