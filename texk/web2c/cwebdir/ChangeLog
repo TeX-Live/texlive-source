@@ -1,5 +1,9 @@
 2021-02-07  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.ch: Fix 'reading error'.
+
+2021-02-07  Andreas Scherer  <https://ascherer.github.io>
+
 	* Makefile,
 	* README,
 	* comm-{amiga,bs,mac,os2,pc,ql,vms,w32}.ch,

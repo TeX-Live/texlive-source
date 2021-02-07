@@ -639,7 +639,7 @@ material should nicely integrate with the original ``\&{85.~Index}.''
 const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
 
 
-@* User communation.  The |scan_args| and |cb_show_banner| routines and the
+@* User communication.  The |scan_args| and |cb_show_banner| routines and the
 |bindtextdomain| argument string need a few extra variables.
 
 @d max_banner 50
