@@ -1,0 +1,22 @@
+#! /bin/sh -vx
+
+# Copyright 2021 Bob Tennent <rdt@queensu.org>
+# You may freely use, modify and/or distribute this file.
+
+rm -f Telemann* 
+
+if test -r "$srcdir/tests/Telemann.xml"; then
+  : # standalone xml2pmx
+elif test -r "$srcdir/xml2pmx-src/tests/Telemann.xml"; then
+  srcdir=$srcdir/xml2pmx-src # in TL
+else
+  echo "$0: cannot find tests/Telemann.xml" >&2
+  exit 1
+fi
+
+cp "$srcdir/tests/Telemann.xml" . || exit 1
+
+./xml2pmx Telemann.xml Telemann.pmx \
+        && diff Telemann.pmx "$srcdir/tests/Telemann.pmx" \
+        || exit 1
+exit 0

@@ -1,0 +1,209 @@
+---
+%\input musixlyr
+%\special{papersize=297mm,420mm}%
+---
+%|
+%<?xmlversion="1.0"encoding="UTF-8"standalone="no"?>
+%<!DOCTYPEscore-partwisePUBLIC"-//Recordare//DTDMusicXML1.0Partwise//EN""http://www.musicxml.org/dtds/partwise.dtd">
+%
+%
+%
+%
+%Part P1 : 
+%Part P2 : 
+%
+%
+% nv, -noinst, nostaves per instrument
+ 2 -2 1 1
+% mtrnuml,mtrdenl,mtrnmp,mtrdnp,xmtrnum0,isig
+ 4 4 4 4 0 -3
+%
+% npages,nsyst,musicsize,fracindent 
+ 0 5 16 0.07
+
+
+bt
+./
+Tt
+
+Tc
+
+Abepl
+\\input musixper\
+%%w277m
+%%h390m
+
+% ( 2| 1| 1) 1
+ rp /
+% ( 1| 1| 1) 1
+ r4 g44u Dmp a44u b44u /
+% ( 2| 1| 1) 2
+ r4 (B c43l Dmp d43l e43nl /
+% ( 1| 1| 1) 2
+ {0 c05 Dmp //
+% ( 1| 1| 2) 2
+ r4 (B e44nl f44l g44l /
+% ( 2| 1| 1) 3
+ r4 (C c44u f44u e44nu //
+% ( 2| 1| 2) 3
+ {0 f03 /
+% ( 1| 1| 1) 3
+ {1 c05 }0 Dmp {0 za4 /
+% ( 2| 1| 1) 4
+ e44fu r2b r4b //
+% ( 2| 1| 2) 4
+ f43l }0 d44l zg3 c44l za3 c44l za3n /
+% ( 1| 1| 1) 4
+ c45l }1 za4 }0 b44u zg4 a44u ze4 g44u ze4 /
+% ( 2| 1| 1) 5
+ b23u a23fu )C //
+% ( 2| 1| 2) 5
+ b43l {0 b42l b22l )B }0 /
+% ( 1| 1| 1) 5
+ {0 f24u ze4 f24u }0 zd4 )B /
+% ( 2| 1| 1) 6
+ r4 g43u r2b //
+% ( 2| 1| 2) 6
+ e23l g43l zf3 b43l zg3 /
+% ( 1| 1| 1) 6
+ r4 c44u zb3 d44u zb3 e44u zc4 /
+% ( 2| 1| 1) 7
+ r4 g43fu r2b //
+% ( 2| 1| 2) 7
+ e23l a43nl zg3f a43l zg3 /
+% ( 1| 1| 1) 7
+ r4 D< c44u za3 d44u zc4 e44u zc4 /
+% ( 2| 1| 1) 8
+ c4d4l za3f b83l o. b43l {0 b43l /
+% ( 1| 1| 1) 8
+ f4d4u ze4 D<+0+3 b83u b43u D> {0 b43u /
+% ( 2| 1| 1) 9
+ b03 }0 /
+% ( 1| 1| 1) 9
+ b03 }0 D>+0+3 /
+% ( 2| 1| 1) 10
+ r4 c44l Dmf za3 c44l zb3 e44l zc4 /
+% ( 1| 1| 1) 10
+ r4 f44u Dmf ze4 g44u ze4 a44u zf4 /
+% ( 2| 1| 1) 11
+ r4 b43nl za3 b43l zg3 b43l zf3 /
+% ( 1| 1| 1) 11
+ r4 f44u ze4 g44u ze4 a44u ze4 /
+% ( 2| 1| 1) 12
+ c4d4l zg3 a83l zf3 a43nl zf3s {0 b43l {1 zg3 /
+% ( 1| 1| 1) 12
+ b4d4u zf4 e84u zc4 e44u zc4 {0 e44u {1 zc4 /
+% ( 2| 1| 1) 13
+ b03 }0 zg3 }1 /
+% ( 1| 1| 1) 13
+ e04 }0 zc4 }1 /
+% ( 2| 1| 1) 14
+ (B c24l b23nl /
+% ( 1| 1| 1) 14
+ r4 [u g84u e84u ] f44u e44u /
+% ( 2| 1| 1) 15
+ b23fl a4d3nl a83fl /
+% ( 1| 1| 1) 15
+ g44u e44u f4d4u e84u /
+% ( 2| 1| 1) 16
+ g23l f23sl /
+% ( 1| 1| 1) 16
+ g4d4u d84u d44u {0 d44u /
+% ( 2| 1| 1) 17
+ f23nl e23nl )B /
+% ( 1| 1| 1) 17
+ d04 }0 /
+% ( 2| 1| 1) 18
+ f43l d43l e43fl f43l /
+% ( 1| 1| 1) 18
+ r2 b43nu d44u zb3 /
+% ( 2| 1| 1) 19
+ g43l zc3 a43nl zd3 b43l ze3 c44sl zf3 /
+% ( 1| 1| 1) 19
+ e44u zb3f D< f44u zc4 g44u zd4 a44nu ze4n /
+% ( 2| 1| 1) 20
+ c4d4nl zf3 a83l zf3 a43l zf3 {0 a43l {1 ze3n /
+% ( 1| 1| 1) 20
+ b4d4u ze4f D<+0+3 b83u b43u {0 b43u /
+% ( 2| 1| 1) 21
+ a03 }0 ze3 }1 /
+% ( 1| 1| 1) 21
+ b03 }0 /
+% ( 2| 1| 1) 22
+ r4 e44l zg3 b43nl za3 b43fl zg3 /
+% ( 1| 1| 1) 22
+ r4 b44u zf4 g44u zd4 e44u zc4 /
+% ( 2| 1| 1) 23
+ r2b r4b f43su //
+% ( 2| 1| 2) 23
+ r4 c44l zf3s a43nl ze3f (B [l c83l b82nl )B ] /
+% ( 1| 1| 1) 23
+ r4 a44nu zf4 f44su zd4 e44u zb3n /
+% ( 2| 1| 1) 24
+ a4d3l zb2f b83l o. a43l g43l /
+% ( 1| 1| 1) 24
+ f4d4nu zc4 b83fu b43u {0 b43u /
+% ( 2| 1| 1) 25
+ e23nl f23l /
+% ( 1| 1| 1) 25
+ b03 }0 /
+% ( 2| 1| 1) 26
+ r4b c44u c44u e44u //
+% ( 2| 1| 2) 26
+ r4 [l c84l b83l ] (B [l a83l g83l )B ] f43l /
+% ( 1| 1| 1) 26
+ r4 (B c44u c45u c45u //
+% ( 1| 1| 2) 26
+ r4b [l c84l d84l )B ] (B [l e84l f84l )B (B g84l a84l )B ] /
+% ( 2| 1| 1) 27
+ r4 c44l zf3 b43nl zg3 b43l za3 /
+% ( 1| 1| 1) 27
+ r4 a44u ze4 g44u ze4 f44u ze4 /
+% ( 2| 1| 1) 28
+ c4d4l zg3 a83l zf3 a43l zf3 {0 b43l {1 zg3 /
+% ( 1| 1| 1) 28
+ b4d4u zf4 e84u zb3 e44u zb3n {0 e44u {1 zc4 /
+% ( 2| 1| 1) 29
+ b43l }0 zg3 }1 a2d3nl zg3 /
+% ( 1| 1| 1) 29
+ {2 e44u }0 zc4 }1 D< e2d4u }2 zc4s D<+0+3 /
+% ( 2| 1| 1) 30
+ b23l zg3 (B c24l zb3 /
+% ( 1| 1| 1) 30
+ r4 D< b44u a44u D<+0+3 g44u //
+% ( 1| 1| 2) 30
+ e24l zc4n g24l (B ze4 /
+% ( 2| 1| 1) 31
+ c24u c44u b43nu )B //
+% ( 2| 1| 2) 31
+ a23l g23l /
+% ( 1| 1| 1) 31
+ a4d4u g84u f44u g44u //
+% ( 1| 1| 2) 31
+ {0 f24l {1 zd4 f24l }0 zd4 )B }1 /
+% ( 2| 1| 1) 32
+ r4 [l c84l c84l ] [l b83nl b83l c84l zb3f c84l ] zb3 /
+% ( 1| 1| 1) 32
+ r4 [u e84u e84u ] [u e84u e84u e84u e84u ] /
+% ( 2| 1| 1) 33
+ [l c84l za3n c84l ] za3 {0 b43nl {1 za3 b23l }0 za3 }1 /
+% ( 1| 1| 1) 33
+ [u e84u f84u ] zd4 {0 g44u {1 ze4 g24u }0 ze4 }1 /
+% ( 2| 1| 1) 34
+ r2b c44u r4b //
+% ( 2| 1| 2) 34
+ r4 c44l zb3 [l b83l a83l ] e44l zg3 /
+% ( 1| 1| 1) 34
+ r4 g44u ze4 a44u ze4 b44u zf4 /
+% ( 2| 1| 1) 35
+ e4d4l zf3 a83l zf3 a23l zb2 /
+% ( 1| 1| 1) 35
+ b4d4nu e84u d24u //
+% ( 1| 1| 2) 35
+ g44l (B [l a84l c84fl )B ] c44l b43l /
+% ( 2| 1| 1) 36
+ (B a23l zb2n g23l )B zb2f /
+% ( 1| 1| 1) 36
+ (B e24u e24u )B //
+% ( 1| 1| 2) 36
+ b23x3 (B d4fl )B c4fl c24nl /

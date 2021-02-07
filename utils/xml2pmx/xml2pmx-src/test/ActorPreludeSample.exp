@@ -1,0 +1,2123 @@
+---
+%\input musixlyr
+%\special{papersize=297mm,420mm}%
+---
+%|
+%<?xmlversion="1.0"encoding="UTF-8"?>
+%<!DOCTYPEscore-partwisePUBLIC"-//Recordare//DTDMusicXML3.0Partwise//EN""http://www.musicxml.org/dtds/partwise.dtd">
+%Prelude to a Tragedy
+%Lee Actor
+%
+%
+%Part P1 : Picc. (V2k)
+%Part P2 : Fl. (V2k)
+%Part P3 : Ob. (V2k)
+%Part P4 : E.H. (V2k)
+%Part P5 : Clar. (V2k)
+%Part P6 : B. Cl. (V2k)
+%Part P7 : Bsn. (V2k)
+%Part P8 : Hn. (V2k)
+%Part P9 : Hn. 2 (V2k)
+%Part P10 : Tpt. (V2k)
+%Part P11 : Trb. (V2k)
+%Part P12 : B Trb. (V2k)
+%Part P13 : Tuba (V2k)
+%Part P14 : Timp. (V2k)
+%Part P15 : Splash Cymbal
+%Part P16 : Bass Drum
+%Part P17 : Harp (V2k)
+%Part P18 : Vln. (V2k)
+%Part P19 : Vln. 2 (V2k)
+%Part P20 : Va. (V2k)
+%Part P21 : Vc. (V2k)
+%Part P22 : Cb. (V2k)
+%
+%
+% nv, -noinst, nostaves per instrument
+ 23 -22 1 1 1 1 1 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+% mtrnuml,mtrdenl,mtrnmp,mtrdnp,xmtrnum0,isig
+ 3 4 3 4 0 0
+%
+% npages,nsyst,musicsize,fracindent 
+ 0 5 16 0.07
+Cb. (V2k)
+Vc. (V2k)
+Va. (V2k)
+Vln. 2 (V2k)
+Vln. (V2k)
+Harp (V2k)
+Bass Drum
+Splash Cymbal
+Timp. (V2k)
+Tuba (V2k)
+B Trb. (V2k)
+Trb. (V2k)
+Tpt. (V2k)
+Hn. 2 (V2k)
+Hn. (V2k)
+Bsn. (V2k)
+B. Cl. (V2k)
+Clar. (V2k)
+E.H. (V2k)
+Ob. (V2k)
+Fl. (V2k)
+Picc. (V2k)
+bbattbtttbbbbtttbtttttt
+./
+Tt
+Prelude to a Tragedy
+Tc
+Lee Actor
+Abepl
+\\input musixper\
+\\setclefsymbol{8}\drumclef\
+\\setlines{8}{1}\
+\\setclefsymbol{7}\drumclef\
+\\setlines{7}{1}\
+%%w277m
+%%h390m
+
+% ( 22| 1| 1) 1
+ rp /
+% ( 21| 1| 1) 1
+ rp /
+% ( 20| 1| 1) 1
+ (Bl [u b13u Dp c14u b13u c14u ] [u b13u c14u b13u c14u ] [u b13u c14u b13u c14u )B ] /
+% ( 19| 1| 1) 1
+ \zcharnote{12}{pizz.}\ b45l Dmf r4 r4 /
+% ( 18| 1| 1) 1
+ \zcharnote{12}{Moderato   \metron{\qu}{85}}\ {0 e2d5l Dp {1 zb5 /
+% ( 17| 2| 2) 1
+ rp /
+% ( 17| 1| 1) 1
+ b45l Dmf zb6 r4 r4 /
+% ( 16| 1| 1) 1
+ rp /
+% ( 15| 1| 1) 1
+ rp /
+% ( 14| 1| 1) 1
+ rp /
+% ( 13| 1| 1) 1
+ rp /
+% ( 12| 1| 1) 1
+ rp /
+% ( 11| 1| 1) 1
+ rp /
+% ( 10| 1| 1) 1
+ rp /
+% ( 9| 1| 1) 1
+ rp /
+% ( 8| 1| 1) 1
+ rp /
+% ( 7| 1| 1) 1
+ rp /
+% ( 6| 1| 1) 1
+ rp /
+% ( 5| 1| 1) 1
+ rp /
+% ( 4| 1| 1) 1
+ rp /
+% ( 3| 1| 1) 1
+ rp /
+% ( 2| 1| 1) 1
+ rp /
+% ( 1| 1| 1) 1
+ \zcharnote{12}{Moderato   \metron{\qu}{85}}\ rp /
+% ( 22| 1| 1) 2
+
+m4/4/4/4 
+ rp /
+% ( 21| 1| 1) 2
+ rp /
+% ( 20| 1| 1) 2
+ (Bu [u b13u c14u b13u c14u ] [l b13l c14l d14l e14fl )B ] (Bu [u b13u c14u b13u c14u ] [l b13l c14l 
+d14l e14l )B ] /
+% ( 19| 1| 1) 2
+ rp /
+% ( 18| 1| 1) 2
+ {2 e05 }0 {0 zb5 }1 /
+% ( 17| 2| 2) 2
+ rp /
+% ( 17| 1| 1) 2
+ rp /
+% ( 16| 1| 1) 2
+ rp /
+% ( 15| 1| 1) 2
+ rp /
+% ( 14| 1| 1) 2
+ rp /
+% ( 13| 1| 1) 2
+ rp /
+% ( 12| 1| 1) 2
+ rp /
+% ( 11| 1| 1) 2
+ rp /
+% ( 10| 1| 1) 2
+ rp /
+% ( 9| 1| 1) 2
+ rp /
+% ( 8| 1| 1) 2
+ rp /
+% ( 7| 1| 1) 2
+ rp /
+% ( 6| 1| 1) 2
+ rp /
+% ( 5| 1| 1) 2
+ rp /
+% ( 4| 1| 1) 2
+ rp /
+% ( 3| 1| 1) 2
+ rp /
+% ( 2| 1| 1) 2
+ rp /
+% ( 1| 1| 1) 2
+ rp /
+% ( 22| 1| 1) 3
+ rp /
+% ( 21| 1| 1) 3
+ rp /
+% ( 20| 1| 1) 3
+ (Bu [l f14l g14fl f14l g14l ] [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l e14fl ] [l d14l e14l 
+d14l c14l )B ] /
+% ( 19| 1| 1) 3
+ rp /
+% ( 18| 1| 1) 3
+ {1 e05 }2 {2 zb5 }0 /
+% ( 17| 2| 2) 3
+ rp /
+% ( 17| 1| 1) 3
+ rp /
+% ( 16| 1| 1) 3
+ rp /
+% ( 15| 1| 1) 3
+ rp /
+% ( 14| 1| 1) 3
+ rp /
+% ( 13| 1| 1) 3
+ rp /
+% ( 12| 1| 1) 3
+ rp /
+% ( 11| 1| 1) 3
+ rp /
+% ( 10| 1| 1) 3
+ rp /
+% ( 9| 1| 1) 3
+ rp /
+% ( 8| 1| 1) 3
+ rp /
+% ( 7| 1| 1) 3
+ rp /
+% ( 6| 1| 1) 3
+ rp /
+% ( 5| 1| 1) 3
+ rp /
+% ( 4| 1| 1) 3
+ rp /
+% ( 3| 1| 1) 3
+ rp /
+% ( 2| 1| 1) 3
+ rp /
+% ( 1| 1| 1) 3
+ rp /
+% ( 22| 1| 1) 4
+
+m3/4/3/4 
+ r4 {0 f22u Dmp /
+% ( 21| 1| 1) 4
+ r4 {0 f22u Dmp /
+% ( 20| 1| 1) 4
+ (Bl [u b13u c14u b13u c14u ] [u b13u c14u b13u c14u ] [u b13u c14u b13u c14u )B ] /
+% ( 19| 1| 1) 4
+ rp /
+% ( 18| 1| 1) 4
+ {0 e2d5l }1 {1 zb5 }2 /
+% ( 17| 2| 2) 4
+ rp /
+% ( 17| 1| 1) 4
+ rp /
+% ( 16| 1| 1) 4
+ rp /
+% ( 15| 1| 1) 4
+ rp /
+% ( 14| 1| 1) 4
+ rp /
+% ( 13| 1| 1) 4
+ rp /
+% ( 12| 1| 1) 4
+ rp /
+% ( 11| 1| 1) 4
+ rp /
+% ( 10| 1| 1) 4
+ rp /
+% ( 9| 1| 1) 4
+ rp /
+% ( 8| 1| 1) 4
+ rp /
+% ( 7| 1| 1) 4
+ rp /
+% ( 6| 1| 1) 4
+ rp /
+% ( 5| 1| 1) 4
+ rp /
+% ( 4| 1| 1) 4
+ rp /
+% ( 3| 1| 1) 4
+ rp /
+% ( 2| 1| 1) 4
+ rp /
+% ( 1| 1| 1) 4
+ rp /
+% ( 22| 1| 1) 5
+
+m2/4/2/4 
+ f22u }0 /
+% ( 21| 1| 1) 5
+ f22u }0 /
+% ( 20| 1| 1) 5
+ (Bu [u b13u c14u b13u c14u ] [l b13l c14l d14l e14fl )B ] /
+% ( 19| 1| 1) 5
+ rp /
+% ( 18| 1| 1) 5
+ {2 e25l }0 {0 zb5 }1 /
+% ( 17| 2| 2) 5
+ rp /
+% ( 17| 1| 1) 5
+ rp /
+% ( 16| 1| 1) 5
+ rp /
+% ( 15| 1| 1) 5
+ rp /
+% ( 14| 1| 1) 5
+ rp /
+% ( 13| 1| 1) 5
+ rp /
+% ( 12| 1| 1) 5
+ rp /
+% ( 11| 1| 1) 5
+ rp /
+% ( 10| 1| 1) 5
+ rp /
+% ( 9| 1| 1) 5
+ rp /
+% ( 8| 1| 1) 5
+ rp /
+% ( 7| 1| 1) 5
+ rp /
+% ( 6| 1| 1) 5
+ rp /
+% ( 5| 1| 1) 5
+ rp /
+% ( 4| 1| 1) 5
+ rp /
+% ( 3| 1| 1) 5
+ rp /
+% ( 2| 1| 1) 5
+ rp /
+% ( 1| 1| 1) 5
+ rp /
+% ( 22| 1| 1) 6
+
+m4/4/4/4 
+ r4 e2d2u /
+% ( 21| 1| 1) 6
+ r4 e2d2u /
+% ( 20| 1| 1) 6
+ (Bu [l f14l g14fl f14l g14l ] [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l e14fl ] [l d14l e14l 
+d14l c14l )B ] /
+% ( 19| 1| 1) 6
+ rp /
+% ( 18| 1| 1) 6
+ {1 e05 }2 {2 zb5 }0 /
+% ( 17| 2| 2) 6
+ rp /
+% ( 17| 1| 1) 6
+ rp /
+% ( 16| 1| 1) 6
+ rp /
+% ( 15| 1| 1) 6
+ rp /
+% ( 14| 1| 1) 6
+ rp /
+% ( 13| 1| 1) 6
+ rp /
+% ( 12| 1| 1) 6
+ rp /
+% ( 11| 1| 1) 6
+ rp /
+% ( 10| 1| 1) 6
+ rp /
+% ( 9| 1| 1) 6
+ rp /
+% ( 8| 1| 1) 6
+ rp /
+% ( 7| 1| 1) 6
+ rp /
+% ( 6| 1| 1) 6
+ rp /
+% ( 5| 1| 1) 6
+ rp /
+% ( 4| 1| 1) 6
+ rp /
+% ( 3| 1| 1) 6
+ rp /
+% ( 2| 1| 1) 6
+ rp /
+% ( 1| 1| 1) 6
+ rp /
+% ( 22| 1| 1) 7
+
+m3/4/3/4 
+ r4 {0 f22u /
+% ( 21| 1| 1) 7
+ r4 {0 f22u /
+% ( 20| 1| 1) 7
+ (Bu [u b13u c14u b13u c14u ] [l b13l c14l d14l e14fl ] [u b13u c14u b13u c14u )B ] /
+% ( 19| 1| 1) 7
+ \zcharnote{12}{arco}\ (Bu [l b14l Dp c15l b14l c15l ] [l b14l c15l d15l e15fl ] [l b14l c15l b14l c15l 
+)B ] /
+% ( 18| 1| 1) 7
+ {0 e2d5l }1 {1 zb5 }2 /
+% ( 17| 2| 2) 7
+ rp /
+% ( 17| 1| 1) 7
+ rp /
+% ( 16| 1| 1) 7
+ rp /
+% ( 15| 1| 1) 7
+ rp /
+% ( 14| 1| 1) 7
+ rp /
+% ( 13| 1| 1) 7
+ rp /
+% ( 12| 1| 1) 7
+ rp /
+% ( 11| 1| 1) 7
+ rp /
+% ( 10| 1| 1) 7
+ rp /
+% ( 9| 1| 1) 7
+ rp /
+% ( 8| 1| 1) 7
+ rp /
+% ( 7| 1| 1) 7
+ rp /
+% ( 6| 1| 1) 7
+ rp /
+% ( 5| 1| 1) 7
+ {0 c2d6sl Dp {1 ze6 D< /
+% ( 4| 1| 1) 7
+ rp /
+% ( 3| 1| 1) 7
+ {0 b2d5l Dp {1 zd6 D< /
+% ( 2| 1| 1) 7
+ {0 b2d5l Dp {1 zf6s D< /
+% ( 1| 1| 1) 7
+ {0 b2d5l Dp /
+% ( 22| 1| 1) 8
+
+m2/4/2/4 
+ f22u }0 /
+% ( 21| 1| 1) 8
+ f22u }0 /
+% ( 20| 1| 1) 8
+ (Bu [u b13u D< c14u b13u c14u ] [l b13l c14l d14l e14fl )B ] D<+0+3 /
+% ( 19| 1| 1) 8
+ (Bu [l b14l D< c15l b14l c15l ] [l b14l c15l d15l D<+0+3 e15fl )B ] /
+% ( 18| 1| 1) 8
+ {2 e25l }0 {0 zb5 }1 /
+% ( 17| 2| 2) 8
+ rp /
+% ( 17| 1| 1) 8
+ rp /
+% ( 16| 1| 1) 8
+ rp /
+% ( 15| 1| 1) 8
+ rp /
+% ( 14| 1| 1) 8
+ rp /
+% ( 13| 1| 1) 8
+ rp /
+% ( 12| 1| 1) 8
+ rp /
+% ( 11| 1| 1) 8
+ rp /
+% ( 10| 1| 1) 8
+ rp /
+% ( 9| 1| 1) 8
+ rp /
+% ( 8| 1| 1) 8
+ rp /
+% ( 7| 1| 1) 8
+ rp /
+% ( 6| 1| 1) 8
+ rp /
+% ( 5| 1| 1) 8
+ c26l }0 ze6 }1 D<+0+3 /
+% ( 4| 1| 1) 8
+ rp /
+% ( 3| 1| 1) 8
+ b25l }0 zd6 }1 D<+0+3 /
+% ( 2| 1| 1) 8
+ b25l }0 zf6 }1 D<+0+3 /
+% ( 1| 1| 1) 8
+ {1 b25l }0 /
+% ( 22| 1| 1) 9
+
+m4/4/4/4 
+ r4 e2d2u /
+% ( 21| 1| 1) 9
+ r4 e2d2u /
+% ( 20| 1| 1) 9
+ (Bu [l f14l Df D> g14fl f14l g14l ] [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l e14fl ] [l d14l 
+e14l d14l c14l )B ] D>+0+3 /
+% ( 19| 1| 1) 9
+ (Bu [l f15l Df D> g15fl f15l g15l ] [l f15l g15l f15l g15l )B ] (Bu [l f15l g15l f15l e15fl ] [l d15l 
+e15l d15l c15l )B ] D>+0+3 /
+% ( 18| 1| 1) 9
+ {1 e05 }2 {2 zb5 }0 /
+% ( 17| 2| 2) 9
+ rp /
+% ( 17| 1| 1) 9
+ rp /
+% ( 16| 1| 1) 9
+ rp /
+% ( 15| 1| 1) 9
+ rp /
+% ( 14| 1| 1) 9
+ rp /
+% ( 13| 1| 1) 9
+ rp /
+% ( 12| 1| 1) 9
+ rp /
+% ( 11| 1| 1) 9
+ rp /
+% ( 10| 1| 1) 9
+ rp /
+% ( 9| 1| 1) 9
+ rp /
+% ( 8| 1| 1) 9
+ rp /
+% ( 7| 1| 1) 9
+ rp /
+% ( 6| 1| 1) 9
+ rp /
+% ( 5| 1| 1) 9
+ c06n Df ze6f D> D>+0+3 /
+% ( 4| 1| 1) 9
+ rp /
+% ( 3| 1| 1) 9
+ a05s Df zc6s D> D>+0+3 /
+% ( 2| 1| 1) 9
+ a05s Df ze6s D> D>+0+3 /
+% ( 1| 1| 1) 9
+ {0 b05 }1 /
+% ( 22| 1| 1) 10
+
+m3/4/3/4 
+ rp /
+% ( 21| 1| 1) 10
+ rp /
+% ( 20| 1| 1) 10
+ (Bu [u b13u Dp c14u b13u c14u ] [l b13l c14l d14l e14fl )B ] (Bl [u b13u c14u b13u c14u )B ] /
+% ( 19| 1| 1) 10
+ b14l Dpp r1 r8 r4 r4 /
+% ( 18| 1| 1) 10
+ {0 e2d5l }1 {1 zb5 }2 /
+% ( 17| 2| 2) 10
+ rp /
+% ( 17| 1| 1) 10
+ rp /
+% ( 16| 1| 1) 10
+ rp /
+% ( 15| 1| 1) 10
+ rp /
+% ( 14| 1| 1) 10
+ rp /
+% ( 13| 1| 1) 10
+ rp /
+% ( 12| 1| 1) 10
+ rp /
+% ( 11| 1| 1) 10
+ rp /
+% ( 10| 1| 1) 10
+ rp /
+% ( 9| 1| 1) 10
+ rp /
+% ( 8| 1| 1) 10
+ rp /
+% ( 7| 1| 1) 10
+ rp /
+% ( 6| 1| 1) 10
+ rp /
+% ( 5| 1| 1) 10
+ rp /
+% ( 4| 1| 1) 10
+ rp /
+% ( 3| 1| 1) 10
+ rp /
+% ( 2| 1| 1) 10
+ rp /
+% ( 1| 1| 1) 10
+ {1 b2d5l }0 /
+% ( 22| 1| 1) 11
+ \zcharnote{12}{pizz.}\ r4 f42u o> Df r4 /
+% ( 21| 1| 1) 11
+ \zcharnote{12}{pizz.}\ r4 f42u o> Df r4 /
+% ( 20| 1| 1) 11
+ (Bu [l b13l c14l d14l e14fl ] [l b13l c14l d14l e14l ] [u b13u c14u b13u c14u )B ] /
+% ( 19| 1| 1) 11
+ (Bu [l b14l Dp c15l d15l e15fl ] [l b14l c15l d15l e15l ] [l b14l c15l b14l c15l )B ] /
+% ( 18| 1| 1) 11
+ {2 e2d5l }0 {0 zb5 }1 /
+% ( 17| 2| 2) 11
+ rp /
+% ( 17| 1| 1) 11
+ rp /
+% ( 16| 1| 1) 11
+ rp /
+% ( 15| 1| 1) 11
+ rp /
+% ( 14| 1| 1) 11
+ rp /
+% ( 13| 1| 1) 11
+ rp /
+% ( 12| 1| 1) 11
+ rp /
+% ( 11| 1| 1) 11
+ rp /
+% ( 10| 1| 1) 11
+ rp /
+% ( 9| 1| 1) 11
+ rp /
+% ( 8| 1| 1) 11
+ {0 f2d3su Dp {1 za3 D< /
+% ( 7| 1| 1) 11
+ {0 b2d2u Dp {1 zd3 D< /
+% ( 6| 1| 1) 11
+ {0 a2d3fu Dp D< /
+% ( 5| 1| 1) 11
+ \zcharnote{12}{1.}\ {0 a2d3fu Dp D< /
+% ( 4| 1| 1) 11
+ {0 d2d4fu Dp D< /
+% ( 3| 1| 1) 11
+ rp /
+% ( 2| 1| 1) 11
+ rp /
+% ( 1| 1| 1) 11
+ {0 b2d5l }1 /
+% ( 22| 1| 1) 12
+
+m2/4/2/4 
+ rp /
+% ( 21| 1| 1) 12
+ rp /
+% ( 20| 1| 1) 12
+ (Bu [u b13u D< c14u b13u c14u ] [l b13l c14l d14l e14fl )B ] D<+0+3 /
+% ( 19| 1| 1) 12
+ (Bu [l b14l D< c15l b14l c15l ] [l b14l c15l d15l e15fl )B ] D<+0+3 /
+% ( 18| 1| 1) 12
+ {1 e25l }2 {2 zb5 }0 /
+% ( 17| 2| 2) 12
+ rp /
+% ( 17| 1| 1) 12
+ rp /
+% ( 16| 1| 1) 12
+ rp /
+% ( 15| 1| 1) 12
+ rp /
+% ( 14| 1| 1) 12
+ rp /
+% ( 13| 1| 1) 12
+ rp /
+% ( 12| 1| 1) 12
+ rp /
+% ( 11| 1| 1) 12
+ rp /
+% ( 10| 1| 1) 12
+ rp /
+% ( 9| 1| 1) 12
+ rp /
+% ( 8| 1| 1) 12
+ f23u }0 za3 }1 D<+0+3 /
+% ( 7| 1| 1) 12
+ b22u }0 zd3 }1 D<+0+3 /
+% ( 6| 1| 1) 12
+ a23u }0 D<+0+3 /
+% ( 5| 1| 1) 12
+ a23u }0 D<+0+3 /
+% ( 4| 1| 1) 12
+ d24u }0 D<+0+3 /
+% ( 3| 1| 1) 12
+ rp /
+% ( 2| 1| 1) 12
+ rp /
+% ( 1| 1| 1) 12
+ {1 b25l }0 /
+% ( 22| 1| 1) 13
+
+m4/4/4/4 
+ r4 e42u o> r2 /
+% ( 21| 1| 1) 13
+ r4 e42u o> r2 /
+% ( 20| 1| 1) 13
+ (Bu [l f14l Df D> g14fl f14l g14l ] [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l e14fl ] [l d14l 
+e14l d14l D>+0+3 c14l )B ] /
+% ( 19| 1| 1) 13
+ (Bu [l f15l Df D> g15fl f15l g15l ] [l f15l g15l f15l g15l )B ] (Bu [l f15l g15l f15l e15fl ] [l d15l 
+e15l d15l c15l )B ] D>+0+3 /
+% ( 18| 1| 1) 13
+ e05 }1 zb5 }2 /
+% ( 17| 2| 2) 13
+ rp /
+% ( 17| 1| 1) 13
+ rp /
+% ( 16| 1| 1) 13
+ rp /
+% ( 15| 1| 1) 13
+ rp /
+% ( 14| 1| 1) 13
+ rp /
+% ( 13| 1| 1) 13
+ rp /
+% ( 12| 1| 1) 13
+ rp /
+% ( 11| 1| 1) 13
+ rp /
+% ( 10| 1| 1) 13
+ rp /
+% ( 9| 1| 1) 13
+ rp /
+% ( 8| 1| 1) 13
+ f03n Df za3f D> D>+0+3 /
+% ( 7| 1| 1) 13
+ a02s Df zc3s D> D>+0+3 /
+% ( 6| 1| 1) 13
+ g03 Df D> D>+0+3 /
+% ( 5| 1| 1) 13
+ g03 Df D> D>+0+3 /
+% ( 4| 1| 1) 13
+ c04 Df D> D>+0+3 /
+% ( 3| 1| 1) 13
+ rp /
+% ( 2| 1| 1) 13
+ rp /
+% ( 1| 1| 1) 13
+ b05 }1 /
+% ( 22| 1| 1) 14
+
+m3/4/3/4 
+ rp /
+% ( 21| 1| 1) 14
+ rp /
+% ( 20| 1| 1) 14
+ (Bu [l b13l Dpp c14l d14l e14fl ] [u b13u c14u b13u c14u )B ] (Bl [u b13u Dp c14u b13u c14u )B ] /
+% ( 19| 1| 1) 14
+ b14l Dpp r1 r8 r4 (Bu [l b14l Dp c15l b14l c15l )B ] /
+% ( 18| 1| 1) 14
+ rp /
+% ( 17| 2| 2) 14
+ rp /
+% ( 17| 1| 1) 14
+ rp /
+% ( 16| 1| 1) 14
+ rp /
+% ( 15| 1| 1) 14
+ rp /
+% ( 14| 1| 1) 14
+ rp /
+% ( 13| 1| 1) 14
+ rp /
+% ( 12| 1| 1) 14
+ rp /
+% ( 11| 1| 1) 14
+ rp /
+% ( 10| 1| 1) 14
+ rp /
+% ( 9| 1| 1) 14
+ rp /
+% ( 8| 1| 1) 14
+ rp /
+% ( 7| 1| 1) 14
+ rp /
+% ( 6| 1| 1) 14
+ rp /
+% ( 5| 1| 1) 14
+ rp /
+% ( 4| 1| 1) 14
+ rp /
+% ( 3| 1| 1) 14
+ rp /
+% ( 2| 1| 1) 14
+ rp /
+% ( 1| 1| 1) 14
+ rp /
+% ( 22| 1| 1) 15
+ rp /
+% ( 21| 1| 1) 15
+ \zcharnote{12}{arco}\ r4 r4 (Bl [u b12u Dmf c13u d13u e13fu )B ] /
+% ( 20| 1| 1) 15
+ (Bu [l b13l c14l d14l e14fl )B ] (Bu [l b13l Dmp c14l d14l e14l )B ] (Bu [l b13l Dmf c14l d14l e14l 
+)B ] /
+% ( 19| 1| 1) 15
+ (Bu [l b14l c15l d15l e15fl )B ] (Bu [l b14l Dmp c15l d15l e15l )B ] (Bu [l b14l Dmf c15l d15l e15l 
+)B ] /
+% ( 18| 1| 1) 15
+ r4 (Bu [l b15l Dmp c16l d16l e16fl )B ] (Bu [l b15l Dmf c16l d16l e16l )B ] /
+% ( 17| 2| 2) 15
+ rp /
+% ( 17| 1| 1) 15
+ rp /
+% ( 16| 1| 1) 15
+ rp /
+% ( 15| 1| 1) 15
+ rp /
+% ( 14| 1| 1) 15
+ rp /
+% ( 13| 1| 1) 15
+ rp /
+% ( 12| 1| 1) 15
+ rp /
+% ( 11| 1| 1) 15
+ rp /
+% ( 10| 1| 1) 15
+ rp /
+% ( 9| 1| 1) 15
+ rp /
+% ( 8| 1| 1) 15
+ rp /
+% ( 7| 1| 1) 15
+ rp /
+% ( 6| 1| 1) 15
+ rp /
+% ( 5| 1| 1) 15
+ rp /
+% ( 4| 1| 1) 15
+ rp /
+% ( 3| 1| 1) 15
+ rp /
+% ( 2| 1| 1) 15
+ rp /
+% ( 1| 1| 1) 15
+ rp /
+% ( 22| 1| 1) 16
+ \zcharnote{12}{arco}\ (Bl [u b12u Df D< c13u d13u e13fu )B ] (Bl [u b12u c13u d13u e13u )B ] (Bl [u 
+b12u c13u d13u e13u )B ] D<+0+3 /
+% ( 21| 1| 1) 16
+ (Bl [u b12u Df D< c13u d13u e13fu )B ] (Bl [u b12u c13u d13u e13u )B ] (Bl [u b12u c13u d13u e13u )B 
+] D<+0+3 /
+% ( 20| 1| 1) 16
+ (Bu [l b13l Df D< c14l d14l e14fl )B ] (Bu [l b13l c14l d14l e14l )B ] (Bu [l b13l c14l d14l e14l )B 
+] D<+0+3 /
+% ( 19| 1| 1) 16
+ (Bu [l b14l Df D< c15l d15l e15fl )B ] (Bu [l b14l c15l d15l e15l )B ] (Bu [l b14l c15l d15l e15l )B 
+] D<+0+3 /
+% ( 18| 1| 1) 16
+ (Bu [l b15l Df D< c16l d16l e16fl )B ] (Bu [l b15l c16l d16l e16l )B ] (Bu [l b15l c16l d16l e16l )B 
+] D<+0+3 /
+% ( 17| 2| 2) 16
+ rp /
+% ( 17| 1| 1) 16
+ rp /
+% ( 16| 1| 1) 16
+ rp /
+% ( 15| 1| 1) 16
+ rp /
+% ( 14| 1| 1) 16
+ rp /
+% ( 13| 1| 1) 16
+ rp /
+% ( 12| 1| 1) 16
+ rp /
+% ( 11| 1| 1) 16
+ rp /
+% ( 10| 1| 1) 16
+ rp /
+% ( 9| 1| 1) 16
+ rp /
+% ( 8| 1| 1) 16
+ rp /
+% ( 7| 1| 1) 16
+ r4 (Bl [u b11u Df zb2 D< c12u zc3 d12u zd3 e12fu )B ] ze3f (Bl [u b11u zb2 c12u zc3 d12u zd3 e12u )B 
+] ze3 D<+0+3 /
+% ( 6| 1| 1) 16
+ rp /
+% ( 5| 1| 1) 16
+ rp /
+% ( 4| 1| 1) 16
+ rp /
+% ( 3| 1| 1) 16
+ r4 \zcharnote{12}{1.}\ r4 (Bu [l b14l Df D< c15l d15l D<+0+3 e15fl )B ] /
+% ( 2| 1| 1) 16
+ r4 \zcharnote{12}{1.}\ r4 (Bu [l b15l Df D< c16l d16l e16fl )B ] D<+0+3 /
+% ( 1| 1| 1) 16
+ r4 r4 (Bu [l b15l Df D< c16l d16l e16fl )B ] D<+0+3 /
+% ( 22| 1| 1) 17
+ f2d3l o> Dff /
+% ( 21| 1| 1) 17
+ f2d3l o> Dff /
+% ( 20| 1| 1) 17
+ f14l Dff r1 r8 r4 r4 /
+% ( 19| 1| 1) 17
+ f15l Dff r1 r8 r4 r4 /
+% ( 18| 1| 1) 17
+ f16l Dff r1 r8 r4 r4 /
+% ( 17| 2| 2) 17
+ rp /
+% ( 17| 1| 1) 17
+ rp /
+% ( 16| 1| 1) 17
+ rp /
+% ( 15| 1| 1) 17
+ rp /
+% ( 14| 1| 1) 17
+ rp /
+% ( 13| 1| 1) 17
+ rp /
+% ( 12| 1| 1) 17
+ rp /
+% ( 11| 1| 1) 17
+ rp /
+% ( 10| 1| 1) 17
+ rp /
+% ( 9| 1| 1) 17
+ rp /
+% ( 8| 1| 1) 17
+ rp /
+% ( 7| 1| 1) 17
+ f2d2u o> Dff zf3 /
+% ( 6| 1| 1) 17
+ rp /
+% ( 5| 1| 1) 17
+ rp /
+% ( 4| 1| 1) 17
+ rp /
+% ( 3| 1| 1) 17
+ f15l Dff r1 r8 r4 r4 /
+% ( 2| 1| 1) 17
+ f16l Dff r1 r8 r4 r4 /
+% ( 1| 1| 1) 17
+ f16l Dff r1 r8 r4 r4 /
+% ( 22| 1| 1) 18
+
+m4/4/4/4 
+ {0 e02 o> D> /
+% ( 21| 1| 1) 18
+ {0 e02 o> D> /
+% ( 20| 1| 1) 18
+ rp /
+% ( 19| 1| 1) 18
+ rp /
+% ( 18| 1| 1) 18
+ rp /
+% ( 17| 2| 2) 18
+ rp /
+% ( 17| 1| 1) 18
+ rp /
+% ( 16| 1| 1) 18
+ rp /
+% ( 15| 1| 1) 18
+ rp /
+% ( 14| 1| 1) 18
+ rp /
+% ( 13| 1| 1) 18
+ rp /
+% ( 12| 1| 1) 18
+ rp /
+% ( 11| 1| 1) 18
+ rp /
+% ( 10| 1| 1) 18
+ rp /
+% ( 9| 1| 1) 18
+ rp /
+% ( 8| 1| 1) 18
+ rp /
+% ( 7| 1| 1) 18
+ \zcharnote{12}{a 2}\ e02n o> D> D>+0+3 /
+% ( 6| 1| 1) 18
+ rp /
+% ( 5| 1| 1) 18
+ rp /
+% ( 4| 1| 1) 18
+ rp /
+% ( 3| 1| 1) 18
+ rp /
+% ( 2| 1| 1) 18
+ rp /
+% ( 1| 1| 1) 18
+ rp /
+% ( 22| 1| 1) 19
+
+m3/4/3/4 
+ {1 e2d2u }0 Dp D>+0+3 /
+% ( 21| 1| 1) 19
+ {1 e2d2u }0 Dp D>+0+3 /
+% ( 20| 1| 1) 19
+ \zcharnote{12}{pizz.}\ r4 e43u Dmf r4 /
+% ( 19| 1| 1) 19
+ rp /
+% ( 18| 1| 1) 19
+ rp /
+% ( 17| 2| 2) 19
+ rp /
+% ( 17| 1| 1) 19
+ rp /
+% ( 16| 1| 1) 19
+ rp /
+% ( 15| 1| 1) 19
+ rp /
+% ( 14| 1| 1) 19
+ rp /
+% ( 13| 1| 1) 19
+ rp /
+% ( 12| 1| 1) 19
+ rp /
+% ( 11| 1| 1) 19
+ rp /
+% ( 10| 1| 1) 19
+ rp /
+% ( 9| 1| 1) 19
+ rp /
+% ( 8| 1| 1) 19
+ rp /
+% ( 7| 1| 1) 19
+ rp /
+% ( 6| 1| 1) 19
+ \zcharnote{12}{solo}\ r4 (Bl [u f13su Dmp g13u f13u g13u )B ] r4 /
+% ( 5| 1| 1) 19
+ rp /
+% ( 4| 1| 1) 19
+ rp /
+% ( 3| 1| 1) 19
+ rp /
+% ( 2| 1| 1) 19
+ rp /
+% ( 1| 1| 1) 19
+ rp /
+% ( 22| 1| 1) 20
+ {0 e2d2u }1 /
+% ( 21| 1| 1) 20
+ {0 e2d2u }1 /
+% ( 20| 1| 1) 20
+ r4 e43u r4 /
+% ( 19| 1| 1) 20
+ rp /
+% ( 18| 1| 1) 20
+ rp /
+% ( 17| 2| 2) 20
+ rp /
+% ( 17| 1| 1) 20
+ rp /
+% ( 16| 1| 1) 20
+ rp /
+% ( 15| 1| 1) 20
+ rp /
+% ( 14| 1| 1) 20
+ rp /
+% ( 13| 1| 1) 20
+ rp /
+% ( 12| 1| 1) 20
+ rp /
+% ( 11| 1| 1) 20
+ rp /
+% ( 10| 1| 1) 20
+ rp /
+% ( 9| 1| 1) 20
+ rp /
+% ( 8| 1| 1) 20
+ rp /
+% ( 7| 1| 1) 20
+ rp /
+% ( 6| 1| 1) 20
+ r4 (Bl [u f13su g13u f13u g13u )B ] r4 /
+% ( 5| 1| 1) 20
+ \zcharnote{12}{2.}\ r4 (Bl [u f13su Dmp g13u f13u g13u )B ] r4 /
+% ( 4| 1| 1) 20
+ rp /
+% ( 3| 1| 1) 20
+ rp /
+% ( 2| 1| 1) 20
+ rp /
+% ( 1| 1| 1) 20
+ rp /
+% ( 22| 1| 1) 21
+ {1 e2d2u }0 /
+% ( 21| 1| 1) 21
+ {1 e2d2u }0 /
+% ( 20| 1| 1) 21
+ e43u e43u r4 /
+% ( 19| 1| 1) 21
+ \zcharnote{12}{pizz.}\ r4 r4 b43fu Dmf /
+% ( 18| 1| 1) 21
+ rp /
+% ( 17| 2| 2) 21
+ rp /
+% ( 17| 1| 1) 21
+ rp /
+% ( 16| 1| 1) 21
+ rp /
+% ( 15| 1| 1) 21
+ rp /
+% ( 14| 1| 1) 21
+ r4 r4 [u b12fu Dmp b12u b82u ] /
+% ( 13| 1| 1) 21
+ rp /
+% ( 12| 1| 1) 21
+ rp /
+% ( 11| 1| 1) 21
+ rp /
+% ( 10| 1| 1) 21
+ rp /
+% ( 9| 1| 1) 21
+ rp /
+% ( 8| 1| 1) 21
+ rp /
+% ( 7| 1| 1) 21
+ rp /
+% ( 6| 1| 1) 21
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u f13u g13u )B ] (Bl [u f13u g13u a13u b13fu )B ] /
+% ( 5| 1| 1) 21
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u f13u g13u )B ] (Bl [u f13u g13u a13u b13fu )B ] /
+% ( 4| 1| 1) 21
+ rp /
+% ( 3| 1| 1) 21
+ rp /
+% ( 2| 1| 1) 21
+ rp /
+% ( 1| 1| 1) 21
+ rp /
+% ( 22| 1| 1) 22
+ {0 e2d2u }1 /
+% ( 21| 1| 1) 22
+ {0 e2d2u }1 /
+% ( 20| 1| 1) 22
+ e43u r4 r4 /
+% ( 19| 1| 1) 22
+ r4 b43fu b43u /
+% ( 18| 1| 1) 22
+ rp /
+% ( 17| 2| 2) 22
+ rp /
+% ( 17| 1| 1) 22
+ rp /
+% ( 16| 1| 1) 22
+ rp /
+% ( 15| 1| 1) 22
+ rp /
+% ( 14| 1| 1) 22
+ r4 [u b12fu b12u b82u ] [u b12u b12u b82u ] /
+% ( 13| 1| 1) 22
+ rp /
+% ( 12| 1| 1) 22
+ rp /
+% ( 11| 1| 1) 22
+ rp /
+% ( 10| 1| 1) 22
+ rp /
+% ( 9| 1| 1) 22
+ rp /
+% ( 8| 1| 1) 22
+ rp /
+% ( 7| 1| 1) 22
+ rp /
+% ( 6| 1| 1) 22
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u a13u b13fu )B ] (Bl [u f13u g13u a13u b13u )B ] /
+% ( 5| 1| 1) 22
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u a13u b13fu )B ] (Bl [u f13u g13u a13u b13u )B ] /
+% ( 4| 1| 1) 22
+ rp /
+% ( 3| 1| 1) 22
+ rp /
+% ( 2| 1| 1) 22
+ rp /
+% ( 1| 1| 1) 22
+ rp /
+% ( 22| 1| 1) 23
+
+m2/4/2/4 
+ e22u }0 /
+% ( 21| 1| 1) 23
+ e22u }0 /
+% ( 20| 1| 1) 23
+ e43u Dmf e43u /
+% ( 19| 1| 1) 23
+ rp /
+% ( 18| 1| 1) 23
+ \zcharnote{12}{pizz.}\ e45l Dmf e45l /
+% ( 17| 2| 2) 23
+ rp /
+% ( 17| 1| 1) 23
+ rp /
+% ( 16| 1| 1) 23
+ rp /
+% ( 15| 1| 1) 23
+ rp /
+% ( 14| 1| 1) 23
+ rp /
+% ( 13| 1| 1) 23
+ rp /
+% ( 12| 1| 1) 23
+ rp /
+% ( 11| 1| 1) 23
+ rp /
+% ( 10| 1| 1) 23
+ rp /
+% ( 9| 1| 1) 23
+ rp /
+% ( 8| 1| 1) 23
+ rp /
+% ( 7| 1| 1) 23
+ rp /
+% ( 6| 1| 1) 23
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u f13u g13u )B ] /
+% ( 5| 1| 1) 23
+ (Bl [u f13su g13u f13u g13u )B ] (Bl [u f13u g13u f13u g13u )B ] /
+% ( 4| 1| 1) 23
+ rp /
+% ( 3| 1| 1) 23
+ rp /
+% ( 2| 1| 1) 23
+ rp /
+% ( 1| 1| 1) 23
+ rp /
+% ( 22| 1| 1) 24
+
+m4/4/4/4 
+ e02 Dp D< D<+0+3 /
+% ( 21| 1| 1) 24
+ e02 Dp D< D<+0+3 /
+% ( 20| 1| 1) 24
+ e43u r4 e43u Df r4 /
+% ( 19| 1| 1) 24
+ r4 b43fu Dmf r4 b43u Df /
+% ( 18| 1| 1) 24
+ e45l b44fl e45l Df b44l /
+% ( 17| 2| 2) 24
+ rp /
+% ( 17| 1| 1) 24
+ rp /
+% ( 16| 1| 1) 24
+ rp /
+% ( 15| 1| 1) 24
+ rp /
+% ( 14| 1| 1) 24
+ r4 [u b12fu Dmp b12u b82u ] r4 [u b12u Dmf b12u b82u ] /
+% ( 13| 1| 1) 24
+ rp /
+% ( 12| 1| 1) 24
+ rp /
+% ( 11| 1| 1) 24
+ b03 zc4 Dp D< D<+0+3 /
+% ( 10| 1| 1) 24
+ rp /
+% ( 9| 1| 1) 24
+ b04 Dp zf5s D< D<+0+3 /
+% ( 8| 1| 1) 24
+ d05 Dp zg5 D< D<+0+3 /
+% ( 7| 1| 1) 24
+ \zcharnote{12}{a 2}\ e03 Dp D< D<+0+3 /
+% ( 6| 1| 1) 24
+ (Bl [u f13su D< g13u f13u g13u )B ] (Bl [u f13u g13u a13u b13fu )B ] (Bl [u f13u g13u f13u g13u )B ] 
+(Bl [u f13u g13u a13u b13u )B ] D<+0+3 /
+% ( 5| 1| 1) 24
+ (Bl [u f13su Dmp zf4s D< g13u zg4 f13u zf4 g13u )B ] zg4 (Bl [u f13u zf4 g13u zg4 a13u za4 b13fu )B 
+] zb4f (Bl [u f13u zf4 g13u zg4 f13u zf4 g13u )B ] zg4 (Bl [u f13u zf4 g13u zg4 a13u za4 b13u )B ] zb4 
+D<+0+3 /
+% ( 4| 1| 1) 24
+ rp /
+% ( 3| 1| 1) 24
+ rp /
+% ( 2| 1| 1) 24
+ rp /
+% ( 1| 1| 1) 24
+ rp /
+% ( 22| 1| 1) 25
+
+m3/4/3/4 
+ {0 e2d2u Df D> D>+0+3 /
+% ( 21| 1| 1) 25
+ {0 e2d2u Df D> D>+0+3 /
+% ( 20| 1| 1) 25
+ rp /
+% ( 19| 1| 1) 25
+ b43fu Dff b43u Df b43u Dmf /
+% ( 18| 1| 1) 25
+ b44fl Dff b44l Df b44l Dmf /
+% ( 17| 2| 2) 25
+ rp /
+% ( 17| 1| 1) 25
+ rp /
+% ( 16| 1| 1) 25
+ rp /
+% ( 15| 1| 1) 25
+ rp /
+% ( 14| 1| 1) 25
+ [u b12fu Df b12u b82u ] [u b12u Dmf b12u b82u ] [u b12u Dmp b12u b82u ] /
+% ( 13| 1| 1) 25
+ rp /
+% ( 12| 1| 1) 25
+ rp /
+% ( 11| 1| 1) 25
+ a2d3sl zb3 Df D> D>+0+3 /
+% ( 10| 1| 1) 25
+ rp /
+% ( 9| 1| 1) 25
+ b2d4fl Df zf5n D> D>+0+3 /
+% ( 8| 1| 1) 25
+ c2d5sl Df zf5s D> D>+0+3 /
+% ( 7| 1| 1) 25
+ e2d2u Df D> D>+0+3 /
+% ( 6| 1| 1) 25
+ (Bl [u c14u Df D> d14fu c14u d14u )B ] (Bl [u c14u d14u c14u b13fu )B ] (Bl [u a13u b13u a13u D>+0+3 
+g13u )B ] /
+% ( 5| 1| 1) 25
+ (Bl [u c14u Df zc5 D> d14fu zd5f c14u zc5 d14u )B ] zd5 (Bl [u c14u zc5 d14u zd5 c14u zc5 b13fu )B ] 
+zb4f (Bl [u a13u za4 b13u zb4 a13u za4 g13u )B ] zg4 D>+0+3 /
+% ( 4| 1| 1) 25
+ rp /
+% ( 3| 1| 1) 25
+ \zcharnote{12}{1.}\ (Bu [l b14fl Df D> c15fl b14l c15l )B ] (Bu [l b14l c15l b14l a14fl )B ] (Bl [u 
+g14u a14u g14u f14u )B ] D>+0+3 /
+% ( 2| 1| 1) 25
+ rp /
+% ( 1| 1| 1) 25
+ rp /
+% ( 22| 1| 1) 26
+
+m4/4/4/4 
+ e02 }0 Dp /
+% ( 21| 1| 1) 26
+ e02 }0 Dp /
+% ( 20| 1| 1) 26
+ \zcharnote{12}{arco}\ (Bl [u e13u Dp f13u e13u f13u ] [u e13u f13u g13u a13fu )B ] (Bl [u e13u f13u 
+e13u f13u ] [u e13u f13u g13u a13u )B ] /
+% ( 19| 1| 1) 26
+ \zcharnote{12}{arco}\ r2 (Bl [u e14u Dp f14u e14u f14u ] [u e14u f14u g14u a14fu )B ] /
+% ( 18| 1| 1) 26
+ rp /
+% ( 17| 2| 2) 26
+Ct r1 [u c15su a14u e14u ] f44u r1 [u c15u a14u e14u ] f44u /
+% ( 17| 1| 1) 26
+ e45l Dmf ze6 e45l ze6 e45l ze6 e45l ze6 /
+% ( 16| 1| 1) 26
+ rp /
+% ( 15| 1| 1) 26
+ rp /
+% ( 14| 1| 1) 26
+ rp /
+% ( 13| 1| 1) 26
+ rp /
+% ( 12| 1| 1) 26
+ rp /
+% ( 11| 1| 1) 26
+ rp /
+% ( 10| 1| 1) 26
+ rp /
+% ( 9| 1| 1) 26
+ rp /
+% ( 8| 1| 1) 26
+ rp /
+% ( 7| 1| 1) 26
+ rp /
+% ( 6| 1| 1) 26
+ f13su Dp r1 r8 r4 r2 /
+% ( 5| 1| 1) 26
+ f13su Dp zf4s r1 r8 r4 r2 /
+% ( 4| 1| 1) 26
+ rp /
+% ( 3| 1| 1) 26
+ e14u Dp r1 r8 r4 r2 /
+% ( 2| 1| 1) 26
+ rp /
+% ( 1| 1| 1) 26
+ rp /
+% ( 22| 1| 1) 27
+ e02 Dp D< D<+0+3 /
+% ( 21| 1| 1) 27
+ e02 Dp D< D<+0+3 /
+% ( 20| 1| 1) 27
+ (Bl [u e13u D< f13u e13u f13u ] [u e13u f13u g13u a13fu )B ] (Bl [u e13u f13u e13u f13u ] [u e13u f13u 
+g13u a13u )B ] D<+0+3 /
+% ( 19| 1| 1) 27
+ (Bl [u e14u D< f14u e14u f14u ] [u e14u f14u g14u a14fu )B ] (Bl [u e14u f14u e14u f14u ] [u e14u f14u 
+g14u a14u )B ] D<+0+3 /
+% ( 18| 1| 1) 27
+ \zcharnote{12}{arco}\ (Bu [l e15l Dp D< f15l e15l f15l ] [l e15l f15l g15l a15fl )B ] (Bu [l e15l f15l 
+e15l f15l ] [l e15l f15l g15l a15l )B ] D<+0+3 /
+% ( 17| 2| 2) 27
+ r1 [u c15su a14u e14u ] f44u r1 [u c15u a14u e14u ] f44u /
+% ( 17| 1| 1) 27
+ e45l D< ze6 e45l ze6 e45l ze6 e45l ze6 D<+0+3 /
+% ( 16| 1| 1) 27
+ rp /
+% ( 15| 1| 1) 27
+ rp /
+% ( 14| 1| 1) 27
+ \Trrrml{5}\ e03 Dp D< D<+0+3 //
+% ( 14| 1| 2) 27
+ e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l 
+e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l 
+e63l e63l e63l e63l e63l e63l e63l /
+% ( 13| 1| 1) 27
+ rp /
+% ( 12| 1| 1) 27
+ rp /
+% ( 11| 1| 1) 27
+ rp /
+% ( 10| 1| 1) 27
+ rp /
+% ( 9| 1| 1) 27
+ rp /
+% ( 8| 1| 1) 27
+ rp /
+% ( 7| 1| 1) 27
+ b03 zc4 Dp D< D<+0+3 /
+% ( 6| 1| 1) 27
+ f05 Dp D< D<+0+3 /
+% ( 5| 1| 1) 27
+ c05s zd5 Dp D< D<+0+3 /
+% ( 4| 1| 1) 27
+ d05 Dp D< D<+0+3 /
+% ( 3| 1| 1) 27
+ e05 Dp zb5 D< D<+0+3 /
+% ( 2| 1| 1) 27
+ g05 Dp zc6 D< D<+0+3 /
+% ( 1| 1| 1) 27
+ rp /
+% ( 22| 1| 1) 28
+
+m3/4/3/4 
+ e2d2u Df D> D>+0+3 /
+% ( 21| 1| 1) 28
+ e2d2u Df D> D>+0+3 /
+% ( 20| 1| 1) 28
+ (Bl [u b13fu Df D> c14fu b13u c14u )B ] (Bl [u b13u c14u b13u a13fu )B ] (Bl [u g13u a13u g13u D>+0+3 
+f13u )B ] /
+% ( 19| 1| 1) 28
+ (Bu [l b14fl Df D> c15fl b14l c15l )B ] (Bu [l b14l c15l b14l a14fl )B ] (Bl [u g14u a14u g14u D>+0+3 
+f14u )B ] /
+% ( 18| 1| 1) 28
+ (Bu [l b15fl Df D> c16fl b15l c16l )B ] (Bu [l b15l c16l b15l a15fl )B ] (Bu [l g15l a15l g15l D>+0+3 
+f15l )B ] /
+% ( 17| 2| 2) 28
+ r1 [u c15su a14u e14u ] f44u r1 [u c15u a14u e14u ] /
+% ( 17| 1| 1) 28
+ e45l Dff ze6 D> e45l ze6 e45l ze6 D>+0+3 /
+% ( 16| 1| 1) 28
+ rp /
+% ( 15| 1| 1) 28
+ rp /
+% ( 14| 1| 1) 28
+ \trrrml{5}\ e2d3l Df D> D>+0+3 //
+% ( 14| 1| 2) 28
+ e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l 
+e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l e63l /
+% ( 13| 1| 1) 28
+ rp /
+% ( 12| 1| 1) 28
+ rp /
+% ( 11| 1| 1) 28
+ rp /
+% ( 10| 1| 1) 28
+ rp /
+% ( 9| 1| 1) 28
+ rp /
+% ( 8| 1| 1) 28
+ rp /
+% ( 7| 1| 1) 28
+ a2d3sl zb3 Df D> D>+0+3 /
+% ( 6| 1| 1) 28
+ e2d5sl Df D> D>+0+3 /
+% ( 5| 1| 1) 28
+ c2d5nl zd5f Df D> D>+0+3 /
+% ( 4| 1| 1) 28
+ c2d5sl Df D> D>+0+3 /
+% ( 3| 1| 1) 28
+ d2d5sl Df za5s D> D>+0+3 /
+% ( 2| 1| 1) 28
+ f2d5sl Df zb5 D> D>+0+3 /
+% ( 1| 1| 1) 28
+ rp /
+% ( 22| 1| 1) 29
+ rp /
+% ( 21| 1| 1) 29
+ rp /
+% ( 20| 1| 1) 29
+ e13u Dp r1 r8 r4 r4 /
+% ( 19| 1| 1) 29
+ e14u Dp r1 r8 r4 r4 /
+% ( 18| 1| 1) 29
+ e15l Dp r1 r8 r4 r4 /
+% ( 17| 2| 2) 29
+ f43u zf4 f43u zf4 f43u zf4 /
+% ( 17| 1| 1) 29
+ [u e15u Dmf c15su a14u e14u ] r4 [u e15u c15u a14u e14u ] /
+% ( 16| 1| 1) 29
+ rp /
+% ( 15| 1| 1) 29
+ rp /
+% ( 14| 1| 1) 29
+ rp /
+% ( 13| 1| 1) 29
+ rp /
+% ( 12| 1| 1) 29
+ rp /
+% ( 11| 1| 1) 29
+ rp /
+% ( 10| 1| 1) 29
+ rp /
+% ( 9| 1| 1) 29
+ rp /
+% ( 8| 1| 1) 29
+ rp /
+% ( 7| 1| 1) 29
+ rp /
+% ( 6| 1| 1) 29
+ rp /
+% ( 5| 1| 1) 29
+ rp /
+% ( 4| 1| 1) 29
+ rp /
+% ( 3| 1| 1) 29
+ rp /
+% ( 2| 1| 1) 29
+ rp /
+% ( 1| 1| 1) 29
+ rp /
+% ( 22| 1| 1) 30
+ \zcharnote{12}{pizz.}\ f42u Dmp f42u r4 /
+% ( 21| 1| 1) 30
+ \zcharnote{12}{pizz.}\ f42u Dmp f42u r4 /
+% ( 20| 1| 1) 30
+ \zcharnote{12}{pizz.}\ f43u Dmp f43u r4 /
+% ( 19| 1| 1) 30
+ rp /
+% ( 18| 1| 1) 30
+ (Bl [u e15u Dp c15su a14u e14u )B ] (Bl [u e15u c15u a14u e14u )B ] r4 /
+% ( 17| 2| 2) 30
+ r4 r4 f43u zf4 /
+% ( 17| 1| 1) 30
+ r4 r4 [u e15u c15su a14u e14u ] /
+% ( 16| 1| 1) 30
+ rp /
+% ( 15| 1| 1) 30
+ rp /
+% ( 14| 1| 1) 30
+ rp /
+% ( 13| 1| 1) 30
+ rp /
+% ( 12| 1| 1) 30
+ rp /
+% ( 11| 1| 1) 30
+ rp /
+% ( 10| 1| 1) 30
+ rp /
+% ( 9| 1| 1) 30
+ rp /
+% ( 8| 1| 1) 30
+ rp /
+% ( 7| 1| 1) 30
+ rp /
+% ( 6| 1| 1) 30
+ rp /
+% ( 5| 1| 1) 30
+ rp /
+% ( 4| 1| 1) 30
+ rp /
+% ( 3| 1| 1) 30
+ rp /
+% ( 2| 1| 1) 30
+ rp /
+% ( 1| 1| 1) 30
+ rp /
+% ( 22| 1| 1) 31
+ r4 f42u r4 /
+% ( 21| 1| 1) 31
+ r4 f42u r4 /
+% ( 20| 1| 1) 31
+ r4 f43u r4 /
+% ( 19| 1| 1) 31
+ rp /
+% ( 18| 1| 1) 31
+ r4 (Bl [u e15u c15su a14u e14u )B ] r4 /
+% ( 17| 2| 2) 31
+ f43u zf4 r4 f43u zf4 /
+% ( 17| 1| 1) 31
+ r4 r4 [u e15u c15su a14u e14u ] /
+% ( 16| 1| 1) 31
+ rp /
+% ( 15| 1| 1) 31
+ rp /
+% ( 14| 1| 1) 31
+ rp /
+% ( 13| 1| 1) 31
+ rp /
+% ( 12| 1| 1) 31
+ rp /
+% ( 11| 1| 1) 31
+ rp /
+% ( 10| 1| 1) 31
+ rp /
+% ( 9| 1| 1) 31
+ rp /
+% ( 8| 1| 1) 31
+ rp /
+% ( 7| 1| 1) 31
+ rp /
+% ( 6| 1| 1) 31
+ rp /
+% ( 5| 1| 1) 31
+ rp /
+% ( 4| 1| 1) 31
+ rp /
+% ( 3| 1| 1) 31
+ rp /
+% ( 2| 1| 1) 31
+ rp /
+% ( 1| 1| 1) 31
+ rp /
+% ( 22| 1| 1) 32
+ f42u r4 f42u /
+% ( 21| 1| 1) 32
+ f42u r4 f42u /
+% ( 20| 1| 1) 32
+ f43u r4 f43u /
+% ( 19| 1| 1) 32
+ rp /
+% ( 18| 1| 1) 32
+ (Bl [u e15u c15su a14u e14u )B ] r4 (Bl [u e15u c15u a14u e14u )B ] /
+% ( 17| 2| 2) 32
+ r4 f43u zf4 f43u zf4 /
+% ( 17| 1| 1) 32
+ r4 [u e15u c15su a14u e14u ] [u e15u c15u a14u e14u ] /
+% ( 16| 1| 1) 32
+ rp /
+% ( 15| 1| 1) 32
+ rp /
+% ( 14| 1| 1) 32
+ rp /
+% ( 13| 1| 1) 32
+ rp /
+% ( 12| 1| 1) 32
+ rp /
+% ( 11| 1| 1) 32
+ rp /
+% ( 10| 1| 1) 32
+ rp /
+% ( 9| 1| 1) 32
+ rp /
+% ( 8| 1| 1) 32
+ rp /
+% ( 7| 1| 1) 32
+ rp /
+% ( 6| 1| 1) 32
+ rp /
+% ( 5| 1| 1) 32
+ rp /
+% ( 4| 1| 1) 32
+ rp /
+% ( 3| 1| 1) 32
+ rp /
+% ( 2| 1| 1) 32
+ rp /
+% ( 1| 1| 1) 32
+ rp /
+% ( 22| 1| 1) 33
+ f42su r4 r4 /
+% ( 21| 1| 1) 33
+ f42su r4 r4 /
+% ( 20| 1| 1) 33
+ f43su r4 r4 /
+% ( 19| 1| 1) 33
+ (Bl [u f14su Dp g14u a14u b14fu )B ] (Bl [u f14u g14u a14u b14u )B ] (Bu [l c15l d15fl e15fl e15nl )B 
+] /
+% ( 18| 1| 1) 33
+ (Bl [u f14su Dp g14u a14u b14fu )B ] (Bl [u f14u g14u a14u b14u )B ] (Bu [l c15l d15fl e15fl e15nl )B 
+] /
+% ( 17| 2| 2) 33
+ rp /
+% ( 17| 1| 1) 33
+ rp /
+% ( 16| 1| 1) 33
+ \zcharnote{12}{B.D.}\ {0 \trrrmu{1}\ f2d4u Dp //
+% ( 16| 1| 2) 33
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u /
+% ( 15| 1| 1) 33
+ \zcharnote{12}{Susp. Cym.}\ {0 \trrrml{7}\ e2d5l Dp //
+% ( 15| 1| 2) 33
+ [l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l ] /
+% ( 14| 1| 1) 33
+ rp /
+% ( 13| 1| 1) 33
+ (Bl f2d2su Dp /
+% ( 12| 1| 1) 33
+ (Bl b2d2u Dp /
+% ( 11| 1| 1) 33
+ (Bu d2d3l Dp zg3 /
+% ( 10| 1| 1) 33
+ rp /
+% ( 9| 1| 1) 33
+ rp /
+% ( 8| 1| 1) 33
+ rp /
+% ( 7| 1| 1) 33
+ rp /
+% ( 6| 1| 1) 33
+ rp /
+% ( 5| 1| 1) 33
+ \zcharnote{12}{1.}\ (Bl [u g14su Dp a14u b14u c15nu )B ] (Bl [u g14u a14u b14u c15u )B ] (Bu [l d15l 
+e15fl f15l f15sl )B ] /
+% ( 4| 1| 1) 33
+ rp /
+% ( 3| 1| 1) 33
+ rp /
+% ( 2| 1| 1) 33
+ \zcharnote{12}{1.}\ (Bu [l f15sl Dp g15l a15l b15fl )B ] (Bu [l f15l g15l a15l b15l )B ] (Bu [l c16l 
+d16fl e16fl e16nl )B ] /
+% ( 1| 1| 1) 33
+ rp /
+% ( 22| 1| 1) 34
+
+m2/4/2/4 
+ rp /
+% ( 21| 1| 1) 34
+ rp /
+% ( 20| 1| 1) 34
+ rp /
+% ( 19| 1| 1) 34
+ (Bu [l f15nl g15fl f15l e15fl )B ] (Bu [l d15nl c15l b14nl a14l )B ] /
+% ( 18| 1| 1) 34
+ (Bu [l f15nl g15fl f15l e15fl )B ] (Bu [l d15nl c15l b14nl a14l )B ] /
+% ( 17| 2| 2) 34
+ rp /
+% ( 17| 1| 1) 34
+ rp /
+% ( 16| 1| 1) 34
+ \zcharnote{12}{(B.D.)}\ {1 \trrrmu{1}\ f24u }0 //
+% ( 16| 1| 2) 34
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+/
+% ( 15| 1| 1) 34
+ \zcharnote{12}{(Susp. Cym.)}\ {1 \trrrml{7}\ e25l }0 //
+% ( 15| 1| 2) 34
+ [l e15l e15l e15l e15l e15l e15l e15l e15l ] /
+% ( 14| 1| 1) 34
+ rp /
+% ( 13| 1| 1) 34
+ f22nu )B /
+% ( 12| 1| 1) 34
+ b22fu )B /
+% ( 11| 1| 1) 34
+ c23sl )B zf3s /
+% ( 10| 1| 1) 34
+ rp /
+% ( 9| 1| 1) 34
+ rp /
+% ( 8| 1| 1) 34
+ rp /
+% ( 7| 1| 1) 34
+ rp /
+% ( 6| 1| 1) 34
+ rp /
+% ( 5| 1| 1) 34
+ \zcharnote{12}{1.}\ (Bu [l g15nl a15fl g15l f15l )B ] (Bu [l e15nl d15l c15sl b14l )B ] /
+% ( 4| 1| 1) 34
+ rp /
+% ( 3| 1| 1) 34
+ rp /
+% ( 2| 1| 1) 34
+ \zcharnote{12}{1.}\ (Bu [l f16nl g16fl f16l e16fl )B ] (Bu [l d16nl c16l b15nl a15l )B ] /
+% ( 1| 1| 1) 34
+ rp /
+% ( 22| 1| 1) 35
+
+m3/4/3/4 
+ rp /
+% ( 21| 1| 1) 35
+ rp /
+% ( 20| 1| 1) 35
+ \zcharnote{12}{arco}\ (Bl [u a13u Dmp b13fu c14u d14fu )B ] (Bl [u a13u b13u c14u c14su )B ] (Bu [l 
+d14sl e14l f14sl g14l )B ] /
+% ( 19| 1| 1) 35
+ (Bu [l a14l Dmp b14fl c15l d15fl )B ] (Bu [l a14l b14l c15l c15sl )B ] (Bu [l d15sl e15l f15sl g15l 
+)B ] /
+% ( 18| 1| 1) 35
+ (Bu [l a14l Dmp b14fl c15l d15fl )B ] (Bu [l a14l b14l c15l c15sl )B ] (Bu [l d15sl e15l f15sl g15l 
+)B ] /
+% ( 17| 2| 2) 35
+ rp /
+% ( 17| 1| 1) 35
+ rp /
+% ( 16| 1| 1) 35
+ {0 \trrrmu{1}\ f2d4u }1 D< //
+% ( 16| 1| 2) 35
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u /
+% ( 15| 1| 1) 35
+ {0 \trrrml{7}\ e2d5l }1 D< //
+% ( 15| 1| 2) 35
+ [l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l ] /
+% ( 14| 1| 1) 35
+ rp /
+% ( 13| 1| 1) 35
+ (Bl a2d2u Dmp /
+% ( 12| 1| 1) 35
+ (Bu d2d3l Dmp /
+% ( 11| 1| 1) 35
+ (Bu f2d3l Dmp zb3f /
+% ( 10| 1| 1) 35
+ rp /
+% ( 9| 1| 1) 35
+ rp /
+% ( 8| 1| 1) 35
+ rp /
+% ( 7| 1| 1) 35
+ rp /
+% ( 6| 1| 1) 35
+ rp /
+% ( 5| 1| 1) 35
+ (Bl [u b13u Dmp zb4 c14nu zc5n d14u zd5 e14fu )B ] ze5f (Bl [u b13u zb4 c14u zc5 d14u zd5 e14u )B ] 
+ze5 (Bu [l f14l zf5 f14sl zf5s g14sl zg5s a14l )B ] za5 /
+% ( 4| 1| 1) 35
+ rp /
+% ( 3| 1| 1) 35
+ rp /
+% ( 2| 1| 1) 35
+ (Bu [l a14l Dmp za5 b14fl zb5f c15l zc6 d15fl )B ] zd6f (Bu [l a14l za5 b14l zb5 c15l zc6 c15sl )B ] 
+zc6s (Bu [l d15sl zd6s e15l ze6 f15sl zf6s g15l )B ] zg6 /
+% ( 1| 1| 1) 35
+ rp /
+% ( 22| 1| 1) 36
+
+m2/4/2/4 
+ rp /
+% ( 21| 1| 1) 36
+ rp /
+% ( 20| 1| 1) 36
+ (Bu [l g14sl a14l g14l f14sl )B ] (Bu [l f14nl e14fl d14l c14l )B ] /
+% ( 19| 1| 1) 36
+ (Bu [l g15sl a15l g15l f15sl )B ] (Bu [l f15nl e15fl d15l c15l )B ] /
+% ( 18| 1| 1) 36
+ (Bu [l g15sl a15l g15l f15sl )B ] (Bu [l f15nl e15fl d15l c15l )B ] /
+% ( 17| 2| 2) 36
+ rp /
+% ( 17| 1| 1) 36
+ rp /
+% ( 16| 1| 1) 36
+ {1 \trrrmu{1}\ f24u }0 //
+% ( 16| 1| 2) 36
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+/
+% ( 15| 1| 1) 36
+ {1 \trrrml{7}\ e25l }0 //
+% ( 15| 1| 2) 36
+ [l e15l e15l e15l e15l e15l e15l e15l e15l ] /
+% ( 14| 1| 1) 36
+ rp /
+% ( 13| 1| 1) 36
+ g22su )B /
+% ( 12| 1| 1) 36
+ c23su )B /
+% ( 11| 1| 1) 36
+ e23l )B za3 /
+% ( 10| 1| 1) 36
+ rp /
+% ( 9| 1| 1) 36
+ rp /
+% ( 8| 1| 1) 36
+ rp /
+% ( 7| 1| 1) 36
+ rp /
+% ( 6| 1| 1) 36
+ rp /
+% ( 5| 1| 1) 36
+ (Bu [l a14sl za5s b14l zb5 a14l za5 g14sl )B ] zg5s (Bu [l g14nl zg5n f14l zf5 e14l ze5 d14l )B ] zd5 
+/
+% ( 4| 1| 1) 36
+ rp /
+% ( 3| 1| 1) 36
+ rp /
+% ( 2| 1| 1) 36
+ (Bu [l g15sl zg6s a15l za6 g15l zg6 f15sl )B ] zf6s (Bu [l f15nl zf6n e15fl ze6f d15l zd6 c15l )B ] 
+zc6 /
+% ( 1| 1| 1) 36
+ rp /
+% ( 22| 1| 1) 37
+
+m3/4/3/4 
+ rp /
+% ( 21| 1| 1) 37
+ \zcharnote{12}{arco}\ (Bl [u c13u Dmf c13su d13su e13u )B ] (Bu [l f13sl g13l a13l b13fl )B ] (Bu [l 
+a13l g13l f13l e13l )B ] /
+% ( 20| 1| 1) 37
+ (Bu [l c14l Dmf c14sl d14sl e14l )B ] (Bu [l f14sl g14l a14l b14fl )B ] (Bu [l a14l g14l f14l e14l )B 
+] /
+% ( 19| 1| 1) 37
+ (Bu [l c15l Dmf c15sl d15sl e15l )B ] (Bu [l f15sl g15l a15l b15fl )B ] (Bu [l a15l g15l f15l e15l )B 
+] /
+% ( 18| 1| 1) 37
+ (Bu [l c15l Dmf c15sl d15sl e15l )B ] (Bu [l f15sl g15l a15l b15fl )B ] (Bu [l a15l g15l f15l e15l )B 
+] /
+% ( 17| 2| 2) 37
+ rp /
+% ( 17| 1| 1) 37
+ rp /
+% ( 16| 1| 1) 37
+ {0 \trrrmu{1}\ f2d4u }1 //
+% ( 16| 1| 2) 37
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u /
+% ( 15| 1| 1) 37
+ {0 \trrrml{7}\ e2d5l }1 //
+% ( 15| 1| 2) 37
+ [l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l e15l ] /
+% ( 14| 1| 1) 37
+ rp /
+% ( 13| 1| 1) 37
+ (Bl c22u Dmf b41u )B /
+% ( 12| 1| 1) 37
+ (Bu f23l Dmf e43l )B /
+% ( 11| 1| 1) 37
+ (Bu a23fl Dmf zd4f g43l )B zc4 /
+% ( 10| 1| 1) 37
+ rp /
+% ( 9| 1| 1) 37
+ (Bu g24l Dmf ze5f f44su )B zd5 /
+% ( 8| 1| 1) 37
+ (Bu c25l Dmf zg5 b44l )B zf5s /
+% ( 7| 1| 1) 37
+ (Bl c22u Dmf zc3 b41u )B zb2 /
+% ( 6| 1| 1) 37
+ (Bl [u d14u Dmf e14fu f14u f14su )B ] (Bl [u g14su a14u b14u c15u )B ] (Bl [u b14u a14u g14u f14u )B 
+] /
+% ( 5| 1| 1) 37
+ (Bl [u d14u Dmf zd5 e14fu ze5f f14u zf5 f14su )B ] zf5s (Bu [l g14sl zg5s a14l za5 b14l zb5 c15l )B 
+] zc6 (Bu [l b14l zb5 a14l za5 g14l zg5 f14l )B ] zf5 /
+% ( 4| 1| 1) 37
+ (Bl [u g14u Dmf g14su a14su b14u )B ] (Bu [l c15sl d15l e15l f15l )B ] (Bu [l e15l d15l c15l b14l )B 
+] /
+% ( 3| 1| 1) 37
+ \zcharnote{12}{1.}\ (Bu [l c15l Dmf c15sl d15sl e15l )B ] (Bu [l f15sl g15l a15l b15fl )B ] (Bu [l a15l 
+g15l f15l e15l )B ] /
+% ( 2| 1| 1) 37
+ (Bu [l c15l Dmf zc6 c15sl zc6s d15sl zd6s e15l )B ] ze6 (Bu [l f15sl zf6s g15l zg6 a15l za6 b15fl )B 
+] zb6f (Bu [l a15l za6 g15l zg6 f15l zf6 e15l )B ] ze6 /
+% ( 1| 1| 1) 37
+ rp /
+% ( 22| 1| 1) 38
+ \zcharnote{12}{arco}\ (Bu [l d13sl Df D< e13l f13sl g13l )B ] (Bu [l a13l b13fl c14l c14sl )B ] (Bu 
+[l d14l d14sl e14l f14nl )B ] D<+0+3 /
+% ( 21| 1| 1) 38
+ (Bu [l d13sl Df D< e13l f13sl g13l )B ] (Bu [l a13l b13fl c14l c14sl )B ] (Bu [l d14l d14sl e14l f14nl 
+)B ] D<+0+3 /
+% ( 20| 1| 1) 38
+ (Bu [l d14sl Df D< e14l f14sl g14l )B ] (Bu [l a14l b14fl c15l c15sl )B ] (Bu [l d15l d15sl e15l f15nl 
+)B ] D<+0+3 /
+% ( 19| 1| 1) 38
+ (Bu [l d15sl Df D< e15l f15sl g15l )B ] (Bu [l a15l b15fl c16l c16sl )B ] (Bu [l d16l d16sl e16l f16nl 
+)B ] D<+0+3 /
+% ( 18| 1| 1) 38
+ (Bu [l d15sl Df D< e15l f15sl g15l )B ] (Bu [l a15l b15fl c16l c16sl )B ] (Bu [l d16l d16sl e16l f16nl 
+)B ] D<+0+3 /
+% ( 17| 2| 2) 38
+ rp /
+% ( 17| 1| 1) 38
+ rp /
+% ( 16| 1| 1) 38
+ \trrrmu{1}\ f2d4u }0 D<+0+3 //
+% ( 16| 1| 2) 38
+ f6d4u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u 
+f64u f64u f64u f64u f64u f64u f64u f64u f64u f64u /
+% ( 15| 1| 1) 38
+ \trrrml{7}\ e2d5l }0 D<+0+3 //
+% ( 15| 1| 2) 38
+ [l e15l e15l e15l e15l ] [l e15l e15l ] e4d5l /
+% ( 14| 1| 1) 38
+ rp /
+% ( 13| 1| 1) 38
+ (Bl e22fu Df D< d42u )B D<+0+3 /
+% ( 12| 1| 1) 38
+ (Bu a23fl Df D< g43l )B D<+0+3 /
+% ( 11| 1| 1) 38
+Cn (Bu b23l Df ze4 D< b43fl )B ze4f D<+0+3 /
+% ( 10| 1| 1) 38
+ (Bu b24l Df ze5 D< b44fl )B ze5f D<+0+3 /
+% ( 9| 1| 1) 38
+ (Bl f24su Df zb4 D< f44nu )B zb4f D<+0+3 /
+% ( 8| 1| 1) 38
+ (Bu b24fl Df ze5f D< a44l )B zd5 D<+0+3 /
+% ( 7| 1| 1) 38
+ (Bl e22fu Df ze3f D< d42u )B zd3 D<+0+3 /
+% ( 6| 1| 1) 38
+ (Bl [u f14nu Df D< f14su g14su a14u )B ] (Bu [l b14l c15l d15l d15sl )B ] (Bu [l e15l f15l f15sl g15nl 
+)B ] D<+0+3 /
+% ( 5| 1| 1) 38
+ (Bu [l f14nl Df zf5n D< f14sl zf5s g14sl zg5s a14l )B ] za5 (Bu [l b14l zb5 c15l zc6 d15l zd6 d15sl 
+)B ] zd6s (Bu [l e15l ze6n e15sl ze6s f15l zf6s g15nl )B ] zg6n D<+0+3 /
+% ( 4| 1| 1) 38
+ (Bu [l a14sl Df D< b14l c15sl d15l )B ] (Bu [l e15l f15l g15l g15sl )B ] (Bu [l a15l a15sl b15l c16nl 
+)B ] D<+0+3 /
+% ( 3| 1| 1) 38
+ (Bu [l d14sl Df zd5s D< e14l ze5 f14sl zf5s g14l )B ] zg5 (Bu [l a14l za5 b14fl zb5f c15l zc6 c15sl 
+)B ] zc6s (Bu [l d15nl zd6n d15sl zd6s e15l ze6 f15nl )B ] zf6n D<+0+3 /
+% ( 2| 1| 1) 38
+ \zcharnote{12}{a 2}\ (Bu [l d15sl Df D< e15l f15sl g15l )B ] (Bu [l a15l b15fl c16l c16sl )B ] (Bu [l 
+d16l d16sl e16l f16nl )B ] D<+0+3 /
+% ( 1| 1| 1) 38
+ (Bu [l d15sl Df D< e15l f15sl g15l )B ] (Bu [l a15l b15fl c16l c16sl )B ] (Bu [l d16l d16sl e16l f16nl 
+)B ] D<+0+3 /
+% ( 22| 1| 1) 39
+ (Bu [l f14sl Dff g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] 
+/
+% ( 21| 1| 1) 39
+ (Bu [l f14sl Dff g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] 
+/
+% ( 20| 1| 1) 39
+ (Bu [l f15sl Dff g15l f15l g15l )B ] (Bu [l f15l g15l f15l g15l )B ] (Bu [l f15l g15l f15l g15l )B ] 
+/
+% ( 19| 1| 1) 39
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] 
+/
+% ( 18| 1| 1) 39
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] 
+/
+% ( 17| 2| 2) 39
+ rp /
+% ( 17| 1| 1) 39
+ rp /
+% ( 16| 1| 1) 39
+ f44u Dff f44u f44u /
+% ( 15| 1| 1) 39
+ e2d5l Dff /
+% ( 14| 1| 1) 39
+ f42su Dff f42u f42u /
+% ( 13| 1| 1) 39
+ {0 f2d2su Dff /
+% ( 12| 1| 1) 39
+ {0 f2d3sl Dff /
+% ( 11| 1| 1) 39
+ {0 d2d4l Dff {1 zg4 /
+% ( 10| 1| 1) 39
+ {0 d2d5l Dff {1 zg5 /
+% ( 9| 1| 1) 39
+ {0 d2d4u Dff {1 zd5 /
+% ( 8| 1| 1) 39
+ {0 a2d4l Dff {1 zf5s /
+% ( 7| 1| 1) 39
+ {0 f2d2su Dff {1 zf3s /
+% ( 6| 1| 1) 39
+ (Bu [l g15sl Dff a15l g15l a15l )B ] (Bu [l g15l a15l g15l a15l )B ] (Bu [l g15l a15l g15l a15l )B ] 
+/
+% ( 5| 1| 1) 39
+ (Bu [l g15sl Dff zg6s a15l za6 g15l zg6 a15l )B ] za6 (Bu [l g15l zg6 a15l za6 g15l zg6 a15l )B ] za6 
+(Bu [l g15l zg6 a15l za6 g15l zg6 a15l )B ] za6 /
+% ( 4| 1| 1) 39
+ (Bu [l c16sl Dff d16l c16l d16l )B ] (Bu [l c16l d16l c16l d16l )B ] (Bu [l c16l d16l c16l d16l )B ] 
+/
+% ( 3| 1| 1) 39
+ (Bu [l f15sl Dff zf6s g15l zg6 f15l zf6 g15l )B ] zg6 (Bu [l f15l zf6 g15l zg6 f15l zf6 g15l )B ] zg6 
+(Bu [l f15l zf6 g15l zg6 f15l zf6 g15l )B ] zg6 /
+% ( 2| 1| 1) 39
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] 
+/
+% ( 1| 1| 1) 39
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] 
+/
+% ( 22| 1| 1) 40
+
+m2/4/2/4 
+ rp /
+% ( 21| 1| 1) 40
+ rp /
+% ( 20| 1| 1) 40
+ rp /
+% ( 19| 1| 1) 40
+ rp /
+% ( 18| 1| 1) 40
+ rp /
+% ( 17| 2| 2) 40
+ rp /
+% ( 17| 1| 1) 40
+ rp /
+% ( 16| 1| 1) 40
+ rp /
+% ( 15| 1| 1) 40
+ rp /
+% ( 14| 1| 1) 40
+ rp /
+% ( 13| 1| 1) 40
+ {1 f22u }0 /
+% ( 12| 1| 1) 40
+ {1 f23l }0 /
+% ( 11| 1| 1) 40
+ {2 d24l }0 {0 zg4 }1 /
+% ( 10| 1| 1) 40
+ {2 d25l }0 {0 zg5 }1 /
+% ( 9| 1| 1) 40
+ {2 d24u }0 {0 zd5 }1 /
+% ( 8| 1| 1) 40
+ {2 a24l }0 {0 zf5 }1 /
+% ( 7| 1| 1) 40
+ {2 f22u }0 {0 zf3 }1 /
+% ( 6| 1| 1) 40
+ rp /
+% ( 5| 1| 1) 40
+ rp /
+% ( 4| 1| 1) 40
+ rp /
+% ( 3| 1| 1) 40
+ rp /
+% ( 2| 1| 1) 40
+ rp /
+% ( 1| 1| 1) 40
+ rp /
+% ( 22| 1| 1) 41
+
+m3/4/3/4 
+ (Bu [l f14sl Dff g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] r4 /
+% ( 21| 1| 1) 41
+ (Bu [l f14sl Dff g14l f14l g14l )B ] (Bu [l f14l g14l f14l g14l )B ] r4 /
+% ( 20| 1| 1) 41
+ (Bu [l f15sl Dff g15l f15l g15l )B ] (Bu [l f15l g15l f15l g15l )B ] r4 /
+% ( 19| 1| 1) 41
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] r4 /
+% ( 18| 1| 1) 41
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] r4 /
+% ( 17| 2| 2) 41
+ rp /
+% ( 17| 1| 1) 41
+ rp /
+% ( 16| 1| 1) 41
+ f44u Dff f44u r4 /
+% ( 15| 1| 1) 41
+ rp /
+% ( 14| 1| 1) 41
+ f42su Dff f42u r4 /
+% ( 13| 1| 1) 41
+ f2d2u }1 /
+% ( 12| 1| 1) 41
+ f2d3l }1 /
+% ( 11| 1| 1) 41
+ d2d4l }2 zg4 }0 /
+% ( 10| 1| 1) 41
+ d2d5l }2 zg5 }0 /
+% ( 9| 1| 1) 41
+ d2d4u }2 zd5 }0 /
+% ( 8| 1| 1) 41
+ a2d4l }2 zf5 }0 /
+% ( 7| 1| 1) 41
+ f2d2u }2 zf3 }0 /
+% ( 6| 1| 1) 41
+ (Bu [l g15sl Dff a15l g15l a15l )B ] (Bu [l g15l a15l g15l a15l )B ] r4 /
+% ( 5| 1| 1) 41
+ (Bu [l g15sl Dff zg6s a15l za6 g15l zg6 a15l )B ] za6 (Bu [l g15l zg6 a15l za6 g15l zg6 a15l )B ] za6 
+r4 /
+% ( 4| 1| 1) 41
+ (Bu [l c16sl Dff d16l c16l d16l )B ] (Bu [l c16l d16l c16l d16l )B ] r4 /
+% ( 3| 1| 1) 41
+ (Bu [l f15sl Dff zf6s g15l zg6 f15l zf6 g15l )B ] zg6 (Bu [l f15l zf6 g15l zg6 f15l zf6 g15l )B ] zg6 
+r4 /
+% ( 2| 1| 1) 41
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] r4 /
+% ( 1| 1| 1) 41
+ (Bu [l f16sl Dff g16l f16l g16l )B ] (Bu [l f16l g16l f16l g16l )B ] r4 /

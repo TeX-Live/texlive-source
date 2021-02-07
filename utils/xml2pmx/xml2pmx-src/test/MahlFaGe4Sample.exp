@@ -1,0 +1,127 @@
+---
+%\input musixlyr
+%\special{papersize=297mm,420mm}%
+---
+%|
+%<?xmlversion="1.0"encoding="UTF-8"?>
+%<!DOCTYPEscore-partwisePUBLIC"-//Recordare//DTDMusicXML3.0Partwise//EN""http://www.musicxml.org/dtds/partwise.dtd">
+%Die zwei blauen Augen (Page 1)
+%Gustav Mahler
+%
+%
+%Part P1 : Voice
+%Part P2 : Acoustic Grand Piano
+%
+%
+% nv, -noinst, nostaves per instrument
+ 3 -2 2 1
+% mtrnuml,mtrdenl,mtrnmp,mtrdnp,xmtrnum0,isig
+ 4 4 4 4 1 1
+%
+% npages,nsyst,musicsize,fracindent 
+ 0 5 16 0.07
+Piano
+Voice
+btt
+./
+Tt
+Die zwei blauen Augen (Page 1)
+Tc
+Gustav Mahler
+Abepl
+\\input musixper\
+%%w277m
+%%h390m
+
+% ( 2| 2| 4) 0
+ r4 /
+% ( 2| 1| 1) 0
+ (Bu [u g83u Dpp ze4 b83u )B ] zf4 /
+% ( 1| 1| 1) 0
+ \zcharnote{12}{Alla Marcia Durchaus mit geheimnissvoll schwermüthigen Ausdruck (nicht sch}\ [u e84u 
+Dpp f84u ] /
+% ( 2| 2| 4) 1
+
+m4/4/4/4 
+m4/4/0/0 
+ e41u ze2 b42l ze3 zg3 r2 /
+% ( 2| 1| 1) 1
+ (Bu [u b8d3u ze4 zg4 b13u ] ze4 zg4 b43u )B ze4 zg4 r4 (Bu [u c84u ze4 b83u )B ] zf4 /
+% ( 1| 1| 1) 1
+ [u g8d4u g14u ] [u g84u g84u ] r8 [u g84u e84u f84u ] /
+% ( 2| 2| 4) 2
+ e41u ze2 [l b8d2l ze3 zg3 b12l ] ze3 zg3 b42l ze3 zg3 r4 /
+% ( 2| 1| 1) 2
+ (Bu b43u zg4 [u b8d3u ze4 zg4 b13u ] ze4 zg4 b43u )B ze4 zg4 r4 /
+% ( 1| 1| 1) 2
+ g44u r4 r8 [u g84u f84u g84u ] /
+% ( 2| 2| 4) 3
+ d41u zd2 (Bu [l d8d3l zf3 za3 d13l ] zf3 za3 d43l )B zf3 za3 r4 /
+% ( 2| 1| 1) 3
+ (Bu d44u zf4 za4 [u d8d4u zf4 za4 d14u ] zf4 za4 [u d8d4u zf4 za4 d14u ] ze4 zg4 [u d8d4u zf4 d14u )B 
+] ze4 zg4 /
+% ( 1| 1| 1) 3
+ a44u [u a84u a84u ] [u a84u g84u f84u g84u ] /
+% ( 2| 2| 4) 4
+ d41u zd2 d43l zf3 za3 r2 /
+% ( 2| 1| 1) 4
+ (Bu d44u zf4 za4 [u d8d4u zf4 za4 d14u ] zf4 za4 d44u )B zf4 za4 D< (Bu [u e84u zg4 f84u )B ] za4 //
+% ( 2| 1| 3) 4
+ r2b r4b d44l /
+% ( 1| 1| 1) 4
+ a24u r4 (Bl [u g84u a84u )B ] /
+% ( 2| 2| 4) 5
+ g41u zg2 d43l zg3 zb3 g42u e43l zg3 zb3 /
+% ( 2| 1| 1) 5
+ b44u (Bu b44u b44u b44u )B D<+0+3 //
+% ( 2| 1| 2) 5
+ d44l zg4 (Bl [l g84l zb4 f84l )B ] za4 (Bl [l f84l za4 e84l )B ] zg4 (Bl [l e84l zg4 d84sl )B ] zf4 
+/
+% ( 1| 1| 1) 5
+ b44l D< b44l b44l b44l D<+0+3 /
+% ( 2| 2| 4) 6
+ b41u zb2 [l b8d2l zf3 za3 b12l ] zf3 za3 b82l zf3 za3 r8 r4 /
+% ( 2| 1| 1) 6
+ {0u b24u D> D>+0+3 b84u }0 r8 b44u //
+% ( 2| 1| 2) 6
+ d44sl zf4 [l c44sx3 ze4 b3l zd4 c4l ] ze4 d84l zf4 r8 (Bl [l e84l zg4 f84l )B ] za4 /
+% ( 1| 1| 1) 6
+ (Bu b4d4l D> c85nl )B b44l b44l D>+0+3 /
+% ( 2| 2| 4) 7
+ e41u ze2 [u g81u zg2 a81u ] za2 b41u zb2 b41u /
+% ( 2| 1| 1) 7
+ b44u b44u zg5 (Bu [u b84u zg5 a84u )B zf5 (Bu a84u zf5 g84u )B ] ze5 //
+% ( 2| 1| 2) 7
+ g44l g44l zb4 b44l b44l /
+% ( 1| 1| 1) 7
+ (Bu [u b84u D> g85u )B ] g45u D>+0+3 (Bu [u g85u Dpp f85u )B (Bu f85u e85u )B ] //
+% ( 1| 1| 2) 7
+ (Bl [l b84l e85l )B ] e45l (Bl [l g84l f84l )B (Bl f84l e84l )B ] /
+% ( 2| 2| 4) 8
+
+m5/4/5/4 
+ e42u (Bu [l b8d3l ze4 zg4 b13l ] ze4 zg4 b43l )B ze4 zg4 r4 r4 /
+% ( 2| 1| 1) 8
+ g24l zb4 ze5 r4 r4 (Bu [u g83u ze4 b83u )B ] zf4 /
+% ( 1| 1| 1) 8
+ e25u r4 \zcharnote{12}{espress.}\ r4 (Bl [u e84u f84u )B ] //
+% ( 1| 1| 2) 8
+ e24l r2b r4b /
+% ( 2| 2| 4) 9
+
+m4/4/4/4 
+ e41u ze2 b42l ze3 zg3 r2 /
+% ( 2| 1| 1) 9
+ (Bu [u b8d3u ze4 zg4 b13u ] ze4 zg4 b43u )B ze4 zg4 r4 (Bu [u c84u ze4 b83u )B ] zf4 /
+% ( 1| 1| 1) 9
+ [u g8d4u g14u ] g44u r8 [u g84u o^ e84u f84u ] /
+% ( 2| 2| 4) 10
+
+m5/4/5/4 
+ e41u ze2 (Bu [l b8d2l ze3 zg3 b12l ] ze3 zg3 b42l )B ze3 zg3 r4 r4 /
+% ( 2| 1| 1) 10
+ (Bl b43u ze4 zg4 [u b8d3u ze4 zg4 b13u ] ze4 zg4 b43u )B ze4 zg4 r4 (Bu [u f84u e84u )B ] zg4 //
+% ( 2| 1| 3) 10
+ r0b d44l /
+% ( 1| 1| 1) 10
+ [u g8d4u g14u ] [u g8d4u g14u ] g44u r4 (Bl [u f84u g84u )B ] /

@@ -1,0 +1,58 @@
+version 2020-08-12:
+
+ * modify configure.ac for distribution
+
+version 2020-06-04:
+
+ * remove dependency on windows.h
+
+version 2020-06-03:
+
+Improvements to Oberon sources:
+
+* Remove unused variables and procedures.
+
+* Explicitly initialise each local variable.
+
+* Delete occasional empty declarations -- VAR with no variables declared
+
+* Declare 'notes' (Testbed) as an array of *pointers* to NoteDesc; add
+  to NotesProp the call
+  
+    NEW(notes[ps, voice, measure, note]);
+
+* Add ^ to one call of WriteNote2PMX:
+
+    WriteNote2PMX( W, notes[ps, voice, measure, note]^, ps, voice,
+                   voicefrom, measure, note, Dtext, Rtext, istuplet );  
+
+* Add tests for notes[p, v, m, n] = NIL in four places: l.293, l.771,
+  l.1411, l.1435
+
+* In Testbed, increase the size of the following string buffers to 32:
+
+  tremolotype (l.138); tremolo, blindrest (l.928); number (l.1580);
+  cautionary, editorial, parentheses (l.2206); defaultxs (l.2312).
+
+* Only print clefspec[i] if it is non-null:
+
+    IF clefspec[i] # 0X THEN Out.Char( clefspec[i] ) END;  
+
+________________________________________________________________________
+
+Changes to compile with OBC:
+
+* Delete procedures PrintRange (two places), which refer to Scanner module
+
+* Use modules String1 and MyFiles in place of Strings0 and Files.  Use
+  Out directly, eliminating references to LCout.
+
+* Add TYPE LONGINT = INTEGER at the head of each file.
+
+* Use Args in place of Kernel in Testbed module.
+
+__________________________________________________________________________
+
+Changes to runtime to allow compilation with gcc -std=c90 -Wall -pedantic
+
+  
