@@ -31,8 +31,10 @@ typedef enum {
 	otl_type_gpos_extend = 0x29
 } otl_LookupType;
 
-typedef union _otl_subtable otl_Subtable;
+
+/*typedef union _otl_subtable otl_Subtable;*/
 typedef struct _otl_lookup otl_Lookup;
+
 
 typedef struct {
 	pos_t dx;
@@ -177,7 +179,8 @@ extern caryll_RefElementInterface(subtable_gpos_markToLigature) iSubtable_gpos_m
 
 typedef struct {
 	otl_LookupType type;
-	otl_Subtable *subtable;
+	/*otl_Subtable *subtable;*/
+        union _otl_subtable *subtable;
 } subtable_extend;
 
 typedef union _otl_subtable {
