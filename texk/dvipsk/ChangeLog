@@ -1,5 +1,7 @@
 2021-02-08  Karl Berry  <karl@freefriends.org>
 
+	* configure.ac (AC_INIT): TeX Live not TeXLive.
+
 	* dvips.c (found_problems): define.
 	(main): final exit status depends on its value.
 	* protos.h (found_problems): declare.
