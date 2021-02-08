@@ -186,7 +186,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
 #endif /* ! VMCMS */
 #else /*  ! (VMCMS || MVSXA) */
       sprintf(errbuf, "Could not find figure file %.500s; continuing.", s);
-      found_problems = 1; /* continue, but do not exit successfully */
+      found_problems = 0; /* continue, but do not exit successfully */
       if (secure == 2) {
          strcat(errbuf, "\nNote that an absolute path or a relative path with .. are denied in -R2 mode.");
       }
