@@ -92,6 +92,7 @@ texdoctk
 tpic2pdftex
 vlna
 xindy
+xml2pmx
 xpdfopen
 ])]) # KPSE_UTILS_PKGS
 

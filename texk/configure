@@ -709,6 +709,7 @@ enable_xindy
 enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
+enable_xml2pmx
 enable_xpdfopen
 enable_web2c
 with_banner_add
@@ -1494,6 +1495,7 @@ Optional Features:
   --enable-xindy          build the xindy package
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
+  --disable-xml2pmx       do not build the xml2pmx package
   --disable-xpdfopen      do not build the xpdfopen package
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
@@ -3633,6 +3635,24 @@ $as_echo "$as_me: Assuming \`--with-clisp-runtime=$with_clisp_runtime'" >&6;}
     if test ! -f "$with_clisp_runtime"; then :
   as_fn_error $? "no such file: \"$with_clisp_runtime\"" "$LINENO" 5
 fi ;;
+esac
+
+## utils/xml2pmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xml2pmx/
+## configure options and TL libraries required for xml2pmx
+# Check whether --enable-xml2pmx was given.
+if test "${enable_xml2pmx+set}" = set; then :
+  enableval=$enable_xml2pmx;
+fi
+case $enable_xml2pmx in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xml2pmx=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xml2pmx=$enable_xml2pmx'" >&5
+$as_echo "$as_me: Assuming \`--enable-xml2pmx=$enable_xml2pmx'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-xml2pmx=$enable_xml2pmx'"
+    ;;
 esac
 
 ## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/

@@ -134,6 +134,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/utils/xindy/ac/withenable.ac \
 	$(top_srcdir)/utils/xindy/ac/xindy.ac \
 	$(top_srcdir)/utils/xindy/ac/clisp.ac \
+	$(top_srcdir)/utils/xml2pmx/ac/withenable.ac \
 	$(top_srcdir)/utils/xpdfopen/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/withenable.ac \
 	$(top_srcdir)/texk/web2c/ac/web2c.ac \
