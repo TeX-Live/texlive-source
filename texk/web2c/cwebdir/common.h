@@ -25,7 +25,7 @@
 % file |"common.h"|, which is also included in |"common.w"| to propagate
 % possible changes from this single source consistently.
 
-% First comes general stuff:
+First comes general stuff:
 
 @s boolean int
 @s uint8_t int

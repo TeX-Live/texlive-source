@@ -1,3 +1,8 @@
+2021-02-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Don't repeat yourself.
+
 2021-02-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: CWEB development has moved to another level.

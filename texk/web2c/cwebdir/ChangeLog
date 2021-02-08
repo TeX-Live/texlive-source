@@ -1,3 +1,13 @@
+2021-02-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctangle.c,
+	* ctangle.w,
+	* cweave.w: Don't repeat yourself.
+
 2021-02-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch: Fix 'reading error';

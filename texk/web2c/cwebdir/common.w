@@ -73,8 +73,6 @@ The file begins with a few basic definitions.
 @ The details will be filled in due course.  The interface of this module
 is included first.  It is also used by the main programs.
 
-First comes general stuff:
-
 @i common.h
 
 @ In certain cases \.{CTANGLE} and \.{CWEAVE} should do almost, but not

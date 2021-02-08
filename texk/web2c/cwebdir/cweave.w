@@ -107,8 +107,6 @@ be included in both |"ctangle.w"| and |"cweave.w"|. It appears in
 file |"common.h"|, which is also included in |"common.w"| to propagate
 possible changes from this \.{COMMON} interface consistently.
 
-First comes general stuff:
-
 @i common.h
 
 @ The following parameters were sufficient in the original \.{WEAVE} to
