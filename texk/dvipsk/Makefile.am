@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright 2017-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -117,7 +117,7 @@ TESTS = afm2tfm-test.pl
 afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
-	test-overflow-buffers.test uptex-vf.test
+	test-missing-image.test test-overflow-buffers.test uptex-vf.test
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-overflow-buffers.log: dvips$(EXEEXT)
@@ -177,6 +177,9 @@ DISTCLEANFILES += same-name.out
 ## test-dvips
 EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
 DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
+## test-missing-image
+EXTRA_DIST += testdata/missing-image.tex testdata/missing-image.dvi
+DISTCLEANFILES += missing-image.ps
 ## test-overflow-buffers
 EXTRA_DIST += overflow-color-push.dvi overflow-color-push.tex \
               overflow-epsfile.dvi overflow-epsfile.tex \
