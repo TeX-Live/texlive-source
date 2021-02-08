@@ -1,3 +1,16 @@
+2021-02-08  Karl Berry  <karl@freefriends.org>
+
+	* dvips.c (found_problems): define.
+	(main): final exit status depends on its value.
+	* protos.h (found_problems): declare.
+	* output.c (copyfile_general): set found_problems=1 if image not found.
+	This is to match the new behavior of dvipdfmx.
+	https://tug.org/pipermail/dvipdfmx/2021-January/000159.html (thread)
+	
+	* test-missing-image.test: corresponding test.
+	* testdata/missing-image.dvi,
+	* testdata/missing-image.tex: files for new test.
+
 2020-12-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* NEWS: Mention new/jfm feature.

@@ -1,0 +1,15 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain. Test that dvips exits with bad status when there is a
+# missing image file.
+# 
+# BTW, to just run this test on its own:
+# make -C $wp TESTS=test-missing-image.test check 
+# where wp=.../Work/texk/dvipsk
+
+if ./dvips $srcdir/testdata/missing-image.dvi -o dvipstst.ps; then
+  echo "$0: found image file, but shouldn't have." >&2
+  exit 1
+fi
+
+exit 0
