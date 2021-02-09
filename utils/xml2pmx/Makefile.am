@@ -32,6 +32,7 @@ xml2pmx_SOURCES = \
 	@XML2PMX_TREE@/primtab.h \
 	@XML2PMX_TREE@/primtab0.c \
 	@XML2PMX_TREE@/support.c \
+	@XML2PMX_TREE@/wrapper.c \
 	@XML2PMX_TREE@/xmain.c
 
 man1_MANS = \

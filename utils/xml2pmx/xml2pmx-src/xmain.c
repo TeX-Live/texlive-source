@@ -28,6 +28,8 @@
  * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define main xmain
+
 #include <string.h>
 #include <stdlib.h>
 

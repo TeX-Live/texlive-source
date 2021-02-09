@@ -1,6 +1,6 @@
 2021-02-09  Karl Berry  <karl@freefriends.org>
 
-	* xml2pmx-2021-02-07: import.
+	* xml2pmx-2021-02-07: import, including new wrapper.c.
 
 2021-02-07  Karl Berry  <karl@freefriends.org>
 
