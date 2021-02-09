@@ -1,6 +1,6 @@
 # configure.ac for XML2PMX
 
-AC_INIT(xml2pmx, 2021-01-23, rdt@cs.queensu.ca)
+AC_INIT(xml2pmx, 2021-02-07, rdt@cs.queensu.ca)
 AC_CONFIG_AUX_DIR(scripts)
 AM_INIT_AUTOMAKE([-Wall foreign])
 AC_CONFIG_SRCDIR(obx.h)

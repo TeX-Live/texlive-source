@@ -34,8 +34,8 @@ xml2pmx_SOURCES = \
 	@XML2PMX_TREE@/support.c \
 	@XML2PMX_TREE@/xmain.c
 
-#man1_MANS = \
-#	$(XML2PMX_TREE)/xml2pmx.1 
+man1_MANS = \
+	$(XML2PMX_TREE)/xml2pmx.1 
 
 # Tests
 AM_TESTS_ENVIRONMENT = XML2PMX_TREE=$(XML2PMX_TREE); export XML2PMX_TREE;

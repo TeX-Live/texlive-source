@@ -7,7 +7,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([xml2pmx_version], [2021-01-23])[]dnl using unmodified xml2pmx source
+m4_define([xml2pmx_version], [2021-02-07])[]dnl using unmodified xml2pmx source
 AC_INIT([xml2pmx (TeX Live)], xml2pmx_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xml2pmx-src/obx.h])

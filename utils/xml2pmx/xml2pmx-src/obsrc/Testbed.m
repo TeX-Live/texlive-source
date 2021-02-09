@@ -1,6 +1,7 @@
 MODULE Testbed;  
+
 (***************************************************************************)
-(**************** Copyright 2015 --2021 Dieter Gloetzel ********************)
+(**************** Copyright 2015--2021 Dieter Gloetzel ********************)
 (************************ Version016 multi platform  ***********************)
 (***************************************************************************)
 (*  This program is free software: you can redistribute it and/or modify
@@ -15,6 +16,7 @@ MODULE Testbed;
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>. *)
+
     (* corrections starting 09.07.2020    beam2pmx add "l" or "u" to "[j"    *)
  (*  IMPORT Texts, Strings, Files, Oberon, b, Complete, Out;  (*   Import fuer Oberon Version *) *)
  (*  IMPORT Args32, Strings, Files, Out := WCout, b, Complete, Fifo ;  *)  (* Import fuer Windows-Exe Version  *)

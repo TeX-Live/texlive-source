@@ -1,0 +1,59 @@
+.TH XML2PMX 1 2021-01-23  "" ""
+
+.SH DESCRIPTION
+
+xml2pmx translates MusicXML files to input suitable for PMX processing
+
+.SH SYNOPSIS
+
+.B xml2pmx 
+.RB  [ \-v\ |\ \-\-version\ |\ \-h\ |\ \-\-help ]
+
+.B xml2pmx  
+.IR input .xml
+.IR output .pmx
+[ p | d | v | s | l ] ..
+
+The 
+.BR musixtex.lua 
+script
+from version 0.23 supports 
+.BR xml2pmx 
+as a pre-preprocessor for MusicXML files.
+
+.SH OPTIONS
+
+The meanings of the letter options are as follows:
+
+     p       XML parser output; not recommended unless the terminal window process has enough storage
+
+     d       information on "directions" (dynamical marks etc)  
+
+     v       distribution of voices over instruments and measures 
+
+     s       statistics of MusicXML tags like <note>, <measure> etc 
+
+     l       for extracting lyrics in a separate file  
+
+.SH BUGS
+
+.B xml2pmx 
+processes input in UTF-8 encoding only.  MusicXML files in UTF-16 encoding should be
+converted using, for example, 
+.B recode
+(in Unix-like systems) or by importing into an editor like
+.B notepad
+and saving in UTF-8 encoding.
+
+.SH SEE ALSO
+
+.BR pmx (1)
+.BR obc (1)
+.BR musixtex (1)
+.BR recode (1)
+
+.SH AUTHORS
+This man page was written by Bob Tennent <rdt@cs.queensu.ca>.
+.B xml2pmx
+was written by Dieter Gloetzel <d.gloetzel@web.de> and
+adapted for compilation by obc (the Oxford Oberon Compiler) by Mike Spivey <mike@cs.ox.ac.uk>.
