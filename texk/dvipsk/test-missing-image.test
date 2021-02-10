@@ -3,7 +3,7 @@
 # Public domain. Test that dvips exits with bad status when there is a
 # missing image file.
 # 
-# BTW, to just run this test on its own:
+# BTW, to run just this test on its own:
 # make -C $wp TESTS=test-missing-image.test check 
 # where wp=.../Work/texk/dvipsk
 

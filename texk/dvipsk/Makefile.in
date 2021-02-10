@@ -719,9 +719,9 @@ LDADD = $(KPATHSEA_LIBS)
 dist_man1_MANS = afm2tfm.1 dvips.1
 info_TEXINFOS = dvips.texi
 dvips_TEXINFOS = contrib/config.proto dvips.help
-DISTCLEANFILES = $(DVIS) $(PSS) afmtest.tfm beginfontk1.ps \
-	eepic-nan.ps pfbincl.ps *badnews* same-name.out dvipstst.ps \
-	missfont.log mtest.ps missing-image.ps overflow-color-push.ps \
+DISTCLEANFILES = $(DVIS) $(PSS) beginfontk1.ps eepic-nan.ps pfbincl.ps \
+	*badnews* same-name.out afmtest.tfm dvipstst.ps missfont.log \
+	mtest.ps missing-image.ps overflow-color-push.ps \
 	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjf_full.ps \
 	upjf_omit.ps
 enc_DATA = dvips-all.enc
@@ -771,7 +771,7 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	vmcms vms
 CLEANFILES = $(prologues) texc.lpro
 TEST_EXTENSIONS = .pl .test
-TESTS = afm2tfm-test.pl beginfontk1.test eepic-nan.test pfbincl.test \
+TESTS = test-afm2tfm.test beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
 	test-missing-image.test test-overflow-buffers.test \
 	uptex-vf.test
@@ -2004,7 +2004,7 @@ $(prologues): squeeze/stamp-squeeze
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
-afm2tfm-test.log: afm2tfm$(EXEEXT)
+test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-overflow-buffers.log: dvips$(EXEEXT)

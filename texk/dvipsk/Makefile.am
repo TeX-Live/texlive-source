@@ -111,10 +111,10 @@ EXTRA_DIST = $(dist_prologues) texc.script
 
 CLEANFILES = $(prologues) texc.lpro
 
-## dvips tests
+## dvips/afm2tfm tests
 TEST_EXTENSIONS = .pl .test
-TESTS = afm2tfm-test.pl
-afm2tfm-test.log: afm2tfm$(EXEEXT)
+TESTS = test-afm2tfm.test
+test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
 	test-missing-image.test test-overflow-buffers.test uptex-vf.test
@@ -158,8 +158,6 @@ EXTRA_DIST += \
 	testdata/texc.pro \
 	testdata/texps.pro
 
-## afm2tfm-test.pl
-DISTCLEANFILES += afmtest.tfm
 ## beginfontk1.test
 EXTRA_DIST += testdata/beginfontk1.dvi testdata/beginfontk1.eps testdata/beginfontk1.tex
 DISTCLEANFILES += beginfontk1.ps
@@ -174,13 +172,15 @@ EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex
 DISTCLEANFILES += *badnews*
 ## same-name.test
 DISTCLEANFILES += same-name.out
-## test-dvips
+## test-afm2tfm.test
+DISTCLEANFILES += afmtest.tfm
+## test-dvips.test
 EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
 DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
-## test-missing-image
+## test-missing-image.test
 EXTRA_DIST += testdata/missing-image.tex testdata/missing-image.dvi
 DISTCLEANFILES += missing-image.ps
-## test-overflow-buffers
+## test-overflow-buffers.test
 EXTRA_DIST += overflow-color-push.dvi overflow-color-push.tex \
               overflow-epsfile.dvi overflow-epsfile.tex \
               overflow-psbox.dvi overflow-psbox.tex

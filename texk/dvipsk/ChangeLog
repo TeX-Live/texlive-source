@@ -1,3 +1,9 @@
+2021-02-09  Karl Berry  <karl@freefriends.org>
+
+	* test-afm2tfm.test: rewrite as shell script.
+	* afm2tfm-test.pl: remove.
+	* Makefile.am (TESTS, etc.): adapt accordingly.
+
 2021-02-08  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_INIT): TeX Live not TeXLive.
