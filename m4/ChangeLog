@@ -1,3 +1,7 @@
+2021-02-09  Karl Berry  <karl@freefriends.org>
+
+	* kpse-setup.m4 (_KPSE_RECURSE): add debug if configure not found.
+
 2021-02-07  Karl Berry  <karl@freefriends.org>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): new utils program xml2pmx.

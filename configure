@@ -21108,10 +21108,14 @@ CONF_SUBDIRS=
 if test -x $srcdir/texk/ptexenc/configure; then
   test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes && MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/ptexenc $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texk/ptexenc/configure' >&5
 fi
 if test -x $srcdir/texk/kpathsea/configure; then
   test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes && MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/kpathsea $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texk/kpathsea/configure' >&5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5

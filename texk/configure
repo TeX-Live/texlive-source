@@ -6445,130 +6445,194 @@ CONF_SUBDIRS=
 if test -x $srcdir/web2c/configure; then
   test "x$enable_web2c" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS web2c"
   CONF_SUBDIRS="$CONF_SUBDIRS web2c"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/web2c/configure' >&5
 fi
 if test -x $srcdir/afm2pl/configure; then
   test "x$enable_afm2pl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS afm2pl"
   CONF_SUBDIRS="$CONF_SUBDIRS afm2pl"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/afm2pl/configure' >&5
 fi
 if test -x $srcdir/bibtex-x/configure; then
   test "x$enable_bibtex_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS bibtex-x"
   CONF_SUBDIRS="$CONF_SUBDIRS bibtex-x"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/bibtex-x/configure' >&5
 fi
 if test -x $srcdir/chktex/configure; then
   test "x$enable_chktex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS chktex"
   CONF_SUBDIRS="$CONF_SUBDIRS chktex"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/chktex/configure' >&5
 fi
 if test -x $srcdir/cjkutils/configure; then
   test "x$enable_cjkutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS cjkutils"
   CONF_SUBDIRS="$CONF_SUBDIRS cjkutils"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/cjkutils/configure' >&5
 fi
 if test -x $srcdir/detex/configure; then
   test "x$enable_detex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS detex"
   CONF_SUBDIRS="$CONF_SUBDIRS detex"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/detex/configure' >&5
 fi
 if test -x $srcdir/dtl/configure; then
   test "x$enable_dtl" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dtl"
   CONF_SUBDIRS="$CONF_SUBDIRS dtl"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dtl/configure' >&5
 fi
 if test -x $srcdir/dvi2tty/configure; then
   test "x$enable_dvi2tty" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvi2tty"
   CONF_SUBDIRS="$CONF_SUBDIRS dvi2tty"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvi2tty/configure' >&5
 fi
 if test -x $srcdir/dvidvi/configure; then
   test "x$enable_dvidvi" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvidvi"
   CONF_SUBDIRS="$CONF_SUBDIRS dvidvi"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvidvi/configure' >&5
 fi
 if test -x $srcdir/dviljk/configure; then
   test "x$enable_dviljk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dviljk"
   CONF_SUBDIRS="$CONF_SUBDIRS dviljk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dviljk/configure' >&5
 fi
 if test -x $srcdir/dviout-util/configure; then
   test "x$enable_dviout_util" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dviout-util"
   CONF_SUBDIRS="$CONF_SUBDIRS dviout-util"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dviout-util/configure' >&5
 fi
 if test -x $srcdir/dvipdfm-x/configure; then
   test "x$enable_dvipdfm_x" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipdfm-x"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipdfm-x"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvipdfm-x/configure' >&5
 fi
 if test -x $srcdir/dvipng/configure; then
   test "x$enable_dvipng" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipng"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipng"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvipng/configure' >&5
 fi
 if test -x $srcdir/dvipos/configure; then
   test "x$enable_dvipos" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipos"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipos"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvipos/configure' >&5
 fi
 if test -x $srcdir/dvipsk/configure; then
   test "x$enable_dvipsk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvipsk"
   CONF_SUBDIRS="$CONF_SUBDIRS dvipsk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvipsk/configure' >&5
 fi
 if test -x $srcdir/dvisvgm/configure; then
   test "x$enable_dvisvgm" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS dvisvgm"
   CONF_SUBDIRS="$CONF_SUBDIRS dvisvgm"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/dvisvgm/configure' >&5
 fi
 if test -x $srcdir/gregorio/configure; then
   test "x$enable_gregorio" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gregorio"
   CONF_SUBDIRS="$CONF_SUBDIRS gregorio"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/gregorio/configure' >&5
 fi
 if test -x $srcdir/gsftopk/configure; then
   test "x$enable_gsftopk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS gsftopk"
   CONF_SUBDIRS="$CONF_SUBDIRS gsftopk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/gsftopk/configure' >&5
 fi
 if test -x $srcdir/lcdf-typetools/configure; then
   test "x$enable_lcdf_typetools" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lcdf-typetools"
   CONF_SUBDIRS="$CONF_SUBDIRS lcdf-typetools"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/lcdf-typetools/configure' >&5
 fi
 if test -x $srcdir/makeindexk/configure; then
   test "x$enable_makeindexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makeindexk"
   CONF_SUBDIRS="$CONF_SUBDIRS makeindexk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/makeindexk/configure' >&5
 fi
 if test -x $srcdir/makejvf/configure; then
   test "x$enable_makejvf" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS makejvf"
   CONF_SUBDIRS="$CONF_SUBDIRS makejvf"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/makejvf/configure' >&5
 fi
 if test -x $srcdir/mendexk/configure; then
   test "x$enable_mendexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS mendexk"
   CONF_SUBDIRS="$CONF_SUBDIRS mendexk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/mendexk/configure' >&5
 fi
 if test -x $srcdir/musixtnt/configure; then
   test "x$enable_musixtnt" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS musixtnt"
   CONF_SUBDIRS="$CONF_SUBDIRS musixtnt"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/musixtnt/configure' >&5
 fi
 if test -x $srcdir/ps2pk/configure; then
   test "x$enable_ps2pk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2pk"
   CONF_SUBDIRS="$CONF_SUBDIRS ps2pk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/ps2pk/configure' >&5
 fi
 if test -x $srcdir/psutils/configure; then
   test "x$enable_psutils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS psutils"
   CONF_SUBDIRS="$CONF_SUBDIRS psutils"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/psutils/configure' >&5
 fi
 if test -x $srcdir/seetexk/configure; then
   test "x$enable_seetexk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS seetexk"
   CONF_SUBDIRS="$CONF_SUBDIRS seetexk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/seetexk/configure' >&5
 fi
 if test -x $srcdir/tex4htk/configure; then
   test "x$enable_tex4htk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tex4htk"
   CONF_SUBDIRS="$CONF_SUBDIRS tex4htk"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/tex4htk/configure' >&5
 fi
 if test -x $srcdir/ttf2pk2/configure; then
   test "x$enable_ttf2pk2" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttf2pk2"
   CONF_SUBDIRS="$CONF_SUBDIRS ttf2pk2"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/ttf2pk2/configure' >&5
 fi
 if test -x $srcdir/ttfdump/configure; then
   test "x$enable_ttfdump" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ttfdump"
   CONF_SUBDIRS="$CONF_SUBDIRS ttfdump"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/ttfdump/configure' >&5
 fi
 if test -x $srcdir/upmendex/configure; then
   test "x$enable_upmendex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS upmendex"
   CONF_SUBDIRS="$CONF_SUBDIRS upmendex"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/upmendex/configure' >&5
 fi
 if test -x $srcdir/xdvik/configure; then
   test "x$enable_xdvik" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xdvik"
   CONF_SUBDIRS="$CONF_SUBDIRS xdvik"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/xdvik/configure' >&5
 fi
 if test -x $srcdir/texlive/configure; then
   test "x$enable_texlive" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texlive"
   CONF_SUBDIRS="$CONF_SUBDIRS texlive"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texlive/configure' >&5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5

@@ -1,6 +1,6 @@
 # $Id$
 # Private macros for the TeX Live (TL) tree.
-# Copyright 2017-2020 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -283,6 +283,8 @@ m4_ifdef([have_]Kpse_pkg, [dnl
 if test -x $srcdir/$4Kpse_Pkg/configure; then
   $3 && Kpse_add([MAKE_SUBDIRS])
   Kpse_add([CONF_SUBDIRS])
+else
+  echo 'tldbg:[$0] skipping subdir, no (executable) configure: '"$srcdir"'/$4Kpse_Pkg/configure' >&AS_MESSAGE_LOG_FD
 fi
 ])[]dnl m4_ifdef
 ])

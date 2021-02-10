@@ -6445,74 +6445,110 @@ CONF_SUBDIRS=
 if test -x $srcdir/pplib/configure; then
   test "x$with_system_pplib" != xyes && test "x$need_pplib" = xyes && MAKE_SUBDIRS="pplib $MAKE_SUBDIRS"
   CONF_SUBDIRS="pplib $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/pplib/configure' >&5
 fi
 if test -x $srcdir/harfbuzz/configure; then
   test "x$with_system_harfbuzz" != xyes && test "x$need_harfbuzz" = xyes && MAKE_SUBDIRS="harfbuzz $MAKE_SUBDIRS"
   CONF_SUBDIRS="harfbuzz $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/harfbuzz/configure' >&5
 fi
 if test -x $srcdir/icu/configure; then
   test "x$with_system_icu" != xyes && test "x$need_icu" = xyes && MAKE_SUBDIRS="icu $MAKE_SUBDIRS"
   CONF_SUBDIRS="icu $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/icu/configure' >&5
 fi
 if test -x $srcdir/teckit/configure; then
   test "x$with_system_teckit" != xyes && test "x$need_teckit" = xyes && MAKE_SUBDIRS="teckit $MAKE_SUBDIRS"
   CONF_SUBDIRS="teckit $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/teckit/configure' >&5
 fi
 if test -x $srcdir/graphite2/configure; then
   test "x$with_system_graphite2" != xyes && test "x$need_graphite2" = xyes && MAKE_SUBDIRS="graphite2 $MAKE_SUBDIRS"
   CONF_SUBDIRS="graphite2 $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/graphite2/configure' >&5
 fi
 if test -x $srcdir/zziplib/configure; then
   test "x$with_system_zziplib" != xyes && test "x$need_zziplib" = xyes && MAKE_SUBDIRS="zziplib $MAKE_SUBDIRS"
   CONF_SUBDIRS="zziplib $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/zziplib/configure' >&5
 fi
 if test -x $srcdir/xpdf/configure; then
   test "x$with_system_xpdf" != xyes && test "x$need_xpdf" = xyes && MAKE_SUBDIRS="xpdf $MAKE_SUBDIRS"
   CONF_SUBDIRS="xpdf $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/xpdf/configure' >&5
 fi
 if test -x $srcdir/mpfr/configure; then
   test "x$with_system_mpfr" != xyes && test "x$need_mpfr" = xyes && MAKE_SUBDIRS="mpfr $MAKE_SUBDIRS"
   CONF_SUBDIRS="mpfr $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/mpfr/configure' >&5
 fi
 if test -x $srcdir/gmp/configure; then
   test "x$with_system_gmp" != xyes && test "x$need_gmp" = xyes && MAKE_SUBDIRS="gmp $MAKE_SUBDIRS"
   CONF_SUBDIRS="gmp $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/gmp/configure' >&5
 fi
 if test -x $srcdir/cairo/configure; then
   test "x$with_system_cairo" != xyes && test "x$need_cairo" = xyes && MAKE_SUBDIRS="cairo $MAKE_SUBDIRS"
   CONF_SUBDIRS="cairo $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/cairo/configure' >&5
 fi
 if test -x $srcdir/pixman/configure; then
   test "x$with_system_pixman" != xyes && test "x$need_pixman" = xyes && MAKE_SUBDIRS="pixman $MAKE_SUBDIRS"
   CONF_SUBDIRS="pixman $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/pixman/configure' >&5
 fi
 if test -x $srcdir/gd/configure; then
   test "x$with_system_gd" != xyes && test "x$need_gd" = xyes && MAKE_SUBDIRS="gd $MAKE_SUBDIRS"
   CONF_SUBDIRS="gd $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/gd/configure' >&5
 fi
 if test -x $srcdir/freetype2/configure; then
   test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes && MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"
   CONF_SUBDIRS="freetype2 $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/freetype2/configure' >&5
 fi
 if test -x $srcdir/libpng/configure; then
   test "x$with_system_libpng" != xyes && test "x$need_libpng" = xyes && MAKE_SUBDIRS="libpng $MAKE_SUBDIRS"
   CONF_SUBDIRS="libpng $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/libpng/configure' >&5
 fi
 if test -x $srcdir/libpaper/configure; then
   test "x$with_system_libpaper" != xyes && test "x$need_libpaper" = xyes && MAKE_SUBDIRS="libpaper $MAKE_SUBDIRS"
   CONF_SUBDIRS="libpaper $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/libpaper/configure' >&5
 fi
 if test -x $srcdir/luajit/configure; then
   test "x$with_system_luajit" != xyes && test "x$need_luajit" = xyes && MAKE_SUBDIRS="luajit $MAKE_SUBDIRS"
   CONF_SUBDIRS="luajit $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/luajit/configure' >&5
 fi
 if test -x $srcdir/lua53/configure; then
   test "x$with_system_lua53" != xyes && test "x$need_lua53" = xyes && MAKE_SUBDIRS="lua53 $MAKE_SUBDIRS"
   CONF_SUBDIRS="lua53 $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/lua53/configure' >&5
 fi
 if test -x $srcdir/zlib/configure; then
   test "x$with_system_zlib" != xyes && test "x$need_zlib" = xyes && MAKE_SUBDIRS="zlib $MAKE_SUBDIRS"
   CONF_SUBDIRS="zlib $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/zlib/configure' >&5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
