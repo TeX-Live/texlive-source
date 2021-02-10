@@ -1,8 +1,8 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2020
-@set month-year November 2020
+@set version 2021
+@set month-year February 2021
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -15,7 +15,7 @@
 This file documents the @TL{} build system and more.
 
 @noindent
-Copyright @copyright{} 2016--2020 Karl Berry.@*
+Copyright @copyright{} 2016--2021 Karl Berry.@*
 Copyright @copyright{} 2013--2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
@@ -1720,6 +1720,11 @@ including the generated @file{Makefile.in aclocal.m4 configure}, and
 @code{svn:ignore} the Automake cache @file{autom4te.cache}.  (This is
 so people checking out the TL source tree do not have to run any
 autotools, but can simply run @code{configure}.)
+
+To reiterate: do not fail to commit the generated @file{configure} and
+other files. The m4 code in @file{kpse-pkgs.m4} uses the existence of
+@file{configure} to determine whether to descend into (and configure)
+a given subdirectory.
 
 @pindex reautoconf@r{, for new program}
 Then, run the TL tool @code{reautoconf} in the top-level TL

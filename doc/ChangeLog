@@ -1,3 +1,8 @@
+2021-02-09  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Adding a new program module): emphasize requirement
+	for configure, etc., to be committed.
+
 2020-11-28  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Adding a new program module): more explicit
