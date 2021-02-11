@@ -1,11 +1,11 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.7 --- June 2020
+% Version 4.0 --- February 2021
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+', 'pdftex', and 'xetex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL3.7+LNCS+PDF}
+\xdef\fmtversion{\fmtversion+CTWILL4.0+LNCS+PDF}
 
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
@@ -17,7 +17,7 @@
 \ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
 \else \pdftextrue \pdfoutput=1
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
-  \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor rg \pdflinkcolor RG}}
+  \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi\fi
 \newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
 

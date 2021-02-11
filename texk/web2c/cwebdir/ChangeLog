@@ -1,3 +1,7 @@
+2021-02-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctwimac.tex: Fix bug in color setter.
+
 2021-02-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
