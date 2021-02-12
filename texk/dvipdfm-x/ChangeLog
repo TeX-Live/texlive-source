@@ -1,3 +1,9 @@
+2021-02-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* dvi.c: Fix a bug (segfault) that current_font is not checked
+	properly when catch_phantom=1.
+	* configure.ac: Version 20210212.
+
 2021-01-31  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* spc_misc.c: Processing of pdffontatrr special should be
