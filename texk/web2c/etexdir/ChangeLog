@@ -1,3 +1,7 @@
+2021-02-13  Karl Berry  <karl@freefriends.org>
+
+	* am/etex.am (etex_ch_srcs): adjust for split enctex changes.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/etex.am (etex_CPPFLAGS): append $(ZLIB_INCLUDES).

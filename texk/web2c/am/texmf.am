@@ -64,7 +64,9 @@ tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
-	enctex.ch \
+	enctexdir/enctex1.ch \
+	enctexdir/enctex-tex.ch \
+	enctexdir/enctex2.ch \
 	$(tex_ch_synctex) \
 	tex-binpool.ch
 ##

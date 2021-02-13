@@ -1,3 +1,15 @@
+2021-02-13  Karl Berry  <karl@freefriends.org>
+
+	* enctexdir/enctex1.ch,
+	* enctexdir/enctex2.ch,
+	* enctexdir/enctex-tex.ch,
+	* enctexdir/enctex-pdftex.ch: new files, from enctex.ch.
+	* am/texmf.am (tex_ch_srcs): split enctex changes into
+	common (enctex1.ch, enctex2.ch) and differing (enctex-tex.ch,
+	enctex-pdftex.ch) pieces to avoid duplicating the whole thing.
+	* enctex.ch,
+	* enctex2.ch: remove.
+
 2021-02-13  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptexdir/am/eptex.am, eptexdir/etex.ch1,
