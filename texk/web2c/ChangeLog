@@ -1,3 +1,16 @@
+2021-02-12  Karl Berry  <karl@freefriends.org>
+
+	* tracingstacklevels.ch: new change file for \tracingstacklevels
+	parameter, proposed and implemented by Petr Olsak.
+	* pdftexdir/am/pdftex.am (pdftex_ch_srcs),
+	* xetexdir/am/xetex.am (xetex_ch_srcs): add it.
+	* tests/tracingstacklevels.tex,
+	* tests/tracingstacklevel2.tex: test files (for manual use; not
+	included in make check).
+	* xetexdir/xetex.ch (v): new declaration needed in start_input.
+	* enctex.ch: adjust web2c_int_pars so that this is applied after
+	tracingstacklevels.ch.
+
 2021-02-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

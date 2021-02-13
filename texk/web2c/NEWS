@@ -4,11 +4,14 @@ This file records noteworthy changes.  (Public domain.)
 https://tug.org/TUGboat/42-1/tb130knuth-tuneup21.pdf
 New TeX version is 3.141592653, MF 2.71828182.
 
-* pdftex, xetex, e(u)ptex: if \tracinglostchars >= 3,
-make missing characters an error (not just a log message),
-and always report the character code in hex.
+* for all engines except original TeX:
+- if \tracinglostchars >= 3, make missing characters an error (not just
+  a log message), and always report the character code in hex.
+- if new primitive parameter \tracingstacklevels > 0, logging of macro
+  expansion at higher levels is truncated; also, the macro expansion
+  depth is indicated on \tracingmacros log lines.
 
-* obscure interaction sequences try to avoid crashing.
+* obscure interaction sequences no longer crash.
 
 
 2020 (for TeX Live 2020, 27 March 2020)
