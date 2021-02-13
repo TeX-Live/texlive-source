@@ -4541,7 +4541,7 @@ pdftex_ch_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	zlib-fmt.ch \
-	enctex.ch \
+	enctex2.ch \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch \
 	pdftexdir/char-warning-pdftex.ch \

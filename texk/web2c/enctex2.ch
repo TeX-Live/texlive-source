@@ -1,7 +1,8 @@
-% enctex.ch: implementation of enc\TeX, to be applied on top of tex.ch.
-% Used by TeX and e-TeX. Originally used by TeX, e-TeX and pdfTeX.
-% The renamed enctex2.ch is used by pdfTeX in order to be applied
-% after tracingstacklevels.ch.
+% enctex2.ch: implementation of enc\TeX, to be applied on top of tex.ch.
+% Used by pdfTeX. The original enctex.ch, which was used by TeX,
+% e-TeX, pdfTeX, but not by pTeX or XeTeX, was renamed as enctex2.ch
+% in order to be applied after tracingstacklevels.ch in the case
+% of pdfTeX. The original enctex.ch is used by TeX, and e-TeX.
 
 @x [2.20] l.579 - encTeX: global declarations
 xprn: array [ASCII_code] of ASCII_code;
@@ -95,13 +96,13 @@ k:=first; while k < last do begin print_buffer(k) end;
 
 % encTeX: \mubytein \mubyteout \mubytelog and \specialout
 @x [17.236] l.4954
-@d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
+@d web2c_int_pars=web2c_int_base+4 {total number of web2c's integer parameters}
 @y
-@d mubyte_in_code=web2c_int_base+3 {if positive then reading mubytes is active}
-@d mubyte_out_code=web2c_int_base+4 {if positive then printing mubytes is active}
-@d mubyte_log_code=web2c_int_base+5 {if positive then print mubytes to log and terminal}
-@d spec_out_code=web2c_int_base+6 {if positive then print specials by mubytes}
-@d web2c_int_pars=web2c_int_base+7 {total number of web2c's integer parameters}
+@d mubyte_in_code=web2c_int_base+4{if positive then reading mubytes is active}
+@d mubyte_out_code=web2c_int_base+5{if positive then printing mubytes is active}
+@d mubyte_log_code=web2c_int_base+6{if positive then print mubytes to log and terminal}
+@d spec_out_code=web2c_int_base+7 {if positive then print specials by mubytes}
+@d web2c_int_pars=web2c_int_base+8 {total number of web2c's integer parameters}
 @z
 
 % encTeX: \mubytein \mubyteout \mubytelog and \specialout

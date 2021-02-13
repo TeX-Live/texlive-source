@@ -1,3 +1,10 @@
+2021-02-13  Akira Kakuto  <kakuto@w32tex.org>
+
+	* enctex.ch: Recover the original enctex.ch in order to be
+	compatible with the TeX.
+	* enctex2.ch: Rename the new enctex.ch for pdfTeX.
+	* pdftexdir/am/pdftex.am: Rename enctex.ch to enctex2.ch.
+
 2021-02-12  Karl Berry  <karl@freefriends.org>
 
 	* tracingstacklevels.ch: new change file for \tracingstacklevels
