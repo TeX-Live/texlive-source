@@ -74,6 +74,7 @@ ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
 ptex_web_srcs = \
 	tex.web \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch
 
 # Generate ptex.ch

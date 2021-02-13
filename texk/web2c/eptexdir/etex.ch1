@@ -16,10 +16,10 @@ last_node_type:=-1; last_node_subtype:=-1;
 @z
 
 @x [17.236]
-@d int_pars=63 {total number of integer parameters}
+@d int_pars=64 {total number of integer parameters}
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @y
-@d tex_int_pars=63 {total number of \TeX's integer parameters}
+@d tex_int_pars=64 {total number of \TeX's integer parameters}
 @#
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @z

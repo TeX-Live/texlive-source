@@ -4302,6 +4302,7 @@ ptex_prereq = ptexd.h ptexdir/ptex_version.h $(am__append_135)
 ptex_web_srcs = \
 	tex.web \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch
 
 ptex_ch_srcs = \
@@ -4361,6 +4362,7 @@ eptex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
 
@@ -4405,6 +4407,7 @@ uptex_prereq = uptexd.h ptexdir/ptex_version.h \
 uptex_web_srcs = \
 	tex.web \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch
 
 uptex_ch_srcs = \
@@ -4469,6 +4472,7 @@ euptex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
 

@@ -10,9 +10,9 @@
 @z
 
 @x tex.web l.4960 + tex.ch
-@d tex_int_pars=63 {total number of \TeX's integer parameters}
+@d tex_int_pars=64 {total number of \TeX's integer parameters}
 @y
-@d synctex_code=63
+@d synctex_code=64
 @d tex_int_pars=synctex_code+1 {total number of \TeX's integer parameters}
 @z
 

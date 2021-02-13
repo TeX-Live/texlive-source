@@ -1,3 +1,11 @@
+2021-02-13  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptexdir/am/eptex.am, eptexdir/etex.ch1,
+	euptexdir/am/euptex.am, ptexdir/am/ptex.am,
+	ptexdir/ptex-base.ch, synctexdir/synctex-ep-mem.ch1,
+	synctexdir/synctex-p-mem.ch1, and uptexdir/am/uptex.am:
+	Support \tracingstacklevels in [e][u]pTeX.
+
 2021-02-13  Akira Kakuto  <kakuto@w32tex.org>
 
 	* enctex.ch: Recover the original enctex.ch in order to be

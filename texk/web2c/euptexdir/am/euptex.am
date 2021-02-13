@@ -50,6 +50,7 @@ euptex_web_srcs = \
 	etexdir/etex.ch \
 	etexdir/tex.ch0 \
 	tex.ch \
+	tracingstacklevels.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
 
