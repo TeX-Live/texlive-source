@@ -18,6 +18,8 @@
 *   Internal function for sorting arrays.
 */
 
+#include <cstddef>
+
 #include "unicode/utypes.h"
 #include "cmemory.h"
 #include "uarrsort.h"

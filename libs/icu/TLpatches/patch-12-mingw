@@ -1,8 +1,8 @@
 	We don't want this for TeX Live cross compilation.
 
---- source/config/mh-mingw~	2019-10-03 04:16:41.000000000 -0700
-+++ source/config/mh-mingw	2019-12-11 15:34:02.831473103 -0800
-@@ -71,25 +71,7 @@
+--- source/config/mh-mingw~	2020-12-17 11:34:38.000000000 -0800
++++ source/config/mh-mingw	2021-02-13 08:20:54.167330952 -0800
+@@ -76,25 +76,7 @@
  STATIC_O = ao
  
 -ifeq ($(ENABLE_SHARED),YES)

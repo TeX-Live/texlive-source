@@ -3,14 +3,12 @@
 	https://tug.org/pipermail/tlbuild/2020q1/004599.html
 	https://tug.org/pipermail/tlbuild/2020q1/004599.html
 
---- ubidiimp.h	(revision 53315)
-+++ ubidiimp.h	(working copy)
-@@ -33,6 +33,8 @@ typedef uint32_t Flags;
-     is easier with the same names for the BiDi types in the code as there.
+--- source/common/ubidiimp.h~	2020-12-17 11:34:38.000000000 -0800
++++ source/common/ubidiimp.h	2021-02-13 08:20:09.076105678 -0800
+@@ -42,4 +42,6 @@
      See UCharDirection in uchar.h .
  */
 +#undef ES
 +#undef CS
  enum {
      L=  U_LEFT_TO_RIGHT,                /*  0 */
-     R=  U_RIGHT_TO_LEFT,                /*  1 */

@@ -16,6 +16,8 @@
 *   created by: Markus W. Scherer
 */
 
+#include <cstddef>
+
 #include "unicode/utypes.h"
 #include "unicode/ustring.h"
 #include "unicode/unistr.h"
@@ -566,7 +568,7 @@ enum {
 //    when a provider asks for a UText to be allocated with extra storage.
 
 struct ExtendedUText {
-    UText          ut;
+    UText               ut;
     max_align_t    extension;
 };
 
