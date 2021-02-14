@@ -5,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 56565 $';
+my $svnrev = '$Revision: 57421 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -224,7 +224,6 @@ BEGIN {
 use Cwd;
 use Getopt::Long;
 use File::Temp;
-use File::Copy qw//;
 
 use TeXLive::TLConfig;
 
@@ -3201,7 +3200,7 @@ sub _create_config_files {
   }
   if ($usermode && -e $dest) {
     tlwarn("Updating $dest, backup copy in $dest.backup\n");
-    File::Copy::copy($dest, "$dest.backup");
+    copy("-f", $dest, "$dest.backup");
   }
   open(OUTFILE,">$dest")
     or die("Cannot open $dest for writing: $!");

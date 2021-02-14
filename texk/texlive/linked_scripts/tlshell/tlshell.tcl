@@ -2382,30 +2382,35 @@ proc populate_main {} {
   .mn.opt.paper add command -label "[__ "Advanced"] ..." \
       -command papersize_advanced
 
-  if {[llength $::langs] > 1} {
+
+  if {$::tcl_platform(platform) ne "windows"} {
     incr inx
-    .mn.opt add cascade -label [__ "GUI language"] \
-        -menu .mn.opt.lang
-    menu .mn.opt.lang
+    set ::inx_platforms $inx
+    .mn.opt add command -label "[__ "Platforms"] ..." -command platforms_select
+  }
+
+  if {[llength $::langs] > 1} {
+    .mn add cascade -label [__ "GUI language"] \
+        -menu .mn.lang
+    menu .mn.lang
     foreach l [lsort $::langs] {
       if {$l eq $::lang} {
         set mlabel "$l *"
       } else {
         set mlabel $l
       }
-      .mn.opt.lang add command -label $mlabel \
+      .mn.lang add command -label $mlabel \
           -command "set_language $l"
     }
   }
 
-  incr inx
-  .mn.opt add cascade -label [__ "GUI font scaling"] \
-      -menu .mn.opt.fscale
-  menu .mn.opt.fscale
-  .mn.opt.fscale add command -label \
-      "[__ "Current"]:  [format {%.2f} $::tkfontscale]"
+  .mn add cascade -label [__ "GUI font scaling"] \
+      -menu .mn.fscale
+  menu .mn.fscale
+  .mn.fscale add command -label \
+      "[__ "Current:"]  [format {%.2f} $::tkfontscale]"
   foreach s {0.6 0.8 1 1.2 1.6 2 2.5 3 3.8 5 6 7.5 9} {
-    .mn.opt.fscale add command -label $s -command "set_fontscale $s"
+    .mn.fscale add command -label $s -command "set_fontscale $s"
   }
 
   # browser-style keyboard shortcuts for scaling
@@ -2420,13 +2425,6 @@ proc populate_main {} {
     bind . <Command-Shift-KeyRelease-equal> {zoom 1.25}
     bind . <Command-KeyRelease-plus> {zoom 1.25}
     bind . <Command-KeyRelease-0> {set_fontscale 1}
-  }
-
-
-  if {$::tcl_platform(platform) ne "windows"} {
-    incr inx
-    set ::inx_platforms $inx
-    .mn.opt add command -label "[__ "Platforms"] ..." -command platforms_select
   }
 
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0

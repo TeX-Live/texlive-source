@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 57424 2021-01-15 02:30:58Z preining $
+# $Id: tlmgr.pl 57705 2021-02-10 22:57:28Z karl $
 #
 # Copyright 2008-2020 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 57424 $';
-my $datrev = '$Date: 2021-01-15 03:30:58 +0100 (Fri, 15 Jan 2021) $';
+my $svnrev = '$Revision: 57705 $';
+my $datrev = '$Date: 2021-02-10 23:57:28 +0100 (Wed, 10 Feb 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -93,6 +93,7 @@ BEGIN {
 }
 
 use Cwd qw/abs_path/;
+use File::Find;
 use File::Spec;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev permute);
@@ -5239,7 +5240,8 @@ Error message from creating MainWindow:
 
 
 #  UNINSTALL
-#
+# Return zero if successful, nonzero if failure.
+# 
 sub uninstall_texlive {
   if (win32()) {
     printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel to removing TeX Live!\n";
@@ -5279,13 +5281,15 @@ sub uninstall_texlive {
     system("rm", "-f", "$Master/$f");
   }
   if (-d "$Master/temp") {
-    system("rmdir", "--ignore-fail-on-non-empty", "$Master/temp");
+    finddepth(sub { rmdir; }, "$Master/temp");
   }
   unlink("$Master/install-tl.log");
   # if they want removal, give them removal. Hopefully they know how to
   # regenerate any changed config files.
   system("rm", "-rf", "$Master/texmf-config");
-  system("rmdir", "--ignore-fail-on-non-empty", "$Master");
+  finddepth(sub { rmdir; }, "$Master");
+  
+  return -d "$Master";
 }
 
 
@@ -10113,7 +10117,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 57424 2021-01-15 02:30:58Z preining $
+$Id: tlmgr.pl 57705 2021-02-10 22:57:28Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
