@@ -111,7 +111,7 @@ begin
   if v < tracing_stack_levels then
     while v > 0 do begin print_char("."); decr(v); end
   else print_char("~");
-  slow_print("INPUT "); slow_print(cur_name); print_ln;
+  slow_print("INPUT "); slow_print(cur_name); slow_print(cur_ext); print_ln;
   end_diagnostic(false);
 end;
 @z
