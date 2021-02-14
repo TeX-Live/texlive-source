@@ -1,3 +1,6 @@
+2012-02-14 Luigi Scarso <luigi.scarso@gmail.com> 
+    * callback for nesting level used in tracingmacros
+
 2021-02-01 Luigi Scarso <luigi.scarso@gmail.com> 
     * two TeX January 2021 DEK buglet fixes (H.Hagen)
 
