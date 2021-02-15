@@ -1270,16 +1270,6 @@ if n<math_code_base then
 @d holding_inserts_code=53 {do not remove insertion nodes from \.{\\box255}}
 @d error_context_lines_code=54 {maximum intermediate line pairs shown}
 @d tex_int_pars=55 {total number of \TeX's integer parameters}
-@#
-@d web2c_int_base=tex_int_pars {base for web2c's integer parameters}
-@d char_sub_def_min_code=web2c_int_base {smallest value in the charsubdef list}
-@d char_sub_def_max_code=web2c_int_base+1 {largest value in the charsubdef list}
-@d tracing_char_sub_def_code=web2c_int_base+2 {traces changes to a charsubdef def}
-@d tracing_stack_levels_code=web2c_int_base+3 {tracing |input_stack| level if |tracingmacros| positive}
-@d web2c_int_pars=web2c_int_base+4 {total number of web2c's integer parameters}
-@#
-@d int_pars=web2c_int_pars {total number of integer parameters}
-@d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @y
 @d cur_fam_code=44 {current family}
 @d cur_jfam_code=45 {current kanji family}
@@ -1298,12 +1288,7 @@ if n<math_code_base then
 @d text_baseline_shift_factor_code=57
 @d script_baseline_shift_factor_code=58
 @d scriptscript_baseline_shift_factor_code=59
-@d char_sub_def_min_code=60 {smallest value in the charsubdef list}
-@d char_sub_def_max_code=61 {largest value in the charsubdef list}
-@d tracing_char_sub_def_code=62 {traces changes to a charsubdef def}
-@d tracing_stack_levels_code=63
-@d int_pars=64 {total number of integer parameters}
-@d count_base=int_base+int_pars {256 user \.{\\count} registers}
+@d tex_int_pars=60 {total number of \TeX's integer parameters}
 @z
 
 @x [17.236] l.5167 - pTeX: cur_jfam, |jchr_widow_penalty|

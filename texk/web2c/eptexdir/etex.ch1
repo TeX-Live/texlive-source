@@ -16,12 +16,9 @@ last_node_type:=-1; last_node_subtype:=-1;
 @z
 
 @x [17.236]
-@d int_pars=64 {total number of integer parameters}
-@d count_base=int_base+int_pars {256 user \.{\\count} registers}
+@d int_pars=web2c_int_pars {total number of integer parameters}
 @y
-@d tex_int_pars=64 {total number of \TeX's integer parameters}
-@#
-@d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
+@d etex_int_base=web2c_int_pars {base for \eTeX's integer parameters}
 @z
 
 @x
