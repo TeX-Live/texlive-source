@@ -97,7 +97,9 @@ static inline DiyFp DiyFp_multiply(const DiyFp lhs, const DiyFp rhs) {
 	}
 	return DiyFp_from_parts(h, lhs.e + rhs.e + 64);
 #elif (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)) && defined(__x86_64__) && !defined(_MSC_VER)
-	unsigned __int128 p = (unsigned __int128)(lhs.f) * (unsigned __int128)(rhs.f);
+        __extension__ typedef unsigned __int128 uint128_t;
+	//unsigned int128 p = (unsigned int128)(lhs.f) * (unsigned int128)(rhs.f);
+        uint128_t p = (uint128_t)(lhs.f) * (uint128_t)(rhs.f);
 	uint64_t h = p >> 64;
 	uint64_t l = (uint64_t)(p);
 	if (l & ((uint64_t)(1) << 63)) // rounding
