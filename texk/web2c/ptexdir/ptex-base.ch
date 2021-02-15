@@ -1275,7 +1275,7 @@ if n<math_code_base then
 @d char_sub_def_min_code=web2c_int_base {smallest value in the charsubdef list}
 @d char_sub_def_max_code=web2c_int_base+1 {largest value in the charsubdef list}
 @d tracing_char_sub_def_code=web2c_int_base+2 {traces changes to a charsubdef def}
-@d tracing_stack_levels_code=web2c_int_base+3 {tracing input_stack level if tracingmacros positive}
+@d tracing_stack_levels_code=web2c_int_base+3 {tracing |input_stack| level if |tracingmacros| positive}
 @d web2c_int_pars=web2c_int_base+4 {total number of web2c's integer parameters}
 @#
 @d int_pars=web2c_int_pars {total number of integer parameters}

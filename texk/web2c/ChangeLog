@@ -1,3 +1,8 @@
+2021-02-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* tracingstacklevels.ch,
+	* ptexdir/ptex-base.ch: Fix Pascal variable in comment.
+
 2021-02-14  Petr Olsak  <petr@olsak.net>
 
 	* tracingstacklevels.ch: slow_print(cur_ext) also.

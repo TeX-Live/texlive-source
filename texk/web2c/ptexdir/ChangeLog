@@ -1,3 +1,7 @@
+2021-02-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* ptexdir/ptex-base.ch: Fix Pascal variable in comment.
+
 2020-11-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Fix syntax error of "not equal".

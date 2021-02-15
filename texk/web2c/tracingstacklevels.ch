@@ -23,7 +23,7 @@
 @x
 @d web2c_int_pars=web2c_int_base+3 {total number of web2c's integer parameters}
 @y
-@d tracing_stack_levels_code=web2c_int_base+3 {tracing input_stack level if tracingmacros positive}
+@d tracing_stack_levels_code=web2c_int_base+3 {tracing |input_stack| level if |tracingmacros| positive}
 @d web2c_int_pars=web2c_int_base+4 {total number of web2c's integer parameters}
 @z
 
