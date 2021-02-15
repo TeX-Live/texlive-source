@@ -1,0 +1,12 @@
+% $Id$
+% Public domain. Originally written by Karl Berry, 2020.
+% Trivial test file for \tracinglostchars >=3 feature;
+% see char-warning-pdftex.ch. Not included in make check, just for manual use.
+
+\font\x=/usr/local/texlive/2020/texmf-dist/fonts/tfm/public/knuth-lib/logo10.tfm
+\tracinglostchars=3 \x \char99\end
+
+% should get an error:
+%   ! Missing character: There is no c ("63) in font logo10.
+% compared to original TeX, log message only:
+%   Missing character: There is no c in font logo10!
