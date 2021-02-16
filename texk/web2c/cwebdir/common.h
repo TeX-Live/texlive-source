@@ -238,7 +238,7 @@ handle \TEX/, so they should be sufficient for most applications of
 @d max_texts 10239 /* number of replacement texts, must be less than 10240 */
 @d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
 @d stack_size 500 /* number of simultaneous levels of macro expansion */
-@d buf_size 1000 /* for \.{CWEAVE} */
+@d buf_size 1000 /* maximum length of input line, plus one */
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
 
 @ End of \.{COMMON} interface.
