@@ -1,5 +1,9 @@
 2021-02-16  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.h: Reshuffle byte_mem pointer.
+
+2021-02-16  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.ch,
 	* common.h: Restore comment from 'cweave.w' (3.64c).
 

@@ -1,3 +1,8 @@
+2021-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Reshuffle byte_mem pointer.
+
 2021-02-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* tracingstacklevels.ch,
