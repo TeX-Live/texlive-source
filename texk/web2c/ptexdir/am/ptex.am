@@ -1,6 +1,6 @@
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 

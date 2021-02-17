@@ -1,3 +1,8 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+	* NEWS,
+	* doc/web2c.texi: 2021 release.
+
 2021-02-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

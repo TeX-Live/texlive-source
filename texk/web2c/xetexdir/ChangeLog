@@ -1,3 +1,12 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999993 for TL21.
+
+	* char-warning-xetex.ch: doc tweak.
+	
 2021-02-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	* xetex.web: sync \tracingparagraphs fix from tex.web.

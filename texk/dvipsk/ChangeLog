@@ -1,3 +1,12 @@
+2021-02-17  Karl Berry  <karl@freefriends.org>
+
+	* NEWS,
+	* afm2tfm.c,
+	* dvips.c,
+	* dvips.h,
+	* dvips.texi,
+	* configure.ac: version 2021.1 and copyright 2021.
+
 2021-02-09  Karl Berry  <karl@freefriends.org>
 
 	* test-afm2tfm.test: rewrite as shell script.

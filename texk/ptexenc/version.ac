@@ -1,5 +1,5 @@
 dnl $Id$
-dnl   Copyright 2016-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2021 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -10,4 +10,4 @@ dnl Keep package and shared library versions the same;
 dnl see kpathsea/version.ac.
 dnl
 dnl This file is m4-included from configure.ac.
-m4_define([ptexenc_version], [1.3.9/dev])
+m4_define([ptexenc_version], [1.3.9])

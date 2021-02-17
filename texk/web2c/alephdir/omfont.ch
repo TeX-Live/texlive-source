@@ -3,7 +3,7 @@
 % This file is part of the Omega project, which
 % is based on the web2c distribution of TeX.
 % 
-% Copyright (c) 1994--2000 John Plaice and Yannis Haralambous
+% Copyright (c) 1994--2021 John Plaice and Yannis Haralambous
 % 
 % This library is free software; you can redistribute it and/or
 % modify it under the terms of the GNU Library General Public

@@ -1,3 +1,12 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]22 for TL21.
+
+	* char-warning-pdftex.ch: doc tweak.
+	
 2021-02-13  Karl Berry  <karl@freefriends.org>
 
 	* am/pdftex.am (pdftex_ch_srcs): adjust for split enctex changes.

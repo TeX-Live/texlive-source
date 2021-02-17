@@ -16,7 +16,7 @@
 % Assuming that font is findable as a system font, e.g., shown by
 %   fc-list :scalable=true family
 
-@x [30] If \tracinglostchars > 2, then promote full errors.
+@x [30] If \tracinglostchars > 2, then promote to full error.
 procedure char_warning(@!f:internal_font_number;@!c:integer);
 var old_setting: integer; {saved value of |tracing_online|}
 begin if tracing_lost_chars>0 then

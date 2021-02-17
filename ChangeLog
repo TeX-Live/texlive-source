@@ -1,3 +1,7 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+	* version.ac: 2021, no more /dev.
+
 2020-05-28  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (world): do not descend into $(texlinks_dir) if it

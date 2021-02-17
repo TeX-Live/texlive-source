@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 

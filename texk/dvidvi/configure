@@ -13466,7 +13466,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-$as_echo "#define TL_VERSION \"TeX Live 2021/dev\"" >>confdefs.h
+$as_echo "#define TL_VERSION \"TeX Live 2021\"" >>confdefs.h
 
 
 # We don't use libpathsea, so add '-DNO_DEBUG' not to overload fopen.
