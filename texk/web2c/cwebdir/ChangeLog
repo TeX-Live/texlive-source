@@ -1,5 +1,9 @@
 2021-02-17  Andreas Scherer  <https://ascherer.github.io>
 
+	* cweave.w: Fix 'Illegal hardware instruction on MacOS.
+
+2021-02-17  Andreas Scherer  <https://ascherer.github.io>
+
 	* Makefile: Main CWEB modules depend on COMMON inteface.
 
 2021-02-16  Andreas Scherer  <https://ascherer.github.io>

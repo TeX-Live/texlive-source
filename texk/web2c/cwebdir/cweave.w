@@ -1333,7 +1333,7 @@ boolean per_cent,boolean carryover@t\2\2@>)
       if (*j--=='%' && (j==out_buf || *j!='\\')) {
         *b--='%'; break;
       }
-  if (b<out_ptr) strncpy(out_buf+1,b+1,(size_t)(out_ptr-b));
+  if (b<out_ptr) memcpy(out_buf+1,b+1,(size_t)(out_ptr-b));
   out_ptr-=b-out_buf;
 }
 
