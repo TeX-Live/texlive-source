@@ -21063,12 +21063,11 @@ tangleboot-web2c: tangleboot.p $(web2c_depend)
 .pin.p:
 	$(cp_silent)cp -f $< $@
 $(tangleboot_OBJECTS): $(tangleboot_DEPENDENCIES)
-ctangle.c: ctangleboot$(EXEEXT) cwebdir/comm-w2c.h cwebdir/ctangle.w cwebdir/ctang-w2c.ch ctangleboot-sh
+ctangle.c: common-ctangle cwebdir/ctangle.w cwebdir/ctang-w2c.ch
 	@$(ctangleboot) ctangle ctang-w2c
-cweb.c: common-ctangle
+cweb.c: common-ctangle cwebdir/common.w cwebdir/comm-w2c.ch
 	@$(ctangleboot) common comm-w2c cweb.c
-common-ctangle: ctangleboot$(EXEEXT) cwebdir/common.w cwebdir/comm-w2c.ch ctangleboot-sh
-	@$(ctangleboot) common comm-w2c cweb.c
+common-ctangle: ctangleboot$(EXEEXT) cwebdir/comm-w2c.h ctangleboot-sh
 $(ctangleboot_OBJECTS): $(ctangleboot_DEPENDENCIES)
 # ctangleboot.cin and cwebboot.cin are in the distribution
 .cin.c:

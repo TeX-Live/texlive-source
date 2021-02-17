@@ -1,3 +1,8 @@
+2021-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile.in,
+	* am/bootstrap.am: Main CWEB modules depend on COMMON interface.
+
 2021-02-17  Karl Berry  <karl@tug.org>
 
 	* NEWS,

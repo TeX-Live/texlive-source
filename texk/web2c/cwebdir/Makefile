@@ -125,7 +125,7 @@ SAVEctangle.c:
 SAVEcommon.c:
 	$(CP) common.c SAVEcommon.c
 
-common.c: common.w $(CCHANGES)
+common.c: common.w $(CCHANGES) common.h
 	$(CTANGLE) common $(CCHANGES)
 
 common.o: common.c
@@ -134,13 +134,13 @@ common.o: common.c
 ctangle: ctangle.o common.o
 	$(CC) $(LINKFLAGS) -o ctangle ctangle.o common.o 
 
-ctangle.c: ctangle.w $(TCHANGES)
+ctangle.c: ctangle.w $(TCHANGES) common.h
 	$(CTANGLE) ctangle $(TCHANGES)
 
 cweave: cweave.o common.o
 	$(CC) $(LINKFLAGS) -o cweave cweave.o common.o
 
-cweave.c: cweave.w $(WCHANGES)
+cweave.c: cweave.w $(WCHANGES) common.h prod.w
 	$(CTANGLE) cweave $(WCHANGES)
 
 doc: $(SOURCES:.w=.dvi)
