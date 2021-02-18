@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.0--- February 2021
+% Version 4.0 --- February 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -2418,7 +2418,7 @@ of identifiers in case labels.
 If the first identifier is the keyword `\&{operator}', we give up;
 users who want to index definitions of overloaded \CPLUSPLUS/ operators
 should say, for example, `\.{@@!@@\^\\\&\{operator\} \$+\{=\}\$@@>}' (or,
-more properly alphebetized,
+more properly alphabetized,
 `\.{@@!@@:operator+=\}\{\\\&\{operator\} \$+\{=\}\$@@>}').
 
 @d no_ident_found (token_pointer)0 /* distinct from any identifier token */
@@ -4119,7 +4119,7 @@ static void finish_C(boolean);@/
 
 @ @c
 static void
-finish_C(@t\1\1@> /* finishes a definition or a \Cee\ part */
+finish_C(@t\1\1@> /* finishes a definition or a \CEE/ part */
   boolean visible@t\2\2@>) /* nonzero if we should produce \TeX\ output */
 {
   text_pointer p; /* translation of the scraps */
