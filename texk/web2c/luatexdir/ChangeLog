@@ -1,33 +1,33 @@
-2012-02-14 Luigi Scarso <luigi.scarso@gmail.com> 
+2012-02-14 Luigi Scarso <luigi.scarso@gmail.com>
     * callback for nesting level used in tracingmacros
 
-2021-02-01 Luigi Scarso <luigi.scarso@gmail.com> 
+2021-02-01 Luigi Scarso <luigi.scarso@gmail.com>
     * two TeX January 2021 DEK buglet fixes (H.Hagen)
 
-2021-01-31 Luigi Scarso <luigi.scarso@gmail.com>  
+2021-01-31 Luigi Scarso <luigi.scarso@gmail.com>
     * mark math glyphs as protected (in order to prevent processing
       as text in base mode) (H.Hagen)
     * removed width/ic compensation for traditional math code path
       (see [Dev-luatex] Duplicated italic correction in do_delimiter ) (H.Hagen)
 
-2021-01-30 Luigi Scarso <luigi.scarso@gmail.com> 
+2021-01-30 Luigi Scarso <luigi.scarso@gmail.com>
     * level_max and level_chr determing what gets put in front of
       macro tracing lines (variant on suggestion by PO on implementors list)(H. Hagen)
 
-2021-01-13 Luigi Scarso <luigi.scarso@gmail.com> 
+2021-01-13 Luigi Scarso <luigi.scarso@gmail.com>
     * pdftex compatibility hack (H. Hagen)
 
-2020-12-13 Luigi Scarso <luigi.scarso@gmail.com> 
+2020-12-13 Luigi Scarso <luigi.scarso@gmail.com>
     * fixed Hyphenation issue regarding frozen glyph nodes (M.F. Krüger)
 
-2020-12-12 Luigi Scarso <luigi.scarso@gmail.com> 
+2020-12-12 Luigi Scarso <luigi.scarso@gmail.com>
     * fixed  luatex segfault with huge romannumeral overfull (H. Hagen)
     * automake (GNU automake) 1.16.3
 
-2020-11-08 Luigi Scarso <luigi.scarso@gmail.com> 
+2020-11-08 Luigi Scarso <luigi.scarso@gmail.com>
     * convert assert(is_simple_character(wordstart)) to tex error
 
-2020-10-30 Luigi Scarso <luigi.scarso@gmail.com> 
+2020-10-30 Luigi Scarso <luigi.scarso@gmail.com>
     * fixed a typo in w32 code in errors.c (A. Kakuto)
 
 2020-10-04 Luigi Scarso <luigi.scarso@gmail.com>
@@ -46,7 +46,7 @@
     * fixed: \tracinglostchars>=3 is an error (no fatal error)
 
 2020-07-26 Luigi Scarso <luigi.scarso@gmail.com>
-    * New value for \tracinglostchars: \tracinglostchars>=3 is a fatal error 
+    * New value for \tracinglostchars: \tracinglostchars>=3 is a fatal error
 
 2020-07-12 Luigi Scarso <luigi.scarso@gmail.com>
     * Original reports:
@@ -1235,7 +1235,7 @@
 
 2010-05-13  Taco Hoekwater <taco@luatex.org>
 
-	* utils/synctex.c, utils/synctex-luatex.h: update from J�rome
+	* utils/synctex.c, utils/synctex-luatex.h: update from Jérôme 
 	Laurens, bringing luatex in-line with the core synctex distribution
 	* luatex_svnversion.h: updated to reflect the version of 0.60.x branch
 	
