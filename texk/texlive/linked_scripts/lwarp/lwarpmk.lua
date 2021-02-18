@@ -1,8 +1,8 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016-2020 Brian Dunn
+-- Copyright 2016-2021 Brian Dunn
 
-printversion = "v0.83"
+printversion = "v0.895"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -32,10 +32,11 @@ lwarpmk pdftohtml [-p project]:
 lwarpmk pdftosvg <list of file names>: Converts each PDF file to SVG.
 lwarpmk epstopdf <list of file names>: Converts each EPS file to PDF.
 lwarpmk clean [-p project]: Remove *.aux, *.toc, *.lof/t,
-    *.idx, *.ind, *.log, *_html_inc.*, .gl*,
+    *.idx, *.ind, *.bbl, *.log, *_html_inc.*, .gl*,
     *_html.pdf, *_html.html, *_html.sidetoc
 lwarpmk cleanall [-p project]: Remove auxiliary files, project.pdf, *.html
 lwarpmk cleanlimages: Removes all images from the "lateximages" directory.
+lwarpmk -v: Print the version number.
 lwarpmk -h: Print this help message.
 lwarpmk --help: Print this help message.
 
@@ -379,12 +380,13 @@ function removeaux ()
 -- Remove auxiliary files:
 -- All .aux files are removed since there may be many bbl*.aux files.
 -- Also removes sourcename_html.pdf, sourcename_html.html,
--- and sourcename_html.sidetoc.
+-- and sourcename_html.sidetoc, plus comment_*.cut.
 --
 os.execute ( rmname .. " *.aux " ..
     sourcename ..".toc " .. sourcename .. "_html.toc " ..
     sourcename ..".lof " .. sourcename .. "_html.lof " ..
     sourcename ..".lot " .. sourcename .. "_html.lot " ..
+    sourcename ..".bbl " .. sourcename .. "_html.bbl " ..
     " *.idx " ..
     " *.ind " ..
     sourcename ..".ps " .. sourcename .."_html.ps " ..
@@ -393,7 +395,8 @@ os.execute ( rmname .. " *.aux " ..
     sourcename .. "_html.pdf " ..
     sourcename .. "_html.html " ..
     sourcename .. "_html.sidetoc " ..
-    " *_html_inc.* "
+    " *_html_inc.* " ..
+    " comment_*.cut"
     )
 end
 
@@ -889,6 +892,12 @@ print ("lwarpmk: Done.")
 
 elseif (arg[1] == nil) then
 printhelp ()
+
+-- lwarpmk -v:
+
+elseif (arg[1] == "-v" ) then
+-- The version number has already been printed
+-- by the lwarpmk intro.
 
 -- lwarpmk -h or lwarpmk --help :
 
