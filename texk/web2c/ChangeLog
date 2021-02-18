@@ -1,3 +1,9 @@
+2021-02-18  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (Common options): mention -cnf-line.
+	Also, use https instead of http for most urls,
+	update for 2021, etc.
+
 2021-02-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: Reshuffle a few variables (upstream).
