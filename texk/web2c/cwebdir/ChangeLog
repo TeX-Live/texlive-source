@@ -1,5 +1,9 @@
 2021-02-18  Andreas Scherer  <https://ascherer.github.io>
 
+	* cweave.w: Purge unused macro definition.
+
+2021-02-18  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctangle.c,
 	* ctangle.w,
 	* cweave.w: Reshuffle a few variables (upstream).
