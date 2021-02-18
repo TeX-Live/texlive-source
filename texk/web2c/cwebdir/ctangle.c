@@ -293,8 +293,8 @@ text_pointer last_unnamed;
 output_state cur_state;
 
 output_state stack[stack_size+1];
-stack_pointer stack_ptr;
 stack_pointer stack_end= stack+stack_size;
+stack_pointer stack_ptr;
 
 /*:32*//*37:*/
 #line 362 "ctangle.w"

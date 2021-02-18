@@ -287,8 +287,8 @@ typedef output_state *stack_pointer;
 output_state cur_state; /* |cur_end|, |cur_byte|, |cur_name|, |cur_repl|,
   and |cur_section| */
 output_state stack[stack_size+1]; /* info for non-current levels */
-stack_pointer stack_ptr; /* first unused location in the output state stack */
 stack_pointer stack_end=stack+stack_size; /* end of |stack| */
+stack_pointer stack_ptr; /* first unused location in the output state stack */
 
 @ To get the output process started, we will perform the following
 initialization steps. We may assume that |text_info->text_link| is nonzero,

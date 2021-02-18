@@ -1,5 +1,11 @@
 2021-02-18  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctangle.c,
+	* ctangle.w,
+	* cweave.w: Reshuffle a few variables (upstream).
+
+2021-02-18  Andreas Scherer  <https://ascherer.github.io>
+
 	* cweave.w: Fix an 'aspell'ing error and one old macro call.
 
 2021-02-17  Andreas Scherer  <https://ascherer.github.io>

@@ -335,11 +335,11 @@ Thus, we usually have |*text_ptr==tok_ptr|.
 @<Global...@>=
 token tok_mem[max_toks]; /* tokens */
 token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
-token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
 token_pointer tok_ptr; /* first unused position in |tok_mem| */
-text_pointer text_ptr; /* first unused position in |tok_start| */
-text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
 token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
+token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
+text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
+text_pointer text_ptr; /* first unused position in |tok_start| */
 text_pointer max_text_ptr; /* largest value of |text_ptr| */
 
 @ @<Set init...@>=
@@ -2418,7 +2418,7 @@ of identifiers in case labels.
 If the first identifier is the keyword `\&{operator}', we give up;
 users who want to index definitions of overloaded \CPLUSPLUS/ operators
 should say, for example, `\.{@@!@@\^\\\&\{operator\} \$+\{=\}\$@@>}' (or,
-more properly alphabetized,
+more properly alpha\-betized,
 `\.{@@!@@:operator+=\}\{\\\&\{operator\} \$+\{=\}\$@@>}').
 
 @d no_ident_found (token_pointer)0 /* distinct from any identifier token */
@@ -3608,8 +3608,8 @@ typedef output_state *stack_pointer;
 @<Global...@>=
 output_state cur_state; /* |cur_end|, |cur_tok|, |cur_mode| */
 output_state stack[stack_size]; /* info for non-current levels */
-stack_pointer stack_ptr; /* first unused location in the output state stack */
 stack_pointer stack_end=stack+stack_size-1; /* end of |stack| */
+stack_pointer stack_ptr; /* first unused location in the output state stack */
 stack_pointer max_stack_ptr; /* largest value assumed by |stack_ptr| */
 
 @ @<Set init...@>=
