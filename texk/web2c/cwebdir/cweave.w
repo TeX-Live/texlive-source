@@ -1291,8 +1291,8 @@ be output.
 
 @<Global...@>=
 char out_buf[line_length+1]; /* assembled characters */
-char *out_ptr; /* last character in |out_buf| */
 char *out_buf_end = out_buf+line_length; /* end of |out_buf| */
+char *out_ptr; /* last character in |out_buf| */
 int out_line; /* number of next line to be output */
 
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
@@ -2107,12 +2107,12 @@ typedef scrap *scrap_pointer;
 @<Global...@>=
 scrap scrap_info[max_scraps]; /* memory array for scraps */
 scrap_pointer scrap_info_end=scrap_info+max_scraps -1; /* end of |scrap_info| */
-scrap_pointer pp; /* current position for reducing productions */
 scrap_pointer scrap_base; /* beginning of the current scrap sequence */
 scrap_pointer scrap_ptr; /* ending of the current scrap sequence */
+scrap_pointer max_scr_ptr; /* largest value assumed by |scrap_ptr| */
+scrap_pointer pp; /* current position for reducing productions */
 scrap_pointer lo_ptr; /* last scrap that has been examined */
 scrap_pointer hi_ptr; /* first scrap that has not been examined */
-scrap_pointer max_scr_ptr; /* largest value assumed by |scrap_ptr| */
 
 @ @<Set init...@>=
 scrap_base=scrap_info+1;
