@@ -1,3 +1,7 @@
+2021-02-18  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, eptex_version.h: e-pTeX version 210118 for TL21.
+
 2020-11-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* fam256.ch: Adapt to changes in ptex-base.ch.

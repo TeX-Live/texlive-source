@@ -1,3 +1,8 @@
+2021-02-18  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch, ptex_version.h: pTeX version p3.9.0 for TL21.
+	(Forgot to update version number on 2020-02-05.)
+
 2021-02-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* ptexdir/ptex-base.ch: Fix Pascal variable in comment.

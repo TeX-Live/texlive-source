@@ -61,7 +61,9 @@
 % (2018-04-14) HK  pTeX p3.8.1 Bug fix for discontinuous KINSOKU table.
 % (2019-02-03) HK  pTeX p3.8.2 Change \inhibitglue, add \disinhibitglue.
 % (2019-10-14) HY  pTeX p3.8.3 Allow getting \kansujichar.
-%
+% (2021-02-18) HK  pTeX p3.9.0. Add \ifjfont and \iftfont (in 2020-02-06, by HY),
+%                  Bug fix for getting \kansujichar,
+%                  based on TeX 3.141592653
 
 @x
 % Here is TeX material that gets inserted after \input webmac
@@ -75,9 +77,9 @@
 @d banner_k==TeX_banner_k
 @y
 @d pTeX_version=3
-@d pTeX_minor_version=8
-@d pTeX_revision==".3"
-@d pTeX_version_string=='-p3.8.3' {current \pTeX\ version}
+@d pTeX_minor_version=9
+@d pTeX_revision==".0"
+@d pTeX_version_string=='-p3.9.0' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.141592653',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
