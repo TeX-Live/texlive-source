@@ -30,7 +30,7 @@ is modified.
 
 
 @x Section 7.
-@d chunk_marker 0
+  for section names */
 
 @<Common code...@>=
 typedef struct name_info {
@@ -47,15 +47,15 @@ typedef name_info *name_pointer; /* pointer into array of \&{name\_info}s */
 typedef name_pointer *hash_pointer;
 extern char byte_mem[]; /* characters of names */
 extern char *byte_mem_end; /* end of |byte_mem| */
+extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_info name_dir[]; /* information about names */
 extern name_pointer name_dir_end; /* end of |name_dir| */
 extern name_pointer name_ptr; /* first unused position in |name_dir| */
-extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
 @y
-@d chunk_marker 0
+  for section names */
 
 @f huge extern
 
@@ -131,19 +131,19 @@ xmem->num=0; /* sentinel value */
 @x Section 30. (to please Borland's C++, version 4.02)
 token tok_mem[max_toks]; /* tokens */
 token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
-token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
 token_pointer tok_ptr; /* first unused position in |tok_mem| */
-text_pointer text_ptr; /* first unused position in |tok_start| */
-text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
 token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
+token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
+text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
+text_pointer text_ptr; /* first unused position in |tok_start| */
 @y
 token tok_mem[max_toks]; /* tokens */
 token_pointer tok_mem_end; /* end of |tok_mem| */
-token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
 token_pointer tok_ptr; /* first unused position in |tok_mem| */
-text_pointer text_ptr; /* first unused position in |tok_start| */
-text_pointer tok_start_end; /* end of |tok_start| */
 token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
+token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
+text_pointer tok_start_end; /* end of |tok_start| */
+text_pointer text_ptr; /* first unused position in |tok_start| */
 @z
 
 @x Section 31. (goes with the previous change)

@@ -1,3 +1,8 @@
+2021-02-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Replace 'boolean' values upstream.
+
 2021-02-18  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (Common options): mention -cnf-line.

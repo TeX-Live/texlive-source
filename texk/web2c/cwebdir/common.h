@@ -31,8 +31,8 @@ First comes general stuff:
 @s uint8_t int
 @s uint16_t int
 
-@d ctangle 0
-@d cweave 1
+@d ctangle false
+@d cweave true
 
 @<Common code...@>=
 typedef bool boolean;
@@ -98,7 +98,6 @@ extern char *limit; /* points to the last character in the buffer */
 @d rlink dummy.Rlink /* right link in binary search tree for section names */
 @d root name_dir->rlink /* the root of the binary search tree
   for section names */
-@d chunk_marker 0
 
 @<Common code...@>=
 typedef struct name_info {

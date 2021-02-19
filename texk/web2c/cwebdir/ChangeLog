@@ -1,3 +1,20 @@
+2021-02-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-bs.ch,
+	* comm-mac.ch,
+	* com-ql.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweave.w: Replace 'boolean' values upstream.
+
 2021-02-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w: Purge unused macro definition.

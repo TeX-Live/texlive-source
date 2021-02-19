@@ -155,7 +155,7 @@ the routine as if it would work.
   sprintf(idx_file_name,"%s.idx",name_pos);
   sprintf(scn_file_name,"%s.scn",name_pos);
   sprintf(C_file_name,"%s.c",name_pos);
-  found_web=1;
+  found_web=true;
 }
 @y
 @<Make |web_file_name|...@>=
@@ -173,7 +173,7 @@ the routine as if it would work.
   sprintf(idx_file_name,"%s_idx",name_pos);
   sprintf(scn_file_name,"%s_scn",name_pos);
   sprintf(C_file_name,"%s_c",name_pos);
-  found_web=1;
+  found_web=true;
 }
 @z
 
@@ -188,7 +188,7 @@ the routine as if it would work.
       sprintf(change_file_name,"%s.ch",*argv);
     else strcpy(change_file_name,*argv);
   }
-  found_change=1;
+  found_change=true;
 }
 @y
 @ @<Make |change_file_name|...@>=
@@ -199,7 +199,7 @@ the routine as if it would work.
     if (dot_pos==NULL)
       sprintf(change_file_name,"%s_ch",*argv);
     else strcpy(change_file_name,*argv);
-    found_change=1;
+    found_change=true;
   }
 }
 @z
@@ -224,7 +224,7 @@ the routine as if it would work.
       sprintf(scn_file_name,"%s.scn",*argv);
     }
   }
-  found_out=1;
+  found_out=true;
 }
 @y
 @ @<Override...@>=
@@ -245,7 +245,7 @@ the routine as if it would work.
       sprintf(scn_file_name,"%s_scn",*argv);
     }
   }
-  found_out=1;
+  found_out=true;
 }
 @z
 

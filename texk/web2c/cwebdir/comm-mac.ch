@@ -18,12 +18,12 @@ support |feof|, |getc|, and |ungetc| you may have to change things here.
 static boolean input_ln(FILE *);@/
 
 @ @c
-static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns 0 */
+static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns |false| */
 FILE *fp@t\2\2@>) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(0);  /* we have hit end-of-file */
+  if (feof(fp)) return(false);  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
@@ -32,9 +32,9 @@ FILE *fp@t\2\2@>) /* what file to read from */
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
     }
-  if (c==EOF && limit==buffer) return(0);  /* there was nothing after
+  if (c==EOF && limit==buffer) return(false);  /* there was nothing after
     the last newline */
-  return(1);
+  return(true);
 }
 @y
 @ In the unlikely event that your standard I/O library does not
@@ -45,27 +45,30 @@ line endings, so that \.{CWEB} will works with ASCII files stored in
 \UNIX/, {\mc DOS} or {\mc MAC} format.
 @^system dependencies@>
 
-@c
-static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns 0 */
+@<Predecl...@>=
+static boolean input_ln(FILE *);@/
+
+@ @c
+static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns |false| */
 FILE *fp@t\2\2@>) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(0);  /* we have hit end-of-file */
+  if (feof(fp)) return(false);  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
-  while (1) {
+  while (true) {
     c = getc(fp);
-    if (c==EOF)  return (limit!=buffer); /* 0, if there was nothing after
+    if (c==EOF)  return (limit!=buffer); /* |false|, if there was nothing after
       the last newline */
     else if (c=='\n' || c=='\r') { /* we have hit end-of-line */
       int d = getc(fp);
       if (c+d!='\n'+'\r') /* no combination |"\n\r"| or |"\r\n"| */
         ungetc(d,fp);
-      return (1);
+      return (true);
     }
     else if (k>buffer_end) {
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
-      return (1);
+      return (true);
 @.Input line too long@>
     }
     else

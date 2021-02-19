@@ -355,8 +355,8 @@ const char *first, /* position of first character of string */
 size_t l, /* length of identifier */
 eight_bits t@t\2\2@>) /* desired |ilk| */
 {
-  if (length(p)!=l) return 0;
-  if (p->ilk!=t && !(t==normal && abnormal(p))) return 0;
+  if (length(p)!=l) return false;
+  if (p->ilk!=t && !(t==normal && abnormal(p))) return false;
   return !strncmp(first,p->byte_start,l);
 }
 
@@ -594,8 +594,8 @@ static eight_bits skip_TeX(void);@/
 @ @c
 static void
 skip_limbo(void) {
-  while(1) {
-    if (loc>limit && get_line()==0) return;
+  while(true) {
+    if (loc>limit && get_line()==false) return;
     *(limit+1)='@@';
     while (*loc!='@@') loc++; /* look for '@@', then skip two chars */
     if (loc++ <=limit) { int c=ccode[(eight_bits)*loc++];
@@ -617,8 +617,8 @@ assumed to exist at the very end of the file.
 static eight_bits
 skip_TeX(void) /* skip past pure \TEX/ code */
 {
-  while (1) {
-    if (loc>limit && get_line()==0) return(new_section);
+  while (true) {
+    if (loc>limit && get_line()==false) return(new_section);
     *(limit+1)='@@';
     while (*loc!='@@' && *loc!='|') loc++;
     if (*loc++ =='|') return('|');
@@ -688,15 +688,15 @@ static eight_bits
 get_next(void) /* produces the next input token */
 {
   eight_bits c; /* the current character */
-  while (1) {
+  while (true) {
     @<Check if we're at the end of a preprocessor command@>@;
-    if (loc>limit && get_line()==0) return(new_section);
+    if (loc>limit && get_line()==false) return(new_section);
     c=*(loc++);
     if (xisdigit(c) || c=='.') @<Get a constant@>@;
     else if (c=='\'' || c=='"'@|
            || ((c=='L' || c=='u' || c=='U')&&(*loc=='\'' || *loc=='"'))@|
            || ((c=='u' && *loc=='8')&&(*(loc+1)=='\'' || *(loc+1)=='"'))@|
-           || (c=='<' && sharp_include_line==1))
+           || (c=='<' && sharp_include_line==true))
         @<Get a string@>@;
     else if (xisalpha(c) || isxalpha(c) || ishigh(c))
       @<Get an identifier@>@;
@@ -722,10 +722,10 @@ for |ord|, since |get_next| changes |ord| into a string.
 @d right_preproc 0217 /* ends a preprocessor command */
 
 @<Glob...@>=
-boolean preprocessing=0; /* are we scanning a preprocessor command? */
+boolean preprocessing=false; /* are we scanning a preprocessor command? */
 
 @ @<Raise prep...@>= {
-  preprocessing=1;
+  preprocessing=true;
   @<Check if next token is |include|@>@;
   return (left_preproc);
 }
@@ -735,11 +735,11 @@ a file name in lines that start with \.{\#include}.  We must treat this file
 name as a string.
 
 @<Glob...@>=
-boolean sharp_include_line=0; /* are we scanning a |#include| line? */
+boolean sharp_include_line=false; /* are we scanning a |#include| line? */
 
 @ @<Check if next token is |include|@>=
 while (loc<=buffer_end-7 && xisspace(*loc)) loc++;
-if (loc<=buffer_end-6 && strncmp(loc,"include",7)==0) sharp_include_line=1;
+if (loc<=buffer_end-6 && strncmp(loc,"include",7)==0) sharp_include_line=true;
 
 @ When we get to the end of a preprocessor line,
 we lower the flag and send a code |right_preproc|, unless
@@ -747,9 +747,9 @@ the last character was a \.\\.
 
 @<Check if we're at...@>=
   while (loc==limit-1 && preprocessing && *loc=='\\')
-    if (get_line()==0) return(new_section); /* still in preprocessor mode */
+    if (get_line()==false) return(new_section); /* still in preprocessor mode */
   if (loc>=limit && preprocessing) {
-    preprocessing=sharp_include_line=0;
+    preprocessing=sharp_include_line=false;
     return(right_preproc);
   }
 
@@ -845,13 +845,13 @@ convention, but do not allow the string to be longer than |longest_name|.
     delim=*loc++; *++id_loc=delim;
   }
   if (delim=='<') delim='>'; /* for file names in |#include| lines */
-  while (1) {
+  while (true) {
     if (loc>=limit) {
       if(*(limit-1)!='\\') {
         err_print("! String didn't end"); loc=limit; break;
 @.String didn't end@>
       }
-      if(get_line()==0) {
+      if(get_line()==false) {
         err_print("! Input ended in middle of string"); loc=buffer; break;
 @.Input ended in middle of string@>
       }
@@ -919,8 +919,8 @@ character of the name.)
 
 @ @<Put section name...@>=
 k=section_text;
-while (1) {
-  if (loc>limit && get_line()==0) {
+while (true) {
+  if (loc>limit && get_line()==false) {
     err_print("! Input ended in section name");
 @.Input ended in section name@>
     loc=buffer+1; break;
@@ -1020,7 +1020,7 @@ static void phase_one(void);@/
 static void
 phase_one(void) {
   phase=1; reset_input(); section_count=0;
-  skip_limbo(); change_exists=0;
+  skip_limbo(); change_exists=false;
   while (!input_has_ended)
     @<Store cross-reference data for the current section@>@;
   changed_section[section_count]=change_exists;
@@ -1033,7 +1033,7 @@ phase_one(void) {
 {
   if (++section_count==max_sections) overflow("section number");
   changed_section[section_count]=changing;
-     /* it will become 1 if any line changes */
+     /* it will become |true| if any line changes */
   if (*(loc-1)=='*' && show_progress) {
     printf("*%d",section_count);
     update_terminal; /* print a progress report */
@@ -1041,7 +1041,7 @@ phase_one(void) {
   @<Store cross-references in the \TEX/ part of a section@>@;
   @<Store cross-references in the definition part of a section@>@;
   @<Store cross-references in the \CEE/ part of a section@>@;
-  if (changed_section[section_count]) change_exists=1;
+  if (changed_section[section_count]) change_exists=true;
 }
 
 @ The |C_xref| subroutine stores references to identifiers in
@@ -1119,7 +1119,7 @@ enclosed in \.{@@\^}$\,\ldots\,$\.{@@>} or \.{@@.}$\,\ldots\,$\.{@@>}
 or \.{@@:}$\,\ldots\,$\.{@@>}.
 
 @<Store cross-references in the \T...@>=
-while (1) {
+while (true) {
   switch (next_control=skip_TeX()) {
     case translit_code: err_print("! Use @@l in limbo only"); continue;
 @.Use @@l in limbo...@>
@@ -1264,8 +1264,8 @@ name_pointer p) /* print anomalies in subtree |p| */
   if (p) {
     section_check(p->llink);
     cur_xref=(xref_pointer)p->xref;
-    if (cur_xref->num==file_flag) {an_output=1; cur_xref=cur_xref->xlink;}
-    else an_output=0;
+    if (cur_xref->num==file_flag) {an_output=true; cur_xref=cur_xref->xlink;}
+    else an_output=false;
     if (cur_xref->num <def_flag) {
       fputs("\n! Never defined: <",stdout);
       print_section_name(p); putchar('>'); mark_harmless;
@@ -1297,9 +1297,9 @@ int out_line; /* number of next line to be output */
 
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
 and moves any remaining characters to the beginning of the next line.
-If the |per_cent| parameter is 1, a |'%'| is appended to the line
+If the |per_cent| parameter is |true|, a |'%'| is appended to the line
 that is being output; in this case the breakpoint |b| should be strictly
-less than |out_buf_end|. If the |per_cent| parameter is |0|,
+less than |out_buf_end|. If the |per_cent| parameter is |false|,
 trailing blanks are suppressed.
 The characters emptied from the buffer form a new line of output;
 if the |carryover| parameter is true, a |"%"| in that line will be
@@ -1350,11 +1350,11 @@ static void
 finish_line(void) /* do this at the end of a line */
 {
   char *k; /* pointer into |buffer| */
-  if (out_ptr>out_buf) flush_buffer(out_ptr,0,0);
+  if (out_ptr>out_buf) flush_buffer(out_ptr,false,false);
   else {
     for (k=buffer; k<=limit; k++)
       if (!(xisspace(*k))) return;
-    flush_buffer(out_buf,0,0);
+    flush_buffer(out_buf,false,false);
   }
 }
 
@@ -1405,13 +1405,13 @@ static void
 break_out(void) /* finds a way to break the output line */
 {
   char *k=out_ptr; /* pointer into |out_buf| */
-  while (1) {
+  while (true) {
     if (k==out_buf) @<Print warning message, break the line, |return|@>@;
     if (*k==' ') {
-      flush_buffer(k,0,1); return;
+      flush_buffer(k,false,true); return;
     }
     if (*(k--)=='\\' && *k!='\\') { /* we've decreased |k| */
-      flush_buffer(k,1,1); return;
+      flush_buffer(k,true,true); return;
     }
   }
 }
@@ -1427,7 +1427,7 @@ line by putting a |'%'| just before the last character.
 @.Line had to be broken@>
   term_write(out_buf+1, out_ptr-out_buf-1);
   new_line; mark_harmless;
-  flush_buffer(out_ptr-1,1,1); return;
+  flush_buffer(out_ptr-1,true,true); return;
 }
 
 @ Here is a macro that outputs a section number in decimal notation.
@@ -1491,8 +1491,8 @@ static void
 copy_limbo(void)
 {
   char c;
-  while (1) {
-    if (loc>limit && (finish_line(), get_line()==0)) return;
+  while (true) {
+    if (loc>limit && (finish_line(), get_line()==false)) return;
     *(limit+1)='@@';
     while (*loc!='@@') out(*(loc++));
     if (loc++<=limit) {
@@ -1526,8 +1526,8 @@ static eight_bits
 copy_TeX(void)
 {
   char c; /* current character being copied */
-  while (1) {
-    if (loc>limit && (finish_line(), get_line()==0)) return(new_section);
+  while (true) {
+    if (loc>limit && (finish_line(), get_line()==false)) return(new_section);
     *(limit+1)='@@';
     while ((c=*(loc++))!='|' && c!='@@') {
       out(c);
@@ -1556,10 +1556,10 @@ boolean is_long_comment, /* is this a traditional \CEE/ comment? */
 int bal@t\2\2@>) /* brace balance */
 {
   char c; /* current character being copied */
-  while (1) {
+  while (true) {
     if (loc>limit) {
       if (is_long_comment) {
-        if (get_line()==0) {
+        if (get_line()==false) {
           err_print("! Input ended in mid-comment");
 @.Input ended in mid-comment@>
           loc=buffer+1; goto done;
@@ -1615,7 +1615,7 @@ enough right braces to keep \TEX/ happy.
 
 @<Clear |bal|...@>=
 if (phase==2) while (bal-- >0) app_tok('}');
-return(0);
+return(false);
 
 @** Parsing.
 The most intricate part of \.{CWEAVE} is its mechanism for converting
@@ -2106,7 +2106,7 @@ typedef scrap *scrap_pointer;
 
 @<Global...@>=
 scrap scrap_info[max_scraps]; /* memory array for scraps */
-scrap_pointer scrap_info_end=scrap_info+max_scraps -1; /* end of |scrap_info| */
+scrap_pointer scrap_info_end=scrap_info+max_scraps-1; /* end of |scrap_info| */
 scrap_pointer scrap_base; /* beginning of the current scrap sequence */
 scrap_pointer scrap_ptr; /* ending of the current scrap sequence */
 scrap_pointer max_scr_ptr; /* largest value assumed by |scrap_ptr| */
@@ -3082,7 +3082,7 @@ than to squeeze the last bit of space from the memory arrays.
 @d safe_scrap_incr 10
 
 @<Reduce the scraps using the productions until no more rules apply@>=
-while (1) {
+while (true) {
   @<Make sure the entries |pp| through |pp+3| of |cat| are defined@>@;
   if (tok_ptr+safe_tok_incr>tok_mem_end) {
     if (tok_ptr>max_tok_ptr) max_tok_ptr=tok_ptr;
@@ -3249,7 +3249,7 @@ switch (next_control) {
     app_scrap(exp,yes_math);@+break;
   case string: case constant: case verbatim:
     @<Append a string or constant@>@;@+break;
-  case identifier: app_cur_id(1);@+break;
+  case identifier: app_cur_id(true);@+break;
   case TeX_string:
     @<Append a \TEX/ string, without forming a scrap@>@;@+break;
   case '/': case '.':
@@ -3447,7 +3447,7 @@ while (id_first<id_loc)
 app(@q{@>'}');
 
 @ The function |app_cur_id| appends the current identifier to the
-token list; it also builds a new scrap if |scrapping==1|.
+token list; it also builds a new scrap if |scrapping==true|.
 
 @<Predec...@>=
 static void app_cur_id(boolean);@/
@@ -3746,7 +3746,7 @@ make_output(void) /* outputs the equivalents of tokens */
   boolean save_mode; /* value of |cur_mode| before a sequence of breaks */
   app(end_translation); /* append a sentinel */
   freeze_text; push_level(text_ptr-1);
-  while (1) {
+  while (true) {
     a=get_output();
     reswitch: switch(a) {
       case end_translation: return;
@@ -3756,7 +3756,7 @@ make_output(void) /* outputs the equivalents of tokens */
 @.\\MRL@>
       case noop: case inserted: break;
       case cancel: case big_cancel: c=0; b=a;
-        while (1) {
+        while (true) {
           a=get_output();
           if (a==inserted) continue;
           if ((a<indent && !(b==big_cancel&&a==' ')) || a>big_force) break;
@@ -3809,7 +3809,7 @@ if (is_tiny(cur_name)) {
     out('\\');
   out((cur_name->byte_start)[0]);
 }
-else out_name(cur_name,1);
+else out_name(cur_name,true);
 
 @ The current mode does not affect the behavior of \.{CWEAVE}'s output routine
 except when we are outputting control tokens.
@@ -3825,7 +3825,7 @@ if (a<break_space || a==preproc_line) {
 @.\\8@>
     if (a==opt) {
       b=get_output(); /* |opt| is followed by a digit */
-      if (b!='0' || force_lines==0) out(b)@;
+      if (b!='0' || force_lines==false) out(b)@;
       else out_str("{-1}"); /* |force_lines| encourages more \.{@@\v} breaks */
     }
   } else if (a==opt) b=get_output(); /* ignore digit following |opt| */
@@ -3840,7 +3840,7 @@ is suppressed (i.e., a line break that follows `\.{\\Y\\B}').
 
 @<Look ahead for st...@>= {
   b=a; save_mode=cur_mode; c=0;
-  while (1) {
+  while (true) {
     a=get_output();
     if (a==inserted) continue;
     if (a==cancel || a==big_cancel) {
@@ -3885,8 +3885,8 @@ input buffer and the translation process uses the end of the active
   out_str("\\X");
 @.\\X@>
   cur_xref=(xref_pointer)cur_name->xref;
-  if (cur_xref->num==file_flag) {an_output=1; cur_xref=cur_xref->xlink;}
-  else an_output=0;
+  if (cur_xref->num==file_flag) {an_output=true; cur_xref=cur_xref->xlink;}
+  else an_output=false;
   if (cur_xref->num>=def_flag) {
     out_section(cur_xref->num-def_flag);
     if (phase==3) {
@@ -3957,7 +3957,7 @@ equals the delimiter that began the string being copied.
 
 @<Copy the \CEE/ text into...@>=
 j=limit+1; *j='|'; delim=0;
-while (1) {
+while (true) {
   if (k>=k_limit) {
     fputs("\n! C text in section name didn't end: <",stdout);
 @.C text...didn't end@>
@@ -3998,8 +3998,8 @@ static void
 phase_two(void) {
 reset_input(); if (show_progress) fputs("\nWriting the output file...",stdout);
 @.Writing the output file...@>
-section_count=0; format_visible=1; copy_limbo();
-finish_line(); flush_buffer(out_buf,0,0); /* insert a blank line, it looks nice */
+section_count=0; format_visible=true; copy_limbo();
+finish_line(); flush_buffer(out_buf,false,false); /* insert a blank line, it looks nice */
 while (!input_has_ended) @<Translate the current section@>@;
 }
 
@@ -4014,7 +4014,7 @@ and `|emit_space_if_needed|' are able to handle the situation:
 @d save_position save_line=out_line; save_place=out_ptr
 @d emit_space_if_needed if (save_line!=out_line || save_place!=out_ptr)
   out_str("\\Y");
-  space_checked=1
+  space_checked=true;
 @.\\Y@>
 
 @<Global...@>=
@@ -4023,8 +4023,8 @@ char *save_place; /* former value of |out_ptr| */
 int sec_depth; /* the integer, if any, following \.{@@*} */
 boolean space_checked; /* have we done |emit_space_if_needed|? */
 boolean format_visible; /* should the next format declaration be output? */
-boolean doing_format=0; /* are we outputting a format declaration? */
-boolean group_found=0; /* has a starred section occurred? */
+boolean doing_format=false; /* are we outputting a format declaration? */
+boolean group_found=false; /* has a starred section occurred? */
 
 @ @<Translate the current section@>= {
   section_count++;
@@ -4058,7 +4058,7 @@ else {
       sec_depth = sec_depth*10 + (*loc) -'0';
   }
   while (*loc == ' ') loc++; /* remove spaces before group title */
-  group_found=1;
+  group_found=true;
   out_str("\\N");
 @.\\N@>
   {@+ char s[32];@+sprintf(s,"{%d}",sec_depth+1);@+out_str(s);@+}
@@ -4094,13 +4094,13 @@ index entries are not copied and \CEE/ text within \pb\ is translated.
 the token memory is in its initial empty state.
 
 @<Translate the d...@>=
-space_checked=0;
+space_checked=false;
 while (next_control<=definition) { /* |format_code| or |definition| */
   init_stack;
   if (next_control==definition) @<Start a macro definition@>@;
   else @<Start a format definition@>@;
-  outer_parse(); finish_C(format_visible); format_visible=1;
-  doing_format=0;
+  outer_parse(); finish_C(format_visible); format_visible=true;
+  doing_format=false;
 }
 
 @ The |finish_C| procedure outputs the translation of the current
@@ -4162,11 +4162,11 @@ it starts after we scan the matching `\.)'.
     err_print("! Improper macro definition");
 @.Improper macro definition@>
   else {
-    app('$'); app_cur_id(0);
+    app('$'); app_cur_id(false);
     if (*loc=='(')
   reswitch: switch (next_control=get_next()) {
       case '(': case ',': app(next_control); goto reswitch;
-      case identifier: app_cur_id(0); goto reswitch;
+      case identifier: app_cur_id(false); goto reswitch;
       case ')': app(next_control); next_control=get_next(); break;
       default: err_print("! Improper macro definition"); break;
     }
@@ -4177,8 +4177,8 @@ it starts after we scan the matching `\.)'.
 }
 
 @ @<Start a format...@>= {
-  doing_format=1;
-  if(*(loc-1)=='s' || *(loc-1)=='S') format_visible=0;
+  doing_format=true;
+  if(*(loc-1)=='s' || *(loc-1)=='S') format_visible=false;
   if(!space_checked){emit_space_if_needed;save_position;}
   app_str("\\F"); /* this will produce `\&{format }' */
 @.\\F@>
@@ -4219,7 +4219,7 @@ if (next_control<=section_name) {
     outer_parse();
     @<Emit the scrap for a section name if present@>@;
   }
-  finish_C(1);
+  finish_C(true);
 }
 
 @ The title of the section and an $\E$ or $\mathrel+\E$ are made
@@ -4267,8 +4267,8 @@ after the section ends.
 @<Show cross...@>=
 if (this_section>name_dir) {
   cur_xref=(xref_pointer)this_section->xref;
-  if (cur_xref->num==file_flag){an_output=1;cur_xref=cur_xref->xlink;}
-  else an_output=0;
+  if (cur_xref->num==file_flag){an_output=true;cur_xref=cur_xref->xlink;}
+  else an_output=false;
   if (cur_xref->num>def_flag)
     cur_xref=cur_xref->xlink; /* bypass current section number */
   footnote(def_flag); footnote(cite_flag); footnote(0);
@@ -4311,7 +4311,7 @@ to the first cross-reference, and the last link is a zero.
 
 @<Output all the section numbers...@>=
 q=cur_xref; if (q->xlink->num>flag) out('s'); /* plural */
-while (1) {
+while (true) {
   out_section(cur_xref->num-flag);
   cur_xref=cur_xref->xlink; /* point to the next cross-reference to output */
   if (cur_xref->num<=flag) break;
@@ -4325,7 +4325,7 @@ while (1) {
 @ @<Output the code for the end of a section@>=
 out_str("\\fi"); finish_line();
 @.\\fi@>
-flush_buffer(out_buf,0,0); /* insert a blank line, it looks nice */
+flush_buffer(out_buf,false,false); /* insert a blank line, it looks nice */
 
 @** Phase three processing.
 We are nearly finished! \.{CWEAVE}'s only remaining task is to write out the
@@ -4605,7 +4605,7 @@ lowcase: out_str("\\\\");
 @.\\9@>
   case typewriter: out_str("\\.");
 @.\\.@>
-  case roman: not_an_identifier: out_name(cur_name,0); goto name_done;
+  case roman: not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom: {char *j; out_str("$\\");
     for (j=cur_name->byte_start;j<(cur_name+1)->byte_start;j++)
       out(*j=='_'? 'x': *j=='$'? 'X': *j);
@@ -4615,7 +4615,7 @@ lowcase: out_str("\\\\");
   default: out_str("\\&");
 @.\\\&@>
 }
-out_name(cur_name,1);
+out_name(cur_name,true);
 name_done:@;
 
 @ Section numbers that are to be underlined are enclosed in
