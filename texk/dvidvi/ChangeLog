@@ -1,3 +1,9 @@
+2021-02-19  Karl Berry  <karl@freefriends.org>
+
+	* dvidvi.test,
+	* tests/playout.2,
+	* tests/playout.3: eliminate version number from comparison.
+
 2020-12-09  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvidvi.c: Remove definition of a function win32_fprintf()
