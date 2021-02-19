@@ -165,7 +165,7 @@ AC_STRUCT_TM
 AC_FUNC_STAT
 AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
 
-AC_SEARCH_LIBS(clock_gettime, rt)dnl for Solaris 10
+AC_SEARCH_LIBS(clock_gettime, rt)dnl for Solaris 10 and other old libc
 
 AC_ARG_ENABLE([woff],
 	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
