@@ -13,7 +13,8 @@
 	* ctangle.w,
 	* ctwill-w2c.ch,
 	* cweav-bs.ch,
-	* cweave.w: Replace 'boolean' values upstream.
+	* cweave.w,
+	* cwebman.tex: Replace 'boolean' values upstream.
 
 2021-02-18  Andreas Scherer  <https://ascherer.github.io>
 

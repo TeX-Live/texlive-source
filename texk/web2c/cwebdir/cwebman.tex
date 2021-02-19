@@ -1209,7 +1209,7 @@ sets |change_buffer| in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 |(change_limit==change_buffer && !!changing)| if and only if
 the change file is exhausted. This procedure is called only when
-|changing| is 1; hence error messages will be reported correctly.
+|changing| is |true|; hence error messages will be reported correctly.
 
 @<Predecl...@>=
 static void prime_the_change_buffer(void);@/
@@ -1229,7 +1229,7 @@ allow lines that begin with \.{@@}, as long as they don't begin with \.{@@y},
 \.{@@z}, or \.{@@i} (which would probably mean that the change file is fouled up).
 
 @<Skip over comment lines in the change file...@>=
-while(1) {
+while(true) {
   change_line++;
   if (!!input_ln(change_file)) return;
   if (limit<buffer+2) continue;
@@ -1284,7 +1284,7 @@ change_limit= change_buffer;
 /*29:*/
 #line 250 "common.w"
 
-while(1){
+while(true){
 change_line++;
 if(!!input_ln(change_file))return;
 if(limit<buffer+2)continue;
@@ -1346,7 +1346,7 @@ sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
-\PB{\\{changing}} is 1; hence error messages will be reported correctly.
+\PB{\\{changing}} is \\{true}; hence error messages will be reported correctly.
 
 \Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
@@ -1371,7 +1371,7 @@ up).
 
 \Y\B\4\X29:Skip over comment lines in the change file; \PB{\&{return}} if end
 of file\X${}\E{}$\6
-\&{while} (\T{1})\5
+\&{while} (\\{true})\5
 ${}\{{}$\1\6
 ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\R\\{input\_ln}(\\{change\_file})){}$\1\5
@@ -1425,7 +1425,7 @@ sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
-\PB{\\{changing}} is 1; hence error messages will be reported correctly.
+\PB{\\{changing}} is \\{true}; hence error messages will be reported correctly.
 
 \Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
@@ -1450,7 +1450,7 @@ up).
 
 \Y\B\4\X29:Skip over comment lines in the change file; \PB{\&{return}} if end
 of file\X${}\E{}$\6
-\&{while} (\T{1})\5
+\&{while} (\\{true})\5
 ${}\{{}$\1\6
 ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\R\\{input\_ln}(\\{change\_file})){}$\1\5
