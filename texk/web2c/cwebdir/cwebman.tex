@@ -1337,6 +1337,7 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CWEAVE}}
 
 Here is the corresponding excerpt from \.{common.tex}.
+(Code for section 31 omitted for space reasons.)
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
@@ -1346,7 +1347,8 @@ sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
-\PB{\\{changing}} is \\{true}; hence error messages will be reported correctly.
+\PB{\\{changing}} is \PB{\\{true}}; hence error messages will be reported
+correctly.
 
 \Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
@@ -1410,8 +1412,6 @@ ${}\{{}$\1\6
 \U28.\fi
 !endgroup
 \endgroup
-\medskip
-(Code for section 31 omitted for space reasons.)
 \vfil\eject
 
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
@@ -1425,7 +1425,8 @@ sets \PB{\\{change\_buffer}} in preparation for the next matching operation.
 Since blank lines in the change file are not used for matching, we have
 \PB{$(\\{change\_limit}\E\\{change\_buffer}\W\R\\{changing})$} if and only if
 the change file is exhausted. This procedure is called only when
-\PB{\\{changing}} is \\{true}; hence error messages will be reported correctly.
+\PB{\\{changing}} is \PB{\\{true}}; hence error messages will be reported
+correctly.
 
 \Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
