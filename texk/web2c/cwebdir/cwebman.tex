@@ -1260,7 +1260,6 @@ do {
   change_limit=change_buffer+(ptrdiff_t)(limit-buffer);
   strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
-
 !endgroup
 \endgroup
 \vfill\eject
@@ -1275,14 +1274,14 @@ have been tangled into section~28.
 \begingroup \def\tt{\eighttt} \baselineskip9pt
 \verbatim
 /*:24*//*28:*/
-#line 236 "common.w"
+#line 234 "common.w"
 
 static void
 prime_the_change_buffer(void)
 {
 change_limit= change_buffer;
 /*29:*/
-#line 250 "common.w"
+#line 248 "common.w"
 
 while(true){
 change_line++;
@@ -1299,10 +1298,10 @@ err_print("!! Missing @x in change file");
 }
 
 /*:29*/
-#line 241 "common.w"
+#line 239 "common.w"
 
 /*30:*/
-#line 267 "common.w"
+#line 265 "common.w"
 
 do{
 change_line++;
@@ -1314,10 +1313,10 @@ return;
 }while(limit==buffer);
 
 /*:30*/
-#line 242 "common.w"
+#line 240 "common.w"
 
 /*31:*/
-#line 277 "common.w"
+#line 275 "common.w"
 
 {
 change_limit= change_buffer+(ptrdiff_t)(limit-buffer);
@@ -1325,7 +1324,7 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
 
 /*:31*/
-#line 243 "common.w"
+#line 241 "common.w"
 
 }
 
@@ -1498,7 +1497,6 @@ ${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39(\&{size\_t})(\\{limit}-%
 \\{buffer}+\T{1}));{}$\6
 \4${}\}{}$\2\par
 \Us28\ET33.\fi
-
 \vfil\eject\titletrue
 \rightskip=0pt % get out of C mode (cf. \B)
 \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
