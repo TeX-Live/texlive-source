@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.6 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.68.
+This file documents 'Asymptote', version 2.69.
 
    <https://asymptote.sourceforge.io>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.68.
+This file documents 'Asymptote', version 2.69.
 
    <https://asymptote.sourceforge.io>
 
@@ -2687,7 +2687,7 @@ power with the '^' operator.
    The implicit initializer for transforms is 'identity()'.  The
 routines 'shift(transform t)' and 'shiftless(transform t)' return the
 transforms '(t.x,t.y,0,0,0,0)' and '(0,0,t.xx,t.xy,t.yx,t.yy)'
-respectively.  The function bool 'isometry(transform t)' can be used to
+respectively.  The function 'bool isometry(transform t)' can be used to
 test if 't' is an isometry (preserves distance).
 
 
@@ -4836,7 +4836,7 @@ File: asymptote.info,  Node: LaTeX usage,  Next: Base modules,  Prev: Programmin
 ***************
 
 'Asymptote' comes with a convenient 'LaTeX' style file 'asymptote.sty'
-(v1.35 or later required) that makes 'LaTeX' 'Asymptote'-aware.
+(v1.36 or later required) that makes 'LaTeX' 'Asymptote'-aware.
 Entering 'Asymptote' code directly into the 'LaTeX' source file, at the
 point where it is needed, keeps figures organized and avoids the need to
 invent new file names for each figure.  Simply add the line

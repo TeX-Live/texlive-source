@@ -1,3 +1,146 @@
+commit ab6c72c152ec8ad0e052706ac16023bf044ab550
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 18 09:11:30 2021 -0700
+
+    Make orthographic scaling consistent with perspective scaling when keepAspect=false.
+
+commit 70aa2bcb08e9f2cc88bef64570d5760430f0891a
+Merge: a755f768 4b768e16
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 23:11:04 2021 -0700
+
+    Merge pull request #203 from cagprado/fix_image_scaling
+    
+    Fix Gouraud image scaling
+
+commit a755f7680687d11bc95b00e83b327c917f76cb77
+Merge: 7f96ae66 9347f01d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 23:04:22 2021 -0700
+
+    Merge branch 'cagprado-contour_scaling'.
+
+commit 9347f01dcbfd4aa9f77b236259bf3acecb481248
+Merge: 7f96ae66 4cd9bf4b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 22:56:07 2021 -0700
+
+    Merge branch 'contour_scaling' of https://github.com/cagprado/asymptote into cagprado-contour_scaling.
+
+commit 7f96ae660b6359c601c8243b279b0146ef4cf7ae
+Merge: 3c7dffea d4a34e7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 22:50:45 2021 -0700
+
+    Merge branch 'mojca-static_cast'.
+
+commit d4a34e7b287872567bbf65ae36b2f29daf59e67c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 22:44:50 2021 -0700
+
+    Subtract 1 before casting to potentially smaller type.
+
+commit 36ff9595303524acf076ee11ff746b6a273a65c0
+Merge: 3c7dffea ad93504e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 8 22:33:06 2021 -0700
+
+    Merge branch 'static_cast' of https://github.com/mojca/asymptote into mojca-static_cast.
+
+commit 3c7dffea7529c3f9280c52935ad487ad13fa1377
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 6 17:07:07 2021 -0700
+
+    Remove obsolete package everypage.
+
+commit dbc74f5b52f9c610324fbc1c2f6ec946be3d8ef1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 5 00:20:27 2021 -0700
+
+    Fix commit f513ffde5c8540e1b45a93fd0391541a6f4aa2f7.
+
+commit 4cd9bf4b60c1d64104c9df81e60d50f15fa63a25
+Author: Caio Prado <cagprado@yandex.com>
+Date:   Fri Feb 5 14:33:49 2021 +0800
+
+    Make contour respect picture scaling
+    
+    Add (x, y) scaling to the 2D contours routines.
+
+commit ad93504e5824181c3a27e8edd3e6fc0d1612e03c
+Author: Mojca Miklavec <mojca.miklavec.lists@gmail.com>
+Date:   Sat Jan 16 14:53:31 2021 +0100
+
+    Cast unsigned integers to avoid compiler warnings
+
+commit 4b768e169d301afb109e87e56af8cdb2fd634692
+Author: Caio Prado <cagprado@yandex.com>
+Date:   Wed Jan 13 11:20:29 2021 +0800
+
+    Make Gouraud image respect x and y picture scaling
+    
+    Transforms (x, y) pairs of the unstructured mesh according to the
+    picture scaling in each coordinate.  This fix an issue that the picture
+    scaling is ignored when generating the image.
+
+commit 1b62e8a4ac702136ca4ecaeb20c022021c3941fb
+Author: Caio Prado <cagprado@yandex.com>
+Date:   Wed Jan 13 11:06:52 2021 +0800
+
+    Fix z scaling in Gouraud image
+    
+    Fix a bug introduced in commit d0269b9d990cbf5677e67d43e9b85a969ef03bb8
+    in which a comparison is made between scaled and unscaled z values
+    leading to inconsistent palette range when z scale is not the identity.
+
+commit 959b76f728f2f31835b7d7c2db98a354c88db337
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 2 14:35:00 2021 -0700
+
+    Add missing HAVE_LIBCURL conditional.
+
+commit b2ba3f71bbde5e55b91f267e8b9db433b9a20123
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 27 07:19:44 2020 -0700
+
+    Add missing above argument.
+
+commit 743285c30959db265c986cc673ac86709880f387
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 27 07:14:03 2020 -0700
+
+    Remove unused line.
+
+commit 1d12797c816b9c21b703fbb361bb6a610335e3cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 7 22:02:57 2020 -0700
+
+    Increase fuzz in bezulate.
+
+commit 27d92380e50d5f7f8467c9a6d1f9db4ef0794993
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 7 18:02:36 2020 -0700
+
+    Fix segmentation fault in subpath3 (cf. commit 213d56942fe5b9ef605e0ccf545527833319348d).
+
+commit 7ff0865c34c76d046c13e955893d2cc4c7ec4cbb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 29 14:32:36 2020 -0700
+
+    Fix dual simplex method.
+
+commit 19b6edf283fcf9018967575ed9d31fb4e75ff026
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 22:14:01 2020 -0700
+
+    Fix warning message.
+
+commit 85ded4fe8e4c3b8a0f820bb4bea2d1784875171f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 22 20:52:08 2020 -0700
+
+    Increment version to 2.69.
+
 commit 3b88c382bf0dd59daa6427a9fc4f03c246b5d218
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 22 18:02:21 2020 -0700
