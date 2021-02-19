@@ -1615,7 +1615,7 @@ enough right braces to keep \TEX/ happy.
 
 @<Clear |bal|...@>=
 if (phase==2) while (bal-- >0) app_tok('}');
-return(false);
+return(0);
 
 @** Parsing.
 The most intricate part of \.{CWEAVE} is its mechanism for converting
