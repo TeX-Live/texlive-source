@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.0 --- February 2021
+% Version 4.1 --- February 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -32,11 +32,11 @@
 \def\skipxTeX{\\{skip\_\TEX/}}
 \def\copyxTeX{\\{copy\_\TEX/}}
 
-\def\title{CWEAVE (Version 4.0)}
+\def\title{CWEAVE (Version 4.1)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CWEAVE} processor}
   \vskip 15pt
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -67,7 +67,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.0)"
+@d banner "This is CWEAVE (Version 4.1)"
 
 @c @<Include files@>@/
 @h
@@ -618,11 +618,11 @@ static eight_bits
 skip_TeX(void) /* skip past pure \TEX/ code */
 {
   while (true) {
-    if (loc>limit && get_line()==false) return(new_section);
+    if (loc>limit && get_line()==false) return new_section;
     *(limit+1)='@@';
     while (*loc!='@@' && *loc!='|') loc++;
-    if (*loc++ =='|') return('|');
-    if (loc<=limit) return(ccode[(eight_bits)*(loc++)]);
+    if (*loc++ =='|') return '|';
+    if (loc<=limit) return ccode[(eight_bits)*(loc++)];
   }
 }
 
@@ -690,7 +690,7 @@ get_next(void) /* produces the next input token */
   eight_bits c; /* the current character */
   while (true) {
     @<Check if we're at the end of a preprocessor command@>@;
-    if (loc>limit && get_line()==false) return(new_section);
+    if (loc>limit && get_line()==false) return new_section;
     c=*(loc++);
     if (xisdigit(c) || c=='.') @<Get a constant@>@;
     else if (c=='\'' || c=='"'@|
@@ -704,7 +704,7 @@ get_next(void) /* produces the next input token */
     else if (xisspace(c)) continue; /* ignore spaces and tabs */
     if (c=='#' && loc==buffer+1) @<Raise preprocessor flag@>@;
     mistake: @<Compress two-symbol operator@>@;
-    return(c);
+    return c;
   }
 }
 
@@ -727,7 +727,7 @@ boolean preprocessing=false; /* are we scanning a preprocessor command? */
 @ @<Raise prep...@>= {
   preprocessing=true;
   @<Check if next token is |include|@>@;
-  return (left_preproc);
+  return left_preproc;
 }
 
 @ An additional complication is the freakish use of \.< and \.> to delimit
@@ -747,10 +747,10 @@ the last character was a \.\\.
 
 @<Check if we're at...@>=
   while (loc==limit-1 && preprocessing && *loc=='\\')
-    if (get_line()==false) return(new_section); /* still in preprocessor mode */
+    if (get_line()==false) return new_section; /* still in preprocessor mode */
   if (loc>=limit && preprocessing) {
     preprocessing=sharp_include_line=false;
-    return(right_preproc);
+    return right_preproc;
   }
 
 @ The following code assigns values to the combinations \.{++},
@@ -760,7 +760,7 @@ combinations \.{...}, \.{::}, \.{.*} and \.{->*}.
 The compound assignment operators (e.g., \.{+=}) are
 treated as separate tokens.
 
-@d compress(c) if (loc++<=limit) return(c)
+@d compress(c) if (loc++<=limit) return c
 
 @<Compress tw...@>=
 switch(c) {
@@ -790,7 +790,7 @@ switch(c) {
   id_first=--loc;
   while (isalpha((eight_bits)*++loc) || isdigit((eight_bits)*loc) @|
       || isxalpha((eight_bits)*loc) || ishigh((eight_bits)*loc));
-  id_loc=loc; return(identifier);
+  id_loc=loc; return identifier;
 }
 
 @ Different conventions are followed by \TEX/ and \CEE/ to express octal
@@ -826,7 +826,7 @@ are pointers into the array |section_text|, not into |buffer|.
          || *loc=='f' || *loc=='F') {
     *id_loc++='$'; *id_loc++=toupper((eight_bits)*loc); loc++;
   }
-  return(constant);
+  return constant;
 }
 
 @ \CEE/ strings and character constants, delimited by double and single
@@ -873,7 +873,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     printf("..."); mark_error;
   }
   id_loc++;
-  return(string);
+  return string;
 }
 
 @ After an \.{@@} sign has been scanned, the next character tells us
@@ -887,12 +887,12 @@ whether there is more work to do.
     case underline: xref_switch=def_flag; continue;
     case trace: tracing=c-'0'; continue;
     case xref_roman: case xref_wildcard: case xref_typewriter: case noop:
-    case TeX_string: c=ccode[(eight_bits)c]; skip_restricted(); return(c);
+    case TeX_string: c=ccode[(eight_bits)c]; skip_restricted(); return c;
     case section_name:
       @<Scan the section name and make |cur_section| point to it@>@;
     case verbatim: @<Scan a verbatim string@>@;
     case ord: @<Get a string@>@;
-    default: return(ccode[(eight_bits)c]);
+    default: return ccode[(eight_bits)c];
   }
 }
 
@@ -906,7 +906,7 @@ because the section name might (for example) follow \&{int}.
   if (k-section_text>3 && strncmp(k-2,"...",3)==0)
         cur_section=section_lookup(section_text+1,k-3,1); /* 1 indicates a prefix */
   else cur_section=section_lookup(section_text+1,k,0);
-  xref_switch=0; return(section_name);
+  xref_switch=0; return section_name;
 }
 
 @ Section names are placed into the |section_text| array with consecutive spaces,
@@ -994,7 +994,7 @@ buffer.  We also set |loc| to the position just after the ending delimiter.
   if (loc>=limit) err_print("! Verbatim string didn't end");
 @.Verbatim string didn't end@>
   id_loc=loc; loc+=2;
-  return (verbatim);
+  return verbatim;
 }
 
 @** Phase one processing.
@@ -1527,14 +1527,14 @@ copy_TeX(void)
 {
   char c; /* current character being copied */
   while (true) {
-    if (loc>limit && (finish_line(), get_line()==false)) return(new_section);
+    if (loc>limit && (finish_line(), get_line()==false)) return new_section;
     *(limit+1)='@@';
     while ((c=*(loc++))!='|' && c!='@@') {
       out(c);
       if (out_ptr==out_buf+1 && (xisspace(c))) out_ptr--;
     }
-    if (c=='|') return('|');
-    if (loc<=limit) return(ccode[(eight_bits)*(loc++)]);
+    if (c=='|') return '|';
+    if (loc<=limit) return ccode[(eight_bits)*(loc++)];
   }
 }
 
@@ -1572,7 +1572,7 @@ int bal@t\2\2@>) /* brace balance */
       }
     }
     c=*(loc++);
-    if (c=='|') return(bal);
+    if (c=='|') return bal;
     if (is_long_comment) @<Check for end of comment@>@;
     if (phase==2) {
       if (ishigh(c)) app_tok(quoted_char);
@@ -1615,7 +1615,7 @@ enough right braces to keep \TEX/ happy.
 
 @<Clear |bal|...@>=
 if (phase==2) while (bal-- >0) app_tok('}');
-return(0);
+return 0;
 
 @** Parsing.
 The most intricate part of \.{CWEAVE} is its mechanism for converting
@@ -3175,7 +3175,7 @@ where appropriate.
     if (j->mathness / 4 == yes_math) app('$');
     if (tok_ptr+6>tok_mem_end) overflow("token");
   }
-  freeze_text; return(text_ptr-1);
+  freeze_text; return text_ptr-1;
 }
 
 @ @<If semi-tracing, show the irreducible scraps@>=
@@ -3494,7 +3494,7 @@ C_translate(void)
   p=translate(); /* make the translation */
   if (scrap_ptr>max_scr_ptr) max_scr_ptr=scrap_ptr;
   scrap_ptr=scrap_base-1; scrap_base=save_base; /* scrap the scraps */
-  return(p);
+  return p;
 }
 
 @ The |outer_parse| routine is to |C_parse| as |outer_xref|
@@ -3679,16 +3679,16 @@ get_output(void) /* returns the next token of output */
   if (a>=0400) {
     cur_name=a % id_flag + name_dir;
     switch (a / id_flag) {
-      case 2: return(res_word); /* |a==res_flag+cur_name| */
-      case 3: return(section_code); /* |a==section_flag+cur_name| */
+      case 2: return res_word ; /* |a==res_flag+cur_name| */
+      case 3: return section_code ; /* |a==section_flag+cur_name| */
       case 4: push_level(a % id_flag + tok_start); goto restart;
         /* |a==tok_flag+cur_name| */
       case 5: push_level(a % id_flag + tok_start); cur_mode=inner; goto restart;
         /* |a==inner_tok_flag+cur_name| */
-      default: return(identifier); /* |a==id_flag+cur_name| */
+      default: return identifier; /* |a==id_flag+cur_name| */
     }
   }
-  return((eight_bits)a);
+  return (eight_bits)a;
 }
 
 @ The real work associated with token output is done by |make_output|.

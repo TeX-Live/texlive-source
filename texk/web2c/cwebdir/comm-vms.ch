@@ -45,8 +45,8 @@ print |"%SYSTEM-F-ABORT, abort"|, if |history > harmless_message|.
 @z
 
 @x section 68 (1987 BL) (01-FEB-1992 ST) (11-JAN-1993 DEK)
-  if (history > harmless_message) return(1);
-  else return(0);
+  if (history > harmless_message) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 @y
 /*
    VAX/VMS and UNIX have different error status conventions.

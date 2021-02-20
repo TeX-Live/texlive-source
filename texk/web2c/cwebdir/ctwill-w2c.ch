@@ -34,9 +34,9 @@
 @z
 
 @x
-\def\title{CWEAVE (Version 4.0)}
+\def\title{CWEAVE (Version 4.1)}
 @y
-\def\title{CTWILL (Version 4.0 [\TeX~Live])}
+\def\title{CTWILL (Version 4.1 [\TeX~Live])}
 @z
 
 @x
@@ -46,9 +46,9 @@
 @z
 
 @x
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
 @y
-  \centerline{(Version 4.0 [\TeX~Live])}
+  \centerline{(Version 4.1 [\TeX~Live])}
 @z
 
 @x
@@ -75,7 +75,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.0)"
+@d banner "This is CWEAVE (Version 4.1)"
 @y
 This is the \.{CTWILL} program by D. E. Knuth, based
 on \.{CWEAVE} by Silvio Levy and D.~E. Knuth. It is also based on
@@ -94,7 +94,7 @@ reprinted in {\sl Digital Typography\/} (1999), 225--245.
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 modified. The version number parallels the corresponding version of \.{CWEAVE}.
 
-@d banner "This is CTWILL, Version 4.0"
+@d banner "This is CTWILL, Version 4.1"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 

@@ -7,15 +7,15 @@ ex <dev_>cc;"-v -h -c =500000 cweave_c"
 
 
 @x
-\def\title{CWEAVE (Version 4.0)}
+\def\title{CWEAVE (Version 4.1)}
 @y
-\def\title{CWEAVE (QL Version 4.0)}
+\def\title{CWEAVE (QL Version 4.1)}
 @z
 
 @x section 1
-@d banner "This is CWEAVE (Version 4.0)"
+@d banner "This is CWEAVE (Version 4.1)"
 @y
-@d banner "This is CWEAVE (QL Version 4.0)"
+@d banner "This is CWEAVE (QL Version 4.1)"
 @z
 
 @x

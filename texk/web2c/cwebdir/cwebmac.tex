@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.0 --- February 2021
+% Version 4.1 --- February 2021
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB4.0}
-\chardef\cwebversion=4 \chardef\cwebrevision=0
+\xdef\fmtversion{\fmtversion+CWEB4.1}
+\chardef\cwebversion=4 \chardef\cwebrevision=1
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -14,7 +14,7 @@
 %\else \pdftextrue \pdfoutput=1 \input pdfcolor \let\setcolor\pdfsetcolor \fi\fi
 \else \pdftextrue \pdfoutput=1 % changed in 3.69
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
-  \def\Blue{\pdfliteral{0 0 1 rg 0 0 1 RG}}
+  \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi\fi
 \newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
 
@@ -282,12 +282,10 @@
 \def\stsec{\rightskip=0pt % get out of C mode (cf. \B)
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \noindent{\let\*=\lapstar\bf\secstar.\quad}%
-  \ifpdftex\smash{\raise\baselineskip\hbox to0pt{%
-%     \let\*=\empty\pdfdest num \secstar fith}} % bad space in versions < 3.68
-     \let\*=\empty\pdfdest num \secstar fith}}% changed in version 3.68
-  \else\ifpdf\smash{\raise\baselineskip\hbox to0pt{%
-     \let\*=\empty\special{%
-       pdf: dest (\romannumeral\secstar) [ @thispage /FitH @ypos ]}}}\fi\fi}
+  \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
+    \ifpdftex \pdfdest num \secstar fith%
+    \else \special{pdf: dest (\romannumeral\secstar)
+      [ @thispage /FitH @ypos ]}\fi}}\fi}
 \let\startsection=\stsec
 \def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
 \def\A{\note{See also section}} % xref for doubly defined section name

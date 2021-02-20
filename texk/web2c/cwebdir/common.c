@@ -459,7 +459,7 @@ FILE*fp)
 {
 register int c= EOF;
 register char*k;
-if(feof(fp))return(false);
+if(feof(fp))return false;
 limit= k= buffer;
 while(k<=buffer_end&&(c= getc(fp))!=EOF&&c!='\n')
 if((*(k++)= c)!=' ')limit= k;
@@ -468,9 +468,9 @@ if((c= getc(fp))!=EOF&&c!='\n'){
 ungetc(c,fp);loc= buffer;err_print("! Input line too long");
 
 }
-if(c==EOF&&limit==buffer)return(false);
+if(c==EOF&&limit==buffer)return false;
 
-return(true);
+return true;
 }
 
 /*:24*//*28:*/
@@ -829,7 +829,7 @@ init_p(p,t);
 /*:51*/
 #line 656 "common.w"
 
-return(p);
+return p;
 }
 
 /*:48*//*52:*/
@@ -1146,8 +1146,8 @@ case fatal_message:puts("(That was a fatal error, my friend.)");
 /*:69*/
 #line 1084 "common.w"
 
-if(history> harmless_message)return(1);
-else return(0);
+if(history> harmless_message)return EXIT_FAILURE;
+else return EXIT_SUCCESS;
 }
 
 /*:68*//*70:*/

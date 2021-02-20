@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CTANGLE (Version 4.0)}
+\def\title{CTANGLE (Version 4.1)}
 @y
-\def\title{CTANGLE (Version 4.0 [\TeX~Live])}
+\def\title{CTANGLE (Version 4.1 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
 @y
-  \centerline{(Version 4.0 [\TeX~Live])}
+  \centerline{(Version 4.1 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CTANGLE (Version 4.0)"
+@d banner "This is CTANGLE (Version 4.1)"
 @y
-@d banner "This is CTANGLE, Version 4.0"
+@d banner "This is CTANGLE, Version 4.1"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -343,7 +343,7 @@ features that have been created by numerous contributors over the course of a
 quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
-material should nicely integrate with the original ``\&{105.~Index}.''
+material should nicely integrate with the original ``\&{104.~Index}.''
 
 @* Output file update.  Most \CEE/ projects are controlled by a
 \.{Makefile} that automatically takes care of the temporal dependecies

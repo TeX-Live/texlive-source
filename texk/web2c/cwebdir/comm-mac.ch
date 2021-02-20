@@ -4,9 +4,9 @@ No changes to CTANGLE or CWEAVE are needed.
 (Contributed 13 Oct 2000 by AndPio@aol.com; slightly edited by Don Knuth)
 
 @x in limbo, change the title page document to specify Mac version
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
 @y
-  \centerline{(Version 4.0 for MacOS)}
+  \centerline{(Version 4.1 for MacOS)}
 @z
 
 @x sections 23/24: Make input_ln accept \n, \r, \n\r, or \r\n as line endings
@@ -23,7 +23,7 @@ FILE *fp@t\2\2@>) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(false);  /* we have hit end-of-file */
+  if (feof(fp)) return false;  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
@@ -32,9 +32,9 @@ FILE *fp@t\2\2@>) /* what file to read from */
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
     }
-  if (c==EOF && limit==buffer) return(false);  /* there was nothing after
+  if (c==EOF && limit==buffer) return false;  /* there was nothing after
     the last newline */
-  return(true);
+  return true;
 }
 @y
 @ In the unlikely event that your standard I/O library does not
@@ -54,21 +54,21 @@ FILE *fp@t\2\2@>) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(false);  /* we have hit end-of-file */
+  if (feof(fp)) return false;  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
   while (true) {
     c = getc(fp);
-    if (c==EOF)  return (limit!=buffer); /* |false|, if there was nothing after
+    if (c==EOF)  return limit!=buffer; /* |false|, if there was nothing after
       the last newline */
     else if (c=='\n' || c=='\r') { /* we have hit end-of-line */
       int d = getc(fp);
       if (c+d!='\n'+'\r') /* no combination |"\n\r"| or |"\r\n"| */
         ungetc(d,fp);
-      return (true);
+      return true;
     }
     else if (k>buffer_end) {
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
-      return (true);
+      return true;
 @.Input line too long@>
     }
     else

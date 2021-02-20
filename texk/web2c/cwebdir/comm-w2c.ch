@@ -17,16 +17,16 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.0)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.1)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (4.0 [\TeX~Live])}
+\def\title{Common code for CTANGLE and CWEAVE (4.1 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
 @y
-  \centerline{(Version 4.0 [\TeX~Live])}
+  \centerline{(Version 4.1 [\TeX~Live])}
 @z
 
 @x
@@ -390,8 +390,8 @@ can be made sensitive to these conditions.
 @z
 
 @x
-  if (history > harmless_message) return(1);
-  else return(0);
+  if (history > harmless_message) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 @y
   switch(history) {
   case harmless_message: return RETURN_WARN;

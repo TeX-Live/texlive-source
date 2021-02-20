@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.0 --- February 2021
+% Version 4.1 --- February 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -27,11 +27,11 @@
 \mathchardef\RA="3221 % right arrow
 \mathchardef\BA="3224 % double arrow
 
-\def\title{CTANGLE (Version 4.0)}
+\def\title{CTANGLE (Version 4.1)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CTANGLE} processor}
   \vskip 15pt
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -61,7 +61,7 @@ Joachim Schrod, Lee Wittenberg, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.0)"
+@d banner "This is CTANGLE (Version 4.1)"
 
 @c
 @<Include files@>@/
@@ -805,12 +805,12 @@ skip_ahead(void) /* skip to next control code */
 {
   eight_bits c; /* control code found */
   while (true) {
-    if (loc>limit && (get_line()==false)) return(new_section);
+    if (loc>limit && (get_line()==false)) return new_section;
     *(limit+1)='@@';
     while (*loc!='@@') loc++;
     if (loc<=limit) {
       loc++; c=ccode[(eight_bits)*loc]; loc++;
-      if (c!=ignore || *(loc-1)=='>') return(c);
+      if (c!=ignore || *(loc-1)=='>') return c;
     }
   }
 }
@@ -842,24 +842,24 @@ boolean is_long_comment@t\2\2@>)
   while (true) {
     if (loc>limit) {
       if (is_long_comment) {
-        if(get_line()) return(comment_continues=true);
+        if(get_line()) return comment_continues=true;
         else{
           err_print("! Input ended in mid-comment");
 @.Input ended in mid-comment@>
-          return(comment_continues=false);
+          return comment_continues=false;
         }
       }
-      else return(comment_continues=false);
+      else return comment_continues=false;
     }
     c=*(loc++);
     if (is_long_comment && c=='*' && *loc=='/') {
-      loc++; return(comment_continues=false);
+      loc++; return comment_continues=false;
     }
     if (c=='@@') {
       if (ccode[(eight_bits)*loc]==new_section) {
         err_print("! Section name ended in mid-comment"); loc--;
 @.Section name ended in mid-comment@>
-        return(comment_continues=false);
+        return comment_continues=false;
       }
       else loc++;
     }
@@ -894,18 +894,18 @@ get_next(void) /* produces the next input token */
   while (true) {
     if (loc>limit) {
       if (preprocessing && *(limit-1)!='\\') preprocessing=0;
-      if (get_line()==false) return(new_section);
+      if (get_line()==false) return new_section;
       else if (print_where && !no_where) {
           print_where=false;
           @<Insert the line number into |tok_mem|@>@;
         }
-        else return ('\n');
+        else return '\n';
     }
     c=*loc;
     if (comment_continues || (c=='/' && (*(loc+1)=='*' || *(loc+1)=='/'))) {
       skip_comment(comment_continues||*(loc+1)=='*');
           /* scan to end of comment or newline */
-      if (comment_continues) return('\n');
+      if (comment_continues) return '\n';
       else continue;
     }
     loc++;
@@ -920,11 +920,11 @@ get_next(void) /* produces the next input token */
     else if (xisspace(c)) {
         if (!preprocessing || loc>limit) continue;
           /* we don't want a blank after a final backslash */
-        else return(' '); /* ignore spaces and tabs, unless preprocessing */
+        else return ' '; /* ignore spaces and tabs, unless preprocessing */
     }
     else if (c=='#' && loc==buffer+1) preprocessing=1;
     mistake: @<Compress two-symbol operator@>@;
-    return(c);
+    return c;
   }
 }
 
@@ -935,7 +935,7 @@ combinations \.{...}, \.{::}, \.{.*} and \.{->*}.
 The compound assignment operators (e.g., \.{+=}) are
 treated as separate tokens.
 
-@d compress(c) if (loc++<=limit) return(c)
+@d compress(c) if (loc++<=limit) return c
 
 @<Compress tw...@>=
 switch(c) {
@@ -963,7 +963,7 @@ switch(c) {
   id_first=--loc;
   while (isalpha((eight_bits)*++loc) || isdigit((eight_bits)*loc) @|
       || isxalpha((eight_bits)*loc) || ishigh((eight_bits)*loc));
-  id_loc=loc; return(identifier);
+  id_loc=loc; return identifier;
 }
 
 @ @<Get a constant@>= {
@@ -986,7 +986,7 @@ switch(c) {
  found: while (*loc=='u' || *loc=='U' || *loc=='l' || *loc=='L'
              || *loc=='f' || *loc=='F') loc++;
   id_loc=loc;
-  return(constant);
+  return constant;
 }
 
 @ \CEE/ strings and character constants, delimited by double and single
@@ -1033,7 +1033,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     err_print("...");
   }
   id_loc++;
-  return(string);
+  return string;
 }
 
 @ After an \.{@@} sign has been scanned, the next character tells us
@@ -1056,7 +1056,7 @@ whether there is more work to do.
       @<Scan the section name and make |cur_section_name| point to it@>@;
     case string: @<Scan a verbatim string@>@;
     case ord: @<Scan an ASCII constant@>@;
-    default: return(c);
+    default: return c;
   }
 }
 
@@ -1085,7 +1085,7 @@ thus, \.{@@'\\nopq'} gives the same result as \.{@@'\\n'}.
     }
   }
   loc++;
-  return(ord);
+  return ord;
 
 @ @<Scan the section name...@>= {
   char *k; /* pointer into |section_text| */
@@ -1096,7 +1096,7 @@ thus, \.{@@'\\nopq'} gives the same result as \.{@@'\\n'}.
   if (cur_section_name_char=='(')
     @<If it's not there, add |cur_section_name| to the output file stack, or
           complain we're out of room@>@;
-  return(section_name);
+  return section_name;
 }
 
 @ Section names are placed into the |section_text| array with consecutive spaces,
@@ -1159,7 +1159,7 @@ buffer.  We also set |loc| to the position just after the ending delimiter.
   if (loc>=limit) err_print("! Verbatim string didn't end");
 @.Verbatim string didn't end@>
   id_loc=loc; loc+=2;
-  return(string);
+  return string;
 }
 
 @* Scanning a macro definition.
@@ -1345,17 +1345,14 @@ sensed in the input, and it proceeds until the end of that section.  It
 uses |section_count| to keep track of the current section number; with luck,
 \.{CWEAVE} and \.{CTANGLE} will both assign the same numbers to sections.
 
-@<Global...@>=
-extern sixteen_bits section_count; /* the current section number */
+@<Predecl...@>=
+static void scan_section(void);@/
 
 @ The body of |scan_section| is a loop where we look for control codes
 that are significant to \.{CTANGLE}: those
 that delimit a definition, the \CEE/ part of a module, or a new module.
 
-@<Predecl...@>=
-static void scan_section(void);@/
-
-@ @c
+@c
 static void
 scan_section(void)
 {

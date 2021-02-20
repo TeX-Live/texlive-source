@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.0 --- February 2021
+% Version 4.1 --- February 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -22,12 +22,12 @@
 
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.0)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.1)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.0)}
+  \centerline{(Version 4.1)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -165,7 +165,7 @@ FILE *fp@t\2\2@>) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(false);  /* we have hit end-of-file */
+  if (feof(fp)) return false;  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
@@ -174,9 +174,9 @@ FILE *fp@t\2\2@>) /* what file to read from */
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
     }
-  if (c==EOF && limit==buffer) return(false);  /* there was nothing after
+  if (c==EOF && limit==buffer) return false;  /* there was nothing after
     the last newline */
-  return(true);
+  return true;
 }
 
 @ Now comes the problem of deciding which file to read from next.
@@ -654,7 +654,7 @@ char t@t\2\2@>) /* the |ilk|; used by \.{CWEAVE} only */
   @<Compute the hash code |h|@>@;
   @<Compute the name location |p|@>@;
   if (p==name_ptr) @<Enter a new name into the table at position |p|@>@;
-  return(p);
+  return p;
 }
 
 @ A simple hash code is used: If the sequence of
@@ -1082,8 +1082,8 @@ int wrap_up(void) {
   if (show_stats)
     print_stats(); /* print statistics about memory usage */
   @<Print the job |history|@>@;
-  if (history > harmless_message) return(1);
-  else return(0);
+  if (history > harmless_message) return EXIT_FAILURE;
+  else return EXIT_SUCCESS;
 }
 
 @ @<Print the job |history|@>=
