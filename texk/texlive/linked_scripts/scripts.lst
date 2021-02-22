@@ -4,6 +4,7 @@ bibexport/bibexport.sh
 checklistings/checklistings.sh
 ctanbib/ctanbib
 dtxgen/dtxgen
+git-latexdiff/git-latexdiff
 installfont/installfont-tl
 latexfileversion/latexfileversion
 listbib/listbib
@@ -33,12 +34,14 @@ texlive-extra/texlinks.sh
 texosquery/texosquery.sh
 texosquery/texosquery-jre5.sh
 texosquery/texosquery-jre8.sh
+tikztosvg/tikztosvg
 typeoutfileinfo/typeoutfileinfo.sh
 wordcount/wordcount.sh
 a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
 accfonts/vpl2vpl
+albatross/albatross.sh
 arara/arara.sh
 attachfile2/pdfatfi.pl
 authorindex/authorindex
@@ -82,6 +85,7 @@ fragmaster/fragmaster.pl
 getmap/getmapdl.lua
 glossaries/makeglossaries
 glossaries/makeglossaries-lite.lua
+hyperxmp/hyperxmp-add-bytecount.pl
 jfmutil/jfmutil.pl
 ketcindy/ketcindy.pl
 kotex-utils/jamo-normalize.pl
@@ -98,6 +102,7 @@ latexdiff/latexrevise.pl
 latexindent/latexindent.pl
 latexmk/latexmk.pl
 latexpand/latexpand
+light-latex-make/llmk.lua
 lilyglyphs/lily-glyph-commands.py
 lilyglyphs/lily-image-commands.py
 lilyglyphs/lily-rebuild-pdfs.py
@@ -138,6 +143,7 @@ pygmentex/pygmentex.py
 pythontex/depythontex.py
 pythontex/pythontex.py
 rubik/rubikrotation.pl
+spix/spix.py
 splitindex/splitindex.pl
 srcredact/srcredact.pl
 sty2dtx/sty2dtx.pl

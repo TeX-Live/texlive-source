@@ -8,7 +8,7 @@
 #              https://github.com/openlilylib/lilyglyphs                 %
 #               http://www.openlilylib.org/lilyglyphs                    %
 #                                                                        %
-#  Copyright 2012-2013 Urs Liska and others, ul@openlilylib.org          %
+#  Copyright 2012-2020 Urs Liska and others, ul@openlilylib.org          %
 #                                                                        %
 #  'lilyglyphs' is free software: you can redistribute it and/or modify  %
 #  it under the terms of the LaTeX Project Public License, either        %
@@ -63,35 +63,35 @@ lily_src_score = """
 
 def main():
     """Do the actual work of the script"""
-    print ''
-    print 'buildglyphimages.py,'
-    print 'Part of lilyglyphs.'
-    print ''
+    print('')
+    print('buildglyphimages.py,')
+    print('Part of lilyglyphs.')
+    print('')
     
     # set CWD and ensure the necessary subdirs are present
     check_paths()
-    print ''
+    print('')
 
     # load and parse input file
     lg.read_input_file(in_file)
     read_entries()
-    print ''
+    print('')
 
     # generate LilyPond source files for each command
     # and compile them
     write_lily_src_files()
-    print ''
+    print('')
     lg.compile_lily_files()
-    print ''
+    print('')
     
     # remove intermediate files and move pdfs to pdf directory
     lg.cleanup_lily_files()
-    print ''
+    print('')
     
     # generate latex commands and example code
     # and write them to the output file
     lg.generate_latex_commands()
-    print ''
+    print('')
     write_latex_file()
 
     
@@ -127,11 +127,11 @@ rais = ''
 
 def read_entries():
     """Parses the input source file and extracts glyph entries"""
-    print 'Read entries of LilyPond commands:'
+    print('Read entries of LilyPond commands:')
     for i in range(len(lg.definitions_file)):
         if '%%lilyglyphs' in lg.definitions_file[i]:
             i = read_entry(i)
-    print lg.lily_files
+    print(lg.lily_files)
 
 def read_entry(i):
     """Reads a single glyph entry from the input file and stores it
@@ -165,11 +165,11 @@ def read_entry(i):
     # read command name
     line = lg.definitions_file[i].strip()
     cmd_name = line[: line.find('=') - 1]
-    print '- ' + cmd_name,
+    print('- ' + cmd_name, end=' ')
     if is_protected:
-        print '(protected and skipped)'
+        print('(protected and skipped)')
     else:
-        print '' #(for line break only)
+        print('') #(for line break only)
 
     # read actual command until we find a line the begins with a closing curly bracket
     i += 1
@@ -193,7 +193,7 @@ def read_entry(i):
 
 
 def usage():
-    print """buildglyphimages. Part of the lilyglyphs package.
+    print("""buildglyphimages. Part of the lilyglyphs package.
     Parses a template file, creates
     single .ly files from it, uses LilyPond to create single glyph
     pdf files and set up template files to be used in LaTeX.
@@ -204,7 +204,7 @@ def usage():
     For detailed instructions refer to the manual.
     Usage:
     buildglyphimages.py in-file-name.
-    """
+    """)
 
 def write_file_info(name, fout):
     """Formats file specific information for the lilyPond source file"""
@@ -225,22 +225,22 @@ def write_file_info(name, fout):
 
 def write_latex_file():
     """Composes LaTeX file and writes it to disk"""
-    print 'Generate LaTeX file'
-    print lg.dir_cmd, in_basename
+    print('Generate LaTeX file')
+    print(lg.dir_cmd, in_basename)
     lg.write_latex_file(os.path.join(os.getcwd(), lg.dir_cmd,  in_basename + '.tex'))
 
 def write_lily_src_files():
     """Generates one .ly file for each found new command"""
     skip_cmds = []
-    print 'Write .ly files for each entry:'
+    print('Write .ly files for each entry:')
     for cmd_name in lg.in_cmds:
-        print '- ' + cmd_name
+        print('- ' + cmd_name)
         gen_src_name = os.path.join(lg.dir_lysrc, cmd_filename(cmd_name) + '.ly')
         # handle existing commands
         if os.path.exists(gen_src_name):
             action = ''
             while not (action == 'Y' or action == 'N'):
-                action = raw_input('already present. Overwrite (y/n)? ')
+                action = input('already present. Overwrite (y/n)? ')
                 action = action.upper()
             if action == 'N':
                 skip_cmds.append(cmd_name)
@@ -281,7 +281,7 @@ def write_lily_src_files():
         fout.close()
     
     # remove skipped commands from in_cmds
-    print skip_cmds
+    print(skip_cmds)
     for cmd_name in skip_cmds:
         del lg.in_cmds[cmd_name]
         lg.lily_files.remove(cmd_filename(cmd_name))
@@ -314,7 +314,7 @@ if __name__ == "__main__":
     in_path, in_filename = os.path.split(in_file)
     in_path = os.path.normpath(in_path)
     if not (('lilyglyphs' in in_path) and (in_path.endswith('definitions'))):
-        print 'File in the wrong location: ' + in_path
+        print('File in the wrong location: ' + in_path)
         usage()
         sys.exit(2)
     in_basename, in_ext = os.path.splitext(in_filename)

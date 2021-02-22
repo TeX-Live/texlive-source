@@ -62,9 +62,9 @@ print_err("Aleph capacity exceeded, sorry [");
 @z
 %----------------------------------------
 @x
-  print("Omega output, Version 3.14159265--1.15, ");
+  print("Omega output, Version 3.141592653--1.15, ");
 @y
-  print("Aleph output, Version 3.14159265--1.15--2.1, ");
+  print("Aleph output, Version 3.141592653--1.15--2.1, ");
 @z
 %----------------------------------------
 @x

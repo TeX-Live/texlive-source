@@ -1,6 +1,6 @@
 /* mpfr_cos -- cosine of a floating-point number
 
-Copyright 2001-2019 Free Software Foundation, Inc.
+Copyright 2001-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -64,7 +64,9 @@ mpfr_cos2_aux (mpfr_ptr f, mpfr_srcptr r)
   mpz_init (t);
   ex = mpfr_get_z_2exp (x, r); /* r = x*2^ex */
 
-  /* remove trailing zeroes */
+  /* Remove trailing zeroes.
+     Since x comes from a regular MPFR number, due to the constraints on the
+     exponent and the precision, there can be no integer overflow below. */
   l = mpz_scan1 (x, 0);
   ex += l;
   mpz_fdiv_q_2exp (x, x, l);
@@ -208,10 +210,10 @@ mpfr_cos (mpfr_ptr y, mpfr_srcptr x, mpfr_rnd_t rnd_mode)
           if (MPFR_IS_ZERO(xr))
             goto ziv_next;
           /* now |xr| <= 4, thus r <= 16 below */
-          mpfr_mul (r, xr, xr, MPFR_RNDU); /* err <= 1 ulp */
+          mpfr_sqr (r, xr, MPFR_RNDU); /* err <= 1 ulp */
         }
       else
-        mpfr_mul (r, x, x, MPFR_RNDU); /* err <= 1 ulp */
+        mpfr_sqr (r, x, MPFR_RNDU); /* err <= 1 ulp */
 
       /* now |x| < 4 (or xr if reduce = 1), thus |r| <= 16 */
 

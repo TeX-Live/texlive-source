@@ -2,7 +2,7 @@
 ** GraphicsPath.hpp                                                     **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -732,7 +732,7 @@ class GraphicsPath {
 
 	private:
 		std::deque<CommandVariant> _commands; ///< sequence of path commands
-		WindingRule _windingRule;
+		WindingRule _windingRule = WindingRule::NON_ZERO;
 		Point _startPoint; ///< start point of final sub-path
 		Point _finalPoint; ///< final point reached by last command in path
 };

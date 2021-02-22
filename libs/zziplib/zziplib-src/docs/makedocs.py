@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import sys
 from zzipdoc.match import *
 from zzipdoc.options import *
@@ -37,7 +39,7 @@ class PerFile:
         return None
     def print_list_mainheader(self):
         for t_fileheader in self.headers:
-            print t_fileheader.get_filename(), t_fileheader.src_mainheader()
+            print(t_fileheader.get_filename(), t_fileheader.src_mainheader())
         
 class PerFunctionEntry:
     def __init__(self, header, comment, prototype):
@@ -66,10 +68,10 @@ class PerFunction:
                                            functionprototype) ]
     def print_list_titleline(self):
         for funcheader in self.headers:
-            print funcheader.get_filename(), "[=>]", funcheader.get_titleline()
+            print(funcheader.get_filename(), "[=>]", funcheader.get_titleline())
     def print_list_name(self):
         for funcheader in self.prototypes:
-            print funcheader.get_filename(), "[>>]", funcheader.get_name()
+            print(funcheader.get_filename(), "[>>]", funcheader.get_name())
 
 class PerFunctionFamilyEntry:
     def __init__(self, leader):
@@ -122,12 +124,12 @@ class PerFunctionFamily:
         for name in self.retarget:
             into = self.retarget[name]
             if into not in name_list:
-                print ("function '"+name+"' retarget into '"+into+
-                       "' does not exist - keep alone")
+                print("function '"+name+"' retarget into '"+into+
+                      "' does not exist - keep alone")
             if into in self.retarget:
                 other = self.retarget[into]
-                print ("function '"+name+"' retarget into '"+into+
-                       "' which is itself a retarget into '"+other+"'")
+                print("function '"+name+"' retarget into '"+into+
+                      "' which is itself a retarget into '"+other+"'")
             if into not in lead_list:
                 lead_list += [ into ]
         for func in self.functions:
@@ -141,7 +143,7 @@ class PerFunctionFamily:
                 entry.add(func) # the first
                 self.entries += [ entry ]
             else:
-                print "head function '"+name+" has no entry"
+                print("head function '"+name+" has no entry")
         for func in self.functions:
             name = func.get_name()
             if name in self.retarget:
@@ -150,14 +152,14 @@ class PerFunctionFamily:
                 if entry is not None:
                     entry.add(func) # will not add duplicates
                 else:
-                    print "into function '"+name+" has no entry"
+                    print("into function '"+name+" has no entry")
     def print_list_name(self):
         for family in self.entries:
             name = family.get_name()
-            print name, ":",
+            print(name, ":", end = " ")
             for item in family.functions:
-                print item.get_name(), ",",
-            print ""
+                print(item.get_name(), ",", end = " ")
+            print("")
 class HtmlManualPageAdapter:
     def __init__(self, entry):
         """ usually takes a PerFunctionEntry """

@@ -1,6 +1,6 @@
 /* mpfr_dump, mpfr_fdump -- dump a float (for the tests and debugging purpose)
 
-Copyright 1999-2019 Free Software Foundation, Inc.
+Copyright 1999-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -31,7 +31,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
  * in such a case, it outputs information between exclamation marks:
  *   - 'N': the number is not normalized (MSB = 0);
  *   - 'T': there are non-zero trailing bits (output in square brackets);
- *   - 'U': this is a UBF number (internal use only);
+ *   - 'U': this is an UBF number (internal use only);
  *   - '<': the exponent is < the current emin;
  *   - '>': the exponent is > the current emax.
  *

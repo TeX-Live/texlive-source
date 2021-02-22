@@ -68,7 +68,7 @@ function *realRealFunction();
 #include "path.h"
 
 #ifdef __CYGWIN__
-extern "C" double yn(int, double);
+  extern "C" double yn(int, double);
 extern "C" double jn(int, double);
 extern "C" int __signgam;
 #define signgam __signgam
@@ -103,7 +103,7 @@ static const unsigned char BitReverseTable8[256]=
 #define R2(n)     n,    n+2*64,    n+1*64,    n+3*64
 #define R4(n) R2(n),R2(n+2*16),R2(n+1*16),R2(n+3*16)
 #define R6(n) R4(n),R4(n+2*4 ),R4(n+1*4 ),R4(n+3*4 )
-R6(0),R6(2),R6(1),R6(3)
+  R6(0),R6(2),R6(1),R6(3)
 };
 #undef R2
 #undef R4
@@ -112,29 +112,29 @@ R6(0),R6(2),R6(1),R6(3)
 unsigned long long bitreverse8(unsigned long long a)
 {
   return
-    (unsigned long long) BitReverseTable8[a]; 
+    (unsigned long long) BitReverseTable8[a];
 }
 
 unsigned long long bitreverse16(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 8) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 8)]);
 }
 
 unsigned long long bitreverse24(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 16) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 8) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 16) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 16)]);
 }
 
 unsigned long long bitreverse32(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 24) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 16) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 24) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 16) |
     ((unsigned long long) BitReverseTable8[(a >> 16) & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 24)]);
 }
@@ -142,8 +142,8 @@ unsigned long long bitreverse32(unsigned long long a)
 unsigned long long bitreverse40(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 32) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 24) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 32) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 24) |
     ((unsigned long long) BitReverseTable8[(a >> 16) & 0xff] << 16) |
     ((unsigned long long) BitReverseTable8[(a >> 24) & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 32)]);
@@ -152,8 +152,8 @@ unsigned long long bitreverse40(unsigned long long a)
 unsigned long long bitreverse48(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 40) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 32) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 40) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 32) |
     ((unsigned long long) BitReverseTable8[(a >> 16) & 0xff] << 24) |
     ((unsigned long long) BitReverseTable8[(a >> 24) & 0xff] << 16) |
     ((unsigned long long) BitReverseTable8[(a >> 32) & 0xff] << 8) |
@@ -163,24 +163,24 @@ unsigned long long bitreverse48(unsigned long long a)
 unsigned long long bitreverse56(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 48) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 40) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 48) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 40) |
     ((unsigned long long) BitReverseTable8[(a >> 16) & 0xff] << 32) |
     ((unsigned long long) BitReverseTable8[(a >> 24) & 0xff] << 24) |
     ((unsigned long long) BitReverseTable8[(a >> 32) & 0xff] << 16) |
-    ((unsigned long long) BitReverseTable8[(a >> 40) & 0xff] << 8) | 
+    ((unsigned long long) BitReverseTable8[(a >> 40) & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 48)]);
 }
 
 unsigned long long bitreverse64(unsigned long long a)
 {
   return
-    ((unsigned long long) BitReverseTable8[a & 0xff] << 56) | 
-    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 48) | 
+    ((unsigned long long) BitReverseTable8[a & 0xff] << 56) |
+    ((unsigned long long) BitReverseTable8[(a >> 8) & 0xff] << 48) |
     ((unsigned long long) BitReverseTable8[(a >> 16) & 0xff] << 40) |
     ((unsigned long long) BitReverseTable8[(a >> 24) & 0xff] << 32) |
     ((unsigned long long) BitReverseTable8[(a >> 32) & 0xff] << 24) |
-    ((unsigned long long) BitReverseTable8[(a >> 40) & 0xff] << 16) | 
+    ((unsigned long long) BitReverseTable8[(a >> 40) & 0xff] << 16) |
     ((unsigned long long) BitReverseTable8[(a >> 48) & 0xff] << 8) |
     ((unsigned long long) BitReverseTable8[(a >> 56)]);
 }
@@ -193,7 +193,7 @@ Int popcount(T a)
   a=a-((a >> 1) & (T)~(T)0/3);
   a=(a & (T)~(T)0/15*3)+((a >> 2) & (T)~(T)0/15*3);
   a=(a+(a >> 4)) & (T)~(T)0/255*15;
-return (T)(a*((T)~(T)0/255)) >> (sizeof(T)-1)*CHAR_BIT;
+  return (T)(a*((T)~(T)0/255)) >> (sizeof(T)-1)*CHAR_BIT;
 }
 #undef T
 #endif
@@ -219,12 +219,12 @@ Int factorial(Int n)
   return table[n];
 }
 
-static inline Int Round(double x) 
+static inline Int Round(double x)
 {
   return Int(x+((x >= 0) ? 0.5 : -0.5));
 }
 
-inline Int sgn(double x) 
+inline Int sgn(double x)
 {
   return (x > 0.0 ? 1 : (x < 0.0 ? -1 : 0));
 }
@@ -232,12 +232,12 @@ inline Int sgn(double x)
 static bool initializeRandom=true;
 
 void Srand(Int seed)
-{ 
+{
   initializeRandom=false;
   const int n=256;
   static char state[n];
   initstate(intcast(seed),state,n);
-}  
+}
 
 // Autogenerated routines:
 
@@ -274,7 +274,7 @@ void gen_runmath2(stack *Stack)
 {
   Int y=vm::pop<Int>(Stack);
   Int x=vm::pop<Int>(Stack);
-#line 203 "runmath.in" 
+#line 203 "runmath.in"
   {Stack->push<Int>(quotient<Int>()(x,y)); return;}
 }
 
@@ -283,7 +283,7 @@ void gen_runmath2(stack *Stack)
 void gen_runmath3(stack *Stack)
 {
   Int x=vm::pop<Int>(Stack);
-#line 208 "runmath.in" 
+#line 208 "runmath.in"
   {Stack->push<Int>(Abs(x)); return;}
 }
 
@@ -292,7 +292,7 @@ void gen_runmath3(stack *Stack)
 void gen_runmath4(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 213 "runmath.in" 
+#line 213 "runmath.in"
   {Stack->push<Int>(sgn(x)); return;}
 }
 
@@ -300,7 +300,7 @@ void gen_runmath4(stack *Stack)
 // Int rand();
 void gen_runmath5(stack *Stack)
 {
-#line 218 "runmath.in" 
+#line 218 "runmath.in"
   if(initializeRandom)
     Srand(1);
   {Stack->push<Int>(random()); return;}
@@ -311,7 +311,7 @@ void gen_runmath5(stack *Stack)
 void gen_runmath6(stack *Stack)
 {
   Int seed=vm::pop<Int>(Stack);
-#line 225 "runmath.in" 
+#line 225 "runmath.in"
   Srand(seed);
 }
 
@@ -320,7 +320,7 @@ void gen_runmath6(stack *Stack)
 // real unitrand();
 void gen_runmath7(stack *Stack)
 {
-#line 231 "runmath.in"                         
+#line 231 "runmath.in"
   {Stack->push<real>(((real) random())/RANDOM_MAX); return;}
 }
 
@@ -329,7 +329,7 @@ void gen_runmath7(stack *Stack)
 void gen_runmath8(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 236 "runmath.in" 
+#line 236 "runmath.in"
   {Stack->push<Int>(Intcast(ceil(x))); return;}
 }
 
@@ -338,7 +338,7 @@ void gen_runmath8(stack *Stack)
 void gen_runmath9(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 241 "runmath.in" 
+#line 241 "runmath.in"
   {Stack->push<Int>(Intcast(floor(x))); return;}
 }
 
@@ -347,7 +347,7 @@ void gen_runmath9(stack *Stack)
 void gen_runmath10(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 246 "runmath.in" 
+#line 246 "runmath.in"
   if(validInt(x)) {Stack->push<Int>(Round(x)); return;}
   integeroverflow(0);
 }
@@ -357,7 +357,7 @@ void gen_runmath10(stack *Stack)
 void gen_runmath11(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 252 "runmath.in" 
+#line 252 "runmath.in"
   {Stack->push<Int>(Ceil(x)); return;}
 }
 
@@ -366,7 +366,7 @@ void gen_runmath11(stack *Stack)
 void gen_runmath12(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 257 "runmath.in" 
+#line 257 "runmath.in"
   {Stack->push<Int>(Floor(x)); return;}
 }
 
@@ -375,7 +375,7 @@ void gen_runmath12(stack *Stack)
 void gen_runmath13(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
-#line 262 "runmath.in" 
+#line 262 "runmath.in"
   {Stack->push<Int>(Round(Intcap(x))); return;}
 }
 
@@ -396,7 +396,7 @@ void gen_runmath15(stack *Stack)
 {
   real x=vm::pop<real>(Stack);
   real y=vm::pop<real>(Stack);
-#line 273 "runmath.in" 
+#line 273 "runmath.in"
   {Stack->push<real>(atan2(y,x)); return;}
 }
 
@@ -406,7 +406,7 @@ void gen_runmath16(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 278 "runmath.in" 
+#line 278 "runmath.in"
   {Stack->push<real>(hypot(x,y)); return;}
 }
 
@@ -416,7 +416,7 @@ void gen_runmath17(stack *Stack)
 {
   real y=vm::pop<real>(Stack);
   real x=vm::pop<real>(Stack);
-#line 283 "runmath.in" 
+#line 283 "runmath.in"
   {Stack->push<real>(remainder(x,y)); return;}
 }
 
@@ -677,11 +677,11 @@ void gen_runmath40(stack *Stack)
 #line 435 "runmath.in"
   typedef unsigned long long Bitreverse(unsigned long long a);
   static Bitreverse *B[]={bitreverse8,bitreverse16,bitreverse24,bitreverse32,
-                     bitreverse40,bitreverse48,bitreverse56,bitreverse64};
+                          bitreverse40,bitreverse48,bitreverse56,bitreverse64};
   int maxbits=intbits()-1; // Drop sign bit
 #if Int_MAX2 >= 0x7fffffffffffffffLL
   --maxbits;               // Drop extra bit for reserved values
-#endif  
+#endif
   if(bits <= 0 || bits > maxbits || a < 0 ||
      (unsigned long long) a >= (1ULL << bits))
     {Stack->push<Int>(-1); return;}

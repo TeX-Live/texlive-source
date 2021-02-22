@@ -536,9 +536,7 @@ static boolean short_scan_something_internal(int cmd, int chr, int level, boolea
                     /*tex assumes identical values */
                     cur_val_level = cur_chr;
                 }
-                if ((cur_list.tail_field != contrib_head) &&
-                    !is_char_node(cur_list.tail_field) &&
-                    (cur_list.mode_field != 0)) {
+                if ((cur_list.tail_field != contrib_head) && (cur_list.mode_field != 0)) {
                     switch (cur_chr) {
                         case lastpenalty_code:
                             if (type(cur_list.tail_field) == penalty_node)
@@ -2095,7 +2093,8 @@ halfword scan_toks(boolean macro_def, boolean xpand)
                 */
                 s = match_token + cur_chr;
                 get_token();
-                if (cur_cmd == left_brace_cmd) {
+             /* if (cur_cmd == left_brace_cmd) { */
+                if (cur_tok < left_brace_limit) {
                     hash_brace = cur_tok;
                     store_new_token(cur_tok);
                     store_new_token(end_match_token);
@@ -2103,7 +2102,10 @@ halfword scan_toks(boolean macro_def, boolean xpand)
                 }
                 if (t == nine_token) {
                     print_err("You already have nine parameters");
-                    help1("I'm going to ignore the # sign you just used.");
+                    help2(
+                        "I'm going to ignore the # sign you just used,",
+                        "as well as the token that followed it."
+                    );
                     error();
                 } else {
                     incr(t);

@@ -6,11 +6,27 @@
 
 ./dt2dv $srcdir/edited.txt testfile.dvi || exit 1
 
-./dv2dt testfile.dvi testfile.dtl || exit 1
+./dv2dt testfile.dvi testfile.dtl || exit 2
 
-./dt2dv testfile.dtl testfile.dvx || exit 1
+./dt2dv testfile.dtl testfile.dvx || exit 3
 
-./dv2dt testfile.dvx testfile.dtx || exit 1
+./dv2dt testfile.dvx testfile.dtx || exit 4
 
-diff testfile.dtl testfile.dtx || exit 1
+cmp testfile.dvi testfile.dvx || exit 5
+
+diff testfile.dtl testfile.dtx || exit 6
+
+./dt2dv -so testfile.dtl > testfile1.dvi || exit 7
+./dt2dv -si testfile2.dvi < testfile.dtl || exit 8
+./dt2dv -so -si < testfile.dtl > testfile3.dvi || exit 9
+
+cmp testfile.dvi testfile1.dvi || exit 10
+cmp testfile.dvi testfile2.dvi || exit 11
+cmp testfile.dvi testfile3.dvi || exit 12
+
+./dv2dt < testfile.dvi > testfile1.dtl || exit 13
+cat testfile.dvi | ./dv2dt > testfile2.dtl || exit 14
+
+diff testfile.dtl testfile1.dtl || exit 15
+diff testfile.dtl testfile2.dtl || exit 16
 

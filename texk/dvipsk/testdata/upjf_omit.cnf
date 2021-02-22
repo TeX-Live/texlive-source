@@ -1,0 +1,13 @@
+% makejvf settings for test
+% You may freely use, modify and/or distribute this file.
+
+CHARSET	%
++	2600,% ☀
++	2603,% ☃
++	3000..303F,% CJK Symbols and Punctuation
++	3040..309F,% Hiragana
++	6674,% 晴
+%+	96EA,% 雪
++	FF00..FFEF,% Halfwidth and Fullwidth Forms
+%+	20B9F% 𠮟
+

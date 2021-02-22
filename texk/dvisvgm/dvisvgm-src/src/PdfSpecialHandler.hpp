@@ -2,7 +2,7 @@
 ** PdfSpecialHandler.hpp                                                **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -38,11 +38,11 @@ class PdfSpecialHandler : public SpecialHandler {
 		void preprocessBeginAnn (StreamInputReader &ir, SpecialActions &actions);
 		void preprocessDest (StreamInputReader &ir, SpecialActions &actions);
 		void preprocessPagesize (StreamInputReader &ir, SpecialActions &actions);
+		void preprocessMapfile (StreamInputReader &ir, SpecialActions &actions);
+		void preprocessMapline (StreamInputReader &ir, SpecialActions &actions);
 		void processBeginAnn (StreamInputReader &ir, SpecialActions &actions);
 		void processEndAnn (StreamInputReader &ir, SpecialActions &actions);
 		void processDest (StreamInputReader &ir, SpecialActions &actions);
-		void processMapfile (StreamInputReader &ir, SpecialActions &actions);
-		void processMapline (StreamInputReader &ir, SpecialActions &actions);
 
 		void dviMovedTo (double x, double y, SpecialActions &actions) override;
 		void dviEndPage (unsigned pageno, SpecialActions &actions) override;

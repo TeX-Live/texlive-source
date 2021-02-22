@@ -96,6 +96,8 @@
 #include <ptexenc/unicode.h>
 #endif
 
+#include "common.h"
+
 #define uchar unsigned char
 #define uint  unsigned int
 #define Long  int
@@ -471,6 +473,7 @@ void usage(int ex)
     "   pdf   specials:  pdf:bcolor, pdf:ecolor, pdf:bgcolor\n"
     "   tpic  specials:  pn\n"
     );
+    fprintf(stderr, "\nEmail bug reports to %s.\n", BUG_ADDRESS);
     exit(ex);
 }
 

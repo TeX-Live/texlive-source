@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
+# $Id: tlmgr.pl 57772 2021-02-17 19:01:36Z karl $
 #
-# Copyright 2008-2020 Norbert Preining
+# Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 54446 $';
-my $datrev = '$Date: 2020-03-21 17:45:22 +0100 (Sat, 21 Mar 2020) $';
+my $svnrev = '$Revision: 57772 $';
+my $datrev = '$Date: 2021-02-17 20:01:36 +0100 (Wed, 17 Feb 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -25,6 +25,7 @@ our $ismain;
 our $loadmediasrcerror;
 our $packagelogfile;
 our $packagelogged;
+our $commandlogfile;
 our $tlmgr_config_file;
 our $pinfile;
 our $action; # for the pod2usage -sections call
@@ -92,6 +93,7 @@ BEGIN {
 }
 
 use Cwd qw/abs_path/;
+use File::Find;
 use File::Spec;
 use Pod::Usage;
 use Getopt::Long qw(:config no_autoabbrev permute);
@@ -358,6 +360,7 @@ my %globaloptions = (
   "machine-readable" => 1,
   "no-execute-actions" => 1,
   "package-logfile" => "=s",
+  "command-logfile" => "=s",
   "persistent-downloads" => "!",
   "pause" => 1,
   "pin-file" => "=s",
@@ -653,6 +656,22 @@ for the full story.\n";
     debug("appending to package log file: $packagelogfile\n");
   }
 
+  # output of executed commands are put into -command-logfile
+  $commandlogfile = $opts{"command-logfile"};
+  if ($opts{"usermode"}) {
+    $commandlogfile ||= "$::maintree/web2c/tlmgr-commands.log";
+  } else {
+    $commandlogfile ||= "$texmfsysvar/web2c/tlmgr-commands.log";
+  }
+  # Try to open the packagelog file, but do NOT die when that does not work
+  if (!open(COMMANDLOG, ">>$commandlogfile")) {
+    debug("Cannot open command log file for appending: $commandlogfile\n");
+    debug("Will not log output of executed commands for this run\n");
+    $commandlogfile = "";
+  } else {
+    debug("appending to command log file: $commandlogfile\n");
+  }
+
   $loadmediasrcerror = "Cannot load TeX Live database from ";
 
   # load the config file and set the config options
@@ -815,7 +834,7 @@ sub do_cmd_and_check {
   # tlmgr front ends (MacOSX's TeX Live Utility) can read it
   # and show it to the user before the possibly long delay.
   info("running $cmd ...\n");
-  logpackage("running $cmd");
+  logcommand("running $cmd");
   my ($out, $ret);
   if ($opts{"dry-run"}) {
     $ret = $F_OK;
@@ -829,22 +848,17 @@ sub do_cmd_and_check {
   } else {
     ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
   }
-  # Although it is quite verbose to report all the output from every
-  # fmtutil (especially) run, it's the only way to know what's normal
-  # when something fails. Prefix each line to make them easy to see
-  # (and filter out/in).
-  (my $prefixed_out = $out) =~ s/^/(cmd)/gm;
-  $prefixed_out =~ s/\n+$//; # trailing newlines don't seem interesting
-  my $outmsg = "output:\n$prefixed_out\n--end of output of $cmd.\n";
+  $out =~ s/\n+$//; # trailing newlines don't seem interesting
+  my $outmsg = "output:\n$out\n--end of output of $cmd.\n";
   if ($ret == $F_OK) {
     info("done running $cmd.\n");
-    logpackage("success, $outmsg");
+    logcommand("success, $outmsg");
     ddebug("$cmd $outmsg");
     return ($F_OK);
   } else {
     info("\n");
     tlwarn("$prg: $cmd failed (status $ret), output:\n$out\n");
-    logpackage("error, status: $ret, $outmsg");
+    logcommand("error, status: $ret, $outmsg");
     return ($F_ERROR);
   }
 }
@@ -859,7 +873,7 @@ sub do_cmd_and_check {
 sub handle_execute_actions {
   my $errors = 0;
 
-  my $sysmode = ($opts{"usermode"} ? "" : "-sys");
+  my $sysmode = ($opts{"usermode"} ? "-user" : "-sys");
   my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
 
   if ($::files_changed) {
@@ -1494,7 +1508,9 @@ sub action_path {
       $ret |= TeXLive::TLUtils::w32_add_to_path(
         $localtlpdb->root . "/bin/win32",
         $winadminmode);
-      $ret |= TeXLive::TLWinGoo::broadcast_env();
+      # ignore this return value, since broadcase_env might return
+      # nothing in case of errors, and there is no way around it.
+      # $ret |= TeXLive::TLWinGoo::broadcast_env();
     } else {
       $ret |= TeXLive::TLUtils::add_symlinks($localtlpdb->root,
         $localtlpdb->platform(),
@@ -1507,7 +1523,9 @@ sub action_path {
       $ret |= TeXLive::TLUtils::w32_remove_from_path(
         $localtlpdb->root . "/bin/win32",
         $winadminmode);
-      $ret |= TeXLive::TLWinGoo::broadcast_env();
+      # ignore this return value, since broadcase_env might return
+      # nothing in case of errors, and there is no way around it.
+      # $ret |= TeXLive::TLWinGoo::broadcast_env();
     } else {
       # remove symlinks
       $ret |= TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
@@ -1590,7 +1608,7 @@ sub action_info {
     my $load_remote = 0;
     for my $d (@datafields) {
       $load_remote = 1 if ($d eq "remoterev");
-      if ($d !~ m/^(name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|depends|cat-version|cat-date|cat-license|cat-contact-.*)$/) {
+      if ($d !~ m/^(name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|depends|[lr]?cat-version|[lr]?cat-date|[lr]?cat-license|[lr]?cat-contact-.*)$/) {
         tlwarn("unknown data field: $d\n");
         return($F_ERROR);
       }
@@ -1855,6 +1873,7 @@ sub restore_one_package {
   $localtlpdb->add_tlpobj($tlpobj);
   TeXLive::TLUtils::announce_execute_actions("enable",
                                       $localtlpdb->get_package($pkg));
+  check_announce_format_triggers($pkg);
   $localtlpdb->save;
   # TODO_ERRORCHECKING we should check the return values of the
   # various calls above
@@ -2723,14 +2742,13 @@ sub action_update {
   } else {
     @todo = @ARGV;
   }
+  if ($opts{"self"} && !@critical) {
+    info("$prg: no self-updates for tlmgr available\n");
+  }
   # don't do anything if we have been invoked in a strange way
-  if (!@todo) {
-    if ($opts{"self"}) {
-      info("$prg: no self-updates for tlmgr available.\n");
-    } else {
-      tlwarn("$prg update: please specify a list of packages, --all, or --self.\n");
-      return ($F_ERROR);
-    }
+  if (!@todo && !$opts{"self"}) {
+    tlwarn("$prg update: please specify a list of packages, --all, or --self.\n");
+    return ($F_ERROR);
   }
 
   if (!($opts{"self"} && @critical) || ($opts{"self"} && $opts{"list"})) {
@@ -3572,7 +3590,9 @@ sub action_update {
   # if a real update from default disk location didn't find anything,
   # warn if nothing is updated.  Unless they said --self, in which case
   # we've already reported it.
-  if (!(@new || @updated) && ! $opts{"self"}) {
+  # But if --self --all was given, and *no* update available for
+  # critical packages, then we should report it, too!
+  if (!(@new || @updated) && ( !$opts{"self"} || @todo )) {
     if (!$::machinereadable) {
       info("$prg: no updates available\n");
       if ($remotetlpdb->media ne "NET"
@@ -3897,6 +3917,7 @@ sub show_one_package_json {
                           installed => ($is_installed ? TeXLive::TLUtils::True() : TeXLive::TLUtils::False()),
                           lrev      => ($is_installed ? $loctlp->revision : 0),
                           rrev      => ($is_available ? $remtlp->revision : 0),
+                          rcataloguedata => ($is_available ? $remtlp->cataloguedata : {}),
                           revision  => undef);
   print $str;
   return($F_OK);
@@ -3944,15 +3965,31 @@ sub show_one_package_csv {
     } elsif ($d eq "installed") {
       push @out, $is_installed;
     } elsif ($d eq "relocatable") {
-      push @out, ($tlp->relocatable ? 1 : 0);
+      push @out, ($tlp->relocated ? 1 : 0);
     } elsif ($d eq "cat-version") {
       push @out, ($tlp->cataloguedata->{'version'} || "");
+    } elsif ($d eq "lcat-version") {
+      push @out, ($is_installed ? ($loctlp->cataloguedata->{'version'} || "") : "");
+    } elsif ($d eq "rcat-version") {
+      push @out, ($is_available ? ($remtlp->cataloguedata->{'version'} || "") : "");
     } elsif ($d eq "cat-date") {
       push @out, ($tlp->cataloguedata->{'date'} || "");
+    } elsif ($d eq "lcat-date") {
+      push @out, ($is_installed ? ($loctlp->cataloguedata->{'date'} || "") : "");
+    } elsif ($d eq "rcat-date") {
+      push @out, ($is_available ? ($remtlp->cataloguedata->{'date'} || "") : "");
     } elsif ($d eq "cat-license") {
       push @out, ($tlp->cataloguedata->{'license'} || "");
+    } elsif ($d eq "lcat-license") {
+      push @out, ($is_installed ? ($loctlp->cataloguedata->{'license'} || "") : "");
+    } elsif ($d eq "rcat-license") {
+      push @out, ($is_available ? ($remtlp->cataloguedata->{'license'} || "") : "");
     } elsif ($d =~ m/^cat-(contact-.*)$/) {
       push @out, ($tlp->cataloguedata->{$1} || "");
+    } elsif ($d =~ m/^lcat-(contact-.*)$/) {
+      push @out, ($is_installed ? ($loctlp->cataloguedata->{$1} || "") : "");
+    } elsif ($d =~ m/^rcat-(contact-.*)$/) {
+      push @out, ($is_available ? ($remtlp->cataloguedata->{$1} || "") : "");
     } elsif ($d eq "localrev") {
       push @out, ($is_installed ? $loctlp->revision : 0);
     } elsif ($d eq "remoterev") {
@@ -5203,7 +5240,8 @@ Error message from creating MainWindow:
 
 
 #  UNINSTALL
-#
+# Return zero if successful, nonzero if failure.
+# 
 sub uninstall_texlive {
   if (win32()) {
     printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel to removing TeX Live!\n";
@@ -5243,13 +5281,15 @@ sub uninstall_texlive {
     system("rm", "-f", "$Master/$f");
   }
   if (-d "$Master/temp") {
-    system("rmdir", "--ignore-fail-on-non-empty", "$Master/temp");
+    finddepth(sub { rmdir; }, "$Master/temp");
   }
   unlink("$Master/install-tl.log");
   # if they want removal, give them removal. Hopefully they know how to
   # regenerate any changed config files.
   system("rm", "-rf", "$Master/texmf-config");
-  system("rmdir", "--ignore-fail-on-non-empty", "$Master");
+  finddepth(sub { rmdir; }, "$Master");
+  
+  return -d "$Master";
 }
 
 
@@ -6625,8 +6665,16 @@ sub action_shell {
         init_local_db();
         print "OK\n";
       } elsif ($what eq "remote") {
-        init_tlmedia_or_die();
-        print "OK\n";
+        my ($ret, $err) = init_tlmedia();
+        if ($ret) {
+          print("OK\n");
+        } else {
+          if ($::machinereadable) {
+            # replace \n with \\n to get single line
+            $err =~ s/\n/\\n/g;
+          }
+          print("ERROR $err\n");
+        }
       } else {
         print "ERROR can only load 'local' or 'remote', not $what\n";
       }
@@ -7021,7 +7069,9 @@ sub setup_one_remotetlpdb {
     # first check that the saved tlpdb is present at all
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
-      "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
+      ($is_main ? 
+        "$Master/$InfraLocation/texlive.tlpdb.main.$loc_digest" :
+        "$Master/$InfraLocation/texlive.tlpdb.$loc_digest");
     ddebug("loc_digest = $loc_digest\n");
     ddebug("loc_copy = $loc_copy_of_remote_tlpdb\n");
     if (-r $loc_copy_of_remote_tlpdb) {
@@ -7185,7 +7235,9 @@ FROZEN
   if (!$local_copy_tlpdb_used && $location =~ m;^(https?|ftp)://;) {
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
-      "$Master/$InfraLocation/texlive.tlpdb.$loc_digest";
+      ($is_main ? 
+        "$Master/$InfraLocation/texlive.tlpdb.main.$loc_digest" :
+        "$Master/$InfraLocation/texlive.tlpdb.$loc_digest");
     my $tlfh;
     if (!open($tlfh, ">:unix", $loc_copy_of_remote_tlpdb)) {
       # that should be only a debug statement, since a user without
@@ -7196,6 +7248,14 @@ FROZEN
       &debug("writing out tlpdb to $loc_copy_of_remote_tlpdb\n");
       $remotetlpdb->writeout($tlfh);
       close($tlfh);
+      # Remove all other copies of main databases in case different mirrors
+      # are used $Master/$InfraLocation/texlive.tlpdb.main.$loc_digest
+      if ($is_main) {
+        for my $fn (<"$Master/$InfraLocation/texlive.tlpdb.main.*">) {
+          next if ($fn eq $loc_copy_of_remote_tlpdb);
+          unlink($fn);
+        }
+      }
     }
   }
 
@@ -7350,6 +7410,9 @@ sub load_options_from_config {
         tlwarn("$prg: $fn: unknown value for no-checksums: $val\n");
       }
 
+    } elsif ($key eq "tkfontscale") {
+      $config{'tkfontscale'} = $val;
+
     } elsif ($sysmode) {
       # keys here are only allowed in sys mode
       if ($key eq "allowed-actions") {
@@ -7446,6 +7509,13 @@ sub logpackage {
     print PACKAGELOG "[$tim] @_\n";
   }
 }
+sub logcommand {
+  if ($commandlogfile) {
+    my $tim = localtime();
+    print COMMANDLOG "[$tim] @_\n";
+  }
+}
+
 
 # resolve relative paths from tlpdb wrt tlroot 
 sub norm_tlpdb_path {
@@ -7793,6 +7863,13 @@ S<Japanese (ja)>, S<Dutch (nl)>, S<Polish (pl)>, S<Brazilian Portuguese
 (zh_CN)>, and S<traditional Chinese (zh_TW)>.
 
 tlshell shares its message catalog with tlmgr.
+
+=item B<--command-logfile> I<file>
+
+C<tlmgr> logs the output of all programs invoked (mktexlr, mtxrun, fmtutil,
+updmap) to a separate log file, by default
+C<TEXMFSYSVAR/web2c/tlmgr-commands.log>.  This option allows you to specify a
+different file for the log.
 
 =item B<--debug-translation>
 
@@ -8291,21 +8368,35 @@ C<--only-installed> and C<--only-remote> cannot both be specified.
 =item B<--data C<item1,item2,...>>
 
 If the option C<--data> is given, its argument must be a comma separated
-list of field names from: C<name>, C<category>, C<localrev>, C<remoterev>,
-C<shortdesc>, C<longdesc>, C<installed>, C<size>, C<relocatable>, C<depends>,
-C<cat-version>, C<cat-date>, or C<cat-license>. In this case the requested
-packages' information is listed in CSV format one package per line, and the
-column information is given by the C<itemN>. The C<depends> column contains
-the name of all dependencies separated by C<:>.
+list of field names from: C<name>, C<category>, C<localrev>,
+C<remoterev>, C<shortdesc>, C<longdesc>, C<installed>, C<size>,
+C<relocatable>, C<depends>, C<cat-version>, C<cat-date>, C<cat-license>,
+plus various C<cat-contact-*> fields (see below).
+
+The C<cat-*> fields all come from the TeX Catalogue
+(L<https://ctan.org/pkg/catalogue>). For each, there are two more
+variants with prefix C<l> and C<r>, e.g., C<lcat-version> and
+C<rcat-version>, which indicate the local and remote information,
+respectively. The variants without C<l> and C<r> show the most current
+one, which is normally the remote value.
+
+The requested packages' information is listed in CSV format, one package
+per line, and the column information is given by the C<itemN>. The
+C<depends> column contains the names of all the dependencies separated
+by C<:> characters.
+
+At this writing, the C<cat-contact-*> fields include: C<home>,
+C<repository>, C<support>, C<bugs>, C<announce>, C<development>. Each
+may be empty or a url value. A brief description is on the CTAN upload
+page for new packages: L<https://ctan.org/upload>.
 
 =item B<--json>
 
-In case C<--json> is specified, the output is a
-JSON encoded array where each array element is the JSON representation of
-a single C<TLPOBJ> but with additional information. For details see
-C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLPOBJINFO>.
-If both C<--json> and C<--data> are given, C<--json> takes precedence.
-
+In case C<--json> is specified, the output is a JSON encoded array where
+each array element is the JSON representation of a single C<TLPOBJ> but
+with additional information. For details see
+C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLPOBJINFO>. If both
+C<--json> and C<--data> are given, C<--json> takes precedence.
 
 =back
 
@@ -9210,12 +9301,12 @@ If the package on the server is older than the package already installed
 (e.g., if the selected mirror is out of date), C<tlmgr> does not
 downgrade.  Also, packages for uninstalled platforms are not installed.
 
-C<tlmgr> saves a copy of the C<texlive.tlpdb> file used for an update
-with a suffix representing the repository url, as in
-C<tlpkg/texlive.tlpdb.>I<long-hash-string>.  These can be useful for
-fallback information, but if you don't like them accumulating (e.g.,
-C<mirror.ctan.org> resolves to many different hosts, each resulting in
-a possibly different hash), it's harmless to delete them.
+C<tlmgr> saves one copy of the main C<texlive.tlpdb> file used for an
+update with a suffix representing the repository url, as in
+C<tlpkg/texlive.tlpdb.main.>I<long-hash-string>. Thus, even when many
+mirrors are used, only one main C<tlpdb> backup is kept. For non-main
+repositories, which do not generally have (m)any mirrors, no pruning of
+backups is done.
 
 This action does not automatically add or remove new symlinks in system
 directories; you need to run C<tlmgr> L</path> yourself if you are using
@@ -9262,6 +9353,9 @@ command-line option.
 
 =item C<require-verification>, value 0 or 1 (default 0), same as
 command-line option.
+
+=item C<tkfontscale>, value any float.
+Controls the scaling of fonts in the Tk based frontends.
 
 =item C<update-exclude>, value: comma-separated list of packages
 (no space allowed). Same as the command line option C<--exclude>
@@ -10023,7 +10117,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54446 2020-03-21 16:45:22Z karl $
+$Id: tlmgr.pl 57772 2021-02-17 19:01:36Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

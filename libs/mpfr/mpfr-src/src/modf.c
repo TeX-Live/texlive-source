@@ -1,6 +1,6 @@
 /* mpfr_modf -- Integral and fractional part.
 
-Copyright 2007-2019 Free Software Foundation, Inc.
+Copyright 2007-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -21,9 +21,6 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
 
 #include "mpfr-impl.h"
-
-#define INEXPOS(y) ((y) == 0 ? 0 : (((y) > 0) ? 1 : 2))
-#define INEX(y,z) (INEXPOS(y) | (INEXPOS(z) << 2))
 
 /* Set iop to the integral part of op and fop to its fractional part */
 int

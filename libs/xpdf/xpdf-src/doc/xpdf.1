@@ -1,7 +1,7 @@
-.\" Copyright 1996-2019 Glyph & Cog, LLC
-.TH xpdf 1 "25 Sep 2019"
+.\" Copyright 1996-2021 Glyph & Cog, LLC
+.TH xpdf 1 "28 Jan 2021"
 .SH NAME
-xpdf \- Portable Document Format (PDF) file viewer (version 4.02)
+xpdf \- Portable Document Format (PDF) file viewer (version 4.03)
 .SH SYNOPSIS
 .B xpdf
 [options]
@@ -118,6 +118,9 @@ to the window size, or \'width', to fit the page width to the window
 width.
 .RB "[config file: " initialZoom ]
 .TP
+.BI \-rot " angle"
+Rotate pages by 0 (the default), 90, 180, or 270 degrees.
+.TP
 .BI \-aa " yes | no"
 Enable or disable font anti-aliasing.  This defaults to "yes".
 .RB "[config file: " antialias ]
@@ -151,6 +154,10 @@ Set the X display (only available with X11).
 .B \-cmd
 Print commands as they're executed (useful for debugging).
 .RB "[config file: " printCommands ]
+.TP
+.BI \-tabstate " tabstate-file"
+Sets the file used by the loadTabState and saveTabState commands.
+.RB "[config file: " tabStateFile ]
 .TP
 .BI \-cfg " config-file"
 Read
@@ -240,10 +247,18 @@ a 'save' button for each attached file.  Not all PDF files have
 attachments.
 .PP
 .SS Text selection
-Dragging the mouse with the left button held down will highlight an
-arbitrary rectangle.  Selected text can be copied to the clipboard
-(with the edit/copy menu item).  On X11, selected text will be
-available in the X selection buffer.
+In block selection mode, dragging the mouse with the left button held
+down will highlight an arbitrary rectangle.  Shift-clicking will
+extend the selection.
+.PP
+In linear selection mode, dragging with the left button will highlight
+text in reading order.  Double-clicking or triple-clicking will select
+a word or a line, respectively.  Shift-clicking will extend the
+selection.
+.PP
+Selected text can be copied to the clipboard (with the edit/copy menu
+item).  On X11, selected text will be available in the X selection
+buffer.
 .PP
 .SS Links
 When the mouse is over a hyperlink, the link target will be shown in a
@@ -400,6 +415,12 @@ and unbind commands in the config file (see
 The bind command allows you to bind a key or mouse button to a
 sequence of one or more commands.
 .PP
+In commands that take arguments (inside parentheses), special
+characters (namely '(', ')', ',', and '\\x01') can be escaped by
+preceding them with a '\\x01' character.  This is mostly useful in
+things like scripts that need to be able to open arbitrary PDF files,
+using the \'openFile' command.
+.PP
 The following commands are supported:
 .TP
 .B about
@@ -451,6 +472,9 @@ Switch to continuous view mode.
 .TP
 .B copy
 Copy selected text to the clipboard.
+.TP
+.B copyLinkTarget
+Copy the target of the link under the mouse cursor to the clipboard.
 .TP
 .B endPan
 End a pan operation.
@@ -626,6 +650,9 @@ Open the \'print' dialog.
 .B quit
 Quit from xpdf.
 .TP
+.B raise
+Bring the xpdf window to the front.
+.TP
 .B reload
 Reload the current PDF file.
 .TP
@@ -751,8 +778,17 @@ Scroll up by
 .I n
 pixels, moving to the previous page if appropriate.
 .TP
+.B selectLine
+Set the selection to the line at the current mouse position.
+.TP
+.B selectWord
+Set the selection to the word at the current mouse position.
+.TP
 .BI setSelection( pg , ulx , uly , lrx , lry )
 Set the selection to the specified coordinates on the specified page.
+.TP
+.B showKeyBindings
+Open the key bindings dialog.
 .TP
 .B showToolbar
 Show the toolbar.
@@ -771,6 +807,10 @@ Switch to side-by-side two-page view mode.
 .TP
 .B singlePageMode
 Switch to single-page view mode.
+.TP
+.B startExtendedSelection
+Extend the selection to the current mouse position, and continue
+extending as the mouse moves.
 .TP
 .B startPan
 Start a pan operation at the current mouse position, which will scroll
@@ -868,7 +908,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The xpdf software and documentation are copyright 1996-2019 Glyph &
+The xpdf software and documentation are copyright 1996-2021 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR pdftops (1),

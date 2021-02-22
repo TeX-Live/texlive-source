@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2020 TeX Users Group.
+Copyright 2006-2021 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -34,7 +34,7 @@ chktex 1.7.6 - checked 15mar20
 cjkutils 4.8.4 - checked 18apr15
   http://cjk.ffii.org/cjk-4.8.4.tar.gz
 
-detex 2.8.6 - checked 15mar20
+detex 2.8.9 - checked 03dec20
   https://github.com/pkubowicz/opendetex/releases
     old info: http://www.cs.purdue.edu/homes/trinkle/detex/
 
@@ -63,8 +63,9 @@ dvipos - maintained here, by us
 
 dvipsk - maintained here, by us
 
-dvisvgm 2.9.1 - checked 21mar20
+dvisvgm 2.11.1 - checked 23jan21
   https://dvisvgm.de/Downloads/
+  https://github.com/mgieseki/dvisvgm
 
 gregorio 5.2.1 - checked 19dec19
   CTAN/support/gregoriotex/gregorio-5.2.1.zip
@@ -116,7 +117,8 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        aleph - maintained here
         ctie - CTAN
         cweb - https://github.com/ascherer/cwebbin
-               (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/)
+               (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
+               and ftp://ftp.cs.stanford.edu/pub/ctwill/)
        eptex - https://github.com/texjporg/tex-jp-build
                also: https://osdn.jp/projects/eptex
         etex - maintained here

@@ -501,6 +501,8 @@ private:
   int seqLength;		// length of current sequence
   int seqIndex;			// index into current sequence
   GBool first;			// first code after a table clear
+  unsigned long long totalIn;	// total number of encoded bytes read so far
+  unsigned long long totalOut;	// total number of bytes decoded so far
 
   GBool processNextCode();
   void clearTable();
@@ -814,6 +816,8 @@ private:
   int blockLen;			// remaining length of uncompressed block
   GBool endOfBlock;		// set when end of block is reached
   GBool eof;			// set when end of stream is reached
+  unsigned long long totalIn;	// total number of encoded bytes read so far
+  unsigned long long totalOut;	// total number of bytes decoded so far
 
   static int			// code length code reordering
     codeLenCodeMap[flateMaxCodeLenCodes];

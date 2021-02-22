@@ -36,6 +36,7 @@ static GBool gray = gFalse;
 #if SPLASH_CMYK
 static GBool cmyk = gFalse;
 #endif
+static int rotate = 0;
 static char enableFreeTypeStr[16] = "";
 static char antialiasStr[16] = "";
 static char vectorAntialiasStr[16] = "";
@@ -61,6 +62,8 @@ static ArgDesc argDesc[] = {
   {"-cmyk",   argFlag,     &cmyk,          0,
    "generate a CMYK PAM file"},
 #endif
+  {"-rot",    argInt,      &rotate,        0,
+   "set page rotation: 0, 90, 180, or 270"},
 #if HAVE_FREETYPE_H
   {"-freetype",   argString,      enableFreeTypeStr, sizeof(enableFreeTypeStr),
    "enable FreeType font rasterizer: yes, no"},
@@ -133,7 +136,7 @@ int main(int argc, char *argv[]) {
     ok = gFalse;
   }
   if (!ok || argc != 3 || printVersion || printHelp) {
-    fprintf(stderr, "pdftoppm version %s\n", xpdfVersion);
+    fprintf(stderr, "pdftoppm version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdftoppm", "<PDF-file> <PPM-root>", argDesc);
@@ -226,7 +229,7 @@ int main(int argc, char *argv[]) {
   }
   splashOut->startDoc(doc->getXRef());
   for (pg = firstPage; pg <= lastPage; ++pg) {
-    doc->displayPage(splashOut, pg, resolution, resolution, 0,
+    doc->displayPage(splashOut, pg, resolution, resolution, rotate,
 		     gFalse, gTrue, gFalse);
     if (!strcmp(ppmRoot, "-")) {
 #ifdef _WIN32

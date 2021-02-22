@@ -384,14 +384,14 @@ for kanji_type_index:=0 to max_kanji do kanji_type[kanji_type_index]:=-1;
 ng:=0;
 
 @ @<If is jfm or vfm then print error@>=
-if (file_format>tfm_format) then
+if file_format>tfm_format then
   err_print('This is an illegal command for kanji format files.')
-else if (file_format=undefined) then file_format:=tfm_format
+else if file_format=undefined then file_format:=tfm_format
 
 @ @<If is tfm then print error@>=
-if (file_format=tfm_format) then
+if file_format=tfm_format then
   err_print('You can use this command only for kanji format files.')
-else if (file_format=undefined) then file_format:=jfm_or_vfm
+else if file_format=undefined then file_format:=jfm_or_vfm
 
 @ These are extended propaties for \.{JFM}.
 

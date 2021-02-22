@@ -25,7 +25,8 @@ libtex_a_SOURCES = \
 	seek.c \
 	tempfile.c \
 	tempfile.h \
-	types.h
+	types.h \
+	common.h
 
 $(libtex_a_OBJECTS): $(KPATHSEA_DEPEND)
 

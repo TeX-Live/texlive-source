@@ -1,3 +1,9 @@
+==============================================================
+XeTeX 0.999993 (February 2021)
+
+* Fix several bugs in Unicode math kerning implementation.
+
+==============================================================
 XeTeX 0.999992 (January 2020)
 
 * Merged various minor fixes from TeX Live svn sources

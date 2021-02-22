@@ -17,7 +17,7 @@ class TextFile:
             self.src_text = fd.read()
             fd.close()
             return True
-        except IOError, e:
+        except IOError as e:
             pass
         return False
     def assert_src_text(self):

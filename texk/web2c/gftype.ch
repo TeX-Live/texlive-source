@@ -134,6 +134,16 @@ if max_cols > max_image then max_cols := max_image;
 image_array := nil;
 @z
 
+@x [7] Purge 'final_end' label.
+Such errors might be discovered inside of subroutines inside of subroutines,
+so a procedure called |jump_out| has been introduced. This procedure, which
+simply transfers control to the label |final_end| at the end of the program,
+contains the only non-local |goto| statement in \.{GFtype}.
+@y
+Such errors might be discovered inside of subroutines inside of subroutines,
+so we might want to |abort| the program with an error message.
+@z
+
 @x [7] Remove jump_out, and make `abort' end with a newline.
 @d abort(#)==begin print(' ',#); jump_out;
     end
@@ -426,6 +436,7 @@ itself will get a new section number.
 Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
+@d do_nothing ==        {empty statement}
 
 @<Define |parse_arguments|@> =
 procedure parse_arguments;
@@ -440,7 +451,7 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
 
     end else if getopt_return_val = "?" then begin
       usage (my_name);

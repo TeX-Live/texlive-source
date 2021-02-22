@@ -1,3 +1,27 @@
+2021-02-18  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, eptex_version.h: e-pTeX version 210118 for TL21.
+
+2020-11-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* fam256.ch: Adapt to changes in ptex-base.ch.
+
+2020-09-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdfutils.ch (Scan the argument for command |c|) <expanded_code>:
+	free_avail(def_ref) to avoid memory exhaustion with many \expanded.
+	(Sync with pdftex.web and xetex.web changes r56230.)
+
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* char-warning-eptex.ch: new file (see ../pdftexdir/ChangeLog).
+	* am/eptex.am (eptex_ch_srcs): add it.
+
+2020-05-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Sync with inhibit_glue_flag improvement.
+	https://github.com/texjporg/tex-jp-build/pull/102
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/eptex.am (eptex_CPPFLAGS): append $(ZLIB_INCLUDES).

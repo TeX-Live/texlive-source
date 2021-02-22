@@ -5,11 +5,11 @@ set -e
 # Parameters
 DLLPATH_EXTRA=$1        # Path to supporting DLLs
 CFLAGS_EXTRA=$2         # Extra C flags
-    
+
 
 LOG=run_tests.log
 
-CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 $CFLAGS_EXTRA"
+CFLAGS="-g -Igdtest/ -I. -I../src/ -D_WIN32 -DHAVE_SYS_STAT_H $CFLAGS_EXTRA"
 LDFLAGS='-L../src -llibgd'
 DLLPATH=../src:$DLLPATH_EXTRA
 
@@ -38,7 +38,7 @@ echo "Running tests:"
 count=0
 failures=0
 compile_failures=0
-for test in `find . -name \*.c | grep -v '^./gdtest'`; do
+for test in `find . -name \*.c | grep -vE '^./(fontconfig|gdtest|gdhelpers|xpm)'`; do
     count=`expr $count + 1`
 
     exe=${test%.c}.exe
@@ -49,7 +49,7 @@ for test in `find . -name \*.c | grep -v '^./gdtest'`; do
         compile_failures=`expr $compile_failures + 1`
         continue
     fi
-    
+
     echo "Running $exe:" >> $LOG
     if $exe 2>&1 >> $LOG; then
         echo "PASS: $test"
@@ -62,6 +62,3 @@ done
 
 echo "$failures failures and $compile_failures compile failures out of $count tests."
 echo "Error messages in $LOG"
-
-
-

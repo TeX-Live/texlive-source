@@ -113,7 +113,7 @@ includechars(fontdesctype *f, char *s)
       s[--l] = 0;
    if (!ISXDIGIT(s[0]) || !ISXDIGIT(s[1]) || s[2]!=':'
          || strspn(s+3,"0123456789ABCDEFabcdef") < l-3) {
-      fprintf(stderr, "%s\n", s);
+      fprintf_str(stderr, "%s\n", s);
       error("Bad syntax in included font usage table");
       return;
    }
@@ -162,7 +162,7 @@ scan1fontcomment(char *p)
    name = getname(p);
    q = strtok((char *)0, " ");
    if (p==NULL || (scsize=(integer)(atof(q)*DVIperBP))==0) {
-      fprintf(stderr, "%s\n",p);
+      fprintf_str(stderr, "%s\n",p);
       error("No scaled size for included font");
       nextstring = area;   /* remove from string pool */
       return;
@@ -170,7 +170,7 @@ scan1fontcomment(char *p)
    scname = q;
    q = strtok((char *)0, " ");
    if (p==NULL || (dssize=(integer)(atof(q)*DVIperBP))==0) {
-      fprintf(stderr, "%s\n",p);
+      fprintf_str(stderr, "%s\n",p);
       error("No design size for included font");
       nextstring = area;
       return;
@@ -252,7 +252,7 @@ scan_fontnames(char *str, const char *psfile)
      if (1) {
 #ifdef DEBUG
        if (dd(D_FONTS))
-         fprintf(stderr,
+         fprintf_str(stderr,
 		       "Adding font '%s' from included postscript file '%s'.\n",
 		       p,psfile);
 #endif  /* DEBUG */
@@ -384,7 +384,7 @@ scanfontcomments(const char *filename)
 
 #ifdef DEBUG
       if (dd(D_FONTS))
-         fprintf(stderr,
+         fprintf_str(stderr,
 		       "Checking for fonts in '%s'\n",filename);
 #endif  /* DEBUG */
 
@@ -418,7 +418,7 @@ scanfontcomments(const char *filename)
      if(check_atend) {
 #ifdef DEBUG
        if (dd(D_FONTS))
-         fprintf(stderr,
+         fprintf_str(stderr,
 		       "Checking for (atend) fonts in '%s'\n",filename);
 #endif  /* DEBUG */
 
@@ -439,7 +439,7 @@ scanfontcomments(const char *filename)
 #ifdef DEBUG
        else { /* r == NULL */
 	 if (dd(D_FONTS))
-         fprintf(stderr,
+         fprintf_str(stderr,
 		       "Did not find %%%%Trailer in included file '%s'.\n",
 		       filename);
        }

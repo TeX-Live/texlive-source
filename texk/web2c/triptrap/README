@@ -1,12 +1,13 @@
-web2c/triptrap -- The trip and trap tests are Knuth's torture tests for
-TeX and Metafont.  The MetaPost test is also named `trap', so I've
-renamed the conflicting files to `mftrap...' and `mptrap...'.  (The
-contents of all files remain absolutely unaltered, of course.)
+$Id$
+(This file is public domain.)
 
-The tests are exercised in the web2c distribution via `make trip trap mptrap'
-(from the top-level or web2c/ directories).  They do not and cannot
-exercise the path searching capabilities; for that, a few ``normal''
-test runs before and after installation should suffice.
+web2c/triptrap -- The trip and trap tests are Knuth's torture tests for
+TeX and Metafont.  The MetaPost test is also named `trap', so
+renamed the conflicting files to `mftrap...' and `mptrap...'. 
+The contents of all files remain absolutely unaltered, of course.
+
+The tests are exercised in TeX Live via `make triptrap' in the web2c/
+directory.
 
 {trip,mftrap,mptrap}.diffs -- show the diffs from Knuth's originals as
 generated on my development machine. tripman.tex, trapman.tex, and
@@ -28,9 +29,10 @@ For trip:
   hyphenation exception table is to be dynamic at all).  Knuth has said
   this discrepancy is ok.
 
-For trap, additionally, the capsule numbers will be different.  We
-believe this is because the master trap.log was not updated completed
-after the 2.7182818 (2014) tune-up, and have asked Knuth to review.
+For trap, additionally, the capsule numbers have sometimes been
+different, because the master trap.log was not updated completely after
+the 2.7182818 (2014) tune-up, as confirmed by Knuth. The 2.7182818 (2021)
+tuneup restores correct values.
 
 texmf.cnf -- sets up various constants the way the tests want them.  Not
 all constants can be changed, alas, but this suffices to avoid building

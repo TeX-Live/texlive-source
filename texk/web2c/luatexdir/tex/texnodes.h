@@ -597,6 +597,7 @@ typedef enum {
     noad_option_no_sub_script   = 0x21 + 0x08,
     noad_option_no_super_script = 0x22 + 0x08,
     noad_option_no_script       = 0x23 + 0x08,
+    noad_option_no_rule         = 0x24 + 0x08,
 } delimiter_options ;
 
 #  define delimiteroptionset(a) ((delimiteroptions(a) & noad_option_set    ) == noad_option_set    )
@@ -657,6 +658,7 @@ typedef enum {
 #  define fractionoptionset(a) ((fractionoptions(a) & noad_option_set    ) == noad_option_set    )
 #  define fractionexact(a)     ((fractionoptions(a) & noad_option_exact  ) == noad_option_exact  )
 #  define fractionnoaxis(a)    ((fractionoptions(a) & noad_option_no_axis) == noad_option_no_axis)
+#  define fractionnorule(a)    ((fractionoptions(a) & noad_option_no_rule) == noad_option_no_rule)
 
 /* radical noads */
 /* this is like a fraction, but it only stores a |left_delimiter| */
@@ -732,6 +734,7 @@ typedef enum {
     pdf_setmatrix_node,
     pdf_save_node,
     pdf_restore_node,
+    pdf_link_state_node,
 } whatsit_types;
 
 #  define first_common_whatsit      0
@@ -739,9 +742,11 @@ typedef enum {
 #  define backend_first_dvi_whatsit 15
 #  define backend_last_dvi_whatsit  15
 #  define backend_first_pdf_whatsit 16
-#  define backend_last_pdf_whatsit  31
+#  define backend_last_pdf_whatsit  32
 
-#  define MAX_WHATSIT_TYPE 32
+/* add some slack for the future */
+
+#  define MAX_WHATSIT_TYPE 34
 
 #  define known_whatsit_type(i) ( \
     (i >= first_common_whatsit      && i <= last_common_whatsit) || \
@@ -917,6 +922,10 @@ typedef enum {
 #  define pdf_setmatrix_node_size   3
 #  define pdf_save_node_size        3
 #  define pdf_restore_node_size     3
+
+#  define pdf_link_state_node_size  3
+
+#  define pdf_link_state(a) vinfo((a) + 2)
 
 #  define pdf_colorstack_node_size  4
 #  define pdf_colorstack_stack(a)   vlink((a)+2)

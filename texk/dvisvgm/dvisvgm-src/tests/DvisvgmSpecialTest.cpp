@@ -2,7 +2,7 @@
 ** DvisvgmSpecialTest.cpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -92,10 +92,10 @@ TEST_F(DvisvgmSpecialTest, rawText) {
 	EXPECT_TRUE(recorder.defsEquals(""));
 	EXPECT_TRUE(recorder.pageEquals("<g id='page1'>first\n-42,14</g>")) << recorder.pageString();
 
-	iss.clear(); iss.str("raw \t ;{?(-x+2*y-5)}second {?bbox dummy} \t");
+	iss.clear(); iss.str("raw \t ;{?(-x+2*y-5)}{?(-y+2*x-5)}second {?bbox dummy} \t");
 	handler.process("", iss, recorder);
 	EXPECT_TRUE(recorder.defsEquals(""));
-	EXPECT_TRUE(recorder.pageEquals("<g id='page1'>first\n-42,14;65second 0 0 0 0</g>")) << recorder.pageString();
+	EXPECT_TRUE(recorder.pageEquals("<g id='page1'>first\n-42,14;65-103second 0 0 0 0</g>")) << recorder.pageString();
 }
 
 

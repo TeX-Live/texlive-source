@@ -26,8 +26,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-191112'
-@d epTeX_version_number==191112
+@d epTeX_version_string=='-210218'
+@d epTeX_version_number==210218
 @z
 
 @x e-pTeX: banner
@@ -36,7 +36,7 @@
   {printed when \pTeX\ starts}
 @#
 @d epTeX_version==pTeX_version_string,epTeX_version_string,eTeX_version_string
-@d epTeX_banner=='This is e-pTeX, Version 3.14159265',epTeX_version
+@d epTeX_banner=='This is e-pTeX, Version 3.141592653',epTeX_version
 @d epTeX_banner_k==epTeX_banner
   {printed when \epTeX\ starts}
 @z

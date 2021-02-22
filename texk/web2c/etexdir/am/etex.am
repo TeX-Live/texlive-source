@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -60,7 +61,9 @@ etex_ch_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
 	zlib-fmt.ch \
-	enctex.ch \
+	enctexdir/enctex1.ch \
+	enctexdir/enctex-tex.ch \
+	enctexdir/enctex2.ch \
 	$(etex_ch_synctex) \
 	etexdir/tex.ch1 \
 	etexdir/tex.ech \

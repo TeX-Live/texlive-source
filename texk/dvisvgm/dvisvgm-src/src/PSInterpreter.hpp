@@ -2,7 +2,7 @@
 ** PSInterpreter.hpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -66,19 +66,20 @@ struct PSActions {
 	virtual void setcolorspace (std::vector<double> &p) =0;
 	virtual void setcmykcolor (std::vector<double> &cmyk) =0;
 	virtual void setdash (std::vector<double> &p) =0;
+	virtual void setfillconstantalpha (std::vector<double> &p) =0;
 	virtual void setgray (std::vector<double> &p) =0;
 	virtual void sethsbcolor (std::vector<double> &hsb) =0;
+	virtual void setisshapealpha (std::vector<double> &p) =0;
 	virtual void setlinecap (std::vector<double> &p) =0;
 	virtual void setlinejoin (std::vector<double> &p) =0;
 	virtual void setlinewidth (std::vector<double> &p) =0;
 	virtual void setmatrix (std::vector<double> &p) =0;
 	virtual void setmiterlimit (std::vector<double> &p) =0;
 	virtual void setnulldevice (std::vector<double> &p) =0;
-	virtual void setopacityalpha (std::vector<double> &p) =0;
-	virtual void setshapealpha (std::vector<double> &p) =0;
 	virtual void setpagedevice (std::vector<double> &p) =0;
 	virtual void setpattern (std::vector<double> &p) =0;
 	virtual void setrgbcolor (std::vector<double> &rgb) =0;
+	virtual void setstrokeconstantalpha (std::vector<double> &p) =0;
 	virtual void shfill (std::vector<double> &p) =0;
 	virtual void stroke (std::vector<double> &p) =0;
 	virtual void translate (std::vector<double> &p) =0;

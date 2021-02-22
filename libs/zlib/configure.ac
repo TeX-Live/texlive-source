@@ -1,6 +1,7 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2016 Karl Berry <tex-live@tug.org>
+dnl   Copyright (C) 2016-2020 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -25,15 +26,6 @@ KPSE_COMPILER_VISIBILITY
 AC_CONFIG_HEADERS([config.h])[]dnl unused, to avoid zillions of -D's on command line
 
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
-
-if test "x$GCC" = xyes; then
-  CFLAGS=${CFLAGS-"-O3"}
-fi
-
-AC_HEADER_STDC
-if test "x$ac_cv_header_stdc" != xyes; then
-  AC_MSG_ERROR([Sorry, can't do anything for you without header_stdc])
-fi
 
 AC_CHECK_HEADER([errno.h],
                 [ZLIB_DEFINES=],

@@ -6,7 +6,6 @@ detex \- a filter to strip \fITeX\fP commands from a .tex file.
 [ \fB\-clnstw\fR ] [ \fB\-e\fI environment-list\fR ] [ \fIfilename\fR[.tex] ... ]
 .SH DESCRIPTION
 .I Detex
-(Version 2.8.3)
 reads each file in sequence, removes all comments and
 .I TeX
 control sequences
@@ -86,6 +85,11 @@ Without \fB\-w\fR the output follows the original,
 with the deletions mentioned above.  Newline characters are
 preserved where possible
 so that the lines of output match the input as closely as possible.
+.PP
+The 
+.B \-1
+option will prefix each printed line with `filename:linenumber:` indicating
+where that line is coming from in terms of the original (La)TeX document.
 .PP
 The TEXINPUTS environment variable is used to find \\input and \\include
 files.  Like \fITeX\fP, it interprets a leading or trailing `:' as the default

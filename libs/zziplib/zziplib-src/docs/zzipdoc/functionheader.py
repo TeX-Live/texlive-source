@@ -1,4 +1,4 @@
-from match import Match
+from zzipdoc.match import Match
 
 class FunctionHeader:
     """ parsing the comment block that is usually presented before

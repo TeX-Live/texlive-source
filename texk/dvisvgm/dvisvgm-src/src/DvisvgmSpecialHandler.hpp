@@ -2,7 +2,7 @@
 ** DvisvgmSpecialHandler.hpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -53,7 +53,7 @@ class DvisvgmSpecialHandler : public SpecialHandler {
 				: _append(append), _pushContext(push), _popContext(pop) {}
 
 			void parse (const std::string &xml, SpecialActions &actions, bool finish=false);
-			void flush (SpecialActions &actions);
+			void finish (SpecialActions &actions);
 
 		protected:
 			void openElement (const std::string &tag, SpecialActions &actions);
@@ -65,6 +65,7 @@ class DvisvgmSpecialHandler : public SpecialHandler {
 			PopFunc _popContext;
 			std::string _xmlbuf;
 			NameStack _nameStack;  ///< names of nested elements still missing a closing tag
+			bool _error=false;
 	};
 
 	using StringVector = std::vector<std::string>;

@@ -31,6 +31,7 @@ static int firstPage = 1;
 static int lastPage = 0;
 static double zoom = 1;
 static int resolution = 150;
+static GBool noFonts = gFalse;
 static GBool skipInvisible = gFalse;
 static GBool allInvisible = gFalse;
 static char ownerPassword[33] = "\001";
@@ -45,10 +46,12 @@ static ArgDesc argDesc[] = {
    "first page to convert"},
   {"-l",       argInt,      &lastPage,      0,
    "last page to convert"},
-  {"-z",      argFP,       &zoom,     0,
+  {"-z",       argFP,       &zoom,          0,
    "initial zoom level (1.0 means 72dpi)"},
-  {"-r",      argInt,      &resolution,     0,
+  {"-r",       argInt,      &resolution,    0,
    "resolution, in DPI (default is 150)"},
+  {"-nofonts", argFlag, &noFonts,           0,
+   "do not extract embedded fonts"},
   {"-skipinvisible", argFlag, &skipInvisible, 0,
    "do not draw invisible text"},
   {"-allinvisible",  argFlag, &allInvisible,  0,
@@ -97,7 +100,7 @@ int main(int argc, char *argv[]) {
   fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
   if (!ok || argc != 3 || printVersion || printHelp) {
-    fprintf(stderr, "pdftohtml version %s\n", xpdfVersion);
+    fprintf(stderr, "pdftohtml version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdftohtml", "<PDF-file> <html-dir>", argDesc);
@@ -155,7 +158,7 @@ int main(int argc, char *argv[]) {
   }
 
   // create HTML directory
-  if (!createDir(htmlDir, 0755)) {
+  if (makeDir(htmlDir, 0755)) {
     error(errIO, -1, "Couldn't create HTML output directory '{0:s}'",
 	  htmlDir);
     exitCode = 2;
@@ -171,20 +174,20 @@ int main(int argc, char *argv[]) {
   htmlGen->setZoom(zoom);
   htmlGen->setDrawInvisibleText(!skipInvisible);
   htmlGen->setAllTextInvisible(allInvisible);
-  htmlGen->setExtractFontFiles(gTrue);
+  htmlGen->setExtractFontFiles(!noFonts);
   htmlGen->startDoc(doc);
 
   // convert the pages
   for (pg = firstPage; pg <= lastPage; ++pg) {
     htmlFileName = GString::format("{0:s}/page{1:d}.html", htmlDir, pg);
     pngFileName = GString::format("{0:s}/page{1:d}.png", htmlDir, pg);
-    if (!(htmlFile = fopen(htmlFileName->getCString(), "wb"))) {
+    if (!(htmlFile = openFile(htmlFileName->getCString(), "wb"))) {
       error(errIO, -1, "Couldn't open HTML file '{0:t}'", htmlFileName);
       delete htmlFileName;
       delete pngFileName;
       goto err2;
     }
-    if (!(pngFile = fopen(pngFileName->getCString(), "wb"))) {
+    if (!(pngFile = openFile(pngFileName->getCString(), "wb"))) {
       error(errIO, -1, "Couldn't open PNG file '{0:t}'", pngFileName);
       fclose(htmlFile);
       delete htmlFileName;
@@ -236,7 +239,7 @@ static GBool createIndex(char *htmlDir) {
   int pg;
 
   htmlFileName = GString::format("{0:s}/index.html", htmlDir);
-  html = fopen(htmlFileName->getCString(), "w");
+  html = openFile(htmlFileName->getCString(), "w");
   delete htmlFileName;
   if (!html) {
     error(errIO, -1, "Couldn't open HTML file '{0:t}'", htmlFileName);

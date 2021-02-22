@@ -1,0 +1,42 @@
+# C/C++ with GCC
+# Build your C/C++ project with GCC using make.
+# Add steps that publish test results, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/c-cpp/gcc
+
+trigger:
+- master
+- develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- script: |
+    sudo apt-get update --fix-missing
+  displayName: 'install refresh'
+- script: |
+    sudo apt-get install --fix-broken --ignore-missing libsdl2-dev
+  displayName: 'install libsdl2-dev'
+- script: |
+    sudo apt-get install --fix-broken --ignore-missing python3-pip
+  displayName: 'install python3-pip'
+- script: |
+    pip3 install unittest-xml-reporting
+  displayName: 'install unittest-xml-reporting'
+- script: |
+    rm -rf build
+    mkdir build
+  displayName: 'build dir'
+- script: |
+    cd build && cmake -DTESTFLAGS=--xmlresults=TEST-zziplibs.xml ..
+  displayName: 'configure'
+- script: |
+    cd build && make all VERBOSE=1
+  displayName: 'make all'
+- script: |
+    cd build && make check VERBOSE=1 || true
+  displayName: 'make check VERBOSE=1'
+- script: |
+    find . -name '*.xml'
+  displayName: 'find xml'
+- task: PublishTestResults@2

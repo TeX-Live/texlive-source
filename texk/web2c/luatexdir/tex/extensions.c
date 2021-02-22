@@ -156,6 +156,10 @@ static void do_extension_pdf(int immediate)
         new_whatsit(pdf_save_node);
     } else if (scan_keyword("restore")) {
         new_whatsit(pdf_restore_node);
+    } else if (scan_keyword("linkstate")) {
+        new_whatsit(pdf_link_state_node);
+        scan_int();
+        pdf_link_state(tail) = cur_val;
     } else if (scan_keyword("setmatrix")) {
         new_whatsit(pdf_setmatrix_node);
         scan_toks(false, true);
@@ -563,8 +567,9 @@ void write_out(halfword p)
     int old_setting;
     /*tex write stream number */
     int j;
-    /*tex line to be written, as a C string */
-    char *s, *ss;
+    /*tex line to be written, as a Lua string */
+    lstring *ss = NULL;
+    lstring *s = NULL;
     int callback_id;
     int lua_retval;
     expand_macros_in_tokenlist(p);
@@ -579,21 +584,21 @@ void write_out(halfword p)
     } else {
         tprint_nl("");
     }
-    s = tokenlist_to_cstring(def_ref, false, NULL);
+    s = tokenlist_to_lstring(def_ref, false);
     if (selector < no_print) {
         /*tex selector is a file */
         callback_id = callback_defined(process_output_buffer_callback);
         if (callback_id > 0) {
             /*tex fix up the output buffer using callbacks */
-            lua_retval = run_callback(callback_id, "S->S", s, &ss);
+            lua_retval = run_callback(callback_id, "L->L", s, &ss);
             if ((lua_retval == true) && (ss != NULL)) {
-                xfree(s);
+                free_lstring(s);
                 s = ss;
             }
         }
     }
-    tprint(s);
-    xfree(s);
+    lprint(s);
+    free_lstring(s);
     print_ln();
     flush_list(def_ref);
     selector = old_setting;

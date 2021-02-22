@@ -1,4 +1,4 @@
-from match import Match
+from zzipdoc.match import Match
 
 def markup_link_syntax(text):
     """ markup the link-syntax ` => somewhere ` in the text block """
@@ -31,7 +31,7 @@ class CommentMarkup:
         comment = self.header.comment
         try:
             comment = self.header.get_otherlines()
-        except Exception, e:
+        except Exception as e:
             pass
         mode = ""
         text = ""

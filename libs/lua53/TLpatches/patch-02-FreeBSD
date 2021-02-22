@@ -1,6 +1,6 @@
 diff -u liolib.c.orig liolib.c 
---- liolib.c.orig	2017-04-19 19:29:57.000000000 +0200
-+++ liolib.c	2018-07-21 10:04:50.965674394 +0200
+--- liolib.c.orig	2020-10-04 12:06:03.579772529 +0200
++++ liolib.c	2020-10-04 12:12:12.061843306 +0200
 @@ -16,6 +16,9 @@
  #include <stdio.h>
  #include <stdlib.h>
@@ -10,3 +10,4 @@ diff -u liolib.c.orig liolib.c
 +#endif
  
  #include "lua.h"
+ 

@@ -26,7 +26,6 @@ xdvipdfmx_SOURCES = \
 	cid_basefont.h \
 	cid.c \
 	cid.h \
-	cid_p.h \
 	cidtype0.c \
 	cidtype0.h \
 	cidtype2.c \
@@ -248,6 +247,7 @@ DISTCLEANFILES = config.force
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test xdvipdfm-bb.test
 TESTS += xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test
 TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
+TESTS += dvipdfmx-upjf.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log: xdvipdfmx$(EXEEXT)
@@ -290,5 +290,10 @@ DISTCLEANFILES += reverse.pdf
 ## xdvipdfm-ttc.test
 EXTRA_DIST += tests/ttc.dvi tests/ttc.tex tests/test.ttc
 DISTCLEANFILES += ttc*.pdf
+## dvipdfmx-upjf.test
+EXTRA_DIST += tests/upjf.dvi tests/upjf.tex tests/upjf.map tests/Makefile_upjf
+EXTRA_DIST += tests/upjf_full.cnf tests/upjf_omit.cnf tests/upjf_full.vf tests/upjf_omit.vf
+EXTRA_DIST += tests/upjf-r.tfm tests/upjf-g.tfm tests/upjf.tfm tests/UPJF-UTF16-H
+DISTCLEANFILES += upjf.vf upjf*.pdf
 ##
 EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex

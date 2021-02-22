@@ -94,12 +94,18 @@ a non-local goto, which we don't use in C.
 @z
 
 @x [8] Just exit, instead of doing a nonlocal goto.
+nested procedure, so the procedure called |jump_out| has been added to transfer
+to the very end of the program with an error message.
+
 @d abort(#)==begin print_ln(' ',#); jump_out; end
 
 @p procedure jump_out;
 begin goto final_end;
 end;
 @y
+nested procedure, so we might want to |abort|
+the program with an error message.
+
 @d abort(#)==begin verbose:=true; print_ln(#); uexit(1);
     end
 @z
@@ -236,6 +242,7 @@ cur_loc:=cur_loc+2;
 if a<128 then signed_pair:=a*256+b
 else signed_pair:=(a-256)*256+b;
 end;
+@#
 @{
 function get_three_bytes:integer; {returns the next three bytes, unsigned}
 var a,@!b,@!c:eight_bits;
@@ -243,7 +250,9 @@ begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
 cur_loc:=cur_loc+3;
 get_three_bytes:=(a*256+b)*256+c;
 end;
-@#
+@{
+@/
+@}
 function signed_trio:integer; {returns the next three bytes, signed}
 var a,@!b,@!c:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c);
@@ -252,6 +261,7 @@ if a<128 then signed_trio:=(a*256+b)*256+c
 else signed_trio:=((a-256)*256+b)*256+c;
 end;
 @}
+@#
 function signed_quad:integer; {returns the next four bytes, signed}
 var a,@!b,@!c,@!d:eight_bits;
 begin read(pk_file,a); read(pk_file,b); read(pk_file,c); read(pk_file,d);
@@ -458,7 +468,7 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
 
     end else if getopt_return_val = "?" then begin
       usage (my_name);
@@ -510,12 +520,10 @@ long_options[current_option].flag := address_of (verbose);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@
-@<Glob...@> =
+@ @<Glob...@> =
 @!verbose: c_int_type;
 
-@
-@<Initialize the option...@> =
+@ @<Initialize the option...@> =
 verbose := false;
 
 @ An element with all zeros always ends the list.

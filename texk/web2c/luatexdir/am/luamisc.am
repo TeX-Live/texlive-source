@@ -9,17 +9,17 @@
 #EXTRA_LIBRARIES += libluamisc.a liblua53misc.a  libluajitmisc.a
 EXTRA_LIBRARIES += libluamisc.a libluajitmisc.a
 
-libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a libluaffi.a libluapplib.a
-#liblua53misc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) liblua53socket.a liblua53ffi.a liblua53pplib.a
-libluajitmisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluajitsocket.a libluajitpplib.a
+libluamisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluasocket.a libluaffi.a 
+#liblua53misc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) liblua53socket.a liblua53ffi.a 
+libluajitmisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluajitsocket.a 
 
 $(libluamisc_a_OBJECTS): $(libluamisc_a_DEPENDENCIES)
 #$(liblua53misc_a_OBJECTS): $(liblua53misc_a_DEPENDENCIES)
 $(libluajitmisc_a_OBJECTS): $(libluajitmisc_a_DEPENDENCIES)
 
-libluamisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUA_INCLUDES)
-#liblua53misc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
-libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(LUAJIT_INCLUDES)
+libluamisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(PPLIB_INCLUDES) $(LUA_INCLUDES)
+#liblua53misc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(PPLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
+libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(PPLIB_INCLUDES) $(LUAJIT_INCLUDES)
 libluajitmisc_a_CPPFLAGS += -DLuajitTeX -I$(srcdir)/luatexdir
 
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)

@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2016 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2021 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -25,7 +25,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <pdftexdir/pdftex_version.h> /* for PDFTEX_VERSION */
 #include <pdftexdir/etex_version.h> /* for ETEX_VERSION */
 
-#define BANNER "This is pdfTeX, Version 3.14159265-" ETEX_VERSION "-" PDFTEX_VERSION
+#define BANNER "This is pdfTeX, Version 3.141592653-" ETEX_VERSION "-" PDFTEX_VERSION
 #define COPYRIGHT_HOLDER "Han The Thanh (pdfTeX) et al"
 #define AUTHOR NULL
 #define PROGRAM_HELP PDFTEXHELP

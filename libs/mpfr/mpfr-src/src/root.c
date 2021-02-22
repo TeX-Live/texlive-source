@@ -1,6 +1,6 @@
 /* mpfr_root -- kth root.
 
-Copyright 2005-2019 Free Software Foundation, Inc.
+Copyright 2005-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -161,7 +161,7 @@ mpfr_rootn_ui (mpfr_ptr y, mpfr_srcptr x, unsigned long k, mpfr_rnd_t rnd_mode)
   sh = tmp - n;
   if (sh > 0) /* we have to flush to 0 the last sh bits from m */
     {
-      inexact = inexact || ((mpfr_exp_t) mpz_scan1 (m, 0) < sh);
+      inexact = inexact || (mpz_scan1 (m, 0) < sh);
       mpz_fdiv_q_2exp (m, m, sh);
       e += k * sh;
     }

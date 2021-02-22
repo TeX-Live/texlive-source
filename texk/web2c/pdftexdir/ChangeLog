@@ -1,3 +1,190 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]22 for TL21.
+
+	* char-warning-pdftex.ch: doc tweak.
+	
+2021-02-13  Karl Berry  <karl@freefriends.org>
+
+	* am/pdftex.am (pdftex_ch_srcs): adjust for split enctex changes.
+
+2021-02-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftex.web: sync \tracingparagraphs fix from tex.web.
+
+2021-01-28  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	* tounicode.c ((un)dumptounicode): use integer, not size_t,
+	so .fmt files work across platforms.
+
+2021-01-20  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: update.
+	* ptexmac.h (undumpcharptr): use xmalloc, not malloc.
+
+2021-01-20  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	(Un)dump \pdfglyphtounicode assignments in the .fmt.
+	* pdftex.web (Dump/Undump pdftex data): call (un)dumptounicode.
+	* ptexlib.h ((un)dumptounicode): declare.
+	* tounicode.c ((un)dumptounicode): define.
+	* ptexmac.h ((un)dumpcharptr): #define here, from writeimg.c
+	(using generic_dump).
+	* writeimg.c: #defines moved.
+	ntg-pdftex mail, 17 Jan 2021 21:47:33.
+
+2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
+
+	* ttf2afm.c (make_name): yet another attempt at filtering
+	control characters, since the test font, SourceCodePro (as well
+	as many other Mac fonts), actually contains control characters
+	(24 and 25), due to UTF-16BE.
+
+2021-01-11  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): better to use unsigned char.
+
+2021-01-10  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): go back to copying all characters
+	to try to placate NetBSD. No harm in it?
+	https://tug.org/pipermail/tlbuild/2021q1/004780.html
+
+2021-01-06  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): let's exclude iscntrl() per Thanh,
+	but accept crlf and tab.
+
+2021-01-05  Karl Berry  <karl@freefriends.org>
+
+	* ttf2afm.c (make_name): copy all characters, not just isprint().
+	From Akira/Mojca.
+
+2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
+
+	* ttf2afm.c (make_name): new fn.
+	(read_font): output FontName etc. in afm.
+	Request from Doug McAllaster, mail to Thanh of 4 Jan 2021 14:17:40.
+
+2020-10-31  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_begin_string): don't output fake space
+	unless pdf_doing_string. pdftex r838-839.
+	Report from Ulrike Fischer, 18oct20.
+
+2020-08-31  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	* pdftex.web (Scan the argument for command |c|) <expanded_code>:
+	free_avail(def_ref) to avoid memory exhaustion with many \expanded.
+
+2020-08-04  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.web: Pick a few obvious nits.
+
+2020-08-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.ch: Move pdfTeX variants of MLTeX code next to originals.
+
+2020-07-22  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftex.web, writeimg.c: Show unfound file names in
+	fatal error messages.
+	https://tug.org/pipermail/pdftex/2020-July/009203.html
+
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.ch: Avoid overful hboxes in table-of-contents.
+
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* char-warning-pdftex.ch: new file to implement new feature;
+	if \tracinglostchars>=3, missing characters cause an error and not
+	just a diagnostic message. Also, always report the hex code of the
+	missing character. From David Jones, tex-implements 30jun2020.
+	* am/pdftex.am (pdftex_ch_srcs): add it.
+	* change-files.txt: update.
+
+2020-07-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* am/pdftex.am: Avoid changefile ambiguity.
+
+2020-06-11  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (Create link annotations...): check for gen_running_link.
+	(pdf_running_link_{off,on}_node): new @d for new primitives.
+	(Put each ...): define them.
+	(Cases of |print_cmd_chr|...): print them.
+	(Declare act...): switch on them.
+	(Implement \.{\\pdfrunninglinkoff}, ...on): new modules to
+	implement them.
+	(Display the whatsit...),
+	(Mark a partial copy...),
+	(Wipe out the whatsit...): handle them as whatsits.
+	(gen_running_link): new global, define and initialize.
+	(Output the whatsit...): set gen_running_link according
+	to the new primitives.
+	pdftex r835. Following suggestion from Ulrike Fischer,
+	https://tug.org/pipermail/tex-live/2018-November/042759.html.
+
+2020-06-10  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (end_link): warn instead of fatal for
+	"\pdfendlink ended up in different nesting level than \pdfstartlink".
+	pdftex r832. Suggestion from Ulrike Fischer,
+	https://tug.org/pipermail/tex-live/2018-November/042759.html.
+
+2020-06-03  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web: Initialize save_tail to avoid a value of 0 given at
+	compile time. Remove unnecessary codes. (from Hironobu
+	Yamashita). pdftex r829.
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-May/004330.html
+
+2020-06-02  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (auto_kern): @d=3, rather than "explicit".
+	(Display kern |p|): report auto_kern message; avoid link(r)
+	when r=null. pdftex r828. Report from Robert Schlict,
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-May/004317.html
+
+2020-05-31  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* writepng.c: Suppress a compiler warning: '&&' within '||'
+
+2020-05-15  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdftoepdf.cc, pdftosrc.cc, NEWS: remove support of poppler.
+
+2020-05-14  Karl Berry  <karl@freefriends.org>
+
+	* pdftoepdf-poppler0.68.0.cc,
+	* pdftoepdf-poppler0.69.0.cc,
+	* pdftoepdf-poppler0.70.0.cc,
+	* pdftoepdf-poppler0.71.0.cc,
+	* pdftoepdf-poppler0.72.0.cc,
+	* pdftoepdf-poppler0.75.0.cc,
+	* pdftoepdf-poppler0.76.0.cc,
+	* pdftoepdf-poppler0.83.0.cc,
+	* pdftoepdf-poppler0.86.0.cc,
+	* pdftosrc-newpoppler.cc,
+	* pdftosrc-poppler0.71.0.cc,
+	* pdftosrc-poppler0.72.0.cc,
+	* pdftosrc-poppler0.76.0.cc,
+	* pdftosrc-poppler0.83.0.cc: remove these interim stabs at poppler
+	support; now poppler is not supported in TL.
+	See source/m4/kpse-xpdf-flags.m4 for some discussion.
+
+2020-03-28  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (load_expand_font, vf_def_font): do not call
+	copy_expand_params on null_font. pdftex r823.
+	Original report from Robert Schlicht,
+	https://tug.org/pipermail/tex-live/2020-March/045099.html
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2020-March/004307.html
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020, pdftex 1.40.21.

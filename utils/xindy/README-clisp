@@ -1,5 +1,6 @@
 (This file public domain.)
 
 GNU clisp (gnu.org/software/clisp) is required by xindy.
-See the end of ../README (that is, Buid/source/utils/README) for
-information on building it.
+
+See the end of ../README (that is, Build/source/utils/README in the
+TeX Live repository) for information on building it.

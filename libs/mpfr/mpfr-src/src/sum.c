@@ -1,6 +1,6 @@
 /* Sum -- efficiently sum a list of floating-point numbers
 
-Copyright 2014-2019 Free Software Foundation, Inc.
+Copyright 2014-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -967,6 +967,16 @@ sum_aux (mpfr_ptr sum, const mpfr_ptr *x, unsigned long n, mpfr_rnd_t rnd,
 
                 wi = tq / GMP_NUMB_BITS;
                 td = tq % GMP_NUMB_BITS;
+
+                /* Note: The "else" (td == 0) branch below can be executed
+                   only if tq >= GMP_NUMB_BITS, which is possible only when
+                   logn is large enough. Indeed, if tq > logn + some constant,
+                   this means that the TMD did not occur.
+                   TODO: Find an upper bound on tq, and add a corresponding
+                   MPFR_ASSERTD assertion / hint. On some platforms, this
+                   branch might be dead code, and such information would
+                   allow the compiler to remove it.
+                   It seems that this branch is never tested (r12754). */
 
                 if (td != 0)
                   {

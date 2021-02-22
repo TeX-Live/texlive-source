@@ -1,5 +1,5 @@
 /*   $Id$
- *   Copyright 1986-2020 Tomas Rokicki.
+ *   Copyright 1986-2021 Tomas Rokicki.
  *   This is dvips, a freely redistributable PostScript driver
  *   for dvi files. You may freely use, modify and/or distribute this
  *   program or any portion thereof.
@@ -15,7 +15,7 @@
 #define CD_IDX(i)  ((i>=MAX_2BYTES_CODE ? MAX_2BYTES_CODE : i))
 
 #define BANNER \
-"This is dvips(k) 2020.1 Copyright 2020 Radical Eye Software"
+"This is dvips(k) 2021.1 Copyright 2021 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #ifdef KPATHSEA
 #include "config.h"
@@ -188,8 +188,12 @@ typedef struct tfd {
    struct tfd *nextsize;
    char *scalename;
    chardesctype *chardesc;
-   int iswide;
+   int iswide, kind;
 } fontdesctype;
+
+#define VF_TEX   (1)
+#define VF_OMEGA (2)
+#define VF_PTEX  (3)
 
 /*  A fontmap associates a fontdesc with a font number.
  */
@@ -305,6 +309,19 @@ struct papsiz {
 
 #define USE_PCLOSE (801)
 #define USE_FCLOSE (802)
+
+/* output Unicode string on console in windows */
+#if defined(KPATHSEA) && defined(WIN32)
+#undef  perror
+#define fprintf_str  win32_fprintf
+#define fputs_str    win32_fputs
+#define putc_str     win32_putc
+#define perror       win32_perror
+#else
+#define fprintf_str  fprintf
+#define fputs_str    fputs
+#define putc_str     putc
+#endif
 
 /* Things that KPATHSEA knows, and are useful even without it. */
 #if !defined(KPATHSEA)

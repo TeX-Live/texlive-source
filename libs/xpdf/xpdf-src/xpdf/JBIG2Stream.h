@@ -128,6 +128,7 @@ private:
   Guchar *dataPtr;
   Guchar *dataEnd;
   Guint byteCounter;
+  GBool done;
 
   JArithmeticDecoder *arithDecoder;
   JArithmeticDecoderStats *genericRegionStats;

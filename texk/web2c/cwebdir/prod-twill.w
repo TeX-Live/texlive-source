@@ -11,7 +11,7 @@ have different |mathness|.  In this way we never get double {\tt\$\$}.
 
 % The following kludge is needed because \newcount, \newdimen, and \+
 % are "\outer" control sequences that cannot be used in skipped text!
-\newcount\prodno \newdimen\midcol \let\+\relax
+\fi \newcount\prodno \newdimen\midcol \let\+\relax \ifon
 
 \def\v{\char'174}
 \mathchardef\RA="3221 % right arrow

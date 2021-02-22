@@ -1,0 +1,43 @@
+% $Id$
+% Public domain.
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\def\zz#1{#1#1#1#1#1#1#1#1#1#1}% 10 times
+\def\zzz#1{\zz{\zz{\zz{\zz{\zz{\zz{\zz{#1}}}}}}}}% 10 million times
+\def\empty{}
+\zzz{\expanded{\empty}}
+\end
+
+% Date: Mon, 31 Aug 2020 01:01:17 +0200
+% From: Marcel Fabian Krueger <tex@2krueger.de>
+% Subject: Re: [PATCH] \expanded main memory bug
+%
+% [...]
+% You might have heard that Jonathan Spratte got a bug in pdfTeX and
+% XeTeX: Using \expanded more than 5*10^6 times triggered a main memory
+% exhaustion. [that is:
+% ! TeX capacity exceeded, sorry [main memory size=8000000].
+% ]
+% 
+% This was caused by \expanded only passing link(def_ref) to the input
+% stack, leaking the reference counter pointed to by def_ref. A patch for
+% both engines is attached.
+% 
+% --- pdftexdir/pdftex.web
+% +++ pdftexdir/pdftex.web
+% @@ -10955,6 +10955,7 @@ expanded_code:
+%      ins_list(link(def_ref));
+% +    free_avail(def_ref);
+%      def_ref := save_def_ref;
+% 
+% --- xetexdir/xetex.web
+% +++ xetexdir/xetex.web
+% @@ -11094,6 +11094,7 @@ expanded_code:
+%      ins_list(link(def_ref));
+% +    free_avail(def_ref);
+%      def_ref := save_def_ref;
+
+
+
+% [Applied in r56230. Then the test document from Marcel above runs to
+% completion. We don't actually try to use this during make check or
+% anything else, just recording the information. --karl] 

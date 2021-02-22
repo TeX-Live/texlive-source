@@ -52,6 +52,8 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-config.hh \
 	@HARFBUZZ_TREE@/src/hb-debug.hh \
 	@HARFBUZZ_TREE@/src/hb-dispatch.hh \
+	@HARFBUZZ_TREE@/src/hb-draw.cc \
+	@HARFBUZZ_TREE@/src/hb-draw.hh \
 	@HARFBUZZ_TREE@/src/hb-face.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
@@ -71,6 +73,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-open-file.hh \
 	@HARFBUZZ_TREE@/src/hb-open-type.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff-common.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-cff1-std-str.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.cc \
@@ -114,6 +117,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-shaper.cc \
 	@HARFBUZZ_TREE@/src/hb-static.cc \
 	@HARFBUZZ_TREE@/src/hb-string-array.hh \
+	@HARFBUZZ_TREE@/src/hb-style.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
@@ -136,7 +140,6 @@ libharfbuzz_a_SOURCES =  \
 
 ## native OpenType Layout backend
 libharfbuzz_a_SOURCES += \
-	@HARFBUZZ_TREE@/src/hb-aat-fdsc-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-common.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-ankr-table.hh \
@@ -144,7 +147,6 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-feat-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-just-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-kerx-table.hh \
-	@HARFBUZZ_TREE@/src/hb-aat-layout-lcar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-morx-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-opbd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-layout-trak-table.hh \
@@ -180,6 +182,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-joining-list.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-win1256.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \
@@ -190,6 +193,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-machine-index.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \

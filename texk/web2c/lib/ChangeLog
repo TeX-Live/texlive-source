@@ -1,3 +1,43 @@
+2021-01-01  Akira Kakuto  <kakuto@w32tex.org>
+
+	* printversion.c: Update copyright year.
+
+2020-12-10  Akira Kakuto  <kakuto@w32tex.org>
+
+	* lib.h: Definition of eof() contradicts corecrt_io.h
+	in Visual Studio 2019.
+
+2020-09-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: Call kpse_in_name_ok() in find_input_file() for
+	getfilemoddate(), getfilesize(), getfiledump() and getmd5sum(),
+	instead of in each separate routine. Doing it in the latter
+	means we always check an absolute filename, and thus fail with
+	openin_any=p. Original report from Adrian,
+	https://tug.org/pipermail/tex-live/2020-September/046127.html
+
+2020-08-28  Karl Berry  <karl@tug.org>
+
+	* texmfmp.c (input_line): always clear errno before calling getc,
+	else an EINTR errno might persist, masking a real EOF. On the other
+	hand, loop as long as we have EOF && EINTR so we don't prematurely
+	stop reading characters.
+	https://tug.org/pipermail/tex-k/2020-August/003297.html
+
+2020-07-18  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c: reformat so that all function return types and names
+	both are at the beginning of a line.
+
+2020-07-17  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp.c (calledit): close only open input files,
+	not non-files resulting from terminal interactions.
+	This means looking at each element of input_stack
+	instead of only looking at the input_file array. Painful.
+	Original report from Xiao Zhang,
+	https://tex.stackexchange.com/q/552113
+
 2020-01-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	* printversion.c: Update copyright year.

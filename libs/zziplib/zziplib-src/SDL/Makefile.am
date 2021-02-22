@@ -8,10 +8,10 @@ EXTRA_DIST = $(sdl_DATA)
 check_PROGRAMS = zzcatsdl
 
 zzcatsdl_SOURCES = SDL_rwops_zzcat.c SDL_rwops_zzip.c
-ZZIP_CFLAGS= `export PKG_CONFIG_PATH=../zzip; pkg-config zziplib --cflags` 
-ZZIP_LIBS= `export PKG_CONFIG_PATH=../zzip; pkg-config zziplib --libs`
-SDL_CFLAGS= `export PKG_CONFIG_PATH=.; pkg-config sdl --cflags` 
-SDL_LIBS= `export PKG_CONFIG_PATH=.; pkg-config sdl --libs`
+ZZIP_CFLAGS= `export PKG_CONFIG_PATH=../zzip; $(PKG_CONFIG) zziplib --cflags` 
+ZZIP_LIBS= `export PKG_CONFIG_PATH=../zzip; $(PKG_CONFIG) zziplib --libs`
+SDL_CFLAGS= `export PKG_CONFIG_PATH=.; $(PKG_CONFIG) sdl --cflags` 
+SDL_LIBS= `export PKG_CONFIG_PATH=.; $(PKG_CONFIG) sdl --libs`
 CFLAGS= -I$(srcdir) $(ZZIP_CFLAGS) $(SDL_CFLAGS)
 LIBS= $(ZZIP_LIBS) $(SDL_LIBS)
 

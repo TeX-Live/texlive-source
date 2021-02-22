@@ -25,7 +25,9 @@ noinst_DATA = libfreetype.a
 # warns "file is not of required architecture", and does not read it.
 # There is no apparent reason for this.  Using --without-zlib evidently
 # causes freetype2 to use its internal zlib, so no functionality should
-# be lost, even though it is not the cleanest solution.
+# be lost, even though it is not the cleanest solution. Similarly, don't
+# incorporate other libraries which are not needed or are elsewhere in TL.
+# They just complicate things.
 ft-config:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
@@ -34,9 +36,10 @@ ft-config:
 	  $(SHELL) $(abs_srcdir)/$(FREETYPE_TREE)/configure \
 	    $(config_args) --disable-shared \
 	    --without-bzip2 \
-	    --without-zlib \
-	    --without-png \
+	    --without-brotli \
 	    --without-harfbuzz \
+	    --without-png \
+	    --without-zlib \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)

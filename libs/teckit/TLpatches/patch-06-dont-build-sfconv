@@ -1,6 +1,6 @@
-diff -ur teckit-2.5.9/bin/Makefile.am teckit-src/bin/Makefile.am
---- teckit-2.5.9/bin/Makefile.am	Tue Mar 19 00:23:12 2019
-+++ teckit-src/bin/Makefile.am	Tue Mar 19 07:33:51 2019
+diff -ur teckit-2.5.10/bin/Makefile.am teckit-src/bin/Makefile.am
+--- teckit-2.5.10/bin/Makefile.am	Tue May 05 23:09:53 2020
++++ teckit-src/bin/Makefile.am	Wed May 06 09:09:23 2020
 @@ -1,6 +1,6 @@
  AUTOMAKE_OPTIONS = -Wno-portability
  
@@ -8,4 +8,3 @@ diff -ur teckit-2.5.9/bin/Makefile.am teckit-src/bin/Makefile.am
 +bin_PROGRAMS = teckit_compile txtconv
  
  AM_CPPFLAGS  = -I$(top_srcdir)/source/Public-headers
- 

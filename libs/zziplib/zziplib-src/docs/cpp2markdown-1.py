@@ -1,4 +1,5 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
+
 import pygments.lexers.compiled as lexer
 import optparse
 import re
@@ -108,7 +109,7 @@ class CppToMarkdown:
     def run(self, filename):
         filetext = open(filename).read()
         for line in self.process(filetext, filename):
-            print line
+            print(line)
     def process(self, filetext, filename=""):
         section_ruler = "-----------------------------------------"
         copyright = ""
@@ -136,7 +137,7 @@ class CppToMarkdown:
             else:
                 if text:
                     yield "#### NOTES"
-                    print token, text.replace("\n", "\n  ")
+                    print(token + " " + text.replace("\n", "\n  "))
         if copyright:
             yield section_ruler
             yield "### COPYRIGHT"

@@ -1,7 +1,7 @@
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id$
+## utils/axodraw2/ac/withenable.ac: configure.ac fragment for TL subdir
+dnl $Id$
 dnl
-dnl Copyright 2018 Karl Berry <tex-live@tug.org>
+dnl Copyright 2018-2020 Karl Berry <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries for axodraw2.

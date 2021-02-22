@@ -1,6 +1,6 @@
 /* mpfr_free_cache... - Free cache/pool memory used by MPFR.
 
-Copyright 2004-2019 Free Software Foundation, Inc.
+Copyright 2004-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -22,7 +22,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
-/* Theses caches may be global to all threads or local to the current one. */
+/* These caches may be global to all threads or local to the current one. */
 static void
 mpfr_free_const_caches (void)
 {
@@ -39,7 +39,7 @@ mpfr_free_const_caches (void)
   mpfr_clear_cache (__gmpfr_cache_const_catalan);
 }
 
-/* Theses caches/pools are always local to a thread. */
+/* These caches/pools are always local to a thread. */
 static void
 mpfr_free_local_cache (void)
 {

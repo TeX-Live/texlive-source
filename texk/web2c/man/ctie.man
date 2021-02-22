@@ -1,4 +1,4 @@
-.TH CTIE 1 "7 April 2010" "Web2C @VERSION@"
+.TH CTIE 1 "8 June 2020" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 ctie \- merge or apply CWEB change files
@@ -45,6 +45,9 @@ The environment variable CWEBINPUTS is used to search for the input files,
 or the system default if CWEBINPUTS is not set.  See
 .BR tex (1)
 for the details of the searching.
+To avoid conflicts with other programs that also use the CWEBINPUTS
+environment, you can be more specific and use CWEBINPUTS_ctie for
+special requirements in CTIE.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR cweb (1),

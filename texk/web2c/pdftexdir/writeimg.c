@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2014 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2021 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -305,7 +305,7 @@ integer readimage(strnumber s, integer page_num, strnumber page_name,
     cur_file_name = find_input_file(s);
     img_name(img) = cur_file_name;
     if (img_name(img) == NULL)
-        pdftex_fail("cannot find image file");
+        pdftex_fail("cannot find image file %s", makecstring(s));
     recorder_record_input(cur_file_name);
     /* type checks */
     checktypebyheader(img);
@@ -442,36 +442,6 @@ void img_free(void)
 
 /* #define undumpsizet   generic_undump */
 #define undumpinteger generic_undump
-
-/* (un)dumping a string means dumping the allocation size, followed
- * by the bytes. The trailing \0 is dumped as well, because that 
- * makes the code simpler.
- */
-
-#define dumpcharptr(a)				\
-  do {						\
-    integer x;					\
-    if (a!=NULL) {				\
-      x = strlen(a)+1;				\
-      dumpinteger(x);  dumpthings(*a, x);	\
-    } else {					\
-      x = 0; dumpinteger(x);			\
-    }						\
-  } while (0)
-
-#define undumpcharptr(s)			\
-  do {						\
-    integer x;					\
-    char *a;					\
-    undumpinteger (x);				\
-    if (x>0) {					\
-      a = malloc(x);				\
-      undumpthings(*a,x);			\
-      s = a ;					\
-    } else { s = NULL; }			\
-  } while (0)
-
-
 
 void dumpimagemeta(void)
 {

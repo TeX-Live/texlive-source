@@ -1,2 +1,2 @@
-#define MFLUA_VERSION "0.9.1"
-#define BANNER "This is MFLua, Version 2.7182818-" MFLUA_VERSION
+#define MFLUA_VERSION "1.0.0-alpha"
+#define BANNER "This is MFLua, Version 2.71828182-" MFLUA_VERSION

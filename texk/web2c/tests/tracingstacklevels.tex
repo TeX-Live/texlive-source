@@ -1,0 +1,22 @@
+% $Id$
+% Public domain. Originally written by Karl Berry, 2021.
+% Trivially test \tracingstacklevels (works with initex).
+% (Run by hand; not included in the make check tests.)
+% See tracingstacklevels.ch and the pdftex manual for more info.
+
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+
+%\tracingcommands=3 % more output if you want to see
+
+\tracingmacros=2      % so macro expansion is logged at all
+\tracingstacklevels=2 % cut off at level 2
+
+\def\a#1{\relax}      % arguments since parameter logging is affected too
+\def\b#1{\a{#1}}
+\b1
+
+% try \input, which counts as another level for this.
+% The file expands \b again.
+\input tracingstacklevel2
+
+\end

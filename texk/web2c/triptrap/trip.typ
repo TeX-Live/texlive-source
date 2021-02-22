@@ -6,7 +6,7 @@ Options selected:
   Resolution =  72.27000000 pixels per inch
 numerator/denominator=25400000/473628672
 magnification=2000;       0.00003052 pixels per DVI unit
-' TeX output 2014.01.07:0959'
+' TeX output 1776.07.04:1200'
  
 42: beginning of page 0.0.0.0.11.0.0.0.0.0 
 87: down4 129105920 

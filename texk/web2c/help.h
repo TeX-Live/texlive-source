@@ -61,7 +61,9 @@ const_string CTANGLEHELP[] = {
     "+p          print progress report messages",
     "+/-q        shortcut for '-bhp'; also '--quiet' (default)",
     "+/-v        shortcut for '+bhp'; also '--verbose'",
+    "-dN         set 'kpathsea_debug' to N (0..127)",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL
@@ -80,6 +82,7 @@ const_string CWEAVEHELP[] = {
     "+p          print progress report messages",
     "+/-q        shortcut for '-bhp'; also '--quiet' (default)",
     "+/-v        shortcut for '+bhp'; also '--verbose'",
+    "-dN         set 'kpathsea_debug' to N (0..127)",
     "-e          do not enclose C material in \\PB{...}",
     "-f          do not force a newline after every C statement in output",
     "-i          suppress indentation of parameter declarations",
@@ -87,6 +90,7 @@ const_string CWEAVEHELP[] = {
     "-x          omit indices, section names, table of contents",
     "+lX         use macros for language X as of Xcwebmac.tex",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL
@@ -105,6 +109,7 @@ const_string CTWILLHELP[] = {
     "+p          print progress report messages",
     "+/-q        shortcut for '-bhp'; also '--quiet' (default)",
     "+/-v        shortcut for '+bhp'; also '--verbose'",
+    "-dN         set 'kpathsea_debug' to N (0..127)",
     "-e          do not enclose C material in \\PB{...}",
     "-f          do not force a newline after every C statement in output",
     "-i          suppress indentation of parameter declarations",
@@ -113,6 +118,7 @@ const_string CTWILLHELP[] = {
     "+P          \\input ctproofmac.tex instead of ctwimac.tex",
     "+/-lX       use macros for language X as of Xct{wi|proof}mac.tex",
     "+s          print usage statistics",
+    "-t          ignore temporary output irrespective of changes",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL

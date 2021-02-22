@@ -124,6 +124,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define to the current TeX Live version string. */
+#undef TL_VERSION
+
 /* Define to 1 if <zlib.h> declares 'z_const'. */
 #undef ZLIB_CONST
 

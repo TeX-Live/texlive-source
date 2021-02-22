@@ -1,4 +1,7 @@
+#include <string.h>
+
 #define EXTERN extern
+
 
 #if defined(JIT)
 #include "mfluajitd.h"
@@ -14,13 +17,21 @@
 #include <luajit.h>
 #endif
 
+
+#if defined(NO_OTFCC)
+/* */
+#else
+extern int otfcc_build(int argc, char *argv[]);
+extern int otfcc_dump(int argc, char *argv[]);
+#endif
+
 /* See  shell_cmd_is_allowed below */
 int shellenabledp = 1;
 int restrictedshell = 0;
 
 /**************************************************************/
 /*                                                            */
-/* private functions                                          */
+/* MFbuiltin private functions                                */
 /*                                                            */
 /**************************************************************/
 static lua_State *Luas[1];
@@ -472,6 +483,154 @@ static int priv_mflua_banner(lua_State *L)
 }
 
 
+/**************************************************************/
+/*                                                            */
+/* otfcc private functions                                    */
+/*                                                            */
+/**************************************************************/
+
+#ifdef MFLuaJIT
+static void lua_len (lua_State *L, int i) {
+  switch (lua_type(L, i)) {
+    case LUA_TSTRING:
+      lua_pushnumber(L, (lua_Number)lua_objlen(L, i));
+      break;
+    case LUA_TTABLE:
+      if (!luaL_callmeta(L, i, "__len"))
+        lua_pushnumber(L, (lua_Number)lua_objlen(L, i));
+      break;
+    case LUA_TUSERDATA:
+      if (luaL_callmeta(L, i, "__len"))
+        break;
+      /* FALLTHROUGH */
+    default:
+      luaL_error(L, "attempt to get length of a %s value",
+                 lua_typename(L, lua_type(L, i)));
+  }
+}
+
+static int lua_absindex (lua_State *L, int i) {
+  if (i < 0 && i > LUA_REGISTRYINDEX)
+    i += lua_gettop(L) + 1;
+  return i;
+}
+static int lua_geti (lua_State *L, int index, lua_Integer i) {
+  index = lua_absindex(L, index);
+  lua_pushinteger(L, i);
+  lua_gettable(L, index);
+  return lua_type(L, -1);
+}
+#endif
+
+static int priv_mflua_otf_dump(lua_State *L) {
+    if (!lua_istable(L, -1)) {
+      fprintf(stderr, "! dump: expected a table\n");
+      lua_pop(L,1);
+      return 0;
+    } else {
+     /* table is in the stack at index '-1' */
+     size_t l=0;
+     int j;
+     char **av;
+
+     lua_len (L, -1);
+     l = (size_t)(lua_tonumber(L,-1));
+     lua_pop(L,1);
+     if (l==0 )
+       return 0;
+     av = malloc((l+1) * sizeof(char*));
+     if (av==NULL) { 
+       fprintf(stderr, "! dump: unable to allocate av\n");
+       return 0;
+     }
+     av[0] = malloc((strlen("/dump")+1)*sizeof(char));
+     if (av[0]==NULL) { 
+       fprintf(stderr, "! dump: unable to allocate av[0]\n");
+       return 0;
+     }
+     strcpy(av[0], "/dump");
+     /* fill the av array */
+     for(j=1;j<=l;j++){
+        const char *k;
+        lua_geti(L,-1,j);
+        k = lua_tostring(L, -1);
+        av[j] = malloc((strlen(k)+1)*sizeof(char));
+        if (av[j]==NULL) { 
+         fprintf(stderr, "! dump: unable to allocate av[%d]\n",j);
+         return 0;
+        }
+        strcpy(av[j], k);
+        lua_pop(L,1);
+     }
+#if defined(NO_OTFCC)
+/* */
+#else 
+     otfcc_dump(l+1,av);
+#endif
+     /* release the av */
+     free(av[0]);
+     for(j=1;j<=l;j++)
+         free(av[j]);
+     free(av);
+     return 0;
+   }
+}
+
+
+static int priv_mflua_otf_build(lua_State *L) {
+    if (!lua_istable(L, -1)) {
+      fprintf(stderr, "! build: expected a table\n");
+      lua_pop(L,1);
+      return 0;
+    } else {
+     /* table is in the stack at index '-1' */
+     size_t l=0;
+     int j;
+     char **av;
+
+     lua_len (L, -1);
+     l = (size_t)(lua_tonumber(L,-1)) ;
+     lua_pop(L,1);
+     if (l==0 )
+       return 0;
+     av = malloc((l+1) * sizeof(char*));
+     if (av==NULL) { 
+       fprintf(stderr, "! build: unable to allocate av\n");
+       return 0;
+     }
+     av[0] = malloc((strlen("/build")+1)*sizeof(char));
+     if (av[0]==NULL) { 
+       fprintf(stderr, "! build: unable to allocate av[0]\n");
+       return 0;
+     }
+     strcpy(av[0], "/build");
+     /* fill the av array */
+     for(j=1;j<=l;j++){
+        const char *k;
+        lua_geti(L,-1,j);
+        k = lua_tostring(L, -1);
+        av[j] = malloc((strlen(k)+1)*sizeof(char));
+        if (av[j]==NULL) { 
+         fprintf(stderr, "! build: unable to allocate av[%d]\n",j);
+         return 0;
+        }
+        strcpy(av[j], k);
+        lua_pop(L,1);
+     }
+#if defined(NO_OTFCC)
+/* */
+#else 
+     otfcc_build(l+1,av);
+#endif
+     /* release the av */
+     free(av[0]);
+     for(j=1;j<=l;j++)
+         free(av[j]);
+     free(av);
+     return 0;
+   }
+}
+
 
 
 /**************************************************************/
@@ -517,6 +676,12 @@ static const struct luaL_Reg MFbuiltin_l[] = {
   {"mflua_version",priv_mflua_version},
   {"mflua_banner",priv_mflua_banner},
   {NULL, NULL}                /* sentinel */
+};
+
+static struct luaL_Reg mflua_otfcc[] = {
+    { "build", priv_mflua_otf_build },
+    { "dump", priv_mflua_otf_dump },
+    { NULL,        NULL}
 };
 
 
@@ -567,6 +732,17 @@ int mfluabeginprogram(void)
       luaL_newlib(L,MFbuiltin_l);
 #endif
       lua_settable(L, -3);
+      /* set the otfcc table */
+      lua_pushstring(L,"otf");
+#ifdef MFLuaJIT
+      /* 5.1 */
+      lua_newtable(L);
+      luaL_register (L,NULL,mflua_otfcc);
+#else
+      luaL_newlib(L,mflua_otfcc);
+#endif
+      lua_settable(L, -3);
+      
     }
     lua_pop(L,1);
   }

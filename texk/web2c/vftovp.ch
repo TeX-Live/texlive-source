@@ -268,6 +268,14 @@ default_directory:=default_directory_name;
 @z
 
 @x [44] Don't append `.tfm' here, and keep lowercase.
+@ The string |cur_name| is supposed to be set to the external name of the
+\.{TFM} file for the current font. This usually means that we need to
+prepend the name of the default directory, and
+to append the suffix `\.{.TFM}'. Furthermore, we change lower case letters
+to upper case, since |cur_name| is a \PASCAL\ string.
+@^system dependencies@>
+
+@<Move font name into the |cur_name| string@>=
 for k:=1 to name_length do cur_name[k]:=' ';
 if a=0 then
   begin for k:=1 to default_directory_name_length do
@@ -554,7 +562,8 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
+
     end else if getopt_return_val = "?" then begin
       usage (my_name);
 
@@ -649,14 +658,12 @@ incr (current_option);
 @<Type...@> =
 @!charcode_format_type = charcode_ascii..charcode_default;
 
-@
-@<Const...@> =
+@ @<Const...@> =
 @!charcode_ascii = 0;
 @!charcode_octal = 1;
 @!charcode_default = 2;
 
-@
-@<Global...@> =
+@ @<Global...@> =
 @!charcode_format: charcode_format_type;
 
 @ It starts off as the default, that is, we output letters and digits as

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Public domain. Originally written by Norbert Preining and Karl Berry, 2018-2019.
+# Public domain. Originally written by Norbert Preining and Karl Berry, 2018-2020.
 
 scriptname=`basename "$0"`
 javaVersion=$(java -version 2>&1 | head -1)

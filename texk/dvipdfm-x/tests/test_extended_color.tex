@@ -1,0 +1,137 @@
+% latex test_extended_color.tex
+% dvipdfmx test_extended_color.dvi
+\documentclass[dvipdfmx]{article}
+% for xelatex:
+%\documentclass{article}
+\newcommand{\specialbox}[3]{\makebox[#1][l]{\raisebox{-#2}[0bp][#2]{#3}}}
+\AtBeginDocument{%
+%% Separation ColorSpace (Spot color)
+\special{pdf:stream @tintTransform1
+  ({0 exch dup 0.62 mul exch 0})
+  <<  /FunctionType 4
+      /Domain [ 0.0 1.0 ]
+      /Range [ 0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0 ]
+  >>
+}
+\special{pdf:stream @tintTransform2
+  ({dup 0.78 mul exch dup 0.05 mul exch 0.71 mul 0})
+  <<  /FunctionType 4
+      /Domain [ 0.0 1.0 ]
+      /Range [ 0.0 1.0 0.0 1.0 0.0 1.0 0.0 1.0 ]
+  >>
+}
+%% -- Orange
+\special{pdf:obj @colorspace:orange [ /Separation
+    /Orange /DeviceCMYK @tintTransform1]}
+%% -- Green
+\special{pdf:obj @colorspace:green [ /Separation
+    /Green /DeviceCMYK @tintTransform2]}
+
+%% Pattern: Uncolored
+\special{pdf:stream @pattern:tile1
+    (0.16 0 0 0.16 0 0 cm 4 w
+     50 0 m 50 28 28 50 0 50 c S 100 50
+     m 72 50 50 28 50 0 c S
+     50 100 m 50 72 72 50 100 50 c S
+     0 50 m 28 50 50 72 50 100 c S
+     100 50 m 100 78 78 100 50 100 c 22 100 0 78 0 50 c
+     0 22 22 0 50 0 c 78 0 100 22 100 50 c S
+     0 0 m 20 10 25 5 25 0 c f 0 0 m 10 20 5 25 0 25 c f
+     100 0 m 80 10 75 5 75 0 c f
+     100 0 m 90 20 95 25 100 25 c f
+     100 100 m 80 90 75 95 75 100 c f
+     100 100 m 90 80 95 75 100 75 c f
+     0 100 m 20 90 25 95 25 100 c f
+     0 100 m 10 80 5 75 0 75 c f
+     50 50 m 70 60 75 55 75 50 c 75 45 70 40 50 50 c f
+     50 50 m 60 70 55 75 50 75 c 45 75 40 70 50 50 c f
+     50 50 m 30 60 25 55 25 50 c
+     25 45 30 40 50 50 c f
+     50 50 m 60 30 55 25 50 25 c 45 25 40 30 50 50 c f)
+    <<
+        /BBox [0 0 16 16]
+        /PaintType 2
+        /PatternType 1
+        /Resources <<
+            /ProcSet [/PDF]
+        >>
+        /TilingType 3
+        /Type /Pattern
+        /XStep 16
+        /YStep 16
+    >>
+}
+\special{pdf:obj @colorspace:pattern [/Pattern /DeviceRGB]} 
+%% Indexed
+\special{pdf:obj @colorspace:indexed [/Indexed
+    /DeviceRGB 3 <000000 FF0000 00FF00 0000FF>]}
+%% Calibrated Gray
+\special{pdf:obj @colorspace:calgray [ /CalGray << /WhitePoint [0.95505 1.00000 1.0890] /Gamma 2.222 >> ]}
+%% ICCBased (require ICC profile)
+\special{pdf:fstream @icc_profile:srgb (sRGB.icc) << /N 3 >>}
+\special{pdf:obj @colorspace:srgb [ /ICCBased @icc_profile:srgb ]}
+}
+\begin{document}
+Indexed:
+\special{pdf:bcolor @colorspace:indexed [2]}
+Green
+\special{pdf:ecolor}
+\special{pdf:bcolor @colorspace:indexed [3]}
+Blue
+\special{pdf:ecolor}
+\special{pdf:bcolor @colorspace:indexed [1]}
+Red
+\special{pdf:ecolor}
+\special{pdf:bcolor @colorspace:indexed [0]}
+Black
+\special{pdf:ecolor}
+
+Separation:
+\special{pdf:bcolor @colorspace:orange [0.4]}
+Orange 0.4
+\special{pdf:ecolor}
+\special{pdf:bcolor @colorspace:green [0.8]}
+Green 0.8
+\special{pdf:ecolor}
+
+Nesting and Page Break:
+\special{pdf:bcolor @colorspace:orange [0.9]}
+Orange 0.9
+\special{pdf:bcolor @colorspace:green [0.8]}
+Green 0.8
+\newpage
+...continued
+\special{pdf:ecolor}
+Orange 0.9
+
+\special{pdf:bcolor /DeviceCMYK [1 0 0 0.5]}
+CMYK 1 0 0 0.5
+\special{pdf:bcolor /DeviceRGB [1 0 0 ]}
+Red
+\special{pdf:ecolor}
+\special{pdf:ecolor}
+Finally... back to the first color: Orange 0.9.
+\special{pdf:ecolor}
+\newpage
+
+CalGray:
+\special{pdf:bcolor @colorspace:calgray [0.2]}
+CalGray example.
+\special{pdf:ecolor}
+
+ICCBased ColorSpace:
+
+\special{pdf:bcolor @colorspace:srgb [0.0 1.0 0.0]}
+{\Huge Hello again}
+\special{pdf:ecolor}
+\newpage
+
+Pattern Examples...
+
+\specialbox{320pt}{100pt}{%
+\special{pdf:bcolor @colorspace:pattern [0.8 @pattern:tile1]}%
+\special{pdf:content 0 0 320 100 re f}%
+\special{pdf:ecolor}%
+}
+
+\end{document}

@@ -22,6 +22,7 @@
 
 WebFont::WebFont(GfxFont *gfxFontA, XRef *xref) {
   GfxFontType type;
+  Ref id;
 
   gfxFont = gfxFontA;
   fontBuf = NULL;
@@ -29,23 +30,25 @@ WebFont::WebFont(GfxFont *gfxFontA, XRef *xref) {
   ffType1C = NULL;
   isOpenType = gFalse;
 
-  type = gfxFont->getType();
-  if (type == fontTrueType ||
-      type == fontTrueTypeOT ||
-      type == fontCIDType2 ||
-      type == fontCIDType2OT) {
-    if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
-      ffTrueType = FoFiTrueType::make(fontBuf, fontLength, 0);
-    }
-  } else if (type == fontType1C ||
-	     type == fontCIDType0C) {
-    if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
-      ffType1C = FoFiType1C::make(fontBuf, fontLength);
-    }
-  } else if (type == fontType1COT ||
-	     type == fontCIDType0COT) {
-    if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
-      isOpenType = gTrue;
+  if (gfxFont->getEmbeddedFontID(&id)) {
+    type = gfxFont->getType();
+    if (type == fontTrueType ||
+	type == fontTrueTypeOT ||
+	type == fontCIDType2 ||
+	type == fontCIDType2OT) {
+      if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
+	ffTrueType = FoFiTrueType::make(fontBuf, fontLength, 0);
+      }
+    } else if (type == fontType1C ||
+	       type == fontCIDType0C) {
+      if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
+	ffType1C = FoFiType1C::make(fontBuf, fontLength);
+      }
+    } else if (type == fontType1COT ||
+	       type == fontCIDType0COT) {
+      if ((fontBuf = gfxFont->readEmbFontFile(xref, &fontLength))) {
+	isOpenType = gTrue;
+      }
     }
   }
 }

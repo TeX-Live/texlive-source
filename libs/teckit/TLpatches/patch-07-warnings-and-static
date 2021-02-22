@@ -1,0 +1,103 @@
+diff -ur teckit-2.5.10/source/Compiler.cpp teckit-src/source/Compiler.cpp
+--- teckit-2.5.10/source/Compiler.cpp	Tue May 05 23:09:53 2020
++++ teckit-src/source/Compiler.cpp	Wed May 06 09:00:34 2020
+@@ -189,7 +189,7 @@
+ 		free(table);
+ }
+ 
+-char*
++const char*
+ WINAPI
+ TECkit_GetUnicodeName(UInt32 usv)
+ {
+diff -ur teckit-2.5.10/source/Compiler.h teckit-src/source/Compiler.h
+--- teckit-2.5.10/source/Compiler.h	Tue May 05 23:09:53 2020
++++ teckit-src/source/Compiler.h	Wed May 06 08:59:40 2020
+@@ -229,7 +229,7 @@
+ 		vector<UInt32>		byteClassLines;
+ 		vector<UInt32>		uniClassLines;
+ 
+-		long				passType;
++		UInt32				passType;
+ 		UInt32				uniDefault;
+ 		UInt8				byteDefault;
+ 		bool				supplementaryChars;
+diff -ur teckit-2.5.10/source/Engine.cpp teckit-src/source/Engine.cpp
+--- teckit-2.5.10/source/Engine.cpp	Tue May 05 23:09:53 2020
++++ teckit-src/source/Engine.cpp	Wed May 06 09:06:24 2020
+@@ -51,12 +51,6 @@
+ #	define NOSERVICE
+ #	define NOMCX
+ #	include <windows.h>
+-
+-	BOOL WINAPI
+-	DllMain(HINSTANCE /*hInst*/, DWORD /*wDataSeg*/, LPVOID /*lpReserved*/)
+-	{
+-		return true;
+-	}
+ #endif
+ 
+ #include "Engine.h"
+diff -ur teckit-2.5.10/source/Public-headers/TECkit_Compiler.h teckit-src/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.10/source/Public-headers/TECkit_Compiler.h	Tue May 05 23:09:53 2020
++++ teckit-src/source/Public-headers/TECkit_Compiler.h	Wed May 06 09:07:40 2020
+@@ -29,6 +29,9 @@
+ #ifdef _WIN32
+ /* MS compiler has predefined _WIN32, so assume Windows target  */
+ #include <windows.h>	// apparently just using windef.h fails on VC++6
++#undef WINAPI
++#define WINAPI
++#define EXPORTED
+ #else
+ /* not the MS compiler, so try Metrowerks' platform macros */
+ #ifndef __APPLE__
+@@ -55,7 +58,7 @@
+ #define kCompilerOpts_Compress	0x00000010	/* generate compressed mapping table */
+ #define kCompilerOpts_XML		0x00000020	/* instead of a compiled binary table, generate an XML representation of the mapping */
+ 
+-typedef void (CALLBACK *TECkit_ErrorFn)(void* userData, char* msg, char* param, UInt32 line);
++typedef void (CALLBACK *TECkit_ErrorFn)(void* userData, const char* msg, const char* param, UInt32 line);
+ 
+ TECkit_Status
+ WINAPI EXPORTED
+@@ -74,7 +77,7 @@
+ TECkit_GetCompilerVersion();
+ 
+ /* new APIs for looking up Unicode names (as NUL-terminated C strings) */
+-char*
++const char*
+ WINAPI EXPORTED
+ TECkit_GetUnicodeName(UInt32 usv);
+ 	/* returns the Unicode name of usv, if available, else NULL */
+diff -ur teckit-2.5.10/source/Public-headers/TECkit_Engine.h teckit-src/source/Public-headers/TECkit_Engine.h
+--- teckit-2.5.10/source/Public-headers/TECkit_Engine.h	Tue May 05 23:09:53 2020
++++ teckit-src/source/Public-headers/TECkit_Engine.h	Wed May 06 09:08:34 2020
+@@ -79,6 +79,9 @@
+ #ifdef _WIN32
+ /* MS compiler has predefined _WIN32, so assume Windows target  */
+ #include <windows.h>
++#undef WINAPI
++#define WINAPI
++#define EXPORTED
+ #else
+ /* not the MS compiler, so try Metrowerks' platform macros */
+ #ifndef __APPLE__
+diff -ur teckit-2.5.10/source/Sample-tools/TECkit_Compile.cpp teckit-src/source/Sample-tools/TECkit_Compile.cpp
+--- teckit-2.5.10/source/Sample-tools/TECkit_Compile.cpp	Tue May 05 23:09:53 2020
++++ teckit-src/source/Sample-tools/TECkit_Compile.cpp	Wed May 06 09:05:22 2020
+@@ -24,13 +24,13 @@
+ #endif
+ 
+ extern "C" {
+-	static void CALLBACK errFunc(void* userData, char* msg, char* param, UInt32 line);
++	static void CALLBACK errFunc(void* userData, const char* msg, const char* param, UInt32 line);
+ };
+ 
+ static
+ void
+ CALLBACK
+-errFunc(void* /*userData*/, char* msg, char* param, UInt32 line)
++errFunc(void* /* userData */, const char* msg, const char* param, UInt32 line)
+ {
+ 	fprintf(stderr, "%s", msg);
+ 	if (param != 0)

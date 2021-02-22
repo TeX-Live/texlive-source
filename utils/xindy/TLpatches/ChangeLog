@@ -1,3 +1,10 @@
+2020-05-28  Karl Berry  <karl@tug.org>
+
+	* patch-06-markup-range-attr,
+	* patch-08-hyperref-seealso,
+	* patch-10-doc-min-range: new patches from J\"urgen S.
+	https://tug.org/pipermail/tex-live/2020-May/045760.html
+
 2017-11-13  Karl Berry  <karl@tug.org>
 
 	* patch-02-lbrace: new file.

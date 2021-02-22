@@ -967,6 +967,7 @@ expanded_code:
     warning_index := save_warning_index;
     scanner_status := save_scanner_status;
     ins_list(link(def_ref));
+    free_avail(def_ref);
     def_ref := save_def_ref;
     restore_cur_string;
     return;
@@ -1572,6 +1573,7 @@ end;
 @ @<Implement \.{\\pdfsavepos}@>=
 begin
     new_whatsit(pdf_save_pos_node, small_node_size);
+    inhibit_glue_flag:=false;
 end
 
 @ @<Save current position in DVI mode@>=

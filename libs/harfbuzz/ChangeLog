@@ -1,3 +1,43 @@
+2020-12-27  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.4.
+	* version.ac: Adjusted.
+
+2020-12-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.3.
+	* Makefile.am, version.ac: Adjusted.
+
+2020-08-29  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.2.
+	* version.ac: Adjusted.
+
+2020-08-14  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.1.
+	* Makefile.am, version.ac: Adjusted.
+
+2020-07-25  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.7.0.
+	* Makefile.am, version.ac: Adjusted.
+
+2020-06-23  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.6.8.
+	* Makefile.am, include/Makefile.am, version.ac: Adjusted.
+
+2020-06-04  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.6.7.
+	* version.ac: Adjusted.
+
+2020-05-18  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import harfbuzz-2.6.6.
+	* Makefile.am, include/Makefile.am, version.ac: Adjusted.
+
 2019-10-30  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import harfbuzz-2.6.4.

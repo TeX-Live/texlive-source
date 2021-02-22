@@ -1,3 +1,11 @@
+2020-06-07  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* ac/withenable.ac: omit $Id$ from generated output.
+	
+	* configure.ac (AC_CHECK_LIB([m]): check for erf, not sqrt.
+	(Missed this in earlier changes in other dirs.)
+
 2019-09-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import v1.3 from ctan.org/pkg/axodraw2.

@@ -1,4 +1,4 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,11 +8,11 @@
     PygmenTeX is a converter that do syntax highlighting of snippets of
     source code extracted from a LaTeX file.
 
-    :copyright: Copyright 2014 by José Romildo Malaquias
+    :copyright: Copyright 2020 by José Romildo Malaquias
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.8'
+__version__ = '0.10'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -27,6 +27,7 @@ from pygments.formatters.latex import LatexFormatter, escape_tex, _get_ttype_nam
 from pygments.util import get_bool_opt, get_int_opt
 from pygments.lexer import Lexer
 from pygments.token import Token
+from pygments.util import guess_decode
 
 ###################################################
 # The following code is in >=pygments-2.0
@@ -56,24 +57,24 @@ class EnhancedLatexFormatter(LatexFormatter):
             realoutfile = outfile
             outfile = StringIO()
 
-        outfile.write(u'\\begin{Verbatim}[commandchars=\\\\\\{\\}')
+        outfile.write(r'\begin{Verbatim}[commandchars=\\\{\}')
         if self.linenos:
             start, step = self.linenostart, self.linenostep
-            outfile.write(u',numbers=left' +
-                          (start and u',firstnumber=%d' % start or u'') +
-                          (step and u',stepnumber=%d' % step or u''))
+            outfile.write(',numbers=left' +
+                          (start and ',firstnumber=%d' % start or '') +
+                          (step and ',stepnumber=%d' % step or ''))
         if self.mathescape or self.texcomments or self.escapeinside:
-            outfile.write(u',codes={\\catcode`\\$=3\\catcode`\\^=7\\catcode`\\_=8}')
+            outfile.write(r',codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8}')
         if self.verboptions:
-            outfile.write(u',' + self.verboptions)
-        outfile.write(u']\n')
+            outfile.write(',' + self.verboptions)
+        outfile.write(']\n')
 
         for ttype, value in tokensource:
             if ttype in Token.Comment:
                 if self.texcomments:
                     # Try to guess comment starting lexeme and escape it ...
                     start = value[0:1]
-                    for i in xrange(1, len(value)):
+                    for i in range(1, len(value)):
                         if start[0] != value[i]:
                             break
                         start += value[i]
@@ -129,7 +130,7 @@ class EnhancedLatexFormatter(LatexFormatter):
             else:
                 outfile.write(value)
 
-        outfile.write(u'\\end{Verbatim}\n')
+        outfile.write('\\end{Verbatim}\n')
 
         if self.full:
             realoutfile.write(DOC_TEMPLATE %
@@ -232,7 +233,7 @@ DISPLAY_LINENOS_SNIPPET_TEMPLATE = r'''
 '''
 
 
-def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
+def pyg(outfile, outencoding, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
     try:
         lexer = get_lexer_by_name(opts['lang'])
     except ClassNotFound as err:
@@ -260,27 +261,8 @@ def pyg(outfile, n, opts, extra_opts, text, usedstyles, inline_delim = ''):
     if tabsize:
         lexer.tabsize = tabsize
 
-    encoding = opts['encoding']
-    if encoding == 'guess':
-        try:
-            import chardet
-        except ImportError:
-            try:
-                text = text.decode('utf-8')
-                if text.startswith(u'\ufeff'):
-                    text = text[len(u'\ufeff'):]
-                    encoding = 'utf-8'
-            except UnicodeDecodeError:
-                text = text.decode('latin1')
-                encoding = 'latin1'
-        else:
-            encoding = chardet.detect(text)['encoding']
-            text = text.decode(encoding)
-    else:
-        text = text.decode(encoding)
-
     lexer.encoding = ''
-    _fmter.encoding = encoding
+    # _fmter.encoding = outencoding
 
     stylename = opts['sty']
 
@@ -367,7 +349,7 @@ _re_input = re.compile(
     r'^<@@pygmented@input@(\d+)\n(.*)\n([\s\S]*?)\n>@@pygmented@input@\1$',
     re.MULTILINE)
 
-def convert(code, outfile):
+def convert(code, outfile, outencoding):
     """
     Convert ``code``
     """
@@ -393,6 +375,7 @@ def convert(code, outfile):
         m = _re_inline.match(code, pos)
         if m:
             pyg(outfile,
+                outencoding,
                 m.group(1),
                 parse_opts(opts.copy(), m.group(2)),
                 '',
@@ -405,6 +388,7 @@ def convert(code, outfile):
         m = _re_display.match(code, pos)
         if m:
             pyg(outfile,
+                outencoding,
                 m.group(1),
                 parse_opts(opts.copy(), m.group(2)),
                 '',
@@ -415,15 +399,16 @@ def convert(code, outfile):
 
         m = _re_input.match(code, pos)
         if m:
+            opts_new = parse_opts(opts, m.group(2))
             try:
-                filecontents = open(m.group(3), 'rb').read()
+                filecontents, inencoding = read_input(m.group(3), opts_new['encoding'])
             except Exception as err:
-                sys.stderr.write('Error: cannot read input file: ')
-                sys.stderr.write(str(err))
+                print('Error: cannot read input file: ', err, file=sys.stderr)
             else:
                 pyg(outfile,
+                    outencoding,
                     m.group(1),
-                    parse_opts(opts, m.group(2)),
+                    opts_new,
                     "",
                     filecontents,
                     usedstyles)
@@ -435,6 +420,16 @@ def convert(code, outfile):
 
     outfile.write(GENERIC_DEFINITIONS_2)
 
+def read_input(filename, encoding):
+    with open(filename, 'rb') as infp:
+        code = infp.read()
+
+    if not encoding or encoding == 'guess':
+        code, encoding = guess_decode(code)
+    else:
+        code = code.decode(encoding)
+
+    return code, encoding
 
 
 USAGE = """\
@@ -486,7 +481,7 @@ def main(args = sys.argv):
         return 0
 
     if opts.pop('-V', None) is not None:
-        print('PygmenTeX version %s, (c) 2010 by José Romildo.' % __version__)
+        print('PygmenTeX version %s, (c) 2020 by José Romildo.' % __version__)
         return 0
  
     if len(args) != 1:
@@ -494,10 +489,9 @@ def main(args = sys.argv):
         return 2
     infn = args[0]
     try:
-        code = open(infn, 'rb').read()
+        code, inencoding = read_input(infn, "guess")
     except Exception as err:
-        sys.stderr.write('Error: cannot read input file: ')
-        sys.stderr.write(str(err))
+        print('Error: cannot read input file: ', err, file=sys.stderr)
         return 1
 
     outfn = opts.pop('-o', None)
@@ -507,11 +501,10 @@ def main(args = sys.argv):
     try:
         outfile = open(outfn, 'w')
     except Exception as err:
-        sys.stderr.write('Error: cannot open output file: ')
-        sys.stderr.write(str(err))
+        print('Error: cannot open output file: ', err, file=sys.stderr)
         return 1
 
-    convert(code, outfile)
+    convert(code, outfile, inencoding)
 
     return 0
 

@@ -185,6 +185,7 @@ public:
   // Return the ascent and descent values.
   double getAscent() { return ascent; }
   double getDescent() { return descent; }
+  double getDeclaredAscent() { return declaredAscent; }
 
   // Return the writing mode (0=horizontal, 1=vertical).
   virtual int getWMode() { return 0; }
@@ -234,6 +235,7 @@ protected:
   double missingWidth;		// "default" width
   double ascent;		// max height above baseline
   double descent;		// max depth below baseline
+  double declaredAscent;	// ascent value, before munging
   GBool hasToUnicode;		// true if the font has a ToUnicode map
   GBool ok;
 };

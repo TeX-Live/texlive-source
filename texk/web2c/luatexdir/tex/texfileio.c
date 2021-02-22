@@ -316,7 +316,7 @@ boolean lua_a_open_in(alpha_file * f, char *fn, int n)
         }
     } else {
         /*tex no read callback */
-        if (openinnameok(fnam)) {
+        if (openinnameok(fn)) {
             ret = open_in_or_pipe(f, fnam, kpse_tex_format, FOPEN_RBIN_MODE, (n == 0 ? true : false));
         } else {
             /*tex open failed */

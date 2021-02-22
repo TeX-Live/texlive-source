@@ -1,12 +1,14 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2014-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([detex_version], [2.8.5])[]dnl using unmodified detex source tree
+m4_define([detex_version], [2.8.9])[]dnl using unmodified detex source tree
 AC_INIT([detex (TeX Live)], detex_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([detex-src/detex.l])
@@ -17,7 +19,6 @@ dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([detex])
 
 AC_PROG_LEX
-AC_HEADER_TIME
 
 AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 

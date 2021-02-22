@@ -1,6 +1,7 @@
-#! /usr/bin/env python
 # -*- coding: UTF-8 -*-
-from match import Match
+from __future__ import print_function
+
+from zzipdoc.match import Match
 
 class HtmlDocument:
     """ binds some html content page with additional markup - in this
@@ -29,31 +30,31 @@ class HtmlDocument:
     def get_title(self):
         if self.title: return self.title
         try:   return self.text[0].get_title()
-        except Exception, e: pass
+        except Exception as e: pass
         return self.title
     def _html_meta(self, meta):
         """ accepts adapter objects with .html_meta() """
         try:   return meta.html_meta()
-        except Exception, e: pass
+        except Exception as e: pass
         return str(meta)
     def _html_style(self, style):
         """ accepts adapter objects with .html_style() and .xml_style() """
         ee = None
         try:   return style.html_style()
-        except Exception, e: ee = e; pass
+        except Exception as e: ee = e; pass
         try:   return style.xml_style()
-        except Exception, e: print "HtmlDocument/style", ee, e; pass
+        except Exception as e: print("HtmlDocument/style {} {}".format(ee, e)); pass
         try:   return str(style)
-        except Exception, e: print "HtmlDocument/style", e; return ""
+        except Exception as e: print("HtmlDocument/style {}".format(e)); return ""
     def _html_text(self, html):
         """ accepts adapter objects with .html_text() and .xml_text() """
         ee = None
         try:   return html.html_text()
-        except Exception, e: ee = e; pass
+        except Exception as e: ee = e; pass
         try:   return html.xml_text()
-        except Exception, e: print "HtmlDocument/text", ee, e; pass
+        except Exception as e: print("HtmlDocument/text {} {}".format(ee, e)); pass
         try:   return str(html)
-        except Exception, e: print "HtmlDocument/text", e; return "&nbsp;"
+        except Exception as e: print("HtmlDocument/text {}".format(e)); return "&nbsp;"
     def navigation(self):
         if self.navi:
             return self.navi
@@ -63,7 +64,7 @@ class HtmlDocument:
                 self.navi = fd.read()
                 fd.close()
                 return self.navi
-            except Exception, e:
+            except Exception as e:
                 pass
         return None
     def html_header(self):
@@ -103,15 +104,15 @@ class HtmlDocument:
         return filename
     def save(self, filename = None):
         filename = self._filename(filename)
-        print "writing '"+filename+"'"
+        print("writing '"+filename+"'")
         try:
             fd = open(filename, "w")
-            print >>fd, self.html_header()
+            print(self.html_header(), file=fd)
             for text in self.text:
-                print >>fd, self._html_text(text)
-            print >>fd, self.html_footer()
+                print(self._html_text(text), file=fd)
+            print(self.html_footer(), file=fd)
             fd.close()
             return True
-        except IOError, e:
-            print "could not open '"+filename+"'file", e
+        except IOError as e:
+            print("could not open '"+filename+"'file {}".format(e))
             return False

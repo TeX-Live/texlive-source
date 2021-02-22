@@ -1,11 +1,11 @@
-# $Id$
-# texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
+dnl $Id$
+# texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
 dnl
-dnl Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+dnl Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## configure options for TeX and MF
+# configure options for TeX and MF
 m4_define_default([kpse_indent_26], [26])[]dnl
 AC_ARG_WITH([banner-add],
             AS_HELP_STRING([--with-banner-add=STR],
@@ -37,14 +37,14 @@ m4_define([kpse_tex_progs], [dnl
 [[euptex],    [yes], [yes], [e-upTeX],    [ptexenc zlib]],
 [[aleph],     [yes], [],    [Aleph],      []],
 [[pdftex],    [yes], [yes], [pdfTeX],     [xpdf libpng zlib]],
-[[luatex],    [yes], [],    [LuaTeX],     [libpng zziplib lua53]],
-[[luajittex], [yes], [],    [LuaJITTeX],  [libpng zziplib luajit]],
-[[luahbtex],    [yes], [],    [LuaHBTeX],     [libpng zziplib lua53 harfbuzz]],
-[[luajithbtex], [yes], [],    [LuaHBJITTeX],  [libpng zziplib luajit harfbuzz]],
+[[luatex],    [yes], [],    [LuaTeX],     [pplib libpng zziplib lua53]],
+[[luajittex], [yes], [],    [LuaJITTeX],  [pplib libpng zziplib luajit]],
+[[luahbtex],    [yes], [],    [LuaHBTeX],     [pplib libpng zziplib lua53 harfbuzz]],
+[[luajithbtex], [yes], [],    [LuaHBJITTeX],  [pplib libpng zziplib luajit harfbuzz]],
 [[mp],        [yes], [],    [MetaPost],   [mpfr cairo libpng]],
 [[pmp],       [yes], [],    [pMetaPost],  [mpfr cairo libpng ptexenc]],
 [[upmp],      [yes], [],    [upMetaPost], [mpfr cairo libpng ptexenc]],
-[[xetex],     [yes], [yes], [XeTeX],      [poppler libpng freetype2 teckit harfbuzz]],
+[[xetex],     [yes], [yes], [XeTeX],      [pplib libpng freetype2 teckit harfbuzz]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
            [m4_ifset([Kpse_Prog],

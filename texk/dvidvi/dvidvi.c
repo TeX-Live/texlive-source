@@ -34,8 +34,10 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-#define BANNER "\nThis is dvidvi 1.1, Copyright 1988-1991 Radical Eye Software\n" \
+#define BANNER   "\nThis is dvidvi " VERSION " (" TL_VERSION ")," \
+                 " Copyright 1988-1991 Radical Eye Software\n" \
                  "Improved from 1.0 to 1.1, 1994, Markus Kohm\n"
+#define BUG_ADDRESS  PACKAGE_BUGREPORT
 #define STRINGSIZE (500L)  /* maximum number of strings in program */
 
 #ifdef HAVE_CONFIG_H
@@ -175,16 +177,6 @@ int prettycolumn ;       /* the column we are at when running pretty */
 
 #ifdef ASCIIPTEX
 int ptexdvi ;            /* true if dvi file is extended (TATEKUMI) */
-#endif
-
-#ifdef WIN32
-void win32_fprintf(FILE *fp, const char *fmt, ...) {
-  va_list argp;
-
-  va_start(argp, fmt);
-  win32_vfprintf(fp, fmt, argp);
-  va_end(argp);
-}
 #endif
 
 /*
@@ -359,6 +351,7 @@ static void usage(void) {
    (void)fprintf(stderr,"    [-q] quiet mode               [-r] reverse pages\n");
    (void)fprintf(stderr,"    [-m modulo:pagespecs]         [-j] jumping pages\n");
    (void)fprintf(stderr,"    [-p pagemodulo]\n");
+   (void)fprintf(stderr,"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 #ifndef VMS
    exit(1) ;
 #else /* VMS */

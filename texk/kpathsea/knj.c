@@ -1,7 +1,7 @@
 /* knj.c: check for 2-Byte Kanji (CP 932, SJIS) codes.
 
    Copyright 2010, 2016, 2018 Akira Kakuto.
-   Copyright 2013, 2016 TANAKA Takuji.
+   Copyright 2013, 2016, 2020 TANAKA Takuji.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -116,12 +116,58 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
+    unsigned char *fnn;
+    unsigned char *p;
+    size_t len;
 
     assert(filename && mode);
-
-    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
+    len = strlen(filename);
+/*
+  Support very long input path name, longer than _MAX_PATH for
+  Windows, if it really exists and input name is given in
+  full-absolute path in a command line.
+  /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
+  More than one adjacent directory separators should be
+  excluded. (2020/10/24)
+*/
+    fnn = xmalloc(len + 10);
+    p = strstr(filename, ".\\");
+    if (!p) {
+       p = strstr(filename, "./");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "//");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\\\");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\/");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "/\\");
+    }
+    if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\' &&
+         filename[2] != '?'))) {
+       filename += 2;
+       strcpy (fnn, "\\\\?\\UNC\\");
+       strcat (fnn, filename);
+    } else if (!p && len > 2 && filename[1] == ':') {
+       strcpy (fnn, "\\\\?\\");
+       strcat (fnn, filename);
+    } else {
+       strcpy (fnn, filename);
+    }
+    for (p = fnn; *p; p++) {
+      if (*p == '/')
+         *p = '\\';
+    }
+    
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, fnn, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
+    free (fnn);
     if (f == NULL)
         FATAL_PERROR(filename);
     if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
@@ -149,12 +195,58 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
     FILE *f;
     wchar_t *fnamew, modew[4];
     int i;
+    unsigned char *fnn;
+    unsigned char *p;
+    size_t len;
 
     assert(filename && mode);
+    len = strlen(filename);
+/*
+  Support very long input path name, longer than _MAX_PATH for
+  Windows, if it really exists and input name is given in
+  full-absolute path in a command line.
+  /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
+  More than one adjacent directory separators should be
+  excluded. (2020/10/24)
+*/
+    fnn = xmalloc(len + 10);
+    p = strstr(filename, ".\\");
+    if (!p) {
+       p = strstr(filename, "./");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "//");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\\\");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "\\/");
+    }
+    if (!p && len > 2) {
+       p = strstr(filename + 2, "/\\");
+    }
+    if (!p && len > 2 && ((filename[0] == '/' && filename[1] == '/') ||
+        (filename[0] == '\\' && filename[1] == '\\' &&
+         filename[2] != '?'))) {
+       filename += 2;
+       strcpy (fnn, "\\\\?\\UNC\\");
+       strcat (fnn, filename);
+    } else if (!p && len > 2 && filename[1] == ':') {
+       strcpy (fnn, "\\\\?\\");
+       strcat (fnn, filename);
+    } else {
+       strcpy (fnn, filename);
+    }
+    for (p = fnn; *p; p++) {
+      if (*p == '/')
+         *p = '\\';
+    }
 
-    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, filename, fnamew=NULL);
+    fnamew = get_wstring_from_mbstring(kpse->File_system_codepage, fnn, fnamew=NULL);
     for(i=0; (modew[i]=(wchar_t)mode[i]); i++) {} /* mode[i] must be ASCII */
     f = _wfopen(fnamew, modew);
+    free (fnn);
     if (f != NULL) {
         if (KPATHSEA_DEBUG_P (KPSE_DEBUG_FOPEN)) {
             DEBUGF_START ();
@@ -466,6 +558,23 @@ kpathsea_win32_vfprintf(kpathsea kpse, FILE *fp, const char *format, va_list arg
 }
 
 int
+kpathsea_win32_fprintf(kpathsea kpse, FILE *fp, const char *format, ...)
+{
+    int ret, count;
+    va_list argp;
+
+    count = 0;
+    va_start(argp, format);
+    ret = kpathsea_win32_vfprintf(kpse, fp, format, argp);
+    if (ret==EOF) {
+        return EOF;
+    }
+    count += ret;
+    va_end(argp);
+    return count;
+}
+
+int
 kpathsea_win32_puts(kpathsea kpse, const char *str)
 {
     if (kpathsea_win32_fputs(kpse, str, stdout)==EOF) {
@@ -519,6 +628,19 @@ kpathsea_win32_putc(kpathsea kpse, int c, FILE *fp)
     *(kpse->st_str)++ = c;
     kpse->st_len--;
     return c;
+}
+
+void
+kpathsea_win32_perror(kpathsea kpse, const char *str)
+{
+    wchar_t *wstr;
+
+    if (kpse->File_system_codepage != CP_UTF8)
+        return perror(str);
+
+    wstr = get_wstring_from_utf8(str, wstr=NULL);
+    _wperror(wstr);
+    free(wstr);
 }
 
 int
@@ -618,6 +740,23 @@ win32_vfprintf(FILE *fp, const char *format, va_list argp)
 }
 
 int
+win32_fprintf(FILE *fp, const char *format, ...)
+{
+    int ret, count;
+    va_list argp;
+
+    count = 0;
+    va_start(argp, format);
+    ret = kpathsea_win32_vfprintf(kpse_def, fp, format, argp);
+    if (ret==EOF) {
+        return EOF;
+    }
+    count += ret;
+    va_end(argp);
+    return count;
+}
+
+int
 win32_puts(const char *str)
 {
   return kpathsea_win32_puts(kpse_def, str);
@@ -627,6 +766,12 @@ int
 win32_putc(int c, FILE *fp)
 {
   return kpathsea_win32_putc(kpse_def, c, fp);
+}
+
+void
+win32_perror(const char *str)
+{
+  kpathsea_win32_perror(kpse_def, str);
 }
 
 int

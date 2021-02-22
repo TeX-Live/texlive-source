@@ -1,6 +1,8 @@
 2017-02-17  Karl Berry  <karl@freefriends.org>
 
-	* recurse.am: doc fixes.
+	* bin_links.am,
+	* recurse.am: consistently omit $Id$ from generated Makefile.in,
+	but do include comments.
 
 2017-02-16  Karl Berry  <karl@tug.org>
 

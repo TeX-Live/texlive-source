@@ -1,8 +1,8 @@
-.\" Copyright 1997-2019 Glyph & Cog, LLC
-.TH pdftotext 1 "25 Sep 2019"
+.\" Copyright 1997-2021 Glyph & Cog, LLC
+.TH pdftotext 1 "28 Jan 2021"
 .SH NAME
 pdftotext \- Portable Document Format (PDF) to text converter
-(version 4.02)
+(version 4.03)
 .SH SYNOPSIS
 .B pdftotext
 [options]
@@ -58,6 +58,12 @@ Similar to
 but optimized for simple one-column pages.  This mode will do a better
 job of maintaining horizontal spacing, but it will only work properly
 with a single column of text.
+.TP
+.B \-simple2
+Similar to
+.BR \-simple ,
+but handles slightly rotated text (e.g., OCR output) better.  Only works
+for pages with a single column of text.
 .TP
 .B \-table
 Table mode is similar to physical layout mode, but optimized for
@@ -161,11 +167,14 @@ Read
 .I config-file
 in place of ~/.xpdfrc or the system-wide config file.
 .TP
+.B \-listencodings
+List all available text output encodings, then exit.
+.TP
 .B \-v
-Print copyright and version information.
+Print copyright and version information, then exit.
 .TP
 .B \-h
-Print usage information.
+Print usage information, then exit.
 .RB ( \-help
 and
 .B \-\-help
@@ -192,7 +201,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftotext software and documentation are copyright 1996-2019 Glyph
+The pdftotext software and documentation are copyright 1996-2021 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

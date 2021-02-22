@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2020-03-25"
+release_date = "2020-06-04"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -107,6 +107,7 @@ testsuppdir   = escapepath(testsuppdir)
 builddir      = escapepath(builddir)
 distribdir    = escapepath(distribdir)
 localdir      = escapepath(localdir)
+resultdir     = escapepath(resultdir)
 testdir       = escapepath(testdir)
 typesetdir    = escapepath(typesetdir)
 unpackdir     = escapepath(unpackdir)
@@ -158,6 +159,7 @@ if options["target"] == "check" then
         print("\n  Check failed with difference files")
         local testdir = testdir
         if config ~= "build" then
+          resultdir = resultdir .. "-" .. config
           testdir = testdir .. "-" .. config
         end
         for _,i in ipairs(filelist(testdir,"*" .. os_diffext)) do

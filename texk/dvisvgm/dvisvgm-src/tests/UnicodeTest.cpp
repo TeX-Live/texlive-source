@@ -2,7 +2,7 @@
 ** UnicodeTest.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -61,6 +61,40 @@ TEST(UnicodeTest, utf8) {
 	EXPECT_EQ(Unicode::utf8(0x10000), string("\xf0\x90\x80\x80"));
 	EXPECT_EQ(Unicode::utf8(0x10ffff), string("\xf4\x8f\xbf\xbf"));
 	EXPECT_TRUE(Unicode::utf8(0x110000).empty());
+}
+
+
+TEST(UnicodeTest, fromSurrogate1) {
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800dc00), 0x10000u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd83cdd10), 0x1f110u);
+
+	// invalid surrogates
+	EXPECT_EQ(Unicode::fromSurrogate(0xd7ffdc00), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xdc00dc00), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800dbff), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800e000), 0u);
+}
+
+
+TEST(UnicodeTest, fromSurrogate2) {
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800, 0xdc00), 0x10000u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd83c, 0xdd10), 0x1f110u);
+
+	// invalid surrogates
+	EXPECT_EQ(Unicode::fromSurrogate(0xd7ff, 0xdc00), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xdc00, 0xdc00), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800, 0xdbff), 0u);
+	EXPECT_EQ(Unicode::fromSurrogate(0xd800, 0xe000), 0u);
+}
+
+
+TEST(UnicodeTest, toSurrogate) {
+	EXPECT_EQ(Unicode::toSurrogate(0x10000), 0xd800dc00u);
+	EXPECT_EQ(Unicode::toSurrogate(0x1f110), 0xd83cdd10u);
+
+	// invalid code points
+	EXPECT_EQ(Unicode::toSurrogate(0xffff), 0u);
+	EXPECT_EQ(Unicode::toSurrogate(0x110000), 0u);
 }
 
 

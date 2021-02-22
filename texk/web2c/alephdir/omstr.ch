@@ -758,17 +758,21 @@ else  begin for k:=1 to name_length do append_char(name_of_file[k]);
 @x [29] m.536 l.10324 - Omega
 begin wlog(banner);
 slow_print(format_ident); print("  ");
-print_int(day); print_char(" ");
+print_int(sys_day); print_char(" ");
 months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
-for k:=3*month-2 to 3*month do wlog(months[k]);
-print_char(" "); print_int(year); print_char(" ");
-print_two(time div 60); print_char(":"); print_two(time mod 60);
+for k:=3*sys_month-2 to 3*sys_month do wlog(months[k]);
+print_char(" "); print_int(sys_year); print_char(" ");
+print_two(sys_time div 60); print_char(":"); print_two(sys_time mod 60);
 end
 @y
 begin wlog(banner);
 slow_print(format_ident); print_nl("");
 print_int(day); print_char(" ");
 months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
+{don't output garbage if nefarious user sets invalid month value;
+ this error message never actually shows up, the program just aborts,
+ but it doesn't matter in practice.}
+if (month < 1) or (month > 12) then fatal_error("month out of range 1..12");
 for k:=3*month-2 to 3*month do wlog(months[k]);
 print_char(" "); print_int(year); print_char(" ");
 print_two(time div 60); print_char(":"); print_two(time mod 60);
@@ -785,7 +789,7 @@ end
 @x [32] m.617 l.12262 - Omega
   print(" TeX output "); print_int(year); print_char(".");
 @y
-  print("Omega output, Version 3.14159265--1.15, ");
+  print("Omega output, Version 3.141592653--1.15, ");
   print_int(year); print_char(".");
 @z
 %---------------------------------------

@@ -1,0 +1,38 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2020 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+TEXFONTS="$srcdir/tests;."
+SOURCE_DATE_EPOCH=1588474800
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS SOURCE_DATE_EPOCH
+
+failed=
+
+echo "*** dvipdfmx: test for upjf_full.pdf" && echo \
+	&& cp $srcdir/tests/upjf_full.vf ./upjf.vf \
+	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf.pdf ./upjf_full.pdf \
+	&& echo && echo "dvipdfmx-upjf-vf_full tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf-vf_full"
+
+echo "*** dvipdfmx: test for upjf_omit.pdf" && echo \
+	&& cp $srcdir/tests/upjf_omit.vf ./upjf.vf \
+	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf.pdf ./upjf_omit.pdf \
+	&& echo && echo "dvipdfmx-upjf-vf_omit tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf-vf_omit"
+
+cmp ./upjf_full.pdf ./upjf_omit.pdf || failed="$failed dvipdfmx-upjf-cmp"
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
+

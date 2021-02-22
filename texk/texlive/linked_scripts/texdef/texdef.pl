@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 ################################################################################
 #  texdef -- Show definitions of TeX commands
-#  Copyright (c) 2011-2012 Martin Scharrer <martin@scharrer-online.de>
+#  Copyright (c) 2011-2020 Martin Scharrer <martin@scharrer-online.de>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -116,14 +116,14 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.8a -- 2018/03/28';
+my $VERSION = 'Version 1.9 -- 2020/09/27';
 sub usage {
     my $option = shift;
     my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.8a -- 2019/03/28
-Copyright (C) 2011-2018  Martin Scharrer <martin@scharrer-online.de>
+Version 1.9 -- 2020/09/27
+Copyright (C) 2011-2020  Martin Scharrer <martin@scharrer-online.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
 
@@ -136,6 +136,7 @@ Other program names are possible. See the 'tex' option.  Command names do not ne
 Options:
   --tex <format>, -t <format>   : Use given format of TeX: 'tex', 'latex', 'context'.
                                   Variations of 'tex' and 'latex', like 'luatex', 'lualatex', 'xetex', 'xelatex' are supported.
+                                  The postfix '-dev' for develop versions of the format is also supported (e.g. 'latex-dev').
                                   The default is given by the used program name: 'texdef' -> 'tex', 'latexdef' -> 'latex', etc.
   --texoptions <options>        : Call (La)TeX with the given options.
   --source, -s                  : Try to show the original source code of the command definition (L).
@@ -306,23 +307,23 @@ if ($EDIT && !$EDITOR) {
 }
 
 ## Format specific settings
-if ($TEX =~ /latex$/) {
+if ($TEX =~ /latex(?:-dev)?$/) {
   $ISLATEX = 1;
   $BEGINENVSTR = '\begin{%s}' . "\n";
   $ENDENVSTR   = '\end{%s}'   . "\n";
 }
-elsif ($TEX =~ /tex$/) {
+elsif ($TEX =~ /tex(?:-dev)?$/) {
   $ISTEX   = 1;
   $BEGINENVSTR = '\%s' . "\n";
   $ENDENVSTR   = '\end%s' . "\n";
 }
-elsif ($TEX =~ /context$/) {
+elsif ($TEX =~ /context(?:-dev)?$/) {
   $ISCONTEXT = 1;
   $BEGINENVSTR = '\start%s' . "\n";
   $ENDENVSTR   = '\stop%s'  . "\n";
 }
 
-if ($TEX =~ /^dvi((la)?tex)$/) {
+if ($TEX =~ /^dvi((la)?tex)(?:-dev)?$/) {
   $TEX = $1;
   $TEXOPTIONS .= ' -output-format=dvi '
 }
@@ -774,6 +775,16 @@ sub print_orig_def {
     return $found;
 }
 
+sub cleanpath {
+    my $path = shift;
+    chomp $path;
+    if ($path =~ /[a-z]:/i) {
+        $path =~ s/\//\\/g;
+    }
+    return $path;
+}
+
+
 open (my $texpipe, '-|', "$TEX $TEXOPTIONS $USERTEXOPTIONS \"$TMPFILE\" ");
 
 my $name = '';
@@ -786,21 +797,20 @@ while (<$texpipe>) {
     my $line = $1;
     if ($FINDDEF == 2) {
         if ($line =~ /first defined in "(.*)"/) {
-            my $path = `kpsewhich "$1"`;
-            chomp $path;
+            my $path = cleanpath(`kpsewhich "$1"`);
             $line =~ s/$1/$path/;
         }
     }
     if ($PRINTORIGDEF) {
         if ($line =~ /first defined in "(.*)"/) {
             my $file = $1;
-            my $path = `kpsewhich "$file"`;
+            my $path = cleanpath(`kpsewhich "$file"`);
             chomp $path;
             $origdeffound = print_orig_def($cmd, $file, $path);
         }
         elsif ($line =~ /is defined by \(La\)TeX./) {
             my $file = 'latex.ltx';
-            my $path = `kpsewhich "$file"`;
+            my $path = cleanpath(`kpsewhich "$file"`);
             chomp $path;
             $file = $path if $FINDDEF > 1;
             $origdeffound = print_orig_def($cmd, $file, $path);

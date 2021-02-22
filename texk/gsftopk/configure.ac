@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2009, 2013 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2014-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -19,7 +21,6 @@ AC_CONFIG_HEADERS([c-auto.h:c-auto.in])
 
 dnl Checks for header files.
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_CHECK_HEADERS([poll.h sys/time.h])
 
 dnl Checks for library functions.

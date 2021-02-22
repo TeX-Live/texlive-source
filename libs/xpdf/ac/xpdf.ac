@@ -1,9 +1,12 @@
+dnl $Id$
 ## libs/xpdf/ac/xpdf.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## basic check of system xpdf (poppler)
+## basic check of system xpdf (a.k.a. poppler, no longer supported in
+## TL sources)
 KPSE_TRY_LIBXX([xpdf],
                [#include <GfxFont.h>],
                [GfxFont *gfxFont; gfxFont->decRefCnt();])

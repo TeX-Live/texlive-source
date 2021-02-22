@@ -1,3 +1,69 @@
+2021-02-17  Karl Berry  <karl@freefriends.org>
+
+	* doc/kpathsea.texi,
+	* version.ac (kpse_dev): no /dev for 6.3.3.
+	* NEWS,
+	* doc/kpathsea.texi,
+	* kpsewhich.c,
+	* texmf.cnf: copyright 2021.
+
+2020-12-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* knj.[ch]: Add new functions win32_fprintf(), win32_perror().
+	(Windows only)
+
+2020-10-24  Akira Kakuto  <kakuto@w32tex.org>
+
+	* readable.c, knj.c: More than one adjacent directory
+	separators in filename+2 should not exist in \\?\ form of
+	absolute path.
+
+2020-08-26  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (save_size): double to 200,000. Needed with
+	long documents, tex4ht, and l3regex. Hopefully no harm in increasing.
+	https://tug.org/pipermail/tex4ht/2020q3/002710.html
+
+2020-07-05  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (snprintf): two more test programs
+	also need <stdarg.h> and <stdio.h>.
+
+2020-07-04  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (snprintf): #include <stdio.h> to placate
+	new arm64 Mac compiler, since apparently that's the standard
+	place for the [v]snprintf declaration. We'll see. Report from Dick.
+
+2020-06-22  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (EXTRA_DIST): add COPYING.LESSERv2.
+	* texmf.cnf (expand_depth, pk_dpi, strings_free): write a few
+	words about these parameters; see web2c/doc for more.
+
+2020-06-12  Karl Berry  <karl@freefriends.org>
+
+	* tex-make.c (kpathsea_make_tex): do not emit any warnings for
+	filenames that we don't like, e.g., [Some Fnt]. Leave it up to
+	the caller. Suggestion from David Carlisle,
+	https://tug.org/pipermail/tex-k/2020-June/003214.html
+
+2020-06-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* readable.c, knj.c: /../, /./, \..\, \.\ should not exist
+	in \\?\ form of absolute path.
+
+2020-04-28  Akira Kakuto  <kakuto@w32tex.org>
+
+	* readable.c, knj.c: Support very long input path name,
+	longer than _MAX_PATH for Windows, if it really exists and
+	input name is given in full-absolute path in a command line.
+	(Windows only).
+
+2020-04-10  Karl Berry  <karl@tug.org>
+
+	* version.ac: now 6.3.3/dev since TL'20 is released.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.

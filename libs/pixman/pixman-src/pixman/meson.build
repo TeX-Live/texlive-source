@@ -30,6 +30,11 @@ version_h = configure_file(
   install_dir : join_paths(get_option('prefix'), get_option('includedir'), 'pixman-1')
 )
 
+libpixman_extra_cargs = []
+if cc.has_function_attribute('dllexport')
+  libpixman_extra_cargs = ['-DPIXMAN_API=__declspec(dllexport)']
+endif
+
 pixman_simd_libs = []
 simds = [
   # the mmx library can be compiled with mmx on x86/x86_64, iwmmxt on
@@ -97,10 +102,18 @@ pixman_files = files(
   'pixman-utils.c',
 )
 
-libpixman = shared_library(
+# We cannot use 'link_with' or 'link_whole' because meson wont do the right
+# thing for static archives.
+_obs = []
+foreach l : pixman_simd_libs
+  _obs += l.extract_all_objects()
+endforeach
+
+libpixman = library(
   'pixman-1',
   [pixman_files, config_h, version_h],
-  link_with : [pixman_simd_libs],
+  objects : _obs,
+  c_args : libpixman_extra_cargs,
   dependencies : [dep_m, dep_threads],
   version : meson.project_version(),
   install : true,

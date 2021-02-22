@@ -38,7 +38,7 @@
 \def\title{DVI\lowercase{copy}} % don't change this line!
 \def\contentspagenumber{1}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont DVIcopy} processor}

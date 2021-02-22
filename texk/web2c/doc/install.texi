@@ -67,7 +67,6 @@ as described in the first section below.
 * Compile-time options::        Unusual -D's.
 * Additional targets::		Breaking down the task.
 * Triptrap::                    Running the torture tests.
-* Runtime options::             Array sizes and the like.
 @end menu
 
 
@@ -287,61 +286,3 @@ and @code{mptrap}.
 To run simple tests for all the programs as well as the torture tests,
 run @samp{make check}.  You can compare the output to the distributed
 file @file{tests/check.log} if you like.
-
-
-@node Runtime options
-@section Runtime options
-
-@cindex runtime options
-
-@cindex configuration file values
-@cindex array sizes
-Besides the configure- and compile-time options described in the
-previous sections, you can control a number of parameters (in
-particular, array sizes) in the @file{texmf.cnf} runtime file read by
-Kpathsea (@pxref{Config files,,, kpathsea, Kpathsea}).
-
-Rather than exhaustively listing them here, please see the last section
-of the distributed @file{kpathsea/texmf.cnf}.  Some of the more
-interesting values:
-
-@vtable @samp
-@item main_memory
-Total words of memory available, for @TeX{}, Metafont, and MetaPost.
-Must remake the format file after changing.
-
-@item extra_mem_bot
-@cindex boxes, memory for
-@cindex glue, memory for
-@cindex breakpoints, memory for
-@cindex PiC@TeX{}, increasing memory for
-Extra space for ``large'' @TeX{} data structures: boxes, glue,
-breakpoints, et al.  If you use PiC@TeX{}, you may well want to set this.
-
-@item font_mem_size
-@cindex TFM files, memory for
-Words of font info available for @TeX{}; this is approximately the total
-size of all TFM files read.
-
-@item hash_extra
-@cindex control sequence names, space for
-@cindex hash table, increasing size of
-Additional space for the hash table of control sequence names.
-Approximately 10,000 control sequences can be stored in the main hash
-table; if you have a large book with numerous cross-references, 
-this might not be enough, and thus you will want to set @code{hash_extra}.
-
-@end vtable
-
-@cindex array limit, fixed
-@cindex swap space, as array limit
-@cindex reallocation of arrays
-@cindex dynamic array allocation
-Of course, ideally all arrays would be dynamically expanded as
-necessary, so the only limiting factor would be the amount of swap space
-available.  Unfortunately, implementing this is extremely difficult, as
-the fixed size of arrays is assumed in many places throughout the source
-code.  These runtime limits are a practical compromise between the
-compile-time limits in previous versions, and truly dynamic arrays.  (On
-the other hand, the Web2c Bib@TeX{} implementation does do dynamic
-reallocation of some arrays.)

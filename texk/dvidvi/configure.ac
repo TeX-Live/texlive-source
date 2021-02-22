@@ -17,6 +17,10 @@ KPSE_COMMON([dvidvi])
 
 AC_CONFIG_HEADERS([config.h])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 # We don't use libpathsea, so add '-DNO_DEBUG' not to overload fopen.
 KPSE_KPATHSEA_FLAGS([no-debug])
 KPSE_COND_WIN32

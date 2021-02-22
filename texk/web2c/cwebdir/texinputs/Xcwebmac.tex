@@ -25,11 +25,11 @@
 % Version 3.64 [p20] --- Andreas Scherer, March 2002
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [2018] --- Andreas Scherer, Octobre 2018
+% Version 3.64 [2020] --- Andreas Scherer, May 2020
 
-\ifx\undefined\documentclass\input cwebmac.tex
-\else\endinput\fi % LaTeX will use other macros
+\ifx\undefined\botofcontents\input cwebmac.tex\fi
 
-\xdef\fmtversion{\fmtversion[2018]}
+\xdef\fmtversion{\fmtversion[2020]}
 
 \def\Cpp{\CPLUSPLUS/} % for backward compatibility
 
@@ -38,4 +38,4 @@
 \def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 \def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
 
-%\let\K=\leftarrow % "honest" alternative to standard assignment operator
+\let\K=\leftarrow % "honest" alternative to standard assignment operator

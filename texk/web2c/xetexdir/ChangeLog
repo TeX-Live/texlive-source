@@ -1,3 +1,80 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999993 for TL21.
+
+	* char-warning-xetex.ch: doc tweak.
+	
+2021-02-06  Akira Kakuto  <kakuto@w32tex.org>
+
+	* xetex.web: sync \tracingparagraphs fix from tex.web.
+
+2020-10-13  Akira Kakuto  <kakuto@w32tex.org>
+
+	* xetexextra.c: Sync with W32 sources.
+
+2020-08-31  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	* xetex.web (Scan the argument for command |c|) <expanded_code>:
+	free_avail(def_ref) to avoid memory exhaustion with many \expanded.
+
+2020-08-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* xetex.web: Fix math operator in Pascal comment.
+
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* char-warning-xetex.ch: WEBify variable in comment.
+	* xetex.ch: Place Web2c changes together.
+
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* char-warning-xetex.ch: new file; see ../pdftexdir/ChangeLog.
+	Also define new procedure print_ucs_code to print U+nnnn
+	for system fonts.
+	* am/xetex.am: add it.
+
+2020-07-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* am/xetex.am: Avoid changefile ambiguity.
+
+2020-07-04  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* xetex.web: Tweak indentation, etc.
+
+2020-07-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* xetex.web: Fix |code| snippets in {comments}.
+
+2020-07-03  David Jones  <dmj@ams.org>
+
+	* XeTeXOTMath.cpp: New implementation of get_ot_math_kern().
+	https://sourceforge.net/p/xetex/bugs/175/
+
+	* xetex.web: Fix bugs in
+	@<Attach subscript OpenType math kerning@> 
+	@<Attach superscript OpenType math kerning@>
+	(https://sourceforge.net/p/xetex/bugs/173/
+
+2020-05-04  Andreas Scherer  <https://ascherer.github.io>
+
+	* xetex.ch,
+	* xetex.web: Restore section numbering from xetex.web.
+	XeTeX can format itself, both stand-alone and as TL variant
+	(only \beginR and \endR are problematic).
+
+2020-04-26  Karl Berry  <karl@freefriends.org>
+
+	* am/xetex.am (xetex_cppflags, xetex_ldadd, xetex_dependencies):
+	use pplib instead of poppler.
+
+2020-04-26  Akira Kakuto  <kakuto@w32tex.org>
+
+	* XeTeX_ext.c,
+	* pdfimage.cpp: use pplib instead of poppler.
+
 2020-03-27  Karl Berry  <karl@tug.org>
 
 	* TeX Live 2020.

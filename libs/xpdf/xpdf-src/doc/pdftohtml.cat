@@ -4,7 +4,7 @@ pdftohtml(1)                General Commands Manual               pdftohtml(1)
 
 NAME
        pdftohtml  -  Portable Document Format (PDF) to HTML converter (version
-       4.02)
+       4.03)
 
 SYNOPSIS
        pdftohtml [options] PDF-file HTML-dir
@@ -47,6 +47,11 @@ OPTIONS
               tial zoom level is controlled by the '-z' option.  Specifying  a
               larger '-r' value will allow the viewer to zoom in farther with-
               out upscaling artifacts in the background.
+
+       -nofonts
+              Disable extraction of embedded  fonts.   By  default,  pdftohtml
+              extracts  TrueType and OpenType fonts.  Disabling extraction can
+              work around problems with buggy fonts.
 
        -skipinvisible
               Don't draw invisible text.  By default, invisible text (commonly
@@ -97,7 +102,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdftohtml software and documentation are copyright 1996-2019 Glyph
+       The  pdftohtml software and documentation are copyright 1996-2021 Glyph
        & Cog, LLC.
 
 SEE ALSO
@@ -107,4 +112,4 @@ SEE ALSO
 
 
 
-                                  25 Sep 2019                     pdftohtml(1)
+                                  28 Jan 2021                     pdftohtml(1)

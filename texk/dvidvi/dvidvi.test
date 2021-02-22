@@ -1,20 +1,23 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 # Copyright 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 rm -rf play*
 cp $srcdir/tests/play.dvi .
-./dvidvi -f 5 -l @25 -m'4:-3,0(6,0)' play playout \
-	2>playout.2 \
-	&& diff playout.2 $srcdir/tests/playout.2 \
-	|| exit 1
+./dvidvi -f 5 -l @25 -m'4:-3,0(6,0)' play playout 2>playout.2
+#
+# Eliminate version number for the comparison.
+grep -v '^This is dvidvi' playout.2 \
+| diff - $srcdir/tests/playout.2 \
+|| exit 1
 
 rm -rf play*
 cp $srcdir/tests/playtate.dvi .
-./dvidvi -f 5 -l @25 -m'4:-3,0(6,0)' playtate playout \
-	2>playout.3 \
-	&& diff playout.3 $srcdir/tests/playout.3 \
-	|| exit 1
+./dvidvi -f 5 -l @25 -m'4:-3,0(6,0)' playtate playout 2>playout.3
+#
+grep -v '^This is dvidvi' playout.3 \
+| diff - $srcdir/tests/playout.3 \
+|| exit 1
 

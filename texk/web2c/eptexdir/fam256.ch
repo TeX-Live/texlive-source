@@ -1218,13 +1218,12 @@ def_code: begin
     print_int(n);
     if m=0 then
       begin help1("I'm going to use 0 instead of that illegal code value.");@/
-      error;
+      error; cur_val:=0;
       end
     else
       begin help1("I'm going to use 16 instead of that illegal code value.");@/
-      error;
+      error; cur_val:=16;
       end;
-    cur_val:=m;
   end;
   if p<math_code_base then define(p,data,cur_val)
   else if p<del_code_base then define(p,data,hi(cur_val))
@@ -1264,13 +1263,12 @@ def_code: begin
       print_int(n);
       if m=0 then
         begin help1("I'm going to use 0 instead of that illegal code value.");@/
-        error;
+        error; cur_val:=0;
         end
       else
         begin help1("I'm going to use 16 instead of that illegal code value.");@/
-        error;
+        error; cur_val:=16;
         end;
-      cur_val:=m;
     end;
     if p<math_code_base then define(p,data,cur_val)
     else if cur_val1=math_code_base then begin

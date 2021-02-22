@@ -40,7 +40,7 @@
 #include "XRef.h"
 #include "PreScanOutputDev.h"
 #include "CharCodeToUnicode.h"
-#include "Form.h"
+#include "AcroForm.h"
 #include "TextString.h"
 #if HAVE_SPLASH
 #  include "Splash.h"
@@ -1287,7 +1287,8 @@ PSOutputDev::PSOutputDev(char *fileName, PDFDoc *docA,
 			 GBool manualCtrlA,
 			 PSOutCustomCodeCbk customCodeCbkA,
 			 void *customCodeCbkDataA,
-			 GBool honorUserUnitA) {
+			 GBool honorUserUnitA,
+			 GBool fileNameIsUTF8) {
   FILE *f;
   PSFileType fileTypeA;
 
@@ -1333,7 +1334,12 @@ PSOutputDev::PSOutputDev(char *fileName, PDFDoc *docA,
 #endif
   } else {
     fileTypeA = psFile;
-    if (!(f = fopen(fileName, "w"))) {
+    if (fileNameIsUTF8) {
+      f = openFile(fileName, "w");
+    } else {
+      f = fopen(fileName, "w");
+    }
+    if (!f) {
       error(errIO, -1, "Couldn't open PostScript file '{0:s}'", fileName);
       ok = gFalse;
       return;
@@ -1737,7 +1743,7 @@ void PSOutputDev::writeDocSetup(Catalog *catalog) {
   Page *page;
   Dict *resDict;
   Annots *annots;
-  Form *form;
+  AcroForm *form;
   Object obj1, obj2, obj3;
   GString *s;
   GBool needDefaultFont;
@@ -1994,6 +2000,7 @@ void PSOutputDev::setupResources(Dict *resDict) {
   }
   patDict.free();
 
+
   //----- recursively scan SMask transparency groups in ExtGState dicts
   resDict->lookup("ExtGState", &gsDict);
   if (gsDict.isDict()) {
@@ -2211,13 +2218,15 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
     if (fontLoc->locType == gfxFontLocResident &&
 	fontLoc->fontType >= fontCIDType0) {
       subst = gTrue;
-      if ((uMap = globalParams->getUnicodeMap(fontLoc->encoding))) {
-	fi->ff->encoding = fontLoc->encoding->copy();
-	uMap->decRefCnt();
-      } else {
-	error(errSyntaxError, -1,
-	      "Couldn't find Unicode map for 16-bit font encoding '{0:t}'",
-	      fontLoc->encoding);
+      if (!fi->ff->encoding) {
+	if ((uMap = globalParams->getUnicodeMap(fontLoc->encoding))) {
+	  fi->ff->encoding = fontLoc->encoding->copy();
+	  uMap->decRefCnt();
+	} else {
+	  error(errSyntaxError, -1,
+		"Couldn't find Unicode map for 16-bit font encoding '{0:t}'",
+		fontLoc->encoding);
+	}
       }
     }
 
@@ -2244,7 +2253,7 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
 	if (font->getType() == fontTrueType &&
 	    !subst &&
 	    !((Gfx8BitFont *)font)->getHasEncoding()) {
-	  sprintf(buf, "c%02x", i+j);
+	  snprintf(buf, sizeof(buf), "c%02x", i+j);
 	  charName = buf;
 	} else {
 	  charName = ((Gfx8BitFont *)font)->getCharName(i+j);
@@ -2392,6 +2401,7 @@ PSFontFileInfo *PSOutputDev::setupExternalType1Font(GfxFont *font,
   // open the font file
   if (!(fontFile = fopen(fileName->getCString(), "rb"))) {
     error(errIO, -1, "Couldn't open external font file");
+    delete psName;
     return NULL;
   }
 
@@ -3623,7 +3633,7 @@ GString *PSOutputDev::copyType1PFB(Guchar *font, int fontSize) {
 	 p[0] == 0x80 &&
 	 (p[1] == 0x01 || p[1] == 0x02)) {
     len = p[2] + (p[3] << 8) + (p[4] << 16) + (p[5] << 24);
-    if (len > remain - 6) {
+    if (len < 0 || len > remain - 6) {
       break;
     }
     if (p[1] == 0x01) {
@@ -4102,6 +4112,7 @@ void PSOutputDev::setupForm(Object *strRef, Object *strObj) {
   resObj.free();
 }
 
+
 GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
 				  int rotateA, GBool useMediaBox, GBool crop,
 				  int sliceX, int sliceY,
@@ -4441,17 +4452,27 @@ void PSOutputDev::startPage(int pageNum, GfxState *state) {
       landscape = gFalse;
     } else {
       rotate = (360 - state->getRotate()) % 360;
+      double scaledWidth = width * userUnit;
+      double scaledHeight = height * userUnit;
+      if (xScale0 > 0 && yScale0 > 0) {
+	scaledWidth *= xScale0;
+	scaledHeight *= yScale0;
+      }
       if (rotate == 0 || rotate == 180) {
-	if ((width < height && imgWidth > imgHeight && height > imgHeight) ||
-	    (width > height && imgWidth < imgHeight && width > imgWidth)) {
+	if ((scaledWidth < scaledHeight && imgWidth > imgHeight &&
+	     scaledHeight > imgHeight) ||
+	    (scaledWidth > scaledHeight && imgWidth < imgHeight &&
+	     scaledWidth > imgWidth)) {
 	  rotate += 90;
 	  landscape = gTrue;
 	} else {
 	  landscape = gFalse;
 	}
       } else { // rotate == 90 || rotate == 270
-	if ((height < width && imgWidth > imgHeight && width > imgHeight) ||
-	    (height > width && imgWidth < imgHeight && height > imgWidth)) {
+	if ((scaledHeight < scaledWidth && imgWidth > imgHeight &&
+	     scaledWidth > imgHeight) ||
+	    (scaledHeight > scaledWidth && imgWidth < imgHeight &&
+	     scaledHeight > imgWidth)) {
 	  rotate = 270 - rotate;
 	  landscape = gTrue;
 	} else {
@@ -5252,6 +5273,29 @@ void PSOutputDev::tilingPatternFillL2(GfxState *state, Gfx *gfx,
   noStateChanges = gFalse;
 }
 
+GBool PSOutputDev::shadedFill(GfxState *state, GfxShading *shading) {
+  if (level != psLevel2 &&
+      level != psLevel2Sep &&
+      level != psLevel3 &&
+      level != psLevel3Sep) {
+    return gFalse;
+  }
+
+  switch (shading->getType()) {
+  case 1:
+    functionShadedFill(state, (GfxFunctionShading *)shading);
+    return gTrue;
+  case 2:
+    axialShadedFill(state, (GfxAxialShading *)shading);
+    return gTrue;
+  case 3:
+    radialShadedFill(state, (GfxRadialShading *)shading);
+    return gTrue;
+  default:
+    return gFalse;
+  }
+}
+
 GBool PSOutputDev::functionShadedFill(GfxState *state,
 				      GfxFunctionShading *shading) {
   double x0, y0, x1, y1;
@@ -5957,7 +6001,7 @@ void PSOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 void PSOutputDev::drawMaskedImage(GfxState *state, Object *ref, Stream *str,
 				  int width, int height,
 				  GfxImageColorMap *colorMap,
-				  Stream *maskStr,
+				  Object *maskRef, Stream *maskStr,
 				  int maskWidth, int maskHeight,
 				  GBool maskInvert, GBool interpolate) {
   int len;
@@ -8301,7 +8345,7 @@ void PSOutputDev::writePSString(GString *s) {
       writePSChar((char)*p);
       line += 2;
     } else if (*p < 0x20 || *p >= 0x80) {
-      sprintf(buf, "\\%03o", *p);
+      snprintf(buf, sizeof(buf), "\\%03o", *p);
       writePS(buf);
       line += 4;
     } else {
@@ -8351,7 +8395,7 @@ GString *PSOutputDev::filterPSName(GString *name) {
 	c == '(' || c == ')' || c == '<' || c == '>' ||
 	c == '[' || c == ']' || c == '{' || c == '}' ||
 	c == '/' || c == '%') {
-      sprintf(buf, "#%02x", c & 0xff);
+      snprintf(buf, sizeof(buf), "#%02x", c & 0xff);
       name2->append(buf);
     } else {
       name2->append(c);

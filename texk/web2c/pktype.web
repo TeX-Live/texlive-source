@@ -1,3 +1,4 @@
+% This program is not copyrighted and can be used freely.
 % PKtype.web
 %
 %  PKtype verifies the correctness of a PK file.
@@ -6,13 +7,14 @@
 % First release, 0.9 version:  8 May 1985
 % Updated to reflect new pk format, 2.0 version: 25 July 1985
 % Updated again for new pk format, 2.1 version: 15 August 1985
-% Docmentation updated, 2.2 version: 17 November 1987
+% Documentation updated, 2.2 version: 17 November 1987
 %
-% slight editing to correspond with MFware report -- don, 21 Oct 89
-% additional editing suggested by P Breitenlohner -- don, 18 Nov 89
-%  Corrected two typos -- 21 Dec 96 (don)
+% slight editing to correspond with MFware report -- don, 21 October 89
+% additional editing suggested by P Breitenlohner -- don, 18 November 89
+%  Corrected two typos -- 21 December 96 (don)
+% More typos -- 23 April 20 (tgr/karl)
 
-\def\versiondate{18 November 1989}
+\def\versiondate{23 April 2020}
 %
 \def\hang{\hangindent 3em\noindent\ignorespaces}
 \font\ninerm=cmr9
@@ -23,9 +25,9 @@
 \def\(#1){} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 \def\title{PKtype}
-\def\contentspagenumber{0}
+\def\contentspagenumber{1}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont PKtype} processor}
@@ -301,7 +303,7 @@ definitions are called flag bytes, and various fields within the byte indicate
 various things about how the character definition is encoded.  Command bytes
 have zero or more parameters, and can never appear within a character
 definition or between parameters of another command, where they would be
-interpeted as data.
+interpreted as data.
 
 A \.{PK} file consists of a preamble, followed by a sequence of one or more
 character definitions, followed by a postamble.  The preamble command must
@@ -342,7 +344,7 @@ of a keyword followed by possible parameters relevant to that keyword.
 length exceeds~255.
 
 \yskip\hang\\{pk\_xxx4} 243 |k[4]| |x[k]|.  Like |pk_xxx1|, but |k| can be
-ridiculously large; |k| musn't be negative.
+ridiculously large; |k| mustn't be negative.
 
 \yskip\hang|pk_yyy| 244 |y[4]|.  This command is undefined in general; it
 functions as a five-byte \\{no\_op} unless special \.{PK} reading programs

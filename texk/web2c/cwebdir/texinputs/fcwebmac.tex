@@ -30,8 +30,7 @@
 
 % french translations --- Denis Roegel, 18 September 1994
 
-\ifx\undefined\documentclass\input Xcwebmac.tex
-\else\endinput\fi % LaTeX will use other macros
+\ifx\undefined\botofcontents\input cwebmac.tex\fi
 
 \def\.#1{\leavevmode\hbox{\tentex % typewriter type for strings
   \ifx\Cstringchars\undefined\else\Cstringchars\fi % special string characters
@@ -50,8 +49,7 @@
 \def\ATH{{\acrofalse\X\kern-.5em:D\'efinitions du pr\'eprocesseur\X}}
 
 \def\A{\note{Voir aussi la section}} % xref for doubly defined section name
-\def\As{\note{Voir aussi les sections}} % xref for multiply defined 
-                                        % section name
+\def\As{\note{Voir aussi les sections}} % xref for multiply defined section name
 
 \def\ET{ et~} % conjunction between two section numbers
 \def\ETs{ et~} % conjunction between the last two of several section numbers

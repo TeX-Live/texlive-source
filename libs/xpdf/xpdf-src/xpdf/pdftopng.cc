@@ -18,6 +18,7 @@
 #include "gmempp.h"
 #include "parseargs.h"
 #include "GString.h"
+#include "gfile.h"
 #include "GlobalParams.h"
 #include "Object.h"
 #include "PDFDoc.h"
@@ -32,6 +33,7 @@ static double resolution = 150;
 static GBool mono = gFalse;
 static GBool gray = gFalse;
 static GBool pngAlpha = gFalse;
+static int rotate = 0;
 static char enableFreeTypeStr[16] = "";
 static char antialiasStr[16] = "";
 static char vectorAntialiasStr[16] = "";
@@ -55,6 +57,8 @@ static ArgDesc argDesc[] = {
    "generate a grayscale PNG file"},
   {"-alpha",  argFlag,     &pngAlpha,      0,
    "include an alpha channel in the PNG file"},
+  {"-rot",    argInt,      &rotate,        0,
+   "set page rotation: 0, 90, 180, or 270"},
 #if HAVE_FREETYPE_H
   {"-freetype",   argString,      enableFreeTypeStr, sizeof(enableFreeTypeStr),
    "enable FreeType font rasterizer: yes, no"},
@@ -119,7 +123,7 @@ int main(int argc, char *argv[]) {
     goto err0;
   }
   if (!ok || argc != 3 || printVersion || printHelp) {
-    fprintf(stderr, "pdftopng version %s\n", xpdfVersion);
+    fprintf(stderr, "pdftopng version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
     if (!printVersion) {
       printUsage("pdftopng", "<PDF-file> <PNG-root>", argDesc);
@@ -197,7 +201,7 @@ int main(int argc, char *argv[]) {
   }
   splashOut->startDoc(doc->getXRef());
   for (pg = firstPage; pg <= lastPage; ++pg) {
-    doc->displayPage(splashOut, pg, resolution, resolution, 0,
+    doc->displayPage(splashOut, pg, resolution, resolution, rotate,
 		     gFalse, gTrue, gFalse);
     if (mono) {
       if (!strcmp(pngRoot, "-")) {
@@ -207,7 +211,7 @@ int main(int argc, char *argv[]) {
 #endif
       } else {
 	pngFile = GString::format("{0:s}-{1:06d}.png", pngRoot, pg);
-	if (!(f = fopen(pngFile->getCString(), "wb"))) {
+	if (!(f = openFile(pngFile->getCString(), "wb"))) {
 	  exit(2);
 	}
 	delete pngFile;
@@ -225,7 +229,7 @@ int main(int argc, char *argv[]) {
 #endif
       } else {
 	pngFile = GString::format("{0:s}-{1:06d}.png", pngRoot, pg);
-	if (!(f = fopen(pngFile->getCString(), "wb"))) {
+	if (!(f = openFile(pngFile->getCString(), "wb"))) {
 	  exit(2);
 	}
 	delete pngFile;
@@ -244,7 +248,7 @@ int main(int argc, char *argv[]) {
 #endif
       } else {
 	pngFile = GString::format("{0:s}-{1:06d}.png", pngRoot, pg);
-	if (!(f = fopen(pngFile->getCString(), "wb"))) {
+	if (!(f = openFile(pngFile->getCString(), "wb"))) {
 	  exit(2);
 	}
 	delete pngFile;

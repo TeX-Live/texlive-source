@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2019 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2021 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -37,6 +37,7 @@
 #include "pdfdoc.h"
 #include "pdfdev.h"
 #include "pdfdraw.h"
+#include "pdfnames.h"
 
 #include "epdf.h"
 #include "mpost.h"
@@ -62,6 +63,9 @@ static int  ps_include_page (pdf_ximage *ximage,
 #define IMAGE_TYPE_BMP      6
 #define IMAGE_TYPE_JP2      7
 
+#if defined(_WIN32)
+extern int fsyscp_stat(const char *path, struct stat *buffer);
+#endif /* _WIN32 */
 
 struct attr_
 {
@@ -87,9 +91,11 @@ struct pdf_ximage_
   struct attr_ attr;
 
   char        *filename;
+  char        *fullname;
   pdf_obj     *reference;
   pdf_obj     *resource;
 
+  int          reserved;
 };
 
 
@@ -117,12 +123,14 @@ static void
 pdf_init_ximage_struct (pdf_ximage *I)
 {
   I->ident    = NULL;
-    I->filename = NULL;
+  I->filename = NULL;
+  I->fullname = NULL;
 
   I->subtype  = -1;
   memset(I->res_name, 0, 16);
   I->reference = NULL;
   I->resource  = NULL;
+  I->reserved  = 0;
 
   I->attr.width = I->attr.height = 0;
   I->attr.xdensity = I->attr.ydensity = 1.0;
@@ -138,12 +146,12 @@ pdf_init_ximage_struct (pdf_ximage *I)
 }
 
 static void
-pdf_set_ximage_tempfile (pdf_ximage *I, const char *filename)
+pdf_set_ximage_tempfile (pdf_ximage *I, const char *fullname)
 {
-  if (I->filename)
-    RELEASE(I->filename);
-  I->filename = NEW(strlen(filename)+1, char);
-  strcpy(I->filename, filename);
+  if (I->fullname)
+    RELEASE(I->fullname);
+  I->fullname = NEW(strlen(fullname)+1, char);
+  strcpy(I->fullname, fullname);
   I->attr.tempfile = 1;
 }
 
@@ -154,6 +162,8 @@ pdf_clean_ximage_struct (pdf_ximage *I)
     RELEASE(I->ident);
   if (I->filename)
     RELEASE(I->filename);
+  if (I->fullname)
+    RELEASE(I->fullname);
   if (I->reference)
     pdf_release_obj(I->reference);
   if (I->resource)
@@ -193,8 +203,8 @@ pdf_close_images (void)
         if (dpx_conf.verbose_level > 1 &&
             dpx_conf.file.keep_cache != 1)
           MESG("pdf_image>> deleting temporary file \"%s\"\n", I->filename);
-        dpx_delete_temp_file(I->filename, false); /* temporary filename freed here */
-        I->filename = NULL;
+        dpx_delete_temp_file(I->fullname, false); /* temporary filename freed here */
+        I->fullname = NULL;
       }
       pdf_clean_ximage_struct(I);
     }
@@ -250,28 +260,45 @@ source_image_type (FILE *fp)
 }
 
 static int
-load_image (const char *ident, const char *fullname, int format, FILE  *fp,
+load_image (const char *ident, const char *filename, const char *fullname, int format, FILE  *fp,
             load_options options)
 {
   struct ic_ *ic = &_ic;
-  int         id = -1; /* ret */
+  int         id = -1, reserved = 0;
   pdf_ximage *I;
 
-  id = ic->count;
-  if (ic->count >= ic->capacity) {
-    ic->capacity += 16;
-    ic->ximages   = RENEW(ic->ximages, ic->capacity, pdf_ximage);
-  }
-
-  I  = &ic->ximages[id];
-  pdf_init_ximage_struct(I);
   if (ident) {
-    I->ident = NEW(strlen(ident)+1, char);
-    strcpy(I->ident, ident);
+    for (id = 0; id < ic->count; id++) {
+      I = &ic->ximages[id];
+      if (I->ident && !strcmp(ident, I->ident)) {
+        if (I->reserved) {
+          reserved = 1;
+          break;
+        }
+      }
+    }
+  }
+  if (!reserved) {
+    id = ic->count;
+    if (ic->count >= ic->capacity) {
+      ic->capacity += 16;
+      ic->ximages   = RENEW(ic->ximages, ic->capacity, pdf_ximage);
+    }
+    I  = &ic->ximages[id];
+    pdf_init_ximage_struct(I);
+    if (ident) {
+      I->ident = NEW(strlen(ident)+1, char);
+      strcpy(I->ident, ident);
+    }
+    ic->count++;
+  }
+  if (filename) {
+    I->filename = NEW(strlen(filename)+1, char);
+    strcpy(I->filename, filename);
   }
   if (fullname) {
-    I->filename = NEW(strlen(fullname)+1, char);
-    strcpy(I->filename, fullname);
+    I->fullname = NEW(strlen(fullname)+1, char);
+    strcpy(I->fullname, fullname);
   }
 
   I->attr.page_no   = options.page_no;
@@ -349,8 +376,6 @@ load_image (const char *ident, const char *fullname, int format, FILE  *fp,
     goto error;
   }
 
-  ic->count++;
-
   return  id;
 
  error:
@@ -368,30 +393,30 @@ int utf8name_failed = 0;
 #endif /* WIN32 */
 
 int
-pdf_ximage_findresource (const char *ident, load_options options)
+pdf_ximage_load_image (const char *ident, const char *filename, load_options options)
 {
   struct ic_ *ic = &_ic;
-  int         id = -1;
+  int         i, id = -1;
   pdf_ximage *I;
   char       *fullname, *f = NULL;
   int         format;
   FILE       *fp;
 
-  /* I don't understand why there is comparision against I->attr.dict here...
-   * I->attr.dict and options.dict are simply pointers to PDF dictionaries.
-   */
-  for (id = 0; id < ic->count; id++) {
-    I = &ic->ximages[id];
-    if (I->ident && !strcmp(ident, I->ident)) {
-      f = I->filename;
-      if (I->attr.page_no == options.page_no /* Not sure */
-          && I->attr.dict == options.dict    /* ????? */
-          && I->attr.bbox_type == options.bbox_type) {
-          return id;
-        }
-      }
+  for (i = 0; i < ic->count; i++) {
+    I = &ic->ximages[i];
+    if (I->filename && !strcmp(filename, I->filename)) {
+      id = i;
+      break;
     }
-
+  }
+  if (id >= 0) {
+    if (I->attr.page_no == options.page_no &&
+        !pdf_compare_object(I->attr.dict, options.dict) && /* ????? */
+        I->attr.bbox_type == options.bbox_type) {
+      return id;
+    }
+    f = I->fullname;
+  }
   if (f) {
     /* we already have converted this file; f is the temporary file name */
     fullname = NEW(strlen(f)+1, char);
@@ -401,13 +426,13 @@ pdf_ximage_findresource (const char *ident, load_options options)
 #if defined(WIN32)
     utf8name_failed = 0;
 #endif /* WIN32 */
-    fullname = dpx_find_file(ident, "_pic_", "");
+    fullname = dpx_find_file(filename, "_pic_", "");
 #if defined(WIN32)
     if (!fullname && file_system_codepage != win32_codepage) {
       int tmpcp = file_system_codepage;
       utf8name_failed = 1;
       file_system_codepage = win32_codepage;
-      fullname = dpx_find_file(ident, "_pic_", "");
+      fullname = dpx_find_file(filename, "_pic_", "");
       file_system_codepage = tmpcp;
     }
 #endif /* WIN32 */
@@ -415,19 +440,28 @@ pdf_ximage_findresource (const char *ident, load_options options)
 #if defined(WIN32)
       utf8name_failed = 0;
 #endif /* WIN32 */
-      WARN("Error locating image file \"%s\"", ident);
+      if (dpx_conf.compat_mode == dpx_mode_compat_mode) {
+        WARN("Image inclusion failed for \"%s\".", filename);
+      } else {
+        ERROR("Image inclusion failed for \"%s\".", filename);
+      }
       return  -1;
     }
   }
 
   fp = dpx_fopen(fullname, FOPEN_RBIN_MODE);
   if (!fp) {
-    WARN("Error opening image file \"%s\"", fullname);
-    RELEASE(fullname);
+    if (dpx_conf.compat_mode == dpx_mode_compat_mode) {
+      WARN("Error opening image file \"%s\"", fullname);
+      RELEASE(fullname);
+    } else {
+      RELEASE(fullname);
+      ERROR("Image inclusion failed for \"%s\".", filename);
+    }
     return  -1;
   }
   if (dpx_conf.verbose_level > 0) {
-    MESG("(Image:%s", ident);
+    MESG("(Image:%s", filename);
     if (dpx_conf.verbose_level > 1)
       MESG("[%s]", fullname);
   }
@@ -437,15 +471,24 @@ pdf_ximage_findresource (const char *ident, load_options options)
   case IMAGE_TYPE_MPS:
     if (dpx_conf.verbose_level > 0)
       MESG("[MPS]");
-    id = mps_include_page(ident, fp);
+    id = mps_include_page(filename, fp);
     if (id < 0) {
       WARN("Try again with the distiller.");
       format = IMAGE_TYPE_EPS;
       rewind(fp);
-    } else
+    } else {
+      /* Workaround for the problem reported.
+       * mps_include_page() above doesn't set I->filename...
+       */
+      I = &ic->ximages[id];
+      if (!I->filename) {
+        I->filename = NEW(strlen(filename)+1, char);
+        strcpy(I->filename, filename);
+      }
       break;
+    }
   default:
-    id = load_image(ident, fullname, format, fp, options);
+    id = load_image(ident, filename, fullname, format, fp, options);
     break;
   }
   dpx_fclose(fp);
@@ -455,10 +498,32 @@ pdf_ximage_findresource (const char *ident, load_options options)
   if (dpx_conf.verbose_level > 0)
     MESG(")");
 
-  if (id < 0)
-    WARN("pdf: image inclusion failed for \"%s\".", ident);
+  if (id < 0) {
+    if (dpx_conf.compat_mode == dpx_mode_compat_mode) {
+      WARN("Image inclusion failed for \"%s\".", filename);
+    } else {
+      ERROR("Image inclusion failed for \"%s\".", filename);
+    }
+  }
 
   return  id;
+}
+
+int
+pdf_ximage_findresource (const char *ident)
+{
+  struct ic_ *ic = &_ic;
+  int         id = -1;
+  pdf_ximage *I;
+
+  for (id = 0; id < ic->count; id++) {
+    I = &ic->ximages[id];
+    if (I->ident && !strcmp(ident, I->ident)) {
+      return id;
+    }
+  }
+
+  return -1;
 }
 
 /* Reference: PDF Reference 1.5 v6, pp.321--322
@@ -549,8 +614,6 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   I->attr.xdensity = info->xdensity;
   I->attr.ydensity = info->ydensity;
 
-  I->reference = pdf_ref_obj(resource);
-
   dict = pdf_stream_dict(resource);
   pdf_add_dict(dict, pdf_new_name("Type"),    pdf_new_name("XObject"));
   pdf_add_dict(dict, pdf_new_name("Subtype"), pdf_new_name("Image"));
@@ -562,6 +625,23 @@ pdf_ximage_set_image (pdf_ximage *I, void *image_info, pdf_obj *resource)
   if (I->attr.dict)
     pdf_merge_dict(dict, I->attr.dict);
 
+  if (I->ident) {
+    int error;
+
+    error = pdf_names_add_object(global_names, I->ident, strlen(I->ident), pdf_link_obj(resource));
+    if (I->reference)
+      pdf_release_obj(I->reference);
+    if (error) {
+      I->reference = pdf_ref_obj(resource);
+    } else {
+      /* Need to create object reference before closing it */
+      I->reference = pdf_names_lookup_reference(global_names, I->ident, strlen(I->ident));
+      pdf_names_close_object(global_names, I->ident, strlen(I->ident));
+    }
+    I->reserved = 0;
+  } else {
+    I->reference = pdf_ref_obj(resource);
+  }
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
   I->resource  = NULL;
 }
@@ -591,8 +671,23 @@ pdf_ximage_set_form (pdf_ximage *I, void *form_info, pdf_obj *resource)
   I->attr.bbox.urx = max4(p1.x, p2.x, p3.x, p4.x);
   I->attr.bbox.ury = max4(p1.y, p2.y, p3.y, p4.y);
 
-  I->reference = pdf_ref_obj(resource);
-
+  if (I->ident) {
+    int error;
+    
+    error = pdf_names_add_object(global_names, I->ident, strlen(I->ident), pdf_link_obj(resource));
+    if (I->reference)
+      pdf_release_obj(I->reference);
+    if (error) {
+      I->reference = pdf_ref_obj(resource);
+    } else {
+      /* Need to create object reference before closing it */
+      I->reference = pdf_names_lookup_reference(global_names, I->ident, strlen(I->ident));
+      pdf_names_close_object(global_names, I->ident, strlen(I->ident));
+    }
+    I->reserved = 0;
+  } else {
+    I->reference = pdf_ref_obj(resource);
+  }
   pdf_release_obj(resource); /* Caller don't know we are using reference. */
   I->resource  = NULL;
 }
@@ -619,7 +714,7 @@ pdf_ximage_get_reference (int id)
   CHECK_ID(ic, id);
 
   I = GET_IMAGE(ic, id);
-  if (!I->reference)
+  if (!I->reference && I->resource)
     I->reference = pdf_ref_obj(I->resource);
 
   return pdf_link_obj(I->reference);
@@ -631,8 +726,65 @@ pdf_ximage_defineresource (const char *ident,
                            int subtype, void *info, pdf_obj *resource)
 {
   struct ic_ *ic = &_ic;
+  int         id, reserved = 0;
+  pdf_ximage *I;
+
+  if (ident) {
+    for (id = 0; id < ic->count; id++) {
+      I = &ic->ximages[id];
+      if (I->ident && !strcmp(ident, I->ident) && I->reserved) {
+        reserved = 1;
+        break;
+      }
+    }
+  }
+
+  if (!reserved) {
+    id = ic->count;
+    if (ic->count >= ic->capacity) {
+      ic->capacity += 16;
+      ic->ximages   = RENEW(ic->ximages, ic->capacity, pdf_ximage);
+    }
+    I = &ic->ximages[id];
+    pdf_init_ximage_struct(I);
+
+    if (ident) {
+      I->ident = NEW(strlen(ident)+1, char);
+      strcpy(I->ident, ident);
+    }
+    ic->count++;
+  }
+
+  switch (subtype) {
+  case PDF_XOBJECT_TYPE_IMAGE:
+    pdf_ximage_set_image(I, info, resource);
+    sprintf(I->res_name, "Im%d", id);
+    break;
+  case PDF_XOBJECT_TYPE_FORM:
+    pdf_ximage_set_form (I, info, resource);
+    sprintf(I->res_name, "Fm%d", id);
+    break;
+  default:
+    ERROR("Unknown XObject subtype: %d", subtype);
+  }
+
+  return  id;
+}
+
+int
+pdf_ximage_reserve (const char *ident)
+{
+   struct ic_ *ic = &_ic;
   int         id;
   pdf_ximage *I;
+
+  for (id = 0; id < ic->count; id++) {
+    I = &ic->ximages[id];
+    if (I->ident && !strcmp(ident, I->ident)) {
+      WARN("XObject ID \"%s\" already used!", ident);
+      return -1;
+    }
+  }
 
   id = ic->count;
   if (ic->count >= ic->capacity) {
@@ -648,24 +800,13 @@ pdf_ximage_defineresource (const char *ident,
     I->ident = NEW(strlen(ident)+1, char);
     strcpy(I->ident, ident);
   }
-
-  switch (subtype) {
-  case PDF_XOBJECT_TYPE_IMAGE:
-    pdf_ximage_set_image(I, info, resource);
-    sprintf(I->res_name, "Im%d", id);
-    break;
-  case PDF_XOBJECT_TYPE_FORM:
-    pdf_ximage_set_form (I, info, resource);
-    sprintf(I->res_name, "Fm%d", id);
-    break;
-  default:
-    ERROR("Unknown XObject subtype: %d", subtype);
-  }
+  I->reference  = pdf_names_reserve(global_names, ident, strlen(ident));
+  sprintf(I->res_name, "Fm%d", id);
+  I->reserved = 1;
   ic->count++;
 
-  return  id;
+  return id;
 }
-
 
 char *
 pdf_ximage_get_resname (int id)
@@ -905,6 +1046,18 @@ pdf_ximage_scale_image (int            id,
       r->ury = I->attr.bbox.ury;
     }
     break;
+  default: /* maybe reserved */
+    if (p->flags & INFO_HAS_USER_BBOX) {
+      r->llx = p->bbox.llx;
+      r->lly = p->bbox.lly;
+      r->urx = p->bbox.urx;
+      r->ury = p->bbox.ury;
+    } else { /* I->attr.bbox from the image bounding box */
+      r->llx = 0.0;
+      r->lly = 0.0;
+      r->urx = 1.0;
+      r->ury = 1.0;
+    }
   }
 
   return  0;
@@ -964,9 +1117,20 @@ ps_include_page (pdf_ximage *ximage, const char *filename, load_options options)
   }
 #endif
 
+#if defined(_WIN32)
+/* temp is always ASCII only. So fsyscp_stat() is not necessary for
+ * temp. However, filename can be non-ASCII UTF-8.
+ */
+  if (dpx_conf.file.keep_cache != -1 &&
+      stat(temp, &stat_t)==0 &&
+      (fsyscp_stat(filename, &stat_o)==0 ||
+       stat(filename, &stat_o)==0) && 
+      stat_t.st_mtime > stat_o.st_mtime) {
+#else
   if (dpx_conf.file.keep_cache != -1 &&
       stat(temp, &stat_t)==0 && stat(filename, &stat_o)==0 && 
       stat_t.st_mtime > stat_o.st_mtime) {
+#endif /* _WIN32 */
     /* cache exist */
     /*printf("\nLast file modification: %s", ctime(&stat_o.st_mtime));
       printf("Last file modification: %s", ctime(&stat_t.st_mtime));*/
@@ -1041,4 +1205,21 @@ static int check_for_mp (FILE *image_file)
   }
 
   return ((try_count > 0) ? 1 : 0);
+}
+
+/* ERROR() can't be used here otherwise the cleanup routine is recursively called. */
+#undef ERROR
+void
+pdf_error_cleanup_cache (void)
+{
+  struct ic_ *ic = &_ic;
+  int         i;
+  pdf_ximage *I;
+
+  for (i = 0; i < ic->count; i++) {
+    I = &ic->ximages[i];
+    if (I->attr.tempfile) {
+      dpx_delete_temp_file(I->fullname, false); /* temporary filename freed here */
+    }
+  }
 }

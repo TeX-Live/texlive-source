@@ -127,6 +127,7 @@ public:
 
   // Get page parameters.
   int getNum() { return num; }
+  PageAttrs *getAttrs() { return attrs; }
   PDFRectangle *getMediaBox() { return attrs->getMediaBox(); }
   PDFRectangle *getCropBox() { return attrs->getCropBox(); }
   GBool isCropped() { return attrs->isCropped(); }

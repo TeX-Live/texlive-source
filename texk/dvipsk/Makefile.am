@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipsk/
 ##
-## Copyright 2017-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -111,13 +111,13 @@ EXTRA_DIST = $(dist_prologues) texc.script
 
 CLEANFILES = $(prologues) texc.lpro
 
-## dvips tests
+## dvips/afm2tfm tests
 TEST_EXTENSIONS = .pl .test
-TESTS = afm2tfm-test.pl
-afm2tfm-test.log: afm2tfm$(EXEEXT)
+TESTS = test-afm2tfm.test
+test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
-	test-overflow-buffers.test
+	test-missing-image.test test-overflow-buffers.test uptex-vf.test
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-overflow-buffers.log: dvips$(EXEEXT)
@@ -158,8 +158,6 @@ EXTRA_DIST += \
 	testdata/texc.pro \
 	testdata/texps.pro
 
-## afm2tfm-test.pl
-DISTCLEANFILES += afmtest.tfm
 ## beginfontk1.test
 EXTRA_DIST += testdata/beginfontk1.dvi testdata/beginfontk1.eps testdata/beginfontk1.tex
 DISTCLEANFILES += beginfontk1.ps
@@ -174,14 +172,25 @@ EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex
 DISTCLEANFILES += *badnews*
 ## same-name.test
 DISTCLEANFILES += same-name.out
-## test-dvips
+## test-afm2tfm.test
+DISTCLEANFILES += afmtest.tfm
+## test-dvips.test
 EXTRA_DIST += testdata/dvipstst.tex testdata/dvipstst.xdv testdata/dvipstst.xps
 DISTCLEANFILES += dvipstst.ps missfont.log mtest.ps
-## test-overflow-buffers
+## test-missing-image.test
+EXTRA_DIST += testdata/missing-image.tex testdata/missing-image.dvi
+DISTCLEANFILES += missing-image.ps
+## test-overflow-buffers.test
 EXTRA_DIST += overflow-color-push.dvi overflow-color-push.tex \
               overflow-epsfile.dvi overflow-epsfile.tex \
               overflow-psbox.dvi overflow-psbox.tex
 DISTCLEANFILES += overflow-color-push.ps overflow-epsfile.ps overflow-psbox.ps
+## uptex-vf.test
+EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdata/upjf.map \
+              testdata/upjf.tfm testdata/upjf-g.tfm testdata/upjf-r.tfm \
+              testdata/upjf_full.vf testdata/upjf_omit.vf \
+              testdata/upjf_full.cnf testdata/upjf_omit.cnf
+DISTCLEANFILES += upjf.vf upjf_full.ps upjf_omit.ps
 
 EXTRA_DIST += \
 	NEWS \

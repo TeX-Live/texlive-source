@@ -1,4 +1,4 @@
-.TH CWEB 1L 2002-Apr-13
+.TH CWEB 1 2018-Dec-16
 .
 .SH NAME
 ctangle, cweave \- translate CWEB to C and/or TeX
@@ -10,14 +10,14 @@ ctangle, cweave \- translate CWEB to C and/or TeX
 .B \-bhp
 ] [
 .B +s
-] webfile[.w] [changefile[.ch]] [outputfile[.c]]
+] webfile[.w] [{changefile[.ch]|-} [outputfile[.c]]]
 .br
 .B cweave
 [
 .B \-befhpx
 ] [
 .B +s
-] webfile[.w] [changefile[.ch]] [outputfile[.tex]]
+] webfile[.w] [{changefile[.ch]|-} [outputfile[.tex]]]
 .ad
 .
 .SH DESCRIPTION
@@ -78,8 +78,7 @@ If you say -bhp, you get nothing but error messages.
 .PP
 The
 .B +s
-option prints statistics about memory usage at the end of a run
-(assuming that the programs have been compiled with the -DSTAT switch).
+option prints statistics about memory usage at the end of a run.
 .PP
 There are three other options applicable to
 .I cweave
@@ -99,20 +98,15 @@ and similar programs.
 means omit the index and table of contents.
 .
 .SH FILES
+The location of the files mentioned below varies from system to system.
 .TP
-/usr/local/lib/tex/inputs/cwebmac.tex
+cwebmac.tex
 TeX macros used by cweave output.
 .TP
-/usr/local/src/cweb/cwebman.tex
+cwebman.tex
 The user manual.
 .TP
-/usr/local/src/cweb/examples/wc.w
-An introductory example.
-.TP
-/usr/local/src/cweb/examples/wmerge.w
-Patch program based on CWEB-style change files.
-.TP
-/usr/local/lib/cweb
+/usr/lib/cweb
 Directory for cweb "include" files.
 .
 .SH "SEE ALSO"

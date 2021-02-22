@@ -2,7 +2,7 @@
 ** CMapReader.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -114,6 +114,8 @@ void CMapReader::op_def (InputReader&) {
 			else
 				throw CMapReaderException("invalid WMode (0 or 1 expected)");
 		}
+		else if (name == "CMapType")
+			_cmap->_cmaptype = val;
 		else if (name == "Registry")
 			_cmap->_registry = val;
 		else if (name == "Ordering")

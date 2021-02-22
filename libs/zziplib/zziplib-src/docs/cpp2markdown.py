@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import pygments.lexers.compiled as lexer
 import optparse
 import re
@@ -62,7 +64,7 @@ class CppToMarkdown:
     def run(self, filename):
         filetext = open(filename).read()
         for line in self.process(filetext, filename):
-            print line
+            print(line)
     def process(self, filetext, filename=""):
         for token, text in self.parse(filetext):
             if token == FileInclude:
@@ -86,7 +88,7 @@ class CppToMarkdown:
             else:
                 if text:
                     yield "#### NOTES"
-                    print token, text.replace("\n", "\n  ")
+                    print(token + " " + text.replace("\n", "\n  "))
     def isexported_function(self):
         function = self.function_text.strip().replace("\n"," ")
         logg.debug("@ --------------------------------------") 

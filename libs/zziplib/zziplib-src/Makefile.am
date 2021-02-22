@@ -6,6 +6,8 @@ WANT_AUTOCONF = 2.57
 DIST_SUBDIRS = zzip zzipwrap bins test docs  SDL
 SUBDIRS =      zzip zzipwrap bins test docs @SDL@
 
+DISTCLEANFILES = _configs.sed
+
 rpm: dist-bzip2 $(PACKAGE).spec
 	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.bz2
 	test -d ../pub && cp $(PACKAGE)-$(VERSION).tar.bz2 ../pub/

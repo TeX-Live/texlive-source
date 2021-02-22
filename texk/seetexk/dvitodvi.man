@@ -1,6 +1,6 @@
-.\" Copyright (c) 1987-2013 UMD-CS, released under the X11 license;
+.\" Copyright (c) 1987-2020 UMD-CS, released under the X11 license;
 .\" see README and source files.
-.TH DVITODVI 1
+.TH DVITODVI 1 "8 September 2020" "TeX Live"
 .SH NAME
 dvitodvi \- rearrange pages in a DVI file
 .SH SYNOPSIS
@@ -128,13 +128,12 @@ To select all of the odd pages in reverse order, use:
 .sp
 .SH AUTHOR
 Angus Duggan, from dviselect(1), by
-Chris Torek, University of Maryland
+Chris Torek, University of Maryland. Currently maintained as part
+of TeX Live (https://tug.org/texlive).
 .SH "SEE ALSO"
-dviconcat(1), dvibook(1), dviselect(1), latex(1), tex(1)
+dvibook(1), dviconcat(1), dviselect(1), latex(1), tex(1)
 .br
 .I "MC-TeX User's Guide"
-.br
-.I "The TeXbook"
 .SH BUGS
 .I Dvitodvi
 does not adjust some of the parameters in the postamble. This may be a problem

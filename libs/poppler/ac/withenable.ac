@@ -1,7 +1,0 @@
-## libs/poppler/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
-dnl
-dnl Copyright (C) 2011 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for poppler
-KPSE_WITH_LIB([poppler], [zlib])

@@ -2,7 +2,7 @@
 ** Font.hpp                                                             **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -266,7 +266,7 @@ class NativeFont : public PhysicalFont {
 		double charWidth (int c) const override;
 		double charDepth (int c) const override;
 		double charHeight (int c) const override;
-		double italicCorr (int c) const override         {return 0;}
+		double italicCorr (int c) const override;
 		const FontMetrics* getMetrics () const override  {return nullptr;}
 		const FontStyle* style () const override         {return &_style;}
 		Color color () const override                    {return _color;}

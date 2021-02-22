@@ -1,3 +1,381 @@
+2021-02-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-w2c.ch
+	* comm-w2c.h
+	* common.c
+	* common.h
+	* common.w
+	* ctang-bs.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-man.ch,
+	* cweave.w: Decouple CTANGLE and CWEAVE from COMMON.
+
+2021-02-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-{mac,ql,vms,w32}.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-{bs,pc,ql,vms,w32}.ch,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-{bs,pc,ql,vms,w32}.ch,
+	* cweav-man.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* po/{cweb,cweb-tl}.pot,
+	* po/de/{cweb,cweb-tl}.po,
+	* po/it/cweb.po: CWEB 4.1 and CWEBbin 2021.
+
+2021-02-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-bs.ch,
+	* comm-mac.ch,
+	* com-ql.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweave.w,
+	* cwebman.tex: Replace 'boolean' values upstream.
+
+2021-02-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w: Purge unused macro definition.
+
+2021-02-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangle.c,
+	* ctangle.w,
+	* cweave.w: Reshuffle a few variables (upstream).
+
+2021-02-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w: Fix an 'aspell'ing error and one old macro call.
+
+2021-02-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w: Fix 'Illegal hardware instruction' on MacOS.
+
+2021-02-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile: Main CWEB modules depend on COMMON interface.
+
+2021-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* common.h,
+	* ctangle.c,
+	* comm-w2c.h: Reshuffle byte_mem pointer.
+
+2021-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* common.h: Restore comment from 'cweave.w' (3.64c).
+
+2021-02-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctwimac.tex: Fix bug in color setter.
+
+2021-02-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctangle.c,
+	* ctangle.w,
+	* cweave.w: Don't repeat yourself.
+
+2021-02-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Fix 'reading error';
+	CWEB development has moved to another level.
+
+2021-02-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* README,
+	* comm-{amiga,bs,mac,os2,pc,ql,vms,w32}.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-{bs,pc,ql,vms,w32}.ch,
+	* ctang-man.ch,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* ctwill.bux,
+	* cweav-{bs,pc,ql,vms,w32}.ch,
+	* cweav-man.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cweb.1,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* examples/wmerge.w,
+	* po/{cweb,cweb-tl,web2c-help}.pot,
+	* po/de/{cweb,cweb-tl,web2c-help}.po,
+	* po/it/cweb.po,
+	* system.bux: New CWEB 4.0 and CWEBbin 2021.
+
+2020-07-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Fix typographic inconsistency.
+
+2020-07-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.hch,
+	* ctwill-mini.ch: Clearer exposition re external type definitions.
+
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch,
+	* po/web2c-help.pot,
+	* po/de/web2c-help.po: Add '-dN' to 'help' message.
+
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Add special index entries for Kpathsea values.
+
+2020-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Add links to appendices D, E, F, and G.
+
+2020-07-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* texinputs/pdfctwimac.tex: Fix two issues with 'ctwill.dvi/pdf'.
+
+2020-07-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Add links and bookmarks in PDF.
+
+2020-06-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* prod-mini.ch: Merge editorial changes with CTIE;
+	no need for a separate changefile for 'prod.w'.
+
+2020-06-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch,
+	* ctwill-mini.ch,
+	* ctwill.bux,
+	* system.bux,
+	* prod-mini.ch: Add editorial material to produce 'ctwill.pdf'
+	with CTWILL itself.
+
+2020-06-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* prod-twill.w: Roll back editorial changes.
+
+2020-06-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Fix start pageno after dynamic to.
+	MF and [{pdf|Xe}]TeX start their main body on pageno 3.
+
+2020-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Generic solution for the headers in
+	WEB and CWEB programs (with four special cases with their own '\N').
+
+2020-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Clarify triple responsibility.
+
+2020-06-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Generic 'group title' on the first
+	page after the table-of-contents.
+
+2020-06-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctimac.tex: Bookmarks for "Names of the sections".
+
+2020-06-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch: Translate another message string.
+	* ctwill-w2c.ch,
+	* prod-twill.w: Page breaks for CWILL format.  Fix final header.
+	* texinputs/pdfctimac.tex: Alternative comment font (9pt).
+	Don't force small borders in standard macros for PDF output.
+
+2020-06-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctimac.tex: Unified color management;
+	code compaction; simplified if-else inside \acro;
+	structured outlines/bookmarks with all supported TeX engines.
+
+2020-06-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctimac.tex: New macros for PDF output with hyperlinks
+	created with 'ctwill +lpdf' followed by 'tex'+'dvipdfm', 'pdftex',
+	or 'xetex' on your CWEB source.
+
+2020-06-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Purge space from 'covernote'.
+
+2020-06-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Add footnotes for TeX Live extensions.
+
+2020-06-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch: Add short comments to new material.
+
+2020-06-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/p+cwebmac.tex: Switch on PDF creation with 'cweave -lp+'
+	followed by 'tex'+'dvipdfm' or 'xetex' on your CWEB source.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Add date to table-of-contents page.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch: Handle special 'files' as secondary output.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Check accessibility to designated output files.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* ctang-w2c.ch,
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Underscore 'enum'erated values in index.
+
+2020-06-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Add index entries for the CWEBINPUTS envvar.
+
+2020-06-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Fix newline blunder in case of error.
+
+2020-06-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Adapt to 'pwebmac.tex 4.5.2'.
+
+2020-05-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Sanitize command for PDF outlines.
+
+2020-05-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Fake headline on page after TOC.
+
+2020-05-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Add treatment for {pdf,xe}tex.web.
+
+2020-05-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/Xcwebmac.tex: Activate alternative assignment operator.
+	* texinputs/pdfwebtocfront.tex: Add comments to the macro code.
+
+2020-05-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/Xcwebmac.tex: Amend macros from knuth.drv (in
+	github.com/oberdiek/latex-tds) to move table-of-contents
+	up front in PDF output (on second TeX run).
+
+2020-04-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Clarify §95 and fix missing type format.
+
+2020-04-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Purge irrelevant mention of .web extension.
+
+2020-04-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch: Purge standard headers already in KPathSea.
+
+2020-04-27  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h: Use enum'erated program identifiers.
+	Reshuffle typedef's to fix formatting in §7 of COMMON.
+
+2020-04-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Fix missing hyphen.
+
+2020-04-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Fix uppercase spelling for COMMON module.
+
+2020-04-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch: Print CTWILL user manual on two pages.
+
+2020-04-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweav-w2c.ch,
+	* ctwill-w2c.ch: Move reference to global variable 'use_language'
+	from 'main' to section 'Extensions'.
+
+2020-04-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.h: Add comment for section 6 in CWEB programs.
+
+2020-04-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch, comm-w2c.h: Rearrange 'common variables'.
+
+2020-03-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch, comm-w2c.h, ctang-w2c.ch, ctwill-w2c.ch, cweav-w2c.ch,
+	* po/de/cweb.po, po/de/web2c-help.po,
+	* po/it/cweb.po,
+	* po/web2c-help.pot: Add new option '-t'.
+
 2020-02-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctang-w2c.ch: Fix verbosity bug in ctangle.

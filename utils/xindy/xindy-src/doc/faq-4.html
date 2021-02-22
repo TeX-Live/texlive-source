@@ -460,11 +460,12 @@ location references. For exmaple the sequence
 the form
 <P>
 <PRE>
-  (define-location-class ... :min-range-length none)
+  (define-location-class ... :min-range-length 100000)
 </PRE>
-<P>The argument <CODE>:min-range-length none</CODE> avoids forming of ranges.
-Arbitrary numbers instead of <CODE>none</CODE> define the minimum length of a
-sequence of location references that are needed to form a range.
+<P>Arbitrary numbers define the minimum length of a sequence of location references that are needed to form a range.
+The use of a sufficiently large number (such as <CODE>:min-range-length 100000</CODE>) avoids forming of ranges
+(unless your document has more than 100.000 pages and an index entry spans all of them; in this unlikely case, just increase
+the number sufficiently).
 <SF>xindy</SF>s default value is&nbsp;2.
 <P>
 <P>

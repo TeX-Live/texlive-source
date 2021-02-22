@@ -3,7 +3,7 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-16  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-20  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -23,6 +23,27 @@
 # Detailed usage information at the end of the file
 #
 
+# Version 1.3.1.1
+#  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
+#
+# Version 1.3.1 
+#    Bug fixes:
+#      - remove some uninitialised variable $2 warnings in string substitution in flatten function in case included file is not found
+#      - add minimal postprocessing to diff processing of preamble commands (replace \RIGHTBRACE by \} ) 
+#      - pre-processing: replace (contributed) routine take_comments_and_enter_from_frac() with take_comments_and_newline_from_frac(), which does the same thing
+#        (remove whitespace characters and comments between the argument of \frac commands) in an easier and more robust way. In addition, it
+#        will replace commands like \frac12 with \frac{1}{2} as pre-processing step.   Fixes issue #184
+#      - add "intertext" to list of unsafe math commands @UNSAFEMATHCMD . Fixes issue #179
+#      - provide citation command patterns for biblatex and protect them with mbox'es. Fixes issue #199
+#      - hardcode number of parameters for \href and \url commands to allow spaces between commands and arguments even if --allow-spaces option is not used (this
+#        is needed because some bibliography styles add such in-command-sequence spaces)  Fixes issues: #178 #198
+#      - bibitem is now kept even in deleted blocks such that deleted references show up properly (this implies that the actual numbers in numerical referencing schemes will change)
+#        (this is implemented by introducing a new class of commands KEEPCMD , which are kept as is in deleted environments (no effect in added environments). Currently
+#        \bibitem   is hardwired to be the only member of this class  (fixes issue #194, #174)
+#    Features:
+#      - add some special processing for revtex bibliography commands, so that the spaces between bibliography commands \bibfield and \bibinfo and their arguments are ignored.
+#         (fixes issue #194, should fix #174)
+#
 # Version 1.3.0 (7 October 2018):
 #    - treat options to \documentclass as potential package names (some packages allow implicit loading of or imply selected packages
 #    - improved pattern matching: now allows nested angular brackets, and is no longer confused by escaped curly braces
@@ -34,6 +55,9 @@
 #     - added to textcmds: \intertext
 #    - new config variable CUSTOMDIFCMD to allow defining special versions of  commands  in added or deleted blocks (Pull request by github user jprotze)
 #    - added option -no-links (mostly for use by latexdiff-vc in only-changes modes) (Pull request by github user jprotze)
+#    - new option --filter-script to run both input through a pre-processing script (PR jasonmccsmith  #167) 
+#      new option --no-filter-stderr to hide stderr output from filter-script (potentially dangerous, as this might hide malfunctioning of filter scripts)
+#    - --flatten now can deal with imports made using the import package {PR jasonmccsmith #173)
 #   Bug fixes:
 #    - pattern matching of \verb and \lstinline commands had an error which meant they would trigger on commands beginning with \verb.
 #    - In description environments, mark up item descriptions by effectively reating the insides of item commannds as text commands (fixes #161)
@@ -176,7 +200,7 @@
 # package and use the standard latexdiff version instead
 # (current distribution available from http://search.cpan.org/~nedkonz/Algorithm-Diff-1.15
 #  the most recent version can be found via  http://search.cpan.org/search?module=Algorithm::Diff )
-# Please note that the LICENCSE for Algorithm::Diff :
+# Please note the LICENCE for Algorithm::Diff :
 #   "Copyright (c) 2000-2002 Ned Konz.  All rights reserved.
 #    This program is free software;
 #    you can redistribute it and/or modify it under the same terms
@@ -630,12 +654,14 @@ use strict ;
 use warnings;
 use utf8 ;
 
+use File::Spec ;
+
 my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.0  (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2018 F J Tilmann
+This is LATEXDIFF 1.3.1.1 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2020 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -655,7 +681,7 @@ my %CONFIG=(
    COUNTERCMD => undef,
                                         # COUNTERCMD textcmds which are associated with a counter
                                         # If any of these commands occur in a deleted block
-                                        # they will be succeeded by an \addtocounter{...}{-1}
+                                        # they will be followed by an \addtocounter{...}{-1}
                                         # for the associated counter such that the overall numbers
                                         # should be the same as in the new file
    LISTENV => undef ,  # list making environments - they will generally be kept
@@ -704,7 +730,7 @@ my ($ARRENV,
 
 
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
-my @UNSAFEMATHCMD=('qedhere');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
+my @UNSAFEMATHCMD=('qedhere','intertext');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
 
@@ -759,6 +785,8 @@ our @SAFECMDEXCL=();
 my @MBOXCMDLIST=();   # patterns for commands which are in principle safe but which need to be surrounded by an \mbox
 my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
 
+my @KEEPCMDLIST=( qr/^bibitem$/ );   # patterns for commands which should not be deleted in nominally delete text passages
+my @KEEPCMDEXCL=();          
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -772,6 +800,7 @@ my ($oldpost, $newpost);
 my ($diffall);
 # Option names
 my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblelabel,
+    $filterscript,$ignorefilterstderr,
     $showpreamble,$showsafe,$showtext,$showconfig,$showall,
     $replacesafe,$appendsafe,$excludesafe,
     $replacetext,$appendtext,$excludetext,
@@ -873,6 +902,8 @@ GetOptions('type|t=s' => \$type,
 	   'ignore-warnings' => \$ignorewarnings,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
+	   'filter-script=s' => \$filterscript,
+       'ignore-filter-stderr' => \$ignorefilterstderr,
 	   'no-links' => \$nolinks,
 	   'version' => \$version,
 	   'help|h' => \$help,
@@ -917,7 +948,8 @@ if (defined($mathmarkup)) {
   # else use numerical value
 }
 
-
+# Give filterscript a default empty string
+$filterscript="" unless defined($filterscript);
 
 # setting extra preamble commands
 if (defined($preamblefile)) {
@@ -1075,16 +1107,19 @@ if ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
 
 
 
+
+
 foreach $pkg ( @packagelist ) {
   map { $packages{$_}="" } split(/,/,$pkg) ;
 }
 
 
-
 if ($showconfig || $showtext || $showsafe || $showpreamble) {
+
   show_configuration();
   exit 0; 
 }
+
 
 if ( @ARGV != 2 ) { 
   print STDERR "2 and only 2 non-option arguments required.  Write latexdiff -h to get help\n";
@@ -1144,6 +1179,17 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
 # word: sequence of letters or accents followed by letter
   my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
   my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
+
+  # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
+  # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
+  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
+  my $predefinedcmdoptseq12='\\\\(?:href|bibfield|bibinfo)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
+#  my $predefinedcmdoptseq11='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one optional and one non-optional arguments
+# \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
+  my $predefinedbibitem='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\})(?:%?\s*\\\\BibitemOpen)?';  # Commands with one optional and one non-optional arguments
+
+  my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.'|'.$predefinedbibitem.')';
+
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
   my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
   my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
@@ -1152,7 +1198,7 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
 ## the current maths command cannot cope with newline within the math expression
   my $comment='%[^\n]*\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
@@ -1203,8 +1249,55 @@ if (lc($encoding) eq "utf8" ) {
   binmode(STDERR, ":utf8");
 }
 
+# filter($text)
+# Runs $text through the script provided in $filterscript argument, if set
+# If not set, just returns $text unchanged.
+# If flatten was set, defer filtering to flatten.  flatten will run the filter
+# on all incoming text prior to its own processing.
+# If flatten was not set, filter each of old and new once (see just below this def)
+sub filter {
+  my ($text)=@_;
+  my ($textout,$pid);
+  if ($filterscript ne "") {
+    print STDERR "Passing " . length($text) . " chars to filter script " . $filterscript . "\n" if $verbose;
+
+    if ($ignorefilterstderr) {
+        # If we need to capture and bury STDERR, use the Open3 version, and close CHLD_ERR below.
+        use IPC::Open3;
+        # We consume STDERR from the process, and hide it
+        $pid = open3(\*CHLD_IN, \*CHLD_OUT, \*CHLD_ERR, $filterscript) or die "open3() failed $!";
+    }
+    else {
+        # Capture STDOUT and use as our new $text.  Allow STDERR to go to console.
+        use IPC::Open2;
+        $pid = open2(\*CHLD_OUT, \*CHLD_IN, $filterscript) or die "open2() failed $!";
+    }
+    # Send in $text
+    print CHLD_IN $text."\n";  # Adding a newline just to make sure there is one.
+    close CHLD_IN;
+    # Wait for output and gather it up
+    while (<CHLD_OUT>) {
+      $textout = $textout.$_;
+    }
+    if ($ignorefilterstderr) {
+        close CHLD_ERR;       # Enable only if Open3 used above
+    }
+    # On the off chance a very long running and/or frequently called script is used.
+    waitpid( $pid, 0 );
+    $text = $textout;
+    print STDERR "Received " . length($text) . " chars after filtering\n" if $verbose;
+    print STDERR $text if $verbose;
+  }
+  return $text;
+}
+
 $old=read_file_with_encoding($oldfile,$encoding);
 $new=read_file_with_encoding($newfile,$encoding);
+
+if (not defined($flatten)) {
+    $old=filter($old);
+    $new=filter($new);
+}
 
 
 
@@ -1217,11 +1310,11 @@ exetime(1);
 
 
 if ($flatten) {
-  $oldbody=flatten($oldbody,$oldpreamble,$oldfile,$encoding);
-  $newbody=flatten($newbody,$newpreamble,$newfile,$encoding);
+  $oldbody=flatten($oldbody,$oldpreamble,File::Spec->rel2abs($oldfile),$encoding);
+  $newbody=flatten($newbody,$newpreamble,File::Spec->rel2abs($newfile),$encoding);
   # flatten preamble
-  $oldpreamble=flatten($oldpreamble,$oldpreamble,$oldfile,$encoding);
-  $newpreamble=flatten($newpreamble,$newpreamble,$newfile,$encoding);
+  $oldpreamble=flatten($oldpreamble,$oldpreamble,File::Spec->rel2abs($oldfile),$encoding);
+  $newpreamble=flatten($newpreamble,$newpreamble,File::Spec->rel2abs($newfile),$encoding);
 
 }
 
@@ -1476,6 +1569,9 @@ my ( $citpat);
 if ( defined $packages{"apacite"}  ) {
   print STDERR "apacite package detected.\n" if $verbose ;
   $citpat='(?:mask)?(?:full|short|no)?cite(?:A|author|year|meta)?(?:NP)?';
+} elsif (defined $packages{"biblatex"}) {
+  print STDERR "biblatex package detected.\n" if $verbose ;
+  $citpat='(?:[cC]ites?|(?:[pP]aren|foot|[Tt]ext|[sS]mart|super)cites?\*?|footnotecitetex)';
 } else {
   # citation command pattern for all other citation schemes
   $citpat='(?:cite\w*|nocite)';
@@ -1798,11 +1894,13 @@ sub remove_endinput {
 # encoding is the encoding
 sub flatten {
   my ($text,$preamble,$filename,$encoding)=@_;
-  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$bblfile,$subfile,$command,$verbenv,$verboptions);
+  my ($includeonly,$dirname,$fname,$newpage,$fullfile,$filecontent,$replacement,$begline,$inputcmd,$bblfile,$subfile,$command,$verbenv,$verboptions,$ignore,$fileonly);
   my ($subpreamble,$subbody,$subpost);
+  my ($subdir,$subdirfull,$importfilepath);
   require File::Basename ; 
-  require File::Spec ; 
-  $dirname = File::Basename::dirname($filename);
+  ###  require File::Spec ;    # now this is needed even if flatten option not given
+  $filename = File::Spec->rel2abs( $filename ) ;
+  ($ignore, $dirname, $fileonly) = File::Spec->splitpath($filename) ;
   $bblfile = $filename;
   $bblfile=~s/\.tex$//;
   $bblfile.=".bbl";
@@ -1815,11 +1913,51 @@ sub flatten {
 
   print STDERR "DEBUG: includeonly $includeonly\n" if $debug;
 
+
+  # Run through filter, to let filterscript have a pass if it was set
+  $text = filter($text);
+
+  # Recursively replace \\import and \\subimport files
+  $text =~ s/(^(?:[^%\n]|\\%)*)(\\subimport\{(.*?)\}|\\import\{(.*?)\})(?:[\s]*)\{(.*?)\}/{
+          # $1 is begline
+          # $3 is directory if subimport
+          # $4 is directory if import
+          # $5 is filename
+          $begline = (defined($1)? $1 : "");
+          $subdir = $3 if defined($3);
+          $subdir = $4 if defined($4);
+          $fname = $5;
+          $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
+          print STDERR "DEBUG begline:", $begline, "\n" if $debug;
+          print STDERR "DEBUG", (defined($3)? "subimport_file:" : "import_file:"), $subdir, "\n" if $debug;
+          print STDERR "DEBUG file:", $fname, "\n" if $debug;
+
+          # subimport appends $subdir to the current $dirname.  import replaces it with an absolute path.
+          $subdirfull = (defined($3) ? File::Spec->catdir($dirname,$subdir) : $subdir);
+
+          $importfilepath = File::Spec->catfile($subdirfull, $fname);
+          
+          print STDERR "importing importfilepath:", $importfilepath,"\n" if $verbose;
+          if ( -f $importfilepath ) {
+              # If file exists, replace input or include command with expanded input
+              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
+          } else {
+              # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
+              # and is not meant to be expanded directly 
+              print STDERR "WARNING: Could not find included file ",$importfilepath,". I will continue but not expand |$2|\n";
+              $replacement=(defined($3)? "\\subimport" : "\\import");
+              $replacement .= "{$subdir}{$fname} % Processed";
+          }
+          "$begline$replacement";
+  }/exgm;
+
   # recursively replace \\input and \\include files
   $text =~ s/(^(?:[^%\n]|\\%)*)(\\input\{(.*?)\}|\\include\{(${includeonly}(?:\.tex)?)\})/{ 
 	    $begline=(defined($1)? $1 : "") ;
+	    $inputcmd=$2;
 	    $fname = $3 if defined($3) ;
 	    $fname = $4 if defined($4) ;
+            $newpage=(defined($4)? " \\newpage " : "") ;
             #      # add tex extension unless there is a three or four letter extension already 
             $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
             $fullfile = File::Spec->catfile($dirname,$fname);
@@ -1832,12 +1970,11 @@ sub flatten {
 	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding) or die "Could not open file ",$fullfile,": $!";
 	      $replacement = remove_endinput($replacement); 
 	      # \include always starts a new page; use explicit \newpage command to simulate this
-	      $newpage=(defined($4)? " \\newpage " : "") ;
 	    } else {
 	      # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
-	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$2|\n" unless $fname =~ m(#[0-9]) ;
-	      $replacement = $2 ;   # i.e. just the original command again -> make no change file does not exist
+	      print STDERR "WARNING: Could not find included file ",$fullfile,". I will continue but not expand |$inputcmd|\n" unless $fname =~ m(#[0-9]) ;
+	      $replacement = $inputcmd ;   # i.e. just the original command again -> make no change file does not exist
 	      $newpage="";
 	    }
 	    "$begline$newpage$replacement$newpage";
@@ -2116,6 +2253,7 @@ sub splitlatex {
     }
 
   }
+
   unshift(@retval,$leadin) if (length($leadin)>0);
   return @retval;
 }
@@ -2297,10 +2435,14 @@ sub extracttextblocks {
   my $wpat=qr/^(?:[a-zA-Z.,'`:;?()!]*)[\s~]*$/;  #'
   my $retval=[];
 
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace='\s*'; 
+
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # store pure text blocks
-    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/o 
+    if ($token =~ /$wpat/ ||  ( $token =~/^\\((?:[`'^"~=.]|[\w\d@\*]+))((?:${extraspace}\[$brat_n\]${extraspace}|${extraspace}\{$pat_n\})*)/ 
 				&& iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL) 
 				&& !iscmd($1,\@TEXTCMDLIST,\@TEXTCMDEXCL))) {
       # we have text or a command which can be treated as text
@@ -2345,6 +2487,10 @@ sub extractcommands {
   my ($i,$token,$index,$cmd,$open,$mid,$closing);
   my $retval=[];
 
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace='\s*'; 
+
   for ($i=0;$i< scalar @$block;$i++) {
     ($token,$index)=@{ $block->[$i] };
     # check if token is an alphanumeric command sequence with at least one non-optional argument
@@ -2356,6 +2502,7 @@ sub extractcommands {
     # $4: }  + trailing spaces
     if ( ( $token =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
 	 && iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL) ) {
+      print STDERR "DEBUG EXTRACTCOMMANDS Match |$1|$2|$3|$4|$index \n" if $debug;      
       #      push(@$retval,[ $2,$index,$1,$3,$4 ]);
       ($cmd,$open,$mid,$closing) = ($2,$1,$3,$4) ;
       $closing =~ s/\}/\\RIGHTBRACE/ ;
@@ -2371,20 +2518,20 @@ sub extractcommands {
 sub iscmd {
   my ($cmd,$regexar,$regexexcl)=@_;
   my ($ret)=0;
-  print STDERR "DEBUG: iscmd($cmd)=" if $debug;
+  ### print STDERR "DEBUG: iscmd($cmd)=" if $debug;
   foreach $pat ( @$regexar ) {
     if ( $cmd =~ m/^${pat}$/ ) {
       $ret=1 ; 
       last;
     }
   }
-  print STDERR "0\n" if ($debug && !$ret) ;
+  ### print STDERR "0\n" if ($debug && !$ret) ;
   return 0 unless $ret;
   foreach $pat ( @$regexexcl ) {
-    print STDERR "0\n" if ( $debug && $cmd =~ m/^${pat}$/) ;
+    ### print STDERR "0\n" if ( $debug && $cmd =~ m/^${pat}$/) ;
     return 0 if ( $cmd =~ m/^${pat}$/ );
   }
-  print STDERR "1\n" if $debug;
+  ### print STDERR "1\n" if $debug;
   return 1;
 }
 
@@ -2443,7 +2590,6 @@ sub pass2 {
     print STDERR "  $deltokcnt discarded tokens in $delblkcnt blocks.\n";
     print STDERR "  $addtokcnt appended  tokens in $addblkcnt blocks.\n";
   }
-
   return(@$retval);
 }
 
@@ -2466,13 +2612,20 @@ sub marktags {
   my $cmdcomment= ($opencmd =~ m/^%/);  # Flag to indicate whether opencmd is a comment (i.e. if we intend to simply comment out changed commands)
   my ($command,$commandword,$closingbracket) ; # temporary variables needed below to remember sub-pattern matches
 
-# split this block to flatten out sequences joined in pass1
+
+
+# split this block to split sequences joined in pass1
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
   ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
+
+  # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
+  # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
+  my $extraspace_mt='\s*'; 
+
+
   foreach (@$block) {
     $word=$_; 
-    ### print STDERR "DEBUG MARKTAGS: |$word|\n" if $debug;
     if ( $word =~ s/^%/%$comment/ ) {
       # a comment
       if ($cmd==1) {
@@ -2497,9 +2650,7 @@ sub marktags {
     }
     # negative lookahead pattern (?!) in second clause is put in to avoid matching \( .. \) patterns
     # also note that second pattern will match \\
-    print STDERR "DEBUG marktags: Considering word |$word|\n" if $debug;
-    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
-      ###print STDERR "DEBUG MARKTAGS is a non-safe command ($1)\n" if $debug;
+    if (  $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)/ &&  !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       ###    if ( $word =~ /^[&{}\[\]]/ || ( $word =~ /^\\([\w*@\\% ]+)/ && !iscmd($1,\@SAFECMDLIST,\@SAFECMDEXCL)) ) {
       # word is a command or other significant token (not in SAFECMDLIST)
 	## same conditions as in subroutine extractcommand:
@@ -2511,13 +2662,13 @@ sub marktags {
 	# $3: last argument
 	# $4: }  + trailing spaces
 	### pre-0.3    if ( ( $token =~ m/^(\\([\w\d\*]+)(?:\[$brat0\]|\{$pat_n\})*\{)($pat_n)(\}\s*)$/so )
-      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace}\[$brat_n\]|${extraspace}\{$pat_n\})*${extraspace}\{)($pat_n)(\}\s*)$/so )
+      if ( ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)$/so )
 	   && (iscmd($2,\@TEXTCMDLIST,\@TEXTCMDEXCL)|| iscmd($2,\@MATHTEXTCMDLIST,\@MATHTEXTCMDEXCL))
            && ( !$cmdcomment || !iscmd($2,\@CONTEXT2CMDLIST, \@CONTEXT2CMDEXCL) )  ) {
 	# Condition 1: word is a command? - if yes, $1,$2,.. will be set as above
         # Condition 2: word is a text command - we mark up the interior of the word. There is a separate check for MATHTEXTCMDLIST
         #              because for $mathmarkup=WHOLE, the commands should not be split in pass1 (ie. math mode commands are not in
-        #              TEXTCMDLIST, but the interior of MATHTEXT commands should be highlighted in both deleted and added blocks
+        #              TEXTCMDLIST, but the interior of MATHTEXT commnds should be highlighted in both deleted and added blocks
         # Condition 3: But if we are in a deleted block ($cmdcomment=1) and
         #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
@@ -2553,6 +2704,13 @@ sub marktags {
 	}
 	push (@$retval,$AUXCMD,"\n") if $cmdcomment ;
 	$cmd=-1 ;
+      } elsif ( $cmdcomment &&
+	       ( $word =~ m/^(\\([\w\d\*]+)(?:${extraspace_mt}\[$brat_n\]|${extraspace_mt}\{$pat_n\})*${extraspace_mt}\{)($pat_n)(\}\s*)/so )
+	       && iscmd($2,\@KEEPCMDLIST, \@KEEPCMDEXCL) ) {
+	# 'keepcmd' in a deleted environment: keep  the command as is
+	push (@$retval,$close) if $cmd==0 ;
+	push (@$retval,$word);
+	$cmd=-1;  # pretend we are at the beginning of a sequence because we do not want to add an additional $closecmd or $close before the next token, no matter what it is
       } else {
 	# ordinary command
 	push (@$retval,$opencmd) if $cmd==-1 ;
@@ -2589,52 +2747,19 @@ sub marktags {
 }
 
 #used in preprocess
-sub take_comments_and_enter_from_frac() {
-      #*************take the \n and % between frac and {}***********
-      #notice all of the substitution are made none global
-      while( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end\{\1}/s ) {
-	# if there isn't any % or \n in the pattern $2 then there should be an \\end{...} in $2
-	### print STDERR "Match the following in take_comments and_enter_from_frac(1):\n****$&****\n" if $debug;
-	if( $2 !~ m/\\end\{$1}/s ) {
-	  # take out % and \n from the next match only (none global)
-		s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\frac(([\s]*%[^\n]*?)*[\r\n|\r|\n])+\{(.*?)\\end\{\1}/\\begin{$1}$2\\frac{$5\\end{$1}/s;
-	}
-	else{
-	  #there are no more % and \n in $2, we want to find the next one so we clear the begin-end from the pattern
-		s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end\{\1}/MATHBLOCK$1\{$2\}MATHBLOCKEND/s;
-	}
-      }
-      ###cleaning up
-      while( s/MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{(.*?)\}MATHBLOCKEND/\\begin{$1}$2\\end{$1}/s ){}
-      ###*************take the \n and % between frac and {}***********
-      
-      ###**********take the \n and % between {} and {} of the frac***************
-      while( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\frac\{(.*?)\\end\{\1\}/s ) {
-	# if there isn't any more //frac before the first //end in the pattern $2 then there should be an \\end{...} in $2
-	###print STDERR "Match the following in take_comments and_enter_from_frac(2):\n****$&****\n" if $debug;
-        if( $2 !~ m/\\end\{$1\}/s ) {
-          # from now on CURRFRAC is the frac we are looking at
-          s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\frac\{(.*?)\\end\{\1\}/\\begin\{$1\}$2CURRFRAC\{$3\\end\{$1\}/s;
-          while( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{(.*?)\\end\{\1\}/s ) {
-             if( m/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat_n)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end\{\1}/s ) {
-                   s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)CURRFRAC\{($pat_n)\}([\s]*(%[^\n]*?)*[\r\n|\r|\n])+[\s]*\{(.*?)\\end\{\1\}/\\begin\{$1\}$2CURRFRAC\{$3\}\{$6\\end\{$1\}/s;
-               } 
-              else { # there is no comment or \n between the two brackets {}{}
-              # change CURRFRAC to FRACSTART so we can change them all back to //frac{ when we finish
-                   s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)CURRFRAC\{(.*?)\\end\{\1}/\\begin{$1}$2FRACSTART\{$3\\end{$1}/s;
-              }
-            }
-        }
-        else{
-          ###there are no more frac in $2, we want to find the next one so we clear the begin-end from the pattern
-          s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)}(.*?)\\end\{\1}/MATHBLOCK$1\{$2\}MATHBLOCKEND/s;
-        }
-        
-      }
-      ###cleaning up
-      while( s/MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{(.*?)\}MATHBLOCKEND/\\begin{$1}$2\\end{$1}/s ){}
-      s/FRACSTART/\\frac/g;
-      ###***************take the \n and % between {} and {} of the frac*********************
+sub take_comments_and_newline_from_frac() {
+  # some special magic for common usage of frac, which does not conform to the latexdiff requirements but can be made to fit
+  # note that this is a rare exception to the general rule that the new tex can be reconstructed from the diff file
+
+  # \frac12 -> \frac{1}{2}
+  s/\\frac(\d)(\w)/\\frac\{$1\}\{$2\}/g;
+
+  # \frac1{2b} -> \frac{1}{2b}
+  s/\\frac(\d)/\\frac\{$1\}/g;
+
+  # delete space and comment characters between \frac arguments
+#  s/\\frac(?:\s*?%[^\n]*?)*?(\{$pat_n\})\s*(\{$pat_n\})/\\frac$1$2/g;
+  s/\\frac(?:\s|%[^\n]*?)*(\{$pat_n\})(?:\s|%[^\n]*?)*(\{$pat_n\})/\\frac$1$2/g;
 }
 
 # preprocess($string, ..)
@@ -2717,7 +2842,7 @@ sub preprocess {
       # resort to WHOLE or FINE, or NONE math mode processing.
       s/\\begin\{($ARRENV)}(.*?)\\end\{\1}/\\ARRAYBLOCK$1\{$2\\DIFANCHORARRB \}\\DIFANCHORARRE /sg;
 
-      take_comments_and_enter_from_frac();
+      take_comments_and_newline_from_frac();
 
       s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
     }
@@ -3335,8 +3460,7 @@ sub restore_item_commands {
   # pre-process preamble by looking for commands used in \maketitle (title, author, date etc commands) 
   # the list of commands is defined in CONTEXT2CMD 
   # if found then use a bodydiff to mark up content, and replace the corresponding commands 
-  # in both preambles by marked up version to 'fool' the linediff (such that only body is marked
-  # up.
+  # in both preambles by marked up version to 'fool' the linediff (such that only body is marked up).
   # A special case are e.g. author commands being added (or removed)
   # 1. If commands are added, then the entire content is marked up as new, but also the lines are marked as new in the linediff
   # 2. If commands are removed, then the linediff will mark the line as deleted.  The program returns 
@@ -3414,6 +3538,9 @@ EOF
     }
     $argnew=$newhash{$cmd}->[2];
     $argdiff="{" . join("",bodydiff($argold,$argnew)) ."}";
+    # Replace \RIGHTBRACE by }    
+    $argdiff =~ s/\\RIGHTBRACE/}/g;
+
     if ( length $optargnew ) {
       $optargdiff="[".join("",bodydiff($optargold,$optargnew))."]" ;
       $optargdiff =~ s/\\DIFaddbegin /\\DIFaddbeginFL /g;
@@ -3759,6 +3886,7 @@ be real files (not pipes or similar) as they are opened twice.
                        reason package specific parsing needs to be switched off, use --packages=none.
                        The following packages trigger special behaviour:
                        endfloat hyperref amsmath apacite siunitx cleveref glossaries mhchem chemformula/chemmacros
+                       biblatex
                        [ Default: scan the preamble for \\usepackage commands to determine
                          loaded packages.]
 
@@ -3840,7 +3968,17 @@ Miscelleneous options
                        be located in the same directories as the old and new master files,
                        respectively, making it possible to organise files into old and new directories.
                        --flatten is applied recursively, so inputted files can contain further
-                       \\input statements.
+                       \\input statements.  Also handles files included by the import package
+                       (\\import and \\subimport), and \\subfile command.
+
+--filter-script=filterscript    Run files through this filterscript (full path preferred) before processing.
+                       The filterscript must take STDIN input and output to STDOUT.
+                       When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+--ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
+                       Turn this flag on to ignore STDERR from the filter script.
+
+
 
 --help
 -h                     Show this help text.
@@ -4095,7 +4233,7 @@ define new C<\DIFadd> and C<\DIFdel> commands, which provide a wrapper for these
 using them for the text but not for the link defining command (where any markup would cause
 errors).
 
-=item C<apacite>
+=item C<apacite>, C<biblatex>
 
 Redefine the commands recognised as citation commands.
 
@@ -4401,11 +4539,25 @@ included sections are not expanded.  The included files are assumed to
  be located in the same directories as the old and new master files,
 respectively, making it possible to organise files into old and new directories. 
 --flatten is applied recursively, so inputted files can contain further
-C<\input> statements.
+C<\input> statements.  Also handles files included by the import package
+(C<\import> and C<\subimport>), and C<\subfile> command.
 
 Use of this option might result in prohibitive processing times for
 larger documents, and the resulting difference document
 no longer reflects the structure of the input documents.
+
+=item B<--filter-script=filterscript>
+
+Run files through this filterscript (full path preferred) before processing.
+The filterscript must take STDIN input and output to STDOUT.
+When coupled with --flatten, each file will be run through the filter as it is brought in.
+
+=item B<--ignore-filter-stderr>
+
+When running with --filter-script, STDERR from the script may cause readability issues.
+Turn this flag on to ignore STDERR from the filter script.
+
+
 
 =item B<--help> or
 B<-h>
@@ -4968,6 +5120,8 @@ min
 Pr
 sec
 sup
+bibfield
+bibinfo
 [Hclbkdruvt]
 [`'^"~=.]
 _
@@ -4994,6 +5148,7 @@ framebox
 footnote
 footnotetext
 framebox
+href
 intertext
 part
 (sub){0,2}section\*?
@@ -5007,6 +5162,7 @@ savebox
 sbox
 shortintertext
 shortstack
+sidenote
 signature
 text.*
 value
@@ -5151,7 +5307,7 @@ verbatim[*]?
 %DIF CULINECHBAR PREAMBLE
 \RequirePackage[normalem]{ulem}
 \RequirePackage[dvips]{changebar}
-\RequirePackage{color}
+\RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\uwave{#1}}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\sout{#1}}\protect\cbdelete}
 %DIF END CULINECHBAR PREAMBLE

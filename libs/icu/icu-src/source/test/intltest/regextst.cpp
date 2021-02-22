@@ -31,6 +31,7 @@
 
 #include "unicode/localpointer.h"
 #include "unicode/regex.h"
+#include "unicode/stringpiece.h"
 #include "unicode/uchar.h"
 #include "unicode/ucnv.h"
 #include "unicode/uniset.h"
@@ -105,6 +106,7 @@ void RegexTest::runIndexedTest( int32_t index, UBool exec, const char* &name, ch
     TESTCASE_AUTO(TestBug13631);
     TESTCASE_AUTO(TestBug13632);
     TESTCASE_AUTO(TestBug20359);
+    TESTCASE_AUTO(TestBug20863);
     TESTCASE_AUTO_END;
 }
 
@@ -3499,11 +3501,15 @@ void RegexTest::regex_find(const UnicodeString &pattern,
     //    positions.
     //
     parsePat = RegexPattern::compile("<(/?)(r|[0-9]+)>", 0, pe, status);
-    REGEX_CHECK_STATUS_L(line);
+    if (!assertSuccess(WHERE, status) ) {
+        goto cleanupAndReturn;
+    }
 
     unEscapedInput = inputString.unescape();
     parseMatcher = parsePat->matcher(unEscapedInput, status);
-    REGEX_CHECK_STATUS_L(line);
+    if (!assertSuccess(WHERE, status) ) {
+        goto cleanupAndReturn;
+    }
     while(parseMatcher->find()) {
         parseMatcher->appendReplacement(deTaggedInput, "", status);
         REGEX_CHECK_STATUS;
@@ -4202,6 +4208,8 @@ void RegexTest::PerlTests() {
         if (expected != found) {
             errln("line %d: Expected %smatch, got %smatch",
                 lineNum, expected?"":"no ", found?"":"no " );
+            delete testMat;
+            delete testPat;
             continue;
         }
 
@@ -4597,6 +4605,8 @@ void RegexTest::PerlTestsUTF8() {
         if (expected != found) {
             errln("line %d: Expected %smatch, got %smatch",
                 lineNum, expected?"":"no ", found?"":"no " );
+            delete testMat;
+            delete testPat;
             continue;
         }
 
@@ -5829,11 +5839,11 @@ void RegexTest::TestBug12884() {
     REGEX_ASSERT(status == U_REGEX_TIME_OUT);
 
     // UText, wrapping non-UTF-16 text, also takes a different execution path.
-    const char *text8 = u8"¿Qué es Unicode?  Unicode proporciona un número único para cada"
+    StringPiece text8(u8"¿Qué es Unicode?  Unicode proporciona un número único para cada"
                           "carácter, sin importar la plataforma, sin importar el programa,"
-                          "sin importar el idioma.";
+                          "sin importar el idioma.");
     status = U_ZERO_ERROR;
-    LocalUTextPointer ut(utext_openUTF8(NULL, text8, -1, &status));
+    LocalUTextPointer ut(utext_openUTF8(NULL, text8.data(), text8.length(), &status));
     REGEX_CHECK_STATUS;
     m.reset(ut.getAlias());
     m.find(status);
@@ -5912,5 +5922,96 @@ void RegexTest::TestBug20359() {
     assertEquals(WHERE, 3, uregex_start(re.getAlias(), 0, &status));
     assertSuccess(WHERE, status);
 }
+
+
+void RegexTest::TestBug20863() {
+    // Test that patterns with a large number of named capture groups work correctly.
+    //
+    // The ticket was not for a bug per se, but to reduce memory usage by using lazy
+    // construction of the map from capture names to numbers, and decreasing the
+    // default size of the map.
+
+    constexpr int GROUP_COUNT = 2000;
+    std::vector<UnicodeString> groupNames;
+    for (int32_t i=0; i<GROUP_COUNT; ++i) {
+        UnicodeString name;
+        name.append(u"name");
+        name.append(Int64ToUnicodeString(i));
+        groupNames.push_back(name);
+    }
+
+    UnicodeString patternString;
+    for (UnicodeString name: groupNames) {
+        patternString.append(u"(?<");
+        patternString.append(name);
+        patternString.append(u">.)");
+    }
+
+    UErrorCode status = U_ZERO_ERROR;
+    UParseError pe;
+    LocalPointer<RegexPattern> pattern(RegexPattern::compile(patternString, pe, status), status);
+    if (!assertSuccess(WHERE, status)) {
+        return;
+    }
+
+    for (int32_t i=0; i<GROUP_COUNT; ++i) {
+        int32_t group = pattern->groupNumberFromName(groupNames[i], status);
+        if (!assertSuccess(WHERE, status)) {
+            return;
+        }
+        assertEquals(WHERE, i+1, group);
+        // Note: group 0 is the overall match; group 1 is the first separate capture group.
+    }
+
+    // Verify that assignment of patterns with various combinations of named capture work.
+    // Lazy creation of the internal named capture map changed the implementation logic here.
+    {
+        LocalPointer<RegexPattern> pat1(RegexPattern::compile(u"abc", pe, status), status);
+        LocalPointer<RegexPattern> pat2(RegexPattern::compile(u"a(?<name>b)c", pe, status), status);
+        assertSuccess(WHERE, status);
+        assertFalse(WHERE, *pat1 == *pat2);
+        *pat1 = *pat2;
+        assertTrue(WHERE, *pat1 == *pat2);
+        assertEquals(WHERE, 1, pat1->groupNumberFromName(u"name", status));
+        assertEquals(WHERE, 1, pat2->groupNumberFromName(u"name", status));
+        assertSuccess(WHERE, status);
+    }
+
+    {
+        LocalPointer<RegexPattern> pat1(RegexPattern::compile(u"abc", pe, status), status);
+        LocalPointer<RegexPattern> pat2(RegexPattern::compile(u"a(?<name>b)c", pe, status), status);
+        assertSuccess(WHERE, status);
+        assertFalse(WHERE, *pat1 == *pat2);
+        *pat2 = *pat1;
+        assertTrue(WHERE, *pat1 == *pat2);
+        assertEquals(WHERE, 0, pat1->groupNumberFromName(u"name", status));
+        assertEquals(WHERE, U_REGEX_INVALID_CAPTURE_GROUP_NAME, status);
+        status = U_ZERO_ERROR;
+        assertEquals(WHERE, 0, pat2->groupNumberFromName(u"name", status));
+        assertEquals(WHERE, U_REGEX_INVALID_CAPTURE_GROUP_NAME, status);
+        status = U_ZERO_ERROR;
+    }
+
+    {
+        LocalPointer<RegexPattern> pat1(RegexPattern::compile(u"a(?<name1>b)c", pe, status), status);
+        LocalPointer<RegexPattern> pat2(RegexPattern::compile(u"a(?<name2>b)c", pe, status), status);
+        assertSuccess(WHERE, status);
+        assertFalse(WHERE, *pat1 == *pat2);
+        *pat2 = *pat1;
+        assertTrue(WHERE, *pat1 == *pat2);
+        assertEquals(WHERE, 1, pat1->groupNumberFromName(u"name1", status));
+        assertSuccess(WHERE, status);
+        assertEquals(WHERE, 1, pat2->groupNumberFromName(u"name1", status));
+        assertSuccess(WHERE, status);
+        assertEquals(WHERE, 0, pat1->groupNumberFromName(u"name2", status));
+        assertEquals(WHERE, U_REGEX_INVALID_CAPTURE_GROUP_NAME, status);
+        status = U_ZERO_ERROR;
+        assertEquals(WHERE, 0, pat2->groupNumberFromName(u"name2", status));
+        assertEquals(WHERE, U_REGEX_INVALID_CAPTURE_GROUP_NAME, status);
+        status = U_ZERO_ERROR;
+    }
+
+}
+
 
 #endif  /* !UCONFIG_NO_REGULAR_EXPRESSIONS  */

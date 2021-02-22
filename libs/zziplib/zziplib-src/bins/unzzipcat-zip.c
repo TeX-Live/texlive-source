@@ -24,35 +24,9 @@
 #include <io.h>
 #endif
 
-static int exitcode(int e)
-{
-    switch (e)
-    {
-        case ZZIP_NO_ERROR:
-            return EXIT_OK;
-        case ZZIP_OUTOFMEM: /* out of memory */
-            return EXIT_ENOMEM;
-        case ZZIP_DIR_OPEN: /* failed to open zipfile, see errno for details */
-            return EXIT_ZIP_NOT_FOUND;
-        case ZZIP_DIR_STAT: /* failed to fstat zipfile, see errno for details */
-        case ZZIP_DIR_SEEK: /* failed to lseek zipfile, see errno for details */
-        case ZZIP_DIR_READ: /* failed to read zipfile, see errno for details */
-        case ZZIP_DIR_TOO_SHORT:
-        case ZZIP_DIR_EDH_MISSING:
-            return EXIT_FILEFORMAT;
-        case ZZIP_DIRSIZE:
-            return EXIT_EARLY_END_OF_FILE;
-        case ZZIP_ENOENT:
-            return EXIT_FILE_NOT_FOUND;
-        case ZZIP_UNSUPP_COMPR:
-            return EXIT_UNSUPPORTED_COMPRESSION;
-        case ZZIP_CORRUPTED:
-        case ZZIP_UNDEF:
-        case ZZIP_DIR_LARGEFILE:
-            return EXIT_FILEFORMAT;
-    }
-    return EXIT_ERRORS;
-}
+/* Functions in unzzip.c: */
+extern int exitcode(int);
+extern FILE* create_fopen(char*, char*, int);
 
 static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
 {
@@ -69,35 +43,6 @@ static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
     }
 }
 
-static void makedirs(const char* name)
-{
-      char* p = strrchr(name, '/');
-      if (p) {
-          char* dir_name = _zzip_strndup(name, p-name);
-          makedirs(dir_name);
-          free (dir_name);
-      } 
-      if (_zzip_mkdir(name, 0775) == -1 && errno != EEXIST)
-      {
-          DBG3("while mkdir %s : %s", name, strerror(errno));
-      }
-      errno = 0;
-}
-
-static FILE* create_fopen(char* name, char* mode, int subdirs)
-{
-   if (subdirs)
-   {
-      char* p = strrchr(name, '/');
-      if (p) {
-          char* dir_name = _zzip_strndup(name, p-name);
-          makedirs(dir_name); 
-          free (dir_name);
-      }
-   }
-   return fopen(name, mode);
-}
-
 static int unzzip_cat (int argc, char ** argv, int extract)
 {
     int done = 0;
@@ -107,7 +52,7 @@ static int unzzip_cat (int argc, char ** argv, int extract)
     
     if (argc == 1)
     {
-        printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+        printf (__FILE__ " version " ZZIP_PACKAGE_NAME " " ZZIP_PACKAGE_VERSION "\n");
         return EXIT_OK; /* better provide an archive argument */
     }
     

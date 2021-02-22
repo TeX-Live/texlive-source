@@ -1,6 +1,6 @@
 # This file is part of CWEB.
 # It is distributed WITHOUT ANY WARRANTY, express or implied.
-# Version 3.64 --- February 2002
+# Version 4.1 --- February 2021
 
 # Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -63,8 +63,10 @@ RM= /bin/rm
 CP= /bin/cp
 
 # uncomment the second line if you use pdftex to bypass .dvi files
+# uncomment the third line if you use xetex to bypass .dvi files
 PDFTEX = dvipdfm
 #PDFTEX = pdftex
+#PDFTEX = xetex
 
 ##########  You shouldn't have to change anything after this point #######
 
@@ -105,6 +107,7 @@ ALL =  common.w ctangle.w cweave.w prod.w \
 	case "$(PDFTEX)" in \
 	 dvipdfm ) tex "\let\pdf+ \input $*"; dvipdfm $* ;; \
 	 pdftex ) pdftex $* ;; \
+	 xetex ) xetex $* ;; \
 	esac
 
 all: ctangle cweave
@@ -125,7 +128,7 @@ SAVEctangle.c:
 SAVEcommon.c:
 	$(CP) common.c SAVEcommon.c
 
-common.c: common.w $(CCHANGES)
+common.c: common.w $(CCHANGES) common.h
 	$(CTANGLE) common $(CCHANGES)
 
 common.o: common.c
@@ -134,13 +137,13 @@ common.o: common.c
 ctangle: ctangle.o common.o
 	$(CC) $(LINKFLAGS) -o ctangle ctangle.o common.o 
 
-ctangle.c: ctangle.w $(TCHANGES)
+ctangle.c: ctangle.w $(TCHANGES) common.h
 	$(CTANGLE) ctangle $(TCHANGES)
 
 cweave: cweave.o common.o
 	$(CC) $(LINKFLAGS) -o cweave cweave.o common.o
 
-cweave.c: cweave.w $(WCHANGES)
+cweave.c: cweave.w $(WCHANGES) common.h prod.w
 	$(CTANGLE) cweave $(WCHANGES)
 
 doc: $(SOURCES:.w=.dvi)

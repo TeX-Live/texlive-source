@@ -1,0 +1,20 @@
+# Public domain.
+# You may freely use, modify and/or distribute this file.
+
+# test data for uptex virtual fonts
+uptex-vf: upjf_full.vf upjf_omit.vf upjf.dvi
+
+upjf.tfm:
+	cp -p `kpsewhich upjisr-h.tfm` upjf.tfm
+
+upjf_full.vf: upjf.tfm upjf_full.cnf
+	makejvf -i -u custom -e -t upjf_full.cnf -H upjf.tfm -K upjf-g upjf-r
+	mv upjf.vf upjf_full.vf
+
+upjf_omit.vf: upjf.tfm upjf_omit.cnf
+	makejvf -i -u custom -e -t upjf_omit.cnf -H upjf.tfm -K upjf-g upjf-r
+	mv upjf.vf upjf_omit.vf
+
+upjf.dvi: upjf.tex
+	uplatex upjf.tex
+

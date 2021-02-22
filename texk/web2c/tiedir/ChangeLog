@@ -1,6 +1,66 @@
+2020-07-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Format types in boldface prior to their definition.
+
+2020-07-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Fix case glitch in section 18.
+
+2020-07-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: We do use 'enum' in TeX Live's 'tie'.
+
+2020-06-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Mention WEBINPUTS environment variable in \S59.
+
+2020-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Minor change in section 1
+
+2020-06-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Put 'date' at the bottom of table-of-contents page.
+
+2020-06-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Underscore 'enum'erated values in index.
+
+2020-06-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Format changes similar to CWEB.
+
+2020-05-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Format title page similar to CWEB.
+
+2020-05-29  Karl Berry  <karl@freefriends.org>
+
+	* tie-w2c.ch: pd not copyright.
+
+2020-05-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Incorporated Igor Liferenko's changes.
+
+2020-04-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Fix type format in section 60.
+
+2020-04-27  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Editorial modifications for tie.w.
+
+2020-04-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Fix several typos in tie.w.
+
+2020-04-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Fix typographic deviations from original tie.
+
 2018-01-18  Karl Berry  <karl@tug.org>
 
-	* tie.w (print, print_ln): printf %s instead of direct string
+	* tie-w2c.w (print, print_ln): printf %s instead of direct string
 	(from Debian).
 
 2014-02-12  Peter Breitenlohner  <peb@mppmu.mpg.de>

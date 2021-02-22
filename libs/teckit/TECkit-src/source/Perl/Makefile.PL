@@ -12,7 +12,7 @@ $c_ext = '.cpp';
 $o_ext = ($^O =~ m/win32/o) ? '.obj' : '.o';
 push(@ExtUtils::MakeMaker::Overridable, qw(pm_to_blib)) if ($^O eq 'MSWin32');
 
-$define = '-I.. "-I../Public-headers" -I../../zlib-1.2.3 -I../..';
+$define = '-I.. "-I../Public-headers" -I../../zlib-1.2.11 -I../..';
 $lddlflags = $Config{'lddlflags'};
 if ($Config{'byteorder'} eq '4321')
 { $define .= ' -DTARGET_RT_BIG_ENDIAN'; }
@@ -26,7 +26,7 @@ $define .= " -DTRACING" if ($opt_d);
 if ($^O =~ m/win32/oi)
 {
     $lddlflags =~ s/:x86/:I386/o;
-    $lddlflags .= " ../../zlib-1.2.3/zlib.lib";
+    $lddlflags .= " ../../zlib-1.2.11/zlib.lib";
 #    $libs = 'strmbase.lib msvcprt.lib';
     $define .= ' -DWIN32 -GX -Fo$@';
     $ccflags = $Config{'ccflags'};

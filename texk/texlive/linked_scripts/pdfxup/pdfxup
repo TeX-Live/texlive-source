@@ -2,153 +2,233 @@
 shopt -s extglob
 shopt -s lastpipe
 
-VERSION="1.50"
-VDATE="2019/12/31"
+VERSION="2.00"
+VDATE="2020/12/17"
 ## see release notes at the end of this file.
 
 
-: ${GS=`which gs`}
-if [ ! $? ]; then
-    echo "ghostscript not found; aborting.";
-    exit 1;
-fi
-: ${PDFLATEX=`which pdflatex`}
-if [ ! $? ]; then
-    echo "pdflatex not found; aborting.";
-    exit 1;
-fi
+## (c) 2020/12/17 Nicolas Markey <pdfxup at markey dot fr>
+##
+## This work may  be distributed and/or modified under  the conditions of
+## the LaTeX Project  Public License, either version 1.3  of this license
+## or (at  your option)  any later version.   The latest version  of this
+## license is in
+## 
+##   http://www.latex-project.org/lppl.txt
+## 
+## and version 1.3 or later is part of all distributions of LaTeX version
+## 2005/12/01 or later.
+## 
+## This work has the LPPL maintenance status `maintained'.
+## The Current Maintainer of this work is Nicolas Markey.
 
+
+
+## Roadmap
+## 1) definition of some functions:
+##    defaultvalues() and setdefaultvalues()
+##    usage()
+##    myecho()
+##    dimtopt() and testdim()
+##    ifinrangelist()
+##    setconfigfile() [look for configuration file]
+##    cleancslor()    [clean comma-sep. list of ranges]
+##    cleanup
+## 2) script:
+##    - set default options
+##    - test for ghostscript and pdflatex
+##    - process command-line options
+##    - check number of pages
+##    - set up variables
+##    - compute bounding box
+##    - prepare latex file 
+##    - create PDF
+##    - clean up
+## 3) manual, examples and release notes
+##
+
+######################################################################
 ## default values for all options.
+######################################################################
 ## Can be modified from command line
-## For instance, run "VERB=4 pdfxup ..." 
+## For instance, "dfpdfxupBB=1-4 pdfxup ..." automatically sets "-bb=1-4"
+## (might be useful for defining derived scripts)
 function defaultvalues()
 {
-  : ${dfpdfxupCOLS=2}
-  : ${dfpdfxupROWS=1}
-  : ${dfpdfxupLANDSC=1}
-  : ${dfpdfxupPAP="a4"}
+  : ${dfpdfxupNB_COLUMNS=2}
+  : ${dfpdfxupNB_ROWS=1}
+  : ${dfpdfxupLANDSCAPE=1}
+  : ${dfpdfxupPAPERSIZE="a4"}
   : ${dfpdfxupBOOKLET=0}
   : ${dfpdfxupCLIP=1}
-  : ${dfpdfxupOUTF="pdfxup.pdf"}
-  : ${dfpdfxupIHM="5pt"}
-  : ${dfpdfxupIVM="5pt"}
-  : ${dfpdfxupIM="5pt"}
-  : ${dfpdfxupHM="5pt"}
-  : ${dfpdfxupVM="5pt"}
-  : ${dfpdfxupM="5pt"}
-  : ${dfpdfxupIHS="1pt"}
-  : ${dfpdfxupIVS="1pt"}
-  : ${dfpdfxupIS="1pt"}
-  : ${dfpdfxupFW=".4pt"}
+  : ${dfpdfxupOUTPUTFILE="pdfxup.pdf"}
+  : ${dfpdfxupINNER_HMARGIN="5pt"}
+  : ${dfpdfxupINNER_VMARGIN="5pt"}
+  : ${dfpdfxupINNER_MARGINS="5pt"}
+  : ${dfpdfxupHMARGIN="5pt"}
+  : ${dfpdfxupVMARGIN="5pt"}
+  : ${dfpdfxupMARGINS="5pt"}
+  : ${dfpdfxupINTERM_HSPACE="1pt"}
+  : ${dfpdfxupINTERM_VSPACE="1pt"}
+  : ${dfpdfxupINTERM_SPACES="1pt"}
+  : ${dfpdfxupFRAME_WIDTH=".4pt"}
   : ${dfpdfxupPAGES="-"}
-  : ${dfpdfxupBB="-"}
-  : ${dfpdfxupNOBB=""}
-  : ${dfpdfxupKBB="0"}
-  : ${dfpdfxupGBB="0"}
-  : ${dfpdfxupVERB=1}
-  : ${dfpdfxupDEBUG=0}
-  : ${dfpdfxupWMPERIOD=1}
-}
-
-function usage()
-{
-    defaultvalues;
-    echo "pdfxup: n-up pages of a PDF document, preserving readability
-usage: `basename $0` [OPTIONS] file
-Available OPTIONS are:
-  -x n           n columns per page                    [default: \"$dfpdfxupCOLS\"]
-  -y n           n lines per page                      [default: \"$dfpdfxupROWS\"]
-  -l [0|1]       landscape-mode                        [default: \"$dfpdfxupLANDSC\"]
-  -b [0|1|le|se] booklet-mode                          [default: \"$dfpdfxupBOOKLET\"]
-  -c [0|1]       clip pages to bounding box	       [default: \"$dfpdfxupCLIP\"]
-  -im n          inner margins                         [default: \"$dfpdfxupIM\"]
-  -m n           margins                               [default: \"$dfpdfxupM\"]
-  -is n          interm. spaces                        [default: \"$dfpdfxupIS\"]
-  -fw n          frame width                           [default: \"$dfpdfxupFW\"] 
-  -o file        write output to file                  [default: \"$dfpdfxupOUTF\"]
-  -p pages       only include these pages              [default: \"$dfpdfxupPAGES\" (all)]
-  -nobb pages    pages to omit when computing b.box    [default: \"$dfpdfxupNOBB\" (none)]
-  -bb pages      pages to use for computing b.box      [default: \"$dfpdfxupBB\" (all)]
-  -g [0|1]       only computes bounding box            [default: \"$dfpdfxupGBB\"]
-  -s x y X Y     force bounding box                    [default: unset]
-  -V [0-3]       select verbosity                      [default: \"$dfpdfxupVERB\"]
-  -w file	 add watermarking		       [default: none]
-  -wp n		 repeat last n pages of watermark file [default: \"$dfpdfxupWMPERIOD\"]
-  -i             ask before overwriting/removing files
-  -d             debug mode: keep intermediary files
-  -v             show version number and exit";
-
-##
-## Some options are not presented, for the sake of brevity...
-##
-##  -ihm n         inner horizontal margin               [default: \"$dfpdfxupIHM\"]
-##  -ivm n         inner vertical margin                 [default: \"$dfpdfxupIVM\"]
-##  -hm n          horizontal margin                     [default: \"$dfpdfxupHM\"]
-##  -vm n          vertical margin                       [default: \"$dfpdfxupVM\"]
-##  -ihs n         interm. horizontal space              [detault: \"$dfpdfxupIHS\"]
-##  -ivs n         interm. vertical space                [detault: \"$dfpdfxupIVS\"]
-##  -kbb	   keep original bounding box            [default: \"$dfpdfxupKBB\"]
-##  -ps s          output paper size                     [default: \"$dfpdfxupPAP\"]
-##  -q             run quietly (equiv. '-V=0')
-##  -h             show this help message
-##
-##
-##
-
-    exit 0;
+  : ${dfpdfxupINCLUDE_FOR_BBOX="-"}
+  : ${dfpdfxupEXCLUDE_FOR_BBOX=""}
+  : ${dfpdfxupKEEP_ORIG_BBOX="0"}
+  : ${dfpdfxupCOMPUTE_BBOX_ONLY="0"}
+  : ${dfpdfxupVERBOSITY="1"}
+  : ${dfpdfxupDEBUG="0"}
+  : ${dfpdfxupWATERMARK_PERIOD="1"}
+  : ${dfpdfxupSILENTLY_OVERWRITE="0"}
+  : ${dfpdfxupSET_BBOX=""}
+  : ${dfpdfxupTIGHT_FRAME="0"}
 }
 
 function setdefaultvalues()
 {
-    COLS=$dfpdfxupCOLS;
-    ROWS=$dfpdfxupROWS;
-    LANDSC=$dfpdfxupLANDSC;
+    # number of columns
+    NB_COLUMNS=$dfpdfxupNB_COLUMNS;
+    # number of rows
+    NB_ROWS=$dfpdfxupNB_ROWS;
+    # landscape mode (1=landscape, 0=portrait)
+    LANDSCAPE=$dfpdfxupLANDSCAPE;
+    # booklet mode ('se'=booklet 'short-edge', 'le'=booklet 'long-edge')
     BOOKLET=$dfpdfxupBOOKLET;
+    # clip pages to bounding box (1=yes, 0=no)
     CLIP=$dfpdfxupCLIP;
-    PAP=$dfpdfxupPAP;
-    OUTF=$dfpdfxupOUTF
-    IHM=$dfpdfxupIHM;
-    IVM=$dfpdfxupIVM;
-    IM=$dfpdfxupIM;
-    HM=$dfpdfxupHM;
-    VM=$dfpdfxupVM;
-    M=$dfpdfxupM;
-    IHS=$dfpdfxupIHS;
-    IVS=$dfpdfxupIVS;
-    IS=$dfpdfxupIS;
-    FW=$dfpdfxupFW;
-    ## don't overwrite VERB if set on command line
-    : ${VERB=$dfpdfxupVERB};
+    # papersize ('a4', 'letter', ...)
+    PAPERSIZE=$dfpdfxupPAPERSIZE;
+    # name of output file
+    OUTPUTFILE=$dfpdfxupOUTPUTFILE
+    # (minimal) inner horizontal margin (between frame and logical page)
+    INNER_HMARGIN=$dfpdfxupINNER_HMARGIN;
+    # (minimal) inner vertical margin (between frame and logical page)
+    INNER_VMARGIN=$dfpdfxupINNER_VMARGIN;
+    # (minimal) inner margin (both horizontal and vertical)
+    INNER_MARGINS=$dfpdfxupINNER_MARGINS;
+    # horizontal margin (between content and border of physical page)
+    HMARGIN=$dfpdfxupHMARGIN;
+    # vertical margin (between content and border of physical page)
+    VMARGIN=$dfpdfxupVMARGIN;
+    # margin (between content and border of physical page)
+    MARGINS=$dfpdfxupMARGINS;
+    # intermediate horizontal space (between logical pages)
+    INTERM_HSPACE=$dfpdfxupINTERM_HSPACE;
+    # intermediate vertical space (between logical pages)
+    INTERM_VSPACE=$dfpdfxupINTERM_VSPACE;
+    # intermediate space (between logical pages)
+    INTERM_SPACES=$dfpdfxupINTERM_SPACES;
+    # frame width
+    FRAME_WIDTH=$dfpdfxupFRAME_WIDTH;
+    # verbosity level
+    ## don't overwrite VERBOSITY if set on command line
+    : ${VERBOSITY=$dfpdfxupVERBOSITY};
+    # debug mode
     DEBUG=$dfpdfxupDEBUG;
-    WATERMARK="";
-    WATERMARKPERIOD=$dfpdfxupWMPERIOD;
-    KBB=$dfpdfxupKBB;
-    GBB=$dfpdfxupGBB;
-    SBB=0;
-    x0=-1
-    y0=-1
-    h0=-1
-    w0=-1
-    ## the names for h and w should actually be X and Y: they are not width and height, 
-    ## but coordinates of upper right corner.
+    # file used for watermarking
+    WATERMARK_FILE="";
+    # number of pages to repeat when watermarking
+    WATERMARK_PERIOD=$dfpdfxupWATERMARK_PERIOD;
+    # keep original bounding box (hence do not recompute)
+    KEEP_ORIG_BBOX=$dfpdfxupKEEP_ORIG_BBOX;
+    # only compute bounding box (hence do not produce PDF output)
+    COMPUTE_BBOX_ONLY=$dfpdfxupCOMPUTE_BBOX_ONLY;
+    # overwrite output file without warning
+    SILENTLY_OVERWRITE=$dfpdfxupSILENTLY_OVERWRITE;
+    # make frame tight around logical pages
+    TIGHT_FRAME=$dfpdfxupTIGHT_FRAME;
+    # initial bounding box
+    SET_BBOX=$dfpdfxupSET_BBOX
 
-    ## Notice: PAGES, BB and NOBB will be set to default values if empty after
-    ## processing options
+    ## Notice: the names for h and w should actually be X and Y:
+    ##    they are not width and height, but coordinates of upper right corner.
+    ## Notice: PAGES, INCLUDE_FOR_BBOX and EXCLUDE_FOR_BBOX will be set to default values if empty after
+    ##    processing options
 }
 
+######################################################################
+## Usage
+######################################################################
+function usage()
+{
+    defaultvalues;
+    if [[ "$dfpdfxupPAGES" == "-" ]]; then
+	explicitPAGES=" (all)";
+    fi
+    if [[ "$dfpdfxupEXCLUDE_FOR_BBOX" == "" ]]; then
+	explicitEXCLUDE_FOR_BBOX=" (none)";
+    fi
+    if [[ "$dfpdfxupINCLUDE_FOR_BBOX" == "-" ]]; then
+	explicitBB=" (all)";
+    fi
+    if [[ "$dfpdfxupSET_BBOX" == "" ]]; then
+	explicitSET_BBOX=" (unset)";
+    fi
+    echo "pdfxup: n-up pages of a PDF document, preserving readability
+usage: `basename $0` [OPTIONS] file
+The main OPTIONS are:
+  -x n           n columns per page                    [default: \"$dfpdfxupNB_COLUMNS\"]
+  -y n           n lines per page                      [default: \"$dfpdfxupNB_ROWS\"]
+  -l [0|1]       landscape-mode                        [default: \"$dfpdfxupLANDSCAPE\"]
+  -b [0|1|le|se] booklet-mode                          [default: \"$dfpdfxupBOOKLET\"]
+  -cf file	 import config. parameters from file   [default: none]
+  -m n           margins                               [default: \"$dfpdfxupMARGINS\"]
+  -fw n          frame width                           [default: \"$dfpdfxupFRAME_WIDTH\"] 
+  -o file        write output to file                  [default: \"$dfpdfxupOUTPUTFILE\"]
+  -p pages       only include these pages              [default: \"$dfpdfxupPAGES\"$explicitPAGES]
+  -nobb pages    pages to omit when computing b.box    [default: \"$dfpdfxupEXCLUDE_FOR_BBOX\"$explicitEXCLUDE_FOR_BBOX]
+  -bb pages      pages to use for computing b.box      [default: \"$dfpdfxupINCLUDE_FOR_BBOX\"$explicitBB]
+  -g [0|1]       only computes bounding box            [default: \"$dfpdfxupCOMPUTE_BBOX_ONLY\"]
+  -s x y X Y     force bounding box                    [default: \"$dfpdfxupSET_BBOX\"$explicitSET_BBOX]
+  -w file	 add watermarking		       [default: none]
+  -wp n		 repeat last n pages of watermark file [default: \"$dfpdfxupWATERMARK_PERIOD\"]
+  -i             ask before overwriting/removing files
+  -d             debug mode: keep intermediary files
+  -v             show version number and exit
+See the manual page ('man pdfxup') for the list of all options.";
+
+##
+## Some options are not presented, for the sake of brevity...
+##
+##  -c [0|1]       clip pages to bounding box	       [default: \"$dfpdfxupCLIP\"]
+##  -im n          inner margins                         [default: \"$dfpdfxupINNER_MARGINS\"]
+##  -ihm n         inner horizontal margin               [default: \"$dfpdfxupINNER_HMARGIN\"]
+##  -ivm n         inner vertical margin                 [default: \"$dfpdfxupINNER_VMARGIN\"]
+##  -hm n          horizontal margin                     [default: \"$dfpdfxupHMARGIN\"]
+##  -vm n          vertical margin                       [default: \"$dfpdfxupVMARGIN\"]
+##  -ihs n         interm. horizontal space              [detault: \"$dfpdfxupINTERM_HSPACE\"]
+##  -ivs n         interm. vertical space                [detault: \"$dfpdfxupINTERM_VSPACE\"]
+##  -is n          interm. spaces                        [default: \"$dfpdfxupINTERM_SPACES\"]
+##  -kbb	   keep original bounding box            [default: \"$dfpdfxupKEEP_ORIG_BBOX\"]
+##  -ow            allow overwriting                     [default: \"$dfpdfxupSILENTLY_OVERWRITE\"]
+##  -ps s          output paper size                     [default: \"$dfpdfxupPAPERSIZE\"]
+##  -tf            draw tight frame around each page     [default: \"$dfpdfxupTIGHT_FRAME\"]
+##  -q             run quietly (equiv. '-V=0')
+##  -h             show this help message
+##   -V [0-3]       select verbosity                      [default: \"$dfpdfxupVERBOSITY\"]
+##
+##
+##
+    exit 0;
+}
+
+######################################################################
+## Auxiliary functions
+######################################################################
 ## myecho handles several levels of verbosity
 function myecho()
 {
     ECHO=0;
     case $1 in
 	+([0-9])\+)
-            if [[ $VERB -ge ${1%+} ]]; then ECHO=1; fi
+            if [[ $VERBOSITY -ge ${1%+} ]]; then ECHO=1; fi
 	    ;;
         +([0-9]))
-	    if [[ $VERB -eq $1 ]]; then ECHO=1; fi
+	    if [[ $VERBOSITY -eq $1 ]]; then ECHO=1; fi
 	    ;;
 	+([0-9])-)
-	    if [[ $VERB -le ${1%-} ]]; then ECHO=1; fi
+	    if [[ $VERBOSITY -le ${1%-} ]]; then ECHO=1; fi
 	    ;;
     esac
     if [[ $ECHO == 1 ]]; then
@@ -163,14 +243,12 @@ function myecho()
     fi
 }
 
-## function to debug option processing
-function showopts()
+DELAYEDECHO="";
+function delaymyecho ()
 {
-    if [[ OPTS -eq 0 ]]; then
-	OPTS=1;
-    fi
-    myecho 4+ "     * $1"
+    DELAYEDECHO+="\n$1";
 }
+
 
 ## transforms given dimension (in cm, mm, in) in pt
 function dimtopt() 
@@ -181,15 +259,15 @@ function dimtopt()
 	    ;;
 	*mm)
 	    dim=${dim%mm};
-	    eval dim=$((dim*2845/1000))pt;
+	    eval dim=$((dim*2845/100))pt;
 	    ;;
 	*cm)
 	    dim=${dim%cm};
-	    eval dim=$((dim*2845/100))pt;
+	    eval dim=$((dim*284/10))pt;
 	    ;;
 	*in)
 	    dim=${dim%in};
-	    eval dim=$((dim*7228/100))pt;
+	    eval dim=$((dim*723/10))pt;
 	    ;;
 	*[!0-9]*)
 	    ## should not occur... has been filtered out by main 'case'
@@ -258,6 +336,28 @@ function ifinrangelist()
     return;
 }
 
+## look for config file
+function setconfigfile()
+{
+    if [[ `echo "$1"|grep -v "/"` ]]; then
+	if [[ `echo "$1"|grep "\.xup$"` && $KPSEWHICH ]]; then
+	    CFFILE=`$KPSEWHICH $1`
+	else
+	    CFFILE=`$KPSEWHICH $1.xup`
+	fi
+    fi
+    if [[ (! -e $CFFILE) ]]; then
+	if [[ -e $1 ]]; then
+	    CFFILE=$1
+	else
+	    if [[ -e $1.xup ]]; then
+		CFFILE=$1.xup
+	    fi
+	fi
+    fi
+    #echo $CFFILE;
+}
+ 
 ## normalize list + count number of pages to be displayed
 function cleancslor()
 {
@@ -266,17 +366,46 @@ function cleancslor()
     for i in ${list//,/$IFS}; do
         case $i in
 	    +([0-9]))
-                 result+="$i,";
-                 nbpages+=1;;
+                 if [[ $i -le $nbp ]]; then
+		     result+="$i,";
+                     nbpages+=1;
+		 else
+		     myecho 1+ "   $file has $nbp page(s); page $i does not exist."
+		 fi
+		 ;;
 	    -+([0-9]))
-                 result+="1$i,";
-		 nbpages+=${i#-};;     
+                 if [[ $i -le $nbp ]]; then
+                     result+="1$i,";
+		     nbpages+=${i#-};
+		 else
+		     myecho 1+ "   $file has $nbp page(s); changed 1$i to 1-$nbp."
+                     result+="1$nbp,";
+		     nbpages+=${nbp#-};
+		 fi
+		 ;;
             +([0-9])-)
-                 result+="$i$nbp,";
-		 nbpages+=$(expr $nbp + 1 - ${i%-});;     
-            +([0-9])-+([0-9]))
-		 result+="$i,";
-		 nbpages+=$(expr 1 + `echo $i|cut -d- -f2` - `echo $i|cut -d- -f1`);;
+                 if [[ $i -le $nbp ]]; then
+		     result+="$i$nbp,";
+		     nbpages+=$(expr $nbp + 1 - ${i%-});
+		 else
+		     myecho 1+ "   $file has $nbp page(s); pages $i do not exist."
+		 fi
+		 ;;
+	    +([0-9])-+([0-9]))
+	         fstp=`echo $i|cut -d- -f1`
+		 if [[ $fstp -gt $nbp ]]; then
+		     myecho 1+ "   $file has $nbp page(s); range $i omitted."
+		 fi
+		 lstp=`echo $i|cut -d- -f2`
+		 if [[ $lstp -gt $nbp ]]; then
+		     myecho 1+ "   $file has $nbp page(s); range $i changed to $fstp-$nbp."
+		     lstp=$nbp;
+		 fi
+		 if [[ $lstp -ge $fstp ]]; then
+		     result+="$fstp-$lstp,";
+		     nbpages+=$(expr 1 + $lstp - $fstp)
+		 fi
+		 ;;
 	    -)
 		 result+="1-$nbp,";
 		 nbpages+=$nbp;;
@@ -299,6 +428,15 @@ function cleancslor()
     done
 }
 
+function cleanup()
+{
+    if [[ $DEBUG == 0 ]]; then
+	myecho 1+ "-> cleaning";
+	myecho 2+ " * rm $RMopt *$filename.*"
+	rm $RMopt *$filename.* 
+    fi
+}
+
 ARGS=$@;
 if [ $# -eq 0 ]; then
   usage;
@@ -307,84 +445,108 @@ fi
 defaultvalues;
 setdefaultvalues;
 filename="temp-pdfxup-`date +%s`";
+inputfilename="input-$filename";
+watermarkfilename="watermark-$filename";
 
-OPTS=0;
+######################################################################
+## check for ghostscript and pdflatex
+######################################################################
+## GS could be specified from command-line
+: ${GS=`which gs`}
+GSVERSION=`$GS --version 2>/dev/null`;
+if [ ! "$GSVERSION" ]; then
+    echo "   /!\\ ghostscript not found; aborting.";
+    exit 1;
+fi  
+GSNTS="9.27";
+if [ ${GSVERSION%.*} -eq ${GSNTS%.*} ] && [ ${GSVERSION#*.} -gt ${GSNTS#*.} ] || \
+       [ ${GSVERSION%.*} -gt ${GSNTS%.*} ]; then
+    GSOPTFILE=" --permit-file-read=$inputfilename.pdf "
+    GSOPTWATERMARK=" --permit-file-read=$watermarkfilename.pdf "
+fi
 
+## PDFLATEX could be specified on command-line
+: ${PDFLATEX=`which pdflatex`}
+PDFLATEXVERSION=`$PDFLATEX --version 2>/dev/null |grep 3.1415|grep -i tex`;
+if [ ! "$PDFLATEXVERSION" ]; then
+    echo "   /!\\ pdflatex not found; aborting.";
+    exit 1;
+fi
+
+## KPSEWHICH could be specified on command-line
+: ${KPSEWHICH=`which kpsewhich`}
+
+
+######################################################################
+## command-line arguments
+######################################################################
 ## go through all arguments and options
-myecho 4+ "-> processing options";
-myecho 4+ "   selected options: ";
+
 while [ $# != 0 ]; do
     case $1 in
 	-x|--columns)
-	    COLS=$2;
-	    showopts "columns=$COLS";
+	    NB_COLUMNS=$2;
 	    shift 2;;
 	-x?(=)+([0-9]))
-	    COLS=`echo $1|sed -re "s/-x=?//"`;
-	    showopts "columns=$COLS";
+	    NB_COLUMNS=`echo $1|sed -re "s/-x=?//"`;
 	    shift;;
 	-y|--rows)
-	    ROWS=$2;
-	    showopts "rows=$ROWS";
+	    NB_ROWS=$2;
 	    shift 2;;
 	-y?(=)+([0-9]))
-	    ROWS=`echo $1|sed -re "s/-y=?//"`;
-	    showopts "rows=$ROWS";
+	    NB_ROWS=`echo $1|sed -re "s/-y=?//"`;
+	    shift;;
+        -nup|--nup)
+	    NB_COLUMNS=`echo $2|sed -re "s/x.*$//"`;
+	    NB_ROWS=`echo $2|sed -re "s/^.*x//"`;
+	    shift 2;;
+        -?(-)nup?(=)+([0-9])x+([0-9]))
+	    NB_COLUMNS=`echo $1|sed -re "s/x.*$//"|sed -re "s/--?nup=?//"`;
+	    NB_ROWS=`echo $1|sed -re "s/^--?nup.*x//"`;
 	    shift;;
 	-l|--landscape)
 	    case $2 in
 		1|yes|y|true)
-		    LANDSC=1;
+		    LANDSCAPE=1;
 		    SHIFT=2;
 		    ;;
 		0|no|n|false)
-		    LANDSC=0;
+		    LANDSCAPE=0;
 		    SHIFT=2;
 		    ;;
 		-*)
-		    LANDSC=1;
+		    LANDSCAPE=1;
 		    SHIFT=1;
 		    ;;
 		*)
-		    LANDSC=1;
+		    LANDSCAPE=1;
 		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
 		    #echo "Assuming you want landscape outupt...";
 		    SHIFT=1;
 	    esac
-	    if [[ $LANDSC -eq 1 ]]; then
-		showopts "landscape=true";
-	    else
-		showopts "landscape=false";
-	    fi
 	    shift $SHIFT;;
 	-l*)
 	    ANS=`echo $1|sed -re "s/-l=?//"`;
 	    case $ANS in
 		1|yes|y|true)
-		    LANDSC=1;
+		    LANDSCAPE=1;
 		    ;;
 		0|no|n|false)
-		    LANDSC=0;
+		    LANDSCAPE=0;
 		    ;;
 		*)
-		    LANDSC=1;
+		    LANDSCAPE=1;
 		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
 		    #echo "Assuming you want landscape outupt...";
 	    esac
-	    if [[ $LANDSC -eq 1 ]]; then
-		showopts "landscape=true";
-	    else
-		showopts "landscape=false";
-	    fi
 	    shift;;
 	-nl|--portrait|--no-landscape|--nolandscape)
-	    LANDSC=0;
-	    showopts "landscape=false";
+	    LANDSCAPE=0;
 	    shift;;
 	-b|--booklet)
 	    case $2 in
 		se|short-edge)
-		    BOOKLET="se";
+		    BOOKLET="2";
 		    SHIFT=2;
 		    ;;
 		1|yes|y|true|le|long-edge)
@@ -406,21 +568,15 @@ while [ $# != 0 ]; do
 		    SHIFT=1;
 	    esac
 	    if [[ $BOOKLET != 0 ]]; then
-		FW=0pt
+		FRAME_WIDTH=0pt
 		# this is the default, but can be changed by passing -fw option
-	    fi
-	    if [[ $BOOKLET -eq 1 ]]; then
-		showopts "booklet (long-edge)";
-	    else if [[ $BOOKLET -eq "se" ]]; then
-		    showopts "booklet (short edge)";
-		 fi
 	    fi
 	    shift $SHIFT;;
 	-b[^b]*|--booklet*)
 	    ANS=`echo $1|sed -re "s/--?b(ooklet)?=?//"`;
 	    case $ANS in
 		se|short-edge)
-		    BOOKLET="se";
+		    BOOKLET="2";
 		    ;;
 		1|yes|y|true|le|long-edge)
 		    BOOKLET=1;
@@ -434,14 +590,34 @@ while [ $# != 0 ]; do
 		    #echo "Assuming you want booklet outupt...";
 	    esac
 	    if [[ $BOOKLET != 0 ]]; then
-		FW=0pt
+		FRAME_WIDTH=0pt
 		# this is the default, but can be changed by passing -fw option
 	    fi
-	    if [[ $BOOKLET -eq 1 ]]; then
-		showopts "booklet (long-edge)";
-	    else if [[ $BOOKLET -eq "se" ]]; then
-		    showopts "booklet (short edge)";
-		 fi
+	    shift;;
+	-cf|--config|--config-file|-?(-)mode)
+	    case $2 in
+		-*)
+		    echo "Error. Option '$1' expects a file name; found '$2'.";
+		    echo "Aborting.";
+		    exit 0;
+		    ;;
+		*)
+		    setconfigfile $2
+		    ;;
+	    esac
+	    if [[ -e "$CFFILE" ]]; then
+		source $CFFILE
+	    else
+		myecho 0+ "   /!\ configuration file $2 not found"
+	    fi
+	    shift 2;;
+	-cf=*|--config=*|--config-file=*|-?(-)mode=*)
+	    TMP=`echo $1|cut -d= -f2-`
+	    setconfigfile $TMP
+	    if [[ -e "$CFFILE" ]]; then
+		source $CFFILE
+	    else
+		myecho 0+ "   /!\ configuration file $TMP not found"
 	    fi
 	    shift;;
 	-c|--clip)
@@ -458,11 +634,6 @@ while [ $# != 0 ]; do
 		    CLIP=1;
 		    SHIFT=1;
 	    esac
-	    if [[ $CLIP -eq 1 ]]; then
-		showopts "clip=true";
-	    else
-		showopts "clip=false";
-	    fi
 	    shift $SHIFT;;
 	-c*|--clip=*)
 	    ANS=`echo $1|sed -re "s/--?c(lip)?=?//"`;
@@ -474,324 +645,329 @@ while [ $# != 0 ]; do
 		    CLIP=0;
 		    ;;
 	    esac
-	    if [[ $CLIP -eq 1 ]]; then
-		showopts "clip=true";
-	    else
-		showopts "clip=false";
-	    fi
 	    shift;;
-	-ps|--paper|--paper-size)
-	    PAP=$2;
-	    showopts "paper size=$PAP";
+	-nc|--no-clip)
+	    CLIP=0;
+	    shift;;
+	-ps|--paper|--paper?(-)size)
+	    PAPERSIZE=$2;
 	    shift 2;;
-	-ps=*|--paper=*|--paper-size=*)
+	-ps=*|--paper=*|--paper?(-)size=*)
 	    ## '=' is compulsory, as we expect a string...
-	    ANS=`echo $1|sed -re "s/(-ps=|--paper=|--paper-size=)//"`;
-	    PAP=$ANS;
-	    showopts "paper size=$PAP";
+	    ANS=`echo $1|sed -re "s/(-ps=|--paper=|--paper-?size=)//"`;
+	    PAPERSIZE=$ANS;
 	    shift;;
-	-p|--pages|--page)
-	    PAGES+="$2,";
-	    #showopts "pages=$PAGES";
+        -p|--pages|--page)
+	    case $2 in
+		-)
+		    PAGES+="$2,";
+		    ;;
+		-*)
+		    echo "Error: option '$1' expects a range, not '$2'.";
+		    echo "Aborting.";
+		    exit 0;
+		    ;;
+		*)
+		    PAGES+="$2,";
+		    ;;
+	    esac
 	    shift 2;;
 	-p*|--page*)
 	    ANS=`echo $1|sed -re "s/--?p(ages?)?=?//"`;
 	    PAGES=+="$ANS,";
-	    #showopts "pages=$PAGES";
 	    shift;;
 	-o|--out|--output-file|--outfile)
-	    OUTF=$2;
-	    showopts "output file=$OUTF";
+	    OUTPUTFILE=$2;
 	    shift 2;;
-	-o*|--out=*|--output-file=*|--outfile=*)
-	    ANS=`echo $1|sed -re "s/--?o(ut(put-)?(file)?)?=?//"`;
-	    OUTF=$ANS;
-	    showopts "output file=$OUTF";
+	-o=*|--out=*|--output-file=*|--outfile=*)
+	    ANS=`echo $1|sed -re "s/--?o(ut(put-)?(file)?)?=//"`;
+	    OUTPUTFILE=$ANS;
+	    shift;;
+	-ow)
+	    SILENTLY_OVERWRITE="1";
 	    shift;;
 	-ihm|--innerhmargin)
-	    dimtopt $2 $dfpdfxupIHM "$1 $2";
-	    IHM=$dim;
-	    showopts "inner horizontal margin=$IHM";
+	    dimtopt $2 $dfpdfxupINNER_HMARGIN "$1 $2";
+	    INNER_HMARGIN=$dim;
 	    shift 2;;
 	-ihm?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-ihm=?//"`;
-	    dimtopt $ANS $dfpdfxupIHM $1;
-	    IHM=$dim;
-	    showopts "inner horizontal margin=$IHM";
+	    dimtopt $ANS $dfpdfxupINNER_HMARGIN $1;
+	    INNER_HMARGIN=$dim;
 	    shift;;
 	-ivm|--innervmargin)
-	    dimtopt $2 $dfpdfxupIVM "$1 $2";
-	    IVM=$dim;
-	    showopts "inner vertical margin=$IVM";
+	    dimtopt $2 $dfpdfxupINNER_VMARGIN "$1 $2";
+	    INNER_VMARGIN=$dim;
 	    shift 2;;
 	-ivm?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-ivm=?//"`;
-	    dimtopt $ANS $dfpdfxupIVM $1;
-	    IVM=$dim;
-	    showopts "inner vertical margin=$IVM";
+	    dimtopt $ANS $dfpdfxupINNER_VMARGIN $1;
+	    INNER_VMARGIN=$dim;
 	    shift;;
 	-im|--innermargins)
-	    dimtopt $2 $dfpdfxupIM "$1 $2";
-	    IHM=$dim;
-	    IVM=$dim;
-	    showopts "inner margins=$IHM";
+	    dimtopt $2 $dfpdfxupINNER_MARGINS "$1 $2";
+	    INNER_HMARGIN=$dim;
+	    INNER_VMARGIN=$dim;
 	    shift 2;;
 	-im?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-im=?//"`;
-	    dimtopt $ANS $dfpdfxupIM $1;
-	    IHM=$dim;
-	    IVM=$dim;
-	    showopts "inner margins=$IHM";
+	    dimtopt $ANS $dfpdfxupINNER_MARGINS $1;
+	    INNER_HMARGIN=$dim;
+	    INNER_VMARGIN=$dim;
 	    shift;;
 	-hm|--hmargin)
-	    testdim $2 $dfpdfxupHM "$1 $2";
-	    HM=$dim;
-	    showopts "horizontal margin=$HM";
+	    testdim $2 $dfpdfxupHMARGIN "$1 $2";
+	    HMARGIN=$dim;
 	    shift 2;;
 	-hm?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-hm=?//"`;
-	    testdim $ANS $dfpdfxupHM $1;
-	    HM=$dim;
-	    showopts "horizontal margin=$HM";
+	    testdim $ANS $dfpdfxupHMARGIN $1;
+	    HMARGIN=$dim;
 	    shift;;
 	-vm|--vmargin)
-	    testdim $2 $dfpdfxupVM "$1 $2";
-	    VM=$dim;
-	    showopts "vertical margin=$VM";
+	    testdim $2 $dfpdfxupVMARGIN "$1 $2";
+	    VMARGIN=$dim;
 	    shift 2;;
 	-vm?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-vm=?//"`;
-	    testdim $ANS $dfpdfxupVM $1;
-	    VM=$dim;
-	    showopts "vertical margin=$VM";
+	    testdim $ANS $dfpdfxupVMARGIN $1;
+	    VMARGIN=$dim;
 	    shift;;
 	-m|--margins)
-	    testdim $2 $dfpdfxupM "$1 $2";
-	    HM=$dim;
-	    VM=$dim;
-	    showopts "margins=$HM";
+	    testdim $2 $dfpdfxupMARGINS "$1 $2";
+	    HMARGIN=$dim;
+	    VMARGIN=$dim;
 	    shift 2;;
 	-m?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-m=?//"`;
-	    testdim $ANS $dfpdfxupM $1;
-	    HM=$dim;
-	    VM=$dim;
-	    showopts "margins=$HM";
+	    testdim $ANS $dfpdfxupMARGINS $1;
+	    HMARGIN=$dim;
+	    VMARGIN=$dim;
 	    shift;;
 	-ihs|--inthspace)
-	    testdim $2 $dfpdfxupIHS "$1 $2";
-	    IHS=$dim;
-	    showopts "horizontal space=$IHS";
+	    testdim $2 $dfpdfxupINTERM_HSPACE "$1 $2";
+	    INTERM_HSPACE=$dim;
 	    shift 2;;
 	-ihs?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-ihs=?//"`;
-	    testdim $ANS $dfpdfxupIHS $1;
-	    IHS=$dim;
-	    showopts "horizontal space=$IHS";
+	    testdim $ANS $dfpdfxupINTERM_HSPACE $1;
+	    INTERM_HSPACE=$dim;
 	    shift;;
 	-ivs|--intvspace)
-	    testdim $2 $dfpdfxupIVS "$1 $2";
-	    IVS=$dim;
-	    showopts "vertical space=$IVS";
+	    testdim $2 $dfpdfxupINTERM_VSPACE "$1 $2";
+	    INTERM_VSPACE=$dim;
 	    shift 2;;
 	-ivs?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-ivs=?//"`;
-	    testdim $ANS $dfpdfxupIVS $1;
-	    IVS=$dim;
-	    showopts "vertical space=$IVS";
+	    testdim $ANS $dfpdfxupINTERM_VSPACE $1;
+	    INTERM_VSPACE=$dim;
 	    shift;;
 	-is|--intspaces)
-	    testdim $2 $dfpdfxupIS "$1 $2";
-	    IHS=$dim;
-	    IVS=$dim;
-	    showopts "space=$IHS";
+	    testdim $2 $dfpdfxupINTERM_SPACES "$1 $2";
+	    INTERM_HSPACE=$dim;
+	    INTERM_VSPACE=$dim;
 	    shift 2;;
 	-is?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-is=?//"`;
-	    testdim $ANS $dfpdfxupIS $1;
-	    IHS=$dim;
-	    IVS=$dim;
-	    showopts "space=$IHS";
+	    testdim $ANS $dfpdfxupINTERM_SPACES $1;
+	    INTERM_HSPACE=$dim;
+	    INTERM_VSPACE=$dim;
 	    shift;;
-	-fw|--framewidth)
-	    testdim $2 $dfpdfxupFW "$1 $2";
-	    FW=$dim;
-	    showopts "frame rule width=$FW";
+	-fw|--framewidth|--frame-width)
+	    testdim $2 $dfpdfxupFRAME_WIDTH "$1 $2";
+	    FRAME_WIDTH=$dim;
 	    shift 2;;
 	-fw?(=)+([0-9])*)
 	    ANS=`echo $1|sed -re "s/-fw=?//"`;
-	    testdim $ANS $dfpdfxupFW $1;
-	    FW=$dim;
-	    showopts "frame rule width=$FW";
+	    testdim $ANS $dfpdfxupFRAME_WIDTH $1;
+	    FRAME_WIDTH=$dim;
+	    shift;;
+        -tf|--tight-frame)
+	    case $2 in
+		1|yes|y|true)
+		    TIGHT_FRAME=1;
+		    SHIFT=1;
+		    ;;
+		0|no|n|false)
+		    TIGHT_FRAME=0;
+		    SHIFT=1;
+		    ;;
+		*)
+		    TIGHT_FRAME=1;
+		    SHIFT=1;
+	    esac
+	    shift $SHIFT;;
+        -tf*|--tight-frame*)
+	    TIGHT_FRAME=`echo $1|sed -re "s/--?t(ight-)?f(rame)?=?//"`;
 	    shift;;
 	-i)
 	    MVopt="-i";
 	    RMopt="-i";
-	    showopts "interactive clean up: true";
 	    shift;;
 	-nobb|--nobb|-no-bb|--no-bb)
-	    NOBB+="$2,";
+	    case $2 in
+		-)
+		    EXCLUDE_FOR_BBOX+="$2,";
+		    ;;
+		-*)
+		    echo "Error: option '$1' expects a range, not '$2'.";
+		    echo "Aborting.";
+		    exit 0;
+		    ;;
+		*)
+		    EXCLUDE_FOR_BBOX+="$2,";
+		    ;;
+	    esac
 	    shift 2;;
 	-nobb*|--no-bb*)
 	    ANS=`echo $1|sed -re "s/--?no-?bb=?//"`;
-	    NOBB+="$ANS,";
+	    EXCLUDE_FOR_BBOX+="$ANS,";
 	    shift;;
 	-bb|--bb|--bounding-box)
-	    BB+="$2,";
+	    case $2 in
+		-)
+		    INCLUDE_FOR_BBOX+="$2,";
+		    ;;
+		-*)
+		    echo "Error: option '$1' expects a range, not '$2'.";
+		    echo "Aborting.";
+		    exit 0;
+		    ;;
+		*)
+		    INCLUDE_FOR_BBOX+="$2,";
+		    ;;
+	    esac
 	    shift 2;;
 	-bb*|--bb*|--bounding-box)
 	    ANS=`echo $1|sed -re "s/--?b(ounding-?)?b(ox)?=?//"`;
-	    BB+="$ANS,";
+	    INCLUDE_FOR_BBOX+="$ANS,";
 	    shift;;
 	-kbb|--keepbb|--keep-bb|--original-bb)
 	    case $2 in
 		1|yes|y|true)
-		    KBB=1;
+		    KEEP_ORIG_BBOX=1;
 		    SHIFT=2;
 		    ;;
 		0|no|n|false)
-		    KBB=0;
+		    KEEP_ORIG_BBOX=0;
 		    SHIFT=2;
 		    ;;
 		-*)
-		    KBB=1;
+		    KEEP_ORIG_BBOX=1;
 		    SHIFT=1;
 		    ;;
 		*)
-		    KBB=1;
+		    KEEP_ORIG_BBOX=1;
 		    SHIFT=1;
 	    esac
-	    if [[ $KBB -eq 1 ]]; then
-		showopts "keep original bounding box=true";
-	    else
-		showopts "keep original bounding box=false";
-	    fi
 	    shift $SHIFT;;
 	-kbb*|--keepbb*|--keep-bb*|--original-bb*)
 	    ANS=`echo $1|sed -re "s/--?(k(eep-?)?bb|orig[^=]*bb)=?//"`;
 	    case $ANS in
 		1|yes|y|true)
-		    KBB=1;
+		    KEEP_ORIG_BBOX=1;
 		    ;;
 		0|no|n|false)
-		    KBB=0;
+		    KEEP_ORIG_BBOX=0;
 		    ;;
 		*)
-		    KBB=1;
+		    KEEP_ORIG_BBOX=1;
 	    esac
-	    if [[ $KBB -eq 1 ]]; then
-		showopts "keep original bounding box=true";
-	    else
-		showopts "keep original bounding box=false";
-	    fi
 	    shift;;
 	-g|--get-bb|--getbb)
 	    case $2 in
 		1|yes|y|true)
-		    GBB=1;
+		    COMPUTE_BBOX_ONLY=1;
 		    SHIFT=2;
 		    ;;
 		0|no|n|false)
-		    GBB=0;
+		    COMPUTE_BBOX_ONLY=0;
 		    SHIFT=2;
 		    ;;
 		-*)
-		    GBB=1;
+		    COMPUTE_BBOX_ONLY=1;
 		    SHIFT=1;
 		    ;;
 		*)
-		    GBB=1;
+		    COMPUTE_BBOX_ONLY=1;
 		    SHIFT=1;
 	    esac
-	    if [[ $GBB -eq 1 ]]; then
-		showopts "only compute bounding box=true";
-	    else
-		showopts "only compute bounding box=false";
-	    fi
 	    shift $SHIFT;;
 	-g*|--get-bb=*|--getbb=*)
 	    ANS=`echo $1|sed -re "s/--?g(etbb|et-bb)?=?//"`;
 	    case $ANS in
 		1|yes|y|true)
-		    GBB=1;
+		    COMPUTE_BBOX_ONLY=1;
 		    ;;
 		0|no|n|false)
-		    GBB=0;
+		    COMPUTE_BBOX_ONLY=0;
 		    ;;
 		*)
-		    GBB=1;
+		    COMPUTE_BBOX_ONLY=1;
 		    #echo "Normal use of '$1' option is: '$1 [0|1]'";
 		    #echo "Assuming you want landscape outupt...";
 	    esac
-	    if [[ $GBB -eq 1 ]]; then
-		showopts "only compute bounding box=true";
-	    else
-		showopts "only compute bounding box=false";
-	    fi
 	    shift;;
 	-s|--set-bb|--setbb)
 	    case "$2$3$4$5" in
                 +([0-9]))
-		    SBB=1;
-		    BBX=$2;
-		    BBY=$3;
-		    BBW=$4;
-		    BBH=$5;;
+		    SET_BBOX="$2 $3 $4 $5"
+		    ;;
+ 	        *)
+		    echo "Error: option '$1' expects 4 numbers.";
+		    echo "Aborting.";
+		    exit 0;
+		    ;;
 	    esac
-	    showopts "bounding box set to $2 $3 $4 $5";
 	    shift 5;;
 	-V)
 	    case $2 in
 		@(0|1|2|3))
-		    if [[ $VERB -lt $2 ]]; then
-			VERB=$2;
+		    if [[ $VERBOSITY -lt $2 ]]; then
+			VERBOSITY=$2;
 		    fi
 		    SHIFT=2;;
 		*)
-		    if [[ $VERB -lt 2 ]]; then
-			VERB=2;
+		    if [[ $VERBOSITY -lt 2 ]]; then
+			VERBOSITY=2;
 		    fi
 		    SHIFT=1;;
 	    esac
 	    shift $SHIFT;;
 	-V?(=)@(0|1|2|3))
-	    if [[ $VERB -lt `echo $1|sed -re "s/-V=?//"` ]]; then
-		VERB=`echo $1|sed -re "s/-V=?//"`;
+	    if [[ $VERBOSITY -lt `echo $1|sed -re "s/-V=?//"` ]]; then
+		VERBOSITY=`echo $1|sed -re "s/-V=?//"`;
 	    fi
 	    shift;;
 	-V?(=)+([0-9]))
-	    VERB=9;
+	    VERBOSITY=9;
 	    shift;;
         -VV)
-	    if [[ $VERB -lt 2 ]]; then
-		VERB=2;
+	    if [[ $VERBOSITY -lt 3 ]]; then
+		VERBOSITY=3;
 	    fi
 	    shift;;
 	-VVV)
-	    if [[ $VERB -lt 3 ]]; then
-		VERB=3;
+	    if [[ $VERBOSITY -lt 4 ]]; then
+		VERBOSITY=4;
 	    fi
 	    shift;;
 	-q|--quiet)
-	    VERB=0;
+	    VERBOSITY=0;
 	    shift;;
 	-w|--watermark|--watermark-file)
-	    WATERMARK=$2;
-	    showopts "watermarking with file $WATERMARK";
+	    WATERMARK_FILE=$2;
 	    shift 2;;
 	-w=*|--watermark=*|--watermark-file=*)
 	    ANS=`echo $1|sed -re "s/--?w[^=]*=//"`;
-	    WATERMARK=$ANS;
-	    showopts "watermarking with file $WATERMARK";
+	    WATERMARK_FILE=$ANS;
 	    shift;;
 	-wp|--wperiod|--watermark-period)
-	    WATERMARKPERIOD=$2;
-	    showopts "watermarking period=$WATERMARKPERIOD";
+	    WATERMARK_PERIOD=$2;
 	    shift 2;;
 	-wp=*|--wperiod=*|--watermark-period=*)
 	    ANS=`echo $1|sed -re "s/--?w[^=]*=//"`;
-	    WATERMARKPERIOD=$ANS;
-	    showopts "watermarking period=$WATERMARKPERIOD";
+	    WATERMARK_PERIOD=$ANS;
 	    shift;;
 	-v|--version)
 	    echo "pdfxup version $VERSION (released $VDATE)";
@@ -816,48 +992,153 @@ while [ $# != 0 ]; do
     esac;
 done
 
-## this depends on verbosity, hence can only be announced *after* processing options...
-myecho 3- "-> processing options";
 
 ## check input file
-if [[ $file == "" ]]; then
+if [[ "$file" == "" ]]; then
     echo "pdfxup error: no input file given; exiting.";
-    exit 0;
+    exit 1;
 fi
 
-if [[ ! -e $file ]]; then
-    echo "pdfxup error: file $file not found; exiting.";
-    exit 0;
+## try adding .pdf suffix if needed
+if [[ ! -e "$file" && `basename "$file" .pdf` == "$file" && -e "${file}.pdf" ]];
+    then
+    myecho 2+ "    changing file name '$file' to '$file.pdf'";
+    file="${file}.pdf";
+fi;
+
+if [[ ! -e "$file" ]]; then
+    echo "pdfxup error: file \"$file\" not found; exiting.";
+    exit 1;
 fi
 
+## check output file
+
+
+## set bbox
+SBB=0;
+read -r x0 y0 w0 h0 <<<$(echo "-1 -1 -1 -1");
+if [[ "$SET_BBOX" ]]; then
+    SBB=1;
+    read -r BBX BBY BBW BBH <<<$(echo $SET_BBOX);
+fi
+
+
+## summarize options:
+myecho 1+ "-> processing options";
+if [[ "$FILE" != "" ]]; then
+    myecho 2+ "   * used configuration file $FILE";
+fi
+if [[ $BOOKLET -eq 1 ]]; then
+    myecho 2+ "   * booklet mode (long-edge)";
+else if [[ $BOOKLET -eq 2 ]]; then
+	 myecho 2+ "   * booklet mode (short edge)";
+     else
+	 myecho 2+ -ne "   * columns=$NB_COLUMNS, rows=$NB_ROWS, ";
+	 if [[ $LANDSCAPE -eq 1 ]]; then
+	     myecho 2+ "landscape mode";
+	 else
+	     myecho 2+ "portrait mode";
+	 fi
+     fi
+fi
+myecho 2+ "   * paper size=$PAPERSIZE";
+if [[ $CLIP -eq 1 ]]; then
+    myecho 2+ "   * clipping content outside bounding box";
+else
+    myecho 2+ "   * not clipping content outside bounding box";
+fi
+myecho 2+ "   * output file is \"$OUTPUTFILE\"";
+if [[ "$INNER_HMARGIN" == "$INNER_VMARGIN" ]]; then
+    myecho 2+ "   * inner margins=$INNER_HMARGIN";
+else
+    myecho 2+ "   * inner horizontal margin=$INNER_HMARGIN, inner vertical margin=$INNER_VMARGIN";
+fi
+if [[ "$HMARGIN" == "$VMARGIN" ]]; then
+    myecho 2+ "   * margins=$HMARGIN";
+else
+    myecho 2+ "   * horizontal margin=$HMARGIN, vertical margin=$VMARGIN";
+fi
+if [[ "$INTERM_HSPACE" == "$INTERM_VSPACE" ]]; then
+    myecho 2+ "   * space between pages=$INTERM_HSPACE";
+else
+    myecho 2+ "   * horizontal space between pages=$INTERM_HSPACE, vertical space=$INTERM_VSPACE";
+fi
+if [[ $TIGHT_FRAME -eq 1 ]]; then
+    TIGHT_FRAMEMESSAGE=" (tight)";
+else
+    TIGHT_FRAMEMESSAGE=" (loose)";
+fi
+myecho 2+ "   * frame rule width=$FRAME_WIDTH $TIGHT_FRAMEMESSAGE";
+if [[ $MVopt == "-i" && $RMopt == "-i" ]]; then
+    myecho 2+ "   * interactive clean up";
+else
+    myecho 2+ "   * non-interactive clean up";
+fi
+if [[ $COMPUTE_BBOX_ONLY -eq 1 ]]; then
+    myecho 2+ "   * only compute bounding box";
+fi
+if [[ $KEEP_ORIG_BBOX -eq 1 ]]; then
+    myecho 2+ "   * keep original bounding box";
+fi
+if [[ $SBB -eq 1 ]]; then
+    myecho 2+ "   * bounding box set to $BBX $BBY $BBW $BBH";
+fi
+if [[ "$WATERMARK_FILE" ]]; then
+    myecho 2+ "   * watermarking with file $WATERMARK_FILE";
+    myecho 2+ "   * watermarking period=$WATERMARK_PERIOD";	    
+fi
+
+
+## here we report on our earlier checks about GS and PDFLATEX
+## (again, we had to know the level of verbosity first...)
+myecho 2+ "-> checking for ghostscript and pdflatex"
+myecho 2+ "   ghostscript is $GS (version $GSVERSION)";  
+if [ "$GSOPTFILE" ]; then
+    myecho 2+ "   [gs version > $GSNTS; we will use --permit-file-read]";
+else
+    myecho 2+ "   [gs version <= $GSNTS; not using --permit-file-read]\"";
+fi
+myecho 2+ "   pdflatex is $PDFLATEX (version $PDFLATEXVERSION)";
+
+    
+######################################################################
 ## get number of pages of input file
-nbp=`$GS -sDEVICE=bbox -dNOPAUSE -dQUIET -c "($file) (r) file runpdfbegin pdfpagecount = quit"`
+######################################################################
+## for this we make a copy of input file, to avoid problem with
+##   ghostscript not correctly handling filenames containing white spaces
+## (see https://stackoverflow.com/questions/42578061/ghostscript-and-spaces-in-filenames)
+cp "$file" $inputfilename.pdf
+myecho 2+ "-> computing number of pages";
+myecho 2+ " * $GS $GSOPTFILE -sDEVICE=bbox -dNOPAUSE -dQUIET -c \"($inputfilename.pdf) (r) file runpdfbegin pdfpagecount = quit\""
+nbp=`$GS $GSOPTFILE -sDEVICE=bbox -dNOPAUSE -dQUIET -c "($inputfilename.pdf) (r) file runpdfbegin pdfpagecount = quit"`
+myecho 2+ "   File \"$file\" has $nbp pages";
 
-## now we can deal with ranges of pages (BB, NOBB, PAGES)
+
+## now we can deal with ranges of pages (INCLUDE_FOR_BBOX, EXCLUDE_FOR_BBOX, PAGES)
+## cleancslor uses $nbp, so we have to compute this before
 declare -i nbpages;
-nbpages=0;
-if [[ ${BB} != "" ]]; then
-    BB=${BB%,};
-    cleancslor $BB;
-    BB=${result%,};
-    showopts "use for bounding-box computation: "${BB};
+if [[ ${INCLUDE_FOR_BBOX} != "" ]]; then
+    INCLUDE_FOR_BBOX=${INCLUDE_FOR_BBOX%,};
+    cleancslor $INCLUDE_FOR_BBOX;
+    INCLUDE_FOR_BBOX=${result%,};
+    myecho 3+ "   * use for bounding-box computation: "${INCLUDE_FOR_BBOX};
 else
     if [[ ${PAGES} != "" ]]; then
-	BB=${PAGES%,};
-        cleancslor $BB;
-        BB=${result%,};
-	showopts "use for bounding-box computation: "${BB};
+	INCLUDE_FOR_BBOX=${PAGES%,};
+        cleancslor $INCLUDE_FOR_BBOX;
+        INCLUDE_FOR_BBOX=${result%,};
+	myecho 3+ "   * use for bounding-box computation: "${INCLUDE_FOR_BBOX};
     else
-	BB=$dfpdfxupBB;
+	INCLUDE_FOR_BBOX=$dfpdfxupINCLUDE_FOR_BBOX;
     fi    
 fi
-if [[ ${NOBB} != "" ]]; then 
-    NOBB=${NOBB%,};
-    cleancslor $NOBB;
-    NOBB=${result%,};
-    showopts "exclude from bounding-box computation: "${NOBB};
+if [[ ${EXCLUDE_FOR_BBOX} != "" ]]; then 
+    EXCLUDE_FOR_BBOX=${EXCLUDE_FOR_BBOX%,};
+    cleancslor $EXCLUDE_FOR_BBOX;
+    EXCLUDE_FOR_BBOX=${result%,};
+    myecho 3+ "   * exclude from bounding-box computation: "${EXCLUDE_FOR_BBOX};
 else
-    NOBB=$dfpdfxupNOBB;
+    EXCLUDE_FOR_BBOX=$dfpdfxupEXCLUDE_FOR_BBOX;
 fi
 if [[ ${PAGES} != "" ]]; then
     PAGES=${PAGES%,};
@@ -867,9 +1148,15 @@ fi
 nbpages=0;
 cleancslor $PAGES;
 PAGES=${result%,};
-showopts "pages to display: ${PAGES} (${nbpages} pages)";
+myecho 2+ "   * pages to display: ${PAGES} (${nbpages} pages)";
+if [[ $nbpages -le 0 ]]; then
+    myecho 1+ "   No pages to include. Aborting."
+    exit 0;
+fi
 
-
+######################################################################
+## set up some variables
+######################################################################
 ## clipping option
 if [[ $CLIP != 0 ]]; then
     myecho 2+ "   clipping pages (anything outside bounding box will be dropped)";
@@ -881,19 +1168,20 @@ else
 fi
 
 
-## output file name
-if [[ ! -e $file && `basename $file .pdf` == $file ]]; then
-    myecho 2+ "    changing file name '$file' to '$file.pdf'";
-    file="$file.pdf";
-fi;
-
-
+## whether the frame should be tight around pages, or loose (use all width)
+if [[ $TIGHT_FRAME -eq 1 ]]; then
+    TIGHT_FRAMEBOX="\fbox";
+    WIDE_FRAMEBOX="";
+else
+    TIGHT_FRAMEBOX="";
+    WIDE_FRAMEBOX="\fbox";
+fi
 
 ## special case: if booklet, we force the numbers of rows and cols
 if [[ $BOOKLET != 0 ]]; then
-  if [[ $COLS != 2 || $ROWS != 1 || $LANDSC == 0 ]]; then
-      echo "    forcing booklet mode: 2 columns, 1 row, landscape mode";
-      COLS=2; ROWS=1; LANDSC=1;
+  if [[ $NB_COLUMNS != 2 || $NB_ROWS != 1 || $LANDSCAPE == 0 ]]; then
+      myecho 1+ "    forcing booklet mode: 2 columns, 1 row, landscape mode";
+      NB_COLUMNS=2; NB_ROWS=1; LANDSCAPE=1;
   fi
 fi
 
@@ -901,23 +1189,32 @@ fi
 
 ## check watermarking file
 nbwp=1; ## set even if no watemark
-if [[ $WATERMARK != "" ]]; then
-    if [[ ! -e $WATERMARK ]]; then
+if [[ $WATERMARK_FILE != "" ]]; then
+    if [[ ! -e $WATERMARK_FILE ]]; then
 	myecho 1+ "    pdfxup: watermarking file not found. Omiting watermarking."
     else
-	myecho 2+ " * using file $WATERMARK for watermarking";
-	if [[ `file -b $WATERMARK | grep "PDF"` ]]; then
-	    ## get number of pages of WATERMARK (PDF) file
-	    nbwp=`$GS -sDEVICE=bbox -dNOPAUSE -dQUIET -c "($WATERMARK) (r) file runpdfbegin pdfpagecount = quit"`
-	    if [[ $WATERMARKPERIOD -gt $nbwp || $WATERMARKPERIOD -lt 1 ]]; then
-		WATERMARKPERIOD=$nbwp;
+	myecho 2+ " * using file $WATERMARK_FILE for watermarking";
+    fi
+fi
+
+## get number of pages of WATERMARK_FILE (PDF) file
+if [[ $WATERMARK_FILE != "" ]]; then
+    if [[ -e $WATERMARK_FILE ]]; then
+	if [[ `file -b $WATERMARK_FILE | grep "PDF"` ]]; then
+	    ## copy file in case it contains spaces
+	    cp "$WATERMARK_FILE" $watermarkfilename.pdf
+	    nbwp=`$GS $GSOPTWATERMARK -sDEVICE=bbox -dNOPAUSE -dQUIET -c "($watermarkfilename.pdf) (r) file runpdfbegin pdfpagecount = quit"`
+	    if [[ $WATERMARK_PERIOD -gt $nbwp || $WATERMARK_PERIOD -lt 1 ]]; then
+		WATERMARK_PERIOD=$nbwp;
 	    fi
 	fi
     fi
 fi
 
 
+######################################################################
 ## start computing bounding box
+######################################################################
 x=$x0
 y=$y0
 w=$w0
@@ -926,12 +1223,13 @@ curr=0
 page=0
 step=0
 
-if [[ $KBB == 0 ]]; then
+
+if [[ $KEEP_ORIG_BBOX == 0 ]]; then
     if [[ $SBB == 0 ]]; then
 	myecho 1+ -n "-> computing bounding box";
 	myecho 2+ "";
 	
-	for r in ${BB//,/$IFS}; 
+	for r in ${INCLUDE_FOR_BBOX//,/$IFS}; 
 	do 
 	    case $r in
 		+([0-9]))
@@ -950,8 +1248,8 @@ if [[ $KBB == 0 ]]; then
 		    first=1;
 		    last=$nbp;;
 	    esac
-	    myecho 2+ " * $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $file"
-	    $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $file 2>&1 | 
+	    myecho 2+ " * $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $inputfilename.pdf"
+	    $GS -dNOPAUSE -dSAFER -dQUIET -dBATCH -dFirstPage=$first -dLastPage=$last -sDEVICE=bbox $inputfilename.pdf 2>&1 | 
 		while IFS= read -r line; do
 		    bbox=`echo $line | grep "%%BoundingBox" | sed "s/^.*Box: //"`;
 		    if [[ $bbox != "" ]]; then 
@@ -975,7 +1273,7 @@ if [[ $KBB == 0 ]]; then
  				3)
  				    thish=$i;
  				    #if [[ $h -lt $i ]]; then h=$i; fi
-				    ifinrangelist $page $NOBB;
+				    ifinrangelist $page $EXCLUDE_FOR_BBOX;
 				    if [ $in == 0 ]; then
 					eval step=$(( step+1 ));
  					if [[ $x -lt 0 || $x -gt $thisx && $thisx+$thisw -gt 0 ]]; then x=$thisx; fi
@@ -993,6 +1291,7 @@ if [[ $KBB == 0 ]]; then
 		    fi
 		done;
         done;
+	myecho 2- "";
     else
 	x=$BBX;
 	y=$BBY;
@@ -1002,18 +1301,17 @@ if [[ $KBB == 0 ]]; then
 fi
 
 
-EMPTYBB=$KBB;
-if [[ $KBB == 0 && $x -eq $x0 &&
+EMPTYBB=$KEEP_ORIG_BBOX;
+if [[ $KEEP_ORIG_BBOX == 0 && $x -eq $x0 &&
       $y -eq $y0 && 
       $h -eq $h0 && 
       $w -eq $w0 ]]; then
-    myecho 1+ "";
     myecho 1+ " * empty bounding box; keeping original margins";
     EMPTYBB=1;
     #exit 1;
 fi
 
-if [[ $SBB == 0 && $EMPTYBB == 0 ]]; then
+if [[ $SINCLUDE_FOR_BBOX == 0 && $EMPTYBB == 0 ]]; then
     myecho 1 -n "."
     myecho 2+ -ne "     bbox: x=$x y=$y X=$w Y=$h  (final)              \\r";
     myecho 3+ "";
@@ -1021,27 +1319,31 @@ if [[ $SBB == 0 && $EMPTYBB == 0 ]]; then
     myecho 1+ "";
 fi
 
-if [[ $GBB != 0 ]]; then
+if [[ $COMPUTE_BBOX_ONLY != 0 ]]; then
     myecho 1+ "   final bounding box: x=$x y=$y X=$w Y=$h";
+    cleanup;
     exit 0;
 fi
 
 
 
 ## compute options to pass to \includegraphics
-IHM=${IHM%pt};
-IVM=${IVM%pt};
+#INNER_HMARGIN=${INNER_HMARGIN%pt};
+#INNER_VMARGIN=${INNER_VMARGIN%pt};
 if [[ $EMPTYBB -eq 0 ]]; then 
-    eval x=$((x-IHM))
-    eval y=$((y-IVM))
-    eval w=$((w+IHM))
-    eval h=$((h+IVM))
+#    eval x=$((x-INNER_HMARGIN))
+#    eval y=$((y-INNER_VMARGIN))
+#    eval w=$((w+INNER_HMARGIN))
+#    eval h=$((h+INNER_VMARGIN))
     BBOPTION="viewport=$x $y $w $h";
 else
-    BBOPTION="trim=-$IHM -$IVM -$IHM -$IVM";
+#    BBOPTION="trim=-$INNER_HMARGIN -$INNER_VMARGIN -$INNER_HMARGIN -$INNER_VMARGIN";
+    BBOPTION="trim=0 0 0 0";
 fi
 
+######################################################################
 ## start writing .tex file
+######################################################################
 cat > $filename.tex <<EOF
   \newif\ifbooklet
   \newif\iflongedge
@@ -1058,262 +1360,43 @@ case $BOOKLET in
 esac
 
 cat >> $filename.tex <<EOF
-  \documentclass{article}
-  \usepackage[margin=0pt]{geometry}
-  \usepackage{graphicx}
-  \IfFileExists{grffile.sty}{\usepackage{grffile}}{}
-  \topskip=0pt
+  \def\pdfxupfile{$inputfilename.pdf}
+  \def\pdfxuppagelist{$PAGES}
+  \def\pdfxupoutputpaper{$PAPERSIZE}
+  \def\pdfxupoutputlandscape{$LANDSCAPE}
+  \def\pdfxupnbhoriz{$NB_COLUMNS}
+  \def\pdfxupnbvert{$NB_ROWS}
+  \def\pdfxupnbpages{$nbpages}
+  \def\pdfxupvmargin{$VMARGIN}
+  \def\pdfxuphmargin{$HMARGIN}
+  \def\pdfxupinnervmargin{$INNER_VMARGIN}
+  \def\pdfxupinnerhmargin{$INNER_HMARGIN}
+  \def\pdfxupintermvspace{$INTERM_VSPACE}
+  \def\pdfxupintermhspace{$INTERM_HSPACE}
+  \def\pdfxupframewidth{$FRAME_WIDTH}
+  \def\pdfxupemptybb{$EMPTYBB}
+  \def\pdfxupx{$x}
+  \def\pdfxupy{$y}
+  \def\pdfxupw{$w}
+  \def\pdfxuph{$h}
+  \def\pdfxupfilename{$filename}
+  \def\pdfxupwatermark{$WATERMARK_FILE}
+  \def\pdfxupnbwp{$nbwp}
+  \def\pdfxupwperiod{$WATERMARK_PERIOD}
+  \def\pdfxupclipopt{$CLIPOPT}
+  \def\pdfxupwidefbox{$WIDE_FRAMEBOX}
+  \def\pdfxuptightfbox{$TIGHT_FRAMEBOX}
+  \def\pdfxupbbox{$BBOPTION}
 
-  \makeatletter
+  \input{pdfxup-template}
 
-  %% \nthvalue#1#2 looks for #1-th value in list of intervals #2
-  \newcounter{result}%
-  \newif\iffound
-  \def\@parserange#1-#2-#3\@end#4\@end{%
-    \setcounter{result}{#4}%
-    \ifnum\value{result}=1\relax
-      \foundtrue
-      \setcounter{result}{#1}%
-    \else
-      \addtocounter{result}{-1}%
-      \ifx\relax#3\relax%% means that range contains no -
-      \else
-        \addtocounter{result}{#1}%
-        \ifnum#2<\value{result}\relax
-          \addtocounter{result}{-#2}%
-        \else
-          \foundtrue
-        \fi
-      \fi
-    \fi}
-  \def\parserange#1#2{\expandafter\@parserange#2-SINGLE-\@end#1\@end}
-  \def\@parsecsl#1,#2\@end#3\@end{%
-    \parserange{#3}{#1}%
-    \iffound\else
-    \ifx\relax#2\relax\else\@parsecsl#2\@end\value{result}\@end\fi\fi}
-  \def\nthvalue#1#2{\foundfalse\expandafter\@parsecsl#2,\@end#1\@end}
-  %%
-
-  \def\file{$file}
-  \def\pagelist{$PAGES}
-  \def\watermark{$WATERMARK}
-  \pdfximage{\file}
-  \parindent=0pt
-
-  \def\outputpaper{$PAP}
-  \def\outputlandscape{$LANDSC}
-  \def\nbhoriz{$COLS}
-  \def\nbvert{$ROWS}
-
-  \expandafter\geometry\expandafter{\outputpaper paper}
-  \ifnum\outputlandscape=1\relax\geometry{landscape}\fi
-
-  \newcounter{outpage}
-  \newcounter{lastpage}
-  %\setcounter{outpage}{\the\pdflastximagepages}
-  \setcounter{outpage}{$nbpages}
-  \addtocounter{outpage}{-1}
-  \divide\c@outpage by \nbhoriz
-  \divide\c@outpage by \nbvert
-  \ifbooklet
-    \divide\c@outpage by 2
-  \fi
-  \stepcounter{outpage}
-  \ifbooklet
-    \multiply\c@outpage by 2
-  \fi
-  \setcounter{lastpage}{\value{outpage}}
-  \multiply\c@lastpage by \nbhoriz
-  \multiply\c@lastpage by \nbvert
-  %\showthe\c@outpage
-  \makeatother
-  %
-  \newlength\outputvmargin
-  \newlength\outputhmargin
-  \setlength\outputvmargin{$VM}
-  \setlength\outputhmargin{$HM}
-  \newlength\outputindivvmargin
-  \newlength\outputindivhmargin
-  \setlength\outputindivvmargin{$IVS}
-  \setlength\outputindivhmargin{$IHS}
-  %
-  \fboxsep=0pt%
-  \setlength\fboxrule{$FW}
-  \newlength\hresult
-  \newlength\vresult
-  \hresult=\paperwidth
-  \advance\hresult by -\nbhoriz\fboxrule
-  \advance\hresult by -\nbhoriz\fboxrule
-  \vresult=\paperheight 
-  \advance\vresult by -\nbvert\fboxrule
-  \advance\vresult by -\nbvert\fboxrule
-  %
-  \advance\hresult by -2\outputhmargin
-  \advance\vresult by -2\outputvmargin
-  %
-  \advance\hresult by -\nbhoriz \outputindivhmargin
-  \advance\vresult by -\nbvert \outputindivvmargin
-  \advance\hresult by \outputindivhmargin
-  \advance\vresult by \outputindivvmargin
-  %
-  \divide\hresult by \nbhoriz
-  \divide\vresult by \nbvert
-
-  % computing actual scale
-  \if0$EMPTYBB
-  \newcounter{origx}
-  \setcounter{origx}{$w}
-  \addtocounter{origx}{-$x}
-  \newcounter{origy}
-  \setcounter{origy}{$h}
-  \addtocounter{origy}{-$y}
-  \newlength\finalx
-  \newlength\finaly
-  \finalx=\hresult
-  \finaly=\vresult
-  \divide\finalx by \value{origx}
-  \divide\finaly by \value{origy}
-  \newwrite\scale
-  \immediate\openout\scale=$filename.scl
-  \ifdim\finalx>\finaly
-    \multiply\finaly by 100
-    \immediate\write\scale{\the\finaly}
-  \else
-    \multiply\finalx by 100
-    \immediate\write\scale{\the\finalx}
-  \fi
-  \immediate\closeout\scale
-  \fi
-
-  \begin{document}
-  %\tracingoutput=1
-  %\tracingpages=1
-  %\tracingparagraphs=1
-  \makeatletter
-  \newcounter{curroutpage}
-  \setcounter{curroutpage}{1}
-  \addtocounter{curroutpage}{-1}
-  \newcounter{currpage}
-  \newcounter{currcol}
-  \newcounter{currline}
-  \newcounter{realout}
-  \newcounter{wmout}
-  \newcounter{wmoutaux}
-  %\showthe\value{outpage}
-  %\showthe\value{curroutpage}
-  \@whilenum \value{outpage}>\value{curroutpage} \do%
-    {\stepcounter{curroutpage}%
-    \setcounter{currpage}{\value{curroutpage}}%
-    \advance\c@currpage by -1%
-    \multiply\c@currpage by \nbhoriz%
-    \multiply\c@currpage by \nbvert%
-    \hrule \@height\z@%
-    \setcounter{currline}{0}%
-    \vskip \outputvmargin%
-    \@whilenum\value{currline}<\nbvert \do%
-      {\hrule \@height\z@\vskip \outputindivvmargin%
-        \ifnum\value{currline}>0\vskip \outputindivvmargin\fi%
-        \global\stepcounter{currline}%
-        \setcounter{currcol}{0}%
-        \hskip \outputhmargin%
-        \@whilenum\value{currcol}<\nbhoriz \do%
-          {\ifnum\value{currcol}>0\hskip\outputindivhmargin\fi%
-            \global\stepcounter{currcol}%
-            \global\stepcounter{currpage}%
-            \ifnum\value{currpage}>\value{lastpage}\else
-	      %% computing page number corresponding to \currline and \currcol
-              \setcounter{realout}{\value{currpage}}%
-              \def\ang{0}%
-              \ifbooklet
-               \iflongedge
-                %% long edge:
-                %% 1->n, 2->1, 3->n-1 (rotated), 4->2(rotated)...
-                \ifodd\value{realout}%           -> 1 or 3
-                  \addtocounter{realout}{-1}%
-                  \divide\c@realout by 2\relax
-                  \ifodd\value{realout}%         -> 3
-                    \def\ang{180}%
-                  \else%                         -> 1
-                  \fi
-                  \setcounter{realout}{-\value{realout}}%
-                  \addtocounter{realout}{\value{outpage}}%
-                  \addtocounter{realout}{\value{outpage}}%
-                \else%                           -> 2 or 4
-                  \divide\c@realout by 2\relax
-                  \ifodd\value{realout}%         -> 2
-                  \else%                         -> 4
-                    \def\ang{180}%
-                  \fi
-                \fi
-               \else 
-                %% short edge:
-                %% 1->n, 2->1, 3->2, 4->n-1, 5->n-2, 6->3, 7->4, 8->n-3
-                \ifodd\value{realout}%           -> 1 or 3
-                  \addtocounter{realout}{-1}%
-                  \divide\c@realout by 2\relax
-                  \ifodd\value{realout}%         -> 3
-                    \stepcounter{realout}
-                  \else%                         -> 1
-                    \setcounter{realout}{-\value{realout}}%
-                    \addtocounter{realout}{\value{outpage}}%
-                    \addtocounter{realout}{\value{outpage}}%
-                  \fi
-                \else%                           -> 2 or 4
-                  \divide\c@realout by 2\relax
-                  \ifodd\value{realout}%         -> 2
-                  \else%                         -> 4
-                    \setcounter{realout}{-\value{realout}}%
-                    \stepcounter{realout}
-                    \addtocounter{realout}{\value{outpage}}%
-                    \addtocounter{realout}{\value{outpage}}%
-                  \fi
-                \fi
-               \fi
-              \fi
-              \ifnum\value{realout}>$nbpages\relax
-	        %% if page above nb of pages, output blank page
-                \hskip\hresult\hskip2\fboxrule
-              \else
-                %% otherwise compute corresponding page to display
-	        %% first keep realout for watermarking...
-	        \setcounter{wmoutaux}{\value{realout}}%
-	        \setcounter{wmout}{\value{realout}}%
-                \nthvalue{\value{realout}}{\pagelist}%
-                \iffound\setcounter{realout}{\value{result}}%
-                \else %% hmmm... problem
-                \message{I'm messed up counting pages...}%
-                \fi
-                %% compute watermarking page (should be original realout?)
-	        \ifx\watermark\@empty\else
-	  	  \ifnum$nbwp<\value{wmoutaux}\relax
-		    \addtocounter{wmoutaux}{-$nbwp}%
-		    \addtocounter{wmoutaux}{-1}%
-		    \divide\c@wmoutaux by $WATERMARKPERIOD\relax
-                    \stepcounter{wmoutaux}%
-		    \multiply\c@wmoutaux by $WATERMARKPERIOD\relax
-		    \addtocounter{wmout}{-\value{wmoutaux}}%
-		  \fi
-		  \vbox to \vresult{\vfill
-	          \hbox to 0pt{\hfill
-		    \expandafter\includegraphics\expandafter[keepaspectratio,%
-		    height=\vresult,width=\hresult,angle=\ang,%
-                    page=\value{wmout}$CLIPOPT]{$WATERMARK}\hss}\vfill}%
-		\fi
-	        \fbox{\vbox to \vresult{\vfill
-		\hbox to \hresult{\hfill
-                 \expandafter\includegraphics\expandafter[$BBOPTION,%
-                    keepaspectratio,height=\vresult,width=\hresult,angle=\ang,%
-                    page=\value{realout}$CLIPOPT]{\file}\hfill}\vfill}}%
-              \fi
-            \fi}}%
-        \clearpage%
-  }%
-  \makeatother%
-  \end{document}
 EOF
 
+######################################################################
+## produce PDF output
+######################################################################
 myecho 1+ "-> producing final file";
-case $VERB in
+case $VERBOSITY in
     0|1|2)
 	myecho 2+ " * $PDFLATEX -interaction=nonstopmode $filename.tex"
 	$PDFLATEX -interaction=batchmode $filename.tex > /dev/null 2>&1 || \
@@ -1322,27 +1405,30 @@ case $VERB in
 	myecho 3+ " * $PDFLATEX -interaction=nonstopmode $filename.tex"
 	$PDFLATEX -interaction=nonstopmode $filename.tex || LATEXFAILED=1;;
 esac
+
+######################################################################
+## clean up
+######################################################################
 if [[ $LATEXFAILED -eq 1 ]]; then
-    myecho 1+ ": failed!"
-    if [[ $DEBUG == 0 ]]; then
-	myecho 1+ "-> cleaning";
-	myecho 2+ " * rm $RMopt $filename.*"
-	rm $RMopt $filename.*
-    fi
+    myecho 1+ "$PDFLATEX: compilation failed!"
+    myecho 1+ "Use option '-d' to get and analyse failing file."
+    cleanup
     exit 0;
 fi
 if [[ $EMPTYBB -eq 0 ]]; then
-    myecho 1+ "   final scale: "`cat $filename.scl | sed -e "s/pt$//"`"%"
+    myecho 0+ "   final scale: "`cat $filename.scl | sed -e "s/pt$//"`"%"
 fi
-myecho 2+ " * mv $MVopt $filename.pdf $OUTF"
-mv $MVopt $filename.pdf $OUTF
-if [[ $DEBUG == 0 ]]; then
-  myecho 1+ "-> cleaning";
-  myecho 2+ " * rm $RMopt $filename.*"
-  rm $RMopt $filename.*
+if [[ $SILENTLY_OVERWRITE -eq 1 ]]; then
+    myecho 2+ " * mv $MVopt $filename.pdf \"$OUTPUTFILE\""
+    mv $MVopt $filename.pdf "$OUTPUTFILE"
+else
+    myecho 2+ " * mv $MVopt -i $filename.pdf \"$OUTPUTFILE\""
+    mv $MVopt -i $filename.pdf "$OUTPUTFILE"    
 fi
-
+cleanup
 exit 0
+
+
 
 
 
@@ -1428,7 +1514,7 @@ pdfxup has numerous options:
 
 # pdfxup file.pdf
   -> creates pdfxup.pdf from file.pdf with default options
-     (2-up, margins=5mm)
+     (2-up, margins=5pt)
 # pdfxup -bb 1-4 file.pdf
   -> same behaviour, but computes the bounding box only using the 
      first 4 pages
@@ -1446,3 +1532,56 @@ pdfxup has numerous options:
   -> arranges 4 beamer frames per page (not reducing margins)
 # pdfxup -fw0 -w draft.png file.pdf
   -> remove frame border; add 'draft' watermarking on all pages
+
+##################################################################
+##
+##     Releases
+##
+##################################################################
+Author: Nicolas Markey 
+Please send your comments to <pdfxup@markey.fr>
+
+v1.00 (2015/08/23)
+ - first release
+
+v1.10 (2015/09/08)
+ - added option 'booklet'
+ - corrected numerous computation/spacing bugs in LaTeX file
+ - added succinct documentation
+
+v1.20 (2015/09/11)
+ - added options -nobb, -bb, -p
+ - solved bug with dots in PDF file names
+
+v1.30 (2015/10/06)
+ - added options -g and -s for getting and then manually
+ - setting bounding box.
+ - created man page
+
+v1.50 (2019/12/31)
+ - added the -c option (to clip pages)
+ - corrected + improved option -p
+ - added watermarking
+
+v1.51 (2020/01/06)
+ - corrected bug in dimtopt() (conversion mm to pt)
+
+v1.60 (2020/06/24)
+ - added --allow-file-read=... option for ghostscript >= 9.28
+   (thanks to Janis Kalofolias for pointing out the problem)
+ - allow file names containing spaces 
+ - better inclusion of watermarks
+
+v1.61 (2020/10/21)
+ - clean up after option '-g' (thanks to Oliver Redner)
+
+v2.00 (2020/12/17)
+ - fixed a bug with inner margins
+ - added --tight-frame option: tells whether the frame should
+   be tight around the page (and leave horizontal white space 
+   outside the frame), or as large as possible.
+ - added --config-file option: configuration files (default
+   extension .xup) can be used to define default values
+   for frequent situations.
+ - cleaned-up man page, adding some missing options (thanks
+   to Louis Gostiaux for pointing undocumented options)

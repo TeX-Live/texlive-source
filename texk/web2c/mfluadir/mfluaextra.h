@@ -5,7 +5,7 @@
 
 #include <mfluadir/mflua_version.h> /* for MFLUA_VERSION and BANNER */
 
-/*#define BANNER "This is MFLua, Version 2.7182818-" MFLUA_VERSION*/
+/*#define BANNER "This is MFLua, Version 2.71828182-" MFLUA_VERSION*/
 #define COPYRIGHT_HOLDER "L. Scarso"
 #define AUTHOR NULL
 #define PROGRAM_HELP MFLUAHELP

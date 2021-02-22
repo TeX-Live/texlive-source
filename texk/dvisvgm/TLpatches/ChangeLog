@@ -1,3 +1,8 @@
+2021-01-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Import 2.11.1.
+	* patch-04-configure: adapt.
+
 2019-12-09  Martin Gieseking  <martin.gieseking@uos.de>
 
 	* Import 2.8.2.

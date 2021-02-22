@@ -409,7 +409,7 @@ T
     (do-markup-list (get-members attribute-group)
       :identifier LOCREF
       :open-body  (do-markup-locref-list-open  loccls 0)
-      :elt-body   (do-markup-locref     LOCREF loccls 0)
+      :elt-body   (do-markup-locref (get-catattr LOCREF) LOCREF loccls 0)
       :sep-body   (do-markup-locref-list-sep   loccls 0)
       :close-body (do-markup-locref-list-close loccls 0))
 
@@ -429,7 +429,8 @@ T
           (do-markup-default "LOCREF-LIST:CLOSE" (get-name loccls) depth))
   :sep   ((do-markup-default "LOCREF-LIST:SEP"   (get-name loccls) depth)))
 ;; line 808 "markup.nw"
-(defmethod do-markup-locref ((locref location-reference)
+(defmethod do-markup-locref ((attr   category-attribute)
+                             (locref location-reference)
                              (loccls layered-location-class)
                              (depth  number))
   #+ASSERT! (assert! (and (typep locref 'layered-location-reference)
@@ -455,7 +456,7 @@ T
          (do-markup-list subrefs
            :identifier LOCREF
            :open-body  (do-markup-locref-list-open  loccls new-depth)
-           :elt-body   (do-markup-locref     LOCREF loccls new-depth)
+           :elt-body   (do-markup-locref attr LOCREF loccls new-depth)
            :sep-body   (do-markup-locref-list-sep   loccls new-depth)
            :close-body (do-markup-locref-list-close loccls new-depth)))
 
@@ -506,23 +507,24 @@ T
           (do-markup-default "LOCREF:CLOSE"
             (get-name attr) (get-name loccls) depth)))
 ;; line 955 "markup.nw"
-(defmethod do-markup-locref ((range location-range)
+(defmethod do-markup-locref ((attr  category-attribute)
+                             (range location-range)
                              (loccls layered-location-class)
                              (depth number))
   (let ((length (get-length range)))
-    (do-markup-range-open  loccls length)
-    (do-markup-locref (get-first range) loccls depth)
-    (do-markup-range-sep   loccls length)
+    (do-markup-range-open attr loccls length)
+    (do-markup-locref attr (get-first range) loccls depth)
+    (do-markup-range-sep attr loccls length)
     (when (markup-range-print-end-p loccls length)
-      (do-markup-locref (get-last range)  loccls depth))
-    (do-markup-range-close loccls length)))
+      (do-markup-locref attr (get-last range)  loccls depth))
+    (do-markup-range-close attr loccls length)))
 
 (define-list-environment-methods do-markup-range
-    ((loccls layered-location-class) (length number))
-  :open  ((do-markup-default "RANGE:OPEN"  (get-name loccls) length)
+    ((attr category-attribute) (loccls layered-location-class) (length number))
+  :open  ((do-markup-default "RANGE:OPEN" (get-name attr) (get-name loccls) length)
           (do-markup-indent))
   :close ((do-markup-outdent)
-          (do-markup-default "RANGE:CLOSE" (get-name loccls) length))
+          (do-markup-default "RANGE:CLOSE" (get-name attr) (get-name loccls) length))
   :sep   ((do-markup-default "RANGE:SEP" (get-name loccls) length)))
 
 (defmethod markup-range-print-end-p ((loccls layered-location-class)
@@ -947,7 +949,7 @@ T
 ;; line 1002 "markup.nw"
 (defmacro markup-range (&whole whole &rest args)
   (destructuring-switch-bind (&key
-                              open close sep class length
+                              open close sep class attr length
                               &switch ignore-end)
       args
     (cond
@@ -965,13 +967,20 @@ T
 ((and class (progn (setq class (stringify class))
                    (not (lookup-locref-class *indexstyle* class))))
  (nraw "parameter `~S' is not a location-reference class! (ignored)~%" class))
+;; line 294 "markup.nw"
+((and attr (progn (setq attr (stringify attr))
+                   (not (lookup-catattr *indexstyle* attr))))
+ (nraw "parameter `~S' is not an attribute! (ignored)~%" attr))
 ;; line 1009 "markup.nw"
           ((and length (not (numberp length)))
              (nraw "parameter `~S' is not a number! (ignored)~%" length))
           (t `(let ()
                (markup::define-list-environment-methods
                    DO-MARKUP-RANGE
-                   (,(if class
+                   (,(if attr
+                         `(attr (EQL ',(lookup-catattr *indexstyle* attr)))
+                         '(attr category-attribute))
+                   ,(if class
                          `(locrefcls (EQL ',(cdr (lookup-locref-class
                                                   *indexstyle* class))))
                          '(locrefcls layered-location-class))
@@ -989,7 +998,7 @@ T
                     ,(if length
                          `(length (EQL ,length))
                          '(length number)))
-                 :declare ((declare (ignore locrefcls length)))
+                 :declare ((declare (ignore attr locrefcls length)))
                  :body    (,(not ignore-end))))))))
 ;; line 1064 "markup.nw"
 (defmacro markup-crossref-list (&key open sep close class)

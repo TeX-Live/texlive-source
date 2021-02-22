@@ -1,5 +1,5 @@
-Changes applied to the TECkit-2.5.9/ tree obtained from:
-	https://github.com/silnrsi/teckit/archive/2.5.9.tar.gz.
+Changes applied to the TECkit-2.5.10/ tree obtained from:
+	https://github.com/silnrsi/teckit/archive/2.5.10.tar.gz.
 
 Removed execute permissions from:
 	installed-top.pc.in
@@ -23,9 +23,9 @@ Removed:
 	test/Makefile.in
 	test-driver
 	SFconv/
-	zlib-1.2.3/
+	zlib-1.2.11/
 
-Converted Dos/Win line ends to native:
+Converted Dos/Win lpwdine ends to native:
 	source/Perl/TECkit.xs
 	source/Perl/lib/Encode/TECkit.pm
 	source/Perl/test.pl

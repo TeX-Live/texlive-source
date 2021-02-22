@@ -410,7 +410,7 @@ Search path for
 and
 .I \eopenin
 files.
-This probably start with ``.'', so
+This should probably start with ``.'', so
 that user files are found before system files.  An empty path
 component will be replaced with the paths defined in the
 .I texmf.cnf

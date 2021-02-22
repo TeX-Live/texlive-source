@@ -10,7 +10,7 @@
 # Originally written as `texhash' by Thomas Esser, Okt., 1994.
 # Public domain.
 
-version='$Id: mktexlsr 53254 2019-12-29 19:18:55Z karl $'
+version='$Id: mktexlsr 56842 2020-11-02 23:00:54Z karl $'
 progname=`echo $0 | sed 's%.*/%%'`
 
 usage="Usage: $progname [OPTION]... [DIR]...
@@ -69,7 +69,7 @@ case $dirname in
       export PATH ;;
 esac
 
-if tty -s; then verbose=true; else verbose=false; fi
+if tty -s >/dev/null 2>&1; then verbose=true; else verbose=false; fi
 dry_run=false
 trees=
 

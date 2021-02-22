@@ -185,8 +185,8 @@ strings representing separators. Separators must follow the
 keyword argument <CODE>:sep</CODE>. If the keyword <CODE>:min-range-length</CODE> is
 specified we define the <EM>minimum range length</EM> to be used when
 building ranges. The argument <CODE>num</CODE> must be a positive integer
-number or the keyword <CODE>none</CODE> in which case the building of ranges
-is disallowed. If the switch <CODE>:var</CODE> is specified the declared class
+number. Use a sufficiently large number (such as 10000) to disallow the building of ranges.
+If the switch <CODE>:var</CODE> is specified the declared class
 is of type <EM>variable</EM>, i.e. it is a <EM>var-location-class</EM>. Since
 building of ranges is currently only allowed for standard classes
 <CODE>:var</CODE> and <CODE>:min-range-length</CODE> must not be used together. The
@@ -198,7 +198,7 @@ layers the hierarchy does contain. See command
 <P>
 <PRE>
   (define-location-class "page-numbers" ("arabic-numbers")
-                         :minimum-range-length 3)
+                         :min-range-length 3)
 </PRE>
 <P>Defines the location class <CODE>page-numbers</CODE> consisting of one layer
 which is the alphabet <CODE>arabic-numbers</CODE>. Since the minimum
@@ -927,17 +927,16 @@ location references in a hierarchical form. With the commands
 <PRE>
 (markup-range [:open string] [:close string] [:sep string]
               [:class locref-class]
+              [:attr attribute]
               [:length num] [:ignore-end])
 </PRE>
 </CODE></BLOCKQUOTE>
 <P>A range consists of two location references. Markup can be specified
 with the <CODE>:open</CODE> and <CODE>:close</CODE> arguments and one separator given
 by the argument <CODE>:sep</CODE>.
-<P>Since both location references are tagged with markup defined by the
-command <CODE>markup-locref</CODE> a specialization on attributes or depth is
-not necessary. Specialization is allowed on the class they belong to,
-because the separator between two location refences may be different
-for each location class. Argument <CODE>:length</CODE> can be used to define
+<P>The markup of the separator can be specified attributes via
+the<CODE>:attr</CODE> tag.
+<P>Argument <CODE>:length</CODE> can be used to define
 different markup for different lengths. In conjunction with
 <CODE>:length</CODE> is may be useful not to print the second location
 reference at all. For example, one wishes to markup ranges of length 1

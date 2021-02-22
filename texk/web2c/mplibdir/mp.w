@@ -4379,9 +4379,32 @@ Note that the values are |scaled| integers. Hence \MP\ can no longer
 be used after the year 32767.
 
 @c
+#if defined(_MSC_VER)
+#define strtoull _strtoui64
+#endif
 static void mp_fix_date_and_time (MP mp) {
-  time_t aclock = time ((time_t *) 0);
-  struct tm *tmptr = localtime (&aclock);
+  char *source_date_epoch;
+  time_t epoch;
+  char *endptr;
+  struct tm *tmptr;
+  source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+  if (source_date_epoch) {
+    errno = 0;
+    epoch = strtoull(source_date_epoch, &endptr, 10);
+    if (*endptr != '\0' || errno != 0) {
+      FATAL1("invalid epoch-seconds-timezone value for environment variable $SOURCE_DATE_EPOCH: %s",
+              source_date_epoch);
+    }
+/* there is a limit 3001.01.01:2059 for epoch in Microsoft C */
+#if defined(_MSC_VER)
+    if (epoch > 32535291599ULL)
+      epoch = 32535291599ULL;
+#endif
+    tmptr = gmtime (&epoch);
+  } else {
+    epoch = time ((time_t *) 0);
+    tmptr = localtime (&epoch);
+  }
   set_internal_from_number (mp_time, unity_t);
   number_multiply_int (internal_value(mp_time), (tmptr->tm_hour * 60 + tmptr->tm_min));
   set_internal_from_number (mp_hour, unity_t);
@@ -34445,8 +34468,12 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   size_t k, kk; /* current character and character to stop at */
   four_quarters cc;     /* the |char_info| for the current character */
   mp_number h, d;  /* dimensions of the current character */
+  mp_number minus_inf_t; /* check the -inf of height and depth */
   new_number(h);
   new_number(d);
+  new_number(minus_inf_t);
+  number_clone(minus_inf_t, inf_t);
+  number_negate(minus_inf_t);
   set_number_to_zero(p->width);
   set_number_to_neg_inf(p->height);
   set_number_to_neg_inf(p->depth);
@@ -34461,6 +34488,7 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   @<Set the height and depth to zero if the bounding box is empty@>;
   free_number (h);
   free_number (d);
+  free_number (minus_inf_t);
 }
 
 
@@ -34490,7 +34518,10 @@ void mp_set_text_box (MP mp, mp_text_node p) {
 overflow.
 
 @<Set the height and depth to zero if the bounding box is empty@>=
-if (number_to_scaled(p->height) < -number_to_scaled(p->depth)) {
+if (number_equal(p->height,p->depth) && number_equal(p->height,minus_inf_t)) {
+  set_number_to_zero(p->height);
+  set_number_to_zero(p->depth);
+} else if (number_to_scaled(p->height) < -number_to_scaled(p->depth)) {
   set_number_to_zero(p->height);
   set_number_to_zero(p->depth);
 }

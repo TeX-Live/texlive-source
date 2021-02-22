@@ -3,7 +3,7 @@
 # latexdiff-vc  - wrapper script for applying latexdiff to rcs managed files
 #                 and for automatised creation of postscript or pdf from difference file
 #
-#   Copyright (C) 2005-16  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2005-20  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository:         https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -26,18 +26,17 @@
 # Detailed usage information at the end of the file
 #
 # TODO/IDEAS: - option to call external pre-processing codes
-#             - choose type of latex processor / bibtex (luatex, xelatex etc)
 # version 1.3.0 ((7 October 2018)
 #    - option --only-changes with hyperref will suppress hyperrefs (pull request jprotze)_
 #    - option --only-changes now moves (rather than copies) file with only changes 
 # version 1.2.1 (22 June 2017):
-#    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submited by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
+#    - update: use qpdf (instead of pdftk) to select particular pages of output (pull request #102 submitted by Tom Scogland via github). This was necessary because pdftk is being deprecated. pdftk is still used as a fall-back
 #    - bug fix: --hg option was not recognised (partially fixes github issue #93 )
 #    - wrap passed-through options to latexdiff in quotation marks (fix github issue #58 )
 #    - program names for latexdiff, latex, dvips, bibtex configurable (fixes issue #40)
 #
 # version 1.2.0:
-#    - depracation fix: left brace in RegEx now needs to be escaped
+#    - deprecation fix: left brace in RegEx now needs to be escaped
 #
 # version 1.1.1:
 #    - better detection of RCS system 
@@ -72,8 +71,8 @@ use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.3.0
-  (c) 2005-2018 F J Tilmann
+This is LATEXDIFF-VC 1.3.1.1
+  (c) 2005-2020 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -316,11 +315,11 @@ if ( scalar(@revs)>0 ) {
 
 # make file list (last arguments), initial arguments have to be passed to latexdiff
 # We assume an argument is a valid file rather than a latexdiff argument
-# if it has extension .tex, .bbl or .flt (output of flatex)
+# if it has extension .tex, .bbl or .flt (output of flatex), and does not start with a - or --
 
 @files=($file2);
 while( $file1=pop @ARGV ) {
-  if ( $file1 =~ /\.(tex|bbl|flt)$/ ) {
+  if ( $file1 =~ /\.(tex|bbl|flt)$/ && $file1 !~ /^-/) {
     # $file1 looks like a valid file name and is prepended to file list
     unshift @files, $file1 ;
   } else {
@@ -674,7 +673,7 @@ specified, and they result in different behaviour:
 
 =item B<latexdiff-vc> -r F<file.tex> ...
 
-compares F<file.tex> with the most recent version checked into RCS.
+compares F<file.tex> with the most recently checked-in version checked.
 
 =item B<latexdiff-vc> -r F<rev1> F<file.tex> ...
 
@@ -685,7 +684,7 @@ compares F<file.tex> with revision F<rev1>.
 compares revisions F<rev1> and F<rev2> of F<file.tex>.
 
 Multiple files can be specified for all of the above options. All files must have the
-extension C<.tex>, though.
+extensions C<.tex>, C<.bbl>, or C<.flt>, though.
 
 =item B<latexdiff-vc>  F<old.tex> F<new.tex>
 
@@ -701,7 +700,7 @@ reported to stdout.
 Rather than appending the string C<diff> and optionally the version
 numbers given to the output-file, this will prepend a directory name C<diff> 
 to the
-original filename, creating the directory and subdirectories should they not exist already.  This is particularly useful in order to clone a
+original filename, creating the directory and sub-directories should they not exist already.  This is particularly useful in order to clone a
 complete directory hierarchy.  Optionally, a pathname F<path> can be specified, which is prepended instead of C<diff>.
 
 =item B<--flatten,--flatten=keep-intermediate>
@@ -712,9 +711,6 @@ Note that if additional files are needed which are not included in the flatten p
 The generic usage of this function is : C<latexdiff-vc --flatten -r rev1 [-r rev2] master.tex> where master.tex is the project file containing the highest level of includes etc.
 
 With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kept in the current directory (Default is to store them in a temporary directory and delete them after generating the diff file.)
-
-=item B<--config var1=val1,var2=val2,...> or B<-c var1=val1,..>
-
 
 
 =item B<--only-changes>
@@ -738,6 +734,7 @@ run latex command on diff file after generation of diff file.
 run latex and dvixxx commands after generation of diff file.
 
 =item B<-c configfile>
+=item B<--config var1=val1,var2=val2,...> or B<-c var1=val1,..>
 
 Set configuration variables for latexdiff and latexdiff-vc.  The option can be repeated to set different
 variables (as an alternative to the comma-separated list).
@@ -755,7 +752,7 @@ Available variables for latexdiff-vc:
 
 =back
 
-All other config variables are passed to latexdiff. Explicity set configuration changes always override implicit
+All other config variables are passed to latexdiff. Explicitly set configuration changes always override implicit
 changes by the following shortcut options B<--fast>, B<--so>, B<--ps> and B<--pdf>. 
 
 =item B<--fast> or B<--so>
@@ -803,7 +800,7 @@ L<latexdiff>
 =head1 PORTABILITY
 
 I<latexdiff-vc> uses external commands and is therefore dependent on the system architecture; it has been
-tested mainly on Unix-like systems. It also requires the a version control
+tested mainly on Unix-like systems. It also requires a version control
 system and latex to be installed on the system to make use of all features.  Modules from Perl 5.8
 or higher are required.
 

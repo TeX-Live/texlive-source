@@ -30,6 +30,16 @@
 \def\glob{13}\def\gglob{20, 25} % these are defined in module 1
 @z
 
+@x [1.6] Purge non-local 'goto' label.
+@d end_of_MF=9998 {go here to close files and terminate gracefully}
+@y
+@z
+@x
+start_of_MF@t\hskip-2pt@>, end_of_MF@t\hskip-2pt@>,@,final_end;
+@y
+start_of_MF@t\hskip-2pt@>,@,final_end;
+@z
+
 @x [1.7] Convert `debug..gubed' and `stat..tats' into #ifdefs.
 @d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
 @d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
@@ -621,11 +631,29 @@ else
 @z
 
 @x [6.76] Eliminate non-local goto.
+@ The |jump_out| procedure just cuts across all active procedure levels and
+goes to |end_of_MF|. This is the only nontrivial |@!goto| statement in the
+whole program. It is used when there is no recovery from a particular error.
+
+Some \PASCAL\ compilers do not implement non-local |goto| statements.
+@^system dependencies@>
+In such cases the body of |jump_out| should simply be
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+
 @<Error hand...@>=
 procedure jump_out;
 begin goto end_of_MF;
 end;
 @y
+@ The |jump_out| procedure just cuts across all active procedure levels.
+The body of |jump_out| simply calls
+`|close_files_and_terminate|;\thinspace' followed by a call on some system
+procedure that quietly terminates the program.
+@^system dependencies@>
+
+@f noreturn==procedure
+
 @d do_final_end==begin
    update_terminal;
    ready_already:=0;
@@ -676,14 +704,14 @@ not been commented out.
 @d edit_file==input_stack[file_ptr]
 @z
 @x
-"E": if file_ptr>0 then
+"E": if file_ptr>0 then if input_stack[file_ptr].name_field>=256 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
   slow_print(input_stack[file_ptr].name_field);
   print(" at line "); print_int(line);@/
   interaction:=scroll_mode; jump_out;
 @y
-"E": if file_ptr>0 then
+"E": if file_ptr>0 then if input_stack[file_ptr].name_field>=256 then
     begin
     edit_name_start:=str_start[edit_file.name_field];
     edit_name_length:=str_start[edit_file.name_field+1] -
@@ -981,37 +1009,29 @@ repeat if (p>=lo_mem_max) then clobbered:=true
 input and output, establishes the initial values of the date and time.
 @^system dependencies@>
 Since standard \PASCAL\ cannot provide such information, something special
-is needed. The program here simply specifies July 4, 1776, at noon; but
-users probably want a better approximation to the truth.
+is needed. The program here simply assumes that suitable values appear in
+the global variables \\{sys\_time}, \\{sys\_day}, \\{sys\_month}, and
+\\{sys\_year} (which are initialized to noon on 4 July 1776,
+in case the implementor is careless).
 
 Note that the values are |scaled| integers. Hence \MF\ can no longer
 be used after the year 32767.
 
 @p procedure fix_date_and_time;
-begin internal[time]:=12*60*unity; {minutes since midnight}
-internal[day]:=4*unity; {fourth day of the month}
-internal[month]:=7*unity; {seventh month of the year}
-internal[year]:=1776*unity; {Anno Domini}
-end;
+begin sys_time:=12*60;
+sys_day:=4; sys_month:=7; sys_year:=1776;  {self-evident truths}
 @y
 @ The following procedure, which is called just before \MF\ initializes its
 input and output, establishes the initial values of the date and time.
-It is calls an externally defined |date_and_time|, even though it could
-be done from Pascal.
-The external procedure also sets up interrupt catching.
+It calls an externally defined |date_and_time|, which also sets up
+interrupt catching. See more comments in \.{tex.ch}.
 @^system dependencies@>
 
 Note that the values are |scaled| integers. Hence \MF\ can no longer
 be used after the year 32767.
 
 @p procedure fix_date_and_time;
-begin
-    date_and_time(internal[time],internal[day],internal[month],internal[year]);
-    internal[time] := internal[time] * unity;
-    internal[day] := internal[day] * unity;
-    internal[month] := internal[month] * unity;
-    internal[year] := internal[year] * unity;
-end;
+begin date_and_time(sys_time,sys_day,sys_month,sys_year);
 @z
 
 @x [12.198] Change class to c_class to avoid C++ keyword.
@@ -1148,7 +1168,7 @@ end;
   @!n:screen_col);
 var @!k:screen_col; {an index into |a|}
 @!c:screen_col; {an index into |screen_pixel|}
-begin @{ k:=0; c:=a[0];
+begin @{@+k:=0; c:=a[0];
 repeat incr(k);
   repeat screen_pixel[r,c]:=b; incr(c);
   until c=a[k];
@@ -1507,16 +1527,9 @@ recorder_change_filename(stringcast(name_of_file+1));
 pack_job_name(".log");
 @z
 
-@x [38.790]
-begin wlog(banner);
-slow_print(base_ident); print("  ");
-print_int(round_unscaled(internal[day])); print_char(" ");
+@x [38.790] leading character for C string
 months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @y
-begin wlog(banner);
-wlog (version_string);
-slow_print(base_ident); print("  ");
-print_int(round_unscaled(internal[day])); print_char(" ");
 months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @z
 
@@ -1564,7 +1577,7 @@ loop@+begin
 @z
 
 @x [38.793] Can't return name to string pool because of editor option?
-if name=str_ptr-1 then {we can conserve string pool space now}
+if name=str_ptr-1 then {conserve string pool space (but see note above)}
   begin flush_string(name); name:=cur_name;
   end;
 @y

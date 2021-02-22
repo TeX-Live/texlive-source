@@ -40,13 +40,6 @@ int main() {
 			error |=1;
 		}
 	}
-
-	if (gdImageGetPixel(im, xs -1, 95) != white) {
-		error |=1;
-	}
-	if (gdImageGetPixel(im, xe +1, 95) != white) {
-		error |=1;
-	}
 	gdImageDestroy(im);
 
 	return error;

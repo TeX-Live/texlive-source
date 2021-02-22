@@ -17,14 +17,14 @@ use strict;
 
 # Define some global variables.
 my $progname = basename $0;        # Name of this program
-our $VERSION = "1.4";              # Version number of this program
+our $VERSION = "1.6";              # Version number of this program
 my %name2chars;                    # Map from a font name to a character list
 my $GS = $ENV{"GS"} || "gs";       # Name of the Ghostscript interpreter
 my $TFTOPL = $ENV{"TFTOPL"} || "tftopl";    # Name of the TFM to PL converter
 my $dpi = 300;                     # Number of dots per inch used to generate bitmapped characters
 my @tfmlist;                       # List of TFM files to use
 my %fontmatch;                     # Map from a font name to its best match
-my $xinc = 36;                     # Width of font name in PostScript points
+my $xinc = 48;                     # Width of font name in PostScript points
 my $yinc = 24;                     # Height of font in PostScript points
 my $init_yinc = 36;                # Space after title
 my %tfmfontwidth;                  # Map from font name to character number to character width
@@ -46,7 +46,7 @@ my $sample_file_tex;               # Name of a TeX file of font samples to write
 my $single_font_use = 0;           # 1=one use per font; 0=allow repetitions
 my $samples_per_page = 25;         # Number of font samples to print per page
 my $tfm_cache_file;                # Name of a file in which to cache font metrics
-my $any_scale = 0;                 # 0=1X, 1.1X, 1.2X, ...; 1=any scale is allowed
+my $no_match = 10**9;              # Sentinel indicating no match was found
 
 ###########################################################################
 
@@ -189,11 +189,6 @@ sub optimal_scale ($$)
     }
     return 1.0 if $tfm_dot_tfm == 0.0;   # Handle TFM characters that all have zero width.
     my $optscale = $doc_dot_tfm / $tfm_dot_tfm;
-    unless ($any_scale) {
-        # Allow only values >= 1.0 and only multiples of 0.1.
-        return 1.0 if $optscale < 1.0;
-        $optscale = int($optscale*10 + 0.5) / 10;
-    }
     return $optscale;
 }
 
@@ -206,12 +201,21 @@ sub compare_maps ($$;$)
     my %docmap = %{$_[0]};    # Map for a document font
     my %tfmmap = %{$_[1]};    # Map for a TFM font
     my $scale = $_[2] || 1.0; # Scale for each TFM width
+    my @sqdiffs;              # List of squares of differences
     my $sqdiff = 0;           # Sum of squares of differences
 
+    # Compute the per-character squared difference.
     while (my ($char, $docwidth) = each %docmap) {
         my $tfmwidth = $tfmmap{$char};
-        return 10**9 if !defined $tfmwidth;      # Match is impossible.
-        $sqdiff += ($docwidth - $tfmwidth*$scale) ** 2;
+        return $no_match if !defined $tfmwidth;      # Match is impossible.
+        push @sqdiffs, ($docwidth - $tfmwidth*$scale) ** 2;
+    }
+
+    # Sort the list of squared differences in decreasing order (for
+    # floating-point stability), add it up, and return the sum.
+    @sqdiffs = sort {$b <=> $a} @sqdiffs;
+    foreach my $s (@sqdiffs) {
+        $sqdiff += $s;
     }
     return $sqdiff;
 }
@@ -339,9 +343,66 @@ sub unique_items (@)
     return keys %item_hash;
 }
 
+
+# Collapse repeated whitespace instances into a single space character.
+sub collapse_spaces ($)
+{
+    my $simply_spaced = $_[0];
+    $simply_spaced =~ s/\s+/ /gs;
+    return $simply_spaced;
+}
+
+# Combine a list of strings with commas and "and".
+sub join_string_list (@)
+{
+    my @items = @_;
+    return $items[0] if $#items == 0;
+    return "$items[0] and $items[1]" if $#items == 1;
+    return join(", ", @items[0..$#items-1]) . ", and $items[$#items]";
+}
+
+# Determine a PostScript file's page size.  Return it as a pair of TeX
+# points, a description of a standard paper size, and its source in
+# the document.
+sub page_size ($)
+{
+    my $ps = $_[0];          # Entire PostScript file
+    my $bp2pt = 72.27/72;    # Conversion factor from bp to pt
+    my @psize = (597.508, 845.047, "A4", "a fallback mechanism");  # Default to A4 paper
+
+    # Look for a bounding box.  This should work in most cases.
+    if ($ps =~ /^\%\%BoundingBox: (\d+) (\d+) (\d+) (\d+)$/m) {
+        $psize[0] = ($3 - $1)*$bp2pt;
+        $psize[1] = ($4 - $2)*$bp2pt;
+        $psize[3] = "the PostScript bounding box";
+    }
+    # dvips-produced PostScript files that lack a bounding box may
+    # specify a page size when entering the TeXDict dictionary.
+    elsif ($ps =~ /\bTeXDict\s+begin\s+(\d+)\s+(\d+)\s+\d+\s+\d+\s+\d+/ms) {
+        $psize[0] = $1/65536.0;
+        $psize[1] = $2/65536.0;
+        $psize[3] = "the TeX dictionary";
+    }
+
+    # Look for standard paper sizes.
+    my $wd = int($psize[0] + 0.5);
+    my $ht = int($psize[1] + 0.5);
+    if ($wd == 598 && $ht == 845) {
+        $psize[2] = "A4";
+    }
+    elsif ($wd == 614 && $ht == 795) {
+        $psize[2] = "US Letter";
+    }
+    else {
+        $psize[2] = "unrecognized paper size";
+    }
+    return @psize;
+}
+
 ###########################################################################
 
 # Parse the command line.
+my @cmdline = @ARGV;
 Getopt::Long::Configure ("bundling");
 GetOptions ("h|help"       => \$wanthelp,
             "v|verbose+"   => \$verbose,
@@ -355,7 +416,6 @@ GetOptions ("h|help"       => \$wanthelp,
             "p|ps=s"       => \$sample_file_ps,
             "s|spp=i"      => \$samples_per_page,
             "C|cache=s"    => \$tfm_cache_file,
-            "a|any-scale!" => \$any_scale,
             "1|no-repeats" => \$single_font_use) || pod2usage(2);
 if ($wantversion) {
     print "pkfix-helper $VERSION\n";
@@ -370,6 +430,7 @@ if ($wanthelp) {
 my $infilename = $#ARGV>=0 ? $ARGV[0] : "-";
 my $outfilename = $#ARGV>=1 ? $ARGV[1] : "-";
 die "${progname}: Samples per page must be at least 1 ($samples_per_page was specified)\n" if $samples_per_page < 1;
+print STDERR "Command line: $0 @cmdline\n" if $verbose >= 2;
 
 # Convert any user-specified TFMs to the appropriate internal format.
 foreach my $tfm (@extra_tfms) {
@@ -378,6 +439,7 @@ foreach my $tfm (@extra_tfms) {
 }
 
 # Parse the list of forced font mappings.
+my %is_forced;
 foreach my $mapstr (@forced_fonts) {
     $mapstr =~ /^(\w+)\s*=\s*(.*)$/ || die "${progname}: Unable to parse font specification \"$mapstr\"\n";
     my $parsed_font_spec = parse_font_spec $2;
@@ -389,33 +451,44 @@ foreach my $mapstr (@forced_fonts) {
         # Define a new font match,
         $fontmatch{$1} = $parsed_font_spec;
     }
+    $is_forced{$1} = 1;
 }
 
 # Construct a list of (possibly nonexistent) TFM files to try.  These
 # should be in order of decreasing likelihood.  Each entry in the list
 # is of the form {full name, scale factor}.
 @exclude_res = ('^\s*$') if $#exclude_res == -1;
-foreach my $size_scale ([10, 1.0],
-                        [12, 1.0],
-                        [10, 1.1],
-                        [17, 1.0],
+foreach my $size_scale (# The following are the most common sizes found in
+                        # old LaTeX documents.
+                        [10, 1.0],       # 10 pt.
+                        [12, 1.0],       # 12 pt.
+                        [10, 1.095],     # 11 pt. -- really 10*sqrt(1.2) pt.
+                        [17, 17.28/17],  # 17 pt. -- really 10*1.2^3 pt.
                         [ 9, 1.0],
                         [ 8, 1.0],
                         [ 7, 1.0],
                         [ 6, 1.0],
                         [ 5, 1.0],
-                        [10, 1.2],
-                        # The following are common cmbx12 section headings.
+                        # As 10 pt. is LaTeX's most generic font size, LaTeX
+                        # sometimes needs to scale up a 10 pt. font to make up
+                        # for no other size being available.
+                        [10, 1.2],       # 12 pt.
+                        [10, 1.44],      # 14 pt. -- really 10*1.2^2 pt.
+                        [10, 1.728],     # 17 pt. -- really 10*1.2^3 pt.
+                        [10, 2.074],     # 20 pt. -- really 10*1.2^4 pt.
+                        [10, 2.488],     # 25 pt. -- really 10*1.2^5 pt.
+                        # While not particularly common, the following are
+                        # sometimes encountered with cmbx12 for section
+                        # headings.
                         [12, 14.40/12],
                         [12, 17.28/12],
                         [12, 20.74/12],
                         [12, 24.88/12]) {
     my ($pointsize, $scale) = @$size_scale;
   FONTLOOP:
-    foreach my $basefont (qw (cmr cmb cmtt cmbsy cmbx cmbxsl cmbxti
-                              cmcsc cmex cmitt cmmi cmmib cmsl cmsltt
-                              cmss cmssbx cmssi cmsy cmti lasy lasyb
-                              msam msbm cmssdc cmtcsc)) {
+    foreach my $basefont (qw (cmr cmbx cmtt cmbsy cmbxsl cmcsc cmex cmitt cmmi
+                              cmmib cmss cmssbx cmssi cmsy cmsl cmsltt cmti cmb
+                              lasy lasyb msam msbm cmbxti cmssdc cmtcsc)) {
         my $friendly_name = sprintf "%s%d \@ %.5gX", $basefont, $pointsize, $scale;
         foreach my $regexp (@exclude_res) {
             next FONTLOOP if $friendly_name =~ $regexp;
@@ -441,8 +514,51 @@ my $entirefile;
 }
 print STDERR "done.\n" if $verbose;
 
+# Warn if the file doesn't look like it was produced by dvips.
+if ($entirefile !~ /dvips/i) {
+    warn "${progname}: $infilename does not appear to have been produced by dvips; font conversion is unlikely to succeed\n";
+    warn "${progname}: $infilename does not even appear to be a PostScript file\n" if substr($entirefile, 0, 2) ne '%!';
+}
+
+# Compute the byte offset of each DVIPSBeginSection before we modify the input
+# file.
+my @begin_offsets;
+my $idx = 0;
+while (1) {
+    $idx = index($entirefile, '%DVIPSBeginSection', $idx);
+    last if $idx == -1;
+    push @begin_offsets, ++$idx;
+}
+
+# Preprocess the input file to make it easier to parse.
+print STDERR "Preprocessing ... " if $verbose >= 2;
+$entirefile =~ s/[\n\r]+/\n/g;          # Normalize line endings to Unix-style.
+$entirefile =~ s/TeXDict\s+begin\s+\%\%Begin(\w+).*?\%\%End\1.*?\n/$&end\nTeXDict begin /gs;    # Remove blocks of code between "TeXDict begin" and the first number.
+$entirefile =~ s/TeXDict\s+begin\s+\d+\s+\d+\s+\d+.*?\@/collapse_spaces($&)/gse;   # Normalize "TeXDict begin" spacing.
+print STDERR "done.\n" if $verbose >= 2;
+
+# Determine the number of dots per inch used to generate the bitmaps.
+if ($entirefile =~ /dpi=(\d+)/i
+    || $entirefile =~ /Resolution (\d+)dpi/i
+    || $entirefile =~ /\%Feature: \*Resolution (\d+)/) {
+    $dpi = $1 + 0;
+    printf STDERR "Bitmapped fonts are typeset at $dpi DPI.\n" if $verbose;
+}
+else {
+    warn "${progname}: Could not determine the target printer resolution; assuming $dpi DPI\n";
+}
+
+# Determine the page size.
+my @psize = page_size $entirefile;
+if ($verbose >= 2) {
+    printf STDERR "Determined the page size to be %.0fpt by %.0fpt (%s) via %s.\n", $psize[0], $psize[1], $psize[2], $psize[3];
+}
+elsif ($verbose >= 1) {
+    printf STDERR "Determined the page size to be %.3fpt by %.3fpt (%s).\n", $psize[0], $psize[1], $psize[2];
+}
+
 # Rename the fonts in each subdocument (figure).
-my @fontrenames;
+my @fig_font_renames;    # List of {old text, new text, TeX dictionary} triplets
 my $fignum = 1;
 my $numrenamed = 0;
 while ($entirefile =~ /(\%\%BeginDocument: (.*?)\n.*?\%\%EndDocument)/gs) {
@@ -451,14 +567,14 @@ while ($entirefile =~ /(\%\%BeginDocument: (.*?)\n.*?\%\%EndDocument)/gs) {
     my $figname = $2;
     if ($verbose >= 2) {
         if ($fignum == 1) {
-            print STDERR "Renaming all fonts encountered in included documents:\n";
+            print STDERR "Renaming all fonts encountered in figures and other included documents:\n";
         }
         print STDERR "    $figname\n";
     }
-    while ($figure =~ m|/(\S+)\s+\d+\s+\d+\s+df(.*?>[^<>]*?[DI])\s+E|gs) {
+    while ($figure =~ m|/([^()<>\[\]{}\/\%]+)\s+\d+\s+\d+\s+df(.*?>[^<>]*?[DI])\s+E|gs) {
         my $fontname = $1;   # Name of current font (e.g., "Fa")
         $newfigure =~ s,(?<=/)$fontname\b,${fontname}_$fignum,gs;
-        $newfigure =~ s,\b$fontname(?=\(),${fontname}_$fignum,gs;
+        $newfigure =~ s,\b$fontname(?=[^()]*\(),${fontname}_$fignum,gs;
         $numrenamed++;
         if ($verbose >= 2) {
             printf STDERR "        %s --> %s_%d\n", $fontname, $fontname, $fignum;
@@ -475,29 +591,86 @@ while ($entirefile =~ /(\%\%BeginDocument: (.*?)\n.*?\%\%EndDocument)/gs) {
         else {
             warn "${progname}: Failed to extract a font-defining TeXDict from $figname\n";
         }
-        push @fontrenames, [$figure, $newfigure, $texdict];
+        push @fig_font_renames, [$figure, $newfigure, $texdict];
     }
     $fignum++;
 }
 if ($verbose && $entirefile =~ /\%\%BeginDocument:/s) {
     print STDERR "Number of Type 3 fonts encountered in included documents: $numrenamed\n";
 }
-foreach my $ren (@fontrenames) {
+foreach my $ren (@fig_font_renames) {
     my ($before, $after, $notused) = @$ren;
     $entirefile =~ s/\Q$before\E/$after/gs;
 }
 
-# If the document contains a subdocument with (now renamed) font
-# definitions, hoist those definitions adjacent to the main document's
-# font definitions so pkfix can find them.
-if (@fontrenames) {
-    if ($entirefile =~ /(TeXDict begin (\d+) (\d+) (\d+) (\d+) (\d+) \(.*?\)\s+\@start.*?)(?=end)/s) {
-        my $fontdict = $1;
+# Rename the fonts in each section.
+my @sections = $entirefile =~ /(?<=\n)\%DVIPSBeginSection.*?\%DVIPSEndSection\n/gs;
+my @sdoc_font_renames;    # List of {old text, new text, TeX dictionary} triplets
+if ($#sections > 0) {
+    printf STDERR "Renaming the fonts in %d dvips sections:\n", 1+$#sections if $verbose >= 2;
+    my $numrenamed = 0;
+    foreach my $secnum (0 .. $#sections) {
+        if ($verbose >= 2) {
+            printf STDERR "    Section %d, beginning at file position %d\n", 1+$secnum, $begin_offsets[$secnum];
+        }
+        my $oldsection = $sections[$secnum];
+        my $newsection = $oldsection;
+        while ($oldsection =~ m|/([^()<>\[\]{}\/\%]+)\s+\d+\s+\d+\s+df(.*?>[^<>]*?[DI])\s+E|gs) {
+            my $fontname = $1;   # Name of current font (e.g., "Fa")
+            my $newfontname = sprintf "%s_S%02d", $fontname, 1+$secnum;
+            $newsection =~ s,(?<=/)$fontname\b,$newfontname,gs;
+            $newsection =~ s,\b$fontname\b(?=[^()]*\(),$newfontname,gs;
+            $numrenamed++;
+            if ($verbose >= 2) {
+                printf STDERR "        %s --> %s\n", $fontname, $newfontname;
+            }
+        }
+        if ($oldsection ne $newsection) {
+            # Remove the font-defining dictionary from the the section
+            # as it may confuse pkfix.  Store it so we can later
+            # reinsert it into the main document's font-defining
+            # dictionary.
+            my $texdict = "";
+            if ($newsection =~ s/(TeXDict begin \d+ \d+ \d+ \d+ \d+(?: \([^\)]*\))?\s+\@start bos)\s+(.*?)(?=\%DVIPSSectionPage)/$1\n/gs) {
+                $texdict = $2;
+            }
+            else {
+                warn "${progname}: Failed to extract a font-defining TeXDict from dvips section @{[1+$secnum]}\n";
+            }
+            push @sdoc_font_renames, [$oldsection, $newsection, $texdict];
+        }
+    }
+    if ($verbose) {
+        printf STDERR "Number of Type 3 fonts encountered in %d dvips sections: %d\n", 1+$#sections, $numrenamed;
+    }
+}
+foreach my $ren (@sdoc_font_renames) {
+    my ($before, $after, $notused) = @$ren;
+    $entirefile =~ s/\Q$before\E/$after/gs;
+}
+
+# If the document contains a section or subdocument with (now renamed)
+# font definitions, hoist those definitions to where pkfix can find
+# them.
+if (@sdoc_font_renames || @fig_font_renames) {
+    if ($entirefile =~ /(TeXDict begin \d+ \d+ \d+ \d+ \d+(?: \([^\)]*\))?\s+\@start)(.*?)(?=end)/s) {
+        # Construct the PostScript code to add.
+        my $texdict_header = $1;
+        my $texdict_body = $2;
         my $morefonts = "";
-        foreach my $ren (@fontrenames) {
+        foreach my $ren (@sdoc_font_renames, @fig_font_renames) {
             $morefonts .= $ren->[2];
         }
-        $entirefile =~ s/(\Q$fontdict\E)/$1$morefonts/s;
+
+        # Insert the code at a suitable location.
+        if ($entirefile =~ /\%\%EndProlog/s) {
+            # First choice: In a ProcSet right before the %%EndProlog
+            $entirefile =~ s/(\%\%EndProlog)/\%\%BeginProcSet: ${progname}-fonts.pro\n$texdict_header\n$morefonts\nend\n\%\%EndProcSet\n$1\n\%DVIPSParameters: dpi=$dpi/;
+        }
+        else {
+            # Second choice: Within the first TeXDict usage
+            $entirefile =~ s/(\Q$texdict_header$texdict_body\E)/$1$morefonts/s;
+        }
     }
     else {
         warn "${progname}: Failed to find a font-defining TeXDict\n";
@@ -506,12 +679,13 @@ if (@fontrenames) {
 
 # Construct a mapping from each document font name to a list of valid
 # characters in that font.
-while ($entirefile =~ m|/(\S+)\s+\d+\s+\d+\s+df(.*?>[^<>]*?[DI])\s+E|gs) {
+while ($entirefile =~ m|/([^()<>\[\]{}\/\%]+)\s+\d+\s+\d+\s+df(.*?>[^<>]*?[DI])\s+E|gs) {
     my $fontname = $1;   # Name of current font (e.g., "Fa")
     my $fontbody = $2;   # List of character definitions as hexadecimal strings
     my $charnum = 0;     # Current character number
     my @charlist = ();   # List of valid characters in PostScript-friendly format
 
+    warn "${progname}: Font $fontname is multiply defined\n" if defined $name2chars{$fontname};
     while ($fontbody =~ /<[0-9A-F\s]+>(.*?[DI])/gs) {
         # Put the current character number in $charnum then append the
         # corresponding character to @charlist.
@@ -532,21 +706,11 @@ if ($verbose) {
     printf STDERR "Total number of Type 3 fonts encountered: %d\n", 1+$#sortedfontnames;
     if ($verbose >= 2) {
         foreach my $fontname (@sortedfontnames) {
-            printf STDERR "    %-5.5s -- %3d character(s)\n", $fontname, 1+$#{$name2chars{$fontname}};
+            printf STDERR "    %s -- %3d character(s)\n", $fontname, 1+$#{$name2chars{$fontname}};
         }
     }
 }
 die "${progname}: No Type 3 fonts were encountered in the input file\n" if $#sortedfontnames==-1;
-
-# Determine the number of dots per inch used to generate the bitmaps.
-if ($entirefile =~ /dpi=(\d+)/i
-    || $entirefile =~ /Resolution (\d+)dpi/i) {
-    $dpi = $1 + 0;
-    printf STDERR "Bitmapped fonts are typeset at $dpi DPI.\n" if $verbose;
-}
-else {
-    warn "${progname}: Could not determine the target printer resolution; assuming $dpi DPI\n";
-}
 
 # Insert some helper code after the tex.pro ProcSet.
 my $output_width_ps = $entirefile;    # PostScript code to output character widths
@@ -585,8 +749,14 @@ end
 SHOWFONTNAME
     ;#'
 if ($output_width_ps !~ s/\%\%BeginProcSet: tex\w*\.pro.*?\%\%EndProcSet/$&\n$showfontnamecode/s) {
-    print STDERR "No tex.pro ProcSet was found.  We have to guess where to inject PostScript code.\n" if $verbose >= 3;
-    die "${progname}: Unable to inject prologue code\n" if $output_width_ps !~ s/TeXDict begin\s+\d+\s+\d+\s+bop/\n$showfontnamecode\n$&/s;
+    print STDERR "No tex.pro ProcSet was found.  Looking for a suitable TeXDict begin.\n" if $verbose >= 3;
+    if ($output_width_ps =~ s/TeXDict begin\s+\d+\s+\d+\s+bop/\n$showfontnamecode\n$&/s) {
+        print STDERR "Found a suitable TeXDict begin!\n" if $verbose >= 3;
+    }
+    else {
+        print STDERR "Failed to find a suitable TeXDict begin.\n" if $verbose >= 3;
+        die "${progname}: Unable to inject prologue code\n";
+    }
 }
 
 # Define some code to display the width of every valid character in
@@ -616,9 +786,14 @@ ENDDISPLAYCODE
     ;
 
 # Replace the bulk of the PostScript file with the display code.
-if ($output_width_ps !~ s/\%\%Page:.*(\%\%Trailer)/$displaycode$1/s) {
-    print STDERR 'No %%Page and/or %%Trailer comments were found.  We have to guess where to inject PostScript code.', "\n" if $verbose >= 3;
-    die "${progname}: Unable to inject display code\n" if $output_width_ps !~ s/TeXDict begin\s+\d+\s+\d+\s+bop.*eop\s+end/\n$displaycode\n/s;
+if ($output_width_ps !~ s/(?:\%\%Page|\%DVIPSSectionPage):.*(\%\%Trailer|\%DVIPSSectionTrailer)/$displaycode$1/s) {
+    print STDERR 'No %%Page and/or %%Trailer comments were found.  Looking for a suitable TeXDict begin.', "\n" if $verbose >= 3;
+    if ($output_width_ps =~ s/TeXDict begin\s+\d+\s+\d+\s+bop.*eop\s+end/\n$displaycode\n/s) {
+        print STDERR "Found a suitable TeXDict begin!\n" if $verbose >= 3;
+    } else {
+        print STDERR "Failed to find a suitable TeXDict begin.\n" if $verbose >= 3;
+        die "${progname}: Unable to inject display code\n";
+    }
 }
 
 # Output the modified PostScript code to a temporary file, run
@@ -632,11 +807,12 @@ close $psfile;
 undef $output_width_ps;
 my %fontwidth;     # Map from font name to character number to character width
 my @previnfo = ("", 0.0);   # Previous font name and final character position
-my $gscmd = "$GS -q -dNOPAUSE -dBATCH -dNODISPLAY $psfilename";
+my $gscmd = "$GS -dNOPAUSE -dBATCH -dNODISPLAY $psfilename";
 print STDERR "Finding character widths ... " if $verbose >= 1;
 print STDERR "\n    Invoking: $gscmd\n" if $verbose >= 2;
 print STDERR "done.\n" if $verbose >= 1;
 open (GSCMD, "$gscmd|") || die "${progname}: failed to fork ($!)\n";
+my @gs_output;     # Ghostscript diagnostic messages, to output on error
 while (my $oneline = <GSCMD>) {
     if ($oneline =~ /FONT: (\S+)\s*CHAR: (\d+)\s*XPOS: (\S+)/o) {
         my ($fontname, $charnum, $xpos) = ($1, $2, $3);
@@ -649,8 +825,16 @@ while (my $oneline = <GSCMD>) {
         $dvips_xscale = $1 * 1.0;
         $dvips_yscale = $2 * -1.0;
     }
+    else {
+        push @gs_output, $oneline;
+    }
 }
-close GSCMD || die "${progname}: failed to run $GS ($!)\n";
+close GSCMD || do {
+    foreach my $ln (@gs_output) {
+        print STDERR $ln;
+    }
+    die "${progname}: failed to run $GS ($!)\n";
+};
 unlink $psfilename;
 die "${progname}: No character-width information was found\n" if !%fontwidth;
 
@@ -723,9 +907,12 @@ write_tfm_cache_file() if defined $tfm_cache_file;
 # characters utilized) to every TFM file (in increasing order of
 # obscurity).
 print STDERR "Matching fonts:\n" if $verbose;
+my %already_used_tfms;     # Set of TFM files already assigned to a document font, empty unless --no-repeats was specified
 foreach my $fontname (@sortedfontnames) {
-    my @besttfms;             # Best matching TFM file(s), sizes, and scales
-    my $bestmatch = 10**9;    # Best matching value
+    my @besttfms;               # Best matching TFM file(s), sizes, and scales
+    my $bestmatch = $no_match;  # Best matching value
+    my @besttfms_rep;           # Best matching but repeated TFM file(s), sizes, and scales
+    my $bestmatch_rep = $no_match;  # Best matching repeated value
 
     # Don't substitute the font if we were told not to.
     if (defined $retained_t3s{$fontname}) {
@@ -767,16 +954,39 @@ foreach my $fontname (@sortedfontnames) {
         my $scale = $tfminfo->{"scale"};
         printf STDERR "    Comparing %s and %s \@ %.5gX ... ", $fontname, $tfm, $scale if $verbose >= 2;
         my $match = compare_maps $fontwidth{$fontname}, $tfmfontwidth{$tfm}, $scale;
-        if ($bestmatch > $match) {
-            # We found a closer match than what we had before.
-            $bestmatch  = $match;
-            @besttfms   = ($tfminfo);
+        if (defined $already_used_tfms{$tfm}->{$scale}) {
+            # Repeated TFM (and --no-repeats was specified) -- not eligible for
+            # best TFM.
+            if ($bestmatch_rep > $match) {
+                # We found a closer match than what we had before.
+                $bestmatch_rep  = $match;
+                @besttfms_rep   = ($tfminfo);
+            }
+            elsif ($bestmatch_rep == $match) {
+                # We found an equal match to what we had before.
+                push @besttfms_rep, $tfminfo;
+            }
         }
-        elsif ($bestmatch == $match) {
-            # We found an equal match to what we had before.
-            push @besttfms, $tfminfo;
+        else {
+            # Non-repeated TFM -- eligible for best TFM.
+            if ($bestmatch > $match) {
+                # We found a closer match than what we had before.
+                $bestmatch  = $match;
+                @besttfms   = ($tfminfo);
+            }
+            elsif ($bestmatch == $match) {
+                # We found an equal match to what we had before.
+                push @besttfms, $tfminfo;
+            }
         }
-        printf STDERR "done (mismatch=%.5f).\n", $match if $verbose >= 2;
+        if ($verbose >= 2) {
+            if ($match == $no_match) {
+                print STDERR "done (disjoint character sets).\n";
+            }
+            else {
+                printf STDERR "done (mismatch=%.5f).\n", $match;
+            }
+        }
     }
 
     # Select the first of the best matches.
@@ -784,30 +994,82 @@ foreach my $fontname (@sortedfontnames) {
     my $besttfminfo = $fontmatch{$fontname};
     my $besttfm = $besttfminfo->{"tfm"};
     my $bestscale = $besttfminfo->{"scale"};
+
+    # Report how good or bad the match is and what other close matches the user
+    # might consider instead.
     if ($verbose >= 2) {
-        if ($#besttfms == 0) {
-            # Single winner
-            printf STDERR "    Best match for %s is %s \@ %.5gX with mismatch=%.5f.\n\n",
-            $fontname, $besttfm, $bestscale, $bestmatch;
+        my $forced_str = defined $is_forced{$fontname} ? ", forced by user," : "";
+        if ($bestmatch == $no_match) {
+            # No match was found.
+            printf STDERR "    No match was found for %s%s.\n", $fontname, $forced_str;
+        }
+        elsif ($#besttfms == 0) {
+            # There was a single winner.
+            printf STDERR "    Best match for %s%s is %s \@ %.5gX with mismatch=%.5f.\n",
+            $fontname, $forced_str, $besttfm, $bestscale, $bestmatch;
         }
         else {
-            # Tie for first place
-            printf STDERR "    Best match for %s is %s \@ %.5gX (tied among %s) with mismatch=%.5f.\n\n",
-            $fontname, $besttfm, $bestscale,
-            join("/", map {sprintf "%s\@%.5gX", $_->{"tfm"}, $_->{"scale"}} @besttfms),
-            $bestmatch;
+            # There was a tie for first place.
+            my $preposition = $#besttfms == 1 ? "between" : "among";
+            printf STDERR "    Best match for %s%s is %s \@ %.5gX (tied %s %s) with mismatch=%.5f.\n",
+                $fontname, $forced_str, $besttfm, $bestscale, $preposition,
+                join_string_list(map {sprintf "%s \@ %.5gX", $_->{"tfm"}, $_->{"scale"}} @besttfms),
+                $bestmatch;
+        }
+        if ($bestmatch_rep < $bestmatch ||
+            ($bestmatch < $no_match && $bestmatch_rep <= $bestmatch)) {
+            # A repeated font would have matched equally well (excluding
+            # failures to match at all) or better.
+            printf STDERR "    Ignored repeated %s %s with mismatch=%.5f.\n",
+                $#besttfms_rep == 0 ? "font" : "fonts",
+                join_string_list(map {sprintf "%s \@ %.5gX", $_->{"tfm"}, $_->{"scale"}} @besttfms_rep),
+                $bestmatch_rep;
         }
     }
     elsif ($verbose == 1) {
-        printf STDERR "done (%s \@ %.5gX, mismatch=%.5f).\n", $besttfm, $bestscale, $bestmatch;
+        if ($bestmatch == $no_match) {
+            print STDERR "done (no match found";
+        }
+        else {
+            printf STDERR "done (%s \@ %.5gX with mismatch=%.5f", $besttfm, $bestscale, $bestmatch;
+        }
+        print STDERR ", forced by user" if defined $is_forced{$fontname};
+        if ($#besttfms > 0 && $bestmatch != $no_match) {
+            # There was a tie for first place.
+            printf STDERR ", tied with %s",
+                join_string_list(map {sprintf "%s \@ %.5gX", $_->{"tfm"}, $_->{"scale"}} @besttfms[1..$#besttfms]);
+        }
+        if ($bestmatch_rep < $bestmatch ||
+            ($bestmatch < $no_match && $bestmatch_rep <= $bestmatch)) {
+            # A repeated font would have matched equally well (excluding
+            # failures to match at all) or better.
+            printf STDERR "; ignored %s %s with mismatch=%.5f",
+                $#besttfms_rep == 0 ? "repeat" : "repeats",
+                join_string_list(map {sprintf "%s \@ %.5gX", $_->{"tfm"}, $_->{"scale"}} @besttfms_rep),
+                $bestmatch_rep;
+        }
+        print STDERR ").\n";
     }
-    warn "${progname}: Best match for $fontname is rather poor\n" if $bestmatch>=1.0;
+    if ($bestmatch == $no_match) {
+        warn "${progname}: ${fontname} uses characters that don't appear in any candidate font\n";
+    }
+    elsif ($bestmatch >= 1.0) {
+        warn "${progname}: Best match for $fontname is rather poor\n";
+    }
+    printf STDERR "\n" if $verbose >= 2;  # Warnings should precede the inter-font newline character.
 
-    # Optionally remove the font from @goodtfmlist.
+    # If --no-repeats was specified, mark the font as having been used.
     if ($single_font_use) {
-        @tfmlist = grep {$_->{"tfm"} ne $besttfm
-                             || $_->{"scale"} != $bestscale} @tfmlist;
+        $already_used_tfms{$besttfm}->{$bestscale} = 1;
     }
+}
+
+# Merge all sections into a single section to avoid confusing pkfix.
+if ($#sections > 0) {
+    my $numreplacements = 0;
+    $entirefile =~ s/(TeXDict begin)\s+(\d+ \d+ \d+ \d+ \d+(?: \([^\)]*\))?\s+\@start\s+bos)/$numreplacements++ ? "" : "$1\n$2"/gse;
+    $entirefile =~ s/eos\s+end//gs;
+    $entirefile =~ s/(.*)(\%DVIPSEndSection)/$1eos end\n$2/s;
 }
 
 # Insert %DVIPSBitmapFont comments around every Type 3 font definition.
@@ -815,7 +1077,7 @@ my $commented_ps = $entirefile;
 my $infilename_ps = $infilename;   # PostScript version of $infilename
 $infilename_ps =~ s/([\(\)\\])/\\$1/g;
 $commented_ps =~ s|^\%(End)?DVIPSBitmapFont.*$||gm;    # Remove existing comments (if any)
-$commented_ps =~ s|/(\S+)\s+\d+\s+\d+\s+df.*?>[^<]*?[DI]\s+E|write_comments($1, $&)|gse;
+$commented_ps =~ s|/([^()<>\[\]{}\/\%]+)\s+\d+\s+\d+\s+df.*?>[^<]*?[DI]\s+E|write_comments($1, $&)|gse;
 if ($commented_ps !~ /\%\%EndProlog/) {
     # pkfix fails silently if it doesn't see an %%EndProlog.
     print STDERR "No %%EndProlog comment was found.  Adding one.\n" if $verbose >= 3;
@@ -869,12 +1131,12 @@ TeXDict begin
       font-name-string show (:) show
     grestore
     gsave
-      42 0 rmoveto
+      $xinc 0 rmoveto
       font-name cvx exec
       currentfont bitmap-font-transform makefont setfont
       sample-string show
     grestore
-    0 -24 rmoveto
+    0 -$yinc rmoveto
 } def
 
 \% Define a transformation matrix for dvips bitmapped fonts.  We _could_
@@ -888,9 +1150,15 @@ end
 \%\%EndProcSet
 SHOWFONTNAME
     ;
-    if ($sample_ps !~ s/\%\%BeginProcSet: tex\w*\.pro.*\%\%EndProcSet/$&\n$showfontnamecode/s) {
-        print STDERR "No tex.pro ProcSet was found.  We have to guess where to inject PostScript code.\n" if $verbose >= 3;
-        die "${progname}: Unable to inject prologue code\n" if $sample_ps !~ s/TeXDict begin\s+\d+\s+\d+\s+bop/\n$showfontnamecode\n$&/s;
+    if ($sample_ps !~ s/\%\%BeginProcSet: tex\w*\.pro.*?\%\%EndProcSet/$&\n$showfontnamecode/s) {
+        print STDERR "No tex.pro ProcSet was found.  Looking for a suitable TeXDict begin.\n" if $verbose >= 3;
+        if ($sample_ps =~ s/TeXDict begin\s+\d+\s+\d+\s+bop/\n$showfontnamecode\n$&/s) {
+            print STDERR "Found a suitable TeXDict begin!\n" if $verbose >= 3;
+        }
+        else {
+            print STDERR "Failed to find a suitable TeXDict begin.\n" if $verbose >= 3;
+            die "${progname}: Unable to inject prologue code\n";
+        }
     }
 
     # Generate code to output a sample of each font in turn.
@@ -902,10 +1170,12 @@ TeXDict begin
 \% Display a page title.
 0 0 moveto
 initmatrix
+0 -9.962 rmoveto
 gsave
   /Helvetica 18 selectfont
   (Fonts used by $infilename_ps) show
 grestore
+0 -18 rmoveto
 0 -$init_yinc rmoveto
 
 \% Display samples of each document font in decreasing order of the number
@@ -929,14 +1199,21 @@ TeXDict begin
 $pageno @{[$pageno-1]} bop
 0 0 moveto
 initmatrix
+0 -9.962 rmoveto
 PAGETRANSITION
 ;
         }
     }
     $displaycode .= "eop\nend\n";
-    if ($sample_ps !~ s/\%\%Page:.*(\%\%Trailer)/$displaycode$1/s) {
-        print STDERR 'No %%Page and/or %%Trailer comments were found.  We have to guess where to inject PostScript code.', "\n" if $verbose >= 3;
-        die "${progname}: Unable to inject display code\n" if $sample_ps !~ s/TeXDict begin\s+\d+\s+\d+\s+bop.*eop\s+end/\n$displaycode\n/s;
+    if ($sample_ps !~ s/(?:\%\%Page|\%DVIPSSectionPage):.*(\%\%Trailer|\%DVIPSSectionTrailer)/$displaycode$1/s) {
+        print STDERR 'No %%Page and/or %%Trailer comments were found.  Looking for a suitable TeXDict begin.', "\n" if $verbose >= 3;
+        if ($sample_ps =~ s/TeXDict begin\s+\d+\s+\d+\s+bop.*eop\s+end/\n$displaycode\n/s) {
+            print STDERR "Found a suitable TeXDict begin!\n" if $verbose >= 3;
+        }
+        else {
+            print STDERR "Failed to find a suitable TeXDict begin.\n" if $verbose >= 3;
+            die "${progname}: Unable to inject display code\n";
+        }
     }
 
     # Write the PostScript file.
@@ -966,8 +1243,35 @@ latex.
 TEX_HEADER
     ;
     write SAMPLE_TEX;
-    print SAMPLE_TEX <<'TEX_BOILERPLATE';
 
+    my $set_tex_paper_size = <<'SET_TEX_PAPER_SIZE';
+
+% Set the paper size to match that of the original PostScript file.
+% There is no standard mechanism for doing so we include a case for
+% each of the major TeX engines.
+\def\ifIhave#1#2#3{\expandafter\ifx\csname #1\endcsname\relax#3\else#2\fi}
+\ifIhave{pagewidth}{%
+  % LuaTeX
+  \pagewidth=<WIDTH>%
+  \pageheight=<HEIGHT>%
+}{%
+  \ifIhave{pdfpagewidth}{%
+    % pdfTeX and XeTeX
+    \pdfpagewidth=<WIDTH>%
+    \pdfpageheight=<HEIGHT>%
+  }{%
+    % TeX + dvips
+    \special{papersize=<WIDTH>,<HEIGHT>}%
+  }%
+}
+
+SET_TEX_PAPER_SIZE
+    ;
+    $set_tex_paper_size =~ s/<WIDTH>/$psize[0]pt/g;
+    $set_tex_paper_size =~ s/<HEIGHT>/$psize[1]pt/g;
+    print SAMPLE_TEX $set_tex_paper_size;
+
+    print SAMPLE_TEX <<'TEX_BOILERPLATE';
 % Make printable all special characters between
 % \makeprintable...\endmakeprintable except for "\", "{", and "}".
 \def\makeprintable{%
@@ -999,20 +1303,22 @@ TEX_HEADER
   \endgroup
 }
 
-% We use Times Bold at 12 point for font names.
+% We use Times Bold at 12 point for font names and Times Roman at 8 point
+% for tagging fonts controlled explicitly by the user.
 \font\timesbXII=ptmb at 12bp
+\font\timesVIII=ptmr at 8bp
 
 % Don't add extra space to paragraphs.
 \parindent=0pt
 \parskip=0pt
 
 % Output the document's title.
-\font\somefont=phvr at 18bp
+\font\somefont=phvr at 18bp\somefont
 TEX_BOILERPLATE
     ;
     # Output the document's title.
     my $infilename_tex = texify split "", $infilename;
-    print SAMPLE_TEX '\put(0, 0){\somefont New fonts to use for ', "$infilename_tex}\n";
+    print SAMPLE_TEX '\put(0, 0){New fonts to use for ', "$infilename_tex}\n";
 
     # Output samples of each font in turn.
     print SAMPLE_TEX "\n\% Output font samples.\n";
@@ -1021,19 +1327,27 @@ TEX_BOILERPLATE
         # Output a single font sample.
         my $fontname = $sortedfontnames[$fontnum];
         my $samplestring = texify @{$name2chars{$fontname}};
-        my $yoffset = ($fontnum-$firstfontnum)*$yinc + $init_yinc;
-        printf SAMPLE_TEX "\\put(0, %d){\\timesbXII %s:}%%\n", $yoffset, $fontname;
-        my $tfm = $fontmatch{$fontname}->{"tfm"};
-        my $scale = $fontmatch{$fontname}->{"scale"};
-        my $size = $tfm2size{$tfm};
-        printf SAMPLE_TEX "\\font\\somefont=%s%s\\somefont\n",
-        $tfm, $scale==1.0 ? "" : sprintf(" at %.5gbp", $scale*$size);
-        printf SAMPLE_TEX "\\put(%d, %d){%s}%%\n", $xinc, $yoffset, $samplestring;
-
-        if ($fontnum % $samples_per_page == $samples_per_page-1) {
+        my $yoffset = ($fontnum-$firstfontnum)*$yinc;
+        $yoffset += $init_yinc if $firstfontnum == 0;
+        if (defined $retained_t3s{$fontname}) {
+            printf SAMPLE_TEX "\\timesVIII\\put(-15, %d){(k)}%%\n", $yoffset-1;
+        }
+        elsif (defined $is_forced{$fontname}) {
+            printf SAMPLE_TEX "\\timesVIII\\put(-15, %d){(f)}%%\n", $yoffset-1;
+        }
+        printf SAMPLE_TEX "\\timesbXII\\put(0, %d){%s:}%%\n", $yoffset, $fontname;
+        if (defined $fontmatch{$fontname}) {
+            my $tfm = $fontmatch{$fontname}->{"tfm"};
+            my $scale = $fontmatch{$fontname}->{"scale"};
+            my $size = $tfm2size{$tfm};
+            printf SAMPLE_TEX "\\font\\somefont=%s%s\\somefont\n",
+                $tfm, $scale==1.0 ? "" : sprintf(" at %.5gpt", $scale*$size);
+            printf SAMPLE_TEX "\\put(%d, %d){%s}%%\n", $xinc, $yoffset, $samplestring;
+        }
+        if ($fontnum%$samples_per_page == $samples_per_page - 1) {
             # Insert a page break after every $samples_per_page font samples.
             print SAMPLE_TEX "\\vskip 0pt plus 1fill\\eject\n";
-            $firstfontnum = $fontnum;
+            $firstfontnum = $fontnum + 1;
         }
     }
 
@@ -1168,15 +1482,25 @@ program's internal operations.
 =item B<-f> I<name>=I<fontspec>, B<--force>=I<name>=I<fontspec>
 
 Force B<pkfix-helper> to associate a specific font with a given font
-name appearing the document.  I<name> is a two-character B<dvips> font
-name such as C<Fa>.  I<fontspec> is a font specification such as
-C<cmmi8> or S<C<cmsy10 @ 1.1X>>.  An asterisk used in the name of the
-base font S<(e.g., C<cmti*>)> will automatically try all integral test
-font sizes from 5 to 17 points (C<cmti5>, S<C<cmti6>, ...,>
-C<cmti17>).  An asterisk used as a scale value S<(e.g., C<cmsy10 @
-*>)> will be replaced by the scale value that gives the best match to
-the original font's metrics.  The B<--force> option can be specified
-repeatedly on the command line.
+name appearing the document.  I<name> is a (usually) two-character
+B<dvips> font name such as C<Fa>.  I<fontspec> is a font specification
+that comprises a font name and an optional scale: "I<font> S<[C<@>
+I<scale>]>".  Some examples of I<fontspec>s are C<cmmi8> and
+S<C<cmsy10 @ 1.1X>>.
+
+An asterisk used in the name of the font S<(e.g., C<cmti*>)> will be
+replaced by all integers from 5 to 17 (C<cmti5>, S<C<cmti6>, ...,>
+C<cmti17>).  The scale can be written as a multiple of the design size
+(C<X>) or as an absolute size in either TeX points (C<pt>) or
+PostScript "big" points (C<bp>).  Hence, S<C<cmsy8 @ 1.5X>>, S<C<cmsy8
+@ 12pt>>, and S<C<cmsy8 @ 11.96bp>> all represent the I<Computer
+Modern Math Symbols 8 Point> font scaled to 12 TeX points/11.96
+PostScript points.  Instead of specifying an explicit scale, an
+asterisk can be used (as in S<C<cmsy8 @ *>>) to request that
+B<pkfix-helper> find the scale that best matches the original font's
+metrics.
+
+The B<--force> option can be specified repeatedly on the command line.
 
 =item B<-p> I<filename.ps>, B<--ps>=I<filename.ps>
 
@@ -1189,11 +1513,32 @@ Create a Plain TeX file called I<filename.tex> that shows the B<dvips>
 name and a font sample of every font that B<pkfix-helper> used in the
 output document.
 
+=item B<-k> I<fontspec>, B<--keep>=I<fontspec>
+
+Do not substitute a vector font for bitmapped font I<fontspec> (C<Fa>,
+C<Fb>, etc.).  This is useful when converting documents that use
+obscure bitmapped fonts for which there is no vector equivalent.  For
+example, it was somewhat common in the past to include graphics such
+as university or corporate logos into a document by converting the
+bitmapped image into a single-character font and using that font in
+LaTeX.  B<--keep> prevents such fonts from being replaced.  The
+B<--keep> option can be specified repeatedly on the command line.
+
+=item B<-1>, B<--no-repeats>
+
+Prevent B<pkfix-helper> from associating the same I<fontspec> with
+more than one B<dvips> font name.
+
 =back
 
-=head2 Infrequently Used Options
+=head2 Less-frequently Used Options
 
 =over 4
+
+=item B<-q>, B<--quiet>
+
+Instruct B<pkfix-helper> to produce no output during its run except
+for error and warning messages.
 
 =item B<-C> I<filename>, B<--cache>=I<filename>
 
@@ -1208,16 +1553,6 @@ previously extracted metrics from I<filename>, going through the
 F<tftopl>-based process only for TFM files that were not previously
 encountered.
 
-=item B<-q>, B<--quiet>
-
-Instruct B<pkfix-helper> to produce no output during its run except
-for fatal error messages.
-
-=item B<-1>, B<--no-repeats>
-
-Prevent B<pkfix-helper> from associating the same I<fontspec> with
-more than one B<dvips> font name.
-
 =item B<-i> I<fontspec>, B<--include>=I<fontspec>
 
 Add I<fontspec> to the list of font specifications against which
@@ -1231,24 +1566,6 @@ repeatedly on the command line.
 Remove all font specifications matching regular expression I<regexp>
 from B<pkfix-helper>'s list of known fonts.  The B<--exclude> option
 can be specified repeatedly on the command line.
-
-=item B<-k> I<fontspec>, B<--keep>=I<fontspec>
-
-Do not substitute a vector font for bitmapped font I<fontspec> (C<Fa>,
-C<Fb>, etc.).  This is useful when converting documents that use
-obscure bitmapped fonts for which there is no vector equivalent.  For
-example, it was somewhat common in the past to include graphics such
-as university or corporate logos into a document by converting the
-bitmapped image into a single-character font and using that font in
-LaTeX.  B<--keep> prevents such fonts from being replaced.  The
-B<--keep> option can be specified repeatedly on the command line.
-
-=item B<-a>, B<--any-scale>
-
-Allow any value to be used to scale a font when "C<*>" is specified as
-the scale factor.  Normally, B<pkfix-helper> considers only integer
-multiples of 0.1 that are greater than or equal to 1.0 (i.e.,
-I<fontname>C<@1X>, C<@1.1X>, C<@1.2X>, C<@1.3X>, etc.).
 
 =item B<-s>, B<--spp>
 
@@ -1271,6 +1588,21 @@ is the sum of the squares of the difference between the character
 widths of a document font and a potential replacement font.)  Use the
 B<--force> option to designate an alternative replacement font or
 scaling amount.
+
+=item C<I<name> uses characters that don't appear in any candidate font>
+
+None of the fonts considered for a match include all of the characters
+in font I<name>.  The user should use the B<--force> option to inform
+B<pkfix-helper> which font to use or the B<--keep> option to retain
+the original, bitmapped font.
+
+=item C<Processing I<name> ... done (I<font> with mismatch=I<number>, tied with I<font>...)>
+
+The best match for I<name> is font I<font>.  A perfect match has a
+I<number> of 0.00000.  Worse matches observe larger values.  If a tie
+is reported, this means one or more fonts matched I<name> equally well
+(i.e., they see the same I<number>).  In this case, B<pkfix-helper>
+selects the qualitatively most likely font as the winner.
 
 =back
 
@@ -1421,23 +1753,12 @@ The name of a utility for converting F<.tfm> files to F<.pl> files
 =back
 
 
-=head1 BUGS
-
-Even when B<pkfix-helper> finds a perfect match S<(i.e., the> correct
-font in the correct size) the mismatch value is still typically
-nonzero.  The same error is probably what causes B<pkfix-helper>
-sometimes to consider the wrong font as being a better match than the
-correct font.  Suggestions for fixing these bugs are welcome.
-
-
 =head1 RESTRICTIONS
 
 B<pkfix-helper> works only with PostScript files produced by B<dvips>,
-not with arbitrary PostScript files.  The program has not been tested
-with output from versions of B<dvips> older than v5.490 S<(ca. 1992)>;
-output from older versions may or may not work.  Only bitmapped fonts
-loaded by B<dvips> can be analyzed, not bitmapped fonts loaded by
-embedded graphics.
+not with arbitrary PostScript files.  Only bitmapped fonts loaded by
+B<dvips> can be analyzed, not bitmapped fonts loaded by embedded
+graphics.
 
 B<pkfix-helper> works by comparing character widths, not the actual
 glyphs.  Consequently, it is misled by sets of fonts with similar
@@ -1445,15 +1766,39 @@ character widths (at least for those characters used by a given
 document).  As an extreme example, all Computer Modern Teletype fonts
 of a given design size (e.g., C<cmtt10>, C<cmsltt10>, and C<cmitt10>)
 use exactly the same widths for all characters.  Human assistance is
-generally needed to guide B<pkfix-helper>'s font-matching procedures.
+generally needed to guide B<pkfix-helper>'s font-matching procedures,
+especially for fonts for which relatively few characters appear in the
+document.
+
+There is an astonishing variety of B<dvips> output.  Different
+versions of the program and different command-line options can result
+in PostScript files with a completely different structure.
+B<pkfix-helper> works hard to find font information buried in numerous
+output-file variants, but it is not uncommon for a PostScript file
+produced by a sufficiently old version of B<dvips> or with
+sufficiently obscure command-line options to utterly confuse
+B<pkfix-helper>.  In this case, please send your problematic
+PostScript files to the author of B<pkfix-helper> (see L</AUTHOR>
+below), who may be able to enhance B<pkfix-helper> to handle them.
 
 
 =head1 NOTES
 
 Files produced using the B<--tex> option are Plain TeX files and
-therefore must be compiled with F<tex> (or a variation such as
-F<pdftex>, F<luatex>, etc.), I<not> with F<latex>.
+therefore must be compiled with B<tex> (or a variant such as
+B<pdftex>, B<luatex>, B<xetex>, etc.), I<not> with B<latex>.
 
+B<dvips>-produced PostScript files can be structured in sections,
+demarcated by C<%DVIPSBeginSection> and C<%DVIPSEndSection>.  Font
+names are local to a section.  Hence, a font named C<Fa> may map to
+C<cmex10> in one section and to C<cmmi7> in another.  B<pkfix-helper>
+assigns every font in a multi-section document a unique name by
+appending a section-number suffix: C<Fa_S01>, C<Fa_S02>, etc.
+
+Font names are processed in decreasing order of the number of
+characters they have represented in the document.  That is, if the
+document includes 10 characters from C<Fa> and 23 characters from
+C<Fb>, B<pkfix-helper> will process C<Fb> before C<Fa>.
 
 =head1 SEE ALSO
 
@@ -1471,7 +1816,7 @@ Scott Pakin, I<scott+pkfh@pakin.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2011, Scott Pakin
+Copyright (C) 2009-2020, Scott Pakin
 
 This file may be distributed and/or modified under the conditions of
 the LaTeX Project Public License, either version 1.3c of this license

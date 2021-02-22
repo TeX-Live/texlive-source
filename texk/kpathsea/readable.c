@@ -41,7 +41,53 @@ static boolean
 READABLE(kpathsea kpse, const_string fn, unsigned int st)
 {
   wchar_t *fnw;
-  fnw = get_wstring_from_mbstring(kpse->File_system_codepage, fn, fnw=NULL);
+  unsigned char *fnn;
+  unsigned char *p;
+  size_t len = strlen(fn);
+
+  fnn = xmalloc(len + 10);
+/*
+  Support very long input path name, longer than _MAX_PATH for
+  Windows, if it really exists and input name is given in
+  full-absolute path in a command line.
+  /../, /./, \..\, \.\ should be excluded (2020/06/06)
+  More than one adjacent directory separators should be
+  excluded. (2020/10/24)
+*/
+  p = strstr(fn, ".\\");
+  if (!p) {
+    p = strstr(fn, "./");
+  }
+  if (!p && len > 2) {
+    p = strstr(fn + 2, "//");
+  }
+  if (!p && len > 2) {
+    p = strstr(fn + 2, "\\\\");
+  }
+  if (!p && len > 2) {
+    p = strstr(fn + 2, "\\/");
+  }
+  if (!p && len > 2) {
+    p = strstr(fn + 2, "/\\");
+  }
+  if (!p && len > 2 && ((fn[0] == '/' && fn[1] == '/') ||
+      (fn[0] == '\\' && fn[1] == '\\' && fn[2] != '?'))) {
+    fn += 2;
+    strcpy (fnn, "\\\\?\\UNC\\");
+    strcat (fnn, fn);
+  } else if (!p && len > 2 && fn[1] == ':') {
+    strcpy (fnn, "\\\\?\\");
+    strcat (fnn, fn);
+  } else {
+    strcpy (fnn, fn);
+  }
+
+  for (p = fnn; *p; p++) {
+    if (*p == '/')
+      *p = '\\';
+  }
+
+  fnw = get_wstring_from_mbstring(kpse->File_system_codepage, fnn, fnw=NULL);
   if ((st = GetFileAttributesW(fnw)) != 0xFFFFFFFF) {
     /* succeeded */
     errno = 0;
@@ -58,6 +104,7 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
       break;
     }
   }
+  free (fnn);
   if (fnw)
     free (fnw);
   return ((st != 0xFFFFFFFF) && !(st & FILE_ATTRIBUTE_DIRECTORY));

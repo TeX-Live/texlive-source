@@ -1,0 +1,50 @@
+\begin{thebibliography}{1}
+
+\bibitem{björk2020}
+Tomas Björk.
+\newblock {\em Arbitrage Theory in Continuous Time}.
+\newblock Oxford University Press, 2020.
+
+\bibitem{boswell}
+Dustin Boswell and Trevor Foucher.
+\newblock リーダブルコード
+  ―より良いコードを書くためのシンプルで実践的
+  なテクニック (Theory in practice).
+\newblock オライリージャパン, 2012.
+
+\bibitem{dostoevskii}
+Фёдор~Миха́йлович Достое́вский.
+\newblock {\em Братья Карамазовы}.
+\newblock Гослитиздат, 1958.
+
+\bibitem{gim}
+김만중.
+\newblock 구운몽.
+\newblock 高麗書林, 1975.
+
+\bibitem{nikos}
+Νίκος Καζαντζάκης.
+\newblock {\em Συμπόσιον}.
+\newblock 京緑社, 2020.
+
+\bibitem{knuth86}
+Donald~E. Knuth.
+\newblock {\em The \TeX book}.
+\newblock Addison-Wesley, 1986.
+
+\bibitem{ken-na}
+中野賢.
+\newblock 日本語{\LaTeXe}ブック.
+\newblock アスキー, 1996.
+
+\bibitem{kigou}
+Foo Hoge.
+\newblock {\em ＄£（！？）☃♪、。§○●}.
+\newblock Snowman commedian Press, 2020.
+
+\bibitem{fullwidth}
+Bar Fuga.
+\newblock １.
+\newblock TeXnician Co., Ltd., 2020.
+
+\end{thebibliography}

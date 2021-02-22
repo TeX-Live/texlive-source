@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([t1utils], [1.41])
+AC_INIT([t1utils], [1.42])
 AC_CONFIG_SRCDIR([t1ascii.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
@@ -19,6 +19,7 @@ dnl strerror()?
 dnl
 
 AC_REPLACE_FUNCS([strerror memmem])
+AC_CHECK_DECLS([memmem])
 
 
 dnl
@@ -88,7 +89,7 @@ char* strerror(int errno);
 #endif
 
 /* Prototype memmem if we don't have it. */
-#if !HAVE_MEMMEM
+#if !HAVE_MEMMEM || !HAVE_DECL_MEMMEM
 void* memmem(const void* haystack, size_t haystack_len,
              const void* needle, size_t needle_len);
 #endif

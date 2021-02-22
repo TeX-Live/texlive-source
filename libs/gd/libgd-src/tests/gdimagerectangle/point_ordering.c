@@ -1,7 +1,7 @@
 /**
  * Test point ordering of gdImageRectangle()
  *
- * We're testing the two allowed point orders with and without thickness,
+ * We're testing all four possible point orders with and without thickness,
  * and verify that all sides of the rectangle are drawn.
  *
  * See also <https://github.com/libgd/libgd/issues/177>
@@ -27,10 +27,14 @@ int main()
     red   = gdImageColorAllocate(im, 255,   0,   0);
 
     draw_and_check_rectangle(im,  10,  10,  50,  50, black, red);
+    draw_and_check_rectangle(im,  50,  60,  10, 100, black, red);
     draw_and_check_rectangle(im,  50, 150,  10, 110, black, red);
+    draw_and_check_rectangle(im,  10, 200,  50, 160, black, red);
     gdImageSetThickness(im, 4);
     draw_and_check_rectangle(im,  60,  10, 100,  50, black, red);
+    draw_and_check_rectangle(im, 100,  60,  60, 100, black, red);
     draw_and_check_rectangle(im, 100, 150,  60, 110, black, red);
+    draw_and_check_rectangle(im,  60, 200, 100, 160, black, red);
 
 #if 0
     /* save image for debugging purposes */

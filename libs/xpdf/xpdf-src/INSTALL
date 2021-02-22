@@ -1,11 +1,11 @@
 Xpdf
 ====
 
-version 4.02
-2019-sep-25
+version 4.03
+2021-jan-28
 
 The Xpdf software and documentation are
-copyright 1996-2019 Glyph & Cog, LLC.
+copyright 1996-2021 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
@@ -115,25 +115,29 @@ different systems.
     -DSYSTEM_XPDFRC="/etc/xpdfrc"
         Look for a system-wide xpdfrc config file in this directory.
 
-     -DCMAKE_DISABLE_FIND_PACKAGE_Qt4=1
-     -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=1
+    -DXPDFRC_DATADIR="/usr/share/xpdf"
+        The ${DATADIR} variable in xpdfrc config files will expand to
+        this string.
+
+    -DCMAKE_DISABLE_FIND_PACKAGE_Qt4=1
+    -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=1
         Do not search for the Qt4/Qt5 libraries.  This will disable
         building the GUI viewer (xpdf).  Cmake will look for a "qmake"
         binary -- make sure the first qmake binary on your executable
         search path matches the desired version of Qt.
 
-     -DCMAKE_C_FLAGS="..."
-     -DCMAKE_CXX_FLAGS="..."
+    -DCMAKE_C_FLAGS="..."
+    -DCMAKE_CXX_FLAGS="..."
         Set additional options to pass to the C and/or C++ compilers.
 
-     -DCMAKE_EXE_LINKER_FLAGS="..."
+    -DCMAKE_EXE_LINKER_FLAGS="..."
         Set additional options to pass to the linker.
 
-     -DCMAKE_INSTALL_BINDIR
+    -DCMAKE_INSTALL_BINDIR
         Set the bin directory, relative to CMAKE_INSTALL_PREFIX
         (typically "bin").
 
-     -DCMAKE_INSTALL_MANDIR
+    -DCMAKE_INSTALL_MANDIR
         Set the man directory, relative to CMAKE_INSTALL_PREFIX
         (typically "man" or "share/man").
 

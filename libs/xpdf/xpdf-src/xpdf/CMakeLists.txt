@@ -38,7 +38,6 @@ add_library(xpdf_objs OBJECT
   Dict.cc
   Error.cc
   FontEncodingTables.cc
-  Form.cc
   Function.cc
   Gfx.cc
   GfxFont.cc
@@ -67,7 +66,7 @@ add_library(xpdf_objs OBJECT
   UnicodeRemapping.cc
   UnicodeTypeTable.cc
   UTF8.cc
-  XFAForm.cc
+  XFAScanner.cc
   XRef.cc
   Zoox.cc
 )
@@ -88,6 +87,7 @@ if ((QT4_FOUND OR Qt5Widgets_FOUND)
     PDFCore.cc
     PreScanOutputDev.cc
     PSOutputDev.cc
+    ShadingImage.cc
     SplashOutputDev.cc
     TextOutputDev.cc
     TileCache.cc
@@ -104,6 +104,7 @@ if (HAVE_SPLASH)
     $<TARGET_OBJECTS:xpdf_objs>
     PreScanOutputDev.cc
     PSOutputDev.cc
+    ShadingImage.cc
     SplashOutputDev.cc
     pdftops.cc
   )
@@ -151,6 +152,7 @@ if (HAVE_SPLASH AND PNG_FOUND)
   add_executable(pdftohtml
     $<TARGET_OBJECTS:xpdf_objs>
     HTMLGen.cc
+    ShadingImage.cc
     SplashOutputDev.cc
     TextOutputDev.cc
     WebFont.cc
@@ -215,6 +217,7 @@ install(FILES ${PROJECT_SOURCE_DIR}/doc/pdfdetach.1 DESTINATION ${CMAKE_INSTALL_
 if (HAVE_SPLASH)
   add_executable(pdftoppm
     $<TARGET_OBJECTS:xpdf_objs>
+    ShadingImage.cc
     SplashOutputDev.cc
     pdftoppm.cc
   )
@@ -234,6 +237,7 @@ endif ()
 if (HAVE_SPLASH AND PNG_FOUND)
   add_executable(pdftopng
     $<TARGET_OBJECTS:xpdf_objs>
+    ShadingImage.cc
     SplashOutputDev.cc
     pdftopng.cc
   )

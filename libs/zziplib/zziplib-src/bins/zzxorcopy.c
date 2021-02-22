@@ -13,7 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include <zzip/_config.h> /* for ZZIP_VERSION */
+#include <zzip/_config.h> /* for  ZZIP_PACKAGE_VERSION  */
 
 #if __STDC_VERSION__+0 < 199901
 #define _ssize_t int
@@ -54,7 +54,7 @@ main (int argc, char ** argv)
     }
     if (! strcmp (argv[1], "--version"))
     {
-	printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+	printf (__FILE__ " version " ZZIP_PACKAGE_NAME " " ZZIP_PACKAGE_VERSION "\n");
 	return 0;
     }
     

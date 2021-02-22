@@ -1,7 +1,7 @@
-# $Id$
+## $Id$
 # Makefile.am for the TeX Live subdirectory texk/dvisvgm/
 #
-# Copyright 2015-2017 Karl Berry <tex-live@tug.org>
+# Copyright 2015-2020 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 #

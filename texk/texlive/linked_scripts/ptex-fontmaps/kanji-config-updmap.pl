@@ -1,18 +1,18 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20200217.0
+# Version 20201227.0
 #
 # formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2019 by PREINING Norbert
-# Copyright 2016-2019 by Japanese TeX Development Community
+# Copyright 2011-2020 by PREINING Norbert
+# Copyright 2016-2020 by Japanese TeX Development Community
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
 #
 # For development see
-#  https://github.com/texjporg/jfontmaps
+#  https://github.com/texjporg/ptex-fontmaps
 #
 # For a changelog see the git log
 #
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20200217.0';
+my $version = '20201227.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;

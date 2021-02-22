@@ -1,11 +1,11 @@
-# $Id$
-# utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
+## utils/xindy/ac/withenable.ac: configure.ac fragment for TL subdir
+dnl $Id$
 dnl
-dnl Copyright 2009-2018 Karl Berry <tex-live@tug.org>
+dnl Copyright 2009-2020 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2010 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
-## configure options and TL libraries required for xindy
+## configure options and TL libraries required for xindy.
 KPSE_ENABLE_PROG([xindy], , [disable])
 m4_include(kpse_TL[utils/xindy/ac/xindy.ac])
 m4_include(kpse_TL[utils/xindy/ac/clisp.ac])

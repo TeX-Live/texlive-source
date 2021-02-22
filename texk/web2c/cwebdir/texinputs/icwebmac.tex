@@ -28,8 +28,7 @@
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [p22] --- Andreas Scherer, March 2016
 
-\ifx\undefined\documentclass\input Xcwebmac.tex
-\else\endinput\fi % LaTeX will use other macros
+\ifx\undefined\botofcontents\input cwebmac.tex\fi
 
 \def\.#1{\leavevmode\hbox{\tentex % typewriter type for strings
   \ifx\Cstringchars\undefined\else\Cstringchars\fi % special string characters

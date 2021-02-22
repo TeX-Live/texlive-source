@@ -1,3 +1,10 @@
+2021-02-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ps2pk.c, mag.c, pfb2pfa.c, pk2bm.c, pktest.c, configure.ac:
+	Show TeX Live version number and bug report address in usage.
+	* ps2pk.c, pk2bm.c, mag.c:
+	Avoid compiler warnings.
+
 2018-12-05  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* mag.c, pk2bm.c: check for missing arguments.

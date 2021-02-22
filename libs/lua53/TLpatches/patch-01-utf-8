@@ -1,6 +1,6 @@
 diff -u lctype.h.orig lctype.h 
---- lctype.h.orig	2018-07-21 09:57:36.061692228 +0200
-+++ lctype.h	2018-07-21 10:03:29.625677730 +0200
+--- lctype.h.orig	2020-10-04 12:05:56.139893521 +0200
++++ lctype.h	2020-10-04 12:21:33.348948021 +0200
 @@ -7,6 +7,8 @@
  #ifndef lctype_h
  #define lctype_h
@@ -24,3 +24,4 @@ diff -u lctype.h.orig lctype.h
  #define lisdigit(c)	testprop(c, MASK(DIGITBIT))
  #define lisspace(c)	testprop(c, MASK(SPACEBIT))
  #define lisprint(c)	testprop(c, MASK(PRINTBIT))
+

@@ -1,3 +1,11 @@
+2020-12-03  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (CFLAGS): do not force -O3 if gcc; there are endless
+	optimization options these days.
+	(AC_HEADER_STDC): remove since it will be a no-op in the upcoming
+	autoconf-2.70, and is presumably not needed; do not explicitly test
+	$ac_cv_header_stdc since it won't be defined.
+
 2017-01-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import zlib-1.2.11.

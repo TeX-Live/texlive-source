@@ -1,4 +1,5 @@
 #include "mendex.h"
+#include "version.h"
 #include <kpathsea/tex-file.h>
 #include <kpathsea/variable.h>
 
@@ -18,8 +19,6 @@ char *styfile,*idxfile[256],*indfile,*dicfile,*logfile;
 #define DEFAULT_INDEXDICTS "."
 #endif
 KpathseaSupportInfo kp_ist,kp_dict;
-
-#define VERSION "version 0.54"
 
 int main(int argc, char **argv)
 {
@@ -156,7 +155,7 @@ int main(int argc, char **argv)
 				u_getVersion(icuVersion);
 				u_versionToString(icuVersion, icu_version);
 				fprintf(stderr,"upmendex - index processor, %s (%s).\n",VERSION, TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2020 TANAKA Takuji\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2021 TANAKA Takuji\n");
 				fprintf(stderr," using ICU version %s\n",icu_version);
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% upmendex [-ilqrcgf] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [--] [idx0 idx1 ...]\n");
@@ -174,6 +173,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-t log  take log as the error log file.\n");
 				fprintf(stderr,"-p no   set the starting page number of index.\n");
 				fprintf(stderr,"idx...  input files.\n");
+				fprintf(stderr,"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 				exit(0);
 				break;
 			}

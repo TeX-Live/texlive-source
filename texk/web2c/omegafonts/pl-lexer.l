@@ -1,13 +1,12 @@
-%option never-interactive
-
 %{
 /* pl-lexer.l: Lexical analysis of property list files.
 
 This file is part of Omega,
 which is based on the web2c distribution of TeX,
 
-Copyright (c) 1994--2001 John Plaice and Yannis Haralambous
-Copyright (c) 2002 Roozbeh Pournader
+Copyright 2020 Karl Berry <tex-live@tug.org>
+Copyright 2002 Roozbeh Pournader
+Copyright 1994--2001 John Plaice and Yannis Haralambous
 
 Omega is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -24,6 +23,19 @@ along with Omega; if not, write to the Free Software Foundation, Inc.,
 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
 */
 
+/* The xyarabic.opl test has an opl comment larger than 16k, which is
+   the default buffer size for flex defined in its preamble.  This
+   results in an error like:
+input buffer overflow, can't enlarge buffer because scanner uses REJECT
+   So we need to redefine YY_BUF_SIZE, which we do here.  Unfortunately
+   it is not perfect, since the flex preamble code uses its own
+   YY_BUF_SIZE to #define YY_STATE_BUF_SIZE before our override takes
+   effect.  Fortunately this is not causing an error.  Apparently the
+   only way to truly override it would be on the command line, and that
+   seems like too much trouble when this works in practice.  */
+#undef YY_BUF_SIZE
+#define YY_BUF_SIZE 110000
+
 #include <kpathsea/lib.h>
 #include <kpathsea/c-memstr.h>
 #include "parser.h"
@@ -38,7 +50,7 @@ int line_number = 1;
 extern YYSTYPE yylval;
 
 /* POTENTIAL BUG: saved_text could be run over; should check */
-#define MAX_PTR 10000
+#define MAX_PTR 100000
 char saved_text[MAX_PTR];
 
 static void scan_int(unsigned);

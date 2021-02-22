@@ -2,7 +2,7 @@
 #
 # This is file 'jfmutil.pl'.
 #
-# Copyright (c) 2019 Takayuki YATO (aka. "ZR")
+# Copyright (c) 2008-2020 Takayuki YATO (aka. "ZR")
 #   GitHub:   https://github.com/zr-tex8r
 #   Twitter:  @zr_tex8r
 #
@@ -2766,7 +2766,7 @@ package main;
   foreach (qw(
     textool_error textool_version
     read_whole_file write_whole_file
-    pl_parse pl_form pl_prefer_hex
+    pl_parse pl_form pl_prefer_hex pl_value
     jcode_set
     kpse
     vf_parse vf_form vf_parse_ex vf_form_ex vf_strict
@@ -2781,11 +2781,12 @@ package main;
 #================================================= BEGIN
 use Encode qw(encode decode);
 my $prog_name = 'jfmutil';
-my $version = '1.2.3';
-my $mod_date = '2019/09/02';
+my $version = '1.3.1';
+my $mod_date = '2020/05/04';
 #use Data::Dump 'dump';
 #
 my ($sw_hex, $sw_uptool, $sw_noencout, $inenc, $exenc, $sw_lenient);
+my ($sw_compact);
 my ($proc_name, $infile, $in2file ,$outfile, $out2file);
 
 #### main procedure
@@ -2831,6 +2832,7 @@ sub main_zvp02vf {
   read_option();
   $t = read_whole_file(kpse($infile)) or error();
   $t = pl_parse($t) or error();
+  ($sw_compact) and $t = do_compact_vf($t);
   $t = vf_form($t) or error();
   write_whole_file($outfile, $t, 1) or error();
 }
@@ -2866,7 +2868,6 @@ sub main_tfm2zpl {
   write_whole_file($outfile, $t) or error();
 }
 
-
 sub main_zpl2tfm {
   my ($t);
   read_option();
@@ -2875,6 +2876,28 @@ sub main_zpl2tfm {
   $t = pl_parse($t) or error();
   $t = jfm_form($t) or error();
   write_whole_file($outfile, $t, 1) or error();
+}
+
+sub is_simple_char {
+  local ($_) = @_;
+  ($#$_ == 4 &&
+    $_->[0] eq 'CHARACTER' &&
+    $_->[3][0] eq 'CHARWD' &&
+    $_->[4][0] eq 'MAP'
+  ) or return;
+  my $cc = ::pl_value($_, 1);
+  $_ = $_->[4];
+  ($#$_ == 1 &&
+    $_->[1][0] eq 'SETCHAR' &&
+    ::pl_value($_->[1], 1) == $cc
+  ) or return;
+  return 1;
+}
+
+sub do_compact_vf {
+  my ($t) = @_;
+  $t = [ grep { !is_simple_char($_) } (@$t) ];
+  return $t;
 }
 
 sub show_usage {
@@ -2906,6 +2929,7 @@ Options:
   -o / --octal    output charcode in 'O' form
   --uptool        use upTeX tools (uppltotf etc.)
   --lenient       ignore non-fatal error on VFs
+  --compact       output VF in compact form
   The following options affect interpretation of 'K' form.
   --kanji=ENC     set source encoding: ENC=jis/sjis/euc/utf8/none
   --kanji-internal=ENC set internal encoding: ENC=jis/unicode/none
@@ -2947,6 +2971,8 @@ sub read_option {
       $exenc = $arg;
     } elsif (($arg) = $opt =~ m/^--kanji-internal[=:](.*)$/) {
       $inenc = $arg;
+    } elsif ($opt eq '--compact') {
+      $sw_compact = 1;
     } else {
       error("invalid option", $opt);
     }
@@ -2958,8 +2984,6 @@ sub read_option {
   #if ($inenc eq 'unicode') { $sw_uptool = 1; }
   if ($sw_hex) { pl_prefer_hex(1); }
   if ($sw_lenient) { vf_strict(0); }
-  (0 <= $#ARGV && $#ARGV <= 1)
-    or error("wrong number of arguments");
   if ($proc_name eq 'vf2zvp0') {
     ($infile, $outfile) = fix_pathname(".vf", ".zvp0");
   } elsif ($proc_name eq 'zvp02vf') {
@@ -2975,12 +2999,17 @@ sub read_option {
   } elsif ($proc_name eq 'zpl2tfm') {
     ($infile, $outfile) = fix_pathname(".zpl", ".tfm");
   }
+  if ($sw_compact && $proc_name ne 'zvp02vf') {
+    alert("option unsupported for '$proc_name'", "--compact");
+  }
   ($infile ne $outfile)
     or error("input and output file have same name", $infile);
 }
 
 sub fix_pathname {
   my (@ext) = @_; my (@path);
+  (0 <= $#ARGV && $#ARGV <= $#ext)
+    or error("wrong number of arguments");
   @{$path[0]} = split_path($ARGV[0]);
   (defined $path[0][2]) or $path[0][2] = $ext[0];
   foreach (1 .. $#ext) {
@@ -3020,7 +3049,7 @@ sub error {
 
 #================================================= END
 
-#------------------------------------------------- pxcopyfont interfaces
+#------------------------------------------------- extra interfaces
 
 *usage_message_org = \&usage_message;
 
@@ -3050,6 +3079,10 @@ Options:
   --unicode     generate VF for 'direct-unicode' mode imposed by pxufont
                 package; this option is supported only for upTeX fonts and
                 thus implies '--uptex' (only for jodel)
+  --compact     output VF in compact form
+
+* VF Compaction
+Usage: $prog_name compact <in.vf> <out.vf>
 
 * Common Options
   -h / --help     show this help message and exit
@@ -3063,6 +3096,7 @@ EOT2
   vfinfo  => \&main_vfinfo,
   vfcopy  => \&main_vfcopy,
   jodel   => \&main_jodel,
+  compact => \&main_compact,
 );
 
 sub main_vfinfo {
@@ -3080,21 +3114,26 @@ sub main_jodel {
   PXCopyFont::jodel();
 }
 
+sub main_compact {
+  PXCompact::read_option('compact');
+  PXCompact::compact();
+}
+
 #------------------------------------------------- pxcopyfont stuffs
 package PXCopyFont;
 
 *error = *main::error;
-*read_whole_file = *main::read_whole_file;
-*write_whole_file = *main::write_whole_file;
 
 our ($src_main, $dst_main, @dst_base, $op_zero, $op_uptex, $op_quiet);
+our ($op_compact, $op_dbgone);
 
 sub info {
-  ($op_quiet) or main::show_info(@_);
+  ($op_quiet) or ::show_info(@_);
 }
 
 sub copy_vf {
-  local $_ = read_whole_file(main::kpse("$src_main.vf"), 1) or error();
+  local $_ = ::read_whole_file(::kpse("$src_main.vf"), 1) or error();
+  ($op_compact) and $_ = compact_vf($_);
   my $vfc = parse_vf($_);
   my ($nb, $nb1) = (scalar(@{$vfc->[0]}), scalar(@dst_base));
   info("number of base TFMs in '$src_main'", $nb);
@@ -3103,14 +3142,14 @@ sub copy_vf {
   } elsif ($nb != $nb1) {
     error("wrong number of base TFMs given", $nb1);
   }
-  write_whole_file("$dst_main.vf", form_vf($vfc), 1) or error();
-  write_whole_file("$dst_main.tfm",
-      read_whole_file(main::kpse("$src_main.tfm"), 1), 1) or error();
+  ::write_whole_file("$dst_main.vf", form_vf($vfc), 1) or error();
+  ::write_whole_file("$dst_main.tfm",
+      ::read_whole_file(::kpse("$src_main.tfm"), 1), 1) or error();
   foreach my $k (0 .. $#dst_base) {
     my $sfn = $vfc->[0][$k][1]; my $dfn = $dst_base[$k];
     ($sfn ne $dfn) or next;
-    write_whole_file("$dfn.tfm",
-      read_whole_file(main::kpse("$sfn.tfm"), 1), 1) or error();
+    ::write_whole_file("$dfn.tfm",
+      ::read_whole_file(::kpse("$sfn.tfm"), 1), 1) or error();
   }
 }
 
@@ -3137,7 +3176,7 @@ sub parse_vf {
 }
 
 sub info_vf {
-  local $_ = read_whole_file(main::kpse("$src_main.vf"), 1) or error();
+  local $_ = ::read_whole_file(::kpse("$src_main.vf"), 1) or error();
   my $vfc = parse_vf($_);
   foreach (@{$vfc->[0]}) {
     printf("%d=%s\n", $_->[2], $_->[1]);
@@ -3163,21 +3202,34 @@ sub form_vf {
   return $tfm . ("\xf8" x (4 - length($tfm) % 4));
 }
 
+sub compact_vf {
+  my ($vf) = @_;
+  my $pl = ::vf_parse($vf) or error();
+  $pl = [ grep { !::is_simple_char($_) } (@$pl) ];
+  $vf = ::vf_form($pl) or error();
+  return $vf;
+}
+
 sub read_option {
   my ($proc) = @_;
   $op_zero = 0; $op_uptex = 0; $op_quiet = 0;
+  $op_compact = 0; $op_dbgone = 0;
   while ($ARGV[0] =~ m/^-/) {
     my $opt = shift(@ARGV);
     if ($opt =~ m/^--?h(elp)?$/) {
-      main::show_usage();
+      ::show_usage();
     } elsif ($opt =~ m/^-(?:V|-version)?$/) {
-      main::show_version();
+      ::show_version();
     } elsif ($opt eq '-z' || $opt eq '--zero') {
       $op_zero = 1;
     } elsif ($opt eq '--uptex') {
       $op_uptex = 1;
     } elsif ($opt eq '--unicode') {
       $op_uptex = 2;
+    } elsif ($opt eq '--compact') {
+      $op_compact = 1;
+    } elsif ($opt eq '--debug-one') { # undocumented
+      $op_dbgone = 1;
     } elsif ($opt eq '--quiet') { # undocumented
       $op_quiet = 2;
     } else {
@@ -3211,13 +3263,13 @@ sub read_option {
 #------------------------------- jodel
 
 our %standard_vf = (
-  'rml'             => [1, 'hXXXN-h'],
-  'rmlv'            => [1, 'hXXXN-v'],
+  'rml'             => [1, 'JhXXXN-h'],
+  'rmlv'            => [1, 'JhXXXN-v'],
   'uprml-h'         => [2, 'uphXXXN-h'],
   'uprml-hq'        => [2, 'jodhXXX-hq'],
   'uprml-v'         => [2, 'uphXXXN-v'],
-  'gbm'             => [1, 'hXXXN-h'],
-  'gbmv'            => [1, 'hXXXN-v'],
+  'gbm'             => [1, 'JhXXXN-h'],
+  'gbmv'            => [1, 'JhXXXN-v'],
   'upgbm-h'         => [2, 'uphXXXN-h'],
   'upgbm-hq'        => [2, 'jodhXXX-hq'],
   'upgbm-v'         => [2, 'uphXXXN-v'],
@@ -3229,6 +3281,7 @@ our @shape = (
 our ($jengine, $jtate, @jvfname, %jvfidx, %jvfparsed);
 
 sub jodel {
+  ($op_dbgone) and @shape = @shape[1];
   jodel_analyze();
   if ($op_uptex == 2) {
     ($jengine == 2)
@@ -3253,8 +3306,9 @@ sub jodel_vf_name {
 }
 sub jodel_tfm_name {
   my ($shp, $nn, $nam) = @_;
-  $nam =~ s/XXX/\Q$shp\E/; $nam =~ s/N/\Q$nn\E/;
-  return $nam;
+  local $_ = $nam; my $jod = ($nn eq 'n') ? 'jod' : '';
+  s/XXX/\Q$shp\E/; s/N/\Q$nn\E/; s/J/\Q$jod\E/;
+  return $_;
 }
 sub jodel_for_uptex {
   return ($jengine == 2 || ($jengine == 3 && $op_uptex));
@@ -3265,7 +3319,7 @@ sub jodel_for_uptex {
   sub jodel_kpse {
     my ($in) = @_;
     if (exists $jkpse{$in}) { return $jkpse{$in}; }
-    my $out = main::kpse($in); $jkpse{$in} = $out;
+    my $out = ::kpse($in); $jkpse{$in} = $out;
     return $out;
   }
 }
@@ -3282,15 +3336,16 @@ sub jodel_clone {
 sub jodel_analyze {
   local ($_);
   info("**** Analyze VF '$src_main'");
-  $_ = read_whole_file(jodel_kpse("$src_main.tfm"), 1) or error();
+  $_ = ::read_whole_file(jodel_kpse("$src_main.tfm"), 1) or error();
   $jtate = (unpack('n', $_) == 9);
   info("direction", ($jtate) ? 'tate' : 'yoko');
   @jvfname = ($src_main); $jengine = 0;
   info("base TFMs", "");
   for (my $i = 0; $i <= $#jvfname; $i++) {
     my $nvf = $jvfname[$i];
-    $_ = read_whole_file(jodel_kpse("$nvf.vf"), 1)
+    $_ = ::read_whole_file(jodel_kpse("$nvf.vf"), 1)
       or error(($i > 0) ? ("non-standard raw TFM", $nvf) : ());
+    ($op_compact) and $_ = compact_vf($_);
     $_ = parse_vf($_) or error();
     $jvfidx{$nvf} = $i; $jvfparsed{$nvf} = $_;
     my @lst = map { $_->[1] } @{$_->[0]};
@@ -3330,9 +3385,9 @@ sub jodel_generate {
     }
     info("from", "$snvf -> @slst");
     info("  to", "$dnvf -> @dlst");
-    write_whole_file("$dnvf.vf", jodel_form_vf($vfc), 1) or error();
-    write_whole_file("$dnvf.tfm",
-        read_whole_file(jodel_kpse("$snvf.tfm"), 1), 1) or error();
+    ::write_whole_file("$dnvf.vf", jodel_form_vf($vfc), 1) or error();
+    ::write_whole_file("$dnvf.tfm",
+        ::read_whole_file(jodel_kpse("$snvf.tfm"), 1), 1) or error();
   }
 }
 
@@ -3344,6 +3399,55 @@ sub jodel_form_vf {
   }
   my $tfm = join('', $vfc->[1], @lst, $vfc->[2]);
   return $tfm . ("\xf8" x (4 - length($tfm) % 4));
+}
+
+#------------------------------------------------- 'compact' stuffs
+package PXCompact;
+
+*error = *main::error;
+
+our ($src_name, $dst_name, $op_quiet);
+
+sub info {
+  ($op_quiet) or ::show_info(@_);
+}
+
+sub num_chars {
+  my ($pl) = @_; my $c = 0;
+  foreach (@$pl) { $c += 1 if ($_->[0] eq 'CHARACTER'); }
+  return $c;
+}
+
+sub compact {
+  local $_ = ::read_whole_file(::kpse("$src_name.vf"), 1) or error();
+  my $pl = ::vf_parse($_) or error();
+  my ($siz, $nc) = (length($_), num_chars($pl));
+  info("from", "$siz bytes, $nc chars", "$src_name.vf");
+  $pl = [ grep { !::is_simple_char($_) } (@$pl) ];
+  $_ = ::vf_form($pl) or error();
+  ($siz, $nc) = (length($_), num_chars($pl));
+  ::write_whole_file("$dst_name.vf", $_, 1) or error();
+  info("  to", "$siz bytes, $nc chars", "$dst_name.vf");
+}
+
+sub read_option {
+  my ($proc) = @_;
+  $op_quiet = 0;
+  while ($ARGV[0] =~ m/^-/) {
+    my $opt = shift(@ARGV);
+    if ($opt =~ m/^--?h(elp)?$/) {
+      ::show_usage();
+    } elsif ($opt =~ m/^-(?:V|-version)?$/) {
+      ::show_version();
+    } elsif ($opt eq '--quiet') { # undocumented
+      $op_quiet = 2;
+    } else {
+      error("invalid option", $opt);
+    }
+  }
+  ($#ARGV == 1) or error("wrong number of arguments");
+  ($src_name, $dst_name) = @ARGV;
+  $src_name =~ s/\.vf$//; $dst_name =~ s/\.vf$//;
 }
 
 #------------------------------------------------- go to main

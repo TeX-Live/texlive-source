@@ -21,6 +21,7 @@
 #endif
 #include "gmempp.h"
 #include "GString.h"
+#include "gfile.h"
 #include "config.h"
 #include "GlobalParams.h"
 #include "Page.h"
@@ -113,6 +114,7 @@ PDFDoc::PDFDoc(GString *fileNameA, GString *ownerPassword,
   ok = setup(ownerPassword, userPassword);
 }
 
+#if 0
 #ifdef _WIN32
 PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
@@ -122,14 +124,21 @@ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
 
   init(coreA);
 
+  // handle a Windows shortcut
+  wchar_t wPath[MAX_PATH + 1];
+  int n = fileNameLen < MAX_PATH ? fileNameLen : MAX_PATH;
+  memcpy(wPath, fileNameA, n * sizeof(wchar_t));
+  wPath[n] = L'\0';
+  readWindowsShortcut(wPath, MAX_PATH + 1);
+  int wPathLen = (int)wcslen(wPath);
+
   // save both Unicode and 8-bit copies of the file name
   fileName = new GString();
-  fileNameU = (wchar_t *)gmallocn(fileNameLen + 1, sizeof(wchar_t));
-  for (i = 0; i < fileNameLen; ++i) {
+  fileNameU = (wchar_t *)gmallocn(wPathLen + 1, sizeof(wchar_t));
+  memcpy(fileNameU, wPath, (wPathLen + 1) * sizeof(wchar_t));
+  for (i = 0; i < wPathLen; ++i) {
     fileName->append((char)fileNameA[i]);
-    fileNameU[i] = fileNameA[i];
   }
-  fileNameU[fileNameLen] = L'\0';
 
   // try to open file
   // NB: _wfopen is only available in NT
@@ -153,6 +162,7 @@ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
   ok = setup(ownerPassword, userPassword);
 }
 #endif
+#endif /* 0 */
 
 PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
@@ -165,7 +175,7 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
 /*
 #ifdef _WIN32
   Unicode u;
-  int n, i, j;
+  int i, j;
 #endif
 */
 
@@ -175,17 +185,19 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
 
 #if defined(_WIN32)
 #if 0
-  n = 0;
+  wchar_t wPath[MAX_PATH + 1];
   i = 0;
-  while (getUTF8(fileName, &i, &u)) {
-    ++n;
+  j = 0;
+  while (j < MAX_PATH && getUTF8(fileName, &i, &u)) {
+    wPath[j++] = (wchar_t)u;
   }
-  fileNameU = (wchar_t *)gmallocn(n + 1, sizeof(wchar_t));
-  i = j = 0;
-  while (j < n && getUTF8(fileName, &i, &u)) {
-    fileNameU[j++] = (wchar_t)u;
-  }
-  fileNameU[n] = L'\0';
+  wPath[j] = L'\0';
+  readWindowsShortcut(wPath, MAX_PATH + 1);
+  int wPathLen = (int)wcslen(wPath);
+
+  fileNameU = (wchar_t *)gmallocn(wPathLen + 1, sizeof(wchar_t));
+  memcpy(fileNameU, wPath, (wPathLen + 1) * sizeof(wchar_t));
+
   // NB: _wfopen is only available in NT
   version.dwOSVersionInfoSize = sizeof(version);
   GetVersionEx(&version);
@@ -572,6 +584,18 @@ GBool PDFDoc::saveEmbeddedFile(int idx, const char *path) {
   GBool ret;
 
   if (!(f = fopen(path, "wb"))) {
+    return gFalse;
+  }
+  ret = saveEmbeddedFile2(idx, f);
+  fclose(f);
+  return ret;
+}
+
+GBool PDFDoc::saveEmbeddedFileU(int idx, const char *path) {
+  FILE *f;
+  GBool ret;
+
+  if (!(f = openFile(path, "wb"))) {
     return gFalse;
   }
   ret = saveEmbeddedFile2(idx, f);

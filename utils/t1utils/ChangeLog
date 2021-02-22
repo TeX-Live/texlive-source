@@ -1,3 +1,8 @@
+2020-10-31  Akira Kakuto  <kakuto@w32tex.org>
+
+	Import t1utils-1.42.
+	* version.ac: Adapted.
+
 2017-08-30  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: Do not use system memmem.

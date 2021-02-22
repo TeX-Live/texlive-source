@@ -1,8 +1,8 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 # -*- coding: UTF-8 -*-
+
 import sys
 import re
-import string
 import commands
 import warnings
 
@@ -58,19 +58,20 @@ def section2html(text):
     mapping = { "<screen>" : "<pre>", "</screen>" : "</pre>",
                 "<para>" : "<p>", "</para>" : "</p>" ,
                 "<function>" : "<link>", "</function>" : "</link>" }
-    for str in mapping:
-        text = string.replace(text, str, mapping[str])
+    for m in mapping:
+        text = text.replace(m, mapping[m])
     return text
 def html(text):
     return section2html(paramdef2html(text))
 def cdata1(text):
-    return string.replace(text, "&",  "&amp;")
+    return text.replace("&",  "&amp;")
 def cdata31(text):
-    return string.replace(string.replace(text, "<","&lt;"), ">","&gt;")
+    text = text.replace("<","&lt;")
+    return text.replace(">","&gt;")
 def cdata3(text):
     return cdata31(cdata1(text))
 def cdata43(text):
-    return string.replace(text,"\"", "&quot;")
+    return text.replace("\"", "&quot;")
 def cdata41(text):
     return cdata43(cdata31(text))
 def cdata4(text):
@@ -126,7 +127,7 @@ def this_function_link(text, name):
 class Options:
     var = {}
     def __getattr__(self, name):
-        if not self.var.has_key(name): return None
+        if not name in self.var: return None
         return self.var[name]
     def __setattr__(self, name, value):
         self.var[name] = value
@@ -158,7 +159,7 @@ class File:
         self.copyright = ""
     def __getattr__(self, name):
         """ defend against program to break on uninited members """
-        if self.__dict__.has_key(name): return self.__dict__[name]
+        if name in self.__dict__: return self.__dict__[name]
         warn("no such member: "+name); return None
     def set_author(self, text):
         if self.authors:
@@ -215,7 +216,7 @@ def scan_options (options, list):
         #else
         try:
             input = open(name, "r")
-        except IOError, error:
+        except IOError as error:
             warn(#...... (scan_options) ...............
                 "can not open input file: "+name, error)
             continue
@@ -294,7 +295,7 @@ class Function:
 #        return ""
     def __getattr__(self, name):
         """ defend against program exit on members being not inited """
-        if self.__dict__.has_key(name): return self.__dict__[name]
+        if name in self.__dict__: return self.__dict__[name]
         warn("no such member: "+name); return None
     def dict(self):
         return self.__dict__
@@ -376,7 +377,7 @@ def examine_head_anchors(func_list):
         function.head = s(function.head, r"(.*)also:(.*)", lambda x
                           : set_seealso(function, x.group(2)) and x.group(1))
         if function.seealso and None:
-            print "function[",function.name,"].seealso=",function.seealso
+            print("function[" + function.name + "].seealso=" + function.seealso)
 examine_head_anchors(function_list)
 
 # =============================================================== HTML =====
@@ -524,11 +525,11 @@ html.add_page_list(html_pages)
 # and finally print the html-formatted output
 try:
     F = open(o.libhtmlfile, "w")
-except IOError, error:
+except IOError as error:
     warn(# ............. open(o.libhtmlfile, "w") ..............
         "can not open html output file: "+o.libhtmlfile, error)
 else:
-    print >> F, html.page_text()
+    print(html.page_text(), file=F)
     F.close()
 #fi
 
@@ -987,40 +988,37 @@ doctype += '"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">'+"\n"
 
 try:
     F = open(o.docbookfile,"w")
-except IOError, error:
+except IOError as error:
     warn("can not open docbook output file: "+o.docbookfile, error)
 else:
-    print >> F, doctype, '<reference><title>Manual Pages</title>'
+    print(doctype + '<reference><title>Manual Pages</title>', file=F)
 
     for page in combined_pages:
-        print >> F, page.refentry_text()
+        print(page.refentry_text(), file=F)
     #od
 
     for page in header_refpages.values():
         if not page.refentry: continue
-        print >> F, "\n<!-- _______ "+page.id+" _______ -->",
-        print >> F, page.refentry_text()
+        print("\n<!-- _______ "+page.id+" _______ -->" + page.refentry_text(), file=F)
     #od
 
-    print >> F, "\n",'</reference>',"\n"
+    print("\n</reference>\n", file=F)
     F.close()
 #fi
 
 # _____________________________________________________________________
 try:
     F = open( o.dumpdocfile, "w")
-except IOError, error:
+except IOError as error:
     warn ("can not open"+o.dumpdocfile,error)
 else:
     for func in function_list:
         name = func.name
-        print >> F, "<fn id=\""+name+"\">"+"<!-- FOR \""+name+"\" -->\n"
+        print("<fn id=\""+name+"\">"+"<!-- FOR \""+name+"\" -->\n", file=F)
         for H in sorted_keys(func.dict()):
-            print >> F, "<"+H+" name=\""+name+"\">",
-            print >> F, str(func.dict()[H]),
-            print >> F, "</"+H+">"
+            print("<"+H+" name=\""+name+"\">" + str(func.dict()[H]) + "</"+H+">", file=F)
         #od
-        print >> F, "</fn><!-- END \""+name+"\" -->\n\n";
+        print("</fn><!-- END \""+name+"\" -->\n\n", file=F)
     #od
     F.close();
 #fi

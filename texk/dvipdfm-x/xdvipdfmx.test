@@ -43,4 +43,3 @@ test -z "$failed" && exit 0
 echo
 echo "failed tests:$failed"
 exit 1
-

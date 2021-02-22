@@ -1,5 +1,5 @@
-Changes applied to the zziplib-0.13.69 tree as obtained from:
-https://github.com/gdraheim/zziplib/archive/v0.13.69.tar.gz
+Changes applied to the zziplib-0.13.71 tree as obtained from:
+https://github.com/gdraheim/zziplib/archive/v0.13.71.tar.gz
 
 Copied:
 	m4/ax_prefix_config_h.m4 -> ../m4/ (without AC_BEFORE)

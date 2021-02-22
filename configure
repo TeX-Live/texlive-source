@@ -800,6 +800,7 @@ enable_xindy
 enable_xindy_rules
 enable_xindy_docs
 with_clisp_runtime
+enable_xml2pmx
 enable_xpdfopen
 enable_web2c
 with_banner_add
@@ -903,8 +904,6 @@ with_system_icu
 with_system_teckit
 with_system_graphite2
 with_system_zziplib
-with_system_xpdf
-with_system_poppler
 with_system_mpfr
 with_mpfr_includes
 with_mpfr_libdir
@@ -1609,6 +1608,7 @@ Optional Features:
   --enable-xindy          build the xindy package
   --enable-xindy-rules      build and install make-rules package
   --enable-xindy-docs       build and install documentation
+  --disable-xml2pmx       do not build the xml2pmx package
   --disable-xpdfopen      do not build the xpdfopen package
   --disable-web2c         do not build the web2c (TeX & Co.) package
   --enable-auto-core        cause TeX&MF to dump core, given a certain
@@ -1760,10 +1760,6 @@ Optional Packages:
   --with-system-graphite2 use installed graphite2 headers and library
                           (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
-                          pkg-config)
-  --with-system-xpdf      use installed poppler headers and library instead of
-                          xpdf library from TL (requires pkg-config)
-  --with-system-poppler   use installed poppler headers and library (requires
                           pkg-config)
   --with-system-mpfr      use installed mpfr headers and library
   --with-mpfr-includes=DIR
@@ -4205,8 +4201,7 @@ $as_echo "$as_me: $host -> \`--disable-mfluajit-nowin'" >&6;}
 esac ;;
 esac
 
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
+## utils/autosp/ac/withenable.ac: configure.ac fragment for Tl subdir
 ## configure options and TL libraries required for autosp.
 # Check whether --enable-autosp was given.
 if test "${enable_autosp+set}" = set; then :
@@ -4224,8 +4219,7 @@ $as_echo "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
     ;;
 esac
 
-## utils/autosp/ac/withenable.ac: configure.ac fragment for TeX Live subdir
-## $Id: withenable.ac 46590 2018-02-10 23:30:32Z karl $
+## utils/axodraw2/ac/withenable.ac: configure.ac fragment for TL subdir
 ## configure options and TL libraries for axodraw2.
 # Check whether --enable-axodraw2 was given.
 if test "${enable_axodraw2+set}" = set; then :
@@ -4405,9 +4399,8 @@ $as_echo "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
     ;;
 esac
 
-# $Id: withenable.ac 49993 2019-02-10 19:14:27Z karl $
-# utils/xindy/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
-## configure options and TL libraries required for xindy
+## utils/xindy/ac/withenable.ac: configure.ac fragment for TL subdir
+## configure options and TL libraries required for xindy.
 # Check whether --enable-xindy was given.
 if test "${enable_xindy+set}" = set; then :
   enableval=$enable_xindy;
@@ -4462,6 +4455,24 @@ $as_echo "$as_me: Assuming \`--with-clisp-runtime=$with_clisp_runtime'" >&6;}
     if test ! -f "$with_clisp_runtime"; then :
   as_fn_error $? "no such file: \"$with_clisp_runtime\"" "$LINENO" 5
 fi ;;
+esac
+
+## utils/xml2pmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xml2pmx/
+## configure options and TL libraries required for xml2pmx
+# Check whether --enable-xml2pmx was given.
+if test "${enable_xml2pmx+set}" = set; then :
+  enableval=$enable_xml2pmx;
+fi
+case $enable_xml2pmx in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xml2pmx=$enable_all_pkgs
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xml2pmx=$enable_xml2pmx'" >&5
+$as_echo "$as_me: Assuming \`--enable-xml2pmx=$enable_xml2pmx'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-xml2pmx=$enable_xml2pmx'"
+    ;;
 esac
 
 ## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/
@@ -4519,9 +4530,8 @@ test "x$enable_web2c" = xno || {
   need_zlib=yes
 }
 
-# $Id: web2c.ac 53078 2019-12-10 18:39:13Z karl $
-# texk/web2c/ac/web2c.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
-## configure options for TeX and MF
+# texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
+# configure options for TeX and MF
 
 # Check whether --with-banner-add was given.
 if test "${with_banner_add+set}" = set; then :
@@ -4702,6 +4712,7 @@ case $enable_luatex in #(
 esac
 
 test "x$enable_web2c:$enable_luatex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -4718,6 +4729,7 @@ case $enable_luajittex in #(
 esac
 
 test "x$enable_web2c:$enable_luajittex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -4734,6 +4746,7 @@ case $enable_luahbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luahbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_lua53=yes
@@ -4751,6 +4764,7 @@ case $enable_luajithbtex in #(
 esac
 
 test "x$enable_web2c:$enable_luajithbtex" = xyes:yes && {
+  need_pplib=yes
   need_libpng=yes
   need_zziplib=yes
   need_luajit=yes
@@ -4823,7 +4837,7 @@ if test "${enable_xetex_synctex+set}" = set; then :
 fi
 
 test "x$enable_web2c:$enable_xetex" = xyes:yes && {
-  need_poppler=yes
+  need_pplib=yes
   need_libpng=yes
   need_freetype2=yes
   need_teckit=yes
@@ -5779,6 +5793,9 @@ if test "${enable_linked_scripts+set}" = set; then :
 fi
 
 
+## libs/pplib/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/pplib/
+## configure options and TL libraries required for pplib
+
 ## libs/harfbuzz/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/harfbuzz/
 ## configure options and TL libraries required for harfbuzz
 
@@ -5982,11 +5999,7 @@ test "x$need_zziplib" = xyes && {
 
 ## libs/xpdf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 ## configure options and TL libraries required for xpdf
-
-# Check whether --with-system-xpdf was given.
-if test "${with_system_xpdf+set}" = set; then :
-  withval=$with_system_xpdf;
-fi
+: "kpse_xpdf_options - no-op"
 if test "x$with_system_xpdf" = x; then
   if test -f $srcdir/libs/xpdf/configure; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`xpdf' headers and library from TL tree" >&5
@@ -6009,50 +6022,6 @@ $as_echo "$as_me: Using \`xpdf' headers and library from TL tree" >&6;}
     ac_configure_args="$ac_configure_args '--without-system-xpdf'"
   fi
 fi
-
-## libs/poppler/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
-## configure options and TL libraries required for poppler
-
-# Check whether --with-system-poppler was given.
-if test "${with_system_poppler+set}" = set; then :
-  withval=$with_system_poppler;
-fi
-if test "x$with_system_poppler" = x; then
-  if test -f $srcdir/libs/poppler/configure; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming \`poppler' headers and library from TL tree" >&5
-$as_echo "$as_me: Assuming \`poppler' headers and library from TL tree" >&6;}
-    with_system_poppler=no
-  else
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Assuming installed \`poppler' headers and library" >&5
-$as_echo "$as_me: Assuming installed \`poppler' headers and library" >&6;}
-    with_system_poppler=yes
-  fi
-  ac_configure_args="$ac_configure_args '--with-system-poppler=$with_system_poppler'"
-elif test "x$with_system_poppler" = xyes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using installed \`poppler' headers and library" >&5
-$as_echo "$as_me: Using installed \`poppler' headers and library" >&6;}
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: Using \`poppler' headers and library from TL tree" >&5
-$as_echo "$as_me: Using \`poppler' headers and library from TL tree" >&6;}
-  if test "x$with_system_poppler" != xno; then
-    with_system_poppler=no
-    ac_configure_args="$ac_configure_args '--without-system-poppler'"
-  fi
-fi
-if test "x$with_system_poppler" = xyes; then
-  if test "x$with_system_zlib" = x; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}:   ->  installed \`zlib' headers and library" >&5
-$as_echo "$as_me:   ->  installed \`zlib' headers and library" >&6;}
-    with_system_zlib=yes
-    ac_configure_args="$ac_configure_args '--with-system-zlib'"
-  elif test "x$with_system_zlib" != xyes; then
-    as_fn_error $? "Sorry, \`--with-system-poppler' requires \`--with-system-zlib'" "$LINENO" 5
-  fi
-fi
-
-test "x$need_poppler" = xyes && {
-  need_zlib=yes
-}
 
 ## libs/mpfr/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfr/
 ## configure options and TL libraries required for mpfr
@@ -6742,12 +6711,7 @@ ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
 
 if test x"${MISSING+set}" != xset; then
-  case $am_aux_dir in
-  *\ * | *\	*)
-    MISSING="\${SHELL} \"$am_aux_dir/missing\"" ;;
-  *)
-    MISSING="\${SHELL} $am_aux_dir/missing" ;;
-  esac
+  MISSING="\${SHELL} '$am_aux_dir/missing'"
 fi
 # Use eval to expand $SHELL
 if eval "$MISSING --is-lightweight"; then
@@ -21144,10 +21108,14 @@ CONF_SUBDIRS=
 if test -x $srcdir/texk/ptexenc/configure; then
   test "x$with_system_ptexenc" != xyes && test "x$need_ptexenc" = xyes && MAKE_SUBDIRS="texk/ptexenc $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/ptexenc $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texk/ptexenc/configure' >&5
 fi
 if test -x $srcdir/texk/kpathsea/configure; then
   test "x$with_system_kpathsea" != xyes && test "x$need_kpathsea" = xyes && MAKE_SUBDIRS="texk/kpathsea $MAKE_SUBDIRS"
   CONF_SUBDIRS="texk/kpathsea $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texk/kpathsea/configure' >&5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
@@ -21271,6 +21239,13 @@ fi
 ZLIB_LIBS="-lz"
 if test "x$with_zlib_libdir" != x && test "x$with_zlib_libdir" != xyes; then
   ZLIB_LIBS="-L$with_zlib_libdir $ZLIB_LIBS"
+fi
+
+if $PKG_CONFIG PPLIB; then
+  PPLIB_INCLUDES=`$PKG_CONFIG PPLIB --cflags`
+  PPLIB_LIBS=`$PKG_CONFIG PPLIB --libs`
+elif test "x$need_PPLIB:$with_system_PPLIB" = xyes:yes; then
+  as_fn_error $? "did not find PPLIB" "$LINENO" 5
 fi
 
 ##tldbg _KPSE_LIB_FLAGS_SYSTEM: libpaper (paper).
@@ -21522,25 +21497,7 @@ if test "x$with_mpfr_libdir" != x && test "x$with_mpfr_libdir" != xyes; then
   MPFR_LIBS="-L$with_mpfr_libdir $MPFR_LIBS"
 fi
 
-if $PKG_CONFIG poppler --atleast-version=0.30; then
-  POPPLER_INCLUDES=`$PKG_CONFIG poppler --cflags`
-  POPPLER_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  as_fn_error $? "did not find poppler 0.30 or better" "$LINENO" 5
-fi
-
-POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-POPPLER_INCLUDES="$POPPLER_VERSION $POPPLER_INCLUDES"
-
-if $PKG_CONFIG poppler --atleast-version=0.12; then
-  XPDF_INCLUDES=`$PKG_CONFIG poppler --cflags`
-  XPDF_LIBS=`$PKG_CONFIG poppler --libs`
-elif test "x$need_xpdf:$with_system_xpdf" = xyes:yes; then
-  as_fn_error $? "did not find poppler 0.12 or better" "$LINENO" 5
-fi
-
-POPPLER_VERSION='-DPOPPLER_VERSION=\"'`$PKG_CONFIG poppler --modversion`'\"'
-XPDF_INCLUDES="$POPPLER_VERSION $XPDF_INCLUDES"
+: "kpse_xpdf_system_flags - no-op"
 
 if $PKG_CONFIG zziplib --atleast-version=0.12; then
   ZZIPLIB_INCLUDES=`$PKG_CONFIG zziplib --cflags`
@@ -22094,47 +22051,9 @@ rm -f core conftest.err conftest.$ac_objext \
 $as_echo "$kpse_res" >&6; }
 fi
 
-## libs/poppler/ac/poppler.ac: configure.ac fragment for the TeX Live subdirectory libs/poppler/
-## basic check of system poppler
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-if test "x$need_poppler:$with_system_poppler" = xyes:yes; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking requested system \`poppler' library" >&5
-$as_echo_n "checking requested system \`poppler' library... " >&6; }
-  CPPFLAGS="$POPPLER_INCLUDES $CPPFLAGS"
-  LIBS="$POPPLER_LIBS $LIBS"
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <GfxFont.h>
-int
-main ()
-{
-GfxFont *gfxFont; gfxFont->decRefCnt();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  syslib_used=yes kpse_res=ok
-else
-  syslib_status=no kpse_res=failed
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
-$as_echo "$kpse_res" >&6; }
-fi
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
 ## libs/xpdf/ac/xpdf.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
-## basic check of system xpdf (poppler)
+## basic check of system xpdf (a.k.a. poppler, no longer supported in
+## TL sources)
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -24021,7 +23940,9 @@ $as_echo X/"$am_mf" |
     { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
 $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
 as_fn_error $? "Something went wrong bootstrapping makefile fragments
-    for automatic dependency tracking.  Try re-running configure with the
+    for automatic dependency tracking.  If GNU make was not used, consider
+    re-running the configure script with MAKE=\"gmake\" (or whatever is
+    necessary).  You can also try re-running configure with the
     '--disable-dependency-tracking' option to at least be able to build
     the package (albeit without support for automatic dependency tracking).
 See \`config.log' for more details" "$LINENO" 5; }
@@ -24961,11 +24882,11 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:
-** Configuration summary for $PACKAGE_STRING (2020$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2021$with_banner_add):
 
    $msg_compiling" >&5
 $as_echo "
-** Configuration summary for $PACKAGE_STRING (2020$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2021$with_banner_add):
 
    $msg_compiling" >&6; }
 case $kpse_src$kpse_bld in

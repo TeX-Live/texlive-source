@@ -1,3 +1,4 @@
+% This program is not copyrighted and can be used freely.
 % PKtoGF.web
 %
 %  PKtoGF creates a generic font file from a packed pixel file.
@@ -6,7 +7,8 @@
 % Fixed bug to include specials in character (1.0): January 1988
 % Cleaned up description (bitweight errors) no version change:  July 1990
 % Fixed bug with empty character setting min_n to 1 (1.1): 19 October 1990
-\def\versiondate{19 October 1990}
+% A few typos, no version change: 22 April 2020, 27 October 2020
+\def\versiondate{22 April 2020}
 %
 \font\ninerm=cmr9
 \let\mc=\ninerm % medium caps for names like PASCAL
@@ -17,9 +19,9 @@
 \def\(#1){} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 \def\title{PKtoGF}
-\def\contentspagenumber{0}
+\def\contentspagenumber{1}
 \def\topofcontents{\null
-  \def\titlepage{F} % include headline on the contents page
+  \titlefalse % include headline on the contents page
   \def\rheader{\mainfont\hfil \contentspagenumber}
   \vfill
   \centerline{\titlefont The {\ttitlefont PKtoGF} processor}
@@ -537,7 +539,7 @@ should be zero, but other document file formats allow nonzero vertical
 escapement.
 
 The character width~|w| duplicates the information in the \.{TFM} file; it
-is $2^{24}$ times the ratio of the true width to the font's design size.
+is $2^{20}$ times the ratio of the true width to the font's design size.
 
 The backpointer |p| points to the character's |boc|, or to the first of
 a sequence of consecutive \\{xxx} or |yyy| or |no_op| commands that
@@ -591,7 +593,7 @@ The packed file format is a compact representation of the data contained in a
 are almost always less than half the size of their \.{GF} counterparts.  They
 are also easier to convert into a raster representation because they do not
 have a profusion of \\{paint}, \\{skip}, and \\{new\_row} commands to be
-separately interpreted.  In addition, the \.{PK} format expressedly forbids
+separately interpreted.  In addition, the \.{PK} format expressly forbids
 \&{special} commands within a character.  The minimum bounding box for each
 character is explicit in the format, and does not need to be scanned for as in
 the \.{GF} format.  Finally, the width and escapement values are combined with
@@ -615,7 +617,7 @@ definitions are called flag bytes, and various fields within the byte indicate
 various things about how the character definition is encoded.  Command bytes
 have zero or more parameters, and can never appear within a character
 definition or between parameters of another command, where they would be
-interpeted as data.
+interpreted as data.
 
 A \.{PK} file consists of a preamble, followed by a sequence of one or more
 character definitions, followed by a postamble.  The preamble command must
@@ -656,7 +658,7 @@ of a keyword followed by possible parameters relevant to that keyword.
 length exceeds~255.
 
 \yskip\hang\\{pk\_xxx4} 243 |k[4]| |x[k]|.  Like |pk_xxx1|, but |k| can be
-ridiculously large; |k| musn't be negative.
+ridiculously large; |k| mustn't be negative.
 
 \yskip\hang|pk_yyy| 244 |y[4]|.  This command is undefined in general; it
 functions as a five-byte \\{no\_op} unless special \.{PK} reading programs
@@ -857,7 +859,7 @@ more bytes than this, although, of course, it is legal for any character.
 Any extra bits in the last byte should be set to zero.
 
 @ At this point, we are ready to introduce the format for a character
-descripter.  It consists of three parts: a flag byte, a character preamble,
+descriptor.  It consists of three parts: a flag byte, a character preamble,
 and the raster data.  The most significant four bits of the flag byte
 yield the |dyn_f| value for that character.  (Notice that only values of
 0 through 14 are legal for |dyn_f|, with 14 indicating a bit mapped character;
@@ -902,7 +904,7 @@ parameters of the \.{GF} file format, including vertical escapement.
 \vskip\baselineskip
 The |flag| parameter is the flag byte.  The parameter |pl| (packet length)
 contains the offset
-of the byte following this character descripter, with respect to the beginning
+of the byte following this character descriptor, with respect to the beginning
 of the |tfm| width parameter.  This is given so a \.{PK} reading program can,
 once it has read the flag byte, packet length, and character code (|cc|), skip
 over the character by simply reading this many more bytes.  For the two short
@@ -1042,7 +1044,7 @@ text files and files of bytes (packed files and generic font files.)
 For our purposes, we shall consider an eight-bit byte to consist of the
 values |0..255|.  If your system does not pack these values to a byte, it is
 no major difficulty; you must only insure that the input function
-|pk_byte| can read packed bytes, and that the output fuunction |gf_byte|
+|pk_byte| can read packed bytes, and that the output function |gf_byte|
 packs the bytes to be shipped.
 
 @<Types...@>=

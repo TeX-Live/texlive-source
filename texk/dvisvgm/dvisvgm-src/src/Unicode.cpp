@@ -2,7 +2,7 @@
 ** Unicode.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2020 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -112,6 +112,41 @@ string Unicode::utf8 (int32_t cp) {
 	}
 	return utf8;
 }
+
+
+/** Converts a surrogate pair to its code point.
+ *  @param[in] high high-surrogate value (upper 16 bits)
+ *  @param[in] low low-surrogate value (lower 16 bits)
+ *  @return corresponding code point or 0 if the surrogate is invalid */
+uint32_t Unicode::fromSurrogate (uint32_t high, uint32_t low) {
+	if (high < 0xD800 || high > 0xDBff || low < 0xDC00 || low > 0xDFFF)
+		return 0;
+	// http://www.unicode.org/versions/Unicode3.0.0/ch03.pdf, p. 45
+	return (high-0xD800)*0x400 + low-0xDC00 + 0x10000;
+}
+
+
+/** Converts a surrogate value to its code point.
+ *  @param[in] surrogate combined high and low surrogate value
+ *  @return corresponding code point or 0 if the surrogate is invalid */
+uint32_t Unicode::fromSurrogate (uint32_t surrogate) {
+	return fromSurrogate(surrogate >> 16, surrogate & 0xFFFF);
+}
+
+
+/** Converts a code point of the surrogate range (0x10000--0x10FFFF)
+ *  to its surrogate value.
+ *  @param[in] cp code point to convert
+ *  @return 32-bit surrogate (combined high and low values) */
+uint32_t Unicode::toSurrogate (uint32_t cp) {
+	if (cp < 0x10000 || cp > 0x10FFFF)
+		return 0;
+	// http://www.unicode.org/versions/Unicode3.0.0/ch03.pdf, p. 45
+	uint32_t high = (cp-0x10000)/0x400 + 0xD800;
+	uint32_t low = (cp-0x10000)%0x400 + 0xDC00;
+	return (high << 16) | low;
+}
+
 
 #include "AGLTable.hpp"
 

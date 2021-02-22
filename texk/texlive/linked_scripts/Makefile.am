@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2020 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -60,6 +60,7 @@ texmf_shell_scripts = \
 	checklistings/checklistings.sh \
 	ctanbib/ctanbib \
 	dtxgen/dtxgen \
+	git-latexdiff/git-latexdiff \
 	installfont/installfont-tl \
 	latexfileversion/latexfileversion \
 	listbib/listbib \
@@ -89,6 +90,7 @@ texmf_shell_scripts = \
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \
+	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
 	wordcount/wordcount.sh
 
@@ -97,6 +99,7 @@ texmf_other_scripts = \
 	accfonts/mkt1font \
 	accfonts/vpl2ovp \
 	accfonts/vpl2vpl \
+	albatross/albatross.sh \
 	arara/arara.sh \
 	attachfile2/pdfatfi.pl \
 	authorindex/authorindex \
@@ -140,6 +143,7 @@ texmf_other_scripts = \
 	getmap/getmapdl.lua \
 	glossaries/makeglossaries \
 	glossaries/makeglossaries-lite.lua \
+	hyperxmp/hyperxmp-add-bytecount.pl \
 	jfmutil/jfmutil.pl \
 	ketcindy/ketcindy.pl \
 	kotex-utils/jamo-normalize.pl \
@@ -156,6 +160,7 @@ texmf_other_scripts = \
 	latexindent/latexindent.pl \
 	latexmk/latexmk.pl \
 	latexpand/latexpand \
+	light-latex-make/llmk.lua \
 	lilyglyphs/lily-glyph-commands.py \
 	lilyglyphs/lily-image-commands.py \
 	lilyglyphs/lily-rebuild-pdfs.py \
@@ -196,6 +201,7 @@ texmf_other_scripts = \
 	pythontex/depythontex.py \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
+	spix/spix.py \
 	splitindex/splitindex.pl \
 	srcredact/srcredact.pl \
 	sty2dtx/sty2dtx.pl \

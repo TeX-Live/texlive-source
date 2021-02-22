@@ -19,10 +19,60 @@
 
 @x l.19 Add macro definitions
 \def\title{The CTIE processor}
+\def\botofcontents{%
+\vfill
+$\copyright$ 2002,2003 Julian Gilbey
+
+All rights reserved.
+
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-
+\let\maybe=\iftrue
 \def\title{The CTIE processor}
+\def\topofcontents{\null\vfill
+  \centerline{\titlefont The {\ttitlefont CTIE} processor}
+  \vskip 15pt
+  \centerline{(Version 1.1 [\TeX~Live])}
+  \vfill}
+\def\covernote{\vbox{\ninerm\noindent
+Copyright \copyright\ 2002, 2003 Julian Gilbey
+\smallskip\noindent
+All rights reserved.
+\bigskip\noindent
+This program is distributed WITHOUT ANY WARRANTY, express or implied.
+\smallskip\noindent
+Permission is granted to make and distribute verbatim copies of this
+program provided that the copyright notice and this permission notice
+are preserved on all copies.
+\smallskip\noindent
+Permission is granted to copy and distribute modified versions of this
+program under the conditions for verbatim copying, provided that the
+entire resulting derived work is distributed under the terms of a
+permission notice identical to this one.
+}}
+\datecontentspage
+@z
+
+@x l.81
+@d copyright 
+    "Copyright 2002,2003 Julian Gilbey.  All rights reserved.  There is no warranty.\n\
+Run with the --version option for other important information."
+@y
+@d copyright
+    "Copyright 2002,2003 Julian Gilbey."@|
+    "  All rights reserved.  There is no warranty.\n"@|
+    "Run with the --version option for other important information."
 @z
 
 @x l.102
@@ -35,12 +85,17 @@ int main (int argc, string *argv)
 @x l.105 Set up kpathsea stuff
     @<Initialise parameters@>;
 @y
-    @<Set up |PROGNAME| feature and initialize the search path mechanism@>;
-    @<Initialise parameters@>;
+    @<Set up |PROGNAME| feature and initialise the search path mechanism@>@;
+    @<Initialise parameters@>@;
 @z
 
-These are defined by kpathsea; we replace this by the path-searching
-initialisation code taken almost verbatim from comm-w2c.ch.
+@x l.107
+    @<Print the banners@>;
+@y
+    @<Print the banners@>@;
+@z
+
+boolean and string are defined by kpathsea.
 @x l.116
 @ We include the additional types |boolean| and |string|.  \.{CTIE}
 replaces the complex \.{TIE} character set handling (based on that of
@@ -54,44 +109,19 @@ so uses the |char| type for input and output.
 typedef int boolean;
 typedef char* string;
 @y
-@ The \.{ctie} program from the original \.{CTIE} package uses the
-compile-time default directory or the value of the environment
-variable \.{CWEBINPUTS} as an alternative place to be searched for
-files, if they could not be found in the current directory.
-
-This version uses the \Kpathsea/ mechanism for searching files. 
-The directories to be searched for come from three sources:
-
- (a)~a user-set environment variable \.{CWEBINPUTS}
-    (overriden by \.{CWEBINPUTS\_ctie});\par
- (b)~a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
-    e.g. \.{CWEBINPUTS=.:$TEXMF/texmf/cweb//}
-    or \.{CWEBINPUTS.ctie=.:$TEXMF/texmf/cweb//};\hangindent=2\parindent\par
- (c)~compile-time default directories \.{.:$TEXMF/texmf/cweb//}
-    (specified in \.{texmf.in}).
-
-@d kpse_find_cweb(name) kpse_find_file(name, kpse_cweb_format, true)
-
-@ The simple file searching is replaced by the `path searching'
-mechanism that the \Kpathsea/ library provides.
-
-We set |kpse_program_name| to |"ctie"|.  This means if the variable
-|CWEBINPUTS.ctie| is present in \.{texmf.cnf} (or |CWEBINPUTS_ctie| in
-the environment) its value will be used as the search path for
-filenames.  This allows different flavors of \.{CTIE} to have
-different search paths.
-
-@<Set up |PROGNAME| feature and initialize the search path mechanism@>=
-kpse_set_program_name(argv[0], "ctie");
-
 @ We include the additional types |boolean| and |string|.  \.{CTIE}
 replaces the complex \.{TIE} character set handling (based on that of
 the original \.{WEB} system) with the standard \.{CWEB} behaviour, and
 so uses the |char| type for input and output.
 
-The |kpathsea| library (version 3.4.5) defines the |true|, |false|,
-|boolean| and |string| types in \.{kpathsea/types.h}, so we do not
-actually need to define them here.
+The \.{kpathsea} library (version 3.4.5 and higher) defines the |@!boolean|
+(with the values |@!true| and |@!false|) and |@!string| (and |@!const_string|)
+types in \.{<kpathsea/simpletypes.h>}, so we do not actually need to define
+them here.
+
+@s boolean int
+@s string int
+@s const_string int
 @z
 
 @x l.129 The kpathsea include files find the right header file for these.
@@ -108,7 +138,8 @@ extern char* strncpy(); /* copy up to $n$ string characters */
 extern char *strerror();
 @y
 @ We don't need to predeclare any string handling functions here, as
-the \.{kpathsea} headers do the right thing.
+the \.{kpathsea} headers do the right thing by including \.{<string.h>}
+behind the scenes.
 @z
 
 @x l.149
@@ -117,11 +148,39 @@ the \.{kpathsea} headers do the right thing.
 @d xisupper(c) (isupper((unsigned char)c)&&((unsigned char)c<0200))
 @z
 
-@x l.173 The kpathsea include files must be first.
+@x l.155
+This variable must be initialized.
+@y
+This variable must be initialised.
+@z
+
+@x l.158
+@d spotless 0
+@d troublesome 1
+@d fatal 2
+
+@<Global variables@>=
+int history=spotless;
+@y
+@<Global variables@>=
+typedef enum {
+    @!spotless,
+    @!troublesome,
+    @!fatal } return_code;
+static return_code history=spotless;
+@z
+
+@x l.170 The kpathsea include files must be first.
+predefined as we include the \.{stdio.h} definitions.
+
+@<Global \&{\#include}s@>=
 #include <stdio.h>
 @y
+predefined as we include the \.{<stdio.h>} definitions
+through the \.{kpathsea} interface.
+
+@<Global \&{\#include}s@>=
 #include <kpathsea/kpathsea.h>
-#include <stdio.h>
 @z
 
 @x l.176 And this.
@@ -138,9 +197,68 @@ This should cause no trouble in any \CEE/ program.
 @y
 @ And we need dynamic memory allocation.
 This should cause no trouble in any \CEE/ program.
-The \.{kpathsea} include files handle the definition of |malloc()|,
-too.
+The \.{kpathsea} include files handle the definition of |@!malloc|, too.
 @^system dependencies@>
+@z
+
+@x l.190
+files) are treated the same way.  To organize the
+@y
+files) are treated the same way.  To organise the
+@z
+
+Sections 10 and 11: use enum as requested in ctie.w
+
+@x l.204
+\leavevmode |file_types| is used to describe whether a file
+@y
+\leavevmode \&{file\_types} is used to describe whether a file
+@z
+
+@x l.208
+the kind of output. (this would even be necessary if we
+@y
+the kind of output. (This would even be necessary if we
+@z
+
+@x l.212
+#define search 0
+#define test 1
+#define reading 2
+#define ignore 3
+typedef int in_file_modes; /* should be |enum(search, test, reading, ignore)| */
+#define unknown 0
+#define master 1
+#define chf 2
+typedef int file_types; /* should be |enum(unknown, master, chf)| */
+@y
+typedef enum {
+    @!search,
+    @!test,
+    @!reading,
+    @!ignore } in_file_modes;
+typedef enum {
+    @!unknown,
+    @!master,
+    @!chf } file_types;
+@z
+
+@x l.223
+@ A variable of type |out_md_type| will tell us in what state the output
+@y
+@ A variable of type \&{out\_md\_type} will tell us in what state the output
+@z
+
+@x l.230 dito
+#define normal 0
+#define pre 1
+#define post 2
+typedef int out_md_type; /* should be |enum(normal, pre, post)| */
+@y
+typedef enum {
+    @!normal,
+    @!pre,
+    @!post } out_md_type;
 @z
 
 @x l.284 way too short!
@@ -157,12 +275,24 @@ static boolean
 get_line (file_index i, boolean do_includes)
 @z
 
+@x l.361
+replacement part of a change file, or in an incomplerte check if the
+@y
+replacement part of a change file, or in an incomplete check if the
+@z
+
 Handle input lines with CRLF
 
 @x l.376
         if ((*(k++) = c) != ' ') inp_desc->limit = k;
 @y
         if ((*(k++) = c) != ' ' && c != '\r') inp_desc->limit = k;
+@z
+
+@x l.386
+    @<Increment the line number and print a progess report at
+@y
+    @<Increment the line number and print a progress report at
 @z
 
 @x l.436
@@ -182,7 +312,7 @@ it cannot find them in the current directory.
 (Colon-separated paths are not supported.)
 @y
 We use the \Kpathsea/ library (in particular, the \.{CWEBINPUTS}
-variable) to search for this file.
+variable) to search for this file.@.CWEBINPUTS@>
 @z
 
 @x l.510 Don't need the same variables any longer
@@ -265,6 +395,14 @@ int wrap_up()
 int wrap_up (void)
 @z
 
+@x l.667
+    if (history > spotless) return 1;
+    else return 0;
+@y
+    if (history > spotless) return EXIT_FAILURE;
+    else return EXIT_SUCCESS;
+@z
+
 @x l.674
 int wrap_up();
 @y
@@ -284,10 +422,26 @@ char *s, *t;
 void pfatal_error (const char *s, const char *t)
 @z
 
+@x l.713
+@ We need an include file for the above.
+
+@<Global \&{\#include}s@>=
+#include <errno.h>
+@y
+@ The \.{<errno.h>} include file for the above comes via the \.{kpathsea}
+interface.
+@z
+
 @x l.731 Use binary mode for output files
     out_file=fopen(out_name, "w");
 @y
     out_file=fopen(out_name, "wb");
+@z
+
+@x l.739
+@ The name of the file and the file desciptor are stored in
+@y
+@ The name of the file and the file descriptor are stored in
 @z
 
 @x l.747 Use the kpathsea library to do this
@@ -428,12 +582,30 @@ usage_error (void)
     fprintf(stderr, "Usage: ctie -m|-c outfile master changefile(s)\n");
 @z
 
+@x l.1111
+    exit(1);
+@y
+    exit(EXIT_FAILURE);
+@z
+
 @x l.1119 Add Web2C version to banner string
 printf("%s\n", banner); /* print a ``banner line'' */
 @y
-{
-    printf("%s (%s)\n", banner, kpathsea_version_string); /* print a ``banner line'' */
-}
+printf("%s (%s)\n", banner, kpathsea_version_string); /* print a ``banner line'' */
+@z
+
+Section 63: use 'none' more than once.
+
+@x l.1169
+(which is the case if |no_ch==(-1)|) or if the next element of
+@y
+(which is the case if |no_ch==none|) or if the next element of
+@z
+
+@x l.1174
+    if (no_ch==(-1)) {
+@y
+    if (no_ch==none) {
 @z
 
 @x l.1218
@@ -461,6 +633,12 @@ static void
 usage_help (void)
 {
     const_string *message=CTIEHELP;
+@z
+
+@x l.1248
+    exit(0);
+@y
+    exit(EXIT_SUCCESS);
 @z
 
 @x l.1253
@@ -491,12 +669,15 @@ print_version_and_exit (const_string name, const_string version)
     puts ("both the CTIE copyright and the GNU General Public Licence.");
     puts ("For more information about these matters, see the files");
     puts ("named COPYING and the CTIE source.");
-    puts ("Primary authors of CTIE: Julian Gilbey.");
-    puts ("Kpathsea written by Karl Berry and others.\n");
+    puts ("Primary author of CTIE: Julian Gilbey.");
+    puts ("Kpathsea written by Karl Berry and others.");
 
-    exit (0);
+    exit (EXIT_SUCCESS);
 }
 @z
+
+We use the path-searching initialisation code
+taken almost verbatim from comm-w2c.ch.
 
 @x l.1267
 @* System-dependent changes.
@@ -511,6 +692,36 @@ inserted here; then only the index itself will get a new
 module number.
 @^system dependencies@>
 @y
-@* System-dependent changes.
-There are no additional changes.
+@* System-dependent changes.@^system dependencies@>@.CWEBINPUTS@>
+The \.{ctie} program from the original \.{CTIE} package uses the
+compile-time default directory or the value of the environment
+variable \.{CWEBINPUTS} as an alternative place to be searched for
+files, if they could not be found in the current directory.
+
+This version uses the \Kpathsea/ mechanism for searching files.
+The directories to be searched for come from three sources:
+\smallskip
+{\parindent5em
+\item{(a)} a user-set environment variable \.{CWEBINPUTS}
+    (overridden by \.{CWEBINPUTS\_ctie});
+\item{(b)} a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
+    e.g., \.{CWEBINPUTS=\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}\hfil\break
+    or \.{CWEBINPUTS.ctie=\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//};
+\item{(c)} compile-time default directories (specified in
+    \.{texmf.in}),\hfil\break
+    i.e., \.{\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}.\par}
+
+@d kpse_find_cweb(name) kpse_find_file(name, kpse_cweb_format, true)
+
+@ The simple file searching is replaced by the `path searching'
+mechanism that the \Kpathsea/ library provides.
+
+We set |kpse_program_name| to `\.{ctie}'.  This means if the variable
+\.{CWEBINPUTS.ctie} is present in \.{texmf.cnf} (or \.{CWEBINPUTS\_ctie}
+in the environment) its value will be used as the search path for
+filenames.  This allows different flavors of \.{CTIE} to have
+different search paths.@.CWEBINPUTS@>
+
+@<Set up |PROGNAME| feature...@>=
+kpse_set_program_name(argv[0], "ctie");
 @z

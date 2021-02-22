@@ -1,4 +1,4 @@
-.TH TIE 1 "7 April 2010" "Web2C @VERSION@"
+.TH TIE 1 "8 June 2020" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 tie \- merge or apply WEB change files
@@ -41,6 +41,9 @@ The environment variable WEBINPUTS is used to search for the input files,
 or the system default if WEBINPUTS is not set.  See
 .BR tex (1)
 for the details of the searching.
+To avoid conflicts with other programs that also use the WEBINPUTS
+environment, you can be more specific and use WEBINPUTS_tie for
+special requirements in TIE.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR web (1),

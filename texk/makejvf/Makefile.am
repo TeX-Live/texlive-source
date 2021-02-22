@@ -42,7 +42,8 @@ EXTRA_DIST += \
 	tests/gkhugeok.tfm \
 	tests/gkhugeok.vf \
 	tests/skipjfmp.tfm \
-	tests/skipjfmp.vf
+	tests/skipjfmp.vf \
+	tests/skipjfmp_omit.vf
 
 DISTCLEANFILES = min10.vf rml.tfm rmlv.tfm tmin10.vf testnewu.vf \
 	gkhugeok.vf skipjfmp.vf urml.tfm

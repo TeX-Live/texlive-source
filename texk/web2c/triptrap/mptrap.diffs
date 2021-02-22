@@ -1,15 +1,50 @@
+#! /bin/sh -vx
+# Public domain.
+
+testdir=$abs_srcdir/triptrap
++ testdir=SRCDIR/triptrap
+
+TEXMFCNF=$testdir; export TEXMFCNF
++ TEXMFCNF=SRCDIR/triptrap
++ export TEXMFCNF
+
+rm -rf mptrapdir
++ rm -rf mptrapdir
+mkdir mptrapdir
++ mkdir mptrapdir
+cd mptrapdir
++ cd mptrapdir
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
++ dvitype_args='-output-level=2 -dpi=72.27 -page-start='\''*.*.*.*.*.*.*.*.*.*'\'''
+
+echo ">>> Running MPTRAP test for MetaPost." >&2
++ echo '>>> Running MPTRAP test for MetaPost.'
 >>> Running MPTRAP test for MetaPost.
+echo ">>> See $testdir/mptrap.diffs for example of acceptable diffs." >&2
++ echo '>>> See SRCDIR/triptrap/mptrap.diffs for example of acceptable diffs.'
 >>> See SRCDIR/triptrap/mptrap.diffs for example of acceptable diffs.
+
+set -x
++ set -x
+
+./pltotf $testdir/trapf.pl trapf.tfm
 + ./pltotf SRCDIR/triptrap/trapf.pl trapf.tfm
+
+# get same filename in log
+$LN_S $testdir/mtrap.mp . || exit 1
 + ln -s SRCDIR/triptrap/mtrap.mp .
+
+./mpost --ini mtrap
 + ./mpost --ini mtrap
-This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
+This is MetaPost, version 2.00 (TeX Live 2021/dev) (kpathsea version 6.3.3/dev)
 (./mtrap.mp
+diff $testdir/mtrap.log mtrap.log
 + diff SRCDIR/triptrap/mtrap.log mtrap.log
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)  12 APR 2015 16:22
+> This is MetaPost, version 2.00 (TeX Live 2021/dev) (kpathsea version 6.3.3/dev)  27 JAN 2021 18:03
 4,5c4,5
 < Memory usage 19&13 (3972 still untouched)
 < String usage 3&12 (101&7774 now untouched)
@@ -185,7 +220,7 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 929c929
 < >> "%%Creator: MetaPost 1.203"
 ---
-> >> "%%Creator: MetaPost 1.999"
+> >> "%%Creator: MetaPost 2.00"
 931c931
 < >> "%*Font: trapf 9.9628 9.96265 35:c008"
 ---
@@ -205,7 +240,7 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < String usage 16&50 (46&6607 now untouched)
 ---
 > Memory usage 15664
-> String usage 70&1484
+> String usage 70&1483
 966,968c966,968
 < >> 42
 < Memory usage 359&13 (2867 still untouched)
@@ -213,7 +248,7 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 ---
 > >> 41
 > Memory usage 15664
-> String usage 90&2139
+> String usage 90&2138
 973,976c973,976
 < Memory usage 359&13 (2867 still untouched)
 < String usage 17&84 (1&5292 now untouched)
@@ -221,13 +256,13 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < String usage 30&97 (43&7558 now untouched)
 ---
 > Memory usage 15664
-> String usage 91&2147
+> String usage 91&2146
 > Memory usage 15664
-> String usage 152&2401
+> String usage 152&2400
 978c978
 < >> "%%CreationDate: 2009.05.25:1247"
 ---
-> >> "%%CreationDate: 2015.04.12:1622"
+> >> "%%CreationDate: 2021.01.27:1803"
 982,984c982,984
 < >> "%*Font: trapf 9.9628 9.96265 35:c008"
 < Memory usage 359&13 (2867 still untouched)
@@ -235,13 +270,13 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 ---
 > >> "%*Font: trapf 9.96266 9.96265 35:c008"
 > Memory usage 15664
-> String usage 152&2401
+> String usage 152&2400
 987,988c987,988
 < Memory usage 359&13 (2867 still untouched)
 < String usage 30&88 (61&6618 now untouched)
 ---
 > Memory usage 16432
-> String usage 172&2909
+> String usage 172&2908
 999,1001c999,1001
 < The equation I just processed has given some variable
 < a value of 4096 or more. Continue and I'll try to cope
@@ -255,19 +290,19 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < String usage 30&88 (61&6618 now untouched)
 ---
 > Memory usage 16432
-> String usage 172&2909
+> String usage 172&2908
 1022,1023c1022,1023
 < Memory usage 361&13 (2867 still untouched)
 < String usage 31&96 (60&6610 now untouched)
 ---
 > Memory usage 16432
-> String usage 172&2909
+> String usage 172&2908
 1071,1072c1071,1072
 < Memory usage 361&13 (2867 still untouched)
 < String usage 31&96 (59&6602 now untouched)
 ---
 > Memory usage 16432
-> String usage 173&2917
+> String usage 173&2916
 1076,1081c1076,1079
 <  37 strings out of 104
 <  508 string characters out of 7786
@@ -276,19 +311,20 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 <  5i,42n,6p,99b,2f stack positions out of 300i,84n,1500p,200b,25f
 <  8 string compactions (moved 2756 characters, 222 strings)
 ---
->  173 strings using 2917 characters
+>  173 strings using 2916 characters
 >  18856 bytes of node memory
->  317 symbolic tokens
->  6i,48n,6p,99b,2f stack positions out of 16i,96n,7p,200b,4f
+>  320 symbolic tokens
+>  6i,49n,6p,99b,2f stack positions out of 16i,98n,7p,200b,4f
 1082a1081
 > 
+diff $testdir/mtrap.0 mtrap.0
 + diff SRCDIR/triptrap/mtrap.0 mtrap.0
 4,5c4,5
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.999
-> %%CreationDate: 2015.04.12:1622
+> %%Creator: MetaPost 2.00
+> %%CreationDate: 2021.01.27:1803
 7c7
 < %*Font: trapf 9.9628 9.96265 35:c008
 ---
@@ -303,13 +339,14 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < 0.00064 1 scale stroke grestore
 ---
 > 1.00067 1 scale stroke grestore
+diff $testdir/mtrap.1 mtrap.1
 + diff SRCDIR/triptrap/mtrap.1 mtrap.1
 4,5c4,5
 < %%Creator: MetaPost 1.203
 < %%CreationDate: 2009.05.25:1247
 ---
-> %%Creator: MetaPost 1.999
-> %%CreationDate: 2015.04.12:1622
+> %%Creator: MetaPost 2.00
+> %%CreationDate: 2021.01.27:1803
 23,25c23,24
 <  0 0 0 setrgbcolor 1
 <  0 dtransform exch truncate exch idtransform pop setlinewidth [] 0 setdash
@@ -327,17 +364,27 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < [0 -0.00064 -1 0 0 0] concat stroke grestore
 ---
 > [0 -1.00067 -1 0 0 0] concat stroke grestore
+diff $testdir/writeo writeo
 + diff SRCDIR/triptrap/writeo writeo
+diff $testdir/writeo.2 writeo.2
 + diff SRCDIR/triptrap/writeo.2 writeo.2
+
+$LN_S $testdir/trap.mp . || exit 1
 + ln -s SRCDIR/triptrap/trap.mp .
+$LN_S $testdir/trap.mpx . || exit 1
 + ln -s SRCDIR/triptrap/trap.mpx .
+
+## Why is --jobname required? And why --ini?
+./mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
 + ./mpost --ini --jobname=trap
+mv trap.log mptrapin.log || exit 1
 + mv trap.log mptrapin.log
+diff $testdir/mptrapin.log mptrapin.log
 + diff SRCDIR/triptrap/mptrapin.log mptrapin.log
 1c1
 < This is MetaPost, version 1.203 (kpathsea version 3.5.7dev) (INIMP)  25 MAY 2009 12:47
 ---
-> This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)  12 APR 2015 16:22
+> This is MetaPost, version 2.00 (TeX Live 2021/dev) (kpathsea version 6.3.3/dev)  27 JAN 2021 18:03
 40,60c40,47
 < ! Missing `:' has been inserted.
 < <to be read again> 
@@ -532,5 +579,8 @@ This is MetaPost, version 1.999 (TeX Live 2015) (kpathsea version 6.2.1)
 < 308 symbolic tokens
 ---
 > 
+
+exit 0
 + exit 0
-PASS: mplibdir/mptraptest
+PASS mplibdir/mptraptest.test (exit status: 0)
+PASS: mplibdir/mptraptest.test

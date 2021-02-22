@@ -27,6 +27,7 @@ Options:
 -r*  Reverse order of pages          -R*  Run securely
 -s*  Enclose output in save/restore  -S # Max section size in pages
 -t s Paper format                    -T c Specify desired page size
+-title s Title in comment
 -u s PS mapfile                      -U*  Disable string param trick
 -v   Print version number and quit   -V*  Send downloadable PS fonts as PK
 -x # Override dvi magnification      -X # Horizontal resolution

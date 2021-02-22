@@ -1,7 +1,7 @@
 # norootforbuild
 Summary:      ZZipLib - libZ-based ZIP-access Library with an Easy-to-Use API
 Name:         zziplib
-Version:      0.13.69
+Version:      0.13.71
 Release:      1
 License:      LGPLv2.1+
 Group:        System/Libraries
@@ -35,7 +35,7 @@ Provides:     zziplib-lib010 = %version
 Summary:      ZZipLib - Documentation Files
 Group:        Development/Languages/C and C++
 BuildRequires: python
-BuildRequires: xmlto
+# BuildRequires: xmlto
 PreReq: scrollkeeper
 
 %package devel

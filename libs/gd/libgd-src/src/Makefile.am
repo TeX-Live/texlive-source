@@ -23,7 +23,9 @@ check_PROGRAMS += fontconfigtest
 endif
 
 if HAVE_LIBFREETYPE
+if HAVE_LIBJPEG
 bin_PROGRAMS += annotate
+endif
 check_PROGRAMS += gdtestft testtr
 endif
 
@@ -37,7 +39,19 @@ if HAVE_LIBZ
 check_PROGRAMS += gd2time
 endif
 
-EXTRA_DIST = bdftogd demoin.png entities.html entities.tcl CMakeLists.txt config.h.cmake gd_io_stream.cxx gdpp.cxx msinttypes/inttypes.h msinttypes/stdint.h
+EXTRA_DIST = \
+	bdftogd \
+	demoin.png \
+	entities.html \
+	entities.tcl \
+	CMakeLists.txt \
+	config.h.cmake \
+	gd_io_stream.cxx \
+	gdpp.cxx \
+	getopt.c \
+	snprintf.c \
+	msinttypes/inttypes.h \
+	msinttypes/stdint.h
 
 include_HEADERS = gd.h gdfx.h gd_io.h gdcache.h gdfontg.h gdfontl.h gdfontmb.h gdfonts.h gdfontt.h entities.h gd_color_map.h gd_errors.h gdpp.h
 
@@ -114,4 +128,3 @@ libgd_la_LDFLAGS = -version-info $(GDLIB_LT_CURRENT):$(GDLIB_LT_REVISION):$(GDLI
 libgd_la_LIBADD = $(LTLIBICONV)
 
 LDADD = libgd.la $(LIBICONV)
-

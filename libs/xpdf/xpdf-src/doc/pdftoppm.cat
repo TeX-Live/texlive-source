@@ -4,7 +4,7 @@ pdftoppm(1)                 General Commands Manual                pdftoppm(1)
 
 NAME
        pdftoppm - Portable Document Format (PDF) to Portable Pixmap (PPM) con-
-       verter (version 4.02)
+       verter (version 4.03)
 
 SYNOPSIS
        pdftoppm [options] PDF-file PPM-root
@@ -47,6 +47,9 @@ OPTIONS
 
        -cmyk  Generate a CMYK PAM file (instead of an RGB PPM file).
 
+       -rot angle
+              Rotate pages by 0 (the default), 90, 180, or 270 degrees.
+
        -freetype yes | no
               Enable or disable FreeType (a TrueType /  Type  1  font  raster-
               izer).  This defaults to "yes".  [config file: enableFreeType]
@@ -86,7 +89,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftoppm software and documentation are copyright 1996-2019 Glyph &
+       The pdftoppm software and documentation are copyright 1996-2021 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -96,4 +99,4 @@ SEE ALSO
 
 
 
-                                  25 Sep 2019                      pdftoppm(1)
+                                  28 Jan 2021                      pdftoppm(1)

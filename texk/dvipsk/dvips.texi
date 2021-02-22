@@ -2,8 +2,8 @@
 @setfilename dvips.info
 @settitle Dvips: A DVI-to-PostScript translator
 
-@set version 2020.1
-@set month-year January 2020
+@set version 2021.1
+@set month-year February 2021
 
 @copying
 This manual documents Dvips version @value{version}
@@ -35,7 +35,7 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @subtitle for version @value{version}
 @subtitle @value{month-year}
 @author Tomas Rokicki
-@author @url{http://tug.org/dvips}
+@author @url{https://tug.org/dvips}
 
 @page
 @insertcopying
@@ -105,21 +105,14 @@ font at a different size can be used instead, although Dvips will
 complain loudly about the poor aesthetics of the resulting output.
 
 One of the most important features is the support of virtual fonts,
-which add an entirely new level of flexibility to @TeX{}.  Virtual fonts
-are used to give Dvips its excellent PostScript font support, handling
-all the font remapping in a natural, portable, elegant, and extensible
-way.  Dvips even comes with its own Afm2tfm program that creates
-the necessary virtual fonts and @TeX{} font metric files automatically
-from the Adobe font metric files.
+which add an entirely new level of flexibility to @TeX{}.  Dvips even
+comes with its own Afm2tfm program that can create the virtual fonts
+and @TeX{} font metric files automatically from Adobe font metric
+files.
 
 Source is provided and freely distributable, so adding a site-specific feature
 is possible.  Adding such features is made easier by the highly modular
 structure of the program.
-
-There is really no reason to use another driver, and the more people use
-Dvips, the less time will be spent fighting with PostScript and the
-more time will be available to create beautiful documents.
-So if you don't use Dvips on your system, get it today.
 
 @cindex Rokicki, Tomas
 Tom Rokicki wrote and maintains the original Dvips program.
@@ -143,8 +136,7 @@ program.  Therefore, for the basic steps involved,
 For solutions to common installation problems and information on how to
 report a bug, see the file @file{kpathsea/BUGS} (@pxref{Bugs,,,
 kpathsea, Kpathsea}).  For solutions to Dvips-specific problems,
-@pxref{Debug options}.  Also see the Dvips home page at
-@url{http://www.radicaleye.com/dvips}.
+@pxref{Debug options}.
 
 Dvips does require some additional installation, detailed in the
 sections below.  Also, to configure color devices, @pxref{Color device
@@ -233,7 +225,7 @@ originally written by Peter Deutsch.  It can read the PostScript
 produced by Dvips and render it on your monitor, or for another device
 (e.g., an Epson printer) that does not support PostScript, or in PDF
 format.  The latest version is available via
-@url{http://ghostscript.com}.
+@url{https://ghostscript.com}.
 
 @cindex Theisen, Tim
 @pindex ghostview
@@ -246,7 +238,7 @@ Theisen, provides typical previewing capabilities (next page/previous
 page, magnification, etc.).  It requires Ghostscript to run, and files
 in structured Postscript, specifically with @samp{%%Page} comments (no
 @samp{N} in @file{config.ps}).  The current version is known as GV,
-and is available from @url{http://www.gnu.org/software/gv}.
+and is available from @url{https://www.gnu.org/software/gv}.
 
 
 @node Diagnosing problems
@@ -506,7 +498,7 @@ same fonts over and over again, it hasn't been installed properly.
 @xref{Unable to generate fonts,,, kpathsea, Kpathsea}.)
 
 Many options are available (see the next section).  For a brief summary
-of available options, just type
+of available options, run
 
 @example
 dvips --help
@@ -796,7 +788,6 @@ Specify manual feed, if supported by the output device.
 
 @item -mode @var{mode}
 @opindex -mode @var{mode}
-@opindex -mode
 @cindex mode name, specifying
 @cindex Metafont mode, specifying
 Use @var{mode} as the Metafont device name for path searching and font
@@ -1038,6 +1029,17 @@ processing; use @samp{-t@tie{}nopaper} to omit any paper size
 information in the output.  (If you just have a single page document,
 you can use @samp{-E} to get pure EPSF output.)
 @end itemize
+
+@item -title @var{string}
+@opindex -title @var{str}
+@cindex title, specifying
+@cindex output title, specifying
+@cindex document title, specifying
+@findex %%Title
+Use @var{string} as the title in the generated PostScript
+(@code{%%Title}). If not specified, the default is the basename of the
+input file; for example, running @code{dvips /foo/bar.dvi} will have a
+@code{%%Title} of @samp{bar.dvi}.
 
 @item -T @var{hsize},@var{vsize}
 @opindex -T @var{hsize},@var{vsize}
@@ -1992,7 +1994,7 @@ the file.
 
 Once the figure file has a bounding box comment (see the previous
 section) you are ready to import the graphic into a La@TeX{}
-document. For @LaTeX{} 2e, you can use the epsf, graphics or graphicx
+document. For @LaTeX{}2e, you can use the epsf, graphics or graphicx
 packages, but the last is recommended---it has the most flexible
 syntax, and is briefly described here.  Further information can be
 found in @file{grfguide} or @file{epslatex}, which should be included
@@ -2058,7 +2060,7 @@ account.
 @cindex EPSF macros
 @cindex macros for epsf inclusion
 
-If you are using @LaTeX{} 2e, use the @samp{graphics} or @samp{graphicx}
+If you are using @LaTeX{}2e, use the @samp{graphics} or @samp{graphicx}
 package.  @xref{\includegraphics}.
 
 If you are using plain @TeX{} or La@TeX{} 2.09, you need @file{epsf.tex}
@@ -2886,22 +2888,18 @@ interpreters as well.)  Various versions of both PC and Unix distillers
 are supported; Ghostscript includes limited distiller support
 (@pxref{Ghostscript installation}).
 
-Macros you can use in your @TeX{} document to insert the specials in the
-first place are available from @file{@var{CTAN:}/support/hypertex}.  For
-CTAN info, @pxref{unixtex.ftp,,, kpathsea, Kpathsea}.
+By far the most common @LaTeX{} package used to create hyperlinked
+output is @code{hyperref} (@url{https://ctan.org/pkg/hyperref}).  For
+plain @TeX{}, the Eplain package has some hyperlink support
+(@url{https://tug.org/eplain}).
 
-@flindex @code{http://www.win.tue.nl/~dickie/idvi}
 @flindex @code{http://xxx.lanl.gov/hypertex}
 @cindex Doyle, Mark
 @cindex Bhattacharya, Tanmoy
-@cindex Java DVI reader
-@pindex idvi @r{Java DVI reader}
 @pindex dvihps@r{, hyperdvi to PostScript}
 This hypertext support (and original form of the documentation) was
 written by Mark Doyle and Tanmoy Bhattacharya as the @samp{dvihps}
-program. You can retrieve their software and additional documentation
-via the CTAN reference above.
-
+program.
 
 @menu
 * Hypertext caveats::       Font quality, missing character psi.
@@ -2958,9 +2956,9 @@ concepts}).  For example, the @file{cmr10} file might be in
 distribution may make those fonts available in a separate optional
 package (e.g., @code{tetex-extra} in Debian).  Failing that,
 commercial versions of the Computer Modern fonts are available from
-Blue Sky; public domain versions - in particular, the lm fonts, and
-the cm-super fonts, are available from CTAN sites (for CTAN info,
-@pxref{unixtex.ftp,,, kpathsea, Kpathsea}).
+Blue Sky; public domain versions, in particular, the lm 
+and cm-super font families, are available from CTAN and in @TeX{}
+distributions.
 
 You can convert a PostScript file to PDF using @code{distill}, which
 comes with Adobe Acrobat, or @code{ps2pdf}, which comes with
@@ -3000,8 +2998,8 @@ more, but copies are available elsewhere:
 @end display
 
 You may also want to check ``Notes on converting (La)@TeX{} documents
-to robust PDF using Rokicki's dvips and Acrobat Distiller'' by Timothy
-P. Van Zandt:@*
+to robust PDF using Rokicki's dvips and Acrobat Distiller'' by
+Timothy@tie{}P. Van Zandt:@*
 @url{http://www.emrg.com/texpdf.htmlhttp://zandtwerk.insead.fr/tex2pdf.html}.
 
 
@@ -3288,16 +3286,16 @@ format is a historical artifact.)
 
 @cindex virtual fonts
 
-A @dfn{virtual font} is constructed by extracting characters from one or
-more existing fonts and rearranging them, or synthesizing new characters
-in various ways.  The explanation in this manual is intended to suffice
-for understanding enough about virtual fonts to use them with Dvips. It
-isn't a reference manual on virtual fonts.  For more information: The
-primary document on virtual fonts is Donald E. Knuth, @cite{TUGboat}
-11(1), Apr.@: 1990, pp.@: 13--23, ``Virtual Fonts: More Fun for Grand
-Wizards'' (@file{@var{CTAN:}/info/virtual-fonts.knuth}; for CTAN info,
-@pxref{unixtex.ftp,,, kpathsea, Kpathsea}).  (Don't be intimidated by
-the subtitle.)
+A @dfn{virtual font} is constructed by extracting characters from one
+or more existing fonts and rearranging them, or synthesizing new
+characters in various ways.  The explanation in this manual is
+intended to suffice for understanding enough about virtual fonts to
+use them with Dvips. It isn't a reference manual on virtual fonts.
+For more information: The primary document on virtual fonts is
+Donald@tie{}E. Knuth, @cite{TUGboat} 11(1), Apr.@: 1990, pp.@: 13--23,
+``Virtual Fonts: More Fun for Grand Wizards''
+(@url{mirror.ctan.org/info/virtual-fonts.knuth}).  (Don't be
+intimidated by the subtitle.)
 
 @cindex vf files
 @cindex vpl files
@@ -3325,7 +3323,18 @@ created when you run @code{vptovf}.
 @cindex virtual font expansion
 You can @dfn{expand} virtual fonts into their base fonts with DVIcopy
 (@pxref{dvicopy invocation,,, web2c, Web2c}).  This is useful if you are
-using a DVI translator that doesn't understand vf's itself.
+using a DVI translator that doesn't itself understand vf's.
+
+@pindex ptex @r{JFM}
+@pindex uptex @r{JFM}
+@cindex Japanese font metric file
+@cindex JFM file, and virtual font fallback
+If a virtual font has no entry at a given codepoint and the first
+@code{MAPFONT} designates an (u)pTeX JFM, we designate the glyph of
+the same codepoint in the TFM(JFM) with the smallest font ID.  This
+feature helps to reduce the size of Japanese virtual fonts.  For more
+information about the extensive support of Japanese in TeX, see
+@url{https://github.com/texjporg}.
 
 
 @node Encodings
@@ -3694,9 +3703,9 @@ can also obtain special effects such as an oblique font.
 @cindex virtual fonts, creating
 @cindex Jeffrey, Alan
 Alternatives to Afm2tfm for creating virtual fonts include
-@code{fontinst} @url{http://ctan.org/pkg/fontinst},
+@code{fontinst} @url{https://ctan.org/pkg/fontinst},
 @code{lcdf-typetools}, particularly @code{otftotfm}
-(@url{http://ctan.org/pkg/lcdf-typetools}), and @code{afm2p}
+(@url{https://ctan.org/pkg/lcdf-typetools}), and @code{afm2pl}
 (@url{http://tex.aanhet.net/afm2pl/}), among others.
 
 @menu
@@ -4399,10 +4408,10 @@ For (the obsolete) @LaTeX{} 2.09, add the @samp{colordvi} style option as in:
 \documentstyle[12pt,colordvi]@{article@}
 @end example
 @noindent
-For @LaTeX{} 2e, these examples are not applicable.  Instead, please see
-the documentation for the graphics package, available from
-@file{@var{CTAN}:doc/latex/graphics/}.  See also
-@file{@var{CTAN}:doc/epslatex.ps}.
+For @LaTeX{}2e, these examples are not applicable.  Instead, please see
+the documentation for the graphics package
+(@url{https://ctan.org/pkg/graphics}), and the epslatex document
+(@url{https://ctan.org/pkg/epslatex}).
 
 @cindex Crayola crayon box
 @cindex Pantone colors

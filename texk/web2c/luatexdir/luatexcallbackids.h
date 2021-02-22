@@ -76,6 +76,8 @@ typedef enum {
     page_order_index_callback,
     make_extensible_callback,
     process_pdf_image_content_callback,
+    provide_charproc_data_callback,
+    input_level_string_callback,
     total_callbacks,
 } callback_callback_types;
 

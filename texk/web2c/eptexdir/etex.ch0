@@ -13,7 +13,6 @@
 @d etex_int_base=tex_int_pars {base for \eTeX's integer parameters}
 @y
 @d int_pars=web2c_int_pars {total number of integer parameters}
-@d count_base=int_base+int_pars {256 user \.{\\count} registers}
 @z
 
 @x [26.413]

@@ -1,6 +1,6 @@
 /* mpfr_sqr -- Floating-point square
 
-Copyright 2004-2019 Free Software Foundation, Inc.
+Copyright 2004-2020 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,8 +26,10 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 #if !defined(MPFR_GENERIC_ABI) && (GMP_NUMB_BITS == 32 || GMP_NUMB_BITS == 64)
 
 /* Special code for prec(a) < GMP_NUMB_BITS and prec(b) <= GMP_NUMB_BITS.
-   Note: this function was copied from mpfr_mul_1 in file mul.c, thus any change
-   here should be done also in mpfr_mul_1. */
+   Note: this function was copied from mpfr_mul_1 in file mul.c, thus any
+   change here should be done also in mpfr_mul_1.
+   Although this function works as soon as prec(a) < GMP_NUMB_BITS and
+   prec(b) <= GMP_NUMB_BITS, we use it for prec(a)=prec(b) < GMP_NUMB_BITS. */
 static int
 mpfr_sqr_1 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
 {
@@ -75,16 +77,17 @@ mpfr_sqr_1 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
          possible for p=53, because the largest significand is 6369051672525772
          but its square has only 52 leading ones. For p=24 it is possible,
          with b = 11863283, whose square has 24 leading ones. */
-      if ((ax == __gmpfr_emin - 1) && (ap[0] == ~mask) &&
+      if (ax == __gmpfr_emin - 1 && ap[0] == ~mask &&
           ((rnd_mode == MPFR_RNDN && rb) ||
-           (MPFR_IS_LIKE_RNDA(rnd_mode, MPFR_IS_NEG (a)) && (rb | sb))))
+           (MPFR_IS_LIKE_RNDA (rnd_mode, 0) && (rb | sb))))
         goto rounding; /* no underflow */
       /* For RNDN, mpfr_underflow always rounds away, thus for |a| <= 2^(emin-2)
          we have to change to RNDZ. This corresponds to:
          (a) either ax < emin - 1
          (b) or ax = emin - 1 and ap[0] = 1000....000 and rb = sb = 0 */
       if (rnd_mode == MPFR_RNDN &&
-          (ax < __gmpfr_emin - 1 || (ap[0] == MPFR_LIMB_HIGHBIT && (rb | sb) == 0)))
+          (ax < __gmpfr_emin - 1 ||
+           (ap[0] == MPFR_LIMB_HIGHBIT && (rb | sb) == 0)))
         rnd_mode = MPFR_RNDZ;
       return mpfr_underflow (a, rnd_mode, MPFR_SIGN_POS);
     }
@@ -104,7 +107,7 @@ mpfr_sqr_1 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
       else
         goto add_one_ulp;
     }
-  else if (MPFR_IS_LIKE_RNDZ(rnd_mode, MPFR_IS_NEG(a)))
+  else if (MPFR_IS_LIKE_RNDZ (rnd_mode, 0))
     {
     truncate:
       MPFR_ASSERTD(ax >= __gmpfr_emin);
@@ -179,7 +182,8 @@ mpfr_sqr_1n (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
          (a) either ax < emin - 1
          (b) or ax = emin - 1 and ap[0] = 1000....000 and rb = sb = 0 */
       if (rnd_mode == MPFR_RNDN &&
-          (ax < __gmpfr_emin - 1 || (ap[0] == MPFR_LIMB_HIGHBIT && (rb | sb) == 0)))
+          (ax < __gmpfr_emin - 1 ||
+           (ap[0] == MPFR_LIMB_HIGHBIT && (rb | sb) == 0)))
         rnd_mode = MPFR_RNDZ;
       return mpfr_underflow (a, rnd_mode, MPFR_SIGN_POS);
     }
@@ -199,7 +203,7 @@ mpfr_sqr_1n (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
       else
         goto add_one_ulp;
     }
-  else if (MPFR_IS_LIKE_RNDZ(rnd_mode, MPFR_IS_NEG(a)))
+  else if (MPFR_IS_LIKE_RNDZ (rnd_mode, 0))
     {
     truncate:
       MPFR_ASSERTD(ax >= __gmpfr_emin);
@@ -292,24 +296,24 @@ mpfr_sqr_2 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
      a >= 0.111...111[1]*2^(emin-1), there is no underflow. */
   if (MPFR_UNLIKELY(ax < __gmpfr_emin))
     {
-      /* Note: like for mpfr_sqr_2, the case
+      /* Note: like for mpfr_sqr_1, the case
          0.111...111*2^(emin-1) < a < 2^(emin-1) is not possible when emin is
          odd, since (modulo a shift) this would imply 1-2^(-p) < a = b^2 < 1,
          and this is not possible with 1-2^(-p) <= b < 1.
          For emin even, it is possible for some values of p, for example for
          p=69 with b=417402170410649030795*2^k. */
-      if ((ax == __gmpfr_emin - 1) &&
-          (ap[1] == MPFR_LIMB_MAX) &&
-          (ap[0] == ~mask) &&
+      if (ax == __gmpfr_emin - 1 &&
+          ap[1] == MPFR_LIMB_MAX &&
+          ap[0] == ~mask &&
           ((rnd_mode == MPFR_RNDN && rb) ||
-           (MPFR_IS_LIKE_RNDA(rnd_mode, MPFR_IS_NEG (a)) && (rb | sb))))
+           (MPFR_IS_LIKE_RNDA (rnd_mode, 0) && (rb | sb))))
         goto rounding; /* no underflow */
-      /* for RNDN, mpfr_underflow always rounds away, thus for |a| <= 2^(emin-2)
-         we have to change to RNDZ */
+      /* for RNDN, mpfr_underflow always rounds away, thus for
+         |a| <= 2^(emin-2) we have to change to RNDZ */
       if (rnd_mode == MPFR_RNDN &&
           (ax < __gmpfr_emin - 1 ||
            (ap[1] == MPFR_LIMB_HIGHBIT && ap[0] == 0 && (rb | sb) == 0)))
-            rnd_mode = MPFR_RNDZ;
+        rnd_mode = MPFR_RNDZ;
       return mpfr_underflow (a, rnd_mode, MPFR_SIGN_POS);
     }
 
@@ -328,7 +332,7 @@ mpfr_sqr_2 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
       else
         goto add_one_ulp;
     }
-  else if (MPFR_IS_LIKE_RNDZ(rnd_mode, MPFR_IS_NEG(a)))
+  else if (MPFR_IS_LIKE_RNDZ (rnd_mode, 0))
     {
     truncate:
       MPFR_ASSERTD(ax >= __gmpfr_emin);
@@ -401,13 +405,13 @@ mpfr_sqr_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
     sb = sb2 = 1; /* result cannot be exact in that case */
   else
     {
-      mp_limb_t p[6];
-      mpn_sqr (p, bp, 3);
-      a2 = p[5];
-      a1 = p[4];
-      a0 = p[3];
-      sb = p[2];
-      sb2 = p[1] | p[0];
+      mp_limb_t t[6];
+      mpn_sqr (t, bp, 3);
+      a2 = t[5];
+      a1 = t[4];
+      a0 = t[3];
+      sb = t[2];
+      sb2 = t[1] | t[0];
     }
   if (a2 < MPFR_LIMB_HIGHBIT)
     {
@@ -435,12 +439,12 @@ mpfr_sqr_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
      a >= 0.111...111[1]*2^(emin-1), there is no underflow. */
   if (MPFR_UNLIKELY(ax < __gmpfr_emin))
     {
-      if ((ax == __gmpfr_emin - 1) &&
-          (ap[2] == MPFR_LIMB_MAX) &&
-          (ap[1] == MPFR_LIMB_MAX) &&
-          (ap[0] == ~mask) &&
+      if (ax == __gmpfr_emin - 1 &&
+          ap[2] == MPFR_LIMB_MAX &&
+          ap[1] == MPFR_LIMB_MAX &&
+          ap[0] == ~mask &&
           ((rnd_mode == MPFR_RNDN && rb) ||
-           (MPFR_IS_LIKE_RNDA(rnd_mode, MPFR_IS_NEG (a)) && (rb | sb))))
+           (MPFR_IS_LIKE_RNDA (rnd_mode, 0) && (rb | sb))))
         goto rounding; /* no underflow */
       /* for RNDN, mpfr_underflow always rounds away, thus for |a| <= 2^(emin-2)
          we have to change to RNDZ */
@@ -467,7 +471,7 @@ mpfr_sqr_3 (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode, mpfr_prec_t p)
       else
         goto add_one_ulp;
     }
-  else if (MPFR_IS_LIKE_RNDZ(rnd_mode, MPFR_IS_NEG(a)))
+  else if (MPFR_IS_LIKE_RNDZ (rnd_mode, 0))
     {
     truncate:
       MPFR_ASSERTD(ax >= __gmpfr_emin);
@@ -535,19 +539,20 @@ mpfr_sqr (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
   bq = MPFR_GET_PREC(b);
 
 #if !defined(MPFR_GENERIC_ABI) && (GMP_NUMB_BITS == 32 || GMP_NUMB_BITS == 64)
-  if (aq < GMP_NUMB_BITS && bq <= GMP_NUMB_BITS)
-    return mpfr_sqr_1 (a, b, rnd_mode, aq);
+  if (aq == bq)
+    {
+      if (aq < GMP_NUMB_BITS)
+        return mpfr_sqr_1 (a, b, rnd_mode, aq);
 
-  if (GMP_NUMB_BITS < aq && aq < 2 * GMP_NUMB_BITS
-      && GMP_NUMB_BITS < bq && bq <= 2 * GMP_NUMB_BITS)
-    return mpfr_sqr_2 (a, b, rnd_mode, aq);
+      if (GMP_NUMB_BITS < aq && aq < 2 * GMP_NUMB_BITS)
+        return mpfr_sqr_2 (a, b, rnd_mode, aq);
 
-  if (aq == GMP_NUMB_BITS && bq <= GMP_NUMB_BITS)
-    return mpfr_sqr_1n (a, b, rnd_mode);
+      if (aq == GMP_NUMB_BITS)
+        return mpfr_sqr_1n (a, b, rnd_mode);
 
-  if (2 * GMP_NUMB_BITS < aq && aq < 3 * GMP_NUMB_BITS
-      && 2 * GMP_NUMB_BITS < bq && bq <= 3 * GMP_NUMB_BITS)
-    return mpfr_sqr_3 (a, b, rnd_mode, aq);
+      if (2 * GMP_NUMB_BITS < aq && aq < 3 * GMP_NUMB_BITS)
+        return mpfr_sqr_3 (a, b, rnd_mode, aq);
+    }
 #endif
 
   ax = 2 * MPFR_GET_EXP (b);
@@ -558,6 +563,8 @@ mpfr_sqr (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
                                     2*bn or 2*bn-1 */
 
   if (MPFR_UNLIKELY(bn > MPFR_SQR_THRESHOLD))
+    /* the following line should not be replaced by mpfr_sqr,
+       otherwise we'll get an infinite loop! */
     return mpfr_mul (a, b, b, rnd_mode);
 
   MPFR_TMP_MARK(marker);
@@ -585,7 +592,7 @@ mpfr_sqr (mpfr_ptr a, mpfr_srcptr b, mpfr_rnd_t rnd_mode)
 
   MPFR_TMP_FREE(marker);
   {
-    mpfr_exp_t ax2 = ax + (mpfr_exp_t) (b1 - 1 + cc);
+    mpfr_exp_t ax2 = ax + ((int) b1 - 1 + cc);
     if (MPFR_UNLIKELY( ax2 > __gmpfr_emax))
       return mpfr_overflow (a, rnd_mode, MPFR_SIGN_POS);
     if (MPFR_UNLIKELY( ax2 < __gmpfr_emin))

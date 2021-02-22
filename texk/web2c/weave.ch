@@ -56,13 +56,20 @@
 @z
 
 @x [1] Define my_name
-@d banner=='This is WEAVE, Version 4.4'
+@d banner=='This is WEAVE, Version 4.5'
 @y
 @d my_name=='weave'
-@d banner=='This is WEAVE, Version 4.4'
+@d banner=='This is WEAVE, Version 4.5'
 @z
 
 @x [2] No global labels, define and call parse_arguments.
+calls the `|jump_out|' procedure, which goes to the label |end_of_WEAVE|.
+
+@d end_of_WEAVE = 9999 {go here to wrap it up}
+@y
+calls the `|jump_out|' procedure.
+@z
+@x
 label end_of_WEAVE; {go here to finish}
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
@@ -75,7 +82,7 @@ procedure initialize;
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
-@<Define |parse_arguments|@>
+@<Define |parse_arguments|@>@/
 @<Error handling procedures@>@/
 procedure initialize;
   var @<Local variables for initialization@>@/
@@ -91,15 +98,25 @@ procedure initialize;
 @!max_names=5000; {number of identifiers, index entries, and module names;
   must be less than 10240}
 @y
-@!max_bytes=65536; {|1/ww| times the number of bytes in identifiers,
+@!max_bytes=65535; {|1/ww| times the number of bytes in identifiers,
   index entries, and module names; must be less than 65536}
-@!max_names=10220; {number of identifiers, index entries, and module names;
+@!max_names=10239; {number of identifiers, index entries, and module names;
   must be less than 10240}
 @z
 @x
+@!max_modules=2000;{greater than the total number of modules}
+@!hash_size=353; {should be prime}
 @!buf_size=100; {maximum length of input line}
+@!longest_name=400; {module names shouldn't be longer than this}
+@!long_buf_size=500; {|buf_size+longest_name|}
+@!line_length=80; {lines of \TeX\ output have at most this many characters,
 @y
-@!buf_size=3000; {maximum length of input line}
+@!max_modules=10239; {greater than the total number of modules}
+@!hash_size=8501; {should be prime}
+@!buf_size=1000; {maximum length of input line}
+@!longest_name=10000; {module names shouldn't be longer than this}
+@!long_buf_size=buf_size+longest_name; {C arithmetic in \PASCAL\ constant}
+@!line_length=80; {lines of \TeX\ output have at most this many characters,
 @z
 @x
 @!max_refs=30000; {number of cross references; must be less than 65536}
@@ -110,10 +127,10 @@ procedure initialize;
 @!max_scraps=1000; {number of tokens in \PASCAL\ texts being parsed}
 @!stack_size=200; {number of simultaneous output levels}
 @y
-@!max_refs=65000; {number of cross references; must be less than 65536}
-@!max_toks=65000; {number of symbols in \PASCAL\ texts being parsed;
+@!max_refs=65535; {number of cross references; must be less than 65536}
+@!max_toks=65535; {number of symbols in \PASCAL\ texts being parsed;
   must be less than 65536}
-@!max_texts=10000; {number of phrases in \PASCAL\ texts being parsed;
+@!max_texts=10239; {number of phrases in \PASCAL\ texts being parsed;
   must be less than 10240}
 @!max_scraps=10000; {number of tokens in \PASCAL\ texts being parsed}
 @!stack_size=2000; {number of simultaneous output levels}
@@ -215,7 +232,24 @@ rewrite(tex_file,tex_name);
       begin while not eoln(f) do vgetc(f);
 @z
 
-@x [??] Fix jump_out
+@x [33] Fix jump_out
+@ The |jump_out| procedure just cuts across all active procedure levels
+and jumps out of the program. This is the only non-local \&{goto} statement
+in \.{WEAVE}. It is used when no recovery from a particular error has
+been provided.
+
+Some \PASCAL\ compilers do not implement non-local |goto| statements.
+@^system dependencies@>
+In such cases the code that appears at label |end_of_WEAVE| should be
+copied into the |jump_out| procedure, followed by a call to a system procedure
+that terminates the program.
+@y
+@ The |jump_out| procedure just cuts across all active procedure levels
+and jumps out of the program.
+It is used when no recovery from a particular error has
+been provided.
+@z
+@x
 @d fatal_error(#)==begin new_line; print(#); error; mark_fatal; jump_out;
   end
 
@@ -254,7 +288,7 @@ var q:xref_number; {pointer to previous cross reference}
 begin if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @y
 If the user has sent the |no_xref| flag (the -x option of the command line),
-then it is unnecessary to keep track of cross references for identifers.
+then it is unnecessary to keep track of cross references for identifiers.
 If one were careful, one could probably make more changes around module
 100 to avoid a lot of identifier looking up.
 
@@ -268,13 +302,6 @@ var q:xref_number; {pointer to previous cross-reference}
 @!m,@!n: sixteen_bits; {new and previous cross-reference value}
 begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
-@z
-
-@x [179] only used when debugging
-@!k:0..long_buf_size; {index into |buffer|}
-@y
-@!debug @!k:0..long_buf_size; {index into |buffer|}
-gubed@;
 @z
 
 @x [239] omit index and module names if no_xref set
@@ -364,7 +391,7 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
 
     end else if getopt_return_val = "?" then begin
       usage (my_name);
@@ -425,8 +452,7 @@ long_options[current_option].flag := address_of (no_xref);
 long_options[current_option].val := 1;
 incr (current_option);
 
-@
-@<Global...@> =
+@ @<Global...@> =
 @!no_xref:c_int_type;
 
 @ An element with all zeros always ends the list.

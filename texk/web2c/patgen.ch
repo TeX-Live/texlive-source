@@ -58,7 +58,22 @@ begin
   print_ln (version_string);
 @z
 
+@x [10] Purge 'jump_out' and 'end_of_PATGEN'.
+error message about what caused the error. Such errors might be
+discovered inside of subroutines inside of subroutines, so a \.{WEB}
+macro called |jump_out| has been introduced. This macro, which transfers
+control to the label |end_of_PATGEN| at the end of the program, contains
+the only non-local |@!goto| statement in \.{PATGEN}. Some \PASCAL\
+compilers do not implement non-local |goto| statements. In such cases
+the |goto end_of_PATGEN| in the definition of |jump_out| should simply
+be replaced by a call on some system procedure that quietly terminates
+the program.
+@y
+error message about what caused the error.
+@z
 @x Error handling
+@d jump_out==goto end_of_PATGEN {terminates \.{PATGEN}}
+@#
 @d error(#)==begin print_ln(#); jump_out; end
 @y
 @d error(#)==begin write_ln(stderr, #); uexit(1); end;

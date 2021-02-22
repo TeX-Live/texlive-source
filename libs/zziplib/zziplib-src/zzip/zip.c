@@ -82,7 +82,8 @@ int __zzip_fetch_disk_trailer(int fd, zzip_off_t filesize,
 int __zzip_parse_root_directory(int fd,
                                 struct _disk_trailer *trailer,
                                 struct zzip_dir_hdr **hdr_return,
-                                zzip_plugin_io_t io);
+                                zzip_plugin_io_t io,
+				zzip_off_t filesize);
 
 _zzip_inline static char *__zzip_aligned4(char *p);
 
@@ -406,7 +407,8 @@ int
 __zzip_parse_root_directory(int fd,
                             struct _disk_trailer *trailer,
                             struct zzip_dir_hdr **hdr_return,
-                            zzip_plugin_io_t io)
+                            zzip_plugin_io_t io,
+                            zzip_off_t filesize)
 {
     auto struct zzip_disk_entry dirent;
     struct zzip_dir_hdr *hdr;
@@ -421,7 +423,8 @@ __zzip_parse_root_directory(int fd,
     zzip_off64_t zz_rootseek = _disk_trailer_rootseek(trailer);
     __correct_rootseek(zz_rootseek, zz_rootsize, trailer);
 
-    if (zz_entries < 0 || zz_rootseek < 0 || zz_rootsize < 0)
+    if (zz_entries <= 0 || zz_rootsize < 0 ||
+        zz_rootseek < 0 || zz_rootseek >= filesize)
         return ZZIP_CORRUPTED;
 
     hdr0 = (struct zzip_dir_hdr *) malloc(zz_rootsize);
@@ -472,9 +475,15 @@ __zzip_parse_root_directory(int fd,
         } else
         {
             if (io->fd.seeks(fd, zz_rootseek + zz_offset, SEEK_SET) < 0)
+	    {
+	    	free(hdr0);
                 return ZZIP_DIR_SEEK;
+	    }
             if (io->fd.read(fd, &dirent, sizeof(dirent)) < __sizeof(dirent))
+	    {
+	    	free(hdr0);
                 return ZZIP_DIR_READ;
+	    }
             d = &dirent;
         }
 
@@ -574,11 +583,18 @@ __zzip_parse_root_directory(int fd,
 
         if (hdr_return)
             *hdr_return = hdr0;
+	else
+	{
+	    /* If it is not assigned to *hdr_return, it will never be free()'d */
+	    free(hdr0);
+	}
     }                           /* else zero (sane) entries */
+    else
+        free(hdr0);
 #  ifndef ZZIP_ALLOW_MODULO_ENTRIES
-    return (entries != zz_entries ? ZZIP_CORRUPTED : 0);
+    return (entries != zz_entries) ? ZZIP_CORRUPTED : 0;
 #  else
-    return ((entries & (unsigned)0xFFFF) != zz_entries ? ZZIP_CORRUPTED : 0);
+    return ((entries & (unsigned)0xFFFF) != zz_entries) ? ZZIP_CORRUPTED : 0;
 #  endif
 }
 
@@ -638,7 +654,7 @@ zzip_dir_alloc(zzip_strings_t * fileext)
     return zzip_dir_alloc_ext_io(fileext, 0);
 }
 
-/** => zzip_dir_alloc_ext_io
+/** also: zzip_dir_alloc_ext_io
  * This function will free the zzip_dir handle unless there are still
  * zzip_files attached (that may use its cache buffer).
  * This is the inverse of => zzip_dir_alloc , and both
@@ -755,7 +771,7 @@ __zzip_dir_parse(ZZIP_DIR * dir)
           (long) _disk_trailer_rootseek(&trailer));
 
     if ((rv = __zzip_parse_root_directory(dir->fd, &trailer, &dir->hdr0,
-                                          dir->io)) != 0)
+                                          dir->io, filesize)) != 0)
         { goto error; }
   error:
     return rv;

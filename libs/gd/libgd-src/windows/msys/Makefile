@@ -1,4 +1,3 @@
-
 # Simple makefile for building and testing libgd under MSYS/MinGW on
 # Windows
 
@@ -7,9 +6,10 @@
 LIBVER=3.0.1
 
 # Misc. config flags.
-CDEFS=-DHAVE_ERRNO_H -DHAVE_ICONV -DHAVE_ICONV_H		\
--DHAVE_ICONV_T_DEF -DHAVE_INTTYPES_H -DHAVE_LIMITS_H -DHAVE_STDDEF_H	\
--DHAVE_STDINT_H -DHAVE_STDLIB_H -DHAVE_VISIBILITY -DICONV_CONST
+CDEFS=-DHAVE_ICONV -DHAVE_ICONV_H		\
+-DHAVE_ICONV_T_DEF -DHAVE_INTTYPES_H	\
+-DHAVE_STDINT_H -DHAVE_VISIBILITY -DICONV_CONST \
+-DENABLE_GD_FORMATS=1
 
 # GnuWin32 libs should all be installed in one place.
 GNUDIR=/c/tools/GnuWin32
@@ -131,13 +131,3 @@ $(TARGET): $(OBJ)
 		$(OBJ) $(LIBS)
 
 include deps.mk
-
-
-
-
-
-
-
-
-
-

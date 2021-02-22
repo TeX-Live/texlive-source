@@ -1,3 +1,7 @@
+2020-07-19  Karl Berry  <karl@freefriends.org>
+
+	* am/euptex.am (euptex_ch_srcs): add eptexdir/char-warning-eptex.ch.
+
 2019-12-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/euptex.am (euptex_CPPFLAGS): append $(ZLIB_INCLUDES).

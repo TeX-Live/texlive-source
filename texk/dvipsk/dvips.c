@@ -87,6 +87,7 @@ FILE *generic_fsyscp_fopen(const char *filename, const char *mode)
 /* PS fonts fully downloaded as headers */
 char *downloadedpsnames[DOWNLOADEDPSSIZE];
 
+int found_problems = 0;      /* should we exit successfully? */
 int unused_top_of_psnames;   /* unused top number of downloadedpsnames[#] */
 fontdesctype *fonthead;      /* list of all fonts mentioned so far */
 fontdesctype *curfnt;        /* the currently selected font */
@@ -123,6 +124,7 @@ integer maxsecsize = 0;       /* the maximum size of a section */
 integer firstboploc;         /* where the first bop is */
 Boolean sepfiles;            /* each section in its own file? */
 int numcopies;               /* number of copies of each page to print */
+char *titlename="";          /* if given, used for %%Title */
 const char *oname;           /* output file name */
 char *iname;                 /* dvi file name */
 char *fulliname;             /* same, with current working directory */
@@ -315,6 +317,7 @@ static const char *helparr[] = {
 "-r*  Reverse order of pages          -R*  Run securely",
 "-s*  Enclose output in save/restore  -S # Max section size in pages",
 "-t s Paper format                    -T c Specify desired page size",
+"-title s Title in comment",
 "-u s PS mapfile                      -U*  Disable string param trick",
 "-v   Print version number and quit   -V*  Send downloadable PS fonts as PK",
 "-x # Override dvi magnification      -X # Horizontal resolution",
@@ -365,7 +368,7 @@ error_with_perror(const char *s, const char *fname)
    if (prettycolumn > 0)
         fprintf(stderr,"\n");
    prettycolumn = 0;
-   fprintf(stderr, "%s: %s", progname, s);
+   fprintf_str(stderr, "%s: %s", progname, s);
    if (fname) {
      putc (' ', stderr);
      perror (fname);
@@ -736,7 +739,7 @@ main(int argc, char **argv)
                 strcmp (argv[i] + 1, "-version") == 0) {
                puts (BANNER);
                puts (kpathsea_version_string);
-               puts ("Copyright 2020 Radical Eye Software.\n\
+               puts ("Copyright 2021 Radical Eye Software.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the Dvips copyright.\n\
@@ -999,21 +1002,24 @@ case 'r' :
                reverse = (*p != '0');
                break;
 case 't' :
-               if (*p == 0 && argv[i+1])
-                  p = argv[++i];
-               if (strcmp(p, "landscape") == 0) {
-                  if (hpapersize || vpapersize)
-                     error(
-             "both landscape and papersize specified; ignoring landscape");
-                  else
-                     landscape = 1;
-               } else
-                  paperfmt = p;
+               if (STREQ (p, "itle") && argv[i+1]) {
+                  titlename = argv[++i];
+               } else {
+                  if (*p == 0 && argv[i+1])
+                     p = argv[++i];
+                  if (strcmp(p, "landscape") == 0) {
+                     if (hpapersize || vpapersize)
+                        error("both landscape and papersize specified; ignoring landscape");
+                     else
+                        landscape = 1;
+                  } else
+                     paperfmt = p;
+               }
                break;
 case 'v':
-                printf ("%s %s\n", banner, banner2);
-                exit (0);
-                break;
+               printf ("%s %s\n", banner, banner2);
+               exit (0);
+               break;
 case 'x' : case 'y' :
                if (*p == 0 && argv[i+1])
                   p = argv[++i];
@@ -1321,19 +1327,19 @@ default:
 #ifdef DEBUG
    if (dd(D_PATHS)) {
 #ifdef SHORTINT
-        fprintf(stderr,"input file %s output file %s swmem %ld\n",
+        fprintf_str(stderr,"input file %s output file %s swmem %ld\n",
 #else /* ~SHORTINT */
-           fprintf(stderr,"input file %s output file %s swmem %d\n",
+           fprintf_str(stderr,"input file %s output file %s swmem %d\n",
 #endif /* ~SHORTINT */
            iname, oname, swmem);
 #ifndef KPATHSEA
-   fprintf(stderr,"tfm path %s\npk path %s\n", tfmpath, pkpath);
-   fprintf(stderr,"fig path %s\nvf path %s\n", figpath, vfpath);
-   fprintf(stderr,"config path %s\nheader path %s\n",
+   fprintf_str(stderr,"tfm path %s\npk path %s\n", tfmpath, pkpath);
+   fprintf_str(stderr,"fig path %s\nvf path %s\n", figpath, vfpath);
+   fprintf_str(stderr,"config path %s\nheader path %s\n",
                   configpath, headerpath);
 #endif
 #ifdef FONTLIB
-   fprintf(stderr,"fli path %s\nfli names %s\n", flipath, fliname);
+   fprintf_str(stderr,"fli path %s\nfli names %s\n", flipath, fliname);
 #endif
    } /* dd(D_PATHS) */
 #endif /* DEBUG */
@@ -1482,7 +1488,7 @@ default:
                   fprintf(stderr, "\n");
                   prettycolumn = 0;
                }
-               fprintf(stderr, "(-> %s) ", oname);
+               fprintf_str(stderr, "(-> %s) ", oname);
                prettycolumn += strlen(oname) + 6;
             }
 #ifdef HPS
@@ -1530,7 +1536,7 @@ default:
 #endif
    }
 #endif
-   return 0;
+   return found_problems ? EXIT_FAILURE : EXIT_SUCCESS;
    /*NOTREACHED*/
 }
 #ifdef VMS

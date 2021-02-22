@@ -1,0 +1,24 @@
+#! /bin/sh -vx
+# $Id: pplib.test 45809 2017-11-15 00:36:56Z karl $
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+#srcdir='../../../source/libs/pplib'
+#PPLIB_TREE=pplib-src
+
+rm -rf test
+mkdir test
+
+cp $srcdir/$PPLIB_TREE/test/luaimage.pdf test
+
+(cd test && ../pptest1 luaimage.pdf | sed -e 's/memused.*$//;s/memwaste.*$//;' >out1 || exit 1) \
+&& (cd test && ../pptest2 luaimage.pdf >out2 || exit 1) \
+&& (cd test && ../pptest3  luaimage.pdf >out3 || exit 1) || exit 1
+
+
+diff $srcdir/$PPLIB_TREE/test/out1 test/out1 || exit 1
+diff $srcdir/$PPLIB_TREE/test/out2 test/out2 || exit 1
+diff $srcdir/$PPLIB_TREE/test/luaimage.pdf.out test/luaimage.pdf.out || exit 1
+diff $srcdir/$PPLIB_TREE/test/out3 test/out3 || exit 1
+

@@ -21,6 +21,7 @@
 #
 # Detailed usage information at the end of the file
 # Note: version number now keeping up with latexdiff
+# Version 1.3.1  (Bug fix) Remove some deprecation warnings due to uncommented left parentheses 
 # Version 1.0.2  Option --version
 # Version 1.0.1   no changes to latexrevise
 # Version 0.3   Updated for compatibility with latexdiff 0.3 output (DIFAUXCMD removal)
@@ -31,8 +32,8 @@ use strict;
 use warnings;
 
 my $versionstring=<<EOF ;
-This is LATEXREVISE 1.0.2
-  (c) 2005-2012 F J Tilmann
+This is LATEXREVISE 1.3.1.1
+  (c) 2005-2020 F J Tilmann
 EOF
 
 # Markup strings (make sure that this are set to the same value as in 
@@ -62,12 +63,28 @@ my $PREAMBLEXTBEG='^%DIF PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
 my $PREAMBLEXTEND='^%DIF END PREAMBLE EXTENSION ADDED BY LATEXDIFF$';
 
 
-my $pat0 = '(?:[^{}]|\\\{|\\\})*';
-my $pat1 = '(?:[^{}]|\\\{|\\\}|\{'.$pat0.'\})*';
-my $pat2 = '(?:[^{}]|\\\{|\\\}|\{'.$pat1.'\})*';
-my $pat3 = '(?:[^{}]|\\\{|\\\}|\{'.$pat2.'\})*';
-my $pat4 = '(?:[^{}]|\\\{|\\\}|\{'.$pat3.'\})*';
+#my $pat0 = '(?:[^{}]|\\\{|\\\})*';
+#my $pat1 = '(?:[^{}]|\\\{|\\\}|\{'.$pat0.'\})*';
+#my $pat2 = '(?:[^{}]|\\\{|\\\}|\{'.$pat1.'\})*';
+#my $pat3 = '(?:[^{}]|\\\{|\\\}|\{'.$pat2.'\})*';
+#my $pat4 = '(?:[^{}]|\\\{|\\\}|\{'.$pat3.'\})*';
+
+my $pat0 = '(?:[^{}])*';
+my $pat_n = $pat0;
+# if you get "undefined control sequence MATHBLOCKmath" error, increase the maximum value in this loop
+for (my $i_pat = 0; $i_pat < 20; ++$i_pat){
+  $pat_n = '(?:[^{}]|\{'.$pat_n.'\}|\\\\\{|\\\\\})*';
+  # Actually within the text body, quoted braces are replaced in pre-processing. The only place where 
+  # the last part of the pattern matters is when processing the arguments of context2cmds in the preamble
+  # and these contain a \{ or \} combination, probably rare.
+  # It should thus be fine to use the simpler version below.
+  ###  $pat_n = '(?:[^{}]|\{'.$pat_n.'\})*';
+}
+
+
 my $brat0 = '(?:[^\[\]]|\\\[|\\\])*'; 
+
+
 
 
 my ($input,$preamble,$body,$post);
@@ -103,7 +120,7 @@ if ( $version ) {
 
 
 if ( ($accept &&  $decline) || ($accept && $simplify) || ($decline && $simplify) ) {
-  die '-a,-d and -s options are mutually axclusive. Type latexrevise -h to get more help.';
+  die '-a,-d and -s options are mutually exclusive. Type latexrevise -h to get more help.';
 }
 
 
@@ -178,7 +195,7 @@ elsif ( $decline) {
 
   # Mop up tokens. This must be done already now as otherwise 
   # detection of white-space problems does not work
-  $cnt = $body =~ s/${DELOPEN}($pat4)${DELCLOSE}/$1/sg;
+  $cnt = $body =~ s/${DELOPEN}($pat_n)${DELCLOSE}/$1/sg;
   # remove markup of deleted commands 
   $cnt +=   $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg ;
   $cnt +=   $body =~ s/${DELCMDOPEN}//g ;
@@ -217,13 +234,13 @@ elsif ( $decline) {
 # remove any remaining tokens
 if ( $accept || $decline || $simplify ) {
   # first substitution command deals with special case of added paragraph
-  $cnt = $body =~ s/${ADDOPEN}($pat4)\n${ADDCLOSE}\n/$1\n/sg;
-  $cnt += $body =~ s/${ADDOPEN}($pat4)${ADDCLOSE}/$1/sg;
+  $cnt = $body =~ s/${ADDOPEN}($pat_n)\n${ADDCLOSE}\n/$1\n/sg;
+  $cnt += $body =~ s/${ADDOPEN}($pat_n)${ADDCLOSE}/$1/sg;
   $cnt==0 || warn 'Remaining $ADDOPEN tokens in DECLINE mode\n' unless ( $quiet || $accept || $simplify );
 }
 if ($accept || $simplify ) {
   # Note: in decline mode these commands have already been removed above
-  $cnt = $body =~ s/${DELOPEN}($pat4)${DELCLOSE}/$1/sg;
+  $cnt = $body =~ s/${DELOPEN}($pat_n)${DELCLOSE}/$1/sg;
   #### remove markup of deleted commands 
   $cnt +=   $body =~ s/${DELCMDOPEN}(.*?)${DELCMDCLOSE}/$1/sg ;
   $cnt +=   $body =~ s/${DELCMDOPEN}//g ;
@@ -238,11 +255,11 @@ if ($accept || $simplify ) {
 
 # Remove comment commands
 if (defined($comment)) {
-  print STDERR "Removing \\$comment\{..\} sequences ..." if $verbose;
+  print STDERR "Removing \\$comment\{..\} sequences (incl. argument)..." if $verbose;
   # protect $comments in comments by making them look different
   $body =~ s/(%.*)${comment}(.*)$/$1${someword}$2/mg ;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat4}\}//sg ;
+  $cnt = 0 + $body =~ s/\\${comment}(?:\[${brat0}\])?\{${pat_n}\}//sg ;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
   # and undo the protection substitution
   $body =~ s/(%.*)${someword}(.*)$/$1${comment}$2/mg ;
@@ -257,11 +274,11 @@ if (defined($comenv)) {
 }
 
 if (defined($markup)) {
-  print STDERR "Removing \\$markup\{..\} cpmmands ..." if $verbose;
+  print STDERR "Removing \\$markup\{..\} commands (leaving argument)..." if $verbose;
   # protect $markups in comments by making them look different
   $body =~ s/(%.*)${markup}(.*)$/$1${someword}$2/mg ;
   # carry out the substitution
-  $cnt = 0 + $body =~ s/\\${markup}(?:\[${brat0}\])?\{(${pat4})\}/$1/sg ;
+  $cnt = 0 + $body =~ s/\\${markup}(?:\[${brat0}\])?\{(${pat_n})\}/$1/sg ;
   print STDERR "$cnt matches found and removed.\n" if $verbose;
   # and undo the protection substitution
   $body =~ s/(%.*)${someword}(.*)$/$1${markup}$2/mg ;
@@ -378,7 +395,7 @@ options.
 
 -c cmd
 --comment=cmd     Remove \\cmd{...}.  cmd is supposed to mark some explicit 
-                  anotations which should be removed from the file before 
+                  annotations which should be removed from the file before 
                   release.
 
 -e envir
@@ -470,7 +487,7 @@ options.
 =item B<-c cmd> or B<--comment=cmd>
 
 Remove C<\cmd{...}> sequences.  C<cmd> is supposed to mark some explicit 
-anotations which should be removed from the file before 
+annotations which should be removed from the file before 
 release.
 
 =item B<-e envir> or B<--comment-environment=envir> 
@@ -508,8 +525,9 @@ which should have been removed already.
 =head1 BUGS
 
 The current version is a beta version which has not yet been
-extensively tested, but worked fine locally.  Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
-or send them to I<tilmann -- AT -- gfz-potsdam.de>..  Include the serial number of I<latexrevise>
+extensively tested. It has not been actively maintained so might not process output of newer versions of latexdiff entirely correctly.
+Please submit bug reports using the issue tracker of the github repository page I<https://github.com/ftilmann/latexdiff.git>, 
+or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the serial number of I<latexrevise>
 (Option --version).  If you come across latexdiff
 output which is not processed correctly by I<latexrevise> please include the
 problem file as well as the old and new files on which it is based,

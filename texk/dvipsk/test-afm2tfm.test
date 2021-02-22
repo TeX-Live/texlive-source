@@ -1,0 +1,40 @@
+#! /bin/sh -vx
+# $Id: test-dvips.test 45809 2017-11-15 00:36:56Z karl $
+# Public domain. Originally written 2010, Karl Berry.
+# Check that afm2tfm functions.
+# 
+# BTW, to run just this test on its own:
+# make -C $wp TESTS=test-afm2tfm.test check 
+# where wp=.../Work/texk/dvipsk
+
+test_file=afmtest.afm
+test_dir=$srcdir/../tests/texmf
+test_input=$test_dir/$test_file
+if test ! -r "$test_input"; then # probably srcdir messed up
+  echo "$0: goodbye, cannot find test input: $test_input" >&2
+  exit 1
+fi
+
+AFMFONTS=$test_dir; export AFMFONTS
+
+# run afm2tfm, assumed on $test_file so we can check the output.
+do_check () {
+  if "$@"; then :; else
+    echo "$0: "$@" "$test_file" failed, goodbye." >&2
+    exit 1
+  fi
+
+  tfm=`basename "$test_file" .afm`.tfm
+  if test ! -s "$tfm"; then
+    echo "$0: tfm empty or not created, goodbye." >&2
+    ls -l "$tfm" >&2
+    exit 1
+  fi
+  
+  # could run tftopl, but let's not assume it.
+}
+
+do_check ./afm2tfm "$test_file"
+do_check ./afm2tfm "$test_file" -p $srcdir/testdata/8r.enc # options after
+
+exit 0

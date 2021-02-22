@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2007-2016 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -81,40 +81,55 @@ truedpi (const char *ident, double point_size, unsigned bdpi)
 }
 
 static FILE *
-dpx_open_pk_font_at (const char *ident, unsigned dpi)
+dpx_open_pk_font_at (const char *ident, unsigned dpi, char **pkname)
 {
   FILE  *fp;
   char  *fqpn;
   kpse_glyph_file_type kpse_file_info;
+/*
+ * ident can be such as "cmr10.pfb":
+ * https://tug.org/pipermail/dvipdfmx/2020-December/000142.html.
+ * As a workaround, we drop a suffix if it exists.
+ * 
+ */
+  char  *ident_nosuffix;
+  ident_nosuffix = xstrdup(ident);
+  fqpn = strrchr(ident_nosuffix, '.');
+  if (fqpn) {
+    *fqpn = '\0';
+  }
+  fqpn = kpse_find_glyph(ident_nosuffix, dpi, kpse_pk_format, &kpse_file_info);
 
-  fqpn = kpse_find_glyph(ident, dpi, kpse_pk_format, &kpse_file_info);
   if (!fqpn)
     return  NULL;
   fp   = MFOPEN(fqpn, FOPEN_RBIN_MODE);
   RELEASE(fqpn);
+  *pkname = NEW(strlen(ident_nosuffix)+12, char);
+  (void)snprintf(*pkname, strlen(ident_nosuffix)+12,  "%s.%dpk", ident_nosuffix, dpi);
+  RELEASE(ident_nosuffix);
 
   return  fp;
 }
 
 
 int
-pdf_font_open_pkfont (pdf_font *font)
+pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding_id, int embedding, double point_size)
 {
-  char     *ident;
-  double    point_size;
-  int       encoding_id;
   unsigned  dpi;
   FILE     *fp;
-
-  ident       = pdf_font_get_ident(font);
-  point_size  = pdf_font_get_param(font, PDF_FONT_PARAM_POINT_SIZE);
-  encoding_id = pdf_font_get_encoding(font);
+  char     *pkname;
 
   if (!ident || point_size <= 0.0)
     return  -1;
+  if (!embedding) {
+    WARN("Ignoring no-embed option for PK font: %s", ident);
+  }
+  if (index != 0) {
+    WARN("Ignoring font index option for PK font: %s", ident);
+  }
 
   dpi = truedpi(ident, point_size, base_dpi);
-  fp  = dpx_open_pk_font_at(ident, dpi);
+  fp  = dpx_open_pk_font_at(ident, dpi, &pkname);
   if (!fp)
     return  -1;
   MFCLOSE(fp);
@@ -122,7 +137,7 @@ pdf_font_open_pkfont (pdf_font *font)
   /* Type 3 fonts doesn't have FontName.
    * FontFamily is recommended for PDF 1.5.
    */
-  pdf_font_set_fontname(font, ident);
+  font->fontname = pkname;
 
   if (encoding_id >= 0) {
     pdf_encoding_used_by_type3(encoding_id);
@@ -485,6 +500,7 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
 int
 pdf_font_load_pkfont (pdf_font *font)
 {
+  char     *pkname;
   pdf_obj  *fontdict;
   char     *usedchars;
   char     *ident;
@@ -502,15 +518,14 @@ pdf_font_load_pkfont (pdf_font *font)
 #endif /* ENABLE_GLYPHENC */
   int       error = 0;
 
-  if (!pdf_font_is_in_use(font)) {
+  if (!font->reference)
     return 0;
-  }
 
-  ident       = pdf_font_get_ident(font);
-  point_size  = pdf_font_get_param(font, PDF_FONT_PARAM_POINT_SIZE);
-  usedchars   = pdf_font_get_usedchars(font);
+  ident       = font->filename;
+  point_size  = font->point_size;
+  usedchars   = font->usedchars;
 #if  ENABLE_GLYPHENC
-  encoding_id = pdf_font_get_encoding(font);
+  encoding_id = font->encoding_id;
   if (encoding_id < 0)
     enc_vec = NULL;
   else {
@@ -521,11 +536,11 @@ pdf_font_load_pkfont (pdf_font *font)
   ASSERT(ident && usedchars && point_size > 0.0);
 
   dpi  = truedpi(ident, point_size, base_dpi);
-  fp   = dpx_open_pk_font_at(ident, dpi);
+  fp   = dpx_open_pk_font_at(ident, dpi, &pkname);
   if (!fp) {
     ERROR("Could not find/open PK font file: %s (at %udpi)", ident, dpi);
   }
-
+  font->filename = pkname;
   memset(charavail, 0, 256);
   charprocs  = pdf_new_dict();
   /* Include bitmap as 72dpi image:

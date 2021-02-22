@@ -16,6 +16,11 @@
 % [0] Let bibtex.tex work with latest webmac (which defines \ET, hence
 % making E active loses).
 @x
+% Note: WEAVE will typeset an upper-case `E' in a PASCAL identifier a
+% bit strangely so that the `TeX' in the name of this program is typeset
+% correctly; if this becomes a problem remove these three lines to get
+% normal upper-case `E's in PASCAL identifiers
+\def\drop{\kern-.1667em\lower.5ex\hbox{E}\kern-.125em} % middle of TeX
 \catcode`E=13 \uppercase{\def E{e}}
 \def\\#1{\hbox{\let E=\drop\it#1\/\kern.05em}} % italic type for identifiers
 @y
@@ -378,6 +383,9 @@ for i:=0 to @'377 do id_class[i] := legal_id_char;
 @z
 
 @x [38] File opening.
+@
+@^system dependencies@>
+@:PASCAL H}{\ph@>
 The \ph\ compiler with which the present version of \TeX\ was prepared has
 extended the rules of \PASCAL\ in a very convenient way. To open file~|f|,
 we can write
@@ -415,7 +423,8 @@ end;
 @y
 @ File opening will be done in C. But we want an auxiliary function to
 change a \BibTeX\ string into a C string, to keep string pool stuff
-out of the C code in @.{lib/openclose.c}.
+out of the C code in \.{lib/openclose.c}.
+@.lib/openclose.c@>
 
 @d no_file_path = -1
 
@@ -628,12 +637,15 @@ end;
 @z
 
 @x [65] max_strings=hash_size settable at runtime.
+@
+@<Globals in the outer block@>=
 @!hash_next : packed array[hash_loc] of hash_pointer;   {coalesced-list link}
 @!hash_text : packed array[hash_loc] of str_number;     {pointer to a string}
 @!hash_ilk : packed array[hash_loc] of str_ilk;         {the type of string}
 @!ilk_info : packed array[hash_loc] of integer;         {|ilk|-specific info}
 @!hash_used : hash_base..hash_max+1;    {allocation pointer for hash table}
 @y
+@ @<Globals in the outer block@>=
 @!hash_next : ^hash_pointer;   {coalesced-list link}
 @!hash_text : ^str_number;     {pointer to a string}
 @!hash_ilk : ^str_ilk;         {the type of string}
@@ -736,6 +748,10 @@ aux_not_found:
 aux_found:                      {now we're ready to read the \.{.aux} file}
 end;
 @y
+This module and the next two must be changed on those systems using
+command-line arguments.
+@^system dependencies@>
+
 @<Procedures and functions for the reading and processing of input files@>=
 procedure get_the_top_level_aux_file_name;
 label aux_found,@!aux_not_found;
@@ -1025,7 +1041,7 @@ if (last_cite = max_cites) then
     while (last_cite < max_cites) do
         begin
         type_list[last_cite] := empty;@/
-        cite_info[last_cite] := any_value;  {to appeas \PASCAL's boolean evaluation}
+        cite_info[last_cite] := any_value;  {to appease \PASCAL's boolean evaluation}
         incr(last_cite);
         end;
 @z
@@ -1617,7 +1633,7 @@ begin
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
     if getopt_return_val = -1 then begin
-      {End of arguments; we exit the loop below.} ;
+      do_nothing; {End of arguments; we exit the loop below.}
 
     end else if getopt_return_val = "?" then begin
       usage (my_name);
@@ -1675,8 +1691,7 @@ long_options[current_option].flag := 0;
 long_options[current_option].val := 0;
 incr (current_option);
 
-@
-@<Glob...@> =
+@ @<Glob...@> =
 @!min_crossrefs: integer;
 
 @ Set |min_crossrefs| to two by default, so we match the

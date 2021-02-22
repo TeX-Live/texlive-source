@@ -63,7 +63,7 @@ unzzip_list (int argc, char ** argv, int verbose)
     
     if (argc == 1)
     {
-        printf (__FILE__" version "ZZIP_PACKAGE" "ZZIP_VERSION"\n");
+        printf (__FILE__ " version " ZZIP_PACKAGE_NAME " " ZZIP_PACKAGE_VERSION "\n");
         return EXIT_OK; /* better provide an archive argument */
     }
     

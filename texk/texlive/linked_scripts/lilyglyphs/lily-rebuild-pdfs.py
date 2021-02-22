@@ -8,7 +8,7 @@
 #              https://github.com/openlilylib/lilyglyphs                 %
 #               http://www.openlilylib.org/lilyglyphs                    %
 #                                                                        %
-#  Copyright 2012-2013 Urs Liska and others, ul@openlilylib.org          %
+#  Copyright 2012-2020 Urs Liska and others, ul@openlilylib.org          %
 #                                                                        %
 #  'lilyglyphs' is free software: you can redistribute it and/or modify  %
 #  it under the terms of the LaTeX Project Public License, either        %
@@ -54,9 +54,9 @@ import os, sys, subprocess, argparse, lilyglyphs_common as lg
 
 def main():
     """Main walk through the program"""
-    print 'rebuild-pdfs.py'
-    print 'regenerate all pdf images that are not present (anymore)'
-    print ''
+    print('rebuild-pdfs.py')
+    print('regenerate all pdf images that are not present (anymore)')
+    print('')
     
     # Check if we are in a legal CWD and ensure a PDF subdir is present
     check_paths()
@@ -66,14 +66,14 @@ def main():
 
     # is there anything to be done at all?
     if len(src_files) == 0:
-        print ''
-        print 'No image files missing, nothing to be done.'
-        print 'If you want to re-create pdfs, then delete them first'
+        print('')
+        print('No image files missing, nothing to be done.')
+        print('If you want to re-create pdfs, then delete them first')
         sys.exit(0)
-    print ''
-    print 'Found ' + str(len(src_files)) + ' missing file(s).'
+    print('')
+    print('Found ' + str(len(src_files)) + ' missing file(s).')
     for cmd in src_files:
-        print '- ' + cmd
+        print('- ' + cmd)
 
     # compile all LilyPond files without matching pdf
     lg.lily_files = src_files
@@ -86,7 +86,7 @@ def check_missing_pdfs():
     """Compares the list of LilyPond source and resulting PDF files.
        Returns a list of LilyPond source file basenames 
        which don't have a corresponding PDF file"""
-    print 'Reading file lists, counting missing pdf files'
+    print('Reading file lists, counting missing pdf files')
     
     # read existing .pdf files in lg.dir_pdfs
     img_files = []
@@ -114,21 +114,21 @@ def check_paths():
     """Checks if we're in the right CWD
        and makes sure that there is a pdf output directory available"""
 
-    print 'Checking directories ...'
+    print('Checking directories ...')
     
     # check the presence of the necessary subdirectories
     ls = os.listdir('.')
     if not 'generated_src' in ls:
-        print 'No LilyPond source files directory found.'
-        print 'Sorry, there is something wrong :-('
-        print 'Current working directory is: ' + os.getcwd()
-        print 'Please consult the manual.'
+        print('No LilyPond source files directory found.')
+        print('Sorry, there is something wrong :-(')
+        print('Current working directory is: ' + os.getcwd())
+        print('Please consult the manual.')
         sys.exit(2)
     if not 'pdfs' in ls:
         os.mkdir('pdfs')
     
-    print '... done'
-    print ''
+    print('... done')
+    print('')
 
 
 # ####################################
