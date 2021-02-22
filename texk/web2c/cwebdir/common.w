@@ -149,8 +149,8 @@ some of \.{CWEB}'s routines use the fact that it is safe to refer to
 @<Global var...@>=
 char buffer[long_buf_size]; /* where each line of input goes */
 char *buffer_end=buffer+buf_size-2; /* end of |buffer| */
-char *limit=buffer; /* points to the last character in the buffer */
 char *loc=buffer; /* points to the next character to be read from the buffer */
+char *limit=buffer; /* points to the last character in the buffer */
 
 @ In the unlikely event that your standard I/O library does not
 support |feof|, |getc|, and |ungetc| you may have to change things here.
@@ -198,7 +198,7 @@ FILE *change_file; /* change file */
 char file_name[max_include_depth][max_file_name_length];
   /* stack of non-change file names */
 char change_file_name[max_file_name_length]; /* name of change file */
-char alt_web_file_name[max_file_name_length]; /* alternate name to try */
+static char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 int line[max_include_depth]; /* number of current line in the stacked files */
 int change_line; /* number of current line in change file */
 int change_depth; /* where \.{@@y} originated during a change */
@@ -218,8 +218,8 @@ Here's a shorthand expression for inequality between the two lines:
   strncmp(buffer, change_buffer, (size_t)(limit-buffer)))
 
 @<Global var...@>=
-char change_buffer[buf_size]; /* next line of |change_file| */
-char *change_limit; /* points to the last character in |change_buffer| */
+static char change_buffer[buf_size]; /* next line of |change_file| */
+static char *change_limit; /* points to the last character in |change_buffer| */
 
 @ Procedure |prime_the_change_buffer|
 sets |change_buffer| in preparation for the next matching operation.
@@ -607,8 +607,8 @@ usually have |name_ptr->byte_start==byte_ptr|, and certainly
 we want to keep |name_ptr<=name_dir_end| and |byte_ptr<=byte_mem_end|.
 
 @<Global var...@>=
-name_pointer name_ptr; /* first unused position in |name_dir| */
 char *byte_ptr; /* first unused position in |byte_mem| */
+name_pointer name_ptr; /* first unused position in |name_dir| */
 
 @ @<Init...@>=
 name_dir->byte_start=byte_ptr=byte_mem; /* position zero in both arrays */

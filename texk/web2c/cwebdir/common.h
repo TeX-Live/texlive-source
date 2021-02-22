@@ -91,6 +91,43 @@ extern char *buffer_end; /* end of |buffer| */
 extern char *loc; /* points to the next character to be read from the buffer */
 extern char *limit; /* points to the last character in the buffer */
 
+@ Code related to file handling:
+@f line x /* make |line| an unreserved word */
+@d max_include_depth 10 /* maximum number of source files open
+  simultaneously, not counting the change file */
+@d max_file_name_length 1024
+@d cur_file file[include_depth] /* current file */
+@d cur_file_name file_name[include_depth] /* current file name */
+@d cur_line line[include_depth] /* number of current line in current file */
+@d web_file file[0] /* main source file */
+@d web_file_name file_name[0] /* main source file name */
+
+@<Common code...@>=
+extern int include_depth; /* current level of nesting */
+extern FILE *file[]; /* stack of non-change files */
+extern FILE *change_file; /* change file */
+extern char file_name[][max_file_name_length];
+  /* stack of non-change file names */
+extern char change_file_name[]; /* name of change file */
+extern int line[]; /* number of current line in the stacked files */
+extern int change_line; /* number of current line in change file */
+extern int change_depth; /* where \.{@@y} originated during a change */
+extern boolean input_has_ended; /* if there is no more input */
+extern boolean changing; /* if the current line is from |change_file| */
+extern boolean web_file_open; /* if the web file is being read */
+
+@ @<Predecl...@>=
+extern boolean get_line(void); /* inputs the next line */
+extern void check_complete(void); /* checks that all changes were picked up */
+extern void reset_input(void); /* initialize to read the web file and change file */
+
+@ Code related to section numbers:
+@<Common code...@>=
+extern sixteen_bits section_count; /* the current section number */
+extern boolean changed_section[]; /* is the section changed? */
+extern boolean change_pending; /* is a decision about change still unclear? */
+extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
+
 @ Code related to identifier and section name storage:
 @d length(c) (size_t)((c+1)->byte_start-(c)->byte_start) /* the length of a name */
 @d print_id(c) term_write((c)->byte_start,length((c))) /* print identifier */
@@ -152,47 +189,6 @@ extern void err_print(const char *); /* print error message and context */
 extern void fatal(const char *,const char *); /* issue error message and die */
 extern void overflow(const char *); /* succumb because a table has overflowed */
 
-@ Code related to file handling:
-@f line x /* make |line| an unreserved word */
-@d max_include_depth 10 /* maximum number of source files open
-  simultaneously, not counting the change file */
-@d max_file_name_length 1024
-@d cur_file file[include_depth] /* current file */
-@d cur_file_name file_name[include_depth] /* current file name */
-@d cur_line line[include_depth] /* number of current line in current file */
-@d web_file file[0] /* main source file */
-@d web_file_name file_name[0] /* main source file name */
-
-@<Common code...@>=
-extern int include_depth; /* current level of nesting */
-extern FILE *file[]; /* stack of non-change files */
-extern FILE *change_file; /* change file */
-extern char C_file_name[]; /* name of |C_file| */
-extern char tex_file_name[]; /* name of |tex_file| */
-extern char idx_file_name[]; /* name of |idx_file| */
-extern char scn_file_name[]; /* name of |scn_file| */
-extern char file_name[][max_file_name_length];
-  /* stack of non-change file names */
-extern char change_file_name[]; /* name of change file */
-extern int line[]; /* number of current line in the stacked files */
-extern int change_line; /* number of current line in change file */
-extern int change_depth; /* where \.{@@y} originated during a change */
-extern boolean input_has_ended; /* if there is no more input */
-extern boolean changing; /* if the current line is from |change_file| */
-extern boolean web_file_open; /* if the web file is being read */
-
-@ @<Predecl...@>=
-extern boolean get_line(void); /* inputs the next line */
-extern void check_complete(void); /* checks that all changes were picked up */
-extern void reset_input(void); /* initialize to read the web file and change file */
-
-@ Code related to section numbers:
-@<Common code...@>=
-extern sixteen_bits section_count; /* the current section number */
-extern boolean changed_section[]; /* is the section changed? */
-extern boolean change_pending; /* is a decision about change still unclear? */
-extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
-
 @ Code related to command line arguments:
 @d show_banner flags['b'] /* should the banner line be printed? */
 @d show_progress flags['p'] /* should progress reports be printed? */
@@ -203,9 +199,13 @@ extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
 @<Common code...@>=
 extern int argc; /* copy of |ac| parameter to |main| */
 extern char **argv; /* copy of |av| parameter to |main| */
+extern char C_file_name[]; /* name of |C_file| */
+extern char tex_file_name[]; /* name of |tex_file| */
+extern char idx_file_name[]; /* name of |idx_file| */
+extern char scn_file_name[]; /* name of |scn_file| */
 extern boolean flags[]; /* an option for each 7-bit code */
 
-@ Code relating to output:
+@ Code related to output:
 @d update_terminal fflush(stdout) /* empty the terminal output buffer */
 @d new_line putchar('\n') @d putxchar putchar
 @d term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)

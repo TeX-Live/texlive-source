@@ -43,6 +43,15 @@
 #define xisupper(c) (isupper((eight_bits) c) &&((eight_bits) c<0200) ) 
 #define xisxdigit(c) (isxdigit((eight_bits) c) &&((eight_bits) c<0200) )  \
 
+#define max_include_depth 10 \
+
+#define max_file_name_length 1024
+#define cur_file file[include_depth]
+#define cur_file_name file_name[include_depth]
+#define cur_line line[include_depth]
+#define web_file file[0]
+#define web_file_name file_name[0] \
+
 #define length(c) (size_t) ((c+1) ->byte_start-(c) ->byte_start) 
 #define print_id(c) term_write((c) ->byte_start,length((c) ) ) 
 #define llink link
@@ -58,15 +67,6 @@
 #define mark_error history= error_message
 #define confusion(s) fatal("! This can't happen: ",s)  \
  \
-
-#define max_include_depth 10 \
-
-#define max_file_name_length 1024
-#define cur_file file[include_depth]
-#define cur_file_name file_name[include_depth]
-#define cur_line line[include_depth]
-#define web_file file[0]
-#define web_file_name file_name[0] \
 
 #define show_banner flags['b']
 #define show_progress flags['p']
@@ -171,7 +171,31 @@ extern char*loc;
 extern char*limit;
 
 /*:6*//*7:*/
-#line 102 "common.h"
+#line 105 "common.h"
+
+extern int include_depth;
+extern FILE*file[];
+extern FILE*change_file;
+extern char file_name[][max_file_name_length];
+
+extern char change_file_name[];
+extern int line[];
+extern int change_line;
+extern int change_depth;
+extern boolean input_has_ended;
+extern boolean changing;
+extern boolean web_file_open;
+
+/*:7*//*9:*/
+#line 125 "common.h"
+
+extern sixteen_bits section_count;
+extern boolean changed_section[];
+extern boolean change_pending;
+extern boolean print_where;
+
+/*:9*//*10:*/
+#line 139 "common.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -195,44 +219,20 @@ extern name_pointer hash[];
 extern hash_pointer hash_end;
 extern hash_pointer h;
 
-/*:7*//*9:*/
-#line 146 "common.h"
+/*:10*//*12:*/
+#line 183 "common.h"
 
 extern int history;
 
-/*:9*//*11:*/
-#line 166 "common.h"
+/*:12*//*14:*/
+#line 199 "common.h"
 
-extern int include_depth;
-extern FILE*file[];
-extern FILE*change_file;
+extern int argc;
+extern char**argv;
 extern char C_file_name[];
 extern char tex_file_name[];
 extern char idx_file_name[];
 extern char scn_file_name[];
-extern char file_name[][max_file_name_length];
-
-extern char change_file_name[];
-extern int line[];
-extern int change_line;
-extern int change_depth;
-extern boolean input_has_ended;
-extern boolean changing;
-extern boolean web_file_open;
-
-/*:11*//*13:*/
-#line 190 "common.h"
-
-extern sixteen_bits section_count;
-extern boolean changed_section[];
-extern boolean change_pending;
-extern boolean print_where;
-
-/*:13*//*14:*/
-#line 203 "common.h"
-
-extern int argc;
-extern char**argv;
 extern boolean flags[];
 
 /*:14*//*15:*/
@@ -274,83 +274,90 @@ typedef output_state*stack_pointer;
 /*20:*/
 #line 129 "ctangle.w"
 
-text text_info[max_texts];
-text_pointer text_info_end= text_info+max_texts-1;
-text_pointer text_ptr;
-eight_bits tok_mem[max_toks];
-eight_bits*tok_mem_end= tok_mem+max_toks-1;
-eight_bits*tok_ptr;
+static text text_info[max_texts];
+static text_pointer text_info_end= text_info+max_texts-1;
+static text_pointer text_ptr;
+static eight_bits tok_mem[max_toks];
+static eight_bits*tok_mem_end= tok_mem+max_toks-1;
+static eight_bits*tok_ptr;
 
 /*:20*//*26:*/
 #line 198 "ctangle.w"
 
-text_pointer last_unnamed;
+static text_pointer last_unnamed;
 
 /*:26*//*32:*/
 #line 286 "ctangle.w"
 
-output_state cur_state;
+static output_state cur_state;
 
-output_state stack[stack_size+1];
-stack_pointer stack_end= stack+stack_size;
-stack_pointer stack_ptr;
+static output_state stack[stack_size+1];
+static stack_pointer stack_end= stack+stack_size;
+static stack_pointer stack_ptr;
 
 /*:32*//*37:*/
 #line 362 "ctangle.w"
 
-int cur_val;
+static int cur_val;
 
 /*:37*//*42:*/
 #line 454 "ctangle.w"
 
-eight_bits out_state;
-boolean protect;
+static eight_bits out_state;
+static boolean protect;
 
 /*:42*//*45:*/
 #line 486 "ctangle.w"
 
-name_pointer output_files[max_files];
-name_pointer*cur_out_file,*end_output_files,*an_output_file;
-char cur_section_name_char;
-char output_file_name[longest_name+1];
+static name_pointer output_files[max_files];
+static name_pointer*cur_out_file,*end_output_files,*an_output_file;
+static char cur_section_name_char;
+static char output_file_name[longest_name+1];
 
 /*:45*//*52:*/
 #line 586 "ctangle.w"
 
-boolean output_defs_seen= false;
+static boolean output_defs_seen= false;
 
 /*:52*//*57:*/
 #line 695 "ctangle.w"
 
-char translit[128][translit_length];
+static char translit[128][translit_length];
 
 /*:57*//*62:*/
 #line 774 "ctangle.w"
 
-eight_bits ccode[256];
+static eight_bits ccode[256];
 
 /*:62*//*66:*/
 #line 834 "ctangle.w"
 
-boolean comment_continues= false;
+static boolean comment_continues= false;
 
 /*:66*//*68:*/
 #line 873 "ctangle.w"
 
-name_pointer cur_section_name;
-boolean no_where;
+static name_pointer cur_section_name;
+static boolean no_where;
 
 /*:68*//*82:*/
 #line 1187 "ctangle.w"
 
-text_pointer cur_text;
-eight_bits next_control;
+static text_pointer cur_text;
+static eight_bits next_control;
 
 /*:82*/
 #line 71 "ctangle.w"
 
 /*8:*/
-#line 125 "common.h"
+#line 119 "common.h"
+
+extern boolean get_line(void);
+extern void check_complete(void);
+extern void reset_input(void);
+
+/*:8*//*11:*/
+#line 162 "common.h"
 
 extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
 extern name_pointer id_lookup(const char*,const char*,char);
@@ -362,22 +369,15 @@ extern void print_prefix_name(name_pointer);
 extern void print_section_name(name_pointer);
 extern void sprint_section_name(char*,name_pointer);
 
-/*:8*//*10:*/
-#line 149 "common.h"
+/*:11*//*13:*/
+#line 186 "common.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
 extern void fatal(const char*,const char*);
 extern void overflow(const char*);
 
-/*:10*//*12:*/
-#line 184 "common.h"
-
-extern boolean get_line(void);
-extern void check_complete(void);
-extern void reset_input(void);
-
-/*:12*//*16:*/
+/*:13*//*16:*/
 #line 223 "common.h"
 
 extern void common_init(void);

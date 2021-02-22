@@ -68,7 +68,7 @@ is modified.
 @h
 @<Common code for \.{CWEAVE} and \.{CTANGLE}@>@/
 @<Typedef declarations@>@/
-@<Global variables@>@/
+@<Private variables@>@/
 @<Predeclaration of procedures@>@/
 
 @ \.{CTANGLE} has a fairly straightforward outline.  It operates in
@@ -126,13 +126,13 @@ typedef struct {
 } text;
 typedef text *text_pointer;
 
-@ @<Glob...@>=
-text text_info[max_texts];
-text_pointer text_info_end=text_info+max_texts-1;
-text_pointer text_ptr; /* first unused position in |text_info| */
-eight_bits tok_mem[max_toks];
-eight_bits *tok_mem_end=tok_mem+max_toks-1;
-eight_bits *tok_ptr; /* first unused position in |tok_mem| */
+@ @<Private...@>=
+static text text_info[max_texts];
+static text_pointer text_info_end=text_info+max_texts-1;
+static text_pointer text_ptr; /* first unused position in |text_info| */
+static eight_bits tok_mem[max_toks];
+static eight_bits *tok_mem_end=tok_mem+max_toks-1;
+static eight_bits *tok_ptr; /* first unused position in |tok_mem| */
 
 @ @<Set init...@>=
 text_info->tok_start=tok_ptr=tok_mem;
@@ -195,8 +195,8 @@ The replacement text pointer for the first unnamed section appears in
 
 @d section_flag max_texts /* final |text_link| in section replacement texts */
 
-@<Glob...@>=
-text_pointer last_unnamed; /* most recent replacement text of unnamed section */
+@<Private...@>=
+static text_pointer last_unnamed; /* most recent replacement text of unnamed section */
 
 @ @<Set init...@>= last_unnamed=text_info; text_info->text_link=0;
 
@@ -283,12 +283,12 @@ typedef output_state *stack_pointer;
 @d cur_repl cur_state.repl_field /* pointer to current replacement text */
 @d cur_section cur_state.section_field /* current section number being expanded */
 
-@<Global...@>=
-output_state cur_state; /* |cur_end|, |cur_byte|, |cur_name|, |cur_repl|,
+@<Private...@>=
+static output_state cur_state; /* |cur_end|, |cur_byte|, |cur_name|, |cur_repl|,
   and |cur_section| */
-output_state stack[stack_size+1]; /* info for non-current levels */
-stack_pointer stack_end=stack+stack_size; /* end of |stack| */
-stack_pointer stack_ptr; /* first unused location in the output state stack */
+static output_state stack[stack_size+1]; /* info for non-current levels */
+static stack_pointer stack_end=stack+stack_size; /* end of |stack| */
+static stack_pointer stack_ptr; /* first unused location in the output state stack */
 
 @ To get the output process started, we will perform the following
 initialization steps. We may assume that |text_info->text_link| is nonzero,
@@ -359,8 +359,8 @@ if the next output is an identifier, in which case
 @d section_number 0201 /* code returned by |get_output| for section numbers */
 @d identifier 0202 /* code returned by |get_output| for identifiers */
 
-@<Global...@>=
-int cur_val; /* additional information corresponding to output token */
+@<Private...@>=
+static int cur_val; /* additional information corresponding to output token */
 
 @ If |get_output| finds that no more output remains, it returns with
 |stack_ptr==stack|.
@@ -451,9 +451,9 @@ are preceded by a `\.\\'.
 @d unbreakable 3 /* state associated with \.{@@\&} */
 @d verbatim 4 /* state in the middle of a string */
 
-@<Global...@>=
-eight_bits out_state; /* current status of partial output */
-boolean protect; /* should newline characters be quoted? */
+@<Private...@>=
+static eight_bits out_state; /* current status of partial output */
+static boolean protect; /* should newline characters be quoted? */
 
 @ Here is a routine that is invoked when we want to output the current line.
 During the output process, |cur_line| equals the number of the next line
@@ -483,11 +483,11 @@ All these special sections are saved on a stack, |output_files|.
 We write them out after we've done the unnamed section.
 
 @d max_files 256
-@<Glob...@>=
-name_pointer output_files[max_files];
-name_pointer *cur_out_file, *end_output_files, *an_output_file;
-char cur_section_name_char; /* is it |'<'| or |'('| */
-char output_file_name[longest_name+1]; /* name of the file */
+@<Private...@>=
+static name_pointer output_files[max_files];
+static name_pointer *cur_out_file, *end_output_files, *an_output_file;
+static char cur_section_name_char; /* is it |'<'| or |'('| */
+static char output_file_name[longest_name+1]; /* name of the file */
 
 @ We make |end_output_files| point just beyond the end of
 |output_files|. The stack pointer
@@ -583,8 +583,8 @@ that refer to macros, preceded by the \.{\#define} preprocessor command.
   if (!output_defs_seen)
     output_defs();
 
-@ @<Glob...@>=
-boolean output_defs_seen=false;
+@ @<Private...@>=
+static boolean output_defs_seen=false;
 
 @ @<Predecl...@>=
 static void output_defs(void);@/
@@ -692,8 +692,8 @@ This makes debugging a lot less confusing.
 
 @d translit_length 10
 
-@<Glo...@>=
-char translit[128][translit_length];
+@<Private...@>=
+static char translit[128][translit_length];
 
 @ @<Set init...@>=
 {
@@ -771,8 +771,8 @@ milestones.
 @d section_name 0311 /* control code for `\.{@@<}' */
 @d new_section 0312 /* control code for `\.{@@\ }' and `\.{@@*}' */
 
-@<Global...@>=
-eight_bits ccode[256]; /* meaning of a char following \.{@@} */
+@<Private...@>=
+static eight_bits ccode[256]; /* meaning of a char following \.{@@} */
 
 @ @<Set ini...@>= {
   int c; /* must be |int| so the |for| loop will end */
@@ -831,8 +831,8 @@ the two types of comments.
 If |skip_comment| comes to the end of the section, it prints an error message.
 No comment, long or short, is allowed to contain `\.{@@\ }' or `\.{@@*}'.
 
-@<Global...@>=
-boolean comment_continues=false; /* are we scanning a comment? */
+@<Private...@>=
+static boolean comment_continues=false; /* are we scanning a comment? */
 
 @ @c
 static boolean skip_comment(@t\1\1@> /* skips over comments */
@@ -870,9 +870,9 @@ boolean is_long_comment@t\2\2@>)
 
 @d constant 03
 
-@<Global...@>=
-name_pointer cur_section_name; /* name of section just scanned */
-boolean no_where; /* suppress |print_where|? */
+@<Private...@>=
+static name_pointer cur_section_name; /* name of section just scanned */
+static boolean no_where; /* suppress |print_where|? */
 
 @ As one might expect, |get_next| consists mostly of a big switch
 that branches to the various special cases that can arise.
@@ -1184,9 +1184,9 @@ acted, |cur_text| will point to the replacement text just generated, and
 @d macro  0
 @d app_repl(c)  {if (tok_ptr==tok_mem_end) overflow("token"); *tok_ptr++=c;}
 
-@<Global...@>=
-text_pointer cur_text; /* replacement text formed by |scan_repl| */
-eight_bits next_control;
+@<Private...@>=
+static text_pointer cur_text; /* replacement text formed by |scan_repl| */
+static eight_bits next_control;
 
 @ @<Predecl...@>=
 static void scan_repl(eight_bits);@/

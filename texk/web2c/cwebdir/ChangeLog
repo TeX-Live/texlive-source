@@ -1,3 +1,20 @@
+2021-02-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-w2c.ch
+	* comm-w2c.h
+	* common.c
+	* common.h
+	* common.w
+	* ctang-bs.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-man.ch,
+	* cweave.w: Decouple CTANGLE and CWEAVE from COMMON.
+
 2021-02-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

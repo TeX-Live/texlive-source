@@ -99,7 +99,7 @@ cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 @z
 
 @x
-char alt_web_file_name[max_file_name_length]; /* alternate name to try */
+static char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 @y
 @z
 

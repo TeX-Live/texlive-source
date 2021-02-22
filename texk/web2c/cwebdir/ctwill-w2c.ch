@@ -285,16 +285,16 @@ outbursts of new code.)
 @x
 turned on during the first phase.
 
-@<Global...@>=
-boolean change_exists; /* has any section changed? */
+@<Private...@>=
+static boolean change_exists; /* has any section changed? */
 @y
 turned on during the first phase---NOT!
 @z
 
 @x
-sixteen_bits xref_switch,section_xref_switch; /* either zero or |def_flag| */
+static sixteen_bits xref_switch,section_xref_switch; /* either zero or |def_flag| */
 @y
-sixteen_bits xref_switch,section_xref_switch; /* either zero or |def_flag| */
+static sixteen_bits xref_switch,section_xref_switch; /* either zero or |def_flag| */
 
 @ \.{CTWILL} also has special data structures to keep track of current
 and temporary meanings. These structures were not designed for maximum
@@ -312,21 +312,21 @@ typedef struct {
   char tex_part[max_tex_chars]; /* \TeX\ part of meaning */
 } meaning_struct;
 
-@ @<Glob...@>=
+@ @<Private...@>=
 struct perm_meaning {
   meaning_struct perm; /* current meaning of an identifier */
   int stamp; /* last section number in which further output suppressed */
   struct perm_meaning *link; /* another meaning to output in this section */
 } cur_meaning[max_names]; /* the current ``permanent'' meanings */
-struct perm_meaning *top_usage; /* first meaning to output in this section */
-meaning_struct temp_meaning_stack[max_meanings]; /* the current ``temporary'' meanings */
-meaning_struct *temp_meaning_ptr; /* first available slot in |temp_meaning_stack| */
-meaning_struct *max_temp_meaning_ptr; /* its maximum value so far */
-name_pointer title_code[max_titles]; /* program names seen so far */
-name_pointer *title_code_ptr; /* first available slot in |title_code| */
-char ministring_buf[max_tex_chars]; /* \TeX\ code being generated */
-char *ministring_ptr; /* first available slot in |ministring_buf| */
-boolean ms_mode; /* are we outputting to |ministring_buf|? */
+static struct perm_meaning *top_usage; /* first meaning to output in this section */
+static meaning_struct temp_meaning_stack[max_meanings]; /* the current ``temporary'' meanings */
+static meaning_struct *temp_meaning_ptr; /* first available slot in |temp_meaning_stack| */
+static meaning_struct *max_temp_meaning_ptr; /* its maximum value so far */
+static name_pointer title_code[max_titles]; /* program names seen so far */
+static name_pointer *title_code_ptr; /* first available slot in |title_code| */
+static char ministring_buf[max_tex_chars]; /* \TeX\ code being generated */
+static char *ministring_ptr; /* first available slot in |ministring_buf| */
+static boolean ms_mode; /* are we outputting to |ministring_buf|? */
 
 @ @<Set init...@>=
 max_temp_meaning_ptr=temp_meaning_stack;
@@ -443,8 +443,8 @@ id_lookup("make_pair",NULL,func_template);
 @y
 id_lookup("make_pair",NULL,func_template);
 
-@ @<Glob...@>=
-sixteen_bits int_loc, ext_loc; /* locations of special reserved words */
+@ @<Private...@>=
+static sixteen_bits int_loc, ext_loc; /* locations of special reserved words */
 @z
 
 @x
@@ -885,10 +885,10 @@ the section is changed, we output `\.{\\*}' just after the number.
 @z
 
 @x
-scrap scrap_info[max_scraps]; /* memory array for scraps */
+static scrap scrap_info[max_scraps]; /* memory array for scraps */
 @y
-scrap scrap_info[max_scraps]; /* memory array for scraps */
-scrap null_scrap; /* a scrap with empty translation */
+static scrap scrap_info[max_scraps]; /* memory array for scraps */
+static scrap null_scrap; /* a scrap with empty translation */
 @z
 
 @x
@@ -1412,9 +1412,9 @@ while (!input_has_ended) @<Translate the current section@>@;
 while (!input_has_ended) @<Translate the current section@>@;
 }
 
-@ @<Glob...@>=
-FILE *aux_file;
-char aux_file_name[max_file_name_length]; /* name of \.{.aux} file */
+@ @<Private...@>=
+static FILE *aux_file;
+static char aux_file_name[max_file_name_length]; /* name of \.{.aux} file */
 
 @ @<Read the \.{.aux} file, if present; then open it for output@>=
 memcpy(aux_file_name,tex_file_name,strlen(tex_file_name)-4);
@@ -1439,14 +1439,14 @@ if ((aux_file=fopen(aux_file_name,"wb"))==NULL)
 @z
 
 @x
-boolean group_found=false; /* has a starred section occurred? */
+static boolean group_found=false; /* has a starred section occurred? */
 
 @ @<Translate the current section@>= {
   section_count++;
 @y
-boolean group_found=false; /* has a starred section occurred? */
-boolean right_start_switch; /* has `\.{@@r}' occurred recently? */
-boolean temp_switch; /* has `\.{@@\%}' occurred recently? */
+static boolean group_found=false; /* has a starred section occurred? */
+static boolean right_start_switch; /* has `\.{@@r}' occurred recently? */
+static boolean temp_switch; /* has `\.{@@\%}' occurred recently? */
 
 @ @d usage_sentinel (struct perm_meaning *)1
 @<Translate the current section@>= {
@@ -1522,10 +1522,10 @@ flush_buffer(out_ptr,false,false);
   doing_format=false;
 }
 
-@ @<Glob...@>=
-boolean is_macro; /* it's a macro def, not a format def */
-int def_diff; /* 0 iff the current macro has parameters */
-name_pointer id_being_defined; /* the definee */
+@ @<Private...@>=
+static boolean is_macro; /* it's a macro def, not a format def */
+static int def_diff; /* 0 iff the current macro has parameters */
+static name_pointer id_being_defined; /* the definee */
 @z
 
 @x
@@ -1762,6 +1762,9 @@ finish_line(); fclose(active_file); active_file=NULL;
 
 @x
 the index section itself.
+
+@<Private...@>=
+static sixteen_bits k_section; /* runs through the sections */
 @y
 the index section itself---NOT!
 @z

@@ -103,11 +103,11 @@ typedef xref_info huge* xref_pointer;
 
 
 @x Section 23.
-xref_info xmem[max_refs]; /* contains cross-reference information */
-xref_pointer xmem_end = xmem+max_refs-1;
+static xref_info xmem[max_refs]; /* contains cross-reference information */
+static xref_pointer xmem_end = xmem+max_refs-1;
 @y
-xref_info huge xmem[max_refs]; /* contains cross-reference information */
-xref_pointer xmem_end;
+static xref_info huge xmem[max_refs]; /* contains cross-reference information */
+static xref_pointer xmem_end;
 @z
 
 
@@ -129,21 +129,21 @@ xmem->num=0; /* sentinel value */
 
 
 @x Section 30. (to please Borland's C++, version 4.02)
-token tok_mem[max_toks]; /* tokens */
-token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
-token_pointer tok_ptr; /* first unused position in |tok_mem| */
-token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
-token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
-text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
-text_pointer text_ptr; /* first unused position in |tok_start| */
+static token tok_mem[max_toks]; /* tokens */
+static token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
+static token_pointer tok_ptr; /* first unused position in |tok_mem| */
+static token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
+static token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
+static text_pointer tok_start_end = tok_start+max_texts-1; /* end of |tok_start| */
+static text_pointer text_ptr; /* first unused position in |tok_start| */
 @y
-token tok_mem[max_toks]; /* tokens */
-token_pointer tok_mem_end; /* end of |tok_mem| */
-token_pointer tok_ptr; /* first unused position in |tok_mem| */
-token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
-token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
-text_pointer tok_start_end; /* end of |tok_start| */
-text_pointer text_ptr; /* first unused position in |tok_start| */
+static token tok_mem[max_toks]; /* tokens */
+static token_pointer tok_mem_end; /* end of |tok_mem| */
+static token_pointer tok_ptr; /* first unused position in |tok_mem| */
+static token_pointer max_tok_ptr; /* largest value of |tok_ptr| */
+static token_pointer tok_start[max_texts]; /* directory into |tok_mem| */
+static text_pointer tok_start_end; /* end of |tok_start| */
+static text_pointer text_ptr; /* first unused position in |tok_start| */
 @z
 
 @x Section 31. (goes with the previous change)
@@ -212,9 +212,9 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 
 
 @x Section 246.
-char *cur_byte; /* index into |byte_mem| */
+static char *cur_byte; /* index into |byte_mem| */
 @y
-char huge* cur_byte; /* index into |byte_mem| */
+static char huge* cur_byte; /* index into |byte_mem| */
 @z
 
 

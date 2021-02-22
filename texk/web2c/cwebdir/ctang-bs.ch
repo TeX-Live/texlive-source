@@ -141,13 +141,13 @@ typedef text *text_pointer;
 
 
 @x Section 17.
-eight_bits tok_mem[max_toks];
-eight_bits *tok_mem_end=tok_mem+max_toks-1;
-eight_bits *tok_ptr; /* first unused position in |tok_mem| */
+static eight_bits tok_mem[max_toks];
+static eight_bits *tok_mem_end=tok_mem+max_toks-1;
+static eight_bits *tok_ptr; /* first unused position in |tok_mem| */
 @y
-eight_bits huge tok_mem[max_toks];
-eight_bits huge* tok_mem_end;
-eight_bits huge* tok_ptr; /* first unused position in |tok_mem| */
+static eight_bits huge tok_mem[max_toks];
+static eight_bits huge* tok_mem_end;
+static eight_bits huge* tok_ptr; /* first unused position in |tok_mem| */
 @z
 
 
