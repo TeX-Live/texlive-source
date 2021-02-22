@@ -1,3 +1,7 @@
+2021-02-22  Phelype Oleinik  <phe.h.o1@gmail.com>
+
+	* etex.ch: avoid "expansion depth" overflow with \numexpr.
+
 2021-02-13  Karl Berry  <karl@freefriends.org>
 
 	* am/etex.am (etex_ch_srcs): adjust for split enctex changes.
