@@ -1,6 +1,6 @@
 2021-02-22  Phelype Oleinik  <phe.h.o1@gmail.com>
 
-	* eobase.ch: avoid "expansion depth" overflow with \numexpr.
+	* xetex.web: avoid "expansion depth" overflow with \numexpr.
 
 2021-02-17  Karl Berry  <karl@tug.org>
 
