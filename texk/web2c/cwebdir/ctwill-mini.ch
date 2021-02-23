@@ -109,14 +109,6 @@ Section 9.
 @-c@>
 @z
 
-Section 12.
-
-@x
-@ Code related to section numbers:
-@y
-@ Code related to section numbers:
-@z
-
 Section 13.
 
 @x
