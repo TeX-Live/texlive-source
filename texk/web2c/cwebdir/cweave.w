@@ -251,7 +251,7 @@ If one were careful, one could probably make more changes around section
 @<Predecl...@>=
 static void new_xref(name_pointer);@/
 static void new_section_xref(name_pointer);@/
-static void set_file_flag(name_pointer);@/
+static void set_file_flag(name_pointer);
 
 @ @c
 static void
@@ -383,8 +383,7 @@ name_pointer p)
   p->xref=(void *)xref_ptr;
 }
 
-@ @<Predecl...@>=
-static void update_node(name_pointer p);@/
+@ @<Predecl...@>=@+static void update_node(name_pointer p);
 
 @ We have to get \CEE/'s
 reserved words into the hash table, and the simplest way to do this is
@@ -490,8 +489,7 @@ id_lookup("volatile",NULL,const_like);
 id_lookup("wchar_t",NULL,raw_int);
 id_lookup("while",NULL,for_like);
 id_lookup("xor",NULL,alfop);
-id_lookup("xor_eq",NULL,alfop);
-res_wd_end=name_ptr;
+id_lookup("xor_eq",NULL,alfop);@+ res_wd_end=name_ptr;
 id_lookup("TeX",NULL,custom);
 id_lookup("make_pair",NULL,func_template);
 
@@ -590,7 +588,7 @@ interpretation of identifiers.
 
 @<Predec...@>=
 static void skip_limbo(void);@/
-static eight_bits skip_TeX(void);@/
+static eight_bits skip_TeX(void);
 
 @ @c
 static void
@@ -681,10 +679,7 @@ compilers even allow the dollar sign.
 @d ishigh(c) ((eight_bits)(c)>0177)
 @^high-bit character handling@>
 
-@<Predecl...@>=
-static eight_bits get_next(void);@/
-
-@ @c
+@c
 static eight_bits
 get_next(void) /* produces the next input token */
 {
@@ -708,6 +703,8 @@ get_next(void) /* produces the next input token */
     return c;
   }
 }
+
+@ @<Predecl...@>=@+static eight_bits get_next(void);
 
 @ Because preprocessor commands do not fit in with the rest of the syntax
 of \CEE/,
@@ -961,10 +958,7 @@ if (c=='@@') {
 
 @ This function skips over a restricted context at relatively high speed.
 
-@<Predecl...@>=
-static void skip_restricted(void);@/
-
-@ @c
+@c
 static void
 skip_restricted(void)
 {
@@ -983,6 +977,8 @@ false_alarm:
 @.Control codes are forbidden...@>
   }
 }
+
+@ @<Predecl...@>=@+static void skip_restricted(void);
 
 @ At the present point in the program we
 have |*(loc-1)==verbatim|; we set |id_first| to the beginning
@@ -1014,10 +1010,7 @@ static eight_bits next_control; /* control code waiting to be acting upon */
 @ The overall processing strategy in phase one has the following
 straightforward outline.
 
-@<Predecl...@>=
-static void phase_one(void);@/
-
-@ @c
+@c
 static void
 phase_one(void) {
   phase=1; reset_input(); section_count=0;
@@ -1029,6 +1022,8 @@ phase_one(void) {
   phase=2; /* prepare for second phase */
   @<Print error messages about unused or undefined section names@>@;
 }
+
+@ @<Predecl...@>=@+static void phase_one(void);
 
 @ @<Store cross-reference data...@>=
 {
@@ -1068,7 +1063,7 @@ as well as |normal==0|.
 
 @<Predecl...@>=
 static void C_xref(eight_bits);@/
-static void outer_xref(void);@/
+static void outer_xref(void);
 
 @ @c
 static void
@@ -1254,10 +1249,7 @@ static boolean an_output; /* did |file_flag| precede |cur_xref|? */
 walks through the tree of section names and prints out anomalies.
 @^recursion@>
 
-@<Predecl...@>=
-static void section_check(name_pointer);@/
-
-@ @c
+@c
 static void
 section_check(
 name_pointer p) /* print anomalies in subtree |p| */
@@ -1281,6 +1273,8 @@ name_pointer p) /* print anomalies in subtree |p| */
     section_check(p->rlink);
   }
 }
+
+@ @<Predecl...@>=@+static void section_check(name_pointer);
 
 @ @<Print error messages about un...@>=section_check(root);
 
@@ -1315,7 +1309,7 @@ of commented-out text).
 
 @<Predecl...@>=
 static void flush_buffer(char *,boolean,boolean);@/
-static void finish_line(void);@/
+static void finish_line(void);
 
 @ @c
 static void
@@ -1380,7 +1374,7 @@ A line break will occur at a space or after a single-nonletter
 
 @<Predecl...@>=
 static void out_str(const char *);@/
-static void break_out(void);@/
+static void break_out(void);
 
 @ @c
 static void
@@ -1438,7 +1432,7 @@ the section is changed, we output `\.{\\*}' just after the number.
 
 @<Predecl...@>=
 static void out_section(sixteen_bits);@/
-static void out_name(name_pointer,boolean);@/
+static void out_name(name_pointer,boolean);
 
 @ @c
 static void
@@ -1485,7 +1479,7 @@ The use of `\.{@@}' signs is severely restricted in such material:
 @<Predecl...@>=
 static void copy_limbo(void);@/
 static eight_bits copy_TeX(void);@/
-static int copy_comment(boolean,int);@/
+static int copy_comment(boolean,int);
 
 @ @c
 static void
@@ -1784,16 +1778,15 @@ static char cat_name[256][12];
 
 @ This code allows \.{CWEAVE} to display its parsing steps.
 
-@<Predecl...@>=
-static void print_cat(eight_bits);@/
-
-@ @c
+@c
 static void
 print_cat(@t\1\1@> /* symbolic printout of a category */
 eight_bits c@t\2\2@>)
 {
   fputs(cat_name[c],stdout);
 }
+
+@ @<Predecl...@>=@+static void print_cat(eight_bits);
 
 @ The token lists for translated \TEX/ output contain some special control
 symbols as well as ordinary characters. These control symbols are
@@ -2142,10 +2135,7 @@ translated without line-break controls.
 @d tok_flag 4*id_flag /* signifies a token list */
 @d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
 
-@<Predecl...@>=
-static void print_text(text_pointer p);@/
-
-@ @c
+@c
 static void
 print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
 text_pointer p@t\2\2@>)
@@ -2169,6 +2159,8 @@ text_pointer p@t\2\2@>)
   }
   update_terminal;
 }
+
+@ @<Predecl...@>=@+static void print_text(text_pointer p);
 
 @ @<Print token |r|...@>=
 switch (r) {
@@ -2272,7 +2264,7 @@ static int cur_mathness, init_mathness;
 @ @<Predecl...@>=
 static void app_str(const char *);@/
 static void big_app(token);@/
-static void big_app1(scrap_pointer);@/
+static void big_app1(scrap_pointer);
 
 @ @c
 static void
@@ -2429,7 +2421,7 @@ more properly alpha\-betized,
 static token_pointer find_first_ident(text_pointer);@/
 static void make_reserved(scrap_pointer);@/
 static void make_underlined(scrap_pointer);@/
-static void underline_xref(name_pointer);@/
+static void underline_xref(name_pointer);
 
 @ @c
 static token_pointer
@@ -3023,7 +3015,7 @@ too large, since it is assumed that this test was done beforehand.
 
 @<Predecl...@>=
 static void reduce(scrap_pointer,short,eight_bits,short,short);@/
-static void squash(scrap_pointer,short,eight_bits,short,short);@/
+static void squash(scrap_pointer,short,eight_bits,short,short);
 
 @ @c
 static void
@@ -3147,10 +3139,7 @@ lists with up to six tokens without checking for overflow. Before calling
 since |translate| might add a new text and a new scrap before it checks
 for overflow.
 
-@<Predecl...@>=
-static text_pointer translate(void);@/
-
-@ @c
+@c
 static text_pointer
 translate(void) /* converts a sequence of scraps */
 {
@@ -3161,6 +3150,8 @@ translate(void) /* converts a sequence of scraps */
   @<Reduce the scraps...@>@;
   @<Combine the irreducible scraps that remain@>@;
 }
+
+@ @<Predecl...@>=@+static text_pointer translate(void);
 
 @ If the initial sequence of scraps does not reduce to a single scrap,
 we concatenate the translations of all remaining scraps, separated by
@@ -3215,10 +3206,7 @@ repeatedly to read \CEE/ text until encountering the next `\.{\v}' or
 what it reads are appended into the |cat| and |trans| arrays, and |scrap_ptr|
 is advanced.
 
-@<Predecl...@>=
-static void C_parse(eight_bits);@/
-
-@ @c
+@c
 static void
 C_parse(@t\1\1@> /* creates scraps from \CEE/ tokens */
   eight_bits spec_ctrl@t\2\2@>)
@@ -3231,6 +3219,8 @@ C_parse(@t\1\1@> /* creates scraps from \CEE/ tokens */
         next_control==begin_short_comment) return;
   }
 }
+
+@ @<Predecl...@>=@+static void C_parse(eight_bits);
 
 @ The following macro is used to append a scrap whose tokens have just
 been appended:
@@ -3453,7 +3443,7 @@ token list; it also builds a new scrap if |scrapping==true|.
 @<Predec...@>=
 static void app_cur_id(boolean);@/
 static text_pointer C_translate(void);@/
-static void outer_parse(void);@/
+static void outer_parse(void);
 
 @ @c
 static void
@@ -3621,7 +3611,7 @@ The value of |cur_mode| is not changed.
 
 @<Predecl...@>=
 static void push_level(text_pointer);@/
-static void pop_level(void);@/
+static void pop_level(void);
 
 @ @c
 static void
@@ -3668,7 +3658,7 @@ static name_pointer cur_name;
 @<Predecl...@>=
 static eight_bits get_output(void);@/
 static void output_C(void);@/
-static void make_output(void);@/
+static void make_output(void);
 
 @ @c
 static eight_bits
@@ -3991,10 +3981,7 @@ is analogous to phase one, except that more work is involved because we must
 actually output the \TEX/ material instead of merely looking at the
 \.{CWEB} specifications.
 
-@<Predecl...@>=
-static void phase_two(void);@/
-
-@ @c
+@c
 static void
 phase_two(void) {
 reset_input(); if (show_progress) fputs("\nWriting the output file...",stdout);
@@ -4003,6 +3990,8 @@ section_count=0; format_visible=true; copy_limbo();
 finish_line(); flush_buffer(out_buf,false,false); /* insert a blank line, it looks nice */
 while (!input_has_ended) @<Translate the current section@>@;
 }
+
+@ @<Predecl...@>=@+static void phase_two(void);
 
 @ The output file will contain the control sequence \.{\\Y} between non-null
 sections of a section, e.g., between the \TEX/ and definition parts if both
@@ -4114,10 +4103,7 @@ takes place, so that the translation will normally end with \.{\\6} or
 \.{\\7} (the \TEX/ macros for |force| and |big_force|). This \.{\\6} or
 \.{\\7} is replaced by the concluding \.{\\par} or by \.{\\Y\\par}.
 
-@<Predecl...@>=
-static void finish_C(boolean);@/
-
-@ @c
+@c
 static void
 finish_C(@t\1\1@> /* finishes a definition or a \CEE/ part */
   boolean visible@t\2\2@>) /* nonzero if we should produce \TeX\ output */
@@ -4145,6 +4131,8 @@ finish_C(@t\1\1@> /* finishes a definition or a \CEE/ part */
   tok_ptr=tok_mem+1; text_ptr=tok_start+1; scrap_ptr=scrap_info;
     /* forget the tokens and the scraps */
 }
+
+@ @<Predecl...@>=@+static void finish_C(boolean);
 
 @ Keeping in line with the conventions of the \CEE/ preprocessor (and
 otherwise contrary to the rules of \.{CWEB}) we distinguish here
@@ -4287,10 +4275,7 @@ leaves |cur_xref| pointing to the first element not printed.  Typical outputs:
 Note that the output of \.{CWEAVE} is not English-specific; users may
 supply new definitions for the macros \.{\\A}, \.{\\As}, etc.
 
-@<Predecl...@>=
-static void footnote(sixteen_bits);@/
-
-@ @c
+@c
 static void
 footnote(@t\1\1@> /* outputs section cross-references */
 sixteen_bits flag@t\2\2@>)
@@ -4305,6 +4290,8 @@ sixteen_bits flag@t\2\2@>)
   @<Output all the section numbers on the reference list |cur_xref|@>@;
   out('.');
 }
+
+@ @<Predecl...@>=@+static void footnote(sixteen_bits);
 
 @ The following code distinguishes three cases, according as the number
 of cross-references is one, two, or more than two. Variable |q| points
@@ -4336,10 +4323,7 @@ If the user has set the |no_xref| flag (the \.{-x} option on the command line),
 just finish off the page, omitting the index, section name list, and table of
 contents.
 
-@<Predecl...@>=
-static void phase_three(void);@/
-
-@ @c
+@c
 static void
 phase_three(void) {
 if (no_xref) {
@@ -4386,6 +4370,8 @@ if (show_happiness) {
 }
 check_complete(); /* was all of the change file used? */
 }
+
+@ @<Predecl...@>=@+static void phase_three(void);
 
 @ Just before the index comes a list of all the changed sections, including
 the index section itself.
@@ -4531,10 +4517,7 @@ regarded as identical.
 
 @d infinity 255 /* $\infty$ (approximately) */
 
-@<Predecl...@>=
-static void unbucket(eight_bits);@/
-
-@ @c
+@c
 static void
 unbucket(@t\1\1@> /* empties buckets having depth |d| */
 eight_bits d@t\2\2@>)
@@ -4551,6 +4534,8 @@ eight_bits d@t\2\2@>)
     sort_ptr->head=bucket[collate[c]]; bucket[collate[c]]=NULL;
   }
 }
+
+@ @<Predecl...@>=@+static void unbucket(eight_bits);
 
 @ @<Sort and output...@>=
 sort_ptr=scrap_info; unbucket(1);
@@ -4651,10 +4636,7 @@ do {
 prints them.
 @^recursion@>
 
-@<Predecl...@>=
-static void section_print(name_pointer);@/
-
-@ @c
+@c
 static void
 section_print(@t\1\1@> /* print all section names in subtree |p| */
 name_pointer p@t\2\2@>)
@@ -4670,6 +4652,8 @@ name_pointer p@t\2\2@>)
     section_print(p->rlink);
   }
 }
+
+@ @<Predecl...@>=@+static void section_print(name_pointer);
 
 @ @<Output all the section names@>=section_print(root);
 

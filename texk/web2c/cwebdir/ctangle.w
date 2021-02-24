@@ -69,7 +69,7 @@ is modified.
 @<Common code for \.{CWEAVE} and \.{CTANGLE}@>@/
 @<Typedef declarations@>@/
 @<Private variables@>@/
-@<Predeclaration of procedures@>@/
+@<Predeclaration of procedures@>
 
 @ \.{CTANGLE} has a fairly straightforward outline.  It operates in
 two phases: First it reads the source file, saving the \CEE/ code in
@@ -228,11 +228,8 @@ construction or numerical constant.
 @ The following procedure is used to enter a two-byte value into
 |tok_mem| when a replacement text is being generated.
 
-@<Predecl...@>=
-static void store_two_bytes(sixteen_bits);@/
-
-@ @c
-void
+@c
+static void
 store_two_bytes(
 sixteen_bits x)
 {
@@ -240,6 +237,8 @@ sixteen_bits x)
   *tok_ptr++=x>>8; /* store high byte */
   *tok_ptr++=x&0377; /* store low byte */
 }
+
+@ @<Predecl...@>=@+static void store_two_bytes(sixteen_bits);
 
 @** Stacks for output.  The output process uses a stack to keep track
 of what is going on at different ``levels'' as the sections are being
@@ -307,11 +306,7 @@ the new one going.
 We assume that the \CEE/ compiler can copy structures.
 @^system dependencies@>
 
-@<Predecl...@>=
-static void push_level(name_pointer);@/
-static void pop_level(boolean);@/
-
-@ @c
+@c
 static void
 push_level(@t\1\1@> /* suspends the current level */
 name_pointer p@t\2\2@>)
@@ -325,6 +320,10 @@ name_pointer p@t\2\2@>)
     cur_section=0;
   }
 }
+
+@ @<Predecl...@>=
+static void push_level(name_pointer);@/
+static void pop_level(boolean);
 
 @ When we come to the end of a replacement text, the |pop_level| subroutine
 does the right thing: It either moves to the continuation of this replacement
@@ -366,10 +365,7 @@ static int cur_val; /* additional information corresponding to output token */
 |stack_ptr==stack|.
 @^high-bit character handling@>
 
-@<Predecl...@>=
-static void get_output(void);@/
-
-@ @c
+@c
 static void
 get_output(void) /* sends next token to |out_char| */
 {
@@ -397,6 +393,8 @@ get_output(void) /* sends next token to |out_char| */
     }
   }
 }
+
+@ @<Predecl...@>=@+static void get_output(void);
 
 @ The user may have forgotten to give any \CEE/ text for a section name,
 or the \CEE/ text may have been associated with a different name by mistake.
@@ -459,10 +457,7 @@ static boolean protect; /* should newline characters be quoted? */
 During the output process, |cur_line| equals the number of the next line
 to be output.
 
-@<Predecl...@>=
-static void flush_buffer(void);@/
-
-@ @c
+@c
 static void
 flush_buffer(void) /* writes one line to output file */
 {
@@ -474,6 +469,8 @@ flush_buffer(void) /* writes one line to output file */
   }
   cur_line++;
 }
+
+@ @<Predecl...@>=@+static void flush_buffer(void);
 
 @ Second, we have modified the original \.{TANGLE} so that it will write output
 on multiple files.
@@ -514,10 +511,7 @@ complain we're out of room@>=
 @* The big output switch.  Here then is the routine that does the
 output.
 
-@<Predecl...@>=
-static void phase_two(void);@/
-
-@ @c
+@c
 static void
 phase_two (void) {
   web_file_open=false;
@@ -551,6 +545,8 @@ writeloop:   @<Write all the named output files@>@;
     }
   }
 }
+
+@ @<Predecl...@>=@+static void phase_two(void);
 
 @ To write the named output files, we proceed as for the unnamed
 section.
@@ -588,7 +584,7 @@ static boolean output_defs_seen=false;
 
 @ @<Predecl...@>=
 static void output_defs(void);@/
-static void out_char(eight_bits);@/
+static void out_char(eight_bits);
 
 @ @c
 static void
@@ -795,11 +791,7 @@ static eight_bits ccode[256]; /* meaning of a char following \.{@@} */
 @ The |skip_ahead| procedure reads through the input at fairly high speed
 until finding the next non-ignorable control code, which it returns.
 
-@<Predecl...@>=
-static eight_bits skip_ahead(void);@/
-static boolean skip_comment(boolean);@/
-
-@ @c
+@c
 static eight_bits
 skip_ahead(void) /* skip to next control code */
 {
@@ -814,6 +806,10 @@ skip_ahead(void) /* skip to next control code */
     }
   }
 }
+
+@ @<Predecl...@>=
+static eight_bits skip_ahead(void);@/
+static boolean skip_comment(boolean);
 
 @ The |skip_comment| procedure reads through the input at somewhat high
 speed in order to pass over comments, which \.{CTANGLE} does not transmit
@@ -882,10 +878,7 @@ that branches to the various special cases that can arise.
 @d ishigh(c) ((eight_bits)(c)>0177)
 @^high-bit character handling@>
 
-@<Predecl...@>=
-static eight_bits get_next(void);@/
-
-@ @c
+@c
 static eight_bits
 get_next(void) /* produces the next input token */
 {
@@ -927,6 +920,8 @@ get_next(void) /* produces the next input token */
     return c;
   }
 }
+
+@ @<Predecl...@>=@+static eight_bits get_next(void);
 
 @ The following code assigns values to the combinations \.{++},
 \.{--}, \.{->}, \.{>=}, \.{<=}, \.{==}, \.{<<}, \.{>>}, \.{!=}, \.{||} and
@@ -1188,9 +1183,6 @@ acted, |cur_text| will point to the replacement text just generated, and
 static text_pointer cur_text; /* replacement text formed by |scan_repl| */
 static eight_bits next_control;
 
-@ @<Predecl...@>=
-static void scan_repl(eight_bits);@/
-
 @ @c
 static void
 scan_repl(@t\1\1@> /* creates a replacement text */
@@ -1212,6 +1204,8 @@ eight_bits t@t\2\2@>)
   if (text_ptr>text_info_end) overflow("text");
   cur_text=text_ptr; (++text_ptr)->tok_start=tok_ptr;
 }
+
+@ @<Predecl...@>=@+static void scan_repl(eight_bits);
 
 @ Here is the code for the line number: first a |sixteen_bits| equal
 to |0150000|; then the numeric line number; then a pointer to the
@@ -1345,10 +1339,7 @@ sensed in the input, and it proceeds until the end of that section.  It
 uses |section_count| to keep track of the current section number; with luck,
 \.{CWEAVE} and \.{CTANGLE} will both assign the same numbers to sections.
 
-@<Predecl...@>=
-static void scan_section(void);@/
-
-@ The body of |scan_section| is a loop where we look for control codes
+The body of |scan_section| is a loop where we look for control codes
 that are significant to \.{CTANGLE}: those
 that delimit a definition, the \CEE/ part of a module, or a new module.
 
@@ -1384,6 +1375,8 @@ scan_section(void)
   no_where=print_where=false;
   @<Scan the \CEE/ part of the current section@>@;
 }
+
+@ @<Predecl...@>=@+static void scan_section(void);
 
 @ At the top of this loop, if |next_control==section_name|, the
 section name has already been scanned (see |@<Get control code
@@ -1452,9 +1445,6 @@ else {
 cur_text->text_link=section_flag;
   /* mark this replacement text as a nonmacro */
 
-@ @<Predec...@>=
-static void phase_one(void);@/
-
 @ @c
 static void
 phase_one(void) {
@@ -1467,13 +1457,12 @@ phase_one(void) {
   phase=2;
 }
 
+@ @<Predec...@>=@+static void phase_one(void);
+
 @ Only a small subset of the control codes is legal in limbo, so limbo
 processing is straightforward.
 
-@<Predecl...@>=
-static void skip_limbo(void);@/
-
-@ @c
+@c
 static void
 skip_limbo(void)
 {
@@ -1501,6 +1490,8 @@ skip_limbo(void)
     }
   }
 }
+
+@ @<Predecl...@>=@+static void skip_limbo(void);
 
 @ @<Read in transliteration of a character@>=
   while(xisspace(*loc)&&loc<limit) loc++;

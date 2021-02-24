@@ -500,11 +500,11 @@ ccode['r']=ccode['R']=right_start;
 @z
 
 @x
-static eight_bits skip_TeX(void);@/
+static eight_bits skip_TeX(void);
 
 @ @c
 @y
-static eight_bits skip_TeX(void);@/
+static eight_bits skip_TeX(void);
 
 @ We look for a clue about the program's title, because this will become
 part of all meanings.
@@ -899,17 +899,15 @@ null_scrap.trans=&tok_start[0];
 @z
 
 @x
-static void print_text(text_pointer p);@/
-@y
-#if 0
-static void print_text(text_pointer p);@/
-#endif
-@z
+@d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
 
-@x
+@c
 static void
 print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
 @y
+@d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
+
+@c
 #if 0
 static void
 print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
@@ -925,6 +923,15 @@ print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
 }
 @y
 }
+#endif
+@z
+
+@x
+@ @<Predecl...@>=@+static void print_text(text_pointer p);
+@y
+@ @<Predecl...@>=
+#if 0
+static void print_text(text_pointer p);
 #endif
 @z
 
@@ -1633,7 +1640,7 @@ placed on the list, unless they are reserved and their current
 }
 
 @ @<Output information about usage of id's defined in other sections@>=
-{@+struct perm_meaning *q;
+{ struct perm_meaning *q;
   while (temp_meaning_ptr>temp_meaning_stack) {
     out_mini(--temp_meaning_ptr);
     q=temp_meaning_ptr->id-name_dir+cur_meaning;
@@ -1646,9 +1653,6 @@ placed on the list, unless they are reserved and their current
     if (q->stamp!=section_count) out_mini(&(q->perm));
   }
 }
-
-@ @<Predec...@>=
-static void out_mini(meaning_struct *);@/
 
 @ @c static void
 out_mini(
@@ -1668,6 +1672,8 @@ out_mini(
   @<Mini-output the name at |cur_name|@>;
   out(' '); out_str(m->tex_part); finish_line();
 }
+
+@ @<Predec...@>=@+static void out_mini(meaning_struct *);
 
 @ @<Mini-output...@>=
 switch (cur_name->ilk) {

@@ -186,7 +186,7 @@ extern void init_node(name_pointer);@/
 extern void init_p(name_pointer,eight_bits);@/
 extern void print_prefix_name(name_pointer);@/
 extern void print_section_name(name_pointer);@/
-extern void sprint_section_name(char *,name_pointer);@/
+extern void sprint_section_name(char *,name_pointer);
 
 @ Code related to error handling:
 @d spotless 0 /* |history| value for normal jobs */
@@ -244,7 +244,7 @@ extern FILE *check_file; /* temporary output file */
 @<Predecl...@>=
 extern void common_init(void);@/
 extern void print_stats(void);@/
-extern void cb_show_banner(void);@/
+extern void cb_show_banner(void);
 
 @ The following parameters were sufficient in the original \.{WEB} to
 handle \TEX/, so they should be sufficient for most applications of

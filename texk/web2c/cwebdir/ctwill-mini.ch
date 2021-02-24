@@ -707,14 +707,6 @@ the category codes |pp->cat,@,@,(pp+1)->cat|$,\,\,\ldots\,$
 the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @z
 
-Section 138.
-
-@x
-@ @<Set init...@>=
-@y
-@r @ @<Set init...@>=
-@z
-
 Section 139.
 
 @x
@@ -722,6 +714,14 @@ Section 139.
 @y
 @ Token lists in |@!tok_mem| are composed of the following kinds of
 @-p@>
+@z
+
+Section 141.
+
+@x
+@ @<Print token |r|...@>=
+@y
+@r @ @<Print token |r|...@>=
 @z
 
 Section 142.
@@ -933,12 +933,28 @@ Section 168.
 @r @ @<Cases for |decl_head|@>=
 @z
 
+Section 173.
+
+@x
+@ @<Cases for |fn_decl|@>=
+@y
+@r @ @<Cases for |fn_decl|@>=
+@z
+
 Section 208.
 
 @x
 @ Here's the |squash| procedure, which
 @y
 @r @ Here's the |squash| procedure, which
+@z
+
+Section 212.
+
+@x
+@ @<Print a snapsh...@>=
+@y
+@r @ @<Print a snapsh...@>=
 @z
 
 Section 220.
@@ -1061,14 +1077,6 @@ Section 272.
 @ The |footnote| procedure gives cross-reference information about
 @y
 @r @ The |footnote| procedure gives cross-reference information about
-@z
-
-Section 277.
-
-@x
-@ @<Output information about usage of id's defined in other sections@>=
-@y
-@r @ @<Output information about usage of id's defined in other sections@>=
 @z
 
 Section 284.
