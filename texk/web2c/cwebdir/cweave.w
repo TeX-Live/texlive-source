@@ -99,6 +99,7 @@ char **av@t\2\2@>) /* argument values */
   phase_one(); /* read all the user's text and store the cross-references */
   phase_two(); /* read all the text again and translate it to \TEX/ form */
   phase_three(); /* output the cross-reference index */
+  if (tracing==2 && !show_progress) new_line;
   return wrap_up(); /* and exit gracefully */
 }
 
