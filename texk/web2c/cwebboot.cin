@@ -23,7 +23,7 @@
 #include <string.h>  
 
 /*:3*//*89:*/
-#line 710 "cwebdir/comm-w2c.ch"
+#line 709 "cwebdir/comm-w2c.ch"
 
 #if HAVE_GETTEXT
 #include <locale.h>  
@@ -34,7 +34,7 @@
 #endif
 
 /*:89*//*91:*/
-#line 757 "cwebdir/comm-w2c.ch"
+#line 756 "cwebdir/comm-w2c.ch"
 
 typedef bool boolean;
 #define HAVE_BOOLEAN
@@ -44,7 +44,7 @@ typedef bool boolean;
 #include <lib/lib.h>  
 
 /*:91*//*94:*/
-#line 796 "cwebdir/comm-w2c.ch"
+#line 795 "cwebdir/comm-w2c.ch"
 
 #define CWEB
 #include "help.h" 
@@ -482,7 +482,7 @@ static int section_name_cmp(char**,int,name_pointer);
 static void scan_args(void);
 
 /*:75*//*96:*/
-#line 809 "cwebdir/comm-w2c.ch"
+#line 808 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
@@ -515,7 +515,7 @@ for(h= hash;h<=hash_end;*h++= NULL);
 #line 78 "cwebdir/comm-w2c.ch"
 
 /*92:*/
-#line 771 "cwebdir/comm-w2c.ch"
+#line 770 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -524,7 +524,7 @@ kpse_set_program_name(argv[0],"cweb");
 
 #line 85 "cwebdir/comm-w2c.ch"
 /*90:*/
-#line 719 "cwebdir/comm-w2c.ch"
+#line 718 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
 texmf_locale= kpse_var_expand("${TEXMFLOCALEDIR}");
@@ -1427,7 +1427,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*95:*/
-#line 800 "cwebdir/comm-w2c.ch"
+#line 799 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1439,7 +1439,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*98:*/
-#line 847 "cwebdir/comm-w2c.ch"
+#line 846 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1618,7 +1618,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
 #line 496 "cwebdir/comm-w2c.ch"
 /*:76*//*97:*/
-#line 813 "cwebdir/comm-w2c.ch"
+#line 812 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1651,7 +1651,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:97*//*99:*/
-#line 855 "cwebdir/comm-w2c.ch"
+#line 854 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {

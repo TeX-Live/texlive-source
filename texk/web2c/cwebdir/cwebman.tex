@@ -398,15 +398,15 @@ $$\hbox{ If \\{pa} is declared as `\&{int} ${}{*}\\{pa}$',
 the assignment $\\{pa}\K{\AND}\|a[\T{0}]$ makes \\{pa}
 point to the zeroth element of \|a.}$$
 The \TEX/ text would look like this in your \.{CWEB} file:
-$$\lpile{\.{If |pa| is declared as `|int *pa|', the}\cr
-\.{assignment |pa=\&a[0]| makes |pa| point
-to the zeroth element of |a|.}\cr}$$
-And \.{CWEAVE} translates this into something you are glad you didn't have
-to type:
-$$\lpile{\.{If \\\\\{pa\} is declared as
-  `\\\&\{int\} \$\{\}\{*\}\\\\\{pa\}\$',}\cr
-\.{the assignment \$\\\\\{pa\}\\K\{\\AND\}\\|a[\\T\{0\}]\$}\cr
-\.{makes \\\\\{pa\} point to the zeroth element of \\|a.}\cr}$$
+$$\lpile{\.{If |pa| is declared as `|int *pa|', the assignment}\cr
+\.{|pa=\&a[0]| makes |pa| point to the zeroth element of |a|.}\cr}$$
+And \.{CWEAVE} translates this into something
+you are glad you didn't have to type:
+$$\lpile{\.{If \\PB\{\\\\\{pa\}\} is declared as `\\PB\{\\\&\{int\}
+  \$\{\}\{*\}\\\\\{pa\}\$\}', the}\cr
+\.{assignment \\PB\{\$\\\\\{pa\}\\K\{\\AND\}\\|a[\\T\{0\}]\$\}
+  makes \\PB\{\\\\\{pa\}\} point}\cr
+\.{to the zeroth element of \\PB\{\\|a\}.}\cr}$$
 Incidentally, the cross-reference index that \.{CWEAVE} would make, in
 the presence of a comment like this, would include
 the current section number as one of the index entries for \\{pa},
@@ -1011,7 +1011,7 @@ part of a \.{struct}, even though \CEE/ does allow this.
 
 \section Running the programs.
 The \UNIX/ command line for \.{CTANGLE} is
-$$\.{ctangle [options] web\_file[.w] [\{change\_file[.ch]|-\} [out\_file]]}$$
+$$\.{ctangle [options] webfile[.w] [\{changefile[.ch]|-\} [outfile[.c]]]}$$
 and the same conventions apply to \.{CWEAVE}. If `\.-' or no change file is
 specified, the change file is null. The extensions \.{.w} and \.{.ch}
 are appended only if the given file names contain no dot. If the
@@ -1042,7 +1042,7 @@ by default.)
 
 \option e Enclose \CEE/ material formatted by \.{CWEAVE} in
 brackets \.{\\PB\{...\}}, so that special hooks can be used.
-(Off by default; has no effect on \.{CTANGLE}.)
+(On by default; has no effect on \.{CTANGLE}.)
 
 \option f Force line breaks after each \CEE/ statement formatted
 by \.{CWEAVE}. (On by default; \.{-f} saves paper but looks less \CEE/-like
@@ -1336,7 +1336,7 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CWEAVE}}
 
 Here is the corresponding excerpt from \.{common.tex}.
-(Code for section 31 omitted for space reasons.)
+(Code for section 31 is omitted for space reasons.)
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt

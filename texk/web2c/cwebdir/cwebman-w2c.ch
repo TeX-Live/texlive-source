@@ -96,14 +96,14 @@
 \def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.1)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\tentt CWEB} USER MANUAL (4.1 [\TeX~Live])}
+\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.1 [\TeX~Live])}
 @z
 
 @x
 \vskip 18pt\centerline{(Version 4.1 --- February 2021)}
 @y
 \vskip 18pt\centerline{(Version 4.1 --- February 2021)%
-\footnote*{This document describes the extended \.{CWEB} (4.1 [\TeX~Live]).}}
+\footnote*{This document describes the extended \.{CWEB} (Version 4.1 [\TeX~Live]).}}
 @z
 
 @x
@@ -148,6 +148,14 @@ conventions of the \Kpathsea/ library as outlined in section~\X91:File lookup
 with \Kpathsea/\X~of \pdfURL{appendix~D}{common-changes.pdf} to look for it.
 % FIXME
 (This is true for any other input or change file lookup.)}
+@z
+
+@x
+except for error messages.
+@y
+except for error messages.%
+\cwebfootnote{\.{CWEB} in \TeX~Live runs `\.{--quiet}ly', i.\,e.,
+options `\.{b}', `\.{h}', and `\.{p}' are `off' by default.}
 @z
 
 @x

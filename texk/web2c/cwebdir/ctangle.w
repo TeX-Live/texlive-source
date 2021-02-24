@@ -1236,7 +1236,7 @@ case identifier: a=id_lookup(id_first,id_loc,0)-name_dir;
   app_repl(a % 0400); break;
 case section_name: if (t!=section_name) goto done;
   else {
-    @<Was an `@@' missed here?@>@;
+    @<Was an `\.{@@}' missed here?@>@;
     a=cur_section_name-name_dir;
     app_repl((a / 0400)+0250);
     app_repl(a % 0400);
@@ -1263,7 +1263,7 @@ case definition: case format_code: case begin_C: if (t!=section_name) goto done;
   }
 case new_section: goto done;
 
-@ @<Was an `@@'...@>= {
+@ @<Was an `\.{@@}'...@>= {
   char *try_loc=loc;
   while (*try_loc==' ' && try_loc<limit) try_loc++;
   if (*try_loc=='+' && try_loc<limit) try_loc++;
