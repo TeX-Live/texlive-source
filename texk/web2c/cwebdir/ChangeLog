@@ -1,5 +1,9 @@
 2021-02-24  Andreas Scherer  <https://ascherer.github.io>
 
+	* cweave.w: Fix spacing for |#include| in TeX comment.
+
+2021-02-24  Andreas Scherer  <https://ascherer.github.io>
+
 	* common.w,
 	* ctangle.w,
 	* cweave.w: Fine print for single '@' characters in TeX text.

@@ -736,7 +736,7 @@ a file name in lines that start with \.{\#include}.  We must treat this file
 name as a string.
 
 @<Private...@>=
-static boolean sharp_include_line=false; /* are we scanning a |#include| line? */
+static boolean sharp_include_line=false; /* are we scanning a \&{\#include} line? */
 
 @ @<Check if next token is |include|@>=
 while (loc<=buffer_end-7 && xisspace(*loc)) loc++;
@@ -845,7 +845,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     if (delim=='u' && *loc=='8') { *++id_loc=*loc++; }
     delim=*loc++; *++id_loc=delim;
   }
-  if (delim=='<') delim='>'; /* for file names in |#include| lines */
+  if (delim=='<') delim='>'; /* for file names in \&{\#include} lines */
   while (true) {
     if (loc>=limit) {
       if(*(limit-1)!='\\') {
