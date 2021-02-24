@@ -289,7 +289,7 @@ prepares to read the next line from |change_file|.
 
 When a match is found, the current section is marked as changed unless
 the first line after the \.{@@x} and after the \.{@@y} both start with
-either |'@@*'| or |'@@ '| (possibly preceded by whitespace).
+either `\.{@@*}' or `\.{@@\ }' (possibly preceded by whitespace).
 
 This procedure is called only when |buffer<limit|, i.e., when the
 current line is nonempty.

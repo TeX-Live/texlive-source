@@ -1,5 +1,11 @@
 2021-02-24  Andreas Scherer  <https://ascherer.github.io>
 
+	* common.w,
+	* ctangle.w,
+	* cweave.w: Fine print for single '@' characters in TeX text.
+
+2021-02-24  Andreas Scherer  <https://ascherer.github.io>
+
 	* cweave.w: Fix output format when 'tracing @2'.
 
 2021-02-23  Andreas Scherer  <https://ascherer.github.io>

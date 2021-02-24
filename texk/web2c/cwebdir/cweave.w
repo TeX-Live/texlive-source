@@ -598,7 +598,7 @@ skip_limbo(void) {
   while(true) {
     if (loc>limit && get_line()==false) return;
     *(limit+1)='@@';
-    while (*loc!='@@') loc++; /* look for '@@', then skip two chars */
+    while (*loc!='@@') loc++; /* look for `\.{@@}', then skip two chars */
     if (loc++ <=limit) { int c=ccode[(eight_bits)*loc++];
       if (c==new_section) return;
       if (c==noop) skip_restricted();
