@@ -60,7 +60,7 @@ i386-solaris, x86_64-solaris:
 i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
   ./Build (with --enable-xindy for i386).
 
-x86_64-darwin: See Master/source/mactexdoc.tar.xz.
+universal-darwin: See Master/source/mactexdoc.tar.xz.
 
 x86_64-darwinlegacy:
   Mac OS X 10.6, clang 5.0, libc++ required
