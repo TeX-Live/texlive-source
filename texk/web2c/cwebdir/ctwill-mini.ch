@@ -14,7 +14,7 @@ Section 1.
 @z
 
 @x
-@d banner "This is CTWILL, Version 4.1"
+@d banner "This is CTWILL, Version 4.2"
 @y
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
@@ -35,7 +35,7 @@ be even more ``off'' from {\itt cweave.w}.  Care has been taken to give a
 faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 ---Enjoy!\bigskip}
 
-@d banner "This is CTWILL, Version 4.1"
+@d banner "This is CTWILL, Version 4.2"
 @z
 
 Section 2.
