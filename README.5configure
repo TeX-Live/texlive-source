@@ -71,9 +71,7 @@ of 'DVI' and 'GF' files must always be <2GB, due to the file format
 specifications.
 
    With LFS, there is no fixed limit on the size of PDF files created by
-'pdftex' or PostScript files created by 'dvips'.  The size of PDF images
-included by 'pdftex' or 'luatex' must, however, be <2GB when using
-'poppler' version 0.22 or before (even on 64-bit systems with LFS).
+'pdftex' or PostScript files created by 'dvips'.
 
 7.1.4 '--disable-missing'
 -------------------------
@@ -361,21 +359,6 @@ is one of:
 
 to generate the specified type of file dynamically.  The default can be
 overridden by the user in any case (*note kpathsea library::).
-
-7.3.2 Configure options for system 'poppler'
---------------------------------------------
-
-Building XeTeX requires 'poppler', either from the TL tree or system
-headers and library.  Building pdfTeX requires either 'xpdf' from the
-TeX Live tree or system 'poppler' headers and library.
-
-'--with-system-poppler'
-Use a system version (0.18 or newer) of 'poppler' for LuaTeX (or
-LuaJITTeX) and XeTeX, and use 'pkg-config' to obtain the required flags.
-
-'--with-system-xpdf'
-Use a system version (0.12 or newer) of 'poppler' (and 'pkg-config') for
-pdfTeX instead of 'xpdf' from the TL tree.  *Note --disable-largefile::.
 
 7.4 Variables for configure
 ===========================

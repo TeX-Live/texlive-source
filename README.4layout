@@ -28,8 +28,8 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.16.1
-     bison (GNU Bison) 3.5.2
+     automake (GNU automake) 1.16.2
+     bison (GNU Bison) 3.7.4
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
      m4 (GNU M4) 1.4.18
@@ -504,7 +504,8 @@ In that case, as above, we put the upstream sources into a subdirectory
 'configure' in this original '...-src' directory, but only in our own
 directory; but we do compile using the source files in '...-src'.
 
-   So, to summarize the files that we must (usually) create:
+   So, to summarize the files that must (usually) be created inside a
+new TL source directory ('texk/newprog' or 'utils/newprog'):
 
 'ac/withenable.ac'
      The 'KPSE_ENABLE_PROG' call just explained.
@@ -512,37 +513,67 @@ directory; but we do compile using the source files in '...-src'.
 'configure.ac'
 'Makefile.am'
      By merging the contents of the original 'configure.ac' (if
-     provided) and a comparable program already in TL. There is no magic
-     recipe, it's necessary to think about needs to be done in the
-     original vs. in TeX Live.
+     provided) and a comparable program already in TL. In the above
+     example, one line that will be needed in 'configure.ac' (can be
+     added before the 'AC_CONFIG_FILES' at the end) is:
+
+          AC_SUBST([NEWPROG_TREE], [newprog-src])
+
+     and then use '@NEWPROG_TREE@' in 'Makefile.am' where needed.
+
+     In general, there is no magic recipe for this part of the job.
+     It's necessary to think about what needs to be done in the original
+     vs. in TeX Live.  It's useful to look at the setup for the most
+     comparable programs already in TL that you can find.  It's also
+     useful to grep the entire 'Build/source' tree for whatever you can
+     think of to investigate how something is done.  Most of the
+     TL-specific macros are defined in 'Build/source/m4/*'.
 
 'TLpatches/TL-Changes'
-     Actions taken after getting the original source tree; typically
-     removal of derived or unused common files.
+     First actions taken after getting the original source tree;
+     typically removal of derived or unused common files.
 
 'TLpatches/patch-...'
      If any changes are needed to the original sources, record the
-     patches here so they can be applied next time.  And send them
-     upstream so that perhaps they won't have to be.
+     patches here so they can be applied next time.  Also, send them
+     upstream so that we don't have to maintain them forever.
 
 'ChangeLog'
      Record all TL-specific changes, now and in the future.
 
-   Then, run GNU 'autoreconf' in the new directory (*note Build system
-tools::).  After that works, 'svn add' the necessary files, including
-the generated 'Makefile.in aclocal.m4 configure', and 'svn:ignore' the
-Automake cache 'autom4te.cache'.  (This is so people checking out the TL
-source tree do not have to run any autotools, but can simply run
-'configure'.)
+   After populating the new TL source directory ('.../newprog/', in the
+above), run GNU 'autoreconf' there (*note Build system tools::).  Once
+that works, if you are the one who's eventually going to commit the new
+package, 'svn add' the necessary files, including the generated
+'Makefile.in aclocal.m4 configure', and 'svn:ignore' the Automake cache
+'autom4te.cache'.  (This is so people checking out the TL source tree do
+not have to run any autotools, but can simply run 'configure'.)
 
-   Then, run the TL tool 'reautoconf' in the top-level TL 'source/'
-directory, to incorporate the new program into the build tree.
+   To reiterate: do not fail to commit the generated 'configure' and
+other files.  The m4 code in 'kpse-pkgs.m4' uses the existence of
+'configure' to determine whether to descend into (and configure) a given
+subdirectory.
 
-   Then, run (and rerun) a build until the program compiles and tests
-successfully, probably involving rerunning autoreconf in the source
-directory, 'make' in the build directory, etc.
+   Then, run the TL tool 'reautoconf' in the top-level TL
+'Build/source/' directory, to incorporate the new program into the build
+tree.  It is good to then rebuild the whole tree (e.g., using TL's
+'Build/Build' script) to get all the necessary files generated.
 
-   After final success, don't forget to commit.
+   It will probably fail.  So then you need to keep at it until the
+program compiles and tests successfully.  The most efficient way is to
+rerun 'autoreconf' as needed in the new source directory
+('Build/source/.../newprog'), then 'make' in the corresponding build
+directory ('Build/work/.../newprog'), then 'make check', etc.  In the
+end, also make sure that the whole tree builds from scratch.
+
+   After final success, don't forget to commit.  (Or email the TL
+maintainers with the patch.)
+
+   Caveat: adding a new TeX engine is not completely different, but it's
+not all that similar, either.  In that case, the work is done inside a
+new subdirectory of 'texk/web2c/'.  Many things are common to all the
+engines, other things need to be copied and possibly modified for each
+one, yet others are unique to each.  No general recipe is possible.
 
 6.6.2 Adding a new generic library module
 -----------------------------------------

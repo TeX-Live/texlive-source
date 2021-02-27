@@ -81,46 +81,24 @@ following modules are supported:
 @item @code{text}
 @anchor{install-tl @code{text}}
 
-The text mode user interface (default on Unix systems).  Same as the
-@code{-no-gui} option.
+The text mode user interface (default on Unix systems, including Macs).
+Same as the @code{-no-gui} option.
 
-@item @code{tcl}
-@anchor{install-tl @code{tcl}}
+@item @code{tcl} (or "perltk" or "wizard" or "expert" or nothing)
+@anchor{install-tl @code{tcl} (or "perltk" or "wizard" or "expert" or nothing)}
 
-The Tcl/Tk user interface (default on Macs and Windows).  It starts
+The Tcl/Tk user interface (default on Windows).  It starts
 with a small number of configuration options, roughly equivalent
-to what the wizard option below offers, but a button @code{Advanced}
-takes you to a screen with roughly the same options as the @code{perltk}
-interface.
-
-@item @code{wizard}
-@anchor{install-tl @code{wizard}}
-
-The wizard mode user interface, asking only minimal questions before
-installing all of TeX Live.
-
-@item @code{expert}
-@anchor{install-tl @code{expert}}
-
-A generic name for, currently, @code{perltk}; it may select a different GUI
-in the future.
-
-@item @code{perltk}
-@anchor{install-tl @code{perltk}}
-
-The expert GUI installer, providing access to more options.
+to what the former wizard option offers, but a button @code{Advanced}
+takes you to a screen with roughly the same options as the former
+@code{perltk} interface.
 
 @end table
 
-The @code{perltk} and @code{wizard} modules require the Perl/Tk module
-(@url{https://tug.org/texlive/distro.html#perltk}). if Perl/Tk is not
-available, installation continues in text mode, except on Windows,
-where all gui options except @code{text} are diverted to the default
-@code{tcl} GUI.
-
-The @code{tcl} GUI requires Tcl/Tk. This is standard on Macs and is often
-already installed on GNU/Linux. For Windows, TeX Live provides a Tcl/Tk
-runtime.
+The default GUI requires Tcl/Tk. This is standard on Macs (although it
+is considered deprecated since Catalina) and is often already installed
+on GNU/Linux, or can be easily installed through a distro package
+manager. For Windows, TeX Live provides a Tcl/Tk runtime.
 
 @item @strong{-no-gui}
 @anchor{install-tl @strong{-no-gui}}
@@ -130,10 +108,8 @@ Use the text mode installer (default except on Windows and Macs).
 @item @strong{-lang} @emph{llcode}
 @anchor{install-tl @strong{-lang} @emph{llcode}}
 
-By default, the GUI tries to deduce your language from the
-environment. The Tcl GUI uses the language detection built into
-Tcl/Tk; the Perl/Tk GUIs use the @code{LC_MESSAGES} environment
-variable. If that fails you can select a different language by
+By default, the Tcl GUI uses the language detection built into
+Tcl/Tk. If that fails you can select a different language by
 giving this option with a language code (based on ISO 639-1).
 Currently supported (but not necessarily completely translated) are:
 English (en, default), Czech (cs), German (de), French (fr), Italian
@@ -165,8 +141,8 @@ will be adjusted accordingly.
 @anchor{install-tl @strong{-select-repository}}
 
 This option allows you to choose a particular mirror from the current
-list of active CTAN mirrors. This option is supported in the @code{text},
-@code{wizard} and @code{perltk} installer modes, and will also offer to install
+list of active CTAN mirrors. This option is supported in the @code{text}
+and @code{gui} installer modes, and will also offer to install
 from local media if available, or from a repository specified on the
 command line. It's useful when the (default) automatic redirection does
 not choose a good host for you.
@@ -199,9 +175,10 @@ building TeX Live, see @url{https://tug.org/texlive/build.html}.
 @item @strong{-debug-translation}
 @anchor{install-tl @strong{-debug-translation}}
 
-In the Perl/Tk GUI modes, this option reports any missing, or more
-likely untranslated, messages to standard error. Helpful for
-translators to see what remains to be done.
+In the former Perl/Tk GUI modes, this option reported any missing,
+or more likely untranslated, messages to standard error. Not yet
+implemented for the Tcl interface. Helpful for translators to see
+what remains to be done.
 
 @item @strong{-force-platform} @emph{platform}
 @anchor{install-tl @strong{-force-platform} @emph{platform}}
@@ -517,8 +494,8 @@ variables.
 
 Omit creating the ConTeXt cache.  This is useful for redistributors.
 
-@item @code{TEXLIVE_INSTALL_NO_IMPORT}
-@anchor{install-tl @code{TEXLIVE_INSTALL_NO_IMPORT}}
+@item @code{TEXLIVE_INSTALL_NO_RESUME}
+@anchor{install-tl @code{TEXLIVE_INSTALL_NO_RESUME}}
 
 Omit check for installing on top of a previous installation and then
 asking about importing previous settings.
@@ -528,6 +505,12 @@ asking about importing previous settings.
 
 Omit printing the welcome message after successful installation, e.g.,
 when testing.
+
+@item @code{TEXLIVE_INSTALL_PAPER}
+@anchor{install-tl @code{TEXLIVE_INSTALL_PAPER}}
+
+Set the default paper size for all relevant programs; must be either
+@code{letter} or @code{a4}. The default is @code{a4}.
 
 @item @code{TEXLIVE_INSTALL_PREFIX}
 @anchor{install-tl @code{TEXLIVE_INSTALL_PREFIX}}
@@ -573,5 +556,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: install-tl 54143 2020-03-06 23:51:18Z karl $
+$Id: install-tl 57970 2021-02-27 14:17:34Z siepo $
 

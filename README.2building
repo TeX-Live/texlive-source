@@ -87,8 +87,8 @@ invoked to build an individual program or library, first building any
 required libraries.
 
    Here is an example from start to finish for working on 'dvipdfm-x'.
-(Unfortunately, this does not suffice for building one, or a subset, of
-the TeX engines; see the next section.)
+(Unfortunately, this does not suffice for building the TeX engines; see
+the next section.)
 
      mkdir mydir && cd mydir  # new working directory
 
@@ -142,7 +142,7 @@ an older compiler lacking such support, you need to (re)move those
 source directories; specifying '--disable' for them does not suffice,
 unfortunately.  Specifically, before running 'configure':
 
-     rm -rf libs/icu libs/poppler libs/graphite2 texk/dvisvgm
+     rm -rf libs/icu libs/graphite2 texk/dvisvgm
 
    Also, even with '--disable-all-pkgs', dependencies are (currently)
 checked.  For instance, if a (non-MacOSX) system does not have
@@ -165,19 +165,31 @@ wanting to build one, or a subset, of the TeX engines (or other Web2c
 programs).
 
    The simplest way to do this is to disable everything and then
-explicitly specify what to make.  For example, to build only LuaTeX:
+explicitly specify what to make.  For example, to build only the
+original TeX:
 
-     ./configure --disable-all-pkgs  # or ./Build
-     cd Work/texk/web2c              # build directory
-     make luatex                     # specify target
+     cd Work        # top build directory
+     ../configure --without-x --disable-shared --disable-all-pkgs \
+                  --enable-tex --disable-synctex -C CFLAGS=-g CXXFLAGS=-g
+     make
+     cd texk/web2c  # cd engine build directory
+     make tex       # must specify target
 
-   This works because the 'make' automatically runs 'configure' as
-necessary for the dependencies and target.  Furthermore, the source tree
-can be cut down to just what is needed for the given engine (the
-separate pdfTeX and LuaTeX source repositories do this, if you want to
-peruse examples).
+   The first 'make' run will configure everything, and even build the
+libraries, even though the packages are disabled.  The source tree can
+be cut down to just what is needed for the given engine (the separate
+pdfTeX and LuaTeX source repositories do this, for example), but see
+caveats in previous section.
 
-   We hope to improve the situation in the future.  Patches are welcome.
+   If you want to debug an X-related program or shared library setup, or
+other variants, change the 'configure' options accordingly.  Either
+'../Build' or '../configure' can be run.
+
+   Then it is necessary to again specify the target engine ('tex', in
+the above) in the 'make'.
+
+   All this is somewhat unfortunate.  We hope to improve the situation
+in the future.  Patches are welcome.
 
 4.7 Cross compilation
 =====================

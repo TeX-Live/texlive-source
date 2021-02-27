@@ -244,6 +244,14 @@ necessarily completely translated) are: @w{English (en, default)},
 
 tlshell shares its message catalog with tlmgr.
 
+@item @strong{--command-logfile} @emph{file}
+@anchor{tlmgr @strong{--command-logfile} @emph{file}}
+
+@code{tlmgr} logs the output of all programs invoked (mktexlr, mtxrun, fmtutil,
+updmap) to a separate log file, by default
+@code{TEXMFSYSVAR/web2c/tlmgr-commands.log}.  This option allows you to specify a
+different file for the log.
+
 @item @strong{--debug-translation}
 @anchor{tlmgr @strong{--debug-translation}}
 
@@ -832,21 +840,36 @@ is available in a remote repository using
 @anchor{tlmgr @strong{--data @code{item1@comma{}item2@comma{}...}}}
 
 If the option @code{--data} is given, its argument must be a comma separated
-list of field names from: @code{name}, @code{category}, @code{localrev}, @code{remoterev},
-@code{shortdesc}, @code{longdesc}, @code{installed}, @code{size}, @code{relocatable}, @code{depends},
-@code{cat-version}, @code{cat-date}, or @code{cat-license}. In this case the requested
-packages' information is listed in CSV format one package per line, and the
-column information is given by the @code{itemN}. The @code{depends} column contains
-the name of all dependencies separated by @code{:}.
+list of field names from: @code{name}, @code{category}, @code{localrev},
+@code{remoterev}, @code{shortdesc}, @code{longdesc}, @code{installed}, @code{size},
+@code{relocatable}, @code{depends}, @code{cat-version}, @code{cat-date}, @code{cat-license},
+plus various @code{cat-contact-*} fields (see below).
+
+The @code{cat-*} fields all come from the TeX Catalogue
+(@url{https://ctan.org/pkg/catalogue}). For each, there are two more
+variants with prefix @code{l} and @code{r}, e.g., @code{lcat-version} and
+@code{rcat-version}, which indicate the local and remote information,
+respectively. The variants without @code{l} and @code{r} show the most current
+one, which is normally the remote value.
+
+The requested packages' information is listed in CSV format, one package
+per line, and the column information is given by the @code{itemN}. The
+@code{depends} column contains the names of all the dependencies separated
+by @code{:} characters.
+
+At this writing, the @code{cat-contact-*} fields include: @code{home},
+@code{repository}, @code{support}, @code{bugs}, @code{announce}, @code{development}. Each
+may be empty or a url value. A brief description is on the CTAN upload
+page for new packages: @url{https://ctan.org/upload}.
 
 @item @strong{--json}
 @anchor{tlmgr @strong{--json} 1}
 
-In case @code{--json} is specified, the output is a
-JSON encoded array where each array element is the JSON representation of
-a single @code{TLPOBJ} but with additional information. For details see
-@code{tlpkg/doc/JSON-formats.txt}, format definition: @code{TLPOBJINFO}.
-If both @code{--json} and @code{--data} are given, @code{--json} takes precedence.
+In case @code{--json} is specified, the output is a JSON encoded array where
+each array element is the JSON representation of a single @code{TLPOBJ} but
+with additional information. For details see
+@code{tlpkg/doc/JSON-formats.txt}, format definition: @code{TLPOBJINFO}. If both
+@code{--json} and @code{--data} are given, @code{--json} takes precedence.
 
 @end table
 
@@ -1842,12 +1865,12 @@ If the package on the server is older than the package already installed
 (e.g., if the selected mirror is out of date), @code{tlmgr} does not
 downgrade.  Also, packages for uninstalled platforms are not installed.
 
-@code{tlmgr} saves a copy of the @code{texlive.tlpdb} file used for an update
-with a suffix representing the repository url, as in
-@code{tlpkg/texlive.tlpdb.}@emph{long-hash-string}.  These can be useful for
-fallback information, but if you don't like them accumulating (e.g.,
-@code{mirror.ctan.org} resolves to many different hosts, each resulting in
-a possibly different hash), it's harmless to delete them.
+@code{tlmgr} saves one copy of the main @code{texlive.tlpdb} file used for an
+update with a suffix representing the repository url, as in
+@code{tlpkg/texlive.tlpdb.main.}@emph{long-hash-string}. Thus, even when many
+mirrors are used, only one main @code{tlpdb} backup is kept. For non-main
+repositories, which do not generally have (m)any mirrors, no pruning of
+backups is done.
 
 This action does not automatically add or remove new symlinks in system
 directories; you need to run @code{tlmgr} @ref{tlmgr path,, path} yourself if you are using
@@ -1896,6 +1919,9 @@ The allowed keys are:
 
 @item @code{require-verification}, value 0 or 1 (default 0), same as command-line option.
 @anchor{tlmgr @code{require-verification}@comma{} value 0 or 1 (default 0)@comma{} same as command-line option.}
+
+@item @code{tkfontscale}, value any float. Controls the scaling of fonts in the Tk based frontends.
+@anchor{tlmgr @code{tkfontscale}@comma{} value any float. Controls the scaling of fonts in the Tk based frontends.}
 
 @item @code{update-exclude}, value: comma-separated list of packages (no space allowed). Same as the command line option @code{--exclude} for the action @code{update}.
 @anchor{tlmgr @code{update-exclude}@comma{} value: comma-separated list of packages (no space allowed). Same as the command line option @code{--exclude} for the action @code{update}.}
@@ -2738,5 +2764,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 54118 2020-03-05 22:27:22Z karl $
+$Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
 

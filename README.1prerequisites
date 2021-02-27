@@ -15,9 +15,9 @@ notably FreeType; all the TL-maintained directories (and
 Automake/Autoconf output in general) work with any reasonable 'make'.
 
    A C++11 compiler is similarly required because of the third-party
-libraries ICU and Poppler; the program 'dvisvgm' also requires C++11.
-It is possible to build everything else with older compilers, but you
-have to remove the C++11-dependent sources.  *Note Build one package::.
+library ICU; the program 'dvisvgm' also requires C++11.  It is possible
+to build everything else with older compilers, but you have to remove
+the C++11-dependent sources.  *Note Build one package::.
 
    A few programs in the tree have additional requirements:
 
