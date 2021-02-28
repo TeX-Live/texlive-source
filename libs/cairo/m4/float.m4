@@ -30,10 +30,13 @@ double d = 909042349670368103374704789055050114762116927356156320147971208440534
 
 ]])], [
 
-if strings - conftest.$ac_objext | grep noonsees >/dev/null ; then
+# allow users to override default 'strings' with 'llvm-strings'
+# or ${CHOST}-strings.
+AC_CHECK_TOOL([STRINGS], [strings])
+if $STRINGS - conftest.$ac_objext | grep noonsees >/dev/null ; then
   ax_cv_c_float_words_bigendian=yes
 fi
-if strings - conftest.$ac_objext | grep seesnoon >/dev/null ; then
+if $STRINGS - conftest.$ac_objext | grep seesnoon >/dev/null ; then
   if test "$ax_cv_c_float_words_bigendian" = unknown; then
     ax_cv_c_float_words_bigendian=no
   else
