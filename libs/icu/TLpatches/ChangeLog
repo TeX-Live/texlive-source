@@ -1,6 +1,12 @@
+2021-03-01  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	* patch-24-simulator: new patch.
+	https://github.com/unicode-org/icu/pull/1608
+	https://unicode-org.atlassian.net/browse/ICU-21513
+
 2020-01-13  Karl Berry  <karl@freefriends.org>
 
-	* patch-04-data-makefile: new Makefilepatch needed on Solaris
+	* patch-04-data-makefile: new Makefile patch needed on Solaris
 	found by Mojca, from:
 	https://unicode-org.atlassian.net/browse/ICU-20852
 
