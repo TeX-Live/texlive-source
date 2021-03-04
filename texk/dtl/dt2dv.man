@@ -1,7 +1,10 @@
 .\" This file is public domain.
 .\" Originally written 1995, Geoffrey Tobin.
-.\" The author has expressed the hope that any modification will retain enough content to remain useful. He would also appreciate being acknowledged as the original author in the documentation.
-.\" This declaration added 2008/11/14 by Clea F. Rees with the permission of Geoffrey Tobin.
+.\" The author has expressed the hope that any modification will
+.\" retain enough content to remain useful.  He would also appreciate being
+.\" acknowledged as the original author in the documentation.
+.\" This declaration added 2008/11/14 by Clea F. Rees with the
+.\" permission of Geoffrey Tobin.
 .\" ====================================================================
 .\"  @Troff-man-file{
 .\"     author          = "Nelson H. F. Beebe and Geoffrey R. D. Tobin",
@@ -48,8 +51,8 @@ dt2dv \- convert a DTL text representation of a TeX DVI file to a binary DVI fil
 .RB [ \-group ]
 .RB [ \-si ]
 .RB [ \-so ]
-.I [input-DTL-file]
-.I [output-DVI-file]
+.RI [ input-DTL-file ]
+.RI [ output-DVI-file ]
 .PP
 In the absence of the
 .B \-si
@@ -57,9 +60,9 @@ and
 .B \-so
 options,
 both file arguments are
-.IR required
+.I required
 in the order
-.B input-DTL-file output-DVI-file .
+.BR "input-DTL-file output-DVI-file" .
 But also see the OPTIONS section below.
 No default file extensions are supplied.
 .\"======================================================================
@@ -68,7 +71,8 @@ No default file extensions are supplied.
 converts a text representation of a \*(Te\& DVI
 file, usually produced by the companion
 .BR dv2dt (1)
-utility, back to a binary DVI file. DTL
+utility, back to a binary DVI file.
+DTL
 .RI ( "DVI Text Language" )
 files can be edited, with care, and then restored
 to DVI form for processing by any \*(Te\& DVI
@@ -84,7 +88,7 @@ not well-suited for conversion back to a DVI file.
 .PP
 The format of \*(Te\& DVI files is fully described
 in
-Donald E. Knuth,
+Donald E.\& Knuth,
 .IR "\*(Te\&: The Program" ,
 Addison-Wesley (1986), ISBN 0-201-13437-3, as well
 as in the
@@ -147,7 +151,7 @@ Email: <G.Tobin@ee.latrobe.edu.au>
 These manual pages were written primarily by
 .RS
 .nf
-Nelson H. F. Beebe, Ph.D.
+Nelson H.\& F.\& Beebe, Ph.D.
 Center for Scientific Computing
 Department of Mathematics
 University of Utah

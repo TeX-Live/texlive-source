@@ -1,3 +1,8 @@
+2021-03-04  Karl Berry  <karl@freefriends.org>
+
+	* gftodvi.man: font and spacing fixes from Debian.
+	Add tex-k as bug reporting address.
+
 2021-02-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man: CWEB 4.2 release.
