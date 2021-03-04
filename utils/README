@@ -64,7 +64,7 @@ mkdir $clisp_toolsdir
 
 wget=wget  # or "curl -O" or whatever
 
-libsigsegv_ver=libsigsegv-2.12
+libsigsegv_ver=libsigsegv-2.13
 cd $clisp_basedir
 $wget http://ftp.gnu.org/gnu/libsigsegv/$libsigsegv_ver.tar.gz
 gzip -dc $libsigsegv_ver.tar.gz | tar xf -
@@ -108,13 +108,19 @@ cd $clisp_ver
 #  modules/syscalls/configure.orig > modules/syscalls/configure
 # On FreeBSD/amd64: add --disable-mmap.
 #
+# Do not link with ncurses, we don't need it and versions differ.
+ac_cv_search_tgetent=" "; export ac_cv_search_tgetent
+#
 ./configure CPPFLAGS=-DUNIX_BINARY_DISTRIB --prefix=$clisp_toolsdir \
-  --without-readline --without-dynamic-modules --without-termcap-ncurses \
+  --without-readline --without-dynamic-modules \
   --disable-nls \
   --with-libsigsegv-prefix=$clisp_toolsdir \
   --with-libiconv-prefix=$clisp_toolsdir \
   $clisp_builddir \
 && (cd $clisp_builddir && make)
+
+Then the files we want are $clisp_builddir/lisp.run and lispinit.mem,
+to be installed as <tlbindir>/xindy.{run,mem}.
 
 There may be clisp test failures relating to sockets on some
 systems. Since xindy doesn't use sockets, we can ignore those for TL.

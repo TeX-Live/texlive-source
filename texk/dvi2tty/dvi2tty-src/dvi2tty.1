@@ -1,12 +1,12 @@
-.TH DVI2TTY 1 "13 November 1990"
+.TH DVI2TTY 1 "4 March 2021"
 .SH NAME
-dvi2tty \- preview a TeX DVI\-file on an ordinary ascii terminal
+dvi2tty \- preview a TeX DVI file on an ordinary ASCII terminal
 .SH SYNOPSIS
 .B dvi2tty
-[ options ] dvi\-file
+[ options ] dvifile
 .SH DESCRIPTION
 .I dvi2tty
-converts a TeX DVI\-file to a format that is appropriate for terminals
+converts a TeX DVI file to a format that is appropriate for terminals
 and line printers. The program is intended to be used for
 preliminary proofreading of TeX-ed documents.
 By default the output is directed to the terminal,
@@ -22,22 +22,22 @@ Since
 .I dvi2tty
 produces output for terminals and line printers the
 representation of documents is naturally quite primitive.
-In principle Font Changes are totally ignored, but
+In principle font changes are totally ignored, but
 .I dvi2tty
 recognizes
-a few mathematical and special symbols that can be be displayed on an
-ordinary ascii terminal, such as the '+' and '-' symbol.
+a few mathematical and special symbols that can be displayed on an
+ordinary ASCII terminal, such as the '+' and '-' symbol.
 .PP
 If the width of the output text requires more columns than fits
-in one line (c.f. the \-w option) it is broken into several lines by
+in one line (cf.\& the -w option) it is broken into several lines by
 .I dvi2tty
 although they will be printed as one line on regular TeX output
-devices (e.g. laser printers). To show that a broken line is really
+devices (e.g., laser printers). To show that a broken line is really
 just one logical line an asterisk (``*'') in the last position
 means that the logical line is continued on the next physical
 line output by
 .I dvi2tty.
-Such a continuation line is started with a a space and an asterisk
+Such a continuation line is started with a space and an asterisk
 in the first two columns.
 .PP
 Options may be specified in the environment variable DVI2TTY.
@@ -47,126 +47,123 @@ environment, will override the one from the environment.
 .B Options:
 .PP
 .TP
-.B \-o file
+.B -o file
 Write output to file ``file''.
 .TP
-.B \-p list
+.B -p list
 Print the pages chosen by list.
-Numbers refer to TeX\-page numbers (known as \\count0).
+Numbers refer to TeX page numbers (known as \ecount0).
 An example of format for list is ``1,3:6,8''
 to choose pages 1, 3 through 6 and 8.
 Negative numbers can be used exactly as in TeX,
-e g \-1 comes before \-4 as in ``\-p\-1:\-4,17''.
+e.g., \-1 comes before \-4 as in ``-p-1:-4,17''.
 .TP
-.B \-P list
-Like \-p except that page numbers refer to
-the sequential ordering of the pages in the dvi\-file.
+.B -P list
+Like -p except that page numbers refer to
+the sequential ordering of the pages in the dvi-file.
 Negative numbers don't make a lot of sense here...
 .TP
-.B \-w n
+.B -w n
 Specify terminal width
 .I n.
-Legal range 16\-132.
+Valid range 16\(en132.
 Default is 80. If your terminal has the
 ability to display in 132 columns it might
-be a good idea to use \-w132 and toggle the
+be a good idea to use -w132 and toggle the
 terminal into this mode as output will
 probably look somewhat better.
 .TP
-.B \-v
-Specify height of lines. Default value 450000. Allows to adjust linespacing.
+.B -v
+Specify height of lines. Default value 450000. Allows one to adjust linespacing.
 .TP
-.B \-q
+.B -q
 Don't pipe the output through a pager.
 This may be the default on some systems
 (depending on the whims of the person installing the program).
 .TP
-.B \-e n
+.B -e n
 This option can be used to influence the spacing between words.
-With a negative value the number of spaces 
+With a negative value the number of spaces
 between words becomes less, with a positive value it becomes more.
-\-e\-11 seems to worked well.
+-e-11 seems to worked well.
 .TP
-.B \-f
+.B -f
 Pipe through a pager, $PAGER if defined, or whatever the installer of
 the program compiled
 in (often ``more''). This may be the default, but it is still okay
 to redirect output with ``>'', the pager will not be used if output
 is not going to a terminal.
 .TP
-.B \-F
+.B -F
 Specify the pager program to be used.
-This overrides the $PAGER and the default pager.
+This overrides the $PAGER environment variable and the default pager.
 .TP
-.B \-Fprog
+.B -Fprog
 Use ``prog'' as program to pipe output into. Can be used to choose an
-alternate pager (e g ``-Fless'').
+alternate pager (e.g., ``-Fless'').
 .TP
-.B \-t
-\\tt fonts were used (instead of cm) to produce dvi file. (screen.sty
-is a powerfull mean to do that with LaTeX).
+.B -t
+\\tt fonts were used (instead of cm) to produce the dvi file.
 .TP
-.B \-a
+.B -a
 Dvi2tty normally tries to output accented characters. With the -a option,
 accented characters are output without the accent sign.
 .TP
-.B \-l
+.B -l
 Mark page breaks with the two-character sequence ``^L''. The default is
 to mark them with a form-feed character.
 .TP
-.B \-c
-Do not attempt to translate any characters (like the Scandinavion/latin1 mode)
+.B -c
+Do not attempt to translate any characters (like the Scandinavian/latin1 mode)
 except when running in tt-font.
 .TP
-.B \-u
+.B -u
 Toggle option to process certain latin1 characters. Use this if your output
-devices supports latin1 cahracters.
+devices supports latin1 characters.
 Note this may interfere with -s. Best not to use -u and -s together.
 .TP
-.B \-s
+.B -s
 Toggle option to process the special Scandinavian characters that on most (?)
-terminals in Scandinavia are mapped to ``{|}[\\]''.
+terminals in Scandinavia are mapped to ``{|}[\e]''.
 Note this may interfere with -u. Best not to use -u and -s together.
 .TP
-.B \-J
+.B -J
 Auto detect NTT JTeX, ASCII pTeX, and upTeX dvi format.
 .TP
-.B \-N
+.B -N
 Display NTT JTeX dvi.
 .TP
-.B \-A
+.B -A
 Display ASCII pTeX dvi.
 .TP
-.B \-U
+.B -U
 Display upTeX dvi.
 .TP
-.B \-Eenc
+.B -Eenc
 Set output Japanese encoding. The enc argument 'e', 's', 'j', and 'u'
 denotes EUC-JP, Shift_JIS, ISO-2022-JP, and UTF-8, respectively.
 .TP
-.B \-bdelim
+.B -bdelim
 Print the name of fonts when switching to it (and ending it). The delim
 argument is used to delimit the fontname.
 .SH FILES
-/bin/more \ \ \ \ 
-probably the default pager.
+.nr L1 \w'/bin/more \ \ \ \ '
+/bin/more\h'|\n(L1u'probably the default pager.
 .SH ENVIRONMENT
-PAGER \ \ \ \ \ \ \ \ \ \ \ \ 
-the pager to use.
+.\".nr L1 \w'DVI2TTY  '
+PAGER\h'|\n(L1u'the pager to use.
 .br
-DVI2TTY \ \ \ \ \ \ \ \ \ \ \ 
-can be set to hold command-line options.
+DVI2TTY\h'|\n(L1u'can be set to hold command-line options.
 .SH "SEE ALSO"
 TeX, dvi2ps
 .SH AUTHOR
-Original Pascal verion: Svante Lindahl, Royal Institute of Technology, Stockholm
+Original Pascal version: Svante Lindahl, Royal Institute of Technology, Stockholm
 .br
-Improved C version: Marcel Mol
+Improved C version: Marcel Mol, MESA Consulting
 .br
-marcel@mesa.nl, MESA Consulting
+Now maintained at https://github.com/t-tk/dvi2tty/releases.
 .SH BUGS
-Blanks between words get lost quite easy. This is less
+Blanks between words get lost quite easily. This is less
 likely if you are using a wider output than the default 80.
 .PP
 Only one file may be specified on the command line.
-

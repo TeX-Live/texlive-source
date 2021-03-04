@@ -1,4 +1,4 @@
-.TH DETEX 1 "12 August 1993" "Purdue University"
+.TH DETEX 1 "4 March 2021" "Purdue University"
 .SH NAME
 detex \- a filter to strip \fITeX\fP commands from a .tex file.
 .SH SYNOPSIS
@@ -72,7 +72,7 @@ environments.
 .PP
 The
 .B \-r
-option tries to naively replace $..$, $$..$$, \(..\) and \[..\]
+option tries to naively replace $..$, $$..$$, \\(..\\) and \\[..\\]
 with nouns and verbs (in particular, "noun" and "verbs")
 in a way that keeps sentences readable.
 .PP

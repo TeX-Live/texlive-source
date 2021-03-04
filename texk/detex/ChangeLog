@@ -1,3 +1,8 @@
+2021-03-04  Karl Berry  <karl@freefriends.org>
+
+	* detex-src/detex.man: double backslashes. From Debian via Norbert,
+	tldistro 3 Mar 2021 07:59:41.
+
 2020-12-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import opendetex-2.8.9.

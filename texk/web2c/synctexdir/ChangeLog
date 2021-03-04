@@ -1,3 +1,10 @@
+2021-03-04  Karl Berry  <karl@freefriends.org>
+
+	* synctex_scanner_new_with_output_file: don't warn to terminal
+	with _synctex_error when a file is missing.
+	code from https://gitlab.gnome.org/GNOME/evince/commit/678410e81d0c889f4db4e995ca451ed62b8a2eee
+	Debian bug #908964
+
 2019-10-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* synctex-p-rec.ch0, synctex-ep-rec.ch0: Fix \meaning\synctex
@@ -6,7 +13,7 @@
 
 2019-08-07  Akira Kakuto  <kakuto@w32tex.org>
 
-	* synctex.c: Improve support of non-ascii path names
+	* synctex.c: Improve support of non-ASCII path names
 	(Windows only).
 
 2018-10-25  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
