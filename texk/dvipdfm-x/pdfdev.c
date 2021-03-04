@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2021 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -1243,10 +1243,21 @@ pdf_dev_eop (void)
 static void
 print_fontmap (const char *font_name, fontmap_rec *mrec)
 {
+  char *p;
   if (!mrec)
     return;
 
   MESG("\n");
+
+/*
+  The extension ".pfb" is not needed for type1 fonts.
+  And the extension ".pfb" prohibits to call mktexpk with right
+  arguments when pdftex.map is used and when type1 is not found.
+  Thus we discard the extension ".pfb". 
+*/
+  p = strrchr(mrec->font_name, '.');
+  if (p && strcasecmp(p, ".pfb") == 0)
+    *p = '\0';
 
   MESG("fontmap: %s -> %s", font_name, mrec->font_name);
   if (mrec->enc_name)

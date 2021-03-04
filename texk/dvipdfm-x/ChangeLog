@@ -1,3 +1,11 @@
+2021-03-04  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdfdev.c: Fix to call mktexpk with correct arguments when
+	pdftex.map is used and type1 font is not found.
+	Reported by Igor Liferenko:
+	https://tug.org/pipermail/dvipdfmx/2021-March/000241.html
+	* configure.ac: Version 20210304.
+
 2021-02-12  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* dvi.c: Fix a bug (segfault) that current_font is not checked
