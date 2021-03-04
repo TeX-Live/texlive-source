@@ -1,5 +1,5 @@
 dnl Gregorio
-dnl Copyright (C) 2006-2019 The Gregorio Project (see CONTRIBUTORS.md)
+dnl Copyright (C) 2006-2021 The Gregorio Project (see CONTRIBUTORS.md)
 dnl
 dnl This file is part of Gregorio.
 dnl
@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[5.2.1],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
-FILENAME_VERSION="5_2_1"
+AC_INIT([gregorio],[6.0.0-beta2],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
+FILENAME_VERSION="6_0_0-beta2"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 MK=""

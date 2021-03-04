@@ -10,7 +10,7 @@ Create a [LaTeX](http://en.wikipedia.org/wiki/LaTeX) file that will produce the 
 
 Compile the LaTeX file with LuaLaTeX, you get your score in PDF! You can change the LaTeX file to include other scores, create booklets, books, etc.
 
-You can also try it online [here](http://dev.illuminarepublications.com/gregorio/).
+You can also try it online [here](http://dev.illuminarepublications.com/).
 
 ## Installation
 

@@ -1,5 +1,5 @@
-Changes applied to the gregorio-5.2.1 tree as obtained from:
-	CTAN/support/gregoriotex/gregorio-5.2.1.zip
+Changes applied to the gregorio source tree as obtained from:
+	CTAN/support/gregoriotex/gregorio-6.2.2-beta2.zip
 
 Remove:
 	Makefile.in
@@ -10,3 +10,4 @@ Remove:
 	contrib/TeXShop/Makefile.in
 	src/Makefile.in
 	src/config_.h.in
+	doc/ examples/ fonts/ tex/

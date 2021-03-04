@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2015-2019 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2015-2021 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -68,7 +68,7 @@
 VERSION=`head -1 .gregorio-version`
 FILEVERSION=`echo $VERSION | sed 's/\./_/g'`
 
-TEXFILES=(tex/gregoriotex*.tex tex/gsp-default.tex tex/gregoriotex*.lua
+TEXFILES=(tex/gregoriotex*.tex tex/gregoriotex*.lua
           tex/*.dat)
 LATEXFILES=(tex/gregorio*.sty)
 TTFFILES=(fonts/*.ttf)
@@ -76,15 +76,19 @@ DOCFILES=(doc/*.tex doc/*.lua doc/*.gabc doc/*.pdf doc/doc_README.md)
 EXAMPLEFILES=(examples/FactusEst.gabc examples/PopulusSion.gabc
               examples/main-lualatex.tex examples/debugging.tex)
 FONTSRCFILES=(greextra.sfd squarize.py convertsfdtottf.py gregall.sfd
-              gresgmodern.sfd fonts_README.md)
+              gresgmodern.sfd fonts_README.md grelaon.sfd stemsschemas.py
+              simplify.py)
 FONTSRCFILES=("${FONTSRCFILES[@]/#/fonts/}")
 FONTSRCFILES+=(fonts/*-base.sfd)
+TDSDOCFILES=(*.md)
+TDSSRCFILES=(gregorio-${VERSION}.tar.bz2)
 # Files which have been eliminated, or whose installation location have been
 # changed.  We will remove existing versions of these files in the target texmf
 # tree before installing.
 LEGACYFILES=(tex/luatex/gregoriotex/gregoriotex.sty
              tex/luatex/gregoriotex/gregoriosyms.sty
              tex/luatex/gregoriotex/gregoriotex-ictus.tex
+             tex/luatex/gregoriotex/gsp-default.tex
              fonts/truetype/public/gregoriotex/parmesan.ttf
              fonts/truetype/public/gregoriotex/parmesan-op.ttf
              fonts/source/gregoriotex/parmesan-base.sfd
@@ -107,6 +111,7 @@ RM=${RM:-rm}
 GENERATE_UNINSTALL=${GENERATE_UNINSTALL:-true}
 AUTO_UNINSTALL=${AUTO_UNINSTALL:-false}
 REMOVE_OLD_FILES=${REMOVE_OLD_FILES:-true}
+install_start=false
 
 arg="$1"
 case "$arg" in
@@ -167,6 +172,15 @@ UNINSTALL_SCRIPT="${TEXMFROOT}/${UNINSTALL_SCRIPT_DIR}/${UNINSTALL_SCRIPT_FILE}"
 
 function die {
     echo 'Failed.'
+    if $install_start
+    then
+        if [ -f ${UNINSTALL_SCRIPT} ]
+        then
+            echo "Cleaning up partial install"
+            source "${UNINSTALL_SCRIPT}"
+            rm "${UNINSTALL_SCRIPT}"
+        fi
+    fi
     exit 1
 }
 
@@ -175,6 +189,8 @@ function install_to {
     shift
     mkdir -p "${TEXMFROOT}/$dir" || die
     $CP "$@" "${TEXMFROOT}/$dir" || die
+
+    install_start=true
 
     if ${GENERATE_UNINSTALL}
     then
@@ -281,6 +297,13 @@ then
     echo "Making TDS-ready archive ${TDS_ZIP}."
     rm -f ${TDS_ZIP}
     (rm ${TEXMFROOT}/fonts/source/gregoriotex/gregorio-base.sfd ${TEXMFROOT}/fonts/source/gregoriotex/granapadano-base.sfd ) || die
+    install_to "doc/luatex/${NAME}/" "${TDSDOCFILES[@]}"
+    tar xf ${TDSSRCFILES[@]}
+    cd gregorio-$VERSION
+    zip -r ../gregorio-$VERSION.zip * --exclude=*.DS_Store*
+    cd ..
+    install_to "source/luatex/${NAME}/" "gregorio-$VERSION.zip"
+    rm -rf gregorio-$VERSION gregorio-$VERSION.zip
     (cd ${TEXMFROOT} && zip -9 ../${TDS_ZIP} -q -r .) || die
     rm -r ${TEXMFROOT} || die
 else

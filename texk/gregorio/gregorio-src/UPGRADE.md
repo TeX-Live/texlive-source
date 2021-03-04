@@ -4,7 +4,15 @@ This file contains instructions to upgrade to a new release of Gregorio.  These 
 
 ## Unreleased
 
+### Upright punctum inclinatum
+
 Gregorio will now use an "upright" punctum inclinatum shape for a series of unison punctum inclinatum notes over a given syllable.  When there is a single punctum inclinatum, Gregorio will use a heuristic to choose a shape.  In any of these cases, if the result is not satisfactory, especially in context with nearby syllables, you may select a different shape by using `0` (for the descending shape) or `1` (for the ascending shape) after the capitalized letter indicating the punctum inclinatum.  Forced selection of the upright shape is also possible by using `2` after the capitalized letter indicating the punctum inclinatum.
+
+### GABC escape character
+
+In GABC text, the dollar sign (`$`) is now an "escape character" which prevents any special interpretation of the single character which follows the `$`.  This allows you to put things like parentheses in text (use `$(`), but it also prevents other special interpretation of the character that follows (e.g., `$:` prevents auto-protrusion for the colon and `$-` prevents hyphenation handling of the dash).  In order to send a `$` to TeX, use `$$` to escape the dollar sign.
+
+If you had used the `$` for some reason in your GABC text, this change will break your score.  You will need to change all `$` in your text to `$$` to retain the old behavior.
 
 ## 5.1
 
@@ -285,7 +293,7 @@ The `gregorio` executable now uses the `.gtex` extension by default (instead of 
 
 ### Custom spacings
 
-If you are using custom spacings, please update the values of `interwordspacetext`, `intersyllablespacenotes` and `interwordspacenotes` to match their new definitions (in the comments in `gsp-default.tex`). Also note that `alterationspace` is now fixed and cannot take `plus` or `minus` values.
+If you are using custom spacings, please update the values of `interwordspacetext`, `intersyllablespacenotes` and `interwordspacenotes` to match their new definitions (in the comments in `gsp-sample.tex`). Also note that `alterationspace` is now fixed and cannot take `plus` or `minus` values.
 
 ### Euouae blocks
 
@@ -447,7 +455,7 @@ In version 2.4.2, an early version of the feature to auto-compile gabc score was
 
 ### Custom dimension changes
 
-If you use custom space definitions (`gsp-foo.tex`), the format have changed, and you must rewrite it completely. See the new `gsp-default.tex` for an example, and GregorioRef.pdf for documentation.
+If you use custom space definitions (`gsp-foo.tex`), the format have changed, and you must rewrite it completely. See the new `gsp-sample.tex` for an example, and GregorioRef.pdf for documentation.
 
 ### Color definition
 

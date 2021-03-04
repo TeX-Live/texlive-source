@@ -2,6 +2,43 @@
 All notable changes to this project will be documented in this file.
 As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). It follows [some conventions](http://keepachangelog.com/).
 
+## [Unreleased][develop]
+
+
+## [Unreleased][CTAN]
+
+
+## [6.0.0-beta2] - 2021-03-04
+
+
+
+
+## [6.0.0-beta1] - 2021-02-23
+### Fixed
+- Fixed some problem in 900_gregorio.xml (Scribus render frame tool).  First, the use of `filecontents` rather than `filecontents*` was leading to a comment header that made it impossible for Gregorio to find the gabc headers in the temporary score file.  Further, some of the indenting (which makes the file more human readable) was leading to errors in the formatting of the created files because they are processed in a way which handles whitespace differently from XML.  See [#1457](https://github.com/gregorio-project/gregorio/issues/1457).
+- `spacelinestext` is now based on the lyric font size instead of being a fixed distance.  As a result, large lyrics should no longer overlap with low notes.  See [#1261](https://github.com/gregorio-project/gregorio/issues/1261).
+- Added parenthesized figures for virgula (gabc: `` `?``), divisio minima (gabc: ` ,?`), flat (gabc: `x?`), natural (gabc: `y?`), and sharp (gabc: `#?`).  See [#1475](https://github.com/gregorio-project/gregorio/issues/1475).
+- Staff line thickness is now set in gsp-default.tex.  This corrects a problem with the staff lines changing thickness when the default spacing configuration is loaded while the staff size is something other than the default (17).  See [#1461](https://github.com/gregorio-project/gregorio/issues/1461).
+- Corrected interaction issues between text styles and ligatures.  The LaTeX commands like `\textit` insert italics correction, preventing ligatures being formed between their arguments if two occur sequentially.  On the other hand the switches like `\itshape` do not.  Since gregorio breaks up syllables around the vowel and then applies the formating commands to each part, this behavior showed up.  We switch to using the switches to avoid this (except for underlining, for which a switch does not exist).  We also fix this for color tags by loading `luacolor` which changes how the `\color` tag is implemented to allow ligatures to span groups.  See [#1444](https://github.com/gregorio-project/gregorio/issues/1444).
+- A reuse of a save register led to the `\hyphenpenalty` not being restored correctly at the end of the score.  All save registers are now clearly identified by when they are used so as to make it harder to accidentally use the wrong one.  See [posts on mailing list](https://groups.google.com/g/gregorio-users/c/u3LmnGYnhwU).
+- Fixed an overly specific find/replace in snippets that that led to `\par` being able to slip into the snippet file under certain circumstances (and there by causing compilation to fail).  See [#1497](https://github.com/gregorio-project/gregorio/issues/1497).
+- Updated to use iftex package (the sucessor to ifluatex).  See [#1481](https://github.com/gregorio-project/gregorio/issues/1481).
+
+### Added
+- Default spacings are now designated internal and thus always loaded.  `gsp-sample.tex` is added to the `doc` folder to show users how to create their own custom spacing configuration.  As part of this change, spacing configuration files no longer need to be complete.  Since the default configuration is always loaded at package startup, all needed penalties and spacings will be defined and the user's configuration file need only specify those whose value they wish to customize.  Addresses issues raised in [#1460](https://github.com/gregorio-project/gregorio/issues/1460).
+- Added additional message to verbose output of command-line tool to prevent confusion when a custom Latin vowel convention is found that the internal Latin rules will be used.  See [#1470](https://github.com/gregorio-project/gregorio/issues/1470).
+- Added `$` in gabc text to prevent special interpretation of the character that follows.  See [#1515](https://github.com/gregorio-project/gregorio/issues/1515)
+- GregorioTeX will now look in additional places for scores.  Users can specify paths to look in using `\gresetgregpath`.  If scores are not found in the current working directory or the list of provided paths, we fall back on kpse to try and find them.  See [#1395](https://github.com/gregorio-project/gregorio/issues/1395).
+- Added the ability to toggle the visibility of the translation and above lines text.  See [user request on mailing list](https://groups.google.com/g/gregorio-users/c/J-V0dkBMevY).
+
+### Changed
+- The space between a non-punctum inclinatum and the upright punctum inclinatum is renamed to uprightpunctuminclinatumshift.  This helps to better distinguish it from punctuminclinatumunisonshift (the space between two consecutive ascending or descending puncta inclinata on the same line).  See [#1507](https://github.com/gregorio-project/gregorio/issues/1507).
+- `noteadditionalspacelinestext` now calculates the actual amount of additional space needed by low notes.  To enable the old behavior (when `noteadditionalspacelinestext` is set by the user), use `\gresetnoteadditionalspacelinestext{manual}`.  See [#1521](https://github.com/gregorio-project/gregorio/issues/1521) and [#1526](https://github.com/gregorio-project/gregorio/pull/1526).
+
+### Removed
+- `\gresethyphenprotrusion{percentage}`, supplanted by `\gresetprotrusionfactor{eolhyphen}{factor}`.  Note that the value the new command takes is a factor rather than a percentage.
+
+
 ## [5.2.1] - 2019-04-06
 ### Fixed
 - Project names with quotes in them no longer cause GregorioTeX to not be able to find the executable.  See [#1416](https://github.com/gregorio-project/gregorio/issues/1416).

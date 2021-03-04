@@ -131,6 +131,7 @@ gregoriotex-syllable.tex
 gregoriotex-symbols.lua
 gregoriotex-symbols.tex
 gregoriotex-common.tex
+gregoriotex-gsp-default.tex
 gregoriotex.lua"
 
 for f in $files

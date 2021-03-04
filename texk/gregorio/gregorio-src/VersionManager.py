@@ -5,7 +5,7 @@
 
     See VersionUpdate.py -h for help
 
-    Copyright (C) 2015-2019 The Gregorio Project (see CONTRIBUTORS.md)
+    Copyright (C) 2015-2021 The Gregorio Project (see CONTRIBUTORS.md)
 
     This file is part of Gregorio.
 
@@ -65,6 +65,7 @@ GREGORIO_FILES = ["configure.ac",
                   "tex/gregoriotex-nabc.lua",
                   "tex/gregoriosyms.sty",
                   "tex/gregoriotex-common.tex",
+                  "tex/gregoriotex-gsp-default.tex",
                   "fonts/squarize.py",
                  ]
 COPYRIGHT_FILES = ["install-gtex.sh",
@@ -72,7 +73,7 @@ COPYRIGHT_FILES = ["install-gtex.sh",
                    "ctan_upload.sh",
                    "tex/gregoriotex-signs.tex",
                    "tex/gregorio-vowels.dat",
-                   "tex/gsp-default.tex",
+                   "tex/gregoriotex-gsp-default.tex",
                    "tex/gregoriotex-nabc.lua",
                    "tex/gregoriotex-symbols.lua",
                    "tex/gregoriotex-chars.tex",
@@ -109,6 +110,7 @@ COPYRIGHT_FILES = ["install-gtex.sh",
                    "doc/Gabc.tex",
                    "doc/GregorioRef.lua",
                    "doc/Appendix_Font_Tables.tex",
+                   "doc/gsp-sample.tex",
                    "VersionManager.py",
                    "coverage.sh",
                    "COPYING.md",
