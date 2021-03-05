@@ -6,21 +6,25 @@ See comments in ../texk/README.
 
 asymptote 2.69 - checked 2jan21
   update to TL from CTAN, to include prebuilt doc.
-  see http://tug.org/texlive/build.html#asymptote
+  see https://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
 autosp 2021-01-07 - checked 08jan21
-  http://ctan.org/pkg/autosp
+  https://ctan.org/pkg/autosp
+
+axodraw2 2.1.1c - checked 5mar21
+  https://ctan.org/pkg/axodraw2
+  (also has files in Master; ctan2tl will install)
 
 devnag - from devanagari package installed in texmf-dist.
 
 lacheck - maintained here, by us
 
 m-tx 0.63a - checked 29apr18
-  http://ctan.org/pkg/m-tx/
+  https://ctan.org/pkg/m-tx/
 
 pmx 2.9.4a - checked 30jan21
-  http://ctan.org/pkg/pmx/
+  https://ctan.org/pkg/pmx/
 
 ps2eps 1.68 - checked 10may12
   http://tm.uka.de/~bless/ps2eps
@@ -32,7 +36,7 @@ texdoctk - reluctantly maintained here in TL
   If anyone would like to resume development, just let us know.
   
 tpic2pdftex 1.97 - checked 10may12
-  http://ctan.org/pkg/tpic2pdftex/
+  https://ctan.org/pkg/tpic2pdftex/
 
 vlna 1.5 - checked 10may12
   ftp://math.feld.cvut.cz/pub/olsak/vlna/
@@ -40,7 +44,7 @@ vlna 1.5 - checked 10may12
 xindy - see just below
 
 xpdfopen 0.86 - checked 9jul18
-  http://ctan.org/pkg/xpdfopen/
+  https://ctan.org/pkg/xpdfopen/
   http://cs.acadiau.ca/~jdiamond/xpdfopen/
 
 
