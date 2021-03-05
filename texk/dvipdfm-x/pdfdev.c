@@ -1330,9 +1330,11 @@ pdf_dev_locate_font (const char *font_name, spt_t ptsize)
   arguments when pdftex.map is used and when type1 is not found.
   Thus we discard the extension ".pfb". 
 */
-  pp = strrchr(mrec->font_name, '.');
-  if (pp && strcasecmp(pp, ".pfb") == 0)
-    *pp = '\0';
+  if (mrec && mrec->font_name) {
+    pp = strrchr(mrec->font_name, '.');
+    if (pp && strcasecmp(pp, ".pfb") == 0)
+      *pp = '\0';
+  }
 
   if (dpx_conf.verbose_level > 1)
     print_fontmap(font_name, mrec);
