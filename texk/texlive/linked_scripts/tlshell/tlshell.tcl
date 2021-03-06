@@ -1,6 +1,8 @@
-#!/usr/bin/env wish
+#!/bin/sh
+# next line ignored by wish but not by sh \
+TK_SILENCE_DEPRECATION=1 exec wish "$0" "$@"
 
-# Copyright 2017-2020 Siep Kroonenberg
+# Copyright 2017-2021 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.

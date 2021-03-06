@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 57772 2021-02-17 19:01:36Z karl $
+# $Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 57772 $';
-my $datrev = '$Date: 2021-02-17 20:01:36 +0100 (Wed, 17 Feb 2021) $';
+my $svnrev = '$Revision: 57970 $';
+my $datrev = '$Date: 2021-02-27 15:17:34 +0100 (Sat, 27 Feb 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -21,7 +21,6 @@ $datrev =~ s/ \(.*$//;
 $tlmgrversion = "$tlmgrrevision ($datrev)";
 
 our $Master;
-our $ismain;
 our $loadmediasrcerror;
 our $packagelogfile;
 our $packagelogged;
@@ -41,12 +40,6 @@ END {
 
 BEGIN {
   $^W = 1;
-  $ismain = (__FILE__ eq $0);
-  # WARNING
-  # The only use anticipated for tlmgr.pl as library for the 2009 release
-  # is the Windows w32client prototype script.
-  # Unix-specific problems with use as library will probably go undetected.
-
   # make subprograms (including kpsewhich) have the right path:
   my $kpsewhichname;
   if ($^O =~ /^MSWin/i) {
@@ -61,14 +54,8 @@ BEGIN {
   } else {
     $Master = __FILE__;
     $Master =~ s,/*[^/]*$,,;
-    if ($ismain) {
-      $bindir = $Master;
-      $Master = "$Master/../..";
-    } else {
-      # for the time being, this code will not be used or tested
-      $Master = "$Master/../../..";
-      # no code yet for $bindir; would have to detect platform
-    }
+    $bindir = $Master;
+    $Master = "$Master/../..";
     # make subprograms (including kpsewhich) have the right path:
     $ENV{"PATH"} = "$bindir:$ENV{PATH}";
     $kpsewhichname = "kpsewhich";
@@ -374,7 +361,7 @@ my %globaloptions = (
   "version" => 1,
 );
 
-main() if $ismain;
+main();
 
 
 ### main ##################################################################
@@ -437,6 +424,12 @@ sub main {
     ddebug("$k => $opts{$k}\n");
   }
   ddebug("arguments: @ARGV\n") if @ARGV;
+
+  # prepare for loading of lang.pl which expects $::lang and $::opt_lang
+  $::opt_lang = $config{"gui-lang"} if (defined($config{"gui-lang"}));
+  $::opt_lang = $opts{"gui-lang"} if (defined($opts{"gui-lang"}));
+  require("TeXLive/trans.pl");
+  load_translations();
 
   if ($opts{"version"} || (defined $action && $action eq "version")) {
     if ($::machinereadable) {
@@ -10117,7 +10110,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 57772 2021-02-17 19:01:36Z karl $
+$Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
