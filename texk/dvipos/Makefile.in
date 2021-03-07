@@ -563,7 +563,7 @@ dist_man1_MANS = dvipos.1
 EXTRA_DIST = miktex.mak $(TESTS) tests/play.dvi tests/play.loc \
 	tests/play.pos tests/ptmr.tfm
 TESTS = dvipos.test
-DISTCLEANFILES = play.dvi play.loc play.pos
+DISTCLEANFILES = play.dvi play.loc play*.pos
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

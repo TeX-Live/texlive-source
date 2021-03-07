@@ -13,9 +13,7 @@ cp $srcdir/tests/play.dvi .
 ./dvipos -b -o play.loc play.dvi || exit 1
 diff play.loc $srcdir/tests/play.loc || exit 2
 
-if diff --ignore-matching-lines="Processing_data_and_time" play.pos play.pos; then
-  diff --ignore-matching-lines="Processing_data_and_time" play.pos $srcdir/tests/play.pos || exit 3
-else
-  echo Do not check difference of "play.pos"
-fi
+grep -v 'Processing_data_and_time' $srcdir/tests/play.pos > play_0.pos \
+  && grep -v 'Processing_data_and_time' play.pos > play_1.pos \
+  && diff play_0.pos play_1.pos || exit 3
 

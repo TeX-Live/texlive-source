@@ -37,5 +37,5 @@ EXTRA_DIST += $(TESTS)
 
 ## dvipos.test
 EXTRA_DIST += tests/play.dvi tests/play.loc tests/play.pos tests/ptmr.tfm
-DISTCLEANFILES = play.dvi play.loc play.pos
+DISTCLEANFILES = play.dvi play.loc play*.pos
 
