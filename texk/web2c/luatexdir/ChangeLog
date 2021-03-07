@@ -1,4 +1,7 @@
-2012-02-14 Luigi Scarso <luigi.scarso@gmail.com>
+2021-03-07 Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed inclusion of  PDF images with page /Metadata streams (M.F. Krüger)
+
+2021-02-14 Luigi Scarso <luigi.scarso@gmail.com>
     * callback for nesting level used in tracingmacros
 
 2021-02-01 Luigi Scarso <luigi.scarso@gmail.com>
