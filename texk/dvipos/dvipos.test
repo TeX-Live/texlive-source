@@ -8,7 +8,7 @@ TFMFONTS="$srcdir/tests"
 export TEXMFCNF TFMFONTS
 
 ## play.dvi has no "pos:" specials
-rm -rf play.*
+rm -rf play*.*
 cp $srcdir/tests/play.dvi .
 ./dvipos -b -o play.loc play.dvi || exit 1
 diff play.loc $srcdir/tests/play.loc || exit 2
