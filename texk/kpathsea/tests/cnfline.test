@@ -5,6 +5,10 @@
 
 cnf_dir=$srcdir/tests/cnfline
 
+# just in case they are set in the environment
+unset maxpr
+unset othervar
+
 # Just for fun, let's first try the --cnf-line feature to set TEXMFCNF.
 val=`./kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=othervar`
 test x"$val" = x300 || exit 1

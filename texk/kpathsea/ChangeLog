@@ -1,3 +1,12 @@
+2021-03-08  Karl Berry  <karl@freefriends.org>
+
+	* tests/cnfline/texmf.cnf (maxpr.lt-kpsewhich): set this,
+	for --enable-shared builds.
+	https://tug.org/pipermail/tex-k/2021-March/003490.html
+	* tests/cnfline.test: unset maxpr othervar, just in case
+	they are set in the environment. Maybe unset on an unset variable
+	is portable enough nowadays?
+
 2021-02-17  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi,

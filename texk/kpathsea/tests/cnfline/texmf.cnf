@@ -1,5 +1,14 @@
 # $Id$
 # Public domain. This tiny texmf.cnf is for kpathsea/tests/cnfline.test. 
 maxpr=100
+
+# static build:
 maxpr.kpsewhich=200
+
+# with --enable-shared (libtool) build, the binary has a different name.
+# although we could also work around this by specifying --progname in
+# cnfline.test, one goal of the test is to check what happens when
+# --progname is not specified.
+maxpr.lt-kpsewhich=200
+
 othervar=300
