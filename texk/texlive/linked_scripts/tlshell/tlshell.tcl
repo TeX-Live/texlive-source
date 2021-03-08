@@ -1,6 +1,8 @@
 #!/bin/sh
 # next line ignored by wish but not by sh \
 TK_SILENCE_DEPRECATION=1 exec wish "$0" "$@"
+# The above environment variable is set to suppress
+# a warning message under MacOS Catalina and Big Sur
 
 # Copyright 2017-2021 Siep Kroonenberg
 
@@ -2269,12 +2271,20 @@ proc run_external {cmd mess} {
 }
 
 proc about_cmd {} {
-  set msg "\u00a9 2017-2020 Siep Kroonenberg\n\n"
+  set msg "\u00a9 2017-2021 Siep Kroonenberg\n\n"
   append msg [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]
   tk_messageBox -message $msg
 }
 
-proc show_help {} {
+proc tlshell_help {} {
+  set msg \
+      [__ "This TeX Live Manager front-end should be pretty self-explanatory.
+Note that it does not cover the full functionality of tlmgr. Notably, it does not cover user mode or backup and restore.
+Consult the 'Tlmgr Help' menu for full documentation on tlmgr itself."]
+  tk_messageBox -message $msg
+}
+
+proc tlmgr_help {} {
   set ::env(NOPERLDOC) 1
   long_message [exec tlmgr --help] ok
 }
@@ -2432,7 +2442,8 @@ proc populate_main {} {
   .mn add cascade -label [__ "Help"] -menu .mn.help -underline 0
   menu .mn.help
   .mn.help add command -label [__ "About"] -command about_cmd
-  .mn.help add command -label [__ "tlmgr help"] -command show_help
+  .mn.help add command -label [__ "TLShell Help"] -command tlshell_help
+  .mn.help add command -label [__ "Tlmgr Help"] -command tlmgr_help
 
   ## menu end
 

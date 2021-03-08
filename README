@@ -32,38 +32,45 @@ aarch64-linux:
   gcc (Debian 8.3.0-6) 8.3.0
   ./Build --enable-arm-neon=check
 
+armhf-linux:
+  Raspbian/Raspberry Pi OS (Debian Buster)
+  gcc (Raspbian 8.3.0-6+rpi1) 8.3.0
+  ./Build --enable-xindy CLISP=${BUILD_ROOT_DIR}/clisp/clisp-build/clisp}
+
+i386-cygwin, x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
+  TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
+    LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
+  ./Build
+  
+
+i386-freebsd, amd64-freebsd:
+  Built on contextgarden, see below.
+  FreeBSD 11.4
+
+i386-linux: see travis below.
+
 i386-netbsd, amd64-netbsd:
-  NetBSD/amd64 9.0
-  gcc version 7.4.0 (nb3 20190319)
+  NetBSD/amd64 9.1
+  gcc version 7.5.0 (nb4 20200810)
     TL_MAKE=gmake CC=gcc CXX=g++ \
     CFLAGS=-D_NETBSD_SOURCE \
     CXXFLAGS='-D_NETBSD_SOURCE -std=c++11' \
     LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
-  Except that we take Nelson's asy build.
-
-i386-freebsd, amd64-freebsd:
-  Built on contextgarden, see below.
-  FreeBSD 11.4
-  Except that we take Nelson's asy build.
-
-i386-linux: see travis below.
-
-i386-openbsd, amd64-openbsd:
-  e.g., see CONFIGURE_ARGS in the Makefile in
-  http://cvsweb.openbsd.org/cgi-bin/cvsweb/ports/print/texlive/base/
 
 i386-solaris, x86_64-solaris:
   Built on contextgarden, see below.
   Solaris 10, gcc 5.5.  See doc/README.solaris.
 
-i386-cygwin, x86_64-cygwin: gcc-4.8.2, cygwin-1.7.29.
-  ./Build (with --enable-xindy for i386).
-
 universal-darwin: See Master/source/mactexdoc.tar.xz.
+
+win32:
+  Makefiles written by hand, see Master/source/w32tex-src.tar.xz.
+  Visual Studio 2010 and Visual Studio 2015.
 
 x86_64-darwinlegacy:
   Mac OS X 10.6, clang 5.0, libc++ required
+  auxiliary installer binaries: Mac OS X 10.6, gcc -std=c99.
   https://github.com/TeXLive-M/texlive-buildbot
   http://build.contextgarden.net/waterfall?tag=c/texlive
   (These links have info on all platforms built by Mojca.)

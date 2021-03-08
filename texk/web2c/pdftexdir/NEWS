@@ -1,6 +1,7 @@
+pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021)
 - changes:
   - new primitives \pdfrunninglinkoff and \pdfrunninglinkon; e.g., for
-    turning off generation of links in headers and footers.
+    disabling generation of links in headers and footers.
   - warn instead of aborting when "\pdfendlink ended up in
     different nesting level than \pdfstartlink". 
   - dump \pdfglyphtounicode assignments in fmt file.
@@ -10,7 +11,7 @@
   - avoid crash in unusual autoexpand cases.
 
 - source: poppler support removed, as it was too hard to keep in sync
-  with upstream. For native TL, pdftex has always used libs/xpdf,
+  with upstream. In native TL, pdftex has always used libs/xpdf,
   which is cut-down and adapted code from xpdf.
 
 pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020) (March 27, 2020)
