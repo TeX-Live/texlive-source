@@ -1,3 +1,9 @@
+2021-03-08  Karl Berry  <karl@tug.org>
+
+	* doc/glue.web,
+	* doc/webman.tex: add these Knuth files here, since nowhere
+	else seems better. PDF output for them is in the knuth page.
+
 2021-02-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
