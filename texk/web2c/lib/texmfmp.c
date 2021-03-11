@@ -610,8 +610,18 @@ runsystem (const char *cmd)
 
   if (allow == 1)
     status = system (cmd);
-  else if (allow == 2)
+  else if (allow == 2) {
+/*
+  command including a character '|' is not allowed in
+  restricted mode for security.
+*/
+    size_t k;
+    for (k = 0; k < strlen (safecmd); k++) {
+      if (safecmd[k] == '|')
+        return 0;
+    }
     status =  system (safecmd);
+  }
 
   /* Not really meaningful, but we have to manage the return value of system. */
   if (status != 0)

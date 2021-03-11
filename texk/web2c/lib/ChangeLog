@@ -1,3 +1,8 @@
+2021-03-12  Akira Kakuto  <kakuto@w32tex.org>
+
+	* texmfmp.c: Disable commands containing a character '|' for
+	write18 in restricted mode for security.
+
 2021-01-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	* printversion.c: Update copyright year.
