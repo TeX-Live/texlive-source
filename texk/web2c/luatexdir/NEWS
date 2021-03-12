@@ -1,5 +1,5 @@
 ==============================================================
-LuaTeX 1.13.0 2021-02-18
+LuaTeX 1.13.0 2021-03-12
 ==============================================================
 
 This is the release for TeX live 2021.
@@ -10,6 +10,7 @@ Two TeX January 2021 DEK buglet fixes (H.Hagen)
 Mark math glyphs as protected (in order to prevent processing
 as text in base mode).
 Removed width/ic compensation for traditional math code path.
+When restricted system commands is enabled  os.setenv has no effect.
 Minor clean-up and bugs fixed (see ChangeLog)
 
 

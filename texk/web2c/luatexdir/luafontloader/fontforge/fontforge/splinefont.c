@@ -246,6 +246,12 @@ char *Decompress(char *name, int compression) {
     char buf[1500];
     char *tmpfile;
 
+    if (   strchr(name,'$') || strchr(name,'!') || strchr(name,'*') || strchr(name,'?')
+        || strchr(name,'[') || strchr(name,'[') || strchr(name,']') || strchr(name,']') 
+        || strchr(name,';') || strchr(name,'&') || strchr(name,'>') || strchr(name,'<')
+        || strchr(name,'`') || strchr(name,'"') || strchr(name,'|') || strchr(name,'\'')
+        || strchr(name,'\\')) 
+return( NULL );
     if ( dir==NULL ) dir = P_tmpdir;
     tmpfile = galloc(strlen(dir)+strlen(GFileNameTail(name))+2);
     strcpy(tmpfile,dir);
@@ -253,9 +259,9 @@ char *Decompress(char *name, int compression) {
     strcat(tmpfile,GFileNameTail(name));
     *strrchr(tmpfile,'.') = '\0';
 #if defined( _NO_SNPRINTF ) || defined( __VMS )
-    sprintf( buf, "%s < %s > %s", compressors[compression].decomp, name, tmpfile );
+    sprintf( buf, "%s < \"%s\" > \"%s\"", compressors[compression].decomp, name, tmpfile );
 #else
-    snprintf( buf, sizeof(buf), "%s < %s > %s", compressors[compression].decomp, name, tmpfile );
+    snprintf( buf, sizeof(buf), "%s < \"%s\" > \"%s\"", compressors[compression].decomp, name, tmpfile );
 #endif
     if ( system(buf)==0 )
 return( tmpfile );

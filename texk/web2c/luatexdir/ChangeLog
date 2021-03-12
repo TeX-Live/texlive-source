@@ -1,3 +1,7 @@
+2021-03-12 Luigi Scarso <luigi.scarso@gmail.com>
+    * When restricted system commands is enabled  os.setenv has no effect
+    * Patched  Decompress to avoid execution of arbitrary commands
+
 2021-03-07 Luigi Scarso <luigi.scarso@gmail.com>
     * Fixed inclusion of  PDF images with page /Metadata streams (M.F. Krüger)
 
