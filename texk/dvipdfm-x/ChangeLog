@@ -1,3 +1,8 @@
+2021-03-14  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvipdfmx.c: Do not allow directory separators in an optarg
+	in an option -i optarg for security reason.
+
 2021-03-05  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pdfdev.c: Correct the incomplete fix on 2021-03-04.
