@@ -1,5 +1,5 @@
 Changes applied to the gregorio source tree as obtained from:
-	CTAN/support/gregoriotex/gregorio-6.2.2-beta2.zip
+	CTAN/support/gregoriotex/gregorio-6.0.0.zip
 
 Remove:
 	Makefile.in

@@ -1,3 +1,8 @@
+2021-03-14  Karl Berry  <karl@tug.org>
+
+	* Import gregorio-6.0.0.
+	* version.ac: Adapted.
+
 2021-03-04  Karl Berry  <karl@tug.org>
 
 	* Import gregorio-6.0.0-beta2.
