@@ -636,7 +636,7 @@ canonicalize_path(const char *path)
 }
 
 /* Escape all of the following characters in str:
-   ` \ ; ( )
+   ` \ ; ( ) &
    making it safe to pass str to a shell. Return result in a newly
    allocated string, which the caller is responsible to free() after use.
 */
@@ -653,6 +653,7 @@ shell_escape_string(const char *str)
 	    || *src_ptr == '`'
 	    || *src_ptr == '('
 	    || *src_ptr == ')'
+	    || *src_ptr == '&'
 	    || *src_ptr == ';') {
 #if 0
 	    /* only if not yet escaped? */
