@@ -1493,7 +1493,6 @@ proc platforms_select {} {
   .tlpl.pl column stat -width [expr {$::cw * 3}]
   .tlpl.pl heading plat -text [__ "platform"] -anchor w
   .tlpl.pl column plat -width [expr {$::cw * 20}]
-
   # tag for indicating changed entries
   .tlpl.pl tag configure "changed" -font bfont
 
@@ -1504,6 +1503,7 @@ proc platforms_select {} {
     .tlpl.pl insert {} end -id $pname -values \
         [list [mark_sym [dict get $::platforms $pname "cur"]] $pname]
   }
+  set_tree_col_width .tlpl.pl "plat"
 
   bind .tlpl.pl <space> {toggle_pl_marked [.tlpl.pl focus] "#1"}
   bind .tlpl.pl <Return> {toggle_pl_marked [.tlpl.pl focus] "#1"}
@@ -1573,16 +1573,16 @@ proc commit_papers {} {
 }
 
 proc papersize_advanced {} {
-  # dialog for settings papersize for:
+  # dialog for settings paper size for:
   # all | pdftex | dvipdfmx | context | dvips | psutils | xdvi
   # on windows, xdvi is omitted
-  # we also insert a non-existent engine to test handling of missing entries
   # we could have handled papers somewhat like the platforms dialog,
   # but radio buttons seem more natural,
   # and there are not enough items to worry about scrollability.
   # we create a grid with the radio buttons and a column 'changed'.
 
-  set ::papers(dummy) "" ; # dummy: see comment above
+  ## a non-existent engine 'dummy' to test handling of missing entries
+  #set ::papers(dummy) ""
   foreach nm {"pdftex" "dvipdfmx" "context" "dvips" "psutils" "xdvi"} {
     set ::papers($nm) ""
   }
@@ -1610,7 +1610,7 @@ proc papersize_advanced {} {
   }
   set nms [array names ::papers] ; # invalid names have now been weeded out
   if {[llength $nms] < 1} {
-    tk_messageBox -title [__ "Error"] -message [__ "No papersizes available"]
+    tk_messageBox -title [__ "Error"] -message [__ "No paper sizes available"]
     # we did not yet start building the dialog, so we can just:
     return
   }
@@ -1634,8 +1634,8 @@ proc papersize_advanced {} {
   pack [ttk::frame .tlpap.radios] -in .tlpap.bg
 
   foreach {p c} {"a4" 1 "letter" 2} {
-    pgrid [ttk::label .tlpap.radios.head$p -text $p -font bfont] \
-        -row 0 -column $c
+    pgrid [ttk::label .tlpap.radios.head$p \
+               -text [string totitle $p] -font bfont] -row 0 -column $c
   }
   grid [ttk::separator .tlpap.radios.sep0 -orient horizontal] \
       -row 1 -column 0 -columnspan 3 -sticky ew
@@ -2387,7 +2387,7 @@ proc populate_main {} {
   .mn.opt add cascade -label [__ "Paper ..."] -menu .mn.opt.paper
   incr inx
   menu .mn.opt.paper
-  foreach p {a4 letter} {
+  foreach p {A4 Letter} {
     .mn.opt.paper add command -label $p -command \
         "set_all_papers [string tolower $p]"
   }
@@ -2635,6 +2635,7 @@ proc populate_main {} {
   .pkglist heading remoterev -text [__ "Remote rev. (ver.)"] -anchor w
   .pkglist heading shortdesc -text [__ "Description"] -anchor w
   .pkglist column mk -width [expr {$::cw * 3}] -stretch 0
+  # column widths are resizable: no need to accommodate the longest names
   .pkglist column name -width [expr {$::cw * 25}] -stretch 1
   .pkglist column localrev -width [expr {$::cw * 18}] -stretch 0
   .pkglist column remoterev -width [expr {$::cw * 18}] -stretch 0
