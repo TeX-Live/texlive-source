@@ -1,3 +1,16 @@
+2021-03-14  Karl Berry  <karl@freefriends.org>
+
+	* string-utils.c (shell_escape_string): escape other shell
+	metacharacters and whitespace.
+
+2021-03-12  Norbert Preining  <norbert@preining.info>
+
+	* string-utils.c (shell_escape_string): also escape &.
+
+2021-03-14  Norbert Preining  <norbert@preining.info>
+
+	* string-utils.c (shell_escape_string): also escape &.
+
 2020-03-02  Karl Berry  <karl@freefriends.org>
 
 	* main.c (is_good_dvi_file): avoid using strnlen, not present
