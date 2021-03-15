@@ -1,3 +1,8 @@
+Release Notes for Version 2.70
+
+A stack overflow was fixed. Under MSWindows, problems with SVG generation and
+Xasy installation were fixed. Compiler warning messages were addressed.
+
 Release Notes for Version 2.69
 
 A segmentation fault in subpath3 was fixed. The fuzz parameter in bezulate
@@ -2321,3 +2326,5 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
+
+LocalWords:  MSWindows SVG Xasy

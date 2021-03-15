@@ -1,3 +1,96 @@
+commit cef479451a35b8a242d68e45666f97583270df0d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 14 18:29:38 2021 -0600
+
+    Update copyright.
+
+commit 80f47d0cf5777ebca07790bc0c8f46881e568a3c
+Merge: 3cac2756 7a22ce6a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 13 12:51:02 2021 -0700
+
+    Merge pull request #220 from ellio167/homebrew
+    
+    Add link to brew.sh in MacOS install doc section
+
+commit 7a22ce6aea529560805b05da2a81ce59321dce72
+Author: Ryan S. Elliott <relliott@umn.edu>
+Date:   Fri Mar 12 08:23:50 2021 -0600
+
+    Add link to brew.sh in MacOS install doc section
+
+commit 3cac27568d17d48c71250fa8aad4e2f41aae3707
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 10 13:19:11 2021 -0700
+
+    Fix last revision.
+
+commit 38fb7ff28e7e6a6ccc28770bb757ee6fecd66d5a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 10 13:12:07 2021 -0700
+
+    Fix stack overflow (bug #217).
+
+commit eedfb87671064f5b0bda066a262895f0544a581a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 9 13:10:54 2021 -0700
+
+    Optimize phi computations in ode.asy.
+
+commit e4c50ed8c20d7dc8da5f081773c35d1cb4fde105
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 27 01:30:53 2021 -0700
+
+    Implement real phi4(real x) in ode.
+
+commit fe57aee56791a43306ee3bc2b36a0813fcc83474
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 24 21:22:27 2021 -0700
+
+    Use UTF-8 encodings.
+
+commit d41e41b63bac1276aa6b5def965acc56188327d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 21 16:24:18 2021 -0700
+
+    Remove tmpdir workaround for old versions of dvisvgm (older than 2.10).
+
+commit 71d0b51bf94cf78cba1d893ce592fcfd9fc4e628
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 21 15:52:55 2021 -0700
+
+    Fix compiler warning messages.
+
+commit 24b51055076bd6340103cc0bed077932234f49f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 20 00:36:47 2021 -0700
+
+    Use canonical name for MSWindows temp directory.
+
+commit b9f5aa77eac95d201c88f515a79397e7dc95352c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 20 00:28:58 2021 -0700
+
+    Fix tempdir under MSWindows installations that lack CYGWIN.
+
+commit 2651bba958b187a0a9b91bfc6c97d437c5088b4c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 19 21:27:35 2021 -0700
+
+    Add asypath option to xasy start menu shortcut.
+
+commit cd6155afe411261165aa0d09f579f4768717fb11
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 19 21:23:28 2021 -0700
+
+    Add asypath option to xasy shortcut.
+
+commit 2f633ecbe329c811ae76befe827c4ee44b3c03c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 19 01:04:33 2021 -0700
+
+    Increment version to 2.70.
+
 commit ab6c72c152ec8ad0e052706ac16023bf044ab550
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 18 09:11:30 2021 -0700
