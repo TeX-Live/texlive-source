@@ -10,7 +10,7 @@
 .sp
 .fi
 ..
-.TH "DVIPDFMX" "1" "5 October 2020"
+.TH "DVIPDFMX" "1" "15 March 2021"
 .SH NAME
 dvipdfmx, xdvipdfmx, dvipdfm \- produce PDF files directly from DVI files
 .SH SYNOPSIS
@@ -36,7 +36,6 @@ is another incarnation of
 rather than a separate program.  Compatibility is attempted as best as
 possible.  
 
-In addition,
 .B xdvipdfmx
 is another incarnation.  It is used as the back end for
 .BR xetex (1)
@@ -133,6 +132,12 @@ as defined in the configuration file.
 .TP 5
 .B \-\-\^help
 Show a help message and exit successfully.
+.TP 5
+.B \-\^i " cfgfile"
+Read
+.I cfgfile
+as another include file, after reading the default
+.IR dvipdfmx.cfg .
 .TP 5
 .B \-\^l
 Select landscape mode.  In other words, exchange the 
@@ -317,6 +322,12 @@ configuration.  The location may be determined by using kpsewhich, e.g.,
 .TP 5
 .I dvipdfmx.cfg
 Default configuration file
+.TP 5
+.I dvipdfmx-unsafe.cfg
+Configuration file that runs Ghostscript without safety checks; use only
+for trusted source files. It is currently required to use PSTricks with
+XeTeX:
+.B xetex \-output-driver="xdvipdfmx \-i dvipdfmx-unsafe.cfg -q -E" ...
 .TP 5
 .I pdftex.map
 The default font map file (this may be changed in the config file).
