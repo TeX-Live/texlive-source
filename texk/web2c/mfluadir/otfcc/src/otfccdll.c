@@ -3,7 +3,11 @@
 #include "otfcc/sfnt-builder.h"
 
 #ifdef _WIN32
+ #ifndef _MSC_VER /* static link --ak */
 #define OTFCC_DLL_EXPORT __declspec(dllexport)
+ #else
+#define OTFCC_DLL_EXPORT
+ #endif
 #else
 #define OTFCC_DLL_EXPORT
 #endif

@@ -54,8 +54,8 @@
 		arr->capacity = 0;                                                                         \
 		arr->items = NULL;                                                                         \
 	}                                                                                              \
-	caryll_trivialCreate(__TV);                                                                    \
-	caryll_trivialFree(__TV);                                                                      \
+	caryll_trivialCreate(__TV)                                                                    \
+	caryll_trivialFree(__TV)                                                                      \
 	static __CARYLL_INLINE__ void __TV##_growTo(MODIFY __TV *arr, size_t target) {                 \
 		if (target <= arr->capacity) return;                                                       \
 		if (arr->capacity < __CARYLL_VECTOR_INITIAL_SIZE)                                          \

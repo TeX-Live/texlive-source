@@ -42,6 +42,10 @@ typedef char *sds;
 
 /* Note: sdshdr5 is never used, we just access the flags byte directly.
  * However is here to document the layout of type 5 SDS strings. */
+#ifdef _MSC_VER
+#define __attribute__(x)
+#pragma pack(push,1)
+#endif
 struct __attribute__((__packed__)) sdshdr5 {
 	unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
 	char buf[];
@@ -70,7 +74,9 @@ struct __attribute__((__packed__)) sdshdr64 {
 	unsigned char flags; /* 3 lsb of type, 5 unused bits */
 	char buf[];
 };
-
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
 #define SDS_TYPE_5 0
 #define SDS_TYPE_8 1
 #define SDS_TYPE_16 2

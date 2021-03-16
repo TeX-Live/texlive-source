@@ -6,7 +6,9 @@
 #include "platform.h"
 //#include "stopwatch.h"
 
+#ifndef _MSC_VER
 #include <unistd.h>
+#endif /* _MSC_VER */
 
 /* to reset the getopt_long */
 extern int optind;

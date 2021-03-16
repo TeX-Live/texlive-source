@@ -98,35 +98,35 @@
 	}
 
 #define caryll_standardTypeFn1(T)                                                                  \
-	caryll_trivialInit(T);                                                                         \
-	caryll_trivialCopy(T);                                                                         \
-	caryll_trivialDispose(T);                                                                      \
-	caryll_trivialMove(T);                                                                         \
-	caryll_trivialReplace(T);
+	caryll_trivialInit(T)                                                                         \
+	caryll_trivialCopy(T)                                                                         \
+	caryll_trivialDispose(T)                                                                      \
+	caryll_trivialMove(T)                                                                         \
+	caryll_trivialReplace(T)
 #define caryll_standardTypeFn2(T, __fn_dispose)                                                    \
-	caryll_trivialInit(T);                                                                         \
-	caryll_trivialCopy(T);                                                                         \
-	caryll_nonTrivialDispose(T, __fn_dispose);                                                     \
-	caryll_trivialMove(T);                                                                         \
-	caryll_trivialReplace(T);
+	caryll_trivialInit(T)                                                                         \
+	caryll_trivialCopy(T)                                                                         \
+	caryll_nonTrivialDispose(T, __fn_dispose)                                                     \
+	caryll_trivialMove(T)                                                                         \
+	caryll_trivialReplace(T)
 #define caryll_standardTypeFn3(T, __fn_init, __fn_dispose)                                         \
-	caryll_nonTrivialInit(T, __fn_init);                                                           \
-	caryll_trivialCopy(T);                                                                         \
-	caryll_nonTrivialDispose(T, __fn_dispose);                                                     \
-	caryll_trivialMove(T);                                                                         \
-	caryll_trivialReplace(T);
+	caryll_nonTrivialInit(T, __fn_init)                                                           \
+	caryll_trivialCopy(T)                                                                         \
+	caryll_nonTrivialDispose(T, __fn_dispose)                                                     \
+	caryll_trivialMove(T)                                                                         \
+	caryll_trivialReplace(T)
 #define caryll_standardTypeFn4(T, __fn_init, __fn_copy, __fn_dispose)                              \
-	caryll_nonTrivialInit(T, __fn_init);                                                           \
-	caryll_nonTrivialCopy(T, __fn_copy);                                                           \
-	caryll_nonTrivialDispose(T, __fn_dispose);                                                     \
-	caryll_trivialMove(T);                                                                         \
-	caryll_trivialReplace(T);
+	caryll_nonTrivialInit(T, __fn_init)                                                           \
+	caryll_nonTrivialCopy(T, __fn_copy)                                                           \
+	caryll_nonTrivialDispose(T, __fn_dispose)                                                     \
+	caryll_trivialMove(T)                                                                         \
+	caryll_trivialReplace(T)
 #define caryll_standardTypeFn5(T, __fn_init, __fn_copy, __fn_dispose, __fn_move)                   \
-	caryll_nonTrivialInit(T, __fn_init);                                                           \
-	caryll_nonTrivialCopy(T, __fn_copy);                                                           \
-	caryll_nonTrivialDispose(T, __fn_dispose);                                                     \
-	caryll_nonTrivialMove(T, __fn_move);                                                           \
-	caryll_trivialReplace(T);
+	caryll_nonTrivialInit(T, __fn_init)                                                           \
+	caryll_nonTrivialCopy(T, __fn_copy)                                                           \
+	caryll_nonTrivialDispose(T, __fn_dispose)                                                     \
+	caryll_nonTrivialMove(T, __fn_move)                                                           \
+	caryll_trivialReplace(T)
 
 #define caryll_standardTypeMethods(T)                                                              \
 	.init = T##_init, .copy = T##_copy, .dispose = T##_dispose, .move = T##_move,                  \
@@ -165,23 +165,23 @@
 #else
 
 #define caryll_standardRefTypeFn(T, ...)                                                           \
-	caryll_standardTypeFn(T, __VA_ARGS__);                                                         \
-	caryll_trivialCreate(T);                                                                       \
-	caryll_trivialFree(T);
+	caryll_standardTypeFn(T, __VA_ARGS__)                                                         \
+	caryll_trivialCreate(T)                                                                       \
+	caryll_trivialFree(T)
 #define caryll_standardValTypeFn(T, ...)                                                           \
-	caryll_standardTypeFn(T, __VA_ARGS__);                                                         \
-	caryll_trivialEmpty(T);                                                                        \
-	caryll_trivialDup(T);
+	caryll_standardTypeFn(T, __VA_ARGS__)                                                         \
+	caryll_trivialEmpty(T)                                                                        \
+	caryll_trivialDup(T)
 
 #define caryll_standardType(T, __name, ...)                                                        \
-	caryll_standardTypeFn(T, __VA_ARGS__);                                                         \
-	caryll_ElementInterfaceOf(T) __name = {caryll_standardTypeMethods(T)};
+	caryll_standardTypeFn(T, __VA_ARGS__)                                                         \
+	caryll_ElementInterfaceOf(T) __name = {caryll_standardTypeMethods(T)}
 #define caryll_standardRefType(T, __name, ...)                                                     \
-	caryll_standardRefTypeFn(T, __VA_ARGS__);                                                      \
-	caryll_ElementInterfaceOf(T) __name = {caryll_standardRefTypeMethods(T)};
+	caryll_standardRefTypeFn(T, __VA_ARGS__)                                                      \
+	caryll_ElementInterfaceOf(T) __name = {caryll_standardRefTypeMethods(T)}
 #define caryll_standardValType(T, __name, ...)                                                     \
-	caryll_standardValTypeFn(T, __VA_ARGS__);                                                      \
-	caryll_ElementInterfaceOf(T) __name = {caryll_standardValTypeMethods(T)};
+	caryll_standardValTypeFn(T, __VA_ARGS__)                                                      \
+	caryll_ElementInterfaceOf(T) __name = {caryll_standardValTypeMethods(T)}
 
 #endif
 
@@ -203,7 +203,7 @@
 		return (_fnCompare)(*a, *b);                                                               \
 	}
 #define caryll_OrdEqFns(T, _fnCompare)                                                             \
-	caryll_OrdFns(T, _fnCompare);                                                                  \
+	caryll_OrdFns(T, _fnCompare)                                                                  \
 	static __CARYLL_INLINE__ bool T##_equal(const T a, const T b) {                                \
 		return !(_fnCompare)(a, b);                                                                \
 	}
