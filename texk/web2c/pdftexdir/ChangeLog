@@ -1,3 +1,8 @@
+2021-03-16  Karl Berry  <karl@freefriends.org>
+
+	* writefont.c (write_fontdictionary): pdftex_fail with message
+	instead of assertion. From Martin Budaj, Mar 16, 2021 at 8:47 AM.
+
 2021-02-22  Phelype Oleinik  <phe.h.o1@gmail.com>
 
 	* pdftex.web: avoid "expansion depth" overflow with \numexpr.
