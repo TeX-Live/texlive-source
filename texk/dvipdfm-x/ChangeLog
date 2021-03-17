@@ -1,3 +1,10 @@
+2021-03-18  Akira Kakuto  <kakuto@w32tex.org>
+
+	* dvipdfmx.c: A bug in compat mode is found and fixed by
+	Christian Schenk:
+	https://tug.org/pipermail/tex-live/2021-March/046609.html
+	* configure.ac: Version 20210318.
+
 2021-03-14  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvipdfmx.c: Do not allow directory separators in an optarg
