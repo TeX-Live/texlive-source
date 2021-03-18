@@ -1,3 +1,9 @@
+2021-03-18  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (save_size): reset to 80000 since that is what
+	sup_save_size is set to in tex.ch. Found by Christian Schenk,
+	tex-live 18 Mar 2021 18:39:04.
+
 2021-03-08  Karl Berry  <karl@freefriends.org>
 
 	* tests/cnfline/texmf.cnf (maxpr.lt-kpsewhich): set this,
