@@ -1,3 +1,4 @@
+# $Id: TLUtils.pm 58139 2021-03-05 00:26:37Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2021 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 57772 $';
+my $svnrev = '$Revision: 58139 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -339,15 +340,15 @@ sub platform_name {
   
   if ($OS eq "darwin") {
     # We have two versions of Mac binary sets.
-    # 10.x and newer -> x86_64-darwin [MacTeX]
-    # 10.6/Snow Leopard through 10.x -> x86_64-darwinlegacy, if 64-bit
-    # x changes every year. In 2020 (Big Sur) Apple started with 11.x.
+    # 10.x and newer -> universal-darwin [MacTeX]
+    # 10.6/Snow Leopard through 10.x -> x86_64-darwinlegacy, if 64-bit.
+    # x changes every year. As of TL 2021 (Big Sur) Apple started with 11.x.
     #
     # (BTW, uname -r numbers are larger by 4 than the Mac minor version.
     # We don't use uname numbers here.)
     #
     # this changes each year, per above:
-    my $mactex_darwin = 13;  # lowest minor rev supported by x86_64-darwin.
+    my $mactex_darwin = 14;  # lowest minor rev supported by x86_64-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
@@ -358,12 +359,11 @@ sub platform_name {
            . " (from sw_vers -productVersion: $sw_vers)\n";
       return "unknownmac-unknownmac";
     }
-    if ($os_major >= 11) {
-      $CPU = "x86_64";
+    # have to refine after all 10.x become "legacy".
+    if ($os_major >= 11 || $os_minor >= $mactex_darwin) {
+      $CPU = "universal";
       $OS = "darwin";
-    } elsif ($os_minor >= $mactex_darwin) {
-      ; # sufficiently new 10.x, default is ok (x86_64-darwin).
-    } elsif ($os_minor >= 6 && $os_minor < $mactex_darwin) {
+    } elsif ($os_major == 10 && 6 <= $os_minor && $os_minor < $mactex_darwin){
       # in between, x86 hardware only.  On 10.6 only, must check if 64-bit,
       # since if later than that, always 64-bit.
       my $is64 = $os_minor == 6
@@ -424,10 +424,9 @@ sub platform_desc {
     'powerpc-linux'    => 'GNU/Linux on PowerPC',
     'sparc-linux'      => 'GNU/Linux on Sparc',
     'sparc-solaris'    => 'Solaris on Sparc',
-    'universal-darwin' => 'MacOSX universal binaries',
+    'universal-darwin' => 'MacOSX current (10.14-) on ARM/x86_64',
     'win32'            => 'Windows',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
-    'x86_64-darwin'       => 'MacOSX current (10.13-) on x86_64',
     'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-) on x86_64',
     'x86_64-dragonfly' => 'DragonFlyBSD on x86_64',
     'x86_64-linux'     => 'GNU/Linux on x86_64',
@@ -1580,9 +1579,11 @@ sub install_packages {
     $donesize += $tlpsizes{$package};
   }
   my $totaltime = time() - $starttime;
-  my $totmin = int ($totaltime/60);
+  my $tothour = int ($totaltime/3600);
+  my $totmin = (int ($totaltime/60)) % 60;
   my $totsec = $totaltime % 60;
-  info(sprintf("Time used for installing the packages: %02d:%02d\n",
+  my $hrstr = ($tothour > 0 ? "$tothour:" : "");
+  info(sprintf("Time used for installing the packages: $hrstr%02d:%02d\n",
        $totmin, $totsec));
   $totlpdb->save;
   return 1;
