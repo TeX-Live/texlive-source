@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.3f"
+local version = "v0.3g"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -123,4 +123,5 @@ end)
 make:run()
 
 log:status("Conversion finished")
+logging.exit_status()
 
