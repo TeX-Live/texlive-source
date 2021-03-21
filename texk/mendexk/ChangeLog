@@ -1,7 +1,13 @@
-2020-01-16  Karl Berry  <karl@freefriends.org>
+2021-03-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* COPYRIGHT,
-	* main.c: 2021.
+	* main.c, configure.ac, version.h:
+	Version 3.3 [21-Mar-2021].
+	* main.c, COPYRIGHT: Update copyright year.
+	* fread.c: Fix a bug about page_precedence in style.
+	Thanks to Suzana Sagadin for the report.
+	* tests/pprec[012].ist, tests/pprecA.idx, tests/pprecA-[012].ind,
+	tests/mendex.test, Makefile.am:
+	Add new tests.
 
 2020-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 

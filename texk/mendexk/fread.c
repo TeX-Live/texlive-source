@@ -474,35 +474,45 @@ ATTRLOOP:
 			switch(page_precedence[pattr[cc]]) {
 			case 'r':
 				if (strchr("ivxlcdm",p->page[i])==NULL) {
-					pattr[cc]++;
+					if (pattr[cc]<strlen(page_precedence)-1)
+						pattr[cc]++;
+					else pattr[cc]=0;
 					for (j=cc+1;j<3;j++) pattr[j]=0;
 					goto ATTRLOOP;
 				}
 				break;
 			case 'R':
 				if (strchr("IVXLCDM",p->page[i])==NULL) {
-					pattr[cc]++;
+					if (pattr[cc]<strlen(page_precedence)-1)
+						pattr[cc]++;
+					else pattr[cc]=0;
 					for (j=cc+1;j<3;j++) pattr[j]=0;
 					goto ATTRLOOP;
 				}
 				break;
 			case 'n':
 				if (p->page[i]<'0' || p->page[i]>'9') {
-					pattr[cc]++;
+					if (pattr[cc]<strlen(page_precedence)-1)
+						pattr[cc]++;
+					else pattr[cc]=0;
 					for (j=cc+1;j<3;j++) pattr[j]=0;
 					goto ATTRLOOP;
 				}
 				break;
 			case 'a':
 				if (p->page[i]<'a' || p->page[i]>'z') {
-					pattr[cc]++;
+					if (pattr[cc]<strlen(page_precedence)-1)
+						pattr[cc]++;
+					else pattr[cc]=0;
 					for (j=cc+1;j<3;j++) pattr[j]=0;
 					goto ATTRLOOP;
 				}
 				break;
 			case 'A':
 				if (p->page[i]<'A' || p->page[i]>'Z') {
-					pattr[cc]++;
+					if (pattr[cc]<strlen(page_precedence)-1)
+						pattr[cc]++;
+					else pattr[cc]=0;
 					for (j=cc+1;j<3;j++) pattr[j]=0;
 					goto ATTRLOOP;
 				}

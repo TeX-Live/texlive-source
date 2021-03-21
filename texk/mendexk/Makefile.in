@@ -581,9 +581,11 @@ dist_man1_MANS = mendex.1
 EXTRA_DIST = COPYRIGHT COPYRIGHT.ja ChangeLog.ja indexsty \
 	mendex.ja.txt mendex.1 mendex.1.ja $(TESTS) tests/foo.idx \
 	tests/foo.ind tests/uni.idx tests/uni.dict tests/uni.ist \
-	tests/uni.ind
+	tests/uni.ind tests/pprec0.ist tests/pprec1.ist \
+	tests/pprec2.ist tests/pprecA.idx tests/pprecA-0.ind \
+	tests/pprecA-1.ind tests/pprecA-2.ind
 TESTS = tests/mendex.test
-DISTCLEANFILES = foo.* uni.*
+DISTCLEANFILES = foo.* uni.* pprec*.*
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
