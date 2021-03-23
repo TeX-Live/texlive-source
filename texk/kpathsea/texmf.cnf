@@ -823,7 +823,7 @@ buf_size = 200000
 % for all known free hyphenation patterns to be loaded simultaneously
 % (as TeX Live does).
 %
-trie_size = 1000000
+trie_size = 1100000
 
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <65535
                         % http://primes.utm.edu/curios/page.php/8191.html
