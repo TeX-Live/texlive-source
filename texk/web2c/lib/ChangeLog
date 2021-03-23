@@ -1,3 +1,7 @@
+2021-03-23  Karl Berry  <karl@tug.org>
+
+	* TL'21.
+
 2021-03-12  Akira Kakuto  <kakuto@w32tex.org>
 
 	* texmfmp.c: Disable commands containing a character '|' for

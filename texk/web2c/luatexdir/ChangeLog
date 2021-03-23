@@ -1,3 +1,6 @@
+2021-03-23 Karl Berry <karl@tug.org>
+    * TL'21.
+
 2021-03-12 Luigi Scarso <luigi.scarso@gmail.com>
     * When restricted system commands is enabled  os.setenv has no effect
     * Patched  Decompress to avoid execution of arbitrary commands

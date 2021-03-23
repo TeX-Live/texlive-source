@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.3.3 (for TeX Live 2021)
+6.3.3 (for TeX Live 2021, 23 March 2021)
 * The library does not emit warnings for unrecognized filenames,
   leaving it up to the caller.
 * Double save_size limit to 200,000 for tex4ht, l3regex, etc.

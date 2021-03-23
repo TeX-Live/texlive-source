@@ -1,3 +1,7 @@
+2021-03-23  Karl Berry  <karl@tug.org>
+
+	* TL'21.
+
 2021-03-04  Karl Berry  <karl@freefriends.org>
 
 	* synctex_scanner_new_with_output_file: don't warn to terminal

@@ -1,3 +1,7 @@
+2021-03-23  Karl Berry  <karl@tug.org>
+
+	* TL'21.
+
 2021-03-18  Akira Kakuto  <kakuto@w32tex.org>
 
 	* dvipdfmx.c: A bug in compat mode is found and fixed by

@@ -1,4 +1,4 @@
-pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021)
+pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021) (March 23, 2021)
 - changes:
   - new primitives \pdfrunninglinkoff and \pdfrunninglinkon; e.g., for
     disabling generation of links in headers and footers.
