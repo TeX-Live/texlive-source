@@ -329,10 +329,8 @@ variable) to search for this file.@.CWEBINPUTS@>
 @x l.534 Replace with kpse_find_file
     if ((new_inc->the_file=fopen(new_inc->file_name, "r"))!=NULL) {
 @y
-    fullname=kpse_find_cweb(new_inc->file_name);
-    if (fullname)
-        new_inc->the_file=fopen(fullname, "r");
-    if (fullname!=NULL && new_inc->the_file!=NULL) {
+    if ((fullname=kpse_find_cweb(new_inc->file_name))!=NULL @|
+      && (new_inc->the_file=fopen(fullname, "r"))!=NULL) {
         free(fullname);
 @z
 
@@ -434,8 +432,9 @@ interface.
 
 @x l.731 Use binary mode for output files
     out_file=fopen(out_name, "w");
+    if (out_file==NULL) {
 @y
-    out_file=fopen(out_name, "wb");
+    if ((out_file=fopen(out_name, "wb"))==NULL) {
 @z
 
 @x l.739
@@ -466,20 +465,15 @@ the file.
 {
     string fullname;
 
-    fullname = kpse_find_cweb(input_organisation[0]->file_name);
-    if (fullname)
-        input_organisation[0]->the_file = fopen(fullname, "r");
-
-    if (fullname==NULL || input_organisation[0]->the_file==NULL) {
-        if (fullname) {
+    if ((fullname = kpse_find_cweb(input_organisation[0]->file_name))!=NULL) {
+        if ((input_organisation[0]->the_file = fopen(fullname, "r"))==NULL)
             pfatal_error("! Cannot open master file ",
                 input_organisation[0]->file_name);
-        } else {
-            fatal_error(-1, "! Cannot find master file ",
-                input_organisation[0]->file_name);
-        }
+        free(fullname);
+    } @+ else {
+        fatal_error(-1, "! Cannot find master file ",
+            input_organisation[0]->file_name);
     }
-    else free(fullname);
 @.Cannot open master file@>
 @.Cannot find master file@>
 @z
@@ -505,20 +499,16 @@ the file.
 
     i=1;
     while (i<no_ch) {
-        fullname = kpse_find_cweb(input_organisation[i]->file_name);
-        if (fullname)
-            input_organisation[i]->the_file = fopen(fullname, "r");
-
-        if (fullname==NULL || input_organisation[i]->the_file==NULL) {
-            if (fullname) {
+        if ((fullname = kpse_find_cweb(input_organisation[i]->file_name))
+                !=NULL) {
+            if ((input_organisation[i]->the_file = fopen(fullname, "r"))==NULL)
                 pfatal_error("! Cannot open change file ",
                     input_organisation[i]->file_name);
-            } else {
-                fatal_error(-1, "! Cannot find change file ",
-                    input_organisation[i]->file_name);
-            }
+            free(fullname);
+        } @+ else {
+            fatal_error(-1, "! Cannot find change file ",
+                input_organisation[i]->file_name);
         }
-        else free(fullname);
 @.Cannot open change file@>
 @.Cannot find change file@>
 @z
