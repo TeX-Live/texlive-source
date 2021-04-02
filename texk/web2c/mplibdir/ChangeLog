@@ -1,9 +1,11 @@
+2021-04-02  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Revert the patch in mpx_copy_mpto, it was wrong in tex mode. Added a check if in troff mode.
+
 2021-03-23 Karl Berry <karl@tug.org>
     * TL'21.
 
 2020-12-28  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Temp, fix in mpx_copy_mpto, changed || with && to avoid a wrong final %
-
 
 2020-12-27  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Fixed some typos in manual (thank to 胡亚捷 (Hu Yajie) )
