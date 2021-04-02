@@ -1,3 +1,7 @@
+2021-04-03  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pkfont.c: Remove unnecessary changes made on 2020-12-14.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.

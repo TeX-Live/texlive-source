@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2021 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -86,27 +86,14 @@ dpx_open_pk_font_at (const char *ident, unsigned dpi, char **pkname)
   FILE  *fp;
   char  *fqpn;
   kpse_glyph_file_type kpse_file_info;
-/*
- * ident can be such as "cmr10.pfb":
- * https://tug.org/pipermail/dvipdfmx/2020-December/000142.html.
- * As a workaround, we drop a suffix if it exists.
- * 
- */
-  char  *ident_nosuffix;
-  ident_nosuffix = xstrdup(ident);
-  fqpn = strrchr(ident_nosuffix, '.');
-  if (fqpn) {
-    *fqpn = '\0';
-  }
-  fqpn = kpse_find_glyph(ident_nosuffix, dpi, kpse_pk_format, &kpse_file_info);
 
+  fqpn = kpse_find_glyph(ident, dpi, kpse_pk_format, &kpse_file_info);
   if (!fqpn)
     return  NULL;
   fp   = MFOPEN(fqpn, FOPEN_RBIN_MODE);
   RELEASE(fqpn);
-  *pkname = NEW(strlen(ident_nosuffix)+12, char);
-  (void)snprintf(*pkname, strlen(ident_nosuffix)+12,  "%s.%dpk", ident_nosuffix, dpi);
-  RELEASE(ident_nosuffix);
+  *pkname = NEW(strlen(ident)+12, char);
+  (void)snprintf(*pkname, strlen(ident)+12,  "%s.%dpk", ident, dpi);
 
   return  fp;
 }
