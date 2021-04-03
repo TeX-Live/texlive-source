@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.*
+rm -f foo.* uni.* pprec*.*
 
 ./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
 	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
