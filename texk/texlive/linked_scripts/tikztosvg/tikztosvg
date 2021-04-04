@@ -1,4 +1,12 @@
 #!/bin/sh
+#  _   _ _         _ 
+# | |_(_) | __ ___| |_ ___  _____   ____ _ 
+# | __| | |/ /|_  / __/ _ \/ __\ \ / / _` |
+# | |_| |   <  / /| || (_) \__ \\ V / (_| |
+#  \__|_|_|\_\/___|\__\___/|___/ \_/ \__, |
+#                                    |___/
+# 2021 (C) Pablo
+# Free use of this software is granted under the terms of the GPL-3.0 License
 
 puts() 
 {
@@ -34,6 +42,10 @@ showVersion()
   exit 0
 }
 
+# The default list of packages and libraries that should be imported
+PACKAGES="tikz tikz-cd pgfplots amsmath amssymb"
+LIBRARIES=""
+
 if ! [ -x "$(command -v xelatex)" ]
 then
   error "xelatex could not be found"
@@ -45,7 +57,6 @@ then
 fi
 
 # Parsing the arguments
-PACKAGES=""
 while [ $# -gt 1 ]
 do
   case "$1" in
@@ -66,6 +77,21 @@ do
           ;;
         *)
           PACKAGES="$PACKAGES $2"
+          shift
+          shift
+      esac
+      ;;
+    -l|--library)
+      case "$2" in
+        "")
+          error "Unnexpected EOF"
+          ;;
+        # Check if the name of the package is valid
+        *" "*) 
+          error "Invalid library name. TikZ library names cannot contain scapes!" 
+          ;;
+        *)
+          LIBRARIES="$LIBRARIES $2"
           shift
           shift
       esac
@@ -139,12 +165,17 @@ TEX_FILE="$TEMP_DIR/tmp.tex"
 # Generate the LaTeX document
 printf "\documentclass[crop,tikz,multi=false]{standalone}\n" > "$TEX_FILE"
 
-for PACKAGE in $PACKAGES
+for PACKAGE in $(echo "$PACKAGES" | tr " " "\n" | sort | uniq)
 do
   printf "\usepackage{%s}\n" "$PACKAGE" >> "$TEX_FILE"
 done
 
-printf "\\\begin{document} \huge\n" >> "$TEX_FILE"
+for LIBRARY in $(echo "$LIBRARIES" | tr " " "\n" | sort | uniq) 
+do
+  printf "\usetikzlibrary{%s}\n" "$LIBRARY" >> "$TEX_FILE"
+done
+
+printf "\\\begin{document}\n" >> "$TEX_FILE"
 cat "$INPUT" >> "$TEX_FILE"
 
 if [ $? -ne 0 ]
