@@ -62,7 +62,7 @@ E.g.\ it will not use the |enum| type declarations.
 @x l.105
 @d banner  "This is TIE, CWEB Version 2.4."
 @y
-@d banner  "This is TIE, CWEB Version 2.4."
+@d banner  "This is TIE, CWEB Version 2.4"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
