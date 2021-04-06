@@ -53,8 +53,13 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   /../, /./, \..\, \.\ should be excluded (2020/06/06)
   More than one adjacent directory separators should be
   excluded. (2020/10/24)
+  The "nul" device should be excluded. (2021/04/07).
 */
-  p = strstr(fn, ".\\");
+  if (stricmp(fn + len - 3, "nul") == 0)
+    p = fn;
+  if (!p) {
+    p = strstr(fn, ".\\");
+  }
   if (!p) {
     p = strstr(fn, "./");
   }

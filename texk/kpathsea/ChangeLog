@@ -1,3 +1,8 @@
+2021-04-07  Akira Kakuto  <kakuto@w32tex.org>
+
+	* knj.c, readable.c: Fix a bug that the "nul" device given in
+	a full-path form, such as c:/usr/work/nul was not readable.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.

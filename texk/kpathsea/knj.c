@@ -129,9 +129,14 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
   /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
   More than one adjacent directory separators should be
   excluded. (2020/10/24)
+  The "nul" device should be excluded. (2021/04/07).
 */
     fnn = xmalloc(len + 10);
-    p = strstr(filename, ".\\");
+    if (stricmp(filename + len - 3, "nul") == 0)
+       p = filename;
+    if (!p) {
+       p = strstr(filename, ".\\");
+    }
     if (!p) {
        p = strstr(filename, "./");
     }
@@ -208,9 +213,14 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
   /./ , /../, \.\, \..\ should be excluded. (2020/06/06)
   More than one adjacent directory separators should be
   excluded. (2020/10/24)
+  The "nul" device should be excluded. (2021/04/07).
 */
     fnn = xmalloc(len + 10);
-    p = strstr(filename, ".\\");
+    if (stricmp(filename + len - 3, "nul") == 0)
+       p = filename;
+    if (!p) {
+       p = strstr(filename, ".\\");
+    }
     if (!p) {
        p = strstr(filename, "./");
     }
