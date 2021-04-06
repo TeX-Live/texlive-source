@@ -1,3 +1,7 @@
+2021-04-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctie-k.ch: Use 'putc' for single newline character.
+
 2021-04-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctie-k.ch: Include TeX Live versionstring in banner line.

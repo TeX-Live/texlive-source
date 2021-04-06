@@ -422,6 +422,12 @@ char *s, *t;
 void pfatal_error (const char *s, const char *t)
 @z
 
+@x l.707
+    else fprintf(stderr, "\n");
+@y
+    else putc('\n', stderr);
+@z
+
 @x l.713
 @ We need an include file for the above.
 
