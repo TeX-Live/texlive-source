@@ -117,7 +117,7 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
     wchar_t *fnamew, modew[4];
     int i;
     unsigned char *fnn;
-    unsigned char *p;
+    unsigned char *p = NULL;
     size_t len;
 
     assert(filename && mode);
@@ -132,8 +132,16 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
   The "nul" device should be excluded. (2021/04/07).
 */
     fnn = xmalloc(len + 10);
+
     if (stricmp(filename + len - 3, "nul") == 0)
-       p = filename;
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 4, "nul:") == 0)
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 7, "nul.tex") == 0)
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 8, "nul:.tex") == 0)
+       p = (unsigned char *)filename;
+
     if (!p) {
        p = strstr(filename, ".\\");
     }
@@ -164,6 +172,7 @@ kpathsea_fsyscp_xfopen (kpathsea kpse, const char *filename, const char *mode)
     } else {
        strcpy (fnn, filename);
     }
+
     for (p = fnn; *p; p++) {
       if (*p == '/')
          *p = '\\';
@@ -201,7 +210,7 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
     wchar_t *fnamew, modew[4];
     int i;
     unsigned char *fnn;
-    unsigned char *p;
+    unsigned char *p = NULL;
     size_t len;
 
     assert(filename && mode);
@@ -216,8 +225,16 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
   The "nul" device should be excluded. (2021/04/07).
 */
     fnn = xmalloc(len + 10);
+
     if (stricmp(filename + len - 3, "nul") == 0)
-       p = filename;
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 4, "nul:") == 0)
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 7, "nul.tex") == 0)
+       p = (unsigned char *)filename;
+    else if (stricmp(filename + len - 8, "nul:.tex") == 0)
+       p = (unsigned char *)filename;
+
     if (!p) {
        p = strstr(filename, ".\\");
     }
@@ -248,6 +265,7 @@ kpathsea_fsyscp_fopen (kpathsea kpse, const char *filename, const char *mode)
     } else {
        strcpy (fnn, filename);
     }
+
     for (p = fnn; *p; p++) {
       if (*p == '/')
          *p = '\\';
@@ -645,8 +663,10 @@ kpathsea_win32_perror(kpathsea kpse, const char *str)
 {
     wchar_t *wstr;
 
-    if (kpse->File_system_codepage != CP_UTF8)
-        return perror(str);
+    if (kpse->File_system_codepage != CP_UTF8) {
+        perror(str);
+        return;
+    }
 
     wstr = get_wstring_from_utf8(str, wstr=NULL);
     _wperror(wstr);

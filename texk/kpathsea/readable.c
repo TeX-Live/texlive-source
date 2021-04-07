@@ -42,7 +42,7 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
 {
   wchar_t *fnw;
   unsigned char *fnn;
-  unsigned char *p;
+  unsigned char *p = NULL;
   size_t len = strlen(fn);
 
   fnn = xmalloc(len + 10);
@@ -56,7 +56,14 @@ READABLE(kpathsea kpse, const_string fn, unsigned int st)
   The "nul" device should be excluded. (2021/04/07).
 */
   if (stricmp(fn + len - 3, "nul") == 0)
-    p = fn;
+    p = (unsigned char *)fn;
+  else if (stricmp(fn + len - 4, "nul:") == 0)
+    p = (unsigned char *)fn;
+  else if (stricmp(fn + len - 7, "nul.tex") == 0)
+    p = (unsigned char *)fn;
+  else if (stricmp(fn + len - 8, "nul:.tex") == 0)
+    p = (unsigned char *)fn;
+
   if (!p) {
     p = strstr(fn, ".\\");
   }
