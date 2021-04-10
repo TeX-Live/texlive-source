@@ -1,3 +1,6 @@
+2021-04-10  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Metapost version 2.01 (needed to mark the patch mpx_copy_mpto).
+
 2021-04-02  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Revert the patch in mpx_copy_mpto, it was wrong in tex mode. Added a check if in troff mode.
 
