@@ -1,3 +1,10 @@
+2021-04-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {pprescan,scanpage}.c:
+	Fix bug in fallback multibyte character in virtual font for (u)pTeX.
+	Thanks 流橋 利樹-san for the report.
+	https://oku.edu.mie-u.ac.jp/tex/mod/forum/discuss.php?d=3068
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.
