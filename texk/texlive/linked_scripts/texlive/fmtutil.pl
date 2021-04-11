@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 56682 2020-10-17 06:08:28Z preining $
+# $Id: fmtutil.pl 58784 2021-04-07 07:30:50Z kakuto $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 56682 2020-10-17 06:08:28Z preining $';
-my $lastchdate = '$Date: 2020-10-17 08:08:28 +0200 (Sat, 17 Oct 2020) $';
+my $svnid = '$Id: fmtutil.pl 58784 2021-04-07 07:30:50Z kakuto $';
+my $lastchdate = '$Date: 2021-04-07 09:30:50 +0200 (Wed, 07 Apr 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 56682 $';
+my $svnrev = '$Revision: 58784 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -380,7 +380,6 @@ sub callback_build_formats {
   # code taken over from the original shell script for KPSE_DOT etc
   my $thisdir = cwd();
   $ENV{'KPSE_DOT'} = $thisdir;
-
   # due to KPSE_DOT, we don't search the current directory, so include
   # it explicitly for formats that \write and later on \read
   $ENV{'TEXINPUTS'} ||= "";
