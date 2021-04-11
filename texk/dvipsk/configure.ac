@@ -24,6 +24,10 @@ AC_CHECK_SIZEOF([int])
 
 AC_SEARCH_LIBS([pow], [m])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 KPSE_KPATHSEA_FLAGS
 
 # For dvips-all.enc.

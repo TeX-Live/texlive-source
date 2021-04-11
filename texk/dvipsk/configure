@@ -13745,6 +13745,11 @@ if test "$ac_res" != no; then :
 fi
 
 
+
+
+$as_echo "#define TL_VERSION \"TeX Live 2021\"" >>confdefs.h
+
+
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 

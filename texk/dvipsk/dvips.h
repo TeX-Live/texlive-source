@@ -15,7 +15,7 @@
 #define CD_IDX(i)  ((i>=MAX_2BYTES_CODE ? MAX_2BYTES_CODE : i))
 
 #define BANNER \
-"This is dvips(k) 2021.1 Copyright 2021 Radical Eye Software"
+"This is dvips(k) " VERSION " (" TL_VERSION ")  Copyright 2021 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #ifdef KPATHSEA
 #include "config.h"
