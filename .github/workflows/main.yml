@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Full build
         run: |
-          apt-get update
-          apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
           cd $GITHUB_WORKSPACE ; ./Build -C
 
