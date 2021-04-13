@@ -1,0 +1,31 @@
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push or pull request events but only for the trunk branch
+  push:
+    branches: [ trunk ]
+  pull_request:
+    branches: [ trunk ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-16.04
+    env:
+      TL_MAKE_FLAGS: -j 2
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Full build
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+          cd $GITHUB_WORKSPACE ; ./Build -C
+
