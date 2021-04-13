@@ -315,6 +315,7 @@ apply_normalization(uint32_t* buf, int len, int norm)
 
     status = TECkit_ConvertBuffer(*normPtr, (Byte*)buf, len * sizeof(UInt32), &inUsed,
                 (Byte*)&buffer[first], sizeof(*buffer) * (bufsize - first), &outUsed, 1);
+    TECkit_ResetConverter(*normPtr);
     if (status != kStatus_NoError)
         buffer_overflow();
     last = first + outUsed / sizeof(*buffer);
@@ -693,6 +694,7 @@ applytfmfontmapping(void* cnv, int c)
     /* TECkit_Status status; */
     /* status = */ TECkit_ConvertBuffer((TECkit_Converter)cnv,
             (const Byte*)&in, sizeof(in), &inUsed, out, sizeof(out), &outUsed, 1);
+    TECkit_ResetConverter((TECkit_Converter)cnv);
     if (outUsed < 1)
         return 0;
     else
@@ -1754,6 +1756,7 @@ retry:
     status = TECkit_ConvertBuffer(cnv,
             (Byte*)txtPtr, txtLen * sizeof(UniChar), &inUsed,
             (Byte*)mappedtext, outLength, &outUsed, true);
+    TECkit_ResetConverter(cnv);
 
     switch (status) {
         case kStatus_NoError:
