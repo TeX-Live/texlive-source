@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
+# $Id: tlmgr.pl 58862 2021-04-13 01:01:37Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 57970 $';
-my $datrev = '$Date: 2021-02-27 15:17:34 +0100 (Sat, 27 Feb 2021) $';
+my $svnrev = '$Revision: 58862 $';
+my $datrev = '$Date: 2021-04-13 03:01:37 +0200 (Tue, 13 Apr 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -869,6 +869,13 @@ sub handle_execute_actions {
   my $sysmode = ($opts{"usermode"} ? "-user" : "-sys");
   my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
 
+  # of create_formats is unset (NOT the default) we add --refresh so that
+  # only existing formats are recreated
+  if (!$localtlpdb->option("create_formats")) {
+    $invoke_fmtutil .= " --refresh";
+    info("only existing formats will be refreshed per user option (create_formats=0)\n");
+  }
+
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
     if (defined($localtlpdb->get_package('context'))
@@ -931,9 +938,8 @@ sub handle_execute_actions {
       }
     }
 
-    # format-regenerate is used when the paper size changes.  In that
-    # case, if option("create_formats") is set, we simply want to generate
-    # all formats
+    # format-regenerate is used when the paper size changes.
+    # In that case we simply want to generate all formats
     #
     my %done_formats;
     my %updated_engines;
@@ -957,13 +963,12 @@ sub handle_execute_actions {
     for my $m (keys %{$::execute_actions{'disable'}{'formats'}}) {
       $do_full = 1;
     }
-    my $opt_fmt = $localtlpdb->option("create_formats");
     if ($do_full) {
       info("regenerating fmtutil.cnf in $TEXMFDIST\n");
       TeXLive::TLUtils::create_fmtutil($localtlpdb,
                                        "$TEXMFDIST/web2c/fmtutil.cnf");
     }
-    if ($opt_fmt && !$::regenerate_all_formats) {
+    if (!$::regenerate_all_formats) {
       # first regenerate all formats --byengine 
       for my $e (keys %updated_engines) {
         debug ("updating formats based on $e\n");
@@ -994,20 +999,21 @@ sub handle_execute_actions {
           # Use full path for external command, except on Windows.
           $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
         }
-        if ($localtlpdb->option("create_formats")
-            && !$::regenerate_all_formats) {
+        if (!$::regenerate_all_formats) {
           $errors += do_cmd_and_check ("$invoke_fmtutil --byhyphen \"$lang\"");
         }
       }
     }
-  }
 
-  #
-  if ($::regenerate_all_formats) {
-    info("Regenerating all formats, this may take some time ...");
-    $errors += do_cmd_and_check("$invoke_fmtutil --all");
-    info("done\n");
-    $::regenerate_all_formats = 0;
+    # ::regenerate_all_formats comes from TLPaper updates
+    # so we just refresh formats instead of generating all that have not been there
+    if ($::regenerate_all_formats) {
+      info("Regenerating available formats, this may take some time ...");
+      # --refresh might already be in $invoke_fmtutil, but we don't care
+      $errors += do_cmd_and_check("$invoke_fmtutil --refresh --all");
+      info("done\n");
+      $::regenerate_all_formats = 0;
+    }
   }
 
   # undefine the global var, otherwise in GUI mode the actions
@@ -10110,7 +10116,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
+$Id: tlmgr.pl 58862 2021-04-13 01:01:37Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

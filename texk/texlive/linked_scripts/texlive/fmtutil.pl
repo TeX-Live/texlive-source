@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 58784 2021-04-07 07:30:50Z kakuto $
+# $Id: fmtutil.pl 58847 2021-04-12 01:00:22Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2020 Norbert Preining
+# Copyright 2014-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 58784 2021-04-07 07:30:50Z kakuto $';
-my $lastchdate = '$Date: 2021-04-07 09:30:50 +0200 (Wed, 07 Apr 2021) $';
+my $svnid = '$Id: fmtutil.pl 58847 2021-04-12 01:00:22Z preining $';
+my $lastchdate = '$Date: 2021-04-12 03:00:22 +0200 (Mon, 12 Apr 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 58784 $';
+my $svnrev = '$Revision: 58847 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -103,7 +103,6 @@ our %opts = ( quiet => 0 , strict => 1 );
 my @cmdline_cmds = (  # in same order as help message
   "all",
   "missing",
-  "refresh",
   "byengine=s",
   "byfmt=s",
   "byhyphen=s",
@@ -123,6 +122,7 @@ our @cmdline_options = (  # in same order as help message
   "no-error-if-no-format",
   "nohash",
   "recorder",
+  "refresh",
   "strict!",
   "quiet|silent|q",
   "catcfg",
@@ -202,8 +202,16 @@ sub main {
                   . "Try $prg --help if you need it.\n");
       return 1;
     } elsif (@cmds == 0) {
-      print_error("no command specified; try $prg --help if you need it.\n");
-      return 1;
+      if ($opts{'refresh'}) {
+        # backward compatibility: till 2021 we had --refresh as a command
+        # but now we allow combining it with --byfmt etc
+        # In case that --refresh was given without any other command, we
+        # treat it as --all --refresh as it was the case till the change.
+        $opts{'all'} = 1;
+      } else {
+        print_error("no command specified; try $prg --help if you need it.\n");
+        return 1;
+      }
     }
   }
   
@@ -287,9 +295,6 @@ sub main {
 
   } elsif ($opts{'byhyphen'}) {
     return callback_build_formats('byhyphen', $opts{'byhyphen'});
-
-  } elsif ($opts{'refresh'}) {
-    return callback_build_formats('refresh');
 
   } elsif ($opts{'missing'}) {
     return callback_build_formats('missing');
@@ -473,6 +478,12 @@ sub select_and_rebuild_format {
   $doit = 1 if ($what eq 'missing' && ! -r "$destdir/$fmtfile");
   $doit = 1 if ($what eq 'byengine' && $eng eq $whatarg);
   $doit = 1 if ($what eq 'byfmt' && $fmt eq $whatarg);
+  #
+  # Deal with the --refresh option
+  # 2021 changed behavior that --refresh can be used with all other format
+  # selection cmd line args.
+  $doit = 0 if ($opts{'refresh'} && ! -r "$destdir/$fmtfile");
+  #
   # TODO
   # original fmtutil.sh was stricter about existence of the hyphen file
   # not sure how we proceed here; let's implicitly ignore.
@@ -1338,6 +1349,7 @@ Options:
   --no-strict             exit successfully even if a format fails to build
   --nohash                don't update ls-R files
   --recorder              pass the -recorder option and save .fls files
+  --refresh               recreate only existing format files
   --quiet                 be silent
   --catcfg                (does nothing, exists for compatibility)
   --dolinks               (does nothing, exists for compatibility)
@@ -1347,7 +1359,6 @@ Options:
 Commands:
   --all                   recreate all format files
   --missing               create all missing format files
-  --refresh               recreate only existing format files
   --byengine ENGINE       (re)create formats built with ENGINE
   --byfmt FORMAT          (re)create format FORMAT
   --byhyphen HYPHENFILE   (re)create formats that depend on HYPHENFILE
