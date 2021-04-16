@@ -1,7 +1,7 @@
 % This file is part of CWEB.
 % The CWEB programs by Silvio Levy are based on programs by D. E. Knuth.
 % They are distributed WITHOUT ANY WARRANTY, express or implied.
-% This README file last updated February 2021 by Andreas Scherer
+% This README file last updated April 2021 by Andreas Scherer
 
 % Copyright (C) 1987,1990,1993,2000,2016 Silvio Levy and Donald E. Knuth
 
@@ -66,14 +66,16 @@ makefile.bs
 prod.w
 readme.ql
 c++lib.w
+iso_types.w
 
 The file cwebman.tex is the user manual.
 The examples directory contains additional examples of the use of CWEB.
 The files common.c and ctangle.c are used for bootstrapping.
 The file cweb.1 is a manual page.
 The file cweb.el is suggested for GNU-Emacs users.
-The file c++lib.w is for C++ users (say `@i c++lib.w' at beginning of program).
-The files *-man.ch are used if you want to make the full 240-page CWEB manual.
+The files c++lib.w and iso_types.w are for C++ users (say `@i c++lib.w'
+and/or `@i iso_types.w' at beginning of program).
+The files *-man.ch are used if you want to make the full 243-page CWEB manual.
 The files *-bs.ch are used instead of *-pc.ch if you are doing BIG programs.
 You can use makefile.bs to make CWEB with *-bs.ch.
 The files *-ql.ch are for QDOS/SMSQ systems; see readme.ql for further info.

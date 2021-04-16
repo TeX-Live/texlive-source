@@ -1,6 +1,6 @@
 # This file is part of CWEB.
 # It is distributed WITHOUT ANY WARRANTY, express or implied.
-# Version 4.2 --- February 2021
+# Version 4.3 --- April 2021
 
 # Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -74,14 +74,14 @@ CWEAVE = ./cweave
 CTANGLE = ./ctangle
 SOURCES = cweave.w common.w ctangle.w
 ALL =  common.w ctangle.w cweave.w prod.w \
-	Makefile common.c common.h ctangle.c \
+	Makefile README common.c common.h ctangle.c \
 	cwebman.tex cwebmac.tex comm-vms.ch ctang-vms.ch \
 	cweav-vms.ch comm-man.ch ctang-man.ch cweav-man.ch \
 	comm-pc.ch ctang-pc.ch cweav-pc.ch comm-amiga.ch \
         comm-bs.ch ctang-bs.ch cweav-bs.ch makefile.bs \
 	comm-ql.ch ctang-ql.ch cweav-ql.ch readme.ql \
 	comm-w32.ch ctang-w32.ch cweav-w32.ch \
-	comm-os2.ch comm-mac.ch cweb.1 cweb.el c++lib.w README
+	comm-os2.ch comm-mac.ch cweb.1 cweb.el c++lib.w iso_types.w
 
 .SUFFIXES: .dvi .tex .w .pdf
 
@@ -183,6 +183,8 @@ install: all
 	- mkdir $(CWEBINPUTS)
 	$(CP) c++lib.w $(CWEBINPUTS)
 	chmod 644 $(CWEBINPUTS)/c++lib.w
+	$(CP) iso_types.w $(CWEBINPUTS)
+	chmod 644 $(CWEBINPUTS)/iso_types.w
 
 floppy: $(ALL) examples
 	bar cvhf /dev/rfd0 $(ALL) examples

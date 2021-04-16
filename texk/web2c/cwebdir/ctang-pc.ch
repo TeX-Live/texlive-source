@@ -9,11 +9,11 @@ that allows >64K arrays. If you need lots of bytes and toks, try the
 alternate change files with -bs suffix instead of -pc.
 
 @x section 1
-@d banner "This is CTANGLE (Version 4.2)"
+@d banner "This is CTANGLE (Version 4.3)"
 @y
-@d banner "This is CTANGLE (Version 4.2pc)"
+@d banner "This is CTANGLE (Version 4.3pc)"
 @z
-@x section 4
+@x section 17
 @d max_bytes 1000000 /* the number of bytes in identifiers,
   index entries, and section names */
 @d max_toks 1000000 /* number of bytes in compressed \CEE/ code */

@@ -1,9 +1,9 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 3.6 --- May 2000
+% Version 4.3 --- April 2021
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 \ifx\documentstyle\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL3.6+LNCS}
+\xdef\fmtversion{\fmtversion+CTWILL4.3+LNCS}
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -218,6 +218,7 @@
 \newskip\intersecskip \intersecskip=12pt minus 3pt % space between sections
 \let\yskip=\smallskip
 \def\?{\mathrel?}
+\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\par\penalty5000
   \Y\noindent{\hangindent2\em\baselineskip10pt\eightrm#1~#2.\par}}
 \def\lapstar{\rlap{*}}
@@ -278,7 +279,8 @@
   \hbox{$\def\?{\kern.2em}%
     \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \let\~=\oct \let\^=\hex {#1}$}}
+    \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
+    \let\~=\oct \let\^=\hex \let\\=\bin{#1}$}}%$%
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
@@ -292,15 +294,15 @@
 
 %\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
 %\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
-\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
-\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\oct{\hbox{$^\circ$\kern-.1em}\Od}% CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$}\Hd} % CWEB style
+\def\bin{\hbox{$^{\scriptscriptstyle b}$}\Bd}
+\def\Od#1/{{\it#1}} % octal digit
+\def\Hd#1/{{\tt#1}} % hexadecimal digit
+\def\Bd#1/{{\tt#1}} % binary digit
 \def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
         \hbox{\strut\kern2pt\.{#1}\kern2pt}}
       \hrule}\vrule\kern2pt}} % verbatim string
-
-\def\TeX{{\ifmmode\it\fi
-   \leavevmode\hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
-\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 
 % now here's the mini-index formatting control
 \newcount\nrefs % total number of references in partial page

@@ -20,16 +20,16 @@ This file contributed by Barry Schwartz, trashman@crud.mn.org, 28 Jun 94.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.2)"
+@d banner "This is CWEAVE (Version 4.3)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.2pc/big)"
+@d banner "This is CWEAVE (Version 4.3pc/big)"
 @z
 
 
-@x Section 7.
+@x Section 10.
   for section names */
 
 @<Common code...@>=
@@ -119,11 +119,11 @@ static xref_pointer xmem_end;
 
 
 @x Section 24.
-xref_ptr=xmem; init_node(name_dir); xref_switch=0; section_xref_switch=0;
+xref_ptr=xmem; init_node(name_dir); xref_switch=section_xref_switch=0;
 xmem->num=0; /* sentinel value */
 @y
 xmem_end = xmem + max_refs - 1;
-xref_ptr=xmem; init_node(name_dir); xref_switch=0; section_xref_switch=0;
+xref_ptr=xmem; init_node(name_dir); xref_switch=section_xref_switch=0;
 xmem->num=0; /* sentinel value */
 @z
 
@@ -165,7 +165,7 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 74.
+@x Section 78.
       if (unindexed(lhs)) { /* retain only underlined entries */
         xref_pointer q,r=NULL;
         for (q=(xref_pointer)lhs->xref;q>xmem;q=q->xlink)
@@ -186,7 +186,7 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 93.
+@x Section 97.
   char *k, *k_end=(p+1)->byte_start; /* pointers into |byte_mem| */
   out('{');
   for (k=p->byte_start; k<k_end; k++) {
@@ -197,39 +197,41 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 209.
+@x Section 218.
   char *p; /* index into |byte_mem| */
 @y
   char huge *p; /* index into |byte_mem| */
 @z
 
 
-@x Section 244.
+@x Section 253.
     if (cur_name->xref!=(void *)xmem) {
 @y
     if (cur_name->xref!=(void huge*)xmem) {
 @z
 
 
-@x Section 246.
+@x Section 255.
 static char *cur_byte; /* index into |byte_mem| */
 @y
 static char huge* cur_byte; /* index into |byte_mem| */
 @z
 
 
-@x Section 255.
+@x Section 264.
 switch (cur_name->ilk) {
-  case normal: case func_template: if (is_tiny(cur_name)) out_str("\\|");
-    else {char *j;
+  case normal: case func_template:
+    if (is_tiny(cur_name)) out_str("\\|");
+    else {@+char *j;
 @y
 switch (cur_name->ilk) {
-  case normal: case func_template: if (is_tiny(cur_name)) out_str("\\|");
-    else {char huge* j;
+  case normal: case func_template:
+    if (is_tiny(cur_name)) out_str("\\|");
+    else {@+char huge* j;
 @z
 
 
-@x Section 255.
+@x Section 264.
   case custom: {char *j; out_str("$\\");
 @y
   case custom: {char huge* j; out_str("$\\");

@@ -34,9 +34,9 @@
 @z
 
 @x
-\def\title{CWEAVE (Version 4.2)}
+\def\title{CWEAVE (Version 4.3)}
 @y
-\def\title{CTWILL (Version 4.2 [\TeX~Live])}
+\def\title{CTWILL (Version 4.3 [\TeX~Live])}
 @z
 
 @x
@@ -46,9 +46,9 @@
 @z
 
 @x
-  \centerline{(Version 4.2)}
+  \centerline{(Version 4.3)}
 @y
-  \centerline{(Version 4.2 [\TeX~Live])}
+  \centerline{(Version 4.3 [\TeX~Live])}
 @z
 
 @x
@@ -75,7 +75,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.2)"
+@d banner "This is CWEAVE (Version 4.3)"
 @y
 This is the \.{CTWILL} program by D. E. Knuth, based
 on \.{CWEAVE} by Silvio Levy and D.~E. Knuth. It is also based on
@@ -94,7 +94,7 @@ reprinted in {\sl Digital Typography\/} (1999), 225--245.
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 modified. The version number parallels the corresponding version of \.{CWEAVE}.
 
-@d banner "This is CTWILL, Version 4.2"
+@d banner "This is CTWILL, Version 4.3"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -628,6 +628,10 @@ skip_restricted(void)
 
 @x
 @.Control codes are forbidden...@>
+  }
+}
+
+@ @<Predecl...@>=@+static void skip_restricted(void);
 @y
 @.Control codes are forbidden...@>
     if (c==meaning && phase==2) @<Process a user-generated meaning@>@;
@@ -635,15 +639,7 @@ skip_restricted(void)
   }
 }
 
-@ @<Suppress mini-index entry@>=
-{ char *first=id_first,*last=id_loc;
-  while (xisspace(*first)) first++;
-  while (xisspace(*(last-1))) last--;
-  if (first<last) {
-    struct perm_meaning *q=id_lookup(first,last,normal)-name_dir+cur_meaning;
-    q->stamp=section_count; /* this is what actually suppresses output */
-  }
-}
+@ @<Predecl...@>=@+static void skip_restricted(void);
 
 @ @<Process a user-generated meaning@>=
 { char *first=id_first;
@@ -662,6 +658,16 @@ skip_restricted(void)
     else @<Digest the meaning of |p|, |t|, |n|@>;
   }
   loc=id_loc+2;
+}
+
+@ @<Suppress mini-index entry@>=
+{ char *first=id_first,*last=id_loc;
+  while (xisspace(*first)) first++;
+  while (xisspace(*(last-1))) last--;
+  if (first<last) {
+    struct perm_meaning *q=id_lookup(first,last,normal)-name_dir+cur_meaning;
+    q->stamp=section_count; /* this is what actually suppresses output */
+  }
 }
 
 @ @<Digest...@>=
@@ -683,6 +689,8 @@ skip_restricted(void)
   else { char *q=m->tex_part;
     while (loc<id_loc) *q++=*loc++;
     *q='\0';
+  }
+}
 @z
 
 @x
@@ -872,10 +880,10 @@ the section is changed, we output `\.{\\*}' just after the number.
 @z
 
 @x
-@d end_arg 62 /* \.{@@]} */
+@d attr_head 69 /* denotes beginning of attribute */
 @y
-@d end_arg 62 /* \.{@@]} */
-@d title 63 /* program name or header name in a ``meaning'' */
+@d attr_head 69 /* denotes beginning of attribute */
+@d title 70 /* program name or header name in a ``meaning'' */
 @z
 
 @x
@@ -903,14 +911,14 @@ null_scrap.trans=&tok_start[0];
 
 @c
 static void
-print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
+print_text( /* prints a token list for debugging; not used in |main| */
 @y
 @d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
 
 @c
 #if 0
-static void
-print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
+@t\4\4@>static void
+print_text( /* prints a token list for debugging; not used in |main| */
 @z
 
 @x
@@ -964,16 +972,16 @@ static token_pointer tok_loc; /* where the first identifier appears */
 @z
 
 @x
-  r->num=m; /* everything from |q| on is left undisturbed */
+r->num=m; /* everything from |q| on is left undisturbed */
 @y
-  r->num=m; /* everything from |q| on is left undisturbed */
+r->num=m; /* everything from |q| on is left undisturbed */
 
 @ \.{CTWILL} needs the following procedure, which appends tokens of a
 translated text until coming to |tok_loc|, then suppresses text that may
 appear between parentheses or brackets. The calling routine should set
 |ident_seen=false| first. (This is admittedly tricky.)
 
-@c boolean ident_seen;
+@c static boolean ident_seen;
 static boolean app_supp(
   text_pointer p)
 { token_pointer j;
@@ -1089,7 +1097,7 @@ while (ast_count) {
 @x
 @<Cases for |exp|@>=
 if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  make_underlined(pp); big_app1(pp); big_app(indent); app(indent);
+  make_underlined(pp); big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,1);
 }
 @y
@@ -1097,16 +1105,13 @@ if (cat1==lbrace || cat1==int_like || cat1==decl) {
 if(cat1==lbrace || cat1==int_like || cat1==decl) {
   make_underlined(pp);
   make_ministring(0);
-  big_app1(pp);
-  if (indent_param_decl) {
-    big_app(indent); app(indent);
-  }
+  if (indent_param_decl) big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,1);
 }
 @z
 
 @x
-  make_underlined (pp);  squash(pp,2,tag,-1,7);
+  make_underlined (pp); squash(pp,2,tag,-1,7);
 @y
   make_underlined (pp);
   if (tok_loc>operator_found) {
@@ -1123,8 +1128,7 @@ if (cat1==comma) {
   big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
-  big_app1(pp); big_app('{'); big_app1(pp+1); big_app('}');
-  reduce(pp,2,decl_head,-1,34);
+  big_app1_insert(pp,'{'); big_app('}'); reduce(pp,2,decl_head,-1,34);
 }
 else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
   make_underlined(pp+1); squash(pp,2,decl_head,-1,35);
@@ -1134,7 +1138,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app1(pp); big_app(indent); app(indent); reduce(pp,1,fn_decl,0,38);
+  big_app(dindent); big_app1(pp); reduce(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @y
@@ -1143,7 +1147,7 @@ if (cat1==comma) {
   big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
-  big_app1(pp); big_app('{'); big_app1(pp+1); big_app('}');
+  big_app1_insert(pp,'{'); big_app('}');
   reduce(pp,2,decl_head,-1,34);
 }
 else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
@@ -1156,10 +1160,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app1(pp);
-  if (indent_param_decl) {
-    big_app(indent); app(indent);
-  }
+  if (indent_param_decl) big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
@@ -1168,24 +1169,19 @@ else if (cat1==semi) squash(pp,2,decl,-1,39);
 @x
 @ @<Cases for |decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1);
-  reduce(pp,2,decl,-1,40);
+  big_app1_insert(pp,force); reduce(pp,2,decl,-1,40);
 }
 else if (cat1==stmt || cat1==function) {
-  big_app1(pp); big_app(big_force);
-  big_app1(pp+1); reduce(pp,2,cat1,-1,41);
+  big_app1_insert(pp,big_force); reduce(pp,2,cat1,-1,41);
 }
 @y
 @ @<Cases for |decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1);
-  reduce(pp,2,decl,-1,40);
+  big_app1_insert(pp,force); reduce(pp,2,decl,-1,40);
 }
 else if (cat1==stmt || cat1==function) {
-  big_app1(pp);
-  if(order_decl_stmt) big_app(big_force);
-  else big_app(force);
-  big_app1(pp+1); reduce(pp,2,cat1,-1,41);
+  big_app1_insert(pp,order_decl_stmt ? big_force : force);
+  reduce(pp,2,cat1,-1,41);
 }
 @z
 
@@ -1199,7 +1195,7 @@ else if (cat1==stmt || cat1==function) {
 @x
 @ @<Cases for |fn_decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1); reduce(pp,2,fn_decl,0,51);
+  big_app1_insert(pp,force); reduce(pp,2,fn_decl,0,51);
 }
 else if (cat1==stmt) {
   big_app1(pp); app(outdent); app(outdent); big_app(force);
@@ -1208,16 +1204,22 @@ else if (cat1==stmt) {
 @y
 @ @<Cases for |fn_decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1); reduce(pp,2,fn_decl,0,51);
+  big_app1_insert(pp,force); reduce(pp,2,fn_decl,0,51);
 }
 else if (cat1==stmt) {
   big_app1(pp);
   if (indent_param_decl) {
     app(outdent); app(outdent);
   }
-  big_app(force);
-  big_app1(pp+1); reduce(pp,2,function,-1,52);
+  big_app(force); big_app1(pp+1); reduce(pp,2,function,-1,52);
 }
+@z
+
+@x
+  big_app1_insert(pp,dindent); reduce(pp,2,fn_decl,0,73);
+@y
+  big_app1(pp); if (indent_param_decl) big_app(dindent);
+  big_app1(pp+1); reduce(pp,2,fn_decl,0,73);
 @z
 
 @x
@@ -1241,9 +1243,9 @@ else squash(pp,1,exp,-2,122);
 @z
 
 @x
-  big_app1(pp); big_app(' '); big_app1(pp+1); reduce(pp,2,else_like,-2,102);
+  big_app1_insert(pp,' '); reduce(pp,2,else_like,-2,102);
 @y
-  big_app1(pp); big_app(' '); big_app1(pp+1); reduce(pp,2,else_like,-2,123);
+  big_app1_insert(pp,' '); reduce(pp,2,else_like,-2,123);
 @z
 
 @x
@@ -1251,19 +1253,18 @@ else squash(pp,1,exp,-2,122);
 if ((cat1==int_like || cat1==cast) && (cat2==comma || cat2==semi))
   squash(pp+1,1,exp,-1,115);
 else if (cat1==int_like) {
-  big_app1(pp); big_app(' '); big_app1(pp+1); reduce(pp,2,typedef_like,0,116);
+  big_app1_insert(pp,' '); reduce(pp,2,typedef_like,0,116);
 }
 else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
   make_underlined(pp+1); make_reserved(pp+1);
-  big_app1(pp); big_app(' '); big_app1(pp+1); reduce(pp,2,typedef_like,0,117);
+  big_app1_insert(pp,' '); reduce(pp,2,typedef_like,0,117);
 }
 else if (cat1==comma) {
   big_app2(pp); big_app(' '); reduce(pp,2,typedef_like,0,118);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,119);
 else if (cat1==ubinop && (cat2==ubinop || cat2==cast)) {
-  big_app('{'); big_app1(pp+1); big_app('}'); big_app1(pp+2);
-  reduce(pp+1,2,cat2,0,120);
+  big_app('{'); big_app1_insert(pp+1,'}'); reduce(pp+1,2,cat2,0,120);
 }
 @y
 @ Here \.{CTWILL} deviates from the normal productions introduced in
@@ -1353,11 +1354,9 @@ if (cat1==decl_head) {
 @z
 
 @x
-to \.{\\PB}, if the user has invoked \.{CWEAVE} with the \.{+e} flag.
-Although \.{cwebmac} ignores \.{\\PB}, other macro packages
+to \.{\\PB}.  Although \.{cwebmac} ignores \.{\\PB}, other macro packages
 @y
-to \.{\\PB}, if the user has invoked \.{CTWILL} with the \.{+e} flag.
-Although \.{ctwimac} ignores \.{\\PB}, other macro packages
+to \.{\\PB}.  Although \.{ctwimac} ignores \.{\\PB}, other macro packages
 @z
 
 @x
@@ -1412,12 +1411,10 @@ section_count=0; format_visible=true; right_start_switch=false; copy_limbo();
 @z
 
 @x
-while (!input_has_ended) @<Translate the current section@>@;
-}
+@ @<Predecl...@>=@+static void phase_two(void);
 
 @y
-while (!input_has_ended) @<Translate the current section@>@;
-}
+@ @<Predecl...@>=@+static void phase_two(void);
 
 @ @<Private...@>=
 static FILE *aux_file;
@@ -1479,15 +1476,15 @@ if (*(loc-1)!='*') {
 @y
 @.\\N@>
   if (right_start_switch) {
-    out_str("N"); right_start_switch=false;
+    out('N'); right_start_switch=false;
 @.\\NN@>
   }
 @z
 
 @x
-out_str("{");out_section(section_count); out_str("}");
+out('{'); out_section(section_count); out('}');
 @y
-out_str("{");out_section(section_count); out_str("}");
+out('{'); out_section(section_count); out('}');
 flush_buffer(out_ptr,false,false);
 @z
 
@@ -1551,12 +1548,12 @@ static name_pointer id_being_defined; /* the definee */
 @x
 @.Improper macro definition@>
   else {
-    app('$'); app_cur_id(false);
+    app_cur_id(false);
 @y
 @.Improper macro definition@>
   else {
     id_being_defined=id_lookup(id_first,id_loc,normal);
-    app('$'); app_cur_id(false);
+    app_cur_id(false);
     def_diff=*loc-'(';
 @z
 
@@ -1809,9 +1806,9 @@ rest of the job.
 @z
 
 @x
-  case normal: case func_template: if (is_tiny(cur_name)) out_str("\\|");
+  case normal: case func_template:
 @y
-  case normal: if (is_tiny(cur_name)) out_str("\\|");
+  case normal:
 @z
 
 @x
@@ -1900,20 +1897,20 @@ else {
 @x
 @** Index.
 @y
-@** Extensions to \.{CWEB}.  The following sections introduce new or improved
-features that have been created by numerous contributors over the course of a
-quarter century.
+@** Extensions to {\tentex CWEB}.  The following sections introduce new or
+improved features that have been created by numerous contributors over the
+course of a quarter century.
 
 \bigskip
 \font\itt=cmitt10
-{\noindent \it Although \.{\itt CTWILL} is based on \.{\itt cweave.w}, new and
+{\noindent \it Although {\itt CTWILL} is based on {\itt cweave.w}, new and
 modified material is incorporated all over the place, without taking special
 care for keeping the original section numbering intact.}
 
 @* Formatting alternatives.
-\.{CWEAVE} indents declarations after old-style function definitions.
-With the \.{-i} option they will come out flush left.  You won't see
-any difference if you use ANSI-style function definitions.
+\.{CWEAVE} indents declarations after old-style function definitions and
+long parameter lists of modern function definitions.
+With the \.{-i} option they will come out flush left.
 
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 
@@ -1947,7 +1944,7 @@ if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  if (temporary_output) @<Compare the temporary output...@>@;
+  if (check_for_change) @<Compare the temporary output...@>@;
 
   fclose(tex_file); tex_file=NULL;
   fclose(check_file); check_file=NULL;
@@ -1979,7 +1976,7 @@ else {
   rename(check_file_name,tex_file_name);
 }
 
-@* Put ``version'' information in \.{COMMON}.
+@* Put ``version'' information in a single spot.
 Don't do this at home, kids! Push our local macro to the variable in \.{COMMON}
 for printing the |banner| and the |versionstring| from there.
 

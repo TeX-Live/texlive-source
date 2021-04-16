@@ -15,7 +15,7 @@ by using "huge" pointers.
 (Update attempt by Andreas Scherer, 31 Jan 2021.  Good luck!)
 
 
-@x Section 6.
+@x Section 9.
   for section names */
 
 @<Common code...@>=
@@ -50,7 +50,7 @@ typedef struct name_info {
   union {
     void huge* equiv_member;
     void huge* xref_member;
-  } ptr_union;  /* info corresponding to names */
+  } ptr_union; /* info corresponding to names */
 } name_info; /* contains information about an identifier or section name */
 typedef name_info *name_pointer; /* pointer into array of \&{name\_info}s */
 typedef name_pointer *hash_pointer;
@@ -136,23 +136,23 @@ name_pointer p)
 
 @x Section 57.
 static name_pointer
-add_section_name(@t\1\1@> /* install a new node in the tree */
+add_section_name( /* install a new node in the tree */
 name_pointer par, /* parent of new node */
 int c, /* right or left? */
 char *first, /* first character of section name */
 char *last, /* last character of section name, plus one */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
+boolean ispref) /* are we adding a prefix or a full name? */
 {
   name_pointer p=name_ptr; /* new node */
   char *s=first_chunk(p);
 @y
 static name_pointer
-add_section_name(@t\1\1@> /* install a new node in the tree */
+add_section_name( /* install a new node in the tree */
 name_pointer par, /* parent of new node */
 int c, /* right or left? */
 char huge* first, /* first character of section name */
 char huge* last, /* last character of section name, plus one */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
+boolean ispref) /* are we adding a prefix or a full name? */
 {
   name_pointer p=name_ptr; /* new node */
   char huge* s=first_chunk(p);
@@ -161,39 +161,39 @@ int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
 
 @x Section 58.
 static void
-extend_section_name(@t\1\1@>
+extend_section_name(
 name_pointer p, /* name to be extended */
 char *first, /* beginning of extension text */
 char *last, /* one beyond end of extension text */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
+boolean ispref) /* are we adding a prefix or a full name? */
 {
   char *s;
 @y
 static void
-extend_section_name(@t\1\1@>
+extend_section_name(
 name_pointer p, /* name to be extended */
 char huge* first, /* beginning of extension text */
 char huge* last, /* one beyond end of extension text */
-int ispref@t\2\2@>) /* are we adding a prefix or a full name? */
+boolean ispref) /* are we adding a prefix or a full name? */
 {
   char huge* s;
 @z
 
 
-@x Section 64.
-static int section_name_cmp(@t\1\1@>
+@x Section 63.
+static int section_name_cmp(
 char **pfirst, /* pointer to beginning of comparison string */
 int len, /* length of string */
-name_pointer r@t\2\2@>) /* section name being compared */
+name_pointer r) /* section name being compared */
 {
   char *first=*pfirst; /* beginning of comparison string */
   name_pointer q=r+1; /* access to subsequent chunks */
   char *ss, *s=first_chunk(r);
 @y
-static int section_name_cmp(@t\1\1@>
+static int section_name_cmp(
 char huge** pfirst, /* pointer to beginning of comparison string */
 int len, /* length of string */
-name_pointer r@t\2\2@>) /* section name being compared */
+name_pointer r) /* section name being compared */
 {
   char huge* first=*pfirst; /* beginning of comparison string */
   name_pointer q=r+1; /* access to subsequent chunks */
@@ -208,14 +208,14 @@ An omitted change file argument means that |"NUL"| should be used,
 @z
 
 
-@x Section 76.
+@x Section 75.
   strcpy(change_file_name,"/dev/null");
 @y
   strcpy(change_file_name,"NUL");
 @z
 
 
-@x Section 76.
+@x Section 75.
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
 @y
         else if (*s == ':' || *s == '\\' || *s == '/')

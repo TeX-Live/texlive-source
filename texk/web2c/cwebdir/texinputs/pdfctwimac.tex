@@ -234,6 +234,7 @@
 \newskip\intersecskip \intersecskip=12pt minus 3pt % space between sections
 \let\yskip=\smallskip
 \def\?{\mathrel?}
+\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\par\penalty5000
   \Y\noindent{\hangindent2\em\baselineskip10pt%
     \eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
@@ -400,7 +401,7 @@
 \def\startsection{\titletrue
   \line{\smash{\titlefont\title}\quad\hrulefill}\bigskip
   \let\startsection=\stsec\stsec}
-\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 }} % begin `define' or `format'
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\iftenpoint\ninepoint\fi
@@ -415,7 +416,7 @@
 %\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
 \def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 \def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
-\def\D{\defin{\#define}} % macro definition
+\def\D{\defin{{\rm\#}define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
 \def\ETs{, and~} % conjunction between the last two of several section numbers
@@ -469,7 +470,8 @@
   \hbox{$\def\?{\kern.2em}%$%
     \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \let\~=\oct \let\^=\hex {#1}$}}%$%
+    \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
+    \let\~=\oct \let\^=\hex \let\\=\bin{#1}$}}%$%
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
@@ -484,15 +486,15 @@
 
 %\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
 %\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
-\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
-\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\oct{\hbox{$^\circ$\kern-.1em}\Od}% CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$}\Hd} % CWEB style
+\def\bin{\hbox{$^{\scriptscriptstyle b}$}\Bd}
+\def\Od#1/{{\it#1}} % octal digit
+\def\Hd#1/{{\tt#1}} % hexadecimal digit
+\def\Bd#1/{{\tt#1}} % binary digit
 \def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
         \hbox{\strut\kern2pt\.{#1}\kern2pt}}
       \hrule}\vrule\kern2pt}} % verbatim string
-
-\def\TeX{{\ifmmode\it\fi
-   \leavevmode\hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
-\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 
 % now here's the mini-index formatting control
 \newcount\nrefs % total number of references in partial page
@@ -639,7 +641,26 @@
 
 \hsize=\pagewd \vsize=\maxdimen \output={\twillout}
 
+%\let\page=\pagebody \raggedbottom
+% \def\page{\box255 }\normalbottom % faster, but loses plain TeX footnotes
+%\def\normaloutput#1#2#3{\ifodd\pageno\hoffset=\pageshift\fi
+ %\shipout\vbox{
+  %\vbox to\fullpageht{
+  %\iftitle\global\titlefalse
+  %\else\hbox to\pagewd{\vbox to10pt{}\ifodd\pageno #3\else#2\fi}\fi
+  %\vfill#1}} % parameter #1 is the page itself
+  %\global\advance\pageno by1}
+%\def\topofcontents{\centerline{\titlefont\title}\vskip.7in
+  %\vfill} % this material will start the table of contents page
+%\def\startpdf{\ifpdftex\pdfcatalog{/PageMode /UseOutlines}\else
+    %\ifpdf{\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
+%\def\botofcontents{\vfill
+  %\centerline{\covernote}} % this material will end the table of contents page
+%\def\covernote{}
 \def\contentspagenumber{0} % default page number for table of contents
+%\newdimen\pageshift \pageshift=\hoffset
+   %% shift righthand pages wrt lefthand ones (changed in version 3.70)
+%\def\setpage{\hsize\pagewd\vsize\pageht} % use after changing page size
 \def\contentsfile{\jobname.toc} % file that gets table of contents info
 \def\readcontents{\input \contentsfile}
 \def\readsections{\input \jobname.scn}
@@ -675,6 +696,28 @@
   \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
   \pdfoutline goto num #3 count -\expnumber{chunk#2.#3} {#5}}}
 \let\con=\end % no table of contents
+%\def\con{\par\vfill\eject % finish the section names
+% \ifodd\pageno\else\titletrue\null\vfill\eject\fi % for duplex printers
+  %\rightskip 0pt \hyphenpenalty 50 \tolerance 200
+  %\setpage \output={\normaloutput\page\lheader\rheader}
+  %\titletrue % prepare to output the table of contents
+  %\pageno=\contentspagenumber
+  %\def\grouptitle{TABLE OF CONTENTS}
+  %\message{Table of contents:}
+  %\topofcontents \startpdf
+  %\line{\hfil Section\hbox to3em{\hss Page}}
+  %\let\ZZ=\contentsline
+  %\readcontents\relax % read the contents info
+  %\botofcontents \end} % print the contents page(s) and terminate
+%\def\contentsline#1#2#3#4#5{\ifnum#2=0 \smallbreak\fi
+    %\line{\consetup{#2}#1
+      %\rm\leaders\hbox to .5em{.\hfil}\hfil
+      %\ \ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi\hbox to3em{\hss#4}}}
+%\def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
+  %\or % depth 0 (@*)
+  %\or \hskip2em % depth 1 (@*1)
+  %\or \hskip4em \or \hskip6em \or \hskip8em \or \hskip10em % depth 2,3,4,5
+  %\else \hskip12em \fi} % depth 6 or more
 \def\datethis{} \def\datecontentspage{}
 
 % To produce only a subset of pages, put the page numbers on separate

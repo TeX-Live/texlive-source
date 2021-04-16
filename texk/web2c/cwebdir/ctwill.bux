@@ -1,24 +1,23 @@
 @$program {COMMON.W}18 \&{int}@>
-@$ctangle {COMMON.W}18 \&{int}@>
-@$ctwill {COMMON.W}18 \&{int}@>
-@$cweave {COMMON.W}18 \&{int}@>
+@$ctangle {COMMON.W}2 \&{int}@>
+@$ctwill {COMMON.W}2 \&{int}@>
+@$cweave {COMMON.W}2 \&{int}@>
 @$phase {COMMON.W}19 \&{int}@>
 @$common_init {COMMON.W}20 \&{void} (\,)@>
-@$id_first {COMMON.W}21 \&{char} ${*}$@>
-@$id_loc {COMMON.W}21 \&{char} ${*}$@>
 @$section_text {COMMON.W}21 \&{char} [\,][\,]@>
 @$section_text_end {COMMON.W}21 \&{char} ${*}$@>
+@$id_first {COMMON.W}21 \&{char} ${*}$@>
+@$id_loc {COMMON.W}21 \&{char} ${*}$@>
 @$buffer {COMMON.W}22 \&{char} [\,]@>
 @$buffer_end {COMMON.W}22 \&{char} ${*}$@>
-@$limit {COMMON.W}22 \&{char} ${*}$@>
 @$loc {COMMON.W}22 \&{char} ${*}$@>
+@$limit {COMMON.W}22 \&{char} ${*}$@>
 
 @$include_depth {COMMON.W}25 \&{int}@>
 @$file {COMMON.W}25 \&{FILE} ${*}$ [\,]@>
 @$change_file {COMMON.W}25 \&{FILE} ${*}$@>
 @$file_name {COMMON.W}25 \&{char} [\,][\,]@>
 @$change_file_name {COMMON.W}25 \&{char} [\,]@>
-@$alt_web_file_name {COMMON.W}25 \&{char} [\,]@>
 @$line {COMMON.W}25 \&{int} [\,]@>
 @$change_line {COMMON.W}25 \&{int}@>
 @$change_depth {COMMON.W}25 \&{int}@>
@@ -43,9 +42,9 @@
 @$byte_ptr {COMMON.W}44 \&{char} ${*}$@>
 @$name_ptr {COMMON.W}44 \&{name\_pointer}@>
 
-@$h {COMMON.W}46 \&{hash\_pointer}@>
 @$hash {COMMON.W}46 \&{name\_pointer} [\,]@>
 @$hash_end {COMMON.W}46 \&{hash\_pointer}@>
+@$h {COMMON.W}46 \&{hash\_pointer}@>
 
 @$id_lookup {COMMON.W}48 \&{name\_pointer} (\,)@>
 
@@ -72,7 +71,6 @@
 @$scn_file_name {COMMON.W}73 \&{char} [\,]@>
 @$check_file_name {COMMON.W}73 \&{char} [\,]@>
 @$flags {COMMON.W}73 \&{boolean} [\,]@>
-@$use_language {COMMON.W}86 \&{const char} ${*}$@>
 
 @$C_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$tex_file {COMMON.W}83 \&{FILE} ${*}$@>
@@ -80,6 +78,8 @@
 @$scn_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$check_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$active_file {COMMON.W}83 \&{FILE} ${*}$@>
+
+@$use_language {COMMON.W}86 \&{const char} ${*}$@>
 
 @$cb_banner {COMMON.W}87 \&{char} [\,]@>
 

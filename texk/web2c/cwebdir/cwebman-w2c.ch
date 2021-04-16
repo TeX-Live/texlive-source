@@ -93,17 +93,17 @@
 @z
 
 @x
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.2)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.3)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.2 [\TeX~Live])}
+\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.3 [\TeX~Live])}
 @z
 
 @x
-\vskip 18pt\centerline{(Version 4.2 --- February 2021)}
+\vskip 18pt\centerline{(Version 4.3 --- April 2021)}
 @y
-\vskip 18pt\centerline{(Version 4.2 --- February 2021)%
-\footnote*{This document describes the extended \.{CWEB} (Version 4.2 [\TeX~Live]).}}
+\vskip 18pt\centerline{(Version 4.3 --- April 2021)%
+\footnote*{This document describes the extended \.{CWEB} (Version 4.3 [\TeX~Live]).}}
 @z
 
 @x
@@ -159,35 +159,38 @@ options `\.{b}', `\.{h}', and `\.{p}' are `off' by default.}
 @z
 
 @x
-output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
+options are currently implemented:
+
+\yskip
+\def\option#1 {\textindent{\.#1}\hangindent2\parindent}
 @y
-output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)%
+\def\option#1 {\textindent{\.#1}\hangindent2\parindent}%
+options are currently implemented:%
 \cwebfootnote{This extended version of \.{CWEB} adds the following options
 to the list:
 \hfil\smallskip
+\option c Overwrite output files with temporary output only if changes occur.
+(On by default.)
+\hfil\vskip\normallineskip
 \option d Set the debugging variable \\{kpathsea\_debug} to the numeric
 value $N\in[0,127]$ of this option.  See section~93 % FIXME
 of \pdfURL{appendix~D}{common-changes.pdf} for details.
 \hfil\vskip\normallineskip
-\option i Indent parameters in function declarations.  This causes the
-formal parameter declarations in function heads to be indented.  (On by
-default; \.{-i} typesets declarations flush left; some people think this
-to be more logical than indenting them) (Has no effect on \.{CTANGLE}.)
+\option i Indent parameters in function declarations.  (On by default;
+\.{-i} typesets declarations flush left; some people think this to be
+more logical than indenting them.) (Has no effect on \.{CTANGLE}.)
 \hfil\vskip\normallineskip
 \option l This option takes the string of characters to its right as its
 argument to switch between different user languages and macro packages.
 For example, if you call \.{CWEAVE} with the `\.{+ld}' (or `\.{-ld}') option,
 the German \.{CWEB} macros \.{dcwebmac.tex} will be loaded in the first line
-of output instead of the English ones. To avoid conflicts, the Danish
-macros could be called \.{dkcwebmac.tex} and would be included by `\.{+ldk}'.
-(Off by default) (Has no effect on \.{CTANGLE}.)
+of output instead of the English ones. (Off by default.) (Has no effect on
+\.{CTANGLE}.)
 \hfil\vskip\normallineskip
 \option o Separate declarations and the first statement in a function block.
-\.{CWEAVE} automatically inserts a bit of extra space.  (On by default.)
-(Has no effect on \.{CTANGLE}.)
-\hfil\vskip\normallineskip
-\option t Overwrite output files with temporary output only if changes occur.
-(On by default.)}
+(On by default.) (Has no effect on\break\hbox{}\qquad\.{CTANGLE}.)}
+
+\yskip
 @z
 
 @x
@@ -311,9 +314,9 @@ And here's what the same excerpt looks like when typeset.
 @z
 
 @x
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.2)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.3)\}{ }\\vfill\}}\cr}$$
 @y
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.2)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.3)\}{ }\\vfill\}}\cr}$$
 @z
 
 @x

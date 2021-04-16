@@ -26,9 +26,8 @@ identifier's ilk becomes |raw_int|.  A dagger \dag\ before the
 production number refers to the notes at the end of this section,
 which deal with various exceptional cases.
 
-We use \\{in}, \\{out}, \\{back} and
-\\{bsp} as shorthands for |indent|, |outdent|, |backup| and
-|break_space|, respectively.
+We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
+|indent|, |outdent|, |backup|, |break_space|, and |dindent|, respectively.
 
 \begingroup \lineskip=4pt
 \def\alt #1 #2
@@ -38,9 +37,9 @@ We use \\{in}, \\{out}, \\{back} and
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip
 \prodno=0 \midcol=2.5in
@@ -58,14 +57,14 @@ We use \\{in}, \\{out}, \\{back} and
 & stmt; \ /$\ast\,$comment$\,*$/\cr
 \+& |exp| \altt|lbrace| |int_like| |decl|
     & |fn_decl| \altt|lbrace| |int_like| |decl|
-        \hfill $F=E^*\,|in|\,|in|$ & \malt {\\{main}()$\{$}
+        \hfill $F=E^*\,\\{din}$ & \malt {\\{main}()$\{$}
            {\\{main}$(\\{ac},\\{av})$ \&{int} \\{ac};} \cr
 \+& |exp| |unop| & |exp| & |x++|\cr
 \+& |exp| \alt |binop| |ubinop| |exp| & |exp| & \malt {|x/y|} {|x+y|} \cr
 \+& |exp| |comma| |exp| & |exp| \hfill $EC\,|opt|9\,E$& |f(x,y)|\cr
 \+& |exp| \alt {|lpar| |rpar|} |cast| |colon| &
     |exp| \alt {|lpar| |rpar|} |cast| |base| &
-     \malt \&C|()|: {\&C|int i)|:} \cr
+     \malt \&C|()|: {\&C|(int i)|:} \cr
 \+& |exp| |semi| & |stmt| & |x=0;|\cr
 \+& |exp| |colon| & |tag| \hfill $E^*C$ & |found:|\cr
 \+& |exp| |rbrace| & |stmt| |rbrace| & end of \&{enum} list\cr
@@ -118,7 +117,7 @@ We use \\{in}, \\{out}, \\{back} and
      $D=D$\alt $B$ $C$ \unskip$E$ & \malt {\&{int} $f(\&{int}\ x=2)$} |int b:1| \cr
 \+& |decl_head| |cast| & |decl_head| & |int f(int)|\cr
 \+& |decl_head| \altt|int_like| |lbrace| |decl| & |fn_decl|
-                   \altt|int_like| |lbrace| |decl| \hfill $F=D\,|in|\,|in|$
+                   \altt|int_like| |lbrace| |decl| \hfill $F=D\,\\{din}$
                              & |long time () {|\cr
 \+& |decl_head| |semi| & |decl| & |int n;|\cr
 \+& |decl| |decl| & |decl| \hfill $D_1\,|force|\,D_2$ & |int n;double x;|\cr
@@ -161,24 +160,24 @@ We use \\{in}, \\{out}, \\{back} and
 \+& |else_like| |colon| & |else_like| |base| & \&{try} :\cr
 \+& |else_like| |lbrace| & |else_head| |lbrace| & \&{else} $\{$\cr
 \+& |else_like| |stmt| & |stmt| \hfill
-       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & |else x=0;|\cr
+       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
 \+& |else_head| \alt|stmt| |exp|  & |stmt| \hfill
-      $|force|\,E\,\\{bsp}\,|noop|\,|cancel|\,S\,\\{bsp}$ & |else{x=0;}|\cr
+      $|force|\,E\,\\{bsp}\,|noop|\,|cancel|\,S\,\\{bsp}$ & $\!\!$|else{x=0;}|\cr
 \+& |if_clause| |lbrace| & |if_head| |lbrace| & |if (x) {|\cr
 \+& |if_clause| |stmt| |else_like| |if_like| & |if_like| \hfill
     $|force|\,I\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|\,E\,\.\ I$ &
-     |if (x) y; else if|\cr
+     $\!\!$|if (x) y; else if|\cr
 \+& |if_clause| |stmt| |else_like| & |else_like| \hfill
     $|force|\,I\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|\,E$ &
-   |if (x) y; else|\cr
+   $\!\!$|if (x) y; else|\cr
 \+& |if_clause| |stmt| & |else_like| |stmt| & |if (x)|\cr
 \+& |if_head| \alt|stmt| |exp| |else_like| |if_like| & |if_like| \hfill
     $|force|\,I\,\\{bsp}\,|noop|\,|cancel|\,S\,|force|\,E\,\.\ I$ &
-     |if (x){y;}else if|\cr
+     $\!\!$|if (x){y;}else if|\cr
 \+& |if_head| \alt|stmt| |exp| |else_like| & |else_like| \hfill
     $|force|\,I\,\\{bsp}\,|noop|\,|cancel|\,S\,|force|\,E$ &
-   |if (x){y;}else|\cr
-\+& |if_head| \alt|stmt| |exp| & |else_head| \alt|stmt| |exp| & |if (x){y;}|\cr
+   $\!\!$|if (x){y;}else|\cr
+\+& |if_head| \alt|stmt| |exp| & |else_head| \alt|stmt| |exp| & $\!\!$|if (x){y;}|\cr
 \advance\midcol20pt
 \+& |do_like| |stmt| |else_like| |semi| & |stmt| \hfill
       $D\,\\{bsp}\,|noop|\,|cancel|\,S\,|cancel|\,|noop|\,\\{bsp}\,ES$%
@@ -191,18 +190,18 @@ We use \\{in}, \\{out}, \\{back} and
     $C$\alt $C$ $E$ \\{in}\,\\{in} & |catch (...)|\cr
 \+& |tag| |tag| & |tag| \hfill $T_1\,\\{bsp}\,T_2$ & |case 0: case 1:|\cr
 \+& |tag| \altt|stmt| |decl| |function| & \altt|stmt| |decl| |function|
-       \hfill $|force|\,\\{back}\,T\,\\{bsp}\,S$ & |case 0: z=0;|\cr
+       \hfill $|force|\,\\{back}\,T\,\\{bsp}\,S$ & $\!\!$|case 0: z=0;|\cr
 \+\dagit& |stmt| \altt|stmt| |decl| |function| &
    \altt|stmt| |decl| |function|
       \hfill $S\,$\altt$|force|\,S$ $|big_force|\,D$ $|big_force|\,F$ &
       |x=1;y=2;|\cr
 \+& |semi| & |stmt| \hfill \.\ $S$& empty statement\cr
 \+\dagit& |lproc| \altt |if_like| |else_like| |define_like| & |lproc| &
-         \maltt {{\bf \#include}} {\bf\#else} {\bf\#define} \cr
-\+& |lproc| |rproc| & |insert| & {\bf\#endif} \cr
+         \maltt {\#\&{include}} \#\&{else} \#\&{define} \cr
+\+& |lproc| |rproc| & |insert| & \#\&{endif} \cr
 \+& |lproc| \alt {|exp| [|exp|]} |function| |rproc| & |insert| \hfill
     $I$\.\ \alt {$E{[\.{\ \\5}E]}$} {$F$} &
- \malt{{\bf\#define} $a$\enspace 1} {{\bf\#define} $a$\enspace$\{\,b;\,\}$} \cr
+ \malt{\#\&{define} $a$\enspace 1} {\#\&{define} $a$\enspace$\{\,b;\,\}$} \cr
 \+& |section_scrap| |semi| & |stmt|\hfill $MS$ |force|
    &$\langle\,$section name$\,\rangle$;\cr
 \+& |section_scrap| & |exp| &$\langle\,$section name$\,\rangle$\cr
@@ -265,6 +264,55 @@ We use \\{in}, \\{out}, \\{back} and
     \malt |?x:| |?f():| \cr
 \+& |begin_arg| |end_arg| & |exp| & \.{@@[}\&{char}$*$\.{@@]}\cr
 \+& |any_other| |end_arg| & |end_arg| &    \&{char}$*$\.{@@]}\cr
+\+& |alignas_like| |decl_head| & |attr| & |alignas(struct s *)| \cr
+\+& |alignas_like| |exp| & |attr| & |alignas(8)| \cr
+\+& |lbrack| |lbrack| & |attr_head| & attribute begins \cr
+\+& |lbrack| & |lpar| & |[| elsewhere \cr
+\+& |rbrack| & |rpar| & |]| elsewhere \cr
+\+& |attr_head| |rbrack| |rbrack| & |attr| & $[[\ldots]]$ \cr
+\+& |attr_head| |exp| & |attr_head| & $[[$|deprecated| \cr
+\+& |attr_head| |using_like| |exp| |colon| & |attr_head| & $[[$|using NS:| \cr
+\+& |attr| \alt|lbrace| |stmt| & \alt|lbrace| |stmt| \hfill $A\.\ $ \alt $S$ $L$ &
+  |[[likely]] {|\cr
+\+& |attr| |tag| & |tag| \hfill $A\.\ T$ & |[[likely]] case 0:| \cr
+\+& |attr| |semi| & |stmt| & |[[fallthrough]];| \cr
+\+& |attr| |attr| & |attr| \hfill $A\.\ A$ & |alignas(x)| $[[\ldots]]$ \cr
+\+& |attr| |decl_head| & |decl_head| & |[[nodiscard]] f()| \cr
+\+& |decl_head| |attr| & |decl_head| & |(int x [[deprecated]])|\cr
+\+& |using_like| & |int_like| & \&{using} not in attributes \cr
+\+& |struct_like| |attr| & |struct_like| \hfill $S\.\ A$ &
+  |struct [[deprecated]]|\cr
+\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
+\+& |attr| |typedef_like| & |typedef_like| \hfill $A\.\ T$ &
+  |[[deprecated]] typedef| \cr
+\+& |raw_int| |lbrack| & |exp| & |int[3]| \cr
+\+& |attr_head| |comma| & |attr_head| & $[[$|x, y| \cr
+\+& |if_head| |attr| & |if_head| \hfill $I\.\ A$ & |if (x) [[unlikely]] {| \cr
+\+& |lbrack| |lbrack| |rbrack| |rbrack| & |exp| & |[[]]| \cr
+\+& |attr| |function| & |function| \hfill $A\.\ F$ &
+  attribute and function \cr
+\+& |default_like| |colon| & |case_like| |colon| & |default:| \cr
+\+& |default_like| & |exp| & |f()=default;| \cr
+\+& |struct_like| |struct_like| & |struct_like| \hfill $S\.\ S$ &
+  |enum class| \cr
+\+& |exp| |colcol| |int_like| & |int_like| & $\\{std}\DC\&{atomic}$ \cr
+\advance\midcol-60pt
+\+\dagit& |langle| |struct_like| \alt |exp| |int_like| |comma| &
+  |langle| \hfill $LS$\alt $E^{**}$ $I^{**}$ $C$ & $\langle$\&{typename} $t,$\cr
+\+\dagit& |langle| |struct_like| \alt |exp| |int_like| |prerangle| &
+  |cast| \hfill $LS$\alt $E^{**}$ $I^{**}$ $P$ &
+  \hbox{$\langle$\&{typename} $t\rangle$} \hss \cr
+\advance\midcol60pt
+\+& |template_like| |cast| |struct_like| & |struct_like| \hfill $T\.\ CS$ &
+  |template<@t\dots@>> class| \cr
+\+& |tag| |rbrace| & |decl| |rbrace| & @q{@>|public: }| \cr
+\+& |fn_decl| |attr| & |fn_decl| \hfill $F\.\ A$ & |void f() noexcept| \cr
+\+& |alignas_like| |cast| & |attr| & |alignas(int)| \cr
+\yskip
+\yskip
+\yskip
+\yskip
+\yskip
 \yskip
 \yskip
 \yskip
@@ -295,6 +343,9 @@ Rule 114: The |operator_like| must not be immediately followed by
 |raw_ubin|.
 
 Rule 123: The mathness of the |colon| or |base| changes to `yes'.
+
+Rules 153, 154: |make_reserved| is called only if the \.{+t} option is given
+to \.{CWEAVE}.
 
 Rule 200: The |exp| must not be immediately followed by |lpar| or~|exp|.
 

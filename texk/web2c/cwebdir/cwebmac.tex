@@ -1,7 +1,7 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.2 --- February 2021
+% Version 4.3 --- April 2021
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB4.2}
+\xdef\fmtversion{\fmtversion+CWEB4.3}
 \chardef\cwebversion=4 \chardef\cwebrevision=1
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
@@ -31,6 +31,7 @@
 \def\TEX/{\TeX}
 \def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
 \def\Cee{\CEE/} % for backward compatibility
+\def\Cpp{\CPLUSPLUS/} % for backward compatibility
 \def\9#1{}
  % with this definition of \9 you can say @:sort key}{TeX code@>
  % to alphabetize an index entry by the sort key but format with the TeX code
@@ -124,6 +125,7 @@
 \newskip\intersecskip \intersecskip=12pt minus 3pt % space between sections
 \let\yskip=\smallskip
 \def\?{\mathrel?}
+\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\Y\noindent{\hangindent2em%
     \baselineskip10pt\eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
 
@@ -287,7 +289,7 @@
     \else \special{pdf: dest (\romannumeral\secstar)
       [ @thispage /FitH @ypos ]}\fi}}\fi}
 \let\startsection=\stsec
-\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 }} % begin `define' or `format'
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\rightskip=0pt plus 100pt minus 10pt % go into C mode
@@ -300,7 +302,7 @@
 \let\SHC\C % "// short comments" treated like "/* ordinary comments */"
 %\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 %\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
-\def\D{\defin{\#define}} % macro definition
+\def\D{\defin{{\rm\#}define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
 \def\ETs{, and~} % conjunction between the last two of several section numbers
@@ -341,12 +343,15 @@
 \def\Qs{\note{This code is cited in sections}} % xref for mentions of a section
 \let\R=\lnot % logical not
 % \S is section sign
+\def\digitseparator{\,} % a bit of extra space
 \def\T#1{\leavevmode % octal, hex or decimal constant
   \hbox{$\def\?{\kern.2em}%
+    \let\ \digitseparator%
 %    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant % versions < 3.67
     \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant % in version 3.67
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \let\~=\oct \let\^=\hex {#1}$}}
+    \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
+    \let\~=\oct \let\^=\hex \let\\=\bin {#1}$}}
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
@@ -365,8 +370,12 @@
 
 %\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
 %\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
-\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
-\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\oct{\hbox{$^\circ$\kern-.1em}\Od}% CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$}\Hd} % CWEB style
+\def\bin{\hbox{$^{\scriptscriptstyle b}$}\Bd}
+\def\Od#1/{{\it#1}} % octal digit
+\def\Hd#1/{{\tt#1}} % hexadecimal digit
+\def\Bd#1/{{\tt#1}} % binary digit
 \def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
         \hbox{\strut\kern2pt\.{#1}\kern2pt}}
       \hrule}\vrule\kern2pt}} % verbatim string
@@ -482,14 +491,13 @@
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
-  \else\ifpdf
-    \special{pdf: outline -1 << /Title (\outsecname)
+  \else \special{pdf: outline -1 << /Title (\outsecname)
       /Dest [ @thispage /FitH @ypos ] >>}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \special{pdf: outline 0 << /Title (\the\toksE)
         /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
-  \fi\fi\fi
+  \fi\fi
   \readsections}
 \def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
 \def\expnumber#1{\expandafter\ifx\csname#1\endcsname\relax 0%
@@ -536,9 +544,6 @@
 \def\printtwodigits{\advance\twodigits100
   \expandafter\gobbleone\number\twodigits
   \advance\twodigits-100 }
-\def\TeX{{\ifmmode\it\fi
-   \leavevmode\hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
-\def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\datethis{\def\startsection{\leftline{\sc\today\ at \hours}\bigskip
   \let\startsection=\stsec\stsec}}
   % say `\datethis' in limbo, to get your listing timestamped before section 1

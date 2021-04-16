@@ -4,27 +4,24 @@ No changes to CTANGLE or CWEAVE are needed.
 (Contributed 13 Oct 2000 by AndPio@aol.com; slightly edited by Don Knuth)
 
 @x in limbo, change the title page document to specify Mac version
-  \centerline{(Version 4.2)}
+  \centerline{(Version 4.3)}
 @y
-  \centerline{(Version 4.2 for MacOS)}
+  \centerline{(Version 4.3 for MacOS)}
 @z
 
-@x sections 23/24: Make input_ln accept \n, \r, \n\r, or \r\n as line endings
+@x section 23: Make input_ln accept \n, \r, \n\r, or \r\n as line endings
 @ In the unlikely event that your standard I/O library does not
 support |feof|, |getc|, and |ungetc| you may have to change things here.
 @^system dependencies@>
 
-@<Predecl...@>=
-static boolean input_ln(FILE *);@/
-
-@ @c
-static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns |false| */
-FILE *fp@t\2\2@>) /* what file to read from */
+@c
+static boolean input_ln( /* copies a line into |buffer| or returns |false| */
+FILE *fp) /* what file to read from */
 {
-  register int  c=EOF; /* character read; initialized so some compilers won't complain */
-  register char *k;  /* where next character goes */
-  if (feof(fp)) return false;  /* we have hit end-of-file */
-  limit = k = buffer;  /* beginning of buffer */
+  register int c=EOF; /* character read; initialized so some compilers won't complain */
+  register char *k; /* where next character goes */
+  if (feof(fp)) return false; /* we have hit end-of-file */
+  limit = k = buffer; /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
   if (k>buffer_end)
@@ -32,7 +29,7 @@ FILE *fp@t\2\2@>) /* what file to read from */
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
     }
-  if (c==EOF && limit==buffer) return false;  /* there was nothing after
+  if (c==EOF && limit==buffer) return false; /* there was nothing after
     the last newline */
   return true;
 }
@@ -45,17 +42,14 @@ line endings, so that \.{CWEB} will works with ASCII files stored in
 \UNIX/, {\mc DOS} or {\mc MAC} format.
 @^system dependencies@>
 
-@<Predecl...@>=
-static boolean input_ln(FILE *);@/
-
-@ @c
-static boolean input_ln(@t\1\1@> /* copies a line into |buffer| or returns |false| */
-FILE *fp@t\2\2@>) /* what file to read from */
+@c
+static boolean input_ln( /* copies a line into |buffer| or returns |false| */
+FILE *fp) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
-  register char *k;  /* where next character goes */
-  if (feof(fp)) return false;  /* we have hit end-of-file */
-  limit = k = buffer;  /* beginning of buffer */
+  register char *k; /* where next character goes */
+  if (feof(fp)) return false; /* we have hit end-of-file */
+  limit = k = buffer; /* beginning of buffer */
   while (true) {
     c = getc(fp);
     if (c==EOF)  return limit!=buffer; /* |false|, if there was nothing after
@@ -77,7 +71,7 @@ FILE *fp@t\2\2@>) /* what file to read from */
 }
 @z
 
-@x section 28, simply return if no change file was specified
+@x section 27, simply return if no change file was specified
   change_limit=change_buffer; /* this value is used if the change file ends */
   @<Skip over comment lines in the change file; |return| if end of file@>@;
 @y
@@ -121,20 +115,19 @@ An omitted change file argument means that |"/dev/null"| should be used,
 @y
 An omitted change file argument means that no change file should be used,
 @z
-
-@x section 76, make change file name empty when it is unspecified
+@x section 75, make change file name empty when it is unspecified
   strcpy(change_file_name,"/dev/null");
 @y
   change_file_name[0]='\0';   /* empty string */
 @z
-@x section 76, use the Metrowerks |ccommand| to access command lines
+@x section 75, use the Metrowerks |ccommand| to access command lines
   while (--argc > 0) {
 @y
   argc = ccommand (&argv); /* use Mac interface to command line */
 @^system dependencies@>
   while (--argc > 0) {
 @z
-@x section 76, use the path separator constant
+@x section 75, use the path separator constant
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
 @y
         else if (*s==PATH_SEP) dot_pos=NULL,name_pos=++s;

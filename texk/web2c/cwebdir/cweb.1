@@ -1,4 +1,4 @@
-.TH CWEB 1 2018-Dec-16
+.TH CWEB 1 2021-Mar-24
 .
 .SH NAME
 ctangle, cweave \- translate CWEB to C and/or TeX
@@ -9,14 +9,14 @@ ctangle, cweave \- translate CWEB to C and/or TeX
 [
 .B \-bhp
 ] [
-.B +s
+.B +ks
 ] webfile[.w] [{changefile[.ch]|-} [outputfile[.c]]]
 .br
 .B cweave
 [
 .B \-befhpx
 ] [
-.B +s
+.B +st
 ] webfile[.w] [{changefile[.ch]|-} [outputfile[.tex]]]
 .ad
 .
@@ -80,7 +80,13 @@ The
 .B +s
 option prints statistics about memory usage at the end of a run.
 .PP
-There are three other options applicable to
+There is one other option applicable to
+.I ctangle
+only:
+.B +k
+means keep '-separators in numeric literals in the C/C++\ output.
+.PP
+There are four other options applicable to
 .I cweave
 only:
 .B \-f
@@ -89,13 +95,15 @@ means do not force a newline after every statement in the formatted output.
 inhibits the enclosure of C\ material formatted by
 .I cweave
 in brackets
-\ePB{...}.
-Such brackets are normally inserted so that special hooks
+\ePB{...};
+such brackets are normally inserted so that special hooks
 can be used by
 .I cweb-latex
 and similar programs.
 .B \-x
-means omit the index and table of contents.
+means omit the index, the names of the sections, and the table of contents.
+.B +t
+means treat 'typename' in templates like 'typedef'.
 .
 .SH FILES
 The location of the files mentioned below varies from system to system.
