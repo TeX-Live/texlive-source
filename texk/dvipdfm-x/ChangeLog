@@ -1,3 +1,8 @@
+2021-04-17  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pkfont.c: Remove all changes in 2020-12-14 and recover the
+	original pkfont.c.
+
 2021-04-15  Akira Kakuto  <kakuto@w32tex.org>
 
 	* tfm.c: Improve to find ofm files.

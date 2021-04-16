@@ -1,6 +1,6 @@
 /* This is dvipdfmx, an eXtended version of dvipdfm by Mark A. Wicks.
 
-    Copyright (C) 2002-2021 by Jin-Hwan Cho and Shunsaku Hirata,
+    Copyright (C) 2002-2020 by Jin-Hwan Cho and Shunsaku Hirata,
     the dvipdfmx project team.
     
     Copyright (C) 1998, 1999 by Mark A. Wicks <mwicks@kettering.edu>
@@ -81,7 +81,7 @@ truedpi (const char *ident, double point_size, unsigned bdpi)
 }
 
 static FILE *
-dpx_open_pk_font_at (const char *ident, unsigned dpi, char **pkname)
+dpx_open_pk_font_at (const char *ident, unsigned dpi)
 {
   FILE  *fp;
   char  *fqpn;
@@ -92,8 +92,6 @@ dpx_open_pk_font_at (const char *ident, unsigned dpi, char **pkname)
     return  NULL;
   fp   = MFOPEN(fqpn, FOPEN_RBIN_MODE);
   RELEASE(fqpn);
-  *pkname = NEW(strlen(ident)+12, char);
-  (void)snprintf(*pkname, strlen(ident)+12,  "%s.%dpk", ident, dpi);
 
   return  fp;
 }
@@ -104,7 +102,6 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
 {
   unsigned  dpi;
   FILE     *fp;
-  char     *pkname;
 
   if (!ident || point_size <= 0.0)
     return  -1;
@@ -116,7 +113,7 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
   }
 
   dpi = truedpi(ident, point_size, base_dpi);
-  fp  = dpx_open_pk_font_at(ident, dpi, &pkname);
+  fp  = dpx_open_pk_font_at(ident, dpi);
   if (!fp)
     return  -1;
   MFCLOSE(fp);
@@ -124,7 +121,8 @@ pdf_font_open_pkfont (pdf_font *font, const char *ident, int index, int encoding
   /* Type 3 fonts doesn't have FontName.
    * FontFamily is recommended for PDF 1.5.
    */
-  font->fontname = pkname;
+  font->fontname = NEW(strlen(ident)+1, char);
+  strcpy(font->fontname, ident);
 
   if (encoding_id >= 0) {
     pdf_encoding_used_by_type3(encoding_id);
@@ -487,7 +485,6 @@ create_pk_CharProc_stream (struct pk_header_ *pkh,
 int
 pdf_font_load_pkfont (pdf_font *font)
 {
-  char     *pkname;
   pdf_obj  *fontdict;
   char     *usedchars;
   char     *ident;
@@ -523,11 +520,11 @@ pdf_font_load_pkfont (pdf_font *font)
   ASSERT(ident && usedchars && point_size > 0.0);
 
   dpi  = truedpi(ident, point_size, base_dpi);
-  fp   = dpx_open_pk_font_at(ident, dpi, &pkname);
+  fp   = dpx_open_pk_font_at(ident, dpi);
   if (!fp) {
     ERROR("Could not find/open PK font file: %s (at %udpi)", ident, dpi);
   }
-  font->filename = pkname;
+
   memset(charavail, 0, 256);
   charprocs  = pdf_new_dict();
   /* Include bitmap as 72dpi image:
