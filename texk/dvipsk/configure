@@ -13747,7 +13747,7 @@ fi
 
 
 
-$as_echo "#define TL_VERSION \"TeX Live 2021\"" >>confdefs.h
+$as_echo "#define TL_VERSION \"TeX Live 2022/dev\"" >>confdefs.h
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

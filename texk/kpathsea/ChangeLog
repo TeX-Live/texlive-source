@@ -1,3 +1,7 @@
+2021-04-17  Karl Berry  <karl@tug.org>
+
+	* version.ac: now 6.3.4/dev since TL'21 is released.
+
 2021-04-07  Akira Kakuto  <kakuto@w32tex.org>
 
 	* knj.c, readable.c: Fix a bug that the "nul" device given in

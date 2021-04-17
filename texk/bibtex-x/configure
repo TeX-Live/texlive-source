@@ -13729,7 +13729,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-$as_echo "#define TL_VERSION \"TeX Live 2021\"" >>confdefs.h
+$as_echo "#define TL_VERSION \"TeX Live 2022/dev\"" >>confdefs.h
 
 
 ac_ext=cpp

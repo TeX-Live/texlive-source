@@ -13455,7 +13455,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-$as_echo "#define TL_VERSION \"TeX Live 2021\"" >>confdefs.h
+$as_echo "#define TL_VERSION \"TeX Live 2022/dev\"" >>confdefs.h
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking if C99 variadic macros are supported" >&5

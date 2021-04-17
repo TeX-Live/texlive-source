@@ -1,3 +1,7 @@
+2021-04-17  Karl Berry  <karl@tug.org>
+
+	* version.ac: now 2022/dev since TL'21 is released.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* tardate.ac (tex_live_tardate): 2020-03-23 for TL'21.
