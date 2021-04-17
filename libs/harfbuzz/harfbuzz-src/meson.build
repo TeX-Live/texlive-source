@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.47.0',
-  version: '2.7.4',
+  version: '2.8.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-rtti also anyway
     'cpp_rtti=false',       # Just to support msvc, we are passing -fno-exceptions also anyway
@@ -285,9 +285,6 @@ if host_machine.system() != 'windows'
 
   if thread_dep.found()
     conf.set('HAVE_PTHREAD', 1)
-  else
-    check_headers += ['sched.h']
-    check_funcs += ['sched_yield', {'link_with': 'rt'}]
   endif
 endif
 
@@ -337,14 +334,6 @@ foreach check : check_funcs
   endif
 endforeach
 
-if cpp.links(files('meson-cc-tests/intel-atomic-primitives-test.c'), name: 'Intel atomics')
-  conf.set('HAVE_INTEL_ATOMIC_PRIMITIVES', 1)
-endif
-
-if cpp.links(files('meson-cc-tests/solaris-atomic-operations.c'), name: 'Solaris atomic ops')
-  conf.set('HAVE_SOLARIS_ATOMIC_OPS', 1)
-endif
-
 subdir('src')
 subdir('util')
 
@@ -352,16 +341,8 @@ if not get_option('tests').disabled()
   subdir('test')
 endif
 
-# get_option('wrap_mode') isn't available in <0.49 and this
-# is just an internal tool
-if meson.version().version_compare('>=0.49')
-  if (not get_option('benchmark').disabled() and
-      get_option('wrap_mode') != 'nodownload' and
-      host_machine.system() != 'windows' and
-      not meson.is_subproject() and
-      not meson.is_cross_build())
-    subdir('perf')
-  endif
+if not get_option('benchmark').disabled()
+  subdir('perf')
 endif
 
 if not get_option('docs').disabled()
@@ -402,6 +383,11 @@ build_summary = {
     {'Documentation': conf.get('HAVE_GTK_DOC', 0) == 1,
      'GObject bindings': conf.get('HAVE_GOBJECT', 0) == 1,
      'Introspection': conf.get('HAVE_INTROSPECTION', 0) == 1,
+     'Experimental APIs': conf.get('HB_EXPERIMENTAL_API', 0) == 1,
+    },
+  'Testing':
+    {'Tests': get_option('tests').enabled(),
+     'Benchmark': get_option('benchmark').enabled(),
     },
 }
 if meson.version().version_compare('>=0.53')

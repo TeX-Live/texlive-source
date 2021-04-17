@@ -63,9 +63,6 @@
 /* Use hb-icu Unicode callbacks */
 #undef HAVE_ICU_BUILTIN
 
-/* Have Intel __sync_* atomic primitives */
-#undef HAVE_INTEL_ATOMIC_PRIMITIVES
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -86,15 +83,6 @@
 
 /* Have PTHREAD_PRIO_INHERIT. */
 #undef HAVE_PTHREAD_PRIO_INHERIT
-
-/* Define to 1 if you have the <sched.h> header file. */
-#undef HAVE_SCHED_H
-
-/* Have sched_yield */
-#undef HAVE_SCHED_YIELD
-
-/* Have Solaris __machine_*_barrier and atomic_* operations */
-#undef HAVE_SOLARIS_ATOMIC_OPS
 
 /* Define to 1 if you have the <stdbool.h> header file. */
 #undef HAVE_STDBOOL_H

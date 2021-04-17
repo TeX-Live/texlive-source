@@ -193,16 +193,16 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-machine-index.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.hh \

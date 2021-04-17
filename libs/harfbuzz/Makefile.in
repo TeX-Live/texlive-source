@@ -163,10 +163,10 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-var.$(OBJEXT) \
@@ -227,8 +227,8 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-khmer.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-syllabic.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use-table.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-vowel-constraints.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po \
@@ -862,16 +862,16 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-machine-index.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-complex.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.hh \
@@ -1106,6 +1106,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1113,9 +1116,6 @@ clean-noinstLIBRARIES:
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.$(OBJEXT):  \
-	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-ot-shape-normalize.$(OBJEXT):  \
@@ -1181,8 +1181,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-khmer.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-syllabic.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use-table.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-vowel-constraints.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po@am__quote@ # am--include-marker
@@ -1832,8 +1832,8 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-khmer.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-syllabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use-table.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-vowel-constraints.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po
@@ -1933,8 +1933,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-indic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-khmer.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-myanmar.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-syllabic.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-thai.Po
-	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use-table.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-use.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-complex-vowel-constraints.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-shape-fallback.Po
