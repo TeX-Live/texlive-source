@@ -1,3 +1,12 @@
+2021-04-10 Luigi Scarso <luigi.scarso@gmail.com>
+    * LuaTeX version 1.13.2  with MetaPost 2.01. 
+      The version change in MetaPost 
+      is due solely to the bug fix in btex .. etex 
+
+2021-04-02 Luigi Scarso <luigi.scarso@gmail.com>
+    * LuaTeX version 1.13.1,  
+      The version change is due solely to the bug fix in btex .. etex 
+
 2021-03-23 Karl Berry <karl@tug.org>
     * TL'21.
 
