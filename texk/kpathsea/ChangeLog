@@ -1,3 +1,8 @@
+2021-04-22  Karl Berry  <karl@freefriends.org>
+
+	* doc/kpathsea.texi (TeX directory structure): link to
+	ctan.org/pkg/tds instead of http://mirror.ctan.org.
+
 2021-04-17  Karl Berry  <karl@tug.org>
 
 	* version.ac: now 6.3.4/dev since TL'21 is released.

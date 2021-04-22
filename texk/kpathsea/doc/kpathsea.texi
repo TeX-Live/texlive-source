@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.3
-@set month-year February 2021
+@set month-year April 2021
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -358,7 +358,7 @@ distribution.  It conforms to both the GNU coding standards and the
 @TeX{} directory structure (TDS) standard.  For rationale and further
 explanation, please see those documents.  The GNU document is
 available from @url{https://gnu.org/prep/standards}.  The TDS
-document is available from @url{http://mirror.ctan.org/tds}
+document is available from @url{https://ctan.org/pkg/tds}
 (@pxref{unixtex.ftp}).
 
 In short, here is a skeleton of the default directory structure,
