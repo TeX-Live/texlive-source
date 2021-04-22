@@ -127,7 +127,7 @@ http(s), ftp, or scp. The documentation for @code{tlmgr} has the details
 (@url{https://tug.org/texlive/doc/tlmgr.html#OPTIONS}).
 
 For installation, the default is to pick a mirror automatically, using
-@url{http://mirror.ctan.org/systems/texlive/tlnet}; the chosen mirror is
+@url{https://mirror.ctan.org/systems/texlive/tlnet}; the chosen mirror is
 used for the entire download. You can use the special argument @code{ctan}
 as an abbreviation for this. (See @url{https://ctan.org} for more about CTAN
 and its mirrors.)
@@ -556,5 +556,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: install-tl 57970 2021-02-27 14:17:34Z siepo $
+$Id: install-tl 58938 2021-04-21 21:26:24Z karl $
 

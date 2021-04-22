@@ -60,8 +60,8 @@ with @code{tlmgr}:
 @item @code{tlmgr option repository ctan}
 @anchor{tlmgr @code{tlmgr option repository ctan}}
 
-@item @code{tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet}
-@anchor{tlmgr @code{tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet}}
+@item @code{tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet}
+@anchor{tlmgr @code{tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet}}
 
 Tell @code{tlmgr} to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want to have continuing
@@ -154,8 +154,8 @@ Equivalent ways of specifying a local directory.
 @item @code{ctan}
 @anchor{tlmgr @code{ctan}}
 
-@item @code{http://mirror.ctan.org/systems/texlive/tlnet}
-@anchor{tlmgr @code{http://mirror.ctan.org/systems/texlive/tlnet}}
+@item @code{https://mirror.ctan.org/systems/texlive/tlnet}
+@anchor{tlmgr @code{https://mirror.ctan.org/systems/texlive/tlnet}}
 
 Pick a CTAN mirror automatically, trying for one that is both nearby and
 up-to-date. The chosen mirror is used for the entire download. The bare
@@ -1052,7 +1052,7 @@ get further updates from the Internet, after originally installing from
 DVD.  To do this, you can run
 
 @verbatim
- tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+ tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
 @end verbatim
 
 The @code{install-tl} documentation has more information about the possible
@@ -2764,5 +2764,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 57970 2021-02-27 14:17:34Z siepo $
+$Id: tlmgr.pl 58938 2021-04-21 21:26:24Z karl $
 

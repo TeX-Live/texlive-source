@@ -1,3 +1,8 @@
+2021-04-22  Karl Berry  <karl@tug.org>
+
+	* tlbuild-incl/tlmgr.texi,
+	* tlbuild-incl/install-tl.texi: regenerate for https://mirror.ctan.org.
+
 2021-02-09  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Adding a new program module): emphasize requirement
