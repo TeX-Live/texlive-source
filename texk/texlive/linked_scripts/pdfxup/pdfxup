@@ -2,12 +2,12 @@
 shopt -s extglob
 shopt -s lastpipe
 
-VERSION="2.00"
-VDATE="2020/12/17"
+VERSION="2.10"
+VDATE="2021/04/25"
 ## see release notes at the end of this file.
 
 
-## (c) 2020/12/17 Nicolas Markey <pdfxup at markey dot fr>
+## (c) 2021/04/25 Nicolas Markey <pdfxup at markey dot fr>
 ##
 ## This work may  be distributed and/or modified under  the conditions of
 ## the LaTeX Project  Public License, either version 1.3  of this license
@@ -83,6 +83,8 @@ function defaultvalues()
   : ${dfpdfxupSILENTLY_OVERWRITE="0"}
   : ${dfpdfxupSET_BBOX=""}
   : ${dfpdfxupTIGHT_FRAME="0"}
+  : ${dfpdfxupCOLUMN="0"}
+  : ${dfpdfxupBALANCELAST="0"}
 }
 
 function setdefaultvalues()
@@ -140,11 +142,16 @@ function setdefaultvalues()
     TIGHT_FRAME=$dfpdfxupTIGHT_FRAME;
     # initial bounding box
     SET_BBOX=$dfpdfxupSET_BBOX
-
+    # pages displayed left-to-right first (default), or top-to-bottom first
+    COLUMN=$dfpdfxupCOLUMN
+    # balance last page (corresponds to option 'columnstrict' option
+    # in the pdfpages manual; also works in "non-column" mode)
+    BALANCELAST=$dfpdfxupBALANCELAST
+    
     ## Notice: the names for h and w should actually be X and Y:
     ##    they are not width and height, but coordinates of upper right corner.
-    ## Notice: PAGES, INCLUDE_FOR_BBOX and EXCLUDE_FOR_BBOX will be set to default values if empty after
-    ##    processing options
+    ## Notice: PAGES, INCLUDE_FOR_BBOX and EXCLUDE_FOR_BBOX will be set to
+    ##    default values if empty after processing options
 }
 
 ######################################################################
@@ -204,9 +211,11 @@ See the manual page ('man pdfxup') for the list of all options.";
 ##  -ow            allow overwriting                     [default: \"$dfpdfxupSILENTLY_OVERWRITE\"]
 ##  -ps s          output paper size                     [default: \"$dfpdfxupPAPERSIZE\"]
 ##  -tf            draw tight frame around each page     [default: \"$dfpdfxupTIGHT_FRAME\"]
+##  -col           arrange pages top-to-bottom first     [default: \"$dfpdfxupCOLUMN\"]
+##  -bal           balance last page                     [default: \"$dfpdfxupBALANCELAST\"]
 ##  -q             run quietly (equiv. '-V=0')
 ##  -h             show this help message
-##   -V [0-3]       select verbosity                      [default: \"$dfpdfxupVERBOSITY\"]
+##   -V [0-3]       select verbosity                     [default: \"$dfpdfxupVERBOSITY\"]
 ##
 ##
 ##
@@ -445,15 +454,16 @@ fi
 defaultvalues;
 setdefaultvalues;
 filename="temp-pdfxup-`date +%s`";
-inputfilename="input-$filename";
-watermarkfilename="watermark-$filename";
+inputfilename="input-pdfxup-$filename";
+watermarkfilename="watermark-pdfxup-$filename";
 
 ######################################################################
 ## check for ghostscript and pdflatex
 ######################################################################
 ## GS could be specified from command-line
 : ${GS=`which gs`}
-GSVERSION=`$GS --version 2>/dev/null`;
+## regexp keeps only first two numbers of version number (eg. 9.53.3 -> 9.53)
+GSVERSION=`$GS --version 2>/dev/null |sed -e "s/\(.\.[^\.]*\)\..*/\\1/"`;
 if [ ! "$GSVERSION" ]; then
     echo "   /!\\ ghostscript not found; aborting.";
     exit 1;
@@ -620,6 +630,18 @@ while [ $# != 0 ]; do
 		myecho 0+ "   /!\ configuration file $TMP not found"
 	    fi
 	    shift;;
+	-?(-)col|--column|--column-mode|-?(-)vert?(ical))
+	    COLUMN=1
+	    shift;;
+	-?(-)row|--row-mode|-?(-)line?(s)|-?(-)horiz?(ontal))
+	    COLUMN=0
+	    shift;;
+	-?(-)bal|--balance|--balancelast|--balance-last)
+	    BALANCELAST=1
+	    shift;;					
+	-?(-)no-bal|--no-balance|--no-balancelast|--no-balance-last)
+	    BALANCELAST=0
+	    shift;;
 	-c|--clip)
 	    case $2 in
 		1|yes|y|true)
@@ -674,7 +696,7 @@ while [ $# != 0 ]; do
 	    shift 2;;
 	-p*|--page*)
 	    ANS=`echo $1|sed -re "s/--?p(ages?)?=?//"`;
-	    PAGES=+="$ANS,";
+	    PAGES+="$ANS,";
 	    shift;;
 	-o|--out|--output-file|--outfile)
 	    OUTPUTFILE=$2;
@@ -1351,7 +1373,7 @@ EOF
 case $BOOKLET in
     0)
 	echo "  \bookletfalse" >> $filename.tex;;
-    se)
+    2)
 	echo "  \booklettrue" >> $filename.tex
 	echo "  \longedgefalse" >> $filename.tex;;
     *)
@@ -1387,6 +1409,8 @@ cat >> $filename.tex <<EOF
   \def\pdfxupwidefbox{$WIDE_FRAMEBOX}
   \def\pdfxuptightfbox{$TIGHT_FRAMEBOX}
   \def\pdfxupbbox{$BBOPTION}
+  \def\columnmode{$COLUMN}
+  \def\balancelast{$BALANCELAST}
 
   \input{pdfxup-template}
 
@@ -1539,7 +1563,7 @@ pdfxup has numerous options:
 ##
 ##################################################################
 Author: Nicolas Markey 
-Please send your comments to <pdfxup@markey.fr>
+Please send your comments and bug reports to <pdfxup@markey.fr>
 
 v1.00 (2015/08/23)
  - first release
@@ -1585,3 +1609,14 @@ v2.00 (2020/12/17)
    for frequent situations.
  - cleaned-up man page, adding some missing options (thanks
    to Louis Gostiaux for pointing undocumented options)
+
+v2.10 (2021/04/25)
+ - fixed a bug with ghostscript adding a patch-level number in their
+   version number. This is the bug reported in 
+     https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=976080
+   It was solved with the help of Christian Gnaegi.
+ - fixed 2 bugs in the computations of size of pages
+ - fixed a bug which inhibited short-edge option of booklets
+ - added options --col (to fill in pages vertically first) and --bal
+   (to balance columns (or rows) the last page). This feature was
+   requested by Philipp Killinger.

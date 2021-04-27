@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 58862 2021-04-13 01:01:37Z preining $
+# $Id: tlmgr.pl 58961 2021-04-22 00:55:07Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 58862 $';
-my $datrev = '$Date: 2021-04-13 03:01:37 +0200 (Tue, 13 Apr 2021) $';
+my $svnrev = '$Revision: 58961 $';
+my $datrev = '$Date: 2021-04-22 02:55:07 +0200 (Thu, 22 Apr 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -873,7 +873,7 @@ sub handle_execute_actions {
   # only existing formats are recreated
   if (!$localtlpdb->option("create_formats")) {
     $invoke_fmtutil .= " --refresh";
-    info("only existing formats will be refreshed per user option (create_formats=0)\n");
+    debug("only existing formats will be refreshed per user option (create_formats=0)\n");
   }
 
   if ($::files_changed) {
@@ -7007,9 +7007,9 @@ sub _init_tlmedia {
   # choose a mirror if we are asked.
   if ($location =~ m/^ctan$/i) {
     $location = give_ctan_mirror();
-  } elsif ($location =~ m,^$TeXLiveServerURL,) {
+  } elsif ($location =~ m,^$TeXLiveServerURLRegexp,) {
     my $mirrorbase = TeXLive::TLUtils::give_ctan_mirror_base();
-    $location =~ s,^$TeXLiveServerURL,$mirrorbase,;
+    $location =~ s,^$TeXLiveServerURLRegexp,$mirrorbase,;
   }
 
   my $errormsg;
@@ -7049,9 +7049,9 @@ sub setup_one_remotetlpdb {
   # choose a mirror if we are asked.
   if ($location =~ m/^ctan$/i) {
     $location = give_ctan_mirror();
-  } elsif ($location =~ m,^$TeXLiveServerURL,) {
+  } elsif ($location =~ m,^$TeXLiveServerURLRegexp,) {
     my $mirrorbase = TeXLive::TLUtils::give_ctan_mirror_base();
-    $location =~ s,^$TeXLiveServerURL,$mirrorbase,;
+    $location =~ s,^$TeXLiveServerURLRegexp,$mirrorbase,;
   }
 
   # if we talk about a net location try to download the hash of the tlpdb
@@ -7698,7 +7698,7 @@ with C<tlmgr>:
 
 =item C<tlmgr option repository ctan>
 
-=item C<tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet>
+=item C<tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet>
 
 Tell C<tlmgr> to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want to have continuing
@@ -7781,7 +7781,7 @@ Equivalent ways of specifying a local directory.
 
 =item C<ctan>
 
-=item C<http://mirror.ctan.org/systems/texlive/tlnet>
+=item C<https://mirror.ctan.org/systems/texlive/tlnet>
 
 Pick a CTAN mirror automatically, trying for one that is both nearby and
 up-to-date. The chosen mirror is used for the entire download. The bare
@@ -8557,7 +8557,7 @@ One common use of C<option> is to permanently change the installation to
 get further updates from the Internet, after originally installing from
 DVD.  To do this, you can run
 
- tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
+ tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet
 
 The C<install-tl> documentation has more information about the possible
 values for C<repository>.  (For backward compatibility, C<location> can
@@ -10116,7 +10116,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 58862 2021-04-13 01:01:37Z preining $
+$Id: tlmgr.pl 58961 2021-04-22 00:55:07Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

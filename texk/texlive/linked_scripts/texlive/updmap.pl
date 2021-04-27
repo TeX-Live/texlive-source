@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 51338 2019-06-07 16:36:59Z karl $
+# $Id: updmap.pl 58960 2021-04-22 00:52:00Z preining $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2019 Norbert Preining
+# Copyright 2011-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 51338 2019-06-07 16:36:59Z karl $';
+my $svnid = '$Id: updmap.pl 58960 2021-04-22 00:52:00Z preining $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2019-06-07 18:36:59 +0200 (Fri, 07 Jun 2019) $';
+my $lastchdate = '$Date: 2021-04-22 02:52:00 +0200 (Thu, 22 Apr 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 51338 $';
+my $svnrev = '$Revision: 58960 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1373,10 +1373,10 @@ The following files have been generated as listed above,
 but will not be found because overriding files exist, listed below.
 ");
     #
-    if ($prg eq "updmap-sys") {
+    if ($opts{'sys'}) {
       print_and_log ("
-Perhaps you have run updmap in the past, but are running updmap-sys
-now.  Once you run updmap the first time, you have to keep using it,
+Perhaps you have run updmap-user in the past, but are running updmap-sys
+now.  Once you run updmap-user the first time, you have to keep using it,
 or else remove the personal configuration files it creates (the ones
 listed below).
 ");

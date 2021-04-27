@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 58847 2021-04-12 01:00:22Z preining $
+# $Id: fmtutil.pl 58961 2021-04-22 00:55:07Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 58847 2021-04-12 01:00:22Z preining $';
-my $lastchdate = '$Date: 2021-04-12 03:00:22 +0200 (Mon, 12 Apr 2021) $';
+my $svnid = '$Id: fmtutil.pl 58961 2021-04-22 00:55:07Z preining $';
+my $lastchdate = '$Date: 2021-04-22 02:55:07 +0200 (Thu, 22 Apr 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 58847 $';
+my $svnrev = '$Revision: 58961 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
