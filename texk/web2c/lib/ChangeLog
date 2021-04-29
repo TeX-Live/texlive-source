@@ -1,3 +1,19 @@
+2021-04-28  Marcel Fabian Krueger  <tex@2krueger.de>
+	    Hironori KITAGAWA <h_kitagawa2001@yahoo.co.jp>
+	    Karl Berry <karl@freefriends.org>
+
+	* texmfmp.c (calledit): When looking for the filename to edit,
+	skip \scantokens pseudo-files (streams 18 and 19) and indeed all
+	name_field values <=255 (following tex.web), and token lists
+	(state_field==0).
+	
+	Original reports from Don Hosek,
+	https://tex.stackexchange.com/questions/594702
+	and Hironori (plus patch),
+	https://tug.org/pipermail/tex-k/2021-April/003542.html
+	and Marcel (plus patch) for \scantokens,
+	https://tug.org/pipermail/tex-live/2021-April/046846.html.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.

@@ -2624,29 +2624,49 @@ calledit (packedASCIIcode *filename,
      and a non-file for the insert. https://tex.stackexchange.com/q/552113 
      
      Therefore, we have to traverse down input_stack (not input_file),
-     looking for name_field values >17, which correspond to open
-     files, and then the index_field value of that entry tells us the
+     looking for large enough name_field values corresponding to open
+     files. Then the index_field value of that entry tells us the
      corresponding element of input_file, which is what we need to close.
+     Additionally we have to skip all entries with state_field 0 since these
+     correspond to token lists and not input files.
 
-     We test for >17 because name_field=0 means the terminal,
-     name_field=1..16 means \openin stream n - 1,
-     name_field=17 means an invalid stream number (for read_toks).
-     Although ... seems like we should close any opened \openin files also.
-     Whoever is reading this, please implement that? Sigh.
+     We test for name_field<=255, following tex.web, because the first
+     256 strings are static, initialized by TeX. (Well, many more
+     strings are initialized, but we'll follow tex.web.)
      
-     Description in modules 300--304 of tex.web: "Input stacks and states."
+     For the record, name_field=0 means the terminal,
+     name_field=1..16 means \openin stream n - 1,
+     name_field=17 means an invalid stream number (for read_toks),
+     name_field=18..19 means \scantokens pseudo-files (except for
+     original TeX of course). But 255 suffices for us.
      
      Here, we do not have to look at cur_input, the global variable
      which is effectively the top of input_stack, because it will always
      be a terminal (non-file) interaction -- the one where the user
-     typed "e" to start the edit.  */
+     typed "e" to start the edit.
+     
+     In addition, state_field will be zero for token lists. Skip those too.
+     (Does not apply to Metafont.)
+
+     Description in modules 300--304 of tex.web: "Input stacks and states".
+     
+     We should close any opened \openin files also. Whoever is reading
+     this, please implement that?  */
  {  
   int is_ptr; /* element of input_stack, 0 < input_ptr */  
   for (is_ptr = 0; is_ptr < inputptr; is_ptr++) {
-    if (inputstack[is_ptr].namefield <= 17) {
+#ifdef TeX
+    if (inputstack[is_ptr].statefield == 0 /* token list */
+        || inputstack[is_ptr].namefield <= 255) { /* can't be filename */
+#elif defined(MF)
+    if (inputstack[is_ptr].namefield <= 255) {
+#else
+#error "Unable to identify program" /* MetaPost doesn't use this file */
+#endif
         ; /* fprintf (stderr, "calledit: skipped input_stack[%d], ", is_ptr);
-             fprintf (stderr, "namefield=%d <= 17\n",
-                      inputstack[is_ptr].namefield); */
+             fprintf (stderr, "namefield=%d <= 255 or statefield=%d == 0\n",
+                      inputstack[is_ptr].namefield,
+                      inputstack[is_ptr].statefield); */
     } else {
       FILE *f;
       /* when name_field > 17, index_field specifies the element of
