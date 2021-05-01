@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.40 2020/03/10 22:35:15 karl Exp $
+# $Id: texfot,v 1.43 2021/05/01 15:49:53 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.40 2020/03/10 22:35:15 karl Exp $';
+my $ident = '$Id: texfot,v 1.43 2021/05/01 15:49:53 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -26,7 +26,7 @@ my @opt_ignore = ();
 my $opt_interactive = 0;
 my $opt_quiet = 0;
 my $opt_stderr = 1;
-my $opt_tee = ($ENV{"TMPDIR"} || "/tmp") . "/fot";
+my $opt_tee = ($ENV{"TMPDIR"} || $ENV{"TMP"} || "/tmp") . "/fot";
 my $opt_version = 0;
 my $opt_help = 0;
 
@@ -134,10 +134,11 @@ sub process_output {
       LaTeX\ Warning:\ You\ have\ requested\ package
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
      |LaTeX\ Font\ Warning:\ Size\ substitutions
+     |Package\ auxhook\ Warning:\ Cannot\ patch
      |Package\ caption\ Warning:\ Un(supported|known)\ document\ class
      |Package\ fixltx2e\ Warning:\ fixltx2e\ is\ not\ required
-     |Package\ layouts\ Warning:\ Layout\ scale
      |Package\ frenchb?\.ldf\ Warning:\ (Figures|The\ definition)
+     |Package\ layouts\ Warning:\ Layout\ scale
      |\*\*\*\ Reloading\ Xunicode\ for\ encoding  # spurious ***
      |This\ is\ `?(epsf\.tex|.*\.sty|TAP) # so what
      |pdfTeX\ warning:.*inclusion:\ fou   #nd PDF version ...
@@ -366,10 +367,11 @@ the TeX command (on stdout).  C<--no-stderr> omits that reporting.
 =item C<--tee> I<file>
 
 By default, the output being filtered is C<tee>-ed, before filtering, to
-C<$TMPDIR/fot> (C</tmp/fot> if C<TMPDIR> is not set), to make it easy to
-check the full output when the filtering seems suspect.  This option
-allows specifying a different file.  Use S<C<--tee /dev/null>> if you don't
-want the original output at all.
+C<$TMPDIR/fot> (or C<$TMP/fot> if C<TMP> is set, or C</tmp/fot> if
+neither environment variable is set), to make it easy to check the full
+output when the filtering seems suspect. This option allows specifying a
+different file. Use S<C<--tee /dev/null>> if you don't want the original
+output at all.
 
 =item C<--version>
 
@@ -384,7 +386,7 @@ Display this help and exit successfully.
 =head1 RATIONALE
 
 I wrote this because, in my work as a TUGboat editor
-(L<http://tug.org/TUGboat>, journal submissions always welcome!), I run
+(L<https://tug.org/TUGboat>, journal submissions always welcome!), I run
 and rerun many documents, many times each. It was too easy to lose
 warnings I needed to see in the mass of unvarying and uninteresting
 output from TeX, such as style files being read and fonts being used. I
@@ -403,8 +405,9 @@ Here are some keywords if you want to explore other options:
 texloganalyser, pydflatex, logfilter, latexmk, rubber, arara, and
 searching for C<log> at L<https://ctan.org/search>.
 
-C<texfot> is written in Perl, and runs on Unix, and does not work on
-Windows.
+C<texfot> is written in Perl, and runs on Unix. It may work on Windows
+if Perl and other software is installed, but I don't use Windows and
+don't support C,texfot> there.
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output

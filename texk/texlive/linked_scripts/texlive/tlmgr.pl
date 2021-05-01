@@ -6,7 +6,7 @@
 # or any later version.
 
 my $svnrev = '$Revision: 58961 $';
-my $datrev = '$Date: 2021-04-22 02:55:07 +0200 (Thu, 22 Apr 2021) $';
+my $datrev = '$Date: 2021-04-21 17:55:07 -0700 (Wed, 21 Apr 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -869,11 +869,11 @@ sub handle_execute_actions {
   my $sysmode = ($opts{"usermode"} ? "-user" : "-sys");
   my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
 
-  # of create_formats is unset (NOT the default) we add --refresh so that
+  # if create_formats is false (NOT the default) we add --refresh so that
   # only existing formats are recreated
   if (!$localtlpdb->option("create_formats")) {
     $invoke_fmtutil .= " --refresh";
-    debug("only existing formats will be refreshed per user option (create_formats=0)\n");
+    debug("refreshing only existing formats per user option (create_formats=0)\n");
   }
 
   if ($::files_changed) {
@@ -1006,9 +1006,9 @@ sub handle_execute_actions {
     }
 
     # ::regenerate_all_formats comes from TLPaper updates
-    # so we just refresh formats instead of generating all that have not been there
+    # --refresh existing formats to avoid generating new ones.
     if ($::regenerate_all_formats) {
-      info("Regenerating available formats, this may take some time ...");
+      info("Regenerating existing formats, this may take some time ...");
       # --refresh might already be in $invoke_fmtutil, but we don't care
       $errors += do_cmd_and_check("$invoke_fmtutil --refresh --all");
       info("done\n");
@@ -7216,7 +7216,7 @@ and the repository are not compatible:
   if ($remotetlpdb->config_frozen) {
     my $frozen_msg = <<FROZEN;
 TeX Live $TeXLive::TLConfig::ReleaseYear is frozen and will no longer
-be routinely updated. This happens in preparation for a new release.
+be routinely updated. This happens when a new release is made.
 
 If you're willing to help with pretesting the new release, and we hope
 you are, (when pretests are available), please read
