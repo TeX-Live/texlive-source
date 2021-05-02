@@ -8,13 +8,16 @@ the form `\.{\\def\\title\{NAME\}}'.
 
 @c
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 @<Type definitions@>@;
 @<Global variables@>@;
 @<Procedures@>@;
 @#
-main(argc,argv)
-  int argc;
-  char *argv[];
+int main(
+  int argc,
+  char *argv[])
 { @<Local variables@>;
   @<Initialize the data structures@>;
   while (--argc) {
@@ -99,7 +102,7 @@ typedef union {
   struct node_struct *n;
 } mixed;
 typedef struct node_struct {
-  char *id;
+  const char *id;
   mixed data;
   struct node_struct *next;
 } node;
@@ -112,8 +115,8 @@ if the input is all screwed up.
 @d string_block_size 8192 /* number of bytes per string block */
 
 @<Proc...@>=
-char *save_string(s)
-  char *s;
+char *save_string(
+  char *s)
 {
   register char *p,*q; register int l;
   for (p=s;*p;p++) ;
@@ -142,7 +145,7 @@ char *save_string(s)
 @d nodes_per_block 340
 
 @<Proc...@>=
-node *new_node()
+node *new_node(void)
 {
   if (next_node==bad_node) {
     next_node=(node*)calloc(nodes_per_block,sizeof(node));
@@ -344,8 +347,8 @@ If they are still equal, we look at the format characters (the first
 two characters of the |id| field).
 
 @<Proc...@>=
-int compare(p,q)
-  node *p,*q;
+int compare(
+  node *p, node *q)
 {@+register unsigned char *pp,*qq;
   for (pp=(unsigned char*)p->id+3,qq=(unsigned char*)q->id+3;
       *pp&&ord[*pp]==ord[*qq];pp++,qq++) ;
@@ -376,7 +379,7 @@ collate[0]=0; strcpy(collate+1,"} \1\2\3\4\5\6\7\10\11\12\13\14\15\16\17\
 !\42#$%&'()*+,-./:;<=>?@@[\\]^`{|~_\
 abcdefghijklmnopqrstuvwxyz0123456789");
 {@+register int j;
-  for (j=1;collate[j];j++) ord[collate[j]]=j;
+  for (j=1;collate[j];j++) ord[(int)collate[j]]=j;
   ord[128]=j; /* this affects the ordering of |sentinel.id| */
   for (j='A';j<='Z';j++) ord[j]=ord[tolower(j)];
 }
@@ -387,8 +390,8 @@ the order when printing. After this procedure has acted, the field
 |q->data.n| should not be considered an active pointer.
 
 @<Proc...@>=
-collapse(p,q)
-  node *p,*q;
+void collapse(
+  node *p, node *q)
 {@+register node *x;
   for (x=q->data.n;x->next;x=x->next) ;
   x->next=p->data.n;
@@ -411,7 +414,7 @@ properly, especially in the ``custom'' format when they must become
 }
 
 @ @<Output |x->id|...@>=
-{@+register char *p=x->id;
+{@+register const char *p=x->id;
   if (*p==' ') {
     if (*(p+1)!=' ') goto unknown;
     goto known;

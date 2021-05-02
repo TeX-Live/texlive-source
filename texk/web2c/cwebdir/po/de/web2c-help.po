@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-24 12:04+0100\n"
-"PO-Revision-Date: 2021-03-24 12:04+0100\n"
+"POT-Creation-Date: 2021-02-06 15:10+0200\n"
+"PO-Revision-Date: 2021-02-06 15:58+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -55,10 +55,6 @@ msgstr "-dN         setze 'kpathsea_debug' auf N (0..127)"
 msgid "+h          print success message on completion"
 msgstr "+h          schreibe die Erfolgsmeldung am Ende"
 
-#: help.h:66
-msgid "+k          keep separators in numeric literals in the output"
-msgstr "+k          konserviere '-Trenner in Zahlen in der Ausgabe"
-
 #: help.h:61 help.h:81 help.h:107
 msgid "+p          print progress report messages"
 msgstr "+p          schreibe die Fortschrittsmeldungen"
@@ -71,17 +67,13 @@ msgstr "+/-q        Kurzform für '-bhp'; auch '--quiet' (Vorgabe)"
 msgid "+/-v        shortcut for '+bhp'; also '--verbose'"
 msgstr "+/-v        Kurzform für '+bhp'; auch '--verbose'"
 
-#: help.h:64 help.h:85 help.h:112
-msgid "-c          ignore temporary output irrespective of changes"
-msgstr "-c          ignoriere temporäre Ausgabe unabhängig von Änderungen"
-
-#: help.h:66 help.h:93 help.h:121
+#: help.h:64 help.h:90 help.h:117
 msgid "+s          print usage statistics"
 msgstr "+s          melde die Verbrauchsstatistik"
 
-#: help.h:95 help.h:124
-msgid "+t          treat 'typename' in a template like 'typedef'"
-msgstr "+t          behandle 'typename' in Templates wie 'typedef'"
+#: help.h:65 help.h:91 help.h:118
+msgid "-t          ignore temporary output irrespective of changes"
+msgstr "-t          ignoriere temporäre Ausgabe unabhängig von Änderungen"
 
 #: help.h:66 help.h:92 help.h:119
 msgid "--help      display this help and exit"

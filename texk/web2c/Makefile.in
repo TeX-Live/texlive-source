@@ -21196,10 +21196,10 @@ cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod.w cw
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 ctwill.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-twill.w cwebdir/ctwill-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave ctwill-w2c ctwill.c
-ctwill-refsort.c: ctangle$(EXEEXT) cwebdir/refsort.w cwebdir/refsort.ch
-	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) refsort refsort ctwill-refsort.c
-ctwill-twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w cwebdir/twinx.ch
-	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) twinx twinx ctwill-twinx.c
+ctwill-refsort.c: ctangle$(EXEEXT) cwebdir/refsort.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) refsort - ctwill-refsort.c
+ctwill-twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) twinx - ctwill-twinx.c
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
 ctiedir/ctie.log: ctie$(EXEEXT)

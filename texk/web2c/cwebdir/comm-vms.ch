@@ -34,7 +34,7 @@ modified:
 
 @x section 68 (01-FEB-1992 ST)
 programs are started. Here, for instance, we pass the operating system
-a status of |EXIT_SUCCESS| if and only if only harmless messages were printed.
+a status of 0 if and only if only harmless messages were printed.
 @y
 programs are started. Here, for instance, we pass VAX/VMS
 a status of |SS$_NORMAL| if and only if only harmless
@@ -67,7 +67,7 @@ An omitted change file argument means that the
 null device |"NL:"| should be used, when no changes are desired.
 @z
 
-@x section 75 (1987 BL) (01-FEB-1992 ST) (05-APR-1992 DEK)
+@x section 76 (1987 BL) (01-FEB-1992 ST) (05-APR-1992 DEK)
   strcpy(change_file_name,"/dev/null");
 @y
   strcpy(change_file_name,"NL:");

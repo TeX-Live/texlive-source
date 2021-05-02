@@ -25,13 +25,13 @@ ctwill.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-twil
 DISTCLEANFILES += ctwill.c
 
 nodist_ctwill_refsort_SOURCES = ctwill-refsort.c
-ctwill-refsort.c: ctangle$(EXEEXT) cwebdir/refsort.w cwebdir/refsort.ch
-	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) refsort refsort ctwill-refsort.c
+ctwill-refsort.c: ctangle$(EXEEXT) cwebdir/refsort.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) refsort - ctwill-refsort.c
 DISTCLEANFILES += ctwill-refsort.c
 
 nodist_ctwill_twinx_SOURCES = ctwill-twinx.c
-ctwill-twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w cwebdir/twinx.ch
-	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) twinx twinx ctwill-twinx.c
+ctwill-twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w
+	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) twinx - ctwill-twinx.c
 DISTCLEANFILES += ctwill-twinx.c
 
 nodist_tie_SOURCES = tie.c

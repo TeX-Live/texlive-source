@@ -2,6 +2,8 @@
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
+\def\TeX{{\ifmmode\it\fi
+   \hbox{T\kern-.1667em\lower.424ex\hbox{E}\hskip-.125em X}}}
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \let\mc=\ninerm % medium caps
 \def\CEE/{{\mc C\spacefactor1000}}

@@ -14,7 +14,7 @@ Section 1.
 @z
 
 @x
-@d banner "This is CTWILL, Version 4.3"
+@d banner "This is CTWILL, Version 4.2"
 @y
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
@@ -35,7 +35,7 @@ be even more ``off'' from {\itt cweave.w}.  Care has been taken to give a
 faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 ---Enjoy!\bigskip}
 
-@d banner "This is CTWILL, Version 4.3"
+@d banner "This is CTWILL, Version 4.2"
 @z
 
 Section 2.
@@ -43,7 +43,7 @@ Section 2.
 @x
 @ Here is a sort of user manual for \.{CTWILL}---which is exactly like
 @y
-@* {\tentex CTWILL} user manual.
+@* \.{CTWILL} user manual.
 Here is a sort of user manual for \.{CTWILL}---which is exactly like
 @z
 
@@ -93,29 +93,14 @@ Section 7.
 
 @x
 internationalization.
-
-@d _(S) gettext(S)
-
-@<Include files@>=
-#ifndef HAVE_GETTEXT
-#define HAVE_GETTEXT 0
-#endif
-@#
 @y
 internationalization.
-
-@d _(S) gettext(S)
-@-S@>
-
-@r @ @<Include files@>=
 @-A@>
 @-HAVE_GETTEXT@>
-#ifndef HAVE_GETTEXT
-#define HAVE_GETTEXT 0
-#endif
+@-S@>
 @z
 
-Section 10.
+Section 9.
 
 @x
 @ Code related to input routines:
@@ -124,7 +109,7 @@ Section 10.
 @-c@>
 @z
 
-Section 14.
+Section 13.
 
 @x
 @ Code related to identifier and section name storage:
@@ -133,7 +118,7 @@ Section 14.
 @-c@>
 @z
 
-Section 16.
+Section 15.
 
 @x
 @ Code related to error handling:
@@ -142,7 +127,7 @@ Section 16.
 @-s@>
 @z
 
-Section 18.
+Section 17.
 
 @x
 extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
@@ -150,7 +135,7 @@ extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
 extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
 @z
 
-Section 19.
+Section 18.
 
 @x
 @ Code related to output:
@@ -161,7 +146,7 @@ Section 19.
 @-c@>
 @z
 
-Section 24.
+Section 23.
 
 @x
 @* Data structures exclusive to {\tt CWEAVE}.
@@ -173,14 +158,6 @@ Section 24.
 Section 25.
 
 @x
-@ We keep track of the current section number in |section_count|, which
-@y
-@r @ We keep track of the current section number in |section_count|, which
-@z
-
-Section 26.
-
-@x
 @ The other large memory area in \.{CWEAVE} keeps the cross-reference data.
 @y
 @ The other large memory area in \.{CWEAVE} keeps the cross-reference data.
@@ -188,7 +165,23 @@ Section 26.
 @-x@>
 @z
 
-Section 36.
+Section 27.
+
+@x
+@ \.{CTWILL} also has special data structures to keep track of current
+@y
+@r @ \.{CTWILL} also has special data structures to keep track of current
+@z
+
+Section 32.
+
+@x
+@ The |new_meaning| routine changes the current ``permanent meaning''
+@y
+@r @ The |new_meaning| routine changes the current ``permanent meaning''
+@z
+
+Section 35.
 
 @x
 @ A new cross-reference for an identifier is formed by calling |new_xref|,
@@ -196,6 +189,23 @@ Section 36.
 @ A new cross-reference for an identifier is formed by calling |new_xref|,
 @-a@>
 @-c@>
+@z
+
+Section 44.
+
+@x
+@ We have to get \CEE/'s
+@y
+@r @ We have to get \CEE/'s
+@z
+
+Section 45.
+
+@x
+id_lookup("goto",NULL,case_like);
+@y
+@ @<Store all...@>=
+id_lookup("goto",NULL,case_like);
 @z
 
 Section 49.
@@ -249,133 +259,42 @@ Section 63.
 @-c@>
 @z
 
-@x
-              if (*(loc+1)=='*') {loc++;@+compress(minus_gt_ast);}
-@y
-              if (*(loc+1)=='*') {@+loc++;@+compress(minus_gt_ast);@+}
-@z
+Section 66.
 
 @x
-            else if (*loc=='.' && *(loc+1)=='.') {
-              loc++;@+compress(dot_dot_dot);
-            } break;
+@<Get a string@>= {
 @y
-            else if (*loc=='.' && *(loc+1)=='.') {@+
-              loc++;@+compress(dot_dot_dot);@+
-            } break;
-@z
-
-Section 64.
-
-@x
-  id_first=--loc;
-  do {
-    ++loc;
-  } while (isalpha((eight_bits)*loc) || isdigit((eight_bits)*loc) @|
-      || isxalpha((eight_bits)*loc) || ishigh((eight_bits)*loc));
-  id_loc=loc; return identifier;
-}
-@y
-  id_first=--loc;@/
-  do {
-    ++loc;
-  } while (isalpha((eight_bits)*loc) || isdigit((eight_bits)*loc) @|
-      || isxalpha((eight_bits)*loc) || ishigh((eight_bits)*loc));@/
-  id_loc=loc;@/
-  return identifier;
-}
-@z
-
-Section 67.
-
-@x
-@ @<Get a bin...@>={
-@y
-@r @ @<Get a bin...@>={
+@<Get a string@>= {@+
 @z
 
 Section 70.
 
 @x
-@ @<Get a wide...@>={
-@y
-@r @ @<Get a wide...@>={
-@z
-
-Section 74.
-
-@x
 @ @<Put section name...@>=
 @y
-@ @<Put section name...@>=
+@r @ @<Put section name...@>=
 @z
 
-Section 75.
+Section 84.
 
 @x
-@ @<If end of name...@>=
-@y
-@r @ @<If end of name...@>=
-@z
-
-Section 87.
-
-@x
-C_xref( /* makes cross-references for \CEE/ identifiers */
-  eight_bits spec_ctrl)
-@y
-C_xref(eight_bits spec_ctrl)
-  /* makes cross-references for \CEE/ identifiers */
-@z
-
-Section 88--89.
-
-@x
-@ The |outer_xref| subroutine is like |C_xref| except that it begins
 with |next_control!='|'| and ends with |next_control>=format_code|. Thus, it
-handles \CEE/ text with embedded comments.
-
-@c
-static void
-outer_xref(void) /* extension of |C_xref| */
-{
-  int bal; /* brace level in comment */
 @y
-@ The |outer_xref| subroutine is like |C_xref| except that it begins
 with |next_control| |!='|'| and ends with |next_control>=format_code|.
 Thus, it
-handles \CEE/ text with embedded comments.
-
-@ @c
-static void
-outer_xref(void) /* extension of |C_xref| */
-{@+
-  int bal; /* brace level in comment */
 @z
 
 Section 91.
 
 @x
-@ @<Replace |"@@@@"| by |"@@"| @>=
-{
-  char *src=id_first,*dst=id_first;
-@y
-@ @<Replace |"@@@@"| by |"@@"| @>=
-{@+
-  char *src=id_first,*dst=id_first;
-@z
-
-Section 96.
-
-@x
 @ Finally, when the \TEX/ and definition parts have been treated, we have
 |next_control>=begin_C|.
 @y
-@r @ Finally, when the \TEX/ and definition parts have been treated, we have
+@ Finally, when the \TEX/ and definition parts have been treated, we have
 \hfil\break|next_control>=begin_C|.
 @z
 
-Section 102.
+Section 97.
 
 @x
 @ The |flush_buffer| routine empties the buffer up to a given breakpoint,
@@ -384,7 +303,15 @@ Section 102.
 @-c@>
 @z
 
-Section 106.
+Section 99.
+
+@x
+@ When we are copying \TEX/ source material, we retain line breaks
+@y
+@r @ When we are copying \TEX/ source material, we retain line breaks
+@z
+
+Section 101.
 
 @x
 @ When we wish to append one character |c| to the output buffer, we write
@@ -393,25 +320,15 @@ Section 106.
 @-c@>
 @z
 
-Section 107.
+Section 105.
 
 @x
-out_str( /* output characters from |s| to end of string */
-const char*s)
+@ We get to this section only in the unusual case that the entire output line
 @y
-out_str(const char*s)
-  /* output characters from |s| to end of string */
+@r @ We get to this section only in the unusual case that the entire output line
 @z
 
-Section 113.
-
-@x
-@ The |out_name| procedure is used to output an identifier or index
-@y
-@r @ The |out_name| procedure is used to output an identifier or index
-@z
-
-Section 116.
+Section 111.
 
 @x
 @ The |copy_TeX| routine processes the \TEX/ code at the beginning of a
@@ -419,7 +336,17 @@ Section 116.
 @r @ The |copy_TeX| routine processes the \TEX/ code at the beginning of a
 @z
 
-Section 117.
+@x
+static eight_bits
+copy_TeX(void)
+{
+@y
+static eight_bits
+copy_TeX(void)
+{@+
+@z
+
+Section 112.
 
 @x
 @ The |copy_comment| function issues a warning if more braces are opened than
@@ -429,22 +356,16 @@ Section 117.
 @z
 
 @x
-static int copy_comment( /* copies \TeX\ code in comments */
-boolean is_long_comment, /* is this a traditional \CEE/ comment? */
-int bal) /* brace balance */
+int bal@t\2\2@>) /* brace balance */
+{
+  char c; /* current character being copied */
 @y
-static int copy_comment(
-boolean is_long_comment, /* is this a traditional \CEE/ comment? */
-int bal) /* brace balance */
+int bal@t\2\2@>) /* brace balance */
+{@+
+  char c; /* current character being copied */
 @z
 
-@x
-      } else {
-@y
-      } @+ else {
-@z
-
-Section 122.
+Section 117.
 
 @x
 @ Here is a list of the category codes that scraps can have.
@@ -452,7 +373,7 @@ Section 122.
 @r @ Here is a list of the category codes that scraps can have.
 @z
 
-Section 126.
+Section 121.
 
 @x
 @ The token lists for translated \TEX/ output contain some special control
@@ -461,7 +382,7 @@ Section 126.
 @-n@>
 @z
 
-Section 127.
+Section 122.
 
 @x
 \yskip\noindent All of these tokens are removed from the \TEX/ output that
@@ -470,7 +391,7 @@ Section 127.
 @-n@>
 @z
 
-Section 128.
+Section 123.
 
 @x
 @ The raw input is converted into scraps according to the following table,
@@ -488,67 +409,55 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad\hbox to11cm{#\hfil}&\quad\hfil#\hfil\cr
 @z
 
-Section 129.
+Section 124.
 
 @x
-\./&|binop|: \./&yes\cr
+\.>&|prerangle|: \.{\\rangle}&yes\cr
 @y
-\./&|binop|: \./&yes\cr}
+\.>&|prerangle|: \.{\\rangle}&yes\cr}
 
 @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 @z
 
-Section 130.
+Section 125.
 
 @x
-\.{complex}&|int_like|: \stars&yes\cr
+\.{continue}&|case_like|: \stars&maybe\cr
 @y
-\.{complex}&|int_like|: \stars&yes\cr}
+\.{continue}&|case_like|: \stars&maybe\cr}
+
+@r @ Cont.
+
+\yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
+@z
+
+Section 126.
+
+@x
+\.{long}&|raw_int|: \stars&maybe\cr
+@y
+\.{long}&|raw_int|: \stars&maybe\cr}
 
 @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 @z
 
-Section 131.
+Section 127.
 
 @x
-\.{friend}&|int_like|: \stars&maybe\cr
+\.{try}&|else_like|: \stars&maybe\cr
 @y
-\.{friend}&|int_like|: \stars&maybe\cr}
+\.{try}&|else_like|: \stars&maybe\cr}
 
-@ Cont.
+@r @ Cont.
 
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 @z
 
-Section 132.
-
-@x
-\.{static\_cast}&|raw_int|: \stars&maybe\cr
-@y
-\.{static\_cast}&|raw_int|: \stars&maybe\cr}
-
-@ Cont.
-
-\yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-@z
-
-Section 133.
-
-@x
-\.{xor\_eq}&|alfop|: \stars&yes\cr
-@y
-\.{xor\_eq}&|alfop|: \stars&yes\cr}
-
-@ Cont.
-
-\yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
-@z
-
-Sections 134--142.
+Sections 128--135.
 
 @x l.7 line numbers refer to 'prod.w'
 @ Here is a table of all the productions.  Each production that
@@ -580,9 +489,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-in@>@-x@>@-y@>
 \prodno=13 \midcol=2.5in
@@ -610,9 +519,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-in@>
 \prodno=27 \midcol=2.5in
@@ -640,9 +549,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-in@>
 \prodno=47 \midcol=2.5in
@@ -656,9 +565,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 @z
 
 @x l.164
-       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
+       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & |else x=0;|\cr
 @y
-       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
+       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & |else x=0;|\cr
 \endgroup
 
 @ Cont.
@@ -670,9 +579,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-any@>@-z@>@-g@>@-a@>@-x@>@-y@>@-f@>
 \prodno=61 \midcol=2.5in
@@ -701,9 +610,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-any@>@-z@>@-g@>@-a@>
 \prodno=86 \midcol=2.5in
@@ -723,11 +632,6 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 \endgroup
 
 @ Cont.
-@-deprecated@>
-@-fallthrough@>
-@-likely@>
-@-nodiscard@>
-@-unlikely@>
 \begingroup \lineskip=4pt
 \def\alt #1 #2
 {$\displaystyle\Bigl\{\!\matrix{\strut\hbox{#1}\cr
@@ -736,9 +640,9 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 {$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
    \strut\hbox{#3}\cr}\!\Biggr\}$ }
 \def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
 \def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
+{$\displaystyle\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-any_other@>@-z@>@-f@>@-x@>@-p@>
 \prodno=100 \midcol=2.5in
@@ -765,56 +669,15 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
 @y
 @z
 
-@x l.291
-\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
-@y
-\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
-\endgroup
-
-@ Cont.
-@-deprecated@>
-@-fallthrough@>
-@-likely@>
-@-nodiscard@>
-@-unlikely@>
-\begingroup \lineskip=4pt
-\def\alt #1 #2
-{$\displaystyle\Bigl\{\!\matrix{\strut\hbox{#1}\cr
-   \strut\hbox{#2}\cr}\!\Bigr\}$ }
-\def\altt #1 #2 #3
-{$\displaystyle\Biggl\{\!\matrix{\strut\hbox{#1}\cr\hbox{#2}\cr
-   \strut\hbox{#3}\cr}\!\Biggr\}$ }
-\def\malt #1 #2
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\strut\hbox{#2}\hfill\cr}$}
-\def\maltt #1 #2 #3
-{$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
-   \strut\hbox{#3}\hfill\cr}$}
-\yskip@-any_other@>@-z@>@-f@>@-x@>@-p@>
-\prodno=143 \midcol=2.5in
-\def\theprodno{\number\prodno \global\advance\prodno by1\enspace}
-\def\dagit{\dag\theprodno}
-\def\+#1&#2&#3&#4\cr{\def\next{#1}%
- \line{\hbox to 2em{\hss
-  \ifx\next\empty\theprodno\else\next\fi}\strut
-  \ignorespaces#2\hfil\hbox to\midcol{$\RA$
-  \ignorespaces#3\hfil}\quad \hbox to1.45in{\ignorespaces#4\hfil}}}
-\advance\midcol20pt
-@z
-
-@x l.326
-\+& |alignas_like| |cast| & |attr| & |alignas(int)| \cr
-\yskip
-\yskip
-\yskip
-\yskip
-\yskip
+@x l.272
+\+& |any_other| |end_arg| & |end_arg| &    \&{char}$*$\.{@@]}\cr
 \yskip
 \yskip
 \yskip
 \parindent=0pt
 \dag{\bf Notes}
 @y
-\+& |alignas_like| |cast| & |attr| & |alignas(int)| \cr
+\+& |any_other| |end_arg| & |end_arg| &    \&{char}$*$\.{@@]}\cr
 \advance\midcol-3pt
 \+\dag200\enspace& |typedef_like| |decl_head| \alt|exp| |int_like| &
       |typedef_like| |decl_head| \hfill $D=D$\alt $E^{**}$ $I^{**}$ \unskip &
@@ -826,18 +689,15 @@ TeX reports 'extra \fi' when running on twilled 'ctwill.w'.
   \&{typedef} \&{int} \&{foo}\cr
 \endgroup
 
-@-any_other@>@-z@>@ \begingroup\dag{\bf Notes}
-\advance \hsize by -4cm
-\parindent=0pt
-\everypar={\hangindent=2em}
+@r @-any_other@>@-z@>@ \begingroup\dag{\bf Notes}
 @z
 
-Section 143.
+Section 136.
 
 @x
 @* Implementing the productions.
 @y
-@* Implementing the productions.\advance \hsize by -4cm
+@* Implementing the productions.  \advance \hsize by -4cm
 \ifx\undefined\pdfpagewidth \else \advance \pdfpagewidth by -4cm \fi
 @z
 
@@ -847,7 +707,7 @@ the category codes |pp->cat,@,@,(pp+1)->cat|$,\,\,\ldots\,$
 the category codes |pp->cat|, |(pp+1)->cat|, $\,\ldots\,$
 @z
 
-Section 146.
+Section 139.
 
 @x
 @ Token lists in |@!tok_mem| are composed of the following kinds of
@@ -856,7 +716,15 @@ Section 146.
 @-p@>
 @z
 
-Section 149.
+Section 141.
+
+@x
+@ @<Print token |r|...@>=
+@y
+@r @ @<Print token |r|...@>=
+@z
+
+Section 142.
 
 @x
 @ The production rules listed above are embedded directly into \.{CWEAVE},
@@ -871,7 +739,7 @@ Section 149.
 @-pp@>
 @z
 
-Section 150.
+Section 143.
 
 @x
 The code below is an exact translation of the production rules into
@@ -880,7 +748,7 @@ The code below is an exact translation of the production rules into
 @-a@>
 @z
 
-Section 153.
+Section 146.
 
 @x
 @ Let us consider the big switch for productions now, before looking
@@ -888,21 +756,7 @@ Section 153.
 @r @ Let us consider the big switch for productions now, before looking
 @z
 
-@x
-        && pp->cat!=new_exp
-        && pp->cat!=ftemplate @|
-@y
-        && pp->cat!=new_exp @|
-        && pp->cat!=ftemplate
-@z
-
-@x
-        && pp->cat!=const_like
-@y
-        && pp->cat!=const_like @|
-@z
-
-Section 154.
+Section 147.
 
 @x
   switch (pp->cat) {
@@ -953,11 +807,6 @@ Section 154.
     case typedef_like: @<Cases for |typedef_like|@>@; @+break;
     case delete_like: @<Cases for |delete_like|@>@; @+break;
     case question: @<Cases for |question|@>@; @+break;
-    case alignas_like: @<Cases for |alignas_like|@>@; @+break;
-    case lbrack: @<Cases for |lbrack|@>@; @+break;
-    case attr_head: @<Cases for |attr_head|@>@; @+break;
-    case attr: @<Cases for |attr|@>@; @+break;
-    case default_like: @<Cases for |default_like|@>@; @+break;
   }
   pp++; /* if no match was found, we move to the right */
 }
@@ -968,7 +817,7 @@ Section 154.
   pp++; /* if no match was found, we move to the right */
 }
 
-@ @<Cases for |pp->cat|@>=@t\1\5\5@>
+@ @<Cases for |pp->cat|@>=
     case exp: @<Cases for |exp|@>@; @+break;
     case lpar: @<Cases for |lpar|@>@; @+break;
     case unop: @<Cases for |unop|@>@; @+break;
@@ -1016,14 +865,9 @@ Section 154.
     case typedef_like: @<Cases for |typedef_like|@>@; @+break;
     case delete_like: @<Cases for |delete_like|@>@; @+break;
     case question: @<Cases for |question|@>@; @+break;
-    case alignas_like: @<Cases for |alignas_like|@>@; @+break;
-    case lbrack: @<Cases for |lbrack|@>@; @+break;
-    case attr_head: @<Cases for |attr_head|@>@; @+break;
-    case attr: @<Cases for |attr|@>@; @+break;
-    case default_like: @<Cases for |default_like|@>@; @+break;
 @z
 
-Section 155.
+Section 148.
 
 @x
 of identifiers in case labels.
@@ -1034,7 +878,7 @@ of identifiers in case labels.
 If the first identifier is the keyword `\&{operator}', we give up;
 @z
 
-Section 157.
+Section 150.
 
 @x
 @ The scraps currently being parsed must be inspected for any
@@ -1048,26 +892,7 @@ Section 157.
 \hfil\break|make_reserved|, hence |tok_loc| has been set.
 @z
 
-@x
-make_reserved( /* make the first identifier in |p->trans| like |int| */
-scrap_pointer p)
-@y
-make_reserved(scrap_pointer p)
-  /* make the first identifier in |p->trans| like |int| */
-@z
-
-Section 158.
-
-@x
-make_underlined(
-/* underline the entry for the first identifier in |p->trans| */
-scrap_pointer p)
-@y
-make_underlined(scrap_pointer p)
-  /* underline the entry for the first identifier in |p->trans| */
-@z
-
-Section 161.
+Section 154.
 
 @x
 @ \.{CTWILL} needs the following procedure, which appends tokens of a
@@ -1075,7 +900,7 @@ Section 161.
 @r @ \.{CTWILL} needs the following procedure, which appends tokens of a
 @z
 
-Section 162.
+Section 155.
 
 @x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
@@ -1092,23 +917,7 @@ Section 162.
 {@+
 @z
 
-Section 163.
-
-@x
-if (l==0) { app(int_loc+res_flag); app(' '); cur_mathness=no_math; }
-@y
-if (l==0) { app(int_loc+res_flag); app(' '); cur_mathness=no_math; }@+
-@z
-
-Section 164.
-
-@x
-   && *(*r+1)=='{') app(**q); /* |struct_like| identifier */
-@y
-   @|&& *(*r+1)=='{') app(**q); /* |struct_like| identifier */
-@z
-
-Section 166.
+Section 159.
 
 @x
 @ @<Cases for |lpar|@>=
@@ -1116,51 +925,39 @@ Section 166.
 @r @ @<Cases for |lpar|@>=
 @z
 
-Section 180.
+Section 168.
 
 @x
-  if (indent_param_decl) {
-    app(outdent); app(outdent);
-  }
+@ @<Cases for |decl_head|@>=
 @y
-  if (indent_param_decl) {@+app(outdent); app(outdent);@+}
+@r @ @<Cases for |decl_head|@>=
 @z
 
-Section 189.
+Section 173.
 
 @x
-@ @<Cases for |case_like|@>=
+@ @<Cases for |fn_decl|@>=
 @y
-@r @ @<Cases for |case_like|@>=
+@r @ @<Cases for |fn_decl|@>=
 @z
 
-Section 206.
+Section 208.
 
 @x
-@ @<Cases for |raw_ubin|@>=
+@ Here's the |squash| procedure, which
 @y
-@r @ @<Cases for |raw_ubin|@>=
+@r @ Here's the |squash| procedure, which
 @z
 
-Section 221.
+Section 212.
 
 @x
-@ And here now is the code that applies productions as long as possible.
+@ @<Print a snapsh...@>=
 @y
-@r @ And here now is the code that applies productions as long as possible.
+@r @ @<Print a snapsh...@>=
 @z
 
-Section 230.
-
-@x
-    if (next_control=='|' || next_control==begin_comment ||
-        next_control==begin_short_comment) return;
-@y
-    if (next_control=='|' || next_control==begin_comment @| ||
-        next_control==begin_short_comment) return;
-@z
-
-Section 232.
+Section 220.
 
 @x
 @ The following macro is used to append a scrap whose tokens have just
@@ -1170,183 +967,23 @@ Section 232.
 @-c@>
 @z
 
-Section 233.
+Section 229.
 
 @x
-@ @<Append the scr...@>=
-@<Make sure that there is room for the new scraps, tokens, and texts@>@;
+@ The |outer_parse| routine is to |C_parse| as |outer_xref|
 @y
-@r @ @<Append the scr...@>=
-@#
-@<Make sure that there is room for the new scraps, tokens, and texts@>@;
-@#
+@r @ The |outer_parse| routine is to |C_parse| as |outer_xref|
 @z
 
-@x
-  case '/': case '.':
-    app(next_control);@+app_scrap(binop,yes_math);@+break;
-  case '<': app_str("\\langle");@+app_scrap(prelangle,yes_math);@+break;
-@.\\langle@>
-  case '>': app_str("\\rangle");@+app_scrap(prerangle,yes_math);@+break;
-@.\\rangle@>
-  case '=': app_str("\\K");@+app_scrap(binop,yes_math);@+break;
-@.\\K@>
-  case '|': app_str("\\OR");@+app_scrap(binop,yes_math);@+break;
-@.\\OR@>
-  case '^': app_str("\\XOR");@+app_scrap(binop,yes_math);@+break;
-@.\\XOR@>
-  case '%': app_str("\\MOD");@+app_scrap(binop,yes_math);@+break;
-@.\\MOD@>
-  case '!': app_str("\\R");@+app_scrap(unop,yes_math);@+break;
-@.\\R@>
-  case '~': app_str("\\CM");@+app_scrap(unop,yes_math);@+break;
-@.\\CM@>
-  case '+': case '-': app(next_control);@+app_scrap(ubinop,yes_math);@+break;
-  case '*': app(next_control);@+app_scrap(raw_ubin,yes_math);@+break;
-  case '&': app_str("\\AND");@+app_scrap(raw_ubin,yes_math);@+break;
-@.\\AND@>
-  case '?': app_str("\\?");@+app_scrap(question,yes_math);@+break;
-@.\\?@>
-  case '#': app_str("\\#");@+app_scrap(ubinop,yes_math);@+break;
-@.\\\#@>
-@y
-@#
-  @t\4@> @<Cases for operators@>@;
-@#
-@z
+Section 235.
 
 @x
-  case ignore: case xref_roman: case xref_wildcard:
-  case meaning: case suppress:
+@ To insert token-list |p| into the output, the |push_level| subroutine
 @y
-  case ignore: case xref_roman: case xref_wildcard:@/
-  case meaning: case suppress:@/
-@z
-
-@x
-  case '(': app(next_control);@+app_scrap(lpar,maybe_math);@+break;
-  case ')': app(next_control);@+app_scrap(rpar,maybe_math);@+break;
-  case '[': app(next_control);@+app_scrap(lbrack,maybe_math);@+break;
-  case ']': app(next_control);@+app_scrap(rbrack,maybe_math);@+break;
-  case '{': app_str("\\{"@q}@>);@+app_scrap(lbrace,yes_math);@+break;
-@.\\\{@>@q}@>
-  case '}': app_str(@q{@>"\\}");@+app_scrap(rbrace,yes_math);@+break;
-@q{@>@.\\\}@>
-  case ',': app(',');@+app_scrap(comma,yes_math);@+break;
-  case ';': app(';');@+app_scrap(semi,maybe_math);@+break;
-  case ':': app(':');@+app_scrap(colon,no_math);@+break;@/
-@y
-@#
-  @t\4@> @<Cases for syntax markers@>@;
-@z
-
-@x
-  @t\4@>  @<Cases involving nonstandard characters@>@;
-@y
-  @t\4@>  @<Cases involving nonstandard characters@>@;
-@#
-@z
-
-@x
-  overflow(_("scrap/token/text"));
-}
-@y
-  overflow(_("scrap/token/text"));
-}
-
-@ @<Cases for operators@>=@t\1\5\5@>
-  case '/': case '.':
-    app(next_control);@+app_scrap(binop,yes_math);@+break;
-  case '<': app_str("\\langle");@+app_scrap(prelangle,yes_math);@+break;
-@.\\langle@>
-  case '>': app_str("\\rangle");@+app_scrap(prerangle,yes_math);@+break;
-@.\\rangle@>
-  case '=': app_str("\\K");@+app_scrap(binop,yes_math);@+break;
-@.\\K@>
-  case '|': app_str("\\OR");@+app_scrap(binop,yes_math);@+break;
-@.\\OR@>
-  case '^': app_str("\\XOR");@+app_scrap(binop,yes_math);@+break;
-@.\\XOR@>
-  case '%': app_str("\\MOD");@+app_scrap(binop,yes_math);@+break;
-@.\\MOD@>
-  case '!': app_str("\\R");@+app_scrap(unop,yes_math);@+break;
-@.\\R@>
-  case '~': app_str("\\CM");@+app_scrap(unop,yes_math);@+break;
-@.\\CM@>
-  case '+': case '-': app(next_control);@+app_scrap(ubinop,yes_math);@+break;
-  case '*': app(next_control);@+app_scrap(raw_ubin,yes_math);@+break;
-  case '&': app_str("\\AND");@+app_scrap(raw_ubin,yes_math);@+break;
-@.\\AND@>
-  case '?': app_str("\\?");@+app_scrap(question,yes_math);@+break;
-@.\\?@>
-  case '#': app_str("\\#");@+app_scrap(ubinop,yes_math);@+break;
-@.\\\#@>
-
-@ @<Cases for syntax markers@>=@t\1\5\5@>
-  case '(': app(next_control);@+app_scrap(lpar,maybe_math);@+break;
-  case ')': app(next_control);@+app_scrap(rpar,maybe_math);@+break;
-  case '[': app(next_control);@+app_scrap(lbrack,maybe_math);@+break;
-  case ']': app(next_control);@+app_scrap(rbrack,maybe_math);@+break;
-  case '{': app_str("\\{"@q}@>);@+app_scrap(lbrace,yes_math);@+break;
-@.\\\{@>@q}@>
-  case '}': app_str(@q{@>"\\}");@+app_scrap(rbrace,yes_math);@+break;
-@q{@>@.\\\}@>
-  case ',': app(',');@+app_scrap(comma,yes_math);@+break;
-  case ';': app(';');@+app_scrap(semi,maybe_math);@+break;
-  case ':': app(':');@+app_scrap(colon,no_math);@+break;@/
+@r @ To insert token-list |p| into the output, the |push_level| subroutine
 @z
 
 Section 237.
-
-@x
-@ Some nonstandard characters may have entered \.{CWEAVE} by means of
-@y
-@r @ Some nonstandard characters may have entered \.{CWEAVE} by means of
-@z
-
-Section 239.
-
-@x
-@<Append a \TEX/ string, without forming a scrap@>=
-@y
-@r @ @<Append a \TEX/ string, without forming a scrap@>=
-@z
-
-Section 245.
-
-@x
-make_pb=true;
-
-@ @c
-@y
-make_pb=true;
-
-@r @ @c
-@z
-
-Section 249.
-
-@x
-@<Private...@>=
-@y
-@r @ @<Private...@>=
-@z
-
-Section 252.
-
-@x
-@ @c
-static void
-push_level( /* suspends the current level */
-text_pointer p)
-@y
-@ Suspend the current level.
-@c
-static void
-push_level(text_pointer p)@/
-@z
-
-Section 253.
 
 @x
 called when |stack_ptr==1|.
@@ -1354,96 +991,47 @@ called when |stack_ptr==1|.
 called when |stack_ptr| |==1|.
 @z
 
-Section 257.
+Section 241.
 
 @x
-@ The real work associated with token output is done by |make_output|.
+  text_pointer save_text_ptr;
+  sixteen_bits save_next_control; /* values to be restored */
+  text_pointer p; /* translation of the \CEE/ text */
 @y
-@r @ The real work associated with token output is done by |make_output|.
+  text_pointer save_text_ptr, p; /* translation of the \CEE/ text */
+  sixteen_bits save_next_control; /* values to be restored */
 @z
 
-Section 258.
+Section 244.
 
 @x
-    reswitch: switch(a) {
-      case end_translation: return;
-      case identifier: case res_word: @<Output an identifier@>@; break;
-      case section_code: @<Output a section name@>@; break;
-      case math_rel: out_str("\\MRL{"@q}@>);
-@.\\MRL@>
-      case noop: case inserted: break;
-      case cancel: case big_cancel: c=0; b=a;
-        while (true) {
-          a=get_output();
-          if (a==inserted) continue;
-          if ((a<indent && !(b==big_cancel&&a==' ')) || a>big_force) break;
-          if (a==indent) c++;
-          else if (a==outdent) c--;
-            else if (a==opt) a=get_output();
-        }
-        @<Output saved |indent| or |outdent| tokens@>@;
-        goto reswitch;
-      case dindent: a=get_output();
-        if (a!=big_force) {
-          out_str("\\1\\1"); goto reswitch;
-        }
-        else dindent_pending=true; /* fall through */
-      case indent: case outdent: case opt: case backup: case break_space:
-      case force: case big_force: case preproc_line: @<Output a control,
-        look ahead in case of line breaks, possibly |goto reswitch|@>@; break;
-      case quoted_char: out(*(cur_tok++));
-      case qualifier: break;
-      default: out(a); /* otherwise |a| is an ordinary character */
-    }
-  }
+else @<Look ahead for strongest line break, |goto reswitch|@>
+@y
+else {@<Look ahead for strongest line break, |goto reswitch|@>}
+@z
+
+Section 245.
+
+@x
+@<Look ahead for st...@>= {
+@y
+@<Look ahead for st...@>=
+@z
+
+@x
 }
 @y
-    reswitch: @/@<The output |switch|@>@;
-  }
-}
-
-@r @ @<The output |switch|@>=
-    switch(a) {
-      case end_translation: return;
-      case identifier: case res_word: @<Output an identifier@>@; break;
-      case section_code: @<Output a section name@>@; break;
-      case math_rel: out_str("\\MRL{"@q}@>);
-@.\\MRL@>
-      case noop: case inserted: break;
-      case cancel: case big_cancel: c=0; b=a;
-        while (true) {
-          a=get_output();
-          if (a==inserted) continue;
-          if ((a<indent && !(b==big_cancel&&a==' ')) || a>big_force) break;
-          if (a==indent) c++;
-          else if (a==outdent) c--;
-            else if (a==opt) a=get_output();
-        }
-        @<Output saved |indent| or |outdent| tokens@>@;
-        goto reswitch;
-      case dindent: a=get_output();
-        if (a!=big_force) {
-          out_str("\\1\\1"); goto reswitch;
-        }
-        else dindent_pending=true; /* fall through */
-      case indent: case outdent: case opt: case backup: case break_space:
-      case force: case big_force: case preproc_line: @<Output a control,
-        look ahead in case of line breaks, possibly |goto reswitch|@>@; break;
-      case quoted_char: out(*(cur_tok++));
-      case qualifier: break;
-      default: out(a); /* otherwise |a| is an ordinary character */
-    }
 @z
 
-Section 264.
+Section 246.
 
 @x
-@ The remaining part of |make_output| is somewhat more complicated. When we
+@ @<Output saved...@>=
 @y
-@r @ The remaining part of |make_output| is somewhat more complicated. When we
+@r @ @<Output saved...@>=
 @z
 
-Section 267.
+Section 250.
 
 @x
 @ The \CEE/ text enclosed in \pb\ should not contain `\.{\v}' characters,
@@ -1451,7 +1039,7 @@ Section 267.
 @r @ The \CEE/ text enclosed in \pb\ should not contain `\.{\v}' characters,
 @z
 
-Section 273.
+Section 256.
 
 @x
 @ The output file will contain the control sequence \.{\\Y} between non-null
@@ -1459,7 +1047,7 @@ Section 273.
 @r @ The output file will contain the control sequence \.{\\Y} between non-null
 @z
 
-Section 276.
+Section 259.
 
 @x
 @<Translate the \T...@>= do {
@@ -1467,21 +1055,7 @@ Section 276.
 @<Translate the \T...@>= do {@+
 @z
 
-Section 282.
-
-@x
-@<Start a macro...@>= {
-@y
-@r @ @<Start a macro...@>= {
-@z
-
-@x
-  if(!space_checked){emit_space_if_needed;save_position;}
-@y
-  if(!space_checked){@+emit_space_if_needed;save_position;@+}
-@z
-
-Section 285.
+Section 267.
 
 @x
 |next_control>=begin_C|. We will make the global variable |this_section|
@@ -1489,7 +1063,7 @@ Section 285.
 \hfil\break|next_control>=begin_C|. We will make the global variable |this_section|
 @z
 
-Section 286.
+Section 268.
 
 @x
 @ @<Translate the \CEE/...@>=
@@ -1497,7 +1071,7 @@ Section 286.
 @r @ @<Translate the \CEE/...@>=
 @z
 
-Section 290.
+Section 272.
 
 @x
 @ The |footnote| procedure gives cross-reference information about
@@ -1505,26 +1079,26 @@ Section 290.
 @r @ The |footnote| procedure gives cross-reference information about
 @z
 
-Section 302.
+Section 284.
 
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
 @y
-@r @ A left-to-right radix sorting method is used, since this makes it easy to
+@ A left-to-right radix sorting method is used, since this makes it easy to
 @-c@>
 @z
 
-Section 304.
+Section 286.
 
 @x
-@<Rest of |trans_plus| union@>=
+@ During the sorting phase we shall use the |cat| and |trans| arrays from
 @y
-@ @<Rest of |trans_plus| union@>=
+@ During the sorting phase we shall use the |cat| and |trans| arrays from
 @-j@>
 @-k@>
 @z
 
-Section 308.
+Section 289.
 
 @x
 $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
@@ -1532,17 +1106,15 @@ $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
 |collate[0]| $<$|collate[1]|$<\cdots<$|collate[100]|.
 @z
 
-Section 310.
+Section 296.
 
 @x
-unbucket( /* empties buckets having depth |d| */
-eight_bits d)
+    else {char *j;
 @y
-unbucket(eight_bits d)
-  /* empties buckets having depth |d| */
+    else {@+char *j;
 @z
 
-Section 322.
+Section 303.
 
 @x
 @ Because on some systems the difference between two pointers is a |ptrdiff_t|
@@ -1552,80 +1124,18 @@ rather than an |int|, we use \.{\%ld} to print these quantities.
 |ptrdiff_t| rather than an |int|, we use \.{\%ld} to print these quantities.
 @z
 
-@x
-  puts(_("\nMemory usage statistics:"));
-@.Memory usage statistics:@>
-  printf(_("%ld names (out of %ld)\n"),
-            (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
-  printf(_("%ld cross-references (out of %ld)\n"),
-            (ptrdiff_t)(xref_ptr-xmem),(long)max_refs);
-  printf(_("%ld bytes (out of %ld)\n"),
-            (ptrdiff_t)(byte_ptr-byte_mem),(long)max_bytes);
-  printf(_("%ld temp meanings (out of %ld)\n"),
-            (ptrdiff_t)(max_temp_meaning_ptr-temp_meaning_stack),
-            (long)max_meanings);
-  printf(_("%ld titles (out of %ld)\n"),
-            (ptrdiff_t)(title_code_ptr-title_code),(long)max_titles);
-  puts(_("Parsing:"));
-  printf(_("%ld scraps (out of %ld)\n"),
-            (ptrdiff_t)(max_scr_ptr-scrap_info),(long)max_scraps);
-  printf(_("%ld texts (out of %ld)\n"),
-            (ptrdiff_t)(max_text_ptr-tok_start),(long)max_texts);
-  printf(_("%ld tokens (out of %ld)\n"),
-            (ptrdiff_t)(max_tok_ptr-tok_mem),(long)max_toks);
-  printf(_("%ld levels (out of %ld)\n"),
-            (ptrdiff_t)(max_stack_ptr-stack),(long)stack_size);
-  puts(_("Sorting:"));
-  printf(_("%ld levels (out of %ld)\n"),
-            (ptrdiff_t)(max_sort_ptr-scrap_info),(long)max_scraps);
-@y
-  puts(_("\nMemory usage statistics:"));@/
-@.Memory usage statistics:@>
-  printf(_("%ld names (out of %ld)\n"),
-            (ptrdiff_t)(name_ptr-name_dir),@/
-            @t\5\5\5\5@>(long)max_names);@/
-  printf(_("%ld cross-references (out of %ld)\n"),
-            (ptrdiff_t)(xref_ptr-xmem),(long)max_refs);@/
-  printf(_("%ld bytes (out of %ld)\n"),
-            (ptrdiff_t)(byte_ptr-byte_mem),@/
-            @t\5\5\5\5@>(long)max_bytes);@/
-  printf(_("%ld temp meanings (out of %ld)\n"),
-            (ptrdiff_t)(max_temp_meaning_ptr-temp_meaning_stack),@/
-            @t\5\5\5\5@>(long)max_meanings);@/
-  printf(_("%ld titles (out of %ld)\n"),
-            (ptrdiff_t)(title_code_ptr-title_code),@/
-            @t\5\5\5\5@>(long)max_titles);@/
-  puts(_("Parsing:"));@/
-  printf(_("%ld scraps (out of %ld)\n"),
-            (ptrdiff_t)(max_scr_ptr-scrap_info),@/
-            @t\5\5\5\5@>(long)max_scraps);@/
-  printf(_("%ld texts (out of %ld)\n"),
-            (ptrdiff_t)(max_text_ptr-tok_start),@/
-            @t\5\5\5\5@>(long)max_texts);@/
-  printf(_("%ld tokens (out of %ld)\n"),
-            (ptrdiff_t)(max_tok_ptr-tok_mem),@/
-            @t\5\5\5\5@>(long)max_toks);@/
-  printf(_("%ld levels (out of %ld)\n"),
-            (ptrdiff_t)(max_stack_ptr-stack),@/
-            @t\5\5\5\5@>(long)stack_size);@/
-  puts(_("Sorting:"));@/
-  printf(_("%ld levels (out of %ld)\n"),
-            (ptrdiff_t)(max_sort_ptr-scrap_info),@/
-            @t\5\5\5\5@>(long)max_scraps);
-@z
-
-Section 323.
+Section 304.
 
 @x
 \bigskip
 \font\itt=cmitt10
-{\noindent \it Although {\itt CTWILL} is based on {\itt cweave.w}, new and
+{\noindent \it Although \.{\itt CTWILL} is based on \.{\itt cweave.w}, new and
 modified material is incorporated all over the place, without taking special
 care for keeping the original section numbering intact.}
 @y
 @z
 
-Section 331.
+Section 312.
 
 @x
 @** Index.

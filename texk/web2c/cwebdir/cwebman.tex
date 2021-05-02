@@ -1,4 +1,5 @@
 % This file generates the user manual; TeX it, don't read it!
+% update 14 Nov 2016 by DEK: corrected obsolete remarks re debugging info
 
 \def\tangref{3} % where the main explanation of CTANGLing is given
 \input cwebmac
@@ -35,7 +36,7 @@
 
 \def\lheader{\mainfont\the\pageno\hfill\sc\runninghead\hfill}
 \def\rheader{\hfill\sc\runninghead\hfill\mainfont\the\pageno}
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.3)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.2)}
 
 % This verbatim mode assumes that ! marks are !! in the text being copied.
 \def\verbatim{\begingroup
@@ -49,7 +50,7 @@
 \null\vfill
 \centerline{\titlefont The {\ttitlefont CWEB} System of
     Structured Documentation}
-\vskip 18pt\centerline{(Version 4.3 --- April 2021)}
+\vskip 18pt\centerline{(Version 4.2 --- February 2021)}
 \vskip 24pt
 \centerline{\authorfont Donald E. Knuth and Silvio Levy}
 \vfill
@@ -393,9 +394,9 @@ program.  Therefore the \.{CWEB} language allows you to get the effect of
 \CEE/ editing within \TEX/ text, if you place `\.|' marks before and
 after the \CEE/ material. For example, suppose you want to say something
 like this:
-$$\hbox{If \PB{\\{pa}} is declared as `\PB{\&{int} ${}{*}\\{pa}$}',
-the assignment \PB{$\\{pa}\K{\AND}\|a[\T{0}]$} makes \PB{\\{pa}}
-point to the zeroth element of \PB{\|a}.}$$
+$$\hbox{ If \\{pa} is declared as `\&{int} ${}{*}\\{pa}$',
+the assignment $\\{pa}\K{\AND}\|a[\T{0}]$ makes \\{pa}
+point to the zeroth element of \|a.}$$
 The \TEX/ text would look like this in your \.{CWEB} file:
 $$\lpile{\.{If |pa| is declared as `|int *pa|', the assignment}\cr
 \.{|pa=\&a[0]| makes |pa| point to the zeroth element of |a|.}\cr}$$
@@ -476,16 +477,13 @@ respectively, to it; in \CEE/ the constant should be preceded by \.0
 or \.{0x}.  In \.{CWEB} it seems reasonable to let each convention hold
 in its respective realm; so in \CEE/ text you get $40_8$ by typing
 `\.{040}', which \.{CTANGLE} faithfully copies into the \CEE/ file (for
-the compiler's benefit) and which \.{CWEAVE} prints as $\T{\~40/}$.
+the compiler's benefit) and which \.{CWEAVE} prints as $\T{\~40}$.
 Similarly, \.{CWEAVE} prints the hexadecimal \CEE/ constant `\.{0x20}'
-as \T{\^20/}. The use of italic font for octal digits and typewriter font
+as \T{\^20}. The use of italic font for octal digits and typewriter font
 for hexadecimal digits makes the meaning of such constants clearer in
-a document. For consistency, then, you should type `\.{|040|}'  or
-`\.{|0x20|}' in the \TEX/ part of the section.
-
-And if you type a binary constant like `\.{0b00101010}', \.{CWEAVE} prints
-it as $\T{\\00101010/}$. In all numeric literals you may add \.' separators
-for improved readability.
+a document. For consistency, then, you
+should type `\.{|040|}'  or `\.{|0x20|}'
+in the \TEX/ part of the section.
 
 \section Control codes.
 A \.{CWEB} {\sl control code\/}
@@ -763,11 +761,11 @@ and so on. When such characters occur in identifiers, \.{CTANGLE} must replace
 them by standard ASCII alphanumeric characters or
 \.{\_}, in order to generate legal \CEE/ code.  It does this by means
 of a transliteration table, which by default associates the string
-\.{Xab} to the character with ASCII code \T{\^/}$ab$ (where $a$ and $b$ are
+\.{Xab} to the character with ASCII code \T{\^}$ab$ (where $a$ and $b$ are
 hexadecimal digits, and $a\ge8$).  By placing the
 construction \.{@l\ ab\ newstring} in limbo, you are telling
 \.{CTANGLE} to replace this character by \.{newstring} instead.
-For example, the ISO Latin-1 code for the letter `\"u' is \T{\^FC/}
+For example, the ISO Latin-1 code for the letter `\"u' is \T{\^FC}
 (or \.{'\char`\\374'}),
 and \.{CTANGLE} will normally change this code to the
 three-character sequence \.{XFC} if it
@@ -1044,7 +1042,7 @@ by default.)
 
 \option e Enclose \CEE/ material formatted by \.{CWEAVE} in
 brackets \.{\\PB\{...\}}, so that special hooks can be used.
-(On by default.) (Has no effect on \.{CTANGLE}.)
+(On by default; has no effect on \.{CTANGLE}.)
 
 \option f Force line breaks after each \CEE/ statement formatted
 by \.{CWEAVE}. (On by default; \.{-f} saves paper but looks less \CEE/-like
@@ -1053,18 +1051,13 @@ to some people.) (Has no effect on \.{CTANGLE}.)
 \option h Print a happy message at the conclusion of a successful
 run. (On by default.)
 
-\option k Keep single quotes (\.') in numeric literals in the
-\CEE//\CPLUSPLUS/ output. (Off by default.) (\.{CTANGLE} only.)
-
 \option p Give progress reports as the program runs. (On by default.)
 
 \option s Show statistics about memory usage after the program
 runs to completion. (Off by default.)
-If you have large \.{CWEB} files or sections, you may need to see how close
-you come to exceeding the capacity of \.{CTANGLE} and/or \.{CWEAVE}.
-
-\option t Treat \&{typename} in a template like \&{typedef}.
-(Off by default.) (Has no effect on \.{CTANGLE}.)
+If you
+have large \.{CWEB} files or sections, you may need to see
+how close you come to exceeding the capacity of \.{CTANGLE} and/or \.{CWEAVE}.
 
 \option x Include indexes and a table of contents in the \TEX/ file
 output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
@@ -1162,7 +1155,7 @@ for the macros that make this work.)
 Alternatively, thanks to H\`an Th\^e\kern-.3em\raise.3ex\hbox{\'{}} Th\`anh
 and Andreas Scherer, you can generate \.{cob.pdf} in one step by simply
 saying `\.{pdftex}~\.{cob}'.
-And a third way to create PDF output from \.{CWEB} input is to say
+A third way to create PDF output from \.{CWEB} input is to say
 `\.{xetex}~\.{cob}'.
 
 A more elaborate system called \.{CTWILL}, which extends the usual cross
@@ -1218,7 +1211,10 @@ Since blank lines in the change file are not used for matching, we have
 the change file is exhausted. This procedure is called only when
 |changing| is |true|; hence error messages will be reported correctly.
 
-@c
+@<Predecl...@>=
+static void prime_the_change_buffer(void);@/
+
+@ @c
 static void
 prime_the_change_buffer(void)
 {
@@ -1227,8 +1223,6 @@ prime_the_change_buffer(void)
   @<Skip to the next nonblank line; |return| if end of file@>@;
   @<Move |buffer| and |limit| to |change_buffer| and |change_limit|@>@;
 }
-
-@ @<Predecl...@>=@+static void prime_the_change_buffer(void);
 
 @ While looking for a line that begins with \.{@@x} in the change file, we
 allow lines that begin with \.{@@}, as long as they don't begin with \.{@@y},
@@ -1274,20 +1268,20 @@ do {
 
 Here's the portion of the \CEE/ code generated by \.{CTANGLE} that corresponds
 to the source on the preceding page.  Notice that sections~29, 30 and~31
-have been tangled into section~27.
+have been tangled into section~28.
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
 \verbatim
-/*:23*//*27:*/
-#line 227 "common.w"
+/*:24*//*28:*/
+#line 234 "common.w"
 
 static void
 prime_the_change_buffer(void)
 {
 change_limit= change_buffer;
 /*29:*/
-#line 243 "common.w"
+#line 248 "common.w"
 
 while(true){
 change_line++;
@@ -1304,10 +1298,10 @@ err_print("!! Missing @x in change file");
 }
 
 /*:29*/
-#line 232 "common.w"
+#line 239 "common.w"
 
 /*30:*/
-#line 260 "common.w"
+#line 265 "common.w"
 
 do{
 change_line++;
@@ -1319,10 +1313,10 @@ return;
 }while(limit==buffer);
 
 /*:30*/
-#line 233 "common.w"
+#line 240 "common.w"
 
 /*31:*/
-#line 270 "common.w"
+#line 275 "common.w"
 
 {
 change_limit= change_buffer+(ptrdiff_t)(limit-buffer);
@@ -1330,11 +1324,11 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
 
 /*:31*/
-#line 234 "common.w"
+#line 241 "common.w"
 
 }
 
-/*:27*//*32:*/
+/*:28*//*33:*/
 !endgroup
 \endgroup
 \vfill\eject
@@ -1355,7 +1349,11 @@ the change file is exhausted. This procedure is called only when
 \PB{\\{changing}} is \PB{\\{true}}; hence error messages will be reported
 correctly.
 
-\Y\B\1\1\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\2\2\6
+\Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
+\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
+\fi
+
+\M{28}\B\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{change\_limit}\K\\{change\_buffer}{}$;\C{ this value is used if the
 change file ends }\6
@@ -1365,10 +1363,6 @@ change file ends }\6
 \X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
 \PB{\\{change\_limit}}\X\6
 \4${}\}{}$\2\par
-\fi
-
-\M{28}\B\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\5
-\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
 \fi
 
 \M{29}While looking for a line that begins with \.{@x} in the change file, we
@@ -1398,7 +1392,7 @@ ${}\\{loc}\K\\{buffer}+\T{2};{}$\6
 \\{err\_print}(\.{"!!\ Missing\ @x\ in\ cha}\)\.{nge\ file"});\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\par
-\U27.\fi
+\U28.\fi
 
 \M{30}Here we are looking at lines following the \.{@x}.
 
@@ -1414,7 +1408,7 @@ ${}\{{}$\1\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
 \&{while} ${}(\\{limit}\E\\{buffer}){}$;\par
-\U27.\fi
+\U28.\fi
 !endgroup
 \endgroup
 \vfil\eject
@@ -1433,7 +1427,11 @@ the change file is exhausted. This procedure is called only when
 \PB{\\{changing}} is \PB{\\{true}}; hence error messages will be reported
 correctly.
 
-\Y\B\1\1\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\2\2\6
+\Y\B\4\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\6
+\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
+\fi
+
+\M{28}\B\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void})\1\1\2\2\6
 ${}\{{}$\1\6
 ${}\\{change\_limit}\K\\{change\_buffer}{}$;\C{ this value is used if the
 change file ends }\6
@@ -1443,10 +1441,6 @@ change file ends }\6
 \X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}} and %
 \PB{\\{change\_limit}}\X\6
 \4${}\}{}$\2\par
-\fi
-
-\M{28}\B\X7:Predeclaration of procedures\X${}\mathrel+\E{}$\5
-\&{static} \&{void} \\{prime\_the\_change\_buffer}(\&{void});\par
 \fi
 
 \M{29}While looking for a line that begins with \.{@x} in the change file, we
@@ -1476,7 +1470,7 @@ ${}\\{loc}\K\\{buffer}+\T{2};{}$\6
 \\{err\_print}(\.{"!\ Missing\ @x\ in\ cha}\)\.{nge\ file"});\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\par
-\U27.\fi
+\U28.\fi
 
 \M{30}Here we are looking at lines following the \.{@x}.
 
@@ -1492,7 +1486,7 @@ ${}\{{}$\1\6
 \4${}\}{}$\2\6
 \4${}\}{}$\2\5
 \&{while} ${}(\\{limit}\E\\{buffer}){}$;\par
-\U27.\fi
+\U28.\fi
 
 \M{31}\B\X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}}
 and \PB{\\{change\_limit}}\X${}\E{}$\6
@@ -1502,7 +1496,7 @@ ${}\\{change\_limit}\K\\{change\_buffer}+(\&{ptrdiff\_t})(\\{limit}-%
 ${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39(\&{size\_t})(\\{limit}-%
 \\{buffer}+\T{1}));{}$\6
 \4${}\}{}$\2\par
-\Us27\ET32.\fi
+\Us28\ET33.\fi
 \vfil\eject\titletrue
 \rightskip=0pt % get out of C mode (cf. \B)
 \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
@@ -1597,7 +1591,7 @@ $$\lpile{\.{\\def\\topofcontents\{\\null\\vfill}\cr
   \.{ { }\\titlefalse \% include headline on the contents page}\cr
   \.{ { }\\def\\rheader\{\\mainfont The \{\\tt CWEAVE\}{ }processor\\hfil\}}\cr
   \.{ { }\\centerline\{\\titlefont The \{\\ttitlefont CWEAVE\}{ }processor\}}\cr
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.3)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.2)\}{ }\\vfill\}}\cr}$$
 Redefining \.{\\rheader}, which is the headline for right-hand pages,
 suffices in this case to put the desired information at the top of the
 contents page.

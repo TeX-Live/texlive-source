@@ -17,16 +17,16 @@ by using "huge" pointers.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.3)"
+@d banner "This is CTANGLE (Version 4.2)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.3pc/big)"
+@d banner "This is CTANGLE (Version 4.2pc/big)"
 @z
 
 
-@x Section 10.
+@x Section 9.
   for section names */
 
 @<Common code...@>=
@@ -127,7 +127,7 @@ to run \.{CTANGLE} from a makefile.)
 @z
 
 
-@x Section 19.
+@x Section 16.
   eight_bits *tok_start; /* pointer into |tok_mem| */
   sixteen_bits text_link; /* relates replacement texts */
 } text;
@@ -140,7 +140,7 @@ typedef text *text_pointer;
 @z
 
 
-@x Section 20.
+@x Section 17.
 static eight_bits tok_mem[max_toks];
 static eight_bits *tok_mem_end=tok_mem+max_toks-1;
 static eight_bits *tok_ptr; /* first unused position in |tok_mem| */
@@ -151,7 +151,7 @@ static eight_bits huge* tok_ptr; /* first unused position in |tok_mem| */
 @z
 
 
-@x Section 21.
+@x Section 18.
 text_info->tok_start=tok_ptr=tok_mem;
 text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
   /* this makes replacement text 0 of length zero */
@@ -163,14 +163,14 @@ text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
 @z
 
 
-@x Section 22.
+@x Section 19.
 @d equiv equiv_or_xref /* info corresponding to names */
 @y
 @d equiv ptr_union.equiv_member /* info corresponding to names */
 @z
 
 
-@x Section 31.
+@x Section 27.
   eight_bits *end_field; /* ending location of replacement text */
   eight_bits *byte_field; /* present location within replacement text */
 @y
@@ -179,7 +179,7 @@ text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
 @z
 
 
-@x Section 55.
+@x Section 49.
 out_char(
 eight_bits cur_char)
 {

@@ -17,16 +17,16 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.3)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.2)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (4.3 [\TeX~Live])}
+\def\title{Common code for CTANGLE and CWEAVE (4.2 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.2)}
 @y
-  \centerline{(Version 4.3 [\TeX~Live])}
+  \centerline{(Version 4.2 [\TeX~Live])}
 @z
 
 @x
@@ -146,11 +146,11 @@ if ((web_file=fopen(web_file_name,"r"))==NULL) {
        fatal("! Cannot open input file ", web_file_name);
 }
 @y
-if ((found_filename=kpse_find_cweb(web_file_name))==NULL @|
-    || (web_file=fopen(found_filename,"r"))==NULL)
+if ((found_filename=kpse_find_cweb(web_file_name))==NULL || @|
+    (web_file=fopen(found_filename,"r"))==NULL) {
   fatal(_("! Cannot open input file "), web_file_name);
-else if (strlen(found_filename) < max_file_name_length) {
-  /* Copy name for \#\&{line} directives. */
+} else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for |#line| directives. */
   if (strcmp(web_file_name, found_filename))
     strcpy(web_file_name, found_filename +
       ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
@@ -162,11 +162,11 @@ else if (strlen(found_filename) < max_file_name_length) {
 if ((change_file=fopen(change_file_name,"r"))==NULL)
        fatal("! Cannot open change file ", change_file_name);
 @y
-if ((found_filename=kpse_find_cweb(change_file_name))==NULL @|
-    || (change_file=fopen(found_filename,"r"))==NULL)
+if ((found_filename=kpse_find_cweb(change_file_name))==NULL || @|
+    (change_file=fopen(found_filename,"r"))==NULL) {
   fatal(_("! Cannot open change file "), change_file_name);
-else if (strlen(found_filename) < max_file_name_length) {
-  /* Copy name for \#\&{line} directives. */
+} else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for |#line| directives. */
   if (strcmp(change_file_name, found_filename))
     strcpy(change_file_name, found_filename +
       ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
@@ -217,7 +217,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @x
   char temp_file_name[max_file_name_length];
   char *cur_file_name_end=cur_file_name+max_file_name_length-1;
-  char *kk, *k=cur_file_name;
+  char *k=cur_file_name, *kk;
   int l; /* length of file name */
 @y
   char *cur_file_name_end=cur_file_name+max_file_name_length-1;
@@ -227,9 +227,9 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @x
   if ((cur_file=fopen(cur_file_name,"r"))!=NULL) {
 @y
-  if ((found_filename=kpse_find_cweb(cur_file_name))!=NULL @|
-      && (cur_file=fopen(found_filename,"r"))!=NULL) {
-    /* Copy name for \#\&{line} directives. */
+  if ((found_filename=kpse_find_cweb(cur_file_name))!=NULL && @|
+      (cur_file=fopen(found_filename,"r"))!=NULL) {
+    /* Copy name for |#line| directives. */
     if (strlen(found_filename) < max_file_name_length) {
       if (strcmp(cur_file_name, found_filename))
         strcpy(cur_file_name, found_filename +
@@ -255,7 +255,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
   if (l>0) {
     if (k+l+2>=cur_file_name_end)  too_long();
 @.Include file name ...@>
-    for (; k>=cur_file_name; k--) *(k+l+1)=*k;
+    for (; k>= cur_file_name; k--) *(k+l+1)=*k;
     strcpy(cur_file_name,temp_file_name);
     cur_file_name[l]='/'; /* \UNIX/ pathname separator */
     if ((cur_file=fopen(cur_file_name,"r"))!=NULL) {
@@ -364,7 +364,7 @@ else if (include_depth==0) printf(_(". (l. %d)\n"), cur_line);
 Some implementations may wish to pass the |history| value to the
 operating system so that it can be used to govern whether or not other
 programs are started. Here, for instance, we pass the operating system
-a status of |EXIT_SUCCESS| if and only if only harmless messages were printed.
+a status of 0 if and only if only harmless messages were printed.
 @^system dependencies@>
 @y
 On multi-tasking systems like the {\mc AMIGA} it is very convenient to
@@ -394,22 +394,20 @@ can be made sensitive to these conditions.
   else return EXIT_SUCCESS;
 @y
   switch(history) {
-  case spotless: return RETURN_OK;
   case harmless_message: return RETURN_WARN;
   case error_message: return RETURN_ERROR;
-  case fatal_message: default: return RETURN_FAIL;
+  case fatal_message: return RETURN_FAIL;
+  default: return RETURN_OK;
   }
 @z
 
 @x
-case spotless:
-  if (show_happiness) puts("(No errors were found.)"); break;
+case spotless: if (show_happiness) puts("(No errors were found.)"); break;
 case harmless_message:
   puts("(Did you see the warning message above?)"); break;
 case error_message:
   puts("(Pardon me, but I think I spotted something wrong.)"); break;
-case fatal_message: default:
-  puts("(That was a fatal error, my friend.)");
+case fatal_message: puts("(That was a fatal error, my friend.)");
 @y
 case spotless:
   if (show_happiness) puts(_("(No errors were found.)")); break;
@@ -417,7 +415,7 @@ case harmless_message:
   puts(_("(Did you see the warning message above?)")); break;
 case error_message:
   puts(_("(Pardon me, but I think I spotted something wrong.)")); break;
-case fatal_message: default:
+case fatal_message:
   puts(_("(That was a fatal error, my friend.)"));
 @z
 
@@ -425,14 +423,6 @@ case fatal_message: default:
   printf("\n! Sorry, %s capacity exceeded",t); fatal("","");
 @y
   printf(_("\n! Sorry, %s capacity exceeded"),t); fatal("","");
-@z
-
-@x
-or flags to be turned on (beginning with |"+"|).
-@y
-or flags to be turned on (beginning with |"+"|).
-\TeX~Live's \.{CWEB} executables accept several ``long options'' as well;
-see section |@<Handle flag arg...@>| for details.
 @z
 
 @x
@@ -446,7 +436,7 @@ char check_file_name[max_file_name_length]; /* name of |check_file| */
 show_banner=show_happiness=show_progress=make_xrefs=true;@/
 @y
 make_xrefs=true;@/
-check_for_change=true; /* Check temporary output for changes */
+temporary_output=true; /* Check temporary output for changes */
 @z
 
 @x
@@ -469,28 +459,32 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 @x
   strcpy(change_file_name,"/dev/null");
 @y
-  strcpy(change_file_name,"/dev/null");
+@#
 #if defined DEV_NULL
   strncpy(change_file_name,DEV_NULL,max_file_name_length-2);
   change_file_name[max_file_name_length-2]='\0';
 #elif defined _DEV_NULL
   strncpy(change_file_name,_DEV_NULL,max_file_name_length-2);
   change_file_name[max_file_name_length-2]='\0';
+#else
+  strcpy(change_file_name,"/dev/null");
 #endif
 @^system dependencies@>
 @z
 
 @x
-      while (*s)
+      while (*s) {
         if (*s=='.') dot_pos=s++;
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
         else s++;
+      }
 @y
-      while (*s)
+      while (*s) {
         if (*s=='.') dot_pos=s++;
         else if (*s==DIR_SEPARATOR || *s==DEVICE_SEPARATOR || *s=='/')
           dot_pos=NULL,name_pos=++s;
         else s++;
+      }
 @^system dependencies@>
 @z
 
@@ -509,9 +503,11 @@ otherwise we add |".w"|.
 @z
 
 @x
-for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
-  flags[(eight_bits)*dot_pos]=flag_change;
+@<Handle flag...@>=
+{
+  for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
 @y
+@<Handle flag...@>=
 {
   if (strcmp("-help",*argv)==0 || strcmp("--help",*argv)==0)
 @.--help@>
@@ -521,25 +517,26 @@ for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
     @<Display version information and |exit|@>@;
   if (strcmp("-verbose",*argv)==0 || strcmp("--verbose",*argv)==0)
 @.--verbose@>
-    strcpy(*argv,"-v");
+  { show_banner=show_progress=show_happiness=1; continue; }
   if (strcmp("-quiet",*argv)==0 || strcmp("--quiet",*argv)==0)
 @.--quiet@>
-      strcpy(*argv,"-q");
-  for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++) {
-    switch (*dot_pos) {
-    case 'v': show_banner=show_progress=show_happiness=true; continue;
-    case 'q': show_banner=show_progress=show_happiness=false; continue;
-    case 'd':
+  { show_banner=show_progress=show_happiness=0; continue; }
+  for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
+    if (*dot_pos=='v') {
+      show_banner=show_progress=show_happiness=true;
+    } else
+    if (*dot_pos=='q') {
+      show_banner=show_progress=show_happiness=false;
+    } else
+    if (*dot_pos=='d') {
       if (sscanf(++dot_pos,"%u",&kpathsea_debug)!=1) @<Print usage error...@>@;
       while (isdigit(*dot_pos)) dot_pos++; /* skip numeric part */
       dot_pos--; /* reset to final digit */
-      continue;
-    case 'l': use_language=++dot_pos; break; /* from |switch| */
-    default: flags[(eight_bits)*dot_pos]=flag_change; continue;
-    }
-    break; /* from |for| loop */
-  }
-}
+    } else
+    if(*dot_pos=='l') {
+       use_language=++dot_pos;
+       break;
+    } else
 @z
 
 @x
@@ -628,9 +625,9 @@ else {
 @x
 @** Index.
 @y
-@** Extensions to {\tentex CWEB}.  The following sections introduce new or
-improved features that have been created by numerous contributors over the
-course of a quarter century.
+@** Extensions to \.{CWEB}.  The following sections introduce new or improved
+features that have been created by numerous contributors over the course of a
+quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
 material should nicely integrate with the original ``\&{85.~Index}.''
@@ -832,7 +829,6 @@ static void cb_usagehelp (const_string *message, const_string bug_email)
   textdomain("web2c-help");
 @.web2c-help.mo@>
   while (*message) {
-    /* empty string \.{""} has special meaning for |gettext| */
     printf("%s\n", strcmp("", *message) ? _(*message) : *message);
     ++message;
   }
@@ -858,6 +854,7 @@ printversionandexit(cb_banner,
 @c
 void cb_show_banner (void)
 {
+  assert(cb_banner[0]!='\0');
   textdomain("cweb-tl");
 @.cweb-tl.mo@>
   printf("%s%s\n", _(cb_banner), versionstring);

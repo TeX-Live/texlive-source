@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.3 --- April 2021 (works also with later versions)
+% Version 4.2 --- February 2021 (works also with later versions)
 
 % Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth
 
@@ -27,7 +27,9 @@
 
 First comes general stuff:
 
-@i iso_types.w
+@s boolean int
+@s uint8_t int
+@s uint16_t int
 
 
 @<Common code...@>=
@@ -71,22 +73,20 @@ internationalization.
 @^ASCII code dependencies@>
 
 @d and_and 04 /* `\.{\&\&}'\,; corresponds to MIT's {\tentex\char'4} */
-@d lt_lt 020 /* `\.{<<}'\,; corresponds to MIT's {\tentex\char'20} */
-@d gt_gt 021 /* `\.{>>}'\,; corresponds to MIT's {\tentex\char'21} */
-@d plus_plus 013 /* `\.{++}'\,; corresponds to MIT's {\tentex\char'13} */
-@d minus_minus 01 /* `\.{--}'\,; corresponds to MIT's {\tentex\char'1} */
-@d minus_gt 031 /* `\.{->}'\,; corresponds to MIT's {\tentex\char'31} */
-@d non_eq 032 /* `\.{!=}'\,; corresponds to MIT's {\tentex\char'32} */
-@d lt_eq 034 /* `\.{<=}'\,; corresponds to MIT's {\tentex\char'34} */
-@d gt_eq 035 /* `\.{>=}'\,; corresponds to MIT's {\tentex\char'35} */
-@d eq_eq 036 /* `\.{==}'\,; corresponds to MIT's {\tentex\char'36} */
-@d or_or 037 /* `\.{\v\v}'\,; corresponds to MIT's {\tentex\char'37} */
-@d dot_dot_dot 016 /* `\.{...}'\,; corresponds to MIT's {\tentex\char'16} */
-@d colon_colon 06 /* `\.{::}'\,; corresponds to MIT's {\tentex\char'6} */
-@d period_ast 026 /* `\.{.*}'\,; corresponds to MIT's {\tentex\char'26} */
-@d minus_gt_ast 027 /* `\.{->*}'\,; corresponds to MIT's {\tentex\char'27} */
-@#
-@d compress(c) if (loc++<=limit) return c
+@d lt_lt 020 /* `\.{<<}'\,;  corresponds to MIT's {\tentex\char'20} */
+@d gt_gt 021 /* `\.{>>}'\,;  corresponds to MIT's {\tentex\char'21} */
+@d plus_plus 013 /* `\.{++}'\,;  corresponds to MIT's {\tentex\char'13} */
+@d minus_minus 01 /* `\.{--}'\,;  corresponds to MIT's {\tentex\char'1} */
+@d minus_gt 031 /* `\.{->}'\,;  corresponds to MIT's {\tentex\char'31} */
+@d non_eq 032 /* `\.{!=}'\,;  corresponds to MIT's {\tentex\char'32} */
+@d lt_eq 034 /* `\.{<=}'\,;  corresponds to MIT's {\tentex\char'34} */
+@d gt_eq 035 /* `\.{>=}'\,;  corresponds to MIT's {\tentex\char'35} */
+@d eq_eq 036 /* `\.{==}'\,;  corresponds to MIT's {\tentex\char'36} */
+@d or_or 037 /* `\.{\v\v}'\,;  corresponds to MIT's {\tentex\char'37} */
+@d dot_dot_dot 016 /* `\.{...}'\,;  corresponds to MIT's {\tentex\char'16} */
+@d colon_colon 06 /* `\.{::}'\,;  corresponds to MIT's {\tentex\char'6} */
+@d period_ast 026 /* `\.{.*}'\,;  corresponds to MIT's {\tentex\char'26} */
+@d minus_gt_ast 027 /* `\.{->*}'\,;  corresponds to MIT's {\tentex\char'27} */
 
 @<Common code...@>=
 extern char section_text[]; /* text being sought for */
@@ -95,16 +95,12 @@ extern char *id_first; /* where the current identifier begins in the buffer */
 extern char *id_loc; /* just after the current identifier in the buffer */
 
 @ Code related to input routines:
-@d xisalpha(c) (isalpha((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d xisdigit(c) (isdigit((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d xisspace(c) (isspace((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d xislower(c) (islower((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d xisupper(c) (isupper((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d xisxdigit(c) (isxdigit((eight_bits)(c))&&((eight_bits)(c)<0200))
-@d isxalpha(c) ((c)=='_' || (c)=='$')
-  /* non-alpha characters allowed in identifier */
-@d ishigh(c) ((eight_bits)(c)>0177)
-@^high-bit character handling@>
+@d xisalpha(c) (isalpha((eight_bits)c)&&((eight_bits)c<0200))
+@d xisdigit(c) (isdigit((eight_bits)c)&&((eight_bits)c<0200))
+@d xisspace(c) (isspace((eight_bits)c)&&((eight_bits)c<0200))
+@d xislower(c) (islower((eight_bits)c)&&((eight_bits)c<0200))
+@d xisupper(c) (isupper((eight_bits)c)&&((eight_bits)c<0200))
+@d xisxdigit(c) (isxdigit((eight_bits)c)&&((eight_bits)c<0200))
 
 @<Common code...@>=
 extern char buffer[]; /* where each line of input goes */
@@ -185,7 +181,7 @@ extern hash_pointer h; /* index into hash-head array */
 extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
 extern name_pointer id_lookup(const char *,const char *,char);
    /* looks up a string in the identifier table */
-extern name_pointer section_lookup(char *,char *,boolean); /* finds section name */
+extern name_pointer section_lookup(char *,char *,int); /* finds section name */
 extern void init_node(name_pointer);@/
 extern void init_p(name_pointer,eight_bits);@/
 extern void print_prefix_name(name_pointer);@/
@@ -216,8 +212,8 @@ extern void overflow(const char *); /* succumb because a table has overflowed */
 @d show_progress flags['p'] /* should progress reports be printed? */
 @d show_stats flags['s'] /* should statistics be printed at end of run? */
 @d show_happiness flags['h'] /* should lack of errors be announced? */
+@d temporary_output flags['t'] /* should temporary output take precedence? */
 @d make_xrefs flags['x'] /* should cross references be output? */
-@d check_for_change flags['c'] /* check temporary output for changes */
 
 @<Common code...@>=
 extern int argc; /* copy of |ac| parameter to |main| */
@@ -231,8 +227,10 @@ extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
 
 @ Code related to output:
 @d update_terminal fflush(stdout) /* empty the terminal output buffer */
-@d new_line putchar('\n')
+@d new_line putchar('\n') @d putxchar putchar
 @d term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)
+@d C_printf(c,a) fprintf(C_file,c,a)
+@d C_putc(c) putc(c,C_file) /* isn't \CEE/ wonderfully consistent? */
 
 @<Common code...@>=
 extern FILE *C_file; /* where output of \.{CTANGLE} goes */

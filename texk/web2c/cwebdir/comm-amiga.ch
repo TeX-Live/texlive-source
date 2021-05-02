@@ -10,7 +10,7 @@ An omitted change file argument means that |"/dev/null"| should be used,
 An omitted change file argument means that |"nil:"| should be used,
 @z
 
-@x section 75
+@x section 76
   strcpy(change_file_name,"/dev/null");
 @y
   strcpy(change_file_name,"nil:");

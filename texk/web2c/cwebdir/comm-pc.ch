@@ -19,13 +19,13 @@ An omitted change file argument means that |"/dev/null"| should be used,
 An omitted change file argument means that |"NUL"| should be used,
 @z
 
-@x section 75
+@x section 76
   strcpy(change_file_name,"/dev/null");
 @y
   strcpy(change_file_name,"NUL");
 @z
 
-@x section 75 (this change copied from comm-bs.ch, July 94)
+@x section 76 (this change copied from comm-bs.ch, July 94)
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
 @y
         else if (*s == ':' || *s == '\\' || *s == '/')
