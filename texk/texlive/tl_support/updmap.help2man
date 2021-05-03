@@ -6,9 +6,11 @@
 # do not fill the long TEXMF* tables.
 
 [NAME]
-updmap \- manage TeX font maps, per-user
+updmap \- manage TeX font maps
 .br
 updmap-sys \- manage TeX font maps, system-wide
+.br
+updmap-user \- manage TeX font maps, per-user
 
 /Adapt the font and file/
 .nf
