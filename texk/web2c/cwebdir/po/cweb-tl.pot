@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-06 15:43+0100\n"
+"POT-Creation-Date: 2021-04-13 16:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,15 +30,15 @@ msgid "%s: Need one to three file arguments.\n"
 msgstr ""
 
 #: ctang-texlive.ch:39
-msgid "This is CTANGLE, Version 4.2"
+msgid "This is CTANGLE, Version 4.3"
 msgstr ""
 
 #: ctwill-texlive.ch:39
-msgid "This is CTWILL, Version 4.2"
+msgid "This is CTWILL, Version 4.3"
 msgstr ""
 
 #: cweav-texlive.ch:39
-msgid "This is CWEAVE, Version 4.2"
+msgid "This is CWEAVE, Version 4.3"
 msgstr ""
 
 #: comm-texlive.ch:512

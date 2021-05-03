@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CWEAVE (Version 4.2)}
+\def\title{CWEAVE (Version 4.3)}
 @y
-\def\title{CWEAVE (Version 4.2 [\TeX~Live])}
+\def\title{CWEAVE (Version 4.3 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.2)}
+  \centerline{(Version 4.3)}
 @y
-  \centerline{(Version 4.2 [\TeX~Live])}
+  \centerline{(Version 4.3 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CWEAVE (Version 4.2)"
+@d banner "This is CWEAVE (Version 4.3)"
 @y
-@d banner "This is CWEAVE, Version 4.2"
+@d banner "This is CWEAVE, Version 4.3"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -252,14 +252,19 @@ tex_puts("cwebma");
 
 @c
 static void
-print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
+print_text( /* prints a token list for debugging; not used in |main| */
 @y
 @d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
 
-@c
+@<Predecl...@>=
 #if 0
-static void
-print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
+static void print_text(text_pointer p);
+#endif
+
+@ @c
+#if 0
+@t\4\4@>static void
+print_text( /* prints a token list for debugging; not used in |main| */
 @z
 
 @x
@@ -272,25 +277,18 @@ print_text(@t\1\1@> /* prints a token list for debugging; not used in |main| */
 @x
 @ @<Predecl...@>=@+static void print_text(text_pointer p);
 @y
-@ @<Predecl...@>=
-#if 0
-static void print_text(text_pointer p);
-#endif
 @z
 
 @x
 @<Cases for |exp|@>=
 if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  make_underlined(pp); big_app1(pp); big_app(indent); app(indent);
+  make_underlined(pp); big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,1);
 }
 @y
 @<Cases for |exp|@>=
 if(cat1==lbrace || cat1==int_like || cat1==decl) {
-  make_underlined(pp); big_app1(pp);
-  if (indent_param_decl) {
-    big_app(indent); app(indent);
-  }
+  make_underlined(pp); if (indent_param_decl) big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,1);
 }
 @z
@@ -301,10 +299,9 @@ if (cat1==comma) {
   big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
-  big_app1(pp); big_app('{'); big_app1(pp+1); big_app('}');
-  reduce(pp,2,decl_head,-1,34);
+  big_app1_insert(pp,'{'); big_app('}'); reduce(pp,2,decl_head,-1,34);
 }
-else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
+else if (cat1==exp && cat2!=lpar && cat2!=lbrack && cat2!=exp && cat2!=cast) {
   make_underlined(pp+1); squash(pp,2,decl_head,-1,35);
 }
 else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
@@ -312,7 +309,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app1(pp); big_app(indent); app(indent); reduce(pp,1,fn_decl,0,38);
+  big_app(dindent); big_app1(pp); reduce(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @y
@@ -321,10 +318,10 @@ if (cat1==comma) {
   big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
-  big_app1(pp); big_app('{'); big_app1(pp+1); big_app('}');
+  big_app1_insert(pp,'{'); big_app('}');
   reduce(pp,2,decl_head,-1,34);
 }
-else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
+else if (cat1==exp && cat2!=lpar && cat2!=lbrack && cat2!=exp && cat2!=cast) {
   make_underlined(pp+1); squash(pp,2,decl_head,-1,35);
 }
 else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
@@ -332,10 +329,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app1(pp);
-  if (indent_param_decl) {
-    big_app(indent); app(indent);
-  }
+  if (indent_param_decl) big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
@@ -344,31 +338,26 @@ else if (cat1==semi) squash(pp,2,decl,-1,39);
 @x
 @ @<Cases for |decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1);
-  reduce(pp,2,decl,-1,40);
+  big_app1_insert(pp,force); reduce(pp,2,decl,-1,40);
 }
 else if (cat1==stmt || cat1==function) {
-  big_app1(pp); big_app(big_force);
-  big_app1(pp+1); reduce(pp,2,cat1,-1,41);
+  big_app1_insert(pp,big_force); reduce(pp,2,cat1,-1,41);
 }
 @y
 @ @<Cases for |decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1);
-  reduce(pp,2,decl,-1,40);
+  big_app1_insert(pp,force); reduce(pp,2,decl,-1,40);
 }
 else if (cat1==stmt || cat1==function) {
-  big_app1(pp);
-  if(order_decl_stmt) big_app(big_force);
-  else big_app(force);
-  big_app1(pp+1); reduce(pp,2,cat1,-1,41);
+  big_app1_insert(pp,order_decl_stmt ? big_force : force);
+  reduce(pp,2,cat1,-1,41);
 }
 @z
 
 @x
 @ @<Cases for |fn_decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1); reduce(pp,2,fn_decl,0,51);
+  big_app1_insert(pp,force); reduce(pp,2,fn_decl,0,51);
 }
 else if (cat1==stmt) {
   big_app1(pp); app(outdent); app(outdent); big_app(force);
@@ -377,16 +366,22 @@ else if (cat1==stmt) {
 @y
 @ @<Cases for |fn_decl|@>=
 if (cat1==decl) {
-  big_app1(pp); big_app(force); big_app1(pp+1); reduce(pp,2,fn_decl,0,51);
+  big_app1_insert(pp,force); reduce(pp,2,fn_decl,0,51);
 }
 else if (cat1==stmt) {
   big_app1(pp);
   if (indent_param_decl) {
     app(outdent); app(outdent);
   }
-  big_app(force);
-  big_app1(pp+1); reduce(pp,2,function,-1,52);
+  big_app(force); big_app1(pp+1); reduce(pp,2,function,-1,52);
 }
+@z
+
+@x
+  big_app1_insert(pp,dindent); reduce(pp,2,fn_decl,0,73);
+@y
+  big_app1(pp); if (indent_param_decl) big_app(dindent);
+  big_app1(pp+1); reduce(pp,2,fn_decl,0,73);
 @z
 
 @x
@@ -620,17 +615,17 @@ finish_line(); fclose(active_file); active_file=NULL;
 @x
 @** Index.
 @y
-@** Extensions to \.{CWEB}.  The following sections introduce new or improved
-features that have been created by numerous contributors over the course of a
-quarter century.
+@** Extensions to {\tentex CWEB}.  The following sections introduce new or
+improved features that have been created by numerous contributors over the
+course of a quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
-material should nicely integrate with the original ``\&{263.~Index}.''
+material should nicely integrate with the original ``\&{272.~Index}.''
 
 @* Formatting alternatives.
-\.{CWEAVE} indents declarations after old-style function definitions.
-With the \.{-i} option they will come out flush left.  You won't see
-any difference if you use ANSI-style function definitions.
+\.{CWEAVE} indents declarations after old-style function definitions and
+long parameter lists of modern function definitions.
+With the \.{-i} option they will come out flush left.
 
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 
@@ -657,14 +652,13 @@ be found in the program \.{NUWEB} by Preston Briggs, to whom credit is due.
 
 @<Update the result...@>=
 if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
-  char x[BUFSIZ],y[BUFSIZ];
-  int x_size,y_size,comparison=false;
+  boolean comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  if (temporary_output) @<Compare the temporary output...@>@;
+  if (check_for_change) @<Compare the temporary output...@>@;
 
   fclose(tex_file); tex_file=NULL;
   fclose(check_file); check_file=NULL;
@@ -679,10 +673,10 @@ strcpy(check_file_name,""); /* We want to get rid of the temporary file */
 
 @<Compare the temporary output to the previous output@>=
 do {
-  x_size = fread(x,1,BUFSIZ,tex_file);
-  y_size = fread(y,1,BUFSIZ,check_file);
-  comparison = (x_size == y_size); /* Do not merge these statements! */
-  if(comparison) comparison = !memcmp(x,y,x_size);
+  char x[BUFSIZ],y[BUFSIZ];
+  int x_size = fread(x,sizeof(char),BUFSIZ,tex_file);
+  int y_size = fread(y,sizeof(char),BUFSIZ,check_file);
+  comparison = (x_size == y_size) && !memcmp(x,y,x_size);
 } while(comparison && !feof(tex_file) && !feof(check_file));
 
 @ Note the superfluous call to |remove| before |rename|.  We're using it to
@@ -696,7 +690,7 @@ else {
   rename(check_file_name,tex_file_name);
 }
 
-@* Put ``version'' information in a single spot.
+@* Print ``version'' information.
 Don't do this at home, kids! Push our local macro to the variable in \.{COMMON}
 for printing the |banner| and the |versionstring| from there.
 

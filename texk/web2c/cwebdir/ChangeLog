@@ -1,3 +1,72 @@
+2021-04-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* README,
+	* comm-{mac,mini,ql,w2c}.ch,
+	* comm-w2c.h,
+	* common.bux,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-{bs,pc,ql,vms,w2c,w32}.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill.bux,
+	* ctwill-{mini,w2c}.ch,
+	* cweav-{bs,pc,ql,vms,w2c,w32}.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* po/cweb[-tl].pot,
+	* po/de/cweb[-tl].po,
+	* po/it/cweb.po,
+	* system.bux: CWEB 4.3 and CWEBbin 2021.
+
+2021-03-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.w,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* prod-twill.w,
+	* prod.w: Parameter indentation for modern function headers.
+
+2021-03-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* README,
+	* comm-{bs,mac}.ch,
+	* comm-w2c.h,
+	* common.h,
+	* common.w,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman.tex,
+	* prod-twill.w,
+	* prod.w: Incorporate C++ material by @texdraft.
+
+2021-03-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* refsort.ch,
+	* twinx.ch: Patch refsort and twinx with changefiles.
+
+	* resort.w,
+	* twinx.w: Revert to original form from the CTWILL tarball.
+
+	* twinx-startup.tex: Add example template for 'twinx'.
+
 2021-02-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

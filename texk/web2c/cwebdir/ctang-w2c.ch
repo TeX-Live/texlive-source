@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CTANGLE (Version 4.2)}
+\def\title{CTANGLE (Version 4.3)}
 @y
-\def\title{CTANGLE (Version 4.2 [\TeX~Live])}
+\def\title{CTANGLE (Version 4.3 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.2)}
+  \centerline{(Version 4.3)}
 @y
-  \centerline{(Version 4.2 [\TeX~Live])}
+  \centerline{(Version 4.3 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CTANGLE (Version 4.2)"
+@d banner "This is CTANGLE (Version 4.3)"
 @y
-@d banner "This is CTANGLE, Version 4.2"
+@d banner "This is CTANGLE, Version 4.3"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -78,9 +78,9 @@
 @z
 
 @x
-      overflow("output files");
+    else overflow("output files");
 @y
-      overflow(_("output files"));
+    else overflow(_("output files"));
 @z
 
 @x
@@ -113,14 +113,14 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     an_output_file--;
     sprint_section_name(output_file_name,*an_output_file);
     fclose(C_file);
-    C_file=fopen(output_file_name,"wb");
-    if (C_file ==0) fatal("! Cannot open output file ",output_file_name);
+    if ((C_file=fopen(output_file_name,"wb"))==NULL)
+      fatal("! Cannot open output file ",output_file_name);
 @.Cannot open output file@>
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;
-    cur_name= (*an_output_file);
-    cur_repl= (text_pointer)cur_name->equiv;
+    cur_name=(*an_output_file);
+    cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
     cur_end=(cur_repl+1)->tok_start;
     while (stack_ptr > stack) get_output();
@@ -142,8 +142,8 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;
-    cur_name= (*an_output_file);
-    cur_repl= (text_pointer)cur_name->equiv;
+    cur_name=(*an_output_file);
+    cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
     cur_end=(cur_repl+1)->tok_start;
     while (stack_ptr > stack) get_output();
@@ -154,9 +154,9 @@ strcpy(check_file_name,""); /* We want to get rid of the temporary file */
 @z
 
 @x
-          else if (a<050000) { confusion("macro defs have strange char");}
+          else if (a<050000) confusion("macro defs have strange char");
 @y
-          else if (a<050000) { confusion(_("macro defs have strange char"));}
+          else if (a<050000) confusion(_("macro defs have strange char"));
 @z
 
 @x
@@ -338,9 +338,9 @@ case output_defs_code: if (t!=section_name) err_print(_("! Misplaced @@h"));
 @x
 @** Index.
 @y
-@** Extensions to \.{CWEB}.  The following sections introduce new or improved
-features that have been created by numerous contributors over the course of a
-quarter century.
+@** Extensions to {\tentex CWEB}.  The following sections introduce new or
+improved features that have been created by numerous contributors over the
+course of a quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
 material should nicely integrate with the original ``\&{104.~Index}.''
@@ -368,7 +368,7 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  if (temporary_output) @<Compare the temporary output...@>@;
+  if (check_for_change) @<Compare the temporary output...@>@;
 
   fclose(C_file); C_file=NULL;
   fclose(check_file); check_file=NULL;
@@ -464,7 +464,7 @@ if((check_file=fopen(check_file_name,"r"))==NULL)
   fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-@* Put ``version'' information in a single spot.
+@* Print ``version'' information.
 Don't do this at home, kids! Push our local macro to the variable in \.{COMMON}
 for printing the |banner| and the |versionstring| from there.
 

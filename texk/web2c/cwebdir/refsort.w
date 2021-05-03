@@ -40,9 +40,9 @@ be plenty big enough.
 
 @d abort(c,m) { fprintf(stderr,"%s!\n%s",m,buf); return c; }
 @c
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
+#include "stdio.h"
+#include "strings.h"
+#include "ctype.h"
 @#
 typedef struct {
   char key[max_key];
@@ -54,7 +54,7 @@ char cur_page[10]; /* page number, as a string */
 char buf[max_size]; /* current line of input */
 char *input_status; /* |NULL| if end of input reached, else |buf| */
 @#
-int main()
+main()
 {
   register char *p,*q;
   register int n; /* current number of items */
@@ -86,7 +86,7 @@ while (1) {
 }
 
 @ @<Output the current group@>=
-{
+{ register int k;
   for (y=sorted;y<sorted+n;y++) printf("%s\n",(*y)->entry);
   printf("\\donewithpage%s\n",cur_page);
 }
@@ -162,4 +162,3 @@ characters. Ergo, the following routine replaced a simpler original loop.
   for (;*p;p++) *q++=*p;
 }
 
-@* Index.
