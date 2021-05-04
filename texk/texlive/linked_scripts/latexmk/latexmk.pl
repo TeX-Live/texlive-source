@@ -26,141 +26,38 @@
 ##
 ##
 ##
-##   Modification log from 1 Jan 2020 onwards in detail
+##   Modification log from 14 Apr 2021 onwards in detail
 ##
+##  3 May 2021 John Collins  Minor corrections
+## 30 Apr 2021 John Collins  Revert the change of 14-15 Apr, by removing the
+##                           of cwd().  That gave sometimes obnoxiously slow
+##                           parsing of big log files, because of the slowness
+##                           of large number of calls to cwd() caused by calls
+##                           to sub normalize_filename. I think I am mistaken
+##                           that cwd() could possibly give a different result
+##                           than getcwd(), whose cached result is used by
+##                           my goodcwd(). That idea was my motivation on 14 Apr.
+## 22 Apr 2021 John Collins  Clean up aux and out_dir code.
+## 21 Apr 2021 John Collins  Clean up some comments
+##                           Add in emulation of -aux-directory.  On by
+##                           default.
+## 20 Apr 2021 John Collins  Add -dALLOWPSTRANSPARENCY option to ps2pdf and
+##                           dvi2pdf. That avoids problems with recent
+##                           ghostscript versions when, e.g., pstricks is used.
+## 16 Apr 2021 John Collins  Better normalization of aux_dir and out_dir, so
+##                that TEXMFOUTPUT, and the source and dest names for bibtex
+##                and makeindex allow them to work always when the aux_dir
+##                is **not** below cwd, at least under TeX Live. With MiKTeX
+##                bibtex works even without special precautions for aux_dir
+##                not below cwd.  But makeindex doesn't work in this case,
+##                even if TEXMFOUTPUT is set correctly.
 ## 14-15 Apr 2021 John Collins  In normalize_filename, try both good_cwd() and
 ##                           cwd() for removing directory component.
-##                           That improves clean up.
-##                           V. 4.72b
-## 14 Apr 2021 John Collins  Allow index instead of makeindex in indexfudge options
-## 12 Apr 2021 John Collins  Start to fix bug on not-found files with out_dir = .
-## 11 Apr 2021 John Collins  V. 4.72a.
-##                           Modify contents of minimal aux file.
-##  9 Apr 2021 John Collins  Correct bug that if on one run of latexmk a
-##                           missing file was detected and the file was
-##                           later created, then a subsequent run of latexmk
-##                           didn't cause a recompilation.  The cause was an
-##                           error in latexmk's initialization of its file
-##                           database.
-##                           V. 4.72.
-## 12 Jan 2021 John Collins  Correct parse_log
-## 28 Dec 2020 John Collins  Process -output-format=fmt option rather than passing it to *latex
-## 26-27 Dec 2020 John Collins  Deal with bug exposed by chapterbib.  (It involved
-##                           incorrect attempt to deal with filenames specified
-##                           relative to aux_dir.
-## 14 Dec 2020 John Collins  Try to solve problems of normalization of source
-##                           name and general normalization of file names.
-## 10 Dec 2020 John Collins  Set up run_makeindex and $makeindex_fudge, just as
-##                           for bibtex, and corresponding CL options.
-##                           Revert changes to normalize_filename, they aren't
-##                           needed any more.
-##                           Normalize filenames in rdb_ensure_file.
-## 25 Nov 2020 John Collins  Revert to default $bibtex_fudge to 1
-##                           Rationale: 
-##                           There are enough annoying security-related
-##                           complications in many cases concerning
-##                           filenames with a path component given to
-##                           bibtex, that it is better to do the cd trick
-##                           by default.  In addition there are some
-##                           interesting incompatibilities between TeXLive
-##                           and MiKTeX.  In the rare (I suspect) cases
-##                           where the fudge fails, the user can always
-##                           turn it off, of course.
-##                           I should do same fudge for makeindex. 
-##                           Comment out warning when bibtex fudge is used.
-## 18 Nov 2020 John Collins  Add options -bibtexfudge, -bibtexfudge-, -nobibtexfudge,
-##                           so that the options are in agreement with documentation
-##                           including historical versions.
-##                           Set environmnent variable TEXMFOUTPUT to the
-##                           aux_dir.  This solves problem that bibtex and
-##                           makeindex sometimes cannot write to the
-##                           aux_dir (for their log and output files). This
-##                           problem occurs notably when the aux_dir is
-##                           specified by an absolute path to a directory that
-##                           is not a subdirectory of the cwd.
-## 12 Nov 2020 John Collins  Correct some aliasing of filenames.
-## 11 Nov 2020 John Collins  Remove some messages.
-##                           Don't allow log file as a source.
-##  2 Nov 2020 John Collins  Refuse to allow main pdf file or main output file to
-##                             be source of a primary rule, and give warning
-##                             about it.  (Concerns at least hyperxmp (2020/10/05 v. 5.6;
-##                             this accesses file system metadata, specifically file size,
-##                             and the fls file therefore lists the pdf file as a source.
-##                             This generally leads to an infinite loop, without a special
-##                             a configuration.)  Hyperxmp v. 5.7 2010/11/01 doesn't give
-##                             this problem.  But the test is still good to have.
-## 23 Oct 2020 John Collins  Fix incorrect $/ in reading rc files
-## 10-15 Oct 2020 John Collins  Correct bug in normalizing filename
-##                           Give .latexmkrc priority over latexmkrc in cwd
-##  8 Oct 2020 John Collins  Restore use Cwd "chdir";.  There's no longer
-##                             a problem with cd
-##  7 Oct 2020 John Collins  Extra diagnostics for reporting normalized aux/out dirs
-##  6 Oct 2020 John Collins  Better normalize etc.
-##  1 Oct 2020 John Collins  Improve some messages.
-## 30 Sep 2020 John Collins  V. 4.70c.
-##                           Clean up some comments.
-## 29 Sep 2020 John Collins  V. 4.70b.
-##                             Correct switch_output.
-##                             Try to ensure bibtex isn't given absolute pathname, when aux_dir
-##                               is under current directory.  (Otherwise bibtex isn't allowed
-##                               to write a bbl file under default TeXLive settings.)
-##                             Add options -bibfudge, -bibfudge-, -nobibfudge.
-## Current version (4.70b, 29 Sep 2020) to CTAN
-## 13 Sep 2020 John Collins  V. 4.70a.  Updates in comments about bibtex.
-## 28 Aug 2020 John Collins  Correct $biber and $bibtex to use %S not %B
-## 24 Aug 2020 John Collins  Make sure bibtex/biber rules when created for
-##                           missing bbl file have correct path for source
-##                           and destination when out/aux dir used.
-## 16 Jun 2020 John Collins  Warning when bibtex fudge is used.
-##                           Change default $bibtex_fudge to 0.  This is safe with
-##                           at least bibtex in TeXLive 2019 or later, and in current
-##                           MiKTeX.  This version of latexmk is distributed in TeXLive
-##                           and MiKTeX with a recent enough version of bibtex.
-##                           Previously, there was a bug in bibtex that prevented it
-##                           working correctly when -output-directory is used.  Latexmk
-##                           took special action to evade the bug, but at the expense
-##                           of problems when a .bib file is specified in a directory
-##                           relative to the document directory.
-##                           V. 4.69c
-##  9 Jun 2020 John Collins  Fix problems with excess calls to parse_log, and messages
-##                             about changing rule structure when .fdb_latexmk file
-##                             does not exist.
-##                           Making quoting (or not) of output and aux directories 
-##                             for option to *latex obey $quote_filenames.
-##  8 Jun 2020 John Collins  Engine detection: note that recent lualatex
-##                           uses luaHBtex, not luatex.  So I modified the one
-##                           place that the name of the $engine is used.
-##  6 May 2020 John Collins  Add diagnostic for changed environment variables
-## 27 Apr 2020 John Collins  Put ./ for latexmkrc files in current directory
-##                           V. 4.69b
-## Current version (4.69a, 17 Apr 2020) to CTAN
-## 16 Apr 2020 John Collins  Correct contents of "All targets (...) are up-to-date" message
-##                           V. 4.69a.
-## 12 Mar 2020 John Collins  Version is 4.69
-##  7 Feb 2020 John Collins  Report rc files read
-##  6 Feb 2020 John Collins  Fix bug when -cd and -outdir are used, and outdir is
-##                             same as document directory.  (Bug is caused by
-##                             problem in perl module Cwd.)
-##  2,3 Feb 2020 John Collins  Correction in find_basename.
-## 31 Jan 2020 John Collins  Cleanup sub exit_msg1: incorrect comment etc.
-##                           Extra @file_not_found entry for message from
-##                             \input on not-found-file
-##                           Remove use of $extension_treatment: Too hard to
-##                             check.  Always use what was called 'unix' method.
-##                           When command-line-specified tex file not found,
-##                             test for cusdep to make it, then try kpsewhich,
-##                             and only if all 3 fail report an error.
-## 15 Jan 2020 John Collins  Add -MSWinBackSlash -MSWinBackSlash- options to
-##                             control whether directory separator '\' is
-##                             used for filenames on command line for
-##                             called programs under MSWin.
-##  3 Jan 2020 John Collins  Add -E option to default command for xdvipdfmx, to
-##                             match call made by xetex (see XeTeX_ext.c in
-##                             xetex source).  This forces xdvipdfmx to always
-##                             try to embed fonts, ignoring licensing flags, etc.
+##                           That improves clean up.  At least it could.
+##                V. 4.73.
 ##
 ##
-## 1998-2019, John Collins:  Many improvements and fixes.
+## 1998-2021, John Collins:  Many improvements and fixes.
 ##   See CHANGE-log.txt for full list, and CHANGES for summaries
 ##
 ## Modified by Evan McLean (no longer available for support)
@@ -179,8 +76,8 @@
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.72b';
-$version_details = "$My_name, John Collins, 15 April 2021";
+$version_num = '4.73';
+$version_details = "$My_name, John Collins, 3 May 2021";
 
 use Config;
 use File::Basename;
@@ -192,10 +89,6 @@ use File::Spec;
 # The first does not exist in old versions of Perl, while the second
 # is deprecated in more recent versions and will be removed
 $have_bsd_glob = 0;
-sub my_glob {
-    if ($have_bsd_glob) { return bsd_glob( $_[0] ); }
-    else { return glob( $_[0] ); }
-}
 use File::Glob;
 if ( eval{ File::Glob->import('bsd_glob'); 1; } ) {
     # Success in importing bsd_glob
@@ -211,6 +104,11 @@ elsif ( eval{ File::Glob->import('glob'); 1; } ) {
 }
 else {
     die "Could not import 'File::Glob:bsd_glob' or 'File::Glob:glob'\n";
+}
+# How I use the result of loading glob routines:
+sub my_glob {
+    if ($have_bsd_glob) { return bsd_glob( $_[0] ); }
+    else { return glob( $_[0] ); }
 }
 
 use File::Path 2.08 qw( make_path );
@@ -281,7 +179,9 @@ $log_wrap = 79;
 #        See subroutine test_fix_texnames and its call for their use.
 $illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
 
-# Whether to normalize filenames where possible:
+# Whether to normalize aux_dir and out_dir where possible.
+# This is important when these directories aren't subdirectories of the cwd,
+# and TeXLive's makeindex and/or bibtex are used.
 $normalize_names = 2;  # Strongest kind.
 
 ## Hash mapping file extension (w/o period, e.g., 'eps') to a single regexp,
@@ -299,7 +199,6 @@ $normalize_names = 2;  # Strongest kind.
 #  So it is useful to ignore lines in the hash calculation only if they
 #  are of a fixed size (as with a date/time stamp).
 %hash_calc_ignore_pattern =();
-
 
 # Specification of templates for extra rules.
 # See subroutine rdb_initialize_rules for examples of rule templates, and
@@ -358,6 +257,10 @@ $latex_silent_switch  = '-interaction=batchmode';
 $pdflatex_silent_switch  = '-interaction=batchmode';
 $lualatex_silent_switch  = '-interaction=batchmode';
 $xelatex_silent_switch  = '-interaction=batchmode';
+
+# Whether to emulate -aux-directory, so we can use it on system(s) (TeXLive)
+# that don't support it:
+$emulate_aux = 1;
 
 %input_extensions = ();
 # %input_extensions maps primary_rule_name to pointer to hash of file extensions
@@ -566,13 +469,14 @@ $makeindex_fudge = 1; # Whether or not to cd to aux dir when running makeindex.
                       # makeindex writing to aux_dir when it is not specified
                       # as a subdirectory of cwd.
 
-## Command to convert dvi file to pdf file directly:
-$dvipdf  = 'dvipdf %O %S %D';
+## Command to convert dvi file to pdf file directly.
+#   Use option -dALLOWPSTRANSPARENCY so that it works with documents
+#   using pstricks etc:
+$dvipdf  = 'dvipdf -dALLOWPSTRANSPARENCY %O %S %D';
 # N.B. Standard dvipdf runs dvips and gs with their silent switch, so for
 #      standard dvipdf $dvipdf_silent_switch is unneeded, but innocuous. 
 #      But dvipdfmx can be used instead, and it has a silent switch (-q).
 #      So implementing $dvipdf_silent_switch is useful.
-
 $dvipdf_silent_switch  = '-q';
 
 ## Command to convert dvi file to ps file:
@@ -588,8 +492,10 @@ $dvips_pdf_switch = '-P pdf';
 # Switch(es) to make dvips silent:
 $dvips_silent_switch  = '-q';
 
-## Command to convert ps file to pdf file:
-$ps2pdf = 'ps2pdf  %O %S %D';
+## Command to convert ps file to pdf file.
+#   Use option -dALLOWPSTRANSPARENCY so that it works with documents
+#   using pstricks etc:
+$ps2pdf = 'ps2pdf -dALLOWPSTRANSPARENCY %O %S %D';
 
 ## Command to convert xdv file to pdf file
 $xdvipdfmx  = 'xdvipdfmx -E -o %D %O %S';
@@ -1100,9 +1006,12 @@ $jobname = '';          # Jobname: as with current tex, etc indicates
                         # invoked on multiple files.
 $out_dir = '';          # Directory for output files.  
                         # Cf. --output-directory of current *latex
+                        # Blank means default, i.e., cwd.
 $aux_dir = '';          # Directory for aux files (log, aux, etc).
                         # Cf. --aux-directory of current *latex in MiKTeX.
-
+                        # Blank means default, i.e., same as $out_dir.
+                        # Note that these values get modified when
+                        # processing a .tex file.
 
 ## default flag settings.
 $recorder = 1;          # Whether to use recorder option on latex/pdflatex
@@ -1692,6 +1601,8 @@ while ($_ = $ARGV[0])
   elsif (/^-diagnostics/) { $diagnostics = 1; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
+  elsif (/^-emulate-aux-dir$/) { $emulate_aux = 1; }
+  elsif (/^-emulate-aux-dir-$/) { $emulate_aux = 0; }
   elsif (/^-f$/)     { $force_mode = 1; }
   elsif (/^-f-$/)    { $force_mode = 0; }
   elsif (/^-g$/)     { $go_mode = 1; }
@@ -1752,6 +1663,7 @@ while ($_ = $ARGV[0])
       # N.B. This has already been obeyed.
   }
   elsif (/^-nobib(tex|)fudge$/) { $bibtex_fudge = 0; }
+  elsif (/^-noemulate-aux-dir$/) { $emulate_aux = 0; }
   elsif (/^-no(make|)indexfudge$/) { $makeindex_fudge = 0; }
   elsif ( /^-output-directory=(.*)$/ ||/^-outdir=(.*)$/ ) {
       $out_dir = $1;
@@ -1958,7 +1870,8 @@ warn "$My_name: This is $version_details, version: $version_num.\n",
    unless $silent;
 
 
-if ( ($out_dir ne '') && ($aux_dir eq '') ){
+if ( $aux_dir eq '' ){
+# ????????????This may be wrong, given MiKTeX's behavior
     $aux_dir = $out_dir;
 }
 
@@ -2373,58 +2286,10 @@ foreach $filename ( @file_list )
     local $pdflatex = $pdflatex;
     local $xelatex = $xelatex;
 
-    # Ensure the output/auxiliary directories exist, if need be
-    if ( $out_dir ) {
-        if ( ! -e $out_dir ) {
-             warn "$My_name: making output directory '$out_dir'\n"
-                if ! $silent;
-             make_path $out_dir;
-        }
-        elsif ( ! -d $out_dir ) {
-            warn "$My_name: you requested output directory '$out_dir',\n",
-                 "     but an ordinary file of the same name exists, which will\n",
-                 "     probably give an error later\n";
-        }
-    }
+    &normalize_aux_out_ETC;
 
-    if ( $aux_dir && ($aux_dir ne $out_dir) ) {
-        # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
-        # option is sufficient, especially because the -aux-directory exists
-        # only in MiKTeX, not in TeXLive.
-        if ( ! -e $aux_dir ) {
-            warn "$My_name: making auxiliary directory '$aux_dir'\n"
-               if ! $silent;
-            make_path $aux_dir;
-        }
-        elsif ( ! -d $aux_dir ) {
-            warn "$My_name: you requested aux directory '$aux_dir',\n",
-                 "     but an ordinary file of the same name exists, which will\n",
-                 "     probably give an error later\n";
-        }
-    }
-
-    if ($normalize_names) {
-        $aux_dir = normalize_filename($aux_dir);
-        $out_dir = normalize_filename($out_dir);
-    }
-    set_dirs_etc();
-    if ($diagnostics) {
-        warn "$My_name: Cwd: '", good_cwd(), "'\n";
-        warn "$My_name: Normalized aux dir and out dir: '$aux_dir', '$out_dir'\n";
-        warn "$My_name: and combining forms: '$aux_dir1', '$out_dir1'\n";
-    }
-    if ( $out_dir && ($out_dir ne '.') ) {
-        add_option( "-output-directory=$quote$out_dir$quote",
-                \$latex, \$pdflatex, \$lualatex, \$xelatex );
-    }
-    if ( $aux_dir && ($aux_dir ne '.') && ($aux_dir ne $out_dir) ) {
-        # N.B. If $aux_dir and $out_dir are the same, then the -output-directory
-        # option is sufficient, especially because the -aux-directory exists
-        # only in MiKTeX, not in TeXLive.
-        add_option( "-aux-directory=$quote%V$quote",
-                    \$latex, \$pdflatex, \$lualatex, \$xelatex );
-    }
-
+    # Set -output-directory and -aux-directory options for *latex
+    &set_aux_out_options;
 
     &set_names;
     
@@ -2438,7 +2303,6 @@ foreach $filename ( @file_list )
     rdb_one_rule( 'view', sub{ $view_file = $$Psource; } );
 
     if ( $cleanup_mode > 0 ) {
-# ?? MAY NEED TO FIX THE FOLLOWING IF $aux_dir or $out_dir IS SET.
         my %other_generated = ();
         my @index_bibtex_generated = ();
         my @aux_files = ();
@@ -2742,14 +2606,10 @@ if ($failure_count > 0) {
 }
 
 if ( $where_log == 2 ) {
-    warn "$My_name: You requested aux_dir '$aux_dir_requested',\n".
-         "  but '$aux_dir' was used by the *latex engine.\n".
-         "  That indicates a configuration error.\n";
-    if ( ($tex_distribution !~ /^MiKTeX/i) && ($aux_dir_requested ne $out_dir_requested) ) {
-        warn "  Probably you set different aux and out directories,\n".
-             "  but that is not supported by your TeX distribution.\n".
-             "  The only current distribution supporting this is MiKTeX.\n";
-    }
+    warn "$My_name: You requested aux_dir '$aux_dir_requested',\n",
+         "  but '$out_dir' was used for the .log file etc, and I couldn't\n",
+         "  correct the problem, even by setting emulation of aux_dir on.\n",
+         "  There is a strong suspicion of a bug in $my_name or a configuration error.\n";
 }
 
 
@@ -2850,27 +2710,27 @@ sub ensure_path {
             print "Set environment variable $var='$ENV{$var}'\n";
         }
     }
-}
+} #END ensure_path
 
 #############################################################
 
-sub set_dirs_etc {
-    # Normalize $out_dir and $aux_dir, so that if they have a non-trivial last
-    # component, any trailing '/' is removed.
-    # Then set $out_dir1 and $aux_dir1 to have a directory separator character
-    # '/' added if needed to give forms suitable for direct concatenation with
-    # a filename.  These are needed for substitutions like %Y%R.
-    # Nasty cases of dir_name: "/"  on all systems,  "A:", "A:/" etc on MS-Win
-    # Then set some TeX-related environment variables.
-    $out_dir = dirname_no_tail( $out_dir );
+sub normalize_aux_out_ETC {
+    # 1. Normalize $out_dir and $aux_dir, so that if they have a non-trivial last
+    #    component, any trailing '/' is removed.
+    # 2. Set $out_dir1 and $aux_dir1 to have a directory separator character
+    #    '/' added if needed to give forms suitable for direct concatenation with
+    #    a filename.  These are needed for substitutions like %Y%R.
+    #    Nasty cases of dir_name: "/"  on all systems,  "A:", "A:/" etc on MS-Win
+    # 3. Set some TeX-related environment variables.
+    # 4. Ensure the aux and out directories exist
     $aux_dir = dirname_no_tail( $aux_dir );
-    $out_dir1 = $out_dir;
+    $out_dir = dirname_no_tail( $out_dir );
+    if ($normalize_names) {
+        foreach ( $aux_dir, $out_dir ) { $_ = normalize_filename_abs($_); }
+    }
     $aux_dir1 = $aux_dir;
-    $out_dir_abs = abs_path($out_dir);
-    $out_dir1_abs = $out_dir_abs;
-    $aux_dir_abs = abs_path($aux_dir);
-    $aux_dir1_abs = $aux_dir_abs;
-    foreach ( $aux_dir1, $out_dir1, $aux_dir1_abs, $out_dir1_abs ) {
+    $out_dir1 = $out_dir;
+    foreach ( $aux_dir1, $out_dir1 ) {
         if ( ($_ ne '')  && ! m([\\/\:]$) ) {
             # Add a trailing '/' if necessary to give a string that can be
             # correctly concatenated with a filename:
@@ -2891,30 +2751,88 @@ sub set_dirs_etc {
         # Convert $aux_dir to absolute path to make the search path invariant
         # under change of directory.
         foreach ( 'BIBINPUTS', 'TEXINPUTS' ) {
-            ensure_path( $_, $aux_dir_abs );
+            ensure_path( $_, $aux_dir );
         }
         # Set TEXMFOUTPUT  so that when the aux_dir is not a subdirectory
         # of the cwd (or below), bibtex and makeindex can write to it.
         # Otherwise, security precautions in these programs will prevent
-        # them from writing there.
+        # them from writing there, on TeXLive.  MiKTeX is different: see
+        # below.
         # The security issues concern **document-controlled** writing of
         # files, when bibtex or makeindex is invoked directly by a
         # document. In contrast, here $aux_dir is set by latexmk, not by
         # the document. (See the main texmf.cnf file in a TeXLive
-        # distribution for some information.)  The security issues here
-        # appear to be identical to those when giving an
-        # -output-directory=... option to *latex.
-        # CONSTRAINTS:
-        # 1. This works in the aux dir is an an absolute path pointing to a
-        #    higher-level directory, but NOT when it is a relative path, e.g.,
-        #    "../build".
-        # 2. The directories for files on the command line given to bibtex
-        #    and makeindex must be exactly the same as the value in $aux_dir.
-        #    This is ensured by the way in which the command strings are
-        #    constructed.
-        $ENV{TEXMFOUTPUT} = $aux_dir_abs;
+        # distribution for some information on security issues.)
+        #
+        # PROPERTIES:
+        # 1. In TeXLive, the use of TEXMFOUTPUT works if
+        #    (a) the directory given is an an absolute path,
+        #    AND (b) the path contains no .. pieces
+        #    AND (c) the directory component of the filename(s) on the command
+        #       line for makeindex and bibtex is exactly the same string as
+        #       for the directory named in TEXMFOUTPUT.
+        # 2. In MiKTeX, bibtex has none of the security restrictions; but
+        #    makeindex has, and the use of TEXMFOUTPUT has no effect.
+        # So the following is only needed for TeXLive.
+        $ENV{TEXMFOUTPUT} = $aux_dir;
     }
-}
+    
+    # Ensure the output/auxiliary directories exist, if need be
+    if ( $out_dir ) {
+        make_path_mod( $out_dir,  'output' );
+    }
+
+    if ( $aux_dir && ($aux_dir ne $out_dir) ) {
+        make_path_mod( $aux_dir,  'auxiliary' );
+    }
+
+    if ($diagnostics) {
+        warn "$My_name: Cwd: '", good_cwd(), "'\n";
+        warn "$My_name: Normalized aux dir and out dir: '$aux_dir', '$out_dir'\n";
+        warn "$My_name: and combining forms: '$aux_dir1', '$out_dir1'\n";
+    }
+
+}  #END normalize_aux_out_ETC
+
+#############################################################
+
+sub set_aux_out_options {
+    # Set -output-directory and -aux-directory options for *latex.  Use
+    # placeholders for substitutions so that correct value is put in at
+    # runtime.
+    # N.B. At this point, empty $aux_dir means cwd, unlike the definition
+    #      used in initialization stage of latexmk.
+    if ($emulate_aux) {
+        if ( $aux_dir && ($aux_dir ne '.') ) {
+            # N.B. Set **output** directory to **aux_dir**, rather than
+            # out_dir. If aux and out dirs are are different, then we'll move
+            # the relevant files (.pdf, .ps, .dvi, .xdv, .fls to the output
+            # directory after running *latex.
+            add_option( "-output-directory=%V",
+                        \$latex, \$pdflatex, \$lualatex, \$xelatex );
+        }
+    }
+    else {
+        if ( $out_dir && ($out_dir ne '.') ) {
+            add_option( "-output-directory=%W",
+                        \$latex, \$pdflatex, \$lualatex, \$xelatex );
+        }
+        if ( $aux_dir ne $out_dir ) {
+            # N.B. If $aux_dir and $out_dir are the same, then the
+            # -output-directory option is sufficient, especially because
+            # the -aux-directory exists only in MiKTeX, not in TeXLive.
+            if ($aux_dir) {
+                add_option( "-aux-directory=%V",
+                            \$latex, \$pdflatex, \$lualatex, \$xelatex );
+            }
+            else {
+                # Must have a non-empty string for argument of -aux-directory:
+                add_option( "-aux-directory=.",
+                            \$latex, \$pdflatex, \$lualatex, \$xelatex );
+            }
+        }
+    }
+} #END set_aux_out_options
 
 #############################################################
 
@@ -3284,7 +3202,6 @@ sub do_cusdep {
         # Source does not exist.  Users of this rule will need to turn
         # it off when custom dependencies are reset
         if ( !$silent ) {
-## ??? Was commented out.  1 Sep. 2008 restored, for cusdep no-file-exists issue
             warn "$My_name: In trying to apply custom-dependency rule\n",
             "  to make '$$Pdest' from '$$Psource'\n",
             "  the source file has disappeared since the last run\n";
@@ -3976,6 +3893,8 @@ sub print_help
   "   -dvi-  - turn off required dvi\n",
   "   -e <code> - Execute specified Perl code (as part of latexmk start-up\n",
   "               code)\n",
+  "   -emulate-aux-dir  - emulate -aux-directory option for *latex\n",
+  "   -emulate-aux-dir- - use -aux-directory option with *latex\n",
   "   -f     - force continued processing past errors\n",
   "   -f-    - turn off forced continuing processing past errors\n",
   "   -gg    - Super go mode: clean out generated files (-CA), and then\n",
@@ -4014,6 +3933,7 @@ sub print_help
   "   -nobibtex      - never use bibtex\n",
   "   -nobibfudge or -nobibtexfudge - don't change directory when running bibtex\n",
   "   -nodependents  - Do not show list of dependent files after processing\n",
+  "   -noemulate-aux-dir - use -aux-directory option with *latex\n",
   "   -noindexfudge or -nomakeindexfudge - don't change directory when running makeindex\n",
   "   -norc          - omit automatic reading of system, user and project rc files\n",
   "   -output-directory=dir or -outdir=dir\n",
@@ -4518,6 +4438,25 @@ sub set_names {
 }
 
 #**************************************************
+
+sub move_out_files_from_aux {
+    # Move output and fls files to out_dir
+    # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
+    foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps' ) {
+        # Include fls file, because MiKTeX puts it in out_dir, rather than
+        # aux_dir, which would seem more natural.  We must maintain
+        # compatibility.
+        my $from =  "$aux_dir1$root_filename.$ext";
+        my $to = "$out_dir1$root_filename.$ext" ;
+        if ( test_gen_file( $from ) ) {
+            if (! $silent) { warn "$My_name: Moving '$from' to '$to'\n"; }
+            my $ret = move( $from, $to );
+            if ( ! $ret ) { die "  That failed, with message '$!'\n";}
+        }
+    }
+}
+
+#***************************************************
 
 sub parse_log {
 # Scan log file for: dependent files
@@ -5335,10 +5274,11 @@ sub find_set_log {
     #           to (*)latex.
     #        Use of $aux_dir different to $out_dir, when (*)latex doesn't support
     #           the -aux-directory option (notably with TeXLive distribution).
-    if ($where_log >= 0) {
-        # .log file was found on previous run.  No need to repeat search, since
-        # if the location were to change from run to run, we'd have other
-        # serious difficulties that are to hard to deal with.
+    if ($where_log == 1) {
+        # .log file was found in correct place on previous run.
+        # So there's no need to repeat search, since if the location were to
+        # change from run to run, we'd have other serious difficulties that are
+        # to hard to deal with.
         return;
     }
     if ( test_gen_file( "$aux_dir1$root_filename.log" ) ) {
@@ -5349,9 +5289,22 @@ sub find_set_log {
         # .log file is in out_dir not in aux_dir.
         # Presumably there is a configuration error
         # that prevents aux_dir from being used by latex.
-        # So change $aux_dir to the actually used value.
-        $where_log = 2;
-        $aux_dir = $out_dir;
+        warn "$My_name: .log file in '$out_dir' instead of expected '$aux_dir'\n";
+        if ($emulate_aux) {
+            warn "    But emulate_aux is on, so that should not happen\n",
+                 "    I'll switch aux_dir to equal out_dir\n";
+            $where_log = 2;
+            $aux_dir = $out_dir;
+        }
+        else {
+            warn "    But emulate_aux is off.  So I'll turn it on.\n";
+            $emulate_aux = 1;
+            foreach ( $$Pext_cmd, $$Pint_cmd ) {
+                s/ -output-directory=[^ ]*(?= )//g;
+                s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
+            }
+            print "========== '$$Pext_cmd' '$$Pint_cmd'\n";
+        }
     }
     elsif ( test_gen_file( "$root_filename.log" ) ) {
         # .log file is not in out_dir nor in aux_dir, but is in cwd.
@@ -5373,7 +5326,7 @@ sub find_set_log {
         warn "$My_name: Changed aux_dir from '$aux_dir_requested' to '$aux_dir'\n".
              "          to allow for probable configuration error\n";
         # Allow for the changes associated with change of $aux_dir:
-        &set_dirs_etc;
+        &normalize_aux_out_ETC;
         &set_names;
         warn "$My_name: Actual .log file is\n",
              "     '$log_name'\n",
@@ -5381,11 +5334,12 @@ sub find_set_log {
              "     '$aux_dir_requested/$root_filename.log'\n",
              "   that seemed to be intended.\n";
     }
-}
+} #END find_set_log
 
 #************************************************************
 
 sub parse_fls {
+    my $start_time = processing_time();  
     my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write, $Ppwd_latex ) = @_;
     %$Pinputs = %$Poutputs = %$Pfirst_read_after_write = ();
     my $fls_file = new FileHandle;
@@ -5538,10 +5492,9 @@ sub normalize_filename {
    my ( $file, @dirs ) = @_;
    my $file1 = $file;   # Saved original value
    my $cwd = good_cwd();
-   my $cwd1 = cwd();
    # Normalize files to use / to separate directory components:
    # (Note both / and \ are allowed under MSWin.)
-   foreach ($cwd, $cwd1, $file,  @dirs) {
+   foreach ($cwd, $file,  @dirs) {
        s(\\)(/)g;
        $_ = dirname_no_tail( $_ );
    }
@@ -5549,7 +5502,7 @@ sub normalize_filename {
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
-   foreach my $dir ( @dirs, '.', $cwd, $cwd1 ) {
+   foreach my $dir ( @dirs, '.', $cwd ) {
        if ( $dir =~ /^\s*$/ ) {
            # All spaces, nothing to do.
            next;
@@ -5571,9 +5524,18 @@ sub normalize_filename {
        $file = '';
    }
    return $file;
-}
+} #END normalize_filename
 
 # ------------------------------
+
+sub normalize_filename_abs {
+    # Convert filename to be either
+    # absolute path in canonical form
+    # or relative to cwd.
+    return normalize_filename( abs_path($_[0]) );
+}
+
+#-----------------------------
 
 sub normalize_clean_filename {
    # Usage: normalize_clean_filename( filename [, extra forms of name of cwd] )
@@ -7647,8 +7609,6 @@ sub rdb_make1 {
         if ( !$$Plast_message ) {
             $$Plast_message = "Run of rule '$rule' gave a non-zero error code";
         }
-# !!??        $failure_msg = $$Plast_message;
-        
     }
     foreach ( keys %$PHsource_rules ) {
         $$PHsource_rules{$_} = $pass{$_};
@@ -7935,6 +7895,9 @@ sub rdb_run1 {
         }
     }
 
+    if ( ($$Pcmd_type eq 'primary') && ( $aux_dir ne $out_dir ) ) {
+        &move_out_files_from_aux;
+    }
     $updated = 1;
     if ($$Ptest_kind == 3) { 
         # We are time-criterion first time only.  Now switch to
@@ -8070,7 +8033,6 @@ sub Run_subst {
 #-----------------
 
 sub rdb_primary_run {
-#?? See multipass_run in previous version Aug 2007 for issues
     # Call: rdb_primary_run
     # Assumes contexts for: recursion, make, & rule.
     # Assumes (a) the rule is a primary, 
@@ -8156,12 +8118,6 @@ sub rdb_primary_run {
     rdb_do_files( sub { if ($$Pcorrect_after_primary) {&rdb_update1;} } );
 
     $updated = 1;    # Flag that some dependent file has been remade
-
-#??    # Fix the state of the files as of now: this will solve the
-#??    # problem of latex and pdflatex interfering with each other,
-#??    # at the expense of some non-optimality
-#??    #??  Check this is correct:
-#??    &rdb_update_files;
 
     if ( $diagnostics ) {
         print "$My_name: Rules after run: \n";
@@ -8251,7 +8207,6 @@ sub rdb_flag_changes_here {
     if ($$Pout_of_date) {
         push @rules_to_apply, $rule;
     }
-#??     print "======== flag: $rule $$Pout_of_date ==========\n";
 } #END rdb_flag_changes_here
 
 #************************************************************
@@ -8405,7 +8360,6 @@ sub rdb_diagnose_changes {
 #
 # When the action subroutine(s) are actually called, a context for the
 # rule and/or file (as appropriate) is given by setting named
-## NEW ??
 # variables to REFERENCES to the relevant data values.  These can be
 # used to retrieve and set the data values.  As a convention,
 # references to scalars are given by variables named start with "$P",
@@ -8413,12 +8367,6 @@ sub rdb_diagnose_changes {
 # "$PAint_cmd", and references to hashes with "$PH", as in "$PHsource".
 # After the action subroutine has finished, checks for data
 # consistency may be made. 
-## ??? OLD
-# variables to the relevant data values.  After the action subroutine
-# has finished, the database is updated with the values of these named
-# variables, with any necessary consistency checks.  Thus the action
-# subroutines can act on sensibly named variables without needed to
-# know the database structure.  
 #
 # The only routines that actually use the database structure and need
 # to be changed if that is changed are:  (a) the routines rdb_one_rule
@@ -9417,9 +9365,6 @@ sub find_file_list1 {
   my $ref_search = $_[3];
   my @not_found = ();
 
-#??  show_array( "=====find_file_list1.  Suffix: '$suffix'\n Source:",  @$ref_input );
-#??  show_array( " Bibinputs:",  @$ref_search );
-
   my @return_list = ();    # Generate list in local array, since input 
                            # and output arrays may be same
   my $retcode = 0;
@@ -9463,6 +9408,33 @@ sub unlink_or_move {
             }
         }
     }
+}
+
+#************************************************************
+
+sub make_path_mod {
+    my $dir = $_[0];
+    my $title = $_[1];
+    my $ret = 0;
+    if ( (! -e $dir) && (! -l $dir) ) {
+        warn "$My_name: making $title directory '$dir'\n"
+            if ! $silent;
+        make_path( $dir );
+    }
+    elsif ( -l $dir ) {
+        $ret = 1;
+        warn "$My_name: you requested $title directory '$dir',\n",
+             "    but there exists a symlink that has the same name, but\n",
+             "    does not point to anything.  I won't create a directory, and\n",
+             "    that will probably give an error later.\n";
+    }
+    elsif ( ! -d $dir ) {
+        $ret = 2;
+        warn "$My_name: you requested $title directory '$dir',\n",
+             "    but an ordinary file of the same name exists, which will\n",
+             "    probably give an error later.\n";
+    }
+    return $ret;
 }
 
 #************************************************************

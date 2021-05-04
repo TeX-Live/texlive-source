@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 58960 2021-04-22 00:52:00Z preining $
+# $Id: updmap.pl 59062 2021-05-03 15:46:54Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -14,7 +14,7 @@
 # the original versions were licensed under the following agreement:
 # Anyone may freely use, modify, and/or distribute this file, without
 
-my $svnid = '$Id: updmap.pl 58960 2021-04-22 00:52:00Z preining $';
+my $svnid = '$Id: updmap.pl 59062 2021-05-03 15:46:54Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +27,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2021-04-22 02:52:00 +0200 (Thu, 22 Apr 2021) $';
+my $lastchdate = '$Date: 2021-05-03 17:46:54 +0200 (Mon, 03 May 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 58960 $';
+my $svnrev = '$Revision: 59062 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1338,26 +1338,27 @@ sub mkMaps {
     }
   }
 
-  # all kind of warning messages
+  # all kinds of warning messages
   if ($first_time_creation_in_usermode) {
     print_and_log("
 *************************************************************
 *                                                           *
 * WARNING: you are switching to updmap's per-user mappings. *
-*            Please read the following explanations.        *
+*         Please read the following warnings!               *
 *                                                           *
 *************************************************************
 
-You have run updmap-user (as opposed to updmap-sys) for the first time; this
-has created configuration files which are local to your personal account.
+You have run updmap-user (as opposed to updmap-sys) for the first time;
+this has created configuration files which are local to your personal account.
 
-Any changes in system map files will *not* be automatically reflected in
-your files; furthermore, running updmap-sys will no longer have any
-effect for you.  As a consequence, you have to rerun updmap-user yourself
-after any change in the system directories; for example, if a new font
-package is added.
+From now on, any changes in system map files will *not* be automatically
+reflected in your files; furthermore, running updmap-sys (as is done
+automatically) will no longer have any effect for you.
 
-See http://tug.org/texlive/scripts-sys-user.html for details.
+As a consequence, you yourself have to rerun updmap-user yourself after
+any change in the *system* directories! For example, if a new font
+package is added or existing mappings change, which happens frequently.
+See https://tug.org/texlive/scripts-sys-user.html for details.
 
 If you want to undo this, remove the files mentioned above.
 
@@ -2262,10 +2263,10 @@ Usage: $prg [-user|-sys] [OPTION] ... [COMMAND]
    or: $prg-user [OPTION] ... [COMMAND]
    or: $prg-sys  [OPTION] ... [COMMAND]
 
-Update the default font map files used by pdftex (pdftex.map), dvips
-(psfonts.map), and dvipdfm(x), and optionally pxdvi, as determined by
-all configuration files updmap.cfg (the ones returned by running
-"kpsewhich --all updmap.cfg", but see below).
+Update the default font map files used by pdftex and dvipdfm(x)
+(pdftex.map), dvips (psfonts.map), and optionally pxdvi, as determined
+by all configuration files updmap.cfg (usually the ones returned by
+running "kpsewhich --all updmap.cfg", but see below).
 
 Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
@@ -2274,11 +2275,11 @@ font files are included, typically subsetted, in the PDF or PostScript output.
 updmap-sys (or updmap -sys) is intended to affect the system-wide 
 configuration, while updmap-user (or updmap -user) affects personal
 configuration files only, overriding the system files.  
-As a consequence, once updmap-user has been run, even a single time,
-running updmap-sys no longer has any effect.  (updmap-sys issues a
-warning in this situation.)
 
-See http://tug.org/texlive/scripts-sys-user.html for details.
+As a consequence, once updmap-user has been run, even a single time,
+running updmap-sys no longer has any effect.  updmap-sys issues a
+warning about this, since it is rarely desirable.
+See https://tug.org/texlive/scripts-sys-user.html for details.
 
 By default, the TeX filename database (ls-R) is also updated.
 
@@ -2295,8 +2296,6 @@ historical reasons.  A general overview:
   installation time, by the system installer or the package manager or
   by hand, and not (by default) by updmap.
 
-Good luck.
-
 Options:
   --cnffile FILE            read FILE for the updmap configuration 
                              (can be given multiple times, in which case
@@ -2309,28 +2308,28 @@ Options:
   --copy                    cp generic files rather than using symlinks
   --force                   recreate files even if config hasn't changed
   --nomkmap                 do not recreate map files
-  --nohash                  do not run texhash
+  --nohash                  do not run mktexlsr (a.k.a. texhash)
   --sys                     affect system-wide files (equivalent to updmap-sys)
   --user                    affect personal files (equivalent to updmap-user)
   -n, --dry-run             only show the configuration, no output
   --quiet, --silent         reduce verbosity
 
 Commands:
-  --help                    show this message and exit
-  --version                 show version information and exit
-  --showoption OPTION       show the current setting of OPTION
-  --showoptions OPTION      show possible settings for OPTION
-  --setoption OPTION VALUE  set OPTION to value; option names below
-  --setoption OPTION=VALUE  as above, just different syntax
-  --enable MAPTYPE MAPFILE  add "MAPTYPE MAPFILE" to updmap.cfg,
-                             where MAPTYPE is Map, MixedMap, or KanjiMap
-  --enable Map=MAPFILE      add \"Map MAPFILE\" to updmap.cfg
-  --enable MixedMap=MAPFILE add \"MixedMap MAPFILE\" to updmap.cfg
-  --enable KanjiMap=MAPFILE add \"KanjiMap MAPFILE\" to updmap.cfg
-  --disable MAPFILE         disable MAPFILE, of whatever type
-  --listmaps                list all maps (details below)
-  --listavailablemaps       list available maps (details below)
-  --syncwithtrees           disable unavailable map files in updmap.cfg
+  --help                     show this message and exit
+  --version                  show version information and exit
+  --showoption OPTION        show the current setting of OPTION
+  --showoptions OPTION       show possible settings for OPTION
+  --setoption OPTION VALUE   set OPTION to value; option names below
+  --setoption OPTION=VALUE   as above, just different syntax
+  --enable MAPTYPE MAPFILE   add "MAPTYPE MAPFILE" to updmap.cfg,
+                              where MAPTYPE is Map, MixedMap, or KanjiMap
+  --enable Map=MAPFILE       add \"Map MAPFILE\" to updmap.cfg
+  --enable MixedMap=MAPFILE  add \"MixedMap MAPFILE\" to updmap.cfg
+  --enable KanjiMap=MAPFILE  add \"KanjiMap MAPFILE\" to updmap.cfg
+  --disable MAPFILE          disable MAPFILE, of whatever type
+  --listmaps                 list all maps (details below)
+  --listavailablemaps        list available maps (details below)
+  --syncwithtrees            disable unavailable map files in updmap.cfg
 
 The main output:
 
@@ -2360,7 +2359,7 @@ Explanation of the map types:
   
   The only difference between Map and MixedMap is that MixedMap entries
   are not added to psfonts_pk.map.  The purpose is to help users with
-  devices that render Type 1 outline fonts worse than mode-tuned Type 1
+  devices that render Type 1 outline fonts worse than mode-tuned Type 3
   bitmap fonts.  So, MixedMap is used for fonts that are available as
   both Type 1 and Metafont.
 
@@ -2463,7 +2462,7 @@ Where and which updmap.cfg changes are saved:
   config file, a higher-level one can be used.  That way, the
   distribution's settings can be overridden system-wide using
   TEXMFLOCAL, and system settings can be overridden again in a
-  particular user's TEXMFHOME.
+  particular user's TEXMFHOME or TEXMFCONFIG.
 
 Resolving multiple definitions of a font:
 
@@ -2522,11 +2521,11 @@ will be read and written, give the -n option (or read the source).
 The log file is written to TEXMFVAR/web2c/updmap.log.
 
 For step-by-step instructions on making new fonts known to TeX, read
-http://tug.org/fonts/fontinstall.html.  For even more terse
+https://tug.org/fonts/fontinstall.html.  For even more terse
 instructions, read the beginning of the main updmap.cfg file.
 
 Report bugs to: tex-live\@tug.org
-TeX Live home page: <http://tug.org/texlive/>
+TeX Live home page: <https://tug.org/texlive/>
 EOF
 ;
   print &version();

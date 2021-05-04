@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 58961 2021-04-22 00:55:07Z preining $
+# $Id: tlmgr.pl 59064 2021-05-03 17:37:44Z karl $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 58961 $';
-my $datrev = '$Date: 2021-04-21 17:55:07 -0700 (Wed, 21 Apr 2021) $';
+my $svnrev = '$Revision: 59064 $';
+my $datrev = '$Date: 2021-05-03 19:37:44 +0200 (Mon, 03 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5249,13 +5249,18 @@ sub uninstall_texlive {
   return if !check_on_writable();
 
   init_local_db(0);
+  if (defined($opts{"dry-run"})) {
+    # TODO: we should implement --dry-run for remove --all.
+    print "Sorry, no --dry-run with remove --all; goodbye.\n";
+    return ($F_OK | $F_NOPOSTACTION);
+  }
   my $force = defined($opts{"force"}) ? $opts{"force"} : 0;
   if (!$force) {
     print("If you answer yes here the whole TeX Live installation here,\n",
           "under ", $localtlpdb->root, ", will be removed!\n");
     print "Remove TeX Live (y/N): ";
     my $yesno = <STDIN>;
-    if ($yesno !~ m/^y(es)?$/i) {
+    if (!defined($yesno) || $yesno !~ m/^y(es)?$/i) {
       print "Ok, cancelling the removal!\n";
       return ($F_OK | $F_NOPOSTACTION);
     }
@@ -7215,14 +7220,16 @@ and the repository are not compatible:
   # check for being frozen
   if ($remotetlpdb->config_frozen) {
     my $frozen_msg = <<FROZEN;
-TeX Live $TeXLive::TLConfig::ReleaseYear is frozen and will no longer
-be routinely updated. This happens when a new release is made.
+TeX Live $TeXLive::TLConfig::ReleaseYear is frozen
+and will no longer be routinely updated.  This happens when a new
+release is made, or will be made shortly.
 
-If you're willing to help with pretesting the new release, and we hope
-you are, (when pretests are available), please read
-https://tug.org/texlive/pretest.html.
+If you're willing to help with pretesting a new release, and we hope
+you are, please see https://tug.org/texlive/pretest.html.
 
-Otherwise, just wait, and the new release will be ready in due time.
+For general status information about TeX Live, see its home page:
+https://tug.org/texlive
+
 FROZEN
     # don't die here, we want to allow updates even if tlnet is frozen!
     tlwarn($frozen_msg);
@@ -8870,9 +8877,10 @@ written to the terminal.
 
 =back
 
-This action does not automatically remove symlinks to executables from
-system directories; you need to run C<tlmgr path remove> (L</path>)
-yourself if you are using this feature and want stale symlinks removed.
+Except with C<--all>, this C<remove> action does not automatically
+remove symlinks to executables from system directories; you need to run
+C<tlmgr path remove> (L</path>) yourself if you remove an individual
+package with a symlink in a system directory.
 
 =head2 repository
 
@@ -10116,7 +10124,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 58961 2021-04-22 00:55:07Z preining $
+$Id: tlmgr.pl 59064 2021-05-03 17:37:44Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
