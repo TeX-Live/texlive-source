@@ -1,3 +1,8 @@
+2021-05-05  Akira Kakuto  <kakuto@w32tex.org>
+
+	* pdfximage.c: Support non-ascii TMP and TEMP to call
+	Ghostscript.
+
 2021-04-17  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pkfont.c: Remove all changes in 2020-12-14 and recover the
