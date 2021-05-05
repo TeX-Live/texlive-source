@@ -12,6 +12,9 @@
 /* Have cairo-ft support in cairo graphics library */
 #undef HAVE_CAIRO_FT
 
+/* Have chafa terminal graphics library */
+#undef HAVE_CHAFA
+
 /* Have Core Text backend */
 #undef HAVE_CORETEXT
 
@@ -26,9 +29,6 @@
 
 /* Define to 1 if you have the <dwrite.h> header file. */
 #undef HAVE_DWRITE_H
-
-/* Have fontconfig library */
-#undef HAVE_FONTCONFIG
 
 /* Have FreeType 2 library */
 #undef HAVE_FREETYPE

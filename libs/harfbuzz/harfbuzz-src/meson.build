@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.47.0',
-  version: '2.8.0',
+  version: '2.8.1',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-rtti also anyway
     'cpp_rtti=false',       # Just to support msvc, we are passing -fno-exceptions also anyway
@@ -95,8 +95,6 @@ glib_dep = dependency('glib-2.0', required: get_option('glib'),
                       fallback: ['glib', 'libglib_dep'])
 gobject_dep = dependency('gobject-2.0', required: get_option('gobject'),
                          fallback: ['glib', 'libgobject_dep'])
-fontconfig_dep = dependency('fontconfig', required: get_option('fontconfig'),
-                            fallback: ['fontconfig', 'fontconfig_dep'])
 graphite2_dep = dependency('graphite2', required: get_option('graphite'))
 
 icu_dep = null_dep
@@ -156,6 +154,8 @@ if not get_option('cairo').disabled()
   endif
 endif
 
+chafa_dep = dependency('chafa', version: '>= 1.6.0', required: get_option('chafa'))
+
 conf = configuration_data()
 incconfig = include_directories('.')
 
@@ -181,6 +181,10 @@ endif
 
 if cairo_ft_dep.found()
   conf.set('HAVE_CAIRO_FT', 1)
+endif
+
+if chafa_dep.found()
+  conf.set('HAVE_CHAFA', 1)
 endif
 
 if graphite2_dep.found()
@@ -215,10 +219,6 @@ if freetype_dep.found()
   else
     check_funcs += check_freetype_funcs
   endif
-endif
-
-if fontconfig_dep.found()
-  conf.set('HAVE_FONTCONFIG', 1)
 endif
 
 gdi_uniscribe_deps = []
@@ -369,7 +369,7 @@ build_summary = {
     },
   'Dependencies used for command-line utilities':
     {'Cairo': conf.get('HAVE_CAIRO', 0) == 1,
-     'Fontconfig': conf.get('HAVE_FONTCONFIG', 0) == 1,
+     'Chafa': conf.get('HAVE_CHAFA', 0) == 1,
     },
   'Additional shapers':
     {'Graphite2': conf.get('HAVE_GRAPHITE2', 0) == 1,
