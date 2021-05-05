@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59064 2021-05-03 17:37:44Z karl $
+# $Id: tlmgr.pl 59074 2021-05-04 15:57:34Z siepo $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59064 $';
-my $datrev = '$Date: 2021-05-03 19:37:44 +0200 (Mon, 03 May 2021) $';
+my $svnrev = '$Revision: 59074 $';
+my $datrev = '$Date: 2021-05-04 17:57:34 +0200 (Tue, 04 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4864,7 +4864,7 @@ sub action_option {
 #
 sub action_platform {
   my $ret = $F_OK;
-  my @extra_w32_packs = qw/tlperl.win32 tlgs.win32 tlpsv.win32
+  my @extra_w32_packs = qw/tlperl.win32 tlgs.win32
                            collection-wintools
                            dviout.win32 wintools.win32/;
   if ($^O =~ /^MSWin/i) {
@@ -10124,7 +10124,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59064 2021-05-03 17:37:44Z karl $
+$Id: tlmgr.pl 59074 2021-05-04 15:57:34Z siepo $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
