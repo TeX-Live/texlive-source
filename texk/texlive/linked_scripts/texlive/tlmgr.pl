@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59074 2021-05-04 15:57:34Z siepo $
+# $Id: tlmgr.pl 59108 2021-05-06 22:52:43Z karl $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59074 $';
-my $datrev = '$Date: 2021-05-04 17:57:34 +0200 (Tue, 04 May 2021) $';
+my $svnrev = '$Revision: 59108 $';
+my $datrev = '$Date: 2021-05-07 00:52:43 +0200 (Fri, 07 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5255,9 +5255,10 @@ sub uninstall_texlive {
     return ($F_OK | $F_NOPOSTACTION);
   }
   my $force = defined($opts{"force"}) ? $opts{"force"} : 0;
+  my $tlroot = $localtlpdb->root;
   if (!$force) {
     print("If you answer yes here the whole TeX Live installation here,\n",
-          "under ", $localtlpdb->root, ", will be removed!\n");
+          "under $tlroot, will be removed!\n");
     print "Remove TeX Live (y/N): ";
     my $yesno = <STDIN>;
     if (!defined($yesno) || $yesno !~ m/^y(es)?$/i) {
@@ -5265,18 +5266,23 @@ sub uninstall_texlive {
       return ($F_OK | $F_NOPOSTACTION);
     }
   }
-  print ("Ok, removing the whole installation:\n");
+  print ("Ok, removing the whole TL installation under: $tlroot\n");
+  
+  print ("symlinks... ");
   TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
     $localtlpdb->platform(),
     $localtlpdb->option("sys_bin"),
     $localtlpdb->option("sys_man"),
     $localtlpdb->option("sys_info"));
   # now remove the rest
+  print ("main dirs... ");
   system("rm", "-rf", "$Master/texmf-dist");
   system("rm", "-rf", "$Master/texmf-doc");
   system("rm", "-rf", "$Master/texmf-var");
   system("rm", "-rf", "$Master/tlpkg");
   system("rm", "-rf", "$Master/bin");
+
+  print ("misc... ");
   system("rm", "-rf", "$Master/readme-html.dir");
   system("rm", "-rf", "$Master/readme-txt.dir");
   for my $f (qw/doc.html index.html install-tl 
@@ -5291,9 +5297,28 @@ sub uninstall_texlive {
   # if they want removal, give them removal. Hopefully they know how to
   # regenerate any changed config files.
   system("rm", "-rf", "$Master/texmf-config");
+  #
   finddepth(sub { rmdir; }, "$Master");
   
-  return -d "$Master";
+  # but not user dirs.
+  chomp (my $texmfconfig = `kpsewhich -var-value=TEXMFCONFIG`);
+  chomp (my $texmfvar = `kpsewhich -var-value=TEXMFVAR`);
+  print <<NOT_REMOVED;
+
+User directories intentionally not touched, removing them is up to you:
+  TEXMFCONFIG=$texmfconfig
+  TEXMFVAR=$texmfvar
+
+NOT_REMOVED
+
+  my $remnants;
+  if (-d $Master) {
+    print "\nSorry, something did not get removed, under: $Master\n";
+    $remnants = 1;
+  } else {
+    $remnants = 0; 
+  }
+  return $remnants;
 }
 
 
@@ -5379,6 +5404,7 @@ sub action_recreate_tlpdb {
     $tlpdb->add_tlpobj($tlp);
   }
   # writeout the re-created tlpdb to stdout
+  &debug("tlmgr:action_recreate_tlpdb: writing out tlpdb\n");
   $tlpdb->writeout;
   return;
 }
@@ -7251,7 +7277,7 @@ FROZEN
       # similar
       &debug("Cannot save remote TeX Live database to $loc_copy_of_remote_tlpdb: $!\n");
     } else {
-      &debug("writing out tlpdb to $loc_copy_of_remote_tlpdb\n");
+      &debug("tlmgr:setup_one_remote_tlpdb: writing out remote tlpdb to $loc_copy_of_remote_tlpdb\n");
       $remotetlpdb->writeout($tlfh);
       close($tlfh);
       # Remove all other copies of main databases in case different mirrors
@@ -10124,7 +10150,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59074 2021-05-04 15:57:34Z siepo $
+$Id: tlmgr.pl 59108 2021-05-06 22:52:43Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
