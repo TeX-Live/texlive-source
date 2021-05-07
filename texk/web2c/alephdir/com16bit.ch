@@ -210,10 +210,10 @@ if ini_version then
 @!sup_max_in_open = 127;
 
 @!inf_param_size = 60;
-@!sup_param_size = 6000;
+@!sup_param_size = 32767;
 
 @!inf_save_size = 600;
-@!sup_save_size = 80000;
+@!sup_save_size = 30000000;
 
 @!inf_stack_size = 200;
 @!sup_stack_size = 30000;
