@@ -1,3 +1,8 @@
+2021-05-07  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi,
+	* doc/ref.txi: typos.
+
 2021-04-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

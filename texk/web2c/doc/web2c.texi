@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2021
-@set month-year February 2021
+@set month-year May 2021
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -174,7 +174,7 @@ practical implication for redistributors of Web2c is that most of the
 executables are covered by the GNU General Public License or GNU
 Lesser General Public License, and therefore anyone who gets a binary
 distribution must also be able to get the sources, as explained by the
-terms of the GPL (@url{https://gnu.org/licenses/}. The GPL covers the
+terms of the GPL (@url{https://gnu.org/licenses/}). The GPL covers the
 Web2c executables, including @code{tex}, because the Free Software
 Foundation sponsored the initial development of the Kpathsea library
 that Web2c uses.  The basic source files from Stanford, however, have
@@ -909,7 +909,7 @@ with the primitive operation.)
 
 As (allowed) extensions to standard @TeX{}, Web2c also supports
 specifying the filename in double quotes (@code{"some name"}) and in
-braces (@code{@{"some name"@}}), which is convenient for filenames
+braces (@code{@{some name@}}), which is convenient for filenames
 containing spaces or other special characters, as described in the
 sections below.
 
@@ -1141,7 +1141,7 @@ a security hole vulnerable to Trojan horse attack: an unwitting user could
 run a @TeX{} program that overwrites, say, @file{~/.rhosts}.  (MetaPost has
 a @code{write} primitive with similar implications).  To alleviate this and
 similar problems the functions @code{kpathsea_out_name_ok} and
-@code{kpathsea_in_name_ok} from the Kpathse library (@pxref{Calling
+@code{kpathsea_in_name_ok} from the Kpathsea library (@pxref{Calling
 sequence,,, kpathsea, Kpathsea}) are used to determine if a given filename
 is acceptable to be opened for output or input, depending on the setting of
 the configuration variables @code{openout_any} and @code{openin_any}:
@@ -1735,7 +1735,7 @@ written to the file @var{output}.
 @c @cindex dictionary file
 @c @findex \lefthyphemmin
 @c @findex \righthyphenmin
-@c The first line contains the values of @code{}\lefthyphenmin} and
+@c The first line contains the values of @code{\lefthyphenmin} and
 @c @code{\righthyphenmin} in columns 1--2 and 3--4. Columns 5, 6, and 7 may
 @c optionally contain replacements for the default characters @samp{.},
 @c @samp{-}, and @samp{*} respectively used in the word lists.
@@ -1749,7 +1749,7 @@ written to the file @var{output}.
 
 In addition, Patgen prompts interactively for other values.
 
-For more information, see @cite{Word hy-phen-a-tion by com-puter} by
+For more information, see @cite{Word hy-phen-a-tion by com-put-er} by
 Frank Liang (@pxref{References}), and also the @file{patgen.web} source file.
 
 The only options are @samp{-help} and @samp{-version} (@pxref{Common
@@ -2679,7 +2679,7 @@ simply passes the @var{tex-input} through to
 must start with a @code{verbatimtex} block that gives the necessary
 @code{\documentclass} (or @code{\documentstyle})
 @code{\begin@{document@}} command.  You will also need to set the
-enviroment variable @code{TEX} to @samp{latex}.
+environment variable @code{TEX} to @samp{latex}.
 
 @var{tex-input} need not be specifically @TeX{} input; it could also be
 Troff.  In that case, you will need the @samp{-m pictures} Troff macro
@@ -2721,7 +2721,7 @@ need to be downloaded (@pxref{psfonts.map,,, dvips, Dvips}).
 
 @cindex PDF, and @code{.mps} files
 @cindex @code{.mps} files and PDF
-It is posible for pdf@TeX{} to read MetaPost output directly; this is
+It is possible for pdf@TeX{} to read MetaPost output directly; this is
 in contrast to general EPSF files, which have to be converted for use
 with PDF output.  The easiest way is to name the MetaPost output files
 with the @code{.mps} extension.  Then the @LaTeX{}
@@ -3080,7 +3080,7 @@ used 7, but this proved too restrictive for use by Web2c.
 @cindex identifier case
 These options specify the case of identifiers in the output of tangle.
 If @samp{-uppercase} (@samp{-lowercase}) is specified, tangle will
-convert all identfiers to uppercase (lowercase).  The default is
+convert all identifiers to uppercase (lowercase).  The default is
 @samp{-mixedcase}, which specifies that the case will not be changed.
 
 @item -underline
@@ -3478,8 +3478,8 @@ mentioned below are in the source files that read them;
 @cindex font file formats
 @cindex file formats for fonts
 
-(For another perspective on this, @pxref{Font concepts,,, dvips,
-Dvips}).
+For another perspective on this, @pxref{Font concepts,,, dvips,
+Dvips}.
 
 Font files come in several varieties, with suffixes like:
 @example
@@ -3789,7 +3789,7 @@ Show the characters' bitmaps using asterisks and spaces.
 Translate all commands in the GF file.
 @end table
 
-As an example of the output, here is the (abrdiged) translation of the
+As an example of the output, here is the (abridged) translation of the
 letter `K' in @samp{cmr10}, as rendered at 600@dmn{dpi} with the mode
 @samp{ljfour} from @file{modes.mf} (available from
 @url{ftp://ftp.tug.org/tex/modes.mf}), with both @samp{-mnemonics} and
@@ -4297,7 +4297,7 @@ nature of a development request rather than a legal requirement.
 
 ML@TeX{}, pdf@TeX{}, Lua@TeX{}, Xe@TeX{}, and all the other derived
 engines have used various license terms for their additions to the
-base code, often the GPL (see @url{https://www.gnu.org/licenses/#GPL}
+base code, often the GPL (see @url{https://www.gnu.org/licenses/#GPL})
 or (for example) the file @file{web2c/pdftexdir/COPYINGv2}. They also
 mostly make use of additional libraries with their own (compatible)
 terms. Please see each program's sources.

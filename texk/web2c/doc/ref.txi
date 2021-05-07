@@ -102,7 +102,7 @@ Reprinted with corrections, 1996.
 
 @item [Lia83]
 Franklin Mark Liang.
-Word hy-phen-a-tion by com-pu-ter.
+Word hy-phen-a-tion by com-put-er.
 Technical Report STAN-CS-83-977, Stanford University, August 1983.
 @url{https://tug.org/docs/liang/liang-thesis.pdf}.
 
