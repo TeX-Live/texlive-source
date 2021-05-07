@@ -1,5 +1,11 @@
 2021-05-07  Karl Berry  <karl@freefriends.org>
 
+	* tex.ch (sup_save_size): increase to 30000000
+	(could be max_halfword). Found by Christian Schenk,
+	tex-live 18 Mar 2021 18:39:04.
+
+2021-05-07  Karl Berry  <karl@freefriends.org>
+
 	* doc/web2c.texi,
 	* doc/ref.txi: typos.
 

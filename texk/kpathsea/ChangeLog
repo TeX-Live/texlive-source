@@ -1,3 +1,8 @@
+2021-05-07  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (save_size): re-increase to 200000
+	with parallel change to tex.ch.
+
 2021-04-22  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi (TeX directory structure): link to
