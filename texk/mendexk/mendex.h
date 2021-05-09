@@ -14,12 +14,12 @@
 struct page {
 	char *page;
 	char *enc;
-	char attr[3];
+	int attr[3];
 };
 
 struct index {
 	int num;
-	char words;
+	unsigned char words;
 	char *org[3];
 	char *dic[3];
 	char *idx[3];

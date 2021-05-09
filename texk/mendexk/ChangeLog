@@ -1,3 +1,16 @@
+2021-05-09  Karl Berry  <karl@freefriends.org>
+
+	* mendex.h (page.attr): use int, not char, since we do signed
+	comparison and aarch64 apparently treats char as unsigned.
+	(index.words): use unsigned char for consistency.
+	* fwrite.c (printpage): factor out beginning/end page values.
+	* tests/rangetwo.idx,
+	* tests/rangetwo.ind,
+	* tests/rangetwo.ist: new simple test.
+	* tests/mendex.test: run the rangetwo test.
+	Report from Johannes Hielscher,
+	https://tug.org/pipermail/tlbuild/2021q1/004873.html.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.

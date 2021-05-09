@@ -326,7 +326,11 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 	for(j=0;j<ind[num].num;j++) {
 		cc=range_check(ind[num],j,lbuff);
 		if (cc>j) {
-			if (pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0])==pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])) {
+			int epage = pnumconv(ind[num].p[cc].page,
+    		       	                     ind[num].p[cc].attr[0]);
+			int bpage = pnumconv(ind[num].p[j].page,
+			                     ind[num].p[j].attr[0]);
+			if (epage==bpage) {
 				j=cc-1;
 				continue;
 			}
@@ -337,20 +341,18 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 			if (strlen(ind[num].p[j].enc)>0) {
 				SPRINTF(buff,"%s%s%s",encap_prefix,ind[num].p[j].enc,encap_infix);
 			}
-			if (strlen(suffix_3p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==2) {
-				SAPPENDF(buff,"%s",ind[num].p[j].page);
+			/* print beginning of range */
+			SAPPENDF(buff,"%s",ind[num].p[j].page);
+			if (strlen(suffix_3p)>0 && (epage-bpage)==2) {
 				SAPPENDF(buff,"%s",suffix_3p);
 			}
-			else if (strlen(suffix_mp)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))>=2) {
-				SAPPENDF(buff,"%s",ind[num].p[j].page);
+			else if (strlen(suffix_mp)>0 && (epage-bpage)>=2) {
 				SAPPENDF(buff,"%s",suffix_mp);
 			}
-			else if (strlen(suffix_2p)>0 && (pnumconv(ind[num].p[cc].page,ind[num].p[cc].attr[0])-pnumconv(ind[num].p[j].page,ind[num].p[j].attr[0]))==1) {
-				SAPPENDF(buff,"%s",ind[num].p[j].page);
+			else if (strlen(suffix_2p)>0 && (epage-bpage)==1) {
 				SAPPENDF(buff,"%s",suffix_2p);
 			}
 			else {
-				SAPPENDF(buff,"%s",ind[num].p[j].page);
 				SAPPENDF(buff,"%s",delim_r);
 				SAPPENDF(buff,"%s",ind[num].p[cc].page);
 			}
