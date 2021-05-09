@@ -1,3 +1,11 @@
+2021-04-21 Luigi Scarso <luigi.scarso@gmail.com>
+    *\discretionaryligaturemode: optionally block select disc creation 
+    (see [Dev-luatex] [PATCH] Nested discretionaries M.F. Krüger) (HH)
+
+2021-04-19 Luigi Scarso <luigi.scarso@gmail.com>
+    *\mathdefaultsmode: different radical style defaults 
+     (see [Dev-luatex] Uunderdelimiter & friends and mathstyles by M.F. Krüger) (HH)
+
 2021-04-19 Luigi Scarso <luigi.scarso@gmail.com>
     * A patch for  linkarea in rtl context
 

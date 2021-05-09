@@ -1,3 +1,7 @@
+2021-05-09  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Impose mp->stack_size < 1001 in @d push_input to avoid stack overflow 
+          due infinite recursion of macro expansion (thanks to A. Kakuto).
+
 2021-04-10  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Metapost version 2.01 (needed to mark the patch mpx_copy_mpto).
 
