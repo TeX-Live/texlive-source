@@ -77,11 +77,14 @@ void CDECL error(ErrorCategory category, GFileOffset pos,
     (*errorCbk)(errorCbkData, category, (int)pos, sanitized->getCString());
   } else {
     fflush(stdout);
+    /* Label the error messages for pdftex's use as libxpdf.
+       It would be cleaner to use the callback feature, but seems
+       like too much trouble at this late date. */
     if (pos >= 0) {
-      fprintf(stderr, "%s (%d): %s\n",
+      fprintf(stderr, "\nlibxpdf: %s (%d): %s\n",
 	      errorCategoryNames[category], (int)pos, sanitized->getCString());
     } else {
-      fprintf(stderr, "%s: %s\n",
+      fprintf(stderr, "\nlibxpdf: %s: %s\n",
 	      errorCategoryNames[category], sanitized->getCString());
     }
     fflush(stderr);

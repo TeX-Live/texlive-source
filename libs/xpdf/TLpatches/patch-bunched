@@ -312,3 +312,23 @@ diff -ur xpdf-4.03/xpdf/config.h xpdf-src/xpdf/config.h
  #if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__)
  #define POPEN_READ_MODE "rb"
  #else
+diff -ur xpdf-4.03/xpdf/Error.cc xpdf-src/xpdf/Error.cc
+--- xpdf-4.03/xpdf/Error.cc	Thu Jan 28 07:23:52 2021
++++ xpdf-src/xpdf/Error.cc	Mon Feb 01 12:34:28 2021
+@@ -77,11 +77,14 @@
+     (*errorCbk)(errorCbkData, category, (int)pos, sanitized->getCString());
+   } else {
+     fflush(stdout);
++    /* Label the error messages for pdftex's use as libxpdf.
++       It would be cleaner to use the callback feature, but seems
++       like too much trouble at this late date. */
+     if (pos >= 0) {
+-      fprintf(stderr, "%s (%d): %s\n",
++      fprintf(stderr, "\nlibxpdf: %s (%d): %s\n",
+ 	      errorCategoryNames[category], (int)pos, sanitized->getCString());
+     } else {
+-      fprintf(stderr, "%s: %s\n",
++      fprintf(stderr, "\nlibxpdf: %s: %s\n",
+ 	      errorCategoryNames[category], sanitized->getCString());
+     }
+     fflush(stderr);

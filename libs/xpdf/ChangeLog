@@ -1,3 +1,8 @@
+2021-05-10  Karl Berry  <karl@freefriends.org>
+
+	* xpdf-src/xpdf/Error.cc (error): label error messages
+	as coming from libxpdf.
+
 2021-02-01  Akira Kakuto  <kakuto@w32tex.org>
 
 	* Import xpdf-4.03.
