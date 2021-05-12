@@ -1,3 +1,15 @@
+2021-05-09  Karl Berry  <karl@freefriends.org>
+
+	* mendex.h (page.attr): use int, not char, since we do signed
+	comparison and aarch64 apparently treats char as unsigned.
+	(index.words): use unsigned char for consistency.
+	
+	Same fixes as for mendex; see mendexk/ChangeLog.
+	Report from Johannes Hielscher,
+	  https://tug.org/pipermail/tlbuild/2021q1/004873.html
+	and follow-up:
+	  https://tug.org/pipermail/tlbuild/2021q2/004911.html
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.
