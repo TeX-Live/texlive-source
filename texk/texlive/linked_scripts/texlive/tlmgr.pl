@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59108 2021-05-06 22:52:43Z karl $
+# $Id: tlmgr.pl 59154 2021-05-09 22:00:07Z karl $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59108 $';
-my $datrev = '$Date: 2021-05-07 00:52:43 +0200 (Fri, 07 May 2021) $';
+my $svnrev = '$Revision: 59154 $';
+my $datrev = '$Date: 2021-05-10 00:00:07 +0200 (Mon, 10 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -24,6 +24,7 @@ our $Master;
 our $loadmediasrcerror;
 our $packagelogfile;
 our $packagelogged;
+our $commandslogged;
 our $commandlogfile;
 our $tlmgr_config_file;
 our $pinfile;
@@ -632,6 +633,7 @@ for the full story.\n";
   # package related actions (install, remove, update) to
   # the package-log file TEXMFSYSVAR/web2c/tlmgr.log
   $packagelogged = 0;  # how many msgs we logged
+  $commandslogged = 0;
   chomp (my $texmfsysvar = `kpsewhich -var-value=TEXMFSYSVAR`);
   $packagelogfile = $opts{"package-logfile"};
   if ($opts{"usermode"}) {
@@ -699,9 +701,15 @@ for the full story.\n";
   my $ret = execute_action($action, @ARGV);
 
   # close the special log file
-  if ($packagelogfile && !$::gui_mode) {
-    info("$prg: package log updated: $packagelogfile\n") if $packagelogged;
-    close(PACKAGELOG);
+  if (!$::gui_mode) {
+    if ($packagelogfile) {
+      info("$prg: package log updated: $packagelogfile\n") if $packagelogged;
+      close(PACKAGELOG);
+    }
+    if ($commandlogfile) {
+      info("$prg: command log updated: $commandlogfile\n") if $commandslogged;
+      close(COMMANDLOG);
+    }
   }
 
   # F_ERROR stops processing immediately, and prevents postactions from
@@ -828,6 +836,7 @@ sub do_cmd_and_check {
   # and show it to the user before the possibly long delay.
   info("running $cmd ...\n");
   logcommand("running $cmd");
+  logpackage("command: $cmd");
   my ($out, $ret);
   if ($opts{"dry-run"}) {
     $ret = $F_OK;
@@ -867,12 +876,15 @@ sub handle_execute_actions {
   my $errors = 0;
 
   my $sysmode = ($opts{"usermode"} ? "-user" : "-sys");
-  my $invoke_fmtutil = "fmtutil$sysmode $common_fmtutil_args";
+  my $fmtutil_cmd = "fmtutil$sysmode";
+  my $status_file = TeXLive::TLUtils::tl_tmpfile();
+  my $fmtutil_args = "$common_fmtutil_args --status-file=$status_file";
+
 
   # if create_formats is false (NOT the default) we add --refresh so that
   # only existing formats are recreated
   if (!$localtlpdb->option("create_formats")) {
-    $invoke_fmtutil .= " --refresh";
+    $fmtutil_args .= " --refresh";
     debug("refreshing only existing formats per user option (create_formats=0)\n");
   }
 
@@ -973,7 +985,9 @@ sub handle_execute_actions {
       for my $e (keys %updated_engines) {
         debug ("updating formats based on $e\n");
         $errors += do_cmd_and_check
-                    ("$invoke_fmtutil --no-error-if-no-format --byengine $e");
+                    ("$fmtutil_cmd --byengine $e --no-error-if-no-format $fmtutil_args");
+        read_and_report_fmtutil_status_file($status_file);
+        unlink($status_file);
       }
       # now rebuild all other formats
       for my $f (keys %do_enable) {
@@ -981,7 +995,9 @@ sub handle_execute_actions {
         # ignore disabled formats
         next if !$::execute_actions{'enable'}{'formats'}{$f}{'mode'};
         debug ("(re)creating format dump $f\n");
-        $errors += do_cmd_and_check ("$invoke_fmtutil --byfmt $f");
+        $errors += do_cmd_and_check ("$fmtutil_cmd --byfmt $f $fmtutil_args");
+        read_and_report_fmtutil_status_file($status_file);
+        unlink($status_file);
         $done_formats{$f} = 1;
       }
     }
@@ -1000,7 +1016,9 @@ sub handle_execute_actions {
           $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
         }
         if (!$::regenerate_all_formats) {
-          $errors += do_cmd_and_check ("$invoke_fmtutil --byhyphen \"$lang\"");
+          $errors += do_cmd_and_check ("$fmtutil_cmd --byhyphen \"$lang\" $fmtutil_args");
+          read_and_report_fmtutil_status_file($status_file);
+          unlink($status_file);
         }
       }
     }
@@ -1010,7 +1028,9 @@ sub handle_execute_actions {
     if ($::regenerate_all_formats) {
       info("Regenerating existing formats, this may take some time ...");
       # --refresh might already be in $invoke_fmtutil, but we don't care
-      $errors += do_cmd_and_check("$invoke_fmtutil --refresh --all");
+      $errors += do_cmd_and_check("$fmtutil_cmd --refresh --all $fmtutil_args");
+      read_and_report_fmtutil_status_file($status_file);
+      unlink($status_file);
       info("done\n");
       $::regenerate_all_formats = 0;
     }
@@ -1028,6 +1048,42 @@ sub handle_execute_actions {
   }
 }
 
+sub read_and_report_fmtutil_status_file {
+  my $status_file = shift;
+  my $fh;
+  if (!open($fh, '<', $status_file)) {
+    printf STDERR "Cannot read status file $status_file, strange!\n";
+    return;
+  }
+  chomp(my @lines = <$fh>);
+  close $fh;
+  my @failed;
+  my @success;
+  for my $l (@lines) {
+    my ($status, $fmt, $eng, $what, $whatargs) = split(' ', $l, 5);
+    if ($status eq "DISABLED") {
+      # ignore for now
+    } elsif ($status eq "NOTSELECTED") {
+      # ignore for now
+    } elsif ($status eq "FAILURE") {
+      push @failed, "${fmt}.fmt/$eng";
+    } elsif ($status eq "SUCCESS") {
+      push @success, "${fmt}.fmt/$eng";
+    } elsif ($status eq "NOTAVAIL") {
+      # ignore for now
+    } elsif ($status eq "UNKNOWN") {
+      # ignore for now
+    } else {
+      # ignore for now
+    }
+  }
+  logpackage("  OK: @success") if (@success);
+  logpackage("  ERROR: @failed") if (@failed);
+  logcommand("  OK: @success") if (@success);
+  logcommand("  ERROR: @failed") if (@failed);
+  info("  OK: @success\n") if (@success);
+  info("  ERROR: @failed\n") if (@failed);
+}
 
 #  GET_MIRROR
 #
@@ -5243,7 +5299,8 @@ Error message from creating MainWindow:
 # 
 sub uninstall_texlive {
   if (win32()) {
-    printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel to removing TeX Live!\n";
+    printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel "
+                  . "to uninstall TeX Live!\n";
     return ($F_ERROR);
   }
   return if !check_on_writable();
@@ -5266,54 +5323,62 @@ sub uninstall_texlive {
       return ($F_OK | $F_NOPOSTACTION);
     }
   }
-  print ("Ok, removing the whole TL installation under: $tlroot\n");
+  print "Ok, removing the whole TL installation under: $tlroot\n";
   
-  print ("symlinks... ");
+  # Must use kpsewhich before removing it.
+  chomp (my $texmfsysconfig = `kpsewhich -var-value=TEXMFSYSCONFIG`);
+  chomp (my $texmfsysvar = `kpsewhich -var-value=TEXMFSYSVAR`);
+  chomp (my $texmfconfig = `kpsewhich -var-value=TEXMFCONFIG`);
+  chomp (my $texmfvar = `kpsewhich -var-value=TEXMFVAR`);
+
+  print "symlinks... ";
   TeXLive::TLUtils::remove_symlinks($localtlpdb->root,
     $localtlpdb->platform(),
     $localtlpdb->option("sys_bin"),
     $localtlpdb->option("sys_man"),
     $localtlpdb->option("sys_info"));
-  # now remove the rest
-  print ("main dirs... ");
+
+  # now remove the rest.
+  print "main dirs... ";
   system("rm", "-rf", "$Master/texmf-dist");
   system("rm", "-rf", "$Master/texmf-doc");
+  system("rm", "-rf", "$Master/texmf-config");
   system("rm", "-rf", "$Master/texmf-var");
   system("rm", "-rf", "$Master/tlpkg");
   system("rm", "-rf", "$Master/bin");
 
-  print ("misc... ");
+  # In case SYS{VAR,CONFIG} were configured with different values.
+  # Above we remove the hardwired $Master/texmf-{config,var} 
+  # if present, assuming the user did not pathologically configure things.
+  system("rm", "-rf", "$texmfsysconfig");
+  system("rm", "-rf", "$texmfsysvar");
+
+  print "misc... ";
   system("rm", "-rf", "$Master/readme-html.dir");
   system("rm", "-rf", "$Master/readme-txt.dir");
-  for my $f (qw/doc.html index.html install-tl 
+  for my $f (qw/doc.html index.html install-tl install-tl.log
                 LICENSE.CTAN LICENSE.TL README README.usergroups
-                release-texlive.txt texmf.cnf texmfcnf.lua/) {
+                release-texlive.txt texmf.cnf texmfcnf.lua
+               /) {
     system("rm", "-f", "$Master/$f");
   }
-  if (-d "$Master/temp") {
-    finddepth(sub { rmdir; }, "$Master/temp");
-  }
-  unlink("$Master/install-tl.log");
-  # if they want removal, give them removal. Hopefully they know how to
-  # regenerate any changed config files.
-  system("rm", "-rf", "$Master/texmf-config");
-  #
-  finddepth(sub { rmdir; }, "$Master");
+  finddepth(sub { rmdir; }, $Master);
+  rmdir($Master);
+  print "done.\n";
   
-  # but not user dirs.
-  chomp (my $texmfconfig = `kpsewhich -var-value=TEXMFCONFIG`);
-  chomp (my $texmfvar = `kpsewhich -var-value=TEXMFVAR`);
-  print <<NOT_REMOVED;
+  # don't remove user dirs, which may have been abused.
+  if (-d $texmfconfig || -d $texmfvar) {
+    print <<NOT_REMOVED;
 
 User directories intentionally not touched, removing them is up to you:
   TEXMFCONFIG=$texmfconfig
   TEXMFVAR=$texmfvar
-
 NOT_REMOVED
+  }
 
   my $remnants;
   if (-d $Master) {
-    print "\nSorry, something did not get removed, under: $Master\n";
+    print "\nSorry, something did not get removed under: $Master\n";
     $remnants = 1;
   } else {
     $remnants = 0; 
@@ -7543,6 +7608,7 @@ sub logpackage {
 }
 sub logcommand {
   if ($commandlogfile) {
+    $commandslogged++;
     my $tim = localtime();
     print COMMANDLOG "[$tim] @_\n";
   }
@@ -10150,7 +10216,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59108 2021-05-06 22:52:43Z karl $
+$Id: tlmgr.pl 59154 2021-05-09 22:00:07Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

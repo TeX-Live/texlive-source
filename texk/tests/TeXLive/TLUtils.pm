@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 58139 2021-03-05 00:26:37Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2021 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 58139 $';
+my $svnrev = '$Revision: 59149 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -656,8 +655,8 @@ sub run_cmd {
 
 =item C<system_pipe($prog, $infile, $outfile, $removeIn, @extraargs)>
 
-Runs C<$prog> with C<@extraargs> redirecting stdin from C<$infile>, stdout to C<$outfile>.
-Removes C<$infile> if C<$removeIn> is true.
+Runs C<$prog> with C<@extraargs> redirecting stdin from C<$infile>,
+stdout to C<$outfile>. Removes C<$infile> if C<$removeIn> is true.
 
 =cut
 
@@ -2394,7 +2393,7 @@ sub untar {
   # quoting issues.
   # so fall back on chdir in Perl.
   #
-  debug("unpacking $tarfile in $targetdir\n");
+  debug("TLUtils::untar: unpacking $tarfile in $targetdir\n");
   my $cwd = cwd();
   chdir($targetdir) || die "chdir($targetdir) failed: $!";
 
@@ -2750,7 +2749,7 @@ sub download_file {
       return \*RETFH;
     } else {
       if (-r $filetoopen) {
-        copy ($filetoopen, $par);
+        copy ("-f", "-L", $filetoopen, $dest);
         return 1;
       }
       return 0;
@@ -2910,7 +2909,7 @@ Return C</dev/null> on Unix and C<nul> on Windows.
 =cut
 
 sub nulldev {
-  return (&win32)? 'nul' : '/dev/null';
+  return (&win32()) ? 'nul' : '/dev/null';
 }
 
 =item C<get_full_line ($fh)>
@@ -3913,26 +3912,69 @@ Return a particular mirror given by the generic CTAN auto-redirecting
 default (specified in L<$TLConfig::TexLiveServerURL>) if we get a
 response, else the empty string.
 
-Neither C<TL_DOWNLOAD_PROGRAM> nor <TL_DOWNLOAD_ARGS> is honored (see
-L<download_file>), since certain options have to be set to do the job
-and the program has to be C<wget> since we parse the output.
+Use C<curl> if it is listed as a C<working_downloader>, else C<wget>,
+else give up. We can't support arbitrary downloaders here, as we do for
+regular package downloads, since certain options have to be set and the
+output has to be parsed.
+
+We try invoking the program three times (hardwired).
 
 =cut
 
 sub query_ctan_mirror {
+  my @working_downloaders = @{$::progs{'working_downloaders'}};
+  ddebug("query_ctan_mirror: working_downloaders: @working_downloaders\n");
+  if (TeXLive::TLUtils::member("curl", @working_downloaders)) {
+    return query_ctan_mirror_curl();
+  } elsif (TeXLive::TLUtils::member("wget", @working_downloaders)) {
+    return query_ctan_mirror_wget();
+  } else {
+    return;
+  }
+}
+
+# curl will follow the redirect chain for us.
+# 
+sub query_ctan_mirror_curl {
+  my $max_trial = 3;
+  my $warg = (win32() ? "-w %{url_effective} " : "-w '%{url_effective}' ");
+  for (my $i = 1; $i <= $max_trial; $i++) {
+    # -L -> follow redirects
+    # -s -> silent
+    # -w -> what to output after completion
+    my $cmd = "$::progs{'curl'} -Ls "
+              . "-o " . nulldev() . " "
+              . $warg
+              . "--connect-timeout $NetworkTimeout "
+              . "--max-time $NetworkTimeout "
+              . $TeXLiveServerURL;
+    ddebug("query_ctan_mirror_curl: cmd: $cmd\n");
+    my $url = `$cmd`;
+    if (length $url) {
+      # remove trailing slashes
+      $url =~ s,/*$,,;
+      ddebug("query_ctan_mirror_curl: returning url: $url\n");
+      return $url;
+    }
+    sleep(1);
+  }
+  return;
+}
+
+sub query_ctan_mirror_wget {
   my $wget = $::progs{'wget'};
   if (!defined ($wget)) {
-    tlwarn("query_ctan_mirror: Programs not set up, trying wget\n");
+    tlwarn("query_ctan_mirror_wget: Programs not set up, trying wget\n");
     $wget = "wget";
   }
 
   # we need the verbose output, so no -q.
   # do not reduce retries here, but timeout still seems desirable.
   my $mirror = $TeXLiveServerURL;
-  my $cmd = "$wget $mirror --timeout=$NetworkTimeout -O "
-            . (win32() ? "nul" : "/dev/null") . " 2>&1";
+  my $cmd = "$wget $mirror --timeout=$NetworkTimeout "
+            . "-O " . nulldev() . " 2>&1";
+  ddebug("query_ctan_mirror_wget: cmd is $cmd\n");
 
-  #
   # since we are reading the output of wget to find a mirror
   # we have to make sure that the locale is unset
   my $saved_lcall;
@@ -3950,6 +3992,7 @@ sub query_ctan_mirror {
     foreach (@out) {
       if (m/^Location: (\S*)\s*.*$/) {
         (my $mhost = $1) =~ s,/*$,,;  # remove trailing slashes since we add it
+        ddebug("query_ctan_mirror_wget: returning url: $mhost\n");
         return $mhost;
       }
     }
@@ -4013,9 +4056,10 @@ sub check_on_working_mirror {
 
 sub give_ctan_mirror_base {
   # only one backbone has existed for a while (2018).
-  my @backbone = qw!http://www.ctan.org/tex-archive!;
+  my @backbone = qw!https://www.ctan.org/tex-archive!;
 
   # start by selecting a mirror and test its operationality
+  ddebug("give_ctan_mirror_base: calling query_ctan_mirror\n");
   my $mirror = query_ctan_mirror();
   if (!defined($mirror)) {
     # three times calling mirror.ctan.org did not give anything useful,
@@ -4541,7 +4585,11 @@ sub mktexupd {
 }
 
 
-=item C<check_sys_user_mode($user,$sys,$tmfc, $tmfsc, $tmfv, $tmfsv)>
+=item C<setup_sys_user_mode($prg, $optsref, $tmfc, $tmfsc, $tmfv, $tmfsv)>
+
+Return two-element list C<($texmfconfig,$texmfvar)> of which directories
+to use, either user or sys. If C<$prg> is C<mktexfmt>, and the system
+dirs are writable, use them even if we are in user mode.
 
 =cut
 
@@ -4569,7 +4617,8 @@ sub setup_sys_user_mode {
       exit(1);
     }
     if (!$optsref->{'sys'}) {
-      print STDERR "$prg [WARNING]: hidden sys mode found, switching to sys mode.\n" if (!$optsref->{'quiet'});
+      print STDERR "$prg [WARNING]: hidden sys mode found, switching to sys mode.\n"
+        if (!$optsref->{'quiet'});
       $optsref->{'sys'} = 1;
     }
   }
@@ -4579,16 +4628,42 @@ sub setup_sys_user_mode {
     # we are running as updmap-sys, make sure that the right tree is used
     $texmfconfig = $TEXMFSYSCONFIG;
     $texmfvar    = $TEXMFSYSVAR;
+    &debug("TLUtils::setup_sys_user_mode: sys mode\n");
+
   } elsif ($optsref->{'user'}) {
     $texmfconfig = $TEXMFCONFIG;
     $texmfvar    = $TEXMFVAR;
+    &debug("TLUtils::setup_sys_user_mode: user mode\n");
+
+    # mktexfmt is run (accidentally or on purpose) by a user with
+    # missing formats; we want to put the resulting format dumps in
+    # TEXMFSYSVAR if possible, so that future format updates will just
+    # work. Until 2021, they were put in TEXMFVAR, causing problems.
+    # 
+    # We only do this for mktexfmt, not fmtutil; if fmtutil is called
+    # explicitly with fmtutil -user, ok, do what they said to do.
+    #
+    if ($prg eq "mktexfmt") {
+      my $switchit = 0;
+      if (-d "$TEXMFSYSVAR/web2c") {
+        $switchit = 1 if (-w "$TEXMFSYSVAR/web2c");
+      } elsif (-d $TEXMFSYSVAR && -w $TEXMFSYSVAR) {
+        $switchit = 1;
+      }
+      if ($switchit) {
+        $texmfvar = $TEXMFSYSVAR;
+        &ddebug("  switched to $texmfvar for mktexfmt\n");
+      }
+    }
   } else {
-    print STDERR "" .
+    print STDERR
       "$prg [ERROR]: Either -sys or -user mode is required.\n" .
       "$prg [ERROR]: In nearly all cases you should use $prg -sys.\n" .
       "$prg [ERROR]: For special cases see https://tug.org/texlive/scripts-sys-user.html\n" ;
     exit(1);
   }
+
+  &debug("  returning: ($texmfconfig,$texmfvar)\n");
   return ($texmfconfig, $texmfvar);
 }
 
