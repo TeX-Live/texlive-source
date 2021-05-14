@@ -1,3 +1,8 @@
+2021-05-14  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXINPUTS.optex): new definition for new format.
+	Move some other definitions around for consistency, but no changes.
+
 2021-05-07  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (save_size): re-increase to 200000
