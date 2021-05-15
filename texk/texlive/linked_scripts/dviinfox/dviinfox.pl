@@ -42,7 +42,7 @@
 use strict;
 
 my $Prog    = "dviinfox";
-my $Version = "1.04";
+my $Version = "1.06";
 my $Author = "Dag Langmyhr and Hironobu Yamashita";
 
 my $True = 1;
@@ -54,10 +54,13 @@ my $List_pages = $False;
 
 # DVI commands:
 my $DVI_Filler    = "\337"; # 223 = 0xdf
-my $DVI_Font      = "\363"; # 243 = 0xf3
 my $DVI_Post      = "\370"; # 248 = 0xf8
 my $DVI_Post_post = "\371"; # 249 = 0xf9
 my $DVI_Pre       = "\367"; # 247 = 0xf7
+my $DVI_Font      = "\363"; # 243 = 0xf3
+my $DVI_Font2     = "\364"; # 244 = 0xf4
+my $DVI_Font3     = "\365"; # 245 = 0xf5
+my $DVI_Font4     = "\366"; # 246 = 0xf6
 my $XDV_Font      = "\374"; # 252 = 0xfc
 
 my $Unit;
@@ -174,8 +177,23 @@ sub Read_DVI_file {
     if ($List_all) {
 	print "DVI format $Format";
 	print "; id $VersionID" if ($VersionID != $Format);
-	print " (pTeX DVI)" if (($Format == 2) && ($VersionID == 3));
-	print " (XeTeX XDV)" if ($Format > 2);
+	if ($Format == 2) {
+	    if ($VersionID == 2) {
+		# Standard DVI
+	    } elsif ($VersionID == 3) {
+		print " (pTeX DVI)";
+	    } else {
+		print " (unknown DVI?)";
+	    }
+	} elsif (($Format >= 4) && ($Format <= 7)) {
+	    if ($VersionID == $Format) {
+		print " (XeTeX XDV)";
+	    } else {
+		print " (unknown DVI?)";
+	    }
+	} else {
+		print " (unknown DVI?)";
+	}
 	print "; ";
     }
     if ($List_all || $List_pages) {
@@ -200,7 +218,7 @@ sub Read_DVI_file {
 	my ($F_count, $F_check, $F_scale, $F_design, $F_name);
 	my ($F_flag, $F_index, $F_colored, $F_extend, $F_slant, $F_embolden);
 	my $F_tempswa;
-	while (($c = getc(F)) eq $DVI_Font || $c eq $XDV_Font) {
+	while (($c = getc(F)) eq $XDV_Font || ($c ge $DVI_Font && $c le $DVI_Font4)) {
 	    # initialize
 	    $F_count  = 0;
 	    $F_check  = 0;
@@ -213,18 +231,7 @@ sub Read_DVI_file {
 	    $F_extend = 0;
 	    $F_slant = 0;
 	    $F_embolden = 0;
-	    if ($c eq $DVI_Font) {
-		# standard DVI: TFM font definition command
-		$F_count  = ord(getc(F));
-		$F_check  = &Read4_u;
-		$F_scale  = &Read4;
-		$F_design = &Read4;
-		$F_name   = &Read_text2;
-		printf("  Font %3d: %9s at %6.3f", 
-		       $F_count, $F_name, &Scale_to_pt($F_scale));
-		printf(" (design size %6.3f, ", &Scale_to_pt($F_design));
-		print "checksum=$F_check)\n";
-	    } else { # $c eq $XDV_Font
+	    if ($c eq $XDV_Font) {
 		# extended XDV for XeTeX: Native font definition command
 		if (!$IS_XDV) {
 		    printf STDERR ("Erorr: Command %d used in non-XDV file!\n", ord($XDV_Font));
@@ -266,6 +273,25 @@ sub Read_DVI_file {
 		    }
 		    print("\n");
 		}
+	    } else {
+		# standard DVI: TFM font definition command
+		if ($c eq $DVI_Font) {
+		  $F_count = ord(getc(F));
+		} elsif ($c eq $DVI_Font2) {
+		  $F_count = &Read2_u;
+		} elsif ($c eq $DVI_Font3) {
+		  $F_count = &Read3_u;
+		} elsif ($c eq $DVI_Font4) {
+		  $F_count = &Read4_u;
+		}
+		$F_check  = &Read4_u;
+		$F_scale  = &Read4;
+		$F_design = &Read4;
+		$F_name   = &Read_text2;
+		printf("  Font %3d: %9s at %6.3f",
+		       $F_count, $F_name, &Scale_to_pt($F_scale));
+		printf(" (design size %6.3f, ", &Scale_to_pt($F_design));
+		print "checksum=$F_check)\n";
 	    }
 	};
 
@@ -311,6 +337,14 @@ sub Scale_to_sp {
 # Read an unsigned two-byte value.
 sub Read2_u {
     return ord(getc(F))*256 + ord(getc(F));
+}
+
+
+# Read3_u
+# -------
+# Read an unsigned three-byte value.
+sub Read3_u {
+    return (ord(getc(F))*256+ord(getc(F)))*256+ord(getc(F));
 }
 
 
