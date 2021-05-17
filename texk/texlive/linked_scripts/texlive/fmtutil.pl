@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 59143 2021-05-09 02:23:44Z preining $
+# $Id: fmtutil.pl 59207 2021-05-15 13:58:40Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 59143 2021-05-09 02:23:44Z preining $';
-my $lastchdate = '$Date: 2021-05-09 04:23:44 +0200 (Sun, 09 May 2021) $';
+my $svnid = '$Id: fmtutil.pl 59207 2021-05-15 13:58:40Z preining $';
+my $lastchdate = '$Date: 2021-05-15 15:58:40 +0200 (Sat, 15 May 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 59143 $';
+my $svnrev = '$Revision: 59207 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -616,7 +616,7 @@ sub select_and_rebuild_format {
 sub check_and_warn_on_user_format {
   my ($fmt, $eng) = @_;
   # do nothing if we are updating files in $TEXMFVAR
-  return if ($opts{'fmtdir'} eq $TEXMFVAR);
+  return if ($opts{'fmtdir'} eq "$TEXMFVAR/web2c");
   my $saved_fmtdir = $opts{'fmtdir'};
   $opts{'fmtdir'} = "$TEXMFVAR/web2c";
   my ($kpsefmt, $destdir, $fmtfile, $logfile) = compute_format_destination($fmt, $eng);

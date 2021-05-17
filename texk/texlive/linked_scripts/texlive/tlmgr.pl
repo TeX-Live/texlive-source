@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59154 2021-05-09 22:00:07Z karl $
+# $Id: tlmgr.pl 59208 2021-05-15 17:45:58Z karl $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59154 $';
-my $datrev = '$Date: 2021-05-10 00:00:07 +0200 (Mon, 10 May 2021) $';
+my $svnrev = '$Revision: 59208 $';
+my $datrev = '$Date: 2021-05-15 19:45:58 +0200 (Sat, 15 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5653,17 +5653,20 @@ sub check_runfiles {
     }
     # special case for koma-script where doc/src files are in runfiles section
     if ($tlpn eq "koma-script") {
-      @files = grep {!m;^texmf-dist/source/latex/koma-script/;} @files;
-      @files = grep {!m;^texmf-dist/doc/latex/koma-script/;} @files;
+      @files = grep { !m;^texmf-dist/source/latex/koma-script/; } @files;
+      @files = grep { !m;^texmf-dist/doc/latex/koma-script/; } @files;
     }
     push @runtime_files, @files;
   }
 
-  # build the duplicates list.
+  # build the duplicates list; only one duplicate in list, no matter how
+  # many clashing files there actually are.
   my @duplicates = (""); # just to use $duplicates[-1] freely
   my $prev = "";
-  foreach my $f (sort map { TeXLive::TLUtils::basename($_) } @runtime_files) {
-    push (@duplicates, $f) if (($f eq $prev) and not ($f eq $duplicates[-1]));
+  for my $f (sort map { lc(TeXLive::TLUtils::basename($_)) } @runtime_files) {
+    if ($f eq $prev && !($f eq $duplicates[-1])) {
+      push(@duplicates, $f);
+    }
     $prev = $f;
   }
   shift @duplicates; # get rid of the fake 1st value
@@ -5693,13 +5696,12 @@ sub check_runfiles {
             |.*-noEmbed\.map
             |ps2mfbas\.mf
             |pstricks\.con
-            |readme.*
             |sample\.bib
             |tex4ht\.env
             |test\.mf
             |texutil\.rb
             |tlmgrgui\.pl
-           )$/x;
+           )$/xi;
     # For the a_.* line above: source*pro has .enc files which differ
     # only in comments, hence the otftotfm-hashed name is the same.
     # Seems like it could happen more or at random with other fonts too.
@@ -5714,30 +5716,36 @@ sub check_runfiles {
     # https://tug.org/pipermail/tex-live/2019-December/044530.html
     next if $f
       =~ /^( afoot\.sty
+            |cherokee\.tfm
             |gamma\.mf
             |lexer\.lua
             |ligature\.mf
             |md-utrma\.pfb
             |ot1\.cmap
             |t1\.cmap
-           )$/x;
+            |ut1omlgc\.fd
+           )$/xi;
 
-    my @copies = grep (/\/$f$/, @runtime_files);
+    my @copies = grep (/\/$f$/i, @runtime_files);
     # map files can be duplicated between (but not within) formats.
     if ($f =~ /\.map$/) {
       my $need_check = 0;
       my $prev_dir = "";
       my @cop = @copies; # don't break the outside list
-      map { s#^texmf-dist/fonts/map/(.*?)/.*#$1# } @cop;
-      foreach my $dir (sort @cop ) {
+      map { s!^texmf-dist/fonts/map/(.*?)/.*!$1!; } @cop;
+      foreach my $dir (sort @cop) {
         last if ($need_check = ($dir eq $prev_dir));
         $prev_dir = $dir;
       }
       next unless $need_check;
     }
-    # if all copies are identical, ok, else, complain
+    # if all copies are identical, ok, else complain.
     my $diff = 0;
-    for (my $i = 1; $i < scalar(@copies); $i++) {
+    for (my $i = 1; $i < @copies; $i++) {
+      # there are many duplicates between asymptote/GUI and
+      # asymptote/GUI/pyUIClass; don't omit checks for other .py files.
+      next if $copies[$i] =~ m!asymptote/.*\.py$!;
+      #
       if ($diff = tlcmp("$Master/$copies[$i-1]", "$Master/$copies[$i]")) {
         print "# $f\ndiff $Master/$copies[$i-1] $Master/$copies[$i]\n";
         last;
@@ -10216,7 +10224,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59154 2021-05-09 22:00:07Z karl $
+$Id: tlmgr.pl 59208 2021-05-15 17:45:58Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
