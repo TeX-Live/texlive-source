@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use warnings;
 
 ## Copyright John Collins 1998-2021
 ##           (username jcc8 at node psu.edu)
@@ -28,7 +29,12 @@
 ##
 ##   Modification log from 14 Apr 2021 onwards in detail
 ##
-##  3 May 2021 John Collins  Minor corrections
+## 16 May 2021 John Collins  Deal with some variable used only once warnings
+##                           Remove by default informational messages on rc
+##                           files read, and aux_dir and out_dir setting.
+##  5-6 May 2021 John Collins  Correct normalization of aux and out dirs.
+##                           Version 4.74
+##  3 May 2021 John Collins  Minor corrections.  Submit to CTAN.
 ## 30 Apr 2021 John Collins  Revert the change of 14-15 Apr, by removing the
 ##                           of cwd().  That gave sometimes obnoxiously slow
 ##                           parsing of big log files, because of the slowness
@@ -76,8 +82,8 @@
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.73';
-$version_details = "$My_name, John Collins, 3 May 2021";
+$version_num = '4.74';
+$version_details = "$My_name, John Collins, 16 May 2021";
 
 use Config;
 use File::Basename;
@@ -124,7 +130,7 @@ use Digest::MD5;
 
 # The following variables are assigned once and then used in symbolic 
 #     references, so we need to avoid warnings 'name used only once':
-use vars qw( $dvi_update_command $ps_update_command $pdf_update_command );
+use vars qw( $dvi_update_command $ps_update_command $pdf_update_command $out_dir_requested );
 
 # Translation of signal names to numbers and vv:
 %signo = ();
@@ -1015,9 +1021,13 @@ $aux_dir = '';          # Directory for aux files (log, aux, etc).
 
 ## default flag settings.
 $recorder = 1;          # Whether to use recorder option on latex/pdflatex
-$silent = 0;            # Silence latex's messages?
+$silent = 0;            # Whether fo silence latex's messages (and others)
 $warnings_as_errors = 0;# Treat warnings as errors and exit with non-zero exit code
 $silence_logfile_warnings = 0; # Do list warnings in log file
+$rc_report = 0;         # Whether to report on rc files read
+$aux_out_dir_report = 0; # Whether to report on aux_dir & out_dir after
+                         # initialization and normalization
+
 $kpsewhich_show = 0;    # Show calls to and results from kpsewhich
 $landscape_mode = 0;    # default to portrait mode
 $analyze_input_log_always = 1; # Always analyze .log for input files in the
@@ -1859,8 +1869,9 @@ while ($_ = $ARGV[0])
   }
 }
 
-show_array( "Rc files read:", @rc_files_read )
-    unless ( $silent && ! $diagnostics );
+if ( $diagnostics || $rc_report ) {
+    show_array( "Rc files read:", @rc_files_read );
+}
 
 if ( $bad_options > 0 ) {
     &exit_help( "Bad options specified" );
@@ -1869,17 +1880,22 @@ if ( $bad_options > 0 ) {
 warn "$My_name: This is $version_details, version: $version_num.\n",
    unless $silent;
 
-
+if ($out_dir eq '' ){
+    # Default to cwd
+    $out_dir = '.';
+}
 if ( $aux_dir eq '' ){
-# ????????????This may be wrong, given MiKTeX's behavior
+    # Default to out_dir
+    #  ?? This is different than MiKTeX
     $aux_dir = $out_dir;
 }
-
 # Save original values for use in diagnositics.
 # We may change $aux_dir and $out_dir after a detection
 #  of results of misconfiguration.
 $aux_dir_requested = $aux_dir;
 $out_dir_requested = $out_dir;
+
+
 # The following reports results of diagnostics on location of .log file
 #   after the first run of a latex engine, when actually used aux_dir
 #   may not be the expected one, due to a configuration error.
@@ -2279,6 +2295,7 @@ foreach $filename ( @file_list )
     else {
         $path = '';
     }
+    
     local $aux_dir = $aux_dir;
     local $out_dir = $out_dir;
     local $latex = $latex;
@@ -2287,7 +2304,6 @@ foreach $filename ( @file_list )
     local $xelatex = $xelatex;
 
     &normalize_aux_out_ETC;
-
     # Set -output-directory and -aux-directory options for *latex
     &set_aux_out_options;
 
@@ -2717,20 +2733,37 @@ sub ensure_path {
 sub normalize_aux_out_ETC {
     # 1. Normalize $out_dir and $aux_dir, so that if they have a non-trivial last
     #    component, any trailing '/' is removed.
-    # 2. Set $out_dir1 and $aux_dir1 to have a directory separator character
+    # 2. They should be non-empty.
+    # 3. Set $out_dir1 and $aux_dir1 to have a directory separator character
     #    '/' added if needed to give forms suitable for direct concatenation with
     #    a filename.  These are needed for substitutions like %Y%R.
     #    Nasty cases of dir_name: "/"  on all systems,  "A:", "A:/" etc on MS-Win
-    # 3. Set some TeX-related environment variables.
-    # 4. Ensure the aux and out directories exist
-    $aux_dir = dirname_no_tail( $aux_dir );
-    $out_dir = dirname_no_tail( $out_dir );
+    # 4. Set some TeX-related environment variables.
+    # 5. Ensure the aux and out directories exist
+
+    # Ensure the output/auxiliary directories exist, if need be
+    my $ret1 = 0;
+    my $ret2 = 0;
+    eval {
+        if ( $out_dir ) {
+            $ret1 = make_path_mod( $out_dir,  'output' );
+        }
+        if ( $aux_dir && ($aux_dir ne $out_dir) ) {
+            $ret2 = make_path_mod( $aux_dir,  'auxiliary' );
+        }
+    };
+    if ($ret1 || $ret2 || $@ ) {
+        if ($@) { print "Error message:\n  $@"; }
+        die "$My_name: Since there was trouble making the output (and aux) dirs, I'll stop\n"
+    }
+
     if ($normalize_names) {
         foreach ( $aux_dir, $out_dir ) { $_ = normalize_filename_abs($_); }
     }
     $aux_dir1 = $aux_dir;
     $out_dir1 = $out_dir;
     foreach ( $aux_dir1, $out_dir1 ) {
+        if ($_ eq '.') {$_ = '';}
         if ( ($_ ne '')  && ! m([\\/\:]$) ) {
             # Add a trailing '/' if necessary to give a string that can be
             # correctly concatenated with a filename:
@@ -2777,16 +2810,7 @@ sub normalize_aux_out_ETC {
         $ENV{TEXMFOUTPUT} = $aux_dir;
     }
     
-    # Ensure the output/auxiliary directories exist, if need be
-    if ( $out_dir ) {
-        make_path_mod( $out_dir,  'output' );
-    }
-
-    if ( $aux_dir && ($aux_dir ne $out_dir) ) {
-        make_path_mod( $aux_dir,  'auxiliary' );
-    }
-
-    if ($diagnostics) {
+    if ($diagnostics || $aux_out_dir_report ) {
         warn "$My_name: Cwd: '", good_cwd(), "'\n";
         warn "$My_name: Normalized aux dir and out dir: '$aux_dir', '$out_dir'\n";
         warn "$My_name: and combining forms: '$aux_dir1', '$out_dir1'\n";
@@ -2800,10 +2824,14 @@ sub set_aux_out_options {
     # Set -output-directory and -aux-directory options for *latex.  Use
     # placeholders for substitutions so that correct value is put in at
     # runtime.
-    # N.B. At this point, empty $aux_dir means cwd, unlike the definition
-    #      used in initialization stage of latexmk.
+    # N.B. At this point, $aux_dir and $out_dir should be non-empty, unlike the
+    #      case after the reading of latexmkrc files, where empty string means
+    #      use default.  Let's be certain, however:
+    if ($out_dir eq '') { $out_dir = '.'; $out_dir1 = ''; }
+    if ($aux_dir eq '') { $aux_dir = $out_dir; $aux_dir1 = $out_dir1; }
+    
     if ($emulate_aux) {
-        if ( $aux_dir && ($aux_dir ne '.') ) {
+        if ( $aux_dir ne '.' ) {
             # N.B. Set **output** directory to **aux_dir**, rather than
             # out_dir. If aux and out dirs are are different, then we'll move
             # the relevant files (.pdf, .ps, .dvi, .xdv, .fls to the output
@@ -2821,15 +2849,8 @@ sub set_aux_out_options {
             # N.B. If $aux_dir and $out_dir are the same, then the
             # -output-directory option is sufficient, especially because
             # the -aux-directory exists only in MiKTeX, not in TeXLive.
-            if ($aux_dir) {
-                add_option( "-aux-directory=%V",
+            add_option( "-aux-directory=%V",
                             \$latex, \$pdflatex, \$lualatex, \$xelatex );
-            }
-            else {
-                # Must have a non-empty string for argument of -aux-directory:
-                add_option( "-aux-directory=.",
-                            \$latex, \$pdflatex, \$lualatex, \$xelatex );
-            }
         }
     }
 } #END set_aux_out_options
@@ -3899,8 +3920,8 @@ sub print_help
   "   -f-    - turn off forced continuing processing past errors\n",
   "   -gg    - Super go mode: clean out generated files (-CA), and then\n",
   "            process files regardless of file timestamps\n",
-  "   -g     - process regardless of file timestamps\n",
-  "   -g-    - Turn off -g\n",
+  "   -g     - process at least one run of all rules\n",
+  "   -g-    - Turn off -g and -gg\n",
   "   -h     - print help\n",
   "   -help - print help\n",
   "   -indexfudge or -makeindexfudge - change directory to output directory when running makeindex\n",
@@ -5299,11 +5320,10 @@ sub find_set_log {
         else {
             warn "    But emulate_aux is off.  So I'll turn it on.\n";
             $emulate_aux = 1;
-            foreach ( $$Pext_cmd, $$Pint_cmd ) {
+            foreach ( $$Pext_cmd ) {
                 s/ -output-directory=[^ ]*(?= )//g;
                 s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
             }
-            print "========== '$$Pext_cmd' '$$Pint_cmd'\n";
         }
     }
     elsif ( test_gen_file( "$root_filename.log" ) ) {
@@ -5487,7 +5507,8 @@ sub normalize_filename {
    # Usage: normalize_filename( filename [, extra forms of name of cwd] )
    # Returns filename with removal of various forms for cwd, and
    # with conversion of directory separator to '/' only.
-   # Works also when filename is name of a directory.
+   # Also when filename is name of a directory, with a trailing '/',
+   #   the trailing '/' is removed.
    #
    my ( $file, @dirs ) = @_;
    my $file1 = $file;   # Saved original value
@@ -5496,9 +5517,11 @@ sub normalize_filename {
    # (Note both / and \ are allowed under MSWin.)
    foreach ($cwd, $file,  @dirs) {
        s(\\)(/)g;
+       # If this is directory name of form :.../", remove unnecessary
+       # trailing directory separators:
        $_ = dirname_no_tail( $_ );
    }
-   if ($filename eq '.') { $filename = ''; }
+   
    # Remove initial component equal to current working directory.
    # Use \Q and \E round directory name in regex to avoid interpretation
    #   of metacharacters in directory name:
@@ -5516,12 +5539,11 @@ sub normalize_filename {
            last;
      }
    }
-   if ($file eq '.' ) {
-       # This only occurs for a directory that is the cwd.
-       # Our convention is always to replace this by a blank.
-       # Watch out for tests of existence that will go wrong,
-       # and for a form for concatenating this with a filename.
-       $file = '';
+   if ($file eq '' ) {
+       # This only occurs for $file equal to a directory that
+       # is the cwd. Our convention is always to set it to '.'
+       # 
+       $file = '.';
    }
    return $file;
 } #END normalize_filename
@@ -9424,15 +9446,12 @@ sub make_path_mod {
     elsif ( -l $dir ) {
         $ret = 1;
         warn "$My_name: you requested $title directory '$dir',\n",
-             "    but there exists a symlink that has the same name, but\n",
-             "    does not point to anything.  I won't create a directory, and\n",
-             "    that will probably give an error later.\n";
+             "    but there exists a symlink of the same name. I won't create a directory,\n";
     }
     elsif ( ! -d $dir ) {
         $ret = 2;
         warn "$My_name: you requested $title directory '$dir',\n",
-             "    but an ordinary file of the same name exists, which will\n",
-             "    probably give an error later.\n";
+            "    but an ordinary file of the same name exists.\n";
     }
     return $ret;
 }
@@ -10112,7 +10131,22 @@ sub good_cwd {
 sub pushd {
     push @dir_stack, [cwd(), $cache{cwd}];
     if ( $#_ > -1) {
-        chdir dirname_no_tail( $_[0] ); 
+        local $ret = 0;
+        eval {
+            if ( -d $_[0] ) {
+                $ret = chdir dirname_no_tail( $_[0] );
+            }
+            else {
+                print "$my_name: Can't change directory to '$_[0]'\n",
+                      "   A directory of the same name does not exist.\n";
+            }
+        };
+        if ( ($ret == 0) || $@ ) {            
+            if ($@) {
+                print "Error:\n  $@" ;
+            }
+            die "$My_name: Error in changing directory to '$_[0]'.  I must stop\n";
+        }
         &cache_good_cwd;
     }
 }
@@ -10122,7 +10156,7 @@ sub pushd {
 sub popd {
     if ($#dir_stack > -1 ) { 
         my $Parr = pop @dir_stack;
-        chdir $$Parr[0]; 
+        chdir $$Parr[0];
         $cache{cwd} = $$Parr[1];
     }
 }
