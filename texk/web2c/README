@@ -9,9 +9,9 @@ or WEB-to-C translator.
 Web2c no longer exists as a separate distribution.  It is maintained as
 part of TeX Live (http://tug.org/texlive).
 
-See `NEWS' for changes by release, `ChangeLog` for all changes.
-See `INSTALL' for installation instructions.
-See `PROJECTS' for future improvements you might like to work on.
+See `NEWS' for changes by release,
+`ChangeLog` for all changes.
+`PROJECTS' for some old rainy-day ideas.
 
 If present, see *dir/README for more details on each package.
 

@@ -1,3 +1,8 @@
+2021-05-18  Karl Berry  <karl@freefriends.org>
+
+	* usage.c (usagehelp): if bug_email arg ends in "@tug.org"
+	also output the url for the mailing list.
+
 2021-04-28  Marcel Fabian Krueger  <tex@2krueger.de>
 	    Hironori KITAGAWA <h_kitagawa2001@yahoo.co.jp>
 	    Karl Berry <karl@freefriends.org>

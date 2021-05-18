@@ -1,3 +1,8 @@
+2021-05-18  Karl Berry  <karl@freefriends.org>
+
+	* README,
+	* PROJECTS: updates.
+
 2021-05-07  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (sup_save_size): increase to 30000000

@@ -5,8 +5,8 @@
 
 #include <w2c/config.h>
 
-/* Call usage if the program exits with an "usage error".  STR is supposed
-   to be the program name. */
+/* Print a message about trying --help with program name STR and exit
+   with bad status. */
 
 void
 usage (const_string str)
@@ -15,21 +15,39 @@ usage (const_string str)
   uexit (1);
 }
 
-/* Call usage if the program exits by printing the help message.
-   MESSAGE is a NULL-terminated array of strings which make up the
-   help message.  Each string is printed on a separate line.
-   We use arrays instead of a single string to work around compiler
-   limitations (sigh).
-*/
+
+/* Print MESSAGE, a NULL-terminated array of strings which make up the
+   help message, and exit successfully.  Each string is printed on a
+   separate line. We use arrays instead of a single string to work
+   around compiler limitations (sigh). Then print a line about sending
+   bug reports to BUG_EMAIL, which defaults to tex-k@tug.org if passed
+   NULL. If BUG_EMAIL is @tug.org, also output a url to the mailing list. */
+
 void
 usagehelp (const_string *message, const_string bug_email)
 {
-    if (!bug_email)
-        bug_email = "tex-k@tug.org";
-    while (*message) {
-        printf("%s\n", *message);
-        ++message;
+    if (!bug_email) {
+      bug_email = "tex-k@tug.org";
     }
-    printf("\nEmail bug reports to %s.\n", bug_email);
-    uexit(0);
+    
+    while (*message) {
+      printf ("%s\n", *message);
+      ++message;
+    }
+
+    printf ("\nEmail bug reports to %s", bug_email);
+    if (strlen (bug_email) > 9) {
+      const_string domain = strchr (bug_email, '@');
+      if (domain && strcmp (domain, "@tug.org") == 0) {
+        const_string ptr;
+        
+        printf (" (https://lists.tug.org/");
+        for (ptr = bug_email; ptr < domain; ptr++) {
+          putchar (*ptr);
+        }
+        printf (")");
+      }
+    }
+    puts (".");
+    uexit (0);
 }
