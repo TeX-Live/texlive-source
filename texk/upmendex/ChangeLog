@@ -1,3 +1,12 @@
+2021-05-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.56  Beta version.
+	* configure.ac: Bump version.
+	* styfile.c:
+	Fix a bug of reading keywords "setpage_prefix", "setpage_suffix"
+	in style file.
+	More strictly check string length.
+
 2021-05-09  Karl Berry  <karl@freefriends.org>
 
 	* mendex.h (page.attr): use int, not char, since we do signed
