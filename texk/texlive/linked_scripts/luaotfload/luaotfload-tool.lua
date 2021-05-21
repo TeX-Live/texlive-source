@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.17",       --TAGVERSION
-    date          = "2021-01-08", --TAGDATE
+    version       = "3.18",       --TAGVERSION
+    date          = "2021-05-21", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -584,7 +584,7 @@ local function display_general (fullinfo)
                 --- the MS compiler doesn’t support C99, so
                 --- strftime is missing some functionality;
                 --- see loslib.c for details.
-                val = osdate("%Y-%m-d %H:%M:%S", fullinfo[key])
+                val = osdate("%Y-%m-%d %H:%M:%S", fullinfo[key])
             end
         end
         if not val then
@@ -736,7 +736,7 @@ local action_sequence = {
     "config"   , "loglevel" , "help"      , "version" ,
     "dumpconf" , "diagnose" , "blacklist" , "cache"   ,
     "flush"    , "bisect"   , "generate"  , "list"    ,
-    "query"    ,
+    "query"    , "aliases"  ,
 }
 
 local action_pending  = tabletohash(action_sequence, false)
@@ -834,7 +834,7 @@ local bisect_status_fmt  = [[
 local function write_bisect_status (data)
     local payload = tableserialize (data, true)
     local status  = stringformat (bisect_status_fmt,
-                                  osdate ("%Y-%m-d %H:%M:%S", os.time ()),
+                                  osdate ("%Y-%m-%d %H:%M:%S", os.time ()),
                                   payload)
     if status and iosavedata (bisect_status_file, status) then
         logreport ("info", 4, "bisect",
@@ -1396,6 +1396,51 @@ function actions.diagnose (job)
     return diagnose (job)
 end
 
+function actions.aliases (job)
+    --- Help XeTeX find fonts
+    local name_index = fonts.names.data() or fonts.names.load()
+    local mappings   = name_index.mappings
+    local fontnames  = name_index.fontnames.texmf
+    local families   = name_index.families.texmf
+    local formats    = { 'ttf', 'otf', }
+    for _, format in ipairs(formats) do
+        for name, mapping in pairs(fontnames[format]) do
+            mapping = mappings[mapping]
+            print(string.format('%s %s', mapping.basename, name))
+        end
+    end
+    local function best_match(options, target)
+        if not options then return end
+        if options.default then return mappings[options.default] end
+        local best, best_diff = nil, math.huge
+        for _, option in ipairs(options) do
+            local diff = math.abs(option[1]-target)
+            if diff < best_diff then
+                best, best_diff = option[4], diff
+            end
+        end
+        return mappings[best]
+    end
+    for _, format in ipairs(formats) do
+        for name, family in pairs(families[format]) do
+            local r = best_match(family.r, 655360, mappings)
+            local b = best_match(family.b, 655360, mappings)
+            local i = best_match(family.i, 655360, mappings)
+            local bi = best_match(family.bi, 655360, mappings)
+            r = r or b or i or bi -- Not sure if this is still needed
+            if r then
+                b, i, bi = b or r, i or r, bi or r
+                print(string.format('%s %s\n%s %s-b\n%s %s-i\n%s %s-bi',
+                    r.basename, name,
+                    b.basename, name,
+                    i.basename, name,
+                    bi.basename, name))
+            end
+        end
+    end
+    return true
+end
+
 --- stuff to be carried out prior to exit
 
 local finalizers = { }
@@ -1434,6 +1479,7 @@ local function process_cmdline ( ) -- unit -> jobspec
     }
 
     local long_options = {
+        aliases            = 0,
         ["bisect"]         = 1,
         cache              = 1,
         conf               = 1,
@@ -1587,6 +1633,8 @@ local function process_cmdline ( ) -- unit -> jobspec
             action_pending["dumpconf"] = true
         elseif v == "print-conf" then
             result.print_config = true
+        elseif v == "aliases" then
+            action_pending["aliases"] = true
         end
     end
 
