@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59287 2021-05-20 21:34:36Z karl $
+# $Id: tlmgr.pl 59291 2021-05-21 03:14:40Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59287 $';
-my $datrev = '$Date: 2021-05-20 23:34:36 +0200 (Thu, 20 May 2021) $';
+my $svnrev = '$Revision: 59291 $';
+my $datrev = '$Date: 2021-05-21 05:14:40 +0200 (Fri, 21 May 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -398,6 +398,10 @@ sub main {
 
   GetOptions(\%opts, keys(%optarg)) or pod2usage(2);
 
+  # load the config file and set the config options
+  # load it BEFORE starting downloads as we set persistent-downloads there!
+  load_config_file();
+
   $::debug_translation = 0;
   $::debug_translation = 1 if $opts{"debug-translation"};
 
@@ -422,7 +426,7 @@ sub main {
 
   ddebug("action = $action\n");
   for my $k (keys %opts) {
-    ddebug("$k => $opts{$k}\n");
+    ddebug("$k => " . (defined($opts{$k}) ? $opts{$k} : "(undefined)") . "\n");
   }
   ddebug("arguments: @ARGV\n") if @ARGV;
 
@@ -668,10 +672,6 @@ for the full story.\n";
   }
 
   $loadmediasrcerror = "Cannot load TeX Live database from ";
-
-  # load the config file and set the config options
-  # load it BEFORE starting downloads as we set persistent-downloads there!
-  load_config_file();
 
   # in system mode verify that the selected action is allowed
   if (!$opts{"usermode"} && $config{'allowed-actions'}) {
@@ -10224,7 +10224,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59287 2021-05-20 21:34:36Z karl $
+$Id: tlmgr.pl 59291 2021-05-21 03:14:40Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

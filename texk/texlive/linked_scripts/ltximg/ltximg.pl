@@ -31,7 +31,7 @@ use Config;
 use Cwd;
 use if $^O eq 'MSWin32', 'Win32';
 use if $^O eq 'MSWin32', 'Module::Load::Conditional' => qw(can_load check_install requires);
-# Need on Windows cmd for colors, TeX Live not provide 'Win32::Console::ANSI'
+# Need for colors in Windows cmd, TeX Live not provide 'Win32::Console::ANSI'
 if($^O eq 'MSWin32' && check_install( module => 'Win32::Console::ANSI')) {
     require Win32::Console::ANSI;
 }
@@ -44,8 +44,8 @@ my $workdir = cwd;
 ### Script identification
 my $scriptname = 'ltximg';
 my $program    = 'LTXimg';
-my $nv         = 'v2.0';
-my $date       = '2021-01-24';
+my $nv         = 'v2.1';
+my $date       = '2021-05-21';
 my $copyright  = <<"END_COPYRIGHT" ;
 [$date] - LaTeX environments to image and standalone files
 END_COPYRIGHT
@@ -601,7 +601,7 @@ sub SearchRegistry {
     return $found;
 } # end GS search registry
 
-### This part is only necessary if you're using Git on windows and don't
+### This part is only necessary if you're using Git-bash on windows and don't
 ### have gs configured in PATH. Git for windows don't have a Win32::TieRegistry
 ### module for perl (is not supported in the current versions of msys).
 sub Searchbyregquery {
@@ -2544,17 +2544,13 @@ if (@pst_exa and $outfile) {
 $PALABRAS = qr/\b (?: pst-\w+ | pstricks (?: -add | -pdf )? | psfrag |psgo |vaucanson-g| auto-pst-pdf(?: -lua )? )/x;
 $FAMILIA  = qr/\{ \s* $PALABRAS (?: \s* [,] \s* $PALABRAS )* \s* \}(\%*)?/x;
 
-### Clean PST content in preamble
+### Clean PSTricks content in preamble
 if ($clean{pst} and $outfile) {
     Log("Remove pstricks packages in preamble for $opts_cmd{string}{output}$outext");
     $preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
                    ^ $USEPACK (?: $CORCHETES )? $FAMILIA \s*//msxg;
     $preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
                    (?: ^ $USEPACK \{ | \G) [^}]*? \K (,?) \s* $PALABRAS (\s*) (,?) /$1 and $3 ? ',' : $1 ? $2 : ''/gemsx;
-    if (@pst_exa) {
-        Log("Uncomment pst-exa package in preamble for $opts_cmd{string}{output}$outext");
-        $preamble =~ s/(?:\%)(\\usepackage\[\s*)(swpl|tcb)(,pdf\s*\]\{pst-exa\})/$1$2$3/msxg;
-    }
     Log("Remove \\psset\{...\} in preamble for $opts_cmd{string}{output}$outext");
     $preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
                    \\psset\{(?:\{.*?\}|[^\{])*\}(?:[\t ]*(?:\r?\n|\r))+//gmsx;
@@ -2564,6 +2560,12 @@ if ($clean{pst} and $outfile) {
     Log("Remove empty lines in preamble for $opts_cmd{string}{output}$outext");
     $preamble =~ s/\%<\*$dtxverb> .+?\%<\/$dtxverb>(*SKIP)(*F)|
                    ^\\usepackage\{\}(?:[\t ]*(?:\r?\n|\r))+/\n/gmsx;
+}
+
+### Uncomment pst-exa package
+if (@pst_exa and $outfile) {
+    Log("Uncomment pst-exa package in preamble for $opts_cmd{string}{output}$outext");
+    $preamble =~ s/(?:\%)(\\usepackage\[\s*)(swpl|tcb)(,pdf\s*\]\{pst-exa\})/$1$2$3/msxg;
 }
 
 ### To be sure that the package graphicx and \graphicspath is in the main
@@ -2807,9 +2809,10 @@ if ($outfile) {
     }
     # Remove internal mark for verbatim and verbatim write environments
     $out_file =~ s/\%<\*$dtxverb>\s*(.+?)\s*\%<\/$dtxverb>/$1/gmsx;
-    %replace = (%changes_out);
+    %replace = (%changes_out,%tmpoutreplace);
     $find    = join q{|}, map {quotemeta} sort { length $a <=> length $b } keys %replace;
     $out_file =~ s/($find)/$replace{$1}/g;
+    # Write <output file>
     if (-e "$opts_cmd{string}{output}$outext") {
         Log("Rewriting the file $opts_cmd{string}{output}$outext in $workdir");
         Infocolor('Warning', "The file [$opts_cmd{string}{output}$outext] already exists and will be rewritten");
@@ -2818,7 +2821,6 @@ if ($outfile) {
         Infoline("Creating the file $opts_cmd{string}{output}$outext");
         Log("Write the file $opts_cmd{string}{output}$outext in $workdir");
     }
-    # Write <output file>
     open my $OUTfile, '>', "$opts_cmd{string}{output}$outext";
         print {$OUTfile} $out_file;
     close $OUTfile;
@@ -3281,4 +3283,3 @@ General Public License for more details.
 gs(1), dvips(1), ps2pdf(1), pdfcrop(1), pdftops(1), pdftocairo(1), pdftoppm(1)
 
 =cut
-
