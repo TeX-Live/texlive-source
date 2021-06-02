@@ -1,3 +1,9 @@
+2021-06-02  Masamichi HOSODA  <trueroad@trueroad.jp>
+
+	* pdfencoding.c: Fix a segmentation fault on pdfencoding.
+	https://tug.org/pipermail/dvipdfmx/2021-May/000270.html
+	https://github.com/texjporg/tex-jp-build/issues/114
+
 2021-05-31  Karl Berry  <karl@tug.org>
 
 	* dvipdfmx.1: bug reporting address now dvipdfmx@tug.org

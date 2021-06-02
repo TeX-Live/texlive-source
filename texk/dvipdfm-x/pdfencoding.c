@@ -74,7 +74,7 @@ typedef struct pdf_encoding
   char     *glyphs[256];     /* ".notdef" must be represented as NULL */
   char      is_used[256];
 
-  struct pdf_encoding *baseenc;
+  int baseenc_id;
   pdf_obj  *tounicode;
 
   pdf_obj  *resource;
@@ -100,7 +100,7 @@ pdf_init_encoding_struct (pdf_encoding *encoding)
 
   encoding->tounicode = NULL;
 
-  encoding->baseenc   = NULL;
+  encoding->baseenc_id= -1;
   encoding->resource  = NULL;
 
   encoding->flags     = 0;
@@ -437,7 +437,7 @@ pdf_encoding_new_encoding (const char *enc_name, const char *ident,
     if (baseenc_id < 0 || !pdf_encoding_is_predefined(baseenc_id))
       ERROR("Illegal base encoding %s for encoding %s\n",
 	    baseenc_name, encoding->enc_name);
-    encoding->baseenc = &enc_cache.encodings[baseenc_id];
+    encoding->baseenc_id = baseenc_id;
   }
 
   if (flags & FLAG_IS_PREDEFINED)
@@ -464,9 +464,11 @@ void pdf_encoding_complete (void)
        */
       int with_base = !(encoding->flags & FLAG_USED_BY_TYPE3)
 	              || pdf_check_version(1, 4) >= 0;
+      pdf_encoding *baseenc = (encoding->baseenc_id < 0) ?
+	NULL : &enc_cache.encodings[encoding->baseenc_id];
       ASSERT(!encoding->resource);
       encoding->resource = create_encoding_resource(encoding,
-						    with_base ? encoding->baseenc : NULL);
+						    with_base ? baseenc : NULL);
       ASSERT(!encoding->tounicode);
       encoding->tounicode = pdf_create_ToUnicode_CMap(encoding->enc_name,
 						      encoding->glyphs,
