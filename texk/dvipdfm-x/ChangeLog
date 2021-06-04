@@ -1,3 +1,9 @@
+2021-06-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfximage.c: Improved error messages when PDF/PS inclusion
+	fails. Output page numbers too.
+	* configure.ac: Version 20210605.
+
 2021-06-02  Masamichi HOSODA  <trueroad@trueroad.jp>
 
 	* pdfencoding.c: Fix a segmentation fault on pdfencoding.
