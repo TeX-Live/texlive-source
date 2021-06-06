@@ -68,8 +68,8 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |exp| |semi| & |stmt| & |x=0;|\cr
 \+& |exp| |colon| & |tag| \hfill $E^*C$ & |found:|\cr
 \+& |exp| |rbrace| & |stmt| |rbrace| & end of \&{enum} list\cr
-\+& |exp| \alt {|lpar| |rpar|} |cast|  \alt|const_like| |case_like| &
-      |exp| \alt {|lpar| |rpar|} |cast|  \hfill
+\+& |exp| \alt {|lpar| |rpar|} |cast| \alt|const_like| |case_like| &
+      |exp| \alt {|lpar| |rpar|} |cast| \hfill
        \alt $R=R\.\ C$ $C_1=C_1\.\ C_2$ & 
       \malt {|f() const|} {|f(int) throw|} \cr
 \+& |exp| \alt |exp| |cast| & |exp| & |time()|\cr
@@ -161,7 +161,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |else_like| |lbrace| & |else_head| |lbrace| & \&{else} $\{$\cr
 \+& |else_like| |stmt| & |stmt| \hfill
        $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
-\+& |else_head| \alt|stmt| |exp|  & |stmt| \hfill
+\+& |else_head| \alt|stmt| |exp| & |stmt| \hfill
       $|force|\,E\,\\{bsp}\,|noop|\,|cancel|\,S\,\\{bsp}$ & $\!\!$|else{x=0;}|\cr
 \+& |if_clause| |lbrace| & |if_head| |lbrace| & |if (x) {|\cr
 \+& |if_clause| |stmt| |else_like| |if_like| & |if_like| \hfill

@@ -1,18 +1,16 @@
-2021-04-13  Andreas Scherer  <https://ascherer.github.io>
+2021-06-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,
-	* README,
 	* comm-{mac,mini,ql,w2c}.ch,
 	* comm-w2c.h,
-	* common.bux,
 	* common.c,
 	* common.h,
 	* common.w,
 	* ctang-{bs,pc,ql,vms,w2c,w32}.ch,
 	* ctangle.c,
 	* ctangle.w,
-	* ctwill.bux,
 	* ctwill-{mini,w2c}.ch,
+	* ctwimac.tex,
 	* cweav-{bs,pc,ql,vms,w2c,w32}.ch,
 	* cweave.w,
 	* cwebmac.tex,
@@ -21,7 +19,8 @@
 	* po/cweb[-tl].pot,
 	* po/de/cweb[-tl].po,
 	* po/it/cweb.po,
-	* system.bux: CWEB 4.3 and CWEBbin 2021.
+	* prod-twill.w,
+	* prod.w: CWEB 4.3 and CWEBbin 2021.
 
 2021-03-26  Andreas Scherer  <https://ascherer.github.io>
 

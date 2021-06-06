@@ -17,12 +17,12 @@ by using "huge" pointers.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.3)"
+@d banner "This is CTANGLE (Version 4.4)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.3pc/big)"
+@d banner "This is CTANGLE (Version 4.4pc/big)"
 @z
 
 
@@ -84,49 +84,6 @@ extern hash_pointer h; /* index into hash-head array */
 @z
 
 
-@x Section 17.
-@ The following parameters were sufficient in the original \.{WEB} to
-handle \TEX/, so they should be sufficient for most applications of
-\.{CWEB}.
-
-@d max_bytes 1000000 /* the number of bytes in identifiers,
-  index entries, and section names */
-@d max_toks 1000000 /* number of bytes in compressed \CEE/ code */
-@d max_names 10239 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@d max_sections 4000 /* greater than the total number of sections */
-@d max_texts 10239 /* number of replacement texts, must be less than 10240 */
-@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
-@d stack_size 500 /* number of simultaneous levels of macro expansion */
-@d buf_size 1000 /* maximum length of input line, plus one */
-@y
-@ The following parameters were sufficient in the original \.{WEB} to
-handle \TEX/, so they should be sufficient for most applications of
-\.{CWEB}.
-
-(This is a modified version of \.{CTANGLE}, and in fact one of the parameters
-has been reduced in value.  The parameter |max_toks|
-has been reduced from 270000 [which
-was sufficient to handle \TEX/] to
-170000, so that \.{CTANGLE}
-may be run on {\mc MSDOS}
-systems that are tight on memory.  Consider, for
-instance, an 80286-based machine with several TSRs and drivers, trying
-to run \.{CTANGLE} from a makefile.)
-
-@d max_bytes 90000 /* the number of bytes in identifiers,
-  index entries, and section names */
-@d max_toks 170000 /* number of bytes in compressed \CEE/ code */
-@d max_names 4000 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@d max_sections 4000 /* greater than the total number of sections */
-@d max_texts 2500 /* number of replacement texts, must be less than 10240 */
-@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
-@d stack_size 50 /* number of simultaneous levels of macro expansion */
-@d buf_size 100 /* for \.{CWEAVE} */
-@z
-
-
 @x Section 19.
   eight_bits *tok_start; /* pointer into |tok_mem| */
   sixteen_bits text_link; /* relates replacement texts */
@@ -141,6 +98,22 @@ typedef text *text_pointer;
 
 
 @x Section 20.
+@ @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@d max_toks 270000 /* number of bytes in compressed \CEE/ code */
+@y
+@ (This is a modified version of \.{CTANGLE}, and in fact one of the parameters
+has been reduced in value.  The parameter |max_toks|
+has been reduced from 270000 [which
+was sufficient to handle \TEX/] to
+170000, so that \.{CTANGLE}
+may be run on {\mc MSDOS}
+systems that are tight on memory.  Consider, for
+instance, an 80286-based machine with several TSRs and drivers, trying
+to run \.{CTANGLE} from a makefile.)
+@d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@d max_toks 170000 /* number of bytes in compressed \CEE/ code */
+@z
+@x
 static eight_bits tok_mem[max_toks];
 static eight_bits *tok_mem_end=tok_mem+max_toks-1;
 static eight_bits *tok_ptr; /* first unused position in |tok_mem| */

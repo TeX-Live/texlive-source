@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.3 --- May 2021
+% Version 4.4 --- June 2021
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB4.3}
-\chardef\cwebversion=4 \chardef\cwebrevision=1
+\xdef\fmtversion{\fmtversion+CWEB4.4}
+\chardef\cwebversion=4 \chardef\cwebrevision=4
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -350,7 +350,7 @@
 %    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant % versions < 3.67
     \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant % in version 3.67
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
+    \def\%{\cdot 2^{\aftergroup}}% power of two (via dirty trick)
     \let\~=\oct \let\^=\hex \let\\=\bin {#1}$}}
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section

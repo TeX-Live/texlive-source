@@ -10,24 +10,24 @@ ex <dev_>cc;'-v -h -c -=500000 -DCWEBINPUTS=flp2_ common_c'
 @x
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.3)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.4)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
 @y
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (QL Version 4.3)}
+\def\title{Common code for CTANGLE and CWEAVE (QL Version 4.4)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -40,7 +40,7 @@ for the file name plus one character as string terminator. (Note that
 (current) QDOS/SMSQ file systems have a limitation of 36 characters as
 maximum length for a file name.
 @x
-@d max_file_name_length 1024
+@d max_file_name_length 60
 @y
 @d max_file_name_length 42
 @z
@@ -148,7 +148,7 @@ the routine as if it would work.
     sprintf(web_file_name,"%s.w",*argv);
   else {
     strcpy(web_file_name,*argv);
-    *dot_pos=0; /* string now ends where the dot was */
+    *dot_pos='\0'; /* string now ends where the dot was */
   }
   sprintf(alt_web_file_name,"%s.web",*argv);
   sprintf(tex_file_name,"%s.tex",name_pos); /* strip off directory name */
@@ -166,7 +166,7 @@ the routine as if it would work.
     sprintf(web_file_name,"%s_w",*argv);
   else {
     strcpy(web_file_name,*argv);
-    *dot_pos=0; /* string now ends where the dot was */
+    *dot_pos='\0'; /* string now ends where the dot was */
   }
   sprintf(alt_web_file_name,"%s_web",*argv);
   sprintf(tex_file_name,"%s_tex",name_pos); /* strip off directory name */
@@ -219,7 +219,7 @@ the routine as if it would work.
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
     if (make_xrefs) { /* indexes will be generated */
-      *dot_pos=0;
+      *dot_pos='\0';
       sprintf(idx_file_name,"%s.idx",*argv);
       sprintf(scn_file_name,"%s.scn",*argv);
     }
@@ -240,7 +240,7 @@ the routine as if it would work.
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
     if (make_xrefs) { /* indexes will be generated */
-      *dot_pos=0;
+      *dot_pos='\0';
       sprintf(idx_file_name,"%s_idx",*argv);
       sprintf(scn_file_name,"%s_scn",*argv);
     }

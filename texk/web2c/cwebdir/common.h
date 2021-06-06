@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.3 --- May 2021 (works also with later versions)
+% Version 4.4 --- June 2021 (works also with later versions)
 
 % Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth
 
@@ -99,7 +99,7 @@ extern char *limit; /* points to the last character in the buffer */
 @f line x /* make |line| an unreserved word */
 @d max_include_depth 10 /* maximum number of source files open
   simultaneously, not counting the change file */
-@d max_file_name_length 1024
+@d max_file_name_length 60
 @d cur_file file[include_depth] /* current file */
 @d cur_file_name file_name[include_depth] /* current file name */
 @d cur_line line[include_depth] /* number of current line in current file */
@@ -134,7 +134,7 @@ extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
 
 @ Code related to identifier and section name storage:
 @d length(c) (size_t)((c+1)->byte_start-(c)->byte_start) /* the length of a name */
-@d print_id(c) term_write((c)->byte_start,length((c))) /* print identifier */
+@d print_id(c) term_write((c)->byte_start,length(c)) /* print identifier */
 @d llink link /* left link in binary search tree for section names */
 @d rlink dummy.Rlink /* right link in binary search tree for section names */
 @d root name_dir->rlink /* the root of the binary search tree
@@ -230,16 +230,14 @@ extern void print_stats(void);
 handle \TEX/, so they should be sufficient for most applications of
 \.{CWEB}.
 
-@d max_bytes 1000000 /* the number of bytes in identifiers,
-  index entries, and section names */
-@d max_toks 1000000 /* number of bytes in compressed \CEE/ code */
-@d max_names 10239 /* number of identifiers, strings, section names;
-  must be less than 10240 */
-@d max_sections 4000 /* greater than the total number of sections */
-@d max_texts 10239 /* number of replacement texts, must be less than 10240 */
-@d longest_name 10000 /* file and section names and section texts shouldn't be longer than this */
-@d stack_size 500 /* number of simultaneous levels of macro expansion */
-@d buf_size 1000 /* maximum length of input line, plus one */
+@d buf_size 100 /* maximum length of input line, plus one */
+@d longest_name 10000 /* file names, section names, and section texts
+   shouldn't be longer than this */
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
+@d max_bytes 90000 /* the number of bytes in identifiers,
+  index entries, and section names; must be less than $2^{24}$ */
+@d max_names 4000 /* number of identifiers, strings, section names;
+  must be less than 10240 */
+@d max_sections 2000 /* greater than the total number of sections */
 
 @ End of \.{COMMON} interface.

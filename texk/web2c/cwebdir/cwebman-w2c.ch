@@ -93,17 +93,17 @@
 @z
 
 @x
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.3)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.4)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.3 [\TeX~Live])}
+\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.4 [\TeX~Live])}
 @z
 
 @x
-\vskip 18pt\centerline{(Version 4.3 --- May 2021)}
+\vskip 18pt\centerline{(Version 4.4 --- June 2021)}
 @y
-\vskip 18pt\centerline{(Version 4.3 --- May 2021)%
-\footnote*{This document describes the extended \.{CWEB} (Version 4.3 [\TeX~Live]).}}
+\vskip 18pt\centerline{(Version 4.4 --- June 2021)%
+\footnote*{This document describes the extended \.{CWEB} (Version 4.4 [\TeX~Live]).}}
 @z
 
 @x
@@ -273,9 +273,9 @@ generated sections 27--31 of the file
 @z
 
 @x
-\def\runninghead{APPENDIX A  --- TRANSLATION BY {\tentt CTANGLE}}
+\def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CTANGLE}}
 @y
-\def\runninghead{APPENDIX A  --- TRANSLATION BY {\tentt CTANGLE}}
+\def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CTANGLE}}
 \subsection Translation by CTANGLE.
 @z
 
@@ -314,9 +314,9 @@ And here's what the same excerpt looks like when typeset.
 @z
 
 @x
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.3)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.4)\}{ }\\vfill\}}\cr}$$
 @y
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.3)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.4)\}{ }\\vfill\}}\cr}$$
 @z
 
 @x

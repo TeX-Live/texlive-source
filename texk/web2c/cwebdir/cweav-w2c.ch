@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CWEAVE (Version 4.3)}
+\def\title{CWEAVE (Version 4.4)}
 @y
-\def\title{CWEAVE (Version 4.3 [\TeX~Live])}
+\def\title{CWEAVE (Version 4.4 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
 @y
-  \centerline{(Version 4.3 [\TeX~Live])}
+  \centerline{(Version 4.4 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CWEAVE (Version 4.3)"
+@d banner "This is CWEAVE (Version 4.4)"
 @y
-@d banner "This is CWEAVE, Version 4.3"
+@d banner "This is CWEAVE, Version 4.4"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -60,9 +60,29 @@
 @z
 
 @x
+@d max_refs 20000 /* number of cross-references; must be less than 65536 */
+@d max_scraps 2000 /* number of tokens in \CEE/ texts being parsed */
+@y
+@d max_refs 65535 /* number of cross-references; must be less than 65536 */
+@d max_scraps 5000 /* number of tokens in \CEE/ texts being parsed */
+@z
+
+@x
 @d append_xref(c) if (xref_ptr==xmem_end) overflow("cross-reference");
 @y
 @d append_xref(c) if (xref_ptr==xmem_end) overflow(_("cross-reference"));
+@z
+
+@x
+@d max_toks 20000 /* number of symbols in \CEE/ texts being parsed;
+  must be less than 65536 */
+@d max_texts 4000 /* number of phrases in \CEE/ texts being parsed;
+  must be less than 10240 */
+@y
+@d max_toks 65535 /* number of symbols in \CEE/ texts being parsed;
+  must be less than 65536 */
+@d max_texts 10239 /* number of phrases in \CEE/ texts being parsed;
+  must be less than 10240 */
 @z
 
 @x
@@ -84,9 +104,9 @@
 @z
 
 @x
-    case translit_code: err_print("! Use @@l in limbo only"); continue;
+  case translit_code: err_print("! Use @@l in limbo only"); continue;
 @y
-    case translit_code: err_print(_("! Use @@l in limbo only")); continue;
+  case translit_code: err_print(_("! Use @@l in limbo only")); continue;
 @z
 
 @x
@@ -126,9 +146,9 @@
 @z
 
 @x
-  if (loc>=limit) err_print("! Verbatim string didn't end");
+if (loc>=limit) err_print("! Verbatim string didn't end");
 @y
-  if (loc>=limit) err_print(_("! Verbatim string didn't end"));
+if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 @z
 
 @x
@@ -144,15 +164,15 @@
 @z
 
 @x
-    err_print("! Missing left identifier of @@s");
+  err_print("! Missing left identifier of @@s");
 @y
-    err_print(_("! Missing left identifier of @@s"));
+  err_print(_("! Missing left identifier of @@s"));
 @z
 
 @x
-      err_print("! Missing right identifier of @@s");
+    err_print("! Missing right identifier of @@s");
 @y
-      err_print(_("! Missing right identifier of @@s"));
+    err_print(_("! Missing right identifier of @@s"));
 @z
 
 @x
@@ -248,13 +268,13 @@ tex_puts("cwebma");
 @z
 
 @x
-@d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
+@d inner_tok_flag (5*id_flag) /* signifies a token list in `\pb' */
 
 @c
 static void
 print_text( /* prints a token list for debugging; not used in |main| */
 @y
-@d inner_tok_flag 5*id_flag /* signifies a token list in `\pb' */
+@d inner_tok_flag (5*id_flag) /* signifies a token list in `\pb' */
 
 @<Predecl...@>=
 #if 0
@@ -397,9 +417,9 @@ else if (cat1==stmt) {
 @z
 
 @x
-    if (tok_ptr+6>tok_mem_end) overflow("token");
+  if (tok_ptr+6>tok_mem_end) overflow("token");
 @y
-    if (tok_ptr+6>tok_mem_end) overflow(_("token"));
+  if (tok_ptr+6>tok_mem_end) overflow(_("token"));
 @z
 
 @x
@@ -463,9 +483,9 @@ else if (cat1==stmt) {
 @z
 
 @x
-reset_input(); if (show_progress) fputs("\nWriting the output file...",stdout);
+if (show_progress) fputs("\nWriting the output file...",stdout);
 @y
-reset_input(); if (show_progress) fputs(_("\nWriting the output file..."),stdout);
+if (show_progress) fputs(_("\nWriting the output file..."),stdout);
 @z
 
 @x
@@ -620,7 +640,7 @@ improved features that have been created by numerous contributors over the
 course of a quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
-material should nicely integrate with the original ``\&{272.~Index}.''
+material should nicely integrate with the original ``\&{271.~Index}.''
 
 @* Formatting alternatives.
 \.{CWEAVE} indents declarations after old-style function definitions and

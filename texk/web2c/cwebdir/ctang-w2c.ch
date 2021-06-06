@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CTANGLE (Version 4.3)}
+\def\title{CTANGLE (Version 4.4)}
 @y
-\def\title{CTANGLE (Version 4.3 [\TeX~Live])}
+\def\title{CTANGLE (Version 4.4 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
 @y
-  \centerline{(Version 4.3 [\TeX~Live])}
+  \centerline{(Version 4.4 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CTANGLE (Version 4.3)"
+@d banner "This is CTANGLE (Version 4.4)"
 @y
-@d banner "This is CTANGLE, Version 4.3"
+@d banner "This is CTANGLE, Version 4.4"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -57,6 +57,14 @@
 @i common.h
 @y
 @i comm-w2c.h
+@z
+
+@x
+@ @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@d max_toks 270000 /* number of bytes in compressed \CEE/ code */
+@y
+@ @d max_texts 10239 /* number of replacement texts, must be less than 10240 */
+@d max_toks 1000000 /* number of bytes in compressed \CEE/ code */
 @z
 
 @x
@@ -119,7 +127,7 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;
-    cur_name=(*an_output_file);
+    cur_name=*an_output_file;
     cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
     cur_end=(cur_repl+1)->tok_start;
@@ -142,7 +150,7 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;
-    cur_name=(*an_output_file);
+    cur_name=*an_output_file;
     cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
     cur_end=(cur_repl+1)->tok_start;
@@ -190,15 +198,15 @@ strcpy(check_file_name,""); /* We want to get rid of the temporary file */
 @z
 
 @x
-    case translit_code: err_print("! Use @@l in limbo only"); continue;
+  case translit_code: err_print("! Use @@l in limbo only"); continue;
 @y
-    case translit_code: err_print(_("! Use @@l in limbo only")); continue;
+  case translit_code: err_print(_("! Use @@l in limbo only")); continue;
 @z
 
 @x
-        err_print("! Double @@ should be used in control text");
+      err_print("! Double @@ should be used in control text");
 @y
-        err_print(_("! Double @@ should be used in control text"));
+      err_print(_("! Double @@ should be used in control text"));
 @z
 
 @x
@@ -238,15 +246,15 @@ strcpy(check_file_name,""); /* We want to get rid of the temporary file */
 @z
 
 @x
-  if (loc>=limit) err_print("! Verbatim string didn't end");
+if (loc>=limit) err_print("! Verbatim string didn't end");
 @y
-  if (loc>=limit) err_print(_("! Verbatim string didn't end"));
+if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 @z
 
 @x
-@d app_repl(c)  {if (tok_ptr==tok_mem_end) overflow("token"); *tok_ptr++=c;}
+@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow("token"); *(tok_ptr++)=c;}
 @y
-@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow(_("token")); *tok_ptr++=c;}
+@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow(_("token")); *(tok_ptr++)=c;}
 @z
 
 @x
@@ -286,9 +294,9 @@ case output_defs_code: if (t!=section_name) err_print(_("! Misplaced @@h"));
 @z
 
 @x
-    err_print("! Definition flushed, must start with identifier");
+  err_print("! Definition flushed, must start with identifier");
 @y
-    err_print(_("! Definition flushed, must start with identifier"));
+  err_print(_("! Definition flushed, must start with identifier"));
 @z
 
 @x
@@ -361,8 +369,7 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
   rename(check_file_name,C_file_name); /* This was the first run */
 
 @ @<Set up the comparison of temporary output@>=
-  char x[BUFSIZ],y[BUFSIZ];
-  int x_size,y_size,comparison=false;
+  boolean comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
@@ -377,10 +384,10 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
 
 @<Compare the temporary output to the previous output@>=
 do {
-  x_size = fread(x,1,BUFSIZ,C_file);
-  y_size = fread(y,1,BUFSIZ,check_file);
-  comparison = (x_size == y_size); /* Do not merge these statements! */
-  if(comparison) comparison = !memcmp(x,y,x_size);
+  char x[BUFSIZ],y[BUFSIZ];
+  int x_size = fread(x,sizeof(char),BUFSIZ,C_file);
+  int y_size = fread(y,sizeof(char),BUFSIZ,check_file);
+  comparison = (x_size == y_size) && !memcmp(x,y,x_size);
 } while(comparison && !feof(C_file) && !feof(check_file));
 
 @ Note the superfluous call to |remove| before |rename|.  We're using it to
@@ -400,13 +407,13 @@ instead of to a file (in \.{@@(...@@>}) to \.{/dev/null} or \.{/dev/stdout} or
 to a file and finally get rid of that file.
 
 @<Update the secondary results...@>=
-if(0==strcmp("/dev/stdout",output_file_name))
+if(0==strcmp("/dev/stdout",output_file_name))@/
   @<Redirect temporary output to \.{/dev/stdout}@>@;
-else if(0==strcmp("/dev/stderr",output_file_name))
+else if(0==strcmp("/dev/stderr",output_file_name))@/
   @<Redirect temporary output to \.{/dev/stderr}@>@;
-else if(0==strcmp("/dev/null",output_file_name))
+else if(0==strcmp("/dev/null",output_file_name))@/
   @<Redirect temporary output to \.{/dev/null}@>@;
-else { /* Hopefully a \\{regular} output file */
+else { /* Hopefully a regular output file */
   if((C_file=fopen(output_file_name,"r"))!=NULL) {
     @<Set up the comparison of temporary output@>@;
     @<Create the secondary output depending on the comparison@>@;
@@ -429,7 +436,7 @@ else {
 @<Redirect temporary output to \.{/dev/stdout}@>={
   @<Setup system redirection@>@;
   do {
-    in_size = fread(in_buf,1,BUFSIZ,check_file);
+    in_size = fread(in_buf,sizeof(char),BUFSIZ,check_file);
     in_buf[in_size]='\0';
     fprintf(stdout,"%s",in_buf);
   } while(!feof(check_file));@/
@@ -442,7 +449,7 @@ else {
 @<Redirect temporary output to \.{/dev/stderr}@>={
   @<Setup system redirection@>@;
   do {
-    in_size = fread(in_buf,1,BUFSIZ,check_file);
+    in_size = fread(in_buf,sizeof(char),BUFSIZ,check_file);
     in_buf[in_size]='\0';
     fprintf(stderr,"%s",in_buf);
   } while(!feof(check_file));@/
@@ -453,13 +460,14 @@ else {
 @ No copying necessary, just remove the temporary output file.
 
 @<Redirect temporary output to \.{/dev/null}@>={
-  int comparison=true;
+  boolean comparison=true;
   @<Create the secondary output...@>@;
 }
 
 @ @<Setup system redirection@>=
 char in_buf[BUFSIZ+1];
-int in_size,comparison=true;
+int in_size;
+boolean comparison=true;
 if((check_file=fopen(check_file_name,"r"))==NULL)
   fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>

@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.3 --- May 2021
+% Version 4.4 --- June 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -22,12 +22,12 @@
 
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.3)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.4)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -178,7 +178,7 @@ FILE *fp) /* what file to read from */
 @ Now comes the problem of deciding which file to read from next.
 Recall that the actual text that \.{CWEB} should process comes from two
 streams: a |web_file|, which can contain possibly nested include
-commands \.{@@i}, and a |change_file|, which might also contain
+commands~\.{@@i}, and a |change_file|, which might also contain
 includes.  The |web_file| together with the currently open include
 files form a stack |file|, whose names are stored in a parallel stack
 |file_name|.  The boolean |changing| tells whether or not we're reading
@@ -268,10 +268,8 @@ do {
 } while (limit==buffer);
 
 @ @<Move |buffer| and |limit| to |change_buffer| and |change_limit|@>=
-{
-  change_limit=change_buffer+(ptrdiff_t)(limit-buffer);
-  strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
-}
+change_limit=change_buffer+(ptrdiff_t)(limit-buffer);
+strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 
 @ The following procedure is used to see if the next change entry should
 go into effect; it is called only when |changing| is |false|.
@@ -289,12 +287,11 @@ either `\.{@@*}' or `\.{@@\ }' (possibly preceded by whitespace).
 This procedure is called only when |buffer<limit|, i.e., when the
 current line is nonempty.
 
-@d if_section_start_make_pending(b) {
+@d if_section_start_make_pending(b)@/
   *limit='!';@+
   for (loc=buffer;xisspace(*loc);loc++) ;@+
   *limit=' ';
   if (*loc=='@@' && (xisspace(*(loc+1)) || *(loc+1)=='*')) change_pending=b;
-}
 
 @c
 static void
@@ -478,7 +475,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
 #endif /* |CWEBINPUTS| */
   }
   if (l>0) {
-    if (k+l+2>=cur_file_name_end)  too_long();
+    if (k+l+2>=cur_file_name_end) too_long();
 @.Include file name ...@>
     for (; k>=cur_file_name; k--) *(k+l+1)=*k;
     strcpy(cur_file_name,temp_file_name);
@@ -619,7 +616,7 @@ function |names_match|, which is slightly different in
 \.{CWEAVE} and \.{CTANGLE}.  If there is no match for the identifier,
 it is inserted into the table.
 
-@d hash_size 8501 /* should be prime */
+@d hash_size 353 /* should be prime */
 
 @<Global var...@>=
 name_pointer hash[hash_size]; /* heads of hash lists */
@@ -886,7 +883,7 @@ while (p) { /* compare shortest prefix of |p| with new name */
       par=p;
     p=(c==less?p->llink:p->rlink);
   } else { /* new name matches |p| */
-    if (r!=NULL) {  /* and also |r|: illegal */
+    if (r!=NULL) { /* and also |r|: illegal */
       fputs("\n! Ambiguous prefix: matches <",stdout);
 @.Ambiguous prefix ... @>
       print_prefix_name(p);
@@ -1018,7 +1015,6 @@ void
 err_print( /* prints `\..' and location of error message */
 const char *s)
 {
-  char *k,*l; /* pointers into |buffer| */
   printf(*s=='!'? "\n%s" : "%s",s);
   if (web_file_open) @<Print error location based on input buffer@>@;
   update_terminal; mark_error;
@@ -1034,7 +1030,8 @@ has special line-numbering conventions.
 @^system dependencies@>
 
 @<Print error location based on input buffer@>=
-{if (changing && include_depth==change_depth)
+{char *k,*l; /* pointers into |buffer| */
+if (changing && include_depth==change_depth)
   printf(". (l. %d of change file)\n", change_line);
 else if (include_depth==0) printf(". (l. %d)\n", cur_line);
   else printf(". (l. %d of include file %s)\n", cur_line, cur_file_name);
@@ -1203,7 +1200,7 @@ after the dot.  We must check that there is enough room in
     sprintf(web_file_name,"%s.w",*argv);
   else {
     strcpy(web_file_name,*argv);
-    *dot_pos=0; /* string now ends where the dot was */
+    *dot_pos='\0'; /* string now ends where the dot was */
   }
   sprintf(alt_web_file_name,"%s.web",*argv);
   sprintf(tex_file_name,"%s.tex",name_pos); /* strip off directory name */
@@ -1238,7 +1235,7 @@ after the dot.  We must check that there is enough room in
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
     if (make_xrefs) { /* indexes will be generated */
-      *dot_pos=0;
+      *dot_pos='\0';
       sprintf(idx_file_name,"%s.idx",*argv);
       sprintf(scn_file_name,"%s.scn",*argv);
     }

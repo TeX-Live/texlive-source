@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.3 --- May 2021
+% Version 4.4 --- June 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -27,11 +27,11 @@
 \mathchardef\RA="3221 % right arrow
 \mathchardef\BA="3224 % double arrow
 
-\def\title{CTANGLE (Version 4.3)}
+\def\title{CTANGLE (Version 4.4)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CTANGLE} processor}
   \vskip 15pt
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -61,7 +61,7 @@ Joachim Schrod, Lee Wittenberg, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.3)"
+@d banner "This is CTANGLE (Version 4.4)"
 
 @c
 @<Include files@>@/
@@ -126,7 +126,9 @@ typedef struct {
 } text;
 typedef text *text_pointer;
 
-@ @<Private...@>=
+@ @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@d max_toks 270000 /* number of bytes in compressed \CEE/ code */
+@<Private...@>=
 static text text_info[max_texts];
 static text_pointer text_info_end=text_info+max_texts-1;
 static text_pointer text_ptr; /* first unused position in |text_info| */
@@ -156,9 +158,8 @@ name_pointer p, /* points to the proposed match */
 const char *first, /* position of first character of string */
 size_t l, /* length of identifier */
 eight_bits t) /* not used by \.{TANGLE} */
-{@+(void)t;
-  if (length(p)!=l) return false;
-  return !strncmp(first,p->byte_start,l);
+{@+(void)t;@/
+  return length(p)==l && strncmp(first,p->byte_start,l)==0;
 }
 
 @ The common lookup routine refers to separate routines |init_node| and
@@ -227,7 +228,7 @@ or line breaks allowed between them (the \.{@@\&} operation of \.{CWEB}).
 @d string 02 /* takes the place of ASCII \.{STX} */
 @d constant 03 /* takes the place of ASCII \.{ETX} */
 @d join 0177 /* takes the place of ASCII \.{DEL} */
-@d output_defs_flag (2*024000-1)
+@d output_defs_flag (2*024000-1) /* |024000==(0250-0200)*0400| */
 
 @ The following procedure is used to enter a two-byte value into
 |tok_mem| when a replacement text is being generated.
@@ -280,7 +281,8 @@ typedef struct {
 } output_state;
 typedef output_state *stack_pointer;
 
-@ @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
+@ @d stack_size 50 /* number of simultaneous levels of macro expansion */
+@d cur_end cur_state.end_field /* current ending location in |tok_mem| */
 @d cur_byte cur_state.byte_field /* location of next output byte in |tok_mem|*/
 @d cur_name cur_state.name_field /* pointer to current name being expanded */
 @d cur_repl cur_state.repl_field /* pointer to current replacement text */
@@ -516,6 +518,7 @@ output.
 @c
 static void
 phase_two (void) {
+  phase=2;
   web_file_open=false;
   cur_line=1;
   @<Initialize the output stacks@>@;
@@ -525,9 +528,11 @@ phase_two (void) {
 @.No program text...@>
   }
   else {
-    if(cur_out_file==end_output_files) {
-      if(show_progress)
+    if (cur_out_file==end_output_files) {
+      if (show_progress) {
         printf("\nWriting the output file (%s):",C_file_name);
+        update_terminal;
+      }
     }
     else {
       if (show_progress) {
@@ -565,7 +570,7 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
     cur_line=1;
     stack_ptr=stack+1;
-    cur_name=(*an_output_file);
+    cur_name=*an_output_file;
     cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
     cur_end=(cur_repl+1)->tok_start;
@@ -705,14 +710,11 @@ static char translit[128][translit_length];
 @ @<Case of an identifier@>=@t\1\quad@>
 case identifier:
   if (out_state==num_or_id) C_putc(' ');
-  j=(cur_val+name_dir)->byte_start;
-  k=(cur_val+name_dir+1)->byte_start;
-  while (j<k) {
+  for (j=(cur_val+name_dir)->byte_start, k=(cur_val+name_dir+1)->byte_start;
+       j<k; j++)
     if ((eight_bits)(*j)<0200) C_putc(*j);
 @^high-bit character handling@>
     else C_printf("%s",translit[(eight_bits)(*j)-0200]);
-    j++;
-  }
   out_state=num_or_id; break;
 
 @ @<Case of a sec...@>=@t\1\quad@>
@@ -725,12 +727,12 @@ case section_number:
     goto restart;
   } else {
     sixteen_bits a;
-    a=0400* *cur_byte++;
+    a=*cur_byte++ *0400;
     a+=*cur_byte++; /* gets the line number */
     C_printf("\n#line %d \"",a);
 @:line}{\.{\#line}@>
-    cur_val=*cur_byte++;
-    cur_val=0400*(cur_val-0200)+ *cur_byte++; /* points to the file name */
+    cur_val=(*cur_byte++-0200)*0400;
+    cur_val+=*cur_byte++; /* points to the file name */
     for (j=(cur_val+name_dir)->byte_start, k=(cur_val+name_dir+1)->byte_start;
          j<k; j++) {
       if (*j=='\\' || *j=='"') C_putc('\\');
@@ -922,8 +924,8 @@ get_next(void) /* produces the next input token */
 @ @<Predecl...@>=@+static eight_bits get_next(void);
 
 @ The following code assigns values to the combinations \.{++},
-\.{--}, \.{->}, \.{>=}, \.{<=}, \.{==}, \.{<<}, \.{>>}, \.{!=}, \.{||} and
-\.{\&\&}, and to the \CPLUSPLUS/
+\.{--}, \.{->}, \.{>=}, \.{<=}, \.{==}, \.{<<}, \.{>>}, \.{!=}, %\.{||}
+\.{\v\v} and~\.{\&\&}, and to the \CPLUSPLUS/
 combinations \.{...}, \.{::}, \.{.*} and \.{->*}.
 The compound assignment operators (e.g., \.{+=}) are
 treated as separate tokens.
@@ -1042,24 +1044,23 @@ convention, but do not allow the string to be longer than |longest_name|.
 @ After an \.{@@} sign has been scanned, the next character tells us
 whether there is more work to do.
 
-@<Get control code and possible section name@>= {
-  switch(c=ccode[(eight_bits)*loc++]) {
-    case ignore: continue;
-    case translit_code: err_print("! Use @@l in limbo only"); continue;
+@<Get control code and possible section name@>=
+switch(c=ccode[(eight_bits)*loc++]) {
+  case ignore: continue;
+  case translit_code: err_print("! Use @@l in limbo only"); continue;
 @.Use @@l in limbo...@>
-    case control_text: while ((c=skip_ahead())=='@@');
-      /* only \.{@@@@} and \.{@@>} are expected */
-      if (*(loc-1)!='>')
-        err_print("! Double @@ should be used in control text");
+  case control_text: while ((c=skip_ahead())=='@@');
+    /* only \.{@@@@} and \.{@@>} are expected */
+    if (*(loc-1)!='>')
+      err_print("! Double @@ should be used in control text");
 @.Double @@ should be used...@>
-      continue;
-    case section_name:
-      cur_section_name_char=*(loc-1);
-      @<Scan the section name and make |cur_section_name| point to it@>@;
-    case string: @<Scan a verbatim string@>@;
-    case ord: @<Scan an ASCII constant@>@;
-    default: return c;
-  }
+    continue;
+  case section_name:
+    cur_section_name_char=*(loc-1);
+    @<Scan the section name and make |cur_section_name| point to it@>@;
+  case string: @<Scan a verbatim string@>@;
+  case ord: @<Scan an ASCII constant@>@;
+  default: return c;
 }
 
 @ After scanning a valid ASCII constant that follows
@@ -1089,7 +1090,7 @@ thus, \.{@@'\\nopq'} gives the same result as \.{@@'\\n'}.
   return ord;
 
 @ @<Scan the section name...@>= {
-  char *k; /* pointer into |section_text| */
+  char *k=section_text; /* pointer into |section_text| */
   @<Put section name into |section_text|@>@;
   if (k-section_text>3 && strncmp(k-2,"...",3)==0)
     cur_section_name=section_lookup(section_text+1,k-3,true);
@@ -1111,7 +1112,6 @@ character of the name.)
 @<Set init...@>=section_text[0]=' ';
 
 @ @<Put section name...@>=
-k=section_text;
 while (true) {
   if (loc>limit && get_line()==false) {
     err_print("! Input ended in section name");
@@ -1156,14 +1156,13 @@ have |*(loc-1)==string|; we set |id_first| to the beginning
 of the string itself, and |id_loc| to its ending-plus-one location in the
 buffer.  We also set |loc| to the position just after the ending delimiter.
 
-@<Scan a verbatim string@>= {
-  id_first=loc++; *(limit+1)='@@'; *(limit+2)='>';
-  while (*loc!='@@' || *(loc+1)!='>') loc++;
-  if (loc>=limit) err_print("! Verbatim string didn't end");
+@<Scan a verbatim string@>=
+id_first=loc++; *(limit+1)='@@'; *(limit+2)='>';
+while (*loc!='@@' || *(loc+1)!='>') loc++;
+if (loc>=limit) err_print("! Verbatim string didn't end");
 @.Verbatim string didn't end@>
-  id_loc=loc; loc+=2;
-  return string;
-}
+id_loc=loc; loc+=2;
+return string;
 
 @* Scanning a macro definition.
 The rules for generating the replacement texts corresponding to macros and
@@ -1184,7 +1183,7 @@ ANSI \CEE/ preprocessor sometimes requires it.
 acted, |cur_text| will point to the replacement text just generated, and
 |next_control| will contain the control code that terminated the activity.
 
-@d app_repl(c)  {if (tok_ptr==tok_mem_end) overflow("token"); *tok_ptr++=c;}
+@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow("token"); *(tok_ptr++)=c;}
 
 @<Private...@>=
 static text_pointer cur_text; /* replacement text formed by |scan_repl| */
@@ -1198,7 +1197,7 @@ eight_bits t)
   sixteen_bits a; /* the current token */
   if (t==section_name) @<Insert the line number into |tok_mem|@>@;
   while (true) switch (a=get_next()) {
-      @<In cases that |a| is a non-|char| token (|identifier|,
+      @/@t\4@>@<In cases that |a| is a non-|char| token (|identifier|,
         |section_name|, etc.), either process it and change |a| to a byte
         that should be stored, or |continue| if |a| should be ignored,
         or |goto done| if |a| signals the end of this replacement text@>@;
@@ -1218,8 +1217,13 @@ eight_bits t)
 to |0150000|; then the numeric line number; then a pointer to the
 file name.
 
+@d store_id(a) a=id_lookup(id_first,id_loc,0)-name_dir;@/
+  app_repl((a / 0400)+0200);
+  app_repl(a % 0400);
+
 @<Insert the line...@>=
 {
+  eight_bits a; /* shadow variable |a| */
   store_two_bytes(0150000);
   if (changing && include_depth==change_depth) { /* correction made Feb 2017 */
     id_first=change_file_name;
@@ -1229,14 +1233,11 @@ file name.
     store_two_bytes((sixteen_bits)cur_line);
   }
   id_loc=id_first+strlen(id_first);
-  {int a_l=id_lookup(id_first,id_loc,0)-name_dir; app_repl((a_l / 0400)+0200);
-    app_repl(a_l % 0400);}
+  store_id(a);
 }
 
 @ @<In cases that |a| is...@>=@t\1\quad@>
-case identifier: a=id_lookup(id_first,id_loc,0)-name_dir;
-  app_repl((a / 0400)+0200);
-  app_repl(a % 0400); break;
+case identifier: store_id(a); break;
 case section_name: if (t!=section_name) goto done;
   else {
     @<Was an `\.{@@}' missed here?@>@;
@@ -1375,11 +1376,11 @@ scan_section(void)
   while (true) {
     @<Skip ahead until |next_control| corresponds to \.{@@d}, \.{@@<},
       \.{@@\ } or the like@>@;
-    if (next_control == definition) {  /* \.{@@d} */
+    if (next_control == definition) { /* \.{@@d} */
         @<Scan a definition@>@;
         continue;
     }
-    if (next_control == begin_C) {  /* \.{@@c} or \.{@@p} */
+    if (next_control == begin_C) { /* \.{@@c} or \.{@@p} */
       p=name_dir; break;
     }
     if (next_control == section_name) { /* \.{@@<} or \.{@@(} */
@@ -1408,22 +1409,19 @@ while (next_control<definition)
     loc-=2; next_control=get_next();
   }
 
-@ @<Scan a definition@>= {
-  while ((next_control=get_next())=='\n'); /* allow newline before definition */
-  if (next_control!=identifier) {
-    err_print("! Definition flushed, must start with identifier");
+@ @<Scan a definition@>=
+while ((next_control=get_next())=='\n'); /* allow newline before definition */
+if (next_control!=identifier) {
+  err_print("! Definition flushed, must start with identifier");
 @.Definition flushed...@>
-    continue;
-  }
-  app_repl(((a=id_lookup(id_first,id_loc,0)-name_dir) / 0400)+0200);
-        /* append the lhs */
-  app_repl(a % 0400);
-  if (*loc!='(') { /* identifier must be separated from replacement text */
-    app_repl(string); app_repl(' '); app_repl(string);
-  }
-  scan_repl(macro);
-  cur_text->text_link=macro;
+  continue;
 }
+store_id(a); /* append the lhs */
+if (*loc!='(') { /* identifier must be separated from replacement text */
+  app_repl(string); app_repl(' '); app_repl(string);
+}
+scan_repl(macro);
+cur_text->text_link=macro;
 
 @ If the section name is not followed by \.{=} or \.{+=}, no \CEE/
 code is forthcoming: the section is being cited, not being
@@ -1449,7 +1447,7 @@ store_two_bytes((sixteen_bits)(0150000+section_count));
 
 @ @<Update the data...@>=
 if (p==name_dir||p==NULL) { /* unnamed section, or bad section name */
-  (last_unnamed)->text_link=cur_text-text_info; last_unnamed=cur_text;
+  last_unnamed->text_link=cur_text-text_info; last_unnamed=cur_text;
 }
 else if (p->equiv==(void *)text_info) p->equiv=(void *)cur_text;
   /* first section of this name */
@@ -1471,7 +1469,6 @@ phase_one(void) {
   skip_limbo();
   while (!input_has_ended) scan_section();
   check_complete();
-  phase=2;
 }
 
 @ @<Predec...@>=@+static void phase_one(void);
@@ -1483,13 +1480,12 @@ processing is straightforward.
 static void
 skip_limbo(void)
 {
-  char c;
   while (true) {
     if (loc>limit && get_line()==false) return;
     *(limit+1)='@@';
     while (*loc!='@@') loc++;
     if (loc++<=limit) {
-      c=*loc++;
+      char c=*loc++;
       if (ccode[(eight_bits)c]==new_section) break;
       switch (ccode[(eight_bits)c]) {
         case translit_code: @<Read in transliteration of a character@>@; break;

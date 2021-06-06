@@ -17,16 +17,16 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.3)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.4)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (4.3 [\TeX~Live])}
+\def\title{Common code for CTANGLE and CWEAVE (4.4 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.3)}
+  \centerline{(Version 4.4)}
 @y
-  \centerline{(Version 4.3 [\TeX~Live])}
+  \centerline{(Version 4.4 [\TeX~Live])}
 @z
 
 @x
@@ -253,7 +253,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
 #endif /* |CWEBINPUTS| */
   }
   if (l>0) {
-    if (k+l+2>=cur_file_name_end)  too_long();
+    if (k+l+2>=cur_file_name_end) too_long();
 @.Include file name ...@>
     for (; k>=cur_file_name; k--) *(k+l+1)=*k;
     strcpy(cur_file_name,temp_file_name);
@@ -284,6 +284,12 @@ The remainder of the \.{@@i} line after the file name is ignored.
     err_print("! Change file entry did not match");
 @y
     err_print(_("! Change file entry did not match"));
+@z
+
+@x
+@d hash_size 353 /* should be prime */
+@y
+@d hash_size 8501 /* should be prime */
 @z
 
 @x
@@ -712,9 +718,9 @@ There are several ways to set |TEXMFLOCALEDIR|:
 #if HAVE_GETTEXT
 #include <locale.h> /* |@!LC_MESSAGES|, |@!LC_CTYPE| */
 #else
-#define setlocale(A,B) ""
-#define bindtextdomain(A,B) ""
-#define textdomain(A) ""
+#define setlocale(a,b) ""
+#define bindtextdomain(a,b) ""
+#define textdomain(a) ""
 #endif
 
 @ @<Set locale...@>=
