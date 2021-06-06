@@ -32,7 +32,7 @@ char symhead_positive[STYBUFSIZE]={"Symbols"},symhead_negative[STYBUFSIZE]={"sym
 char numhead_positive[STYBUFSIZE]={"Numbers"},numhead_negative[STYBUFSIZE]={"numbers"};
 int symbol_flag=1;
 int letter_head=1;
-UChar atama[STYBUFSIZE],tumunja[STYBUFSIZE],hanzi_head[STYBUFSIZE]={L'\0'};
+UChar atama[STYBUFSIZE],tumunja[STYBUFSIZE],hanzi_head[STYBUFSIZE]={L'\0'},kana_head[STYBUFSIZE]={L'\0'};
 char page_compositor[STYBUFSIZE]={"-"},page_precedence[STYBUFSIZE]={"rnaRA"};
 char character_order[STYBUFSIZE]={"SNLGCJKH"};
 char icu_locale[STYBUFSIZE]={"root"},icu_rules[STYBUFSIZE]={""};

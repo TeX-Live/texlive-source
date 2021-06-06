@@ -370,6 +370,7 @@ int is_jpn_kana(UChar *c)
 
 	if      ((*c>=0x3040)&&(*c<=0x30FF)) return 1; /* Hiragana, Katakana */
 	else if ((*c>=0x31F0)&&(*c<=0x31FF)) return 1; /* Katakana Phonetic Extensions */
+	else if ((*c>=0x32D0)&&(*c<=0x32FE)) return 1; /* Circled Katakana */
 
 	if (is_surrogate_pair(c)) {
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));

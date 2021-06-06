@@ -1,3 +1,19 @@
+2021-06-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.57  Beta version.
+	* configure.ac: Bump version.
+	* main.c, styfile.c:
+	Accept multiple numbers of style files by option '-s'.
+	* main.c, sort.c, styfile.c, fwrite.c, {,ex}kana.h, {,ex}var.h:
+	Add a keyword "kana_head" to style file.
+	Treat "Circled Katakana" as kana.
+	* tests/upmendex.test, tests/uni[12].ist,
+	tests/rangetwo.{idx,ind,ist}:
+	Add new tests.
+	* upmendex.ja.txt:
+	Update document.
+	Ref. https://github.com/texjporg/tex-jp-build/issues/116
+
 2021-05-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.56  Beta version.

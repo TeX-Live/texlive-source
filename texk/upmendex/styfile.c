@@ -49,6 +49,7 @@ void styread(const char *filename)
 		fprintf(stderr,"%s does not exist.\n",filename);
 		exit(0);
 	}
+	verb_printf(efp,"Scanning style file %s.",filename);
 
 	for (i=0;;i++) {
 		if (fgets(buff,4095,fp)==NULL) break;
@@ -131,8 +132,8 @@ void styread(const char *filename)
 			letter_head=atoi(&buff[cc]);
 			continue;
 		}
-		if (getparam(buff,"atama",tmp)) {
-			multibyte_to_widechar(atama,STYBUFSIZE,tmp);
+		if (getparam(buff,"kana_head",tmp)) {
+			multibyte_to_widechar(kana_head,STYBUFSIZE,tmp);
 			continue;
 		}
 		if (getparam(buff,"tumunja",tmp)) {
@@ -157,6 +158,8 @@ void styread(const char *filename)
 		if (getparam(buff,"icu_attributes", icu_attr_str   )) continue;
 	}
 	fclose(fp);
+
+	verb_printf(efp,"...done.\n");
 }
 
 /*   analize string parameter of style file   */

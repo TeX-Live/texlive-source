@@ -31,7 +31,7 @@ extern char symhead_positive[],symhead_negative[];
 extern char numhead_positive[],numhead_negative[];
 extern int symbol_flag;
 extern int letter_head;
-extern UChar atama[],tumunja[],hanzi_head[];
+extern UChar atama[],tumunja[],hanzi_head[],kana_head[];
 extern char page_compositor[],page_precedence[];
 extern char character_order[];
 extern char icu_locale[],icu_rules[];

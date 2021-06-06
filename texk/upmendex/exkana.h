@@ -4,6 +4,7 @@ extern UChar AIUEO[];
 extern UChar *aiueo;
 extern UChar kanatable[];
 extern UChar extkanatable[];
+extern UChar circkanatable[];
 
 extern UChar GANADA[];
 
@@ -17,7 +18,10 @@ extern UChar GANADA[];
 #define KATAEND  0x30fa    /* ヺ */
 #define EXKANATOP  0x31F0  /* ㇰ */
 #define EXKANAEND  0x31FF  /* ㇿ */
+#define CRKANATOP  0x32D0  /* ㋐ */
+#define CRKANAEND  0x32FE  /* ㋾ */
 
 #define is_katakana(a)  ((a)>=KATATOP && (a)<=KATAEND)
 #define is_hiragana(a)  ((a)>=HIRATOP && (a)<=HIRAEND)
 #define is_extkana(a)   ((a)>=EXKANATOP && (a)<=EXKANAEND)
+#define is_circkana(a)  ((a)>=CRKANATOP && (a)<=CRKANAEND)
