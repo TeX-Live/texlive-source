@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* pprec*.*
+rm -f foo.* uni.* pprec*.* rangetwo.*
 
 ./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
 	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
@@ -23,6 +23,10 @@ cat $srcdir/tests/uni.idx | \
 	./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
 	>uni.ind2 2>uni.ilg2 \
 	&& diff $srcdir/tests/uni.ind uni.ind2 || exit 1
+
+./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni1.ist -s $srcdir/tests/uni2.ist \
+	$srcdir/tests/uni.idx -o uni.ind3 -t uni.ilg3 \
+	&& diff $srcdir/tests/uni.ind uni.ind3 || exit 1
 
 # test for two-element range suffix_2p
 ./mendex -s $srcdir/tests/rangetwo.ist $srcdir/tests/rangetwo.idx \

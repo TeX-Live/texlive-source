@@ -1,0 +1,6 @@
+% -*- coding: utf-8 -*-
+
+lethead_flag 1
+lethead_prefix "\n\\centerline{\\bfseries ◆◆◆ "
+lethead_suffix  " ◆◆◆}\\par\\nobreak"
+

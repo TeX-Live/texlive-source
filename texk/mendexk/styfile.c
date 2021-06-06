@@ -48,6 +48,7 @@ void styread(const char *filename)
 		fprintf(stderr,"%s does not exist.\n",filename);
 		exit(0);
 	}
+	verb_printf(efp,"Scanning style file %s.",filename);
 
 	for (i=0;;i++) {
 		if (fgets(buff,4095,fp)==NULL) break;
@@ -130,12 +131,13 @@ void styread(const char *filename)
 			letter_head=atoi(&buff[cc]);
 			continue;
 		}
-		if (getparam(buff,"atama",atama)) continue;
 		if (getparam(buff,"page_compositor",page_compositor)) continue;
 		if (getparam(buff,"page_precedence",page_precedence)) continue;
 		if (getparam(buff,"character_order",character_order)) continue;
 	}
 	nkf_close(fp);
+
+	verb_printf(efp,"...done.\n");
 }
 
 /*   analize string parameter of style file   */

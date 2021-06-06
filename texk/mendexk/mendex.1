@@ -47,9 +47,9 @@ and ignore leading and trailing blank(s).
 By default, blanks in the index key are retained.
 .TP 10
 \fB-g\fR
-Make Japanese index head \fIA\fR-line (\fIA, Ka, Sa, ...\fR) of the gojuon table (Japanese
-syllabary). By default, all the characters in the gojuon table
-are used.
+Make Japanese index head \fIA\fR-line (\fIA, Ka, Sa, ...\fR; 10 characters)
+of the \fIgojuon\fR table (Japanese syllabary). By default, all 48 characters
+in the \fIgojuon\fR table are used.
 .TP 10
 \fB-f\fR
 Force to output Kanji characters even non-existent in dictionaries.
@@ -99,6 +99,7 @@ Show summary of options.
 .TP 10
 \fB--\fR
 Arguments after \fB--\fR are not taken as options.
+This is useful when the input file name starts with '-'.
 
 .SH "STYLE FILE"
 The style file informs \fImendex\fR about the format of the
@@ -116,7 +117,7 @@ A line begun by \'%\' is a comment.
 \fBkeyword\fR  <string>
 "\\\\indexentry"
 .RS
-Command with an argument of index entry.
+Command with an argument of index entry which is going to be processed.
 .RE
 .TP 30
 \fBarg_open\fR  <char>
@@ -230,7 +231,7 @@ Prefix of heading for newly appeared heading letter.
 \fBheading_prefix\fR  <string>
 ""
 .RS
-Same as \fBlethead_prefix\fR.
+Same as \fBlethead_prefix\fR. (compatible with makeindex)
 .RE
 .TP 30
 \fBlethead_suffix\fR  <string>
@@ -242,7 +243,7 @@ Suffix of heading for newly appeared heading letter.
 \fBheading_suffix\fR  <string>
 ""
 .RS
-Same as \fBlethead_suffix\fR.
+Same as \fBlethead_suffix\fR. (compatible with makeindex)
 .RE
 .TP 30
 \fBlethead_flag\fR  <number>
@@ -255,7 +256,7 @@ Flag to control output of heading letters.
 \fBheading_flag\fR  <number>
 0
 .RS
-Same as \fBlethead_flag\fR.
+Same as \fBlethead_flag\fR. (Note: makeindex uses a different name \fBheadings_flag\fR)
 .RE
 .TP 30
 \fBitem_0\fR  <string>
@@ -458,11 +459,13 @@ Japanese sequence and non-Japanese sequence in sorting procedure.
 .RE
 .TP 30
 \fBcharacter_order\fR  <string>
-"SEJ"
+"SNEJ"
 .RS
 Order of scripts and symbols.
-\'S\', \'E\' and \'J\' respectively denotes symbol, English and Japanese.
+\'S\', \'N\', \'E\' and \'J\' respectively denotes symbol, numbers, English and Japanese.
 (Extended by mendex)
+Please make sure that \'S\' and \'N\' are next to each other,
+since \fBmendex\fR considers numbers as part of symbol.
 .RE
 .PP
 .SH ABOUT JAPANESE PROCESSING

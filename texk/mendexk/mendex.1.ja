@@ -36,7 +36,7 @@ mendex \- 索引整形ツール
 スペースやタブといったブランクを短縮して、すべて１個の半角スペースにします。また、前後のブランクは削除されます。
 .TP 10
 \fB-g\fR
-日本語の頭文字の区切りを "あかさた・・・わ" にします。指定しないと "あいうえ・・・わをん" になります。
+日本語の頭文字の区切りを "あかさた・・・わ" にします。指定しないと "あいうえ・・・わゐゑをん" になります。
 .TP 10
 \fB-f\fR
 辞書ファイルにない漢字も強制的に出力するモードです。
@@ -77,6 +77,7 @@ mendex \- 索引整形ツール
 .TP 10
 \fB--\fR
 以降はオプション文字列と解釈しません。
+これは，ファイル名の先頭の文字が '-' であるファイルを扱う場合に有用です。
 
 
 .SH スタイルファイル
@@ -89,7 +90,7 @@ mendex \- 索引整形ツール
 \fBkeyword\fR  <文字列>
 "\\\\indexentry"
 .RS
-索引エントリを引数として持つコマンド。
+処理対象とする索引エントリを引数として持つコマンド。
 .RE
 .TP 30
 \fBarg_open\fR  <文字>
@@ -199,7 +200,7 @@ mendexのパラメータ文字に対するエスケープキャラクタ。
 \fBheading_prefix\fR  <文字列>
 ""
 .RS
-lethead_prefixと同じ。
+lethead_prefixと同じ。(makeindex互換)
 .RE
 .TP 30
 \fBlethead_suffix\fR  <文字列>
@@ -211,7 +212,7 @@ lethead_prefixと同じ。
 \fBheading_suffix\fR  <文字列>
 ""
 .RS
-lethead_suffixと同じ。
+lethead_suffixと同じ。(makeindex互換)
 .RE
 .TP 30
 \fBlethead_flag\fR  <数値>
@@ -223,7 +224,7 @@ lethead_suffixと同じ。
 \fBheading_flag\fR  <数値>
 0
 .RS
-lethead_flagと同じ。
+lethead_flagと同じ。makeindexではheadings_flagという名称のため、互換性がありません。
 .RE
 .TP 30
 \fBitem_0\fR  <文字列>
@@ -403,9 +404,11 @@ symbol_flag が0でない場合に、数字・記号の頭文字として出力�
 .RE
 .TP 30
 \fBcharacter_order\fR  <文字列>
-"SEJ"
+"SNEJ"
 .RS
-記号、英字、日本語の優先順位。\'S\'は記号、\'E\'は英字、\'J\'は日本語を表す。(mendex専用)
+記号、英字、日本語の優先順位。
+\'S\'は記号、\'N\'は数字、\'E\'は英字、\'J\'は日本語を表す。(mendex専用)
+mendexでは索引項目の分類として「数字」は「記号」に含める仕様としていますので、\'S\'と\'N\'は必ず隣り合わせてください（数字と数字以外の記号の順序入れ替えは可能です）。
 .RE
 .PP
 .SH 日本語の扱いについて
