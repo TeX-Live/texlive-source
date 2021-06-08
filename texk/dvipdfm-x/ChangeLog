@@ -1,3 +1,14 @@
+2021-06-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
+
+	* pdfencoding.c: Replace the changes made on 2021-06-02. The
+	segmentation fault problem was introduced by the changes in
+	rev.7557 which were not just problematic but also making it
+	unclear that it's not possible to freely choose which
+	encodings to use as the base encoding. Remove useless base
+	encoding entry which was causing the problem from the
+	pdf_encoding struct.
+	* configure.ac: Version 20210609.
+
 2021-06-05  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfximage.c: Improved error messages when PDF/PS inclusion
