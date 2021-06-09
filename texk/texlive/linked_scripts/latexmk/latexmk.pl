@@ -29,6 +29,18 @@ use warnings;
 ##
 ##   Modification log from 14 Apr 2021 onwards in detail
 ##
+## 29 May 2021 John Collins  When emulating aux_dir, put .synctex.gz .synctex
+##                             files in out_dir (as done by MiKTeX, and needed
+##                             for their use).
+##                           Turn emulate aux_dir off by default, to match older
+##                             behavior.  (BACKWARDS INCOMPATIBLE with 4.73 and
+##                             4.74.)
+##                           Add end-of-all-runs warning if emulate aux_dir needed
+##                             to be turned on, when it was initially off.
+##                           Add .synctex to list of extensions to clear by default.
+## 20 May 2021 John Collins  Turn back on default to report rc files read.
+##                           Add options -rc-report, -rc-report-, 
+##                             -dir_report, -dir_report-.
 ## 16 May 2021 John Collins  Deal with some variable used only once warnings
 ##                           Remove by default informational messages on rc
 ##                           files read, and aux_dir and out_dir setting.
@@ -82,8 +94,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.74';
-$version_details = "$My_name, John Collins, 16 May 2021";
+$version_num = '4.74b';
+$version_details = "$My_name, John Collins, 29 May 2021";
 
 use Config;
 use File::Basename;
@@ -266,7 +278,9 @@ $xelatex_silent_switch  = '-interaction=batchmode';
 
 # Whether to emulate -aux-directory, so we can use it on system(s) (TeXLive)
 # that don't support it:
-$emulate_aux = 1;
+$emulate_aux = 0;
+# Whether emulate_aux had to be switched on during a run:
+$emulate_aux_switched = 0;
 
 %input_extensions = ();
 # %input_extensions maps primary_rule_name to pointer to hash of file extensions
@@ -283,7 +297,7 @@ $input_extensions{xelatex} = $input_extensions{pdflatex};
 %allowed_output_ext = ( ".dvi" => 1, ".xdv" => 1, ".pdf" => 1 );
 # Extensions of files preserved when clean up is by -c rather than -C:
 %small_cleanup_preserved_exts = ();
-foreach ( 'dvi', 'dviF', 'ps', 'psF', 'pdf', 'synctex.gz', 'xdv' ) {
+foreach ( 'dvi', 'dviF', 'ps', 'psF', 'pdf', 'synctex', 'synctex.gz', 'xdv' ) {
     $small_cleanup_preserved_exts{$_} = 1;
 }
 
@@ -1024,7 +1038,7 @@ $recorder = 1;          # Whether to use recorder option on latex/pdflatex
 $silent = 0;            # Whether fo silence latex's messages (and others)
 $warnings_as_errors = 0;# Treat warnings as errors and exit with non-zero exit code
 $silence_logfile_warnings = 0; # Do list warnings in log file
-$rc_report = 0;         # Whether to report on rc files read
+$rc_report = 1;         # Whether to report on rc files read
 $aux_out_dir_report = 0; # Whether to report on aux_dir & out_dir after
                          # initialization and normalization
 
@@ -1609,6 +1623,8 @@ while ($_ = $ARGV[0])
       $dependents_list = 1; 
   }
   elsif (/^-diagnostics/) { $diagnostics = 1; }
+  elsif (/^-dir-report$/)    { $aux_out_dir_report = 1; }
+  elsif (/^-dir-report-$/)   { $aux_out_dir_report = 0; }
   elsif (/^-dvi$/)   { $dvi_mode = 1; }
   elsif (/^-dvi-$/)  { $dvi_mode = 0; }
   elsif (/^-emulate-aux-dir$/) { $emulate_aux = 1; }
@@ -1747,6 +1763,8 @@ while ($_ = $ARGV[0])
   elsif (/^-pvctimeout$/) { $pvc_timeout = 1; }
   elsif (/^-pvctimeout-$/) { $pvc_timeout = 0; }
   elsif (/^-pvctimeoutmins=(.*)$/) { $pvc_timeout_mins = $1; }
+  elsif (/^-rc-report$/)    { $rc_report = 1; }
+  elsif (/^-rc-report-$/)   { $rc_report = 0; }
   elsif (/^-recorder$/ ){ $recorder = 1; }
   elsif (/^-recorder-$/ ){ $recorder = 0; }
   elsif (/^-rules$/ ) { $rules_list = 1; }
@@ -2627,7 +2645,12 @@ if ( $where_log == 2 ) {
          "  correct the problem, even by setting emulation of aux_dir on.\n",
          "  There is a strong suspicion of a bug in $my_name or a configuration error.\n";
 }
-
+if ( $emulate_aux_switched ) {
+    warn "$My_name: I had to switch -aux-directory on after it was initially off,\n",
+         "  because your *latex program appeared not to support it. You probably\n",
+         "  should either use the option -emulate-aux-dir, or in a latexmkrc file\n",
+         "  set \$emulate_aux = 1;\n";
+}
 
 # end MAIN PROGRAM
 #############################################################
@@ -3910,6 +3933,8 @@ sub print_help
   "   -deps-out=file - Set name of output file for dependency list,\n",
   "                    and turn on showing of dependency list\n",
   "   -dF <filter> - Filter to apply to dvi file\n",
+  "   -dir-report  - Before processing a tex file, report aux and out dir settings\n",
+  "   -dir-report- - Before processing a tex file, do not report aux and out dir settings\n",
   "   -dvi   - generate dvi\n",
   "   -dvi-  - turn off required dvi\n",
   "   -e <code> - Execute specified Perl code (as part of latexmk start-up\n",
@@ -3998,6 +4023,8 @@ sub print_help
   "   -r <file> - Read custom RC file\n",
   "               (N.B. This file could override options specified earlier\n",
   "               on the command line.)\n",
+  "   -rc-report  - After initialization, report names of rc files read\n",
+  "   -rc-report- - After initialization, do not report names of rc files read\n",
   "   -recorder - Use -recorder option for *latex\n",
   "               (to give list of input and output files)\n",
   "   -recorder- - Do not use -recorder option for *latex\n",
@@ -4463,7 +4490,7 @@ sub set_names {
 sub move_out_files_from_aux {
     # Move output and fls files to out_dir
     # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
-    foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps' ) {
+    foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps', 'synctex', 'synctex.gz' ) {
         # Include fls file, because MiKTeX puts it in out_dir, rather than
         # aux_dir, which would seem more natural.  We must maintain
         # compatibility.
@@ -5320,6 +5347,7 @@ sub find_set_log {
         else {
             warn "    But emulate_aux is off.  So I'll turn it on.\n";
             $emulate_aux = 1;
+            $emulate_aux_switched = 1;
             foreach ( $$Pext_cmd ) {
                 s/ -output-directory=[^ ]*(?= )//g;
                 s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
@@ -9438,20 +9466,31 @@ sub make_path_mod {
     my $dir = $_[0];
     my $title = $_[1];
     my $ret = 0;
-    if ( (! -e $dir) && (! -l $dir) ) {
+    if ( -d $dir ) {}
+    elsif ( (! -e $dir) && (! -l $dir) ) {
+        # N.B. A link pointing to a non-existing target
+        # returns false for -e, so we must also check -l
         warn "$My_name: making $title directory '$dir'\n"
             if ! $silent;
-        make_path( $dir );
+        # Error handling from File::Path documentation:
+        make_path( $dir, {error => \my $err} );
+        if ($err && @$err) {
+             for my $diag (@$err) {
+                 my ($file, $message) = %$diag;
+                 if ($file eq '') {
+                     print "general error in making dir: $message\n";
+                 }
+                 else {
+                      print "problem making path $file: $message\n";
+                }
+             }
+             $ret = 1;
+        }
     }
-    elsif ( -l $dir ) {
-        $ret = 1;
-        warn "$My_name: you requested $title directory '$dir',\n",
-             "    but there exists a symlink of the same name. I won't create a directory,\n";
-    }
-    elsif ( ! -d $dir ) {
+    else {
         $ret = 2;
         warn "$My_name: you requested $title directory '$dir',\n",
-            "    but an ordinary file of the same name exists.\n";
+            "    but a non-directory file/symlink of the same name exists.\n";
     }
     return $ret;
 }
