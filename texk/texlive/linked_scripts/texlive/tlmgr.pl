@@ -853,7 +853,7 @@ sub do_cmd_and_check {
   $out =~ s/\n+$//; # trailing newlines don't seem interesting
   my $outmsg = "output:\n$out\n--end of output of $cmd.\n";
   if ($ret == $F_OK) {
-    info("done running $cmd.\n");
+    info("done running $cmd.\n") unless $cmd =~ /^fmtutil/;
     logcommand("success, $outmsg");
     ddebug("$cmd $outmsg");
     return ($F_OK);
