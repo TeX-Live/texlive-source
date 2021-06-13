@@ -46,7 +46,7 @@ void styread(const char *filename)
 		fp=NULL;
 	if (fp==NULL) {
 		fprintf(stderr,"%s does not exist.\n",filename);
-		exit(0);
+		exit(255);
 	}
 	verb_printf(efp,"Scanning style file %s.",filename);
 

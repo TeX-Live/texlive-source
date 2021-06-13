@@ -121,11 +121,12 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 {
 	int i,j,hpoint=0;
 	char datama[2048],lbuff[BUFFERLEN];
-	FILE *fp;
+	FILE *fp=NULL;
 	int conv_euc_to_euc;
 
-	if (filename && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");
-	else {
+	if (filename && kpse_out_name_ok(filename))
+		fp=fopen(filename,"wb");
+	if (fp == NULL) {
 		fp=stdout;
 #ifdef WIN32
 		setmode(fileno(fp), _O_BINARY);
@@ -218,7 +219,15 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				if ((alphabet(ind[i-1].dic[0][0]))||(japanese(ind[i-1].dic[0]))){
 					fputs(group_skip,fp);
 					if (lethead_flag && symbol_flag) {
-						fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
+						if (strlen(symbol)) {
+							fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
+						}
+						else if (lethead_flag>0) {
+							fprintf(fp,"%s%s%s",lethead_prefix,symhead_positive,lethead_suffix);
+						}
+						else if (lethead_flag<0) {
+							fprintf(fp,"%s%s%s",lethead_prefix,symhead_negative,lethead_suffix);
+						}
 					}
 				}
 			}
@@ -309,7 +318,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	}
 	fputs(postamble,fp);
 
-	if (filename) fclose(fp);
+	if (fp!=stdout) fclose(fp);
 }
 
 /*   write page block   */
