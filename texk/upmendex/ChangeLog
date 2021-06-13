@@ -1,3 +1,11 @@
+2021-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	Same fixes as for mendex.
+	* fwrite.c:
+	Avoid segmentation fault for unwritable fopen.
+	* pageread.c, styfile.c: Exit code 255 for non-existent
+	style/log file.
+
 2021-06-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.57  Beta version.

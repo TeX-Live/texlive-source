@@ -154,11 +154,12 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	char lbuff[BUFFERLEN],obuff[BUFFERLEN];
 	UChar datama[256],initial[INITIALLENGTH],initial_prev[INITIALLENGTH];
 	int chset,chset_prev;
-	FILE *fp;
+	FILE *fp=NULL;
 	UErrorCode perr;
 
-	if (filename && kpse_out_name_ok(filename)) fp=fopen(filename,"wb");
-	else {
+	if (filename && kpse_out_name_ok(filename))
+		fp=fopen(filename,"wb");
+	if (fp == NULL) {
 		fp=stdout;
 #ifdef WIN32
 		setmode(fileno(fp), _O_BINARY);
@@ -402,7 +403,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	}
 	fputs(postamble,fp);
 
-	if (filename) fclose(fp);
+	if (fp!=stdout) fclose(fp);
 }
 
 /*   write page block   */
