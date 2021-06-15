@@ -1,3 +1,7 @@
+2021-06-15  Karl Berry  <karl@freefriends.org>
+
+	* dvicopy.web: erroneous '/'; also switch to "Unix" in text.
+
 2021-06-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

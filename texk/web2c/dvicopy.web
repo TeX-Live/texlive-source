@@ -3095,7 +3095,7 @@ system permits this. Here we just define the system-independent part of the
 code required for this possibility. Since a complete option (a keyword
 possibly followed by one or several parameters) may have embedded blanks
 it might be necessary to replace these blanks by some other separator,
-e.g., by a '/'. Using, e.g., \.{UNIX} style options one might then say
+e.g., by a `\./'. Using, e.g., Unix style options one might then say
 $$\.{\title\space-mag/2000 -sel/17.3/5 -sel/47 ...}$$
 to override the magnification factor that is stated in the \.{DVI} file,
 and to select five pages starting with the page numbered~17.3 as well as
