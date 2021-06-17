@@ -1,3 +1,16 @@
+2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (letter_space_font): use explicit \fontdimen6 (quad)
+	if specified:
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-June/004335.html
+
+	And avoid problem when single-character command
+	is used with \letterspacefont:
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-June/004336.html
+	
+	Both reports from Robert Schlict.
+	(pdftex r853, r854)	
+
 2021-06-15  Marcel Fabian Krueger  <tex@2krueger.de>
 
 	* ptexlib.h (glyph_unicode_entry): use integer, not long,
@@ -1500,7 +1513,7 @@
 
 	* pdftex.ch (do_extension): Recover variables unused by TeX.
 
-2009-09-16  Han The Thanh <hanthethanh@gmail.com>
+2009-09-16  Thanh Han The <hanthethanh@gmail.com>
 
 	* writettf.c: patch for TTC from Liu Yubao <yubao.liu@gmail.com>
 
@@ -1538,14 +1551,14 @@
 	* pdftex.web (sup_dest_names_size): increase to 500000;
 	test document from Peter Abbott to Karl, 12 Aug 2009 12:24:43.
 
-2009-07-13  Han The Thanh <hanthethanh@gmail.com>
+2009-07-13  Thanh Han The <hanthethanh@gmail.com>
 
 	* mapfile.c: treat TTC fonts as TTF
 	* writejpg.c: fix bitmap resolution
 	* writettf.c: fix segfault for certain TTF fonts
 	* pdftex.web: enable pk generation by default
 
-2009-06-26  Han The Thanh <hanthethanh@gmail.com>
+2009-06-26  Thanh Han The <hanthethanh@gmail.com>
 
 	* pdftex.web: bugfix from Hartmut: fix \pdfobj file {foo} for files
 	          foo that don't end with '\n'
