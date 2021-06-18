@@ -14,9 +14,6 @@ AC_CONFIG_SRCDIR([main.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
-AC_PROG_CXX
-KPSE_CXX_HACK
-
 dnl Common code for all programs using libkpathsea.
 KPSE_COMMON([upmendex], [no-define])
 
@@ -36,6 +33,9 @@ AC_CACHE_CHECK([if C99 variadic macros are supported],
 AS_CASE([$kpse_cv_have___VA_ARGS__],
         [yes], [AC_DEFINE([HAVE___VA_ARGS__], 1,
                           [Define to 1 if you have C99 variadic macros.])])
+
+AC_PROG_CXX
+KPSE_CXX_HACK
 
 dnl As of ICU 65.1, ICU requires -lpthread on x86_64-linux and, most
 dnl likely, on other platforms. Otherwise there is a crash in

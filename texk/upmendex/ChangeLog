@@ -1,3 +1,10 @@
+2021-06-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac: Avoid error of C++ compiler detection
+	in some envirionment.
+	Report from Vadmin Kantorov,
+	https://github.com/t-tk/upmendex-package/issues/1
+
 2021-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	Same fixes as for mendex.
