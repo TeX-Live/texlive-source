@@ -2,7 +2,7 @@
 
 	* configure.ac: Avoid error of C++ compiler detection
 	in some envirionment.
-	Report from Vadmin Kantorov,
+	Report from Vadim Kantorov,
 	https://github.com/t-tk/upmendex-package/issues/1
 	* main.c: Add ICU version to banner.
 
