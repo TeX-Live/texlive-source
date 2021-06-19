@@ -1,3 +1,4 @@
+# $Id: TLConfig.pm 59225 2021-05-16 17:41:12Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -5,7 +6,7 @@
 
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 59122 $';
+my $svnrev = '$Revision: 59225 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -127,10 +128,8 @@ our %FallbackDownloaderArgs = (
   'curl' => ['--user-agent', 'texlive/curl',
              '--retry', '4', '--retry-delay', '4',
              '--connect-timeout', "$NetworkTimeout", 
-             '--insecure',
              '--fail', '--location', '--silent', '--output'],
   'wget' => ['--user-agent=texlive/wget', '--tries=4',
-             '--no-check-certificate',
              "--timeout=$NetworkTimeout", '-q', '-O'],
 );
 # the way we package things on the web
@@ -278,7 +277,7 @@ our $ChecksumExtension = "sha512";
 
 =head1 NAME
 
-C<TeXLive::TLConfig> -- TeX Live Configuration module
+C<TeXLive::TLConfig> -- TeX Live configuration parameters
 
 =head1 SYNOPSIS
 
@@ -289,12 +288,12 @@ C<TeXLive::TLConfig> -- TeX Live Configuration module
 The L<TeXLive::TLConfig> module contains definitions of variables 
 configuring all of TeX Live.
 
-=over 4
-
-=head1 EXPORTED VARIABLES
+=head2 EXPORTED VARIABLES
 
 All of the following variables are pulled into the callers namespace,
 i.e., are declared with C<EXPORT> (and C<EXPORT_OK>).
+
+=over 4
 
 =item C<@TeXLive::TLConfig::MetaCategories>
 
@@ -378,7 +377,7 @@ C<Master/tlpkg/doc/>.
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written for the TeX Live
-distribution (L<http://tug.org/texlive>) and both are licensed under the
+distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
 =cut
