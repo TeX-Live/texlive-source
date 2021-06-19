@@ -33,6 +33,8 @@ int main(int argc, char **argv)
 	_setmaxstdio(2048);
 #endif
 	kpse_set_program_name(argv[0], "upmendex");
+	u_getVersion(icuVersion);
+	u_versionToString(icuVersion, icu_version);
 
 #ifdef WIN32
 	file_system_codepage = CP_UTF8;
@@ -157,8 +159,6 @@ int main(int argc, char **argv)
 				if (strcmp(argv[i],"--help")!=0) break;
 
 			default:
-				u_getVersion(icuVersion);
-				u_versionToString(icuVersion, icu_version);
 				fprintf(stderr,"upmendex - index processor, %s (%s).\n",VERSION, TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2021 TANAKA Takuji\n");
 				fprintf(stderr," using ICU version %s\n",icu_version);
@@ -233,12 +233,12 @@ int main(int argc, char **argv)
 	}
 
 	if (strcmp(argv[0],"makeindex")==0) {
-		verb_printf(efp,"This is Not `MAKEINDEX\', But `UPMENDEX\' %s (%s).\n",
-			    VERSION, TL_VERSION);
+		verb_printf(efp,"This is Not `MAKEINDEX\', But `UPMENDEX\' %s [ICU %s] (%s).\n",
+			    VERSION, icu_version, TL_VERSION);
 	}
 	else {
-		verb_printf(efp,"This is upmendex %s (%s).\n",
-			    VERSION, TL_VERSION);
+		verb_printf(efp,"This is upmendex %s [ICU %s] (%s).\n",
+			    VERSION, icu_version, TL_VERSION);
 	}
 
 /*   init kanatable   */
