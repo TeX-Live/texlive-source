@@ -76,7 +76,8 @@ dist_btdoc_DATA = \
 ## Tests.
 ##
 bibtex8_tests = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
-bibtexu_tests = tests/bibtexu.test tests/bibtexu-yannis.test
+bibtexu_tests = tests/bibtexu.test tests/bibtexu-basic.test \
+                tests/bibtexu-range.test tests/bibtexu-yannis.test
 
 TESTS =
 if BIBTEX8
@@ -86,7 +87,8 @@ tests/bibtex8.log tests/bibtex8-mem.log tests/sort.log: bibtex8$(EXEEXT)
 if BIBTEXU
 TESTS += $(bibtexu_tests)
 endif BIBTEXU
-tests/bibtexu.log tests/bibtexu-yannis.log: bibtexu$(EXEEXT)
+tests/bibtexu.log tests/bibtexu-basic.log tests/bibtexu-range.log \
+  tests/bibtexu-yannis.log: bibtexu$(EXEEXT)
 
 EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests)
 DISTCLEANFILES =
@@ -99,8 +101,18 @@ EXTRA_DIST += tests/sort.aux \
 	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
 	tests/testdata.bib tests/teststyle.bst
 DISTCLEANFILES += tests/xsort.aux tests/xsort.bbl tests/xsort.blg
+##
 ## tests/bibtex8-mem.test
 DISTCLEANFILES += tests/memtest.bib tests/memtest?.*
+##
+## tests/bibtexu-basic.test
+EXTRA_DIST += tests/ubasic.aux tests/ubasic.bbl tests/ubasic.bib
+DISTCLEANFILES += tests/xubasic.aux tests/xubasic.bbl tests/xubasic.blg
+##
+## tests/bibtexu-range.test
+EXTRA_DIST += tests/urange.aux tests/urange.bbl tests/urange.bib
+DISTCLEANFILES += tests/xurange.aux tests/xurange.bbl tests/xurange.blg
+##
 ## tests/bibtexu-yannis.test
 EXTRA_DIST += tests/yannis.aux tests/yannis.bbl tests/yannis.bib
 DISTCLEANFILES += tests/xyannis.aux tests/xyannis.bbl tests/xyannis.blg

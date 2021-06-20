@@ -17648,9 +17648,7 @@ fi
 
 
 if test "x$enable_bibtexu" != xno; then
-  # As of ICU 65.1, ICU requires -lpthread on x86_64-linux and, most
-  # likely, on other platforms. See upmendex/configure.ac for more info.
-kpse_save_CPPFLAGS=$CPPFLAGS
+    kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
 ##tldbg _KPSE_INIT: Initialize TL infrastructure.

@@ -1,24 +1,23 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2019-2021 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
-
-# Test file prepared by Yannis Haralambous in 2009.
-
-exit 0 # temp until fixed
+# Some actual sorting needed.
 
 test -d tests || mkdir -p tests
 
-cp $srcdir/tests/yannis.aux tests/xyannis.aux
+testname=yannis
+
+cp $srcdir/tests/$testname.aux tests/x$testname.aux || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 BSTINPUTS=$srcdir/../web2c/tests; export BSTINPUTS
 BIBINPUTS=$srcdir/tests; export BIBINPUTS
-if ./bibtexu -l fr -o fr -t -d all tests/xyannis; then :; else
-  echo "bibtexu failed, tests/xyannis.blg is:" >&2
-  cat tests/xyannis.blg >&2
+
+if ./bibtexu -t -d all -l fr -o fr tests/x$testname; then :; else
+  echo "*** bibtexu failed, tests/x$testname.blg is:" >&2
+  cat tests/x$testname.blg >&2
   exit 1
 fi
 
-diff $srcdir/tests/yannis.bbl tests/xyannis.bbl || exit 1
-
+diff $srcdir/tests/$testname.bbl tests/x$testname.bbl || exit 1

@@ -1,0 +1,25 @@
+#! /bin/sh -vx
+# $Id: bibtexu-yannis.test 51452 2019-06-25 01:28:47Z karl $
+# Public domain. Originally written by Karl Berry, 2021.
+
+test -d tests || mkdir -p tests
+
+testname=ubasic
+# due to lack of libpthread:
+#   terminate called after throwing an instance of 'std::system_error'
+#    what():  Unknown error -1
+#   Aborted
+
+cp $srcdir/tests/$testname.aux tests/x$testname.aux || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+BSTINPUTS=$srcdir/../tests/texmf; export BSTINPUTS
+BIBINPUTS=$srcdir/tests; export BIBINPUTS
+
+if ./bibtexu -t -d all tests/x$testname; then :; else
+  echo "*** bibtexu failed, tests/x$testname.blg is:" >&2
+  cat tests/x$testname.blg >&2
+  exit 1
+fi
+
+diff $srcdir/tests/$testname.bbl tests/x$testname.bbl || exit 1

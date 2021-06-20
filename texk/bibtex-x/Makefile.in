@@ -653,18 +653,24 @@ dist_btdoc_DATA = \
 	file_id.diz
 
 bibtex8_tests = tests/bibtex8.test tests/bibtex8-mem.test tests/sort.test
-bibtexu_tests = tests/bibtexu.test tests/bibtexu-yannis.test
+bibtexu_tests = tests/bibtexu.test tests/bibtexu-basic.test \
+                tests/bibtexu-range.test tests/bibtexu-yannis.test
+
 TESTS = $(am__append_3) $(am__append_4)
 EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/sort.aux \
 	tests/sort1.bbl tests/sort2.bbl tests/sort3.bbl \
 	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
-	tests/testdata.bib tests/teststyle.bst tests/yannis.aux \
+	tests/testdata.bib tests/teststyle.bst tests/ubasic.aux \
+	tests/ubasic.bbl tests/ubasic.bib tests/urange.aux \
+	tests/urange.bbl tests/urange.bib tests/yannis.aux \
 	tests/yannis.bbl tests/yannis.bib bt371csf.zip dos-dj.mak \
 	dos-emx.mak os2.mak unix.mak csf/00readme.txt csf/COPYING \
 	csf/HISTORY csf/file_id.diz
 DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
 	tests/xsort.aux tests/xsort.bbl tests/xsort.blg \
-	tests/memtest.bib tests/memtest?.* tests/xyannis.aux \
+	tests/memtest.bib tests/memtest?.* tests/xubasic.aux \
+	tests/xubasic.bbl tests/xubasic.blg tests/xurange.aux \
+	tests/xurange.bbl tests/xurange.blg tests/xyannis.aux \
 	tests/xyannis.bbl tests/xyannis.blg
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
@@ -1686,7 +1692,8 @@ $(bibtexu_OBJECTS): $(KPATHSEA_DEPEND) $(ICU_DEPEND)
 @KPATHSEA_RULE@
 @ICU_RULE@
 tests/bibtex8.log tests/bibtex8-mem.log tests/sort.log: bibtex8$(EXEEXT)
-tests/bibtexu.log tests/bibtexu-yannis.log: bibtexu$(EXEEXT)
+tests/bibtexu.log tests/bibtexu-basic.log tests/bibtexu-range.log \
+  tests/bibtexu-yannis.log: bibtexu$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

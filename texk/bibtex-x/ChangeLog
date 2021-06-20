@@ -1,3 +1,19 @@
+2021-06-20  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (bibtexu_tests): add tests/bibtexu-{basic,range}.test.
+	(EXTRA_DIST, DISTCLEANFILES): likewise.
+	* tests/bibtexu-{basic,range}.test,
+	* tests/u{basic,range}.{aux,bbl,bib,tex}: new files from Dmitry.
+
+	* tests/bibtexu-yannis.test: reenable (probably failed due to lack
+	of pthread?), use same test template.
+	* tests/yannis.bib: credit Yannis.
+
+2021-06-20  Dmitry Zheleznyakov <dmitry.zhelezniakov@gmail.com>
+
+	* bibtex-4.c (x_substring, web section 438): adjust pop_lit1
+	before icu_fromUChars calls, to avoid crash on page ranges.
+
 2021-06-19  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac [enable_bibtexu]: also check for -lpthread.

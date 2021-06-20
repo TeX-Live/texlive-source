@@ -2061,17 +2061,16 @@ back to UTF-8. 23/sep/2009
       BEGIN
 #ifdef UTF_8
         unsigned char frUch1[BUF_SIZE+1];
-        int32_t frUchCap = BUF_SIZE + 1;
-        int32_t lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
         unsigned char frUch2[BUF_SIZE+1];
-        int32_t ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
+        int32_t frUchCap = BUF_SIZE + 1;
+        int32_t lenfrUch;
+        int32_t ptrfrUch;
 #endif
         if (pop_lit1 > (sp_length - (pop_lit2 - 1)))
         BEGIN
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
 #ifdef UTF_8
-        frUchCap = BUF_SIZE + 1;
         lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
         ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
         sp_ptr = str_start[pop_lit3] + ptrfrUch;
@@ -2095,10 +2094,10 @@ back to UTF-8. 23/sep/2009
       BEGIN
 #ifdef UTF_8
         unsigned char  frUch1[BUF_SIZE+1];
-        int32_t frUchCap = BUF_SIZE + 1;
-        int32_t lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
         unsigned char  frUch2[BUF_SIZE+1];
-        int32_t ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
+        int32_t frUchCap = BUF_SIZE + 1;
+        int32_t lenfrUch;
+        int32_t ptrfrUch;
 #endif
         pop_lit2 = -pop_lit2;
         if (pop_lit1 > (Integer_T) (sp_length - (pop_lit2 - 1)))
@@ -2106,7 +2105,6 @@ back to UTF-8. 23/sep/2009
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
 #ifdef UTF_8
-        frUchCap = BUF_SIZE + 1;
         lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
         ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
         sp_ptr = str_start[pop_lit3] + ptrfrUch;
