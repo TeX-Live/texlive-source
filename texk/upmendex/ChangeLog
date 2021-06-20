@@ -1,9 +1,14 @@
+2021-06-19  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: pthread doc update; also needed in bibtexu (q.v.).
+
 2021-06-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* configure.ac: Avoid error of C++ compiler detection
-	in some envirionment.
+	* configure.ac: variadic checks before AC_PROG_CXX, to avoid error
+	of C++ compiler detection in some environments.
 	Report from Vadim Kantorov,
 	https://github.com/t-tk/upmendex-package/issues/1
+	
 	* main.c: Add ICU version to banner.
 
 2021-06-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>

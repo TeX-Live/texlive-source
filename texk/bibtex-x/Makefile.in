@@ -101,6 +101,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-search-libs.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/libtool.m4 \
 	$(top_srcdir)/../../m4/ltoptions.m4 \
@@ -141,7 +142,8 @@ am__objects_2 = bibtexu-bibtex-1.$(OBJEXT) bibtexu-bibtex-2.$(OBJEXT) \
 	bibtexu-bibtex.$(OBJEXT) bibtexu-utils.$(OBJEXT)
 am_bibtexu_OBJECTS = $(am__objects_2)
 bibtexu_OBJECTS = $(am_bibtexu_OBJECTS)
-bibtexu_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+bibtexu_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -544,6 +546,7 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+PTHREAD_LIB = @PTHREAD_LIB@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -629,7 +632,7 @@ bibtexu_SOURCES = $(common_sources)
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
 bibtexu_CPPFLAGS = $(AM_CPPFLAGS) $(ICU_INCLUDES) -DUTF_8
-bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(ICU_LIBS_EXTRA)
+bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(PTHREAD_LIB) $(ICU_LIBS_EXTRA)
 dist_man1_MANS = bibtex8.1 bibtexu.1
 csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 dist_csf_DATA = \

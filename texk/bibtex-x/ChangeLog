@@ -1,3 +1,10 @@
+2021-06-19  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac [enable_bibtexu]: also check for -lpthread.
+	* Makefile.am (bibtexu_LDADD): include $(PTHREAD_LIB).
+	Report and fix from Dmitry Zheleznyakov:
+	https://tug.org/pipermail/tex-k/2021-June/003591.html
+
 2021-02-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* utils.c, configure.ac:
