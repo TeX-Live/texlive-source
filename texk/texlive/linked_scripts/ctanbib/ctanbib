@@ -16,26 +16,38 @@ kpse.set_program_name("luatex")
 -- The Current Maintainer of this work is Michal Hoftich
 
 local bibtype = "manual"
+local pkgurl = false
 if #arg < 1 or arg[1]=="--help" or arg[1]=="-h" then
   print([[ctanbib - convert ctan package information to bibtex format
 Usage:
 ctanbib [options] <package name>
 Available options:
-  -c,--ctan       Use @ctan type instead of @manual
+  -c,--ctan       Use @ctan type instead of @manual and long url
+  -C,--CTAN       Use @ctan type and short ... /pkg/url
   -h,--help       Print this message
   -v,--version    Print version info
   ]])
-  os.exit(1)
+  os.exit(0)
 elseif arg[1]=="--version" or arg[1]=="-v" then
-  print "ctanbib version 0.1d"
-  os.exit(1)
+  print "ctanbib version 0.1e"
+  os.exit(0)
 elseif arg[1]=="--ctan" or arg[1]=="-c" then
   table.remove(arg, 1)
   bibtype = "ctan"
+elseif arg[1]=="--CTAN" or arg[1]=="-C" then
+  table.remove(arg, 1)
+  bibtype = "ctan"
+  pkgurl = true
 end
 
 local pkgname = arg[1]
-local url = "https://www.ctan.org/xml/2.0/pkg/" .. pkgname .. "?author-name=true"
+
+if not pkgname then 
+  print "[ctanbib] Error: missing package name"
+  os.exit(1)
+end
+
+local url = "https://ctan.org/xml/2.0/pkg/" .. pkgname .. "?author-name=true"
 local authors_url = "https://ctan.org/xml/2.0/authors"
 
 -- change that for different title scheme
@@ -54,7 +66,6 @@ version = {$version}
 ]]
 
 local dom = require('luaxml-domobject')
-
 
 local load_xml =  function(url)
   -- local command = io.popen("wget -qO- ".. url,"r")
@@ -142,7 +153,7 @@ end
 local get_url = function(record)
   local home = record:query_selector("home")[1]
   if home then return home:get_attribute("href") end
-  return "http://www.ctan.org/pkg/"..pkgname
+  return "https://ctan.org/pkg/"..pkgname
 end
 
 local get_caption = function(record)
@@ -191,7 +202,7 @@ e.title = get_title(record)
 e.subtitle = get_caption(record)
 e.url = get_url(record)
 -- use the CTAN path as url for the CTAN type
-if bibtype == "ctan" then
+if (bibtype == "ctan") and not pkgurl then
   e.url = ctan_url(record)
 end
 e.version, e.date = get_version(record)

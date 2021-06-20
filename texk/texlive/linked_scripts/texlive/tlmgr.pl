@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59568 2021-06-12 22:02:32Z karl $
+# $Id: tlmgr.pl 59637 2021-06-19 15:17:38Z karl $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59568 $';
-my $datrev = '$Date: 2021-06-13 00:02:32 +0200 (Sun, 13 Jun 2021) $';
+my $svnrev = '$Revision: 59637 $';
+my $datrev = '$Date: 2021-06-19 17:17:38 +0200 (Sat, 19 Jun 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2574,7 +2574,8 @@ sub auto_remove_install_force_packages {
     next if $removals_full{$p};
     my $remotetlp = $remotetlpdb->get_package($p);
     if (!defined($remotetlp)) {
-      tlwarn("$prg: Strange, $p mentioned but not found anywhere!\n");
+      tlwarn("$prg:auto_remove_install_force_packages: strange, package "
+             . "mentioned but not found anywhere: $p\n");
       next;
     }
     next if ($remotetlp->category ne "Collection");
@@ -4109,7 +4110,8 @@ sub show_one_package_list {
       if (@cand) {
         my $first = shift @cand;
         if (defined($first)) {
-          tlwarn("$prg: strange, we have a first candidate but no tlp: $p\n");
+          tlwarn("$prg:show_one_package_list: strange, have first "
+                 . "candidate but no tlp: $p\n");
           return($F_WARNING);
         }
         # already shifted away the first element
@@ -4122,19 +4124,23 @@ sub show_one_package_list {
             my ($t,$r) = split(/\//, $a, 2);
             my $tlp = $remotetlpdb->get_package($p, $t);
             my $foo = $tlp->shortdesc;
-            print "      $t: ", defined($foo) ? $foo : "(shortdesc missing)" , "\n";
+            print "      $t: ",
+                  defined($foo) ? $foo : "(shortdesc missing)" , "\n";
           }
           return($F_WARNING);
         } else {
-          tlwarn("$prg: strange, package listed but no residual candidates: $p\n");
+          tlwarn("$prg:show_one_package_list: strange, package listed "
+                 . "but no residual candidates: $p\n");
           return($F_WARNING);
         }
       } else {
-        tlwarn("$prg: strange, package listed but no candidates: $p\n");
+        tlwarn("$prg:show_one_package_list: strange, package listed but "
+               . "no candidates: $p\n");
         return($F_WARNING);
       }
     } else {
-      tlwarn("$prg: strange, package cannot be found in remote tlpdb: $p\n");
+      tlwarn("$prg:show_one_package_list: strange, package not found in "
+             . "remote tlpdb: $p\n");
       return($F_WARNING);
     }
   }
@@ -4189,7 +4195,8 @@ sub show_one_package_detail {
         # useless test, @cand will always be defined because $remotetlpdb is virtual
         my $first = shift @cand;
         if (defined($first)) {
-          tlwarn("$prg: strange, we have a first candidate but no tlp: $pkg\n");
+          tlwarn("$prg:show_one_package_detail: strange, have first candidate "
+                 . "but no tlp: $pkg\n");
           return($F_WARNING);
         }
         # already shifted away the first element
@@ -10224,7 +10231,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59568 2021-06-12 22:02:32Z karl $
+$Id: tlmgr.pl 59637 2021-06-19 15:17:38Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
