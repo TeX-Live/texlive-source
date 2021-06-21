@@ -441,7 +441,6 @@ AWK = @AWK@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
-CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
@@ -546,6 +545,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -573,20 +573,20 @@ EXTRA_DIST = $(TESTS) tests/oldindep.spc tests/oldindep.tex \
 	tests/firstpn.tex tests/firstpn.dvi tests/firstpn.dry \
 	tests/annot.tex tests/annot.dvi tests/longspec.tex \
 	tests/longspec.dvi tests/flatnest.tex tests/flatnest.dvi \
-	tests/oldindep.cfn tests/jis.tfm tests/jis.cfn \
-	tests/eufm10.tfm tests/eufm10.cfn tests/cmr10.pk \
-	tests/cmr10.cfn tests/upjisr-h.vf tests/upsjir-h.cfn \
-	tests/uparse.tfm tests/uparse.cfn tests/skipjfmp.tfm \
-	tests/skipjfmp.cfn tests/upphirakakuw3-h.tfm \
-	tests/upphirakakuw3-h.cfn tests/upphirakakuw6-h.tfm \
-	tests/upphirakakuw6-h.cfn
+	tests/jisx0208.dvi tests/jisx0208.txt tests/oldindep.cfn \
+	tests/jis.tfm tests/jis.cfn tests/eufm10.tfm tests/eufm10.cfn \
+	tests/cmr10.pk tests/cmr10.cfn tests/upjisr-h.vf \
+	tests/upsjir-h.cfn tests/uparse.tfm tests/uparse.cfn \
+	tests/skipjfmp.tfm tests/skipjfmp.cfn \
+	tests/upphirakakuw3-h.tfm tests/upphirakakuw3-h.cfn \
+	tests/upphirakakuw6-h.tfm tests/upphirakakuw6-h.cfn
 DISTCLEANFILES = x*oldindep.spc x*oldindepa.txt x*oldindepax.dvi \
 	x*oldindep.dry x*oldindepout.dvi x*underout.dvi x*tpicpn.dry \
 	x*tpicpnout.dvi x*tpicsh.dry x*reverse.dry x*reverseout.dvi \
 	x*first.dry x*firstout.dvi x*firstpn.dry x*write.dvi \
-	x*writeout.dvi oldindep.dvi xoldindep.cfn xjis.cfn xeufm10.cfn \
-	xeufm10.ed.cfn xcmr10.cfn xupjisr-h.cfn xuparse.cfn \
-	xskipjfmp.cfn xupp3-h.cfn xupp6-h.cfn
+	x*writeout.dvi *.da.txt *.da.dvi oldindep.dvi xoldindep.cfn \
+	xjis.cfn xeufm10.cfn xeufm10.ed.cfn xcmr10.cfn xupjisr-h.cfn \
+	xuparse.cfn xskipjfmp.cfn xupp3-h.cfn xupp6-h.cfn
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
