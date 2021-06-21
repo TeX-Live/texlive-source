@@ -1,3 +1,9 @@
+2021-06-21  Karl Berry  <karl@freefriends.org>
+
+	* tests/bibtexu-yannis.test: disable again. Fails on
+	FreeBSD, OpenBSD, sparc-solaris.
+	https://tug.org/pipermail/tlbuild/2021q2/004918.html
+
 2021-06-20  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (bibtexu_tests): add tests/bibtexu-{basic,range}.test.
