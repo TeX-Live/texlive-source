@@ -112,6 +112,7 @@ static int UCS2toJISnative(int ucs2)
 {
     int i, j;
 
+    if (ucs2==0) return 0;
     for (i=0; i<MAXJIS; i++) {
         for (j=0; j<94; j++) {
             if (UnicodeTbl[i][j] == ucs2) {
