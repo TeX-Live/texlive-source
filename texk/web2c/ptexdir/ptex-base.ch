@@ -4185,10 +4185,10 @@ first_use:=true; chain:=false;
 delete_glue_ref(cur_kanji_skip); delete_glue_ref(cur_xkanji_skip);
 cur_kanji_skip:=space_ptr(head); cur_xkanji_skip:=xspace_ptr(head);
 add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
-link(temp_head):=link(head);
 if not is_char_node(tail)and(type(tail)=disp_node) then
   begin free_node(tail,small_node_size); tail:=prev_node; link(tail):=null
   end;
+link(temp_head):=link(head);
 if is_char_node(tail) then tail_append(new_penalty(inf_penalty))
 else if type(tail)<>glue_node then tail_append(new_penalty(inf_penalty))
 @z
@@ -5274,7 +5274,10 @@ mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
   begin if head=tail then pop_nest {null paragraphs are ignored}
   else line_break(widow_penalty);
 @y
-  begin if head=tail then pop_nest {null paragraphs are ignored}
+  begin if (link(head)=tail)and(not is_char_node(tail)and(type(tail)=disp_node)) then
+    begin free_node(tail,small_node_size); tail:=head; link(head):=null; end;
+    { |disp_node|-only paragraphs are ignored }
+  if head=tail then pop_nest {null paragraphs are ignored}
   else begin adjust_hlist(head,true); line_break(widow_penalty)
        end;
 @z
@@ -5732,6 +5735,11 @@ direction:=-abs(direction);
 @x [48.1145] l.22435 - pTeX: Call adjust_hlist at begin of display
 else  begin line_break(display_widow_penalty);@/
 @y
+else if (link(head)=tail)and(not is_char_node(tail)and(type(tail)=disp_node)) then
+  begin free_node(tail,small_node_size); tail:=head; link(head):=null;
+  pop_nest; w:=-max_dimen;
+  end
+  { |disp_node|-only paragraphs are ignored }
 else  begin adjust_hlist(head,true); line_break(display_widow_penalty);@/
 @z
 

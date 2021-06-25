@@ -154,6 +154,16 @@ change_box(q);
 @z
 
 @x [48.1145]
+  pop_nest; w:=-max_dimen;
+  end
+  { |disp_node|-only paragraphs are ignored }
+@y
+  @<Prepare for display after an empty paragraph@>
+  end
+  { |disp_node|-only paragraphs are ignored }
+@z
+
+@x [48.1145]
 else  begin adjust_hlist(head,true); line_break(display_widow_penalty);@/
 @y
 else  begin adjust_hlist(head,true); line_break(true);@/

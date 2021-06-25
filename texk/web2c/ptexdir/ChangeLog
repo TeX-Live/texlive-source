@@ -1,3 +1,12 @@
+2021-06-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	and Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch (end_graf, @<Go into display math mode@>):
+	Ignore disp_node-only paragraphs.
+	* ptex-base.ch (line_break): consider when link(temp_head)=tail
+	and it is a disp_node.
+	https://github.com/texjporg/tex-jp-build/issues/123
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.
