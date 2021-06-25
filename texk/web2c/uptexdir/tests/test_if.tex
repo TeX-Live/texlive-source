@@ -1,29 +1,56 @@
+%#!ptex
 \kcatcode`あ=18
 \def\xA{あ}\let\yA=あ
 \kcatcode`あ=17
 \def\xB{あ}\let\yB=あ
 \kcatcode`あ=16
+\def\xC{あ}\let\yC=あ
 
-\message{\ifcat あ\xA Y\else N\fi}
-\message{\ifcat あ\yA Y\else N\fi}
-\message{\ifcat あ\xB Y\else N\fi}
-\message{\ifcat あ\yB Y\else N\fi}
+%% for pTeX
+%  * x: macro -> re-eval kcatcode
+%  * y: let   -> copy kcatcode
+%% for upTeX
+%  * x: macro -> reserved kcatcode
+%  * y: let   -> copy kcatcode
 
-\message{\if    あ\xA Y\else N\fi}
-\message{\if    あ\yA Y\else N\fi}
-\message{\if    い\xA Y\else N\fi}
-\message{\if    い\yA Y\else N\fi}
+\message{ifcat}
+\message{\ifcat あ\xA Y\else N\fi}% pY, uN
+\message{\ifcat あ\yA Y\else N\fi}% pN, uN
+\message{\ifcat あ\xB Y\else N\fi}% pY, uN
+\message{\ifcat あ\yB Y\else N\fi}% pN, uN
+\message{\ifcat あ\xC Y\else N\fi}% pY, uY
+\message{\ifcat あ\yC Y\else N\fi}% pY, uY
+
+\message{if}
+\message{\if    あ\xA Y\else N\fi}% pY, uY
+\message{\if    あ\yA Y\else N\fi}% pY, uY
+\message{\if    あ\xB Y\else N\fi}% pY, uY
+\message{\if    あ\yB Y\else N\fi}% pY, uY
+\message{\if    あ\xC Y\else N\fi}% pY, uY
+\message{\if    あ\yC Y\else N\fi}% pY, uY
+\message{\if    い\xA Y\else N\fi}% pN, uN
+\message{\if    い\yA Y\else N\fi}% pN, uN
+
+\message{ifx}
+\message{\ifx   あ\xA Y\else N\fi}% pN, uN
+\message{\ifx   あ\yA Y\else N\fi}% pN, uN
+\message{\ifx   あ\xB Y\else N\fi}% pN, uN
+\message{\ifx   あ\yB Y\else N\fi}% pN, uN
+\message{\ifx   あ\xC Y\else N\fi}% pN, uN
+\message{\ifx   あ\yC Y\else N\fi}% pY, uY
+\message{\ifx  \xA\xB Y\else N\fi}% pY, uN
+\message{\ifx  \xA\xC Y\else N\fi}% pY, uN
+\message{\ifx  \yA\yB Y\else N\fi}% pN, uN
+\message{\ifx  \yA\yC Y\else N\fi}% pN, uN
 
 \ifx\ucs\undefined\else
   \kcatcode"100=16
   \message{upTeX}
   \def\xA{Ā}% U+0100
   \def\xB{ā}% U+0101
-  \message{\if   \xA\relax Y\else N\fi}
-  \message{\if   \xB\relax Y\else N\fi}
-  \message{\ifcat\xA\relax Y\else N\fi}
-  \message{\ifcat\xB\relax Y\else N\fi}
+  \message{\if   \xA\relax Y\else N\fi}% uN
+  \message{\if   \xB\relax Y\else N\fi}% uN
+  \message{\ifcat\xA\relax Y\else N\fi}% uN
+  \message{\ifcat\xB\relax Y\else N\fi}% uN
 \fi
 \end
-
-

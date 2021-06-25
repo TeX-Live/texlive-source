@@ -2542,7 +2542,7 @@ else begin
   end
 @z
 
-@x [28.502] l.10138 - pTeX: ifx : Test character : KANJI character
+@x [28.502] l.10138 - pTeX: if[cat] : Test character : KANJI character
 if (cur_cmd>active_char)or(cur_chr>255) then {not a character}
   begin m:=relax; n:=256;
   end
@@ -2554,7 +2554,7 @@ if (cur_cmd>active_char)or(cur_chr>255) then
   end;
 @y
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin n:=cur_chr; m:=kcat_code(kcatcodekey(n));
+  begin m:=cur_cmd; n:=cur_chr;
   end
 else if (cur_cmd>active_char)or(cur_chr>255) then
   begin m:=relax; n:=max_cjk_val;
@@ -2563,8 +2563,8 @@ else  begin m:=cur_cmd; n:=cur_chr;
   end;
 get_x_token_or_active_char;
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr));
-  end
+  begin cur_cmd:=cur_cmd;
+  end {dummy}
 else if (cur_cmd>active_char)or(cur_chr>255) then
   begin cur_cmd:=relax; cur_chr:=max_cjk_val;
   end;

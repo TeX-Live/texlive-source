@@ -704,24 +704,16 @@ uptex_revision_code: print(upTeX_revision);
 
 @x
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin n:=cur_chr; m:=kcat_code(kcatcodekey(n));
-  end
 @y
 if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
-  begin m:=cur_cmd; n:=cur_chr;
-  end
 @z
 
 @x
 get_x_token_or_active_char;
 if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then
-  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr));
-  end
 @y
 get_x_token_or_active_char;
 if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
-  begin cur_cmd:=cur_cmd;
-  end {dummy}
 @z
 
 @x
