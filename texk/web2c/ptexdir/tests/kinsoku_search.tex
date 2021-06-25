@@ -1,0 +1,43 @@
+%#!euptex -ini -etex
+\tracingonline1
+\tracingassigns1
+
+% 最優先hashはコードポイントから一意に決まる値（jtex.pdfも参照）
+\prebreakpenalty`、=10000 % code=12289, 最優先hash=1
+\prebreakpenalty`。=10000 % code=12290, 最優先hash=2
+\prebreakpenalty`ぁ=150 % code=12353, 最優先hash=1だが埋まってしまったので3に分配
+\prebreakpenalty`ぃ=150 % code=12355, 最優先hash=3だが埋まってしまったので4に分配
+
+\showthe\currentgrouplevel % > 0.
+\showthe\prebreakpenalty`ぃ % > 150.
+
+\prebreakpenalty`ぃ=0 % changing hash=4
+\showthe\prebreakpenalty`ぃ % > 0. ← OK（hash=4読出）
+
+\prebreakpenalty`ぃ=123 % changing hash=4
+\showthe\prebreakpenalty`ぃ % > 123. ← OK（hash=4読出）
+
+\prebreakpenalty`ぁ=0 % changing hash=3
+\showthe\prebreakpenalty`ぃ % > 123. ← OK（hash=4読出）
+
+% この時点で "ぁ" が消えてhash=3が空いている。
+% 一方，"ぃ"はフォールバックしたhash=4に格納されている。
+
+\prebreakpenalty`ぃ=0 % changing hash=4
+\showthe\prebreakpenalty`ぃ % > 0. ← 修正（削除済み）
+
+\prebreakpenalty`ぃ=234 % changing hash=3
+\showthe\prebreakpenalty`ぃ % > 234. ← OK（hash=3読出）
+
+\prebreakpenalty`ぃ=0 % changing hash=3
+\showthe\prebreakpenalty`ぃ % > 0. ← 修正（削除済み）
+
+\prebreakpenalty`ぁ=345 % changing hash=3
+\showthe\prebreakpenalty`ぃ % > 0. ← 修正（削除済み）
+
+% この時点で "ぁ" が再びhash=3を埋めている。
+
+\prebreakpenalty`ぃ=0 % reassigning hash=4
+\showthe\prebreakpenalty`ぃ % > 0. ← OK（削除済み）
+
+\end

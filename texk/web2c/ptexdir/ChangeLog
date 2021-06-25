@@ -7,8 +7,14 @@
 	and it is a disp_node.
 	https://github.com/texjporg/tex-jp-build/issues/123
 	* ptex-base.ch: Partially revert the commit on 2019-05-06;
-	no re-eval kcatcode of Japanese character token in \if and \ifcat.
-	This is because the behavior was inconsistent against \ifx.
+	no re-eval kcatcode of \let-copied Japanese character token in
+	\if and \ifcat, because the behavior was inconsistent against \ifx.
+	https://github.com/texjporg/ptex-manual/issues/4
+	* ptex-base.ch: Fix searching in inhibit/kinsoku tables, because
+	the fix on 2018-04-14 was still incomplete.
+	https://github.com/texjporg/tex-jp-build/issues/113
+	* tests/kinsoku_search.tex: New test file.
+	* tests/kinsoku_table.tex: Update.
 
 2021-03-23  Karl Berry  <karl@tug.org>
 

@@ -1249,10 +1249,27 @@ if n<math_code_base then
     begin print_esc("xspcode"); print_int(n-auto_xsp_code_base);
     end
   else if n<kinsoku_base then
-    begin print("(inhibitxspcode table) "); print_int(n-inhibit_xsp_code_base);
+    begin print("inhibitxspcode table "); print_int(n-inhibit_xsp_code_base);
+      print(", type=");
+      case eq_type(n) of
+        0: print("both");   { |inhibit_both| }
+        1: print("before"); { |inhibit_previous| }
+        2: print("after");  { |inhibit_after| }
+        3: print("none");   { |inhibit_none| }
+        4: print("unused"); { |inhibit_unused| }
+      end; {there are no other cases}
+      print(", code");
     end
   else if n<kansuji_base then
-    begin print("(kinsoku table) "); print_int(n-kinsoku_base);
+    begin print("kinsoku table "); print_int(n-kinsoku_base);
+      print(", type=");
+      case eq_type(n) of
+        0: print("no");
+        1: print("pre");    { |pre_break_penalty_code| }
+        2: print("post");   { |post_break_penalty_code| }
+        3: print("unused"); { |kinsoku_unused_code| }
+      end; {there are no other cases}
+      print(", code");
     end
   else if n<lc_code_base then
     begin print_esc("kansujichar"); print_int(n-kansuji_base);
@@ -1412,7 +1429,10 @@ end;
 tats
 @y
 else if n<kinsoku_penalty_base then @<Show equivalent |n|, in region 6@>
-else if n<=eqtb_size then print("kinsoku")
+else if n<=eqtb_size then begin
+  print("kinsoku table "); print_int(n-kinsoku_penalty_base);
+  print(", penalty="); print_int(eqtb[n].int);
+  end
 else print_char("?"); {this can't happen either}
 end;
 tats
@@ -6582,19 +6602,23 @@ assign_inhibit_xsp_code: print_esc("inhibitxspcode");
 @ @<Declare procedures needed in |scan_something_internal|@>=
 function get_inhibit_pos(c:KANJI_code; n:small_number):pointer;
 label done, done1;
-var p,s:pointer;
-begin s:=calc_pos(c); p:=s;
+var p,pp,s:pointer;
+begin s:=calc_pos(c); p:=s; pp:=no_entry;
 if n=new_pos then
   begin repeat
-  if (inhibit_xsp_type(p)=inhibit_unused)or(inhibit_xsp_code(p)=0)
-    or(inhibit_xsp_code(p)=c) then goto done;
+  if inhibit_xsp_code(p)=c then goto done;  { found, update there }
+  if inhibit_xsp_code(p)=0 then             { no further scan needed }
+    begin if pp<>no_entry then p:=pp; goto done; end;
+  if inhibit_xsp_type(p)=inhibit_unused then
+    if pp=no_entry then pp:=p; { save the nearest unused hash }
   incr(p); if p>255 then p:=0;
-  until s=p; p:=no_entry;
+  until s=p;
+  p:=pp;
   end
 else
   begin repeat
-  if inhibit_xsp_code(p)=0 then goto done1
-  else if (inhibit_xsp_type(p)<>inhibit_unused)and(inhibit_xsp_code(p)=c) then goto done;
+  if inhibit_xsp_code(p)=0 then goto done1;
+  if inhibit_xsp_code(p)=c then goto done;
   incr(p); if p>255 then p:=0;
   until s=p;
 done1: p:=no_entry;
@@ -6629,6 +6653,7 @@ end;
 begin scan_int; q:=get_inhibit_pos(tokanji(cur_val),cur_pos);
 cur_val_level:=int_val; cur_val:=inhibit_none;
 if q<>no_entry then cur_val:=inhibit_xsp_type(q);
+if cur_val>inhibit_none then cur_val:=inhibit_none;
 end
 
 @ The \.{\\prebreakpenalty} is used to specified amount of penalties inserted
@@ -6654,8 +6679,8 @@ assign_kinsoku: case chr_code of
 @ @<Declare procedures needed in |scan_something_internal|@>=
 function get_kinsoku_pos(c:KANJI_code; n:small_number):pointer;
 label done, done1;
-var p,s:pointer;
-begin s:=calc_pos(c); p:=s;
+var p,pp,s:pointer;
+begin s:=calc_pos(c); p:=s; pp:=no_entry;
 @!debug
 print_ln; print("c:="); print_int(c); print(", p:="); print_int(s);
 if p+kinsoku_base<0 then
@@ -6664,16 +6689,19 @@ if p+kinsoku_base<0 then
 gubed
 if n=new_pos then
   begin repeat
-  if (kinsoku_type(p)=0)or(kinsoku_type(p)=kinsoku_unused_code)
-    or(kinsoku_code(p)=c) then goto done;
+  if kinsoku_code(p)=c then goto done;  { found, update there }
+  if kinsoku_type(p)=0 then             { no further scan needed }
+    begin if pp<>no_entry then p:=pp; goto done; end;
+  if kinsoku_type(p)=kinsoku_unused_code then
+    if pp=no_entry then pp:=p; { save the nearest unused hash }
   incr(p); if p>255 then p:=0;
   until s=p;
-  p:=no_entry;
+  p:=pp;
   end
 else
   begin repeat
-  if kinsoku_type(p)=0 then goto done1
-  else if (kinsoku_type(p)<>kinsoku_unused_code)and(kinsoku_code(p)=c) then goto done;
+  if kinsoku_type(p)=0 then goto done1;
+  if kinsoku_code(p)=c then goto done;
   incr(p); if p>255 then p:=0;
   until s=p;
 done1: p:=no_entry;

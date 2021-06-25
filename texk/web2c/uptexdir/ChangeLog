@@ -71,7 +71,7 @@
 2019-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch:
-	Make appropreate comparison of U+0100 by \if.
+	Make appropriate comparison of U+0100 by \if.
 	https://github.com/texjporg/tex-jp-build/issues/68
 	* tests/test_if.tex: Test case.
 
