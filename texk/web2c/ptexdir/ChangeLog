@@ -11,10 +11,12 @@
 	\if and \ifcat, because the behavior was inconsistent against \ifx.
 	https://github.com/texjporg/ptex-manual/issues/4
 	* ptex-base.ch: Fix searching in inhibit/kinsoku tables, because
-	the fix on 2018-04-14 was still incomplete.
+	the fix on 2018-04-14 was still incomplete. More information for
+	\tracingrestores and \tracingassigns.
 	https://github.com/texjporg/tex-jp-build/issues/113
 	* tests/kinsoku_search.tex: New test file.
 	* tests/kinsoku_table.tex: Update.
+	* ptex-base.ch, ptex_version.h: Version p3.9.1.
 
 2021-03-23  Karl Berry  <karl@tug.org>
 
