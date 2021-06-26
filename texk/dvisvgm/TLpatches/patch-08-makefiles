@@ -1,29 +1,36 @@
 	See ./TL-Changes.
 
---- dvisvgm-2.8.2/Makefile.am	2019-07-08 17:24:34.000000000 +0200
-+++ dvisvgm-src/Makefile.am	2019-11-16 13:57:04.091210187 +0100
-@@ -5,7 +5,7 @@
- 
+diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.11.1/Makefile.am	2021-01-21 06:06:33.000000000 -0800
++++ dvisvgm-src/Makefile.am	2021-01-23 00:47:24.909030000 -0800
+@@ -6,5 +6,5 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
 -SUBDIRS = libs m4 src tests doc
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
  
- if USE_BUNDLED_LIBS
---- dvisvgm-2.8.2/src/Makefile.am	2019-09-12 14:43:35.000000000 +0200
-+++ dvisvgm-src/src/Makefile.am	2019-11-16 15:54:55.820450555 +0100
-@@ -4,7 +4,7 @@
- ## Process this file with automake.
+diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/libs/ff-woff/Makefile.am dvisvgm-src/libs/ff-woff/Makefile.am
+--- dvisvgm-2.11.1/libs/ff-woff/Makefile.am	2021-01-21 06:06:33.000000000 -0800
++++ dvisvgm-src/libs/ff-woff/Makefile.am	2021-06-26 08:57:25.865861500 -0700
+@@ -84,5 +84,5 @@
+ EXTRA_DIST = LICENSE
+ 
+-AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_CFLAGS)
++AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_INCLUDES)
+ 
+ @CODE_COVERAGE_RULES@
+diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.11.1/src/Makefile.am	2021-01-21 06:06:33.000000000 -0800
++++ dvisvgm-src/src/Makefile.am	2021-06-26 08:56:40.066387630 -0700
+@@ -5,5 +5,5 @@
  
  bin_PROGRAMS     = dvisvgm
 -noinst_LTLIBRARIES = libdvisvgm.la
 +noinst_LIBRARIES = libdvisvgm.a
  SUBDIRS = optimizer
  
- dvisvgm_SOURCES = \
-@@ -14,13 +14,11 @@
- include ../libs/defs.am
+@@ -15,11 +15,9 @@
  
  dvisvgm_LDADD = \
 -	$(noinst_LTLIBRARIES) \
@@ -38,9 +45,7 @@
 +	$(XXHASH_LIBS)
  
  if ENABLE_WOFF
- dvisvgm_LDADD += \
-@@ -35,9 +33,17 @@
- dvisvgm_LDADD += $(LIBCRYPTO_LIBS)
+@@ -36,7 +34,15 @@
  endif
  
 -dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
@@ -58,9 +63,7 @@
 +libdvisvgm_a_SOURCES = \
  	AGLTable.hpp \
  	BasicDVIReader.hpp           BasicDVIReader.cpp \
- 	Bezier.hpp                   Bezier.cpp \
-@@ -160,28 +166,31 @@
- 	ZLibOutputStream.hpp
+@@ -161,26 +167,30 @@
  
  if ENABLE_WOFF
 -libdvisvgm_la_SOURCES += ffwrapper.c ffwrapper.h
@@ -94,6 +97,7 @@
 +	$(KPATHSEA_INCLUDES) \
 +	$(POTRACE_INCLUDES) \
 +	$(FREETYPE2_INCLUDES) \
++	$(ZLIB_INCLUDES) \
 +	$(LIBGS_INCLUDES) \
 +	$(CODE_COVERAGE_CFLAGS)
 +
@@ -102,18 +106,14 @@
 +endif WIN32
  
  AM_LDFLAGS = \
- 	$(KPSE_LIBS) \
-@@ -192,8 +201,6 @@
- 	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
+@@ -193,6 +203,4 @@
  	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
 -AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
 -
  AM_CXXFLAGS +=  \
  	$(BROTLI_CFLAGS) \
- 	$(WOFF2_CFLAGS)
-@@ -204,9 +211,10 @@
- AM_CXXFLAGS += $(LIBCRYPTO_CFLAGS)
+@@ -205,7 +213,8 @@
  endif
  
 -AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
@@ -123,9 +123,7 @@
 +if ! TEXLIVE_BUILD
  
  # the command-line parser class is generated from options.xml by opt2cpp
- $(srcdir)/CommandLine.hpp: options.xml
-@@ -220,7 +228,15 @@
- 	fi
+@@ -221,6 +230,14 @@
  
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
@@ -140,9 +138,10 @@
 +@FREETYPE2_RULE@
 +# Rebuild libz:
 +@ZLIB_RULE@
---- dvisvgm-2.8.2/src/optimizer/Makefile.am	2019-11-08 15:26:11.000000000 +0100
-+++ dvisvgm-src/src/optimizer/Makefile.am	2019-11-16 15:15:54.151760519 +0100
-@@ -1,6 +1,6 @@
+diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/src/optimizer/Makefile.am dvisvgm-src/src/optimizer/Makefile.am
+--- dvisvgm-2.11.1/src/optimizer/Makefile.am	2021-01-21 06:06:33.000000000 -0800
++++ dvisvgm-src/src/optimizer/Makefile.am	2020-11-25 00:24:36.317206031 -0800
+@@ -1,5 +1,5 @@
 -noinst_LTLIBRARIES = liboptimizer.la
 +noinst_LIBRARIES = liboptimizer.a
  
@@ -150,4 +149,3 @@
 +liboptimizer_a_SOURCES = \
  	AttributeExtractor.hpp      AttributeExtractor.cpp \
  	DependencyGraph.hpp \
- 	GroupCollapser.hpp          GroupCollapser.cpp  \

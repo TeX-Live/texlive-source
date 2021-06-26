@@ -676,7 +676,7 @@ AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
 	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
 	$(XXHASH_CFLAGS) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
-	$(FREETYPE2_INCLUDES) $(LIBGS_INCLUDES) \
+	$(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) $(LIBGS_INCLUDES) \
 	$(CODE_COVERAGE_CFLAGS) $(am__append_9) $(am__append_11) \
 	$(am__append_12) $(am__append_13)
 CLEANFILES = *.gcda *.gcno

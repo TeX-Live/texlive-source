@@ -1,3 +1,11 @@
+2021-06-26  Karl Berry  <karl@freefriends.org>
+
+	* dvisvgm-src/libs/ff-woff/Makefile.am (AM_CFLAGS): use ZLIB_INCLUDES
+	not ZLIB_CFLAGS (again).
+	* dvisvgm-src/Makefile.am (AM_CXXFLAGS): use ZLIB_INCLUDES (again).
+	* TLpatches/patch-08-makefiles: update.
+	Report from Luigi Scarso.
+
 2021-02-19  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: AC_SEARCH_LIBS(clock_gettime, rt) for Solaris 10.
