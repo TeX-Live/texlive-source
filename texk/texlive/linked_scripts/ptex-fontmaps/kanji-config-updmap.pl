@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
 # kanji-config-updmap: setup Japanese font embedding
-# Version 20201227.0
+# Version 20210625.0
 #
 # formerly known as updmap-setup-kanji
 #
 # Copyright 2004-2006 by KOBAYASHI R. Taizo for the shell version (updmap-otf)
-# Copyright 2011-2020 by PREINING Norbert
-# Copyright 2016-2020 by Japanese TeX Development Community
+# Copyright 2011-2021 by PREINING Norbert
+# Copyright 2016-2021 by Japanese TeX Development Community
 #
 # This file is licensed under GPL version 3 or any later version.
 # For copyright statements see end of file.
@@ -22,7 +22,7 @@ use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
 
 my $prg = "kanji-config-updmap";
-my $version = '20201227.0';
+my $version = '20210625.0';
 
 my $updmap_real = "updmap";
 my $updmap = $updmap_real;
@@ -149,10 +149,10 @@ sub macosx_new {
     $macos_ver_major =~ s/^(\d+)\.(\d+).*/$1/;
     my $macos_ver_minor = $macos_ver;
     $macos_ver_minor =~ s/^(\d+)\.(\d+).*/$2/;
-    if ($macos_ver_major==10) {
-      if ($macos_ver_minor>=11) {
-        return 1;
-      }
+    if ($macos_ver_major==10 && $macos_ver_minor>=11) {
+      return 1; # macOS 10.11 (El Capitan) or later
+    } elsif ($macos_ver_major>=11) {
+      return 1; # macOS 11.0 (Big Sur) or later
     }
   }
   return 0;
