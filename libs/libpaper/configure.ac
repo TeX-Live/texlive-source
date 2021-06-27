@@ -1,6 +1,8 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2013-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -13,9 +15,12 @@ AC_CONFIG_SRCDIR([libpaper-src/lib/paper.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4])
 
+dnl Must come before KPSE_BASIC to avoid Autoconf 2.70 warning:
+dnl   AC_LINK_IFELSE was called before AC_USE_SYSTEM_EXTENSIONS
+AC_USE_SYSTEM_EXTENSIONS
+
 KPSE_BASIC([paper])
 
-AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_CC
 AC_PROG_RANLIB
 AC_PROG_LN_S
@@ -44,5 +49,4 @@ AC_SUBST([LIBPAPER_TREE], [libpaper-src])
 AC_CONFIG_FILES([Makefile 
                 include/Makefile
                 paperconf.1:libpaper-src/man/paperconf.1.in])
-
 AC_OUTPUT

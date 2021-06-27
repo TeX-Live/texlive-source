@@ -1,3 +1,9 @@
+2021-06-27  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_USE_SYSTEM_EXTENSIONS): use before KPSE_BASIC,
+	to avoid Autoconf 2.70 (or later) warning:
+	AC_LINK_IFELSE was called before AC_USE_SYSTEM_EXTENSIONS
+
 2016-02-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Makefile.am, configure.ac: New convention.
