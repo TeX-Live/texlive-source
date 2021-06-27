@@ -1,0 +1,35 @@
+pre 2 25400000 473628672 1000 0 ''
+ [1]
+bop 1 0 0 0 0 0 0 0 0 0 -1
+fntnum0
+put2 0x2546 "テ"
+right3 655360
+put2 0x252d "キ"
+right3 1310720
+put2 0x2539 "ス"
+right3 1966080
+put2 0x2548 "ト"
+right3 2621440
+set2 0x2447 "で"
+set2 0x2422 "あ"
+set2 0x246a "り"
+right3 1310720
+fntnum1
+put1 0x41
+right3 1638400
+setchar116
+setchar101
+setchar120
+setchar116
+ "text"
+right3 1310720
+fntnum0
+set2 0x2447 "で"
+set2 0x2422 "あ"
+set2 0x246b "る"
+set2 0x2123 "。"
+eop
+post 57 25400000 473628672 1000 0 0 0 1
+fntdef1 0 0 1310720 1310720 0 5 'min10'
+fntdef1 1 0 1310720 1310720 0 5 'cmr10'
+post_post 173 2 223 223 223 223 223 223

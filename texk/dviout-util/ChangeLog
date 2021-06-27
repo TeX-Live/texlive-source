@@ -1,3 +1,10 @@
+2021-06-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* dvispc.c: Avoid encoding conversion in ASCII range
+	for printing characters with internal-euc/sjis.
+	* dvispc.test, tests/put[j].dump.dvi, tests/put[j].txt,
+	Makefile.am: Another test files.
+
 2021-06-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.test, chkdvifont.test: Minor adjustments.

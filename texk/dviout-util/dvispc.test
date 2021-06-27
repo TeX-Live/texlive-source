@@ -172,6 +172,12 @@ $CMP $testdir/jisx0208.dvi jisx0208.da.dvi || exit 1
 ./dvispc -a -Js $testdir/jisx0208.dvi jisx0208-sjp.da.txt || exit 2
 ./dvispc -a -Je $testdir/jisx0208.dvi jisx0208-ejp.da.txt || exit 2
 
+## EXE2TEXT: printing ASCII/Japanese characters
+./dvispc -a -Ju $testdir/putj.dump.dvi putj.da.txt || exit 2
+$DIFF $testdir/putj.txt putj.da.txt || exit 1
+./dvispc -a -JU $testdir/put.dump.dvi put.da.txt || exit 2
+$DIFF $testdir/put.txt put.da.txt || exit 1
+
 
 exit 0
 

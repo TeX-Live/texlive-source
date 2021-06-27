@@ -48,7 +48,9 @@ EXTRA_DIST += tests/oldindep.spc \
 	tests/annot.tex tests/annot.dvi \
 	tests/longspec.tex tests/longspec.dvi \
 	tests/flatnest.tex tests/flatnest.dvi \
-	tests/jisx0208.dvi tests/jisx0208.txt
+	tests/jisx0208.dvi tests/jisx0208.txt \
+	tests/putj.dump.dvi tests/putj.dump.txt \
+	tests/put.dump.dvi tests/put.dump.txt
 DISTCLEANFILES = x*oldindep.spc \
 	x*oldindepa.txt x*oldindepax.dvi \
 	x*oldindep.dry x*oldindepout.dvi \

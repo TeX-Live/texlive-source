@@ -314,8 +314,8 @@ const int AdID = (('A'<<24)+('d'<<16)+('O'<<8)+EOP);
 #ifndef PTEXENC
 // #define issjis1(c) ((c)>=0x81&&(c)<=0xfc&&((c)<=0x9f||(c)>=0xe0))
 // #define issjis2(c) ((c)>=0x40 && (c)<=0xfc && (c)!=0x7f)
-#define isjis(c) (((c)>=0x21 && (c)<=0x7e))
 #endif
+#define isjis(c) (((c)>=0x21 && (c)<=0x7e))
 #define is_hex(c)   ((c>='0'&&c<='9')||(c>='a'&&c<='f')||(c>='A'&&c<='F'))
 #define is_oct(c)   (c>='0'&&c<='7')
 // #define is_dig(c)   (c>='0'&&c<='9')
@@ -1912,6 +1912,8 @@ uint work(FILE *dvi)
                     code = read_n(dvi, mode & 0xf);
 #ifdef PTEXENC
                     if(f_jstr){
+                      // internal-euc/sjis: fromDVI cannot convert ASCII range
+                      if (is_internalUPTEX() || (isjis(code>>8) && isjis(code&0xff))) {
                         wch = fromDVI(code);
                         if (is_internalUPTEX()) wch = UCStoUTF8(wch);
                         imb = 0;  memset(mbstr, '\0', 4);
@@ -1924,6 +1926,7 @@ uint work(FILE *dvi)
                         fputs2(mbstr, fp_out);
                         fprintf(fp_out, "\"\n");
                         continue;
+                      }
                     }
 #else
                     if(f_sjis){
