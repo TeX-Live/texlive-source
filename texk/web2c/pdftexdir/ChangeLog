@@ -1,3 +1,10 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]23 for post-TL21 fmt fix.
+	
 2021-01-04  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (letter_space_font): use explicit \fontdimen6 (quad)

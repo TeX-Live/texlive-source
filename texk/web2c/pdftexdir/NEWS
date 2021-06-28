@@ -1,3 +1,11 @@
+pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)
+- changes:
+  - for letterspaced fonts, use explicit \fontdimen6 if specified.
+
+- bugfixes:
+  - make .fmt files sharable between 4/8-byte architectures.
+  - for \letterspacefont, avoid problem with single-character control sequence.
+  
 pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021) (March 23, 2021)
 - changes:
   - new primitives \pdfrunninglinkoff and \pdfrunninglinkon; e.g., for
