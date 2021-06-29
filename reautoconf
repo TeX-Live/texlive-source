@@ -1,11 +1,11 @@
 #! /bin/sh
 # $Id$
-# This "reautoconf" script found at the root of the TeX Live source tree 
-# runs aclocal and autoconf (from PATH) in all relevant directories.
+# This "reautoconf" script at the root of the TeX Live source tree 
+# runs autoreconf (from PATH) in all relevant TL directories.
 #
-# Copyright 2008 Karl Berry.
+# Copyright 2008-2021 Karl Berry.
+# Copyright 2004-2009 Peter Breitenlohner.
 # Copyright 2005 Olaf Weber.
-# Copyright 2004 - 2009 Peter Breitenlohner.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,50 +25,61 @@ unset CDPATH
 usage="Usage: $0 [OPTION]... [DIR]...
   Run \`autoreconf --no-recursive' in the directories DIR...
   (default all) of the TeX Live source tree.
+  
+  By default, also pass -Wno-obsolete, because Autoconf 2.70
+  and later deprecated many widely used macros. See Build/m4/README for
+  a lengthy discussion of this. To see the obsolete warnings (perhaps
+  because you want to spend time fixing them), use --warn-obsolete here.
 
 Options:
   -h, --help      display this help and exit successfully
   -n, --dry-run   don't run any commands; just print them
   -q, --quiet     don't echo commands
   -v, --verbose   verbosely report processing (default)
+      --warn-obsolete  do not pass -Wno-obsolete
 
 Environment variables:
   TL_AUTOCONF:   program to use instead of autoconf from PATH
   TL_AUTOHEADER: program to use instead of autoheader from PATH
   TL_AUTOMAKE:   program to use instead of automake from PATH
-  TL_ACLOCAL:    program to use instead of aclocal from PATH"
+  TL_ACLOCAL:    program to use instead of aclocal from PATH
+
+This script should be invoked only from the top level of the TeX Live
+source tree.
+
+Report bugs (and any other discussion) to:
+  tlbuild@tug.org (https://lists.tug.org/tlbuild)
+
+Version: $Id$
+"
 
 do_cmd=eval
 do_say=echo
 verbose=-v
+warn_obsolete=-Wno-obsolete
 
 list=
 
 for option
 do
   case $option in
-    -h | --help) echo "$usage"; exit 0
-      ;;
-    -n | --dry-run) do_cmd=:
-      ;;
-    -q | --quiet) do_say=:; verbose=
-      ;;
-    -v | --verbose) do_say=echo; verbose=-v
-      ;;
-    -*) echo "$0: *** unrecognized option \`$option'"
-      echo "$usage"; exit 1
-      ;;
-    *) list="$list $option"
-      ;;
+    -h | --help | --version) echo "$usage"; exit 0 ;;
+    -n | --dry-run)  do_cmd=:                ;;
+    -q | --quiet)    do_say=:;    verbose=   ;;
+    -v | --verbose)  do_say=echo; verbose=-v ;;
+    --warn-obsolete) warn_obsolete=          ;;
+    -*) echo "$0: *** unrecognized option \`$option'" >&2
+        echo "Try --help if you need it." >&2; exit 1 ;;
+     *) list="$list $option" ;;
   esac
 done
 
-[ "$do_cmd" = : ] && do_say=echo	# -n implies -v
+test x"$do_cmd" = x: && do_say=echo	# -n implies -v
 
-[ -f ./m4/kpse-setup.m4 ] || {
-	echo "$0: *** can't find ./m4/kpse-setup.m4 (from `pwd`)" >&2
-	exit 1
-}
+if test ! -f ./m4/kpse-setup.m4; then
+  echo "$0: *** can't find ./m4/kpse-setup.m4 (from `pwd`)" >&2
+  exit 1
+fi
 
 : ${TL_AUTOCONF=autoconf}
 echo "$0: using \"$TL_AUTOCONF\" = `$TL_AUTOCONF --version | sed 1q`"
@@ -83,7 +94,8 @@ echo "$0:               TL_AUTOHEADER, TL_AUTOMAKE, and/or TL_ACLOCAL."
 
 # Give users a chance to quit here
 # and set TL_AUTOCONF, TL_AUTOHEADER, TL_AUTOMAKE, and/or TL_ACLOCAL
-$do_cmd sleep 5
+$do_cmd sleep 4
+$do_say "$0: starting at `date`."
 
 AUTOCONF=$TL_AUTOCONF
 AUTOHEADER=$TL_AUTOHEADER
@@ -94,17 +106,19 @@ export AUTOCONF AUTOHEADER AUTOMAKE ACLOCAL
 do_it () {
   $do_say "$0: running \"$@\""
   $do_cmd "$@"
+  if test $? -ne 0; then
+    echo "exit status of $*: $?" >&2
+  fi
 }
 
 if test "x$list" = x; then
-  list=". auxdir/auxsub libs utils texk `find libs utils texk -type d -name ac |
-    sed 's,/ac\$,,'`"
+  list=". auxdir/auxsub libs utils texk \
+        `find libs utils texk -type d -name ac | sed 's,/ac\$,,'`"
 fi
 
 # Autoreconf in all directories
 for dir in $list; do
-  # Remove trailing slash from shell filename completion
-  dir=`echo $dir | sed 's,/\$,,'`
+
   if test ! -d "$dir"; then
     echo "$0: $dir not a directory, skipping." >&2
     continue
@@ -119,7 +133,7 @@ for dir in $list; do
   else
     extra_dirs=
   fi
-  do_it autoreconf $verbose --no-recursive $dir $extra_dirs
+  do_it autoreconf $verbose --no-recursive $warn_obsolete $dir $extra_dirs
 done
 
-echo "$0: done."
+echo "$0: done at `date`."

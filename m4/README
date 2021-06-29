@@ -1,22 +1,23 @@
 $Id$
-Copyright 2009-2017 Karl Berry <tex-live@tug.org>
+Copyright 2009-2021 Karl Berry <tex-live@tug.org>
 Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 You may freely use, modify and/or distribute this file.
 
-This directory is the central repository for Autoconf macros needed to build
-the TeX Live (TL) tree. They are incorporated into the configure scripts.
+This m4/ directory is the central repository for Autoconf macros needed
+to build the TeX Live (TL) tree. They are incorporated into the
+configure scripts.
 
 (1) Public macros such as libtool.m4 used to build the libraries and
-programs in the TL subdirectories libs/*/, utils/*/, and texk/*/ that are
-owned by the TL tree, i.e., either not maintained independently or with a
-proxy Makefile.am using an (almost) unmodified source tree and bypassing the
-original build system.
+programs in the TL subdirectories libs/*/, utils/*/, and texk/*/ that
+are owned by the TL tree, i.e., either not maintained independently or
+with a proxy Makefile.am using an (essentially) unmodified source tree,
+bypassing the original/upstream build system, whatever it may be.
 
-Note: the files libtool.m4 and ../build-aux/ltmain.sh must match.
+Note: the files libtool.m4 and ../build-aux/ltmain.sh must be kept in sync.
 
 (2) `Public' macros for the TL build system and for the TL libraries in the
 subdirectories libs/*/, texk/kpathsea/, and texk/ptexenc/, used to configure
-programs and other libraries requiring these TL libraries.  The macros are
+programs and other libraries requiring these TL libraries. The macros are
 designed with the aim that programs maintained independently can be built as
 part of the TL tree or without TL (using installed versions of the required
 libraries), ideally using the same unmodified sources.
@@ -25,11 +26,64 @@ libraries), ideally using the same unmodified sources.
 owned by the TL tree.
 
 kpse-pkgs.m4: defines lists of subdirectories libs/Lib/, utils/Util/, and
-	tex/Prog/ with libraries and programs that can be built as part of
-	the TL tree.
+   tex/Prog/ with libraries and programs that can be built as part of
+  the TL tree.
 
 kpse-setup.m4: macros that walk through these lists to provide configure
-	options.  They depend on configure fragments */*/ac/withenable.ac
-	defining the dependencies between these libraries and programs.
+  options. They depend on configure fragments */*/ac/withenable.ac
+  defining the dependencies between these libraries and programs.
 
-See also the sibling top-level am/ directory.
+
+--- See also the sibling top-level am/ directory, which contains
+fragments for our Makefile.am files.
+
+
+---- "Obsolete" AC_* macros in Autoconf.
+
+In Autoconf 2.70, many commonly used AC_ macros were designated obsolete
+(though they still work fine), and now their use generates warnings. In
+the case of TeX Live, many hundreds of warnings, obscuring any real
+diagnostics. Therefore our top-level reautoconf script now passes
+-Wno-obsolete to autoreconf in order to eliminate the "obsolete"
+warnings (so glad this option is provided).
+
+To undo this and see the warnings, our reautoconf can be given the option
+--warn-obsolete. One reason to do this would be to work on updating our
+configure.ac/etc. source files (an onerous task); and communicate
+changes to upstream (even more onerously), who probably won't want to
+require the latest Autoconf anyway (though we can). All in all, it feels
+like a tremendous amount of time to spend merely to end up in the same
+place, with no discernible benefit. Thus there is no particular
+timeframe, or, apparently, need, for fixing the warnings.
+
+Most of the obsolete macros are straightforward to replace with the new
+"approved" macros, and described in the Autoconf manual. In a few cases
+(marked with "caveat" in the list below), however, the replacement is
+not obvious or does not have exactly the same behavior, and therefore
+requires further checking.
+
+The following is a terse list of the deprecated macros used in TL
+(typically many times each), and the replacement given in the Autoconf
+manual -- which needs to be referenced to do any actual work in this
+area; these are just hints about what's going on.
+
+AC_ERROR - replaced by AC_MSG_ERROR
+AC_FOREACH - alias of m4_foreach_w
+AC_HEADER_STDC - This macro is obsolescent. Its sole effect ...
+AC_HELP_STRING - replaced by AS_HELP_STRING
+AC_LANG_C - Same as AC_LANG([C])
+AC_LANG_CPLUSPLUS - Same as AC_LANG([C++])
+AC_PROG_CC_C99 - now done by AC_PROG_CC
+AC_TRY_COMPILE - same as AC_COMPILE_IFELSE(...
+AC_TRY_LINK - Same as: AC_LINK_IFELSE(...
+AC_TRY_RUN - same as AC_RUN_IFELSE(...
+AC_TYPE_SIGNAL - just use void
+AC_UNISTD_H - same as AC_CHECK_HEADERS([unistd.h])
+
+AC_HEADER_TIME - (caveat) although it does still define TIME_WITH_SYS_TIME 
+
+AC_PROG_LEX - (caveat) still does this if neither the yywrap nor
+  the noyywrap option is given.
+
+AC_FUNC_VFORK - (caveat) does not appear in manual (except in index).
+  Same as AC_FUNC_FORK?

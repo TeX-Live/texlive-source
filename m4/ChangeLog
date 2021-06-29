@@ -1,3 +1,7 @@
+2021-06-28  Karl Berry  <karl@freefriends.org>
+
+	* README: list the macros obsoleted by autoconf 2.70 which we use.
+
 2021-02-09  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4 (_KPSE_RECURSE): add debug if configure not found.

@@ -1,3 +1,9 @@
+2021-06-27  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf: pass -Wno-obsolete by default, since Autoconf 2.70
+	and later obsoletes many common macros. See m4/README for more.
+	Also standardize shell usage, etc., but no other functional changes.
+
 2021-04-17  Karl Berry  <karl@tug.org>
 
 	* version.ac: now 2022/dev since TL'21 is released.
