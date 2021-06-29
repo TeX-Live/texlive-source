@@ -9,7 +9,7 @@
 \typeout{\string\ucs.}
 \newcount\cntA
 \loop\ifnum\cntA<256
-  \ifnum0=\ucs\cntA\else\typeout{\the\cntA: \ucs\cntA (\Uchar\ucs\cntA)}\fi
+  \ifnum0>\ucs\cntA\else\typeout{\the\cntA: \ucs\cntA (\Uchar\ucs\cntA)}\fi
   \advance\cntA1
 \repeat
 
@@ -17,7 +17,7 @@
 \typeout{\string\toucs.}
 \cntA=0
 \loop\ifnum\cntA<256
-  \ifnum0=\toucs\cntA\else\typeout{\the\cntA: \toucs\cntA}\fi
+  \ifnum0>\toucs\cntA\else\typeout{\the\cntA: \toucs\cntA}\fi
   \advance\cntA1
 \repeat
 \typeout{\toucs"0, \toucs"80, \toucs"D7, \toucs"A7, \toucs"10000}
