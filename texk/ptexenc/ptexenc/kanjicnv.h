@@ -11,6 +11,9 @@
 #define LO(x)     ( ((int)(x))       & 0xff)
 #define HILO(x,y) ((LO(x) << 8) | LO(y))
 
+extern boolean isJISkanji1(int c);
+extern boolean isJISkanji2(int c);
+
 extern boolean isEUCkanji1(int c);
 extern boolean isEUCkanji2(int c);
 

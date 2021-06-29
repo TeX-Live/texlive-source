@@ -1,3 +1,9 @@
+2021-06-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* kanjicnv.c, ptexenc/kanjicnv.h: Always return 0 for
+	invalid code conversions between JIS/EUC/SJIS/KUTEN/UCS.
+	* jisx0208.h: Remove unused entry of UnicodeTbl.
+
 2021-06-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* unicode-jp.c: changed the returned value of UCS2toJISnative(0)
