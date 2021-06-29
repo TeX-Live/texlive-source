@@ -1,3 +1,8 @@
+2021-06-29  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Adapt to pTeX p3.10.0.
+	* uptex.defines: Add toUCS().
+
 2021-06-25  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uptex—m.ch: Adapt to ptex-base.ch for no re-eval.

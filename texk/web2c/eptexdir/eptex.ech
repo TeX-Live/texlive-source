@@ -26,8 +26,8 @@
 @y
 @d eTeX_version_string=='-2.6' {current \eTeX\ version}
 @#
-@d epTeX_version_string=='-210218'
-@d epTeX_version_number==210218
+@d epTeX_version_string=='-210629'
+@d epTeX_version_number==210629
 @z
 
 @x e-pTeX: banner

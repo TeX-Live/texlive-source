@@ -1,3 +1,14 @@
+2021-06-29  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	and Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch:
+	  - Bug fix: Wrap print_hex for negative value.
+	  - Change: Code conversion primitives return -1 for invalid.
+	  - Added: New primitives \ucs (from upTeX) and \toucs.
+	* ptex.defines: Add fromUCS() and toUCS().
+	* ptex_version.h: pTeX version p3.10.0.
+	https://github.com/texjporg/tex-jp-build/pull/121
+
 2021-06-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 	and Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
