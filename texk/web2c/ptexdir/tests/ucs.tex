@@ -1,0 +1,29 @@
+%#!eptex
+
+\def\typeout{\immediate\write17}
+
+\ifnum`あ="A4A2 \typeout{<EUC>}
+\else\ifnum`ア="8341 \typeout{<SJIS>}
+\else\typeout{<uptex>}\fi\fi
+
+\typeout{\string\ucs.}
+\newcount\cntA
+\loop\ifnum\cntA<256
+  \ifnum0=\ucs\cntA\else\typeout{\the\cntA: \ucs\cntA (\Uchar\ucs\cntA)}\fi
+  \advance\cntA1
+\repeat
+
+
+\typeout{\string\toucs.}
+\cntA=0
+\loop\ifnum\cntA<256
+  \ifnum0=\toucs\cntA\else\typeout{\the\cntA: \toucs\cntA}\fi
+  \advance\cntA1
+\repeat
+\typeout{\toucs"0, \toucs"80, \toucs"D7, \toucs"A7, \toucs"10000}
+\typeout{\toucs"8341, \toucs"EAA4, \toucs"EAA5}
+\typeout{\toucs"A4A2, \toucs"F4A6, \toucs"F4A7}
+
+
+\bye
+
