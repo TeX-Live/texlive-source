@@ -31,7 +31,7 @@
 /* web2c: Define if gcc asm needs _ on external symbols. */
 #undef ASM_NEEDS_UNDERSCORE
 
-/* Define to 1 if the `closedir' function returns void instead of `int'. */
+/* Define to 1 if the `closedir' function returns void instead of int. */
 #undef CLOSEDIR_VOID
 
 /* web2c: Default editor for interactive `e' option. */
@@ -133,9 +133,6 @@
 /* Define to 1 if you have the `memcpy' function. */
 #undef HAVE_MEMCPY
 
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
 /* Define to 1 if you have the `mkdtemp' function. */
 #undef HAVE_MKDTEMP
 
@@ -165,6 +162,9 @@
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
@@ -292,7 +292,9 @@
 /* The size of `void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
 /* metafont: Define to include old Suntools (not X) window support. */
@@ -332,11 +334,6 @@
 /* Define to 1 if <zlib.h> declares 'z_const'. */
 #undef ZLIB_CONST
 
-/* Enable large inode numbers on Mac OS X 10.5.  */
-#ifndef _DARWIN_USE_64_BIT_INODE
-# define _DARWIN_USE_64_BIT_INODE 1
-#endif
-
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
 
@@ -351,7 +348,8 @@
    #define below would cause a syntax error. */
 #undef _UINT64_T
 
-/* Define to 1 if type `char' is unsigned and you are not using gcc.  */
+/* Define to 1 if type `char' is unsigned and your compiler does not
+   predefine this macro.  */
 #ifndef __CHAR_UNSIGNED__
 # undef __CHAR_UNSIGNED__
 #endif
