@@ -24,6 +24,7 @@ Usage:
 ctanbib [options] name1 name2 ...
 Available options:
   -c,--ctan       Use CTAN URL instead of the package homepage 
+  -C,--ctanpath   Use package's CTAN path as URL
   -e,--entrytype  (default manual)  Change entry type
   -h,--help       Print this message
   -v,--version    Print version info
@@ -33,7 +34,7 @@ if args.help then
   print(msg)
   os.exit(0)
 elseif args.version then
-  print "ctanbib version 0.2"
+  print "ctanbib version 0.2a"
   os.exit(0)
 elseif args.ctan then
   pkgurl = true
@@ -186,6 +187,14 @@ local ctan_url = function(record, pkgname)
   return "https://ctan.org/pkg/"..pkgname
 end
 
+local ctan_path = function(record)
+  local ctan = record:query_selector("ctan")[1]
+  -- some package don't contain the CTAN path
+  if not ctan then return get_url(record) end
+  local path = ctan:get_attribute("path")
+  return path
+end
+
 
 local compile = function(template, records)
   return template:gsub("$([a-z]+)", function(a) 
@@ -215,6 +224,8 @@ for _, pkgname in ipairs(args) do
   -- use the CTAN path as url for the CTAN type
   if pkgurl then
     e.url = ctan_url(record, pkgname)
+  elseif args.ctanpath then
+    e.url = ctan_path(record)
   end
   e.version, e.date = get_version(record)
   e.urldate = os.date("%Y-%m-%d")
