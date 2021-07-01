@@ -3501,8 +3501,8 @@ if p<>null then
   hlist_node,vlist_node,dir_node,rule_node,unset_node:
     @<Incorporate box dimensions into the dimensions of
       the hbox that will contain~it@>;
-  ins_node,mark_node,adjust_node:
-    if adjust_tail<>null then @<Transfer node |p| to the adjustment list@>;
+  ins_node,mark_node,adjust_node: if adjust_tail<>null then
+    @<Transfer node |p| to the adjustment list@>;
   whatsit_node:@<Incorporate a whatsit node into an hbox@>;
   disp_node:disp:=disp_dimen(p);
 @z
@@ -5381,6 +5381,7 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
       end
     else  begin
       r:=get_node(small_node_size); type(r):=adjust_node;@/
+      subtype(r):=0; {the |subtype| is not used}
       adjust_ptr(r):=list_ptr(p); delete_glue_ref(q);
       if not is_char_node(tail)and(type(tail)=disp_node) then
         prev_append(r)

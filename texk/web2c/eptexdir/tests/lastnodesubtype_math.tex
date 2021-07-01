@@ -1,0 +1,29 @@
+\def\typeout{\immediate\write17}
+\newcount\CNT\newcount\CNTs
+\def\TEST#1#2#3{\par$#1{xyz}#2\CNT=\lastnodetype\CNTs=\lastnodesubtype\typeout{\string #1: (\the\CNT,\the\CNTs)}#3$}
+
+\TEST\displaystyle\displaystyle{}
+\TEST\textstyle\textstyle{}
+\TEST\mathchoice{{a}{a}{a}}{}
+\TEST\mathord{}{}
+\TEST\mathop\displaylimits{}
+\TEST\mathop\limits{}
+\TEST\mathop\nolimits{}
+\TEST\mathbin{}{}
+\TEST\mathrel{}{}
+\TEST\mathopen{}{}
+\TEST\mathclose{}{}
+\TEST\mathpunct{}{}
+\TEST\mathinner{}{}
+\TEST\sqrt{}{}% radical
+\TEST\underline{}{}
+\TEST\overline{}{}
+\TEST\vcenter{}{}
+\TEST\dot{}{}% accent
+
+\TEST{left}{\left[}{\right]}
+\TEST{middle}{\left(\middle|}{\right)}
+\TEST{\left[\right]}{}{}
+% TODO: right, fraction
+
+\bye
