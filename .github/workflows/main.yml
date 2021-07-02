@@ -1,31 +1,116 @@
+# .github/workflows/main.yml for texlive-source CI building
+#
+# Norbert Preining
+# Public Domain
+#
+# This file controls CI testing via Github Actions of the
+# git-svn checkout of the TeX Live source directory
+# which is pushed to Github
+#   https://github.com/TeX-Live/texlive-source
+# The cron job that does the git svn up and git push is
+# running on texlive.info; see norbert cron there. Run cmd as norbert:
+#   /home/norbert/git-svn-repos/git-svn-syncer --new texlive-source
+#
+# To make and retrieve new binaries:
+# * go to https://github.com/TeX-Live/texlive-source/commits/master
+#   and check that all commits you want are there (max waiting time 30min).
+# * go to https://github.com/TeX-Live/texlive-source/releases
+#   and "Draft new release" (does git tag).
+# * wait 30min or so.
+# * go to https://github.com/TeX-Live/texlive-source/releases/latest/
+#   and there should be binaries for the new "release".
+# * use tl-update-bindir.
+#
+# The actual code for building and running is in the Github Action
+#   TeX-Live/tl-build-docker-action
+#
+# TODO
+# * it would be nice if we could adjust the docker action usage
+#   to override the dockerfile but this seems not to be possible at the moment
 
-name: CI
+on: [push]
 
-# Controls when the action will run. 
-on:
-  # Triggers the workflow on push or pull request events but only for the trunk branch
-  push:
-    branches: [ trunk ]
-  pull_request:
-    branches: [ trunk ]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-16.04
-    env:
-      TL_MAKE_FLAGS: -j 2
+  docker_linux_32bit_job:
+    runs-on: ubuntu-latest
+    name: i386-linux build job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-      - name: Full build
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
-          cd $GITHUB_WORKSPACE ; ./Build -C
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: TeX-Live/tl-build-docker-action
+          ref: v1
+          path: actions/TeX-Live/tl-build-docker-action
+      - name: Update Dockerfile
+        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.i386-linux actions/TeX-Live/tl-build-docker-action/Dockerfile
+      - name: Run docker image
+        uses: ./actions/TeX-Live/tl-build-docker-action
+        with:
+          arch: 'i386-linux'
+      - name: find file step
+        run: ls -l
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: texlive-bin-i386-linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  docker_linux_64bit_job:
+    runs-on: ubuntu-latest
+    name: x86_64-linux build job
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: TeX-Live/tl-build-docker-action
+          ref: v1
+          path: actions/TeX-Live/tl-build-docker-action
+      - name: Update Dockerfile
+        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.x86_64-linux actions/TeX-Live/tl-build-docker-action/Dockerfile
+      - name: Run docker image
+        uses: ./actions/TeX-Live/tl-build-docker-action
+        with:
+          arch: 'x86_64-linux'
+      - name: find file step
+        run: ls -l
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: texlive-bin-x86_64-linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  docker_linuxmusl_64bit_job:
+    runs-on: ubuntu-latest
+    name: x86_64-linuxmusl build job
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: TeX-Live/tl-build-docker-action
+          ref: v1
+          path: actions/TeX-Live/tl-build-docker-action
+      - name: Update Dockerfile
+        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.x86_64-linuxmusl actions/TeX-Live/tl-build-docker-action/Dockerfile
+      - name: Run docker image
+        uses: ./actions/TeX-Live/tl-build-docker-action
+        with:
+          arch: 'x86_64-linuxmusl'
+      - name: find file step
+        run: ls -l
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: texlive-bin-x86_64-linuxmusl.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
