@@ -1,7 +1,7 @@
-diff -ur ps2eps-1.68.orig/src/C/bbox.c ps2eps-1.68/src/C/bbox.c
---- ps2eps-1.68.orig/src/C/bbox.c	2010-12-15 13:39:27.000000000 +0100
-+++ ps2eps-1.68/src/C/bbox.c	2010-12-15 13:46:23.000000000 +0100
-@@ -210,7 +210,7 @@
+diff -ur ps2eps-1.70.orig/src/C/bbox.c ps2eps-1.70/src/C/bbox.c
+--- ps2eps-1.70.orig/src/C/bbox.c	2021-07-04 01:38:12.000000000 +0900
++++ ps2eps-1.70/src/C/bbox.c	2021-07-04 01:39:17.000000000 +0900
+@@ -221,7 +221,7 @@
  #if defined(_WIN32) && !defined(__CYGWIN__)  /* this is really braindead stuff for MSVC */
  	  i= _setmode( _fileno(stdin), _O_BINARY);
  	  if (i == -1)

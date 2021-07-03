@@ -3,9 +3,7 @@
 # {#!/usr/bin/perl}.   
 # ps2eps - convert PostScript to EPS (Encapsulated PostScript) files
 # -------------------------------------------------------------------
-# $Id: ps2eps,v 1.68 2010-05-07 19:42:35 bless Exp $
-# -------------------------------------------------------
-# (C)opyright 1999-2009 Roland Bless
+# (C)opyright 1998-2018 Roland Bless
 #
 # This program is free software; you can redistribute it and/or modify     
 # it under the terms of the GNU General Public License as published by     
@@ -57,7 +55,7 @@ else
 
 $bboxver=`bbox >$NULLDEV -V`;
 $bboxname= ($?== -1) ? "" : "bbox";
-$version= '$Id: ps2eps,v 1.68 2010-05-07 19:42:35 bless Exp $'; #'
+$version= '$Id: ps2eps,v 1.70 2018-01-09 18:00:00 bless Exp $'; #'
 $insertPScode= 1;     # Insert surrounding Postscript code
 $infhandle = STDIN;   # Standard input is the default input file
 $outfhandle = STDOUT; # Standard output is default output if STDIN is input
@@ -75,6 +73,7 @@ $trytofixps= 1;       # try to fix postscript code
 $forcefixps= 0;       # fix postscript code unconditionally if eq 1
 $filterorientation= 1;# filter Orientation line
 $looseBB='';          # default: tight bounding box
+$bboxonly=0;          # output Bounding box only, no other output
 $clip=0;              # do not clip
 $warnings=0;          # do not print warnings concerning postscript sanity
 $debuggs=0;           # no debugging of ghostscript call, turn this on if you want to see the gs call
@@ -147,7 +146,7 @@ $licensetxt= "\
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n";
 
 @prgidtxt= ( "$prgname - convert PostScript to EPS (Encapsulated PostScript) files\n",
-	     "(C)opyright 1998-2009 Roland Bless\n\n" );
+	     "(C)opyright 1998-2018 Roland Bless\n\n" );
 
 @helptxt= ("Version: $ver[2]\n",
           "Operation:\n",
@@ -163,12 +162,13 @@ $licensetxt= "\
           " If BoundingBox in output seems to be wrong, please try options --size or --ignoreBB.\n\n" );
 
 @usagetxt= ("Syntax:\n",
-            " $prgname [-f] [-q] [-N] [-O] [-n] [-P] [-c] [-b] [-C] [-m] [-B] [-E] [-s <pagedim>] [-R +|-|^] [-t <x,y>] [-l] [-g] [-d] [-H] [-h|--help] [-g] [-a] [-W] [-L] [-V|--version] [--] [psfile1] [psfile2] [...]\n",
+            " $prgname [-f] [-q] [-N] [-O] [-X] [-n] [-P] [-c] [-b] [-C] [-m] [-B] [-E] [-s <pagedim>] [-R +|-|^] [-t <x,y>] [-l] [-g] [-d] [-H] [-h|--help] [-g] [-a] [-W] [-L] [-V|--version] [--] [psfile1] [psfile2] [...]\n",
             "Options:\n",
             " -f, --force                force overwriting existing files\n",
             " -q, --quiet                quiet operation (no output while processing files)\n",
             " -N, --noinsert             do not insert any postscript code\n",
             " -O, --preserveorientation  do not filter Orientation: header comment\n",
+	    " -X, --BBonly               print resulting bounding box(es) only, no other output\n",
             " -n, --nofix                do not try to fix postscript code\n",
             " -P, --removepreview        remove preview image (smaller file, but no preview)\n",
             " -F, --fixps                fix postscript code unconditionally\n",
@@ -185,7 +185,7 @@ $licensetxt= "\
 	    " -B, --ignoreBB             do not use existing bounding box as page size for rendering\n",
 	    " -E, --ignoreEOF            do not use %%EOF as hint for end of file\n",
 	    " -g, --gsbbox               use internal bbox device of ghostscript\n",
-	    " -H, --no-hires             do not use a HiResBoundingBox\n",
+	    " -H, --nohires              do not use a HiResBoundingBox\n",
             " -h, --help                 help information\n",
             " -L, --license              show licensing information\n",
             " -V, --version              show version information\n",
@@ -234,6 +234,7 @@ GetOptions('f|force'	=> \$forceoverwrite,
 	   'C|clip'	=> \$clip,
 	   'l|loose'	=> sub { $looseBB = '-l' },
 	   'B|ignoreBB'	=> \$ignoreBB,
+	   'X|BBonly'   => \$bboxonly,
 	   'E|ignoreEOF'=> \$ignoreEOFDSC,
 	   's|size=s'	=> \$opt_s,
 	   't|translate=s'	=> \$opt_t,
@@ -420,7 +421,7 @@ while ($infname= (shift @filenames))
     {
       $BBarg= $1;
       # accept even negative and fractional BBs
-      if ( $BBarg =~ /(\-?\d+\.?\d*\s+){3,}\d+/ ) # ignore %% BoundingBox: (atend) comments
+      if ( $BBarg =~ /(\-?\d+\.?\d*\s+){3,}\-?\d+\.?\d*/ ) # ignore %% BoundingBox: (atend) comments
       {
 	($eBBllx,$eBBlly,$eBBurx,$eBBury,$dummy)= split /\s/,$BBarg;
 	#print STDERR "Existing BB: $eBBllx,$eBBlly,$eBBurx,$eBBury\n";
@@ -636,6 +637,14 @@ while ($infname= (shift @filenames))
   $boundingbox = "%%BoundingBox: $cBBllx $cBBlly $cBBurx $cBBury\n";
 
   if (!$quiet) { print STDERR "ready. $boundingbox" };
+
+  if ($bboxonly) 
+  { 
+      print STDERR $boundingbox; 
+      if (defined($hiresboundingbox) && !defined($nohires)) 
+      { print STDERR $hiresboundingbox; }
+      exit 0 
+  };
   
   $before_startps= 1;
   $inserted_prolog= 0;

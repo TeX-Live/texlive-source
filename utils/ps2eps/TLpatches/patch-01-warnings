@@ -1,7 +1,7 @@
-diff -ur ps2eps-1.68.orig/src/C/bbox.c ps2eps-1.68/src/C/bbox.c
---- ps2eps-1.68.orig/src/C/bbox.c	2010-08-31 10:58:37.000000000 +0200
-+++ ps2eps-1.68/src/C/bbox.c	2010-12-15 13:39:27.000000000 +0100
-@@ -69,12 +69,14 @@
+diff -ur ps2eps-1.70.orig/src/C/bbox.c ps2eps-1.70/src/C/bbox.c
+--- ps2eps-1.70.orig/src/C/bbox.c	2021-03-13 05:45:13.000000000 +0900
++++ ps2eps-1.70/src/C/bbox.c	2021-07-04 01:38:12.000000000 +0900
+@@ -70,12 +70,14 @@
    1
  };
  
@@ -18,7 +18,7 @@ diff -ur ps2eps-1.68.orig/src/C/bbox.c ps2eps-1.68/src/C/bbox.c
  {
    return (x == (unsigned int) ~0U) ? x : x+1;
  }
-@@ -95,8 +97,9 @@
+@@ -96,8 +98,9 @@
  *       and printed to stdout                                           *
  ************************************************************************/
  /* calculate the bounding box in postscript points, given a resolution in dpi */
@@ -30,7 +30,7 @@ diff -ur ps2eps-1.68.orig/src/C/bbox.c ps2eps-1.68/src/C/bbox.c
                          const unsigned char tight)
  {
  	FILE 	*inputfile;
-@@ -181,6 +184,7 @@
+@@ -192,6 +195,7 @@
  #ifdef DEBUG
  	fprintf(stderr,"\nreading picture: %s size X: %u Y: %u\n",name,width,height);
  #endif

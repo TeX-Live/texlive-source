@@ -1,13 +1,13 @@
 /********************************************************************/
 /** bbox -- calculates Bounding Box of a pbmraw/ppmraw-picture     **/
-/** Created:   Nov. 1997, revised Feb. 1998, Dec. 1999, June 2009  **/
+/** Created:   Nov. 1997, revised 1998, 1999, 2009, 2021           **/
 /** Author:    Roland Bless <roland -at- bless.de>                 **/
-/** Copyright (C) 1998-2009 Roland Bless                           **/
+/** Copyright (C) 1998-2020 Roland Bless                           **/
 /** To compile simply use:                                         **/
 /** "cc bbox.c -o bbox" or "make bbox"                             **/
 /********************************************************************/
 /*
- * $Id: bbox.c,v 1.18 2009-10-13 15:03:49 bless Exp $
+ * $Id: bbox.c 146 2021-03-12 20:26:23Z bless $
  */
 
 /**
@@ -52,10 +52,11 @@
 /**********************
 *  global variables   *
 **********************/
-const char *const version= "$Revision: 1.18 $ $Date: 2009-10-13 15:03:49 $";
+const char *const version= "$Rev: 146 $";
 const char *const prgname= "bbox";
 
 const double round_precision= 1e-6;
+const short int inputlinelength= 1024;
 
 unsigned char bitval[8]=
 {
@@ -103,7 +104,7 @@ void readppm_and_calcbb(const char *name,
                         const unsigned char tight)
 {
 	FILE 	*inputfile;
-        char    inputline[1024];
+        char    inputline[inputlinelength];
         unsigned char magic_found= 0;
         int x,y,byte_x,i;
 	const double pt_dpi_dbl= 72.0;
@@ -129,21 +130,29 @@ void readppm_and_calcbb(const char *name,
           {
             fprintf(stderr,"%s: ERROR -- could not open file %s\n",
                     prgname, name);
-            return;
+            exit(1);
           }
         }
         /** check for magic number **/
         do
         {
-          fgets(inputline, 1024, inputfile);
+		if (fgets(inputline, inputlinelength, inputfile) == NULL) {
+			fprintf(stderr,"%s: ERROR -- unexpected end of file %s\n", prgname, name);
+			fclose(inputfile);
+			exit(1);
+		}
 #ifdef DEBUG
           fprintf(stderr,"read:[%s]\n",inputline);
 #endif
           if ( strcmp(inputline,"P4\n") == 0 )
+          {
             magic_found= 4;
+          }
           else
           if ( strcmp(inputline,"P6\n") == 0 )
+          {
             magic_found= 6;
+          }
         }
         while ( !feof(inputfile) && !magic_found );
 
@@ -151,12 +160,17 @@ void readppm_and_calcbb(const char *name,
         {
           fprintf(stderr,"%s: ERROR -- %s is not in ppmraw or pbmraw format\n",
                   prgname, name);
-          return;
+	  fclose(inputfile);
+	  exit(1);
         }
         /** skip comments **/
         do
         {
-          fgets(inputline, 1024, inputfile);
+	   if (fgets(inputline, inputlinelength, inputfile) == NULL) {
+		   fprintf(stderr,"%s: ERROR -- unexpected end of file %s\n", prgname, name);
+		   fclose(inputfile);
+		   exit(1);
+	   }
 #ifdef DEBUG
           fprintf(stderr,"read:[%s]\n",inputline);
 #endif
@@ -170,8 +184,12 @@ void readppm_and_calcbb(const char *name,
         sscanf(inputline,"%u %u",&width,&height);
         if ( magic_found == 6 ) /* PPM file has maximum color-component value */
         {
-          fgets(inputline, 1024, inputfile);
-          sscanf(inputline,"%u",&ui_colormax);
+	  if (fgets(inputline, inputlinelength, inputfile) == NULL) {
+		  fprintf(stderr,"%s: ERROR -- unexpected end of file %s\n", prgname, name);
+		  fclose(inputfile);
+		  exit(1);
+	  }
+	  sscanf(inputline,"%u",&ui_colormax);
 	  colormax = (unsigned char) ui_colormax; /* this is safer */
         }
 #ifdef DEBUG
@@ -348,7 +366,7 @@ void readppm_and_calcbb(const char *name,
           /* skip the rest of the file if any data is still present */
           while ( !feof(inputfile) )
           {
-            fgets(inputline, 1024, inputfile);
+            fgets(inputline, inputlinelength, inputfile);
           }
 
           /* give out Bounding Box */
@@ -356,7 +374,7 @@ void readppm_and_calcbb(const char *name,
           printf("%%%%HiResBoundingBox: %f %f %f %f\n", hllx, hlly, hurx, hury);
         }
         else
-          fprintf(stderr,"%s: ERROR -- not enough memory to read in one row of the picture\n",prgname);
+          fprintf(stderr,"%s: ERROR -- not enough memory to read in one row of the picture\n", prgname);
 
 	fclose(inputfile);
         free(image_row);

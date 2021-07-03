@@ -14,7 +14,7 @@ UPDATES
 =======
 Possibly you can find the newest version at the
 following URL:
-http://www.ipv6.tm.uka.de/~bless/ps2eps
+http://tm.kit.edu/~bless
 
 
 Contact information:

@@ -1,5 +1,5 @@
-Changes applied to the ps2eps-1.68 tree as obtained from:
-	http://www.tm.uka.de/~bless/ps2eps-1.68.tar.gz
+Changes applied to the ps2eps-1.70 tree as obtained from:
+	http://tm.uka.de/~bless/ps2eps-1.70.tar.gz
 
 Rename:
 	bin/ps2eps => bin/ps2eps.pl
@@ -9,4 +9,4 @@ Remove:
 	bin/win32/
 	doc/html/
 	doc/pdf/
-
+	src/C/Makefile

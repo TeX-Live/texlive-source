@@ -3,17 +3,17 @@
 .\" <http://shell.ipoline.com/~elmert/comp/docbook2X/> 
 .\" Please send any bug reports, improvements, comments, patches, 
 .\" etc. to Steve Cheng <steve@ggi-project.org>.
-.TH "PS2EPS" "1" "31 August 2010" "" ""
+.TH "PS2EPS" "1" "September 1st, 2018" "" ""
 
 .SH NAME
 ps2eps \- convert PostScript to EPS (Encapsulated PostScript) files
 .SH SYNOPSIS
 
-\fBps2eps\fR [ \fB-f\fR ] [ \fB-q\fR ] [ \fB-N\fR ] [ \fB-O\fR ] [ \fB-n\fR ] [ \fB-P\fR ] [ \fB-c\fR ] [ \fB-C\fR ] [ \fB-m\fR ] [ \fB-B\fR ] [ \fB-E\fR ] [ \fB-s \fIpagedim\fB\fR ] [ \fB-t \fIoffset\fB\fR ] [ \fB-r \fIresolution\fB\fR ] [ \fB-R \fI+|-|^\fB\fR ] [ \fB-l\fR ] [ \fB-g\fR ] [ \fB-H\fR ] [ \fB-d\fR ] [ \fB-h|--help\fR ] [ \fB-a\fR ] [ \fB-W\fR ] [ \fB-L\fR ] [ \fB-V|--version\fR ] [ \fB--\fR ] [ \fB\fIpsfile1\fB\fR ] [ \fB\fIpsfile2\fB\fR ] [ \fB\fI\&...\fB\fR ]
+\fBps2eps\fR [ \fB-f\fR ] [ \fB-q\fR ] [ \fB-N\fR ] [ \fB-O\fR ] [ \fB-X\fR ] [ \fB-n\fR ] [ \fB-P\fR ] [ \fB-c\fR ] [ \fB-C\fR ] [ \fB-m\fR ] [ \fB-B\fR ] [ \fB-E\fR ] [ \fB-s \fIpagedim\fB\fR ] [ \fB-t \fIoffset\fB\fR ] [ \fB-r \fIresolution\fB\fR ] [ \fB-R \fI+|-|^\fB\fR ] [ \fB-l\fR ] [ \fB-g\fR ] [ \fB-H\fR ] [ \fB-d\fR ] [ \fB-h|--help\fR ] [ \fB-a\fR ] [ \fB-W\fR ] [ \fB-L\fR ] [ \fB-V|--version\fR ] [ \fB--\fR ] [ \fB\fIpsfile1\fB\fR ] [ \fB\fIpsfile2\fB\fR ] [ \fB\fI\&...\fB\fR ]
 
 .SH "DESCRIPTION"
 .PP
-This manual page documents \fBps2eps\fR version 1.68.
+This manual page documents \fBps2eps\fR version 1.70.
 .PP
 \fBps2eps\fR is a tool (written in Perl) to produce 
 Encapsulated PostScript Files (EPS/EPSF) from usual one-paged Postscript
@@ -21,6 +21,9 @@ documents. It calculates correct Bounding Boxes for those EPS files and
 filters some special postscript command sequences that can produce
 erroneous results on printers. EPS files are often needed for including
 (scalable) graphics of high quality into TeX/LaTeX (or even Word) documents.
+It can also be used to calculate correct BoundingBoxes for PDF files by
+using the option \fB--BBonly\fR\&. However, it cannot produce
+a PDF file, but it can be used together with \fBpdfcrop\fR\&.
 .PP
 Without any argument, ps2eps reads from standard input
 and writes to standard output.
@@ -63,6 +66,16 @@ instructions are added around the original postscript code by
 .TP
 \fB-O, --preserveorientation \fR
 do not filter %%Orientation: header comment.
+.TP
+\fB-X, --BBonly \fR
+Just print the resulting bounding box(es) to standard error, no output file is written.
+\fBps2eps\fR will perform a read-only operation. This is highly useful to calculate bounding boxes of
+PDF files. Can be used with option \fB--quiet\fR to suppress other output and
+also with \fB--nohires\fR to suppress output of the HiResBoundingBox.
+It can be used with \fBpdfcrop\fR as follows:
+\fBpdfcrop --gscmd 'gswrap-ps2eps.sh' file.pdf\fR
+where \fBgswrap-ps2eps.sh\fR containts something like
+\fBps2eps -l -X -q $BASH_ARGV\fR
 .TP
 \fB-n, --nofix \fR
 do not try to fix postscript code by filtering some instructions.

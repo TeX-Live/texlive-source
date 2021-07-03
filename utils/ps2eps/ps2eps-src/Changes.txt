@@ -1,6 +1,17 @@
 ----------------------------
 Detailed Change Log:
 ----------------------------
+
+----------------------------
+revision 1.70
+date: 
+- added new option -X, --BBonly that only prints the BoundingBox result, but does not
+  write a new file. This is highly useful to correctly figure out the BB of PDFs
+----------------------------
+revision 1.69 (not released)
+date: 2013-03-05 22:48:42 +0100 (Di, 05. Mär 2013)
+- fixed auto translate for negative Bounding Boxes
+----------------------------
 revision 1.68
 date: 2010-05-07 21:42:35 +0200;  author: bless;  state: Exp;  lines: +3 -3; 
 - quoted translate command string
@@ -222,7 +233,7 @@ revision 1.32 (not released)
 -------------
 date: 2001/04/06 22:31:27
 - Fixed case sensitiveness when checking for suffix replacement
-  (thanks to Erik J�rgensen)
+  (thanks to Erik Jørgensen)
 ----------------------------
 revision 1.31
 -------------
