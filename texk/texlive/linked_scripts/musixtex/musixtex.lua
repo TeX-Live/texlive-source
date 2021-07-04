@@ -1,12 +1,12 @@
 #!/usr/bin/env texlua  
 
-VERSION = "0.23a"
+VERSION = "0.23b"
 
 --[[
      musixtex.lua: processes MusiXTeX files using xml2pmx and/or prepmx and/or pmxab 
      and/or autosp as pre-processors (and deletes intermediate files)
 
-     (c) Copyright 2011-2020 Bob Tennent rdt@cs.queensu.ca
+     (c) Copyright 2011-2021 Bob Tennent rdt@cs.queensu.ca
                              and Dirk Laurie dirk.laurie@gmail.com
 
      This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,9 @@ VERSION = "0.23a"
 --[[
 
   ChangeLog:
+
+     version 0.23b 2020-05-27  RDT
+       improve the -h output
 
      version 0.23a 2020-08-14  RDT
        pmxprep files now deleted by xml2pmx
@@ -138,15 +141,22 @@ function usage()
   orig_print 
 [[
 Usage:  [texlua] musixtex.lua { option | basename[ .xml | .mtx | .pmx | .aspc | .tex | .ltx] } ...
-        When no extension is given, extensions are tried in the above order
-        until a source file is found. Preprocessing goes xml-pmx-tex or mtx-pmx-tex or 
-        aspc-tex, with the entry point determined by the extension.
-        The normal route after preprocessing goes tex-dvi-ps-pdf, but shorter 
-        routes are also available, see the options. The default 3-pass processing route
-        for .tex files is etex-musixflx-etex.
+        When no extension is given, extensions are tried in the above order 
+        until a source file is found. Preprocessing goes 
+           .xml - .pmx - .tex
+           .mtx - .pmx - .tex
+           .pmx - .tex
+           .aspc - .tex 
+        with the entry point determined by the filename extension.
+        The normal route after preprocessing goes .tex - .dvi - .ps - .pdf, 
+        but shorter routes are also available; see the options. 
+        The default 3-pass processing route for .tex files is 
+            etex - musixflx - etex.
+        .ltx files, possibly after autosp preprocessing, are treated as latex 
+        source and processed by latex (or pdflatex) rather than etex.
 Options: -v, --version  version
          -h, --help   help
-         -l  latex source
+         -l  latex source; implied by .ltx extension
          -p  direct tex-pdf (pdftex etc)
          -F fmt  use fmt as the TeX processor
          -d  tex-dvi-pdf (using dvipdfm if -D not used)
@@ -212,7 +222,11 @@ end
 --       possible by exploiting the the fact that Lua has two false values.
 --         dvi == nil    "do not produce a DVI file" (but maybe PDF)
 --         dvi == false  "do not process the DVI file" (but stop after TeX)
-local dvips = "dvips -e0"
+
+local dvips = "dvips -e0"  
+-- option -e0 suppresses dvips "feature" of adjusting location to align 
+-- characters in words of text 
+
 function defaults()
   xml2pmx = "xml2pmx"
   prepmx = "prepmx"
