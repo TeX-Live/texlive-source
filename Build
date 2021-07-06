@@ -53,6 +53,8 @@ export MAKE; export TL_MAKE
 
 if test "x$1" = x--no-clean; then
   shift
+  echo "$0: --no-clean given, so keeping build and install dirs: " \
+       "$TL_WORKDIR $TL_INSTALL_DEST"
 else
   test -f Makefile && $MAKE clean 
   rm -rf $TL_WORKDIR $TL_INSTALL_DEST

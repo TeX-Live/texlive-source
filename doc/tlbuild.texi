@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2021
-@set month-year February 2021
+@set month-year July 2021
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -497,10 +497,12 @@ in the @code{pdftex} development source (details at
 tree.
 
 @cindex C++11, removing dependent sources
-Some libraries and programs require C++11.  If you want to build with
-an older compiler lacking such support, you need to (re)move those
-source directories; specifying @code{--disable} for them does not
-suffice, unfortunately.  Specifically, before running @code{configure}:
+Some libraries and programs require C++11; one such is XeTeX.  If you
+want to build with an older compiler lacking such support, you need to
+(re)move those source directories; unfortunately, specifying
+@code{--disable} for them does not suffice.  It's also necessary to
+specify @code{--disable-xetex} explicitly. Specifically, before
+running @code{configure --disable-xetex ...}:
 
 @example
 rm -rf libs/icu libs/graphite2 texk/dvisvgm
@@ -508,11 +510,13 @@ rm -rf libs/icu libs/graphite2 texk/dvisvgm
 
 @vindex --enable-missing @r{to ignore dependencies}
 Also, even with @code{--disable-all-pkgs}, dependencies are (currently)
-checked.  For instance, if a (non-MacOSX) system does not have
+checked.  One notable case: if a (non-MacOSX) system does not have
 @code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites}),
 and @code{configure} will terminate even with @code{--disable-xetex}.
 To proceed without such dependencies, specify @code{--enable-missing}
-also.  (Patches to improve this would be most welcome.)
+also.
+
+Patches to improve all this would be most welcome.
 
 @vindex CC=@var{c-compiler}
 @vindex CXX=@var{c++-compiler}
@@ -543,7 +547,8 @@ original @TeX{}:
 @example
 cd Work        # top build directory
 ../configure --without-x --disable-shared --disable-all-pkgs \
-             --enable-tex --disable-synctex -C CFLAGS=-g CXXFLAGS=-g
+             --enable-tex --disable-synctex --disable-xetex \
+             --enable-missing -C CFLAGS=-g CXXFLAGS=-g
 make
 cd texk/web2c  # cd engine build directory
 make tex       # must specify target
@@ -551,9 +556,12 @@ make tex       # must specify target
 
 The first @code{make} run will configure everything, and even build
 the libraries, even though the packages are disabled.
+
 The source tree can be cut down to just what is needed for the given
 engine (the separate pdf@TeX{} and Lua@TeX{} source repositories do
-this, for example), but see caveats in previous section.
+this, for example), but see caveats in previous section.  When the
+@code{--disable-xetex} and @code{--enable-missing} options are needed
+is also explained in the previous section.
 
 If you want to debug an X-related program or shared library setup, or
 other variants, change the @code{configure} options
@@ -1527,7 +1535,7 @@ modifications documented in @file{TLpatches/*}, and a wrapper
 @file{xindy-src}.
 
 The @code{xindy} build requires a @file{make} that supports a
-@code{VPATH} build, can handle all targets, and do not refer to
+@code{VPATH} build, can handle all targets, and does not refer to
 @code{$@{top_srcdir@}} or @code{$@{top_builddir@}}.  The fragment
 @code{xindy/ac/withenable.ac} contains
 
