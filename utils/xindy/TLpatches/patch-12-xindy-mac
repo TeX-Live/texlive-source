@@ -1,0 +1,18 @@
+	xindy.run (aka clisp) built as universal binary with lipo,
+	have to find arch-specific mem file.
+
+Index: xindy.in
+===================================================================
+--- xindy.in	(revision 59852)
++++ xindy.in	(working copy)
+@@ -511,6 +511,10 @@
+     my @uname = POSIX::uname();
+     if ( $uname[4] eq 'Power Macintosh' ) {
+ 	$mem_file = "$lib_dir/xindy-ppc.mem";
++    } else if ( $uname[4] eq 'x86_64' ) {
++	$mem_file = "$lib_dir/xindy-x86_64.mem";
++    } else if ( $uname[4] eq 'arm64' ) {
++	$mem_file = "$lib_dir/xindy-arm64.mem";
+     } else {
+ 	$mem_file = "$lib_dir/xindy-i386.mem";
+     }

@@ -1,0 +1,7 @@
+2021-07-06  Karl Berry  <karl@tug.org>
+
+	* idxhello.tex: add necessary \usepackage{makeidx}\makeindex.
+	* idxhello.idx: regenerate.
+
+(This ChangeLog file public domain.)
+

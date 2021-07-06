@@ -1,3 +1,12 @@
+2021-07-06  Karl Berry  <karl@tug.org>
+
+	* xindy-src/user-commands/xindy.in: for the Mac,
+	xindy.run (aka clisp) is now built as a universal binary (x86_64+arm),
+	so have to find arch-specific mem file. as we did in the past
+	for PowerPC vs. x86_64.
+	* TLpatches/patch-12-xindy-mac: new file.
+	The patches to xindy.in from original upstream
+
 2020-06-07  Karl Berry  <karl@freefriends.org>
 
 	* ac/withenable.ac: omit $Id$ from generated output.
