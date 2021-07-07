@@ -511,9 +511,9 @@ if ( $OSNAME eq 'darwin'  &&  ! -e $mem_file ) {
     my @uname = POSIX::uname();
     if ( $uname[4] eq 'Power Macintosh' ) {
 	$mem_file = "$lib_dir/xindy-ppc.mem";
-    } else if ( $uname[4] eq 'x86_64' ) {
+    } elsif ( $uname[4] eq 'x86_64' ) {
 	$mem_file = "$lib_dir/xindy-x86_64.mem";
-    } else if ( $uname[4] eq 'arm64' ) {
+    } elsif ( $uname[4] eq 'arm64' ) {
 	$mem_file = "$lib_dir/xindy-arm64.mem";
     } else {
 	$mem_file = "$lib_dir/xindy-i386.mem";
