@@ -5,10 +5,12 @@
 -- REQUIREMENTS:  
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
+--
+-- $Id: xindex.lua 4 2021-07-07 07:25:04Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.29
+ local version = 0.30
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -46,6 +48,7 @@ local args = require ('xindex-lapp') [[
     -e,--escapechar (default ")
     -n,--noheadings 
     -a,--no_casesensitive
+    -b,--no_labels
     -o,--output (default "")
     -l,--language (default en)
     -p,--prefix (default L)
@@ -239,10 +242,16 @@ else
   writeLog(1,"Output with headings between different first letter\n",1)
 end
 
+no_labels = args["no_labels"]
+if no_headings then
+  writeLog(1,"Index without labels\n",1)
+else
+  writeLog(1,"Index with labels\n",1)
+end
+
 writeLog(2,"Open outputfile "..filename,0)
 outFile = io.open(filename,"w+")
 writeLog(2,"... done\n",0)
-
 
 writeLog(1,"Starting base file ... \n",2)
 BaseRunFile = kpse.find_file("xindex-base.lua") 
