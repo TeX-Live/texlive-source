@@ -1,3 +1,15 @@
+2021-07-10  Karl Berry  <karl@freefriends.org>
+
+	* xindy-src/user-commands/xindy.in: append TL svn revision to
+	xindy.pl version number (1.18), and move $is_TL assignment to
+	before $VERSION computation. Expand $Revision$ keyword in TL repo.
+	
+	Move Mac .mem cases to above parse_options, so --version 
+	and --internal-version work.
+	
+	(call_xindy, ..., xindy_expression): forward decls of functions
+	to avoid prototype warnings.
+
 2021-07-06  Karl Berry  <karl@tug.org>
 
 	* xindy-src/user-commands/xindy.in: for the Mac,

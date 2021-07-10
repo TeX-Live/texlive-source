@@ -319,7 +319,7 @@ Joachim Schrod
 
 =head1 LEGALESE
 
-Copyright (c) 2004-2014 by Joachim Schrod.
+Copyright (c) 2004-2021 by Joachim Schrod.
 
 B<xindy> is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -340,7 +340,14 @@ GNU General Public License for more details.
 use strict;
 use English qw(-no_match_vars);
 
-our $VERSION = sprintf "%d.%02d", q$Revision: 1.18 $ =~ /: (\d+)\.(\d+)/ ;
+our $is_TL = ( '@is_TL@' eq 'yes' );
+
+our $VERSION = sprintf "%d.%02d", q$xRevision: 1.18 $ =~ /: (\d+)\.(\d+)/ ;
+if ($is_TL) {
+    # Until xindy is actively maintained upstream, let's make
+    # changes in TL be reflected in different version numbers.
+    $VERSION .= sprintf ".TL%d", q$Revision$ =~ /: (\d+)/ ; # TL rev
+}
 
 
 # Used modules.
@@ -353,10 +360,17 @@ use File::Temp qw(tempfile tmpnam);
 use Getopt::Long qw(:config bundling);
 use POSIX qw(uname);
 
+# Forward declarations for prototypes.
+
+sub call_xindy ($$);
+sub create_raw_index ();
+sub filter_index ($$);
+sub handle_signals ();
+sub parse_options ();
+sub xindy_expression ();
 
 # Determine environment. Where is our library directory, and our modules?
 
-our $is_TL = ( '@is_TL@' eq 'yes' );
 our $is_w32 = ( $OSNAME =~ /^MSWin/i ) ;
 our $path_sep = ( $is_w32 ? ';' : ':' ) ;
 our $is_windows = ( $is_w32 || $OSNAME eq 'cygwin' ) ;
@@ -501,10 +515,6 @@ our ($quiet, $verbose, %debug,
 $input_markup = 'latex';
 $mem_file = "$lib_dir/xindy.mem";
 
-my @orig_argv = @ARGV;
-parse_options();
-
-
 # Support universal binary on Mac OS X.
 
 if ( $OSNAME eq 'darwin'  &&  ! -e $mem_file ) {
@@ -519,6 +529,11 @@ if ( $OSNAME eq 'darwin'  &&  ! -e $mem_file ) {
 	$mem_file = "$lib_dir/xindy-i386.mem";
     }
 }
+
+my @orig_argv = @ARGV;
+parse_options();
+
+# might get overridden
 die "$cmd: Cannot locate $mem_file"  unless -e $mem_file;
 
 
@@ -928,6 +943,8 @@ sub quotify ( $ ) {
 
 
 #======================================================================
+# (modified several times for TeX Live; see
+#  Build/source/utils/xindy/ChangeLog)
 #
 # $Log: xindy.pl,v $
 # Revision 1.18  2011/01/18 22:18:29  jschrod
