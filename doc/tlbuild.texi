@@ -505,7 +505,7 @@ specify @code{--disable-xetex} explicitly. Specifically, before
 running @code{configure --disable-xetex ...}:
 
 @example
-rm -rf libs/icu libs/graphite2 texk/dvisvgm
+rm -rf libs/icu libs/graphite2 texk/dvisvgm texk/web2c/xetexdir
 @end example
 
 @vindex --enable-missing @r{to ignore dependencies}

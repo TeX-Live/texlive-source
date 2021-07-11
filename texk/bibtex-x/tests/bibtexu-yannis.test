@@ -8,7 +8,7 @@
 # https://tug.org/pipermail/tlbuild/2021q2/004918.html
 # 
 # Looking for someone interested in debugging ...
-exit 0
+exit 77
 
 test -d tests || mkdir -p tests
 
