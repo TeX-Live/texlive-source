@@ -1,3 +1,7 @@
+2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* makejvf.1: Document -O option added in version 20200412.
+
 2021-01-12  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* main.c: Add size check to avoid segmentation fault.
