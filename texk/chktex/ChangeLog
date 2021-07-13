@@ -1,3 +1,7 @@
+2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* regex/regex_internal.h: sync with pdftexdir/regex 2017-02-16.
+
 2017-03-27  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): use instead of TESTS_ENVIRONMENT.
