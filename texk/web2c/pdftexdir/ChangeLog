@@ -1,3 +1,12 @@
+2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* regex/regexec.c: Avoid MSVC compiler error.
+	-> error C2059: syntax error: ':'
+	MSVC does not allow empty expression for ternary
+	conditional operator (?:) which is a GNU C extension.
+	https://gcc.gnu.org/onlinedocs/gcc/Conditionals.html
+	https://stackoverflow.com/questions/3319075/
+
 2021-02-17  Karl Berry  <karl@tug.org>
 
         * NEWS,

@@ -2866,7 +2866,11 @@ check_arrival (re_match_context_t *mctx, state_array_t *path, int top_node,
 	      sizeof (re_dfastate_t *) * (path->alloc - old_alloc));
     }
 
+#ifdef _MSC_VER
+  str_idx = path->next_idx ? path->next_idx : top_str;
+#else
   str_idx = path->next_idx ?: top_str;
+#endif
 
   /* Temporary modify MCTX.  */
   backup_state_log = mctx->state_log;
