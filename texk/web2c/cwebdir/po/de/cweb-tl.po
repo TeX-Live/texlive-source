@@ -32,16 +32,16 @@ msgid "%s: Need one to three file arguments.\n"
 msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
 
 #: ctang-texlive.ch:39
-msgid "This is CTANGLE, Version 4.4"
-msgstr "Dies ist CTANGLE, Version 4.4"
+msgid "This is CTANGLE, Version 4.5"
+msgstr "Dies ist CTANGLE, Version 4.5"
 
 #: ctwill-texlive.ch:39
-msgid "This is CTWILL, Version 4.4"
-msgstr "Dies ist CTWILL, Version 4.4"
+msgid "This is CTWILL, Version 4.5"
+msgstr "Dies ist CTWILL, Version 4.5"
 
 #: cweav-texlive.ch:39
-msgid "This is CWEAVE, Version 4.4"
-msgstr "Dies ist CWEAVE, Version 4.4"
+msgid "This is CWEAVE, Version 4.5"
+msgstr "Dies ist CWEAVE, Version 4.5"
 
 #: comm-texlive.ch:512
 #, c-format

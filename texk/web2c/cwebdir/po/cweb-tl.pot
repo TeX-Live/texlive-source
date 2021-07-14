@@ -30,15 +30,15 @@ msgid "%s: Need one to three file arguments.\n"
 msgstr ""
 
 #: ctang-texlive.ch:39
-msgid "This is CTANGLE, Version 4.4"
+msgid "This is CTANGLE, Version 4.5"
 msgstr ""
 
 #: ctwill-texlive.ch:39
-msgid "This is CTWILL, Version 4.4"
+msgid "This is CTWILL, Version 4.5"
 msgstr ""
 
 #: cweav-texlive.ch:39
-msgid "This is CWEAVE, Version 4.4"
+msgid "This is CWEAVE, Version 4.5"
 msgstr ""
 
 #: comm-texlive.ch:512

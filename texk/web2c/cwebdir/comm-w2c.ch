@@ -17,16 +17,16 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.4)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.5)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (4.4 [\TeX~Live])}
+\def\title{Common code for CTANGLE and CWEAVE (4.5 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.4)}
+  \centerline{(Version 4.5)}
 @y
-  \centerline{(Version 4.4 [\TeX~Live])}
+  \centerline{(Version 4.5 [\TeX~Live])}
 @z
 
 @x
@@ -218,7 +218,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
   char temp_file_name[max_file_name_length];
   char *cur_file_name_end=cur_file_name+max_file_name_length-1;
   char *kk, *k=cur_file_name;
-  int l; /* length of file name */
+  size_t l; /* length of file name */
 @y
   char *cur_file_name_end=cur_file_name+max_file_name_length-1;
   char *k=cur_file_name;
@@ -762,8 +762,6 @@ The directories to be searched for come from three sources:
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
-typedef bool boolean;
-#define HAVE_BOOLEAN
 #include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header;
   |@!kpathsea_debug|, |@!const_string|, |@!string| */
 #include <w2c/config.h> /* \&{integer} */

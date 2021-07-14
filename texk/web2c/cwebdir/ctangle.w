@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.4 --- June 2021
+% Version 4.5 --- July 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -27,11 +27,11 @@
 \mathchardef\RA="3221 % right arrow
 \mathchardef\BA="3224 % double arrow
 
-\def\title{CTANGLE (Version 4.4)}
+\def\title{CTANGLE (Version 4.5)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CTANGLE} processor}
   \vskip 15pt
-  \centerline{(Version 4.4)}
+  \centerline{(Version 4.5)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -61,7 +61,7 @@ Joachim Schrod, Lee Wittenberg, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.4)"
+@d banner "This is CTANGLE (Version 4.5)"
 
 @c
 @<Include files@>@/
@@ -390,11 +390,12 @@ get_output(void) /* sends next token to |out_char| */
   else {
     a=(a-0200)*0400+*cur_byte++;
     switch (a/024000) { /* |024000==(0250-0200)*0400| */
-      case 0: cur_val=a; out_char(identifier); break;
+      case 0: cur_val=(int)a; out_char(identifier); break;
       case 1: if (a==output_defs_flag) output_defs();
         else @<Expand section |a-024000|, |goto restart|@>@;
         break;
-      default: cur_val=a-050000; if (cur_val>0) cur_section=cur_val;
+      default: cur_val=(int)a-050000;
+        if (cur_val>0) cur_section=(sixteen_bits)cur_val;
         out_char(section_number);
     }
   }
@@ -594,7 +595,7 @@ static void output_defs(void);@/
 static void out_char(eight_bits);
 
 @ @d C_printf(c,a) fprintf(C_file,c,a)
-@d C_putc(c) putc(c,C_file) /* isn't \CEE/ wonderfully consistent? */
+@d C_putc(c) putc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
 
 @c
 static void
@@ -619,11 +620,12 @@ output_defs(void)
         else {
           a=(a-0200)*0400+*cur_byte++;
           if (a<024000) { /* |024000==(0250-0200)*0400| */
-            cur_val=a; out_char(identifier);
+            cur_val=(int)a; out_char(identifier);
           }
           else if (a<050000) confusion("macro defs have strange char");
           else {
-            cur_val=a-050000; cur_section=cur_val; out_char(section_number);
+            cur_val=(int)a-050000; cur_section=(sixteen_bits)cur_val;
+            out_char(section_number);
           }
       /* no other cases */
         }
@@ -723,15 +725,15 @@ case section_number:
   else if(cur_val<0) C_printf("/*:%d*/",-cur_val);
   else if (protect) {
     cur_byte +=4; /* skip line number and file name */
-    cur_char = '\n';
+    cur_char = (eight_bits)'\n';
     goto restart;
   } else {
     sixteen_bits a;
     a=*cur_byte++ *0400;
     a+=*cur_byte++; /* gets the line number */
-    C_printf("\n#line %d \"",a);
+    C_printf("\n#line %d \"",(int)a);
 @:line}{\.{\#line}@>
-    cur_val=(*cur_byte++-0200)*0400;
+    cur_val=(int)(*cur_byte++-0200)*0400;
     cur_val+=*cur_byte++; /* points to the file name */
     for (j=(cur_val+name_dir)->byte_start, k=(cur_val+name_dir+1)->byte_start;
          j<k; j++) {
@@ -783,7 +785,7 @@ static eight_bits ccode[256]; /* meaning of a char following \.{@@} */
 }
 ccode[' ']=ccode['\t']=ccode['\n']=ccode['\v']=ccode['\r']=ccode['\f']
   =ccode['*']=new_section;
-ccode['@@']='@@'; ccode['=']=string;
+ccode['@@']=(eight_bits)'@@'; ccode['=']=string;
 ccode['d']=ccode['D']=definition;
 ccode['f']=ccode['F']=ccode['s']=ccode['S']=format_code;
 ccode['c']=ccode['C']=ccode['p']=ccode['P']=begin_C;
@@ -892,13 +894,12 @@ get_next(void) /* produces the next input token */
           print_where=false;
           @<Insert the line number into |tok_mem|@>@;
         }
-        else return '\n';
+        else return (eight_bits)'\n';
     }
-    c=*loc;
+    c=(eight_bits)*loc;
     if (comment_continues || (c=='/' && (*(loc+1)=='*' || *(loc+1)=='/'))) {
-      skip_comment(comment_continues||*(loc+1)=='*');
+      if (skip_comment(comment_continues||*(loc+1)=='*')) return '\n';
           /* scan to end of comment or newline */
-      if (comment_continues) return '\n';
       else continue;
     }
     loc++;
@@ -907,13 +908,14 @@ get_next(void) /* produces the next input token */
            || ((c=='L' || c=='u' || c=='U')&&(*loc=='\'' || *loc=='"'))@|
            || ((c=='u' && *loc=='8')&&(*(loc+1)=='\'' || *(loc+1)=='"')))
         @<Get a string@>@;
-    else if (isalpha(c) || isxalpha(c) || ishigh(c))
+    else if (isalpha((int)c) || isxalpha(c) || ishigh(c))
       @<Get an identifier@>@;
     else if (c=='@@') @<Get control code and possible section name@>@;
     else if (xisspace(c)) {
         if (!preprocessing || loc>limit) continue;
           /* we don't want a blank after a final backslash */
-        else return ' '; /* ignore spaces and tabs, unless |preprocessing| */
+        else return (eight_bits)' ';
+          /* ignore spaces and tabs, unless |preprocessing| */
     }
     else if (c=='#' && loc==buffer+1) preprocessing=true;
     mistake: @<Compress two-symbol operator@>@;
@@ -957,8 +959,8 @@ switch(c) {
   id_first=--loc;
   do
     ++loc;
-  while (isalpha((eight_bits)*loc) || isdigit((eight_bits)*loc) @|
-      || isxalpha((eight_bits)*loc) || ishigh((eight_bits)*loc));
+  while (isalpha((int)*loc) || isdigit((int)*loc) @|
+      || isxalpha(*loc) || ishigh(*loc));
   id_loc=loc; return identifier;
 }
 
@@ -1000,7 +1002,7 @@ delimiters if they are protected by a backslash.  We follow this
 convention, but do not allow the string to be longer than |longest_name|.
 
 @<Get a string@>= {
-  char delim = c; /* what started the string */
+  char delim = (char)c; /* what started the string */
   id_first = section_text+1;
   id_loc = section_text; *++id_loc=delim;
   if (delim=='L' || delim=='u' || delim=='U') { /* wide character constant */
@@ -1020,16 +1022,16 @@ convention, but do not allow the string to be longer than |longest_name|.
       else if (++id_loc<=section_text_end) *id_loc='\n'; /* will print as
       \.{"\\\\\\n"} */
     }
-    if ((c=*loc++)==delim) {
-      if (++id_loc<=section_text_end) *id_loc=c;
+    if ((c=(eight_bits)*loc++)==delim) {
+      if (++id_loc<=section_text_end) *id_loc=(char)c;
       break;
     }
     if (c=='\\') {
       if (loc>=limit) continue;
       if (++id_loc<=section_text_end) *id_loc = '\\';
-      c=*loc++;
+      c=(eight_bits)*loc++;
     }
-    if (++id_loc<=section_text_end) *id_loc=c;
+    if (++id_loc<=section_text_end) *id_loc=(char)c;
   }
   if (id_loc>=section_text_end) {
     fputs("\n! String too long: ",stdout);
@@ -1118,13 +1120,13 @@ while (true) {
 @.Input ended in section name@>
     loc=buffer+1; break;
   }
-  c=*loc;
+  c=(eight_bits)*loc;
   @<If end of name or erroneous nesting, |break|@>@;
   loc++; if (k<section_text_end) k++;
   if (xisspace(c)) {
-    c=' '; if (*(k-1)==' ') k--;
+    c=(eight_bits)' '; if (*(k-1)==' ') k--;
   }
-*k=c;
+*k=(char)c;
 }
 if (k>=section_text_end) {
   fputs("\n! Section name too long: ",stdout);
@@ -1136,7 +1138,7 @@ if (*k==' ' && k>section_text) k--;
 
 @ @<If end of name or erroneous nesting,...@>=
 if (c=='@@') {
-  c=*(loc+1);
+  c=(eight_bits)*(loc+1);
   if (c=='>') {
     loc+=2; break;
   }
@@ -1183,7 +1185,10 @@ ANSI \CEE/ preprocessor sometimes requires it.
 acted, |cur_text| will point to the replacement text just generated, and
 |next_control| will contain the control code that terminated the activity.
 
-@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow("token"); *(tok_ptr++)=c;}
+@d app_repl(c) {
+  if (tok_ptr==tok_mem_end) overflow("token");
+  else *(tok_ptr++)=(eight_bits)c;
+}
 
 @<Private...@>=
 static text_pointer cur_text; /* replacement text formed by |scan_repl| */
@@ -1217,9 +1222,9 @@ eight_bits t)
 to |0150000|; then the numeric line number; then a pointer to the
 file name.
 
-@d store_id(a) a=id_lookup(id_first,id_loc,0)-name_dir;@/
+@d store_id(a) a=id_lookup(id_first,id_loc,'\0')-name_dir;@/
   app_repl((a / 0400)+0200);
-  app_repl(a % 0400);
+  app_repl(a % 0400)
 
 @<Insert the line...@>=
 {
@@ -1244,8 +1249,9 @@ case section_name: if (t!=section_name) goto done;
     a=cur_section_name-name_dir;
     app_repl((a / 0400)+0250);
     app_repl(a % 0400);
-    @<Insert the line number into |tok_mem|@>@; break;
+    @<Insert the line number into |tok_mem|@>@;
   }
+  break;
 case output_defs_code: if (t!=section_name) err_print("! Misplaced @@h");
 @.Misplaced @@h@>
   else {
@@ -1255,11 +1261,13 @@ case output_defs_code: if (t!=section_name) err_print("! Misplaced @@h");
     app_repl(a % 0400);
     @<Insert the line number into |tok_mem|@>@;
   }
- break;
+  break;
 case constant: case string:
   @<Copy a string or verbatim construction or numerical constant@>@;
+  break;
 case ord:
   @<Copy an ASCII constant@>@;
+  break;
 case definition: case format_code: case begin_C: if (t!=section_name) goto done;
   else {
     err_print("! @@d, @@f and @@c are ignored in C text"); continue;
@@ -1296,16 +1304,16 @@ code. The \.{+k} switch will `keep' the single quotes in the output.
       id_first++;
     app_repl(*id_first++);
   }
-  app_repl(a); break;
+  app_repl(a);
 
 @ This section should be rewritten on machines that don't use ASCII
 code internally.
 @^ASCII code dependencies@>
 
 @<Copy an ASCII constant@>= {
-  int c=(eight_bits) *id_first;
+  int c=(int)((eight_bits) *id_first);
   if (c=='\\') {
-    c=*++id_first;
+    c=(int)((eight_bits) *++id_first);
     if (c>='0' && c<='7') {
       c-='0';
       if (*(id_first+1)>='0' && *(id_first+1)<='7') {
@@ -1324,15 +1332,15 @@ code internally.
     case 'a':c='\7';@+break;
     case '?':c='?';@+break;
     case 'x':
-      if (xisdigit(*(id_first+1))) c=*(++id_first)-'0';
+      if (xisdigit(*(id_first+1))) c=(int)(*(++id_first)-'0');
       else if (xisxdigit(*(id_first+1))) {
         ++id_first;
-        c=toupper((eight_bits)*id_first)-'A'+10;
+        c=toupper((int)*id_first)-'A'+10;
       }
-      if (xisdigit(*(id_first+1))) c=16*c+*(++id_first)-'0';
+      if (xisdigit(*(id_first+1))) c=16*c+(int)(*(++id_first)-'0');
       else if (xisxdigit(*(id_first+1))) {
         ++id_first;
-        c=16*c+toupper((eight_bits)*id_first)-'A'+10;
+        c=16*c+toupper((int)*id_first)-(int)'A'+10;
       }
       break;
     case '\\':c='\\';@+break;
@@ -1344,12 +1352,11 @@ code internally.
   }@/
   /* at this point |c| should have been converted to its ASCII code number */
   app_repl(constant);
-  if (c>=100) app_repl('0'+c/100);
-  if (c>=10) app_repl('0'+(c/10)%10);
-  app_repl('0'+c%10);
+  if (c>=100) app_repl((int)'0'+c/100);
+  if (c>=10) app_repl((int)'0'+(c/10)%10);
+  app_repl((int)'0'+c%10);
   app_repl(constant);
 }
-break;
 
 @* Scanning a section.
 The |scan_section| procedure starts when `\.{@@\ }' or `\.{@@*}' has been
@@ -1370,7 +1377,7 @@ scan_section(void)
   sixteen_bits a; /* token for left-hand side of definition */
   section_count++; @+ no_where=true;
   if (*(loc-1)=='*' && show_progress) { /* starred section */
-    printf("*%d",section_count); update_terminal;
+    printf("*%d",(int)section_count); update_terminal;
   }
   next_control=ignore;
   while (true) {
@@ -1491,7 +1498,7 @@ skip_limbo(void)
         case translit_code: @<Read in transliteration of a character@>@; break;
         case format_code: case '@@': break;
         case control_text: if (c=='q' || c=='Q') {
-          while ((c=skip_ahead())=='@@');
+          while ((c=(char)skip_ahead())=='@@');
           if (*(loc-1)!='>')
             err_print("! Double @@ should be used in control text");
 @.Double @@ should be used...@>
@@ -1530,19 +1537,19 @@ skip_limbo(void)
   }
 
 @ Because on some systems the difference between two pointers is a |ptrdiff_t|
-but not an |int|, we use \.{\%ld} to print these quantities.
+but not an |int|, we use \.{\%td} to print these quantities.
 
 @c
 void
 print_stats(void) {
   puts("\nMemory usage statistics:");
-  printf("%ld names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
-  printf("%ld replacement texts (out of %ld)\n",
+  printf("%td replacement texts (out of %ld)\n",
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);
-  printf("%ld bytes (out of %ld)\n",
+  printf("%td bytes (out of %ld)\n",
           (ptrdiff_t)(byte_ptr-byte_mem),(long)max_bytes);
-  printf("%ld tokens (out of %ld)\n",
+  printf("%td tokens (out of %ld)\n",
           (ptrdiff_t)(tok_ptr-tok_mem),(long)max_toks);
 }
 

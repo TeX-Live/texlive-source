@@ -15,7 +15,7 @@
 #endif
 
 #include <ctype.h>  
-#include <stdbool.h>  
+#include <kpathsea/simpletypes.h>  
 #include <stddef.h>  
 #include <stdint.h>  
 #include <stdlib.h>  
@@ -36,15 +36,13 @@
 /*:89*//*91:*/
 #line 764 "cwebdir/comm-w2c.ch"
 
-typedef bool boolean;
-#define HAVE_BOOLEAN
 #include <kpathsea/kpathsea.h>  
 
 #include <w2c/config.h>  
 #include <lib/lib.h>  
 
 /*:91*//*94:*/
-#line 803 "cwebdir/comm-w2c.ch"
+#line 801 "cwebdir/comm-w2c.ch"
 
 #define CWEB
 #include "help.h" 
@@ -72,12 +70,12 @@ typedef bool boolean;
 
 #define compress(c) if(loc++<=limit) return c \
 
-#define xisalpha(c) (isalpha((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisdigit(c) (isdigit((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisspace(c) (isspace((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xislower(c) (islower((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisupper(c) (isupper((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisxdigit(c) (isxdigit((eight_bits) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xisalpha(c) (isalpha((int) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xisdigit(c) (isdigit((int) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xisspace(c) (isspace((int) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xislower(c) (islower((int) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xisupper(c) (isupper((int) (c) ) &&((eight_bits) (c) <0200) ) 
+#define xisxdigit(c) (isxdigit((int) (c) ) &&((eight_bits) (c) <0200) ) 
 #define isxalpha(c) ((c) =='_'||(c) =='$')  \
 
 #define ishigh(c) ((eight_bits) (c) > 0177)  \
@@ -130,13 +128,13 @@ typedef bool boolean;
 #define max_sections 4000 \
 
 #define lines_dont_match (change_limit-change_buffer!=limit-buffer|| \
-strncmp(buffer,change_buffer,(size_t) (limit-buffer) ) )  \
+strncmp(buffer,change_buffer,(size_t) (limit-buffer) ) !=0)  \
 
 #define if_section_start_make_pending(b)  \
 *limit= '!'; \
 for(loc= buffer;xisspace(*loc) ;loc++) ; \
 *limit= ' '; \
-if(*loc=='@'&&(xisspace(*(loc+1) ) ||*(loc+1) =='*') ) change_pending= b; \
+if(*loc=='@'&&(xisspace(*(loc+1) ) ||*(loc+1) =='*') ) change_pending= b \
 
 #define too_long() {include_depth--; \
 err_print(_("! Include file name too long") ) ;goto restart;} \
@@ -144,10 +142,10 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 #define hash_size 8501 \
 
 #define first_chunk(p) ((p) ->byte_start+2) 
-#define prefix_length(p) (int) ((eight_bits) *((p) ->byte_start) *256+ \
+#define prefix_length(p) (size_t) ((eight_bits) *((p) ->byte_start) *256+ \
 (eight_bits) *((p) ->byte_start+1) ) 
-#define set_prefix_length(p,m) (*((p) ->byte_start) = (m) /256, \
-*((p) ->byte_start+1) = (m) %256)  \
+#define set_prefix_length(p,m) (*((p) ->byte_start) = (char) ((m) /256) , \
+*((p) ->byte_start+1) = (char) ((m) %256) )  \
 
 #define less 0
 #define equal 1
@@ -175,9 +173,8 @@ err_print(_("! Include file name too long") ) ;goto restart;} \
 #line 64 "cwebdir/common.w"
 
 /*2:*/
-#line 33 "cwebdir/comm-w2c.h"
+#line 34 "cwebdir/comm-w2c.h"
 
-typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 typedef enum{
@@ -427,7 +424,7 @@ extern void reset_input(void);
 #line 184 "cwebdir/comm-w2c.h"
 
 extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
-extern name_pointer id_lookup(const char*,const char*,char);
+extern name_pointer id_lookup(const char*,const char*,eight_bits);
 
 extern name_pointer section_lookup(char*,char*,boolean);
 extern void init_node(name_pointer);
@@ -466,13 +463,13 @@ static void check_change(void);
 /*:33*//*55:*/
 #line 764 "cwebdir/common.w"
 
-static int web_strcmp(char*,int,char*,int);
+static int web_strcmp(char*,size_t,char*,size_t);
 static name_pointer add_section_name(name_pointer,int,char*,char*,boolean);
 static void extend_section_name(name_pointer,char*,char*,boolean);
 
 /*:55*//*64:*/
 #line 991 "cwebdir/common.w"
-static int section_name_cmp(char**,int,name_pointer);
+static int section_name_cmp(char**,size_t,name_pointer);
 
 /*:64*//*76:*/
 #line 1186 "cwebdir/common.w"
@@ -480,7 +477,7 @@ static void scan_args(void);
 
 #line 507 "cwebdir/comm-w2c.ch"
 /*:76*//*96:*/
-#line 816 "cwebdir/comm-w2c.ch"
+#line 814 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
@@ -513,7 +510,7 @@ for(h= hash;h<=hash_end;*h++= NULL);
 #line 78 "cwebdir/comm-w2c.ch"
 
 /*92:*/
-#line 778 "cwebdir/comm-w2c.ch"
+#line 776 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -632,7 +629,7 @@ change_line++;
 if(!input_ln(change_file))return;
 if(limit<buffer+2)continue;
 if(buffer[0]!='@')continue;
-if(xisupper(buffer[1]))buffer[1]= tolower((eight_bits)buffer[1]);
+if(xisupper(buffer[1]))buffer[1]= tolower((int)buffer[1]);
 if(buffer[1]=='x')break;
 if(buffer[1]=='y'||buffer[1]=='z'||buffer[1]=='i'){
 loc= buffer+2;
@@ -698,7 +695,7 @@ change_limit= change_buffer;changing= false;
 return;
 }
 if(limit> buffer+1&&buffer[0]=='@'){
-char xyz_code= xisupper(buffer[1])?tolower((eight_bits)buffer[1]):buffer[1];
+char xyz_code= xisupper(buffer[1])?tolower((int)buffer[1]):buffer[1];
 /*34:*/
 #line 336 "cwebdir/common.w"
 
@@ -823,7 +820,7 @@ changed_section[section_count]= true;change_pending= false;
 }
 *limit= ' ';
 if(buffer[0]=='@'){
-if(xisupper(buffer[1]))buffer[1]= tolower((eight_bits)buffer[1]);
+if(xisupper(buffer[1]))buffer[1]= tolower((int)buffer[1]);
 if(buffer[1]=='x'||buffer[1]=='y'){
 loc= buffer+2;
 #line 280 "cwebdir/comm-w2c.ch"
@@ -953,18 +950,18 @@ name_pointer
 id_lookup(
 const char*first,
 const char*last,
-char t)
+eight_bits t)
 {
 const char*i= first;
 int h;
-int l;
+size_t l;
 name_pointer p;
 if(last==NULL)for(last= first;*last!='\0';last++);
-l= (int)(last-first);
+l= (size_t)(last-first);
 /*49:*/
 #line 656 "cwebdir/common.w"
 
-h= (eight_bits)*i;
+h= (int)((eight_bits)*i);
 while(++i<last)h= (h+h+(int)((eight_bits)*i))%hash_size;
 
 
@@ -1049,7 +1046,7 @@ print_prefix_name(
 name_pointer p)
 {
 char*s= first_chunk(p);
-int l= prefix_length(p);
+size_t l= prefix_length(p);
 term_write(s,l);
 if(s+l<(p+1)->byte_start)term_write("...",3);
 }
@@ -1059,9 +1056,9 @@ if(s+l<(p+1)->byte_start)term_write("...",3);
 
 static int web_strcmp(
 char*j,
-int j_len,
+size_t j_len,
 char*k,
-int k_len)
+size_t k_len)
 {
 char*j1= j+j_len,*k1= k+k_len;
 while(k<k1&&j<j1&&*j==*k)k++,j++;
@@ -1085,7 +1082,7 @@ boolean ispref)
 {
 name_pointer p= name_ptr;
 char*s= first_chunk(p);
-int name_len= (int)(last-first)+ispref;
+size_t name_len= (size_t)(last-first+(int)ispref);
 #line 307 "cwebdir/comm-w2c.ch"
 if(s+name_len> byte_mem_end)overflow(_("byte memory"));
 if(name_ptr+1>=name_dir_end)overflow(_("name"));
@@ -1116,7 +1113,7 @@ boolean ispref)
 {
 char*s;
 name_pointer q= p+1;
-int name_len= (int)(last-first)+ispref;
+size_t name_len= (size_t)(last-first+(int)ispref);
 #line 314 "cwebdir/comm-w2c.ch"
 if(name_ptr>=name_dir_end)overflow(_("name"));
 #line 838 "cwebdir/common.w"
@@ -1146,7 +1143,7 @@ name_pointer q= NULL;
 name_pointer r= NULL;
 name_pointer par= NULL;
 
-int name_len= (int)(last-first)+1;
+size_t name_len= (size_t)(last-first+1);
 /*60:*/
 #line 878 "cwebdir/common.w"
 
@@ -1242,7 +1239,7 @@ return r;
 
 static int section_name_cmp(
 char**pfirst,
-int len,
+size_t len,
 name_pointer r)
 {
 char*first= *pfirst;
@@ -1254,7 +1251,7 @@ while(true){
 ss= (r+1)->byte_start-1;
 if(*ss==' '&&ss>=r->byte_start)ispref= true,q= q->link;
 else ispref= false,ss++,q= name_dir;
-switch(c= web_strcmp(first,len,s,ss-s)){
+switch(c= web_strcmp(first,len,s,(size_t)(ss-s))){
 case equal:if(q==name_dir)
 if(ispref){
 *pfirst= first+(ptrdiff_t)(ss-s);
@@ -1278,7 +1275,7 @@ void
 err_print(
 const char*s)
 {
-printf(*s=='!'?"\n%s":"%s",s);
+*s=='!'?printf("\n%s",s):printf("%s",s);
 if(web_file_open)/*67:*/
 #line 1032 "cwebdir/common.w"
 
@@ -1412,7 +1409,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*95:*/
-#line 807 "cwebdir/comm-w2c.ch"
+#line 805 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
@@ -1424,7 +1421,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*98:*/
-#line 855 "cwebdir/comm-w2c.ch"
+#line 853 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1598,7 +1595,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 }
 
 /*:75*//*97:*/
-#line 820 "cwebdir/comm-w2c.ch"
+#line 818 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1632,7 +1629,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:97*//*99:*/
-#line 863 "cwebdir/comm-w2c.ch"
+#line 861 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {

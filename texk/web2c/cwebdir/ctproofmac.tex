@@ -1,5 +1,5 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.4 --- June 2021
+% Version 4.4 --- July 2021
 % Modified for proofs in CTWILL
 \ifx\documentstyle\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CWEB4.4+PROOFS}
@@ -160,7 +160,7 @@
 \let\R=\lnot % logical not
 % \S is section sign
 \def\T#1{\leavevmode % octal, hex or decimal constant
-  \hbox{$\def\?{\kern.2em}%
+  \hbox{$\def\?{\kern.2em}%$%
     \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
     \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
@@ -169,7 +169,7 @@
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
 \let\W=\land % logical and
-\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % section name
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\eightrm\kern.5em#1}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le

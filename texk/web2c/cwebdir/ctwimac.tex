@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.4 --- June 2021
+% Version 4.4 --- July 2021
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
-\ifx\documentstyle\undefined\else\endinput\fi % LaTeX will use other macros
+\ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CTWILL4.4+LNCS}
 
 \let\:=\. % preserve a way to get the dot accent
@@ -17,8 +17,8 @@
 \newwrite\reffile
 \ifx\norefs\def\else
   \openin\sreffile=\jobname.sref
-  \ifeof\sreffile \immediate\openout\reffile=\jobname.ref \sortedfalse
-    \message{This is the first pass!}
+  \ifeof\sreffile \immediate\openout\reffile=\jobname.ref
+       \sortedfalse \message{This is the first pass!}
   \else \sortedtrue \message{This is the second pass!} \fi
 \fi
 
@@ -211,7 +211,7 @@
 \def\6{\ifmmode\else\par % forced break
   \hangindent\ind\em\noindent\kern\ind\em\copy\bakk\ignorespaces\fi}
 \def\7{\Y\6} % forced break and a little extra space
-\def\8{\hskip-\ind em\hskip 2\em} % no indentation
+\def\8{\hskip-\ind\em\hskip 2\em} % no indentation
 
 \newcount\gdepth % depth of current major group, plus one
 \newtoks\gtitle % title of current major group
@@ -228,7 +228,7 @@
 \def\startsection{\titletrue
   \line{\smash{\titlefont\title}\quad\hrulefill}\bigskip
   \let\startsection=\stsec\stsec}
-\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 }} % begin `define' or `format'
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\iftenpoint\ninepoint\fi
@@ -242,7 +242,7 @@
 \let\SHC\C % "// short comments" treated like "/* ordinary comments */"
 %\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 %\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
-\def\D{\defin{\#define}} % macro definition
+\def\D{\defin{{\rm\#}define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
 \def\ETs{, and~} % conjunction between the last two of several section numbers
@@ -259,7 +259,8 @@
   \else\ifdim\ht\partialpage<\pageht \leftfalse\else\lefttrue\fi\fi\NNN}
 \outer\def\NN{\ifvoid\partialpage\leftfalse
   \else\ifdim\ht\partialpage<\pageht \lefttrue\else\leftfalse\fi\fi\NNN}
-\outer\def\NNN#1#2#3.{\gdepth=#1\gtitle={#3}\def\secno{#2}% starred section
+\outer\def\NNN#1#2#3.{% beginning of starred section
+  \gdepth=#1\gtitle={#3}\def\secno{#2}
   \ifleft \flushout
     \gdef\rlhead{\let\i=I\uppercase{\ignorespaces#3}} % running left headline
     \global\let\rrhead=\rlhead % running right headline
@@ -276,7 +277,7 @@
 \let\R=\lnot % logical not
 % \S is section sign
 \def\T#1{\leavevmode % octal, hex or decimal constant
-  \hbox{$\def\?{\kern.2em}%
+  \hbox{$\def\?{\kern.2em}%$%
     \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
     \def\%{\cdot 16^{\aftergroup}}% power of sixteen (via dirty trick)
@@ -285,7 +286,7 @@
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
 \let\W=\land % logical and
-\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % section name
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\sevenrm\kern.5em#1}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le

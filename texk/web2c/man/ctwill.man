@@ -111,7 +111,7 @@ The present incarnation of \f[B]ctwill\f[R] and its utilities tries hard
 to be a drop-in replacement for the original package.
 There are, however, a few differences worth noting:
 .IP \[bu] 2
-This version is based on the most recent version of CWEB (4.4).
+This version is based on the most recent version of CWEB (4.5).
 .IP \[bu] 2
 In TeX\ Live the utility programs are prefixed with \f[B]ctwill-\f[R]
 and the macro files with \f[B]ct\f[R] for technical reasons.

@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{CTANGLE (Version 4.4)}
+\def\title{CTANGLE (Version 4.5)}
 @y
-\def\title{CTANGLE (Version 4.4 [\TeX~Live])}
+\def\title{CTANGLE (Version 4.5 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.4)}
+  \centerline{(Version 4.5)}
 @y
-  \centerline{(Version 4.4 [\TeX~Live])}
+  \centerline{(Version 4.5 [\TeX~Live])}
 @z
 
 @x
@@ -41,9 +41,9 @@
 @z
 
 @x
-@d banner "This is CTANGLE (Version 4.4)"
+@d banner "This is CTANGLE (Version 4.5)"
 @y
-@d banner "This is CTANGLE, Version 4.4"
+@d banner "This is CTANGLE, Version 4.5"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
@@ -252,9 +252,15 @@ if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 @z
 
 @x
-@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow("token"); *(tok_ptr++)=c;}
+@d app_repl(c) {
+  if (tok_ptr==tok_mem_end) overflow("token");
+  else *(tok_ptr++)=(eight_bits)c;
+}
 @y
-@d app_repl(c) {if (tok_ptr==tok_mem_end) overflow(_("token")); *(tok_ptr++)=c;}
+@d app_repl(c) {
+  if (tok_ptr==tok_mem_end) overflow(_("token"));
+  else *(tok_ptr++)=(eight_bits)c;
+}
 @z
 
 @x
@@ -325,22 +331,22 @@ case output_defs_code: if (t!=section_name) err_print(_("! Misplaced @@h"));
 
 @x
   puts("\nMemory usage statistics:");
-  printf("%ld names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
-  printf("%ld replacement texts (out of %ld)\n",
+  printf("%td replacement texts (out of %ld)\n",
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);
-  printf("%ld bytes (out of %ld)\n",
+  printf("%td bytes (out of %ld)\n",
           (ptrdiff_t)(byte_ptr-byte_mem),(long)max_bytes);
-  printf("%ld tokens (out of %ld)\n",
+  printf("%td tokens (out of %ld)\n",
 @y
   puts(_("\nMemory usage statistics:"));
-  printf(_("%ld names (out of %ld)\n"),
+  printf(_("%td names (out of %ld)\n"),
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
-  printf(_("%ld replacement texts (out of %ld)\n"),
+  printf(_("%td replacement texts (out of %ld)\n"),
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);
-  printf(_("%ld bytes (out of %ld)\n"),
+  printf(_("%td bytes (out of %ld)\n"),
           (ptrdiff_t)(byte_ptr-byte_mem),(long)max_bytes);
-  printf(_("%ld tokens (out of %ld)\n"),
+  printf(_("%td tokens (out of %ld)\n"),
 @z
 
 @x

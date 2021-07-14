@@ -2,9 +2,9 @@ This is the change file for CWEB's CWEAVE under Win32
 (Contributed by Fabrice Popineau, February 2002)
 
 @x section 1
-@d banner "This is CWEAVE (Version 4.4)"
+@d banner "This is CWEAVE (Version 4.5)"
 @y
-@d banner "This is CWEAVE (Version 4.4win32)"
+@d banner "This is CWEAVE (Version 4.5win32)"
 @z
 
 @x
