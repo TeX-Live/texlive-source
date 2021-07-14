@@ -82,7 +82,6 @@ otangle_man_sources = ofm2opl.man opl2ofm.man ovf2ovp.man ovp2ovf.man
 
 if ALEPH
 man_sources += aleph.man
-man1_links += aleph:lamed
 endif ALEPH
 EXTRA_DIST += aleph.man
 

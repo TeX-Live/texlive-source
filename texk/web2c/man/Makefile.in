@@ -109,7 +109,6 @@ host_triplet = @host@
 @OTANGLE_TRUE@am__append_16 = $(otangle_man_sources)
 @OTANGLE_TRUE@am__append_17 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
 @ALEPH_TRUE@am__append_18 = aleph.man
-@ALEPH_TRUE@am__append_19 = aleph:lamed
 subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -459,10 +458,10 @@ bootstrap_man_sources = ctie.man cweb.man ctwill.man tangle.man tie.man
 man1_links = cweb:ctangle cweb:cweave ctwill:ctwill-refsort \
 	ctwill:ctwill-twinx $(am__append_3) $(am__append_5) \
 	$(am__append_6) $(am__append_10) $(am__append_12) \
-	$(am__append_14) $(am__append_17) $(am__append_19) \
-	latex-dev:pdflatex-dev latex-dev:xelatex-dev \
-	latex-dev:lualatex-dev latex-dev:dvilualatex-dev \
-	latex-dev:platex-dev latex-dev:uplatex-dev
+	$(am__append_14) $(am__append_17) latex-dev:pdflatex-dev \
+	latex-dev:xelatex-dev latex-dev:lualatex-dev \
+	latex-dev:dvilualatex-dev latex-dev:platex-dev \
+	latex-dev:uplatex-dev
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
 	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man
