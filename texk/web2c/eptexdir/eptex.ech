@@ -461,13 +461,13 @@ begin
       begin if input_stack[k].state_field=token_list then decr(k)
       else if input_stack[k].name_field>19 then
         begin j:=input_stack[k].index_field; k:=-1; end
-      else begin j:=-(name+1); k:=-1; end
+      else begin j:=-(input_stack[k].name_field+1); k:=-1; end
       end
     end
   else if name>19 then j:=index else j:=-(name+1);
   if (j>=0) or (j=-1) or (j=-18) then begin
     k:=true;
-    if j>= 0 then k:=setinfileenc(input_file[j],stringcast(name_of_file+1))
+    if j>=0 then k:=setinfileenc(input_file[j],stringcast(name_of_file+1))
     else k:=setstdinenc(stringcast(name_of_file+1));
     if k = false then
       begin begin_diagnostic;

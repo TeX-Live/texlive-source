@@ -1,3 +1,7 @@
+2021-07-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech: Fix a warning message from \epTeXinputencoding.
+
 2021-07-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech: Revise \lastnodesubtype to show math "noad" types,
