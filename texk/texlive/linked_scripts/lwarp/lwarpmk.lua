@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2021 Brian Dunn
 
-printversion = "v0.899"
+printversion = "v0.900"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -92,7 +92,7 @@ if ( usinglwarp == false ) then
     print ("lwarpmk: \\usepackage{lwarp} was not detected.")
     print ("lwarpmk: The HTML output will not be correct.")
     print ("lwarpmk: Ensured that \\usepackage{lwarp} is enabled,")
-    print ("lwarpmk: then lwarpmk print and lwarpmk HTML again.")
+    print ("lwarpmk: then lwarpmk print and lwarpmk html again.")
     print ("lwarpmk: ===")
 end
 end -- function
