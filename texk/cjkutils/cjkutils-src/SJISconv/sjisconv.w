@@ -95,12 +95,19 @@ the range 0xF0--0xFC) is not supported because it is not portable.
 
 @c
 #include <stdio.h>
-#include <stdlib.h>@#
+#include <stdlib.h>
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif@#
 
 
 int main(int argc, char *argv[])
    {int ch;
 
+#ifdef WIN32
+    setmode(fileno(stdout), _O_BINARY);
+#endif
     fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
 
     ch = fgetc(stdin);@#

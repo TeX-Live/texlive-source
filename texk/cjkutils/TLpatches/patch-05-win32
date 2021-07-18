@@ -1,149 +1,161 @@
-diff -urN cjkutils-src.orig/Bg5conv/bg5conv.c cjkutils-src/Bg5conv/bg5conv.c
---- cjkutils-src.orig/Bg5conv/bg5conv.c	2018-06-04 21:21:53.198895618 +0900
-+++ cjkutils-src/Bg5conv/bg5conv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -6,11 +6,18 @@
+diff -ur cjkutils-4.8.4.orig/Bg5conv/bg5conv.w cjkutils-4.8.4/Bg5conv/bg5conv.w
+--- cjkutils-4.8.4.orig/Bg5conv/bg5conv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/Bg5conv/bg5conv.w	2021-07-18 19:52:36.000000000 +0900
+@@ -93,12 +93,19 @@
  
- #include <stdio.h> 
- #include <stdlib.h> 
+ @c
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
 +#ifdef WIN32
 +#include <fcntl.h>
 +#include <io.h>
-+#endif
++#endif@#
  
  
- int main(int argc,char*argv[])
- {int ch;
- 
-+#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
-+#endif
- fprintf(stdout,"\\def\\CJKpreproc{%s}",banner);
- 
- ch= fgetc(stdin);
-diff -urN cjkutils-src.orig/CEFconv/cef5conv.c cjkutils-src/CEFconv/cef5conv.c
---- cjkutils-src.orig/CEFconv/cef5conv.c	2018-06-04 21:21:53.198895618 +0900
-+++ cjkutils-src/CEFconv/cef5conv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -7,6 +7,10 @@
- #include <ctype.h> 
- #include <stdio.h> 
- #include <stdlib.h> 
-+#ifdef WIN32
-+#include <fcntl.h>
-+#include <io.h>
-+#endif
- 
- 
- int main(int argc,char*argv[])
-@@ -15,6 +19,9 @@
- unsigned char out[32];
- unsigned char*inp,*outp;
+ int main(int argc, char *argv[])
+    {int ch;
  
 +#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
++    setmode(fileno(stdout), _O_BINARY);
 +#endif
- fprintf(stdout,"\\def\\CNSpreproc{%s}",banner);
+     fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
  
- ch= fgetc(stdin);
-diff -urN cjkutils-src.orig/CEFconv/cefconv.c cjkutils-src/CEFconv/cefconv.c
---- cjkutils-src.orig/CEFconv/cefconv.c	2018-06-04 21:21:53.198895618 +0900
-+++ cjkutils-src/CEFconv/cefconv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -7,6 +7,10 @@
- #include <ctype.h> 
- #include <stdio.h> 
- #include <stdlib.h> 
+     ch = fgetc(stdin);@#
+diff -ur cjkutils-4.8.4.orig/CEFconv/cef5conv.w cjkutils-4.8.4/CEFconv/cef5conv.w
+--- cjkutils-4.8.4.orig/CEFconv/cef5conv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/CEFconv/cef5conv.w	2021-07-18 19:53:46.000000000 +0900
+@@ -108,7 +108,11 @@
+ @c
+ #include <ctype.h>
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
 +#ifdef WIN32
 +#include <fcntl.h>
 +#include <io.h>
-+#endif
++#endif@#
  
  
- int main(int argc,char*argv[])
-@@ -15,6 +19,9 @@
- unsigned char out[32];
- unsigned char*inp,*outp;
+ int main(int argc, char *argv[])
+@@ -117,6 +121,9 @@
+     unsigned char out[32];
+     unsigned char *inp, *outp;
  
 +#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
++    setmode(fileno(stdout), _O_BINARY);
 +#endif
- fprintf(stdout,"\\def\\CNSpreproc{%s}",banner);
+     fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
  
- ch= fgetc(stdin);
-diff -urN cjkutils-src.orig/CEFconv/cefsconv.c cjkutils-src/CEFconv/cefsconv.c
---- cjkutils-src.orig/CEFconv/cefsconv.c	2018-06-04 21:21:53.199895618 +0900
-+++ cjkutils-src/CEFconv/cefsconv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -7,6 +7,10 @@
- #include <ctype.h> 
- #include <stdio.h> 
- #include <stdlib.h> 
-+#ifdef WIN32
-+#include <fcntl.h>
-+#include <io.h>
-+#endif
- 
- 
- int main(int argc,char*argv[])
-@@ -14,6 +18,9 @@
- unsigned char in[16];
- unsigned char out[32];
- unsigned char*inp,*outp;
-+#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
-+#endif
- 
- fprintf(stdout,"\\def\\CNSpreproc{%s}",banner);
- 
-diff -urN cjkutils-src.orig/SJISconv/sjisconv.c cjkutils-src/SJISconv/sjisconv.c
---- cjkutils-src.orig/SJISconv/sjisconv.c	2018-06-04 21:21:53.199895618 +0900
-+++ cjkutils-src/SJISconv/sjisconv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -6,11 +6,18 @@
- 
- #include <stdio.h> 
- #include <stdlib.h> 
+     ch = fgetc(stdin);@#
+diff -ur cjkutils-4.8.4.orig/CEFconv/cefconv.w cjkutils-4.8.4/CEFconv/cefconv.w
+--- cjkutils-4.8.4.orig/CEFconv/cefconv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/CEFconv/cefconv.w	2021-07-18 19:55:21.000000000 +0900
+@@ -100,7 +100,11 @@
+ @c
+ #include <ctype.h>
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
 +#ifdef WIN32
 +#include <fcntl.h>
 +#include <io.h>
-+#endif
++#endif@#
  
  
- int main(int argc,char*argv[])
- {int ch;
+ int main(int argc, char *argv[])
+@@ -109,6 +113,9 @@
+     unsigned char out[32];
+     unsigned char *inp, *outp;
  
 +#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
++    setmode(fileno(stdout), _O_BINARY);
 +#endif
- fprintf(stdout,"\\def\\CJKpreproc{%s}",banner);
+     fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
  
- ch= fgetc(stdin);
-diff -urN cjkutils-src.orig/extconv/extconv.c cjkutils-src/extconv/extconv.c
---- cjkutils-src.orig/extconv/extconv.c	2018-06-04 21:21:53.200895618 +0900
-+++ cjkutils-src/extconv/extconv.c	2021-07-18 11:20:33.821975945 +0900
-@@ -6,11 +6,18 @@
- 
- #include <stdio.h> 
- #include <stdlib.h> 
+     ch = fgetc(stdin);@#
+diff -ur cjkutils-4.8.4.orig/CEFconv/cefsconv.w cjkutils-4.8.4/CEFconv/cefsconv.w
+--- cjkutils-4.8.4.orig/CEFconv/cefsconv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/CEFconv/cefsconv.w	2021-07-18 19:56:04.000000000 +0900
+@@ -111,7 +111,11 @@
+ @c
+ #include <ctype.h>
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
 +#ifdef WIN32
 +#include <fcntl.h>
 +#include <io.h>
-+#endif
++#endif@#
  
  
- int main(int argc,char*argv[])
- {int ch;
+ int main(int argc, char *argv[])
+@@ -120,6 +124,9 @@
+     unsigned char out[32];
+     unsigned char *inp, *outp;
  
 +#ifdef WIN32
-+setmode(fileno(stdout), _O_BINARY);
++    setmode(fileno(stdout), _O_BINARY);
++#endif
+     fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
+ 
+     ch = fgetc(stdin);@#
+diff -ur cjkutils-4.8.4.orig/SJISconv/sjisconv.w cjkutils-4.8.4/SJISconv/sjisconv.w
+--- cjkutils-4.8.4.orig/SJISconv/sjisconv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/SJISconv/sjisconv.w	2021-07-18 19:57:11.000000000 +0900
+@@ -95,12 +95,19 @@
+ 
+ @c
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
++#ifdef WIN32
++#include <fcntl.h>
++#include <io.h>
++#endif@#
+ 
+ 
+ int main(int argc, char *argv[])
+    {int ch;
+ 
++#ifdef WIN32
++    setmode(fileno(stdout), _O_BINARY);
++#endif
+     fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
+ 
+     ch = fgetc(stdin);@#
+diff -ur cjkutils-4.8.4.orig/extconv/extconv.w cjkutils-4.8.4/extconv/extconv.w
+--- cjkutils-4.8.4.orig/extconv/extconv.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/extconv/extconv.w	2021-07-18 19:58:13.000000000 +0900
+@@ -93,12 +93,19 @@
+ 
+ @c
+ #include <stdio.h>
+-#include <stdlib.h>@#
++#include <stdlib.h>
++#ifdef WIN32
++#include <fcntl.h>
++#include <io.h>
++#endif@#
+ 
+ 
+ int main(int argc, char *argv[])
+    {int ch;
+ 
++#ifdef WIN32
++    setmode(fileno(stdout), _O_BINARY);
 +#endif
  
- fprintf(stdout,"\\def\\CJKpreproc{%s}",banner);
+     fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
  
-diff -urN cjkutils-src.orig/hbf2gf/hbf2gf.c cjkutils-src/hbf2gf/hbf2gf.c
---- cjkutils-src.orig/hbf2gf/hbf2gf.c	2018-06-04 21:21:53.202895618 +0900
-+++ cjkutils-src/hbf2gf/hbf2gf.c	2021-07-18 11:23:03.151348296 +0900
-@@ -286,9 +286,9 @@
- FILE*config,*out;
- HBF*hbf;
+diff -ur cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w cjkutils-4.8.4/hbf2gf/hbf2gf.w
+--- cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w	2015-04-18 15:51:28.000000000 +0900
++++ cjkutils-4.8.4/hbf2gf/hbf2gf.w	2021-07-18 20:22:51.000000000 +0900
+@@ -148,9 +148,9 @@
+ FILE *config, *out;
+ HBF *hbf;@#
  
--#ifdef msdos 
+-#ifdef msdos /* if we compile under DOS or OS/2 */
 +#ifdef WIN32
  #define WRITE_BIN   "wb"
 -#define WRITE_TXT   "wt"

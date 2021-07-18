@@ -108,7 +108,11 @@ wrong.
 @c
 #include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>@#
+#include <stdlib.h>
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif@#
 
 
 int main(int argc, char *argv[])
@@ -117,6 +121,9 @@ int main(int argc, char *argv[])
     unsigned char out[32];
     unsigned char *inp, *outp;
 
+#ifdef WIN32
+    setmode(fileno(stdout), _O_BINARY);
+#endif
     fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
 
     ch = fgetc(stdin);@#

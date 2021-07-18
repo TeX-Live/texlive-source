@@ -19,3 +19,13 @@ Removed:
 	subfonts/
 	thaifont/
 
+Pre-generated files
+	Bg5conv/bg5conv.c
+	CEFconv/cef5conv.c
+	CEFconv/cefconv.c
+	CEFconv/cefsconv.c
+	SJISconv/sjisconv.c
+	extconv/extconv.c
+are also removed, as we regenerate them using cattle
+in the top directory.
+
