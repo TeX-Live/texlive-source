@@ -31,8 +31,9 @@ chktex 1.7.6 - checked 15mar20
   http://mirror.ctan.org/support/chktex/
   http://download.savannah.gnu.org/releases/chktex/
 
-cjkutils 4.8.4 - checked 18apr15
-  http://cjk.ffii.org/cjk-4.8.4.tar.gz
+cjkutils 4.8.4 - checked 18jul21
+  http://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
+  http://www.nongnu.org/cjk/
 
 detex 2.8.9 - checked 4mar21
   https://github.com/pkubowicz/opendetex/releases
