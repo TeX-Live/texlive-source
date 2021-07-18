@@ -6,11 +6,18 @@
 
 #include <stdio.h> 
 #include <stdlib.h> 
+#ifdef WIN32
+#include <fcntl.h>
+#include <io.h>
+#endif
 
 
 int main(int argc,char*argv[])
 {int ch;
 
+#ifdef WIN32
+setmode(fileno(stdout), _O_BINARY);
+#endif
 
 fprintf(stdout,"\\def\\CJKpreproc{%s}",banner);
 

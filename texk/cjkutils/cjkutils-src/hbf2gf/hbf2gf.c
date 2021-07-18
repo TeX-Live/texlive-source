@@ -286,9 +286,9 @@ char output_name[STRING_LENGTH+1];
 FILE*config,*out;
 HBF*hbf;
 
-#ifdef msdos 
+#ifdef WIN32
 #define WRITE_BIN   "wb"
-#define WRITE_TXT   "wt"
+#define WRITE_TXT   "wb"
 #define READ_BIN    "rb"
 #define READ_TXT    "rt"
 #else
