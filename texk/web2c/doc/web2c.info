@@ -1,4 +1,4 @@
-This is web2c.info, produced by makeinfo version 6.7 from web2c.texi.
+This is web2c.info, produced by makeinfo version 6.8 from web2c.texi.
 
 This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
@@ -58,7 +58,7 @@ Web2c
 
 This document describes how to install and use the programs in the Web2c
 implementation of the TeX system, especially for Unix systems.  It
-corresponds to Web2c version 2021, released in May 2021.
+corresponds to Web2c version 2021, released in July 2021.
 
 * Menu:
 
@@ -83,7 +83,7 @@ File: web2c.info,  Node: Introduction,  Next: Installation,  Prev: Top,  Up: Top
 1 Introduction
 **************
 
-This manual corresponds to version 2021 of Web2c, released in May 2021.
+This manual corresponds to version 2021 of Web2c, released in July 2021.
 
    "Web2c" is the name of a TeX implementation, originally for Unix, but
 now also running under various operating systems.  By "TeX
@@ -774,33 +774,38 @@ File: web2c.info,  Node: Hardware and memory dumps,  Prev: Determining the memor
 4.3.3 Hardware and memory dumps
 -------------------------------
 
-By default, memory dump files are generally sharable between
-architectures of different types; specifically, on machines of different
-endianness (*note (libc)Byte order::).  (This is a feature of the Web2c
-implementation, and is not true of all TeX implementations.)  If you
-specify '--disable-dump-share' to 'configure', however, memory dumps
-will be endian-dependent.
+By default, memory dump files are sharable between architectures of
+different types; specifically, on machines of different endianness
+(*note (libc)Byte order::) and with different word sizes (4-byte 'long'
+vs. 8-byte 'long').  This is a feature of the Web2c implementation, and
+is not true of all TeX implementations.
 
-   The reason to do this is speed.  To achieve endian-independence, the
-reading of memory dumps on LittleEndian architectures, such as PC's and
-DEC architectures, is somewhat slowed (all the multibyte values have to
-be swapped).  Usually, this is not noticeable, and the advantage of
-being able to share memory dumps across all platforms at a site far
-outweighs the speed loss.  But if you're installing Web2c for use on
-LittleEndian machines only, perhaps on a PC being used only by you, you
-may wish to get maximum speed.
+   The script 'tl-check-fmtshare' in the TeX Live source tree
+('Master/tlpkg/bin') provides a relatively easy way to test that a
+'.fmt' built on the local host can be loaded by a TeX engine built on
+some remote host.
+
+   If you specify '--disable-dump-share' to 'configure', however, memory
+dumps will be endian-dependent.  The reason to do this is speed.  To
+achieve endian-independence, the reading of memory dumps on LittleEndian
+architectures, such as PC's and DEC architectures, is somewhat slowed
+(all the multibyte values have to be swapped).  Usually, this is not
+noticeable, and the advantage of being able to share memory dumps across
+all platforms at a site far outweighs the speed loss.  But if you're
+trying to squeeze out every possible bit of performance, you may wish to
+do this.
 
    TeXnically, even without '--disable-dump-share', sharing of '.fmt'
 files cannot be guaranteed to work.  Floating-point values are always
 written in native format, and hence will generally not be readable
 across platforms.  Fortunately, TeX uses floating point only to
-represent glue ratios, and all common formats (plain, LaTeX, AMSTeX,
-...) do not do any glue setting at '.fmt'-creation time.  Metafont does
+represent glue ratios, and none of the common formats (plain, LaTeX,
+AMSTeX, ...) do any glue setting at '.fmt'-creation time.  Metafont does
 not use floating point in any dumped value at all.
 
    Incidentally, different memory dump files will never compare equal
-byte-for-byte, because the program always dumps the current date and
-time.  So don't be alarmed by just a few bytes difference.
+byte-for-byte, because the programs dump the current date and time.  So
+don't be alarmed by a few bytes difference.
 
    If you don't know what endianness your machine is, and you're
 curious, here is a little C program to tell you.  (The 'configure'
@@ -826,6 +831,9 @@ References::).
 
        exit (u.c[sizeof (long) - 1] == 1);
      }
+
+   You can add 'printf("long %d\n", sizeof(long));' to see the size of
+the 'long' data type.
 
 
 File: web2c.info,  Node: Editor invocation,  Next: \input filenames,  Prev: Memory dumps,  Up: Three programs
@@ -3502,7 +3510,7 @@ Index
 * - starts option names:                 Option conventions.  (line  11)
 * -- starts option names:                Option conventions.  (line  11)
 * --disable-dump-share configure option: Hardware and memory dumps.
-                                                              (line   6)
+                                                              (line  17)
 * --disable-mf-nowin:                    Online Metafont graphics.
                                                               (line  65)
 * --enable-epsfwin:                      Online Metafont graphics.
@@ -3534,7 +3542,7 @@ Index
 * -base=BASE:                            Determining the memory dump to use.
                                                               (line  15)
 * -base=DUMPNAME:                        Common options.      (line  39)
-* -change=CHFILE:                        mft invocation.      (line  63)
+* -change=CHFILE:                        mft invocation.      (line  62)
 * -charcode-format=TYPE:                 tftopl invocation.   (line  27)
 * -charcode-format=TYPE <1>:             vftovp invocation.   (line  30)
 * -cnf-line:                             Common options.      (line  25)
@@ -3596,7 +3604,7 @@ Index
 * -shell-restricted:                     tex invocation.      (line 122)
 * -show-opcodes:                         dvitype invocation.  (line  52)
 * -strict:                               tangle invocation.   (line  46)
-* -style=MFTFILE:                        mft invocation.      (line  67)
+* -style=MFTFILE:                        mft invocation.      (line  66)
 * -T:                                    mpost invocation.    (line 111)
 * -terse:                                bibtex invocation.   (line  28)
 * -tex=TEXPROGRAM:                       mpost invocation.    (line 114)
@@ -3629,6 +3637,10 @@ Index
 * .Xresources:                           Online Metafont graphics.
                                                               (line  69)
 * 2602gf:                                mf invocation.       (line  48)
+* 32-bit architecture:                   Hardware and memory dumps.
+                                                              (line   6)
+* 64-bit architecture:                   Hardware and memory dumps.
+                                                              (line   6)
 * 8 bit clean:                           Common options.      (line 110)
 * 8 bit clean output, specifying:        Common options.      (line 110)
 * 8-bit characters:                      TCX files.           (line   6)
@@ -3738,11 +3750,11 @@ Index
 * byte position:                         pktype invocation.   (line  40)
 * byte position <1>:                     gftype invocation.   (line  76)
 * byte swapping:                         Hardware and memory dumps.
-                                                              (line  13)
+                                                              (line  17)
 * c-sources Makefile target:             Additional targets.  (line  12)
 * caveats for \input filenames:          \input filename caveats.
                                                               (line   6)
-* change files, and MFT:                 mft invocation.      (line  63)
+* change files, and MFT:                 mft invocation.      (line  62)
 * change files, and Tangle:              tangle invocation.   (line  11)
 * change files, and Weave:               weave invocation.    (line  14)
 * changing error messages style:         Common options.      (line  31)
@@ -3762,7 +3774,7 @@ Index
                                                               (line  69)
 * cm.base:                               Initial Metafont.    (line  26)
 * cmbase.mf:                             Initial Metafont.    (line  26)
-* cmbase.mft:                            mft invocation.      (line  73)
+* cmbase.mft:                            mft invocation.      (line  72)
 * cmmf.base not recommended:             Initial Metafont.    (line  26)
 * color, in DVItoMP:                     dvitomp invocation.  (line  15)
 * comments, in TCX files:                TCX files.           (line  70)
@@ -3775,7 +3787,7 @@ Index
                                                               (line   6)
 * Computer Modern fonts, and Troff:      mpost invocation.    (line  61)
 * Computer Modern macros:                Initial Metafont.    (line  26)
-* Computer Modern Typefaces, production of: mft invocation.   (line  73)
+* Computer Modern Typefaces, production of: mft invocation.   (line  72)
 * configuration:                         Installation.        (line   6)
 * configuration file reading:            Path searching.      (line   6)
 * configuration file values:             Runtime options.     (line   6)
@@ -3805,7 +3817,7 @@ Index
 * Cweb:                                  WEB.                 (line  12)
 * CWEB:                                  WEB.                 (line  12)
 * date and time, in memory dumps:        Hardware and memory dumps.
-                                                              (line  30)
+                                                              (line  35)
 * debugging DVI utilities:               dvitype invocation.  (line  52)
 * debugging flags, specifying:           Common options.      (line  64)
 * decimal character codes, in TCX files: TCX files.           (line  77)
@@ -3847,7 +3859,7 @@ Index
 * e response at error prompt:            Editor invocation.   (line   6)
 * e-circumflex:                          \charsubdef.         (line  20)
 * e-TeX:                                 TeX extensions.      (line  10)
-* e.mft:                                 mft invocation.      (line  73)
+* e.mft:                                 mft invocation.      (line  72)
 * EC fonts:                              tex invocation.      (line  41)
 * EC fonts <1>:                          mf invocation.       (line  24)
 * editing of bitmap fonts:               Font utilities available elsewhere.
@@ -3896,7 +3908,7 @@ Index
 * floating-point arithmetic:             Compile-time options.
                                                               (line  21)
 * floating-point values:                 Hardware and memory dumps.
-                                                              (line  22)
+                                                              (line  27)
 * fmt file, determining:                 Determining the memory dump to use.
                                                               (line   6)
 * fmt files:                             Initial TeX.         (line   6)
@@ -3944,7 +3956,7 @@ Index
 * gftype GF validation:                  gftype invocation.   (line   6)
 * gftype.web:                            Font utilities.      (line  11)
 * glue ratio representations:            Hardware and memory dumps.
-                                                              (line  22)
+                                                              (line  27)
 * glue, memory for:                      Runtime options.     (line  20)
 * glyph substitutions:                   MLTeX.               (line   6)
 * gray font:                             gftodvi invocation.  (line  29)
@@ -3954,7 +3966,7 @@ Index
 * gsftopk:                               Font utilities available elsewhere.
                                                               (line  35)
 * Harbison, Samuel P.:                   Hardware and memory dumps.
-                                                              (line  34)
+                                                              (line  39)
 * hardware and memory dumps:             Hardware and memory dumps.
                                                               (line   6)
 * headerbyte information:                tftopl invocation.   (line  95)
@@ -4041,6 +4053,8 @@ Index
                                                               (line   6)
 * location of texmf.cnf in TeX Live:     Runtime options.     (line  56)
 * log file, BibTeX:                      bibtex invocation.   (line  14)
+* long data type, size of:               Hardware and memory dumps.
+                                                              (line   6)
 * Lua:                                   TeX extensions.      (line  30)
 * LuaTeX:                                TeX extensions.      (line  30)
 * machine dependencies:                  Hardware and memory dumps.
@@ -4070,7 +4084,7 @@ Index
 * memory dumps and hardware:             Hardware and memory dumps.
                                                               (line   6)
 * memory dumps, contain date and time:   Hardware and memory dumps.
-                                                              (line  30)
+                                                              (line  35)
 * memory dumps, creating:                Creating memory dumps.
                                                               (line   6)
 * mems Make target:                      Additional targets.  (line  34)
@@ -4095,7 +4109,7 @@ Index
                                                               (line  15)
 * MetaPost input files:                  mpost invocation.    (line  26)
 * MetaPost invocation:                   mpost invocation.    (line   6)
-* MetaPost source, prettyprinting:       mft invocation.      (line  79)
+* MetaPost source, prettyprinting:       mft invocation.      (line  77)
 * MetaPost, initial:                     Initial MetaPost.    (line   6)
 * MetaPost, TeX, and Metafont:           Three programs.      (line   6)
 * metatype1:                             Font utilities available elsewhere.
@@ -4212,7 +4226,7 @@ Index
 * plain.bst:                             Basic BibTeX style files.
                                                               (line  11)
 * plain.fmt:                             Initial TeX.         (line  13)
-* plain.mft:                             mft invocation.      (line  67)
+* plain.mft:                             mft invocation.      (line  66)
 * pltotf:                                pltotf invocation.   (line   6)
 * pool file, writing:                    tangle invocation.   (line  16)
 * Poole, Simon:                          Online Metafont graphics.
@@ -4314,14 +4328,14 @@ Index
 * starting page:                         dvicopy invocation.  (line  28)
 * starting page <1>:                     dvitype invocation.  (line  46)
 * Steele Jr., Guy L.:                    Hardware and memory dumps.
-                                                              (line  34)
+                                                              (line  39)
 * stopping at the first error:           Common options.      (line  46)
 * strategy, overall:                     Introduction.        (line  16)
 * string numbers, displaying:            pooltype invocation. (line   6)
 * string pool, writing:                  tangle invocation.   (line  16)
 * string representation:                 pooltype invocation. (line  30)
 * style design, for BibTeX:              bibtex invocation.   (line  49)
-* style files:                           mft invocation.      (line  67)
+* style files:                           mft invocation.      (line  66)
 * substitutions of font glyphs:          MLTeX.               (line   6)
 * sun:                                   Online Metafont graphics.
                                                               (line  42)
@@ -4333,7 +4347,7 @@ Index
                                                               (line  43)
 * swap space, as array limit:            Runtime options.     (line  45)
 * swapping bytes:                        Hardware and memory dumps.
-                                                              (line  13)
+                                                              (line  17)
 * syntax of TCX files:                   TCX files.           (line  65)
 * system C library function:             Shell escapes.       (line   6)
 * system command:                        Shell escapes.       (line   6)
@@ -4394,8 +4408,10 @@ Index
 * tftopl:                                tftopl invocation.   (line   6)
 * three programs:                        Three programs.      (line   6)
 * time and date, in memory dumps:        Hardware and memory dumps.
-                                                              (line  30)
+                                                              (line  35)
 * title font:                            gftodvi invocation.  (line  33)
+* tl-check-fmtshare:                     Hardware and memory dumps.
+                                                              (line  12)
 * tokenization, and \input filenames:    \input filename caveats.
                                                               (line   6)
 * toolkits, X:                           Online Metafont graphics.
@@ -4505,78 +4521,78 @@ Index
 
 Tag Table:
 Node: Top2759
-Node: Introduction3829
-Node: Installation7165
-Node: configure options9209
-Node: Compile-time options11231
-Node: Additional targets12333
-Node: Triptrap13610
-Node: Commonalities15113
-Node: Option conventions15646
-Node: Common options16869
-Node: Path searching21487
-Node: Output file location22459
-Node: Three programs23761
-Node: Runtime options24468
-Node: Initial and virgin27609
-Node: Memory dumps28558
-Node: Creating memory dumps29010
-Node: Determining the memory dump to use30217
-Node: Hardware and memory dumps31794
-Node: Editor invocation34240
-Node: \input filenames35103
-Node: \input quoted filename36654
-Node: \input braced filename37431
-Node: \input filename caveats38361
-Node: TeX39875
-Node: tex invocation41043
-Node: Initial TeX48029
-Node: Formats49393
-Node: Languages and hyphenation52210
-Node: MLTeX52640
-Node: \charsubdef54268
-Node: \tracingcharsubdef56591
-Node: TCX files57166
-Node: patgen invocation62606
-Node: Shell escapes63313
-Node: IPC and TeX66893
-Node: TeX extensions67463
-Node: Metafont69492
-Node: mf invocation70780
-Node: Initial Metafont74617
-Node: Modes76247
-Node: Online Metafont graphics78497
-Node: gftodvi invocation81922
-Node: mft invocation84742
-Node: MetaPost88740
-Node: mpost invocation89576
-Node: Initial MetaPost94612
-Node: dvitomp invocation95534
-Node: BibTeX96199
-Node: bibtex invocation96560
-Node: Basic BibTeX style files99034
-Node: WEB100364
-Node: tangle invocation101573
-Node: weave invocation103697
-Node: pooltype invocation105104
-Node: DVI utilities106234
-Node: dvicopy invocation107168
-Node: dvitype invocation108453
-Node: dvitype output example110784
-Node: Font utilities113837
-Node: Font file formats115017
-Node: gftopk invocation118284
-Node: pktogf invocation119475
-Node: pktype invocation120641
-Node: gftype invocation123464
-Node: tftopl invocation127967
-Node: pltotf invocation132560
-Node: vftovp invocation133611
-Node: vptovf invocation135846
-Node: Font utilities available elsewhere136873
-Node: Legalisms139078
-Node: References140525
-Node: Index144658
+Node: Introduction3830
+Node: Installation7167
+Node: configure options9211
+Node: Compile-time options11233
+Node: Additional targets12335
+Node: Triptrap13612
+Node: Commonalities15115
+Node: Option conventions15648
+Node: Common options16871
+Node: Path searching21489
+Node: Output file location22461
+Node: Three programs23763
+Node: Runtime options24470
+Node: Initial and virgin27611
+Node: Memory dumps28560
+Node: Creating memory dumps29012
+Node: Determining the memory dump to use30219
+Node: Hardware and memory dumps31796
+Node: Editor invocation34546
+Node: \input filenames35409
+Node: \input quoted filename36960
+Node: \input braced filename37737
+Node: \input filename caveats38667
+Node: TeX40181
+Node: tex invocation41349
+Node: Initial TeX48335
+Node: Formats49699
+Node: Languages and hyphenation52516
+Node: MLTeX52946
+Node: \charsubdef54574
+Node: \tracingcharsubdef56897
+Node: TCX files57472
+Node: patgen invocation62912
+Node: Shell escapes63619
+Node: IPC and TeX67199
+Node: TeX extensions67769
+Node: Metafont69798
+Node: mf invocation71086
+Node: Initial Metafont74923
+Node: Modes76553
+Node: Online Metafont graphics78803
+Node: gftodvi invocation82228
+Node: mft invocation85048
+Node: MetaPost89046
+Node: mpost invocation89882
+Node: Initial MetaPost94918
+Node: dvitomp invocation95840
+Node: BibTeX96505
+Node: bibtex invocation96866
+Node: Basic BibTeX style files99340
+Node: WEB100670
+Node: tangle invocation101879
+Node: weave invocation104003
+Node: pooltype invocation105410
+Node: DVI utilities106540
+Node: dvicopy invocation107474
+Node: dvitype invocation108759
+Node: dvitype output example111090
+Node: Font utilities114143
+Node: Font file formats115323
+Node: gftopk invocation118590
+Node: pktogf invocation119781
+Node: pktype invocation120947
+Node: gftype invocation123770
+Node: tftopl invocation128273
+Node: pltotf invocation132866
+Node: vftovp invocation133917
+Node: vptovf invocation136152
+Node: Font utilities available elsewhere137179
+Node: Legalisms139384
+Node: References140831
+Node: Index144964
 
 End Tag Table
 

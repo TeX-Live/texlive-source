@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2021
-@set month-year May 2021
+@set month-year July 2021
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -789,24 +789,34 @@ will be used.
 @cindex machine dependencies
 @cindex architecture dependencies
 @cindex dependencies, hardware
-@opindex --disable-dump-share configure @r{option}
-By default, memory dump files are generally sharable between
-architectures of different types; specifically, on machines of different
-endianness (@pxref{Byte order,,,libc,GNU C Library}).  (This is a
+@cindex 32-bit architecture
+@cindex 64-bit architecture
+@cindex @code{long} data type, size of
+By default, memory dump files are sharable between architectures of
+different types; specifically, on machines of different endianness
+(@pxref{Byte order,,, libc, GNU C Library}) and with different word
+sizes (4-byte @code{long} vs.@: 8-byte @code{long}).  This is a
 feature of the Web2c implementation, and is not true of all @TeX{}
-implementations.)  If you specify @samp{--disable-dump-share} to
-@code{configure}, however, memory dumps will be endian-dependent.
+implementations.
+
+@pindex tl-check-fmtshare
+The script @code{tl-check-fmtshare} in the @TeX{} Live source tree
+(@file{Master/tlpkg/bin}) provides a relatively easy way to test that
+a @file{.fmt} built on the local host can be loaded by a @TeX{} engine
+built on some remote host.
 
 @cindex byte swapping
 @cindex swapping bytes
-The reason to do this is speed.  To achieve endian-independence, the
-reading of memory dumps on LittleEndian architectures, such as PC's and
-DEC architectures, is somewhat slowed (all the multibyte values have to
-be swapped).  Usually, this is not noticeable, and the advantage of
-being able to share memory dumps across all platforms at a site far
-outweighs the speed loss.  But if you're installing Web2c for use on
-LittleEndian machines only, perhaps on a PC being used only by you, you
-may wish to get maximum speed.
+@opindex --disable-dump-share configure @r{option}
+If you specify @samp{--disable-dump-share} to @code{configure},
+however, memory dumps will be endian-dependent.  The reason to do this
+is speed.  To achieve endian-independence, the reading of memory dumps
+on LittleEndian architectures, such as PC's and DEC architectures, is
+somewhat slowed (all the multibyte values have to be swapped).
+Usually, this is not noticeable, and the advantage of being able to
+share memory dumps across all platforms at a site far outweighs the
+speed loss.  But if you're trying to squeeze out every possible bit of
+performance, you may wish to do this.
 
 @cindex floating-point values
 @cindex glue ratio representations
@@ -814,8 +824,8 @@ may wish to get maximum speed.
 @file{.fmt} files cannot be guaranteed to work.  Floating-point values
 are always written in native format, and hence will generally not be
 readable across platforms.  Fortunately, @TeX{} uses floating point
-only to represent glue ratios, and all common formats (plain,
-@LaTeX{}, AMS@TeX{}, @dots{}) do not do any glue setting at
+only to represent glue ratios, and none of the common formats (plain,
+@LaTeX{}, AMS@TeX{}, @dots{}) do any glue setting at
 @file{.fmt}-creation time.  Metafont does not use floating point in
 any dumped value at all.
 
@@ -823,8 +833,8 @@ any dumped value at all.
 @cindex time and date, in memory dumps
 @cindex memory dumps, contain date and time
 Incidentally, different memory dump files will never compare equal
-byte-for-byte, because the program always dumps the current date and
-time. So don't be alarmed by just a few bytes difference.
+byte-for-byte, because the programs dump the current date and time. So
+don't be alarmed by a few bytes difference.
 
 @cindex Harbison, Samuel P.
 @cindex Steele Jr., Guy L.
@@ -854,6 +864,9 @@ main ()
   exit (u.c[sizeof (long) - 1] == 1);
 @}
 @end example
+
+You can add @code{printf("long %d\n", sizeof(long));} to see the size
+of the @code{long} data type.
 
 
 @node Editor invocation
