@@ -1,3 +1,8 @@
+2021-07-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvispc.c: Output text files by "wb" mode.
+	(Windows only)
+
 2021-06-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvispc.c: Avoid encoding conversion in ASCII range

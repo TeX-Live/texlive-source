@@ -787,7 +787,11 @@ same:       strcpy(outfile, infile);
         else if(f_mode == EXE2MODIFY)
             fp_out = stderr;
         else{
+#ifndef UNIX
+            fp_out = fopen(outfile, WRITE_BINARY);
+#else
             fp_out = fopen(outfile, WRITE_TEXT);
+#endif
             if(fp_out == NULL){
                 fprintf(stderr, "Cannot open %s for output\n", outfile);
                 exit(1);
