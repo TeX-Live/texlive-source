@@ -1,3 +1,8 @@
+2021-07-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvi2tty.c, disdvi.c: Apply patch of W32TeX by Kakuto-san.
+	(Windows only)
+
 2021-03-04  Karl Berry  <karl@freefriends.org>
 
 	* dvi2tty-src/dvi2tty.1: Fixes from Bjarni Ingi Gislason (and

@@ -169,6 +169,7 @@ int main(int argc, char **argv)
         argv = av;
         argc = ac;
     }
+    _setmode (fileno(stdout), _O_BINARY);
 #endif
 
 #if defined(THINK_C)
@@ -227,7 +228,7 @@ int main(int argc, char **argv)
         dvifp = stdin;
 
 #if defined(MSDOS) || defined(WIN32)
-    setmode(fileno(dvifp), O_BINARY);
+    setmode(fileno(dvifp), _O_BINARY);
 #endif
 
     while ((opcode = (int) get1()) != EOF) {    /* process until end of file */
