@@ -26,6 +26,6 @@ Pre-generated files
 	CEFconv/cefsconv.c
 	SJISconv/sjisconv.c
 	extconv/extconv.c
-are also removed, as we regenerate them using cattle
+are also removed, as we regenerate them using ctangle
 in the top directory.
 
