@@ -22,7 +22,7 @@
 #define VERSION "0.6.0"
 
 /* Test for ANSI/ISO Standard C */
-#if (defined(__cplusplus) || defined(__STDC__) || defined(c_plusplus))
+#if (defined(_MSC_VER) || defined(__cplusplus) || defined(__STDC__) || defined(c_plusplus))
 #define STDC 1
 #else
 #define STDC 0
