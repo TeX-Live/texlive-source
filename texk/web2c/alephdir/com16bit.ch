@@ -1039,7 +1039,7 @@ begin input_ptr:=0; max_in_stack:=0;
 source_filename_stack[0]:=0;full_source_filename_stack[0]:=0;
 @z
 
-@x [27.???]
+@x [27.???] set limit when fatal_error
 else fatal_error("*** (cannot \read from terminal in nonstop modes)")
 @y
 else begin
