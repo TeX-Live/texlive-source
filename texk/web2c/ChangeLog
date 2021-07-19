@@ -1,3 +1,9 @@
+2021-07-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* tex.ch (term_input, @<Input for \.{\\read} from the terminal@>):
+	initialize limit to avoid printing some garbage.
+	https://tug.org/pipermail/tex-k/2021-July/003630.html
+
 2021-07-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

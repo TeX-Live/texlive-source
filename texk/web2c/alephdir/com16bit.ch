@@ -679,6 +679,14 @@ else  begin slow_print(format_ident); print_ln;
   end;
 @z
 
+@x [5.??] term_input: set limit when fatal_error (patch to omtrans.ch)
+if not new_input_ln(term_in,term_in_mode,term_in_translation,true)
+then fatal_error("End of file on the terminal!");
+@y
+if not new_input_ln(term_in,term_in_mode,term_in_translation,true)
+then begin limit:=0; fatal_error("End of file on the terminal!"); end;
+@z
+
 @x [6.73] l.1732 - Add unspecified_mode.
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @y
@@ -1029,6 +1037,15 @@ begin input_ptr:=0; max_in_stack:=0;
 @y
 begin input_ptr:=0; max_in_stack:=0;
 source_filename_stack[0]:=0;full_source_filename_stack[0]:=0;
+@z
+
+@x [27.???]
+else fatal_error("*** (cannot \read from terminal in nonstop modes)")
+@y
+else begin
+  limit:=0;
+  fatal_error("*** (cannot \read from terminal in nonstop modes)");
+  end
 @z
 
 @x [28.501] l.9747 - \eof18

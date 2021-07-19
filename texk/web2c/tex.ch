@@ -785,6 +785,13 @@ if translate_filename then begin
 end;
 @z
 
+@x [5.??] term_input: set limit when fatal_error
+if not input_ln(term_in,true) then fatal_error("End of file on the terminal!");
+@y
+if not input_ln(term_in,true) then begin
+  limit:=0; fatal_error("End of file on the terminal!"); end;
+@z
+
 @x [6.73] l.1732 - Add unspecified_mode.
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @y
@@ -1528,6 +1535,15 @@ cur_order:=co_backup; link(backup_head):=backup_backup;
 @y
 cur_order:=co_backup; link(backup_head):=backup_backup;
 decr(expand_depth_count);
+@z
+
+@x [27.???]
+else fatal_error("*** (cannot \read from terminal in nonstop modes)")
+@y
+else begin
+  limit:=0;
+  fatal_error("*** (cannot \read from terminal in nonstop modes)");
+  end
 @z
 
 @x [28.501] l.9747 - \eof18
