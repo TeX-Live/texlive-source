@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 59207 2021-05-15 13:58:40Z preining $
+# $Id: fmtutil.pl 59983 2021-07-18 22:18:08Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 59207 2021-05-15 13:58:40Z preining $';
-my $lastchdate = '$Date: 2021-05-15 15:58:40 +0200 (Sat, 15 May 2021) $';
+my $svnid = '$Id: fmtutil.pl 59983 2021-07-18 22:18:08Z karl $';
+my $lastchdate = '$Date: 2021-07-19 00:18:08 +0200 (Mon, 19 Jul 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 59207 $';
+my $svnrev = '$Revision: 59983 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -36,7 +36,6 @@ my $version = "r$svnrev ($lastchdate)";
 use strict;
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use File::Basename;
-use File::Copy;
 use File::Spec;
 use Cwd;
 
@@ -736,7 +735,7 @@ sub rebuild_one_format {
     if ($poolfile && -f $poolfile) {
       print_verbose("attempting to create localized format "
                     . "using pool=$pool and tcx=$tcx.\n");
-      File::Copy::copy($poolfile, "$eng.pool");
+      TeXLive::TLUtils::copy("-f", $poolfile, "$eng.pool");
       $tcxflag = "-translate-file=$tcx" if ($tcx);
       $localpool = 1;
     }
@@ -798,7 +797,7 @@ sub rebuild_one_format {
     # to make sure that in SElinux enabled cases the rules of
     # the destination directory are applied.
     # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900580
-    if (File::Copy::copy($logfile, "$destdir/$logfile")) {
+    if (TeXLive::TLUtils::copy("-f", $logfile, "$destdir/$logfile")) {
       print_info("log file copied to: $destdir/$logfile\n");
     } else {
       print_deferred_error("cannot copy log $logfile to: $destdir\n")
@@ -846,7 +845,7 @@ sub rebuild_one_format {
     # package dependencies for each format.  Unfortunately omega-based
     # engines gratuitiously changed the extension from .fls to .ofl.
     my $recfile = $fmt . ($fmt =~ m/^(aleph|lamed)$/ ? ".ofl" : ".fls");
-    if (!File::Copy::copy($recfile, "$destdir/$recfile")) {
+    if (! TeXLive::TLUtils::copy("-f", $recfile, "$destdir/$recfile")) {
       print_deferred_error("cannot copy recorder $recfile to: $destdir\n");
     }
   }
@@ -856,39 +855,38 @@ sub rebuild_one_format {
   # we check whether the next command **would** create a new file,
   # and if it succeeded, we set the actual flag.
   my $possibly_warn = ($opts{'user'} && ! -r $destfile);
-  if (File::Copy::copy($fmtfile, $destfile )) {
+  if (TeXLive::TLUtils::copy("-f", $fmtfile, $destfile)) {
     print_info("$destfile installed.\n");
     $first_time_creation_in_usermode = $possibly_warn;
     #
     # original fmtutil.sh did some magic trick for mplib-luatex.mem
-    #
     # nowadays no mplib mem is created and all files loaded
     # so we comment and do not convert this
     #
-    # As a special special case, we create mplib-luatex.mem for use by
-    # the mplib embedded in luatex if it doesn't already exist.  (We
-    # never update it if it does exist.)
-    #
-    # This is used by the luamplib package.  This way, an expert user
-    # who wants to try a new version of luatex (hence with a new
-    # version of mplib) can manually update mplib-luatex.mem without
-    # having to tamper with mpost itself.
-    #
-    #  if test "x$format" = xmpost && test "x$engine" = xmpost; then
-    #    mplib_mem_name=mplib-luatex.mem
-    #    mplib_mem_file=$fulldestdir/$mplib_mem_name
-    #    if test \! -f $mplib_mem_file; then
-    #      verboseMsg "$progname: copying $destfile to $mplib_mem_file"
-    #      if cp "$destfile" "$mplib_mem_file" </dev/null; then
-    #        mktexupd "$fulldestdir" "$mplib_mem_name"
-    #      else
-    #        # failure to copy merits failure handling: e.g., full file system.
-    #        log_failure "cp $destfile $mplib_mem_file failed."
-    #      fi
-    #    else
-    #      verboseMsg "$progname: $mplib_mem_file already exists, not updating."
-    #    fi
-    #  fi
+    ## As a special special case, we create mplib-luatex.mem for use by
+    ## the mplib embedded in luatex if it doesn't already exist.  (We
+    ## never update it if it does exist.)
+    ##
+    ## This is used by the luamplib package.  This way, an expert user
+    ## who wants to try a new version of luatex (hence with a new
+    ## version of mplib) can manually update mplib-luatex.mem without
+    ## having to tamper with mpost itself.
+    ##
+    ##  if test "x$format" = xmpost && test "x$engine" = xmpost; then
+    ##    mplib_mem_name=mplib-luatex.mem
+    ##    mplib_mem_file=$fulldestdir/$mplib_mem_name
+    ##    if test \! -f $mplib_mem_file; then
+    ##      verboseMsg "$progname: copying $destfile to $mplib_mem_file"
+    ##      if cp "$destfile" "$mplib_mem_file" </dev/null; then
+    ##        mktexupd "$fulldestdir" "$mplib_mem_name"
+    ##      else
+    ##        ## failure to copy merits failure handling: e.g., full file system.
+    ##        log_failure "cp $destfile $mplib_mem_file failed."
+    ##      fi
+    ##    else
+    ##      verboseMsg "$progname: $mplib_mem_file already exists, not updating."
+    ##    fi
+    ##  fi
 
     if ($mktexfmtMode && $mktexfmtFirst) {
       print "$destfile\n";
