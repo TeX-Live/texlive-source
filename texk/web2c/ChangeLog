@@ -1,3 +1,9 @@
+2021-07-22  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (50.1308): when fmt loading fails because the string
+	checksums are different, say that explicitly, not just
+	"different executable".
+
 2021-07-19  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* tex.ch (term_input, @<Input for \.{\\read} from the terminal@>):
