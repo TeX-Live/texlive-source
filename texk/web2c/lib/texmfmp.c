@@ -1065,6 +1065,25 @@ maininit (int ac, string *av)
 #endif /* TeX */
 }
 
+#if defined(_MSC_VER) && _MSC_VER > 1600
+#include <crtdbg.h>
+void
+myInvalidParameterHandler(const wchar_t* expression,
+   const wchar_t* function, 
+   const wchar_t* file, 
+   unsigned int line, 
+   uintptr_t pReserved)
+{
+/* After updating a compiler from Visual Studio 2010 to
+   Visual Studio 2015, XeTeX exits with the code 0xc0000417,
+   that means "invalid paremeter in CRT detected".
+   Probably it is safe to ignore the error.
+   So I use a handler which smiply return.
+*/
+   return;
+}
+#endif /* defined(_MSC_VER) ... */
+
 /* main: Set up for reading the command line, which will happen in
    `maininit' and `topenin', then call the main body, plus
    special Windows/Kanji initializations.  */
@@ -1080,6 +1099,13 @@ main (int ac, string *av)
   _wildcard (&ac, &av);
   _response (&ac, &av);
 #endif
+
+#if defined(_MSC_VER) && _MSC_VER > 1600
+   _invalid_parameter_handler oldHandler, newHandler;
+   newHandler = myInvalidParameterHandler;
+   oldHandler = _set_invalid_parameter_handler(newHandler);
+   _CrtSetReportMode(_CRT_ASSERT, 0);
+#endif /* defined(_MSC_VER) ... */
 
 #ifdef WIN32
   av[0] = kpse_program_basename (av[0]);

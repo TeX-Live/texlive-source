@@ -1,3 +1,8 @@
+2021-07-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmfmp.c: Apply patch of W32TeX for Visual Studio 2015
+	by Kakuto-san.
+
 2021-05-18  Karl Berry  <karl@freefriends.org>
 
 	* usage.c (usagehelp): if bug_email arg ends in "@tug.org"
