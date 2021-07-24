@@ -97,9 +97,11 @@
 inline static double my_fmax(double x, double y) { return (x < y) ? y : x; }
 #endif
 
+/* I use the definition in kpathsea --ak
 #ifdef WIN32
 #   define snprintf _snprintf
 #endif
+*/
 
 #if SYNCTEX_DEBUG
 #   ifdef WIN32
@@ -125,6 +127,9 @@ int synctex_test(int argc, char *argv[]);
 int main(int argc, char *argv[])
 {
     int arg_index = 1;
+#ifdef WIN32
+    kpse_set_program_name(argv[0], "synctex");
+#endif
     printf("This is SyncTeX command line utility, version " SYNCTEX_CLI_VERSION_STRING "\n");
     if(arg_index<argc) {
         if(0==strcmp("help",argv[arg_index])) {

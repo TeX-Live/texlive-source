@@ -1,7 +1,9 @@
 2021-07-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* synctex-main.c (synctex_test_file):
+	* synctex_main.c (synctex_test_file):
 	Output not "compress mode" but "io mode".
+	* synctex_main.c:
+	Apply patch of W32TeX by Kakuto-san. (Windows only).
 
 2021-03-23  Karl Berry  <karl@tug.org>
 
