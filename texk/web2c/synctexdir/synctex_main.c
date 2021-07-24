@@ -896,7 +896,7 @@ int synctex_test_file (int argc, char *argv[])
     char * output = NULL;
     char * directory = NULL;
     char * synctex_name = NULL;
-    synctex_compress_mode_t mode = synctex_compress_mode_none;
+    synctex_io_mode_t mode = 0;
     if(arg_index>=argc) {
         _synctex_error("!  usage: synctex test file -o output [-d directory]\n");
         return -1;
@@ -924,11 +924,11 @@ int synctex_test_file (int argc, char *argv[])
         printf("output:%s\n"
              "directory:%s\n"
              "file name:%s\n"
-             "compression mode:%s\n",
+             "io mode:%s\n",
              output,
              directory,
              synctex_name,
-             (mode?"gz":"none"));
+             _synctex_get_io_mode_name(mode));
     }
     return 0;
 }
