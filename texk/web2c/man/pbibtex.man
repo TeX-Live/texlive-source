@@ -1,0 +1,87 @@
+.TH PBIBTEX 1 "24 July 2021" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP\"
+.el .ds OX TeX\"
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.\"=====================================================================
+.SH NAME
+pbibtex, upbibtex \- make a (Japanese) bibliography for (La)TeX
+.SH SYNOPSIS
+.B pbibtex
+.RI [ options ]
+.IR auxname [ \fB.aux\fP ]
+.SH DESCRIPTION
+p\*(BX (\fBpbibtex\fR)
+is a modified version of \*(BX for Japanese handling.
+It sorts entries according to code points in EUC-JP.
+Also, a new built-in function
+.B is.kanji.str$
+which determines whether an entry is outside ASCII is introduced.
+.PP
+up\*(BX (\fBupbibtex\fR)
+is a modified version of p\*(BX,
+which sorts entries according to code points in Unicode.
+.SH Extensions to Bibliography Style Functions
+A new built-in function is available, and some other functions
+are modified to simplify Japanese handling.
+.PP
+.TP 5
+.B is.kanji.str$
+[New feature]
+Pops the top (string) literal to see if it contains any non-ASCII
+characters. Pushes 1 if it contains at least one, 0 if not.
+.PP
+.TP 5
+.B substring$
+Modified to avoid dividing a character string in the middle of
+a multibyte character.
+.PP
+.TP 5
+.B text.prefix$
+Similar modification to
+.B substring$
+described above.
+.PP
+.TP 5
+.B add.period$
+Modified to prevent appending "." after Japanese punctuations
+corresponding to "!", "?" and "."
+(e.g. U+FF01, U+FF1F, U+3002 and U+FF0E).
+.PP
+.TP 5
+.B format.name$
+Modified to accept Japanese \fIzenkaku\fR ideographic space
+(U+3000) for names displayed in Japanese.
+Also modified to recognize Japanese commas (U+3001 and U+FF0C)
+similar to "and" between names.
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR bibtex (1),
+.BR ptex (1).
+.\"=====================================================================
+.SH AUTHORS
+.PP
+Japanese version of \*(BX was originally developed by Shouichi Matsui
+as J\*(BX until 1991.
+It was developed to behave consistently with NTT J\*(TX in handling
+legacy Japanese encodings.
+The old documentations jbibtex.pdf, jbtxdoc.tex, jbtxhak.tex
+(all available in \*(TX Live)
+describe Japanese handling capability and some additional notes
+of J\*(BX.
+.PP
+Current (u)p\*(BX is a forked version of J\*(BX,
+and has replaced the encoding conversion routine with one that is
+compatible with (u)p\*(TX community edition using the ptexenc library.
+Note that descriptions of encodings in the old documentations
+j*.pdf (especially Section 3.3 of jbibtex.pdf, such as BIBTERMCODE
+and BIBFILECODE) are incorrect anymore.
+.PP
+This manual page was written by Hironobu Yamashita.

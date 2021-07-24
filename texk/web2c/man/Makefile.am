@@ -57,8 +57,10 @@ man_sources += ptex.man
 man1_links += ptex:eptex ptex:euptex ptex:uptex
 man_sources += ppltotf.man ptftopl.man
 man1_links += ppltotf:uppltotf ptftopl:uptftopl
+man_sources += pbibtex.man
+man1_links += pbibtex:upbibtex
 endif PTEX
-EXTRA_DIST += ptex.man ppltotf.man ptftopl.man
+EXTRA_DIST += ptex.man ppltotf.man ptftopl.man pbibtex.man
 
 if LUATEX
 man_sources += luatex.man

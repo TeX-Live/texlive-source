@@ -1,3 +1,8 @@
+2021-07-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pbibtex.man: new.
+	* Makefile.am: add pbibtex, also link as upbibtex.
+
 2021-07-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Makefile.am: lamed (aleph-based latex) is gone.
