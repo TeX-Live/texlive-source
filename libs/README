@@ -40,7 +40,7 @@ libpng 1.6.37 - checked 03may19
 lua 5.2.4 - checked 11mar15
   http://www.lua.org/ftp/
 
-lua 5.3.5 - checked 21jul18
+lua 5.3.6 - checked 04oct20
   http://www.lua.org/ftp/
 
 luajit 2.1.0-beta3 - checked 20jun17
@@ -65,5 +65,5 @@ xpdf 4.03 - checked 01feb21
 zlib 1.2.11 - checked 15jan17
   http://www.zlib.net/ - used by many
 
-zziplib 0.13.69 - checked 18mar18
-  https://github.com/gdraheim/zziplib/archive/v0.13.69.tar.gz
+zziplib 0.13.71 - checked 23apr20
+  https://github.com/gdraheim/zziplib/releases
