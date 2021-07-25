@@ -34,7 +34,7 @@ t1utils 1.42 - checked 31oct20
 
 texdoctk - reluctantly maintained here in TL
   If anyone would like to resume development, just let us know.
-  
+
 tpic2pdftex 1.97 - checked 10may12
   https://ctan.org/pkg/tpic2pdftex/
 
@@ -42,6 +42,9 @@ vlna 1.5 - checked 10may12
   ftp://math.feld.cvut.cz/pub/olsak/vlna/
 
 xindy - see just below
+
+xml2pmx 2021-02-07 - checked 25sep21
+  https://ctan.org/pkg/xml2pmx/
 
 xpdfopen 0.86 - checked 9jul18
   https://ctan.org/pkg/xpdfopen/
