@@ -1,3 +1,9 @@
+2021-07-25  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (proglib_sources): laboriously list all of lib/*.c
+	except texmfmp.c as dependencies, since texmfmp.c is not a
+	dependency of lib.a.
+
 2021-07-25  Petr Olsak  <petr@olsak.net>
 	and Karl Berry  <karl@freefriends.org>
 	and Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
