@@ -1,3 +1,4 @@
+% $Id$
 % This is a change file for upTeX u1.27
 % By Takuji Tanaka.
 %
@@ -184,9 +185,9 @@ if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
 @z
 
 @x
-@d max_command=set_auto_spacing {the largest command code seen at |big_switch|}
+@d max_command=partoken_name {the largest command code seen at |big_switch|}
 @y
-@d set_enable_cjk_token=set_auto_spacing+1 {set cjk mode ( \.{\\enablecjktoken}, \.{\\disablecjktoken}, \.{\\forcecjktoken} )}
+@d set_enable_cjk_token=partoken_name+1 {set cjk mode ( \.{\\enablecjktoken}, \.{\\disablecjktoken}, \.{\\forcecjktoken} )}
 @d max_command=set_enable_cjk_token {the largest command code seen at |big_switch|}
 @z
 

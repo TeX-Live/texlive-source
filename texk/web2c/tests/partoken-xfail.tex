@@ -1,0 +1,31 @@
+% $Id$
+% Public domain. Originally written by Petr Olsak, 2021.
+% Testing \partokenname and \partokencontext primitives: an expected failure.
+% 
+% We want to test in iniTeX state, use "pdftex -ini partoken-test.tex" 
+%
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\hsize=4in \vsize=4in \baselineskip=12pt
+\font\f=cmr10 \f
+\nonstopmode
+
+% Seting different partoken name
+\catcode`\_=11
+\let \_par = \par
+\partokenname \_par
+\def\par{hello}
+
+% Not-\long macro does not accept \_par
+% (emitted here from blank line):
+\def\macro#1{}
+% see partoken-ok.tex for successful test.
+\macro{failing long test:
+
+} % generates error: 
+% ! Paragraph ended before \macro was complete.
+% <to be read again> 
+%                    \_par 
+% l.20
+% plus dependent error: Too many }'s.
+
+\end

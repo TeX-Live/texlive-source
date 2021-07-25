@@ -1,0 +1,25 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain. Originally written by Karl Berry, 2021.
+# Check for new \partokenname primitives.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+# running in Build/source/Work/texk/web2c
+# srcdir  is Build/source/texk/web2c
+: ${srcdir=../../../texk/web2c}
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXMFDOTDIR=$srcdir/tests; export TEXMFDOTDIR # both fonts and inputs
+
+: ${testengine=pdftex}
+
+# should succeed. nonstopmode instead of batchmode so normal errors are
+# printed on the terminal, and thus show up in test-suite.log.
+if ./$testengine -ini --interaction=nonstopmode partoken-ok.tex; then :; else
+  exit 1; fi
+
+# should fail
+if ./$testengine -ini --interaction=nonstopmode partoken-xfail.tex; then
+  exit 1; fi
+
+exit 0

@@ -1,3 +1,4 @@
+## $Id$
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
 ## Copyright 2016-2021 Karl Berry <tex-live@tug.org>
@@ -68,6 +69,7 @@ uptex_web_srcs = \
 	tex.web \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken.ch \
 	zlib-fmt.ch
 
 # Generate uptex.ch

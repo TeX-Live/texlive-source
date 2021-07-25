@@ -1,0 +1,48 @@
+% $Id$
+% Public domain. Originally written by Petr Olsak, 2021.
+% Testing \partokenname and \partokencontext primitives: successful tests.
+% 
+% We want to test in iniTeX state, use "pdftex -ini partoken-test.tex" 
+% Generating dvi output.
+%
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\hsize=4in \vsize=4in \baselineskip=12pt
+\font\f=cmr10 \f % we want to typeset some text
+
+% Seting different partoken name
+\catcode`\_=11
+\partokenname \_par
+\let \_par = \par
+\def\par{hello}
+% This empty line emits \_par (i.e., no output), no "hello":
+
+% Not-\long macro accepts \par in its argument, but does not accept \_par
+% (emitted here from blank line):
+\def\macro#1{}
+\macro{long test: \par} % without error
+% see partoken-xfail.tex for failing test.
+%
+\let \_endgraf=\_par
+\def \_par{PAR-TOKEN\_endgraf}
+% This empty line prints PAR-TOKEN (plus underfull \hbox
+%   due to \parfillskip=0pt):
+
+% This \vskip prints Test PAR-TOKEN (plus underfull \hbox warning):
+Test \vskip1pt \relax
+%
+% This end-of-\vbox prints 0: Test text. (standard behavior):
+\vbox{\the\partokencontext: Test text.}
+%
+\partokencontext=1
+% This prints 1: Test text.PAR-TOKEN (\_par called at end of \vbox):
+\vbox{\the\partokencontext: Test text.}
+%
+% This prints 1: no-align text (standard behavior):
+\halign{#\cr \noalign{\the\partokencontext: no-align text}}
+%
+\partokencontext=2
+% This prints: 2: no-align textPAR-TOKEN (\_par called at end of \noalign):
+\halign{#\cr \noalign{\the\partokencontext: no-align text}}
+%
+% no blank line to elide final PAR-TOKEN.
+\end

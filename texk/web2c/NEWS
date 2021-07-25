@@ -1,5 +1,10 @@
 This file records noteworthy changes.  (Public domain.)
 
+* for all engines except original TeX:
+- new primitives \partokenname and \partokencontext allow overriding the
+  name of the internally-emitted \par token at blank lines, the end of
+  vboxes, etc.
+
 
 2021 (for TeX Live 2021, 23 March 2021)
 * Knuth 2021 tune-up, with fixes to all of his *.web files. Overview:

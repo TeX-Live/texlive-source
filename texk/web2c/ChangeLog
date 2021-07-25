@@ -1,3 +1,37 @@
+2021-07-25  Petr Olsak  <petr@olsak.net>
+	and Karl Berry  <karl@freefriends.org>
+	and Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* partoken.ch: new primitives \partokenname and \partokencontext.
+	* NEWS: mention this.
+
+	* partoken-102.ch (max_command): split off @d since different for pTeX.
+	* enctexdir/enctex-pdftex.ch: rearrange constants.
+	* uptexdir/uptex-m.ch (max_command): now partoken_name is last.
+	* ptexdir/ptex-base.ch (max_command): now partoken_name is last.
+	(insert_group, vcenter_group): remove constant lines from change
+	hunks so that partoken.ch can apply.
+
+	* eptexdir/am/eptex.am (eptex_web_srcs),
+	* euptexdir/am/euptex.am (euptex_web_srcs),
+	* ptexdir/am/ptex.am (ptex_web_srcs),
+	* uptexdir/am/uptex.am (uptex_web_srcs): include partoken.ch.
+	* xetexdir/am/xetex.am (xetex_ch_srcs),
+	* pdftexdir/am/pdftex.am (pdftex_ch_srcs): include partoken.ch
+	and partoken-102.ch.
+
+	* pdftexdir/tests/partoken.test: test it.
+	* tests/partoken-ok.tex,
+	* tests/partoken-xfail.tex: new test files.
+	* tests/cmr10.pfb: needed since the partoken test typesets text.
+	* pdftexdir/am/pdftex.am (pdftex_tests): new test.
+	(pdftexdir/tests/partoken.log): new log.
+	(EXTRA_DIST): new test files.
+	(DISTCLEANFILES): remove new log files.
+
+	* pdftexdir/tests/cnfline.test: use nonstopmode so errors are on
+	terminal, following partoken.test.
+
 2021-07-25  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch: restore "strings are different" change from 2021-07-22.

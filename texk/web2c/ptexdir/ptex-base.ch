@@ -1,3 +1,4 @@
+% $Id$
 % This is a change file for pTeX
 % By Sadayuki Tanaka and ASCII MEDIA WORKS.
 %
@@ -1009,7 +1010,8 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d set_interaction=hyph_data+1 {define level of interaction ( \.{\\batchmode}, etc.~)}
 @d set_auto_spacing=set_interaction+1 {set auto spacing mode
   ( \.{\\autospacing}, \.{\\noautospacing}, \.{\\autoxspacing}, \.{\\noautoxspacing} )}
-@d max_command=set_auto_spacing {the largest command code seen at |big_switch|}
+@d partoken_name=set_auto_spacing+1 {set |par_token| name}
+@d max_command=partoken_name {the largest command code seen at |big_switch|}
 @z
 
 @x [16.212] l.4437 - pTeX: last_jchr, direction, adjust direction
@@ -5340,8 +5342,6 @@ push_nest; mode:=-vmode; direction:=adjust_dir; prev_depth:=ignore_depth;
 @z
 
 @x [47.1100] l.21189 - pTeX: free box node, ins_dir
-insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
-  d:=split_max_depth; f:=floating_penalty; unsave; decr(save_ptr);
   {now |saved(0)| is the insertion number, or 255 for |vadjust|}
   p:=vpack(link(head),natural); pop_nest;
   if saved(0)<255 then
@@ -5359,8 +5359,6 @@ insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
   if nest_ptr=0 then build_page;
   end;
 @y
-insert_group: begin end_graf; q:=split_top_skip; add_glue_ref(q);
-  d:=split_max_depth; f:=floating_penalty; unsave; decr(save_ptr);
   {now |saved(0)| is the insertion number, or 255 for |vadjust|}
   p:=vpack(link(head),natural); set_box_dir(p)(direction); pop_nest;
   if saved(0)<255 then
@@ -5938,13 +5936,11 @@ scan_math(nucleus(tail),kcode_noad(tail));
 @z
 
 @x [48.1164] l.22790 - pTeX: vcenter : dir
-vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
   p:=vpack(link(head),saved(1),saved(0)); pop_nest;
   tail_append(new_noad); type(tail):=vcenter_noad;
   math_type(nucleus(tail)):=sub_box; info(nucleus(tail)):=p;
   end;
 @y
-vcenter_group: begin end_graf; unsave; save_ptr:=save_ptr-2;
   p:=vpack(link(head),saved(1),saved(0));
   set_box_dir(p)(direction); pop_nest;
   if abs(box_dir(p))<>abs(direction) then p:=new_dir_node(p,abs(direction));

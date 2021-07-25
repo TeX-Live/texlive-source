@@ -3252,7 +3252,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(pdftex_tests) tests/wprob.tex pdftexdir/tests/pdfimage.tex \
 	tests/1-4.jpg tests/B.pdf tests/basic.tex \
 	tests/lily-ledger-broken.png tests/expanded.tex \
-	tests/expanded.txt tests/cnfline.tex $(ttf2afm_tests) \
+	tests/expanded.txt tests/cnfline.tex tests/partoken-ok.tex \
+	tests/partoken-xfail.tex $(ttf2afm_tests) \
 	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
 	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
 	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
@@ -3570,31 +3571,31 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	pdfprimitive-euptex.* $(nodist_pdftex_SOURCES) pdftex-final.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
 	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
-	cnfline.log postV3.afm postV7.afm test-13.pdf test-13.xref \
-	test-15.pdf test-15.xref $(nodist_libluatex_sources) \
-	luaimage.* luajitimage.* $(nodist_xetex_SOURCES) xetex.web \
-	xetex-final.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
-	bug73.fmt bug73.log bug73.out bug73.tex filedump.log \
-	filedump.out filedump.tex $(omegaware_programs:=.c) \
-	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
-	$(omegaware_programs:=-web2c) ofm2opl.web opl2ofm.web \
-	ovf2ovp.web ovp2ovf.web omegaware/bad*.* \
-	omegaware/tests/charwdr.* omegaware/tests/charwdv.* \
-	omegaware/tests/xcheck* omegaware/tests/xlevel1.* \
-	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xpagenum.* \
-	omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
-	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
-	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
-	omegaware/tests/xOCherokee.* ocftest.* omegaware/tests/xinbmp* \
-	omegaware/tests/xoverbmp* omegaware/tests/xrealnum.* \
-	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
-	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
-	omegaware/tests/xsample*.out omegaware/tests/shortend.* \
-	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
-	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
-	omegaware/tests/yrepeat* omegaware/tests/*yarabic* \
-	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
-	aleph.pool aleph-tangle
+	cnfline.log partoken-ok.log partoken-xfail.log postV3.afm \
+	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
+	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
+	$(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
+	xetex.p xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \
+	bug73.tex filedump.log filedump.out filedump.tex \
+	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
+	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
+	ofm2opl.web opl2ofm.web ovf2ovp.web ovp2ovf.web \
+	omegaware/bad*.* omegaware/tests/charwdr.* \
+	omegaware/tests/charwdv.* omegaware/tests/xcheck* \
+	omegaware/tests/xlevel1.* omegaware/tests/xlig*.* ofont*vf \
+	omegaware/tests/xpagenum.* omegaware/tests/xofont* \
+	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
+	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
+	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
+	ocftest.* omegaware/tests/xinbmp* omegaware/tests/xoverbmp* \
+	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
+	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
+	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
+	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
+	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
+	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
+	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
+	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
@@ -4308,6 +4309,7 @@ ptex_web_srcs = \
 	tex.web \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken.ch \
 	zlib-fmt.ch
 
 ptex_ch_srcs = \
@@ -4368,6 +4370,7 @@ eptex_web_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
 
@@ -4413,6 +4416,7 @@ uptex_web_srcs = \
 	tex.web \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken.ch \
 	zlib-fmt.ch
 
 uptex_ch_srcs = \
@@ -4478,6 +4482,7 @@ euptex_web_srcs = \
 	etexdir/tex.ch0 \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
 
@@ -4549,6 +4554,8 @@ pdftex_ch_srcs = \
 	pdftexdir/tex.ch0 \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken-102.ch \
+	partoken.ch \
 	zlib-fmt.ch \
 	enctexdir/enctex1.ch \
 	enctexdir/enctex-pdftex.ch \
@@ -4563,7 +4570,7 @@ pdftex_ch_srcs = \
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
   pdftexdir/pdfimage.test pdftexdir/expanded.test \
-  pdftexdir/tests/cnfline.test
+  pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test
 
 ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
@@ -5241,6 +5248,8 @@ xetex_ch_srcs = \
 	xetexdir/tex.ch0 \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken-102.ch \
+	partoken.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	$(xetex_post_ch_synctex) \
@@ -21828,7 +21837,7 @@ pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
   pdftexdir/pdfimage.log pdftexdir/expanded.log \
-  pdftexdir/cnfline.log: pdftex$(EXEEXT)
+  pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log: pdftex$(EXEEXT)
 pdftexdir/ttf2afm.log: ttf2afm$(EXEEXT)
 
 $(pdftosrc_OBJECTS): $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(XPDF_DEPEND)

@@ -114,6 +114,8 @@ xetex_ch_srcs = \
 	xetexdir/tex.ch0 \
 	tex.ch \
 	tracingstacklevels.ch \
+	partoken-102.ch \
+	partoken.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \
 	$(xetex_post_ch_synctex) \
