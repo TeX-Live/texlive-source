@@ -3,9 +3,14 @@
 #include "config.h"
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
 #include <sys/param.h>
+#endif
 
 #include <ctype.h>
+#ifdef _MSC_VER
+#include <getopt.h>
+#endif
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -100,6 +105,10 @@ int main(int argc, char** argv)
     const char* progname;
 
     progname = strrchr(*argv, '/');
+#ifdef WIN32
+    if(!progname)
+        progname = strrchr(*argv, '\\');
+#endif
     if (progname) {
 	++progname;
     } else {

@@ -1,3 +1,8 @@
+2021-07-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* src/paperconf.c: Apply patch of W32TeX for Windows
+	Visual C by Kakuto-san.
+
 2021-06-27  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_USE_SYSTEM_EXTENSIONS): use before KPSE_BASIC,

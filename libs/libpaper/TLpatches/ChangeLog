@@ -1,3 +1,8 @@
+2021-07-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* patch-05-windows (new): Patch of W32TeX for Windows
+	Visual C by Kakuto-san.
+
 2014-06-18  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* patch-04-unsigned (new): Avoid undefined behaviour.
