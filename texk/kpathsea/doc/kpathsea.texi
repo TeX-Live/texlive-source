@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.3
-@set month-year April 2021
+@set month-year July 2021
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -651,10 +651,10 @@ mentions most features.  The format of @file{texmf.cnf} files follows:
 @itemize @bullet
 @item
 @cindex comments, in @file{texmf.cnf}
-Comments start with @samp{%}, either at the beginning of a line or
-preceded by whitespace, and continue to the end of the line.  That is,
-similar to most shells, a @samp{%} in the ``middle'' of a value does not
-start a comment.  Examples:
+Comments start with @samp{%} or @samp{#}, either at the beginning of a
+line or preceded by whitespace, and continue to the end of the line.
+That is, similar to most shells, a comment character in the ``middle''
+of a value does not start a comment.  Examples:
 
 @example
 % this is a comment
@@ -731,16 +731,6 @@ TEXINPUTS.latex209 = $latex209_inputs
 TEXINPUTS.latex2e = $latex2e_inputs
 TEXINPUTS.latex = $latex2e_inputs
 @end example
-
-@cindex shell scripts as configuration files
-@cindex configuration files as shell scripts.
-This format has some similarity to Bourne shell scripts---change the
-comment character to @code{#}, disallow spaces around the @code{=},
-and get rid of the @code{.@var{name}} convention, and it could be run
-through the shell.  However, there seemed little advantage in this,
-since all the information would have to passed back to Kpathsea and
-parsed there anyway, since the @code{sh} process couldn't affect its
-parent's environment.
 
 @kindex = @r{omitted in @file{texmf.cnf} and misparsing}
 The combination of spaces being ignored before the @code{.} of a
@@ -2620,7 +2610,7 @@ file is; @TeX{} documents will find their favorite name.
 
 @end enumerate
 
-The format of fontmap files is straightforward:
+The format of fontmap files:
 
 @itemize @bullet
 @cindex comments, in fontmap files
