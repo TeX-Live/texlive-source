@@ -3512,8 +3512,7 @@ undump_things(format_engine[0], x);
 format_engine[x-1]:=0; {force string termination, just in case}
 if strcmp(engine_name, stringcast(format_engine)) then
   begin wake_up_terminal;
-  wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ',
-           format_engine);
+  wterm_ln('---! ', stringcast(name_of_file+1), ' was written by ', format_engine);
   libc_free(format_engine);
   goto bad_fmt;
 end;
@@ -3523,7 +3522,7 @@ format_debug('string pool checksum')(x);
 if x<>@$ then begin {check that strings are the same}
   wake_up_terminal;
   wterm_ln('---! ', stringcast(name_of_file+1),
-           ' made by different executable, strings are different');
+           ' made by different executable version');
   goto bad_fmt;
 end;
 @<Undump |xord|, |xchr|, and |xprn|@>;

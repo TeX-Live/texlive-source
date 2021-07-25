@@ -1,3 +1,8 @@
+2021-07-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* tex.ch:
+	set limit before "cannot \read from terminal" error etc.
+
 2021-07-22  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (50.1308): when fmt loading fails because the string
