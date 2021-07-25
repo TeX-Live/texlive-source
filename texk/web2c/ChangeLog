@@ -1,3 +1,7 @@
+2021-07-25  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch: restore "strings are different" change from 2021-07-22.
+
 2021-07-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* tex.ch:

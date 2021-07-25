@@ -1,3 +1,4 @@
+% $Id$
 % tex.ch for C compilation with web2c, derived from various other change files.
 % By Tim Morgan, UC Irvine ICS Department, and many others.
 %
@@ -3522,7 +3523,7 @@ format_debug('string pool checksum')(x);
 if x<>@$ then begin {check that strings are the same}
   wake_up_terminal;
   wterm_ln('---! ', stringcast(name_of_file+1),
-           ' made by different executable version');
+           ' made by different executable version, strings are different');
   goto bad_fmt;
 end;
 @<Undump |xord|, |xchr|, and |xprn|@>;
