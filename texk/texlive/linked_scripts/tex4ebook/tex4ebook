@@ -67,7 +67,7 @@ else
 end
 
 if args.version then
-  print "tex4ebook v0.3c"
+  print "tex4ebook v0.3d"
   return 
 end
 
@@ -201,4 +201,5 @@ executor.run(input,params)
 executor.writeContainer()
 executor.clean()
 log:status("Conversion finished")
+logging.exit_status()
 --print(args[1])
