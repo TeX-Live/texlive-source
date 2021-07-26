@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 59983 2021-07-18 22:18:08Z karl $
+# $Id: fmtutil.pl 60057 2021-07-25 18:09:03Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 59983 2021-07-18 22:18:08Z karl $';
-my $lastchdate = '$Date: 2021-07-19 00:18:08 +0200 (Mon, 19 Jul 2021) $';
+my $svnid = '$Id: fmtutil.pl 60057 2021-07-25 18:09:03Z karl $';
+my $lastchdate = '$Date: 2021-07-25 20:09:03 +0200 (Sun, 25 Jul 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 59983 $';
+my $svnrev = '$Revision: 60057 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -432,12 +432,14 @@ sub callback_build_formats {
   #
   # for formats that load other formats (e.g., jadetex loads latex.fmt),
   # add the current directory to TEXFORMATS, too.  Currently unnecessary
-  # for MFBASES and MPMEMS.
+  # for MFBASES.
   $ENV{'TEXFORMATS'} ||= "";
   $ENV{'TEXFORMATS'} = "$tmpdir$sep$ENV{TEXFORMATS}";
 
-  # switch to temporary directory for format generation
-  $opts{"dry-run"} || chdir($tmpdir)
+  # switch to temporary directory for format generation; on the other hand,
+  # for -n, the tmpdir won't exist, but we don't want to find a spurious
+  # tex.fmt in the cwd. Probably won't be such things in /.
+  chdir($opts{"dry-run"} ? "/" : $tmpdir)
   || die "Cannot change to directory $tmpdir: $!";
   
   # we rebuild formats in two rounds:
@@ -772,63 +774,72 @@ sub rebuild_one_format {
                   . "$prgswitch $texargs";
   print_verbose("running \`$cmdline' ...\n");
 
-  {
-    my $texpool = $ENV{'TEXPOOL'};
-    if ($localpool) {
-      $ENV{'TEXPOOL'} = cwd() . $sep . ($texpool ? $texpool : "");
-    }
+  my $texpool = $ENV{'TEXPOOL'};
+  if ($localpool) {
+    $ENV{'TEXPOOL'} = cwd() . $sep . ($texpool ? $texpool : "");
+  }
 
-    # in mktexfmtMode we must redirect *all* output to stderr
-    $cmdline .= " >&2" if $mktexfmtMode;
-    $cmdline .= " <$nul";
-    my $retval = system("$DRYRUN$cmdline");
-    
-    # report error if it failed.
-    if ($retval != 0) {
-      $retval /= 256 if ($retval > 0);
-      print_deferred_error("running \`$cmdline' return status: $retval\n");
-    }
+  # in mktexfmtMode we must redirect *all* output to stderr
+  $cmdline .= " >&2" if $mktexfmtMode;
+  $cmdline .= " <$nul";
+  my $retval = system("$DRYRUN$cmdline");
 
-    # Copy the log file after the program is run, so that the log file
-    # is available to inspect even on failure. So we need the dest dir tree.
-    TeXLive::TLUtils::mkdirhier($destdir) if ! $opts{"dry-run"};
-    #
+  # report error if it failed.
+  if ($retval != 0) {
+    $retval /= 256 if ($retval > 0);
+    print_deferred_error("running \`$cmdline' return status: $retval\n");
+  }
+
+  # Copy the log file after the program is run, so that the log file
+  # is available to inspect even on failure. So we need the dest dir tree.
+  TeXLive::TLUtils::mkdirhier($destdir) if ! $opts{"dry-run"};
+  #
+  if ($opts{"dry-run"}) {
+    print_info("would copy log file to: $destdir/$logfile\n");
+  } else {
     # Here and in the following we use copy instead of move
     # to make sure that in SElinux enabled cases the rules of
     # the destination directory are applied.
     # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=900580
+    # 
     if (TeXLive::TLUtils::copy("-f", $logfile, "$destdir/$logfile")) {
       print_info("log file copied to: $destdir/$logfile\n");
     } else {
-      print_deferred_error("cannot copy log $logfile to: $destdir\n")
-        unless $opts{"dry-run"};
-    }
-
-    # original shell script did *not* check the return value
-    # we keep this behavior, but add an option --strict that
-    # errors out on all failures.
-    if ($retval != 0 && $opts{'strict'}) {
-      print_deferred_error("returning error due to option --strict\n");
-      return $FMT_FAILURE;
-    }
-
-    if ($localpool) {
-      if ($texpool) {
-        $ENV{'TEXPOOL'} = $texpool;
-      } else {
-        delete $ENV{'TEXPOOL'};
-      }
+      print_deferred_error("failed to copy log $logfile to: $destdir\n");
     }
   }
 
+  # original shell script did *not* check the return value
+  # we keep this behavior, but add an option --strict that
+  # errors out on all failures.
+  if ($retval != 0 && $opts{'strict'}) {
+    print_deferred_error("returning error due to option --strict\n");
+    return $FMT_FAILURE;
+  }
+
+  if ($localpool) {
+    if ($texpool) {
+      $ENV{'TEXPOOL'} = $texpool;
+    } else {
+      delete $ENV{'TEXPOOL'};
+    }
+  }
+
+  # if this was a dry run, we don't expect anything to have been
+  # created, so there's nothing to inspect or copy. Call it good.
+  if ($opts{"dry-run"}) {
+    print_info("dry run, so returning success: $fmtfile\n");
+    return $FMT_SUCCESS;
+  }
+
   # check and install of fmt and log files
-  if (! -f $fmtfile) {
-    print_deferred_error("\`$cmdline' failed (no $fmtfile)\n");
+  if (! -s $fmtfile) {
+    print_deferred_error("no (or empty) $fmtfile made by: $cmdline\n");
     return $FMT_FAILURE;
   }
 
   if (! -f $logfile) {
-    print_deferred_error("no log file generated for $fmt/$eng, strange\n");
+    print_deferred_error("no log file generated for: $fmt/$eng\n");
     return $FMT_FAILURE;
   }
 
@@ -1243,7 +1254,7 @@ sub determine_config_files {
 # returns 1 if actually saved due to changes
 sub save_fmtutil {
   my $fn = shift;
-  return if $opts{'dry-run'};
+  return 0 if $opts{'dry-run'};
   my %fmtf = %{$alldata->{'fmtutil'}{$fn}};
   if ($fmtf{'changed'}) {
     TeXLive::TLUtils::mkdirhier(dirname($fn));

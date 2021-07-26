@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.3g"
+local version = "v0.3h"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -76,6 +76,9 @@ make.params = parameters
 if make:length() < 1 then
 	if mode == "draft" then
 		make:htlatex()
+  elseif mode == "clean" then
+    make:clean()
+    make.no_dvi_process = true
 	else
 		make:htlatex()
 		make:htlatex()
@@ -84,7 +87,7 @@ if make:length() < 1 then
 end
 
 
-if not args["no-tex4ht"] then
+if not args["no-tex4ht"] and not make.no_dvi_process then
   make:tex4ht()
 end
 
@@ -92,7 +95,11 @@ local ext = args.xetex and "xdv" or "dvi"
 if #make.image_patterns > 0 then
   make.params.t4ht_par = make.params.t4ht_par .. " -p"
 end
-make:t4ht {ext = ext}
+
+if not make.no_dvi_process then
+  make:t4ht {ext = ext}
+end
+
 -- run extensions which modify the build sequence
 if #extensions > 0 then
   make = mkutils.extensions_modify_build(extensions, make)
