@@ -44,8 +44,7 @@
 
 2021-07-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
-	* tex.ch:
-	set limit before "cannot \read from terminal" error etc.
+	* tex.ch: add section numbers for changes on 2021-07-19.
 
 2021-07-22  Karl Berry  <karl@freefriends.org>
 
