@@ -764,7 +764,7 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.71
-     automake (GNU automake) 1.16.3
+     automake (GNU automake) 1.16.4
      bison (GNU Bison) 3.7.5
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6

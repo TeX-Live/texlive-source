@@ -738,6 +738,9 @@ AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
 AM_DEFAULT_V
 AM_V
+CSCOPE
+ETAGS
+CTAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
@@ -4823,6 +4826,20 @@ CCDEPMODE=depmode=$am_cv_CC_dependencies_compiler_type
 else
   am__fastdepCC_TRUE='#'
   am__fastdepCC_FALSE=
+fi
+
+
+# Variables for tags utilities; see am/tags.am
+if test -z "$CTAGS"; then
+  CTAGS=ctags
+fi
+
+if test -z "$ETAGS"; then
+  ETAGS=etags
+fi
+
+if test -z "$CSCOPE"; then
+  CSCOPE=cscope
 fi
 
 

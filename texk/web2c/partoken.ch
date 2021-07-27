@@ -57,7 +57,7 @@ tracing_stack_levels_code:print_esc("tracingstacklevels");
 partoken_context_code:print_esc("partokencontext");
 @z
 
-% Declaration of primitives |\patokenname| and |\partokencontext|
+% Declaration of primitives |\partokenname| and |\partokencontext|
 @x
   primitive("tracingstacklevels",assign_int,int_base+tracing_stack_levels_code);@/
 @!@:tracing_stack_levels_}{\.{\\tracingstacklevels} primitive@>
