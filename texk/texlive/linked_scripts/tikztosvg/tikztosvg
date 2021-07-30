@@ -38,13 +38,13 @@ showHelp()
 
 showVersion()
 {
-  echo 0.1.2
+  echo 0.2.1
   exit 0
 }
 
 # The default list of packages and libraries that should be imported
-PACKAGES="tikz tikz-cd pgfplots amsmath amssymb"
-LIBRARIES=""
+packages="tikz tikz-cd pgfplots amsmath amssymb"
+libraries=""
 
 if ! [ -x "$(command -v xelatex)" ]
 then
@@ -76,7 +76,7 @@ do
           error "Invalid package name. LaTeX package names cannot contain scapes!" 
           ;;
         *)
-          PACKAGES="$PACKAGES $2"
+          packages="$packages $2"
           shift
           shift
       esac
@@ -91,26 +91,26 @@ do
           error "Invalid library name. TikZ library names cannot contain scapes!" 
           ;;
         *)
-          LIBRARIES="$LIBRARIES $2"
+          libraries="$libraries $2"
           shift
           shift
       esac
       ;;
     -o|--output)
-      if [ -n "$OUTPUT" ]
+      if [ -n "$output" ]
       then
         error "The output path was specified multiple times"
       elif [ -z "$2" ]
       then
         error "Unexpected EOF"
       else
-        OUTPUT="$2"
+        output="$2"
         shift
         shift
       fi
       ;;
     -q|--quit)
-      QUIET=1
+      quiet=1
       shift
       ;;
     *) 
@@ -130,75 +130,75 @@ case "$1" in
     error "No input path provided"
     ;;
   "-")
-    INPUT=/dev/stdin
+    input=/dev/stdin
     ;;
   *)
-    INPUT="$1"
+    input="$1"
     ;;
 esac
 
-case "$OUTPUT" in
+case "$output" in
   # Set the output to stdout
   -)
-    QUIET=1
-    OUTPUT=/dev/stdout
+    quiet=1
+    output=/dev/stdout
     ;;
 
   # If no output path is provided, use the basename of the input
   "") 
     if [ -x "$(command -v dirname)" ]
     then
-      OUTPUT="$(dirname "$INPUT")/$(basename "$INPUT" | cut -d "." -f1).svg" 
+      output="$(dirname "$input")/$(basename "$input" | cut -d "." -f1).svg" 
     fi
     ;;
 
   # If the output path is provided, but it resolves to directory, output a 
   # a file with the same basename as the input in the target directory
   */) 
-    OUTPUT="$OUTPUT$(basename "$INPUT" | cut -d "." -f1).svg" 
+    output="$output$(basename "$input" | cut -d "." -f1).svg" 
     ;;
 esac
 
-TEMP_DIR="$(mktemp -d)"
-TEX_FILE="$TEMP_DIR/tmp.tex"
+tmp_dir="$(mktemp -d)"
+tex_file="$tmp_dir/tmp.tex"
 
 # Generate the LaTeX document
-printf "\documentclass[crop,tikz,multi=false]{standalone}\n" > "$TEX_FILE"
+printf "\documentclass[crop,tikz,multi=false]{standalone}\n" > "$tex_file"
 
-for PACKAGE in $(echo "$PACKAGES" | tr " " "\n" | sort | uniq)
+for package in $(echo "$packages" | tr " " "\n" | sort | uniq)
 do
-  printf "\usepackage{%s}\n" "$PACKAGE" >> "$TEX_FILE"
+  printf '\\usepackage{%s}\n' "$package" >> "$tex_file"
 done
 
-for LIBRARY in $(echo "$LIBRARIES" | tr " " "\n" | sort | uniq) 
+for library in $(echo "$libraries" | tr " " "\n" | sort | uniq) 
 do
-  printf "\usetikzlibrary{%s}\n" "$LIBRARY" >> "$TEX_FILE"
+  printf '\\usetikzlibrary{%s}\n' "$library" >> "$tex_file"
 done
 
-printf "\\\begin{document}\n" >> "$TEX_FILE"
-cat "$INPUT" >> "$TEX_FILE"
+printf '\\begin{document}\n' >> "$tex_file"
 
-if [ $? -ne 0 ]
+
+if ! cat "$input" >> "$tex_file"
 then
-  rm "$TEMP_DIR" -r
-  error "File not found: $INPUT"
+  rm "$tmp_dir" -r
+  error "File not found: $input"
 fi
 
-printf "\\\end{document}\n" >> "$TEX_FILE"
+printf "\\\end{document}\n" >> "$tex_file"
 
-if [ -z "$QUIET" ]
+if [ -z "$quiet" ]
 then
   message "Rendering the LaTeX document. . ."
-  xelatex -halt-on-error -output-directory="$TEMP_DIR" "$TEX_FILE"
+  xelatex -halt-on-error -output-directory="$tmp_dir" "$tex_file"
 else
-  xelatex -halt-on-error -output-directory="$TEMP_DIR" "$TEX_FILE" 1> /dev/null 2>&1
+  xelatex -halt-on-error -output-directory="$tmp_dir" "$tex_file" 1> /dev/null 2>&1
 fi
 
 S=$?
 if [ $S -ne 0 ]
 then
-  rm "$TEMP_DIR" -r
-  if [ -z "$QUIET" ]
+  rm "$tmp_dir" -r
+  if [ -z "$quiet" ]
   then
     error "xelatex exited with code $S" $S
   else
@@ -206,18 +206,18 @@ then
   fi
 fi
 
-if [ -z "$QUIET" ]
+if [ -z "$quiet" ]
 then
   message "Converting the output to SVG. . ."
 fi
 
-pdf2svg "$TEMP_DIR/tmp.pdf" "$OUTPUT" 1
+pdf2svg "$tmp_dir/tmp.pdf" "$output" 1
 
 S=$?
 if [ $S -ne 0 ]
 then
-  rm "$TEMP_DIR" -r
-  if [ -z "$QUIET" ]
+  rm "$tmp_dir" -r
+  if [ -z "$quiet" ]
   then
     error "pdf2svg exited with code $S" $S
   else
@@ -225,10 +225,10 @@ then
   fi
 fi
 
-if [ -z "$QUIET" ]
+if [ -z "$quiet" ]
 then
   message "Done!"
 fi
 
-rm "$TEMP_DIR" -rf
+rm "$tmp_dir" -rf
 
