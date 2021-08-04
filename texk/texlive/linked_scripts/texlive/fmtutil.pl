@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 60057 2021-07-25 18:09:03Z karl $
+# $Id: fmtutil.pl 60154 2021-08-03 21:55:56Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -8,7 +8,7 @@
 # or any later version.
 #
 # History:
-# Original shell script (C) 2001 Thomas Esser, public domain
+# Original shell script 2001 Thomas Esser, public domain
 
 my $TEXMFROOT;
 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 60057 2021-07-25 18:09:03Z karl $';
-my $lastchdate = '$Date: 2021-07-25 20:09:03 +0200 (Sun, 25 Jul 2021) $';
+my $svnid = '$Id: fmtutil.pl 60154 2021-08-03 21:55:56Z karl $';
+my $lastchdate = '$Date: 2021-08-03 23:55:56 +0200 (Tue, 03 Aug 2021) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 60057 $';
+my $svnrev = '$Revision: 60154 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -61,6 +61,7 @@ my @deferred_stdout;
 # $::opt_verbosity = 3; # manually enable debugging
 
 my $first_time_creation_in_usermode = 0;
+my $first_time_usermode_warning = 1; # give lengthy warning if warranted?
 
 my $DRYRUN = "";
 my $STATUS_FH;
@@ -237,14 +238,22 @@ sub main {
 
   $DRYRUN = "echo " if ($opts{'dry-run'});
 
-  if ($opts{'status-file'}) {
-    open $STATUS_FH, '>>', $opts{'status-file'}
-      || printf STDERR "Cannot open status-file: $opts{'status-file'}\nWill not write status information!\n";
+  if ($opts{'status-file'} && ! $opts{'dry-run'}) {
+    if (! open($STATUS_FH, '>>', $opts{'status-file'})) {
+      print_error("cannot open status file >>$opts{'status-file'}: $!\n");
+      print_error("not writing status information!\n");
+    }
   }
   
+  # get the config/var trees we will use.
   ($texmfconfig, $texmfvar)
     = TeXLive::TLUtils::setup_sys_user_mode($prg, \%opts,
                        $TEXMFCONFIG, $TEXMFSYSCONFIG, $TEXMFVAR, $TEXMFSYSVAR);
+  
+  # if we are using the sys tree, we don't want to give the usermode warning.
+  if ($texmfvar eq $TEXMFSYSVAR) {
+    $first_time_usermode_warning = 0;
+  }
 
   determine_config_files("fmtutil.cnf");
   my $changes_config_file = $alldata->{'changes_config'};
@@ -338,7 +347,8 @@ sub main {
   }
 
   if ($STATUS_FH) {
-    close($STATUS_FH) || print STDERR "Cannot close fh for $opts{'status-file'}.\n";
+    close($STATUS_FH)
+    || print_error("cannot close $opts{'status-file'}: $!\n");
   }
 
   unless ($opts{'nohash'}) {
@@ -517,7 +527,8 @@ sub callback_build_formats {
   # In case of user mode and formats rebuilt, warn that these formats
   # will shadow future updates. Can be suppressed with --quiet which
   # does not show print_info output
-  if ($opts{'user'} && $suc && $first_time_creation_in_usermode) {
+  if ($opts{'user'} && $suc && $first_time_creation_in_usermode
+      && $first_time_usermode_warning) {
     print_info("
 *************************************************************
 *                                                           *
