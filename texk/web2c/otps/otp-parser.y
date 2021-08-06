@@ -40,7 +40,7 @@ fprintf(stderr, "line %d: %s\n", line_number, msg);
 %token STRING
 %token LEFTARROW
 %token RIGHTARROW
-%token INPUT
+%token MYINPUT
 %token OUTPUT
 %token ALIASES
 %token STATES
@@ -70,7 +70,7 @@ File :
 Input :
 	/* Empty */
 	{ input_bytes=2; }
-    |	INPUT NUMBER ';'
+    |	MYINPUT NUMBER ';'
 	{ input_bytes=$2.yint; }
     ;
 

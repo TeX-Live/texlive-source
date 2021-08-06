@@ -50,7 +50,7 @@ extern int yydebug;
     STRING = 260,
     LEFTARROW = 261,
     RIGHTARROW = 262,
-    INPUT = 263,
+    MYINPUT = 263,
     OUTPUT = 264,
     ALIASES = 265,
     STATES = 266,
@@ -70,7 +70,7 @@ extern int yydebug;
 #define STRING 260
 #define LEFTARROW 261
 #define RIGHTARROW 262
-#define INPUT 263
+#define MYINPUT 263
 #define OUTPUT 264
 #define ALIASES 265
 #define STATES 266

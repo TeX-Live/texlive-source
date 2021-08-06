@@ -120,7 +120,7 @@ string		\"([^\"]|\"\")*\"
 		}
 =>		return(RIGHTARROW);
 "<"=		return(LEFTARROW);
-input:		return(INPUT);
+input:		return(MYINPUT);
 output:		return(OUTPUT);
 aliases:	return(ALIASES);
 states:		return(STATES);

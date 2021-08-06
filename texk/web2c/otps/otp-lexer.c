@@ -1004,7 +1004,7 @@ return(LEFTARROW);
 case 12:
 YY_RULE_SETUP
 #line 123 "../../../../texk/web2c/otps/otp-lexer.l"
-return(INPUT);
+return(MYINPUT);
 	YY_BREAK
 case 13:
 YY_RULE_SETUP

@@ -115,7 +115,7 @@ extern int yydebug;
     STRING = 260,
     LEFTARROW = 261,
     RIGHTARROW = 262,
-    INPUT = 263,
+    MYINPUT = 263,
     OUTPUT = 264,
     ALIASES = 265,
     STATES = 266,
@@ -135,7 +135,7 @@ extern int yydebug;
 #define STRING 260
 #define LEFTARROW 261
 #define RIGHTARROW 262
-#define INPUT 263
+#define MYINPUT 263
 #define OUTPUT 264
 #define ALIASES 265
 #define STATES 266
@@ -481,7 +481,7 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "NUMBER", "ID", "STRING", "LEFTARROW",
-  "RIGHTARROW", "INPUT", "OUTPUT", "ALIASES", "STATES", "TABLES",
+  "RIGHTARROW", "MYINPUT", "OUTPUT", "ALIASES", "STATES", "TABLES",
   "EXPRESSIONS", "PUSH", "POP", "DIV", "MOD", "BEG", "END", "'+'", "'-'",
   "'*'", "';'", "'['", "']'", "'='", "'{'", "'}'", "','", "'<'", "'>'",
   "'.'", "'^'", "'('", "')'", "'|'", "'\\\\'", "'$'", "'#'", "$accept",
