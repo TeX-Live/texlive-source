@@ -4,7 +4,7 @@
 #include "exkana.h"
 #include "exvar.h"
 
-int sym,nmbr,ltn,kana,hngl,hnz,cyr,grk;
+int sym,nmbr,ltn,kana,hngl,hnz,cyr,grk,dvng,thai;
 
 static int wcomp(const void *p, const void *q);
 static int pcomp(const void *p, const void *q);
@@ -57,6 +57,14 @@ void wsort(struct index *ind, int num)
 			grk=order++;
 			break;
 
+		case 'D':
+			dvng=order++;
+			break;
+
+		case 'T':
+			thai=order++;
+			break;
+
 		default:
 			break;
 		}
@@ -72,6 +80,8 @@ BREAK:
 	if (hnz==0) hnz=order++;
 	if (cyr==0) cyr=order++;
 	if (grk==0) grk=order++;
+	if (dvng==0) dvng=order++;
+	if (thai==0) thai=order++;
 
 	status = U_ZERO_ERROR;
 	if (strlen(icu_rules)>0) {
@@ -257,6 +267,9 @@ static int ordering(UChar *c)
 		else if (is_hanzi(c))    return hnz;
 		else if (is_cyrillic(c)) return cyr;
 		else if (is_greek(c))    return grk;
+		else if (is_numeric(c))  return nmbr;
+		else if (is_devanagari(c)) return dvng;
+		else if (is_thai(c))     return thai;
 		else return sym;
 	}
 }
@@ -276,6 +289,9 @@ int charset(UChar *c)
 		else if (is_hanzi(c))    return CH_HANZI;
 		else if (is_cyrillic(c)) return CH_CYRILLIC;
 		else if (is_greek(c))    return CH_GREEK;
+		else if (is_numeric(c))  return CH_NUMERIC;
+		else if (is_devanagari(c)) return CH_DEVANAGARI;
+		else if (is_thai(c))     return CH_THAI;
 		else return CH_SYMBOL;
 	}
 }
@@ -361,6 +377,8 @@ int is_latin(UChar *c)
 int is_numeric(UChar *c)
 {
 	if ((*c>=L'0')&&(*c<=L'9')) return 1;
+	else if ((*c>=0x0966)&&(*c<=0x096F)) return 1; /* Devanagari Digit */
+	else if ((*c>=0x0E50)&&(*c<=0x0E59)) return 1; /* Thai Digit */
 	else return 0;
 }
 
@@ -435,6 +453,22 @@ int is_greek(UChar *c)
 {
 	if      ((*c>=0x0370)&&(*c<=0x03FF)) return 1; /* Greek */
 	else if ((*c>=0x1F00)&&(*c<=0x1FFF)) return 1; /* Greek Extended */
+	else return 0;
+}
+
+int is_devanagari(UChar *c)
+{
+	if      ((*c>=0x0966)&&(*c<=0x096F)) return 0; /* Devanagari Digit */
+	else if ((*c>=0x0900)&&(*c<=0x097F)) return 1; /* Devanagari */
+	else if ((*c>=0xA8E0)&&(*c<=0xA8FF)) return 1; /* Devanagari Extended */
+	else return 0;
+}
+
+int is_thai(UChar *c)
+{
+	if      ((*c==0x0E3F))               return 0; /* Thai Currency Symbol Baht */
+	else if ((*c>=0x0E50)&&(*c<=0x0E59)) return 0; /* Thai Digit */
+	else if ((*c>=0x0E00)&&(*c<=0x0E7F)) return 1; /* Thai */
 	else return 0;
 }
 

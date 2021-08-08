@@ -245,8 +245,10 @@ int main(int argc, char **argv)
 
 	initkanatable();
 
-/*   init hangul tumunja table   */
-	u_strcpy(tumunja,GANADA);
+/*   init hangul,devanagari,thai *_head table   */
+	u_strcpy(hangul_head,GANADA);
+	u_strcpy(devanagari_head,DVNG_HEAD);
+	u_strcpy(thai_head,THAI_HEAD);
 
 	for (k=0;styfile[k]!=NULL;k++) {
 		styread(styfile[k]);

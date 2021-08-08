@@ -1,3 +1,16 @@
+2021-08-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.58  Beta version.
+	* configure.ac: Bump version.
+	* main.c, convert.c, fwrite.c, sort.c, styfile.c, mendex.h, {,ex}kana.h, {,ex}var.h:
+	Supports Devanagari, Thai scripts (experimental).
+	Add keywords "devanagari_head", "thai_head" to style file.
+	Add a keyword "hangul_head" to style file, let "tumumja" deprecated.
+	* styfile.c:
+	Add an option "numeric-ordering" to the keyword "icu_attributes" in style file.
+	* upmendex.ja.txt:
+	Update document.
+
 2021-06-19  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: pthread doc update; also needed in bibtexu (q.v.).

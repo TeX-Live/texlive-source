@@ -173,9 +173,13 @@ upmendex - 索引整形ツール
       デフォルトでは、letter_head とコマンドラインオプション '-g'
       の設定に従う。(upmendex専用)
 
-   tumunja  <文字列>
+   hangul_head  <文字列>
       "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ"
       ハングル見出し文字。見出し文字を文字列で指定する。(upmendex専用)
+
+   tumunja  <文字列>
+      "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ"
+      hangul_headと同じ。(非推奨, upmendex専用)
 
    hanzi_head  <文字列>
       ""
@@ -309,10 +313,13 @@ upmendex - 索引整形ツール
       ((up)mendex専用)
 
    character_order  <文字列>
-      "SNLGCJKH"
+      "SNLGCJKHDT"
       記号、英字、日本語の優先順位。'S'は記号、'N'は数字、'L'はラテン文字、
       'G'はギリシャ文字、'C'はキリル文字、'J'は日本語(かな)、'K'はハングル、
-      'H'は漢字を表す。(upmendex専用)
+      'H'は漢字、'D'はデーヴァナーガリー、'T'はタイ文字を表す。
+      upendexでは索引項目の分類として「数字」は「記号」に含める仕様なので、
+      'S'と'N'は必ず隣り合わせること（数字と数字以外の記号の順序入れ替えは可能）。
+      (upmendex専用)
 
    icu_locale  <文字列>
       ""
@@ -346,7 +353,8 @@ upmendex - 索引整形ツール
       "french-collation:on", "french-collation:off",
       "case-first:off", "case-first:upper-first", "case-first:lower-first",
       "case-level:on", "case-level:off",
-      "normalization-mode:on", "normalization-mode:off"
+      "normalization-mode:on", "normalization-mode:off",
+      "numeric-ordering:on", "numeric-ordering:off"
       (upmendex専用)
 
 

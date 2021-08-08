@@ -218,6 +218,7 @@ int convert(UChar *buff1, UChar *buff2)
 
 			else if (is_latin(buff3)||is_cyrillic(buff3)||is_greek(buff3)
 				 ||is_jpn_kana(buff3)||is_kor_hngl(buff3)||is_zhuyin(buff3)
+				 ||is_numeric(buff3)||is_devanagari(buff3)||is_thai(buff3)
 					||is_comb_diacritical_mark(buff3)) {
 				buff2[j]=buff3[0];
 				if (wclen==2) buff2[j+1]=buff3[1];

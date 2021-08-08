@@ -6,8 +6,6 @@ extern UChar kanatable[];
 extern UChar extkanatable[];
 extern UChar circkanatable[];
 
-extern UChar GANADA[];
-
 #define SPACE    0x3000    /* 全角スペース */
 #define ALPHATOP 0xff01    /* ！ */
 #define ALPHAEND 0xff5a    /* ｚ */

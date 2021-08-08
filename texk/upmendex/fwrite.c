@@ -150,7 +150,7 @@ void verb_printf(FILE *fp, const char *format, ...)
 /*   write ind file   */
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
-	int i,j,hpoint=0,tpoint=0;
+	int i,j,hpoint=0,tpoint=0,ipoint=0,jpoint=0;
 	char lbuff[BUFFERLEN],obuff[BUFFERLEN];
 	UChar datama[256],initial[INITIALLENGTH],initial_prev[INITIALLENGTH];
 	int chset,chset_prev;
@@ -213,22 +213,68 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			else if (chset==CH_HANGUL) {
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
-					for (j=tpoint;j<(u_strlen(tumunja));j++) {
-						if (initial_cmp_char(initial,tumunja[j])) {
-							fprint_uchar(fp,&tumunja[j-1],M_NONE,1);
+					for (j=tpoint;j<(u_strlen(hangul_head));j++) {
+						if (initial_cmp_char(initial,hangul_head[j])) {
+							fprint_uchar(fp,&hangul_head[j-1],M_NONE,1);
 							tpoint=j;
 							break;
 						}
 					}
-					if (j==(u_strlen(tumunja))) {
-						fprint_uchar(fp,&tumunja[j-1],M_NONE,1);
+					if (j==(u_strlen(hangul_head))) {
+						fprint_uchar(fp,&hangul_head[j-1],M_NONE,1);
 					}
 					fputs(lethead_suffix,fp);
 				}
 				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
 				SPRINTF(lbuff,"%s%s",item_0,obuff);
-				for (tpoint=0;tpoint<(u_strlen(tumunja));tpoint++) {
-					if (initial_cmp_char(initial,tumunja[tpoint])) {
+				for (tpoint=0;tpoint<(u_strlen(hangul_head));tpoint++) {
+					if (initial_cmp_char(initial,hangul_head[tpoint])) {
+						break;
+					}
+				}
+			}
+			else if (chset==CH_DEVANAGARI) {
+				if (lethead_flag!=0) {
+					fputs(lethead_prefix,fp);
+					for (j=jpoint;j<(u_strlen(devanagari_head));j++) {
+						if (initial_cmp_char(initial,devanagari_head[j])) {
+							fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+							jpoint=j;
+							break;
+						}
+					}
+					if (j==(u_strlen(devanagari_head))) {
+						fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+					}
+					fputs(lethead_suffix,fp);
+				}
+				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
+				SPRINTF(lbuff,"%s%s",item_0,obuff);
+				for (jpoint=0;jpoint<(u_strlen(devanagari_head));jpoint++) {
+					if (initial_cmp_char(initial,devanagari_head[jpoint])) {
+						break;
+					}
+				}
+			}
+			else if (chset==CH_THAI) {
+				if (lethead_flag!=0) {
+					fputs(lethead_prefix,fp);
+					for (j=ipoint;j<(u_strlen(thai_head));j++) {
+						if (initial_cmp_char(initial,thai_head[j])) {
+							fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
+							ipoint=j;
+							break;
+						}
+					}
+					if (j==(u_strlen(thai_head))) {
+						fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
+					}
+					fputs(lethead_suffix,fp);
+				}
+				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
+				SPRINTF(lbuff,"%s%s",item_0,obuff);
+				for (ipoint=0;ipoint<(u_strlen(thai_head));ipoint++) {
+					if (initial_cmp_char(initial,thai_head[ipoint])) {
 						break;
 					}
 				}
@@ -304,8 +350,8 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 			}
 			else if (chset==CH_HANGUL) {
-				for (j=tpoint;j<(u_strlen(tumunja));j++) {
-					if (initial_cmp_char(initial,tumunja[j])) {
+				for (j=tpoint;j<(u_strlen(hangul_head));j++) {
+					if (initial_cmp_char(initial,hangul_head[j])) {
 						break;
 					}
 				}
@@ -314,13 +360,45 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
 						fputs(lethead_prefix,fp);
-						fprint_uchar(fp,&tumunja[j-1],M_NONE,1);
+						fprint_uchar(fp,&hangul_head[j-1],M_NONE,1);
+						fputs(lethead_suffix,fp);
+					}
+				}
+			}
+			else if (chset==CH_DEVANAGARI) {
+				for (j=jpoint;j<(u_strlen(devanagari_head));j++) {
+					if (initial_cmp_char(initial,devanagari_head[j])) {
+						break;
+					}
+				}
+				if ((j!=jpoint)||(j==0)) {
+					jpoint=j;
+					fputs(group_skip,fp);
+					if (lethead_flag!=0) {
+						fputs(lethead_prefix,fp);
+						fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+						fputs(lethead_suffix,fp);
+					}
+				}
+			}
+			else if (chset==CH_THAI) {
+				for (j=ipoint;j<(u_strlen(thai_head));j++) {
+					if (initial_cmp_char(initial,thai_head[j])) {
+						break;
+					}
+				}
+				if ((j!=ipoint)||(j==0)) {
+					ipoint=j;
+					fputs(group_skip,fp);
+					if (lethead_flag!=0) {
+						fputs(lethead_prefix,fp);
+						fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
 						fputs(lethead_suffix,fp);
 					}
 				}
 			}
 			else {
-				if (CH_LATIN<=chset_prev&&chset_prev<=CH_HANZI){
+				if (CH_LATIN<=chset_prev&&chset_prev<=CH_THAI){
 					fputs(group_skip,fp);
 					if (lethead_flag!=0 && symbol_flag) {
 						if (strlen(symbol)) {
@@ -772,6 +850,17 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			else hi=mi;
 		}
 		u_strcpy(ini,hz_index[lo-1].idx);
+		return;
+	}
+	else if (is_devanagari(&ch)||is_thai(&ch)) {
+		if (ch==0x929||0x931||0x934||(0x958<=ch&&ch<=0x95F)) {
+			src[0]=ch;  src[1]=0x00;
+			perr=U_ZERO_ERROR;
+			unorm2_normalize(unormalizer_NFD, src, 1, dest, 8, &perr);
+			if (U_SUCCESS(perr))
+				ch=dest[0];                         /* without modifier */
+		}
+		ini[0]=ch;
 		return;
 	}
 	if (ch==0x049||ch==0x069||ch==0x130||ch==0x131||ch==0x0CE||ch==0x0EE) {

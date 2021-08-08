@@ -136,12 +136,20 @@ void styread(const char *filename)
 			multibyte_to_widechar(kana_head,STYBUFSIZE,tmp);
 			continue;
 		}
-		if (getparam(buff,"tumunja",tmp)) {
-			multibyte_to_widechar(tumunja,STYBUFSIZE,tmp);
+		if (getparam(buff,"hangul_head",tmp) || getparam(buff,"tumunja",tmp)) {
+			multibyte_to_widechar(hangul_head,STYBUFSIZE,tmp);
 			continue;
 		}
 		if (getparam(buff,"hanzi_head",tmp)) {
 			multibyte_to_widechar(hanzi_head,STYBUFSIZE,tmp);
+			continue;
+		}
+		if (getparam(buff,"thai_head",tmp)) {
+			multibyte_to_widechar(thai_head,STYBUFSIZE,tmp);
+			continue;
+		}
+		if (getparam(buff,"devanagari_head",tmp)) {
+			multibyte_to_widechar(devanagari_head,STYBUFSIZE,tmp);
 			continue;
 		}
 		if (getparam(buff,"page_compositor",page_compositor)) continue;
@@ -351,5 +359,11 @@ void set_icu_attributes(void)
 		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
 		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
 		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (normalization-mode).");
+	}
+	if ((pos=strstr(tmp,"numeric-ordering:"))>0) {
+		pos+=17;  attr=UCOL_NUMERIC_COLLATION;
+		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
+		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
+		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (numeric-ordering).");
 	}
 }
