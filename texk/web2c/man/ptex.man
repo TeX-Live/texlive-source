@@ -1,4 +1,4 @@
-.TH PTEX 1 "27 May 2018" "Web2C @VERSION@"
+.TH PTEX 1 "08 August 2021" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -82,6 +82,8 @@ In this version of (e-)(u)p\*(TX, enc\*(TX extensions are
 .SH "SEE ALSO"
 .BR tex (1),
 .BR etex (1).
+.br
+Reference manual: <https://github.com/texjporg/ptex-manual>
 .\"=====================================================================
 .SH AUTHORS
 This version of (e-)(u)p\*(TX is maintained by
