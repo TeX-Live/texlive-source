@@ -1,9 +1,0 @@
-lacheck is a tool for finding common mistakes in LaTeX documents.  
-
-It was originally written by Kresten Krab Thorup in 1991, with
-modifications by Per Abrahmsen.  It is currently maintained as part of
-TeX Live (http://tug.org/texlive).
-
-It is released under the GPL.
-
-

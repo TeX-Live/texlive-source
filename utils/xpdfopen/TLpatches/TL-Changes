@@ -1,9 +1,0 @@
-Changes applied to the xpdfopen-0.86/ tree as obtained from:
-	http://cs.acadiau.ca/~jdiamond/xpdfopen/xpdfopen-0.86.tar.gz
-
-Removed:
-	Makefile.in
-	aclocal.m4
-	configure
-	pdfopen.pdf
-

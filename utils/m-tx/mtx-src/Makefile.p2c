@@ -1,8 +1,0 @@
-all: globals.c mtx.c preamble.c lyrics.c analyze.c mtxline.c\
-  status.c uptext.c prepmx.c files.c notes.c multfile.c utility.c control.c strings.c
-
-%.c: %.pas 
-	p2c -a -LTurbo $*.pas
-	cp $*.c $*.c.orig
-	sed -e "s/#include <p2c\/p2c.h>/#include \"p2c.h\"/" < $*.c.orig > $*.c
-

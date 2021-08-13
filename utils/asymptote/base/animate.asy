@@ -1,3 +1,0 @@
-usepackage("animate");
-import animation;
-

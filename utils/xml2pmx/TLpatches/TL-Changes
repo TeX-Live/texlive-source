@@ -1,8 +1,0 @@
-Changes applied to the xml2pmx tree as obtained from:
-	http://www.ctan.org/tex-archive/support/xml2pmx/
-
-Remove:
-	Makefile.in
-	aclocal.m4
-	configure
-	scripts/ # whole directory
