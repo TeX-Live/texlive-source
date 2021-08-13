@@ -1,2 +1,0 @@
-#!/bin/sh
-mtxrun --script pstopdf "$@"

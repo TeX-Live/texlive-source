@@ -1,8 +1,0 @@
-#!/bin/bash
-
-if [[ -n ${2:+x} ]]; then
-    echo "I will add $2 to the input path"
-    export TEXINPUTS="$2//:"
-    export LUAINPUTS="$2//:"
-fi
-luatex --shell-escape -file-line-error -synctex=1 "$1"

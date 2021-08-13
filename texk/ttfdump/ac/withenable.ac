@@ -1,7 +1,0 @@
-## texk/ttfdump/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttfdump/
-dnl
-dnl Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for ttfdump
-KPSE_ENABLE_PROG([ttfdump], [kpathsea])

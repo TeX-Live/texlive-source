@@ -1,7 +1,0 @@
-## texk/ps2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pk/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for ps2pk
-KPSE_ENABLE_PROG([ps2pk], [kpathsea])

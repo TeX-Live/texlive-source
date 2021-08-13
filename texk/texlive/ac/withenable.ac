@@ -1,8 +1,0 @@
-## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
-dnl
-dnl Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for texlive
-KPSE_ENABLE_PROG([texlive], , , [TeX Live scripts])
-m4_include(kpse_TL[texk/texlive/ac/texlive.ac])

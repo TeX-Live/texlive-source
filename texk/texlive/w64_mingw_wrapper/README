@@ -1,8 +1,0 @@
-This file and the graphics are public domain.
-
-This directory is for the generic TeX Live wrapper on Windows that is
-used for most scripts. The main file is runscript.tlu.
-
-*.svg are the sources for *.ico,
-and the *.ico are used in wrappers.
-Hence their locaton here.

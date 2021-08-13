@@ -1,75 +1,0 @@
-
-
-
-
-accents: e
-LATEX
-now inline: blae test
-now inline: bla etest
-now inline: bla e test
-real spaces  xxx
-tildes accent ~o
-horizontal 2 - is {
-horizontal 3 - is |
-ligatures:    Yp
-what about vertical bars |
-horizontal bar -
-and tildes
-< funny carrots >
-copyright cO
-pounds $
-euro diamond3 scandinavian ae AE  o  O  AA A aa a Z z
-alpha eta 
-nu 
-tau 
-beta 
-theta 
-xi 
-upsilon 
-gamma 
-iota 
-phi 
-delta 
-kappa 
-pi 
-chi 
-epsilon 
-lambda 
-rho 
-psi  
-zeta 
-mu 
-sigma 
-omega_!____
- 1 | 2 |3||
- 4 | 5 |6||
-_7_|_8_|9||_
-so far not in verbatim (tt font)
-
-
-
-                              1
-
-
-
-
-now in verbatim (tt font)
-accents: \'{e}
-\LaTeX
-now inline: bla\'{e} test
-now inline: bla \'{e}test
-now inline: bla \'{e} test
-real spaces~~~xxx
-tildes  accent \~o
-horizontal 2 -  is --
-horizontal 3 -  is ---
-ligatures: ffl fi fl Yp
-what about vertical bars |
-horizontal bar -
-and tildes ~
-< funny carrots >
-or other symbols: \\ { } [ ] _ ^ ? = ; / . , + * ( ) ' & % $ # " !
-
-
-
-                                 2

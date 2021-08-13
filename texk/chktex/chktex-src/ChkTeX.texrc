@@ -1,6 +1,0 @@
-# Ignore file for ChkTeX.tex, since it shows many errors in its examples
-# it raises many errors when checking ChkTeX.tex with chktex itself.
-
-VerbEnvir { errexam errdesc }
-
-WipeArg { \Cmd:{} }

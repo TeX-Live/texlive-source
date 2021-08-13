@@ -1,6 +1,0 @@
-# This file is part of the ttf2pk package
-
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-bindir = @bindir@
-mandir = @mandir@

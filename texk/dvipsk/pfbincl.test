@@ -1,9 +1,0 @@
-#! /bin/sh -vx
-# $Id$
-# Public domain.
-
-./dvips -D 300 $srcdir/testdata/pfbincl.xdv -o pfbincl.ps || exit 1
-diff $srcdir/testdata/pfbincl.xps pfbincl.ps
-
-exit 0
-

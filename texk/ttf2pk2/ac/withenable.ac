@@ -1,7 +1,0 @@
-## texk/ttf2pk2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk2/
-dnl
-dnl Copyright (C) 2011-2013 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for ttf2pk
-KPSE_ENABLE_PROG([ttf2pk2], [kpathsea freetype2])

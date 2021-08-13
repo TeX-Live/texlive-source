@@ -1,7 +1,0 @@
-## texk/gregorio/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gregorio/
-dnl
-dnl Copyright (C) 2015 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for gregorio
-KPSE_ENABLE_PROG([gregorio], [kpathsea])

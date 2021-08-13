@@ -1,8 +1,0 @@
-## texk/kpathsea/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/kpathsea/
-dnl
-dnl Copyright (C) 2009-2011 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## configure options and TL libraries required for kpathsea
-KPSE_WITH_TEXLIB([kpathsea])
-m4_include(kpse_TL[texk/kpathsea/ac/mktex.ac])

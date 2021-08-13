@@ -1,1 +1,0 @@
-compile from within src/java with: javac *.java */*.java */*/*.java -d ../../texmf/tex4ht/bin

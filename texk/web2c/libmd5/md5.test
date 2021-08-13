@@ -1,7 +1,0 @@
-#! /bin/sh
-
-# Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-# You may freely use, modify and/or distribute this file.
-
-./md5main --test || exit 1
-

@@ -1,433 +1,0 @@
-Mminstance NEWS
-
-This file contains news relevant to the mmafm and mmpfb programs, which
-used to be distributed separately in the mminstance package.
-
-Version 1.50   20.Aug.2003
-
-* As of version 1.50, mminstance is distributed as part of the
-  lcdf-typetools package. Changes for versions 1.50 and up are listed in
-  NEWS.
-
-
-Version 1.26.3   14.Aug.2003
-
-* Library changes to attempt to satisfy more C++ compilers. Again massive
-  thanks to Nelson H.F. Beebe, and new massive thanks to Fabrice Popineau.
-
-
-Version 1.26.2   13.Aug.2003
-
-* Revert from '#include <cXXX>' to '#include <XXX.h>'.
-
-
-Version 1.26.1   11.Aug.2003
-
-* 'uintptr_t' configury, and more template changes.
-
-
-Version 1.26   10.Aug.2003
-
-* Further address build problems reported by Nelson Beebe.
-
-
-Version 1.25   7.Aug.2003
-
-* Address build problems reported by Nelson H.F. Beebe.
-
-
-Version 1.24   30.Jul.2003
-
-* Fix configure check for whether va_list is addressable. Ryan Murray found
-  the bug; thanks hugely to Claire Connelly for testing resources.
-
-* Minor code restructuring.
-
-* mmpfb: --minimize is the default.
-
-* mmpfb: --minimize additionally forces some interpolated values to
-  integers, specifically BlueValues, OtherBlues, FamilyBlues,
-  FamilyOtherBlues, and BlueShift. Maybe this will avoid some problems
-  people have had with embedding mmpfb-generated fonts and Acrobat 6.
-
-* Change rounding procedures. Now fonts generated on different platforms
-  will likely not differ in rounding details. (What a difference 0.00001
-  makes!)
-
-
-Version 1.23   9.Jul.2003
-
-* Add configure check for whether va_list is addressable. Thanks to Claire
-  Connelly.
-
-
-Version 1.22   5.Jun.2003
-
-* More template nonsense. Mea culpa to Melissa O'Neill and Claire Connelly.
-
-
-Version 1.21   4.Jun.2003
-
-* GCC 3.3 would not link mminstance due to missing template instantiations.
-  Moved templatei.cc into libefont.a to fix this. Reported by Melissa
-  O'Neill <oneill@cs.hmc.edu>.
-
-
-Version 1.20   26.Jan.2003
-
-* mmafm: Fix bug with parsing intermediate-master files that made AJensonMM
-  unusable. Reported by Fulko van Westrenen <westrenen@fvw.cistron.nl>.
-
-
-Version 1.19   5.Jan.2003
-
-* mmpfb: Previously, error introduced by the rounding process could build
-  up over the length of a path, causing an anomaly when the path was
-  closed. Now mmpfb compensates for rounding error, resulting in a path
-  with better fidelity.
-
-* mmpfb: Add the `--minimize' option to minimize output fonts, allowing the
-  X font server to load mmpfb-generated fonts. Problem with the X font
-  server reported by Joerg Lippman <joerg.lippmann@o3-software.de>.
-
-* mmpfb: Add placeholder subroutines to fill in any gaps in the subroutine
-  array, which the X font server doesn't like (that IBM Type 1 code is
-  bad!). Probably this should be optional, since it makes the font bigger.
-
-* mmpfb: Renumber subroutines consecutively.
-
-* mmpfb: Generate a new FullName as well as a new FontName.
-
-* Adapt to newer Automake and LCDF and Efont libraries.
-
-
-Version 1.18   5.Oct.2002
-
-* Fix for compilation with newer C++ compilers.
-
-
-Version 1.17   30.Sep.2002
-
-* Fix for NuevaMM-It: the ItalicAngle array was not being properly
-  commented out. Reported by Thomas Wu <twu@gene.com>.
-
-
-Version 1.16.3   17.Sep.2001
-
-* Workaround for Mac OS X: its sscanf() function behaves incorrectly when a
-  format string ends with ` %n'. Reported and patched by Melissa O'Neill
-  <oneill@cs.sfu.ca>.
-
-
-Version 1.16.2   6.Sep.2001
-
-* Improvements so mminstance compiles on more platforms. Problems reported
-  by Nelson H. F. Beebe <beebe@math.utah.edu>.
-
-
-Version 1.16.1   15.Jul.2001
-
-* Bug fix: more cleanups for newer GCCs. Reported by C. M. Connelly
-  <c@eskimo.com>.
-
-
-Version 1.16   18.Jun.2001
-
-* Bug fix: now newer C++ compilers will compile mminstance. Reported by
-  Melissa O'Neill <oneill@cs.sfu.ca>.
-
-
-Version 1.15.1   12.Aug.2000
-
-* Don't use `-Wall' by default; old C++ compilers generate huge numbers of
-  irrelevant warnings. Reported by Tom Kacvinsky <tjk@ams.org>.
-
-
-Version 1.15   12.Jul.2000
-
-* mmpfb: Remove calls to nonexistent subroutines. (This was not actually a
-  bug; the calls to nonexistent subroutines would never execute anyway. The
-  font ITCGaramondMM-It had characters like `/question { A callsubr B
-  callsubr }', where the `A' subroutine would either draw an entire
-  character and call `endchar' -- so `B' would never get called -- or it
-  would do nothing at all. Previous mmpfb versions would remove the `B'
-  subroutine but keep the `B callsubr' call if the interpolated `A' called
-  `endchar'.) Requested by Han The Thanh <thanh@informatics.muni.cz>.
-
-* mmpfb: Removed warning about `strange othersubr commands'.
-
-
-Version 1.14   22.Jun.2000
-
-* mmpfb: Fixed a bug with large UniqueID values. Reported by Sivan Toledo
-  <sivan@math.tau.ac.il>.
-
-* mmpfb: Support for interpolating BlueFuzz without any warnings.
-
-
-Version 1.13   16.Apr.2000
-
-* mmpfb: Can handle synthetic fonts like TektonMM-Oblique. Requested by
-  Melissa O'Neill <oneill@cs.sfu.ca>.
-
-
-Version 1.12   5.Apr.2000
-
-* mmpfb: Make sure to remove multiple master commands from hint replacement
-  subroutines. Required another overhaul. Requested by Han The Thanh
-  <thanh@informatics.muni.cz>.
-
-
-Version 1.11   3.Apr.2000
-
-* mmafm: Added `--kern-precision' option. Requested by Han The Thanh
-  <thanh@informatics.muni.cz>.
-
-* Bug fix: now mminstance can be compiled with recent versions of gcc. The
-  error was a strange use of va_arg(). Reported by C. M. Connelly
-  <c@eskimo.com>.
-
-
-Version 1.10   21.Feb.2000
-
-* mmpfb: Comment out DesignVector, NormDesignVector, and WeightVector
-  entries. Now Ghostscript 6.0's ps2pdf script will work with
-  mmpfb-generated fonts. Change requested by Melissa O'Neill
-  <oneill@cs.sfu.ca>.
-
-
-Version 1.9   18.Jan.2000
-
-* mmpfb: Bug fix in special callothersubrs code introduced in Version 1.8.
-  This bug probably did not affect anyone.
-
-
-Version 1.8   10.Jan.2000
-
-* mmpfb: Don't warn when encountering `BuildCharArray'. This shows up in
-  some ITC multiple masters. Requested by Han The Thanh
-  <thanh@informatics.muni.cz>.
-
-* mmpfb: Handle special callothersubrs from ITC Garamond MM. This required
-  big changes, but the code is cleaner now, and more likely to be right in
-  future: best of both worlds. Requested by Han The Thanh
-  <thanh@informatics.muni.cz>.
-
-
-Version 1.7   30.Dec.1999
-
-* mmpfb: Fixed bug where garbled encoding vectors could be produced.
-  Patch sent in by Christopher League <league@contrapunctus.net>.
-
-* Bug fix: Some error messages used to cause assertion failures.
-
-
-Version 1.6   28.Nov.1999
-
-* mmafm: Added `--precision' option for optionally rounding AFM dimensions.
-  Requested by Christopher League <league@contrapunctus.net>.
-
-* Many bug fixes for compiling under NeXTSTEP or g++ 2.95. Patches sent in
-  by Melissa O'Neill <oneill@cs.sfu.ca>.
-
-* Bug fix: numbers with both decimal point and exponent, like `1.2e5', are
-  parsed correctly.
-
-
-Version 1.5   4.Jul.1999
-
-* mmpfb: Added `--subrs' option for reducing the number of subroutines in
-  the output font. Use this option if you plan to use Acrobat Distiller 3.0
-  to distill PostScript files including mmpfb-generated fonts. Distiller
-  3.0 has a low limit on the number of subroutines per font. Several
-  changes to the Type 1 library support this. Problem reported by Thierry
-  Bouche <Thierry.Bouche@ujf-grenoble.fr>; tracking help by Tom Kacvinsky
-  <tjk@ams.org>.
-
-* Both programs accept multiple master instance names, like
-  `MinionMM_367_400_18_', and will interpolate that instance from the
-  multiple master font.
-
-* Removed `FONTPATH' and `AFMPATH'. `PSRESOURCEPATH' has been preferred for
-  a couple months.
-
-* Updated ErrorHandler.
-
-
-Version 1.4.1   26.Jun.1999
-
-* mmpfb: Also comment out the /UniqueID in the Private dictionary, if any.
-  Reported by Thierry Bouche <Thierry.Bouche@ujf-grenoble.fr>.
-
-
-Version 1.4   25.Jun.1999
-
-* mmpfb: Always comment out any /UniqueID in the font. This bug prevented
-  some printers from printing files with mmpfb-interpolated fonts. Reported
-  by Thierry Bouche <Thierry.Bouche@ujf-grenoble.fr>.
-
-* mmpfb: Comment out `Blend...' entries in the FontInfo dictionary. Now
-  Adobe Acrobat Distiller can handle mmpfb-interpolated fonts; it correctly
-  treats them like single-master fonts. Problem reported by Thierry Bouche
-  <Thierry.Bouche@ujf-grenoble.fr>.
-
-* mmpfb: Comment out multiple-master-specific dictionary entries, rather
-  than removing them entirely.
-
-* mmpfb: Interpolates Blend FontInfo dictionary entries, like
-  `UnderlinePosition' (maybe; can't find any fonts that use them, so it's
-  untested).
-
-
-Version 1.3.1   21.May.1999
-
-* Changed libraries to conform to STL interfaces.
-
-* Change to psres.cc to fix compilation bug under old C++ compilers.
-
-
-Version 1.3   11.Apr.1999
-
-* Mmafm will now automatically run `mmpfb --amcp-info' when necessary, so
-  you don't have to create the AMCP files yourself. Caveat: This will only
-  work if you use the PSRESOURCEPATH environment variable and have
-  PSres.upr files set up correctly.
-
-* mmafm: Added the PSRESOURCEPATH environment variable, in favor of
-  AFMPATH and FONTPATH.
-
-* mmafm: Checks for completely unknown design vectors.
-
-* mmpfb: Now uses the PSRESOURCEPATH environment variable to look for fonts
-  by name.
-
-* mmpfb: Modifies the output font's XUID to prevent font cache pollution.
-
-* Improved documentation.
-
-* Unfortunately, this version still doesn't work under NeXTSTEP.
-
-
-Version 1.3b2   22.Jan.1999
-
-* Don't use `index' as a method name; it's a macro under NeXTSTEP. Reported
-  by Melissa O'Neill <oneill@cs.sfu.ca>.
-
-* Patch around problems with NeXTSTEP's strtod and strtol. Also reported by
-  Melissa O'Neill <oneill@cs.sfu.ca>.
-
-
-Version 1.3b1   12.Jan.1999
-
-* Han The Thanh <thanh@informatics.muni.cz> reports that Acrobat Reader
-  gives a "bad /BBox" warning on mmpfb-interpolated fonts. This seems to be
-  because mmpfb would produce fractional FontBBox entries. Fix: round the
-  FontBBox entries so it contains integers.
-
-* Small bug fix: negative non-integers were formerly read incorrectly,
-  introducing an error of not more than 2 integer units.
-
-
-Version 1.2   18.Dec.1998
-
-* Better error messages and fewer coredumps on bad files.
-
-* The mminstance package now uses automake.
-
-
-Version 1.1   27.Sep.1998
-
-* mmpfb: Changes to remove all multiple master commands in the output font,
-  not just most of them.
-
-* mmpfb: Added error message on bad input file.
-
-* Removed hackery which prevented linking with -lstdc++.
-
-* `--help' now prints on stdout, as the GNU standards require.
-
-* Makefiles: added `make uninstall' target, enabled `./configure's program
-  name transformations, made VPATH builds possible.
-
-
-Version 1.0   17.Sep.1998
-
-* No changes; just decided it was stable.
-
-
-Version 0.92   2.Sep.1998
-
-* Code reorganization in metrics. (Removed LineScanner, which wasn't a general
-  design; split into a more general Slurper and a specific AfmParser.)
-
-
-Version 0.91   15.May.1998
-
-* mmafm: Nonexistent files caused a coredump instead of an error (fixed).
-
-* mmafm: Added support for finding AMFMs via path variables and PSres.upr
-  files (you don't have to give an AMFM filename on the command line, you can
-  give a font name).
-
-
-Version 0.9   4.Mar.1998
-
-* Fixed a bug in parsing fonts with intermediate masters.
-
-* mmafm: Added support for finding AFMs via path variables and PSres.upr
-  files, and for giving their filenames on the command line.
-
-* Wrote manual pages.
-
-
-Version 0.8
-
-* Major release: Mmafm uses a new AFM/AMFM parsing library.
-
-* Restructured the two packages (mmafm and mmpfb) into one package
-  (mminstance) containing both programs.
-
-* Improved error messages, command line behavior, usage, and help.
-
-
-Version 0.62
-
-* Fixed small bug in t1interp.cc which caused serious problems. (Function
-  Type1Interp::number() fell off the end instead of returning true.) Bug
-  reported by Melissa O'Neill <oneill@cs.sfu.ca>.
-
-
-Version 0.6
-
-* Major release: Both programs use a new, modular Type 1 parsing library,
-  they take real numbers as arguments, and the configure scripts no longer
-  try to link with -lstdc++. Thanks to Melissa O'Neill <oneill@cs.sfu.ca>
-  for suggestions.
-
-* mmafm looks for separate .amcp files for intermediate master conversion
-  programs. Suggested by Melissa O'Neill <oneill@cs.sfu.ca>.
-
-* mmpfb can read and generate PFA fonts.
-
-* Other fixes.
-
-
-Version 0.5
-
-* Fixed bug preventing the programs from working with Kepler.
-
-
-Version 0.4
-
-* Fixed mmpfb to handle older multiple master fonts (Myriad and Minion) and
-  to generate non-truncated PFBs.
-
-
-Version 0.2   16.Aug.1997
-
-* Fixed serious bug in normalize_vector that resulted in incorrect output.
-
-
-Version 0.1   21.Jul.1997
-
-* Initial release.

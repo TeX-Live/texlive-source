@@ -1,1 +1,0 @@
-/* xvasprintf.h: empty */
