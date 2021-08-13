@@ -1,6 +1,0 @@
-Encode::TECkit      T_PTROBJ
-TECkit_Status       INT
-Byte *              T_PV
-UInt32              T_UV
-Byte                T_U_CHAR
-

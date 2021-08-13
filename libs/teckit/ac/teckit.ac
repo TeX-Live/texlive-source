@@ -1,9 +1,0 @@
-## libs/teckit/ac/teckit.ac: configure.ac fragment for the TeX Live subdirectory libs/teckit/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## basic check of system teckit
-KPSE_TRY_LIBXX([teckit],
-               [#include <teckit/TECkit_Engine.h>],
-               [TECkit_Converter converter; TECkit_DisposeConverter(converter);])

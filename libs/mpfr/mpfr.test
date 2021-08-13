@@ -1,7 +1,0 @@
-#! /bin/sh
-
-# Copyright (C) 2014 Taco Hoekwater <taco@metatex.org>
-# You may freely use, modify and/or distribute this file.
-
-./mpfrtest || exit 1
-

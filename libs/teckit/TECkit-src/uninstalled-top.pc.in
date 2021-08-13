@@ -1,6 +1,0 @@
-prefix=@abs_builddir@
-exec_prefix=@exec_prefix@
-priv_includedir=@abs_srcdir@/source
-includedir=@abs_srcdir@/include
-libdir=@abs_builddir@/lib/.libs
-version=@VERSION@

@@ -1,9 +1,0 @@
-## libs/gd/ac/gd.ac: configure.ac fragment for the TeX Live subdirectory libs/gd/
-dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
-dnl You may freely use, modify and/or distribute this file.
-dnl
-## basic check of system gd
-KPSE_TRY_LIB([gd],
-             [#include <gd.h>],
-             [gdImageCreate(1, 2);])
