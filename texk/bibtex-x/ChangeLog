@@ -1,3 +1,11 @@
+2021-08-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* bibtex.c, bibtex-[23].c, gbl{proc,vars}.h:
+	Use ucol_strcollUTF8() for collation.
+	Use u_strToUTF8WithSub() in icu_fromUChars() and
+	u_strFromUTF8WithSub() in icu_toUChars().
+	Initialize ICU collator only once.
+
 2021-06-21  Karl Berry  <karl@freefriends.org>
 
 	* tests/bibtexu-yannis.test: disable again. Fails on
