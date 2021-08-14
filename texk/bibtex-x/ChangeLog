@@ -3,7 +3,7 @@
 	* bibtex.c, bibtex-[23].c, gbl{proc,vars}.h:
 	Use ucol_strcollUTF8() for collation.
 	Use u_strToUTF8WithSub() in icu_fromUChars() and
-	u_strFromUTF8WithSub() in icu_toUChars().
+	u_strFromUTF8WithSub() in icu_toUChars() in stead of ucnv_*.
 	Initialize ICU collator only once.
 
 2021-06-21  Karl Berry  <karl@freefriends.org>

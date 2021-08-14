@@ -2931,7 +2931,7 @@ BEGIN
 #ifdef UTF_8
 /*
 We use ICU Collator ucol_strcollUTF8() to compare the Unicode in UTF-8.
-There is an commad line option "-o", "--location" to set the rule of collation.
+There is an command line option "-o", "--location" to set the rule of collation.
 */
   Integer_T lenk1, lenk2;
   UBool u_less;
