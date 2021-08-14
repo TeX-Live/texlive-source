@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 59637 2021-06-19 15:17:38Z karl $
+# $Id: tlmgr.pl 60157 2021-08-04 01:42:52Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 59637 $';
-my $datrev = '$Date: 2021-06-19 17:17:38 +0200 (Sat, 19 Jun 2021) $';
+my $svnrev = '$Revision: 60157 $';
+my $datrev = '$Date: 2021-08-04 03:42:52 +0200 (Wed, 04 Aug 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6465,7 +6465,7 @@ sub texconfig_conf_mimic {
   }
   info("=========================== active config files ==========================\n");
   for my $m (sort(qw/fmtutil.cnf config.ps mktex.cnf pdftexconfig.tex/)) {
-    info(sprintf("%-17s %s", "$m:", `kpsewhich $m`));
+    info(sprintf("%-17s %s", "$m:", `kpsewhich $m` || "(not found!)\n"));
   }
   for my $m (qw/texmf.cnf updmap.cfg/) {
     for my $f (`kpsewhich -all $m`) {
@@ -10231,7 +10231,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 59637 2021-06-19 15:17:38Z karl $
+$Id: tlmgr.pl 60157 2021-08-04 01:42:52Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

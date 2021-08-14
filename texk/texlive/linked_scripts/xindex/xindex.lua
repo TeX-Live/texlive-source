@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 4 2021-07-07 07:25:04Z hvoss $
+-- $Id: xindex.lua 10 2021-08-14 07:50:17Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.30
+ local version = 0.31
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -32,12 +32,12 @@ Report bugs to
 kpse.set_program_name("luatex")
 
 local f = kpse.find_file("lualibs.lua")
-print ("filename "..f)
+--print ("filename "..f)
+
 require("lualibs")  -- all part of LuaTeX
 require('unicode')
 require('string')
 require("lpeg")
-
 
 local args = require ('xindex-lapp') [[
   parameter handling
@@ -53,9 +53,9 @@ local args = require ('xindex-lapp') [[
     -l,--language (default en)
     -p,--prefix (default L)
     -u,--use_UCA
-    <input> (string)
+    -s,--use_stdin
+    <files...> (default stdin) .idx file(s)
 ]]
-
 
 --[[
     No -v flag, v is just { false }. not args.v[1] is true, so vlevel becomes 0.
@@ -76,6 +76,8 @@ if (luaVersion < "Lua 5.3") then
   os.exit()
 end
 
+useStdInput = args["use_stdin"]
+
 --local inspect = require 'inspect' 
 --print(inspect(args))
 
@@ -91,46 +93,70 @@ be no log file created.
 end
 ]]
 
+require('xindex-baselib')
 
---[[
-if not args["input"] then 
-  io.write ("Filename: ")
-  inFile = io.read()
-else
-  inFile = args["input"]
+local nInFiles = #args.files
+if not useStdInput then
+  --print(tostring(nInFiles).." input files are given!")
+  inFiles = {}    --args.files as strings
+  for i = 1,nInFiles do
+    local file = args.files_name[i]
+--    test for extension is in xindex-lapp
+--    if not file_exists(file) then
+--      if file_exists(file..".idx") then
+--        inFiles[#inFiles+1] = file..".idx"
+--      else
+--        print("Inputfile "..file.." or "..file..".idx not found!\n")
+--      end
+--    else
+      inFiles[#inFiles+1] = file
+--    end
+  end  
 end
-]]
 
-require('xindex-lib')
-
-inFile = args["input"]
-if not file_exists(inFile) then
-  if file_exists(inFile..".idx") then
-    inFile = inFile..".idx"
-  else
-    writeLog(2,"Inputfile "..inFile.." or "..inFile..".idx not found!\n",0)
-    os.exit()
-  end
-end  
+-- print ("Check Logfile:")
 
 local filename
-local logfilename
+logfilename = ""
+
 if args["output"] == '""' then
-  if inFile:sub(inFile:len()-3,inFile:len()) == ".idx" then 
-    filename = inFile:sub(1,inFile:len()-3).."ind"
-    logfilename = inFile:sub(1,inFile:len()-3).."ilg"
+  if not useStdInput then
+    if inFiles[1]:sub(inFiles[1]:len()-3,inFiles[1]:len()) == ".idx" then 
+      filename = inFiles[1]:sub(1,inFiles[1]:len()-3).."ind"
+      if nInFiles > 1 then
+        logfilename = "xindex.ilg"
+      else 
+        logfilename = inFiles[1]:sub(1,inFiles[1]:len()-3).."ilg"
+      end
+    else
+      filename = inFiles[1]..".ind"
+      if nInFiles > 1 then
+        logfilename = "xindex.ilg"
+      else 
+        logfilename = inFiles[1]..".ilg"
+      end
+    end
   else
-    filename = inFile..".ind"
-    logfilename = inFile..".ilg"
+    filename = "xindex.ind"
+    logfilename = "xindex.ilg"
   end
 else
   filename = args.output
-  logfilename = filename:gsub('%p...','')..".ilg"
+  if nInFiles > 1 or useStdInput then
+    logfilename = "xindex.ilg"
+  else 
+    logfilename = filename:gsub('%p...','')..".ilg"
+  end
 end
 
+
+
 logFile = io.open(logfilename,"w+")
+require('xindex-lib')
+
 writeLog(2,"xindex v."..version.." (c) Herbert Voß\n",-1)
 writeLog(1,"Verbose level = "..vlevel.."\n",1)
+writeLog(2,"Logfile:",logfilename,1)
 
 writeLog(2,"Open outputfile "..filename,0)
 outFile = io.open(filename,"w+")
@@ -147,7 +173,7 @@ if vlevel > 0 then
   writeLog(1,"---------- parameter ----------\n",1)
 end
 
-writeLog(2,"Using input file: "..inFile.."\n",0)
+-- writeLog(2,"Using input file: "..inFile.."\n",0)
 
 labelPrefix = args.prefix
 writeLog(2,"Label prefix: "..labelPrefix.."\n",-1)
@@ -254,6 +280,7 @@ outFile = io.open(filename,"w+")
 writeLog(2,"... done\n",0)
 
 writeLog(1,"Starting base file ... \n",2)
+
 BaseRunFile = kpse.find_file("xindex-base.lua") 
 dofile(BaseRunFile)
 
