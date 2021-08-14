@@ -427,7 +427,7 @@ __EXTERN__ Boolean_T                    Flag_language;
 __EXTERN__ char                        *Str_language;
 __EXTERN__ Boolean_T                    Flag_location;
 __EXTERN__ char                        *Str_location;
-__EXTERN__ UCollator *                  u_coll;
+__EXTERN__ UCollator                   *u_coll;
 #endif
 __EXTERN__ Boolean_T                    Flag_7bit;
 __EXTERN__ Boolean_T                    Flag_8bit;
