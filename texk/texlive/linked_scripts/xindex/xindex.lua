@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 10 2021-08-14 07:50:17Z hvoss $
+-- $Id: xindex.lua 13 2021-08-15 10:49:40Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.31
+ local version = 0.33
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -101,35 +101,32 @@ if not useStdInput then
   inFiles = {}    --args.files as strings
   for i = 1,nInFiles do
     local file = args.files_name[i]
---    test for extension is in xindex-lapp
---    if not file_exists(file) then
---      if file_exists(file..".idx") then
---        inFiles[#inFiles+1] = file..".idx"
---      else
---        print("Inputfile "..file.." or "..file..".idx not found!\n")
---      end
---    else
+    if not file_exists(file) then
+      if file_exists(file..".idx") then
+        inFiles[#inFiles+1] = file..".idx"
+      end
+    else
       inFiles[#inFiles+1] = file
---    end
+    end
   end  
 end
 
 -- print ("Check Logfile:")
 
-local filename
+outfilename = ""
 logfilename = ""
 
 if args["output"] == '""' then
   if not useStdInput then
     if inFiles[1]:sub(inFiles[1]:len()-3,inFiles[1]:len()) == ".idx" then 
-      filename = inFiles[1]:sub(1,inFiles[1]:len()-3).."ind"
+      outfilename = inFiles[1]:sub(1,inFiles[1]:len()-3).."ind"
       if nInFiles > 1 then
         logfilename = "xindex.ilg"
       else 
         logfilename = inFiles[1]:sub(1,inFiles[1]:len()-3).."ilg"
       end
     else
-      filename = inFiles[1]..".ind"
+      outfilename = inFiles[1]..".ind"
       if nInFiles > 1 then
         logfilename = "xindex.ilg"
       else 
@@ -137,15 +134,15 @@ if args["output"] == '""' then
       end
     end
   else
-    filename = "xindex.ind"
+    outfilename = "xindex.ind"
     logfilename = "xindex.ilg"
   end
 else
-  filename = args.output
+  outfilename = args.output
   if nInFiles > 1 or useStdInput then
     logfilename = "xindex.ilg"
   else 
-    logfilename = filename:gsub('%p...','')..".ilg"
+    logfilename = outfilename:gsub('%p...','')..".ilg"
   end
 end
 
@@ -156,10 +153,10 @@ require('xindex-lib')
 
 writeLog(2,"xindex v."..version.." (c) Herbert Voß\n",-1)
 writeLog(1,"Verbose level = "..vlevel.."\n",1)
-writeLog(2,"Logfile:",logfilename,1)
+writeLog(2,"Logfile:"..logfilename,1)
 
-writeLog(2,"Open outputfile "..filename,0)
-outFile = io.open(filename,"w+")
+writeLog(2,"Open outputfile "..outfilename,0)
+outFile = io.open(outfilename,"w+")
 writeLog(2," ... done\n",0)
 
 if vlevel > 0 then
@@ -275,8 +272,8 @@ else
   writeLog(1,"Index with labels\n",1)
 end
 
-writeLog(2,"Open outputfile "..filename,0)
-outFile = io.open(filename,"w+")
+writeLog(2,"Open outputfile "..outfilename,0)
+outFile = io.open(outfilename,"w+")
 writeLog(2,"... done\n",0)
 
 writeLog(1,"Starting base file ... \n",2)
