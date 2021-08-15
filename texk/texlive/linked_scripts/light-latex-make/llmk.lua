@@ -3,7 +3,7 @@
 --
 -- This is file `llmk.lua'.
 --
--- Copyright 2018-2020 Takuto ASAKURA (wtsnjp)
+-- Copyright 2018-2021 Takuto ASAKURA (wtsnjp)
 --   GitHub:   https://github.com/wtsnjp
 --   Twitter:  @wtsnjp
 --
@@ -39,8 +39,8 @@ local M = {}
 
 -- program information
 M.prog_name = 'llmk'
-M.version = '0.2.0'
-M.copyright = 'Copyright 2018-2020'
+M.version = '1.0.0'
+M.copyright = 'Copyright 2018-2021'
 M.author = 'Takuto ASAKURA (wtsnjp)'
 M.llmk_toml = 'llmk.toml'
 
@@ -57,11 +57,13 @@ M.top_level_spec = {
   bibtex = {'string', 'bibtex'},
   clean_files = {'[string]', {
     '%B.aux', '%B.bbl', '%B.bcf', '%B-blx.bib', '%B.blg', '%B.fls',
-    '%B.idx', '%B.ilg', '%B.log', '%B.out', '%B.run.xml', '%B.toc'
+    '%B.idx', '%B.ilg', '%B.ind', '%B.log', '%B.nav', '%B.out',
+    '%B.run.xml', '%B.snm', '%B.toc', '%B.vrb',
   }},
   clobber_files = {'[string]', {'%B.dvi', '%B.pdf', '%B.ps', '%B.synctex.gz'}},
   dvipdf = {'string', 'dvipdfmx'},
   dvips = {'string', 'dvips'},
+  extra_clean_files = {'[string]', {}},
   latex = {'string', 'lualatex'},
   llmk_version = {'string', nil},
   makeindex = {'string', 'makeindex'},
@@ -169,9 +171,13 @@ function M.dbg_print_table(dbg_type, table)
   helper(table, 2)
 end
 
--- return the filename if exits, even if the ".tex" extension is omitted
--- otherwise return nil
-local lfs = require("lfs")
+function M.get_status(raw)
+  if os.type == 'windows' then
+    return raw
+  else
+    return raw / 256
+  end
+end
 
 -- Replace config param to filename
 function M.replace_specifiers(str, source, target)
@@ -301,6 +307,13 @@ local function version_check(given_version)
     llmk.util.err_print('warning',
       'This program (v%d.%d) is older than the specified llmk_version (v%d.%d)',
       major, minor, given_major, given_minor)
+  end
+
+  -- warn if the given mojor version is older than this program
+  if given_major < major then
+    llmk.util.err_print('warning',
+      'The specified llmk_version (v%d.%d) is older than this program (v%d.%d)',
+      given_major, given_minor, major, minor)
   end
 
   -- Note: no breaking change has been made (yet)
@@ -848,7 +861,13 @@ function M.get_toml(fn)
       end
     else
       if toml_field then
-        toml = toml .. string.match(l, '^%s*%%%s*(.-)%s*$') .. '\n'
+        local match = string.match(l, '^%s*%%%s*(.-)%s*$')
+        if match == nil then
+          llmk.util.err_print('error', 'Encounter invalid line in TOML field')
+          os.exit(llmk.const.exit_error)
+        else
+          toml = toml .. match .. '\n'
+        end
       end
     end
 
@@ -1232,10 +1251,12 @@ local function run_program(name, prog, fn, fdb, postprocess)
   end
 
   -- call and check the status
-  local status = os.execute(cmd)
-  if status > 0 then
+  -- Note: os.execute() returns values 256 multiples of actual status
+  --       except on Windows
+  local cmd_status = llmk.util.get_status(os.execute(cmd))
+  if cmd_status > 0 then
     llmk.util.err_print('error',
-      'Fail running %s (exit code: %d)', cmd, status)
+      'Fail running %s (exit code: %d)', cmd, cmd_status)
     os.exit(llmk.const.exit_failure)
   end
 
@@ -1327,12 +1348,14 @@ end
 function M.clean(fn, config)
   llmk.util.err_print('info', 'Begining cleaning for "%s"', fn)
   replace_spec_and_remove_files(config.clean_files, fn)
+  replace_spec_and_remove_files(config.extra_clean_files, fn)
 end
 
 -- the actual process for the --clobber action
 function M.clobber(fn, config)
   llmk.util.err_print('info', 'Begining clobbering for "%s"', fn)
   replace_spec_and_remove_files(config.clean_files, fn)
+  replace_spec_and_remove_files(config.extra_clean_files, fn)
   replace_spec_and_remove_files(config.clobber_files, fn)
 end
 
