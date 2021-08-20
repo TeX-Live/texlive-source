@@ -38,7 +38,7 @@ showHelp()
 
 showVersion()
 {
-  echo 0.2.1
+  echo 0.3.0
   exit 0
 }
 
@@ -46,15 +46,8 @@ showVersion()
 packages="tikz tikz-cd pgfplots amsmath amssymb"
 libraries=""
 
-if ! [ -x "$(command -v xelatex)" ]
-then
-  error "xelatex could not be found"
-fi
-
-if ! [ -x "$(command -v pdf2svg)" ]
-then
-  error "pdf2svg could not be found"
-fi
+# The default TeX engine
+texengine='lualatex'
 
 # Parsing the arguments
 while [ $# -gt 1 ]
@@ -113,6 +106,27 @@ do
       quiet=1
       shift
       ;;
+    --lualatex)
+      shift
+      ;;
+    --xelatex)
+      if command -v xelatex > /dev/null
+      then
+        texengine='xelatex'
+      else
+        error "Couldn't find xelatex: required by the --xelatex option"
+      fi
+      shift
+      ;;
+    --pdflatex)
+      if command -v pdflatex > /dev/null
+      then
+        texengine='pdflatex'
+      else
+        error "Couldn't find pdflatex: required by the --pdflatex option"
+      fi
+      shift
+      ;;
     *) 
       error "Unexpected token: \"$1\""
       ;;
@@ -126,10 +140,10 @@ case "$1" in
   -v|--version)
     showVersion
     ;;
-  "")
+  '')
     error "No input path provided"
     ;;
-  "-")
+  -)
     input=/dev/stdin
     ;;
   *)
@@ -145,11 +159,8 @@ case "$output" in
     ;;
 
   # If no output path is provided, use the basename of the input
-  "") 
-    if [ -x "$(command -v dirname)" ]
-    then
-      output="$(dirname "$input")/$(basename "$input" | cut -d "." -f1).svg" 
-    fi
+  '') 
+    output="$(dirname "$input")/$(basename "$input" | cut -d "." -f1).svg" 
     ;;
 
   # If the output path is provided, but it resolves to directory, output a 
@@ -163,14 +174,14 @@ tmp_dir="$(mktemp -d)"
 tex_file="$tmp_dir/tmp.tex"
 
 # Generate the LaTeX document
-printf "\documentclass[crop,tikz,multi=false]{standalone}\n" > "$tex_file"
+printf '\\documentclass[crop,tikz,multi=false]{standalone}\n' > "$tex_file"
 
-for package in $(echo "$packages" | tr " " "\n" | sort | uniq)
+for package in $packages
 do
   printf '\\usepackage{%s}\n' "$package" >> "$tex_file"
 done
 
-for library in $(echo "$libraries" | tr " " "\n" | sort | uniq) 
+for library in $libraries
 do
   printf '\\usetikzlibrary{%s}\n' "$library" >> "$tex_file"
 done
@@ -189,18 +200,19 @@ printf "\\\end{document}\n" >> "$tex_file"
 if [ -z "$quiet" ]
 then
   message "Rendering the LaTeX document. . ."
-  xelatex -halt-on-error -output-directory="$tmp_dir" "$tex_file"
+  $texengine -halt-on-error -output-directory="$tmp_dir" "$tex_file"
 else
-  xelatex -halt-on-error -output-directory="$tmp_dir" "$tex_file" 1> /dev/null 2>&1
+  $texengine -halt-on-error -output-directory="$tmp_dir" "$tex_file" 1> /dev/null 2>&1
 fi
 
+# TODO: Make this less horrible?
 S=$?
 if [ $S -ne 0 ]
 then
   rm "$tmp_dir" -r
   if [ -z "$quiet" ]
   then
-    error "xelatex exited with code $S" $S
+    error "$texengine exited with code $S" $S
   else
     exit $S
   fi
@@ -213,6 +225,7 @@ fi
 
 pdf2svg "$tmp_dir/tmp.pdf" "$output" 1
 
+# TODO: Make this less horrible?
 S=$?
 if [ $S -ne 0 ]
 then
