@@ -24389,7 +24389,7 @@ distinguishable by the condition |cur_p=null|.
             (replace_count(#) = 0)) {an empty |disc_node|}
         or ((type(#) = math_node) and (width(#) = 0))
         or ((type(#) = kern_node) and
-            ((width(#) = 0) or (subtype(#) = normal)))
+            ((width(#) = 0) or (subtype(#) = normal) or (subtype(#) = auto_kern)))
         or ((type(#) = glue_node) and (glue_ptr(#) = zero_glue))
         or ((type(#) = hlist_node) and (width(#) = 0) and (height(#) = 0) and
             (depth(#) = 0) and (list_ptr(#) = null))

@@ -1,3 +1,10 @@
+2021-08-21  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (cp_skipable): make autokerns "skipable", so character
+	protrusion works with chars having autokern
+	(\pdfprependkern/\pdfappendkern).
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-August/004338.html
+
 2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* regex/regexec.c: Avoid MSVC compiler error.
