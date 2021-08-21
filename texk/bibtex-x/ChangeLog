@@ -11,7 +11,8 @@
 	* tests/ubasic.{bib,bbl},yannis.{bib,bbl}:
 	Update.
 	* tests/bibtexu-yannis.test:
-	Reenable again (hopefully fixed the issue).
+	Reenable again (fixed the fails on FreeBSD, OpenBSD, sparc-solaris).
+	https://build.contextgarden.net/#/waterfall?tags=c.texlive
 
 2021-08-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 

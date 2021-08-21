@@ -4,11 +4,6 @@
 # You may freely use, modify and/or distribute this file.
 # Some actual sorting needed.
 
-# Disable, since it fails on (at least) FreeBSD, OpenBSD, sparc-solaris.
-# https://tug.org/pipermail/tlbuild/2021q2/004918.html
-# 
-# Looking for someone interested in debugging ...
-
 test -d tests || mkdir -p tests
 
 testname=yannis
