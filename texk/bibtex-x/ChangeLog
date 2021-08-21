@@ -1,3 +1,18 @@
+2021-08-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* bibtex-4.c:
+	Fix bug of collation (check END_OF_STRING, compare arg1 and arg2).
+	* bibtex-2.c, gblproc.h:
+	Fix bug of making upper/lower cases.
+	It may remain a bug when lengths are different between
+	from-string and to-string, for example:
+	  U+00DF ß LATIN SMALL LETTER SHARP S, 0xC3 0x9F in UTF-8
+	  U+1E9E ẞ LATIN CAPITAL LETTER SHARP S, 0xE1 0xBA 0x9E in UTF-8
+	* tests/ubasic.{bib,bbl},yannis.{bib,bbl}:
+	Update.
+	* tests/bibtexu-yannis.test:
+	Reenable again (hopefully fixed the issue).
+
 2021-08-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* bibtex.c, bibtex-[23].c, gbl{proc,vars}.h:
@@ -100,7 +115,7 @@
 
 	Merge bibtex8/ and bibtexu/ into bibtex-x (extended).
 	* bibtex-[234].c, bibtex.[ch], gblprocs.h, gblvars.h, utils.c:
-	Use '#ifndef UTF_8 <bibtex8 code> #ekse <bibtexu code> #endif'.
+	Use '#ifndef UTF_8 <bibtex8 code> #else <bibtexu code> #endif'.
 	* version.h: Set date to '18 mar 2013'.
 	Makefile.am, configure.ac: Adapted.
 

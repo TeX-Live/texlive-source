@@ -2928,17 +2928,18 @@ Boolean_T         less_than (CiteNumber_T arg1, CiteNumber_T arg2)
 BEGIN
   StrEntLoc_T		ptr1,
 			ptr2;
+  Boolean_T		less_than;
 #ifdef UTF_8
 /*
 We use ICU Collator ucol_strcollUTF8() to compare the Unicode in UTF-8.
-There is an command line option "-o", "--location" to set the rule of collation.
+There is a command line option "-o", "--location" to set the rule of collation.
 */
   Integer_T lenk1, lenk2;
-  UBool u_less;
+  UBool u_cmp;
   UErrorCode err1 = U_ZERO_ERROR;
+  char *eos1, *eos2;
   const char *ustr1, *ustr2;
 #else
-  Boolean_T		less_than;
   Integer_T		char_ptr;
   ASCIICode_T		char1,
 			char2;
@@ -2953,10 +2954,12 @@ There is an command line option "-o", "--location" to set the rule of collation.
 #ifdef UTF_8
   ustr1 = (const char *)&ENTRY_STRS(ptr1, 0);
   ustr2 = (const char *)&ENTRY_STRS(ptr2, 0);
-  lenk1 = strlen(ustr1);
-  lenk2 = strlen(ustr2);
+  eos1 = strchr(ustr1, END_OF_STRING);
+  eos2 = strchr(ustr2, END_OF_STRING);
+  lenk1 = eos1 ? eos1-ustr1 : strlen(ustr1);
+  lenk2 = eos2 ? eos2-ustr2 : strlen(ustr2);
 
-  u_less = ucol_strcollUTF8(u_coll, ustr1, lenk1, ustr2, lenk2, &err1)==UCOL_LESS;
+  u_cmp = ucol_strcollUTF8(u_coll, ustr1, lenk1, ustr2, lenk2, &err1);
   if (!U_SUCCESS(err1))
   BEGIN
 	printf("Error in ucol_strcollUTF8.\n");
@@ -2966,11 +2969,22 @@ There is an command line option "-o", "--location" to set the rule of collation.
 #endif                      			/* TRACE */
   END
 
-#ifdef TRACE
-  if (Flag_trace)
-    TRACE_PR_LN2 ("... first is smaller than second? -- %s (ICU)", (u_less?"T":"F"));
-#endif                      			/* TRACE */
-  return u_less;
+  if (u_cmp==UCOL_EQUAL)
+      BEGIN
+        if (arg1 < arg2)
+        BEGIN
+	  COMPARE_RETURN (TRUE);
+	END
+        else if (arg1 > arg2)
+        BEGIN
+	  COMPARE_RETURN (FALSE);
+        END
+        else
+        BEGIN
+          CONFUSION ("Duplicate sort key");
+        END
+      END
+  less_than = u_cmp==UCOL_LESS;
 #else
   char_ptr = 0;
   LOOP
@@ -3013,13 +3027,13 @@ There is an command line option "-o", "--location" to set the rule of collation.
     END
     INCR (char_ptr);
   END
+#endif
 Exit_Label:
 #ifdef TRACE
   if (Flag_trace)
     TRACE_PR_LN2 ("... first is smaller than second? -- %s", (less_than?"T":"F"));
 #endif                      			/* TRACE */
   return (less_than);
-#endif
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 301 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 

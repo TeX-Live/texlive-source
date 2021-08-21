@@ -459,15 +459,10 @@ character. When it's UTF-8, we should care about the length of charater.   23/se
 When we do lower_case_uni, the length of string have been changed. So we should do some job 
 for the precessing after lower case. Here there may be some potential bug.      23/sep/2009
 */
-		int16_t i=ex_buf_ptr;
 		int16_t llen;
 
-		while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
-		BEGIN
-		  i++;		
-		END
-		llen=(i-ex_buf_ptr);
-		ex_buf_ptr=ex_buf_length-1+lower_case_uni (ex_buf, ex_buf_ptr, llen)+ex_buf_ptr;
+		llen=utf8len(ex_buf[ex_buf_ptr]);
+		ex_buf_ptr=ex_buf_ptr+lower_case_uni (ex_buf, ex_buf_ptr, llen)-1;
 #else
 		lower_case (ex_buf, ex_buf_ptr, 1);
 #endif
@@ -487,14 +482,10 @@ for the precessing after lower case. Here there may be some potential bug.      
 Here the same for processing the length of string after change case. 23/sep/2009
 */
 	      BEGIN
-	        int16_t i=ex_buf_ptr;
-	        int16_t llen;
-	        while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
-       	        BEGIN
-		  i++;		
-	        END
-	        llen=(i-ex_buf_ptr+1);
-		ex_buf_ptr=ex_buf_ptr-1+lower_case_uni (ex_buf, ex_buf_ptr, llen);
+		int16_t llen;
+
+		llen=utf8len(ex_buf[ex_buf_ptr]);
+		ex_buf_ptr=ex_buf_ptr+lower_case_uni (ex_buf, ex_buf_ptr, llen)-1;
 	      END
 #else
 	      lower_case (ex_buf, ex_buf_ptr, 1);
@@ -506,14 +497,10 @@ Here the same for processing the length of string after change case. 23/sep/2009
 Here the same for processing the length of string after change case. 23/sep/2009
 */
               BEGIN
-	        int16_t i=ex_buf_ptr;
-	        int16_t ulen;
-	        while ((ex_buf[i] != COLON) && (ex_buf[i] != WHITE_SPACE) && (i< ex_buf_length))
-       	        BEGIN
-		  i++;		
-	        END
-	        ulen=(i-ex_buf_ptr+1);
-	        ex_buf_ptr=ex_buf_ptr-1+upper_case_uni (ex_buf, ex_buf_ptr, ulen);
+		int16_t ulen;
+
+		ulen=utf8len(ex_buf[ex_buf_ptr]);
+		ex_buf_ptr=ex_buf_ptr+upper_case_uni (ex_buf, ex_buf_ptr, ulen)-1;
               END
 #else
 	      upper_case (ex_buf, ex_buf_ptr, 1);
