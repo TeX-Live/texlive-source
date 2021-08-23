@@ -1,3 +1,8 @@
+2021-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/upmendex.test, tests/rule[12].ist, tests/rule.{idx,ind}:
+	Add new tests for the keyword "icu_rules" in style file.
+
 2021-08-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.58  Beta version.

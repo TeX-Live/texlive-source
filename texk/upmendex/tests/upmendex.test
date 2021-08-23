@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* pprec*.* rangetwo.*
+rm -f foo.* uni.* pprec*.* rangetwo.* rule*.*
 
 ./upmendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
 	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
@@ -45,4 +45,13 @@ cat $srcdir/tests/uni.idx | \
 ./upmendex -s $srcdir/tests/pprec2.ist $srcdir/tests/pprecA.idx \
 	-o pprecA-2.ind1 -t pprecA-2.ilg \
 	&& diff $srcdir/tests/pprecA-2.ind pprecA-2.ind1 || exit 1
+
+# test for icu_rules
+./upmendex -s $srcdir/tests/uni.ist -s $srcdir/tests/rule1.ist $srcdir/tests/rule.idx \
+	-o rule1.ind1 -t rule1.ilg \
+	&& diff $srcdir/tests/rule.ind rule1.ind1 || exit 1
+
+./upmendex -s $srcdir/tests/uni.ist -s $srcdir/tests/rule2.ist $srcdir/tests/rule.idx \
+	-o rule2.ind1 -t rule2.ilg \
+	&& diff $srcdir/tests/rule.ind rule2.ind1 || exit 1
 
