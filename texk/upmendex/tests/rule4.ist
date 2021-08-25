@@ -1,0 +1,4 @@
+% -*- coding: utf-8 -*-
+% To test malformed input
+
+icu_rules "&a<<<A<C<<\U000000c7<<c<<\uE7<u<<U<<\x{fc}<<\xDC<b<<B"

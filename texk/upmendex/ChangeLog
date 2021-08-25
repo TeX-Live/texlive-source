@@ -1,3 +1,10 @@
+2021-08-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* sort.c:
+	Initialize a string. Check malformed input for "icu_rules".
+	* tests/upmendex.test, tests/rule[34].ist:
+	Add new tests.
+
 2021-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/upmendex.test, tests/rule[12].ist, tests/rule.{idx,ind}:

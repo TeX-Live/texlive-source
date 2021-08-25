@@ -17,7 +17,7 @@ void wsort(struct index *ind, int num)
 {
 	int i,order;
 	UErrorCode status;
-	UChar rules[STYBUFSIZE];
+	UChar rules[STYBUFSIZE] = {'\0'};
 
 	for (order=1,i=0;;i++) {
 		switch (character_order[i]) {
@@ -324,10 +324,11 @@ static int get_charset_juncture(UChar *str)
 	}
 }
 
-static int unescape(const unsigned char *src, UChar *dist)
+static int unescape(const unsigned char *src, UChar *dest)
 {
-	int i,j,k;
+	int i,j,k,ret;
 	char tmp[STYBUFSIZE];
+	UErrorCode status;
 
 	for (i=j=0;i<STYBUFSIZE;i++) {
 		if (src[i]=='\0') {
@@ -336,15 +337,23 @@ static int unescape(const unsigned char *src, UChar *dist)
 		else if (src[i]< 0x80 && (src[i+1]>=0x80 || src[i+1]=='\0')) {
 			strncpy(tmp,(char *)&src[j],i-j+1);
 			tmp[i-j+1]='\0';
-			k=u_strlen(dist);
-			u_unescape(tmp, &dist[k], STYBUFSIZE-k);
+			k=u_strlen(dest);
+			ret=u_unescape(tmp, &dest[k], STYBUFSIZE-k);
+			if (ret==0) {
+				verb_printf(efp, "\n[ICU] Escape sequence in input seems malformed.\n");
+				exit(254);
+			}
 			j=i+1;
 		}
 		else if (src[i]>=0x80 && (src[i+1]< 0x80 || src[i+1]=='\0')) {
 			strncpy(tmp,(char *)&src[j],i-j+1);
 			tmp[i-j+1]='\0';
-			k=u_strlen(dist);
-			multibyte_to_widechar(&dist[k], STYBUFSIZE-k, tmp);
+			k=u_strlen(dest);
+			u_strFromUTF8(&dest[k], STYBUFSIZE-k, NULL, tmp, -1, &status);
+			if (U_FAILURE(status)) {
+				verb_printf(efp, "\n[ICU] Input string seems malformed.: %s\n", u_errorName(status));
+				exit(254);
+			}
 			j=i+1;
 		}
 	}

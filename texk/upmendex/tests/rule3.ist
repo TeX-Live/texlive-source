@@ -1,0 +1,4 @@
+% -*- coding: latin-1 -*-
+% To test malformed input
+
+icu_rules "&a<<<A<C<<Ç<<c<<ç<u<<U<<ü<<Ü<b<<B"
