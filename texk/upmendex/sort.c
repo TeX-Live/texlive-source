@@ -349,6 +349,7 @@ static int unescape(const unsigned char *src, UChar *dest)
 			strncpy(tmp,(char *)&src[j],i-j+1);
 			tmp[i-j+1]='\0';
 			k=u_strlen(dest);
+			status=U_ZERO_ERROR;
 			u_strFromUTF8(&dest[k], STYBUFSIZE-k, NULL, tmp, -1, &status);
 			if (U_FAILURE(status)) {
 				verb_printf(efp, "\n[ICU] Input string seems malformed.: %s\n", u_errorName(status));
