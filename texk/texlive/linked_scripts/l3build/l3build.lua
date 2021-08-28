@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2021-05-06"
+release_date = "2021-08-28"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -43,6 +43,8 @@ local print            = print
 local select           = select
 local tonumber         = tonumber
 local exit             = os.exit
+local open             = io.open
+local stdout           = io.stdout
 
 -- l3build setup and functions
 kpse.set_program_name("kpsewhich")
@@ -159,6 +161,35 @@ if options["target"] == "check" then
           print("  - " .. testdir .. "/" .. i)
         end
         print("")
+      end
+      if options["show-saves"] then
+        local savecmds, recheckcmds = "", ""
+        for _,config in ipairs(failed) do
+          local testdir = testdir
+          if config ~= "build" then
+            testdir = testdir .. "-" .. config
+          end
+          local f = open(testdir .. "/.savecommands")
+          if not f then
+            print("Error: Cannot find save commands for configuration " ..
+              config)
+            exit(2)
+          end
+          for line in f:lines() do
+             if line == "" then break end
+             savecmds = savecmds .. "  " .. line .. "\n"
+          end
+          for line in f:lines() do
+             recheckcmds = recheckcmds .. "  " .. line .. "\n"
+          end
+          f:close()
+        end
+        print"To regenerate the test files, run\n"
+        print(savecmds)
+        if recheckcmds ~= "" then
+          print"To detect engine specific differences, run after that\n"
+          print(recheckcmds)
+        end
       end
       exit(1)
     else
