@@ -76,13 +76,9 @@ void styread(const char *filename)
 		if (getparam(buff,"symhead_negative",symhead_negative)) continue;
 		if (getparam(buff,"numhead_positive",numhead_positive)) continue;
 		if (getparam(buff,"numhead_negative",numhead_negative)) continue;
-		cc=scompare(buff,"lethead_flag");
-		if (cc!= -1) {
-			lethead_flag=atoi(&buff[cc]);
-			continue;
-		}
-		cc=scompare(buff,"heading_flag");
-		if (cc!= -1) {
+		if ( (cc=scompare(buff,"lethead_flag")) != -1 ||
+		     (cc=scompare(buff,"heading_flag")) != -1 ||
+		     (cc=scompare(buff,"headings_flag")) != -1 ) {
 			lethead_flag=atoi(&buff[cc]);
 			continue;
 		}
@@ -164,6 +160,13 @@ void styread(const char *filename)
 			continue;
 		}
 		if (getparam(buff,"icu_attributes", icu_attr_str   )) continue;
+
+		cc=strcspn(buff," \t\r\n");
+		if (cc>0) buff[cc]='\0';
+		if (buff[0]=='%' || buff[0]=='\n') continue;
+		if (strlen(buff)>0) {
+			verb_printf(efp,"\nWarning: Unknown specifier (%s).", buff);
+		}
 	}
 	fclose(fp);
 

@@ -1,3 +1,10 @@
+2021-08-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* styfile.c:
+	Add a alias "headings_flag" of the keyword "heading_flag"
+	in style file for compatibility with makeindex.
+	Warn if specifier in style file is unknown.
+
 2021-08-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* sort.c:
