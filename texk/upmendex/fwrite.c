@@ -280,8 +280,8 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 			}
 			else {
-				if (lethead_flag!=0) {
-					if (symbol_flag && strlen(symbol)) {
+				if (lethead_flag!=0 && symbol_flag) {
+					if (strlen(symbol)) {
 						fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
 					}
 					else if (lethead_flag>0) {

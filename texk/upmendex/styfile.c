@@ -319,54 +319,62 @@ static int sstrncmp(const char *s1, const char *s2, size_t len)
 void set_icu_attributes(void)
 {
 	int i,attr;
-	char *pos, *tmp;
+	char *pos, *head, *tmp;
 
 	for (i=0;i<UCOL_ATTRIBUTE_COUNT;i++) icu_attributes[i]=UCOL_DEFAULT;
 	tmp=icu_attr_str;
-	if ((pos=strstr(tmp,"alternate:"))>0) {
+	head=strtok(tmp, " \t");
+	while (head!=NULL) {
+	    pos=head;
+	    if (strncmp(pos,"alternate:",10)==0) {
 		pos+=10;  attr=UCOL_ALTERNATE_HANDLING;
-		if      (strstr(pos,"shifted"))       icu_attributes[attr]=UCOL_SHIFTED;
-		else if (strstr(pos,"non-ignorable")) icu_attributes[attr]=UCOL_NON_IGNORABLE;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (alternate).");
-	}
-	if ((pos=strstr(tmp,"strength:"))>0) {
+		if      (strcmp(pos,"shifted")==0)       icu_attributes[attr]=UCOL_SHIFTED;
+		else if (strcmp(pos,"non-ignorable")==0) icu_attributes[attr]=UCOL_NON_IGNORABLE;
+		else	goto illegal;
+	    } else
+	    if (strncmp(pos,"strength:",9)==0) {
 		pos+=9;   attr=UCOL_STRENGTH;
-		if      (strstr(pos,"primary"))       icu_attributes[attr]=UCOL_PRIMARY;
-		else if (strstr(pos,"secondary"))     icu_attributes[attr]=UCOL_SECONDARY;
-		else if (strstr(pos,"tertiary"))      icu_attributes[attr]=UCOL_TERTIARY;
-		else if (strstr(pos,"quaternary"))    icu_attributes[attr]=UCOL_QUATERNARY;
-		else if (strstr(pos,"identical"))     icu_attributes[attr]=UCOL_IDENTICAL;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (strength).");
-	}
-	if ((pos=strstr(tmp,"french-collation:"))>0) {
+		if      (strcmp(pos,"primary")==0)       icu_attributes[attr]=UCOL_PRIMARY;
+		else if (strcmp(pos,"secondary")==0)     icu_attributes[attr]=UCOL_SECONDARY;
+		else if (strcmp(pos,"tertiary")==0)      icu_attributes[attr]=UCOL_TERTIARY;
+		else if (strcmp(pos,"quaternary")==0)    icu_attributes[attr]=UCOL_QUATERNARY;
+		else if (strcmp(pos,"identical")==0)     icu_attributes[attr]=UCOL_IDENTICAL;
+		else	goto illegal;
+	    } else
+	      if (strncmp(pos,"french-collation:",17)==0) {
 		pos+=17;  attr=UCOL_FRENCH_COLLATION;
-		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
-		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (french-collation).");
-	}
-	if ((pos=strstr(tmp,"case-first:"))>0) {
+		if      (strcmp(pos,"on")==0)            icu_attributes[attr]=UCOL_ON;
+		else if (strcmp(pos,"off")==0)           icu_attributes[attr]=UCOL_OFF;
+		else	goto illegal;
+	    } else
+	    if (strncmp(pos,"case-first:",11)==0) {
 		pos+=11;  attr=UCOL_CASE_FIRST;
-		if      (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
-		else if (strstr(pos,"upper-first"))   icu_attributes[attr]=UCOL_UPPER_FIRST;
-		else if (strstr(pos,"lower-first"))   icu_attributes[attr]=UCOL_LOWER_FIRST;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (case-first).");
-	}
-	if ((pos=strstr(tmp,"case-level:"))>0) {
+		if      (strcmp(pos,"off")==0)           icu_attributes[attr]=UCOL_OFF;
+		else if (strcmp(pos,"upper-first")==0)   icu_attributes[attr]=UCOL_UPPER_FIRST;
+		else if (strcmp(pos,"lower-first")==0)   icu_attributes[attr]=UCOL_LOWER_FIRST;
+		else	goto illegal;
+	    } else
+	    if (strncmp(pos,"case-level:",11)==0) {
 		pos+=11;  attr=UCOL_CASE_LEVEL;
-		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
-		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (case-level).");
-	}
-	if ((pos=strstr(tmp,"normalization-mode:"))>0) {
+		if      (strcmp(pos,"on")==0)            icu_attributes[attr]=UCOL_ON;
+		else if (strcmp(pos,"off")==0)           icu_attributes[attr]=UCOL_OFF;
+		else	goto illegal;
+	    } else
+	    if (strncmp(pos,"normalization-mode:",19)==0) {
 		pos+=19;  attr=UCOL_NORMALIZATION_MODE;
-		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
-		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (normalization-mode).");
-	}
-	if ((pos=strstr(tmp,"numeric-ordering:"))>0) {
+		if      (strcmp(pos,"on")==0)            icu_attributes[attr]=UCOL_ON;
+		else if (strcmp(pos,"off")==0)           icu_attributes[attr]=UCOL_OFF;
+		else	goto illegal;
+	    } else
+	    if (strncmp(pos,"numeric-ordering:",17)==0) {
 		pos+=17;  attr=UCOL_NUMERIC_COLLATION;
-		if      (strstr(pos,"on"))            icu_attributes[attr]=UCOL_ON;
-		else if (strstr(pos,"off"))           icu_attributes[attr]=UCOL_OFF;
-		else	verb_printf(efp,"\nWarning: Illegal input for icu_attributes (numeric-ordering).");
+		if      (strcmp(pos,"on")==0)            icu_attributes[attr]=UCOL_ON;
+		else if (strcmp(pos,"off")==0)           icu_attributes[attr]=UCOL_OFF;
+		else	goto illegal;
+	    } else {
+	illegal:
+		verb_printf(efp,"\nWarning: Illegal input for icu_attributes (%s).",head);
+	    }
+	    head=strtok(NULL, " \t");
 	}
 }

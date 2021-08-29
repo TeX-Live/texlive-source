@@ -1,5 +1,13 @@
 \begin{theindex}
 
+\centerline{\bfseries ◆◆◆ Symbols ◆◆◆}\par\nobreak
+  \item #\leaders\hbox{$\cdot$}\hfill 2000
+  \item $\leaders\hbox{$\cdot$}\hfill 2001
+  \item 10\leaders\hbox{$\cdot$}\hfill 1000
+  \item 2\leaders\hbox{$\cdot$}\hfill 1001
+
+  \indexspace
+
 \centerline{\bfseries ◆◆◆ A ◆◆◆}\par\nobreak
   \item a\leaders\hbox{$\cdot$}\hfill 401
   \item A\leaders\hbox{$\cdot$}\hfill 400

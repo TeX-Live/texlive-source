@@ -3,43 +3,35 @@
 \centerline{\bfseries ◆◆◆ Symbols ◆◆◆}\par\nobreak
   \item #\leaders\hbox{$\cdot$}\hfill 2000
   \item $\leaders\hbox{$\cdot$}\hfill 2001
-  \item 10\leaders\hbox{$\cdot$}\hfill 1000
   \item 2\leaders\hbox{$\cdot$}\hfill 1001
+  \item 10\leaders\hbox{$\cdot$}\hfill 1000
 
   \indexspace
 
 \centerline{\bfseries ◆◆◆ A ◆◆◆}\par\nobreak
-  \item a\leaders\hbox{$\cdot$}\hfill 401
   \item A\leaders\hbox{$\cdot$}\hfill 400
+  \item a\leaders\hbox{$\cdot$}\hfill 401
 
   \indexspace
 
 \centerline{\bfseries ◆◆◆ B ◆◆◆}\par\nobreak
-  \item b\leaders\hbox{$\cdot$}\hfill 403
   \item B\leaders\hbox{$\cdot$}\hfill 402
+  \item b\leaders\hbox{$\cdot$}\hfill 403
 
   \indexspace
 
 \centerline{\bfseries ◆◆◆ C ◆◆◆}\par\nobreak
-  \item c\leaders\hbox{$\cdot$}\hfill 405
   \item C\leaders\hbox{$\cdot$}\hfill 404
-
-  \indexspace
-
-\centerline{\bfseries ◆◆◆ Ç ◆◆◆}\par\nobreak
-  \item ç\leaders\hbox{$\cdot$}\hfill 407
+  \item c\leaders\hbox{$\cdot$}\hfill 405
   \item Ç\leaders\hbox{$\cdot$}\hfill 406
+  \item ç\leaders\hbox{$\cdot$}\hfill 407
 
   \indexspace
 
 \centerline{\bfseries ◆◆◆ U ◆◆◆}\par\nobreak
-  \item u\leaders\hbox{$\cdot$}\hfill 409
   \item U\leaders\hbox{$\cdot$}\hfill 408
-
-  \indexspace
-
-\centerline{\bfseries ◆◆◆ Ü ◆◆◆}\par\nobreak
-  \item ü\leaders\hbox{$\cdot$}\hfill 411
+  \item u\leaders\hbox{$\cdot$}\hfill 409
   \item Ü\leaders\hbox{$\cdot$}\hfill 410
+  \item ü\leaders\hbox{$\cdot$}\hfill 411
 
 \end{theindex}
