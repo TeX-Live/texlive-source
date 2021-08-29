@@ -64,6 +64,8 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
 	@HARFBUZZ_TREE@/src/hb-meta.hh \
+	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.cc \
+	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.hh \
 	@HARFBUZZ_TREE@/src/hb-mutex.hh \
 	@HARFBUZZ_TREE@/src/hb-null.hh \
 	@HARFBUZZ_TREE@/src/hb-number-parser.hh \
@@ -80,6 +82,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-gasp-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color-cbdt-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-color-colrv1-closure.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cmap-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-face.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-face.hh \
@@ -101,6 +104,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-pool.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-macroman.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-post-table-v2subset.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-tag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-sanitize.hh \

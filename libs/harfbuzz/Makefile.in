@@ -127,6 +127,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-face.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-font.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-map.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-number.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-cff1-table.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.$(OBJEXT) \
@@ -207,6 +208,7 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-map.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ms-feature-ranges.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-number.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff1-table.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff2-table.Po \
@@ -737,8 +739,10 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-iter.hh @HARFBUZZ_TREE@/src/hb-kern.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh @HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
-	@HARFBUZZ_TREE@/src/hb-meta.hh @HARFBUZZ_TREE@/src/hb-mutex.hh \
-	@HARFBUZZ_TREE@/src/hb-null.hh \
+	@HARFBUZZ_TREE@/src/hb-meta.hh \
+	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.cc \
+	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.hh \
+	@HARFBUZZ_TREE@/src/hb-mutex.hh @HARFBUZZ_TREE@/src/hb-null.hh \
 	@HARFBUZZ_TREE@/src/hb-number-parser.hh \
 	@HARFBUZZ_TREE@/src/hb-number.cc \
 	@HARFBUZZ_TREE@/src/hb-number.hh \
@@ -753,6 +757,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-gasp-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color-cbdt-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-color-colrv1-closure.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cmap-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-face.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-face.hh \
@@ -774,6 +779,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-pool.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-macroman.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-post-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-post-table-v2subset.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-tag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-sanitize.hh \
@@ -996,6 +1002,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-map.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-number.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1159,6 +1168,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-map.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ms-feature-ranges.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-number.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff1-table.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff2-table.Po@am__quote@ # am--include-marker
@@ -1809,6 +1819,7 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-map.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ms-feature-ranges.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-number.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff1-table.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff2-table.Po
@@ -1910,6 +1921,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-font.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-graphite2.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-map.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ms-feature-ranges.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-number.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff1-table.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ot-cff2-table.Po
