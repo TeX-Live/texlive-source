@@ -12,8 +12,8 @@ See also comments in ../texk/README.
 cairo 1.16.0 - checked 20oct18
   http://cairographics.org/releases/
 
-freetype2 2.10.4 - checked 21oct20
-  http://savannah.nongnu.org/download/freetype/
+freetype2 2.11.0 - checked 29aug21
+  http://download.savannah.gnu.org/releases/freetype/
 
 gd 2.3.2 - checked 28aug21
   https://github.com/libgd/libgd/releases
