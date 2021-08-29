@@ -323,7 +323,7 @@ void set_icu_attributes(void)
 
 	for (i=0;i<UCOL_ATTRIBUTE_COUNT;i++) icu_attributes[i]=UCOL_DEFAULT;
 	tmp=icu_attr_str;
-	head=strtok(tmp, " \t");
+	head=strtok(tmp, " \t\r\n");
 	while (head!=NULL) {
 	    pos=head;
 	    if (strncmp(pos,"alternate:",10)==0) {
@@ -375,6 +375,6 @@ void set_icu_attributes(void)
 	illegal:
 		verb_printf(efp,"\nWarning: Illegal input for icu_attributes (%s).",head);
 	    }
-	    head=strtok(NULL, " \t");
+	    head=strtok(NULL, " \t\r\n");
 	}
 }

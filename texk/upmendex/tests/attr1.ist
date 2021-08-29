@@ -1,1 +1,2 @@
-icu_attributes "case-first:upper-first 	numeric-ordering:on	 "
+icu_attributes "case-first:upper-first 	
+numeric-ordering:on	 "
