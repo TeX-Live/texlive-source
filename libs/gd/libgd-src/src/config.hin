@@ -27,11 +27,17 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define if you have avif */
+#undef HAVE_LIBAVIF
+
 /* Define if you have fontconfig */
 #undef HAVE_LIBFONTCONFIG
 
 /* Define if you have freetype */
 #undef HAVE_LIBFREETYPE
+
+/* Define if you have heif */
+#undef HAVE_LIBHEIF
 
 /* Define if you have liq */
 #undef HAVE_LIBIMAGEQUANT

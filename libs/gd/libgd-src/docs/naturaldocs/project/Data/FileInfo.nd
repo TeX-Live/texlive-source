@@ -1,97 +1,98 @@
-1.51
+1.52
 C/C++
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_errors.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_errors.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcmpgif.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcmpgif.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdhelpers.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdhelpers.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtestft.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtestft.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_filename.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_filename.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontsizetest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontsizetest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_stream.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_stream.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_gd.c	1611999504	1	GD IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/license.txt	1611999504	1	License
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdft.c	1611999504	1	FreeType font rendering
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_tiff.c	1611999504	1	TIFF IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_tga.c	1611999504	1	TGA Input
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontg.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontg.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_ss.c	1611999504	1	gdNewSSCtx
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_match.c	1611999504	1	gdImageColorMatch
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontconfigtest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontconfigtest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_map.c	1611999504	1	gdColorMapLookup
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/circletexttest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/circletexttest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontt.c	1611999504	1	Tiny Font
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/config.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/config.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_nnquant.c	1611999504	1	gdImageNeuQuant
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2togif.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2togif.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2topng.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2topng.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontl.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontl.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_file.c	1611999504	1	gdNewFileCtx
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gifanimtest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gifanimtest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontg.c	1611999504	1	Giant Font
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_wbmp.c	1611999504	1	WBMP IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontl.c	1611999504	1	Large Font
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_interpolation.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_interpolation.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_tga.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_tga.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/wbmp.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/wbmp.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_filter.c	1611999504	1	Image Filters
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_crop.c	1611999504	1	Cropping
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_webp.c	1611999504	1	WebP IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_security.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_security.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_matrix.c	1611999504	1	Matrix
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfonts.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfonts.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2time.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2time.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/jisx0208.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/jisx0208.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/snprintf.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/snprintf.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_rotate.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_rotate.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_jpeg.c	1611999504	1	JPEG IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtables.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtables.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_bmp.c	1611999504	1	BMP IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfonts.c	1611999504	1	Small Font
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io.h	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdkanji.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdkanji.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_transform.c	1611999504	1	Transformations
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcache.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcache.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontt.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontt.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_nnquant.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_nnquant.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_intern.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_intern.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontmb.c	1611999504	1	Medium Bold Font
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdparttopng.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdparttopng.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_dp.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_io_dp.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdxpm.c	1611999504	1	XPM Input
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontwheeltest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/fontwheeltest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_gd2.c	1611999504	1	GD2 IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtest.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtest.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/webpng.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/webpng.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/giftogd2.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/giftogd2.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_gif_out.c	1611999504	1	GIF Output
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_ss.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_ss.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontmb.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfontmb.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_map_test.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_map_test.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_topal.c	1611999504	1	Color Quantization
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfx.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfx.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_xbm.c	1611999504	1	XBM IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdpp.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdpp.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfx.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdfx.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_gif_in.c	1611999504	1	GIF Input
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/testac.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/testac.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/pngtogd2.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/pngtogd2.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/preamble.txt	1611999504	1	About LibGD 2.3.1
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_version.c	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_version.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/testtr.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/testtr.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/entities.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/entities.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/getopt.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/getopt.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/bmp.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/bmp.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtopng.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdtopng.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_png.c	1611999504	1	PNG IO
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcache.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdcache.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/pngtogd.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/pngtogd.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gddemo.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gddemo.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2copypal.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd2copypal.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gdhelpers.c	1611999504	1	gdFree
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/wbmp.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/wbmp.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/annotate.c	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/annotate.c
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd.h	1611999504	1	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd.h
-/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_map.h	1611999504	0	/root/workspace/hanqiang/libgd_release_2.3.1/libgd/docs/naturaldocs/tmp/gd_color_map.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_version.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_version.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_security.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_security.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_filename.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_filename.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_stream.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_stream.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_xbm.c	1614908973	1	XBM IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontmb.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontmb.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/webpng.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/webpng.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcache.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcache.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontt.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontt.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io.h	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/wbmp.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/wbmp.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontwheeltest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontwheeltest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2time.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2time.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_map.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_map.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/circletexttest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/circletexttest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_topal.c	1614908973	1	Color Quantization
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_gd.c	1614908973	1	GD IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/getopt.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/getopt.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_match.c	1614908973	1	gdImageColorMatch
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontsizetest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontsizetest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_ss.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_ss.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontconfigtest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/fontconfigtest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/bmp.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/bmp.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2copypal.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2copypal.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_jpeg.c	1614908973	1	JPEG IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_nnquant.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_nnquant.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/annotate.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/annotate.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtables.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtables.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdpp.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdpp.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_crop.c	1614908973	1	Cropping
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_map.c	1614908973	1	gdColorMapLookup
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_dp.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_dp.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/jisx0208.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/jisx0208.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_ss.c	1614908973	1	gdNewSSCtx
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontg.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontg.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_gd2.c	1614908973	1	GD2 IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_intern.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_intern.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_matrix.c	1614908973	1	Matrix
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/wbmp.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/wbmp.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdxpm.c	1614908973	1	XPM Input
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_rotate.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_rotate.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfonts.c	1614908973	1	Small Font
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gddemo.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gddemo.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfonts.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfonts.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2togif.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2togif.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcmpgif.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcmpgif.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_png.c	1614908973	1	PNG IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/preamble.txt	1614908973	1	About LibGD 2.3.2
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/pngtogd2.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/pngtogd2.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_gif_out.c	1614908973	1	GIF Output
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdhelpers.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdhelpers.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_heif.c	1614908973	1	HEIF IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtestft.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtestft.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/license.txt	1614908973	1	License
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdkanji.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdkanji.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcache.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdcache.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfx.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfx.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_tga.c	1614908973	1	TGA Input
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/config.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/config.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2topng.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd2topng.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_tiff.c	1614908973	1	TIFF IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_avif.c	1614908973	1	AVIF IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_errors.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_errors.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdft.c	1614908973	1	FreeType font rendering
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontl.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontl.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/pngtogd.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/pngtogd.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_tga.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_tga.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/testtr.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/testtr.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/testac.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/testac.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdparttopng.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdparttopng.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/giftogd2.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/giftogd2.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_bmp.c	1614908973	1	BMP IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontmb.c	1614908973	1	Medium Bold Font
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gifanimtest.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gifanimtest.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_wbmp.c	1614908973	1	WBMP IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/entities.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/entities.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtopng.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdtopng.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_nnquant.c	1614908973	1	gdImageNeuQuant
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_io_file.c	1614908973	1	gdNewFileCtx
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_map_test.c	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color_map_test.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_webp.c	1614908973	1	WebP IO
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfx.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfx.c
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color.h	1614908973	0	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_color.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontl.c	1614908973	1	Large Font
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_filter.c	1614908973	1	Image Filters
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd.h	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd.h
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontg.c	1614908973	1	Giant Font
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdhelpers.c	1614908973	1	gdFree
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gdfontt.c	1614908973	1	Tiny Font
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_transform.c	1614908973	1	Transformations
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_gif_in.c	1614908973	1	GIF Input
+/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_interpolation.c	1614908973	1	/usr/local/src/gd/gd/docs/naturaldocs/tmp/gd_interpolation.c

@@ -1,7 +1,7 @@
-diff -ur libgd-2.3.1/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
---- libgd-2.3.1/src/gd_interpolation.c	Sat Jan 30 18:30:01 2021
-+++ libgd-src/src/gd_interpolation.c	Wed Feb 03 14:56:52 2021
-@@ -1992,9 +1992,9 @@
+diff -ur libgd-2.3.2/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
+--- libgd-2.3.2/src/gd_interpolation.c	Wed Mar 03 16:15:02 2021
++++ libgd-src/src/gd_interpolation.c	Fri Aug 27 15:08:28 2021
+@@ -1989,9 +1989,9 @@
  	int i;
  
  	b = (unsigned char)tcolor;
@@ -14,9 +14,9 @@ diff -ur libgd-2.3.1/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
  
  	b = CLAMP(b, 0, 255);
  	g = CLAMP(g, 0, 255);
-diff -ur libgd-2.3.1/src/gdft.c libgd-src/src/gdft.c
---- libgd-2.3.1/src/gdft.c	Sat Jan 30 18:30:01 2021
-+++ libgd-src/src/gdft.c	Wed Feb 03 15:26:58 2021
+diff -ur libgd-2.3.2/src/gdft.c libgd-src/src/gdft.c
+--- libgd-2.3.2/src/gdft.c	Wed Mar 03 16:15:02 2021
++++ libgd-src/src/gdft.c	Fri Aug 27 15:12:43 2021
 @@ -446,6 +446,11 @@
  		FT_Face face, gdFTStringExtraPtr strex,
  		glyphInfo **glyph_info)

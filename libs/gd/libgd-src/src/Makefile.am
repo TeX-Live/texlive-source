@@ -49,7 +49,6 @@ EXTRA_DIST = \
 	gd_io_stream.cxx \
 	gdpp.cxx \
 	getopt.c \
-	snprintf.c \
 	msinttypes/inttypes.h \
 	msinttypes/stdint.h
 
@@ -61,6 +60,7 @@ libgd_la_SOURCES = \
 	bmp.h \
 	gd.c \
 	gd.h \
+	gd_avif.c \
 	gd_bmp.c \
 	gd_color.c \
 	gd_color.h \
@@ -74,6 +74,7 @@ libgd_la_SOURCES = \
 	gd_gd2.c \
 	gd_gif_in.c \
 	gd_gif_out.c \
+	gd_heif.c \
 	gd_intern.h \
 	gd_interpolation.c \
 	gd_io.c \

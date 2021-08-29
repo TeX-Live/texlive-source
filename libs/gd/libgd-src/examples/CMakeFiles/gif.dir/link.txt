@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/gif.dir/gif.c.o  -o ../Bin/gif -Wl,-rpath,/root/workspace/hanqiang/libgd_release_2.3.1/libgd/Bin ../Bin/libgd.so.3.0.9 

@@ -33,6 +33,7 @@ noinst_LIBRARIES=libgd.a
 
 libgd_a_SOURCES = \
 	@GD_TREE@/src/gd.c \
+	@GD_TREE@/src/gd_avif.c \
 	@GD_TREE@/src/gd_bmp.c \
 	@GD_TREE@/src/gd_color.c \
 	@GD_TREE@/src/gd_color_map.c \
@@ -44,6 +45,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gd_gd2.c \
 	@GD_TREE@/src/gd_gif_in.c \
 	@GD_TREE@/src/gd_gif_out.c \
+	@GD_TREE@/src/gd_heif.c \
 	@GD_TREE@/src/gd_interpolation.c \
 	@GD_TREE@/src/gd_io.c \
 	@GD_TREE@/src/gd_io_dp.c \

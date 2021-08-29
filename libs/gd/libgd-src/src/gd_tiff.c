@@ -43,6 +43,7 @@
 
 #include "gd.h"
 #include "gd_errors.h"
+#include "gd_intern.h"
 #include "gdfonts.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,10 +71,6 @@
 #define GD_GRAY 3
 #define GD_INDEXED 4
 #define GD_RGB 5
-
-#define MIN(a,b) (a < b) ? a : b;
-#define MAX(a,b) (a > b) ? a : b;
-
 
 typedef struct tiff_handle {
 	int size;

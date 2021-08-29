@@ -13,7 +13,7 @@ extern "C" {
  * trailing comment. */
 #define GD_MAJOR_VERSION    2           /*version605b5d1778*/
 #define GD_MINOR_VERSION    3           /*version605b5d1778*/
-#define GD_RELEASE_VERSION  1           /*version605b5d1778*/
+#define GD_RELEASE_VERSION  2           /*version605b5d1778*/
 #define GD_EXTRA_VERSION    ""      /*version605b5d1778*/
 /* End parsable section. */
 
@@ -79,7 +79,7 @@ extern "C" {
 #define BGD_DECLARE(rt) BGD_EXPORT_DATA_PROT rt BGD_STDCALL
 
 /* VS2012+ disable keyword macroizing unless _ALLOW_KEYWORD_MACROS is set
-   We define inline, snprintf, and strcasecmp if they're missing
+   We define inline, and strcasecmp if they're missing
 */
 #ifdef _MSC_VER
 #  define _ALLOW_KEYWORD_MACROS
@@ -89,9 +89,6 @@ extern "C" {
 #  ifndef strcasecmp
 #    define strcasecmp _stricmp
 #  endif
-#if _MSC_VER < 1900
-     extern int snprintf(char*, size_t, const char*, ...);
-#endif
 #endif
 
 /* gd.h: declarations file for the graphic-draw module.
@@ -332,6 +329,46 @@ typedef enum {
 	GD_LINEAR,
 	GD_METHOD_COUNT = 23
 } gdInterpolationMethod;
+
+/**
+ * Group: HEIF Coding Format
+ *
+ * Values that select the HEIF coding format.
+ *
+ * Constants: gdHeifCodec
+ *
+ *  GD_HEIF_CODEC_UNKNOWN
+ *  GD_HEIF_CODEC_HEVC
+ *  GD_HEIF_CODEC_AV1
+ *
+ * See also:
+ *  - <gdImageHeif>
+ */
+typedef enum {
+	GD_HEIF_CODEC_UNKNOWN = 0,
+	GD_HEIF_CODEC_HEVC,
+	GD_HEIF_CODEC_AV1 = 4,
+} gdHeifCodec;
+
+/**
+ * Group: HEIF Chroma Subsampling
+ *
+ * Values that select the HEIF chroma subsampling.
+ *
+ * Constants: gdHeifCompression
+ *
+ *  GD_HEIF_CHROMA_420
+ *  GD_HEIF_CHROMA_422
+ *  GD_HEIF_CHROMA_444
+ *
+ * See also:
+ *  - <gdImageHeif>
+ */
+typedef const char *gdHeifChroma;
+
+#define GD_HEIF_CHROMA_420 "420"
+#define GD_HEIF_CHROMA_422 "422"
+#define GD_HEIF_CHROMA_444 "444"
 
 /* define struct with name and func ptr and add it to gdImageStruct gdInterpolationMethod interpolation; */
 
@@ -626,6 +663,14 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromJpegPtrEx (int size, void *data, int ig
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebp (FILE * inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpPtr (int size, void *data);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromWebpCtx (gdIOCtx * infile);
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeif(FILE *inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromHeifCtx(gdIOCtx *infile);
+
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *inFile);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data);
+BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *infile);
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiff(FILE *inFile);
 BGD_DECLARE(gdImagePtr) gdImageCreateFromTiffCtx(gdIOCtx *infile);
@@ -1084,6 +1129,17 @@ BGD_DECLARE(void *) gdImageWebpPtr (gdImagePtr im, int *size);
 BGD_DECLARE(void *) gdImageWebpPtrEx (gdImagePtr im, int *size, int quantization);
 BGD_DECLARE(void) gdImageWebpCtx (gdImagePtr im, gdIOCtx * outfile, int quantization);
 
+BGD_DECLARE(void) gdImageHeifEx(gdImagePtr im, FILE *outFile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+BGD_DECLARE(void) gdImageHeif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void *) gdImageHeifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageHeifPtrEx(gdImagePtr im, int *size, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+BGD_DECLARE(void) gdImageHeifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, gdHeifCodec codec, gdHeifChroma chroma);
+
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile);
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed);
+BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size);
+BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed);
+BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed);
 
 /**
  * Group: GifAnim

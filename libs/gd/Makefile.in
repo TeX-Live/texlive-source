@@ -121,7 +121,7 @@ libgd_a_AR = $(AR) $(ARFLAGS)
 libgd_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
 am_libgd_a_OBJECTS = @GD_TREE@/src/gd.$(OBJEXT) \
-	@GD_TREE@/src/gd_bmp.$(OBJEXT) \
+	@GD_TREE@/src/gd_avif.$(OBJEXT) @GD_TREE@/src/gd_bmp.$(OBJEXT) \
 	@GD_TREE@/src/gd_color.$(OBJEXT) \
 	@GD_TREE@/src/gd_color_map.$(OBJEXT) \
 	@GD_TREE@/src/gd_color_match.$(OBJEXT) \
@@ -131,6 +131,7 @@ am_libgd_a_OBJECTS = @GD_TREE@/src/gd.$(OBJEXT) \
 	@GD_TREE@/src/gd_gd.$(OBJEXT) @GD_TREE@/src/gd_gd2.$(OBJEXT) \
 	@GD_TREE@/src/gd_gif_in.$(OBJEXT) \
 	@GD_TREE@/src/gd_gif_out.$(OBJEXT) \
+	@GD_TREE@/src/gd_heif.$(OBJEXT) \
 	@GD_TREE@/src/gd_interpolation.$(OBJEXT) \
 	@GD_TREE@/src/gd_io.$(OBJEXT) @GD_TREE@/src/gd_io_dp.$(OBJEXT) \
 	@GD_TREE@/src/gd_io_file.$(OBJEXT) \
@@ -181,6 +182,7 @@ depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/gdtest-gdtest.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd.Po \
+	@GD_TREE@/src/$(DEPDIR)/gd_avif.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_bmp.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_color.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_color_map.Po \
@@ -192,6 +194,7 @@ am__depfiles_remade = ./$(DEPDIR)/gdtest-gdtest.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_gd2.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_gif_in.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_gif_out.Po \
+	@GD_TREE@/src/$(DEPDIR)/gd_heif.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_interpolation.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_io.Po \
 	@GD_TREE@/src/$(DEPDIR)/gd_io_dp.Po \
@@ -675,6 +678,7 @@ AM_CFLAGS = # $(WARNING_CFLAGS)
 noinst_LIBRARIES = libgd.a
 libgd_a_SOURCES = \
 	@GD_TREE@/src/gd.c \
+	@GD_TREE@/src/gd_avif.c \
 	@GD_TREE@/src/gd_bmp.c \
 	@GD_TREE@/src/gd_color.c \
 	@GD_TREE@/src/gd_color_map.c \
@@ -686,6 +690,7 @@ libgd_a_SOURCES = \
 	@GD_TREE@/src/gd_gd2.c \
 	@GD_TREE@/src/gd_gif_in.c \
 	@GD_TREE@/src/gd_gif_out.c \
+	@GD_TREE@/src/gd_heif.c \
 	@GD_TREE@/src/gd_interpolation.c \
 	@GD_TREE@/src/gd_io.c \
 	@GD_TREE@/src/gd_io_dp.c \
@@ -802,6 +807,8 @@ clean-noinstLIBRARIES:
 	@: > @GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/gd.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/src/gd_avif.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
+	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/gd_bmp.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/gd_color.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
@@ -823,6 +830,8 @@ clean-noinstLIBRARIES:
 @GD_TREE@/src/gd_gif_in.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/gd_gif_out.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
+	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@GD_TREE@/src/gd_heif.$(OBJEXT): @GD_TREE@/src/$(am__dirstamp) \
 	@GD_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @GD_TREE@/src/gd_interpolation.$(OBJEXT):  \
 	@GD_TREE@/src/$(am__dirstamp) \
@@ -910,6 +919,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gdtest-gdtest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_avif.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_bmp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_color.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_color_map.Po@am__quote@ # am--include-marker
@@ -921,6 +931,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_gd2.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_gif_in.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_gif_out.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_heif.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_interpolation.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_io.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GD_TREE@/src/$(DEPDIR)/gd_io_dp.Po@am__quote@ # am--include-marker
@@ -1506,6 +1517,7 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 		-rm -f ./$(DEPDIR)/gdtest-gdtest.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd.Po
+	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_avif.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_bmp.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_color.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_color_map.Po
@@ -1517,6 +1529,7 @@ distclean: distclean-recursive
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gd2.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gif_in.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gif_out.Po
+	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_heif.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_interpolation.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_io.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_io_dp.Po
@@ -1599,6 +1612,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 		-rm -f ./$(DEPDIR)/gdtest-gdtest.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd.Po
+	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_avif.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_bmp.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_color.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_color_map.Po
@@ -1610,6 +1624,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gd2.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gif_in.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_gif_out.Po
+	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_heif.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_interpolation.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_io.Po
 	-rm -f @GD_TREE@/src/$(DEPDIR)/gd_io_dp.Po

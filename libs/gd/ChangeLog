@@ -1,3 +1,8 @@
+2021-08-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import libgd-2.3.2.
+	* version.ac, Makefile.am: Adapted.
+
 2021-02-03  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import libgd-2.3.1.
