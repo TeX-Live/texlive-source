@@ -3,7 +3,7 @@
 #
 
 
-# Copyright (C) 1996-2021 by
+# Copyright (C) 1996-2020 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -81,9 +81,9 @@ ifeq ($(PLATFORM),windows)
   # (2004-11-11), and then in the devel mailing list (2004-11-20 to -23).
   #
   ifeq ($(OS),Windows_NT)
-    COPY := >nul cmd.exe /c copy
+    COPY := cmd.exe /c copy
   else
-    COPY := >nul copy
+    COPY := copy
   endif  # test NT
 
 

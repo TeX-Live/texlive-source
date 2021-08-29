@@ -1,14 +1,4 @@
-#!/usr/bin/env python
-#
-# Copyright (C) 2020-2021 by
-# David Turner, Robert Wilhelm, and Werner Lemberg.
-#
-# This file is part of the FreeType project, and may only be used, modified,
-# and distributed under the terms of the FreeType project license,
-# LICENSE.TXT.  By continuing to use, modify, or distribute this file you
-# indicate that you have read the license and understand and accept it
-# fully.
-
+#!/usr/bin/python
 """Toggle settings in `ftoption.h` file based on command-line arguments.
 
 This script takes an `ftoption.h` file as input and rewrites
@@ -92,7 +82,7 @@ def main():
             line = "#define " + option_name
         new_lines.append(line)
 
-    result = "\n".join(new_lines) + "\n"
+    result = "\n".join(new_lines)
 
     # Sanity check that all command-line options were actually processed.
     cmdline_options = set(args.enable) | set(args.disable)

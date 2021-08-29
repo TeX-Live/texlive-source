@@ -4,7 +4,7 @@
  *
  *   TrueType Glyph Loader (body).
  *
- * Copyright (C) 1996-2021 by
+ * Copyright (C) 1996-2020 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -197,17 +197,10 @@
     }
 #endif /* TT_SUPPORT_SUBPIXEL_HINTING_INFINALITY */
 
-#ifdef FT_CONFIG_OPTION_INCREMENTAL
-    /* With the incremental interface, these values are set by  */
-    /* a call to `tt_get_metrics_incremental'.                  */
-    if ( face->root.internal->incremental_interface == NULL )
-#endif
+    if ( !loader->linear_def )
     {
-      if ( !loader->linear_def )
-      {
-        loader->linear_def = 1;
-        loader->linear     = advance_width;
-      }
+      loader->linear_def = 1;
+      loader->linear     = advance_width;
     }
 
     return FT_Err_Ok;
@@ -217,8 +210,8 @@
 #ifdef FT_CONFIG_OPTION_INCREMENTAL
 
   static void
-  tt_get_metrics_incremental( TT_Loader  loader,
-                              FT_UInt    glyph_index )
+  tt_get_metrics_incr_overrides( TT_Loader  loader,
+                                 FT_UInt    glyph_index )
   {
     TT_Face  face = loader->face;
 
@@ -458,7 +451,7 @@
                           (void*)&load->exec->glyphIns,
                           n_ins );
 
-      load->exec->glyphSize = (FT_UInt)tmp;
+      load->exec->glyphSize = (FT_UShort)tmp;
       if ( error )
         return error;
 
@@ -743,14 +736,12 @@
                       subglyph->transform.xx / 65536.0,
                       subglyph->transform.yy / 65536.0 ));
         else if ( subglyph->flags & WE_HAVE_A_2X2 )
-        {
-          FT_TRACE7(( "      scaling: xx=%f, yx=%f\n",
+          FT_TRACE7(( "      scaling: xx=%f, yx=%f\n"
+                      "               xy=%f, yy=%f\n",
                       subglyph->transform.xx / 65536.0,
-                      subglyph->transform.yx / 65536.0 ));
-          FT_TRACE7(( "               xy=%f, yy=%f\n",
+                      subglyph->transform.yx / 65536.0,
                       subglyph->transform.xy / 65536.0,
                       subglyph->transform.yy / 65536.0 ));
-        }
 
         subglyph++;
       }
@@ -1748,11 +1739,13 @@
 
     if ( loader->byte_len == 0 || loader->n_contours == 0 )
     {
-#ifdef FT_CONFIG_OPTION_INCREMENTAL
-      tt_get_metrics_incremental( loader, glyph_index );
-#endif
+      /* must initialize points before (possibly) overriding */
+      /* glyph metrics from the incremental interface        */
       tt_loader_set_pp( loader );
 
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+      tt_get_metrics_incr_overrides( loader, glyph_index );
+#endif
 
 #ifdef TT_CONFIG_OPTION_GX_VAR_SUPPORT
 
@@ -1835,11 +1828,13 @@
       goto Exit;
     }
 
-#ifdef FT_CONFIG_OPTION_INCREMENTAL
-    tt_get_metrics_incremental( loader, glyph_index );
-#endif
+    /* must initialize phantom points before (possibly) overriding */
+    /* glyph metrics from the incremental interface                */
     tt_loader_set_pp( loader );
 
+#ifdef FT_CONFIG_OPTION_INCREMENTAL
+    tt_get_metrics_incr_overrides( loader, glyph_index );
+#endif
 
     /***********************************************************************/
     /***********************************************************************/

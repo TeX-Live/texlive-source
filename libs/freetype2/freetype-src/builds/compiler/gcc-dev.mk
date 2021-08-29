@@ -3,7 +3,7 @@
 #
 
 
-# Copyright (C) 1996-2021 by
+# Copyright (C) 1996-2020 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -59,7 +59,7 @@ T := -o$(space)
 #
 #   These should concern: debug output, optimization & warnings.
 #
-#   Use the ANSIFLAGS variable to define the compiler flags used to enforce
+#   Use the ANSIFLAGS variable to define the compiler flags used to enfore
 #   ANSI compliance.
 #
 ifndef CFLAGS
@@ -82,9 +82,8 @@ ifndef CFLAGS
 endif
 
 # ANSIFLAGS: Put there the flags used to make your compiler ANSI-compliant.
-# You can override this on the command line.
 #
-ANSIFLAGS ?= -std=c99 -pedantic
+ANSIFLAGS := -ansi -pedantic
 
 
 # Library linking

@@ -2,7 +2,7 @@
 #
 # Process this file with autoconf to produce a configure script.
 #
-# Copyright (C) 2001-2021 by
+# Copyright (C) 2001-2020 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -11,13 +11,13 @@
 # indicate that you have read the license and understand and accept it
 # fully.
 
-AC_INIT([FreeType], [2.11], [freetype@nongnu.org], [freetype])
+AC_INIT([FreeType], [2.10.4], [freetype@nongnu.org], [freetype])
 AC_CONFIG_SRCDIR([ftconfig.h.in])
 
 
 # Don't forget to update `docs/VERSIONS.TXT'!
 
-version_info='24:0:18'
+version_info='23:4:17'
 AC_SUBST([version_info])
 ft_version=`echo $version_info | tr : .`
 AC_SUBST([ft_version])
@@ -97,6 +97,7 @@ esac
 
 # checks for header files
 
+AC_HEADER_STDC
 AC_CHECK_HEADERS([fcntl.h unistd.h])
 
 
@@ -191,59 +192,53 @@ AC_SUBST(INSTALL_FT2_CONFIG, [$enable_freetype_config])
 AC_SYS_LARGEFILE
 
 # Here we check whether we can use our mmap file component.
-#
-# Note that `ftsystem.c` for Windows has its own mmap-like implementation
-# not covered by `AC_FUNC_MMAP` and/or `FT_UNMAP_PARAM`.
 
 AC_ARG_ENABLE([mmap],
   AS_HELP_STRING([--disable-mmap],
                  [do not check mmap() and do not use]),
   [enable_mmap="no"], [enable_mmap="yes"])
 if test "x${enable_mmap}" != "xno"; then
-  case "$host" in
-  *-*-mingw*)
-    AC_MSG_CHECKING([for working mmap])
-    AC_MSG_RESULT([using MapViewOfFile in Windows])
-    FTSYS_SRC='$(TOP_DIR)/builds/windows/ftsystem.c'
-    ;;
-  *)
-    AC_FUNC_MMAP
-    if test "$ac_cv_func_mmap_fixed_mapped" = "yes"; then
-      FTSYS_SRC='$(PLATFORM_DIR)/ftsystem.c'
+  AC_FUNC_MMAP
+fi
+if test "x${enable_mmap}" = "xno" \
+   -o "$ac_cv_func_mmap_fixed_mapped" != "yes"; then
+  FTSYS_SRC='$(BASE_DIR)/ftsystem.c'
+else
+  FTSYS_SRC='$(BUILD_DIR)/ftsystem.c'
 
-      AC_CHECK_DECLS([munmap],
-        [],
-        [],
-        [
+  AC_CHECK_DECLS([munmap],
+    [],
+    [],
+    [
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 #include <sys/mman.h>
 
-        ])
+    ])
 
-      FT_MUNMAP_PARAM
-    fi
-    ;;
-  esac
-fi
-
-if test -z "$FTSYS_SRC"; then
-  FTSYS_SRC='$(BASE_DIR)/ftsystem.c'
+  FT_MUNMAP_PARAM
 fi
 AC_SUBST([FTSYS_SRC])
-
 
 AC_CHECK_FUNCS([memcpy memmove])
 
 
 # get compiler flags right
 #
-#   We try to make the compiler work for C99-strict source.  Even if the
-#   C compiler is gcc and C99 flags are available, some system headers
-#   might be broken in C99 mode.  We have to check whether compilation
-#   finishes successfully.
+#   We try to make the compiler work for C89-strict source.  Even if the
+#   C compiler is gcc and C89 flags are available, some system headers
+#   (e.g., Android Bionic libc) are broken in C89 mode.  We have to check
+#   whether the compilation finishes successfully.
+#
+#   Due to bugs in mingwrt 4.0.3 we don't use `-ansi' for MinGW.
+#
+#   To avoid zillions of
+#
+#     ISO C90 does not support 'long long'
+#
+#   warnings, we disable `-pedantic' for gcc version < 4.6.
 #
 if test "x$GCC" = xyes; then
   XX_CFLAGS="-Wall"
@@ -255,11 +250,23 @@ if test "x$GCC" = xyes; then
     XX_ANSIFLAGS="-pedantic"
     ;;
   *)
-    XX_ANSIFLAGS=""
+    GCC_VERSION=`$CC -dumpversion`
+    GCC_MAJOR=`echo "$GCC_VERSION" | sed 's/\([[^.]][[^.]]*\).*/\1/'`
+    GCC_MINOR=`echo "$GCC_VERSION" | sed 's/[[^.]][[^.]]*.\([[^.]][[^.]]*\).*/\1/'`
 
-    for a in "-pedantic" "-std=c99"
+    XX_PEDANTIC=-pedantic
+    if test $GCC_MAJOR -lt 4; then
+      XX_PEDANTIC=
+    else
+      if test $GCC_MAJOR -eq 4 -a $GCC_MINOR -lt 6; then
+        XX_PEDANTIC=
+      fi
+    fi
+
+    XX_ANSIFLAGS=""
+    for a in $XX_PEDANTIC -ansi
     do
-      AC_MSG_CHECKING([$CC compiler flag ${a} to assure ANSI C99 works correctly])
+      AC_MSG_CHECKING([gcc compiler flag ${a} to assure ANSI C works correctly])
       orig_CFLAGS="${CFLAGS}"
       CFLAGS="${CFLAGS} ${XX_ANSIFLAGS} ${a}"
       AC_COMPILE_IFELSE([
@@ -501,7 +508,7 @@ AC_ARG_WITH([harfbuzz],
 
 have_harfbuzz=no
 if test x"$with_harfbuzz" = xyes -o x"$with_harfbuzz" = xauto; then
-  harfbuzz_pkg="harfbuzz >= 2.0.0"
+  harfbuzz_pkg="harfbuzz >= 1.8.0"
   have_harfbuzz_pkg=no
 
   if test x"$HARFBUZZ_CFLAGS" = x -a x"$HARFBUZZ_LIBS" = x; then
@@ -1005,10 +1012,6 @@ case "$CFLAGS" in
     ;;
 esac
 
-# Check for pthreads
-
-AX_PTHREAD([have_pthread=yes], [have_pthread=no])
-
 # Check for Python and docwriter
 
 have_py3=no
@@ -1021,7 +1024,7 @@ if test "x$PYTHON" != "xmissing"; then
 
   if test "x$have_py3" = "xyes"; then
     PIP="$PYTHON -m $PIP"
-    AC_MSG_CHECKING([for `docwriter' Python module])
+    AC_MSG_CHECKING([for \`docwriter' Python module])
     $PYTHON -m docwriter -h > /dev/null 2>&1
     if test "x$?" = "x0"; then
       have_docwriter=yes
@@ -1139,11 +1142,6 @@ else
   ftoption_unset FT_CONFIG_OPTION_USE_BROTLI
 fi
 
-if test "$have_pthread" != no; then
-  CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-  LDFLAGS="$LDFLAGS $PTHREAD_CFLAGS $PTHREAD_LIBS"
-fi
-
 AC_SUBST([CFLAGS])
 AC_SUBST([LDFLAGS])
 
@@ -1178,27 +1176,16 @@ Library configuration:
   libpng:        $have_libpng
   harfbuzz:      $have_harfbuzz
   brotli:        $have_brotli
-  pthread:       $have_pthread
 ])
 
 # Warn if docwriter is not installed
 
 if test $have_docwriter = no; then
   AC_MSG_WARN([
-  `make refdoc' will fail since pip package `docwriter' is not installed.
-  To install, run `$PIP install docwriter', or to use a Python
-  virtual environment, run `make refdoc-venv' (requires pip package
-  `virtualenv').  These operations require Python >= 3.5.
-  ])
-fi
-
-# Warn if pthread is not available
-
-if test $have_pthread = no; then
-  AC_MSG_WARN([
-  `FT_DEBUG_LOGGING' will not work since the `pthread' library is not
-  available.  This warning can be safely ignored if you don't plan to use
-  this configuration macro.
+  \`make refdoc' will fail since pip package \`docwriter' is not installed.
+  To install, run \`$PIP install docwriter', or to use a Python
+  virtual environment, run \`make refdoc-venv' (requires pip package
+  \`virtualenv'). These operations require Python >= 3.5.
   ])
 fi
 

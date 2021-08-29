@@ -1,8 +1,3 @@
-2021-08-29  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
-
-	Import freetype-2.11.0.
-	* version.ac: Adjusted.
-
 2021-01-03  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (ft-config): pass --without-brotli, in hopes
