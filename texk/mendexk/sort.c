@@ -42,6 +42,7 @@ void wsort(struct index *ind, int num)
 			break;
 
 		default:
+			verb_printf(efp,"\nWarning: Illegal input for character_order (%c).",character_order[i]);
 			break;
 		}
 	}

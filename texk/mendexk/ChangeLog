@@ -1,3 +1,11 @@
+2021-08-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* sort.c:
+	Strict check for "character_order" in style file.
+	* fwrite.c:
+	Fix a bug when "symbol_flag" is 0.
+	* version.h: Date [29-Aug-2021]
+
 2021-08-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* styfile.c:

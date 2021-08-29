@@ -146,8 +146,8 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	for (i=line_length=0;i<lines;i++) {
 		if (i==0) {
 			if (!((alphabet(ind[i].dic[0][0]))||(japanese(ind[i].dic[0])))) {
-				if (lethead_flag) {
-					if (symbol_flag && strlen(symbol)) {
+				if (lethead_flag!=0 && symbol_flag) {
+					if (strlen(symbol)) {
 						fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
 					}
 					else if (lethead_flag>0) {
@@ -218,7 +218,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			if (!((alphabet(ind[i].dic[0][0]))||(japanese(ind[i].dic[0])))) {
 				if ((alphabet(ind[i-1].dic[0][0]))||(japanese(ind[i-1].dic[0]))){
 					fputs(group_skip,fp);
-					if (lethead_flag && symbol_flag) {
+					if (lethead_flag!=0 && symbol_flag) {
 						if (strlen(symbol)) {
 							fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
 						}
