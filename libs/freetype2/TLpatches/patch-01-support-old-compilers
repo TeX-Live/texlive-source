@@ -1,0 +1,44 @@
+diff -ur freetype-2.11.0/src/smooth/ftgrays.c freetype-src/src/smooth/ftgrays.c
+--- freetype-2.11.0/src/smooth/ftgrays.c	Sat Jul 17 15:51:32 2021
++++ freetype-src/src/smooth/ftgrays.c	Wed Sep 01 11:32:04 2021
+@@ -437,17 +437,16 @@
+   typedef int   TCoord;   /* integer scanline/pixel coordinate */
+   typedef int   TArea;    /* cell areas, coordinate products   */
+ 
+-
+-  typedef struct TCell_*  PCell;
+-
+-  typedef struct  TCell_
++  struct  TCell_
+   {
+     TCoord  x;     /* same with gray_TWorker.ex    */
+     TCoord  cover; /* same with gray_TWorker.cover */
+     TArea   area;
+-    PCell   next;
++    struct TCell_  *next;
++  };
+ 
+-  } TCell;
++  typedef struct TCell_ TCell;
++  typedef TCell *PCell;
+ 
+   typedef struct TPixmap_
+   {
+@@ -1938,7 +1937,7 @@
+     TCoord*  band;
+ 
+     int  continued = 0;
+-
++    PCell null_cell;
+ 
+     /* set up vertical bands */
+     if ( height > n )
+@@ -1959,7 +1958,7 @@
+     /* Initialize the null cell at the start of the `cells` array.    */
+     /* Note that this requires `ras.cell_free` initialization to skip */
+     /* over the first entry in the array.                             */
+-    PCell null_cell  = NULL_CELL_PTR( ras );
++    null_cell  = NULL_CELL_PTR( ras );
+     null_cell->x     = CELL_MAX_X_VALUE;
+     null_cell->area  = 0;
+     null_cell->cover = 0;
