@@ -3,6 +3,7 @@
 	Imported freetype-2.11.0 source tree from:
 	  http://download.savannah.gnu.org/releases/freetype.
 	Add patch-01-support-old-compilers.
+	Add patch-02-try-Nelson-flag.
 
 2020-10-21  Akira Kakuto  <kakuto@w32tex.org>
 

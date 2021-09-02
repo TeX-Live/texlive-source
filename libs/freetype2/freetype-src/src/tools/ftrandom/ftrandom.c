@@ -28,9 +28,13 @@
 /* modified by Werner Lemberg <wl@gnu.org>       */
 /* This file is now part of the FreeType library */
 
-
+/* Try Nelson's flag in Solaris */
+#if defined(__sun)
+#define _XOPEN_SOURCE 600
+#define _XPG6
+#else
 #define _XOPEN_SOURCE 500 /* for `kill', `strdup', `random', and `srandom' */
-
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>

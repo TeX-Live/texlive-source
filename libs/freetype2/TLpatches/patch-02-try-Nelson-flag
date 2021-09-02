@@ -1,0 +1,53 @@
+diff -ur freetype-2.11.0/src/dlg/dlg.c freetype-src/src/dlg/dlg.c
+--- freetype-2.11.0/src/dlg/dlg.c	Tue Jul 20 01:08:21 2021
++++ freetype-src/src/dlg/dlg.c	Thu Sep 02 10:32:31 2021
+@@ -2,7 +2,13 @@
+ // Distributed under the Boost Software License, Version 1.0.
+ // See accompanying file LICENSE or copy at http://www.boost.org/LICENSE_1_0.txt
+ 
++/* Try Nelson's flag */
++#if defined(__sun)
++#define _XOPEN_SOURCE 600
++#define _XPG6
++#else
+ #define _XOPEN_SOURCE
++#endif
+ #define _POSIX_C_SOURCE 200809L
+ #define _WIN32_WINNT 0x0600
+ 
+diff -ur freetype-2.11.0/src/dlg/dlgwrap.c freetype-src/src/dlg/dlgwrap.c
+--- freetype-2.11.0/src/dlg/dlgwrap.c	Sat Feb 13 17:16:54 2021
++++ freetype-src/src/dlg/dlgwrap.c	Thu Sep 02 10:32:53 2021
+@@ -18,7 +18,13 @@
+ 
+   /* We have to duplicate these feature test macros from `dlg.c` */
+   /* since `freetype.h` loads some affected standard headers.    */
++/* Try Nelson's flag */
++#if defined(__sun)
++#define _XOPEN_SOURCE 600
++#define _XPG6
++#else
+ #define _XOPEN_SOURCE
++#endif
+ #define _POSIX_C_SOURCE 200809L
+ 
+ #include <freetype/freetype.h>
+diff -ur freetype-2.11.0/src/tools/ftrandom/ftrandom.c freetype-src/src/tools/ftrandom/ftrandom.c
+--- freetype-2.11.0/src/tools/ftrandom/ftrandom.c	Thu Aug 27 15:17:20 2020
++++ freetype-src/src/tools/ftrandom/ftrandom.c	Thu Sep 02 10:28:03 2021
+@@ -28,9 +28,13 @@
+ /* modified by Werner Lemberg <wl@gnu.org>       */
+ /* This file is now part of the FreeType library */
+ 
+-
++/* Try Nelson's flag in Solaris */
++#if defined(__sun)
++#define _XOPEN_SOURCE 600
++#define _XPG6
++#else
+ #define _XOPEN_SOURCE 500 /* for `kill', `strdup', `random', and `srandom' */
+-
++#endif
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
