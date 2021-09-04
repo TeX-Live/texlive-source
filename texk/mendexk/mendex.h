@@ -39,9 +39,9 @@ int lastpage(const char *filename);
 /* sort.c */
 void wsort(struct index *ind, int num);
 void pagesort(struct index *ind, int num);
-int alphanumeric(char c);
-int alphabet(char c);
-int numeric(char c);
+int alphanumeric(char *c);
+int alphabet(char *c);
+int numeric(char *c);
 int japanese(char *buff);
 int chkcontinue(struct page *p, int num);
 

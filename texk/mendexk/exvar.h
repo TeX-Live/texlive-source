@@ -26,7 +26,7 @@ extern int line_max;
 extern char indent_space[];
 extern int indent_length;
 extern int priority;
-extern char symbol[];
+extern char symhead[],numhead[];
 extern char symhead_positive[],symhead_negative[];
 extern char numhead_positive[],numhead_negative[];
 extern int symbol_flag;

@@ -27,7 +27,7 @@ int line_max=72;
 char indent_space[STYBUFSIZE]={"\t\t"};
 int indent_length=16;
 int priority=0;
-char symbol[STYBUFSIZE]={""};
+char symhead[STYBUFSIZE]={""},numhead[STYBUFSIZE]={""};
 char symhead_positive[STYBUFSIZE]={"Symbols"},symhead_negative[STYBUFSIZE]={"symbols"};
 char numhead_positive[STYBUFSIZE]={"Numbers"},numhead_negative[STYBUFSIZE]={"numbers"};
 int symbol_flag=1;

@@ -112,10 +112,10 @@ static int wcomp(const void *p, const void *q)
 				return 1;
 
 /*   symbol pattern   */
-			if ((!numeric((*index1).dic[j][i]))&&(numeric((*index2).dic[j][i])))
+			if ((!numeric(&(*index1).dic[j][i]))&&(numeric(&(*index2).dic[j][i])))
 				return -1;
 
-			if ((!numeric((*index2).dic[j][i]))&&(numeric((*index1).dic[j][i])))
+			if ((!numeric(&(*index2).dic[j][i]))&&(numeric(&(*index1).dic[j][i])))
 				return 1;
 
 /*   simple compare   */
@@ -211,8 +211,8 @@ static int pcomp(const void *p, const void *q)
 static int ordering(char *buff)
 {
 	if ((unsigned char)(*buff)<0x80) {
-		if (alphabet(*buff)) return alpha; 
-		else if (numeric(*buff)) return number; 
+		if (alphabet(buff)) return alpha;
+		else if (numeric(buff)) return number;
 		else return sym;
 	}
 	else {
@@ -221,22 +221,22 @@ static int ordering(char *buff)
 	}
 }
 
-int alphanumeric(char c)
+int alphanumeric(char *c)
 {
-	if (((c>='A')&&(c<='Z'))||((c>='a')&&(c<='z'))||((c>='0')&&(c<='9')))
+	if (((*c>='A')&&(*c<='Z'))||((*c>='a')&&(*c<='z'))||((*c>='0')&&(*c<='9')))
 		return 1;
 	else return 0;
 }
 
-int alphabet(char c)
+int alphabet(char *c)
 {
-	if (((c>='A')&&(c<='Z'))||((c>='a')&&(c<='z'))) return 1;
+	if (((*c>='A')&&(*c<='Z'))||((*c>='a')&&(*c<='z'))) return 1;
 	else return 0;
 }
 
-int numeric(char c)
+int numeric(char *c)
 {
-	if ((c>='0')&&(c<='9')) return 1;
+	if ((*c>='0')&&(*c<='9')) return 1;
 	else return 0;
 }
 

@@ -123,6 +123,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 	char datama[2048],lbuff[BUFFERLEN];
 	FILE *fp=NULL;
 	int conv_euc_to_euc;
+	char *init, *init_prev;
 
 	if (filename && kpse_out_name_ok(filename))
 		fp=fopen(filename,"wb");
@@ -143,36 +144,40 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 		fprintf(fp,"%s%d%s",setpage_prefix,pagenum,setpage_suffix);
 	}
 
+	if (strlen(symhead)==0) {
+		if (lethead_flag>0) {
+			strcpy(symhead, symhead_positive);
+		}
+		else if (lethead_flag<0) {
+			strcpy(symhead, symhead_negative);
+		}
+	}
+	{
+		if (lethead_flag>0) {
+			strcpy(numhead, numhead_positive);
+		}
+		else if (lethead_flag<0) {
+			strcpy(numhead, numhead_negative);
+		}
+	}
+
 	for (i=line_length=0;i<lines;i++) {
+		init = ind[i].dic[0];
 		if (i==0) {
-			if (!((alphabet(ind[i].dic[0][0]))||(japanese(ind[i].dic[0])))) {
-				if (lethead_flag!=0 && symbol_flag) {
-					if (strlen(symbol)) {
-						fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
-					}
-					else if (lethead_flag>0) {
-						fprintf(fp,"%s%s%s",lethead_prefix,symhead_positive,lethead_suffix);
-					}
-					else if (lethead_flag<0) {
-						fprintf(fp,"%s%s%s",lethead_prefix,symhead_negative,lethead_suffix);
-					}
-				}
-				SPRINTF(lbuff,"%s%s",item_0,ind[i].idx[0]);
-			}
-			else if (alphabet(ind[i].dic[0][0])) {
+			if (alphabet(init)) {
 				if (lethead_flag>0) {
-					fprintf(fp,"%s%c%s",lethead_prefix,ind[i].dic[0][0],lethead_suffix);
+					fprintf(fp,"%s%c%s",lethead_prefix,init[0],lethead_suffix);
 				}
 				else if (lethead_flag<0) {
-					fprintf(fp,"%s%c%s",lethead_prefix,ind[i].dic[0][0]+32,lethead_suffix);
+					fprintf(fp,"%s%c%s",lethead_prefix,init[0]+32,lethead_suffix);
 				}
 				SPRINTF(lbuff,"%s%s",item_0,ind[i].idx[0]);
 			}
-			else if (japanese(ind[i].dic[0])) {
+			else if (japanese(init)) {
 				if (lethead_flag) {
 					fputs(lethead_prefix,fp);
 					for (j=hpoint;j<(strlen(datama)/2);j++) {
-						if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[j*2+1]) {
+						if ((unsigned char)init[1]<(unsigned char)datama[j*2+1]) {
 							fprint_euc_char(fp,atama[(j-1)*2],atama[(j-1)*2+1]);
 							hpoint=j;
 							break;
@@ -185,10 +190,19 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 				SPRINTF(lbuff,"%s%s",item_0,ind[i].idx[0]);
 				for (hpoint=0;hpoint<(strlen(datama)/2);hpoint++) {
-					if ((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[hpoint*2+1]) {
+					if ((unsigned char)init[1]<(unsigned char)datama[hpoint*2+1]) {
 						break;
 					}
 				}
+			}
+			else {
+				if (lethead_flag!=0 && symbol_flag==2 && numeric(init)) {
+					fprintf(fp,"%s%s%s",lethead_prefix,numhead,lethead_suffix);
+				}
+				if (lethead_flag!=0 && (symbol_flag==1 || (symbol_flag==2 && !numeric(init)))) {
+					fprintf(fp,"%s%s%s",lethead_prefix,symhead,lethead_suffix);
+				}
+				SPRINTF(lbuff,"%s%s",item_0,ind[i].idx[0]);
 			}
 			switch (ind[i].words) {
 			case 1:
@@ -215,36 +229,21 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			printpage(ind,fp,i,lbuff);
 		}
 		else {
-			if (!((alphabet(ind[i].dic[0][0]))||(japanese(ind[i].dic[0])))) {
-				if ((alphabet(ind[i-1].dic[0][0]))||(japanese(ind[i-1].dic[0]))){
-					fputs(group_skip,fp);
-					if (lethead_flag!=0 && symbol_flag) {
-						if (strlen(symbol)) {
-							fprintf(fp,"%s%s%s",lethead_prefix,symbol,lethead_suffix);
-						}
-						else if (lethead_flag>0) {
-							fprintf(fp,"%s%s%s",lethead_prefix,symhead_positive,lethead_suffix);
-						}
-						else if (lethead_flag<0) {
-							fprintf(fp,"%s%s%s",lethead_prefix,symhead_negative,lethead_suffix);
-						}
-					}
-				}
-			}
-			else if (alphabet(ind[i].dic[0][0])) {
-				if (ind[i].dic[0][0]!=ind[i-1].dic[0][0]) {
+			init_prev = ind[i-1].dic[0];
+			if (alphabet(init)) {
+				if (init[0]!=init_prev[0]) {
 					fputs(group_skip,fp);
 					if (lethead_flag>0) {
-						fprintf(fp,"%s%c%s",lethead_prefix,ind[i].dic[0][0],lethead_suffix);
+						fprintf(fp,"%s%c%s",lethead_prefix,init[0],lethead_suffix);
 					}
 					else if (lethead_flag<0) {
-						fprintf(fp,"%s%c%s",lethead_prefix,ind[i].dic[0][0]+32,lethead_suffix);
+						fprintf(fp,"%s%c%s",lethead_prefix,init[0]+32,lethead_suffix);
 					}
 				}
 			}
-			else if (japanese(ind[i].dic[0])) {
+			else if (japanese(init)) {
 				for (j=hpoint;j<(strlen(datama)/2);j++) {
-					if ((unsigned char)(ind[i].dic[0][0]<=(unsigned char)datama[j*2])&&((unsigned char)ind[i].dic[0][1]<(unsigned char)datama[j*2+1])) {
+					if (((unsigned char)init[0]<=(unsigned char)datama[j*2])&&((unsigned char)init[1]<(unsigned char)datama[j*2+1])) {
 						break;
 					}
 				}
@@ -255,6 +254,20 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 						fputs(lethead_prefix,fp);
 						fprint_euc_char(fp,atama[(j-1)*2],atama[(j-1)*2+1]);
 						fputs(lethead_suffix,fp);
+					}
+				}
+			}
+			else {
+				if ( alphabet(init_prev) || japanese(init_prev) ||
+				    (!numeric(init_prev)&&numeric(init)) || (numeric(init_prev)&&!numeric(init)) ) {
+					if (alphabet(init_prev) || japanese(init_prev) || symbol_flag==2)
+						fputs(group_skip,fp);
+					if (lethead_flag!=0 && symbol_flag==2 && numeric(init)) {
+						fprintf(fp,"%s%s%s",lethead_prefix,numhead,lethead_suffix);
+					}
+					if (lethead_flag!=0 && (symbol_flag==1 && (alphabet(init_prev)||japanese(init_prev)) ||
+								symbol_flag==2 && !numeric(init)) ) {
+						fprintf(fp,"%s%s%s",lethead_prefix,symhead,lethead_suffix);
 					}
 				}
 			}
