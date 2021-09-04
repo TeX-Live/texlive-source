@@ -128,11 +128,11 @@ BREAK:
 		exit(254);
 	}
 	if (status == U_USING_DEFAULT_WARNING) {
-		warn_printf(efp, "\nWarning, [ICU] U_USING_DEFAULT_WARNING for locale %s\n",
+		warn_printf(efp, "\nWarning: [ICU] U_USING_DEFAULT_WARNING for locale %s\n",
 			    icu_locale);
 	}
 	if (status == U_USING_FALLBACK_WARNING) {
-		warn_printf(efp, "\nWarning, [ICU] U_USING_FALLBACK_WARNING for locale %s\n",
+		warn_printf(efp, "\nWarning: [ICU] U_USING_FALLBACK_WARNING for locale %s\n",
 			    icu_locale);
 	}
 	for (i=0;i<UCOL_ATTRIBUTE_COUNT;i++) {
@@ -141,7 +141,7 @@ BREAK:
 			ucol_setAttribute(icu_collator, i, icu_attributes[i], &status);
 		}
 		if (U_FAILURE(status)) {
-			warn_printf(efp, "\nWarning, [ICU] Failed to set attribute (%d): %s\n",
+			warn_printf(efp, "\nWarning: [ICU] Failed to set attribute (%d): %s\n",
 				    i, u_errorName(status));
 		}
 	}

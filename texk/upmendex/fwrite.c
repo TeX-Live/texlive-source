@@ -93,7 +93,7 @@ static void fprint_uchar(FILE *fp, const UChar *a, const int mode, const int len
 	} else
 		olen=wclen;
 	if (olen>INITIALLENGTH) {
-		warn_printf(efp, "\nWarning, Too long (%d) header.\n", olen);
+		warn_printf(efp, "\nWarning: Too long (%d) header.\n", olen);
 		wclen=INITIALLENGTH;
 	} else
 		wclen=olen;
@@ -1042,7 +1042,7 @@ static int init_hanzi_header(void)
 			len=u_strlen(pch0);
 		}
 		if (len>=INITIALLENGTH) {
-			warn_printf(efp, "\nWarning, Too long (%d) hanzi header.\n", len);
+			warn_printf(efp, "\nWarning: Too long (%d) hanzi header.\n", len);
 			len=INITIALLENGTH-1;
 		}
 		u_strncpy(hz_index[k].idx,pch0,len);
