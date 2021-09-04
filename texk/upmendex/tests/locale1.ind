@@ -23,6 +23,9 @@
 \centerline{\bfseries ◆◆◆ C ◆◆◆}\par\nobreak
   \item c\leaders\hbox{$\cdot$}\hfill 405
   \item C\leaders\hbox{$\cdot$}\hfill 404
+  \item Ch\leaders\hbox{$\cdot$}\hfill 420
+  \item cha\leaders\hbox{$\cdot$}\hfill 421
+  \item cz\leaders\hbox{$\cdot$}\hfill 422
 
   \indexspace
 

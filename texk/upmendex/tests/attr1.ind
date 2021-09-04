@@ -25,6 +25,9 @@
   \item c\leaders\hbox{$\cdot$}\hfill 405
   \item Ç\leaders\hbox{$\cdot$}\hfill 406
   \item ç\leaders\hbox{$\cdot$}\hfill 407
+  \item Ch\leaders\hbox{$\cdot$}\hfill 420
+  \item cha\leaders\hbox{$\cdot$}\hfill 421
+  \item cz\leaders\hbox{$\cdot$}\hfill 422
 
   \indexspace
 

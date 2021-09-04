@@ -84,3 +84,7 @@ else
   exit 1
 fi
 
+# test for icu_locale + icu_rules
+./upmendex -s $srcdir/tests/uni.ist -s $srcdir/tests/locale2.ist -s $srcdir/tests/rule1.ist $srcdir/tests/rule.idx \
+	-o locale2-rule1.ind1 -t locale2-rule1.ilg \
+	&& diff $srcdir/tests/locale2-rule.ind locale2-rule1.ind1 || exit 1

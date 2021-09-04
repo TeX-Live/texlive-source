@@ -19,8 +19,6 @@
   \item Ç\leaders\hbox{$\cdot$}\hfill 406
   \item c\leaders\hbox{$\cdot$}\hfill 405
   \item ç\leaders\hbox{$\cdot$}\hfill 407
-  \item Ch\leaders\hbox{$\cdot$}\hfill 420
-  \item cha\leaders\hbox{$\cdot$}\hfill 421
   \item cz\leaders\hbox{$\cdot$}\hfill 422
 
   \indexspace
@@ -36,5 +34,11 @@
 \centerline{\bfseries ◆◆◆ B ◆◆◆}\par\nobreak
   \item b\leaders\hbox{$\cdot$}\hfill 403
   \item B\leaders\hbox{$\cdot$}\hfill 402
+
+  \indexspace
+
+\centerline{\bfseries ◆◆◆ CH ◆◆◆}\par\nobreak
+  \item Ch\leaders\hbox{$\cdot$}\hfill 420
+  \item cha\leaders\hbox{$\cdot$}\hfill 421
 
 \end{theindex}

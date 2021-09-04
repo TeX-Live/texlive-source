@@ -117,7 +117,7 @@ void styread(const char *filename)
 			indent_length=atoi(&buff[cc]);
 			continue;
 		}
-		if (getparam(buff,"symbol",symbol)) continue;
+		if (getparam(buff,"symbol",symhead)) continue;
 		cc=scompare(buff,"symbol_flag");
 		if (cc!= -1) {
 			symbol_flag=atoi(&buff[cc]);

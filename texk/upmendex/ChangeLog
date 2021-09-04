@@ -1,3 +1,18 @@
+2021-09-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.59  Beta version.
+	* configure.ac: Bump version.
+	* fwrite.c, styfile.c, {,ex}var.h:
+	Support output order of symbols and numbers separately
+	when "symbol_flag" is 2 in style file.
+	* sort.c:
+	Accept combination of "icu_locale" and "icu_rules" in style file.
+	If simultaneously specified, collation rules specified by "icu_rules" are
+	added on collation rules specified by "icu_locale".
+	* tests/upmendex.test, tests/rule.{idx,ind}, tests/locale2.ist,
+	tests/{locale1,attri1,locale2-rule}.ind:
+	Add a new test and update conventional tests.
+
 2021-08-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* styfile.c:
