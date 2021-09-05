@@ -3869,7 +3869,7 @@ static void mpx_cleandir(MPX mpx, char *cur_path) {
   char *wrk, *p;
 #ifdef _WIN32
   struct _finddata_t c_file;
-  long hFile;
+  intptr_t hFile;
 #else
   struct dirent *entry;
   DIR *d;
