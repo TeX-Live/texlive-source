@@ -890,7 +890,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			strgth = ucol_getStrength(icu_collator);
 			ucol_setStrength(icu_collator, UCOL_PRIMARY);
 			strX[0] = 0x059;  strX[1] = 0x00; /* Y */
-			strZ[0] = 0x049;  strX[1] = 0x00; /* I */
+			strZ[0] = 0x049;  strZ[1] = 0x00; /* I */
 			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
 			if (order==UCOL_EQUAL) i_y_mode=2; else i_y_mode=1;
 			ucol_setStrength(icu_collator, strgth);
