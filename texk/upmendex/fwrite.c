@@ -740,7 +740,8 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	UChar32 c32;
 	UErrorCode perr;
 	UCollationResult order;
-	static int hanzi_mode=0;
+	UCollationStrength strgth;
+	static int hanzi_mode=0, i_y_mode=0;
 
 	ch=istr[0];
 	*chset=charset(istr);
@@ -880,6 +881,22 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		if (order==UCOL_GREATER) {
 			ini[0] = (ch==0x049||ch==0x131) ? 0x131 : 0x130; /* ı or İ */
 			turkish_i=1;
+			return;
+		}
+	}
+	if (ch==0x059||ch==0x079) {
+		/* check Y versus I for Lithuanian */
+		if (i_y_mode==0) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			strX[0] = 0x059;  strX[1] = 0x00; /* Y */
+			strZ[0] = 0x049;  strX[1] = 0x00; /* I */
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			if (order==UCOL_EQUAL) i_y_mode=2; else i_y_mode=1;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (i_y_mode==2) {
+			ini[0] = 0x049; /* I */
 			return;
 		}
 	}

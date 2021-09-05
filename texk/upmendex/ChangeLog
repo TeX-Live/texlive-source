@@ -1,3 +1,8 @@
+2021-09-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fwrite.c:
+	Support I-Y ordering in Lithuanian.
+
 2021-09-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.59  Beta version.
