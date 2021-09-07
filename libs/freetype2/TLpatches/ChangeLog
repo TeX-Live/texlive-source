@@ -1,3 +1,7 @@
+2021-09-07  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	Simplified patches for Solaris (fixed upstream).
+
 2021-09-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Imported freetype-2.11.0 source tree from:

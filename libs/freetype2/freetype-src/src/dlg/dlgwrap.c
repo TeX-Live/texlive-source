@@ -18,13 +18,7 @@
 
   /* We have to duplicate these feature test macros from `dlg.c` */
   /* since `freetype.h` loads some affected standard headers.    */
-/* Try Nelson's flag */
-#if defined(__sun)
 #define _XOPEN_SOURCE 600
-#define _XPG6
-#else
-#define _XOPEN_SOURCE
-#endif
 #define _POSIX_C_SOURCE 200809L
 
 #include <freetype/freetype.h>
