@@ -1,8 +1,26 @@
+2021-09-03  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (prev_tail): new global.
+	(tail_append): maintain it.
+	(insert_before_tail): new macro.
+	(If |tmp_k1| is not null...): insert auto-kern before a
+	null discretionary inserted by |wrapup| (i.e., explicit hyphen)
+	if appropriate. Report (2) from Robert Schlicht.
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-August/004338.html
+	
+2021-09-03  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (append_discretionary): insert autokern
+	(\pdfprependkern/pdfappendkern) after
+	hyphen char inserted by hyphenation. Report (3) from Robert Schlicht.
+	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-August/004338.html
+
 2021-08-21  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (cp_skipable): make autokerns "skipable", so character
 	protrusion works with chars having autokern
-	(\pdfprependkern/\pdfappendkern).
+	(\pdfprependkern/\pdfappendkern). Report (1) and patch from
+	Robert Schlicht,
 	https://mailman.ntg.nl/pipermail/ntg-pdftex/2021-August/004338.html
 
 2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
