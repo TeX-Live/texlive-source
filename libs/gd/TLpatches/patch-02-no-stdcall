@@ -1,6 +1,6 @@
-diff -ur libgd-2.3.2/src/gd.h libgd-src/src/gd.h
---- libgd-2.3.2/src/gd.h	Sun Mar 07 03:21:36 2021
-+++ libgd-src/src/gd.h	Fri Aug 27 15:13:24 2021
+diff -ur libgd-2.3.3/src/gd.h libgd-src/src/gd.h
+--- libgd-2.3.3/src/gd.h	Sat Sep 11 13:52:47 2021
++++ libgd-src/src/gd.h	Mon Sep 13 12:41:43 2021
 @@ -63,7 +63,7 @@
  #   define BGD_EXPORT_DATA_PROT __declspec(dllimport)
  #  endif
@@ -8,5 +8,5 @@ diff -ur libgd-2.3.2/src/gd.h libgd-src/src/gd.h
 -# define BGD_STDCALL __stdcall
 +# define BGD_STDCALL
  # define BGD_EXPORT_DATA_IMPL
+ # define BGD_MALLOC
  #else
- # if defined(__GNUC__) || defined(__clang__)

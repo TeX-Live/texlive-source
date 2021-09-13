@@ -1,7 +1,40 @@
-diff -ur libgd-2.3.2/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
---- libgd-2.3.2/src/gd_interpolation.c	Wed Mar 03 16:15:02 2021
-+++ libgd-src/src/gd_interpolation.c	Fri Aug 27 15:08:28 2021
-@@ -1989,9 +1989,9 @@
+diff -ur libgd-2.3.3/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
+--- libgd-2.3.3/src/gd_interpolation.c	Sat Sep 11 13:43:11 2021
++++ libgd-src/src/gd_interpolation.c	Mon Sep 13 13:00:04 2021
+@@ -295,8 +295,9 @@
+ }
+ 
+ double filter_linear(const double x, const double support) {
++	double ax;
+ 	ARG_NOT_USED(support);
+-	double ax = fabs(x);
++	ax = fabs(x);
+ 	if (ax < 1.0f) {
+ 		return (1.0f - ax);
+ 	}
+@@ -339,8 +340,9 @@
+ /* CubicSpline filter, default radius 2 */
+ static double filter_cubic_spline(const double x1, const double support)
+ {
++	double x;
+ 	ARG_NOT_USED(support);
+-	const double x = x1 < 0.0 ? -x1 : x1;
++	x = x1 < 0.0 ? -x1 : x1;
+ 
+ 	if (x < 1.0 ) {
+ 		const double x2 = x*x;
+@@ -559,8 +561,9 @@
+ 
+ static double filter_power(const double x, const double support)
+ {
++	double a;
+ 	ARG_NOT_USED(support);
+-	const double a = 2.0f;
++	a = 2.0f;
+ 	if (fabs(x)>1) return 0.0f;
+ 	return (1.0f - (double)fabs(pow(x,a)));
+ }
+@@ -2004,9 +2007,9 @@
  	int i;
  
  	b = (unsigned char)tcolor;
@@ -12,11 +45,11 @@ diff -ur libgd-2.3.2/src/gd_interpolation.c libgd-src/src/gd_interpolation.c
 +	r = (unsigned char)(tcolor >> 16);
 +	a = (unsigned char)(tcolor >> 24);
  
- 	b = CLAMP(b, 0, 255);
- 	g = CLAMP(g, 0, 255);
-diff -ur libgd-2.3.2/src/gdft.c libgd-src/src/gdft.c
---- libgd-2.3.2/src/gdft.c	Wed Mar 03 16:15:02 2021
-+++ libgd-src/src/gdft.c	Fri Aug 27 15:12:43 2021
+ 	for (i = 0; i < im->colorsTotal; i++) {
+ 		if (im->red[i] == r && im->green[i] == g && im->blue[i] == b && im->alpha[i] == a) {
+diff -ur libgd-2.3.3/src/gdft.c libgd-src/src/gdft.c
+--- libgd-2.3.3/src/gdft.c	Sat Sep 11 13:43:11 2021
++++ libgd-src/src/gdft.c	Mon Sep 13 12:40:35 2021
 @@ -446,6 +446,11 @@
  		FT_Face face, gdFTStringExtraPtr strex,
  		glyphInfo **glyph_info)
@@ -39,7 +72,7 @@ diff -ur libgd-2.3.2/src/gdft.c libgd-src/src/gdft.c
  	info = (glyphInfo*) gdMalloc (sizeof (glyphInfo) * len);
  	if (!info) {
  		return -1;
-@@ -1523,6 +1525,8 @@
+@@ -1496,6 +1498,8 @@
  		}
  
  		if (render) {
@@ -48,7 +81,7 @@ diff -ur libgd-2.3.2/src/gdft.c libgd-src/src/gdft.c
  			FT_Activate_Size (platform_specific);
  
  			/* load glyph again into the slot (erase previous one)  - this time with scaling */
-@@ -1556,8 +1560,8 @@
+@@ -1529,8 +1533,8 @@
  			bm = (FT_BitmapGlyph) image;
  			/* position rounded down to nearest pixel at current dpi
  			(the estimate was rounded up to next 1/METRIC_RES, so this should fit) */
@@ -59,7 +92,7 @@ diff -ur libgd-2.3.2/src/gdft.c libgd-src/src/gdft.c
  			gdft_draw_bitmap (tc_cache, im, fg, bm->bitmap,
  					  (int)(x + (pen_x * cos_a + pen_y * sin_a)*hdpi/(METRIC_RES*64) + bm->left),
  					  (int)(y - (pen_x * sin_a - pen_y * cos_a)*vdpi/(METRIC_RES*64) - bm->top));
-@@ -1793,6 +1797,16 @@
+@@ -1766,6 +1770,16 @@
  	 */
  	*fontpath = NULL;
  	fontsearchpath = getenv ("GDFONTPATH");

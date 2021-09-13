@@ -1,3 +1,8 @@
+2021-09-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import libgd-2.3.3.
+	* version.ac: Adapted.
+
 2021-08-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import libgd-2.3.2.

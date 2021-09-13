@@ -1,4 +1,4 @@
-	Building libgd-2.3.2 as part of the TL tree
+	Building libgd-2.3.3 as part of the TL tree
 	=========================================
 
 This directory libs/gd/ uses a proxy Makefile.am to build the gd library
@@ -11,4 +11,4 @@ been copied to libs/gd/configure.ac.
 =============================
 
 2013-06-26	Peter Breitenlohner <peb@mppmu.mpg.de>
-2021-08-28	Akira Kakuto <kakuto@jcom.zaq.ne.jp>
+2021-09-13	Akira Kakuto <kakuto@jcom.zaq.ne.jp>

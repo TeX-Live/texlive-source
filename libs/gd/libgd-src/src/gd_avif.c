@@ -33,7 +33,10 @@
 			We need more testing to really know what quantizer settings are optimal,
 			but teams at Google have been using maximum=30 as a starting point.
 		QUALITY_DEFAULT: following gd conventions, -1 indicates the default.
-		SPEED_DEFAULT: AVIF_SPEED_DEFAULT is -1. This simply tells the AVIF encoder to use the default speed.
+		SPEED_DEFAULT:
+			AVIF_SPEED_DEFAULT is simply the default encoding speed of the AV1 codec.
+			This could be as slow as 0. So we use 6, which is currently considered to be a fine default.
+
 */
 
 #define CHROMA_SUBSAMPLING_DEFAULT AVIF_PIXEL_FORMAT_YUV420
@@ -41,7 +44,7 @@
 #define HIGH_QUALITY_SUBSAMPLING_THRESHOLD 90
 #define QUANTIZER_DEFAULT 30
 #define QUALITY_DEFAULT -1
-#define SPEED_DEFAULT AVIF_SPEED_DEFAULT
+#define SPEED_DEFAULT 6
 
 // This initial size for the gdIOCtx is standard among GD image conversion functions.
 #define NEW_DYNAMIC_CTX_SIZE 2048
@@ -148,7 +151,7 @@ static avifBool isAvifSrgbImage(avifImage *avifIm) {
 */
 static avifBool isAvifError(avifResult result, const char *msg) {
 	if (result != AVIF_RESULT_OK) {
-		gd_error("avif error - %s: %s", msg, avifResultToString(result));
+		gd_error("avif error - %s: %s\n", msg, avifResultToString(result));
 		return AVIF_TRUE;
 	}
 
@@ -174,16 +177,21 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 	void *dataBuf = NULL;
 	gdIOCtx *ctx = (gdIOCtx *) io->data;
 
+	// readFlags is unsupported
+	if (readFlags != 0) {
+		return AVIF_RESULT_IO_ERROR;
+	}
+
 	// TODO: if we set sizeHint, this will be more efficient.
 
-	if (offset > LONG_MAX || size < 0)
+	if (offset > INT_MAX || size > INT_MAX)
 		return AVIF_RESULT_IO_ERROR;
 
 	// Try to seek offset bytes forward. If we pass the end of the buffer, throw an error.
-	if (!ctx->seek(ctx, offset))
+	if (!ctx->seek(ctx, (int) offset))
 		return AVIF_RESULT_IO_ERROR;
 
-	dataBuf = gdMalloc(size);
+	dataBuf = avifAlloc(size);
 	if (!dataBuf) {
 		gd_error("avif error - couldn't allocate memory");
 		return AVIF_RESULT_UNKNOWN_ERROR;
@@ -191,15 +199,15 @@ static avifResult readFromCtx(avifIO *io, uint32_t readFlags, uint64_t offset, s
 
 	// Read the number of bytes requested.
 	// If getBuf() returns a negative value, that means there was an error.
-	int charsRead = ctx->getBuf(ctx, dataBuf, size);
+	int charsRead = ctx->getBuf(ctx, dataBuf, (int) size);
 	if (charsRead < 0) {
-		gdFree(dataBuf);
+		avifFree(dataBuf);
 		return AVIF_RESULT_IO_ERROR;
 	}
 
 	out->data = dataBuf;
 	out->size = charsRead;
-	return charsRead == size ? AVIF_RESULT_OK : AVIF_RESULT_TRUNCATED_DATA;
+	return AVIF_RESULT_OK;
 }
 
 // avif.h says this is optional, but it seemed easy to implement.
@@ -336,7 +344,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 */
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 {
-	int x, y;
+	uint32_t x, y;
 	gdImage *im = NULL;
 	avifResult result;
 	avifIO *io;
@@ -347,6 +355,15 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 	rgb.pixels = NULL;
 
 	decoder = avifDecoderCreate();
+
+	// Check if libavif version is >= 0.9.1.
+	// If so, allow the PixelInformationProperty ('pixi') to be missing in AV1 image
+	// items. libheif v1.11.0 or older does not add the 'pixi' item property to
+	// AV1 image items. (This issue has been corrected in libheif v1.12.0.)
+
+#if AVIF_VERSION >= 90100
+	decoder->strictFlags &= ~AVIF_STRICT_PIXI_REQUIRED;
+#endif
 
 	io = createAvifIOFromCtx(ctx);
 	if (!io) {
@@ -366,7 +383,7 @@ BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx (gdIOCtx *ctx)
 		goto cleanup;
 
 	if (!isAvifSrgbImage(decoder->image))
-		gd_error_ex(LOG_WARNING, "Image's color profile is not sRGB");
+		gd_error_ex(LOG_NOTICE, "Image's color profile is not sRGB");
 
 	// Set up the avifRGBImage, and convert it from YUV to an 8-bit RGB image.
 	// (While AVIF image pixel depth can be 8, 10, or 12 bits, GD truecolor images are 8-bit.)
@@ -438,7 +455,7 @@ cleanup:
 		im			- The image to save.
 		outFile - The FILE pointer to write to.
 		quality - Compression quality (0-100). 0 is lowest-quality, 100 is highest.
-		speed	 - The speed of compression (0-10). 0 is slowest, 10 is fastest.
+		speed	  - The speed of compression (0-10). 0 is slowest, 10 is fastest.
 
 	Notes on parameters:
 		quality - If quality = -1, we use a default quality as defined in QUALITY_DEFAULT.
@@ -447,7 +464,9 @@ cleanup:
 		speed - At slower speeds, encoding may be quite slow. Use judiciously.
 
 		Qualities or speeds that are lower than the minimum value get clamped to the minimum value,
-		abd qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		and qualities or speeds that are lower than the maximum value get clamped to the maxmum value.
+		Note that AVIF_SPEED_DEFAULT is -1. If we ever set SPEED_DEFAULT = AVIF_SPEED_DEFAULT,
+		we'd want to add a conditional to ensure that value doesn't get clamped.
 
 
 	Returns:
@@ -457,6 +476,7 @@ cleanup:
 */
 
 /*
+	 Private subobject
 	 Function: _gdImageAvifCtx
 
 	 We need this underscored function because gdImageAvifCtx() can't return anything.
@@ -477,7 +497,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 
 	uint32_t val;
 	uint8_t *p;
-	int x, y;
+	uint32_t x, y;
 
 	if (im == NULL)
 		return 1;
@@ -497,8 +517,7 @@ static avifBool _gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, in
 		return 1;
 	}
 
-	if (speed != AVIF_SPEED_DEFAULT)
-		speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
+	speed = CLAMP(speed, AVIF_SPEED_SLOWEST, AVIF_SPEED_FASTEST);
 
 	avifPixelFormat subsampling = quality >= HIGH_QUALITY_SUBSAMPLING_THRESHOLD ?
 		CHROMA_SUBAMPLING_HIGH_QUALITY : CHROMA_SUBSAMPLING_DEFAULT;
@@ -596,7 +615,7 @@ BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int s
 
 BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
 {
-	gdImageAvifEx(im, outFile, QUALITY_DEFAULT, AVIF_SPEED_DEFAULT);
+	gdImageAvifEx(im, outFile, QUALITY_DEFAULT, SPEED_DEFAULT);
 }
 
 BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed)
@@ -638,41 +657,62 @@ static void *_noAvifError(void)
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvif(FILE *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifPtr(int size, void *data)
 {
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(data);
 	return _noAvifError();
 }
 
 BGD_DECLARE(gdImagePtr) gdImageCreateFromAvifCtx(gdIOCtx *ctx)
 {
+	ARG_NOT_USED(ctx);
 	return _noAvifError();
 }
 
 BGD_DECLARE(void) gdImageAvifCtx(gdImagePtr im, gdIOCtx *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outFile, int quality, int speed)
+BGD_DECLARE(void) gdImageAvifEx(gdImagePtr im, FILE *outfile, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	_noAvifError();
 }
 
-BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outFile)
+BGD_DECLARE(void) gdImageAvif(gdImagePtr im, FILE *outfile)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(outfile);
 	_noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtr(gdImagePtr im, int *size)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+
 	return _noAvifError();
 }
 
 BGD_DECLARE(void *) gdImageAvifPtrEx(gdImagePtr im, int *size, int quality, int speed)
 {
+	ARG_NOT_USED(im);
+	ARG_NOT_USED(size);
+	ARG_NOT_USED(quality);
+	ARG_NOT_USED(speed);
 	return _noAvifError();
 }
 

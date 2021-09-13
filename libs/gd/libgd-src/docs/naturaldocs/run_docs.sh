@@ -49,7 +49,7 @@ fi
 echo "Found '$(nd)': $($(nd) -h | head -n1)"
 
 # Library version number.
-VERSION=$(cd ../../; perl config/getver.pl)
+VERSION=$(cd ../../; config/getver.sh)
 
 # Clear away old docs and ensure the doc dir. is present.
 rm -rf html
@@ -74,6 +74,13 @@ $(nd) --rebuild --rebuild-output --documented-only \
 	-o html html  \
 	--project project/ \
 	-s Default libgd
+
+# Strip whitespace.
+sed -i.tmp -E \
+  -e 's:[[:space:]]+$::' \
+  -e '${/^[[:space:]]*$/d}' \
+  project/*.txt
+rm project/*.txt.tmp
 
 # And cleanup the temp files.
 rm -rf Data tmp
