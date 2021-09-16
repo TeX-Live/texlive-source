@@ -199,7 +199,7 @@ tricky way so that the first line of the output file will be
 
 @<Start \TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
-*out_ptr='c'; tex_printf("\\input cwebma");
+tex_printf("\\input cwebma"); *out_ptr='c';
 @y
 @ In particular, the |finish_line| procedure is called near the very
 beginning of phase two. We initialize the output variables in a slightly
@@ -213,10 +213,11 @@ Without this option the first line of the output file will be
 `\.{\\input cwebmac}'.
 
 @<Start \TEX/...@>=
-out_ptr=out_buf+1; out_line=1; active_file=tex_file; *out_ptr='c';
+out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_puts("\\input ");
 tex_printf(use_language);
 tex_puts("cwebma");
+*out_ptr='c';
 @z
 
 @x
@@ -265,6 +266,12 @@ tex_puts("cwebma");
     err_print("! Illegal use of @@ in comment");
 @y
     err_print(_("! Illegal use of @@ in comment"));
+@z
+
+@x
+@i prod.w
+@y
+@i prod-cweave.w
 @z
 
 @x
@@ -329,7 +336,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app(dindent); big_app1(pp); reduce(pp,1,fn_decl,0,38);
+  big_app(dindent); squash(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @y
@@ -349,8 +356,8 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  if (indent_param_decl) big_app(dindent); big_app1(pp);
-  reduce(pp,1,fn_decl,0,38);
+  if (indent_param_decl) big_app(dindent);
+  squash(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @z
@@ -405,6 +412,15 @@ else if (cat1==stmt) {
 @z
 
 @x
+  big_app1_insert(pp, (cat1==function || cat1==decl) ? big_force :
+     force_lines ? force : break_space); reduce(pp,2,cat1,-1,76);
+@y
+  big_app1_insert(pp, (cat1==function || cat1==decl) ? @|
+     ( order_decl_stmt ? big_force : force ) : @|
+     ( force_lines ? force : break_space ) ); reduce(pp,2,cat1,-1,76);
+@z
+
+@x
     overflow("token");
 @y
     overflow(_("token"));
@@ -441,9 +457,9 @@ else if (cat1==stmt) {
 @z
 
 @x
-        else err_print("! Double @@ should be used in strings");
+      else err_print("! Double @@ should be used in strings");
 @y
-        else err_print(_("! Double @@ should be used in strings"));
+      else err_print(_("! Double @@ should be used in strings"));
 @z
 
 @x

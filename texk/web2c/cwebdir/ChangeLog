@@ -1,3 +1,21 @@
+2021-09-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-{bs,vms,w2c,w32}.ch,
+	* common.c,
+	* common.h,
+	* ctang-vms.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-{mini,w2c}.ch,
+	* cweav-{vms,w2c}.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* po/de/web2c-help.po,
+	* po/web2c-help.pot,
+	* prod-{cweave,twill}.w,
+	* prod.w: CWEB 4.6 pre-release.
+
 2021-07-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

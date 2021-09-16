@@ -21226,7 +21226,7 @@ weave.p: tangle$(EXEEXT) weave.web weave.ch
 weave.log: weave$(EXEEXT)
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
-cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
+cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-cweave.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 ctwill.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-twill.w cwebdir/ctwill-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave ctwill-w2c ctwill.c

@@ -548,6 +548,15 @@ Section 106.
 @r @ Here is a list of the category codes that scraps can have.
 @z
 
+Section 108.
+
+@x
+@d print_cat(c) fputs(cat_name[c],stdout)
+@y
+@d print_cat(c) fputs(cat_name[c],stdout)
+@-c@>
+@z
+
 Section 109--110.
 
 @x
@@ -704,6 +713,7 @@ Section 119.
 {$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-in@>
+@%@$dindent {CTWILL}110 =\T{\~226/}@>
 \prodno=27 \midcol=2.5in
 \def\theprodno{\number\prodno \global\advance\prodno by1\enspace}
 \def\dagit{\dag\theprodno}
@@ -717,9 +727,9 @@ Section 119.
 Section 120.
 
 @x l.75
-              \&{struct} \&{name\_info} $\{$\cr
+    & \&{struct} \&{name\_info} $\{$\cr
 @y
-              \&{struct} \&{name\_info} $\{$\cr
+    & \&{struct} \&{name\_info} $\{$\cr
 \endgroup
 
 @r @ Cont.@-z@>@-in@>@-x@>
@@ -749,9 +759,9 @@ Section 120.
 Section 121.
 
 @x l.164
-       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
+    & \&{else} $x=0;$\cr
 @y
-       $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$ & $\!\!$|else x=0;|\cr
+    & \&{else} $x=0;$\cr
 \endgroup
 
 @ Cont.
@@ -768,6 +778,7 @@ Section 121.
 {$\displaystyle\!\matrix{\strut\hbox{#1}\hfill\cr\hbox{#2}\hfill\cr
    \strut\hbox{#3}\hfill\cr}$}
 \yskip@-any@>@-z@>@-g@>@-a@>@-x@>@-y@>@-f@>
+@%@$dindent {CTWILL}110 =\T{\~226/}@>
 \prodno=61 \midcol=2.5in
 \def\theprodno{\number\prodno \global\advance\prodno by1\enspace}
 \def\dagit{\dag\theprodno}
@@ -906,15 +917,9 @@ Section 125.
 
 @x l.326
 \+& |alignas_like| |cast| & |attr| & |alignas(int)| \cr
-\yskip
-\yskip
-\yskip
-\yskip
-\yskip
-\yskip
-\yskip
-\yskip
+\vfill\break
 \parindent=0pt
+\everypar={\hangindent=2em}
 \dag{\bf Notes}
 @y
 \+& |alignas_like| |cast| & |attr| & |alignas(int)| \cr
@@ -1002,12 +1007,20 @@ Section 132.
 @-pp@>
 @z
 
+@x
+example, `|squash(pp,3,exp,-2,3)|' is an abbreviation for `|big_app3(pp);
+reduce(pp,3,exp,-2,3)|'.
+@y
+example, `|squash(pp,3,exp,-2,3)|' is an abbreviation for `|big_app3(pp)|'
+followed by `|reduce(pp,3,exp,-2,3)|'.
+@z
+
 Section 133.
 
 @x
 The code below is an exact translation of the production rules into
 @y
-@r @ The code below is an exact translation of the production rules into
+@ The code below is an exact translation of the production rules into
 @-a@>
 @-c@>
 @-p@>
@@ -1223,7 +1236,19 @@ scrap_pointer p)
 @$make_underlined {CTWILL}141 \&{static} \&{void} (\,)@>
 @z
 
+@x
+    return; /* this happens, for example, in |case found:| */
+@y
+    return; /* this happens, for example, in \&{case} \\{found}: */
+@z
+
 Section 144.
+
+@x
+    strcpy(ministring_buf,"label");
+@y
+    strcpy(ministring_buf,"label");@/
+@z
 
 @x
 else if (cat1==attr) {
@@ -1242,11 +1267,11 @@ Section 158.
 Section 165.
 
 @x
-  else squash(pp,1,else_like,0,65);
+  else reduce(pp,0,else_like,0,65);
 }
 else if (cat1==attr) {
 @y
-  else squash(pp,1,else_like,0,65);
+  else reduce(pp,0,else_like,0,65);
 }
 @+ else @/ if (cat1==attr) {
 @z
@@ -1290,13 +1315,9 @@ else if (cat1==raw_ubin) {
 Section 198.
 
 @x
-static void squash(scrap_pointer,short,eight_bits,short,short);
-
-@ @c
+@ Now here's the |reduce| procedure used in our code for productions,
 @y
-static void squash(scrap_pointer,short,eight_bits,short,short);
-
-@r @ @c
+@r @ Now here's the |reduce| procedure used in our code for productions,
 @z
 
 Section 203.
@@ -1466,17 +1487,19 @@ Section 213--214.
 Section 221.
 
 @x
-@ The |outer_parse| routine is to |C_parse| as |outer_xref|
-@y
-@r @ The |outer_parse| routine is to |C_parse| as |outer_xref|
-@z
-
-@x
 @d make_pb flags['e']
 @y
 @d make_pb flags['e']
 @-make_pb@>
 @$make_pb {CTWILL}221 =\\{flags}[\.{'e'}]@>
+@z
+
+Section 222.
+
+@x
+@ @c
+@y
+@r @ @c
 @z
 
 Section 225.
@@ -1517,12 +1540,6 @@ This subroutine will never be called when |stack_ptr==1|.
 @z
 
 Section 234--235.
-
-@x
-@ Here is \.{CWEAVE}'s major output handler.
-@y
-@r @ Here is \.{CWEAVE}'s major output handler.
-@z
 
 @x
     reswitch: switch(a) {
@@ -1994,12 +2011,13 @@ Section 302.
 Section 303.
 
 @x
-@ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
+@ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
 @y
-@r @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
+@r @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
 @-a@>
 @-b@>
 @-c@>
+@-l@>
 @-make_ministring@>
 @$make_ministring {CTWILL}303 \&{static} \&{void} (\,)@>
 @z
@@ -2007,9 +2025,9 @@ Section 303.
 Section 304.
 
 @x
-@ @<Predec...@>=@+static void make_ministring(int);
+@ @<Predec...@>=@+static void make_ministring(scrap_pointer);
 @y
-@ @<Predec...@>=@+static void make_ministring(int);
+@ @<Predec...@>=@+static void make_ministring(scrap_pointer);
 @-make_ministring@>
 @z
 

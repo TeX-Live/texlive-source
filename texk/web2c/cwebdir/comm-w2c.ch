@@ -451,7 +451,7 @@ char check_file_name[max_file_name_length]; /* name of |check_file| */
 @x
 show_banner=show_happiness=show_progress=make_xrefs=true;
 @y
-make_xrefs=check_for_change=true;
+make_xrefs=true;
 @z
 
 @x

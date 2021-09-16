@@ -473,7 +473,7 @@ tricky way so that the first line of the output file will be
 
 @<Start \TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
-*out_ptr='c'; tex_printf("\\input cwebma");
+tex_printf("\\input cwebma"); *out_ptr='c';
 @y
 @ In particular, the |finish_line| procedure is called near the very
 beginning of phase two. We initialize the output variables in a slightly
@@ -492,10 +492,11 @@ debugging mini-index entries.
 @d proofing flags['P']
 
 @<Start \TEX/...@>=
-out_ptr=out_buf+1; out_line=1; active_file=tex_file; *out_ptr='c';
+out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_puts("\\input ");
 tex_printf(use_language);
 tex_puts(proofing?"ctproofma":"ctwima");
+*out_ptr='c';
 @z
 
 @x
@@ -676,7 +677,7 @@ if (cat1==lbrace || cat1==int_like || cat1==decl) {
 @y
 @<Cases for |exp|@>=
 if(cat1==lbrace || cat1==int_like || cat1==decl) {
-  make_underlined(pp); make_ministring(0); big_app1(pp);
+  make_underlined(pp); make_ministring(pp); big_app1(pp);
   if (indent_param_decl) big_app(dindent);
   reduce(pp,1,fn_decl,0,1);
 }
@@ -687,9 +688,8 @@ if(cat1==lbrace || cat1==int_like || cat1==decl) {
 @y
   make_underlined (pp);
   if (tok_loc>operator_found) {
-    name_pointer cn=((*tok_loc)%id_flag)+name_dir;
     strcpy(ministring_buf,"label");
-    new_meaning(cn);
+    new_meaning(((*tok_loc)%id_flag)+name_dir);
   }
   squash(pp,2,tag,-1,7);
 @z
@@ -710,7 +710,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  big_app(dindent); big_app1(pp); reduce(pp,1,fn_decl,0,38);
+  big_app(dindent); squash(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @y
@@ -723,8 +723,7 @@ else if (cat1==ubinop) {
   reduce(pp,2,decl_head,-1,34);
 }
 else if (cat1==exp && cat2!=lpar && cat2!=lbrack && cat2!=exp && cat2!=cast) {
-  make_underlined(pp+1);
-  make_ministring(1);
+  make_underlined(pp+1); make_ministring(pp+1);
   squash(pp,2,decl_head,-1,35);
 }
 else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
@@ -732,8 +731,8 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
 else if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  if (indent_param_decl) big_app(dindent); big_app1(pp);
-  reduce(pp,1,fn_decl,0,38);
+  if (indent_param_decl) big_app(dindent);
+  squash(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @z
@@ -760,8 +759,7 @@ else if (cat1==stmt || cat1==function) {
 @x
     make_underlined(pp+1); make_reserved(pp+1);
 @y
-    make_underlined(pp+1); make_reserved(pp+1);
-    make_ministring(1);
+    make_underlined(pp+1); make_reserved(pp+1); make_ministring(pp+1);
 @z
 
 @x
@@ -795,6 +793,15 @@ else if (cat1==stmt) {
 @z
 
 @x
+  big_app1_insert(pp, (cat1==function || cat1==decl) ? big_force :
+     force_lines ? force : break_space); reduce(pp,2,cat1,-1,76);
+@y
+  big_app1_insert(pp, (cat1==function || cat1==decl) ? @|
+     ( order_decl_stmt ? big_force : force ) : @|
+     ( force_lines ? force : break_space ) ); reduce(pp,2,cat1,-1,76);
+@z
+
+@x
 if (cat1==define_like) make_underlined(pp+2);
 @y
 if (cat1==define_like) { /* \#\&{define} is analogous to \&{extern} */
@@ -807,11 +814,11 @@ if (cat1==define_like) { /* \#\&{define} is analogous to \&{extern} */
 @z
 
 @x
-if (cat1==prelangle) squash(pp+1,1,langle,1,100);
-else squash(pp,1,exp,-2,101);
+if (cat1==prelangle) reduce(pp+1,0,langle,1,100);
+else reduce(pp,0,exp,-2,101);
 @y
-if (cat1==prelangle) squash(pp+1,1,langle,1,121);
-else squash(pp,1,exp,-2,122);
+if (cat1==prelangle) reduce(pp+1,0,langle,1,121);
+else reduce(pp,0,exp,-2,122);
 @z
 
 @x
@@ -823,7 +830,7 @@ else squash(pp,1,exp,-2,122);
 @x
 @ @<Cases for |typedef_like|@>=
 if ((cat1==int_like || cat1==cast) && (cat2==comma || cat2==semi))
-  squash(pp+1,1,exp,-1,115);
+  reduce(pp+1,0,exp,-1,115);
 else if (cat1==int_like) {
   big_app1_insert(pp,' '); reduce(pp,2,typedef_like,0,116);
 }
@@ -848,15 +855,14 @@ less friendly to \CPLUSPLUS/ but good enough for me.
 @<Cases for |typedef_like|@>=
 if (cat1==decl_head) {
   if ((cat2==exp&&cat3!=lpar&&cat3!=exp)||cat2==int_like) {
-    make_underlined(pp+2); make_reserved(pp+2);
-    make_ministring(2);
-    big_app2(pp+1); reduce(pp+1,2,decl_head,0,200);
+    make_underlined(pp+2); make_reserved(pp+2); make_ministring(pp+2);
+    squash(pp+1,2,decl_head,0,200);
   }
   else if (cat2==semi) {
     big_app1(pp); big_app(' '); big_app2(pp+1); reduce(pp,3,decl,-1,201);
   }
 } else if (cat1==int_like && cat2==raw_int &&
-    (cat3==semi || cat3==comma)) squash(pp+2,1,exp,1,202);
+    (cat3==semi || cat3==comma)) reduce(pp+2,0,exp,1,202);
 @z
 
 @x
@@ -903,9 +909,9 @@ if (cat1==decl_head) {
 @z
 
 @x
-        else err_print("! Double @@ should be used in strings");
+      else err_print("! Double @@ should be used in strings");
 @y
-        else err_print(_("! Double @@ should be used in strings"));
+      else err_print(_("! Double @@ should be used in strings"));
 @z
 
 @x
@@ -1664,38 +1670,35 @@ catch14: return *(*(p+1)-1)=='9'; /* was production 14 used? */
 @ @<Predec...@>=@+static boolean app_supp(text_pointer);
 
 @q Section 142->284. @>
-@ The trickiest part of \.{CTWILL} is the procedure |make_ministring(l)|,
-which tries to figure out a symbolic form of definition after
-|make_underlined(pp+l)| has been called. We rely heavily on the
-existing productions, which force the translated texts to have a
+@ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
+with offset $l\in\{0,1,2\}$, which tries to figure out a symbolic form of
+definition after |make_underlined(pp+l)| has been called. We rely heavily
+on the existing productions, which force the translated texts to have a
 structure that's decodable even though the underlying |cat| and |mathness|
 codes have disappeared.
 
 @c static void
-make_ministring(
-  int l) /* 0, 1, or 2 */
+make_ministring(scrap_pointer p)
 {
-  name_pointer cn;
   if (tok_loc<=operator_found) return;
-  cn=((*tok_loc)%id_flag)+name_dir;
   @<Append the type of the declaree; |return| if it begins with \&{extern}@>@;
-  null_scrap.mathness=(((pp+l)->mathness)%4)*5; big_app1(&null_scrap);
+  null_scrap.mathness=((p->mathness)%4)*5; big_app1(&null_scrap);
     /* now we're ready for the mathness that follows (I think);
        (without the mod 4 times 5, comments posed a problem,
        namely in cases like |int a(b,c)| followed by comment) */
-  ident_seen=false;@+app_supp((pp+l)->trans);
+  ident_seen=false;@+app_supp(p->trans);
   null_scrap.mathness=10; big_app1(&null_scrap);
    /* now |cur_mathness==no_math| */
   ms_mode=true; ministring_ptr=ministring_buf;
-  if (l==2) *ministring_ptr++='=';
+  if (p==pp+2) *ministring_ptr++='=';
   make_output(); /* translate the current text into a ministring */
   tok_ptr=*(--text_ptr); /* delete that text */
-  new_meaning(cn);
+  new_meaning(((*tok_loc)%id_flag)+name_dir);
   cur_mathness=maybe_math; /* restore it */
 }
 
 @q Section 285. @>
-@ @<Predec...@>=@+static void make_ministring(int);
+@ @<Predec...@>=@+static void make_ministring(scrap_pointer);
 
 @q Section 43->286. @>
 @ @<Private...@>=
@@ -1712,15 +1715,15 @@ its current meaning, but we do suppress mini-index entries to its
 current meaning in other sections.
 
 @<Append the type of the declaree; |return| if it begins with \&{extern}@>=
-if (l==0) { app(int_loc+res_flag); app(' '); cur_mathness=no_math; }
+if (p==pp) { app(int_loc+res_flag); app(' '); cur_mathness=no_math; }
 else {
-  text_pointer q=(pp+l-1)->trans, r;
+  text_pointer q=(p-1)->trans, r;
   token t;
   int ast_count=0; /* asterisks preceding the expression */
   boolean non_ast_seen=false; /* have we seen a non-asterisk? */
   while (true) {
     if (*(q+1)==*q+1) {
-      r=q;@+break; /* e.g. \&{struct}; we're doing production 45 or 46 */
+      r=q;@+break; /* e.g., \&{struct}; we're doing production 45 or 46 */
     }
     if (**q<tok_flag) confusion(_("find type"));
     r=**q-tok_flag+tok_start;

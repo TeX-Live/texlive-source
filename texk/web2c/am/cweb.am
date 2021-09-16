@@ -15,7 +15,7 @@ ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 DISTCLEANFILES += ctie.c
 
 nodist_cweave_SOURCES = cweave.c cweb.c
-cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod.w cwebdir/cweav-w2c.ch
+cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-cweave.w cwebdir/cweav-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/cwebdir $(ctangle) cweave cweav-w2c
 DISTCLEANFILES += cweave.c
 

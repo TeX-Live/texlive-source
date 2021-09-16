@@ -1493,8 +1493,8 @@ skip_limbo(void)
     while (*loc!='@@') loc++;
     if (loc++<=limit) {
       char c=*loc++;
-      if (ccode[(eight_bits)c]==new_section) break;
       switch (ccode[(eight_bits)c]) {
+        case new_section: return;
         case translit_code: @<Read in transliteration of a character@>@; break;
         case format_code: case '@@': break;
         case control_text: if (c=='q' || c=='Q') {

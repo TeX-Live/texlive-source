@@ -1,3 +1,11 @@
+2021-09-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile.in,
+	* am/cweb.am,
+	* ctangleboot.cin,
+	* cwebboot.cin,
+	* help.h: CWEB 4.6 pre-release.
+
 2021-07-25  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (proglib_sources): laboriously list all of lib/*.c

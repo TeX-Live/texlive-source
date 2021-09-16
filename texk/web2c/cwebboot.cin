@@ -18,8 +18,8 @@
 #include <kpathsea/simpletypes.h>  
 #include <stddef.h>  
 #include <stdint.h>  
-#include <stdlib.h>  
 #include <stdio.h>  
+#include <stdlib.h>  
 #include <string.h>  
 
 /*:3*//*89:*/
@@ -541,7 +541,7 @@ textdomain("cweb");
 #line 1139 "cwebdir/common.w"
 
 #line 454 "cwebdir/comm-w2c.ch"
-make_xrefs= check_for_change= true;
+make_xrefs= true;
 #line 1141 "cwebdir/common.w"
 
 /*:74*/

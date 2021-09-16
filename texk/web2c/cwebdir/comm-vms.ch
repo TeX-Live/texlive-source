@@ -18,8 +18,8 @@ modified:
 #include <stdbool.h> /* definition of |@!bool|, |@!true| and |@!false| */
 #include <stddef.h> /* definition of |@!ptrdiff_t| */
 #include <stdint.h> /* definition of |@!uint8_t| and |@!uint16_t| */
-#include <stdlib.h> /* definition of |@!getenv| and |@!exit| */
 #include <stdio.h> /* definition of |@!printf| and friends */
+#include <stdlib.h> /* definition of |@!getenv| and |@!exit| */
 #include <string.h> /* definition of |@!strlen|, |@!strcmp| and so on */
 @y
 #include ctype /* definition of |@!isalpha|, |@!isdigit| and so on */
@@ -27,8 +27,8 @@ modified:
 #include stdbool /* definition of |@!bool|, |@!true| and |@!false| */
 #include stddef /* definition of |@!ptrdiff_t| */
 #include stdint /* definition of |@!uint8_t| and |@!uint16_t| */
-#include stdlib /* definition of |@!getenv| and |@!exit| */
 #include stdio /* definition of |@!printf| and friends */
+#include stdlib /* definition of |@!getenv| and |@!exit| */
 #include string /* definition of |@!strlen|, |@!strcmp| and so on */
 @z
 

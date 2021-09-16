@@ -1,4 +1,4 @@
-% This file is part of CTWILL, a modification of CWEB.
+% This file is part of CWEB.
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
@@ -254,16 +254,21 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
     $O$\.\ \alt $N$ $S$ & |operator delete|\cr
 \+& |operator_like| |comma| & |exp| & \&{operator},\cr
 \+\dagit& |operator_like| & |new_exp| & |operator char*|\cr
-\advance\midcol-3pt
-\+\dag200\enspace& |typedef_like| |decl_head| \alt|exp| |int_like| &
-      |typedef_like| |decl_head| \hfill $D=D$\alt $E^{**}$ $I^{**}$ \unskip &
-          \&{typedef} \&{char} \&{ch};\cr
-\advance\midcol+3pt
-\+201\enspace& |typedef_like| |decl_head| |semi| & |decl| \hfill $T\.\ D$ &
-                                             \&{typedef} \&{int} $\&x,\&y$;\cr
-\+\dag202\enspace& |typedef_like| |int_like| |raw_int| & |typedef_like| |int_like| |exp| &
-  \&{typedef} \&{int} \&{foo}\cr
-\global\prodno=121
+\advance\midcol-8pt
+\+& |typedef_like| \alt|int_like| |cast| \alt|comma| |semi| &
+    |typedef_like| |exp| \alt|comma| |semi| & \&{typedef} \&{int} \&I,\cr
+\advance\midcol+8pt
+\+& |typedef_like| |int_like| & |typedef_like| \hfill $T\.\ I$ &
+    \&{typedef} \&{char}\cr
+\+\dagit& |typedef_like| |exp| & |typedef_like| \hfill $T\.\ E^{**}$ &
+    \&{typedef} \&I \.{@@[@@]} (|*|\&P)\cr
+\+& |typedef_like| |comma| & |typedef_like| \hfill $TC\.\ $ &
+    \&{typedef} \&{int} \&x,\cr
+\+& |typedef_like| |semi| & |decl| & \&{typedef} \&{int} $\&x,\&y$;\cr
+\+& |typedef_like| |ubinop| \alt |cast| |ubinop| &
+    |typedef_like| \alt |cast| |ubinop| \hfill
+    \alt $C=\.\{U\.\}C$ $U_2=\.\{U_1\.\}U_2$ \unskip &
+    \&{typedef} |*|{}|*|(\&{CPtr})\cr
 \+& |delete_like| |lpar| |rpar| & |delete_like|\hfill $DL\.{\\,}R$
     & \&{delete}[\,] \cr
 \+& |delete_like| |exp| & |exp| \hfill $D\.\ E$ & \&{delete} $p$ \cr
@@ -356,13 +361,12 @@ must not be immediately followed by a |binop|.
 Rule 114: The |operator_like| must not be immediately followed by
 |raw_ubin|.
 
+Rule 117: The |exp| must not be immediately followed by |lpar|, |exp|,
+or |cast|.
+
 Rule 123: The mathness of the |colon| or |base| changes to `yes'.
 
 Rules 153, 154: |make_reserved| is called only if \.{CWEAVE} has been invoked
 with the \.{+t} option.
-
-Rule 200: The |exp| must not be immediately followed by |lpar| or~|exp|.
-
-Rule 202: The |raw_int| must be immediately followed by |semi| or |comma|.
 
 \endgroup

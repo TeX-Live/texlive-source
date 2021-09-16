@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2021\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-24 12:04+0100\n"
+"POT-Creation-Date: 2021-07-27 09:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +71,7 @@ msgid "+/-v        shortcut for '+bhp'; also '--verbose'"
 msgstr ""
 
 #: help.h:64 help.h:85 help.h:112
-msgid "-c          ignore temporary output irrespective of changes"
+msgid "+c          check temporary output for changes"
 msgstr ""
 
 #: help.h:66 help.h:93 help.h:121

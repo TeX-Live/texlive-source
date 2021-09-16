@@ -448,7 +448,7 @@
        \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
   \closeout\cont % the contents information has been fully gathered
   \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
-    \global\setbox\sbox=\page \global\pagesavedtrue}
+    \global\setbox\sbox=\page \global\pagesavedtrue \mark{\topmark}}
   \pagesavedfalse \eject % eject the page-so-far and predecessors
   \setbox\sbox\vbox{\unvbox\sbox} % take it out of its box
   \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height

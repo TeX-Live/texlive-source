@@ -169,8 +169,7 @@ options are currently implemented:%
 \cwebfootnote{This extended version of \.{CWEB} adds the following options
 to the list:
 \hfil\smallskip
-\option c Overwrite output files with temporary output only if changes occur.
-(On by default.)
+\option c Check temporary output files for changes.  (Off by default.)
 \hfil\vskip\normallineskip
 \option d Set the debugging variable \\{kpathsea\_debug} to the numeric
 value $N\in[0,127]$ of this option.  See section~93 % FIXME

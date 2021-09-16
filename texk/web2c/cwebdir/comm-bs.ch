@@ -183,7 +183,7 @@ boolean ispref) /* are we adding a prefix or a full name? */
 @x Section 63.
 static int section_name_cmp(
 char **pfirst, /* pointer to beginning of comparison string */
-int len, /* length of string */
+size_t len, /* length of string */
 name_pointer r) /* section name being compared */
 {
   char *first=*pfirst; /* beginning of comparison string */
@@ -192,7 +192,7 @@ name_pointer r) /* section name being compared */
 @y
 static int section_name_cmp(
 char huge** pfirst, /* pointer to beginning of comparison string */
-int len, /* length of string */
+size_t len, /* length of string */
 name_pointer r) /* section name being compared */
 {
   char huge* first=*pfirst; /* beginning of comparison string */

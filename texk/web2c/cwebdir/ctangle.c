@@ -8,8 +8,8 @@
 #include <stdbool.h>  
 #include <stddef.h>  
 #include <stdint.h>  
-#include <stdlib.h>  
 #include <stdio.h>  
+#include <stdlib.h>  
 #include <string.h>  
 
 /*:4*/
@@ -1583,8 +1583,8 @@ if(loc> limit&&get_line()==false)return;
 while(*loc!='@')loc++;
 if(loc++<=limit){
 char c= *loc++;
-if(ccode[(eight_bits)c]==new_section)break;
 switch(ccode[(eight_bits)c]){
+case new_section:return;
 case translit_code:/*102:*/
 #line 1516 "ctangle.w"
 
