@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* pprec*.* rangetwo.* locale*.* attr*.* rule*.*
+rm -f foo.* uni.* pprec*.* range*.* locale*.* attr*.* rule*.*
 
 ./upmendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
 	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
@@ -28,10 +28,18 @@ cat $srcdir/tests/uni.idx | \
 	$srcdir/tests/uni.idx -o uni.ind3 -t uni.ilg3 \
 	&& diff $srcdir/tests/uni.ind uni.ind3 || exit 1
 
-# test for two-element range suffix_2p
-./upmendex -s $srcdir/tests/rangetwo.ist $srcdir/tests/rangetwo.idx \
-	-o rangetwo.ind1 -t rangetwo.ilg \
-	&& diff $srcdir/tests/rangetwo.ind rangetwo.ind1 || exit 1
+# test for range suffix_2p, suffix_3p, suffix_mp
+./upmendex -s $srcdir/tests/range1.ist $srcdir/tests/range.idx \
+	-o range1.ind1 -t range1.ilg \
+	&& diff $srcdir/tests/range1.ind range1.ind1 || exit 1
+
+./upmendex -s $srcdir/tests/range2.ist $srcdir/tests/range.idx \
+	-o range2.ind1 -t range2.ilg \
+	&& diff $srcdir/tests/range2.ind range2.ind1 || exit 1
+
+./upmendex -s $srcdir/tests/range3.ist $srcdir/tests/range.idx \
+	-o range3.ind1 -t range3.ilg \
+	&& diff $srcdir/tests/range3.ind range3.ind1 || exit 1
 
 # test for page_precedence and suffix_3p
 ./upmendex -s $srcdir/tests/pprec0.ist $srcdir/tests/pprecA.idx \

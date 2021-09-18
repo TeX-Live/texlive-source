@@ -248,12 +248,12 @@ void pagesort(struct index *ind, int num)
 static int pcomp(const void *p, const void *q)
 {
 	int i,j,cc=0,num1,num2;
-	char buff[16];
+	char buff[16],*p0,*p1;
 	const struct page *page1 = p, *page2 = q;
 
 	scount++;
 
-	for (i=0;i<3;i++) {
+	for (i=0;i<PAGE_COMPOSIT_DEPTH;i++) {
 		if ((page1->attr[i]<0)&&(page2->attr[i]<0)) return 0;
 		else if ((page1->attr[i]<0)&&(page2->attr[i]>=0)) return -1;
 		else if ((page2->attr[i]<0)&&(page1->attr[i]>=0)) return 1;
@@ -261,18 +261,18 @@ static int pcomp(const void *p, const void *q)
 		if (page1->attr[i]>page2->attr[i]) return 1;
 		if (page1->attr[i]<page2->attr[i]) return -1;
 
-		for (j=cc;j<strlen(page1->page);j++) {
-			if (strncmp(&page1->page[j],page_compositor,strlen(page_compositor))==0) break;
-		}
-		strncpy(buff,&page1->page[cc],j-cc);
-		buff[j-cc]='\0';
+		p0=&page1->page[cc];
+		p1=strstr(p0, page_compositor);
+		j=p1 ? p1-p0 : strlen(p0);
+		strncpy(buff,p0,j);
+		buff[j]='\0';
 		num1=pnumconv(buff,page1->attr[i]);
 
-		for (j=cc;j<strlen(page2->page);j++) {
-			if (strncmp(&page2->page[j],page_compositor,strlen(page_compositor))==0) break;
-		}
-		strncpy(buff,&page2->page[cc],j-cc);
-		buff[j-cc]='\0';
+		p0=&page2->page[cc];
+		p1=strstr(p0, page_compositor);
+		j=p1 ? p1-p0 : strlen(p0);
+		strncpy(buff,p0,j);
+		buff[j]='\0';
 		num2=pnumconv(buff,page2->attr[i]);
 
 		if (num1>num2) return 1;
@@ -281,7 +281,8 @@ static int pcomp(const void *p, const void *q)
 		if (page1->enc[0]=='(' || page2->enc[0]==')') return -1;
 		if (page1->enc[0]==')' || page2->enc[0]=='(') return 1;
 
-		cc=j+strlen(page_compositor);
+		if (p1) cc+=j+strlen(page_compositor);
+		else return 0;
 	}
 
 	return 0;
@@ -528,35 +529,48 @@ int is_comb_diacritical_mark(UChar *c)
 
 int chkcontinue(struct page *p, int num)
 {
-	int i,j,cc=0,num1,num2;
-	char buff[16];
+	int i,j,cc=0,num1,num2,k1,k2;
+	char buff1[16],buff2[16],*p0,*p1;
 
-	for (i=0;i<3;i++) {
+	for (i=0;i<PAGE_COMPOSIT_DEPTH;i++) {
 		if ((p[num].attr[i]<0)&&(p[num+1].attr[i]<0)) return 1;
 		else if (p[num].attr[i]!=p[num+1].attr[i]) return 0;
 
-		for (j=cc;j<strlen(p[num].page);j++) {
-			if (strncmp(&p[num].page[j],page_compositor,strlen(page_compositor))==0) break;
+		p0=&p[num].page[cc];
+		p1=strstr(p0, page_compositor);
+		if (p1) {
+			j=p1-p0;
+			k1=j;
+		} else {
+			j=strlen(p0);
+			k1=0;
 		}
-		strncpy(buff,&p[num].page[cc],j);
-		buff[j]='\0';
-		num1=pnumconv(buff,p[num].attr[i]);
+		strncpy(buff1,p0,j);
+		buff1[j]='\0';
+		num1=pnumconv(buff1,p[num].attr[i]);
 
-		for (j=cc;j<strlen(p[num+1].page);j++) {
-			if (strncmp(&p[num+1].page[j],page_compositor,strlen(page_compositor))==0) break;
+		p0=&p[num+1].page[cc];
+		p1=strstr(p0, page_compositor);
+		if (p1) {
+			j=p1-p0;
+			k2=j;
+		} else {
+			j=strlen(p0);
+			k2=0;
 		}
-		strncpy(buff,&p[num+1].page[cc],j);
-		buff[j]='\0';
-		num2=pnumconv(buff,p[num+1].attr[i]);
+		strncpy(buff2,p0,j);
+		buff2[j]='\0';
+		num2=pnumconv(buff2,p[num+1].attr[i]);
 
-		if (num1==num2 || num1+1==num2) {
-			if (i==2) return 1;
-			if ((p[num].attr[i+1]<0)&&(p[num+1].attr[i+1]<0)) return 1;
-			else return 0;
+		if (k1>0 || k2>0) {
+			if (k1!=k2) return 0;
+			if (strcmp(buff1,buff2)) return 0;
+			cc+=k1+strlen(page_compositor);
+			continue;
 		}
-		else if (num1!=num2) return 0;
 
-		cc=j+strlen(page_compositor);
+		if (num1==num2 || num1+1==num2) return 1;
+		else return 0;
 	}
 
 	return 1;

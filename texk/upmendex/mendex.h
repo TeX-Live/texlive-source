@@ -11,10 +11,12 @@
 #include <unicode/uchar.h>
 #include <unicode/ucol.h>
 
+#define PAGE_COMPOSIT_DEPTH 10
+
 struct page {
 	char *page;
 	char *enc;
-	int attr[3];
+	int attr[PAGE_COMPOSIT_DEPTH];
 };
 
 struct index {
