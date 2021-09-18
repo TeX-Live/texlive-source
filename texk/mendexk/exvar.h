@@ -2,7 +2,7 @@ extern FILE *efp;
 
 extern int lines,idxcount,acc,reject;
 extern int prange,fsti,lorder,bcomp,force,fpage,gflg,verb,debug;
-extern int warn,scount,pattr[3];
+extern int warn,scount,pattr[];
 
 extern struct index *ind;
 

@@ -1,7 +1,22 @@
+2021-09-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fread.c, fwrite.c, sort.c, mendex.h, {,ex}var.h:
+	Extend levels of page numbers from 3 to 10
+	for compatibility with makeindex.
+	Fix a bug of page ranges with multi-level page numbers.
+	* fread.c:
+	Strict check for "page_precedence" and "page_compositor" in style file.
+	* fwrite.c:
+	Do not break lines before "delim_n".
+	* tests/mendex.test, tests/range.idx, tests/range[123].{ist,ind},
+	removed tests/rangetwo.*:
+	Update tests.
+	* version.h: Date [18-Sep-2021]
+
 2021-09-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:
-	Version 3.6 [6-Jun-2021].
+	Version 3.6 [4-Sep-2021].
 	* styfile.c, sort.c, fwrite.c, mendex.h, {,ex}var.h:
 	Support output order of symbols and numbers separately
 	when "symbol_flag" is 2 in style file.

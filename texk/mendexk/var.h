@@ -4,7 +4,7 @@ FILE *efp;
 
 int lines,idxcount,acc=0,reject=0;
 int prange=1,fsti=0,lorder=0,bcomp=0,force=0,fpage=0,gflg=0,verb=1,debug=0;
-int warn=0,scount=0,pattr[3]={0,0,0};
+int warn=0,scount=0,pattr[PAGE_COMPOSIT_DEPTH]={0};
 /* static char roman[]={"ivxlcdm"},Roman[]={"IVXLCDM"}; */
 
 struct index *ind;
