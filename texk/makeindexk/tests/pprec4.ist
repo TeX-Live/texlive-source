@@ -1,0 +1,11 @@
+% -*- coding: utf-8 -*-
+
+page_precedence "Ana"
+
+delim_0 "[[delim0]]"
+delim_1 "[[delim1]]"
+delim_2 "[[delim2]]"
+delim_r "[[delimr]]"
+suffix_2p "[[sfx 2p]]"
+suffix_3p "[[sfx 3p]]"
+

@@ -1,0 +1,25 @@
+\begin{theindex}
+
+  \item entryA, 1[[sfx 2p]], iii[[sfx 2p]], IX[[sfx 2p]]
+  \item entryA1, 1[[sfx 2p]], iii[[sfx 2p]], IX[[sfx 2p]]
+  \item entryB, 1[[sfx 3p]], iii[[sfx 3p]], IX[[sfx 3p]]
+  \item entryB1, 1[[sfx 3p]], iii[[sfx 3p]], IX[[sfx 3p]]
+  \item entryC, 1[[sfx mp]], \bold{iii[[sfx mp]]}, IX, \bold{X}, 
+		XI[[sfx 2p]]
+  \item entryC1, 1[[sfx mp]], \bold{iii[[sfx mp]]}, \bold{X}, 
+		IX[[sfx mp]]
+  \item entryD, c-1[[sfx 2p]], d-IX[[sfx 2p]], i-iii[[sfx 2p]]
+  \item entryD1, c-1[[sfx 2p]], d-IX[[sfx 2p]], i-iii[[sfx 2p]]
+  \item entryE, c-1[[sfx 3p]], d-IX[[sfx 3p]], i-iii[[sfx 3p]]
+  \item entryE1, c-1[[sfx 3p]], d-IX[[sfx 3p]], i-iii[[sfx 3p]]
+  \item entryF, C-I[[sfx mp]], D-DI[[sfx mp]], V-LIII[[sfx mp]]
+  \item entryF1, C-I[[sfx mp]], \bold{D-DII}, D-DI[[sfx mp]], 
+		V-LIII[[sfx mp]]
+  \item entryP, A-a-1-VII-iii[[sfx 3p]], A-a-1-VIII-iii, A-a-1-IX-iii, 
+		A-a-2-VII-iii, A-a-3-VII-iii
+  \item entryQ, 1-2-3-4-5-6-7-8-9-10[[sfx 2p]], 
+		1-2-3-4-5-6-7-8-9-14[[sfx 3p]], 
+		1-2-3-4-5-6-7-8-9-22[[sfx mp]], 
+		1-2-3-4-5-6-7-8-9-i[[sfx mp]]
+
+\end{theindex}

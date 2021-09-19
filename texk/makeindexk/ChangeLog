@@ -1,3 +1,14 @@
+2021-09-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mkind.h, scanid.[ch], scanst.c:
+	Fix a bug about detection of page number types.
+	Default string "rnaRA" for page_precedence was not initialized.
+	Improve heuristic detection of page number types.
+	* tests/makeindex.test, tests/range.idx, tests/range[123].{ind,ist},
+	tests/pprec[AB].idx, tests/pprec[01234].ist, tests/pprec[AB]-[01234].ind:
+	Add new tests. These are compatible with (up)mendex.
+	* configure.ac, mkind.h: Bump version to 2.16
+
 2019-11-01  Karl Berry  <karl@tug.org>
 
 	* mkindex: "quote" arguments, doc tweaks.
