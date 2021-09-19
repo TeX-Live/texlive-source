@@ -268,7 +268,7 @@ LOOP:
 					nest++;
 				else if (buff[j]==arg_close) {
 					if (nest==0) {
-						table[k]='\0';	
+						table[k]='\0';
 						ind[0].p[0].page=xstrdup(table);
 						break;
 					}
@@ -339,7 +339,7 @@ LOOP:
 					copy_multibyte_char(buff, table, &j, &k);
 				}
 
-				table[k]='\0';	
+				table[k]='\0';
 
 				for (k=0;k<=ind[l].num;k++) {
 					if (strcmp(ind[l].p[k].page,table)==0) {
@@ -531,7 +531,9 @@ ATTRLOOP:
 				}
 				break;
 			case 'a':
-				if (*page0<'a' || *page0>'z' || strlen(buff)>1) {
+				if (*page0<'a' || *page0>'z' || strlen(buff)>1 ||
+				    (strchr("ivx",*page0) && strchr(page_precedence,'r') && !pcpos)) {
+					/* heuristic detection as roman number since I=1, V=5, X=10 are quite small */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
 					else pattr[cc]=0;
@@ -540,7 +542,9 @@ ATTRLOOP:
 				}
 				break;
 			case 'A':
-				if (*page0<'A' || *page0>'Z' || strlen(buff)>1) {
+				if (*page0<'A' || *page0>'Z' || strlen(buff)>1 ||
+				    (strchr("IVX",*page0) && strchr(page_precedence,'R') && !pcpos)) {
+					/* heuristic detection as roman number since I=1, V=5, X=10 are quite small */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
 					else pattr[cc]=0;
