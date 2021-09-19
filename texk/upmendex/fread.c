@@ -344,7 +344,7 @@ LOOP:
 					copy_multibyte_char(buff, table, &j, &k);
 				}
 
-				table[k]='\0';	
+				table[k]='\0';
 
 				for (k=0;k<=ind[l].num;k++) {
 					if (strcmp(ind[l].p[k].page,table)==0) {
@@ -356,9 +356,9 @@ LOOP:
 					ind[l].num++;
 					if (!((ind[l].num)%16)) ind[l].p=(struct page *)xrealloc(ind[l].p,sizeof(struct page)*((int)((ind[l].num)/16)+1)*16);
 
-					ind[l].p[ind[l].num].page=xstrdup(table);	
+					ind[l].p[ind[l].num].page=xstrdup(table);
 
-					ind[l].p[ind[l].num].enc=xstrdup(estr);	
+					ind[l].p[ind[l].num].enc=xstrdup(estr);
 					chkpageattr(&ind[l].p[ind[l].num]);
 				}
 			}
@@ -388,15 +388,15 @@ LOOP:
 						nest++;
 					if (buff[j]==arg_close) {
 						if (nest==0) {
-							table[k]='\0';	
-							ind[i].p[0].page=xstrdup(table);	
+							table[k]='\0';
+							ind[i].p[0].page=xstrdup(table);
 							break;
 						}
 						else nest--;
 					}
 					copy_multibyte_char(buff, table, &j, &k);
 				}
-				ind[l].p[0].enc=xstrdup(estr);	
+				ind[l].p[0].enc=xstrdup(estr);
 				chkpageattr(&ind[i].p[0]);
 			}
 		}
@@ -538,7 +538,7 @@ ATTRLOOP:
 			switch(page_precedence[pattr[cc]]) {
 			case 'r':
 				if (strchr("ivxlcdm",*page0)==NULL ||
-				    (strchr("lcdm",*page0) && strchr(page_precedence,'a') && strlen(buff)==1 && pcpos))  {
+				    (strchr("lcdm",*page0) && strchr(page_precedence,'a') && strlen(buff)==1 && pcpos)) {
 					/* heuristic detection as alphabet since L=50, C=100, D=100, M=1000 are quite large */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
@@ -549,7 +549,7 @@ ATTRLOOP:
 				break;
 			case 'R':
 				if (strchr("IVXLCDM",*page0)==NULL ||
-				    (strchr("LCDM",*page0) && strchr(page_precedence,'A') && strlen(buff)==1 && pcpos))  {
+				    (strchr("LCDM",*page0) && strchr(page_precedence,'A') && strlen(buff)==1 && pcpos)) {
 					/* heuristic detection as alphabet since L=50, C=100, D=100, M=1000 are quite large */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
@@ -568,7 +568,9 @@ ATTRLOOP:
 				}
 				break;
 			case 'a':
-				if (*page0<'a' || *page0>'z' || strlen(buff)>1) {
+				if (*page0<'a' || *page0>'z' || strlen(buff)>1 ||
+				    (strchr("ivx",*page0) && strchr(page_precedence,'r') && !pcpos)) {
+					/* heuristic detection as roman number since I=1, V=5, X=10 are quite small */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
 					else pattr[cc]=0;
@@ -577,7 +579,9 @@ ATTRLOOP:
 				}
 				break;
 			case 'A':
-				if (*page0<'A' || *page0>'Z' || strlen(buff)>1) {
+				if (*page0<'A' || *page0>'Z' || strlen(buff)>1 ||
+				    (strchr("IVX",*page0) && strchr(page_precedence,'R') && !pcpos)) {
+					/* heuristic detection as roman number since I=1, V=5, X=10 are quite small */
 					if (pattr[cc]<pplen-1)
 						pattr[cc]++;
 					else pattr[cc]=0;

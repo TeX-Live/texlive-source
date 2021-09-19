@@ -1,3 +1,11 @@
+2021-09-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fread.c:
+	Modify heuristic detection of page number types.
+	* tests/upmendex.test, tests/range.idx, tests/range[123].ind,
+	tests/pprecB.idx, tests/pprec[34].ist, tests/pprecB-[034].ind:
+	Update tests.
+
 2021-09-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fread.c, fwrite.c, sort.c, mendex.h, {,ex}var.h:
