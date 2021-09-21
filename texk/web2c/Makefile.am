@@ -274,6 +274,9 @@ include $(srcdir)/uptexdir/am/uptex.am
 ## e-upTeX
 include $(srcdir)/euptexdir/am/euptex.am
 
+## hiTeX
+include $(srcdir)/hitexdir/am/hitex.am
+
 ## pdfTeX
 include $(srcdir)/pdftexdir/am/libpdftex.am
 include $(srcdir)/pdftexdir/am/pdftex.am
@@ -289,11 +292,8 @@ include $(srcdir)/luatexdir/am/libluatex.am
 include $(srcdir)/luatexdir/am/luaffi.am
 include $(srcdir)/luatexdir/am/luatex.am
 
-
 ## luahbTeX
 include $(srcdir)/luatexdir/am/luaharfbuzz.am
-
-
 
 ## XeTeX
 include $(srcdir)/xetexdir/am/xetex.am

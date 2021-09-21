@@ -1619,6 +1619,7 @@ Please maintain @file{foo/ChangeLog} for all TL changes.
 
 @menu
 * Adding a new program module::
+* Adding a new engine::
 * Adding a new generic library module::
 * Adding a new @TeX{}-specific library module::
 @end menu
@@ -1751,14 +1752,37 @@ builds from scratch.
 After final success, don't forget to commit. (Or email the TL
 maintainers with the patch.)
 
-@cindex engine, adding new
-Caveat: adding a new @TeX{} engine is not completely different, but
-it's not all that similar, either. In that case, the work is done
-inside a new subdirectory of @file{texk/web2c/}. Many things are
-common to all the engines, other things need to be copied and possibly
-modified for each one, yet others are unique to each. No general
-recipe is possible.
+@node Adding a new engine
+@subsection Adding a new engine
 
+@cindex adding a new engine
+@cindex engine, adding new
+
+Adding a new @TeX{} engine is not completely different from adding a
+program, but it's not all that similar, either.  In this case, the main
+work is done by creating a new subdirectory of @file{texk/web2c/} for
+the engine.  The subdirectory is conventionally named ending in
+@file{dir}, like @file{pdftexdir} and @file{xetexdir}.
+
+The source files for the new engine should be put in this
+@file{@var{newengine}dir} subdirectory.  Also, a file
+@file{@var{newengine}dir/am/@var{newengine}.am} (e.g.,
+@file{pdftexdir/am/pdftex.am} is needed with the Makefile fragment
+needed to build it.
+
+The overall @file{web2c/Makefile.am} needs to have an @file{include}
+statement added to insert that @file{@var{newengine}.am} file.
+
+In @file{web2c/ac/web2c.ac}, a line needs to be added in the
+definition of the @code{kpse_tex_progs} variable to include it in the
+build.  That line specifies whether the new engine is built by default,
+and the additional libraries requires.
+
+For examples of building engines in CWEB, you can check the existing
+@file{hitexdir} and @file{mplibdir} directories; these are somewhat
+simpler than Lua@TeX{}.  Of course, every engine will have its own
+unique features and requirements, so existing examples will only take
+you so far.
 
 @node Adding a new generic library module
 @subsection Adding a new generic library module

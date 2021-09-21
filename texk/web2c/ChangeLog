@@ -1,3 +1,9 @@
+2021-09-21  Karl Berry  <karl@freefriends.org>
+
+	* ac/web2c.ac (kpse_tex_progs): include hitex, disabled by default.
+	* Makefile.am: include hitexdir/am/hitex.am.
+	* hitexdir: new directory.
+
 2021-09-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile.in,

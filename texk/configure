@@ -765,6 +765,7 @@ enable_uptex_synctex
 enable_euptex
 enable_euptex_synctex
 enable_aleph
+enable_hitex
 enable_pdftex
 enable_pdftex_synctex
 enable_luatex
@@ -1560,6 +1561,7 @@ Optional Features:
   --disable-euptex          do not compile and install e-upTeX
   --disable-euptex-synctex    build e-upTeX without SyncTeX support
   --disable-aleph           do not compile and install Aleph
+  --enable-hitex            compile and install HiTeX
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
   --disable-luatex          do not compile and install LuaTeX
@@ -4560,6 +4562,21 @@ case $enable_aleph in #(
   *) :
     enable_aleph=yes ;;
 esac
+# Check whether --enable-hitex was given.
+if test ${enable_hitex+y}
+then :
+  enableval=$enable_hitex;
+fi
+case $enable_hitex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_hitex=no ;;
+esac
+
+test "x$enable_web2c:$enable_hitex" = xyes:yes && {
+  need_zlib=yes
+}
 # Check whether --enable-pdftex was given.
 if test ${enable_pdftex+y}
 then :
