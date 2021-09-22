@@ -79,7 +79,6 @@
 #define isascii    __isascii
 #define isatty     _isatty
 #define itoa       _itoa
-#define link       _link
 #define lseek      _lseek
 #define memicmp    _memicmp
 #define mktemp     _mktemp
