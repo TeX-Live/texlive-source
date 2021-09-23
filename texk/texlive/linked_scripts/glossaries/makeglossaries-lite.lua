@@ -36,13 +36,13 @@
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
-   * 4.45:
-     - no change.
-   * 4.44:
-     - no change.
-   * 4.41:
-     - no change.
-   * 4.40:
+   * 4.47:
+     - Added hybrid instructions if record option detected but not \makeglossaries
+     - Added extra info to error message on -d
+     - Fixed bug #183 that occurs when \@istfilename is missing
+     - Only add double-quotes if text contains any spaces which
+       may help address issue #129
+   * 4.40 - 4.46:
      - no change.
    * 4.39:
      - corrected script name in version and help messages
@@ -68,7 +68,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.45 (2020-01-18)"
+thisversion = "4.47 (2021-09-20)"
 
 quiet = false
 dryrun = false
@@ -163,6 +163,17 @@ function dorun(name, glg, gls, glo, language, codepage)
 
 end
 
+-- v4.47 only add double-quotes if text contains any spaces
+function quote_if_spaced(str)
+
+   if string.find(str, " ") then
+      str = '"' .. str .. '"' 
+   end
+
+   return str;
+
+end
+
 function doxindy(name, glg, gls, glo, language, codepage)
 
   if codepage == nil
@@ -170,14 +181,14 @@ function doxindy(name, glg, gls, glo, language, codepage)
      codepage = "utf8"
   end
 
-  cmd = string.format('"%s" -I xindy -L %s -C %s -M "%s" -t "%s" -o "%s"',
-    xindyexec, language, codepage, styfile, glg, gls)
+  cmd = string.format('%s -I xindy -L %s -C %s -M %s -t %s -o %s',
+    quote_if_spaced(xindyexec), language, codepage, quote_if_spaced(styfile), quote_if_spaced(glg), quote_if_spaced(gls))
 
   if letterorder then cmd = string.format('%s -M ord/letorder', cmd) end
 
   if quiet then cmd = string.format('%s -q', cmd) end
 
-  cmd = string.format('%s "%s"', cmd, glo)
+  cmd = string.format('%s %s', cmd, quote_if_spaced(glo))
 
   if dryrun then
 
@@ -194,7 +205,7 @@ end
 
 function domakeindex(name, glg, gls, glo)
 
-  cmd = string.format('"%s"', makeindex_m)
+  cmd = quote_if_spaced(makeindex_m)
 
   if makeindex_c then cmd = cmd .. " -c" end
 
@@ -206,19 +217,19 @@ function domakeindex(name, glg, gls, glo)
 
   if quiet then cmd = cmd .. " -q" end
 
-  if glg ~= nil then cmd = string.format('%s -t "%s"', cmd, glg) end
+  if glg ~= nil then cmd = string.format('%s -t %s', cmd, quote_if_spaced(glg)) end
 
-  if gls ~= nil then cmd = string.format('%s -o "%s"', cmd, gls) end
+  if gls ~= nil then cmd = string.format('%s -o %s', cmd, quote_if_spaced(gls)) end
 
   if makeindex_p ~= nil then 
     cmd = string.format("%s -p %s", cmd, makeindex_p)
   end
 
   if styfile ~= nil then 
-    cmd = string.format('%s -s "%s"', cmd, styfile)
+    cmd = string.format('%s -s %s', cmd, quote_if_spaced(styfile))
   end
 
-  cmd = string.format('%s "%s"', cmd, glo)
+  cmd = string.format('%s %s', cmd, quote_if_spaced(glo))
 
   if dryrun then
     print(cmd)
@@ -275,7 +286,7 @@ while i <= #arg do
   elseif arg[i] == "-d"
   then
     error(string.format(
-      "The '%s' option isn't available for this light-weight version.\nYou will need to use the Perl version instead.",
+      "The '%s' option isn't available for this light-weight version. \n(Lua doesn't natively provide a function to change directory.) \nYou will need to use the Perl version instead \nor just change directory before running this script.",
       arg[i]))
 
 -- Xindy Options
@@ -382,15 +393,23 @@ then
 -- v4.36: corrected check for double-quotes
 
   styfile = string.match(aux, "\\@istfilename{([^}]*)}")
-  styfile = string.gsub(styfile, "\"", "");
+
+-- v4.47: added check for null styfile (missing \@istfilename)
+  if styfile ~= nil
+  then
+    styfile = string.gsub(styfile, "\"", "");
+  end
 
   if styfile == nil
   then
     if isbib2gls
     then
+-- v4.47 added extra hybrid instructions
        error([[
 No \@istfilename found but found \glsxtr@resource.
 You need to run bib2gls not makeglossaries-lite.
+If you have used record=alsoindex or record=hybrid
+then add \makeglossaries to your preamble.
   ]])
     else
        error([[

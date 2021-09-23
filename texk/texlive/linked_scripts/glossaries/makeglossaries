@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.45
+# Version : 4.47
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -31,25 +31,15 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.45 (2020-01-18)";
+my $version="4.47 (2021-09-20)";
 
 # History:
-# v4.43:
-#   * No change.
-# v4.41:
-#   * No change.
-# v4.40:
-#   * No change.
-# v4.39:
-#   * No change.
-# v4.38:
-#   * No change.
-# v4.37:
-#   * No change.
-# v4.36:
-#   * No change.
-# v4.35:
-#   * No change.
+# v4.47:
+#   * Added hybrid instructions if record option detected but not
+#     \makeglossaries
+#   * Added quote_if_spaced subroutine
+# v4.35 - v4.46:
+#   * No change. (Version number updated in line with glossaries.sty)
 # v4.34:
 #   * Added check for \glsxtr@resource
 # v4.33:
@@ -350,9 +340,12 @@ unless ($istfile)
 {
    if ($foundbib2glsresource)
    {
+# v4.47 added extra hybrid instructions
       die "Found \\glsxtr\@resource in '$name.aux',\n",
           "but not found \\\@istfilename.\n",
-          "You need to run bib2gls not makeglossaries.\n";
+          "You need to run bib2gls not makeglossaries.\n",
+          "If you have used record=alsoindex or record=hybrid\n",
+          "then add \\makeglossaries to your preamble.\n";
    }
    else
    {
@@ -818,6 +811,21 @@ sub scan_aux{
   }
 }
 
+# v4.47 new
+# Issue #129 was specifically about the Lua script but it's
+# likely the same problem would occur with this Perl script given
+# the same version of cmd.exe
+sub quote_if_spaced{
+  my ($str) = @_;
+
+  if ($str=~/ /)
+  {
+     $str = "\"$str\"";
+  }
+
+  $str;
+}
+
 # v2.01 new subroutine run_app added
 sub run_app{
    my($appname, $appargs, $trans, $quiet, $dontexec) = @_;
@@ -833,9 +841,12 @@ sub run_app{
 
    return if ($dontexec);
 
+   # v4.47
+   my $cmdstr = &quote_if_spaced($appname) . " $appargs";
+
    # v2.11 added double-quotes around $appname
    # v2.14 added -k switch
-   if (not $opt_k and open (STATUS, "\"$appname\" $appargs 2>&1 |"))
+   if (not $opt_k and open (STATUS, "$cmdstr 2>&1 |"))
    {
       while (<STATUS>)
       {
@@ -861,7 +872,7 @@ sub run_app{
            "Retrying without redirection.\n" unless ($quiet or $opt_Q);
       }
 
-      $status = `\"$appname\" $appargs`;
+      $status = `$cmdstr`;
 
       $log = $status;
 

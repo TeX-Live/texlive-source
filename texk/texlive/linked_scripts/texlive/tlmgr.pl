@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 60157 2021-08-04 01:42:52Z preining $
+# $Id: tlmgr.pl 60557 2021-09-20 10:46:43Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 60157 $';
-my $datrev = '$Date: 2021-08-04 03:42:52 +0200 (Wed, 04 Aug 2021) $';
+my $svnrev = '$Revision: 60557 $';
+my $datrev = '$Date: 2021-09-20 12:46:43 +0200 (Mon, 20 Sep 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1658,7 +1658,15 @@ sub action_info {
   } elsif ($opts{'data'}) {
     # output format is changed to csv with " as quotes
     # we need to determine the fields
-    @datafields = split(',', $opts{'data'});
+    #
+    # Try to work around stupidiy in Windows where "," is interpreted in
+    # powershell (and cmd?)
+    # We optionally split at ":"
+    if ($opts{'data'} =~ m/:/) {
+      @datafields = split(':', $opts{'data'});
+    } else {
+      @datafields = split(',', $opts{'data'});
+    }
     # check for correctness of data fields and whether remote is necessary
     my $load_remote = 0;
     for my $d (@datafields) {
@@ -8480,8 +8488,8 @@ C<--only-installed> and C<--only-remote> cannot both be specified.
 
 =item B<--data C<item1,item2,...>>
 
-If the option C<--data> is given, its argument must be a comma separated
-list of field names from: C<name>, C<category>, C<localrev>,
+If the option C<--data> is given, its argument must be a comma or colon 
+separated list of field names from: C<name>, C<category>, C<localrev>,
 C<remoterev>, C<shortdesc>, C<longdesc>, C<installed>, C<size>,
 C<relocatable>, C<depends>, C<cat-version>, C<cat-date>, C<cat-license>,
 plus various C<cat-contact-*> fields (see below).
@@ -10231,7 +10239,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 60157 2021-08-04 01:42:52Z preining $
+$Id: tlmgr.pl 60557 2021-09-20 10:46:43Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
