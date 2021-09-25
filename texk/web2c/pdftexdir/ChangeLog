@@ -1,3 +1,13 @@
+2021-09-25  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web: always call pdf_warning with prepend_nl true,
+	to avoid warnings showing up in the midst of the output, e.g., from:
+        '\pdfoutput=1 \noindent \pdfstartlink goto num 99\pdfendlink'
+
+	This might cause a blank line, but doing the test as in print_nl
+	to check if we are already at the beginning of the terminal line
+	seems too intrusive at this late date, affecting other messages.
+
 2021-09-03  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (prev_tail): new global.

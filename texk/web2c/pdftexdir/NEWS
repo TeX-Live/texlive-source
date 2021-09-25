@@ -1,6 +1,7 @@
 pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)
 - changes:
   - for letterspaced fonts, use explicit \fontdimen6 if specified.
+  - always start a warning at the beginning of a line.
 
 - bugfixes:
   - make .fmt files sharable between 4/8-byte architectures.

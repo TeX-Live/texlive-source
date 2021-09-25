@@ -17247,7 +17247,7 @@ var kn, st, sh: scaled;
     f: internal_font_number;
 begin
     if not (not is_char_node(g) and type(g) = glue_node) then begin
-        pdf_warning("adjust_interword_glue", "g is not a glue", false, false);
+        pdf_warning("adjust_interword_glue", "g is not a glue", true, true);
         return;
     end;
 
@@ -17610,8 +17610,7 @@ begin
     end
     else begin
         if (pdf_font_type[f] <> new_font_type) and (pdf_font_type[f] <> virtual_font_type) then
-            pdf_warning("font expansion", "font should be expanded before its first use",
-                        true, true);
+            pdf_warning("font expansion", "font should be expanded before its first use", true, true);
         set_expand_params(f, auto_expand, stretch_limit, shrink_limit, font_step, 0);
         if pdf_font_type[f] = virtual_font_type then
             vf_expand_local_fonts(f);
@@ -19877,7 +19876,7 @@ PDF browsers, so we need to fix them.
 begin
     if obj_dest_ptr(k) <> null then
         return;
-    pdf_warning("dest", "", false, false);
+    pdf_warning("dest", "", true, false);
     if obj_info(k) < 0 then begin
         print("name{");
         print(-obj_info(k));
@@ -19906,7 +19905,7 @@ end
 @ @<Check for non-existing pages@>=
 k := head_tab[obj_type_page];
 while obj_aux(k) = 0 do begin
-    pdf_warning("dest", "Page ", false, false);
+    pdf_warning("dest", "Page ", true, false);
     print_int(obj_info(k));
     print(" has been referenced but does not exist!");
     print_ln; print_ln;
@@ -19949,7 +19948,7 @@ for k := font_base + 1 to font_ptr do
             pdf_font_attr[k] := pdf_font_attr[i]
         else if (length(pdf_font_attr[i]) <> 0) and (length(pdf_font_attr[k]) <> 0) and
            not str_eq_str(pdf_font_attr[i], pdf_font_attr[k]) then begin
-           pdf_warning("\pdffontattr", "fonts ", false, false);
+           pdf_warning("\pdffontattr", "fonts ", true, false);
            print_font_identifier(i);
            print(" and ");
            print_font_identifier(k);
@@ -34795,7 +34794,7 @@ procedure warn_dest_dup(id: integer; byname: small_number; s1, s2: str_number);
 begin
     if pdf_suppress_warning_dup_dest > 0 then
         return;
-    pdf_warning(s1, "destination with the same identifier (", false, false);
+    pdf_warning(s1, "destination with the same identifier (", true, false);
     if byname > 0 then begin
         print("name");
         print_mark(id);
@@ -35207,7 +35206,7 @@ end;
 procedure pdf_fix_thread(thread: integer);
 var a: pointer;
 begin
-    pdf_warning("thread", "destination ", false, false);
+    pdf_warning("thread", "destination ", true, false);
     if obj_info(thread) < 0 then begin
         print("name{");
         print(-obj_info(thread));
