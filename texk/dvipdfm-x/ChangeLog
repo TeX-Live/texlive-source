@@ -1,3 +1,11 @@
+2021-09-26  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+	* pdfdev.c: Remove all my changes on 2021-03-04 and 2021-03-05
+	which were completely wrong.
+	* pkfont.c: Before calling kpse_find_glyph(ident, ...), remove
+	a suffix .pfb from the ident, if the suffix exists, because the
+	suffix prevents mktexpk to work right.
+	* configure.ac: version 20210926.
+
 2021-06-09  Shunsaku Hirata  <shunsaku.hirata74@gmail.com>
 
 	* pdfencoding.c: Replace the changes made on 2021-06-02. The
