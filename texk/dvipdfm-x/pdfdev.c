@@ -1290,7 +1290,6 @@ print_fontmap (const char *font_name, fontmap_rec *mrec)
 int
 pdf_dev_locate_font (const char *font_name, spt_t ptsize)
 {
-  char            *pp;
   pdf_dev         *p = current_device();
   int              i;
   fontmap_rec     *mrec;
