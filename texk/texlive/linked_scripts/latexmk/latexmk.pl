@@ -29,6 +29,11 @@ use warnings;
 ##
 ##   Modification log from 14 Apr 2021 onwards in detail
 ##
+## 23 Sep 2021 John Collins  Option -time: times for all rules reported now
+## 18 Sep 2021 John Collins  For biber: parse blg file for config file use
+##                           V. 4.75.
+## 27 Aug 2021 John Collins  Modified "missing file" message (when parsing
+#                              log file). 
 ## 29 May 2021 John Collins  When emulating aux_dir, put .synctex.gz .synctex
 ##                             files in out_dir (as done by MiKTeX, and needed
 ##                             for their use).
@@ -94,8 +99,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.74b';
-$version_details = "$My_name, John Collins, 29 May 2021";
+$version_num = '4.75';
+$version_details = "$My_name, John Collins, 21 September 2021";
 
 use Config;
 use File::Basename;
@@ -4189,7 +4194,8 @@ sub check_biber_log {
         elsif ( /> INFO - Found .* '([^']+)'\s*$/
                 || /> INFO - Found '([^']+)'\s*$/
                 || /> INFO - Reading '([^']+)'\s*$/
-                || /> INFO - Processing .* file '([^']+)' .*$/
+                || /> INFO - Processing .* file '([^']+)'.*$/
+                || /> INFO - Config file is '([^']+)'.*$/
             ) {
             my $file = $1;
             my ( $base, $path, $ext ) = fileparseA( $file );
@@ -4901,7 +4907,7 @@ LINE:
         foreach my $pattern (@file_not_found) {
             if ( /$pattern/ ) {
                 my $file = clean_filename($1);
-                warn "$My_name: Missing input file: '$file' from following:\n  '$_'\n"
+                warn "$My_name: Missing input file '$file' (or dependence on it) from following:\n  '$_'\n"
                     unless $silent;
                 $dependents{normalize_filename($file, @pwd_log)} = 0;
                 my $file1 = $file;
@@ -7821,6 +7827,9 @@ sub rdb_run1 {
     foreach (@int_args_for_printing) {
         if ( ! defined $_ ) { $_ = 'undef'; }
     }
+
+    # The actual execution of the command:
+    my $time = processing_time();
     if ($int_cmd) {
         print "For rule '$rule', use internal command '\&$int_cmd( @int_args_for_printing )' ...\n"
             if $diagnostics;
@@ -7837,6 +7846,9 @@ sub rdb_run1 {
         $$Plast_result = 2;
         $$Plast_message = "Bug or configuration error; incorrect command type";
     }
+    $time = processing_time() - $time;
+    push @timings, "'$_[0]': time = $time\n";            
+
     if ( $rule =~ /^biber/ ) {
         my @biber_source = ( );
         my $retcode = check_biber_log( $$Pbase, \@biber_source );
@@ -9884,18 +9896,18 @@ sub Run_msg {
 
 #==================
 
-sub Run {
-    # This is wrapper around Run_no_time to capture timing information
+sub Run_time {
+    # This is wrapper around Run to capture timing information
     my $time1 = processing_time();
-    my ($pid, $return) = Run_no_time($_[0]);
+    my ($pid, $return) = Run($_[0]);
     my $time = processing_time() - $time1;
     push @timings, "'$_[0]': time = $time\n"; 
     return ($pid, $return);
-} #END Run_msg
+} #END Run_time
 
 #==================
 
-sub Run_no_time {
+sub Run {
 # Usage: Run_no_time ("command string");
 #    or  Run_no_time ("one-or-more keywords command string");
 # Possible keywords: internal, NONE, start, nostart.
