@@ -1,5 +1,5 @@
 % This file is part of HINT
-% Copyright 2017-2021 Martin Ruckert
+% Copyright 2017-2021 Martin Ruckert, Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -70,8 +70,8 @@
 %\makefigindex
 \titletrue
 
-\def\lastrevision{${}$Revision: 2485 ${}$}
-\def\lastdate{${}$Date: 2021-08-19 19:37:13 +0200 (Thu, 19 Aug 2021) ${}$}
+\def\lastrevision{${}$Revision: 2515 ${}$}
+\def\lastdate{${}$Date: 2021-09-23 17:59:58 +0200 (Thu, 23 Sep 2021) ${}$}
 \eject
 \input titlepage.tex
 
@@ -194,6 +194,13 @@ process slightly for our purposes.
 In this section, we explain the different change files that modify \TeX.
 Larger changes are accomplished by replacing entire functions.
 
+\subsection{The |banner|}
+Now that we are about to change the behaviour of \TeX\ significantly,
+we have to give the program a new banner.
+
+{
+\changestyle{banner.tex}
+}
 
 \subsection{The |main| Program}
 We add two function calls to \TeX's |main| program: 
@@ -3658,7 +3665,7 @@ stream definitions:
   while (p!=null)
   { uint8_t n;
     n=setstream_number(p);
-    DBG(DBGDEF,"Defining stream %d at " SIZE_F "\n",n,hpos-hstart);
+    DBG(DBGDEF,"Defining stream %d at 0x%tx\n",n,hpos-hstart);
     HPUTTAG(stream_kind,b100);
     HPUT8(n);
     hout_xdimen_node(setstream_max(p)); /* maximum height */

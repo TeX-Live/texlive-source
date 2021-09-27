@@ -1,5 +1,5 @@
 % This file is part of HINT
-% Copyright 2017-2021 Martin Ruckert
+% Copyright 2017-2021 Martin Ruckert, Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2485 $
+\setrevision$Revision: 2515 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2021-08-19 19:37:13 +0200 (Thu, 19 Aug 2021) $
+\setdate$Date: 2021-09-23 17:59:58 +0200 (Thu, 23 Sep 2021) $
 
 \null
 
@@ -719,7 +719,7 @@ HGETTAG(a);@/@t{}@>
 @<read and check the end byte |z|@>=
 HGETTAG(z);@+
 if (a!=z)
-  QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%x to " SIZE_F "\n"@],@|
+  QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%x to 0x%tx\n"@],@|
     NAME(a),INFO(a),NAME(z),INFO(z),@|node_pos, hpos-hstart-1);
 @
 
@@ -1227,7 +1227,7 @@ void hwrite_charcode(uint32_t c)
 \getcode
 @<shared get functions@>=
 #define @[HGET_UTF8C(X)@]  (X)=HGET8;@+ if ((X&0xC0)!=0x80) \
-  QUIT(@["UTF8 continuation byte expected at " SIZE_F " got 0x%02X\n"@],hpos-hstart-1,X)@;
+  QUIT(@["UTF8 continuation byte expected at 0x%tx got 0x%02X\n"@],hpos-hstart-1,X)@;
 
 uint32_t hget_utf8(void)
 { uint8_t a;
@@ -2824,7 +2824,7 @@ void hget_size_boundary(info_t info)
 { uint32_t n;
   if (info<2) return;
   n=HGET8;
-  if (n-1!=0x100-info) QUIT(@["Size boundary byte 0x%x with info value %d at " SIZE_F@],
+  if (n-1!=0x100-info) QUIT(@["Size boundary byte 0x%x with info value %d at 0x%tx"@],
                             n, info,hpos-hstart-1);
 }
 
@@ -2861,7 +2861,7 @@ void hget_list(list_t *l)
     hpos=hpos+(L).s; hget_size_boundary(I);\
     { uint32_t s=hget_list_size(I); \
       if (s!=(L).s) \
-      QUIT(@["List sizes at 0x%x and " SIZE_F " do not match 0x%x != 0x%x"@],node_pos+1,hpos-hstart-I-1,(L).s,s);}
+      QUIT(@["List sizes at 0x%x and 0x%tx do not match 0x%x != 0x%x"@],node_pos+1,hpos-hstart-I-1,(L).s,s);}
 @
 
 \putcode
@@ -5788,7 +5788,7 @@ content_node: stream_def_node @+ | stream_ins_node;
 { xdimen_t x;
   uint16_t f,r;
   uint8_t n;
-  DBG(DBGDEF,"Defining normal stream %d at " SIZE_F "\n",*(hpos-1),hpos-hstart-2);
+  DBG(DBGDEF,"Defining normal stream %d at 0x%tx\n",*(hpos-1),hpos-hstart-2);
   hget_xdimen_node(&x); @+hwrite_xdimen_node(&x); 
   HGET16(f); @+RNG("magnification factor",f,0,1000);@+ hwritef(" %d",f);
   n=HGET8; if (n==255) hwritef(" *"); else { REF_RNG(stream_kind,n);@+hwrite_ref(n);@+}
@@ -5804,7 +5804,7 @@ static bool hget_stream_def(void)
   else
   { ref_t df;
     @<read the start byte |a|@>@;
-    DBG(DBGDEF,"Defining stream %d at " SIZE_F "\n",*hpos,hpos-hstart-1);
+    DBG(DBGDEF,"Defining stream %d at 0x%tx\n",*hpos,hpos-hstart-1);
     DEF(df,stream_kind,HGET8);
     hwrite_start();@+hwritef("stream");@+@+hwrite_ref(df.n);
     if (df.n>0) 
@@ -6165,12 +6165,12 @@ void hput_range(uint8_t pg, bool on)
 { if (((next_range-1)/2)>max_ref[range_kind])
     QUIT("Page range %d > %d",(next_range-1)/2,max_ref[range_kind]);
   if (on && page_on[pg]!=0)
-    QUIT(@["Template %d is switched on at 0x%x and " SIZE_F@],@|
+    QUIT(@["Template %d is switched on at 0x%x and 0x%tx"@],@|
            pg, range_pos[page_on[pg]].pos, hpos-hstart);
   else if (!on && page_on[pg]==0)
-    QUIT(@["Template %d is switched off at " SIZE_F " but was not on"@],@|
+    QUIT(@["Template %d is switched off at 0x%tx but was not on"@],@|
            pg, hpos-hstart);
-  DBG(DBGRANGE,@["Range *%d %s at " SIZE_F "\n"@],pg,on?"on":"off",hpos-hstart);
+  DBG(DBGRANGE,@["Range *%d %s at 0x%tx\n"@],pg,on?"on":"off",hpos-hstart);
   range_pos[next_range].pg=pg;
   range_pos[next_range].pos=hpos-hstart;
   range_pos[next_range].on=on;
@@ -6322,8 +6322,10 @@ and a (short) comment as the second argument.
 \putcode
 @<function to write the banner@>=
 
-static size_t hput_banner(char *magic, char *s)
-{ return fprintf(hout,"%s %d.%d %s\n",magic,HINT_VERSION,HINT_SUB_VERSION,s);
+static size_t hput_banner(char *magic, char *str)
+{ size_t s=fprintf(hout,"%s %d.%d %s\n",magic,HINT_VERSION,HINT_SUB_VERSION,str);
+  if (s>MAX_BANNER) QUIT("Banner too big"); 
+  return s;
 }
 @
 
@@ -6363,15 +6365,15 @@ void hput_hint(char * str)
 { size_t s;
   DBG(DBGBASIC,"Writing hint output %s\n",str); 
   s=hput_banner("hint",str);
-  DBG(DBGDIR,@["Root entry at " SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Root entry at 0x%tx\n"@],s);
   s+=hput_root();
-  DBG(DBGDIR,@["Directory section at " SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Directory section at 0x%tx\n"@],s);
   s+=hput_section(0);
-  DBG(DBGDIR,@["Definition section at " SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Definition section at 0x%tx\n"@],s);
   s+=hput_section(1);
-  DBG(DBGDIR,@["Content section at " SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Content section at 0x%tx\n"@],s);
   s+=hput_section(2);
-  DBG(DBGDIR,@["Auxiliary sections at " SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Auxiliary sections at 0x%tx\n"@],s);
   hput_optional_sections();
 }
 @
@@ -6394,7 +6396,7 @@ and advance the stream position accordingly.\label{HPUT}\label{HGET}
 
 \getcode
 @<shared get macros@>=
-#define HGET_ERROR @/ QUIT(@["HGET overrun in section %d at " SIZE_F "\n"@],@|section_no,hpos-hstart)
+#define HGET_ERROR @/ QUIT(@["HGET overrun in section %d at 0x%tx\n"@],@|section_no,hpos-hstart)
 #define @[HEND@]   @[((hpos<=hend)?0:(HGET_ERROR,0))@]
 
 #define @[HGET8@]      ((hpos<hend)?*(hpos++):(HGET_ERROR,0))
@@ -6408,7 +6410,7 @@ and advance the stream position accordingly.\label{HPUT}\label{HGET}
 @<put functions@>=
 void hput_error(void)
 {@+if (hpos<hend) return;
- QUIT(@["HPUT overrun section %d pos=" SIZE_F "\n"@],@|section_no,hpos-hstart);
+ QUIT(@["HPUT overrun section %d pos=0x%tx\n"@],@|section_no,hpos-hstart);
 }
 @
 
@@ -6483,7 +6485,8 @@ void hget_unmap(void)
 bool hget_map(void)
 { FILE *f;
   struct stat st;
-  size_t s,t,u;
+  size_t s,t;
+  uint64_t u;
   f= fopen(hin_name,"rb");
   if (f==NULL)@/
   {	MESSAGE("Unable to open file: %s", hin_name);@+	return false;@+  }
@@ -6497,15 +6500,15 @@ bool hget_map(void)
     fclose(f);
     return false;
   }
+  u=st.st_size;
   if (hin_addr!=NULL) hget_unmap();
-  hin_addr=malloc(st.st_size);	
+  hin_addr=malloc(u);	
   if (hin_addr==NULL)
-  { MESSAGE("Unable to allocate %ld byte for File %s", st.st_size,hin_name);
+  { MESSAGE("Unable to allocate 0x%"PRIx64" byte for File %s", u,hin_name);
     fclose(f);
     return 0;
   }
-  t=0;@+
-  u=st.st_size;
+  t=0;
   do{
     s=fread(hin_addr+t,1,u,f);
     if (s<=0)
@@ -6705,8 +6708,8 @@ void  hput_increase_buffer(uint32_t n)
    bsize=dir[section_no].bsize*buffer_factor+0.5;
    if (bsize<pos+n) bsize=pos+n;
    if (bsize>=HINT_NO_POS) bsize=HINT_NO_POS;
-   if (bsize<pos+n)  QUIT(@["Unable to increase buffer size " SIZE_F " by 0x%x byte"@],@|hpos-hstart,n);
-   DBG(DBGBUFFER,@["Reallocating output buffer "@|" for section %d from 0x%x to " SIZE_F " byte\n"@],
+   if (bsize<pos+n)  QUIT(@["Unable to increase buffer size 0x%tx by 0x%x byte"@],@|hpos-hstart,n);
+   DBG(DBGBUFFER,@["Reallocating output buffer "@|" for section %d from 0x%x to 0x%tx byte\n"@],
        section_no,dir[section_no].bsize,bsize);
    REALLOCATE(dir[section_no].buffer,bsize,uint8_t);
    dir[section_no].bsize=(uint32_t)bsize;
@@ -6719,7 +6722,7 @@ static size_t hput_data(uint16_t n, uint8_t *buffer, uint32_t size)
 { size_t s;
   s=fwrite(buffer,1,size,hout);
   if (s!=size)
-    QUIT(@["short write " SIZE_F " < %d in section %d"@],s,size,n);
+    QUIT(@["short write 0x%tx < %d in section %d"@],s,size,n);
   return s;
 }
 
@@ -7060,7 +7063,7 @@ The name of the directory section must be the empty string.
 \getcode
 @<get file functions@>=
 static void hget_root(entry_t *root)
-{ DBG(DBGDIR,"Root entry at " SIZE_F "\n",hpos-hstart);
+{ DBG(DBGDIR,"Root entry at 0x%tx\n",hpos-hstart);
   hget_entry(root); 
   root->pos=hpos-hstart;
   max_section_no=root->section_no;
@@ -7165,7 +7168,7 @@ static size_t hput_root(void)
   dir[0].section_no=max_section_no;
   hput_entry(&dir[0]);
   s=hput_data(0, hstart,hpos-hstart);
-  DBG(DBGDIR,@["Writing root size=" SIZE_F "\n"@],s);
+  DBG(DBGDIR,@["Writing root size=0x%tx\n"@],s);
   return s;
 }
 
@@ -7223,7 +7226,7 @@ static void hput_optional_sections(void)
      }
      fclose(f);
      if (fsize!=dir[i].size) 
-       QUIT(@["File size " SIZE_F " does not match directory size %u"@],@|fsize,dir[i].size);
+       QUIT(@["File size 0x%tx does not match directory size %u"@],@|fsize,dir[i].size);
    }
 }
 @
@@ -8517,6 +8520,8 @@ It tells us what to expect in the rest of this section.
   "Usage: %s [options] filename%s\n",prog_name, in_ext);@/
   fprintf(stderr,
   "Options:\n"@/
+  "\t --help \t display this message\n"@/
+  "\t --version\t display the HINT version\n"@/
   "\t -o file\t specify an output file name\n"@/
   "\t -g     \t assume global names for auxiliary files\n"@/
   "\t -l     \t redirect stderr to a log file\n"@/
@@ -8524,7 +8529,8 @@ It tells us what to expect in the rest of this section.
   "\t -x     \t enable writing hexadecimal character codes\n"@/
   "\t -c     \t enable compression of section 1 and 2\n");@/
 #ifdef DEBUG
-fprintf(stderr,"\t -d XXX \t hexadecimal value. OR together these values:\n");@/
+fprintf(stderr,"\t -d XXXX \t set debug flag to hexadecimal value XXXX.\n"
+               "\t\t\t OR together these values:\n");@/
 fprintf(stderr,"\t\t\t XX=%03X   basic debugging\n", DBGBASIC);@/
 fprintf(stderr,"\t\t\t XX=%03X   tag debugging\n", DBGTAGS);@/
 fprintf(stderr,"\t\t\t XX=%03X   node debugging\n",DBGNODE);@/
@@ -8600,7 +8606,9 @@ int option_log=false;
 @ 
 
 Processing the command line looks for options and then sets the
-input file name\index{file name}.
+input file name\index{file name}. For compatibility with 
+GNU standards, the long options {\tt --help} and {\tt --version}
+are supported in addition to the short options.
 
 @<process the command line@>=
   debugflags=DBGBASIC;
@@ -8611,7 +8619,12 @@ input file name\index{file name}.
   { if ((*argv)[0]=='-')
     { char option=(*argv)[1];
       switch(option)
-      { default: goto explain_usage;
+      { case '-': 
+          if (strcmp(*argv,"--version")==0)
+          { fprintf(stderr,"%s version %d.%d\n",prog_name, HINT_VERSION, HINT_SUB_VERSION);
+            exit(0);
+          }
+        default: goto explain_usage; 
         case 'o': argv++;
           file_name_length=(int)strlen(*argv);
           ALLOCATE(file_name,file_name_length+6,char); /*plus extension*/
@@ -8759,22 +8772,25 @@ For portability, we first define the output specifier for expressions of type |s
 \index{DBG+\.{DBG}}\index{SIZE F+\.{SIZE\_F}}\index{DBGTAG+\.{DBGTAG}}
 \index{RNG+\.{RNG}}\index{TAGERR+\.{TAGERR}}
 @<debug macros@>=
+#if 0 
+/* use 0x percent tx instead */
 #ifdef WIN32
 #define SIZE_F "0x%x"
 #else
 #define SIZE_F "0x%zx"
+#endif
 #endif
 #ifdef DEBUG
 #define @[DBG(FLAGS,...)@] ((debugflags & (FLAGS))?LOG(__VA_ARGS__):0)
 #else
 #define @[DBG(FLAGS,...)@] 0
 #endif
-#define @[DBGTAG(A,P)@] @[DBG(DBGTAGS,@["tag [%s,%d] at " SIZE_F "\n"@],@|NAME(A),INFO(A),(P)-hstart)@]
+#define @[DBGTAG(A,P)@] @[DBG(DBGTAGS,@["tag [%s,%d] at 0x%tx\n"@],@|NAME(A),INFO(A),(P)-hstart)@]
 
 #define @[RNG(S,N,A,Z)@] @/\
   if ((int)(N)<(int)(A)||(int)(N)>(int)(Z)) QUIT(S@, " %d out of range [%d - %d]",N,A,Z)
 
-#define @[TAGERR(A)@] @[QUIT(@["Unknown tag [%s,%d] at " SIZE_F "\n"@],NAME(A),INFO(A),hpos-hstart)@]
+#define @[TAGERR(A)@] @[QUIT(@["Unknown tag [%s,%d] at 0x%tx\n"@],NAME(A),INFO(A),hpos-hstart)@]
 @
 
 The \.{bison} generated parser will need a function |yyerror| for
@@ -9259,7 +9275,7 @@ The code to skip the end\index{end byte} byte |z| and to check the start\index{s
 
 @<skip and check the start byte |a|@>=
   HTEGTAG(a);
-  if (a!=z) QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at " SIZE_F " to 0x%x\n"@],@|NAME(a),INFO(a),NAME(z),INFO(z),@|
+  if (a!=z) QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%tx to 0x%x\n"@],@|NAME(a),INFO(a),NAME(z),INFO(z),@|
     hpos-hstart,node_pos-1);
 @
 
@@ -9711,7 +9727,7 @@ void hteg_size_boundary(info_t info)
 { uint32_t n;
   if (info<2) return;
   n=HTEG8;
-  if (n-1!=0x100-info) QUIT(@["List size boundary byte 0x%x does not match info value %d at " SIZE_F@],
+  if (n-1!=0x100-info) QUIT(@["List size boundary byte 0x%x does not match info value %d at 0x%tx"@],
                             n, info,hpos-hstart);
 }
 
@@ -9739,7 +9755,7 @@ void hteg_list(list_t *l)
     l->p=hpos-hstart;
     hteg_size_boundary(INFO(z));
     s=hteg_list_size(INFO(z));
-    if (s!=l->s) QUIT(@["List sizes at " SIZE_F " and 0x%x do not match 0x%x != 0x%x"@],
+    if (s!=l->s) QUIT(@["List sizes at 0x%tx and 0x%x do not match 0x%x != 0x%x"@],
                         hpos-hstart,node_pos-1,s,l->s);
     @<skip and check the start byte |a|@>@;
   }
@@ -10155,7 +10171,7 @@ extern int hcompress_depth(int n, int c);
 \subsection{{\tt shrink.l}}\index{shrink.l+{\tt shrink.l}}\index{scanning}
 The definitions for lex are collected in the file {\tt shrink.l}
 
-@(shrink.lex-in@>=
+@(shrink.l@>=
 %{
 #include "basetypes.h"
 #include "error.h"
@@ -10163,7 +10179,7 @@ The definitions for lex are collected in the file {\tt shrink.l}
 #include "hput.h"
 
 @<enable bison debugging@>@;
-#include "shrink-parser.h"
+#include "hishrink-parser.h"
 
 @<scanning macros@>@;@+
 @<scanning functions@>@;
@@ -10196,7 +10212,7 @@ The grammar rules for bison are collected in the file  {\tt shrink.y}.
 % for the option %token-table use the command line parameter -k
 
 
-@(shrink.yacc-in@>=
+@(shrink.y@>=
 %{
 #include "basetypes.h"
 #include <string.h>
@@ -10240,7 +10256,7 @@ extern int yylex(void);
 %%
 @
 
-\subsection{{\tt hishrink.c}}\index{hishrink.c+{\tt hishrink.c}}
+\subsection{{\tt shrink.c}}\index{shrink.c+{\tt shrink.c}}
 
 \.{shrink} is a \CEE\ program translating a \HINT\ file in long format into a \HINT\ file in short format.
 
@@ -10258,7 +10274,7 @@ extern int yylex(void);
 #include "error.h"
 #include "hformat.h"
 #include "hput.h"
-#include "shrink-parser.h"
+#include "hishrink-parser.h"
 
 extern void yyset_debug(int lex_debug);
 extern int yylineno;
@@ -10313,8 +10329,8 @@ explain_usage:
 
 
 
-\subsection{{\tt histretch.c}}\label{stretchmain}\index{histretch.c+{\tt histretch.c}}
-\.{histretch} is a \CEE\ program translating a \HINT\ file in short 
+\subsection{{\tt stretch.c}}\label{stretchmain}\index{stretch.c+{\tt stretch.c}}
+\.{stretch} is a \CEE\ program translating a \HINT\ file in short 
 format into a \HINT\ file in long format.
 
 @(histretch.c@>=
