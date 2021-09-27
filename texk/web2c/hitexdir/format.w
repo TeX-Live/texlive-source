@@ -10179,7 +10179,7 @@ The definitions for lex are collected in the file {\tt shrink.l}
 #include "hput.h"
 
 @<enable bison debugging@>@;
-#include "hishrink-parser.h"
+#include "parser.h"
 
 @<scanning macros@>@;@+
 @<scanning functions@>@;
@@ -10274,7 +10274,7 @@ extern int yylex(void);
 #include "error.h"
 #include "hformat.h"
 #include "hput.h"
-#include "hishrink-parser.h"
+#include "parser.h"
 
 extern void yyset_debug(int lex_debug);
 extern int yylineno;
