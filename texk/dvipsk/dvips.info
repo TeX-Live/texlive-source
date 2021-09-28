@@ -1,8 +1,8 @@
-This is dvips.info, produced by makeinfo version 5.1 from dvips.texi.
+This is dvips.info, produced by makeinfo version 6.8 from dvips.texi.
 
-This manual documents Dvips version 2021.1 (February 2021), a program to
-translate a DVI file into PostScript.  You may freely use, modify and/or
-distribute this file.
+This manual documents Dvips version 2021.1 (September 2021), a program
+to translate a DVI file into PostScript.  You may freely use, modify
+and/or distribute this file.
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
 * DVI-to-Postscript: (dvips).        Translating TeX DVI files to PostScript.
@@ -16,9 +16,9 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 2021.1 (February 2021), a program to
-translate a DVI file into PostScript.  You may freely use, modify and/or
-distribute this file.
+This manual documents Dvips version 2021.1 (September 2021), a program
+to translate a DVI file into PostScript.  You may freely use, modify
+and/or distribute this file.
 
 * Menu:
 
@@ -416,9 +416,9 @@ environment variables, and command-line options.
 * Menu:
 
 * Basic usage::
-* Command-line options::        
-* Environment variables::       
-* Config files::                
+* Command-line options::
+* Environment variables::
+* Config files::
 
 
 File: dvips.info,  Node: Basic usage,  Next: Command-line options,  Up: Invoking Dvips
@@ -639,8 +639,10 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
 '-h NAME'
      Prepend NAME as an additional header file, or, if NAME is '-',
-     suppress all header files.  Any definitions in the header file get
-     added to the PostScript 'userdict'.
+     suppress inclusion of default header files.  If '-h' is given
+     multiple times, the headers are included in the order given.  Any
+     definitions in the header file get added to the PostScript
+     'userdict'.
 
 '-i*'
      Make each section be a separate file; a "section" is a part of the
@@ -695,7 +697,7 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
 '-L*'
      By default or with '-L1', the last 'papersize' special wins; with
-     '-L0', the first special wins.  *Note 'papersize' special::.
+     '-L0', the first special wins.  *Note papersize special::.
 
 '-m*'
      Specify manual feed, if supported by the output device.
@@ -771,7 +773,7 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
 '-O X-OFFSET,Y-OFFSET'
      Move the origin by X-OFFSET,Y-OFFSET, a comma-separated pair of
-     dimensions such as '.1in,-.3cm' (*note 'papersize' special::).  The
+     dimensions such as '.1in,-.3cm' (*note papersize special::).  The
      origin of the page is shifted from the default position (of one
      inch down, one inch to the right from the upper left corner of the
      paper) by this amount.  This is usually best specified in the
@@ -875,7 +877,7 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
 
 '-T HSIZE,VSIZE'
      Set the paper size to (HSIZE,VSIZE), a comma-separated pair of
-     dimensions such as '.1in,-.3cm' (*note 'papersize' special::).  It
+     dimensions such as '.1in,-.3cm' (*note papersize special::).  It
      overrides any paper size special in the DVI file.  Be careful, as
      the paper size will stick to a predefined size if there is one
      close enough.  To disable this behavior, use '-tunknown'.
@@ -1153,7 +1155,9 @@ There is no provision for continuation lines.
      Option details::.
 
 'h HEADER'
-     Prepend HEADER to output.  Same as 'h-', *note Option details::.
+     Prepend HEADER to output.  Same as 'h-'; that is, the config file
+     'h' directive suppresses any inclusion of standard headers (*note
+     Option details::).
 
 'H PATH'
      Use PATH to search for PostScript header files.  The environment
@@ -1338,12 +1342,12 @@ attempt to override it manually.
 
 * Menu:
 
-* 'papersize' special::           Specifying the paper size in TeX.
+* papersize special::           Specifying the paper size in TeX.
 * Config file paper sizes::     Specifying printer- and site-specific sizes.
 * Paper trays::                 Changing paper trays automatically.
 
 
-File: dvips.info,  Node: 'papersize' special,  Next: Config file paper sizes,  Up: Paper size and landscape
+File: dvips.info,  Node: papersize special,  Next: Config file paper sizes,  Up: Paper size and landscape
 
 4.1 'papersize' special
 =======================
@@ -1386,7 +1390,7 @@ the first special wins--this was the behavior of Dvips prior to the 2017
 release.
 
 
-File: dvips.info,  Node: Config file paper sizes,  Next: Paper trays,  Prev: 'papersize' special,  Up: Paper size and landscape
+File: dvips.info,  Node: Config file paper sizes,  Next: Paper trays,  Prev: papersize special,  Up: Paper size and landscape
 
 4.2 Configuration file paper size command
 =========================================
@@ -1730,8 +1734,8 @@ terminal when it processes each figure, give the command:
 
 * Menu:
 
-* EPSF scaling::                
-* EPSF clipping::               
+* EPSF scaling::
+* EPSF clipping::
 
 
 File: dvips.info,  Node: EPSF scaling,  Next: EPSF clipping,  Up: EPSF macros
@@ -2003,8 +2007,8 @@ header files are included.
 
 * Menu:
 
-* Including headers from TeX::  
-* Including headers from the command line::  
+* Including headers from TeX::
+* Including headers from the command line::
 * Headers and memory usage::
 
 
@@ -3774,23 +3778,23 @@ Index
 * Menu:
 
 * ! special (literal PS header):         Literal headers.     (line   6)
-* ! starting output filename:            Option details.      (line 247)
+* ! starting output filename:            Option details.      (line 249)
 * " special (literal PostScript):        " special.           (line   6)
 * %%BoundingBox:                         Bounding box.        (line  17)
 * %%Page, and multi-page information:    PostScript hooks.    (line  37)
-* %%Page, not generating:                Option details.      (line 212)
-* %%Page, removing:                      Option details.      (line 165)
+* %%Page, not generating:                Option details.      (line 214)
+* %%Page, removing:                      Option details.      (line 167)
 * %%Page, required by Ghostview:         Ghostscript installation.
                                                               (line  12)
-* %%Title:                               Option details.      (line 357)
+* %%Title:                               Option details.      (line 359)
 * %%VMusage:                             Headers and memory usage.
                                                               (line  12)
 * %*Font:                                Fonts in figures.    (line   6)
 * (atend), bounding box specification:   Bounding box.        (line  28)
 * +PSMAPFILE:                            Configuration file commands.
-                                                              (line 126)
+                                                              (line 128)
 * -:                                     Option details.      (line  11)
-* - as output filename:                  Option details.      (line 247)
+* - as output filename:                  Option details.      (line 249)
 * --help:                                Option summary.      (line   7)
 * --help <1>:                            Option details.      (line  15)
 * --version:                             Option details.      (line  18)
@@ -3812,60 +3816,60 @@ Index
 * -F:                                    Option details.      (line 115)
 * -G:                                    Option details.      (line 122)
 * -h NAME:                               Option details.      (line 127)
-* -i:                                    Option details.      (line 132)
-* -j for partial font downloading:       Option details.      (line 151)
-* -K:                                    Option details.      (line 165)
-* -k for cropmarks:                      Option details.      (line 157)
-* -L:                                    Option details.      (line 183)
-* -l [=]NUM:                             Option details.      (line 174)
-* -m:                                    Option details.      (line 187)
-* -M:                                    Option details.      (line 199)
-* -mode MODE:                            Option details.      (line 190)
-* -N:                                    Option details.      (line 212)
-* -n NUM:                                Option details.      (line 209)
-* -noomega:                              Option details.      (line 220)
-* -noptex:                               Option details.      (line 226)
+* -i:                                    Option details.      (line 134)
+* -j for partial font downloading:       Option details.      (line 153)
+* -K:                                    Option details.      (line 167)
+* -k for cropmarks:                      Option details.      (line 159)
+* -L:                                    Option details.      (line 185)
+* -l [=]NUM:                             Option details.      (line 176)
+* -m:                                    Option details.      (line 189)
+* -M:                                    Option details.      (line 201)
+* -mode MODE:                            Option details.      (line 192)
+* -N:                                    Option details.      (line 214)
+* -n NUM:                                Option details.      (line 211)
+* -noomega:                              Option details.      (line 222)
+* -noptex:                               Option details.      (line 228)
 * -O:                                    Afm2tfm options.     (line  51)
-* -o NAME:                               Option details.      (line 242)
-* -O X-OFFSET,Y-OFFSET:                  Option details.      (line 259)
-* -P PRINTER:                            Option details.      (line 291)
+* -o NAME:                               Option details.      (line 244)
+* -O X-OFFSET,Y-OFFSET:                  Option details.      (line 261)
+* -P PRINTER:                            Option details.      (line 293)
 * -p PS-ENC:                             Changing PostScript encodings.
                                                               (line   6)
 * -p PS-ENC <1>:                         Afm2tfm options.     (line  56)
-* -p [=]NUM:                             Option details.      (line 277)
-* -pp FIRST-LAST:                        Option details.      (line 286)
-* -pp RANGE:                             Option details.      (line 286)
+* -p [=]NUM:                             Option details.      (line 279)
+* -pp FIRST-LAST:                        Option details.      (line 288)
+* -pp RANGE:                             Option details.      (line 288)
 * -PPRINTER, and config file searching:  Configuration file searching.
                                                               (line  27)
-* -q:                                    Option details.      (line 310)
-* -r:                                    Option details.      (line 314)
-* -R:                                    Option details.      (line 317)
-* -s:                                    Option details.      (line 325)
-* -S NUM:                                Option details.      (line 332)
+* -q:                                    Option details.      (line 312)
+* -r:                                    Option details.      (line 316)
+* -R:                                    Option details.      (line 319)
+* -s:                                    Option details.      (line 327)
+* -S NUM:                                Option details.      (line 334)
 * -s SLANT:                              Afm2tfm options.     (line  61)
 * -T ENC-FILE:                           Changing both encodings.
                                                               (line   6)
-* -T HSIZE,VSIZE:                        Option details.      (line 363)
-* -t PAPERTYPE:                          Option details.      (line 337)
+* -T HSIZE,VSIZE:                        Option details.      (line 365)
+* -t PAPERTYPE:                          Option details.      (line 339)
 * -T PS-TEX-ENC:                         Afm2tfm options.     (line  71)
 * -t TEX-ENC:                            Changing TeX encodings.
                                                               (line   6)
 * -t TEX-ENC <1>:                        Afm2tfm options.     (line  66)
-* -title STR:                            Option details.      (line 357)
-* -U:                                    Option details.      (line 378)
+* -title STR:                            Option details.      (line 359)
+* -U:                                    Option details.      (line 380)
 * -u:                                    Afm2tfm options.     (line  75)
-* -u PSMAPFILE:                          Option details.      (line 370)
-* -v:                                    Option details.      (line 386)
-* -V:                                    Option details.      (line 389)
+* -u PSMAPFILE:                          Option details.      (line 372)
+* -v:                                    Option details.      (line 388)
+* -V:                                    Option details.      (line 391)
 * -v VPL-FILE:                           Afm2tfm options.     (line  81)
 * -V VPL-FILE:                           Afm2tfm options.     (line  84)
-* -x NUM:                                Option details.      (line 398)
-* -X NUM:                                Option details.      (line 406)
-* -Y NUM:                                Option details.      (line 413)
+* -x NUM:                                Option details.      (line 400)
+* -X NUM:                                Option details.      (line 408)
+* -Y NUM:                                Option details.      (line 415)
 * -z:                                    Hypertext.           (line   6)
-* -Z for compressing bitmap fonts:       Option details.      (line 422)
-* -z for recognizing hyperdvi:           Option details.      (line 416)
-* '..'-relative filenames:               Option details.      (line 317)
+* -Z for compressing bitmap fonts:       Option details.      (line 424)
+* -z for recognizing hyperdvi:           Option details.      (line 418)
+* ..-relative filenames:                 Option details.      (line 319)
 * .afm Adobe metric files:               Metric files.        (line  26)
 * .dvipsrc, searched for:                Configuration file searching.
                                                               (line  14)
@@ -3917,20 +3921,20 @@ Index
 * \magnification:                        EPSF scaling.        (line  62)
 * \rotninety:                            Literal examples.    (line  27)
 * \textCOLORNAME:                        Color macro files.   (line  46)
-* | starting output filename:            Option details.      (line 247)
+* | starting output filename:            Option details.      (line 249)
 * a config command (conserve memory):    Configuration file commands.
                                                               (line  21)
 * A ring, Scandinavian letter:           Reencoding with Afm2tfm.
                                                               (line  32)
-* a3 papertype:                          Option details.      (line 337)
+* a3 papertype:                          Option details.      (line 339)
 * a4 paper size:                         Config file paper sizes.
                                                               (line  82)
-* a4 papertype:                          Option details.      (line 337)
+* a4 papertype:                          Option details.      (line 339)
 * A4size paper size:                     Config file paper sizes.
                                                               (line  90)
-* absolute filenames, disabling:         Option details.      (line 317)
-* absolute page number, and '-l':        Option details.      (line 174)
-* absolute page number, and '-p':        Option details.      (line 277)
+* absolute filenames, disabling:         Option details.      (line 319)
+* absolute page number, and -l:          Option details.      (line 176)
+* absolute page number, and -p:          Option details.      (line 279)
 * accent height adjustment, omitting:    Afm2tfm options.     (line  33)
 * accents, in wrong position:            Reencoding with Afm2tfm.
                                                               (line  32)
@@ -3946,7 +3950,7 @@ Index
 * Aladdin Ghostscript:                   Ghostscript installation.
                                                               (line   6)
 * Anderson, Laurie:                      Hypertext specials.  (line  42)
-* angle ('psfile' special option):       psfile special.      (line  36)
+* angle (psfile special option):         psfile special.      (line  36)
 * arcs:                                  Glyph files.         (line  17)
 * ASCII character codes, used by PostScript: PostScript typesetting.
                                                               (line  31)
@@ -3973,7 +3977,7 @@ Index
 * bop-hook:                              Paper trays.         (line   6)
 * bop-hook <1>:                          EPSF scaling.        (line  74)
 * bop-hook <2>:                          PostScript hooks.    (line  11)
-* bop-hook, and offset pages:            Option details.      (line 272)
+* bop-hook, and offset pages:            Option details.      (line 274)
 * boundary character:                    Encoding file format.
                                                               (line  41)
 * bounding box, comment for:             Bounding box.        (line   6)
@@ -3997,7 +4001,7 @@ Index
                                                               (line   6)
 * CharStrings Type 1 dictionary:         PostScript typesetting.
                                                               (line  51)
-* clip ('psfile' special option):        psfile special.      (line  39)
+* clip (psfile special option):          psfile special.      (line  39)
 * clipping of EPSF:                      EPSF clipping.       (line   6)
 * CODINGSCHEME:                          Reencoding with Afm2tfm.
                                                               (line  51)
@@ -4021,17 +4025,17 @@ Index
                                                               (line  13)
 * comments, in encoding files:           Encoding file format.
                                                               (line  20)
-* comments, removing included:           Option details.      (line 165)
+* comments, removing included:           Option details.      (line 167)
 * compilation:                           Installation.        (line   6)
 * compressed PostScript:                 Dynamic creation of graphics.
                                                               (line   6)
-* compressing bitmap fonts:              Option details.      (line 422)
+* compressing bitmap fonts:              Option details.      (line 424)
 * Computer Modern in PostScript:         Hypertext caveats.   (line   6)
 * Computer Modern, encoding of:          Encodings.           (line  15)
 * condensed fonts:                       Afm2tfm options.     (line  47)
 * config.proto:                          config.ps installation.
                                                               (line  14)
-* config.ps:                             Option details.      (line 291)
+* config.ps:                             Option details.      (line 293)
 * config.ps installation:                config.ps installation.
                                                               (line   6)
 * config.ps paper sizes:                 Config file paper sizes.
@@ -4063,8 +4067,8 @@ Index
 * copies, duplicated page bodies:        Option details.      (line  31)
 * copies, uncollated:                    Option details.      (line  46)
 * Crayola crayon box:                    Color macro files.   (line  17)
-* crop.pro:                              Option details.      (line 157)
-* cropmarks:                             Option details.      (line 157)
+* crop.pro:                              Option details.      (line 159)
+* cropmarks:                             Option details.      (line 159)
 * current font, in PostScript:           PostScript typesetting.
                                                               (line  35)
 * D config command (dpi):                Configuration file commands.
@@ -4076,22 +4080,22 @@ Index
 * debugging <1>:                         Option details.      (line  57)
 * debugging options:                     Debug options.       (line   6)
 * default resolutions:                   Configuration file commands.
-                                                              (line 147)
+                                                              (line 149)
 * default_texsizes Make variable:        Configuration file commands.
-                                                              (line 163)
+                                                              (line 165)
 * Deutsch, Peter:                        Ghostscript installation.
                                                               (line   6)
 * device dependency, and virtual fonts:  Configuration file commands.
-                                                              (line 186)
-* dictionary, 'CharStrings':             PostScript typesetting.
+                                                              (line 188)
+* dictionary, CharStrings:               PostScript typesetting.
                                                               (line  51)
 * dictionary, PostScript language:       PostScript typesetting.
                                                               (line  35)
-* dictionary, 'SDict':                   Literal headers.     (line   6)
-* dictionary, 'userdict':                Header files.        (line  21)
-* distillation, and '-z':                Option details.      (line 416)
+* dictionary, SDict:                     Literal headers.     (line   6)
+* dictionary, userdict:                  Header files.        (line  21)
+* distillation, and -z:                  Option details.      (line 418)
 * distiller, for PDF files:              Hypertext.           (line  11)
-* document title, specifying:            Option details.      (line 357)
+* document title, specifying:            Option details.      (line 359)
 * dot accent:                            Reencoding with Afm2tfm.
                                                               (line  32)
 * double-sided printing:                 Option details.      (line  37)
@@ -4116,7 +4120,7 @@ Index
 * DVIPSHEADERS:                          Environment variables.
                                                               (line  31)
 * DVIPSHEADERS, overrides H:             Configuration file commands.
-                                                              (line  60)
+                                                              (line  62)
 * DVIPSMAKEPK:                           Environment variables.
                                                               (line  35)
 * DVIPSRC:                               Environment variables.
@@ -4124,7 +4128,7 @@ Index
 * DVIPSSIZES:                            Environment variables.
                                                               (line  46)
 * DVIPSSIZES, overrides R:               Configuration file commands.
-                                                              (line 160)
+                                                              (line 162)
 * dynamic creation of graphics:          Dynamic creation of graphics.
                                                               (line   6)
 * e config command (maxdrift):           Configuration file commands.
@@ -4184,16 +4188,16 @@ Index
                                                               (line   6)
 * failure, to print at all:              No output.           (line   6)
 * fallback resolutions:                  Configuration file commands.
-                                                              (line 147)
+                                                              (line 149)
 * figures and fonts:                     Fonts in figures.    (line   6)
 * figures, natural size:                 EPSF macros.         (line  38)
 * figures, scaling:                      EPSF scaling.        (line   6)
 * filter, running as a:                  Option details.      (line 103)
-* first page printed:                    Option details.      (line 277)
+* first page printed:                    Option details.      (line 279)
 * font concepts:                         Font concepts.       (line   6)
 * font encodings, bitmap:                Bitmap font encodings.
                                                               (line   6)
-* font generation, avoiding:             Option details.      (line 199)
+* font generation, avoiding:             Option details.      (line 201)
 * fontinst:                              Invoking afm2tfm.    (line  13)
 * fonts, as header files:                Including headers from TeX.
                                                               (line  13)
@@ -4223,11 +4227,11 @@ Index
                                                               (line   6)
 * ghostview:                             Ghostscript installation.
                                                               (line  12)
-* Ghostview, and no 'N':                 Ghostscript installation.
+* Ghostview, and no N:                   Ghostscript installation.
                                                               (line  12)
 * glyph files:                           Glyph files.         (line   6)
 * GLYPHFONTS, overrides P:               Configuration file commands.
-                                                              (line 135)
+                                                              (line 137)
 * gnuplot:                               Dynamic creation of graphics.
                                                               (line  25)
 * graphics inclusion fails:              Including graphics fails.
@@ -4235,16 +4239,16 @@ Index
 * gs installation:                       Ghostscript installation.
                                                               (line   6)
 * gsave/grestore, and literal PS:        Literal examples.    (line  27)
-* gsftopk:                               Option details.      (line 390)
+* gsftopk:                               Option details.      (line 392)
 * h config command (download additional header): Configuration file commands.
                                                               (line  57)
 * H config command (PostScript header path): Configuration file commands.
-                                                              (line  60)
+                                                              (line  62)
 * Hafner, Jim:                           Color.               (line   6)
 * header file, downloading:              Option details.      (line 127)
 * header files, defined:                 Header files.        (line   6)
 * header path, defining:                 Configuration file commands.
-                                                              (line  60)
+                                                              (line  62)
 * header=FILE \special:                  Including headers from TeX.
                                                               (line   6)
 * headers and memory usage:              Headers and memory usage.
@@ -4255,24 +4259,24 @@ Index
                                                               (line   6)
 * hints:                                 PostScript typesetting.
                                                               (line  55)
-* hoffset ('psfile' special option):     psfile special.      (line  18)
+* hoffset (psfile special option):       psfile special.      (line  18)
 * HP4Si printer and paper trays:         Paper trays.         (line   6)
 * href:                                  Hypertext specials.  (line  32)
-* hscale ('psfile' special option):      psfile special.      (line  30)
-* hsize ('psfile' special option):       psfile special.      (line  24)
+* hscale (psfile special option):        psfile special.      (line  30)
+* hsize (psfile special option):         psfile special.      (line  24)
 * html specials:                         Hypertext.           (line   6)
-* html specials, and '-z':               Option details.      (line 416)
-* 'http://xxx.lanl.gov/hypertex':        Hypertext.           (line  22)
+* html specials, and -z:                 Option details.      (line 418)
+* http://xxx.lanl.gov/hypertex:          Hypertext.           (line  22)
 * Hungarian umlaut:                      Reencoding with Afm2tfm.
                                                               (line  32)
-* hyperdvi extensions, enabling:         Option details.      (line 416)
+* hyperdvi extensions, enabling:         Option details.      (line 418)
 * hypertext and bitmap fonts:            Hypertext caveats.   (line   6)
 * hypertext caveats:                     Hypertext caveats.   (line   6)
 * hypertext caveats <1>:                 Hypertext caveats.   (line   6)
 * hypertext specials:                    Hypertext specials.  (line   6)
 * hypertext support:                     Hypertext.           (line   6)
 * i config command (pages/section):      Configuration file commands.
-                                                              (line  64)
+                                                              (line  66)
 * Illustrator, workaround for:           Including graphics fails.
                                                               (line  10)
 * img:                                   Hypertext specials.  (line  52)
@@ -4282,7 +4286,7 @@ Index
                                                               (line   6)
 * including headers in TeX:              Including headers from TeX.
                                                               (line   6)
-* installation of 'config.ps':           config.ps installation.
+* installation of config.ps:             config.ps installation.
                                                               (line   6)
 * installation of PostScript fonts:      PostScript font installation.
                                                               (line   6)
@@ -4294,31 +4298,31 @@ Index
 * inverted output:                       Small or inverted.   (line   6)
 * invoking Dvips:                        Invoking Dvips.      (line   6)
 * j config command (partial font downloading): Configuration file commands.
-                                                              (line  68)
+                                                              (line  70)
 * Japanese font metric file:             Virtual fonts.       (line  37)
 * Jeffrey, Alan:                         Invoking afm2tfm.    (line  13)
 * JFM file, and virtual font fallback:   Virtual fonts.       (line  37)
 * K config command (comment removal):    Configuration file commands.
-                                                              (line  72)
+                                                              (line  74)
 * kerning, defined:                      Metric files.        (line  15)
 * KPATHSEA_DEBUG:                        Environment variables.
                                                               (line  18)
 * L config command (last paper size wins): Configuration file commands.
-                                                              (line  76)
+                                                              (line  78)
 * landscape orientation, defined:        Paper size and landscape.
                                                               (line  11)
-* landscape papertype:                   Option details.      (line 337)
-* landscape, as '\special':              'papersize' special. (line  16)
-* last page printed:                     Option details.      (line 174)
-* last-resort font scaling, with 'DVIPSSIZES': Environment variables.
+* landscape papertype:                   Option details.      (line 339)
+* landscape, as \special:                papersize special.   (line  16)
+* last page printed:                     Option details.      (line 176)
+* last-resort font scaling, with DVIPSSIZES: Environment variables.
                                                               (line  47)
-* last-resort scaling, with 'R':         Configuration file commands.
-                                                              (line 147)
-* ledger papertype:                      Option details.      (line 337)
-* legal papertype:                       Option details.      (line 337)
+* last-resort scaling, with R:           Configuration file commands.
+                                                              (line 149)
+* ledger papertype:                      Option details.      (line 339)
+* legal papertype:                       Option details.      (line 339)
 * letter paper size:                     Config file paper sizes.
                                                               (line  82)
-* letter papertype:                      Option details.      (line 337)
+* letter papertype:                      Option details.      (line 339)
 * letterhead tray:                       Paper trays.         (line  10)
 * letterSize paper size:                 Config file paper sizes.
                                                               (line  90)
@@ -4332,28 +4336,28 @@ Index
 * literal headers:                       Literal headers.     (line   6)
 * literal PostScript, examples:          Literal examples.    (line   6)
 * literal PostScript, using:             Literal PS.          (line   6)
-* llx ('psfile' special option):         psfile special.      (line  42)
-* lly ('psfile' special option):         psfile special.      (line  42)
+* llx (psfile special option):           psfile special.      (line  42)
+* lly (psfile special option):           psfile special.      (line  42)
 * long documents not printing:           Long documents fail. (line   6)
 * low characters, shifting:              Option details.      (line 122)
-* lpr spooler, MS-DOS emulation:         Option details.      (line 247)
+* lpr spooler, MS-DOS emulation:         Option details.      (line 249)
 * m config command (available memory):   Configuration file commands.
-                                                              (line  80)
+                                                              (line  82)
 * M config command (mf mode):            Configuration file commands.
-                                                              (line 107)
+                                                              (line 109)
 * macros for color:                      Color macro files.   (line   6)
 * macros for epsf inclusion:             \includegraphics.    (line   6)
 * macros for epsf inclusion <1>:         EPSF macros.         (line   6)
 * magnification, DVI:                    EPSF scaling.        (line  62)
-* magnification, overriding DVI:         Option details.      (line 398)
-* magnification, vertical:               Option details.      (line 409)
+* magnification, overriding DVI:         Option details.      (line 400)
+* magnification, vertical:               Option details.      (line 411)
 * mailcap and hypertext:                 Hypertext specials.  (line  53)
-* manual feed:                           Option details.      (line 187)
+* manual feed:                           Option details.      (line 189)
 * maxdrift:                              Option details.      (line  76)
-* maximum pages printed:                 Option details.      (line 209)
-* media:                                 Option details.      (line 337)
+* maximum pages printed:                 Option details.      (line 211)
+* media:                                 Option details.      (line 339)
 * memory available:                      Configuration file commands.
-                                                              (line  80)
+                                                              (line  82)
 * memory of printer exhausted:           Printer errors.      (line  14)
 * memory usage, and headers:             Headers and memory usage.
                                                               (line   6)
@@ -4362,43 +4366,43 @@ Index
                                                               (line 104)
 * Metafont ligature operations:          Encoding file format.
                                                               (line  54)
-* Metafont mode, specifying:             Option details.      (line 190)
+* Metafont mode, specifying:             Option details.      (line 192)
 * Metafont source files:                 Glyph files.         (line  30)
 * metric files:                          Metric files.        (line   6)
 * Minion typeface family:                psfonts.map.         (line  60)
-* missfont.log:                          Option details.      (line 199)
-* MISSFONT_LOG:                          Option details.      (line 202)
+* missfont.log:                          Option details.      (line 201)
+* MISSFONT_LOG:                          Option details.      (line 204)
 * Mitsubishi Shinko CHC-S446i printer:   No output.           (line  14)
 * mkdvipspapers:                         Config file paper sizes.
                                                               (line  79)
-* mktexpk, avoiding:                     Option details.      (line 199)
+* mktexpk, avoiding:                     Option details.      (line 201)
 * mktexpk, changing name:                Environment variables.
                                                               (line  36)
-* mode name, specifying:                 Option details.      (line 190)
-* mtpk:                                  Option details.      (line 390)
+* mode name, specifying:                 Option details.      (line 192)
+* mtpk:                                  Option details.      (line 392)
 * multiple master fonts:                 psfonts.map.         (line  60)
-* multiple output files:                 Option details.      (line 132)
+* multiple output files:                 Option details.      (line 134)
 * multiple paper trays:                  Paper trays.         (line   6)
 * Murphy, Tim:                           Hypertext specials.  (line  20)
 * N config command (disable EPS):        Configuration file commands.
-                                                              (line 110)
+                                                              (line 112)
 * name:                                  Hypertext specials.  (line  41)
 * narrow fonts:                          psfonts.map.         (line  19)
 * no output at all:                      No output.           (line   6)
 * non-printing characters, shifting:     Option details.      (line 122)
 * non-resident fonts:                    psfonts.map.         (line   6)
-* nopaper, paper format for '-t':        Config file paper sizes.
+* nopaper, paper format for -t:          Config file paper sizes.
                                                               (line  74)
 * o config command (output destination): Configuration file commands.
-                                                              (line 115)
+                                                              (line 117)
 * O config command (page offsets):       Configuration file commands.
-                                                              (line 123)
+                                                              (line 125)
 * oblique fonts:                         Special font effects.
                                                               (line   6)
 * octal character codes:                 Afm2tfm options.     (line  51)
 * odd pages only:                        Option details.      (line  27)
-* offset pages:                          Option details.      (line 259)
-* Omega extensions:                      Option details.      (line 220)
+* offset pages:                          Option details.      (line 261)
+* Omega extensions:                      Option details.      (line 222)
 * option, details of:                    Option details.      (line   6)
 * options, debugging:                    Debug options.       (line   6)
 * options, Dvips:                        Invoking Dvips.      (line   6)
@@ -4411,21 +4415,21 @@ Index
 * output file, sectioning of:            Headers and memory usage.
                                                               (line   6)
 * output file, setting:                  Configuration file commands.
-                                                              (line 115)
-* output files, multiple:                Option details.      (line 132)
-* output title, specifying:              Option details.      (line 357)
+                                                              (line 117)
+* output files, multiple:                Option details.      (line 134)
+* output title, specifying:              Option details.      (line 359)
 * output, inverted:                      Small or inverted.   (line   6)
 * output, none:                          No output.           (line   6)
-* output, redirecting:                   Option details.      (line 242)
+* output, redirecting:                   Option details.      (line 244)
 * output, too small:                     Small or inverted.   (line   6)
 * p config command (font aliases):       Configuration file commands.
-                                                              (line 126)
+                                                              (line 128)
 * P config command (PK path):            Configuration file commands.
-                                                              (line 135)
-* page range:                            Option details.      (line 286)
-* page, first printed:                   Option details.      (line 277)
-* page, last printed:                    Option details.      (line 174)
-* pages, maximum printed:                Option details.      (line 209)
+                                                              (line 137)
+* page range:                            Option details.      (line 288)
+* page, first printed:                   Option details.      (line 279)
+* page, last printed:                    Option details.      (line 176)
+* pages, maximum printed:                Option details.      (line 211)
 * PaintType:                             Special font effects.
                                                               (line  50)
 * Pantone colors:                        Color macro files.   (line  17)
@@ -4436,16 +4440,16 @@ Index
 * paper size, general:                   Paper size and landscape.
                                                               (line   6)
 * paper trays:                           Paper trays.         (line   6)
-* paper type:                            Option details.      (line 337)
-* papersize special:                     'papersize' special. (line   6)
-* papersize special, and no '-t':        Option details.      (line 337)
-* 'papersize' special, first vs. last:   Option details.      (line 183)
+* paper type:                            Option details.      (line 339)
+* papersize special:                     papersize special.   (line   6)
+* papersize special, and no -t:          Option details.      (line 339)
+* papersize special, first vs. last:     Option details.      (line 185)
 * partial font downloading:              psfonts.map.         (line  55)
 * PDF files, font quality:               Hypertext caveats.   (line   6)
 * PDF files, making:                     Ghostscript installation.
                                                               (line   6)
 * PDF files, making <1>:                 Hypertext.           (line  11)
-* PDF files, option for:                 Option details.      (line 416)
+* PDF files, option for:                 Option details.      (line 418)
 * pdfmark:                               Hypertext.           (line   6)
 * pfa files:                             Glyph files.         (line  25)
 * pfb files:                             Glyph files.         (line  25)
@@ -4453,16 +4457,16 @@ Index
 * pfm files:                             Metric files.        (line  48)
 * Phaser printer, used for color calibration: Color device configuration.
                                                               (line  18)
-* physical page number, and '-l':        Option details.      (line 174)
-* physical page number, and '-p':        Option details.      (line 277)
-* physical page number, and 'bop-hook':  PostScript hooks.    (line  26)
+* physical page number, and -l:          Option details.      (line 176)
+* physical page number, and -p:          Option details.      (line 279)
+* physical page number, and bop-hook:    PostScript hooks.    (line  26)
 * pipes, not readable:                   Option details.      (line 103)
 * pk files:                              Glyph files.         (line  35)
 * PKFONTS, overrides P:                  Configuration file commands.
-                                                              (line 135)
-* plotfile, 'ps' subspecial:             ps special.          (line  29)
+                                                              (line 137)
+* plotfile, ps subspecial:               ps special.          (line  29)
 * pltotf:                                Metric files.        (line  39)
-* popen for output:                      Option details.      (line 247)
+* popen for output:                      Option details.      (line 249)
 * portrait orientation, defined:         Paper size and landscape.
                                                               (line  11)
 * positioning accuracy:                  Option details.      (line  76)
@@ -4472,9 +4476,9 @@ Index
 * PostScript encoding:                   Encodings.           (line  27)
 * PostScript encoding, changing:         Changing PostScript encodings.
                                                               (line   6)
-* PostScript font alias file:            Option details.      (line 370)
+* PostScript font alias file:            Option details.      (line 372)
 * PostScript font alias file <1>:        Configuration file commands.
-                                                              (line 126)
+                                                              (line 128)
 * PostScript fonts:                      PostScript fonts.    (line   6)
 * PostScript fonts, installing:          PostScript font installation.
                                                               (line   6)
@@ -4500,12 +4504,12 @@ Index
                                                               (line  14)
 * printer errors:                        Printer errors.      (line   6)
 * printer memory:                        Configuration file commands.
-                                                              (line  80)
+                                                              (line  82)
 * printer memory exhausted:              Printer errors.      (line  14)
-* printer offset:                        Option details.      (line 259)
+* printer offset:                        Option details.      (line 261)
 * PRINTER, and config file searching:    Configuration file searching.
                                                               (line  36)
-* PRINTER, avoided with '-f':            Option details.      (line 103)
+* PRINTER, avoided with -f:              Option details.      (line 103)
 * printer, driving directly:             Option details.      (line 115)
 * problems:                              Diagnosing problems. (line   6)
 * property list files:                   Metric files.        (line  39)
@@ -4520,19 +4524,19 @@ Index
 * psfonts.map <2>:                       psfonts.map.         (line   6)
 * psheaderdir:                           Header files.        (line  12)
 * psi character missing:                 Hypertext caveats.   (line  53)
-* pstopk:                                Option details.      (line 390)
-* pTeX extensions:                       Option details.      (line 220)
-* pTeX extensions <1>:                   Option details.      (line 226)
+* pstopk:                                Option details.      (line 392)
+* pTeX extensions:                       Option details.      (line 222)
+* pTeX extensions <1>:                   Option details.      (line 228)
 * ptex JFM:                              Virtual fonts.       (line  37)
 * q config command (quiet):              Configuration file commands.
-                                                              (line 141)
+                                                              (line 143)
 * Q config command (quiet):              Configuration file commands.
-                                                              (line 141)
-* quiet operation:                       Option details.      (line 310)
+                                                              (line 143)
+* quiet operation:                       Option details.      (line 312)
 * R config command (fallback resolution): Configuration file commands.
-                                                              (line 147)
+                                                              (line 149)
 * r config command (page reversal):      Configuration file commands.
-                                                              (line 144)
+                                                              (line 146)
 * raw tfm files:                         Afm2tfm options.     (line  17)
 * reencode/*.enc:                        Encodings.           (line  35)
 * reencoding:                            Reencoding with Afm2tfm.
@@ -4543,25 +4547,25 @@ Index
 * remapping:                             Reencoding with Afm2tfm.
                                                               (line   6)
 * resident fonts, different in different printers: Option details.
-                                                              (line 370)
+                                                              (line 372)
 * resident fonts, different in different printers <1>: Configuration file commands.
-                                                              (line 126)
-* resolution:                            Option details.      (line 406)
-* resolution <1>:                        Option details.      (line 413)
+                                                              (line 128)
+* resolution:                            Option details.      (line 408)
+* resolution <1>:                        Option details.      (line 415)
 * resolution, setting:                   Option details.      (line  63)
-* reverse pagination:                    Option details.      (line 314)
-* rhi ('psfile' special option):         psfile special.      (line  46)
+* reverse pagination:                    Option details.      (line 316)
+* rhi (psfile special option):           psfile special.      (line  46)
 * Rokicki, Tomas:                        Why Dvips.           (line  52)
 * rotate.tex:                            ps special.          (line  33)
-* rwi ('psfile' special option):         psfile special.      (line  46)
+* rwi (psfile special option):           psfile special.      (line  46)
 * s config command (global save/restore): Configuration file commands.
-                                                              (line 169)
+                                                              (line 171)
 * S config command (pict path):          Configuration file commands.
-                                                              (line 172)
+                                                              (line 174)
 * save/restore, and inverted output:     Small or inverted.   (line   6)
 * save/restore, and literal PS:          Literal examples.    (line  27)
 * save/restore, and specials:            ps special.          (line   6)
-* save/restore, generating global:       Option details.      (line 325)
+* save/restore, generating global:       Option details.      (line 327)
 * scaleunit:                             psfile special.      (line  66)
 * scaling of figures:                    EPSF scaling.        (line   6)
 * scaling small caps:                    Afm2tfm options.     (line  43)
@@ -4575,15 +4579,15 @@ Index
                                                               (line   6)
 * sections of output file, and memory:   Headers and memory usage.
                                                               (line   6)
-* sections output, in separate files:    Option details.      (line 132)
-* security:                              Option details.      (line 317)
-* shell command execution, disabling:    Option details.      (line 317)
+* sections output, in separate files:    Option details.      (line 134)
+* security:                              Option details.      (line 319)
+* shell command execution, disabling:    Option details.      (line 319)
 * shell escape, in config file:          Configuration file commands.
                                                               (line  42)
 * Shinko CHC-S446i printer:              No output.           (line  14)
 * show PostScript operator:              PostScript typesetting.
                                                               (line  23)
-* silent operation:                      Option details.      (line 310)
+* silent operation:                      Option details.      (line 312)
 * simplex mode on duplex printers:       Including headers from the command line.
                                                               (line  13)
 * slanted fonts:                         Special font effects.
@@ -4598,21 +4602,21 @@ Index
 * specials, hypertext:                   Hypertext specials.  (line   6)
 * splines:                               Glyph files.         (line  17)
 * spooler, lacking:                      Option details.      (line 115)
-* spooling to lpr on MS-DOS:             Option details.      (line 247)
+* spooling to lpr on MS-DOS:             Option details.      (line 249)
 * standard I/O:                          Option details.      (line 103)
 * standard input, reading options from:  Option details.      (line  11)
-* standard output, output to:            Option details.      (line 242)
+* standard output, output to:            Option details.      (line 244)
 * standard PostScript, required by Ghostview: Ghostscript installation.
                                                               (line  12)
 * start-hook:                            PostScript hooks.    (line  11)
-* structured comments:                   Option details.      (line 212)
+* structured comments:                   Option details.      (line 214)
 * system in config file:                 Configuration file commands.
                                                               (line  42)
 * T config command (TFM path):           Configuration file commands.
-                                                              (line 177)
+                                                              (line 179)
 * Tektronix Phaser printer, used for color calibration: Color device configuration.
                                                               (line  18)
-* testpage.tex:                          Option details.      (line 266)
+* testpage.tex:                          Option details.      (line 268)
 * TeX encoding, changing:                Changing TeX encodings.
                                                               (line   6)
 * TeX, including headers in:             Including headers from TeX.
@@ -4620,13 +4624,13 @@ Index
 * TEXCONFIG:                             Environment variables.
                                                               (line  55)
 * TEXFONTS, overrides P:                 Configuration file commands.
-                                                              (line 135)
+                                                              (line 137)
 * TEXFONTS, overrides T:                 Configuration file commands.
-                                                              (line 177)
+                                                              (line 179)
 * TEXINPUTS, overrides S:                Configuration file commands.
-                                                              (line 172)
+                                                              (line 174)
 * texmext.enc:                           Encodings.           (line  35)
-* TEXMFOUTPUT:                           Option details.      (line 202)
+* TEXMFOUTPUT:                           Option details.      (line 204)
 * texmital.enc:                          Encodings.           (line  35)
 * texmsym.enc:                           Encodings.           (line  35)
 * texmsym.enc <1>:                       Changing TeX encodings.
@@ -4634,164 +4638,169 @@ Index
 * TEXPICTS:                              Environment variables.
                                                               (line  62)
 * TEXPICTS, overrides S:                 Configuration file commands.
-                                                              (line 172)
+                                                              (line 174)
 * TEXPKS, overrides P:                   Configuration file commands.
-                                                              (line 135)
+                                                              (line 137)
 * TEXSIZES, overrides R:                 Configuration file commands.
-                                                              (line 160)
+                                                              (line 162)
 * text in figures, chopped off:          EPSF clipping.       (line   6)
 * tfm files:                             Metric files.        (line  31)
 * TFMFONTS, overrides T:                 Configuration file commands.
-                                                              (line 177)
+                                                              (line 179)
 * tftopl:                                Metric files.        (line  39)
 * Theisen, Tim:                          Ghostscript installation.
                                                               (line  12)
 * tight bounding box, finding:           Option details.      (line  87)
-* title, specifying:                     Option details.      (line 357)
+* title, specifying:                     Option details.      (line 359)
 * too-small output:                      Small or inverted.   (line   6)
 * trademark character, accessing:        Changing PostScript encodings.
                                                               (line  18)
 * trailing spaces, dropped:              Hypertext caveats.   (line  53)
-* TranScript:                            Option details.      (line 212)
+* TranScript:                            Option details.      (line 214)
 * transforming downloaded fonts:         psfonts.map.         (line  19)
 * trouble:                               Diagnosing problems. (line   6)
 * Type 1 fonts:                          Glyph files.         (line  25)
 * typesetting in PostScript:             PostScript typesetting.
                                                               (line   6)
 * U config command (Xerox 4045):         Configuration file commands.
-                                                              (line 182)
+                                                              (line 184)
 * uncollated copies:                     Option details.      (line  46)
 * uncompressing PostScript:              Dynamic creation of graphics.
                                                               (line   6)
 * uniform resource locator:              Hypertext specials.  (line  20)
-* unknown, paper format for '-t':        'papersize' special. (line  29)
-* unknown, paper format for '-t' <1>:    Config file paper sizes.
+* unknown, paper format for -t:          papersize special.   (line  29)
+* unknown, paper format for -t <1>:      Config file paper sizes.
                                                               (line  69)
 * uptex JFM:                             Virtual fonts.       (line  37)
 * URL, definition:                       Hypertext specials.  (line  27)
 * URL, extended for TeX:                 Hypertext specials.  (line  20)
-* urx ('psfile' special option):         psfile special.      (line  42)
-* ury ('psfile' special option):         psfile special.      (line  42)
+* urx (psfile special option):           psfile special.      (line  42)
+* ury (psfile special option):           psfile special.      (line  42)
 * usage, basic:                          Basic usage.         (line   6)
 * user-definable colors:                 User-definable colors.
                                                               (line   6)
 * userdict, and dictionary files:        Header files.        (line  21)
 * userdict, used for header files:       Option details.      (line 127)
 * V config command (vf path):            Configuration file commands.
-                                                              (line 186)
+                                                              (line 188)
 * verbose EPSF processing:               EPSF macros.         (line  46)
 * vf files:                              Virtual fonts.       (line  16)
 * virtual font expansion:                Virtual fonts.       (line  33)
 * virtual font path:                     Configuration file commands.
-                                                              (line 186)
+                                                              (line 188)
 * virtual fonts:                         Virtual fonts.       (line   6)
 * virtual fonts, creating:               Invoking afm2tfm.    (line  13)
 * VM exhausted:                          Printer errors.      (line  14)
 * VMusage:                               Headers and memory usage.
                                                               (line  12)
-* voffset ('psfile' special option):     psfile special.      (line  21)
+* voffset (psfile special option):       psfile special.      (line  21)
 * vpl files:                             Virtual fonts.       (line  16)
 * vptovf:                                Making a font available.
                                                               (line  52)
-* vscale ('psfile' special option):      psfile special.      (line  33)
-* vsize ('psfile' special option):       psfile special.      (line  27)
+* vscale (psfile special option):        psfile special.      (line  33)
+* vsize (psfile special option):         psfile special.      (line  27)
 * W config command (emit warning):       Configuration file commands.
-                                                              (line 191)
+                                                              (line 193)
 * warning messages, defining:            Configuration file commands.
-                                                              (line 191)
-* warnings, suppressing:                 Option details.      (line 310)
+                                                              (line 193)
+* warnings, suppressing:                 Option details.      (line 312)
 * whole font downloading:                psfonts.map.         (line  60)
 * wide fonts:                            psfonts.map.         (line  19)
 * X config command (horizontal resolution): Configuration file commands.
-                                                              (line 198)
-* Xerox 4045:                            Option details.      (line 378)
+                                                              (line 200)
+* Xerox 4045:                            Option details.      (line 380)
 * Y config command (vertical resolution): Configuration file commands.
-                                                              (line 201)
+                                                              (line 203)
 * Z config command (compress fonts):     Configuration file commands.
-                                                              (line 204)
+                                                              (line 206)
 * z config command (secure mode):        Configuration file commands.
-                                                              (line 207)
+                                                              (line 209)
 
 
 
 Tag Table:
-Node: Top521
-Node: Why Dvips1271
-Node: Installation3854
-Node: config.ps installation4789
-Node: PostScript font installation7396
-Node: Ghostscript installation8316
-Node: Diagnosing problems9255
-Node: Debug options10346
-Node: No output11350
-Node: Small or inverted12816
-Node: Printer errors13534
-Node: Long documents fail14866
-Node: Including graphics fails15207
-Node: Invoking Dvips16446
-Node: Basic usage17068
-Node: Command-line options18066
-Node: Option summary18514
-Node: Option details20789
-Node: Environment variables41006
-Node: Config files43867
-Node: Configuration file searching44537
-Node: Configuration file commands47734
-Node: Paper size and landscape55708
-Node: 'papersize' special57335
-Node: Config file paper sizes59045
-Node: Paper trays63203
-Node: Interaction with PostScript64537
-Node: PostScript figures65190
-Node: Bounding box65916
-Node: \includegraphics69288
-Node: EPSF macros71580
-Node: EPSF scaling73579
-Node: EPSF clipping76149
-Node: psfile special76791
-Node: Dynamic creation of graphics79183
-Node: Fonts in figures80501
-Node: Header files82151
-Node: Including headers from TeX83361
-Node: Including headers from the command line85399
-Node: Headers and memory usage86498
-Node: Literal PS87709
-Node: " special88291
-Node: ps special89032
-Node: Literal headers90530
-Node: PostScript hooks91239
-Node: Literal examples93335
-Node: Hypertext94789
-Node: Hypertext caveats95963
-Node: Hypertext specials100319
-Node: PostScript fonts102953
-Node: Font concepts104070
-Node: Metric files105300
-Node: Glyph files108080
-Node: Virtual fonts110439
-Node: Encodings112594
-Node: Bitmap font encodings114996
-Node: PostScript typesetting117526
-Node: Making a font available120623
-Node: Invoking afm2tfm125657
-Node: Changing font encodings126677
-Node: Changing TeX encodings127468
-Node: Changing PostScript encodings128570
-Node: Changing both encodings129914
-Node: Reencoding with Afm2tfm130588
-Node: Encoding file format133691
-Node: Special font effects137895
-Node: Afm2tfm options140155
-Node: psfonts.map143680
-Node: Color148410
-Node: Color macro files149454
-Node: User-definable colors152664
-Node: Color subtleties153940
-Node: Ted Turner155592
-Node: Color device configuration156817
-Node: Color support details159261
-Node: Color specifications159639
-Node: Color specials161043
-Node: Index163172
+Node: Top522
+Node: Why Dvips1273
+Node: Installation3856
+Node: config.ps installation4791
+Node: PostScript font installation7398
+Node: Ghostscript installation8318
+Node: Diagnosing problems9257
+Node: Debug options10348
+Node: No output11352
+Node: Small or inverted12818
+Node: Printer errors13536
+Node: Long documents fail14868
+Node: Including graphics fails15209
+Node: Invoking Dvips16448
+Node: Basic usage17039
+Node: Command-line options18037
+Node: Option summary18485
+Node: Option details20760
+Node: Environment variables41077
+Node: Config files43938
+Node: Configuration file searching44608
+Node: Configuration file commands47805
+Node: Paper size and landscape55875
+Node: papersize special57500
+Node: Config file paper sizes59208
+Node: Paper trays63364
+Node: Interaction with PostScript64698
+Node: PostScript figures65351
+Node: Bounding box66077
+Node: \includegraphics69449
+Node: EPSF macros71741
+Node: EPSF scaling73709
+Node: EPSF clipping76279
+Node: psfile special76921
+Node: Dynamic creation of graphics79313
+Node: Fonts in figures80631
+Node: Header files82281
+Node: Including headers from TeX83487
+Node: Including headers from the command line85525
+Node: Headers and memory usage86624
+Node: Literal PS87835
+Node: " special88417
+Node: ps special89158
+Node: Literal headers90656
+Node: PostScript hooks91365
+Node: Literal examples93461
+Node: Hypertext94915
+Node: Hypertext caveats96089
+Node: Hypertext specials100445
+Node: PostScript fonts103079
+Node: Font concepts104196
+Node: Metric files105426
+Node: Glyph files108206
+Node: Virtual fonts110565
+Node: Encodings112720
+Node: Bitmap font encodings115122
+Node: PostScript typesetting117652
+Node: Making a font available120749
+Node: Invoking afm2tfm125783
+Node: Changing font encodings126803
+Node: Changing TeX encodings127594
+Node: Changing PostScript encodings128696
+Node: Changing both encodings130040
+Node: Reencoding with Afm2tfm130714
+Node: Encoding file format133817
+Node: Special font effects138021
+Node: Afm2tfm options140281
+Node: psfonts.map143806
+Node: Color148536
+Node: Color macro files149580
+Node: User-definable colors152790
+Node: Color subtleties154066
+Node: Ted Turner155718
+Node: Color device configuration156943
+Node: Color support details159387
+Node: Color specifications159765
+Node: Color specials161169
+Node: Index163298
 
 End Tag Table
+
+
+Local Variables:
+coding: utf-8
+End:

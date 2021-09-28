@@ -1,3 +1,11 @@
+2021-09-28  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi (Option details) <-h>: mention that inclusion happens
+	in the order given.
+	(Configuration file commands) <h>: emphasize that standard headers
+	are not included.
+	Report from Igor Liferenko, tex-k 28 Sep 2021 14:39:22.
+
 2021-04-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvips.h, configure.ac:

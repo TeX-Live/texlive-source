@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2021.1
-@set month-year February 2021
+@set month-year September 2021
 
 @copying
 This manual documents Dvips version @value{version}
@@ -707,8 +707,10 @@ reader.  It's more likely to cause problems nowadays.
 @cindex header file, downloading
 @cindex userdict@r{, used for header files}
 Prepend @var{name} as an additional header file, or, if @var{name} is
-@samp{-}, suppress all header files.  Any definitions in the header file
-get added to the PostScript @samp{userdict}.
+@samp{-}, suppress inclusion of default header files.  If @code{-h} is
+given multiple times, the headers are included in the order given.
+Any definitions in the header file get added to the PostScript
+@samp{userdict}.
 
 @item -i*
 @opindex -i
@@ -1389,7 +1391,9 @@ Shift low-numbered characters; obsolete.  Same as @samp{-G},
 
 @item h @var{header}
 @opindex h @r{config command (download additional header)}
-Prepend @var{header} to output.  Same as @samp{h-}, @pxref{Option details}.
+Prepend @var{header} to output.  Same as @samp{h-}; that is, the
+config file @code{h} directive suppresses any inclusion of standard
+headers (@pxref{Option details}).
 
 @item H @var{path}
 @opindex H @r{config command (PostScript header path)}
