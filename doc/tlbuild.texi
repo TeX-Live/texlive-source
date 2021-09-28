@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2021
-@set month-year July 2021
+@set month-year September 2021
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -1762,7 +1762,8 @@ Adding a new @TeX{} engine is not completely different from adding a
 program, but it's not all that similar, either.  In this case, the main
 work is done by creating a new subdirectory of @file{texk/web2c/} for
 the engine.  The subdirectory is conventionally named ending in
-@file{dir}, like @file{pdftexdir} and @file{xetexdir}.
+@file{dir}, like @file{pdftexdir} and @file{xetexdir}, to avoid
+clashes with executable names.
 
 The source files for the new engine should be put in this
 @file{@var{newengine}dir} subdirectory.  Also, a file
@@ -1783,6 +1784,14 @@ For examples of building engines in CWEB, you can check the existing
 simpler than Lua@TeX{}.  Of course, every engine will have its own
 unique features and requirements, so existing examples will only take
 you so far.
+
+Web2c is built as one ``package'', with each subdirectory's @file{.am}
+fragment inserted with an Automake @code{include}.  This means that,
+for instance, @code{$(srcdir)} is @file{.../web2c}, not
+@file{.../webdir/enginedir}.  It is a difficult setup to come to terms
+with, but the alternative is to recurse into each engine subdirectory,
+and that would be far worse (@pxref{Directories,,, automake, GNU
+Automake}).
 
 @node Adding a new generic library module
 @subsection Adding a new generic library module

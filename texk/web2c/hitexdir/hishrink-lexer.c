@@ -866,7 +866,7 @@ extern int yydebug;
 #define YYDEBUG 0
 #endif
 	/*:423*/
-#include "parser.h"
+#include "hishrink-parser.h"
 
 	/*22:*/
 #define SCAN_UDEC(S) yylval.u= strtoul(S,NULL,10)

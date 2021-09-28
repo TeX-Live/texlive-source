@@ -9,20 +9,22 @@ bin_PROGRAMS += hitex hishrink histretch
 endif HITEX
 EXTRA_PROGRAMS += hitex hishrink histretch
 
-#kb hitex_CFLAGS = $(AM_CFLAGS) \
-#kb -Wno-parentheses -Wno-maybe-uninitialized -Wno-unused-function -Wno-unused-variable 
+# convenience target to build all the programs here.
+hiall: hitex hishrink histretch
+
+# We want debugging for the parser, and we use features not in POSIX yacc.
+# The result is that we assume bison? Not sure if that's ok.
+AM_YFLAGS = -d -v -Wno-yacc
+
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS)
 #
 histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 histretch_LDADD = $(ZLIB_LIBS)
 #
-hishrink_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+# The -I$(srcdir)/hitexdir is so the compiler can find the *parser.h file.
+hishrink_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 hishrink_LDADD = $(ZLIB_LIBS)
-
-# We want debugging for the parser, and we use features not in POSIX yacc.
-# I guess the result is that we assume bison? Not sure if that's ok.
-AM_YFLAGS = -d -v -Wno-yacc
 
 # HiTeX CWEB sources
 hitex_web = hitexdir/format.w hitexdir/htex.w hitexdir/hitex.w
@@ -47,40 +49,28 @@ $(format_c_h_l_y): format-tangle
 format-tangle: ctangle$(EXEEXT) hitexdir/format.w tangle-sh
 	$(hi_ctangle_sh) format
 
-$(hitex_c_h): hitex-tangle
-	$(hi_ctangle_sh) hitex
+# The actual sources for the lexer and parser are in format.w.
+# However, to simplify life with Automake (a little), we maintain them
+# here as if they were real, direct source files. That is, we update
+# them by hand when they change.
+# 
+# We want to do this partly because ultimately we want the generated
+# .[ch] files to be saved in $(srcdir), as is done for the other .[ly]
+# files, so that builders need not have yacc (bison in this case) and (f)lex. 
 #
-hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
-	$(hi_ctangle_sh) hitex
+# The $(srcdir) is not necessary if everything is up to date,
+# but can help with the remake if the [.ch] or [.ly] are not present.
+hishrink_SOURCES = $(srcdir)/hitexdir/hishrink-lexer.l \
+                   $(srcdir)/hitexdir/hishrink-parser.y
 
-# htex.c needs hitex.h, so depend on the hitex tangle.
-$(htex_c_h): htex-tangle hitex-tangle
-	$(hi_ctangle_sh) htex
+# This is our attempt to ensure that bison is run before anything else.
 #
-htex-tangle: ctangle$(EXEEXT) hitexdir/htex.w tangle-sh hitex-tangle
-	$(hi_ctangle_sh) htex
-
-# Generating hformat.c using mkhformat.
-hformat.c: mkhformat
-	./mkhformat >hformat.c || { rm -f hformat.c; exit 1; }
-
-
-
-# Other web2c/*dir/am/*.am engine Makefile fragments define a bunch of
-# _OBJECTS variables. This does not seem right to me. Instead, we
-# correctly define the _SOURCES.
+$(hishrink_OBJECTS): $(srcdir)/hitexdir/hishrink-parser.h
 #
-nodist_hitex_SOURCES = hformat.c hput.c $(htex_c_h) $(hitex_c_h)
-nodist_histretch_SOURCES = hformat.c histretch.c
-hishrink_SOURCES = lexer.c parser.c parser.h
-nodist_hishrink_SOURCES = hformat.c hishrink.c
-
-# shrink needs the yacc header. It's actually the .o that should be the
-# target here, seems to me, but hishrink.o is not used for the object
-# name, it's hishrink-hishrink.o (because the program is also named
-# hishrink), and adding that here ends up trying to link with
-# hishrink-hishrink.o (I don't know), which doesn't exist. Sigh.
-#hishrink.c: shrink-parser.h shrink-parser.c
+# By the way, the $(BUILT_SOURCES) suggestion in the Automake manual for
+# this does not work for us, because we want to be able to invoke
+# specific targets (hiall, hitex, hishrink, ...), and $(BUILT_SOURCES)
+# is only a dependency on general targets (all, install, ...).
 
 EXTRA_DIST += hitexdir/ChangeLog $(hitex_web)
 
