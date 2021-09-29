@@ -49,6 +49,29 @@ $(format_c_h_l_y): format-tangle
 format-tangle: ctangle$(EXEEXT) hitexdir/format.w tangle-sh
 	$(hi_ctangle_sh) format
 
+$(hitex_c_h): hitex-tangle
+	$(hi_ctangle_sh) hitex
+#
+hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
+	$(hi_ctangle_sh) hitex
+
+# htex.c needs hitex.h, so depend on the hitex tangle.
+$(htex_c_h): htex-tangle hitex-tangle
+	$(hi_ctangle_sh) htex
+#
+htex-tangle: ctangle$(EXEEXT) hitexdir/htex.w tangle-sh hitex-tangle
+	$(hi_ctangle_sh) htex
+
+# Generating hformat.c using mkhformat.
+hformat.c: mkhformat
+	./mkhformat >hformat.c || { rm -f hformat.c; exit 1; }
+
+# hitex
+nodist_hitex_SOURCES = hformat.c hput.c $(htex_c_h) $(hitex_c_h)
+
+#histretch
+nodist_histretch_SOURCES = hformat.c histretch.c
+
 # The actual sources for the lexer and parser are in format.w.
 # However, to simplify life with Automake (a little), we maintain them
 # here as if they were real, direct source files. That is, we update
@@ -62,6 +85,7 @@ format-tangle: ctangle$(EXEEXT) hitexdir/format.w tangle-sh
 # but can help with the remake if the [.ch] or [.ly] are not present.
 hishrink_SOURCES = $(srcdir)/hitexdir/hishrink-lexer.l \
                    $(srcdir)/hitexdir/hishrink-parser.y
+nodist_hishrink_SOURCES = hformat.c hishrink.c
 
 # This is our attempt to ensure that bison is run before anything else.
 #
