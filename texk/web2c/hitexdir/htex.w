@@ -387,6 +387,7 @@ all global variables, if desired.  Similar remarks apply to the other
 portions of the program.
 
 @p @<Header files and function declarations@>@;
+#include "basetypes.h"
 #include "htex.h"
 #include "hitex.h"
 @<Global variables@>@;
