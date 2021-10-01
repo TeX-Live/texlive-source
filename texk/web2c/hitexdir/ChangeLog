@@ -1,0 +1,20 @@
+2021-10-01  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (nodist_hishrink_SOURCES): remove references to .[ly]
+	files; instead list the hishrink-{parser,lexer}.c files explicitly.
+	Simpler to eliminate Automake's lex/yacc.
+	* hishrink-lexer.l,
+	* hishrink-parser.y: remove.
+
+2021-09-28  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (hishrink_SOURCES): specify hishrink-lexer.l
+	and hishrink-parser.y as if they were direct sources.
+	(hishrink_OBJECTS): depend on hishrink-parser.h.
+	(hishrink_CPPFLAGS): include -I$(srcdir)/hitexdir so we can
+	find hishrink-parser.h.
+	(hiall): convenience target to build all three programs.
+	* format.w: back to hishrink-parser.h.
+	* hishrink-{parser,lexer}.*: rename from {parser,lexer}.*.
+
+(This file public domain.)

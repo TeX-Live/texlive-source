@@ -69,25 +69,20 @@ hformat.c: mkhformat
 # hitex
 nodist_hitex_SOURCES = hformat.c hput.c $(htex_c_h) $(hitex_c_h)
 
-#histretch
+# histretch
 nodist_histretch_SOURCES = hformat.c histretch.c
 
 # The actual sources for the lexer and parser are in format.w.
-# However, to simplify life with Automake (a little), we maintain them
-# here as if they were real, direct source files. That is, we update
-# them by hand when they change.
-# 
-# We want to do this partly because ultimately we want the generated
-# .[ch] files to be saved in $(srcdir), as is done for the other .[ly]
-# files, so that builders need not have yacc (bison in this case) and (f)lex. 
+# However, to simplify life with Automake (a little), we include the
+# generated [.ch] files as if they were the sources here, and don't try
+# to have Automake support the derivation from .w.
 #
-# The $(srcdir) is not necessary if everything is up to date,
-# but can help with the remake if the [.ch] or [.ly] are not present.
-hishrink_SOURCES = $(srcdir)/hitexdir/hishrink-lexer.l \
-                   $(srcdir)/hitexdir/hishrink-parser.y
-nodist_hishrink_SOURCES = hformat.c hishrink.c
+nodist_hishrink_SOURCES = hformat.c hishrink.c \
+  hitexdir/hishrink-lexer.c \
+  hitexdir/hishrink-parser.c hitexdir/hishrink-parser.h 
 
-# This is our attempt to ensure that bison is run before anything else.
+# This is our attempt to ensure that bison got run before anything else,
+# when needed.
 #
 $(hishrink_OBJECTS): $(srcdir)/hitexdir/hishrink-parser.h
 #

@@ -1387,22 +1387,28 @@ nodist_gftype_OBJECTS = gftype.$(OBJEXT)
 gftype_OBJECTS = $(nodist_gftype_OBJECTS)
 gftype_LDADD = $(LDADD)
 gftype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am_hishrink_OBJECTS = hitexdir/hishrink-hishrink-lexer.$(OBJEXT) \
+nodist_hishrink_OBJECTS = hishrink-hformat.$(OBJEXT) \
+	hishrink-hishrink.$(OBJEXT) \
+	hitexdir/hishrink-hishrink-lexer.$(OBJEXT) \
 	hitexdir/hishrink-hishrink-parser.$(OBJEXT)
-hishrink_OBJECTS = $(am_hishrink_OBJECTS)
+hishrink_OBJECTS = $(nodist_hishrink_OBJECTS)
 hishrink_DEPENDENCIES = $(am__DEPENDENCIES_1)
-histretch_SOURCES = histretch.c
-histretch_OBJECTS = histretch-histretch.$(OBJEXT)
+nodist_histretch_OBJECTS = histretch-hformat.$(OBJEXT) \
+	histretch-histretch.$(OBJEXT)
+histretch_OBJECTS = $(nodist_histretch_OBJECTS)
 histretch_DEPENDENCIES = $(am__DEPENDENCIES_1)
-hitex_SOURCES = hitex.c
-hitex_OBJECTS = hitex-hitex.$(OBJEXT)
+am__objects_37 = hitex-htex.$(OBJEXT)
+am__objects_38 = hitex-hitex.$(OBJEXT)
+nodist_hitex_OBJECTS = hitex-hformat.$(OBJEXT) hitex-hput.$(OBJEXT) \
+	$(am__objects_37) $(am__objects_38)
+hitex_OBJECTS = $(nodist_hitex_OBJECTS)
 hitex_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
-am__objects_37 = luatexdir/luahbtex-luatex.$(OBJEXT) \
+am__objects_39 = luatexdir/luahbtex-luatex.$(OBJEXT) \
 	mplibdir/luahbtex-lmplib.$(OBJEXT)
-nodist_luahbtex_OBJECTS = $(am__objects_37)
+nodist_luahbtex_OBJECTS = $(am__objects_39)
 luahbtex_OBJECTS = $(nodist_luahbtex_OBJECTS)
 am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
@@ -1413,16 +1419,16 @@ am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luahbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luahbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luahbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_38 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
+am__objects_40 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
 	mplibdir/luajithbtex-lmplib.$(OBJEXT)
-nodist_luajithbtex_OBJECTS = $(am__objects_38)
+nodist_luajithbtex_OBJECTS = $(am__objects_40)
 luajithbtex_OBJECTS = $(nodist_luajithbtex_OBJECTS)
 luajithbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luajithbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luajithbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_39 = luatexdir/luajittex-luatex.$(OBJEXT) \
+am__objects_41 = luatexdir/luajittex-luatex.$(OBJEXT) \
 	mplibdir/luajittex-lmplib.$(OBJEXT)
-nodist_luajittex_OBJECTS = $(am__objects_39)
+nodist_luajittex_OBJECTS = $(am__objects_41)
 luajittex_OBJECTS = $(nodist_luajittex_OBJECTS)
 am__DEPENDENCIES_8 = libmplibcore.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1431,9 +1437,9 @@ am__DEPENDENCIES_8 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luajittex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(luajittex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_40 = luatexdir/luatex-luatex.$(OBJEXT) \
+am__objects_42 = luatexdir/luatex-luatex.$(OBJEXT) \
 	mplibdir/luatex-lmplib.$(OBJEXT)
-nodist_luatex_OBJECTS = $(am__objects_40)
+nodist_luatex_OBJECTS = $(am__objects_42)
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 luatex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -1459,8 +1465,8 @@ mflua_DEPENDENCIES = libmflua.a libmfluaotfcc.a $(am__DEPENDENCIES_2) \
 mflua_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mflua_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_41 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
-nodist_mflua_nowin_OBJECTS = $(am__objects_41)
+am__objects_43 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
+nodist_mflua_nowin_OBJECTS = $(am__objects_43)
 mflua_nowin_OBJECTS = $(nodist_mflua_nowin_OBJECTS)
 mflua_nowin_DEPENDENCIES = libmflua.a libmfluaotfcc.a \
 	$(am__DEPENDENCIES_2) $(windowlib) $(am__DEPENDENCIES_6)
@@ -1475,8 +1481,8 @@ mfluajit_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 mfluajit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mfluajit_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_42 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
-nodist_mfluajit_nowin_OBJECTS = $(am__objects_42)
+am__objects_44 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
+nodist_mfluajit_nowin_OBJECTS = $(am__objects_44)
 mfluajit_nowin_OBJECTS = $(nodist_mfluajit_nowin_OBJECTS)
 mfluajit_nowin_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 	$(am__DEPENDENCIES_2) $(windowlib) $(am__DEPENDENCIES_1)
@@ -1488,8 +1494,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_43 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_43)
+am__objects_45 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_45)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 mpost_DEPENDENCIES = libmplibcore.a libmplibextramath.a \
 	libmplibbackends.a $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1522,12 +1528,12 @@ am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
-@PDFTEX_SYNCTEX_TRUE@am__objects_44 =  \
+@PDFTEX_SYNCTEX_TRUE@am__objects_46 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
-	$(am__objects_44)
-am__objects_45 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_45) pdftex-pdftex-pool.$(OBJEXT)
+	$(am__objects_46)
+am__objects_47 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_47) pdftex-pdftex-pool.$(OBJEXT)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_11 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a
@@ -1554,20 +1560,20 @@ nodist_pltotf_OBJECTS = pltotf.$(OBJEXT)
 pltotf_OBJECTS = $(nodist_pltotf_OBJECTS)
 pltotf_LDADD = $(LDADD)
 pltotf_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_46 = pmpost-pmp.$(OBJEXT)
-am__objects_47 = pmpost-pmpmath.$(OBJEXT)
-am__objects_48 = pmpost-pmpmathbinary.$(OBJEXT)
-am__objects_49 = pmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_50 = pmpost-pmpmathdouble.$(OBJEXT)
-am__objects_51 = pmpost-pmpstrings.$(OBJEXT)
-am__objects_52 = pmpost-pmpxout.$(OBJEXT)
-am__objects_53 = pmpost-ppngout.$(OBJEXT)
-am__objects_54 = pmpost-ppsout.$(OBJEXT)
-am__objects_55 = pmpost-psvgout.$(OBJEXT)
-nodist_pmpost_OBJECTS = $(am__objects_46) $(am__objects_47) \
-	$(am__objects_48) $(am__objects_49) $(am__objects_50) \
-	pmpost-pmpost.$(OBJEXT) $(am__objects_51) $(am__objects_52) \
-	$(am__objects_53) $(am__objects_54) $(am__objects_55) \
+am__objects_48 = pmpost-pmp.$(OBJEXT)
+am__objects_49 = pmpost-pmpmath.$(OBJEXT)
+am__objects_50 = pmpost-pmpmathbinary.$(OBJEXT)
+am__objects_51 = pmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_52 = pmpost-pmpmathdouble.$(OBJEXT)
+am__objects_53 = pmpost-pmpstrings.$(OBJEXT)
+am__objects_54 = pmpost-pmpxout.$(OBJEXT)
+am__objects_55 = pmpost-ppngout.$(OBJEXT)
+am__objects_56 = pmpost-ppsout.$(OBJEXT)
+am__objects_57 = pmpost-psvgout.$(OBJEXT)
+nodist_pmpost_OBJECTS = $(am__objects_48) $(am__objects_49) \
+	$(am__objects_50) $(am__objects_51) $(am__objects_52) \
+	pmpost-pmpost.$(OBJEXT) $(am__objects_53) $(am__objects_54) \
+	$(am__objects_55) $(am__objects_56) $(am__objects_57) \
 	pmpost-ptfmin.$(OBJEXT)
 pmpost_OBJECTS = $(nodist_pmpost_OBJECTS)
 pmpost_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1585,10 +1591,10 @@ am__dist_ptex_SOURCES_DIST = ptexdir/ptexextra.c ptexdir/ptexextra.h \
 	ptexdir/ptex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-ptex.h
-@PTEX_SYNCTEX_TRUE@am__objects_56 = synctexdir/ptex-synctex.$(OBJEXT)
-dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_56)
-am__objects_57 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_57) ptex-ptex-pool.$(OBJEXT)
+@PTEX_SYNCTEX_TRUE@am__objects_58 = synctexdir/ptex-synctex.$(OBJEXT)
+dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT) $(am__objects_58)
+am__objects_59 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_59) ptex-ptex-pool.$(OBJEXT)
 ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 @PTEX_SYNCTEX_TRUE@am__DEPENDENCIES_12 = $(am__DEPENDENCIES_1)
 am_ptftopl_OBJECTS =
@@ -1609,10 +1615,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_58 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_58)
-am__objects_59 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_59) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_60 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_60)
+am__objects_61 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_61) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1637,21 +1643,21 @@ am_updvitype_OBJECTS =
 nodist_updvitype_OBJECTS = updvitype-updvitype.$(OBJEXT)
 updvitype_OBJECTS = $(am_updvitype_OBJECTS) \
 	$(nodist_updvitype_OBJECTS)
-am__objects_60 = upmpost-pmp.$(OBJEXT)
-am__objects_61 = upmpost-pmpmath.$(OBJEXT)
-am__objects_62 = upmpost-pmpmathbinary.$(OBJEXT)
-am__objects_63 = upmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_64 = upmpost-pmpmathdouble.$(OBJEXT)
-am__objects_65 = upmpost-pmpstrings.$(OBJEXT)
-am__objects_66 = upmpost-pmpxout.$(OBJEXT)
-am__objects_67 = upmpost-ppngout.$(OBJEXT)
-am__objects_68 = upmpost-ppsout.$(OBJEXT)
-am__objects_69 = upmpost-psvgout.$(OBJEXT)
-am__objects_70 = $(am__objects_60) $(am__objects_61) $(am__objects_62) \
-	$(am__objects_63) $(am__objects_64) upmpost-pmpost.$(OBJEXT) \
-	$(am__objects_65) $(am__objects_66) $(am__objects_67) \
-	$(am__objects_68) $(am__objects_69) upmpost-ptfmin.$(OBJEXT)
-nodist_upmpost_OBJECTS = $(am__objects_70)
+am__objects_62 = upmpost-pmp.$(OBJEXT)
+am__objects_63 = upmpost-pmpmath.$(OBJEXT)
+am__objects_64 = upmpost-pmpmathbinary.$(OBJEXT)
+am__objects_65 = upmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_66 = upmpost-pmpmathdouble.$(OBJEXT)
+am__objects_67 = upmpost-pmpstrings.$(OBJEXT)
+am__objects_68 = upmpost-pmpxout.$(OBJEXT)
+am__objects_69 = upmpost-ppngout.$(OBJEXT)
+am__objects_70 = upmpost-ppsout.$(OBJEXT)
+am__objects_71 = upmpost-psvgout.$(OBJEXT)
+am__objects_72 = $(am__objects_62) $(am__objects_63) $(am__objects_64) \
+	$(am__objects_65) $(am__objects_66) upmpost-pmpost.$(OBJEXT) \
+	$(am__objects_67) $(am__objects_68) $(am__objects_69) \
+	$(am__objects_70) $(am__objects_71) upmpost-ptfmin.$(OBJEXT)
+nodist_upmpost_OBJECTS = $(am__objects_72)
 upmpost_OBJECTS = $(nodist_upmpost_OBJECTS)
 am__DEPENDENCIES_16 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1665,12 +1671,12 @@ am__dist_uptex_SOURCES_DIST = uptexdir/uptexextra.c \
 	uptexdir/uptexextra.h uptexdir/uptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-uptex.h
-@UPTEX_SYNCTEX_TRUE@am__objects_71 =  \
+@UPTEX_SYNCTEX_TRUE@am__objects_73 =  \
 @UPTEX_SYNCTEX_TRUE@	synctexdir/uptex-synctex.$(OBJEXT)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT) \
-	$(am__objects_71)
-am__objects_72 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_72) uptex-uptex-pool.$(OBJEXT)
+	$(am__objects_73)
+am__objects_74 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_74) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 @UPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_17 = $(am__DEPENDENCIES_1)
 am_uptftopl_OBJECTS =
@@ -1709,12 +1715,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_73 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_75 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_73)
-am__objects_74 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_74) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_75)
+am__objects_76 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_76) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_18 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_19 = $(libxetex) $(am__DEPENDENCIES_1) \
@@ -1765,8 +1771,13 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/euptex-euptex-pool.Po \
 	./$(DEPDIR)/euptex-euptex0.Po ./$(DEPDIR)/euptex-euptexini.Po \
 	./$(DEPDIR)/gftodvi.Po ./$(DEPDIR)/gftopk.Po \
-	./$(DEPDIR)/gftype.Po ./$(DEPDIR)/histretch-histretch.Po \
-	./$(DEPDIR)/hitex-hitex.Po ./$(DEPDIR)/initex-callexe.Po \
+	./$(DEPDIR)/gftype.Po ./$(DEPDIR)/hishrink-hformat.Po \
+	./$(DEPDIR)/hishrink-hishrink.Po \
+	./$(DEPDIR)/histretch-hformat.Po \
+	./$(DEPDIR)/histretch-histretch.Po \
+	./$(DEPDIR)/hitex-hformat.Po ./$(DEPDIR)/hitex-hitex.Po \
+	./$(DEPDIR)/hitex-hput.Po ./$(DEPDIR)/hitex-htex.Po \
+	./$(DEPDIR)/initex-callexe.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-luainit-hb.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-luastuff-hb.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-printing-hb.Po \
@@ -2451,15 +2462,6 @@ AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-@MAINTAINER_MODE_FALSE@am__skiplex = test -f $@ ||
-LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
-LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(LEX) $(AM_LFLAGS) $(LFLAGS)
-AM_V_LEX = $(am__v_LEX_@AM_V@)
-am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
-am__v_LEX_0 = @echo "  LEX     " $@;
-am__v_LEX_1 = 
-YLWRAP = $(top_srcdir)/../../build-aux/ylwrap
 OBJCXXCOMPILE = $(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS)
 LTOBJCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
@@ -2478,16 +2480,6 @@ AM_V_OBJCXXLD = $(am__v_OBJCXXLD_@AM_V@)
 am__v_OBJCXXLD_ = $(am__v_OBJCXXLD_@AM_DEFAULT_V@)
 am__v_OBJCXXLD_0 = @echo "  OBJCXXLD" $@;
 am__v_OBJCXXLD_1 = 
-@MAINTAINER_MODE_FALSE@am__skipyacc = test -f $@ ||
-am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
-		   -e s/c++$$/h++/ -e s/c$$/h/
-YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
-LTYACCCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(YACC) $(AM_YFLAGS) $(YFLAGS)
-AM_V_YACC = $(am__v_YACC_@AM_V@)
-am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
-am__v_YACC_0 = @echo "  YACC    " $@;
-am__v_YACC_1 = 
 SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_libluaffi_a_SOURCES) $(libluaharfbuzz_a_SOURCES) \
 	$(nodist_libluahbtexspecific_a_SOURCES) \
@@ -2530,9 +2522,10 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(dist_euptex_SOURCES) $(nodist_euptex_SOURCES) \
 	$(gftodvi_SOURCES) $(nodist_gftodvi_SOURCES) \
 	$(nodist_gftopk_SOURCES) $(nodist_gftype_SOURCES) \
-	$(hishrink_SOURCES) histretch.c hitex.c \
-	$(nodist_initex_SOURCES) $(nodist_luahbtex_SOURCES) \
-	$(nodist_EXTRA_luahbtex_SOURCES) $(nodist_luajithbtex_SOURCES) \
+	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
+	$(nodist_hitex_SOURCES) $(nodist_initex_SOURCES) \
+	$(nodist_luahbtex_SOURCES) $(nodist_EXTRA_luahbtex_SOURCES) \
+	$(nodist_luajithbtex_SOURCES) \
 	$(nodist_EXTRA_luajithbtex_SOURCES) \
 	$(nodist_luajittex_SOURCES) $(nodist_luatex_SOURCES) \
 	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
@@ -2577,11 +2570,11 @@ DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(am__libxetex_a_SOURCES_DIST) $(libsynctex_la_SOURCES) \
 	$(dist_aleph_SOURCES) $(am__dist_eptex_SOURCES_DIST) \
 	$(am__dist_etex_SOURCES_DIST) $(am__dist_euptex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) $(hishrink_SOURCES) histretch.c hitex.c \
-	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
-	$(dist_mflua_SOURCES) $(dist_mfluajit_SOURCES) \
-	$(pbibtex_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
-	$(pdftosrc_SOURCES) $(pdvitype_SOURCES) $(ppltotf_SOURCES) \
+	$(gftodvi_SOURCES) $(md5main_SOURCES) $(dist_mf_SOURCES) \
+	$(dist_mf_nowin_SOURCES) $(dist_mflua_SOURCES) \
+	$(dist_mfluajit_SOURCES) $(pbibtex_SOURCES) \
+	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
+	$(pdvitype_SOURCES) $(ppltotf_SOURCES) \
 	$(am__dist_ptex_SOURCES_DIST) $(ptftopl_SOURCES) \
 	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
@@ -2861,7 +2854,6 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/../../build-aux/ylwrap \
 	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
 	$(top_srcdir)/synctexdir/synctex.pc.in ../../build-aux/ar-lib \
@@ -2869,9 +2861,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	../../build-aux/config.sub ../../build-aux/depcomp \
 	../../build-aux/install-sh ../../build-aux/ltmain.sh \
 	../../build-aux/missing ../../build-aux/texinfo.tex \
-	../../build-aux/ylwrap AUTHORS ChangeLog NEWS README \
-	hitexdir/hishrink-lexer.c hitexdir/hishrink-parser.c \
-	hitexdir/hishrink-parser.h
+	../../build-aux/ylwrap AUTHORS ChangeLog NEWS README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -3174,6 +3164,11 @@ lib_LTLIBRARIES = $(am__append_122)
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = 
 TEST_EXTENSIONS = .pl .test
+#
+# By the way, the $(BUILT_SOURCES) suggestion in the Automake manual for
+# this does not work for us, because we want to be able to invoke
+# specific targets (hiall, hitex, hishrink, ...), and $(BUILT_SOURCES)
+# is only a dependency on general targets (all, install, ...).
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
 	ctangleboot.cin cwebboot.cin tangle.test $(web_programs:=.web) \
@@ -4609,17 +4604,20 @@ format_c_h_l_y = basetypes.h error.h hformat.h \
 htex_c_h = htex.c htex.h
 hitex_c_h = hitex.c hitex.h 
 
+# hitex
+nodist_hitex_SOURCES = hformat.c hput.c $(htex_c_h) $(hitex_c_h)
+
+# histretch
+nodist_histretch_SOURCES = hformat.c histretch.c
+
 # The actual sources for the lexer and parser are in format.w.
-# However, to simplify life with Automake (a little), we maintain them
-# here as if they were real, direct source files.
-# 
-# We want to do this partly because ultimately we want the generated
-# .[ch] files to be saved in $(srcdir), as is done for the other .[ly]
-# files, so that builders need not have yacc (bison in this case) and (f)lex. 
+# However, to simplify life with Automake (a little), we include the
+# generated [.ch] files as if they were the sources here, and don't try
+# to have Automake support the derivation from .w.
 #
-# Without the strange $(srcdir), 
-hishrink_SOURCES = hitexdir/hishrink-lexer.l \
-                   hitexdir/hishrink-parser.y
+nodist_hishrink_SOURCES = hformat.c hishrink.c \
+  hitexdir/hishrink-lexer.c \
+  hitexdir/hishrink-parser.c hitexdir/hishrink-parser.h 
 
 libpdftex_a_CPPFLAGS = $(REGEX_INCLUDES) $(pdftex_cppflags)
 libpdftex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
@@ -5612,7 +5610,7 @@ all: ff-config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .l .lo .log .mm .o .obj .p .pin .pl .pl$(EXEEXT) .test .test$(EXEEXT) .trs .y
+.SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .log .mm .o .obj .p .pin .pl .pl$(EXEEXT) .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mfluadir/am/mflua.am $(srcdir)/mfluadir/am/mfluaotfcc.am $(srcdir)/mfluajitdir/am/mfluajit.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/pmpostdir/am/pmpost.am $(srcdir)/mplibdir/am/libmputil.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/ptexdir/am/ptex.am $(srcdir)/eptexdir/am/eptex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/hitexdir/am/hitex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/libunilib.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luaffi.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luaharfbuzz.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__configure_deps)
@@ -8047,9 +8045,6 @@ hitexdir/$(DEPDIR)/$(am__dirstamp):
 	@: > hitexdir/$(DEPDIR)/$(am__dirstamp)
 hitexdir/hishrink-hishrink-lexer.$(OBJEXT): hitexdir/$(am__dirstamp) \
 	hitexdir/$(DEPDIR)/$(am__dirstamp)
-hitexdir/hishrink-parser.h: hitexdir/hishrink-parser.c
-	@if test ! -f $@; then rm -f hitexdir/hishrink-parser.c; else :; fi
-	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) hitexdir/hishrink-parser.c; else :; fi
 hitexdir/hishrink-hishrink-parser.$(OBJEXT): hitexdir/$(am__dirstamp) \
 	hitexdir/$(DEPDIR)/$(am__dirstamp)
 
@@ -8446,8 +8441,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gftodvi.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gftopk.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gftype.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hishrink-hformat.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hishrink-hishrink.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/histretch-hformat.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/histretch-histretch.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hformat.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hitex.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hput.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-htex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/initex-callexe.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libluahbtexspecific_a-luainit-hb.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libluahbtexspecific_a-luastuff-hb.Po@am__quote@ # am--include-marker
@@ -17367,6 +17368,34 @@ euptex-euptex-pool.obj: euptex-pool.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(euptex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o euptex-euptex-pool.obj `if test -f 'euptex-pool.c'; then $(CYGPATH_W) 'euptex-pool.c'; else $(CYGPATH_W) '$(srcdir)/euptex-pool.c'; fi`
 
+hishrink-hformat.o: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hishrink-hformat.o -MD -MP -MF $(DEPDIR)/hishrink-hformat.Tpo -c -o hishrink-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hishrink-hformat.Tpo $(DEPDIR)/hishrink-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='hishrink-hformat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hishrink-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+
+hishrink-hformat.obj: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hishrink-hformat.obj -MD -MP -MF $(DEPDIR)/hishrink-hformat.Tpo -c -o hishrink-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hishrink-hformat.Tpo $(DEPDIR)/hishrink-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='hishrink-hformat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hishrink-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+
+hishrink-hishrink.o: hishrink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hishrink-hishrink.o -MD -MP -MF $(DEPDIR)/hishrink-hishrink.Tpo -c -o hishrink-hishrink.o `test -f 'hishrink.c' || echo '$(srcdir)/'`hishrink.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hishrink-hishrink.Tpo $(DEPDIR)/hishrink-hishrink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hishrink.c' object='hishrink-hishrink.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hishrink-hishrink.o `test -f 'hishrink.c' || echo '$(srcdir)/'`hishrink.c
+
+hishrink-hishrink.obj: hishrink.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hishrink-hishrink.obj -MD -MP -MF $(DEPDIR)/hishrink-hishrink.Tpo -c -o hishrink-hishrink.obj `if test -f 'hishrink.c'; then $(CYGPATH_W) 'hishrink.c'; else $(CYGPATH_W) '$(srcdir)/hishrink.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hishrink-hishrink.Tpo $(DEPDIR)/hishrink-hishrink.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hishrink.c' object='hishrink-hishrink.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hishrink-hishrink.obj `if test -f 'hishrink.c'; then $(CYGPATH_W) 'hishrink.c'; else $(CYGPATH_W) '$(srcdir)/hishrink.c'; fi`
+
 hitexdir/hishrink-hishrink-lexer.o: hitexdir/hishrink-lexer.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitexdir/hishrink-hishrink-lexer.o -MD -MP -MF hitexdir/$(DEPDIR)/hishrink-hishrink-lexer.Tpo -c -o hitexdir/hishrink-hishrink-lexer.o `test -f 'hitexdir/hishrink-lexer.c' || echo '$(srcdir)/'`hitexdir/hishrink-lexer.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) hitexdir/$(DEPDIR)/hishrink-hishrink-lexer.Tpo hitexdir/$(DEPDIR)/hishrink-hishrink-lexer.Po
@@ -17395,6 +17424,20 @@ hitexdir/hishrink-hishrink-parser.obj: hitexdir/hishrink-parser.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hishrink_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitexdir/hishrink-hishrink-parser.obj `if test -f 'hitexdir/hishrink-parser.c'; then $(CYGPATH_W) 'hitexdir/hishrink-parser.c'; else $(CYGPATH_W) '$(srcdir)/hitexdir/hishrink-parser.c'; fi`
 
+histretch-hformat.o: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT histretch-hformat.o -MD -MP -MF $(DEPDIR)/histretch-hformat.Tpo -c -o histretch-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/histretch-hformat.Tpo $(DEPDIR)/histretch-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='histretch-hformat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o histretch-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+
+histretch-hformat.obj: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT histretch-hformat.obj -MD -MP -MF $(DEPDIR)/histretch-hformat.Tpo -c -o histretch-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/histretch-hformat.Tpo $(DEPDIR)/histretch-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='histretch-hformat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o histretch-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+
 histretch-histretch.o: histretch.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT histretch-histretch.o -MD -MP -MF $(DEPDIR)/histretch-histretch.Tpo -c -o histretch-histretch.o `test -f 'histretch.c' || echo '$(srcdir)/'`histretch.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/histretch-histretch.Tpo $(DEPDIR)/histretch-histretch.Po
@@ -17408,6 +17451,48 @@ histretch-histretch.obj: histretch.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='histretch.c' object='histretch-histretch.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(histretch_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o histretch-histretch.obj `if test -f 'histretch.c'; then $(CYGPATH_W) 'histretch.c'; else $(CYGPATH_W) '$(srcdir)/histretch.c'; fi`
+
+hitex-hformat.o: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-hformat.o -MD -MP -MF $(DEPDIR)/hitex-hformat.Tpo -c -o hitex-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-hformat.Tpo $(DEPDIR)/hitex-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='hitex-hformat.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-hformat.o `test -f 'hformat.c' || echo '$(srcdir)/'`hformat.c
+
+hitex-hformat.obj: hformat.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-hformat.obj -MD -MP -MF $(DEPDIR)/hitex-hformat.Tpo -c -o hitex-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-hformat.Tpo $(DEPDIR)/hitex-hformat.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hformat.c' object='hitex-hformat.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-hformat.obj `if test -f 'hformat.c'; then $(CYGPATH_W) 'hformat.c'; else $(CYGPATH_W) '$(srcdir)/hformat.c'; fi`
+
+hitex-hput.o: hput.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-hput.o -MD -MP -MF $(DEPDIR)/hitex-hput.Tpo -c -o hitex-hput.o `test -f 'hput.c' || echo '$(srcdir)/'`hput.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-hput.Tpo $(DEPDIR)/hitex-hput.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hput.c' object='hitex-hput.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-hput.o `test -f 'hput.c' || echo '$(srcdir)/'`hput.c
+
+hitex-hput.obj: hput.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-hput.obj -MD -MP -MF $(DEPDIR)/hitex-hput.Tpo -c -o hitex-hput.obj `if test -f 'hput.c'; then $(CYGPATH_W) 'hput.c'; else $(CYGPATH_W) '$(srcdir)/hput.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-hput.Tpo $(DEPDIR)/hitex-hput.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hput.c' object='hitex-hput.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-hput.obj `if test -f 'hput.c'; then $(CYGPATH_W) 'hput.c'; else $(CYGPATH_W) '$(srcdir)/hput.c'; fi`
+
+hitex-htex.o: htex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-htex.o -MD -MP -MF $(DEPDIR)/hitex-htex.Tpo -c -o hitex-htex.o `test -f 'htex.c' || echo '$(srcdir)/'`htex.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-htex.Tpo $(DEPDIR)/hitex-htex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='htex.c' object='hitex-htex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-htex.o `test -f 'htex.c' || echo '$(srcdir)/'`htex.c
+
+hitex-htex.obj: htex.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-htex.obj -MD -MP -MF $(DEPDIR)/hitex-htex.Tpo -c -o hitex-htex.obj `if test -f 'htex.c'; then $(CYGPATH_W) 'htex.c'; else $(CYGPATH_W) '$(srcdir)/htex.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-htex.Tpo $(DEPDIR)/hitex-htex.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='htex.c' object='hitex-htex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o hitex-htex.obj `if test -f 'htex.c'; then $(CYGPATH_W) 'htex.c'; else $(CYGPATH_W) '$(srcdir)/htex.c'; fi`
 
 hitex-hitex.o: hitex.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT hitex-hitex.o -MD -MP -MF $(DEPDIR)/hitex-hitex.Tpo -c -o hitex-hitex.o `test -f 'hitex.c' || echo '$(srcdir)/'`hitex.c
@@ -18811,9 +18896,6 @@ xetex-dummy.obj: dummy.cxx
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
 
-.l.c:
-	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
-
 .mm.o:
 @am__fastdepOBJCXX_TRUE@	$(AM_V_OBJCXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
 @am__fastdepOBJCXX_TRUE@	$(OBJCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
@@ -18851,9 +18933,6 @@ xetexdir/libxetex_a-XeTeXFontMgr_Mac.obj: xetexdir/XeTeXFontMgr_Mac.mm
 @AMDEP_TRUE@@am__fastdepOBJCXX_FALSE@	$(AM_V_OBJCXX)source='xetexdir/XeTeXFontMgr_Mac.mm' object='xetexdir/libxetex_a-XeTeXFontMgr_Mac.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepOBJCXX_FALSE@	DEPDIR=$(DEPDIR) $(OBJCXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepOBJCXX_FALSE@	$(AM_V_OBJCXX@am__nodep@)$(OBJCXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_OBJCXXFLAGS) $(OBJCXXFLAGS) -c -o xetexdir/libxetex_a-XeTeXFontMgr_Mac.obj `if test -f 'xetexdir/XeTeXFontMgr_Mac.mm'; then $(CYGPATH_W) 'xetexdir/XeTeXFontMgr_Mac.mm'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeXFontMgr_Mac.mm'; fi`
-
-.y.c:
-	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -19649,9 +19728,6 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-	-rm -f hitexdir/hishrink-lexer.c
-	-rm -f hitexdir/hishrink-parser.c
-	-rm -f hitexdir/hishrink-parser.h
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
@@ -19697,8 +19773,14 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/gftodvi.Po
 	-rm -f ./$(DEPDIR)/gftopk.Po
 	-rm -f ./$(DEPDIR)/gftype.Po
+	-rm -f ./$(DEPDIR)/hishrink-hformat.Po
+	-rm -f ./$(DEPDIR)/hishrink-hishrink.Po
+	-rm -f ./$(DEPDIR)/histretch-hformat.Po
 	-rm -f ./$(DEPDIR)/histretch-histretch.Po
+	-rm -f ./$(DEPDIR)/hitex-hformat.Po
 	-rm -f ./$(DEPDIR)/hitex-hitex.Po
+	-rm -f ./$(DEPDIR)/hitex-hput.Po
+	-rm -f ./$(DEPDIR)/hitex-htex.Po
 	-rm -f ./$(DEPDIR)/initex-callexe.Po
 	-rm -f ./$(DEPDIR)/libluahbtexspecific_a-luainit-hb.Po
 	-rm -f ./$(DEPDIR)/libluahbtexspecific_a-luastuff-hb.Po
@@ -20470,8 +20552,14 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/gftodvi.Po
 	-rm -f ./$(DEPDIR)/gftopk.Po
 	-rm -f ./$(DEPDIR)/gftype.Po
+	-rm -f ./$(DEPDIR)/hishrink-hformat.Po
+	-rm -f ./$(DEPDIR)/hishrink-hishrink.Po
+	-rm -f ./$(DEPDIR)/histretch-hformat.Po
 	-rm -f ./$(DEPDIR)/histretch-histretch.Po
+	-rm -f ./$(DEPDIR)/hitex-hformat.Po
 	-rm -f ./$(DEPDIR)/hitex-hitex.Po
+	-rm -f ./$(DEPDIR)/hitex-hput.Po
+	-rm -f ./$(DEPDIR)/hitex-htex.Po
 	-rm -f ./$(DEPDIR)/initex-callexe.Po
 	-rm -f ./$(DEPDIR)/libluahbtexspecific_a-luainit-hb.Po
 	-rm -f ./$(DEPDIR)/libluahbtexspecific_a-luastuff-hb.Po
@@ -22028,9 +22116,27 @@ $(format_c_h_l_y): format-tangle
 format-tangle: ctangle$(EXEEXT) hitexdir/format.w tangle-sh
 	$(hi_ctangle_sh) format
 
-# This is our attempt to ensure that bison is run before anything else.
+$(hitex_c_h): hitex-tangle
+	$(hi_ctangle_sh) hitex
 #
-$(hishrink_OBJECTS): hitexdir/hishrink-parser.h
+hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
+	$(hi_ctangle_sh) hitex
+
+# htex.c needs hitex.h, so depend on the hitex tangle.
+$(htex_c_h): htex-tangle hitex-tangle
+	$(hi_ctangle_sh) htex
+#
+htex-tangle: ctangle$(EXEEXT) hitexdir/htex.w tangle-sh hitex-tangle
+	$(hi_ctangle_sh) htex
+
+# Generating hformat.c using mkhformat.
+hformat.c: mkhformat
+	./mkhformat >hformat.c || { rm -f hformat.c; exit 1; }
+
+# This is our attempt to ensure that bison got run before anything else,
+# when needed.
+#
+$(hishrink_OBJECTS): $(srcdir)/hitexdir/hishrink-parser.h
 
 # still missing
 
