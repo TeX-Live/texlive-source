@@ -39,7 +39,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2017  Boris Veytsman
+Copyright (C) 2021  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -51,7 +51,7 @@ extent permitted by law.
 use strict;
 BEGIN {
     # find files relative to our installed location within TeX Live
-    chomp(my $TLMaster = `kpsewhich -var-value=SELFAUTOPARENT`); # TL root
+    chomp(my $TLMaster = `kpsewhich -var-value=TEXMFROOT`); # TL root
     if (length($TLMaster)) {
 	unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
     }
