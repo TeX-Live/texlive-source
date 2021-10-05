@@ -1392,17 +1392,14 @@ nodist_hishrink_OBJECTS = hishrink-hformat.$(OBJEXT) \
 	hitexdir/hishrink-hishrink-lexer.$(OBJEXT) \
 	hitexdir/hishrink-hishrink-parser.$(OBJEXT)
 hishrink_OBJECTS = $(nodist_hishrink_OBJECTS)
-hishrink_DEPENDENCIES = $(am__DEPENDENCIES_1)
 nodist_histretch_OBJECTS = histretch-hformat.$(OBJEXT) \
 	histretch-histretch.$(OBJEXT)
 histretch_OBJECTS = $(nodist_histretch_OBJECTS)
-histretch_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am__objects_37 = hitex-htex.$(OBJEXT)
 am__objects_38 = hitex-hitex.$(OBJEXT)
 nodist_hitex_OBJECTS = hitex-hformat.$(OBJEXT) hitex-hput.$(OBJEXT) \
 	$(am__objects_37) $(am__objects_38)
 hitex_OBJECTS = $(nodist_hitex_OBJECTS)
-hitex_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
@@ -4572,19 +4569,18 @@ euptex_ch_srcs = \
 # e-upTeX Tests
 #
 euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test
-
-# We want debugging for the parser, and we use features not in POSIX yacc.
-# The result is that we assume bison? Not sure if that's ok.
-AM_YFLAGS = -d -v -Wno-yacc
-hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
-hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS)
+hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5
+hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a
+hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
 #
 histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 histretch_LDADD = $(ZLIB_LIBS)
+histretch_DEPENDENCIES = $(ZLIB_DEPEND)
 #
 # The -I$(srcdir)/hitexdir is so the compiler can find the *parser.h file.
 hishrink_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 hishrink_LDADD = $(ZLIB_LIBS)
+hishrink_DEPENDENCIES = $(ZLIB_DEPEND)
 
 # HiTeX CWEB sources
 hitex_web = hitexdir/format.w hitexdir/htex.w hitexdir/hitex.w

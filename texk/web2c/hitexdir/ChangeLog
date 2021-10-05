@@ -1,3 +1,11 @@
+2021-10-05  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (AM_YFLAGS): comment out since we aren't doing
+	lex/yacc stuff any more.
+
+	(hitex_CPPFLAGS): include -I$(srcdir)/libmd5 for extensions.
+	(hi{tex,stretch,shrink}_DEPENDENCIES): define.
+
 2021-10-01  Karl Berry  <karl@freefriends.org>
 
 	* am/hitex.am (nodist_hishrink_SOURCES): remove references to .[ly]
