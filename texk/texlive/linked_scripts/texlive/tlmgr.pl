@@ -1,12 +1,12 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 60557 2021-09-20 10:46:43Z preining $
+# $Id: tlmgr.pl 60693 2021-10-04 02:24:25Z preining $
 #
 # Copyright 2008-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
-my $svnrev = '$Revision: 60557 $';
-my $datrev = '$Date: 2021-09-20 12:46:43 +0200 (Mon, 20 Sep 2021) $';
+my $svnrev = '$Revision: 60693 $';
+my $datrev = '$Date: 2021-10-04 04:24:25 +0200 (Mon, 04 Oct 2021) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -63,7 +63,7 @@ BEGIN {
   }
   if (-r "$bindir/$kpsewhichname") {
     # if not in bootstrapping mode => kpsewhich exists, so use it to get $Master
-    chomp($Master = `kpsewhich -var-value=SELFAUTOPARENT`);
+    chomp($Master = `kpsewhich -var-value=TEXMFROOT`);
   }
 
   # if we have no directory in which to find our modules,
@@ -10239,7 +10239,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 60557 2021-09-20 10:46:43Z preining $
+$Id: tlmgr.pl 60693 2021-10-04 02:24:25Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

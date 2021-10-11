@@ -1760,7 +1760,7 @@ proc restore_backups_dialog {} {
     tk_messageBox -message [__ "No backup directory defined"]
     return
   }
-  set bdir [file join [exec kpsewhich -var-value SELFAUTOPARENT] $bdir]
+  set bdir [file join [exec kpsewhich -var-value TEXMFROOT] $bdir]
   if {! [file isdirectory $bdir]} {
     tk_messageBox -message [__ "Backup directory %s does not exist" $bdir]
     return
