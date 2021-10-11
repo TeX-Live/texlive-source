@@ -22,8 +22,8 @@
 #include <stdlib.h>  
 #include <string.h>  
 
-/*:3*//*89:*/
-#line 717 "cwebdir/comm-w2c.ch"
+/*:3*//*91:*/
+#line 739 "cwebdir/comm-w2c.ch"
 
 #if HAVE_GETTEXT
 #include <locale.h>  
@@ -33,21 +33,21 @@
 #define textdomain(a) ""
 #endif
 
-/*:89*//*91:*/
-#line 764 "cwebdir/comm-w2c.ch"
+/*:91*//*93:*/
+#line 786 "cwebdir/comm-w2c.ch"
 
 #include <kpathsea/kpathsea.h>  
 
 #include <w2c/config.h>  
 #include <lib/lib.h>  
 
-/*:91*//*94:*/
-#line 801 "cwebdir/comm-w2c.ch"
+/*:93*//*96:*/
+#line 823 "cwebdir/comm-w2c.ch"
 
 #define CWEB
 #include "help.h" 
 
-/*:94*/
+/*:96*/
 #line 63 "cwebdir/common.w"
 
 #define _(s) gettext(s)  \
@@ -395,13 +395,13 @@ char*found_filename;
 
 #line 601 "cwebdir/comm-w2c.ch"
 /*:83*//*86:*/
-#line 646 "cwebdir/comm-w2c.ch"
+#line 629 "cwebdir/comm-w2c.ch"
 
 const char*use_language= "";
 
 
 /*:86*//*87:*/
-#line 659 "cwebdir/comm-w2c.ch"
+#line 642 "cwebdir/comm-w2c.ch"
 
 char cb_banner[max_banner];
 string texmf_locale;
@@ -476,13 +476,13 @@ static int section_name_cmp(char**,size_t,name_pointer);
 static void scan_args(void);
 
 #line 507 "cwebdir/comm-w2c.ch"
-/*:76*//*96:*/
-#line 814 "cwebdir/comm-w2c.ch"
+/*:76*//*98:*/
+#line 836 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message,const_string bug_email);
 
-/*:96*/
+/*:98*/
 #line 67 "cwebdir/common.w"
 
 
@@ -509,17 +509,17 @@ for(h= hash;h<=hash_end;*h++= NULL);
 /*:47*/
 #line 78 "cwebdir/comm-w2c.ch"
 
-/*92:*/
-#line 776 "cwebdir/comm-w2c.ch"
+/*94:*/
+#line 798 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
-/*:92*/
+/*:94*/
 #line 79 "cwebdir/comm-w2c.ch"
 
 #line 85 "cwebdir/comm-w2c.ch"
-/*90:*/
-#line 726 "cwebdir/comm-w2c.ch"
+/*92:*/
+#line 748 "cwebdir/comm-w2c.ch"
 
 setlocale(LC_MESSAGES,setlocale(LC_CTYPE,""));
 texmf_locale= kpse_var_expand("${TEXMFLOCALEDIR}");
@@ -534,7 +534,7 @@ free(texmf_locale);
 textdomain("cweb");
 
 
-/*:90*/
+/*:92*/
 #line 85 "cwebdir/comm-w2c.ch"
 
 /*74:*/
@@ -553,6 +553,9 @@ make_xrefs= true;
 
 scan_args();
 if(program==ctangle){
+if(check_for_change)/*88:*/
+#line 659 "cwebdir/comm-w2c.ch"
+{
 if((C_file= fopen(C_file_name,"a"))==NULL)
 fatal(_("! Cannot open output file "),C_file_name);
 
@@ -565,11 +568,22 @@ else strcpy(dot_pos,".ttp");
 }
 if((C_file= fopen(check_file_name,"wb"))==NULL)
 fatal(_("! Cannot open output file "),check_file_name);
+}
+
+/*:88*/
+#line 604 "cwebdir/comm-w2c.ch"
+
+else if((C_file= fopen(C_file_name,"wb"))==NULL)
+fatal(_("! Cannot open output file "),C_file_name);
 
 }
 else{
+if(check_for_change)/*89:*/
+#line 674 "cwebdir/comm-w2c.ch"
+{
 if((tex_file= fopen(tex_file_name,"a"))==NULL)
 fatal(_("! Cannot open output file "),tex_file_name);
+
 else fclose(tex_file);
 strcpy(check_file_name,tex_file_name);
 if(check_file_name[0]!='\0'){
@@ -580,9 +594,16 @@ else strcpy(dot_pos,".wtp");
 if((tex_file= fopen(check_file_name,"wb"))==NULL)
 fatal(_("! Cannot open output file "),check_file_name);
 }
+
+/*:89*/
+#line 610 "cwebdir/comm-w2c.ch"
+
+else if((tex_file= fopen(tex_file_name,"wb"))==NULL)
+fatal(_("! Cannot open output file "),tex_file_name);
+}
 #line 1287 "cwebdir/common.w"
 
-#line 636 "cwebdir/comm-w2c.ch"
+#line 619 "cwebdir/comm-w2c.ch"
 /*:84*/
 #line 101 "cwebdir/common.w"
 
@@ -1332,8 +1353,8 @@ puts(_("(That was a fatal error, my friend.)"));
 /*:69*/
 #line 394 "cwebdir/comm-w2c.ch"
 
-/*88:*/
-#line 670 "cwebdir/comm-w2c.ch"
+/*90:*/
+#line 692 "cwebdir/comm-w2c.ch"
 
 if(C_file)fclose(C_file);
 if(tex_file)fclose(tex_file);
@@ -1341,7 +1362,7 @@ if(check_file)fclose(check_file);
 if(strlen(check_file_name))
 remove(check_file_name);
 
-/*:88*/
+/*:90*/
 #line 395 "cwebdir/comm-w2c.ch"
 
 #line 402 "cwebdir/comm-w2c.ch"
@@ -1408,27 +1429,27 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
 {
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
-/*95:*/
-#line 805 "cwebdir/comm-w2c.ch"
+/*97:*/
+#line 827 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 
 
-/*:95*/
+/*:97*/
 #line 523 "cwebdir/comm-w2c.ch"
 
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
-/*98:*/
-#line 853 "cwebdir/comm-w2c.ch"
+/*100:*/
+#line 875 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
 NULL,"Contemporary development on https://github.com/ascherer/cweb.\n");
 
 
-/*:98*/
+/*:100*/
 #line 526 "cwebdir/comm-w2c.ch"
 
 if(strcmp("-verbose",*argv)==0||strcmp("--verbose",*argv)==0)
@@ -1594,8 +1615,8 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
 }
 
-/*:75*//*97:*/
-#line 818 "cwebdir/comm-w2c.ch"
+/*:75*//*99:*/
+#line 840 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1628,8 +1649,8 @@ textdomain("cweb");
 history= spotless;exit(wrap_up());
 }
 
-/*:97*//*99:*/
-#line 861 "cwebdir/comm-w2c.ch"
+/*:99*//*101:*/
+#line 883 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {
@@ -1640,4 +1661,4 @@ textdomain("cweb");
 
 }
 
-/*:99*/
+/*:101*/

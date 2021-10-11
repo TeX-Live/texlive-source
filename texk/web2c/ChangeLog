@@ -1,3 +1,8 @@
+2021-10-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: CWEB 4.6 pre-release RC2.
+
 2021-09-21  Karl Berry  <karl@freefriends.org>
 
 	* ac/web2c.ac (kpse_tex_progs): include hitex, disabled by default.

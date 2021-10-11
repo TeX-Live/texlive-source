@@ -1,3 +1,10 @@
+2021-10-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: CWEB 4.6 pre-release RC2.
+
 2021-09-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-{bs,vms,w2c,w32}.ch,

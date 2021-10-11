@@ -1157,7 +1157,6 @@ if (no_xref) {
   finish_line();
   out_str("\\end");
 @.\\end@>
-  active_file=tex_file;
 }
 @z
 
@@ -1194,8 +1193,8 @@ if (no_xref) {
 @y
 @.\\end@>
 }
-finish_line(); fclose(active_file); active_file=NULL;
-@<Update the result when it has changed@>@;
+finish_line(); fclose(active_file); active_file=tex_file=NULL;
+if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
 @x
@@ -1981,15 +1980,16 @@ a function block.
 @<Set init...@>=
 order_decl_stmt=true;
 
-@* Output file update.  Most \CEE/ projects are controlled by a
-\.{Makefile} that automatically takes care of the temporal dependecies
-between the different source modules.  It is suitable that \.{CWEB} doesn't
-create new output for all existing files, when there are only changes to
-some of them. Thus the \.{make} process will only recompile those modules
-where necessary. The idea and basic implementation of this mechanism can
-be found in the program \.{NUWEB} by Preston Briggs, to whom credit is due.
+@* Output file update. Most \CEE/ projects are controlled by a \.{Makefile}
+that automatically takes care of the temporal dependecies between the different
+source modules. It may be convenient that \.{CWEB} doesn't create new output
+for all existing files, when there are only changes to some of them. Thus the
+\.{make} process will only recompile those modules where necessary. You can
+activate this feature with the `\.{+c}' command-line option. The idea and basic
+implementation of this mechanism can be found in the program \.{NUWEB} by
+Preston Briggs, to whom credit is due.
 
-@<Update the result...@>=
+@<Update the result...@>= {
 if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
   boolean comparison=false;
 
@@ -1997,7 +1997,7 @@ if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  if (check_for_change) @<Compare the temporary output...@>@;
+  @<Compare the temporary output...@>@;
 
   fclose(tex_file); tex_file=NULL;
   fclose(check_file); check_file=NULL;
@@ -2007,6 +2007,7 @@ if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
   rename(check_file_name,tex_file_name); /* This was the first run */
 
 strcpy(check_file_name,""); /* We want to get rid of the temporary file */
+}
 
 @ We hope that this runs fast on most systems.
 

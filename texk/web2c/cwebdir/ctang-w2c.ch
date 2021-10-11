@@ -136,29 +136,36 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
 }
 @y
 @<Write all the named output files@>=
-fclose(C_file); C_file=NULL;
-@<Update the primary result when it has changed@>@;
+if (check_for_change) {
+  fclose(C_file); C_file=NULL;
+  @<Update the primary result when it has changed@>@;
+}
 for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
-    an_output_file--;
-    sprint_section_name(output_file_name,*an_output_file);
-    if ((C_file=fopen(output_file_name,"a"))==NULL)
+  an_output_file--;
+  sprint_section_name(output_file_name,*an_output_file);
+  if (check_for_change) @<Open the intermediate output file@>@;
+  else {
+    fclose(C_file);
+    if ((C_file=fopen(output_file_name,"wb"))==NULL)
       fatal(_("! Cannot open output file "),output_file_name);
 @.Cannot open output file@>
-    else fclose(C_file); /* Test accessability */
-    if((C_file=fopen(check_file_name,"wb"))==NULL)
-      fatal(_("! Cannot open output file "),check_file_name);
-    if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
-    cur_line=1;
-    stack_ptr=stack+1;
-    cur_name=*an_output_file;
-    cur_repl=(text_pointer)cur_name->equiv;
-    cur_byte=cur_repl->tok_start;
-    cur_end=(cur_repl+1)->tok_start;
-    while (stack_ptr > stack) get_output();
-    flush_buffer(); fclose(C_file); C_file=NULL;
+  }
+  if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
+  cur_line=1;
+  stack_ptr=stack+1;
+  cur_name=*an_output_file;
+  cur_repl=(text_pointer)cur_name->equiv;
+  cur_byte=cur_repl->tok_start;
+  cur_end=(cur_repl+1)->tok_start;
+  while (stack_ptr > stack) get_output();
+  flush_buffer();
+  if (check_for_change) {
+    fclose(C_file); C_file=NULL;
     @<Update the secondary results when they have changed@>@;
+  }
 }
-strcpy(check_file_name,""); /* We want to get rid of the temporary file */
+if (check_for_change)
+  strcpy(check_file_name,""); /* We want to get rid of the temporary file */
 @z
 
 @x
@@ -359,15 +366,25 @@ course of a quarter century.
 Care has been taken to keep the original section numbering intact, so this new
 material should nicely integrate with the original ``\&{104.~Index}.''
 
-@* Output file update.  Most \CEE/ projects are controlled by a
-\.{Makefile} that automatically takes care of the temporal dependecies
-between the different source modules.  It is suitable that \.{CWEB} doesn't
-create new output for all existing files, when there are only changes to
-some of them. Thus the \.{make} process will only recompile those modules
-where necessary. The idea and basic implementation of this mechanism can
-be found in the program \.{NUWEB} by Preston Briggs, to whom credit is due.
+@* Output file update. Most \CEE/ projects are controlled by a \.{Makefile}
+that automatically takes care of the temporal dependecies between the different
+source modules. It may be convenient that \.{CWEB} doesn't create new output
+for all existing files, when there are only changes to some of them. Thus the
+\.{make} process will only recompile those modules where necessary. You can
+activate this feature with the `\.{+c}' command-line option. The idea and basic
+implementation of this mechanism can be found in the program \.{NUWEB} by
+Preston Briggs, to whom credit is due.
 
-@<Update the primary result...@>=
+@<Open the intermediate output file@>= {
+  if ((C_file=fopen(output_file_name,"a"))==NULL)
+    fatal(_("! Cannot open output file "),output_file_name);
+@.Cannot open output file@>
+  else fclose(C_file); /* Test accessability */
+  if((C_file=fopen(check_file_name,"wb"))==NULL)
+    fatal(_("! Cannot open output file "),check_file_name);
+}
+
+@ @<Update the primary result...@>=
 if((C_file=fopen(C_file_name,"r"))!=NULL) {
   @<Set up the comparison of temporary output@>@;
   @<Create the primary output depending on the comparison@>@;
@@ -381,7 +398,7 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
     fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>
 
-  if (check_for_change) @<Compare the temporary output...@>@;
+  @<Compare the temporary output...@>@;
 
   fclose(C_file); C_file=NULL;
   fclose(check_file); check_file=NULL;
