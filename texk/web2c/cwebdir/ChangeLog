@@ -1,3 +1,10 @@
+2021-10-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctproofmac.tex,
+	* cttwinxmac.tex,
+	* ctwimac.tex,
+	* texinputs/pdfctwimac.tex: Fix 'base 2' for 'p' exponent.
+
 2021-10-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
