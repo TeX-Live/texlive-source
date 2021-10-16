@@ -1,3 +1,10 @@
+2021-10-16  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* dvipdfmx.c: Fix a bug that the -r option was not effective,
+	as reported in
+	https://tug.org/pipermail/dvipdfmx/2021-September/000296.html.
+	* configure.ac: version 20211016.
+
 2021-09-26  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 	* pdfdev.c: Remove all my changes on 2021-03-04 and 2021-03-05
 	which were completely wrong.
