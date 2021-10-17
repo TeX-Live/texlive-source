@@ -29,6 +29,7 @@ if {$::tcl_platform(platform) ne "windows"} {
 }
 
 set ::instroot [exec kpsewhich -var-value=TEXMFROOT]
+set ::year 0 ; # to be set when connecting to tlmgr
 
 # try to read a configuration variable (gui-lang, tkfontscale)
 # from tlmgr config ($TEXMF[SYS]CONFIG/tlmgr/config
@@ -353,6 +354,11 @@ proc selective_dis_enable {} {
     } else {
       .mn.opt entryconfigure $::inx_platforms -state normal
     }
+  }
+
+  # 64-bit windows
+  if {$::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
+    dis_enable_w64
   }
 }; # selective_dis_enable
 
@@ -1192,9 +1198,12 @@ proc show_repos {} {
   if {! $::have_remote} {
     $w.load configure -text " ([__ "Not loaded"])"
   }
+  # the $::repos array already contains the configured repositories.
+  # 'repository status' adds verification info and actual selected mirror.
   set repodict [dict create]
   if $::have_remote {
     run_cmd_waiting "repository status"
+    # a number code for verification status
     set re {^(\S+) (\S+)/tlpkg/texlive.tlpdb (-?\d+) (.*)$}
     foreach l $::out_log {
       if [regexp $re $l dum nm rp n d] {
@@ -1209,6 +1218,12 @@ proc show_repos {} {
         dict set repodict $nm "veridescr" $d
       }
     }
+    # the selected mirror is needed in the win64 code, so is a global.
+    if {$::repos(main) eq $::any_mirror} {
+      set ::actual_main [dict get $repodict "main" "url"]
+    } else {
+      set ::actual_main $::repos(main)
+    }
   }
   set rw 0
   foreach nm [array names ::repos] {
@@ -1216,10 +1231,8 @@ proc show_repos {} {
     pgrid [ttk::label $w.u$nm -text $::repos($nm) -justify left] \
         -sticky nw -row $rw -column 0
     if {$::repos($nm) eq $::any_mirror && $::have_remote} {
-      set s $::repos($nm)
-      append s "\n[__ "Actual repository"]:\n"
-      append s [dict get $repodict $nm "url"]
-      $w.u$nm configure -text $s
+      $w.u$nm configure -text \
+        "$::any_mirror\n[__ "Actual repository"]:\n$::actual_main"
     }
     if {[array size ::repos] > 1 && $nm ne $::repos($nm)} {
       pgrid [ttk::label $w.n$nm -text "($nm)"] \
@@ -1865,7 +1878,7 @@ proc restore_backups_dialog {} {
 
 } ; # if $::do_restore
 
-##### Main window and supporting procs and callbacks ##################
+##### Supporting procs and callbacks ##################
 
 ##### package-related #####
 
@@ -2236,6 +2249,7 @@ proc zoom {n} {
 }
 
 ##### running external commands #####
+# for when a simple 'set var [exec command]' won't do
 
 # For capturing an external command, we need a separate output channel,
 # but we reuse ::out_log.
@@ -2252,10 +2266,10 @@ proc read_capture {} {
   }
 }; # read_capture
 
-proc run_external {cmd mess} {
+proc run_external {cmd {mess ""}} {
   set ::out_log {}
   set ::err_log {}
-  lappend ::out_log $mess
+  if {$mess ne ""} {lappend ::out_log $mess}
   unset -nocomplain ::done_waiting
   # treat cmd as a list, possibly of one element
   # using a list enables a direct invocation, bypassing a shell
@@ -2289,7 +2303,7 @@ proc tlmgr_help {} {
   long_message [exec tlmgr --help] ok
 }
 
-## arbitrary commands: no way to know what data have to be updated
+## no arbitrary commands: no way to know what data have to be updated
 #proc custom_command {} {
 #  create_dlg .tlcust .
 #  wm title .tlcust [__ "Custom command"]
@@ -2318,6 +2332,306 @@ Please configure a valid repository" $::repos(main)]
     tk_messageBox -message $mes -title [__ "Error"] -type ok -icon error
   }
 }
+
+##### w64 binaries ####################################################
+
+# Although w64 binaries can be added if windows is only an
+# additional platform, the extra w64 command-prompt can only be
+# added from within windows. The situation is a bit difficult to
+# explain to begin with, so it seems better to offer the option only
+# for a native windows install.
+
+# I would have liked to avoid pointless downloads,
+# but comparing dates is fraught with problems:
+# - remote file info is reported differently by different protocols
+# - the date of a local file may be installation time
+# - spurious differences due to local time and daylight saving time
+# we CAN timestamp zipfiles to their latest member
+# with 'unzip -T', but this can only be done AFTER downloading.
+# See also tcl commands 'file mtime', and 'clock scan'
+
+# $::wprocessor will later decide whether a w64 menu will be created.
+if {$::tcl_platform(platform) eq "windows"} {
+  set ::wprocessor $::env(PROCESSOR_ARCHITECTURE)
+  # in case of 32-bit programs on 64-bit system:
+  if [info exists ::env(PROCESSOR_ARCHITEW6432)] {
+    set ::wprocessor $::env(PROCESSOR_ARCHITEW6432)
+  }
+}
+
+proc w64_about {} {
+  # read and display file with warning message
+  set fn [exec kpsewhich -format texmfscripts help-w64.txt]
+  if {$fn eq "" || [catch {open $fn} wf]} {
+    tk_messageBox -message "Failed to open help-w64.txt"
+    return 0
+  }
+  set s ""
+  while {! [catch {chan gets $wf} line] && ! [chan eof $wf]} {
+    set s [string cat $s "\n" $line]
+  }
+  chan close $wf
+  long_message [string range $s 1 end] "okcancel"
+}
+
+set ::w64_zipdir "${::instroot}/bin/win64/zip"
+set ::w64_zipname "tl-win64"
+
+proc create_w64_shortcut {} {
+  # delegate the creation of a start menu shortcut to powershell.
+  # consider failure non-fatal
+  set shortcutfile \
+     [file join \
+          [expr {$::multiuser ? $::env(programdata) : $::env(appdata)}] \
+          "microsoft\\windows\\start menu\\programs" \
+          "TeX Live $::year" \
+          "TeX Live $::year 64-bit.lnk"]
+  set shortcut_bsl [string map {\/ \\} $shortcutfile]
+
+  set inst_bsl [string map {\/ \\} $::instroot]
+  set path_add "${inst_bsl}\\bin\\win64;${inst_bsl}\\bin\\win32;"
+  # below, escape '%' for the sake of tcl, probably unnecessary here
+  # i believe '%' has no special significance  for powershell.
+  set shargs "/k path ${path_add}\%PATH\% && title TeX Live 64-bit"
+  set cmd [string cat \
+      "\$ws = new-object -comobject wscript.shell;" \
+      "\$s = \$ws.createshortcut('$shortcut_bsl');" \
+      "\$s.targetpath = 'cmd';" \
+      "\$s.arguments = '$shargs';" \
+      "\$s.workingdirectory = '\%userprofile\%';" \
+               "\$s.save()"]
+  # powershell will silently overwrite an existing shortcut
+  set res [catch {exec cmd /c powershell.exe -NoLogo -NonInteractive \
+                      -NoProfile -command $cmd}]
+  if {$res || ![file exists $shortcutfile]} {
+    return 0
+  }
+  return 1
+}
+
+proc remove_w64 {} {
+  total_dis_enable 0
+  update idletasks
+  # remove shortcut
+  set shortcutfile \
+     [file join \
+          [expr {$::multiuser ? $::env(programdata) : $::env(appdata)}] \
+          "microsoft\\windows\\start menu\\programs" \
+          "TeX Live $::year" \
+          "TeX Live $::year 64-bit.lnk"]
+  file delete -force $shortcutfile
+  cd $::instroot
+  set w64dir [file join $::instroot "bin" "win64"]
+  total_dis_enable 1
+  update idletasks
+  catch {file delete -force $w64dir}
+  if {[file exists $shortcutfile] || [file exists $w64dir]} {
+    tk_messageBox -message "$w64dir not completely removed"
+    dis_enable_w64
+    return 0
+  } else {
+    tk_messageBox -message "$w64dir completely removed"
+    dis_enable_w64
+    return 1
+  }
+}
+
+proc make_64_dirs {} {
+  if [catch {file mkdir "$::instroot/bin/win64/zip"}] {
+    tk_messageBox -message "Cannot create required directory"
+    return 0
+  }
+  return 1
+}
+
+# local or remote source: these are separate submenu entries
+
+proc get_remote_w64 {} {
+
+  set curl "$::instroot/tlpkg/installer/curl/curl.exe"
+  set url ""
+  if {[string first {://} $::repos(main)]<0} {
+    # local repository, we assume w64 not included
+    set url ""
+  } elseif $::have_remote {
+    set url $::actual_main
+  } else {
+    set url $::repos(main)
+    if {$url eq $::any_mirror} {
+      set url ""
+    }
+  }
+  # we are currently in $::w64_zipdir
+  if [file exists ${::w64_zipname}.zip] {
+    # here and elsewhere, we do not consider a rename failure fatal
+    catch {file rename -force ${::w64_zipname}.zip ${::w64_zipname}_old.zip}
+  }
+  set notfound 1
+  set ntries 1
+  while {$notfound && $ntries<6} {
+    if {$url eq ""} {
+      # ask curl for a specific mirror
+      if [catch {exec $curl -Ls -o nul -w %{url_effective} $::any_mirror} url] {
+        tk_messageBox -message "Cannot get any mirror"
+        return 0
+      }
+    }
+    set c [string last "/texlive" $url]
+    if {$c<0} {
+      lappend ::err_log "Mirror $url no good at try $ntries"
+      continue
+    }
+    set url [string range $url 0 $c] ; # the new value includes a final '/'
+    set url "${url}win32/TLW64/${::w64_zipname}.zip"
+    # download options:
+    # -s: silent; -f: silent fail; -o: target name; -R: preserve time
+    incr ntries
+    set notfound [catch {
+      exec -keepnewline -ignorestderr $curl -s -f -o ${::w64_zipname}.zip -R $url
+    }]
+    if {!$notfound} {
+      lappend ::err_log "Success after $ntries tries"
+      return 1
+    } else {
+      set url ""
+    }
+  }
+  tk_messageBox -message \
+   "No success after $ntries tries.\nFailed to download ${::w64_zipname}.zip"
+  return 0
+}
+
+proc get_local_w64 {} {
+  # we are currently in $::w64_zipdir
+  # invoke file browser
+  set zipfile [tk_getOpenFile \
+                   -filetypes {{"Zip files" {.zip .ZIP}}} \
+                   -initialfile "${::w64_zipname}.zip" \
+                   -title "Zipfile with 64-bit binaries"]
+  if {$zipfile eq ""} {
+    return 0
+  } else {
+    if {[file normalize $zipfile] ne "${::w64_zipdir}/${::w64_zipname}.zip"} {
+      # nothing to be done if zipfile is at its intended location
+      if [file exists "${::w64_zipname}.zip"] {
+        file rename -force "${::w64_zipname}.zip" "${::w64_zipname}_old.zip"
+        # ignore failure; below, we shall just try to overwrite
+      }
+      if [catch {file copy -force $zipfile ${::w64_zipname}.zip}] {
+        tk_messageBox -message \
+            "Cannot copy $zipfile to ${::w64_zipdir}/${::w64_zipname}.zip"
+        return 0
+      }
+    }
+  }
+  return 1
+}
+
+proc dis_enable_w64 {} {
+  if [file exists [file join $::instroot "bin" "win64"]] {
+    .mn.w64 entryconfigure $::inx_remove64 -state normal
+  } else {
+    .mn.w64 entryconfigure $::inx_remove64 -state disabled
+  }
+  if [file exists [file join $::w64_zipdir "${::w64_zipname}.zip"]] {
+    .mn.w64 entryconfigure $::inx_sync64 -state normal
+  } else {
+    .mn.w64 entryconfigure $::inx_sync64 -state disabled
+  }
+}
+
+proc sync_w64_w32 {} {
+  # disable interface, but only if invoked directly
+  set caller [lindex [info level 1] 0]
+  if {$caller ne "add_or_update_w64"} {
+    total_dis_enable 0
+    update idletasks
+  }
+  # try to clear out bin/win64
+  foreach f [glob -nocomplain -directory $::instroot/bin/win64 *] {
+    if {![file isdirectory $f]} {
+      catch {file delete $f}
+    }
+  }
+  cd $::instroot; # actually already done by invoker
+  if [catch {
+    exec unzip -d $::instroot -qo ${::w64_zipdir}/${::w64_zipname}.zip} r] {
+    tk_messageBox -message "$r:\nDid not succeed in extracting all win64 files"
+    return 0
+  }
+  cd $::instroot/bin/win64
+  # all 64-bit executable files should have corresponding 32-bit files
+  set sync_mess {}
+  foreach f [glob -nocomplain *] {
+    # exempt .dll files
+    if {[string tolower [string range $f end-3 end]] ne ".dll"} {
+      if {! [file exists ../win32/$f] && ![file isdirectory $f]} {
+        if [catch {file delete $f}] {
+          lappend sync_mess $f
+        }
+      }
+    }
+  }
+  cd $::instroot
+  if {$caller ne "add_or_update_w64"} {
+    total_dis_enable 1
+    update idletasks
+  }
+  return $sync_mess
+}
+
+proc add_or_update_w64 {lr} {
+  if {! [file exists ${::w64_zipname}.zip]} {
+    # 'about' message if no prior w64
+    w64_about
+  }
+  set ok 1
+  # below, fatal errors in invoked procs produce error message boxes
+  # so nothing remains but abandoning the effort.
+  if {! [make_64_dirs]} {set ok 0}
+
+  if {$ok && [catch {cd $::w64_zipdir}]} {
+    tk_messageBox -message "Cannot access $::w64_zipdir"
+    set ok 0
+  }
+  if {! $ok} {return 0}
+
+  # operations below may take time: disable interface
+  total_dis_enable 0
+  update idletasks
+  if {$lr eq "remote"} {
+    if {! [get_remote_w64]} {
+      set ok 0
+    }
+  } else {
+    if {! [get_local_w64]} {
+      set ok 0
+    }
+  }
+  if $ok {
+    # unpack new zip selectively
+    set mess [sync_w64_w32] ; # a list of filenames
+    if {[llength $mess]>0} {
+      set mess [linsert $mess 0 \
+        "The following files should have been deleted from bin/w64 but were not:"]
+    }
+    # now w64 shortcut for cmd.exe using powershell invocation
+    if [create_w64_shortcut] {
+      lappend mess "64-bit TeXLive shortcut created"
+    } else {
+      lappend mess "Failed to create 64-bit TeXLive shortcut"
+    }
+    lappend mess "Downloaded and installed 64-bit binaries."
+      lappend mess "Done"
+    any_message [join $mess "\n"] ok
+  }
+
+  total_dis_enable 1
+  update idletasks
+  return 1
+}
+
+##### main window #####################################################
 
 proc populate_main {} {
 
@@ -2353,10 +2667,6 @@ proc populate_main {} {
     }
   }
 
-  # inx: keeping count to record submenu indices where needed,
-  # i.e. when an entry needs to be referenced.
-  # not all submenus need this.
-
   .mn add cascade -label [__ "File"] -menu .mn.file -underline 0
   menu .mn.file
   .mn.file add command -label [__ "Load repository"] \
@@ -2365,8 +2675,6 @@ proc populate_main {} {
 
   .mn add cascade -label [__ "Actions"] -menu .mn.act -underline 0
   menu .mn.act
-  set inx -1
-  incr inx
   .mn.act add command -label [__ "Regenerate filename database"] -command \
       {run_external "mktexlsr" [__ "Regenerating filename database..."]}
   .mn.act add command -label [__ "Regenerate formats"] -command \
@@ -2377,15 +2685,16 @@ proc populate_main {} {
 
   .mn add cascade -label [__ "Options"] -menu .mn.opt -underline 0
 
+  # need to keep track of indices of this submenu
   menu .mn.opt
   set inx -1
   incr inx
   .mn.opt add command -label "[__ "Repositories"] ..." \
       -command repository_dialog
-
   incr inx
   .mn.opt add cascade -label [__ "Paper ..."] -menu .mn.opt.paper
   incr inx
+
   menu .mn.opt.paper
   foreach p {A4 Letter} {
     .mn.opt.paper add command -label $p -command \
@@ -2399,6 +2708,28 @@ proc populate_main {} {
     incr inx
     set ::inx_platforms $inx
     .mn.opt add command -label "[__ "Platforms"] ..." -command platforms_select
+  }
+
+  if {$::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
+    .mn add cascade -label "64-bit Windows" -menu .mn.w64
+    menu .mn.w64
+    set inx -1
+    incr inx
+    .mn.w64 add command -label [__ "About"] -command w64_about
+    incr inx
+    .mn.w64 add command -label [__ "Add/replace 64-bit binaries"] \
+        -command "add_or_update_w64 remote"
+    incr inx
+    .mn.w64 add command -label [__ "Add/replace from local file"] \
+        -command "add_or_update_w64 local"
+    incr inx
+    set ::inx_sync64 $inx
+    .mn.w64 add command -label [__ "Resynchronize with 32-bit"] \
+        -command sync_w64_w32
+    incr inx
+    set ::inx_remove64 $inx
+    .mn.w64 add command -label [__ "Remove 64-bit binaries"] \
+        -command remove_w64
   }
 
   if {[llength $::langs] > 1} {
@@ -2764,6 +3095,13 @@ proc initialize {} {
     set ::multiuser 0
     foreach l $::out_log {
       if [regexp {^\s*multiuser\s+([01])\s*$} $l d ::multiuser] break
+    }
+  }
+  run_cmd_waiting "version"
+  foreach l $::out_log {
+    if {[string range $l 0 8] eq "tlversion"} {
+      set ::year [string range $l end-3 end]
+      break
     }
   }
   get_packages_info_local
