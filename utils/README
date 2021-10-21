@@ -88,6 +88,7 @@ ln -s . $clisp_toolsdir/lib/64  # for Solaris 64-bit
 # when running configure for clisp.
 
 # may be able to omit iconv if have new enough in libc or elsewhere.
+# (and omit --with-libiconv-prefix below)
 libiconv_ver=libiconv-1.16
 cd $clisp_basedir
 $wget http://ftp.gnu.org/gnu/libiconv/$libiconv_ver.tar.gz
@@ -100,12 +101,12 @@ cd $libiconv_ver
 # would probably be ideal to also do a local libtermcap or ncurses,
 # but doesn't seem to be a problem in practice?
 
-# foil wrong attempts at dynamic linking, etc.
-(cd $clisp_basedir/clisp-tools/lib && rm -f *.dylib *.la)
+# foil wrong attempts at dynamic linking, etc. Don't worry if any don't exist.
+(cd $clisp_basedir/clisp-tools/lib && mkdir .dy && mv *.dylib *.la .dy)
 
-clisp_ver=2.49.92
+clisp_ver=clisp-2.49.92
 cd $clisp_basedir
-$wget https://alpha.gnu.org/gnu/clisp/clisp-2.49.92.tar.bz2
+$wget https://alpha.gnu.org/gnu/clisp/$clisp_ver.tar.bz2
 bunzip2 -dc $clisp_ver.tar.bz2 | tar xf -
 cd $clisp_ver
 
@@ -116,7 +117,9 @@ cd $clisp_ver
 # On FreeBSD/amd64: add --disable-mmap.
 #
 # Do not link with ncurses, we don't need it and versions differ.
-ac_cv_search_tgetent=" "; export ac_cv_search_tgetent
+# but, this doesn't work with 2.49.92, results in undefined references
+# to the termcap functions.
+#ac_cv_search_tgetent=" "; export ac_cv_search_tgetent
 #
 ./configure CPPFLAGS=-DUNIX_BINARY_DISTRIB --prefix=$clisp_toolsdir \
   --without-readline --without-dynamic-modules \
