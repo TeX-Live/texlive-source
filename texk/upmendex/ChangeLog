@@ -1,3 +1,14 @@
+2021-10-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 0.60  Beta version.
+	* configure.ac: Bump version.
+	* Makefile.am, convert.c, fwrite.c, sort.c,
+	{,ex}kana.h, ktable.h, mendex.h:
+	Enhance procedure of classifying characters:
+	Newly classifies by character type of
+	General Category in Unicode Script Property.
+	https://github.com/t-tk/upmendex-package/issues/8
+
 2021-09-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fread.c:
@@ -170,7 +181,7 @@
 
 2020-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* main.c, version.h, Makefile.{am.in}: Add bug report addresses
+	* main.c, version.h, Makefile.am: Add bug report addresses
 	on command line help.
 	* convert.c: Tune buffer sizes to avoid tool warnings.
 

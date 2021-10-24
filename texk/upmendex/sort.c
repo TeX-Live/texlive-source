@@ -290,13 +290,15 @@ static int pcomp(const void *p, const void *q)
 
 static int ordering(UChar *c)
 {
-	if (*c<0x80) {
-		if (is_latin(c)) return ltn;
-		else if (is_numeric(c)) return nmbr;
-		else return sym;
+	if      (*c<0x20)                return sym;  /* control */
+	else if (*c<0x7F) {
+		if      (is_latin(c))    return ltn;
+		else if (is_numeric(c))  return nmbr;
+		else                     return sym;
 	}
+	else if (*c<0xA0)                return sym;  /* control */
 	else {
-		if (is_latin(c)) return ltn;
+		if      (is_latin(c))    return ltn;
 		else if (is_jpn_kana(c)) return kana;
 		else if (is_kor_hngl(c)) return hngl;
 		else if (is_hanzi(c))    return hnz;
@@ -305,20 +307,21 @@ static int ordering(UChar *c)
 		else if (is_numeric(c))  return nmbr;
 		else if (is_devanagari(c)) return dvng;
 		else if (is_thai(c))     return thai;
-		else return sym;
+		else                     return sym;
 	}
 }
 
 int charset(UChar *c)
 {
-	if (*c==0x00) return CH_UNKNOWN;
-	else if (*c<0x80) {
-		if (is_latin(c)) return CH_LATIN;
-		else if (is_numeric(c)) return CH_NUMERIC;
-		else return CH_SYMBOL;
+	if      (*c<0x20)                return CH_UNKNOWN;  /* control */
+	else if (*c<0x7F) {
+		if      (is_latin(c))    return CH_LATIN;
+		else if (is_numeric(c))  return CH_NUMERIC;
+		else                     return CH_SYMBOL;
 	}
+	else if (*c<0xA0)                return CH_UNKNOWN;  /* control */
 	else {
-		if (is_latin(c)) return CH_LATIN;
+		if      (is_latin(c))    return CH_LATIN;
 		else if (is_jpn_kana(c)) return CH_KANA;
 		else if (is_kor_hngl(c)) return CH_HANGUL;
 		else if (is_hanzi(c))    return CH_HANZI;
@@ -327,7 +330,7 @@ int charset(UChar *c)
 		else if (is_numeric(c))  return CH_NUMERIC;
 		else if (is_devanagari(c)) return CH_DEVANAGARI;
 		else if (is_thai(c))     return CH_THAI;
-		else return CH_SYMBOL;
+		else                     return CH_SYMBOL;
 	}
 }
 
@@ -347,11 +350,18 @@ static int get_charset_juncture(UChar *str)
 		else l = k-1;
 		chset_l=charset(&str[l]);
 		chset_k=charset(&str[k]);
+		if (chset0==CH_UNKNOWN && is_any_script(chset_l)) {
+			chset0=chset_l;
+		}
+		if (chset0!=CH_UNKNOWN && is_any_script(chset_k)) {
+#if 0
 		if (chset0==CH_UNKNOWN && chset_l!=CH_SYMBOL && chset_l!=CH_NUMERIC) {
 			chset0=chset_l;
 		}
 		if (chset_k!=CH_SYMBOL && chset_k!=CH_NUMERIC) {
+#endif
 			if (chset0!=chset_k) {
+			  fprintf(stderr,"sort.c: ###DBG1000 %d %d %d len:%d %05x %05x\n", chset0, chset_l, chset_k, k, str[l], str[k]);
 				len=k;
 				return len;
 			}
@@ -396,17 +406,11 @@ static int unescape(const unsigned char *src, UChar *dest)
 	return -1;
 }
 
-int is_alphanumeric(UChar *c)
-{
-	if (((*c>=L'A')&&(*c<=L'Z'))||((*c>=L'a')&&(*c<=L'z'))||((*c>=L'0')&&(*c<=L'9')))
-		return 1;
-	else return 0;
-}
-
 int is_latin(UChar *c)
 {
 	if (((*c>=L'A')&&(*c<=L'Z'))||((*c>=L'a')&&(*c<=L'z'))) return 1;
-	else if ((*c>=0x00C0)&&(*c<=0x00D6)) return 1; /* Latin-1 Supplement */
+	else if ((*c==0x00AA)||(*c==0x00BA)) return 1; /* Latin-1 Supplement */
+	else if ((*c>=0x00C0)&&(*c<=0x00D6)) return 1;
 	else if ((*c>=0x00D8)&&(*c<=0x00F6)) return 1;
 	else if ((*c>=0x00F8)&&(*c<=0x00FF)) return 1;
 	else if ((*c>=0x0100)&&(*c<=0x024F)) return 1; /* Latin Extended-A,B */
@@ -416,28 +420,57 @@ int is_latin(UChar *c)
 	else if ((*c>=0xAB30)&&(*c<=0xAB6F)) return 1; /* Latin Extended-E */
 	else if ((*c>=0x1E00)&&(*c<=0x1EFF)) return 1; /* Latin Extended Additional */
 	else if ((*c>=0xFB00)&&(*c<=0xFB06)) return 1; /* Latin ligatures */
+	else if ((*c>=0xFF21)&&(*c<=0xFF3A)) return 1; /* Fullwidth Latin Capital Letter */
+	else if ((*c>=0xFF41)&&(*c<=0xFF5A)) return 1; /* Fullwidth Latin Small Letter */
+		/* Property of followings is "Common, So (other symbol)", but seem to be treated as Latin by ICU collator */
+	else if ((*c>=0x24B6)&&(*c<=0x24CF)) return 1; /* CIRCLED LATIN CAPITAL LETTER */
+	else if ((*c>=0x24D0)&&(*c<=0x24E9)) return 1; /* CIRCLED LATIN SMALL LETTER */
 	else return 0;
 }
 
 int is_numeric(UChar *c)
 {
+	UChar32 c32;
+
 	if ((*c>=L'0')&&(*c<=L'9')) return 1;
-	else if ((*c>=0x0966)&&(*c<=0x096F)) return 1; /* Devanagari Digit */
-	else if ((*c>=0x0E50)&&(*c<=0x0E59)) return 1; /* Thai Digit */
-	else return 0;
+	else if ((*c>=0xFF10)&&(*c<=0xFF19)) return 1; /* Fullwidth Digit */
+		/* followings do not seem to be treated as numbers by ICU collator though charType is U_OTHER_NUMBER */
+	else if ((*c>=0x3192)&&(*c<=0x3195)) return 0; /* IDEOGRAPHIC ANNOTATION ONE MARK..IDEOGRAPHIC ANNOTATION FOUR MARK */
+	else if ((*c>=0x3220)&&(*c<=0x3229)) return 0; /* PARENTHESIZED IDEOGRAPH ONE..PARENTHESIZED IDEOGRAPH TEN */
+	else if ((*c>=0x3280)&&(*c<=0x3289)) return 0; /* CIRCLED IDEOGRAPH ONE..CIRCLED IDEOGRAPH TEN */
+	else if ((*c>=0xA830)&&(*c<=0xA835)) return 0; /* NORTH INDIC FRACTION ONE QUARTER..NORTH INDIC FRACTION THREE SIXTEENTHS */
+
+	if (is_surrogate_pair(c))
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+	else c32=*c;
+
+	switch (u_charType(c32)) {
+	case U_DECIMAL_DIGIT_NUMBER:
+		return 1;
+	case U_OTHER_NUMBER:
+		return 2;
+	default:
+		return 0;
+	}
 }
 
 int is_jpn_kana(UChar *c)
 {
 	UChar32 c32;
 
-	if      ((*c>=0x3040)&&(*c<=0x30FF)) return 1; /* Hiragana, Katakana */
+	if       (*c==0x30A0)                return 0; /* KATAKANA-HIRAGANA DOUBLE HYPHEN */
+	else if  (*c==0x30FB)                return 0; /* KATAKANA MIDDLE DOT */
+	else if ((*c>=0x3040)&&(*c<=0x30FF)) return 1; /* Hiragana, Katakana */
 	else if ((*c>=0x31F0)&&(*c<=0x31FF)) return 1; /* Katakana Phonetic Extensions */
 	else if ((*c>=0x32D0)&&(*c<=0x32FE)) return 1; /* Circled Katakana */
+	else if ((*c>=0xFF66)&&(*c<=0xFF9F)) return 1; /* Halfwidth Katakana */
+	else if ((*c>=0x3300)&&(*c<=0x3357)) return 1; /* Squared Katakana words */
 
 	if (is_surrogate_pair(c)) {
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
 		if ((c32>=0x1B130) && (c32<=0x1B16F)) return 2; /* Small Kana Extensions */
+		else if ((c32==0x1B000))              return 2; /* KATAKANA LETTER ARCHAIC E */
+		else if ((c32==0x1F200))              return 2; /* SQUARE HIRAGANA HOKA */
 	}
 	return 0;
 		/* ICU 65 does not seem to support
@@ -503,7 +536,8 @@ int is_greek(UChar *c)
 
 int is_devanagari(UChar *c)
 {
-	if      ((*c>=0x0966)&&(*c<=0x096F)) return 0; /* Devanagari Digit */
+	if      ((*c>=0x0964)&&(*c<=0x0965)) return 0; /* Generic punctuation for scripts of India */
+	else if ((*c>=0x0966)&&(*c<=0x096F)) return 0; /* Devanagari Digit */
 	else if ((*c>=0x0900)&&(*c<=0x097F)) return 1; /* Devanagari */
 	else if ((*c>=0xA8E0)&&(*c<=0xA8FF)) return 1; /* Devanagari Extended */
 	else return 0;
@@ -517,14 +551,43 @@ int is_thai(UChar *c)
 	else return 0;
 }
 
-int is_comb_diacritical_mark(UChar *c)
+int is_type_mark_or_punct(UChar *c)
 {
-	if      ((*c>=0x02B0)&&(*c<=0x02FF)) return 1; /* Spacing Modifier Letters */
-	else if ((*c>=0x0300)&&(*c<=0x036F)) return 1; /* Combining Diacritical Marks */
-	else if ((*c>=0x1DC0)&&(*c<=0x1DFF)) return 1; /* Combining Diacritical Marks Supplement */
-	else if ((*c>=0x1AB0)&&(*c<=0x1AFF)) return 1; /* Combining Diacritical Marks Extended */
-	else if ((*c>=0x3099)&&(*c<=0x309A)) return 1; /* Combining Kana Voiced Sound Marks */
-	else return 0;
+	UChar32 c32;
+
+	if (is_surrogate_pair(c))
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+	else c32=*c;
+
+	switch (u_charType(c32)) {
+	case U_MODIFIER_LETTER:
+	case U_DASH_PUNCTUATION: case U_START_PUNCTUATION: case U_END_PUNCTUATION:
+	case U_CONNECTOR_PUNCTUATION: case U_OTHER_PUNCTUATION:
+	case U_INITIAL_PUNCTUATION: case U_FINAL_PUNCTUATION:
+	case U_NON_SPACING_MARK: case U_ENCLOSING_MARK: case U_COMBINING_SPACING_MARK:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+int is_type_symbol(UChar *c)
+{
+	UChar32 c32;
+
+	if (is_surrogate_pair(c))
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+	else c32=*c;
+
+	switch (u_charType(c32)) {
+	case U_MODIFIER_SYMBOL:
+		return 1;
+	case U_MATH_SYMBOL: case U_CURRENCY_SYMBOL:
+	case U_OTHER_SYMBOL:
+		return 2;
+	default:
+		return 0;
+	}
 }
 
 int chkcontinue(struct page *p, int num)

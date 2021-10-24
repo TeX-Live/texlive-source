@@ -18,7 +18,7 @@ static void crcheck(char *lbuff, FILE *fp);
 static void index_normalize(UChar *istr, UChar *ini, int *chset);
 static int initial_cmp_char(UChar *ini, UChar ch);
 static int init_hanzi_header(void);
-static const UNormalizer2* unormalizer_NFD;
+static const UNormalizer2 *unormalizer_NFD, *unormalizer_NFKD;
 static int turkish_i;
 
 #define M_NONE      0
@@ -189,7 +189,8 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 		fprintf(fp,"%s%d%s",setpage_prefix,pagenum,setpage_suffix);
 	}
 	perr=U_ZERO_ERROR;
-	unormalizer_NFD=unorm2_getInstance(NULL, "nfc", UNORM2_DECOMPOSE, &perr);
+	unormalizer_NFD =unorm2_getInstance(NULL, "nfc", UNORM2_DECOMPOSE, &perr);
+	unormalizer_NFKD=unorm2_getInstance(NULL, "nfkc", UNORM2_DECOMPOSE, &perr);
 
 	if (strlen(symhead)==0) {
 		if (lethead_flag>0) {
@@ -427,12 +428,12 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			}
 			else {
 				if (chset_prev!=chset) {
-					if ((CH_LATIN<=chset_prev&&chset_prev<=CH_THAI) || symbol_flag==2)
+					if (is_any_script(chset_prev) || symbol_flag==2)
 						fputs(group_skip,fp);
 					if (lethead_flag!=0 && symbol_flag==2 && chset==CH_NUMERIC) {
 						fprintf(fp,"%s%s%s",lethead_prefix,numhead,lethead_suffix);
 					}
-					if (lethead_flag!=0 && (symbol_flag==1 && (CH_LATIN<=chset_prev&&chset_prev<=CH_THAI) ||
+					if (lethead_flag!=0 && (symbol_flag==1 && is_any_script(chset_prev) ||
 								symbol_flag==2 && chset!=CH_NUMERIC) ) {
 						fprintf(fp,"%s%s%s",lethead_prefix,symhead,lethead_suffix);
 					}
@@ -763,6 +764,13 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	*chset=charset(istr);
 	ini[1]=L'\0';
 
+	if (is_circkana(ch) || is_hankana(ch) || is_sqkana(ch) || is_circlatin(ch)) {  /* ㋐㋑㋒.. ｱｲｳ.. ㌀㌁㌂.. */
+		src[0]=ch;  src[1]=0x00;
+		perr=U_ZERO_ERROR;
+		unorm2_normalize(unormalizer_NFKD, src, 1, dest, 8, &perr);
+		if (U_SUCCESS(perr))
+			ch=dest[0];
+	}
 	if (is_hiragana(ch)) {
 		ch+=KATATOP-HIRATOP; /* hiragana -> katakana */
 	}
@@ -774,15 +782,15 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		ini[0]=extkanatable[ch-EXKANATOP];
 		return;
 	}
-	if (is_circkana(ch)) {     /* ㋐㋑㋒㋓㋔ .. ㋻㋼㋽㋾ */
-		ini[0]=circkanatable[ch-CRKANATOP];
-		return;
-	}
-	else if (ch==0x309F) { ini[0]=0x3088; return; }  /* HIRAGANA YORI -> よ */
+	if      (ch==0x309F) { ini[0]=0x3088; return; }  /* HIRAGANA YORI -> よ */
 	else if (ch==0x30FF) { ini[0]=0x3053; return; }  /* KATAKANA KOTO -> こ */
 	else if (is_jpn_kana(istr)==2) {
 		c32=U16_GET_SUPPLEMENTARY(istr[0],istr[1]);
 		switch (c32) {
+			case 0x1F200:                  /* 🈀 */
+				ini[0]=0x307B; break;  /* ほ */
+			case 0x1B000:                  /* 𛀀 */
+				ini[0]=0x3048; break;  /* え */
 			case 0x1B150: case 0x1B164:
 				ini[0]=0x3090; break;  /* ゐ */
 			case 0x1B151: case 0x1B165:
@@ -888,6 +896,10 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		}
 		ini[0]=ch;
 		return;
+	}
+	if (ch>=0xFF21&&ch<=0xFF3A || ch>=0xFF41&&ch<=0xFF5A) {
+		/* Fullwidth latin letter */
+		ch-=0xFF21-0x0041;
 	}
 	if (ch==0x049||ch==0x069||ch==0x130||ch==0x131||ch==0x0CE||ch==0x0EE) {
 		/* check dotted/dotless İ,I,i,ı and Î,î for Turkish */
@@ -1018,6 +1030,8 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			}
 		}
 	}
+	if (ch==0x0AA) ch=L'A';
+	if (ch==0x0BA) ch=L'O';
 	ini[0]=u_toupper(ch);
 	return;
 }

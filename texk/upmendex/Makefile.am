@@ -19,7 +19,6 @@ upmendex_SOURCES = \
 	kana.h \
 	kp.c \
 	kp.h \
-	ktable.h \
 	main.c \
 	mendex.h \
 	version.h \
