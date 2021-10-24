@@ -1,3 +1,7 @@
+2021-10-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Restore 'classic' PDF layout.
+
 2021-10-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctproofmac.tex,

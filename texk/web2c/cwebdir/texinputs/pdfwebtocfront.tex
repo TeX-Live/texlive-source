@@ -21,11 +21,11 @@
   \let\ORGcon\con
   \def\con{%
     % reduce size of PDF pages for more screen space
-    \pdfpagewidth=\pagewidth  \advance\pdfpagewidth by 2cm
-    \pdfpageheight=\pageheight \advance\pdfpageheight by 3cm
-    \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
-    \else \advance\pdfpageheight by 1cm \global\pageshift=-1.54cm
-      \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
+    \pdfpagewidth=\pagewidth \advance\pdfpagewidth by 1in
+    \pdfpageheight=\fullpageheight \advance\pdfpageheight by 1in
+    \ifpdftex \pdfhorigin=0.5in \pdfvorigin=0.5in
+    \else \global\pageshift=-0.5in
+      \global\hoffset=-0.5in \global\voffset=-0.5in \fi
     \begingroup
       \let\end\relax
       \ORGcon
