@@ -1,3 +1,10 @@
+2021-10-24  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi (Option details) <-l>: describe [.PAGESEQ] subvalue.
+	<-p>: Just refer to -l instead of duplicating.
+	* dvips.1: likewise.
+	Report from Igor Liferenko, 20 Aug 2021 10:13:32.
+
 2021-09-28  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi (Option details) <-h>: mention that inclusion happens

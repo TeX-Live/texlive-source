@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2021.1
-@set month-year September 2021
+@set month-year October 2021
 
 @copying
 This manual documents Dvips version @value{version}
@@ -763,19 +763,29 @@ cause other graphics to fail, however, since the PostScript header
 macros from some software packages read portion the input stream line by
 line, searching for a particular comment.
 
-@item -l [=]@var{num}
-@opindex -l [=]@var{num}
+@item -l [=]@var{num}[.@var{pageseq}]
+@opindex -l [=]@var{num}[.@var{pageseq}]
 @cindex last page printed
 @cindex page, last printed
+@cindex page numbers, multiple repetitions of
 @cindex physical page number, and @samp{-l}
 @cindex absolute page number, and @samp{-l}
-The last page printed will be the first one numbered @var{num}. Default
-is the last page in the document.  If @var{num} is prefixed by an equals
-sign, then it (and the argument to the @samp{-p} option, if specified)
-is treated as a physical (absolute) page number, rather than a value to
-compare with the @TeX{} @samp{\count0} values stored in the DVI file.
-Thus, using @samp{-l =9} will end with the ninth page of the document,
-no matter what the pages are actually numbered.
+The last page printed will be the first one numbered @var{num}; the
+default is the last page in the document. 
+
+By default, @var{num} is compared to @TeX{}'s idea of the page number
+(more precisely, the @code{\count0} value written in the DVI file).
+But if @var{num} is prefixed by an equals sign, then it (and the
+argument to the @samp{-p} option, if specified) is treated as a
+physical (absolute) page number, Thus, using @samp{-l =9} will end the
+output with the ninth page of the document, no matter what the pages
+are actually numbered.
+
+On the other hand, if @var{pageseq} is specified, the @var{pageseq}th
+occurrence of the given @TeX{} page number is used.  For example,
+@samp{-l 99.2} says to end with the second page numbered 99 in the
+document.  The @samp{=} and @var{lastseq} features aren't useful
+together.
 
 @item -L*
 @opindex -L
@@ -914,19 +924,14 @@ If your printer offsets every other page consistently, instead of every
 page, your best recourse is to use @samp{bop-hook} (@pxref{PostScript
 hooks}).
 
-@item -p [=]@var{num}
-@opindex -p [=]@var{num}
+@item -p [=]@var{num}[.@var{pageseq}]
+@opindex -p [=]@var{num}[.@var{pageseq}]
 @cindex first page printed
 @cindex page, first printed
 @cindex physical page number, and @samp{-p}
 @cindex absolute page number, and @samp{-p}
-The first page printed will be the first one numbered @var{num}. Default
-is the first page in the document.  If @var{num} is prefixed by an
-equals sign, then it (and the argument to the @samp{-l} option, if
-specified) is treated as a physical (absolute) page number, rather than
-a value to compare with the @TeX{} @samp{\count0} values stored in the
-DVI file.  Thus, using @samp{-p =3} will start with the third page of
-the document, no matter what the pages are actually numbered.
+Exactly analogous to @code{-l} (q.v.), but specifying the first page
+number to be printed (processed).
 
 @item -pp @var{first}-@var{last}
 @opindex -pp @var{first}-@var{last}

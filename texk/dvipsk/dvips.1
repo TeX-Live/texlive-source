@@ -1,4 +1,4 @@
-.TH DVIPS 1 "1 February 2016"
+.TH DVIPS 1 "24 October 2021"
 .SH NAME
 dvips \- convert a TeX DVI file to PostScript
 .SH SYNOPSIS
@@ -10,8 +10,7 @@ THIS MAN PAGE IS OBSOLETE!
 See the Texinfo documentation instead.
 You can read it either in Emacs or with the standalone 
 .B info
-program which comes with the GNU texinfo distribution as
-ftp.gnu.org:pub/gnu/texinfo/texinfo*.tar.gz.
+program.
 .PP
 The program
 .B dvips
@@ -211,7 +210,13 @@ with
 values.  Thus, using
 .I -l =9
 will end with the ninth page of the document, no matter what the pages
-are actually numbered.
+are actually numbered.  On the other hand, if
+.I num
+is suffixed by `.SEQ', the SEQth occurrence of
+.I num
+is used; for example,
+.I -l 99.2
+says to end processing with the second page numbered 99 in the document.
 .TP
 .B -m
 Specify manual feed for printer.
@@ -312,19 +317,9 @@ default position (of one inch down, one inch to the right from the upper
 left corner of the paper) by this amount.
 .TP
 .B -p num
-The first page printed will be the first one numbered
-.IR num .
-Default is the first page in the document.  If the
-.I num
-is prefixed by an equals sign, then it (and any argument to the
+Just like
 .I -l
-option) is treated as a sequence number, rather than a value to compare
-with
-.I \ecount0
-values.  Thus, using
-.I -p =3
-will start with the third page of the document, no matter what the pages
-are actually numbered.
+but for the first page in the document.
 .TP
 .B -pp pagelist
 A comma-separated list of pages and ranges (a-b) may be given, which
@@ -512,9 +507,9 @@ information.  Especially useful at high resolutions or when very large
 fonts are used.  Will slow down printing somewhat, especially on early
 68000-based PostScript printers.
 .SH "SEE ALSO"
-mf(1), afm2tfm(1), tex(1), latex(1), lpr(1), 
+afm2tfm(1), tex(1), mf(1), dvitype(1), lpr(1), 
 .IR dvips.texi ,
-http://tug.org/dvips.
+https://tug.org/dvips.
 .SH ENVIRONMENT
 Dvipsk uses the same environment variables and algorithms for finding
 font files as TeX and its friends do.  See the documentation for the
@@ -531,4 +526,4 @@ by Don Knuth.  Path searching and configuration modifications by
 Karl Berry.
 .PP
 Maintained in TeX Live; please send bug reports or other correspondence
-to tex-k@tug.org (http://lists.tug.org/tex-k).
+to tex-k@tug.org (https://lists.tug.org/tex-k).
