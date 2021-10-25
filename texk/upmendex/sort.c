@@ -354,14 +354,7 @@ static int get_charset_juncture(UChar *str)
 			chset0=chset_l;
 		}
 		if (chset0!=CH_UNKNOWN && is_any_script(chset_k)) {
-#if 0
-		if (chset0==CH_UNKNOWN && chset_l!=CH_SYMBOL && chset_l!=CH_NUMERIC) {
-			chset0=chset_l;
-		}
-		if (chset_k!=CH_SYMBOL && chset_k!=CH_NUMERIC) {
-#endif
 			if (chset0!=chset_k) {
-			  fprintf(stderr,"sort.c: ###DBG1000 %d %d %d len:%d %05x %05x\n", chset0, chset_l, chset_k, k, str[l], str[k]);
 				len=k;
 				return len;
 			}
