@@ -1,3 +1,10 @@
+2021-10-29  Marcel Fabian Kr\"uger  <tex@2krueger.de>
+
+	* cidtype0.c: Fix a bug that dvipdfmx segfaults when embedding
+	a CFF based OpenType font which does not contain a private
+	dictionary.
+	* configure.ac: version 20211029.
+ 
 2021-10-16  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* dvipdfmx.c: Fix a bug that the -r option was not effective,
