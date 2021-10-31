@@ -476,15 +476,15 @@ respectively, to it; in \CEE/ the constant should be preceded by \.0
 or \.{0x}.  In \.{CWEB} it seems reasonable to let each convention hold
 in its respective realm; so in \CEE/ text you get $40_8$ by typing
 `\.{040}', which \.{CTANGLE} faithfully copies into the \CEE/ file (for
-the compiler's benefit) and which \.{CWEAVE} prints as $\T{\~40/}$.
+the compiler's benefit) and which \.{CWEAVE} prints as $\T{\~40}$.
 Similarly, \.{CWEAVE} prints the hexadecimal \CEE/ constant `\.{0x20}'
-as \T{\^20/}. The use of italic font for octal digits and typewriter font
+as \T{\^20}. The use of italic font for octal digits and typewriter font
 for hexadecimal digits makes the meaning of such constants clearer in
 a document. For consistency, then, you should type `\.{|040|}' or
 `\.{|0x20|}' in the \TEX/ part of the section.
 
 And if you type a binary constant like `\.{0b00101010}', \.{CWEAVE} prints
-it as $\T{\\00101010/}$. In all numeric literals you may add \.' separators
+it as $\T{\\00101010}$. In all numeric literals you may add \.' separators
 for improved readability.
 
 \section Control codes.
@@ -763,11 +763,11 @@ and so on. When such characters occur in identifiers, \.{CTANGLE} must replace
 them by standard ASCII alphanumeric characters or
 \.{\_}, in order to generate legal \CEE/ code.  It does this by means
 of a transliteration table, which by default associates the string
-\.{Xab} to the character with ASCII code \T{\^/}$ab$ (where $a$ and $b$ are
+\.{Xab} to the character with ASCII code \T{\^}$ab$ (where $a$ and $b$ are
 hexadecimal digits, and $a\ge8$).  By placing the
 construction \.{@l\ ab\ newstring} in limbo, you are telling
 \.{CTANGLE} to replace this character by \.{newstring} instead.
-For example, the ISO Latin-1 code for the letter `\"u' is \T{\^FC/}
+For example, the ISO Latin-1 code for the letter `\"u' is \T{\^FC}
 (or \.{'\char`\\374'}),
 and \.{CTANGLE} will normally change this code to the
 three-character sequence \.{XFC} if it

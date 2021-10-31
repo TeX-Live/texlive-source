@@ -1,3 +1,14 @@
+2021-10-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctproofmac.tex,
+	* cttwinxmac.tex,
+	* ctwill-mini.ch,
+	* ctwimac.tex,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman.tex,
+	* texinputs/pdfctwimac.tex: Restore '\T' macro backward compatibility.
+
 2021-10-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfwebtocfront.tex: Restore 'classic' PDF layout.

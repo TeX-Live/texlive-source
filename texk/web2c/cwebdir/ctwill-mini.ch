@@ -1484,7 +1484,21 @@ Section 213--214.
   case ':': app(':');@+app_scrap(colon,no_math);@+break;@/
 @z
 
+Section 216.
+
+@x
+@<Append a string or...@>={@+ int count=-1; /* characters remaining before string break */
+@y
+@<Append a string or...@>={int count=-1; /* characters remaining before string break */
+@z
+
 Section 221.
+
+@x
+@ The |outer_parse| routine is to |C_parse| as |outer_xref|
+@y
+@r @ The |outer_parse| routine is to |C_parse| as |outer_xref|
+@z
 
 @x
 @d make_pb flags['e']
@@ -1492,14 +1506,6 @@ Section 221.
 @d make_pb flags['e']
 @-make_pb@>
 @$make_pb {CTWILL}221 =\\{flags}[\.{'e'}]@>
-@z
-
-Section 222.
-
-@x
-@ @c
-@y
-@r @ @c
 @z
 
 Section 225.
@@ -1540,6 +1546,12 @@ This subroutine will never be called when |stack_ptr==1|.
 @z
 
 Section 234--235.
+
+@x
+@ Here is \.{CWEAVE}'s major output handler.
+@y
+@r @ Here is \.{CWEAVE}'s major output handler.
+@z
 
 @x
     reswitch: switch(a) {
@@ -1783,17 +1795,11 @@ Section 269.
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
 @y
-@ A left-to-right radix sorting method is used, since this makes it easy to
+@r @ A left-to-right radix sorting method is used, since this makes it easy to
 @-c@>
 @z
 
 Section 271.
-
-@x
-@ During the sorting phase we shall use the |cat| and |trans| arrays from
-@y
-@r @ During the sorting phase we shall use the |cat| and |trans| arrays from
-@z
 
 @x
 @<Rest of |trans_plus| union@>=
@@ -1832,7 +1838,7 @@ Section 276.
 @x
 @ Procedure |unbucket| goes through the buckets and adds nonempty lists
 @y
-@r @ Procedure |unbucket| goes through the buckets and adds nonempty lists
+@ Procedure |unbucket| goes through the buckets and adds nonempty lists
 @-unbucket@>
 @$unbucket {CTWILL}276 \&{static} \&{void} (\,)@>
 @z

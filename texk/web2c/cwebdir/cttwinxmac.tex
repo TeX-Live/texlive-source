@@ -8,6 +8,8 @@
 \def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
 \def\TEX/{\TeX}
 \def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
+\def\Cee{\CEE/} % for backward compatibility
+\def\Cpp{\CPLUSPLUS/} % for backward compatibility
 \def\9#1{}
 
 \newdimen\em \em=10pt % this "em" will not change with font size
@@ -119,8 +121,6 @@
 \def\eightbig#1{{\hbox{$\textfont0=\ninerm\textfont2=\ninesy
   \left#1\vbox to6.5pt{}\right.\nulldelimiterspace=0pt$}}}
 
-\def\Cee{{\mc C\spacefactor1000}}
-\def\UNIX{{\mc UNIX\spacefactor1000}}
 \font\titlefont=cmr7 scaled\magstep4 % title on the contents page
 \font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
 
@@ -194,7 +194,7 @@
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \noindent\strut{\bf\modno.\quad}}
 \let\startsection=\stsec
-\def\defin#1{\global\advance\ind by 2 \1\&{#1 } } % begin `define' or `format'
+\def\defin#1{\global\advance\ind by 2 \1\&{#1 }} % begin `define' or `format'
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\iftenpoint\ninepoint\fi
@@ -205,7 +205,7 @@
   \exhyphenpenalty 10000
   \global\ind=2 \1\ \unskip}
 \def\C#1{\5\5\quad$/\ast\,$#1$\,\ast/$}
-\def\D{\defin{\#define}} % macro definition
+\def\D{\defin{{\rm\#}define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
 \def\ETs{, and~} % conjunction between the last two of several section numbers
@@ -222,16 +222,16 @@
 \let\R=\lnot % logical not
 % \S is section sign
 \def\T#1{\leavevmode % octal, hex or decimal constant
-  \hbox{${\def\?{\kern.2em}%
-    \def\${\ell}% long constant
+  \hbox{${\def\?{\kern.2em}%$%
+    \let\ \, % C++ digit separator becomes a little white space
+    \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \def\%{\cdot 2^{\aftergroup}}% power of two (via dirty trick)
-    \let\~=\oct \let\^=\hex #1}$}}
+    \let\~=\oct \let\^=\hex \let\\=\bin {#1}$}}%$%
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
 \let\V=\lor % logical or
 \let\W=\land % logical and
-\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % section name
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${#2\sevenrm\kern.5em#1}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\let % now you can \send the control sequence \Z
@@ -239,11 +239,13 @@
 
 %\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
 %\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
-\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}}% CWEB style
+\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}} % CWEB style
 \def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\bin{\hbox{$^{\scriptscriptstyle b}$\tt\aftergroup}} % new in CWEB 4.3
 \def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
         \hbox{\strut\kern2pt\.{#1}\kern2pt}}
       \hrule}\vrule\kern2pt}} % verbatim string
+\def\p#1{\cdot 2^{#1}} % power of two (hex exponent)
 
 \def\normaloutput#1{\shipout\vbox{
       \vbox to 3pc{\ifodd\pageno\rightheadline\else\leftheadline\fi\vfill}

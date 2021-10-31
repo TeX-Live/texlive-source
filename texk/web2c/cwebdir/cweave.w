@@ -831,7 +831,8 @@ are pointers into the array |section_text|, not into |buffer|.
 
 @d gather_digits_while(t) while ((t) || *loc=='\'')
   if (*loc=='\'') { /* \CPLUSPLUS/-style digit separator */
-    *id_loc++=' '; loc++; /* insert a little bit of space */
+    *id_loc++=' ';@+ loc++; /* insert a little white space */
+@.\\\ @>
   }@+else *id_loc++=*loc++
 
 @<Get a constant@>= {
@@ -865,18 +866,18 @@ digit_suffix:
 @ @<Get a hex...@>={
   *id_loc++='^'; loc++;
   gather_digits_while(xisxdigit(*loc) || *loc=='.');
-  *id_loc++='/'; goto get_exponent;
+  goto get_exponent;
 }
 
 @ @<Get a bin...@>={
   *id_loc++='\\'; loc++;
   gather_digits_while(*loc=='0' || *loc=='1');
-  *id_loc++='/'; goto digit_suffix;
+  goto digit_suffix;
 }
 
 @ @<Get an oct...@>={
   *id_loc++='~'; gather_digits_while(xisdigit(*loc));
-  *id_loc++='/'; goto digit_suffix;
+  goto digit_suffix;
 }
 
 @ \CEE/ strings and character constants, delimited by double and single
@@ -1950,13 +1951,13 @@ with discretionary breaks in between.
 \.{@@=}string\.{@@>}&|exp|: \.{\\vb\{}string with special characters
   quoted\.\}&maybe\cr
 \.{@@'7'}&|exp|: \.{\\.\{@@'7'\}}&maybe\cr
-\.{077} or \.{\\77}&|exp|: \.{\\T\{\\\~77/\}}&maybe\cr
-\.{0x7f}&|exp|: \.{\\T\{\\\^7f/\}}&maybe\cr
-\.{0b10111}&|exp|: \.{\\T\{\\\\10111/\}}&maybe\cr
+\.{077} or \.{\\77}&|exp|: \.{\\T\{\\\~77\}}&maybe\cr
+\.{0x7f}&|exp|: \.{\\T\{\\\^7f\}}&maybe\cr
+\.{0b10111}&|exp|: \.{\\T\{\\\\10111\}}&maybe\cr
 \.{77}&|exp|: \.{\\T\{77\}}&maybe\cr
 \.{77L}&|exp|: \.{\\T\{77\\\$L\}}&maybe\cr
 \.{0.1E5}&|exp|: \.{\\T\{0.1\\\_5\}}&maybe\cr
-\.{0x10p3}&|exp|: \.{\\T\{\\\^10/\\\%3\}}&maybe\cr
+\.{0x10p3}&|exp|: \.{\\T\{\\\^10\}\\p\{3\}}&maybe\cr
 \.{1'000'000}&|exp|: \.{\\T\{1\\\ 000\\\ 000\}}&maybe\cr
 \.+&|ubinop|: \.+&yes\cr
 \.-&|ubinop|: \.-&yes\cr
@@ -3548,12 +3549,11 @@ while (id_first<id_loc) {
 @q(@>@.\\)@>
   }
   switch (*id_first) {
-    case ' ':case '\\':case '#':case '%':case '$':case '^':
-    case '{': case '}': case '~': case '&': case '_': app('\\'); break;
+    case ' ':case '\\':case '#':case '$':case '^':case '{':case '}':
+    case '~':case '&':case '_': app('\\'); break;
 @.\\\ @>
 @.\\\\@>
 @.\\\#@>
-@.\\\%@>
 @.\\\$@>
 @.\\\^@>
 @.\\\{@>@q}@>
@@ -3561,6 +3561,14 @@ while (id_first<id_loc) {
 @.\\\~@>
 @.\\\&@>
 @.\\\_@>
+    case '%': if (next_control==constant) {
+        app_str("}\\p{"); /* special macro for `hex exponent' */
+        id_first++; /* skip |'%'| */
+      }
+      else app('\\');
+      break;
+@.\\p@>
+@.\\\%@>
     case '@@': if (*(id_first+1)=='@@') id_first++;
       else err_print("! Double @@ should be used in strings");
 @.Double @@ should be used...@>

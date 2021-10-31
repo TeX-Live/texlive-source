@@ -1,8 +1,8 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.5 --- July 2021
+% Version 4.5 --- October 2021
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CWEB4.5}
-\chardef\cwebversion=4 \chardef\cwebrevision=4
+\chardef\cwebversion=4 \chardef\cwebrevision=5
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
 % Uncomment the following line if you want PDF goodies to be the default
@@ -234,11 +234,12 @@
   \else\ifx\nxt\~\ifTnum\addF{0}\else\addF\tildechar\fi % 077->\T{\~77}
   \else\ifx\nxt\_\ifTnum\addF{E}\else\addF_\fi  % 0.1E5->\T{0.1\_5}
   \else\ifx\nxt\^\ifTnum\addF{0x}\else\addF^\fi  % 0x77 -> \T{\^77}
+  \else\ifx\nxt\\\\\ifTnum\addF{0b}\else\addF\\\fi  % 0b10111 -> \T{\\10111}
   \else\ifx\nxt\$\ifTnum\tokprocessedtrue\else\addF$\fi % \T{77\$L}
   \else\ifx\nxt\{\addF\lbchar       \else\ifx\nxt\}\addF\rbchar
   \else\ifx\nxt\ \addF\space        \else\ifx\nxt\#\addF{\string\#}%
   \else\ifx\nxt\PP\addF{++}\else\ifx\nxt\MM\addF{--}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
 }
 \def\makeolproctokctlii{%
   \ifx\nxt\MG\addF{->}\else\ifx\nxt\GG\addF{>>}%
@@ -343,14 +344,12 @@
 \def\Qs{\note{This code is cited in sections}} % xref for mentions of a section
 \let\R=\lnot % logical not
 % \S is section sign
-\def\digitseparator{\,} % a bit of extra space
 \def\T#1{\leavevmode % octal, hex or decimal constant
   \hbox{$\def\?{\kern.2em}%
-    \let\ \digitseparator%
+    \let\ \, % C++ digit separator becomes a little white space
 %    \def\$##1{\egroup_{\,\rm##1}\bgroup}% suffix to constant % versions < 3.67
     \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant % in version 3.67
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
-    \def\%{\cdot 2^{\aftergroup}}% power of two (via dirty trick)
     \let\~=\oct \let\^=\hex \let\\=\bin {#1}$}}
 \def\U{\note{This code is used in section}} % xref for use of a section
 \def\Us{\note{This code is used in sections}} % xref for uses of a section
@@ -370,15 +369,13 @@
 
 %\def\oct{\hbox{\rm\char'23\kern-.2em\it\aftergroup\?\aftergroup}} % WEB style
 %\def\hex{\hbox{\rm\char"7D\tt\aftergroup}} % WEB style
-\def\oct{\hbox{$^\circ$\kern-.1em}\Od}% CWEB style
-\def\hex{\hbox{$^{\scriptscriptstyle\#}$}\Hd} % CWEB style
-\def\bin{\hbox{$^{\scriptscriptstyle b}$}\Bd}
-\def\Od#1/{{\it#1}} % octal digit
-\def\Hd#1/{{\tt#1}} % hexadecimal digit
-\def\Bd#1/{{\tt#1}} % binary digit
+\def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}} % CWEB style
+\def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
+\def\bin{\hbox{$^{\scriptscriptstyle b}$\tt\aftergroup}} % new in CWEB 4.3
 \def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
         \hbox{\strut\kern2pt\.{#1}\kern2pt}}
       \hrule}\vrule\kern2pt}} % verbatim string
+\def\p#1{\cdot 2^{#1}} % power of two (hex exponent)
 
 \def\onmaybe{\let\ifon=\maybe} \let\maybe=\iftrue
 \newif\ifon \newif\iftitle \newif\ifpagesaved
