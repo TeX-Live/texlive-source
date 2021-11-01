@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.48
+# Version : 4.49
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -31,10 +31,10 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.48 (2021-10-19)";
+my $version="4.49 (2021-11-01)";
 
 # History:
-# v4.48:
+# v4.48-4.49:
 #   * No change. (Version number updated in line with glossaries.sty)
 # v4.47:
 #   * Added hybrid instructions if record option detected but not
