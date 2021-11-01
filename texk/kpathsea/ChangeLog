@@ -1,3 +1,10 @@
+2021-11-01  Marcel Fabian Krueger  <tex@2krueger.de>
+
+	* str-list.c (str_list_uniqify): compare each input element
+	against the elements to be returned, to keep the ordering of the
+	result the same as the input.  Then the first result in a list
+	from kpsewhich -a will be the same as the result of just kpsewhich.
+
 2021-05-14  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXINPUTS.optex): new definition for new format.

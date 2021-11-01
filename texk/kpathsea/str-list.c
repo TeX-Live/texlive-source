@@ -128,20 +128,28 @@ str_list_uniqify (str_list_type *l)
 
   for (e = 0; e < STR_LIST_LENGTH (*l); e++) {
     string elt1 = STR_LIST_ELT (*l, e);
+    /* printf ("outer l[%d]: %s\n", e, elt1); */
+    
+    /* Compare against known-unique list ret; this keeps the elements in
+       the return list in the same order as the input list.  */
     unsigned f;
-    for (f = e + 1; f < STR_LIST_LENGTH (*l); f++) {
-      string elt2 = STR_LIST_ELT (*l, f);
-      /* I don't think our list should ever contain NULL's, but if
-         it does, let it stay and don't bother collapsing multiple
+    for (f = 0; f < STR_LIST_LENGTH (ret); f++) {
+      string elt2 = STR_LIST_ELT (ret, f);
+      /* printf("  inner ret[%d]: %s\n", f, elt2); */
+      
+      /* I don't think our lists should ever contain NULL's, but if
+         it does, let them stay and don't bother collapsing multiple
          NULL's into one.  */
       if (FILESTRCASEEQ (elt1, elt2)) {
         break;
       }
     }
 
-    if (f == STR_LIST_LENGTH (*l)) {
+    if (f == STR_LIST_LENGTH (ret)) {
+      /* printf ("  added new\n"); */
       str_list_add (&ret, elt1); /* not found */
     } else {
+      /* printf ("  skipped duplicate\n"); */
       free (elt1);  /* duplicate, forget this one */
     }
   }
@@ -149,3 +157,31 @@ str_list_uniqify (str_list_type *l)
   /* Replace the passed list with what we constructed.  */
   *l = ret;
 }
+
+#ifdef TEST
+int
+main ()
+{
+  unsigned e;
+  str_list_type tst = str_list_init ();
+  str_list_add (&tst, xstrdup("a"));
+  str_list_add (&tst, xstrdup("a"));
+  str_list_add (&tst, xstrdup("b"));
+  str_list_add (&tst, xstrdup("a"));
+  str_list_uniqify (&tst);  
+  
+  for (e = 0; e < STR_LIST_LENGTH (tst); e++) {
+    printf ("ret[%d]: %s\n", e, STR_LIST_ELT(tst, e));
+  }
+  
+  return 0;
+}
+
+#endif /* TEST */
+
+
+/*
+Local variables:
+standalone-compile-command: "gcc -g -I. -I.. -I$WK -DTEST -DMAKE_KPSE_DLL str-list.c $wk/.libs/libkpathsea.a"
+End:
+*/
