@@ -1,3 +1,10 @@
+2021-11-03  Naveen M K  <naveen521kk@gmail.com>
+
+	* Makefile.am (install-exec-hook) [WIN32]: install via libtool,
+	so as to install the real program, not just the libtool wrapper.
+	Found for msys2.
+	https://tug.org/pipermail/dvipdfmx/2021-October/000301.html
+
 2021-10-29  Marcel Fabian Kr\"uger  <tex@2krueger.de>
 
 	* cidtype0.c: Fix a bug that dvipdfmx segfaults when embedding

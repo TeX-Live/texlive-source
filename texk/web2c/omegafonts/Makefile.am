@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/omegafonts/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS =  -I$(top_builddir)/.. -I$(top_srcdir) $(KPATHSEA_INCLUDES) -DNOT_WEB2C
@@ -82,8 +84,9 @@ include $(top_srcdir)/../../am/bin_links.am
 if OTANGLE
 install-exec-hook: install-bin-links
 if WIN32
+# same install happens in dvipdfmx.
 	for f in $(linked_programs); do \
-	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
+	  $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) "$(DESTDIR)$(bindir)/$$f$(EXEEXT)"
 	done
 endif WIN32
 uninstall-hook: uninstall-bin-links

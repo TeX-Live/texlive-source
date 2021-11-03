@@ -1,6 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/dvipdfm-x/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 bin_PROGRAMS = xdvipdfmx
@@ -209,10 +210,11 @@ dist_cmapdata_DATA = data/EUC-UCS2
 
 install-exec-hook: install-bin-links
 if WIN32
-	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
-	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)
-	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
-	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+# same install happens in web2c/omegafonts.
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)"
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)"
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/ebb$(EXEEXT)"
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/extractbb$(EXEEXT)"
 endif WIN32
 
 install-data-hook: install-man1-links

@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -128,9 +128,9 @@ call_mf_LDADD =
 if WIN32
 install-mf-links: call_mf$(EXEEXT)
 if !MFN
-	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_mf$(EXEEXT) "$(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)"
 endif !MFN
-	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/inimf$(EXEEXT)
+	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_mf$(EXEEXT) "$(DESTDIR)$(bindir)/inimf$(EXEEXT)"
 uninstall-mf-links:
 if !MFN
 	rm -f $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)

@@ -2001,10 +2001,11 @@ uninstall-man1-links:
 	done
 
 install-exec-hook: install-bin-links
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/ebb$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) $(DESTDIR)$(bindir)/extractbb$(EXEEXT)
+# same install happens in web2c/omegafonts.
+@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/dvipdfm$(EXEEXT)"
+@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/dvipdfmx$(EXEEXT)"
+@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/ebb$(EXEEXT)"
+@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_xdvipdfmx$(EXEEXT) "$(DESTDIR)$(bindir)/extractbb$(EXEEXT)"
 
 install-data-hook: install-man1-links
 

@@ -1,3 +1,9 @@
+2021-11-03  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (install-exec-hook) [WIN32]: install via libtool,
+	the same change as made for dvipdfmx.
+	https://tug.org/pipermail/dvipdfmx/2021-October/000301.html
+
 2020-12-04  Karl Berry  <karl@freefriends.org>
 
 	* pl-lexer.l (YY_BUF_SIZE): #define 110000, for the same

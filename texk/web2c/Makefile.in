@@ -21554,8 +21554,8 @@ trip-clean:
 
 .PHONY: install-mf-links uninstall-mf-links
 @WIN32_TRUE@install-mf-links: call_mf$(EXEEXT)
-@MFN_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)
-@WIN32_TRUE@	$(INSTALL_PROGRAM) call_mf$(EXEEXT) $(DESTDIR)$(bindir)/inimf$(EXEEXT)
+@MFN_FALSE@@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_mf$(EXEEXT) "$(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)"
+@WIN32_TRUE@	$(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_mf$(EXEEXT) "$(DESTDIR)$(bindir)/inimf$(EXEEXT)"
 @WIN32_TRUE@uninstall-mf-links:
 @MFN_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/mf-nowin$(EXEEXT)
 @WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/inimf$(EXEEXT)

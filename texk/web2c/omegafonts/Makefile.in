@@ -1425,8 +1425,9 @@ uninstall-bin-links:
 @WIN32_FALSE@	done
 
 @OTANGLE_TRUE@install-exec-hook: install-bin-links
+# same install happens in dvipdfmx.
 @OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \
-@OTANGLE_TRUE@@WIN32_TRUE@	  $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) $(DESTDIR)$(bindir)/$$f$(EXEEXT) || exit 1; \
+@OTANGLE_TRUE@@WIN32_TRUE@	  $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) call_omfonts$(EXEEXT) "$(DESTDIR)$(bindir)/$$f$(EXEEXT)"
 @OTANGLE_TRUE@@WIN32_TRUE@	done
 @OTANGLE_TRUE@uninstall-hook: uninstall-bin-links
 @OTANGLE_TRUE@@WIN32_TRUE@	for f in $(linked_programs); do \

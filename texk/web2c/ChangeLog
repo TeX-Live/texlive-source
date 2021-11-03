@@ -1,3 +1,9 @@
+2021-11-03  Karl Berry  <karl@freefriends.org>
+
+	* am/texmf.am (install-mf-links) [WIN32]: install via libtool,
+	the same change as made for dvipdfmx.
+	https://tug.org/pipermail/dvipdfmx/2021-October/000301.html
+
 2021-10-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
