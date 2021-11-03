@@ -1,3 +1,8 @@
+2021-11-03  Karl Berry  <karl@freefriends.org>
+
+	* dvips.texi: PostScript not Postscript; remove broken urls;
+	a couple other typos.
+
 2021-10-24  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi (Option details) <-l>: describe [.PAGESEQ] subvalue.

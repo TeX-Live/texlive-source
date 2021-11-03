@@ -1,11 +1,11 @@
 This is dvips.info, produced by makeinfo version 6.8 from dvips.texi.
 
-This manual documents Dvips version 2021.1 (October 2021), a program to
+This manual documents Dvips version 2021.1 (November 2021), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 INFO-DIR-SECTION TeX
 START-INFO-DIR-ENTRY
-* DVI-to-Postscript: (dvips).        Translating TeX DVI files to PostScript.
+* DVI-to-PostScript: (dvips).        Translating TeX DVI files to PostScript.
 * afm2tfm: (dvips)Invoking afm2tfm.  Making Type 1 fonts available to TeX.
 * dvips: (dvips)Invoking Dvips.      DVI-to-PostScript translator.
 END-INFO-DIR-ENTRY
@@ -16,7 +16,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 2021.1 (October 2021), a program to
+This manual documents Dvips version 2021.1 (November 2021), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 
@@ -213,7 +213,7 @@ format.  The latest version is available via <https://ghostscript.com>.
    The program Ghostview, originally written by Johannes Plass and Tim
 Theisen, provides typical previewing capabilities (next page/previous
 page, magnification, etc.).  It requires Ghostscript to run, and files
-in structured Postscript, specifically with '%%Page' comments (no 'N' in
+in structured PostScript, specifically with '%%Page' comments (no 'N' in
 'config.ps').  The current version is known as GV, and is available from
 <https://www.gnu.org/software/gv>.
 
@@ -1213,7 +1213,7 @@ There is no provision for continuation lines.
 
 'N*'
      Disable structured comments.  Beware: This also turns off
-     displaying page numbers or changing to specific pagenumbers in
+     displaying page numbers or changing to specific page numbers in
      PostScript viewers.  Same as '-N', *note Option details::.
 
 'o NAME'
@@ -1371,7 +1371,7 @@ An alternate specification of 'landscape':
      \special{landscape}
 
 This is supported for backward compatibility, but it is hoped that
-reventually the 'papersize' comment will dominate.
+eventually the 'papersize' comment will dominate.
 
    Of course, such a '\special' only informs Dvips of the desired paper
 size; you must also adjust '\hsize' and '\vsize' in your TeX document
@@ -2387,11 +2387,6 @@ more, but copies are available elsewhere:
      <http://www.math.hawaii.edu/~ralph/MathOnWeb/TeXPDF.html>
      <http://www.utdallas.edu/~cantrell/online/543e.html>
 
-   You may also want to check "Notes on converting (La)TeX documents to
-robust PDF using Rokicki's dvips and Acrobat Distiller" by Timothy P.
-Van Zandt:
-<http://www.emrg.com/texpdf.htmlhttp://zandtwerk.insead.fr/tex2pdf.html>.
-
 
 File: dvips.info,  Node: Hypertext specials,  Prev: Hypertext caveats,  Up: Hypertext
 
@@ -2536,7 +2531,7 @@ ff, ffi, and ffl.)
 
    Different typesetting systems use different metric file formats:
 
-   * Each Postscript font has an "Adobe font metrics" ('.afm') file.
+   * Each PostScript font has an "Adobe font metrics" ('.afm') file.
      These files are plain text, so you can inspect them easily.  You
      can get AFM files for Adobe's fonts from
      <ftp://ftp.adobe.com/pub/adobe/Fonts/AFMs>.
@@ -2594,7 +2589,7 @@ appearance of the font at small sizes or low resolutions.
 
    Although various kinds of PostScript outline fonts exist, by far the
 most common, and the only one we will consider, is called "Type 1".  The
-glyph files for Postscript Type 1 fonts typically have names ending in
+glyph files for PostScript Type 1 fonts typically have names ending in
 '.pfa' ("printer font ASCII") or '.pfb' ("printer font binary").
 
    In contrast, glyph files for Computer Modern and the other standard
@@ -2713,7 +2708,7 @@ To dvips, bitmapped fonts do not have any notion of linguistics; they
 are simply a vector of glyphs.  By comparison, PostScript fonts are
 required to contain an encoding vector that at least provides glyph
 names; these names can permit PostScript and PDF viewers to extract
-legible text from Postscript and PDF output.
+legible text from PostScript and PDF output.
 
    Unlike previous versions, dvips versions 2020 and later add glyph
 naming information to Type 3 bitmapped fonts (if they can locate such
@@ -2868,7 +2863,7 @@ something like this:
      afm2tfm Times-Roman -v ptmr rptmr
 
 This reads the file 'Times-Roman.afm', and produces two files as output,
-namely the virtual property list'file 'ptmr.vpl', and the "raw" font
+namely the virtual property list file 'ptmr.vpl', and the "raw" font
 metric file 'rptmr.tfm'.  To use the font in TeX, you first run
 
      vptovf ptmr.vpl ptmr.vf ptmr.tfm
@@ -4268,7 +4263,6 @@ Index
 * hsize (psfile special option):         psfile special.      (line  24)
 * html specials:                         Hypertext.           (line   6)
 * html specials, and -z:                 Option details.      (line 420)
-* http://xxx.lanl.gov/hypertex:          Hypertext.           (line  22)
 * Hungarian umlaut:                      Reencoding with Afm2tfm.
                                                               (line  32)
 * hyperdvi extensions, enabling:         Option details.      (line 420)
@@ -4722,84 +4716,84 @@ Index
 
 
 Tag Table:
-Node: Top520
-Node: Why Dvips1269
-Node: Installation3852
-Node: config.ps installation4787
-Node: PostScript font installation7394
-Node: Ghostscript installation8314
-Node: Diagnosing problems9253
-Node: Debug options10344
-Node: No output11348
-Node: Small or inverted12814
-Node: Printer errors13532
-Node: Long documents fail14864
-Node: Including graphics fails15205
-Node: Invoking Dvips16444
-Node: Basic usage17035
-Node: Command-line options18033
-Node: Option summary18481
-Node: Option details20756
-Node: Environment variables41042
-Node: Config files43903
-Node: Configuration file searching44573
-Node: Configuration file commands47770
-Node: Paper size and landscape55840
-Node: papersize special57465
-Node: Config file paper sizes59173
-Node: Paper trays63329
-Node: Interaction with PostScript64663
-Node: PostScript figures65316
-Node: Bounding box66042
-Node: \includegraphics69414
-Node: EPSF macros71706
-Node: EPSF scaling73674
-Node: EPSF clipping76244
-Node: psfile special76886
-Node: Dynamic creation of graphics79278
-Node: Fonts in figures80596
-Node: Header files82246
-Node: Including headers from TeX83452
-Node: Including headers from the command line85490
-Node: Headers and memory usage86589
-Node: Literal PS87800
-Node: " special88382
-Node: ps special89123
-Node: Literal headers90621
-Node: PostScript hooks91330
-Node: Literal examples93426
-Node: Hypertext94880
-Node: Hypertext caveats96054
-Node: Hypertext specials100410
-Node: PostScript fonts103044
-Node: Font concepts104161
-Node: Metric files105391
-Node: Glyph files108171
-Node: Virtual fonts110530
-Node: Encodings112685
-Node: Bitmap font encodings115087
-Node: PostScript typesetting117617
-Node: Making a font available120714
-Node: Invoking afm2tfm125748
-Node: Changing font encodings126768
-Node: Changing TeX encodings127559
-Node: Changing PostScript encodings128661
-Node: Changing both encodings130005
-Node: Reencoding with Afm2tfm130679
-Node: Encoding file format133782
-Node: Special font effects137986
-Node: Afm2tfm options140246
-Node: psfonts.map143771
-Node: Color148501
-Node: Color macro files149545
-Node: User-definable colors152755
-Node: Color subtleties154031
-Node: Ted Turner155683
-Node: Color device configuration156908
-Node: Color support details159352
-Node: Color specifications159730
-Node: Color specials161134
-Node: Index163263
+Node: Top521
+Node: Why Dvips1271
+Node: Installation3854
+Node: config.ps installation4789
+Node: PostScript font installation7396
+Node: Ghostscript installation8316
+Node: Diagnosing problems9255
+Node: Debug options10346
+Node: No output11350
+Node: Small or inverted12816
+Node: Printer errors13534
+Node: Long documents fail14866
+Node: Including graphics fails15207
+Node: Invoking Dvips16446
+Node: Basic usage17037
+Node: Command-line options18035
+Node: Option summary18483
+Node: Option details20758
+Node: Environment variables41044
+Node: Config files43905
+Node: Configuration file searching44575
+Node: Configuration file commands47772
+Node: Paper size and landscape55843
+Node: papersize special57468
+Node: Config file paper sizes59175
+Node: Paper trays63331
+Node: Interaction with PostScript64665
+Node: PostScript figures65318
+Node: Bounding box66044
+Node: \includegraphics69416
+Node: EPSF macros71708
+Node: EPSF scaling73676
+Node: EPSF clipping76246
+Node: psfile special76888
+Node: Dynamic creation of graphics79280
+Node: Fonts in figures80598
+Node: Header files82248
+Node: Including headers from TeX83454
+Node: Including headers from the command line85492
+Node: Headers and memory usage86591
+Node: Literal PS87802
+Node: " special88384
+Node: ps special89125
+Node: Literal headers90623
+Node: PostScript hooks91332
+Node: Literal examples93428
+Node: Hypertext94882
+Node: Hypertext caveats96056
+Node: Hypertext specials100184
+Node: PostScript fonts102818
+Node: Font concepts103935
+Node: Metric files105165
+Node: Glyph files107945
+Node: Virtual fonts110304
+Node: Encodings112459
+Node: Bitmap font encodings114861
+Node: PostScript typesetting117391
+Node: Making a font available120488
+Node: Invoking afm2tfm125522
+Node: Changing font encodings126542
+Node: Changing TeX encodings127333
+Node: Changing PostScript encodings128435
+Node: Changing both encodings129779
+Node: Reencoding with Afm2tfm130453
+Node: Encoding file format133556
+Node: Special font effects137760
+Node: Afm2tfm options140020
+Node: psfonts.map143545
+Node: Color148275
+Node: Color macro files149319
+Node: User-definable colors152529
+Node: Color subtleties153805
+Node: Ted Turner155457
+Node: Color device configuration156682
+Node: Color support details159126
+Node: Color specifications159504
+Node: Color specials160908
+Node: Index163037
 
 End Tag Table
 

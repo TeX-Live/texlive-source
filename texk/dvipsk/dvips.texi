@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2021.1
-@set month-year October 2021
+@set month-year November 2021
 
 @copying
 This manual documents Dvips version @value{version}
@@ -25,7 +25,7 @@ PostScript.  You may freely use, modify and/or distribute this file.
 
 @dircategory TeX
 @direntry
-* DVI-to-Postscript: (dvips).        Translating TeX DVI files to PostScript.
+* DVI-to-PostScript: (dvips).        Translating TeX DVI files to PostScript.
 * afm2tfm: (dvips)Invoking afm2tfm.  Making Type 1 fonts available to TeX.
 * dvips: (dvips)Invoking Dvips.      DVI-to-PostScript translator.
 @end direntry
@@ -236,7 +236,7 @@ format.  The latest version is available via
 The program Ghostview, originally written by Johannes Plass and Tim
 Theisen, provides typical previewing capabilities (next page/previous
 page, magnification, etc.).  It requires Ghostscript to run, and files
-in structured Postscript, specifically with @samp{%%Page} comments (no
+in structured PostScript, specifically with @samp{%%Page} comments (no
 @samp{N} in @file{config.ps}).  The current version is known as GV,
 and is available from @url{https://www.gnu.org/software/gv}.
 
@@ -1467,7 +1467,7 @@ Metafont mode.  Same as @samp{-mode}, @pxref{Option details}.
 @item N*
 @opindex N @r{ config command (disable EPS)}
 Disable structured comments.  Beware: This also turns off displaying
-page numbers or changing to specific pagenumbers in PostScript viewers.
+page numbers or changing to specific page numbers in PostScript viewers.
 Same as @samp{-N}, @pxref{Option details}.
 
 @item o @var{name}
@@ -1682,7 +1682,7 @@ An alternate specification of @code{landscape}:
 
 @noindent
 This is supported for backward compatibility, but it is hoped that
-reventually the @samp{papersize} comment will dominate.
+eventually the @samp{papersize} comment will dominate.
 
 Of course, such a @code{\special} only informs Dvips of the desired
 paper size; you must also adjust @code{\hsize} and @code{\vsize} in your
@@ -2902,7 +2902,6 @@ output is @code{hyperref} (@url{https://ctan.org/pkg/hyperref}).  For
 plain @TeX{}, the Eplain package has some hyperlink support
 (@url{https://tug.org/eplain}).
 
-@flindex @code{http://xxx.lanl.gov/hypertex}
 @cindex Doyle, Mark
 @cindex Bhattacharya, Tanmoy
 @pindex dvihps@r{, hyperdvi to PostScript}
@@ -3005,11 +3004,6 @@ more, but copies are available elsewhere:
 @url{http://www.math.hawaii.edu/~ralph/MathOnWeb/TeXPDF.html}
 @url{http://www.utdallas.edu/~cantrell/online/543e.html}
 @end display
-
-You may also want to check ``Notes on converting (La)@TeX{} documents
-to robust PDF using Rokicki's dvips and Acrobat Distiller'' by
-Timothy@tie{}P. Van Zandt:@*
-@url{http://www.emrg.com/texpdf.htmlhttp://zandtwerk.insead.fr/tex2pdf.html}.
 
 
 @node Hypertext specials
@@ -3182,7 +3176,7 @@ Different typesetting systems use different metric file formats:
 @item
 @cindex afm files
 @flindex .afm @r{Adobe metric files}
-Each Postscript font has an @dfn{Adobe font metrics} (@samp{.afm})
+Each PostScript font has an @dfn{Adobe font metrics} (@samp{.afm})
 file. These files are plain text, so you can inspect them easily.  You
 can get AFM files for Adobe's fonts from
 @url{ftp://ftp.adobe.com/pub/adobe/Fonts/AFMs}.
@@ -3260,7 +3254,7 @@ appearance of the font at small sizes or low resolutions.
 @flindex .pfb @r{printer font binary files}
 Although various kinds of PostScript outline fonts exist, by far the
 most common, and the only one we will consider, is called @dfn{Type 1}.
-The glyph files for Postscript Type 1 fonts typically have names ending
+The glyph files for PostScript Type 1 fonts typically have names ending
 in @samp{.pfa} (``printer font ASCII'') or @samp{.pfb} (``printer font
 binary'').
 
@@ -3414,7 +3408,7 @@ To dvips, bitmapped fonts do not have any notion of linguistics; they
 are simply a vector of glyphs.  By comparison, PostScript fonts are
 required to contain an encoding vector that at least provides
 glyph names; these names can permit PostScript and PDF viewers to
-extract legible text from Postscript and PDF output.
+extract legible text from PostScript and PDF output.
 
 Unlike previous versions, dvips versions 2020 and later add glyph
 naming information to Type 3 bitmapped fonts (if they can locate such
@@ -3613,7 +3607,7 @@ afm2tfm Times-Roman -v ptmr rptmr
 
 @noindent
 This reads the file @file{Times-Roman.afm}, and produces two files as
-output, namely the virtual property list'file @file{ptmr.vpl}, and the
+output, namely the virtual property list file @file{ptmr.vpl}, and the
 ``raw'' font metric file @file{rptmr.tfm}. To use the font in @TeX{},
 you first run
 
