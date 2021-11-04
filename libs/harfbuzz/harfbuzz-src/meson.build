@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.52.0',
-  version: '3.0.0',
+  version: '3.1.0',
   default_options: [
     'cpp_rtti=false',       # Just to support msvc, we are passing -fno-exceptions also anyway
     'cpp_std=c++11',
@@ -96,7 +96,8 @@ glib_dep = dependency('glib-2.0', required: get_option('glib'),
                       fallback: ['glib', 'libglib_dep'])
 gobject_dep = dependency('gobject-2.0', required: get_option('gobject'),
                          fallback: ['glib', 'libgobject_dep'])
-graphite2_dep = dependency('graphite2', required: get_option('graphite'))
+graphite2_dep = dependency('graphite2', required: get_option('graphite2'))
+graphite_dep = dependency('graphite2', required: get_option('graphite'))
 
 icu_dep = null_dep
 if not get_option('icu').disabled()
@@ -188,7 +189,7 @@ if chafa_dep.found()
   conf.set('HAVE_CHAFA', 1)
 endif
 
-if graphite2_dep.found()
+if graphite2_dep.found() or graphite_dep.found()
   conf.set('HAVE_GRAPHITE2', 1)
 endif
 
@@ -244,17 +245,12 @@ if host_machine.system() == 'windows' and not get_option('gdi').disabled()
 endif
 
 # DirectWrite (Windows)
-directwrite_dep = null_dep
 if host_machine.system() == 'windows' and not get_option('directwrite').disabled()
   if get_option('directwrite').enabled() and not cpp.has_header('dwrite_1.h')
     error('DirectWrite was enabled explicitly, but required header is missing.')
   endif
 
-  directwrite_dep = cpp.find_library('dwrite', required: get_option('directwrite'))
-
-  if directwrite_dep.found()
-    conf.set('HAVE_DIRECTWRITE', 1)
-  endif
+  conf.set('HAVE_DIRECTWRITE', 1)
 endif
 
 # CoreText (macOS)

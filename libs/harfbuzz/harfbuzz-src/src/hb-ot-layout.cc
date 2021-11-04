@@ -688,8 +688,8 @@ hb_ot_layout_script_get_language_tags (hb_face_t    *face,
  *
  * Return value: %true if the language tag is found, %false otherwise
  *
- * Since: ??
- * Deprecated: ??
+ * Since: 0.6.0
+ * Deprecated: 2.0.0
  **/
 hb_bool_t
 hb_ot_layout_script_find_language (hb_face_t    *face,
@@ -1013,24 +1013,15 @@ struct hb_collect_features_context_t
     }
 
     has_feature_filter = true;
+    hb_set_t features_set;
     for (; *features; features++)
+      features_set.add (*features);
+    
+    for (unsigned i = 0; i < g.get_feature_count (); i++)
     {
-      hb_tag_t tag = *features;
-      unsigned index;
-      g.find_feature_index (tag, &index);
-      if (index == OT::Index::NOT_FOUND_INDEX) continue;
-
-      feature_indices_filter.add(index);
-      for (int i = (int) index - 1; i >= 0; i--)
-      {
-        if (g.get_feature_tag (i) != tag) break;
+      hb_tag_t tag = g.get_feature_tag (i);
+      if (features_set.has (tag))
         feature_indices_filter.add(i);
-      }
-      for (unsigned i = index + 1; i < g.get_feature_count (); i++)
-      {
-        if (g.get_feature_tag (i) != tag) break;
-        feature_indices_filter.add(i);
-      }
     }
   }
 
@@ -2011,14 +2002,14 @@ struct hb_get_glyph_alternates_dispatch_t :
   private:
   template <typename T, typename ...Ts> auto
   _dispatch (const T &obj, hb_priority<1>, Ts&&... ds) HB_AUTO_RETURN
-  ( obj.get_glyph_alternates (hb_forward<Ts> (ds)...) )
+  ( obj.get_glyph_alternates (std::forward<Ts> (ds)...) )
   template <typename T, typename ...Ts> auto
   _dispatch (const T &obj, hb_priority<0>, Ts&&... ds) HB_AUTO_RETURN
   ( default_return_value () )
   public:
   template <typename T, typename ...Ts> auto
   dispatch (const T &obj, Ts&&... ds) HB_AUTO_RETURN
-  ( _dispatch (obj, hb_prioritize, hb_forward<Ts> (ds)...) )
+  ( _dispatch (obj, hb_prioritize, std::forward<Ts> (ds)...) )
 };
 
 /**
