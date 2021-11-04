@@ -1,3 +1,6 @@
+- changes:
+  - support structured destinations from PDF 2.0.
+
 pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)
 - changes:
   - for letterspaced fonts, use explicit \fontdimen6 if specified.

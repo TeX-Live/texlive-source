@@ -1,3 +1,7 @@
+2021-11-04  Marcel Kr\"uger  <tex@2krueger.de>
+
+	* pdftex.web: Implement support for PDF 2.0 structure destinations.
+
 2021-09-25  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.web: always call pdf_warning with prepend_nl true,
