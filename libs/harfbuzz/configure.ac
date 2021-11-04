@@ -28,8 +28,7 @@ AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
-# Theoretically harfbuzz does not require C++11?
-AX_CXX_COMPILE_STDCXX([11],,[optional])
+AX_CXX_COMPILE_STDCXX([11])
 
 KPSE_COMPILER_VISIBILITY
 

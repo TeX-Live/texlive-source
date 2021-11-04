@@ -6624,9 +6624,8 @@ printf "%s\n" "no, using $LN_S" >&6; }
 fi
 
 
-# Theoretically harfbuzz does not require C++11?
 
-  ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=false
+  ax_cxx_compile_alternatives="11 0x"    ax_cxx_compile_cxx11_required=true
   ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
