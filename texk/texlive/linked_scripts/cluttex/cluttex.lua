@@ -1369,7 +1369,7 @@ return {
 end
 package.preload["texrunner.handleoption"] = function(...)
 local COPYRIGHT_NOTICE = [[
-Copyright (C) 2016-2020  ARATA Mizuki
+Copyright (C) 2016-2021  ARATA Mizuki
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1893,6 +1893,7 @@ if os.type == "unix" then
   -- Try LuaJIT-like FFI
   local succ, M = pcall(function()
       local ffi = require "ffi"
+      assert(ffi.os ~= "" and ffi.arch ~= "", "ffi library is stub")
       ffi.cdef[[
 int isatty(int fd);
 int fileno(void *stream);
@@ -1938,9 +1939,26 @@ int fileno(void *stream);
     end
   end
 
+  -- Fallback using system command
+  return {
+    isatty = function(file)
+      local fd
+      if file == io.stdin then
+        fd = 0
+      elseif file == io.stdout then
+        fd = 1
+      elseif file == io.stderr then
+        fd = 2
+      else
+        return false
+      end
+      local result = os.execute(string.format("test -t %d", fd))
+      return result == true or result == 0
+    end,
+  }
+
 else
   -- Try LuaJIT
-  -- TODO: Try to detect MinTTY using GetFileInformationByHandleEx
   local succ, M = pcall(function()
       local ffi = require "ffi"
       local bitlib = assert(bit32 or bit, "Neither bit32 (Lua 5.2) nor bit (LuaJIT) found") -- Lua 5.2 or LuaJIT
@@ -2730,35 +2748,53 @@ local message = require "texrunner.message"
 local right_values = {
   dvips = {
     graphics = "dvips",
-    expl3    = "dvips",
+    expl3    = {
+      old = "dvips",
+      new = "dvips",
+    },
     hyperref = "dvips",
     xypic    = "dvips",
   },
   dvipdfmx = {
     graphics = "dvipdfmx",
-    expl3    = "dvipdfmx",
+    expl3    = {
+      old = "dvipdfmx",
+      new = "dvipdfmx",
+    },
     hyperref = "dvipdfmx",
     xypic    = "pdf",
   },
   dvisvgm = {
     graphics = "dvisvgm",
-    expl3    = "dvisvgm",
+    expl3    = {
+      old = "dvisvgm",
+      new = "dvisvgm",
+    },
   },
   xetex = {
     graphics = "xetex",
-    expl3    = "xdvipdfmx",
+    expl3    = {
+      old = "xdvipdfmx",
+      new = "xetex",
+    },
     hyperref = "xetex",
     xypic    = "pdf",
   },
   pdftex = {
     graphics = "pdftex",
-    expl3    = "pdfmode",
+    expl3    = {
+      old = "pdfmode",
+      new = "pdftex",
+    },
     hyperref = "pdftex",
     xypic    = "pdf",
   },
   luatex = {
     graphics = "luatex",
-    expl3    = "pdfmode",
+    expl3    = {
+      old = "pdfmode",
+      new = "luatex",
+    },
     hyperref = "luatex",
     xypic    = "pdf",
   },
@@ -2797,18 +2833,24 @@ local function checkdriver(expected_driver, filelist)
       graphics_driver = "unknown"
     end
   end
-  local expl3_driver = nil -- "pdfmode" | "dvisvgm" | "xdvipdfmx" | "dvipdfmx" | "dvips" | "unknown"
-  if loaded["expl3-code.tex"] or loaded["expl3.sty"] or loaded["l3backend-dvips.def"] or loaded["l3backend-dvipdfmx.def"] or loaded["l3backend-xdvipdfmx.def"] or loaded["l3backend-pdfmode.def"] then
+  local expl3_driver = nil -- "pdfmode" | "dvisvgm" | "xdvipdfmx" | "dvipdfmx" | "dvips" | "pdftex" | "luatex" | "xetex" | "unknown"
+  if loaded["expl3-code.tex"] or loaded["expl3.sty"] or loaded["l3backend-dvips.def"] or loaded["l3backend-dvipdfmx.def"] or loaded["l3backend-xdvipdfmx.def"] or loaded["l3backend-pdfmode.def"] or loaded["l3backend-pdftex.def"] or loaded["l3backend-luatex.def"] or loaded["l3backend-xetex.def"] then
     if loaded["l3backend-pdfmode.def"] then
-      expl3_driver = "pdfmode" -- pdftex, luatex
+      expl3_driver = "pdfmode" -- pdftex, luatex in older l3backend
     elseif loaded["l3backend-dvisvgm.def"] then
       expl3_driver = "dvisvgm"
     elseif loaded["l3backend-xdvipdfmx.def"] then
-      expl3_driver = "xdvipdfmx"
+      expl3_driver = "xdvipdfmx" -- xetex in older l3backend
     elseif loaded["l3backend-dvipdfmx.def"] then
       expl3_driver = "dvipdfmx"
     elseif loaded["l3backend-dvips.def"] then
       expl3_driver = "dvips"
+    elseif loaded["l3backend-pdftex.def"] then
+      expl3_driver = "pdftex"
+    elseif loaded["l3backend-luatex.def"] then
+      expl3_driver = "luatex"
+    elseif loaded["l3backend-xetex.def"] then
+      expl3_driver = "xetex"
     else
       -- TODO: driver=latex2e?
       expl3_driver = "unknown"
@@ -2857,9 +2899,12 @@ local function checkdriver(expected_driver, filelist)
     message.diag("The driver option for graphics(x)/color is missing or wrong.")
     message.diag("Consider setting '", expected.graphics, "' option.")
   end
-  if expl3_driver ~= nil and expected.expl3 ~= nil and expl3_driver ~= expected.expl3 then
+  if expl3_driver ~= nil and expected.expl3 ~= nil and expl3_driver ~= expected.expl3.old and expl3_driver ~= expected.expl3.new then
     message.diag("The driver option for expl3 is missing or wrong.")
-    message.diag("Consider setting 'driver=", expected.expl3, "' option when loading expl3.")
+    message.diag("Consider setting 'driver=", expected.expl3.new, "' option when loading expl3.")
+    if expected.expl3.old ~= expected.expl3.new then
+      message.diag("You might need to instead set 'driver=", expected.expl3.old, "' if you are using an older version of expl3.")
+    end
   end
   if hyperref_driver ~= nil and expected.hyperref ~= nil and hyperref_driver ~= expected.hyperref then
     message.diag("The driver option for hyperref is missing or wrong.")
@@ -2888,7 +2933,7 @@ return {
 }
 end
 --[[
-  Copyright 2016-2020 ARATA Mizuki
+  Copyright 2016-2021 ARATA Mizuki
 
   This file is part of ClutTeX.
 
@@ -2906,7 +2951,7 @@ end
   along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-CLUTTEX_VERSION = "v0.5"
+CLUTTEX_VERSION = "v0.5.1"
 
 -- Standard libraries
 local coroutine = coroutine
