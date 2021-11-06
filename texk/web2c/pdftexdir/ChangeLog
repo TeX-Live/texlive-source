@@ -1,3 +1,9 @@
+2021-11-05  Karl Berry  <karl@freefriends.org>
+
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]24 for TL'22, in advance, for structured dest test.
+
 2021-11-04  Marcel Kr\"uger  <tex@2krueger.de>
 
 	* pdftex.web: Implement support for PDF 2.0 structure destinations.
