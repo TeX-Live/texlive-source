@@ -1,6 +1,9 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+* First return path from kpsewhich -all is now the same as non-all.
+  (Internally, str_list_uniqify retains ordering.)
+
 6.3.3 (for TeX Live 2021, 23 March 2021)
 * The library does not emit warnings for unrecognized filenames,
   leaving it up to the caller.

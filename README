@@ -78,7 +78,10 @@ x86_64-darwinlegacy:
 i386-linux,
 x86_64-linux,
 x86_64-linuxmusl:
-  Alpine 3.1 Docker image with musl libc 1.1.5
-  Binaries are taken from the CI testing on travis-ci
-  see the source/.travis.yaml file for details on how to build,
+  CentOS 7 Docker image with musl libc 1.1.5, plus gcc10:
+    yum -y install centos-release-scl-rh
+    yum -y install devtoolset-10-gcc-c++
+    yum install -y fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+  Binaries are taken from the CI testing via github;
+  see the source/.github/* files for details on how to build,
   and tlpkg/bin/tl-update-bindir for updating binaries (in general).
