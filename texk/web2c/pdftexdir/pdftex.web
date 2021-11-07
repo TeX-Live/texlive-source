@@ -19929,11 +19929,11 @@ begin
     end;
     print(" has been referenced but does not exist");
     print_ln; print_ln;
-    {pdf_begin_obj(k, 1);
+    @{pdf_begin_obj(k, 1);
     pdf_out("[");
     pdf_print_int(head_tab[obj_type_page]);
     pdf_print_ln(" 0 R /Fit]");
-    pdf_end_obj;}
+    pdf_end_obj;@}
 end;
 
 @ @<Check for non-existing structure destinations@>=

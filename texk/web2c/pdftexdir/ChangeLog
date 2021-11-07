@@ -1,3 +1,7 @@
+2021-11-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.web: Use WEB meta-comment for stale code.
+
 2021-11-05  Karl Berry  <karl@freefriends.org>
 
         * pdftex_version.h,
