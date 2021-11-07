@@ -1,3 +1,22 @@
+2021-11-07  Marcel Kr\"uger  <tex@2krueger.de>
+
+	* showstream.ch: new primitive \showstream.
+	* NEWS: mention this.
+
+	* eptexdir/am/eptex.am (eptex_web_srcs),
+	* euptexdir/am/euptex.am (euptex_web_srcs),
+	* pdftexdir/am/pdftex.am (pdftex_ch_srcs),
+	* xetexdir/am/xetex.am (xetex_ch_srcs): include showstream.ch.
+
+	* enctexdir/enctex-pdftex.ch: rearrange constants.
+	
+	* luatexdir/tex/commands.c (initialize_etex_commands): primitive_etex.
+	* luatexdir/tex/equivalents.h (show_stream_code, show_stream_par):
+	new #define.
+	(math_option_code): increment.
+	* luatexdir/tex/mainbody.c (main_initialize): show_stream_par=-1.
+	* luatexdir/tex/maincontrol.c (show_whatever): implement \showstream.
+
 2021-11-03  Karl Berry  <karl@freefriends.org>
 
 	* am/texmf.am (install-mf-links) [WIN32]: install via libtool,
