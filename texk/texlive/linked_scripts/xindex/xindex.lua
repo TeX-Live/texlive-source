@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.33
+ local version = 0.34
 xindex.version = version
 --xindex.self = "xindex"
 
