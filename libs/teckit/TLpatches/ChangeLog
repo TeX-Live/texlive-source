@@ -1,3 +1,10 @@
+2021-11-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Imported TECkit-2.5.11 source tree (teckit) from
+	https://github.com/silnrsi/teckit/archive/2.5.11.tar.gz.
+	patch-06-dont-build-sfconv, patch-07-warnings-and-static:
+	Adapted.
+
 2020-05-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	Imported TECkit-2.5.10 source tree (teckit) from

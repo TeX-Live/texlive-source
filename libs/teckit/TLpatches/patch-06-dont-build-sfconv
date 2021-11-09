@@ -1,6 +1,6 @@
-diff -ur teckit-2.5.10/bin/Makefile.am teckit-src/bin/Makefile.am
---- teckit-2.5.10/bin/Makefile.am	Tue May 05 23:09:53 2020
-+++ teckit-src/bin/Makefile.am	Wed May 06 09:09:23 2020
+diff -ur teckit-2.5.11/bin/Makefile.am teckit-src/bin/Makefile.am
+--- teckit-2.5.11/bin/Makefile.am	Thu Jul 30 04:27:12 2020
++++ teckit-src/bin/Makefile.am	Tue Nov 09 14:44:08 2021
 @@ -1,6 +1,6 @@
  AUTOMAKE_OPTIONS = -Wno-portability
  

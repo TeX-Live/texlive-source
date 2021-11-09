@@ -7,7 +7,7 @@ tools or by linking with other software packages.
 See the Documentation folder for information on the TECkit mapping language
 and conversion tool usage notes.
 
-The TECkit libraries have been updated to support the Unicode 13.0.0 character
+The TECkit libraries have been updated to support the Unicode 14.0.0 character
 repertoire.
 
 Starting with TECkit version 2.5.7 there are several changes with the Windows

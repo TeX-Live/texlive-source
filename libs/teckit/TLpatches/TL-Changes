@@ -1,5 +1,5 @@
-Changes applied to the TECkit-2.5.10/ tree obtained from:
-	https://github.com/silnrsi/teckit/archive/2.5.10.tar.gz.
+Changes applied to the TECkit-2.5.11/ tree obtained from:
+	https://github.com/silnrsi/teckit/archive/2.5.11.tar.gz.
 
 Removed execute permissions from:
 	installed-top.pc.in
