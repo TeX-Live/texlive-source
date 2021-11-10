@@ -1,0 +1,76 @@
+% $Id$
+% Copyright 2020 Bruno Voisin <tex-live@tug.org>
+% You may freely use, modify and/or distribute this file.
+%
+\ifx\fmtname\undefined
+  \input basic
+  \def\fmtname{basic}
+  \expandafter\dump
+\fi
+%==================
+\special{pdf:minorversion 7}
+
+\topskip0pt
+
+\hbox{\XeTeXpicfile "1-4.jpg" width \hsize height \vsize}
+\vfill\eject
+
+\hbox{\XeTeXpdffile "B.pdf" width \hsize height \vsize}
+\vfill\eject
+
+\hbox{\XeTeXpicfile "lily-ledger-broken.png" width \hsize height \vsize}
+\vfill\eject
+
+\vbox to\vsize{\vfill%
+  \special{pdf:image
+    width \the\hsize
+%    height \the\vsize
+  (1-4.jpg)}}
+\eject
+
+\vbox to\vsize{\vfill%
+  \special{pdf:epdf
+    width \the\hsize
+%    height \the\vsize
+   (B.pdf)}}
+\eject
+
+\vbox to\vsize{\vfill%
+  \special{pdf:image
+    width \the\hsize
+%    height \the\vsize
+  (lily-ledger-broken.png)}}
+\eject
+
+\bye
+
+Date: Sat, 16 May 2020 01:33:51 +0200
+From: Bruno Voisin via tex-live <tex-live@tug.org>
+To: tex-live@tug.org
+Subject: Re: xetex test creation for reading pdf images?
+
+Here's a (very quickly) hacked adaptation of luaimage.tex to xetex. I commented out the format creation section at the beginning to test on my setup, after downloading
+
+Build/source/texk/web2c/luatexdir/tests/luaimage.tex
+
+Build/source/texk/web2c/tests/1-4.jpg
+Build/source/texk/web2c/tests/B.pdf
+Build/source/texk/web2c/tests/lily-ledger-broken.png
+
+Two forms of image inclusion commands are used:
+
+- \XeTeXpicfile and \XeTeXpdffile which are the original XeTeX commands,
+
+- \special{pdf:image and \special{pdf:epdf which are the (x)dvipdfm(x) specials,
+
+based on XeTeX-notes.pdf, xetex-reference.pdf, dvipdfm.pdf and dvipdfmx.pdf.
+
+There are some subtle differences between the two forms, not just their syntax but also the way they work. With the latter, specifying both the width and height in a way that alters the aspect ratio of the image does not seem to work: in this case, the image is nowhere to be seen.
+
+That's odd, because I looked at the associated xetex.def and dvipdfmx.def from the graphics package for double-checking and inspiration, and there seems to be no trick to deal with this, it seems to be business as usual with \Gin@req@width and \Gin@req@height.
+
+I won't be able to pursue the matter or maintain this file, it's just to get this thing started. (And I didn't attempt to modify the copyright at the beginning.)
+
+Bruno Voisin
+
+untyped binary data, xeteximage.tex [Press RETURN to save to a file]

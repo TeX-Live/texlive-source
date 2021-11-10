@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 59259 2021-05-18 21:39:53Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2021 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -6,7 +5,7 @@
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 59259 $';
+my $svnrev = '$Revision: 60823 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -112,7 +111,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::report_tlpdb_differences(\%ret);
   TeXLive::TLUtils::tlnet_disabled_packages($root);
   TeXLive::TLUtils::mktexupd();
-  TeXLive::TLUtils::setup_sys_user_mode($optsref,$tmfc, $tmfsc, $tmfv, $tmfsv);
+  TeXLive::TLUtils::setup_sys_user_mode($prg,$optsref,$tmfc,$tmfsc,$tmfv,$tmfsv);
   TeXLive::TLUtils::prepend_own_path();
   TeXLive::TLUtils::repository_to_array($str);
 
@@ -1184,14 +1183,14 @@ time stamps are preserved and symlinks are created on Unix systems. On
 Windows, C<(-l $file)> will never return 'C<true>' and so symlinks will
 be (uselessly) copied as regular files.
 
-If the argument is C<"-L"> and C<$file> is a symlink, the link is
+If the first argument is C<"-L"> and C<$file> is a symlink, the link is
 dereferenced before the copying is done. (If both C<"-f"> and C<"-L">
-are desired, they must be given in that order, although the current code
-has no need to do this.)
+are desired, they must be given in that order, although the codebase
+currently has no need to do this.)
 
-C<copy> invokes C<mkdirhier> if target directories do not exist.  Files
-have mode C<0777> if they are executable and C<0666> otherwise, with
-the set bits in I<umask> cleared in each case.
+C<copy> invokes C<mkdirhier> if target directories do not exist. Files
+start with mode C<0777> if they are executable and C<0666> otherwise,
+with the set bits in I<umask> cleared in each case.
 
 C<$file> can begin with a C<file:/> prefix.
 
@@ -1753,7 +1752,7 @@ sub _do_postaction_filetype {
   }
   my $cmd = $keyval{'cmd'};
 
-  my $texdir = `kpsewhich -var-value=SELFAUTOPARENT`;
+  my $texdir = `kpsewhich -var-value=TEXMFROOT`;
   chomp($texdir);
   my $texdir_bsl = conv_to_w32_path($texdir);
   $cmd =~ s!^("?)TEXDIR/!$1$texdir/!g;
@@ -1828,7 +1827,7 @@ sub _do_postaction_script {
   if (win32() && defined($keyval{'filew32'})) {
     $file = $keyval{'filew32'};
   }
-  my $texdir = `kpsewhich -var-value=SELFAUTOPARENT`;
+  my $texdir = `kpsewhich -var-value=TEXMFROOT`;
   chomp($texdir);
   my @syscmd;
   if ($file =~ m/\.pl$/i) {
@@ -1903,7 +1902,7 @@ sub _do_postaction_shortcut {
 
   &log("postaction $how shortcut for " . $tlpobj->name . "\n");
   if ($how eq "install") {
-    my $texdir = `kpsewhich -var-value=SELFAUTOPARENT`;
+    my $texdir = `kpsewhich -var-value=TEXMFROOT`;
     chomp($texdir);
     my $texdir_bsl = conv_to_w32_path($texdir);
     $icon =~ s!^TEXDIR/!$texdir/!;
@@ -4677,9 +4676,14 @@ sub mktexupd {
 
 =item C<setup_sys_user_mode($prg, $optsref, $tmfc, $tmfsc, $tmfv, $tmfsv)>
 
-Return two-element list C<($texmfconfig,$texmfvar)> of which directories
-to use, either user or sys. If C<$prg> is C<mktexfmt>, and the system
-dirs are writable, use them even if we are in user mode.
+Return two-element list C<($texmfconfig,$texmfvar)> specifying which
+directories to use, either user or sys.  If C<$optsref->{'sys'}>  is
+true, we are in sys mode; else if C<$optsref->{'user'}> is set, we are
+in user mode; else a fatal error.
+
+If C<$prg> eq C<"mktexfmt">, and C<$TEXMFSYSVAR/web2c> is writable, use
+it instead of C<$TEXMFVAR>, even if we are in user mode. C<$TEXMFCONFIG>
+is not switched, however.
 
 =cut
 
