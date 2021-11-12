@@ -1,0 +1,33 @@
+#! /bin/sh -vx
+# $Id: rule.test $
+# Public domain. Originally written by Martin Ruckert
+# Basic check that rule.tex can be hitexed stretched and shrinked.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=$srcdir/hitexdir/tests; export TEXINPUTS
+
+./hitex -ini --interaction=nonstopmode rule.tex || exit $?
+./histretch rule.hnt || exit $?
+./hishrink -o rule.out.hnt rule.HINT || exit $?
+./histretch rule.out.hnt || exit $?
+
+if grep -q "<rule 0x48.451Ept 1pt 0x1C.73E7pt>" rule.HINT
+then
+    : # OK
+else
+    echo "rule.HINT does not contain the propper rule"
+    exit 1
+fi
+
+if diff -q -w rule.out.HINT rule.HINT
+then
+    : #OK
+else
+    echo "rule.out.HINT and rule.HINT differ"
+    exit 1
+fi
+
+exit 0
+

@@ -18,11 +18,12 @@ hiall: hitex hishrink histretch
 
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) 
 hitex_CPPFLAGS += -I$(srcdir)/libmd5
+hitex_CPPFLAGS += -DINIT -DSTAT -DDEBUG
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a
 hitex_LDADD += libmd5.a
 hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
 #
-histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 histretch_LDADD = $(ZLIB_LIBS)
 histretch_DEPENDENCIES = $(ZLIB_DEPEND)
 #
@@ -32,28 +33,28 @@ hishrink_LDADD = $(ZLIB_LIBS)
 hishrink_DEPENDENCIES = $(ZLIB_DEPEND)
 
 # HiTeX CWEB sources
-hitex_web = hitexdir/format.w hitexdir/hitex.w
+hitex_web = hitexdir/hiformat.w hitexdir/hitex.w
 
 # Creating several files: need stamp file and two rules with identical recipes
 hi_ctangle_sh = CWEBINPUTS=$(srcdir)/hitexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 # HiTeX C/yacc/lex sources generated using ctangle.
 # For each cweb (.w) source file, list the files generated.
-format_c_h_l_y = hibasetypes.h hierror.h hiformat.h \
+hiformat_c_h_l_y = hibasetypes.h hierror.h hiformat.h \
         himktables.c \
 	hiput.c hiput.h \
 	higet.c higet.h \
 	hilexer.l hiparser.y \
 	hishrink.c histretch.c
-hitex_c_h = hitex.c hitex.h 
+hitex_c = hitex.c 
 
-$(format_c_h_l_y): format-tangle
-	$(hi_ctangle_sh) format
+$(hiformat_c_h_l_y): hiformat-tangle
+	$(hi_ctangle_sh) hiformat
 #
-format-tangle: ctangle$(EXEEXT) hitexdir/format.w tangle-sh
-	$(hi_ctangle_sh) format
+hiformat-tangle: ctangle$(EXEEXT) hitexdir/hiformat.w tangle-sh
+	$(hi_ctangle_sh) hiformat
 
-$(hitex_c_h): hitex-tangle
+$(hitex_c): hitex-tangle
 	$(hi_ctangle_sh) hitex
 #
 hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
@@ -64,12 +65,12 @@ hitables.c: himktables
 	./himktables > $@ || { rm -f hitables.c; exit 1; }
 
 # hitex
-nodist_hitex_SOURCES = hitables.c hiput.c $(hitex_c_h)
+nodist_hitex_SOURCES = hitables.c hiput.c $(hitex_c)
 
 # histretch
 nodist_histretch_SOURCES = hitables.c histretch.c
 
-# The actual sources for the lexer and parser are in format.w.
+# The actual sources for the lexer and parser are in hiformat.w.
 # However, to simplify life with Automake (a little), we include the
 # generated [.ch] files as if they were the sources here, and don't try
 # to have Automake support the derivation from .w.
@@ -78,7 +79,8 @@ nodist_histretch_SOURCES = hitables.c histretch.c
 # but can help with the remake if the [.ch] or [.ly] are not present.
 nodist_hishrink_SOURCES = hitables.c \
   hitexdir/hilexer.c \
-  hitexdir/hiparser.c hitexdir/hiparser.h 
+  hitexdir/hiparser.c hitexdir/hiparser.h \
+  hishrink.c
 
 # This is our attempt to ensure that bison got run before anything else,
 # when needed.
@@ -94,7 +96,21 @@ EXTRA_DIST += hitexdir/ChangeLog $(hitex_web)
 
 DISTCLEANFILES += $(nodist_hitex_SOURCES)
 DISTCLEANFILES += $(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES)
-DISTCLEANFILES += format-tangle hitex-tangle
+DISTCLEANFILES += hiformat-tangle hitex-tangle
 
 ## HiTeX tests
-# still missing
+#
+hitex_tests = hitexdir/tests/rule.test
+
+hitexdir/tests/rule.log: hitex$(EXEEXT) histretch$(EXEEXT) hishrink$(EXEEXT)
+
+
+EXTRA_DIST += $(hitex_tests)
+
+if HITEX
+TESTS += $(hitex_tests)
+endif HITEX
+
+## rule.test
+EXTRA_DIST += tests/rule.tex
+DISTCLEANFILES += rule.log
