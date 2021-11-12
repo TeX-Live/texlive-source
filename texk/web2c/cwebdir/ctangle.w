@@ -75,7 +75,7 @@ is modified.
 two phases: First it reads the source file, saving the \CEE/ code in
 compressed form; then it shuffles and outputs the code.
 
-Please read the documentation for \.{common}, the set of routines common
+Please read the documentation for \.{COMMON}, the set of routines common
 to \.{CTANGLE} and \.{CWEAVE}, before proceeding further.
 
 @c
