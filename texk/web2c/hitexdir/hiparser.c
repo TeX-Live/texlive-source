@@ -67,78 +67,80 @@
 
 
 /* First part of user prologue.  */
-#line 3 "../../../texk/web2c/hitexdir/hishrink-parser.y"
+#line 2 "parser.y"
 
-#include "basetypes.h"
-#include <string.h> 
-#include <math.h> 
-#include "error.h"
-#include "hformat.h"
-#include "hput.h"
+	#line 10212 "format.w"
+	
+#include "hibasetypes.h"
+#include <string.h>
+#include <math.h>
+#include "hierror.h"
+#include "hiformat.h"
+#include "hiput.h"
 extern char**hfont_name;
 
-/*356:*/
+	/*356:*/
+uint32_t definition_bits[0x100/32][32]= {
+	#line 7578 "format.w"
+	{0}};
 
-uint32_t definition_bits[0x100/32][32]= {{0}};
-
-#define SET_DBIT(N,K) ((N)> 0xFF?1:(definition_bits[N/32][K]|= (1<<((N)&(32-1)))))
-#define GET_DBIT(N,K) ((N)> 0xFF?1:((definition_bits[N/32][K]>>((N)&(32-1)))&1))
+#define SET_DBIT(N,K) ((N)>0xFF?1:(definition_bits[N/32][K]	|= (1<<((N)&(32-1)))))
+#define GET_DBIT(N,K) ((N)>0xFF?1:((definition_bits[N/32][K]>>((N)&(32-1)))&1))
 #define DEF(D,K,N) (D).k= K; (D).n= (N);SET_DBIT((D).n,(D).k);\
  DBG(DBGDEF,"Defining %s %d\n",definition_name[(D).k],(D).n);\
  RNG("Definition",(D).n,max_fixed[(D).k]+1,max_ref[(D).k]);
 #define REF(K,N) REF_RNG(K,N);if(!GET_DBIT(N,K)) \
  QUIT("Reference %d to %s before definition",(N),definition_name[K])
-/*:356*//*360:*/
-
+	/*:356*/	/*360:*/
 #define DEF_REF(D,K,M,N)  DEF(D,K,M);\
-if ((M)> max_default[K]) QUIT("Defining non default reference %d for %s",M,definition_name[K]); \
-if ((N)> max_fixed[K]) QUIT("Defining reference %d for %s by non fixed reference %d",M,definition_name[K],N);
-/*:360*/
-
+if ((M)>max_default[K]) QUIT("Defining non default reference %d for %s",M,definition_name[K]); \
+if ((N)>max_fixed[K]) QUIT("Defining reference %d for %s by non fixed reference %d",M,definition_name[K],N);
+	/*:360*/
 
 extern void hset_entry(entry_t*e,uint16_t i,uint32_t size,
 uint32_t xsize,char*file_name);
 
-/*423:*/
-
+	/*423:*/
 #ifdef DEBUG
 #define  YYDEBUG 1
 extern int yydebug;
 #else
 #define YYDEBUG 0
 #endif
-/*:423*/
-
+	/*:423*/
 extern int yylex(void);
 
-/*352:*/
-
+	/*352:*/
 void hset_max(kind_t k,int n)
-{DBG(DBGDEF,"Setting max %s to %d\n",definition_name[k],n);
-RNG("Maximum",n,max_fixed[k]+1,MAX_REF(k));
-if(n> max_ref[k])
-max_ref[k]= n;
-}
-/*:352*//*363:*/
-
+{
+	#line 7421 "format.w"
+	DBG(DBGDEF,"Setting max %s to %d\n",definition_name[k],n);
+	RNG("Maximum",n,max_fixed[k]+1,MAX_REF(k));
+	if(n>max_ref[k])
+	max_ref[k]= n;
+	}
+	/*:352*/	/*363:*/
 void check_param_def(ref_t*df)
-{if(df->k!=int_kind&&df->k!=dimen_kind&&df->k!=glue_kind)
-QUIT("Kind %s not allowed in parameter list",definition_name[df->k]);
-if(df->n<=max_fixed[df->k]||max_default[df->k]<df->n)
-QUIT("Parameter %d for %s not allowed in parameter list",df->n,definition_name[df->k]);
-}
-/*:363*//*422:*/
-
+{
+	#line 7727 "format.w"
+	if(df->k!=int_kind&&df->k!=dimen_kind&&df->k!=glue_kind)
+	QUIT("Kind %s not allowed in parameter list",definition_name[df->k]);
+	if(df->n<=max_fixed[df->k]||max_default[df->k]<df->n)
+	QUIT("Parameter %d for %s not allowed in parameter list",df->n,definition_name[df->k]);
+	}
+	/*:363*/	/*422:*/
 extern int yylineno;
 int yyerror(const char*msg)
-{QUIT(" in line %d %s",yylineno,msg);
-return 0;
-}
-/*:422*/
+{
+	#line 8799 "format.w"
+	QUIT(" in line %d %s",yylineno,msg);
+	return 0;
+	}
+	/*:422*/
 
 
 
-#line 142 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 144 "parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -161,229 +163,7 @@ return 0;
 #  endif
 # endif
 
-/* Use api.header.include to #include this header
-   instead of duplicating it here.  */
-#ifndef YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED
-# define YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED
-/* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 0
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
-
-/* Token kinds.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    START = 258,                   /* "<"  */
-    END = 259,                     /* ">"  */
-    GLYPH = 260,                   /* "glyph"  */
-    UNSIGNED = 261,                /* UNSIGNED  */
-    REFERENCE = 262,               /* REFERENCE  */
-    SIGNED = 263,                  /* SIGNED  */
-    STRING = 264,                  /* STRING  */
-    CHARCODE = 265,                /* CHARCODE  */
-    FPNUM = 266,                   /* FPNUM  */
-    DIMEN = 267,                   /* "dimen"  */
-    PT = 268,                      /* "pt"  */
-    MM = 269,                      /* "mm"  */
-    INCH = 270,                    /* "in"  */
-    XDIMEN = 271,                  /* "xdimen"  */
-    H = 272,                       /* "h"  */
-    V = 273,                       /* "v"  */
-    FIL = 274,                     /* "fil"  */
-    FILL = 275,                    /* "fill"  */
-    FILLL = 276,                   /* "filll"  */
-    PENALTY = 277,                 /* "penalty"  */
-    INTEGER = 278,                 /* "int"  */
-    LANGUAGE = 279,                /* "language"  */
-    RULE = 280,                    /* "rule"  */
-    RUNNING = 281,                 /* "|"  */
-    KERN = 282,                    /* "kern"  */
-    EXPLICIT = 283,                /* "!"  */
-    GLUE = 284,                    /* "glue"  */
-    PLUS = 285,                    /* "plus"  */
-    MINUS = 286,                   /* "minus"  */
-    TXT_START = 287,               /* TXT_START  */
-    TXT_END = 288,                 /* TXT_END  */
-    TXT_IGNORE = 289,              /* TXT_IGNORE  */
-    TXT_FONT_GLUE = 290,           /* TXT_FONT_GLUE  */
-    TXT_FONT_HYPHEN = 291,         /* TXT_FONT_HYPHEN  */
-    TXT_FONT = 292,                /* TXT_FONT  */
-    TXT_LOCAL = 293,               /* TXT_LOCAL  */
-    TXT_GLOBAL = 294,              /* TXT_GLOBAL  */
-    TXT_CC = 295,                  /* TXT_CC  */
-    HBOX = 296,                    /* "hbox"  */
-    VBOX = 297,                    /* "vbox"  */
-    SHIFTED = 298,                 /* "shifted"  */
-    HPACK = 299,                   /* "hpack"  */
-    HSET = 300,                    /* "hset"  */
-    VPACK = 301,                   /* "vpack"  */
-    VSET = 302,                    /* "vset"  */
-    DEPTH = 303,                   /* "depth"  */
-    ADD = 304,                     /* "add"  */
-    TO = 305,                      /* "to"  */
-    LEADERS = 306,                 /* "leaders"  */
-    ALIGN = 307,                   /* "align"  */
-    CENTER = 308,                  /* "center"  */
-    EXPAND = 309,                  /* "expand"  */
-    BASELINE = 310,                /* "baseline"  */
-    LIGATURE = 311,                /* "ligature"  */
-    DISC = 312,                    /* "disc"  */
-    PAR = 313,                     /* "par"  */
-    MATH = 314,                    /* "math"  */
-    ON = 315,                      /* "on"  */
-    OFF = 316,                     /* "off"  */
-    ADJUST = 317,                  /* "adjust"  */
-    TABLE = 318,                   /* "table"  */
-    ITEM = 319,                    /* "item"  */
-    IMAGE = 320,                   /* "image"  */
-    LABEL = 321,                   /* "label"  */
-    BOT = 322,                     /* "bot"  */
-    MID = 323,                     /* "mid"  */
-    LINK = 324,                    /* "link"  */
-    OUTLINE = 325,                 /* "outline"  */
-    STREAM = 326,                  /* "stream"  */
-    STREAMDEF = 327,               /* "stream (definition)"  */
-    FIRST = 328,                   /* "first"  */
-    LAST = 329,                    /* "last"  */
-    TOP = 330,                     /* "top"  */
-    NOREFERENCE = 331,             /* "*"  */
-    PAGE = 332,                    /* "page"  */
-    RANGE = 333,                   /* "range"  */
-    DIRECTORY = 334,               /* "directory"  */
-    SECTION = 335,                 /* "entry"  */
-    DEFINITIONS = 336,             /* "definitions"  */
-    MAX = 337,                     /* "max"  */
-    PARAM = 338,                   /* "param"  */
-    FONT = 339,                    /* "font"  */
-    CONTENT = 340                  /* "content"  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define START 258
-#define END 259
-#define GLYPH 260
-#define UNSIGNED 261
-#define REFERENCE 262
-#define SIGNED 263
-#define STRING 264
-#define CHARCODE 265
-#define FPNUM 266
-#define DIMEN 267
-#define PT 268
-#define MM 269
-#define INCH 270
-#define XDIMEN 271
-#define H 272
-#define V 273
-#define FIL 274
-#define FILL 275
-#define FILLL 276
-#define PENALTY 277
-#define INTEGER 278
-#define LANGUAGE 279
-#define RULE 280
-#define RUNNING 281
-#define KERN 282
-#define EXPLICIT 283
-#define GLUE 284
-#define PLUS 285
-#define MINUS 286
-#define TXT_START 287
-#define TXT_END 288
-#define TXT_IGNORE 289
-#define TXT_FONT_GLUE 290
-#define TXT_FONT_HYPHEN 291
-#define TXT_FONT 292
-#define TXT_LOCAL 293
-#define TXT_GLOBAL 294
-#define TXT_CC 295
-#define HBOX 296
-#define VBOX 297
-#define SHIFTED 298
-#define HPACK 299
-#define HSET 300
-#define VPACK 301
-#define VSET 302
-#define DEPTH 303
-#define ADD 304
-#define TO 305
-#define LEADERS 306
-#define ALIGN 307
-#define CENTER 308
-#define EXPAND 309
-#define BASELINE 310
-#define LIGATURE 311
-#define DISC 312
-#define PAR 313
-#define MATH 314
-#define ON 315
-#define OFF 316
-#define ADJUST 317
-#define TABLE 318
-#define ITEM 319
-#define IMAGE 320
-#define LABEL 321
-#define BOT 322
-#define MID 323
-#define LINK 324
-#define OUTLINE 325
-#define STREAM 326
-#define STREAMDEF 327
-#define FIRST 328
-#define LAST 329
-#define TOP 330
-#define NOREFERENCE 331
-#define PAGE 332
-#define RANGE 333
-#define DIRECTORY 334
-#define SECTION 335
-#define DEFINITIONS 336
-#define MAX 337
-#define PARAM 338
-#define FONT 339
-#define CONTENT 340
-
-/* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-union YYSTYPE
-{
-#line 78 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-uint32_t u;int32_t i;char*s;float64_t f;glyph_t c;
-dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
-rule_t r;glue_t g;image_t x;
-list_t l;box_t h;disc_t dc;lig_t lg;
-ref_t rf;info_t info;order_t o;bool b;
-
-#line 372 "../../../texk/web2c/hitexdir/hishrink-parser.c"
-
-};
-typedef union YYSTYPE YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
-#endif
-
-
-extern YYSTYPE yylval;
-
-
-int yyparse (void);
-
-
-#endif /* !YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED  */
+#include "hiparser.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -974,33 +754,33 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   306,   306,   307,   308,   311,   311,   314,   317,   317,
-     322,   322,   322,   325,   326,   327,   330,   331,   332,   333,
-     337,   341,   341,   341,   341,   343,   346,   347,   350,   350,
-     351,   355,   356,   359,   359,   360,   361,   364,   364,   365,
-     365,   366,   367,   369,   374,   375,   376,   377,   378,   379,
-     385,   384,   389,   389,   391,   392,   393,   394,   395,   396,
-     397,   398,   398,   402,   404,   405,   407,   408,   409,   412,
-     414,   415,   416,   416,   419,   420,   421,   423,   424,   425,
-     426,   428,   429,   429,   431,   432,   435,   436,   438,   438,
-     441,   441,   441,   441,   442,   443,   444,   445,   448,   448,
-     453,   457,   457,   458,   459,   460,   461,   461,   464,   467,
-     468,   470,   472,   473,   476,   479,   482,   483,   484,   485,
-     486,   486,   487,   488,   490,   493,   494,   495,   496,   497,
-     498,   499,   500,   501,   503,   506,   506,   507,   510,   513,
-     514,   515,   516,   518,   519,   521,   524,   524,   525,   526,
-     529,   535,   535,   535,   535,   536,   540,   544,   553,   553,
-     554,   555,   555,   557,   557,   557,   557,   559,   563,   566,
-     566,   569,   570,   571,   572,   576,   577,   579,   579,   581,
-     581,   581,   587,   588,   591,   594,   594,   595,   595,   596,
-     600,   600,   603,   603,   606,   635,   635,   637,   638,   639,
-     640,   641,   642,   643,   644,   645,   646,   647,   648,   649,
-     650,   651,   652,   653,   658,   659,   660,   661,   662,   663,
-     664,   665,   666,   667,   668,   669,   670,   671,   675,   676,
-     677,   680,   681,   682,   685,   686,   686,   691,   693,   696,
-     696,   699,   700,   701,   702,   703,   704,   705,   706,   708,
-     711,   712,   713,   717,   718,   720,   722,   723,   724,   725,
-     726,   727,   728,   729,   731,   737,   737
+       0,   264,   264,   267,   270,   274,   274,   278,   282,   282,
+     288,   290,   292,   294,   297,   300,   304,   307,   310,   313,
+     319,   324,   326,   328,   330,   334,   338,   341,   345,   345,
+     348,   354,   357,   359,   361,   364,   367,   371,   373,   376,
+     378,   381,   384,   388,   394,   397,   398,   399,   402,   405,
+     412,   411,   420,   420,   422,   425,   428,   431,   434,   437,
+     440,   443,   443,   448,   452,   455,   459,   462,   465,   470,
+     474,   477,   480,   480,   482,   485,   488,   492,   495,   498,
+     501,   505,   508,   508,   514,   517,   522,   525,   529,   529,
+     531,   533,   535,   537,   540,   543,   546,   549,   553,   553,
+     562,   567,   567,   570,   573,   576,   579,   579,   586,   590,
+     593,   597,   601,   604,   609,   614,   616,   619,   622,   625,
+     628,   628,   633,   636,   640,   644,   647,   650,   653,   656,
+     659,   662,   665,   668,   672,   676,   678,   681,   685,   689,
+     692,   695,   698,   702,   705,   709,   713,   715,   718,   721,
+     725,   732,   734,   736,   738,   741,   746,   751,   761,   763,
+     766,   769,   769,   773,   775,   777,   779,   783,   789,   794,
+     794,   796,   799,   802,   805,   810,   813,   817,   817,   819,
+     821,   819,   828,   831,   835,   837,   837,   840,   840,   841,
+     846,   846,   853,   853,   855,   880,   880,   882,   885,   888,
+     891,   894,   897,   900,   903,   906,   909,   912,   915,   918,
+     921,   924,   927,   930,   936,   939,   942,   945,   948,   951,
+     954,   957,   960,   963,   966,   969,   972,   975,   980,   983,
+     986,   990,   991,   994,   998,  1001,  1001,  1009,  1011,  1016,
+    1016,  1019,  1022,  1025,  1028,  1031,  1034,  1037,  1040,  1044,
+    1048,  1051,  1054,  1060,  1063,  1067,  1071,  1074,  1077,  1080,
+    1083,  1086,  1089,  1092,  1096,  1103,  1103
 };
 #endif
 
@@ -2230,1444 +2010,1900 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* glyph: UNSIGNED REFERENCE  */
-#line 306 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {(yyval.c).c= (yyvsp[-1].u);REF(font_kind,(yyvsp[0].u));(yyval.c).f= (yyvsp[0].u);}
-#line 2236 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 264 "parser.y"
+                        {
+	#line 418 "format.w"
+	(yyval.c).c= (yyvsp[-1].u);REF(font_kind,(yyvsp[0].u));(yyval.c).f= (yyvsp[0].u);}
+#line 2018 "parser.c"
     break;
 
   case 3: /* content_node: start "glyph" glyph ">"  */
-#line 307 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                  {hput_tags((yyvsp[-3].u),hput_glyph(&((yyvsp[-1].c))));}
-#line 2242 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 267 "parser.y"
+                                  {
+	#line 419 "format.w"
+	hput_tags((yyvsp[-3].u),hput_glyph(&((yyvsp[-1].c))));}
+#line 2026 "parser.c"
     break;
 
   case 4: /* start: "<"  */
-#line 308 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-           {HPUTNODE;(yyval.u)= (uint32_t)(hpos++-hstart);}
-#line 2248 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 270 "parser.y"
+           {
+	#line 420 "format.w"
+	HPUTNODE;(yyval.u)= (uint32_t)(hpos++-hstart);}
+#line 2034 "parser.c"
     break;
 
   case 6: /* integer: UNSIGNED  */
-#line 311 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {RNG("number",(yyvsp[0].u),0,INT32_MAX);}
-#line 2254 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 274 "parser.y"
+                         {
+	#line 941 "format.w"
+	RNG("number",(yyvsp[0].u),0,0x7FFFFFFF);}
+#line 2042 "parser.c"
     break;
 
   case 7: /* glyph: CHARCODE REFERENCE  */
-#line 314 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {(yyval.c).c= (yyvsp[-1].u);REF(font_kind,(yyvsp[0].u));(yyval.c).f= (yyvsp[0].u);}
-#line 2260 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 278 "parser.y"
+                        {
+	#line 1082 "format.w"
+	(yyval.c).c= (yyvsp[-1].u);REF(font_kind,(yyvsp[0].u));(yyval.c).f= (yyvsp[0].u);}
+#line 2050 "parser.c"
     break;
 
   case 9: /* string: CHARCODE  */
-#line 317 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {static char s[2];
-RNG("String element",(yyvsp[0].u),0x20,0x7E);
-s[0]= (yyvsp[0].u);s[1]= 0;(yyval.s)= s;}
-#line 2268 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 282 "parser.y"
+                         {
+	#line 1187 "format.w"
+	static char s[2];
+	RNG("String element",(yyvsp[0].u),0x20,0x7E);
+	s[0]= (yyvsp[0].u);s[1]= 0;(yyval.s)= s;}
+#line 2060 "parser.c"
     break;
 
   case 10: /* number: UNSIGNED  */
-#line 322 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {(yyval.f)= (float64_t)(yyvsp[0].u);}
-#line 2274 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 288 "parser.y"
+               {
+	#line 1339 "format.w"
+	(yyval.f)= (float64_t)(yyvsp[0].u);}
+#line 2068 "parser.c"
     break;
 
   case 11: /* number: SIGNED  */
-#line 322 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                          {(yyval.f)= (float64_t)(yyvsp[0].i);}
-#line 2280 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 290 "parser.y"
+                                       {
+	#line 1339 "format.w"
+	(yyval.f)= (float64_t)(yyvsp[0].i);}
+#line 2076 "parser.c"
     break;
 
   case 13: /* dimension: number "pt"  */
-#line 325 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.d)= ROUND((yyvsp[-1].f)*ONE);RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
-#line 2286 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 294 "parser.y"
+                   {
+	#line 1682 "format.w"
+	(yyval.d)= ROUND((yyvsp[-1].f)*ONE);RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
+#line 2084 "parser.c"
     break;
 
   case 14: /* dimension: number "in"  */
-#line 326 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-            {(yyval.d)= ROUND((yyvsp[-1].f)*ONE*72.27);RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
-#line 2292 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 297 "parser.y"
+                    {
+	#line 1683 "format.w"
+	(yyval.d)= ROUND((yyvsp[-1].f)*ONE*72.27);RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
+#line 2092 "parser.c"
     break;
 
   case 15: /* dimension: number "mm"  */
-#line 327 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-          {(yyval.d)= ROUND((yyvsp[-1].f)*ONE*(72.27/25.4));RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
-#line 2298 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 300 "parser.y"
+                  {
+	#line 1684 "format.w"
+	(yyval.d)= ROUND((yyvsp[-1].f)*ONE*(72.27/25.4));RNG("Dimension",(yyval.d),-MAX_DIMEN,MAX_DIMEN);}
+#line 2100 "parser.c"
     break;
 
   case 16: /* xdimen: dimension number "h" number "v"  */
-#line 330 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                  {(yyval.xd).w= (yyvsp[-4].d);(yyval.xd).h= (yyvsp[-3].f);(yyval.xd).v= (yyvsp[-1].f);}
-#line 2304 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 304 "parser.y"
+                                  {
+	#line 1762 "format.w"
+	(yyval.xd).w= (yyvsp[-4].d);(yyval.xd).h= (yyvsp[-3].f);(yyval.xd).v= (yyvsp[-1].f);}
+#line 2108 "parser.c"
     break;
 
   case 17: /* xdimen: dimension number "h"  */
-#line 331 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.xd).w= (yyvsp[-2].d);(yyval.xd).h= (yyvsp[-1].f);(yyval.xd).v= 0.0;}
-#line 2310 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 307 "parser.y"
+                           {
+	#line 1763 "format.w"
+	(yyval.xd).w= (yyvsp[-2].d);(yyval.xd).h= (yyvsp[-1].f);(yyval.xd).v= 0.0;}
+#line 2116 "parser.c"
     break;
 
   case 18: /* xdimen: dimension number "v"  */
-#line 332 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.xd).w= (yyvsp[-2].d);(yyval.xd).h= 0.0;(yyval.xd).v= (yyvsp[-1].f);}
-#line 2316 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 310 "parser.y"
+                           {
+	#line 1764 "format.w"
+	(yyval.xd).w= (yyvsp[-2].d);(yyval.xd).h= 0.0;(yyval.xd).v= (yyvsp[-1].f);}
+#line 2124 "parser.c"
     break;
 
   case 19: /* xdimen: dimension  */
-#line 333 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-          {(yyval.xd).w= (yyvsp[0].d);(yyval.xd).h= 0.0;(yyval.xd).v= 0.0;}
-#line 2322 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 313 "parser.y"
+                  {
+	#line 1765 "format.w"
+	(yyval.xd).w= (yyvsp[0].d);(yyval.xd).h= 0.0;(yyval.xd).v= 0.0;}
+#line 2132 "parser.c"
     break;
 
   case 20: /* xdimen_node: start "xdimen" xdimen ">"  */
-#line 337 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                   {hput_tags((yyvsp[-3].u),hput_xdimen(&((yyvsp[-1].xd))));}
-#line 2328 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 319 "parser.y"
+                                   {
+	#line 1769 "format.w"
+	hput_tags((yyvsp[-3].u),hput_xdimen(&((yyvsp[-1].xd))));}
+#line 2140 "parser.c"
     break;
 
   case 21: /* order: "pt"  */
-#line 341 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-        {(yyval.o)= normal_o;}
-#line 2334 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 324 "parser.y"
+        {
+	#line 1947 "format.w"
+	(yyval.o)= normal_o;}
+#line 2148 "parser.c"
     break;
 
   case 22: /* order: "fil"  */
-#line 341 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                           {(yyval.o)= fil_o;}
-#line 2340 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 326 "parser.y"
+                            {
+	#line 1947 "format.w"
+	(yyval.o)= fil_o;}
+#line 2156 "parser.c"
     break;
 
   case 23: /* order: "fill"  */
-#line 341 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                            {(yyval.o)= fill_o;}
-#line 2346 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 328 "parser.y"
+                             {
+	#line 1947 "format.w"
+	(yyval.o)= fill_o;}
+#line 2164 "parser.c"
     break;
 
   case 24: /* order: "filll"  */
-#line 341 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                               {(yyval.o)= filll_o;}
-#line 2352 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 330 "parser.y"
+                              {
+	#line 1947 "format.w"
+	(yyval.o)= filll_o;}
+#line 2172 "parser.c"
     break;
 
   case 25: /* stretch: number order  */
-#line 343 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                    {(yyval.st).f= (yyvsp[-1].f);(yyval.st).o= (yyvsp[0].o);}
-#line 2358 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 334 "parser.y"
+                    {
+	#line 1949 "format.w"
+	(yyval.st).f= (yyvsp[-1].f);(yyval.st).o= (yyvsp[0].o);}
+#line 2180 "parser.c"
     break;
 
   case 26: /* penalty: integer  */
-#line 346 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {RNG("Penalty",(yyvsp[0].i),-20000,+20000);(yyval.i)= (yyvsp[0].i);}
-#line 2364 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 338 "parser.y"
+               {
+	#line 2003 "format.w"
+	RNG("Penalty",(yyvsp[0].i),-20000,+20000);(yyval.i)= (yyvsp[0].i);}
+#line 2188 "parser.c"
     break;
 
   case 27: /* content_node: start "penalty" penalty ">"  */
-#line 347 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                      {hput_tags((yyvsp[-3].u),hput_int((yyvsp[-1].i)));}
-#line 2370 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 341 "parser.y"
+                                      {
+	#line 2004 "format.w"
+	hput_tags((yyvsp[-3].u),hput_int((yyvsp[-1].i)));}
+#line 2196 "parser.c"
     break;
 
   case 29: /* rule_dimension: "|"  */
-#line 350 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {(yyval.d)= RUNNING_DIMEN;}
-#line 2376 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 345 "parser.y"
+                                        {
+	#line 2179 "format.w"
+	(yyval.d)= RUNNING_DIMEN;}
+#line 2204 "parser.c"
     break;
 
   case 30: /* rule: rule_dimension rule_dimension rule_dimension  */
-#line 352 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{(yyval.r).h= (yyvsp[-2].d);(yyval.r).d= (yyvsp[-1].d);(yyval.r).w= (yyvsp[0].d);
-if((yyvsp[0].d)==RUNNING_DIMEN&&((yyvsp[-2].d)==RUNNING_DIMEN||(yyvsp[-1].d)==RUNNING_DIMEN))
-QUIT("Incompatible running dimensions 0x%x 0x%x 0x%x",(yyvsp[-2].d),(yyvsp[-1].d),(yyvsp[0].d));}
-#line 2384 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 349 "parser.y"
+{
+	#line 2181 "format.w"
+	(yyval.r).h= (yyvsp[-2].d);(yyval.r).d= (yyvsp[-1].d);(yyval.r).w= (yyvsp[0].d);
+	if((yyvsp[0].d)==RUNNING_DIMEN&&((yyvsp[-2].d)==RUNNING_DIMEN||(yyvsp[-1].d)==RUNNING_DIMEN))
+	QUIT("Incompatible running dimensions 0x%x 0x%x 0x%x",(yyvsp[-2].d),(yyvsp[-1].d),(yyvsp[0].d));}
+#line 2214 "parser.c"
     break;
 
   case 31: /* rule_node: start "rule" rule ">"  */
-#line 355 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                             {hput_tags((yyvsp[-3].u),hput_rule(&((yyvsp[-1].r))));}
-#line 2390 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 354 "parser.y"
+                             {
+	#line 2184 "format.w"
+	hput_tags((yyvsp[-3].u),hput_rule(&((yyvsp[-1].r))));}
+#line 2222 "parser.c"
     break;
 
   case 33: /* explicit: %empty  */
-#line 359 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {(yyval.b)= false;}
-#line 2396 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 359 "parser.y"
+         {
+	#line 2292 "format.w"
+	(yyval.b)= false;}
+#line 2230 "parser.c"
     break;
 
   case 34: /* explicit: "!"  */
-#line 359 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {(yyval.b)= true;}
-#line 2402 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 361 "parser.y"
+                                 {
+	#line 2292 "format.w"
+	(yyval.b)= true;}
+#line 2238 "parser.c"
     break;
 
   case 35: /* kern: explicit xdimen  */
-#line 360 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                    {(yyval.kt).x= (yyvsp[-1].b);(yyval.kt).d= (yyvsp[0].xd);}
-#line 2408 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 364 "parser.y"
+                    {
+	#line 2293 "format.w"
+	(yyval.kt).x= (yyvsp[-1].b);(yyval.kt).d= (yyvsp[0].xd);}
+#line 2246 "parser.c"
     break;
 
   case 36: /* content_node: start "kern" kern ">"  */
-#line 361 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {hput_tags((yyvsp[-3].u),hput_kern(&((yyvsp[-1].kt))));}
-#line 2414 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 367 "parser.y"
+                                {
+	#line 2294 "format.w"
+	hput_tags((yyvsp[-3].u),hput_kern(&((yyvsp[-1].kt))));}
+#line 2254 "parser.c"
     break;
 
   case 37: /* plus: %empty  */
-#line 364 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-     {(yyval.st).f= 0.0;(yyval.st).o= 0;}
-#line 2420 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 371 "parser.y"
+     {
+	#line 2504 "format.w"
+	(yyval.st).f= 0.0;(yyval.st).o= 0;}
+#line 2262 "parser.c"
     break;
 
   case 38: /* plus: "plus" stretch  */
-#line 364 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                      {(yyval.st)= (yyvsp[0].st);}
-#line 2426 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 373 "parser.y"
+                                             {
+	#line 2504 "format.w"
+	(yyval.st)= (yyvsp[0].st);}
+#line 2270 "parser.c"
     break;
 
   case 39: /* minus: %empty  */
-#line 365 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-      {(yyval.st).f= 0.0;(yyval.st).o= 0;}
-#line 2432 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 376 "parser.y"
+      {
+	#line 2505 "format.w"
+	(yyval.st).f= 0.0;(yyval.st).o= 0;}
+#line 2278 "parser.c"
     break;
 
   case 40: /* minus: "minus" stretch  */
-#line 365 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                        {(yyval.st)= (yyvsp[0].st);}
-#line 2438 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 378 "parser.y"
+                                              {
+	#line 2505 "format.w"
+	(yyval.st)= (yyvsp[0].st);}
+#line 2286 "parser.c"
     break;
 
   case 41: /* glue: xdimen plus minus  */
-#line 366 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {(yyval.g).w= (yyvsp[-2].xd);(yyval.g).p= (yyvsp[-1].st);(yyval.g).m= (yyvsp[0].st);}
-#line 2444 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 381 "parser.y"
+                      {
+	#line 2506 "format.w"
+	(yyval.g).w= (yyvsp[-2].xd);(yyval.g).p= (yyvsp[-1].st);(yyval.g).m= (yyvsp[0].st);}
+#line 2294 "parser.c"
     break;
 
   case 42: /* content_node: start "glue" glue ">"  */
-#line 367 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {if(ZERO_GLUE((yyvsp[-1].g))){HPUT8(zero_skip_no);
-hput_tags((yyvsp[-3].u),TAG(glue_kind,0));}else hput_tags((yyvsp[-3].u),hput_glue(&((yyvsp[-1].g))));}
-#line 2451 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 384 "parser.y"
+                                {
+	#line 2507 "format.w"
+	if(ZERO_GLUE((yyvsp[-1].g))){HPUT8(zero_skip_no);
+	hput_tags((yyvsp[-3].u),TAG(glue_kind,0));}else hput_tags((yyvsp[-3].u),hput_glue(&((yyvsp[-1].g))));}
+#line 2303 "parser.c"
     break;
 
   case 43: /* glue_node: start "glue" glue ">"  */
-#line 370 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{if(ZERO_GLUE((yyvsp[-1].g))){hpos--;(yyval.b)= false;}
-else{hput_tags((yyvsp[-3].u),hput_glue(&((yyvsp[-1].g))));(yyval.b)= true;}}
-#line 2458 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 389 "parser.y"
+{
+	#line 2510 "format.w"
+	if(ZERO_GLUE((yyvsp[-1].g))){hpos--;(yyval.b)= false;}
+	else{hput_tags((yyvsp[-3].u),hput_glue(&((yyvsp[-1].g))));(yyval.b)= true;}}
+#line 2312 "parser.c"
     break;
 
   case 44: /* position: %empty  */
-#line 374 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {(yyval.u)= hpos-hstart;}
-#line 2464 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 394 "parser.y"
+         {
+	#line 2786 "format.w"
+	(yyval.u)= hpos-hstart;}
+#line 2320 "parser.c"
     break;
 
   case 47: /* estimate: %empty  */
-#line 377 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {hpos+= 2;}
-#line 2470 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 399 "parser.y"
+         {
+	#line 2789 "format.w"
+	hpos+= 2;}
+#line 2328 "parser.c"
     break;
 
   case 48: /* estimate: UNSIGNED  */
-#line 378 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {hpos+= hsize_bytes((yyvsp[0].u))+1;}
-#line 2476 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 402 "parser.y"
+                 {
+	#line 2790 "format.w"
+	hpos+= hsize_bytes((yyvsp[0].u))+1;}
+#line 2336 "parser.c"
     break;
 
   case 49: /* list: start estimate content_list ">"  */
-#line 380 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{(yyval.l).k= list_kind;(yyval.l).p= (yyvsp[-1].u);(yyval.l).s= (hpos-hstart)-(yyvsp[-1].u);
-hput_tags((yyvsp[-3].u),hput_list((yyvsp[-3].u)+1,&((yyval.l))));}
-#line 2483 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 406 "parser.y"
+{
+	#line 2792 "format.w"
+	(yyval.l).k= list_kind;(yyval.l).p= (yyvsp[-1].u);(yyval.l).s= (hpos-hstart)-(yyvsp[-1].u);
+	hput_tags((yyvsp[-3].u),hput_list((yyvsp[-3].u)+1,&((yyval.l))));}
+#line 2345 "parser.c"
     break;
 
   case 50: /* $@1: %empty  */
-#line 385 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hpos+= 4;}
-#line 2489 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 412 "parser.y"
+{
+	#line 3199 "format.w"
+	hpos+= 4;}
+#line 2353 "parser.c"
     break;
 
   case 51: /* list: TXT_START position $@1 text TXT_END  */
-#line 387 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{(yyval.l).k= text_kind;(yyval.l).p= (yyvsp[-1].u);(yyval.l).s= (hpos-hstart)-(yyvsp[-1].u);
-hput_tags((yyvsp[-3].u),hput_list((yyvsp[-3].u)+1,&((yyval.l))));}
-#line 2496 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 416 "parser.y"
+{
+	#line 3201 "format.w"
+	(yyval.l).k= text_kind;(yyval.l).p= (yyvsp[-1].u);(yyval.l).s= (hpos-hstart)-(yyvsp[-1].u);
+	hput_tags((yyvsp[-3].u),hput_list((yyvsp[-3].u)+1,&((yyval.l))));}
+#line 2362 "parser.c"
     break;
 
   case 54: /* txt: TXT_CC  */
-#line 391 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-          {hput_txt_cc((yyvsp[0].u));}
-#line 2502 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 422 "parser.y"
+          {
+	#line 3205 "format.w"
+	hput_txt_cc((yyvsp[0].u));}
+#line 2370 "parser.c"
     break;
 
   case 55: /* txt: TXT_FONT  */
-#line 392 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {REF(font_kind,(yyvsp[0].u));hput_txt_font((yyvsp[0].u));}
-#line 2508 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 425 "parser.y"
+                 {
+	#line 3206 "format.w"
+	REF(font_kind,(yyvsp[0].u));hput_txt_font((yyvsp[0].u));}
+#line 2378 "parser.c"
     break;
 
   case 56: /* txt: TXT_GLOBAL  */
-#line 393 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-           {REF((yyvsp[0].rf).k,(yyvsp[0].rf).n);hput_txt_global(&((yyvsp[0].rf)));}
-#line 2514 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 428 "parser.y"
+                   {
+	#line 3207 "format.w"
+	REF((yyvsp[0].rf).k,(yyvsp[0].rf).n);hput_txt_global(&((yyvsp[0].rf)));}
+#line 2386 "parser.c"
     break;
 
   case 57: /* txt: TXT_LOCAL  */
-#line 394 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-          {RNG("Font parameter",(yyvsp[0].u),0,11);hput_txt_local((yyvsp[0].u));}
-#line 2520 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 431 "parser.y"
+                  {
+	#line 3208 "format.w"
+	RNG("Font parameter",(yyvsp[0].u),0,11);hput_txt_local((yyvsp[0].u));}
+#line 2394 "parser.c"
     break;
 
   case 58: /* txt: TXT_FONT_GLUE  */
-#line 395 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {HPUTX(1);HPUT8(txt_glue);}
-#line 2526 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 434 "parser.y"
+                      {
+	#line 3209 "format.w"
+	HPUTX(1);HPUT8(txt_glue);}
+#line 2402 "parser.c"
     break;
 
   case 59: /* txt: TXT_FONT_HYPHEN  */
-#line 396 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                {HPUTX(1);HPUT8(txt_hyphen);}
-#line 2532 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 437 "parser.y"
+                        {
+	#line 3210 "format.w"
+	HPUTX(1);HPUT8(txt_hyphen);}
+#line 2410 "parser.c"
     break;
 
   case 60: /* txt: TXT_IGNORE  */
-#line 397 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-           {HPUTX(1);HPUT8(txt_ignore);}
-#line 2538 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 440 "parser.y"
+                   {
+	#line 3211 "format.w"
+	HPUTX(1);HPUT8(txt_ignore);}
+#line 2418 "parser.c"
     break;
 
   case 61: /* $@2: %empty  */
-#line 398 "../../../texk/web2c/hitexdir/hishrink-parser.y"
- {HPUTX(1);HPUT8(txt_node);}
-#line 2544 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 443 "parser.y"
+         {
+	#line 3212 "format.w"
+	HPUTX(1);HPUT8(txt_node);}
+#line 2426 "parser.c"
     break;
 
   case 63: /* box_dimen: dimension dimension dimension  */
-#line 403 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{(yyval.info)= hput_box_dimen((yyvsp[-2].d),(yyvsp[-1].d),(yyvsp[0].d));}
-#line 2550 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 449 "parser.y"
+{
+	#line 3470 "format.w"
+	(yyval.info)= hput_box_dimen((yyvsp[-2].d),(yyvsp[-1].d),(yyvsp[0].d));}
+#line 2434 "parser.c"
     break;
 
   case 64: /* box_shift: %empty  */
-#line 404 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-          {(yyval.info)= b000;}
-#line 2556 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 452 "parser.y"
+          {
+	#line 3471 "format.w"
+	(yyval.info)= b000;}
+#line 2442 "parser.c"
     break;
 
   case 65: /* box_shift: "shifted" dimension  */
-#line 405 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {(yyval.info)= hput_box_shift((yyvsp[0].d));}
-#line 2562 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 455 "parser.y"
+                          {
+	#line 3472 "format.w"
+	(yyval.info)= hput_box_shift((yyvsp[0].d));}
+#line 2450 "parser.c"
     break;
 
   case 66: /* box_glue_set: %empty  */
-#line 407 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-             {(yyval.info)= b000;}
-#line 2568 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 459 "parser.y"
+             {
+	#line 3474 "format.w"
+	(yyval.info)= b000;}
+#line 2458 "parser.c"
     break;
 
   case 67: /* box_glue_set: "plus" stretch  */
-#line 408 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-             {(yyval.info)= hput_box_glue_set(+1,(yyvsp[0].st).f,(yyvsp[0].st).o);}
-#line 2574 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 462 "parser.y"
+                     {
+	#line 3475 "format.w"
+	(yyval.info)= hput_box_glue_set(+1,(yyvsp[0].st).f,(yyvsp[0].st).o);}
+#line 2466 "parser.c"
     break;
 
   case 68: /* box_glue_set: "minus" stretch  */
-#line 409 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {(yyval.info)= hput_box_glue_set(-1,(yyvsp[0].st).f,(yyvsp[0].st).o);}
-#line 2580 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 465 "parser.y"
+                      {
+	#line 3476 "format.w"
+	(yyval.info)= hput_box_glue_set(-1,(yyvsp[0].st).f,(yyvsp[0].st).o);}
+#line 2474 "parser.c"
     break;
 
   case 69: /* box: box_dimen box_shift box_glue_set list  */
-#line 412 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                         {(yyval.info)= (yyvsp[-3].info)|(yyvsp[-2].info)|(yyvsp[-1].info);}
-#line 2586 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 470 "parser.y"
+                                         {
+	#line 3479 "format.w"
+	(yyval.info)= (yyvsp[-3].info)	|(yyvsp[-2].info)	|(yyvsp[-1].info);}
+#line 2482 "parser.c"
     break;
 
   case 70: /* hbox_node: start "hbox" box ">"  */
-#line 414 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {hput_tags((yyvsp[-3].u),TAG(hbox_kind,(yyvsp[-1].info)));}
-#line 2592 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 474 "parser.y"
+                            {
+	#line 3481 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(hbox_kind,(yyvsp[-1].info)));}
+#line 2490 "parser.c"
     break;
 
   case 71: /* vbox_node: start "vbox" box ">"  */
-#line 415 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {hput_tags((yyvsp[-3].u),TAG(vbox_kind,(yyvsp[-1].info)));}
-#line 2598 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 477 "parser.y"
+                            {
+	#line 3482 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(vbox_kind,(yyvsp[-1].info)));}
+#line 2498 "parser.c"
     break;
 
   case 74: /* box_flex: plus minus  */
-#line 419 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {hput_stretch(&((yyvsp[-1].st)));hput_stretch(&((yyvsp[0].st)));}
-#line 2604 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 482 "parser.y"
+                   {
+	#line 3663 "format.w"
+	hput_stretch(&((yyvsp[-1].st)));hput_stretch(&((yyvsp[0].st)));}
+#line 2506 "parser.c"
     break;
 
   case 75: /* xbox: box_dimen box_shift box_flex xdimen_ref list  */
-#line 420 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                 {(yyval.info)= (yyvsp[-4].info)|(yyvsp[-3].info);}
-#line 2610 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 485 "parser.y"
+                                                 {
+	#line 3664 "format.w"
+	(yyval.info)= (yyvsp[-4].info)	|(yyvsp[-3].info);}
+#line 2514 "parser.c"
     break;
 
   case 76: /* xbox: box_dimen box_shift box_flex xdimen_node list  */
-#line 421 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                              {(yyval.info)= (yyvsp[-4].info)|(yyvsp[-3].info)|b100;}
-#line 2616 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 488 "parser.y"
+                                                      {
+	#line 3665 "format.w"
+	(yyval.info)= (yyvsp[-4].info)	|(yyvsp[-3].info)	|b100;}
+#line 2522 "parser.c"
     break;
 
   case 77: /* box_goal: "to" xdimen_ref  */
-#line 423 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {(yyval.info)= b000;}
-#line 2622 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 492 "parser.y"
+                      {
+	#line 3667 "format.w"
+	(yyval.info)= b000;}
+#line 2530 "parser.c"
     break;
 
   case 78: /* box_goal: "add" xdimen_ref  */
-#line 424 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {(yyval.info)= b001;}
-#line 2628 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 495 "parser.y"
+                       {
+	#line 3668 "format.w"
+	(yyval.info)= b001;}
+#line 2538 "parser.c"
     break;
 
   case 79: /* box_goal: "to" xdimen_node  */
-#line 425 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {(yyval.info)= b100;}
-#line 2634 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 498 "parser.y"
+                       {
+	#line 3669 "format.w"
+	(yyval.info)= b100;}
+#line 2546 "parser.c"
     break;
 
   case 80: /* box_goal: "add" xdimen_node  */
-#line 426 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                {(yyval.info)= b101;}
-#line 2640 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 501 "parser.y"
+                        {
+	#line 3670 "format.w"
+	(yyval.info)= b101;}
+#line 2554 "parser.c"
     break;
 
   case 81: /* hpack: box_shift box_goal list  */
-#line 428 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                             {(yyval.info)= (yyvsp[-1].info);}
-#line 2646 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 505 "parser.y"
+                             {
+	#line 3672 "format.w"
+	(yyval.info)= (yyvsp[-1].info);}
+#line 2562 "parser.c"
     break;
 
   case 82: /* $@3: %empty  */
-#line 429 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                   {HPUT32((yyvsp[0].d));}
-#line 2652 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 508 "parser.y"
+                                   {
+	#line 3673 "format.w"
+	HPUT32((yyvsp[0].d));}
+#line 2570 "parser.c"
     break;
 
   case 83: /* vpack: box_shift "max" "depth" dimension $@3 box_goal list  */
-#line 429 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                             {(yyval.info)= (yyvsp[-6].info)|(yyvsp[-1].info);}
-#line 2658 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 510 "parser.y"
+                                 {
+	#line 3673 "format.w"
+	(yyval.info)= (yyvsp[-6].info)	|(yyvsp[-1].info);}
+#line 2578 "parser.c"
     break;
 
   case 84: /* vxbox_node: start "vset" xbox ">"  */
-#line 431 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {hput_tags((yyvsp[-3].u),TAG(vset_kind,(yyvsp[-1].info)));}
-#line 2664 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 514 "parser.y"
+                              {
+	#line 3675 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(vset_kind,(yyvsp[-1].info)));}
+#line 2586 "parser.c"
     break;
 
   case 85: /* vxbox_node: start "vpack" vpack ">"  */
-#line 432 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {hput_tags((yyvsp[-3].u),TAG(vpack_kind,(yyvsp[-1].info)));}
-#line 2670 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 517 "parser.y"
+                              {
+	#line 3676 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(vpack_kind,(yyvsp[-1].info)));}
+#line 2594 "parser.c"
     break;
 
   case 86: /* hxbox_node: start "hset" xbox ">"  */
-#line 435 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {hput_tags((yyvsp[-3].u),TAG(hset_kind,(yyvsp[-1].info)));}
-#line 2676 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 522 "parser.y"
+                              {
+	#line 3679 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(hset_kind,(yyvsp[-1].info)));}
+#line 2602 "parser.c"
     break;
 
   case 87: /* hxbox_node: start "hpack" hpack ">"  */
-#line 436 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {hput_tags((yyvsp[-3].u),TAG(hpack_kind,(yyvsp[-1].info)));}
-#line 2682 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 525 "parser.y"
+                              {
+	#line 3680 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(hpack_kind,(yyvsp[-1].info)));}
+#line 2610 "parser.c"
     break;
 
   case 90: /* ltype: %empty  */
-#line 441 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-      {(yyval.info)= 1;}
-#line 2688 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 531 "parser.y"
+      {
+	#line 3790 "format.w"
+	(yyval.info)= 1;}
+#line 2618 "parser.c"
     break;
 
   case 91: /* ltype: "align"  */
-#line 441 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                    {(yyval.info)= 1;}
-#line 2694 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 533 "parser.y"
+                      {
+	#line 3790 "format.w"
+	(yyval.info)= 1;}
+#line 2626 "parser.c"
     break;
 
   case 92: /* ltype: "center"  */
-#line 441 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                   {(yyval.info)= 2;}
-#line 2700 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 535 "parser.y"
+                       {
+	#line 3790 "format.w"
+	(yyval.info)= 2;}
+#line 2634 "parser.c"
     break;
 
   case 93: /* ltype: "expand"  */
-#line 441 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                  {(yyval.info)= 3;}
-#line 2706 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 537 "parser.y"
+                       {
+	#line 3790 "format.w"
+	(yyval.info)= 3;}
+#line 2642 "parser.c"
     break;
 
   case 94: /* leaders: glue_node ltype rule_node  */
-#line 442 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                 {if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)|b100;else (yyval.info)= (yyvsp[-1].info);}
-#line 2712 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 540 "parser.y"
+                                 {
+	#line 3791 "format.w"
+	if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)	|b100;else (yyval.info)= (yyvsp[-1].info);}
+#line 2650 "parser.c"
     break;
 
   case 95: /* leaders: glue_node ltype hbox_node  */
-#line 443 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)|b100;else (yyval.info)= (yyvsp[-1].info);}
-#line 2718 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 543 "parser.y"
+                                  {
+	#line 3792 "format.w"
+	if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)	|b100;else (yyval.info)= (yyvsp[-1].info);}
+#line 2658 "parser.c"
     break;
 
   case 96: /* leaders: glue_node ltype vbox_node  */
-#line 444 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)|b100;else (yyval.info)= (yyvsp[-1].info);}
-#line 2724 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 546 "parser.y"
+                                  {
+	#line 3793 "format.w"
+	if((yyvsp[-2].b))(yyval.info)= (yyvsp[-1].info)	|b100;else (yyval.info)= (yyvsp[-1].info);}
+#line 2666 "parser.c"
     break;
 
   case 97: /* content_node: start "leaders" leaders ">"  */
-#line 445 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                      {hput_tags((yyvsp[-3].u),TAG(leaders_kind,(yyvsp[-1].info)));}
-#line 2730 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 549 "parser.y"
+                                      {
+	#line 3794 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(leaders_kind,(yyvsp[-1].info)));}
+#line 2674 "parser.c"
     break;
 
   case 98: /* $@4: %empty  */
-#line 448 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {if((yyvsp[0].d)!=0)HPUT32((yyvsp[0].d));}
-#line 2736 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 553 "parser.y"
+                  {
+	#line 3900 "format.w"
+	if((yyvsp[0].d)!=0)HPUT32((yyvsp[0].d));}
+#line 2682 "parser.c"
     break;
 
   case 99: /* baseline: dimension $@4 glue_node glue_node  */
-#line 449 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.info)= b000;if((yyvsp[-3].d)!=0)(yyval.info)|= b001;
-if((yyvsp[-1].b))(yyval.info)|= b100;
-if((yyvsp[0].b))(yyval.info)|= b010;
-}
-#line 2745 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 556 "parser.y"
+                   {
+	#line 3901 "format.w"
+	(yyval.info)= b000;if((yyvsp[-3].d)!=0)(yyval.info)	|= b001;
+	if((yyvsp[-1].b))(yyval.info)	|= b100;
+	if((yyvsp[0].b))(yyval.info)	|= b010;
+	}
+#line 2693 "parser.c"
     break;
 
   case 100: /* content_node: start "baseline" baseline ">"  */
-#line 454 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{if((yyvsp[-1].info)==b000)HPUT8(0);hput_tags((yyvsp[-3].u),TAG(baseline_kind,(yyvsp[-1].info)));}
-#line 2751 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 563 "parser.y"
+{
+	#line 3906 "format.w"
+	if((yyvsp[-1].info)==b000)HPUT8(0);hput_tags((yyvsp[-3].u),TAG(baseline_kind,(yyvsp[-1].info)));}
+#line 2701 "parser.c"
     break;
 
   case 102: /* cc_list: cc_list TXT_CC  */
-#line 457 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {hput_utf8((yyvsp[0].u));}
-#line 2757 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 567 "parser.y"
+                               {
+	#line 3989 "format.w"
+	hput_utf8((yyvsp[0].u));}
+#line 2709 "parser.c"
     break;
 
   case 103: /* lig_cc: UNSIGNED  */
-#line 458 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {RNG("UTF-8 code",(yyvsp[0].u),0,0x1FFFFF);(yyval.u)= hpos-hstart;hput_utf8((yyvsp[0].u));}
-#line 2763 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 570 "parser.y"
+               {
+	#line 3990 "format.w"
+	RNG("UTF-8 code",(yyvsp[0].u),0,0x1FFFFF);(yyval.u)= hpos-hstart;hput_utf8((yyvsp[0].u));}
+#line 2717 "parser.c"
     break;
 
   case 104: /* lig_cc: CHARCODE  */
-#line 459 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {(yyval.u)= hpos-hstart;hput_utf8((yyvsp[0].u));}
-#line 2769 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 573 "parser.y"
+               {
+	#line 3991 "format.w"
+	(yyval.u)= hpos-hstart;hput_utf8((yyvsp[0].u));}
+#line 2725 "parser.c"
     break;
 
   case 105: /* ref: REFERENCE  */
-#line 460 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-             {HPUT8((yyvsp[0].u));(yyval.u)= (yyvsp[0].u);}
-#line 2775 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 576 "parser.y"
+             {
+	#line 3992 "format.w"
+	HPUT8((yyvsp[0].u));(yyval.u)= (yyvsp[0].u);}
+#line 2733 "parser.c"
     break;
 
   case 106: /* $@5: %empty  */
-#line 461 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-            {REF(font_kind,(yyvsp[0].u));}
-#line 2781 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 579 "parser.y"
+            {
+	#line 3993 "format.w"
+	REF(font_kind,(yyvsp[0].u));}
+#line 2741 "parser.c"
     break;
 
   case 107: /* ligature: ref $@5 lig_cc TXT_START cc_list TXT_END  */
-#line 462 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{(yyval.lg).f= (yyvsp[-5].u);(yyval.lg).l.p= (yyvsp[-3].u);(yyval.lg).l.s= (hpos-hstart)-(yyvsp[-3].u);
-RNG("Ligature size",(yyval.lg).l.s,0,255);}
-#line 2788 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 582 "parser.y"
+{
+	#line 3994 "format.w"
+	(yyval.lg).f= (yyvsp[-5].u);(yyval.lg).l.p= (yyvsp[-3].u);(yyval.lg).l.s= (hpos-hstart)-(yyvsp[-3].u);
+	RNG("Ligature size",(yyval.lg).l.s,0,255);}
+#line 2750 "parser.c"
     break;
 
   case 108: /* content_node: start "ligature" ligature ">"  */
-#line 464 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                        {hput_tags((yyvsp[-3].u),hput_ligature(&((yyvsp[-1].lg))));}
-#line 2794 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 586 "parser.y"
+                                        {
+	#line 3996 "format.w"
+	hput_tags((yyvsp[-3].u),hput_ligature(&((yyvsp[-1].lg))));}
+#line 2758 "parser.c"
     break;
 
   case 109: /* replace_count: explicit  */
-#line 467 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {if((yyvsp[0].b)){(yyval.u)= 0x80;HPUT8(0x80);}else (yyval.u)= 0x00;}
-#line 2800 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 590 "parser.y"
+                      {
+	#line 4106 "format.w"
+	if((yyvsp[0].b)){(yyval.u)= 0x80;HPUT8(0x80);}else (yyval.u)= 0x00;}
+#line 2766 "parser.c"
     break;
 
   case 110: /* replace_count: explicit UNSIGNED  */
-#line 468 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {RNG("Replace count",(yyvsp[0].u),0,31);
-(yyval.u)= ((yyvsp[0].u))|(((yyvsp[-1].b))?0x80:0x00);if((yyval.u)!=0)HPUT8((yyval.u));}
-#line 2807 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 593 "parser.y"
+                          {
+	#line 4107 "format.w"
+	RNG("Replace count",(yyvsp[0].u),0,31);
+	(yyval.u)= ((yyvsp[0].u))	|(((yyvsp[-1].b))?0x80:0x00);if((yyval.u)!=0)HPUT8((yyval.u));}
+#line 2775 "parser.c"
     break;
 
   case 111: /* disc: replace_count list list  */
-#line 470 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {(yyval.dc).r= (yyvsp[-2].u);(yyval.dc).p= (yyvsp[-1].l);(yyval.dc).q= (yyvsp[0].l);
-if((yyvsp[0].l).s==0){hpos= hpos-2;if((yyvsp[-1].l).s==0)hpos= hpos-2;}}
-#line 2814 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 597 "parser.y"
+                            {
+	#line 4109 "format.w"
+	(yyval.dc).r= (yyvsp[-2].u);(yyval.dc).p= (yyvsp[-1].l);(yyval.dc).q= (yyvsp[0].l);
+	if((yyvsp[0].l).s==0){hpos= hpos-2;if((yyvsp[-1].l).s==0)hpos= hpos-2;}}
+#line 2784 "parser.c"
     break;
 
   case 112: /* disc: replace_count list  */
-#line 472 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.dc).r= (yyvsp[-1].u);(yyval.dc).p= (yyvsp[0].l);if((yyvsp[0].l).s==0)hpos= hpos-2;(yyval.dc).q.s= 0;}
-#line 2820 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 601 "parser.y"
+                           {
+	#line 4111 "format.w"
+	(yyval.dc).r= (yyvsp[-1].u);(yyval.dc).p= (yyvsp[0].l);if((yyvsp[0].l).s==0)hpos= hpos-2;(yyval.dc).q.s= 0;}
+#line 2792 "parser.c"
     break;
 
   case 113: /* disc: replace_count  */
-#line 473 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {(yyval.dc).r= (yyvsp[0].u);(yyval.dc).p.s= 0;(yyval.dc).q.s= 0;}
-#line 2826 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 604 "parser.y"
+                      {
+	#line 4112 "format.w"
+	(yyval.dc).r= (yyvsp[0].u);(yyval.dc).p.s= 0;(yyval.dc).q.s= 0;}
+#line 2800 "parser.c"
     break;
 
   case 114: /* disc_node: start "disc" disc ">"  */
-#line 477 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hput_tags((yyvsp[-3].u),hput_disc(&((yyvsp[-1].dc))));}
-#line 2832 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 610 "parser.y"
+{
+	#line 4116 "format.w"
+	hput_tags((yyvsp[-3].u),hput_disc(&((yyvsp[-1].dc))));}
+#line 2808 "parser.c"
     break;
 
   case 116: /* par_dimen: xdimen  */
-#line 482 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                {hput_xdimen_node(&((yyvsp[0].xd)));}
-#line 2838 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 616 "parser.y"
+                {
+	#line 4268 "format.w"
+	hput_xdimen_node(&((yyvsp[0].xd)));}
+#line 2816 "parser.c"
     break;
 
   case 117: /* par: xdimen_ref param_ref list  */
-#line 483 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                             {(yyval.info)= b000;}
-#line 2844 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 619 "parser.y"
+                             {
+	#line 4269 "format.w"
+	(yyval.info)= b000;}
+#line 2824 "parser.c"
     break;
 
   case 118: /* par: xdimen_ref empty_param_list non_empty_param_list list  */
-#line 484 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                      {(yyval.info)= b010;}
-#line 2850 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 622 "parser.y"
+                                                              {
+	#line 4270 "format.w"
+	(yyval.info)= b010;}
+#line 2832 "parser.c"
     break;
 
   case 119: /* par: xdimen_ref empty_param_list list  */
-#line 485 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                 {(yyval.info)= b010;}
-#line 2856 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 625 "parser.y"
+                                         {
+	#line 4271 "format.w"
+	(yyval.info)= b010;}
+#line 2840 "parser.c"
     break;
 
   case 120: /* $@6: %empty  */
-#line 486 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                 {hput_xdimen_node(&((yyvsp[-1].xd)));}
-#line 2862 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 628 "parser.y"
+                         {
+	#line 4272 "format.w"
+	hput_xdimen_node(&((yyvsp[-1].xd)));}
+#line 2848 "parser.c"
     break;
 
   case 121: /* par: xdimen param_ref $@6 list  */
-#line 486 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                               {(yyval.info)= b100;}
-#line 2868 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 630 "parser.y"
+                                     {
+	#line 4272 "format.w"
+	(yyval.info)= b100;}
+#line 2856 "parser.c"
     break;
 
   case 122: /* par: par_dimen empty_param_list non_empty_param_list list  */
-#line 487 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                     {(yyval.info)= b110;}
-#line 2874 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 633 "parser.y"
+                                                             {
+	#line 4273 "format.w"
+	(yyval.info)= b110;}
+#line 2864 "parser.c"
     break;
 
   case 123: /* par: par_dimen empty_param_list list  */
-#line 488 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {(yyval.info)= b110;}
-#line 2880 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 636 "parser.y"
+                                        {
+	#line 4274 "format.w"
+	(yyval.info)= b110;}
+#line 2872 "parser.c"
     break;
 
   case 124: /* content_node: start "par" par ">"  */
-#line 490 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {hput_tags((yyvsp[-3].u),TAG(par_kind,(yyvsp[-1].info)));}
-#line 2886 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 640 "parser.y"
+                              {
+	#line 4276 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(par_kind,(yyvsp[-1].info)));}
+#line 2880 "parser.c"
     break;
 
   case 125: /* math: param_ref list  */
-#line 493 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.info)= b000;}
-#line 2892 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 644 "parser.y"
+                   {
+	#line 4342 "format.w"
+	(yyval.info)= b000;}
+#line 2888 "parser.c"
     break;
 
   case 126: /* math: param_ref list hbox_node  */
-#line 494 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {(yyval.info)= b001;}
-#line 2898 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 647 "parser.y"
+                                 {
+	#line 4343 "format.w"
+	(yyval.info)= b001;}
+#line 2896 "parser.c"
     break;
 
   case 127: /* math: param_ref hbox_node list  */
-#line 495 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {(yyval.info)= b010;}
-#line 2904 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 650 "parser.y"
+                                 {
+	#line 4344 "format.w"
+	(yyval.info)= b010;}
+#line 2904 "parser.c"
     break;
 
   case 128: /* math: empty_param_list list  */
-#line 496 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {(yyval.info)= b100;}
-#line 2910 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 653 "parser.y"
+                              {
+	#line 4345 "format.w"
+	(yyval.info)= b100;}
+#line 2912 "parser.c"
     break;
 
   case 129: /* math: empty_param_list list hbox_node  */
-#line 497 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {(yyval.info)= b101;}
-#line 2916 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 656 "parser.y"
+                                        {
+	#line 4346 "format.w"
+	(yyval.info)= b101;}
+#line 2920 "parser.c"
     break;
 
   case 130: /* math: empty_param_list hbox_node list  */
-#line 498 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {(yyval.info)= b110;}
-#line 2922 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 659 "parser.y"
+                                        {
+	#line 4347 "format.w"
+	(yyval.info)= b110;}
+#line 2928 "parser.c"
     break;
 
   case 131: /* math: empty_param_list non_empty_param_list list  */
-#line 499 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                           {(yyval.info)= b100;}
-#line 2928 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 662 "parser.y"
+                                                   {
+	#line 4348 "format.w"
+	(yyval.info)= b100;}
+#line 2936 "parser.c"
     break;
 
   case 132: /* math: empty_param_list non_empty_param_list list hbox_node  */
-#line 500 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                     {(yyval.info)= b101;}
-#line 2934 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 665 "parser.y"
+                                                             {
+	#line 4349 "format.w"
+	(yyval.info)= b101;}
+#line 2944 "parser.c"
     break;
 
   case 133: /* math: empty_param_list non_empty_param_list hbox_node list  */
-#line 501 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                     {(yyval.info)= b110;}
-#line 2940 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 668 "parser.y"
+                                                             {
+	#line 4350 "format.w"
+	(yyval.info)= b110;}
+#line 2952 "parser.c"
     break;
 
   case 134: /* content_node: start "math" math ">"  */
-#line 503 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {hput_tags((yyvsp[-3].u),TAG(math_kind,(yyvsp[-1].info)));}
-#line 2946 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 672 "parser.y"
+                                {
+	#line 4352 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(math_kind,(yyvsp[-1].info)));}
+#line 2960 "parser.c"
     break;
 
   case 135: /* on_off: "on"  */
-#line 506 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {(yyval.i)= 1;}
-#line 2952 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 676 "parser.y"
+         {
+	#line 4402 "format.w"
+	(yyval.i)= 1;}
+#line 2968 "parser.c"
     break;
 
   case 136: /* on_off: "off"  */
-#line 506 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                     {(yyval.i)= 0;}
-#line 2958 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 678 "parser.y"
+                    {
+	#line 4402 "format.w"
+	(yyval.i)= 0;}
+#line 2976 "parser.c"
     break;
 
   case 137: /* math: on_off  */
-#line 507 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-           {(yyval.info)= b011|((yyvsp[0].i)<<2);}
-#line 2964 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 681 "parser.y"
+           {
+	#line 4403 "format.w"
+	(yyval.info)= b011	|((yyvsp[0].i)<<2);}
+#line 2984 "parser.c"
     break;
 
   case 138: /* content_node: start "adjust" list ">"  */
-#line 510 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                  {hput_tags((yyvsp[-3].u),TAG(adjust_kind,1));}
-#line 2970 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 685 "parser.y"
+                                  {
+	#line 4434 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(adjust_kind,1));}
+#line 2992 "parser.c"
     break;
 
   case 139: /* span_count: UNSIGNED  */
-#line 513 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {(yyval.info)= hput_span_count((yyvsp[0].u));}
-#line 2976 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 689 "parser.y"
+                   {
+	#line 4533 "format.w"
+	(yyval.info)= hput_span_count((yyvsp[0].u));}
+#line 3000 "parser.c"
     break;
 
   case 140: /* content_node: start "item" content_node ">"  */
-#line 514 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                        {hput_tags((yyvsp[-3].u),TAG(item_kind,1));}
-#line 2982 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 692 "parser.y"
+                                        {
+	#line 4534 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(item_kind,1));}
+#line 3008 "parser.c"
     break;
 
   case 141: /* content_node: start "item" span_count content_node ">"  */
-#line 515 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                   {hput_tags((yyvsp[-4].u),TAG(item_kind,(yyvsp[-2].info)));}
-#line 2988 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 695 "parser.y"
+                                                   {
+	#line 4535 "format.w"
+	hput_tags((yyvsp[-4].u),TAG(item_kind,(yyvsp[-2].info)));}
+#line 3016 "parser.c"
     break;
 
   case 142: /* content_node: start "item" list ">"  */
-#line 516 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {hput_tags((yyvsp[-3].u),TAG(item_kind,b000));}
-#line 2994 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 698 "parser.y"
+                                {
+	#line 4536 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(item_kind,b000));}
+#line 3024 "parser.c"
     break;
 
   case 143: /* table: "h" box_goal list list  */
-#line 518 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {(yyval.info)= (yyvsp[-2].info);}
-#line 3000 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 702 "parser.y"
+                          {
+	#line 4538 "format.w"
+	(yyval.info)= (yyvsp[-2].info);}
+#line 3032 "parser.c"
     break;
 
   case 144: /* table: "v" box_goal list list  */
-#line 519 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {(yyval.info)= (yyvsp[-2].info)|b010;}
-#line 3006 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 705 "parser.y"
+                          {
+	#line 4539 "format.w"
+	(yyval.info)= (yyvsp[-2].info)	|b010;}
+#line 3040 "parser.c"
     break;
 
   case 145: /* content_node: start "table" table ">"  */
-#line 521 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                  {hput_tags((yyvsp[-3].u),TAG(table_kind,(yyvsp[-1].info)));}
-#line 3012 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 709 "parser.y"
+                                  {
+	#line 4541 "format.w"
+	hput_tags((yyvsp[-3].u),TAG(table_kind,(yyvsp[-1].info)));}
+#line 3048 "parser.c"
     break;
 
   case 146: /* image_dimen: dimension dimension  */
-#line 524 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                               {(yyval.x).w= (yyvsp[-1].d);(yyval.x).h= (yyvsp[0].d);}
-#line 3018 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 713 "parser.y"
+                               {
+	#line 4629 "format.w"
+	(yyval.x).w= (yyvsp[-1].d);(yyval.x).h= (yyvsp[0].d);}
+#line 3056 "parser.c"
     break;
 
   case 147: /* image_dimen: %empty  */
-#line 524 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                    {(yyval.x).w= (yyval.x).h= 0;}
-#line 3024 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 715 "parser.y"
+                                 {
+	#line 4629 "format.w"
+	(yyval.x).w= (yyval.x).h= 0;}
+#line 3064 "parser.c"
     break;
 
   case 148: /* image: UNSIGNED image_dimen plus minus  */
-#line 525 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                     {(yyval.x).w= (yyvsp[-2].x).w;(yyval.x).h= (yyvsp[-2].x).h;(yyval.x).p= (yyvsp[-1].st);(yyval.x).m= (yyvsp[0].st);RNG("Section number",(yyvsp[-3].u),3,max_section_no);(yyval.x).n= (yyvsp[-3].u);}
-#line 3030 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 718 "parser.y"
+                                     {
+	#line 4630 "format.w"
+	(yyval.x).w= (yyvsp[-2].x).w;(yyval.x).h= (yyvsp[-2].x).h;(yyval.x).p= (yyvsp[-1].st);(yyval.x).m= (yyvsp[0].st);RNG("Section number",(yyvsp[-3].u),3,max_section_no);(yyval.x).n= (yyvsp[-3].u);}
+#line 3072 "parser.c"
     break;
 
   case 149: /* content_node: start "image" image ">"  */
-#line 526 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                  {hput_tags((yyvsp[-3].u),hput_image(&((yyvsp[-1].x))));}
-#line 3036 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 721 "parser.y"
+                                  {
+	#line 4631 "format.w"
+	hput_tags((yyvsp[-3].u),hput_image(&((yyvsp[-1].x))));}
+#line 3080 "parser.c"
     break;
 
   case 150: /* max_value: "outline" UNSIGNED  */
-#line 529 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {max_outline= (yyvsp[0].u);
-RNG("max outline",max_outline,0,0xFFFF);
-DBG(DBGDEF|DBGLABEL,"Setting max outline to %d\n",max_outline);
-}
-#line 3045 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 725 "parser.y"
+                          {
+	#line 4868 "format.w"
+	max_outline= (yyvsp[0].u);
+	RNG("max outline",max_outline,0,0xFFFF);
+	DBG(DBGDEF	|DBGLABEL,"Setting max outline to %d\n",max_outline);
+	}
+#line 3091 "parser.c"
     break;
 
   case 151: /* placement: "top"  */
-#line 535 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-             {(yyval.i)= LABEL_TOP;}
-#line 3051 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 732 "parser.y"
+             {
+	#line 4960 "format.w"
+	(yyval.i)= LABEL_TOP;}
+#line 3099 "parser.c"
     break;
 
   case 152: /* placement: "bot"  */
-#line 535 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                 {(yyval.i)= LABEL_BOT;}
-#line 3057 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 734 "parser.y"
+                            {
+	#line 4960 "format.w"
+	(yyval.i)= LABEL_BOT;}
+#line 3107 "parser.c"
     break;
 
   case 153: /* placement: "mid"  */
-#line 535 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                     {(yyval.i)= LABEL_MID;}
-#line 3063 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 736 "parser.y"
+                            {
+	#line 4960 "format.w"
+	(yyval.i)= LABEL_MID;}
+#line 3115 "parser.c"
     break;
 
   case 154: /* placement: %empty  */
-#line 535 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                                      {(yyval.i)= LABEL_MID;}
-#line 3069 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 738 "parser.y"
+                         {
+	#line 4960 "format.w"
+	(yyval.i)= LABEL_MID;}
+#line 3123 "parser.c"
     break;
 
   case 155: /* content_node: "<" "label" REFERENCE placement ">"  */
-#line 537 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hset_label((yyvsp[-2].u),(yyvsp[-1].i));}
-#line 3075 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 742 "parser.y"
+{
+	#line 4962 "format.w"
+	hset_label((yyvsp[-2].u),(yyvsp[-1].i));}
+#line 3131 "parser.c"
     break;
 
   case 156: /* content_node: start "link" REFERENCE on_off ">"  */
-#line 541 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hput_tags((yyvsp[-4].u),hput_link((yyvsp[-2].u),(yyvsp[-1].i)));}
-#line 3081 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 747 "parser.y"
+{
+	#line 5220 "format.w"
+	hput_tags((yyvsp[-4].u),hput_link((yyvsp[-2].u),(yyvsp[-1].i)));}
+#line 3139 "parser.c"
     break;
 
   case 157: /* def_node: "<" "outline" REFERENCE integer position list ">"  */
-#line 544 "../../../texk/web2c/hitexdir/hishrink-parser.y"
+#line 751 "parser.y"
                                                           {
-static int outline_no= -1;
-(yyval.rf).k= outline_kind;(yyval.rf).n= (yyvsp[-4].u);
-if((yyvsp[-1].l).s==0)QUIT("Outline with empty title in line %d",yylineno);
-outline_no++;
-hset_outline(outline_no,(yyvsp[-4].u),(yyvsp[-3].i),(yyvsp[-2].u));
-}
-#line 3093 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+	#line 5350 "format.w"
+	
+	static int outline_no= -1;
+	(yyval.rf).k= outline_kind;(yyval.rf).n= (yyvsp[-4].u);
+	if((yyvsp[-1].l).s==0)QUIT("Outline with empty title in line %d",yylineno);
+	outline_no++;
+	hset_outline(outline_no,(yyvsp[-4].u),(yyvsp[-3].i),(yyvsp[-2].u));
+	}
+#line 3153 "parser.c"
     break;
 
   case 158: /* stream_link: ref  */
-#line 553 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {REF_RNG(stream_kind,(yyvsp[0].u));}
-#line 3099 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 761 "parser.y"
+               {
+	#line 5765 "format.w"
+	REF_RNG(stream_kind,(yyvsp[0].u));}
+#line 3161 "parser.c"
     break;
 
   case 159: /* stream_link: "*"  */
-#line 553 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                     {HPUT8(255);}
-#line 3105 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 763 "parser.y"
+                                                    {
+	#line 5765 "format.w"
+	HPUT8(255);}
+#line 3169 "parser.c"
     break;
 
   case 160: /* stream_split: stream_link stream_link UNSIGNED  */
-#line 554 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                             {RNG("split ratio",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
-#line 3111 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 766 "parser.y"
+                                             {
+	#line 5766 "format.w"
+	RNG("split ratio",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
+#line 3177 "parser.c"
     break;
 
   case 161: /* $@7: %empty  */
-#line 555 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {RNG("magnification factor",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
-#line 3117 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 769 "parser.y"
+                                {
+	#line 5767 "format.w"
+	RNG("magnification factor",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
+#line 3185 "parser.c"
     break;
 
   case 163: /* stream_type: stream_info  */
-#line 557 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {(yyval.info)= 0;}
-#line 3123 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 773 "parser.y"
+                       {
+	#line 5769 "format.w"
+	(yyval.info)= 0;}
+#line 3193 "parser.c"
     break;
 
   case 164: /* stream_type: "first"  */
-#line 557 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                     {(yyval.info)= 1;}
-#line 3129 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 775 "parser.y"
+                      {
+	#line 5769 "format.w"
+	(yyval.info)= 1;}
+#line 3201 "parser.c"
     break;
 
   case 165: /* stream_type: "last"  */
-#line 557 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                  {(yyval.info)= 2;}
-#line 3135 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 777 "parser.y"
+                     {
+	#line 5769 "format.w"
+	(yyval.info)= 2;}
+#line 3209 "parser.c"
     break;
 
   case 166: /* stream_type: "top"  */
-#line 557 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                              {(yyval.info)= 3;}
-#line 3141 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 779 "parser.y"
+                    {
+	#line 5769 "format.w"
+	(yyval.info)= 3;}
+#line 3217 "parser.c"
     break;
 
   case 167: /* stream_def_node: start "stream (definition)" ref stream_type list xdimen_node glue_node list glue_node ">"  */
-#line 561 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{DEF((yyval.rf),stream_kind,(yyvsp[-7].u));hput_tags((yyvsp[-9].u),TAG(stream_kind,(yyvsp[-6].info)|b100));}
-#line 3147 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 785 "parser.y"
+{
+	#line 5773 "format.w"
+	DEF((yyval.rf),stream_kind,(yyvsp[-7].u));hput_tags((yyvsp[-9].u),TAG(stream_kind,(yyvsp[-6].info)	|b100));}
+#line 3225 "parser.c"
     break;
 
   case 168: /* stream_ins_node: start "stream (definition)" ref ">"  */
-#line 564 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{RNG("Stream insertion",(yyvsp[-1].u),0,max_ref[stream_kind]);hput_tags((yyvsp[-3].u),TAG(stream_kind,b100));}
-#line 3153 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 790 "parser.y"
+{
+	#line 5776 "format.w"
+	RNG("Stream insertion",(yyvsp[-1].u),0,max_ref[stream_kind]);hput_tags((yyvsp[-3].u),TAG(stream_kind,b100));}
+#line 3233 "parser.c"
     break;
 
   case 171: /* stream: empty_param_list list  */
-#line 569 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {(yyval.info)= b010;}
-#line 3159 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 796 "parser.y"
+                            {
+	#line 5871 "format.w"
+	(yyval.info)= b010;}
+#line 3241 "parser.c"
     break;
 
   case 172: /* stream: empty_param_list non_empty_param_list list  */
-#line 570 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                           {(yyval.info)= b010;}
-#line 3165 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 799 "parser.y"
+                                                   {
+	#line 5872 "format.w"
+	(yyval.info)= b010;}
+#line 3249 "parser.c"
     break;
 
   case 173: /* stream: param_ref list  */
-#line 571 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {(yyval.info)= b000;}
-#line 3171 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 802 "parser.y"
+                       {
+	#line 5873 "format.w"
+	(yyval.info)= b000;}
+#line 3257 "parser.c"
     break;
 
   case 174: /* content_node: start "stream" stream_ref stream ">"  */
-#line 573 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hput_tags((yyvsp[-4].u),TAG(stream_kind,(yyvsp[-1].info)));}
-#line 3177 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 806 "parser.y"
+{
+	#line 5875 "format.w"
+	hput_tags((yyvsp[-4].u),TAG(stream_kind,(yyvsp[-1].info)));}
+#line 3265 "parser.c"
     break;
 
   case 175: /* page_priority: %empty  */
-#line 576 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {HPUT8(1);}
-#line 3183 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 810 "parser.y"
+              {
+	#line 5978 "format.w"
+	HPUT8(1);}
+#line 3273 "parser.c"
     break;
 
   case 176: /* page_priority: UNSIGNED  */
-#line 577 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-         {RNG("page priority",(yyvsp[0].u),0,255);HPUT8((yyvsp[0].u));}
-#line 3189 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 813 "parser.y"
+                 {
+	#line 5979 "format.w"
+	RNG("page priority",(yyvsp[0].u),0,255);HPUT8((yyvsp[0].u));}
+#line 3281 "parser.c"
     break;
 
   case 179: /* $@8: %empty  */
-#line 581 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-           {hput_string((yyvsp[0].s));}
-#line 3195 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 819 "parser.y"
+           {
+	#line 5983 "format.w"
+	hput_string((yyvsp[0].s));}
+#line 3289 "parser.c"
     break;
 
   case 180: /* $@9: %empty  */
-#line 581 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                                              {HPUT32((yyvsp[0].d));}
-#line 3201 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 821 "parser.y"
+                                                          {
+	#line 5983 "format.w"
+	HPUT32((yyvsp[0].d));}
+#line 3297 "parser.c"
     break;
 
   case 182: /* content_node: "<" "range" REFERENCE "on" ">"  */
-#line 587 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                         {REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),true);}
-#line 3207 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 828 "parser.y"
+                                         {
+	#line 6095 "format.w"
+	REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),true);}
+#line 3305 "parser.c"
     break;
 
   case 183: /* content_node: "<" "range" REFERENCE "off" ">"  */
-#line 588 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),false);}
-#line 3213 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 831 "parser.y"
+                                      {
+	#line 6096 "format.w"
+	REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),false);}
+#line 3313 "parser.c"
     break;
 
   case 185: /* $@10: %empty  */
-#line 594 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                          {new_directory((yyvsp[0].u)+1);new_output_buffers();}
-#line 3219 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 837 "parser.y"
+                                          {
+	#line 6786 "format.w"
+	new_directory((yyvsp[0].u)+1);new_output_buffers();}
+#line 3321 "parser.c"
     break;
 
   case 189: /* entry: "<" "entry" UNSIGNED string ">"  */
-#line 597 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{RNG("Section number",(yyvsp[-2].u),3,max_section_no);hset_entry(&(dir[(yyvsp[-2].u)]),(yyvsp[-2].u),0,0,(yyvsp[-1].s));}
-#line 3225 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 842 "parser.y"
+{
+	#line 6789 "format.w"
+	RNG("Section number",(yyvsp[-2].u),3,max_section_no);hset_entry(&(dir[(yyvsp[-2].u)]),(yyvsp[-2].u),0,0,(yyvsp[-1].s));}
+#line 3329 "parser.c"
     break;
 
   case 190: /* $@11: %empty  */
-#line 600 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                    {hput_definitions_start();}
-#line 3231 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 846 "parser.y"
+                                    {
+	#line 7277 "format.w"
+	hput_definitions_start();}
+#line 3337 "parser.c"
     break;
 
   case 191: /* definition_section: "<" "definitions" $@11 max_definitions definition_list ">"  */
-#line 602 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-   {hput_definitions_end();}
-#line 3237 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 850 "parser.y"
+   {
+	#line 7279 "format.w"
+	hput_definitions_end();}
+#line 3345 "parser.c"
     break;
 
   case 194: /* max_definitions: "<" "max" max_list ">"  */
-#line 607 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{/*245:*/
-
-if(max_ref[label_kind]>=0)
-ALLOCATE(labels,max_ref[label_kind]+1,label_t);
-/*:245*//*266:*/
-
-if(max_outline>=0)
-ALLOCATE(outlines,max_outline+1,outline_t);
-/*:266*//*293:*/
-
-ALLOCATE(page_on,max_ref[page_kind]+1,int);
-ALLOCATE(range_pos,2*(max_ref[range_kind]+1),range_pos_t);
-/*:293*//*357:*/
-
-definition_bits[0][int_kind]= (1<<(MAX_INT_DEFAULT+1))-1;
-definition_bits[0][dimen_kind]= (1<<(MAX_DIMEN_DEFAULT+1))-1;
-definition_bits[0][xdimen_kind]= (1<<(MAX_XDIMEN_DEFAULT+1))-1;
-definition_bits[0][glue_kind]= (1<<(MAX_GLUE_DEFAULT+1))-1;
-definition_bits[0][baseline_kind]= (1<<(MAX_BASELINE_DEFAULT+1))-1;
-definition_bits[0][page_kind]= (1<<(MAX_PAGE_DEFAULT+1))-1;
-definition_bits[0][stream_kind]= (1<<(MAX_STREAM_DEFAULT+1))-1;
-definition_bits[0][range_kind]= (1<<(MAX_RANGE_DEFAULT+1))-1;
-/*:357*//*372:*/
-
-ALLOCATE(hfont_name,max_ref[font_kind]+1,char*);
-/*:372*/
-hput_max_definitions();}
-#line 3269 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 856 "parser.y"
+{
+	#line 7395 "format.w"
+		/*245:*/
+	if(max_ref[label_kind]>=0)
+	ALLOCATE(labels,max_ref[label_kind]+1,label_t);
+		/*:245*/	/*266:*/
+	if(max_outline>=0)
+	ALLOCATE(outlines,max_outline+1,outline_t);
+		/*:266*/	/*293:*/
+	ALLOCATE(page_on,max_ref[page_kind]+1,int);
+	ALLOCATE(range_pos,2*(max_ref[range_kind]+1),range_pos_t);
+		/*:293*/	/*357:*/
+	definition_bits[0][int_kind]= (1<<(MAX_INT_DEFAULT+1))-1;
+	definition_bits[0][dimen_kind]= (1<<(MAX_DIMEN_DEFAULT+1))-1;
+	definition_bits[0][xdimen_kind]= (1<<(MAX_XDIMEN_DEFAULT+1))-1;
+	definition_bits[0][glue_kind]= (1<<(MAX_GLUE_DEFAULT+1))-1;
+	definition_bits[0][baseline_kind]= (1<<(MAX_BASELINE_DEFAULT+1))-1;
+	definition_bits[0][page_kind]= (1<<(MAX_PAGE_DEFAULT+1))-1;
+	definition_bits[0][stream_kind]= (1<<(MAX_STREAM_DEFAULT+1))-1;
+	definition_bits[0][range_kind]= (1<<(MAX_RANGE_DEFAULT+1))-1;
+		/*:357*/	/*372:*/
+	ALLOCATE(hfont_name,max_ref[font_kind]+1,char*);
+		/*:372*/hput_max_definitions();}
+#line 3373 "parser.c"
     break;
 
   case 197: /* max_value: "font" UNSIGNED  */
-#line 637 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {hset_max(font_kind,(yyvsp[0].u));}
-#line 3275 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 882 "parser.y"
+                       {
+	#line 7399 "format.w"
+	hset_max(font_kind,(yyvsp[0].u));}
+#line 3381 "parser.c"
     break;
 
   case 198: /* max_value: "int" UNSIGNED  */
-#line 638 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                 {hset_max(int_kind,(yyvsp[0].u));}
-#line 3281 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 885 "parser.y"
+                         {
+	#line 7400 "format.w"
+	hset_max(int_kind,(yyvsp[0].u));}
+#line 3389 "parser.c"
     break;
 
   case 199: /* max_value: "dimen" UNSIGNED  */
-#line 639 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {hset_max(dimen_kind,(yyvsp[0].u));}
-#line 3287 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 888 "parser.y"
+                       {
+	#line 7401 "format.w"
+	hset_max(dimen_kind,(yyvsp[0].u));}
+#line 3397 "parser.c"
     break;
 
   case 200: /* max_value: "ligature" UNSIGNED  */
-#line 640 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {hset_max(ligature_kind,(yyvsp[0].u));}
-#line 3293 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 891 "parser.y"
+                          {
+	#line 7402 "format.w"
+	hset_max(ligature_kind,(yyvsp[0].u));}
+#line 3405 "parser.c"
     break;
 
   case 201: /* max_value: "disc" UNSIGNED  */
-#line 641 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {hset_max(disc_kind,(yyvsp[0].u));}
-#line 3299 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 894 "parser.y"
+                      {
+	#line 7403 "format.w"
+	hset_max(disc_kind,(yyvsp[0].u));}
+#line 3413 "parser.c"
     break;
 
   case 202: /* max_value: "glue" UNSIGNED  */
-#line 642 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {hset_max(glue_kind,(yyvsp[0].u));}
-#line 3305 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 897 "parser.y"
+                      {
+	#line 7404 "format.w"
+	hset_max(glue_kind,(yyvsp[0].u));}
+#line 3421 "parser.c"
     break;
 
   case 203: /* max_value: "language" UNSIGNED  */
-#line 643 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {hset_max(language_kind,(yyvsp[0].u));}
-#line 3311 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 900 "parser.y"
+                          {
+	#line 7405 "format.w"
+	hset_max(language_kind,(yyvsp[0].u));}
+#line 3429 "parser.c"
     break;
 
   case 204: /* max_value: "rule" UNSIGNED  */
-#line 644 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {hset_max(rule_kind,(yyvsp[0].u));}
-#line 3317 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 903 "parser.y"
+                      {
+	#line 7406 "format.w"
+	hset_max(rule_kind,(yyvsp[0].u));}
+#line 3437 "parser.c"
     break;
 
   case 205: /* max_value: "image" UNSIGNED  */
-#line 645 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {hset_max(image_kind,(yyvsp[0].u));}
-#line 3323 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 906 "parser.y"
+                       {
+	#line 7407 "format.w"
+	hset_max(image_kind,(yyvsp[0].u));}
+#line 3445 "parser.c"
     break;
 
   case 206: /* max_value: "leaders" UNSIGNED  */
-#line 646 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                 {hset_max(leaders_kind,(yyvsp[0].u));}
-#line 3329 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 909 "parser.y"
+                         {
+	#line 7408 "format.w"
+	hset_max(leaders_kind,(yyvsp[0].u));}
+#line 3453 "parser.c"
     break;
 
   case 207: /* max_value: "baseline" UNSIGNED  */
-#line 647 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {hset_max(baseline_kind,(yyvsp[0].u));}
-#line 3335 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 912 "parser.y"
+                          {
+	#line 7409 "format.w"
+	hset_max(baseline_kind,(yyvsp[0].u));}
+#line 3461 "parser.c"
     break;
 
   case 208: /* max_value: "xdimen" UNSIGNED  */
-#line 648 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                {hset_max(xdimen_kind,(yyvsp[0].u));}
-#line 3341 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 915 "parser.y"
+                        {
+	#line 7410 "format.w"
+	hset_max(xdimen_kind,(yyvsp[0].u));}
+#line 3469 "parser.c"
     break;
 
   case 209: /* max_value: "param" UNSIGNED  */
-#line 649 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {hset_max(param_kind,(yyvsp[0].u));}
-#line 3347 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 918 "parser.y"
+                       {
+	#line 7411 "format.w"
+	hset_max(param_kind,(yyvsp[0].u));}
+#line 3477 "parser.c"
     break;
 
   case 210: /* max_value: "stream (definition)" UNSIGNED  */
-#line 650 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {hset_max(stream_kind,(yyvsp[0].u));}
-#line 3353 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 921 "parser.y"
+                           {
+	#line 7412 "format.w"
+	hset_max(stream_kind,(yyvsp[0].u));}
+#line 3485 "parser.c"
     break;
 
   case 211: /* max_value: "page" UNSIGNED  */
-#line 651 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {hset_max(page_kind,(yyvsp[0].u));}
-#line 3359 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 924 "parser.y"
+                      {
+	#line 7413 "format.w"
+	hset_max(page_kind,(yyvsp[0].u));}
+#line 3493 "parser.c"
     break;
 
   case 212: /* max_value: "range" UNSIGNED  */
-#line 652 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {hset_max(range_kind,(yyvsp[0].u));}
-#line 3365 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 927 "parser.y"
+                       {
+	#line 7414 "format.w"
+	hset_max(range_kind,(yyvsp[0].u));}
+#line 3501 "parser.c"
     break;
 
   case 213: /* max_value: "label" UNSIGNED  */
-#line 653 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-               {hset_max(label_kind,(yyvsp[0].u));}
-#line 3371 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 930 "parser.y"
+                       {
+	#line 7415 "format.w"
+	hset_max(label_kind,(yyvsp[0].u));}
+#line 3509 "parser.c"
     break;
 
   case 214: /* def_node: start "font" ref font ">"  */
-#line 658 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {DEF((yyval.rf),font_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),(yyvsp[-1].info));}
-#line 3377 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 936 "parser.y"
+                       {
+	#line 7612 "format.w"
+	DEF((yyval.rf),font_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),(yyvsp[-1].info));}
+#line 3517 "parser.c"
     break;
 
   case 215: /* def_node: start "int" ref integer ">"  */
-#line 659 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {DEF((yyval.rf),int_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
-#line 3383 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 939 "parser.y"
+                                      {
+	#line 7613 "format.w"
+	DEF((yyval.rf),int_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
+#line 3525 "parser.c"
     break;
 
   case 216: /* def_node: start "dimen" ref dimension ">"  */
-#line 660 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {DEF((yyval.rf),dimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_dimen((yyvsp[-1].d)));}
-#line 3389 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 942 "parser.y"
+                                      {
+	#line 7614 "format.w"
+	DEF((yyval.rf),dimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_dimen((yyvsp[-1].d)));}
+#line 3533 "parser.c"
     break;
 
   case 217: /* def_node: start "language" ref string ">"  */
-#line 661 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {DEF((yyval.rf),language_kind,(yyvsp[-2].u));hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
-#line 3395 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 945 "parser.y"
+                                      {
+	#line 7615 "format.w"
+	DEF((yyval.rf),language_kind,(yyvsp[-2].u));hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
+#line 3541 "parser.c"
     break;
 
   case 218: /* def_node: start "glue" ref glue ">"  */
-#line 662 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {DEF((yyval.rf),glue_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
-#line 3401 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 948 "parser.y"
+                                {
+	#line 7616 "format.w"
+	DEF((yyval.rf),glue_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
+#line 3549 "parser.c"
     break;
 
   case 219: /* def_node: start "xdimen" ref xdimen ">"  */
-#line 663 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {DEF((yyval.rf),xdimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_xdimen(&((yyvsp[-1].xd))));}
-#line 3407 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 951 "parser.y"
+                                    {
+	#line 7617 "format.w"
+	DEF((yyval.rf),xdimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_xdimen(&((yyvsp[-1].xd))));}
+#line 3557 "parser.c"
     break;
 
   case 220: /* def_node: start "rule" ref rule ">"  */
-#line 664 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {DEF((yyval.rf),rule_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
-#line 3413 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 954 "parser.y"
+                                {
+	#line 7618 "format.w"
+	DEF((yyval.rf),rule_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
+#line 3565 "parser.c"
     break;
 
   case 221: /* def_node: start "leaders" ref leaders ">"  */
-#line 665 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {DEF((yyval.rf),leaders_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(leaders_kind,(yyvsp[-1].info)));}
-#line 3419 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 957 "parser.y"
+                                      {
+	#line 7619 "format.w"
+	DEF((yyval.rf),leaders_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(leaders_kind,(yyvsp[-1].info)));}
+#line 3573 "parser.c"
     break;
 
   case 222: /* def_node: start "baseline" ref baseline ">"  */
-#line 666 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {DEF((yyval.rf),baseline_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(baseline_kind,(yyvsp[-1].info)));}
-#line 3425 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 960 "parser.y"
+                                        {
+	#line 7620 "format.w"
+	DEF((yyval.rf),baseline_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(baseline_kind,(yyvsp[-1].info)));}
+#line 3581 "parser.c"
     break;
 
   case 223: /* def_node: start "ligature" ref ligature ">"  */
-#line 667 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {DEF((yyval.rf),ligature_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
-#line 3431 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 963 "parser.y"
+                                        {
+	#line 7621 "format.w"
+	DEF((yyval.rf),ligature_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
+#line 3589 "parser.c"
     break;
 
   case 224: /* def_node: start "disc" ref disc ">"  */
-#line 668 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {DEF((yyval.rf),disc_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
-#line 3437 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 966 "parser.y"
+                                {
+	#line 7622 "format.w"
+	DEF((yyval.rf),disc_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
+#line 3597 "parser.c"
     break;
 
   case 225: /* def_node: start "image" ref image ">"  */
-#line 669 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                          {DEF((yyval.rf),image_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_image(&((yyvsp[-1].x))));}
-#line 3443 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 969 "parser.y"
+                                  {
+	#line 7623 "format.w"
+	DEF((yyval.rf),image_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_image(&((yyvsp[-1].x))));}
+#line 3605 "parser.c"
     break;
 
   case 226: /* def_node: start "param" ref parameters ">"  */
-#line 670 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                               {DEF((yyval.rf),param_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_list((yyvsp[-4].u)+2,&((yyvsp[-1].l))));}
-#line 3449 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 972 "parser.y"
+                                       {
+	#line 7624 "format.w"
+	DEF((yyval.rf),param_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_list((yyvsp[-4].u)+2,&((yyvsp[-1].l))));}
+#line 3613 "parser.c"
     break;
 
   case 227: /* def_node: start "page" ref page ">"  */
-#line 671 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {DEF((yyval.rf),page_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(page_kind,0));}
-#line 3455 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 975 "parser.y"
+                                {
+	#line 7625 "format.w"
+	DEF((yyval.rf),page_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(page_kind,0));}
+#line 3621 "parser.c"
     break;
 
   case 228: /* def_node: start "int" ref ref ">"  */
-#line 675 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {DEF_REF((yyval.rf),int_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(int_kind,0));}
-#line 3461 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 980 "parser.y"
+                         {
+	#line 7644 "format.w"
+	DEF_REF((yyval.rf),int_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(int_kind,0));}
+#line 3629 "parser.c"
     break;
 
   case 229: /* def_node: start "dimen" ref ref ">"  */
-#line 676 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                        {DEF_REF((yyval.rf),dimen_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(dimen_kind,0));}
-#line 3467 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 983 "parser.y"
+                                {
+	#line 7645 "format.w"
+	DEF_REF((yyval.rf),dimen_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(dimen_kind,0));}
+#line 3637 "parser.c"
     break;
 
   case 230: /* def_node: start "glue" ref ref ">"  */
-#line 677 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {DEF_REF((yyval.rf),glue_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(glue_kind,0));}
-#line 3473 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 986 "parser.y"
+                               {
+	#line 7646 "format.w"
+	DEF_REF((yyval.rf),glue_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(glue_kind,0));}
+#line 3645 "parser.c"
     break;
 
   case 232: /* def_list: def_list def_node  */
-#line 681 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                  {check_param_def(&((yyvsp[0].rf)));}
-#line 3479 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 991 "parser.y"
+                          {
+	#line 7760 "format.w"
+	check_param_def(&((yyvsp[0].rf)));}
+#line 3653 "parser.c"
     break;
 
   case 233: /* parameters: estimate def_list  */
-#line 682 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {(yyval.l).p= (yyvsp[0].u);(yyval.l).k= param_kind;(yyval.l).s= (hpos-hstart)-(yyvsp[0].u);}
-#line 3485 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 994 "parser.y"
+                            {
+	#line 7761 "format.w"
+	(yyval.l).p= (yyvsp[0].u);(yyval.l).k= param_kind;(yyval.l).s= (hpos-hstart)-(yyvsp[0].u);}
+#line 3661 "parser.c"
     break;
 
   case 234: /* empty_param_list: position  */
-#line 685 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {HPUTX(2);hpos++;hput_tags((yyvsp[0].u),TAG(param_kind,1));}
-#line 3491 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 998 "parser.y"
+                         {
+	#line 7782 "format.w"
+	HPUTX(2);hpos++;hput_tags((yyvsp[0].u),TAG(param_kind,1));}
+#line 3669 "parser.c"
     break;
 
   case 235: /* $@12: %empty  */
-#line 686 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                {hpos= hpos-2;}
-#line 3497 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1001 "parser.y"
+                                {
+	#line 7783 "format.w"
+	hpos= hpos-2;}
+#line 3677 "parser.c"
     break;
 
   case 236: /* non_empty_param_list: start "param" $@12 parameters ">"  */
-#line 687 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hput_tags((yyvsp[-4].u)-2,hput_list((yyvsp[-4].u)-1,&((yyvsp[-1].l))));}
-#line 3503 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1004 "parser.y"
+{
+	#line 7784 "format.w"
+	hput_tags((yyvsp[-4].u)-2,hput_list((yyvsp[-4].u)-1,&((yyvsp[-1].l))));}
+#line 3685 "parser.c"
     break;
 
   case 238: /* font_head: string dimension UNSIGNED UNSIGNED  */
-#line 694 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{uint8_t f= (yyvsp[-4].u);SET_DBIT(f,font_kind);hfont_name[f]= strdup((yyvsp[-3].s));(yyval.info)= hput_font_head(f,hfont_name[f],(yyvsp[-2].d),(yyvsp[-1].u),(yyvsp[0].u));}
-#line 3509 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1012 "parser.y"
+{
+	#line 7926 "format.w"
+	uint8_t f= (yyvsp[-4].u);SET_DBIT(f,font_kind);hfont_name[f]= strdup((yyvsp[-3].s));(yyval.info)= hput_font_head(f,hfont_name[f],(yyvsp[-2].d),(yyvsp[-1].u),(yyvsp[0].u));}
+#line 3693 "parser.c"
     break;
 
   case 241: /* font_param: start "penalty" fref penalty ">"  */
-#line 699 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                              {hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
-#line 3515 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1019 "parser.y"
+                              {
+	#line 7931 "format.w"
+	hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
+#line 3701 "parser.c"
     break;
 
   case 242: /* font_param: start "kern" fref kern ">"  */
-#line 700 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {hput_tags((yyvsp[-4].u),hput_kern(&((yyvsp[-1].kt))));}
-#line 3521 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1022 "parser.y"
+                                 {
+	#line 7932 "format.w"
+	hput_tags((yyvsp[-4].u),hput_kern(&((yyvsp[-1].kt))));}
+#line 3709 "parser.c"
     break;
 
   case 243: /* font_param: start "ligature" fref ligature ">"  */
-#line 701 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                                 {hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
-#line 3527 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1025 "parser.y"
+                                         {
+	#line 7933 "format.w"
+	hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
+#line 3717 "parser.c"
     break;
 
   case 244: /* font_param: start "disc" fref disc ">"  */
-#line 702 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
-#line 3533 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1028 "parser.y"
+                                 {
+	#line 7934 "format.w"
+	hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
+#line 3725 "parser.c"
     break;
 
   case 245: /* font_param: start "glue" fref glue ">"  */
-#line 703 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
-#line 3539 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1031 "parser.y"
+                                 {
+	#line 7935 "format.w"
+	hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
+#line 3733 "parser.c"
     break;
 
   case 246: /* font_param: start "language" fref string ">"  */
-#line 704 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                               {hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
-#line 3545 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1034 "parser.y"
+                                       {
+	#line 7936 "format.w"
+	hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
+#line 3741 "parser.c"
     break;
 
   case 247: /* font_param: start "rule" fref rule ">"  */
-#line 705 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                         {hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
-#line 3551 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1037 "parser.y"
+                                 {
+	#line 7937 "format.w"
+	hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
+#line 3749 "parser.c"
     break;
 
   case 248: /* font_param: start "image" fref image ">"  */
-#line 706 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                           {hput_tags((yyvsp[-4].u),hput_image(&((yyvsp[-1].x))));}
-#line 3557 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1040 "parser.y"
+                                   {
+	#line 7938 "format.w"
+	hput_tags((yyvsp[-4].u),hput_image(&((yyvsp[-1].x))));}
+#line 3757 "parser.c"
     break;
 
   case 249: /* fref: ref  */
-#line 708 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-        {RNG("Font parameter",(yyvsp[0].u),0,MAX_FONT_PARAMS);}
-#line 3563 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1044 "parser.y"
+        {
+	#line 7940 "format.w"
+	RNG("Font parameter",(yyvsp[0].u),0,MAX_FONT_PARAMS);}
+#line 3765 "parser.c"
     break;
 
   case 250: /* xdimen_ref: ref  */
-#line 711 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {REF(xdimen_kind,(yyvsp[0].u));}
-#line 3569 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1048 "parser.y"
+              {
+	#line 8013 "format.w"
+	REF(xdimen_kind,(yyvsp[0].u));}
+#line 3773 "parser.c"
     break;
 
   case 251: /* param_ref: ref  */
-#line 712 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-             {REF(param_kind,(yyvsp[0].u));}
-#line 3575 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1051 "parser.y"
+             {
+	#line 8014 "format.w"
+	REF(param_kind,(yyvsp[0].u));}
+#line 3781 "parser.c"
     break;
 
   case 252: /* stream_ref: ref  */
-#line 713 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-              {REF_RNG(stream_kind,(yyvsp[0].u));}
-#line 3581 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1054 "parser.y"
+              {
+	#line 8015 "format.w"
+	REF_RNG(stream_kind,(yyvsp[0].u));}
+#line 3789 "parser.c"
     break;
 
   case 253: /* content_node: start "penalty" ref ">"  */
-#line 717 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                     {REF(penalty_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(penalty_kind,0));}
-#line 3587 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1060 "parser.y"
+                     {
+	#line 8019 "format.w"
+	REF(penalty_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(penalty_kind,0));}
+#line 3797 "parser.c"
     break;
 
   case 254: /* content_node: start "kern" explicit ref ">"  */
-#line 719 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{REF(dimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(kern_kind,((yyvsp[-2].b))?b100:b000));}
-#line 3593 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1064 "parser.y"
+{
+	#line 8021 "format.w"
+	REF(dimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(kern_kind,((yyvsp[-2].b))?b100:b000));}
+#line 3805 "parser.c"
     break;
 
   case 255: /* content_node: start "kern" explicit "xdimen" ref ">"  */
-#line 721 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{REF(xdimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-5].u),TAG(kern_kind,((yyvsp[-3].b))?b101:b001));}
-#line 3599 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1068 "parser.y"
+{
+	#line 8023 "format.w"
+	REF(xdimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-5].u),TAG(kern_kind,((yyvsp[-3].b))?b101:b001));}
+#line 3813 "parser.c"
     break;
 
   case 256: /* content_node: start "glue" ref ">"  */
-#line 722 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {REF(glue_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(glue_kind,0));}
-#line 3605 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1071 "parser.y"
+                           {
+	#line 8024 "format.w"
+	REF(glue_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(glue_kind,0));}
+#line 3821 "parser.c"
     break;
 
   case 257: /* content_node: start "ligature" ref ">"  */
-#line 723 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {REF(ligature_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(ligature_kind,0));}
-#line 3611 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1074 "parser.y"
+                               {
+	#line 8025 "format.w"
+	REF(ligature_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(ligature_kind,0));}
+#line 3829 "parser.c"
     break;
 
   case 258: /* content_node: start "disc" ref ">"  */
-#line 724 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {REF(disc_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(disc_kind,0));}
-#line 3617 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1077 "parser.y"
+                           {
+	#line 8026 "format.w"
+	REF(disc_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(disc_kind,0));}
+#line 3837 "parser.c"
     break;
 
   case 259: /* content_node: start "rule" ref ">"  */
-#line 725 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                   {REF(rule_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(rule_kind,0));}
-#line 3623 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1080 "parser.y"
+                           {
+	#line 8027 "format.w"
+	REF(rule_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(rule_kind,0));}
+#line 3845 "parser.c"
     break;
 
   case 260: /* content_node: start "image" ref ">"  */
-#line 726 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                    {REF(image_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(image_kind,0));}
-#line 3629 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1083 "parser.y"
+                            {
+	#line 8028 "format.w"
+	REF(image_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(image_kind,0));}
+#line 3853 "parser.c"
     break;
 
   case 261: /* content_node: start "leaders" ref ">"  */
-#line 727 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                      {REF(leaders_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(leaders_kind,0));}
-#line 3635 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1086 "parser.y"
+                              {
+	#line 8029 "format.w"
+	REF(leaders_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(leaders_kind,0));}
+#line 3861 "parser.c"
     break;
 
   case 262: /* content_node: start "baseline" ref ">"  */
-#line 728 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                       {REF(baseline_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(baseline_kind,0));}
-#line 3641 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1089 "parser.y"
+                               {
+	#line 8030 "format.w"
+	REF(baseline_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(baseline_kind,0));}
+#line 3869 "parser.c"
     break;
 
   case 263: /* content_node: start "language" REFERENCE ">"  */
-#line 729 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                             {REF(language_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),hput_language((yyvsp[-1].u)));}
-#line 3647 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1092 "parser.y"
+                                     {
+	#line 8031 "format.w"
+	REF(language_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),hput_language((yyvsp[-1].u)));}
+#line 3877 "parser.c"
     break;
 
   case 264: /* glue_node: start "glue" ref ">"  */
-#line 731 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                            {REF(glue_kind,(yyvsp[-1].u));
-if((yyvsp[-1].u)==zero_skip_no){hpos= hpos-2;(yyval.b)= false;}
-else{hput_tags((yyvsp[-3].u),TAG(glue_kind,0));(yyval.b)= true;}}
-#line 3655 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1096 "parser.y"
+                            {
+	#line 8033 "format.w"
+	REF(glue_kind,(yyvsp[-1].u));
+	if((yyvsp[-1].u)==zero_skip_no){hpos= hpos-2;(yyval.b)= false;}
+	else{hput_tags((yyvsp[-3].u),TAG(glue_kind,0));(yyval.b)= true;}}
+#line 3887 "parser.c"
     break;
 
   case 265: /* $@13: %empty  */
-#line 737 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-                             {hput_content_start();}
-#line 3661 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1103 "parser.y"
+                             {
+	#line 8464 "format.w"
+	hput_content_start();}
+#line 3895 "parser.c"
     break;
 
   case 266: /* content_section: "<" "content" $@13 content_list ">"  */
-#line 738 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-{hput_content_end();hput_range_defs();hput_label_defs();}
-#line 3667 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 1106 "parser.y"
+{
+	#line 8465 "format.w"
+	hput_content_end();hput_range_defs();hput_label_defs();}
+#line 3903 "parser.c"
     break;
 
 
-#line 3671 "../../../texk/web2c/hitexdir/hishrink-parser.c"
+#line 3907 "parser.c"
 
       default: break;
     }
@@ -3891,6 +4127,6 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 741 "../../../texk/web2c/hitexdir/hishrink-parser.y"
+#line 1110 "parser.y"
 
-/*:510*/
+	/*:510*/

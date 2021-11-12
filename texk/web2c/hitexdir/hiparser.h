@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED
-# define YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED
+#ifndef YY_YY_PARSER_H_INCLUDED
+# define YY_YY_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -140,107 +140,22 @@ extern int yydebug;
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Token kinds.  */
-#define YYEMPTY -2
-#define YYEOF 0
-#define YYerror 256
-#define YYUNDEF 257
-#define START 258
-#define END 259
-#define GLYPH 260
-#define UNSIGNED 261
-#define REFERENCE 262
-#define SIGNED 263
-#define STRING 264
-#define CHARCODE 265
-#define FPNUM 266
-#define DIMEN 267
-#define PT 268
-#define MM 269
-#define INCH 270
-#define XDIMEN 271
-#define H 272
-#define V 273
-#define FIL 274
-#define FILL 275
-#define FILLL 276
-#define PENALTY 277
-#define INTEGER 278
-#define LANGUAGE 279
-#define RULE 280
-#define RUNNING 281
-#define KERN 282
-#define EXPLICIT 283
-#define GLUE 284
-#define PLUS 285
-#define MINUS 286
-#define TXT_START 287
-#define TXT_END 288
-#define TXT_IGNORE 289
-#define TXT_FONT_GLUE 290
-#define TXT_FONT_HYPHEN 291
-#define TXT_FONT 292
-#define TXT_LOCAL 293
-#define TXT_GLOBAL 294
-#define TXT_CC 295
-#define HBOX 296
-#define VBOX 297
-#define SHIFTED 298
-#define HPACK 299
-#define HSET 300
-#define VPACK 301
-#define VSET 302
-#define DEPTH 303
-#define ADD 304
-#define TO 305
-#define LEADERS 306
-#define ALIGN 307
-#define CENTER 308
-#define EXPAND 309
-#define BASELINE 310
-#define LIGATURE 311
-#define DISC 312
-#define PAR 313
-#define MATH 314
-#define ON 315
-#define OFF 316
-#define ADJUST 317
-#define TABLE 318
-#define ITEM 319
-#define IMAGE 320
-#define LABEL 321
-#define BOT 322
-#define MID 323
-#define LINK 324
-#define OUTLINE 325
-#define STREAM 326
-#define STREAMDEF 327
-#define FIRST 328
-#define LAST 329
-#define TOP 330
-#define NOREFERENCE 331
-#define PAGE 332
-#define RANGE 333
-#define DIRECTORY 334
-#define SECTION 335
-#define DEFINITIONS 336
-#define MAX 337
-#define PARAM 338
-#define FONT 339
-#define CONTENT 340
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 78 "../../../texk/web2c/hitexdir/hishrink-parser.y"
-uint32_t u;int32_t i;char*s;float64_t f;glyph_t c;
-dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
-rule_t r;glue_t g;image_t x;
-list_t l;box_t h;disc_t dc;lig_t lg;
-ref_t rf;info_t info;order_t o;bool b;
+#line 79 "parser.y"
 
-#line 244 "../../../texk/web2c/hitexdir/hishrink-parser.h"
+	#line 10237 "format.w"
+	uint32_t u;  int32_t i;  char *s;  float64_t f;  glyph_t c;
+	dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
+	rule_t r;glue_t g;image_t x;
+	list_t l;box_t h;disc_t dc;lig_t lg;
+	ref_t rf;info_t info;order_t o;bool b;
+	
+
+#line 159 "hiparser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -255,4 +170,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY__TEXK_WEB_C_HITEXDIR_HISHRINK_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_PARSER_H_INCLUDED  */

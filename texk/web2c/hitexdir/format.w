@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2515 $
+\setrevision$Revision: 2541 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2021-09-23 17:59:58 +0200 (Thu, 23 Sep 2021) $
+\setdate$Date: 2021-10-26 09:03:28 +0200 (Tue, 26 Oct 2021) $
 
 \null
 
@@ -719,7 +719,7 @@ HGETTAG(a);@/@t{}@>
 @<read and check the end byte |z|@>=
 HGETTAG(z);@+
 if (a!=z)
-  QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%x to 0x%tx\n"@],@|
+  QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%x to " SIZE_F "\n"@],@|
     NAME(a),INFO(a),NAME(z),INFO(z),@|node_pos, hpos-hstart-1);
 @
 
@@ -938,7 +938,7 @@ Last not least, we add rules for signed\index{signed integer} integers.
 @
 
 @<parsing rules@>=
-integer: SIGNED @+| UNSIGNED { RNG("number",$1,0,INT32_MAX);};
+integer: SIGNED @+| UNSIGNED { RNG("number",$1,0,0x7FFFFFFF);};
 @
 
 To preserve the ``signedness'' of an integer also for positive signed integers
@@ -1227,7 +1227,7 @@ void hwrite_charcode(uint32_t c)
 \getcode
 @<shared get functions@>=
 #define @[HGET_UTF8C(X)@]  (X)=HGET8;@+ if ((X&0xC0)!=0x80) \
-  QUIT(@["UTF8 continuation byte expected at 0x%tx got 0x%02X\n"@],hpos-hstart-1,X)@;
+  QUIT(@["UTF8 continuation byte expected at " SIZE_F " got 0x%02X\n"@],hpos-hstart-1,X)@;
 
 uint32_t hget_utf8(void)
 { uint8_t a;
@@ -2824,7 +2824,7 @@ void hget_size_boundary(info_t info)
 { uint32_t n;
   if (info<2) return;
   n=HGET8;
-  if (n-1!=0x100-info) QUIT(@["Size boundary byte 0x%x with info value %d at 0x%tx"@],
+  if (n-1!=0x100-info) QUIT(@["Size boundary byte 0x%x with info value %d at " SIZE_F@],
                             n, info,hpos-hstart-1);
 }
 
@@ -2861,7 +2861,7 @@ void hget_list(list_t *l)
     hpos=hpos+(L).s; hget_size_boundary(I);\
     { uint32_t s=hget_list_size(I); \
       if (s!=(L).s) \
-      QUIT(@["List sizes at 0x%x and 0x%tx do not match 0x%x != 0x%x"@],node_pos+1,hpos-hstart-I-1,(L).s,s);}
+      QUIT(@["List sizes at 0x%x and " SIZE_F " do not match 0x%x != 0x%x"@],node_pos+1,hpos-hstart-I-1,(L).s,s);}
 @
 
 \putcode
@@ -5788,7 +5788,7 @@ content_node: stream_def_node @+ | stream_ins_node;
 { xdimen_t x;
   uint16_t f,r;
   uint8_t n;
-  DBG(DBGDEF,"Defining normal stream %d at 0x%tx\n",*(hpos-1),hpos-hstart-2);
+  DBG(DBGDEF,"Defining normal stream %d at " SIZE_F "\n",*(hpos-1),hpos-hstart-2);
   hget_xdimen_node(&x); @+hwrite_xdimen_node(&x); 
   HGET16(f); @+RNG("magnification factor",f,0,1000);@+ hwritef(" %d",f);
   n=HGET8; if (n==255) hwritef(" *"); else { REF_RNG(stream_kind,n);@+hwrite_ref(n);@+}
@@ -5804,7 +5804,7 @@ static bool hget_stream_def(void)
   else
   { ref_t df;
     @<read the start byte |a|@>@;
-    DBG(DBGDEF,"Defining stream %d at 0x%tx\n",*hpos,hpos-hstart-1);
+    DBG(DBGDEF,"Defining stream %d at " SIZE_F "\n",*hpos,hpos-hstart-1);
     DEF(df,stream_kind,HGET8);
     hwrite_start();@+hwritef("stream");@+@+hwrite_ref(df.n);
     if (df.n>0) 
@@ -6165,12 +6165,12 @@ void hput_range(uint8_t pg, bool on)
 { if (((next_range-1)/2)>max_ref[range_kind])
     QUIT("Page range %d > %d",(next_range-1)/2,max_ref[range_kind]);
   if (on && page_on[pg]!=0)
-    QUIT(@["Template %d is switched on at 0x%x and 0x%tx"@],@|
+    QUIT(@["Template %d is switched on at 0x%x and " SIZE_F@],@|
            pg, range_pos[page_on[pg]].pos, hpos-hstart);
   else if (!on && page_on[pg]==0)
-    QUIT(@["Template %d is switched off at 0x%tx but was not on"@],@|
+    QUIT(@["Template %d is switched off at " SIZE_F " but was not on"@],@|
            pg, hpos-hstart);
-  DBG(DBGRANGE,@["Range *%d %s at 0x%tx\n"@],pg,on?"on":"off",hpos-hstart);
+  DBG(DBGRANGE,@["Range *%d %s at " SIZE_F "\n"@],pg,on?"on":"off",hpos-hstart);
   range_pos[next_range].pg=pg;
   range_pos[next_range].pos=hpos-hstart;
   range_pos[next_range].on=on;
@@ -6365,15 +6365,15 @@ void hput_hint(char * str)
 { size_t s;
   DBG(DBGBASIC,"Writing hint output %s\n",str); 
   s=hput_banner("hint",str);
-  DBG(DBGDIR,@["Root entry at 0x%tx\n"@],s);
+  DBG(DBGDIR,@["Root entry at " SIZE_F "\n"@],s);
   s+=hput_root();
-  DBG(DBGDIR,@["Directory section at 0x%tx\n"@],s);
+  DBG(DBGDIR,@["Directory section at " SIZE_F "\n"@],s);
   s+=hput_section(0);
-  DBG(DBGDIR,@["Definition section at 0x%tx\n"@],s);
+  DBG(DBGDIR,@["Definition section at " SIZE_F "\n"@],s);
   s+=hput_section(1);
-  DBG(DBGDIR,@["Content section at 0x%tx\n"@],s);
+  DBG(DBGDIR,@["Content section at " SIZE_F "\n"@],s);
   s+=hput_section(2);
-  DBG(DBGDIR,@["Auxiliary sections at 0x%tx\n"@],s);
+  DBG(DBGDIR,@["Auxiliary sections at " SIZE_F "\n"@],s);
   hput_optional_sections();
 }
 @
@@ -6396,7 +6396,7 @@ and advance the stream position accordingly.\label{HPUT}\label{HGET}
 
 \getcode
 @<shared get macros@>=
-#define HGET_ERROR @/ QUIT(@["HGET overrun in section %d at 0x%tx\n"@],@|section_no,hpos-hstart)
+#define HGET_ERROR @/ QUIT(@["HGET overrun in section %d at " SIZE_F "\n"@],@|section_no,hpos-hstart)
 #define @[HEND@]   @[((hpos<=hend)?0:(HGET_ERROR,0))@]
 
 #define @[HGET8@]      ((hpos<hend)?*(hpos++):(HGET_ERROR,0))
@@ -6410,7 +6410,7 @@ and advance the stream position accordingly.\label{HPUT}\label{HGET}
 @<put functions@>=
 void hput_error(void)
 {@+if (hpos<hend) return;
- QUIT(@["HPUT overrun section %d pos=0x%tx\n"@],@|section_no,hpos-hstart);
+ QUIT(@["HPUT overrun section %d pos=" SIZE_F "\n"@],@|section_no,hpos-hstart);
 }
 @
 
@@ -6708,8 +6708,8 @@ void  hput_increase_buffer(uint32_t n)
    bsize=dir[section_no].bsize*buffer_factor+0.5;
    if (bsize<pos+n) bsize=pos+n;
    if (bsize>=HINT_NO_POS) bsize=HINT_NO_POS;
-   if (bsize<pos+n)  QUIT(@["Unable to increase buffer size 0x%tx by 0x%x byte"@],@|hpos-hstart,n);
-   DBG(DBGBUFFER,@["Reallocating output buffer "@|" for section %d from 0x%x to 0x%tx byte\n"@],
+   if (bsize<pos+n)  QUIT(@["Unable to increase buffer size " SIZE_F " by 0x%x byte"@],@|hpos-hstart,n);
+   DBG(DBGBUFFER,@["Reallocating output buffer "@|" for section %d from 0x%x to " SIZE_F " byte\n"@],
        section_no,dir[section_no].bsize,bsize);
    REALLOCATE(dir[section_no].buffer,bsize,uint8_t);
    dir[section_no].bsize=(uint32_t)bsize;
@@ -6722,7 +6722,7 @@ static size_t hput_data(uint16_t n, uint8_t *buffer, uint32_t size)
 { size_t s;
   s=fwrite(buffer,1,size,hout);
   if (s!=size)
-    QUIT(@["short write 0x%tx < %d in section %d"@],s,size,n);
+    QUIT(@["short write " SIZE_F " < %d in section %d"@],s,size,n);
   return s;
 }
 
@@ -7063,7 +7063,7 @@ The name of the directory section must be the empty string.
 \getcode
 @<get file functions@>=
 static void hget_root(entry_t *root)
-{ DBG(DBGDIR,"Root entry at 0x%tx\n",hpos-hstart);
+{ DBG(DBGDIR,"Root entry at " SIZE_F "\n",hpos-hstart);
   hget_entry(root); 
   root->pos=hpos-hstart;
   max_section_no=root->section_no;
@@ -7168,7 +7168,7 @@ static size_t hput_root(void)
   dir[0].section_no=max_section_no;
   hput_entry(&dir[0]);
   s=hput_data(0, hstart,hpos-hstart);
-  DBG(DBGDIR,@["Writing root size=0x%tx\n"@],s);
+  DBG(DBGDIR,@["Writing root size=" SIZE_F "\n"@],s);
   return s;
 }
 
@@ -7226,7 +7226,7 @@ static void hput_optional_sections(void)
      }
      fclose(f);
      if (fsize!=dir[i].size) 
-       QUIT(@["File size 0x%tx does not match directory size %u"@],@|fsize,dir[i].size);
+       QUIT(@["File size " SIZE_F " does not match directory size %u"@],@|fsize,dir[i].size);
    }
 }
 @
@@ -8752,7 +8752,7 @@ There is no good program without good error handling\index{error message}\index{
 To print messages\index{message} or indicate errors, I define the following macros:
 \index{MESSAGE+\.{MESSAGE}}\index{QUIT+\.{QUIT}}
 
-@(error.h@>=
+@(hierror.h@>=
 #ifndef _ERROR_H
 #define _ERROR_H
 #include <stdlib.h>
@@ -8772,25 +8772,22 @@ For portability, we first define the output specifier for expressions of type |s
 \index{DBG+\.{DBG}}\index{SIZE F+\.{SIZE\_F}}\index{DBGTAG+\.{DBGTAG}}
 \index{RNG+\.{RNG}}\index{TAGERR+\.{TAGERR}}
 @<debug macros@>=
-#if 0 
-/* use 0x percent tx instead */
 #ifdef WIN32
 #define SIZE_F "0x%x"
 #else
 #define SIZE_F "0x%zx"
-#endif
 #endif
 #ifdef DEBUG
 #define @[DBG(FLAGS,...)@] ((debugflags & (FLAGS))?LOG(__VA_ARGS__):0)
 #else
 #define @[DBG(FLAGS,...)@] 0
 #endif
-#define @[DBGTAG(A,P)@] @[DBG(DBGTAGS,@["tag [%s,%d] at 0x%tx\n"@],@|NAME(A),INFO(A),(P)-hstart)@]
+#define @[DBGTAG(A,P)@] @[DBG(DBGTAGS,@["tag [%s,%d] at " SIZE_F "\n"@],@|NAME(A),INFO(A),(P)-hstart)@]
 
 #define @[RNG(S,N,A,Z)@] @/\
   if ((int)(N)<(int)(A)||(int)(N)>(int)(Z)) QUIT(S@, " %d out of range [%d - %d]",N,A,Z)
 
-#define @[TAGERR(A)@] @[QUIT(@["Unknown tag [%s,%d] at 0x%tx\n"@],NAME(A),INFO(A),hpos-hstart)@]
+#define @[TAGERR(A)@] @[QUIT(@["Unknown tag [%s,%d] at " SIZE_F "\n"@],NAME(A),INFO(A),hpos-hstart)@]
 @
 
 The \.{bison} generated parser will need a function |yyerror| for
@@ -8865,7 +8862,7 @@ void hff_hpos(void)
 @
 
 
-We will put the |hnode_size| variable into the {\tt hformat.c} file
+We will put the |hnode_size| variable into the {\tt tables.c} file
 using the following function. We add some comments and
 split negative values into their components, to make the result more
 readable.
@@ -9275,7 +9272,7 @@ The code to skip the end\index{end byte} byte |z| and to check the start\index{s
 
 @<skip and check the start byte |a|@>=
   HTEGTAG(a);
-  if (a!=z) QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at 0x%tx to 0x%x\n"@],@|NAME(a),INFO(a),NAME(z),INFO(z),@|
+  if (a!=z) QUIT(@["Tag mismatch [%s,%d]!=[%s,%d] at " SIZE_F " to 0x%x\n"@],@|NAME(a),INFO(a),NAME(z),INFO(z),@|
     hpos-hstart,node_pos-1);
 @
 
@@ -9727,7 +9724,7 @@ void hteg_size_boundary(info_t info)
 { uint32_t n;
   if (info<2) return;
   n=HTEG8;
-  if (n-1!=0x100-info) QUIT(@["List size boundary byte 0x%x does not match info value %d at 0x%tx"@],
+  if (n-1!=0x100-info) QUIT(@["List size boundary byte 0x%x does not match info value %d at " SIZE_F@],
                             n, info,hpos-hstart);
 }
 
@@ -9755,7 +9752,7 @@ void hteg_list(list_t *l)
     l->p=hpos-hstart;
     hteg_size_boundary(INFO(z));
     s=hteg_list_size(INFO(z));
-    if (s!=l->s) QUIT(@["List sizes at 0x%tx and 0x%x do not match 0x%x != 0x%x"@],
+    if (s!=l->s) QUIT(@["List sizes at " SIZE_F " and 0x%x do not match 0x%x != 0x%x"@],
                         hpos-hstart,node_pos-1,s,l->s);
     @<skip and check the start byte |a|@>@;
   }
@@ -9851,7 +9848,7 @@ To define basic types in a portable way, we create an include file.
 The macro |_MSC_VER| (Microsoft Visual C Version)\index{Microsoft Visual C}
 is defined only if using the respective compiler.
 \index{false+\\{false}}\index{true+\\{true}}\index{bool+\&{bool}}
-@(basetypes.h@>=
+@(hibasetypes.h@>=
 #ifndef __BASETYPES_H__
 #define __BASETYPES_H__
 #include <stdlib.h>
@@ -9873,7 +9870,6 @@ is defined only if using the respective compiler.
 #define false (!true)
 #define __SIZEOF_FLOAT__ 4
 #define __SIZEOF_DOUBLE__ 8
-#define INT32_MAX              (2147483647)
 #define PRIx64 "I64x"
 #pragma  @[warning( disable : @[4244@]@t @> @[4996@]@t @> @[4127@])@]
 #else 
@@ -9898,11 +9894,11 @@ typedef double float64_t;
 
 
 
-\subsection{{\tt hformat.h}}\index{hformat.h+{\tt hformat.h}}
-The \.{hformat.h} file contains definitions of types, macros, variables and functions
+\subsection{{\tt format.h}}\index{format.h+{\tt format.h}}
+The \.{format.h} file contains definitions of types, macros, variables and functions
 that are needed in other compilation units.
 
-@(hformat.h@>=
+@(hiformat.h@>=
 #ifndef _HFORMAT_H_
 #define _HFORMAT_H_
 @<debug macros@>@;
@@ -9926,15 +9922,15 @@ extern signed char hnode_size[0x100];
 
 #endif
 @
-\subsection{{\tt hformat.c}}\index{hformat.c+{\tt hformat.c}}\index{mkhformat.c+{\tt mkhformat.c}}
-For maximum flexibility and efficiency, the file {\tt hformat.c}
+\subsection{{\tt tables.c}}\index{tables.c+{\tt tables.c}}\index{mktables.c+{\tt mktables.c}}
+For maximum flexibility and efficiency, the file {\tt tables.c}
 is generated by a \CEE\ program.
-Here is the |main| program of {\tt mkhformat}:
+Here is the |main| program of {\tt mktables}:
 
-@(mkhformat.c@>=
+@(himktables.c@>=
 #include <stdio.h>
-#include "basetypes.h"
-#include "hformat.h"
+#include "hibasetypes.h"
+#include "hiformat.h"
 @<skip macros@>@;
 
 int max_fixed[32], max_default[32];
@@ -9952,8 +9948,8 @@ int main(void)
   int i;
   
   
-  printf("#include \"basetypes.h\"\n"@/
-         "#include \"hformat.h\"\n\n");@/
+  printf("#include \"hibasetypes.h\"\n"@/
+         "#include \"hiformat.h\"\n\n");@/
 
   @<print |content_name| and |definition_name|@>@;
 
@@ -10001,11 +9997,11 @@ The following code prints the arrays containing the default values.
 @
 
 
-\subsection{{\tt hget.h}}\index{hget.h+{\tt hget.h}}
-The \.{hget.h} file contains function prototypes for all the functions
+\subsection{{\tt get.h}}\index{get.h+{\tt get.h}}
+The \.{get.h} file contains function prototypes for all the functions
 that read the short format.
 
-@(hget.h@>=
+@(higet.h@>=
 @<hint types@>@;
 @<directory entry type@>@;
 @<shared get macros@>@;
@@ -10049,9 +10045,9 @@ extern uint8_t hff_tag;
 
 
 
-\subsection{{\tt hget.c}}\index{hget.c+{\tt hget.c}}
-@(hget.c@>=
-#include "basetypes.h"
+\subsection{{\tt get.c}}\index{get.c+{\tt get.c}}
+@(higet.c@>=
+#include "hibasetypes.h"
 #include <string.h>
 #include <math.h>
 #include <zlib.h>
@@ -10059,9 +10055,9 @@ extern uint8_t hff_tag;
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#include "error.h"
-#include "hformat.h"
-#include "hget.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "higet.h"
 
 @<common variables@>@;
 
@@ -10074,12 +10070,12 @@ extern uint8_t hff_tag;
 @<shared skip functions@>@;
 @
 
-\subsection{{\tt hput.h}}\index{hput.h+{\tt hput.h}}
-The \.{hput.h} file contains function prototypes for all the functions
+\subsection{{\tt put.h}}\index{put.h+{\tt put.h}}
+The \.{put.h} file contains function prototypes for all the functions
 that write the short format.
 
 
-@(hput.h@>=
+@(hiput.h@>=
 @<put macros@>@;
 @<hint macros@>@;
 @<hint types@>@;
@@ -10148,18 +10144,18 @@ extern int hcompress_depth(int n, int c);
 @
 
 
-\subsection{{\tt hput.c}}\label{writeshort}\index{hput.c+{\tt hput.c}}
+\subsection{{\tt put.c}}\label{writeshort}\index{put.c+{\tt put.c}}
 \noindent
-@(hput.c@>=
-#include "basetypes.h"
+@(hiput.c@>=
+#include "hibasetypes.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <zlib.h>
-#include "error.h"
-#include "hformat.h"
-#include "hput.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "hiput.h"
 
 @<common variables@>@;
 @<shared put variables@>@;
@@ -10168,18 +10164,18 @@ extern int hcompress_depth(int n, int c);
 @<put functions@>@;
 @
 
-\subsection{{\tt shrink.l}}\index{shrink.l+{\tt shrink.l}}\index{scanning}
-The definitions for lex are collected in the file {\tt shrink.l}
+\subsection{{\tt lexer.l}}\index{lexer.l+{\tt lexer.l}}\index{scanning}
+The definitions for lex are collected in the file {\tt lexer.l}
 
-@(shrink.l@>=
+@(hilexer.l@>=
 %{
-#include "basetypes.h"
-#include "error.h"
-#include "hformat.h"
-#include "hput.h"
+#include "hibasetypes.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "hiput.h"
 
 @<enable bison debugging@>@;
-#include "hishrink-parser.h"
+#include "hiparser.h"
 
 @<scanning macros@>@;@+
 @<scanning functions@>@;
@@ -10206,20 +10202,20 @@ int yywrap (void )@+{ return 1;@+}
 
 
 
-\subsection{{\tt shrink.y}}\index{shrink.y+{\tt shrink.y}}\index{parsing}
+\subsection{{\tt parser.y}}\index{parser.y+{\tt parser.y}}\index{parsing}
 
-The grammar rules for bison are collected in the file  {\tt shrink.y}.
+The grammar rules for bison are collected in the file  {\tt parser.y}.
 % for the option %token-table use the command line parameter -k
 
 
-@(shrink.y@>=
+@(hiparser.y@>=
 %{
-#include "basetypes.h"
+#include "hibasetypes.h"
 #include <string.h>
 #include <math.h>
-#include "error.h"
-#include "hformat.h"
-#include "hput.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "hiput.h"
 extern char **hfont_name; /* in common variables */
 
 @<definition checks@>@;
@@ -10261,7 +10257,7 @@ extern int yylex(void);
 \.{shrink} is a \CEE\ program translating a \HINT\ file in long format into a \HINT\ file in short format.
 
 @(hishrink.c@>=
-#include "basetypes.h"
+#include "hibasetypes.h"
 #include <string.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -10271,10 +10267,10 @@ extern int yylex(void);
 #endif
 #include <zlib.h>
 
-#include "error.h"
-#include "hformat.h"
-#include "hput.h"
-#include "hishrink-parser.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "hiput.h"
+#include "hiparser.h"
 
 extern void yyset_debug(int lex_debug);
 extern int yylineno;
@@ -10334,7 +10330,7 @@ explain_usage:
 format into a \HINT\ file in long format.
 
 @(histretch.c@>=
-#include "basetypes.h"
+#include "hibasetypes.h"
 #include <math.h>
 #include <string.h>
 #include <ctype.h>
@@ -10345,9 +10341,9 @@ format into a \HINT\ file in long format.
 #include <direct.h>
 #endif
 #include <fcntl.h>
-#include "error.h"
-#include "hformat.h"
-#include "hget.h"
+#include "hierror.h"
+#include "hiformat.h"
+#include "higet.h"
 
 @<get macros@>@;
 @<write macros@>@;
@@ -10399,7 +10395,7 @@ In the above program, the get functions call the write functions
 and the write functions call some get functions. This requires
 function declarations to satisfy the define before use requirement
 of \CEE. Some of the necessary function declarations are already
-contained in {\tt hget.h}. The remaining declarations are these:
+contained in {\tt get.h}. The remaining declarations are these:
 
 @<get function declarations@>=
 extern void hget_xdimen_node(xdimen_t *x);
@@ -10420,15 +10416,15 @@ extern int hget_txt(void);
 \.{skip} is a \CEE\ program reading the content section of a \HINT\ file in short format 
 backwards.
 
-@(skip.c@>=
-#include "basetypes.h"
+@(hiskip.c@>=
+#include "hibasetypes.h"
 #include <string.h>
 #include <zlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include "error.h"
-#include "hformat.h"
+#include "hierror.h"
+#include "hiformat.h"
 @<hint types@>@;
 
 @<common variables@>@;
