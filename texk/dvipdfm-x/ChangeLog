@@ -1,3 +1,8 @@
+2021-11-12  Karl Berry  <karl@freefriends.org>
+
+	* dvipdfmx.c (show_usage): mention -i.
+	Change bug report line to CTAN package page, for more information.
+
 2021-11-03  Naveen M K  <naveen521kk@gmail.com>
 
 	* Makefile.am (install-exec-hook) [WIN32]: install via libtool,
