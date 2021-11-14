@@ -6834,8 +6834,8 @@ void hset_entry(entry_t *e, uint16_t i, uint32_t size, uint32_t xsize, @|char *f
 @
 
 
-Writing the auxiliary files depends on the {\tt -f} and the {\tt -g}
-option.
+Writing the auxiliary files depends on the {\tt -n}, {\tt -f} and {\tt -g}
+options.
 
 @<without {\tt -f} skip writing an existing file@>=
     if ( !option_force && access(file_name,F_OK)==0)
@@ -6939,13 +6939,13 @@ extern int stem_length;
 void hget_section(uint16_t n);
 void hwrite_aux_files(void)
 { int i;
+  if (option_no_aux) return;
   DBG(DBGBASIC|DBGDIR,"Writing %d aux files\n",max_section_no-2);
   for (i=3;i<=max_section_no;i++)
   { FILE *f;
     char * file_name=dir[i].file_name;
     int file_name_length=0;
 
-    
     @<without {\tt -g} compute a local |file_name|@>@;
     @<without {\tt -f} skip writing an existing file@>@;
     @<make sure the path in |file_name| exists@>@;
@@ -8524,6 +8524,8 @@ It tells us what to expect in the rest of this section.
   "\t --version\t display the HINT version\n"@/
   "\t -o file\t specify an output file name\n"@/
   "\t -g     \t assume global names for auxiliary files\n"@/
+  "\t -f     \t force overwriting auxiliary files\n"@/
+  "\t -n     \t do not write auxiliary files\n"@/
   "\t -l     \t redirect stderr to a log file\n"@/
   "\t -u     \t enable writing utf8 character codes\n"@/
   "\t -x     \t enable writing hexadecimal character codes\n"@/
@@ -8580,6 +8582,7 @@ int option_utf8=false;
 int option_hex=false;
 int option_force=false;
 int option_global=false;
+int option_no_aux=false;
 int option_compress=false;
 char *stem_name=NULL;
 int stem_length=0;
@@ -8634,6 +8637,7 @@ are supported in addition to the short options.
         case 'x': option_hex=true;@+break;
         case 'f': option_force=true; @+break;
         case 'g': option_global=true; @+break;
+        case 'n': option_no_aux=true; @+break;
         case 'c': option_compress=true; @+break;
         case 'd': @/
           argv++; if (*argv==NULL) goto explain_usage;

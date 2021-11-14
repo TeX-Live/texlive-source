@@ -100,9 +100,11 @@ DISTCLEANFILES += hiformat-tangle hitex-tangle
 
 ## HiTeX tests
 #
-hitex_tests = hitexdir/tests/rule.test
+hitex_tests = hitexdir/tests/rule.test\
+	hitexdir/tests/hello.test
 
 hitexdir/tests/rule.log: hitex$(EXEEXT) histretch$(EXEEXT) hishrink$(EXEEXT)
+hitexdir/tests/hello.log: hitex$(EXEEXT) histretch$(EXEEXT)
 
 
 EXTRA_DIST += $(hitex_tests)
@@ -112,5 +114,9 @@ TESTS += $(hitex_tests)
 endif HITEX
 
 ## rule.test
-EXTRA_DIST += tests/rule.tex
+EXTRA_DIST += tests/rule.tex 
 DISTCLEANFILES += rule.log
+
+## hello.test
+EXTRA_DIST += tests/hello.tex 
+DISTCLEANFILES += hello.log

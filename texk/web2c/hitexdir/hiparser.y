@@ -1,6 +1,6 @@
 	/*510:*/
 %{
-	#line 10212 "format.w"
+	#line 10216 "format.w"
 	
 #include "hibasetypes.h"
 #include <string.h>
@@ -63,7 +63,7 @@ void check_param_def(ref_t*df)
 extern int yylineno;
 int yyerror(const char*msg)
 {
-	#line 8799 "format.w"
+	#line 8803 "format.w"
 	QUIT(" in line %d %s",yylineno,msg);
 	return 0;
 	}
@@ -77,7 +77,7 @@ int yyerror(const char*msg)
 
 
 %union {
-	#line 10237 "format.w"
+	#line 10241 "format.w"
 	uint32_t u;  int32_t i;  char *s;  float64_t f;  glyph_t c;
 	dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
 	rule_t r;glue_t g;image_t x;

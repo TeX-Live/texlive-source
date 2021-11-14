@@ -147,7 +147,7 @@ union YYSTYPE
 {
 #line 79 "parser.y"
 
-	#line 10237 "format.w"
+	#line 10241 "format.w"
 	uint32_t u;  int32_t i;  char *s;  float64_t f;  glyph_t c;
 	dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
 	rule_t r;glue_t g;image_t x;
