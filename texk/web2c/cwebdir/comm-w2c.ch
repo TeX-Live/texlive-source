@@ -826,7 +826,7 @@ Modules for dealing with help messages and version info.
 
 @ @<Display help message and |exit|@>=
 cb_usagehelp(program==ctangle ? CTANGLEHELP :
-  program==cweave ? CWEAVEHELP : CTWILLHELP, NULL);
+  program==cweave ? CWEAVEHELP : CTWILLHELP);
 @.--help@>
 
 @ Special variants from Web2c's `\.{lib/usage.c}', adapted for
@@ -835,7 +835,7 @@ cb_usagehelp(program==ctangle ? CTANGLEHELP :
 
 @<Predecl...@>=
 static void cb_usage (const_string str);@/
-static void cb_usagehelp (const_string *message, const_string bug_email);@/
+static void cb_usagehelp (const_string *message);@/
 
 @ @c
 static void cb_usage (const_string str)
@@ -850,10 +850,8 @@ static void cb_usage (const_string str)
   history=fatal_message; exit(wrap_up());
 }
 
-static void cb_usagehelp (const_string *message, const_string bug_email)
+static void cb_usagehelp (const_string *message)
 {
-  if (!bug_email)
-    bug_email = "tex-k@@tug.org";
   textdomain("web2c-help");
 @.web2c-help.mo@>
   while (*message) {
@@ -863,7 +861,7 @@ static void cb_usagehelp (const_string *message, const_string bug_email)
   }
   textdomain("cweb-tl");
 @.cweb-tl.mo@>
-  printf(_("\nEmail bug reports to %s.\n"), bug_email);
+  printf(_("\nPackage home page: %s.\n"), "https://ctan.org/pkg/cweb");
   textdomain("cweb");
 @.cweb.mo@>
   history=spotless; exit(wrap_up());

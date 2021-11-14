@@ -1,3 +1,7 @@
+2021-11-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: More generic point of interest.
+
 2021-11-07  Marcel Kr\"uger  <tex@2krueger.de>
 
 	* showstream.ch: new primitive \showstream.

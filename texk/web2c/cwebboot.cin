@@ -480,7 +480,7 @@ static void scan_args(void);
 #line 836 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
-static void cb_usagehelp(const_string*message,const_string bug_email);
+static void cb_usagehelp(const_string*message);
 
 /*:98*/
 #line 67 "cwebdir/common.w"
@@ -1433,7 +1433,7 @@ if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 #line 827 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
-program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
+program==cweave?CWEAVEHELP:CTWILLHELP);
 
 
 /*:97*/
@@ -1442,7 +1442,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP,NULL);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*100:*/
-#line 875 "cwebdir/comm-w2c.ch"
+#line 873 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1630,10 +1630,8 @@ textdomain("cweb");
 history= fatal_message;exit(wrap_up());
 }
 
-static void cb_usagehelp(const_string*message,const_string bug_email)
+static void cb_usagehelp(const_string*message)
 {
-if(!bug_email)
-bug_email= "tex-k@tug.org";
 textdomain("web2c-help");
 
 while(*message){
@@ -1643,14 +1641,14 @@ printf("%s\n",strcmp("",*message)?_(*message):*message);
 }
 textdomain("cweb-tl");
 
-printf(_("\nEmail bug reports to %s.\n"),bug_email);
+printf(_("\nPackage home page: %s.\n"),"https://ctan.org/pkg/cweb");
 textdomain("cweb");
 
 history= spotless;exit(wrap_up());
 }
 
 /*:99*//*101:*/
-#line 883 "cwebdir/comm-w2c.ch"
+#line 881 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {
