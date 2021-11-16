@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20210721';
+my $VERSION = '20211115';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -646,14 +646,12 @@ sub _parse_metadata {
         $data->{subfamily} =~ s/\A (?: ST | T | SD | D)//xms;
     }
 
-    # remove Adobe's SmallText size, to avoid mistaking it for Text weight
-    for my $fieldname (qw(family subfamily fullname)) {
-        $data->{$fieldname} =~ s/(?: SmallText | SmText )\z//xmsi;
-    }
-
     # Sometimes the relevant info is in Fullname, sometimes in Subfamily;
     # so we need to test against both
     my $fullinfo = lc "$data->{subfamily} | $data->{fullname}";
+
+    # remove Adobe's SmallText size, to avoid mistaking it for Text weight
+    $fullinfo =~ s/(?: SmallText | SmText )\z//xmsi;
 
     # We need to be careful when parsing the font info; in particular
     # we must parse strings like 'UltraCondensed' as 'Regular' weight
@@ -3669,6 +3667,18 @@ a user-defined suffix to the names
 of all generated Type1 fonts; see L</COMMAND-LINE OPTIONS> below.
 
 
+=head2 Sorry, LIGTABLE too long for me to handle
+
+The LIGTABLE in TeX's F<tfm> files, which contains a font's ligatures
+and kerning pairs, is limited to about 32,500 entries (2^15 - 256).
+If the number of ligatures plus kerns in a font is higher than that limit,
+I<pltotf> and I<vptovf> will complain loudly and ignore the excess entries.
+This happens at least with Adobe's Source Serif 4 and Minion 3.
+The best way to handle this situation is to use B<autoinst>'s C<-extra> option
+to raise F<otftotfm>'s value for the C<--min-kern> parameter, which causes it
+to ignore small kerning pairs: C<-extra='--min-kern=5.0'>.
+
+
 =head2 A note for MiKTeX users
 
 Automatically installing the fonts into a suitable TEXMF tree
@@ -4029,7 +4039,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20210721.
+This document describes B<autoinst> version 20211115.
 
 
 =head1 RECENT CHANGES
@@ -4037,6 +4047,10 @@ This document describes B<autoinst> version 20210721.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2021-11-15>
+
+Bugfix: font info parsing now works for Adobe Source Serif 4.
 
 =item I<2021-07-21>
 
