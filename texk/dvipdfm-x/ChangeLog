@@ -1,3 +1,10 @@
+2021-11-17  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* spc_dvips.c: Realize PSTricks on XeTeX without -dNOSAFER,
+	in the way described in
+	https://tug.org/pipermail/dvipdfmx/2021-November/000308.html
+	* configure.ac: version 20211117.
+
 2021-11-12  Karl Berry  <karl@freefriends.org>
 
 	* dvipdfmx.c (show_usage): mention -i.
