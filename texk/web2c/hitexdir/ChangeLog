@@ -1,3 +1,12 @@
+2021-11-16  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am: doc.
+	* tests/hello.test,
+	* tests/rule.test (OUTDIR): use subdir hitexdir/tests/outdir,
+	not hitexdir/tests, to avoid clash of both TeX and Automake
+	creating hitexdir/tests/TEST.log files.
+	Also, avoid GNU diff-specific options.
+
 2021-10-05  Karl Berry  <karl@freefriends.org>
 
 	* am/hitex.am (AM_YFLAGS): comment out since we aren't doing

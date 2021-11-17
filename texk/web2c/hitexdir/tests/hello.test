@@ -1,5 +1,5 @@
-#!/bin/sh
-# $Id: rule.test $
+#!/bin/sh -vx
+# $Id$
 # Public domain. Originally written by Martin Ruckert
 # Basic check that rule.tex can be hitexed stretched and shrinked.
 
@@ -8,20 +8,27 @@ LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS=$srcdir/hitexdir/tests; export TEXINPUTS
 TFMFONTS=$srcdir/tests; export TFMFONTS
-#PKFONTS=$srcdir/tests; export PKFONTS
 T1FONTS=$srcdir/tests; export T1FONTS
-OUTDIR=./hitexdir/tests
 
-./hitex -ini -interaction=nonstopmode -output-directory=$OUTDIR hello.tex || exit $?
+# separate from hitexdir/tests because automake writes hello.log
+# in hitexdir/tests (so it already exists).
+OUTDIR=./hitexdir/tests/outdir; mkdir $OUTDIR
+
+#./hitex --help >/dev/null  || exit $?
+./hitex --version || exit $?
+
+./hitex -ini -interaction=nonstopmode -output-directory=$OUTDIR hello.tex \
+|| exit $?
+
 ./histretch -n $OUTDIR/hello.hnt || exit $?
 
-if grep -q "<section 3 '../../../texk/web2c/tests/cmr10.tfm'>" $OUTDIR/hello.HINT
-then
-    : # OK
+if grep "<section 3 '../../../texk/web2c/tests/cmr10.tfm'>" \
+        $OUTDIR/hello.HINT >/dev/null; then
+  : # OK
 else
-    echo "hello.HINT does not contain the propper .tfm file" >&2
-    exit 1
+  echo "hello.HINT does not contain the proper <section with" \
+       " cmr10.tfm, goodbye." >&2
+  exit 1
 fi
 
 exit 0
-

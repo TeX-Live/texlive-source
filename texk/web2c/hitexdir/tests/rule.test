@@ -1,34 +1,32 @@
-#!/bin/sh
-# $Id: rule.test $
+#!/bin/sh -vx
+# $Id$
 # Public domain. Originally written by Martin Ruckert
-# Basic check that rule.tex can be hitexed stretched and shrinked.
+# Basic check that rule.tex can be hitexed, histretched, hishrinked.
 
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS=$srcdir/hitexdir/tests; export TEXINPUTS
-OUTDIR=./hitexdir/tests
+OUTDIR=./hitexdir/tests/outdir; mkdir $OUTDIR
 
-./hitex -ini --interaction=nonstopmode -output-directory=$OUTDIR rule.tex || exit $?
+./hitex -ini --interaction=nonstopmode -output-directory=$OUTDIR rule.tex \
+|| exit $?
 ./histretch $OUTDIR/rule.hnt || exit $?
 ./hishrink -o $OUTDIR/rule.out.hnt $OUTDIR/rule.HINT || exit $?
 ./histretch $OUTDIR/rule.out.hnt || exit $?
 
-if grep -q "<rule 0x48.451Ept 1pt 0x1C.73E7pt>" $OUTDIR/rule.HINT
-then
-    : # OK
+if grep "<rule 0x48.451Ept 1pt 0x1C.73E7pt>" $OUTDIR/rule.HINT >/dev/null; then
+  : # OK
 else
-    echo "rule.HINT does not contain the propper rule" >&2
-    exit 1
+  echo "rule.HINT does not contain the proper <rule, goodbye." >&2
+  exit 1
 fi
 
-if diff -q -w $OUTDIR/rule.out.HINT $OUTDIR/rule.HINT
-then
-    : #OK
+if diff $OUTDIR/rule.out.HINT $OUTDIR/rule.HINT; then # -w?
+  : # OK
 else
-    echo "rule.out.HINT and rule.HINT differ" >&2
-    exit 1
+  echo "rule.out.HINT and rule.HINT differ, goodbye." >&2
+  exit 1
 fi
 
 exit 0
-
