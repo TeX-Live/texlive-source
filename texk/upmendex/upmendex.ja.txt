@@ -123,7 +123,7 @@ upmendex - 索引整形ツール
 
    preamble  <文字列>
       "\\begin{theindex}\n"
-      出力ファイルの文字列。
+      出力ファイルの先頭の文字列。
 
    postamble  <文字列>
       "\n\n\\end{theindex}\n"
@@ -164,6 +164,10 @@ upmendex - 索引整形ツール
       2のときはタイトルケースで出力する。
 
    heading_flag  <数値>
+      0
+      lethead_flagと同じ。
+
+   headings_flag  <数値>
       0
       lethead_flagと同じ。
 
@@ -283,23 +287,36 @@ upmendex - 索引整形ツール
 
    symhead_positive  <文字列>
       "Symbols"
-      lethead_flag または heading_flag が正数の場合に数字・記号の頭文字として
+      lethead_flag または heading_flag または headings_flag が正数の場合に記号の頭文字として
       出力する文字列。
 
    symhead_negative  <文字列>
       "symbols"
-      lethead_flag または heading_flag が負数の場合に数字・記号の頭文字として
+      lethead_flag または heading_flag または headings_flag が負数の場合に記号の頭文字として
       出力する文字列。
 
    symbol  <文字列>
       ""
-      symbol_flag が0でない場合に、数字・記号の頭文字として出力する文字列。
+      symbol_flag が0でない場合に、記号の頭文字として出力する文字列。
       文字列が定義されていれば、symhead_positive および symhead_negative より
       優先される。((up)mendex専用)
 
+   numhead_positive  <文字列>
+      "Numbers"
+      lethead_flag または heading_flag が正数かつ symbol_flag が2の場合に数字の頭文字として
+      出力する文字列。
+
+   numhead_negative  <文字列>
+      "numbers"
+      lethead_flag または heading_flag が負数かつ symbol_flag が2の場合に数字の頭文字として
+      出力する文字列。
+
    symbol_flag  <数値>
       1
-      symbol の出力フラグ。0のとき出力しない。((up)mendex専用)
+      symbol の出力フラグ。0のとき見出しを出力しない。
+      1のとき数字を記号の一部として扱い記号の見出しを出力する。
+      2のとき数字と記号を別の集合に分類し数字と記号の見出しを出力する。
+      ((up)mendex専用)
 
    letter_head  <数値>
       1
@@ -313,12 +330,29 @@ upmendex - 索引整形ツール
       ((up)mendex専用)
 
    character_order  <文字列>
-      "SNLGCJKHDT"
+      "SNLGCJKHDTah"
       記号、英字、日本語の優先順位。'S'は記号、'N'は数字、'L'はラテン文字、
       'G'はギリシャ文字、'C'はキリル文字、'J'は日本語(かな)、'K'はハングル、
-      'H'は漢字、'D'はデーヴァナーガリー、'T'はタイ文字を表す。
-      upendexでは索引項目の分類として「数字」は「記号」に含める仕様なので、
+      'H'は漢字、'D'はデーヴァナーガリー、'T'はタイ文字、
+      'a'はアラビア文字、'h'はヘブライ文字を表す。
+      symbol_flag=1のとき、索引項目の分類として「数字」は「記号」に含めるので、
       'S'と'N'は必ず隣り合わせること（数字と数字以外の記号の順序入れ替えは可能）。
+      (upmendex専用)
+
+   script_preamble  <文字列1>  <文字列2>
+      ""
+      各スクリプトごとのブロックの先頭の文字列を文字列2に指定する。
+      スクリプト名1個を以下の中から文字列1に指定しなければならない:
+      'latin', 'cyrillic', 'greek', 'kana', 'hangul', 'hanzi',
+      'devanagari', 'thai', 'arabic', 'hebrew'
+      (upmendex専用)
+
+   script_postamble  <文字列1>  <文字列2>
+      ""
+      各スクリプトごとのブロックの末尾の文字列を文字列2に指定する。
+      スクリプト名1個を以下の中から文字列1に指定しなければならない:
+      'latin', 'cyrillic', 'greek', 'kana', 'hangul', 'hanzi',
+      'devanagari', 'thai', 'arabic', 'hebrew'
       (upmendex専用)
 
    icu_locale  <文字列>
@@ -331,20 +365,20 @@ upmendex - 索引整形ツール
       ""
       ICU collatorにおいてlocaleによらずに照合順序を指定する場合、
       照合順序のルールを示す文字列。
-      ( Ref. http://userguide.icu-project.org/collation/customization
-             https://unicode-org.github.io/icu/userguide/collation/customization/
+      ( Ref. https://unicode-org.github.io/icu/userguide/collation/customization/
              http://www.unicode.org/reports/tr35/tr35-collation.html#Rules )
       UTF-8のUnicode文字及び、以下のエスケープ文字列が使用可能である:
       \Uhhhhhhhh (16進数[0-9A-Fa-f]を8桁), \uhhhh (16進数を4桁),
       \xhh (16進数を2桁), \x{h...} (16進数を1〜8桁), \ooo (8進数[0-7]を3桁)。
+      icu_localeとicu_rulesを同時に指定した場合、icu_localeで指定したルールの上に
+      icu_rulesで指定したルールを追加する。
       空文字列(デフォルト)のときは、localeによる照合順序のルールに従う。
       (upmendex専用)
 
    icu_attributes  <文字列>
       ""
       ICU collatorのattribute指定。
-      ( Ref. http://userguide.icu-project.org/collation/customization#TOC-Default-Options
-             https://unicode-org.github.io/icu/userguide/collation/customization/#default-options
+      ( Ref. https://unicode-org.github.io/icu/userguide/collation/customization/#default-options
              http://www.unicode.org/reports/tr35/tr35-collation.html#Setting_Options )
       以下の文字列を解釈する:
       "alternate:shifted", "alternate:non-ignorable",
@@ -365,7 +399,7 @@ upmendex - 索引整形ツール
 カナに揃え、拗音、撥音、濁点を除いた読みを付けなければなりませんでした(自動的に
 揃えるバージョンもある)。
   upmendex ではカナについてはInternational Components for Unicode (ICU)による
-ソートを行います。また漢字については辞書ファイルを設定することにより各索引語ごと
+ソートを行います。また漢字と記号については辞書ファイルを設定することにより各索引語ごと
 に読みを付ける作業をかなり解消できます。
 
   辞書ファイルは <熟語  読み> のリストで構成されます。熟語と読みの区切りはタブま
@@ -376,7 +410,7 @@ upmendex - 索引整形ツール
    漢字     かんじ
    読み     よみ
    環境     かんきょう
-   α       アルファ
+   ＄       ドル
 
   辞書に登録する熟語は、読み方が1通りになるよう送り仮名を付けてください。
   「表」、「性質」のように送り仮名によらず2通りの読み方ができる語についてはどち
@@ -445,5 +479,5 @@ upmendex - 索引整形ツール
 参考
 
 International Components for Unicode (ICU)
-http://site.icu-project.org/
+http://icu.unicode.org/
 https://unicode-org.github.io/icu/

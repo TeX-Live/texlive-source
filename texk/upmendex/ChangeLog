@@ -1,3 +1,17 @@
+2021-11-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.00  Stable version.
+	* configure.ac: Bump version.
+	* {,ex}var.h, fwrite.c, styfile.c:
+	Add options "script_preamble" and "script_postamble"
+	in style file.
+	* sort.c: Add Latin Extended-F and -G.
+	Add U_FORMAT_CHAR to is_type_mark_or_punct().
+	* mendex.h, var.h, convert.c, fwrite.c, sort.c, styfile.c:
+	Supports Arabic, Hebrew scripts (experimental).
+	* upmendex.ja.txt:
+	Update document.
+
 2021-10-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 0.60  Beta version.
