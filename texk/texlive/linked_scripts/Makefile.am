@@ -87,6 +87,8 @@ texmf_shell_scripts = \
 	texlive-extra/texconfig-sys.sh \
 	texlive-extra/texconfig.sh \
 	texlive-extra/texlinks.sh \
+	texlive-extra/xetex-unsafe.sh \
+	texlive-extra/xelatex-unsafe.sh
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \

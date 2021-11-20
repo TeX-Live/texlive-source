@@ -31,12 +31,8 @@ texlive-extra/texconfig-dialog.sh
 texlive-extra/texconfig-sys.sh
 texlive-extra/texconfig.sh
 texlive-extra/texlinks.sh
-texosquery/texosquery.sh
-texosquery/texosquery-jre5.sh
-texosquery/texosquery-jre8.sh
-tikztosvg/tikztosvg
-typeoutfileinfo/typeoutfileinfo.sh
-wordcount/wordcount.sh
+texlive-extra/xetex-unsafe.sh
+texlive-extra/xelatex-unsafe.sh
 a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
