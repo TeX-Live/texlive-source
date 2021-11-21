@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id$
+# $Id: xelatex-unsafe.sh 61101 2021-11-20 23:01:11Z karl $
 # Public domain. Originally written by Karl Berry, 2021.
 # Run Xe(La)TeX unsafely, for pstricks/transparency. See man page for more.
 
@@ -16,7 +16,7 @@ if test "x$1" = x--help; then
   exec "$xu" --help # don't want to duplicate help message.
 
 elif test "x$1" = x--version; then
-  echo "$Id$"
+  echo "$Id: xelatex-unsafe.sh 61101 2021-11-20 23:01:11Z karl $"
   exit 0
 fi
   

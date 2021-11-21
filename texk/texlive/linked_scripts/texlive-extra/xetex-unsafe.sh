@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id$
+# $Id: xetex-unsafe.sh 61101 2021-11-20 23:01:11Z karl $
 # Public domain. Originally written by Karl Berry, 2021.
 # Run Xe(La)TeX unsafely, for pstricks/transparency. See man page for more.
 
@@ -25,11 +25,11 @@ For more about XeTeX: https://tug.org/xetex
 For more about PSTricks: https://tug.org/PSTricks
 Email for xe(la)tex-unsafe specifically: https://lists.tug.org/dvipdfmx
 END_USAGE
-  echo '$Id$'
+  echo '$Id: xetex-unsafe.sh 61101 2021-11-20 23:01:11Z karl $'
   exit 0
 
 elif test "x$1" = x--version; then
-  echo '$Id$'
+  echo '$Id: xetex-unsafe.sh 61101 2021-11-20 23:01:11Z karl $'
   exit 0
 fi
   
