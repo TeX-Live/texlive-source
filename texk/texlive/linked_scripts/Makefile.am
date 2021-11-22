@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2021 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -88,7 +88,7 @@ texmf_shell_scripts = \
 	texlive-extra/texconfig.sh \
 	texlive-extra/texlinks.sh \
 	texlive-extra/xetex-unsafe.sh \
-	texlive-extra/xelatex-unsafe.sh
+	texlive-extra/xelatex-unsafe.sh \
 	texosquery/texosquery.sh \
 	texosquery/texosquery-jre5.sh \
 	texosquery/texosquery-jre8.sh \
