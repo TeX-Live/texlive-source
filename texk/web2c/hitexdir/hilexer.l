@@ -1,20 +1,20 @@
-	/*509:*/
+	/*511:*/
 %{
-	#line 10175 "format.w"
+	#line 10258 "format.w"
 	
 #include "hibasetypes.h"
 #include "hierror.h"
 #include "hiformat.h"
 #include "hiput.h"
 
-	/*423:*/
+	/*425:*/
 #ifdef DEBUG
 #define  YYDEBUG 1
 extern int yydebug;
 #else
 #define YYDEBUG 0
 #endif
-	/*:423*/
+	/*:425*/
 #include "hiparser.h"
 
 	/*22:*/
@@ -136,7 +136,7 @@ float64_t xtof(char*x)
 	}
 	/*:61*/
 int yywrap(void){
-	#line 10186 "format.w"
+	#line 10269 "format.w"
 	return 1;}
 #ifdef _MSC_VER
 #pragma  warning( disable : 4267)
@@ -335,19 +335,19 @@ range	return RANGE;
 	/*:296*/	/*323:*/
 directory	return DIRECTORY;
 section	return SECTION;
-	/*:323*/	/*342:*/
+	/*:323*/	/*344:*/
 definitions	return DEFINITIONS;
-	/*:342*/	/*350:*/
+	/*:344*/	/*352:*/
 max	return MAX;
-	/*:350*/	/*365:*/
+	/*:352*/	/*367:*/
 param	return PARAM;
-	/*:365*/	/*374:*/
+	/*:367*/	/*376:*/
 font	return FONT;
-	/*:374*/	/*402:*/
+	/*:376*/	/*404:*/
 content	return CONTENT;
-	/*:402*/
+	/*:404*/
 [a-z]+	QUIT("Unexpected keyword '%s' in line %d",yytext,yylineno);
 .	QUIT("Unexpected character '%c' (0x%02X) in line %d",yytext[0]>' '?yytext[0]:' ',yytext[0],yylineno);
 
 %%
-	/*:509*/
+	/*:511*/

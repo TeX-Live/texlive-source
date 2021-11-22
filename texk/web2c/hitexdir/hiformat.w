@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2541 $
+\setrevision$Revision: 2571 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2021-10-26 09:03:28 +0200 (Tue, 26 Oct 2021) $
+\setdate$Date: 2021-11-22 17:37:05 +0100 (Mon, 22 Nov 2021) $
 
 \null
 
@@ -3403,9 +3403,11 @@ appendix~\secref{fastforward}.
 \subsection{Boxes}\label{boxnodes}
 The central structuring elements of \TeX\ are boxes\index{box}.
 Boxes have a height |h|, a depth |d|, and a width |w|. 
-The shift amount |a| shifts the contents of the box, the glue ratio\index{glue ratio} |r| is a factor
-applied to the glue inside the box, the glue order |o| is its order of stretchability\index{stretchability},
-and the glue sign |s| is $-1$ for shrinking\index{shrinkability}, 0 for rigid, and $+1$ for stretching.
+The shift amount |a| shifts the contents of the box, 
+the glue ratio\index{glue ratio} |r| is a factor applied to the glue inside the box,
+the glue order |o| is its order of stretchability\index{stretchability},
+and the glue sign |s| is $-1$ for shrinking\index{shrinkability},
+0 for rigid, and $+1$ for stretching.
 Most importantly, a box contains a list |l| of content nodes inside the box.
 
 
@@ -6834,13 +6836,13 @@ void hset_entry(entry_t *e, uint16_t i, uint32_t size, uint32_t xsize, @|char *f
 @
 
 
-Writing the auxiliary files depends on the {\tt -n}, {\tt -f} and {\tt -g}
+Writing the auxiliary files depends on the {\tt -a}, {\tt -g} and {\tt -f}
 options.
 
 @<without {\tt -f} skip writing an existing file@>=
-    if ( !option_force && access(file_name,F_OK)==0)
+    if ( !option_force && access(aux_name,F_OK)==0)
     { MESSAGE("File '%s' exists.\n"@| "To rewrite the file use the -f option.\n",
-              file_name);
+              aux_name);
       continue;
     }
 @
@@ -6864,63 +6866,77 @@ If the \HINT\ file is {\tt shrink}ed on one system and
 {\tt stretch}ed on another system, this is usually not the desired behavior.
 Without the {\tt -g} option,\label{absrel} the files will be written in two local directories.
 The names of these directories are derived from the output file name,
-replacing the extension ``{\tt .HINT}'' with ``{\tt .abs}'' if the original
+replacing the extension ``{\tt .hint}'' with ``{\tt .abs}'' if the original
 filename contained an absolute path, and  replacing it with ``{\tt .rel}''
 if the original filename contained a relative path. Inside these directories,
 the path as given in the filename is retained.
 When {\tt shrink}ing a \HINT\ file without the {\tt -g} option,
 the original filenames can be reconstructed.
 
-@<without {\tt -g} compute a local |file_name|@>=
-if (!option_global)
-{ int path_length=(int)strlen(file_name);
-  @<determine whether |file_name| is absolute or relative@>@;
-  if (file_name_length<stem_length+ext_length+path_length)
-  { file_name_length=stem_length+ext_length+path_length;
-    REALLOCATE(stem_name, file_name_length+1,char);
-  }
-  strcpy(stem_name+stem_length,aux_ext[name_type]);
-  strcpy(stem_name+stem_length+ext_length,file_name);
-  DBG(DBGDIR,"Replacing auxiliary file name:\n\t%s\n->\t%s\n",file_name,stem_name);
-  file_name=stem_name;
+@<compute a local |aux_name|@>=
+{ char *path=dir[i].file_name;
+  int path_length=(int)strlen(path);
+  int aux_length;
+  @<determine whether |path| is absolute or relative@>@;
+  aux_length=stem_length+ext_length+path_length;
+  ALLOCATE(aux_name,aux_length+1,char);
+  strcpy(aux_name,stem_name);
+  strcpy(aux_name+stem_length,aux_ext[name_type]);
+  strcpy(aux_name+stem_length+ext_length,path);
+  @<replace links to the parent directory@>@; 
+  DBG(DBGDIR,"Replacing auxiliary file name:\n\t%s\n->\t%s\n",path,aux_name);
 }
 @
 
-@<determine whether |file_name| is absolute or relative@>=
+@<determine whether |path| is absolute or relative@>=
   enum {absolute=0, relative=1} name_type;
   char *aux_ext[2]={".abs/",".rel/"};
   int ext_length=5;
-  if (file_name[0]=='/')
-  {  name_type=absolute;
-    file_name++; path_length--;
-  }
-  else if (path_length>3 && isalpha(file_name[0]) &&
-           file_name[1]==':' && file_name[2]=='/')
+  if (path[0]=='/')
   { name_type=absolute;
-    file_name[1]='_';
+    path++; path_length--;
+  }
+  else if (path_length>3 && isalpha(path[0]) &&
+           path[1]==':' && path[2]=='/')
+  { name_type=absolute;
+    path[1]='_';
   }      
   else
     name_type=relative;
 @
+
+When the {\tt -g}  is not given, auxiliar files are written into
+special subdirectories. To prevent them from escaping into the global
+file system, we replace links to the parent direcory ``{\tt ../}'' by 
+``{\tt \_\,\_/}''.
+
+@<replace links to the parent directory@>=
+{ int k;
+  for (k=0; k<aux_length-3;k++) 
+    if (aux_name[k]=='.'&& aux_name[k+1]=='.'&& aux_name[k+2]=='/')
+    { aux_name[k]=aux_name[k+1]='_';k=k+2;}
+}
+@
+
 It remains to create the directories along the path we might have constructed.
-@<make sure the path in |file_name| exists@>=
+@<make sure the path in |aux_name| exists@>=
 { char *path_end;
-  path_end=file_name+1;
+  path_end=aux_name+1;
   while (*path_end!=0)
   { if(*path_end=='/')
     { struct stat s;
      *path_end=0;   
-      if (stat(file_name,&s)==-1)
+      if (stat(aux_name,&s)==-1)
       {
 #ifdef WIN32
-      if (mkdir(file_name)!=0)
+      if (mkdir(aux_name)!=0)
 #else
-      @t\2\kern-1em@>if (mkdir(file_name,0777)!=0)
+      @t\2\kern-1em@>if (mkdir(aux_name,0777)!=0)
 #endif
-           QUIT("Unable to create directory %s",file_name);
-         DBG(DBGDIR,"Creating directory %s\n",file_name);
+           QUIT("Unable to create directory %s",aux_name);
+         DBG(DBGDIR,"Creating directory %s\n",aux_name);
       } else if (!(S_IFDIR&s.st_mode))
-        QUIT("Unable to create directory %s, file exists",file_name);
+        QUIT("Unable to create directory %s, file exists",aux_name);
       *path_end='/';
     }
     path_end++;
@@ -6939,28 +6955,30 @@ extern int stem_length;
 void hget_section(uint16_t n);
 void hwrite_aux_files(void)
 { int i;
-  if (option_no_aux) return;
+  if (!option_aux) return;
   DBG(DBGBASIC|DBGDIR,"Writing %d aux files\n",max_section_no-2);
   for (i=3;i<=max_section_no;i++)
   { FILE *f;
-    char * file_name=dir[i].file_name;
-    int file_name_length=0;
-
-    @<without {\tt -g} compute a local |file_name|@>@;
+    char *aux_name=NULL;
+    if (option_global)
+      aux_name=strdup(dir[i].file_name);
+    else
+      @<compute a local |aux_name|@>@; 
     @<without {\tt -f} skip writing an existing file@>@;
-    @<make sure the path in |file_name| exists@>@;
+    @<make sure the path in |aux_name| exists@>@;
 
-    f=fopen(file_name,"wb");
+    f=fopen(aux_name,"wb");
     if (f==NULL) 
-      QUIT("Unable to open file '%s' for writing",file_name);
+      QUIT("Unable to open file '%s' for writing",aux_name);
     else
     { size_t s;
       hget_section(i);
-      DBG(DBGDIR,"Writing file %s\n",file_name);
+      DBG(DBGDIR,"Writing file %s\n",aux_name);
       s=fwrite(hstart,1,dir[i].size,f);
-      if (s!=dir[i].size) QUIT("writing file %s",file_name);
+      if (s!=dir[i].size) QUIT("writing file %s",aux_name);
       fclose(f);
     }
+    free(aux_name);
   }
 }
 @
@@ -7059,6 +7077,7 @@ it starts with the maximum section number instead of the section number zero,
 and we set its position to the position of the
 entry for section 1 (which might already be compressed).
 The name of the directory section must be the empty string.
+
 \gdef\subcodetitle{Directory Section}%
 \getcode
 @<get file functions@>=
@@ -7097,28 +7116,6 @@ void hclear_dir(void)
 
 @
 
-When the \.{shrink} program writes the directory section in the short format,
-it needs to know the sizes of all the  sections---including the optional sections.
-These sizes are not provided in the long format because it is safer and more 
-convenient to let the machine figure out the file sizes\index{file size}. 
-
-@<set the file sizes for optional sections@>=
-{ int i; 
-  for (i=3;i<=max_section_no;i++)
-    { struct stat s;
-      char *file_name=dir[i].file_name;
-      int file_name_length=0;
-      @<without {\tt -g} compute a local |file_name|@>@;     
-      if (stat(file_name,&s)!=0)
-        QUIT("Unable to obtain file size for '%s'",dir[i].file_name);
-      dir[i].size=s.st_size;
-      dir[i].xsize=0;
-    }
-}
-@
-
-The computation of the sizes of the mandatory sections will be 
-explained later.
 Armed with these preparations, we can put the directory into the \HINT\ file.
 
 \gdef\subcodetitle{Directory Section}%
@@ -7173,9 +7170,11 @@ static size_t hput_root(void)
 }
 
 extern int option_compress;
+static char **aux_names;
 void hput_directory(void)
 { int i;
-  @<set the file sizes for optional sections@>@;
+  @<update the file sizes of optional sections@>@;
+
   if (option_compress) { hcompress(1); @+hcompress(2); @+}
   hput_directory_start();
   for (i=1; i<=max_section_no; i++)
@@ -7189,15 +7188,67 @@ void hput_directory(void)
 
 @
 
+Now let us look at the optional sections described in the directory entries 3 and above
+Where these files are found depends on the {\tt -g} and {\tt -a} options.
 
-To conclude this section, here is the function that  adds the files that
-are described in the directory entries 3 and above to a \HINT\ file in short format.
-Where these files are found depends on the {\tt -g} option.
-With that option given, the file names of the directory entries are used unchanged.
-Without that option, the files are found in the {|hin_name|\tt .abs} and  {|hin_name|\tt .rel}
-directories, as described in section~\secref{absrel}.
+With the {\tt -g} option given, only the file names as given in the directory entries are used.
+With the {\tt -a} option given, the file names are translated to filenames in the {|hin_name|\tt .abs} and  {|hin_name|\tt .rel} directories, as described in section~\secref{absrel}.
+If neither the {\tt -a} nor the {\tt -g} option is given, {\tt shrink} first trys the translated
+filename and then the global filename before it gives up.
+
+When the \.{shrink} program writes the directory section in the short format,
+it needs to know the sizes of all the  sections---including the optional sections.
+These sizes are not provided in the long format because it is safer and more 
+convenient to let the machine figure out the file sizes\index{file size}.
+But before we can determine the size, we need to determine the file.
+
+@<update the file sizes of optional sections@>=
+{ int i;
+  ALLOCATE(aux_names,max_section_no+1,char *); 
+  for (i=3;i<=max_section_no;i++)
+  { struct stat s; 
+
+    if (!option_global)
+    { char * aux_name=NULL;
+      @<compute a local |aux_name|@>@;
+      if (stat(aux_name,&s)==0)
+        aux_names[i]=aux_name;
+      else 
+      { if (option_aux) QUIT("Unable to find file '%s'",aux_name); 
+        free(aux_name);
+      } 
+    }
+    if ((aux_names[i]==NULL && !option_aux) || option_global)
+    { if (stat(dir[i].file_name,&s)!=0)
+        QUIT("Unable to find file '%s'",dir[i].file_name); 
+    }
+    dir[i].size=s.st_size;
+    dir[i].xsize=0;
+    DBG(DBGDIR,"section %i: found file %s size %u\n",i,aux_names[i]?aux_names[i]:dir[i].file_name, dir[i].size);
+  }
+}
+@
+
+@<rewrite the file names of optional sections@>=
+{ int i;
+  for (i=3;i<=max_section_no;i++)
+    if (aux_names[i]!=NULL)
+    { free(dir[i].file_name);
+      dir[i].file_name=aux_names[i];
+      aux_names[i]=NULL;
+    }
+} 
+@
+
+
+The computation of the sizes of the mandatory sections will be 
+explained later.
+
 
 \gdef\subcodetitle{Optional Sections}%
+To conclude this section, here is the function that  adds the files that
+are described in the directory entries 3 and above to a \HINT\ file in short format.
+
 \putcode
 @<put functions@>=
 static void hput_optional_sections(void)
@@ -7207,11 +7258,9 @@ static void hput_optional_sections(void)
    { FILE *f;
      size_t fsize;
      char *file_name=dir[i].file_name;
-     int file_name_length=0;
-     DBG(DBGDIR,"file %d: %s\n",dir[i].section_no,file_name);
+     DBG(DBGDIR,"adding file %d: %s\n",dir[i].section_no,file_name);
      if (dir[i].xsize!=0) @/
        DBG(DBGDIR,"Compressing of auxiliary files currently not supported");
-     @<without {\tt -g} compute a local |file_name|@>@;
      f=fopen(file_name,"rb");
      if (f==NULL) QUIT("Unable to read section %d, file %s",
        dir[i].section_no,file_name);
@@ -7226,7 +7275,7 @@ static void hput_optional_sections(void)
      }
      fclose(f);
      if (fsize!=dir[i].size) 
-       QUIT(@["File size " SIZE_F " does not match directory size %u"@],@|fsize,dir[i].size);
+       QUIT(@["File size " SIZE_F " does not match section[0] size %u"@],@|fsize,dir[i].size);
    }
 }
 @
@@ -8516,39 +8565,40 @@ parameters and options\index{option}\index{debugging}.
 It tells us what to expect in the rest of this section.
 {\def\SP{\hskip .5em}
 @<explain usage@>=
-  fprintf(stderr,
-  "Usage: %s [options] filename%s\n",prog_name, in_ext);@/
-  fprintf(stderr,
+  fprintf(stdout,
+  "Usage: %s [OPTION]... FILENAME%s\n",prog_name, in_ext);@/
+  fprintf(stdout,DESCRIPTION);
+  fprintf(stdout,
   "Options:\n"@/
   "\t --help \t display this message\n"@/
   "\t --version\t display the HINT version\n"@/
   "\t -o file\t specify an output file name\n"@/
-  "\t -g     \t assume global names for auxiliary files\n"@/
-  "\t -f     \t force overwriting auxiliary files\n"@/
-  "\t -n     \t do not write auxiliary files\n"@/
+  "\t -a     \t write auxiliary files\n"@/
+  "\t -g     \t use global names of auxiliary files (implies -a)\n"@/
+  "\t -f     \t force overwriting existing auxiliary files\n"@/
   "\t -l     \t redirect stderr to a log file\n"@/
   "\t -u     \t enable writing utf8 character codes\n"@/
   "\t -x     \t enable writing hexadecimal character codes\n"@/
   "\t -c     \t enable compression of section 1 and 2\n");@/
 #ifdef DEBUG
-fprintf(stderr,"\t -d XXXX \t set debug flag to hexadecimal value XXXX.\n"
+fprintf(stdout,"\t -d XXXX \t set debug flag to hexadecimal value XXXX.\n"
                "\t\t\t OR together these values:\n");@/
-fprintf(stderr,"\t\t\t XX=%03X   basic debugging\n", DBGBASIC);@/
-fprintf(stderr,"\t\t\t XX=%03X   tag debugging\n", DBGTAGS);@/
-fprintf(stderr,"\t\t\t XX=%03X   node debugging\n",DBGNODE);@/
-fprintf(stderr,"\t\t\t XX=%03X   definition debugging\n", DBGDEF);@/
-fprintf(stderr,"\t\t\t XX=%03X   directory debugging\n", DBGDIR);@/
-fprintf(stderr,"\t\t\t XX=%03X   range debugging\n",DBGRANGE);@/
-fprintf(stderr,"\t\t\t XX=%03X   float debugging\n", DBGFLOAT);@/
-fprintf(stderr,"\t\t\t XX=%03X   compression debugging\n", DBGCOMPRESS);@/
-fprintf(stderr,"\t\t\t XX=%03X   buffer debugging\n", DBGBUFFER);@/
-fprintf(stderr,"\t\t\t XX=%03X   flex debugging\n", DBGFLEX);@/
-fprintf(stderr,"\t\t\t XX=%03X   bison debugging\n", DBGBISON);@/
-fprintf(stderr,"\t\t\t XX=%03X   TeX debugging\n", DBGTEX);@/
-fprintf(stderr,"\t\t\t XX=%03X   Page debugging\n", DBGPAGE);@/
-fprintf(stderr,"\t\t\t XX=%03X   Font debugging\n", DBGFONT);@/
-fprintf(stderr,"\t\t\t XX=%03X   Render debugging\n", DBGRENDER);@/
-fprintf(stderr,"\t\t\t XX=%03X   Label debugging\n", DBGLABEL);@/
+fprintf(stdout,"\t\t\t XX=%03X   basic debugging\n", DBGBASIC);@/
+fprintf(stdout,"\t\t\t XX=%03X   tag debugging\n", DBGTAGS);@/
+fprintf(stdout,"\t\t\t XX=%03X   node debugging\n",DBGNODE);@/
+fprintf(stdout,"\t\t\t XX=%03X   definition debugging\n", DBGDEF);@/
+fprintf(stdout,"\t\t\t XX=%03X   directory debugging\n", DBGDIR);@/
+fprintf(stdout,"\t\t\t XX=%03X   range debugging\n",DBGRANGE);@/
+fprintf(stdout,"\t\t\t XX=%03X   float debugging\n", DBGFLOAT);@/
+fprintf(stdout,"\t\t\t XX=%03X   compression debugging\n", DBGCOMPRESS);@/
+fprintf(stdout,"\t\t\t XX=%03X   buffer debugging\n", DBGBUFFER);@/
+fprintf(stdout,"\t\t\t XX=%03X   flex debugging\n", DBGFLEX);@/
+fprintf(stdout,"\t\t\t XX=%03X   bison debugging\n", DBGBISON);@/
+fprintf(stdout,"\t\t\t XX=%03X   TeX debugging\n", DBGTEX);@/
+fprintf(stdout,"\t\t\t XX=%03X   Page debugging\n", DBGPAGE);@/
+fprintf(stdout,"\t\t\t XX=%03X   Font debugging\n", DBGFONT);@/
+fprintf(stdout,"\t\t\t XX=%03X   Render debugging\n", DBGRENDER);@/
+fprintf(stdout,"\t\t\t XX=%03X   Label debugging\n", DBGLABEL);@/
 #endif
 @
 }
@@ -8582,7 +8632,7 @@ int option_utf8=false;
 int option_hex=false;
 int option_force=false;
 int option_global=false;
-int option_no_aux=false;
+int option_aux=false;
 int option_compress=false;
 char *stem_name=NULL;
 int stem_length=0;
@@ -8591,7 +8641,7 @@ The variable |stem_name| contains the name of the input file
 not including the extension. The space allocated for it
 is large enough to append an extension with up to five characters.
 It can be used with the extension {\tt .log} for the log file,
-with {\tt .HINT} or {\tt .hnt} for the output file,
+with {\tt .hint} or {\tt .hnt} for the output file,
 and with {\tt .abs} or {\tt .rel} when writing or reading the auxiliary sections.
 The {\tt stretch} program will overwrite the |stem_name|
 using the name of the output file if it is set with the {\tt -o}
@@ -8616,7 +8666,12 @@ are supported in addition to the short options.
 @<process the command line@>=
   debugflags=DBGBASIC;
   prog_name=argv[0];
-  if (argc < 2) goto explain_usage;
+  if (argc < 2) 
+  { fprintf(stderr,
+    "%s: no input file given\n"
+    "Try '%s --help' for more information\n",prog_name, prog_name);
+    exit(1);
+  }
   argv++; /* skip the program name */
   while (*argv!=NULL)
   { if ((*argv)[0]=='-')
@@ -8627,7 +8682,11 @@ are supported in addition to the short options.
           { fprintf(stderr,"%s version %d.%d\n",prog_name, HINT_VERSION, HINT_SUB_VERSION);
             exit(0);
           }
-        default: goto explain_usage; 
+          else if (strcmp(*argv,"--help")==0) 
+          { @<explain usage@>@;
+  fprintf(stdout,"\nFor further information and reporting bugs see https://hint.userweb.mwn.de/\n");
+            exit(0);
+          } 
         case 'o': argv++;
           file_name_length=(int)strlen(*argv);
           ALLOCATE(file_name,file_name_length+6,char); /*plus extension*/
@@ -8636,13 +8695,24 @@ are supported in addition to the short options.
         case 'u': option_utf8=true;@+break;
         case 'x': option_hex=true;@+break;
         case 'f': option_force=true; @+break;
-        case 'g': option_global=true; @+break;
-        case 'n': option_no_aux=true; @+break;
+        case 'g': option_global=option_aux=true; @+break;
+        case 'a': option_aux=true; @+break;
         case 'c': option_compress=true; @+break;
         case 'd': @/
-          argv++; if (*argv==NULL) goto explain_usage;
+          argv++; if (*argv==NULL)
+          { fprintf(stderr,
+             "%s: option -d expects an argument\n"
+             "Try '%s --help' for more information\n",prog_name, prog_name);
+             exit(1);
+           }
           debugflags=strtol(*argv,NULL,16);
           break;
+        default:
+        { fprintf(stderr,
+            "%s: unrecognized option '%s'\n"
+            "Try '%s --help' for more information\n",prog_name,*argv,prog_name);
+            exit(1);
+        }  
       }
     }
     else /* the input file name */
@@ -8659,11 +8729,21 @@ are supported in addition to the short options.
       ALLOCATE(stem_name,stem_length+6,char);
       strncpy(stem_name,hin_name,stem_length);
       stem_name[stem_length]=0;
-      if (*(argv+1)!=NULL) goto explain_usage;
+      if (*(argv+1)!=NULL) 
+      { fprintf(stderr,
+        "%s: extra argument after input file name:  '%s'\n"
+        "Try '%s --help' for more information\n",prog_name,*(argv+1),prog_name);
+        exit(1);
+      }
     }
     argv++;
   }
-  if (hin_name==NULL) goto explain_usage;
+  if (hin_name==NULL) 
+  { fprintf(stderr,
+      "%s: missing input file name\n"
+      "Try '%s --help' for more information\n",prog_name,prog_name);
+      exit(1);
+  }
 @
 
 After the command line has been processed, three file streams need to be opened:
@@ -8721,7 +8801,10 @@ Once we have established logging, we can try to open the other files.
     strcpy(file_name,stem_name);@+
     strcpy(file_name+stem_length,out_ext);
   }
-  @<make sure the path in |file_name| exists@>@;
+  { char *aux_name=file_name;
+    @<make sure the path in |aux_name| exists@>@;
+    aux_name=NULL;
+  }
   hout=fopen(file_name,"wb");
   if (hout==NULL) QUIT("Unable to open output file %s",file_name);
 @
@@ -10290,9 +10373,11 @@ extern int yyparse(void);
 @<function to write the banner@>@;
 @<put functions@>@;
 
+#define DESCRIPTION "\nShrinking converts a 'long' ASCII HINT file into a`short' binary HINT file .\n"
+
 int main(int argc, char *argv[])
 { @<local variables in |main|@>@;
-   in_ext=".HINT";
+   in_ext=".hint";
    out_ext=".hnt";
   @<process the command line@>@;
 
@@ -10314,16 +10399,13 @@ int main(int argc, char *argv[])
   yyparse();
 
   hput_directory();
-
-  hput_hint("shrink");
+  @<rewrite the file names of optional sections@>@;
+  hput_hint("created by shrink");
   
   @<close the output file@>@;
   @<close the input file@>@;
   @<close the log file@>@;
   return 0;
-explain_usage:
-  @<explain usage@>@;
-  return 1;
 }
 @
 
@@ -10365,11 +10447,13 @@ format into a \HINT\ file in long format.
 @<shared get functions@>@;
 @<get functions@>@;
 
+#define DESCRIPTION "\nStretching converts a `short' binary HINT file into a 'long' ASCII HINT file.\n"
+
 int main(int argc, char *argv[])
 { @<local variables in |main|@>@;
 
   in_ext=".hnt";
-  out_ext=".HINT";
+  out_ext=".hint";
   @<process the command line@>@;
   @<open the log file@>@;
   @<open the output file@>@;
@@ -10379,7 +10463,7 @@ int main(int argc, char *argv[])
   hend=hstart+hin_size;
   hget_banner();
   if (!hcheck_banner("hint")) QUIT("Invalid banner");
-  hput_banner("HINT","stretch");
+  hput_banner("HINT","created by stretch");
   hget_directory();
   hwrite_directory();
   hget_definition_section();
@@ -10390,9 +10474,7 @@ int main(int argc, char *argv[])
   DBG(DBGBASIC,"End of Program\n");
   @<close the log file@>@;
   return 0;
-explain_usage:
-  @<explain usage@>@;
-  return 1;}
+}
 @
 
 In the above program, the get functions call the write functions
@@ -10445,6 +10527,8 @@ backwards.
 @<shared skip functions@>@;
 @<skip functions@>@;
 
+#define DESCRIPTION "\n This program tests parsing a binary HINT file in reverse direction.\n"
+
 int main(int argc, char *argv[])
 { @<local variables in |main|@>@;
   in_ext=".hnt";
@@ -10477,9 +10561,6 @@ int main(int argc, char *argv[])
   hget_unmap();
   @<close the log file@>@;
   return 0;
-explain_usage:
-  @<explain usage@>@;
-  return 1;
 }
 @
 

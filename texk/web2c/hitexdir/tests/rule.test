@@ -12,20 +12,20 @@ OUTDIR=./hitexdir/tests/outdir; mkdir $OUTDIR
 ./hitex -ini --interaction=nonstopmode -output-directory=$OUTDIR rule.tex \
 || exit $?
 ./histretch $OUTDIR/rule.hnt || exit $?
-./hishrink -o $OUTDIR/rule.out.hnt $OUTDIR/rule.HINT || exit $?
+./hishrink -o $OUTDIR/rule.out.hnt $OUTDIR/rule.hint || exit $?
 ./histretch $OUTDIR/rule.out.hnt || exit $?
 
-if grep "<rule 0x48.451Ept 1pt 0x1C.73E7pt>" $OUTDIR/rule.HINT >/dev/null; then
+if grep "<rule 0x48.451Ept 1pt 0x1C.73E7pt>" $OUTDIR/rule.hint >/dev/null; then
   : # OK
 else
-  echo "rule.HINT does not contain the proper <rule, goodbye." >&2
+  echo "rule.hint does not contain the proper <rule, goodbye." >&2
   exit 1
 fi
 
-if diff $OUTDIR/rule.out.HINT $OUTDIR/rule.HINT; then # -w?
+if diff $OUTDIR/rule.out.hint $OUTDIR/rule.hint; then # -w?
   : # OK
 else
-  echo "rule.out.HINT and rule.HINT differ, goodbye." >&2
+  echo "rule.out.hint and rule.hint differ, goodbye." >&2
   exit 1
 fi
 

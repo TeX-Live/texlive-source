@@ -202,7 +202,7 @@
 @s dotdot TeX
 @* Introduction.
 This is Hi\TeX, a program derived from and extending the capabilities
-of \TeX\ plus \eTeX\ plus \Prote\ plus k\TeX,
+of \TeX\ plus \eTeX\ plus \Prote\ plus the \TeX\ Live extensions.
 a document compiler intended to produce typesetting of high
 quality.
 The \PASCAL\ program that follows is the definition of \TeX82, a standard
@@ -324,9 +324,7 @@ known as `\Prote'.
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
 @#
-@d HiTeX_version_string Prote_version_string "-1.0"
-@#
-@d banner "This is HiTeX, Version 3.141592653" HiTeX_version_string  /*printed when \TeX\ starts*/
+@d banner "This is HiTeX, Version 3.141592653-" HiTeX_version_string  /*printed when \TeX\ starts*/
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -8075,7 +8073,6 @@ recursive calls don't invalidate them.
 @p @t\4@>@<Declare the procedure called |macro_call|@>@;@/
 @t\4@>@<Declare the procedure called |insert_relax|@>@;@/
 @t\4@>@<Declare \eTeX\ procedures for expanding@>@;@/
-@t\4@>@<Declare \Prote\ procedures for expanding@>@;@/
 static void pass_text(void);
 static void start_input(void);
 static void conditional(void);
@@ -8713,7 +8710,6 @@ procedures are also declared at this point.
 @p static void scan_int(void); /*scans an integer value*/
 @t\4\4@>@<Declare procedures that scan restricted classes of integers@>@;
 @t\4\4@>@<Declare \eTeX\ procedures for scanning@>@;
-@t\4\4@>@<Declare \Prote\ procedures for scanning@>@;
 @t\4\4@>@<Declare procedures that scan font-related stuff@>@;
 
 @ \TeX\ doesn't know exactly what to expect when |scan_something_internal|
@@ -14911,7 +14907,9 @@ static void make_vcenter(pointer @!q)
 {@+pointer v; /*the box that should be centered vertically*/
 scaled @!delta; /*its height plus depth*/
 v=info(nucleus(q));
-if (type(v)!=vlist_node) confusion("vcenter");
+if (type(v)!=vlist_node &&
+    !(type(v)==whatsit_node && (subtype(v)==vset_node || subtype(v)==vpack_node)))
+   confusion("vcenter");
 @:this can't happen vcenter}{\quad vcenter@>
 delta=height(v)+depth(v);
 height(v)=axis_height(cur_size)+half(delta);
@@ -23047,25 +23045,17 @@ mlist_to_hlist();p=link(temp_head); link(temp_head)=null;@/
   display_no_bs(q)= prev_depth <= ignore_depth;
   tail_append(q);
 }
-/* this is from |resume_after_display| */
-if (cur_group!=math_shift_group) confusion("display");
+resume_after_display()
+
+@ @<Declare act...@>=
+static void resume_after_display(void)
+{@+if (cur_group!=math_shift_group) confusion("display");
 @:this can't happen display}{\quad display@>
 unsave();
 mode=hmode;space_factor=1000;set_cur_lang;clang=cur_lang;
 prev_graf=(norm_min(left_hyphen_min)*0100+norm_min(right_hyphen_min))
              *0200000+cur_lang;
 @<Scan an optional space@>;
-
-@ @<Declare act...@>=
-static void resume_after_display(void)
-{@+if (cur_group!=math_shift_group) confusion("display");
-@:this can't happen display}{\quad display@>
-unsave();prev_graf=prev_graf+3;
-push_nest();mode=hmode;space_factor=1000;set_cur_lang;clang=cur_lang;
-prev_graf=(norm_min(left_hyphen_min)*0100+norm_min(right_hyphen_min))
-             *0200000+cur_lang;
-@<Scan an optional space@>;
-if (nest_ptr==1) build_page();
 }
 
 @ The user can force the equation number to go on a separate line
@@ -25779,11 +25769,12 @@ case par_node: print_esc("parameter ");
   print_char(':');print_int(par_value(p).i);
   break;
 case graf_node: print_esc("paragraf(");
+  print_xdimen(graf_extent(p));
+  print(", ");
   print_int(graf_penalty(p));
   print_char(')');
   node_list_display(graf_params(p));
   node_list_display(graf_list(p));
-  print_xdimen(graf_extent(p));
   break;
 case disp_node: print_esc("display ");
   node_list_display(display_eqno(p));
@@ -26331,7 +26322,7 @@ if (iniversion && (buffer[loc]=='*'||etexp)&&str_eq_str(format_ident," (INITEX)"
   if (buffer[loc]=='*') incr(loc);
   eTeX_mode=1; /*enter extended mode*/
   @<Initialize variables for \eTeX\ extended mode@>@;
-  if (buffer[loc]=='*'||protep) {@+
+  if (buffer[loc]=='*'||ltxp) {@+
     @<Check \Prote\ ``constant'' values for consistency@>@;
     @<Generate all \Prote\ primitives@>@;
     if (buffer[loc]=='*')incr(loc);
@@ -28574,7 +28565,7 @@ head of the reference count is returned in |link(garbage)|, the
 tail in |info(garbage)| and if the two are equals, the list is empty.
 User must keep in mind that this has to be flushed when done with!
 
-@<Declare \Prote\ procedures for expanding@>=
+@<Forward declarations@>=
 static void scan_general_x_text(void);
 
 @ @<Declare \Prote\ procedures for token lists@>=
@@ -28589,7 +28580,8 @@ def_ref=d; /*restore whatever*/
 and converts it to a string number that is returned in |info(garbage)|.
 Neither the token list nor the string (obviously) are flushed.
 
-@<Declare \Prote\ procedures for scanning@>=
+
+@<Forward declarations@>=
 static void toks_to_str(void);
 
 @ Here we are using |token_show| that has to take a reference count.
@@ -31071,6 +31063,9 @@ if (type(p)==mark_node)
 { if (bot_mark!=null) delete_token_ref(bot_mark);
   bot_mark=mark_ptr(p);add_token_ref(bot_mark);
 }
+
+
+
 @*1 Replacing {\tt hpack} and {\tt vpack}.
 The following routines extend \TeX's original routines. They check for
 any dependency of the box size on {\tt hsize} or {\tt vsize} and
@@ -31082,202 +31077,89 @@ create an hset node or hpack node if such a dependency was found.
 static pointer hpack(pointer p,scaled w, scaled hf, scaled vf, small_number m)
 {
   pointer r; /*the box node that will be returned*/
-  pointer prev_p; /*trails behind |p|*/
+  pointer q; /*trails behind |p|*/
   scaled h,d,x; /*height, depth, and natural width*/
   scaled s; /*shift amount*/
   pointer g; /*points to a glue specification*/
-  glue_ord sto, sho; /*order of infinity*/
+  glue_ord o, sto, sho; /*order of infinity*/
   internal_font_number f; /*the font in a |char_node|*/
   four_quarters i;  /*font information about a |char_node|*/
   eight_bits hd; /*height and depth indices for a character*/
+  bool repack=false; /* whether repacking is necessary */
   last_badness= 0;r= get_node(box_node_size);type(r)= hlist_node;
   subtype(r)= min_quarterword;shift_amount(r)= 0;
-  prev_p= r+list_offset;link(prev_p)= p;
-  h= 0; d= 0; x= 0;
-  total_stretch[normal]= 0;total_shrink[normal]= 0;
-  total_stretch[fil]= 0;total_shrink[fil]= 0;
-  total_stretch[fill]= 0;total_shrink[fill]= 0;
-  total_stretch[filll]= 0;total_shrink[filll]= 0;
-  while(p!=null)
-    {
-    reswitch:
-      while(is_char_node(p))
-	{ f= font(p);i= char_info(f, character(p));hd= height_depth(i);
-	  x= x+char_width(f, i);
-	  s= char_height(f, hd);if (s> h)h= s;
-	  s= char_depth(f, hd);if (s> d)d= s;
-	  p= link(p);
-	}
-      if (p!=null)
-	{ switch(type(p)){
-	  case hlist_node:case vlist_node:case rule_node:case unset_node:
-	    { x= x+width(p);
-	      if (type(p)>=rule_node)s= 0;else s= shift_amount(p);
-	      if (height(p)-s> h)h= height(p)-s;
-	      if (depth(p)+s> d)d= depth(p)+s;
-	    }
-	    break;
-	  case ins_node:case mark_node:case adjust_node:if (adjust_tail!=null)
-	      { while(link(prev_p)!=p)prev_p= link(prev_p);
-		if (type(p)==adjust_node)
-                  { link(adjust_tail)= adjust_ptr(p);
-		    while(link(adjust_tail)!=null)adjust_tail= link(adjust_tail);
-		    p= link(p);free_node(link(prev_p),small_node_size);
-		  }
-		else
-		  { link(adjust_tail)= p;adjust_tail= p;p= link(p);
-		  }
-		link(prev_p)= p;p= prev_p;
-	      }
-	    break;
-	  case whatsit_node:
-            if (subtype(p)==graf_node)
-			  goto repack;
-			else if (subtype(p)==disp_node )
-			  goto repack;
-			else if (subtype(p)==vpack_node )
-			  goto repack;
-			else if (subtype(p)==hpack_node )
-			  goto repack;
-			else if (subtype(p)==hset_node )
-			  goto repack;
-			else if (subtype(p)==vset_node )
-			  goto repack;
-			else if (subtype(p)==stream_node )
-			  goto repack;
-			else if (subtype(p)==image_node)
-			{ glue_ord o;
-			  if (image_height(p)> h) h= image_height(p);
-                          x= x+image_width(p);
-			  o= image_stretch_order(p);total_stretch[o]= total_stretch[o]+image_stretch(p);
-	                  o= image_shrink_order(p);total_shrink[o]= total_shrink[o]+image_shrink(p);
-			}
-            break;
-		break;
-	  case glue_node:
-	    { glue_ord o;
-		  g= glue_ptr(p);x= x+width(g);
-	      o= stretch_order(g);total_stretch[o]= total_stretch[o]+stretch(g);
-	      o= shrink_order(g);total_shrink[o]= total_shrink[o]+shrink(g);
-	      if (subtype(p)>=a_leaders)
-		{ g= leader_ptr(p);
-		  if (height(g)> h)h= height(g);
-		  if (depth(g)> d)d= depth(g);
-		}
-	    }
-	    break;
-	  case kern_node:case math_node:x= x+width(p);break;
-	  case ligature_node:
-	    { mem[lig_trick]= mem[lig_char(p)];link(lig_trick)= link(p);
-	      p= lig_trick;goto reswitch;
-	    }
-	  default:do_nothing;
-	  }
-	  p= link(p);
-	}
+  q= r+list_offset;link(q)= p;
+  h= 0;@<Clear dimensions to zero@>;
+  while(p!=null) {
+reswitch:
+    while(is_char_node(p))
+      @<Incorporate character dimensions into the dimensions of the hbox that will contain~it,
+then move to the next node@>;
+    if (p!=null)
+    { switch(type(p)){
+      case hlist_node: case vlist_node: case rule_node: case unset_node: case unset_set_node: case unset_pack_node:
+        @<Incorporate box dimensions into the dimensions of the hbox that will contain~it@>@;@+break;
+      case ins_node: case mark_node: case adjust_node: if (adjust_tail!=null)
+        @<Transfer node |p| to the adjustment list@>@;@+break;
+      case glue_node: @<Incorporate glue into the horizontal totals@>@;@+break;
+      case kern_node: case math_node: x=x+width(p);@+break;
+      case ligature_node: @<Make node |p| look like a |char_node| and |goto reswitch|@>@;
+      case whatsit_node: @<Incorporate the various extended boxes into an hbox@>@;@+break;
+      default:do_nothing;
+      }
+      p= link(p);
     }
+  }
+
   if (adjust_tail!=null) link(adjust_tail)= null;
   height(r)= h;depth(r)= d;
-      if (total_stretch[filll]!=0)sto= filll;
-      else if (total_stretch[fill]!=0)sto= fill;
-      else if (total_stretch[fil]!=0)sto= fil;
-      else sto= normal;
+  if (repack) /* convert to a |hpack_node| */
+  { q=new_pack_node();
+    height(q)=h;
+    depth(q)=d;
+    width(q)=x;
+    subtype(q)=hpack_node;
+    list_ptr(q)=list_ptr(r);
+    list_ptr(r)=null;
+    free_node(r, box_node_size);
+    pack_limit(q)=max_dimen; /* no limit, not used */
+    pack_m(q)=m;
+    pack_extent(q)=new_xdimen(w,hf,vf);
+    return q;
+  }
+  else if (hf!=0 || vf!=0 )  /* convert to a hset node */
+  { if (total_stretch[filll]!=0)sto= filll;
+    else if (total_stretch[fill]!=0)sto= fill;
+    else if (total_stretch[fil]!=0)sto= fil;
+    else sto= normal;
 
-	  if (total_shrink[filll]!=0)sho= filll;
-      else if (total_shrink[fill]!=0)sho= fill;
-      else if (total_shrink[fil]!=0)sho= fil;
-      else sho= normal;
+    if (total_shrink[filll]!=0)sho= filll;
+    else if (total_shrink[fill]!=0)sho= fill;
+    else if (total_shrink[fil]!=0)sho= fil;
+    else sho= normal;
+    q=new_set_node();
+    subtype(q)=hset_node;
+    height(q)=h;
+    depth(q)=d;
+    width(q)=x; /* the natural width */
+    shift_amount(q)=shift_amount(r);
+    list_ptr(q)=list_ptr(r);
+    list_ptr(r)=null;
+    free_node(r, box_node_size);
+    if (m==exactly)
+      set_extent(q)=new_xdimen(w,hf,vf);
+    else
+      set_extent(q)=new_xdimen(x+w,hf,vf);
+    set_stretch_order(q)=sto;
+    set_shrink_order(q)=sho;
+    set_stretch(q)=total_stretch[sto];
+    set_shrink(q)=total_shrink[sho];
+    return q;
+  }
 
-  if (hf!=0 || vf!=0 )  /* convert to a hset node */
-	{ pointer q;
-	  q=new_set_node();
-	  subtype(q)=hset_node;
-      height(q)=h;
-	  depth(q)=d;
-	  width(q)=x; /* the natural width */
-	  shift_amount(q)=shift_amount(r);
-	  list_ptr(q)=list_ptr(r);
-	  list_ptr(r)=null;
-      free_node(r, box_node_size);
-      if (m==exactly)
-	    set_extent(q)=new_xdimen(w,hf,vf);
-	  else
-	    set_extent(q)=new_xdimen(x+w,hf,vf);
-      set_stretch_order(q)=sto;
-      set_shrink_order(q)=sho;
-      set_stretch(q)=total_stretch[sto];
-      set_shrink(q)=total_shrink[sho];
-	  return q;
-	}
-
-
-
-
- if (m==additional) w= x+w;
- width(r)= w;x= w-x; /*now |x| is the excess to be made up*/
-
-  if (x==0)
-    { glue_sign(r)= normal; glue_order(r)= normal;
-      set_glue_ratio_zero(glue_set(r));
-      goto end;
-    }
-  else if (x> 0)
-    {
-      glue_order(r)= sto;glue_sign(r)= stretching;
-      if (total_stretch[sto]!=0)glue_set(r)= unfloat(x/(double)total_stretch[sto]);
-      else
-	{ glue_sign(r)= normal;
-	  set_glue_ratio_zero(glue_set(r));
-	}
-      if (sto==normal)
-	{ if (list_ptr(r)!=null)
-	    { last_badness= badness(x,total_stretch[normal]);
-	      if (last_badness> hbadness)
-		{ print_ln();
-		  if (last_badness> 100)
-		    print_nl("Underfull");else print_nl("Loose");
-		  print(" \\hbox (badness ");print_int(last_badness);
-		  goto common_ending;
-		}
-	    }
-	}
-      goto end;
-    }
-  else
-    {
-      glue_order(r)= sho;glue_sign(r)= shrinking;
-      if (total_shrink[sho]!=0)
-	glue_set(r)= unfloat((-x)/(double)total_shrink[sho]);
-      else
-	{ glue_sign(r)= normal;
-	  set_glue_ratio_zero(glue_set(r));
-	}
-      if ((total_shrink[sho]<-x)&&(sho==normal)&&(list_ptr(r)!=null))
-	{ last_badness= 1000000;
-	  set_glue_ratio_one(glue_set(r));
-	  if ((-x-total_shrink[normal]> hfuzz)||(hbadness<100))
-	    { if ((overfull_rule> 0)&&(-x-total_shrink[normal]> hfuzz))
-		{ while(link(prev_p)!=null)prev_p= link(prev_p);
-		  link(prev_p)= new_rule();
-		  width(link(prev_p))= overfull_rule;
-		}
-	      print_ln();print_nl("Overfull \\hbox (");
-	      print_scaled(-x-total_shrink[normal]);print("pt too wide");
-	      goto common_ending;
-	    }
-	}
-      else if (sho==normal)
-	{ if (list_ptr(r)!=null)
-	    { last_badness= badness(-x,total_shrink[normal]);
-	      if (last_badness> hbadness)
-		{ print_ln();print_nl("Tight \\hbox (badness ");print_int(last_badness);
-		  goto common_ending;
-		}
-	    }
-	}
-      goto end;
-    }
- common_ending:
+@<Determine the value of |width(r)| and the appropriate glue setting; then |return|
+or |goto common_ending|@>;
+common_ending:
   if (pack_begin_line!=0)
 	{ if (pack_begin_line> 0)print(") in paragraph at lines ");
 	  else print(") in alignment at lines ");
@@ -31289,25 +31171,38 @@ static pointer hpack(pointer p,scaled w, scaled hf, scaled vf, small_number m)
   print_ln();
   font_in_short_display= null_font;short_display(list_ptr(r));print_ln();
   begin_diagnostic();show_box(r);end_diagnostic(true);
- end:return r;
+end:return r;
+}
 
+@ Now we consider the various whatsit nodes that are new in Hi\TeX.
+In most cases, it is no longer possible to determine the dimensions so that
+the |hpack| function is forced to return a hpack node. The hpack nodes cause
+special trouble when converting mlists to hlists because there the dimensions
+are necessary for positioning the parts of the formulas.
+A clean solution requires to postpone such computations to the \HINT\ viewer.
+For now we adopt a simpler solution and supply an educated guess which is
+reasonable since the boxes that occur in math formulas are often not very
+complicated. | graph_node|s should not be in a horizontal list, and |disp_node|s
+should be only inside |graph_node|s.
 
-repack:
-  {  /* convert the box to a |hpack_node| */
-	  pointer q;
-	  q=new_pack_node();
-	  height(q)=h;
-	  depth(q)=d;
-	  width(q)=x;
-	  subtype(q)=hpack_node;
-      list_ptr(q)=list_ptr(r);
-	  list_ptr(r)=null;
-      free_node(r, box_node_size);
-	  pack_limit(q)=max_dimen; /* no limit, not used */
-	  pack_m(q)=m;
-	  pack_extent(q)=new_xdimen(w,hf,vf);
-	  return q;
-  }
+@<Incorporate the various extended boxes into an hbox@>=
+switch (subtype(p))
+{ case graf_node:  break;
+  case disp_node:  break;
+  case vpack_node:
+  case hpack_node:
+  case hset_node:
+  case vset_node:
+    @<Incorporate box dimensions into the dimensions of the hbox...@>@;
+    repack=true; break;
+  case stream_node: repack=true; break; /* streams are for page templates only */
+  case image_node:
+    if (image_height(p)> h) h= image_height(p);
+    x= x+image_width(p);
+    o= image_stretch_order(p);total_stretch[o]= total_stretch[o]+image_stretch(p);
+    o= image_shrink_order(p);total_shrink[o]= total_shrink[o]+image_shrink(p);
+    break;
+  default: break;
 }
 
 @ @<Hi\TeX\ routines@>=
@@ -31740,7 +31635,6 @@ static pointer new_setpage_node(uint8_t i, str_number n)
 @ The default values are replaced by parameters given to the {\tt\BS setpage}
 primitive and by the current values of certain
 \TeX\ registers when finishing the page template.
-page template itself,
 
 @<Hi\TeX\ routines@>=
 static void hfinish_page_group(void)
@@ -33896,20 +33790,20 @@ function |usage_help|.
 static void usage_help(void)
 {@+@<explain the command line@>@;
   @<explain the options@>@;
-  fprintf(stderr,"\nEmail bug reports to ruckert@@cs.hm.edu.\n");
+  fprintf(stdout,"\nFor further information and reporting bugs see https://hint.userweb.mwn.de/\n");
   exit(0);
 }
 
 @ The command line commes in three slightly different versions:
 
 @<explain the command line@>=
-  fprintf(stderr,@/
+  fprintf(stdout,@/
     "Usage: %s [OPTION]... [TEXNAME[.tex]] [COMMANDS]\n"@/
     "   or: %s [OPTION]... \\FIRST-LINE\n"@/
     "   or: %s [OPTION]... &FMT ARGS\n\n",@/
     argv[0],argv[0],argv[0]);@/
-  fprintf(stderr,@/
-    "  Run TeX on TEXNAME, creating TEXNAME.dvi.\n"@/
+  fprintf(stdout,@/
+    "  Run HiTeX on TEXNAME, creating TEXNAME.hnt.\n"@/
     "  Any remaining COMMANDS are processed\n"@/
     "  as TeX input after TEXNAME is read.\n"@/
     "  If the first line of TEXNAME starts with %%&FMT, and FMT is\n"@/
@@ -33931,7 +33825,7 @@ static void usage_help(void)
 @ Here is the list of possible options and their explanation:
 
 @<explain the options@>=
-  fprintf(stderr,
+  fprintf(stdout,
   "Options:\n"@/
   " -help                 "@/
   @t\qquad@>"\t display this help and exit\n"@/
@@ -33939,8 +33833,8 @@ static void usage_help(void)
   @t\qquad@>"\t output version information and exit\n"@/
   " -etex                 "@/
   @t\qquad@>"\t enable e-TeX extensions\n"@/
-  " -prote                 "@/
-  @t\qquad@>"\t enable prote extensions\n"@/
+  " -ltx                 "@/
+  @t\qquad@>"\t enable extensions required for LaTeX\n"@/
   " -ini                  "@/
   @t\qquad@>"\t be initex for dumping formats; this is\n"@/
   @t\qquad@>"\t\t\t also true if the program name is `kinitex'\n"@/
@@ -33971,8 +33865,8 @@ static void usage_help(void)
   @t\qquad@>"\t enable compression of section 1 and 2\n"@/
   " [-no]-empty-page      "@/
   @t\qquad@>"\t Disable/Enable empty pages\n"@/
-  " -hyphenate-first-word "@/
-  @t\qquad@>"\t hyphenate the first word of a paragraph\n"@/
+  " -no-hyphenate-first-word "@/
+  @t\qquad@>"\t don't hyphenate the first word of a paragraph\n"@/
   " -resolution=NUMBER    "@/
   @t\qquad@>"\t set the resolution to NUMBER dpi\n"@/
   " -mfmode=MODE          "@/
@@ -34003,12 +33897,12 @@ string variables are initialized with |NULL|.
 @<Global...@>=
 static int iniversion=0;
 static int etexp=0;
-static int protep=0;
+static int ltxp=0;
 static int parsefirstlinep=-1;
 static int filelineerrorstylep=-1;
 static const char *user_progname=NULL, *output_directory=NULL, *c_job_name=NULL;
 static char *dump_name=NULL;@#
-int option_no_empty_page=true, option_hyphen_first=false;
+int option_no_empty_page=true, option_hyphen_first=true;
 int option_dpi=600;
 const char *option_mfmode="ljfour", *option_dpi_str="600";
 extern int option_compress;
@@ -34028,7 +33922,7 @@ static struct option long_options[] = {@/
       { "cnf-line",                  1, 0, 0 },@/
       { "ini",                       0, &iniversion, 1 },@/
       { "etex",                      0, &etexp, 1 },@/
-      { "prote",                     0, &protep, 1 },@/
+      { "ltx",                     0, &ltxp, 1 },@/
       { "parse-first-line",          0, &parsefirstlinep, 1 },@/
       { "no-parse-first-line",       0, &parsefirstlinep, 0 },@/
       { "file-line-error",           0, &filelineerrorstylep, 1 },@/
@@ -34036,7 +33930,7 @@ static struct option long_options[] = {@/
       { "compress",                  0, &option_compress, 1 },@/
       { "no-empty-page",             0, &option_no_empty_page, 1 },@/
       { "empty-page",                0, &option_no_empty_page, 0 },@/
-      { "hyphenate-first-word",      0, &option_hyphen_first, 1 },@/
+      { "no-hyphenate-first-word",   0, &option_hyphen_first, 0 },@/
       { "resolution",                1, 0, 0 },@/
       { "mfmode",                    1, 0, 0 },@/
 #ifdef DEBUG
@@ -34058,6 +33952,10 @@ static void parse_options (int argc, char *argv[])
     int g = getopt_long_only (argc, argv, "+", long_options, &option_index);
     if (g==0)
     { @<handle the option at |option_index|@>@;@+ }
+    else if (g == '?')
+    { fprintf(stderr,"Try '%s --help' for more information\n",argv[0]);
+      exit(1);
+    }
     else if (g == -1) return;
   }
 }
@@ -34081,10 +33979,15 @@ static int argument_is(struct option *opt, char * s)
 #define ARGUMENT_IS(S) argument_is(long_options+option_index,S)
 
 @ Now we can handle the first two options:
+
+@d HiTeX_version 1
+@d HiTeX_revision 0
+@d HiTeX_version_string "1.0"
+
 @<handle the option at |option_index|@>=
 if (ARGUMENT_IS("help")) usage_help();
 else if (ARGUMENT_IS("version")){@+
-       printf("Version 0.0\n");
+       printf("Version " HiTeX_version_string "\n");
        exit(0);@+
 }
 
@@ -34389,8 +34292,8 @@ if (etexp && !iniversion)
 { fprintf(stderr,"-etex requires -ini\n");
   exit(1);
 }
-if (protep && !etexp )
-{ fprintf(stderr,"-prote requires -etex\n");
+if (ltxp && !etexp )
+{ fprintf(stderr,"-ltx requires -etex\n");
   exit(1);
 }
 
@@ -34862,14 +34765,12 @@ static int get_md5_sum(int s, int file)
 the new engine returns a version number as an integer
 extending the cases for |last_item|.
 
-@d HiTeX_version 1
-@d HiTeX_revision 0
 @d HiTeX_version_code (eTeX_last_last_item_cmd_mod+7) /* \.{\\HiTeXversion} */
 @d HiTeX_revision_code (eTeX_last_last_item_cmd_mod+8) /* \.{\\HiTeXrevision} */
 
 @<Generate all \Prote\ primitives@>=
 primitive("HiTeXversion", last_item, HiTeX_version_code);
-@!@:Hi\TeX\_version\_}{\.{\\HiTeXversion} primitive@>
+@!@:HiTeX\_version\_}{\.{\\HiTeXversion} primitive@>
 primitive("HiTeXrevision", last_item, HiTeX_revision_code);
 @!@:HiTeX\_revision\_}{\.{\\HiTeXrevision} primitive@>
 

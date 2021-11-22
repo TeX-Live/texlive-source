@@ -1,0 +1,7 @@
+% How to test for the HiTeX engine
+\newif\ifHiTeX
+\expandafter\ifx\csname HiTeXversion\endcsname\relax
+  \HiTeXfalse
+\else
+  \HiTeXtrue
+\fi

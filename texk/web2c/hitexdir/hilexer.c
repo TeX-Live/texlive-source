@@ -843,22 +843,22 @@ static const flex_int16_t yy_rule_linenum[126] =
 char *yytext;
 #line 1 "lexer.l"
 #line 2 "lexer.l"
-	/*509:*/
-	#line 10175 "format.w"
+	/*511:*/
+	#line 10258 "format.w"
 	
 #include "hibasetypes.h"
 #include "hierror.h"
 #include "hiformat.h"
 #include "hiput.h"
 
-	/*423:*/
+	/*425:*/
 #ifdef DEBUG
 #define  YYDEBUG 1
 extern int yydebug;
 #else
 #define YYDEBUG 0
 #endif
-	/*:423*/
+	/*:425*/
 #include "hiparser.h"
 
 	/*22:*/
@@ -980,7 +980,7 @@ float64_t xtof(char*x)
 	}
 	/*:61*/
 int yywrap(void){
-	#line 10186 "format.w"
+	#line 10269 "format.w"
 	return 1;}
 #ifdef _MSC_VER
 #pragma  warning( disable : 4267)
@@ -2013,37 +2013,37 @@ YY_RULE_SETUP
 #line 338 "lexer.l"
 return SECTION;
 	YY_BREAK
-/*:323*/	/*342:*/
+/*:323*/	/*344:*/
 case 119:
 YY_RULE_SETUP
 #line 340 "lexer.l"
 return DEFINITIONS;
 	YY_BREAK
-/*:342*/	/*350:*/
+/*:344*/	/*352:*/
 case 120:
 YY_RULE_SETUP
 #line 342 "lexer.l"
 return MAX;
 	YY_BREAK
-/*:350*/	/*365:*/
+/*:352*/	/*367:*/
 case 121:
 YY_RULE_SETUP
 #line 344 "lexer.l"
 return PARAM;
 	YY_BREAK
-/*:365*/	/*374:*/
+/*:367*/	/*376:*/
 case 122:
 YY_RULE_SETUP
 #line 346 "lexer.l"
 return FONT;
 	YY_BREAK
-/*:374*/	/*402:*/
+/*:376*/	/*404:*/
 case 123:
 YY_RULE_SETUP
 #line 348 "lexer.l"
 return CONTENT;
 	YY_BREAK
-/*:402*/
+/*:404*/
 case 124:
 YY_RULE_SETUP
 #line 350 "lexer.l"
@@ -3226,5 +3226,5 @@ void yyfree (void * ptr )
 
 #line 353 "lexer.l"
 
-	/*:509*/
+	/*:511*/
 

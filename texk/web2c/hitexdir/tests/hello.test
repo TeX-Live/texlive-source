@@ -20,13 +20,13 @@ OUTDIR=./hitexdir/tests/outdir; mkdir $OUTDIR
 ./hitex -ini -interaction=nonstopmode -output-directory=$OUTDIR hello.tex \
 || exit $?
 
-./histretch -n $OUTDIR/hello.hnt || exit $?
+./histretch $OUTDIR/hello.hnt || exit $?
 
-if grep "<section 3 '../../../texk/web2c/tests/cmr10.tfm'>" \
-        $OUTDIR/hello.HINT >/dev/null; then
+if grep "<section 3 .*cmr10.tfm'>" \
+        $OUTDIR/hello.hint >/dev/null; then
   : # OK
 else
-  echo "hello.HINT does not contain the proper <section with" \
+  echo "hello.hint does not contain the proper <section with" \
        " cmr10.tfm, goodbye." >&2
   exit 1
 fi
