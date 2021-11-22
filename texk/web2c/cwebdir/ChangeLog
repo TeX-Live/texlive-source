@@ -1,3 +1,9 @@
+2021-11-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-w2c.h,
+	* common.h: Copyright text in common interface.
+
 2021-11-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,

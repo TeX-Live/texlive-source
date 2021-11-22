@@ -78,7 +78,7 @@ ALL =  common.w ctangle.w cweave.w prod.w \
 	cwebman.tex cwebmac.tex comm-vms.ch ctang-vms.ch \
 	cweav-vms.ch comm-man.ch ctang-man.ch cweav-man.ch \
 	comm-pc.ch ctang-pc.ch cweav-pc.ch comm-amiga.ch \
-        comm-bs.ch ctang-bs.ch cweav-bs.ch makefile.bs \
+	comm-bs.ch ctang-bs.ch cweav-bs.ch makefile.bs \
 	comm-ql.ch ctang-ql.ch cweav-ql.ch readme.ql \
 	comm-w32.ch ctang-w32.ch cweav-w32.ch \
 	comm-os2.ch comm-mac.ch cweb.1 cweb.el c++lib.w iso_types.w
