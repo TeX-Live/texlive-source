@@ -1,0 +1,323 @@
+.TH HITEX 1 "11 November 2021" "Version 1.0"
+.\"=====================================================================
+.if n .ds MF Metafont
+.if t .ds MF Metafont
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.el .ds OX TeX
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if n .ds AX AmSTeX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if n .ds AY AmSLaTeX
+.if n .ds WB Web
+.if t .ds WB W\s-2EB\s0
+.\"=====================================================================
+.SH NAME
+hitex \- HINT output from TeX
+.SH SYNOPSIS
+.B hitex
+.RI [ options ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
+.\"=====================================================================
+.SH DESCRIPTION
+Run the Hi\*(TX typesetter on
+.IR file ,
+usually creating
+.IR file.hnt .
+If the file argument has no extension, ".tex" will be appended to it. 
+Instead of a filename, a set of Hi\*(TX commands can be given, the first
+of which must start with a backslash.
+With a 
+.BI & format
+argument Hi\*(TX uses a different set of precompiled commands,
+contained in
+.IR format\fB.fmt\fP ;
+it is usually better to use the
+.B -fmt
+.I format
+option instead.
+.PP
+Hi\*(TX is a version of \*(TX that creates HINT files. The HINT file
+format is designed for on-screen reading of documents. Using a HINT
+viewer (see
+.BR  https://hint.userweb.mwn.de )
+to display a HINT file its content will dynamicaly adapt to the
+available display area.
+.PP
+The typical use of Hi\*(TX is with pregenerated formats.
+The
+.B hitex
+command uses the equivalent of the plain \*(TX format, and the
+.B hilatex
+command uses the equivalent of the \*(LX format.
+To generate formats, use the
+.B -ini
+switch.
+.PP
+Hi\*(TX's handling of its command-line arguments is similar to that of
+of the other \*(TX programs in the
+.I web2c
+implementation.
+.PP
+Hi\*(TX incorporates the e-\*(TX
+extensions (see 
+.BR etex (1))
+if used with the 
+.B -etex
+switch.
+.PP
+Hi\*(TX incorporates the extensions needed for \*(LX
+(see 
+.BR latex (1))
+if used with the 
+.B -ltx
+switch.
+.\"=====================================================================
+.SH OPTIONS
+This version of Hi\*(TX understands the following command line options.
+.TP
+.BI -cnf-line \ string
+Parse
+.I string
+as a
+.I texmf.cnf
+configuration line.  See the Kpathsea manual.
+.TP
+.B -etex
+Enable the e-\*(TX extensions.  This option is only effective in
+combination with
+.BR -ini .
+See
+.BR etex (1).
+.TP
+.B -file-line-error
+Print error messages in the form
+.I file:line:error
+which is similar to the way many compilers format them.
+.TP
+.B -no-file-line-error
+Disable printing error messages in the
+.I file:line:error
+style.
+.TP
+.BI -fmt \ format
+Use
+.I format
+as the name of the format to be used, instead of the name by which
+Hi\*(TX was called or a
+.I %&
+line.
+.TP
+.B -help
+Print help message and exit.
+.TP
+.B -ini
+Start in
+.I INI
+mode, which is used to dump formats.  The
+.I INI
+mode can be used for typesetting, but no format is preloaded, and
+basic initializations like setting catcodes may be required.
+.TP
+.BI -interaction \ mode
+Sets the interaction mode.  The mode can be either
+.IR batchmode ,
+.IR nonstopmode ,
+.IR scrollmode ,
+and
+.IR errorstopmode .
+The meaning of these modes is the same as that of the corresponding
+\ecommands.
+.TP
+.BI -jobname \ name
+Use
+.I name
+for the job name, instead of deriving it from the name of the input file.
+.TP
+.BI -kpathsea-debug \ bitmask
+Sets path searching debugging flags according to the bitmask.  See the
+.I Kpathsea
+manual for details.
+.TP
+.B -ltx
+Enable the \*(LX extensions.  This option is only effective in
+combination with
+.BR -ini .
+See
+.BR latex (1).
+.TP
+.BI -mktex \ fmt
+Enable
+.RI mktex fmt ,
+where
+.I fmt
+must be either
+.IR tex ,
+.IR tfm ,
+.IR fmt ,
+or
+.IR pk .
+.TP
+.BI -no-mktex \ fmt
+Disable
+.RI mktex fmt ,
+where
+.I fmt
+must be either
+.IR tex ,
+.IR tfm ,
+.IR fmt ,
+or
+.IR pk .
+.TP
+.BI -output-directory \ directory
+Write output files in
+.I directory
+instead of the current directory.  Look up input files in
+.I directory
+first, then along the normal search path.
+.TP
+.B -parse-first-line
+If the first line of the main input file begins with
+.I %&
+parse it to look for a dump name.
+.TP
+.B -no-parse-first-line
+Disable parsing of the first line of the main input file.
+.TP
+.BI -progname \ name
+Pretend to be program
+.IR name .
+This affects both the format used and the search paths.
+.TP
+.B -version
+Print version information and exit.
+.\"=====================================================================
+.SH ENVIRONMENT
+See the Kpathsea library documentation (e.g., the `Path specifications'
+node) for precise details of how the environment variables are used.
+The
+.B kpsewhich
+utility can be used to query the values of the variables.
+.PP
+One caveat: In most Hi\*(TX formats, you cannot use ~ in a filename you
+give directly to Hi\*(TX, because ~ is an active character in \*(TX,
+and hence is expanded, not taken as part of the filename. Other
+programs, such as \*(MF, do not have this problem.
+.PP
+.TP
+.B TEXMFOUTPUT
+Normally, Hi\*(TX puts its output files in the current directory.  If
+any output file cannot be opened there, it tries to open it in the
+directory specified in the environment variable TEXMFOUTPUT.
+There is no default value for that variable.  For example, if you say
+.I hitex paper
+and the current directory is not writable and TEXMFOUTPUT has
+the value
+.IR /tmp ,
+Hi\*(TX attempts to create
+.I /tmp/paper.log
+(and
+.IR /tmp/paper.hnt ,
+if any output is produced.)  TEXMFOUTPUT is also checked for input
+files, as \*(TX often generates files that need to be subsequently
+read; for input, no suffixes (such as ``.tex'') are added by default,
+the input name is simply checked as given.
+.TP
+.B TEXINPUTS
+Search path for
+.I \einput
+and
+.I \eopenin
+files.
+This normally starts with ``.'', so
+that user files are found before system files.  An empty path
+component will be replaced with the paths defined in the
+.I texmf.cnf
+file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
+current directory and ``/home/user/tex'' to the standard search path.
+.TP
+.B TEXFORMATS
+Search path for format files.
+.TP
+.B TFMFONTS
+Search path for font metric
+.RI ( .tfm )
+files.
+.TP
+.B SOURCE_DATE_EPOCH
+If set, its value, taken to be in epoch-seconds, will be used for the
+timestamps in the PDF output, such as the CreationDate and ModDate keys.
+This is useful for making reproducible builds.
+.TP
+.B FORCE_SOURCE_DATE
+If set to the value "1", the time-related \*(TX primitives
+.RI ( \eyear ,
+.IR \emonth ,
+.IR \eday ,
+.IR \etime )
+are also initialized from the value of SOURCE_DATE_EPOCH.  This is not
+recommended if there is any viable alternative.
+.PP
+Many, many more environment variables may be consulted related to path
+searching.  See the Kpathsea manual.
+.\"=====================================================================
+.SH FILES
+The location of the files mentioned below varies from system to
+system.  Use the
+.B kpsewhich
+utility to find their locations.
+.TP
+.I *.tfm
+Metric files for Hi\*(TX's fonts.
+.TP
+.I *.fmt
+Predigested Hi\*(TX format (.\|fmt) files.
+.\"=====================================================================
+.SH NOTES
+.\"=====================================================================
+.SH BUGS
+This version of Hi\*(TX fails to handle correctly glues and kerns with a 
+width that depends on \ehsize or \evsize. Similarly, when
+the layout of table entries or mathematical formulas depends on \ehsize 
+or \evsize their output might be distorted. 
+.\"=====================================================================
+.SH AVAILABILITY
+Hi\*(TX should compile on a large variety of machine architectures
+and operating systems.
+Hi\*(TX is part of the \*(TX Live distribution.
+.br
+The Hi\*(TX home page: https://hint.userweb.mwn.de
+.\"=====================================================================
+.SH "SEE ALSO"
+This manual page is not meant to be exhaustive.  The complete
+documentation for Hi\*(TX can be found in the 
+.IR "Hi\*(TX user manual"
+and the manual of the
+.IR "Kpathsea library" .
+.PP
+Related programs:
+.BR histretch (1),
+.BR hishrink (1),
+.BR latex (1),
+.BR tex (1),
+.\"=====================================================================
+.SH AUTHORS
+The primary author of Hi\*(TX is Martin Ruckert,
+with e\*(TX extensions by Peter Breitenlohner,
+\*LX extensions by Thierry Laronde, and
+the kpathsearch library by Karl Berry.
+.PP
+\*(TX was designed by Donald E. Knuth,
+who implemented it using his \*(WB system for Pascal programs.
+It was ported to Unix at Stanford by Howard Trickey, and
+at Cornell by Pavel Curtis.
+.\" vim: syntax=nroff
