@@ -29937,7 +29937,7 @@ static void hint_debug_help(void)
 {
 fprintf(stderr,@/
   "To generate HINT format debug output use the option\n"
-  " -debug=XX             "@/
+  " -hint-debug=XX             "@/
 @t\qquad@>"\t XX is a hexadecimal value. OR together these values:\n");@/
 fprintf(stderr,"\t\t\t XX=%04X \t basic debugging\n", DBGBASIC);@/
 fprintf(stderr,"\t\t\t XX=%04X \t tag debugging\n", DBGTAGS);@/
@@ -33865,6 +33865,8 @@ static void usage_help(void)
   @t\qquad@>"\t enable compression of section 1 and 2\n"@/
   " [-no]-empty-page      "@/
   @t\qquad@>"\t Disable/Enable empty pages\n"@/
+  " -hyphenate-first-word "@/
+  @t\qquad@>"\t hyphenate the first word of a paragraph\n"@/
   " -no-hyphenate-first-word "@/
   @t\qquad@>"\t don't hyphenate the first word of a paragraph\n"@/
   " -resolution=NUMBER    "@/
@@ -33872,7 +33874,7 @@ static void usage_help(void)
   " -mfmode=MODE          "@/
   @t\qquad@>"\t set the METAFONT mode to MODE\n"@/
 #ifdef DEBUG
-  " -debug=FLAGS          "@/
+  " -hint-debug=FLAGS          "@/
   @t\qquad@>"\t set flags to controll hint debug output\n"@/
   " -hint-debug-help      "@/
   @t\qquad@>"\t give help on hint debugging\n"@/
@@ -33930,11 +33932,12 @@ static struct option long_options[] = {@/
       { "compress",                  0, &option_compress, 1 },@/
       { "no-empty-page",             0, &option_no_empty_page, 1 },@/
       { "empty-page",                0, &option_no_empty_page, 0 },@/
+      { "hyphenate-first-word",      0, &option_hyphen_first, 1 },@/
       { "no-hyphenate-first-word",   0, &option_hyphen_first, 0 },@/
       { "resolution",                1, 0, 0 },@/
       { "mfmode",                    1, 0, 0 },@/
 #ifdef DEBUG
-      { "debug",                     1, 0, 0 },@/
+      { "hint-debug",                1, 0, 0 },@/
       { "hint-debug-help",           0, 0, 0 },@/
 #endif
       { 0, 0, 0, 0 }@+}@+;
@@ -34043,7 +34046,7 @@ else if (ARGUMENT_IS("resolution")) @t\2@>
 else if (ARGUMENT_IS("mfmode"))
   option_mfmode=optarg;
 #ifdef DEBUG@t\1@>
-else @+if (ARGUMENT_IS("debug"))
+else @+if (ARGUMENT_IS("hint-debug"))
   debugflags=strtol(optarg,NULL,16);
 else @+if (ARGUMENT_IS("hint-debug-help"))
   hint_debug_help();

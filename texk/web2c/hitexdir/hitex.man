@@ -91,6 +91,20 @@ as a
 .I texmf.cnf
 configuration line.  See the Kpathsea manual.
 .TP
+.B -compress
+Enable the use of compression for the HINT file. Compressed files are
+smaller but require decompression when viewing. Use only for large
+files if the file size matters.
+.TP
+.B -empty-page
+When writing books, often empty pages are inserted - for example to
+begin chapters on a right hand side page. These empty pages are
+a nuisance for on-screen reading where there are no left or right
+hand side pages. This option keeps empty pages in the output.
+.TP
+.B -no-empty-page
+This option tries to eliminate empty pages in the output. It is set as a default.
+.TP
 .B -etex
 Enable the e-\*(TX extensions.  This option is only effective in
 combination with
@@ -118,6 +132,26 @@ line.
 .TP
 .B -help
 Print help message and exit.
+.TP
+.BI -hint-debug \ bitmask
+Sets HINT file debugging flags according to the 
+.IR bitmask .
+See the
+.B -hint-debug-help
+option for details.
+.TP
+.B -hint-debug-help
+Print an explanation of the HINT debugging flags and exit.
+.TP
+.B -hyphenate-first-word
+\*(TX will usualy not attempt to insert hyphenation points into the first 
+word of a paragraph. If a HINT file must be displayed on a very small device
+such hyphenation points might prove necessary. This option is set by default
+and enables the genaration of these hyphenation points.
+.TP
+.B -no-hyphenate-first-word
+Disable the automatic insertion of hyphenation points in the first word
+of a paragraph. Needed only if complete compatibility with \*(TX is required.
 .TP
 .B -ini
 Start in
@@ -153,6 +187,15 @@ combination with
 .BR -ini .
 See
 .BR latex (1).
+.TP
+.BI -mfmode \ mode
+Use
+.I mode
+as the \*(MF 
+.I mode
+when generating missing fonts. See 
+.BR mf (1)
+for details.
 .TP
 .BI -mktex \ fmt
 Enable
@@ -197,6 +240,13 @@ Disable parsing of the first line of the main input file.
 Pretend to be program
 .IR name .
 This affects both the format used and the search paths.
+.TP
+.BI -resolution \ number
+When using \*(MF to generate missing pk fonts, use a resolution of 
+.I number
+DPI.  See 
+.BR mf (1)
+for details.
 .TP
 .B -version
 Print version information and exit.
@@ -280,10 +330,18 @@ utility to find their locations.
 Metric files for Hi\*(TX's fonts.
 .TP
 .I *.fmt
-Predigested Hi\*(TX format (.\|fmt) files.
+Predigested Hi\*(TX format files.
+.TP
+.I *.pk *.pfb
+Font files used by Hi\*(TX.
 .\"=====================================================================
 .SH NOTES
-.\"=====================================================================
+This manual page is not meant to be exhaustive.  The complete
+documentation for Hi\*(TX can be found in the 
+.IR "Hi\*(TX user manual"
+and the manual of the
+.IR "Kpathsea library" .
+.PP.\"=====================================================================
 .SH BUGS
 This version of Hi\*(TX fails to handle correctly glues and kerns with a 
 width that depends on \ehsize or \evsize. Similarly, when
@@ -294,30 +352,28 @@ or \evsize their output might be distorted.
 Hi\*(TX should compile on a large variety of machine architectures
 and operating systems.
 Hi\*(TX is part of the \*(TX Live distribution.
-.br
-The Hi\*(TX home page: https://hint.userweb.mwn.de
+.PP
+The Hi\*(TX home page is at 
+.BR https://hint.userweb.mwn.de .
+There you find additional software, most importantly viewers for HINT files,
+and further information.
 .\"=====================================================================
 .SH "SEE ALSO"
-This manual page is not meant to be exhaustive.  The complete
-documentation for Hi\*(TX can be found in the 
-.IR "Hi\*(TX user manual"
-and the manual of the
-.IR "Kpathsea library" .
-.PP
-Related programs:
 .BR histretch (1),
 .BR hishrink (1),
 .BR latex (1),
 .BR tex (1),
+.BR kpsewhich (1),
 .\"=====================================================================
 .SH AUTHORS
 The primary author of Hi\*(TX is Martin Ruckert,
 with e\*(TX extensions by Peter Breitenlohner,
-\*LX extensions by Thierry Laronde, and
+\*(LX extensions by Thierry Laronde, and
 the kpathsearch library by Karl Berry.
 .PP
 \*(TX was designed by Donald E. Knuth,
 who implemented it using his \*(WB system for Pascal programs.
-It was ported to Unix at Stanford by Howard Trickey, and
-at Cornell by Pavel Curtis.
+.PP
+Many, many more contributed to the typesetting system now known as \*(TX;
+far too many to name all of them here.
 .\" vim: syntax=nroff
