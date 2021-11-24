@@ -2316,7 +2316,18 @@ checks whether there can be a conflict between math and non-math
 tokens, and intercalates a `\.{\$}' token if necessary.  When in
 doubt what to use, use |big_app|.
 
-The |mathness| is an attribute of scraps that says whether they are
+@d app(a) *(tok_ptr++)=(token)(a)
+@d big_app2(a) big_app1(a);@+big_app1(a+1)
+@d big_app3(a) big_app2(a);@+big_app1(a+2)
+@d big_app4(a) big_app3(a);@+big_app1(a+3)
+@d big_app1_insert(p,c) big_app1(p);@+big_app(c);@+big_app1(p+1)
+
+@<Predecl...@>=
+static void app_str(const char *);@/
+static void big_app(token);@/
+static void big_app1(scrap_pointer);
+
+@ The |mathness| is an attribute of scraps that says whether they are
 to be printed in a math mode context or not.  It is separate from the
 ``part of speech'' (the |cat|) because to make each |cat| have
 a fixed |mathness| (as in the original \.{WEAVE}) would multiply the
@@ -2333,29 +2344,19 @@ irreducible scrap has a |yes_math| boundary the scrap gets preceded
 or followed by a~\.{\$}. The left boundary is |maybe_math| if and
 only if the right boundary is.
 
-The code below is an exact translation of the production rules into
-\CEE/, using such macros, and the reader should have no difficulty
-understanding the format by comparing the code with the symbolic
-productions as they were listed earlier.
-
 @d no_math 2 /* should be in horizontal mode */
 @d yes_math 1 /* should be in math mode */
 @d maybe_math 0 /* works in either horizontal or math mode */
-@d big_app2(a) big_app1(a);@+big_app1(a+1)
-@d big_app3(a) big_app2(a);@+big_app1(a+2)
-@d big_app4(a) big_app3(a);@+big_app1(a+3)
-@d big_app1_insert(p,c) big_app1(p);@+big_app(c);@+big_app1(p+1)
-@d app(a) *(tok_ptr++)=(token)(a)
 
 @<Private...@>=
 static int cur_mathness, init_mathness;
 
-@ @<Predecl...@>=
-static void app_str(const char *);@/
-static void big_app(token);@/
-static void big_app1(scrap_pointer);
+@ The code below is an exact translation of the production rules into
+\CEE/, using such macros, and the reader should have no difficulty
+understanding the format by comparing the code with the symbolic
+productions as they were listed earlier.
 
-@ @c
+@c
 static void
 app_str(
 const char *s)

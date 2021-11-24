@@ -1018,12 +1018,9 @@ followed by `|reduce(pp,3,exp,-2,3)|'.
 Section 133.
 
 @x
-The code below is an exact translation of the production rules into
+@ The |mathness| is an attribute of scraps that says whether they are
 @y
-@ The code below is an exact translation of the production rules into
-@-a@>
-@-c@>
-@-p@>
+@r @ The |mathness| is an attribute of scraps that says whether they are
 @z
 
 Section 136--137.
