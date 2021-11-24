@@ -29,6 +29,15 @@ use warnings;
 ##
 ##   Modification log from 14 Apr 2021 onwards in detail
 ##
+## 20 Nov 2021 John Collins  Add /etc to list of locations for system rc files
+##  4 Nov 2021 John Collins  Improve diagnostics when there's a mismatch of 
+##                             destination file of rule between .fdb_latexmk
+##                             file and expectation.
+##  2 Nov 2021 John Collins  Sort generated-file section by filename; it's
+##                             already done in file data secton.
+##                           Only write fdb_latexmk file if nothing has been
+##                             done.  (Addition of $runs_total variable.)
+##                           V. 4.76.
 ## 23 Sep 2021 John Collins  Option -time: times for all rules reported now
 ## 18 Sep 2021 John Collins  For biber: parse blg file for config file use
 ##                           V. 4.75.
@@ -99,8 +108,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.75';
-$version_details = "$My_name, John Collins, 21 September 2021";
+$version_num = '4.76';
+$version_details = "$My_name, John Collins, 20 November 2021";
 
 use Config;
 use File::Basename;
@@ -777,8 +786,6 @@ elsif ( $^O eq "cygwin" ) {
     # NT executables.
     $tmpdir = $ENV{TMPDIR} || $ENV{TEMP} || '.';
 
-    # Which rc files did I read?
-    @rc_files_read = ();
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
     ## We could stay with MSWin files here, since cygwin perl understands them
@@ -790,10 +797,11 @@ elsif ( $^O eq "cygwin" ) {
     @rc_system_files = ();
     foreach ( 'LatexMk', 'latexmkrc' ) {
        push @rc_system_files,
-            ( "/cygdrive/c/latexmk/$_", 
-              "/opt/local/share/latexmk/$_", 
-              "/usr/local/share/latexmk/$_",
-              "/usr/local/lib/latexmk/$_" );
+           ( "/cygdrive/c/latexmk/$_",
+             "/etc/$_",
+             "/opt/local/share/latexmk/$_", 
+             "/usr/local/share/latexmk/$_",
+             "/usr/local/lib/latexmk/$_" );
     }
     $search_path_separator = ';';  # Separator of elements in search_path
     # This is tricky.  The search_path_separator depends on the kind
@@ -842,14 +850,11 @@ else {
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
-    ## Normally on a UNIX it will be in a subdirectory of /opt/local/share or
-    ## /usr/local/share, depending on the local conventions.
-    ## But /usr/local/lib/latexmk is put in the list for
-    ## compatibility with older versions of latexmk.
     @rc_system_files = ();
     foreach ( 'LatexMk', 'latexmkrc' ) {
        push @rc_system_files,
-            ( "/opt/local/share/latexmk/$_", 
+            ( "/etc/$_",
+              "/opt/local/share/latexmk/$_", 
               "/usr/local/share/latexmk/$_",
               "/usr/local/lib/latexmk/$_" );
     }
@@ -1527,8 +1532,10 @@ elsif ($HOME ne '') {
 
 #==================================================
 
-# Options that are to be obeyed before rc files are read:
+# Which rc files did I read?
+@rc_files_read = ();
 
+# Options that are to be obeyed before rc files are read:
 foreach $_ ( @ARGV )
 {
     if (/^-{1,2}norc$/ ) {
@@ -1561,7 +1568,7 @@ sub read_first_rc_file_in_list {
 if ( $auto_rc_use ) {
     # System rc file:
     if (exists $ENV{LATEXMKRCSYS} ) {
-        push @rc_system_files, $ENV{LATEXMKRCSYS};
+        unshift @rc_system_files, $ENV{LATEXMKRCSYS};
         if ( !-e $ENV{LATEXMKRCSYS} ) {
             warn "$My_name: you've specified a system rc file `$ENV{LATEXMKRCSYS}`\n",
                  "   in environment variable LATEXMKRCSYS, but the file doesn't exist.\n",
@@ -2616,7 +2623,8 @@ if ($show_time) { show_timing();}
 
 sub show_timing {
     my $processing_time = processing_time() - $processing_time1;
-    print @timings, "Accumulated processing time = $processing_time\n"; 
+    print @timings, "Accumulated processing time = $processing_time\n";
+    print "Number of rules run = ", 1+$#timings, "\n";
     @timings = (); 
     $processing_time1 = processing_time();
 }
@@ -6054,60 +6062,64 @@ LINE:
 #************************************************************
 
 sub rdb_read_set_rule {
+    # Makes some settings for rule from data as read from .fdb_latexmk.
     # Rule context assumed.  Implicit passing of $dest, $run_time, $check_time,
-    # $in_name used as local variables in calling routine rdb_read;
+    # $in_name used as local variables in calling routine rdb_read.
+    #
     if ($$Ptest_kind == 3) { $$Ptest_kind = 1; }
     $$Prun_time = $run_time;
     $$Pcheck_time = $check_time;
-    # Deal with possibility that destination in fdb_latexmk has different name
-    # than the default one.  The only case that concerns us is where
-    # the extension is changed (by \pdfoutput, e.g., in tex file).  But
-    # it is possible out and aux directories have been chosen differently,
-    # and the user choice there MUST OVERRIDE the value in the fdb_latexmk file.
-    if ($dest ne $$Pdest) {
-        if (! $possible_primaries{$rule} ) {
-            warn "$My_name: In reading rule '$rule' in '$in_name',\n",
-                 "  name of destination file is not current one; I'll flag rule as out of date.\n";
-            $$Pout_of_date = 10;
-        }
-        elsif ( ! rdb_is_active($rule) ) {
-            warn "$My_name: In reading rule '$rule' in '$in_name',\n",
-                 "  rule is not currently active.\n";
-            # No fixup now. Causes to be analyzed:
-            # Change of requested files: no action needed.
-            # Obeying of metacommand: not implemented yet.
-        }
-        else {
-            # Get here if rule is active and primary and destination is different
-            warn "$My_name: In reading rule '$rule' in '$in_name',\n",
-                 "  destination has different name than configured...\n";
-            my ($oldbase, $oldpath, $oldext) = fileparseA( $dest );
-            my ($newbase, $newpath, $newext) = fileparseA( $$Pdest );
-            if ($oldext ne $newext) {
-                if ( ! exists $allowed_output_ext{$oldext} ) {
-                    warn "  Old extension '$oldext' not allowed.\n";
-                    $$Pout_of_date = 10;
-                }
-                else {
-                    warn "  ===== CHANGING output type from '$newext' to '$oldext' in '$rule'\n";
-                    my $switch_error =  switch_output( $rule, $oldext, $newext );
-                    if ($switch_error) {
-                        warn "   I could not accommodate the changed output extension.\n",
-                             "   That is either because the configuration does not allow it\n",
-                             "   or because there is a conflict with implicit or explicit requested filetypes.\n",
-                             "   (Typically that is about .dvi and/or .ps filetypes.)\n",
-                             "===> There may be subsequent warnings, which may or may not be ignorable.\n",
-                             "===> If necessary, clean out generated files and try again\n";
-                    }
-                }
-            }
-            if ( ($oldbase ne $newbase) || ($oldpath ne $newpath) ) {
-                # There are further issues (e.g., change of out_dir).
-                # Need rerun to correct:
-                $$Pout_of_date = 10;
-            }
-        }
+    # Deal with possibility that destination file in fdb_latexmk from
+    # run differs from what is currently set. Often that just reflects a
+    # difference between the end result of the last run and what the user
+    # has requested for this run. 
+    # 1. Diagnostics are given, in case that matters.
+    # 2. Generally it's only needed to keep the current destination, and to
+    #    flag the rule as out-of-date.
+    # 3. But special treatmen is needed when the rule is a primary rule and
+    #    only the extension of the destination file has changed.
+    if ($dest eq $$Pdest) { return; }
+    if ( ! rdb_is_active($rule) ) {
+        # A common cause: Change of requested files.
+        # No other causes known.
+        # So just do nothing.
+        return;
     }
+    # Arrive here if rule is active and previous dest differs from current.
+    my ($oldbase, $oldpath, $oldext) = fileparseA( $dest );
+    my ($newbase, $newpath, $newext) = fileparseA( $$Pdest );
+    if ( ($oldext ne $newext)
+         && $possible_primaries{$rule}
+         && exists( $allowed_output_ext{$oldext} )
+         && ( $oldpath.$oldbase eq $newpath.$newbase )
+        )
+    {
+        # Change only in extension: A common cause: use of \pdfoutput in tex
+        # file, with conflict with requested compilation type.  The old
+        # extension wins.
+        warn "$My_name: change in extension of output file from '$oldext' on previous run\n",
+             "  to '$newext' for this run.\n",
+             "  So I'll CHANGE the output type from '$newext' to '$oldext',\n",
+             "  and make any necessary fixups.\n";
+        my $switch_error =  switch_output( $rule, $oldext, $newext );
+        if ($switch_error) {
+            warn "   I could not accommodate the changed output extension.\n",
+                 "   That is either because the configuration does not allow it\n",
+                 "   or because there is a conflict with implicit or explicit requested filetypes.\n",
+                 "   (Typically that is about .dvi and/or .ps filetypes.)\n",
+                 "===> There may be subsequent warnings, which may or may not be ignorable.\n",
+                 "===> If necessary, clean out generated files and try again\n";
+        }
+        return;
+    }
+    # All special cases now dealt with. 
+    warn "$My_name: In reading file '$in_name' for state of files and rules on\n",
+         "  previous run, I found that rule '$rule' had a destination file\n",
+         "    $dest\n",
+         "  that differs from the current destination file\n",
+         "    $$Pdest\n",
+         "  I'll use the current destination, and flag the rule as out of date.\n";
+    $$Pout_of_date = 10;
 }  #END rdb_read_set_rule
 
 #************************************************************
@@ -6148,7 +6160,7 @@ sub rdb_write {
              sub { print $out_handle "  \"$file\" $$Ptime $$Psize $$Pmd5 \"$$Pfrom_rule\"\n"; }
            );
            print $out_handle "  (generated)\n";
-           foreach (keys %$PHdest) {
+           foreach (sort keys %$PHdest) {
                print $out_handle "  \"$_\"\n";
            }
        }
@@ -7317,6 +7329,7 @@ sub rdb_make {
     local $failure = 0;        # General accumulated error flag
     local $missing_dvi_pdf = ''; # Did primary run fail to make its output file?
     local $runs = 0;
+    local $runs_total = 0;
     local $too_many_passes = 0;
     local %rules_applied = ();
     local $switched_primary_output = 0;
@@ -7405,7 +7418,9 @@ sub rdb_make {
     }  #End PASS
 
     rdb_for_some( [@unusual_one_time], \&rdb_make1 );
-    rdb_write( $fdb_name );
+
+    if ($runs_total > 0) { rdb_write( $fdb_name ); }
+    else { print "Nothing to do\n"; }
 
     if ($#primary_warning_summary > -1) {
         # N.B. $mult_defined, $bad_reference, $bad_character, $bad_citation also available here.
@@ -7596,6 +7611,7 @@ sub rdb_make1 {
 
     $rules_applied{$rule} = 1;
     $runs++;
+    $runs_total++;
 
     $pass{$rule}++;
     if ($bibtex_not_run > 0) {
