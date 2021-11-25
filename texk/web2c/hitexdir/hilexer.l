@@ -1,6 +1,6 @@
 	/*511:*/
 %{
-	#line 10258 "format.w"
+	#line 10273 "format.w"
 	
 #include "hibasetypes.h"
 #include "hierror.h"
@@ -136,7 +136,7 @@ float64_t xtof(char*x)
 	}
 	/*:61*/
 int yywrap(void){
-	#line 10269 "format.w"
+	#line 10284 "format.w"
 	return 1;}
 #ifdef _MSC_VER
 #pragma  warning( disable : 4267)

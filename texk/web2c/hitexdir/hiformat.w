@@ -8572,14 +8572,22 @@ It tells us what to expect in the rest of this section.
   "Options:\n"@/
   "\t --help \t display this message\n"@/
   "\t --version\t display the HINT version\n"@/
-  "\t -o file\t specify an output file name\n"@/
-  "\t -a     \t write auxiliary files\n"@/
-  "\t -g     \t use global names of auxiliary files (implies -a)\n"@/
-  "\t -f     \t force overwriting existing auxiliary files\n"@/
   "\t -l     \t redirect stderr to a log file\n"@/
+#if defined (STRETCH) || defined (SHRINK)
+  "\t -o file\t specify an output file name\n"@/
+#endif
+#if defined (STRETCH)
+  "\t -a     \t write auxiliary files\n"@/
+  "\t -g     \t do not use localized names (implies -a)\n"@/
+  "\t -f     \t force overwriting existing auxiliary files\n"@/
   "\t -u     \t enable writing utf8 character codes\n"@/
   "\t -x     \t enable writing hexadecimal character codes\n"@/
-  "\t -c     \t enable compression of section 1 and 2\n");@/
+#elif defined (SHRINK)
+  "\t -a     \t use only localized names\n"@/
+  "\t -g     \t do not use localized names\n"@/
+  "\t -c     \t enable compression\n"@/
+#endif
+);
 #ifdef DEBUG
 fprintf(stdout,"\t -d XXXX \t set debug flag to hexadecimal value XXXX.\n"
                "\t\t\t OR together these values:\n");@/
@@ -8653,9 +8661,11 @@ Next are the variables that are local in the |main| program.
 char *prog_name;
 char *in_ext;
 char *out_ext;
+int option_log=false;
+#ifndef SKIP
 char *file_name=NULL;
 int file_name_length=0;
-int option_log=false;
+#endif
 @ 
 
 Processing the command line looks for options and then sets the
@@ -8687,17 +8697,22 @@ are supported in addition to the short options.
   fprintf(stdout,"\nFor further information and reporting bugs see https://hint.userweb.mwn.de/\n");
             exit(0);
           } 
+        case 'l': option_log=true; @+break;
+#if defined (STRETCH) || defined (SHRINK)
         case 'o': argv++;
           file_name_length=(int)strlen(*argv);
           ALLOCATE(file_name,file_name_length+6,char); /*plus extension*/
           strcpy(file_name,*argv);@+  break; 
-        case 'l': option_log=true; @+break;
+        case 'g': option_global=option_aux=true; @+break;
+        case 'a': option_aux=true; @+break;
+#endif
+#if defined (STRETCH)
         case 'u': option_utf8=true;@+break;
         case 'x': option_hex=true;@+break;
         case 'f': option_force=true; @+break;
-        case 'g': option_global=option_aux=true; @+break;
-        case 'a': option_aux=true; @+break;
+#elif defined (SHRINK)
         case 'c': option_compress=true; @+break;
+#endif
         case 'd': @/
           argv++; if (*argv==NULL)
           { fprintf(stderr,
@@ -10373,6 +10388,7 @@ extern int yyparse(void);
 @<function to write the banner@>@;
 @<put functions@>@;
 
+#define SHRINK
 #define DESCRIPTION "\nShrinking converts a 'long' ASCII HINT file into a`short' binary HINT file .\n"
 
 int main(int argc, char *argv[])
@@ -10447,6 +10463,7 @@ format into a \HINT\ file in long format.
 @<shared get functions@>@;
 @<get functions@>@;
 
+#define STRETCH
 #define DESCRIPTION "\nStretching converts a `short' binary HINT file into a 'long' ASCII HINT file.\n"
 
 int main(int argc, char *argv[])
@@ -10527,6 +10544,7 @@ backwards.
 @<shared skip functions@>@;
 @<skip functions@>@;
 
+#define SKIP
 #define DESCRIPTION "\n This program tests parsing a binary HINT file in reverse direction.\n"
 
 int main(int argc, char *argv[])
