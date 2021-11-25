@@ -1,0 +1,218 @@
+.TH HISTRETCH 1 "11 November 2021" "Version 1.3"
+.\"=====================================================================
+.if n .ds MF Metafont
+.if t .ds MF Metafont
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.el .ds OX TeX
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if n .ds AX AmSTeX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if n .ds AY AmSLaTeX
+.if n .ds WB Web
+.if t .ds WB W\s-2EB\s0
+.\"=====================================================================
+.SH NAME
+histretch \- translating binary HINT files to ASCII files
+.SH SYNOPSIS
+.B hitex
+.RI [ options ]
+.RI [ file ]
+.\"=====================================================================
+.SH DESCRIPTION
+Stretching converts a binary HINT file, usually with the extension 
+.BR .hnt ,
+into an  ASCII based HINT file, with the extension
+.BR .hint .
+.PP
+The binary HINT file format - also called `short' format - is optimized
+for displaying HINT files. It can be parsed equally well in forward
+and backward direction to enable fast forward or backward navigation in the file.
+.PP
+The ASCII based HINT file format - also called `long' format - is optimized
+for readability. It can be edited using a text editor. Hence it allows
+simple modifications that would be difficult to achieve when using the binary
+format. It is also convenient when debugging.
+.PP
+The HINT file format is designed for on-screen reading of documents. 
+Using a HINT viewer to display a HINT file, its content will dynamically
+adapt to the available display area. For complete information on the
+HINT file format and programs to view HINT files, see
+.BR  https://hint.userweb.mwn.de .
+.\"=====================================================================
+.SH OPTIONS
+This version of 
+.B histretch
+understands the following command line options:
+.TP
+.B -a
+Enable the writing of auxiliary files. 
+
+Binary HINT files contain all resources necessary to display the file.
+This includes font and images. There are special file formats for fonts,
+like TrueType or OpenType, and special file formats for images like PNG
+or JPG. The HINT file format does not invent new file formats for these
+resources but includes them without modification.
+To obtain a `long' format that can be edited, these embedded
+files need to be written to disk as auxiliary files where they can be 
+edited with suitable programs. 
+
+The HINT file format makes a distinction between global resources,
+like fonts, that are referenced by an absolute path name, and local
+resources, for example an image, that are referenced by a relative
+path name. To avoid clobbering arbitrary directories with the unpacked
+files, the auxiliary files are written to two directories, one
+with the extension
+.B .abs
+and one with the extension
+.BR .rel .
+
+For example
+Given an input file 
+.BR paper.hnt,
+the global resources are written to disk using 
+.B paper.abs
+as root directory. The local resources are written to disk using
+.B paper.rel
+as starting point for the relative path.
+To prevent auxiliary files from escaping from these subdirectories,
+.B ..
+links to a parent directory are replaced by
+.B __
+links to true subdirectories. 
+.TP
+.B -c
+Enable the use of compression for the HINT file. Compressed files are
+smaller but require decompression when viewing. Use only for large
+files if the file size matters.
+.TP
+.BI -d \ bitmask
+Sets HINT file debugging flags according to the 
+.IR bitmask .
+See the
+.B --help
+option for details.
+.TP
+.B -f
+Force the replacement of existing auxiliary files. Use together with the
+.B -g
+or 
+.B -a
+option to make sure that already exiting auxiliary files are replaced by the
+auxiliary files contained in the HINT file.
+
+.BR WARNING :
+This is a dangerous option especially together with the
+.B -g
+option. Never use it on a HINT file of unknown
+origin. It will possibly replace any file on your machine you have
+write access to.
+.TP
+.B -g
+Enable the writing of auxiliary files using the file's path as stored in the HINT file.
+This option is an alternative to the 
+.B -a
+option and takes precedence if given. 
+
+You may use this option if you are stretching a HINT file on the same machine and in
+the same directory where you have created the HINT file. Then all files
+will be copied to the location they came from in case they were deleted
+in the meantime.
+
+If you are stretching a HINT file on one machine and the file was created
+on a different machine, 
+.B histretch 
+will try to copy an auxiliary file
+into the same directory that was used when the HINT file was created, provided that 
+you have the necessary writing rights. 
+This is probably where you want the auxiliary file assuming that both machines have the
+same directory structure.
+
+.BR WARNING :
+This is a dangerous option especially together with the
+.B -f
+option. Never use it on a HINT file of unknown
+origin. It can possibly write (and replace) any file on your machine where you have
+write access.
+
+If you just want to stretch the HINT file, then edit it, and then shrink
+it back to the binary format, you should use the 
+.B -a
+option.
+.TP
+.B --help
+Print help message and exit.
+.TP
+.B -l
+Redirect standard error to a log file. The name of the log file is derived from
+the name of the input file replacing the extension
+.B .hnt
+by the extension
+.BR .log .
+.TP
+.BI -o \ name
+Use
+.I name
+for the output file instead of deriving it from the name of the input file.
+Append the extension
+.B .hint
+if the
+.I name
+does not already has that extension.
+.TP
+.B -u
+Enable the use of UTF8 character codes. 
+Without this option, the output file is a pure ASCII file, because character codes
+outside the ASCII range are written using their numeric representation.
+With this option, the file will always represent printable characters using their UTF8 
+character codes. This might make the output file more readable if displayed 
+using an UTF8 enabled program; but it might be less readable if displayed
+by a program that does not handle UTF8 characters properly. See also the
+.B -x
+option.
+.TP
+.B --version
+Print version information and exit.
+.TP
+.B -x
+Enable the use of hexadecimal character codes.
+Without this option, characters that are not represented using their
+character codes are represented using a decimal representation of 
+the character code. With this option a hexadecimal representation is used.
+The range of character codes that have a numeric representation includes
+the non printable characters (character codes smaller than 32)
+and unless the 
+.B -u
+option is given, the character codes with a value of 127 and above.
+.\"=====================================================================
+.SH NOTES
+This manual page is not meant to be exhaustive.  The complete
+documentation can be found in the 
+.IR "HINT: The file format" .
+This document is available as a book or in electronic form from the 
+HINT project home page at 
+.BR https://hint.userweb.mwn.de .
+There you find additional software, most importantly viewers for HINT files,
+and further information.
+.\"=====================================================================
+.SH AVAILABILITY
+.B histretch
+should compile on a large variety of machine architectures
+and operating systems.
+It is part of the \*(TX Live distribution.
+.PP
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR hishrink (1),
+.BR hitex (1),
+.\"=====================================================================
+.SH AUTHORS
+Martin Ruckert
+.\" vim: syntax=nroff

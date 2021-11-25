@@ -33,7 +33,7 @@ Run the Hi\*(TX typesetter on
 usually creating
 .IR file.hnt .
 If the file argument has no extension, ".tex" will be appended to it. 
-Instead of a filename, a set of Hi\*(TX commands can be given, the first
+Instead of a file name, a set of Hi\*(TX commands can be given, the first
 of which must start with a backslash.
 With a 
 .BI & format
@@ -49,10 +49,10 @@ Hi\*(TX is a version of \*(TX that creates HINT files. The HINT file
 format is designed for on-screen reading of documents. Using a HINT
 viewer (see
 .BR  https://hint.userweb.mwn.de )
-to display a HINT file its content will dynamicaly adapt to the
+to display a HINT file its content will dynamically adapt to the
 available display area.
 .PP
-The typical use of Hi\*(TX is with pregenerated formats.
+The typical use of Hi\*(TX is with pre generated formats.
 The
 .B hitex
 command uses the equivalent of the plain \*(TX format, and the
@@ -144,10 +144,10 @@ option for details.
 Print an explanation of the HINT debugging flags and exit.
 .TP
 .B -hyphenate-first-word
-\*(TX will usualy not attempt to insert hyphenation points into the first 
+\*(TX will usually not attempt to insert hyphenation points into the first 
 word of a paragraph. If a HINT file must be displayed on a very small device
 such hyphenation points might prove necessary. This option is set by default
-and enables the genaration of these hyphenation points.
+and enables the generation of these hyphenation points.
 .TP
 .B -no-hyphenate-first-word
 Disable the automatic insertion of hyphenation points in the first word
@@ -258,9 +258,9 @@ The
 .B kpsewhich
 utility can be used to query the values of the variables.
 .PP
-One caveat: In most Hi\*(TX formats, you cannot use ~ in a filename you
+One caveat: In most Hi\*(TX formats, you cannot use ~ in a file name you
 give directly to Hi\*(TX, because ~ is an active character in \*(TX,
-and hence is expanded, not taken as part of the filename. Other
+and hence is expanded, not taken as part of the file name. Other
 programs, such as \*(MF, do not have this problem.
 .PP
 .TP
@@ -305,8 +305,8 @@ files.
 .TP
 .B SOURCE_DATE_EPOCH
 If set, its value, taken to be in epoch-seconds, will be used for the
-timestamps in the PDF output, such as the CreationDate and ModDate keys.
-This is useful for making reproducible builds.
+creation date and as the reference moment for the time related 
+primitives of \*(LX. This is useful for making reproducible builds.
 .TP
 .B FORCE_SOURCE_DATE
 If set to the value "1", the time-related \*(TX primitives
@@ -339,8 +339,13 @@ Font files used by Hi\*(TX.
 This manual page is not meant to be exhaustive.  The complete
 documentation for Hi\*(TX can be found in the 
 .IR "Hi\*(TX user manual"
-and the manual of the
-.IR "Kpathsea library" .
+Further information can be found in the  manual of the
+.I "Kpathsea library" 
+and in
+.IR "HINT: The file format" .
+which is available as a book or in electronic form from the 
+HINT project home page at 
+.BR https://hint.userweb.mwn.de .
 .PP.\"=====================================================================
 .SH BUGS
 This version of Hi\*(TX fails to handle correctly glues and kerns with a 
