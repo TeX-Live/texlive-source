@@ -600,8 +600,8 @@ ccode['\'']=ord;
 @<Special control codes for debugging@>@;
 
 @ Users can write
-\.{@@2}, \.{@@1}, and \.{@@0} to turn tracing fully on, partly on,
-and off, respectively.
+\.{@@2}, \.{@@1}, and \.{@@0} to turn tracing |fully| on, |partly| on,
+and |off|, respectively.
 
 @<Special control codes...@>=
 ccode['0']=ccode['1']=ccode['2']=trace;
