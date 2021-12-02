@@ -33,6 +33,12 @@ texlive-extra/texconfig.sh
 texlive-extra/texlinks.sh
 texlive-extra/xetex-unsafe.sh
 texlive-extra/xelatex-unsafe.sh
+texosquery/texosquery.sh
+texosquery/texosquery-jre5.sh
+texosquery/texosquery-jre8.sh
+tikztosvg/tikztosvg
+typeoutfileinfo/typeoutfileinfo.sh
+wordcount/wordcount.sh
 a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
@@ -103,6 +109,7 @@ lilyglyphs/lily-glyph-commands.py
 lilyglyphs/lily-image-commands.py
 lilyglyphs/lily-rebuild-pdfs.py
 ltximg/ltximg.pl
+luafindfont/luafindfont.lua
 luaotfload/luaotfload-tool.lua
 lwarp/lwarpmk.lua
 m-tx/m-tx.lua

@@ -384,6 +384,7 @@ texmf_other_scripts = \
 	lilyglyphs/lily-image-commands.py \
 	lilyglyphs/lily-rebuild-pdfs.py \
 	ltximg/ltximg.pl \
+	luafindfont/luafindfont.lua \
 	luaotfload/luaotfload-tool.lua \
 	lwarp/lwarpmk.lua \
 	m-tx/m-tx.lua \
