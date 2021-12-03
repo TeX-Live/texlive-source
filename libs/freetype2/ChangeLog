@@ -1,3 +1,8 @@
+2021-12-03  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import freetype-2.11.1.
+	* version.ac: Adjusted.
+
 2021-09-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import freetype-2.11.0.
