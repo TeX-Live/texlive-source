@@ -144,7 +144,7 @@ it cannot find them in the current directory.
 it cannot find them in the current directory.%
 \cwebfootnote{\acrofalse In this extended implementation, if an \.{@i}nclude
 file can not be found in the current directory, \.{CWEB} will use the
-conventions of the \Kpathsea/ library as outlined in section~\X91:File lookup
+conventions of the \Kpathsea/ library as outlined in section~\X93:File lookup
 with \Kpathsea/\X~of \pdfURL{appendix~D}{common-changes.pdf} to look for it.
 % FIXME
 (This is true for any other input or change file lookup.)}
@@ -172,7 +172,7 @@ to the list:
 \option c Check temporary output files for changes.  (Off by default.)
 \hfil\vskip\normallineskip
 \option d Set the debugging variable \\{kpathsea\_debug} to the numeric
-value $N\in[0,127]$ of this option.  See section~93 % FIXME
+value $N\in[0,127]$ of this option.  See section~95 % FIXME
 of \pdfURL{appendix~D}{common-changes.pdf} for details.
 \hfil\vskip\normallineskip
 \option i Indent parameters in function declarations.  (On by default;

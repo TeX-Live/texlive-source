@@ -93,8 +93,8 @@ can be found in Knuth's article ``Mini-indexes for literate programs,''
 reprinted in {\sl Digital Typography\/} (1999), 225--245.
 
 A kind of ``user manual'' for \.{CTWILL} can be found in the appendix
-{\bf 271.~Mogrify \.{CWEAVE} into \.{CTWILL}} and beyond, together
-with additional material specific to \.{CTWILL}. % FIXME
+\X271:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
+additional material specific to \.{CTWILL}. % FIXME
 Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is

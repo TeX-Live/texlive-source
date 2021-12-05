@@ -15,14 +15,15 @@ Section 1.
 
 @x
 A kind of ``user manual'' for \.{CTWILL} can be found in the appendix
-{\bf 271.~Mogrify \.{CWEAVE} into \.{CTWILL}} and beyond, together
-with additional material specific to \.{CTWILL}. % FIXME
+\X271:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
+additional material specific to \.{CTWILL}. % FIXME
 Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 @y
-A kind of ``user manual'' for \.{CTWILL} can be found in section~\&{288}
-and beyond, together with additional material specific to \.{CTWILL}. % FIXME
+A kind of ``user manual'' for \.{CTWILL} can be found in section~%
+\X288:Mogrify {\tentex CWEAVE} into {\tentex CTWILL}\X~and beyond,
+together with additional material specific to \.{CTWILL}. % FIXME
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
 \noindent \bit Editor's Note: \it This heavily redacted version of

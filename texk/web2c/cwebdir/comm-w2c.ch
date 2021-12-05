@@ -203,7 +203,7 @@ stop reading it and start reading from the named include file.  The
 \.{@@i} line should give a complete file name with or without
 double quotes.
 The actual file lookup is done with the help of the \Kpathsea/ library;
-see section~\X91:File lookup with \Kpathsea/\X~for details. % FIXME
+see section~\X93:File lookup with \Kpathsea/\X~for details. % FIXME
 The remainder of the \.{@@i} line after the file name is ignored.
 @^system dependencies@> @.CWEBINPUTS@>
 @z
