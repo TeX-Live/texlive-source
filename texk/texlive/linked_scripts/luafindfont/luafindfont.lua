@@ -8,7 +8,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2021-11-27
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-   local version = 0.04
+   local version = 0.05
 luafindfont.version = version
 
 --[[
@@ -48,6 +48,9 @@ local args_otfinfo = 0
 local args_info = 0
 local args_max_string = 90
 
+local otfinfo_arg
+local fontNo = 0
+
 local i = 1
 while i <= #arg do
   if arg[i] == "-h" or arg[i] == "--help" then
@@ -69,14 +72,18 @@ while i <= #arg do
   elseif arg[i] == "-n" or arg[i] == "--nosymbolicnames" then
     args_nosymbolicnames = 1
   elseif arg[i] == "-o" or arg[i] == "--otfinfo" then
-    local fontNr = tonumber(arg[i+1])
-    if fontNr then
-      args_otfinfo = fontNr
-      i = i + 1
-    else
-      print("Option -o needs a following fontnumber!")
-      args_otfinfo = 0
+    local o_arg = arg[i+1]
+    otfinfo_arg = "i"
+    fontNo = tonumber(o_arg)
+    if not fontNo then                      -- combination: No and Arg
+      fontNo = tonumber(string.match(o_arg,"%d+"))
+      otfinfo_arg = string.match(o_arg,"%a+")
+      if not fontNo then
+        print("Option -o needs a following fontnumber!")
+        fontNo = 0
+      end
     end
+    i = i + 1
   elseif arg[i] == "-i" or arg[i] == "--info" then
     local fontNr = tonumber(arg[i+1])
     if fontNr then
@@ -107,15 +114,20 @@ if not args_font then
 end
 
 local vlevel = args_verbose
-local otfinfo = args_otfinfo
+--local otfinfo = args_otfinfo
 local info = args_info
 local noSymbolicNames = args_nosymbolicnames
 local maxStrLength = args_max_string
-local font_str = args_font
+local font_str = args_font:lower():gsub("%s+", ""):split("&")
+if #font_str == 1 then font_str[2] = "" end
 
 local luaVersion = _VERSION
 print("We are using "..luaVersion)
-print('Looking for font \"'..font_str..'\"')
+if #font_str > 1 then
+  print('Looking for font \"'..font_str[1]..' & '..font_str[2]..'\"')
+else
+  print('Looking for font \"'..font_str[1]..'\"')
+end
 
 function getFileParts(fullpath,part)
   local path, file, ext = string.match(fullpath, "(.-)([^/]-([^%.]+))$")
@@ -274,7 +286,7 @@ local fontList = {}
 local l_max = {1, 1, 1}
 for i, v in ipairs(fontDataMap) do 
   if v["familyname"] then
-      if string.find (v["familyname"], font_str, 1, true) or (font_str == "*") then
+      if (string.find (v["familyname"]:lower(), font_str[1], 1, true)  and string.find (v["basename"]:lower(), font_str[2], 1, true) ) or (font_str == "*") then
 --	print(string.format("%2d. %30s %20s  %50s",j,v["basename"],v["familyname"],v["fullpath"])) 
         fontList[#fontList+1] = v
         local fullpath = getFileParts(v["fullpath"],"path")  -- strip file name
@@ -295,7 +307,7 @@ local minChars = 26
 local Fontname = "Fontname"
 local Path = "Path"
 local SymbolicName = "Symbolic Name"
-local lfdNr = "Nr."
+local lfdNr = "No."
 if (font_str ~= "*") and not noSymbolicNames then
     print(string.format("%4s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
   else
@@ -314,11 +326,12 @@ for i, v in ipairs(fontList) do
   end
 end
 
-if otfinfo > 0 then
+if fontNo > 0 then
   print()
-  print("Run otfinfo:"..otfinfo)
-  local font = fontList[otfinfo]["fullpath"]
-  local exrun = io.popen("otfinfo -i \""..font.."\"", 'r') -- ".." font may have spaces
+  print("Run otfinfo -"..otfinfo_arg..": "..fontNo)
+  local font = fontList[fontNo]["fullpath"]
+  print("otfinfo -"..otfinfo_arg.." \""..font.."\"")
+  local exrun = io.popen("otfinfo -"..otfinfo_arg.." \""..font.."\"", 'r') -- ".." font may have spaces
   local output = exrun:read('*all')
   print(output)
   exrun:close()
