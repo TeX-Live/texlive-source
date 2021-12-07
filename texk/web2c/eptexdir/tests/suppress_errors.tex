@@ -1,0 +1,76 @@
+\batchmode
+\long\def\typeout#1{\immediate\write-1{#1}}
+\def\ { }%
+\output{\deadcycles0\setbox0\box255}
+\def\E#1{}
+\typeout{*** \string\par\ in non-\string\long\ cmd.}
+\E{a
+
+b}
+\E{c\par d}
+
+\outer\def\F{hoge}
+\typeout{*** \string\outer\ cmd in \string\message\ and \string\write.}
+\immediate\write-1{\F}
+\message{\F}
+
+\typeout{*** \string\outer\ cmd in conditionals.}
+\iftrue a\F 
+\else b\F
+\fi
+
+\typeout{*** \string\outer\ cmd in alignment preambles.}
+\halign{#\F&#\cr a&d\cr}
+
+\typeout{*** \string\par\ in math mode.}
+$ x+1 =
+
+a\par b$
+
+$$\eqno{a}\par$$
+
+$$ aaa\par$$
+
+\typeout{*** \string\pdfprimitive\ and non-primitive.}
+\ifdefined\primitive
+  \primitive\batchmode
+  \primitive\hoge
+\else
+  \pdfprimitive\batchmode
+  \pdfprimitive\hoge
+\fi
+
+\typeout{===============}
+\suppresslongerror=1
+\suppressoutererror=1
+\suppressmathparerror=1
+
+\typeout{*** \string\par\ in non-\string\long\ cmd.}
+\E{a
+
+b}
+\E{c\par d}
+
+\typeout{*** \string\outer\ cmd in \string\message\ and \string\write.}
+\immediate\write-1{\F}
+\message{\F}
+
+\typeout{*** \string\outer\ cmd in conditionals.}
+\iftrue a\F 
+\else b\F
+\fi
+
+\typeout{*** \string\outer\ cmd in alignment preambles.}
+\halign{#\F&#\cr a&d\cr}
+
+\typeout{*** \string\par\ in math mode.}
+$ x+1 =
+
+a\par b$
+
+$$\eqno{a}\par$$
+
+$$ aaa\par$$
+
+\bye
+

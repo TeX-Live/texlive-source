@@ -72,6 +72,7 @@ euptex_ch_srcs = \
 	euptexdir/pdfstrcmp-eup-pre.ch \
 	eptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
+	eptexdir/suppresserrors.ch \
 	eptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 

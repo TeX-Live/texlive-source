@@ -1,3 +1,7 @@
+2021-12-07  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/euptex.am: Add suppresserrors.ch.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.
