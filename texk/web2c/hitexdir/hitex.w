@@ -6290,10 +6290,6 @@ assign_trace(p,"into")@;@/
 
 @p static void eq_word_define(pointer @!p, int @!w)
 {@+
-if (eTeX_ex&&(eqtb[p].i==w))
-  {@+assign_trace(p,"reassigning")@;@/
-  return;
-  }
 assign_trace(p,"changing")@;@/
 if (cur_level==level_one)@t\1@>
    { if (p==dimen_base+hsize_code)

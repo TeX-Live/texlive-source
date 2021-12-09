@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2571 $
+\setrevision$Revision: 2595 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2021-11-22 17:37:05 +0100 (Mon, 22 Nov 2021) $
+\setdate$Date: 2021-12-06 13:18:44 +0100 (Mon, 06 Dec 2021) $
 
 \null
 
@@ -6263,25 +6263,25 @@ bool hcheck_banner(char *magic)
   char *t;
   t=hbanner;
   if (strncmp(magic,hbanner,4)!=0)
-  {  MESSAGE("This is not a %s file",magic); return false; }
+  {  MESSAGE("This is not a %s file\n",magic); return false; }
   else t+=4;
   hbanner_size=(int)strnlen(hbanner,MAX_BANNER);
   if(hbanner[hbanner_size-1]!='\n')
-  { MESSAGE("Banner exceeds maximum size=0x%x",MAX_BANNER); return false; }
+  { MESSAGE("Banner exceeds maximum size=0x%x\n",MAX_BANNER); return false; }
   if (*t!=' ')
-  { MESSAGE("Space expected in banner after %s",magic); return false; }
+  { MESSAGE("Space expected in banner after %s\n",magic); return false; }
   else t++;
   v=strtol(t,&t,10);
   if (v!=HINT_VERSION)
-  { MESSAGE("Wrong HINT version: got %d, expected %d",v,HINT_VERSION); return false; }
+  { MESSAGE("Wrong HINT version: got %d, expected %d\n",v,HINT_VERSION); return false; }
   if (*t!='.')
-  { MESSAGE("Dot expected in banner after HINT version number"); return false; }
+  { MESSAGE("Dot expected in banner after HINT version number\n"); return false; }
   else t++;
   v=strtol(t,&t,10);
   if (v!=HINT_SUB_VERSION)
-  { MESSAGE("Wrong HINT subversion: got %d, expected %d",v,HINT_SUB_VERSION); return false; }
+  { MESSAGE("Wrong HINT subversion: got %d, expected %d\n",v,HINT_SUB_VERSION); return false; }
   if (*t!=' ' && *t!='\n')
-  { MESSAGE("Space expected in banner after HINT subversion"); return false; }
+  { MESSAGE("Space expected in banner after HINT subversion\n"); return false; }
   LOG("%s file version %d.%d:%s",magic,HINT_VERSION, HINT_SUB_VERSION, t);
   DBG(DBGDIR,"banner size=0x%x\n",hbanner_size);
   return true;
@@ -6491,14 +6491,14 @@ bool hget_map(void)
   uint64_t u;
   f= fopen(hin_name,"rb");
   if (f==NULL)@/
-  {	MESSAGE("Unable to open file: %s", hin_name);@+	return false;@+  }
+  {	MESSAGE("Unable to open file: %s\n", hin_name);@+	return false;@+  }
   if (stat(hin_name,&st)<0)
-  {	MESSAGE("Unable to obtain file size: %s", hin_name);
+  {	MESSAGE("Unable to obtain file size: %s\n", hin_name);
     fclose(f);
 	return false;
   }
   if (st.st_size==0)
-  { MESSAGE("File %s is empty", hin_name);
+  { MESSAGE("File %s is empty\n", hin_name);
     fclose(f);
     return false;
   }
@@ -6506,7 +6506,7 @@ bool hget_map(void)
   if (hin_addr!=NULL) hget_unmap();
   hin_addr=malloc(u);	
   if (hin_addr==NULL)
-  { MESSAGE("Unable to allocate 0x%"PRIx64" byte for File %s", u,hin_name);
+  { MESSAGE("Unable to allocate 0x%"PRIx64" byte for File %s\n", u,hin_name);
     fclose(f);
     return 0;
   }
@@ -6514,7 +6514,7 @@ bool hget_map(void)
   do{
     s=fread(hin_addr+t,1,u,f);
     if (s<=0)
-    { MESSAGE("Unable to read file %s",hin_name);
+    { MESSAGE("Unable to read file %s\n",hin_name);
       fclose(f);
 	  free(hin_addr);
 	  hin_addr=NULL;
@@ -6543,14 +6543,14 @@ bool hget_map(void)
   int fd;
   fd = open(hin_name, O_RDONLY, 0);
   if (fd<0)@/
-  { MESSAGE("Unable to open file %s", hin_name);@+ return false;@+ }
+  { MESSAGE("Unable to open file %s\n", hin_name);@+ return false;@+ }
   if (fstat(fd, &st)<0)
-  { MESSAGE("Unable to get file size");
+  { MESSAGE("Unable to get file size\n");
     close(fd);
     return false;
   }
   if (st.st_size==0)
-  { MESSAGE("File %s is empty",hin_name);
+  { MESSAGE("File %s is empty\n",hin_name);
     close(fd);
     return false;
   }
@@ -6561,7 +6561,7 @@ bool hget_map(void)
   if (hin_addr==MAP_FAILED) 
   { close(fd);
     hin_addr=NULL;hin_size=0;
-    MESSAGE("Unable to map file into memory");
+    MESSAGE("Unable to map file into memory\n");
     return 0;
   }
   close(fd);
