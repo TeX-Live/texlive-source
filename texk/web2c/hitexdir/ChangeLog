@@ -1,3 +1,11 @@
+2021-12-11  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (hishrink_OBJECTS, hitex_OBJECTS): depend on
+	$(hiformat_c_h_l_y), so that (hopefully) ctangle is run on
+	hiformat.w to generate, e.g., hibasetypes.h before we try to
+	compile the programs. E.g.,
+	https://tug.org/pipermail/tlbuild/2021q4/004972.html
+
 2021-11-16  Karl Berry  <karl@freefriends.org>
 
 	* am/hitex.am: doc.
