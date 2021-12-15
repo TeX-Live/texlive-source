@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2021-12-09"
+release_date = "2021-12-14"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -136,11 +136,10 @@ end
 if #checkconfigs > 1 then
   if options["target"] == "check" then
     local errorlevel = 0
-    local opts = options
     local failed = { }
     for i = 1, #checkconfigs do
-      opts["config"] = {checkconfigs[i]}
-      errorlevel = call({"."}, "check", opts)
+      options["config"] = {checkconfigs[i]}
+      errorlevel = call({"."}, "check", options)
       if errorlevel ~= 0 then
         if options["halt-on-error"] then
           exit(1)
@@ -199,8 +198,8 @@ if #checkconfigs > 1 then
   elseif options["target"] == "clean" then
     local failure
     for i = 1, #checkconfigs do
-      opts["config"] = {checkconfigs[i]}
-      failure = 0 ~= call({"."}, "clean", opts) or failure
+      options["config"] = {checkconfigs[i]}
+      failure = 0 ~= call({"."}, "clean", options) or failure
     end
     exit(failure and 1 or 0)
   end
