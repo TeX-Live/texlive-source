@@ -449,6 +449,7 @@ texmf_other_scripts = \
 	texlive-extra/e2pall.pl \
 	texliveonfly/texliveonfly.py \
 	texloganalyser/texloganalyser \
+	texlogsieve/texlogsieve \
 	texplate/texplate.sh \
 	thumbpdf/thumbpdf.pl \
 	tlcockpit/tlcockpit.sh \
