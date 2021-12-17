@@ -33833,7 +33833,7 @@ static void usage_help(void)
   @t\qquad@>"\t enable extensions required for LaTeX\n"@/
   " -ini                  "@/
   @t\qquad@>"\t be initex for dumping formats; this is\n"@/
-  @t\qquad@>"\t\t\t also true if the program name is `kinitex'\n"@/
+  @t\qquad@>"\t\t\t also true if the program name is `hinitex'\n"@/
   " -progname=STRING      "@/
   @t\qquad@>"\t set program (and fmt) name to STRING\n"@/
   " -fmt=FMTNAME          "@/
@@ -34571,6 +34571,10 @@ builds of documents.
 #include <time.h>
 static time_t start_time = ((time_t)-1);
 static char *source_date_epoch,*force_source_date;
+
+#if defined(_MSC_VER) && _MSC_VER < 1800
+#define strtoull _strtoui64
+#endif
 
 static struct tm *tl_now(void)
 {@+struct tm *gmt;
