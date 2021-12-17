@@ -1,3 +1,10 @@
+2021-12-16  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* synctex_main.c [WIN32]: #include <kpathsea/progname.h>
+	* am/synctex.am (synctex_CPPFLAGS, synctex_LDADD) [MINGW32]:
+	include KPATHSEA_* variables.
+	https://tug.org/pipermail/tlbuild/2021q4/004983.html
+
 2021-07-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* synctex_main.c (synctex_test_file):

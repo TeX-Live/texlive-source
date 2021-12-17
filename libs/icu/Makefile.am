@@ -1,7 +1,7 @@
 ## $Id$
 ## Wrapper Makefile.am to build ICU for TeX Live.
 ##
-##   Copyright 2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2017-2021 Karl Berry <tex-live@tug.org>
 ##   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ##
 ##   This file is free software; the copyright holder
@@ -58,8 +58,8 @@ if cross
 endif cross
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
 # these two cp commands are a kludge for mingw cross compilation.
-	cd icu-build/lib && (test ! -r icudt.a || cp icudt.a libicudata.a)
-	cd icu-build/lib && (test ! -r libicuin.a || cp libicuin.a libicui18n.a)
+	cd icu-build/lib && (test -r libicudata.a || cp libicudt.a libicudata.a || cp icudt.a libicudata.a)
+	cd icu-build/lib && (test -r libicui18n.a || cp libicuin.a libicui18n.a)
 #
 	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
 

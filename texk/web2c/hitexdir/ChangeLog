@@ -1,3 +1,8 @@
+2021-12-17  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* am/hitex.am (hitables.c): need $(EXEEXT) to execute himktables.
+	https://tug.org/pipermail/tlbuild/2021q4/004984.html
+
 2021-12-17  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* hitex.w: Typo.

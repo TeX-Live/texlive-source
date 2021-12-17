@@ -18,10 +18,14 @@ synctex_SOURCES = \
 	synctexdir/synctex_main.c
 
 synctex_CPPFLAGS = -I$(srcdir)/synctexdir
+if MINGW32
+synctex_CPPFLAGS += $(KPATHSEA_INCLUDES)
+endif MINGW32
+
 
 synctex_LDADD =  $(libsynctex) $(ZLIB_LIBS)
 if MINGW32
-synctex_LDADD += -lshlwapi
+synctex_LDADD += -lshlwapi $(KPATHSEA_LIBS)
 endif MINGW32
 
 $(synctex_OBJECTS): $(libsynctex)

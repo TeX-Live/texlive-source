@@ -519,6 +519,7 @@ int inet_aton(const char *cp, struct in_addr *inp)
 #endif
 
 #ifdef LUASOCKET_INET_PTON
+#ifndef _WS2TCPIP_H_
 int inet_pton(int af, const char *src, void *dst)
 {
     struct addrinfo hints, *res;
@@ -540,4 +541,5 @@ int inet_pton(int af, const char *src, void *dst)
     return ret;
 }
 
+#endif
 #endif

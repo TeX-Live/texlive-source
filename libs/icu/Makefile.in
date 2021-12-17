@@ -1343,8 +1343,8 @@ icubuild: icu-build/Makefile check-makeflags
 @cross_TRUE@	cd icu-native && $(MAKE) $(AM_MAKEFLAGS) all
 	cd icu-build && $(MAKE) $(AM_MAKEFLAGS) all
 # these two cp commands are a kludge for mingw cross compilation.
-	cd icu-build/lib && (test ! -r icudt.a || cp icudt.a libicudata.a)
-	cd icu-build/lib && (test ! -r libicuin.a || cp libicuin.a libicui18n.a)
+	cd icu-build/lib && (test -r libicudata.a || cp libicudt.a libicudata.a || cp icudt.a libicudata.a)
+	cd icu-build/lib && (test -r libicui18n.a || cp libicuin.a libicui18n.a)
 #
 	cd include/unicode && $(MAKE) $(AM_MAKEFLAGS) all
 

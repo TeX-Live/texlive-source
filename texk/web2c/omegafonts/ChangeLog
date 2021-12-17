@@ -1,3 +1,9 @@
+2021-12-16  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* Makefile.am (install-exec-hook) [WIN32]: sh syntax.
+	(Also found by Siep.)
+	https://tug.org/pipermail/tlbuild/2021q4/004983.html
+
 2021-11-03  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (install-exec-hook) [WIN32]: install via libtool,

@@ -1,3 +1,8 @@
+2021-03-23 Siep Kroonenberg  <siepo@bitmuis.nl>
+    *luasocket/src/inet.[ch] (inet_pton, inet_ntop) [_WS2TCPIP_H_]:
+    don't define fns if _WS2TCPIP_H_ is defined; for mingw.
+    https://tug.org/pipermail/tlbuild/2021q4/004980.html
+
 2021-04-21 Luigi Scarso <luigi.scarso@gmail.com>
     *\discretionaryligaturemode: optionally block select disc creation 
     (see [Dev-luatex] [PATCH] Nested discretionaries M.F. Krüger) (HH)
