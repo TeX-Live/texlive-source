@@ -81,7 +81,7 @@ Section 6.
 @x
 @ Code related to input routines:
 @y
-@r @ Code related to input routines:
+@ Code related to input routines:
 @-c@>
 @z
 
