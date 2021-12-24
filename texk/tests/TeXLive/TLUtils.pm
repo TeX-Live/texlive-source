@@ -3,9 +3,11 @@
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
+use strict; use warnings;
+
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 60823 $';
+my $svnrev = '$Revision: 61372 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -127,15 +129,23 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
 
 # avoid -warnings.
 our $PERL_SINGLE_QUOTE; # we steal code from Text::ParseWords
-use vars qw(
-  $::LOGFILE $::LOGFILENAME @::LOGLINES 
-    @::debug_hook @::ddebug_hook @::dddebug_hook @::info_hook 
-    @::install_packages_hook @::warn_hook
-  $TeXLive::TLDownload::net_lib_avail
-    $::checksum_method $::gui_mode $::machinereadable $::no_execute_actions
-    $::regenerate_all_formats
-  $JSON::false $JSON::true
-);
+
+# We use myriad global and package-global variables, unfortunately.
+# To avoid "used only once" warnings, we must use the variable names
+# again; one way to do that would be to assign them all to themselves in
+# the BEGIN block, but this seems (slightly) less ugly.
+# Example in first reply to: https://perlmonks.org/?node_id=11139324
+# 
+# Because we are providing a block to the package command, the scope is
+# limited to that block, so the current real package ends up unaffected.
+package main {
+  our ($LOGFILE, $LOGFILENAME, @LOGLINES,
+    @debug_hook, @ddebug_hook, @dddebug_hook, @info_hook,
+    @install_packages_hook, @warn_hook,
+    $checksum_method, $gui_mode, $machinereadable,
+    $no_execute_actions, $regenerate_all_formats); }
+package JSON { our ($false, $true); }
+package TeXLive::TLDownload { our $net_lib_avail; }
 
 BEGIN {
   use Exporter ();
@@ -966,7 +976,7 @@ sub mkdirhier {
     # from the UNC path, since (! -d //servername/) tests true
     $subdir = $& if ( win32() && ($tree =~ s!^//[^/]+/!!) );
 
-    @dirs = split (/[\/\\]/, $tree);
+    my @dirs = split (/[\/\\]/, $tree);
     for my $dir (@dirs) {
       $subdir .= "$dir/";
       if (! -d $subdir) {
@@ -1278,11 +1288,11 @@ sub copy {
 
     chmod ($mode, $outfile) || warn "chmod($mode,$outfile) failed: $!";
 
-    while ($read = sysread (IN, $buffer, $blocksize)) {
+    while (my $read = sysread (IN, $buffer, $blocksize)) {
       die "read($infile) failed: $!" unless defined $read;
       $offset = 0;
       while ($read) {
-        $written = syswrite (OUT, $buffer, $read, $offset);
+        my $written = syswrite (OUT, $buffer, $read, $offset);
         die "write($outfile) failed: $!" unless defined $written;
         $read -= $written;
         $offset += $written;
@@ -1520,7 +1530,7 @@ sub time_estimate {
     $min %= 60;
   }
   my $sec = $remsecs % 60;
-  $remtime = sprintf("%02d:%02d", $min, $sec);
+  my $remtime = sprintf("%02d:%02d", $min, $sec);
   if ($hour) {
     $remtime = sprintf("%02d:$remtime", $hour);
   }
@@ -1531,7 +1541,7 @@ sub time_estimate {
     $tmin %= 60;
   }
   my $tsec = $esttotalsecs % 60;
-  $tottime = sprintf("%02d:%02d", $tmin, $tsec);
+  my $tottime = sprintf("%02d:%02d", $tmin, $tsec);
   if ($thour) {
     $tottime = sprintf("%02d:$tottime", $thour);
   }
@@ -2057,7 +2067,7 @@ sub add_link_dir_dir {
   }
   if (-w $to) {
     debug ("TLUtils::add_link_dir_dir: linking from $from to $to\n");
-    chomp (@files = `ls "$from"`);
+    chomp (my @files = `ls "$from"`);
     my $ret = 1;
     for my $f (@files) {
       # don't make a system-dir link to our special "man" link.
@@ -2093,7 +2103,7 @@ sub remove_link_dir_dir {
   my ($from, $to) = @_;
   if ((-d "$to") && (-w "$to")) {
     debug("TLUtils::remove_link_dir_dir: removing links from $from to $to\n");
-    chomp (@files = `ls "$from"`);
+    chomp (my @files = `ls "$from"`);
     my $ret = 1;
     foreach my $f (@files) {
       next if (! -r "$to/$f");
@@ -2654,11 +2664,11 @@ END_COMPRESSOR_BAD
 
   if ($::opt_verbosity >= 2) {
     require Data::Dumper;
-    use vars qw($Data::Dumper::Indent $Data::Dumper::Sortkeys
-                $Data::Dumper::Purity); # -w pain
-    $Data::Dumper::Indent = 1;
-    $Data::Dumper::Sortkeys = 1;  # stable output
-    $Data::Dumper::Purity = 1; # recursive structures must be safe
+    # avoid spurious "used only once" warnings due to require
+    # (warnings restored at end of scope). https://perlmonks.org/?node_id=3333
+    no warnings 'once';
+    local $Data::Dumper::Sortkeys = 1;  # stable output
+    local $Data::Dumper::Purity = 1;    # reconstruct recursive structures
     print STDERR "DD:dumping ";
     print STDERR Data::Dumper->Dump([\%::progs], [qw(::progs)]);
   }
@@ -3649,7 +3659,7 @@ Return call(er) stack, as a string.
 sub backtrace {
   my $ret = "";
 
-  my ($line, $subr);
+  my ($filename, $line, $subr);
   my $stackframe = 1;  # skip ourselves
   while ((undef,$filename,$line,$subr) = caller ($stackframe)) {
     # the undef is for the package, which is already included in $subr.
@@ -4275,6 +4285,7 @@ Returns the local file name if succeeded, otherwise undef.
 
 sub download_to_temp_or_file {
   my $url = shift;
+  my $ret;
   my ($url_fh, $url_file);
   if ($url =~ m,^(https?|ftp|file)://, || $url =~ m!$SshURIRegex!) {
     ($url_fh, $url_file) = tl_tmpfile();
@@ -4643,7 +4654,7 @@ sub mktexupd {
         foreach my $db (@texmfdbs) {
           $db=substr($db, -1) if ($db=~m|/$|); # strip leading /
           $db = lc($db) if win32();
-          $up = (win32() ? lc($path) : $path);
+          my $up = (win32() ? lc($path) : $path);
           if (substr($up, 0, length("$db/")) eq "$db/") {
             # we appended a / because otherwise "texmf" is recognized as a
             # substring of "texmf-dist".
