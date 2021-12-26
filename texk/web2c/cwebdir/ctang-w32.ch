@@ -4,9 +4,9 @@ This is the change file for CWEB's CTANGLE under Win32
 Changes necessary for compiling with Borland C/C++
 
 @x section 1
-@d banner "This is CTANGLE (Version 4.5)"
+@d banner "This is CTANGLE (Version 4.6)"
 @y
-@d banner "This is CTANGLE (Version 4.5win32)"
+@d banner "This is CTANGLE (Version 4.6win32)"
 @z
 
 @x

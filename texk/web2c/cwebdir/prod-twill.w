@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.5 --- July 2021
+% Version 4.6 --- December 2021
 %
 @ Here is a table of all the productions.  Each production that
 combines two or more consecutive scraps implicitly inserts a {\tt \$}

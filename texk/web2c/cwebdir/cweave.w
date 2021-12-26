@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.5 --- July 2021
+% Version 4.6 --- December 2021
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -32,11 +32,11 @@
 \def\skipxTeX{\\{skip\_\TEX/}}
 \def\copyxTeX{\\{copy\_\TEX/}}
 
-\def\title{CWEAVE (Version 4.5)}
+\def\title{CWEAVE (Version 4.6)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CWEAVE} processor}
   \vskip 15pt
-  \centerline{(Version 4.5)}
+  \centerline{(Version 4.6)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -67,7 +67,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.5)"
+@d banner "This is CWEAVE (Version 4.6)"
 
 @c
 @<Include files@>@/
@@ -1838,7 +1838,7 @@ static char cat_name[256][12]; /* |12==strlen("struct_head")+1| */
 
 @ This code allows \.{CWEAVE} to display its parsing steps.
 
-@d print_cat(c) fputs(cat_name[c],stdout)
+@d print_cat(c) fputs(cat_name[c],stdout) /* symbolic printout of a category */
 
 @ The token lists for translated \TEX/ output contain some special control
 symbols as well as ordinary characters. These control symbols are
