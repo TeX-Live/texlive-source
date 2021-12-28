@@ -22,7 +22,23 @@
 #
 # Detailed usage information at the end of the file
 #
-
+#
+# Version 1.3.2
+# API adaptions:
+#  - latexdiff now completes with exit code 0 after --help or --version command (see issue #248)
+# New features / feature extensions
+#  - extend CUSTOMDIFCMD related postprocessing to deal properly with multiline commands, or a sequence of several commands in the same line (see github issue #204)
+#  - Support for additional macros from import package (\import, \inputfrom, \includefrom, \subimport,\subinputfrom, \subincludefrom). Provided by janniklasrose in PR #243 (fixes #239)
+#  - replace default driver dvips->pdftex
+# Bug fixes:
+#  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
+#  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
+#  - fix bug reported in issue #168 mangled verbatim line environment 
+#  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
+#  - more ways to process \frac correctly with atomic arguments (committed by julianuu PR #246
+#  - fix a bug in biblatex mode, which prevented proper processing of modified \textcite (see: https://tex.stackexchange.com/questions/555157/latexdiff-and-biblatex-citation-commands)
+#  - -h string fix: add -driver option
+#
 # Version 1.3.1.1
 #  - remove spurious \n to fix error: Unknown regexp modifier "/n" at .../latexdiff line 1974, near "=~ " (see github issue #201)
 #
@@ -660,8 +676,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.1.1 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2020 F J Tilmann
+This is LATEXDIFF 1.3.2 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2021 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -718,7 +734,7 @@ my ($ARRENV,
 # my $MATHREPL='displaymath';  # Environment introducing deleted maths blocks
 # my $MATHARRENV='(?:eqnarray|align|alignat|gather|multline|flalign)[*]?' ;           # Environments turning on eqnarray math mode
 # my $MATHARRREPL='eqnarray*';  # Environment introducing deleted maths blocks
-# my $ARRENV='(?:aligned|gathered|array|[pbvBV]?matrix|smallmatrix|cases|split)'; # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
+# my $ARRENV='(?:aligned|gathered|multlined|array|[pbvBV]?matrix|smallmatrix|cases|split)'; # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
 # my $COUNTERCMD='(?:footnote|part|chapter|section|subsection|subsubsection|paragraph|subparagraph)';  # textcmds which are associated with a counter
 #                                         # If any of these commands occur in a deleted block
 #                                         # they will be succeeded by an \addtocounter{...}{-1}
@@ -915,7 +931,8 @@ if ( $help ) {
 
 
 if ( $version ) {
-  die $versionstring ; 
+  print STDERR $versionstring ; 
+  exit 0;
 }
 
 print STDERR $versionstring if $verbose; 
@@ -960,7 +977,7 @@ if (defined($preamblefile)) {
 
 if ( defined($driver) ) {
   # for changebar only
-  $latexdiffpreamble=~s/\[dvips\]/[$driver]/sg;
+  $latexdiffpreamble=~s/\[pdftex\]/[$driver]/sg;
 }
 # setting up @SAFECMDLIST and @SAFECMDEXCL
 if (defined($replacesafe)) {
@@ -1191,7 +1208,9 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.'|'.$predefinedbibitem.')';
 
   my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
-  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*';
+# standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
+  my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
+# Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
   my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat_n.'\]|\{'. $pat_n . '\})*';
@@ -1410,6 +1429,9 @@ $ulem = ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{ulem\}/ || def
 # If listings is being used or can be found in the latexdiff search path, add to the preamble auxiliary code to enable line-by-line markup
 if ( defined($packages{"listings"}) or `kpsewhich listings.sty` ne "" ) {
   my @listingpreamble=extrapream("LISTINGS");
+  if ($latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ ) {
+    @listingpreamble=extrapream("COLORLISTINGS");
+  }
   my @listingDIFcode=();
   my $replaced;
   # note that in case user supplies preamblefile the type might not reflect well the 
@@ -1572,6 +1594,7 @@ if ( defined $packages{"apacite"}  ) {
 } elsif (defined $packages{"biblatex"}) {
   print STDERR "biblatex package detected.\n" if $verbose ;
   $citpat='(?:[cC]ites?|(?:[pP]aren|foot|[Tt]ext|[sS]mart|super)cites?\*?|footnotecitetex)';
+  push(@TEXTCMDEXCL, qr/^textcite$/);
 } else {
   # citation command pattern for all other citation schemes
   $citpat='(?:cite\w*|nocite)';
@@ -1848,6 +1871,9 @@ sub add_safe_commands {
     my $should_be_safe = $2;
     print STDERR "DEBUG Checking new command: maybe_to_test, should_be_safe: $1 $2\n" if $debug;
     my $success = 0;
+    # skip custom diff commands
+    next if ($maybe_to_test =~ m/^(?:ADD|DEL)?${CUSTOMDIFCMD}$/);
+    ###print STDERR "DEBUG: really test it. \n";
     # test if all latex commands inside it are safe
     $success = 1;
     if ($should_be_safe =~ m/\\\\/) {
@@ -1890,6 +1916,7 @@ sub remove_endinput {
 # expands \input and \include commands within text
 # expands \bibliography command with corresponding bbl file if available
 # expands \subfile command (from subfiles package - not part of standard text distribution)
+# expands \import etc commands (from import package - not part of standard text distribution)
 # preamble is scanned for includeonly commands
 # encoding is the encoding
 sub flatten {
@@ -1917,15 +1944,16 @@ sub flatten {
   # Run through filter, to let filterscript have a pass if it was set
   $text = filter($text);
 
-  # Recursively replace \\import and \\subimport files
-  $text =~ s/(^(?:[^%\n]|\\%)*)(\\subimport\{(.*?)\}|\\import\{(.*?)\})(?:[\s]*)\{(.*?)\}/{
+  # Recursively replace \\import, \\subimport, and related import commands
+  $text =~ s/(^(?:[^%\n]|\\%)*)(\\(sub)?(?:import|inputfrom|includefrom))\{(.*?)\}(?:[\s]*)\{(.*?)\}/{
+          #  (--------1-------)(--(=3=)-------------2-------------------)  (-4-)             (-5-)
           # $1 is begline
-          # $3 is directory if subimport
-          # $4 is directory if import
+          # $2 is the import macro name
+          # $3 is (optional) prefix "sub"
+          # $4 is directory
           # $5 is filename
           $begline = (defined($1)? $1 : "");
-          $subdir = $3 if defined($3);
-          $subdir = $4 if defined($4);
+          $subdir = $4;
           $fname = $5;
           $fname .= ".tex" unless $fname =~ m|\.\w{3,4}$|;
           print STDERR "DEBUG begline:", $begline, "\n" if $debug;
@@ -1940,12 +1968,13 @@ sub flatten {
           print STDERR "importing importfilepath:", $importfilepath,"\n" if $verbose;
           if ( -f $importfilepath ) {
               # If file exists, replace input or include command with expanded input
+              #TODO: need remove_endinput & newpage similar to other replacements inside flatten
               $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
           } else {
               # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
               print STDERR "WARNING: Could not find included file ",$importfilepath,". I will continue but not expand |$2|\n";
-              $replacement=(defined($3)? "\\subimport" : "\\import");
+              $replacement = $2;
               $replacement .= "{$subdir}{$fname} % Processed";
           }
           "$begline$replacement";
@@ -2615,9 +2644,10 @@ sub marktags {
 
 
 # split this block to split sequences joined in pass1
+  ### print STDERR "DEBUG: marktags before splitlatex blocksplit ",join("|",@$block),"\n" if $debug;
   @$block=splitlatex(join "",@$block);
   ### print STDERR "DEBUG: marktags $openmark,$closemark,$open,$close,$opencmd,$closecmd,$comment\n" if $debug;
-  ### print STDERR "DEBUG: marktags blocksplit ",join("|",@$block),"\n" if $debug;
+  print STDERR "DEBUG: after splitlatex ",join("|",@$block),"\n" if $debug;
 
   # we redefine locally $extraspace (shadowing the global definition) to capture command sequences with intervening spaces no matter what the global setting
   # this is done so we can capture those commands with a predefined number of arguments without having to introduce them again explicitly here
@@ -2673,6 +2703,7 @@ sub marktags {
         #            $2 (the command) is in context2, just treat it as an ordinary command (i.e. comment it open with $opencmd)
         # Because we do not want to disable this command
 	# here we do not use $opencmd and $closecmd($opencmd is empty) 
+	print STDERR "DEBUG: Detected text |$word| but not safe command \$2: $2 \$3: $3\n." if $debug;
 	if ($cmd==1) {
 	  push (@$retval,$closecmd) ;
 	} elsif ($cmd==0) { 
@@ -2731,7 +2762,7 @@ sub marktags {
       if ( $word =~ /^\\(?!\()(\\|[`'^"~=.]|[\w*@]+)(.*?)(\s*)$/s &&  iscmd($1,\@MBOXCMDLIST,\@MBOXCMDEXCL)) {
 	# $word is a safe command in MBOXCMDLIST
 	###print STDERR "DEBUG Mboxsafecmd detected:$word:\n" if $debug ;
-	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hspace{0pt}$AUXCMD\n" );
+	push(@$retval,"\\mbox{$AUXCMD\n\\" . $1 . $2 . $3 ."}\\hskip0pt$AUXCMD\n" );
       } else {
 	# $word is a normal word or a safe command (not in MBOXCMDLIST)
 	push (@$retval,$word);
@@ -2751,22 +2782,22 @@ sub take_comments_and_newline_from_frac() {
   # some special magic for common usage of frac, which does not conform to the latexdiff requirements but can be made to fit
   # note that this is a rare exception to the general rule that the new tex can be reconstructed from the diff file
 
-  # \frac12 -> \frac{1}{2}
-  s/\\frac(\d)(\w)/\\frac\{$1\}\{$2\}/g;
-
-  # \frac1{2b} -> \frac{1}{2b}
-  s/\\frac(\d)/\\frac\{$1\}/g;
-
-  # delete space and comment characters between \frac arguments
-#  s/\\frac(?:\s*?%[^\n]*?)*?(\{$pat_n\})\s*(\{$pat_n\})/\\frac$1$2/g;
-  s/\\frac(?:\s|%[^\n]*?)*(\{$pat_n\})(?:\s|%[^\n]*?)*(\{$pat_n\})/\\frac$1$2/g;
+  # regex that matches space and comment characters
+  my $space = qr/\s|%[^\n]*?/;
+  # \frac {abc} -> \frac{abc}
+  # \frac1 -> \frac{1}
+  # \frac a -> \frac{a}
+  # \frac \lambda -> \frac{\lambda}
+  s/\\frac(?|${space}+\{($pat_n)\}|${space}*(\d)|${space}+(\w)|${space}*(\\[a-zA-Z]+))/\\frac\{$1\}/g;
+  # same as above for the second argument of frac
+  s/\\frac(\{$pat_n\})(?|${space}*\{($pat_n)\}|${space}*(\d)|${space}+(\w)|${space}*(\\[a-zA-Z]+))/\\frac$1\{$2\}/g;
 }
 
 # preprocess($string, ..)
 # carry out the following pre-processing steps for all arguments:
 # 1. Remove leading white-space
 #    Change \{ to \QLEFTBRACE and \} to \QRIGHTBRACE and \& to \AMPERSAND
-# #.   Change {,} in comments to \CLEFTBRACE, \CRIGHTBRACE
+# #.   Change {,},\frac in comments to \CLEFTBRACE, \CRIGHTBRACE, \CFRAC
 # 2. mark all first empty line (in block of several) with \PAR tokens
 # 3. Convert all '\%' into '\PERCENTAGE ' and all '\$' into \DOLLAR to make parsing regular expressions easier
 # 4. Convert all \verb|some verbatim text| commands (where | can be an arbitrary character)
@@ -2802,9 +2833,11 @@ sub preprocess {
     s/(?<!\\)\\\{/\\QLEFTBRACE /sg;
     s/(?<!\\)\\\}/\\QRIGHTBRACE /sg;
     s/(?<!\\)\\&/\\AMPERSAND /sg;
-# replace {,} in comments with \\CLEFTBRACE,\\CRIGHTBRACE
+# replace {,}, \frac in comments with \\CLEFTBRACE,\\CRIGHTBRACE, CFRAC to protect from special treatment
     1 while s/((?<!\\)%.*)\{(.*)$/$1\\CLEFTBRACE $2/mg ;
     1 while s/((?<!\\)%.*)\}(.*)$/$1\\CRIGHTBRACE $2/mg ;
+    1 while s/((?<!\\)%.*)\\frac(.*)$/$1\\CFRAC $2/mg ;
+
     s/(?<!\\)\\%/\\PERCENTAGE /g ;  # (?<! is negative lookbehind assertion to prevent \\% from being converted
     s/(?<!\\)\\\$/\\DOLLAR /g ;  # (?<! is negative lookbehind assertion to prevent \\$ from being converted
     s/\\begin\{($VERBATIMENV)\}(.*?)\\end\{\1\}/"\\${1}{". tohash(\%verbhash,"${2}") . "}"/esg;
@@ -2868,7 +2901,7 @@ sub linecomment {
 # remove DIFVRB comments but leave changed lines marked 
 sub reverselinecomment {
   my ($environment, $verbatimtext)=@_;
-  ###print STDERR "OLD VERBATIMTEXT: |$verbatimtext|\n";
+  ### print STDERR "DEBUG REVERSELINECOMMENT input: $environment,|$verbatimtext|\n" if $debug;
   # remove markup added by latexdiff
   # (this should occur only if the type of verbatim environment was changed)
   # (note that this destroys some information in old file)
@@ -2903,7 +2936,7 @@ sub reverselinecomment {
   } else {
     $verbatimtext = "\\begin{${environment}}${verbatimtext}\\end{${environment}}"
   }
-  ###print STDERR "NEW VERBATIMTEXT: |$verbatimtext|\n";
+  ### print STDERR "DEBUG REVERSELINECOMMENT output: |$verbatimtext|\n" if $debug;
   return($verbatimtext);
 }
 
@@ -2943,6 +2976,14 @@ sub fromhash {
     $retstr =~ s/^/$_[2]/mg;
   }
   return $retstr;
+}
+
+# stripdelcmpopen(string)
+# return string with $DELCMDOPEN removed
+sub stripdelcmdopen {
+  my ($str) = $_[0];
+  $str =~ s/${DELCMDOPEN}//mg;
+  return $str;
 }
 
 # writedebugfile(string, label)
@@ -3183,17 +3224,21 @@ sub postprocess {
       ###  $delblock =~ s/\\DIFverb\{/\\DIFDIFdelverb\{/g;
       ###  $delblock =~ s/\\DIFlstinline/\\DIFDIFdellstinline/g;
       ###}
-      # Mark deleted verbose commands
+      # Mark deleted verbatim commands
       $delblock =~ s/(${DELCMDOPEN}\\DIF((?:verb\*?|lstinline(?:\[$brat_n\])?)\{([-\d]*?)\}\s*).*)$/%\n\\DIFDIFdel$2${AUXCMD}\n$1/gm;
       if ( $CUSTOMDIFCMD ) {
-        $delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
+        ###$delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/"$1${DELCMDCLOSE}\\DEL$2". stripdelcmdopen($3) ." ${DELCMDOPEN}"/egms;
+        ###$delblock =~ s/(${DELCMDOPEN}.*)\\($CUSTOMDIFCMD)/$1${DELCMDCLOSE}\\DEL$2/gm;
+        # ($1 ? "${DELCMDOPEN}$1${DELCMDCLOSE}":"") : only add the DELCMDOPEN / DELCMDCLOSE pair if there are actually any commands in between, otherwise this is redundant
+	$delblock    =~ s/${DELCMDOPEN}(.*?)\\($CUSTOMDIFCMD)((?:\[${brat_n}\])*?(?:\s*\{${pat_n}\})*)/($1 ? "${DELCMDOPEN}$1${DELCMDCLOSE}":"") ."\\DEL$2". stripdelcmdopen($3)/egs;
+        # if there is a sequence of several commands in the same row only the first will be converted due to the need to be connected to the DELCMDOPEN. To mop these up, just add the DEL to the front of any remaining cmd's in the deleted block
+        $delblock =~ s/\\($CUSTOMDIFCMD)/\\DEL$1/g;     # this will also convert comments but I guess it does not matter much
       }
 
       #     splice in modified delblock
       substr($_,$begin,$len)=$delblock;
       pos = $begin + length($delblock);
     }
-    ###writedebugfile($_,'postprocess');
 
     ### print STDERR "<<<$_>>>\n" if $debug;
 
@@ -3223,7 +3268,7 @@ sub postprocess {
       $addblock =~ s/\\DIFverb/\\DIFDIFaddverb/g;
       $addblock =~ s/\\DIFlstinline/\\DIFDIFaddlstinline/g;
       if( $CUSTOMDIFCMD ) {
-        $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;
+        $addblock =~ s/\\($CUSTOMDIFCMD)/\\ADD$1/g;     # this will also convert comments but I guess it does not matter much
       }
       # markup the optional arguments of \item
       $addblock =~ s/(\\$ITEMCMD$extraspace(?:<$abrat0>)?$extraspace)\[($brat_n)\]/
@@ -3333,10 +3378,22 @@ sub postprocess {
     # remove empty DIFCMD < lines
     s/^\Q${DELCMDOPEN}\E\n//msg;
 
-    # Expand hashes of verb and verbatim environments (note negative look behind assertion to not leak out of DIFDELCMD comments
+    # Expand hashes of verb and verbatim environments 
     s/${DELCMDOPEN}\\($VERBATIMENV)\{([-\d]*?)\}/"${DELCMDOPEN}\\begin{${1}}".fromhash(\%verbhash,$2,$DELCMDOPEN)."${DELCMDOPEN}\\end{${1}}"/esg;
-    # revert changes to verbatim environments for line diffs (and add code to mark up changes)
-    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
+    # revert changes to verbatim environments for line diffs (and add code to mark up changes) (note negative look behind assertions to not leak out of DIFDELCMD comments)
+    # Example:
+    # < \begin{verbatim}
+    # < %DIF < DIFVRB old verbatim line
+    # < %DIF > DIFVRB new verbatim line
+    # < \end{verbatim}
+    # ---
+    # > \DIFmodbegin
+    # > \begin{verbatim}[alsolanguage=DIFcode]
+    # > %DIF < old verbatim line
+    # > %DIF > new verbatim line
+    # > \end{verbatim}
+    # > \DIFmodend
+    s/(?<!$DELCMDOPEN)\\begin\{($VERBATIMLINEENV)\}(.*?)(?<!$DELCMDOPEN)\\end\{\1\}/"". reverselinecomment($1, $2) .""/esg;
 #    # we do the same for deleted environments but additionally reinstate the framing commands
 #   s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}$extraspace(?:\[$brat0\])?$DELCMDCLOSE(.*?)$DELCMDOPEN\\end\{\1\}$DELCMDCLOSE/"\\begin{$1}". reverselinecomment($2) . "\\end{$1}"/esg;
 ##    s/$DELCMDOPEN\\begin\{($VERBATIMLINEENV)\}($extraspace(?:\[$brat0\])?\s*)(?:\n|$DELCMDOPEN)*$DELCMDCLOSE((?:\%$DELCOMMENT$VERBCOMMENT.*?\n)*)($DELCMDOPEN\\end\{\1\}(?:\n|\s|$DELCMDOPEN)*$DELCMDCLOSE)/"SUBSTITUTION: \\begin{$1}$2 INTERIOR: |$3| END: |$4|"/esg;
@@ -3355,13 +3412,13 @@ sub postprocess {
             . " $AUXCMD\n"  # close the auxiliary environment
             . $5               # and again leave the original deleted closing environment as is
       /esgx;  # Modifiers of substitution command
+    writedebugfile($_,'postprocess2');
     # where changes have occurred in verbatim environment, change verbatim to DIFverbatim to allow mark-up
     # (I use the presence of optional paramater to verbatim environment as the marker - normal verbatim 
     # environment does not take optional arguments)
     s/(?<!$DELCMDOPEN)\\begin\{(verbatim[*]?)\}(\[$brat_n\].*?)\\end\{\1\}/\\begin{DIF$1}$2\\end{DIF$1}/sg;
 
     s/\\($VERBATIMENV)\{([-\d]*?)\}/"\\begin{${1}}".fromhash(\%verbhash,$2)."\\end{${1}}"/esg;
-
 
     # remove all \PAR tokens (taking care to properly keep commented out PAR's
     # from introducing uncommented newlines - next line)
@@ -3408,6 +3465,7 @@ sub postprocess {
     1 while s/\\SQRT(\s*\{($pat_n)\})/\\sqrt$1/g ;
     1 while s/\\SQRTNB\{(\s*$pat0)\}/\\sqrt$1/g ;
  
+    1 while s/(%.*)\\CFRAC (.*)$/$1\\frac$2/mg ;
     1 while s/(%.*)\\CRIGHTBRACE (.*)$/$1\}$2/mg ;
     1 while s/(%.*)\\CLEFTBRACE (.*)$/$1\{$2/mg ;
 
@@ -3416,7 +3474,7 @@ sub postprocess {
     s/\\QLEFTBRACE /\\\{/sg;
     s/\\QRIGHTBRACE /\\\}/sg;
     s/\\AMPERSAND /\\&/sg;
-    # Highligh added inline verbatim commands if possible
+    # Highlight added inline verbatim commands if possible
     if ( $latexdiffpreamble =~ /\\RequirePackage(?:\[$brat_n\])?\{color\}/ )   { 
       # wrap added verb commands with color commands
       s/\\DIFDIFadd((?:verb\*?|lstinline(?:\[$brat_n\])?)\{[-\d]*?\}[\s\n]*)/\{\\color{blue}$AUXCMD\n\\DIF$1%\n\}$AUXCMD\n/sg;
@@ -3476,7 +3534,7 @@ sub preprocess_preamble {
   my ($line,$cmd,$optarg,$arg,$optargnew,$optargold,$optargdiff,$argold,$argnew,$argdiff,$auxline);
 
   my $warnmsgdetail = <<EOF ;
-     This should not occur for standard styles, but can occur for some specifiy styles, document classes,
+     This should not occur for standard styles, but can occur for some specific styles, document classes,
      e.g. journal house styles.
      Workaround: Use --replace-context2cmd option to specifically set those commands, which are not repeated.
 EOF
@@ -3742,7 +3800,7 @@ sub exetime {
 
 
 sub usage {
-  die <<"EOF"; 
+  print STDERR <<"EOF"; 
 Usage: $0 [options] old.tex new.tex > diff.tex
 
 Compares two latex files and writes tex code to stdout, which has the same format as new.tex but 
@@ -3936,6 +3994,9 @@ Other configuration options:
                                 variable SCALEDELGRAPHICS to set size of deleted figures.
                       Note that changes to the optional parameters will make the figure appear as changed 
                       to latexdiff, and this figure will thus be highlighted.
+                      In some circumstances "Misplaced \\noalign" errors can occur if there are certain types
+                      of changes in tables. In this case please use option --graphics-markup=none as a 
+                      work-around. 
 
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
@@ -3947,7 +4008,7 @@ Other configuration options:
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
 
-Miscelleneous options
+Miscellaneous options
 
 --label=label
 -L label               Sets the labels used to describe the old and new files.  The first use
@@ -3978,7 +4039,10 @@ Miscelleneous options
 --ignore-filter-stderr When running with --filter-script, STDERR from the script may cause readability issues.
                        Turn this flag on to ignore STDERR from the filter script.
 
-
+--driver=type          Choose driver for changebar package (only relevant for styles using
+                       changebar: CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR). Possible
+                       drivers are listed in changebar manual, e.g. pdftex,dvips,dvitops
+                       [Default: pdftex]
 
 --help
 -h                     Show this help text.
@@ -3999,6 +4063,7 @@ the API should be considered less stable than for the other options.
 --no-links             Suppress generation of hyperreferences, used for minimal diffs 
                        (option --only-changes of latexdiff-vc).
 EOF
+  exit 0; 
 }
 
 =head1 NAME
@@ -4470,7 +4535,12 @@ scale, and crossed out with a red diagonal cross. Use configuration
 variable SCALEDELGRAPHICS to set size of deleted figures.
 
 Note that changes to the optional parameters will make the figure appear as changed 
-to latexdiff, and this figure will thus be highlighted
+to latexdiff, and this figure will thus be highlighted.
+
+In some circumstances "Misplaced \noalign" error can occur if there are certain types
+of changes in tables. In this case please use C<--graphics-markup=none> as a 
+work-around. 
+
 
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
@@ -4500,7 +4570,7 @@ Default is to work silently.
 Choose driver for changebar package (only relevant for styles using
    changebar: CCHANGEBAR CFONTCHBAR CULINECHBAR CHANGEBAR). Possible
 drivers are listed in changebar manual, e.g. pdftex,dvips,dvitops
-  [Default: dvips]
+  [Default: pdftex]
 
 =item B<--ignore-warnings>
 
@@ -4895,8 +4965,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.3.0
-Copyright (C) 2004-2018 Frederik Tilmann
+Version 1.3.2
+Copyright (C) 2004-2021 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
@@ -4922,6 +4992,7 @@ makebox
 mbox
 pageref
 ref
+eqref
 symbol
 raisebox
 rule
@@ -5222,6 +5293,7 @@ flalign[*]?
 %%BEGIN ARRENV CONFIG
 aligned
 gathered
+multlined
 array
 [pbvBV]?matrix
 smallmatrix
@@ -5291,14 +5363,14 @@ verbatim[*]?
 %DIF END FONTSTRIKE PREAMBLE
 
 %DIF CCHANGEBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}#1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}#1}\protect\cbdelete}
 %DIF END CCHANGEBAR PREAMBLE
 
 %DIF CFONTCHBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\sf #1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\scriptsize #1}\protect\cbdelete}
@@ -5306,14 +5378,14 @@ verbatim[*]?
 
 %DIF CULINECHBAR PREAMBLE
 \RequirePackage[normalem]{ulem}
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \RequirePackage{color}\definecolor{RED}{rgb}{1,0,0}\definecolor{BLUE}{rgb}{0,0,1}
 \providecommand{\DIFadd}[1]{\protect\cbstart{\protect\color{blue}\uwave{#1}}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete{\protect\color{red}\sout{#1}}\protect\cbdelete}
 %DIF END CULINECHBAR PREAMBLE
 
 %DIF CHANGEBAR PREAMBLE
-\RequirePackage[dvips]{changebar}
+\RequirePackage[pdftex]{changebar}
 \providecommand{\DIFadd}[1]{\protect\cbstart{#1}\protect\cbend}
 \providecommand{\DIFdel}[1]{\protect\cbdelete}
 %DIF END CHANGEBAR PREAMBLE
@@ -5560,7 +5632,6 @@ verbatim[*]?
 
 %DIF LISTINGS PREAMBLE
 \RequirePackage{listings}
-\RequirePackage{color}
 \lstdefinelanguage{DIFcode}{
   % note that the definitions in the following two lines are overwritten dependent on the markup type selected %DIFCODE TEMPLATE
   morecomment=[il]{\%DIF\ <\ },          %DIFCODE TEMPLATE
@@ -5575,6 +5646,24 @@ verbatim[*]?
 \lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
 \lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
 %DIF END LISTINGS PREAMBLE
+
+%DIF COLORLISTINGS PREAMBLE
+\RequirePackage{listings}
+\RequirePackage{color}
+\lstdefinelanguage{DIFcode}{
+  % note that the definitions in the following two lines are overwritten dependent on the markup type selected %DIFCODE TEMPLATE
+  morecomment=[il]{\%DIF\ <\ },          %DIFCODE TEMPLATE
+  moredelim=[il][\bfseries]{\%DIF\ >\ }  %DIFCODE TEMPLATE
+}
+\lstdefinestyle{DIFverbatimstyle}{
+	language=DIFcode,
+	basicstyle=\ttfamily,
+	columns=fullflexible,
+	keepspaces=true
+}
+\lstnewenvironment{DIFverbatim}{\lstset{style=DIFverbatimstyle}}{}
+\lstnewenvironment{DIFverbatim*}{\lstset{style=DIFverbatimstyle,showspaces=true}}{}
+%DIF END COLORLISTINGS PREAMBLE
 
 %DIF DIFCODE_UNDERLINE
   moredelim=[il][\color{red}\sout]{\%DIF\ <\ },

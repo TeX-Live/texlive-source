@@ -26,6 +26,13 @@
 # Detailed usage information at the end of the file
 #
 # TODO/IDEAS: - option to call external pre-processing codes
+# version 1.3.2:
+#    - bug fix: when setting config variables with the command lines it is now possible to use quotes to includes spaces in the value, e.g. "-c LATEX=pdflatex --shell-escape'
+#    - bug fix: --only-changes is not compatible with graphics markup. --graphics-markup=none is now set automatically
+#    - when --pdf or --postscript is select, then replace tildes in version names with underscores in output file (e.g. diffHEAD_1 instead of diff HEAD~1. This is necessary because pdflatex strips ~n strings at the end of the filename, when generating output file names
+
+# version 1.3.1:
+#    - bug fix, import File::Path explicitly as otherwise mkpath is not found
 # version 1.3.0 ((7 October 2018)
 #    - option --only-changes with hyperref will suppress hyperrefs (pull request jprotze)_
 #    - option --only-changes now moves (rather than copies) file with only changes 
@@ -66,13 +73,14 @@ use Pod::Usage qw/pod2usage/ ;
 use File::Temp qw/tempdir/ ;
 use File::Basename qw/dirname/;
 use File::Copy;
+use File::Path;
 
 use strict ;
 use warnings ;
 
 my $versionstring=<<EOF ;
-This is LATEXDIFF-VC 1.3.1.1
-  (c) 2005-2020 F J Tilmann
+This is LATEXDIFF-VC 1.3.2
+  (c) 2005-2021 F J Tilmann
 EOF
 
 # output debug and intermediate files, set to 0 in final distribution
@@ -205,7 +213,8 @@ foreach $config ( @configlist ) {
 
 $configlatexdiff="";
 foreach $assign ( @config ) {
-  $assign=~ m/\s*(\w*)\s*=\s*(\S*)\s*$/ or die "Illegal assignment $assign in configuration list (must be variable=value)";  
+    $assign=~ m/\s*(\w*)\s*=\s*(.*?)\s*$/ 
+      or die "Illegal assignment |$assign| in configuration list (must be variable=value)";  
   if ( defined($CFG{$1})) {
     # known latexdiff-vc option
     $CFG{$1}=$2;
@@ -342,7 +351,7 @@ if ( defined($debug) && $debug ) {
 
 # impose ZLABEL subtype if --only-changes option
 if ( $onlychanges ) {
-  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL","--no-links" ;
+  push @ldoptions, "-s", "ZLABEL","-f","IDENTICAL","--no-links", "--graphics-markup=none" ;
 }
 
 if ( scalar(@revs) == 0 ) {
@@ -376,6 +385,12 @@ if ( scalar(@revs) == 2 ) {
   $append = "-diff$revs[0]";
 } else {
   $append = "-diff";
+}
+
+if ( defined($pdf) or defined($postscript) ) {
+  # when using options such as -r HEAD~1  the ~1 is ignored by pdflatex in generating output file names; this could
+  # be confusing and actually causes error to only-changes mode
+  $append =~ s/~/_/g ;
 }
 
 if ( defined ($dir) && ! $dir ) {
@@ -532,7 +547,7 @@ foreach $diff ( @difffiles ) {
       #print STDERR "Generated postscript file $ps\n";
     } elsif ( $run ) {
       if ( $onlychanges ) {
-	my @pages=findchangedpages("$diffbase.aux");
+	my @pages=compresspages(findchangedpages("$diffbase.aux"));
         my $gs = `which gs`;
         $gs =~ s/^\s+|\s+$//g;
         my $qpdf = `which qpdf`;
@@ -540,7 +555,7 @@ foreach $diff ( @difffiles ) {
         my $pdftk = `which pdftk`;
         $pdftk =~ s/^\s+|\s+$//g;
         my $command;
-        if (-x $gs && `gs --version` >= 9.20) {
+        if (-x $gs && `$gs --version` >= 9.20) {
           $command="gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER -sPageList=" . join(",", @pages) . " -sOutputFile=\"$diffbase-changedpage.pdf\" \"$diffbase.pdf\"";
         } elsif (-x $pdftk) {
           $command="pdftk \"$diffbase.pdf\" cat " . join(" ",@pages) . " output \"$diffbase-changedpage.pdf\"";
@@ -588,13 +603,52 @@ sub findchangedpages {
   return(sort {$a <=> $b} keys(%pages));
 }
 
+# inspired by a python version posted at https://stackoverflow.com/a/54714846/8136338
+# compresspages(@pages)
+# @pages: sorted array of unique integers (pages)
+# return a list of pages and page ranges. 3 or more consecutive numbers are merged into a "begin-end" string
+#
+# example: join(",", compresspages([1,3,4,5,7,8])) -> join(",", [1,"3-5",7,8]) -> "1,3-5,7,8"
+sub compresspages {
+  my (@pages) = @_;
+  my @res;
+  my $begin=$pages[0];
+  my $end =$pages[0];
+  my $page;
+  foreach $page ( @pages ) {
+    next if ($page == $begin);
+    if ($page == $end+1) { # handle continuous pages
+      $end = $page;
+      next;
+    } elsif ($begin == $end) { # push single continuous page
+      push @res, $begin;
+      $begin = $end = $page;
+    } elsif ($begin + 1 == $end) { # push two continuous pages
+      push @res, $begin, $end;
+      $begin = $end = $page;
+    } else { # push multiple continuous pages
+      push @res, "$begin-$end";
+      $begin = $end = $page;
+    }
+  }
+  # Finally just check in the same manner for the end element
+  if ($begin == $end) {
+    push @res, $begin;
+  } elsif ($begin + 1 == $end) {
+    push @res, $begin, $end;
+  } else {
+    push @res, "$begin-$end";
+  }
+  return @res;
+}
+
 # checkout_dir(rev,dirname)
 # checks out revision rev and stores it in dirname
 # uses global variables: $vc, $rootdir
 sub checkout_dir {
   my ($rev,$dirname)=@_;
 
-  unless (-e $dirname) { mkdir $dirname or die "Cannot mkdir $dirname ." ;}
+  unless (-e $dirname) { mkpath([ $dirname ]) or die "Cannot mkdir $dirname ." ;}
   if ( $vc eq "SVN" ) {
     system("svn checkout -r $rev $rootdir $dirname")==0 or die "Something went wrong in executing:  svn checkout -r $rev $rootdir $dirname";
   } elsif ( $vc eq "GIT" ) {
@@ -717,7 +771,8 @@ With C<--flatten=keep-intermediate>, the intermediate revision snapshots are kep
 
 Post-process the output such that only pages with changes on them are displayed. This requires the use of subtype ZLABEL 
 in latexdiff, which will be set automatically, but any manually set -s option will be overruled (also requires zref package to 
-be installed). (note that this option must be combined with --ps or --pdf to make sense)
+be installed). This option also disables internal links (as implemented by hyperref package) and graphics markup.
+(note that this option must be combined with --ps or --pdf to make sense)
 
 =item B<--force>
 
