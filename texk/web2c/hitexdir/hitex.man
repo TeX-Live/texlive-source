@@ -342,11 +342,11 @@ documentation for Hi\*(TX can be found in the
 Further information can be found in the  manual of the
 .I "Kpathsea library" 
 and in
-.IR "HINT: The file format" .
+.I "HINT: The file format"
 which is available as a book or in electronic form from the 
 HINT project home page at 
 .BR https://hint.userweb.mwn.de .
-.PP.\"=====================================================================
+.\"=====================================================================
 .SH BUGS
 This version of Hi\*(TX fails to handle correctly glues and kerns with a 
 width that depends on \ehsize or \evsize. Similarly, when
