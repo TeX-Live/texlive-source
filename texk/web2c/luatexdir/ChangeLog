@@ -1,7 +1,77 @@
-2021-03-23 Siep Kroonenberg  <siepo@bitmuis.nl>
-    *luasocket/src/inet.[ch] (inet_pton, inet_ntop) [_WS2TCPIP_H_]:
-    don't define fns if _WS2TCPIP_H_ is defined; for mingw.
-    https://tug.org/pipermail/tlbuild/2021q4/004980.html
+2021-12-31 Luigi Scarso <luigi.scarso@gmail.com>
+    * drop (for the moment) \showstream
+
+2021-12-30 Luigi Scarso <luigi.scarso@gmail.com>
+    * struct dest (M.Krüger)
+    * fixed  a 'Conditional jump or move depends on uninitialised value(s)' msg from valgrind
+
+2021-12-29 Luigi Scarso <luigi.scarso@gmail.com>
+    * Correctly print \write for the error message 
+      "Forbidden control sequence found while scanning text of"
+      (thanks to Hironobu Yamashita)
+
+2021-12-27 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed a typo in a tex comment.
+
+2021-12-24 Luigi Scarso <luigi.scarso@gmail.com>
+    * Metapost: make sure that an already open VF is closed before to read a new one
+
+2021-12-21 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed os.uname on 64 bit Windows (A. Kakuto, L. Scarso)
+
+2021-12-13 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixed a typo in equivalents.c (user202729 @ https://chat.stackexchange.com/transcript/41/2021/12/12)
+
+2021-12-07 Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed a typo in maincontrol.c (thanks to Hironobu Yamashita)
+
+2021-11-20 Luigi Scarso <luigi.scarso@gmail.com>
+    * Ignore paragraphs with only a local par node followed by direction synchronization
+    nodes (paragraphs like that are seen as empty paragraphs) (HH)
+
+2021-08-28 Luigi Scarso <luigi.scarso@gmail.com>
+    *more efficient fontdimen allocation (HH)
+
+2021-08-12 Luigi Scarso <luigi.scarso@gmail.com>
+    *mplibdir: Fix _findfirst handle truncation on Windows x86_64. 
+     Thanks to Richard Copley.
+
+2021-08-08 Luigi Scarso <luigi.scarso@gmail.com>
+    *Improvements for glyph_stream_provider with TTF fonts (MK)
+
+2021-08-04 Luigi Scarso <luigi.scarso@gmail.com>
+    *Fix named instance inconsistency in luaharfbuzz (MK)
+
+2021-08-03 Luigi Scarso <luigi.scarso@gmail.com>
+    *luaharfbuzz: Provide interface for variable fonts (M.Krüger)
+
+2021-07-30 Luigi Scarso <luigi.scarso@gmail.com>
+    *patch for luamplib  to process string with "char 0"; fixed also mplib_text 
+
+2021-07-30 Luigi Scarso <luigi.scarso@gmail.com>
+    *patch for luamplib  to process string with "char 0"
+
+2021-07-27 Luigi Scarso <luigi.scarso@gmail.com>
+    *partoken primitives (HH & PO)
+
+2021-07-27 Luigi Scarso <luigi.scarso@gmail.com>
+    *Sync with TeX Live revision 60088.
+
+2021-07-27 Luigi Scarso <luigi.scarso@gmail.com>
+    *automake-1.16.4; initialize limit to avoid printing some garbage.
+
+2021-07-02 Luigi Scarso <luigi.scarso@gmail.com>
+    *ePNG /Smask for  pdf 2.0
+
+2021-07-02 Luigi Scarso <luigi.scarso@gmail.com>
+    *sync with upstream texlive; autoconf-2.71.
+
+2021-05-10 Luigi Scarso <luigi.scarso@gmail.com>
+    *MetaPost: fixed the patch on the stack overflow.
+
+2021-05-09 Luigi Scarso <luigi.scarso@gmail.com>
+    *Impose mp->stack_size < 1001 in @d push_input to avoid 
+     stack overflow due infinite recursion of macro expansion (thanks to A. Kakuto).
 
 2021-04-21 Luigi Scarso <luigi.scarso@gmail.com>
     *\discretionaryligaturemode: optionally block select disc creation 

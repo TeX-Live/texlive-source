@@ -35,7 +35,8 @@ libluaharfbuzz_a_SOURCES = \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/ot.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/script.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c \
-	luatexdir/luaharfbuzz/src/luaharfbuzz/unicode.c
+	luatexdir/luaharfbuzz/src/luaharfbuzz/unicode.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c
 
 libluajitharfbuzz_a_SOURCES = $(libluaharfbuzz_a_SOURCES)
 

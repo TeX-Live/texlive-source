@@ -466,6 +466,7 @@ void tprint(const char *sss)
     /*tex What is left is the 3 term/log settings. */
     if (dolog || doterm) {
         buffer = xmalloc(strlen(sss)*3);
+        buffer[0] = '\0';
         /*tex The |wrapup_run| callback acts when the log file is already closed.*/
         if (dolog && log_opened_global) {
             const unsigned char *ss = (const unsigned char *) sss;

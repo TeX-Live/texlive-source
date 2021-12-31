@@ -3469,6 +3469,8 @@ void read_toks(int n, halfword r, halfword j)
                     n = -1;
                 }
             } else {
+                /*tex  initialize limit to avoid printing some garbage. */
+                ilimit=0;
                 fatal_error
                     ("*** (cannot \\read from terminal in nonstop modes)");
             }

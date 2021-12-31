@@ -47,10 +47,8 @@ int inet_aton(const char *cp, struct in_addr *inp);
 #endif
 
 #ifdef LUASOCKET_INET_PTON
-#ifndef _WS2TCPIP_H_
 const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt);
 int inet_pton(int af, const char *src, void *dst);
-#endif
 #endif
 
 #endif /* INET_H */

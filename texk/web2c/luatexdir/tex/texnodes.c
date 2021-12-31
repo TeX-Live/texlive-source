@@ -1107,7 +1107,8 @@ void l_set_whatsit_data(void) {
     init_field_key(node_fields_whatsit_pdf_action, 3, file);
     init_field_key(node_fields_whatsit_pdf_action, 4, new_window);
     init_field_key(node_fields_whatsit_pdf_action, 5, data);
-    init_field_nop(node_fields_whatsit_pdf_action, 6);
+    init_field_key(node_fields_whatsit_pdf_action, 6, struct_id);
+    init_field_nop(node_fields_whatsit_pdf_action, 7);
 
     init_field_key(node_fields_whatsit_pdf_annot, 0, attr);
     init_field_key(node_fields_whatsit_pdf_annot, 1, width);
@@ -2302,8 +2303,10 @@ void flush_node_wrapup_pdf(halfword p)
                     delete_token_ref(pdf_action_file(p));
                 if (pdf_action_type(p) == pdf_action_page)
                     delete_token_ref(pdf_action_tokens(p));
-                else if (pdf_action_named_id(p) > 0)
+                else if (pdf_action_named_id(p) & 1)
                     delete_token_ref(pdf_action_id(p));
+                if (pdf_action_named_id(p) & 2)
+                    delete_token_ref(pdf_action_struct_id(p));
             }
             break;
         case pdf_thread_data_node:
@@ -3636,9 +3639,21 @@ void show_node_wrapup_pdf(int p)
                 tprint(" file");
                 print_mark(pdf_action_file(pdf_link_action(p)));
             }
+            if (pdf_action_struct_id(pdf_link_action(p)) != null) {
+                tprint(" struct");
+                if (pdf_action_file(pdf_link_action(p)) != null) {
+                    print_mark(pdf_action_struct_id(pdf_link_action(p)));
+                } else if (pdf_action_named_id(pdf_link_action(p)) & 2) {
+                    tprint(" name");
+                    print_mark(pdf_action_struct_id(pdf_link_action(p)));
+                } else {
+                    tprint(" num");
+                    print_int(pdf_action_struct_id(pdf_link_action(p)));
+                }
+            }
             switch (pdf_action_type(pdf_link_action(p))) {
             case pdf_action_goto:
-                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                if (pdf_action_named_id(pdf_link_action(p)) & 1) {
                     tprint(" goto name");
                     print_mark(pdf_action_id(pdf_link_action(p)));
                 } else {
@@ -3652,7 +3667,7 @@ void show_node_wrapup_pdf(int p)
                 print_mark(pdf_action_tokens(pdf_link_action(p)));
                 break;
             case pdf_action_thread:
-                if (pdf_action_named_id(pdf_link_action(p)) > 0) {
+                if (pdf_action_named_id(pdf_link_action(p)) & 1) {
                     tprint(" thread name");
                     print_mark(pdf_action_id(pdf_link_action(p)));
                 } else {

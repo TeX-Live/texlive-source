@@ -1,3 +1,37 @@
+
+
+==============================================================
+LuaTeX 1.14.1 2021-12-30
+==============================================================
+
+struct dest (M.F. Krüger);
+
+Ignore paragraphs with only a local par node followed by 
+direction synchronization nodes (paragraphs like that are seen 
+as empty paragraphs) (Hans Hagen);
+
+more efficient fontdimen allocation (Hans Hagen);
+
+improvements for glyph_stream_provider with TTF fonts (M.F. Krüger);
+
+provide interface for variable fonts in luaharfbuzz (M.F. Krüger);
+
+partoken primitives (Hans Hagen & Petr Olsak);
+
+PNG /Smask for  pdf 2.0;
+
+\discretionaryligaturemode: optionally block select disc creation 
+(see [Dev-luatex] [PATCH] Nested discretionaries M.F. Krüger) (Hans Hagen);
+
+different radical style defaults in mathdefaultsmode 
+(see [Dev-luatex] Uunderdelimiter & friends and mathstyles by M.F. Krüger) (Hans Hagen).
+
+
+Several bug fixes (see ChangeLog).
+
+
+
+
 ==============================================================
 LuaTeX 1.13.2 2021-04-10
 ==============================================================

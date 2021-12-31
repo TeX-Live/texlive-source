@@ -178,6 +178,7 @@ void initialize_commands(void)
     primitive_luatex("glyphdimensionsmode", assign_int_cmd, int_base + glyph_dimensions_code, int_base);
     primitive_luatex("mathdefaultsmode", assign_int_cmd, int_base + math_defaults_mode_code, int_base);
     primitive_luatex("discretionaryligaturemode", assign_int_cmd, int_base + discretionary_ligature_mode_code, int_base);
+    primitive_etex("partokencontext", assign_int_cmd, int_base + partoken_context_code, int_base);
 
     /*tex
 
@@ -193,6 +194,7 @@ void initialize_commands(void)
     primitive_tex("advance", advance_cmd, 0, 0);
     primitive_tex("afterassignment", after_assignment_cmd, 0, 0);
     primitive_tex("aftergroup", after_group_cmd, 0, 0);
+    primitive_etex("partokenname", partoken_name_cmd, 0, 0);
     primitive_tex("begingroup", begin_group_cmd, 0, 0);
     primitive_tex("char", char_num_cmd, 0, 0);
     primitive_tex("csname", cs_name_cmd, 0, 0);
@@ -817,15 +819,6 @@ void initialize_etex_commands(void)
 
     primitive_luatex("shapemode", assign_int_cmd, int_base + shape_mode_code, int_base);
     primitive_luatex("hyphenationbounds", assign_int_cmd, int_base + hyphenation_bounds_code, int_base);
-
-    /*tex
-
-        The \.{\\showstream} parameter allows to redirect the output of xray_cmd
-        commands to any write stream.
-
-    */
-
-    primitive_tex("showstream", assign_int_cmd, int_base + show_stream_code, int_base);
 
     primitive_etex("showgroups", xray_cmd, show_groups, 0);
 

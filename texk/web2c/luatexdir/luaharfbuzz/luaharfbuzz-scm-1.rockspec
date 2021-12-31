@@ -33,6 +33,7 @@ build = {
       "src/luaharfbuzz/script.c",
       "src/luaharfbuzz/direction.c",
       "src/luaharfbuzz/language.c",
+      "src/luaharfbuzz/variation.c",
       "src/luaharfbuzz/class_utils.c"
       },
       libraries = {"harfbuzz"},

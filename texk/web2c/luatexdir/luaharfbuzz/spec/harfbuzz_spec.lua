@@ -230,6 +230,64 @@ describe("harfbuzz module", function()
       assert.True(r)
       assert.are_same(13, i)
     end)
+
+    it("can return variation axes", function()
+      local f = harfbuzz.Face.new('fonts/STIXTwoText[wght].ttf')
+
+      assert.is_same(true, f:ot_var_has_data())
+      local axes = f:ot_var_get_axis_infos()
+      assert.are_same(1, #axes)
+      assert.are_same(harfbuzz.Tag.new("wght"), axes[1].tag)
+      assert.are_same(1, axes[1].axis_index)
+      assert.are_same(400, axes[1].min_value)
+      assert.are_same(400, axes[1].default_value)
+      assert.are_same(700, axes[1].max_value)
+      assert.are_same(0, axes[1].flags)
+      assert.are_same("Weight", f:get_name(axes[1].name_id))
+    end)
+
+    it("can find variation axis", function()
+      local f = harfbuzz.Face.new('fonts/STIXTwoText[wght].ttf')
+
+      local axis = f:ot_var_find_axis_info(harfbuzz.Tag.new("wght"))
+      assert.is_not_nil(axis)
+      assert.are_same(harfbuzz.Tag.new("wght"), axis.tag)
+      assert.are_same(1, axis.axis_index)
+      assert.are_same(400, axis.min_value)
+      assert.are_same(400, axis.default_value)
+      assert.are_same(700, axis.max_value)
+      assert.are_same(0, axis.flags)
+      assert.are_same("Weight", f:get_name(axis.name_id))
+    end)
+
+    it("can return named instances", function()
+      local f = harfbuzz.Face.new('fonts/STIXTwoText[wght].ttf')
+
+      local instances = f:ot_var_named_instance_get_infos()
+      assert.are_same(4, #instances)
+      assert.are_same(3, instances[3].index)
+      assert.are_same("SemiBold", f:get_name(instances[3].subfamily_name_id))
+      assert.are_same(nil, f:get_name(instances[3].postscript_name_id))
+      assert.are_same(600, f:ot_var_named_instance_get_design_coords(3))
+    end)
+
+    it("can normalize variations", function()
+      local f = harfbuzz.Face.new('fonts/STIXTwoText[wght].ttf')
+
+      local normalized, after = f:ot_var_normalize_variations(harfbuzz.Variation.new("wght=400"))
+      assert.is_nil(after)
+      assert.are_same(0, normalized)
+
+      normalized = f:ot_var_normalize_variations(harfbuzz.Variation.new("wght=700"))
+      assert.are_same(1<<14, normalized)
+
+      normalized, after = f:ot_var_normalize_coords(700)
+      assert.is_nil(after)
+      assert.are_same(1<<14, normalized)
+
+      normalized = f:ot_var_normalize_coords(400)
+      assert.are_same(0, normalized)
+    end)
   end)
 
   describe("harfbuzz.Font", function()
@@ -318,6 +376,25 @@ describe("harfbuzz module", function()
       assert.are_same(2857,f:ot_color_glyph_get_png(2):get_length())
       assert.are_same("\137PNG",f:ot_color_glyph_get_png(2):get_data():sub(1, 4))
     end)
+
+    it("can set variations", function()
+      local f = harfbuzz.Font.new(harfbuzz.Face.new('fonts/STIXTwoText[wght].ttf'))
+
+      f:set_variations(harfbuzz.Variation.new("wght=500"))
+      local normalized, after = f:get_var_coords_normalized()
+      assert.is_nil(after)
+      assert.are_same(5174, normalized)
+
+      f:set_var_coords_design(600)
+      local normalized, after = f:get_var_coords_normalized()
+      assert.is_nil(after)
+      assert.are_same(10348, normalized)
+
+      f:set_var_coords_normalized(1<<13)
+      local normalized, after = f:get_var_coords_normalized()
+      assert.is_nil(after)
+      assert.are_same(1<<13, normalized)
+    end)
   end)
 
   describe("harfbuzz.Feature", function()
@@ -339,7 +416,6 @@ describe("harfbuzz module", function()
 
     it("has visible fields", function()
       local f = harfbuzz.Feature.new('-kern')
-      print(getmetatable(f).__index)
       assert.are_equal(tostring(f.tag), 'kern')
       assert.are_equal(f.value, 0)
       assert.are_equal(f.start, nil)
@@ -359,6 +435,44 @@ describe("harfbuzz module", function()
 
       f.tag, f.value, f.start, f._end = harfbuzz.Tag.new"harf", 0, nil, nil
       assert.are_equal(tostring(f), "-harf")
+    end)
+  end)
+
+  describe("harfbuzz.Variation", function()
+    it("can be initialised with a valid variation string", function()
+      harfbuzz.Variation.new('wght=default')
+      harfbuzz.Variation.new('wght=400')
+      harfbuzz.Variation.new('wght=-20')
+    end)
+
+    it("throws an error when trying to initialise a new variation with an invalid string", function()
+       assert.are_equal(nil, harfbuzz.Variation.new(''))
+       assert.are_equal(nil, harfbuzz.Variation.new('wght'))
+    end)
+
+    it("has a valid tostring value", function()
+      local vs = 'wght=200'
+      local v = harfbuzz.Variation.new(vs)
+      assert.are_equal(vs, tostring(v))
+    end)
+
+    it("has visible fields", function()
+      local v = harfbuzz.Variation.new('wght=400')
+      assert.are_equal(tostring(v.tag), 'wght')
+      assert.are_equal(v.value, 400)
+
+      v = harfbuzz.Variation.new('slnt=-7.5')
+      assert.are_equal(tostring(v.tag), 'slnt')
+      assert.are_equal(v.value, -7.5)
+    end)
+
+    it("has editable fields", function()
+      local f = harfbuzz.Variation.new('slnt=5')
+      f.tag, f.value = harfbuzz.Tag.new"wght", 7
+      assert.are_equal(tostring(f), "wght=7")
+
+      f.tag, f.value = harfbuzz.Tag.new"hght", 0
+      assert.are_equal(tostring(f), "hght=0")
     end)
   end)
 
