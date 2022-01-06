@@ -639,4 +639,18 @@ const_string WEAVEHELP[] = {
 };
 #endif /* WEAVE */
 
+#ifdef TWILL
+const_string TWILLHELP[] = {
+    "Usage: twill [OPTION]... WEBFILE[.web] [CHANGEFILE[.ch]]",
+    "  Weave WEBFILE with CHANGEFILE into a TeX document.",
+    "  Default CHANGEFILE is " DEV_NULL ";",
+    "  TeX output goes to the basename of WEBFILE extended with `.tex'.",
+    "",
+    "-x          omit cross-reference information",
+    "-help       display this help and exit",
+    "-version    output version information and exit",
+    NULL
+};
+#endif /* TWILL */
+
 #endif /* not HELP_H */

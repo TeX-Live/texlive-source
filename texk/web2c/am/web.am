@@ -7,7 +7,8 @@
 ## You may freely use, modify and/or distribute this file.
 
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
-	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
+	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf \
+	weave twill
 
 ## Basic tests, one for each program.
 ##
@@ -173,6 +174,17 @@ weave-web2c: weave.p $(web2c_depend)
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
 weave.log: weave$(EXEEXT)
+
+nodist_twill_SOURCES = twill.c twill.h
+twill.c twill.h: twill-web2c
+	@$(web2c) twill
+twill-web2c: twill.p $(web2c_depend)
+	@$(web2c) twill
+twill.p: tangle$(EXEEXT) twill.web
+	$(tangle) twill
+twill.web: tie$(EXEEXT) weave.web weave.ch weav-twill.ch
+	$(tie_m) weave.web weave.ch weav-twill.ch
+twill.log: twill$(EXEEXT)
 
 ## Tests.
 ##

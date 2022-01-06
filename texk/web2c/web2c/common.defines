@@ -94,6 +94,7 @@
 @define const VFTOVPHELP;
 @define const VPTOVFHELP;
 @define const WEAVEHELP;
+@define const TWILLHELP;
 
 @define function abs ();
 @define function addressof ();

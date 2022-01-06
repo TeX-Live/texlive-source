@@ -438,7 +438,7 @@ am__EXEEXT_1 = bibtex$(EXEEXT) dvicopy$(EXEEXT) dvitype$(EXEEXT) \
 	gftodvi$(EXEEXT) gftopk$(EXEEXT) gftype$(EXEEXT) mft$(EXEEXT) \
 	patgen$(EXEEXT) pktogf$(EXEEXT) pktype$(EXEEXT) \
 	pltotf$(EXEEXT) pooltype$(EXEEXT) tftopl$(EXEEXT) \
-	vftovp$(EXEEXT) vptovf$(EXEEXT) weave$(EXEEXT)
+	vftovp$(EXEEXT) vptovf$(EXEEXT) weave$(EXEEXT) twill$(EXEEXT)
 am__EXEEXT_2 = pbibtex$(EXEEXT) pdvitype$(EXEEXT) ppltotf$(EXEEXT) \
 	ptftopl$(EXEEXT)
 am__EXEEXT_3 = upbibtex$(EXEEXT) updvitype$(EXEEXT) uppltotf$(EXEEXT) \
@@ -1695,6 +1695,10 @@ nodist_weave_OBJECTS = weave.$(OBJEXT)
 weave_OBJECTS = $(nodist_weave_OBJECTS)
 weave_LDADD = $(LDADD)
 weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
+nodist_twill_OBJECTS = twill.$(OBJEXT)
+twill_OBJECTS = $(nodist_twill_OBJECTS)
+twill_LDADD = $(LDADD)
+twill_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 nodist_wofm2opl_OBJECTS = ofm2opl.$(OBJEXT)
 wofm2opl_OBJECTS = $(nodist_wofm2opl_OBJECTS)
 wofm2opl_LDADD = $(LDADD)
@@ -1846,9 +1850,9 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/uptex-uptex-pool.Po ./$(DEPDIR)/uptex-uptex0.Po \
 	./$(DEPDIR)/uptex-uptexini.Po ./$(DEPDIR)/uptftopl-uptftopl.Po \
 	./$(DEPDIR)/vftovp.Po ./$(DEPDIR)/vptovf.Po \
-	./$(DEPDIR)/weave.Po ./$(DEPDIR)/xetex-dummy.Po \
-	./$(DEPDIR)/xetex-xetex-pool.Po ./$(DEPDIR)/xetex-xetex0.Po \
-	./$(DEPDIR)/xetex-xetexini.Po \
+	./$(DEPDIR)/weave.Po ./$(DEPDIR)/twill.Po \
+	./$(DEPDIR)/xetex-dummy.Po ./$(DEPDIR)/xetex-xetex-pool.Po \
+	./$(DEPDIR)/xetex-xetex0.Po ./$(DEPDIR)/xetex-xetexini.Po \
 	alephdir/$(DEPDIR)/aleph-aleph.Po \
 	alephdir/$(DEPDIR)/aleph-alephbis.Po \
 	alephdir/$(DEPDIR)/aleph-alephextra.Po \
@@ -2557,6 +2561,7 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(nodist_uptex_SOURCES) $(uptftopl_SOURCES) \
 	$(nodist_uptftopl_SOURCES) $(nodist_vftovp_SOURCES) \
 	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
+	$(nodist_twill_SOURCES) \
 	$(nodist_wofm2opl_SOURCES) $(nodist_wopl2ofm_SOURCES) \
 	$(nodist_wovf2ovp_SOURCES) $(nodist_wovp2ovf_SOURCES) \
 	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
@@ -2791,7 +2796,7 @@ RECHECK_LOGS = $(TEST_LOGS)
 am__EXEEXT_44 = bibtex.test dvicopy.test dvitype.test gftodvi.test \
 	gftopk.test gftype.test mft.test patgen.test pktogf.test \
 	pktype.test pltotf.test pooltype.test tftopl.test vftovp.test \
-	vptovf.test weave.test
+	vptovf.test weave.test twill.test
 am__EXEEXT_45 = $(am__EXEEXT_44) tests/bibtex-openout-test.pl \
 	tests/bibtex-longline-test.pl tests/bibtex-mem.test \
 	tests/bibtex-bigauth.test tests/bibtex-auxinclude.test
@@ -3798,7 +3803,8 @@ ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
 ctangleboot_DEPENDENCIES = $(default_dependencies)
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
-	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf weave
+	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf \
+	weave twill
 
 web_tests = $(web_programs:=.test) tests/bibtex-openout-test.pl \
 	tests/bibtex-longline-test.pl tests/bibtex-mem.test \
@@ -3820,6 +3826,7 @@ nodist_tftopl_SOURCES = tftopl.c tftopl.h
 nodist_vftovp_SOURCES = vftovp.c vftovp.h
 nodist_vptovf_SOURCES = vptovf.c vptovf.h
 nodist_weave_SOURCES = weave.c weave.h
+nodist_twill_SOURCES = twill.c twill.h
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 nodist_ctwill_SOURCES = ctwill.c cweb.c
@@ -8327,6 +8334,10 @@ weave$(EXEEXT): $(weave_OBJECTS) $(weave_DEPENDENCIES) $(EXTRA_weave_DEPENDENCIE
 	@rm -f weave$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(weave_OBJECTS) $(weave_LDADD) $(LIBS)
 
+twill$(EXEEXT): $(twill_OBJECTS) $(twill_DEPENDENCIES) $(EXTRA_twill_DEPENDENCIES)
+	@rm -f twill$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(twill_OBJECTS) $(twill_LDADD) $(LIBS)
+
 wofm2opl$(EXEEXT): $(wofm2opl_OBJECTS) $(wofm2opl_DEPENDENCIES) $(EXTRA_wofm2opl_DEPENDENCIES) 
 	@rm -f wofm2opl$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(wofm2opl_OBJECTS) $(wofm2opl_LDADD) $(LIBS)
@@ -8571,6 +8582,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vftovp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vptovf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/weave.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/twill.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex-pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex0.Po@am__quote@ # am--include-marker
@@ -19922,6 +19934,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/vftovp.Po
 	-rm -f ./$(DEPDIR)/vptovf.Po
 	-rm -f ./$(DEPDIR)/weave.Po
+	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/xetex-dummy.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex-pool.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex0.Po
@@ -20702,6 +20715,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/vftovp.Po
 	-rm -f ./$(DEPDIR)/vptovf.Po
 	-rm -f ./$(DEPDIR)/weave.Po
+	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/xetex-dummy.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex-pool.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex0.Po
@@ -21548,6 +21562,15 @@ weave-web2c: weave.p $(web2c_depend)
 weave.p: tangle$(EXEEXT) weave.web weave.ch
 	$(tangle) weave weave
 weave.log: weave$(EXEEXT)
+twill.c twill.h: twill-web2c
+	@$(web2c) twill
+twill-web2c: twill.p $(web2c_depend)
+	@$(web2c) twill
+twill.p: tangle$(EXEEXT) twill.web
+	$(tangle) twill
+twill.log: twill$(EXEEXT)
+twill.web: tie$(EXEEXT) weave.web weave.ch weav-twill.ch
+	$(tie_m) weave.web weave.ch weav-twill.ch
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-cweave.w cwebdir/cweav-w2c.ch
