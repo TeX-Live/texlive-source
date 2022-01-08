@@ -3,7 +3,7 @@
 %global __python %{__python3}
 
 Name:           asymptote
-Version:        2.70
+Version:        2.75
 Release:        1%{?dist}
 Summary:        Descriptive vector graphics language
 
@@ -25,6 +25,7 @@ BuildRequires:  dvisvgm >= 2.9.1
 BuildRequires:  texinfo >= 4.7
 BuildRequires:  ImageMagick
 BuildRequires:  libtirpc-devel
+BuildRequires:  libboost-devel
 
 Requires:       tetex-latex
 Requires:       freeglut-devel >= 3.0.0
@@ -33,7 +34,7 @@ Requires(postun): /usr/bin/texhash /sbin/install-info
 
 %description
 Asymptote is a powerful descriptive vector graphics language for technical
-drawings, inspired by MetaPost but with an improved C++-like syntax.
+drawing, inspired by MetaPost but with an improved C++-like syntax.
 Asymptote provides for figures the same high-quality level of typesetting
 that LaTeX does for scientific text.
 
@@ -43,7 +44,7 @@ that LaTeX does for scientific text.
 
 
 %build
-CFLAGS="`echo $RPM_OPT_FLAGS | sed s/-O2/-O3/`" \
+CFLAGS="`echo $RPM_OPT_FLAGS | sed s/-O2/-O3/` -fno-lto" \
 %configure --with-latex=%{_texmf}/tex/latex --with-context=%{_texmf}/tex/context/third
 make %{?_smp_mflags}
 

@@ -1,3 +1,56 @@
+Release Notes for Version 2.75
+
+A 2D transparency bug was fixed. Vim support was improved.
+To support PNG transparency, the default driver was changed from pngalpha
+to png16m and the pdflatex TeX engine is used instead of latex.
+A pngdriver option was added. To support WebGL, billboard labels are enabled
+when configured for offscreen rendering. The subdivision crack work around for
+PRC output was removed. Compilation without the tirpc library is supported
+again (but not recommended since the V3D format requires XDR support).
+
+Release Notes for Version 2.74
+
+Order-independent transparency is disabled if SSBO support is unavailable.
+Embedded 3D renderings now work in inline TeX mode. The tiling pen was fixed. 
+Support was added for filling contour plots by quantizing color density images.
+Unwanted shifting in PDF output when using non-letter size paper was fixed.
+Due to its limitations, the color.sty package was abandoned in favour of
+low-level specials. The bounding box contributions of the linejoin and
+linecap qualifiers are now correctly taken into account. The erase command
+is inhibited for svg and html output. A crash on save in the lsp server
+was fixed. Links to the gallery were fixed in the documentation.
+
+Release Notes for Version 2.73
+
+The asygl library was updated to support embedding of WebGL and WebGL2 scenes
+on the same page.
+
+Release Notes for Version 2.72
+
+WebGL2 is enabled by default only for examples that use image-based lighting.
+Multiple output formats in threaded interactive mode are now handled correctly.
+CPU partial sum indexing is used in the 3D transparency shader if the compute
+shader fails to compile.  
+
+Release Notes for Version 2.71
+
+Support for the portable compressed 3D vector file format V3D was added.
+The default value of settings.prc was changed to false. 
+Efficient order-independent transparency was implemented for modern OpenGL
+platforms and the OSMesa offscreen rendering engine (with no interactive
+transparency support for Mac OS X and WebGL). The WebGL library now uses
+WebGL2 if available. Image-based lighting was implemented.
+Many bug fixes and improvements were made to Xasy, allowing objects drawn
+with the graphical editor to be saved to and restored from a .xasy file, as
+well as being exportable to an .asy file. A function was added to graph a
+parametric function with control points determined by the specified
+derivative. The recommended PostScript viewer for MSWindows is now Sumatra PDF.
+The workflow for generating transparent PDFs and PNGs was fixed.
+Emacs lasy-mode was patched to work with Emacs >= 23. Support for the Language
+Server Protocol was added. Compilation with COMPACT=0 is supported again. 
+All threads now return the same error code. A remote command-line interface to
+http://asymptote.ualberta.ca is now available.
+
 Release Notes for Version 2.70
 
 A stack overflow was fixed. Under MSWindows, problems with SVG generation and

@@ -1,3 +1,6 @@
+settings.outformat="pdf";
+settings.prc=true;
+
 import three;
 
 size(10cm);
@@ -59,7 +62,7 @@ draw(P,uknot,vknot,new pen[] {red,green,blue,magenta});
 // udegree=3, vdegree=3, nu=4, nv=4;
 real[] uknot={0,0,0,0,1,1,1,1};
 real[] vknot={0,0,0,0,1,1,1,1};
-triple[][] P=scale3(20)*octant1.P;
+triple[][] P=scale3(20)*octant1x.P;
 
 // Optional weights:
 real[][] weights=array(P.length,array(P[0].length,1.0));

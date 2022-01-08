@@ -3,14 +3,10 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.70],[https://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.75],[https://sourceforge.net/projects/asymptote])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
-
-test "$CXXFLAGS" || CXXFLAGS="-std=c++11"
-
-test "$CFLAGS" || CFLAGS="-g -O3"
 
 AC_C_BIGENDIAN
 AC_CANONICAL_HOST
@@ -20,6 +16,20 @@ Datadir=$datadir
 test "$Datadir" = '${datarootdir}' && Datadir=$datarootdir
 test "$Datadir" = '${prefix}/share' && Datadir=$prefix/share
 AC_SUBST(Datadir)
+
+AC_ARG_ENABLE(lsp,
+[AS_HELP_STRING(--enable-lsp[[[=yes]]],enable Language Server Protocol)])
+if test "x$enable_lsp" != "xno"; then
+cxxstd="c++14"
+else
+cxxstd="c++11"
+AC_MSG_NOTICE([*** Language Server Protocol disabled by configure flag ***])
+fi
+
+test "$CXXFLAGS" || CXXFLAGS="-std=$cxxstd"
+echo Compiling with $CXXFLAGS
+
+test "$CFLAGS" || CFLAGS="-g -O3"
 
 AC_ARG_WITH(latex,
         [AS_HELP_STRING(--with-latex=PATH,
@@ -99,7 +109,7 @@ AC_CONFIG_SRCDIR([absyn.cc])
 AC_LANG([C++])
 
 # Checks for programs.
-AC_PROG_LEX
+AC_PROG_LEX(noyywrap)
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_CC
@@ -138,10 +148,10 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
                    DEFINE([<unordered_map>])),
   [AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
 
-ASYGLVERSION=1.00
+ASYGLVERSION=1.01
 
-GCVERSION=8.0.4
-ATOMICVERSION=7.6.10
+GCVERSION=8.2.0
+ATOMICVERSION=7.6.12
 
 GCFILE=gc-$GCVERSION
 ac_cv_use_gc="system"
@@ -245,6 +255,8 @@ AC_SUBST(ATOMICVERSION)
 AC_SUBST(GCOPTIONS)
 AC_SUBST(GCLIB)
 AC_SUBST(GCPPLIB)
+AC_SUBST(LSPLIB)
+AC_SUBST(LSPLIBS)
 AC_SUBST(INCL)
 AC_SUBST(OPTIONS)
 AC_SUBST(GLEW)
@@ -272,6 +284,18 @@ if test "x$enable_curl" != "xno"; then
   AC_MSG_NOTICE([*** Could not find libcurl: will compile without optional URL support. ***]))
 else
   AC_MSG_NOTICE([*** libcurl support disabled by configure flag: will compile without optional URL support. ***])
+fi
+
+LSPLIBS=
+LSPLIB=
+if test "x$enable_lsp" != "xno"; then
+  AC_CHECK_LIB([boost_filesystem],[opendir],
+  [AC_CHECK_LIB([boost_thread],[pthread_attr_getdetachstate],
+  [AC_DEFINE(HAVE_LSP,1,DEFINE([Language server protocol]))
+   LSPLIBS="-llspcpp -lboost_filesystem -lboost_thread "
+   LSPLIB=liblspcpp.a],
+  AC_MSG_NOTICE([*** Could not find libboost_thread: will compile without optional Language Server Protocol. ***]))],
+  AC_MSG_NOTICE([*** Could not find libboost_filesystem: will compile without optional Language Server Protocol. ***]))
 fi
 
 AC_ARG_ENABLE(readline,
@@ -360,7 +384,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "xstream.h"])],
                    [AC_SEARCH_LIBS([xdrstdio_create],[nsl tirpc])
                     AC_DEFINE(HAVE_RPC_RPC_H,1,
                    DEFINE([a working <tirpc/rpc/rpc.h> header]))],
-   AC_MSG_WARN([*** Broken rpc headers; XDR support disabled ***]))
+   AC_MSG_WARN([*** Broken rpc headers; XDR/V3D support disabled ***]))
 
 AC_ARG_ENABLE(gsl,
 [AS_HELP_STRING(--enable-gsl[[[=yes]]],enable GNU Scientific Library)])
@@ -375,6 +399,22 @@ fi
 
 AC_ARG_ENABLE(gl,
 [AS_HELP_STRING(--enable-gl[[[=yes]]],enable OpenGL Library)])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+    [#include <GL/gl.h>]
+    [#if !defined(GL_VERSION_4_3) && !defined(GL_ARB_shader_storage_buffer_object)]
+    [#error]
+    [#endif ]
+    )],
+    AC_DEFINE(HAVE_SSBO,1,DEFINE([GLSL shader storage buffer objects])))
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+    [#include <GL/gl.h>]
+    [#if !defined(GL_VERSION_4_3) && !defined(GL_ARB_compute_shader)]
+    [#error]
+    [#endif ]
+    )],
+    AC_DEFINE(HAVE_COMPUTE_SHADER,1,DEFINE([GLSL compute shaders])))
 
 AC_ARG_ENABLE(offscreen,
 [AS_HELP_STRING(--enable-offscreen[[[=no]]],use OSMesa library to implement offscreen rendering)])
@@ -447,7 +487,6 @@ AC_CHECK_TYPES([long long])
 AC_CHECK_TYPES([long])
 AC_C_CONST
 AC_C_INLINE
-AC_TYPE_SIGNAL
 
 AC_DEFUN([ac_FUNC_STRPTIME], [
     AC_CHECK_FUNCS(strptime)

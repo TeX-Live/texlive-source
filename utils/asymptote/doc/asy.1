@@ -31,6 +31,9 @@ in the user's home directory using the long form:
 For a complete
 description, see the Info files.
 .TP
+.B \-GPUindexing         
+Compute indexing partial sums on GPU [true].
+.TP
 .B \-V,\-View             
 View output; command-line only.
 .TP
@@ -103,11 +106,11 @@ Default output file precision [7].
 .B \-divisor n           
 Garbage collect using purge(divisor=n) [2].
 .TP
+.B \-dvisvgmMultipleFiles
+dvisvgm supports multiple files [false].
+.TP
 .B \-embed               
 Embed rendered preview image [true].
-.TP
-.B \-envmap              
-Enable environment map image-based lighting (Experimental) [false].
 .TP
 .B \-exitonEOF           
 Exit interactive mode on EOF [true].
@@ -136,8 +139,17 @@ Show summary of options; command-line only.
 .B \-historylines n      
 Retain n lines of history [1000].
 .TP
+.B \-ibl                 
+Enable environment map image-based lighting [false].
+.TP
 .B \-iconify             
 Iconify rendering window [false].
+.TP
+.B \-image string        
+Environment image name [snowyField].
+.TP
+.B \-imageDir string     
+Environment image library directory [ibl].
 .TP
 .B \-inlineimage         
 Generate inline embedded image [false].
@@ -171,6 +183,12 @@ Use a local interactive history file [false].
 .TP
 .B \-loop                
 Loop 3D animations [false].
+.TP
+.B \-lossy               
+Use single precision for V3D reals [false].
+.TP
+.B \-lsp                 
+Interactive mode for the Language Server Protocol [false].
 .TP
 .B \-m,\-mask             
 Mask fpu exceptions; command-line only.
@@ -215,7 +233,10 @@ Delay before attempting initial pdf reload [750000].
 Initial 3D rendering screen position [(0,0)].
 .TP
 .B \-prc                 
-Embed 3D PRC graphics in PDF output [true].
+Embed 3D PRC graphics in PDF output [false].
+.TP
+.B \-prerender resolution
+Prerender V3D objects (0 implies vector output) [0].
 .TP
 .B \-prompt string       
 Prompt [> ].
@@ -304,11 +325,17 @@ Wait for child processes to finish before exiting [false].
 .B \-warn string         
 Enable warning; command-line only.
 .TP
+.B \-webgl2              
+Use webgl2 if available [false].
+.TP
 .B \-where               
 Show where listed variables are declared [false].
 .TP
+.B \-wsl                 
+Run asy under the Windows Subsystem for Linux. [false].
+.TP
 .B \-xasy                
-Special interactive mode for xasy [false].
+Interactive mode for xasy [false].
 .TP
 .B \-zoomPinchCap limit  
 WebGL maximum zoom pinch [100].

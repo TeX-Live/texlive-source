@@ -23,7 +23,9 @@ cd ~/
 rm -rf asymptote-$VERSION
 mkdir -p CTAN
 rm -rf CTAN/asymptote-$VERSION
-tar -zxf $SHARED/asymptote-$VERSION.src.tgz -C CTAN
+cd CTAN
+tar -vzxf $SHARED/asymptote-$VERSION.src.tgz | grep "/\." | xargs rm -rf
+cd ..
 tar -zxf $SHARED/asymptote-$VERSION.src.tgz
 mkdir -p CTAN/asymptote-$VERSION/binaries/$BINDIR/texlive
 cd asymptote-$VERSION
@@ -31,7 +33,7 @@ fi
 BUILD=build-$VERSION
 ln -sf ../gc-$GC.tar.gz .
 ln -sf ../gc-$GC .
-make -n MSDOS=1 >& /dev/null || ./configure OSTYPE=msdos --enable-gc=$GC --with-latex=/usr/local/share --with-context=/usr/local/share
+make -n MSDOS=1 >& /dev/null || ./configure OSTYPE=msdos --enable-gc=$GC --disable-lsp --with-latex=/usr/local/share --with-context=/usr/local/share
 rm -rf $BUILD
 mkdir -p $BUILD
 cp -a $HOME/dll/cygwin/*.dll $BUILD

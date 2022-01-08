@@ -19,6 +19,10 @@
 #include "angle.h"
 #include "pair.h"
 
+#ifdef HAVE_RPC_RPC_H
+#include "xstream.h"
+#endif
+
 namespace camp {
 
 typedef double Triple[3];
@@ -326,6 +330,15 @@ public:
     out << "[" << v.x << "," << v.y << "," << v.z << "]";
     return out;
   }
+
+
+#ifdef HAVE_RPC_RPC_H
+  friend xdr::oxstream& operator << (xdr::oxstream& out, triple const& v)
+  {
+    out << v.x << v.y << v.z;
+    return out;
+  }
+#endif
 
 };
 
