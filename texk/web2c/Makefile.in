@@ -1635,6 +1635,10 @@ tie_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am_ttf2afm_OBJECTS = pdftexdir/ttf2afm-ttf2afm.$(OBJEXT)
 ttf2afm_OBJECTS = $(am_ttf2afm_OBJECTS)
 ttf2afm_LDADD = $(LDADD)
+nodist_twill_OBJECTS = twill.$(OBJEXT)
+twill_OBJECTS = $(nodist_twill_OBJECTS)
+twill_LDADD = $(LDADD)
+twill_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 am_upbibtex_OBJECTS =
 nodist_upbibtex_OBJECTS = upbibtex-upbibtex.$(OBJEXT)
 upbibtex_OBJECTS = $(am_upbibtex_OBJECTS) $(nodist_upbibtex_OBJECTS)
@@ -1695,10 +1699,6 @@ nodist_weave_OBJECTS = weave.$(OBJEXT)
 weave_OBJECTS = $(nodist_weave_OBJECTS)
 weave_LDADD = $(LDADD)
 weave_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-nodist_twill_OBJECTS = twill.$(OBJEXT)
-twill_OBJECTS = $(nodist_twill_OBJECTS)
-twill_LDADD = $(LDADD)
-twill_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 nodist_wofm2opl_OBJECTS = ofm2opl.$(OBJEXT)
 wofm2opl_OBJECTS = $(nodist_wofm2opl_OBJECTS)
 wofm2opl_LDADD = $(LDADD)
@@ -1836,7 +1836,8 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/tangleboot.Po ./$(DEPDIR)/tex-tex-pool.Po \
 	./$(DEPDIR)/tex-tex0.Po ./$(DEPDIR)/tex-texextra.Po \
 	./$(DEPDIR)/tex-texini.Po ./$(DEPDIR)/tftopl.Po \
-	./$(DEPDIR)/tie-tie.Po ./$(DEPDIR)/upbibtex-upbibtex.Po \
+	./$(DEPDIR)/tie-tie.Po ./$(DEPDIR)/twill.Po \
+	./$(DEPDIR)/upbibtex-upbibtex.Po \
 	./$(DEPDIR)/updvitype-updvitype.Po ./$(DEPDIR)/upmpost-pmp.Po \
 	./$(DEPDIR)/upmpost-pmpmath.Po \
 	./$(DEPDIR)/upmpost-pmpmathbinary.Po \
@@ -1850,9 +1851,9 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/uptex-uptex-pool.Po ./$(DEPDIR)/uptex-uptex0.Po \
 	./$(DEPDIR)/uptex-uptexini.Po ./$(DEPDIR)/uptftopl-uptftopl.Po \
 	./$(DEPDIR)/vftovp.Po ./$(DEPDIR)/vptovf.Po \
-	./$(DEPDIR)/weave.Po ./$(DEPDIR)/twill.Po \
-	./$(DEPDIR)/xetex-dummy.Po ./$(DEPDIR)/xetex-xetex-pool.Po \
-	./$(DEPDIR)/xetex-xetex0.Po ./$(DEPDIR)/xetex-xetexini.Po \
+	./$(DEPDIR)/weave.Po ./$(DEPDIR)/xetex-dummy.Po \
+	./$(DEPDIR)/xetex-xetex-pool.Po ./$(DEPDIR)/xetex-xetex0.Po \
+	./$(DEPDIR)/xetex-xetexini.Po \
 	alephdir/$(DEPDIR)/aleph-aleph.Po \
 	alephdir/$(DEPDIR)/aleph-alephbis.Po \
 	alephdir/$(DEPDIR)/aleph-alephextra.Po \
@@ -2554,18 +2555,17 @@ SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(dist_tex_SOURCES) $(nodist_tex_SOURCES) \
 	$(nodist_tftopl_SOURCES) $(nodist_tie_SOURCES) \
 	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
-	$(upbibtex_SOURCES) $(nodist_upbibtex_SOURCES) \
-	$(updvitype_SOURCES) $(nodist_updvitype_SOURCES) \
-	$(nodist_upmpost_SOURCES) $(uppltotf_SOURCES) \
-	$(nodist_uppltotf_SOURCES) $(dist_uptex_SOURCES) \
-	$(nodist_uptex_SOURCES) $(uptftopl_SOURCES) \
-	$(nodist_uptftopl_SOURCES) $(nodist_vftovp_SOURCES) \
-	$(nodist_vptovf_SOURCES) $(nodist_weave_SOURCES) \
-	$(nodist_twill_SOURCES) \
-	$(nodist_wofm2opl_SOURCES) $(nodist_wopl2ofm_SOURCES) \
-	$(nodist_wovf2ovp_SOURCES) $(nodist_wovp2ovf_SOURCES) \
-	$(dist_xetex_SOURCES) $(nodist_xetex_SOURCES) \
-	$(nodist_EXTRA_xetex_SOURCES)
+	$(nodist_twill_SOURCES) $(upbibtex_SOURCES) \
+	$(nodist_upbibtex_SOURCES) $(updvitype_SOURCES) \
+	$(nodist_updvitype_SOURCES) $(nodist_upmpost_SOURCES) \
+	$(uppltotf_SOURCES) $(nodist_uppltotf_SOURCES) \
+	$(dist_uptex_SOURCES) $(nodist_uptex_SOURCES) \
+	$(uptftopl_SOURCES) $(nodist_uptftopl_SOURCES) \
+	$(nodist_vftovp_SOURCES) $(nodist_vptovf_SOURCES) \
+	$(nodist_weave_SOURCES) $(nodist_wofm2opl_SOURCES) \
+	$(nodist_wopl2ofm_SOURCES) $(nodist_wovf2ovp_SOURCES) \
+	$(nodist_wovp2ovf_SOURCES) $(dist_xetex_SOURCES) \
+	$(nodist_xetex_SOURCES) $(nodist_EXTRA_xetex_SOURCES)
 DIST_SOURCES = $(libff_a_SOURCES) $(libkanji_a_SOURCES) \
 	$(libluaharfbuzz_a_SOURCES) $(libluajitharfbuzz_a_SOURCES) \
 	$(dist_libluajittex_a_SOURCES) $(dist_libluatex_a_SOURCES) \
@@ -8294,6 +8294,10 @@ ttf2afm$(EXEEXT): $(ttf2afm_OBJECTS) $(ttf2afm_DEPENDENCIES) $(EXTRA_ttf2afm_DEP
 	@rm -f ttf2afm$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(ttf2afm_OBJECTS) $(ttf2afm_LDADD) $(LIBS)
 
+twill$(EXEEXT): $(twill_OBJECTS) $(twill_DEPENDENCIES) $(EXTRA_twill_DEPENDENCIES) 
+	@rm -f twill$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(twill_OBJECTS) $(twill_LDADD) $(LIBS)
+
 upbibtex$(EXEEXT): $(upbibtex_OBJECTS) $(upbibtex_DEPENDENCIES) $(EXTRA_upbibtex_DEPENDENCIES) 
 	@rm -f upbibtex$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(upbibtex_OBJECTS) $(upbibtex_LDADD) $(LIBS)
@@ -8333,10 +8337,6 @@ vptovf$(EXEEXT): $(vptovf_OBJECTS) $(vptovf_DEPENDENCIES) $(EXTRA_vptovf_DEPENDE
 weave$(EXEEXT): $(weave_OBJECTS) $(weave_DEPENDENCIES) $(EXTRA_weave_DEPENDENCIES) 
 	@rm -f weave$(EXEEXT)
 	$(AM_V_CCLD)$(LINK) $(weave_OBJECTS) $(weave_LDADD) $(LIBS)
-
-twill$(EXEEXT): $(twill_OBJECTS) $(twill_DEPENDENCIES) $(EXTRA_twill_DEPENDENCIES)
-	@rm -f twill$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(twill_OBJECTS) $(twill_LDADD) $(LIBS)
 
 wofm2opl$(EXEEXT): $(wofm2opl_OBJECTS) $(wofm2opl_DEPENDENCIES) $(EXTRA_wofm2opl_DEPENDENCIES) 
 	@rm -f wofm2opl$(EXEEXT)
@@ -8560,6 +8560,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tex-texini.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tftopl.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tie-tie.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/twill.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upbibtex-upbibtex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/updvitype-updvitype.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmp.Po@am__quote@ # am--include-marker
@@ -8582,7 +8583,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vftovp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/vptovf.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/weave.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/twill.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex-pool.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xetex-xetex0.Po@am__quote@ # am--include-marker
@@ -19912,6 +19912,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/tex-texini.Po
 	-rm -f ./$(DEPDIR)/tftopl.Po
 	-rm -f ./$(DEPDIR)/tie-tie.Po
+	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/upbibtex-upbibtex.Po
 	-rm -f ./$(DEPDIR)/updvitype-updvitype.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmp.Po
@@ -19934,7 +19935,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/vftovp.Po
 	-rm -f ./$(DEPDIR)/vptovf.Po
 	-rm -f ./$(DEPDIR)/weave.Po
-	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/xetex-dummy.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex-pool.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex0.Po
@@ -20693,6 +20693,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/tex-texini.Po
 	-rm -f ./$(DEPDIR)/tftopl.Po
 	-rm -f ./$(DEPDIR)/tie-tie.Po
+	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/upbibtex-upbibtex.Po
 	-rm -f ./$(DEPDIR)/updvitype-updvitype.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmp.Po
@@ -20715,7 +20716,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/vftovp.Po
 	-rm -f ./$(DEPDIR)/vptovf.Po
 	-rm -f ./$(DEPDIR)/weave.Po
-	-rm -f ./$(DEPDIR)/twill.Po
 	-rm -f ./$(DEPDIR)/xetex-dummy.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex-pool.Po
 	-rm -f ./$(DEPDIR)/xetex-xetex0.Po
@@ -21568,9 +21568,9 @@ twill-web2c: twill.p $(web2c_depend)
 	@$(web2c) twill
 twill.p: tangle$(EXEEXT) twill.web
 	$(tangle) twill
-twill.log: twill$(EXEEXT)
 twill.web: tie$(EXEEXT) weave.web weave.ch weav-twill.ch
 	$(tie_m) weave.web weave.ch weav-twill.ch
+twill.log: twill$(EXEEXT)
 ctie.c: ctangle$(EXEEXT) ctiedir/ctie.w ctiedir/ctie-k.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/ctiedir $(ctangle) ctie.w ctie-k.ch
 cweave.c: ctangle$(EXEEXT) cwebdir/comm-w2c.h cwebdir/cweave.w cwebdir/prod-cweave.w cwebdir/cweav-w2c.ch
