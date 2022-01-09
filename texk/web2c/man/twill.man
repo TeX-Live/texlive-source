@@ -16,30 +16,27 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-weave \- translate WEB to TeX
+twill \- translate WEB to TeX
 .SH SYNOPSIS
-.B weave
+.B twill
 .RB [ \-x ]
 .IR webfile [ \fB.web\fP ]
 .RI [ changefile [ \fB.ch\fP ]]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The
-.B weave
+.B twill
 program is used to create a \*(TX file for viewing a \*(WB program.
 It takes appropriate care of typographic details like page
 layout and the use of indentation, italics, boldface, etc., and it supplies
-extensive cross-index information that it gathers automatically.
+extensive cross-index information in the form of 'mini-indexes' for each
+spread of pages and a 'master index' at the end that it gathers automatically.
+.PP
 The command line arguments are the same as for
 .B tangle
 except for the option:
 .B \-x
-says to omit the index, module name list, and table of contents pages.
+says to omit the indexes, module name list, and table of contents pages.
 (A
 .I CONTENTS.tex
 file will still be written when the \*(TX file is processed,
@@ -68,9 +65,9 @@ for the details of the searching.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
-.I $TEXMFMAIN/tex/plain/knuth-lib/webmac.tex
+.I $TEXMFMAIN/tex/plain/knuth-lib/twimac-web.tex
 \*(TX macros used by
-.B weave
+.B twill
 output.
 .\"=====================================================================
 .SH "SEE ALSO"

@@ -1,3 +1,8 @@
+2022-01-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* help.h,
+	* weav-twill.ch: Minor adaptions for TWILL.
+
 2022-01-07  Karl Berry  <karl@freefriends.org>
 
 	* (MFTHELP): consistent argument names. Report from

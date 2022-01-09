@@ -427,15 +427,15 @@ Section 124.
 @.\\input webmac@>
 @.webmac@>
 @y
-`\.{\\input twimac}'.
-@.\\input twimac@>
-@.twimac@>
+`\.{\\input twimac-web}'.
+@.\\input twimac-web@>
+@.twimac-web@>
 @z
 
 @x 2204c2367
 out_ptr:=1; out_line:=1; out_buf[1]:="c"; write(tex_file,'\input webma');
 @y
-out_ptr:=1; out_line:=1; out_buf[1]:="c"; write(tex_file,'\input twima');
+out_ptr:=1; out_line:=1; out_buf[1]:="b"; write(tex_file,'\input twimac-we');
 @z
 
 Section 125.
@@ -495,6 +495,14 @@ Section 133.
     if c<>"@@" then err_print('! Double @@ required outside of sections');
 @.Double \AT! required...@>
     end;
+@z
+
+Section 146.
+
+@x 2888c...
+@ Token lists in |@!tok_mem| are composed of the following kinds of
+@y
+@ Token lists in |tok_mem| are composed of the following kinds of
 @z
 
 Section 183.
@@ -694,7 +702,7 @@ and sets |next_control| to the following token.
 @<Functions |scan_const| and |scan_exp|@>=
 function scan_const:integer;
 label done;
-var radix,accum,p:integer;
+var radix,@!accum,p:integer;
 begin if next_control=string then
   begin accum:=buffer[id_first+1]; next_control:=get_next; goto done;
   end
@@ -732,7 +740,7 @@ subroutine, which doesn't complain about certain syntactic errors.
 @<Functions |scan_const| and |scan_exp|@>=
 function scan_exp:integer;
 label done;
-var accum,s:integer;
+var @!accum,s:integer;
 begin if sign(next_control) then accum:=0
 else accum:=scan_const;
 loop  begin if not sign(next_control) then goto done;
