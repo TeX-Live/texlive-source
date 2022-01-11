@@ -420,23 +420,6 @@ NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 # Files not to be distributed
 recurse_this = texk/
 recurse_top = ../
-
-# am/recurse.am: Makefile fragment to configure and build subdirs.
-#
-# Copyright 2017-2020 Karl Berry <tex-live@tug.org>
-# Copyright 2013      Peter Breitenlohner <tex-live@tug.org>
-# You may freely use, modify and/or distribute this file.
-#
-# Requires $(recurse_this) and $(recurse_top).
-# Uses CONF_SUBDIRS and MAKE_SUBDIRS (set by kpse-setup.m4).
-#
-# For subdirs not required for the current set of configure options
-# we append '--disable-build' so they can skip tests that would
-# fail because, e.g., some required libraries were not built.
-# (By manually testing $enable_build in configure, e.g., dvisvgm/configure.)
-#
-# Code inspired by automake's way to handle recursive targets.
-#
 cf_silent = $(cf_silent_@AM_V@)
 cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
 cf_silent_0 = --silent
@@ -949,6 +932,8 @@ recurse: $(CONFIG_AUX)
 $(CONFIG_AUX):
 	@echo "configure in $(recurse_top)auxdir/auxsub failed to create the file $@"
 	exit 1
+
+# (end of recurse.am)
 
 # Special target to run TRIP and TRAP tests and create diffs.
 .PHONY: triptrap

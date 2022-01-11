@@ -14,21 +14,6 @@
 
 @SET_MAKE@
 
-# am/bin_links.am: Makefile fragment for bindir links.
-#
-# Copyright 2017-2020 Karl Berry <tex-live@tug.org>
-# Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
-# You may freely use, modify and/or distribute this file.
-#
-# requires conditional WIN32
-# requires $(bin_links)
-# Symlinks within $(bindir): FILE:LINK indicates LINK->FILE
-#  for binaries and scripts use, e.g.,
-#    binprog$(EXEEXT):foo
-#    script:bar
-#  respectively, such that the links created on cygwin are
-#    'foo->binprog.exe' and 'bar->script'.
-
 
 
 VPATH = @srcdir@
@@ -1982,6 +1967,8 @@ uninstall-bin-links:
 @WIN32_FALSE@	  link=`echo $$s | sed 's,.*:,,'`; \
 @WIN32_FALSE@	  rm -f $(DESTDIR)$(bindir)/$$link; \
 @WIN32_FALSE@	done
+
+# (end of bin_links.am)
 .PHONY: install-man1-links uninstall-man1-links
 
 install-man1-links:

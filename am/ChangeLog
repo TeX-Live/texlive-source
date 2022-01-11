@@ -1,3 +1,11 @@
+2022-01-11  Karl Berry  <karl@freefriends.org>
+
+	* bin_links.am,
+	* recurse.am: comment out comments (##) again; turns out
+	the leading comments all end up at the beginning of Makefile.in,
+	which is not useful. On the other hand, insert # (end of ...)
+	comments, which do show up in the normal place.
+
 2017-02-17  Karl Berry  <karl@freefriends.org>
 
 	* bin_links.am,
