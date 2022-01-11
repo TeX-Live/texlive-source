@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am: copyright 2022.
+
 2022-01-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* twill.man,

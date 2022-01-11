@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/ptex.am: do not silence tangle-sh.
+
 2021-07-01  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Set subtype=0 for adjust_node.

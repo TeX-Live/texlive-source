@@ -1,3 +1,14 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am: do not silence tangle-sh.
+	(noinst_PROGRAMS): += himktables, so we get Automake's rules
+	to build it instead of whatever is predefined in make.
+	(EXTRA_PROGRAMS): delete, not needed since all listed in bin_PROGRAMS.
+	(hiformat_c_h_l_y): update.
+	* hilexer.l,
+	* hiparser.y: remove these derived files. We check in the
+	.c and .h files instead.
+
 2021-12-17  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* am/hitex.am (hitables.c): need $(EXEEXT) to execute himktables.

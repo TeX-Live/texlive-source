@@ -1,31 +1,50 @@
 #! @SHELL@
-# tangle-sh: shell script to invoke tangle (or ctangle, etc).
+# $Id$
+# tangle-sh: shell script to invoke tangle, ctangle, otangle.
 #
-#   Copyright (C) 2009, 2012 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+#   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
 #   with or without modifications, as long as this notice is preserved.
 #
 # Tangle may create several files, e.g., tex.p and tex.pool from tex.web
-# and tex.ch.  The naive rule
+# and tex.ch.  The simple but naive rule
 #	tex.p tex.pool: tex.web tex.ch tangle$(EXEEXT)
 #		$(tangle) tex tex
-# could run 'tangle tex tex' twice in parallel and fail.  To avoid this
-# and yet recover from removal of tex.p and/or tex.pool, we use an
-# auxiliary stamp file tex-tangle and the two rules
+# could run 'tangle tex tex' twice in parallel and thus fail.
+# 
+# To avoid this and yet recover from removal of tex.p and/or tex.pool,
+# we use an auxiliary stamp file tex-tangle and the two identical rules:
 #	tex.p tex.pool: tex-tangle
+#		# recover from deletion of target files:
 #		WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE) tex tex
 #	tex-tangle: tex.web tex.ch tangle$(EXEEXT) tangle-sh
+#		# normal build:
 #		WEBINPUTS=.:$(srcdir) $(SHELL) ./tangle-sh $@ $(TANGLE) tex tex
-# Compare Automake manual (info Automake) 27.9: Multiple Outputs
 #
+# Confusingly, both rules invoke this script (tangle-sh[.in]), but have
+# quite different purposes, as indicated above. As a result, make will
+# always run tangle-sh twice when a target needs to be rebuilt.
+# 
+# The actual running of tangle happens in the second rule, when we are
+# making the stamp file. The first rule is to recover from deletion of
+# the derived files.
+# 
+# This approach is in the Automake manual, Multiple Outputs node:
+# https://gnu.org/s/automake/manual/html_node/Multiple-Outputs.html
+#   
+# By the way, the name of the stamp file (foo-tangle) is embedded both
+# in this script and in the various *.am files, so it can't be changed lightly.
+
 TEXMFCNF=@srcdir@/../kpathsea; export TEXMFCNF
 
 env="TEXMFCNF=$TEXMFCNF"
 test "x$WEBINPUTS" = x || env="WEBINPUTS=$WEBINPUTS $env"
 test "x$CWEBINPUTS" = x || env="CWEBINPUTS=$CWEBINPUTS $env"
 
+prg=`basename $0`
 target=$1; shift
 tangle=$1; shift
 base=$1
@@ -33,13 +52,13 @@ base=$1
 do_tangle () {
   echo timestamp >$stamp.tmp
   if $AM_V_P; then
-    echo "$env $tangle $@"
+    echo "$prg: $env $tangle $@"
     $tangle "$@" || exit 1
   else
     case $base in
       aleph | xetex) echo "  OTANGLE " $base;;
-      *tex | mf*) echo "  TANGLE  " $base;;
-      *) echo "  CTANGLE " $base;;
+         *tex | mf*) echo "  TANGLE  " $base;;
+                  *) echo "  CTANGLE " $base;;
     esac
     $tangle "$@" >$base.out 2>&1; rc=$?
     test $rc -eq 0 || { cat $base.out; exit $rc; }
@@ -56,8 +75,14 @@ case $target in
     do_tangle "$@"
   ;;
   *)
-    # Recover from removal of $target
-    test -f $target && exit 0
+    # Recover from removal of $target if necessary.
+    if test -f $target; then
+      $AM_V_P && echo "$prg: checking for $target ... ok"
+      exit 0
+    else
+      $AM_V_P && echo "$prg: recovering $target"
+    fi
+    #
     trap "rm -rf $stamp $stamp.lock" 1 2 13 15
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.

@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2021
-@set month-year September 2021
+@set month-year January 2022
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -15,7 +15,7 @@
 This file documents the @TL{} build system and more.
 
 @noindent
-Copyright @copyright{} 2016--2021 Karl Berry.@*
+Copyright @copyright{} 2016--2022 Karl Berry.@*
 Copyright @copyright{} 2013--2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
@@ -220,16 +220,22 @@ efforts, neither task is easy.)
 @cindex compilers, C and C++11
 Overall, building the @TL{} programs, when using all libraries from
 the TL source tree, requires C and C++11 compilers and GNU
-@code{make}.  If @code{make} from your @code{PATH} is not GNU make,
+@code{make}.  If @code{make} from your @code{PATH} is not GNU @code{make,}
 you can set the @code{MAKE} environment variable to whatever is necessary.
 
 @cindex GNU @code{make}, required
 @cindex @code{gmake}, required
 @cindex FreeType
+@cindex @code{$@@} target in normal @code{make} rules
 GNU @code{make} is required only because of some third-party
-libraries, notably FreeType; all the TL-maintained directories (and
-Automake/Autoconf output in general) work with any reasonable
-@code{make}.
+libraries, notably FreeType; Automake/Autoconf output in general, and
+the TL-maintained directories, work with any reasonable
+@code{make}.@footnote{There is one exception in TL: the
+@code{tangle-sh} and related rules use @code{$@@} to mean the target
+name, a feature not present in all @code{make}s. This could be
+alleviated by some laborious editing, but since there's no way to
+avoid GNU @code{make} for the entire tree, it does not seem worth the
+trouble.}
 
 @cindex C++11, required
 A C++11 compiler is similarly required because of the third-party

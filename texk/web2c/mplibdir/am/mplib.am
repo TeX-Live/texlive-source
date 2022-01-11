@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/mplibdir/am/mplib.am: Makefile fragment for MetaPost.
 ##
-## Copyright 2017-2021 Luigi Scarso <tex-live@tug.org>
+## Copyright 2017-2022 Luigi Scarso <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -52,9 +53,9 @@ mpost.c: ctangle$(EXEEXT) mplibdir/mpost.w
 	$(mp_ctangle) mpost.w
 
 $(mpxout_c_h): mpxout-tangle
-	@$(mp_ctangle_sh) mpxout
+	$(mp_ctangle_sh) mpxout
 mpxout-tangle: ctangle$(EXEEXT) mplibdir/mpxout.w tangle-sh
-	@$(mp_ctangle_sh) mpxout
+	$(mp_ctangle_sh) mpxout
 
 ## MetaPost CWeb sources
 mpost_web = mplibdir/mpost.w mplibdir/mpxout.w
@@ -90,3 +91,4 @@ mptrap.diffs: mpost$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 mptrap-clean:
 	rm -rf mptrapdir
 
+# (end of mplib.am)

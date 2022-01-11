@@ -1,6 +1,8 @@
+## $Id$
 ## texk/web2c/am/bootstrap.am: Makefile fragment for tangle and ctangle.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 cp_silent = $(cp_silent_@AM_V@)
@@ -13,30 +15,23 @@ cp_silent_1 =
 bin_PROGRAMS += tangle
 nodist_tangle_SOURCES = tangle.c tangle.h
 tangle.c tangle.h: tangle-web2c
-	@$(web2c) tangle
+	$(web2c) tangle
 tangle-web2c: tangle.p $(web2c_depend)
-	@$(web2c) tangle
+	$(web2c) tangle
 # tangle.p is a special case, since it is needed to compile itself.  We
 # convert and compile the (distributed) tangleboot.pin to make a tangle
 # which we use to make the other programs.  We depend on tangleboot, even
 # though we might not use it.
 tangle.p: tangleboot$(EXEEXT) tangle.web tangle.ch
 	$(tangleboot) tangle tangle
-	@cmp -s tangle.p $(srcdir)/tangleboot.pin || { \
+	cmp -s tangle.p $(srcdir)/tangleboot.pin || { \
 	  if $(AM_V_P); then \
 	    echo "Updating tangle.p => $(srcdir)/tangleboot.pin"; \
 	  else \
 	    echo "  UPD     " tangleboot.pin; \
 	  fi; cp -f tangle.p $(srcdir)/tangleboot.pin; }
 tangle.web:
-	@echo "You seem to be missing tangle.web, perhaps because you" >&2
-	@echo "didn't retrieve web.tar.gz, only web2c.tar.gz." >&2
-	@echo "You need both." >&2
-	@echo >&2
-	@echo "web.tar.gz should be available from the" >&2
-	@echo "same place that you got web2c.tar.gz." >&2
-	@echo "In any case, you can get it from" >&2
-	@echo "ftp://ftp.tug.org/tex/web.tar.gz." >&2
+	@echo "You seem to be missing tangle.web, goodbye." >&2
 	false
 EXTRA_DIST += tangle.web tangle.ch
 DISTCLEANFILES += tangle.c tangle.h tangle.p tangle-web2c
@@ -44,9 +39,9 @@ DISTCLEANFILES += tangle.c tangle.h tangle.p tangle-web2c
 noinst_PROGRAMS += tangleboot
 nodist_tangleboot_SOURCES = tangleboot.c tangleboot.h
 tangleboot.c tangleboot.h: tangleboot-web2c
-	@$(web2c) tangleboot
+	$(web2c) tangleboot
 tangleboot-web2c: tangleboot.p $(web2c_depend)
-	@$(web2c) tangleboot
+	$(web2c) tangleboot
 # tangleboot.pin is in the distribution
 .pin.p:
 	$(cp_silent)cp -f $< $@
@@ -59,14 +54,19 @@ DISTCLEANFILES += tangleboot.c tangleboot.h tangleboot.p tangleboot-web2c
 # to create an up-to-date ctangleboot.cin and cwebboot.cin as well.
 bin_PROGRAMS += ctangle
 nodist_ctangle_SOURCES = ctangle.c cweb.c
+#
 # ctangle.c and cweb.c are special cases, since they are needed to compile
 # themselves.  We depend on ctangleboot, even though we might not use it.
 ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
-ctangle.c: common-ctangle cwebdir/ctangle.w cwebdir/ctang-w2c.ch
-	@$(ctangleboot) ctangle ctang-w2c
-cweb.c: common-ctangle cwebdir/common.w cwebdir/comm-w2c.ch
-	@$(ctangleboot) common comm-w2c cweb.c
-common-ctangle: ctangleboot$(EXEEXT) cwebdir/comm-w2c.h ctangleboot-sh
+#
+ctangle.c: $(common_ctangle) cwebdir/ctangle.w cwebdir/ctang-w2c.ch
+	$(ctangleboot) ctangle ctang-w2c.ch
+#
+cweb.c: $(common_ctangle) cwebdir/common.w cwebdir/comm-w2c.ch
+	$(ctangleboot) common comm-w2c.ch cweb.c
+#
+common_ctangle = ctangleboot$(EXEEXT) cwebdir/comm-w2c.h ctangleboot-sh
+
 EXTRA_DIST += cwebdir
 NEVER_DIST += cwebdir/cweave.log cwebdir/cweave.trs
 NEVER_DIST += cwebdir/ctwill.log cwebdir/ctwill.trs
@@ -97,3 +97,4 @@ tangle.log: tangle$(EXEEXT)
 
 DISTCLEANFILES += cftest.p
 
+# (end of bootstrap.am)

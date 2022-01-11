@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/pmpostdir/am/pmpost.am: Makefile fragment for pMetaPost.
 ##
-## Copyright 2018 Karl Berry <tex-live@tug.org>
+## Copyright 2018-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2014-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -64,9 +65,11 @@ pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
 pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## pMetaPost C sources
-nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) $(pmpmathdecimal_c_h) \
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) \
+        $(pmpmathdecimal_c_h) \
 	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
 	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
+#
 pmp_c_h =  pmp.c pmplib.h pmpmp.h
 pmpmath_c_h = pmpmath.c pmpmath.h
 pmpmathbinary_c_h = pmpmathbinary.c pmpmathbinary.h
@@ -136,24 +139,24 @@ ptfmin.c: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch
 
 # Creating several files: need stamp file and two rules with identical recipes
 $(pmp_c_h): pmp-tangle
-	@$(pmp_ctangle_sh) pmp pmp
+	$(pmp_ctangle_sh) pmp pmp
 pmp-tangle: ctangle$(EXEEXT) pmp.w pmpostdir/pmp.ch tangle-sh
-	@$(pmp_ctangle_sh) pmp pmp
+	$(pmp_ctangle_sh) pmp pmp
 
 $(pmpxout_c_h): pmpxout-tangle
-	@$(pmp_ctangle_sh) pmpxout pmpxout
+	$(pmp_ctangle_sh) pmpxout pmpxout
 pmpxout-tangle: ctangle$(EXEEXT) pmpxout.w pmpostdir/pmpxout.ch tangle-sh
-	@$(pmp_ctangle_sh) pmpxout pmpxout
+	$(pmp_ctangle_sh) pmpxout pmpxout
 
 $(ppsout_c_h): ppsout-tangle
-	@$(pmp_ctangle_sh) ppsout ppsout
+	$(pmp_ctangle_sh) ppsout ppsout
 ppsout-tangle: ctangle$(EXEEXT) ppsout.w pmpostdir/ppsout.ch tangle-sh
-	@$(pmp_ctangle_sh) ppsout ppsout
+	$(pmp_ctangle_sh) ppsout ppsout
 
 $(psvgout_c_h): psvgout-tangle
-	@$(pmp_ctangle_sh) psvgout psvgout
+	$(pmp_ctangle_sh) psvgout psvgout
 psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
-	@$(pmp_ctangle_sh) psvgout psvgout
+	$(pmp_ctangle_sh) psvgout psvgout
 
 ## pMetaPost CWeb sources
 pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
@@ -191,3 +194,4 @@ DISTCLEANFILES += pmpsamp.*
 ## pmpostdir/upmpsamp.test
 DISTCLEANFILES += upmpsamp.*
 
+# (end of pmpost.am)

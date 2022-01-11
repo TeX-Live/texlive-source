@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/euptex.am: do not silence tangle-sh.
+
 2021-12-07  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* am/euptex.am: Add suppresserrors.ch.

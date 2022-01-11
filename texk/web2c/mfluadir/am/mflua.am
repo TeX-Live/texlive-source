@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/mfluadir/am/mflua.am: Makefile fragment for MFLua.
 ##
-## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -76,9 +77,9 @@ mflua-pool.c: mflua.pool mfluad.h $(makecpool_stamp)
 
 # Tangling MFLua
 mflua.p mflua.pool: mflua-tangle
-	@$(texmf_tangle) mflua mflua
+	$(texmf_tangle) mflua mflua
 mflua-tangle: tangle$(EXEEXT) mflua.web mflua.ch tangle-sh
-	@$(texmf_tangle) mflua mflua
+	$(texmf_tangle) mflua mflua
 
 # Extract mflua version
 $(srcdir)/mfluadir/mflua_version.h: @MAINTAINER_MODE_TRUE@ mfluadir/mf-lua.ch
@@ -136,3 +137,5 @@ EXTRA_DIST += \
 	mfluadir/mfluatrap/mflua_ttx_backend.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs
+
+# (end of mflua.am)

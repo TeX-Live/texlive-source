@@ -1,7 +1,10 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/mfluajit.am: do not silence tangle-sh.
+
 2017-04-16 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* am/mfluajit.am: delete useless lua files
-
 
 2016-04-05  Karl Berry  <karl@tug.org>
 

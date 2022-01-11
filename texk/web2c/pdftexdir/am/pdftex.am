@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright 2016-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -43,13 +43,13 @@ nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
 dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
 	pdftexdir/pdftex_version.h pdftexdir/etex_version.h
 $(pdftex_c_h): pdftex-web2c
-	@$(web2c) pdftex
+	$(web2c) pdftex
 pdftex-web2c: pdftex.p $(web2c_texmf) pdftexdir/pdftex.defines
-	@$(web2c) pdftex
+	$(web2c) pdftex
 pdftex.p pdftex.pool: pdftex-tangle
-	@$(pdf_tangle) pdftex pdftex-final
+	$(pdf_tangle) pdftex pdftex-final
 pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex-final.ch tangle-sh
-	@$(pdf_tangle) pdftex pdftex-final
+	$(pdf_tangle) pdftex pdftex-final
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
 	$(makecpool) pdftex >$@ || rm -f $@
 
@@ -137,3 +137,5 @@ DISTCLEANFILES += cnfline.log
 ## partoken.test
 EXTRA_DIST += tests/partoken-ok.tex tests/partoken-xfail.tex
 DISTCLEANFILES += partoken-ok.log partoken-xfail.log
+
+# (end of pdftex.am)

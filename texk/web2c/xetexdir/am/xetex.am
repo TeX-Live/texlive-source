@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright 2017-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -92,9 +92,9 @@ xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
-	@$(xe_tangle) xetex xetex-final
+	$(xe_tangle) xetex xetex-final
 xetex-tangle: otangle$(EXEEXT) xetexdir/xetex.web xetex-final.ch tangle-sh
-	@$(xe_tangle) xetex xetex-final
+	$(xe_tangle) xetex xetex-final
 
 # Extract etex version
 $(srcdir)/xetexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
@@ -220,3 +220,5 @@ DISTCLEANFILES += bug73.fmt bug73.log bug73.out bug73.tex
 ## xetex-filedump.test
 EXTRA_DIST += xetexdir/tests/filedump.log xetexdir/tests/filedump.tex
 DISTCLEANFILES += filedump.log filedump.out filedump.tex
+
+# (end of xetex.am)

@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/uptex.am: do not silence tangle-sh.
+
 2021-06-29  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Adapt to pTeX p3.10.0.

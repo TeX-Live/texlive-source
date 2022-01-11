@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -60,9 +60,9 @@ ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
 
 # Tangling pTeX
 ptex.p ptex.pool: ptex-tangle
-	@$(texmf_tangle) ptex ptex
+	$(texmf_tangle) ptex ptex
 ptex-tangle: tangle$(EXEEXT) ptex.web ptex.ch tangle-sh
-	@$(texmf_tangle) ptex ptex
+	$(texmf_tangle) ptex ptex
 
 # Extract ptex version
 $(srcdir)/ptexdir/ptex_version.h: @MAINTAINER_MODE_TRUE@ ptexdir/ptex-base.ch
@@ -240,3 +240,5 @@ ptrip-clean:
 	rm -rf ptripdir
 
 DISTCLEANFILES += ptrip.diffs
+
+# (end of ptex.am)

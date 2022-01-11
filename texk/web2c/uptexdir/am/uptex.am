@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright 2016-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -53,9 +53,9 @@ uptex-pool.c: uptex.pool uptexd.h $(makecpool_stamp)
 
 # Tangling upTeX
 uptex.p uptex.pool: uptex-tangle
-	@$(texmf_tangle) uptex uptex
+	$(texmf_tangle) uptex uptex
 uptex-tangle: tangle$(EXEEXT) uptex.web uptex.ch tangle-sh
-	@$(texmf_tangle) uptex uptex
+	$(texmf_tangle) uptex uptex
 
 # Extract uptex version
 $(srcdir)/uptexdir/uptex_version.h: @MAINTAINER_MODE_TRUE@ uptexdir/uptex-m.ch
@@ -228,3 +228,4 @@ uptrip-clean:
 
 DISTCLEANFILES += uptrip.diffs
 
+# (end of uptex.am)

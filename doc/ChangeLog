@@ -1,3 +1,8 @@
+2022-01-11  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Prerequisites): mention use of GNU make $@ feature
+	wrt tangle-sh[.in], etc.
+
 2021-07-06  Karl Berry  <karl@tug.org>
 
 	* tlbuild.texi (Build one package, Build one engine): more

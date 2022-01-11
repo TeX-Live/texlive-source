@@ -1,3 +1,8 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/libmplib.am,
+	* am/mplib.am: do not silence tangle-sh.
+
 2021-05-09  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Impose mp->stack_size < 1001 in @d push_input to avoid stack overflow 
           due infinite recursion of macro expansion (thanks to A. Kakuto).

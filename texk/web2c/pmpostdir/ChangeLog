@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/pmpost.am: do not silence tangle-sh.
+
 2021-04-11  Akira Kakuto  <kakuto@w32tex.org>
 
 	* pmp.ch: Sync with the version 2.01 mp.w.

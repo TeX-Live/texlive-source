@@ -1,13 +1,13 @@
 ## $Id$
 ## texk/web2c/hitexdir/am/hitex.am: Makefile fragment for HiTeX
 ##
-## Copyright 2021 Martin Ruckert <ruckert@cs.hm.edu>
+## Copyright 2021-2022 Martin Ruckert <ruckert@cs.hm.edu>
 ## You may freely use, modify and/or distribute this file.
 
 if HITEX
 bin_PROGRAMS += hitex hishrink histretch
+noinst_PROGRAMS += himktables
 endif HITEX
-EXTRA_PROGRAMS += hitex hishrink histretch
 
 # convenience target to build all the programs here.
 hiall: hitex hishrink histretch
@@ -40,12 +40,18 @@ hi_ctangle_sh = CWEBINPUTS=$(srcdir)/hitexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle
 
 # HiTeX C/yacc/lex sources generated using ctangle.
 # For each cweb (.w) source file, list the files generated.
-hiformat_c_h_l_y = hibasetypes.h hierror.h hiformat.h \
-        himktables.c \
-	hiput.c hiput.h \
+hiformat_c_h_l_y = \
+        hibasetypes.h \
+        hierror.h \
+        hiformat.c hiformat.h \
 	higet.c higet.h \
-	hilexer.l hiparser.y \
-	hishrink.c histretch.c
+	hilexer.l \
+        himktables.c \
+	hiparser.y \
+	hiput.c hiput.h \
+	hishrink.c \
+	hiskip.c \
+	histretch.c
 hitex_c = hitex.c 
 
 $(hiformat_c_h_l_y): hiformat-tangle

@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/etex.am: do not silence tangle-sh.
+
 2021-03-23  Karl Berry  <karl@tug.org>
 
 	* TL'21.

@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/aleph.am: do not silence tangle-sh.
+
 2021-07-19  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 
 	* com16bit.ch: Sync with tex.ch to initialize limit.

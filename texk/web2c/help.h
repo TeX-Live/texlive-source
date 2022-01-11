@@ -10,7 +10,7 @@
    thing, the messages have a lot in common, so it's nice to have them
    in one place.)
 
-Copyright 1995, 1996, 2009, 2011-2019 Karl Berry.
+Copyright 1995, 1996, 2009, 2011-2022 Karl Berry.
 Copyright 2008 Taco Hoekwater.
 Copyright 2001, 2003, 2004 Olaf Weber.
 

@@ -2,7 +2,7 @@
 ## texk/web2c/am/web.am: Makefile fragment for the standard web programs --
 ## except tangle.
 ##
-## Copyright 2018-2019 Karl Berry <tex-live@tug.org>
+## Copyright 2018-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 

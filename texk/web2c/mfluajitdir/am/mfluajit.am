@@ -1,6 +1,7 @@
+## $Id$
 ## texk/web2c/mfluajitdir/am/mfluajit.am: Makefile fragment for MFLuaJIT.
 ##
-## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -76,9 +77,9 @@ mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
 
 # Tangling MFLuaJIT
 mfluajit.p mfluajit.pool: mfluajit-tangle
-	@$(texmf_tangle) mfluajit mfluajit
+	$(texmf_tangle) mfluajit mfluajit
 mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
-	@$(texmf_tangle) mfluajit mfluajit
+	$(texmf_tangle) mfluajit mfluajit
 
 # Generate mfluajit.web
 mfluajit.web: tie$(EXEEXT) $(mfluajit_web_srcs)
@@ -133,3 +134,5 @@ EXTRA_DIST += \
         mfluadir/mfluatrap/mflua_ttx_backend.lua \
         mfluadir/mfluatrap/texmf.cnf \
         mfluadir/mfluatrap/mfluatrap.diffs
+
+# (end of mfluajit.am)

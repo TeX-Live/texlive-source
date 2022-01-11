@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -54,9 +54,9 @@ tex-pool.c: tex.pool texd.h $(makecpool_stamp)
 
 # Tangling TeX
 tex.p tex.pool: tex-tangle
-	@$(texmf_tangle) tex tex-final
+	$(texmf_tangle) tex tex-final
 tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
-	@$(texmf_tangle) tex tex-final
+	$(texmf_tangle) tex tex-final
 
 # Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
@@ -186,9 +186,9 @@ mf-pool.c: mf.pool mfd.h $(makecpool_stamp)
 
 # Tangling Metafont
 mf.p mf.pool: mf-tangle
-	@$(texmf_tangle) mf mf-final
+	$(texmf_tangle) mf mf-final
 mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
-	@$(texmf_tangle) mf mf-final
+	$(texmf_tangle) mf mf-final
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
@@ -273,3 +273,4 @@ EXTRA_DIST += \
 	triptrap/writeo \
 	triptrap/writeo.2
 
+# (end of texmf.am)

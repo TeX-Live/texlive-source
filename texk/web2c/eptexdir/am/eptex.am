@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -37,9 +37,9 @@ eptex-pool.c: eptex.pool eptexd.h $(makecpool_stamp)
 
 # Tangling e-pTeX
 eptex.p eptex.pool: eptex-tangle
-	@$(texmf_tangle) eptex eptex
+	$(texmf_tangle) eptex eptex
 eptex-tangle: tangle$(EXEEXT) eptex.web eptex.ch tangle-sh
-	@$(texmf_tangle) eptex eptex
+	$(texmf_tangle) eptex eptex
 
 # Extract eptex version
 $(srcdir)/eptexdir/eptex_version.h: @MAINTAINER_MODE_TRUE@ eptexdir/eptex.ech
@@ -123,3 +123,4 @@ EXTRA_DIST += \
 	eptexdir/tests/pdfprimitive-eptex.log
 DISTCLEANFILES += pdfprimitive-eptex.*
 
+# (end of eptex.am)

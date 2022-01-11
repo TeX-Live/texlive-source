@@ -1,6 +1,8 @@
+## $Id$
 ## texk/web2c/omegaware/am/omegaware.am: Makefile fragment for omegaware web programs.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 omegaware_programs = odvicopy odvitype otangle wofm2opl wopl2ofm wovf2ovp wovp2ovf
@@ -63,9 +65,9 @@ DISTCLEANFILES += opl2ofm.web
 
 nodist_otangle_SOURCES = otangle.c otangle.h
 otangle.c otangle.h: otangle-web2c
-	@$(web2c) otangle
+	$(web2c) otangle
 otangle-web2c: otangle.p $(web2c_depend)
-	@$(web2c) otangle
+	$(web2c) otangle
 EXTRA_DIST += $(otangle_sources)
 otangle_sources = omegaware/otangle.web omegaware/otangle.ch
 otangle.p: tangle$(EXEEXT) $(otangle_sources)
@@ -213,3 +215,4 @@ EXTRA_DIST += \
 	omegaware/tests/arabicr.pl omegaware/tests/arabic.ovp
 DISTCLEANFILES += omegaware/tests/*yarabic*
 
+# (end of omegaware.am)

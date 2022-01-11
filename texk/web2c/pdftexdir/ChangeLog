@@ -1,3 +1,7 @@
+2022-01-10  Karl Berry  <karl@freefriends.org>
+
+	* am/pdftex.am: do not silence tangle-sh.
+
 2021-11-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* pdftex.web: Use WEB meta-comment for stale code.

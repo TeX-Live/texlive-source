@@ -1,7 +1,8 @@
+## $Id$
 ## texk/web2c/mplibdir/am/libmplib.am: Makefile fragment for libmplib.
 ##
-## Copyright (C) 2015-2021 Luigi Scarso <tex-live@tug.org>
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2022 Luigi Scarso <tex-live@tug.org>
+## Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## libmplib.a, used by MetaPost and luaTeX
@@ -38,49 +39,49 @@ tfmin.c: ctangle$(EXEEXT) mplibdir/tfmin.w
 
 # Creating several files: need stamp file and two rules with identical recipes
 $(mp_c_h): mp-tangle 
-	@$(mp_ctangle_sh) mp
+	$(mp_ctangle_sh) mp
 mp-tangle: ctangle$(EXEEXT) mplibdir/mp.w tangle-sh
-	@$(mp_ctangle_sh) mp
+	$(mp_ctangle_sh) mp
 
 $(mpmath_c_h): mpmath-tangle mp-tangle
-	@$(mp_ctangle_sh) mpmath
+	$(mp_ctangle_sh) mpmath
 mpmath-tangle: ctangle$(EXEEXT) mplibdir/mpmath.w tangle-sh
-	@$(mp_ctangle_sh) mpmath
+	$(mp_ctangle_sh) mpmath
 
 $(mpmathbinary_c_h): mpmathbinary-tangle mp-tangle
-	@$(mp_ctangle_sh) mpmathbinary
+	$(mp_ctangle_sh) mpmathbinary
 mpmathbinary-tangle: ctangle$(EXEEXT) mplibdir/mpmathbinary.w tangle-sh
-	@$(mp_ctangle_sh) mpmathbinary
+	$(mp_ctangle_sh) mpmathbinary
 
 $(mpmathdecimal_c_h): mpmathdecimal-tangle mp-tangle
-	@$(mp_ctangle_sh) mpmathdecimal
+	$(mp_ctangle_sh) mpmathdecimal
 mpmathdecimal-tangle: ctangle$(EXEEXT) mplibdir/mpmathdecimal.w tangle-sh
-	@$(mp_ctangle_sh) mpmathdecimal
+	$(mp_ctangle_sh) mpmathdecimal
 
 $(mpmathdouble_c_h): mpmathdouble-tangle mp-tangle
-	@$(mp_ctangle_sh) mpmathdouble
+	$(mp_ctangle_sh) mpmathdouble
 mpmathdouble-tangle: ctangle$(EXEEXT) mplibdir/mpmathdouble.w tangle-sh
-	@$(mp_ctangle_sh) mpmathdouble
+	$(mp_ctangle_sh) mpmathdouble
 
 $(mpstrings_c_h): mpstrings-tangle
-	@$(mp_ctangle_sh) mpstrings
+	$(mp_ctangle_sh) mpstrings
 mpstrings-tangle: ctangle$(EXEEXT) mplibdir/mpstrings.w tangle-sh
-	@$(mp_ctangle_sh) mpstrings
+	$(mp_ctangle_sh) mpstrings
 
 $(pngout_c_h): pngout-tangle
-	@$(mp_ctangle_sh) pngout
+	$(mp_ctangle_sh) pngout
 pngout-tangle: ctangle$(EXEEXT) mplibdir/pngout.w tangle-sh
-	@$(mp_ctangle_sh) pngout
+	$(mp_ctangle_sh) pngout
 
 $(psout_c_h): psout-tangle
-	@$(mp_ctangle_sh) psout
+	$(mp_ctangle_sh) psout
 psout-tangle: ctangle$(EXEEXT) mplibdir/psout.w tangle-sh
-	@$(mp_ctangle_sh) psout
+	$(mp_ctangle_sh) psout
 
 $(svgout_c_h): svgout-tangle
-	@$(mp_ctangle_sh) svgout
+	$(mp_ctangle_sh) svgout
 svgout-tangle: ctangle$(EXEEXT) mplibdir/svgout.w tangle-sh
-	@$(mp_ctangle_sh) svgout
+	$(mp_ctangle_sh) svgout
 
 ## libmplib CWeb sources
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w mplibdir/pngout.w
@@ -101,3 +102,4 @@ DISTCLEANFILES += $(nodist_libmplibcore_a_SOURCES) $(nodist_libmplibextramath_a_
 	mp-tangle mpmath-tangle mpmathdecimal-tangle mpmathdouble-tangle \
 	mpstrings-tangle psout-tangle svgout-tangle pngout-tangle
 
+# (end of libmplib.am)

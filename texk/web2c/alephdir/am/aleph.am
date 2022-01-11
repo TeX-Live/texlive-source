@@ -1,6 +1,8 @@
+## $Id$
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## Aleph
@@ -39,9 +41,9 @@ aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle
-	@$(al_tangle) aleph aleph
+	$(al_tangle) aleph aleph
 aleph-tangle: otangle$(EXEEXT) aleph.web aleph.ch tangle-sh
-	@$(al_tangle) aleph aleph
+	$(al_tangle) aleph aleph
 
 # Generate aleph.web
 aleph_web_srcs = \
@@ -110,3 +112,4 @@ if ALEPH
 TESTS += $(aleph_tests)
 endif ALEPH
 
+# (end of aleph.am)

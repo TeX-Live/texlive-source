@@ -1,20 +1,24 @@
 #! @SHELL@
-# ctangleboot-sh: shell script to invoke ctangleboot and if required
-#    update c{tangle,web}boot.[ch]in from c{tangle,web}.[ch].
-#    For details see tangle-sh.
+# $Id$
+# ctangleboot-sh: shell script to invoke ctangleboot and, if required,
+#   update c{tangle,web}boot.[ch]in from c{tangle,web}.[ch].
+# For details see tangle-sh[.in].
 #
-#   Copyright (C) 2009-2012 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+#   Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
 #   with or without modifications, as long as this notice is preserved.
 #
+prg=`basename $0`
 target=$1; shift
 base=$1
 case $base in
   common) file=cweb; exts=c;;
   ctangle) file=ctangle; exts=c;;
-  *) echo "Usage: $0 TARGET {common|ctangle} [CHANGEFILE]" >&2; exit 1;;
+  *) echo "Usage: $0 TARGET common|ctangle [CHANGEFILE] [OUTFILE]" >&2
+     exit 1;;
 esac
 
 TEXMFCNF=@srcdir@/../kpathsea; export TEXMFCNF
@@ -23,12 +27,16 @@ CWEBINPUTS=@srcdir@/cwebdir; export CWEBINPUTS
 do_ctangleboot () {
   echo timestamp >$stamp.tmp
   if $AM_V_P; then
-    echo "@CTANGLEBOOT@ $@"
+    echo "$prg: @CTANGLEBOOT@ $@"
     @CTANGLEBOOT@ "$@" || exit 1
+    test -s $file.$exts \
+    || { echo "$prg: $file.$exts empty." >&2; rm -f $file.$exts; exit 1; }
   else
     echo "  CTANGLE " $base
     @CTANGLEBOOT@ "$@" >$base.out 2>&1; rc=$?
-    test $rc -eq 0 || { cat $base.out; exit $rc; }
+    # succeed and generate nonempty file
+    (test $rc -eq 0 && test -s $file.$exts) \
+    || { cat $base.out; rm -f $file.$exts exit $rc; }
     rm -f $base.out
   fi
   mv -f $stamp.tmp $stamp
@@ -42,8 +50,14 @@ case $target in
     do_ctangleboot "$@"
   ;;
   *)
-    # Recover from removal of $target
-    test -f $target && exit 0
+    # Recover from removal of $target if necessary.
+    if test -f $target; then
+      $AM_V_P && echo "$prg: checking for $target ... ok"
+      exit 0
+    else
+      $AM_V_P && echo "$prg: recovering $target"
+    fi
+    #
     trap "rm -rf $stamp $stamp.lock" 1 2 13 15
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.
