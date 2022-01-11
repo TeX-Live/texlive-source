@@ -1,3 +1,15 @@
+2022-01-11  Marcel Kr\"uger  <tex@2krueger.de>
+
+	* showstream.ch: adjust selector for show_stream.
+	Bug report from Hironobu Yamashita, 8 Dec 2021:
+\newwrite\IO
+\immediate\openout\IO=io.tex
+\showstream=\IO
+\showtokens A \end
+
+This should throw an error "! Missing { inserted." but for now
+it just stops silently and if I press [Enter] it crashes.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* tangle-sh.in,
