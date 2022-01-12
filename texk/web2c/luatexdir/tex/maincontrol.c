@@ -4055,12 +4055,16 @@ void show_whatever(void)
     int n;      /* level of \.{\\if...\\fi} nesting */
     switch (cur_chr) {
     case show_lists:
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
         begin_diagnostic();
         show_activities();
         break;
     case show_box_code:
         /*tex Show the current contents of a box. */
         scan_register_num();
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
         begin_diagnostic();
         tprint_nl("> \\box");
         print_int(cur_val);
@@ -4073,7 +4077,9 @@ void show_whatever(void)
     case show_code:
         /*tex Show the current meaning of a token, then |goto common_ending|. */
         get_token();
-        if (interaction == error_stop_mode)
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
+        else if (interaction == error_stop_mode)
             wake_up_terminal();
         tprint_nl("> ");
         if (cur_cs != 0) {
@@ -4085,10 +4091,14 @@ void show_whatever(void)
         break;
         /*tex Cases for |show_whatever| */
     case show_groups:
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
         begin_diagnostic();
         show_save_groups();
         break;
     case show_ifs:
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
         begin_diagnostic();
         tprint_nl("");
         print_ln();
@@ -4128,7 +4138,9 @@ void show_whatever(void)
             common_ending|.
         */
         p = the_toks();
-        if (interaction == error_stop_mode)
+        if (file_can_be_written(show_stream_par))
+            selector = show_stream_par;
+        else if (interaction == error_stop_mode)
             wake_up_terminal();
         tprint_nl("> ");
         token_show(temp_token_head);
@@ -4147,6 +4159,10 @@ void show_whatever(void)
         }
     }
   COMMON_ENDING:
+    if (valid_write_file(selector)) {
+        fixup_selector(log_opened_global);
+        return;
+    }
     if (interaction < error_stop_mode) {
         help0();
         decr(error_count);

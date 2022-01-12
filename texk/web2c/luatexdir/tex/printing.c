@@ -382,7 +382,8 @@ void print_nlp(void)
 {
     if (new_string_line > 0) {
         print_char(new_string_line);
-    } else if (((term_offset > 0) && (odd(selector))) ||
+    } else if ((selector < no_print) ||
+               ((term_offset > 0) && (odd(selector))) ||
                ((file_offset > 0) && (selector >= log_only))) {
         print_ln();
     }
