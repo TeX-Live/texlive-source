@@ -1,3 +1,7 @@
+2022-01-12  Marcel Kr\"uger  <tex@2krueger.de>
+
+	* showstream.ch: if (selector<no_print), rather than <log_only.
+
 2022-01-11  Marcel Kr\"uger  <tex@2krueger.de>
 
 	* showstream.ch: adjust selector for show_stream.

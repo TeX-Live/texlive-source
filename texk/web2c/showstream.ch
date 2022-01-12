@@ -13,7 +13,7 @@ print(s);
 end;
 @y
 procedure print_nl(@!s:str_number); {prints string |s| at beginning of line}
-begin if (selector<log_only)or((term_offset>0)and(odd(selector)))or@|
+begin if (selector<no_print)or((term_offset>0)and(odd(selector)))or@|
   ((file_offset>0)and(selector>=log_only)) then print_ln;
 print(s);
 end;
