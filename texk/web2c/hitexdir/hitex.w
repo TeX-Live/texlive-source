@@ -30524,8 +30524,8 @@ static int next_label(void)
    overflow("labels",0xFFFF);
   if (label_no>=labels_allocated)
   { if (labels_allocated==0)
-    { labels_allocated=32; ALLOCATE(labels,labels_allocated,label_t); }
-    else RESIZE(labels,labels_allocated,label_t);
+    { labels_allocated=32; ALLOCATE(labels,labels_allocated,Label); }
+    else RESIZE(labels,labels_allocated,Label);
   }
   max_ref[label_kind]=label_no;
   return label_no;
@@ -30539,8 +30539,8 @@ static int next_outline(void)
    overflow("outlines",0xFFFF);
   if (outline_no>=outlines_allocated)
   { if (outlines_allocated==0)
-    { outlines_allocated=32; ALLOCATE(outlines,outlines_allocated,outline_t); }
-    else RESIZE(outlines,outlines_allocated,outline_t);
+    { outlines_allocated=32; ALLOCATE(outlines,outlines_allocated,Outline); }
+    else RESIZE(outlines,outlines_allocated,Outline);
   }
   max_outline=outline_no;
   return outline_no;
@@ -30554,13 +30554,13 @@ the hash table.
 
 @<Hi\TeX\ auxiliar routines@>=
 typedef struct hash_entry
-{int num; char *nom; uint16_t n; struct hash_entry *next;} hash_entry_t;
+{int num; char *nom; uint16_t n; struct hash_entry *next;} HashEntry;
 #define LABEL_HASH 1009 /* MIX a prime number */
-static hash_entry_t *label_hash[LABEL_HASH]={NULL};
+static HashEntry *label_hash[LABEL_HASH]={NULL};
 
 static int insert_hash(int h, int num, char *nom)
-{ hash_entry_t *e;
-  ALLOCATE(e,1,hash_entry_t);
+{ HashEntry *e;
+  ALLOCATE(e,1,HashEntry);
   e->n= next_label();
   if (nom!=NULL) e->nom=strdup(nom);
   else e->num=num;
@@ -30579,7 +30579,7 @@ The process is straigth forward:
 @<Hi\TeX\ auxiliar routines@>=
 static int find_label_by_number(int p)
 { unsigned int h=(unsigned int)p%LABEL_HASH;
-  hash_entry_t *e= label_hash[h];
+  HashEntry *e= label_hash[h];
   while (e!=NULL)
     if (e->nom==NULL && e->num==p) return e->n;
     else e=e->next;
@@ -30625,7 +30625,7 @@ static unsigned int name_hash(char *s)
 static int find_label_by_name(pointer p)
 { char *s=tokens_to_name(link(p));
   unsigned int h=name_hash(s)%LABEL_HASH;
-  hash_entry_t *e= label_hash[h];
+  HashEntry *e= label_hash[h];
   while (e!=NULL)
     if (e->nom!=NULL && strcmp(e->nom,s)==0) return e->n;
     else e=e->next;
@@ -30699,7 +30699,7 @@ the UTF8 character codes and display those.
 static void new_outline(pointer p)
 { int r=find_label(p);
   int m=next_outline();
-  list_t l;
+  List l;
   uint32_t pos;
   pos=hpos-hstart;
   l.k=list_kind; /* this eventually should be |text_kind| */
@@ -31723,7 +31723,7 @@ for (i=3; i<= max_section_no;i++)
   i++;
   if (i>0xFFFF) QUIT("Too many file sections");
   if (i>=dir_entries)
-    RESIZE(dir,dir_entries,entry_t);
+    RESIZE(dir,dir_entries,Entry);
   max_section_no=i;
   if (max_section_no>0xFFFF) QUIT("Too many sections");
   dir[i].section_no=i;
@@ -31958,14 +31958,14 @@ will then add the reference number and both tags to the output.
 @<Hi\TeX\ macros@>=
 #define HPUTDEF(F,R)            \
   { uint32_t _p;                \
-    uint8_t _t;                 \
+    uint8_t _f;                 \
     HPUTNODE; /* allocate */    \
     _p=hpos-hstart;             \
     HPUT8(0);  /* tag */        \
     HPUT8(R); /* reference */   \
-    _t=F;                       \
-    hstart[_p]=_t; DBGTAG(_t,hstart+_p);      \
-    DBGTAG(_t,hpos); HPUT8(_t); \
+    _f=F;                       \
+    hstart[_p]=_f; DBGTAG(_f,hstart+_p);      \
+    DBGTAG(_f,hpos); HPUT8(_f); \
   }
 @ Definitions are written to the output only if they differ from Hi\TeX's built in defaults.
 @<Output integer definitions@>=
@@ -32081,7 +32081,7 @@ static pointer new_xdimen(scaled w, scaled h, scaled v)
 @ @<Output extended dimension definitions@>=
   DBG(DBGDEF,"Maximum xdimen reference: %d\n",max_ref[xdimen_kind]);
   for (i=max_fixed[xdimen_kind]+1;i<=max_default[xdimen_kind]; i++)
-  { xdimen_t x;
+  { Xdimen x;
     x.w=xdimen_defined[i].w;
     x.h=xdimen_defined[i].h/(double)ONE;
     x.v=xdimen_defined[i].v/(double)ONE;
@@ -32092,7 +32092,7 @@ static pointer new_xdimen(scaled w, scaled h, scaled v)
         HPUTDEF(hput_xdimen(&x),i);
   }
   for (;i<=max_ref[xdimen_kind]; i++)
-  { xdimen_t x;
+  { Xdimen x;
     x.w=xdimen_defined[i].w;
     x.h=xdimen_defined[i].h/(double)ONE;
     x.v=xdimen_defined[i].v/(double)ONE;
@@ -32103,7 +32103,7 @@ static pointer new_xdimen(scaled w, scaled h, scaled v)
 In general there are two choices on how to store a definition: We can use the data structures used by \TeX\
 or we can use the data structures defined by \HINT. If we are lucky, both of them are the same
 as we have seen for integers and dimensions. For extended dimensions, we had to use the \HINT\ data type
-|xdimen_t| because \TeX\ has no corresponding data type and uses only reference numbers.
+|Xdimen| because \TeX\ has no corresponding data type and uses only reference numbers.
 In the case of glue, we definitely have a choice. We decide to use \TeX's pointers to glue specifications
 in the hope to save some work when comparing glues for equality, because \TeX\ already reuses
 glue specifications and often a simple comparison of pointers might suffice.
@@ -32147,7 +32147,7 @@ int glue_equal(pointer p, pointer q)
 { return p==q || glue_spec_equal(p,q);
 }
 
-int glue_t_equal(glue_t *p, glue_t *q)
+int Glue_equal(Glue *p, Glue *q)
 { return(p->w.w==q->w.w && p->w.h==q->w.h && p->w.v==q->w.v &&
           p->p.f== q->p.f && p->m.f==q->m.f &&
           (p->p.o==q->p.o || p->p.f==0.0) &&
@@ -32193,9 +32193,9 @@ static int hget_glue_no(pointer p)
 @ @<Output glue definitions@>=
   DBG(DBGDEF,"Maximum glue reference: %d\n",max_ref[glue_kind]);
   for (i=max_fixed[glue_kind]+1;i<=max_default[glue_kind]; i++)
-    { glue_t g;
-      to_glue_t(glue_defined[i],&g);
-     if (!glue_t_equal(&g,&glue_defaults[i]))
+    { Glue g;
+      to_Glue(glue_defined[i],&g);
+     if (!Glue_equal(&g,&glue_defaults[i]))
         HPUTDEF(hput_glue(&g),i);
     }
   for (;i<=max_ref[glue_kind]; i++)
@@ -32212,7 +32212,7 @@ a regular glue or kern.
 % deallocation of glue specs is relatively simple
 % extended glue and kern values can be restricted to non math mode
 @<Hi\TeX\ auxiliar routines@>=
-void to_glue_t(pointer p, glue_t *g)
+void to_Glue(pointer p, Glue *g)
 { g->w.w=width(p);
   g->w.h=g->w.v=0.0;
   g->p.f=stretch(p)/(double)ONE; g->p.o= stretch_order(p);
@@ -32226,9 +32226,9 @@ and the solution here is the same: a dynamicaly allocated array.
 typedef struct {
 	pointer ls, bs; /* line skip and baselineskip gluespecs */
 	scaled lsl; /* lineskip limit */
-} bl_defined_t;
+} bl_definition;
 
-static bl_defined_t *bl_defined=NULL;
+static bl_definition *bl_defined=NULL;
 static int bl_used=0,bl_allocated=0;
 
 @ The zero baseline skip is predefined which prevents an ambiguous info value of zero
@@ -32236,7 +32236,7 @@ in a baseline node.
 
 @<Initialize definitions for baseline skips@>=
   bl_allocated=8;
-  ALLOCATE(bl_defined,bl_allocated,bl_defined_t);
+  ALLOCATE(bl_defined,bl_allocated,bl_definition);
   bl_defined[zero_baseline_no].bs=zero_glue; incr(glue_ref_count(zero_glue));
   bl_defined[zero_baseline_no].ls=zero_glue; incr(glue_ref_count(zero_glue));
   bl_defined[zero_baseline_no].lsl=0;
@@ -32248,7 +32248,7 @@ int hget_baseline_no(pointer bs, pointer ls, scaled lsl)
   static int rover=0;
   int i;
   for(i=0; i< bl_used; i++) /* search for an existing spec */
-    { bl_defined_t *q=&(bl_defined[rover]);
+    { bl_definition *q=&(bl_defined[rover]);
     if (glue_equal(bs,q->bs) &&  glue_equal(ls,q->ls) && lsl==q->lsl)
       return rover;
     else if (rover==0)
@@ -32257,7 +32257,7 @@ int hget_baseline_no(pointer bs, pointer ls, scaled lsl)
       rover--;
   }
   if (bl_used>=bl_allocated)
-    RESIZE(bl_defined,bl_allocated, bl_defined_t);
+    RESIZE(bl_defined,bl_allocated, bl_definition);
   rover=bl_used++;
   if (rover<0x100 && section_no==2) max_ref[baseline_kind]=rover;
   if (glue_equal(bs,zero_glue))
@@ -32277,7 +32277,7 @@ baselinedefinitions are output after the glue definitions. This is not perfect.
 @<Hi\TeX\ auxiliar routines@>=
 static uint8_t hout_glue_spec(pointer p);
 uint8_t hout_baselinespec(int n)
-{ info_t i=b000;
+{ Info i=b000;
   pointer p;
   scaled s;
   s=bl_defined[n].lsl;
@@ -32451,7 +32451,7 @@ int pl_head=-1, *pl_tail=&pl_head;
 
 @<Hi\TeX\ routines@>=
 
-static uint32_t  hparam_list_hash(list_t *l)
+static uint32_t  hparam_list_hash(List *l)
 { uint32_t h=0;
   uint32_t i;
   for (i=0;i<l->s;i++)
@@ -32459,7 +32459,7 @@ static uint32_t  hparam_list_hash(list_t *l)
   return i;
 }
 
-static bool pl_equal(list_t *l, uint8_t *p)
+static bool pl_equal(List *l, uint8_t *p)
 { uint8_t *q=hstart+l->p;
   uint32_t i;
   for (i=0; i<l->s; i++)
@@ -32467,12 +32467,12 @@ static bool pl_equal(list_t *l, uint8_t *p)
   return true;
 }
 
-static void pl_copy(list_t *l, uint8_t *p)
+static void pl_copy(List *l, uint8_t *p)
 { uint8_t *q=hstart+l->p;
   memcpy(p,q,l->s);
 }
 
-static int hget_param_list_no(list_t *l)
+static int hget_param_list_no(List *l)
 { uint32_t h;
   int i;
   if (l->s<=0) return -1;
@@ -32534,9 +32534,9 @@ parameter lists sorted by their reference number.
     HPUTTAG(param_kind,j+1);
   }
 @*1 Fonts.
-To store a font definition, we define the data type |font_t|
+To store a font definition, we define the data type |Font|
 and an array |hfonts| of pointers indexed by \HINT\ font numbers.
-To map \HINT\ font numbers to \TeX\ font numbers, the |font_t| contains
+To map \HINT\ font numbers to \TeX\ font numbers, the |Font| contains
 the |i| field; to map \TeX\ font numbers to \HINT\ font numbers,
 we use the array |hmap_font|.
 
@@ -32550,17 +32550,17 @@ typedef struct {
   pointer p[MAX_FONT_PARAMS]; /* font parameters */
   uint16_t m; /* section number of font metric file */
   uint16_t y; /* section number of font glyph file */
-} font_t;
+} Font;
 
-static font_t *hfonts[MAX_FONTS]={NULL};
+static Font *hfonts[MAX_FONTS]={NULL};
 static int hmap_font[MAX_FONTS];
 @ @<Initialize definitions for fonts@>=
   for (i=0;i<0x100;i++) hmap_font[i]=-1;
   max_ref[font_kind]=-1;
-@ Allocation of a |font_t| record takes place when we translate a \TeX\ font
+@ Allocation of a |Font| record takes place when we translate a \TeX\ font
 number to a \HINT\ font number using the function |hget_font_no|, and while
 doing so discover that the corresponding \HINT\ font number does not yet exist.
-Because the |font_t| structure must be initialized after allocating it,
+Because the |Font| structure must be initialized after allocating it,
 we start with some auxiliar routines for that purpose.
 
 @<Hi\TeX\ auxiliar routines@>=
@@ -32655,7 +32655,7 @@ static uint8_t hget_font_no(uint8_t f)
   if (max_ref[font_kind]>=0x100)
     QUIT("too many fonts in use");
   g = ++(max_ref[font_kind]);
-  ALLOCATE(hfonts[g],1,font_t);
+  ALLOCATE(hfonts[g],1,Font);
   hfonts[g]->i=f;
   hmap_font[f]=g;
   hfonts[g]->g=hget_font_space(f);
@@ -32695,10 +32695,10 @@ static void ensure_font_no(pointer p)
 { int f;
     DBG(DBGDEF,"Defining %d fonts\n",max_ref[font_kind]+1);
     for (f=0;f<=max_ref[font_kind];f++)
-    { font_t *hf=hfonts[f];
+    { Font *hf=hfonts[f];
       internal_font_number g=hf->i;
       uint32_t pos=hpos-hstart;
-      info_t i= b000;
+      Info i= b000;
       DBG(DBGDEF,"Defining font %d size 0x%x\n",f,font_size[g]);
       hpos++; HPUTNODE;  /* space for the tag and the node */
       HPUT8(f); /* reference */
@@ -32744,12 +32744,12 @@ void hout_string(int s)
 
 #define HPUTCONTENT(F,D)        \
   { uint8_t *_p;                \
-    uint8_t _t;                 \
+    uint8_t _f;                 \
     HPUTNODE; /* allocate */    \
     _p=hpos++; /* tag */        \
-    _t=F(D);                    \
-    *_p=_t; DBGTAG(_t,_p);      \
-    DBGTAG(_t,hpos); HPUT8(_t); \
+    _f=F(D);                    \
+    *_p=_f; DBGTAG(_f,_p);      \
+    DBGTAG(_f,hpos); HPUT8(_f); \
   }
 @*1 Labels.
 The only label that must always exist is the zero label. It is used
@@ -32866,13 +32866,13 @@ static void hout_node(pointer p)
 
 @*1 Characters.
 The processing of a character node consist of three steps: checking for definitions, converting the
-\TeX\ node pointed to by |p| to a \HINT\ data type, here a |glyph_t|, and using the
+\TeX\ node pointed to by |p| to a \HINT\ data type, here a |Glyph|, and using the
 corresponding {\tt hput\_\,\dots} function to output the node and return the |tag|.
 In the following, we will see the same approach in many
 small variations for all kinds of nodes.
 
 @<output a character node@>=
-{ glyph_t g;
+{ Glyph g;
   g.f=hget_font_no(font(p));
   g.c = character(p);
   tag=hput_glyph(&g);
@@ -32899,7 +32899,7 @@ The kern nodes of \TeX\ contain a single dimension and a flag to mark ``explicit
      { int n;
        n=hget_dimen_no(width(p));
        if (n<0)
-       { kern_t k;
+       { Kern k;
          k.x=(subtype(p)==explicit);
          k.d.w=width(p);
          k.d.h=k.d.v=0.0;
@@ -32921,7 +32921,7 @@ otherwise it outputs the extended dimension and returns true.
 
 @<Hi\TeX\ auxiliar routines@>=
 void hout_xdimen_node(pointer p)
-{ xdimen_t x;
+{ Xdimen x;
    x.w=xdimen_width(p);
    x.h=xdimen_hfactor(p)/(double)ONE;
    x.v=xdimen_vfactor(p)/(double)ONE;
@@ -33007,7 +33007,7 @@ to get the same behavior in respect to line breaking.
 
 @<cases to output content nodes@>=
    case math_node:
-     { kern_t k;
+     { Kern k;
        k.x=true;
        k.d.w=width(p);
        k.d.h=k.d.v=0.0;
@@ -33035,14 +33035,14 @@ to get the same behavior in respect to line breaking.
 @*1 Glue and Leaders.
 Because glue specifications and glue nodes are sometimes part of other
 nodes, we start with three auxiliar functions: The first simply
-converts a Hi\TeX\ glue node into a \HINT\ |glue_t|, outputs it and
+converts a Hi\TeX\ glue node into a \HINT\ |Glue|, outputs it and
 returns the tag; the second checks for predefined glues, and the third
 outputs a complete glue node including tags.
 @<Hi\TeX\ auxiliar routines@>=
 
 static uint8_t hout_glue_spec(pointer p)
-{ @+glue_t g;
-  to_glue_t(p,&g);
+{ @+Glue g;
+  to_Glue(p,&g);
   return hput_glue(&g);@+
 }
 
@@ -33086,12 +33086,12 @@ static void hout_glue_node(pointer p)
 @*1 Discretionary breaks.
 Discretionary breaks are needed in font descriptions.
 Therefore we define a function that converts \TeX's |disc_node| pointers
-to \HINT's |disc_t|, outputs the discretionary break, and returns the tag.
+to \HINT's |Disc|, outputs the discretionary break, and returns the tag.
 
 @<Hi\TeX\ auxiliar routines@>=
 
 uint8_t hout_disc(pointer p)
-{ disc_t h;
+{ Disc h;
   h.x=!is_auto_disc(p);
   h.r=replace_count(p);
   if (h.x) h.r|=0x80;
@@ -33131,7 +33131,7 @@ programms and neither attempt hyphenation.
 
 @<cases to output content nodes@>=
    case ligature_node:
-     { lig_t l;
+     { Lig l;
        pointer q;
        l.f=hget_font_no(font(lig_char(p)));
        HPUT8(l.f);
@@ -33149,7 +33149,7 @@ programms and neither attempt hyphenation.
 @*1 Rules.
 @<cases to output content nodes@>=
    case rule_node:
-     { rule_t r;
+     { Rule r;
 	if (is_running(height(p))) r.h=RUNNING_DIMEN; else r.h=height(p);
 	if (is_running(depth(p)))  r.d=RUNNING_DIMEN; else r.d=depth(p);
 	if (is_running(width(p)))  r.w=RUNNING_DIMEN; else r.w=width(p);
@@ -33197,8 +33197,8 @@ signal ``use the defaults''.
 @<output stream content@>=
 { int k,n;
   uint32_t pos;
-  list_t l;
-  info_t i=b000;
+  List l;
+  Info i=b000;
   k=subtype(p);
   n=hget_stream_no(k);
   HPUT8(n);
@@ -33262,10 +33262,10 @@ the function |hout_param_list| is writing the parameter list to the output.
 @<cases to output whatsit content nodes@>=
 case graf_node:
       { uint32_t pos, xpos, xsize;
-        list_t l;
+        List l;
         pointer q;
         int n,m;
-        info_t i=b000;
+        Info i=b000;
         q=graf_extent(p);
         n=hget_xdimen_no(q);
         if (n>=0) HPUT8(n);
@@ -33307,9 +33307,9 @@ case graf_node:
 @<cases to output whatsit content nodes@>=
       case disp_node:
 	{ uint32_t pos;
-          list_t l;
+          List l;
           int n;
-          info_t i=b000;
+          Info i=b000;
           pos=hpos-hstart;
           l.k=param_kind;
 	  n=hout_param_list(display_params(p),pos,&l);
@@ -33336,9 +33336,9 @@ conntent when in fact they can not.
 @<cases to output whatsit content nodes@>=
    case hset_node:
    case vset_node:
-        { kind_t k= subtype(p)==hset_node?hset_kind:vset_kind;
-          info_t i=b000;
-          stretch_t s;
+        { Kind k= subtype(p)==hset_node?hset_kind:vset_kind;
+          Info i=b000;
+          Stretch s;
           int n=set_extent(p);
           i|=hput_box_dimen(height(p),depth(p),width(p));
           i|=hput_box_shift(shift_amount(p));
@@ -33353,8 +33353,8 @@ conntent when in fact they can not.
         break;
       case hpack_node:
       case vpack_node:
-        { kind_t k= (subtype(p)==hpack_node?hpack_kind:vpack_kind);
-          info_t i=b000;
+        { Kind k= (subtype(p)==hpack_node?hpack_kind:vpack_kind);
+          Info i=b000;
           int n=pack_extent(p);
           if (pack_m(p)==additional) i|=b001;
           if (shift_amount(p)!=0) { HPUT32(shift_amount(p)); i|=b010; }
@@ -33368,7 +33368,7 @@ conntent when in fact they can not.
 @*1 Extended Alignments.
 @<cases to output whatsit content nodes@>=
 case align_node:
-  { info_t i=b000;
+  { Info i=b000;
     if (align_m(p)==additional) i|=b001;
     if (align_v(p)) i|=b010;
     if (hout_xdimen(align_extent(p))) i|=b100;
@@ -33404,7 +33404,7 @@ This is the size that is needed to compute the maximum width of a column.
 @<Hi\TeX\ auxiliar routines@>=
 
 static void hout_item(pointer p, uint8_t t, uint8_t s)
-{ info_t i=b000;
+{ Info i=b000;
   uint8_t n;
    n=span_count(p)+1;
   DBG(DBGBASIC,"Writing Item %d/%d->%d/%d\n",type(p),n,t,s);
@@ -33420,7 +33420,7 @@ static void hout_item(pointer p, uint8_t t, uint8_t s)
 
 
 static void hout_item_list(pointer p, bool v)
-{ list_t l;
+{ List l;
   uint32_t pos;
   DBG(DBGBASIC,"Writing Item List\n");
   l.k=list_kind;
@@ -33445,7 +33445,7 @@ static void hout_item_list(pointer p, bool v)
 }
 
 void hout_align_list(pointer p, bool v)
-{ list_t l;
+{ List l;
   uint32_t pos;
   DBG(DBGBASIC,"Writing Align List\n");
   l.k=list_kind;
@@ -33491,7 +33491,7 @@ For convenience, there is also the function |hout_list_node2| which supplies a d
 
 @<Hi\TeX\ routines@>=
 
-static uint8_t hout_list(pointer p, uint32_t pos, list_t *l)
+static uint8_t hout_list(pointer p, uint32_t pos, List *l)
 { l->p=hpos-hstart;
   while(p> mem_min)
   { hout_node(p);
@@ -33501,7 +33501,7 @@ static uint8_t hout_list(pointer p, uint32_t pos, list_t *l)
   return hput_list(pos,l);
 }
 
-static void hout_list_node(pointer p, uint32_t pos, list_t *l)
+static void hout_list_node(pointer p, uint32_t pos, List *l)
 {
   hpos=hstart+pos;
   HPUTX(3);
@@ -33513,16 +33513,16 @@ static void hout_list_node(pointer p, uint32_t pos, list_t *l)
 
 
 static void hout_list_node2(pointer p)
-{ list_t l;
+{ List l;
   uint32_t pos;
   pos=hpos-hstart;
   l.k=list_kind;
   hout_list_node(p,pos,&l);
 }
 @ @<Hi\TeX\ function declarations@>=
-static void hout_list_node(pointer p, uint32_t pos, list_t *l);
+static void hout_list_node(pointer p, uint32_t pos, List *l);
 static void hout_list_node2(pointer p);
-static uint8_t hout_list(pointer p, uint32_t pos, list_t *l);
+static uint8_t hout_list(pointer p, uint32_t pos, List *l);
 
 @*1 Parameter Lists.
 The next function is like |hout_list_node| but restricted to parameter nodes.
@@ -33533,7 +33533,7 @@ The function either finds a reference number to a predefined parameter list
    sets |l->k|, |l->p| and |l->s|, and returns $-1$.
 
 @<Hi\TeX\ routines@>=
-static int hout_param_list(pointer p, uint32_t pos, list_t *l)
+static int hout_param_list(pointer p, uint32_t pos, List *l)
 { int n;
   hpos=hstart+pos;
   if (p==null)
@@ -33556,7 +33556,7 @@ static int hout_param_list(pointer p, uint32_t pos, list_t *l)
   return n;
 }
 @ @<Hi\TeX\ function declarations@>=
-static int hout_param_list(pointer p, uint32_t pos, list_t *l);
+static int hout_param_list(pointer p, uint32_t pos, List *l);
 
 
 @*1 Labels, Links, and Outlines.
@@ -33567,7 +33567,7 @@ are defined in {\tt put.c}.
 @<cases to output whatsit content nodes@>=
 case label_node:  hpos--; new_label(p); return;
 case start_link_node:
-{ info_t i;
+{ Info i;
   int n=new_start_link(p);
   i=b010;
   if (n>0xFF) { i|=b001; HPUT16(n);@+} @+else HPUT8(n);
@@ -33575,7 +33575,7 @@ case start_link_node:
 }
 break;
 case end_link_node:
-{ info_t i;
+{ Info i;
   int n=new_end_link();
   i=b000;
   if (n>0xFF) { i|=b001; HPUT16(n);@+} @+else HPUT8(n);
@@ -33588,7 +33588,7 @@ case outline_node: hpos--; new_outline(p);  return;
 \indent
 @<cases to output whatsit content nodes@>=
      case image_node:
-        { image_t i;
+        { Image i;
           i.n=image_no(p);
           i.w=image_width(p);
 	  i.h=image_height(p);
@@ -33833,7 +33833,7 @@ static void usage_help(void)
   @t\qquad@>"\t enable extensions required for LaTeX\n"@/
   " -ini                  "@/
   @t\qquad@>"\t be initex for dumping formats; this is\n"@/
-  @t\qquad@>"\t\t\t also true if the program name is `hinitex'\n"@/
+  @t\qquad@>"\t\t\t also true if the program name is `kinitex'\n"@/
   " -progname=STRING      "@/
   @t\qquad@>"\t set program (and fmt) name to STRING\n"@/
   " -fmt=FMTNAME          "@/
@@ -34571,10 +34571,6 @@ builds of documents.
 #include <time.h>
 static time_t start_time = ((time_t)-1);
 static char *source_date_epoch,*force_source_date;
-
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#define strtoull _strtoui64
-#endif
 
 static struct tm *tl_now(void)
 {@+struct tm *gmt;

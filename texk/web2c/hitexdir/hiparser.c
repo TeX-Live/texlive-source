@@ -69,7 +69,7 @@
 /* First part of user prologue.  */
 #line 2 "parser.y"
 
-	#line 10314 "format.w"
+	#line 10318 "format.w"
 	
 #include "hibasetypes.h"
 #include <string.h>
@@ -93,11 +93,11 @@ uint32_t definition_bits[0x100/32][32]= {
  QUIT("Reference %d to %s before definition",(N),definition_name[K])
 	/*:358*/	/*362:*/
 #define DEF_REF(D,K,M,N)  DEF(D,K,M);\
-if ((M)>max_default[K]) QUIT("Defining non default reference %d for %s",M,definition_name[K]); \
-if ((N)>max_fixed[K]) QUIT("Defining reference %d for %s by non fixed reference %d",M,definition_name[K],N);
+if ((int)(M)>max_default[K]) QUIT("Defining non default reference %d for %s",M,definition_name[K]); \
+if ((int)(N)>max_fixed[K]) QUIT("Defining reference %d for %s by non fixed reference %d",M,definition_name[K],N);
 	/*:362*/
 
-extern void hset_entry(entry_t*e,uint16_t i,uint32_t size,
+extern void hset_entry(Entry*e,uint16_t i,uint32_t size,
 uint32_t xsize,char*file_name);
 
 	/*425:*/
@@ -111,7 +111,7 @@ extern int yydebug;
 extern int yylex(void);
 
 	/*354:*/
-void hset_max(kind_t k,int n)
+void hset_max(Kind k,int n)
 {
 	#line 7470 "format.w"
 	DBG(DBGDEF,"Setting max %s to %d\n",definition_name[k],n);
@@ -120,7 +120,7 @@ void hset_max(kind_t k,int n)
 	max_ref[k]= n;
 	}
 	/*:354*/	/*365:*/
-void check_param_def(ref_t*df)
+void check_param_def(Ref*df)
 {
 	#line 7776 "format.w"
 	if(df->k!=int_kind&&df->k!=dimen_kind&&df->k!=glue_kind)
@@ -3350,13 +3350,13 @@ yyreduce:
 	#line 7444 "format.w"
 		/*245:*/
 	if(max_ref[label_kind]>=0)
-	ALLOCATE(labels,max_ref[label_kind]+1,label_t);
+	ALLOCATE(labels,max_ref[label_kind]+1,Label);
 		/*:245*/	/*266:*/
 	if(max_outline>=0)
-	ALLOCATE(outlines,max_outline+1,outline_t);
+	ALLOCATE(outlines,max_outline+1,Outline);
 		/*:266*/	/*293:*/
 	ALLOCATE(page_on,max_ref[page_kind]+1,int);
-	ALLOCATE(range_pos,2*(max_ref[range_kind]+1),range_pos_t);
+	ALLOCATE(range_pos,2*(max_ref[range_kind]+1),RangePos);
 		/*:293*/	/*359:*/
 	definition_bits[0][int_kind]= (1<<(MAX_INT_DEFAULT+1))-1;
 	definition_bits[0][dimen_kind]= (1<<(MAX_DIMEN_DEFAULT+1))-1;

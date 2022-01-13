@@ -147,12 +147,12 @@ union YYSTYPE
 {
 #line 79 "parser.y"
 
-	#line 10339 "format.w"
-	uint32_t u;  int32_t i;  char *s;  float64_t f;  glyph_t c;
-	dimen_t d;stretch_t st;xdimen_t xd;kern_t kt;
-	rule_t r;glue_t g;image_t x;
-	list_t l;box_t h;disc_t dc;lig_t lg;
-	ref_t rf;info_t info;order_t o;bool b;
+	#line 10343 "format.w"
+	uint32_t u;  int32_t i;  char *s;  float64_t f;  Glyph c;
+	Dimen d;Stretch st;Xdimen xd;Kern kt;
+	Rule r;Glue g;Image x;
+	List l;Box h;Disc dc;Lig lg;
+	Ref rf;Info info;Order o;bool b;
 	
 
 #line 159 "hiparser.h"
