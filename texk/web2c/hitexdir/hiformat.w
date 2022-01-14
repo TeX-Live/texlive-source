@@ -9953,11 +9953,6 @@ is defined only if using the respective compiler.
 @(hibasetypes.h@>=
 #ifndef __BASETYPES_H__
 #define __BASETYPES_H__
-#ifdef __sun
-/* avoid name conflict with |label_t| in unistd.h via sys/machtypes.h */
-#define _POSIX_C_SOURCE 200809L
-#define _XOPEN_SOURCE 600
-#endif
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _STDLIB_H
