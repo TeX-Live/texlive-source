@@ -14,7 +14,10 @@
 	* cweav-w2c.ch,
 	* cweave.w,
 	* cwebman.tex,
-	* cwebman-w2c.ch: Increase sizes in CWEB 4.6.1.
+	* cwebman-w2c.ch,
+	* po/cweb.pot,
+	* po/de/cweb.po,
+	* po/it/cweb.po: Increase sizes in CWEB 4.6.1.
 
 2021-12-26  Andreas Scherer  <https://ascherer.github.io>
 
