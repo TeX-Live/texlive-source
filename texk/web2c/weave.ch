@@ -111,7 +111,7 @@ procedure initialize;
 @!long_buf_size=500; {|buf_size+longest_name|}
 @!line_length=80; {lines of \TeX\ output have at most this many characters,
 @y
-@!max_modules=10239; {greater than the total number of modules}
+@!max_modules=4000; {greater than the total number of modules}
 @!hash_size=8501; {should be prime}
 @!buf_size=1000; {maximum length of input line}
 @!longest_name=10000; {module names shouldn't be longer than this}

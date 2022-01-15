@@ -1,3 +1,9 @@
+2022-01-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* tangle.ch,
+	* tangleboot.pin,
+	* weave.ch: Adapt WEB to general conventions.
+
 2022-01-12  Marcel Kr\"uger  <tex@2krueger.de>
 
 	* showstream.ch: if (selector<no_print), rather than <log_only.

@@ -90,6 +90,7 @@ procedure initialize;
 @!max_names=4000; {number of identifiers, strings, module names;
   must be less than 10240}
 @!max_texts=2000; {number of replacement texts, must be less than 10240}
+@!hash_size=353; {should be prime}
 @y
 @!max_bytes=65535; {|1/ww| times the number of bytes in identifiers,
   strings, and module names; must be less than 65536}
@@ -98,6 +99,7 @@ procedure initialize;
 @!max_names=10239; {number of identifiers, strings, module names;
   must be less than 10240}
 @!max_texts=10239; {number of replacement texts, must be less than 10240}
+@!hash_size=8501; {should be prime}
 @z
 
 @x

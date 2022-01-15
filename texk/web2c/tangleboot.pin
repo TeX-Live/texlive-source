@@ -1,7 +1,7 @@
 {2:}{4:}{$C-,A+,D-}{[$C+,D+]}
 {:4}program TANGLE(webfile,changefile,Pascalfile,pool);
 const{8:}bufsize=1000;maxbytes=65535;maxtoks=65535;maxnames=10239;
-maxtexts=10239;hashsize=353;longestname=400;linelength=72;
+maxtexts=10239;hashsize=8501;longestname=400;linelength=72;
 outbufsize=144;stacksize=100;maxidlength=50;defunambiglength=32;
 {:8}type{11:}ASCIIcode=0..255;
 {:11}{12:}textfile=packed file of ASCIIcode;{:12}{37:}eightbits=0..255;
