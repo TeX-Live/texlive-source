@@ -22203,26 +22203,27 @@ euptrip-clean:
 hiall: hitex hishrink histretch
 
 $(hiformat_c_h_l_y): hiformat-tangle
-	$(hi_ctangle_sh) hiformat
+
 #
 hiformat-tangle: ctangle$(EXEEXT) hitexdir/hiformat.w tangle-sh
 	$(hi_ctangle_sh) hiformat
 
 $(hitex_c): hitex-tangle
-	$(hi_ctangle_sh) hitex
+
 #
 hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
 	$(hi_ctangle_sh) hitex
 
 # Generating hitables.c using himktables.
-hitables.c: himktables
-	./himktables$(EXEEXT) > $@ || { rm -f hitables.c; exit 1; }
+hitables.c: himktables$(EXEEXT)
+	./himktables > $@ || { rm -f hitables.c; exit 1; }
 
-# hitex and hishrink both need (at least) some of the sources generated
-# from hiformat.w.
+# hitex, histretch, and hishrink all need (at least) some 
+# of the sources generated from hiformat.w.
 #
-$(hitex_OBJECTS): $(hiformat_c_h_l_y)
-$(hishrink_OBJECTS): $(hiformat_c_h_l_y)
+$(hitex_OBJECTS): hiformat-tangle
+$(hishrink_OBJECTS): hiformat-tangle
+$(histretch_OBJECTS): hiformat-tangle
 
 hitexdir/tests/hello.log: hitex$(EXEEXT) histretch$(EXEEXT)
 hitexdir/tests/rule.log: hitex$(EXEEXT) histretch$(EXEEXT) hishrink$(EXEEXT)

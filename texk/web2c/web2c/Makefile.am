@@ -1,8 +1,10 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/web2c/.
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2022 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
-##
+
 AM_CPPFLAGS = -I$(srcdir)/../..
 AM_YFLAGS = -d -v
 AM_CFLAGS = $(WARNING_CFLAGS)
@@ -55,7 +57,7 @@ web2c_SOURCES = \
 
 $(web2c_OBJECTS): web2c-parser.h stamp-lib
 
-web2c_LDADD = -L. -lweb2c
+web2c_LDADD = libweb2c.a
 
 DISTCLEANFILES += web2c-parser.output
 
@@ -106,4 +108,3 @@ CLEANFILES = $(nodist_noinst_DATA)
 
 distclean-local:
 	rm -rf kpathsea w2c
-
