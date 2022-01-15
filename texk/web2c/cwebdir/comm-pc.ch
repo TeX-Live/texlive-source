@@ -8,7 +8,7 @@ Note: The change to section 16 is not necessary if using a compiler
 that allows >64K arrays.
 
 @x section 16
-@d max_bytes 90000 /* the number of bytes in identifiers,
+@d max_bytes 100000 /* the number of bytes in identifiers,
 @y
 @d max_bytes (unsigned)60000 /* the number of bytes in identifiers,
 @z

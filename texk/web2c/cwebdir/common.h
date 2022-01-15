@@ -226,17 +226,16 @@ extern FILE *active_file; /* currently active file for \.{CWEAVE} output */
 extern void common_init(void);@/
 extern void print_stats(void);
 
-@ The following parameters were sufficient in the original \.{WEB} to
-handle \TEX/, so they should be sufficient for most applications of
-\.{CWEB}.
+@ The following parameters are sufficient to handle \TEX/ (converted to
+\.{CWEB}), so they should be sufficient for most applications of \.{CWEB}.
 
-@d buf_size 100 /* maximum length of input line, plus one */
+@d buf_size 200 /* maximum length of input line, plus one */
 @d longest_name 10000 /* file names, section names, and section texts
    shouldn't be longer than this */
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
-@d max_bytes 90000 /* the number of bytes in identifiers,
+@d max_bytes 100000 /* the number of bytes in identifiers,
   index entries, and section names; must be less than $2^{24}$ */
-@d max_names 4000 /* number of identifiers, strings, section names;
+@d max_names 5000 /* number of identifiers, strings, section names;
   must be less than 10240 */
 @d max_sections 2000 /* greater than the total number of sections */
 

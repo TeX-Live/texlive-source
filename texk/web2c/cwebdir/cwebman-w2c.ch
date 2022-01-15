@@ -220,10 +220,10 @@ Sometimes things don't work as smoothly, and you get a bunch of
 the program sources at \.{ftp://ftp.cs.stanford.edu/pub/ctwill}.
 @y
 the program sources at
-\pdfURL{\.{ftp://ftp.cs.stanford.edu/pub/ctwill}}%
-          {ftp://ftp.cs.stanford.edu/pub/ctwill}.%
-\cwebfootnote{\TeX~Live comes with an up-to-date \.{ctwill} executable -- and
-its associated helpers -- out of the box.}
+\pdfURL{\.{http://ftp.cs.stanford.edu/pub/ctwill}}%
+          {http://ftp.cs.stanford.edu/pub/ctwill}.%
+\cwebfootnote{\TeX~Live comes with an up-to-date
+\.{ctwill} executable -- and its associated helpers -- out of the box.}
 @z
 
 @x

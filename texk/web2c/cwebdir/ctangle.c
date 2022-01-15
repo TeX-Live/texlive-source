@@ -84,17 +84,17 @@
 #define new_line putchar('\n') 
 #define term_write(a,b) fflush(stdout) ,fwrite(a,sizeof(char) ,b,stdout)  \
 
-#define buf_size 100
+#define buf_size 200
 #define longest_name 10000 \
 
 #define long_buf_size (buf_size+longest_name) 
-#define max_bytes 90000 \
+#define max_bytes 100000 \
 
-#define max_names 4000 \
+#define max_names 5000 \
 
 #define max_sections 2000 \
 
-#define max_texts 2500
+#define max_texts 4000
 #define max_toks 270000
 #define equiv equiv_or_xref \
 

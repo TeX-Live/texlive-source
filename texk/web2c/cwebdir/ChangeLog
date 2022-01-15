@@ -1,3 +1,21 @@
+2022-01-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-pc.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* ctang-bs.ch,
+	* ctang-pc.ch,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-w2c.ch,
+	* cweav-pc.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* cwebman.tex,
+	* cwebman-w2c.ch: Increase sizes in CWEB 4.6.1.
+
 2021-12-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

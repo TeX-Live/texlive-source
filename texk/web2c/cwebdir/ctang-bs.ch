@@ -98,7 +98,7 @@ typedef text *text_pointer;
 
 
 @x Section 20.
-@ @d max_texts 2500 /* number of replacement texts, must be less than 10240 */
+@ @d max_texts 4000 /* number of replacement texts, must be less than 10240 */
 @d max_toks 270000 /* number of bytes in compressed \CEE/ code */
 @y
 @ (This is a modified version of \.{CTANGLE}, and in fact one of the parameters
