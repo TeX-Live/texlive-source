@@ -19,7 +19,7 @@
 class TimeZoneFormatTest : public IntlTest {
   public:
     // IntlTest override
-    void runIndexedTest(int32_t index, UBool exec, const char*& name, char* par);
+    void runIndexedTest(int32_t index, UBool exec, const char*& name, char* par) override;
 
     void TestTimeZoneRoundTrip(void);
     void TestTimeRoundTrip(void);
@@ -30,6 +30,7 @@ class TimeZoneFormatTest : public IntlTest {
     void TestFormatCustomZone(void);
     void TestFormatTZDBNamesAllZoneCoverage(void);
     void TestAdoptDefaultThreadSafe(void);
+    void TestCentralTime(void);
 
     void RunTimeRoundTripTests(int32_t threadNumber);
     void RunAdoptDefaultThreadSafeTests(int32_t threadNumber);

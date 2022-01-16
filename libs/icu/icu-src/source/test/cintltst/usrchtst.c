@@ -302,7 +302,7 @@ static void TestInitialization(void)
 {
           UErrorCode      status = U_ZERO_ERROR;
           UChar           pattern[512];
-    const UChar           text[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};
+    const UChar           text[] = u"abcdef";
     int32_t i = 0;
     UStringSearch  *result;
 
@@ -332,6 +332,15 @@ static void TestInitialization(void)
         log_err("Error opening search %s\n", u_errorName(status));
     }
     usearch_close(result);
+
+    /* testing that a pattern with all ignoreables doesn't fail initialization with an error */
+    UChar patternIgnoreables[] = u"\u200b"; // Zero Width Space
+    result = usearch_openFromCollator(patternIgnoreables, 1, text, 3, EN_US_, NULL, &status);
+    if (U_FAILURE(status)) {
+        log_err("Error opening search %s\n", u_errorName(status));
+    }
+    usearch_close(result);
+
     close();
 }
 
@@ -1562,7 +1571,7 @@ static void TestSetMatch(void)
                                                search.size[offsetIndex + 1] + 1, 
                                       &status) != search.offset[offsetIndex + 1] ||
                     U_FAILURE(status)) {
-                    log_err("Error getting preceeding match at index %d\n", 
+                    log_err("Error getting preceding match at index %d\n", 
                             search.offset[offsetIndex + 1] + 1);
                 }
             }
@@ -2648,7 +2657,7 @@ static void TestStrengthIdentical(void)
         len = usearch_getMatchedLength(search);
 
         if(pos != -1) {
-            log_err("Expected failure for strentgh = UCOL_IDENTICAL: got %d instead.\n", pos);
+            log_err("Expected failure for strength = UCOL_IDENTICAL: got %d instead.\n", pos);
         }
     }
 

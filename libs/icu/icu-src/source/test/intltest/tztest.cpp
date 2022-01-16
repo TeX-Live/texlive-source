@@ -14,6 +14,7 @@
 #include "unicode/simpletz.h"
 #include "unicode/calendar.h"
 #include "unicode/gregocal.h"
+#include "unicode/localpointer.h"
 #include "unicode/resbund.h"
 #include "unicode/strenum.h"
 #include "unicode/uversion.h"
@@ -152,10 +153,13 @@ TimeZoneTest::TestGenericAPI()
     const char* tzver = TimeZone::getTZDataVersion(status);
     if (U_FAILURE(status)) {
         errcheckln(status, "FAIL: getTZDataVersion failed - %s", u_errorName(status));
-    } else if (uprv_strlen(tzver) != 5 /* 4 digits + 1 letter */) {
-        errln((UnicodeString)"FAIL: getTZDataVersion returned " + tzver);
     } else {
-        logln((UnicodeString)"tzdata version: " + tzver);
+        int32_t tzverLen = uprv_strlen(tzver);
+        if (tzverLen == 5 || tzverLen == 6 /* 4 digits + 1 or 2 letters */) {
+            logln((UnicodeString)"tzdata version: " + tzver);
+        } else {
+            errln((UnicodeString)"FAIL: getTZDataVersion returned " + tzver);
+        }
     }
 }
 
@@ -425,12 +429,16 @@ TimeZoneTest::TestGetAvailableIDs913()
     UnicodeString str;
     UnicodeString buf(u"TimeZone::createEnumeration() = { ");
     int32_t s_length;
-    StringEnumeration* s = TimeZone::createEnumeration();
-    if (s == NULL) {
+    StringEnumeration* s = TimeZone::createEnumeration(ec);
+    LocalPointer<StringEnumeration> tmp1(TimeZone::createEnumeration(), ec);
+    if (U_FAILURE(ec) || s == NULL) {
         dataerrln("Unable to create TimeZone enumeration");
         return;
     }
     s_length = s->count(ec);
+    if (s_length != tmp1->count(ec)) {
+        errln("TimeZone::createEnumeration() with no status args returns a different count.");
+    }
     for (i = 0; i < s_length;++i) {
         if (i > 0) buf += ", ";
         if ((i & 1) == 0) {
@@ -481,8 +489,16 @@ TimeZoneTest::TestGetAvailableIDs913()
     buf.truncate(0);
     buf += "TimeZone::createEnumeration(GMT+01:00) = { ";
 
-    s = TimeZone::createEnumeration(1 * U_MILLIS_PER_HOUR);
+    s = TimeZone::createEnumerationForRawOffset(1 * U_MILLIS_PER_HOUR, ec);
+    LocalPointer<StringEnumeration> tmp2(TimeZone::createEnumeration(1 * U_MILLIS_PER_HOUR), ec);
+    if (U_FAILURE(ec)) {
+        dataerrln("Unable to create TimeZone enumeration for GMT+1");
+        return;
+    }
     s_length = s->count(ec);
+    if (s_length != tmp2->count(ec)) {
+        errln("TimeZone::createEnumeration(GMT+01:00) with no status args returns a different count.");
+    }
     for (i = 0; i < s_length;++i) {
         if (i > 0) buf += ", ";
         buf += *s->snext(ec);
@@ -495,9 +511,17 @@ TimeZoneTest::TestGetAvailableIDs913()
     buf.truncate(0);
     buf += "TimeZone::createEnumeration(US) = { ";
 
-    s = TimeZone::createEnumeration("US");
+    s = TimeZone::createEnumerationForRegion("US", ec);
+    LocalPointer<StringEnumeration> tmp3(TimeZone::createEnumeration("US"), ec);
+    if (U_FAILURE(ec)) {
+        dataerrln("Unable to create TimeZone enumeration for US");
+        return;
+    }
     s_length = s->count(ec);
-    for (i = 0; i < s_length;++i) {
+    if (s_length != tmp3->count(ec)) {
+        errln("TimeZone::createEnumeration(\"US\") with no status args returns a different count.");
+    }
+    for (i = 0; i < s_length; ++i) {
         if (i > 0) buf += ", ";
         buf += *s->snext(ec);
     }
@@ -544,57 +568,57 @@ TimeZoneTest::TestGetAvailableIDsNew()
     
     any = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, NULL, NULL, ec);
     if (U_FAILURE(ec)) {
-        dataerrln("Failed to create enumration for ANY");
+        dataerrln("Failed to create enumeration for ANY");
         goto cleanup;
     }
 
     canonical = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, NULL, NULL, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for CANONICAL");
+        errln("Failed to create enumeration for CANONICAL");
         goto cleanup;
     }
 
     canonicalLoc = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL_LOCATION, NULL, NULL, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for CANONICALLOC");
+        errln("Failed to create enumeration for CANONICALLOC");
         goto cleanup;
     }
 
     any_US = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, "US", NULL, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for ANY_US");
+        errln("Failed to create enumeration for ANY_US");
         goto cleanup;
     }
 
     canonical_US = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL, "US", NULL, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for CANONICAL_US");
+        errln("Failed to create enumeration for CANONICAL_US");
         goto cleanup;
     }
 
     canonicalLoc_US = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_CANONICAL_LOCATION, "US", NULL, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for CANONICALLOC_US");
+        errln("Failed to create enumeration for CANONICALLOC_US");
         goto cleanup;
     }
 
     rawOffset = (-5)*60*60*1000;
     any_W5 = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, NULL, &rawOffset, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for ANY_W5");
+        errln("Failed to create enumeration for ANY_W5");
         goto cleanup;
     }
 
     any_CA_W5 = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, "CA", &rawOffset, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for ANY_CA_W5");
+        errln("Failed to create enumeration for ANY_CA_W5");
         goto cleanup;
     }
 
     rawOffset = 14*60*60*1000;
     any_US_E14 = TimeZone::createTimeZoneIDEnumeration(UCAL_ZONE_TYPE_ANY, "US", &rawOffset, ec);
     if (U_FAILURE(ec)) {
-        errln("Failed to create enumration for ANY_US_E14");
+        errln("Failed to create enumeration for ANY_US_E14");
         goto cleanup;
     }
 
@@ -1171,8 +1195,10 @@ void TimeZoneTest::TestCustomParse()
         TimeZone *zone = TimeZone::createTimeZone(id);
         UnicodeString   itsID, temp;
 
-        if (dynamic_cast<OlsonTimeZone *>(zone) != NULL) {
+        OlsonTimeZone *ozone = dynamic_cast<OlsonTimeZone *>(zone);
+        if (ozone != nullptr) {
             logln(id + " -> Olson time zone");
+            ozone->operator=(*ozone);  // self-assignment should be a no-op
         } else {
             zone->getID(itsID);
             int32_t ioffset = zone->getRawOffset()/1000;
@@ -1218,7 +1244,6 @@ TimeZoneTest::TestAliasedNames()
         {"America/Argentina/Cordoba", "America/Cordoba"},
         {"America/Argentina/Jujuy", "America/Jujuy"},
         {"America/Argentina/Mendoza", "America/Mendoza"},
-        {"America/Atikokan", "America/Coral_Harbour"},
         {"America/Atka", "America/Adak"},
         {"America/Ensenada", "America/Tijuana"},
         {"America/Fort_Wayne", "America/Indianapolis"},
@@ -1718,8 +1743,8 @@ void TimeZoneTest::TestCountries() {
     // Asia/Tokyo isn't.  Vice versa for the "JP" group.
     UErrorCode ec = U_ZERO_ERROR;
     int32_t n;
-    StringEnumeration* s = TimeZone::createEnumeration("US");
-    if (s == NULL) {
+    StringEnumeration* s = TimeZone::createEnumerationForRegion("US", ec);
+    if (U_FAILURE(ec)) {
         dataerrln("Unable to create TimeZone enumeration for US");
         return;
     }
@@ -1729,7 +1754,7 @@ void TimeZoneTest::TestCountries() {
     UnicodeString tokyoZone("Asia/Tokyo", "");
     int32_t i;
 
-    if (s == NULL || n <= 0) {
+    if (n <= 0) {
         dataerrln("FAIL: TimeZone::createEnumeration() returned nothing");
         return;
     }
@@ -1748,7 +1773,11 @@ void TimeZoneTest::TestCountries() {
     }
     delete s;
     
-    s = TimeZone::createEnumeration("JP");
+    s = TimeZone::createEnumerationForRegion("JP", ec);
+    if (U_FAILURE(ec)) {
+        dataerrln("Unable to create TimeZone enumeration for JP");
+        return;
+    }
     n = s->count(ec);
     la = FALSE; tokyo = FALSE;
     
@@ -1765,8 +1794,12 @@ void TimeZoneTest::TestCountries() {
         errln("FAIL: " + laZone + " in JP = " + la);
         errln("FAIL: " + tokyoZone + " in JP = " + tokyo);
     }
-    StringEnumeration* s1 = TimeZone::createEnumeration("US");
-    StringEnumeration* s2 = TimeZone::createEnumeration("US");
+    StringEnumeration* s1 = TimeZone::createEnumerationForRegion("US", ec);
+    StringEnumeration* s2 = TimeZone::createEnumerationForRegion("US", ec);
+    if (U_FAILURE(ec)) {
+        dataerrln("Unable to create TimeZone enumeration for US");
+        return;
+    }
     for(i=0;i<n;++i){
         const UnicodeString* id1 = s1->snext(ec);
         if(id1==NULL || U_FAILURE(ec)){
@@ -2045,6 +2078,8 @@ void TimeZoneTest::TestCanonicalID() {
         {"Africa/Sao_Tome", "Africa/Abidjan"},
         {"America/Antigua", "America/Port_of_Spain"},
         {"America/Anguilla", "America/Port_of_Spain"},
+        {"America/Cayman", "America/Panama"},
+        {"America/Coral_Harbour", "America/Panama"},
         {"America/Curacao", "America/Aruba"},
         {"America/Dominica", "America/Port_of_Spain"},
         {"America/Grenada", "America/Port_of_Spain"},
@@ -2053,7 +2088,6 @@ void TimeZoneTest::TestCanonicalID() {
         {"America/Lower_Princes", "America/Aruba"},
         {"America/Marigot", "America/Port_of_Spain"},
         {"America/Montserrat", "America/Port_of_Spain"},
-        {"America/Panama", "America/Cayman"},
         {"America/Santa_Isabel", "America/Tijuana"},
         {"America/Shiprock", "America/Denver"},
         {"America/St_Barthelemy", "America/Port_of_Spain"},
@@ -2063,7 +2097,7 @@ void TimeZoneTest::TestCanonicalID() {
         {"America/St_Vincent", "America/Port_of_Spain"},
         {"America/Toronto", "America/Montreal"},
         {"America/Tortola", "America/Port_of_Spain"},
-        {"America/Virgin", "America/Port_of_Spain"},
+        {"America/Virgin", "America/Puerto_Rico"},
         {"Antarctica/South_Pole", "Antarctica/McMurdo"},
         {"Arctic/Longyearbyen", "Europe/Oslo"},
         {"Asia/Kuwait", "Asia/Aden"},
@@ -2074,6 +2108,8 @@ void TimeZoneTest::TestCanonicalID() {
         {"Asia/Vientiane", "Asia/Bangkok"},
         {"Atlantic/Jan_Mayen", "Europe/Oslo"},
         {"Atlantic/St_Helena", "Africa/Abidjan"},
+        {"Australia/Currie", "Australia/Hobart"},
+        {"Australia/Tasmania", "Australia/Hobart"},
         {"Europe/Bratislava", "Europe/Prague"},
         {"Europe/Busingen", "Europe/Zurich"},
         {"Europe/Guernsey", "Europe/London"},
@@ -2114,8 +2150,8 @@ void TimeZoneTest::TestCanonicalID() {
     // Walk through equivalency groups
     UErrorCode ec = U_ZERO_ERROR;
     int32_t s_length, i, j, k;
-    StringEnumeration* s = TimeZone::createEnumeration();
-    if (s == NULL) {
+    StringEnumeration* s = TimeZone::createEnumeration(ec);
+    if (U_FAILURE(ec)) {
         dataerrln("Unable to create TimeZone enumeration");
         return;
     }

@@ -42,21 +42,21 @@ public:
             fgTestDataPath = NULL;
         }
     }
-    virtual void errln( const UnicodeString &message ) {
+    virtual void errln( const UnicodeString &message ) override {
         char buffer[4000];
         message.extract(0, message.length(), buffer, sizeof(buffer));
         buffer[3999] = 0; /* NULL terminate */
         log_err(buffer);
     }
 
-    virtual void logln( const UnicodeString &message ) {
+    virtual void logln( const UnicodeString &message ) override {
         char buffer[4000];
         message.extract(0, message.length(), buffer, sizeof(buffer));
         buffer[3999] = 0; /* NULL terminate */
         log_info(buffer);
     }
 
-    virtual void dataerrln( const UnicodeString &message ) {
+    virtual void dataerrln( const UnicodeString &message ) override {
         char buffer[4000];
         message.extract(0, message.length(), buffer, sizeof(buffer));
         buffer[3999] = 0; /* NULL terminate */
@@ -166,7 +166,7 @@ public:
         return fgTestDataPath;
     }
 
-    virtual const char* getTestDataPath(UErrorCode& err) {
+    virtual const char* getTestDataPath(UErrorCode& err) override {
         return loadTestData(err);
     }
 };
@@ -828,7 +828,7 @@ static void ctest_setICU_DATA() {
 U_CDECL_BEGIN
 /*
  * Note: this assumes that context is a pointer to STANDARD_TEST_FILE. It would be
- * cleaner to define an acutal context with a string pointer in it and set STANDARD_TEST_FILE
+ * cleaner to define an actual context with a string pointer in it and set STANDARD_TEST_FILE
  * after the call to initArgs()...
  */
 static int U_CALLCONV argHandler(int arg, int /*argc*/, const char * const argv[], void *context)

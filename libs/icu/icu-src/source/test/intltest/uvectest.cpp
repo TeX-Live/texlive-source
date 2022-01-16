@@ -70,7 +70,7 @@ void UVectorTest::runIndexedTest( int32_t index, UBool exec, const char* &name, 
     }\
 } UPRV_BLOCK_MACRO_END
 
-static int8_t U_CALLCONV
+static int32_t U_CALLCONV
 UVectorTest_compareInt32(UElement key1, UElement key2) {
     if (key1.integer > key2.integer) {
         return 1;
@@ -124,6 +124,21 @@ void UVectorTest::UVector_API() {
     TEST_ASSERT(a->contains((int32_t)15));
     TEST_ASSERT(!a->contains((int32_t)5));
     delete a;
+
+    status = U_ZERO_ERROR;
+    UVector vec(status);
+    vec.setDeleter(uprv_deleteUObject);
+    vec.adoptElement(new UnicodeString(), status);
+    vec.adoptElement(new UnicodeString(), status);
+    assertSuccess(WHERE, status);
+    assertEquals(WHERE, 2, vec.size());
+
+    // With an incoming error, adoptElement will not add to the vector,
+    // and will delete the object. Failure here will show as a memory leak.
+    status = U_ILLEGAL_ARGUMENT_ERROR;
+    vec.adoptElement(new UnicodeString(), status);
+    assertEquals(WHERE, U_ILLEGAL_ARGUMENT_ERROR, status);
+    assertEquals(WHERE, 2, vec.size());
 }
 
 void UVectorTest::UStack_API() {

@@ -22,7 +22,7 @@
  **/
 class DateFormatTest: public CalendarTimeZoneTest {
     // IntlTest override
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par ) override;
 public:
     /**
      * Verify that patterns have the correct values and could produce
@@ -44,7 +44,7 @@ public:
     virtual void TestTwoDigitYearDSTParse(void);
 
 public: // package
-    // internal utility routine (genrates escape sequences for characters)
+    // internal utility routine (generates escape sequences for characters)
     static UnicodeString& escape(UnicodeString& s);
 
 public:

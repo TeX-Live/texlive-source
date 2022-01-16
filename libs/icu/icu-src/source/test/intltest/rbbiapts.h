@@ -29,7 +29,7 @@ class RBBIAPITest: public IntlTest {
 public:
    
     
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL ) override;
     /**
      * Tests Constructor behaviour of RuleBasedBreakIterator
      **/
@@ -96,7 +96,7 @@ public:
     /* Internal subroutine used by TestIsBoundary() */ 
     void doBoundaryTest(BreakIterator& bi, UnicodeString& text, int32_t *boundaries);
 
-    /*Internal subroutine used for comparision of expected and acquired results */
+    /*Internal subroutine used for comparison of expected and acquired results */
     void doTest(UnicodeString& testString, int32_t start, int32_t gotoffset, int32_t expectedOffset, const char* expected);
 
 

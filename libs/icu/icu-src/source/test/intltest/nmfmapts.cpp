@@ -271,7 +271,7 @@ public:
         delete currencyStyle;
     }
     
-    virtual NumberFormat* createFormat(const Locale& /* loc */, UNumberFormatStyle formatType)
+    virtual NumberFormat* createFormat(const Locale& /* loc */, UNumberFormatStyle formatType) override
     {
         if (formatType == UNUM_CURRENCY) {
             return currencyStyle->clone();
@@ -279,7 +279,7 @@ public:
         return NULL;
     }
 
-   virtual inline UClassID getDynamicClassID() const
+   virtual inline UClassID getDynamicClassID() const override
    {
        return (UClassID)&gID;
    }
@@ -325,7 +325,7 @@ IntlTestNumberFormatAPI::testRegistration()
     LocalUNumberFormatPointer uf5(unum_open(UNUM_CURRENCY, NULL, 0, SRC_LOC.getName(), NULL, &status));
 
     if (U_FAILURE(status)) {
-        dataerrln("Error creating instanaces.");
+        dataerrln("Error creating instances.");
         return;
     } else {
         float n = 1234.567f;

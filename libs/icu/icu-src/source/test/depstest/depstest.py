@@ -1,4 +1,4 @@
-#! /usr/bin/python -B
+#! /usr/bin/python3 -B
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2016 and later: Unicode, Inc. and others.
@@ -124,7 +124,7 @@ def _Resolve(name, parents):
   # Check if already cached.
   exports = item.get("exports")
   if exports != None: return item
-  # Calculcate recursively.
+  # Calculate recursively.
   parents.append(name)
   imports = set()
   exports = set()

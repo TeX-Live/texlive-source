@@ -305,7 +305,7 @@ void TransliteratorTest::TestSimpleRules(void) {
     /* Example: rules 1. ab>x|y
      *                2. yc>z
      *
-     * []|eabcd  start - no match, copy e to tranlated buffer
+     * []|eabcd  start - no match, copy e to translated buffer
      * [e]|abcd  match rule 1 - copy output & adjust cursor
      * [ex|y]cd  match rule 2 - copy output & adjust cursor
      * [exz]|d   no match, copy d to transliterated buffer
@@ -658,23 +658,23 @@ int gTestFilterClassID = 0;
  * Used by TestFiltering().
  */
 class TestFilter : public UnicodeFilter {
-    virtual TestFilter* clone() const {
+    virtual TestFilter* clone() const override {
         return new TestFilter(*this);
     }
-    virtual UBool contains(UChar32 c) const {
+    virtual UBool contains(UChar32 c) const override {
         return c != (UChar)0x0063 /*c*/;
     }
     // Stubs
     virtual UnicodeString& toPattern(UnicodeString& result,
-                                     UBool /*escapeUnprintable*/) const {
+                                     UBool /*escapeUnprintable*/) const override {
         return result;
     }
-    virtual UBool matchesIndexValue(uint8_t /*v*/) const {
+    virtual UBool matchesIndexValue(uint8_t /*v*/) const override {
         return FALSE;
     }
-    virtual void addMatchSetTo(UnicodeSet& /*toUnionTo*/) const {}
+    virtual void addMatchSetTo(UnicodeSet& /*toUnionTo*/) const override {}
 public:
-    UClassID getDynamicClassID() const { return (UClassID)&gTestFilterClassID; }
+    UClassID getDynamicClassID() const override { return (UClassID)&gTestFilterClassID; }
 };
 
 /**
@@ -1688,7 +1688,7 @@ void TransliteratorTest::TestCompoundRBT(void) {
 }
 
 /**
- * Compound filter semantics were orginially not implemented
+ * Compound filter semantics were originally not implemented
  * correctly.  Originally, each component filter f(i) is replaced by
  * f'(i) = f(i) && g, where g is the filter for the compound
  * transliterator.
@@ -2026,15 +2026,15 @@ class TestTrans : public Transliterator {
 public:
     TestTrans(const UnicodeString& id) : Transliterator(id, 0) {
     }
-    virtual TestTrans* clone(void) const {
+    virtual TestTrans* clone(void) const override {
         return new TestTrans(getID());
     }
     virtual void handleTransliterate(Replaceable& /*text*/, UTransPosition& offsets,
-        UBool /*isIncremental*/) const
+        UBool /*isIncremental*/) const override
     {
         offsets.start = offsets.limit;
     }
-    virtual UClassID getDynamicClassID() const;
+    virtual UClassID getDynamicClassID() const override;
     static UClassID U_EXPORT2 getStaticClassID();
 };
 UOBJECT_DEFINE_RTTI_IMPLEMENTATION(TestTrans)
@@ -3959,7 +3959,7 @@ void TransliteratorTest::TestAnyX(void) {
  */
 void TransliteratorTest::TestAny(void) {
     UErrorCode status = U_ZERO_ERROR;
-    // Note: there is a lot of implict construction of UnicodeStrings from (char *) in
+    // Note: there is a lot of implicit construction of UnicodeStrings from (char *) in
     //       function call parameters going on in this test.
     UnicodeSet alphabetic("[:alphabetic:]", status);
     if (U_FAILURE(status)) {
@@ -4678,6 +4678,11 @@ void TransliteratorTest::TestHalfwidthFullwidth(void) {
      */
 void TransliteratorTest::TestThai(void) {
 #if !UCONFIG_NO_BREAK_ITERATION
+    // The expectations in this test heavily depends on the Thai dictionary.
+    // Therefore, we skip this test under the LSTM configuration.
+    if (skipDictionaryTest()) {
+        return;
+    }
     UParseError parseError;
     UErrorCode status = U_ZERO_ERROR;
     Transliterator* tr = Transliterator::createInstance("Any-Latin", UTRANS_FORWARD, parseError, status);

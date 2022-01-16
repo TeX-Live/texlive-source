@@ -3,8 +3,8 @@
 	https://tug.org/pipermail/tlbuild/2020q1/004599.html
 	https://tug.org/pipermail/tlbuild/2020q1/004599.html
 
---- source/common/ubidiimp.h~	2020-12-17 11:34:38.000000000 -0800
-+++ source/common/ubidiimp.h	2021-02-13 08:20:09.076105678 -0800
+--- source/common/ubidiimp.h~	2021-10-28 09:04:57.000000000 -0700
++++ source/common/ubidiimp.h	2022-01-16 14:44:51.081353714 -0800
 @@ -42,4 +42,6 @@
      See UCharDirection in uchar.h .
  */

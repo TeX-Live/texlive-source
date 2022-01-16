@@ -25,7 +25,7 @@ class SimpleThread
   public:
     SimpleThread();
     virtual  ~SimpleThread();
-    int32_t   start();            // start the thread. Return 0 if successfull.
+    int32_t   start();            // start the thread. Return 0 if successful.
     void      join();             // A thread must be joined before deleting its SimpleThread.
 
     virtual void run() = 0;       // Override this to provide the code to run
@@ -79,7 +79,7 @@ class ThreadPool : public ThreadPoolBase {
         ThreadPoolBase(test, howMany), fRunFnPtr(runFnPtr) {}
     virtual ~ThreadPool() {}
   private:
-    virtual void callFn(int32_t param) {
+    virtual void callFn(int32_t param) override {
         TestClass *test = dynamic_cast<TestClass *>(fIntlTest);
         (test->*fRunFnPtr)(param);
     }

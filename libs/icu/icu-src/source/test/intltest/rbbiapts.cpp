@@ -70,7 +70,7 @@ void RBBIAPITest::TestCloneEquals()
     logln((UnicodeString)"Testing equals()");
 
     logln((UnicodeString)"Testing == and !=");
-    UBool b = (*bi1 != *biequal);
+    bool b = (*bi1 != *biequal);
     b |= *bi1 == *bi2;
     b |= *bi1 == *bi3;
     if (b) {
@@ -308,7 +308,7 @@ void RBBIAPITest::TestGetSetAdoptText()
     if(rb->getText() != *text2)
         errln((UnicodeString)"ERROR:2 error in adoptText ");
 
-    // Adopt where iterator range is less than the entire orignal source string.
+    // Adopt where iterator range is less than the entire original source string.
     //   (With the change of the break engine to working with UText internally,
     //    CharacterIterators starting at positions other than zero are not supported)
     rb->adoptText(text3);
@@ -551,7 +551,7 @@ void RBBIAPITest::TestIteration()
     //
     bi->first();
     if (bi->isBoundary(3) != TRUE) {
-        errln("%s:%d Incorrect value from bi->isBoudary().  Expected TRUE, got FALSE", __FILE__, __LINE__, i);
+        errln("%s:%d Incorrect value from bi->isBoundary().  Expected TRUE, got FALSE", __FILE__, __LINE__, i);
     }
     i = bi->current();
     if (i != 3) {
@@ -560,7 +560,7 @@ void RBBIAPITest::TestIteration()
 
 
     if (bi->isBoundary(11) != FALSE) {
-        errln("%s:%d Incorrect value from bi->isBoudary().  Expected FALSE, got TRUE", __FILE__, __LINE__, i);
+        errln("%s:%d Incorrect value from bi->isBoundary().  Expected FALSE, got TRUE", __FILE__, __LINE__, i);
     }
     i = bi->current();
     if (i != 10) {
@@ -683,7 +683,7 @@ void RBBIAPITest::TestRuleStatus() {
          int32_t pos, tag;
          for (pos = bi->first(); pos != BreakIterator::DONE; pos = bi->next(), i++) {
              if (pos != bounds1[i]) {
-                 errln("%s:%d FAIL: unexpected word break at postion %d", __FILE__, __LINE__, pos);
+                 errln("%s:%d FAIL: unexpected word break at position %d", __FILE__, __LINE__, pos);
                  break;
              }
              tag = bi->getRuleStatus();

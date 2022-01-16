@@ -175,15 +175,20 @@ void IntlTestDecimalFormatAPI::testAPI(/*char *par*/)
     }
 
     status = U_ZERO_ERROR;
-    DecimalFormat cust1(pattern, symbols, status);
-    if(U_FAILURE(status)) {
-        errln((UnicodeString)"ERROR: Could not create DecimalFormat (pattern, symbols*)");
-    }
-
-    status = U_ZERO_ERROR;
-    DecimalFormat cust2(pattern, *symbols, status);
+    DecimalFormat cust1(pattern, *symbols, status);
     if(U_FAILURE(status)) {
         errln((UnicodeString)"ERROR: Could not create DecimalFormat (pattern, symbols)");
+    }
+
+    // NOTE: The test where you pass "symbols" as a pointer has to come second-- the DecimalFormat
+    // object is _adopting_ this object, meaning it's unavailable for use by this test (e.g.,
+    // to pass to another DecimalFormat) after the call to the DecimalFormat constructor.
+    // The call above, where we're passing it by reference, doesn't take ownership of the
+    // symbols object, so we can reuse it here.
+    status = U_ZERO_ERROR;
+    DecimalFormat cust2(pattern, symbols, status);
+    if(U_FAILURE(status)) {
+        errln((UnicodeString)"ERROR: Could not create DecimalFormat (pattern, symbols*)");
     }
 
     DecimalFormat copy(pat);
@@ -1167,7 +1172,7 @@ void IntlTestDecimalFormatAPI::testInvalidObject() {
         assertEquals(WHERE, U_MEMORY_ALLOCATION_ERROR, status);
 
         // Two invalid objects should not be equal.
-        // (Also verify that nullptr isn't t dereferenced in the comparision operator.)
+        // (Also verify that nullptr isn't t dereferenced in the comparison operator.)
         assertTrue(WHERE, dfBogus != dfBogus2);
 
         // Verify the comparison operator works for two valid objects.

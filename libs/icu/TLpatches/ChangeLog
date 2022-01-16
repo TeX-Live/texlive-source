@@ -1,3 +1,10 @@
+2022-01-16  Karl Berry  <karl@freefriends.org>
+
+	* Update for icu-70.1.
+	* patch-24-simulator: remove, applied upstream.
+	* patch-22-max_align_t: remove, not needed since we have to use a
+	newer compiler anyway.
+
 2021-03-01  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
 
 	* patch-24-simulator: new patch.

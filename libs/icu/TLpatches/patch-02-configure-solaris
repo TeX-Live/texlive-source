@@ -1,8 +1,8 @@
 	Do not disable C++11 on Solaris, since we don't use the Sun compiler.
 
---- source/configure~	2021-02-13 08:16:36.271761526 -0800
-+++ source/configure	2021-02-13 08:18:10.826136078 -0800
-@@ -6149,9 +6149,10 @@
+--- source/configure~	2022-01-16 14:43:05.441342307 -0800
++++ source/configure	2022-01-16 14:44:14.808693105 -0800
+@@ -6161,9 +6161,10 @@
              CXXFLAGS="$OLD_CXXFLAGS"
          fi
 -        case "${host}" in

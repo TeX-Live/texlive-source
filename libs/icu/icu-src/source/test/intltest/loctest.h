@@ -17,7 +17,7 @@ public:
     LocaleTest();
     virtual ~LocaleTest();
     
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL ) override;
 
     /**
      * Test methods to set and get data fields
@@ -82,8 +82,10 @@ public:
    void TestKeywordVariantParsing(void);
    void TestCreateKeywordSet(void);
    void TestCreateKeywordSetEmpty(void);
+   void TestCreateKeywordSetWithPrivateUse(void);
    void TestCreateUnicodeKeywordSet(void);
    void TestCreateUnicodeKeywordSetEmpty(void);
+   void TestCreateUnicodeKeywordSetWithPrivateUse(void);
    void TestGetKeywordValueStdString(void);
    void TestGetUnicodeKeywordValueStdString(void);
 
@@ -131,6 +133,7 @@ public:
     void TestAddLikelyAndMinimizeSubtags();
 
     void TestForLanguageTag();
+    void TestForLanguageTagLegacyTagBug21676();
     void TestToLanguageTag();
     void TestToLanguageTagOmitTrue();
 
@@ -154,6 +157,9 @@ public:
     void TestSetUnicodeKeywordValueInLongLocale();
     void TestSetUnicodeKeywordValueNullInLongLocale();
     void TestLeak21419();
+    void TestNullDereferenceWrite21597();
+    void TestLongLocaleSetKeywordAssign();
+    void TestLongLocaleSetKeywordMoveAssign();
 
 private:
     void _checklocs(const char* label,
@@ -168,7 +174,7 @@ private:
      **/
     void doTestDisplayNames(Locale& inLocale, int32_t compareIndex);
     /**
-     * additional intialization for datatables storing expected values
+     * additional initialization for datatables storing expected values
      **/
     void setUpDataTable(void);
 

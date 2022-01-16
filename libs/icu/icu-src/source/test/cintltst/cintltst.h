@@ -78,10 +78,18 @@ U_CFUNC char *aescstrdup(const UChar* unichars, int32_t length);
 U_CFUNC void *ctst_malloc(size_t size);
 
 /**
- * Return the path to cintltst's data ( icu/source/data/testdata ) directory. 
+ * Return the path to cintltst's data ( icu/source/data/testdata ) directory.
+ * The path may be in the out/ directory.
  * Return value is allocated by ctst_malloc and should not be deleted.
  */
 U_CFUNC const char* loadTestData(UErrorCode* err);
+
+/*
+ * Returns the path to the icu/source/test/testdata directory.
+ * The path is always the source directory.
+ * Return value is static and should not be deleted.
+ */
+U_CFUNC const char* loadSourceTestData(UErrorCode* err);
 
 /**
  * function used to specify the error
@@ -143,7 +151,7 @@ U_CFUNC UBool assertUEquals(const char* msg, const UChar* expectedString,
                             const UChar* actualString);
 
 /**
- * Assert that two 64-bit integers are equal, returning TRUE if they do.
+ * Assert that two 64-bit integers are equal, returning TRUE if they are.
  */
 U_CFUNC UBool assertIntEquals(const char* msg, int64_t expected, int64_t actual);
 
@@ -152,6 +160,11 @@ U_CFUNC UBool assertIntEquals(const char* msg, int64_t expected, int64_t actual)
  * TRUE if they are equal.
  */
 U_CFUNC UBool assertPtrEquals(const char* msg, const void* expected, const void* actual);
+
+/**
+ * Assert that two doubles are equal, returning TRUE if they are.
+ */
+U_CFUNC UBool assertDoubleEquals(const char *msg, double expected, double actual);
 
 /*
  * note - isICUVersionBefore and isICUVersionAtLeast have been removed.

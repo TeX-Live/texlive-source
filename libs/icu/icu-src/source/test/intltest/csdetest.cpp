@@ -218,7 +218,7 @@ void CharsetDetectionTest::checkEncoding(const UnicodeString &testString, const 
     dLength = ucsdet_getUChars(matches[0], decoded, testLength, &status);
 
     if (testString.compare(decoded, dLength) != 0) {
-        errln("Round-trip error for " + id + ", " + eSplit[0] + ": getUChars() didn't yeild the original string.");
+        errln("Round-trip error for " + id + ", " + eSplit[0] + ": getUChars() didn't yield the original string.");
 
 #ifdef DEBUG_DETECT
         for(int32_t i = 0; i < testLength; i += 1) {
@@ -396,7 +396,7 @@ void CharsetDetectionTest::UTF16Test()
     conf = ucsdet_getConfidence(match, &status);
 
     if (strcmp(name, "UTF-16LE") != 0) {
-        errln("Enconding detection failure for UTF-16LE: got %s", name);
+        errln("Encoding detection failure for UTF-16LE: got %s", name);
         return;
     }
 
@@ -780,7 +780,7 @@ void CharsetDetectionTest::Ticket6394Test() {
         return;
     }
 
-    UnicodeSet  setOfCharsetNames;    // UnicodSets can hold strings.
+    UnicodeSet  setOfCharsetNames;    // UnicodeSets can hold strings.
     int32_t i;
     for (i=0; i<matchCount; i++) {
         UnicodeString charSetName(ucsdet_getName(matches[i], &status));

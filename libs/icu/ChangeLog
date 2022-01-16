@@ -1,3 +1,8 @@
+2022-01-16  Karl Berry  <karl@freefriends.org>
+
+	* Import icu-68.2, undoing the std::max_align_t hack since we have
+	to use a newer compiler anyway.
+
 2021-12-17  Siep Kroonenberg  <siepo@bitmuis.nl>
 
 	* Makefile.am (icubuild): sense of test -r lib*.a was reversed.

@@ -75,6 +75,7 @@ static void TestSetMaxFracAndRoundIncr(void);
 static void TestIgnorePadding(void);
 static void TestSciNotationMaxFracCap(void);
 static void TestMinIntMinFracZero(void);
+static void Test21479_ExactCurrency(void);
 
 #define TESTCASE(x) addTest(root, &x, "tsformat/cnumtst/" #x)
 
@@ -116,6 +117,7 @@ void addNumForTest(TestNode** root)
     TESTCASE(TestIgnorePadding);
     TESTCASE(TestSciNotationMaxFracCap);
     TESTCASE(TestMinIntMinFracZero);
+    TESTCASE(Test21479_ExactCurrency);
 }
 
 /* test Parse int 64 */
@@ -262,8 +264,8 @@ static void TestNumberFormat()
     if(numlocales < 0)
         log_err("error in countAvailable");
     else{
-        log_verbose("unum_countAvialable() successful\n");
-        log_verbose("The no: of locales where number formattting is applicable is %d\n", numlocales);
+        log_verbose("unum_countAvailable() successful\n");
+        log_verbose("The no: of locales where number formatting is applicable is %d\n", numlocales);
     }
     for(i=0;i<numlocales;i++)
     {
@@ -671,17 +673,17 @@ free(result);
     unum_getTextAttribute(cur_fr, UNUM_NEGATIVE_SUFFIX, temp, resultlength, &status);
     if(U_FAILURE(status))
     {
-        log_err("Failure in gettting the Text attributes of number format: %s\n", myErrorName(status));
+        log_err("Failure in getting the Text attributes of number format: %s\n", myErrorName(status));
     }
     unum_setTextAttribute(cur_def, UNUM_NEGATIVE_SUFFIX, temp, u_strlen(temp), &status);
     if(U_FAILURE(status))
     {
-        log_err("Failure in gettting the Text attributes of number format: %s\n", myErrorName(status));
+        log_err("Failure in getting the Text attributes of number format: %s\n", myErrorName(status));
     }
     unum_getTextAttribute(cur_def, UNUM_NEGATIVE_SUFFIX, suffix, resultlength, &status);
     if(U_FAILURE(status))
     {
-        log_err("Failure in gettting the Text attributes of number format: %s\n", myErrorName(status));
+        log_err("Failure in getting the Text attributes of number format: %s\n", myErrorName(status));
     }
     if(u_strcmp(suffix,temp)!=0)
         log_err("Fail:Error in setTextAttribute or getTextAttribute in setting and getting suffix\n");
@@ -882,7 +884,7 @@ free(result);
         }
         u_austrncpy(desta, dest, DESTCAPACITY);
         if (strcmp(numFormatted, desta) != 0) {
-            log_err("File %s, Line %d, (expected, acutal) =  (\"%s\", \"%s\")\n",
+            log_err("File %s, Line %d, (expected, actual) =  (\"%s\", \"%s\")\n",
                     __FILE__, __LINE__, numFormatted, desta);
         }
         if ((int32_t)strlen(numFormatted) != resultSize) {
@@ -899,15 +901,15 @@ free(result);
         }
         u_austrncpy(desta, dest, DESTCAPACITY);
         if (strcmp(numFormatted, desta) != 0) {
-            log_err("File %s, Line %d, (expected, acutal) =  (\"%s\", \"%s\")\n",
+            log_err("File %s, Line %d, (expected, actual) =  (\"%s\", \"%s\")\n",
                     __FILE__, __LINE__, numFormatted, desta);
         }
         if (fieldPos.beginIndex != 26) {  /* index of "." in formatted number */
-            log_err("File %s, Line %d, (expected, acutal) =  (%d, %d)\n",
+            log_err("File %s, Line %d, (expected, actual) =  (%d, %d)\n",
                     __FILE__, __LINE__, 0, fieldPos.beginIndex);
         }
         if (fieldPos.endIndex != 27) {
-            log_err("File %s, Line %d, (expected, acutal) =  (%d, %d)\n",
+            log_err("File %s, Line %d, (expected, actual) =  (%d, %d)\n",
                     __FILE__, __LINE__, 0, fieldPos.endIndex);
         }
 
@@ -2748,7 +2750,7 @@ static void TestCurrencyUsage(void) {
         }
 
         if(unum_getAttribute(unumFmt, UNUM_CURRENCY_USAGE) != UCURR_USAGE_CASH) {
-            log_err("FAIL: currency usage attribute is not UNUM_CURRENCY_CASH\n");
+            log_err("FAIL: currency usage attribute is not UNUM_CASH_CURRENCY\n");
         }
 
         for (j=0; j<UPRV_LENGTHOF(DATA); ++j) {
@@ -3547,33 +3549,52 @@ static void TestMinIntMinFracZero(void) {
             status = U_ZERO_ERROR;
             ulen = unum_formatDouble(unum, 10.0, ubuf, kUBufMax, NULL, &status);
             if ( U_FAILURE(status) ) {
-                log_err("unum_formatDouble (CURRRENCY) 10.0 ulen %d fails with %s\n", ulen, u_errorName(status));
+                log_err("unum_formatDouble (CURRENCY) 10.0 ulen %d fails with %s\n", ulen, u_errorName(status));
             } else if (u_strcmp(ubuf, u"$10") != 0) {
                 u_austrncpy(bbuf, ubuf, kUBufMax);
-                log_err("unum_formatDouble (CURRRENCY) 10.0 expected \"$10\", got \"%s\"\n", bbuf);
+                log_err("unum_formatDouble (CURRENCY) 10.0 expected \"$10\", got \"%s\"\n", bbuf);
             }
 
             status = U_ZERO_ERROR;
             ulen = unum_formatDouble(unum, 0.9, ubuf, kUBufMax, NULL, &status);
             if ( U_FAILURE(status) ) {
-                log_err("unum_formatDouble (CURRRENCY) 0.9 ulen %d fails with %s\n", ulen, u_errorName(status));
+                log_err("unum_formatDouble (CURRENCY) 0.9 ulen %d fails with %s\n", ulen, u_errorName(status));
             } else if (u_strcmp(ubuf, u"$.9") != 0) {
                 u_austrncpy(bbuf, ubuf, kUBufMax);
-                log_err("unum_formatDouble (CURRRENCY) 0.9 expected \"$.9\", got \"%s\"\n", bbuf);
+                log_err("unum_formatDouble (CURRENCY) 0.9 expected \"$.9\", got \"%s\"\n", bbuf);
             }
 
             status = U_ZERO_ERROR;
             ulen = unum_formatDouble(unum, 0.0, ubuf, kUBufMax, NULL, &status);
             if ( U_FAILURE(status) ) {
-                log_err("unum_formatDouble (CURRRENCY) 0.0 ulen %d fails with %s\n", ulen, u_errorName(status));
+                log_err("unum_formatDouble (CURRENCY) 0.0 ulen %d fails with %s\n", ulen, u_errorName(status));
             } else if (u_strcmp(ubuf, u"$0") != 0) {
                 u_austrncpy(bbuf, ubuf, kUBufMax);
-                log_err("unum_formatDouble (CURRRENCY) 0.0 expected \"$0\", got \"%s\"\n", bbuf);
+                log_err("unum_formatDouble (CURRENCY) 0.0 expected \"$0\", got \"%s\"\n", bbuf);
             }
 
             unum_close(unum);
         }
     }
+}
+
+static void Test21479_ExactCurrency(void) {
+    UErrorCode status = U_ZERO_ERROR;
+    UNumberFormat* nf = unum_open(UNUM_CURRENCY, NULL, 0, "en_US", NULL, &status);
+    if ( U_FAILURE(status) ) {
+        log_data_err("unum_open UNUM_CURRENCY for en_US fails with %s\n", u_errorName(status));
+        goto cleanup;
+    }
+    unum_setTextAttribute(nf, UNUM_CURRENCY_CODE, u"EUR", -1, &status);
+    UChar result[40];
+    unum_formatDecimal(nf, "987654321000000000000001", -1, result, 40, NULL, &status);
+    if (!assertSuccess("Formatting currency decimal", &status)) {
+        goto cleanup;
+    }
+    assertUEquals("", u"€987,654,321,000,000,000,000,001.00", result);
+
+    cleanup:
+    unum_close(nf);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

@@ -5,8 +5,8 @@
 	http://tug.org/pipermail/tlbuild/2016q1/003438.html
 	(and starting at http://tug.org/pipermail/tlbuild/2016q1/003433.html)
 
---- source/i18n/dayperiodrules.h~	2020-12-17 11:34:38.000000000 -0800
-+++ source/i18n/dayperiodrules.h	2021-02-13 08:30:53.116015999 -0800
+--- source/i18n/dayperiodrules.h~	2021-10-28 09:04:57.000000000 -0700
++++ source/i18n/dayperiodrules.h	2022-01-16 14:47:58.135604382 -0800
 @@ -56,5 +56,5 @@
      double getMidPointForDayPeriod(DayPeriod dayPeriod, UErrorCode &errorCode) const;
  
@@ -14,8 +14,8 @@
 +/* nothing private to placate old compilers --karl/koch private: */
      DayPeriodRules();
  
---- source/i18n/unicode/dtitvinf.h~	2020-12-17 11:34:38.000000000 -0800
-+++ source/i18n/unicode/dtitvinf.h	2021-02-13 08:30:53.116015999 -0800
+--- source/i18n/unicode/dtitvinf.h~	2021-10-28 09:04:57.000000000 -0700
++++ source/i18n/unicode/dtitvinf.h	2022-01-16 14:47:58.136604372 -0800
 @@ -330,5 +330,5 @@
  
  

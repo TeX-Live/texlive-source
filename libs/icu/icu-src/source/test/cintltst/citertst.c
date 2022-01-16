@@ -1004,7 +1004,7 @@ static void TestSmallBuffer()
 }
 
 /**
-* Testing the discontigous contractions
+* Testing the discontiguous contractions
 */
 static void TestDiscontiguos() {
     const char               *rulestr    =
@@ -1090,7 +1090,7 @@ static void TestDiscontiguos() {
             while (ce != UCOL_NULLORDER) {
                 if (ce != ucol_next(iter, &status) ||
                     U_FAILURE(status)) {
-                    log_err("Discontiguos contraction test mismatch\n");
+                    log_err("Discontiguous contraction test mismatch\n");
                     return;
                 }
                 ce = ucol_next(resultiter, &status);

@@ -32,7 +32,7 @@ public:
     CollationRegressionTest();
     virtual ~CollationRegressionTest();
 
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL ) override;
 
     // @bug 4048446
     //
@@ -219,12 +219,6 @@ public:
     // Support for Swedish gone in 1.1.6 (Can't create Swedish collator) 
     //
     void Test4141640(/* char* par */);
-    
-    // @bug 4146160
-    //
-    // RuleBasedCollator doesn't use getCollationElementIterator internally
-    //
-    void Test4146160(/* char* par */);
 
     void Test4179216();
 

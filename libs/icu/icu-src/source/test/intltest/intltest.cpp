@@ -39,6 +39,7 @@
 #include "cmemory.h"
 #include "cstring.h"
 #include "itmajor.h"
+#include "lstmbe.h"
 #include "mutex.h"
 #include "putilimp.h" // for uprv_getRawUTCtime()
 #include "uassert.h"
@@ -1322,7 +1323,7 @@ main(int argc, char* argv[])
                 "### IntlTest [-option1 -option2 ...] [testname1 testname2 ...] \n"
                 "### \n"
                 "### Options are: verbose (v), all (a), noerrormsg (n), \n"
-                "### exhaustive (e), leaks (l), -x xmlfile.xml, prop:<propery>=<value>, \n"
+                "### exhaustive (e), leaks (l), -x xmlfile.xml, prop:<property>=<value>, \n"
                 "### notime (T), \n"
                 "### threads:<threadCount>\n"
                 "###     (The default thread count is 12.),\n"
@@ -1605,7 +1606,7 @@ main(int argc, char* argv[])
 }
 
 const char* IntlTest::loadTestData(UErrorCode& err){
-    if( _testDataPath == NULL){
+    if ( _testDataPath == NULL){
         const char*      directory=NULL;
         UResourceBundle* test =NULL;
         char* tdpath=NULL;
@@ -1621,6 +1622,11 @@ const char* IntlTest::loadTestData(UErrorCode& err){
 
         tdpath = (char*) malloc(sizeof(char) *(( strlen(directory) * strlen(tdrelativepath)) + 100));
 
+        if (tdpath == NULL) {
+            err = U_MEMORY_ALLOCATION_ERROR;
+            it_dataerrln((UnicodeString) "Could not allocate memory for _testDataPath " + u_errorName(err));
+            return "";
+        }
 
         /* u_getDataDirectory shoul return \source\data ... set the
          * directory to ..\source\data\..\test\testdata\out\testdata
@@ -1631,7 +1637,7 @@ const char* IntlTest::loadTestData(UErrorCode& err){
 
         test=ures_open(tdpath, "testtypes", &err);
 
-        if(U_FAILURE(err)){
+        if (U_FAILURE(err)) {
             err = U_FILE_ACCESS_ERROR;
             it_dataerrln((UnicodeString)"Could not load testtypes.res in testdata bundle with path " + tdpath + (UnicodeString)" - " + u_errorName(err));
             return "";
@@ -1647,7 +1653,10 @@ const char* IntlTest::getTestDataPath(UErrorCode& err) {
     return loadTestData(err);
 }
 
-/* Returns the path to icu/source/test/testdata/ */
+/**
+ * Returns the path to icu/source/test/testdata/
+ * Note: this function is parallel with C loadSourceTestData in cintltst.c
+ */
 const char *IntlTest::getSourceTestData(UErrorCode& /*err*/) {
     const char *srcDataDir = NULL;
 #ifdef U_TOPSRCDIR
@@ -1920,9 +1929,9 @@ UBool IntlTest::assertTrue(const char* message, UBool condition, UBool quiet, UB
 UBool IntlTest::assertFalse(const char* message, UBool condition, UBool quiet, UBool possibleDataError) {
     if (condition) {
         if (possibleDataError) {
-            dataerrln("FAIL: assertTrue() failed: %s", message);
+            dataerrln("FAIL: assertFalse() failed: %s", message);
         } else {
-            errln("FAIL: assertTrue() failed: %s", message);
+            errln("FAIL: assertFalse() failed: %s", message);
         }
     } else if (!quiet) {
         logln("Ok: %s", message);
@@ -1974,6 +1983,8 @@ UBool IntlTest::assertEquals(const char* message,
 UBool IntlTest::assertEquals(const char* message,
                              const char* expected,
                              const char* actual) {
+    U_ASSERT(expected != nullptr);
+    U_ASSERT(actual != nullptr);
     if (uprv_strcmp(expected, actual) != 0) {
         errln((UnicodeString)"FAIL: " + message + "; got \"" +
               actual +
@@ -2306,6 +2317,143 @@ const char* IntlTest::getProperty(const char* prop) {
     }
     return val;
 }
+
+//-------------------------------------------------------------------------------
+//
+//    ReadAndConvertFile   Read a text data file, convert it to UChars, and
+//    return the data in one big UChar * buffer, which the caller must delete.
+//
+//    parameters:
+//          fileName:   the name of the file, with no directory part.  The test data directory
+//                      is assumed.
+//          ulen        an out parameter, receives the actual length (in UChars) of the file data.
+//          encoding    The file encoding.  If the file contains a BOM, that will override the encoding
+//                      specified here.  The BOM, if it exists, will be stripped from the returned data.
+//                      Pass NULL for the system default encoding.
+//          status
+//    returns:
+//                      The file data, converted to UChar.
+//                      The caller must delete this when done with
+//                           delete [] theBuffer;
+//
+//
+//--------------------------------------------------------------------------------
+UChar *IntlTest::ReadAndConvertFile(const char *fileName, int &ulen, const char *encoding, UErrorCode &status) {
+    UChar       *retPtr  = NULL;
+    char        *fileBuf = NULL;
+    UConverter* conv     = NULL;
+    FILE        *f       = NULL;
+
+    ulen = 0;
+    if (U_FAILURE(status)) {
+        return retPtr;
+    }
+
+    //
+    //  Open the file.
+    //
+    f = fopen(fileName, "rb");
+    if (f == 0) {
+        dataerrln("Error opening test data file %s\n", fileName);
+        status = U_FILE_ACCESS_ERROR;
+        return NULL;
+    }
+    //
+    //  Read it in
+    //
+    int   fileSize;
+    int   amt_read;
+
+    fseek( f, 0, SEEK_END);
+    fileSize = ftell(f);
+    fileBuf = new char[fileSize];
+    fseek(f, 0, SEEK_SET);
+    amt_read = static_cast<int>(fread(fileBuf, 1, fileSize, f));
+    if (amt_read != fileSize || fileSize <= 0) {
+        errln("Error reading test data file.");
+        goto cleanUpAndReturn;
+    }
+
+    //
+    // Look for a Unicode Signature (BOM) on the data just read
+    //
+    int32_t        signatureLength;
+    const char *   fileBufC;
+    const char*    bomEncoding;
+
+    fileBufC = fileBuf;
+    bomEncoding = ucnv_detectUnicodeSignature(
+        fileBuf, fileSize, &signatureLength, &status);
+    if(bomEncoding!=NULL ){
+        fileBufC  += signatureLength;
+        fileSize  -= signatureLength;
+        encoding = bomEncoding;
+    }
+
+    //
+    // Open a converter to take the rule file to UTF-16
+    //
+    conv = ucnv_open(encoding, &status);
+    if (U_FAILURE(status)) {
+        goto cleanUpAndReturn;
+    }
+
+    //
+    // Convert the rules to UChar.
+    //  Preflight first to determine required buffer size.
+    //
+    ulen = ucnv_toUChars(conv,
+        NULL,           //  dest,
+        0,              //  destCapacity,
+        fileBufC,
+        fileSize,
+        &status);
+    if (status == U_BUFFER_OVERFLOW_ERROR) {
+        // Buffer Overflow is expected from the preflight operation.
+        status = U_ZERO_ERROR;
+
+        retPtr = new UChar[ulen+1];
+        ucnv_toUChars(conv,
+            retPtr,       //  dest,
+            ulen+1,
+            fileBufC,
+            fileSize,
+            &status);
+    }
+
+cleanUpAndReturn:
+    fclose(f);
+    delete []fileBuf;
+    ucnv_close(conv);
+    if (U_FAILURE(status)) {
+        errln("ucnv_toUChars: ICU Error \"%s\"\n", u_errorName(status));
+        delete []retPtr;
+        retPtr = 0;
+        ulen   = 0;
+    }
+    return retPtr;
+}
+
+#if !UCONFIG_NO_BREAK_ITERATION
+UBool LSTMDataIsBuilt() {
+  // If we can find the LSTM data, the RBBI will use the LSTM engine.
+  // So we skip the test which depending on the dictionary data.
+  UErrorCode status = U_ZERO_ERROR;
+  DeleteLSTMData(CreateLSTMDataForScript(USCRIPT_THAI, status));
+  UBool thaiDataIsBuilt = U_SUCCESS(status);
+  status = U_ZERO_ERROR;
+  DeleteLSTMData(CreateLSTMDataForScript(USCRIPT_MYANMAR, status));
+  UBool burmeseDataIsBuilt = U_SUCCESS(status);
+  return thaiDataIsBuilt | burmeseDataIsBuilt;
+}
+
+UBool IntlTest::skipLSTMTest() {
+   return ! LSTMDataIsBuilt();
+}
+UBool IntlTest::skipDictionaryTest() {
+   return LSTMDataIsBuilt();
+}
+#endif /* #if !UCONFIG_NO_BREAK_ITERATION */
 
 /*
  * Hey, Emacs, please set the following:

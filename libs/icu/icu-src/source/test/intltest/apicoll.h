@@ -23,7 +23,7 @@
 
 class CollationAPITest: public IntlTestCollator {
 public:
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par = NULL */);
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* /*par = NULL */) override;
     void doAssert(UBool condition, const char *message);
 
     /**
@@ -102,7 +102,7 @@ public:
      * - creation of a CollationElementIterator object
      * - == and != operators
      * - iterating forward
-     * - reseting the iterator index
+     * - resetting the iterator index
      * - requesting the order properties(primary, secondary or tertiary)
      */
     void TestElemIter(/* char* par */);

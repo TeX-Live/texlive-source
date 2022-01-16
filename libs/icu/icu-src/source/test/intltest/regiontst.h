@@ -21,7 +21,7 @@
  **/
 class RegionTest: public IntlTest {
     // IntlTest override
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par ) override;
 
 public:
     RegionTest();
@@ -38,6 +38,7 @@ public:
     void TestContains(void);
     void TestAvailableTerritories(void);
     void TestNoContainedRegions(void);
+    void TestGroupingChildren(void);
 
 private:
 

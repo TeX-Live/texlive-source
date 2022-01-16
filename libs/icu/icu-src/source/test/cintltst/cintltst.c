@@ -162,7 +162,7 @@ int main(int argc, const char* const argv[])
                     "*** Check the ICU_DATA environment variable and \n"
                     "*** check that the data files are present.\n", warnOrErr);
             if(!getTestOption(WARN_ON_MISSING_DATA_OPTION)) {
-                fprintf(stderr, "*** Exitting.  Use the '-w' option if data files were\n*** purposely removed, to continue test anyway.\n");
+                fprintf(stderr, "*** Exiting.  Use the '-w' option if data files were\n*** purposely removed, to continue test anyway.\n");
                 u_cleanup();
                 return 1;
             }
@@ -178,7 +178,7 @@ int main(int argc, const char* const argv[])
                     "*** Check the ICU_DATA environment variable and \n"
                     "*** check that the data files are present.\n", warnOrErr);
             if(!getTestOption(WARN_ON_MISSING_DATA_OPTION)) {
-                fprintf(stderr, "*** Exitting.  Use the '-w' option if data files were\n*** purposely removed, to continue test anyway.\n");
+                fprintf(stderr, "*** Exiting.  Use the '-w' option if data files were\n*** purposely removed, to continue test anyway.\n");
                 u_cleanup();
                 return 1;
             }
@@ -197,7 +197,7 @@ int main(int argc, const char* const argv[])
             fprintf(stderr,
                     "*** %s! Can not open a resource bundle for the default locale %s\n", warnOrErr, uloc_getDefault());
             if(!getTestOption(WARN_ON_MISSING_DATA_OPTION)) {
-                fprintf(stderr, "*** Exitting.  Use the '-w' option if data files were\n"
+                fprintf(stderr, "*** Exiting.  Use the '-w' option if data files were\n"
                     "*** purposely removed, to continue test anyway.\n");
                 u_cleanup();
                 return 1;
@@ -210,7 +210,7 @@ int main(int argc, const char* const argv[])
         root = NULL;
         addAllTests(&root);
 
-        /*  Tests acutally run HERE.   TODO:  separate command line option parsing & setting from test execution!! */
+        /*  Tests actually run HERE.   TODO:  separate command line option parsing & setting from test execution!! */
         nerrors = runTestRequest(root, argc, argv);
 
         setTestOption(REPEAT_TESTS_OPTION, DECREMENT_OPTION_VALUE);
@@ -576,6 +576,31 @@ const char* loadTestData(UErrorCode* err){
     return _testDataPath;
 }
 
+/**
+ * Returns the path to icu/source/test/testdata/
+ * Note: this function is parallel with C++ getSourceTestData in intltest.cpp
+ */
+const char *loadSourceTestData(UErrorCode* err) {
+    (void)err;
+    const char *srcDataDir = NULL;
+#ifdef U_TOPSRCDIR
+    srcDataDir = U_TOPSRCDIR U_FILE_SEP_STRING"test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING;
+#else
+    srcDataDir = ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING;
+    FILE *f = fopen(".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING "rbbitst.txt", "r");
+    if (f) {
+        /* We're in icu/source/test/intltest/ */
+        fclose(f);
+    }
+    else {
+        /* We're in icu/source/test/intltest/Platform/(Debug|Release) */
+        srcDataDir = ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING ".." U_FILE_SEP_STRING
+                     "test" U_FILE_SEP_STRING "testdata" U_FILE_SEP_STRING;
+    }
+#endif
+    return srcDataDir;
+}
+
 #define CTEST_MAX_TIMEZONE_SIZE 256
 static UChar gOriginalTimeZone[CTEST_MAX_TIMEZONE_SIZE] = {0};
 
@@ -764,6 +789,19 @@ U_CFUNC UBool assertPtrEquals(const char* message, const void* expected, const v
 #ifdef VERBOSE_ASSERTIONS
     else {
         log_verbose("Ok: %s; got 0x%llx\n", message, actual);
+    }
+#endif
+    return TRUE;
+}
+
+U_CFUNC UBool assertDoubleEquals(const char *message, double expected, double actual) {
+    if (expected != actual) {
+        log_err("FAIL: %s; got \"%f\"; expected \"%f\"\n", message, actual, expected);
+        return FALSE;
+    }
+#ifdef VERBOSE_ASSERTIONS
+    else {
+        log_verbose("Ok: %s; got \"%f\"\n", message, actual);
     }
 #endif
     return TRUE;

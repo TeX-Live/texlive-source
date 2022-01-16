@@ -302,7 +302,24 @@ typedef enum UNumberFormatRoundingMode {
       * ROUND_UNNECESSARY reports an error if formatted result is not exact.
       * @stable ICU 4.8
       */
-    UNUM_ROUND_UNNECESSARY
+    UNUM_ROUND_UNNECESSARY,
+#ifndef U_HIDE_DRAFT_API
+    /**
+     * Rounds ties toward the odd number.
+     * @draft ICU 69
+     */
+    UNUM_ROUND_HALF_ODD,
+    /**
+     * Rounds ties toward +∞.
+     * @draft ICU 69
+     */
+    UNUM_ROUND_HALF_CEILING,
+    /**
+     * Rounds ties toward -∞.
+     * @draft ICU 69
+     */
+    UNUM_ROUND_HALF_FLOOR,
+#endif  // U_HIDE_DRAFT_API
 } UNumberFormatRoundingMode;
 
 /** The possible number format pad positions. 
@@ -395,29 +412,27 @@ typedef enum UNumberFormatFields {
 } UNumberFormatFields;
 
 
-#ifndef U_HIDE_DRAFT_API
 /**
  * Selectors with special numeric values to use locale default minimum grouping
  * digits for the DecimalFormat/UNumberFormat setMinimumGroupingDigits method.
  * Do not use these constants with the [U]NumberFormatter API.
  *
- * @draft ICU 68
+ * @stable ICU 68
  */
 typedef enum UNumberFormatMinimumGroupingDigits {
     /**
      * Display grouping using the default strategy for all locales.
-     * @draft ICU 68
+     * @stable ICU 68
      */
     UNUM_MINIMUM_GROUPING_DIGITS_AUTO = -2,
     /**
      * Display grouping using locale defaults, except do not show grouping on
      * values smaller than 10000 (such that there is a minimum of two digits
      * before the first separator).
-     * @draft ICU 68
+     * @stable ICU 68
      */
     UNUM_MINIMUM_GROUPING_DIGITS_MIN2 = -3,
 } UNumberFormatMinimumGroupingDigits;
-#endif  // U_HIDE_DRAFT_API
 
 /**
  * Create and return a new UNumberFormat for formatting and parsing
@@ -692,6 +707,12 @@ unum_formatDecimal(    const    UNumberFormat*  fmt,
 /**
  * Format a double currency amount using a UNumberFormat.
  * The double will be formatted according to the UNumberFormat's locale.
+ *
+ * To format an exact decimal value with a currency, use
+ * `unum_setTextAttribute(UNUM_CURRENCY_CODE, ...)` followed by unum_formatDecimal.
+ * Your UNumberFormat must be created with the UNUM_CURRENCY style. Alternatively,
+ * consider using unumf_openForSkeletonAndLocale.
+ *
  * @param fmt the formatter to use
  * @param number the number to format
  * @param currency the 3-letter null-terminated ISO 4217 currency code
@@ -1069,7 +1090,7 @@ typedef enum UNumberFormatAttribute {
 
   /** 
    * if this attribute is set to 0, it is set to UNUM_CURRENCY_STANDARD purpose,
-   * otherwise it is UNUM_CURRENCY_CASH purpose
+   * otherwise it is UNUM_CASH_CURRENCY purpose
    * Default: 0 (UNUM_CURRENCY_STANDARD purpose)
    * @stable ICU 54
    */
@@ -1406,12 +1427,19 @@ typedef enum UNumberFormatSymbol {
    */
   UNUM_EXPONENT_MULTIPLICATION_SYMBOL = 27,
 
+#ifndef U_HIDE_INTERNAL_API
+  /** Approximately sign.
+   * @internal
+   */
+  UNUM_APPROXIMATELY_SIGN_SYMBOL = 28,
+#endif
+
 #ifndef U_HIDE_DEPRECATED_API
     /**
      * One more than the highest normal UNumberFormatSymbol value.
      * @deprecated ICU 58 The numeric value may change over time, see ICU ticket #12420.
      */
-  UNUM_FORMAT_SYMBOL_COUNT = 28
+  UNUM_FORMAT_SYMBOL_COUNT = 29
 #endif  /* U_HIDE_DEPRECATED_API */
 } UNumberFormatSymbol;
 

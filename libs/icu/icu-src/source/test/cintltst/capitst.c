@@ -90,6 +90,7 @@ void addCollAPITest(TestNode** root)
     addTest(root, &TestBengaliSortKey, "tscoll/capitst/TestBengaliSortKey");
     addTest(root, &TestGetKeywordValuesForLocale, "tscoll/capitst/TestGetKeywordValuesForLocale");
     addTest(root, &TestStrcollNull, "tscoll/capitst/TestStrcollNull");
+    addTest(root, &TestLocaleIDWithUnderscoreAndExtension, "tscoll/capitst/TestLocaleIDWithUnderscoreAndExtension");
 }
 
 void TestGetSetAttr(void) {
@@ -657,7 +658,7 @@ void TestSafeClone() {
     UCollator * someClonedCollators [CLONETEST_COLLATOR_COUNT];
     UCollator * col;
     UErrorCode err = U_ZERO_ERROR;
-    int8_t idx = 6;    /* Leave this here to test buffer alingment in memory*/
+    int8_t idx = 6;    /* Leave this here to test buffer alignment in memory*/
     uint8_t buffer [CLONETEST_COLLATOR_COUNT] [U_COL_SAFECLONE_BUFFERSIZE];
     int32_t bufferSize = U_COL_SAFECLONE_BUFFERSIZE;
     const char sampleRuleChars[] = "&Z < CH";
@@ -1174,7 +1175,7 @@ void TestSortKey()
     free(sortk2);
     free(sortk3);
 
-    log_verbose("Use secondary comparision level testing ...\n");
+    log_verbose("Use secondary comparison level testing ...\n");
     ucol_setStrength(col, UCOL_SECONDARY);
     sortklen=ucol_getSortKey(col, test1, u_strlen(test1),  NULL, 0);
     sortk1=(uint8_t*)malloc(sizeof(uint8_t) * (sortklen+1));
@@ -1376,7 +1377,7 @@ doAssert( (ucol_tertiaryOrder(order1) != ucol_tertiaryOrder(order3)), "The terti
         return;
     }
     /* this here, my friends, is either pure lunacy or something so obsolete that even it's mother
-     * doesn't care about it. Essentialy, this test complains if secondary values for 'I' and '_'
+     * doesn't care about it. Essentially, this test complains if secondary values for 'I' and '_'
      * are the same. According to the UCA, this is not true. Therefore, remove the test.
      * Besides, if primary strengths for two code points are different, it doesn't matter one bit
      * what is the relation between secondary or any other strengths.
@@ -2313,13 +2314,13 @@ TestOpenBinary(void)
     int32_t imageSize;
 
     if((coll==NULL)||(U_FAILURE(status))) {
-        log_data_err("could not load collators or error occured: %s\n",
+        log_data_err("could not load collators or error occurred: %s\n",
             u_errorName(status));
         return;
     }
     UCA = ucol_open("root", &status);
     if((UCA==NULL)||(U_FAILURE(status))) {
-        log_data_err("could not load UCA collator or error occured: %s\n",
+        log_data_err("could not load UCA collator or error occurred: %s\n",
             u_errorName(status));
         return;
     }
@@ -2563,6 +2564,20 @@ static void TestStrcollNull(void) {
     }
 
     ucol_close(coll);
+}
+
+static void TestLocaleIDWithUnderscoreAndExtension(void) {
+    UErrorCode err = U_ZERO_ERROR;
+    UCollator* c1 = ucol_open("en-US-u-kn-true", &err);
+    UCollator* c2 = ucol_open("en_US-u-kn-true", &err);
+    
+    if (assertSuccess("Failed to create collators", &err)) {
+        assertTrue("Comparison using \"normal\" collator failed", !ucol_greater(c1, u"2", -1, u"10", -1));
+        assertTrue("Comparison using \"bad\" collator failed", !ucol_greater(c2, u"2", -1, u"10", -1));
+    }
+    
+    ucol_close(c1);
+    ucol_close(c2);
 }
 
 #endif /* #if !UCONFIG_NO_COLLATION */

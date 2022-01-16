@@ -19,6 +19,7 @@
 #include "unicode/unistr.h"
 #include "unicode/uniset.h"
 #include "unicode/ucnv_err.h"
+#include "unicode/usetiter.h"
 #include "intltest.h"
 #include "cmemory.h"
 
@@ -33,7 +34,7 @@ public:
     ~UnicodeSetTest();
 
 private:
-    void runIndexedTest(int32_t index, UBool exec, const char* &name, char* par=NULL);
+    void runIndexedTest(int32_t index, UBool exec, const char* &name, char* par=NULL) override;
 
     void Testj2268();
 
@@ -90,10 +91,15 @@ private:
 
     void TestStringSpan();
 
-    void TestUCAUnsafeBackwards();
+    void TestPatternWithSurrogates();
     void TestIntOverflow();
     void TestUnusedCcc();
     void TestDeepPattern();
+    void TestEmptyString();
+
+    void assertNext(UnicodeSetIterator &iter, const UnicodeString &expected);
+    void TestSkipToStrings();
+    void TestPatternCodePointComplement();
 
 private:
 

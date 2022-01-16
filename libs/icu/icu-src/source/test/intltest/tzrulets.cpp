@@ -59,15 +59,15 @@ public:
     TestZIDEnumeration(UBool all = FALSE);
     ~TestZIDEnumeration();
 
-    virtual int32_t count(UErrorCode& /*status*/) const {
+    virtual int32_t count(UErrorCode& /*status*/) const override {
         return len;
     }
-    virtual const UnicodeString *snext(UErrorCode& status);
-    virtual void reset(UErrorCode& status);
+    virtual const UnicodeString *snext(UErrorCode& status) override;
+    virtual void reset(UErrorCode& status) override;
     static inline UClassID getStaticClassID() {
         return (UClassID)&fgClassID;
     }
-    virtual UClassID getDynamicClassID() const {
+    virtual UClassID getDynamicClassID() const override {
         return getStaticClassID();
     }
 private:
@@ -83,7 +83,7 @@ TestZIDEnumeration::TestZIDEnumeration(UBool all)
 : idx(0) {
     UErrorCode status = U_ZERO_ERROR;
     if (all) {
-        tzenum = TimeZone::createEnumeration();
+        tzenum = TimeZone::createEnumeration(status);
         len = tzenum->count(status);
     } else {
         tzenum = NULL;
@@ -402,8 +402,6 @@ TimeZoneRuleTest::TestSimpleRuleBasedTimeZone(void) {
     rbtz1->addTransitionRule(atzr, status);
     if (U_SUCCESS(status)) {
         errln("FAIL: 3rd final rule must be rejected");
-    } else {
-        delete atzr;
     }
 
     // Try to add an initial rule
@@ -411,8 +409,6 @@ TimeZoneRuleTest::TestSimpleRuleBasedTimeZone(void) {
     rbtz1->addTransitionRule(ir1, status);
     if (U_SUCCESS(status)) {
         errln("FAIL: InitialTimeZoneRule must be rejected");
-    } else {
-        delete ir1;
     }
 
     delete ir;
@@ -1530,7 +1526,7 @@ TimeZoneRuleTest::TestSimpleTimeZoneCoverage(void) {
 
     avail1 = stz1->getNextTransition(time1, FALSE, tzt1);
     if (avail1) {
-        errln("FAIL: No transition must be returned by getNextTranstion for SimpleTimeZone with no DST rule");
+        errln("FAIL: No transition must be returned by getNextTransition for SimpleTimeZone with no DST rule");
     }
     avail1 = stz1->getPreviousTransition(time1, FALSE, tzt1);
     if (avail1) {
@@ -1565,7 +1561,7 @@ TimeZoneRuleTest::TestSimpleTimeZoneCoverage(void) {
 
     avail1 = stz1->getNextTransition(time1, FALSE, tzt1);
     if (!avail1) {
-        errln("FAIL: Non-null transition must be returned by getNextTranstion for SimpleTimeZone with a DST rule");
+        errln("FAIL: Non-null transition must be returned by getNextTransition for SimpleTimeZone with a DST rule");
     }
     avail1 = stz1->getPreviousTransition(time1, FALSE, tzt1);
     if (!avail1) {
@@ -1759,7 +1755,7 @@ TimeZoneRuleTest::TestVTimeZoneCoverage(void) {
         dataerrln("FAIL: hasEquivalentTransitions failed for vtz/otz: %s", u_errorName(status));
     }
     if (!equiv) {
-        dataerrln("FAIL: hasEquivalentTransitons returned false for the same time zone");
+        dataerrln("FAIL: hasEquivalentTransitions returned false for the same time zone");
     }
 
     // operator=/operator==/operator!=
@@ -2114,7 +2110,7 @@ TimeZoneRuleTest::TestT6216(void) {
     TimeZone *utc = TimeZone::createTimeZone("Etc/GMT");
     GregorianCalendar cal(utc, status);
     if (U_FAILURE(status)) {
-        dataerrln("FAIL: Failed to creat a GregorianCalendar: %s", u_errorName(status));
+        dataerrln("FAIL: Failed to create a GregorianCalendar: %s", u_errorName(status));
         return;
     }
     for (i = 0; TestDates[i][2] != 0; i++) {
@@ -2156,7 +2152,7 @@ TimeZoneRuleTest::TestT6669(void) {
     UErrorCode status = U_ZERO_ERROR;
     SimpleTimeZone stz(0, "CustomID", UCAL_JANUARY, 1, UCAL_SUNDAY, 0, UCAL_JULY, 1, UCAL_SUNDAY, 0, status);
     if (U_FAILURE(status)) {
-        errln("FAIL: Failed to creat a SimpleTimeZone");
+        errln("FAIL: Failed to create a SimpleTimeZone");
         return;
     }
 
@@ -2364,7 +2360,7 @@ TimeZoneRuleTest::verifyTransitions(BasicTimeZone& icutz, UDate start, UDate end
         if (!first &&
                 (tzt0.getTo()->getRawOffset() != tzt.getFrom()->getRawOffset()
                 || tzt0.getTo()->getDSTSavings() != tzt.getFrom()->getDSTSavings())) {
-            errln((UnicodeString)"FAIL: TO rule of the previous transition does not match FROM rule of this transtion at "
+            errln((UnicodeString)"FAIL: TO rule of the previous transition does not match FROM rule of this transition at "
                     + dateToString(time) + " for " + icutz.getID(tzid));                
         }
         tzt0 = tzt;
@@ -2398,7 +2394,7 @@ TimeZoneRuleTest::verifyTransitions(BasicTimeZone& icutz, UDate start, UDate end
         if (!first &&
                 (tzt0.getFrom()->getRawOffset() != tzt.getTo()->getRawOffset()
                 || tzt0.getFrom()->getDSTSavings() != tzt.getTo()->getDSTSavings())) {
-            errln((UnicodeString)"FAIL: TO rule of the next transition does not match FROM rule in this transtion at "
+            errln((UnicodeString)"FAIL: TO rule of the next transition does not match FROM rule in this transition at "
                     + dateToString(time) + " for " + icutz.getID(tzid));                
         }
         tzt0 = tzt;

@@ -22,7 +22,7 @@
  */
 class TestMessageFormat: public IntlTest {
 public:
-    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL );
+    void runIndexedTest( int32_t index, UBool exec, const char* &name, char* par = NULL ) override;
 
     /**
      * regression test for a specific bug regarding ChoiceFormat boundaries
@@ -83,7 +83,7 @@ public:
         UnicodeString pattern ,Locale locale , UErrorCode& err, char* errMsg);
 
     /**
-     * Verify that MessageFormat accomodates more than 10 arguments
+     * Verify that MessageFormat accommodates more than 10 arguments
      * and more than 10 subformats.
      */
     void TestUnlimitedArgsAndSubformats();

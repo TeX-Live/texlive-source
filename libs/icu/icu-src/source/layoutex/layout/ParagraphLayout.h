@@ -369,7 +369,7 @@ public:
      * @param fontRuns a pointer to a <code>FontRuns</code> object representing the font runs.
      *
      * @param levelRuns is a pointer to a <code>ValueRuns</code> object representing the directional levels.
-     *        If this pointer in <code>NULL</code> the levels will be determined by running the Unicde
+     *        If this pointer in <code>NULL</code> the levels will be determined by running the Unicode
      *        Bidi algorithm.
      *
      * @param scriptRuns is a pointer to a <code>ValueRuns</code> object representing script runs.
@@ -377,7 +377,7 @@ public:
      *        Unicode code points.
      *
      * @param localeRuns is a pointer to a <code>LocaleRuns</code> object representing locale runs.
-     *        The <code>Locale</code> objects are used to determind the language of the text. If this
+     *        The <code>Locale</code> objects are used to determine the language of the text. If this
      *        pointer is <code>NULL</code> the default locale will be used for all of the text. 
      *
      * @param paragraphLevel is the directionality of the paragraph, as in the UBiDi object.
@@ -403,7 +403,7 @@ public:
 
     /**
      * The destructor. Virtual so that it works correctly with
-     * sublcasses.
+     * subclasses.
      *
      * @stable ICU 3.2
      */

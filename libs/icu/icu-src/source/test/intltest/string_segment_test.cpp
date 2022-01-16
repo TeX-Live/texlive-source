@@ -16,7 +16,7 @@ class StringSegmentTest : public IntlTest {
     void testGetCodePoint();
     void testCommonPrefixLength();
 
-    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0);
+    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par = 0) override;
 };
 
 static const char16_t* SAMPLE_STRING = u"📻 radio 📻";
@@ -82,7 +82,7 @@ void StringSegmentTest::testGetCodePoint() {
     StringSegment segment(sampleString, false);
     assertEquals("Double-width code point", 0x1F4FB, segment.getCodePoint());
     segment.setLength(1);
-    assertEquals("Inalid A", -1, segment.getCodePoint());
+    assertEquals("Invalid A", -1, segment.getCodePoint());
     segment.resetLength();
     segment.adjustOffset(1);
     assertEquals("Invalid B", -1, segment.getCodePoint());

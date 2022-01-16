@@ -36,7 +36,7 @@ public:
         directionBits(0), lineNumber(0), levelsCount(0), orderingCount(0),
         errorCount(0) {}
 
-    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par=NULL);
+    void runIndexedTest(int32_t index, UBool exec, const char *&name, char *par=NULL) override;
 
     void TestBidiTest();
     void TestBidiCharacterTest();
@@ -362,7 +362,7 @@ void BiDiConformanceTest::TestBidiTest() {
 
 This function performs a conformance test for implementations of the
 Unicode Bidirectional Algorithm, specified in UAX #9: Unicode
-Bidirectional Algorithm, at http://www.unicode.org/unicode/reports/tr9/
+Bidirectional Algorithm, at https://www.unicode.org/reports/tr9/
 
 Each test case is represented in a single line which is read from a file
 named BidiCharacter.txt.  Empty, blank and comment lines may also appear
