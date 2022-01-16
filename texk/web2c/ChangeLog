@@ -1,3 +1,7 @@
+2022-01-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.ch: Add a third layer to 'byte_mem'.
+
 2022-01-15  Karl Berry  <karl@freefriends.org>
 
 	* web2c/Makefile.am (web2c_LDADD): set to libweb2c.a

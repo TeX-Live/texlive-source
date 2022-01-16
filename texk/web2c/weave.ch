@@ -276,6 +276,28 @@ stat @<Print statistics about memory usage@>;@+tats@;@/
 end;
 @z
 
+@x [37] extend 'byte_mem' for "pdftex.web + pdftex-final.ch"
+there are programs that need more than 65536 bytes; \TeX\ is one of these.
+@y
+there are programs that need more than 65536 bytes; \TeX\ is one of these
+(and the pdf\TeX\ variant even requires more than twice that amount when
+its ``final'' change file is applied).
+@z
+
+@x
+is either 0 or 1. (For generality, the first index is actually allowed to
+run between 0 and |ww-1|, where |ww| is defined to be 2; the program will
+@y
+is either 0, 1 or 2. (For generality, the first index is actually allowed to
+run between 0 and |ww-1|, where |ww| is defined to be 3; the program will
+@z
+
+@x
+@d ww=2 {we multiply the byte capacity by approximately this amount}
+@y
+@d ww=3 {we multiply the byte capacity by approximately this amount}
+@z
+
 @x [50] don't enter xrefs if no_xref set
 @d append_xref(#)==if xref_ptr=max_refs then overflow('cross reference')
   else  begin incr(xref_ptr); num(xref_ptr):=#;
