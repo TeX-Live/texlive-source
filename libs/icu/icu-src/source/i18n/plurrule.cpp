@@ -1881,7 +1881,7 @@ void FixedDecimal::adjustForMinFractionDigits(int32_t minFractionDigits) {
 
 double FixedDecimal::getPluralOperand(PluralOperand operand) const {
     switch(operand) {
-        case PLURAL_OPERAND_N: return (exponent == 0 ? source : source * pow(10, exponent));
+        case PLURAL_OPERAND_N: return (exponent == 0 ? source : source * pow(10.0, exponent));
         case PLURAL_OPERAND_I: return (double) longValue();
         case PLURAL_OPERAND_F: return static_cast<double>(decimalDigits);
         case PLURAL_OPERAND_T: return static_cast<double>(decimalDigitsWithoutTrailingZeros);
