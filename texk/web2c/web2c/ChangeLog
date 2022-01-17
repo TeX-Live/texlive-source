@@ -1,3 +1,22 @@
+2022-01-17  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (web2c_DEPENDENCIES),
+	(fixwrites_DEPENDENCIES),
+	(splitup_DEPENDENCIES): set empty, so that Automake doesn't
+	try to build libweb2c.a (what they'd be set to otherwise) in
+	parallel. This is probably why -L -lweb2c was used. Found by
+	Michael Orlitzky, https://tug.org/pipermail/tlbuild/2022q1/005021.html.
+
+	Why all the stamp files are needed still seems mysterious,
+	but moving on ...
+
+2022-01-15  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (web2c_LDADD): set to libweb2c.a
+	instead of -L. -lweb2c, for compatibility with slibtool,
+	and clarity. Report from Michael Orlitzky,
+	tex-k 15 Jan 2022 13:28:41.
+
 2022-01-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.defines: New TWILLHELP.

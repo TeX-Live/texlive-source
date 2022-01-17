@@ -48,31 +48,27 @@ libweb2c_a_SOURCES = \
 	kps.c
 
 $(libweb2c_a_OBJECTS): w2c/config.h
-
 web2c_SOURCES = \
 	web2c-parser.y \
 	web2c-lexer.l \
 	main.c \
 	web2c.h
-
 $(web2c_OBJECTS): web2c-parser.h stamp-lib
-
+web2c_DEPENDENCIES = # don't build libweb2c.a in parallel
 web2c_LDADD = libweb2c.a
-
+#
 DISTCLEANFILES += web2c-parser.output
 
 fixwrites_SOURCES = \
 	fixwrites.c
-
 $(fixwrites_OBJECTS): stamp-lib
-
+fixwrites_DEPENDENCIES = # don't build libweb2c.a in parallel
 fixwrites_LDADD = $(web2c_LDADD)
 
 splitup_SOURCES = \
 	splitup.c
-
 $(splitup_OBJECTS): stamp-lib
-
+splitup_DEPENDENCIES = # don't build libweb2c.a in parallel
 splitup_LDADD = $(web2c_LDADD)
 
 makecpool_SOURCES = \
