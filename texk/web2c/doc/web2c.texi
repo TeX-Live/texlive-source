@@ -11,8 +11,8 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 \fi
 @end tex
 
-@set version 2021
-@set month-year July 2021
+@set version 2022
+@set month-year January 2022
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -63,7 +63,7 @@ This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009, 2010-2021 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009, 2010-2022 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -142,14 +142,14 @@ This manual corresponds to version @value{version} of Web2c, released in
 @cindex @TeX{}, Web2c implementation of
 @cindex Hobby, John
 @cindex Breitenlohner, Peter
-@dfn{Web2c} is the name of a @TeX{} implementation, originally for
-Unix, but now also running under various operating systems. By
-@dfn{@TeX{} implementation}, we mean all of the standard programs
-developed by the Stanford @TeX{} project directed by Donald E. Knuth:
-Metafont, DVItype, GFtoDVI, Bib@TeX{}, Tangle, etc., as well as @TeX{}
-itself. Other programs are also included: DVIcopy, written by Peter
-Breitenlohner, MetaPost and its utilities (derived from Metafont), by
-John Hobby, etc.
+@dfn{Web2c} (also spelled Web2C) is the name of a @TeX{}
+implementation, originally for Unix, but now also running under
+Windows and other operating systems. By @dfn{@TeX{} implementation},
+we mean all of the standard programs developed by the Stanford @TeX{}
+project led by Donald@tie{}E. Knuth: Metafont, DVItype, GFtoDVI,
+Bib@TeX{}, Tangle, etc., as well as @TeX{} itself. Other programs are
+also included: DVIcopy, written by Peter Breitenlohner, MetaPost and
+its utilities (derived from Metafont), by John Hobby, and many more.
 
 @cindex translation from WEB to C
 @cindex strategy, overall
@@ -196,9 +196,17 @@ changed to Web-to-C somewhere in there.  In 1990, Karl Berry became
 the maintainer.  He made many changes to the original sources, and
 started using the shorter name Web2c.  In 1997, Olaf Weber took over,
 and then in 2006, Karl started taking care of it again.  No
-significant development or changes have been needed for many
-years. Dozens of other people have contributed; their names are listed
-in the @file{ChangeLog} files.
+significant development or changes have been needed for many years,
+though dozens of other people have contributed in many ways; their
+names are listed in the @file{ChangeLog} files.
+
+@cindex te@TeX{} distribution
+Originally, Web2c was distributed as its own package, alongside the
+original web programs from Stanford and other components.  It was also
+the basis for the te@TeX{} distribution (now discontinued).  Around
+2004, the packaging focus shifted entirely to the @TeX{} Live
+distribution (@url{https://tug.org/texlive/}), though the same Web2c
+is at the heart of the release.
 
 @cindex acknowledgements
 @cindex Martin, Rick
@@ -210,7 +218,7 @@ access to me for many years.  Richard Stallman at the Free Software
 Foundation employed me while I wrote the original path searching library
 (for the GNU font utilities).  (rms also gave us Emacs, GDB, and GCC,
 without which I cannot imagine developing Web2c.)  And, of course,
-@TeX{} would not exist in the first place without Donald E. Knuth.
+@TeX{} would not exist in the first place without Donald@tie{}E. Knuth.
 
 @cindex reading, additional
 Further reading: @xref{References}.
@@ -226,6 +234,9 @@ Further reading: @xref{References}.
 
 Many aspects of the @TeX{} system are the same among more than one
 program, so we describe those pieces together, here.
+
+Another kind of commonality is the extensions to @TeX{} that are
+available across all the engines; @pxref{TeX extensions}.
 
 @menu
 * Option conventions::   -- or -, = or ` ' for values.
@@ -1901,24 +1912,45 @@ debugging.
 @cindex extensions to @TeX{}
 @cindex @TeX{}, extensions to
 
-The base @TeX{} program has been extended in many ways.  Here's a
-partial list.
+The base @TeX{} program has been extended in many ways.  
+
+@cindex cross-engine functionality
+@cindex Prote engine
+@cindex ker@TeX{} distribution
+There has been a substantial effort to make some extended
+functionality available across all engines, so that formats, notably
+@LaTeX{}, can rely on it.  A list of this common extended
+functionality is in a @cite{@LaTeX{} News} article,
+@url{https://www.latex-project.org/news/latex2e-news/ltnews31.pdf},
+with some further annotatations in a listserv discussion,
+@url{https://listserv.uni-heidelberg.de/cgi-bin/wa?A2=LATEX-L;2e3c27d.2104&S=}.
+
+For engines in @TeX{} Live, the detailed documentation for the
+extended primitives is mostly in the pdf@TeX{} manual
+(@url{http://pdftex.org}).  Independently, the Prote engine also
+implements the common extended functionality
+(@url{http://kertex.kergis.com/en/prote.html}).  Prote is a part of
+the ker@TeX{} distribution (not related to Web2C or @TeX{} Live).
+
+In addition, each engine has its own particular features, described in
+its own manual.  Here's a partial list of the engines.
 
 @table @asis
 @item e-@TeX{}
 @cindex e-@TeX{}
 @cindex primitives, new
 Adds many new primitives, including right-to-left typesetting and more
-registers.  Now frozen. More info: @url{https://ctan.org/pkg/etex}.
+registers. Now frozen. More info: @url{https://ctan.org/pkg/etex}.
 
 @item Aleph
 @cindex Aleph
 @cindex Omega
 @cindex Unicode
-This adds Unicode support, right-to-left typesetting, and more.  Omega
-was the original program.  Aleph is an updated version with a variety
-of bug fixes, and includes e-@TeX{}.  Aleph is not actively maintained.
-More info: @url{https://ctan.org/pkg/aleph}, @url{https://ctan.org/pkg/omega}.
+This adds Unicode support, right-to-left typesetting, and more, based
+on the Omega engine, with the e-@TeX{} and other extensions.  Aleph is
+maintained only for serious bug fixes and does not include the common
+functionality mentioned above.  More info:
+@url{https://ctan.org/pkg/aleph}, @url{https://ctan.org/pkg/omega}.
 
 @item pdf@TeX{}
 @cindex pdf@TeX{}
@@ -1953,6 +1985,13 @@ Combines support for Unicode input, the OpenType and TrueType font
 formats, and use of system fonts with the capabilities of pdf@TeX{},
 with the exception of the font expansion part of micro-typography.
 Home page: @url{https://tug.org/xetex}.
+
+@item hi@TeX{}
+@cindex hi@TeX{}
+@cindex HINT (Hint Is Not @TeX{})
+Outputs the so-called HINT format, which is designed for reading
+technical documents on mobile devices. More info:
+@url{https://ctan.org/pkg/hitex}.
 
 @item p@TeX{}
 @itemx up@TeX{}

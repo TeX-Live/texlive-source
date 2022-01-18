@@ -1,3 +1,10 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (TeX extensions): mention pdftex manual and
+	ltnews31.pdf as primary documentation for the cross-engine
+	functionality.
+	(Introduction): mention TeX Live and teTeX.	
+
 2022-01-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Add a third layer to 'byte_mem'.
