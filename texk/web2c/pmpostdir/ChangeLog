@@ -1,3 +1,7 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* pmp.ch: Sync with the version 2.02 mp.w (three times).
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* am/pmpost.am: do not silence tangle-sh.
