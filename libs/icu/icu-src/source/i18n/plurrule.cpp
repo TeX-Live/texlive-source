@@ -1628,7 +1628,7 @@ FixedDecimal::FixedDecimal(double n, int32_t v, int64_t f, int32_t e) {
     init(n, v, f, e);
     // check values. TODO make into unit test.
     //            
-    //            long visiblePower = (int) Math.pow(10, v);
+    //            long visiblePower = (int) Math.pow(10.0, v);
     //            if (decimalDigits > visiblePower) {
     //                throw new IllegalArgumentException();
     //            }
@@ -1932,14 +1932,14 @@ UnicodeString FixedDecimal::toString() const {
 }
 
 double FixedDecimal::doubleValue() const {
-    return (isNegative ? -source : source) * pow(10, exponent);
+    return (isNegative ? -source : source) * pow(10.0, exponent);
 }
 
 int64_t FixedDecimal::longValue() const {
     if (exponent == 0) {
         return intValue;
     } else {
-        return (long) (pow(10, exponent) * intValue);
+        return (long) (pow(10.0, exponent) * intValue);
     }
 }
 
