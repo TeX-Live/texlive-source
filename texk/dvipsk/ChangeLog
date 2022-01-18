@@ -1,3 +1,12 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* NEWS,
+	* afm2tfm.c,
+	* dvips.c,
+	* dvips.h,
+	* dvips.texi,
+	* configure.ac: version 2022.1 and copyright 2022.
+
 2021-11-03  Karl Berry  <karl@freefriends.org>
 
 	* dvips.texi: PostScript not Postscript; remove broken urls;

@@ -1,6 +1,8 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+dvips 2022.1 (TeX Live 2022):
+
 dvips 2021.1 (TeX Live 2021):
   Default title is now the basename of the input file instead of the
     full path, and can be overridden with new option -title.

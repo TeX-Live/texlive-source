@@ -1,3 +1,10 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999994 for TL22.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* am/xetex.am: do not silence tangle-sh.

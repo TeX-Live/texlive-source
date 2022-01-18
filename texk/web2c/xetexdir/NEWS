@@ -1,4 +1,10 @@
 ==============================================================
+XeTeX 0.999994
+
+* New wrapper scripts xetex-unsafe and xelatex-unsafe for XeTeX
+  documents requiring PSTricks transparency. For safety, use LuaTeX instead.
+
+==============================================================
 XeTeX 0.999993 (February 2021)
 
 * Fix several bugs in Unicode math kerning implementation.

@@ -14124,7 +14124,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2022/dev\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2022\"" >>confdefs.h
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

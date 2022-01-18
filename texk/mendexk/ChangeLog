@@ -1,3 +1,8 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* COPYRIGHT,
+	* main.c: 2021.
+
 2021-09-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fread.c:

@@ -1,3 +1,11 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* version.ac (kpse_dev): no more /dev.
+	* NEWS,
+	* doc/kpathsea.texi,
+	* kpsewhich.c,
+	* texmf.cnf: copyright 2022.
+
 2021-11-01  Marcel Fabian Krueger  <tex@2krueger.de>
 
 	* str-list.c (str_list_uniqify): compare each input element

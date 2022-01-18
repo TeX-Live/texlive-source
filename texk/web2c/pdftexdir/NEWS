@@ -1,4 +1,8 @@
+pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022)
+
 - changes:
+  - new primitive \showstream to redirect \show output.
+  - new primitives \partokenname, \partokencontext to control \par insertion.
   - support structured destinations from PDF 2.0.
 
 pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)

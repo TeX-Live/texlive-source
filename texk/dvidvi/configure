@@ -14119,7 +14119,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2022/dev\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2022\"" >>confdefs.h
 
 
 # We don't use libpathsea, so add '-DNO_DEBUG' not to overload fopen.
