@@ -1,0 +1,228 @@
+.TH HINTVIEW1 "11 November 2021" "Version 1.0"
+.\"=====================================================================
+.if n .ds MF Metafont
+.if t .ds MF Metafont
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.el .ds OX TeX
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if n .ds AX AmSTeX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if n .ds AY AmSLaTeX
+.if n .ds WB Web
+.if t .ds WB W\s-2EB\s0
+.\"=====================================================================
+.SH NAME
+hintview\- displaying HINT files
+.SH SYNOPSIS
+.B hintview
+.RI [ options ]
+.RI [ file ]
+.\"=====================================================================
+.SH DESCRIPTION
+.B Hintview
+displays a binary
+.B HINT
+file, usually with the
+.BR .hnt
+extension.
+.PP
+The binary
+.B HINT
+file format is designed for on-screen reading of documents.
+Using hintview to display a
+.B HINT
+file, its content will dynamically
+adapt to the available display area. For complete information on the
+.B HINT
+file format and programs to view
+.B HINT
+files, see
+.BR  https://hint.userweb.mwn.de .
+.\"=====================================================================
+.SH OPTIONS
+This version of
+.B hintview
+understands the following command line options:
+.TP
+.B -a
+Start in autoreload mode. If in autoreload mode, the viewer will check 
+the modification time of the displayed
+.B HINT
+file each time the cursor enters the window.
+If the modification time has changed, the file is reloaded.
+The viewer attempts to position the new file at about the same position
+as the old file. This attempt might fail if large scale changes have
+been made to the file. 
+.sp
+See also the 
+.B Ctrl-A
+and the
+.B Ctrl-R
+key.
+.TP
+.B -h
+Open the document on the "home" page. The home page is a location
+specified by the document author as a good starting point for reading
+the document.
+.sp
+See also the 
+.B Ctrl-H 
+key.
+.TP
+.B --help
+Print help message and exit.
+.TP
+.B -n
+Start the viewer in "night" mode. In this mode the viewer will display
+the document using a dark background and light foreground color to reduce
+eye strain in a surrounding with dim lighting.
+.sp
+See also the 
+.B Ctrl-N
+key.
+.TP
+.BI -o
+Show a clickable outline of the content. NOT YET IMPLEMENTED.
+.sp
+See also the 
+.B Ctrl-O
+key.
+.TP
+.B --version
+Print version information and exit.
+.TP
+.B -z
+Zoom to 100%. The
+.B HINT
+viewer can display a document using a given
+zoom factor to make characters appear larger or smaller to either
+improve readability or increase the amount of text that can be displayed
+in a given window. This option resets the zoom factor so that a 10pt
+font will appear on screen at the same size as it would appear in a 
+printed book.
+.sp
+See also the 
+.B Ctrl-Z
+key.
+.\"=====================================================================
+.SH KEYSTROKES
+.B Hintview
+recognizes the following keystrokes when typed in its window.
+.TP
+.B Ctrl-A
+Toggle autoreload mode. See also the
+.B -a
+option and the
+.B Ctrl-R
+key.
+.TP
+.B Ctrl-F
+Open the
+.B Find
+dialog. NOT YET IMPLEMENTED.
+.TP
+.BR Home , \ Ctrl-H
+Move to the "home" page. The home page is a location specified by the 
+document author as a good starting point for reading the document.
+.TP
+.B Ctrl-N
+Toggle between night and day mode. See also the
+.B -n
+option.
+.TP
+.B Ctrl-O
+Show a clickable outline of the content. NOT YET IMPLEMENTED.
+.TP
+.B Page-Down
+Move to the next page.
+.TP
+.B Page-Up
+Move to the previous page.
+.TP
+.B Ctrl-R
+Reload the content. The file is reloaded and the viewer
+attempts to position the new file at about the same position
+as the old file. This attempt might fail if large scale changes have
+been made to the file. See also the
+.B Ctrl-A
+key and the
+.B -a
+option.
+.TP
+.B Ctrl-Z
+Zoom to 100%. See also the
+.B -z
+option.
+.\"=====================================================================
+.SH MOUSE ACTIONS
+The following actions are executed using the 
+.BR left\ mouse\ button .
+.TP
+.B Click
+If the mouse is positioned on a link, move to the link target. Links are
+displayed in blue color.
+.TP
+.B Drag
+Dragging from the top-left to the bottom-right increases the zoom factor.
+Dragging in the opposite direction decreases the zoom factor. See also the
+.B Ctrl-Z
+key and the
+.B -z
+option.
+.\"=====================================================================
+.SH NOTES
+This is a simple, bare-bone implementation of a program to render 
+.B HINT
+files. Other programs to display 
+.B HINT
+files are available on the 
+.B HINT
+project home page at 
+.B https://hint.userweb.mwn.de/
+where you find viewers for the Windows and Android operating systems.
+.sp
+Currently the best way to produce
+.B HINT
+files is the use of 
+.BR hitex ,
+a version of \*(TX that produces 
+.B HINT
+files as its output. The 
+.B HINT
+file format is described in 
+.IR "HINT: The file format"
+which is available as a book or in electronic form from the 
+.B HINT
+project home page. The 
+.B HINT
+file format is independent of \*(TX and allows the implementation
+of generators for all kind of word-processors. The 
+.B hintview
+program however uses parts of Donald E. Knuth's implementation
+of \*(TX, notably its line breaking routine, to produce good
+quality rendering of documents.
+.\"=====================================================================
+.SH AVAILABILITY
+.B hintview
+is tested on the Linux platform but
+should compile on a large variety of machine architectures
+and operating systems.
+It is part of the \*(TX Live distribution.
+.PP
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR hitex (1),
+.BR histretch (1),
+.BR hishrink (1).
+.\"=====================================================================
+.SH AUTHORS
+Martin Ruckert
+.\" vim: syntax=nroff
