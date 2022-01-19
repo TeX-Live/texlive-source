@@ -1,5 +1,5 @@
-/*371:*/
-#line 7506 "hint.w"
+/*372:*/
+#line 7522 "hint.w"
 
 #include "basetypes.h"
 #include <string.h> 
@@ -29,7 +29,7 @@
 /*:83*//*87:*/
 #line 1394 "hint.w"
 
-#define HGET_STRETCH(F,O) { stch_t _st;  HGET32(_st.u); (O)= _st.u&3;  _st.u&= ~3; (F)= (scaled)(_st.f*ONE); }
+#define HGET_STRETCH(F,O) { Stch _st;  HGET32(_st.u); (O)= _st.u&3;  _st.u&= ~3; (F)= (scaled)(_st.f*ONE); }
 /*:87*//*89:*/
 #line 1405 "hint.w"
 
@@ -158,7 +158,7 @@ link(q)= null; flush_node_list(q);\
 
 #define HGET_PAR(I) \
 { scaled x= 0;\
-  param_def_t *q;\
+  ParamDef *q;\
   if ((I)==b100) q= hget_param_list_ref(HGET8);\
   if ((I)&b100) x= hget_xdimen_node(); else x= hget_xdimen_ref(HGET8);\
   if ((I)&b010) q= hget_param_list_node(); \
@@ -169,7 +169,7 @@ link(q)= null; flush_node_list(q);\
 #line 2921 "hint.w"
 
 #define HGET_MATH(I) \
-{ param_def_t *q; pointer p= null, a= null;\
+{ ParamDef *q; pointer p= null, a= null;\
 if ((I)&b100) q= hget_param_list_node(); else q= hget_param_list_ref(HGET8);\
 if ((I)&b010) a= hget_hbox_node(); \
 p= hget_list_pointer(); \
@@ -198,7 +198,7 @@ hget_list_pointer();
 #line 3102 "hint.w"
 
 #define HGET_STREAM(I) \
-{ param_def_t *q;  pointer p;\
+{ ParamDef *q;  pointer p;\
   p= get_node(ins_node_size); type(p)= ins_node;\
   subtype(p)= HGET8;RNG("Stream",subtype(p),1,254); \
   if ((I)&b010) q= hget_param_list_node(); else q= hget_param_list_ref(HGET8); \
@@ -230,7 +230,7 @@ hget_list_pointer();
   label_has_name(p)= 0;\
   tail_append(p);}
 /*:193*/
-#line 7518 "hint.w"
+#line 7534 "hint.w"
 
 /*84:*/
 #line 1299 "hint.w"
@@ -242,7 +242,7 @@ hget_list_pointer();
 /*:84*//*88:*/
 #line 1397 "hint.w"
 
-#define HTEG_STRETCH(F,O) { stch_t _st;  HTEG32(_st.u); (O)= _st.u&3;  _st.u&= ~3; (F)= (scaled)(_st.f*ONE); }
+#define HTEG_STRETCH(F,O) { Stch _st;  HTEG32(_st.u); (O)= _st.u&3;  _st.u&= ~3; (F)= (scaled)(_st.f*ONE); }
 /*:88*//*90:*/
 #line 1417 "hint.w"
 
@@ -373,7 +373,7 @@ font(lig_char(p))= HTEG8;\
 #line 2932 "hint.w"
 
 #define HTEG_MATH(I) \
-{ param_def_t *q; pointer p= null, a= null;\
+{ ParamDef *q; pointer p= null, a= null;\
 if ((I)&b001) a= hteg_hbox_node();\
 p= hteg_list_pointer(); \
 if ((I)&b010) a= hteg_hbox_node(); \
@@ -395,8 +395,8 @@ if ((I)&b100) hteg_xdimen_node(); else hget_xdimen_ref(HTEG8);
 #define HTEG_STREAM(I) \
 {pointer p= get_node(ins_node_size); type(p)= ins_node;\
  ins_ptr(p)= hteg_list_pointer();\
- if ((I)&b010) {param_def_t *q= hteg_param_list_node();  hset_stream_params(p,true,q);}\
- else {param_def_t *q= hget_param_list_ref(HTEG8);  hset_stream_params(p,false,q);}\
+ if ((I)&b010) {ParamDef *q= hteg_param_list_node();  hset_stream_params(p,true,q);}\
+ else {ParamDef *q= hget_param_list_ref(HTEG8);  hset_stream_params(p,false,q);}\
  subtype(p)= HTEG8;RNG("Stream",subtype(p),1,254);\
  tail_append(p);}
 /*:186*//*190:*/
@@ -424,13 +424,13 @@ if ((I)&b100) hteg_xdimen_node(); else hget_xdimen_ref(HTEG8);
   label_has_name(p)= 0;\
   tail_append(p);}
 /*:194*/
-#line 7519 "hint.w"
+#line 7535 "hint.w"
 
 
 /*21:*/
 #line 366 "hint.w"
 
-typedef struct{pointer bs,ls;scaled lsl;}bs_t;
+typedef struct{pointer bs,ls;scaled lsl;}BaselineSkip;
 /*:21*//*28:*/
 #line 476 "hint.w"
 
@@ -441,21 +441,21 @@ scaled s;
 pointer g;
 pointer h;
 pointer p[MAX_FONT_PARAMS+1];
-}font_def_t;
-extern font_def_t*font_def;
+}FontDef;
+extern FontDef*font_def;
 /*:28*//*37:*/
 #line 581 "hint.w"
 
-typedef struct param_t{
+typedef struct{
 uint8_t n,k;
 int32_t v;
-}param_t;
+}Param;
 
-typedef struct param_def_t{
-struct param_def_t*next;
-param_t p;}param_def_t;
+typedef struct ParamDef{
+struct ParamDef*next;
+Param p;}ParamDef;
 /*:37*/
-#line 7521 "hint.w"
+#line 7537 "hint.w"
 
 
 
@@ -474,66 +474,66 @@ scaled*dimen_def;
 /*:10*//*14:*/
 #line 300 "hint.w"
 
-xdimen_t*xdimen_def;
+Xdimen*xdimen_def;
 /*:14*//*22:*/
 #line 370 "hint.w"
 
-bs_t*baseline_def= NULL;
+BaselineSkip*baseline_def= NULL;
 /*:22*//*29:*/
 #line 488 "hint.w"
 
-font_def_t*font_def;
+FontDef*font_def;
 /*:29*//*38:*/
 #line 593 "hint.w"
 
-param_def_t**param_def;
+ParamDef**param_def;
 /*:38*//*45:*/
 #line 733 "hint.w"
 
 typedef struct{
 uint8_t pg;
 uint32_t f,t;
-}range_def_t;
-range_def_t*range_def;
+}RangeDef;
+RangeDef*range_def;
 /*:45*//*50:*/
 #line 790 "hint.w"
 
-stream_t*streams;
+Stream*streams;
 /*:50*//*53:*/
 #line 804 "hint.w"
 
 typedef struct{
-xdimen_t x;
+Xdimen x;
 int f;
 int p,n,r;
 pointer b,a;
-xdimen_t w;
+Xdimen w;
 pointer g;
 pointer h;
-}stream_def_t;
+}StreamDef;
 /*:53*//*57:*/
 #line 877 "hint.w"
 
 typedef struct{
 char*n;
-dimen_t d;
+Dimen d;
 pointer g;
 uint8_t p;
 uint32_t t;
-xdimen_t v,h;
-stream_def_t*s;
-}page_def_t;
-page_def_t*page_def;
-page_def_t*cur_page;
+Xdimen v,h;
+StreamDef*s;
+}PageDef;
+PageDef*page_def;
+PageDef*cur_page;
 /*:57*//*65:*/
 #line 1021 "hint.w"
 
-hint_outline_t*hint_outlines= NULL;
+hint_Outline*hint_outlines= NULL;
 int outline_no= -1;
 /*:65*//*162:*/
 #line 2762 "hint.w"
 
-static param_def_t*line_break_params= NULL;
+static ParamDef*line_break_params= NULL;
 /*:162*//*205:*/
 #line 3487 "hint.w"
 
@@ -552,25 +552,25 @@ uint64_t page_loc[MAX_PAGE_POS];
 int cur_loc;
 static int lo_loc,hi_loc;
 /*:225*//*242:*/
-#line 4212 "hint.w"
+#line 4221 "hint.w"
 
 scaled hvsize,hhsize;
 /*:242*//*244:*/
-#line 4240 "hint.w"
+#line 4249 "hint.w"
 
 int page_v,page_h,offset_v,offset_h;
 /*:244*//*301:*/
-#line 5514 "hint.w"
+#line 5523 "hint.w"
 
-hint_link_t*hint_links= NULL;
+hint_Link*hint_links= NULL;
 int max_link= -1;
-/*:301*//*358:*/
-#line 7207 "hint.w"
+/*:301*//*359:*/
+#line 7223 "hint.w"
 
 jmp_buf error_exit;
 char herror_string[MAX_HERROR];
-/*:358*/
-#line 7524 "hint.w"
+/*:359*/
+#line 7540 "hint.w"
 
 /*3:*/
 #line 196 "hint.w"
@@ -580,10 +580,10 @@ static int32_t hget_integer_def(uint8_t a);
 static scaled hget_dimen_def(uint8_t a);
 static pointer hget_glue_def(uint8_t a);
 static void hget_baseline_def(uint8_t a,uint8_t n);
-static param_def_t*hget_param_list(uint8_t a);
+static ParamDef*hget_param_list(uint8_t a);
 static void hget_range_def(uint8_t a,uint8_t pg);
 static void hget_page_def(uint8_t a,uint8_t n);
-static void hget_outline_or_label_def(info_t i,int n);
+static void hget_outline_or_label_def(Info i,int n);
 static void hget_font_metrics();
 static pointer hget_definition(uint8_t a);
 /*:3*//*27:*/
@@ -609,7 +609,7 @@ static pointer hteg_list_pointer(void);
 
 static scaled hget_xdimen_node(void);
 /*:124*/
-#line 7525 "hint.w"
+#line 7541 "hint.w"
 
 /*9:*/
 #line 253 "hint.w"
@@ -629,7 +629,7 @@ return integer_def[n];
 /*:9*//*17:*/
 #line 311 "hint.w"
 
-static scaled xdimen(xdimen_t*x)
+static scaled xdimen(Xdimen*x)
 {return round(x->w+(double)x->h*(double)hhsize+(double)x->v*(double)hvsize);
 }
 static scaled hget_xdimen_ref(uint8_t n)
@@ -665,7 +665,7 @@ return new_glue(pointer_def[glue_kind][n]);
 
 static void hget_font_def(uint8_t a,uint8_t n)
 {char*t;
-font_def_t*f= font_def+n;
+FontDef*f= font_def+n;
 HGET_STRING(t);f->n= strdup(t);
 DBG(DBGDEF,"Font %d: %s\n",n,t);
 HGET32(f->s);RNG("Font size",f->s,1,0x7fffffff);
@@ -675,7 +675,7 @@ f->g= hget_glue_spec();
 f->h= hget_disc_node();
 DBG(DBGDEF,"Start font parameters\n");
 while(KIND(*hpos)!=font_kind)
-{kind_t k;
+{Kind k;
 uint8_t n;
 /*74:*/
 #line 1161 "hint.w"
@@ -724,9 +724,9 @@ font_def[i].s= font_size[i];
 /*:33*//*41:*/
 #line 610 "hint.w"
 
-static void free_param_list(param_def_t*p)
+static void free_param_list(ParamDef*p)
 {while(p!=NULL)
-{param_def_t*q= p;
+{ParamDef*q= p;
 p= p->next;
 free(q);
 }
@@ -734,9 +734,9 @@ free(q);
 /*:41*//*42:*/
 #line 622 "hint.w"
 
-static param_def_t*hget_param_list(uint8_t a)
+static ParamDef*hget_param_list(uint8_t a)
 {uint32_t s,t;
-param_def_t*p= NULL;
+ParamDef*p= NULL;
 uint8_t*list_start,*list_end;
 list_start= hpos;
 s= hget_list_size(INFO(a));
@@ -745,7 +745,7 @@ list_end= hpos+s;
 if(list_end>=hend)
 QUIT("list end after before stream end\n");
 while(hpos<list_end)
-{param_def_t*r;param_t*q;
+{ParamDef*r;Param*q;
 /*74:*/
 #line 1161 "hint.w"
 
@@ -754,7 +754,7 @@ HGETTAG(a);
 /*:74*/
 #line 635 "hint.w"
 
-ALLOCATE(r,1,param_def_t);
+ALLOCATE(r,1,ParamDef);
 q= &(r->p);
 q->n= HGET8;
 q->k= KIND(a);
@@ -783,10 +783,10 @@ QUIT("List sizes at "SIZE_F" and "SIZE_F" do not match 0x%x != 0x%x",list_start-
 return p;
 }
 
-param_def_t*hget_param_list_node(void)
+ParamDef*hget_param_list_node(void)
 {if(KIND(*hpos)!=param_kind)return NULL;
 else
-{param_def_t*p;
+{ParamDef*p;
 /*74:*/
 #line 1161 "hint.w"
 
@@ -810,7 +810,7 @@ return p;
 }
 }
 
-param_def_t*hget_param_list_ref(uint8_t n)
+ParamDef*hget_param_list_ref(uint8_t n)
 {REF_RNG(param_kind,n);
 return param_def[n];
 }
@@ -819,11 +819,11 @@ return param_def[n];
 
 #define MAX_SAVE 100
 #define SAVE_BOUNDARY 0xFF
-static param_t par_save[MAX_SAVE];
+static Param par_save[MAX_SAVE];
 static int par_save_ptr= 0;
 
 static void hset_param(uint8_t k,uint8_t n,int32_t v)
-{param_t*q;
+{Param*q;
 if(par_save_ptr>=MAX_SAVE)QUIT("Parameter save stack overflow");
 q= &(par_save[par_save_ptr++]);
 q->k= k;
@@ -836,7 +836,7 @@ else if(q->k==glue_kind)
 {q->v= pointer_def[glue_kind][q->n];pointer_def[glue_kind][q->n]= (pointer)v;}
 }
 
-void hset_param_list(param_def_t*p)
+void hset_param_list(ParamDef*p)
 {hset_param(SAVE_BOUNDARY,0,0);
 while(p!=NULL)
 {hset_param(p->p.k,p->p.n,p->p.v);
@@ -847,7 +847,7 @@ p= p->next;
 void hrestore_param_list(void)
 {
 while(par_save_ptr> 0)
-{param_t*q;
+{Param*q;
 q= &(par_save[--par_save_ptr]);
 if(q->k==SAVE_BOUNDARY)return;
 if(q->k==int_kind)
@@ -892,9 +892,9 @@ return 0;
 /*:48*//*54:*/
 #line 821 "hint.w"
 
-static void hget_xdimen_def_node(xdimen_t*x);
+static void hget_xdimen_def_node(Xdimen*x);
 
-static bool hget_stream_def(stream_def_t*s)
+static bool hget_stream_def(StreamDef*s)
 {if(KIND(*hpos)!=stream_kind||!(INFO(*hpos)&b100))
 return false;
 else
@@ -962,7 +962,7 @@ static void hskip_list(void);
 static void hget_page_def(uint8_t a,uint8_t i)
 {char*n;
 cur_page= &(page_def[i]);
-ALLOCATE(cur_page->s,max_ref[stream_kind]+1,stream_def_t);
+ALLOCATE(cur_page->s,max_ref[stream_kind]+1,StreamDef);
 HGET_STRING(n);cur_page->n= strdup(n);
 cur_page->p= HGET8;
 cur_page->g= hget_glue_spec();
@@ -1008,7 +1008,7 @@ return copy_node_list(pointer_def[leaders_kind][n]);
 #line 1306 "hint.w"
 
 
-static void hget_xdimen_def(info_t i,xdimen_t*x)
+static void hget_xdimen_def(Info i,Xdimen*x)
 {switch(i)
 {
 case b000:
@@ -1030,8 +1030,8 @@ default:
 x->w= 0;x->h= x->v= 0.0;
 }
 }
-static scaled hget_xdimen(info_t i)
-{xdimen_t x;
+static scaled hget_xdimen(Info i)
+{Xdimen x;
 hget_xdimen_def(i,&x);
 return xdimen(&x);
 }
@@ -1063,7 +1063,7 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 return x;
 }
 
-static void hget_xdimen_def_node(xdimen_t*x)
+static void hget_xdimen_def_node(Xdimen*x)
 {/*74:*/
 #line 1161 "hint.w"
 
@@ -1093,7 +1093,7 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 #line 1359 "hint.w"
 
 scaled hteg_xdimen(uint8_t a)
-{xdimen_t x;
+{Xdimen x;
 switch(a)
 {
 case TAG(xdimen_kind,b000):return hget_xdimen_ref(HTEG8);
@@ -1341,9 +1341,9 @@ else TAGERR(z);
 return 0;
 }
 
-static param_def_t*hteg_param_list(uint8_t z)
+static ParamDef*hteg_param_list(uint8_t z)
 {uint32_t s,t;
-param_def_t*p= NULL;
+ParamDef*p= NULL;
 uint8_t*list_start,*list_end;
 list_end= hpos;
 s= hteg_list_size(INFO(z));
@@ -1352,7 +1352,7 @@ list_start= hpos-s;
 if(list_start<=hstart)
 QUIT("list start before stream start\n");
 while(list_start<hpos)
-{param_def_t*r;param_t*q;
+{ParamDef*r;Param*q;
 /*78:*/
 #line 1222 "hint.w"
 
@@ -1361,7 +1361,7 @@ z= HTEG8,DBGTAG(z,hpos);
 /*:78*/
 #line 1787 "hint.w"
 
-ALLOCATE(r,1,param_def_t);
+ALLOCATE(r,1,ParamDef);
 q= &(r->p);
 q->k= KIND(z);
 if(KIND(z)==int_kind)q->i= hteg_integer_def(a);
@@ -1392,8 +1392,8 @@ return p;
 }
 #endif
 
-static param_def_t*hteg_param_list_node(void)
-{param_def_t*p;
+static ParamDef*hteg_param_list_node(void)
+{ParamDef*p;
 uint8_t*list_start;
 hskip_list_back();
 list_start= hpos;
@@ -1744,10 +1744,10 @@ return null;
 /*:159*//*165:*/
 #line 2779 "hint.w"
 
-pointer hget_paragraph(scaled x,uint32_t offset,param_def_t*q)
+pointer hget_paragraph(scaled x,uint32_t offset,ParamDef*q)
 {
 pointer p,par_head;
-param_def_t*save_lbp= line_break_params;
+ParamDef*save_lbp= line_break_params;
 par_head= tail;
 line_break_params= q;
 if(offset==0)
@@ -1766,7 +1766,7 @@ return par_head;
 
 void hget_par_node(uint32_t offset)
 {scaled x= 0;
-param_def_t*q;
+ParamDef*q;
 /*74:*/
 #line 1161 "hint.w"
 
@@ -1796,9 +1796,9 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 /*:165*//*168:*/
 #line 2833 "hint.w"
 
-void hteg_paragraph(info_t i)
+void hteg_paragraph(Info i)
 {scaled x= 0;
-param_def_t*q= null;
+ParamDef*q= null;
 pointer par_head;
 uint8_t*bs_pos= cur_list.bs_pos;
 scaled ph= prev_height;
@@ -1844,8 +1844,8 @@ hpos= par_start;
 /*:168*//*184:*/
 #line 3080 "hint.w"
 
-static void hset_stream_params(pointer p,bool f,param_def_t*q)
-{param_def_t*r;
+static void hset_stream_params(pointer p,bool f,ParamDef*q)
+{ParamDef*r;
 pointer s;
 while(q!=null)
 {r= q;
@@ -1962,7 +1962,7 @@ cur_loc= i;
 DBG(DBGPAGE,"loc_set_prev: %d < %d < %d\n",lo_loc,cur_loc,hi_loc);
 }
 /*:232*//*245:*/
-#line 4250 "hint.w"
+#line 4259 "hint.w"
 
 static void hset_margins(void)
 {if(cur_page==&(page_def[0])){
@@ -1985,7 +1985,7 @@ if(hvsize> page_v)hvsize= page_v;
 }
 }
 /*:245*//*247:*/
-#line 4280 "hint.w"
+#line 4289 "hint.w"
 
 static void houtput_template0(void)
 {pointer p,q,r;
@@ -2003,7 +2003,7 @@ shift_amount(p)+= offset_h;
 streams[0].p= q;
 }
 /*:247*//*272:*/
-#line 4923 "hint.w"
+#line 4932 "hint.w"
 
 static int trv_string_size= 0;
 static char trv_string[256];
@@ -2031,8 +2031,8 @@ trv_hlist(p);
 trv_string[trv_string_size]= 0;
 return trv_string;
 }
-/*:272*//*368:*/
-#line 7435 "hint.w"
+/*:272*//*369:*/
+#line 7451 "hint.w"
 
 static pointer leaks[1<<16]= {0};
 
@@ -2072,14 +2072,14 @@ if(leaks[i]!=0)
 fprintf(stderr,"ERROR:leak final: p=%d, s=%d\n",i,leaks[i]);
 #endif
 }
-/*:368*/
-#line 7526 "hint.w"
+/*:369*/
+#line 7542 "hint.w"
 
 /*1:*/
 #line 111 "hint.w"
 
 void hget_def_node(void)
-{kind_t k;
+{Kind k;
 int n;
 /*74:*/
 #line 1161 "hint.w"
@@ -2125,7 +2125,7 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 
 }
 
-pointer hset_glue(glue_t*g)
+pointer hset_glue(Glue*g)
 {if(ZERO_GLUE(*g))
 {add_glue_ref(zero_glue);
 return zero_glue;
@@ -2230,7 +2230,7 @@ hget_max_definitions();
 /*4:*/
 #line 211 "hint.w"
 
-{kind_t k;
+{Kind k;
 for(k= 0;k<32;k++)
 {if(k==font_kind||k==int_kind||k==dimen_kind||k==xdimen_kind||
 k==glue_kind||k==baseline_kind||k==range_kind||k==page_kind||k==param_kind||k==stream_kind||k==label_kind)
@@ -2249,11 +2249,11 @@ ALLOCATE(integer_def,max_ref[int_kind]+1,int32_t);
 /*:7*//*11:*/
 #line 274 "hint.w"
 
-ALLOCATE(dimen_def,max_ref[dimen_kind]+1,dimen_t);
+ALLOCATE(dimen_def,max_ref[dimen_kind]+1,Dimen);
 /*:11*//*15:*/
 #line 304 "hint.w"
 
-ALLOCATE(xdimen_def,max_ref[xdimen_kind]+1,xdimen_t);
+ALLOCATE(xdimen_def,max_ref[xdimen_kind]+1,Xdimen);
 /*:15*//*20:*/
 #line 355 "hint.w"
 
@@ -2261,34 +2261,34 @@ ALLOCATE(pointer_def[glue_kind],max_ref[glue_kind]+1,pointer);
 /*:20*//*23:*/
 #line 374 "hint.w"
 
-ALLOCATE(baseline_def,max_ref[baseline_kind]+1,bs_t);
+ALLOCATE(baseline_def,max_ref[baseline_kind]+1,BaselineSkip);
 /*:23*//*30:*/
 #line 492 "hint.w"
 
-ALLOCATE(font_def,max_ref[font_kind]+1,font_def_t);
+ALLOCATE(font_def,max_ref[font_kind]+1,FontDef);
 /*:30*//*39:*/
 #line 597 "hint.w"
 
-ALLOCATE(param_def,max_ref[param_kind]+1,param_def_t*);
+ALLOCATE(param_def,max_ref[param_kind]+1,ParamDef*);
 /*:39*//*46:*/
 #line 740 "hint.w"
 
-ALLOCATE(range_def,max_ref[range_kind]+1,range_def_t);
+ALLOCATE(range_def,max_ref[range_kind]+1,RangeDef);
 /*:46*//*51:*/
 #line 794 "hint.w"
 
-ALLOCATE(streams,max_ref[stream_kind]+1,stream_t);
+ALLOCATE(streams,max_ref[stream_kind]+1,Stream);
 /*:51*//*58:*/
 #line 891 "hint.w"
 
-ALLOCATE(page_def,max_ref[page_kind]+1,page_def_t);
+ALLOCATE(page_def,max_ref[page_kind]+1,PageDef);
 /*:58*//*66:*/
 #line 1026 "hint.w"
 
 if(max_ref[label_kind]>=0)
-ALLOCATE(labels,max_ref[label_kind]+1,label_t);
+ALLOCATE(labels,max_ref[label_kind]+1,Label);
 if(max_outline>=0)
-ALLOCATE(hint_outlines,max_outline+1,hint_outline_t);
+ALLOCATE(hint_outlines,max_outline+1,hint_Outline);
 /*:66*/
 #line 180 "hint.w"
 
@@ -2311,7 +2311,7 @@ page_def[0].h.w= -9*ONE;
 page_def[0].h.h= 1.25;
 page_def[0].h.v= 0.0;
 page_def[0].t= 0;
-ALLOCATE(page_def[0].s,max_ref[stream_kind]+1,stream_def_t);
+ALLOCATE(page_def[0].s,max_ref[stream_kind]+1,StreamDef);
 cur_page= &(page_def[0]);
 /*:59*/
 #line 186 "hint.w"
@@ -2390,12 +2390,12 @@ return p;
 /*:26*//*68:*/
 #line 1046 "hint.w"
 
-void hget_outline_or_label_def(info_t i,int n)
+void hget_outline_or_label_def(Info i,int n)
 {if(i&b100)
 /*70:*/
 #line 1067 "hint.w"
 
-{hint_outline_t*t;
+{hint_Outline*t;
 uint64_t pos;
 uint8_t where;
 outline_no++;
@@ -2426,7 +2426,7 @@ else
 /*69:*/
 #line 1055 "hint.w"
 
-{label_t*t= labels+n;
+{Label*t= labels+n;
 HGET32(t->pos);
 t->where= HGET8;
 if(t->where> LABEL_MID)t->where= LABEL_UNDEF;
@@ -2609,7 +2609,7 @@ QUIT("Text in paragraph not yet implemented");
 return null;
 }
 /*:160*/
-#line 7527 "hint.w"
+#line 7543 "hint.w"
 
 /*80:*/
 #line 1241 "hint.w"
@@ -2909,7 +2909,7 @@ return p;
 
 void hteg_par_node(uint32_t offset)
 {scaled x= 0;
-param_def_t*save_lbp= line_break_params;
+ParamDef*save_lbp= line_break_params;
 pointer p;
 pointer par_head= tail;
 uint8_t*bs_pos= cur_list.bs_pos;
@@ -2971,7 +2971,7 @@ line_break_params= save_lbp;
 }
 
 /*:170*/
-#line 7528 "hint.w"
+#line 7544 "hint.w"
 
 
 /*18:*/
@@ -3617,6 +3617,7 @@ int hint_begin(void)
 {if(!hint_map())return 0;
 hpos= hstart= hin_addr;
 hend= hstart+hin_size;
+hint_clear_fonts(true);
 hflush_contribution_list();hpage_init();
 flush_node_list(link(page_head));
 free_definitions();
@@ -3647,7 +3648,7 @@ list_leaks();
 hclear_dir();
 }
 /*:234*//*238:*/
-#line 4125 "hint.w"
+#line 4134 "hint.w"
 
 bool hint_forward(void)
 {hpage_init();
@@ -3661,7 +3662,7 @@ if(hbuild_page())return true;
 return false;
 }
 /*:238*//*239:*/
-#line 4166 "hint.w"
+#line 4175 "hint.w"
 
 bool hint_backward(void)
 {hpage_init();
@@ -3675,7 +3676,7 @@ if(hbuild_page_up())return true;
 return false;
 }
 /*:239*//*241:*/
-#line 4194 "hint.w"
+#line 4203 "hint.w"
 
 bool flush_pages(uint32_t pos)
 {pointer p= link(head);
@@ -3692,18 +3693,18 @@ store_map(tail,pos,0);
 return false;
 }
 /*:241*//*263:*/
-#line 4707 "hint.w"
+#line 4716 "hint.w"
 
 int hint_get_outline_max(void)
 {return max_outline;}
 /*:263*//*268:*/
-#line 4787 "hint.w"
+#line 4796 "hint.w"
 
-hint_outline_t*hint_get_outlines(void)
+hint_Outline*hint_get_outlines(void)
 {return hint_outlines;
 }
 /*:268*//*270:*/
-#line 4846 "hint.w"
+#line 4855 "hint.w"
 
 static bool trv_ignore= false;
 static bool trv_skip_space= false;
@@ -3769,7 +3770,7 @@ p= link(p);
 }
 }
 /*:270*/
-#line 7530 "hint.w"
+#line 7546 "hint.w"
 
 
-/*:371*/
+/*:372*/

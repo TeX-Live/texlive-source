@@ -1,5 +1,5 @@
 /*1410:*/
-#line 2624 "htex.ch"
+#line 2639 "htex.ch"
 
 #define banner "This is TeX, Version 3.141592653 (HINT)" \
 
@@ -907,7 +907,8 @@ incr(input_ptr) ; \
 #define back_list(A) begin_token_list(A,backed_up) 
 #define ins_list(A) begin_token_list(A,inserted)  \
 
-#define any_state_plus(A) case mid_line+A:case skip_blanks+A:case new_line+A \
+#define any_state_plus(A) case mid_line+A: \
+case skip_blanks+A:case new_line+A \
 
 #define add_delims_to(A) A+math_shift:A+tab_mark:A+mac_param: \
 A+sub_mark:A+letter:A+other_char \
@@ -1497,7 +1498,8 @@ if(mode> 0) tail_append(new_disc() ) ; \
 } \
 } \
 
-#define any_mode(A) case vmode+A:case hmode+A:case mmode+A \
+#define any_mode(A) case vmode+A:case hmode+A: \
+case mmode+A \
 
 #define non_math(A) case vmode+A:case hmode+A \
 
@@ -1726,7 +1728,7 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define end_write_token cs_token_flag+end_write \
 
 
-#line 2625 "htex.ch"
+#line 2640 "htex.ch"
 
 enum{/*11:*/
 #line 355 "btex.w"
@@ -1770,7 +1772,7 @@ file_name_size= 1024,
 empty_string= 256
 
 /*:11*/
-#line 2626 "htex.ch"
+#line 2641 "htex.ch"
 };
 /*18:*/
 #line 495 "btex.w"
@@ -1792,14 +1794,14 @@ typedef int16_t str_number;
 typedef uint8_t packed_ASCII_code;
 
 /*:38*//*104:*/
-#line 2126 "btex.w"
+#line 2128 "btex.w"
 
 typedef int scaled;
 typedef int32_t nonnegative_integer;
 typedef int8_t small_number;
 
 /*:104*//*113:*/
-#line 2320 "btex.w"
+#line 2322 "btex.w"
 
 #if __SIZEOF_FLOAT__==4
 typedef float float32_t;
@@ -1809,7 +1811,7 @@ typedef float float32_t;
 typedef float glue_ratio;
 
 /*:113*//*117:*/
-#line 2429 "btex.w"
+#line 2431 "btex.w"
 
 typedef uint8_t quarterword;
 typedef uint16_t halfword;
@@ -1837,16 +1839,16 @@ four_quarters qqqq;
 typedef struct{FILE*f;memory_word d;}word_file;
 
 /*:117*//*155:*/
-#line 3152 "btex.w"
+#line 3155 "btex.w"
 
 typedef int8_t glue_ord;
 
 /*:155*//*221:*/
-#line 4309 "btex.w"
+#line 4316 "btex.w"
 
 typedef struct{int16_t mode_field;
 pointer head_field,tail_field;
-#line 698 "htex.ch"
+#line 699 "htex.ch"
 int pg_field;
 pointer bs_field,ls_field;
 scaled lsl_field;
@@ -1855,17 +1857,17 @@ scaled hs_field;
 scaled ds_field,dw_field,di_field;
 scaled ht_field;
 uint32_t np_field;
-#line 4313 "btex.w"
+#line 4320 "btex.w"
 memory_word aux_field;
 }list_state_record;
 
 /*:221*//*279:*/
-#line 5881 "btex.w"
+#line 5892 "btex.w"
 
 typedef int8_t group_code;
 
 /*:279*//*310:*/
-#line 6457 "btex.w"
+#line 6471 "btex.w"
 
 typedef struct{
 quarterword state_field,index_field;
@@ -1873,28 +1875,28 @@ halfword start_field,loc_field,limit_field,name_field;
 }in_state_record;
 
 /*:310*//*558:*/
-#line 10727 "btex.w"
+#line 10753 "btex.w"
 
 typedef uint8_t internal_font_number;
 typedef uint16_t font_index;
 
 /*:558*//*605:*/
-#line 11900 "btex.w"
+#line 11950 "btex.w"
 
 typedef int8_t dvi_index;
 
 /*:605*//*944:*/
-#line 18120 "btex.w"
+#line 18222 "btex.w"
 
 typedef uint16_t trie_pointer;
 
 /*:944*//*949:*/
-#line 18186 "btex.w"
+#line 18291 "btex.w"
 
 typedef int16_t hyph_pointer;
 
 /*:949*/
-#line 2627 "htex.ch"
+#line 2642 "htex.ch"
 
 extern void list_init(void);
 extern void hpack_page(void);
@@ -1902,7 +1904,7 @@ extern void happend_insertion(pointer p);
 extern bool hbuild_page(void);
 extern void hdisplay(pointer p,pointer a,bool l);
 extern void mem_init(void);
-#line 25006 "btex.w"
+#line 25143 "btex.w"
 extern pointer copy_node_list(pointer p);
 extern void flush_node_list(pointer p);
 extern
@@ -1922,20 +1924,20 @@ extern int*const char_base;
 extern int*const width_base;
 extern memory_word font_info[];
 extern scaled*const font_size;
-#line 2641 "htex.ch"
+#line 2656 "htex.ch"
 extern char**const font_name;
 extern void hclear_fonts(void);
 extern void read_font_info(int f,char*nom,scaled s);
-#line 25028 "btex.w"
+#line 25165 "btex.w"
 extern list_state_record cur_list;
 extern pointer get_node(int s);
 extern pointer lo_mem_max;
 extern pointer hi_mem_min;
 extern memory_word*const mem;
 extern pointer just_box;
-#line 2649 "htex.ch"
+#line 2664 "htex.ch"
 extern void append_to_vlist(pointer b,uint32_t offset);
-#line 25035 "btex.w"
+#line 25172 "btex.w"
 extern pointer adjust_tail;
 extern void freeze_page_specs(small_number s);
 extern pointer page_tail;
@@ -1954,5 +1956,5 @@ extern int nest_ptr;
 extern void pop_nest(void);
 extern void push_nest(void);
 extern void delete_glue_ref(pointer p);
-#line 2655 "htex.ch"
+#line 2670 "htex.ch"
 void line_break(int final_widow_penalty,pointer par_ptr);/*:1410*/

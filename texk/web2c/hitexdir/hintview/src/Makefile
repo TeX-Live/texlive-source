@@ -24,7 +24,7 @@ LIBS= ../external/glfw-3.1.2/msys.build/src/libglfw3.a ../external/libglew.a  -l
 	       -lm -lz
 #	 -ldl -lm -lX11 -lpthread -lXrandr -lXinerama -lXi -lXcursor -lGL -lz
 else
-LIBS= -l:libglfw3.a -l:libGLEW.a -ldl -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXcursor -lGL -lz -lpthread -lm 
+LIBS= -lglfw -lGLEW -ldl -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXcursor -lGL -lz -lpthread -lm 
 endif
 
 all: hintview
@@ -50,13 +50,6 @@ hfonts.o: hfonts.c
 hintview: $(OBJ)
 	$(CC) $(LDFLAGS)  $(OBJ) $(LIBS) -o $@ 
 
-SRC= $(OBJ:.o=.c) $(HFILES) main.h stb_image.h Makefile
-DIST_SRC = $(SRC:%=src/%)
-DIST_MAN = man/hintview.1
-
-hintview.tgz: 
-	tar -c -C .. --transform 's,^,hintview/,' -z -f $@ $(DIST_SRC) $(DIST_MAN) 
-
 BINDIR=/usr/local/bin
 MANDIR=/usr/local/man
 
@@ -65,13 +58,7 @@ install: hintview
 	install -t $(BINDIR) --mode=755 hintview
 	install -t $(MANDIR)/man1 --mode=644 ../man/hintview.1
 
-
-.PHONY: www
-www: hintview hintview.tgz
-	cp hintview hintview.tgz ../man/hintview.1 ../../www/linux/
-
 clean:
 	rm -f *.o *~ *.dvi *.log *.aux
-	rm -f hintview hintview.tgz
-	$(MAKE) -C ../../hint viewlinux || true
+	rm -f hintview
 

@@ -1,5 +1,5 @@
 	/*508:*/
-	#line 10151 "format.w"
+	#line 10150 "format.w"
 
 #include "basetypes.h"
 #include <string.h>
@@ -16,12 +16,12 @@
 	/*244:*/
 	#line 4905 "format.w"
 
-label_t*labels;
+Label*labels;
 int first_label= -1;
 	/*:244*/	/*292:*/
 	#line 6068 "format.w"
 
-range_pos_t*range_pos;
+RangePos*range_pos;
 int next_range= 1,max_range;
 int*page_on;
 	/*:292*/	/*303:*/
@@ -60,7 +60,7 @@ int stem_length= 0;
 
 FILE*hin= NULL,*hout= NULL,*hlog= NULL;
 	/*:414*/
-	#line 10164 "format.w"
+	#line 10163 "format.w"
 
 
 	/*317:*/
@@ -158,7 +158,7 @@ return hin_size;
 #endif
 
 	/*:317*/
-	#line 10166 "format.w"
+	#line 10165 "format.w"
 
 	/*304:*/
 	#line 6258 "format.w"
@@ -194,24 +194,24 @@ DBG(DBGDIR,"banner size=0x%x\n",hbanner_size);
 return true;
 }
 	/*:304*/
-	#line 10167 "format.w"
+	#line 10166 "format.w"
 
 	/*326:*/
 	#line 6813 "format.w"
 
-entry_t*dir= NULL;
+Entry*dir= NULL;
 uint16_t section_no,max_section_no;
 void new_directory(uint32_t entries)
 {DBG(DBGDIR,"Creating directory with %d entries\n",entries);
 RNG("Directory entries",entries,3,0x10000);
 max_section_no= entries-1;
-ALLOCATE(dir,entries,entry_t);
+ALLOCATE(dir,entries,Entry);
 dir[0].section_no= 0;dir[1].section_no= 1;dir[2].section_no= 2;
 }
 	/*:326*/	/*327:*/
 	#line 6826 "format.w"
 
-void hset_entry(entry_t*e,uint16_t i,uint32_t size,uint32_t xsize,char*file_name)
+void hset_entry(Entry*e,uint16_t i,uint32_t size,uint32_t xsize,char*file_name)
 {e->section_no= i;
 e->size= size;e->xsize= xsize;
 if(file_name==NULL||*file_name==0)
@@ -221,7 +221,7 @@ e->file_name= strdup(file_name);
 DBG(DBGDIR,"Creating entry %d: \"%s\" size=0x%x xsize=0x%x\n",i,file_name,size,xsize);
 }
 	/*:327*/
-	#line 10168 "format.w"
+	#line 10167 "format.w"
 
 
 	/*305:*/
@@ -291,7 +291,7 @@ if(dir[n].xsize>0)hdecompress(n);
 	/*:320*/	/*337:*/
 	#line 7051 "format.w"
 
-void hget_entry(entry_t*e)
+void hget_entry(Entry*e)
 {	/*15:*/
 	#line 712 "format.w"
 
@@ -328,7 +328,7 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 	/*:337*/	/*338:*/
 	#line 7083 "format.w"
 
-static void hget_root(entry_t*root)
+static void hget_root(Entry*root)
 {DBG(DBGDIR,"Root entry at "SIZE_F"\n",hpos-hstart);
 hget_entry(root);
 root->pos= hpos-hstart;
@@ -339,7 +339,7 @@ if(max_section_no<2)QUIT("Sections 0, 1, and 2 are mandatory");
 
 void hget_directory(void)
 {int i;
-entry_t root= {0};
+Entry root= {0};
 hget_root(&root);
 DBG(DBGDIR,"Directory\n");
 new_directory(max_section_no+1);
@@ -365,7 +365,7 @@ free(dir);dir= NULL;
 	#line 7499 "format.w"
 
 void hget_max_definitions(void)
-{kind_t k;
+{Kind k;
 	/*15:*/
 	#line 712 "format.w"
 
@@ -419,7 +419,7 @@ NAME(a),INFO(a),NAME(z),INFO(z),node_pos,hpos-hstart-1);
 if(INFO(a)!=0)QUIT("End of maximum list with info %d",INFO(a));
 }
 	/*:356*/
-	#line 10170 "format.w"
+	#line 10169 "format.w"
 
 	/*52:*/
 	#line 1228 "format.w"
@@ -458,7 +458,7 @@ return u.d;
 	/*:75*/	/*145:*/
 	#line 2822 "format.w"
 
-void hget_size_boundary(info_t info)
+void hget_size_boundary(Info info)
 {uint32_t n;
 if(info<2)return;
 n= HGET8;
@@ -466,7 +466,7 @@ if(n-1!=0x100-info)QUIT("Size boundary byte 0x%x with info value %d at "SIZE_F,
 n,info,hpos-hstart-1);
 }
 
-uint32_t hget_list_size(info_t info)
+uint32_t hget_list_size(Info info)
 {uint32_t n= 0;
 if(info==1)return 0;
 else if(info==2)n= HGET8;
@@ -477,7 +477,7 @@ else QUIT("List info %d must be 1, 2, 3, 4, or 5",info);
 return n;
 }
 
-void hget_list(list_t*l)
+void hget_list(List*l)
 {if(KIND(*hpos)!=list_kind&&
 KIND(*hpos)!=text_kind&&KIND(*hpos)!=param_kind)
 QUIT("List expected at 0x%x",(uint32_t)(hpos-hstart));
@@ -509,7 +509,7 @@ DBG(DBGNODE,"Get list at 0x%x size=%u\n",l->p,l->s);
 }
 }
 	/*:145*/
-	#line 10171 "format.w"
+	#line 10170 "format.w"
 
 	/*426:*/
 	#line 8943 "format.w"
@@ -557,7 +557,7 @@ return u.d;
 	/*:457*/	/*495:*/
 	#line 9824 "format.w"
 
-void hteg_size_boundary(info_t info)
+void hteg_size_boundary(Info info)
 {uint32_t n;
 if(info<2)return;
 n= HTEG8;
@@ -565,7 +565,7 @@ if(n-1!=0x100-info)QUIT("List size boundary byte 0x%x does not match info value 
 n,info,hpos-hstart);
 }
 
-uint32_t hteg_list_size(info_t info)
+uint32_t hteg_list_size(Info info)
 {uint32_t n;
 if(info==1)return 0;
 else if(info==2)n= HTEG8;
@@ -576,7 +576,7 @@ else QUIT("List info %d must be 1, 2, 3, 4, or 5",info);
 return n;
 }
 
-void hteg_list(list_t*l)
+void hteg_list(List*l)
 {	/*454:*/
 	#line 9368 "format.w"
 
@@ -612,13 +612,13 @@ hpos-hstart,node_pos-1);
 }
 }
 
-void hteg_param_list(list_t*l)
+void hteg_param_list(List*l)
 {if(KIND(*(hpos-1))!=param_kind)return;
 hteg_list(l);
 }
 
 
 	/*:495*/
-	#line 10172 "format.w"
+	#line 10171 "format.w"
 
 	/*:508*/

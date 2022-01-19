@@ -1,61 +1,61 @@
 	/*507:*/
-	#line 10106 "format.w"
+	#line 10105 "format.w"
 
 	/*1:*/
 	#line 328 "format.w"
 
-typedef struct{uint32_t c;uint8_t f;}glyph_t;
+typedef struct{uint32_t c;uint8_t f;}Glyph;
 	/*:1*/	/*113:*/
 	#line 2153 "format.w"
 
 typedef struct{
-dimen_t h,d,w;
-}rule_t;
+Dimen h,d,w;
+}Rule;
 	/*:113*/	/*122:*/
 	#line 2267 "format.w"
 
 typedef struct{
 bool x;
-xdimen_t d;
-}kern_t;
+Xdimen d;
+}Kern;
 	/*:122*/	/*140:*/
 	#line 2688 "format.w"
 
 typedef struct{
-kind_t k;
+Kind k;
 uint32_t p;
 uint32_t s;
-}list_t;
+}List;
 	/*:140*/	/*148:*/
 	#line 3110 "format.w"
 
 typedef enum{txt_font= 0x00,txt_global= 0x08,txt_local= 0x11,
 txt_cc= 0x1D,txt_node= 0x1E,txt_hyphen= 0x1F,
-txt_glue= 0x20,txt_ignore= 0xFB}txt_t;
+txt_glue= 0x20,txt_ignore= 0xFB}Txt;
 	/*:148*/	/*159:*/
 	#line 3377 "format.w"
 
-typedef struct{kind_t k;int n;}ref_t;
+typedef struct{Kind k;int n;}Ref;
 	/*:159*/	/*160:*/
 	#line 3414 "format.w"
 
-typedef struct{dimen_t h,d,w,a;float32_t r;int8_t s,o;list_t l;}box_t;
+typedef struct{Dimen h,d,w,a;float32_t r;int8_t s,o;List l;}Box;
 	/*:160*/	/*187:*/
 	#line 3970 "format.w"
 
-typedef struct{uint8_t f;list_t l;}lig_t;
+typedef struct{uint8_t f;List l;}Lig;
 	/*:187*/	/*195:*/
 	#line 4087 "format.w"
 
-typedef struct disc_t{bool x;list_t p,q;uint8_t r;}disc_t;
+typedef struct{bool x;List p,q;uint8_t r;}Disc;
 	/*:195*/	/*228:*/
 	#line 4608 "format.w"
 
 typedef struct{
 uint16_t n;
-dimen_t w,h;
-stretch_t p,m;
-}image_t;
+Dimen w,h;
+Stretch p,m;
+}Image;
 	/*:228*/	/*264:*/
 	#line 5247 "format.w"
 
@@ -64,14 +64,14 @@ uint8_t*t;
 int s;
 int d;
 uint16_t r;
-}outline_t;
+}Outline;
 	/*:264*/	/*291:*/
 	#line 6063 "format.w"
 
 typedef
-struct{uint8_t pg;uint32_t pos;bool on;int link;}range_pos_t;
+struct{uint8_t pg;uint32_t pos;bool on;int link;}RangePos;
 	/*:291*/
-	#line 10107 "format.w"
+	#line 10106 "format.w"
 
 	/*325:*/
 	#line 6799 "format.w"
@@ -83,9 +83,9 @@ uint16_t section_no;
 char*file_name;
 uint8_t*buffer;
 uint32_t bsize;
-}entry_t;
+}Entry;
 	/*:325*/
-	#line 10108 "format.w"
+	#line 10107 "format.w"
 
 	/*37:*/
 	#line 1062 "format.w"
@@ -149,41 +149,41 @@ uint32_t bsize;
 #define HTEG32(X) (HBACK(4),(X)= (hpos[0]<<24)+(hpos[1]<<16)+(hpos[2]<<8)+hpos[3])
 #define HTEGTAG(X) X= HTEG8,DBGTAG(X,hpos)
 	/*:456*/
-	#line 10109 "format.w"
+	#line 10108 "format.w"
 
 
-extern entry_t*dir;
+extern Entry*dir;
 extern uint16_t section_no,max_section_no;
 extern uint8_t*hpos,*hstart,*hend,*hpos0;
 extern uint64_t hin_size,hin_time;
 extern uint8_t*hin_addr;
 
-extern label_t*labels;
+extern Label*labels;
 extern char*hin_name;
 extern bool hget_map(void);
 extern void hget_unmap(void);
 
 extern void new_directory(uint32_t entries);
-extern void hset_entry(entry_t*e,uint16_t i,uint32_t size,uint32_t xsize,char*file_name);
+extern void hset_entry(Entry*e,uint16_t i,uint32_t size,uint32_t xsize,char*file_name);
 
 extern void hget_banner(void);
 extern void hget_section(uint16_t n);
-extern void hget_entry(entry_t*e);
+extern void hget_entry(Entry*e);
 extern void hget_directory(void);
 extern void hclear_dir(void);
 extern bool hcheck_banner(char*magic);
 
 extern void hget_max_definitions(void);
 extern uint32_t hget_utf8(void);
-extern void hget_size_boundary(info_t info);
-extern uint32_t hget_list_size(info_t info);
-extern void hget_list(list_t*l);
+extern void hget_size_boundary(Info info);
+extern uint32_t hget_list_size(Info info);
+extern void hget_list(List*l);
 extern uint32_t hget_utf8(void);
 extern float32_t hget_float32(void);
 extern float32_t hteg_float32(void);
-extern void hteg_size_boundary(info_t info);
-extern uint32_t hteg_list_size(info_t info);
-extern void hteg_list(list_t*l);
+extern void hteg_size_boundary(Info info);
+extern uint32_t hteg_list_size(Info info);
+extern void hteg_list(List*l);
 extern void hff_hpos(void);
 extern uint32_t hff_list_pos,hff_list_size;
 extern uint8_t hff_tag;

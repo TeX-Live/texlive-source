@@ -339,7 +339,8 @@ void nativeSetDark(int on)
 static float pt_h=600.0, pt_v=800.0;
 
 void nativeSetSize(int px_h, int px_v, double x_dpi, double y_dpi)
-{  pt_h = px_h * 72.27 / x_dpi;
+{  //LOG("xdpi=%f, ydpi=%f\n",x_dpi,y_dpi);
+   pt_h = px_h * 72.27 / x_dpi;
    pt_v = px_v * 72.27 / y_dpi; 
    page_h = round(pt_h * (1 << 16));
    page_v = round(pt_v * (1 << 16));
@@ -444,7 +445,7 @@ void nativeImage(double x, double y, double w, double h, unsigned char *b, unsig
 }
 
 
-static void GLtexture(gcache_t *g) {
+static void GLtexture(Gcache *g) {
     unsigned texID;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     checkGlError("glPixelStorei");

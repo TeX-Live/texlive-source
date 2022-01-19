@@ -1,18 +1,18 @@
-/*374:*/
-#line 7585 "hint.w"
+/*375:*/
+#line 7601 "hint.w"
 
 #ifndef _HFONTS_H
 #define _HFONTS_H
 
 /*306:*/
-#line 5687 "hint.w"
+#line 5696 "hint.w"
 
-typedef enum{no_format,pk_format,ft_format}font_format_t;
+typedef enum{no_format,pk_format,ft_format}FontFormat;
 /*:306*//*307:*/
-#line 5699 "hint.w"
+#line 5708 "hint.w"
 
-/*338:*/
-#line 6672 "hint.w"
+/*339:*/
+#line 6688 "hint.w"
 
 
 typedef struct
@@ -20,21 +20,21 @@ typedef struct
 unsigned int cs;
 double ds;
 unsigned char id;
-}pk_t;
-/*:338*//*350:*/
-#line 7003 "hint.w"
+}PKfont;
+/*:339*//*351:*/
+#line 7019 "hint.w"
 
 typedef struct
 {FT_Face face;
-}ft_t;
-/*:350*//*351:*/
-#line 7010 "hint.w"
+}FTfont;
+/*:351*//*352:*/
+#line 7026 "hint.w"
 
 typedef struct
 {int dummy;
-}ftg_t;
-/*:351*/
-#line 5700 "hint.w"
+}FTglyph;
+/*:352*/
+#line 5709 "hint.w"
 
 
 typedef struct font_s{
@@ -43,41 +43,41 @@ unsigned char*font_data;
 int data_size;
 double s;
 double hpxs,vpxs;
-/*312:*/
-#line 5787 "hint.w"
+/*313:*/
+#line 5803 "hint.w"
 
 struct gcache_s**g0;
 struct gcache_s***g1;
 struct gcache_s****g2;
 struct gcache_s*****g3;
 
-/*:312*/
-#line 5708 "hint.w"
+/*:313*/
+#line 5717 "hint.w"
 
-font_format_t ff;
-union{pk_t pk;ft_t tt;};
-}font_t;
-/*:307*//*317:*/
-#line 5999 "hint.w"
+FontFormat ff;
+union{PKfont pk;FTfont tt;};
+}Font;
+/*:307*//*318:*/
+#line 6015 "hint.w"
 
-/*339:*/
-#line 6685 "hint.w"
+/*340:*/
+#line 6701 "hint.w"
 
 typedef struct
 {unsigned char flag;
 unsigned char*encoding;
-}pkg_t;
-/*:339*//*341:*/
-#line 6712 "hint.w"
+}PKglyph;
+/*:340*//*342:*/
+#line 6728 "hint.w"
 
 typedef struct{
 int j;
 int r;
 int f;
 unsigned char*data;
-}pk_parse_t;
-/*:341*/
-#line 6000 "hint.w"
+}PKparse;
+/*:342*/
+#line 6016 "hint.w"
 
 
 struct gcache_s{
@@ -85,17 +85,17 @@ int w,h;
 int hoff,voff;
 unsigned char*bits;
 unsigned int GLtexture;
-font_format_t ff;
+FontFormat ff;
 union{
-pkg_t pk;
-ftg_t tt;
+PKglyph pk;
+FTglyph tt;
 };
 };
-typedef struct gcache_s gcache_t;
-/*:317*/
-#line 7589 "hint.w"
+typedef struct gcache_s Gcache;
+/*:318*/
+#line 7605 "hint.w"
 
 
 
 #endif
-/*:374*/
+/*:375*/

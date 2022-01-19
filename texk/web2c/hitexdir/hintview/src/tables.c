@@ -9,9 +9,9 @@ int max_outline=-1;
 
 int32_t int_defaults[MAX_INT_DEFAULT+1]={0, 100, 200, 10, 50, 50, 150, 150, 50, 100, 10000, 0, 0, 10000, 5000, 10000, 0, 720, 4, 7, 1776, 1, 20000};
 
-dimen_t dimen_defaults[MAX_DIMEN_DEFAULT+1]={0x0, 0x1d5c147, 0x28333f7, 0x0, 0x0, 0x38000, 0x0, 0x0, 0xa0000, 0xa0000};
+Dimen dimen_defaults[MAX_DIMEN_DEFAULT+1]={0x0, 0x1d5c147, 0x28333f7, 0x0, 0x0, 0x38000, 0x0, 0x0, 0xa0000, 0xa0000};
 
-glue_t glue_defaults[MAX_GLUE_DEFAULT+1]={
+Glue glue_defaults[MAX_GLUE_DEFAULT+1]={
 {{0x0, 0.000000, 0.000000},{0.000000, 0},{0.000000, 0}},
 {{0x0, 0.000000, 0.000000},{1.000000, 1},{0.000000, 0}},
 {{0x0, 0.000000, 0.000000},{1.000000, 2},{0.000000, 0}},
@@ -29,11 +29,11 @@ glue_t glue_defaults[MAX_GLUE_DEFAULT+1]={
 {{0x0, 0.000000, 0.000000},{1.000000, 1},{0.000000, 0}},
 };
 
-xdimen_t xdimen_defaults[MAX_XDIMEN_DEFAULT+1]={{0x0, 0.0, 0.0}, {0x0, 1.0, 0.0}, {0x0, 0.0, 1.0}};
+Xdimen xdimen_defaults[MAX_XDIMEN_DEFAULT+1]={{0x0, 0.0, 0.0}, {0x0, 1.0, 0.0}, {0x0, 0.0, 1.0}};
 
-baseline_t baseline_defaults[MAX_BASELINE_DEFAULT+1]={{{{0x0, 0.000000, 0.000000},{0.000000, 0},{0.000000, 0}}, {{0x0, 0.000000, 0.000000},{0.000000, 0},{0.000000, 0}}, 0x0}};
+Baseline baseline_defaults[MAX_BASELINE_DEFAULT+1]={{{{0x0, 0.000000, 0.000000},{0.000000, 0},{0.000000, 0}}, {{0x0, 0.000000, 0.000000},{0.000000, 0},{0.000000, 0}}, 0x0}};
 
-label_t label_defaults[MAX_LABEL_DEFAULT+1]={{0,LABEL_TOP,true,0,0,0}};
+Label label_defaults[MAX_LABEL_DEFAULT+1]={{0,LABEL_TOP,true,0,0,0}};
 
 int max_fixed[32]= {65536, 65536, -1, 2, 65536, -1, 0, 2, -1, -1, -1, -1, -1, -1, 0, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 0, 0, 0, -1, 65536, 65536, 0};
 
