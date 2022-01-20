@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # Enum class for v3dheadertypes
 """ AUTO-GENERATED from v3dheadertypes.csv """
-# Generated at 2022-01-06 15:01:16.537064
+# Generated at 2022-01-19 22:30:10.805644
 
 class v3dheadertypes:
     v3dheadertypes_canvasWidth=1
     # UINT  Canvas width
 
     v3dheadertypes_canvasHeight=2
-    # UINT  Canvas height
+    # UINT  Canvas heighot
 
     v3dheadertypes_absolute=3
     # BOOL  true: absolute size; false: scale to canvas
@@ -23,7 +23,7 @@ class v3dheadertypes:
     # BOOL  true: orthographic; false: perspective
 
     v3dheadertypes_angleOfView=7
-    # REAL  Field of view angle
+    # REAL  Field of view angle (in radians)
 
     v3dheadertypes_initialZoom=8
     # REAL  Initial zoom

@@ -973,6 +973,11 @@ bool picture::shipout(picture *preamble, const string& Prefix,
     else htmlformat=false;
   }
 
+#ifndef HAVE_LIBGLM
+  if(outputformat == "v3d")
+    camp::reportError("to support V3 rendering, please install glm header files, run ./configure, and recompile");
+#endif
+
   bool svgformat=outputformat == "svg";
   bool png=outputformat == "png";
 
@@ -1356,7 +1361,6 @@ bool picture::shipout3(const string& prefix, const string& format,
   bool webgl=format == "html";
 
 #ifndef HAVE_LIBGLM
-  if(webgl)
     camp::reportError("to support WebGL rendering, please install glm header files, run ./configure, and recompile");
 #endif
 
@@ -1501,7 +1505,9 @@ bool picture::shipout3(const string& prefix, const string& format,
 #ifdef HAVE_GL
     if(format3dWait) {
       gl::format3dWait=false;
+#ifdef HAVE_PTHREAD
       endwait(initSignal,initLock);
+#endif
     }
 #endif
 

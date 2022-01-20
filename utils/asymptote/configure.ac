@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.75],[https://sourceforge.net/projects/asymptote])
+AC_INIT([Asymptote],[2.76],[https://github.com/vectorgraphics/asymptote/issues])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -174,7 +174,6 @@ GCLIB=
 GCPPLIB=
 INCL="-I."
 GCNAME="Boehm Garbage Collector"
-GCOPTIONS="--disable-shared"
 if test "x$ac_cv_use_gc" != "xno" ; then
    OPTIONS=$OPTIONS"-DUSEGC "
    case _$ac_cv_use_gc in
@@ -266,7 +265,16 @@ AC_SEARCH_LIBS([lgamma],[m c],,
 AC_MSG_ERROR([*** Please install libm on your system ***]))
 AC_CHECK_LIB([z], [deflate],,
 AC_MSG_ERROR([*** Please install libz or zlib-devel on your system ***]))
-AX_PTHREAD
+
+GCOPTIONS="--disable-shared "
+AC_ARG_ENABLE(threads,
+[AS_HELP_STRING(--enable-threads[[[=yes]]],enable POSIX threads)])
+
+if test "x$enable_threads" != "xno"; then
+   AX_PTHREAD
+else
+   GCOPTIONS=$GCOPTIONS"--disable-threads "
+fi
 
 AC_ARG_ENABLE(sigsegv,
 [AS_HELP_STRING(--enable-sigsegv[[[=yes]]],enable GNU Stack Overflow Handler)])
@@ -288,7 +296,7 @@ fi
 
 LSPLIBS=
 LSPLIB=
-if test "x$enable_lsp" != "xno"; then
+if test "x$enable_lsp" != "xno" -a "x$enable_threads" != "xno"; then
   AC_CHECK_LIB([boost_filesystem],[opendir],
   [AC_CHECK_LIB([boost_thread],[pthread_attr_getdetachstate],
   [AC_DEFINE(HAVE_LSP,1,DEFINE([Language server protocol]))

@@ -1,6 +1,6 @@
 // Enum class for v3dheadertypes
 // AUTO-GENERATED from v3dheadertypes.csv
-// Generated at 2022-01-06 15:00:10.552025
+// Generated at 2022-01-19 22:28:57.698357
 
 namespace camp
 {
@@ -10,7 +10,7 @@ canvasWidth=1,
 // UINT  Canvas width
 
 canvasHeight=2,
-// UINT  Canvas height
+// UINT  Canvas heighot
 
 absolute=3,
 // BOOL  true: absolute size; false: scale to canvas
@@ -25,7 +25,7 @@ orthographic=6,
 // BOOL  true: orthographic; false: perspective
 
 angleOfView=7,
-// REAL  Field of view angle
+// REAL  Field of view angle (in radians)
 
 initialZoom=8,
 // REAL  Initial zoom

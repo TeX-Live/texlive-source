@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 6.7 from
 asymptote.texi.
 
-This file documents 'Asymptote', version 2.75.
+This file documents 'Asymptote', version 2.76.
 
    <https://asymptote.sourceforge.io>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents 'Asymptote', version 2.75.
+This file documents 'Asymptote', version 2.76.
 
    <https://asymptote.sourceforge.io>
 
@@ -7034,7 +7034,7 @@ There are six choices for viewing 3D 'Asymptote' output:
         * Ctrl Right: rotate about the Y axis
         * Alt Right: rotate about the Z axis
 
-     The keyboard shortcuts are:
+     The keyboard bindings are:
         * h: home
         * f: toggle fitscreen
         * x: spin about the X axis
@@ -8865,9 +8865,9 @@ Prince.  Sean Healy designed the 'Asymptote' logo.  Other contributors
 include Orest Shardt, Jesse Frohlich, Michail Vidiassov, Charles Staats,
 Philippe Ivaldi, Olivier Guibé, Radoslav Marinov, Jeff Samuelson, Chris
 Savage, Jacques Pienaar, Mark Henning, Steve Melenchuk, Martin Wiebusch,
-Stefan Knorr, and Supakorn "Jamie" Rassameemasmuang.  Pedram Emami
-developed the 'Asymptote Web Application' hosted at
-<http://asymptote.ualberta.ca>:
+Stefan Knorr, Supakorn "Jamie" Rassameemasmuang, Jacob Skitsko, Joseph
+Chaumont, and Oliver Cheng.  Pedram Emami developed the 'Asymptote Web
+Application' hosted at <http://asymptote.ualberta.ca>:
 
    <https://github.com/vectorgraphics/asymptote-http-server>
 
@@ -10624,36 +10624,36 @@ Ref: logimage267645
 Ref: penimage268751
 Ref: penfunctionimage269014
 Node: three269786
-Ref: PostScript3D300087
-Node: obj301825
-Node: graph3302074
-Ref: GaussianSurface307356
-Node: grid3308506
-Node: solids309291
-Node: tube310283
-Node: flowchart312513
-Node: contour317156
-Node: contour3323664
-Node: smoothcontour3323976
-Node: slopefield325695
-Node: ode327184
-Node: Options327441
-Ref: configuration file334936
-Ref: settings334936
-Ref: texengines336200
-Ref: convert336200
-Node: Interactive mode339643
-Ref: history341792
-Node: GUI343095
-Node: GUI installation343645
-Node: GUI usage344378
-Node: Command-Line Interface345441
-Node: Language server protocol346883
-Node: PostScript to Asymptote348308
-Node: Help349086
-Node: Debugger350760
-Node: Credits352516
-Node: Index353693
+Ref: PostScript3D300086
+Node: obj301824
+Node: graph3302073
+Ref: GaussianSurface307355
+Node: grid3308505
+Node: solids309290
+Node: tube310282
+Node: flowchart312512
+Node: contour317155
+Node: contour3323663
+Node: smoothcontour3323975
+Node: slopefield325694
+Node: ode327183
+Node: Options327440
+Ref: configuration file334935
+Ref: settings334935
+Ref: texengines336199
+Ref: convert336199
+Node: Interactive mode339642
+Ref: history341791
+Node: GUI343094
+Node: GUI installation343644
+Node: GUI usage344377
+Node: Command-Line Interface345440
+Node: Language server protocol346882
+Node: PostScript to Asymptote348307
+Node: Help349085
+Node: Debugger350759
+Node: Credits352515
+Node: Index353738
 
 End Tag Table
 

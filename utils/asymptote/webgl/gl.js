@@ -3,6 +3,8 @@ let Materials=[]; // Array of materials
 let Lights=[]; // Array of lights
 let Centers=[]; // Array of billboard centers
 let Background=[1,1,1,1]; // Background color
+let Transform; // Transformation matrix T[4][4] that maps back to user
+// coordinates, with T[i][j] stored as element 4*i+j.
 
 let canvasWidth,canvasHeight; // Canvas width, height
 
@@ -53,9 +55,13 @@ const zoomRemeshFactor=1.5; // Zoom factor before remeshing
 const FillFactor=0.1;
 const windowTrim=10;
 const third=1/3;
+const pi=Math.acos(-1.0);
+const radians=pi/180.0;
 
 let Zoom;
 let lastZoom;
+let xshift;
+let yshift;
 
 let maxViewportWidth;
 let maxViewportHeight;
@@ -70,7 +76,7 @@ let projViewMat=mat4.create(); // projection view matrix
 let normMat=mat3.create();
 let viewMat3=mat3.create(); // 3x3 view matrix
 let cjMatInv=mat4.create();
-let T=mat4.create(); // Temporary matrix
+let Temp=mat4.create();
 
 let zmin,zmax;
 let center={x:0,y:0,z:0};
@@ -1984,7 +1990,6 @@ class Triangles extends Geometry {
     else
       triangleData.rendered=false;
   }
-
 }
 
 function redrawScene()
@@ -1999,6 +2004,10 @@ function home()
 {
   mat4.identity(rotMat);
   redrawScene();
+
+  if(window.top.asyWebApplication)
+    window.top.asyWebApplication.setProjection("");
+  window.parent.asyProjection=false;
 }
 
 let positionAttribute=0;
@@ -2163,10 +2172,10 @@ function maxbound(v) {
 
 function COBTarget(out,mat)
 {
-  mat4.fromTranslation(T,[center.x,center.y,center.z])
-  mat4.invert(cjMatInv,T);
+  mat4.fromTranslation(Temp,[center.x,center.y,center.z])
+  mat4.invert(cjMatInv,Temp);
   mat4.multiply(out,mat,cjMatInv);
-  mat4.multiply(out,T,out);
+  mat4.multiply(out,Temp,out);
 }
 
 function setUniforms(data,shader)
@@ -2261,15 +2270,15 @@ function rotateScene(lastX,lastY,rawX,rawY,factor)
   if(lastX == rawX && lastY == rawY) return;
   let [angle,axis]=arcball([lastX,-lastY],[rawX,-rawY]);
 
-  mat4.fromRotation(T,2*factor*ArcballFactor*angle/Zoom,axis);
-  mat4.multiply(rotMat,T,rotMat);
+  mat4.fromRotation(Temp,2*factor*ArcballFactor*angle/Zoom,axis);
+  mat4.multiply(rotMat,Temp,rotMat);
 }
 
 function shiftScene(lastX,lastY,rawX,rawY)
 {
-  let zoominv=1/Zoom;
-  shift.x += (rawX-lastX)*zoominv*halfCanvasWidth;
-  shift.y -= (rawY-lastY)*zoominv*halfCanvasHeight;
+  let Zoominv=1/Zoom;
+  shift.x += (rawX-lastX)*Zoominv*halfCanvasWidth;
+  shift.y -= (rawY-lastY)*Zoominv*halfCanvasHeight;
 }
 
 function panScene(lastX,lastY,rawX,rawY)
@@ -2403,6 +2412,72 @@ function disableZoom()
   canvas.removeEventListener("wheel",handleMouseWheel,false);
 }
 
+function Camera()
+{
+  let vCamera=Array(3);
+  let vUp=Array(3);
+  let vTarget=Array(3);
+
+  let cx=center.x;
+  let cy=center.y;
+  let cz=0.5*(viewParam.zmin+viewParam.zmax);
+
+  for(let i=0; i < 3; ++i) {
+    let sumCamera=0.0, sumTarget=0.0, sumUp=0.0;
+    let i4=4*i;
+    for(let j=0; j < 4; ++j) {
+      let j4=4*j;
+      let R0=rotMat[j4];
+      let R1=rotMat[j4+1];
+      let R2=rotMat[j4+2];
+      let R3=rotMat[j4+3];
+      let T4ij=Transform[i4+j];
+      sumCamera += T4ij*(R3-cx*R0-cy*R1-cz*R2);
+      sumUp += T4ij*R1;
+      sumTarget += T4ij*(R3-cx*R0-cy*R1);
+    }
+    vCamera[i]=sumCamera;
+    vUp[i]=sumUp;
+    vTarget[i]=sumTarget;
+  }
+  return [vCamera,vUp,vTarget];
+}
+
+function projection()
+{
+  if(Transform == null) return "";
+
+  let camera,up,target;
+  [camera,up,target]=Camera();
+
+  let projection=orthographic ? "  orthographic(" : "  perspective(";
+  let indent="".padStart(projection.length);
+
+  let currentprojection="currentprojection="+"\n"+
+      projection+"camera=("+camera+"),\n"+
+      indent+"up=("+up+"),"+"\n"+
+      indent+"target=("+target+"),"+"\n"+
+      indent+"zoom="+Zoom*initialZoom/zoom0;
+
+  if(!orthographic)
+    currentprojection += ","+"\n"
+    +indent+"angle="+
+    2.0*Math.atan(Math.tan(0.5*angleOfView)/Zoom)/radians;
+
+  if(xshift != 0 || yshift != 0)
+    currentprojection += ","+"\n"+
+    indent+"viewportshift=("+xshift+","+yshift+")";
+
+  if(!orthographic)
+    currentprojection += ","+"\n"+
+    indent+"autoadjust=false";
+
+  currentprojection += ");"+"\n";
+
+  window.parent.asyProjection=true;
+  return currentprojection;
+}
+
 function handleKey(event)
 {
   let ESC=27;
@@ -2451,6 +2526,9 @@ function handleKey(event)
   case '_':
   case '<':
     shrink();
+    break;
+  case 'c':
+    showCamera();
     break;
   default:
     break;
@@ -2687,39 +2765,38 @@ function drawScene()
 function setDimensions(width,height,X,Y)
 {
   let Aspect=width/height;
-  let zoominv=1/Zoom;
-  let xshift=(X/width+viewportShift[0])*Zoom;
-  let yshift=(Y/height+viewportShift[1])*Zoom;
-
+  xshift=(X/width+viewportShift[0])*Zoom;
+  yshift=(Y/height+viewportShift[1])*Zoom;
+  let Zoominv=1/Zoom;
   if(orthographic) {
     let xsize=maxBound[0]-minBound[0];
     let ysize=maxBound[1]-minBound[1];
     if(xsize < ysize*Aspect) {
-      let r=0.5*ysize*Aspect*zoominv;
+      let r=0.5*ysize*Aspect*Zoominv;
       let X0=2*r*xshift;
-      let Y0=ysize*zoominv*yshift;
+      let Y0=ysize*Zoominv*yshift;
       viewParam.xmin=-r-X0;
       viewParam.xmax=r-X0;
-      viewParam.ymin=minBound[1]*zoominv-Y0;
-      viewParam.ymax=maxBound[1]*zoominv-Y0;
+      viewParam.ymin=minBound[1]*Zoominv-Y0;
+      viewParam.ymax=maxBound[1]*Zoominv-Y0;
     } else {
-      let r=0.5*xsize/(Aspect*Zoom);
-      let X0=xsize*zoominv*xshift;
+      let r=0.5*xsize*Zoominv/Aspect;
+      let X0=xsize*Zoominv*xshift;
       let Y0=2*r*yshift;
-      viewParam.xmin=minBound[0]*zoominv-X0;
-      viewParam.xmax=maxBound[0]*zoominv-X0;
+      viewParam.xmin=minBound[0]*Zoominv-X0;
+      viewParam.xmax=maxBound[0]*Zoominv-X0;
       viewParam.ymin=-r-Y0;
       viewParam.ymax=r-Y0;
     }
   } else {
-      let r=H*zoominv;
-      let rAspect=r*Aspect;
-      let X0=2*rAspect*xshift;
-      let Y0=2*r*yshift;
-      viewParam.xmin=-rAspect-X0;
-      viewParam.xmax=rAspect-X0;
-      viewParam.ymin=-r-Y0;
-      viewParam.ymax=r-Y0;
+    let r=H*Zoominv;
+    let rAspect=r*Aspect;
+    let X0=2*rAspect*xshift;
+    let Y0=2*r*yshift;
+    viewParam.xmin=-rAspect-X0;
+    viewParam.xmax=rAspect-X0;
+    viewParam.ymin=-r-Y0;
+    viewParam.ymax=r-Y0;
   }
 }
 
@@ -2731,6 +2808,16 @@ function setProjection()
     viewParam.ymin,viewParam.ymax,
     -viewParam.zmax,-viewParam.zmin);
   updateViewMatrix();
+
+  if(window.top.asyWebApplication)
+    window.top.asyWebApplication.setProjection(projection());
+}
+
+function showCamera()
+{
+  if(!window.top.asyWebApplication)
+    prompt("Ctrl+c Enter to copy currentprojection to clipboard; then append to asy file:",
+           projection());
 }
 
 function initProjection()
@@ -2792,6 +2879,10 @@ function resize()
 {
   zoom0=initialZoom;
 
+  if(window.top.asyWebApplication &&
+     window.top.asyWebApplication.getProjection() == "")
+    window.parent.asyProjection=false;
+
   if(absolute && !embedded) {
     canvasWidth=canvasWidth0*window.devicePixelRatio;
     canvasHeight=canvasHeight0*window.devicePixelRatio;
@@ -2800,7 +2891,8 @@ function resize()
     canvasWidth=Math.max(window.innerWidth-windowTrim,windowTrim);
     canvasHeight=Math.max(window.innerHeight-windowTrim,windowTrim);
 
-    if(!orthographic && canvasWidth < canvasHeight*Aspect)
+    if(!orthographic && !window.parent.asyProjection &&
+       canvasWidth < canvasHeight*Aspect)
       zoom0 *= canvasWidth/(canvasHeight*Aspect);
   }
 
@@ -2810,8 +2902,9 @@ function resize()
   let maxViewportWidth=window.innerWidth;
   let maxViewportHeight=window.innerHeight;
 
-  viewportShift[0] /= zoom0;
-  viewportShift[1] /= zoom0;
+  let Zoominv=1/zoom0;
+  viewportShift[0] *= Zoominv;
+  viewportShift[1] *= Zoominv;
 
   setsize(canvasWidth,canvasHeight);
   redrawScene();

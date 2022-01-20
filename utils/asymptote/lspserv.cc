@@ -87,6 +87,9 @@ std::string wslUnix2Dos(std::string const& unixPath)
     bool isMntPath=false;
     char drive;
 
+#ifdef __GNU__
+#define PATH_MAX 4096
+#endif
     char actPath[PATH_MAX];
     (void) realpath(unixPath.c_str(), actPath);
     std::string fullPath(actPath);
@@ -301,7 +304,7 @@ std::string wslUnix2Dos(std::string const& unixPath)
 
   void AsymptoteLspServer::onInitialized(Notify_InitializedNotification::notify& notify)
   {
-    logInfo("server initalized notification");
+    logInfo("server initialized notification");
   }
 
   void AsymptoteLspServer::onExit(Notify_Exit::notify& notify)

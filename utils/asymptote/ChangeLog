@@ -1,3 +1,259 @@
+commit ea218793876b65bbd50a842ede9fd003dcd90978
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 21:56:54 2022 -0700
+
+    Implement --disable-threads configure option.
+
+commit 9c2c06849def96507147c2cab66e1da9ecd36d1b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 15:11:35 2022 -0700
+
+    Update asymptote.spec.
+
+commit 96f9ffde0b7a6b3b8f8b2906cd62858bbca64594
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 15:10:10 2022 -0700
+
+    Port to OpenBSD.
+
+commit 81f988a7679b355edf2a7c3c2c6cf2f7d9ba88e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 13:59:59 2022 -0700
+
+    Support compilation with editline but not readline installed.
+
+commit 07f71cdfd7ecec7cd2a9bac10dc0a432f5ad6b16
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 11:31:11 2022 -0700
+
+    Update asygl.
+
+commit f5bc40b62a3ed7095aaaea03da43d86fba68d320
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 11:30:08 2022 -0700
+
+    Set asyProjection=false if AWA has cleared currentprojection.
+
+commit dc6284164c5518bc5e7914db21613d383b784472
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 08:27:37 2022 -0700
+
+    Support compilation without OpenGL again.
+
+commit 474a2fefda7f46706cb64348c7a96780773bed0d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 18 22:20:30 2022 -0700
+
+    Revert "Update asygl."
+    
+    This reverts commit 58dd3eb5cdbc07eeb28459fb0376e12de0fe8342.
+
+commit 58dd3eb5cdbc07eeb28459fb0376e12de0fe8342
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 18 21:28:36 2022 -0700
+
+    Update asygl.
+
+commit 602d2864b88f752de06f93ffb9401d201afb741b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 18 21:25:50 2022 -0700
+
+    WebGL: Make currentprojection persistent under AWA, resettable with the h key.
+
+commit 2154532907ab2feadaa85132bc36f3333f92e058
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 17 22:46:48 2022 -0700
+
+    Add example of 3D transparency; update credits.
+
+commit ea0197ffe7ede6065f49c617b5d4eed53d081b51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 17 16:51:26 2022 -0700
+
+    Update asygl.
+
+commit 737b1474d818fee9a56a9d354d9cdbb72896e36a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 17 16:45:42 2022 -0700
+
+    Fix perspective WebGL zoom; update AWA interface; make home (h key) reset camera.
+
+commit 55cef74a3cbf723acb22e94d3fc94bf6d94e5c03
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 14 21:43:27 2022 -0700
+
+    Update asygl.
+
+commit d4384284d24de663df078bfdd12bb3cc92d1eb01
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 14 21:40:40 2022 -0700
+
+    Fix WebGL zoom and AWA interface.
+
+commit ececb384b5d090b4762669384ef8e23a9c62b47d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 14 20:59:19 2022 -0700
+
+    Update asygl.
+
+commit e9ed81a252727b62cdc356675afd1a3ccdfed19f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 14 20:46:02 2022 -0700
+
+    Fix WebGL and v3d bounds, along with orthographic viewportshift.
+
+commit 36b3ac4071f60e93eb01d48d87ac406674602363
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 13 21:44:17 2022 -0700
+
+    Port to MacOS X Mojave.
+
+commit 4b44415684c5691d5adba94090e65c32f28f6ead
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 13 21:00:24 2022 -0700
+
+    Update asygl.
+
+commit 11791aeb58b1fef2eddd67137d74f17f6ff00f77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 13 20:57:59 2022 -0700
+
+    Update AWA camera interface.
+
+commit a50bfa364e9615571fca8603887f289c74529c0f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 13 11:35:32 2022 -0700
+
+    Update asymptote.spec.
+
+commit ebfb8abf123d7bef8c811267df0e706b5dec6f77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 10 22:49:43 2022 -0700
+
+    Update asygl.
+
+commit 9a3e2c57bacd2692310f74fac49c6fd84ba0f56b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 10 22:48:36 2022 -0700
+
+    Fix WebGL orthographic camera zoom.
+
+commit 58c7c1c73de228668058fca14402cc98dfb35232
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 23:55:30 2022 -0700
+
+    Update asygl.
+
+commit e50bd57eec565f5844e883284ff9dbb9352a0e35
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 23:54:44 2022 -0700
+
+    Fix WebGL perspective camera zoom.
+
+commit 67af72f3c39072b761d9ff4a2b6a8c79d964cd69
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 16:07:27 2022 -0700
+
+    Improve WebGL camera dialogue.
+
+commit 8a3ce22eb86a100bcf595eaecca028737dba953a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 12:55:00 2022 -0700
+
+    Update asygl.
+
+commit 6c78b3774919d8d4cb67ca7ec90fee97334b852a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 12:53:02 2022 -0700
+
+    Fix WebGL camera zoom.
+
+commit 8aacd2ca1de83c434f642ea94700ffd6753f0a92
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 09:02:05 2022 -0700
+
+    Set defaultfilename on reading V3D files from command line.
+
+commit 9c33d0c30ce70909819e4347fdb8887f4bf956b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 9 09:01:48 2022 -0700
+
+    Update URL.
+
+commit 4c5698f614a27809203a2227a0365babf37cd732
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 8 23:29:34 2022 -0700
+
+    Support compilation again without glm-devel library (not recommended,
+    as this will disable both WebGL and V3D support).
+
+commit 48f313effd296591c3c44155736ba98f03a68535
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 8 11:03:55 2022 -0700
+
+    Work around undefined PATH_MAX on hurd-i386.
+
+commit 11446596bd9dfa23e4520dcf44459f9978097581
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 8 00:00:06 2022 -0700
+
+    Fix v3d currentprojections.
+
+commit f94c059c64c75728aeb91baff8c56dac8a119aa9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 22:04:22 2022 -0700
+
+    Update asygl.
+
+commit b5796a262ddcab47a4e407cf23b6e00585dbb57d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 21:59:06 2022 -0700
+
+    Support 'c' (show camera) WebGL keyboard binding for orthographic projections
+    and offscreen rendering.
+
+commit c451c4ade38baeae87a2e2019c489350002f95f5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 21:41:34 2022 -0700
+
+    Update asygl.
+
+commit e36c308d119354b43f0cadae2d53bd5fc4a5110d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 21:34:15 2022 -0700
+
+    Add 'c' (show camera) keyboard binding to WebGL scenes.
+
+commit 59487ff216cf2c425a1e0b356b9f8d09c492f2e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 09:01:01 2022 -0700
+
+    Update copyright years.
+
+commit 4f18f4fcb254a47f76ff832614154051960095fe
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 7 08:15:02 2022 -0700
+
+    Fix typo #294.
+
+commit c4cd63b759f38a0c9d699713af8e7947dabe7ea0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 6 22:37:36 2022 -0700
+
+    Update asymptote.spec.
+
+commit bfc97490c7c17118bbe106adac7f4de63420c1dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 6 22:06:42 2022 -0700
+
+    Update dvipdf.
+
+commit 41cf587359166f67b481e1fc87bfe6de24fe98ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 6 17:07:28 2022 -0700
+
+    Increment version to 2.76.
+
 commit 587b26dca79cad5a31100a30bee9cc4a9dcd93e8
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 6 14:15:06 2022 -0700

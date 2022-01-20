@@ -3,7 +3,7 @@
 %global __python %{__python3}
 
 Name:           asymptote
-Version:        2.75
+Version:        2.76
 Release:        1%{?dist}
 Summary:        Descriptive vector graphics language
 
@@ -13,6 +13,7 @@ URL:            https://asymptote.sourceforge.io/
 Source:         http://downloads.sourceforge.net/sourceforge/asymptote/asymptote-%{version}.src.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires:  gcc-c++
 BuildRequires:  ncurses-devel
 BuildRequires:  readline-devel
 BuildRequires:  fftw-devel >= 3.0
@@ -20,15 +21,19 @@ BuildRequires:  gc-devel >= 6.7
 BuildRequires:  gsl-devel
 BuildRequires:  glm-devel
 BuildRequires:  tetex-latex
-BuildRequires:  ghostscript >= 9.52
-BuildRequires:  dvisvgm >= 2.9.1
+BuildRequires:  ghostscript >= 9.55
 BuildRequires:  texinfo >= 4.7
-BuildRequires:  ImageMagick
+BuildRequires:  freeglut-devel
+BuildRequires:  zlib-devel
+BuildRequires:  libtool
 BuildRequires:  libtirpc-devel
 BuildRequires:  libboost-devel
+BuildRequires:  libglvnd-devel
 
 Requires:       tetex-latex
 Requires:       freeglut-devel >= 3.0.0
+Requires:       dvisvgm >= 2.9.1
+Requires:       ImageMagick
 Requires(post): /usr/bin/texhash /sbin/install-info
 Requires(postun): /usr/bin/texhash /sbin/install-info
 

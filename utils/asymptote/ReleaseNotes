@@ -1,3 +1,11 @@
+Release Notes for Version 2.76
+
+WebGL and V3D bounds were fixed, along with the WebGL zoom and viewportshift.
+Under the Asymptote Web Application, the currentprojection is now persistant;
+for other WebGL instances, the 'c' keyboard binding can be used to display
+the currentprojection. The correct defaultfilename is set on reading V3D
+files from the command line. Portability issues were addressed.
+
 Release Notes for Version 2.75
 
 A 2D transparency bug was fixed. Vim support was improved.
