@@ -2,35 +2,17 @@
 CC = gcc
 CFLAGS = -g -Og -DDEBUG -Wall
 LDFLAGS = -g -Og
-#GL_DEFINES = -DGLEW_STATIC -DTW_NO_DIRECT3D -DTW_NO_LIB_PRAGMA -DTW_STATIC -D_CRT_SECURE_NO_WARNINGS
 
 FT_INCLUDES = -I/usr/include/freetype2
-GL_INCLUDES = $(FT_INCLUDES)
-
-
-HFILES =     hint.h htex.h format.h get.h basetypes.h error.h \
-	     hrender.h rendernative.h hfonts.h
-
-WFILES =     format.w hint.w htex.ch btex.w
-
-HINT_FILES = get.c hint.c tables.c htex.c hrender.c hfonts.c \
-	     $(HFILES) $(WFILES)
 
 
 OBJ=main.o  renderOGL.o get.o hint.o tables.o htex.o hrender.o hfonts.o
 
-ifeq (Msys,$(shell uname -o))
-LIBS= ../external/glfw-3.1.2/msys.build/src/libglfw3.a ../external/libglew.a  -lfreetype \
-	       -lm -lz
-#	 -ldl -lm -lX11 -lpthread -lXrandr -lXinerama -lXi -lXcursor -lGL -lz
-else
 LIBS= -lglfw -lGLEW -ldl -lfreetype -lX11 -lXrandr -lXinerama -lXi -lXcursor -lGL -lz -lpthread -lm 
-endif
 
 all: hintview
 
 .SUFFIXES:
-
 
 hint.o: hint.c
 	$(CC) $(CFLAGS) -Wno-unused-but-set-variable -o $@ -c $<
