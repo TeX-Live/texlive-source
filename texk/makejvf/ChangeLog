@@ -1,3 +1,9 @@
+2022-01-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uniblock.c, main.c: Update references Unicode blocks Blocks-14.0.0.txt.
+	* COPYRIGHT: Update copyright year.
+	* version.h, configure{,.ac}: Bump version to 20220121.
+
 2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* makejvf.1: Document -O option added in version 20200412.
