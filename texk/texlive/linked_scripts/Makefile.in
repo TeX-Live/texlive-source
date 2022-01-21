@@ -328,6 +328,7 @@ texmf_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
+	citation-style-language/citeproc.lua \
 	chklref/chklref.pl \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
 	clojure-pamphlet/pamphletangler \
@@ -730,12 +731,17 @@ uninstall-am: uninstall-nobase_dist_texmf_scriptsSCRIPTS
 .PRECIOUS: Makefile
 
 
+# Build lists of scripts.
 scripts-list: Makefile
 	@echo "Create $@"
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+# Hard to remember the target name different from final file name.
+scripts-lst:
+	$(MAKE) scripts-list
 
 @MAINTAINER_MODE_TRUE@all-local: scripts-list
 @MAINTAINER_MODE_FALSE@all-local:

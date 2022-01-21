@@ -1,20 +1,23 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 ## TeX Live's extra scripts.
 
-## Build lists of scripts.
-##
+# Build lists of scripts.
 scripts-list: Makefile
 	@echo "Create $@"
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
 	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+
+# Hard to remember the target name different from final file name.
+scripts-lst:
+	$(MAKE) scripts-list
 
 if MAINTAINER_MODE
 all-local: scripts-list
@@ -111,6 +114,7 @@ texmf_other_scripts = \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
 	checkcites/checkcites.lua \
+	citation-style-language/citeproc.lua \
 	chklref/chklref.pl \
 	cjk-gs-integrate/cjk-gs-integrate.pl \
 	clojure-pamphlet/pamphletangler \
