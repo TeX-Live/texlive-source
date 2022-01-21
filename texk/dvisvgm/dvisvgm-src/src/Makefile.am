@@ -1,5 +1,5 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
@@ -110,6 +110,7 @@ libdvisvgm_a_SOURCES = \
 	MetafontWrapper.hpp          MetafontWrapper.cpp \
 	NoPsSpecialHandler.hpp       NoPsSpecialHandler.cpp \
 	NumericRanges.hpp \
+	Opacity.hpp                  Opacity.cpp \
 	PageRanges.hpp               PageRanges.cpp \
 	PageSize.hpp                 PageSize.cpp \
 	Pair.hpp \
@@ -140,6 +141,7 @@ libdvisvgm_a_SOURCES = \
 	SVGCharHandlerFactory.hpp    SVGCharHandlerFactory.cpp \
 	SVGCharPathHandler.hpp       SVGCharPathHandler.cpp \
 	SVGCharTspanTextHandler.hpp  SVGCharTspanTextHandler.cpp \
+	SVGElement.hpp               SVGElement.cpp \
 	SVGOutput.hpp                SVGOutput.cpp \
 	SVGSingleCharTextHandler.hpp SVGSingleCharTextHandler.cpp \
 	SVGTree.hpp                  SVGTree.cpp \

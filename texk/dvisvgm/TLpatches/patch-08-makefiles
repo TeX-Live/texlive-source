@@ -1,37 +1,39 @@
-	See ./TL-Changes.
-
-diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.11.1/Makefile.am	2021-01-21 06:06:33.000000000 -0800
-+++ dvisvgm-src/Makefile.am	2021-01-23 00:47:24.909030000 -0800
-@@ -6,5 +6,5 @@
- AUTOMAKE_OPTIONS = foreign
+diff --strip-trailing-cr -u1 -r dvisvgm-2.13/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.13/Makefile.am	2022-01-18 05:39:00.000000000 -0800
++++ dvisvgm-src/Makefile.am	2022-01-21 09:15:51.800456322 -0800
+@@ -7,3 +7,3 @@
  EXTRA_DIST = COPYING
 -SUBDIRS = libs m4 src tests doc
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
- 
-diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/libs/ff-woff/Makefile.am dvisvgm-src/libs/ff-woff/Makefile.am
---- dvisvgm-2.11.1/libs/ff-woff/Makefile.am	2021-01-21 06:06:33.000000000 -0800
-+++ dvisvgm-src/libs/ff-woff/Makefile.am	2021-06-26 08:57:25.865861500 -0700
-@@ -84,5 +84,5 @@
- EXTRA_DIST = LICENSE
+Only in dvisvgm-2.13: aclocal.m4
+Only in dvisvgm-2.13: ar-lib
+Only in dvisvgm-2.13: compile
+Only in dvisvgm-2.13: config.guess
+Only in dvisvgm-2.13: config.sub
+Only in dvisvgm-2.13: configure
+Only in dvisvgm-2.13: depcomp
+Only in dvisvgm-2.13: install-sh
+diff --strip-trailing-cr -u1 -r dvisvgm-2.13/libs/ff-woff/Makefile.am dvisvgm-src/libs/ff-woff/Makefile.am
+--- dvisvgm-2.13/libs/ff-woff/Makefile.am	2019-04-12 07:39:46.000000000 -0700
++++ dvisvgm-src/libs/ff-woff/Makefile.am	2022-01-21 09:15:51.801456314 -0800
+@@ -85,3 +85,3 @@
  
 -AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_CFLAGS)
 +AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_INCLUDES)
  
- @CODE_COVERAGE_RULES@
-diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.11.1/src/Makefile.am	2021-01-21 06:06:33.000000000 -0800
-+++ dvisvgm-src/src/Makefile.am	2021-06-26 08:56:40.066387630 -0700
-@@ -5,5 +5,5 @@
- 
+Only in dvisvgm-2.13: ltmain.sh
+Only in dvisvgm-2.13: m4
+Only in dvisvgm-2.13: missing
+diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.13/src/Makefile.am	2022-01-18 05:39:00.000000000 -0800
++++ dvisvgm-src/src/Makefile.am	2022-01-21 09:15:51.801456314 -0800
+@@ -6,3 +6,3 @@
  bin_PROGRAMS     = dvisvgm
 -noinst_LTLIBRARIES = libdvisvgm.la
 +noinst_LIBRARIES = libdvisvgm.a
  SUBDIRS = optimizer
- 
-@@ -15,11 +15,9 @@
- 
+@@ -16,9 +16,7 @@
  dvisvgm_LDADD = \
 -	$(noinst_LTLIBRARIES) \
 +	$(noinst_LIBRARIES) \
@@ -44,9 +46,7 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 -	$(ZLIB_LIBS)
 +	$(XXHASH_LIBS)
  
- if ENABLE_WOFF
-@@ -36,7 +34,15 @@
- endif
+@@ -37,5 +35,13 @@
  
 -dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
 +dvisvgm_LDADD += \
@@ -62,9 +62,7 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 +
 +libdvisvgm_a_SOURCES = \
  	AGLTable.hpp \
- 	BasicDVIReader.hpp           BasicDVIReader.cpp \
-@@ -161,26 +167,30 @@
- 
+@@ -164,20 +170,14 @@
  if ENABLE_WOFF
 -libdvisvgm_la_SOURCES += ffwrapper.c ffwrapper.h
 +libdvisvgm_a_SOURCES += ffwrapper.c ffwrapper.h
@@ -90,7 +88,7 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 -	$(CODE_COVERAGE_CFLAGS)
 +	-I$(dvisvgm_srcdir)/libs/variant/include
  
- AM_CXXFLAGS += \
+@@ -185,3 +185,13 @@
  	$(POTRACE_CFLAGS) \
 -	$(XXHASH_CFLAGS)
 +	$(XXHASH_CFLAGS) \
@@ -105,16 +103,12 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
  
- AM_LDFLAGS = \
-@@ -193,6 +203,4 @@
- 	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
+@@ -196,4 +206,2 @@
  
 -AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
 -
  AM_CXXFLAGS +=  \
- 	$(BROTLI_CFLAGS) \
-@@ -205,7 +213,8 @@
- endif
+@@ -208,5 +216,6 @@
  
 -AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
  endif
@@ -122,14 +116,11 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 +# TL: do not try to rebuild these source files.
 +if ! TEXLIVE_BUILD
  
- # the command-line parser class is generated from options.xml by opt2cpp
-@@ -221,6 +230,14 @@
- 
+@@ -224,2 +233,3 @@
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
  
- @CODE_COVERAGE_RULES@
- 
+@@ -228 +238,8 @@
  CLEANFILES = *.gcda *.gcno
 +
 +# Rebuild libkpathsea:
@@ -138,14 +129,15 @@ diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--e
 +@FREETYPE2_RULE@
 +# Rebuild libz:
 +@ZLIB_RULE@
-diff '--exclude=*~' '--exclude=*.py[co]' '--exclude=*.[ao]' '--exclude=CVS' '--exclude=.svn' '--exclude=.git' '--exclude=autom4te.cache' '--exclude=Makefile.in' '--exclude=configure' '--exclude=Work' '--exclude=inst' '--exclude=build-pdftex' '--ignore-matching-lines=\$Id' -u2r dvisvgm-2.11.1/src/optimizer/Makefile.am dvisvgm-src/src/optimizer/Makefile.am
---- dvisvgm-2.11.1/src/optimizer/Makefile.am	2021-01-21 06:06:33.000000000 -0800
-+++ dvisvgm-src/src/optimizer/Makefile.am	2020-11-25 00:24:36.317206031 -0800
-@@ -1,5 +1,5 @@
+Only in dvisvgm-src/src: Makefile.am~
+diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/optimizer/Makefile.am dvisvgm-src/src/optimizer/Makefile.am
+--- dvisvgm-2.13/src/optimizer/Makefile.am	2019-12-06 00:42:54.000000000 -0800
++++ dvisvgm-src/src/optimizer/Makefile.am	2022-01-21 09:15:51.801456314 -0800
+@@ -1,4 +1,4 @@
 -noinst_LTLIBRARIES = liboptimizer.la
 +noinst_LIBRARIES = liboptimizer.a
  
 -liboptimizer_la_SOURCES = \
 +liboptimizer_a_SOURCES = \
  	AttributeExtractor.hpp      AttributeExtractor.cpp \
- 	DependencyGraph.hpp \
+Only in dvisvgm-2.13: test-driver

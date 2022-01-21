@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2021 TeX Users Group.
+Copyright 2006-2022 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -64,9 +64,10 @@ dvipos - maintained here, by us
 
 dvipsk - maintained here, by us
 
-dvisvgm 2.11.1 - checked 23jan21
+dvisvgm 2.13 - checked 21jan22
   https://dvisvgm.de/Downloads/
   https://github.com/mgieseki/dvisvgm
+  https://ctan.org/pkg/dvisvgm
 
 gregorio 5.2.1 - checked 19dec19
   CTAN/support/gregoriotex/gregorio-5.2.1.zip

@@ -1,5 +1,5 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2016-2021 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2016-2022 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
@@ -13,6 +13,7 @@ EXTRA_DIST = \
 	frktest.dvi \
 	frktest-nf-cmp.svg \
 	frktest-wf-cmp.svg \
+	lmmono12-regular.otf \
 	sample.dvi \
 	sample-nf-cmp.svg \
 	sample.sfd \

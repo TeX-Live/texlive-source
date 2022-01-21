@@ -1,5 +1,5 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
@@ -73,6 +73,7 @@ dvisvgm-article.xml: dvisvgm.txt $(TWEAK_DB_ARTICLE)
 dvisvgm.sty: dvisvgm-man.xml $(GEN_DBLATEX_STY)
 	xsltproc -o dvisvgm.sty $(GEN_DBLATEX_STY) $<
 
+.NOTPARALLEL:
 dvisvgm.txt: dvisvgm.txt.in ../configure.ac
 	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
 	if [ $< -nt ../configure.ac ]; \

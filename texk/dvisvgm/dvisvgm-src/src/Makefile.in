@@ -178,29 +178,30 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.hpp \
 	MD5HashFunction.hpp Message.hpp Message.cpp \
 	MessageException.hpp MetafontWrapper.hpp MetafontWrapper.cpp \
 	NoPsSpecialHandler.hpp NoPsSpecialHandler.cpp \
-	NumericRanges.hpp PageRanges.hpp PageRanges.cpp PageSize.hpp \
-	PageSize.cpp Pair.hpp PapersizeSpecialHandler.hpp \
-	PapersizeSpecialHandler.cpp PathClipper.hpp PathClipper.cpp \
-	PDFParser.hpp PDFParser.cpp PdfSpecialHandler.hpp \
-	PdfSpecialHandler.cpp PDFToSVG.hpp PreScanDVIReader.hpp \
-	PreScanDVIReader.cpp Process.hpp Process.cpp psdefs.cpp \
-	PSFilter.hpp PSInterpreter.hpp PSInterpreter.cpp PSPattern.hpp \
-	PSPattern.cpp PSPreviewFilter.hpp PSPreviewFilter.cpp \
-	PsSpecialHandler.hpp PsSpecialHandler.cpp RangeMap.hpp \
-	RangeMap.cpp ShadingPatch.hpp ShadingPatch.cpp \
-	SignalHandler.hpp SignalHandler.cpp SourceInput.hpp \
-	SourceInput.cpp SpecialActions.hpp SpecialHandler.hpp \
-	SpecialManager.hpp SpecialManager.cpp StreamReader.hpp \
-	StreamReader.cpp StreamWriter.hpp StreamWriter.cpp Subfont.hpp \
-	Subfont.cpp SVGCharHandler.hpp SVGCharHandler.cpp \
+	NumericRanges.hpp Opacity.hpp Opacity.cpp PageRanges.hpp \
+	PageRanges.cpp PageSize.hpp PageSize.cpp Pair.hpp \
+	PapersizeSpecialHandler.hpp PapersizeSpecialHandler.cpp \
+	PathClipper.hpp PathClipper.cpp PDFParser.hpp PDFParser.cpp \
+	PdfSpecialHandler.hpp PdfSpecialHandler.cpp PDFToSVG.hpp \
+	PreScanDVIReader.hpp PreScanDVIReader.cpp Process.hpp \
+	Process.cpp psdefs.cpp PSFilter.hpp PSInterpreter.hpp \
+	PSInterpreter.cpp PSPattern.hpp PSPattern.cpp \
+	PSPreviewFilter.hpp PSPreviewFilter.cpp PsSpecialHandler.hpp \
+	PsSpecialHandler.cpp RangeMap.hpp RangeMap.cpp \
+	ShadingPatch.hpp ShadingPatch.cpp SignalHandler.hpp \
+	SignalHandler.cpp SourceInput.hpp SourceInput.cpp \
+	SpecialActions.hpp SpecialHandler.hpp SpecialManager.hpp \
+	SpecialManager.cpp StreamReader.hpp StreamReader.cpp \
+	StreamWriter.hpp StreamWriter.cpp Subfont.hpp Subfont.cpp \
+	SVGCharHandler.hpp SVGCharHandler.cpp \
 	SVGCharHandlerFactory.hpp SVGCharHandlerFactory.cpp \
 	SVGCharPathHandler.hpp SVGCharPathHandler.cpp \
 	SVGCharTspanTextHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGOutput.hpp SVGOutput.cpp SVGSingleCharTextHandler.hpp \
-	SVGSingleCharTextHandler.cpp SVGTree.hpp SVGTree.cpp \
-	System.hpp System.cpp TensorProductPatch.hpp \
-	TensorProductPatch.cpp Terminal.hpp Terminal.cpp TFM.hpp \
-	TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
+	SVGElement.hpp SVGElement.cpp SVGOutput.hpp SVGOutput.cpp \
+	SVGSingleCharTextHandler.hpp SVGSingleCharTextHandler.cpp \
+	SVGTree.hpp SVGTree.cpp System.hpp System.cpp \
+	TensorProductPatch.hpp TensorProductPatch.cpp Terminal.hpp \
+	Terminal.cpp TFM.hpp TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
 	TpicSpecialHandler.hpp TpicSpecialHandler.cpp \
 	TriangularPatch.hpp TriangularPatch.cpp TrueTypeFont.hpp \
 	TrueTypeFont.cpp TTFAutohint.hpp TTFAutohint.cpp Unicode.hpp \
@@ -231,7 +232,7 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	InputReader.$(OBJEXT) JFM.$(OBJEXT) Length.$(OBJEXT) \
 	MapLine.$(OBJEXT) Matrix.$(OBJEXT) Message.$(OBJEXT) \
 	MetafontWrapper.$(OBJEXT) NoPsSpecialHandler.$(OBJEXT) \
-	PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
+	Opacity.$(OBJEXT) PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
 	PapersizeSpecialHandler.$(OBJEXT) PathClipper.$(OBJEXT) \
 	PDFParser.$(OBJEXT) PdfSpecialHandler.$(OBJEXT) \
 	PreScanDVIReader.$(OBJEXT) Process.$(OBJEXT) psdefs.$(OBJEXT) \
@@ -243,14 +244,14 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	StreamWriter.$(OBJEXT) Subfont.$(OBJEXT) \
 	SVGCharHandler.$(OBJEXT) SVGCharHandlerFactory.$(OBJEXT) \
 	SVGCharPathHandler.$(OBJEXT) SVGCharTspanTextHandler.$(OBJEXT) \
-	SVGOutput.$(OBJEXT) SVGSingleCharTextHandler.$(OBJEXT) \
-	SVGTree.$(OBJEXT) System.$(OBJEXT) \
-	TensorProductPatch.$(OBJEXT) Terminal.$(OBJEXT) TFM.$(OBJEXT) \
-	ToUnicodeMap.$(OBJEXT) TpicSpecialHandler.$(OBJEXT) \
-	TriangularPatch.$(OBJEXT) TrueTypeFont.$(OBJEXT) \
-	TTFAutohint.$(OBJEXT) Unicode.$(OBJEXT) utility.$(OBJEXT) \
-	VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) XMLNode.$(OBJEXT) \
-	XMLString.$(OBJEXT) $(am__objects_1)
+	SVGElement.$(OBJEXT) SVGOutput.$(OBJEXT) \
+	SVGSingleCharTextHandler.$(OBJEXT) SVGTree.$(OBJEXT) \
+	System.$(OBJEXT) TensorProductPatch.$(OBJEXT) \
+	Terminal.$(OBJEXT) TFM.$(OBJEXT) ToUnicodeMap.$(OBJEXT) \
+	TpicSpecialHandler.$(OBJEXT) TriangularPatch.$(OBJEXT) \
+	TrueTypeFont.$(OBJEXT) TTFAutohint.$(OBJEXT) Unicode.$(OBJEXT) \
+	utility.$(OBJEXT) VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) \
+	XMLNode.$(OBJEXT) XMLString.$(OBJEXT) $(am__objects_1)
 libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
@@ -304,10 +305,11 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Po \
 	./$(DEPDIR)/JFM.Po ./$(DEPDIR)/Length.Po \
 	./$(DEPDIR)/MapLine.Po ./$(DEPDIR)/Matrix.Po \
 	./$(DEPDIR)/Message.Po ./$(DEPDIR)/MetafontWrapper.Po \
-	./$(DEPDIR)/NoPsSpecialHandler.Po ./$(DEPDIR)/PDFParser.Po \
-	./$(DEPDIR)/PSInterpreter.Po ./$(DEPDIR)/PSPattern.Po \
-	./$(DEPDIR)/PSPreviewFilter.Po ./$(DEPDIR)/PageRanges.Po \
-	./$(DEPDIR)/PageSize.Po ./$(DEPDIR)/PapersizeSpecialHandler.Po \
+	./$(DEPDIR)/NoPsSpecialHandler.Po ./$(DEPDIR)/Opacity.Po \
+	./$(DEPDIR)/PDFParser.Po ./$(DEPDIR)/PSInterpreter.Po \
+	./$(DEPDIR)/PSPattern.Po ./$(DEPDIR)/PSPreviewFilter.Po \
+	./$(DEPDIR)/PageRanges.Po ./$(DEPDIR)/PageSize.Po \
+	./$(DEPDIR)/PapersizeSpecialHandler.Po \
 	./$(DEPDIR)/PathClipper.Po ./$(DEPDIR)/PdfSpecialHandler.Po \
 	./$(DEPDIR)/PreScanDVIReader.Po ./$(DEPDIR)/Process.Po \
 	./$(DEPDIR)/PsSpecialHandler.Po ./$(DEPDIR)/RangeMap.Po \
@@ -315,7 +317,7 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Po \
 	./$(DEPDIR)/SVGCharHandlerFactory.Po \
 	./$(DEPDIR)/SVGCharPathHandler.Po \
 	./$(DEPDIR)/SVGCharTspanTextHandler.Po \
-	./$(DEPDIR)/SVGOutput.Po \
+	./$(DEPDIR)/SVGElement.Po ./$(DEPDIR)/SVGOutput.Po \
 	./$(DEPDIR)/SVGSingleCharTextHandler.Po ./$(DEPDIR)/SVGTree.Po \
 	./$(DEPDIR)/ShadingPatch.Po ./$(DEPDIR)/SignalHandler.Po \
 	./$(DEPDIR)/SourceInput.Po ./$(DEPDIR)/SpecialManager.Po \
@@ -640,29 +642,30 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.hpp \
 	MD5HashFunction.hpp Message.hpp Message.cpp \
 	MessageException.hpp MetafontWrapper.hpp MetafontWrapper.cpp \
 	NoPsSpecialHandler.hpp NoPsSpecialHandler.cpp \
-	NumericRanges.hpp PageRanges.hpp PageRanges.cpp PageSize.hpp \
-	PageSize.cpp Pair.hpp PapersizeSpecialHandler.hpp \
-	PapersizeSpecialHandler.cpp PathClipper.hpp PathClipper.cpp \
-	PDFParser.hpp PDFParser.cpp PdfSpecialHandler.hpp \
-	PdfSpecialHandler.cpp PDFToSVG.hpp PreScanDVIReader.hpp \
-	PreScanDVIReader.cpp Process.hpp Process.cpp psdefs.cpp \
-	PSFilter.hpp PSInterpreter.hpp PSInterpreter.cpp PSPattern.hpp \
-	PSPattern.cpp PSPreviewFilter.hpp PSPreviewFilter.cpp \
-	PsSpecialHandler.hpp PsSpecialHandler.cpp RangeMap.hpp \
-	RangeMap.cpp ShadingPatch.hpp ShadingPatch.cpp \
-	SignalHandler.hpp SignalHandler.cpp SourceInput.hpp \
-	SourceInput.cpp SpecialActions.hpp SpecialHandler.hpp \
-	SpecialManager.hpp SpecialManager.cpp StreamReader.hpp \
-	StreamReader.cpp StreamWriter.hpp StreamWriter.cpp Subfont.hpp \
-	Subfont.cpp SVGCharHandler.hpp SVGCharHandler.cpp \
+	NumericRanges.hpp Opacity.hpp Opacity.cpp PageRanges.hpp \
+	PageRanges.cpp PageSize.hpp PageSize.cpp Pair.hpp \
+	PapersizeSpecialHandler.hpp PapersizeSpecialHandler.cpp \
+	PathClipper.hpp PathClipper.cpp PDFParser.hpp PDFParser.cpp \
+	PdfSpecialHandler.hpp PdfSpecialHandler.cpp PDFToSVG.hpp \
+	PreScanDVIReader.hpp PreScanDVIReader.cpp Process.hpp \
+	Process.cpp psdefs.cpp PSFilter.hpp PSInterpreter.hpp \
+	PSInterpreter.cpp PSPattern.hpp PSPattern.cpp \
+	PSPreviewFilter.hpp PSPreviewFilter.cpp PsSpecialHandler.hpp \
+	PsSpecialHandler.cpp RangeMap.hpp RangeMap.cpp \
+	ShadingPatch.hpp ShadingPatch.cpp SignalHandler.hpp \
+	SignalHandler.cpp SourceInput.hpp SourceInput.cpp \
+	SpecialActions.hpp SpecialHandler.hpp SpecialManager.hpp \
+	SpecialManager.cpp StreamReader.hpp StreamReader.cpp \
+	StreamWriter.hpp StreamWriter.cpp Subfont.hpp Subfont.cpp \
+	SVGCharHandler.hpp SVGCharHandler.cpp \
 	SVGCharHandlerFactory.hpp SVGCharHandlerFactory.cpp \
 	SVGCharPathHandler.hpp SVGCharPathHandler.cpp \
 	SVGCharTspanTextHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGOutput.hpp SVGOutput.cpp SVGSingleCharTextHandler.hpp \
-	SVGSingleCharTextHandler.cpp SVGTree.hpp SVGTree.cpp \
-	System.hpp System.cpp TensorProductPatch.hpp \
-	TensorProductPatch.cpp Terminal.hpp Terminal.cpp TFM.hpp \
-	TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
+	SVGElement.hpp SVGElement.cpp SVGOutput.hpp SVGOutput.cpp \
+	SVGSingleCharTextHandler.hpp SVGSingleCharTextHandler.cpp \
+	SVGTree.hpp SVGTree.cpp System.hpp System.cpp \
+	TensorProductPatch.hpp TensorProductPatch.cpp Terminal.hpp \
+	Terminal.cpp TFM.hpp TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
 	TpicSpecialHandler.hpp TpicSpecialHandler.cpp \
 	TriangularPatch.hpp TriangularPatch.cpp TrueTypeFont.hpp \
 	TrueTypeFont.cpp TTFAutohint.hpp TTFAutohint.cpp Unicode.hpp \
@@ -837,6 +840,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Opacity.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFParser.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPattern.Po@am__quote@ # am--include-marker
@@ -854,6 +858,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandlerFactory.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharPathHandler.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharTspanTextHandler.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGElement.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOutput.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGSingleCharTextHandler.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@ # am--include-marker
@@ -1195,6 +1200,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/Message.Po
 	-rm -f ./$(DEPDIR)/MetafontWrapper.Po
 	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Po
+	-rm -f ./$(DEPDIR)/Opacity.Po
 	-rm -f ./$(DEPDIR)/PDFParser.Po
 	-rm -f ./$(DEPDIR)/PSInterpreter.Po
 	-rm -f ./$(DEPDIR)/PSPattern.Po
@@ -1212,6 +1218,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Po
 	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Po
 	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Po
+	-rm -f ./$(DEPDIR)/SVGElement.Po
 	-rm -f ./$(DEPDIR)/SVGOutput.Po
 	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Po
 	-rm -f ./$(DEPDIR)/SVGTree.Po
@@ -1336,6 +1343,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/Message.Po
 	-rm -f ./$(DEPDIR)/MetafontWrapper.Po
 	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Po
+	-rm -f ./$(DEPDIR)/Opacity.Po
 	-rm -f ./$(DEPDIR)/PDFParser.Po
 	-rm -f ./$(DEPDIR)/PSInterpreter.Po
 	-rm -f ./$(DEPDIR)/PSPattern.Po
@@ -1353,6 +1361,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Po
 	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Po
 	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Po
+	-rm -f ./$(DEPDIR)/SVGElement.Po
 	-rm -f ./$(DEPDIR)/SVGOutput.Po
 	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Po
 	-rm -f ./$(DEPDIR)/SVGTree.Po

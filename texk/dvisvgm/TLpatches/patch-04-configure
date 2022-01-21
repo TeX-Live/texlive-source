@@ -1,18 +1,18 @@
---- dvisvgm-2.11.1/configure.ac	2021-01-21 23:07:49.000000000 +0900
-+++ configure.ac	2021-01-23 08:58:18.575395177 +0900
-@@ -1,149 +1,156 @@
+--- dvisvgm-2.13/configure.ac	2022-01-20 01:52:06.000000000 -0800
++++ configure.ac	2022-01-21 09:14:30.484086131 -0800
+@@ -1,81 +1,69 @@
 -# This file is part of dvisvgm
--# Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>
+-# Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
 -AC_PREREQ(2.59)
--AC_INIT([dvisvgm],[2.11.1],[martin.gieseking@uos.de])
-+dnl $Id$
+-AC_INIT([dvisvgm],[2.13],[martin.gieseking@uos.de])
++dnl $Id: configure.ac 57804 2021-02-19 23:14:47Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
-+dnl   Copyright 2015-2021 Karl Berry <tex-live@tug.org>
++dnl   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
 +dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 +dnl
 +dnl   This file is free software; the copyright holder
@@ -20,12 +20,12 @@
 +dnl   with or without modifications, as long as this notice is preserved.
 +dnl
 +dnl  Adapted for TeX Live from original dvisvgm configure.ac
-+dnl  Copyright 2005-2020 Martin Gieseking
++dnl  Copyright 2005-2022 Martin Gieseking
 +dnl
 +AC_PREREQ([2.65])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="January 2021"
+ DATE="January 2022"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])
@@ -127,7 +127,7 @@
 +fi
  AS_IF([test "x$have_libgs" = "xno"],
  	# Ghostscript not found, check for dlopen
- 	[AC_CHECK_LIB(dl, dlopen,,
+@@ -83,66 +71,85 @@
  		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
  		[AC_MSG_WARN(PostScript support disabled)])])
 +fi
@@ -137,17 +137,6 @@
 -
 -# Check for libraries.
 -PKG_CHECK_MODULES([FREETYPE], [freetype2])
--
--AC_ARG_ENABLE([woff],
--	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
--	[],
--	[enable_woff=yes])
--AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
--
--AC_ARG_WITH([ttfautohint],
--	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
--	[with_ttfautohint="$withval"],
--	[with_ttfautohint=no])
 +if test -z "$HAVE_LIBGS" || test "$HAVE_LIBGS" -eq 0; then
 +  AC_MSG_NOTICE([not linking to libgs, trying to arrange for dynamic loading])
 +  # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
@@ -211,6 +200,17 @@
 +AC_CHECK_FUNC([kpse_set_program_name], [],
 +              [AC_MSG_ERROR([cannot find/use libkpathsea])])
  
+-AC_ARG_ENABLE([woff],
+-	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
+-	[],
+-	[enable_woff=yes])
+-AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+-
+-AC_ARG_WITH([ttfautohint],
+-	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
+-	[with_ttfautohint="$withval"],
+-	[with_ttfautohint=no])
+-
 -# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
 -AC_ARG_ENABLE([bundled-libs],
 -	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])])
@@ -270,9 +270,7 @@
 +# emacs-page
  # Check for header files.
  AC_HEADER_DIRENT
- AC_HEADER_STDC
-@@ -158,80 +165,74 @@
- AC_FUNC_STAT
+@@ -159,79 +166,75 @@
  AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
  
 -# add options for selection of "optional" library locations
@@ -286,22 +284,15 @@
 -		[AS_IF([test -n "$ZLIB_DIR"],
 -			[ZLIB_CFLAGS="-I$ZLIB_DIR -I$ZLIB_DIR/include"]
 -			[ZLIB_LIBS="-L$ZLIB_DIR/lib" -lz])])])
++AC_SEARCH_LIBS(clock_gettime, rt)dnl for Solaris 10 and other old libc
+ 
+-AC_SUBST([ZLIB_CFLAGS])
+-AC_SUBST([ZLIB_LIBS])
 +AC_ARG_ENABLE([woff],
 +	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
 +	[],
 +	[enable_woff=yes])
 +AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
-+
-+AC_DEFINE([HAVE_LIBKPATHSEA], 1, [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
-+AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
-+AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
-+if false; then
-+  AC_DEFINE([KPSE_CXX_UNSAFE], 1, [Define to 1 if the kpathsea headers are not C++ safe.])
-+fi
- 
--AC_SUBST([ZLIB_CFLAGS])
--AC_SUBST([ZLIB_LIBS])
-+# TL: skip ttfautohint?
  
 -# Check if the kpathsea headers are C++ safe
 -AC_MSG_CHECKING([if the kpathsea headers are C++ safe])
@@ -313,6 +304,15 @@
 -                AC_DEFINE([KPSE_CXX_UNSAFE], 1,
 -                          [Define to 1 if the kpathsea headers are not C++ safe.])])
 -AC_LANG_POP([C++])
++AC_DEFINE([HAVE_LIBKPATHSEA], 1, [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
++AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
++AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
++if false; then
++  AC_DEFINE([KPSE_CXX_UNSAFE], 1, [Define to 1 if the kpathsea headers are not C++ safe.])
++fi
++
++# TL: skip ttfautohint?
++
 +# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
 +AC_ARG_ENABLE([bundled-libs],
 +	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],

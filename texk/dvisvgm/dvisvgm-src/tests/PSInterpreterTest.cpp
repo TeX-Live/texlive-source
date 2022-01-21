@@ -2,7 +2,7 @@
 ** PSInterpreterTest.cpp                                                **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2021 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -52,6 +52,7 @@ class PSTestActions : public PSActions {
 		void rotate (vector<double> &p) override                 {print("rotate", p);}
 		void save(std::vector<double> &p) override               {print("save", p);}
 		void scale (vector<double> &p) override                  {print("scale", p);}
+		void setalphaisshape (vector<double> &p) override        {print("setalphaisshape", p);}
 		void setblendmode (vector<double> &p) override           {print("setblendmode", p);}
 		void setcolorspace (vector<double> &p) override          {print("setcolorspace", p);}
 		void setcmykcolor (vector<double> &p) override           {print("setcmykcolor", p);}
@@ -59,7 +60,6 @@ class PSTestActions : public PSActions {
 		void setfillconstantalpha (vector<double> &p) override   {print("setfillconstantalpha", p);}
 		void setgray (vector<double> &p) override                {print("setgray", p);}
 		void sethsbcolor (vector<double> &p) override            {print("sethsbcolor", p);}
-		void setisshapealpha (vector<double> &p) override        {print("setisshapealpha", p);}
 		void setlinecap (vector<double> &p) override             {print("setlinecap", p);}
 		void setlinejoin (vector<double> &p) override            {print("setlinejoin", p);}
 		void setlinewidth (vector<double> &p) override           {print("setlinewidth", p);}
@@ -105,7 +105,10 @@ TEST(PSInterpreterTest, gsave_grestore) {
 	actions.clear();
 
 	psi.execute("grestore ");
-	EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 0;setlinejoin 0;setmiterlimit 10;setcolorspace 0;setrgbcolor 0 0 0;setdash 0;grestore;");
+	if (psi.hasFullOpacitySupport())
+		EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 0;setlinejoin 0;setmiterlimit 10;setblendmode 0;setalphaisshape 0;setstrokeconstantalpha 1;setfillconstantalpha 1;setcolorspace 0;setrgbcolor 0 0 0;setdash 0;grestore;");
+	else
+		EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 0;setlinejoin 0;setmiterlimit 10;setcolorspace 0;setrgbcolor 0 0 0;setdash 0;grestore;");
 	actions.clear();
 
 	psi.execute("1 setlinecap 5 setmiterlimit 0 1 0 setrgbcolor gsave 0 setlinecap 10 setmiterlimit ");
@@ -113,7 +116,10 @@ TEST(PSInterpreterTest, gsave_grestore) {
 	actions.clear();
 
 	psi.execute("grestore ");
-	EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 1;setlinejoin 0;setmiterlimit 5;setcolorspace 0;setrgbcolor 0 1 0;setdash 0;grestore;");
+	if (psi.hasFullOpacitySupport())
+		EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 1;setlinejoin 0;setmiterlimit 5;setblendmode 0;setalphaisshape 0;setstrokeconstantalpha 1;setfillconstantalpha 1;setcolorspace 0;setrgbcolor 0 1 0;setdash 0;grestore;");
+	else
+		EXPECT_EQ(actions.result(), "setmatrix 1 0 0 1 0 0;applyscalevals 1 1 1;setlinewidth 1;setlinecap 1;setlinejoin 0;setmiterlimit 5;setcolorspace 0;setrgbcolor 0 1 0;setdash 0;grestore;");
 }
 
 

@@ -306,6 +306,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -625,6 +626,7 @@ uninstall-man: uninstall-man1
 @BUILD_MANPAGE_TRUE@dvisvgm.sty: dvisvgm-man.xml $(GEN_DBLATEX_STY)
 @BUILD_MANPAGE_TRUE@	xsltproc -o dvisvgm.sty $(GEN_DBLATEX_STY) $<
 
+@BUILD_MANPAGE_TRUE@.NOTPARALLEL:
 @BUILD_MANPAGE_TRUE@dvisvgm.txt: dvisvgm.txt.in ../configure.ac
 @BUILD_MANPAGE_TRUE@	sed -e 's/@VERSION[@]/@VERSION@/g' -e 's/@PACKAGE_BUGREPORT[@]/@PACKAGE_BUGREPORT@/g' $< >$@
 @BUILD_MANPAGE_TRUE@	if [ $< -nt ../configure.ac ]; \
