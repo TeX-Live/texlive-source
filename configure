@@ -1670,7 +1670,7 @@ Optional Features:
   --disable-euptex          do not compile and install e-upTeX
   --disable-euptex-synctex    build e-upTeX without SyncTeX support
   --disable-aleph           do not compile and install Aleph
-  --enable-hitex            compile and install HiTeX
+  --disable-hitex           do not compile and install HiTeX
   --disable-pdftex          do not compile and install pdfTeX
   --disable-pdftex-synctex    build pdfTeX without SyncTeX support
   --disable-luatex          do not compile and install LuaTeX
@@ -5499,7 +5499,7 @@ case $enable_hitex in #(
   yes | no) :
      ;; #(
   *) :
-    enable_hitex=no ;;
+    enable_hitex=yes ;;
 esac
 
 test "x$enable_web2c:$enable_hitex" = xyes:yes && {

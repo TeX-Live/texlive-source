@@ -1,3 +1,7 @@
+2022-01-21  Karl Berry  <karl@freefriends.org>
+
+	* ac/web2c.ac (kpse_tex_progs): enable hitex by default.
+
 2022-01-18  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (TeX extensions): mention pdftex manual and
