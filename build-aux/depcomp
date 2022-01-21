@@ -113,7 +113,6 @@ nl='
 # These definitions help.
 upper=ABCDEFGHIJKLMNOPQRSTUVWXYZ
 lower=abcdefghijklmnopqrstuvwxyz
-digits=0123456789
 alpha=${upper}${lower}
 
 if test -z "$depmode" || test -z "$source" || test -z "$object"; then
