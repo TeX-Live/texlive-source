@@ -1905,6 +1905,9 @@ static next_line_retval next_line(void)
             }
             force_eof = false;
             /*tex \LUA\ input or \.{\\scantextokens} */
+            if (tracing_scan_tokens_par > 0 && (iname == 20 || iname == 19)) {
+                print_char(')');
+            }
             if (iname == 21 || iname == 19) {
                 end_file_reading();
             } else {
