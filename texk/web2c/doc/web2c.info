@@ -1632,18 +1632,12 @@ The base TeX program has been extended in many ways.
 functionality available across all engines, so that formats, notably
 LaTeX, can rely on it.  A list of this common extended functionality is
 in a 'LaTeX News' article,
-<https://www.latex-project.org/news/latex2e-news/ltnews31.pdf>, with
-some further annotatations in a listserv discussion,
-<https://listserv.uni-heidelberg.de/cgi-bin/wa?A2=LATEX-L;2e3c27d.2104&S=>.
-
-   For engines in TeX Live, the detailed documentation for the extended
+<https://www.latex-project.org/news/latex2e-news/ltnews31.pdf>.  For
+engines in TeX Live, the detailed documentation for the extended
 primitives is mostly in the pdfTeX manual (<http://pdftex.org>).
-Independently, the Prote engine also implements the common extended
-functionality (<http://kertex.kergis.com/en/prote.html>).  Prote is a
-part of the kerTeX distribution (not related to Web2C or TeX Live).
 
-   In addition, each engine has its own particular features, described
-in its own manual.  Here's a partial list of the engines.
+   In addition, each engine (naturally) has its own particular features,
+described in its own manual.  Here's a partial list of the engines.
 
 e-TeX
      Adds many new primitives, including right-to-left typesetting and
@@ -3724,7 +3718,7 @@ Index
                                                               (line  12)
 * afmtopl:                               Font utilities available elsewhere.
                                                               (line  12)
-* Aleph:                                 TeX extensions.      (line  31)
+* Aleph:                                 TeX extensions.      (line  25)
 * aliases for fonts:                     Path searching.      (line  14)
 * alpha.bst:                             Basic BibTeX style files.
                                                               (line  22)
@@ -3893,7 +3887,7 @@ Index
 * dynamic packing variable:              pktype invocation.   (line  44)
 * e response at error prompt:            Editor invocation.   (line   6)
 * e-circumflex:                          \charsubdef.         (line  20)
-* e-TeX:                                 TeX extensions.      (line  26)
+* e-TeX:                                 TeX extensions.      (line  20)
 * e.mft:                                 mft invocation.      (line  72)
 * EC fonts:                              tex invocation.      (line  41)
 * EC fonts <1>:                          mf invocation.       (line  24)
@@ -3909,14 +3903,14 @@ Index
 * Eplain:                                Formats.             (line  50)
 * epsf:                                  Online Metafont graphics.
                                                               (line  19)
-* epTeX:                                 TeX extensions.      (line  72)
+* epTeX:                                 TeX extensions.      (line  66)
 * errors, editor invoked at:             Editor invocation.   (line   6)
 * escapement, horizontal:                pktype invocation.   (line  57)
 * escapement, horizontal <1>:            gftype invocation.   (line 106)
 * escapement, vertical:                  gftype invocation.   (line 106)
 * etex for MetaPost labels:              mpost invocation.    (line  44)
-* etex is pdfTeX:                        TeX extensions.      (line  38)
-* eupTeX:                                TeX extensions.      (line  72)
+* etex is pdfTeX:                        TeX extensions.      (line  32)
+* eupTeX:                                TeX extensions.      (line  66)
 * executables, shared initial and virgin: Initial and virgin. (line   6)
 * exit status, of shell escape:          Shell escapes.       (line  34)
 * expanded plain format:                 Formats.             (line  50)
@@ -4010,9 +4004,9 @@ Index
 * Herberts, Mathias:                     Online Metafont graphics.
                                                               (line  20)
 * hex character codes, in TCX files:     TCX files.           (line  77)
-* HINT (Hint Is Not TeX):                TeX extensions.      (line  59)
+* HINT (Hint Is Not TeX):                TeX extensions.      (line  53)
 * history:                               Introduction.        (line  44)
-* hiTeX:                                 TeX extensions.      (line  59)
+* hiTeX:                                 TeX extensions.      (line  53)
 * Hobby, John:                           Introduction.        (line   9)
 * horizontal escapement:                 pktype invocation.   (line  57)
 * horizontal escapement <1>:             gftype invocation.   (line 106)
@@ -4025,7 +4019,7 @@ Index
 * human-readable text, converting PK to: pktype invocation.   (line   6)
 * human-readable text, converting TFM to: tftopl invocation.  (line   6)
 * human-readable text, converting VF to: vftovp invocation.   (line   6)
-* hypertext:                             TeX extensions.      (line  38)
+* hypertext:                             TeX extensions.      (line  32)
 * hyphenation and languages:             Languages and hyphenation.
                                                               (line   6)
 * hyphenation patterns, creating:        patgen invocation.   (line   6)
@@ -4061,7 +4055,6 @@ Index
 * IPC_DEBUG <1>:                         IPC and TeX.         (line  13)
 * job name:                              Common options.      (line  60)
 * kerning table, in TFM files:           tftopl invocation.   (line 101)
-* kerTeX distribution:                   TeX extensions.      (line   8)
 * keyboard character code, translating:  TCX files.           (line 101)
 * Knuth, Donald E.:                      Introduction.        (line   9)
 * Knuth, Donald E. <1>:                  mft invocation.      (line  56)
@@ -4093,8 +4086,8 @@ Index
 * log file, BibTeX:                      bibtex invocation.   (line  14)
 * long data type, size of:               Hardware and memory dumps.
                                                               (line   6)
-* Lua:                                   TeX extensions.      (line  46)
-* LuaTeX:                                TeX extensions.      (line  46)
+* Lua:                                   TeX extensions.      (line  40)
+* LuaTeX:                                TeX extensions.      (line  40)
 * machine dependencies:                  Hardware and memory dumps.
                                                               (line   6)
 * machine-readable, converting property lists to: pltotf invocation.
@@ -4163,7 +4156,7 @@ Index
 * MFTERM:                                Online Metafont graphics.
                                                               (line  11)
 * mftmac.tex:                            mft invocation.      (line   6)
-* micro-typography:                      TeX extensions.      (line  38)
+* micro-typography:                      TeX extensions.      (line  32)
 * mktexmf, disabling:                    mf invocation.       (line  24)
 * mktextfM, disabling:                   tex invocation.      (line  41)
 * mltex:                                 MLTeX.               (line   6)
@@ -4205,11 +4198,11 @@ Index
                                                               (line  12)
 * octal character codes, in TCX files:   TCX files.           (line  77)
 * offset for overflow labels:            gftodvi invocation.  (line  59)
-* Omega:                                 TeX extensions.      (line  31)
+* Omega:                                 TeX extensions.      (line  25)
 * online Metafont graphics:              Online Metafont graphics.
                                                               (line   6)
 * opcodes, showing DVI:                  dvitype invocation.  (line  52)
-* OpenType support:                      TeX extensions.      (line  46)
+* OpenType support:                      TeX extensions.      (line  40)
 * optical font scaling:                  Font file formats.   (line  21)
 * option conventions:                    Option conventions.  (line   6)
 * origin:                                pktype invocation.   (line  66)
@@ -4230,9 +4223,9 @@ Index
 * patgen:                                patgen invocation.   (line   6)
 * path searching:                        Path searching.      (line   6)
 * path searching debugging:              Common options.      (line  64)
-* PDF:                                   TeX extensions.      (line  38)
+* PDF:                                   TeX extensions.      (line  32)
 * PDF, and .mps files:                   mpost invocation.    (line  82)
-* pdfTeX:                                TeX extensions.      (line  38)
+* pdfTeX:                                TeX extensions.      (line  32)
 * permissions, legal:                    Legalisms.           (line   6)
 * PFA and PFB conversion:                Font utilities available elsewhere.
                                                               (line  39)
@@ -4284,7 +4277,7 @@ Index
 * predefined macros and memory dumps:    Memory dumps.        (line   6)
 * prettyprinting Metafont source:        mft invocation.      (line   6)
 * prettyprinting WEB programs:           weave invocation.    (line   6)
-* primitives, new:                       TeX extensions.      (line  26)
+* primitives, new:                       TeX extensions.      (line  20)
 * printable characters, specifying:      TCX files.           (line  87)
 * printer characteristics, for Metafont: Modes.               (line   6)
 * production use:                        Initial and virgin.  (line  15)
@@ -4300,11 +4293,10 @@ Index
 * property list format:                  tftopl invocation.   (line  43)
 * property list, converting TFM to:      tftopl invocation.   (line   6)
 * property list, converting VF to virtual: vftovp invocation. (line   6)
-* Prote engine:                          TeX extensions.      (line   8)
 * ps2pk:                                 Font utilities available elsewhere.
                                                               (line  35)
 * psfonts.map, read by MetaPost:         mpost invocation.    (line  76)
-* pTeX:                                  TeX extensions.      (line  65)
+* pTeX:                                  TeX extensions.      (line  59)
 * PXL files, explained:                  Font file formats.   (line  39)
 * pxtoch:                                Font utilities available elsewhere.
                                                               (line  23)
@@ -4390,7 +4382,7 @@ Index
 * syntax of TCX files:                   TCX files.           (line  65)
 * system C library function:             Shell escapes.       (line   6)
 * system command:                        Shell escapes.       (line   6)
-* system fonts, using:                   TeX extensions.      (line  46)
+* system fonts, using:                   TeX extensions.      (line  40)
 * T1 encoding and ISO input:             TCX files.           (line  48)
 * tabs, and \input filenames:            \input filename caveats.
                                                               (line   6)
@@ -4471,7 +4463,7 @@ Index
 * troff, supported in MetaPost:          MetaPost.            (line  12)
 * Troff, WEB for:                        WEB.                 (line  12)
 * Trojan horses and TeX programs:        tex invocation.      (line  48)
-* TrueType support:                      TeX extensions.      (line  46)
+* TrueType support:                      TeX extensions.      (line  40)
 * TUGboat bibliography:                  bibtex invocation.   (line  58)
 * Type 1 conversion:                     Font utilities available elsewhere.
                                                               (line  39)
@@ -4482,16 +4474,16 @@ Index
 * type programs, pool:                   pooltype invocation. (line   6)
 * typeface families:                     Metafont.            (line   6)
 * typesetting:                           TeX.                 (line   6)
-* Unicode:                               TeX extensions.      (line  31)
+* Unicode:                               TeX extensions.      (line  25)
 * Unicode input:                         tex invocation.      (line  86)
-* Unicode input, native:                 TeX extensions.      (line  53)
+* Unicode input, native:                 TeX extensions.      (line  47)
 * uniterm:                               Online Metafont graphics.
                                                               (line  50)
 * unsrt.bst:                             Basic BibTeX style files.
                                                               (line  39)
-* upTeX:                                 TeX extensions.      (line  65)
+* upTeX:                                 TeX extensions.      (line  59)
 * UTF-8 input:                           tex invocation.      (line  86)
-* UTF-8 input, native:                   TeX extensions.      (line  46)
+* UTF-8 input, native:                   TeX extensions.      (line  40)
 * validation, of DVI files:              dvitype invocation.  (line   6)
 * validation, of GF files:               gftype invocation.   (line   6)
 * validation, of PK files:               pktype invocation.   (line   6)
@@ -4540,7 +4532,7 @@ Index
 * xampl.bib:                             bibtex invocation.   (line  55)
 * xbfe, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
-* XeTeX:                                 TeX extensions.      (line  53)
+* XeTeX:                                 TeX extensions.      (line  47)
 * xfed, bitmap font editor:              Font utilities available elsewhere.
                                                               (line  23)
 * xfedor, bitmap font editor:            Font utilities available elsewhere.
@@ -4597,42 +4589,42 @@ Node: patgen invocation63460
 Node: Shell escapes64167
 Node: IPC and TeX67747
 Node: TeX extensions68317
-Node: Metafont71421
-Node: mf invocation72709
-Node: Initial Metafont76546
-Node: Modes78176
-Node: Online Metafont graphics80426
-Node: gftodvi invocation83851
-Node: mft invocation86671
-Node: MetaPost90669
-Node: mpost invocation91505
-Node: Initial MetaPost96541
-Node: dvitomp invocation97463
-Node: BibTeX98128
-Node: bibtex invocation98489
-Node: Basic BibTeX style files100963
-Node: WEB102293
-Node: tangle invocation103502
-Node: weave invocation105626
-Node: pooltype invocation107033
-Node: DVI utilities108163
-Node: dvicopy invocation109097
-Node: dvitype invocation110382
-Node: dvitype output example112713
-Node: Font utilities115766
-Node: Font file formats116946
-Node: gftopk invocation120213
-Node: pktogf invocation121404
-Node: pktype invocation122570
-Node: gftype invocation125393
-Node: tftopl invocation129896
-Node: pltotf invocation134489
-Node: vftovp invocation135540
-Node: vptovf invocation137775
-Node: Font utilities available elsewhere138802
-Node: Legalisms141007
-Node: References142454
-Node: Index146587
+Node: Metafont71090
+Node: mf invocation72378
+Node: Initial Metafont76215
+Node: Modes77845
+Node: Online Metafont graphics80095
+Node: gftodvi invocation83520
+Node: mft invocation86340
+Node: MetaPost90338
+Node: mpost invocation91174
+Node: Initial MetaPost96210
+Node: dvitomp invocation97132
+Node: BibTeX97797
+Node: bibtex invocation98158
+Node: Basic BibTeX style files100632
+Node: WEB101962
+Node: tangle invocation103171
+Node: weave invocation105295
+Node: pooltype invocation106702
+Node: DVI utilities107832
+Node: dvicopy invocation108766
+Node: dvitype invocation110051
+Node: dvitype output example112382
+Node: Font utilities115435
+Node: Font file formats116615
+Node: gftopk invocation119882
+Node: pktogf invocation121073
+Node: pktype invocation122239
+Node: gftype invocation125062
+Node: tftopl invocation129565
+Node: pltotf invocation134158
+Node: vftovp invocation135209
+Node: vptovf invocation137444
+Node: Font utilities available elsewhere138471
+Node: Legalisms140676
+Node: References142123
+Node: Index146256
 
 End Tag Table
 

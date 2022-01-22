@@ -1915,25 +1915,17 @@ debugging.
 The base @TeX{} program has been extended in many ways.  
 
 @cindex cross-engine functionality
-@cindex Prote engine
-@cindex ker@TeX{} distribution
 There has been a substantial effort to make some extended
 functionality available across all engines, so that formats, notably
 @LaTeX{}, can rely on it.  A list of this common extended
 functionality is in a @cite{@LaTeX{} News} article,
-@url{https://www.latex-project.org/news/latex2e-news/ltnews31.pdf},
-with some further annotatations in a listserv discussion,
-@url{https://listserv.uni-heidelberg.de/cgi-bin/wa?A2=LATEX-L;2e3c27d.2104&S=}.
-
+@url{https://www.latex-project.org/news/latex2e-news/ltnews31.pdf}.
 For engines in @TeX{} Live, the detailed documentation for the
 extended primitives is mostly in the pdf@TeX{} manual
-(@url{http://pdftex.org}).  Independently, the Prote engine also
-implements the common extended functionality
-(@url{http://kertex.kergis.com/en/prote.html}).  Prote is a part of
-the ker@TeX{} distribution (not related to Web2C or @TeX{} Live).
+(@url{http://pdftex.org}).
 
-In addition, each engine has its own particular features, described in
-its own manual.  Here's a partial list of the engines.
+In addition, each engine (naturally) has its own particular features,
+described in its own manual.  Here's a partial list of the engines.
 
 @table @asis
 @item e-@TeX{}
