@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 13 2021-08-15 10:49:40Z hvoss $
+-- $Id: xindex.lua 20 2022-01-22 10:37:29Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.34
+ local version = 0.35
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -196,10 +196,12 @@ escape_chars = { -- by default " is the escape char
   {esc_char..'"', '//escapedquote//',     '"'    },
   {esc_char..'@', '//escapedat//',        '@'    },
   {esc_char..'|', '//escapedvert//',      '|'    },
-  {esc_char..'!', '//scapedexcl//',       '!'    },
-  {esc_char..'(', '//escapedparenleft//', '('    },
-  {esc_char..')', '//escapedparenright//',')'    }
+  {esc_char..'!', '//escapedexcl//',       '!'    }
+--  {esc_char..'%(', '//escapedparenleft//', '('    },  -- ( must beescaped
+--  {esc_char..'%)', '//escapedparenright//',')'    }   -- )  "      "
 }
+
+-- esc_char..'%( is not needed because it can only appear after |
 
 language = "en" -- default language
 
