@@ -1,4 +1,4 @@
-Welcome to CJK version 4.8.4 (18-Apr-2015), a LaTeX2e macro package which
+Welcome to CJK version 4.8.5 (16-Oct-2021), a LaTeX2e macro package which
 enables the use of CJK scripts (Chinese/Japanese/Korean) in various
 encodings, written by Werner Lemberg <wl@gnu.org>.
 
@@ -17,7 +17,7 @@ also provides snapshots.
 
 The home site of the CJK package is
 
-  http://cjk.ffii.org
+  http://www.nongnu.org/cjk
 
 Additionally, the latest non-development version can be found on all CTAN
 hosts and its mirrors in the directory <CTAN>/language/chinese.
@@ -25,8 +25,8 @@ hosts and its mirrors in the directory <CTAN>/language/chinese.
 
 The package comes in two parts:
 
-    cjk-4.8.4.tar.gz:       The source files. Needed for all platforms.
-    cjk-4.8.4-doc.tar.gz:   Preformatted documentation files: DVI, PS,
+    cjk-4.8.5.tar.gz:       The source files. Needed for all platforms.
+    cjk-4.8.5-doc.tar.gz:   Preformatted documentation files: DVI, PS,
                             output from cjk-enc.el, etc.
 
 Note that on CTAN and its mirrors, the `src' archive is unpacked; you must

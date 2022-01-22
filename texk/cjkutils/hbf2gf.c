@@ -1,5 +1,5 @@
 #define banner  \
-"hbf2gf (CJK ver. 4.8.4)" \
+"hbf2gf (CJK ver. 4.8.5)" \
  \
 
 #define TRUE 1

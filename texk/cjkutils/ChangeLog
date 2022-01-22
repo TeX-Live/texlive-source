@@ -1,3 +1,8 @@
+2022-01-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Import cjk-4.8.5/utils as cjkutils-4.8.5.
+	* version.ac, tests/*.cjk: Adapted.
+
 2021-07-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Regenerate C sources after patch.

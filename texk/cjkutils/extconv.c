@@ -1,5 +1,5 @@
 #define banner  \
-"extconv (CJK ver. 4.8.4)" \
+"extconv (CJK ver. 4.8.5)" \
 
 /*2:*/
 #line 94 "./cjkutils-src/extconv/extconv.w"

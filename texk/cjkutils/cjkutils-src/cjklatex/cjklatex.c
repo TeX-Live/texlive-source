@@ -11,7 +11,7 @@
 #endif
 
 /*
-  Copyright (C) 2001-2015  F. Popineau <Fabrice.Popineau@supelec.fr>
+  Copyright (C) 2001-2021  F. Popineau <Fabrice.Popineau@supelec.fr>
   
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

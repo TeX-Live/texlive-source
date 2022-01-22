@@ -1,5 +1,5 @@
 #define banner  \
-"sjisconv (CJK ver. 4.8.4)" \
+"sjisconv (CJK ver. 4.8.5)" \
 
 /*2:*/
 #line 96 "./cjkutils-src/SJISconv/sjisconv.w"

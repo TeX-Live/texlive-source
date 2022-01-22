@@ -1,3 +1,120 @@
+2021-10-16  Werner LEMBERG  <wl@gnu.org>
+
+	Version 4.8.5 released
+	======================
+
+	Set version to 4.8.5.
+
+	* doc/history.txt: Updated.
+
+	Update headers in all text files.
+
+2021-10-16  Werner LEMBERG  <wl@gnu.org>
+
+	[hbf2gf] Update config and auxiliary scripts.
+
+	* utils/hbf2gf/config.guess, utils/hbf2gf/config.sub,
+	utils/hbf2gf/install-sh, utils/hbf2gf/mkinstalldirs: Updated to
+	current versions.
+
+	* utils/hbf2gf/configure: Regenerated with autoconf 2.71.
+
+2021-10-16  Werner Lemberg  <wl@gnu.org>
+
+	Update to current LaTeX version.
+
+	Currently, there is a first-aid patch in the LaTeX kernel to make
+	the CJK package work.  This commit moves the corresponding code to
+	here so that the first-aid stuff can be removed.
+
+	* texinput/CJK.sty (\IfFormatAtLeastTF): New macro.
+	(\selectfont): Use the `\selectfont' hook for recent LaTeX versions.
+
+2018-11-25  Werner Lemberg  <wl@gnu.org>
+
+	Generate pinyin hyphenation pattern files from last commit.
+
+	* utils/pyhyphen/hyph-zh-latn-pinyin.tex,
+	utils/pyhyphen/hyph-zh-latn-tonepinyin.tex: New files.
+
+2018-11-25  Werner Lemberg  <wl@gnu.org>
+
+	Rewrite pinyin hyphenation support.
+
+	Investigation has shown that the apostrophe before a syllable
+	starting with `a', `e', or `o' should vanish if a line break occurs. 
+	This commit fixes this bug: The apostrophe should now be entered
+	with the Babel shorthand "'; character ' itself is no longer part of
+	the hyphenation patterns.
+
+	It also adds support for pinyin syllables with tone markers, to be
+	used with Unicode engines like XeTeX or luatex.
+
+	Finally, the license for the resulting pattern files have been
+	changed from GPL to MIT to allow broader usage.
+
+	* utils/pyhyphen/GNUmakefile: New file.  Saying `make' will generate
+	the hyphenation pattern files `hyph-zh-latn-pinyin.tex' and
+	`hyph-zh-latn-tonepinyin.tex'.
+
+	* utils/pyhyphen/hyph-zh-latn-pinyin.in,
+	utils/pyhyphen/make-patterns.sh: New auxiliary files.
+
+	* utils/pyhyphen/pyhyph.tex: Removed.  Obsolete.
+
+	* utils/pyhyphen/pytestutf8.tex: New file to demonstrate patterns
+	for tone pinyin.
+
+	* utils/pyhyphen/pinyin.c, utils/pyhyphen/pinyin.ldf,
+	utils/pyhyphen/pinyin.tr, utils/pytest.tex: Updated.
+
+	* doc/pyhyphen.txt, MANIFEST: Updated.
+
+2016-12-27  Werner Lemberg  <wl@gnu.org>
+
+	* utils/lisp/emacs/cjk-enc.el (cjk-coding): Remove `chinese-big5'.
+
+	Hin-Tak reports this doesn't work...
+
+2016-12-26  Hin-Tak Leung <htl10@users.sourceforge.net>
+
+	[cjk-enc.el] Updated to work with Emacs 25 and later.
+
+	In batch mode, `message' in Emacs 25+ obeys coding-system-for-write.
+
+	  http://git.savannah.gnu.org/cgit/emacs.git/commit/?h=emacs-25&id=c63246628461f748d66a8a07ba008de2e00fd33a
+
+	`cjk-encode' can mis-behave and, at worst, crash from `message'
+	recursing.
+
+	  https://debbugs.gnu.org/cgi/bugreport.cgi?bug=25203
+
+	The charset priority system introduced with Emacs 23+ changes
+	further in Emacs 25+.  Charset `big5' has been updated (together
+	with `big5-hkscs') and now takes priority over the historical
+	`chinese-big5-2' and `chinese-big5-1'.
+
+	  http://git.savannah.gnu.org/cgit/emacs.git/commit/?h=emacs-25&id=9f89ea1f84dbf708228ced0202774b36f30f2b01
+	  http://git.savannah.gnu.org/cgit/emacs.git/commit/?h=emacs-25&id=49fa1919e9be863f22ec8042704bf3436d0ec26d
+
+	Also worth noting is that, "Wrote output.cjk" is no longer seen with
+	Emacs 25+.
+
+	  http://git.savannah.gnu.org/cgit/emacs.git/commit/?h=emacs-25&id=d20f82e6f1ab902469723ebd530ca21bea9cc41b
+
+	Tested against example/{Big5.tex, Big5vert.tex, CJKbabel.tex,
+	muletest.tex, rubytest.tex, thai.tex}, and LANG'ed non-'coding:'ed
+	big5 example, with emacs 21.4, 22.3, 23.3, 24.5 and 25.1.
+
+	Thanks for advice from Eli Zaretskii.
+
+	* utils/lisp/emacs/cjk-enc.el (cjk-enc-table,
+	cjk-format-spec-table): Add `big5' encoding.
+	(cjk-coding): Add `chinese-big5'.
+	(cjk-encode): Adjust Big5 language detection heuristics for Emacs
+	25+; support `big5' encoding.
+	Use `terminal-coding-system' while emitting messages.
+
 2015-04-18  Werner LEMBERG  <wl@gnu.org>
 
 	Version 4.8.4 released
@@ -47,7 +164,7 @@
 	This finally works due to the recent lgrx package which delivers
 	good Babel UTF8 support for LGR encoding.
 
-	An unsolved problem yet, however, is proper cut-and-paste support. 
+	An unsolved problem yet, however, is proper cut-and-paste support.
 	While dvipdfmx properly generates CMaps for CJK encodings (even
 	for virtual fonts which pdftex doesn't handle at all), it doesn't
 	handle encodings like LGR correctly, something the `cmap' package
@@ -181,7 +298,7 @@
 	original charset is preserved in the text property `charset'.
 
 	Another change is the new charset/text-property called `tis620-2533'
-	(a superset of `ascii' and `thai-tis620'), introduced in emacs 23. 
+	(a superset of `ascii' and `thai-tis620'), introduced in emacs 23.
 	This has the tendency of swallowing up every ASCII character and
 	goes into an infinite loop with `examples/thai.tex', so we have to
 	handle this also.

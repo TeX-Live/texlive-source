@@ -120,7 +120,7 @@
 \I\\{hbfGetCodeRange}, 60, 61.
 \I\\{hbfOpen}, 57.
 \I\\{hbfProperty}, 57.
-\I\\{headertstring}, \[13], 14.
+\I\\{headerstring}, \[13], 14.
 \I\|{i}, \[21], \[46], \[48], \[51], \[56], \[63].
 \I\\{input\_size\_x}, \[15], 28, 32, 33, 34, 36, 37, 57.
 \I\\{input\_size\_y}, \[15], 28, 31, 32, 33, 37, 57.
@@ -158,7 +158,6 @@
 \I\\{miktex\_get\_miktex\_version\_string\_ex}, 72.
 \I\\{min\_char}, 9, 28, 48, 51, \[60], 61.
 \I\\{min\_2\_byte}, 28, 30, \[62], 63.
-\I$\msdos$, 2.
 \I\\{name}, \[77], \[80].
 \I\\{name\_buffer}, \[76], 77.
 \I\\{need\_col}, \[34], 35.
@@ -303,6 +302,7 @@
 \I\.{VALID\_SUBCODE}, 48, \[62], 63.
 \I\.{VERSION}, \[5].
 \I\.{WHITE}, \[27], 42, 44.
+\I\.{WIN32}, 2.
 \I\.{WRITE\_BIN}, \[2], 12.
 \I\\{write\_coding}, 18, \[41], \[42].
 \I\\{write\_data}, 11, 12, 15, \[16], \[17].

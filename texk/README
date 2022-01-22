@@ -31,7 +31,7 @@ chktex 1.7.6 - checked 15mar20
   http://mirror.ctan.org/support/chktex/
   http://download.savannah.gnu.org/releases/chktex/
 
-cjkutils 4.8.4 - checked 18jul21
+cjkutils 4.8.5 - checked 22jan22
   http://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
   http://www.nongnu.org/cjk/
 
@@ -69,8 +69,8 @@ dvisvgm 2.13 - checked 21jan22
   https://github.com/mgieseki/dvisvgm
   https://ctan.org/pkg/dvisvgm
 
-gregorio 5.2.1 - checked 19dec19
-  CTAN/support/gregoriotex/gregorio-5.2.1.zip
+gregorio 6.0.0 - checked 14mar21
+  CTAN/support/gregoriotex/gregorio-6.0.0.zip
 
 gsftopk - from Paul Vojta's xdvi.
 

@@ -1,6 +1,6 @@
-% This is the cweb file sjisconv.w of the CJK Package Ver. 4.8.4  18-Apr-2015
+% This is the cweb file sjisconv.w of the CJK Package Ver. 4.8.5  16-Oct-2021
 
-% Copyright (C) 1994-2015  Werner Lemberg <wl@@gnu.org>
+% Copyright (C) 1994-2021  Werner Lemberg <wl@@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -26,13 +26,13 @@
 % output rules (look at the position of braces below!) the author (it's me
 % too :-) prefer. Otherwise this file will be formatted traditionally.
 
-\def\title{sjisconv (CJK Version 4.8.4)}
+\def\title{sjisconv (CJK Version 4.8.5)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont sjisconv} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.8.4)}
+  \centerline{(CJK Version 4.8.5)}
   \vfill}
 
 \def\botofcontents{
@@ -91,7 +91,7 @@ Note that the user-defined character area of SJIS (with the first bytes in
 the range 0xF0--0xFC) is not supported because it is not portable.
 
 @d banner
-"sjisconv (CJK ver. 4.8.4)"
+"sjisconv (CJK ver. 4.8.5)"
 
 @c
 #include <stdio.h>

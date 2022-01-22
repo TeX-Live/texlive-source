@@ -1,7 +1,7 @@
 \input cwebmac
-% This is the cweb file hbf2gf.w of the CJK package ver. 4.8.4  18-Apr-2015
+% This is the cweb file hbf2gf.w of the CJK package ver. 4.8.5  16-Oct-2021
 
-% Copyright (C) 1994-2015  Werner Lemberg <wl@gnu.org>
+% Copyright (C) 1994-2021  Werner Lemberg <wl@gnu.org>
 %
 % This program is free software; you can redistribute it and/or modify
 % it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@
 \def\mf{{\meta META}\-{\meta FONT}}
 \def\Om{\char "0A}                      % Omega symbol
 
-\def\title{hbf2gf (CJK Version 4.8.4)}
+\def\title{hbf2gf (CJK Version 4.8.5)}
 
 \def\topofcontents{
   \null\vfill
   \centerline{\titlefont The {\ttitlefont hbf2gf} program}
   \vskip 20pt
-  \centerline{(CJK Version 4.8.4)}
+  \centerline{(CJK Version 4.8.5)}
   \vfill}
 
 \def\botofcontents{
@@ -77,8 +77,8 @@ This is the \.{hbf2gf} program by Werner Lemberg
 The ``banner line'' defined here should be changed whenever \.{hbf2gf} is
 modified.
 
-\Y\B\4\D$\\{banner}$ \5
-\.{"hbf2gf\ (CJK\ ver.\ 4.}\)\.{8.4)"}\par
+\Y\B\4\D\\{banner}\5
+\.{"hbf2gf\ (CJK\ ver.\ 4.}\)\.{8.5)"}\par
 \fi
 
 \M{2}
@@ -116,13 +116,13 @@ A batch file created by \.{hbf2gf} too (if the program computes a whole set
 of subfonts) will convert the \.{GF} files to \.{PK} files using
 \.{GFtoPK}, a part of every \TeX\ package.
 
-\Y\B\4\D$\.{TRUE}$ \5
+\Y\B\4\D\.{TRUE}\5
 \T{1}\par
-\B\4\D$\.{FALSE}$ \5
+\B\4\D\.{FALSE}\5
 \T{0}\Y\par
-\B\4\D$\.{STRING\_LENGTH}$ \5
+\B\4\D\.{STRING\_LENGTH}\5
 \T{255}\C{ the maximal length of an input string in the configuration file }\par
-\B\4\D$\.{FILE\_NAME\_LENGTH}$ \5
+\B\4\D\.{FILE\_NAME\_LENGTH}\5
 \T{1024}\C{ the maximal length (including the path) of a filename }\Y\par
 \Y\B\4\X2:Global variables\X${}\E{}$\6
 \&{int} \\{nmb\_files}${}\K{-}\T{1}{}$;\C{ create all files by default }\6
@@ -144,16 +144,16 @@ probably must add `\.{.cfg}' }\6
 \&{char} ${}\\{output\_name}[\.{STRING\_LENGTH}+\T{1}]{}$;\7
 \&{FILE} ${}{*}\\{config},{}$ ${}{*}\\{out};{}$\6
 \&{HBF} ${}{*}\\{hbf}{}$;\7
-\8\#\&{ifdef} ${}\msdos{}$\C{ if we compile under DOS or OS/2 }\6
-\8\#\&{define} \.{WRITE\_BIN} \5\.{"wb"}\6
-\8\#\&{define} \.{WRITE\_TXT} \5\.{"wt"}\6
-\8\#\&{define} \.{READ\_BIN} \5\.{"rb"}\6
-\8\#\&{define} \.{READ\_TXT} \5\.{"rt"}\6
+\8\#\&{ifdef} \.{WIN32}\6
+\8\#\&{define} \.{WRITE\_BIN}\5\.{"wb"}\6
+\8\#\&{define} \.{WRITE\_TXT}\5\.{"wb"}\6
+\8\#\&{define} \.{READ\_BIN}\5\.{"rb"}\6
+\8\#\&{define} \.{READ\_TXT}\5\.{"rt"}\6
 \8\#\&{else}\6
-\8\#\&{define} \.{WRITE\_BIN} \5\.{"w"}\6
-\8\#\&{define} \.{WRITE\_TXT} \5\.{"w"}\6
-\8\#\&{define} \.{READ\_BIN} \5\.{"r"}\6
-\8\#\&{define} \.{READ\_TXT} \5\.{"r"}\6
+\8\#\&{define} \.{WRITE\_BIN}\5\.{"w"}\6
+\8\#\&{define} \.{WRITE\_TXT}\5\.{"w"}\6
+\8\#\&{define} \.{READ\_BIN}\5\.{"r"}\6
+\8\#\&{define} \.{READ\_TXT}\5\.{"r"}\6
 \8\#\&{endif}\7
 \&{int} \\{end\_of\_file}${}\K\.{FALSE}{}$;\par
 \As15, 19, 27, 38, 49, 53, 58, 60, 62, 70, 73\ETs76.
@@ -193,8 +193,8 @@ variables, \PB{\\{write\_file}(\,)} writes the \.{GF} files, \PB{\\{write\_pl}(%
 \Y\B\X10:Include files\X\6
 \X11:Prototypes\X\6
 \X2:Global variables\X\7
-\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,]){}$\1\1%
-\2\2\6
+\1\1\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,])\2%
+\2{}$\6
 ${}\{{}$\1\6
 \&{char} ${}{*}\|p;{}$\7
 \X78:Initialize \TeX\ file searching\X\7
@@ -237,7 +237,7 @@ ${}\\{mf\_like}\K\.{TRUE};{}$\6
 \fi
 
 \M{5}
-\Y\B\4\D$\.{VERSION}$ \6
+\Y\B\4\D\.{VERSION}\6
 \.{"\\n"}\6
 \.{"Copyright\ (C)\ 1996-}\)\.{1999\ Werner\ Lemberg.}\)\.{\\n"}\6
 \.{"There\ is\ NO\ warrant}\)\.{y.\ \ You\ may\ redistri}\)\.{bute\ this\
@@ -260,7 +260,7 @@ ${}\\{printf}(\.{"\ (\%s)\\n"},\39\\{TeX\_search\_version}(\,));{}$\6
 \U7.\fi
 
 \M{6}
-\Y\B\4\D$\.{USAGE}$ \6
+\Y\B\4\D\.{USAGE}\6
 \.{"\\n"}\6
 \.{"Usage:\ hbf2gf\ [-q]\ }\)\.{configuration\_file[.}\)\.{cfg]\\n"}\6
 \.{"\ \ \ \ \ \ \ hbf2gf\ [opti}\)\.{ons]\ font\_name\ x\_res}\)\.{olution\ [y%
@@ -454,7 +454,7 @@ functions \PB{\\{write\_pre}(\,)}, \PB{\\{write\_data}(\,)}, and \PB{\\{write%
 In \mf-like mode we create font file name extensions similar to \mf\ if
 the \.{-n} option isn't specified; otherwise only `\.{.gf}' will be appended.
 
-\Y\B\&{static} \&{void} \\{write\_file}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_file}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{char} ${}\\{output\_file}[\.{FILE\_NAME\_LENGTH}+\T{1}];{}$\7
 \&{if} (\\{pk\_files})\5
@@ -508,23 +508,23 @@ bytes are a string in Pascal format containing a header, the date, and the
 time. Strings in Pascal format start with the length of the string and have
 no terminating NULL byte.
 
-\Y\B\4\D$\.{GF\_ID}$ \5
+\Y\B\4\D\.{GF\_ID}\5
 \T{131}\par
-\B\4\D$\.{PRE}$ \5
+\B\4\D\.{PRE}\5
 \T{247}\Y\par
-\B\4\D$\\{headertstring}$ \5
+\B\4\D\\{headerstring}\5
 \.{"\ hbf2gf\ output\ "}\par
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{write\_pre}(\&{void});\par
 \fi
 
 \M{14}
-\Y\B\&{static} \&{void} \\{write\_pre}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_pre}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{char} \\{out\_s}[\T{40}]${},{}$ \|s[\T{20}];\6
 \&{time\_t} \\{secs\_now};\6
 \&{struct} \&{tm} ${}{*}\\{time\_now};{}$\7
-${}\\{strcpy}(\\{out\_s},\39\\{headertstring}){}$;\7
+${}\\{strcpy}(\\{out\_s},\39\\{headerstring}){}$;\7
 ${}\\{secs\_now}\K\\{time}(\NULL){}$;\C{ system date and time }\6
 ${}\\{time\_now}\K\\{localtime}({\AND}\\{secs\_now});{}$\6
 ${}\\{strftime}(\|s,\39\T{20},\39\.{"\%Y.\%m.\%d:\%H.\%M"},\39\\{time%
@@ -605,7 +605,7 @@ empty }\6
 \fi
 
 \M{17}
-\Y\B\&{static} \&{void} \\{write\_data}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_data}(\&{void})\2\2\6
 ${}\{{}$\1\6
 ${}\\{dot\_count}\K\T{0};{}$\6
 ${}\\{char\_adr\_p}\K\\{char\_adr}{}$;\7
@@ -628,11 +628,11 @@ the character code and the dimensions of the character as explained in
 Of Character)
 finishes the current character.
 
-\Y\B\4\D$\.{BOC}$ \5
+\Y\B\4\D\.{BOC}\5
 \T{67}\par
-\B\4\D$\.{BOC1}$ \5
+\B\4\D\.{BOC1}\5
 \T{68}\C{ simplified version of \PB{\.{BOC}} }\par
-\B\4\D$\.{EOC}$ \5
+\B\4\D\.{EOC}\5
 \T{69}\par
 \Y\B\4\X18:Write character\X${}\E{}$\6
 ${}\{{}$\1\6
@@ -694,9 +694,9 @@ drawing the character is \PB{\\{pk\_dx}}. \PB{\\{tfm\_width}} is the width in
 multiples of
 the design size ignoring the target size.
 
-\Y\B\4\D$\.{\_2\_16}$ \5
+\Y\B\4\D\.{\_2\_16}\5
 \T{65536.0}\C{ $2^{16}$ }\par
-\B\4\D$\.{\_2\_20}$ \5
+\B\4\D\.{\_2\_20}\5
 \T{1048576.0}\C{ $2^{20}$ }\par
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
 \&{char} ${}\\{coding}[\.{STRING\_LENGTH}+\T{1}]{}$;\C{ a comment describing
@@ -725,7 +725,7 @@ and configuration file also.
 \fi
 
 \M{21}
-\Y\B\&{static} \&{void} \\{write\_post}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_post}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{long} \\{special\_adr};\6
 \&{long} \\{post\_adr};\7
@@ -757,15 +757,15 @@ connected with the preceding string (but not used here). \PB{\\{special\_adr}}
 contains the address of the ``special section''. All items here are
 optional.
 
-\Y\B\4\D$\.{XXX1}$ \5
+\Y\B\4\D\.{XXX1}\5
 \T{239}\C{ these are all special command bytes }\par
-\B\4\D$\.{XXX2}$ \5
+\B\4\D\.{XXX2}\5
 \T{240}\C{ not used }\par
-\B\4\D$\.{XXX3}$ \5
+\B\4\D\.{XXX3}\5
 \T{241}\C{ not used }\par
-\B\4\D$\.{XXX4}$ \5
+\B\4\D\.{XXX4}\5
 \T{242}\C{ not used }\Y\par
-\B\4\D$\.{YYY}$ \5
+\B\4\D\.{YYY}\5
 \T{243}\C{ not used }\par
 \Y\B\4\X22:Special section\X${}\E{}$\6
 $\\{special\_adr}\K\\{ftell}(\\{out}){}$;\7
@@ -795,11 +795,11 @@ locator
 postamble, and \PB{\\{post\_adr}} points to the beginning byte of the
 postamble.
 
-\Y\B\4\D$\.{POST}$ \5
+\Y\B\4\D\.{POST}\5
 \T{248}\Y\par
-\B\4\D$\.{CHAR\_LOC}$ \5
+\B\4\D\.{CHAR\_LOC}\5
 \T{245}\par
-\B\4\D$\.{CHAR\_LOC0}$ \5
+\B\4\D\.{CHAR\_LOC0}\5
 \T{246}\C{ simplified version of \PB{\.{CHAR\_LOC}} }\par
 \Y\B\4\X23:Post section\X${}\E{}$\6
 $\\{post\_adr}\K\\{ftell}(\\{out});{}$\6
@@ -853,9 +853,9 @@ Jumping to the postamble, a \PB{\.{POST}} byte comes first, then the address of
 the special section, and afterwards all character offsets. These offsets and
 addresses describe the whole file.
 
-\Y\B\4\D$\.{POSTPOST}$ \5
+\Y\B\4\D\.{POSTPOST}\5
 \T{249}\par
-\B\4\D$\.{POSTPOST\_ID}$ \5
+\B\4\D\.{POSTPOST\_ID}\5
 \T{223}\par
 \Y\B\4\X24:Postpost section\X${}\E{}$\6
 $\\{fputc}(\.{POSTPOST},\39\\{out});{}$\6
@@ -875,8 +875,8 @@ ${}\\{fputc}(\.{POSTPOST\_ID},\39\\{out}){}$;\2\par
 \fi
 
 \M{26}
-\Y\B\&{static} \&{void} \\{fputl}(\&{long} \\{num}${},\39{}$\&{FILE} ${}{*}%
-\|f){}$\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{fputl}(\&{long} \\{num}${},\39{}$\&{FILE} ${}{*}%
+\|f)\2\2{}$\6
 ${}\{{}$\1\6
 ${}\\{fputc}(\\{num}\GG\T{24},\39\|f);{}$\6
 ${}\\{fputc}(\\{num}\GG\T{16},\39\|f);{}$\6
@@ -901,17 +901,17 @@ If \PB{\.{EOF}} is encountered, \PB{\\{end\_of\_file}} is set and the function
 returns
 immediately.
 
-\Y\B\4\D$\.{BLACK}$ \5
+\Y\B\4\D\.{BLACK}\5
 \T{1}\par
-\B\4\D$\.{WHITE}$ \5
+\B\4\D\.{WHITE}\5
 \T{0}\Y\par
-\B\4\D$\.{PIXEL\_MAXVAL}$ \5
+\B\4\D\.{PIXEL\_MAXVAL}\5
 \T{255}\par
-\B\4\D$\.{SCALE}$ \5
+\B\4\D\.{SCALE}\5
 \T{4096}\par
-\B\4\D$\.{HALFSCALE}$ \5
+\B\4\D\.{HALFSCALE}\5
 \T{2048}\Y\par
-\B\4\D$\.{MAX\_CHAR\_SIZE}$ \5
+\B\4\D\.{MAX\_CHAR\_SIZE}\5
 \T{1023}\par
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
 \&{HBF\_CHAR} \\{code};\6
@@ -1048,7 +1048,7 @@ result into an output array.
 \fi
 
 \M{30}
-\Y\B\&{static} \&{void} \\{make\_pixel\_array}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{make\_pixel\_array}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{unsigned} \&{char} ${}{*}\\{prP};{}$\6
 \&{unsigned} \&{char} ${}{*}\\{temp\_prP};{}$\6
@@ -1280,11 +1280,11 @@ glyph).
 \fi
 
 \M{37}
-\Y\B\&{static}\6
+\Y\B\1\1\&{static}\6
 \8\#\&{ifdef} \.{\_\_GNUC\_\_}\6
 \&{\_\_inline\_\_}\6
 \8\#\&{endif}\6
-\&{void} \\{read\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow}){}$\1\1\2\2\6
+\&{void} \\{read\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow})\2\2{}$\6
 ${}\{{}$\1\6
 \&{register} \&{int} \\{col}${},{}$ \\{bitshift}${},{}$ \\{offset};\6
 \&{register} \&{unsigned} \&{char} ${}{*}\\{xP};{}$\6
@@ -1340,11 +1340,11 @@ threshold.
 \fi
 
 \M{40}
-\Y\B\&{static}\6
+\Y\B\1\1\&{static}\6
 \8\#\&{ifdef} \.{\_\_GNUC\_\_}\6
 \&{\_\_inline\_\_}\6
 \8\#\&{endif}\6
-\&{void} \\{write\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow}){}$\1\1\2\2\6
+\&{void} \\{write\_row}(\&{unsigned} \&{char} ${}{*}\\{pixelrow})\2\2{}$\6
 ${}\{{}$\1\6
 \&{register} \&{int} \\{col};\6
 \&{register} \&{unsigned} \&{char} ${}{*}\\{xP};{}$\7
@@ -1375,25 +1375,25 @@ should be read as the counter. Example: \PB{\.{SKIP1}}~26 means `skip the next
 
 For further details please refer to ``\mf---the program''.
 
-\Y\B\4\D$\.{PAINT\_}(\|x)$ \5
+\Y\B\4\D\.{PAINT\_}$(\|x)$\5
 (\|x)\C{ $0 \le x \le 63$ }\par
-\B\4\D$\.{PAINT1}$ \5
+\B\4\D\.{PAINT1}\5
 \T{64}\par
-\B\4\D$\.{PAINT2}$ \5
+\B\4\D\.{PAINT2}\5
 \T{65}\par
-\B\4\D$\.{PAINT3}$ \5
+\B\4\D\.{PAINT3}\5
 \T{66}\C{ not used }\Y\par
-\B\4\D$\.{SKIP0}$ \5
+\B\4\D\.{SKIP0}\5
 \T{70}\par
-\B\4\D$\.{SKIP1}$ \5
+\B\4\D\.{SKIP1}\5
 \T{71}\par
-\B\4\D$\.{SKIP2}$ \5
+\B\4\D\.{SKIP2}\5
 \T{72}\par
-\B\4\D$\.{SKIP3}$ \5
+\B\4\D\.{SKIP3}\5
 \T{73}\C{ not used }\Y\par
-\B\4\D$\.{NEW\_ROW\_}(\|x)$ \5
+\B\4\D\.{NEW\_ROW\_}$(\|x)$\5
 $((\|x)+\T{74}{}$)\C{ $0 \le x \le 164$ }\Y\par
-\B\4\D$\.{NOOP}$ \5
+\B\4\D\.{NOOP}\5
 \T{244}\C{ not used }\par
 \Y\B\4\X11:Prototypes\X${}\mathrel+\E{}$\6
 \&{static} \&{void} \\{write\_coding}(\&{void});\par
@@ -1403,7 +1403,7 @@ $((\|x)+\T{74}{}$)\C{ $0 \le x \le 164$ }\Y\par
 The \PB{\&{goto} \\{start}} instruction causes some compilers to complain about
 ``Unreachable code $\ldots$'' or something similar.
 
-\Y\B\&{static} \&{void} \\{write\_coding}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_coding}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{register} \&{int} \\{count}${},{}$ \\{skip};\6
 \&{register} \&{unsigned} \&{char} \\{paint};\6
@@ -1577,7 +1577,7 @@ single bytes and use the \.{HEADER} command repeatedly.
 \fi
 
 \M{46}
-\Y\B\&{static} \&{void} \\{write\_pl}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_pl}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{int} \|i${},{}$ \\{pos};\6
 \&{char} ${}\\{output\_file}[\.{FILE\_NAME\_LENGTH}+\T{1}];{}$\6
@@ -1674,7 +1674,7 @@ of the subfonts back to the original encoding positions.
 \fi
 
 \M{48}
-\Y\B\&{static} \&{void} \\{write\_ovp}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_ovp}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{int} \|c${},{}$ \|i${},{}$ \\{nmb\_subfonts}${},{}$ \\{remainder}${},{}$ %
 \\{count}${},{}$ \\{pos};\6
@@ -1797,13 +1797,13 @@ a \.{TFM} file and copy it \PB{\\{nmb\_files}} times. The name of the job file
 is
 \PB{\\{output\_name}}.
 
-\Y\B\4\D$\.{EXTENSION\_LENGTH}$ \5
+\Y\B\4\D\.{EXTENSION\_LENGTH}\5
 \T{8}\C{ the maximal length of a file extension }\Y\par
-\B\4\D$\.{GFTOPK\_NAME}$ \5
+\B\4\D\.{GFTOPK\_NAME}\5
 \.{"gftopk"}\par
-\B\4\D$\.{PLTOTF\_NAME}$ \5
+\B\4\D\.{PLTOTF\_NAME}\5
 \.{"pltotf"}\par
-\B\4\D$\.{OVP2OVF\_NAME}$ \5
+\B\4\D\.{OVP2OVF\_NAME}\5
 \.{"ovp2ovf"}\par
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
 \&{char} ${}\\{job\_extension}[\.{EXTENSION\_LENGTH}+\T{1}];{}$\6
@@ -1820,7 +1820,7 @@ is
 \fi
 
 \M{51}
-\Y\B\&{static} \&{void} \\{write\_job}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{write\_job}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{FILE} ${}{*}\\{out};{}$\6
 \&{int} \|i${},{}$ \|j;\6
@@ -2063,9 +2063,9 @@ always be set to~\PB{\T{1}}; no job file will be created.
 \fi
 
 \M{53}
-\Y\B\4\D$\.{PRINTER\_MIN\_RES\_X}$ \5
+\Y\B\4\D\.{PRINTER\_MIN\_RES\_X}\5
 \T{50}\par
-\B\4\D$\.{PRINTER\_MIN\_RES\_Y}$ \5
+\B\4\D\.{PRINTER\_MIN\_RES\_Y}\5
 \T{50}\par
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
 \&{char} ${}\\{Buffer}[\.{STRING\_LENGTH}+\T{1}]{}$;\par
@@ -2080,7 +2080,7 @@ always be set to~\PB{\T{1}}; no job file will be created.
 If \PB{\\{config\_file}} isn't found in \mf-like mode we assume that the font
 isn't a HBF font at all.
 
-\Y\B\&{static} \&{void} \\{read\_config}(\&{void})\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{read\_config}(\&{void})\2\2\6
 ${}\{{}$\1\6
 \&{HBF\_BBOX} ${}{*}\\{boxp};{}$\6
 \&{char} ${}{*}\\{real\_config\_file};{}$\7
@@ -2374,7 +2374,7 @@ Successive calls return the byte~2 ranges in ascending order. We raise
 in subcode
 ranges.
 
-\Y\B\4\D$\.{VALID\_SUBCODE}$ \5
+\Y\B\4\D\.{VALID\_SUBCODE}\5
 \T{1}\par
 \Y\B\4\X2:Global variables\X${}\mathrel+\E{}$\6
 \&{char} \\{b2\_codes}[\T{256}];\6
@@ -2418,8 +2418,8 @@ fills
 \fi
 
 \M{65}
-\Y\B\&{static} \&{int} \\{fsearch}(\&{const} \&{char} ${}{*}\\{search%
-\_string}){}$\1\1\2\2\6
+\Y\B\1\1\&{static} \&{int} \\{fsearch}(\&{const} \&{char} ${}{*}\\{search%
+\_string})\2\2{}$\6
 ${}\{{}$\1\6
 \&{char} ${}{*}\|P,{}$ \|p;\6
 \&{const} \&{char} ${}{*}\|Q;{}$\6
@@ -2570,8 +2570,8 @@ message.
 \fi
 
 \M{68}
-\Y\B\&{static} \&{void} \\{config\_error}(\&{const} \&{char} ${}{*}%
-\\{message}){}$\1\1\2\2\6
+\Y\B\1\1\&{static} \&{void} \\{config\_error}(\&{const} \&{char} ${}{*}%
+\\{message})\2\2{}$\6
 ${}\{{}$\1\6
 ${}\\{fprintf}(\\{stderr},\39\.{"Couldn't\ find\ `\%s'\ }\)\.{entry\ in\
 configurati}\)\.{on\ file\\n"},\39\\{message});{}$\6
@@ -2613,8 +2613,8 @@ be used instead.
 \fi
 
 \M{72}
-\Y\B\&{static} \&{const} \&{char} ${}{*}\\{TeX\_search\_version}(\&{void}){}$\1%
-\1\2\2\6
+\Y\B\1\1\&{static} \&{const} \&{char} ${}{*}\\{TeX\_search\_version}(\&{void})%
+\2\2{}$\6
 ${}\{{}$\6
 \8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\1\6
 \&{return} \\{kpathsea\_version\_string};\6
@@ -2657,9 +2657,10 @@ We slightly modify \PB{\\{emtex\_dir\_setup}(\,)} (from the file %
 output a warning in case the environment variable \PB{\\{env}} isn't set
 properly.
 
-\Y\B\8\#\&{ifdef} \.{HAVE\_EMTEXDIR}\6
+\Y\B\1\1\6
+\8\#\&{ifdef} \.{HAVE\_EMTEXDIR}\6
 \&{static} \&{int} ${}\\{dir\_setup}(\\{ed},\39\\{env},\39\\{dir},\39%
-\\{flags}){}$\1\1\6
+\\{flags}){}$\6
 \&{struct} \&{emtex\_dir} ${}{*}\\{ed};{}$\6
 \&{const} \&{char} ${}{*}\\{env};{}$\6
 \&{const} \&{char} ${}{*}\\{dir};{}$\6
@@ -2689,8 +2690,9 @@ use\ }\)\.{current\ directory\\n"},\39\\{env}){}$;\2\7
 \fi
 
 \M{77}
-\Y\B\8\#\&{ifdef} \.{HAVE\_EMTEXDIR}\6
-\&{static} \&{char} ${}{*}\\{file\_find}(\\{name},\39\\{list}){}$\1\1\6
+\Y\B\1\1\6
+\8\#\&{ifdef} \.{HAVE\_EMTEXDIR}\6
+\&{static} \&{char} ${}{*}\\{file\_find}(\\{name},\39\\{list}){}$\6
 \&{char} ${}{*}\\{name};{}$\6
 \&{struct} \&{emtex\_dir} ${}{*}\\{list};\2\2{}$\6
 ${}\{{}$\1\6
@@ -2743,33 +2745,34 @@ versions, and within \.{HBF2GFINPUTS} for new versions.
 \fi
 
 \M{80}
-\Y\B\8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
+\Y\B\1\1\6
+\8\#\&{if} \&{defined} (\.{HAVE\_LIBKPATHSEA})\6
 \&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_program\_text\_format},%
 \39\.{TRUE});{}$\6
 \4${}\}{}$\2\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{kpse\_find\_file}${}(\\{name},\39\\{kpse\_miscfonts\_format},\39%
 \.{TRUE});{}$\6
 \4${}\}{}$\2\7
 \8\#\&{elif} \&{defined} (\.{HAVE\_EMTEXDIR})\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{file\_find}${}(\\{name},\39{\AND}\\{cfg\_path});{}$\6
 \4${}\}{}$\2\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{file\_find}${}(\\{name},\39{\AND}\\{hbf\_path});{}$\6
 \4${}\}{}$\2\7
 \8\#\&{elif} \&{defined} (\.{HAVE\_MIKTEX})\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{char} \\{result}[\.{\_MAX\_PATH}];\7
 \&{if} ${}(\R\\{miktex\_find\_input\_file}(\.{"hbf2gf"},\39{*}\\{name},\39%
@@ -2777,8 +2780,8 @@ ${}\{{}$\1\6
 \&{return} \T{0};\2\6
 \&{return} \\{strdup}(\\{result});\6
 \4${}\}{}$\2\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{char} \\{result}[\.{\_MAX\_PATH}];\7
 \&{if} ${}(\R\\{miktex\_find\_miscfont\_file}({*}\\{name},\39\\{result})){}$\1\5
@@ -2786,13 +2789,13 @@ ${}\{{}$\1\6
 \&{return} \\{strdup}(\\{result});\6
 \4${}\}{}$\2\7
 \8\#\&{else}\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_cfg\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{name};\6
 \4${}\}{}$\2\7
-\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
-\\{name}){}$\1\1\2\2\6
+\1\1\&{static} \&{char} ${}{*}{}$\\{TeX\_search\_hbf\_file}(\&{char} ${}{*}%
+\\{name})\2\2{}$\6
 ${}\{{}$\1\6
 \&{return} \\{name};\6
 \4${}\}{}$\2\6

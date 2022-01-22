@@ -1,5 +1,5 @@
 #define banner  \
-"cef5conv (CJK ver. 4.8.4)" \
+"cef5conv (CJK ver. 4.8.5)" \
 
 /*2:*/
 #line 108 "./cjkutils-src/CEFconv/cef5conv.w"

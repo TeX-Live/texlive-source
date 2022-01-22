@@ -1,6 +1,6 @@
-diff -ur cjkutils-4.8.4.orig/Bg5conv/bg5conv.w cjkutils-4.8.4/Bg5conv/bg5conv.w
---- cjkutils-4.8.4.orig/Bg5conv/bg5conv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/Bg5conv/bg5conv.w	2021-07-18 19:52:36.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/Bg5conv/bg5conv.w cjkutils-4.8.5/Bg5conv/bg5conv.w
+--- cjkutils-4.8.5.orig/Bg5conv/bg5conv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/Bg5conv/bg5conv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -93,12 +93,19 @@
  
  @c
@@ -22,9 +22,9 @@ diff -ur cjkutils-4.8.4.orig/Bg5conv/bg5conv.w cjkutils-4.8.4/Bg5conv/bg5conv.w
      fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
  
      ch = fgetc(stdin);@#
-diff -ur cjkutils-4.8.4.orig/CEFconv/cef5conv.w cjkutils-4.8.4/CEFconv/cef5conv.w
---- cjkutils-4.8.4.orig/CEFconv/cef5conv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/CEFconv/cef5conv.w	2021-07-18 19:53:46.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/CEFconv/cef5conv.w cjkutils-4.8.5/CEFconv/cef5conv.w
+--- cjkutils-4.8.5.orig/CEFconv/cef5conv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/CEFconv/cef5conv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -108,7 +108,11 @@
  @c
  #include <ctype.h>
@@ -48,9 +48,9 @@ diff -ur cjkutils-4.8.4.orig/CEFconv/cef5conv.w cjkutils-4.8.4/CEFconv/cef5conv.
      fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
  
      ch = fgetc(stdin);@#
-diff -ur cjkutils-4.8.4.orig/CEFconv/cefconv.w cjkutils-4.8.4/CEFconv/cefconv.w
---- cjkutils-4.8.4.orig/CEFconv/cefconv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/CEFconv/cefconv.w	2021-07-18 19:55:21.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/CEFconv/cefconv.w cjkutils-4.8.5/CEFconv/cefconv.w
+--- cjkutils-4.8.5.orig/CEFconv/cefconv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/CEFconv/cefconv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -100,7 +100,11 @@
  @c
  #include <ctype.h>
@@ -74,9 +74,9 @@ diff -ur cjkutils-4.8.4.orig/CEFconv/cefconv.w cjkutils-4.8.4/CEFconv/cefconv.w
      fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
  
      ch = fgetc(stdin);@#
-diff -ur cjkutils-4.8.4.orig/CEFconv/cefsconv.w cjkutils-4.8.4/CEFconv/cefsconv.w
---- cjkutils-4.8.4.orig/CEFconv/cefsconv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/CEFconv/cefsconv.w	2021-07-18 19:56:04.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/CEFconv/cefsconv.w cjkutils-4.8.5/CEFconv/cefsconv.w
+--- cjkutils-4.8.5.orig/CEFconv/cefsconv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/CEFconv/cefsconv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -111,7 +111,11 @@
  @c
  #include <ctype.h>
@@ -100,9 +100,9 @@ diff -ur cjkutils-4.8.4.orig/CEFconv/cefsconv.w cjkutils-4.8.4/CEFconv/cefsconv.
      fprintf(stdout, "\\def\\CNSpreproc{%s}", banner);@#
  
      ch = fgetc(stdin);@#
-diff -ur cjkutils-4.8.4.orig/SJISconv/sjisconv.w cjkutils-4.8.4/SJISconv/sjisconv.w
---- cjkutils-4.8.4.orig/SJISconv/sjisconv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/SJISconv/sjisconv.w	2021-07-18 19:57:11.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/SJISconv/sjisconv.w cjkutils-4.8.5/SJISconv/sjisconv.w
+--- cjkutils-4.8.5.orig/SJISconv/sjisconv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/SJISconv/sjisconv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -95,12 +95,19 @@
  
  @c
@@ -124,9 +124,9 @@ diff -ur cjkutils-4.8.4.orig/SJISconv/sjisconv.w cjkutils-4.8.4/SJISconv/sjiscon
      fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
  
      ch = fgetc(stdin);@#
-diff -ur cjkutils-4.8.4.orig/extconv/extconv.w cjkutils-4.8.4/extconv/extconv.w
---- cjkutils-4.8.4.orig/extconv/extconv.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/extconv/extconv.w	2021-07-18 19:58:13.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/extconv/extconv.w cjkutils-4.8.5/extconv/extconv.w
+--- cjkutils-4.8.5.orig/extconv/extconv.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/extconv/extconv.w	2022-01-23 03:37:41.000000000 +0900
 @@ -93,12 +93,19 @@
  
  @c
@@ -148,9 +148,9 @@ diff -ur cjkutils-4.8.4.orig/extconv/extconv.w cjkutils-4.8.4/extconv/extconv.w
  
      fprintf(stdout, "\\def\\CJKpreproc{%s}", banner);@#
  
-diff -ur cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w cjkutils-4.8.4/hbf2gf/hbf2gf.w
---- cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w	2015-04-18 15:51:28.000000000 +0900
-+++ cjkutils-4.8.4/hbf2gf/hbf2gf.w	2021-07-18 20:22:51.000000000 +0900
+diff -ur cjkutils-4.8.5.orig/hbf2gf/hbf2gf.w cjkutils-4.8.5/hbf2gf/hbf2gf.w
+--- cjkutils-4.8.5.orig/hbf2gf/hbf2gf.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/hbf2gf/hbf2gf.w	2022-01-23 03:37:41.000000000 +0900
 @@ -148,9 +148,9 @@
  FILE *config, *out;
  HBF *hbf;@#

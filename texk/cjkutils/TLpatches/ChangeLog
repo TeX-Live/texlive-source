@@ -1,3 +1,8 @@
+2022-01-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Import cjk-4.8.5/utils as cjkutils-4.8.5.
+	* patch-04-mingw64, patch-05-win32: Adapted.
+
 2021-07-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* patch-05-win32: patches should be applied to CWEB source.

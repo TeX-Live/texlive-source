@@ -1,6 +1,6 @@
-diff -ur cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w cjkutils-4.8.4/hbf2gf/hbf2gf.w
---- cjkutils-4.8.4.orig/hbf2gf/hbf2gf.w	2015-04-18 08:51:28.000000000 +0200
-+++ cjkutils-4.8.4/hbf2gf/hbf2gf.w	2015-04-18 12:44:01.000000000 +0200
+diff -ur cjkutils-4.8.5.orig/hbf2gf/hbf2gf.w cjkutils-4.8.5/hbf2gf/hbf2gf.w
+--- cjkutils-4.8.5.orig/hbf2gf/hbf2gf.w	2021-10-17 02:25:02.000000000 +0900
++++ cjkutils-4.8.5/hbf2gf/hbf2gf.w	2022-01-23 03:37:41.000000000 +0900
 @@ -486,7 +486,7 @@
  @d GF_ID 131
  @d PRE   247@#
