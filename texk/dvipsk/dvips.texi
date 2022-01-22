@@ -793,6 +793,17 @@ together.
 By default or with @code{-L1}, the last @samp{papersize} special wins;
 with @code{-L0}, the first special wins.  @xref{@samp{papersize} special}.
 
+@item -landscaperotate*
+@opindex -landscaperotate
+@cindex landscaperotate
+When looking for matching paper sizes, permit rotation of page content
+on the page to match the given size; the default, as of Dvips 2022.1,
+is not to do this.  It should not be needed in modern systems with
+normal print spoolers, and can be harmful when converting to PDF
+(@pxref{Config file paper sizes}).  This option accepts an optional
+suffix of 0 (to explicitly disable) or 1 (to explicitly enable); if
+the option is specified without a suffix, it enables the behavior.
+
 @item -m*
 @opindex -m
 @cindex manual feed
@@ -1426,6 +1437,11 @@ Remove comments from included PostScript files.  Same as @samp{-K},
 If zero, the first paper size specified is effective, else the last.
 Same as @samp{-L}, @pxref{Option details}.
 
+@item landscaperotate
+@opindex landscaperotate @r{config command}
+Permit rotation of page content to match page size.
+Same as @samp{-landscaperotate}, @pxref{Option details}.
+
 @item m @var{num}
 @opindex m @r{config command (available memory)}
 @cindex memory available
@@ -1771,8 +1787,26 @@ zero dimensions is used; this should be the @code{unknown} paper size
 definition mentioned below, resulting in the actual dimensions being
 used.
 
-Landscape mode for all paper sizes is automatically supported.
+@cindex landscaperotate configuration file command
+@cindex landscaperotate command line option
+In versions of Dvips prior to 2022.1, if the paper size specified did
+not match one of the defined paper sizes, Dvips considered rotated
+page content and rotated paper sizes for a match.  This provided some
+automatic support for landscape mode on raw printers, but today it can
+be harmful when generating PDF.  (Specifically, the @samp{/MediaBox}
+then ends up with rotated values, which is not expected by PDF
+viewers, e.g., when a document intentionally has a single page
+rotated.)
 
+Further, on all recent computer systems, this facility is typically
+provided instead by a print spooler that considers the bounding box of
+the document and inserts appropriate media selection commands as part
+of the print job. So, this automatic rotation is no longer done by
+default by Dvips.  If you want to enable it, the
+@samp{-landscaperotate} command line option or @samp{landscaperotate}
+configuration file option can be used.  @xref{Option details}.
+
+@cindex zero dimensions and setting paper size
 If your printer has a command to set a special paper size, then give
 dimensions of @samp{0in 0in}; the PostScript code that sets the paper
 size can refer to the dimensions the user requested as @samp{hsize}

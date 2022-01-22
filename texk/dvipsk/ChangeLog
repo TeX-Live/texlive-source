@@ -1,3 +1,17 @@
+2022-01-22  Tomas Rokicki  <rokicki@gmail.com>
+	
+	* dvips.c (landscaperotate): define new global for new option.
+	(helparr): mention it in help message.
+	(main): recognize -landscaperotate command-line option.
+	* protos.h (landscaperotate): declare it.
+	* dvips.texi (Option details, Configuration file commands,
+	Config file paper sizes): document it.
+	* output.c (findpapersize): only do the rotation auto-matching
+	if option is set.
+	* resident.c (getdefaults): recognize "landscaperotate" in config file.
+	* NEWS: mention it.
+	Report from Ulrike Fischer, 26 Jul 2021 09:11:29 ff.
+
 2022-01-18  Karl Berry  <karl@freefriends.org>
 
 	* NEWS,
