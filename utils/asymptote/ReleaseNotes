@@ -1,3 +1,8 @@
+Release Notes for Version 2.77
+
+A buffer overflow in the partialsum transparency shader was fixed;
+the workload distribution over the GPU processors was improved.
+
 Release Notes for Version 2.76
 
 WebGL and V3D bounds were fixed, along with the WebGL zoom and viewportshift.

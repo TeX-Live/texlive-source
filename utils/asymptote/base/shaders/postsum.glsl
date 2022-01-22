@@ -7,24 +7,24 @@ layout(binding=1, std430) buffer offsetBuffer
   uint offset[];
 };
 
-uint ceilquotient(uint a, uint b)
-{
-  return (a+b-1u)/b;
-}
-
 void main(void)
 {
   uint id=gl_GlobalInvocationID.x;
 
-  uint m=ceilquotient(elements,gl_NumWorkGroups.x);
-  uint row=m*id;
-  uint col=min(m,elements-row);
-  uint stop=row+col-1u;
+  uint m=elements/gl_NumWorkGroups.x;
+  uint r=elements-m*gl_NumWorkGroups.x;
+  uint row,stop;
+  if(id < r) {
+    row=m*id+id;
+    stop=row+m+1;
+  } else {
+    row=m*id+r;
+    stop=row+m;
+  }
 
-  uint curr=offset[row];
-  for(uint i=row; i < stop; ++i) {
-    uint next=offset[i+1u];
-    curr += next;
-    offset[i+1u]=curr;
+  uint Sum=offset[row];
+  for(uint i=row+1u; i < stop; ++i) {
+    Sum += offset[i];
+    offset[i]=Sum;
   }
 }

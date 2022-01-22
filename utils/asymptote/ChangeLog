@@ -1,3 +1,33 @@
+commit c98c63886b06ac0650c0b25304cb0bae9118a92a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 21 20:48:27 2022 -0700
+
+    Fix URL.
+
+commit edc40f1726014f5ea0ce464db4ae70457241cd46
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 21 16:56:39 2022 -0700
+
+    Remove unused code.
+
+commit 037e520058d53f5dd02c06b41c656cb65e255e92
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 21 16:50:46 2022 -0700
+
+    Fix buffer overflow in partialsum.glsl; improve workload distibution.
+
+commit 868ff0b61fb439d4ce6334aec4b4ea49a32ad9bf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 20 21:34:53 2022 -0700
+
+    Optimize postsum shader.
+
+commit 1c6eb60c92a8f25623d6b074f4ab3dcf84d0401d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 19 23:53:29 2022 -0700
+
+    Increment version to 2.77.
+
 commit ea218793876b65bbd50a842ede9fd003dcd90978
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 19 21:56:54 2022 -0700

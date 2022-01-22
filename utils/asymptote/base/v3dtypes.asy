@@ -1,6 +1,6 @@
 // Enum class for v3dtypes
 // AUTO-GENERATED from v3dtypes.csv
-// Generated at 2022-01-19 22:30:10.647049
+// Generated at 2022-01-21 20:50:28.223119
 
 struct v3dtypes
 {
