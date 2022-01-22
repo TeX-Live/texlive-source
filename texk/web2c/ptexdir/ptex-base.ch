@@ -507,7 +507,7 @@ end;
 @d rule_node=3 {|type| of rule nodes}
 @z
 
-@x [10.140] l.3083 - pTeX: renumber ins_node, add ins_dirh field
+@x [10.140] l.3083 - pTeX: renumber ins_node, add ins_dir field
 @d ins_node=3 {|type| of insertion nodes}
 @d ins_node_size=5 {number of words to allocate for an insertion}
 @d float_cost(#)==mem[#+1].int {the |floating_penalty| to be used}
@@ -1040,7 +1040,7 @@ kern_node,math_node,penalty_node: begin r:=get_node(small_node_size);
 @d prev_disp==cur_list.pdisp_field {displacemant at |prev_node|}
 @d last_jchr==cur_list.last_jchr_field {final jchar node on current list}
 @d disp_called==cur_list.disp_called_field {is a |disp_node| present in the current list?}
-@d inhibit_glue_flag==cur_list.inhibit_glue_flag_field {is \.{inhibitglue} is specified at the current list?}
+@d inhibit_glue_flag==cur_list.inhibit_glue_flag_field {is \.{\\inhibitglue} specified at the current list?}
 @z
 
 @x [16.214] l.4464 - pTeX: prev_append: disp_node
@@ -1317,7 +1317,7 @@ if n<math_code_base then
 @d holding_inserts_code=54 {do not remove insertion nodes from \.{\\box255}}
 @d error_context_lines_code=55 {maximum intermediate line pairs shown}
 @d jchr_widow_penalty_code=56
-			{penalty for creating a widow KANJI character line}
+            {penalty for creating a widow KANJI character line}
 @d text_baseline_shift_factor_code=57
 @d script_baseline_shift_factor_code=58
 @d scriptscript_baseline_shift_factor_code=59
@@ -1501,7 +1501,7 @@ def_tfont: print_esc("tfont");
   token that stands for a control sequence; is a multiple of~256, less~1}
 @y
 @d cs_token_flag==@"FFFF {amount added to the |eqtb| location in a
-token that stands for a control sequence; is a multiple of~256, less~1}
+  token that stands for a control sequence; is a multiple of~256, less~1}
 @z
 
 @x [20.293] l.6496 - pTeX: show_token_list
@@ -1612,7 +1612,7 @@ var old_setting:0..max_selector; {saved |selector| setting}
 @d set_trick_count==
   begin first_count:=tally;
   if (first_count>0)and(trick_buf2[(first_count-1)mod error_line]=1) then
-      incr(first_count);
+    incr(first_count);
   trick_count:=first_count+1+error_line-half_error_line;
   if trick_count<error_line then trick_count:=error_line;
   end
@@ -2191,7 +2191,7 @@ if not is_char_node(tx) then
 @<Fetch an item in the current node...@>=
 @z
 
-@x pTeX: \ptexversion 
+@x pTeX: \ptexversion
   begin if cur_chr=input_line_no_code then cur_val:=line
   else cur_val:=last_badness; {|cur_chr=badness_code|}
 @y
@@ -2333,7 +2333,7 @@ if scan_keyword("em") then v:=(@<The em width for |cur_font|@>)
 else if scan_keyword("ex") then v:=(@<The x-height for |cur_font|@>)
 @.ex@>
 else if scan_keyword("zw") then @<The KANJI width for |cur_jfont|@>
-@.ze@>
+@.zw@>
 else if scan_keyword("zh") then @<The KANJI height for |cur_jfont|@>
 @.zh@>
 else goto not_found;
@@ -3163,7 +3163,7 @@ continue:
       synch_h;
       end;
     p:=link(p);
-	jc:=toDVI(KANJI(info(p)));
+    jc:=toDVI(KANJI(info(p)));
     dvi_out(set2); dvi_out(Hi(jc)); dvi_out(Lo(jc));
     cur_h:=cur_h+char_width(f)(orig_char_info(f)(c)); {not |jc|}
     end;
@@ -3600,7 +3600,7 @@ internal kanji code number.
 @d math_kcode(#)==info(#+4) {the |kanji character| field of a noad}
 @d kcode_noad_nucleus(#)==#+3
 @d math_kcode_nucleus(#)==info(#+3)
-	{the |kanji character| field offset from nucleus}
+    {the |kanji character| field offset from nucleus}
 @#
 @d math_jchar=6
 @d math_text_jchar=7
@@ -3661,7 +3661,7 @@ begin print_esc("fam"); print_int(fam(p)); print_char(" ");
 print_ASCII(qo(character(p)));
 @y
 procedure print_fam_and_char(@!p:pointer;@!t:small_number);
-					{prints family and character}
+                    {prints family and character}
 var @!cx:KANJI_code; {temporary register for KANJI}
 begin print_esc("fam"); print_int(fam(p)); print_char(" ");
 if t=math_char then print_ASCII(qo(character(p)))
@@ -3745,9 +3745,9 @@ function shift_sub_exp_box(@!q:pointer):pointer;
         if box_dir(info(q))=dir_tate then d:=t_baseline_shift
         else d:=y_baseline_shift end
       else d:=y_baseline_shift;
-      if cur_style<script_style then 
+      if cur_style<script_style then
         d:=xn_over_d(d,text_baseline_shift_factor, 1000)
-      else if cur_style<script_script_style then 
+      else if cur_style<script_script_style then
         d:=xn_over_d(d,script_baseline_shift_factor, 1000)
       else
         d:=xn_over_d(d,scriptscript_baseline_shift_factor, 1000);
@@ -4342,7 +4342,7 @@ else  case type(s) of
   disp_node: do_nothing;
 @z
 
-@x [38.856] l.17467 - pTeX: print symbolic feasibe node
+@x [38.856] l.17467 - pTeX: print symbolic feasible node
 if cur_p=null then print_esc("par")
 else if type(cur_p)<>glue_node then
   begin if type(cur_p)=penalty_node then print_esc("penalty")
@@ -5027,9 +5027,9 @@ any_mode(make_box): begin_box(0);
 any_mode(make_box): begin_box(0);
 any_mode(chg_dir):
   begin  if cur_group<>align_group then
-    if mode=hmode then 
+    if mode=hmode then
       begin print_err("Improper `"); print_cmd_chr(cur_cmd,cur_chr);
-      print("'"); 
+      print("'");
       help2("You cannot change the direction in unrestricted")
       ("horizontal mode."); error;
       end
@@ -5085,7 +5085,7 @@ q:pointer;
     else  begin p:=new_noad;
       math_type(nucleus(p)):=sub_box;
 @y
-  else  begin if abs(mode)=hmode then 
+  else  begin if abs(mode)=hmode then
     begin space_factor:=1000; inhibit_glue_flag:=false; end
     else  begin p:=new_noad;
       math_type(nucleus(p)):=sub_exp_box;
@@ -5162,7 +5162,7 @@ q:=link(p);
 until q=tx; {found |r|$\to$|p|$\to$|q=tx|}
 q:=link(tx); link(p):=q; link(tx):=null;
 if q=null then tail:=p
-else if fd then {|r|$\to$|p=disp_node|$\to$|q=disp_node|} 
+else if fd then {|r|$\to$|p=disp_node|$\to$|q=disp_node|}
   begin prev_node:=r; prev_disp:=pdisp; link(p):=null; tail:=p;
   disp_dimen(p):=disp_dimen(q); free_node(q,small_node_size);
   end
@@ -5316,7 +5316,7 @@ mode:=hmode; space_factor:=1000; set_cur_lang; clang:=cur_lang;
 @x [47.???] indent_in_hmode: reset inhibit_glue_flag
   if abs(mode)=hmode then space_factor:=1000
 @y
-  if abs(mode)=hmode then 
+  if abs(mode)=hmode then
     begin space_factor:=1000; inhibit_glue_flag:=false; end
 @z
 
@@ -5590,14 +5590,14 @@ var c:integer; {hyphen character}
 begin tail_append(new_disc); inhibit_glue_flag:=false;
 @z
 
-@x pTeX: direction check in \discretionary 
+@x pTeX: direction check in \discretionary
 @!n:integer; {length of discretionary list}
 @y
 @!n:integer; {length of discretionary list}
 @!d:integer; {direction}
 @z
 
-@x pTeX: direction check in \discretionary 
+@x pTeX: direction check in \discretionary
 p:=link(head); pop_nest;
 case saved(-1) of
 0:pre_break(tail):=p;
@@ -5606,13 +5606,13 @@ case saved(-1) of
 p:=link(head); d:=abs(direction); pop_nest;
 case saved(-1) of
 0:if abs(direction)=d then pre_break(tail):=p
-  else begin 
+  else begin
     print_err("Direction Incompatible");
     help2("\discretionary's argument and outer hlist must have same direction.")@/
     ("I delete your first part."); error; pre_break(tail):=null; flush_node_list(p);
   end;
 1:if abs(direction)=d then post_break(tail):=p
-  else begin 
+  else begin
     print_err("Direction Incompatible");
     help2("\discretionary's argument and outer hlist must have same direction.")@/
     ("I delete your second part."); error; post_break(tail):=null; flush_node_list(p);
@@ -5625,7 +5625,7 @@ push_nest; mode:=-hmode; space_factor:=1000;
 push_nest; mode:=-hmode; space_factor:=1000; inhibit_glue_flag:=false;
 @z
 
-@x pTeX: direction check in \discretionary 
+@x pTeX: direction check in \discretionary
 else link(tail):=p;
 if n<=max_quarterword then replace_count(tail):=n
 @y
@@ -5636,7 +5636,7 @@ else if (n>0)and(abs(direction)<>d) then
   end
 else link(tail):=p;
 if n<=max_quarterword then replace_count(tail):=n
-@z 
+@z
 
 @x [47.1120] l.22119 - pTeX: discretionary with disp_node
 decr(save_ptr); return;
@@ -6428,7 +6428,6 @@ else begin inhibit_glue_flag:=false;
   new_whatsit(language_node,small_node_size);
 @z
 
-
 @x [53.1376] l.26309 - pTeX:
 @<Glob...@> =
 @!debug_format_file: boolean;
@@ -6543,8 +6542,8 @@ begin k:=0;
   until n=0;
   begin while k>0 do
     begin decr(k);
-	cx:=kansuji_char(dig[k]);
-	print_kanji(fromDVI(cx));
+    cx:=kansuji_char(dig[k]);
+    print_kanji(fromDVI(cx));
     end;
   end;
 end;
@@ -6659,7 +6658,7 @@ if is_char_kanji(n) then
   if (j<>no_entry)and(cur_val>inhibit_after) then
     begin if global or(cur_level=level_one) then cur_val:=inhibit_unused
       { remove the entry from inhibit table }
-	else cur_val:=inhibit_none; end
+    else cur_val:=inhibit_none; end
   else if j=no_entry then
     begin print_err("Inhibit table is full!!");
     help1("I'm skipping this control sequences.");@/
@@ -6917,9 +6916,9 @@ while p<>null do
   ins_node,disp_node,mark_node,adjust_node,whatsit_node,penalty_node:
     do_nothing;
   math_node:
-    if (subtype(p)=before)or(subtype(p)=after) then 
+    if (subtype(p)=before)or(subtype(p)=after) then
       begin if find_first_char then
-        begin find_first_char:=false; first_char:=p; 
+        begin find_first_char:=false; first_char:=p;
         end;
         last_char:=p; flag:=true;
       end
@@ -6928,7 +6927,7 @@ while p<>null do
     if subtype(p)=acc_kern then
       begin p:=link(p);
         if is_char_node(p) then
-	  if font_dir[font(p)]<>dir_default then p:=link(p);
+          if font_dir[font(p)]<>dir_default then p:=link(p);
         p:=link(link(p));
         if find_first_char then
           begin find_first_char:=false; first_char:=p;
@@ -7023,7 +7022,7 @@ while p<>null do
           if is_char_node(t) then
             if font_dir[font(t)]<>dir_default then t:=link(t);
           p:=link(link(t));
-	  if font_dir[font(p)]<>dir_default then
+          if font_dir[font(p)]<>dir_default then
             begin p:=link(p); insert_skip:=after_wchar; end
           else  insert_skip:=after_schar;
           end
@@ -7123,7 +7122,7 @@ begin if (subtype(p)=before)and(insert_skip=after_wchar) then
   insert_skip:=no_skip;
   end
 else if subtype(p)=after then
-  begin ax:=qo("0"); 
+  begin ax:=qo("0");
   if auto_xsp_code(ax)>=2 then
     insert_skip:=after_schar else insert_skip:=no_skip;
   end
@@ -7360,8 +7359,8 @@ main_loop_j+1: space_factor:=1000;
     begin if not disp_called then
       begin prev_node:=tail; tail_append(get_node(small_node_size));
       type(tail):=disp_node; disp_dimen(tail):=0; disp_called:=true
-	  end;
-	fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
+      end;
+    fast_get_avail(main_p); font(main_p):=main_f; character(main_p):=cur_l;
     link(tail):=main_p; tail:=main_p; last_jchr:=tail;
     fast_get_avail(main_p); info(main_p):=KANJI(cur_chr);
     link(tail):=main_p; tail:=main_p;
@@ -7402,7 +7401,7 @@ again_2:
 @#
 main_loop_j+3:
   if ins_kp=true then @<Insert |pre_break_penalty| of |cur_chr|@>;
-  if main_f<>null_font then 
+  if main_f<>null_font then
     begin @<Look ahead for glue or kerning@>;
     end
   else inhibit_glue_flag:=false;
@@ -7427,7 +7426,7 @@ else
   if disp<>0 or not disp_called then
     begin prev_node:=tail; tail_append(get_node(small_node_size));
     type(tail):=disp_node; disp_dimen(tail):=disp; prev_disp:=disp;
-	disp_called:=true
+    disp_called:=true
     end;
 end;
 

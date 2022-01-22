@@ -297,7 +297,7 @@ kchar_num: print_esc("kchar");
 
 @x
 @d cs_token_flag==@"FFFF {amount added to the |eqtb| location in a
-token that stands for a control sequence; is a multiple of~256, less~1}
+  token that stands for a control sequence; is a multiple of~256, less~1}
 @d left_brace_token=@'0400 {$2^8\cdot|left_brace|$}
 @d left_brace_limit=@'1000 {$2^8\cdot(|left_brace|+1)$}
 @d right_brace_token=@'1000 {$2^8\cdot|right_brace|$}
@@ -353,7 +353,7 @@ kanji,kana,other_kchar,hangul: begin print("kanji character ");
 
 @x
   if (first_count>0)and(trick_buf2[(first_count-1)mod error_line]=1) then
-      incr(first_count);
+    incr(first_count);
 @y
   kcp:=trick_buf2[(first_count-1)mod error_line];
   if (first_count>0)and(kcp>0) then
@@ -729,7 +729,7 @@ if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
 @z
 
 @x
-	jc:=toDVI(KANJI(info(p)));
+    jc:=toDVI(KANJI(info(p)));
     dvi_out(set2); dvi_out(Hi(jc)); dvi_out(Lo(jc));
 @y
     jc:=toDVI(KANJI(info(p)) mod max_cjk_val);
