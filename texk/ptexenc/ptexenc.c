@@ -331,9 +331,10 @@ long fromBUFF(unsigned char *s, int len, int pos)
 
 long fromBUFFshort(unsigned short *s, int len, int pos)
 {
+    int i;
     unsigned char sc[6];
     s += pos; len -= pos;
-    for (int i=0;i<(len<6 ? len : 6);i++) sc[i]=0xFF&s[i];
+    for (i=0;i<(len<6 ? len : 6);i++) sc[i]=0xFF&s[i];
     return fromBUFF(sc, (len<6 ? len : 6), 0);
 }
 
