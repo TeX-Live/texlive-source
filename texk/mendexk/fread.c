@@ -567,7 +567,7 @@ char *mfgets(char *buf, int size, FILE *fp)
 {
 	int c, len;
 
-	if ((len = input_line2(fp, (unsigned char *) buf, 0, size, &c)) == 0
+	if ((len = input_line2(fp, (unsigned char *) buf, NULL, 0, size, &c)) == 0
 		&& c != '\r' && c != '\n') return NULL;
 	if (c == '\n' || c == '\r') {
 		if (len+1 < size) strcat(buf+len, "\n");

@@ -1,3 +1,7 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* fread.c: Adapt to arguments of input_line2() in ptexenc-1.4.0.
+
 2022-01-18  Karl Berry  <karl@freefriends.org>
 
 	* COPYRIGHT,

@@ -17,8 +17,11 @@
 @define function ismultichr ();
 
 @define function multistrlen ();
+@define function multistrlenshort ();
+@define function multistrlenfilename ();
 @define function multibytelen ();
 @define function fromBUFF ();
+@define function fromBUFFshort ();
 @define function toBUFF ();
 
 @define function fromDVI ();

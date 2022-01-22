@@ -1,3 +1,7 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pmp.ch: Adapt to arguments of input_line2() in ptexenc-1.4.0.
+
 2022-01-18  Karl Berry  <karl@freefriends.org>
 
 	* pmp.ch: Sync with the version 2.02 mp.w (three times).

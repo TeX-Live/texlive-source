@@ -1,3 +1,10 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h, unicode.c, ptexenc/unicode.h:
+	Distinguish 8-bit characters and Japanese characters by using
+	flag 0x100 for Japanese char.
+	* version.ac: Bump to 1.4.0.
+
 2022-01-18  Karl Berry  <karl@tug.org>
 
 	* version.ac: remove /dev, for TL22.

@@ -1,3 +1,12 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, etex.ch0, etex.ch1, pdfutils.ch:
+	  Change type of str_pool to unsigned short.
+	  We use only 0--511, and use flag 0x100 for Japanese char.
+	  More details in TUGboat 41(2):329--334, 2020.
+	* eptex.defines: Add multistrlen{short,filename}, fromBUFFshort.
+	* tests/printkanji-eptex.tex: Added.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* am/eptex.am: do not silence tangle-sh.

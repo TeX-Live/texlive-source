@@ -281,6 +281,13 @@ open_input (FILE **f_ptr, int filefmt, const_string fopen_mode)
                                     must_exist);
             if (fname) {
                 fullnameoffile = xstrdup(fname);
+#if defined(PTEX) && !defined(WIN32)
+                fname0 = ptenc_from_utf8_string_to_internal_enc(fullnameoffile);
+                if (fname0) {
+                    free (fullnameoffile);
+                    fullnameoffile = fname0;
+                }
+#endif
                 /* If we found the file in the current directory, don't leave
                    the `./' at the beginning of `nameoffile', since it looks
                    dumb when `tex foo' says `(./foo.tex ... )'.  On the other

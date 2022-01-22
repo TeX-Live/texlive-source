@@ -115,9 +115,9 @@ term_only: begin
 @z
 
 @x
-if kcode_pos=1 then kcode_pos:=2
+else if kcode_pos=1 then kcode_pos:=2
 @y
-if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
+else if (kcode_pos=1)or((kcode_pos>=@'11)and(kcode_pos<=@'12))
    or((kcode_pos>=@'21)and(kcode_pos<=@'23)) then incr(kcode_pos)
 @z
 
@@ -388,6 +388,8 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
     if multistrlen(ustringcast(buffer), limit+1, loc-1)=2 then
       begin cur_chr:=fromBUFF(ustringcast(buffer), limit+1, loc-1);
       cur_cmd:=kcat_code(kcatcodekey(cur_chr));
+      for l:=loc-1 to loc-2+multistrlen(ustringcast(buffer), limit+1, loc-1) do
+        buffer2[l]:=1;
       incr(loc);
       end
     else reswitch: cur_cmd:=cat_code(cur_chr);
@@ -397,6 +399,8 @@ if ((kcp mod @'10)>0)and(nrestmultichr(kcp)>0) then p:=p-(kcp mod @'10);
     cur_cmd:=kcat_code(kcatcodekey(cur_chr));
     if (multistrlen(ustringcast(buffer), limit+1, loc)>1) and check_kcat_code(cur_cmd) then begin
       if (cur_cmd=not_cjk) then cur_cmd:=other_kchar;
+      for l:=loc to loc-1+multistrlen(ustringcast(buffer), limit+1, loc) do
+        buffer2[l]:=1;
       loc:=loc+multistrlen(ustringcast(buffer), limit+1, loc) end
     else begin
       cur_chr:=buffer[loc]; incr(loc);
@@ -428,7 +432,10 @@ hangul_code(skip_blanks),hangul_code(new_line),hangul_code(mid_kanji):
 @x
 else  begin k:=loc; cur_chr:=buffer[k]; incr(k);
   if multistrlen(ustringcast(buffer), limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1))); incr(k);
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1)));
+    for l:=k-1 to k-2+multistrlen(ustringcast(buffer), limit+1, k-1) do
+      buffer2[l]:=1;
+    incr(k);
     end
   else cat:=cat_code(cur_chr);
 start_cs:
@@ -439,6 +446,8 @@ else  begin k:=loc;
   cat:=kcat_code(kcatcodekey(cur_chr));
   if (multistrlen(ustringcast(buffer), limit+1, k)>1) and check_kcat_code(cat) then begin
     if (cat=not_cjk) then cat:=other_kchar;
+    for l:=k to k-1+multistrlen(ustringcast(buffer), limit+1, k) do
+      buffer2[l]:=1;
     k:=k+multistrlen(ustringcast(buffer), limit+1, k) end
   else begin {not multi-byte char}
     cur_chr:=buffer[k];
@@ -464,7 +473,10 @@ start_cs:
 @x
 begin repeat cur_chr:=buffer[k]; incr(k);
   if multistrlen(ustringcast(buffer), limit+1, k-1)=2 then
-    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1))); incr(k);
+    begin cat:=kcat_code(kcatcodekey(fromBUFF(ustringcast(buffer), limit+1, k-1)));
+    for l:=k-1 to k-2+multistrlen(ustringcast(buffer), limit+1, k-1) do
+      buffer2[l]:=1;
+    incr(k);
     end
   else cat:=cat_code(cur_chr);
 @y
@@ -473,6 +485,8 @@ begin repeat
   cat:=kcat_code(kcatcodekey(cur_chr));
   if (multistrlen(ustringcast(buffer), limit+1, k)>1) and check_kcat_code(cat) then begin
     if (cat=not_cjk) then cat:=other_kchar;
+    for l:=k to k-1+multistrlen(ustringcast(buffer), limit+1, k) do
+      buffer2[l]:=1;
     k:=k+multistrlen(ustringcast(buffer), limit+1, k) end
   else begin {not multi-byte char}
     cur_chr:=buffer[k];
@@ -518,20 +532,21 @@ if cat=other_kchar then k:=k-multilenbuffchar(cur_chr)+1; {now |k| points to fir
 
 @x
   if check_kanji(info(p)) then {|wchar_token|}
-    begin buffer[j]:=Hi(info(p)); incr(j);
-    end;
+    begin buffer[j]:=Hi(info(p)); buffer2[j]:=1; incr(j); buffer2[j]:=1;
+    end
+  else buffer2[j]:=0;
   buffer[j]:=Lo(info(p)); incr(j); p:=link(p);
 @y
   if check_kanji(info(p)) then {|wchar_token|}
     begin t:=toBUFF(info(p) mod max_cjk_val);
-    if BYTE1(t)<>0 then begin buffer[j]:=BYTE1(t); incr(j); end;
-    if BYTE2(t)<>0 then begin buffer[j]:=BYTE2(t); incr(j); end;
-    if BYTE3(t)<>0 then begin buffer[j]:=BYTE3(t); incr(j); end;
-                              buffer[j]:=BYTE4(t); incr(j);
+    if BYTE1(t)<>0 then begin buffer[j]:=BYTE1(t); buffer2[j]:=1; incr(j); end;
+    if BYTE2(t)<>0 then begin buffer[j]:=BYTE2(t); buffer2[j]:=1; incr(j); end;
+    if BYTE3(t)<>0 then begin buffer[j]:=BYTE3(t); buffer2[j]:=1; incr(j); end;
+                              buffer[j]:=BYTE4(t); buffer2[j]:=1; incr(j);
     p:=link(p);
     end
   else
-    begin buffer[j]:=info(p) mod max_char_val; incr(j); p:=link(p);
+    begin buffer[j]:=info(p) mod max_char_val; buffer2[j]:=0; incr(j); p:=link(p);
     end;
 @z
 
@@ -606,8 +621,8 @@ begin str_room(1);
 p:=temp_head; link(p):=null; k:=b;
 while k<pool_ptr do
   begin t:=so(str_pool[k]);
-  if multistrlen(ustringcast(str_pool), pool_ptr, k)=2 then
-    begin t:=fromBUFF(ustringcast(str_pool), pool_ptr, k); incr(k);
+  if t>=@"100 then
+    begin t:=fromBUFFshort(str_pool, pool_ptr, k); incr(k);
     end
   else if t=" " then t:=space_token
   else t:=other_token+t;
@@ -618,15 +633,15 @@ while k<pool_ptr do
 begin str_room(1);
 p:=temp_head; link(p):=null; k:=b;
 while k<pool_ptr do
-  begin t:=fromBUFF(ustringcast(str_pool), pool_ptr, k);
-  cc:=kcat_code(kcatcodekey(t));
-  if (multistrlen(ustringcast(str_pool), pool_ptr, k)>1)and
-       check_kcat_code(cc) then
-    begin if (cc=not_cjk) then cc:=other_kchar;
-	  t:=t+cc*max_cjk_val;
-	  k:=k+multistrlen(ustringcast(str_pool), pool_ptr, k)-1;
+  begin  t:=so(str_pool[k]);
+  if t>=@"180 then { there is no |wchar_token| whose code is 0--127. }
+    begin t:=fromBUFFshort(str_pool, pool_ptr, k); cc:=kcat_code(kcatcodekey(t));
+    if (cc=not_cjk) then cc:=other_kchar;
+    t:=t+cc*max_cjk_val;
+    k:=k+multistrlenshort(str_pool, pool_ptr, k)-1;
     end
   else begin t:=so(str_pool[k]);
+    if t>=@"100 then t:=t-@"100;
     if t=" " then t:=space_token
     else t:=other_token+t;
   end;
@@ -709,16 +724,16 @@ if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
 @x
   if (cur_cmd=kanji)or(cur_cmd=kana)or(cur_cmd=other_kchar) then {is kanji}
     begin str_room(2);
-    append_char(Hi(cur_chr)); {kanji upper byte}
-    append_char(Lo(cur_chr)); {kanji lower byte}
+    append_char(@"100+Hi(cur_chr)); {kanji upper byte}
+    append_char(@"100+Lo(cur_chr)); {kanji lower byte}
 @y
   if (cur_cmd>=kanji)and(cur_cmd<=hangul) then {|wchar_token|}
     begin str_room(4); {4 is maximum}
     cur_chr:=toBUFF(cur_chr);
-    if BYTE1(cur_chr)<>0 then append_char(BYTE1(cur_chr));
-    if BYTE2(cur_chr)<>0 then append_char(BYTE2(cur_chr));
-    if BYTE3(cur_chr)<>0 then append_char(BYTE3(cur_chr));
-                              append_char(BYTE4(cur_chr));
+    if BYTE1(cur_chr)<>0 then append_char(@"100+BYTE1(cur_chr));
+    if BYTE2(cur_chr)<>0 then append_char(@"100+BYTE2(cur_chr));
+    if BYTE3(cur_chr)<>0 then append_char(@"100+BYTE3(cur_chr));
+                              append_char(@"100+BYTE4(cur_chr));
 @z
 
 @x
@@ -1220,17 +1235,17 @@ begin if is_char_node(link(p)) then
 @x
 procedure print_kanji(@!s:KANJI_code); {prints a single character}
 begin
-if s>255 then
-  begin print_char(Hi(s)); print_char(Lo(s));
+if s>@"FF then
+  begin print_char(@"100+Hi(s)); print_char(@"100+Lo(s));
   end else print_char(s);
 @y
 procedure print_kanji(@!s:KANJI_code); {prints a single character}
 begin
 s:=toBUFF(s mod max_cjk_val);
-if BYTE1(s)<>0 then print_char(BYTE1(s));
-if BYTE2(s)<>0 then print_char(BYTE2(s));
-if BYTE3(s)<>0 then print_char(BYTE3(s));
-                    print_char(BYTE4(s));
+if BYTE1(s)<>0 then print_char(@"100+BYTE1(s));
+if BYTE2(s)<>0 then print_char(@"100+BYTE2(s));
+if BYTE3(s)<>0 then print_char(@"100+BYTE3(s));
+                    print_char(@"100+BYTE4(s));
 end;
 
 function check_kcat_code(@!ct:integer):integer;

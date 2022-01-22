@@ -1,3 +1,7 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* synctex.c: Reencode nameoffile to utf8 for pTeX.
+
 2021-12-16  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* synctex_main.c [WIN32]: #include <kpathsea/progname.h>

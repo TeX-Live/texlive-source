@@ -11,7 +11,10 @@
 
 @define function iskanji1 ();
 @define function multistrlen ();
+@define function multistrlenshort ();
+@define function multistrlenfilename ();
 @define function fromBUFF ();
+@define function fromBUFFshort ();
 @define function toBUFF ();
 
 @define function fromDVI ();

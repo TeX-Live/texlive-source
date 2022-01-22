@@ -100,7 +100,7 @@ static boolean mp_input_ln (MP mp, void *f) {
 @y
 static boolean mp_input_ln (MP mp, void *f ) {
   int i = EOF;
-  mp->last = input_line2((FILE *)f, mp->buffer, mp->first, mp->buf_size, &i);
+  mp->last = input_line2((FILE *)f, mp->buffer, NULL, mp->first, mp->buf_size, &i);
   if (i == EOF && errno != EINTR && mp->last == mp->first)
     return false;
   if (i != EOF && i != '\n' && i != '\r') {

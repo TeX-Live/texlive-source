@@ -59,9 +59,9 @@ extern void init_default_kanji_select (void);
 #endif /* !PRESERVE_FPUTS */
 
 #ifdef UPBIBTEX
-#define inputline2(fp,buff,pos,size,ptr) input_line2(fp,buff,pos,size,ptr)
+#define inputline2(fp,buff,pos,size,ptr) input_line2(fp,buff,NULL,pos,size,ptr)
 #else
-#define inputline2(fp,buff,pos,size) input_line2(fp,buff,pos,size,NULL)
+#define inputline2(fp,buff,pos,size) input_line2(fp,buff,NULL,pos,size,NULL)
 #endif
 
 extern void init_kanji (const_string file_str, const_string internal_str);

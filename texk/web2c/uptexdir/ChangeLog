@@ -1,3 +1,12 @@
+2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Change type of str_pool to unsigned short.
+	  We use only 0--511, and use flag 0x100 for Japanese char.
+	  More details in TUGboat 41(2):329--334, 2020.
+	* kanji.h: Adapt to arguments of input_line2() in ptexenc-1.4.0
+	  (for upBibTeX).
+	* uptex.defines: Add multistrlen{short,filename}, fromBUFFshort.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* am/uptex.am: do not silence tangle-sh.

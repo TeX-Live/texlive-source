@@ -1,0 +1,68 @@
+%あaª
+\tracingstats=1000
+\noautoxspacing\scrollmode
+\tracingscantokens=1
+\everyeof{\noexpand}
+\font\x=ec-lmtt10 \x
+\immediate\openout1=\jobname.out
+\def\MSG#1{%
+  \message{\string{MSG #1\string}}%
+  \immediate\write17{\string{TOT #1\string}}%
+  \immediate\write1{#1}%
+}
+\def\head#1{\message{■#1.}\par\noindent\hbox{■\null}#1.\par}
+\message{^^J}
+\count255="80
+\loop\ifnum\count255<"100
+  \catcode\count255=11\relax
+  \advance\count255 1\relax
+\repeat
+
+%========
+\head{detokenize}
+\def\A{^^c5^^bf ſ 顛 }
+
+\detokenize\expandafter{\meaning\A}
+\MSG{\detokenize\expandafter{\meaning\A}}
+
+%========
+\head{scantokens}
+\def\c{捉^^c2^^aaª}
+
+\scantokens{\noexpand\^^a4^^a2あ^^e3^^81^^82.^^a4^^a2あ^^e3^^81^^82.\c}
+\def\a{\scantokens{\noexpand\^^a4^^a2あ^^e3^^81^^82.^^a4^^a2あ^^e3^^81^^82.\c}}
+
+\edef\b{\scantokens{\noexpand\^^a4^^a2あ^^e3^^81^^82.^^a4^^a2あ^^e3^^81^^82.\c}}
+\MSG{\a:\b:\meaning\b}
+
+\def\あ{a}
+\MSG{
+  \ifcsname あ\endcsname Y\csname あ\endcsname\else n\fi,
+  \ifcsname ^^e3^^81^^82\endcsname Y\csname ^^e3^^81^^82\endcsname\else n\fi,
+  \ifcsname ^^a4^^a2\endcsname Y\csname ^^a4^^a2\endcsname\else n\fi}
+
+%========
+\head{pdfstrcmp}
+
+\MSG{あ \pdfstrcmp{あ}{^^e3^^81^^82} ^^e3^^81^^82}
+\MSG{あ \pdfstrcmp{あ}{^^a4^^a2} ^^a4^^a2}
+\MSG{捉 \pdfstrcmp{捉}{^^c2^^aa} ^^c2^^aa}
+\MSG{捉 \pdfstrcmp{捉}{ª} ^^c2^^aa}
+\MSG{ª \pdfstrcmp{ª}{^^c2^^aa} ^^c2^^aa}
+
+%========
+\head{other pdf* util.}
+
+\MSG{\detokenize\expandafter{\pdffiledump length 20{\jobname.tex}}}
+
+\MSG{\pdfmdfivesum{}}
+\MSG{\pdfmdfivesum{あ}}
+\MSG{\pdfmdfivesum{^^e3^^81^^82}}
+\MSG{\pdfcreationdate}
+\MSG{\pdffilemoddate{\jobname.tex}}
+\MSG{\pdffilesize{\jobname.tex}}
+\MSG{\the\pdfelapsedtime}
+\MSG{\expanded{^^c2^^aaª捉.^^e3^^81^^82あ^^a4^^a2}}
+
+\immediate\closeout1
+\bye

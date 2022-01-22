@@ -301,13 +301,34 @@ static int fsyscp_remove(char *name);
 #endif /* pdfTeX ... */
 #endif /* _WIN32 */
 
+#if defined(pTeX) || defined(upTeX) || defined(epTeX) || defined(eupTeX)
+#define IS_pTeX 1
+#else
+#define IS_pTeX 0
+#endif
+
 /*  This macro layer was added to take luatex into account as suggested by T. Hoekwater. */
+# if IS_pTeX && !defined(_WIN32)
+char *SYNCTEX_GET_JOB_NAME()
+{
+   char *tmp = gettexstring(jobname);
+   char *tmpa = ptenc_from_internal_enc_string_to_utf8(tmp);
+   if (tmpa) { SYNCTEX_FREE(tmp); return tmpa; } else return tmp;
+}
+char *SYNCTEX_GET_LOG_NAME()
+{
+   char *tmp = gettexstring(texmflogname);
+   char *tmpa = ptenc_from_internal_enc_string_to_utf8(tmp);
+   if (tmpa) { SYNCTEX_FREE(tmp); return tmpa; } else return tmp;
+}
+# else
 #   if !defined(SYNCTEX_GET_JOB_NAME)
 #       define SYNCTEX_GET_JOB_NAME() (gettexstring(jobname))
 #   endif
 #   if !defined(SYNCTEX_GET_LOG_NAME)
 #       define SYNCTEX_GET_LOG_NAME() (gettexstring(texmflogname))
 #   endif
+# endif
 #   if !defined(SYNCTEX_CURRENT_TAG)
 #       define SYNCTEX_CURRENT_TAG (curinput.synctextagfield)
 #   endif

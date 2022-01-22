@@ -1,0 +1,168 @@
+%\scrollmode
+\tracingstats=1000
+\noautoxspacing
+\newlinechar=`\^^J
+\font\x=ec-lmtt10 \x
+\immediate\openout1=\jobname.out
+\def\MSG#1{%
+  \message{\string{MSG #1\string}}%
+  \immediate\write17{\string{TOT #1\string}}%
+  \immediate\write1{#1}%
+}
+\def\head#1{\message{■#1.}\par\noindent\hbox{■\null}#1.\par}
+\message{^^J}
+
+%================
+\def\A{^^c5^^bf ſ 顛 }
+A: \A
+
+\MSG{\A}
+\show\A
+
+%================
+\par
+\head{\string\meaning}
+
+\edef\B{\meaning\A}
+\meaning\B
+
+\B
+\MSG{\meaning\B}
+\show\B
+
+%================
+\head{\string\jobname}
+\edef\C{:\jobname:}
+\MSG{*あ*\jobname *\C*\meaning\C*}
+\message{^^J}
+
+%================
+\catcode`\^^c5=11
+\catcode`\^^bf=11
+\catcode`\^^e1=11
+\catcode`\^^e3=11
+\catcode`\^^81=11
+\catcode`\^^82=11
+
+\head{oneletter}
+
+\string\^^c4.\string\^^c5.\string\^^ff.
+\count0=`\^^c5%
+\MSG{\string\catcode`\string\^^c5 = \the\count0}%
+\count0=`^^c5%
+\MSG{\string\catcode`^^c5 = \the\count0}%
+\count0=`^^c5^^bf%
+\MSG{\string\catcode`^^c5^^bf = \the\count0}%
+\count0=`顛%
+\MSG{\string\catcode`顛 = \the\count0}%
+
+%================
+\head{csname1}
+
+{\def\顛{hoge}\def\^^c5^^bf{piyo}
+\show\顛
+\show\^^c5^^bf
+\expandafter\show\csname ^^c5^^bf\endcsname
+\MSG{\string\顛=>\meaning\顛}
+\MSG{\string\^^c5^^bf=>\meaning\^^c5^^bf}
+\MSG{\expandafter\string\csname ^^c5^^bf\endcsname
+  =>\expandafter\meaning\csname ^^c5^^bf\endcsname}}
+
+\string\^^c5^^bf
+\expandafter\string\csname ^^c5^^bf\endcsname,
+\expandafter\string\csname ſ\endcsname,
+\expandafter\string\csname 顛\endcsname
+\MSG{\string\^^c5^^bf,
+  \expandafter\string\csname ^^c5^^bf\endcsname,
+  \expandafter\string\csname ſ\endcsname,
+  \expandafter\string\csname 顛\endcsname.}
+
+%================
+
+\def\あ{hoge}
+\message{^^J}
+\def\TEST#1#2{%
+  \expandafter\def\csname#2\endcsname{piyo}
+  \par\toks0={#2}
+  \expandafter\string\csname #1\endcsname => \csname #1\endcsname,\par
+  \expandafter\string\csname #2\endcsname => \csname #2\endcsname,\par
+  \expandafter\string\csname \the\toks0\endcsname => \csname \the\toks0\endcsname.
+  \MSG{%
+    \expandafter\string\csname #1\endcsname => \csname #1\endcsname,
+    \expandafter\string\csname #2\endcsname => \csname #2\endcsname.
+    \expandafter\string\csname \the\toks0\endcsname => \csname \the\toks0\endcsname.
+  }%
+}
+\ifnum\euc"A4A2="A4A2\relax
+  \TEST{あ}{^^a4^^a2}
+\else
+  \TEST{あ}{^^e3^^81^^82}
+\fi
+
+%================
+\head{0xFF}
+\catcode"FF=11
+\message{^^J}
+
+\def\^^ff^^c5^^ff^^bf{あ}
+\edef\E{(\string\^^ff^^c5^^ff^^bf:\meaning\^^ff^^c5^^ff^^bf)}
+\^^ff^^c5^^ff^^bf, \E, \string\^^ff^^c5^^ff^^bf, \meaning\E.
+\MSG{\^^ff^^c5^^ff^^bf, \A, \string\^^ff^^c5^^ff^^bf, \meaning\E.}
+
+\def\^^ff{い}
+\edef\E{(\string\^^ff :\meaning\^^ff)}
+\^^ff, \E, \string\^^ff, \meaning\E.
+\MSG{\^^ff, \E, \string\^^ff, \meaning\E.}
+
+\immediate\closeout1
+
+%========
+\head{contexts}
+
+\errorcontextlines=10000
+\def\@{\A\undefined}
+\edef\a{^^c5^^bf a\A\noexpand\@ ſ 顛 }
+\edef\+#1{\noexpand\^^c5^^bf\noexpand\顛\noexpand\^^ff^^c5^^ff^^bf#1
+  \noexpand\^^ff\meaning\A\noexpand\^^c5^^bf\noexpand\顛}
+\+\a
+
+\^^ff^^c5^^ff^^bf ^^c5^^bf \^^c5^^bf ſ顛\a \^^ff ^^ff\^^c5^^bf
+
+\^^c5\^^ff\^^c4\^^fe
+
+\catcode`\^^c5=11
+\catcode`\^^be=11
+\catcode`\^^bf=11
+\catcode`\^^bd=11
+\catcode`\^^ff=11
+\font\x=ec-lmtt10 \x\scrollmode
+
+\def\^^c5^^bf{a}
+\def\顛{b}
+\def\転{c}
+\message{\string\^^c5^^bf \string\^^ff^^c5}
+
+\def\b{\ž.\ſ.\Ž..\転.\顛.\貼.}
+\b
+
+\ž.\ſ.\Ž..\転.\顛.\貼.
+
+
+%========
+\head{csname2}
+
+SHOW \show\ſ.\show\顛.%
+\expandafter\show\csname ſ\endcsname.%
+\expandafter\show\csname 顛\endcsname
+
+STRING \string\ſ.\string\顛.%
+\expandafter\string\csname ſ\endcsname.%
+\expandafter\string\csname 顛\endcsname
+
+MEANING \meaning\ſ.\meaning\顛.%
+\expandafter\meaning\csname ſ\endcsname.%
+\expandafter\meaning\csname 顛\endcsname.%
+
+\message{\string\^^e3^^81^^82 \string\あ}
+
+\end
