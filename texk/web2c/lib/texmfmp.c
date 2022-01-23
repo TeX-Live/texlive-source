@@ -3084,9 +3084,10 @@ getjobname(strnumber name)
     while (i<l)
      {
         p = multistrlenshort(strpool, l, i);
-        if (p>1)
-             for (int j=i+p; i<j; i++) strpool[i] = (0xFF&strpool[i])+0x100;
-        else i++;
+        if (p>1) {
+             int j;
+             for (j=i+p; i<j; i++) strpool[i] = (0xFF&strpool[i])+0x100;
+        } else i++;
      }
 #endif /* IS_pTeX */
     return ret;
