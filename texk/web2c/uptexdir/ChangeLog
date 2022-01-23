@@ -1,3 +1,14 @@
+2022-01-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, updvitype.ch, uppltotf.ch, uptftopl.ch,
+	uptex_version.h: upTeX version u1.28.
+	* uptex-m.ch, ubbibtex.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-14.0.0.txt Date: 2021-01-22, 23:29:00 GMT [KW]".
+	* COPYRIGHT, COPYRIGHT.ja:
+	Update copyright year.
+	* upkcat.test, tests/kcat.tex, tests/upkcat.txt: Add a new test.
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Change type of str_pool to unsigned short.

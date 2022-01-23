@@ -4530,7 +4530,8 @@ upweb_tests = \
 	uptexdir/yokotate.test \
 	uptexdir/newjfm.test \
 	uptexdir/uparse.test \
-	uptexdir/gkhuge.test
+	uptexdir/gkhuge.test \
+	uptexdir/upkcat.test
 
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
 	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_149)

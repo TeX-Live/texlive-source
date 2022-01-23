@@ -1,0 +1,15 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2022 TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+# You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=$srcdir/uptexdir/tests:.; export TEXINPUTS
+
+./uptex -ini -interaction batchmode -jobname upkcat-log kcat.tex || exit 1
+grep '::' upkcat-log.log > upkcat-log_ed.log \
+  && diff upkcat-log_ed.log $srcdir/uptexdir/tests/upkcat.txt || exit 2
+
+exit 0
