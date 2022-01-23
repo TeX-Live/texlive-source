@@ -378,7 +378,7 @@ function is_char_kanji_upbibtex(@!c:integer):boolean;
 label exit;
 var k:integer;
 begin
-  { based on upTeX-1.26 kcatcode status: 16,17,19->true / 15,18->false }
+  { based on upTeX-1.28 kcatcode status: 16,17,19->true / 15,18->false }
   is_char_kanji_upbibtex := true;
   if (is_internalUPTEX) then begin { should be in sync with |kcat_code| of uptex-m.ch }
     k := kcatcodekey(c);
