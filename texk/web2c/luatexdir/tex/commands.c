@@ -799,6 +799,7 @@ void initialize_etex_commands(void)
     primitive_luatex("mathnolimitsmode", assign_int_cmd, int_base + math_nolimits_mode_code, int_base);
     primitive_luatex("mathitalicsmode", assign_int_cmd, int_base + math_italics_mode_code, int_base);
     primitive_luatex("mathrulesmode", assign_int_cmd, int_base + math_rules_mode_code, int_base);
+    primitive_luatex("matheqdirmode", assign_int_cmd, int_base + math_eq_dir_mode_code, int_base);
     primitive_luatex("mathrulesfam", assign_int_cmd, int_base + math_rules_fam_code, int_base);
     primitive_luatex("synctex", assign_int_cmd, int_base + synctex_code, int_base);
 

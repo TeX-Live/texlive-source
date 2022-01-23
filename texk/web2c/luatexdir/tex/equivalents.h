@@ -313,8 +313,9 @@ the |number_regs| \.{\\dimen} registers.
 #  define discretionary_ligature_mode_code 120
 #  define partoken_context_code 121
 #  define show_stream_code 122
+#  define math_eq_dir_mode_code 123
 
-#  define math_option_code 123
+#  define math_option_code 124
 
 #  define mathoption_int_base_code (math_option_code+1)                 /* one reserve */
 #  define mathoption_int_last_code (mathoption_int_base_code+8)
@@ -816,6 +817,7 @@ extern halfword last_cs_name;
 #define fixup_boxes_par                    int_par(fixup_boxes_code)
 #define glyph_dimensions_par               int_par(glyph_dimensions_code)
 #define math_defaults_mode_par             int_par(math_defaults_mode_code)
+#define math_eq_dir_mode_par               int_par(math_eq_dir_mode_code)
 #define discretionary_ligature_mode_par    int_par(discretionary_ligature_mode_code)
 #define partoken_context_code_par          int_par(partoken_context_code)
 

@@ -33,13 +33,10 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 */
 
 #define MAX_CHAIN_SIZE   13 /* why not a bit larger */
-#define CHECK_NODE_USAGE  1 /* this triggers checking */
 
 memory_word *volatile varmem = NULL;
 
-#ifdef CHECK_NODE_USAGE
-    char *varmem_sizes = NULL;
-#endif
+char *varmem_sizes = NULL;
 
 halfword var_mem_max = 0;
 halfword rover = 0;
@@ -1436,13 +1433,9 @@ int lua_properties_use_metatable = 0 ;
 int valid_node(halfword p)
 {
     if (p > my_prealloc && p < var_mem_max) {
-#ifdef CHECK_NODE_USAGE
         if (varmem_sizes[p] > 0) {
             return 1;
         }
-#else
-        return 1;
-#endif
     }
     return 0;
 }
@@ -1475,8 +1468,6 @@ static int test_count = 1;
         formatted_error("nodes","fuzzy token cleanup in node with type %s",node_data[type(p)].name); \
     } \
 }
-
-#ifdef CHECK_NODE_USAGE
 
 static void check_static_node_mem(void)
 {
@@ -1587,12 +1578,9 @@ static void node_mem_dump(halfword p)
     }
 }
 
-#endif
-
 static int free_error(halfword p)
 {
     if (p > my_prealloc && p < var_mem_max) {
-#ifdef CHECK_NODE_USAGE
         int i;
         if (varmem_sizes[p] == 0) {
             check_static_node_mem();
@@ -1610,7 +1598,6 @@ static int free_error(halfword p)
             node_mem_dump(p);
             return 1;
         }
-#endif
     } else {
         formatted_error("nodes", "attempt to free an impossible node %d", (int) p);
         return 1;
@@ -1621,7 +1608,6 @@ static int free_error(halfword p)
 static int copy_error(halfword p)
 {
     if (p >= 0 && p < var_mem_max) {
-#ifdef CHECK_NODE_USAGE
         if (p > my_prealloc && varmem_sizes[p] == 0) {
             if (type(p) == glyph_node) {
                 formatted_warning("nodes", "attempt to copy free glyph (%c) node %d, ignored", (int) character(p), (int) p);
@@ -1630,7 +1616,6 @@ static int copy_error(halfword p)
             }
             return 1;
         }
-#endif
     } else {
         formatted_error("nodes", "attempt to copy an impossible node %d", (int) p);
         return 1;
@@ -2727,9 +2712,7 @@ halfword get_node(int s)
         r = free_chain[s];
         if (r != null) {
             free_chain[s] = vlink(r);
-#ifdef CHECK_NODE_USAGE
             varmem_sizes[r] = (char) s;
-#endif
             vlink(r) = null;
             /*tex Maintain usage statistics. */
             var_used += s;
@@ -2749,9 +2732,7 @@ void free_node(halfword p, int s)
         formatted_error("nodes", "node number %d of type %d should not be freed", (int) p, type(p));
         return;
     }
-#ifdef CHECK_NODE_USAGE
     varmem_sizes[p] = 0;
-#endif
     if (s < MAX_CHAIN_SIZE) {
         vlink(p) = free_chain[s];
         free_chain[s] = p;
@@ -2772,16 +2753,12 @@ static void free_node_chain(halfword q, int s)
 {
     register halfword p = q;
     while (vlink(p) != null) {
-#ifdef CHECK_NODE_USAGE
         varmem_sizes[p] = 0;
-#endif
         var_used -= s;
         p = vlink(p);
     }
     var_used -= s;
-#ifdef CHECK_NODE_USAGE
     varmem_sizes[p] = 0;
-#endif
     vlink(p) = free_chain[s];
     free_chain[s] = q;
 }
@@ -2831,13 +2808,11 @@ void init_node_mem(int t)
         overflow("node memory size", (unsigned) var_mem_max);
     }
     memset((void *) (varmem), 0, (unsigned) t * sizeof(memory_word));
-#ifdef CHECK_NODE_USAGE
     varmem_sizes = (char *) realloc(varmem_sizes, sizeof(char) * (unsigned) t);
     if (varmem_sizes == NULL) {
         overflow("node memory size", (unsigned) var_mem_max);
     }
     memset((void *) varmem_sizes, 0, sizeof(char) * (unsigned) t);
-#endif
     var_mem_max = t;
     rover = var_mem_stat_max + 1;
     vlink(rover) = rover;
@@ -2876,9 +2851,7 @@ void dump_node_mem(void)
     dump_int(var_mem_max);
     dump_int(rover);
     dump_things(varmem[0], var_mem_max);
-#ifdef CHECK_NODE_USAGE
     dump_things(varmem_sizes[0], var_mem_max);
-#endif
     dump_things(free_chain[0], MAX_CHAIN_SIZE);
     dump_int(var_used);
     dump_int(my_prealloc);
@@ -2898,11 +2871,9 @@ void undump_node_mem(void)
     var_mem_max = (x < 100000 ? 100000 : x);
     varmem = xmallocarray(memory_word, (unsigned) var_mem_max);
     undump_things(varmem[0], x);
-#ifdef CHECK_NODE_USAGE
     varmem_sizes = xmallocarray(char, (unsigned) var_mem_max);
     memset((void *) varmem_sizes, 0, (unsigned) var_mem_max * sizeof(char));
     undump_things(varmem_sizes[0], x);
-#endif
     undump_things(free_chain[0], MAX_CHAIN_SIZE);
     undump_int(var_used);
     undump_int(my_prealloc);
@@ -2941,9 +2912,7 @@ halfword slow_get_node(int s)
                 vlink(rover) += s;
             }
             if (vlink(rover) < var_mem_max) {
-#ifdef CHECK_NODE_USAGE
                 varmem_sizes[r] = (char) (s > 127 ? 127 : s);
-#endif
                 vlink(r) = null;
                 /*tex Maintain usage statistics. */
                 var_used += s;
@@ -2984,13 +2953,11 @@ halfword slow_get_node(int s)
                 overflow("node memory size", (unsigned) var_mem_max);
             }
             memset((void *) (varmem + var_mem_max), 0, (unsigned) x * sizeof(memory_word));
-#ifdef CHECK_NODE_USAGE
             varmem_sizes = (char *) realloc(varmem_sizes, sizeof(char) * (unsigned) (var_mem_max + x));
             if (varmem_sizes == NULL) {
                 overflow("node memory size", (unsigned) var_mem_max);
             }
             memset((void *) (varmem_sizes + var_mem_max), 0, (unsigned) (x) * sizeof(char));
-#endif
             /*tex Todo: is it perhaps possible to merge the new memory with an existing rover? */
             vlink(var_mem_max) = rover;
             node_size(var_mem_max) = x;
@@ -3011,7 +2978,6 @@ halfword slow_get_node(int s)
 char *sprint_node_mem_usage(void)
 {
     char *s;
-#ifdef CHECK_NODE_USAGE
     char *ss;
     int i;
     int b = 0;
@@ -3043,16 +3009,12 @@ char *sprint_node_mem_usage(void)
             b = 1;
         }
     }
-#else
-    s = strdup("");
-#endif
     return s;
 }
 
 halfword list_node_mem_usage(void)
 {
     halfword q = null;
-#ifdef CHECK_NODE_USAGE
     halfword p = null;
     halfword i, j;
     char *saved_varmem_sizes = xmallocarray(char, (unsigned) var_mem_max);
@@ -3069,7 +3031,6 @@ halfword list_node_mem_usage(void)
         }
     }
     free(saved_varmem_sizes);
-#endif
     return q;
 }
 
