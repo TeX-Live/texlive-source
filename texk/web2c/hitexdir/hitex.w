@@ -28,8 +28,7 @@
 % subsequent e-TeX extension of TeX.
 
 % Prote is copyright (C) 2021 by Thierry Laronde and put under
-% the kerTeX Public License version 1.0 (a BSD type license with a
-% simplified advertising clause).
+% the MIT/X11 license.
 %
 % As TeX and e-TeX are reserved names for the unchanged (except for the
 % necessary implementation of system dependencies) instances of, resp.,
@@ -106,10 +105,14 @@
 %      - The API for file related primitives has been changed: no error
 %        is reported on failure to find/open and nothing is returned
 %        (matches current other implementations).
+%    0.99.9:
+%      - Fix typos in Pascal replacement text; xchg_buffer_length=0 =>
+%        xchg_buffer_length:=0 (caught by Martin Ruckert).
+%    0.99.10:
+%      - KerTeX Public License -> X11/MIT license.
 %
-% This work was done by Thierry Laronde and is under the kerTeX
-% Public License version 1.0. There is absolutely no warranty of any
-% kind! Use it at your own risks!
+% This work was done by Thierry Laronde and is under the MIT/X11
+% license.
 %
 %
 
@@ -317,9 +320,9 @@ known as `\Prote'.
 @#
 @d eTeX_states 1 /*number of \eTeX\ state variables in |eqtb|*/
 @#
-@d Prote_version_string "3.141592653-2.6-0.99.8" /*current \Prote\ version*/
+@d Prote_version_string "3.141592653-2.6-0.99.9" /*current \Prote\ version*/
 @d Prote_version 0 /* \.{\\Proteversion} */
-@d Prote_revision ".99.8" /* \.{\\Proterevision} */
+@d Prote_revision ".99.9" /* \.{\\Proterevision} */
 @#
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
@@ -28790,18 +28793,6 @@ reset the length to $0$.
 
 @<\Prote\ initializations@>=
 xchg_buffer_length=0;
-
-@ There is too the problem of what is referred as a stream of data.
-Since the conversion in another language is not easy, we dedicate a
-global variable that has to hold a reference to the stream: |data_in|.
-It is a stream of bytes, without making assumptions about what they may
-represent.
-
-In the code, we verify the opening and define |data_in| and this is this
-variable external routine may refer to for processing.
-
-@<Global...@>=
-static byte_file @!data_in; /*opening here, but letting external routines handle*/
 
 @*1 \Prote\ states.
 
