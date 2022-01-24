@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2021 Marc Penninga.
+    Copyright (C) 2005-2022 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20211115';
+my $VERSION = '20220124';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -4016,7 +4016,7 @@ don't paraphase.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2021 Marc Penninga.
+Copyright (C) 2005-2022 Marc Penninga.
 
 
 =head1 LICENSE
@@ -4039,7 +4039,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20211115.
+This document describes B<autoinst> version 20220124.
 
 
 =head1 RECENT CHANGES
