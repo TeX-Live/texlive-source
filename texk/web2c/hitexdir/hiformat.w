@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2636 $
+\setrevision$Revision: 2655 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2022-01-07 16:10:00 +0100 (Fri, 07 Jan 2022) $
+\setdate$Date: 2022-01-24 09:01:21 +0100 (Mon, 24 Jan 2022) $
 
 \null
 
@@ -6242,8 +6242,6 @@ remainder of the banner is simply ignored but may be used to contain
 other useful information about the file.  The maximum size of the
 banner is 256 byte.
 @<hint macros@>=
-#define HINT_VERSION 1
-#define HINT_SUB_VERSION 3
 #define MAX_BANNER 256
 @
 
@@ -6253,19 +6251,19 @@ it returns |true| if successful.
 
 @<common variables@>=
 char hbanner[MAX_BANNER+1];
+int hbanner_size=0;
 @
 
 @<function to check the banner@>=
 
 bool hcheck_banner(char *magic)
-{ int hbanner_size=0;
+{
   int v;
   char *t;
   t=hbanner;
   if (strncmp(magic,hbanner,4)!=0)
   {  MESSAGE("This is not a %s file\n",magic); return false; }
   else t+=4;
-  hbanner_size=(int)strnlen(hbanner,MAX_BANNER);
   if(hbanner[hbanner_size-1]!='\n')
   { MESSAGE("Banner exceeds maximum size=0x%x\n",MAX_BANNER); return false; }
   if (*t!=' ')
@@ -6297,24 +6295,27 @@ Checking the banner is a separate step.
 \getcode
 @<get file functions@>=
 void hget_banner(void)
-{ int i;
-  for (i=0;i<MAX_BANNER && hpos<hend;i++)@/
-  { hbanner[i]=HGET8;
-    if (hbanner[i]=='\n') break;
-  } 
-  hbanner[++i]=0;
+{ hbanner_size=0;
+  while (hbanner_size<MAX_BANNER && hpos<hend)
+  { uint8_t c=HGET8;
+    hbanner[hbanner_size++]=c;
+    if (c=='\n') break;
+  }
+  hbanner[hbanner_size]=0;
 }
 @
 
 To read a long format file, we use the function |fgetc|.
 \readcode
 @<read the banner@>=
-{ int i,c;
-  for (i=0;i<MAX_BANNER && (c=fgetc(hin))!=EOF;i++)@/
-  { hbanner[i]=c;
-    if (hbanner[i]=='\n') break;
+{ hbanner_size=0;
+  while ( hbanner_size<MAX_BANNER)
+  { int c=fgetc(hin);
+    if (c==EOF) break;
+    hbanner[hbanner_size++]=c;
+    if (c=='\n') break;
   } 
-  hbanner[++i]=0;
+  hbanner[hbanner_size]=0;
 }
 @
 
@@ -9991,6 +9992,8 @@ typedef double float64_t;
 #if __SIZEOF_DOUBLE__!=8
 #error  @=float64 type must have size 8@>
 #endif
+#define HINT_VERSION 1
+#define HINT_SUB_VERSION 3
 #endif
 @
 

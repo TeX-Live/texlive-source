@@ -1,5 +1,5 @@
 	/*503:*/
-	#line 9953 "format.w"
+	#line 9954 "format.w"
 
 #ifndef __BASETYPES_H__
 #define __BASETYPES_H__
@@ -41,5 +41,7 @@ typedef double float64_t;
 #if __SIZEOF_DOUBLE__!=8
 #error  float64 type must have size 8
 #endif
+#define HINT_VERSION 1
+#define HINT_SUB_VERSION 3
 #endif
 	/*:503*/

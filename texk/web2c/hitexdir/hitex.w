@@ -324,7 +324,10 @@ known as `\Prote'.
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
 @#
-@d banner "This is HiTeX, Version 3.141592653-" HiTeX_version_string  /*printed when \TeX\ starts*/
+@d QUOTE(X) #X
+@d HINT_VER_STR(X,Y) "HINT version " QUOTE(X) "." QUOTE(Y)
+@d banner "This is HiTeX, Version 3.141592653, " HINT_VER_STR(HINT_VERSION,HINT_SUB_VERSION)
+   /*printed when \TeX\ starts*/
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -873,7 +876,8 @@ implement \TeX\ can open a file whose external name is specified by
 @^system dependencies@>
 
 @<Glob...@>=
-static unsigned char @!name_of_file0[file_name_size+1]={0}, *const @!name_of_file = @!name_of_file0-1;@;@/
+static unsigned char @!name_of_file0[file_name_size+1]={0},
+  *const @!name_of_file = @!name_of_file0-1;@;@/
    /*on some systems this may be a \&{record} variable*/
 static int @!name_length;@/ /*this many characters are actually
   relevant in |name_of_file| (the rest are blank)*/
@@ -1982,7 +1986,9 @@ been commented~out.
 
 @<Interpret code |c| and |return| if done@>=
 switch (c) {
-case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': if (deletions_allowed)
+case '0': case '1': case '2': case '3':
+  case '4': case '5': case '6': case '7':
+  case '8': case '9': if (deletions_allowed)
   @<Delete \(c)|c-"0"| tokens and |goto continue|@>@;@+break;
 @t\4\4@>@;
 #ifdef @!DEBUG
@@ -2645,7 +2651,8 @@ spend about 9\pct! of its running time allocating nodes, and about 6\pct!
 deallocating them after their use.
 
 @<Glob...@>=
-static memory_word @!mem0[mem_max-mem_min+1], *const @!mem = @!mem0-mem_min; /*the big dynamic storage area*/
+static memory_word @!mem0[mem_max-mem_min+1],
+  *const @!mem = @!mem0-mem_min; /*the big dynamic storage area*/
 static pointer @!lo_mem_max; /*the largest location of variable-size memory in use*/
 static pointer @!hi_mem_min; /*the smallest location of one-word memory in use*/
 
@@ -2803,8 +2810,8 @@ pointer @!q; /*the node physically after node |p|*/
 int @!r; /*the newly allocated node, or a candidate for this honor*/
 int @!t; /*temporary register*/
 restart: p=rover; /*start at some free node in the ring*/
-@/do@+{@<Try to allocate within node |p| and its physical successors, and |goto found|
-if allocation was possible@>;
+@/do@+{@<Try to allocate within node |p| and its physical successors, and
+|goto found| if allocation was possible@>;
 @^inner loop@>
 p=rlink(p); /*move to the next node in the ring*/
 }@+ while (!(p==rover)); /*repeat until the whole list has been traversed*/
@@ -2906,8 +2913,8 @@ static void sort_avail(void) /*sorts the available variable-size nodes
 pointer @!old_rover; /*initial |rover| setting*/
 p=get_node(010000000000); /*merge adjacent free areas*/
 p=rlink(rover);rlink(rover)=max_halfword;old_rover=rover;
-while (p!=old_rover) @<Sort \(p)|p| into the list starting at |rover| and advance
-|p| to |rlink(p)|@>;
+while (p!=old_rover) @<Sort \(p)|p| into the list starting at |rover| and
+advance |p| to |rlink(p)|@>;
 p=rover;
 while (rlink(p)!=max_halfword)
   {@+llink(rlink(p))=p;p=rlink(p);
@@ -3498,8 +3505,10 @@ are debugging.)
 
 @<Glob...@>=
 #ifdef @!DEBUG
-static bool @!is_free0[mem_max-mem_min+1], *const @!is_free = @!is_free0-mem_min; /*free cells*/
-@t\hskip10pt@>static bool @!was_free0[mem_max-mem_min+1], *const @!was_free = @!was_free0-mem_min;
+static bool @!is_free0[mem_max-mem_min+1],
+  *const @!is_free = @!is_free0-mem_min; /*free cells*/
+@t\hskip10pt@>static bool @!was_free0[mem_max-mem_min+1],
+  *const @!was_free = @!was_free0-mem_min;
    /*previously free cells*/
 @t\hskip10pt@>static pointer @!was_mem_end, @!was_lo_max, @!was_hi_min;
    /*previous |mem_end|, |lo_mem_max|, and |hi_mem_min|*/
@@ -3678,7 +3687,8 @@ while (p > mem_min)
 
 @ @<Print a short indication of the contents of node |p|@>=
 switch (type(p)) {
-case hlist_node: case vlist_node: case ins_node: case whatsit_node: case mark_node: case adjust_node:
+case hlist_node: case vlist_node: case ins_node:
+  case whatsit_node: case mark_node: case adjust_node:
   case unset_node: case unset_set_node: case unset_pack_node: print("[]");@+break;
 case rule_node: print_char('|');@+break;
 case glue_node: if (glue_ptr(p)!=zero_glue) print_char(' ');@+break;
@@ -4056,7 +4066,8 @@ while (p!=null)
   {@+q=link(p);
   if (is_char_node(p)) free_avail(p)@;
   else{@+switch (type(p)) {
-    case hlist_node: case vlist_node: case unset_node: case unset_set_node: case unset_pack_node: {@+flush_node_list(list_ptr(p));
+    case hlist_node: case vlist_node: case unset_node:
+  case unset_set_node: case unset_pack_node: {@+flush_node_list(list_ptr(p));
       free_node(p, box_node_size);goto done;
       }
     case rule_node: {@+free_node(p, rule_node_size);goto done;
@@ -4129,15 +4140,16 @@ return q;
 @ @<Make a copy of node |p|...@>=
 words=1; /*this setting occurs in more branches than any other*/
 if (is_char_node(p)) r=get_avail();
-else@<Case statement to copy different types and set |words| to the number of initial
-words not yet copied@>;
+else@<Case statement to copy different types and set |words| to the number
+of initial words not yet copied@>;
 while (words > 0)
   {@+decr(words);mem[r+words]=mem[p+words];
   }
 
 @ @<Case statement to copy...@>=
 switch (type(p)) {
-case hlist_node: case vlist_node: case unset_node: case unset_set_node: case unset_pack_node: {@+r=get_node(box_node_size);
+case hlist_node: case vlist_node: case unset_node:
+case unset_set_node: case unset_pack_node: {@+r=get_node(box_node_size);
   mem[r+6]=mem[p+6];mem[r+5]=mem[p+5]; /*copy the last two words*/
   list_ptr(r)=copy_node_list(list_ptr(p)); /*this affects |mem[r+5]|*/
   words=5;
@@ -4149,8 +4161,8 @@ case ins_node: {@+r=get_node(ins_node_size);mem[r+4]=mem[p+4];
   ins_ptr(r)=copy_node_list(ins_ptr(p)); /*this affects |mem[r+4]|*/
   words=ins_node_size-1;
   } @+break;
-case whatsit_node: @<Make a partial copy of the whatsit node |p| and make |r| point
-to it; set |words| to the number of initial words not yet copied@>@;@+break;
+case whatsit_node: @<Make a partial copy of the whatsit node |p| and make
+|r| point to it; set |words| to the number of initial words not yet copied@>@;@+break;
 case glue_node: {@+r=get_node(small_node_size);add_glue_ref(glue_ptr(p));
   glue_ptr(r)=glue_ptr(p);leader_ptr(r)=copy_node_list(leader_ptr(p));
   } @+break;
@@ -5670,12 +5682,16 @@ but \TeX\ needs to store the |eq_level| information in another array
 called |xeq_level|.
 
 @<Glob...@>=
-static memory_word @!eqtb0[eqtb_size-active_base+1], *const @!eqtb = @!eqtb0-active_base;
-static memory_word hfactor_eqtb0[dimen_pars+256]={{{0}}}, *const @!hfactor_eqtb = @!hfactor_eqtb0-dimen_base;
-static memory_word vfactor_eqtb0[dimen_pars+256]={{{0}}}, *const @!vfactor_eqtb = @!vfactor_eqtb0-dimen_base;
+static memory_word @!eqtb0[eqtb_size-active_base+1],
+  *const @!eqtb = @!eqtb0-active_base;
+static memory_word hfactor_eqtb0[dimen_pars+256]={{{0}}},
+  *const @!hfactor_eqtb = @!hfactor_eqtb0-dimen_base;
+static memory_word vfactor_eqtb0[dimen_pars+256]={{{0}}},
+  *const @!vfactor_eqtb = @!vfactor_eqtb0-dimen_base;
 static scaled par_shape_hfactor=0, par_shape_vfactor=0;
 static scaled hhsize=0,hvsize=0;
-static quarterword @!xeq_level0[eqtb_size-int_base+1], *const @!xeq_level = @!xeq_level0-int_base;
+static quarterword @!xeq_level0[eqtb_size-int_base+1],
+  *const @!xeq_level = @!xeq_level0-int_base;
 
 @ @<Set init...@>=
 for (k=int_base; k<=eqtb_size; k++) xeq_level[k]=level_one;
@@ -5722,7 +5738,8 @@ A global boolean variable called |no_new_control_sequence| is set to
 @d font_id_text(A) text(font_id_base+A) /*a frozen font identifier's name*/
 
 @<Glob...@>=
-static two_halves @!hash0[undefined_control_sequence-hash_base], *const @!hash = @!hash0-hash_base;
+static two_halves @!hash0[undefined_control_sequence-hash_base],
+  *const @!hash = @!hash0-hash_base;
    /*the hash table*/
 static pointer @!hash_used; /*allocation pointer for |hash|*/
 static bool @!no_new_control_sequence; /*are new identifiers legal?*/
@@ -5761,7 +5778,8 @@ loop@+{@+if (text(p) > 0) if (length(text(p))==l)
   if (next(p)==0)
     {@+if (no_new_control_sequence)
       p=undefined_control_sequence;
-    else@<Insert a new control sequence after |p|, then make |p| point to it@>;
+    else@<Insert a new control sequence after |p|, then make |p| point to
+it@>;
     goto found;
     }
   p=next(p);
@@ -6219,7 +6237,8 @@ within |save_stack|, so these counts must be handled carefully.
 @p static void eq_destroy(memory_word @!w) /*gets ready to forget |w|*/
 {@+pointer q; /*|equiv| field of |w|*/
 switch (eq_type_field(w)) {
-case call: case long_call: case outer_call: case long_outer_call: delete_token_ref(equiv_field(w));@+break;
+case call: case long_call: case outer_call:
+  case long_outer_call: delete_token_ref(equiv_field(w));@+break;
 case glue_ref: delete_glue_ref(equiv_field(w));@+break;
 case shape_ref: {@+q=equiv_field(w); /*we need to free a \.{\\parshape} block*/
   if (q!=null) free_node(q, info(q)+info(q)+1);
@@ -6384,8 +6403,8 @@ loop@+{@+decr(save_ptr);
       {@+l=save_level(save_ptr);decr(save_ptr);
       }
     else save_stack[save_ptr]=eqtb[undefined_control_sequence];
-    @<Store \(s)|save_stack[save_ptr]| in |eqtb[p]|, unless |eqtb[p]| holds a global
-value@>;
+    @<Store \(s)|save_stack[save_ptr]| in |eqtb[p]|, unless |eqtb[p]| holds
+a global value@>;
     }
   }
 done:
@@ -6646,7 +6665,9 @@ parameters by seeing one in a |match| command before it runs into any
 
 @<Display the token...@>=
 switch (m) {
-case left_brace: case right_brace: case math_shift: case tab_mark: case sup_mark: case sub_mark: case spacer:
+case left_brace: case right_brace: case math_shift:
+  case tab_mark: case sup_mark: case sub_mark:
+  case spacer:
   case letter: case other_char: printn(c);@+break;
 case mac_param: {@+printn(c);printn(c);
   } @+break;
@@ -6936,9 +6957,11 @@ by analogy with |line_stack|.
 @<Glob...@>=
 static int @!in_open; /*the number of lines in the buffer, less one*/
 static int @!open_parens; /*the number of open text files*/
-static alpha_file @!input_file0[max_in_open], *const @!input_file = @!input_file0-1;
+static alpha_file @!input_file0[max_in_open],
+  *const @!input_file = @!input_file0-1;
 static int @!line; /*current line number in the current source file*/
-static int @!line_stack0[max_in_open], *const @!line_stack = @!line_stack0-1;
+static int @!line_stack0[max_in_open],
+  *const @!line_stack = @!line_stack0-1;
 
 @ Users of \TeX\ sometimes forget to balance left and right braces properly,
 and one of the ways \TeX\ tries to spot such errors is by considering an
@@ -7594,8 +7617,8 @@ else{@+cur_cs=0;print_err("Forbidden control sequence found");
 @.Forbidden control sequence...@>
   }
 print(" while scanning ");
-@<Print either `\.{definition}' or `\.{use}' or `\.{preamble}' or `\.{text}', and
-insert tokens that should lead to recovery@>;
+@<Print either `\.{definition}' or `\.{use}' or `\.{preamble}' or `\.{text}',
+and insert tokens that should lead to recovery@>;
 print(" of ");sprint_cs(warning_index);
 help4("I suspect you have forgotten a `}', causing me",@/
 "to read past where you wanted me to stop.",@/
@@ -7651,8 +7674,8 @@ int @!d; /*number of excess characters in an expanded code*/
 restart: cur_cs=0;
 if (state!=token_list)
 @<Input from external file, |goto restart| if no input found@>@;
-else@<Input from token list, |goto restart| if end of list or if a parameter needs
-to be expanded@>;
+else@<Input from token list, |goto restart| if end of list or if a parameter
+needs to be expanded@>;
 @<If an alignment entry has just ended, take appropriate action@>;
 }
 
@@ -7671,12 +7694,13 @@ if (cur_cmd <= car_ret) if (cur_cmd >= tab_mark) if (align_state==0)
 {@+get_cur_chr: if (loc <= limit)  /*current line not yet finished*/
   {@+cur_chr=buffer[loc];incr(loc);
   reswitch: cur_cmd=cat_code(cur_chr);
-  @<Change state if necessary, and |goto switch| if the current character should be
-ignored, or |goto reswitch| if the current character changes to another@>;
+  @<Change state if necessary, and |goto switch| if the current character
+should be ignored, or |goto reswitch| if the current character changes to
+another@>;
   }
 else{@+state=new_line;@/
-  @<Move to next line of file, or |goto restart| if there is no next line, or |return|
-if a \.{\\read} line has finished@>;
+  @<Move to next line of file, or |goto restart| if there is no next line,
+or |return| if a \.{\\read} line has finished@>;
   check_interrupt;
   goto get_cur_chr;
   }
@@ -7688,24 +7712,26 @@ values for |mid_line|, |skip_blanks|, and |new_line| are spaced
 apart from each other by |max_char_code+1|, so we can add a character's
 command code to the state to get a single number that characterizes both.
 
-@d any_state_plus(A) case mid_line+A: case skip_blanks+A: case new_line+A
+@d any_state_plus(A) case mid_line+A:
+  case skip_blanks+A: case new_line+A
 
 @<Change state if necessary...@>=
 switch (state+cur_cmd) {
 @<Cases where character is ignored@>: goto get_cur_chr;
-any_state_plus(escape): @<Scan a control sequence and set |state:=skip_blanks| or
-|mid_line|@>@;@+break;
-any_state_plus(active_char): @<Process an active-character control sequence and set
-|state:=mid_line|@>@;@+break;
-any_state_plus(sup_mark): @<If this |sup_mark| starts an expanded character like~\.{\^\^A}
-or~\.{\^\^df}, then |goto reswitch|, otherwise set |state:=mid_line|@>@;@+break;
+any_state_plus(escape): @<Scan a control sequence and set |state:=skip_blanks|
+or |mid_line|@>@;@+break;
+any_state_plus(active_char): @<Process an active-character control sequence
+and set |state:=mid_line|@>@;@+break;
+any_state_plus(sup_mark): @<If this |sup_mark| starts an expanded character
+like~\.{\^\^A} or~\.{\^\^df}, then |goto reswitch|, otherwise set |state:=mid_line|@>@;@+break;
 any_state_plus(invalid_char): @<Decry the invalid character and |goto restart|@>@;
 @t\4@>@<Handle situations involving spaces, braces, changes of state@>@;
 default:do_nothing;
 }
 
 @ @<Cases where character is ignored@>=
-any_state_plus(ignore): case skip_blanks+spacer: case new_line+spacer
+any_state_plus(ignore): case skip_blanks+spacer:
+  case new_line+spacer
 
 @ We go to |restart| instead of to |get_cur_chr|, because |state| might equal
 |token_list| after the error has been dealt with
@@ -7737,7 +7763,8 @@ case mid_line+right_brace: decr(align_state);@+break;
 case skip_blanks+right_brace: case new_line+right_brace: {@+
   state=mid_line;decr(align_state);
   } @+break;
-add_delims_to(case skip_blanks): add_delims_to(case new_line): state=mid_line;@+break;
+add_delims_to(case skip_blanks): add_delims_to(
+  case new_line): state=mid_line;@+break;
 
 @ When a character of type |spacer| gets through, its character code is
 changed to $\.{"\ "}=040$. This means that the ASCII codes for tab and space,
@@ -7818,9 +7845,9 @@ else{@+start_cs: k=loc;cur_chr=buffer[k];cat=cat_code(cur_chr);
   else if (cat==spacer) state=skip_blanks;
   else state=mid_line;
   if ((cat==letter)&&(k <= limit))
-    @<Scan ahead in the buffer until finding a nonletter; if an expanded code is encountered,
-reduce it and |goto start_cs|; otherwise if a multiletter control sequence is found,
-adjust |cur_cs| and |loc|, and |goto found|@>@;
+    @<Scan ahead in the buffer until finding a nonletter; if an expanded code
+is encountered, reduce it and |goto start_cs|; otherwise if a multiletter
+control sequence is found, adjust |cur_cs| and |loc|, and |goto found|@>@;
   else@<If an expanded code is present, reduce it and |goto start_cs|@>;
   cur_cs=single_base+buffer[loc];incr(loc);
   }
@@ -7869,8 +7896,8 @@ if (k > loc+1)  /*multiletter control sequence has been scanned*/
 
 @ Let's consider now what happens when |get_next| is looking at a token list.
 
-@<Input from token list, |goto restart| if end of list or if a parameter needs to
-be expanded@>=
+@<Input from token list, |goto restart| if end of list or if a parameter needs
+to be expanded@>=
 if (loc!=null)  /*list not exhausted*/
 @^inner loop@>
   {@+t=info(loc);loc=link(loc); /*move to next*/
@@ -7920,8 +7947,8 @@ There is one more branch.
 @d end_line_char_inactive (end_line_char < 0)||(end_line_char > 255)
 
 @<Move to next line of file, or |goto restart|...@>=
-if (name > 17) @<Read next line of file into |buffer|, or |goto restart| if the file
-has ended@>@;
+if (name > 17) @<Read next line of file into |buffer|, or |goto restart| if
+the file has ended@>@;
 else{@+if (!terminal_input)  /*\.{\\read} line has ended*/
     {@+cur_cmd=0;cur_chr=0;return;
     }
@@ -7955,7 +7982,8 @@ by an \.{\\endinput} command.
 @<Glob...@>=
 static bool @!force_eof; /*should the next \.{\\input} be aborted early?*/
 
-@ @<Read next line of file into |buffer|, or |goto restart| if the file has ended@>=
+@ @<Read next line of file into |buffer|, or |goto restart| if the file has
+ended@>=
 {@+incr(line);first=start;
 if (!force_eof)
   if (name <= 19)
@@ -8299,7 +8327,8 @@ array by symbolic names |top_mark|, etc. The value of |top_mark| is either
 @d split_bot_mark cur_mark[split_bot_mark_code]
 
 @<Glob...@>=
-static pointer @!cur_mark0[split_bot_mark_code-top_mark_code+1], *const @!cur_mark = @!cur_mark0-top_mark_code;
+static pointer @!cur_mark0[split_bot_mark_code-top_mark_code+1],
+  *const @!cur_mark = @!cur_mark0-top_mark_code;
    /*token lists for marks*/
 
 @ @<Set init...@>=
@@ -8396,8 +8425,8 @@ warning_index=cur_cs;ref_count=cur_chr;r=link(ref_count);n=0;
 if (tracing_macros > 0) @<Show the text of the macro being expanded@>;
 if (info(r)==protected_token) r=link(r);
 if (info(r)!=end_match_token)
-  @<Scan the parameters and make |link(r)| point to the macro body; but |return| if
-an illegal \.{\\par} is detected@>;
+  @<Scan the parameters and make |link(r)| point to the macro body; but |return|
+if an illegal \.{\\par} is detected@>;
 @<Feed the macro body and its parameters to the scanner@>;
 end: scanner_status=save_scanner_status;warning_index=save_warning_index;
 }
@@ -8440,8 +8469,8 @@ if ((info(r) > match_token+255)||(info(r) < match_token)) s=null;
 else{@+match_chr=info(r)-match_token;s=link(r);r=s;
   p=temp_head;m=0;
   }
-@<Scan a parameter until its delimiter string has been found; or, if |s=null|, simply
-scan the delimiter string@>;@/
+@<Scan a parameter until its delimiter string has been found; or, if |s=null|,
+simply scan the delimiter string@>;@/
  /*now |info(r)| is a token whose command code is either |match| or |end_match|*/
 }@+ while (!(info(r)==end_match_token));
 }
@@ -8454,18 +8483,18 @@ always fail the test `|cur_tok==info(r)|' in the following algorithm.
 @<Scan a parameter until its delimiter string has been found; or,...@>=
 resume: get_token(); /*set |cur_tok| to the next token of input*/
 if (cur_tok==info(r))
-  @<Advance \(r)|r|; |goto found| if the parameter delimiter has been fully matched,
-otherwise |goto continue|@>;
-@<Contribute the recently matched tokens to the current parameter, and |goto continue|
-if a partial match is still in effect; but abort if |s=null|@>;
+  @<Advance \(r)|r|; |goto found| if the parameter delimiter has been fully
+matched, otherwise |goto continue|@>;
+@<Contribute the recently matched tokens to the current parameter, and |goto
+continue| if a partial match is still in effect; but abort if |s=null|@>;
 if (cur_tok==par_token) if (long_state!=long_call)
   @<Report a runaway argument and abort@>;
 if (cur_tok < right_brace_limit)
   if (cur_tok < left_brace_limit)
     @<Contribute an entire group to the current parameter@>@;
   else@<Report an extra right brace and |goto continue|@>@;
-else@<Store the current token, but |goto continue| if it is a blank space that would
-become an undelimited parameter@>;
+else@<Store the current token, but |goto continue| if it is a blank space
+that would become an undelimited parameter@>;
 incr(m);
 if (info(r) > end_match_token) goto resume;
 if (info(r) < match_token) goto resume;
@@ -8786,8 +8815,9 @@ int @!p; /*index into |nest|*/
 m=cur_chr;
 switch (cur_cmd) {
 case def_code: @<Fetch a character code from some table@>@;@+break;
-case toks_register: case assign_toks: case def_family: case set_font: case def_font: @<Fetch
-a token list or font identifier, provided that |level=tok_val|@>@;@+break;
+case toks_register: case assign_toks:
+  case def_family: case set_font: case def_font: @<Fetch a token list or font
+identifier, provided that |level=tok_val|@>@;@+break;
 case assign_int: scanned_result(eqtb[m].i, int_val)@;@+break;
 case assign_dimen:
   scanned_result(eqtb[m].sc, dimen_val);
@@ -9346,7 +9376,8 @@ cur_hfactor=cur_vfactor=0;
 if (!shortcut)
   {@+@<Get the next non-blank non-sign...@>;
   if ((cur_cmd >= min_internal)&&(cur_cmd <= max_internal))
-    @<Fetch an internal dimension and |goto attach_sign|, or fetch an internal integer@>@;
+    @<Fetch an internal dimension and |goto attach_sign|, or fetch an internal
+integer@>@;
   else{@+back_input();
     if (cur_tok==continental_point_token) cur_tok=point_token;
     if (cur_tok!=point_token) scan_int();
@@ -9359,8 +9390,8 @@ if (!shortcut)
 if (cur_val < 0)  /*in this case |f==0|*/
   {@+negative=!negative;negate(cur_val);
   }
-@<Scan units and set |cur_val| to $x\cdot(|cur_val|+f/2^{16})$, where there are |x|
-sp per unit; |goto attach_sign| if the units are internal@>;
+@<Scan units and set |cur_val| to $x\cdot(|cur_val|+f/2^{16})$, where there
+are |x| sp per unit; |goto attach_sign| if the units are internal@>;
 @<Scan an optional space@>;
 attach_sign:
 if (arith_error||(abs(cur_val) >= 010000000000)||
@@ -9427,15 +9458,15 @@ does not overflow.
 
 @<Scan units and set |cur_val| to $x\cdot(|cur_val|+f/2^{16})$...@>=
 if (inf) @<Scan for \(f)\.{fil} units; |goto attach_fraction| if found@>;
-@<Scan for \(u)units that are internal dimensions; |goto attach_sign| with |cur_val|
-set if found@>;
+@<Scan for \(u)units that are internal dimensions; |goto attach_sign| with
+|cur_val| set if found@>;
 if (mu) @<Scan for \(m)\.{mu} units and |goto attach_fraction|@>;
 if (scan_keyword("true")) @<Adjust \(f)for the magnification ratio@>;
 @.true@>
 if (scan_keyword("pt")) goto attach_fraction; /*the easy case*/
 @.pt@>
-@<Scan for \(a)all other units and adjust |cur_val| and |f| accordingly; |goto done|
-in the case of scaled points@>;
+@<Scan for \(a)all other units and adjust |cur_val| and |f| accordingly; |goto
+done| in the case of scaled points@>;
 attach_fraction: if (cur_val >= 040000) arith_error=true;
 else cur_val=cur_val*unity+f;
 done:
@@ -9595,8 +9626,8 @@ if ((cur_cmd >= min_internal)&&(cur_cmd <= max_internal))
 else{@+back_input();scan_dimen(mu, false, false);
   if (negative) { negate(cur_val); negate(cur_hfactor); negate(cur_vfactor);}
   }
-@<Create a new glue specification whose width is |cur_val|; scan for its stretch and
-shrink components@>;
+@<Create a new glue specification whose width is |cur_val|; scan for its stretch
+and shrink components@>;
 }
 @#
 @<Declare procedures needed for expressions@>@;
@@ -9863,9 +9894,9 @@ return p;
 {@+loop{@+resume: get_token(); /*set |cur_cmd|, |cur_chr|, |cur_tok|*/
   if (cur_tok < right_brace_limit) goto done1;
   if (cur_cmd==mac_param)
-    @<If the next character is a parameter number, make |cur_tok| a |match| token;
-but if it is a left brace, store `|left_brace|, |end_match|', set |hash_brace|, and
-|goto done|@>;
+    @<If the next character is a parameter number, make |cur_tok| a |match|
+token; but if it is a left brace, store `|left_brace|, |end_match|', set |hash_brace|,
+and |goto done|@>;
   store_new_token(cur_tok);
   }
 done1: store_new_token(end_match_token);
@@ -10303,7 +10334,8 @@ case if_vmode_code: b=(abs(mode)==vmode);@+break;
 case if_hmode_code: b=(abs(mode)==hmode);@+break;
 case if_mmode_code: b=(abs(mode)==mmode);@+break;
 case if_inner_code: b=(mode < 0);@+break;
-case if_void_code: case if_hbox_code: case if_vbox_code: @<Test box register status@>@;@+break;
+case if_void_code: case if_hbox_code:
+  case if_vbox_code: @<Test box register status@>@;@+break;
 case ifx_code: @<Test if two tokens match@>@;@+break;
 case if_eof_code: {@+scan_four_bit_int();b=(read_open[cur_val]==closed);
   } @+break;
@@ -11243,31 +11275,46 @@ static memory_word @!font_info[font_mem_size+1];
    /*the big collection of font data*/
 static font_index @!fmem_ptr; /*first unused word of |font_info|*/
 static internal_font_number @!font_ptr; /*largest internal font number in use*/
-static four_quarters @!font_check0[font_max-font_base+1], *const @!font_check = @!font_check0-font_base; /*check sum*/
-static scaled @!font_size0[font_max-font_base+1], *const @!font_size = @!font_size0-font_base; /*``at'' size*/
-static scaled @!font_dsize0[font_max-font_base+1], *const @!font_dsize = @!font_dsize0-font_base; /*``design'' size*/
-static font_index @!font_params0[font_max-font_base+1], *const @!font_params = @!font_params0-font_base; /*how many font
+static four_quarters @!font_check0[font_max-font_base+1],
+  *const @!font_check = @!font_check0-font_base; /*check sum*/
+static scaled @!font_size0[font_max-font_base+1],
+  *const @!font_size = @!font_size0-font_base; /*``at'' size*/
+static scaled @!font_dsize0[font_max-font_base+1],
+  *const @!font_dsize = @!font_dsize0-font_base; /*``design'' size*/
+static font_index @!font_params0[font_max-font_base+1],
+  *const @!font_params = @!font_params0-font_base; /*how many font
   parameters are present*/
-static str_number @!font_name0[font_max-font_base+1], *const @!font_name = @!font_name0-font_base; /*name of the font*/
-static str_number @!font_area0[font_max-font_base+1], *const @!font_area = @!font_area0-font_base; /*area of the font*/
-static eight_bits @!font_bc0[font_max-font_base+1], *const @!font_bc = @!font_bc0-font_base;
+static str_number @!font_name0[font_max-font_base+1],
+  *const @!font_name = @!font_name0-font_base; /*name of the font*/
+static str_number @!font_area0[font_max-font_base+1],
+  *const @!font_area = @!font_area0-font_base; /*area of the font*/
+static eight_bits @!font_bc0[font_max-font_base+1],
+  *const @!font_bc = @!font_bc0-font_base;
    /*beginning (smallest) character code*/
-static eight_bits @!font_ec0[font_max-font_base+1], *const @!font_ec = @!font_ec0-font_base;
+static eight_bits @!font_ec0[font_max-font_base+1],
+  *const @!font_ec = @!font_ec0-font_base;
    /*ending (largest) character code*/
-static pointer @!font_glue0[font_max-font_base+1], *const @!font_glue = @!font_glue0-font_base;
+static pointer @!font_glue0[font_max-font_base+1],
+  *const @!font_glue = @!font_glue0-font_base;
    /*glue specification for interword space, |null| if not allocated*/
-static bool @!font_used0[font_max-font_base+1], *const @!font_used = @!font_used0-font_base;
+static bool @!font_used0[font_max-font_base+1],
+  *const @!font_used = @!font_used0-font_base;
    /*has a character from this font actually appeared in the output?*/
-static int @!hyphen_char0[font_max-font_base+1], *const @!hyphen_char = @!hyphen_char0-font_base;
+static int @!hyphen_char0[font_max-font_base+1],
+  *const @!hyphen_char = @!hyphen_char0-font_base;
    /*current \.{\\hyphenchar} values*/
-static int @!skew_char0[font_max-font_base+1], *const @!skew_char = @!skew_char0-font_base;
+static int @!skew_char0[font_max-font_base+1],
+  *const @!skew_char = @!skew_char0-font_base;
    /*current \.{\\skewchar} values*/
-static font_index @!bchar_label0[font_max-font_base+1], *const @!bchar_label = @!bchar_label0-font_base;
+static font_index @!bchar_label0[font_max-font_base+1],
+  *const @!bchar_label = @!bchar_label0-font_base;
    /*start of |lig_kern| program for left boundary character,
   |non_address| if there is none*/
-static int16_t @!font_bchar0[font_max-font_base+1], *const @!font_bchar = @!font_bchar0-font_base;
+static int16_t @!font_bchar0[font_max-font_base+1],
+  *const @!font_bchar = @!font_bchar0-font_base;
    /*boundary character, |non_char| if there is none*/
-static int16_t @!font_false_bchar0[font_max-font_base+1], *const @!font_false_bchar = @!font_false_bchar0-font_base;
+static int16_t @!font_false_bchar0[font_max-font_base+1],
+  *const @!font_false_bchar = @!font_false_bchar0-font_base;
    /*|font_bchar| if it doesn't exist in the font, otherwise |non_char|*/
 
 @ Besides the arrays just enumerated, we have directory arrays that make it
@@ -11280,23 +11327,32 @@ part of this word (the |b0| field), the width of the character is
 stores its quarterwords that way.)
 
 @<Glob...@>=
-static int @!char_base0[font_max-font_base+1], *const @!char_base = @!char_base0-font_base;
+static int @!char_base0[font_max-font_base+1],
+  *const @!char_base = @!char_base0-font_base;
    /*base addresses for |char_info|*/
-static int @!width_base0[font_max-font_base+1], *const @!width_base = @!width_base0-font_base;
+static int @!width_base0[font_max-font_base+1],
+  *const @!width_base = @!width_base0-font_base;
    /*base addresses for widths*/
-static int @!height_base0[font_max-font_base+1], *const @!height_base = @!height_base0-font_base;
+static int @!height_base0[font_max-font_base+1],
+  *const @!height_base = @!height_base0-font_base;
    /*base addresses for heights*/
-static int @!depth_base0[font_max-font_base+1], *const @!depth_base = @!depth_base0-font_base;
+static int @!depth_base0[font_max-font_base+1],
+  *const @!depth_base = @!depth_base0-font_base;
    /*base addresses for depths*/
-static int @!italic_base0[font_max-font_base+1], *const @!italic_base = @!italic_base0-font_base;
+static int @!italic_base0[font_max-font_base+1],
+  *const @!italic_base = @!italic_base0-font_base;
    /*base addresses for italic corrections*/
-static int @!lig_kern_base0[font_max-font_base+1], *const @!lig_kern_base = @!lig_kern_base0-font_base;
+static int @!lig_kern_base0[font_max-font_base+1],
+  *const @!lig_kern_base = @!lig_kern_base0-font_base;
    /*base addresses for ligature/kerning programs*/
-static int @!kern_base0[font_max-font_base+1], *const @!kern_base = @!kern_base0-font_base;
+static int @!kern_base0[font_max-font_base+1],
+  *const @!kern_base = @!kern_base0-font_base;
    /*base addresses for kerns*/
-static int @!exten_base0[font_max-font_base+1], *const @!exten_base = @!exten_base0-font_base;
+static int @!exten_base0[font_max-font_base+1],
+  *const @!exten_base = @!exten_base0-font_base;
    /*base addresses for extensible recipes*/
-static int @!param_base0[font_max-font_base+1], *const @!param_base = @!param_base0-font_base;
+static int @!param_base0[font_max-font_base+1],
+  *const @!param_base = @!param_base0-font_base;
    /*base addresses for font parameters*/
 
 @ @<Set init...@>=
@@ -11442,9 +11498,9 @@ scaled @!z; /*the design size or the ``at'' size*/
 int @!alpha;int @!beta;
    /*auxiliary quantities used in fixed-point multiplication*/
 g=null_font;@/
-@<Read and check the font data; |abort| if the \.{TFM} file is malformed; if there's
-no room for this font, say so and |goto done|; otherwise |incr(font_ptr)| and |goto
-done|@>;
+@<Read and check the font data; |abort| if the \.{TFM} file is malformed;
+if there's no room for this font, say so and |goto done|; otherwise |incr(font_ptr)|
+and |goto done|@>;
 bad_tfm: @<Report that the font won't be loaded@>;
 done: if (file_opened) b_close(&tfm_file);
 return g;
@@ -12602,10 +12658,11 @@ if (o==down1)
   }
 else{@+link(q)=right_ptr;right_ptr=q;
   }
-@<Look at the other stack entries until deciding what sort of \.{DVI} command to generate;
-|goto found| if node |p| is a ``hit''@>;
+@<Look at the other stack entries until deciding what sort of \.{DVI} command
+to generate; |goto found| if node |p| is a ``hit''@>;
 @<Generate a |down| or |right| command for |w| and |return|@>;
-found: @<Generate a |y0| or |z0| command in order to reuse a previous appearance of~|w|@>;
+found: @<Generate a |y0| or |z0| command in order to reuse a previous appearance
+of~|w|@>;
 }
 
 @ The |info| fields in the entries of the down stack or the right stack
@@ -12708,8 +12765,8 @@ decision-making.
 @<Look at the other stack entries until deciding...@>=
 p=link(q);mstate=none_seen;
 while (p!=null)
-  {@+if (width(p)==w) @<Consider a node with matching width; |goto found| if it's
-a hit@>@;
+  {@+if (width(p)==w) @<Consider a node with matching width; |goto found|
+if it's a hit@>@;
   else switch (mstate+info(p)) {
     case none_seen+y_here: mstate=y_seen;@+break;
     case none_seen+z_here: mstate=z_seen;@+break;
@@ -12726,13 +12783,16 @@ moving finger writes, $\ldots\,\,$.''
 
 @<Consider a node with matching width...@>=
 switch (mstate+info(p)) {
-case none_seen+yz_OK: case none_seen+y_OK: case z_seen+yz_OK: case z_seen+y_OK: @t@>@;@/
+case none_seen+yz_OK: case none_seen+y_OK:
+  case z_seen+yz_OK: case z_seen+y_OK: @t@>@;@/
   if (location(p) < dvi_gone) goto not_found;
   else@<Change buffered instruction to |y| or |w| and |goto found|@>@;@+break;
-case none_seen+z_OK: case y_seen+yz_OK: case y_seen+z_OK: @t@>@;@/
+case none_seen+z_OK: case y_seen+yz_OK:
+  case y_seen+z_OK: @t@>@;@/
   if (location(p) < dvi_gone) goto not_found;
   else@<Change buffered instruction to |z| or |x| and |goto found|@>@;@+break;
-case none_seen+y_here: case none_seen+z_here: case y_seen+z_here: case z_seen+y_here: goto found;
+case none_seen+y_here: case none_seen+z_here:
+  case y_seen+z_here: case z_seen+y_here: goto found;
 default:do_nothing;
 }
 
@@ -12868,8 +12928,8 @@ incr(cur_s);
 if (cur_s > 0) dvi_out(push);
 if (cur_s > max_push) max_push=cur_s;
 save_loc=dvi_offset+dvi_ptr;base_line=cur_v;left_edge=cur_h;
-while (p!=null) @<Output node |p| for |hlist_out| and move to the next node, maintaining
-the condition |cur_v=base_line|@>;
+while (p!=null) @<Output node |p| for |hlist_out| and move to the next node,
+maintaining the condition |cur_v=base_line|@>;
 prune_movements(save_loc);
 if (cur_s > 0) dvi_pop(save_loc);
 decr(cur_s);
@@ -12893,7 +12953,8 @@ reswitch: if (is_char_node(p))
   }@+ while (!(!is_char_node(p)));
   dvi_h=cur_h;
   }
-else@<Output the non-|char_node| |p| for |hlist_out| and move to the next node@>@;
+else@<Output the non-|char_node| |p| for |hlist_out| and move to the next
+node@>@;
 
 @ @<Change font |dvi_f| to |f|@>=
 {@+if (!font_used[f])
@@ -12969,7 +13030,8 @@ if (g_sign!=normal)
   }
 rule_wd=rule_wd+cur_g;
 if (subtype(p) >= a_leaders)
-  @<Output leaders in an hlist, |goto fin_rule| if a rule or to |next_p| if done@>;
+  @<Output leaders in an hlist, |goto fin_rule| if a rule or to |next_p| if
+done@>;
 goto move_past;
 }
 
@@ -12983,8 +13045,8 @@ leader_wd=width(leader_box);
 if ((leader_wd > 0)&&(rule_wd > 0))
   {@+rule_wd=rule_wd+10; /*compensate for floating-point rounding*/
   edge=cur_h+rule_wd;lx=0;
-  @<Let |cur_h| be the position of the first box, and set |leader_wd+lx| to the spacing
-between corresponding parts of boxes@>;
+  @<Let |cur_h| be the position of the first box, and set |leader_wd+lx| to
+the spacing between corresponding parts of boxes@>;
   while (cur_h+leader_wd <= edge)
     @<Output a leader box at |cur_h|, then advance |cur_h| by |leader_wd+lx|@>;
   cur_h=edge-10;goto next_p;
@@ -13062,8 +13124,8 @@ if (cur_s > 0) dvi_out(push);
 if (cur_s > max_push) max_push=cur_s;
 save_loc=dvi_offset+dvi_ptr;left_edge=cur_h;cur_v=cur_v-height(this_box);
 top_edge=cur_v;
-while (p!=null) @<Output node |p| for |vlist_out| and move to the next node, maintaining
-the condition |cur_h=left_edge|@>;
+while (p!=null) @<Output node |p| for |vlist_out| and move to the next node,
+maintaining the condition |cur_h=left_edge|@>;
 prune_movements(save_loc);
 if (cur_s > 0) dvi_pop(save_loc);
 decr(cur_s);
@@ -13136,7 +13198,8 @@ if (g_sign!=normal)
   }
 rule_ht=rule_ht+cur_g;
 if (subtype(p) >= a_leaders)
-  @<Output leaders in a vlist, |goto fin_rule| if a rule or to |next_p| if done@>;
+  @<Output leaders in a vlist, |goto fin_rule| if a rule or to |next_p| if
+done@>;
 goto move_past;
 }
 
@@ -13150,8 +13213,8 @@ leader_ht=height(leader_box)+depth(leader_box);
 if ((leader_ht > 0)&&(rule_ht > 0))
   {@+rule_ht=rule_ht+10; /*compensate for floating-point rounding*/
   edge=cur_v+rule_ht;lx=0;
-  @<Let |cur_v| be the position of the first box, and set |leader_ht+lx| to the spacing
-between corresponding parts of boxes@>;
+  @<Let |cur_v| be the position of the first box, and set |leader_ht+lx| to
+the spacing between corresponding parts of boxes@>;
   while (cur_v+leader_ht <= edge)
     @<Output a leader box at |cur_v|, then advance |cur_v| by |leader_ht+lx|@>;
   cur_v=edge-10;goto next_p;
@@ -13215,7 +13278,8 @@ if (tracing_stats > 1)
 #endif
 
 @ @<Ship box |p| out@>=
-@<Update the values of |max_h| and |max_v|; but if the page is too large, |goto done|@>;
+@<Update the values of |max_h| and |max_v|; but if the page is too large,
+|goto done|@>;
 @<Initialize variables as |ship_out| begins@>;
 page_loc=dvi_offset+dvi_ptr;
 dvi_out(bop);
@@ -13383,7 +13447,9 @@ glue of each kind is present. A global variable |last_badness| is used
 to implement \.{\\badness}.
 
 @<Glob...@>=
-static scaled @!total_stretch0[filll-normal+1], *const @!total_stretch = @!total_stretch0-normal, @!total_shrink0[filll-normal+1], *const @!total_shrink = @!total_shrink0-normal;
+static scaled @!total_stretch0[filll-normal+1],
+  *const @!total_stretch = @!total_stretch0-normal,
+  @!total_shrink0[filll-normal+1], *const @!total_shrink = @!total_shrink0-normal;
    /*glue found by |hpack| or |vpack|*/
 static int @!last_badness; /*badness of the most recently packaged box*/
 
@@ -13411,12 +13477,14 @@ total_stretch[filll]=0;total_shrink[filll]=0
 @ @<Examine node |p| in the hlist, taking account of its effect...@>=
 @^inner loop@>
 {@+reswitch: while (is_char_node(p))
-  @<Incorporate character dimensions into the dimensions of the hbox that will contain~it,
-then move to the next node@>;
+  @<Incorporate character dimensions into the dimensions of the hbox that
+will contain~it, then move to the next node@>;
 if (p!=null)
   {@+switch (type(p)) {
-  case hlist_node: case vlist_node: case rule_node: case unset_node: case unset_set_node: case unset_pack_node:
-    @<Incorporate box dimensions into the dimensions of the hbox that will contain~it@>@;@+break;
+  case hlist_node: case vlist_node: case rule_node:
+  case unset_node: case unset_set_node: case unset_pack_node:
+    @<Incorporate box dimensions into the dimensions of the hbox that will
+contain~it@>@;@+break;
   case ins_node: case mark_node: case adjust_node: if (adjust_tail!=null)
     @<Transfer node |p| to the adjustment list@>@;@+break;
   case whatsit_node: @<Incorporate a whatsit node into an hbox@>;@+break;
@@ -13500,9 +13568,10 @@ if (x==0)
   set_glue_ratio_zero(glue_set(r));
   goto end;
   }
-else if (x > 0) @<Determine horizontal glue stretch setting, then |return| or \hbox{|goto
+else if (x > 0) @<Determine horizontal glue stretch setting, then |return|
+or \hbox{|goto common_ending|}@>@;
+else@<Determine horizontal glue shrink setting, then |return| or \hbox{|goto
 common_ending|}@>@;
-else@<Determine horizontal glue shrink setting, then |return| or \hbox{|goto common_ending|}@>@;
 
 @ @<Determine horizontal glue stretch setting...@>=
 {@+@<Determine the stretch order@>;
@@ -13578,7 +13647,8 @@ if ((total_shrink[o] < -x)&&(o==normal)&&(list_ptr(r)!=null))
 bad@>;
   }
 else if (o==normal) if (list_ptr(r)!=null)
-  @<Report a tight hbox and |goto common_ending|, if this box is sufficiently bad@>;
+  @<Report a tight hbox and |goto common_ending|, if this box is sufficiently
+bad@>;
 goto end;
 }
 
@@ -13626,8 +13696,10 @@ static pointer vpackage(pointer p, scaled h, scaled hf, scaled vf, small_number 
 {@+if (is_char_node(p)) confusion("vpack");
 @:this can't happen vpack}{\quad vpack@>
 else switch (type(p)) {
-  case hlist_node: case vlist_node: case rule_node: case unset_node: case unset_set_node: case unset_pack_node:
-    @<Incorporate box dimensions into the dimensions of the vbox that will contain~it@>@;@+break;
+  case hlist_node: case vlist_node: case rule_node:
+  case unset_node: case unset_set_node: case unset_pack_node:
+    @<Incorporate box dimensions into the dimensions of the vbox that will
+contain~it@>@;@+break;
   case whatsit_node: @<Incorporate a whatsit node into a vbox@>;@+break;
   case glue_node: @<Incorporate glue into the vertical totals@>@;@+break;
   case kern_node: {@+x=x+d+width(p);d=0;
@@ -13665,9 +13737,10 @@ if (x==0)
   set_glue_ratio_zero(glue_set(r));
   goto end;
   }
-else if (x > 0) @<Determine vertical glue stretch setting, then |return| or \hbox{|goto
+else if (x > 0) @<Determine vertical glue stretch setting, then |return| or
+\hbox{|goto common_ending|}@>@;
+else@<Determine vertical glue shrink setting, then |return| or \hbox{|goto
 common_ending|}@>@;
-else@<Determine vertical glue shrink setting, then |return| or \hbox{|goto common_ending|}@>@;
 
 @ @<Determine vertical glue stretch setting...@>=
 {@+@<Determine the stretch order@>;
@@ -13723,7 +13796,8 @@ if ((total_shrink[o] < -x)&&(o==normal)&&(list_ptr(r)!=null))
 bad@>;
   }
 else if (o==normal) if (list_ptr(r)!=null)
-  @<Report a tight vbox and |goto common_ending|, if this box is sufficiently bad@>;
+  @<Report a tight vbox and |goto common_ending|, if this box is sufficiently
+bad@>;
 goto end;
 }
 
@@ -14065,8 +14139,11 @@ the current string would be `\.{.\^.\_/}' if |p| points to the |ord_noad| for
 @<Cases of |show_node_list| that arise...@>=
 case style_node: print_style(subtype(p));@+break;
 case choice_node: @<Display choice node |p|@>@;@+break;
-case ord_noad: case op_noad: case bin_noad: case rel_noad: case open_noad: case close_noad: case punct_noad: case inner_noad:
-  case radical_noad: case over_noad: case under_noad: case vcenter_noad: case accent_noad:
+case ord_noad: case op_noad: case bin_noad:
+  case rel_noad: case open_noad: case close_noad:
+  case punct_noad: case inner_noad:
+  case radical_noad: case over_noad: case under_noad:
+  case vcenter_noad: case accent_noad:
   case left_noad: case right_noad: @<Display normal noad |p|@>@;@+break;
 case fraction_noad: @<Display fraction noad |p|@>@;@+break;
 
@@ -14214,8 +14291,11 @@ case choice_node: {@+flush_node_list(display_mlist(p));
   flush_node_list(script_script_mlist(p));
   free_node(p, style_node_size);goto done;
   }
-case ord_noad: case op_noad: case bin_noad: case rel_noad: case open_noad: case close_noad: case punct_noad: case inner_noad:
-  case radical_noad: case over_noad: case under_noad: case vcenter_noad: case accent_noad: @t@>@;@/
+case ord_noad: case op_noad: case bin_noad:
+  case rel_noad: case open_noad: case close_noad:
+  case punct_noad: case inner_noad:
+  case radical_noad: case over_noad: case under_noad:
+  case vcenter_noad: case accent_noad: @t@>@;@/
   {@+if (math_type(nucleus(p)) >= sub_box)
     flush_node_list(info(nucleus(p)));
   if (math_type(supscr(p)) >= sub_box)
@@ -14372,8 +14452,8 @@ small_number @!z; /*runs through font family members*/
 bool @!large_attempt; /*are we trying the ``large'' variant?*/
 f=null_font;w=0;large_attempt=false;
 z=small_fam(d);x=small_char(d);
-loop@+{@+@<Look at the variants of |(z,x)|; set |f| and |c| whenever a better character
-is found; |goto found| as soon as a large enough variant is encountered@>;
+loop@+{@+@<Look at the variants of |(z,x)|; set |f| and |c| whenever a better
+character is found; |goto found| as soon as a large enough variant is encountered@>;
   if (large_attempt) goto found; /*there were none large enough*/
   large_attempt=true;z=large_fam(d);x=large_char(d);
   }
@@ -14395,9 +14475,9 @@ if ((z!=0)||(x!=min_quarterword))
   {@+z=z+s+16;
   @/do@+{z=z-16;g=fam_fnt(z);
   if (g!=null_font)
-    @<Look at the list of characters starting with |x| in font |g|; set |f| and |c|
-whenever a better character is found; |goto found| as soon as a large enough variant
-is encountered@>;
+    @<Look at the list of characters starting with |x| in font |g|; set |f|
+and |c| whenever a better character is found; |goto found| as soon as a large
+enough variant is encountered@>;
   }@+ while (!(z < 16));
   }
 
@@ -14475,8 +14555,8 @@ return char_height(f, hd)+char_depth(f, hd);
 {@+b=new_null_box();
 type(b)=vlist_node;
 r=font_info[exten_base[f]+rem_byte(q)].qqqq;@/
-@<Compute the minimum suitable height, |w|, and the corresponding number of extension
-steps, |n|; also set |width(b)|@>;
+@<Compute the minimum suitable height, |w|, and the corresponding number of
+extension steps, |n|; also set |width(b)|@>;
 c=ext_bot(r);
 if (c!=min_quarterword) stack_into_box(b, f, c);
 c=ext_rep(r);
@@ -14743,20 +14823,21 @@ mlist=cur_mlist;penalties=mlist_penalties;
 style=cur_style; /*tuck global parameters away as local variables*/
 q=mlist;r=null;r_type=op_noad;max_h=0;max_d=0;
 @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
-while (q!=null) @<Process node-or-noad |q| as much as possible in preparation for
-the second pass of |mlist_to_hlist|, then move to the next item in the mlist@>;
+while (q!=null) @<Process node-or-noad |q| as much as possible in preparation
+for the second pass of |mlist_to_hlist|, then move to the next item in the
+mlist@>;
 @<Convert \(a)a final |bin_noad| to an |ord_noad|@>;
-@<Make a second pass over the mlist, removing all noads and inserting the proper spacing
-and penalties@>;
+@<Make a second pass over the mlist, removing all noads and inserting the
+proper spacing and penalties@>;
 }
 
 @ We use the fact that no character nodes appear in an mlist, hence
 the field |type(q)| is always present.
 
 @<Process node-or-noad...@>=
-{@+@<Do first-pass processing based on |type(q)|; |goto done_with_noad| if a noad
-has been fully processed, |goto check_dimensions| if it has been translated into |new_hlist(q)|,
-or |goto done_with_node| if a node has been fully processed@>;
+{@+@<Do first-pass processing based on |type(q)|; |goto done_with_noad| if
+a noad has been fully processed, |goto check_dimensions| if it has been translated
+into |new_hlist(q)|, or |goto done_with_node| if a node has been fully processed@>;
 check_dimensions: z=hpack(new_hlist(q), natural);
 if (height(z) > max_h) max_h=height(z);
 if (depth(z) > max_d) max_d=depth(z);
@@ -14776,17 +14857,20 @@ The values of |r| and |r_type| make this fairly easy.
 reswitch: delta=0;
 switch (type(q)) {
 case bin_noad: switch (r_type) {
-  case bin_noad: case op_noad: case rel_noad: case open_noad: case punct_noad: case left_noad:
+  case bin_noad: case op_noad: case rel_noad:
+  case open_noad: case punct_noad: case left_noad:
     {@+type(q)=ord_noad;goto reswitch;
     }
   default:do_nothing;
   } @+break;
-case rel_noad: case close_noad: case punct_noad: case right_noad: {@+@t@>@;@/
+case rel_noad: case close_noad: case punct_noad:
+  case right_noad: {@+@t@>@;@/
   @<Convert \(a)a final |bin_noad| to an |ord_noad|@>;
   if (type(q)==right_noad) goto done_with_noad;
   } @+break;
 @t\4@>@<Cases for noads that can follow a |bin_noad|@>@;
-@t\4@>@<Cases for nodes that can appear in an mlist, after which we |goto done_with_node|@>@;
+@t\4@>@<Cases for nodes that can appear in an mlist, after which we |goto
+done_with_node|@>@;
 default:confusion("mlist1");
 @:this can't happen mlist1}{\quad mlist1@>
 } @/
@@ -14800,10 +14884,11 @@ case style_node: {@+cur_style=subtype(q);
   @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
   goto done_with_node;
   }
-case choice_node: @<Change this node to a style node followed by the correct choice,
-then |goto done_with_node|@>@;
+case choice_node: @<Change this node to a style node followed by the correct
+choice, then |goto done_with_node|@>@;
 case ins_node: case mark_node: case adjust_node:
-  case whatsit_node: case penalty_node: case disc_node: goto done_with_node;
+  case whatsit_node: case penalty_node:
+  case disc_node: goto done_with_node;
 case rule_node: {@+if (height(q) > max_h) max_h=height(q);
   if (depth(q) > max_d) max_d=depth(q);goto done_with_node;
   }
@@ -15034,15 +15119,15 @@ static void make_fraction(pointer @!q)
 scaled @!delta, @!delta1, @!delta2, @!shift_up, @!shift_down, @!clr;
    /*dimensions for box calculations*/
 if (thickness(q)==default_code) thickness(q)=default_rule_thickness;
-@<Create equal-width boxes |x| and |z| for the numerator and denominator, and compute
-the default amounts |shift_up| and |shift_down| by which they are displaced from the
-baseline@>;
-if (thickness(q)==0) @<Adjust \(s)|shift_up| and |shift_down| for the case of no fraction
-line@>@;
+@<Create equal-width boxes |x| and |z| for the numerator and denominator,
+and compute the default amounts |shift_up| and |shift_down| by which they
+are displaced from the baseline@>;
+if (thickness(q)==0) @<Adjust \(s)|shift_up| and |shift_down| for the case
+of no fraction line@>@;
 else@<Adjust \(s)|shift_up| and |shift_down| for the case of a fraction line@>;
 @<Construct a vlist box for the fraction, according to |shift_up| and |shift_down|@>;
-@<Put the \(f)fraction into a box with its delimiters, and make |new_hlist(q)| point
-to it@>;
+@<Put the \(f)fraction into a box with its delimiters, and make |new_hlist(q)|
+point to it@>;
 }
 
 @ @<Create equal-width boxes |x| and |z| for the numerator and denom...@>=
@@ -15165,8 +15250,8 @@ if (width(z) > width(v)) width(v)=width(z);
 x=rebox(x, width(v));y=rebox(y, width(v));z=rebox(z, width(v));@/
 shift_amount(x)=half(delta);shift_amount(z)=-shift_amount(x);
 height(v)=height(y);depth(v)=depth(y);
-@<Attach the limits to |y| and adjust |height(v)|, |depth(v)| to account for their
-presence@>;
+@<Attach the limits to |y| and adjust |height(v)|, |depth(v)| to account for
+their presence@>;
 new_hlist(q)=v;
 }
 
@@ -15226,9 +15311,10 @@ if (math_type(subscr(q))==empty) if (math_type(supscr(q))==empty)
           {@+a=lig_kern_restart(cur_f, cur_i);
           cur_i=font_info[a].qqqq;
           }
-        loop@+{@+@<If instruction |cur_i| is a kern with |cur_c|, attach the kern
-after~|q|; or if it is a ligature with |cur_c|, combine noads |q| and~|p| appropriately;
-then |return| if the cursor has moved past a noad, or |goto restart|@>;
+        loop@+{@+@<If instruction |cur_i| is a kern with |cur_c|, attach the
+kern after~|q|; or if it is a ligature with |cur_c|, combine noads |q| and~|p|
+appropriately; then |return| if the cursor has moved past a noad, or |goto
+restart|@>;
           if (skip_byte(cur_i) >= stop_flag) return;
           a=a+qo(skip_byte(cur_i))+1;
           cur_i=font_info[a].qqqq;
@@ -15288,9 +15374,9 @@ when both are present.
 @<Convert \(n)|nucleus(q)| to an hlist and attach the sub/superscripts@>=
 switch (math_type(nucleus(q))) {
 case math_char: case math_text_char:
-  @<Create a character node |p| for |nucleus(q)|, possibly followed by a kern node
-for the italic correction, and set |delta| to the italic correction if a subscript
-is present@>@;@+break;
+  @<Create a character node |p| for |nucleus(q)|, possibly followed by a kern
+node for the italic correction, and set |delta| to the italic correction if
+a subscript is present@>@;@+break;
 case empty: p=null;@+break;
 case sub_box: p=info(nucleus(q));@+break;
 case sub_mlist: {@+cur_mlist=info(nucleus(q));save_style=cur_style;
@@ -15347,8 +15433,8 @@ if (math_type(supscr(q))==empty)
   @<Construct a subscript box |x| when there is no superscript@>@;
 else{@+@<Construct a superscript box |x|@>;
   if (math_type(subscr(q))==empty) shift_amount(x)=-shift_up;
-  else@<Construct a sub/superscript combination box |x|, with the superscript offset
-by |delta|@>;
+  else@<Construct a sub/superscript combination box |x|, with the superscript
+offset by |delta|@>;
   }
 if (new_hlist(q)==null) new_hlist(q)=x;
 else{@+p=new_hlist(q);
@@ -15418,10 +15504,10 @@ to a node at the current end of the final hlist.
 p=temp_head;link(p)=null;q=mlist;r_type=0;cur_style=style;
 @<Set up the values of |cur_size| and |cur_mu|, based on |cur_style|@>;
 while (q!=null)
-  {@+@<If node |q| is a style node, change the style and |goto delete_q|; otherwise
-if it is not a noad, put it into the hlist, advance |q|, and |goto done|; otherwise
-set |s| to the size of noad |q|, set |t| to the associated type (|ord_noad.. inner_noad|),
-and set |pen| to the associated penalty@>;
+  {@+@<If node |q| is a style node, change the style and |goto delete_q|;
+otherwise if it is not a noad, put it into the hlist, advance |q|, and |goto
+done|; otherwise set |s| to the size of noad |q|, set |t| to the associated
+type (|ord_noad.. inner_noad|), and set |pen| to the associated penalty@>;
   @<Append inter-element spacing based on |r_type| and |t|@>;
   @<Append any |new_hlist| entries for |q|, and any appropriate penalties@>;
   if (type(q)==right_noad) t=open_noad;
@@ -15435,18 +15521,22 @@ sets up default values so that most of the branches are short.
 @<If node |q| is a style node, change the style...@>=
 t=ord_noad;s=noad_size;pen=inf_penalty;
 switch (type(q)) {
-case op_noad: case open_noad: case close_noad: case punct_noad: case inner_noad: t=type(q);@+break;
+case op_noad: case open_noad: case close_noad:
+  case punct_noad: case inner_noad: t=type(q);@+break;
 case bin_noad: {@+t=bin_noad;pen=bin_op_penalty;
   } @+break;
 case rel_noad: {@+t=rel_noad;pen=rel_penalty;
   } @+break;
-case ord_noad: case vcenter_noad: case over_noad: case under_noad: do_nothing;@+break;
+case ord_noad: case vcenter_noad: case over_noad:
+  case under_noad: do_nothing;@+break;
 case radical_noad: s=radical_noad_size;@+break;
 case accent_noad: s=accent_noad_size;@+break;
 case fraction_noad: s=fraction_noad_size;@+break;
 case left_noad: case right_noad: t=make_left_right(q, style, max_d, max_h);@+break;
 case style_node: @<Change the current style and |goto delete_q|@>@;
-case whatsit_node: case penalty_node: case rule_node: case disc_node: case adjust_node: case ins_node: case mark_node:
+case whatsit_node: case penalty_node:
+  case rule_node: case disc_node: case adjust_node:
+  case ins_node: case mark_node:
  case glue_node: case kern_node: @t@>@;@/
   {@+link(p)=q;p=q;q=link(q);link(p)=null;goto done;
   }
@@ -15814,8 +15904,8 @@ warning_index=save_cs_ptr;align_state=-1000000;
    /*at this point, |cur_cmd==left_brace|*/
 loop@+{@+@<Append the current tabskip glue to the preamble list@>;
   if (cur_cmd==car_ret) goto done; /*\.{\\cr} ends the preamble*/
-  @<Scan preamble text until |cur_cmd| is |tab_mark| or |car_ret|, looking for changes
-in the tabskip glue; append an alignrecord to the preamble list@>;
+  @<Scan preamble text until |cur_cmd| is |tab_mark| or |car_ret|, looking
+for changes in the tabskip glue; append an alignrecord to the preamble list@>;
   }
 done: scanner_status=normal
 
@@ -16213,15 +16303,15 @@ if (cur_group!=align_group) confusion("align0");
 unsave(); /*that |align_group| was for the whole alignment*/
 if (nest[nest_ptr-1].mode_field==mmode) o=display_indent;
   else o=0;
-@<Go through the preamble list, determining the column widths and changing the alignrecords
-to dummy unset boxes@>;
+@<Go through the preamble list, determining the column widths and changing
+the alignrecords to dummy unset boxes@>;
 if (x)
 { @<Handle an alignment that depends on |hsize| or |vsize|@>@;
   pop_alignment();
 }
 else
-{ @<Package the preamble list, to determine the actual tabskip glue amounts, and let
-  |p| point to this prototype box@>;
+{ @<Package the preamble list, to determine the actual tabskip glue amounts,
+  and let |p| point to this prototype box@>;
   @<Set the glue in all the unset boxes of the current list@>;
   flush_node_list(p);pop_alignment();
 }
@@ -16271,8 +16361,8 @@ p=link(link(q));
 if (width(q)==null_flag)
   @<Nullify |width(q)| and the tabskip glue following this column@>;
 if (info(q)!=end_span)
-  @<Merge the widths in the span nodes of |q| with those of |p|, destroying the span
-nodes of |q|@>;
+  @<Merge the widths in the span nodes of |q| with those of |p|, destroying
+the span nodes of |q|@>;
 type(q)=unset_node;span_count(q)=min_quarterword;height(q)=0;
 depth(q)=0;glue_order(q)=normal;glue_sign(q)=normal;
 glue_stretch(q)=0;glue_shrink(q)=0;q=p;
@@ -16341,7 +16431,8 @@ while (q!=null)
     if (type(q)==unset_node)
       @<Set the unset box |q| and the unset boxes in it@>@;
     else if (type(q)==rule_node)
-      @<Make the running dimensions in rule |q| extend to the boundaries of the alignment@>;
+      @<Make the running dimensions in rule |q| extend to the boundaries of
+the alignment@>;
   s=q;q=link(q);
   }
 
@@ -16381,14 +16472,14 @@ arithmetic from entering into the dimensions of any boxes.
 n=span_count(r);t=width(s);w=t;u=hold_head;
 while (n > min_quarterword)
   {@+decr(n);
-  @<Append tabskip glue and an empty box to list |u|, and update |s| and |t| as the
-prototype nodes are passed@>;
+  @<Append tabskip glue and an empty box to list |u|, and update |s| and |t|
+as the prototype nodes are passed@>;
   }
 if (mode==-vmode)
-  @<Make the unset node |r| into an |hlist_node| of width |w|, setting the glue as
-if the width were |t|@>@;
-else@<Make the unset node |r| into a |vlist_node| of height |w|, setting the glue
-as if the height were |t|@>;
+  @<Make the unset node |r| into an |hlist_node| of width |w|, setting the
+glue as if the width were |t|@>@;
+else@<Make the unset node |r| into a |vlist_node| of height |w|, setting the
+glue as if the height were |t|@>;
 shift_amount(r)=0;
 if (u!=hold_head)  /*append blank boxes to account for spanned nodes*/
   {@+link(u)=link(r);link(r)=link(hold_head);r=u;
@@ -16534,8 +16625,8 @@ static void line_break(int @!final_widow_penalty)
 pack_begin_line=mode_line; /*this is for over/underfull box messages*/
 @<Get ready to start line breaking@>;
 @<Find optimal breakpoints@>;
-@<Break the paragraph at the chosen breakpoints, justify the resulting lines to the
-correct widths, and append them to the current vertical list@>;
+@<Break the paragraph at the chosen breakpoints, justify the resulting lines
+to the correct widths, and append them to the current vertical list@>;
 @<Clean up the memory by removing the break nodes@>;
 pack_begin_line=0;
 }
@@ -16706,7 +16797,8 @@ macro makes such six-tuples convenient.
 @<Glob...@>=
 static scaled @!active_width0[6], *const @!active_width = @!active_width0-1;
    /*distance from first active node to~|cur_p|*/
-static scaled @!cur_active_width0[6], *const @!cur_active_width = @!cur_active_width0-1; /*distance from current active node*/
+static scaled @!cur_active_width0[6],
+  *const @!cur_active_width = @!cur_active_width0-1; /*distance from current active node*/
 static scaled @!background0[6], *const @!background = @!background0-1; /*length of an ``empty'' line*/
 static scaled @!break_width0[6], *const @!break_width = @!break_width0-1; /*length being computed after current break*/
 
@@ -16855,14 +16947,14 @@ bool @!no_break_yet; /*have we found a feasible break at |cur_p|?*/
 no_break_yet=true;prev_r=active;old_l=0;
 do_all_six(copy_to_cur_active);
 loop@+{@+resume: r=link(prev_r);
-  @<If node |r| is of type |delta_node|, update |cur_active_width|, set |prev_r| and
-|prev_prev_r|, then |goto continue|@>;
-  @<If a line number class has ended, create new active nodes for the best feasible
-breaks in that class; then |return| if |r=last_active|, otherwise compute the new
-|line_width|@>;
-  @<Consider the demerits for a line from |r| to |cur_p|; deactivate node |r| if it
-should no longer be active; then |goto continue| if a line from |r| to |cur_p| is
-infeasible, otherwise record a new feasible break@>;
+  @<If node |r| is of type |delta_node|, update |cur_active_width|, set |prev_r|
+and |prev_prev_r|, then |goto continue|@>;
+  @<If a line number class has ended, create new active nodes for the best
+feasible breaks in that class; then |return| if |r=last_active|, otherwise
+compute the new |line_width|@>;
+  @<Consider the demerits for a line from |r| to |cur_p|; deactivate node
+|r| if it should no longer be active; then |goto continue| if a line from
+|r| to |cur_p| is infeasible, otherwise record a new feasible break@>;
   }
 end: ;
 #ifdef @!STAT
@@ -16922,13 +17014,16 @@ keeps track of the smallest value in the |minimal_demerits| array.
 @d awful_bad 07777777777 /*more than a billion demerits*/
 
 @<Global...@>=
-static int @!minimal_demerits0[tight_fit-very_loose_fit+1], *const @!minimal_demerits = @!minimal_demerits0-very_loose_fit; /*best total
+static int @!minimal_demerits0[tight_fit-very_loose_fit+1],
+  *const @!minimal_demerits = @!minimal_demerits0-very_loose_fit; /*best total
   demerits known for current line class and position, given the fitness*/
 static int @!minimum_demerits; /*best total demerits known for current line class
   and position*/
-static pointer @!best_place0[tight_fit-very_loose_fit+1], *const @!best_place = @!best_place0-very_loose_fit; /*how to achieve
+static pointer @!best_place0[tight_fit-very_loose_fit+1],
+  *const @!best_place = @!best_place0-very_loose_fit; /*how to achieve
   |minimal_demerits|*/
-static halfword @!best_pl_line0[tight_fit-very_loose_fit+1], *const @!best_pl_line = @!best_pl_line0-very_loose_fit; /*corresponding
+static halfword @!best_pl_line0[tight_fit-very_loose_fit+1],
+  *const @!best_pl_line = @!best_pl_line0-very_loose_fit; /*corresponding
   line number*/
 
 @ @<Get ready to start...@>=
@@ -17070,7 +17165,8 @@ else switch (type(v)) {
     break_width[1]=@|break_width[1]-
       char_width(f, char_info(f, character(lig_char(v))));
     } @+break;
-  case hlist_node: case vlist_node: case rule_node: case kern_node:
+  case hlist_node: case vlist_node: case rule_node:
+  case kern_node:
     break_width[1]=break_width[1]-width(v);@+break;
   default:confusion("disc1");
 @:this can't happen disc1}{\quad disc1@>
@@ -17086,7 +17182,8 @@ else switch (type(s)) {
     break_width[1]=break_width[1]+
       char_width(f, char_info(f, character(lig_char(s))));
     } @+break;
-  case hlist_node: case vlist_node: case rule_node: case kern_node:
+  case hlist_node: case vlist_node: case rule_node:
+  case kern_node:
     break_width[1]=break_width[1]+width(s);@+break;
   default:confusion("disc2");
 @:this can't happen disc2}{\quad disc2@>
@@ -17252,13 +17349,13 @@ breaks must go through a forced break.
 @^inner loop@>
 shortfall=line_width-cur_active_width[1]; /*we're this much too short*/
 if (shortfall > 0)
-  @<Set the value of |b| to the badness for stretching the line, and compute the corresponding
-|fit_class|@>@;
-else@<Set the value of |b| to the badness for shrinking the line, and compute the
-corresponding |fit_class|@>;
+  @<Set the value of |b| to the badness for stretching the line, and compute
+the corresponding |fit_class|@>@;
+else@<Set the value of |b| to the badness for shrinking the line, and compute
+the corresponding |fit_class|@>;
 if ((b > inf_bad)||(pi==eject_penalty))
-  @<Prepare to deactivate node~|r|, and |goto deactivate| unless there is a reason
-to consider lines of text from |r| to |cur_p|@>@;
+  @<Prepare to deactivate node~|r|, and |goto deactivate| unless there is
+a reason to consider lines of text from |r| to |cur_p|@>@;
 else{@+prev_r=r;
   if (b > threshold) goto resume;
   node_r_stays_active=true;
@@ -17412,8 +17509,8 @@ to~|cur_p|.
 
 @<Deactivate node |r|@>=
 link(prev_r)=link(r);free_node(r, active_node_size);
-if (prev_r==active) @<Update the active widths, since the first active node has been
-deleted@>@;
+if (prev_r==active) @<Update the active widths, since the first active node
+has been deleted@>@;
 else if (type(prev_r)==delta_node)
   {@+r=link(prev_r);
   if (r==last_active)
@@ -17498,12 +17595,12 @@ loop@+{@+if (threshold > inf_bad) threshold=inf_bad;
   cur_p=link(temp_head);auto_breaking=true;@/
   prev_p=cur_p; /*glue at beginning is not a legal breakpoint*/
   while ((cur_p!=null)&&(link(active)!=last_active))
-    @<Call |try_break| if |cur_p| is a legal breakpoint; on the second pass, also
-try to hyphenate the next word, if |cur_p| is a glue node; then advance |cur_p| to
-the next node of the paragraph that could possibly be a legal breakpoint@>;
+    @<Call |try_break| if |cur_p| is a legal breakpoint; on the second pass,
+also try to hyphenate the next word, if |cur_p| is a glue node; then advance
+|cur_p| to the next node of the paragraph that could possibly be a legal breakpoint@>;
   if (cur_p==null)
-    @<Try the final line break at the end of the paragraph, and |goto done| if the
-desired breakpoints have been found@>;
+    @<Try the final line break at the end of the paragraph, and |goto done|
+if the desired breakpoints have been found@>;
   @<Clean up the memory by removing the break nodes@>;
   if (!second_pass)
     {
@@ -17573,9 +17670,10 @@ the component of active width that represents real width as opposed to glue.
   @<Advance \(c)|cur_p| to the node following the present string of characters@>;
 switch (type(cur_p)) {
 case hlist_node: case vlist_node: case rule_node: act_width=act_width+width(cur_p);@+break;
-case whatsit_node: @<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>@;@+break;
-case glue_node: {@+@<If node |cur_p| is a legal breakpoint, call |try_break|; then
-update the active widths by including the glue in |glue_ptr(cur_p)|@>;
+case whatsit_node: @<Advance \(p)past a whatsit node in the \(l)|line_break|
+loop@>@;@+break;
+case glue_node: {@+@<If node |cur_p| is a legal breakpoint, call |try_break|;
+then update the active widths by including the glue in |glue_ptr(cur_p)|@>;
   if (second_pass&&auto_breaking)
     hyphenate_word();
   } @+break;
@@ -17584,7 +17682,8 @@ case kern_node: if (subtype(cur_p)==explicit) kern_break@;
 case ligature_node: {@+f=font(lig_char(cur_p));
   act_width=act_width+char_width(f, char_info(f, character(lig_char(cur_p))));
   } @+break;
-case disc_node: @<Try to break after a discretionary fragment, then |goto done5|@>@;
+case disc_node: @<Try to break after a discretionary fragment, then |goto
+done5|@>@;
 case math_node: {@+auto_breaking=(subtype(cur_p)==after);kern_break;
   } @+break;
 case penalty_node: try_break(penalty(cur_p), unhyphenated);@+break;
@@ -17657,7 +17756,8 @@ else switch (type(s)) {
     disc_width=disc_width+
       char_width(f, char_info(f, character(lig_char(s))));
     } @+break;
-  case hlist_node: case vlist_node: case rule_node: case kern_node:
+  case hlist_node: case vlist_node: case rule_node:
+  case kern_node:
     disc_width=disc_width+width(s);@+break;
   default:confusion("disc3");
 @:this can't happen disc3}{\quad disc3@>
@@ -17673,7 +17773,8 @@ else switch (type(s)) {
     act_width=act_width+
       char_width(f, char_info(f, character(lig_char(s))));
     } @+break;
-  case hlist_node: case vlist_node: case rule_node: case kern_node:
+  case hlist_node: case vlist_node: case rule_node:
+  case kern_node:
     act_width=act_width+width(s);@+break;
   default:confusion("disc4");
 @:this can't happen disc4}{\quad disc4@>
@@ -17771,10 +17872,11 @@ scaled @!cur_indent; /*left margin of line number |cur_line|*/
 quarterword @!t; /*used for replacement counts in discretionary nodes*/
 int @!pen; /*use when calculating penalties between lines*/
 halfword @!cur_line; /*the current line number being justified*/
-@<Reverse the links of the relevant passive nodes, setting |cur_p| to the first breakpoint@>;
+@<Reverse the links of the relevant passive nodes, setting |cur_p| to the
+first breakpoint@>;
 cur_line=prev_graf+1;
-@/do@+{@<Justify the line ending at breakpoint |cur_p|, and append it to the current
-vertical list, together with associated penalties and other insertions@>;
+@/do@+{@<Justify the line ending at breakpoint |cur_p|, and append it to the
+current vertical list, together with associated penalties and other insertions@>;
 incr(cur_line);cur_p=next_break(cur_p);
 if (cur_p!=null) if (!post_disc_break)
   @<Prune unwanted nodes at the beginning of the next line@>;
@@ -17829,12 +17931,12 @@ is compulsory, and we set |disc_break| to |true|. We also append
 the |left_skip| glue at the left of the line, unless it is zero.
 
 @<Justify the line ending at breakpoint |cur_p|, and append it...@>=
-@<Modify the end of the line to reflect the nature of the break and to include \.{\\rightskip};
-also set the proper value of |disc_break|@>;
+@<Modify the end of the line to reflect the nature of the break and to include
+\.{\\rightskip}; also set the proper value of |disc_break|@>;
 @<Put the \(l)\.{\\leftskip} glue at the left and detach this line@>;
 @<Call the packaging subroutine, setting |just_box| to the justified box@>;
-@<Append the new box to the current vertical list, followed by the list of special
-nodes taken out of the box by the packager@>;
+@<Append the new box to the current vertical list, followed by the list of
+special nodes taken out of the box by the packager@>;
 @<Append a penalty node, if a nonzero penalty is appropriate@>@;
 
 @ At the end of the following code, |q| will point to the final node on the
@@ -17861,7 +17963,8 @@ done:
 
 @ @<Change discretionary to compulsory...@>=
 {@+t=replace_count(q);
-@<Destroy the |t| nodes following |q|, and make |r| point to the following node@>;
+@<Destroy the |t| nodes following |q|, and make |r| point to the following
+node@>;
 if (post_break(q)!=null) @<Transplant the post-break list@>;
 if (pre_break(q)!=null) @<Transplant the pre-break list@>;
 link(q)=r;disc_break=true;
@@ -18055,8 +18158,8 @@ if (s!=null)
   {@+@<Skip to node |ha|, or |goto done1| if no hyphenation should be attempted@>;
   if (l_hyf+r_hyf > 63) goto done1;
   @<Skip to node |hb|, putting letters into |hu| and |hc|@>;
-  @<Check that the nodes following |hb| permit hyphenation and that at least |l_hyf+r_hyf|
-letters have been found, otherwise |goto done1|@>;
+  @<Check that the nodes following |hb| permit hyphenation and that at least
+|l_hyf+r_hyf| letters have been found, otherwise |goto done1|@>;
   hyphenate();
   }
 done1: ;}
@@ -18068,7 +18171,8 @@ static void hyphenate(void)
 @<Local variables for hyphenation@>@;
 @<Find hyphen locations for the word in |hc|, or |return|@>;
 @<If no hyphens were found, |return|@>;
-@<Replace nodes |ha..hb| by a sequence of nodes that includes the discretionary hyphens@>;
+@<Replace nodes |ha..hb| by a sequence of nodes that includes the discretionary
+hyphens@>;
 }
 
 @ The first thing we need to do is find the node |ha| just before the
@@ -18110,8 +18214,8 @@ loop@+{@+if (is_char_node(s))
     hb=s;incr(hn);hu[hn]=c;hc[hn]=lc_code(c);hyf_bchar=non_char;
     }
   else if (type(s)==ligature_node)
-    @<Move the characters of a ligature node to |hu| and |hc|; but |goto done3| if
-they are not all letters@>@;
+    @<Move the characters of a ligature node to |hu| and |hc|; but |goto done3|
+if they are not all letters@>@;
   else if ((type(s)==kern_node)&&(subtype(s)==normal))
     {@+hb=s;
     hyf_bchar=font_bchar[hf];
@@ -18146,7 +18250,9 @@ loop@+{@+if (!(is_char_node(s)))
     switch (type(s)) {
     case ligature_node: do_nothing;@+break;
     case kern_node: if (subtype(s)!=normal) goto done4;@+break;
-    case whatsit_node: case glue_node: case penalty_node: case ins_node: case adjust_node: case mark_node:
+    case whatsit_node: case glue_node:
+  case penalty_node: case ins_node: case adjust_node:
+  case mark_node:
       goto done4;
     default:goto done1;
     }
@@ -18303,10 +18409,10 @@ font_index @!k; /*position of current lig/kern instruction*/
 hyphen_passed=0;t=hold_head;w=0;link(hold_head)=null;
   /*at this point |ligature_present==lft_hit==rt_hit==false|*/
 @<Set up data structures with the cursor following position |j|@>;
-resume: @<If there's a ligature or kern at the cursor position, update the data structures,
-possibly advancing~|j|; continue until the cursor moves@>;
-@<Append a ligature and/or kern to the translation; |goto continue| if the stack of
-inserted ligatures is nonempty@>;
+resume: @<If there's a ligature or kern at the cursor position, update the
+data structures, possibly advancing~|j|; continue until the cursor moves@>;
+@<Append a ligature and/or kern to the translation; |goto continue| if the
+stack of inserted ligatures is nonempty@>;
 return j;
 }
 
@@ -18379,8 +18485,9 @@ loop@+{@+if (next_char(q)==test_char) if (skip_byte(q) <= stop_flag)
         {@+hyphen_passed=j;hchar=non_char;
         }
       if (op_byte(q) < kern_flag)
-      @<Carry out a ligature replacement, updating the cursor structure and possibly
-advancing~|j|; |goto continue| if the cursor doesn't advance, otherwise |goto done|@>;
+      @<Carry out a ligature replacement, updating the cursor structure and
+possibly advancing~|j|; |goto continue| if the cursor doesn't advance, otherwise
+|goto done|@>;
       w=char_kern(hf, q);goto done; /*this kern will be inserted below*/
      }
   if (skip_byte(q) >= stop_flag)
@@ -18482,8 +18589,8 @@ if (hyphen_passed==0)
     }
   }
 if (hyphen_passed > 0)
-  @<Create and append a discretionary node as an alternative to the unhyphenated word,
-and continue to develop both branches until they become equivalent@>;
+  @<Create and append a discretionary node as an alternative to the unhyphenated
+word, and continue to develop both branches until they become equivalent@>;
 }@+ while (!(j > hn));
 link(s)=q
 
@@ -18504,9 +18611,10 @@ major_tail=r;r_count=0;
 while (link(major_tail) > null) advance_major_tail;
 i=hyphen_passed;hyf[i]=0;
 @<Put the \(c)characters |hu[l..i]| and a hyphen into |pre_break(r)|@>;
-@<Put the \(c)characters |hu[i+1..]| into |post_break(r)|, appending to this list
-and to |major_tail| until synchronization has been achieved@>;
-@<Move pointer |s| to the end of the current list, and set |replace_count(r)| appropriately@>;
+@<Put the \(c)characters |hu[i+1..]| into |post_break(r)|, appending to this
+list and to |major_tail| until synchronization has been achieved@>;
+@<Move pointer |s| to the end of the current list, and set |replace_count(r)|
+appropriately@>;
 hyphen_passed=j-1;link(hold_head)=null;
 }@+ while (!(!odd(hyf[j-1])))
 
@@ -18632,9 +18740,12 @@ typedef int32_t trie_pointer; /*an index into |trie|*/
 
 @<Glob...@>=
 static two_halves @!trie[trie_size+1]; /*|trie_link|, |trie_char|, |trie_op|*/
-static small_number @!hyf_distance0[trie_op_size], *const @!hyf_distance = @!hyf_distance0-1; /*position |k-j| of $n_j$*/
-static small_number @!hyf_num0[trie_op_size], *const @!hyf_num = @!hyf_num0-1; /*value of $n_j$*/
-static quarterword @!hyf_next0[trie_op_size], *const @!hyf_next = @!hyf_next0-1; /*continuation code*/
+static small_number @!hyf_distance0[trie_op_size],
+  *const @!hyf_distance = @!hyf_distance0-1; /*position |k-j| of $n_j$*/
+static small_number @!hyf_num0[trie_op_size],
+  *const @!hyf_num = @!hyf_num0-1; /*value of $n_j$*/
+static quarterword @!hyf_next0[trie_op_size],
+  *const @!hyf_next = @!hyf_next0-1; /*continuation code*/
 static uint16_t @!op_start[256]; /*offset for current language*/
 
 @ @<Local variables for hyph...@>=
@@ -18648,8 +18759,8 @@ never be fetched.
 
 @<Find hyphen locations for the word in |hc|...@>=
 for (j=0; j<=hn; j++) hyf[j]=0;
-@<Look for the word |hc[1..hn]| in the exception table, and |goto found| (with |hyf|
-containing the hyphens) if an entry is found@>;
+@<Look for the word |hc[1..hn]| in the exception table, and |goto found| (with
+|hyf| containing the hyphens) if an entry is found@>;
 if (trie_char(cur_lang+1)!=qi(cur_lang)) return; /*no patterns for |cur_lang|*/
 hc[0]=0;hc[hn+1]=0;hc[hn+2]=256; /*insert delimiters*/
 for (j=0; j<=hn-r_hyf+1; j++)
@@ -18721,8 +18832,9 @@ separate by appending the language code to the string.
 @<Look for the word |hc[1...@>=
 h=hc[1];incr(hn);hc[hn]=cur_lang;
 for (j=2; j<=hn; j++) h=(h+h+hc[j])%hyph_size;
-loop@+{@+@<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|, |goto not_found|;
-but if the two strings are equal, set |hyf| to the hyphen positions and |goto found|@>;
+loop@+{@+@<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|, |goto
+not_found|; but if the two strings are equal, set |hyf| to the hyphen positions
+and |goto found|@>;
   if (h > 0) decr(h);@+else h=hyph_size;
   }
 not_found: decr(hn)
@@ -18777,15 +18889,16 @@ str_number @!s, @!t; /*strings being compared or stored*/
 pool_pointer @!u, @!v; /*indices into |str_pool|*/
 scan_left_brace(); /*a left brace must follow \.{\\hyphenation}*/
 set_cur_lang;
-@<Enter as many hyphenation exceptions as are listed, until coming to a right brace;
-then |return|@>;
+@<Enter as many hyphenation exceptions as are listed, until coming to a right
+brace; then |return|@>;
 }
 
 @ @<Enter as many...@>=
 n=0;p=null;
 loop@+{@+get_x_token();
   reswitch: switch (cur_cmd) {
-  case letter: case other_char: case char_given: @<Append a new letter or hyphen@>@;@+break;
+  case letter: case other_char: case char_given: @<Append a new letter or
+hyphen@>@;@+break;
   case char_num: {@+scan_char_num();cur_chr=cur_val;cur_cmd=char_given;
     goto reswitch;
     }
@@ -18903,13 +19016,16 @@ is |trie_op_ptr|.
 
 @<Glob...@>=
 #ifdef @!INIT
-static uint16_t @!trie_op_hash0[trie_op_size+trie_op_size+1], *const @!trie_op_hash = @!trie_op_hash0+trie_op_size;
+static uint16_t @!trie_op_hash0[trie_op_size+trie_op_size+1],
+  *const @!trie_op_hash = @!trie_op_hash0+trie_op_size;
    /*trie op codes for quadruples*/
 static quarterword @!trie_used[256];
    /*largest opcode used so far for this language*/
-static ASCII_code @!trie_op_lang0[trie_op_size], *const @!trie_op_lang = @!trie_op_lang0-1;
+static ASCII_code @!trie_op_lang0[trie_op_size],
+  *const @!trie_op_lang = @!trie_op_lang0-1;
    /*language part of a hashed quadruple*/
-static quarterword @!trie_op_val0[trie_op_size], *const @!trie_op_val = @!trie_op_val0-1;
+static quarterword @!trie_op_val0[trie_op_size],
+  *const @!trie_op_val = @!trie_op_val0-1;
    /*opcode corresponding to a hashed quadruple*/
 static int @!trie_op_ptr; /*number of stored ops so far*/
 #endif
@@ -19083,7 +19199,8 @@ entries.
 
 @<Glob...@>=
 #ifdef @!INIT
-static bool @!trie_taken0[trie_size], *const @!trie_taken = @!trie_taken0-1;
+static bool @!trie_taken0[trie_size],
+  *const @!trie_taken = @!trie_taken0-1;
    /*does a family start here?*/
 @t\hskip10pt@>static trie_pointer @!trie_min[256];
    /*the first possible slot for each character*/
@@ -19134,8 +19251,8 @@ z=trie_min[c]; /*get the first conceivably good hole*/
 loop@+{@+h=z-c;@/
   @<Ensure that |trie_max>=h+256|@>;
   if (trie_taken[h]) goto not_found;
-  @<If all characters of the family fit relative to |h|, then |goto found|,\30\ otherwise
-|goto not_found|@>;
+  @<If all characters of the family fit relative to |h|, then |goto found|,\30\
+otherwise |goto not_found|@>;
   not_found: z=trie_link(z); /*move to the next hole*/
   }
 found: @<Pack the family into |trie| relative to |h|@>;
@@ -19242,7 +19359,8 @@ bool @!first_child; /*is |p==trie_l[q]|?*/
 ASCII_code @!c; /*character being inserted*/
 if (trie_not_ready)
   {@+set_cur_lang;scan_left_brace(); /*a left brace must follow \.{\\patterns}*/
-  @<Enter all of the patterns into a linked trie, until coming to a right brace@>;
+  @<Enter all of the patterns into a linked trie, until coming to a right
+brace@>;
   }
 else{@+print_err("Too late for ");print_esc("patterns");
   help1("All patterns must be given before typesetting begins.");
@@ -19437,9 +19555,9 @@ scaled @!prev_dp; /*depth of previous box in the list*/
 small_number @!t; /*|type| of the node following a kern*/
 prev_p=p; /*an initial glue node is not a legal breakpoint*/
 least_cost=awful_bad;do_all_six(set_height_zero);prev_dp=0;
-loop@+{@+@<If node |p| is a legal breakpoint, check if this break is the best known,
-and |goto done| if |p| is null or if the page-so-far is already too full to accept
-more stuff@>;
+loop@+{@+@<If node |p| is a legal breakpoint, check if this break is the best
+known, and |goto done| if |p| is null or if the page-so-far is already too
+full to accept more stuff@>;
   prev_p=p;p=link(prev_p);
   }
 done: return best_place;
@@ -19459,14 +19577,14 @@ after a glue or kern node.
 
 @<If node |p| is a legal breakpoint, check...@>=
 if (p==null) pi=eject_penalty;
-else@<Use node |p| to update the current height and depth measurements; if this node
-is not a legal breakpoint, |goto not_found| or |update_heights|, otherwise set |pi|
-to the associated penalty at the break@>;
-@<Check if node |p| is a new champion breakpoint; then \(go)|goto done| if |p| is
-a forced break or if the page-so-far is already too full@>;
+else@<Use node |p| to update the current height and depth measurements; if
+this node is not a legal breakpoint, |goto not_found| or |update_heights|,
+otherwise set |pi| to the associated penalty at the break@>;
+@<Check if node |p| is a new champion breakpoint; then \(go)|goto done| if
+|p| is a forced break or if the page-so-far is already too full@>;
 if ((type(p) < glue_node)||(type(p) > kern_node)) goto not_found;
-update_heights: @<Update the current height and depth measurements with respect to
-a glue or kern node~|p|@>;
+update_heights: @<Update the current height and depth measurements with respect
+to a glue or kern node~|p|@>;
 not_found: if (prev_dp > d)
     {@+cur_height=cur_height+prev_dp-d;
     prev_dp=d;
@@ -19568,8 +19686,8 @@ if (split_first_mark!=null)
   }
 @<Dispense with trivial cases of void or bad boxes@>;
 q=vert_break(list_ptr(v), h, split_max_depth);
-@<Look at all the marks in nodes before the break, and set the final link to |null|
-at the break@>;
+@<Look at all the marks in nodes before the break, and set the final link
+to |null| at the break@>;
 q=prune_page_top(q, saving_vdiscards > 0);
 p=list_ptr(v);list_ptr(v)=null;flush_node_list(v);
 if (q!=null) q=vpack(q, natural);
@@ -19957,16 +20075,17 @@ programming, but the author doesn't see much wrong with it, as long as
 the various labels have a well-understood meaning.
 
 @<Move node |p| to the current page;...@>=
-@<If the current page is empty and node |p| is to be deleted, |goto done1|; otherwise
-use node |p| to update the state of the current page; if this node is an insertion,
-|goto contribute|; otherwise if this node is not a legal breakpoint, |goto contribute|
-or |update_heights|; otherwise set |pi| to the penalty associated with this breakpoint@>;
-@<Check if node |p| is a new champion breakpoint; then \(if)if it is time for a page
-break, prepare for output, and either fire up the user's output routine and |return|
-or ship out the page and |goto done|@>;
+@<If the current page is empty and node |p| is to be deleted, |goto done1|;
+otherwise use node |p| to update the state of the current page; if this node
+is an insertion, |goto contribute|; otherwise if this node is not a legal
+breakpoint, |goto contribute| or |update_heights|; otherwise set |pi| to the
+penalty associated with this breakpoint@>;
+@<Check if node |p| is a new champion breakpoint; then \(if)if it is time
+for a page break, prepare for output, and either fire up the user's output
+routine and |return| or ship out the page and |goto done|@>;
 if ((type(p) < glue_node)||(type(p) > kern_node)) goto contribute;
-update_heights: @<Update the current page measurements with respect to the glue or
-kern specified by node~|p|@>;
+update_heights: @<Update the current page measurements with respect to the
+glue or kern specified by node~|p|@>;
 contribute: @<Make sure that |page_max_depth| is not exceeded@>;
 @<Link node |p| into the current page and |goto done|@>;
 done1: @<Recycle node |p|@>;
@@ -19992,10 +20111,12 @@ we know its successor.
 @<If the current page is empty...@>=
 switch (type(p)) {
 case hlist_node: case vlist_node: case rule_node: if (page_contents < box_there)
-    @<Initialize the current page, insert the \.{\\topskip} glue ahead of |p|, and
-|goto continue|@>@;
-  else@<Prepare to move a box or rule node to the current page, then |goto contribute|@>@;@+break;
-case whatsit_node: @<Prepare to move whatsit |p| to the current page, then |goto contribute|@>;
+    @<Initialize the current page, insert the \.{\\topskip} glue ahead of
+|p|, and |goto continue|@>@;
+  else@<Prepare to move a box or rule node to the current page, then |goto
+contribute|@>@;@+break;
+case whatsit_node: @<Prepare to move whatsit |p| to the current page, then
+|goto contribute|@>;
 case glue_node: if (page_contents < box_there) goto done1;
   else if (precedes_break(page_tail)) pi=0;
   else goto update_heights;@+break;
@@ -20055,8 +20176,8 @@ page_total=page_total+page_depth+width(q);page_depth=0
 
 @ @<Check if node |p| is a new champion breakpoint; then \(if)...@>=
 if (pi < inf_penalty)
-  {@+@<Compute the badness, |b|, of the current page, using |awful_bad| if the box
-is too full@>;
+  {@+@<Compute the badness, |b|, of the current page, using |awful_bad| if
+the box is too full@>;
   if (b < awful_bad)
     if (pi <= eject_penalty) c=pi;
     else if (b < inf_bad) c=b+pi+insert_penalties;
@@ -20111,8 +20232,8 @@ n=subtype(p);r=page_ins_head;
 while (n >= subtype(link(r))) r=link(r);
 n=qo(n);
 if (subtype(r)!=qi(n))
-  @<Create a page insertion node with |subtype(r)=qi(n)|, and include the glue correction
-for box |n| in the current page state@>;
+  @<Create a page insertion node with |subtype(r)=qi(n)|, and include the
+glue correction for box |n| in the current page state@>;
 if (type(r)==split_up) insert_penalties=insert_penalties+float_cost(p);
 else{@+last_ins_ptr(r)=p;
   delta=page_goal-page_total-page_depth+page_shrink;
@@ -20122,7 +20243,8 @@ else{@+last_ins_ptr(r)=p;
   if (((h <= 0)||(h <= delta))&&(height(p)+height(r) <= dimen(n)))
     {@+page_goal=page_goal-h;height(r)=height(r)+height(p);
     }
-  else@<Find the best way to split the insertion, and change |type(r)| to |split_up|@>;
+  else@<Find the best way to split the insertion, and change |type(r)| to
+|split_up|@>;
   }
 goto contribute;
 }
@@ -20230,8 +20352,8 @@ if (bot_mark!=null)
   delete_token_ref(first_mark);first_mark=null;
   }
 @<Put the \(o)optimal current page into box 255, update |first_mark| and |bot_mark|,
-append insertions to their boxes, and put the remaining nodes back on the contribution
-list@>;
+append insertions to their boxes, and put the remaining nodes back on the
+contribution list@>;
 if ((top_mark!=null)&&(first_mark==null))
   {@+first_mark=top_mark;add_token_ref(top_mark);
   }
@@ -20265,15 +20387,15 @@ q=hold_head;link(q)=null;prev_p=page_head;p=link(prev_p);
 while (p!=best_page_break)
   {@+if (type(p)==ins_node)
     {@+if (holding_inserts <= 0)
-       @<Either insert the material specified by node |p| into the appropriate box,
-or hold it for the next page; also delete node |p| from the current page@>;
+       @<Either insert the material specified by node |p| into the appropriate
+box, or hold it for the next page; also delete node |p| from the current page@>;
     }
   else if (type(p)==mark_node) @<Update the values of |first_mark| and |bot_mark|@>;
   prev_p=p;p=link(prev_p);
   }
 split_top_skip=save_split_top_skip;
-@<Break the current page at node |p|, put it in box~255, and put the remaining nodes
-on the contribution list@>;
+@<Break the current page at node |p|, put it in box~255, and put the remaining
+nodes on the contribution list@>;
 @<Delete \(t)the page-insertion nodes@>@;
 
 @ @<Ensure that box 255 is empty before output@>=
@@ -20362,14 +20484,14 @@ while (subtype(r)!=subtype(p)) r=link(r);
 if (best_ins_ptr(r)==null) wait=true;
 else{@+wait=false;s=last_ins_ptr(r);link(s)=ins_ptr(p);
   if (best_ins_ptr(r)==p)
-    @<Wrap up the box specified by node |r|, splitting node |p| if called for; set
-|wait:=true| if node |p| holds a remainder after splitting@>@;
+    @<Wrap up the box specified by node |r|, splitting node |p| if called
+for; set |wait:=true| if node |p| holds a remainder after splitting@>@;
   else{@+while (link(s)!=null) s=link(s);
     last_ins_ptr(r)=s;
     }
   }
-@<Either append the insertion node |p| after node |q|, and remove it from the current
-page, or delete |node(p)|@>;
+@<Either append the insertion node |p| after node |q|, and remove it from
+the current page, or delete |node(p)|@>;
 }
 
 @ @<Wrap up the box specified by node |r|, splitting node |p| if...@>=
@@ -20540,7 +20662,8 @@ if (every_job!=null) begin_token_list(every_job, every_job_text);
 big_switch: get_x_token();@/
 reswitch: @<Give diagnostic information, if requested@>;
 switch (abs(mode)+cur_cmd) {
-case hmode+letter: case hmode+other_char: case hmode+char_given: goto main_loop;
+case hmode+letter: case hmode+other_char:
+  case hmode+char_given: goto main_loop;
 case hmode+char_num: {@+scan_char_num();cur_chr=cur_val;goto main_loop;@+}
 case hmode+no_boundary: {@+get_x_token();
   if ((cur_cmd==letter)||(cur_cmd==other_char)||(cur_cmd==char_given)||
@@ -20553,10 +20676,11 @@ case hmode+ex_space: case mmode+ex_space: goto append_normal_space;
 @t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
 }  /*of the big |case| statement*/
 goto big_switch;
-main_loop: @<Append character |cur_chr| and the following characters (if~any) to the
-current hlist in the current font; |goto reswitch| when a non-character has been fetched@>;
-append_normal_space: @<Append a normal inter-word space to the current list, then
-|goto big_switch|@>;
+main_loop: @<Append character |cur_chr| and the following characters (if~any)
+to the current hlist in the current font; |goto reswitch| when a non-character
+has been fetched@>;
+append_normal_space: @<Append a normal inter-word space to the current list,
+then |goto big_switch|@>;
 }
 
 @ When a new token has just been fetched at |big_switch|, we have an
@@ -20644,15 +20768,15 @@ if (main_k==non_address) goto main_loop_move2; /*no left boundary processing*/
 cur_r=cur_l;cur_l=non_char;
 goto main_lig_loop1; /*begin with cursor after left boundary*/
 @#
-main_loop_wrapup: @<Make a ligature node, if |ligature_present|; insert a null discretionary,
-if appropriate@>;
-main_loop_move: @<If the cursor is immediately followed by the right boundary, |goto
-reswitch|; if it's followed by an invalid character, |goto big_switch|; otherwise
-move the cursor one step to the right and |goto main_lig_loop|@>;
-main_loop_lookahead: @<Look ahead for another character, or leave |lig_stack| empty
-if there's none there@>;
-main_lig_loop: @<If there's a ligature/kern command relevant to |cur_l| and |cur_r|,
-adjust the text appropriately; exit to |main_loop_wrapup|@>;
+main_loop_wrapup: @<Make a ligature node, if |ligature_present|; insert a
+null discretionary, if appropriate@>;
+main_loop_move: @<If the cursor is immediately followed by the right boundary,
+|goto reswitch|; if it's followed by an invalid character, |goto big_switch|;
+otherwise move the cursor one step to the right and |goto main_lig_loop|@>;
+main_loop_lookahead: @<Look ahead for another character, or leave |lig_stack|
+empty if there's none there@>;
+main_lig_loop: @<If there's a ligature/kern command relevant to |cur_l| and
+|cur_r|, adjust the text appropriately; exit to |main_loop_wrapup|@>;
 main_loop_move_lig: @<Move the cursor past a pseudo-ligature, then |goto main_loop_lookahead|
 or |main_lig_loop|@>@;
 
@@ -20830,7 +20954,8 @@ is zero or~not.
 
 @<Append a normal inter-word space...@>=
 if (space_skip==zero_glue)
-  {@+@<Find the glue specification, |main_p|, for text spaces in the current font@>;
+  {@+@<Find the glue specification, |main_p|, for text spaces in the current
+font@>;
   temp_ptr=new_glue(main_p);
   }
 else temp_ptr=new_param_glue(space_skip_code);
@@ -20875,10 +21000,12 @@ shrink(main_p)=xn_over_d(shrink(main_p), 1000, space_factor)
 @ Whew---that covers the main loop. We can now proceed at a leisurely
 pace through the other combinations of possibilities.
 
-@d any_mode(A) case vmode+A: case hmode+A: case mmode+A /*for mode-independent commands*/
+@d any_mode(A) case vmode+A: case hmode+A:
+  case mmode+A /*for mode-independent commands*/
 
 @<Cases of |main_control| that are not part of the inner loop@>=
-any_mode(relax): case vmode+spacer: case mmode+spacer: case mmode+no_boundary: do_nothing;
+any_mode(relax): case vmode+spacer: case mmode+spacer:
+  case mmode+no_boundary: do_nothing;
 any_mode(ignore_spaces): {@+@<Get the next non-blank non-call...@>;
   goto reswitch;
   }
@@ -20902,7 +21029,8 @@ non_math(left_right): non_math(above): non_math(radical):
 non_math(math_style): non_math(math_choice): non_math(vcenter):
 non_math(non_script): non_math(mkern): non_math(limit_switch):
 non_math(mskip): non_math(math_accent):
-case mmode+endv: case mmode+par_end: case mmode+stop: case mmode+vskip: case mmode+un_vbox:
+case mmode+endv: case mmode+par_end: case mmode+stop:
+  case mmode+vskip: case mmode+un_vbox:
 case mmode+valign: case mmode+hrule
 
 @ @<Declare action...@>=
@@ -21026,7 +21154,8 @@ it simply calls on the action routine |append_glue|. Similarly, \.{\\kern}
 activates |append_kern|.
 
 @<Cases of |main_control| that build...@>=
-case vmode+vskip: case hmode+hskip: case mmode+hskip: case mmode+mskip: append_glue();@+break;
+case vmode+vskip: case hmode+hskip: case mmode+hskip:
+  case mmode+mskip: append_glue();@+break;
 any_mode(kern): case mmode+mkern: append_kern();@+break;
 
 @ The |hskip| and |vskip| command codes are used for control sequences
@@ -21161,7 +21290,8 @@ if (cur_group==bottom_level)
   @<Drop current token and complain that it was unmatched@>@;
 else{@+back_input();p=get_avail();link(temp_head)=p;
   print_err("Missing ");
-  @<Prepare to insert a token that matches |cur_group|, and print what it is@>;
+  @<Prepare to insert a token that matches |cur_group|, and print what it
+is@>;
   print(" inserted");ins_list(link(temp_head));
   help5("I've inserted something that you may have forgotten.",@/
   "(See the <inserted text> above.)",@/
@@ -21222,8 +21352,10 @@ case bottom_level: {@+print_err("Too many }'s");
   help2("You've closed more groups than you opened.",@/
   "Such booboos are generally harmless, so keep going.");error();
   } @+break;
-case semi_simple_group: case math_shift_group: case math_left_group: extra_right_brace();@+break;
-@t\4@>@<Cases of |handle_right_brace| where a |right_brace| triggers a delayed action@>@;
+case semi_simple_group: case math_shift_group:
+  case math_left_group: extra_right_brace();@+break;
+@t\4@>@<Cases of |handle_right_brace| where a |right_brace| triggers a delayed
+action@>@;
 default:confusion("rightbrace");
 @:this can't happen rightbrace}{\quad rightbrace@>
 }
@@ -21377,8 +21509,8 @@ static pointer @!cur_box; /*box to be placed into its context*/
 static void box_end(int @!box_context)
 {@+pointer p; /*|ord_noad| for new box in math mode*/
 small_number @!a; /*global prefix*/
-if (box_context < box_flag) @<Append box |cur_box| to the current list, shifted by
-|box_context|@>@;
+if (box_context < box_flag) @<Append box |cur_box| to the current list, shifted
+by |box_context|@>@;
 else if (box_context < ship_out_flag) @<Store \(c)|cur_box| in a box register@>@;
 else if (cur_box!=null)
   if (box_context > ship_out_flag) @<Append a new leader node that uses |cur_box|@>@;
@@ -21456,9 +21588,10 @@ case box_code: {@+scan_register_num();fetch_box(cur_box);
   } @+break;
 case copy_code: {@+scan_register_num();fetch_box(q);cur_box=copy_node_list(q);
   } @+break;
-case last_box_code: @<If the current list ends with a box node, delete it from the
-list and make |cur_box| point to it; otherwise set |cur_box:=null|@>@;@+break;
-case vsplit_code: @<Split off part of a vertical box, make |cur_box| point to it@>@;@+break;
+case last_box_code: @<If the current list ends with a box node, delete it
+from the list and make |cur_box| point to it; otherwise set |cur_box:=null|@>@;@+break;
+case vsplit_code: @<Split off part of a vertical box, make |cur_box| point
+to it@>@;@+break;
 default:@<Initiate the construction of an hbox or vbox, then |return|@>@;
 } @/
 box_end(box_context); /*in simple cases, we use the box immediately*/
@@ -21605,9 +21738,12 @@ case start_par: if (chr_code==0) print_esc("noindent");@+else print_esc("indent"
 
 @ @<Cases of |main_control| that build...@>=
 case vmode+start_par: new_graf(cur_chr > 0);@+break;
-case vmode+letter: case vmode+other_char: case vmode+char_num: case vmode+char_given:
-   case vmode+math_shift: case vmode+un_hbox: case vmode+vrule:
-   case vmode+accent: case vmode+discretionary: case vmode+hskip: case vmode+valign:
+case vmode+letter: case vmode+other_char:
+  case vmode+char_num: case vmode+char_given:
+   case vmode+math_shift: case vmode+un_hbox:
+  case vmode+vrule:
+   case vmode+accent: case vmode+discretionary:
+  case vmode+hskip: case vmode+valign:
    case vmode+ex_space: case vmode+no_boundary: @t@>@;@/
   {@+back_input();new_graf(true);
   } @+break;
@@ -21661,7 +21797,8 @@ case hmode+par_end: {@+if (align_state < 0) off_save(); /*this tries to
   end_graf(); /*this takes us to the enclosing mode, if |mode > 0|*/
   if (mode==vmode) build_page();
   } @+break;
-case hmode+stop: case hmode+vskip: case hmode+hrule: case hmode+un_vbox: case hmode+halign: head_for_vmode();@+break;
+case hmode+stop: case hmode+vskip: case hmode+hrule:
+  case hmode+un_vbox: case hmode+halign: head_for_vmode();@+break;
 
 @ @<Declare act...@>=
 static void head_for_vmode(void)
@@ -21692,7 +21829,8 @@ static void end_graf(void)
 pieces of the program.
 
 @<Cases of |main_control| that build...@>=
-any_mode(insert): case hmode+vadjust: case mmode+vadjust: begin_insert_or_adjust();@+break;
+any_mode(insert): case hmode+vadjust:
+  case mmode+vadjust: begin_insert_or_adjust();@+break;
 any_mode(mark): make_mark();@+break;
 
 @ @<Forbidden...@>=
@@ -21778,7 +21916,8 @@ static void delete_last(void)
 pointer @!p, @!q; /*run through the current list*/
 int @!m; /*the length of a replacement list*/
 if ((mode==vmode)&&(tail==head))
-  @<Apologize for inability to do the operation now, unless \.{\\unskip} follows non-glue@>@;
+  @<Apologize for inability to do the operation now, unless \.{\\unskip} follows
+non-glue@>@;
 else{@+if (!is_char_node(tail)) if (type(tail)==cur_chr)
     {@+q=head;
     @/do@+{p=q;
@@ -21835,7 +21974,8 @@ case un_vbox: if (chr_code==copy_code) print_esc("unvcopy")
 @ The |un_hbox| and |un_vbox| commands unwrap one of the 256 current boxes.
 
 @<Cases of |main_control| that build...@>=
-case vmode+un_vbox: case hmode+un_hbox: case mmode+un_hbox: unpackage();@+break;
+case vmode+un_vbox: case hmode+un_hbox:
+  case mmode+un_hbox: unpackage();@+break;
 
 @ @<Declare act...@>=
 static void unpackage(void)
@@ -21937,15 +22077,15 @@ static void build_discretionary(void)
 pointer p, @!q; /*for link manipulation*/
 int @!n; /*length of discretionary list*/
 unsave();
-@<Prune the current list, if necessary, until it contains only |char_node|, |kern_node|,
-|hlist_node|, |vlist_node|, |rule_node|, and |ligature_node| items; set |n| to the
-length of the list, and set |q| to the list's tail@>;
+@<Prune the current list, if necessary, until it contains only |char_node|,
+|kern_node|, |hlist_node|, |vlist_node|, |rule_node|, and |ligature_node|
+items; set |n| to the length of the list, and set |q| to the list's tail@>;
 p=link(head);pop_nest();
 switch (saved(-1)) {
 case 0: pre_break(tail)=p;@+break;
 case 1: post_break(tail)=p;@+break;
-case 2: @<Attach list |p| to the current list, and record its length; then finish
-up and |return|@>;
+case 2: @<Attach list |p| to the current list, and record its length; then
+finish up and |return|@>;
 }  /*there are no other cases*/
 incr(saved(-1));new_save_level(disc_group);scan_left_brace();
 push_nest();mode=-hmode;space_factor=1000;
@@ -22020,8 +22160,8 @@ if (p!=null)
 @^real division@>
   a=char_width(f, char_info(f, character(p)));@/
   do_assignments();@/
-  @<Create a character node |q| for the next character, but set |q:=null| if problems
-arise@>;
+  @<Create a character node |q| for the next character, but set |q:=null|
+if problems arise@>;
   if (q!=null) @<Append the accent with appropriate kerns, then set |p:=q|@>;
   link(tail)=p;tail=p;space_factor=1000;
   }
@@ -22289,8 +22429,8 @@ if (every_display!=null) begin_token_list(every_display, every_display_text);
 v=shift_amount(just_box)+2*quad(cur_font);w=-max_dimen;
 p=list_ptr(just_box);
 while (p!=null)
-  {@+@<Let |d| be the natural width of node |p|; if the node is ``visible,'' |goto
-found|; if the node is glue that stretches or shrinks, set |v:=max_dimen|@>;
+  {@+@<Let |d| be the natural width of node |p|; if the node is ``visible,''
+|goto found|; if the node is glue that stretches or shrinks, set |v:=max_dimen|@>;
   if (v < max_dimen) v=v+d;
   goto not_found;
   found: if (v < max_dimen)
@@ -22312,8 +22452,8 @@ case hlist_node: case vlist_node: case rule_node: {@+d=width(p);goto found;
   }
 case ligature_node: @<Make node |p| look like a |char_node|...@>@;
 case kern_node: case math_node: d=width(p);@+break;
-case glue_node: @<Let |d| be the natural width of this glue; if stretching or shrinking,
-set |v:=max_dimen|; |goto found| in the case of leaders@>@;@+break;
+case glue_node: @<Let |d| be the natural width of this glue; if stretching
+or shrinking, set |v:=max_dimen|; |goto found| in the case of leaders@>@;@+break;
 case whatsit_node: @<Let |d| be the width of the whatsit |p|@>;@+break;
 default:d=0;
 }
@@ -22437,7 +22577,8 @@ was first properly typeset by \TeX. The code in this section was used.
 @^Knuth, Donald Ervin@>
 
 @<Cases of |main_control| that build...@>=
-case mmode+letter: case mmode+other_char: case mmode+char_given:
+case mmode+letter: case mmode+other_char:
+  case mmode+char_given:
   set_math_char(ho(math_code(cur_chr)));@+break;
 case mmode+char_num: {@+scan_char_num();cur_chr=cur_val;
   set_math_char(ho(math_code(cur_chr)));
@@ -22552,8 +22693,8 @@ else{@+@<Get the next non-blank non-relax...@>;
   default:cur_val=-1;
   }
   }
-if (cur_val < 0) @<Report that an invalid delimiter code is being changed to null;
-set~|cur_val:=0|@>;
+if (cur_val < 0) @<Report that an invalid delimiter code is being changed
+to null; set~|cur_val:=0|@>;
 small_fam(p)=(cur_val/04000000)%16;
 small_char(p)=qi((cur_val/010000)%256);
 large_fam(p)=(cur_val/256)%16;
@@ -22931,8 +23072,8 @@ int @!m; /*|mmode| or |-mmode|*/
 pointer @!p; /*the formula*/
 pointer @!a; /*box containing equation number*/
 danger=false;
-@<Check that the necessary fonts for math symbols are present; if not, flush the current
-math lists and set |danger:=true|@>;
+@<Check that the necessary fonts for math symbols are present; if not, flush
+the current math lists and set |danger:=true|@>;
 m=mode;l=false;p=fin_mlist(null); /*this pops the nest*/
 if (mode==-m)  /*end of equation number*/
   {@+@<Check that another \.\$ follows@>;
@@ -22941,8 +23082,8 @@ if (mode==-m)  /*end of equation number*/
   unsave();decr(save_ptr); /*now |cur_group==math_shift_group|*/
   if (saved(0)==1) l=true;
   danger=false;
-  @<Check that the necessary fonts for math symbols are present; if not, flush the
-current math lists and set |danger:=true|@>;
+  @<Check that the necessary fonts for math symbols are present; if not, flush
+the current math lists and set |danger:=true|@>;
   m=mode;p=fin_mlist(null);
   }
 else a=null;
@@ -23507,8 +23648,8 @@ case toks_register: case assign_toks: {@+q=cur_cs;
   p=cur_chr; /*|p==every_par_loc| or |output_routine_loc| or \dots*/
   scan_optional_equals();
   @<Get the next non-blank non-relax non-call token@>;
-  if (cur_cmd!=left_brace) @<If the right-hand side is a token parameter or token
-register, finish the assignment and |goto done|@>;
+  if (cur_cmd!=left_brace) @<If the right-hand side is a token parameter or
+token register, finish the assignment and |goto done|@>;
   back_input();cur_cs=q;q=scan_toks(false, false);
   if (link(def_ref)==null)  /*empty list: revert to the default*/
     {@+sa_define(p, null, p, undefined_cs, null);free_avail(def_ref);
@@ -23637,7 +23778,8 @@ case def_family: {@+p=cur_chr;scan_four_bit_int();p=p+cur_val;
 @ Next we consider changes to \TeX's numeric registers.
 
 @<Assignments@>=
-case internal_register: case advance: case multiply: case divide: do_register_command(a);@+break;
+case internal_register: case advance:
+  case multiply: case divide: do_register_command(a);@+break;
 
 @ We use the fact that |internal_register < advance < multiply < divide|.
 
@@ -23964,8 +24106,8 @@ else{@+old_setting=selector;selector=new_string;
   }
 define(u, set_font, null_font);scan_optional_equals();scan_file_name();
 @<Scan the font size specification@>;
-@<If this font has already been loaded, set |f| to the internal font number and |goto
-common_ending|@>;
+@<If this font has already been loaded, set |f| to the internal font number
+and |goto common_ending|@>;
 f=read_font_info(u, cur_name, cur_area, s);
 common_ending: define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
 }
@@ -24273,7 +24415,8 @@ case show_lists_code: {@+begin_diagnostic();show_activities();
 case show_box_code: @<Show the current contents of a box@>@;@+break;
 case show_code: @<Show the current meaning of a token, then |goto common_ending|@>@;
 @<Cases for |show_whatever|@>@;@/
-default:@<Show the current value of some parameter or register, then |goto common_ending|@>@;
+default:@<Show the current value of some parameter or register, then |goto
+common_ending|@>@;
 } @/
 @<Complete a potentially long \.{\\show} command@>;
 common_ending: if (interaction < error_stop_mode)
@@ -24307,7 +24450,8 @@ print_meaning();goto common_ending;
 
 @ @<Cases of |print_cmd_chr|...@>=
 case undefined_cs: print("undefined");@+break;
-case call: case long_call: case outer_call: case long_outer_call: {@+n=cmd-call;
+case call: case long_call: case outer_call:
+  case long_outer_call: {@+n=cmd-call;
   if (info(link(chr_code))==protected_token) n=n+4;
   if (odd(n/4)) print_esc("protected");
   if (odd(n)) print_esc("long");
@@ -24373,8 +24517,8 @@ int @!p, @!q; /*all-purpose pointers*/
 int @!x; /*something to dump*/
 four_quarters @!w; /*four ASCII codes*/
 @<If dumping is not allowed, abort@>;
-@<Create the |format_ident|, open the format file, and inform the user that dumping
-has begun@>;
+@<Create the |format_ident|, open the format file, and inform the user that
+dumping has begun@>;
 eqtb[dimen_base+hsize_code].i=hhsize;
 eqtb[dimen_base+vsize_code].i=hvsize;
 @<Dump constants for consistency check@>;
@@ -25403,6 +25547,7 @@ primitive("special", extension, special_node);@/
 @!@:special\_}{\.{\\special} primitive@>
 primitive("immediate", extension, immediate_code);@/
 @!@:immediate\_}{\.{\\immediate} primitive@>
+
 primitive("setlanguage", extension, set_language_code);@/
 @!@:set\_language\_}{\.{\\setlanguage} primitive@>
 
@@ -25421,22 +25566,22 @@ primitive("HINTendlink", extension, end_link_node);@/
 primitive("HINToutline", extension, outline_node);@/
 @!@:HINToutline\_}{\.{\\HINToutline} primitive@>
 
-primitive("image", extension, image_node);@/
+primitive("HINTimage", extension, image_node);@/
 @!@:image\_}{\.{\\image} primitive@>
 
-primitive("setpage", extension, setpage_node);@/
+primitive("HINTsetpage", extension, setpage_node);@/
 @!@:setpage\_}{\.{\\setpage} primitive@>
 
-primitive("stream", extension, stream_node);@/
+primitive("HINTstream", extension, stream_node);@/
 @!@:stream\_}{\.{\\stream} primitive@>
 
-primitive("setstream", extension, setstream_node);@/
+primitive("HINTsetstream", extension, setstream_node);@/
 @!@:setstream\_}{\.{\\setstream} primitive@>
 
-primitive("before", extension, stream_before_node);@/
+primitive("HINTbefore", extension, stream_before_node);@/
 @!@:before\_}{\.{\\before} primitive@>
 
-primitive("after", extension, stream_after_node);@/
+primitive("HINTafter", extension, stream_after_node);@/
 @!@:after\_}{\.{\\after} primitive@>
 
 
@@ -25460,15 +25605,15 @@ case extension: switch (chr_code) {
   case vpack_node: print("vpack");@+break;
   case hset_node: print("hset");@+break;
   case vset_node: print("vset");@+break;
-  case image_node: print("image");@+break;
-  case start_link_node: print("startlink");@+break;
-  case end_link_node: print("endlink");@+break;
-  case label_node: print("dest");@+break;
-  case outline_node: print("outline");@+break;
+  case image_node: print("HINTimage");@+break;
+  case start_link_node: print("HINTstartlink");@+break;
+  case end_link_node: print("HINTendlink");@+break;
+  case label_node: print("HINTdest");@+break;
+  case outline_node: print("HINToutline");@+break;
   case align_node: print("align");@+break;
-  case setpage_node: print("setpage");@+break;
-  case setstream_node: print("setstream");@+break;
-  case stream_node: print("stream");@+break;
+  case setpage_node: print("HINTsetpage");@+break;
+  case setstream_node: print("HINTsetstream");@+break;
+  case stream_node: print("HINTstream");@+break;
   case xdimen_node: print("xdimen");@+break;
   case ignore_node: print("ignore");@+break;
   case immediate_code: print_esc("immediate");@+break;
@@ -25810,7 +25955,7 @@ case hpack_node: case vpack_node:
   node_list_display(list_ptr(p));
   break;
 case image_node:
-  print_esc("image(");
+  print_esc("HINTimage(");
   print_char('(');print_scaled(image_height(p));
    print_char('+'); print_scaled(image_depth(p));
    print(")x"); print_scaled(image_width(p));
@@ -25828,7 +25973,7 @@ case align_node:
   node_list_display(align_list(p));
   break;
 case setpage_node:
-  print_esc("setpage");print_int(setpage_number(p));print_char(' '); printn(setpage_name(p));
+  print_esc("HINTsetpage");print_int(setpage_number(p));print_char(' '); printn(setpage_name(p));
   print(" priority ");print_int(setpage_priority(p));
   print(" width ");print_xdimen(setpage_width(p));
   print(" height ");print_xdimen(setpage_height(p));
@@ -25838,7 +25983,7 @@ case setpage_node:
   node_list_display(setpage_streams(p));
   break;
 case setstream_node:
-  print_esc("setstream");print_int(setstream_insertion(p));
+  print_esc("HINTsetstream");print_int(setstream_insertion(p));
   print_char('(');print_int(setstream_number(p));print_char(')');
   if (setstream_prefered(p)!=255) { print(" prefered ");print_int(setstream_prefered(p)); }
   if (setstream_ratio(p)>0) { print(" ratio ");print_int(setstream_ratio(p)); }
@@ -25852,8 +25997,8 @@ case setstream_node:
     print_spec(setstream_height(p),0);
    print_ln();print_current_string();print_esc("hsize=");print_xdimen(setstream_width(p));
    print_ln();print_current_string();print_esc("topskip=");print_spec(setstream_topskip(p),0);
-  if (setstream_before(p)!=null) { print_ln();print_current_string();print_esc("before");node_list_display(setstream_before(p));}
-  if (setstream_after(p)!=null) { print_ln();print_current_string();print_esc("after");node_list_display(setstream_after(p));}
+  if (setstream_before(p)!=null) { print_ln();print_current_string();print_esc("HINTbefore");node_list_display(setstream_before(p));}
+  if (setstream_after(p)!=null) { print_ln();print_current_string();print_esc("HINTafter");node_list_display(setstream_after(p));}
   flush_char;
   break;
 case ignore_node:
@@ -25861,14 +26006,14 @@ case ignore_node:
   node_list_display(ignore_list(p));
   break;
 case start_link_node:
-  print_esc("startlink ");
+  print_esc("HINTstartlink ");
   print_label(p);
   break;
 case end_link_node:
-  print_esc("endlink ");
+  print_esc("HINTendlink ");
   break;
 case label_node:
-  print_esc("dest ");
+  print_esc("HINTdest ");
   print_label(p);
   if (label_where(p)==1) print("top");
   else if (label_where(p)==2) print("bot");
@@ -25876,14 +26021,14 @@ case label_node:
   else print("undefined");
   break;
 case outline_node:
-  print_esc("outline");
+  print_esc("HINToutline");
   print_label(p);
   print(" depth "); print_int(outline_depth(p));
   if (outline_ptr(p)==null) print("{}"); else
   { print_ln();print_current_string();node_list_display(outline_ptr(p));}
   break;
 case stream_node:
-  print_esc("stream");print_int(stream_insertion(p));
+  print_esc("HINTstream");print_int(stream_insertion(p));
   print_char('(');print_int(stream_number(p));print_char(')');
   break;
 case xdimen_node:
@@ -26210,8 +26355,8 @@ help2("On this page there's a \\write with fewer real {'s than }'s.",@/
 static void out_what(pointer @!p)
 {@+small_number j; /*write stream number*/
 switch (subtype(p)) {
-case open_node: case write_node: case close_node: @<Do some work that has been queued
-up for \.{\\write}@>@;@+break;
+case open_node: case write_node: case close_node: @<Do some work that has
+been queued up for \.{\\write}@>@;@+break;
 case special_node:
 case language_node:
 case save_pos_code: do_nothing;@+break;
@@ -26430,7 +26575,8 @@ case saving_vdiscards_code: print_esc("savingvdiscards");@+break;
 boolean variables.
 
 @<Glob...@>=
-static bool @!eof_seen0[max_in_open], *const @!eof_seen = @!eof_seen0-1; /*has eof been seen?*/
+static bool @!eof_seen0[max_in_open],
+  *const @!eof_seen = @!eof_seen0-1; /*has eof been seen?*/
 
 @ The |print_group| procedure prints the current level of grouping and
 the name corresponding to |cur_group|.
@@ -26459,7 +26605,8 @@ switch (cur_group) {
   case disc_group: print("disc");@+break;
   case insert_group: print("insert");@+break;
   case vcenter_group: print("vcenter");@+break;
-  case math_group: case math_choice_group: case math_shift_group: case math_left_group:
+  case math_group: case math_choice_group:
+  case math_shift_group: case math_left_group:
     {@+print("math");
     if (cur_group==math_choice_group) print(" choice");
     else if (cur_group==math_shift_group) print(" shift");
@@ -27870,7 +28017,8 @@ be dumped and undumped; the last one is also known as |sa_mark|.
 @d sa_mark sa_root[mark_val] /*root for mark classes*/
 
 @<Glob...@>=
-static pointer @!sa_root0[mark_val-int_val+1], *const @!sa_root = @!sa_root0-int_val; /*roots of sparse arrays*/
+static pointer @!sa_root0[mark_val-int_val+1],
+  *const @!sa_root = @!sa_root0-int_val; /*roots of sparse arrays*/
 static pointer @!cur_ptr; /*value returned by |new_index| and |find_sa_element|*/
 static memory_word @!sa_null; /*two |null| pointers*/
 
@@ -28324,7 +28472,8 @@ vertical list are saved in special lists instead of being discarded.
 @d split_disc disc_ptr[vsplit_code] /*first item removed by \.{\\vsplit}*/
 
 @<Glob...@>=
-static pointer @!disc_ptr0[vsplit_code-copy_code+1], *const @!disc_ptr = @!disc_ptr0-copy_code; /*list pointers*/
+static pointer @!disc_ptr0[vsplit_code-copy_code+1],
+  *const @!disc_ptr = @!disc_ptr0-copy_code; /*list pointers*/
 
 @ @<Set init...@>=
 page_disc=null;split_disc=null;
@@ -28628,7 +28777,8 @@ too the maximal size of the date returned by \.{\\creationdate} or
 \.{\\filemoddate} that is $23$ \.{text\_char}. So at least $64$ for now.
 
 @<Global...@>=
-static eight_bits @!xchg_buffer0[xchg_buffer_size], *const @!xchg_buffer = @!xchg_buffer0-1;
+static eight_bits @!xchg_buffer0[xchg_buffer_size],
+  *const @!xchg_buffer = @!xchg_buffer0-1;
    /*exchange buffer for interaction with system routines*/
 static int @!xchg_buffer_length; /*last valid index in this buf; 0 means no data*/
 @ @<Check \Prote\ ``constant'' values for consistency@>=
@@ -28794,7 +28944,8 @@ an |ROM_undefined_primitive| that will allow an easy test.
   else p=ROM_undefined_primitive
 
 @<Global...@>=
-static memory_word @!ROM0[ROM_size-ROM_base+1], *const @!ROM = @!ROM0-ROM_base;
+static memory_word @!ROM0[ROM_size-ROM_base+1],
+  *const @!ROM = @!ROM0-ROM_base;
 
 @ Even if it will be unused in \TeX\ or \eTeX\ modes, we will initialize
 it since we add code to the |primitive| procedure and we need \TeX\
@@ -29344,8 +29495,8 @@ else{@+y=1302456956+4-100; /*$14\times2^{27}\ln2\approx1302456956.421063$*/
       and $2^{16}\times.74436163\approx 48782$*/
   y=y+(z/unity);k=2;
   while (x > mpfract_four+4)
-    @<Increase |k| until |x| can be multiplied by a factor of $2^{-k}$, and adjust
-$y$ accordingly@>;
+    @<Increase |k| until |x| can be multiplied by a factor of $2^{-k}$, and
+adjust $y$ accordingly@>;
   return y/8;
   }
 }
@@ -29874,7 +30025,36 @@ case save_pos_code: save_pos_out(p);@+break;
 In the following we present macros, variables, and routines that
 implement the various features that have been used above to replace
 \TeX's native behaviour.
-The implementation reuses code that has been written as part of
+
+@ Following the implemenentation of other engines,
+the new engine returns a version number as an integer
+extending the cases for |last_item|. Since the additional
+primitives that we define are specific to the \HINT\ format,
+we return version and subversion of the \HINT\ file
+format that this program will generate.
+
+@d HINT_version_code (eTeX_last_last_item_cmd_mod+7) /* \.{\\HINTversion} */
+@d HINT_subversion_code (eTeX_last_last_item_cmd_mod+8) /* \.{\\HINTsubversion} */
+
+@<Generate all \Prote\ primitives@>=
+primitive("HINTversion", last_item, HINT_version_code);
+@!@:HINT\_version\_}{\.{\\HINTversion} primitive@>
+primitive("HINTsubversion", last_item, HINT_subversion_code);
+@!@:HINT\_subversion\_}{\.{\\HINTsubversion} primitive@>
+
+@ Now this new primitive needs its implementation
+
+@<Cases of |last_item| for |print_cmd_chr|@>=
+case HINT_version_code: print_esc("HINTversion");@+break;
+case HINT_subversion_code: print_esc("HINTsubversion");@+break;
+
+@ @<Cases for fetching a \Prote\ int value@>=
+case HINT_version_code: cur_val=HINT_VERSION;@+break;
+case HINT_subversion_code: cur_val=HINT_SUB_VERSION;@+break;
+
+
+
+@ The implementation reuses code that has been written as part of
 the \HINT\  file format specification; therfore we start with three
 include files containing the necessary declarations.
 We end with a list of forward declarations for all the functions
@@ -30102,7 +30282,6 @@ static void hline_break(int final_widow_penalty)
   pointer r, s ; /*miscellaneous nodes of temporary interest*/
   pointer pp;
   bool par_shape_fix=false;
-  bool first_word=true;
   if (DBGTEX&debugflags)
   { print_ln();print("Before hline_break:\n");
     breadth_max=200;
@@ -30158,10 +30337,12 @@ static void hline_break(int final_widow_penalty)
     show_node_list(link(temp_head));print_ln();
   }
   auto_breaking=true;
-  cur_p=temp_head;
-  if (option_hyphen_first && is_char_node(link(cur_p)))
-  { hyphenate_word(); first_word=false; }
-  cur_p=link(cur_p);
+  if (option_hyphen_first && is_char_node(link(temp_head)))
+  { cur_p = new_glue(zero_glue);
+    link(cur_p)=link(temp_head);
+  }
+  else
+    cur_p=link(temp_head);
   while (cur_p!=null)
   { /*Call |try_break| if |cur_p| is a legal breakpoint...*/
     if (is_char_node(cur_p))
@@ -30195,8 +30376,6 @@ static void hline_break(int final_widow_penalty)
 	  default:
 		break;
 	}
-        if (option_hyphen_first && first_word && is_char_node(link(cur_p)))
-        { hyphenate_word(); first_word=false; }
         cur_p=link(cur_p);
 done5:;
   }
@@ -33979,14 +34158,12 @@ static int argument_is(struct option *opt, char * s)
 
 @ Now we can handle the first two options:
 
-@d HiTeX_version 1
-@d HiTeX_revision 0
-@d HiTeX_version_string "1.0"
-
 @<handle the option at |option_index|@>=
 if (ARGUMENT_IS("help")) usage_help();
 else if (ARGUMENT_IS("version")){@+
-       printf("Version " HiTeX_version_string "\n");
+       printf(banner "\n"
+              "eTeX version " eTeX_version_string "\n"
+              "Prote version " Prote_version_string "\n");
        exit(0);@+
 }
 
@@ -34762,31 +34939,6 @@ static int get_md5_sum(int s, int file)
   }
   return DIGEST_SIZE;
 }
-
-
-@ Following the implemenentation of other engines,
-the new engine returns a version number as an integer
-extending the cases for |last_item|.
-
-@d HiTeX_version_code (eTeX_last_last_item_cmd_mod+7) /* \.{\\HiTeXversion} */
-@d HiTeX_revision_code (eTeX_last_last_item_cmd_mod+8) /* \.{\\HiTeXrevision} */
-
-@<Generate all \Prote\ primitives@>=
-primitive("HiTeXversion", last_item, HiTeX_version_code);
-@!@:HiTeX\_version\_}{\.{\\HiTeXversion} primitive@>
-primitive("HiTeXrevision", last_item, HiTeX_revision_code);
-@!@:HiTeX\_revision\_}{\.{\\HiTeXrevision} primitive@>
-
-@ Now this new primitive needs its implementation
-
-@<Cases of |last_item| for |print_cmd_chr|@>=
-case HiTeX_version_code: print_esc("HiTeXversion");@+break;
-case HiTeX_revision_code: print_esc("HiTeXrevision");@+break;
-
-@ @<Cases for fetching a \Prote\ int value@>=
-case HiTeX_version_code: cur_val=HiTeX_version;@+break;
-case HiTeX_revision_code: cur_val=HiTeX_revision;@+break;
-
 
 
 @* Index.
