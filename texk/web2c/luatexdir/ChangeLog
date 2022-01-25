@@ -1,3 +1,10 @@
+2022-01-23 Luigi Scarso <luigi.scarso@gmail.com>
+    * fixing a 15 year old buglet (math atom glue leak).  
+    * New primitive \matheqdirmode for short skip detection in  r2l typesetting (H. Hagen)
+
+2022-01-21 Luigi Scarso <luigi.scarso@gmail.com>
+    * patch for the logging of \scantextokens (H. Hagen)
+
 2022-01-17 Siep Kroonenberg <siepo@bitmuis.nl>
    * patch for inconsistent definitions inet_ntop/inet_pton
 

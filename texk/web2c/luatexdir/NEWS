@@ -1,6 +1,20 @@
 
 
 ==============================================================
+LuaTeX 1.15.0 2021-12-31 
+==============================================================
+
+New primitive \matheqdirmode.
+By default the short skip detection is not adapted to r2l typesetting and that
+hasn't been the case since the start of the project. Changing it could break
+hacks that users came up with but when you set \matheqdirmode to a positive
+value direction will be taken into account.
+
+Several bug fixes (see ChangeLog).
+
+
+
+==============================================================
 LuaTeX 1.14.1 2021-12-30
 ==============================================================
 
