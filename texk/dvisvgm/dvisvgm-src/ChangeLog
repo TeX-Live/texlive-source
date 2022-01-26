@@ -1,3 +1,39 @@
+2022-01-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.13.1 
+
+  * NEWS: 
+  updated NEWS 
+
+2022-01-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PSPattern.cpp: 
+  added explicit std::move to fix build issues with older compilers
+closes 
+  #173 
+
+2022-01-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md: 
+  removed Travis badge from README 
+
+  * libs/xxHash/xxhash.h: 
+  do no longer depend on <assert.h> for 
+  XXH_STATIC_ASSERT
+https://github.com/Cyan4973/xxHash/commit/6189ecd3d44a693460f86280ccf49d33cb4b18e1 
+
+2022-01-23  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  apply bounding box parameters given with pdffile special
+closes #174 
+
+  * src/DvisvgmSpecialHandler.cpp: 
+  added evaluation of {?(...)} to dvisvgm:rawdef special
+closes #175 
+
 2022-01-19  Martin Gieseking  <martin.gieseking@uos.de>
 
   * .github/workflows/c-cpp.yml: 

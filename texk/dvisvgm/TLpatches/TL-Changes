@@ -11,6 +11,7 @@ mv dvisvgm-src dvisvgm-prev
 tar xf dvisvgm-VER.tar.gz
 mv dvisvgm-VER dvisvgm-src
 cd dvisvgm-src
+tar xf dvisvgm-VER.tar.gz # so we can compare orig release to ours
 
 # remove common and generated files:
 rm ar-lib compile config.guess config.sub depcomp install-sh
@@ -34,7 +35,7 @@ See patch-04-configure for reference, but they won't apply as-is.
 Probably easiest to check the previous original dvisvgm/configure.ac
 vs. the new, and then install the changes in our configure.ac by hand.
 
-# patch to integrate into TL build; will probably need adjusting also.
+# patch to integrate into TL build; will likely need adjusting also.
 patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles 
 
 # remake autostuff (then make, etc., as usual).
