@@ -30897,6 +30897,7 @@ static void build_page(void)
   { pointer p= link(contrib_head);
     pointer q=null; /* for output nodes */
     pointer *t; /*the tail of the output nodes*/
+    bool eject=(type(p)==penalty_node && penalty(p)<=eject_penalty);
     @<Record the bottom mark@>@;
     @<Suppress empty pages if requested@>@;
     link(contrib_head)= link(p);link(p)= null;
@@ -30912,8 +30913,11 @@ static void build_page(void)
     { hpos0=hpos; hout_node(p); }
 recycle_p:
     flush_node_list(p);
-    if (q!=null)
+    if (q!=null||eject)
+    {
+empty_output:
       @<Fire up the output routine for |q|@>@;
+    }
   } while(link(contrib_head)!=null);
   DBG(DBGBUFFER,"after build page dyn_used= %d\n", dyn_used);
 }
@@ -30960,35 +30964,28 @@ them if requested. To do so, we delay the output of nodes after
 an eject penalty until either something gets printed on the page or
 another eject penalty comes along. To override the delayed output,
 a penalty less or equal to a double |eject_penalty| can be used.
-The function |its_all_over|
-is an example for such a use.
-
+The function |its_all_over| is an example for such a use.
 
 @<Suppress empty pages if requested@>=
 if (option_no_empty_page &&
-    ((type(p)==penalty_node &&
-      penalty(p)<=eject_penalty && penalty(p)>2*(eject_penalty)) ||
+    ((eject && penalty(p)>2*(eject_penalty)) ||
      (page_contents==empty && !is_visible(p))))
-{ pointer q= link(p);
+{ pointer r, prev_r = p;
   while (true)
-  { if (q==null) return;
-    else if (is_visible(q)) break;
-    else if (type(q)==penalty_node && penalty(q)<=eject_penalty)
-    { while (p!=q)
-      { pointer r=p;
-        DBG(DBGPAGE,"Eliminating node (%d,%d)\n",
-          type(p), type(p)==penalty_node?penalty(p):subtype(p));
-        p=link(p);
-        link(r)=null;
-        flush_node_list(r);
-      }
-      link(contrib_head)= p;
-      DBG(DBGPAGE,"Eliminating empty page done\n");
-      if (penalty(q)<=2*(eject_penalty)) break;
+  { r =link(prev_r);
+    if (r==null) return;
+    else if (is_visible(r)) break;
+    else if (type(r)==penalty_node && penalty(r)<=eject_penalty)
+    { q=p;
+      link(prev_r)=null;
+      link(contrib_head)=r;
+      DBG(DBGPAGE,"Eliminating empty page preceeding penalty %d\n",penalty(r));
+      goto empty_output;
     }
-    q=link(q);
+    prev_r=r;
   }
 }
+
 @ It remains to test a node for visibility. This is a quick (and dirty) test
 because the test will not look inside boxes; it simply tests whether
 the list pointer is |null|. We consider an |open_node|, |write_node|,
@@ -31149,8 +31146,8 @@ if (!is_char_node(*p))
 @ @<Fire up the output routine for |q|@>=
 { pointer r=new_null_box();type(r)=vlist_node;
   subtype(r)=0;shift_amount(r)=0;height(r)=hvsize;
-  list_ptr(r)=q;
-  *t=new_glue(ss_glue);
+  if (t==NULL) list_ptr(r)=new_glue(ss_glue);
+  else { list_ptr(r)=q;  *t=new_glue(ss_glue); }
   flush_node_list(box(255)); /* just in case \dots */
   box(255)=r;
   if (output_routine!=null)
