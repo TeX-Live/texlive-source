@@ -1,3 +1,8 @@
+2022-01-26  Karl Berry  <karl@freefriends.org>
+
+	* gui/print-log.h (info): don't declare unintended `info' variable
+	with type. From Evan Miller, tex-k 26 Jan 2022 10:55:35.
+
 2021-03-14  Karl Berry  <karl@freefriends.org>
 
 	* string-utils.c (shell_escape_string): escape other shell

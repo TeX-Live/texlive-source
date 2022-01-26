@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2004  Paul Vojta and the xdvik development team
+ * Copyright (c) 2002-2022  Paul Vojta and the xdvik development team
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -23,7 +23,7 @@
 #ifndef PRINT_LOG_H_
 #define PRINT_LOG_H_
 
-struct save_or_print_info *info; /* forward declaration */
+struct save_or_print_info; /* forward declaration */
 
 /* printlog access functions */
 extern void printlog_create(struct save_or_print_info *info,
