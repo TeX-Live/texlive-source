@@ -1,4 +1,4 @@
-// © 2016 and later: Unicode, Inc. and others.
+// © 2016 and later: Unicode, Inc. and others
 // License & terms of use: http://www.unicode.org/copyright.html
 /*
 *******************************************************************************
@@ -57,7 +57,7 @@
  *
  * z/OS needs this definition for timeval and to get usleep.
  */
-#if !defined(_XOPEN_SOURCE_EXTENDED) && defined(__TOS_MVS__) && !defined(sun)
+#if !defined(_XOPEN_SOURCE_EXTENDED) && defined(__TOS_MVS__)
 #   define _XOPEN_SOURCE_EXTENDED 1
 #endif
 

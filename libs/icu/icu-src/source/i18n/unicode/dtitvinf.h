@@ -329,7 +329,7 @@ public:
     static UClassID U_EXPORT2 getStaticClassID();
 
 
-/* nothing private to placate old compilers --karl/koch private: */
+private:
     /**
      * DateIntervalFormat will need access to
      * getBestSkeleton(), parseSkeleton(), enum IntervalPatternIndex,
@@ -364,8 +364,7 @@ public:
         kIPI_MAX_INDEX
     };
 public:
-/* nothing private to placate old compilers --karl/koch */
-/* ifndef U_HIDE_INTERNAL_API */
+#ifndef U_HIDE_INTERNAL_API
     /**
      * Max index for stored interval patterns
      * @internal ICU 4.4
@@ -373,8 +372,8 @@ public:
      enum {
          kMaxIntervalPatternIndex = kIPI_MAX_INDEX
      };
-/* endif */  /* U_HIDE_INTERNAL_API */
-/* nothing private to placate old compilers --karl/koch private: */
+#endif  /* U_HIDE_INTERNAL_API */
+private:
 
 
     /**

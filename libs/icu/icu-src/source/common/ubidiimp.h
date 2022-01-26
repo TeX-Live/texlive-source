@@ -41,8 +41,6 @@ typedef uint32_t Flags;
     is easier with the same names for the BiDi types in the code as there.
     See UCharDirection in uchar.h .
 */
-#undef ES
-#undef CS
 enum {
     L=  U_LEFT_TO_RIGHT,                /*  0 */
     R=  U_RIGHT_TO_LEFT,                /*  1 */

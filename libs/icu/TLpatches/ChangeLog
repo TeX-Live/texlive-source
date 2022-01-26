@@ -1,3 +1,16 @@
+2022-01-26  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
+
+	* patch-10-ES: remove, applied upstream
+	* patch-14-xopen: remove, no longer needed
+	https://unicode-org.atlassian.net/browse/ICU-12629
+	* patch-20-private: remove, no longer relevant since
+	gcc 4.2 can no longer compile the sources anyway
+
+2022-01-19  Karl Berry  <karl@freefriends.org>
+
+	* patch-15-pow: new patch
+	https://unicode-org.atlassian.net/browse/ICU-21896
+
 2022-01-16  Karl Berry  <karl@freefriends.org>
 
 	* Update for icu-70.1.

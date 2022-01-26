@@ -55,7 +55,7 @@ public:
     // Returns the center of dayPeriod. Half hours are indicated with a .5 .
     double getMidPointForDayPeriod(DayPeriod dayPeriod, UErrorCode &errorCode) const;
 
-/* nothing private to placate old compilers --karl/koch private: */
+private:
     DayPeriodRules();
 
     // Translates "morning1" to DAYPERIOD_MORNING1, for example.

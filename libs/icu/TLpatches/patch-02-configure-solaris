@@ -1,3 +1,5 @@
+	https://unicode-org.atlassian.net/browse/ICU-13543 (fixed upstream in 71.1)
+
 	Do not disable C++11 on Solaris, since we don't use the Sun compiler.
 
 --- source/configure~	2022-01-16 14:43:05.441342307 -0800

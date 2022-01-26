@@ -1,8 +1,9 @@
+	https://unicode-org.atlassian.net/browse/ICU-21896 (fixed upstream in 71.1)
+
 	Else Solaris gets
 libs/icu/icu-src/source/i18n/plurrule.cpp:1884:90:
 error: call of overloaded 'pow(int, const int32_t&)' is ambiguous
 	per https://tug.org/pipermail/tlbuild/2022q1/005020.html.
-	-> https://github.com/unicode-org/icu/pull/1961
 
 --- plurrule.cpp	(revision 61625)
 +++ plurrule.cpp	(working copy)
