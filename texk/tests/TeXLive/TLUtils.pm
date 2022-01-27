@@ -1,5 +1,5 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2021 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2022 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 61372 $';
+my $svnrev = '$Revision: 61711 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -131,21 +131,50 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
 our $PERL_SINGLE_QUOTE; # we steal code from Text::ParseWords
 
 # We use myriad global and package-global variables, unfortunately.
-# To avoid "used only once" warnings, we must use the variable names
-# again; one way to do that would be to assign them all to themselves in
-# the BEGIN block, but this seems (slightly) less ugly.
-# Example in first reply to: https://perlmonks.org/?node_id=11139324
+# To avoid "used only once" warnings, we must use the variable names again.
 # 
-# Because we are providing a block to the package command, the scope is
-# limited to that block, so the current real package ends up unaffected.
-package main {
-  our ($LOGFILE, $LOGFILENAME, @LOGLINES,
-    @debug_hook, @ddebug_hook, @dddebug_hook, @info_hook,
-    @install_packages_hook, @warn_hook,
-    $checksum_method, $gui_mode, $machinereadable,
-    $no_execute_actions, $regenerate_all_formats); }
-package JSON { our ($false, $true); }
-package TeXLive::TLDownload { our $net_lib_avail; }
+# This ugly repetition in the BEGIN block works with all Perl versions.
+BEGIN {
+  $::LOGFILE = $::LOGFILE;
+  $::LOGFILENAME = $::LOGFILENAME;
+  @::LOGLINES = @::LOGLINES;
+  @::debug_hook = @::debug_hook;
+  @::ddebug_hook = @::ddebug_hook;
+  @::dddebug_hook = @::dddebug_hook;
+  @::info_hook = @::info_hook;
+  @::warn_hook = @::warn_hook;
+  $::checksum_method = $::checksum_method;
+  $::gui_mode = $::gui_mode;
+  @::install_packages_hook = @::install_packages_hook;
+  $::machinereadable = $::machinereadable;
+  $::no_execute_actions = $::no_execute_actions;
+  $::regenerate_all_formats = $::regenerate_all_formats;
+  #
+  $JSON::false = $JSON::false;
+  $JSON::true = $JSON::true;
+  #
+  $TeXLive::TLDownload::net_lib_avail = $TeXLive::TLDownload::net_lib_avail;
+}
+      
+## A cleaner way is to use the "package PKGNAME BLOCK" syntax:
+## when providing a block to the package command, the scope is
+## limited to that block, so the current real package ends up unaffected.
+## Example in first reply to: https://perlmonks.org/?node_id=11139324
+## (Other solutions are also given there, but they don't work well in
+## our context here, although we use them elsewhere.)
+## 
+## Unfortunately the package BLOCK syntax was invented for perl 5.14.0,
+## ca.2011, and OpenCSW on Solaris 10 only provides an older Perl. If we
+## ever drop Solaris 10 support, we can replace the above with this.
+## 
+#package main {
+#  our ($LOGFILE, $LOGFILENAME, @LOGLINES,
+#    @debug_hook, @ddebug_hook, @dddebug_hook, @info_hook,
+#    @install_packages_hook, @warn_hook,
+#    $checksum_method, $gui_mode, $machinereadable,
+#    $no_execute_actions, $regenerate_all_formats); }
+#package JSON { our ($false, $true); }
+#package TeXLive::TLDownload { our $net_lib_avail; }
 
 BEGIN {
   use Exporter ();
@@ -414,7 +443,7 @@ sub platform_name {
     # We don't use uname numbers here.)
     #
     # this changes each year, per above:
-    my $mactex_darwin = 14;  # lowest minor rev supported by x86_64-darwin.
+    my $mactex_darwin = 14;  # lowest minor rev supported by universal-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
