@@ -2123,7 +2123,7 @@ else  begin {we are done with this token list}
       buffer[k+start-first]:=buffer[k];
 @y
   if start<limit then for k:=start to limit-1 do
-    if buffer2[k]>=@"100 then print_char(buffer[k]) else print(buffer[k]);
+    if buffer2[k]>0 then print_char(buffer[k]) else print(buffer[k]);
   first:=limit; prompt_input("=>"); {wait for user response}
 @.=>@>
   if last>first then
@@ -2852,18 +2852,6 @@ if #<>0 then
       print(so(str_pool[j]))
 
 @y
-@z
-
-@x
-@d append_to_name(#)==begin c:=#; if not (c="""") then begin incr(k);
-  if k<=file_name_size then name_of_file[k]:=xchr[c];
-  end end
-@y
-@d append_to_name(#)==begin if (#)>=@"100 then c:=(#)-@"100 else c:=#;
-  { Since the type of |c| is |ASCII_code|, above if-statement might not be needed }
-  if not (c="""") then begin incr(k);
-  if k<=file_name_size then name_of_file[k]:=xchr[c];
-  end end
 @z
 
 @x [29.526] l.10668 - pTeX: scan file name

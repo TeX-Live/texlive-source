@@ -1,3 +1,7 @@
+2022-01-27  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Fix a mistake and avoid compiler warnings.
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Change type of str_pool to unsigned short.

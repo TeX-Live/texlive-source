@@ -597,12 +597,12 @@ runsystem (const char *cmd)
   char *safecmd = NULL;
   char *cmdname = NULL;
 #if IS_pTeX && !defined(WIN32)
-  char *cmd2;
+  char *cmd2 = NULL;
 #endif
   int status = 0;
 #if IS_pTeX && !defined(WIN32)
   cmd2 = (char *)ptenc_from_internal_enc_string_to_utf8((unsigned char *)cmd);
-  if (!cmd2) cmd2=cmd;
+  if (!cmd2) cmd2=(char *)cmd;
 #endif
 
   if (shellenabledp <= 0) {
@@ -640,7 +640,7 @@ runsystem (const char *cmd)
 
   /* Not really meaningful, but we have to manage the return value of system. */
   if (status != 0)
-    fprintf(stderr,"system returned with code %d\n", status); 
+    fprintf(stderr,"system returned with code %d\n", status);
 
 #if IS_pTeX && !defined(WIN32)
   if (cmd!=cmd2) free(cmd2);
