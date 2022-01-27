@@ -1,3 +1,7 @@
+2022-01-27  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* patch-11-oldclang: remove, applied upstream.
+
 2022-01-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* patch-11-oldclang: new file to support old clang.
