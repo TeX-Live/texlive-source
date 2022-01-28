@@ -1,0 +1,349 @@
+#!/usr/bin/env perl
+################################################################################
+# texlogfilter - filter latex engines output or log file
+# Julien Labbé, 2021
+#
+# This work may be distributed and/or modified under the conditions of the LaTeX
+# Project Public License, either version 1.3 of this license or (at your option)
+# any later version. The latest version of this license is in
+#   http://www.latex-project.org/lppl.txt and version 1.3
+# or later is part of all distributions of LaTeX version 2005/12/01 or later.
+################################################################################
+
+use strict;
+use warnings;
+use Getopt::Long;
+use Term::ANSIColor;
+
+my $name = "texlogfilter";
+my $version = "1.0";
+
+# options
+my @userfilters;
+my $showhelp = 0;
+my $showversion = 0;
+my $showrefmsg = 1;
+my $showboxmsg = 1;
+my $showskips = 0;
+my $skipmarker = "...";
+my $extpattern = "tex|sty|cls|bib";
+my $fulllog = 0;
+my $printfilename = -1; # -1: value not modified by options
+my $errcolor = "red";
+my $wrncolor = "yellow";
+my $infcolor = "blue";
+my $skpcolor = "bright_black";
+my $usrcolor = "reset";
+
+GetOptions ("box!"              => \$showboxmsg,    # show box warnings
+            "ref!"              => \$showrefmsg,    # show reference and citation warnings
+            "skips!"            => \$showskips,     # show that lines have been skipped
+            "skip-marker=s"     => \$skipmarker,    # how to indicate skipped lines
+            "files-ext=s"       => \$extpattern,    # file extension regex pattern
+            "add-filter=s"      => \@userfilters,   # user filters list
+            "errors-color=s"    => \$errcolor,      # color for errors
+            "warnings-color=s"  => \$wrncolor,      # color for warnings
+            "infos-color=s"     => \$infcolor,      # color for informations
+            "skips-color=s"     => \$skpcolor,      # color for skipped lines marker
+            "user-color=s"      => \$usrcolor,      # color for content filtered by pattern added with --add-filter
+            "filename!"         => \$printfilename, # print current file name
+            "full-log!"         => \$fulllog,       # show full log (don't filter - only colorize latex engine output)
+            "help"              => \$showhelp,
+            "version"           => \$showversion);
+
+if ($printfilename == -1 && $fulllog) { $printfilename = 0; } # don't show filename for full log, if not explicitly required
+
+# counters
+my $nerr = 0;
+my $nwrn = 0;
+
+# iteration state
+my $nextlines = 0;
+my $currentpackage = "";
+my $currentfile = "";
+my $lastfile = "";
+my $samecontext = -1;   # expected values: 0 (continuing previous line) / 1 (lines skipped) / -1 (initial value)
+
+# functions
+
+sub print_help {
+    # print usage
+    print <<EOT;
+Usage: $name [options] file.log
+
+Filter latex engines output or log file. log is latex, pdflatex, lualatex or
+xelatex output or log file.
+
+Without input file, standard input is used. Use on latex engine output with:
+    latex file.tex < /dev/null | $name
+
+Options:
+ --help                 : print this help and exit
+ --version              : print version and exit
+
+ --box                  : show box warnings
+ --no-box               : mask box warnings
+
+ --ref                  : show reference/citation warnings
+ --no-ref               : mask reference/citation warnings
+
+ --filename             : print current file name
+ --no-filename          : do not print current file name
+ --files-ext=string     : regex pattern used to match files extension (default: $extpattern)
+
+ --skips                : indicate skipped lines
+ --no-skips             : mask skipped lines
+ --skip-marker=string   : marker used to indicate skipped lines (defaut: $skipmarker)
+
+ --add-filter=string    : add user filter pattern (as perl regular expression)
+
+ --full-log             : show full log (don't filter - only colorize latex engine output)
+
+ --errors-color=string
+ --warnings-color=string
+ --infos-color=string
+ --skips-color=string
+ --user-color=string    : colors used for errors, warnings, informations and skipped lines
+EOT
+}
+
+sub print_version {
+    # print version
+    print $version,"\n";
+}
+
+sub print_filename {
+    # print current file name if new
+    if ($printfilename && $currentfile ne $lastfile) {
+        print color("bold"), color($infcolor), "\nFile: ", $currentfile, "\n", color("reset");
+        $lastfile = $currentfile;
+    }
+}
+
+sub print_skips {
+    # show if some lines have benn skipped
+    if ($showskips && !$samecontext) { print color("reset"), color($skpcolor), $skipmarker, "\n", color("reset") ; }
+    $samecontext = 1;
+}
+
+sub handle_error {
+    # handle error
+    #  nl (optional)         : nextline value
+    #  nofilename (optional) : if set, don't print filename
+    my ( $nl, $nofilename ) = @_;
+    $nerr++;
+    if (defined $nl) { $nextlines = $nl ; }
+    print_skips();
+    if (! defined $nofilename) {
+        print_filename();
+    }
+    print color($errcolor), $_, ;
+}
+
+sub handle_warning {
+    # handle warning
+    #  nl (optional)         : nextline value
+    #  nofilename (optional) : if set, don't print filename
+    my ( $nl, $nofilename ) = @_;
+    $nwrn++;
+    if (defined $nl) { $nextlines = $nl ; }
+    print_skips();
+    if (! defined $nofilename) {
+        print_filename();
+    }
+    print color($wrncolor), $_, ;
+}
+
+sub handle_info {
+    # handle info
+    #  nl (optional)         : nextline value
+    #  colorattr             : additional color attribute
+    my ( $nl, $colorattr ) = @_;
+    if (defined $nl) { $nextlines = $nl ; }
+    print_skips();
+    if (defined $colorattr) {print color($infcolor, $colorattr), $_, ; }
+    else { print color($infcolor), $_, ; }
+}
+
+# print help
+if ( $showhelp ) {
+  print_help();
+  exit(0);
+}
+
+# print version
+if ( $showversion ) {
+  print_version();
+  exit(0);
+}
+
+# main loop
+while (<>) {
+
+    # assume currentfile is given in the last open parenthesis
+    # (works badly for packages)
+    if (/\(([^)]+$extpattern)$/) {$currentfile = $1;}
+
+    # try to show usefull lines following some warnings or errors (starting with
+    # whitespaces or package name)
+    if ($currentpackage ne ""){
+        if (/(s+|\($currentpackage\))/){print $_;}
+        else {$currentpackage = ""; }
+    }
+
+    # print above lines, if required
+    if ($nextlines > 0) { $nextlines--; print $_; }
+
+    # find errors
+    elsif (/^(!\s+|.*?:\d+:\s+)?(Class|Package) (\w+ )?Error/i)         { if ($3){$currentpackage=$3}  handle_error(0, "nofilename"); }
+    elsif (/^(!\s+)?LaTeX (?:Error)/i)                                  { handle_error(); }
+    elsif (/^(!|.*?:\d+:) Undefined control sequence\./i)               { chomp; handle_error(4); }
+    elsif (/^(!|.*?:\d+:) Use of (.*) doesn't match its definition\./i) { handle_error(3); }
+    elsif (/^(!|.*?:\d+:) Missing/i)                                    { handle_error(3); }
+    elsif (/^(!|.*?:\d+:)/i)                                            { handle_error(); }
+    elsif (/^No pages of output/i)                                      { handle_error(); }
+
+    # find warning
+    elsif (/^(!\s+)?(Class|Package) (\w+ )?Warning/i)                   { if ($3){$currentpackage=$3}  handle_warning(0, "nofilename"); }
+    elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning: (Citation|Reference)/i)   { if ($showrefmsg) {handle_warning();} }
+    elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning/i)                         { handle_warning(); }
+    elsif (/Runaway argument\?/i)                                       { handle_warning(1); }
+    elsif (/(overfull|underfull|badbox)/i)                              { if ($showboxmsg){handle_warning(1);} }
+
+    # find infos
+    elsif (/^(LaTeX)/i)                                                 { handle_info(); }
+    elsif (/^Document Class/i)                                          { handle_info(); }
+    elsif (/^\\input/)                                                  { handle_info(); }
+    elsif (/^Output written/i)                                          { print "\n"; handle_info(0, "bold"); }
+
+    else {
+        # user added filters
+        my $line=$_;
+        my $usrmatch=0;
+        for my $filter (@userfilters){
+            if ($line =~ m/$filter/ && ! $usrmatch) {
+                $usrmatch = 1;
+                print_skips();
+                print color($usrcolor), $line;
+            }
+        }
+        # if not, skip line
+        if (! $usrmatch){
+            $samecontext=0;
+            if ($fulllog ){ print color("reset"), $line, ; }
+        }
+    }
+}
+
+# end message
+print "\n";
+if ($nerr > 0) {print color("bold"), color($errcolor), "Found ", $nerr, " error(s)\n", color("reset") ;}
+if ($nwrn > 0) {print color("bold"), color($wrncolor), "Found ", $nwrn, " warning(s)\n", color("reset") ;}
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 texlogfilter
+
+=head2 NAME
+
+texlogfilter - filter latex engines output or log file
+
+=head2 SYNOPSIS
+
+    texlogfilter [options] file.log
+
+=head2 DESCRIPTION
+
+Filter latex engines output or log file. For latex, pdflatex, lualatex or
+xelatex output or log file.
+
+Without input file, standard input is used.  Use on latex engine output with:
+
+    latex file.tex < /dev/null | texlogfilter
+
+=head2 OPTIONS
+
+    --help                 : print this help and exit
+    --version              : print version and exit
+
+    --box                  : show box warnings
+    --no-box               : mask box warnings
+
+    --ref                  : show reference/citation warnings
+    --no-ref               : mask reference/citation warnings
+
+    --filename             : print current file name
+    --no-filename          : do not print current file name
+    --files-ext=string     : regex pattern used to match files extension (default: tex|sty|cls|bib)
+
+    --skips                : indicate skipped lines
+    --no-skips             : mask skipped lines
+    --skip-marker=string   : marker used to indicate skipped lines (defaut: ...)
+
+    --add-filter=string    : add user filter pattern (as perl regular expression)
+
+    --full-log             : show full log (don't filter - only colorize latex engine output)
+
+    --errors-color=string
+    --warnings-color=string
+    --infos-color=string
+    --skips-color=string
+    --user-color=string    : colors used for errors, warnings, informations and skipped lines
+
+=head2 ALTERNATIVES
+
+=over
+
+=item * B<texlog-extract> : L<https://www.ctan.org/pkg/texlog-extract>
+
+=item * B<texloganalyser> : L<https://www.ctan.org/pkg/texloganalyser>
+
+=back
+
+=head2 AUTHOR
+
+Written by Julien Labbé.
+
+Inspired from a script given by Martin Scharrer on Stack Exchange network (see
+L<https://tex.stackexchange.com/a/10564>).
+
+=head2 LICENCE
+
+This work may be distributed and/or modified under the conditions of the LaTeX
+Project Public License, either version 1.3 of this license or (at your option)
+any later version. The latest version of this license is in
+L<http://www.latex-project.org/lppl.txt> and version 1.3 or later is part of all
+distributions of LaTeX version 2005/12/01 or later.
+
+=head2 VERSION
+
+1.0
+
+=head2 HISTORY
+
+=over
+
+=item * 2021, november : version 1.0 (initial version).
+
+=back
+
+=cut
+
+=head2 DOCUMENTATION
+
+The documentation is integrated, writtent in Plain Old Documentation (POD)
+format. Exported versions are available, in the following files:
+
+=over
+
+=item * F<README>: created with perldoc.
+
+=item * F<texlogfilter.html>: created with pod2html.
+
+=back
+
+=cut
