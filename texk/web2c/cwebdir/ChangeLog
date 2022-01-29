@@ -1,3 +1,14 @@
+2022-01-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-man.ch,
+	* ctang-man.ch,
+	* cweav-man.ch,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* texinputs/pdfctwimac.tex: Support HINT format.
+
 2022-01-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-pc.ch,

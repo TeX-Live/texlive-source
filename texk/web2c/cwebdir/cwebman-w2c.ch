@@ -18,7 +18,7 @@
 
 @x
 \input cwebmac
-\acrofalse\pdffalse\pdftexfalse
+\acrofalse\pdffalse\pdftexfalse\HINTfalse\acroHINTfalse
 @y
 \input cwebmac
 @z
