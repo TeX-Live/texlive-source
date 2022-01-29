@@ -1628,13 +1628,13 @@ File: web2c.info,  Node: TeX extensions,  Prev: IPC and TeX,  Up: TeX
 
 The base TeX program has been extended in many ways.
 
-   There has been a substantial effort to make some extended
-functionality available across all engines, so that formats, notably
-LaTeX, can rely on it.  A list of this common extended functionality is
-in a 'LaTeX News' article,
+   There has been a substantial effort to make a set of extended
+functionality available across all actively-updated engines, so that
+formats, notably LaTeX, can rely on it.  A list of this common extended
+functionality is in a 'LaTeX News' article,
 <https://www.latex-project.org/news/latex2e-news/ltnews31.pdf>.  For
-engines in TeX Live, the detailed documentation for the extended
-primitives is mostly in the pdfTeX manual (<http://pdftex.org>).
+engines in TeX Live, the detailed documentation for these primitives is
+mostly in the pdfTeX manual (<http://pdftex.org>).
 
    In addition, each engine (naturally) has its own particular features,
 described in its own manual.  Here's a partial list of the engines.
@@ -1673,7 +1673,7 @@ XeTeX
      Home page: <https://tug.org/xetex>.
 
 hiTeX
-     Outputs the so-called HINT format, which is designed for reading
+     Outputs its own HINT format, which is designed for reading
      technical documents on mobile devices.  More info:
      <https://ctan.org/pkg/hitex>.
 
@@ -4589,42 +4589,42 @@ Node: patgen invocation63460
 Node: Shell escapes64167
 Node: IPC and TeX67747
 Node: TeX extensions68317
-Node: Metafont71090
-Node: mf invocation72378
-Node: Initial Metafont76215
-Node: Modes77845
-Node: Online Metafont graphics80095
-Node: gftodvi invocation83520
-Node: mft invocation86340
-Node: MetaPost90338
-Node: mpost invocation91174
-Node: Initial MetaPost96210
-Node: dvitomp invocation97132
-Node: BibTeX97797
-Node: bibtex invocation98158
-Node: Basic BibTeX style files100632
-Node: WEB101962
-Node: tangle invocation103171
-Node: weave invocation105295
-Node: pooltype invocation106702
-Node: DVI utilities107832
-Node: dvicopy invocation108766
-Node: dvitype invocation110051
-Node: dvitype output example112382
-Node: Font utilities115435
-Node: Font file formats116615
-Node: gftopk invocation119882
-Node: pktogf invocation121073
-Node: pktype invocation122239
-Node: gftype invocation125062
-Node: tftopl invocation129565
-Node: pltotf invocation134158
-Node: vftovp invocation135209
-Node: vptovf invocation137444
-Node: Font utilities available elsewhere138471
-Node: Legalisms140676
-Node: References142123
-Node: Index146256
+Node: Metafont71098
+Node: mf invocation72386
+Node: Initial Metafont76223
+Node: Modes77853
+Node: Online Metafont graphics80103
+Node: gftodvi invocation83528
+Node: mft invocation86348
+Node: MetaPost90346
+Node: mpost invocation91182
+Node: Initial MetaPost96218
+Node: dvitomp invocation97140
+Node: BibTeX97805
+Node: bibtex invocation98166
+Node: Basic BibTeX style files100640
+Node: WEB101970
+Node: tangle invocation103179
+Node: weave invocation105303
+Node: pooltype invocation106710
+Node: DVI utilities107840
+Node: dvicopy invocation108774
+Node: dvitype invocation110059
+Node: dvitype output example112390
+Node: Font utilities115443
+Node: Font file formats116623
+Node: gftopk invocation119890
+Node: pktogf invocation121081
+Node: pktype invocation122247
+Node: gftype invocation125070
+Node: tftopl invocation129573
+Node: pltotf invocation134166
+Node: vftovp invocation135217
+Node: vptovf invocation137452
+Node: Font utilities available elsewhere138479
+Node: Legalisms140684
+Node: References142131
+Node: Index146264
 
 End Tag Table
 

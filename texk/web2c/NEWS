@@ -3,15 +3,17 @@ This file records noteworthy changes.  (Public domain.)
 
 2022 (for TeX Live 2022)
 
-* hitex engine included for mobile output in HINT format.
+* new hitex engine included, which outputs HINT files for display on
+mobile devices. HINT viewers for GNU/Linux, Windows, and Android are
+available.
 
 * twill program for original Pascal *.web mini-indexes included.
 
 * across actively-extended engines
-  (that is, not including original (e)TeX, Aleph, (u)pTeX, hitex):
+  (that is, not including original (e)TeX, Aleph, hiTeX):
 - new primitive \showstream to redirect \show output to a file.
 - new primitives \partokenname and \partokencontext allow overriding the
-  name of the internally-emitted \par token at blank lines, the end of
+  name of the emitted \par token mitted at blank lines, the end of
   vboxes, etc.
 
 

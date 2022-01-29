@@ -1915,13 +1915,13 @@ debugging.
 The base @TeX{} program has been extended in many ways.  
 
 @cindex cross-engine functionality
-There has been a substantial effort to make some extended
-functionality available across all engines, so that formats, notably
-@LaTeX{}, can rely on it.  A list of this common extended
-functionality is in a @cite{@LaTeX{} News} article,
+There has been a substantial effort to make a set of extended
+functionality available across all actively-updated engines, so that
+formats, notably @LaTeX{}, can rely on it.  A list of this common
+extended functionality is in a @cite{@LaTeX{} News} article,
 @url{https://www.latex-project.org/news/latex2e-news/ltnews31.pdf}.
-For engines in @TeX{} Live, the detailed documentation for the
-extended primitives is mostly in the pdf@TeX{} manual
+For engines in @TeX{} Live, the detailed documentation for these
+primitives is mostly in the pdf@TeX{} manual
 (@url{http://pdftex.org}).
 
 In addition, each engine (naturally) has its own particular features,
@@ -1981,7 +1981,7 @@ Home page: @url{https://tug.org/xetex}.
 @item hi@TeX{}
 @cindex hi@TeX{}
 @cindex HINT (Hint Is Not @TeX{})
-Outputs the so-called HINT format, which is designed for reading
+Outputs its own HINT format, which is designed for reading
 technical documents on mobile devices. More info:
 @url{https://ctan.org/pkg/hitex}.
 
