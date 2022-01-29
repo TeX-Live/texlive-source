@@ -1,11 +1,11 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.6 --- January 2022
+% Version 4.5 --- October 2021
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+', 'pdftex', and 'xetex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL4.6+LNCS+PDF}
+\xdef\fmtversion{\fmtversion+CTWILL4.5+LNCS+PDF}
 
 \newif\ifpdf
 \ifx\pdf+\pdftrue\fi
@@ -19,10 +19,7 @@
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi\fi
-\newif\ifHINT
-\ifx\HINTversion\undefined \HINTfalse \else \HINTtrue \fi
 \newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
-\newif\ifacroHINT \ifacro\acroHINTtrue\fi \ifHINT\acroHINTtrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -241,7 +238,7 @@
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\par\penalty5000
   \Y\noindent{\hangindent2\em\baselineskip10pt%
-    \eightrm#1~\ifacroHINT{\pdfnote#2.}\else#2\fi.\par}}
+    \eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
 
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
 \newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
@@ -262,6 +259,29 @@
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
       depth \thedepth << /Type /Annot /Subtype /Link
       /Border [0 0 0] /A << /S /GoTo /D (#2) >> >>}\box0\relax}\fi
+\def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
+\def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
+    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
+      \toksC={}\let\space\empty}\makenote}\maketoks}}
+\def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
+\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
+  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
+\def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
+  \ifnum\countB>`9 \countB=0 \fi
+  \ifnum\countB<`0
+    \ifnum0=\countC\else\makenote\fi
+    \ifx\first.\let\next=\maketoksdone\else
+        \let\next=\maketoks
+        \addtokens\toksB{\the\toksD}
+        \ifx\first,\addtokens\toksB{\space}\fi
+    \fi
+  \else \addtokens\toksC{\the\toksD}\global\countC=1\let\next=\maketoks
+  \fi
+  \next
+}
+\def\makenote{\addtokens\toksB
+    {\noexpand\pdflink{\the\toksC}{\romannumeral\the\toksC}}\toksC={}\global\countC=0}
+\def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
 \def\pdfURL#1#2{\ifpdftex\pdfannotlink height\ht\strutbox depth\dp\strutbox
   attr {/Border [0 0 0]} user {/Type /Action /Subtype /Link /A
       << /S /URI /URI (#2) >>}\PDFlinkcolor #1\Black \pdfendlink
@@ -372,53 +392,9 @@
   \outlinest\let\outlinedone=\relax}
 \fi % End of pdf macros
 
-\ifHINT
-% The following uses HINT primitives to implement:
-% \HINThome to mark the position of the home page
-% \HINTlabel to attach a label to the top of a section
-% \HINTlink to link a section number to the section label
-% \HINTcontents to produce an 'outline' item
-% These are the top level HINT macros that are used in this file
-% No HINT primitives are used directly.
-\def\HINThome{\HINTdest name {HINT.home}%
-  \HINToutline goto name {HINT.home} depth 1 {Table of Contents}}
-\def\HINTlabel{{\let\*=\empty\HINTdest num \secstar top}}
-\def\HINTlink#1#2{\HINTstartlink goto num #1 {#1}\HINTendlink}% #2 not used ???
-\def\HINTcontents#1#2#3{\HINToutline goto num #3 depth #2 {#1}}
-\let\pdflink=\HINTlink
-\fi % End of HINT macros
-
-% Common macros for \ifacro and \ifHINT
-\ifacroHINT
-\def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
-\def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
-    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
-      \toksC={}\let\space\empty}\makenote}\maketoks}}
-\def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
-\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
-  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
-\def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
-  \ifnum\countB>`9 \countB=0 \fi
-  \ifnum\countB<`0
-    \ifnum0=\countC\else\makenote\fi
-    \ifx\first.\let\next=\maketoksdone\else
-        \let\next=\maketoks
-        \addtokens\toksB{\the\toksD}
-        \ifx\first,\addtokens\toksB{\space}\fi
-    \fi
-  \else \addtokens\toksC{\the\toksD}\global\countC=1\let\next=\maketoks
-  \fi
-  \next
-}
-\def\makenote{\addtokens\toksB
-    {\noexpand\pdflink{\the\toksC}{\romannumeral\the\toksC}}\toksC={}\global\countC=0}
-\def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
-\fi % End of common macros
-
 \def\lapstar{\rlap{*}}
 \def\stsec{\tenpoint\rightskip=0pt % get out of C mode (cf. \B)
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
-  \ifHINT\HINTlabel\fi% Start page before section
   \noindent\strut{\let\*=\lapstar\bf\secno.\quad}%
   \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
     \ifpdftex \pdfdest num \secstar fith%
@@ -504,7 +480,7 @@
 \let\W=\land % logical and
 \def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\sevenrm\kern.5em
-    \ifacroHINT{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
+    \ifacro{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le
 \let\ZZ=\let % now you can \write the control sequence \ZZ
@@ -636,7 +612,7 @@
 {\obeylines\gdef\makeinref#1 #2 #3
   {\ifsorted\else\ttoks={\[#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
   \hangindent=1em \noindent #2\miniform#3, %<== space!
-    \S\ifacroHINT{\pdfnote#1.}\else{#1}\fi.\par}}
+    \S\ifacro{\pdfnote#1.}\else{#1}\fi.\par}}
 {\obeylines\gdef\makeoutref#1 #2 #3
   {\ifsorted\else\ttoks={\]#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
   \hangindent=1em \noindent #2\miniform#3, \extref#1.\par}}
@@ -728,20 +704,15 @@
   %\pageno=\contentspagenumber
   %\def\grouptitle{TABLE OF CONTENTS}
   %\message{Table of contents:}
-  %\ifHINT\HINThome\fi% Mark the Table of contents as home page
   %\topofcontents \startpdf
-  %\line{\hfil Section\ifHINT\else\hbox to3em{\hss Page}\fi}% No Page in HINT
+  %\line{\hfil Section\hbox to3em{\hss Page}}
   %\let\ZZ=\contentsline
   %\readcontents\relax % read the contents info
   %\botofcontents \end} % print the contents page(s) and terminate
 %\def\contentsline#1#2#3#4#5{\ifnum#2=0 \smallbreak\fi
     %\line{\consetup{#2}#1
       %\rm\leaders\hbox to .5em{.\hfil}\hfil
-      %\ \ifHINT
-          %\HINTlink{#3}{\romannumeral#3}% No page numbers in HINT
-          %\HINTcontents{#1}{#2}{#3}%
-        %\else\ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi
-          %\hbox to3em{\hss#4}\fi}}
+      %\ \ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi\hbox to3em{\hss#4}}}
 %\def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
   %\or % depth 0 (@*)
   %\or \hskip2em % depth 1 (@*1)

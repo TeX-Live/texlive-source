@@ -6,8 +6,7 @@
 	* cweav-man.ch,
 	* cwebmac.tex,
 	* cwebman-w2c.ch,
-	* cwebman.tex,
-	* texinputs/pdfctwimac.tex: Support HINT format.
+	* cwebman.tex: Support HINT format.
 
 2022-01-15  Andreas Scherer  <https://ascherer.github.io>
 
