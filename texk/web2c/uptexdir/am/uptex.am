@@ -172,7 +172,8 @@ upweb_tests = \
 	uptexdir/yokotate.test \
 	uptexdir/newjfm.test \
 	uptexdir/uparse.test \
-	uptexdir/gkhuge.test
+	uptexdir/gkhuge.test \
+	uptexdir/upkcat.test
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
