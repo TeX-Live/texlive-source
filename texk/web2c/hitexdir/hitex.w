@@ -25554,8 +25554,11 @@ primitive("immediate", extension, immediate_code);@/
 primitive("setlanguage", extension, set_language_code);@/
 @!@:set\_language\_}{\.{\\setlanguage} primitive@>
 
-primitive("@@HINT", relax, 256); /*cf.\ |relax|*/
-@!@:@@HINT\_}{\.{\\@@HINT} primitive@>
+primitive("HINTversion", last_item, HINT_version_code);
+@!@:HINT\_version\_}{\.{\\HINTversion} primitive@>
+
+primitive("HINTsubversion", last_item, HINT_subversion_code);
+@!@:HINT\_subversion\_}{\.{\\HINTsubversion} primitive@>
 
 primitive("HINTdest", extension, label_node);@/
 @!@:HINTdest\_}{\.{\\HINTdest} primitive@>
@@ -30027,12 +30030,6 @@ format that this program will generate.
 @d HINT_version_code (eTeX_last_last_item_cmd_mod+7) /* \.{\\HINTversion} */
 @d HINT_subversion_code (eTeX_last_last_item_cmd_mod+8) /* \.{\\HINTsubversion} */
 
-@<Generate all \Prote\ primitives@>=
-primitive("HINTversion", last_item, HINT_version_code);
-@!@:HINT\_version\_}{\.{\\HINTversion} primitive@>
-primitive("HINTsubversion", last_item, HINT_subversion_code);
-@!@:HINT\_subversion\_}{\.{\\HINTsubversion} primitive@>
-
 @ Now this new primitive needs its implementation
 
 @<Cases of |last_item| for |print_cmd_chr|@>=
@@ -30042,7 +30039,6 @@ case HINT_subversion_code: print_esc("HINTsubversion");@+break;
 @ @<Cases for fetching a \Prote\ int value@>=
 case HINT_version_code: cur_val=HINT_VERSION;@+break;
 case HINT_subversion_code: cur_val=HINT_SUB_VERSION;@+break;
-
 
 
 @ The implementation reuses code that has been written as part of
