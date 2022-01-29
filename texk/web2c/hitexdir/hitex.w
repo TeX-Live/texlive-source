@@ -30329,11 +30329,11 @@ static void hline_break(int final_widow_penalty)
   }
   auto_breaking=true;
   if (option_hyphen_first && is_char_node(link(temp_head)))
-  { cur_p = new_glue(zero_glue);
-    link(cur_p)=link(temp_head);
+  { pointer p = new_glue(zero_glue);
+    link(p)=link(temp_head);
+    link(temp_head) =p;
   }
-  else
-    cur_p=link(temp_head);
+  cur_p=link(temp_head);
   while (cur_p!=null)
   { /*Call |try_break| if |cur_p| is a legal breakpoint...*/
     if (is_char_node(cur_p))
