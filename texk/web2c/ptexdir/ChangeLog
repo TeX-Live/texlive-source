@@ -1,3 +1,9 @@
+2022-01-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Fix \chardef code 256 in math.
+	  Fix \mathcode for 128--255 not working.
+	  https://github.com/texjporg/tex-jp-build/issues/129
+
 2022-01-27  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix a mistake and avoid compiler warnings.
@@ -12,6 +18,7 @@
 	* ptex.defines: Add multistrlen{short,filename}, fromBUFFshort.
 	* ptex_version.h: Version p4.0.0.
 	* tests/filename_test.sh, tests/printkanji.tex: Added.
+	  https://github.com/texjporg/tex-jp-build/issues/81
 
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
