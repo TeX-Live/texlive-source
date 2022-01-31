@@ -1242,7 +1242,14 @@ file_exists_p(const char *path, dviErrFlagT *errflag)
     /*      fprintf(stderr, "after internal_open_dvi2: xfopen\n"); */
     
     /* shouldn't happen */
-    if (fstat(fileno(m_dvi_fp), &fstatbuf) != 0 || S_ISDIR(fstatbuf.st_mode)) {	/* if it's a directory */
+    int rv = fstat(fileno(m_dvi_fp), &fstatbuf);
+    if (rv == -1) {
+      perror("xdvi: file_exists_p: fstat");
+      fclose(m_dvi_fp);
+      m_dvi_fp = NULL;
+      return False;
+    }
+    if (S_ISDIR(fstatbuf.st_mode)) {	/* if it's a directory */
 	*errflag = FILE_IS_DIRECTORY;
 	fclose(m_dvi_fp);
 	m_dvi_fp = NULL;

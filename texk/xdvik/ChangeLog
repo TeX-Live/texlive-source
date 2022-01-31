@@ -1,5 +1,9 @@
 2022-01-31  Karl Berry  <karl@freefriends.org>
 
+	* dvi-init.c (file_exists_p): check for failed fstat.
+	Found by John Hawkinson, tlbuild 30 Jan 2022 22:42:23.	
+	https://tug.org/pipermail/tlbuild/2022q1/005105.html
+
 	* xdvi.1.in: add 262144=find and 524288=files.
 	Found by John Hawkinson, tlbuild 30 Jan 2022 23:11:10.
 
