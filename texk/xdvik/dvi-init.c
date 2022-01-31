@@ -1242,8 +1242,7 @@ file_exists_p(const char *path, dviErrFlagT *errflag)
     /*      fprintf(stderr, "after internal_open_dvi2: xfopen\n"); */
     
     /* shouldn't happen */
-    int rv = fstat(fileno(m_dvi_fp), &fstatbuf);
-    if (rv == -1) {
+    if (fstat(fileno(m_dvi_fp), &fstatbuf) == -1) {
       perror("xdvi: file_exists_p: fstat");
       fclose(m_dvi_fp);
       m_dvi_fp = NULL;
