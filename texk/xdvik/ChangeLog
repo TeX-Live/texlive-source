@@ -1,3 +1,8 @@
+2022-01-31  Karl Berry  <karl@freefriends.org>
+
+	* xdvi.1.in: add 262144=find and 524288=files.
+	Found by John Hawkinson, tlbuild 30 Jan 2022 23:11:10.
+
 2022-01-26  Karl Berry  <karl@freefriends.org>
 
 	* gui/print-log.h (info): don't declare unintended `info' variable

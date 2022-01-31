@@ -1,4 +1,4 @@
-.\" Copyright 1990-2019 Paul Vojta and others
+.\" Copyright 1990-2022 Paul Vojta and others
 .\"
 .\" This is Paul's license, included here only for reference, it does not apply
 .\" to all parts of the k version.
@@ -431,6 +431,8 @@ The individual numbers and strings have the following meanings:
 	32768	ft	FreeType library messages (Type 1 fonts)
 	65536	ft_verbose	Verbose FreeType library messages (currently unused)
 	131072	gui	GUI elements
+	262144	find	file searching and more
+	524288	files	file parsing and more
 .sp 1n
 .fi
 Some of the Kpathsea debugging options are actually provided by Kpathsea;
