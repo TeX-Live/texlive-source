@@ -5462,13 +5462,13 @@ defined by |SOURCE_DATE_EPOCH|.
 @^creation date@>
 @^reference time@>
 @^system dependencies@>
-k\TeX\ calls |tl_now| to obtain the current time (UTC) as a |tm| structure.
+k\TeX\ calls |tl_now| to obtain the current time as a |tm| structure.
 @p static void fix_date_and_time(void)
-{@+ struct tm *gmt=tl_now();
-  time=sys_time= gmt->tm_hour*60+gmt->tm_min;/*minutes since midnight*/
-  day=sys_day= gmt->tm_mday;/*day of the month*/
-  month=sys_month=gmt->tm_mon+1;/*month of the year*/
-  year=sys_year=gmt->tm_year+1900;/*Anno Domini*/
+{@+ struct tm *t=tl_now();
+  time=sys_time= t->tm_hour*60+t->tm_min;/*minutes since midnight*/
+  day=sys_day= t->tm_mday;/*day of the month*/
+  month=sys_month=t->tm_mon+1;/*month of the year*/
+  year=sys_year=t->tm_year+1900;/*Anno Domini*/
 }
 
 @ @<Show equivalent |n|, in region 5@>=
@@ -34717,16 +34717,23 @@ static void main_init(int ac, char *av[]);
 @ We conclude this chapter using \.{time.h} to provide a function
 that is used to initialize
 \TeX's date and time information. Because |time| is one of \TeX's
-macros, we add the function |tl_now| that wraps the call to |time|
-(and |gmtime|) for later use in |fix_date_and_time|.
+macros, we add the function |tl_now| before including \TeX's macros
+to wrap the call to the |time| function.
+It sets the variable |start_time| and returns a pointer to a |tm| structure
+to be used later in |fix_date_and_time|.
 
-To support \LaTeX, two environment variables need to be checked:
-If |SOURCE_DATE_EPOCH| is set, it is used as the current time in
-seconds since January 1, 1970 (UTC).
-If |FORCE_SOURCE_DATE| is set to $1$ also \TeX's primitives
-\.{\\year}, \.{\\month}, \.{\\day}, and \.{\\time} use this value
-as the current time. This feature is usefull to make reproducible
-builds of documents.
+To support reproducible output, the environment variable |SOURCE_DATE_EPOCH|
+needs to be checked. If it is set, it is an \ASCII\ representation of
+a \UNIX\ timestamp, defined as the number
+of seconds, excluding leap seconds, since 01 Jan 1970 00:00:00 UTC.
+Its value is then used to initialize the |start_time| variable.
+
+The \TeX\ Live conventions further require that setting the
+|FORCE_SOURCE_DATE| environment variable to $1$ will cause also \TeX's primitives
+\.{\\year}, \.{\\month}, \.{\\day}, and \.{\\time}  to use this value
+as the current time. Looking at the \TeX\ Live code also reveals that
+these primitives use the local time instead of the GMT if this variable is
+not set to~1.
 
 @<Header files and function declarations@>=
 #include <time.h>
@@ -34738,22 +34745,28 @@ static char *source_date_epoch,*force_source_date;
 #endif
 
 static struct tm *tl_now(void)
-{@+struct tm *gmt;
+{@+struct tm *tp;
    time_t t;
    source_date_epoch= getenv("SOURCE_DATE_EPOCH");
+   force_source_date= getenv("FORCE_SOURCE_DATE");
+   if (force_source_date!=NULL &&
+       (force_source_date[0]!='1' || force_source_date[1]!=0))
+       force_source_date=NULL;
+
    if (source_date_epoch!=NULL)
-   { start_time= (time_t)strtoull(source_date_epoch, NULL, 10);
-     force_source_date= getenv ("FORCE_SOURCE_DATE");
-     if (force_source_date!=NULL &&
-         force_source_date[0]=='1' && force_source_date[1]==0)
+   {  start_time= (time_t)strtoull(source_date_epoch, NULL, 10);
+      if (force_source_date!=NULL)
          t=start_time;
-       else
+      else
          t=time(NULL);
    }
    else
      t=start_time=time(NULL);
-  gmt=gmtime(&t);
-  return gmt;
+   if (force_source_date)
+     tp=gmtime(&t);
+   else
+     tp=localtime(&t);
+  return tp;
 }
 
 @ To support \LaTeX, a few more time related functions are needed.
