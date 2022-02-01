@@ -1,8 +1,8 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016-2021 Brian Dunn
+-- Copyright 2016-2022 Brian Dunn
 
-printversion = "v0.902"
+printversion = "v0.903"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -383,8 +383,15 @@ function pdftohtml ()
 -- Convert to text:
 print ("lwarpmk: Converting " .. sourcename
     .."_html.pdf to " .. sourcename .. "_html.html")
-os.execute("pdftotext  -enc " .. pdftotextenc .. "  -nopgbrk  -layout "
+err = os.execute("pdftotext  -enc " .. pdftotextenc .. "  -nopgbrk  -layout "
     .. sourcename .. "_html.pdf " .. sourcename .. "_html.html")
+if ( err ~= 0 ) then
+    print ("lwarpmk: ===")
+    print ("lwarpmk: Ensure that the Poppler utilities are installed." )
+    print ("lwarpmk: See the Lwarp manual: `Installing additional utilities'." )
+    print ("lwarpmk: ===")
+    os.exit(1)
+end
 -- Split the result into individual HTML files:
 splitfile (homehtmlfilename .. ".html" , sourcename .. "_html.html")
 end
