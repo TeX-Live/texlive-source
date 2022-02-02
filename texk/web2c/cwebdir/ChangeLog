@@ -1,3 +1,7 @@
+2022-02-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebmac.tex: Reshuffle '\pdfURL' macro for HiTeX.
+
 2022-01-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

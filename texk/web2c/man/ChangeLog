@@ -1,3 +1,8 @@
+2022-02-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* cweb.man: Pandoc (2.17.1) added some code.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am: copyright 2022.
