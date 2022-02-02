@@ -1170,17 +1170,13 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
     if (first_time) { /* doesn't exist yet, create it */
 	if ((tmp_fd = xdvi_temp_fd(&m_tmp_dvi_name)) == -1) {
 	    XDVI_ERROR((stderr, "error creating temporary file - disabling `useTempFp'."));
-	    resource.use_temp_fp = False;
-	    remove_tmp_dvi_file(NULL);
-	    return NULL;
+	    goto fail;
 	}
 	/* 	fprintf(stderr, "temporary file name: |%s|, %d\n", m_tmp_dvi_name, tmp_fd); */
 	TRACE_EVENTS((stderr, "Created temp file: |%s|\n", m_tmp_dvi_name));
 	if ((target_fp = try_fdopen(tmp_fd, "wb+")) == NULL) {
 	    XDVI_ERROR((stderr, "error opening temporary file (%s) - disabling `useTempFp'.", strerror(errno)));
-	    resource.use_temp_fp = False;
-	    remove_tmp_dvi_file(NULL);
-	    return NULL;
+	    goto fail;
 	}
 	first_time = False;
     }
@@ -1189,19 +1185,22 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 	ASSERT(target_fp != NULL, "");
 	ASSERT(source_fp != NULL, "");
 
+	if (fseek(target_fp, 0L, SEEK_SET)) {
+	  XDVI_ERROR((stderr, "Couldn't seek to start of file %s: %s - disabling `useTempFp'; target_fp: %p.",
+			m_tmp_dvi_name, strerror(errno), target_fp));
+	  goto fclose_and_fail;
+	}
 #if HAVE_FTRUNCATE
 	if (ftruncate(tmp_fd, 0) < 0) {
-
 	    XDVI_ERROR((stderr, "Couldn't truncate file %s: %s - disabling `useTempFp'; target_fp: %p.",
 			m_tmp_dvi_name, strerror(errno), target_fp));
-	    resource.use_temp_fp = False;
-	    remove_tmp_dvi_file(NULL);
-	    fclose(target_fp);
-	    return NULL;
+	    goto fclose_and_fail;
 	}
 #endif
-	fseek(target_fp, 0L, SEEK_SET);
-	fseek(source_fp, 0L, SEEK_SET);
+	if (fseek(source_fp, 0L, SEEK_SET)) {
+	  perror("fseek of source_fp");
+	  goto fclose_and_fail;
+	}
     }
 
     /* copy the file */
@@ -1210,22 +1209,32 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 		    "Error creating temporary file: %s\n"
 		    "- disabling `useTempFp'.",
 		    strerror(errno)));
-	remove_tmp_dvi_file(NULL);
-	resource.use_temp_fp = False;
-	fclose(target_fp);
-	target_fp = NULL;
+	goto fclose_and_fail;
     }
     
     /* rewind both files, else DVI parsing will fail! */
     if (target_fp != NULL) {
 	fflush(target_fp);
     }
-    fseek(source_fp, 0L, SEEK_SET);
+    if (fseek(source_fp, 0L, SEEK_SET)) {
+      perror("fseek of source_fp after rewind");
+    }
     if (target_fp != NULL) {
-	fseek(target_fp, 0L, SEEK_SET);
+      if (fseek(target_fp, 0L, SEEK_SET)) {
+	perror("fseek of target_fp again");
+      }
     }
     
     return target_fp;
+
+ fclose_and_fail:
+    fclose(target_fp);
+    /* FALLTHROUGH */
+ fail:
+    resource.use_temp_fp = False;
+    remove_tmp_dvi_file(NULL);
+    return NULL;
+
 }
 
 static Boolean

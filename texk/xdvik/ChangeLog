@@ -1,3 +1,9 @@
+2022-02-01  John Hawkinson  <jhawk@alum.mit.edu>
+
+	* dvi-init.c (make_backup_fp): check returns from fseeks,
+	disable useTempFp if failure. Posted at
+	https://tug.org/pipermail/tlbuild/2022q1/005129.html
+
 2022-01-31  Karl Berry  <karl@freefriends.org>
 
 	* dvi-init.c (file_exists_p): check for failed fstat.
