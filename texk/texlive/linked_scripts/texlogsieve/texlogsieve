@@ -157,16 +157,24 @@ than max_print_line characters (by default, 79). Since some messages
 may be output together on a single line, even short messages may be
 broken across lines. At the same time, there are quite a few ordinary
 lines that in practice happen to be max_print_line characters long,
-which makes detecting line wrapping a real challenge. Also, for no
-apparent reason, LuaTeX wraps some lines at max_print_line characters
-and others at max_print_line +1 characters. More: I have seen at least
-two cases in which TeX "forgot" to wrap a line, and sometimes there is
-a blank line between the wrapped line and its continuation line. And
-even more! LuaTeX does not break a line in the middle of a multibyte
-UTF-8 character. That is obviously a good idea, but it means some lines
-may be broken at lengths smaller than max_print_line. While this may
-seem rare, it can happen when parts of the document text are included
-in the log, as is the case with over/underfull box messages.
+which makes detecting line wrapping a real challenge. And, just to
+make things more interesting, sometimes there is a blank line between
+the wrapped line and its continuation line.
+
+pdfTeX (and, I suppose, traditional TeX) counts characters as bytes to
+choose where to wrap a line. XeTeX, however, counts utf-8 characters
+(I do not know whether that's code points or graphemes), so we need to
+take that into consideration.
+
+LuaTeX adds some extra complications: for no apparent reason, it wraps
+some lines at max_print_line characters and others at max_print_line +1
+characters. It also sometimes "forgets" to wrap a line. And more! It
+does not break a line in the middle of a multibyte UTF-8 character.
+That is obviously a good idea, but it counts the line length in bytes,
+like pdfTeX, which means some lines may be broken at lengths smaller
+than max_print_line. While this may seem rare, it can happen when parts
+of the document text are included in the log, as is the case with
+over/underfull box messages.
 
 So, if at all possible, it is a very good idea to set max_print_line
 to a really large value (such as 100,000), effectively disabling line
@@ -329,9 +337,8 @@ A simple handler:
   end
 
   function exampleHandler:canDoit(position)
-      local line
       if position == nil then position = 0 end
-      line = Lines:get(position)
+      local line = Lines:get(position)
       if line == nil then return false, {} end
 
       local first, last = string.find(line, self.pattern)
@@ -532,6 +539,7 @@ function main(arg)
   registerHandlers()
   registerSummaries()
   convertFilterStringsToPatterns()
+  detectEngine()
 
   while moreData() do
       if nextHandler == nil then
@@ -679,6 +687,14 @@ function initializeGlobals()
   -- Does the log file have wrapped lines?
   -- This may be changed by initializeKpse().
   badLogFile = true
+
+  -- When we detect one of the many "please rerun LaTeX"
+  -- messages, this is set to true (used in showSummary)
+  SHOULD_RERUN_LATEX = false
+
+  -- detectEngine() may set one of these to true
+  LUATEX = false
+  XETEX = false
 end
 
 function initializeKpse()
@@ -800,6 +816,22 @@ function convertFilterStringsToPatterns()
   FORCED_CRITICAL = tmp
 end
 
+function detectEngine()
+  local line = logfile:read("*line")
+  local first = string.find(string.lower(line), '^this is lua')
+  if first ~= nil then
+      LUATEX = true
+  else
+      first = string.find(string.lower(line), '^this is xe')
+      if first ~= nil then XETEX = true end
+  end
+
+  local msg = Message:new()
+  msg.content = line
+  msg.severity = DEBUG
+  dispatch(msg)
+end
+
 function processCommandLine(args)
   HEARTBEAT = true
   PAGE_DELAY = true
@@ -811,6 +843,8 @@ function processCommandLine(args)
   MINLEVEL = WARNING
   BE_REDUNDANT = false
   DETAILED_UNDEROVER_SUMMARY = true
+  DETAILED_REFERENCE_SUMMARY = true
+  DETAILED_CITATION_SUMMARY = true
 
   SILENCE_STRINGS = {}
   SILENCE_PKGS = {} -- just the package names
@@ -835,52 +869,63 @@ Usage: texlogsieve [OPTION]... [INPUT FILE]
 texlogsieve reads a LaTeX log file (or the standard input), filters
 out less relevant messages, and displays a summary report.
 
+texlogsieve reads additional options from the texlogsieverc file
+if it exists anywhere in the TeX path (for example, in the current
+directory).
+
 Options:
-  --page-delay, --no-page-delay        enable/disable grouping
-                                       messages by page before display
-  --summary, --no-summary              enable/disable final summary
-  --only-summary                       no filtering, only final summary
-  --shipouts, --no-shipouts            enable/disable reporting shipouts
-  --repetitions, --no-repetitions      allow/prevent repeated messages
-  --be-redundant, --no-be-redundant    present/suppress ordinary messages
-                                       that will also appear in the summary
-  --box-detail, --no-box-detail        include/exclude full under/overfull
-                                       boxes information in the summary
-  --heartbeat, --no-heartbeat          enable/disable progress gauge
-  -l LEVEL, --minlevel=LEVEL           filter out messages with severity
-                                       level lower than [LEVEL]. Valid
-                                       levels are DEBUG, INFO, WARNING,
-                                       CRITICAL, and UNKNOWN
-  -u, --unwrap-only                    no filtering or summary, only
-                                       unwrap long, wrapped lines
-  --silence-package=PKGNAME            suppress messages from package
-                                       PKGNAME; can be used multiple times
-  --silence-string=EXCERPT             suppress messages containing text
-                                       EXCERPT; can be used multiple times
-  --silence-file=FILENAME              suppress messages generated during
-                                       processing of FILENAME; can be used
-                                       multiple times
-  --semisilence-file=FILENAME          similar to --silence-file, but not
-                                       recursive
-  --add-debug-message=MESSAGE          add new recognizable debug message
-  --add-info-message=MESSAGE           add new recognizable info message
-  --add-warning-message=MESSAGE        add new recognizable warning message
-  --add-critical-message=MESSAGE       add new recognizable critical message
-  --set-to-level-debug=EXCERPT         reset severity of messages containing
-                                       text EXCERPT to DEBUG; can be used
-                                       multiple times
-  --set-to-level-info=EXCERPT          reset severity of messages containing
-                                       text EXCERPT to INFO; can be used
-                                       multiple times
-  --set-to-level-warning=EXCERPT       reset severity of messages containing
-                                       text EXCERPT to WARNING; can be used
-                                       multiple times
-  --set-to-level-critical=EXCERPT      reset severity of messages containing
-                                       text EXCERPT to CRITICAL; can be used
-                                       multiple times
-  -c cfgfile, --config-file=cfgfile    read options from config file
-  -h, --help                           give this help list
-  --version                            print program version]]
+  --page-delay, --no-page-delay          enable/disable grouping
+                                         messages by page before display
+  --summary, --no-summary                enable/disable final summary
+  --only-summary                         no filtering, only final summary
+  --shipouts, --no-shipouts              enable/disable reporting shipouts
+  --repetitions, --no-repetitions        allow/prevent repeated messages
+  --be-redundant, --no-be-redundant      present/suppress ordinary messages
+                                         that will also appear in the summary
+  --box-detail, --no-box-detail          include/exclude full under/overfull
+                                         boxes information in the summary
+  --ref-detail, --no-ref-detail          include/exclude full undefined refs
+                                         information in the summary
+  --cite-detail, --no-cite-detail        include/exclude full undefined
+                                         citations information in the summary
+  --summary-detail, --no-summary-detail  toggle box-detail, ref-detail, and
+                                         cite-detail at once
+  --heartbeat, --no-heartbeat            enable/disable progress gauge
+  -l LEVEL, --minlevel=LEVEL             filter out messages with severity
+                                         level lower than [LEVEL]. Valid
+                                         levels are DEBUG, INFO, WARNING,
+                                         CRITICAL, and UNKNOWN
+  -u, --unwrap-only                      no filtering or summary, only
+                                         unwrap long, wrapped lines
+  --silence-package=PKGNAME              suppress messages from package
+                                         PKGNAME; can be used multiple times
+  --silence-string=EXCERPT               suppress messages containing text
+                                         EXCERPT; can be used multiple times
+  --silence-file=FILENAME                suppress messages generated during
+                                         processing of FILENAME; can be used
+                                         multiple times
+  --semisilence-file=FILENAME            similar to --silence-file, but not
+                                         recursive
+  --add-debug-message=MESSAGE            add new recognizable DEBUG message
+  --add-info-message=MESSAGE             add new recognizable INFO message
+  --add-warning-message=MESSAGE          add new recognizable WARNING message
+  --add-critical-message=MESSAGE         add new recognizable CRITICAL message
+  --set-to-level-debug=EXCERPT           reset severity of messages containing
+                                         text EXCERPT to DEBUG; can be used
+                                         multiple times
+  --set-to-level-info=EXCERPT            reset severity of messages containing
+                                         text EXCERPT to INFO; can be used
+                                         multiple times
+  --set-to-level-warning=EXCERPT         reset severity of messages containing
+                                         text EXCERPT to WARNING; can be used
+                                         multiple times
+  --set-to-level-critical=EXCERPT        reset severity of messages containing
+                                         text EXCERPT to CRITICAL; can be used
+                                         multiple times
+  -c cfgfile, --config-file=cfgfile      read options from given config file
+                                         in addition to texlogsieverc
+  -h, --help                             give this help list
+  --version                              print program version]]
 
       for _, line in ipairs(linesToTable(msg)) do print(line) end
       os.exit(0)
@@ -888,7 +933,7 @@ Options:
 
   --version
   if vars.version then
-      print("texlogsieve 1.0.0-beta-2")
+      print("texlogsieve 1.0.0-beta-3")
       print("Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>")
       print("License GPLv3+: GNU GPL version 3 or later "
             .. "<https://gnu.org/licenses/gpl.html>.")
@@ -918,6 +963,10 @@ Options:
       vars = processConfigFile(configFile, vars)
   end
 
+  vars.c = nil
+  vars['config-file'] = nil
+
+
   --unwrap-only
   -- "-u"
   if vars['unwrap-only'] or vars.u then
@@ -931,6 +980,10 @@ Options:
       MINLEVEL = DEBUG
   end
 
+  vars.u = nil
+  vars['unwrap-only'] = nil
+
+
   --page-delay
   --no-page-delay
   --page-delay=true/false
@@ -941,6 +994,10 @@ Options:
       SHOW_SHIPOUTS = true -- this may be overriden below
   end
   if vars['page-delay'] then PAGE_DELAY = true end
+
+  vars['page-delay'] = nil
+  vars['no-page-delay'] = nil
+
 
   --only-summary
   if vars['only-summary'] then ONLY_SUMMARY = true end
@@ -955,6 +1012,11 @@ Options:
   end
   if vars.summary then SHOW_SUMMARY = true end
 
+  vars['only-summary'] = nil
+  vars.summary = nil
+  vars['no-summary'] = nil
+
+
   --no-shipouts
   --shipouts
   --shipouts=true/false
@@ -962,6 +1024,10 @@ Options:
       SHOW_SHIPOUTS = false
   end
   if vars.shipouts then SHOW_SHIPOUTS = true end
+
+  vars.shipouts = nil
+  vars['no-shipouts'] = nil
+
 
   --minlevel
   -- "-l"
@@ -975,9 +1041,18 @@ Options:
       elseif level == "info"     then MINLEVEL = INFO
       elseif level == "warning"  then MINLEVEL = WARNING
       elseif level == "critical" then MINLEVEL = CRITICAL
-      else                            MINLEVEL = UNKNOWN
+      elseif level == "unknown"  then MINLEVEL = UNKNOWN
+      else
+          print('    texlogsieve: unknown level "' .. level .. '"')
+          print('                 for help, try "texlogsieve --help"')
+          print()
+          os.exit(1)
       end
   end
+
+  vars.l = nil
+  vars.minlevel = nil
+
 
   --no-repetitions
   --repetitions
@@ -988,6 +1063,10 @@ Options:
       SILENCE_REPETITIONS = true
   end
   if vars.repetitions then SILENCE_REPETITIONS = false end
+
+  vars.repetitions = nil
+  vars['no-repetitions'] = nil
+
 
   --be-redundant
   --no-be-redundant
@@ -1000,6 +1079,31 @@ Options:
   end
   if vars['be-redundant'] then BE_REDUNDANT = true end
 
+  vars['be-redundant'] = nil
+  vars['no-be-redundant'] = nil
+
+
+  --summary-detail
+  --no-summary-detail
+  --summary-detail=true/false
+  if vars['no-summary-detail']
+                    or vars['summary-detail'] ~= nil
+                    and not vars['summary-detail'] then
+
+      DETAILED_UNDEROVER_SUMMARY = false
+      DETAILED_REFERENCE_SUMMARY = false
+      DETAILED_CITATION_SUMMARY = false
+  end
+  if vars['summary-detail'] then
+      DETAILED_UNDEROVER_SUMMARY = true
+      DETAILED_REFERENCE_SUMMARY = true
+      DETAILED_CITATION_SUMMARY = true
+  end
+
+  vars['summary-detail'] = nil
+  vars['no-summary-detail'] = nil
+
+
   --box-detail
   --no-box-detail
   --box-detail=true/false
@@ -1011,6 +1115,40 @@ Options:
   end
   if vars['box-detail'] then DETAILED_UNDEROVER_SUMMARY = true end
 
+  vars['box-detail'] = nil
+  vars['no-box-detail'] = nil
+
+
+  --ref-detail
+  --no-ref-detail
+  --ref-detail=true/false
+  if vars['no-ref-detail']
+                    or vars['ref-detail'] ~= nil
+                    and not vars['ref-detail'] then
+
+      DETAILED_REFERENCE_SUMMARY = false
+  end
+  if vars['ref-detail'] then DETAILED_REFERENCE_SUMMARY = true end
+
+  vars['ref-detail'] = nil
+  vars['no-ref-detail'] = nil
+
+
+  --cite-detail
+  --no-cite-detail
+  --cite-detail=true/false
+  if vars['no-cite-detail']
+                    or vars['cite-detail'] ~= nil
+                    and not vars['cite-detail'] then
+
+      DETAILED_CITATION_SUMMARY = false
+  end
+  if vars['cite-detail'] then DETAILED_CITATION_SUMMARY = true end
+
+  vars['cite-detail'] = nil
+  vars['no-cite-detail'] = nil
+
+
   --no-heartbeat
   --heartbeat
   --heartbeat=true/false
@@ -1019,11 +1157,18 @@ Options:
   end
   if vars.heartbeat then HEARTBEAT = true end
 
+  vars.heartbeat = nil
+  vars['no-heartbeat'] = nil
+
+
   if vars.filename == nil then
       logfile = io.stdin
   else
       logfile = assert(io.open(vars.filename, "r"))
   end
+
+  vars.filename = nil
+
 
   if vars['silence-string'] then SILENCE_STRINGS = vars['silence-string'] end
 
@@ -1034,6 +1179,12 @@ Options:
 
   if vars['semisilence-file'] then SEMISILENCE_FILES =
                                     vars['semisilence-file'] end
+
+  vars['silence-string'] = nil
+  vars['silence-package'] = nil
+  vars['silence-file'] = nil
+  vars['semisilence-file'] = nil
+
 
   if vars['add-debug-message'] then
       for _, msg in ipairs(vars['add-debug-message']) do
@@ -1071,6 +1222,11 @@ Options:
       end
   end
 
+  vars['add-debug-message'] = nil
+  vars['add-info-message'] = nil
+  vars['add-warning-message'] = nil
+  vars['add-critical-message'] = nil
+
 
   if vars['set-to-level-debug'] then
       FORCED_DEBUG = vars['set-to-level-debug']
@@ -1086,6 +1242,24 @@ Options:
 
   if vars['set-to-level-critical'] then
       FORCED_CRITICAL = vars['set-to-level-critical']
+  end
+
+  vars['set-to-level-debug'] = nil
+  vars['set-to-level-info'] = nil
+  vars['set-to-level-warning'] = nil
+  vars['set-to-level-critical'] = nil
+
+
+  local unknown_options = false
+  for k, v in pairs(vars) do
+      print('    texlogsieve: unknown option "' .. k .. '"')
+      unknown_options = true
+  end
+
+  if unknown_options then
+      print('                 for help, try "texlogsieve --help"')
+      print()
+      os.exit(1)
   end
 end
 
@@ -1247,7 +1421,21 @@ function adjustSeverity(msg)
   end
 end
 
+function checkRerun(msg)
+  if msg:checkMatch(msg.rerunMessages) then
+      -- Rerun messages should be silenced when
+      -- "--no-be-redundant" is in effect
+      if not BE_REDUNDANT then msg.redundant = true end
+      return true
+  end
+
+  return false
+end
+
 function processMessage(msg)
+  -- can't use short-circuit eval here, we need checkRerun() to always execute
+  SHOULD_RERUN_LATEX = checkRerun(msg) or SHOULD_RERUN_LATEX
+
   adjustSeverity(msg)
 
   if ONLY_SUMMARY or PAGE_DELAY then
@@ -1347,10 +1535,15 @@ end
 
 function showSummary()
   local thereIsSomething = false
-  for _, summary in ipairs(summaries) do
-      if trim(summary:toString()) ~= "" then
-          thereIsSomething = true
-          break
+
+  if SHOULD_RERUN_LATEX then
+      thereIsSomething = true
+  else
+      for _, summary in ipairs(summaries) do
+          if trim(summary:toString()) ~= "" then
+              thereIsSomething = true
+              break
+          end
       end
   end
 
@@ -1368,6 +1561,11 @@ function showSummary()
           end
           print("")
       end
+  end
+
+  if SHOULD_RERUN_LATEX then
+      print("** LaTeX says you should rerun **")
+      print()
   end
 end
 
@@ -1472,26 +1670,30 @@ end
 
 epilogueHandler = HandlerPrototype:new()
 
+epilogueHandler.beginPatterns = {
+  -- This appears in the logfile but not on stdout
+  "^Here is how much",
+  -- apparently, pdflatex writes this on stdout:
+  "^%(see the transcript file for additional information%)",
+  -- while lualatex writes this on stdout:
+  "^ *%d+ words of node memory still in use:",
+}
+
 function epilogueHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
-  -- This appears in the logfile but not on stdout
-  local _, last = string.find(line, "^Here is how much")
-  if last == nil then
-      -- This appears on stdout (and in the log, of course)
-      _, last = string.find(line,
-              "^%(see the transcript file for additional information%)")
-  else
-      last = string.len(line)
+  local last
+  for _, pat in ipairs(self.beginPatterns) do
+      _, last = string.find(line, pat)
+      if last ~= nil then break end
   end
 
   if last == nil then
       return false, {}
   else
-      return true, {last = last}
+      return true, {last = string.len(line)}
   end
 end
 
@@ -1554,9 +1756,8 @@ end
 underOverFullBoxHandler = HandlerPrototype:new()
 
 function underOverFullBoxHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local basePattern = "^([UO][nv][de][e]?r)full \\(.)box (%b())"
@@ -1810,9 +2011,8 @@ end
 function stringsHandler:canDoitRecursive(patternLines,
                                              position, offset, depth)
 
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   -- skip what was processed in a previous iteration/recursion
@@ -1910,7 +2110,13 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^%s*entering extended mode',
   '^%s*restricted \\write18 enabled%.',
   '^%s*%%%&%-line parsing enabled%.',
-  '^%*%*[%w%.]+', -- "**jobname"
+
+  -- Two diferent ways of saying "**jobname":
+  '^%*%*' .. filepat .. '$',
+  -- if the jobname does not include the extension, we use the first
+  -- part of filepat but also excluding the backslash character
+  '^%*%*[^%%:;,%=%*%?%|%&%$%#%!%@"\\%`\'%<%>%[%]%{%}]+$',
+
   '^\\[^%s=]+=[^%s=]+', -- "\c@chapter=\count174"
   "^\\openout%d+%s*=%s*`?[^']+'?%.?",
 
@@ -2036,6 +2242,8 @@ anywhereDebugStringsHandler.patterns = {
   '^%s*%<' .. filepat .. ', id=.- [%d%.]+pt x [%d%.]+pt%>',
   '^%s*%<use ' .. filepat .. '%>', -- <use blah.jpg>
   '^%s*%<' .. filepat .. '%>', -- <blah.jpg>
+
+  "^%s*`Fixed Point Package', .- %(C%) Michael Mehlich",
 }
 
 
@@ -2203,9 +2411,8 @@ genericLatexHandler.patterns = {
 }
 
 function genericLatexHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local last, data
@@ -2608,9 +2815,8 @@ openParensHandler.loosePattern = "%s*%("
 openParensHandler.pattern = openParensHandler.strictPattern
 
 function openParensHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local first, last = string.find(line, self.pattern)
@@ -2619,6 +2825,21 @@ function openParensHandler:canDoit(position)
   line = string.sub(line, last +1)
 
   local filename = guessFilename(position)
+
+  -- HACK ALERT: if position > 0, we are "looking into the future"
+  -- trying to figure out whether to unwrap some line. If there is
+  -- an open parens with no filename here, we should normally return
+  -- "true". However, if a close parens exists later on the same line,
+  -- unwrapping is probably a good idea, so we will lie in this case
+  -- and say we cannot handle the line. This is not a problem: when
+  -- the time comes to actually process this line, either both the
+  -- open and close parens will be embedded in a larger, known message
+  -- (because of the unwrapping) or we will handle them using the
+  -- "DUMMY" entry in the stack as usual.
+  if filename == nil and position > 0 then
+      local first = string.find(line, '%)')
+      if first ~= nil then return false, {} end
+  end
 
   return true, {first = first, filename = filename} -- might be nil
 end
@@ -2662,16 +2883,114 @@ closeParensHandler.strictPattern = "^(%s*)%)"
 closeParensHandler.loosePattern = "%s*%)"
 closeParensHandler.pattern = closeParensHandler.strictPattern
 
+-- In lookahead, when we say "we can do it" we actually mean "well,
+-- we might be able to do it". This is not a problem: it simply
+-- causes handleUnrecognizedMessage to not immediately include the
+-- close parens in the unrecognized buffer, leaving it in place to
+-- be processed at the next iteration. In this next iteration, it
+-- will be at the start of the line, allowing us to examine things
+-- more carefully.
+function closeParensHandler:lookahead()
+  local line = Lines:get(0)
+  if line == nil then return false, {} end
+
+  local first = string.find(line, self.loosePattern)
+  if first == nil then return false, {} end
+
+  return true, {first = first}
+end
+
+-- When position == 0, we just want to know whether there is a close
+-- parens character here; it is up to doit() to match it or not with
+-- a file or a DUMMY entry in the stack.
+--
+-- When position > 0, we are looking into the future to determine
+-- whether we should unwrap a long line. In this case, we may want
+-- to say "no, we cannot handle this" even if there is a close
+-- parens character here:
+--
+--  * The close parens may pair up with something in the stack. If
+--    that is the case, we do not want to unwrap a line, as it is
+--    an independent message, so we should return true.
+--
+--  * The close parens may not pair up with anything. If that is the
+--    case, we cannot really know whether we should unwrap or not:
+--    it may be the continuation of a previous unknown message or
+--    the start of a new unknown message. However, it is unlikely
+--    for an unknown message to start with a close parens character,
+--    so it's probably better to unwrap and, therefore, we should
+--    return false (i.e., lie). Note, however, that this case is
+--    very unlikely to happen in practice with parens (it may happen
+--    with square brackets): there is always something in the stack,
+--    even if it is only the main tex file we are processing.
+--
+--  * The close parens may pair up with some open parens character
+--    in a line between 0 and the current value of "position". If
+--    that is the case, we want to unwrap, as they are probably part
+--    of the same message, so we should return false (i.e., lie).
+--
+--  * A special case happens if the line we want to decide on whether
+--    to unwrap or not is an "open file" message. If that is the case,
+--    proceeding to unwrap as per the previous item is "wrong". Still,
+--    this causes no harm: during processing of the "open file"
+--    message, the close parens will be detected and postponed for
+--    future processing.
+
 function closeParensHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local first = string.find(line, self.pattern)
   if first == nil then return false, {} end
 
-  return true, {first = first}
+  -- Ok, there is a close parens character here. We are either at the
+  -- current line or in the "future" (position > 0).
+
+  if position == 0 then return true, {first = first} end
+
+  -- If we are in the "future", we check for open/close parens characters
+  -- in the lines between "present" and "future" trying to pair them up,
+  -- either among themselves or with whatever is at the stack.
+  local linenum = 0
+  local pending = openFiles:size()
+  local unpaired = 0 -- open parens with no corresponding close parens
+
+  -- This is "<", not "<=". Why? Because the line pointed at by "position"
+  -- starts at the close parens character, so there is nothing before it
+  -- to check: If position > 0, this is only called if the close parens
+  -- character really is at the beginning of the line
+  while linenum < position do
+    local size = 0
+    local i = 1
+    local line = Lines:get(linenum)
+    if line ~= nil then size = string.len(line) end
+
+    while i <= size do
+        local j = string.find(line, '[%(%)]', i)
+        if j ~= nil then
+            local open = string.find(line, '%(', i)
+            if open then
+                unpaired = unpaired +1
+            elseif unpaired > 0 then
+                unpaired = unpaired -1
+            elseif pending > 0 then
+                pending = pending -1
+            end
+            i = j +1
+        else
+            i = size +1
+        end
+    end
+
+    linenum = linenum +1
+  end
+
+  if pending > 0 and unpaired == 0 then
+      return true, {first = first} -- we pair up with something in the stack
+  else
+      return false, {} -- let's lie!
+  end
 end
 
 function closeParensHandler:doit()
@@ -2706,9 +3025,8 @@ openSquareBracketHandler.loosePattern = "%s*%["
 openSquareBracketHandler.pattern = openSquareBracketHandler.strictPattern
 
 function openSquareBracketHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local first, last = string.find(line, self.pattern)
@@ -2717,6 +3035,12 @@ function openSquareBracketHandler:canDoit(position)
   line = string.sub(line, last +1)
 
   local latexPage = guessShipoutPage(position)
+
+  -- See the comment "HACK ALERT" in openParensHandler:canDoit()
+  if latexPage == nil and position > 0 then
+      local first = string.find(line, '%]')
+      if first ~= nil then return false, {} end
+  end
 
   return true, {first = first, latexPage = latexPage} -- may be nil
 end
@@ -2759,16 +3083,63 @@ closeSquareBracketHandler.strictPattern = "^(%s*)%]"
 closeSquareBracketHandler.loosePattern = "%s*%]"
 closeSquareBracketHandler.pattern = closeSquareBracketHandler.strictPattern
 
+-- Read the comment right before "closeParensHandler:lookahead()"
+function closeSquareBracketHandler:lookahead()
+  local line = Lines:get(0)
+  if line == nil then return false, {} end
+
+  local first = string.find(line, self.loosePattern)
+  if first == nil then return false, {} end
+
+  return true, {first = first}
+end
+
+-- Read the comments right before and inside "closeParensHandler:canDoit()"
 function closeSquareBracketHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local first = string.find(line, self.pattern)
   if first == nil then return false, {} end
 
-  return true, {first = first}
+  if position == 0 then return true, {first = first} end
+
+  local linenum = 0
+  local pending = openFiles:size()
+  local unpaired = 0
+
+  while linenum < position do
+    local size = 0
+    local i = 1
+    local line = Lines:get(linenum)
+    if line ~= nil then size = string.len(line) end
+
+    while i <= size do
+        local j = string.find(line, '[%[%]]', i)
+        if j ~= nil then
+            local open = string.find(line, '%[', i)
+            if open then
+                unpaired = unpaired +1
+            elseif unpaired > 0 then
+                unpaired = unpaired -1
+            elseif pending > 0 then
+                pending = pending -1
+            end
+            i = j +1
+        else
+            i = size +1
+        end
+    end
+
+    linenum = linenum +1
+  end
+
+  if pending > 0 and unpaired == 0 then
+      return true, {first = first}
+  else
+      return false, {}
+  end
 end
 
 function closeSquareBracketHandler:doit()
@@ -2835,9 +3206,8 @@ utf8FontMapHandler = HandlerPrototype:new()
 -- we repeat here the tests we make on the other methods of this
 -- object, which is somewhat dirty.
 function utf8FontMapHandler:canDoit(position)
-  local line
   if position == nil then position = 0 end
-  line = Lines:get(position)
+  local line = Lines:get(position)
   if line == nil then return false, {} end
 
   local first, encoding
@@ -3007,7 +3377,7 @@ function Message:toString(noSilence)
 
     if self.severity < MINLEVEL then self.formatted = "" return "" end
 
-    if self:redundant() then self.formatted = "" return "" end
+    if self:ignoreAsRedundant() then self.formatted = "" return "" end
 
     self.formatted = self:realToString()
     if trim(self.formatted) == "" then self.formatted = "" return "" end
@@ -3038,8 +3408,81 @@ function Message:realToString()
   return msg
 end
 
-function Message:redundant()
+Message.redundantMessages = {
+  {
+    WARNING,
+    'LaTeX',
+    'There were undefined references%.'
+  },
+  {
+    WARNING,
+    'LaTeX',
+    'There were multiply%-defined labels%.'
+  },
+}
+
+Message.rerunMessages = {
+  {
+    WARNING,
+    'LaTeX',
+    'Label%(s%) may have changed%. Rerun to get cross%-references right%.'
+  },
+  {
+    WARNING,
+    'longtable',
+    'Table widths have changed%. Rerun LaTeX%.'
+  },
+  {
+    WARNING,
+    'rerunfilecheck',
+    "File %b`' has changed%."
+  },
+  {
+    WARNING,
+    'biblatex',
+    'Please rerun LaTeX%.'
+  },
+}
+
+function Message:checkMatch(patlist)
+  for _, pat in ipairs(patlist) do
+      -- lua does not have "continue", so we put the loop body
+      -- in a "repeat/until true" block and use break instead.
+      repeat
+          local severity = pat[1]
+          local pkgname = pat[2]
+          local text = pat[3]
+
+          if self.severity ~= severity then break end
+
+          -- This code targets messages generated by genericLatexHandler.
+          -- With it, messages generated by LaTeX do not carry the name
+          -- of any package; in these cases, we use "LaTeX" instead.
+          local name = self.name
+          if name == nil then name = self.what end
+          if name ~= pkgname then break end
+
+          local first = string.find(self:realToString(), text)
+          if first ~= nil then return true end
+      until true
+  end
+
   return false
+end
+
+function Message:ignoreAsRedundant()
+  if BE_REDUNDANT then return false end
+
+  -- this may also be set by checkRerun()
+  if self.redundant == nil then
+      if self:checkMatch(self.redundantMessages) then
+          self.redundant = true
+      else
+          self.redundant = false
+      end
+  end
+
+  return self.redundant
 end
 
 function Message:toSummary()
@@ -3139,7 +3582,7 @@ end
 underOverMessage = Message:new()
 underOverMessage.severity = WARNING
 
-function underOverMessage:redundant()
+function underOverMessage:ignoreAsRedundant()
   return not BE_REDUNDANT
 end
 
@@ -3165,7 +3608,7 @@ end
 
 missingCharMessage = Message:new()
 
-function missingCharMessage:redundant()
+function missingCharMessage:ignoreAsRedundant()
   return not BE_REDUNDANT
 end
 
@@ -3187,7 +3630,7 @@ end
 
 citationMessage = Message:new()
 
-function citationMessage:redundant()
+function citationMessage:ignoreAsRedundant()
   return not BE_REDUNDANT
 end
 
@@ -3248,6 +3691,11 @@ function SummaryPrototype:alreadySeen(msg)
   return self.messages[formatted] ~= nil
 end
 
+-- we use this for --no-ref-detail and --no-cite-detail
+function SummaryPrototype:showDetails()
+  return true
+end
+
 function SummaryPrototype:toString()
   -- check if the table is empty - https://stackoverflow.com/a/1252776
   if next(self.messages) == nil then return "" end
@@ -3255,6 +3703,14 @@ function SummaryPrototype:toString()
   local text = self:processAllMessages()
 
   if text == "" then return "" end -- happens with repetitionsSummary
+
+  if self.header ~= "" then
+      if self:showDetails() then
+          self.header = self.header .. '\n'
+      else
+          self.header = self.header .. ' '
+      end
+  end
 
   return self.header .. text
 end
@@ -3270,11 +3726,15 @@ function SummaryPrototype:processAllMessages()
   for _, messagesSublist in pairsSortedByKeys(self.messages) do
       local tmp = self:processSingleMessageList(messagesSublist)
       if tmp ~= "" then
-          allText = allText .. '\n\n' .. tmp
+          if self:showDetails() then
+              allText = allText .. '\n\n' .. tmp
+          else
+              allText = allText .. ", " .. tmp
+          end
       end
   end
 
-  -- remove leading '\n\n'
+  -- remove leading '\n\n' or ', '
   return string.sub(allText, 3)
 end
 
@@ -3316,31 +3776,15 @@ function SummaryPrototype:pageAndFileList(messages)
     files = tmp
     table.sort(files)
 
-    -- Now turn these into strings
-    tmp = ""
-    for _, page in ipairs(pages) do
-        tmp = tmp .. ", " .. page
-    end
-    pages = tmp
-
-    local _, last = string.find(pages, '^, ')
-    if last ~= nil then pages = string.sub(pages, last +1) end
-
-    local tmp = ""
-    for _, file in ipairs(files) do
-        tmp = tmp .. ", " .. file
-    end
-    files = tmp
-
-    local _, last = string.find(files, '^, ')
-    if last ~= nil then files = string.sub(files, last +1) end
+    pages = listToCommaSeparatedString(pages)
+    files = listToCommaSeparatedString(files)
 
     return pages, files
 end
 
 
 repetitionsSummary = SummaryPrototype:new()
-repetitionsSummary.header = 'Repeated messages:\n'
+repetitionsSummary.header = 'Repeated messages:'
 
 function repetitionsSummary:toString()
   if not SILENCE_REPETITIONS then return "" end
@@ -3376,7 +3820,7 @@ end
 
 
 missingCharSummary = SummaryPrototype:new()
-missingCharSummary.header = 'Missing characters:\n'
+missingCharSummary.header = 'Missing characters:'
 
 function missingCharSummary:processSingleMessageList(messages)
   local text = ""
@@ -3392,7 +3836,11 @@ end
 
 
 citationsSummary = SummaryPrototype:new()
-citationsSummary.header = 'Undefined citations:\n'
+citationsSummary.header = 'Undefined citations:'
+
+function citationsSummary:showDetails()
+  return DETAILED_CITATION_SUMMARY
+end
 
 function citationsSummary:add(msg)
   -- group messages by problem key. We do not use msg:toString()
@@ -3421,19 +3869,32 @@ function citationsSummary:processSingleMessageList(messages)
   local key = messages[1].key
   if key == "" then key = '???' end
 
-  text = key .. '\n'
+  if self:showDetails() then
+      text = key .. '\n'
          .. 'in pages ' .. pages .. " (files " .. files .. ")"
+  else
+      text = key
+  end
 
   return text
 end
 
 
 referencesSummary = citationsSummary:new()
-referencesSummary.header = 'Undefined references:\n'
+referencesSummary.header = 'Undefined references:'
+
+function referencesSummary:showDetails()
+  return DETAILED_REFERENCE_SUMMARY
+end
 
 
 labelsSummary = citationsSummary:new()
-labelsSummary.header = 'Multiply defined labels:\n'
+labelsSummary.header = 'Multiply defined labels:'
+
+-- LaTeX does not supply details for these
+function labelsSummary:showDetails()
+  return false
+end
 
 
 -- This is a little different from the others; we do not want to
@@ -3553,6 +4014,18 @@ function pairsSortedByKeys (t, f)
       end
       return iter
     end
+
+function listToCommaSeparatedString(list)
+  local tmp = ""
+    for _, item in ipairs(list) do
+        tmp = tmp .. ", " .. item
+    end
+
+    local _, last = string.find(tmp, '^, ')
+    if last ~= nil then tmp = string.sub(tmp, last +1) end
+
+    return tmp
+end
 
 
 --[[ ##### STACK ##### ]]--
@@ -3872,9 +4345,14 @@ function Lines:gotoNextLine()
 
   -- When unwrapping lines, we need to check whether a line is of
   -- the "right" size. However, we modify the content of currentLine
-  -- during processing, so we capture its initial length here
+  -- during processing, so we capture its initial length here. See
+  -- Lines:wrappingLength().
   if self.current ~= nil then
-      self.currentLineInitialLength = string.len(self.current)
+      if XETEX then
+          self.currentLineInitialLength = utf8.len(self.current)
+      else
+          self.currentLineInitialLength = string.len(self.current)
+      end
   else
       self.currentLineInitialLength = 0
       self.currentWrapped = false
@@ -3898,7 +4376,11 @@ end
 function Lines:len(n)
   local n = n or 0
   if n == 0 then return self.currentLineInitialLength end
-  return string.len(self[n])
+  if XETEX then
+      return utf8.len(self[n])
+  else
+      return string.len(self[n])
+  end
 end
 
 function Lines:append(x)
@@ -3981,20 +4463,32 @@ end
 
 function Lines:wrappingLength(position)
   local line = self:get(position)
-  local n = self:len(position)
+  local n = self:len(position) -- with XeTeX, this uses utf8.len()
 
-  -- I have seen at least two cases where TeX "forgot" to
-  -- wrap a line. In this happens, the line is not wrapped.
+  -- pdfTeX and XeTeX simply wrap at max_print_line (default 79):
+  -- pdfTeX counts bytes and XeTeX counts utf8 chars. I do not know
+  -- whether "chars" here means "code points" or "graphemes"; lua's
+  -- utf8.len() uses code points, which is probably good enough.
+  if not LUATEX and n == max_print_line then return true end
+
+  -- With LuaTeX, we need to handle a few special cases.
+
+  -- LuaTeX sometimes "forgets" to wrap a line. If this happens, the
+  -- line is not wrapped at all. Why do we do max_print_line +1 here?
+  -- Because LuaTeX sometimes wraps at max_print_line and sometimes
+  -- at max_print_line +1.
   if n > max_print_line +1 then return false end
 
   -- Is the line the "right" length?
   -- (max_print_line or max_print_line +1)
   if n >= max_print_line then return true end
 
-  -- Ok, n < max_print_line, so it looks like this is not
-  -- a wrapped line. BUT! LuaTeX does not break a multibyte
-  -- UTF-8 character, which means some lines may be broken
-  -- at lengths < max_print_line; let's check for this.
+  -- Ok, n < max_print_line, so it looks like this is not a wrapped
+  -- line. BUT! LuaTeX tries to wrap lines by counting bytes just as
+  -- pdfTeX (and differently from XeTeX). However, it does not break
+  -- a multibyte UTF-8 character (which is obviously good). This means
+  -- some lines may be broken at lengths < max_print_line; let's check
+  -- for this.
 
   -- Get the length of the first UTF-8 character on the next line:
   -- https://www.lua.org/manual/5.3/manual.html#pdf-utf8.charpattern
@@ -4019,103 +4513,19 @@ function Lines:wrappingLength(position)
 end
 
 function Lines:noHandlersForNextLine(position)
-  local line = self:get(position)
-
-  local wrapped = true
   for _, candidateHandler in ipairs(beginningOfLineHandlers) do
-      if candidateHandler:canDoit(position +1) then wrapped = false break end
+      if candidateHandler:canDoit(position +1) then
+          return false
+      end
   end
 
   for _, candidateHandler in ipairs(anywhereHandlers) do
-      if candidateHandler:canDoit(position +1) then wrapped = false break end
-  end
-
-  if wrapped then return true end
-
-  -- TODO: the way we deal with these special cases is lame...
-
-  -- a close parens at the beginning of the next line might not be
-  -- a "close file" message, but instead refer to an open parens in
-  -- the current line; let's check for this exceptional case. We
-  -- traverse the current line looking for open/close parens and pair
-  -- every close parens to the corresponding open parens. A dangling
-  -- close parens is probably a continuation too, so we ignore it.
-  if closeParensHandler:canDoit(position +1) then
-      -- We previously decided the line is not wrapped because
-      -- there is a close parens in the following line; let's
-      -- revise that decision
-      local unpaired = 0
-      local i = 1
-      local size = string.len(line)
-      while i <= size do
-          local j = string.find(line, '[%(%)]', i)
-          if j ~= nil then
-              local open = string.find(line, '%(', i)
-              if open then
-                  unpaired = unpaired +1
-              elseif unpaired > 0 then
-                  unpaired = unpaired -1
-              end
-              i = j +1
-          else
-              i = size +1
-          end
+      if candidateHandler:canDoit(position +1) then
+          return false
       end
-
-      if unpaired > 0 then return true end
   end
 
-  -- Same thing for close square bracket
-  if closeSquareBracketHandler:canDoit(position +1) then
-      -- We previously decided the line is not wrapped because
-      -- there is a close square bracket in the following line;
-      -- let's revise that decision
-      local unpaired = 0
-      local i = 1
-      local size = string.len(line)
-      while i <= size do
-          local j = string.find(line, '[%[%]]', i)
-          if j ~= nil then
-              local open = string.find(line, '%[', i)
-              if open then
-                  unpaired = unpaired +1
-              elseif unpaired > 0 then
-                  unpaired = unpaired -1
-              end
-              i = j +1
-          else
-              i = size +1
-          end
-      end
-
-      if unpaired > 0 then return true end
-  end
-
-  local parens, data = openParensHandler:canDoit(position +1)
-  local filename = data[1]
-  if parens and filename == nil then
-      -- Next line could be handled as an "open parens" message, but
-      -- there is no filename, so the message is only "(". There is
-      -- a good chance that is just the continuation of a previous
-      -- wrapped message. If there is a close parens character on the
-      -- line too, we'll assume that is true and ignore the handler
-      local first = string.find(self:get(position +1), "%)")
-      if first ~= nil then return true end
-  end
-
-  local bracket, data = openSquareBracketHandler:canDoit(position +1)
-  local page = data[1]
-  if bracket and page == nil then
-      -- Next line could be handled as an "open square bracket" message,
-      -- but there is no page number, so the message is only "[". There
-      -- is a good chance that is just the continuation of a previous
-      -- wrapped message. If there is a close square bracket character on
-      -- the line too, we'll assume that is true and ignore the handler
-      local first = string.find(self:get(position +1), "%]")
-      if first ~= nil then return true end
-  end
-
-  return false
+  return true
 end
 
 function unwrapUntilPatternMatches(pat)
