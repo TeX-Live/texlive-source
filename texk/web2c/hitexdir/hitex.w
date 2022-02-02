@@ -16206,7 +16206,12 @@ subtype(tail)=tab_skip_code+1
 {@+if (mode==-hmode)
   {@+adjust_tail=cur_tail;u=hpack(link(head), natural);
   if (type(u)==hlist_node) w=width(u);
-  else w=max_dimen+1;
+  else
+#if 0
+    w=max_dimen+1;
+#else
+    w = width(u);
+#endif
   cur_tail=adjust_tail;adjust_tail=null;
   }
 else{@+u=vpackage(link(head), natural, 0);
@@ -16368,8 +16373,11 @@ if (info(q)!=end_span)
 the span nodes of |q|@>;
 type(q)=unset_node;span_count(q)=min_quarterword;height(q)=0;
 depth(q)=0;glue_order(q)=normal;glue_sign(q)=normal;
-glue_stretch(q)=0;glue_shrink(q)=0;q=p;
- if (width(q)>max_dimen) x=true;
+glue_stretch(q)=0;glue_shrink(q)=0;
+#if 0 /* Table nodes are not implemented in the 1.2 viewer */
+if (width(q)>max_dimen) x=true;
+#endif
+q=p;
 }@+ while (!(q==null))
 
 @ @<Nullify |width(q)| and the tabskip glue following this column@>=
@@ -22423,8 +22431,12 @@ display. Then we can set the proper values of |display_width| and
    }
   tail_append(new_param_glue(par_fill_skip_code));
   }
+@<Calculate the length, |l|, and the shift amount, |s|, of the display lines@>;
 push_math(math_shift_group);mode=mmode;
 eq_word_define(int_base+cur_fam_code,-1);@/
+eq_word_define(dimen_base+display_width_code, l); cur_hfactor=0;
+eq_word_define(dimen_base+pre_display_size_code, w);
+eq_word_define(dimen_base+display_indent_code, s);
 if (every_display!=null) begin_token_list(every_display, every_display_text);
 }
 
@@ -22490,15 +22502,15 @@ if (par_shape_ptr==null)
   if ((hang_indent!=0)&&@|
    (((hang_after >= 0)&&(prev_graf+2 > hang_after))||@|
     (prev_graf+1 < -hang_after)))
-    {@+l=hsize-abs(hang_indent);
+    {@+l=-abs(hang_indent); cur_hfactor=unity;
     if (hang_indent > 0) s=hang_indent;@+else s=0;
     }
-  else{@+l=hsize;s=0;
+  else{@+l=0;s=0; cur_hfactor=unity;
     }
 else{@+n=info(par_shape_ptr);
   if (prev_graf+2 >= n) p=par_shape_ptr+2*n;
   else p=par_shape_ptr+2*(prev_graf+2);
-  s=mem[p-1].sc;l=mem[p].sc;
+  s=mem[p-1].sc;l=mem[p].sc;cur_hfactor=0;
   }
 
 @ Subformulas of math formulas cause a new level of math mode to be entered,
@@ -23287,13 +23299,22 @@ resulting list, and with |aux_save| holding the |prev_depth| value.
 if (cur_cmd!=math_shift) @<Pontificate about improper alignment in display@>@;
 else@<Check that another \.\$ follows@>;
 pop_nest();
-tail_append(new_penalty(pre_display_penalty));
-tail_append(new_param_glue(above_display_skip_code));
-link(tail)=p;
-if (p!=null) tail=q;
-tail_append(new_penalty(post_display_penalty));
-tail_append(new_param_glue(below_display_skip_code));
-prev_depth=aux_save.sc;resume_after_display();
+prev_depth=aux_save.sc;
+tail_append(new_disp_node());
+display_formula(tail)=vpack(p, natural);
+/* adding parameter nodes */
+link(temp_head)=null;
+if (hang_indent!=0)
+{ new_param_node(dimen_type,hang_indent_code,hang_indent);
+  if (hang_after!=1)
+    new_param_node(int_type,hang_after_code,hang_after);
+}
+new_param_node(dimen_type,line_skip_limit_code,line_skip_limit);
+new_param_node(glue_type,line_skip_code,line_skip);
+new_param_node(glue_type,baseline_skip_code,baseline_skip);
+display_params(tail)=link(temp_head); link(temp_head)=null;
+display_no_bs(tail)= prev_depth <= ignore_depth;
+resume_after_display();
 }
 
 @ @<Pontificate...@>=
@@ -31391,6 +31412,8 @@ static pointer vpackage(pointer p, scaled h, scaled hf, scaled vf, small_number 
 		      else s= shift_amount(p);
               if (width(p)+s> w) w= width(p)+s;
               break;
+          case unset_set_node: case unset_pack_node:
+              goto repack;
           case whatsit_node:
             if (subtype(p)==graf_node)
 			  goto repack;
