@@ -693,7 +693,7 @@ Section 264.
 @y
 @!web_name,@!chg_name,@!tex_name:const_c_string;
 
-@* New material for \.{TWILL}.
+@* New material for {\tentex TWILL}.
 Here's a new subroutine needed for \.{TWILL}. Assuming that |next_control|
 is the beginning of a numeric constant, and that string constants have
 length~1, the |scan_const| function returns the value of the constant
