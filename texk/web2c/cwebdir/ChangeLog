@@ -1,3 +1,10 @@
+2022-02-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w32.ch,
+	* ctangle.w,
+	* cwebmac.tex,
+	* cwebman.tex: Purge a few WEB leftovers.
+
 2022-02-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebmac.tex: Reshuffle '\pdfURL' macro for HiTeX.
