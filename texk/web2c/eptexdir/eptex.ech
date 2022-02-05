@@ -708,6 +708,16 @@ if_font_char_code:begin scan_font_ident; n:=cur_val;
   end;
 @z
 
+@x e-pTeX: pTeX has \showmode, follow showstream.ch r61589
+@<Show the current japanese processing mode@>=
+begin print_nl("> ");
+@y
+@<Show the current japanese processing mode@>=
+begin
+  @<Adjust |selector| based on |show_stream|@>
+  print_nl("> ");
+@z
+
 @x
 procedure print_direction(@!d:integer); {print the direction represented by d}
 @y

@@ -2,6 +2,10 @@
 
 	* eptex.defines: Add isinternalUPTEX and isterminalUTF8.
 
+2022-01-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: Adapt \showmode to follow \showstream.
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech, etex.ch0, etex.ch1, pdfutils.ch:
