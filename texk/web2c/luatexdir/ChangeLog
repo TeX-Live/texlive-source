@@ -1,3 +1,6 @@
+2022-02-05 Luigi Scarso <luigi.scarso@gmail.com>
+    *  intercept prefix for toksapp cum suis (H.Hagen)
+
 2022-01-23 Luigi Scarso <luigi.scarso@gmail.com>
     * fixing a 15 year old buglet (math atom glue leak).  
     * New primitive \matheqdirmode for short skip detection in  r2l typesetting (H. Hagen)

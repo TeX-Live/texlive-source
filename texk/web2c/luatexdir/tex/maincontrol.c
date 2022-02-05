@@ -2705,7 +2705,7 @@ void prefixed_command(void)
             get_x_token();
         } while ((cur_cmd == spacer_cmd) || (cur_cmd == relax_cmd));
 
-        if (cur_cmd <= max_non_prefixed_command) {
+        if (cur_cmd <= max_non_prefixed_command || cur_cmd == combine_toks_cmd) {
             /*tex
                 Discard erroneous prefixes and |return|
             */
