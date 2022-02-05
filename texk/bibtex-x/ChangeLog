@@ -1,3 +1,8 @@
+2022-02-05  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* version.h: version 3.72 (05 feb 2022).
+
 2021-08-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* bibtex-4.c:
