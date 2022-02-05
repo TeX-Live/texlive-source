@@ -17,16 +17,16 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.6)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.7)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{Common code for CTANGLE and CWEAVE (4.6 [\TeX~Live])}
+\def\title{Common code for CTANGLE and CWEAVE (4.7 [\TeX~Live])}
 @z
 
 @x
-  \centerline{(Version 4.6)}
+  \centerline{(Version 4.7)}
 @y
-  \centerline{(Version 4.6 [\TeX~Live])}
+  \centerline{(Version 4.7 [\TeX~Live])}
 @z
 
 @x

@@ -10,24 +10,24 @@ ex <dev_>cc;'-v -h -c -=500000 -DCWEBINPUTS=flp2_ common_c'
 @x
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (Version 4.6)}
+\def\title{Common code for CTANGLE and CWEAVE (Version 4.7)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.6)}
+  \centerline{(Version 4.7)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
 @y
 \def\v{\char'174} % vertical (|) in typewriter font
 
-\def\title{Common code for CTANGLE and CWEAVE (QL Version 4.6)}
+\def\title{Common code for CTANGLE and CWEAVE (QL Version 4.7)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont Common code for {\ttitlefont CTANGLE} and
     {\ttitlefont CWEAVE}}
   \vskip 15pt
-  \centerline{(Version 4.6)}
+  \centerline{(Version 4.7)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent

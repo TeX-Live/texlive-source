@@ -25,7 +25,7 @@
 /*:4*/
 #line 67 "cwebdir/ctangle.w"
 
-#define banner "This is CTANGLE, Version 4.6" \
+#define banner "This is CTANGLE, Version 4.7" \
  \
 
 #define _(s) gettext(s)  \

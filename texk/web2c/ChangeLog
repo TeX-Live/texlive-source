@@ -1,3 +1,7 @@
+2022-02-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.bin: CWEB 4.7 release.
+
 2022-01-29  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (TeX extensions): simplify references.

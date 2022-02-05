@@ -13,9 +13,9 @@ modified:
 (also modified by Don Knuth to keep version numbers uptodate)
 
 @x section 1 (01-FEB-1992 ST)
-@d banner "This is CWEAVE (Version 4.6)"
+@d banner "This is CWEAVE (Version 4.7)"
 @y
-@d banner "This is CWEAVE (VAX/VMS Version 4.6)"
+@d banner "This is CWEAVE (VAX/VMS Version 4.7)"
 @z
 
 @x section 4 (01-FEB-1992 ST)
