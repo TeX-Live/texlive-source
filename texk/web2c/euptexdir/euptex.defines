@@ -10,6 +10,7 @@
 @define function setencstring ();
 @define procedure setpriorfileenc;
 @define function isinternalUPTEX;
+@define function isterminalUTF8;
 
 @define function iskanji1 ();
 @define function is1stchr ();

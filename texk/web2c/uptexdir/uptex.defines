@@ -11,6 +11,7 @@
 @define procedure setpriorfileenc;
 @define function isinternalUPTEX;
 @define function isinternalEUC;
+@define function isterminalUTF8;
 
 @define function iskanji1 ();
 @define function is1stchr ();

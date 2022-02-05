@@ -52,6 +52,9 @@ extern PTENCDLL boolean  is_internalUPTEX(void);
 #define isinternalEUC   is_internalEUC
 #define isinternalUPTEX is_internalUPTEX
 
+extern PTENCDLL boolean  is_terminalUTF8(void);
+#define isterminalUTF8 is_terminalUTF8
+
 /* check char range */
 extern PTENCDLL boolean ismultichr (int length, int nth, int c);
 extern PTENCDLL boolean iskanji1(int c);

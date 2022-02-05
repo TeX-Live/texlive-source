@@ -1,3 +1,7 @@
+2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex.defines: Add isterminalUTF8.
+
 2022-01-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uptex-m.ch: Adapt to ptex-base.ch fixes.

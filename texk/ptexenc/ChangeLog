@@ -1,3 +1,7 @@
+2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h: Add is_terminalUTF8.
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptexenc.c, ptexenc/ptexenc.h, unicode.c, ptexenc/unicode.h:

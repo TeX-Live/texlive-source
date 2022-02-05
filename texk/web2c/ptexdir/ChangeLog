@@ -1,3 +1,10 @@
+2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Fix for \write18 with quotation.
+	  Convert non-Japanese non-ASCII bytes in name_of_file to
+	  "^^" format. (Thanks Yukimasa Morimi)
+	* ptex.defines: Add isinternalUPTEX and isterminalUTF8.
+
 2022-01-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Fix \chardef code 256 in math.

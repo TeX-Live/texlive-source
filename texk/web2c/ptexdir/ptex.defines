@@ -4,6 +4,8 @@
 
 @define function getencstring;
 @define function setencstring ();
+@define function isinternalUPTEX;
+@define function isterminalUTF8;
 
 @define function iskanji1 ();
 @define function multistrlen ();

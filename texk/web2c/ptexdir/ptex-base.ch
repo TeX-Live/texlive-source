@@ -2854,6 +2854,59 @@ if #<>0 then
 @y
 @z
 
+@x [29.519]
+@d append_to_name(#)==begin c:=#; if not (c="""") then begin incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[c];
+  end end
+@y
+@d append_to_name_char(#)==begin incr(k);
+  if k<=file_name_size then name_of_file[k]:=xchr[#];
+  end
+
+@d append_to_name_hex(#)==if (#)<10 then append_to_name_char((#)+"0")
+  else append_to_name_char((#)-10+"a")
+
+@d append_to_name(#)==begin c:=#; if not (c="""") then append_to_name_char(c); end
+
+@d append_to_name_str_pool(#)==begin
+  if (#)>=@"100 then begin
+    c:=(#)-@"100;
+    append_to_name_char(c);
+  end else begin
+    c:=#;
+    if (c>=@"80) and (not isinternalUPTEX) and isterminalUTF8 then begin
+      append_to_name_char("^");
+      append_to_name_char("^");
+      append_to_name_hex(c div 16);
+      append_to_name_hex(c mod 16);
+    end else if not (c="""") then
+      append_to_name_char(c);
+  end
+end
+@z
+
+@x l.10389
+name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
+@y
+name_of_file:= xmalloc_array (ASCII_code, (length(a)+length(n)+length(e))*4+1);
+@z
+
+@x [29.519] pack_file_name
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[n] to str_start[n+1]-1 do append_to_name(so(str_pool[j]));
+for j:=str_start[e] to str_start[e+1]-1 do append_to_name(so(str_pool[j]));
+@y
+for j:=str_start[a] to str_start[a+1]-1 do append_to_name_str_pool(so(str_pool[j]));
+for j:=str_start[n] to str_start[n+1]-1 do append_to_name_str_pool(so(str_pool[j]));
+for j:=str_start[e] to str_start[e+1]-1 do append_to_name_str_pool(so(str_pool[j]));
+@z
+
+@x l.10444
+name_of_file := xmalloc_array (ASCII_code, n+(b-a+1)+format_ext_length+1);
+@y
+name_of_file := xmalloc_array (ASCII_code, (n+(b-a+1)+format_ext_length)*4+1);
+@z
+
 @x [29.526] l.10668 - pTeX: scan file name
 loop@+begin if (cur_cmd>other_char)or(cur_chr>255) then {not a character}
     begin back_input; goto done;
@@ -6687,10 +6740,10 @@ end
                                               str_pool[str_start[str_ptr]])));
 @y
       if name_of_file then libc_free(name_of_file);
-      name_of_file := xmalloc(cur_length * 3 + 2);
+      name_of_file := xmalloc(cur_length*4+1);
       k := 0;
       for d:=0 to cur_length-1 do
-        append_to_name(str_pool[str_start[str_ptr]+d]);
+        append_to_name_char(str_pool[str_start[str_ptr]+d]); {do not remove quote}
       name_of_file[k+1] := 0;
       runsystem_ret := runsystem(conststringcast(name_of_file+1));
 @z
