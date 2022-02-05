@@ -4,7 +4,7 @@ Public domain.  Originally written 2005 by Karl Berry.
 Extra utilities we (optionally) compile for TeX Live.
 See comments in ../texk/README.
 
-asymptote 2.77 - checked 22jan22
+asymptote 2.78 - checked 5feb22
   update to TL from CTAN, to include prebuilt doc.
   see https://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy

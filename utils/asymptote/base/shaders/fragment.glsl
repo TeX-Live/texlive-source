@@ -29,10 +29,9 @@ float Roughness2; // roughness squared, for smoothing
 float Roughness;
 
 #ifdef HAVE_SSBO
-struct Fragment
-{
-  vec4 color;
-  float depth;
+
+layout(binding=0, std430) buffer sumBuffer {
+  uint sum[];
 };
 
 layout(binding=1, std430) buffer offsetBuffer {
@@ -44,10 +43,24 @@ layout(binding=2, std430) buffer countBuffer {
 };
 
 layout(binding=3, std430) buffer fragmentBuffer {
-  Fragment fragment[];
+  vec4 fragment[];
+};
+
+layout(binding=4, std430) buffer depthBuffer {
+  float depth[];
+};
+
+layout(binding=5, std430) buffer opaqueBuffer {
+  vec4 opaqueColor[];
+};
+
+layout(binding=6, std430) buffer opaqueDepthBuffer {
+  float opaqueDepth[];
 };
 
 uniform uint width;
+uniform uint M;
+uniform uint r;
 #endif
 
 #ifdef NORMAL
@@ -244,14 +257,31 @@ void main()
   outColor=emissive;
 #endif
 
+#ifndef WIDTH
 #ifdef HAVE_SSBO
   uint headIndex=uint(gl_FragCoord.y)*width+uint(gl_FragCoord.x);
-  uint listIndex=offset[headIndex]+atomicAdd(count[headIndex],1u);
-  fragment[listIndex].color=outColor;
-  fragment[listIndex].depth=gl_FragCoord.z;
-#ifdef TRANSPARENT
+#if defined(TRANSPARENT) || (!defined(HAVE_INTERLOCK) && !defined(OPAQUE))
+  uint listIndex=
+#ifdef GPUINDEXING
+    sum[headIndex < r*(M+1u) ? headIndex/(M+1u) : (headIndex-r)/M]+
+#endif
+    offset[headIndex]+atomicAdd(count[headIndex],1u);
+  fragment[listIndex]=outColor;
+  depth[listIndex]=gl_FragCoord.z;
 #ifndef WIREFRAME
   discard;
+#endif
+#else
+#ifndef OPAQUE
+#ifdef HAVE_INTERLOCK
+beginInvocationInterlockARB();
+if(opaqueDepth[headIndex] == 0.0 || gl_FragCoord.z < opaqueDepth[headIndex]) {
+  opaqueDepth[headIndex]=gl_FragCoord.z;
+  opaqueColor[headIndex]=outColor;
+}
+endInvocationInterlockARB();
+#endif
+#endif
 #endif
 #endif
 #endif

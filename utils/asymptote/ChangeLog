@@ -1,3 +1,286 @@
+commit 83b0213063787b8cfdd68fe274b78b5867e5e9b6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 4 23:50:57 2022 -0700
+
+    TRANSPARENCY: Implement GPUinterlock setting.
+
+commit e0e5788ee755527e658cee689939d960e913d0de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 4 20:21:17 2022 -0700
+
+    Add compiler flag.
+
+commit f18094773cc5f5afa0cde79598a5d719af9aca2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 4 20:03:23 2022 -0700
+
+    Update Boehm GC URL.
+
+commit 62df5ed31a3b9e4dcd699290073e18bf9def94e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 4 19:43:33 2022 -0700
+
+    Fix warning message; clean up cached file.
+
+commit 7e1a64b0f7292429b88561ad187e788b67f4a297
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 4 12:38:04 2022 -0700
+
+    TRANSPARENCY: Fix offscreen rendering; update diagnostics.
+
+commit 512dd5c5685a170e6cb906b06843f753382577ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 3 22:47:25 2022 -0700
+
+    TRANSPARENCY: Fix opaque pixels.
+
+commit a491e9a17a6c7ddfd92df7c07d0d249cb983912a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 3 21:41:47 2022 -0700
+
+    Improve formatting.
+
+commit f638f2a62477590d2cbe74d22c3b096699cc0a28
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 3 21:03:00 2022 -0700
+
+    TRANSPARENCY: Support GPUs lacking compute shaders or fragment shader interlocks again.
+
+commit 11d9e8e22fc8810ebe50910ccc5f79e1df673c07
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 3 10:45:47 2022 -0700
+
+    Remove unused buffer fom partialsum shader.
+
+commit 5c70913dac6d2aa98ebf017884209f23ae68033a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 2 23:59:50 2022 -0700
+
+    Eliminate postsum compute shader.
+
+commit 2e65c545aec5539256065148fd1ef5f635fd6291
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 1 23:38:59 2022 -0700
+
+    Don't require GL_ARB_fragment_shader_interlock extension.
+
+commit fb09f40a1cd3f0f133396e303f72975f6669b9d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 1 00:18:21 2022 -0700
+
+    Use fragment shader interlocks for rendering opaque fragments in scenes with
+    transparent objects.
+
+commit 2a4e14970d5e7cd8276eb0cd5d1239dd1e26a3e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 30 14:46:33 2022 -0700
+
+    TRANSPARENCY: Fix bug #298.
+
+commit 2cbfb56dda426557c74008cf4bcdf39478395ed8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 25 20:47:03 2022 -0700
+
+    TRANSPARENCY: Avoid negative indices.
+
+commit 7c986e8a9d144aa5f08934cf50b627c9c1ccad40
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 25 11:31:12 2022 -0700
+
+    TRANSPARENCY: Split up Fragment structure for better performance.
+
+commit e52e18ff2587258149829ebd544f6d4ef085a8e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 24 12:13:22 2022 -0700
+
+    Check for strnlen and provide a substitute if needed.
+
+commit 3914337b0ff8633b99a791213eb9f83abe026fb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 23 22:27:58 2022 -0700
+
+    Fix size of offsetBuffer.
+
+commit fffe9f0cabd78fa6fe1fefadc53c6975a6a4da66
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 23 20:18:05 2022 -0700
+
+    Optimize processor usage in transparent shaders.
+
+commit b3fe6ae082a0c03534b6eaab8403f5a134c6b606
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 23 12:16:15 2022 -0700
+
+    Use unsigned constants in GLSL shaders.
+
+commit 5c2c2321941ae82d962e345563422deb5790c326
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 20:39:59 2022 -0700
+
+    LSP: Search for local gc.h include.
+
+commit 355faf5717deac011cddd82be9110d43e83e462e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 20:09:26 2022 -0700
+
+    Remove style file that interferes with GitHub Pages.
+
+commit 8eb8c506dce3fcc3c2d90402f603db2f953232c6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 20:01:46 2022 -0700
+
+    Fix last revision.
+
+commit c82c40474c66c8ebbb9ce054354b5285ba20e5bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 19:04:39 2022 -0700
+
+    Support --disable-lsp again.
+
+commit b8cba1284afbb53d128d611af81d58bbd67f68cd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 18:47:07 2022 -0700
+
+    Delete unused directory.
+
+commit 88559ebc47f79dd544315186389b3c6ca46522dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 18:44:00 2022 -0700
+
+    Delete unwanted .gitmodules files.
+
+commit be55d1df50653550103a53c48e5d49e98b2492bf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 18:34:40 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "4727d5ea"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "75a82228"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit 025a6d7b3f478d7d09105af22c6c14903a22cc08
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 18:25:11 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "8a263fd1"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "aaf668c7"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit c6aca9ad7722b791f6e30c22bc49185ee572e80e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 18:06:12 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "6342b542"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "a9892cd5"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit dda687450b1c7014da1293a04fec49284653e9f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 17:16:35 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "0aff03be"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "348c5d18"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit 36f776b9e2fc7e9ef7bb6159d228fb5d74fb8497
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 15:26:07 2022 -0700
+
+    Update GUI/requirements; remove obsolete Makefile.
+
+commit 6850a3de582647954e6243750892ca4e4036e9ff
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 15:20:26 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "8ec8c0db"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "4096915d"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit 5b2f0fbefb00486d3c26749e57c90e63f2f8f06b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 15:09:56 2022 -0700
+
+    Support latest version of LspCpp.
+
+commit 9cad0df02737b363d7df4cb610d8e20b0b1580a4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 11:47:21 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "cf90e047"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "4ad5c035"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit 553a1bb5d1edbeef311d792a5cf1c25df54b0b3a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 22 11:25:37 2022 -0700
+
+    Update asymptote.spec.
+
+commit 5375fc50eb608e50e5badba8ddcde761f114bdc0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jan 21 22:17:40 2022 -0700
+
+    Increment version to 2.78.
+
 commit c98c63886b06ac0650c0b25304cb0bae9118a92a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jan 21 20:48:27 2022 -0700

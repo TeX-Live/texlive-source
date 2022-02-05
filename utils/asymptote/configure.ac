@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.77],[https://github.com/vectorgraphics/asymptote/issues])
+AC_INIT([Asymptote],[2.78],[https://github.com/vectorgraphics/asymptote/issues])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -300,7 +300,7 @@ if test "x$enable_lsp" != "xno" -a "x$enable_threads" != "xno"; then
   AC_CHECK_LIB([boost_filesystem],[opendir],
   [AC_CHECK_LIB([boost_thread],[pthread_attr_getdetachstate],
   [AC_DEFINE(HAVE_LSP,1,DEFINE([Language server protocol]))
-   LSPLIBS="-llspcpp -lboost_filesystem -lboost_thread "
+   LSPLIBS="-llspcpp -lnetwork-uri -lboost_filesystem -lboost_thread "
    LSPLIB=liblspcpp.a],
   AC_MSG_NOTICE([*** Could not find libboost_thread: will compile without optional Language Server Protocol. ***]))],
   AC_MSG_NOTICE([*** Could not find libboost_filesystem: will compile without optional Language Server Protocol. ***]))
@@ -496,17 +496,15 @@ AC_CHECK_TYPES([long])
 AC_C_CONST
 AC_C_INLINE
 
-AC_DEFUN([ac_FUNC_STRPTIME], [
-    AC_CHECK_FUNCS(strptime)
-])
-
 # Checks for library functions.
 AC_FUNC_FORK
 AC_CHECK_FUNCS([dup2 floor memset strchr tgamma lgamma memrchr popcount])
 AC_FUNC_STRFTIME
-ac_FUNC_STRPTIME
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_FSEEKO
+
+AC_CHECK_FUNCS(strptime)
+AC_CHECK_FUNCS(strnlen)
 
 AC_CONFIG_HEADERS(config.h)
 
@@ -520,7 +518,7 @@ if test "x$GCDIR" != "x" ; then
    echo FOR EXAMPLE, USE THE COMMANDS:
    echo
    echo wget https://github.com/ivmai/bdwgc/releases/download/v$GCVERSION/$GCFILE.tar.gz
-   echo wget http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-$ATOMICVERSION.tar.gz
+   echo wget https://github.com/ivmai/libatomic_ops/releases/download/v$ATOMICVERSION/libatomic_ops-$ATOMICVERSION.tar.gz
 
    echo
    exit 1

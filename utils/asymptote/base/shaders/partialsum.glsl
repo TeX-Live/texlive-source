@@ -7,17 +7,12 @@ layout(binding=0, std430) buffer sumBuffer
   uint sum[];
 };
 
-layout(binding=1, std430) buffer offsetBuffer
-{
-  uint offset[];
-};
-
 shared uint sharedData[PROCESSORS];
 
 void main(void)
 {
   uint id=gl_LocalInvocationID.x;
-  sharedData[id]=sum[id];
+  sharedData[id]=sum[id+1u];
 
   barrier();
 
@@ -38,11 +33,5 @@ void main(void)
     sharedData[windex] += sharedData[index];
   barrier();
 
-  uint id1=id+1u;
-  if(id1 < PROCESSORS) {
-    uint m=elements/PROCESSORS;
-    uint row=m*id1+min(id1,elements-m*PROCESSORS);
-    offset[row] += sharedData[id];
-  } else
-    sum[0]=sharedData[id];  // Store fragment size in sum[0]
+  sum[id+1u]=sharedData[id];
 }
