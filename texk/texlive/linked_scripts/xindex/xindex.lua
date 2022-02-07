@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 20 2022-01-22 10:37:29Z hvoss $
+-- $Id: xindex.lua 21 2022-01-27 17:45:10Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.35
+ local version = 0.36
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -179,9 +179,14 @@ writeLog(2,"Loading common config file ".."xindex-cfg-common\n",1)
 Config_File_Common = kpse.find_file("xindex-cfg-common.lua") 
 cfg_common = require(Config_File_Common)
 
-local config_file = "xindex-"..args.config..".lua"
-writeLog(2,"Loading local config file "..config_file,0)
-Config_File = kpse.find_file(config_file) 
+local user_config_file = "xindex-"..args["config"]..".lua"
+print("Local config file is: "..user_config_file)
+writeLog(2,"Loading local config file "..user_config_file,0)
+if kpse.find_file(user_config_file) 
+  then Config_File = kpse.find_file(user_config_file) 
+  else print("Cannot find config file with kpse.find_file!!")
+end
+print("\nLocal KPSE config file is: "..Config_File.."\n")
 cfg = require(Config_File)
 writeLog(2," ... done\n",0)
 
