@@ -1,3 +1,4 @@
+# $Id: TLUtils.pm 61960 2022-02-09 21:43:08Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2022 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -7,7 +8,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 61711 $';
+my $svnrev = '$Revision: 61960 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2623,6 +2624,20 @@ sub setup_programs {
       setup_one(($isWin ? "w32" : "unix"), $defprog,
                  "$bindir/$dltype/$defprog.$platform", "--version", $tlfirst);
   }
+  # check for curl special stuff on MacOS
+  if (member("curl", @working_downloaders) && platform() =~ m/darwin/) {
+    # copied from platform_name
+    chomp (my $sw_vers = `sw_vers -productVersion`);
+    my ($os_major,$os_minor) = split (/\./, $sw_vers);
+    if ($os_major == 10 && ($os_minor == 13 || $os_minor == 14)) {
+      my @curlargs = @{$TeXLive::TLConfig::FallbackDownloaderArgs{'curl'}};
+      # can't push new arg at end of list because builtin list ends with
+      # -o to set the output file.
+      unshift (@curlargs, '--cacert', "$::installerdir/tlpkg/installer/curl/curl-ca-bundle.crt");
+      $TeXLive::TLConfig::FallbackDownloaderArgs{'curl'} = \@curlargs;
+      debug("TLUtils::setup_programs: curl on old darwin, final curl args: @{$TeXLive::TLConfig::FallbackDownloaderArgs{'curl'}}\n");
+    }
+  }
   # check for wget/ssl support
   if (member("wget", @working_downloaders)) {
     debug("TLUtils::setup_programs: checking for ssl enabled wget\n");
@@ -4161,9 +4176,9 @@ sub check_on_working_mirror {
   # so try wget and only check for the return value
   # please KEEP the / after $mirror, some ftp mirrors do give back
   # an error if the / is missing after ../CTAN/
-  my $cmd = "$wget $mirror/ --timeout=$NetworkTimeout -O "
-            . (win32() ? "nul" : "/dev/null")
-            . " 2>" . (win32() ? "nul" : "/dev/null");
+  my $cmd = "$wget $mirror/ --timeout=$NetworkTimeout -O -"
+            . "  >" . (TeXLive::TLUtils::nulldev())
+            . " 2>" . (TeXLive::TLUtils::nulldev());
   my $ret = system($cmd);
   # if return value is not zero it is a failure, so switch the meanings
   return ($ret ? 0 : 1);
