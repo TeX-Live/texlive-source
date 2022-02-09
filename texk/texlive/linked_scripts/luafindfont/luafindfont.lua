@@ -1,5 +1,4 @@
 #!/usr/bin/env texlua
--- % $Id: luafindfont.lua 330 2021-11-28 13:47:56Z herbert $
 
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
@@ -8,7 +7,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2021-11-27
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-   local version = 0.05
+   local version = 0.06
 luafindfont.version = version
 
 --[[
@@ -55,7 +54,7 @@ local i = 1
 while i <= #arg do
   if arg[i] == "-h" or arg[i] == "--help" then
     print("Version "..version..", Copyright 2021 by Herbert Voß") 
-    print([[Syntax: luafintfont [options] <font> 
+    print([[Syntax: luafindfont [options] <font> 
     By default the Lua program 'luafindfont' creates a list of the
     fonts which have in its names the given string.  
 
@@ -123,7 +122,7 @@ if #font_str == 1 then font_str[2] = "" end
 
 local luaVersion = _VERSION
 print("We are using "..luaVersion)
-if #font_str > 1 then
+if font_str[2] ~= "" then
   print('Looking for font \"'..font_str[1]..' & '..font_str[2]..'\"')
 else
   print('Looking for font \"'..font_str[1]..'\"')
