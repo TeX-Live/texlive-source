@@ -1,6 +1,9 @@
 2022-02-10  Andreas Scherer  <https://ascherer.github.io>
 
-	* cwebmac.tex: Fix '\ATH' macro.
+	* ctwimac.tex: Add silent \datecontentspage macro.
+	* cwebmac.tex,
+	* texinputs/dcwebstrings.tex,
+	* texinputs/[fi]cwebmac.tex: Fix '\ATH' macro.
 
 2022-02-05  Andreas Scherer  <https://ascherer.github.io>
 
