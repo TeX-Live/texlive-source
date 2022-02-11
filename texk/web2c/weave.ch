@@ -326,6 +326,18 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
+@x [172] Fix spacing.
+@<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>;
+@y
+@<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>;
+@z
+
+@x [173] Fix spacing.
+@ @<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>=
+@y
+@ @<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>=
+@z
+
 @x [239] omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y
