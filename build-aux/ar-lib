@@ -135,6 +135,10 @@ do
       AR="$AR $1"
       shift
       ;;
+    -nologo | -NOLOGO)
+      # We always invoke AR with -nologo, so don't need to add it again.
+      shift
+      ;;
     *)
       action=$1
       shift
