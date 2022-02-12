@@ -1,0 +1,39 @@
+## texk/web2c/luatexdir/am/mfluapotrace.am: Makefile fragment for libmfluapotrace.
+##
+## Copyright (C) 2022 Luigi Scarso <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## mfluapotrace
+##
+EXTRA_LIBRARIES += libmfluapotrace.a 
+
+$(libmfluapotrace_a_OBJECTS): $(LUA_DEPEND)
+
+libmfluapotrace_a_CPPFLAGS = \
+        -I$(top_srcdir)/mfluadir/potrace 
+##         $(LUA_INCLUDES)
+
+
+
+libmfluapotrace_a_CFLAGS = # $(WARNING_CFLAGS)
+
+#nodist_libmfluapotrace_a_SOURCES = $(libmfluapotrace_sources)
+
+libmfluapotrace_a_SOURCES = \
+	mfluadir/potrace/auxiliary.h \
+	mfluadir/potrace/bitmap.h \
+	mfluadir/potrace/config.h \
+	mfluadir/potrace/curve.c \
+	mfluadir/potrace/curve.h \
+	mfluadir/potrace/decompose.c \
+	mfluadir/potrace/decompose.h \
+	mfluadir/potrace/lists.h \
+	mfluadir/potrace/luafunc.c \
+	mfluadir/potrace/luafunc.h \
+	mfluadir/potrace/potracelib.c \
+	mfluadir/potrace/potracelib.h \
+	mfluadir/potrace/progress.h \
+	mfluadir/potrace/trace.c \
+	mfluadir/potrace/trace.h
+
+

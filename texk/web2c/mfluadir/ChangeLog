@@ -1,6 +1,6 @@
-2022-01-10  Karl Berry  <karl@freefriends.org>
-
-	* am/mflua.am: do not silence tangle-sh.
+2021-01-18 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* Embedding of  potrace and lpeg.
 
 2021-03-15 Luigi Scarso <luigi.scarso@gmail.com>
 	

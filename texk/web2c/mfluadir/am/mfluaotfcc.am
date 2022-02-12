@@ -5,35 +5,24 @@
 
 ## mfluaotfcc
 ##
-EXTRA_LIBRARIES += libmfluaotfcc.a libmfluajitotfcc.a
+EXTRA_LIBRARIES += libmfluaotfcc.a 
 
 #libmfluaotfcc_a_DEPENDENCIES = $(ZLIB_DEPEND)
-#libmfluajitotfcc_a_DEPENDENCIES = $(ZLIB_DEPEND)
 
 $(libmfluaotfcc_a_OBJECTS): $(LUA_DEPEND)
-$(libmfluajitotfcc_a_OBJECTS): $(LUAJIT_DEPEND)
 
 libmfluaotfcc_a_CPPFLAGS = \
 	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
 	-I$(top_srcdir)/mfluadir/otfcc/include \
 	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
-	-I$(top_srcdir)/mfluadir/otfcc/lib \
-	 $(LUA_INCLUDES)
+	-I$(top_srcdir)/mfluadir/otfcc/lib 
+##	 $(LUA_INCLUDES)
 
 
-libmfluajitotfcc_a_CPPFLAGS = \
-	-std=c99 -D_CARYLL_USE_PRE_SERIALIZED -DMAIN_VER=0 -DSECONDARY_VER=10 -DPATCH_VER=4 \
-	-DJIT \
-	-I$(top_srcdir)/mfluadir/otfcc/include \
-	-I$(top_srcdir)/mfluadir/otfcc/include/dep \
-	-I$(top_srcdir)/mfluadir/otfcc/lib \
-	$(LUAJIT_INCLUDES)
 
 libmfluaotfcc_a_CFLAGS = # $(WARNING_CFLAGS)
-libmfluajitotfcc_a_CFLAGS = # $(WARNING_CFLAGS)
 
 #nodist_libmfluaotfcc_a_SOURCES = $(libmfluaotfcc_sources)
-#nodist_libmfluajitotfcc_a_SOURCES = $(libmfluaotfcc_sources)
 
 libmfluaotfcc_a_SOURCES = \
 	mfluadir/otfcc/dep/extern/sdsalloc.h \

@@ -1,0 +1,25 @@
+## texk/web2c/mfluadir/am/mflualpeg.am: Makefile fragment for libmflualpeg.
+##
+## Copyright (C) 2022 Luigi Scarso <tex-live@tug.org>
+## You may freely use, modify and/or distribute this file.
+
+## mflualpeg
+##
+EXTRA_LIBRARIES += libmflualpeg.a
+
+$(libmflualpeg_a_OBJECTS): $(LUA_DEPEND)
+
+libmflualpeg_a_CPPFLAGS = \
+	-I$(top_srcdir)/mfluadir/luapeg \
+	$(LUA_INCLUDES)
+
+
+libmflualpeg_a_CFLAGS = # $(WARNING_CFLAGS)
+
+
+libmflualpeg_a_SOURCES = \
+	mfluadir/luapeg/lpeg.c \
+	mfluadir/luapeg/lpeg.h 
+
+
+

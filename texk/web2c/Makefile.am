@@ -245,9 +245,12 @@ include $(srcdir)/am/texmf.am
 ## MFLua
 include $(srcdir)/mfluadir/am/mflua.am
 include $(srcdir)/mfluadir/am/mfluaotfcc.am
+include $(srcdir)/mfluadir/am/mfluapotrace.am
+include $(srcdir)/mfluadir/am/mflualpeg.am
 
 ## MFLuaJIT
 include $(srcdir)/mfluajitdir/am/mfluajit.am
+include $(srcdir)/mfluajitdir/am/mfluajitlpeg.am
 
 ## MetaPost
 include $(srcdir)/mplibdir/am/mplib.am

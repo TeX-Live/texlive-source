@@ -1,7 +1,6 @@
-## $Id$
 ## texk/web2c/mfluadir/am/mflua.am: Makefile fragment for MFLua.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -43,11 +42,11 @@ endif WIN32
 
 dist_mflua_SOURCES = mfluadir/mfluaextra.c mfluadir/mfluaextra.h mfluadir/mflua_version.h
 mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)
-mflua_LDADD = libmflua.a libmfluaotfcc.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS)
+mflua_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS)
 mflua_LDFLAGS = -export-dynamic
 nodist_mflua_nowin_SOURCES = $(dist_mflua_SOURCES)
 mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)
-mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a $(LDADD) $(windowlib) $(LUA_LIBS)
+mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(LUA_LIBS)
 mflua_nowin_LDFLAGS = -export-dynamic
 
 # We must create mfluad.h and mfluadir/mflua_version.h before compiling mfluaextra.c.
@@ -56,7 +55,7 @@ $(mflua_OBJECTS) $(mflua_nowin_OBJECTS): mfluad.h mfluadir/mflua_version.h
 ## mflua and mflua-nowin compile mfluaextra.c with different CPPFLAGS.
 ## Automake, however, does not support CPPFLAGS for individual source files.
 ## To avoid compiling everything twice, the common objects are in a library.
-EXTRA_LIBRARIES += libmflua.a libmfluaotfcc.a 
+EXTRA_LIBRARIES += libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a
 
 # MFLua C sources
 mflua_c_h = mfluaini.c mflua0.c mfluacoerce.h mfluad.h
@@ -77,9 +76,9 @@ mflua-pool.c: mflua.pool mfluad.h $(makecpool_stamp)
 
 # Tangling MFLua
 mflua.p mflua.pool: mflua-tangle
-	$(texmf_tangle) mflua mflua
+	@$(texmf_tangle) mflua mflua
 mflua-tangle: tangle$(EXEEXT) mflua.web mflua.ch tangle-sh
-	$(texmf_tangle) mflua mflua
+	@$(texmf_tangle) mflua mflua
 
 # Extract mflua version
 $(srcdir)/mfluadir/mflua_version.h: @MAINTAINER_MODE_TRUE@ mfluadir/mf-lua.ch
@@ -137,5 +136,3 @@ EXTRA_DIST += \
 	mfluadir/mfluatrap/mflua_ttx_backend.lua \
 	mfluadir/mfluatrap/texmf.cnf \
 	mfluadir/mfluatrap/mfluatrap.diffs
-
-# (end of mflua.am)

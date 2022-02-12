@@ -1,7 +1,6 @@
-## $Id$
 ## texk/web2c/mfluajitdir/am/mfluajit.am: Makefile fragment for MFLuaJIT.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -43,11 +42,11 @@ endif WIN32
 
 dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
 mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS)
+mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS)
 mfluajit_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 nodist_mfluajit_nowin_SOURCES = $(dist_mfluajit_SOURCES)
 mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a $(LDADD) $(windowlib) $(LUAJIT_LIBS)
+mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(LUAJIT_LIBS)
 mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 # We must create mfluajitd.h and mfluadir/mflua_version.h before compiling mfluajitextra.c.
@@ -56,7 +55,7 @@ $(mfluajit_OBJECTS) $(mfluajit_nowin_OBJECTS): mfluajitd.h mfluadir/mflua_versio
 ## mfluajit and mfluajit-nowin compile mfluajitextra.c with different CPPFLAGS.
 ## Automake, however, does not support CPPFLAGS for individual source files.
 ## To avoid compiling everything twice, the common objects are in a library.
-EXTRA_LIBRARIES += libmfluajit.a libmfluaotfcc.a
+EXTRA_LIBRARIES += libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a
 
 # MFLuaJIT C sources
 mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
@@ -77,9 +76,9 @@ mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
 
 # Tangling MFLuaJIT
 mfluajit.p mfluajit.pool: mfluajit-tangle
-	$(texmf_tangle) mfluajit mfluajit
+	@$(texmf_tangle) mfluajit mfluajit
 mfluajit-tangle: tangle$(EXEEXT) mfluajit.web mfluajit.ch tangle-sh
-	$(texmf_tangle) mfluajit mfluajit
+	@$(texmf_tangle) mfluajit mfluajit
 
 # Generate mfluajit.web
 mfluajit.web: tie$(EXEEXT) $(mfluajit_web_srcs)
@@ -134,5 +133,3 @@ EXTRA_DIST += \
         mfluadir/mfluatrap/mflua_ttx_backend.lua \
         mfluadir/mfluatrap/texmf.cnf \
         mfluadir/mfluatrap/mfluatrap.diffs
-
-# (end of mfluajit.am)
