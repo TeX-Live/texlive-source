@@ -1,3 +1,7 @@
+2022-02-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* upbibtex.ch: Adapt to pbibtex.ch (version number).
+
 2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex.defines: Add isterminalUTF8.

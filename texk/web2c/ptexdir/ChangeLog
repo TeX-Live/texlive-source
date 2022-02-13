@@ -1,3 +1,10 @@
+2022-02-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: \write18 in '^^' format. (Thanks Yukimasa Morimi)
+	* pbibtex.ch: Do not break at white_space after Japanese
+	  characters. Version j0.34.
+	  https://github.com/texjporg/pbibtex-manual/issues/1
+
 2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Fix for \write18 with quotation.
