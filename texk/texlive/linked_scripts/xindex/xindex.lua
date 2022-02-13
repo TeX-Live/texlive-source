@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 21 2022-01-27 17:45:10Z hvoss $
+-- $Id: xindex.lua 22 2022-02-11 12:18:15Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.36
+ local version = 0.40
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -49,8 +49,10 @@ local args = require ('xindex-lapp') [[
     -n,--noheadings 
     -a,--no_casesensitive
     -b,--no_labels
+    -i,--ignoreSpace
     -o,--output (default "")
-    -l,--language (default en)
+    -k --checklang               same as * star for checking aux file
+    -l,--language (default en)   or * for detecting the language from the aux file
     -p,--prefix (default L)
     -u,--use_UCA
     -s,--use_stdin
@@ -97,7 +99,9 @@ require('xindex-baselib')
 
 local nInFiles = #args.files
 if not useStdInput then
-  --print(tostring(nInFiles).." input files are given!")
+  if vlevel == 3 then
+    print(tostring(nInFiles).." input file(s): ")
+  end
   inFiles = {}    --args.files as strings
   for i = 1,nInFiles do
     local file = args.files_name[i]
@@ -107,6 +111,9 @@ if not useStdInput then
       end
     else
       inFiles[#inFiles+1] = file
+    end
+    if vlevel == 3 then
+      print(file)
     end
   end  
 end
@@ -153,7 +160,7 @@ require('xindex-lib')
 
 writeLog(2,"xindex v."..version.." (c) Herbert Voß\n",-1)
 writeLog(1,"Verbose level = "..vlevel.."\n",1)
-writeLog(2,"Logfile:"..logfilename,1)
+writeLog(2,"Logfile:"..logfilename.."\n",1)
 
 writeLog(2,"Open outputfile "..outfilename,0)
 outFile = io.open(outfilename,"w+")
@@ -171,6 +178,13 @@ if vlevel > 0 then
 end
 
 -- writeLog(2,"Using input file: "..inFile.."\n",0)
+
+if args["ignoreSpace"] then
+  ignoreSpace = args["ignoreSpace"]
+else
+  ignoreSpace = false
+end
+writeLog(2,"ignore space for sorting: "..tostring(ignoreSpace).."\n",-1)
 
 labelPrefix = args.prefix
 writeLog(2,"Label prefix: "..labelPrefix.."\n",-1)
@@ -208,9 +222,57 @@ escape_chars = { -- by default " is the escape char
 
 -- esc_char..'%( is not needed because it can only appear after |
 
-language = "en" -- default language
+outFile = io.open(outfilename,"w+")
 
-language = string.lower(args["language"]):sub(1, 2)
+local aux_language = ""
+
+if args["checklang"] or (args["language"] == "*") then
+  writeLog(2,'Check language in aux file\n',0) 
+  -- \babel@aux{german}{}        package babel
+  -- \selectlanguage *[variant=german,spelling=new,]{german}   package polyglossia
+  local auxfile = inFiles[1]:split(".")[1]..".aux"
+  writeLog(2,auxfile.."\n",0) 
+  local auxlines = read_lines_from(auxfile)
+  for line = 1,#auxlines do
+    local str = auxlines[line]
+    if string.find(str, "selectlanguage") then        
+      str = str:match("{..+}$")   -- get last word {language}
+      aux_language = str:sub(2,(#str-1))
+      break
+    else
+      if string.find(str, "babel@aux{")  then        
+  --      print("Babel defunden: "..str)
+        str = str:match("{..+}$")   -- get last word {language}
+  --      print("Babel: "..str)
+        aux_language = str:sub(2,(#str-3))
+        break
+      end
+    end
+  end
+--  print(aux_language)
+  if #aux_language > 0 then
+--    print("find language")
+    for i,lang in pairs(indexheader) do
+      for j = 3,#lang do
+        if lang[j] == aux_language then
+          language = i
+        end
+      end
+    end
+  else
+    language = "en"
+  end
+  print("Detected language: "..language)
+else  
+  if args["language"] then
+    language = string.lower(args["language"]):sub(1, 2)
+  else
+    language = "en"
+  end
+end
+
+--print("Sprache:"..language)
+
 writeLog(2,"Language = "..language.."\n",1) 
 if (indexheader[language] == nil) then
   writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
