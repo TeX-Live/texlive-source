@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2015 the xdvik development team
+ * Copyright (c) 2002-2022 the xdvik development team
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -51,6 +51,7 @@ FILE *try_fopen(const char *fname, const char *mode);
 FILE *try_fdopen(int fd, const char *mode);
 int try_open(const char *fname, int flags);
 int try_open_mode(const char *fname, int flags, mode_t mode);
+int try_dup(int oldfd);
 
 extern int xdvi_temp_fd(char **tempfilename);
 extern void xdvi_assert(const char *version,

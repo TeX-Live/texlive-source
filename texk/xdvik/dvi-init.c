@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2013  Paul Vojta
+Copyright (c) 1990-2022  Paul Vojta
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -1185,18 +1185,33 @@ make_backup_fp(FILE *source_fp, FILE *target_fp)
 	ASSERT(target_fp != NULL, "");
 	ASSERT(source_fp != NULL, "");
 
-	if (fseek(target_fp, 0L, SEEK_SET)) {
+	tmp_fd = try_dup(fileno(target_fp));
+	if (tmp_fd == -1) {
+	    XDVI_ERROR((stderr, "Couldn't duplicate descriptor of file %s: %s - disabling `useTempFp'; target_fp: %p.",
+			m_tmp_dvi_name, strerror(errno), target_fp));
+	    goto fclose_and_fail;
+	}
+
+	fclose(target_fp);
+
+	if (lseek(tmp_fd, 0L, SEEK_SET) == -1) {
 	  XDVI_ERROR((stderr, "Couldn't seek to start of file %s: %s - disabling `useTempFp'; target_fp: %p.",
 			m_tmp_dvi_name, strerror(errno), target_fp));
-	  goto fclose_and_fail;
+	  goto fail;
 	}
 #if HAVE_FTRUNCATE
 	if (ftruncate(tmp_fd, 0) < 0) {
 	    XDVI_ERROR((stderr, "Couldn't truncate file %s: %s - disabling `useTempFp'; target_fp: %p.",
 			m_tmp_dvi_name, strerror(errno), target_fp));
-	    goto fclose_and_fail;
+	    goto fail;
 	}
 #endif
+
+	if ((target_fp = try_fdopen(tmp_fd, "wb+")) == NULL) {
+	    XDVI_ERROR((stderr, "error opening temporary file (%s) - disabling `useTempFp'.", strerror(errno)));
+	    goto fail;
+	}
+
 	if (fseek(source_fp, 0L, SEEK_SET)) {
 	  perror("fseek of source_fp");
 	  goto fclose_and_fail;

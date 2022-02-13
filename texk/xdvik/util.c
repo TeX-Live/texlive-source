@@ -1,6 +1,6 @@
 /*========================================================================*\
 
-Copyright (c) 1990-2015  Paul Vojta and others
+Copyright (c) 1990-2022  Paul Vojta and others
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -277,6 +277,20 @@ try_open_mode(const char *fname, int flags, mode_t mode)
     if (fd < 0 && (errno == EMFILE || errno == ENFILE)) {
 	close_a_file();
 	fd = open(fname, flags, mode);
+    }
+    return fd;
+}
+
+/*
+ * Like try_fopen(), for dup().
+ */
+int
+try_dup(int oldfd)
+{
+    int fd = dup(oldfd);
+    if (fd < 0 && (errno == EMFILE || errno == ENFILE)) {
+	close_a_file();
+	fd = dup(oldfd);
     }
     return fd;
 }

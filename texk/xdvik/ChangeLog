@@ -1,3 +1,13 @@
+2022-02-13  Paul Vojta  <vojta@math.berkeley.edu>
+
+	* dvi-init.c (make_backup_fp): call new try_dup, and existing
+	try_fdopen, before fseek.
+	* util.c (try_dup): define new fn.
+	* util.h (try_dup): declare it.
+	This resolves xdvi crashing under MacOS after hitting `R' in some
+	situations (the preceding change did as well, in a clunkier way).
+	https://tug.org/pipermail/tlbuild/2022q1/005140.html ff.
+
 2022-02-01  John Hawkinson  <jhawk@alum.mit.edu>
 
 	* dvi-init.c (make_backup_fp): check returns from fseeks,
