@@ -44,6 +44,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-blob.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-serialize.cc \
+	@HARFBUZZ_TREE@/src/hb-buffer-verify.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
 	@HARFBUZZ_TREE@/src/hb-cache.hh \
 	@HARFBUZZ_TREE@/src/hb-cff-interp-common.hh \
@@ -67,7 +68,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
 	@HARFBUZZ_TREE@/src/hb-meta.hh \
-	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.cc \
 	@HARFBUZZ_TREE@/src/hb-ms-feature-ranges.hh \
 	@HARFBUZZ_TREE@/src/hb-mutex.hh \
 	@HARFBUZZ_TREE@/src/hb-null.hh \
