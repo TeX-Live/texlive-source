@@ -1,6 +1,14 @@
+2022-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.ech, eptex_version.h: e-pTeX version 220214.
+
 2022-02-05  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.defines: Add isinternalUPTEX and isterminalUTF8.
+
+2022-01-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: Add \lastnodefont.
 
 2022-01-26  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 

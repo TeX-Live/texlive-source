@@ -1,0 +1,24 @@
+\newcount\res
+\def\test#1{%
+  \setbox0\hbox{#1\global\res=\lastnodechar\global\xdef\rf{\the\lastnodefont}}%
+  \leavevmode\hbox to 5em{\hss \the\res}, \hbox to 10em{\tentt\meaning\rf\hss}%
+  \copy0\par}
+
+\global\res=\lastnodechar\xdef\rf{\the\lastnodefont}\the\res. {\tentt \meaning\rf}
+
+\ybaselineshift-10pt
+\setbox0\vbox{\vskip10pt\global\res=\lastnodechar\global\xdef\rf{\the\lastnodefont}}%
+\leavevmode\hbox to 5em{\hss \the\res}, \hbox to 10em{\tentt\meaning\rf\hss}%
+
+\test{}
+\test{a}
+\test{ffi}
+\test{漢）}
+\test{漢字}
+\hbox{\tate \test{漢字}}
+\test{あ\kern-1pt}
+\test{あ\hskip10pt}
+\test{あ\/}
+
+
+\bye
