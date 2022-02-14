@@ -1,5 +1,14 @@
 2022-02-14  Andreas Scherer  <https://ascherer.github.io>
 
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* texinputs/dcwebstrings.tex,
+	* texinputs/fcwebmac.tex,
+	* texinputs/icwebmac.tex: Adapt to 'ifhint.tex'.
+
+2022-02-14  Andreas Scherer  <https://ascherer.github.io>
+
 	* common.c,
 	* ctangle.c,
 	* ctangle.w: Add '#line' after '#endif'.

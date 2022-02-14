@@ -16,10 +16,10 @@
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi\fi
-\newif\ifHINT
-\ifx\HINTversion\undefined \HINTfalse \else \HINTtrue \fi
+\newif\ifhint
+\ifx\HINTversion\undefined \hintfalse \else \hinttrue \fi
 \newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
-\newif\ifacroHINT \ifacro\acroHINTtrue\fi \ifHINT\acroHINTtrue\fi
+\newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -70,7 +70,7 @@
    tangles as \tentex "#2"\egroup\par}
 \def\noATL#1 #2 {}
 \def\noatl{\let\ATL=\noATL} % suppress output from @l
-\def\ATH{{\acroHINTfalse\X\kern-.5em:Preprocessor definitions\X}}
+\def\ATH{{\acrohintfalse\X\kern-.5em:Preprocessor definitions\X}}
 \let\PB=\relax % hook for program brackets |...| in TeX part or section name
 
 \chardef\AM=`\& % ampersand character in a string
@@ -130,7 +130,7 @@
 \def\?{\mathrel?}
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\Y\noindent{\hangindent2em%
-    \baselineskip10pt\eightrm#1~\ifacroHINT{\pdfnote#2.}\else#2\fi.\par}}
+    \baselineskip10pt\eightrm#1~\ifacrohint{\pdfnote#2.}\else#2\fi.\par}}
 
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
 \newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
@@ -251,7 +251,7 @@
   \outlinest\let\outlinedone=\relax}
 \fi % End of pdf macros
 
-\ifHINT
+\ifhint
 % The following uses HINT primitives to implement:
 % \HINThome to mark the position of the home page
 % \HINTlabel to attach a label to the top of a section
@@ -267,8 +267,8 @@
 \let\pdflink=\HINTlink
 \fi % End of HINT macros
 
-% Common macros for \ifacro and \ifHINT
-\ifacroHINT
+% Common macros for \ifacro and \ifhint
+\ifacrohint
 \def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
 \def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
     \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
@@ -308,7 +308,7 @@
 \def\lapstar{\rlap{*}}
 \def\stsec{\rightskip=0pt % get out of C mode (cf. \B)
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
-  \ifHINT\HINTlabel\fi% Start page before section
+  \ifhint\HINTlabel\fi% Start page before section
   \noindent{\let\*=\lapstar\bf\secstar.\quad}%
   \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
     \ifpdftex \pdfdest num \secstar fith%
@@ -382,7 +382,7 @@
 \let\W=\land % logical and
 \def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\eightrm\kern.5em
-    \ifacroHINT{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
+    \ifacrohint{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le
 \let\ZZ=\let % now you can \write the control sequence \ZZ
@@ -476,7 +476,7 @@
   \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
   \hsize=.5\pagewidth \advance\hsize by -10pt
     % column width for the index (20pt between cols)
-  \ifHINT\else
+  \ifhint\else
   \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
   \fi
   \def\lr{L} % this tells whether the left or right column is next
@@ -487,7 +487,7 @@
   \message{Index:}
   \parskip 0pt plus .5pt
   \outer\def\I##1, ##2.{\par\hangindent2em\noindent##1:\kern1em
-    \ifacroHINT\pdfnote##2.\else##2\fi.} % index entry
+    \ifacrohint\pdfnote##2.\else##2\fi.} % index entry
   \def\[##1]{$\underline{##1}$} % underlined index item
   \rm \rightskip0pt plus 2.5em \tolerance 10000 \let\*=\lapstar
   \hyphenpenalty 10000 \parindent0pt
@@ -502,7 +502,7 @@
   \message{Section names:}
   \output={\normaloutput\page\lheader\rheader}
   \setpage
-  \def\note##1##2.{\quad{\eightrm##1~\ifacroHINT{\pdfnote##2.}\else{##2}\fi.}}
+  \def\note##1##2.{\quad{\eightrm##1~\ifacrohint{\pdfnote##2.}\else{##2}\fi.}}
   \def\Q{\note{Cited in section}} % crossref for mention of a section
   \def\Qs{\note{Cited in sections}} % crossref for mentions of a section
   \def\U{\note{Used in section}} % crossref for use of a section
@@ -539,16 +539,16 @@
   \pageno=\contentspagenumber
   \def\grouptitle{TABLE OF CONTENTS}
   \message{Table of contents:}
-  \ifHINT\HINThome\fi% Mark the Table of contents as home page
+  \ifhint\HINThome\fi% Mark the Table of contents as home page
   \topofcontents \startpdf
-  \line{\hfil Section\ifHINT\else\hbox to3em{\hss Page}\fi}% No Page in HINT
+  \line{\hfil Section\ifhint\else\hbox to3em{\hss Page}\fi}% No Page in HINT
   \let\ZZ=\contentsline
   \readcontents\relax % read the contents info
   \botofcontents \end} % print the contents page(s) and terminate
 \def\contentsline#1#2#3#4#5{\ifnum#2=0 \smallbreak\fi
     \line{\consetup{#2}#1
       \rm\leaders\hbox to .5em{.\hfil}\hfil
-      \ \ifHINT
+      \ \ifhint
           \HINTlink{#3}{\romannumeral#3}% No page numbers in HINT
           \HINTcontents{#1}{#2}{#3}%
         \else\ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi
