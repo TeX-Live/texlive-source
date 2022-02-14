@@ -1242,7 +1242,11 @@ file name.
 }
 
 @ @<In cases that |a| is...@>=@t\1\quad@>
-case identifier: store_id(a); break;
+case identifier: store_id(a);
+  if (*buffer=='#' && id_first==buffer+1 && id_loc-id_first==5
+      && strncmp("endif",id_first,5)==0)
+    @<Insert the line number into |tok_mem|@>@;
+  break;
 case section_name: if (t!=section_name) goto done;
   else {
     @<Was an `\.{@@}' missed here?@>@;

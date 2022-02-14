@@ -1,3 +1,9 @@
+2022-02-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* ctangle.c,
+	* ctangle.w: Add '#line' after '#endif'.
+
 2022-02-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwimac.tex: Add silent \datecontentspage macro.

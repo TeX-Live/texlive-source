@@ -1,3 +1,7 @@
+2022-02-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.bin: Add '#line' after '#endif'.
+
 2022-02-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Fix spacing in math expression.
