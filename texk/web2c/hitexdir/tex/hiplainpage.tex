@@ -1,0 +1,35 @@
+\ifhint
+  \dimen0=1.25\hsize
+  \advance\dimen0 by -9pt
+  \dimen1=1.25\vsize
+  \advance\dimen1 by -9pt
+\HINTsetpage1 = basic 
+  priority 10
+  width  \dimen0
+  height \dimen1 
+{%
+    \maxdepth=4pt
+    \topskip=10pt
+    \HINTstream\topins %topinsert
+    \HINTstream0 %main text
+    \HINTstream\footins   
+  \HINTsetstream\topins = %topinsert 
+    prefered 0
+  {% 
+    \HINTafter = {}
+  }
+  \HINTsetstream\footins =%footnotes
+    prefered 255
+    ratio 0
+  {%
+    \hsize=300pt
+    \count\footins=1000 % the magnification factor
+    \skip\footins=\bigskipamount % the extra space needed
+    \dimen\footins=\vsize % maximum height on the page
+    \HINTbefore = 
+     {\vskip\skip\footins
+     \footnoterule}
+    \HINTafter = {}
+  }
+}% end page template
+\fi
