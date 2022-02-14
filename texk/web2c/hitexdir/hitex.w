@@ -3865,8 +3865,8 @@ else if (type(p)==vlist_node) print_esc("v");
 else print_esc("unset");
 print("box(");print_scaled(height(p));print_char('+');
 print_scaled(depth(p));print(")x");print_scaled(width(p));
-if (type(p)==unset_set_node)  print("set");
-else if (type(p)==unset_pack_node) print("pack");
+if (type(p)==unset_set_node)  print(" set");
+else if (type(p)==unset_pack_node) print(" pack");
 else if (type(p)==unset_node)
   @<Display special fields of the unset node |p|@>@;
 else{@+@<Display the value of |glue_set(p)|@>;
@@ -26102,17 +26102,16 @@ case baseline_node:
   } @+break;
 case hpack_node: case vpack_node:
 {@+r=get_node(pack_node_size);
-  pack_m(r)=pack_m(p);
-  list_ptr(r)=copy_node_list(list_ptr(p));
-  add_xdimen_ref(pack_extent(p));
-  pack_limit(r)=pack_limit(p);
-  words=pack_node_size-3;
+  mem[r+7]=mem[p+7];mem[r+6]=mem[p+6];mem[r+5]=mem[p+5]; /*copy the last three words*/
+  list_ptr(r)=copy_node_list(list_ptr(p));/*this affects |mem[r+5]|*/
+  add_xdimen_ref(pack_extent(p));/*this affects |mem[r+7]|*/
+  words=5;
   } @+break;
 case hset_node: case vset_node:
 {@+r=get_node(set_node_size);
   mem[r+8]=mem[p+8];mem[r+7]=mem[p+7];mem[r+6]=mem[p+6];mem[r+5]=mem[p+5]; /*copy the last four words*/
-  add_xdimen_ref(set_extent(p));
   list_ptr(r)=copy_node_list(list_ptr(p)); /*this affects |mem[r+5]|*/
+  add_xdimen_ref(set_extent(p));/*this affects |mem[r+7]|*/
   words=5;
   } @+break;
 case image_node:
@@ -32120,7 +32119,7 @@ floating_penalty_no  /* |floating_penalty_code|	42*/
 
 @<Fix definitions for integer parameters@>=
   int_defined[zero_int_no]=0;
-  for (i=pretolerance_code; i<=hang_after_code;i++)
+  for (i=pretolerance_code; i<=floating_penalty_code;i++)
     if ( hmap_int[i]>=0) int_defined[hmap_int[i]]=int_par(i);
   max_ref[int_kind]=MAX_INT_DEFAULT;
 @ The function |hget_int_no| tries to allocate a predefined integer number;
