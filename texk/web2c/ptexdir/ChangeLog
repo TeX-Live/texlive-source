@@ -9,10 +9,10 @@
 	   - When the least significant bit is set,
 	     a blank is generated when the line ends with
 	     "a control word ending with a Japanese character + {}".
-	   - When the second significant bit is set,
+	   - When the second least significant bit is set,
 	     a blank is generated when the line ends with
 	     "a Japanese control symbol".
-	   - When the third significant bit is set,
+	   - When the third least significant bit is set,
 	     a blank is generated when the line ends with
 	     "a Japanese character (which is not part of a CS) + {}".
 	  By setting \ptexendlinemode to the following values,
