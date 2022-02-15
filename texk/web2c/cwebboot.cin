@@ -15,12 +15,16 @@
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
+#line 65 "cwebdir/comm-w2c.h"
+
 
 #if HAVE_GETTEXT
 #include <libintl.h> 
 #else
 #define gettext(a) a
 #endif
+#line 71 "cwebdir/comm-w2c.h"
+
 
 /*:3*//*91:*/
 #line 739 "cwebdir/comm-w2c.ch"
@@ -32,6 +36,8 @@
 #define bindtextdomain(a,b) ""
 #define textdomain(a) ""
 #endif
+#line 746 "cwebdir/comm-w2c.ch"
+
 
 /*:91*//*93:*/
 #line 786 "cwebdir/comm-w2c.ch"
@@ -408,6 +414,8 @@ string texmf_locale;
 #ifndef SEPARATORS
 #define SEPARATORS "://"
 #endif
+#line 647 "cwebdir/comm-w2c.ch"
+
 char separators[]= SEPARATORS;
 
 /*:87*/
@@ -1419,6 +1427,8 @@ change_file_name[max_file_name_length-2]= '\0';
 strncpy(change_file_name,_DEV_NULL,max_file_name_length-2);
 change_file_name[max_file_name_length-2]= '\0';
 #endif
+#line 484 "cwebdir/comm-w2c.ch"
+
 
 #line 1168 "cwebdir/common.w"
 while(--argc> 0){

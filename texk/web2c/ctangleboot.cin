@@ -15,12 +15,16 @@
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
+#line 65 "cwebdir/comm-w2c.h"
+
 
 #if HAVE_GETTEXT
 #include <libintl.h> 
 #else
 #define gettext(a) a
 #endif
+#line 71 "cwebdir/comm-w2c.h"
+
 
 /*:4*/
 #line 67 "cwebdir/ctangle.w"
