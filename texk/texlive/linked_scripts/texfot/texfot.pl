@@ -1,14 +1,14 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.43 2021/05/01 15:49:53 karl Exp $
+# $Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
 # Tee the complete (unfiltered) standard output and standard error to
-# (by default) /tmp/fot.
+# (by default) /tmp/fot.$UID.
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.43 2021/05/01 15:49:53 karl Exp $';
+my $ident = '$Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -26,7 +26,7 @@ my @opt_ignore = ();
 my $opt_interactive = 0;
 my $opt_quiet = 0;
 my $opt_stderr = 1;
-my $opt_tee = ($ENV{"TMPDIR"} || $ENV{"TMP"} || "/tmp") . "/fot";
+my $opt_tee = ($ENV{"TMPDIR"} || $ENV{"TMP"} || "/tmp") . "/fot.$>";
 my $opt_version = 0;
 my $opt_help = 0;
 
@@ -135,6 +135,7 @@ sub process_output {
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
      |LaTeX\ Font\ Warning:\ Size\ substitutions
      |Package\ auxhook\ Warning:\ Cannot\ patch
+     |Package\ biditools\ Warning:\ Patching
      |Package\ caption\ Warning:\ Un(supported|known)\ document\ class
      |Package\ fixltx2e\ Warning:\ fixltx2e\ is\ not\ required
      |Package\ frenchb?\.ldf\ Warning:\ (Figures|The\ definition)
@@ -230,8 +231,8 @@ value is that of I<texcmd>.  Examples:
   # Sample basic invocation:
   texfot pdflatex file.tex
   
-  # Ordinarily all output is copied to /tmp/fot before filtering,
-  # but that can be omitted:
+  # Ordinarily the full output is copied to /tmp/fot.$UID before
+  # filtering, but that can be omitted, or the filename changed:
   texfot --tee=/dev/null lualatex file.tex
   
   # Example of more complex engine invocation:
@@ -367,11 +368,16 @@ the TeX command (on stdout).  C<--no-stderr> omits that reporting.
 =item C<--tee> I<file>
 
 By default, the output being filtered is C<tee>-ed, before filtering, to
-C<$TMPDIR/fot> (or C<$TMP/fot> if C<TMP> is set, or C</tmp/fot> if
-neither environment variable is set), to make it easy to check the full
-output when the filtering seems suspect. This option allows specifying a
-different file. Use S<C<--tee /dev/null>> if you don't want the original
-output at all.
+make it easy to check the full output in case of problems. 
+
+The default I<file> is C<$TMPDIR/fot.>I<uid>; if C<TMPDIR> is not set,
+C<TMP> is used if set; if neither is set, the default directory is
+C</tmp>. For example: C</tmp/fot.1001>. The I<uid> suffix is the
+effective userid of the process, appended for basic avoidance of
+collisions between different users on the same system.
+
+This option allows specifying a different file. Use S<C<--tee
+/dev/null>> to discard the original output.
 
 =item C<--version>
 
@@ -387,7 +393,7 @@ Display this help and exit successfully.
 
 I wrote this because, in my work as a TUGboat editor
 (L<https://tug.org/TUGboat>, journal submissions always welcome!), I run
-and rerun many documents, many times each. It was too easy to lose
+and rerun many documents, many times each. It was easy to lose
 warnings I needed to see in the mass of unvarying and uninteresting
 output from TeX, such as style files being read and fonts being used. I
 wanted to see all and only those messages which needed some action by
@@ -407,7 +413,7 @@ searching for C<log> at L<https://ctan.org/search>.
 
 C<texfot> is written in Perl, and runs on Unix. It may work on Windows
 if Perl and other software is installed, but I don't use Windows and
-don't support C,texfot> there.
+don't support C<texfot> there.
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output
@@ -421,5 +427,7 @@ This script and its documentation were written by Karl Berry and both
 are released to the public domain.  Email C<karl@freefriends.org> with
 bug reports.  It has no home page beyond the package on CTAN:
 L<https://ctan.org/pkg/texfot>.
+
+  $Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $
 
 =cut
