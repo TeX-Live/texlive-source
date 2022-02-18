@@ -1,6 +1,6 @@
 ## texk/web2c/mfluadir/am/mflua.am: Makefile fragment for MFLua.
 ##
-## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
