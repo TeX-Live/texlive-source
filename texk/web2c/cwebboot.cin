@@ -15,16 +15,15 @@
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
-#line 65 "cwebdir/comm-w2c.h"
-
+#line 66 "cwebdir/comm-w2c.h"
 
 #if HAVE_GETTEXT
 #include <libintl.h> 
 #else
+#line 70 "cwebdir/comm-w2c.h"
 #define gettext(a) a
 #endif
-#line 71 "cwebdir/comm-w2c.h"
-
+#line 72 "cwebdir/comm-w2c.h"
 
 /*:3*//*91:*/
 #line 739 "cwebdir/comm-w2c.ch"
@@ -32,12 +31,12 @@
 #if HAVE_GETTEXT
 #include <locale.h>  
 #else
+#line 743 "cwebdir/comm-w2c.ch"
 #define setlocale(a,b) ""
 #define bindtextdomain(a,b) ""
 #define textdomain(a) ""
 #endif
-#line 746 "cwebdir/comm-w2c.ch"
-
+#line 747 "cwebdir/comm-w2c.ch"
 
 /*:91*//*93:*/
 #line 786 "cwebdir/comm-w2c.ch"
@@ -414,9 +413,8 @@ string texmf_locale;
 #ifndef SEPARATORS
 #define SEPARATORS "://"
 #endif
-#line 647 "cwebdir/comm-w2c.ch"
-
-char separators[]= SEPARATORS;
+#line 648 "cwebdir/comm-w2c.ch"
+ char separators[]= SEPARATORS;
 
 /*:87*/
 #line 66 "cwebdir/common.w"
@@ -1424,14 +1422,14 @@ strcpy(change_file_name,"/dev/null");
 strncpy(change_file_name,DEV_NULL,max_file_name_length-2);
 change_file_name[max_file_name_length-2]= '\0';
 #elif defined _DEV_NULL
-strncpy(change_file_name,_DEV_NULL,max_file_name_length-2);
+#line 482 "cwebdir/comm-w2c.ch"
+ strncpy(change_file_name,_DEV_NULL,max_file_name_length-2);
 change_file_name[max_file_name_length-2]= '\0';
 #endif
-#line 484 "cwebdir/comm-w2c.ch"
-
+#line 485 "cwebdir/comm-w2c.ch"
 
 #line 1168 "cwebdir/common.w"
-while(--argc> 0){
+ while(--argc> 0){
 if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
 #line 1247 "cwebdir/common.w"
 

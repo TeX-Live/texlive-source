@@ -1,3 +1,9 @@
+2022-02-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* ctangle.c,
+	* ctangle.w: Add '#line' after '#elif', '#else', and '#endif'.
+
 2022-02-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebmac.tex,

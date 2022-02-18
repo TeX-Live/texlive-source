@@ -1,3 +1,8 @@
+2022-02-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin,
+	* ctangleboot.bin: Add '#line' after '#elif', '#else', and '#endif'.
+
 2022-02-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin,
