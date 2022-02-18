@@ -9,6 +9,20 @@ Versions containing major changes are marked as `beta'; these
 may contain undetected bugs. Such versions shouldn't be used
 by distributors.
 
+   * 22.87.06 (2022-02-17):
+	+ util.c: Fixed segmentation fault occurring when -debug is used with
+	  a non-numerical argument.
+	+ gui/print-log.h: Avoid duplicate info symbol from .h file
+	+ main.c: Avoid warning in calling strnlen()
+	+ string-utils.c: Shell-escape more characters in shell_escape_string()
+	+ dvi-init.c, util.c, util.h: Resolve crashes under MacOS after hitting
+	  `R' in some situations
+	+ xdvi.1.in: Document "-debug find" and "-debug files" command-line
+	  arguments
+
+   * 22.87.05 (2020-03-01):
+	+ Minor man page tweaks (from Karl Berry)
+
    * 22.87.04 (2020-02-29):
 	+ Added xdvi.desktop and a mechanism to install it (TeX Live r46347)
 	+ Some changes in the man page (TeX Live r46371 and r50583)

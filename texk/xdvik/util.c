@@ -1222,8 +1222,9 @@ parse_debugging_string(const char *arg)
 	    free(tempstr);
 	}
 	curr = strchr(curr, ',');
-	if (curr != NULL)
-	    curr++;
+	if (curr == NULL)
+	    break;
+	curr++;
     }
 
     return retval;

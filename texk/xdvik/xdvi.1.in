@@ -431,8 +431,8 @@ The individual numbers and strings have the following meanings:
 	32768	ft	FreeType library messages (Type 1 fonts)
 	65536	ft_verbose	Verbose FreeType library messages (currently unused)
 	131072	gui	GUI elements
-	262144	find	file searching and more
-	524288	files	file parsing and more
+	262144	find	Searching for strings in the DVI file
+	524288	files	File history and opening DVI files
 .sp 1n
 .fi
 Some of the Kpathsea debugging options are actually provided by Kpathsea;
@@ -4344,7 +4344,7 @@ directives).
 the
 .B Kpathsea
 documentation,
-.BR https://ctan.org/pkg/xdvi/ .
+.BR https://ctan.org/pkg/xdvi/ ,
 and the Xdvik home page at
 .BR http://xdvi.sourceforge.net/ .
 .SH AUTHORS
