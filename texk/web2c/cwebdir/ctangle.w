@@ -1243,14 +1243,12 @@ file name.
 
 @ @<In cases that |a| is...@>=@t\1\quad@>
 case identifier: store_id(a);
-  if (*buffer=='#' && @| (
-      ( id_first==buffer+1 && id_loc-id_first==5
-        && strncmp("endif",id_first,5)==0 ) || @|
-      ( id_first==buffer+1 && id_loc-id_first==4
-        && strncmp("else",id_first,4)==0 ) || @|
-      ( id_first==buffer+1 && id_loc-id_first==4
-        && strncmp("elif",id_first,4)==0 ) ) )
-    print_where=true; /* Avoid preprocessor calamities */
+  if (*buffer=='#' && id_first==buffer+1 && @| (
+      ( id_loc-id_first==5 && strncmp("endif",id_first,5)==0 ) || @|
+      ( id_loc-id_first==4 && strncmp("else",id_first,4)==0 ) || @|
+      ( id_loc-id_first==4 && strncmp("elif",id_first,4)==0 ) ) )
+      /* Avoid preprocessor calamities */
+    print_where=true;
   break;
 case section_name: if (t!=section_name) goto done;
   else {
