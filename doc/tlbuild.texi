@@ -1,8 +1,8 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2021
-@set month-year January 2022
+@set version 2022
+@set month-year February 2022
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -96,7 +96,6 @@ For an overview of this manual, @pxref{Introduction}.
 @end menu
 @end ifnottex
 
-
 @node Introduction
 @chapter Introduction
 
@@ -147,7 +146,6 @@ As an exception, the full documentation for @code{install-tl} and
 to do so.  The same text is available online (linked from
 @url{https://tug.org/texlive/doc.html}, or by invoking the program
 with @samp{--help} (or look at the end of the source).
-
 
 @c The first word of the chapter/section title here is used to
 @c construct the README.* filenames, so choose well.  (Or hack the script.)
@@ -210,7 +208,6 @@ All this is for the sake of simplifying both upgrading of modules and
 integrating new modules into the TL build system.  (Despite all
 efforts, neither task is easy.)
 
-
 @node Prerequisites
 @chapter Prerequisites
 
@@ -219,29 +216,45 @@ efforts, neither task is easy.)
 
 @cindex compilers, C and C++11
 Overall, building the @TL{} programs, when using all libraries from
-the TL source tree, requires C and C++11 compilers and GNU
-@code{make}.  If @code{make} from your @code{PATH} is not GNU @code{make,}
-you can set the @code{MAKE} environment variable to whatever is necessary.
+the TL source tree, requires C and C++11 compilers, GNU @code{make},
+and Python.
+
+@itemize
+@item
+If @code{make} from your @code{PATH} is not GNU @code{make}, you can
+set the @code{MAKE} environment variable to whatever is necessary.
 
 @cindex GNU @code{make}, required
 @cindex @code{gmake}, required
-@cindex FreeType
+@cindex FreeType, requires @code{gmake}
 @cindex @code{$@@} target in normal @code{make} rules
-GNU @code{make} is required only because of some third-party
-libraries, notably FreeType; Automake/Autoconf output in general, and
-the TL-maintained directories, work with any reasonable
+GNU @code{make} is required only because of third-party libraries,
+notably FreeType.  Automake/Autoconf output in general, and the
+TL-maintained directories, work with any reasonable
 @code{make}.@footnote{There is one exception in TL: the
 @code{tangle-sh} and related rules use @code{$@@} to mean the target
 name, a feature not present in all @code{make}s. This could be
-alleviated by some laborious editing, but since there's no way to
-avoid GNU @code{make} for the entire tree, it does not seem worth the
+alleviated by laborious editing, but since there's no way to avoid GNU
+@code{make} for builds of the entire tree, it does not seem worth the
 trouble.}
 
+@item
 @cindex C++11, required
+@cindex @code{dvisvgm}, requires C++11
+@cindex HarfBuzz, requires C++11
+@cindex ICU, requires C++11
 A C++11 compiler is similarly required because of the third-party
-library ICU; the program @code{dvisvgm} also requires C++11.  It is
-possible to build everything else with older compilers, but you have
-to remove the C++11-dependent sources.  @xref{Build one package}.
+libraries ICU and HarfBuzz (at least); the program @code{dvisvgm} also
+requires C++11.  It is possible to build what remains with older
+compilers, but you have to remove the C++11-dependent sources.
+@xref{Build one package}.
+
+@item
+@cindex Python, required by ICU
+Python is required by ICU tests.  (If you know how to disable these
+tests and thus eliminate the requirement, please write.)
+
+@end itemize
 
 A few programs in the tree have additional requirements:
 
@@ -249,11 +262,14 @@ A few programs in the tree have additional requirements:
 @item web2c
 @cindex @code{perl}, required by @code{web2c}, etc.
 requires @code{perl} for some tests run by @code{make check}.
+Incidentally, the @TeX{} Live installer (@code{install-tl}) and
+manager (@code{tlmgr}) are also written in Perl, but this does not
+matter for compiling the sources.
 
 @item xdvik
 @itemx xpdfopen
 @cindex X11 development, required by X clients
-require X11 headers and libraries, typically in ``development'' packages
+require X11 headers and libraries, typically in devel(opment) packages
 that are not installed by default.
 
 @item xetex
@@ -261,7 +277,7 @@ that are not installed by default.
 @cindex @code{ApplicationServices} Mac framework, required by @code{xetex}
 @cindex @code{Cocoa} Mac framework, required by @code{xetex}
 requires @file{fontconfig} (again both headers and library), or, for
-MacOSX only, the @code{ApplicationServices} and @code{Cocoa}
+MacOS only, the @code{ApplicationServices} and @code{Cocoa}
 frameworks.
 
 @item xindy
@@ -302,9 +318,8 @@ If you haven't modified any source files, and infrastructure tools
 such as @code{autoconf} or @code{makeinfo} are still being run, check
 your timestamps---notably, @code{use-commit-times} must be set to
 @code{yes} in your Subversion configuration (@pxref{Build system
-tools}).  Barring buggy commits, no infrastructure tools are needed to
-do a normal build.
-
+tools}).  No infrastructure tools are needed to do a normal build
+(barring bugs).
 
 @node Building
 @chapter Building
@@ -333,14 +348,12 @@ Building in the source directory itself is not supported (sorry).
 
 @menu
 * Build iteration::     What @code{configure} and @code{make} do in TL.
-* Build problems::      If the build fails.
 * Build in parallel::   Simultaneous @code{make} processes.
 * Build distribution::  Making a distribution tarball.
 * Build one package::   Example of working on just one program.
 * Build one engine::    Example of building just one @TeX{} engine.
 * Cross compilation::   Building on host X for target Y.
 @end menu
-
 
 @node Build iteration
 @section Build iteration
@@ -374,21 +387,6 @@ Running the top-level @code{make} a second time iterates again over
 all the library and program modules, and finds (should find) nothing
 to be done.
 
-
-@node Build problems
-@section Build problems
-
-@cindex build problems
-@cindex problems with build
-@cindex failure to build
-@vindex --no-clean Build @r{option}
-If configuring or building a module fails, you should first try to
-find and fix the problem.  Failing that, a possible workaround is to
-remove the subdirectory for that module from the build tree (so
-@code{configure} won't try to run there, and finally rerun the top
-level @code{make} (or @file{./Build} @code{--no-clean}).
-
-
 @node Build in parallel
 @section Build in parallel
 
@@ -410,7 +408,6 @@ Incidentally, a noticeable speed-up can be independently gained by
 using a configure cache file, i.e., specifying the @code{configure}
 option @code{-C} (recommended).
 
-
 @node Build distribution
 @section Build distribution
 
@@ -429,7 +426,6 @@ system, since all the support files are lacking; @pxref{Installing}.
 We do not actually distribute any such tarball, and have no plans to
 do so.
 
-
 @node Build one package
 @section Build one package
 
@@ -446,8 +442,8 @@ dependencies and can be invoked to build an individual program or
 library, first building any required libraries.
 
 Here is an example from start to finish for working on
-@code{dvipdfm-x}.  (Unfortunately, this does not suffice for building
-the @TeX{} engines; see the next section.)
+@code{dvipdfm-x}.  Unfortunately, this does not suffice for building
+the @TeX{} engines; see the next section.
 
 @example
 mkdir mydir && cd mydir  # new working directory
@@ -466,10 +462,20 @@ mkdir Work && cd Work
 # Do the make:
 make >&outm || echo fail
 
-# Test:
+# Run the tests:
 cd texk/dvipdfm-x
 make check
+
+# Run the new binary in the buil tree, finding support files
+# in a separate tree for a TeX Live release YYYY
+# (Bourne shell syntax):
+TEXMFROOT=/usr/local/texlive/YYYY \
+TEXMFCNF=$TEXMFROOT/texmf-dist/web2c \
+./xdvipdfmx ...
 @end example
+
+@vindex TEXMFROOT @r{for running standalone}
+@vindex TEXMFCNF @r{for running standalone}
 
 Then you can modify source files in @file{mydir/texk/dvipdfm-x} and
 rerun @code{make} in @file{mydir/Work/texk/dvipdfm-x} to rebuild; that
@@ -489,8 +495,10 @@ tweak as desired; check the output from @code{configure --help}.  It
 is also a good idea to run @code{make check} after making any changes,
 to ensure that whatever tests have been written still pass.
 
+@subsubheading Reducing source download size
+
 @cindex size of source tree
-Finally, the above retrieves the entire TL source tree (several
+The above retrieves the entire TL source tree (several
 hundred megabytes). It is natural to ask if this is really necessary.
 Strictly speaking, the answer is no, but it is vastly more convenient
 to do so. If you cut down the source tree, you must also give
@@ -501,6 +509,19 @@ For an example of this approach, see the @code{build-pdftex.sh} script
 in the @code{pdftex} development source (details at
 @url{http://pdftex.org}), which is indeed such a cut-down TL source
 tree.
+
+@subsubheading GCC used by default
+
+@vindex CC=@var{c-compiler}
+@vindex CXX=@var{c++-compiler}
+@vindex OBJCXX=@var{objc-compiler}
+@pindex gcc@r{, default compilers}
+By default, the @code{gcc} compilers will be used if present;
+otherwise, individual packages may use something different.  You can
+explicitly specify the compilers to be used with the environment
+variables @code{CC}, @code{CXX}, and @code{OBJCXX}.
+
+@subsubheading Removing C+11 dependency
 
 @cindex C++11, removing dependent sources
 Some libraries and programs require C++11; one such is XeTeX.  If you
@@ -516,23 +537,26 @@ rm -rf libs/icu libs/graphite2 texk/dvisvgm texk/web2c/xetexdir
 
 @vindex --enable-missing @r{to ignore dependencies}
 Also, even with @code{--disable-all-pkgs}, dependencies are (currently)
-checked.  One notable case: if a (non-MacOSX) system does not have
+checked.  One notable case: if a (non-MacOS) system does not have
 @code{fontconfig}, Xe@TeX{} cannot be built (@pxref{Prerequisites}),
 and @code{configure} will terminate even with @code{--disable-xetex}.
 To proceed without such dependencies, specify @code{--enable-missing}
 also.
 
+As of 2022, HarfBuzz also requires C++11.  Therefore even more would
+have to be disabled and removed, notably including @code{luahbtex},
+the standard engine used for Lua@LaTeX{}.  Removing that would not
+be acceptable for builds intended for distribution; but perhaps for
+testing the above information could still be useful.
+
+@cindex removing build directories
+@cindex @code{configure} problems, work around by removing
+In general, the TL @code{configure} will run in all directories.
+Therefore a general workaround for build problems is to remove failing
+directories from the tree, and also specify the relevant
+@code{--disable-...} option(s).
+
 Patches to improve all this would be most welcome.
-
-@vindex CC=@var{c-compiler}
-@vindex CXX=@var{c++-compiler}
-@vindex OBJCXX=@var{objc-compiler}
-@pindex gcc@r{, default compilers}
-By default, the @code{gcc} compilers will be used if present;
-otherwise, individual packages may use something different.  You can
-explicitly specify the compilers to be used with the environment
-variables @code{CC}, @code{CXX}, and @code{OBJCXX}.
-
 
 @node Build one engine
 @section Build one engine
@@ -576,8 +600,35 @@ accordingly. Either @code{../Build} or @code{../configure} can be run.
 Then it is necessary to again specify the target engine (@code{tex},
 in the above) in the @code{make}.
 
-All this is somewhat unfortunate.  We hope to improve the situation in
-the future.  Patches are welcome.
+All these complications are rather unfortunate.  Patches are welcome.
+
+@subsubheading Testing one engine
+
+To run only the tests for a given engine, say @code{hitex}:
+
+@example
+make -C $ww check SUBDIRS=. TESTS='$(hitex_tests)' 
+@end example
+
+@noindent where @code{$ww} is the web2c build directory, that is,
+@file{ww=/wherever/Build/source/Work/texk/web2c}.
+
+It's also possible to run individual tests the same way, using the test
+name exactly as specified in the @file{.am} file:
+
+@example
+make -C $ww check SUBDIRS=. TESTS=hitexdir/tests/hello.test
+@end example
+
+@vindex --no-print-directory @r{GNU make option}
+If you get tired of looking at the @samp{Entering}/@samp{Leaving
+directory} lines, you can add the (GNU) make option
+@code{--no-print-dir}.
+
+You may find it useful to put lengthy incantations like this into a
+trivial shell script with a short name (say, @code{hitst}).  Then you
+just run @code{hitst} and edit the file when necessary to change
+things around.
 
 @node Cross compilation
 @section Cross compilation
@@ -600,7 +651,7 @@ name, but note that this should @emph{not} be @code{--host=@var{host}}
 (@pxref{Hosts and Cross-Compilation,,, autoconf, GNU Autoconf}).
 
 In order to build, e.g., 32-bit binaries with @command{clang} on a 64-bit
-MacOSX system one could use:
+MacOS system one could use:
 
 @example
 TL_BUILD_ENV="CC='clang -arch i386' \
@@ -727,7 +778,6 @@ and @file{tie}.
 Building @code{xindy} requires running the host system @code{clisp}
 binary, thus cross compilation is painful, but possible.
 
-
 @node Installing
 @chapter Installing
 
@@ -756,7 +806,6 @@ at @url{https://tug.org/texlive/distro.html}.
 * Linked scripts::              Scripts not maintained in the sources.
 * Distro builds::               Configuring and building for OS distributions.
 @end menu
-
 
 @node Installation directories
 @section Installation directories
@@ -817,7 +866,6 @@ not directly usable from that location; they need to be copied to
 @file{Master/bin/@var{tl-platform}}.  The other files and directories
 that end up in @file{./inst/} are ignored.
 
-
 @node Linked scripts
 @section Linked scripts
 
@@ -857,7 +905,6 @@ Biber, Xindy---and each one creates considerable extra work.  We don't
 want to add more.  (See @url{https://tug.org/texlive/build.html} for
 information about building those exceptions, as well as the @code{xz}
 and @code{wget} programs that are used in the TL infrastructure.)
-
 
 @node Distro builds
 @section Distro builds
@@ -931,7 +978,6 @@ has written a detailed article on adapting TL for distros:
 article needs updating in the future, perhaps we will merge it into
 this document.)
 
-
 @node Layout and infrastructure
 @chapter Layout and infrastructure
 
@@ -952,7 +998,6 @@ files.
 * Program modules::         Handling programs, with examples.
 * Extending @TL{}::         Adding a new module.
 @end menu
-
 
 @node Build system tools
 @section Build system tools
@@ -1012,7 +1057,6 @@ to @code{touch} first @file{aclocal.m4}, then @file{configure} and
 @file{config.h.in} (or @file{c-auto.in}), and finally all
 @file{Makefile.in} files.
 
-
 @node Top-level directories
 @section Top-level directories
 
@@ -1067,7 +1111,6 @@ and @file{inst/} for the install tree (from @code{make install}).
 These names (and everything else about @file{Build}'s operation) can
 be changed by setting environment variables before running it; see the
 script source.
-
 
 @node Autoconf macros
 @section Autoconf macros
@@ -1130,7 +1173,6 @@ headers, types, and structures.  This is used for @TeX{}-specific
 modules.
 @end defmac
 
-
 @node Macros for programs
 @subsection Macros for programs
 
@@ -1157,7 +1199,6 @@ Check for @code{perl} or @code{perl5} in @code{PATH} and set
 @defmac KPSE_PROG_LEX
 Call @code{AC_PROG_LEX} and add the flag @code{-l} for @code{flex}.
 @end defmac
-
 
 @node Macros for compilers
 @subsection Macros for compilers
@@ -1205,7 +1246,6 @@ binary.
 This macro caches its result in the @code{kpse_cv_cxx_hack} variable.
 @end defmac
 
-
 @node Macros for libraries
 @subsection Macros for libraries
 
@@ -1217,7 +1257,6 @@ Call @code{AC_SYS_LARGEFILE} and @code{AC_FUNC_FSEEKO} and append
 suitable @code{-D} flags (optionally including
 @code{-D@var{extra-define}}) to @var{variable}.
 @end defmac
-
 
 @node Macros for library and header flags
 @subsection Macros for library and header flags
@@ -1287,7 +1326,6 @@ KPSE_ADD_FLAGS([libpng])
 KPSE_RESTORE_FLAGS # @r{restore @code{CPPFLAGS} and @code{LIBS}}
 @end example
 
-
 @node Macros for Windows
 @subsection Macros for Windows
 
@@ -1337,7 +1375,6 @@ symlink in the build tree.  Compiling @file{callexe.c} with
 as @code{@var{bar}.exe} is used on Windows instead of a symlink
 @code{@var{bar}->@var{foo}} for Unix-like systems.
 @end defmac
-
 
 @node Library modules
 @section Library modules
@@ -1426,7 +1463,6 @@ for the @code{make} rules to rebuild the library.
 @code{--with-system-libpng}, which then uses @code{pkg-config} to
 determine the flags required for the system library.
 
-
 @node @code{zlib} library
 @subsection The @code{zlib} library in @file{libs/zlib}
 
@@ -1439,7 +1475,6 @@ without the dependency on any other library.  The file
 @code{--with-system-zlib}, as well as @code{--with-zlib-includes} and
 @code{--with-zlib-libdir} to specify non-standard locations of the
 @code{zlib} headers and/or library.
-
 
 @node @code{freetype} library
 @subsection The @code{freetype} library in @file{libs/freetype2}
@@ -1458,7 +1493,6 @@ other words, this actually uses the build system provided by upstream
 @pindex freetype-config
 The flags required for the system library are obtained through
 @code{freetype-config}.
-
 
 @node @code{kpathsea} library
 @subsection The @code{kpathsea} library in @file{texk/kpathsea}
@@ -1495,7 +1529,6 @@ however, the command line options @code{-mktex=tfm} or
 @code{-no-mktex=tfm} for the @TeX{}-like engines override this
 default.
 
-
 @node Program modules
 @section Program modules
 
@@ -1510,7 +1543,6 @@ details for a few of the programs in TL.
 * @code{xdvik} package::   @file{texk/xdvik}
 * @code{asymptote}::       @file{utils/asymptote}
 @end menu
-
 
 @node @code{t1utils} package
 @subsection The @code{t1utils} package in @file{utils/t1utils}
@@ -1528,7 +1560,6 @@ KPSE_ENABLE_PROG([t1utils])
 
 @noindent specifying the module name without any dependencies, and
 supplies the configure option @code{--disable-t1utils}.
-
 
 @node @code{xindy} package
 @subsection The @code{xindy} package in @file{utils/xindy}
@@ -1560,7 +1591,6 @@ The additional fragments @file{ac/xindy.ac} and @file{ac/clisp.ac}
 specify more @code{configure} options to be seen at the top level,
 with @file{ac/xindy.ac} also included by @file{configure.ac}.
 
-
 @node @code{xdvik} package
 @subsection The @code{xdvik} package in @file{texk/xdvik}
 
@@ -1591,7 +1621,6 @@ The additional fragment @code{ac/xdvik.ac} is also included by
 @file{configure.ac} and supplies the configure option
 @code{--with-xdvi-x-toolkit} also seen at the top level.
 
-
 @node @code{asymptote}
 @subsection The subdirectory @file{utils/asymptote}
 
@@ -1604,7 +1633,6 @@ but due to its complexity and prerequisites (e.g., OpenGL) it is
 not part of the TL build system.  These programs must be built and
 installed independently, but are included on the TL DVD together with
 their support files.  See @url{https://tug.org/build.html#asymptote}.
-
 
 @node Extending @TL{}
 @section Extending @TL{}
@@ -1629,7 +1657,6 @@ Please maintain @file{foo/ChangeLog} for all TL changes.
 * Adding a new generic library module::
 * Adding a new @TeX{}-specific library module::
 @end menu
-
 
 @node Adding a new program module
 @subsection Adding a new program module
@@ -1854,7 +1881,6 @@ definition of the M4 macro @code{KPSE_ALL_SYSTEM_FLAGS} in
 @file{m4/kpse-pkgs.m4} must be extended by the line:@*@ @ @
 @code{AC_REQUIRE([KPSE_@var{LIB}_SYSTEM_FLAGS])}
 
-
 @node Adding a new @TeX{}-specific library module
 @subsection Adding a new @TeX{}-specific library module
 
@@ -1878,7 +1904,6 @@ The library name @code{@var{lib}} is added to the M4 macro
 @findex KPSE_WITH_TEXLIB
 The fragment @code{ac/withenable.ac} must use @code{KPSE_WITH_TEXLIB}.
 @end itemize
-
 
 @node Configure options
 @chapter Configure options
@@ -1916,7 +1941,6 @@ line are checked for consistency but never modified.
 * Variables for configure::
 @end menu
 
-
 @node Global configure options
 @section Global configure options
 
@@ -1938,7 +1962,6 @@ Here are the global configure options.
 * @code{--without-ln-s}::
 * @code{--without-x}::
 @end menu
-
 
 @node @code{--disable-native-texlive-build}
 @subsection @code{--disable-native-texlive-build}
@@ -1962,7 +1985,6 @@ that can also be built independently from the TL tree (such as
 use this option to enable TL-specific adaptations, such as
 installation paths.
 
-
 @node @code{--prefix} @code{--bindir} @dots{}
 @subsection @code{--prefix}, @code{--bindir}, @dots{}
 
@@ -1976,7 +1998,6 @@ directories}.
 Also as usual, all values are prefixed by the value of @code{DESTDIR},
 if set, on the @code{make} command line (@pxref{Staged Installs, ,
 Installation in a temporary location, automake, GNU Automake}).
-
 
 @node @code{--disable-largefile}
 @subsection @code{--disable-largefile}
@@ -1995,7 +2016,6 @@ to the file format specifications.
 With LFS, there is no fixed limit on the size of PDF files created by
 @file{pdftex} or PostScript files created by @file{dvips}.
 
-
 @node @code{--disable-missing}
 @subsection @code{--disable-missing}
 
@@ -2003,7 +2023,6 @@ With LFS, there is no fixed limit on the size of PDF files created by
 Immediately terminate the build process if a requested program or feature
 must be disabled, e.g., due to missing libraries.  This can help when
 figuring out a specific (sub)set of modules to enable.
-
 
 @node @code{--enable-compiler-warnings=}@var{level}
 @subsection @code{--enable-compiler-warnings=}@var{level}
@@ -2017,14 +2036,12 @@ variables @code{WARNING_[OBJ]C[XX]FLAGS}, but these variables are not
 consistently used in all library and program modules.  At present,
 these warning flags assume options from the GNU compilers.
 
-
 @node @code{--enable-cxx-runtime-hack}
 @subsection @code{--enable-cxx-runtime-hack}
 
 If enabled (as it is for the native TL build), when using @code{g++},
 try to statically link with @code{libstdc++}, thus improving
 portability of the resulting binary.  @xref{Macros for compilers}.
-
 
 @node @code{--enable-maintainer-mode}
 @subsection @code{--enable-maintainer-mode}
@@ -2035,7 +2052,6 @@ confusing) to the casual user.  This requires current versions of the
 GNU build tools (@pxref{Build system tools}), as it automatically
 rebuilds infrastructure files as needed.  @xref{maintainer-mode,,
 @code{missing} and @code{AM_MAINTAINER_MODE}, automake, GNU Automake}.
-
 
 @node @code{--enable-multiplatform}
 @subsection @code{--enable-multiplatform}
@@ -2053,7 +2069,6 @@ implied for @code{exec_prefix}.  In any case, the values for
 @code{bindir} and @code{libdir} are automatically propagated to all
 subdirectories.
 
-
 @node @code{--enable-shared}
 @subsection @code{--enable-shared}
 
@@ -2061,7 +2076,6 @@ subdirectories.
 Build shared versions of the @TeX{}-specific libraries such as
 @file{libkpathsea}.  This is not allowed for a native TL build (i.e.,
 @code{--disable-native-texlive-build} must also be specified).
-
 
 @node @code{--enable-silent-rules}
 @subsection @code{--enable-silent-rules}
@@ -2074,7 +2088,6 @@ variable expansions), you can specify @code{V=1} on the @code{make}
 command line to get more verbosity, or @code{V=0} to get less,
 regardless of this option.
 
-
 @node @code{--without-ln-s}
 @subsection @code{--without-ln-s}
 
@@ -2083,13 +2096,11 @@ Required when using a system without a working @code{ln -s} to build
 binaries for a Unix-like system.  However, @code{make install} will
 not create anything useful, and might fail.
 
-
 @node @code{--without-x}
 @subsection @code{--without-x}
 
 @vindex --without-x
 Disable all programs using the X Window System.
-
 
 @node Program-specific configure options
 @section Program-specific configure options
@@ -2110,14 +2121,12 @@ Here are (some of) the program-specific @code{configure} options.
 * Configure options for @file{utils/xindy}::
 @end menu
 
-
 @node @code{--enable-@var{prog}} @code{--disable-@var{prog}}
 @subsection @code{--enable-@var{prog}}, @code{--disable-@var{prog}}
 
 @vindex --enable-@var{prog}
 @vindex --disable-@var{prog}
 Do or do not build and install the program(s) of module @code{@var{prog}}.
-
 
 @node @code{--disable-all-pkgs}
 @subsection @code{--disable-all-pkgs}
@@ -2133,7 +2142,6 @@ interested in, and its dependencies, are built.  @xref{Build one package}.
 Without this option, all modules are built except those that are
 explicitly disabled or specify @code{disable} in their
 @file{ac/withenable.ac} fragment.
-
 
 @node Configure options for @file{texk/web2c}
 @subsection Configure options for @file{texk/web2c}
@@ -2231,7 +2239,6 @@ support; ignored for a native @TL{} build.  Defaults are defined in
 @noindent @code{--disable-synctex}
 @*Do not build the @code{SyncTeX} library and tool.
 
-
 @node Configure options for @file{texk/bibtex-x}
 @subsection Configure options for @file{texk/bibtex-x}
 
@@ -2248,7 +2255,6 @@ module @code{bibtex-x} (extended Bib@TeX{}).
 @vindex --disable-bibtexu
 @noindent @code{--disable-bibtexu}@*Do not build the @file{bibtexu} program
 (building @file{bibtexu} requires @code{ICU} libraries).
-
 
 @node Configure options for @file{texk/dvipdfm-x}
 @subsection Configure options for @file{texk/dvipdfm-x}
@@ -2273,7 +2279,6 @@ program or make the @file{dvipdfm} symlink.
 @noindent @code{--disable-xdvipdfmx}@*Do not build the @file{xdvipdfmx}
 program.
 
-
 @node Configure options for @file{texk/dvisvgm}
 @subsection Configure options for @file{texk/dvisvgm}
 
@@ -2297,7 +2302,6 @@ incompatibilities, e.g., on CentOS 5.
 @code{--with-libgs-libdir=@var{dir}}@*Specify non-standard locations
 of the Ghostscript headers and library.
 
-
 @node Configure options for @file{texk/texlive}
 @subsection Configure options for @file{texk/texlive}
 
@@ -2306,7 +2310,6 @@ of the Ghostscript headers and library.
 @noindent @code{--disable-linked-scripts}@*Do not install the ``linked
 scripts'' (@pxref{Linked scripts}), except for the TL scripts required
 to run @code{texlinks}.
-
 
 @node Configure options for @file{texk/xdvik}
 @subsection Configure options for @file{texk/xdvik}
@@ -2331,7 +2334,6 @@ neXtaw}.  The default is @code{motif} if available, else @code{xaw}.
 @pindex scrolling, smooth
 @noindent @code{--enable-xi2-scrolling}@*Use XInput 2.1 ``smooth scrolling''
 if available (default: yes, except for a native TL build).
-
 
 @node Configure options for @file{utils/xindy}
 @subsection Configure options for @file{utils/xindy}
@@ -2358,7 +2360,6 @@ Clisp executable; the value @code{system} (not allowed for a native TL
 build, but the default otherwise) indicates that @file{xindy} will use
 the installed version of @file{clisp} (which must be identical to the
 one used to build @file{xindy}).
-
 
 @node Library-specific configure options
 @section Library-specific configure options
@@ -2473,7 +2474,6 @@ commands used, e.g., to build the @code{xindy} documentation.
 
 @end vtable
 
-
 @node Coding conventions
 @chapter Coding conventions
 
@@ -2493,7 +2493,6 @@ other packages whose maintainers are willing to accept patches.
 * Declarations and definitions::
 * Const::
 @end menu
-
 
 @node Declarations and definitions
 @section Declarations and definitions
@@ -2607,7 +2606,6 @@ them.  Therefore such casts should be avoided whenever possible and
 otherwise must be carefully analyzed to make sure that they cannot
 cause the modification of quantities supposed to be constant.
 
-
 @node Continuous integration
 @chapter Continuous integration
 
@@ -2627,7 +2625,6 @@ commit pushed is tested on Travis-CI.
 * CI testing on Travis-CI::
 * Releases on Github::
 @end menu
-
 
 @node Transfer from Subversion to Github
 @section Transfer from Subversion to Github

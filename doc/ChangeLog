@@ -1,3 +1,13 @@
+2022-02-19  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Prerequisites): C++11 required by HarfBuzz;
+	Python required by ICU tests.
+	(Build problems): move basic idea to "Removing C++11 dependency";
+	not worth its own section.
+	(Build one program): add subsubheadings; mention TEXMFROOT
+	and TEXMFCNF settings to run a program from the build tree.
+	(Build one engine): mention testing hints.
+
 2022-01-11  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Prerequisites): mention use of GNU make $@ feature
