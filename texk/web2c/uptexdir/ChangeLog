@@ -1,3 +1,8 @@
+2022-02-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* upbibtex.ch: Adapt to pbibtex.ch.
+	  https://github.com/texjporg/tex-jp-build/issues/133
+
 2022-02-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Adapt to ptex-base.ch.

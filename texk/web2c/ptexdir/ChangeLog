@@ -1,3 +1,11 @@
+2022-02-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pbibtex.ch: Improve substring$ to truncate at least one
+	  character when trying to start counting from the middle
+	  byte of the first or last Japanese character.
+	  Still version j0.34.
+	  https://github.com/texjporg/tex-jp-build/issues/133
+
 2022-02-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Revised state after a control word which ends
