@@ -1,5 +1,5 @@
-/*1411:*/
-#line 25703 "htex.w"
+/*1410:*/
+#line 25691 "htex.w"
 
 #define banner "This is TeX, Version 3.141592653 (HINT)" \
 
@@ -325,7 +325,7 @@ else decr(glue_ref_count(A) ) ; \
 
 #define add_token_ref(A) incr(token_ref_count(A) ) 
 #define add_glue_ref(A) incr(glue_ref_count(A) ) 
-#define add_xdimen_ref(A) incr(xdimen_ref_count(A) )  \
+#define add_xdimen_ref(A) if(A!=null) incr(xdimen_ref_count(A) )  \
 
 #define escape 0 \
 
@@ -1589,21 +1589,21 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define open_ext(A) link(A+2)  \
 
 #define hitex_ext language_node+1
-#define par_node hitex_ext
-#define par_node_size 3
-#define par_type(A) type(A+1) 
+#define param_node hitex_ext
+#define param_node_size 3
+#define param_type(A) type(A+1) 
 #define int_type 0
 #define dimen_type 1
 #define glue_type 2
-#define par_number(A) subtype(A+1) 
-#define par_value(A) mem[A+2] \
+#define param_no(A) subtype(A+1) 
+#define param_value(A) mem[A+2] \
 
-#define graf_node hitex_ext+1
-#define graf_node_size 5
-#define graf_penalty(A) mem[A+1].i
-#define graf_extent(A) link(A+3) 
-#define graf_params(A) info(A+4) 
-#define graf_list(A) link(A+4)  \
+#define par_node hitex_ext+1
+#define par_node_size 5
+#define par_penalty(A) mem[A+1].i
+#define par_extent(A) link(A+3) 
+#define par_params(A) info(A+4) 
+#define par_list(A) link(A+4)  \
 
 #define disp_node hitex_ext+2
 #define disp_node_size 3
@@ -1618,18 +1618,14 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define baseline_node_no(A) mem[A+1].i \
 
 #define image_node hitex_ext+4
-#define image_node_size 9
-#define image_width(A) width(A) 
-#define image_height(A) height(A) 
-#define image_depth(A) depth(A) 
-#define image_no(A) mem[A+4].i
-#define image_stretch(A) mem[A+5].sc
-#define image_shrink(A) mem[A+6].sc
-#define image_stretch_order(A) stretch_order(A+7) 
-#define image_shrink_order(A) shrink_order(A+7) 
-#define image_name(A) link(A+7) 
-#define image_area(A) info(A+8) 
-#define image_ext(A) link(A+8)  \
+#define image_node_size 6
+#define image_width(A) mem[A+1].sc
+#define image_height(A) mem[A+2].sc
+#define image_no(A) link(A+3) 
+#define image_name(A) info(A+3) 
+#define image_area(A) info(A+4) 
+#define image_ext(A) link(A+4) 
+#define image_alt(A) link(A+5)  \
 
 #define hpack_node hitex_ext+5
 #define vpack_node hitex_ext+6
@@ -1728,7 +1724,7 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define end_write_token cs_token_flag+end_write \
 
 
-#line 25704 "htex.w"
+#line 25692 "htex.w"
 
 enum{/*11:*/
 #line 362 "htex.w"
@@ -1772,7 +1768,7 @@ file_name_size= 1024,
 empty_string= 256
 
 /*:11*/
-#line 25705 "htex.w"
+#line 25693 "htex.w"
 };
 /*18:*/
 #line 502 "htex.w"
@@ -1793,14 +1789,14 @@ typedef int32_t pool_pointer;
 typedef int16_t str_number;
 typedef uint8_t packed_ASCII_code;
 
-/*:38*//*105:*/
+/*:38*//*104:*/
 #line 2194 "htex.w"
 
 typedef int scaled;
 typedef int32_t nonnegative_integer;
 typedef int8_t small_number;
 
-/*:105*//*114:*/
+/*:104*//*113:*/
 #line 2405 "htex.w"
 
 #if __SIZEOF_FLOAT__==4
@@ -1810,7 +1806,7 @@ typedef float float32_t;
 #endif
 typedef float glue_ratio;
 
-/*:114*//*118:*/
+/*:113*//*117:*/
 #line 2514 "htex.w"
 
 typedef uint8_t quarterword;
@@ -1838,13 +1834,13 @@ four_quarters qqqq;
 };}memory_word;
 typedef struct{FILE*f;memory_word d;}word_file;
 
-/*:118*//*156:*/
+/*:117*//*155:*/
 #line 3245 "htex.w"
 
 typedef int8_t glue_ord;
 
-/*:156*//*222:*/
-#line 4409 "htex.w"
+/*:155*//*221:*/
+#line 4408 "htex.w"
 
 typedef struct{int16_t mode_field;
 pointer head_field,tail_field;
@@ -1859,42 +1855,42 @@ uint32_t np_field;
 memory_word aux_field;
 }list_state_record;
 
-/*:222*//*280:*/
-#line 5998 "htex.w"
+/*:221*//*279:*/
+#line 5997 "htex.w"
 
 typedef int8_t group_code;
 
-/*:280*//*311:*/
-#line 6577 "htex.w"
+/*:279*//*310:*/
+#line 6576 "htex.w"
 
 typedef struct{
 quarterword state_field,index_field;
 halfword start_field,loc_field,limit_field,name_field;
 }in_state_record;
 
-/*:311*//*559:*/
-#line 10859 "htex.w"
+/*:310*//*558:*/
+#line 10858 "htex.w"
 
 typedef uint8_t internal_font_number;
 typedef uint16_t font_index;
 
-/*:559*//*606:*/
-#line 12051 "htex.w"
+/*:558*//*605:*/
+#line 12050 "htex.w"
 
 typedef int8_t dvi_index;
 
-/*:606*//*945:*/
-#line 18317 "htex.w"
+/*:605*//*944:*/
+#line 18316 "htex.w"
 
 typedef uint16_t trie_pointer;
 
-/*:945*//*950:*/
-#line 18386 "htex.w"
+/*:944*//*949:*/
+#line 18385 "htex.w"
 
 typedef int16_t hyph_pointer;
 
-/*:950*/
-#line 25706 "htex.w"
+/*:949*/
+#line 25694 "htex.w"
 
 extern void list_init(void);
 extern void hpack_page(void);
@@ -1949,4 +1945,4 @@ extern int nest_ptr;
 extern void pop_nest(void);
 extern void push_nest(void);
 extern void delete_glue_ref(pointer p);
-void line_break(int final_widow_penalty,pointer par_ptr);/*:1411*/
+void line_break(int final_widow_penalty,pointer par_ptr);/*:1410*/
