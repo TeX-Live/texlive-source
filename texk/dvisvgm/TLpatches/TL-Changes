@@ -10,10 +10,10 @@ Update DATE and copyrights in configure.ac.
 mv dvisvgm-src dvisvgm-prev
 tar xf dvisvgm-VER.tar.gz
 mv dvisvgm-VER dvisvgm-src
-cd dvisvgm-src
-tar xf dvisvgm-VER.tar.gz # so we can compare orig release to ours
+tar xf dvisvgm-VER.tar.gz # again, so we can compare orig release to ours
 
 # remove common and generated files:
+cd dvisvgm-src
 rm ar-lib compile config.guess config.sub depcomp install-sh
 rm ltmain.sh missing test-driver 
 rm -rf m4 autom4te.cache

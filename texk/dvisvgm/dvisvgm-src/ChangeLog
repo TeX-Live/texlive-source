@@ -1,3 +1,28 @@
+2022-02-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.13.2 
+
+  * NEWS: 
+  updated NEWS 
+
+2022-02-21  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  removed redundant space is PS code 
+
+  * src/BoundingBox.cpp, src/BoundingBox.hpp, src/DvisvgmSpecialHandler.cpp, 
+    src/PSPattern.cpp, src/PsSpecialHandler.cpp, src/SVGTree.cpp, 
+    tests/BoundingBoxTest.cpp, tests/DvisvgmSpecialTest.cpp, 
+    tests/EmSpecialTest.cpp, tests/PapersizeSpecialTest.cpp: 
+  renamed BoundingBox::toSVGViewBox to BoundingBox::svgViewBoxString 
+
+2022-02-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  use overflow='hidden' to clip included EPS/PDF graphics 
+
 2022-01-26  Martin Gieseking  <martin.gieseking@uos.de>
 
   * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
@@ -6,6 +31,9 @@
 
   * NEWS: 
   updated NEWS 
+
+  * README.md: 
+  added Copr status badge to README 
 
 2022-01-25  Martin Gieseking  <martin.gieseking@uos.de>
 
