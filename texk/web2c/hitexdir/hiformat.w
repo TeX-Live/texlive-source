@@ -10704,6 +10704,7 @@ extern int hcompress_depth(int n, int c);
 #include "hibasetypes.h"
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <zlib.h>
