@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2020 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2020-2022 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -17,6 +17,7 @@ failed=
 
 echo "*** dvipdfmx: test for upjf_full.pdf" && echo \
 	&& cp $srcdir/tests/upjf_full.vf ./upjf.vf \
+	&& cp $srcdir/tests/upjv_full.vf ./upjv.vf \
 	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
 	&& mv ./upjf.pdf ./upjf_full.pdf \
 	&& echo && echo "dvipdfmx-upjf-vf_full tests OK" && echo \
@@ -24,6 +25,7 @@ echo "*** dvipdfmx: test for upjf_full.pdf" && echo \
 
 echo "*** dvipdfmx: test for upjf_omit.pdf" && echo \
 	&& cp $srcdir/tests/upjf_omit.vf ./upjf.vf \
+	&& cp $srcdir/tests/upjv_omit.vf ./upjv.vf \
 	&& ./xdvipdfmx --dvipdfmx -vv -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
 	&& mv ./upjf.pdf ./upjf_omit.pdf \
 	&& echo && echo "dvipdfmx-upjf-vf_omit tests OK" && echo \

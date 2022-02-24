@@ -15,6 +15,21 @@ upjf_omit.vf: upjf.tfm upjf_omit.cnf
 	makejvf -i -u custom -e -t upjf_omit.cnf -H upjf.tfm -K upjf-g upjf-r
 	mv upjf.vf upjf_omit.vf
 
+upjv.tfm:
+	cp -p `kpsewhich upjisr-v.tfm` upjv.tfm
+
+upjv_full.vf: upjv.tfm upjf_full.cnf
+	makejvf -i -u custom -e -t upjf_full.cnf upjv.tfm -K upjv-g upjv-r
+	mv upjv.vf upjv_full.vf
+
+upjv_omit.vf: upjv.tfm upjf_omit.cnf
+	makejvf -i -u custom -e -t upjf_omit.cnf upjv.tfm -K upjv-g upjv-r
+	mv upjv.vf upjv_omit.vf
+
 upjf.dvi: upjf.tex
 	uplatex upjf.tex
+	dvispc -a upjf.dvi upjf.dvitxt
+	sed -i '/xxx/d' upjf.dvitxt
+	dvispc -x upjf.dvitxt upjf.dvi
+	rm upjf.dvitxt
 

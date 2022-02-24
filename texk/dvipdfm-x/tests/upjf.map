@@ -1,9 +1,16 @@
 %upjf-r   UniJIS-UTF16-H  HaranoAjiMincho-Regular.otf
 %upjf-g   UniJIS-UTF16-H  HaranoAjiGothic-Regular.otf
+%upjv-r   UniJIS-UTF16-V  HaranoAjiMincho-Regular.otf
+%upjv-g   UniJIS-UTF16-V  HaranoAjiGothic-Regular.otf
 
 %upjf-r   UniJIS-UTF16-H  !Ryumin-Light
 %upjf-g   UniJIS-UTF16-H  !GothicBBB-Medium
+%upjv-r   UniJIS-UTF16-V  !Ryumin-Light
+%upjv-g   UniJIS-UTF16-V  !GothicBBB-Medium
 
 upjf-r   UPJF-UTF16-H  !Ryumin-Light
 upjf-g   UPJF-UTF16-H  !GothicBBB-Medium
+upjv-r   UPJF-UTF16-V  !Ryumin-Light
+upjv-g   UPJF-UTF16-V  !GothicBBB-Medium
 
+ptmr8r 8r Times-Roman

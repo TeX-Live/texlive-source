@@ -1,3 +1,11 @@
+2022-02-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvipdfmx-upjf.test, Makefile.{am,in},
+	tests/Makefile_upjf, tests/upjv{,-r,-g}.tfm,
+	tests/upjf.{tex,dvi,map}, tests/upjv_{full,omit}.vf,
+	tests/UPJF-UTF16-V:
+	Add a new test for upTeX vertical writing.
+
 2021-11-17  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* spc_dvips.c: Realize PSTricks on XeTeX without -dNOSAFER,
@@ -23,7 +31,7 @@
 	a CFF based OpenType font which does not contain a private
 	dictionary.
 	* configure.ac: version 20211029.
- 
+
 2021-10-16  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* dvipdfmx.c: Fix a bug that the -r option was not effective,
