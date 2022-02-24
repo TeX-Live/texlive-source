@@ -47,9 +47,9 @@
 
 
 \def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision: 2690 $
+\setrevision$Revision: 2696 $
 \def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date: 2022-02-22 16:40:16 +0100 (Tue, 22 Feb 2022) $
+\setdate$Date: 2022-02-24 10:59:11 +0100 (Thu, 24 Feb 2022) $
 
 \null
 
@@ -9219,8 +9219,7 @@ should go while the other files are opened.
 It inherits its name from the input file name.
 
 @<open the log file@> =
-#ifdef DEBUG
-  if (option_log)
+if (option_log)
   { 
     strcat(stem_name,".log");
     hlog=freopen(stem_name,"w",stderr);
@@ -9230,11 +9229,8 @@ It inherits its name from the input file name.
     }
     stem_name[stem_length]=0;
   }
-  else
-    hlog=stderr;
-#else
-    hlog=stderr; 
-#endif
+else
+  hlog=stderr;
 @
 
 Once we have established logging, we can try to open the other files.
@@ -9322,7 +9318,7 @@ For portability, we first define the output specifier for expressions of type |s
 #ifdef DEBUG
 #define @[DBG(FLAGS,...)@] ((debugflags & (FLAGS))?LOG(__VA_ARGS__):0)
 #else
-#define @[DBG(FLAGS,...)@] 0
+#define @[DBG(FLAGS,...)@] (void)0
 #endif
 #define @[DBGTAG(A,P)@] @[DBG(DBGTAGS,@["tag [%s,%d] at " SIZE_F "\n"@],@|NAME(A),INFO(A),(P)-hstart)@]
 
@@ -10826,6 +10822,8 @@ extern int yylex(void);
 #include "hierror.h"
 #include "hiformat.h"
 #include "hiput.h"
+
+@<enable bison debugging@>@;
 #include "hiparser.h"
 
 extern void yyset_debug(int lex_debug);

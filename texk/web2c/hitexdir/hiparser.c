@@ -69,7 +69,7 @@
 /* First part of user prologue.  */
 #line 2 "parser.y"
 
-	#line 10767 "format.w"
+	#line 10763 "format.w"
 	
 #include "hibasetypes.h"
 #include <string.h>
@@ -132,7 +132,7 @@ void check_param_def(Ref*df)
 extern int yylineno;
 int yyerror(const char*msg)
 {
-	#line 9341 "format.w"
+	#line 9337 "format.w"
 	QUIT(" in line %d %s",yylineno,msg);
 	return 0;
 	}
