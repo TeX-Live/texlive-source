@@ -761,6 +761,9 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/upjf.dvi testdata/upjf.map testdata/upjf.tfm \
 	testdata/upjf-g.tfm testdata/upjf-r.tfm testdata/upjf_full.vf \
 	testdata/upjf_omit.vf testdata/upjf_full.cnf \
+	testdata/upjf_omit.cnf testdata/upjv.tfm testdata/upjv-g.tfm  \
+	testdata/upjv-r.tfm testdata/upjv_full.vf \
+	testdata/upjv_omit.vf testdata/upjf_full.cnf \
 	testdata/upjf_omit.cnf NEWS TODO testdata/intoverflow.dvi \
 	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
 	contrib/afm-extra contrib/colorsep.lpro contrib/configs \

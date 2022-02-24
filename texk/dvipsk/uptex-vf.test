@@ -8,10 +8,12 @@ SOURCE_DATE_EPOCH=1588474800
 export TEXFONTS SOURCE_DATE_EPOCH
 
 cp $srcdir/testdata/upjf_full.vf ./upjf.vf && \
+cp $srcdir/testdata/upjv_full.vf ./upjv.vf && \
 ./dvips -d 4 $srcdir/testdata/upjf.dvi -o upjf.ps -u $srcdir/testdata/upjf.map && \
 mv upjf.ps upjf_full.ps || exit 1
 
 cp $srcdir/testdata/upjf_omit.vf ./upjf.vf && \
+cp $srcdir/testdata/upjv_omit.vf ./upjv.vf && \
 ./dvips -d 4 $srcdir/testdata/upjf.dvi -o upjf.ps -u $srcdir/testdata/upjf.map && \
 mv upjf.ps upjf_omit.ps || exit 2
 

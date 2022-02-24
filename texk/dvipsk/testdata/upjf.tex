@@ -1,19 +1,35 @@
-% Copyright (C) 2020 Japanese TeX Development Community
+% Copyright (C) 2020-2022 Japanese TeX Development Community
 % You may freely use, modify and/or distribute this file.
 
 \documentclass{ujarticle}
+%\usepackage[T1]{fontenc}
+%\usepackage{mathptmx}
 
 % for dvipdfmx
 %\AtBeginDvi{\special{pdf:mapline upjf-r UniJIS-UTF16-H HaranoAjiMincho-Regular.otf}}
 %\AtBeginDvi{\special{pdf:mapline upjf-g UniJIS-UTF16-H HaranoAjiGothic-Regular.otf}}
+%\AtBeginDvi{\special{pdf:mapline upjv-r UniJIS-UTF16-V HaranoAjiMincho-Regular.otf}}
+%\AtBeginDvi{\special{pdf:mapline upjv-g UniJIS-UTF16-V HaranoAjiGothic-Regular.otf}}
 %\AtBeginDvi{\special{pdf:mapline upjf-r UniJIS-UTF16-H !Ryumin-Light}}
 %\AtBeginDvi{\special{pdf:mapline upjf-g UniJIS-UTF16-H !GothicBBB-Medium}}
+%\AtBeginDvi{\special{pdf:mapline upjv-r UniJIS-UTF16-V !Ryumin-Light}}
+%\AtBeginDvi{\special{pdf:mapline upjv-g UniJIS-UTF16-V !GothicBBB-Medium}}
 %\AtBeginDvi{\special{pdf:mapline upjf-r UPJF-UTF16-H !Ryumin-Light}}
 %\AtBeginDvi{\special{pdf:mapline upjf-g UPJF-UTF16-H !GothicBBB-Medium}}
+%\AtBeginDvi{\special{pdf:mapline upjv-r UPJF-UTF16-V !Ryumin-Light}}
+%\AtBeginDvi{\special{pdf:mapline upjv-g UPJF-UTF16-V !GothicBBB-Medium}}
 
 \begin{document}
 \pagestyle{empty}
 \font\upjf=upjf at 10pt
-\upjf あいうえおｱｲｳｴｵ、☃~雪晴☀𠮟。
+\fbox{\hbox{\yoko
+\upjf あいうえおｱｲｳｴｵ、☃~雪晴☀𠮟。ABC xyz.
+}}
+
+\tbaselineshift0.3zh
+\font\upjv=upjv at 10pt
+\fbox{\hbox{\tate
+\upjv あいうえお、☃~雪晴☀𠮟。ABC xyz.
+}}
 \end{document}
 

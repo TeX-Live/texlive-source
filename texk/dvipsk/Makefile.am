@@ -189,8 +189,10 @@ DISTCLEANFILES += overflow-color-push.ps overflow-epsfile.ps overflow-psbox.ps
 EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdata/upjf.map \
               testdata/upjf.tfm testdata/upjf-g.tfm testdata/upjf-r.tfm \
               testdata/upjf_full.vf testdata/upjf_omit.vf \
+              testdata/upjv.tfm testdata/upjv-g.tfm testdata/upjv-r.tfm \
+              testdata/upjv_full.vf testdata/upjv_omit.vf \
               testdata/upjf_full.cnf testdata/upjf_omit.cnf
-DISTCLEANFILES += upjf.vf upjf_full.ps upjf_omit.ps
+DISTCLEANFILES += upjf.vf upjv.vf upjf_full.ps upjf_omit.ps
 
 EXTRA_DIST += \
 	NEWS \
