@@ -488,6 +488,14 @@ endcases;
   if show_opcodes and (o >= 128) then print (' {', o:1, '}');
 @z
 
+@x [99]
+    begin define_font(first_par(k)); k:=nop;
+@y
+    begin define_font(first_par(k));
+      if out_mode<>errors_only then print_ln(' ');
+      k:=nop;
+@z
+
 @x [107] (main) No dialog; remove unused label.
 dialog; {set up all the options}
 @y

@@ -1,3 +1,14 @@
+2022-02-24  Karl Berry  <karl@freefriends.org>
+
+	* dvitype.ch (scan_bop, [99]): output a newline between
+	font definitions so they do not run together.
+	From Igor Liferenko,
+	https://tug.org/pipermail/tex-k/2022-January/003760.html (change#3).
+	Original report part of
+	https://tug.org/pipermail/tex-k/2021-November/003711.html,
+	and a first patch from Andreas Scherer in that thread,
+	https://tug.org/pipermail/tex-k/2021-November/003721.html.
+
 2022-02-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin,
