@@ -9009,12 +9009,12 @@ It tells us what to expect in the rest of this section.
   "Usage: %s [OPTION]... FILENAME%s\n",prog_name, in_ext);@/
   fprintf(stdout,DESCRIPTION);
   fprintf(stdout,
-  "Options:\n"@/
+  "\nOptions:\n"@/
   "\t --help \t display this message\n"@/
   "\t --version\t display the HINT version\n"@/
   "\t -l     \t redirect stderr to a log file\n"@/
 #if defined (STRETCH) || defined (SHRINK)
-  "\t -o file\t specify an output file name\n"@/
+  "\t -o FILE\t specify an output file name\n"@/
 #endif
 #if defined (STRETCH)
   "\t -a     \t write auxiliary files\n"@/
@@ -10841,7 +10841,7 @@ extern int yyparse(void);
 @<put functions@>@;
 
 #define SHRINK
-#define DESCRIPTION "\nShrinking converts a 'long' ASCII HINT file into a`short' binary HINT file .\n"
+#define DESCRIPTION "\nConvert a `long' ASCII HINT file into a `short' binary HINT file.\n"
 
 int main(int argc, char *argv[])
 { @<local variables in |main|@>@;
@@ -10916,7 +10916,7 @@ format into a \HINT\ file in long format.
 @<get functions@>@;
 
 #define STRETCH
-#define DESCRIPTION "\nStretching converts a `short' binary HINT file into a 'long' ASCII HINT file.\n"
+#define DESCRIPTION "\nConvert a `short' binary HINT file into a `long' ASCII HINT file.\n"
 
 int main(int argc, char *argv[])
 { @<local variables in |main|@>@;
