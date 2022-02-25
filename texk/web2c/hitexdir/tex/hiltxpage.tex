@@ -1,0 +1,53 @@
+\ifhint
+\textwidth=\hsize
+\textheight=\vsize
+\newinsert\topins
+\skip\topins=0pt % no space added when a topinsert is present
+\count\topins=1000 % magnification factor (1 to 1)
+\dimen\topins=\maxdimen % no limit per page
+\def\topinsert{\bgroup\setbox0\vbox\bgroup}
+\def\endinsert{\egroup
+  \insert\topins{%
+  \penalty100\splittopskip0pt\floatingpenalty0\box0\nobreak\bigskip\egroup}}
+\dimen0=1.25\hsize
+\advance\dimen0 by -9pt
+\dimen1=1.25\vsize
+\advance\dimen1 by -9pt
+\HINTsetpage1 = basic 
+  priority 10
+  width  \dimen0
+  height \dimen1 
+{%
+    \maxdepth=4pt
+    \topskip=10pt
+    \HINTstream\topins %topinsert
+    \HINTstream0 %main text
+    \HINTstream\footins   
+  \HINTsetstream\topins = %topinsert 
+    prefered 0
+  {% 
+    \HINTafter = {}
+  }
+  \HINTsetstream\footins =%footnotes
+    prefered 255
+    ratio 0
+  {%
+    \hsize=300pt
+    \count\footins=1000 % the magnification factor
+    \skip\footins=\bigskipamount % the extra space needed
+    \dimen\footins=\vsize % maximum height on the page
+    \HINTbefore = 
+     {\vskip\skip\footins
+     \footnoterule}
+    \HINTafter = {}
+  }
+}% end page template
+\fi
+
+% the footins had this:
+%    \before = 
+%     {\vskip 0pt plus 1filll\vskip 9pt plus 4pt minus 2pt
+%      \kern -3pt
+%      \hrule width 5em
+%      \kern 2.6pt}
+%  }

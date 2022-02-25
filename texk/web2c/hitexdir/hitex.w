@@ -13847,12 +13847,15 @@ baselineskip calculation is handled by the |append_to_vlist| routine.
     link(tail)= p;tail= p;
   }
   link(tail)=b;tail=b;
-  if (height_known ||
-       (type(b)==whatsit_node &&
-          (subtype(b)==hpack_node || subtype(b)==vpack_node)))
-	prev_depth=depth(b);  /* then also depth is (probably) known */
+  if (height_known)
+    prev_depth=depth(b);
+  else if (type(b)==whatsit_node &&
+          (subtype(b)==hpack_node || subtype(b)==vpack_node))
+    prev_depth=depth(b);	  /* then also depth is (probably) known */
+  else if (type(b)==whatsit_node && subtype(b)==image_node)
+    prev_depth=0;
   else
-	prev_depth=unknown_depth;
+    prev_depth=unknown_depth;
 }
 
 @* Data structures for math mode.
@@ -25688,7 +25691,10 @@ case image_node:@/
       break;
   }
   if (abs(mode)==vmode)
+  { prev_depth=ignore_depth; /* this could be deleted if baseline nodes treat
+                                images as boxes in the viewer */
     append_to_vlist(p); /* image nodes have height, width, and depth like boxes */
+  }
   else
     tail_append(p);
   break;

@@ -39,7 +39,7 @@
 #include <GLFW/glfw3.h>
 
 #define VERSION 1
-#define REVISION 0
+#define REVISION 3
 #define PATCHLEVEL 0
 
 #if 0
