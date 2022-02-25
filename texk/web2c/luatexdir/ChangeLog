@@ -1,3 +1,6 @@
+2022-02-25 Luigi Scarso <luigi.scarso@gmail.com>
+    * lower max to 10000 and reverse check to max check exception penalty (H.Hagen)
+
 2022-02-05 Luigi Scarso <luigi.scarso@gmail.com>
     *  intercept prefix for toksapp cum suis (H.Hagen)
 
