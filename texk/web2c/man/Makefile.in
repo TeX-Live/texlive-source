@@ -468,7 +468,8 @@ man1_links = cweb:ctangle cweb:cweave ctwill:ctwill-refsort \
 	latex-dev:uplatex-dev
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
 	gftopk.man gftype.man mft.man patgen.man pktogf.man pktype.man \
-	pltotf.man pooltype.man tftopl.man vftovp.man vptovf.man weave.man
+	pltotf.man pooltype.man tftopl.man twill.man \
+	vftovp.man vptovf.man weave.man
 
 pdftex_man_sources = pdftex.man pdftosrc.man ttf2afm.man
 otangle_man_sources = ofm2opl.man opl2ofm.man ovf2ovp.man ovp2ovf.man

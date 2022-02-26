@@ -1,3 +1,13 @@
+2022-02-26  Karl Berry  <karl@tug.org>
+
+	* am/hitex.am (man1_MANS): install hi*.man directly from here,
+	not using the man/ subdir as for all others.
+
+2022-02-24  Karl Berry  <karl@tug.org>
+
+	* hiformat.w (DESCRIPTION) x2: consistent quoting.
+	(explain usage): newline before options list.
+
 2022-01-10  Karl Berry  <karl@freefriends.org>
 
 	* am/hitex.am: do not silence tangle-sh.

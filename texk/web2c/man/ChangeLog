@@ -1,3 +1,7 @@
+2022-02-26  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (web_man_sources): add twill.man.
+
 2022-02-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man: CWEB 4.7 release.

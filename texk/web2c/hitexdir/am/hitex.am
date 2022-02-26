@@ -7,10 +7,15 @@
 if HITEX
 bin_PROGRAMS += hitex hishrink histretch
 noinst_PROGRAMS += himktables
-endif HITEX
 
 # convenience target to build all the programs here.
 hiall: hitex hishrink histretch
+
+# At the moment, these are the only man pages handled in the
+# conglomerated web2c/Makefile[.am]. (All the others are in man/.)
+# If that changes, have to set at top level and use +=.
+man1_MANS = hitexdir/hishrink.man hitexdir/histretch.man hitexdir/hitex.man
+endif HITEX
 
 ## Debugging for the parser as usual.
 ## Except we eschew all lex/yacc steps in the Makefile here; see below.

@@ -2620,7 +2620,7 @@ am__can_run_installinfo = \
 man1dir = $(mandir)/man1
 man5dir = $(mandir)/man5
 NROFF = nroff
-MANS = $(dist_man_MANS) $(nodist_man_MANS)
+MANS = $(dist_man_MANS) $(man1_MANS) $(nodist_man_MANS)
 DATA = $(pkgconfig_DATA)
 am__syncinclude_HEADERS_DIST = synctexdir/synctex_parser.h \
 	synctexdir/synctex_version.h synctexdir/synctex_parser_utils.h
@@ -4643,6 +4643,11 @@ euptex_ch_srcs = \
 # e-upTeX Tests
 #
 euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test
+
+# At the moment, these are the only man pages handled in the
+# conglomerated web2c/Makefile[.am]. (All the others are in man/.)
+# If that changes, have to set at top level and use +=.
+@HITEX_TRUE@man1_MANS = hitexdir/hishrink.man hitexdir/histretch.man hitexdir/hitex.man
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
 	-DINIT -DSTAT -DDEBUG
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a libmd5.a
@@ -19194,9 +19199,9 @@ clean-libtool:
 
 distclean-libtool:
 	-rm -f libtool config.lt
-install-man1: $(dist_man_MANS) $(nodist_man_MANS)
+install-man1: $(dist_man_MANS) $(man1_MANS) $(nodist_man_MANS)
 	@$(NORMAL_INSTALL)
-	@list1=''; \
+	@list1='$(man1_MANS)'; \
 	list2='$(dist_man_MANS) $(nodist_man_MANS)'; \
 	test -n "$(man1dir)" \
 	  && test -n "`echo $$list1$$list2`" \
@@ -19230,7 +19235,7 @@ install-man1: $(dist_man_MANS) $(nodist_man_MANS)
 
 uninstall-man1:
 	@$(NORMAL_UNINSTALL)
-	@list=''; test -n "$(man1dir)" || exit 0; \
+	@list='$(man1_MANS)'; test -n "$(man1dir)" || exit 0; \
 	files=`{ for i in $$list; do echo "$$i"; done; \
 	l2='$(dist_man_MANS) $(nodist_man_MANS)'; for i in $$l2; do echo "$$i"; done | \
 	  sed -n '/\.1[a-z]*$$/p'; \
@@ -22412,7 +22417,7 @@ euptrip-clean:
 # (end of euptex.am)
 
 # convenience target to build all the programs here.
-hiall: hitex hishrink histretch
+@HITEX_TRUE@hiall: hitex hishrink histretch
 
 $(hiformat_c_h_l_y): hiformat-tangle
 
