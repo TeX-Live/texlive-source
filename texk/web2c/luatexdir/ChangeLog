@@ -1,3 +1,6 @@
+2022-02-26 Luigi Scarso <luigi.scarso@gmail.com>
+    * write xformattributes and xformresources  (thanks to E. Renkema)
+
 2022-02-25 Luigi Scarso <luigi.scarso@gmail.com>
     * lower max to 10000 and reverse check to max check exception penalty (H.Hagen)
 
