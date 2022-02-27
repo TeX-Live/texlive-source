@@ -781,9 +781,6 @@ texmf_casefold_search = 1
 % To increase space for boxes (as might be needed by, e.g., PiCTeX),
 % increase extra_mem_bot.
 %
-% For some xy-pic samples, you may need as much as 700000 words of memory.
-% For the vast majority of documents, 60000 or less will do.
-%
 main_memory = 5000000 % words of inimemory available; also applies to inimf&mp
 extra_mem_top = 0     % extra high memory for chars, tokens, etc.
 extra_mem_bot = 0     % extra low memory for boxes, glue, breakpoints, etc.
@@ -831,12 +828,12 @@ trie_size = 1100000
 hyph_size = 8191        % prime number of hyphenation exceptions, >610, <65535
                         % http://primes.utm.edu/curios/page.php/8191.html
                         % dynamically increased as necessary, so not important.
-nest_size = 500         % simultaneous semantic levels (e.g., groups)
+nest_size = 1000        % simultaneous semantic levels (e.g., groups)
 max_in_open = 15        % simultaneous input files and error insertions, 
                         % also applies to MetaPost
-param_size = 10000      % simultaneous macro parameters, also applies to MP
+param_size = 20000      % simultaneous macro parameters, also applies to MP
 save_size  = 200000     % for saving values outside current group
-stack_size = 5000       % simultaneous input sources
+stack_size = 10000      % simultaneous input sources
 
 % Limit on recursive expansion calls so TeX has a chance to quit nicely
 % before stack space runs out. The default is 10000. Normally there is no

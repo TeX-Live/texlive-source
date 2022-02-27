@@ -1,3 +1,11 @@
+2022-02-27  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (nest_size): 500 -> 1000.
+	(param_size): 10000 -> 20000.
+	(stack_size): 5000 -> 10000.
+	For stex (ctan.org/pkg/stex), although they also double main_memory
+	to 12M (despite the supposed limit of 8M)?
+
 2022-01-18  Karl Berry  <karl@freefriends.org>
 
 	* version.ac (kpse_dev): no more /dev.
