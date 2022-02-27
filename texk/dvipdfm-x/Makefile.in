@@ -845,6 +845,8 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjf-g.tfm tests/upjf.tfm tests/UPJF-UTF16-H \
 	tests/upjv_full.vf tests/upjv_omit.vf tests/upjv-r.tfm \
 	tests/upjv-g.tfm tests/upjv.tfm tests/UPJF-UTF16-V \
+	tests/upjf-g00.opl tests/upjf-g00.ofm \
+	tests/upjv-g00.opl tests/upjv-g00.ofm \
 	tests/fullmap.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am

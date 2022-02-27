@@ -299,6 +299,8 @@ EXTRA_DIST += tests/upjf_full.vf tests/upjf_omit.vf
 EXTRA_DIST += tests/upjf-r.tfm tests/upjf-g.tfm tests/upjf.tfm tests/UPJF-UTF16-H
 EXTRA_DIST += tests/upjv_full.vf tests/upjv_omit.vf
 EXTRA_DIST += tests/upjv-r.tfm tests/upjv-g.tfm tests/upjv.tfm tests/UPJF-UTF16-V
-DISTCLEANFILES += upjf.vf upjv.vf upjf*.pdf
+EXTRA_DIST += tests/upjf-g00.opl tests/upjf-g00.ofm
+EXTRA_DIST += tests/upjv-g00.opl tests/upjv-g00.ofm
+DISTCLEANFILES += upjf.vf upjv.vf upjf-g.ofm upjv-g.ofm upjf*.pdf
 ##
 EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex
