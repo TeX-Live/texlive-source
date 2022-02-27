@@ -1,4 +1,8 @@
-2021-01-18 Luigi Scarso <luigi.scarso@gmail.com>
+2022-02-27 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* MFLua 1.0.1-alpha.
+
+2022-01-18 Luigi Scarso <luigi.scarso@gmail.com>
 	
 	* Embedding of  potrace and lpeg.
 
