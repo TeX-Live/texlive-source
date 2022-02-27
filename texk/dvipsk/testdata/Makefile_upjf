@@ -26,6 +26,12 @@ upjv_omit.vf: upjv.tfm upjf_omit.cnf
 	makejvf -i -u custom -e -t upjf_omit.cnf upjv.tfm -K upjv-g upjv-r
 	mv upjv.vf upjv_omit.vf
 
+upjf-g00.ofm:
+	opl2ofm upjf-g00.opl
+
+upjv-g00.ofm:
+	opl2ofm upjv-g00.opl
+
 upjf.dvi: upjf.tex
 	uplatex upjf.tex
 	dvispc -a upjf.dvi upjf.dvitxt
