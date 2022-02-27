@@ -1,3 +1,6 @@
+2022-02-27 Luigi Scarso <luigi.scarso@gmail.com>
+    * Development id also with --version.
+
 2022-02-26 Luigi Scarso <luigi.scarso@gmail.com>
     * write xformattributes and xformresources  (thanks to E. Renkema)
 

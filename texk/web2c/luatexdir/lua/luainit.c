@@ -30,6 +30,8 @@ with LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 #include <locale.h>
 
+#include "luatex_svnversion.h"
+
 extern int load_luatex_core_lua (lua_State * L);
 
 /*tex internalized strings: see luatex-api.h */
@@ -443,14 +445,17 @@ static void parse_options(int ac, char **av)
         } else if (ARGUMENT_IS("help")) {
             usagehelp(LUATEX_IHELP, BUG_ADDRESS);
         } else if (ARGUMENT_IS("version")) {
+            #define STR(tok) STR2(tok)
+            #define STR2(tok) #tok
             print_version_banner();
+            puts("\nDevelopment id: " STR(luatex_svn_revision));
             /* *INDENT-OFF* */
-            puts("\n\nExecute  '" my_name " --credits'  for credits and version details.\n\n"
+            puts("\nExecute  '" my_name " --credits'  for credits and version details.\n\n"
                  "There is NO warranty. Redistribution of this software is covered by\n"
                  "the terms of the GNU General Public License, version 2 or (at your option)\n"
                  "any later version. For more information about these matters, see the file\n"
                  "named COPYING and the LuaTeX source.\n\n"
-                 "LuaTeX is Copyright 2021 Taco Hoekwater and the LuaTeX Team.\n");
+                 "LuaTeX is Copyright 2022 Taco Hoekwater and the LuaTeX Team.\n");
             /* *INDENT-ON* */
             uexit(0);
         } else if (ARGUMENT_IS("credits")) {
