@@ -1,4 +1,4 @@
-# $Id: TLUtils.pm 61960 2022-02-09 21:43:08Z karl $
+# $Id: TLUtils.pm 62112 2022-02-20 22:57:45Z preining $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2022 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -8,7 +8,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 61960 $';
+my $svnrev = '$Revision: 62112 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -73,7 +73,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::create_language_def($tlpdb,$dest,$localconf);
   TeXLive::TLUtils::create_language_lua($tlpdb,$dest,$localconf);
   TeXLive::TLUtils::time_estimate($totalsize, $donesize, $starttime)
-  TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc)>);
+  TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc, $retry, $continue);
   TeXLive::TLUtils::do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script);
   TeXLive::TLUtils::announce_execute_actions($how, @executes, $what);
   TeXLive::TLUtils::add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
@@ -502,7 +502,7 @@ sub platform_desc {
     'amd64-midnightbsd'=> 'MidnightBSD on x86_64',
     'amd64-netbsd'     => 'NetBSD on x86_64',
     'armel-linux'      => 'GNU/Linux on ARM',
-    'armhf-linux'      => 'GNU/Linux on ARMv6/RPi',
+    'armhf-linux'      => 'GNU/Linux on RPi(32-bit) and ARMv7',
     'hppa-hpux'        => 'HP-UX',
     'i386-cygwin'      => 'Cygwin on Intel x86',
     'i386-darwin'      => 'MacOSX legacy (10.5-10.6) on Intel x86',
@@ -1579,7 +1579,7 @@ sub time_estimate {
 }
 
 
-=item C<install_packages($from_tlpdb, $media, $to_tlpdb, $what, $opt_src, $opt_doc)>
+=item C<install_packages($from_tlpdb, $media, $to_tlpdb, $what, $opt_src, $opt_doc, $retry, $continue)>
 
 Installs the list of packages found in C<@$what> (a ref to a list) into
 the TLPDB given by C<$to_tlpdb>. Information on files are taken from
@@ -1588,12 +1588,17 @@ the TLPDB C<$from_tlpdb>.
 C<$opt_src> and C<$opt_doc> specify whether srcfiles and docfiles should be
 installed (currently implemented only for installation from uncompressed media).
 
+If C<$retry> is trueish, retry failed packages a second time.
+
+If C<$continue> is trueish, installation failure of non-critical packages
+will be ignored.
+
 Returns 1 on success and 0 on error.
 
 =cut
 
 sub install_packages {
-  my ($fromtlpdb,$media,$totlpdb,$what,$opt_src,$opt_doc) = @_;
+  my ($fromtlpdb,$media,$totlpdb,$what,$opt_src,$opt_doc, $opt_retry, $opt_continue) = @_;
   my $container_src_split = $fromtlpdb->config_src_container;
   my $container_doc_split = $fromtlpdb->config_doc_container;
   my $root = $fromtlpdb->root;
@@ -1651,7 +1656,7 @@ sub install_packages {
     # (and not installing from disk).
     if (!$fromtlpdb->install_package($package, $totlpdb)) {
       tlwarn("TLUtils::install_packages: Failed to install $package\n");
-      if ($media eq "NET") {
+      if ($opt_retry) {
         tlwarn("                           $package will be retried later.\n");
         push @packs_again, $package;
       } else {
@@ -1670,7 +1675,12 @@ sub install_packages {
     info("$infostr\n");
     # return false if download failed again
     if (!$fromtlpdb->install_package($package, $totlpdb)) {
-      return 0;
+      if ($opt_continue) {
+        push @::installation_failed_packages, $package;
+        tlwarn("Failed to install $package, but continue anyway!\n");
+      } else {
+        return 0;
+      }
     }
     $donesize += $tlpsizes{$package};
   }
@@ -4080,7 +4090,7 @@ END_NO_SSL
 # 
 sub query_ctan_mirror_curl {
   my $max_trial = 3;
-  my $warg = (win32() ? "-w %{url_effective} " : "-w '%{url_effective}' ");
+  my $warg = (win32() ? '-w "%{url_effective}" ' : "-w '%{url_effective}' ");
   for (my $i = 1; $i <= $max_trial; $i++) {
     # -L -> follow redirects
     # -s -> silent
