@@ -1,0 +1,48 @@
+%                 F I L E     V E R B A T I M . T E X
+%
+%          THIS SET OF MACROs IS TAKEN FROM D.E.K.'s TeXBook
+%       AND PROVIDES AN EASY WAY OF TYPESETTING TEXTS VERBATIM:
+%
+% 1. \verbatim<character><text without that character><character>
+%    causes the text to be set verbatim using \tt font; 
+% 2. if the text uses up all the alphabet, \doubleverbatim macro 
+%    can be used instead; this is similar to the previous one but 
+%    a pair of characters is now used as a delimiter; 
+% 3. in case of emergency \tripleverbatim macro may be of help... 
+%
+%---------------------------------------------
+\def\uncatcodespecials % see D.E.K., pp. 344 and 380
+    {\def\do##1{\catcode`##1=12}\dospecials}%
+%---------------------------------------------
+{\catcode`\^^I=\active \gdef^^I{\ \ \ \ }% TAB character is replaced by
+                                         % 4 spaces; it is better than
+                                         % nothing, but it does not mimic
+                                         % true tabbing satisfactorily---maybe
+                                         % some nice day...
+ \catcode`\`=\active\gdef`{\relax\lq}}% this line inhibits Spanish 
+                                      % ligatures ?` and !` of \tt font
+\def\setupverbatim % see D.E.K., p. 381
+    {\tt %
+     \spaceskip=0pt \xspaceskip=0pt % just in case...
+     \catcode`\^^I=\active %
+     \catcode`\`=\active %
+     \def\par{\leavevmode\endgraf}% this causes that empty lines aren't 
+                                  % skipped
+     \obeylines \uncatcodespecials \obeyspaces}%
+{\obeyspaces \global\let =\ }% this causes that leading blanks aren't 
+                             % skipped; cf. also def's of \space, \endgraf,
+                             % \lq, \obeyspaces, and \obeylines, 
+                             % D.E.K., pp. 351--352
+%---------------------------------------------
+% see D.E.K., p. 382
+\def\doverbatim#1{\def\next##1#1{##1\endgroup}\next}%
+\def\verbatim{\begingroup\setupverbatim\doverbatim}%
+%----------
+\def\dodoubleverbatim#1#2{\def\next##1#1#2{##1\endgroup}\next}%
+\def\doubleverbatim{\begingroup\setupverbatim\dodoubleverbatim}%
+%----------
+\def\dotripleverbatim#1#2#3{\def\next##1#1#2#3{##1\endgroup}\next}%
+\def\tripleverbatim{\begingroup\setupverbatim\dotripleverbatim}%
+%---------------------------------------------
+\endinput
+

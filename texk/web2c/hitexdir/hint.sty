@@ -1,0 +1,1446 @@
+\input idxmac.tex
+\let\displayverbatimfont=\tt
+\input verbatim.tex
+
+%%
+%% special treatment for @
+%%
+
+\def\makeatletter{\catcode`\@=11\relax}
+\def\makeatother{\catcode`\@=12\relax}
+\makeatletter
+
+%%
+%% Conditionals
+%%
+
+\newif\ifhint
+\newif\ifbook
+\newif\ifpdf
+
+% HINT
+\ifx\HINTversion\undefined
+  \hintfalse
+\else 
+  \hinttrue
+\fi
+
+% PDF
+\ifx\pdfliteral\undefined %  postscript und ps2pdf
+  \pdffalse
+\else
+  \pdftrue
+\fi
+
+% Book
+\ifx\book\undefined
+  \ifhint\bookfalse
+  \else\ifpdf\bookfalse % This might change
+  \else\bookfalse
+  \fi\fi
+\else
+\booktrue
+\hintfalse
+\pdffalse
+\fi
+
+\message{Book: \ifbook true \else false \fi}
+\message{PDF: \ifpdf true \else false \fi}
+\message{HINT: \ifhint true \else false \fi}
+
+%%
+%% Additional fonts 
+%% 
+
+\font\tenss=cmss10 % used for the HINT name
+\font\tenssbx=cmssbx10 % used for the bold HINT name
+\font\largess=cmss12 scaled\magstep1 % used for large HINT name
+\font\largessbx=cmssbx10 scaled\magstep2 % used for large bold HINT name
+\font\manual=manfnt % font used for the METAFONT logo, etc.
+\let\sf\tenss
+\def\bf{\let\sf\tenssbx\fam\bffam\tenbf} 
+
+
+%% Large Font for sections
+%\font\largebf=cmb14 scaled\magstep0
+%\font\largebf=cmb12 scaled\magstep1
+\font\largebf=cmbx12 scaled\magstep1
+%\font\largebf=cmbx8 scaled\magstep3
+%\font\largeit=cmti14 scaled\magstep0
+\font\largeit=cmti12 scaled\magstep1
+%\font\largett=cmtt14 scaled\magstep0
+\font\largett=cmtt12 scaled\magstep1
+%\font\largerm=cmr14 scaled\magstep0
+\font\largerm=cmr12 scaled\magstep1
+% for mathbolditalic
+%\font\tenmib=cmmib10 scaled\magstep0
+\font\tenmib=cmmib10 scaled\magstep0
+\font\largemib=cmmib10 scaled\magstep1
+
+%% Small Fonts for Figure and Table descriptions
+\font\figbf=cmbx9 scaled\magstep0
+\font\figit=cmti9 scaled\magstep0
+\font\figmit=cmmi9 scaled\magstep0
+\font\figsy=cmsy9 scaled\magstep0
+\font\figtt=cmtt9 scaled\magstep0
+\font\figrm=cmr9 scaled\magstep0
+% for mathbolditalic
+\font\figmib=cmmib9 scaled\magstep0
+
+\def\largebold{\let\bf\largebf\let\sf\largessbx\bf}
+
+\def\large{\def\rm{\fam0\largerm}\let\bf\largebold\let\it\largeit\let\tt\largett\let\mib\largemib\let\sf\largess%
+\textfont0=\largerm\textfont1=\largeit
+\setbox\strutbox=\hbox{\vrule height9.5pt depth5.0pt width\z@}\rm}
+
+\def\small{\def\rm{\fam0\figrm}\let\bf\figbf\let\it\figit\let\tt\figtt\let\mib\figmib%
+\textfont0=\figrm\textfont1=\figmit\textfont2=\figsy%
+\setbox\strutbox=\hbox{\vrule height9.0pt depth4.5pt width\z@}\rm}
+
+\let\tiny\eightrm
+\let\mib\tenmib
+
+
+%%
+%% Logos
+%%
+
+%\def\Pascal/{{\mc P\kern-.05emascal\spacefactor1000}}
+\def\CEE{{\mc C\spacefactor1000}}
+\def\Pascal{\leavevmode\hbox{\mc P\kern-.05emascal}}
+\def\PDF{\leavevmode\hbox{\mc PDF}}
+\def\WEB{\leavevmode\hbox{\tt WEB\spacefactor1000}}
+\def\GNU{\leavevmode\hbox{\mc GNU}}
+\def\Prote{{\tenrm P\kern-0.1em R\kern-0.15em\raise.11ex\hbox{o}%
+  \kern-0.22em T\kern-0.05em E}}
+\def\eTeX{$\varepsilon$-\TeX}
+\def\HINT{\leavevmode\hbox{\sf HINT\spacefactor1000}}
+\def\cweb{\leavevmode\hbox{\tt cweb}}
+\def\web2w{\leavevmode\hbox{\tt web2w}}
+\def\LaTeX{L\kern-.36em\raise.3ex\hbox{\sc A}\kern-.15em\TeX}%
+\def\MF{{\manual META}\-{\manual FONT}}%
+\def\TL{\TeX~Live}
+\def\kpse{\leavevmode\hbox{\tt kpathsearch\spacefactor1000}}
+\def\TUB{{\sl TUGboat\/}}
+\def\TUG{\TeX\ \UG}
+\def\tug{\acro{TUG}}
+\def\UG{Users Group}
+\ifacro
+\sanitizecommand{\TeX}{TeX}
+\sanitizecommand{\eTeX}{eTeX}
+\sanitizecommand{\Prote}{PRoTE}
+\fi
+%%
+%% Special controlsequences
+%%
+
+\def\abs#1{\left|#1\right|}
+\def\<#1>{$\langle\,$#1$\,\rangle$}
+\def\registered{{\ooalign{\hfil\raise.07ex\hbox{\sevenrm R}\hfil\crcr\Orb}}}
+\def\hair{\kern.05em\relax} % teeny tiny space
+\def\center#1{\bigskip\line{\hfil#1\hfil}\bigbreak}
+\chardef\VB=`\| % vertical bar character in a string
+\def\^{\ifmmode\mathchar"222 \else\char`^ \fi}%from webmac.tex: pointer or hat
+\ifhint
+\def\_{{\tt\UL}} % make underline an ordinary character for better searching
+\fi
+
+% Bibtex needs this
+\def\mbox#1{\leavevmode\hbox{#1}}
+
+% URLs
+{\gdef\urldot{.}\catcode`.=13
+ \gdef\urlslash{/}\catcode`/=13
+ \gdef\urlspecials{\def.{\urldot\penalty 0}\def/{\urlslash\penalty 0}}
+}
+\def\url{\bgroup\hskip 1cm plus 5cm\penalty -100\hskip -1cm plus -5cm\tt
+  \catcode`_=12\catcode`\~=12\catcode`.=13\catcode`/=13\urlspecials}
+\def\endurl{\egroup}
+
+
+% for the index
+\def\see#1#2{\hskip 0pt plus 100pt\penalty 0\hskip 0 pt plus -100pt{\it see\/} #1}
+
+% typewriter type for strings
+\def\.#1{\leavevmode\hbox{\tt
+  \let\\=\BS % backslash in a string
+  \let\{=\LB % left brace in a string
+  \let\}=\RB % right brace in a string
+  \let\~=\TL % tilde in a string
+  \let\ =\SP % space in a string
+  \let\_=\UL % underline in a string
+  \let\&=\AM % ampersand in a string
+  \let\^=\CF % circumflex in a string
+  \let\|=\VB % vertical bar in a string
+  #1\kern.05em}}
+
+%{\rm\gdef\strutdepth{\dp\strutbox}}
+
+
+%% 
+%% Environments
+%%
+
+% Quotations (form the standard)
+\def\beginquote{\bgroup\narrower\noindent\sl}
+\def\endquote{\egroup}
+
+% Enumerate
+\newcount\enum
+%other styles use \medskip instead of \par
+\def\enumerate{\par\bgroup\advance\leftskip by\parindent\enum=0%
+   \def\item{\advance\enum by 1\par\enumdest\smallskip\noindent\hbox to 0pt{\hss\the\enum.~}\ignorespaces}}
+\def\endenumerate{\medskip\egroup\noindent}
+
+%Itemize
+\def\itemize{\par\bgroup\advance\leftskip by\parindent\relax%
+   \def\item{\par\smallskip\noindent\llap{$\bullet$\enspace}\ignorespaces}}
+\def\enditemize{\medskip\egroup\noindent}
+
+%Float
+\long\def\float#1{\midinsert\parindent 0pt\relax#1\endinsert}
+%\def\float#1{\midinsert
+%\hsize\pagewidth
+%\parindent 0pt\vbox{\hbox{\kern-\marginwidth\vbox{#1}}}\endinsert}
+
+%%
+%% Redefining cwebmac.tex macros
+%%
+
+%defining how to output terminals and nonterminals
+\def\ts#1{\ifmmode\hbox{\sc #1}\else{\sc #1}\fi}% terminal symbol
+\def\nts#1{{\sl #1\/}}% nonterminal symbol
+% redefining the box around verbatim code
+\def\vb#1{\hbox{\strut\.{#1}}}
+% regular expressions and actions
+\newbox\rebox
+\def\re#1{\leavevmode\setbox\rebox\hbox{#1\hfill}\ifdim\wd\rebox<7em\wd\rebox=7em\fi\box\rebox\quad}
+\def\ac{\global\ind=10\hangindent=\ind em\relax}
+\def\eac{\global\ind=3\hangindent=\ind em\relax}
+% yskip is usually a smallskip = 3pt pus 1pt minus 1pt
+% I give it some extra stretchability
+%\def\yskip{\vskip 3pt plus 3pt minus 1pt}
+\let\yskip\smallbreak
+
+% redefine \5 for an optional break without the 2.5em reduced indentation
+%\def\5{\hskip 0pt plus 2.5em\penalty-1\hskip 0pt plus -2.5em\kern0.5em\ignorespaces}% optional break
+%redefine \5 to give some shrinkability
+% form hitex and hint style:
+%\def\5{\hfil\penalty-1\hskip 0pt minus 6pt\hfilneg\kern2.5em\copy\bakk\ignorespaces}% optional break
+\def\5{\hfil\penalty10\hfilneg\hskip 0pt minus 6pt\kern2.5em\copy\bakk\ignorespaces}% optional break
+\def\J{}% dont show @& in the tex output
+\def\Y{\par\yskip}
+
+% start sections
+\def\stsec{\rightskip=0pt % get out of C mode (cf. \B)
+  \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50 %
+}
+
+% the box for the points to operator "->" in C 
+\setbox\MGbox=\hbox{$\rightarrow$}
+
+% how to display NULL
+\def\NULL{\tt NULL}
+
+%other styles make this a \par
+\def\note#1#2.{}
+%\Y\noindent{\hfill%
+%    \baselineskip10pt\tiny#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
+
+%other styles make this minus 10pt
+\def\B{\rightskip=0pt plus 100pt minus 0pt % go into C mode
+  \sfcode`;=3000
+  \pretolerance 10000
+  \hyphenpenalty 1000 % so strings can be broken (discretionary \ is inserted)
+  \exhyphenpenalty 1000
+  \codedest
+  \global\ind=2 \1\ \unskip
+  \vadjust{\vtop to 0pt{\vss\hbox to \hsize{\hfill\tiny(\secstar)}\kern 0pt}}}
+
+% formating of C comments
+\def\C#1{\5\hfill$/\ast\,${\cmntfont #1}$\,\ast/$}
+
+% section begin
+\def\M#1{\MN{#1}\ifon\stsec\smallskip
+%\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+\noindent\ignorespaces}% beginning of section
+
+\def\N#1#2#3.{\MN{#1}\ifon\stsec\smallskip
+%\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+\noindent{\bf#3\quad}\ignorespaces}% beginning of section
+
+\def\MN#1{\smallskip
+ {\xdef\secstar{#1}\let\*=\empty\xdef\secno{#1}}%
+  \gdef\thecode{#1}% common code for \M, \N
+  \ontrue}
+
+% Used in section text
+\def\U{\rightnote{Used in}} % xref for use of a section
+\def\Us{\rightnote{Used in}} % xref for uses of a section
+% replacing \note in \U and \Us by \rightnote 
+%\def\rightnote#1#2.{\vskip-\baselineskip\vtop to 0pt{\vss\hbox to \hsize{\hfill
+%    \tiny#1~\ifacro{\pdfnote#2.}\else#2\fi.}\kern 0pt}}
+%\def\rightnote#1#2.{\vskip-\baselineskip\hbox to \hsize{\hfill
+%    \tiny#1~\ifacro{\pdfnote#2.}\else#2\fi.}}
+%\def\rightnote#1#2.{\penalty1000\discretionary{}{\hbox{}}{\kern 2em}\penalty1000\hfill
+%    \hbox{\tiny#1~\ifacro{\pdfnote#2.}\else#2\fi.}}
+\def\rightnote#1#2.{%
+     \penalty1000\discretionary{}{\hbox{}}{\kern 4em}\penalty1000\hfill
+     \hskip -4em plus 4em\hbox{\tiny #1~\codenote#2.}.}
+
+\def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
+  \XX$\langle\,${\let\I=\ne#2\kern.5em\coderef{#1}$\,\rangle$\XX}}
+
+
+% how to display hex numbers
+\def\hex{\hbox{$^{\scriptstyle\#}$\tt\aftergroup}} % CWEB style
+
+\def\(#1){} % this is used to make section names sort themselves better
+
+
+%%
+%% Dimensions to achive the desired layout
+%%
+
+
+% the other variables are defined in cwebmac.tex
+\newdimen\headheight 
+\newdimen\footheight 
+\newdimen\leftmargin
+\newdimen\rightmargin
+\newdimen\topmargin
+\newdimen\bottommargin
+\newdimen\marginwidth
+
+\parskip 0pt plus .8pt
+
+\leftmargin=22mm
+\rightmargin=22mm
+\topmargin=15mm
+\bottommargin=27mm
+\marginwidth=0pt % we do not have notes in the margin
+
+\headheight=12pt % Text in Head
+\advance\headheight+13pt % Abstand 1pt, Linie 0.47pt und Abstand zum Text 11.53pt
+\footheight=0pt % Text in Footer
+
+\pagewidth=6.69in
+\advance\pagewidth-\leftmargin % left margin/offset
+\advance\pagewidth-\rightmargin % left margin/offset
+
+% 6.69in = 169.926
+% - 2*22mm = 125.926mm
+%
+% 9.61in = 244.094
+% - 15mm  -27 mm = 202.094
+% (12+13)pt = 8.786 mm
+% -8.786 = 193.308 mm
+
+\fullpageheight=9.61in
+\advance\fullpageheight-\topmargin% topmargin
+\advance\fullpageheight-\bottommargin% bottommargin
+
+\pageheight=\fullpageheight
+\advance\pageheight-\headheight
+\advance\pageheight-\footheight
+
+\def\setpage{\hsize\pagewidth\advance\hsize-\marginwidth\vsize\pageheight} % use after changing page size
+
+\setpage
+
+% setting the papersize for postscript and pdf
+
+\ifbook
+  %\overfullrule=0pt
+  \pdfpageheight=9.61in
+  \pdfpagewidth=6.69in
+  \pdfhorigin=\leftmargin
+  \pdfvorigin=\topmargin
+  \pdfcompresslevel=9
+  \pdfdecimaldigits=4
+  \pdfpkresolution=1200
+  \pdfimageresolution=1200
+\else\ifpdf
+  \pdfpageheight=9.61in
+  \pdfpagewidth=6.69in
+  \pdfhorigin=\leftmargin
+  \pdfvorigin=\topmargin
+  \pdfcompresslevel=9
+  \pdfdecimaldigits=4
+  \pdfpkresolution=1200
+  \pdfimageresolution=1200
+\else
+   \special{papersize=6.69in,9.61in}%  postscript und ps2pdf
+\fi\fi
+
+
+
+%%
+%% Page layout
+%%
+
+\long\def\leftmark#1#2{#1}
+\long\def\subsectionmark#1#2{#2}
+\long\def\rightmark#1#2{\if0#1\else\expandafter\subsectionmark\botmark\fi}
+
+\def\lheader{\mainfont\strut
+\thepageno\hfill\expandafter\leftmark\firstmark} % top line on left-hand pages
+
+\def\rheader{\mainfont\strut
+\expandafter\rightmark\firstmark\hfill\thepageno} % top line on right-hand pages
+
+\let\page=\pagebody 
+%\raggedbottom
+\normalbottom
+%\def\page{\box255 }\normalbottom % faster, but loses plain TeX footnotes
+\def\normaloutput#1#2#3{\ifodd\pageno\hoffset=\pageshift\fi
+ \shipout\vbox{
+   \vbox to\fullpageheight{\pagelabel
+     \iftitle\global\titlefalse
+     \else\hbox{\vbox to \headheight{
+       \hbox to \pagewidth{\ifodd\pageno #3\else#2\fi}
+       \vskip 1pt\relax
+       \nointerlineskip
+       \hrule height .47pt
+%      \hbox{\hrule}%fill\psfig{file=image/topline.eps}\hfil}%
+       \vfil}}%
+     \fi
+     \nointerlineskip
+     \hbox{\kern\marginwidth\vbox to \pageheight{#1}}}} % parameter #1 is the page itself
+  \global\advance\pageno by1}
+
+\def\nomarginoutput#1#2#3{%
+ \ifodd\pageno\hoffset=\pageshift\fi
+ \shipout\vbox to\fullpageheight{\pagelabel\nointerlineskip
+  \iftitle\global\titlefalse
+    \hbox{\vbox to \headheight{\vfil}}
+  \else
+    \hbox{\vbox to \headheight{\nointerlineskip
+      \hbox to \pagewidth{\ifodd\pageno#3\else#2\fi}%
+      \vskip 1 pt
+      \nointerlineskip
+      \hrule height .47pt
+%    \hbox{\psfig{silent=,bbllx=0pt,bblly=0pt,bburx=368pt,bbury=2pt,file=image/topline.eps}\hfil}%
+    \vfil}}%
+  \fi\nointerlineskip #1 % parameter #1 is the page itself
+%  \vss
+%    \hbox to \pagewidth{\ifodd\pageno\else#2\fi}%
+%    \nointerlineskip
+%    \hbox{\psfig{file=image/topline.eps}\hfil}%
+}% 
+\global\advance\pageno by1}
+
+%% switch to global nomargin
+\let\normaloutput\nomarginoutput
+\def\sectionbox#1{\hbox{#1}}
+\marginwidth=0mm
+\setpage
+
+
+%%
+%% Frontmatter and mainmatter
+%%
+\pageno=1
+\def\thepageno{\romannumeral\pageno}
+\def\frontmatter{\pageno=4\def\thepageno{\romannumeral\pageno}}
+\def\mainmatter{
+\mark{{\sectionname}{\subsectionname}}
+%\message{Mark {\sectionname}{\subsectionname}}
+\vfil\break\ifodd\pageno\pageno=1\else\pageno=0\fi
+\def\thepageno{\the\pageno}%
+\sectioncount=0
+\mark{{0}{0}}%
+%\hbox{Mark empty empty}%
+\gdef\sectionname{}
+\gdef\subsectionname{}
+\gdef\codetitle{}
+\gdef\subcodetitle{}
+}
+
+
+
+
+%%
+%% Sections
+%%
+
+\newcount\sectioncount
+\sectioncount=0
+\newcount\subsectioncount
+\subsectioncount=0
+\newcount\subsubsectioncount
+\subsubsectioncount=0
+
+\newskip\abovesecskip 
+\newskip\belowsecskip 
+\newskip\abovesubsecskip
+\newskip\belowsubsecskip 
+
+%\abovesecskip= 6ex plus 1ex minus .2ex %space above the section
+%\belowsecskip=3.7ex plus .2ex% space after section
+\abovesecskip= 0.15\vsize plus 5ex minus 1ex %space above the section
+\belowsecskip=10pt plus 2pt% space after section
+\abovesubsecskip=9pt plus 4pt minus 2pt%space above the section
+\belowsubsecskip=3pt plus 1pt minus 0.5pt% space after section
+
+
+\newif\ifappendix
+\appendixfalse
+
+\mark{{0}{0}}\vskip 0pt minus 100pt
+%\hbox{Mark empty empty}%
+\def\thesection{\the\sectioncount}
+\def\topsection{\the\sectioncount}
+
+%\def\sectionbox#1{\hskip-\marginwidth\hbox to \marginwidth{#1\hfil}}
+
+\def\heading#1#2{%
+\def\secno{{\noindent\large\bf\strut{#1}#2}}%
+\par\ifhmode\unskip\fi%     end paragraph and remove vertical space
+\penalty-500
+\vskip 0pt plus 72pt%allow some empty space at the bottom
+\penalty-500
+\vskip 0pt plus -72pt%    room for stetching and a page break
+\hbox{}\vskip\abovesecskip%   space above the section
+%%\titletrue % omits page header for section
+%\hbox{Mark null null}%
+\mark{{0}{0}}%
+\secno% The section title
+\mark{{\sectionname}{\sectionname}}%
+%\message{Mark heading {\sectionname}{\subsectionname}}
+\nobreak\vskip\belowsecskip% space after section
+\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+\ignorespaces}
+
+
+
+\newcount\plaincount
+\def\plainsection#1{%
+\mark{{\sectionname}{\subsectionname}}%
+%\message{Mark plain {\sectionname}{\subsectionname}}
+\subsubsectioncount=0\subsectioncount=0%
+\advance\plaincount by 1\relax
+\def\thesection{}
+\sectionpage%
+\gdef\sectionname{#1}%
+\gdef\subsectionname{#1}%
+\gdef\codetitle{#1}%
+\gdef\subcodetitle{#1}%
+\tocsection{0}{}{#1}
+\heading{}{#1}%
+}
+
+
+\gdef\sectionname{}
+\gdef\subsectionname{}
+\gdef\codetitle{}%
+\gdef\subcodetitle{}
+
+\def\sectionpage{%
+\vfil\break
+\ifodd\pageno\else
+\hbox{}%
+\titletrue
+\fi
+\vfil\break
+}
+
+
+\def\section#1{%
+\mark{{\sectionname}{\subsectionname}}%
+%\message{Mark section {\sectionname}{\subsectionname}}
+\subsubsectioncount=0\subsectioncount=0%
+\advance\sectioncount by 1%updating counts
+\let\thesection\topsection
+\sectionpage%
+\gdef\sectionname{\topsection\quad#1}%
+\gdef\subsectionname{\thesection\quad#1}%
+\gdef\codetitle{#1}%
+\gdef\subcodetitle{#1}%
+\ifnum\sectioncount=1\ifappendix\tocsection{0}{}{Appendix}\heading{}{Appendix}\fi\fi
+\tocsection{0}{\thesection}{#1}%
+\heading{\thesection~}{#1}%
+}
+
+
+\def\subsection#1{%
+\subsubsectioncount=0\advance\subsectioncount by 1%updating counts
+\def\thesection{\topsection.\the\subsectioncount}  
+\def\secno{{\noindent\bf\strut\sectionbox{\thesection~}#1}}%
+\par\ifhmode\unskip\fi%     end paragraph and remove vertical space
+\tocsection{1}{\thesection}{#1}%
+\penalty-200
+\vskip 0pt plus 36pt% allow some empty space at the bottom
+\penalty-200
+\vskip 0pt plus -36pt%    room for stetching and a page break
+\gdef\subsectionname{\thesection\quad#1}%
+\mark{{\sectionname}{\subsectionname}}%
+%\message{Mark subsection {\sectionname}{\subsectionname}}
+\vskip\abovesubsecskip%   space above the subsection
+\secno% The subsection title
+\gdef\subcodetitle{#1}%
+%\mark{{\sectionname}{\subsectionname}}%
+%\hbox{Mark {\sectionname}{\subsectionname}}%
+\nobreak\vskip\belowsubsecskip% space after subsection
+\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+\ignorespaces}
+
+
+\def\subsubsection#1{%
+%\mark{{\sectionname}{\subsectionname}}%
+%\hbox{Mark {\sectionname}{\subsectionname}}%
+  \advance\subsubsectioncount by 1%updating counts
+\def\thesection{\topsection.\the\subsectioncount.\the\subsubsectioncount}  
+\def\secno{{\noindent\it\strut\sectionbox{\thesection~}#1}}%
+\par\ifhmode\unskip\fi%     end paragraph and remove vertical space
+\tocsection{2}{\thesection}{#1}%
+\penalty-200
+\vskip 0pt plus 36pt% allow some empty space at the bottom
+\penalty-200
+\vskip 0pt plus -36pt%    room for stetching and a page break
+\vskip\abovesubsecskip%   space above the subsection
+\secno% The subsubsection title
+\nobreak\vskip\belowsubsecskip% space after subsection
+%\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+%\noindent
+\ignorespaces}
+
+%%
+%% Appendix
+%%
+
+\def\Alphanum#1{%
+  \ifcase#1\or A\or B\or C\or D\or E\or F\or G\or H\or I\or J\or
+   K\or L\or M\or N\or O\or P\or Q\or R\or S\or T\or U\or V\or W\or X\or
+    Y\or Z\else\number#1\fi}
+
+\def\appendix{%
+\mark{{\sectionname}{\subsectionname}}%
+%\message{Mark appendix {\sectionname}{\subsectionname}}
+\sectioncount=0
+\subsectioncount=0
+\gdef\thesection{\Alphanum\sectioncount}%
+\gdef\topsection{\Alphanum\sectioncount}%
+\appendixtrue
+}
+
+%%
+%% Crossreference of Identifiers and Sections
+%%
+\iftrue %% No Crossreference of identifiers
+  \def\inx{\def\lr{L}} % this tells whether the left or right column is next
+\else
+\def\inx{%
+  \hsize=\pagewidth
+  \def\page{\box255 } \normalbottom
+  \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
+    \global\setbox\sbox=\page \global\pagesavedtrue}
+  \pagesavedfalse 
+  \plainsection{Crossreference of Identifiers}% we are beginning the index
+  \mark{{0}{0}}%
+%\hbox{Mark empty empty}%
+  \eject % eject the page-so-far and predecessors
+  \setbox\sbox\vbox{\unvbox\sbox} % take it out of its box
+  \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
+  \hsize=.5\pagewidth \advance\hsize by -10pt
+    % column width for the index (20pt between cols)
+  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
+  \def\lr{L} % this tells whether the left or right column is next
+  \output{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
+    \else\nomarginoutput{\vbox to\pageheight{\box\sbox\vss
+        \hbox to\pagewidth{\box\lbox\hfil\page}}}\lheader\rheader
+    \global\vsize\pageheight\gdef\lr{L}\global\pagesavedfalse
+    \mark{{Crossreference of Identifiers}{Crossreference of Identifiers}}%
+    \fi}
+  \parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \message{Crossreference of Identifiers:}
+  \parskip 0pt plus .5pt
+  \outer\def\I##1, ##2.{\par\hangindent2em\noindent##1:\kern1em
+    \ifbook##2\else\ifpdf\pdfnote##2.\else##2\fi\fi.} % index entry
+  \def\[##1]{$\underline{##1}$} % underlined index item
+  \rm \rightskip0pt plus 2.5em \tolerance 10000 \let\*=\lapstar
+  \hyphenpenalty 10000 \parindent0pt
+  \small
+  \readindex
+}
+\fi
+
+\def\fin{%
+  \if L\lr\mark{{}{}}\fi
+  \vfill\eject % complete the current column.
+   \mark{{}{}}
+  \if R\lr\null\vfill\eject\fi % if necessarry add a right column
+  \setpage
+  \def\page{\box255 } \normalbottom
+  \output={\nomarginoutput\page\lheader\rheader}
+}
+\ifbook
+\let\crosssections=\relax
+\else
+\def\crosssections{
+  \plainsection{Crossreference of Code}% this is done when we are ending the index
+  \parindent 0pt
+  \parfillskip 0pt plus 1fil
+  \let\topsecno=\nullsec
+  \message{Crossreference of Code:}
+  \def\note##1##2.{\hfil\penalty-1\hfilneg\quad{\tiny##1~\ifbook##2\else
+      \ifpdf{\pdfnote##2.}\else
+            \ifhint\codenote##2.\else##2.\fi\fi\fi}}
+  \def\Q{\note{Cited in section}} % crossref for mention of a section
+  \def\Qs{\note{Cited in sections}} % crossref for mentions of a section
+  \def\U{\note{Used in}} % crossref for use of a section
+  \def\Us{\note{Used in}} % crossref for uses of a section
+  \def\I{\par\hangindent 2em}\let\*=*
+  \def\X##1:##2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
+  \XX$\langle\,${\let\I=\ne##2}$\,\rangle$\XX\quad{\tiny Defined in~\codenote##1.}}
+  \readsections
+}
+\fi
+
+
+
+%%
+%% Table of Content
+%%
+
+% we separate the identification of a section used in links
+%from the identification on paper, because plain sections dont
+%have the latter.
+\newcount\toccount
+\toccount=0
+
+\def\tocsection#1#2#3{% depth sectionnumber sectiontitle
+\global\advance\toccount by 1%
+\newdest{SC.\the\toccount}%
+\ifhint
+  \immediate\write\cont{\noexpand\ZZ {#1}{#2}{#3}% write to contents file
+    {\noexpand\thepageno}{\the\toccount}}
+\else
+\edef\next{\write\cont{\noexpand\ZZ {#1}{#2}{#3}% write to contents file
+    {\noexpand\thepageno}{\the\toccount}}}\next % \tocline{depth}{sec}{title}{page}{toccount}
+\fi
+}
+
+\output{
+  \ifhint
+  \shipout\box255\relax% otherwise I loose open, write, or close commands
+  \else
+  \setbox0=\page % the first page is garbage
+  \fi
+%  \openout\cont=\contentsfile
+%  \write\cont{\catcode `\noexpand\@=11\relax}   % \makeatletter
+  \global\output{\normaloutput\page\lheader\rheader}}
+
+
+\newbox\tocbox
+\def\maketoc{%
+  \typeout{Reading table of contents}
+  \setbox\tocbox\vbox{%
+  \let\ZZ=\tocline
+  \ifbook\else\ifpdf\startpdf\fi\fi
+  \readcontents\relax
+  }
+  \typeout{Writing \contentsfile}
+  \immediate\openout\cont=\contentsfile\relax
+  \immediate\write\cont{\catcode `\noexpand\@=11\relax} 
+}
+
+\def\tableofcontent{\plainsection{Contents}\ifhint\HINTdest name {HINT.home}\fi
+\unvbox\tocbox  
+}
+
+
+\def\tocline#1#2#3#4#5{% depth sectionnumber sectiontitle page toccount
+\ifnum#1=0 \smallskip\vskip 0pt plus 12pt\penalty -100\vskip 0pt plus -12pt\fi
+\noindent
+\line{%
+\ifnum#1=0%
+  \hbox to 2em{\bf#2\hfill}{\bf#3~}\hfill
+     \hbox to 2em{\hss\bf\tocref{#1}{#3}{#4}{#5}}%
+\else \ifnum#1=1%
+   \kern 2em\hbox to 3em{\rm#2\hfill}{\rm#3~}\leaders\hbox to .5em{.\hfil}\hfill
+      \hbox to 2em{\hss\tocref{#1}{#3}{#4}{#5}}%
+\else
+   \kern 2em\hbox to 5em{\rm#2\hfill}{\it#3~}\leaders\hbox to .5em{.\hfil}\hfill
+      \hbox to 2em{\hss\tocref{#1}{#3}{#4}{#5}}\fi\fi
+}}
+
+
+
+%%
+%% Figures and Tables
+%%
+
+\def\fig#1{\global\advance\figcount by 1%
+\ifvmode\noindent\fi
+\def\captype{Fig}%
+\capskip=1em%
+\vbox{\nointerlineskip\figdest
+\hbox{\noindent#1\hskip -2pt\hskip 0pt plus 2pt minus 2pt}%
+\medskip
+\rlap{\small\unhbox\capbox}%
+}}
+
+\def\tab#1{%
+\ifvmode\noindent\fi
+\def\captype{Tab}%
+\capskip=0pt%
+\vbox{#1\medskip\rlap{\small\unhbox\capbox}}}
+
+\def\table#1#2{\global\advance\tabcount by 1%
+\ifvmode\noindent\fi
+\def\captype{Tab}%
+\capskip=0pt%
+\vbox{\offinterlineskip\tabdest
+   \halign{\large\strut
+   \vrule##&&\quad\hfil##\hfil\quad\vrule\cr
+   \noalign{\hrule}#2\noalign{\hrule}}%
+   \medskip
+   \tabcaption{#1}%
+  \rlap{\small\unhbox\capbox}%
+  }%
+}
+
+\def\captype{}
+\newdimen\capskip
+\capskip=1em
+\newbox\capbox
+\setbox\capbox\hbox{}
+\newcount\figcount
+\figcount=0
+\newcount\tabcount
+\tabcount=0
+
+\def\nextfigcaption#1{\small\strut\it\hskip\capskip\figindex{\captype}{\the\figcount}{#1}\captype.~\the\figcount:}
+
+\def\caption#1{\global\setbox\capbox\hbox{\nextfigcaption{#1} #1}}
+
+\def\nexttabcaption#1{\small\strut\it\hskip\capskip\tabindex{\captype}{\the\tabcount}{#1}\captype.~\the\tabcount:}
+\def\tabcaption#1{\global\setbox\capbox\hbox{\nexttabcaption{#1} #1}}
+
+
+%\long\def\leftfig#1#2#3{%
+%\ifvmode\noindent\fi
+%\def\captype{Fig}%
+%\capskip=1em%
+%\vbox{%
+% \tabskip=0pt\halign to \hsize{%
+% \vtop{\vskip 0pt\parskip=0pt\hsize=62.5mm\relax
+%  ##}\tabskip=5mm plus 2pt minus 2pt&
+% \vtop{\vskip 0pt\parskip=0pt\hsize=62.5mm\relax##}\tabskip=0pt\cr
+% #1&\capskip=0pt\nextfigcaption{#2} #3\cr}\medbreak}}
+
+\long\def\leftright#1#2#3#4{%
+\ifvmode\noindent\else\par\noindent\fi
+\vbox{\nointerlineskip
+  \advance\hsize by -\leftskip\advance\hsize by -\rightskip%
+  \leftskip=0pt\rightskip=0pt%
+  \hbox to \hsize{\strut
+   \raise\ht\strutbox
+   \vtop{\vskip 0pt\parskip=0pt\hsize=#1\hsize\advance\hsize by -2.5mm\relax
+   \noindent\strut\ignorespaces#3\vfill}\hfil
+   \raise\ht\strutbox
+   \vtop{\vskip 0pt\parskip=0pt\hsize=#2\hsize\advance\hsize by -2.5mm\relax
+   \noindent\strut\ignorespaces#4\vfill}}}}
+
+
+\long\def\leftfig#1#2#3{%
+\def\captype{Fig}%
+\capskip=0pt%
+\leftright{0.5}{0.5}{#1\kern -2pt\hskip 2pt plus 2pt minus 2pt}{\nextfigcaption{#2}\strut #3}}
+
+
+\def\subindex#1{%
+  \par\ifhmode\unskip\fi%     end paragraph and remove vertical space
+  \vskip\abovesubsecskip%   space above the subsection
+  \vskip 0pt plus 72pt% allow some empty space at the bottom
+  \penalty-200\vskip 0pt plus -72pt %    room for stetching and a page break
+  \noindent{\bf\strut#1}%
+  \nobreak\vskip\belowsubsecskip% space after subsection
+  \everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+  \ignorespaces
+}
+
+\newwrite\@figfile
+\newwrite\@tabfile
+
+\def\makefigindex{%
+  \immediate\openout\@figfile=\jobname.fig\relax
+  \def\figindex{\@bsphack\begingroup\@sanitize\@wrfigindex\@figfile}%
+  \immediate\openout\@tabfile=\jobname.tab\relax
+  \def\tabindex{\@bsphack\begingroup\@sanitize\@wrfigindex\@tabfile}%
+  \typeout{Writing index files \jobname.fig \jobname.tab}
+}
+
+\newdimen\iboxsize
+\def\thefigindex{%
+
+  \immediate\closeout\@figfile\relax
+  \immediate\closeout\@tabfile\relax
+  %\small\baselineskip=11pt
+  \plainsection{List of Figures and Tables}
+  \makeatletter
+  \iboxsize=3.7em\relax
+  \subindex{Figures}
+  \def\indexentry##1##2##3##4{%  captype, fig/tab count, caption, page
+    \noindent
+    \line{\hbox to \iboxsize{%
+        \rm##1.~##2:\hfil}{\rm ##3}\ \leaders\hbox to .5em{.\hfil}%
+      \hfill\hbox to 1.4em{\hss
+        \ifbook##4\else
+        \ifpdf
+        \pagelnk{##4}%
+        \else\ifhint\figlink{##2}
+        \else##4\fi\fi\fi
+       }}\par
+  }%
+  \input\jobname.fig\relax
+  \iboxsize=3.9em\relax
+  \subindex{Tables}
+  \def\indexentry##1##2##3##4{%  captype, fig/tab count, caption, page
+    \noindent
+    \line{\hbox to \iboxsize{%
+        \rm##1.~##2:\hfil}{\rm ##3}\ \leaders\hbox to .5em{.\hfil}%
+      \hfill\hbox to 1.4em{\hss
+        \ifbook##4\else
+        \ifpdf
+        \pagelnk{##4}%
+        \else\ifhint\tablink{##2}
+        \else##4\fi\fi\fi
+       }}\par
+  }%
+  \input\jobname.tab\relax
+  \makefigindex
+}
+
+
+\def\@wrfigindex#1#2#3#4{% file, captype, fig/tab count, caption
+   \xdef\gtempa{\write#1{\string\indexentry{#2}{#3}{#4}{\noexpand\thepageno}}}\endgroup\gtempa
+   \if@nobreak\ifvmode\@nobreak\fi\fi\@esphack}
+
+%%
+%% Format Definitions
+%%
+
+%\newbox\codebox
+\newwrite\@getfile
+\newwrite\@putfile
+\newwrite\@redfile
+\newwrite\@wrtfile
+
+\def\makecode{%
+  \immediate\openout\@getfile=\jobname.get\relax
+  \immediate\openout\@putfile=\jobname.put\relax
+  \immediate\openout\@redfile=\jobname.red\relax
+  \immediate\openout\@wrtfile=\jobname.wrt\relax
+  \typeout{Writing index files \jobname.get \jobname.put \jobname.red \jobname.wrt}
+}
+
+\def\thecodeindex{%
+  \immediate\closeout\@getfile\relax
+  \immediate\closeout\@putfile\relax
+  \immediate\closeout\@redfile\relax
+  \immediate\closeout\@wrtfile\relax
+  \def\indexentry##1##2##3##4{% codecount, depth, pagenumber, section
+    \ifnum##2=0 \smallskip\vskip 0pt plus 12pt\penalty -100\vskip 0pt plus -12pt\fi
+    \noindent
+    \line{%
+       \ifnum##2=0##4\hfill
+       \else\qquad\rm##4\ \leaders\hbox to .5em{.\hfil}\hfill
+       \hbox to 1.4em{\hss\pagelnk{##3}}
+       \fi
+    }\par
+   }%
+   \section{Format Definitions}
+  \makeatletter
+  \subsection{Reading the Long Format}\label{codeindex}
+  \input\jobname.red.srt\relax
+  \subsection{Writing the Long Format}
+  \input\jobname.wrt.srt\relax
+  \subsection{Reading the Short Format}
+  \input\jobname.get.srt\relax
+  \subsection{Writing the Short Format}
+  \input\jobname.put.srt\relax
+}
+
+
+\newcount\codecount
+\codecount=0
+
+\ifhint
+\def\@wrcodeindex#1#2#3#4{% file, depth, pagenumber, [sub]sectionname
+  \global\advance\indexcount by 1\indexdest
+  \xdef\gtempa{\write#1{\string\indexentry{#3}{#2}{\the\indexcount}{#4}}}\endgroup\gtempa\@esphack
+}
+\else
+\def\@wrcodeindex#1#2#3#4{% file, depth, pagenumber, [sub]sectionname
+  \xdef\gtempa{\write#1{\string\indexentry{#3}{#2}{\noexpand\thepageno}{#4}}}\endgroup\gtempa\@esphack
+}
+\fi
+
+\def\getindex{\@bsphack\begingroup\@sanitize\@wrcodeindex\@getfile}%
+\def\putindex{\@bsphack\begingroup\@sanitize\@wrcodeindex\@putfile}%
+\def\redindex{\@bsphack\begingroup\@sanitize\@wrcodeindex\@redfile}%
+\def\wrtindex{\@bsphack\begingroup\@sanitize\@wrcodeindex\@wrtfile}%
+
+
+\def\codelabel#1#2#3{
+  \getindex{#1}{#2}{#3}%
+  \putindex{#1}{#2}{#3}%
+  \redindex{#1}{#2}{#3}%
+  \wrtindex{#1}{#2}{#3}}
+\def\getsymbol{$\cdots\Longrightarrow$}
+\def\putsymbol{$\Longrightarrow\cdots$}
+\def\redsymbol{$-{}-{}-{}\Longrightarrow$}
+\def\wrtsymbol{$\Longrightarrow{}-{}-{}-$}
+\def\getcode{\codesection{\getsymbol}{Reading the short format}\getindex{1}{\the\codecount}{\subcodetitle}}
+\def\putcode{\codesection{\putsymbol}{Writing the short format}\putindex{1}{\the\codecount}{\subcodetitle}}
+\def\writecode{\codesection{\wrtsymbol}{Writing the long format}\wrtindex{1}{\the\codecount}{\subcodetitle}}
+\def\readcode{\codesection{\redsymbol}{Reading the long format}\redindex{1}{\the\codecount}{\subcodetitle}}
+\newdimen\coderule
+\def\codesection#1#2{%
+  \par\ifhmode\unskip\fi%     end paragraph and remove vertical space
+  \penalty-200
+  \vskip 0pt plus 72pt% allow some empty space at the bottom
+  \penalty-200
+  \vskip 0pt plus -72pt%    room for stetching and a page break
+\vskip\abovesubsecskip%   space above the subsection
+%\line{\setbox0=\hbox{#1}%
+%\coderule=\hsize\advance\coderule by -\wd0\advance\coderule by -2em%
+%$\vcenter{\hrule width \coderule}$\hss\box0}
+\line{{\it #2\/}:\hfill#1}
+\nobreak\vskip\belowsubsecskip\nobreak% space after subsection
+%\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+%\noindent
+\ignorespaces}
+
+\def\hascode{\global\advance\codecount by 1%
+\codelabel{0}{\the\codecount}{\codetitle}}%
+
+
+%%
+%% Makeindex and the Index
+%%
+
+\newwrite\@indexfile
+
+% new jobname for index file
+\def\makeindex{
+  \immediate\openout\@indexfile=\jobname.inx%
+  \def\index{\@bsphack\begingroup\@sanitize\@wrindex\@indexfile}%
+  \typeout{Writing index file \jobname.inx }%
+}
+
+\def\@idxitem{\par\hangindent 40pt}
+ 
+\newif\ifnextindex
+\nextindexfalse
+
+\def\beginindex{%
+\ifhint\relax\else
+  \def\page{\box255} \normalbottom
+  \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
+    \global\setbox\sbox=\page \global\pagesavedtrue}
+  \pagesavedfalse \eject % eject the page-so-far and predecessors
+  \setbox\sbox\vbox{\unvbox\sbox} % take it out of its box
+  \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
+  \hsize=.5\pagewidth \advance\hsize by -10pt
+    % column width for the index (20pt between cols)
+  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
+  \def\lr{L} % this tells whether the left or right column is next
+  \output{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
+    \else\nomarginoutput{\vbox to\pageheight{\box\sbox\vss
+        \hbox to\pagewidth{\box\lbox\hfil\page}}}\lheader\rheader
+    \global\nextindextrue
+    \global\vsize\pageheight\gdef\lr{L}\global\pagesavedfalse\fi}
+\fi
+\message{Index:}
+\mark{{0}{0}}
+\noindent\par
+\begingroup
+  \rightskip 0pt plus 12pt
+  \parskip 0pt plus .5pt
+  \hyphenpenalty 10000 \parindent0pt
+  \small\baselineskip=11pt
+\def\item{\par\hangindent 40pt\relax\ifnextindex\mark{{Index}{Index}}\fi}%
+\def\subitem{\par\hangindent 40pt\hskip 20pt\relax}%
+\def\subsubitem{\par\hangindent 40pt\hskip 30pt\relax}%
+\def\indexspace{\par\vskip 12pt plus 6pt minus 4pt\vskip 12pt\goodbreak\vskip -12pt\relax}%
+\def\indexheading##1{{\tenbf ##1}\nobreak\vskip 3pt\relax}
+}
+\def\endindex{%
+\endgroup
+  \vfill\eject % complete the current column.
+\ifhint\relax\else
+  \if R\lr\null\vfill\eject\fi % if necessarry add a right column
+\fi
+}
+
+
+%%
+%% Label page, section, toccount, figure, table, code, enum
+%%
+\newcount\cdcount
+\cdcount=0
+
+\newdimen\labelskip
+\def\label#1{% writes \labeldef{name}{{page}{section}{toccount}{figure}{table}{code}{enum}} to aux
+  \ifhint
+  \global\advance\indexcount by 1\indexdest
+     \begingroup\@readauxfile
+   \edef\next{\@writeaux{\string\labeldef{#1}{{\the\indexcount}%
+         {\thesection}{\the\toccount}{\the\figcount}{\the\tabcount}{\the\cdcount}{\the\enum}}}\endgroup}%
+  \else
+   \begingroup\@readauxfile
+   \edef\next{\@writeaux{\string\labeldef{#1}{{\noexpand\thepageno}%
+         {\thesection}{\the\toccount}{\the\figcount}{\the\tabcount}{\the\cdcount}{\the\enum}}}\endgroup}%
+  \fi
+   \ifvmode %make \removelastskip work after \label 
+     \labelskip=\lastskip
+     \vskip-\labelskip
+     \next
+     \vskip\labelskip
+   \else
+     \next
+   \fi
+}
+
+
+\def\m@kelabel#1{label@#1}% this makes the controlseqence from the name
+
+\def\labeldef#1#2{% #1 is name #2 is page section subsection figure table code
+\expandafter\gdef\csname\m@kelabel{#1}\endcsname{#2}}%
+
+\def\@setref#1#2#3{%
+  \ifx#1\relax
+   \message{Undefined reference: #3}
+  \else
+   \expandafter#2#1%
+  \fi}
+
+\def\@iofvii#1#2#3#4#5#6#7{#1}
+\def\@iiofvii#1#2#3#4#5#6#7{#2}
+\def\@iiiofvii#1#2#3#4#5#6#7{#3}
+\def\@ivofvii#1#2#3#4#5#6#7{#4}
+\def\@vofvii#1#2#3#4#5#6#7{#5}
+\def\@viofvii#1#2#3#4#5#6#7{#6}
+\def\@viiofvii#1#2#3#4#5#6#7{#7}
+
+
+\def\pageref#1{\@readauxfile
+  \pagelnk{\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@iofvii{#1}}}
+\def\secref#1{\@readauxfile
+  \sectionlink
+    {\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@iiofvii{#1}}%
+    {\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@iiiofvii{#1}}%
+}
+\def\figref#1{\@readauxfile
+\figlink{\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@ivofvii{#1}}}
+\def\tabref#1{\@readauxfile
+\tablink{\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@vofvii{#1}}}
+\def\cdref#1{\@readauxfile
+\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@viofvii{#1}}
+\def\enumref#1{\@readauxfile
+\enumlink{\expandafter\@setref\csname\m@kelabel{#1}\endcsname\@viiofvii{#1}}}
+
+%%
+%%  Links and Destinations
+%%
+
+\ifbook
+  \def\pdflinkcolor{0 0 0} % the RGB values for hyperlink color
+  \def\linkcolor{\Black}
+  \def\pdflink#1#2{#1}
+  \def\pdfnote#1.{#1}
+  \message{No PDF Links}
+\else
+  \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
+  \def\linkcolor{\Blue}
+  \message{PDF Links are blue}
+\fi
+
+\def\@esphack{\relax\ifhmode\spacefactor\@savsf
+     {}\ifdim \@savsk >\z@ \ignorespaces 
+  \fi \fi}
+
+%
+% Code destinations: by number 
+%
+
+%The number is set be \M and \N and stored as \secno
+%The destination is set in \B where we go into C mode
+\def\codedest{%
+\ifbook\else
+\ifhint\HINTdest num \thecode top\relax
+\else\ifpdf\pdfdest num \thecode fith\relax
+\else\relax
+\fi\fi\fi
+}
+\def\coderef#1{% used in \X
+\ifbook${}_{#1}$\else
+\ifhint\HINTstartlink goto num #1 \hbox{${}_{#1}$}\HINTendlink
+\else\ifpdf{\eightrm\pdfnote#1.}
+\else${}_{#1}$\fi\fi\fi
+}
+
+\def\codenote#1.{% replaces \pdfnote
+  \setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
+% define the following like for pdf
+\def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
+    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
+      \toksC={}\let\space\empty}\makenote}\maketoks}}
+\def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
+\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
+  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
+\def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
+  \ifnum\countB>`9 \countB=0 \fi
+  \ifnum\countB<`0
+    \ifnum0=\countC\else\makenote\fi
+    \ifx\first.\let\next=\maketoksdone\else
+        \let\next=\maketoks
+        \addtokens\toksB{\the\toksD}
+        \ifx\first,\addtokens\toksB{\space}\fi
+    \fi
+  \else \addtokens\toksC{\the\toksD}\global\countC=1\let\next=\maketoks
+  \fi
+  \next
+}
+\def\makenote{\addtokens\toksB
+    {\noexpand\codelink{\the\toksC}{\romannumeral\the\toksC}}\toksC={}\global\countC=0}
+\def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
+
+\def\codelink#1#2{
+\ifbook#1\else
+\ifhint\HINTstartlink goto num #1 #1\HINTendlink
+\else\ifpdf\pdflink{#1}{#2}%
+\else#1%
+\fi\fi\fi}
+
+%
+% new destinations and links: by name 
+%
+
+\def\newdest#1{% used to make a new destination
+%\message{New destination #1}%
+\ifbook
+\else\ifpdf
+  \pdfdest name {#1} fith%\message{Defining pdf label #1}%
+\else\ifhint
+  \HINTdest name {#1}%\message{Defining HINT label #1}%
+\fi\fi\fi}
+
+\def\newlink#1#2{%
+  \ifbook #2\else
+  \ifpdf
+  \pdfstartlink goto name {#1}\linkcolor#2\Black\pdfendlink
+  \else\ifhint
+  \HINTstartlink goto name {#1}#2\HINTendlink
+  \else
+  #2%
+  \fi\fi\fi
+}
+
+
+%SC.-\the\plaincount for plain sections
+%SC.\thesection for regular sections, with subsections and letters for the appendix
+
+\def\tocref#1#2#3#4{% depth, title, page, label used in tocline
+  \ifbook#3\else
+  \ifpdf
+  \pdfstartlink goto name {SC.#4}\relax \linkcolor#3\Black\pdfendlink
+   \ifnum#1=0\pdfoutline goto name {SC.#4} {#2}\fi
+  \else\ifhint
+    \HINTstartlink goto name {SC.#4}\relax $\rightarrow$\HINTendlink
+    \HINToutline goto name {SC.#4} depth #1 {#2}%
+  \else
+  #3%
+  \fi\fi\fi
+}%
+
+%
+% Page references from the index
+%
+
+% \index{keyword} -> \@wrindex{file}{keyword} writes the nectessary information
+% makeindex produces the index and pages are enclosed in \hyperref{pagenumber}
+% Problems:
+%   pagenumbers may be roman numerals in the frontmatter
+%   hyperpage has to cope with 6 different formats
+%   \hyperpage{50} a single page number
+%   \hyperpage{51, 52} two numbers
+%   \hyperpage{53--59} a page range
+%   \hyperpage{xi} a roman numeral
+%   \hyperpage{xi, xii} two numbers
+%   \hyperpage{xi--xx} a page range
+
+
+% Writing the index file: in HINT replacing the page number by the index count
+\newcount\indexcount
+\def\theindexcount{\the\indexcount}
+
+\ifhint
+  \def\@wrindex#1#2{% file, keyword
+     \global\advance\indexcount by 1\indexdest
+     \immediate\write#1{\string
+        \indexentry{#2:hyperpage}{\the\indexcount}}\endgroup
+     \if@nobreak \ifvmode\@nobreak\fi\fi\@esphack}
+ \else
+   \def\@wrindex#1#2{%
+      \xdef\gtempa{\write#1{\string
+      \indexentry{#2:hyperpage}{\noexpand\thepageno}}}\endgroup\gtempa
+      \if@nobreak \ifvmode\@nobreak\fi\fi\@esphack}
+\fi
+
+
+% for HINT and PDF we used hyperrange and hypercomma to split the
+% arguments into index/page numbers and then use pagelink
+\ifbook
+  \def\hyperpage#1{#1}\else
+\ifhint
+  \def\hyperpage#1{\hyperrange#1----+\relax}
+\else\ifpdf
+   \def\hyperpage#1{\hyperrange#1----+\relax}
+\else 
+   \def\hyperpage#1{#1}
+\fi\fi\fi
+
+%\def\indexlink#1{#1}
+
+\def\hyperrange#1--#2--#3+{%
+  \ifx\empty#2\empty%
+    \hypercomma#1, ,+%
+  \else\ifhint
+    \pagelnk{#1}--\pagelink{#2}{$\leftarrow$}%
+  \else
+    \pagelnk{#1}--\pagelnk{#2}%
+  \fi\fi}
+
+\def\hypercomma#1, #2,#3+{%
+  \ifx\empty#2\empty%
+    \pagelnk{#1}%
+  \else\ifhint%
+    \pagelink{#1}{$\longrightarrow$}%
+  \else
+    \pagelnk{#1}%  
+% I omit the second page number  \ifpdf, \pagelnk{#2}\fi
+  \fi\fi
+}
+
+
+%
+% Labels
+%
+
+% section references from \secref use \sectionlink
+% for plainsections, we display the label name because there
+%is no section number.
+
+\def\sectionlink#1#2{% \message{Sectionlink #1 : #2}%
+  \ifbook#1\else
+  \ifpdf
+  \pdfstartlink goto name {SC.#2} \linkcolor#1\Black\pdfendlink
+  \else\ifhint
+  \HINTstartlink goto name {SC.#2}#1\HINTendlink
+  \else
+  #1%
+  \fi\fi\fi
+}
+
+
+% page references from \label and \pageref use \pagelink as before
+\def\indexdest{\newdest{page.\the\indexcount}}
+\def\pagelnk#1{%
+  \ifhint
+    \pagelink{#1}{$\rightarrow$}%
+  \else
+    \pagelink{#1}{#1}%
+  \fi
+}
+\def\pagelink#1#2{\newlink{page.#1}{#2}}
+% For hint the destination is generated with each \index and \label
+% Because of the roman numerals, for pdf files
+% the pdf destination is generated in the header using \pagelabel
+
+
+\ifbook\let\pagelabel=\relax\else
+\ifpdf
+\def\pagelabel{\pdfdest name {page.\thepageno} fitv\relax}
+\else
+\let\pagelabel=\relax
+\fi\fi
+
+% references to Figures, Tables, Enumerations
+\def\figdest{\newdest{FI.\the\figcount}}
+\def\figlink#1{\newlink{FI.#1}{#1}}
+\def\tabdest{\newdest{TA.\the\tabcount}}
+\def\tablink#1{\newlink{TA.#1}{#1}}
+\def\enumdest{\newdest{EN.\the\enum}}
+\def\enumlink#1{\newlink{EN.#1}{#1}}
+
+%
+% References to the bibliography
+%
+\def\citedest#1{\newdest{CI.#1}}
+\def\citelink#1{%\message{Citelink #1}%
+  \newlink{CI.#1}{#1}}
+
+\def\bblhook{%defined before reading the .bbl file
+  \def\biblabelprint##1{%
+   \citedest{##1}%
+   \noindent
+   \hbox to \biblabelwidth{%
+      \biblabelprecontents
+      \biblabelcontents{##1}%
+      \biblabelpostcontents
+   }%
+   \kern\biblabelextraspace
+  }%
+}
+\def\@onecitation#1\@@{%called for each citation
+   \if@notfirstcitation
+      \printbetweencitations
+   \fi
+   %
+   \expandafter \ifx \csname\@citelabel{#1}\endcsname \relax
+      \if@citewarning
+         \message{\@linenumber Undefined citation `#1'.}%
+      \fi
+      % Give it a dummy definition:
+      \expandafter\gdef\csname\@citelabel{#1}\endcsname{%
+         {\tt
+            \escapechar = -1
+            \nobreak\hskip0pt
+            \expandafter\string\csname#1\endcsname
+            \nobreak\hskip0pt
+         }%
+      }%
+   \fi
+   % Now produce the text, whether it was undefined or not.
+   \citelink{\csname\@citelabel{#1}\endcsname}%
+   \@notfirstcitationtrue
+}%  
+%%
+%% Images
+%%
+
+\ifbook
+\def\includefig#1{\leavevmode\hbox{\immediate\pdfximage{image/#1.pdf}\pdfrefximage\pdflastximage}}
+\else\ifpdf
+\def\includefig#1{\leavevmode\hbox{\immediate\pdfximage{image/#1.pdf}\pdfrefximage\pdflastximage}}
+\else\ifhint
+ \def\includefig#1{\image=image/#1.png\relax}
+\else
+  \input epsf.tex
+  \def\includefig#1{\epsfbox{image/#1.eps}}% this is a \leavevmode\hbox{...}
+\fi\fi\fi
+
+\ifhint\eject\fi% hitex will remove empty pages that were introduced by cwebmac
+\makeatother
+
+
+
+
+
+
+

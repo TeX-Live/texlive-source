@@ -1,0 +1,707 @@
+% This file is part of HINT
+% Copyright 2017-2021 Martin Ruckert, Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT
+% OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+% THE SOFTWARE.
+%
+% Except as contained in this notice, the name of the copyright holders shall
+% not be used in advertising or otherwise to promote the sale, use or other
+% dealings in this Software without prior written authorization from the
+% copyright holders.
+
+\input cwebmac
+\input hint.sty
+
+\makeindex
+\maketoc
+
+\titletrue
+\pageno=-2
+
+\def\lastrevision{${}$Revision: 2541 ${}$}
+\def\lastdate{${}$Date: 2021-10-26 09:03:28 +0200 (Tue, 26 Oct 2021) ${}$}
+
+\font\largetitlefont=cmssbx10 scaled\magstep4
+\font\Largetitlefont=cmssbx10 at 40pt
+\font\hugetitlefont=cmssbx10 at 48pt
+\font\smalltitlefontit=cmbxti10 scaled\magstep3
+\font\smalltitlefont=cmssbx10 scaled\magstep3
+
+\hbox{}
+\vskip 0pt plus 1fill
+{
+  \baselineskip=1cm\parindent=0pt
+  \largetitlefont\raggedright  Hi\TeX\par
+  \vskip 10pt plus 0.3fill
+  \leftline{\smalltitlefont User Manual} 
+  \vskip-3pt
+  \vskip 10pt plus 0.3fill
+  \hskip 0pt plus 2fill \it  F\"ur Beatriz\hskip 0pt plus 0.5fill\hbox{}
+  \vskip 10pt plus 3fill
+  \leftline{\smalltitlefont Version 1.1 (Draft)}
+  \bigskip
+  \raggedright\baselineskip=12pt
+  \bf MARTIN RUCKERT \ \it Munich University of Applied Sciences\par
+  \bigskip
+  \lastdate, \lastrevision\par
+  \smallskip
+}
+{\raggedright\advance\rightskip 3.5pc 
+\def\:{\discretionary{}{}{}}
+\noindent
+Internet page  {\tt http:\://hint.\:userweb.\:mwn.\:de/\:hint/\:format.html}
+may contain current information about this book, downloadable software,
+and news. 
+
+\smallskip
+\noindent
+Copyright $\copyright$ 2022 by Martin Ruckert
+\smallskip
+}
+\frontmatter
+\pageno=-1
+
+\tableofcontent
+
+\mainmatter
+
+\def\rs{\hskip 2pt plus 3pt minus 2pt\penalty0\relax}
+\def\rule#1:#2.{\par{\hangindent32pt\hangafter1\parindent0pt\rightskip 0pt plus 60pt#1{\bf:}\quad%
+  \hskip 0pt plus 60pt\penalty-300\hskip 0pt plus -60pt#2{\bf.}\par}}
+\def\sym#1{\rs$<${\it #1\/}$>$\rs}
+\def\OR{\rs${}\vert{}$\rs}
+\def\opt#1{\rs$[{}$#1${}]$\rs}
+\def\cs#1{\.{\BS #1}}
+
+\section{Hi\TeX\ primitives}
+
+While currently Hi\TeX\ is the only \TeX\ engine that supports output in the \HINT\ file
+format, this might not be so forever. To avoid unnecessary complications for 
+package writers, it is strongly suggested that all such \TeX\ engines implement
+the same primitives according to the same specification. The following is the first
+draft of this specification. All the primitives use {\tt HINT} as a prefix to
+avoid name conflicts. The prefix {\tt HINT}, as opposed to e.g. {\tt HiTeX},
+was chosen to stress the idea that these primitives are specific for the
+output format---not for the \TeX\ engine.
+
+Because this is the first specification that will reach a wider user base,
+it is reasonable to expect changes to occur in the future. Therefore it is
+recommended that these primitives should not be used directly in a
+\TeX\ document; instead they should be encapsulated in suitable
+macros so that the consequences of any change to the primitives will 
+be local to these macros.
+
+\subsection{Syntax Description}
+In the following, we describe the syntax of primitive control sequences which were
+added to \TeX.
+
+\itemize
+\item We use a {\tt typewriter font}\index{typewriter font}
+for text that occurs \index{verbatim}verbatim in the \TeX\ document.
+\item We use \sym{italics} enclosed in pointed brakets to denote symbols\index{symbol+\sym{symbol}}.
+\item We use rules\index{rule} to define the meaning of symbols.
+A rule starts with the symbol
+to be explained, followed by a colon ``{\bf :}'', and then the text that this symbol
+stands for. A rule ends with a period ``{\bf .}''.
+\item Optional\index{optional+\opt{optional}} parts of the rule's text
+are enclosed in \opt{square brackets}.
+\item Alternatives\index{alternative} are seperated by a vertical bar ``\OR''\index{\OR}.
+\item Some symbols refere to text that is defined as part of standard \TeX. These are explained here by an example:
+
+\medskip
+\rule\sym{integer}: \index{integer+\sym{integer}}
+  an integer as in  \cs{penalty}\sym{integer}.
+\rule\sym{normal dimension}:\index{normal dimension+\sym{normal dimension}}
+  a dimension as in \cs{hrule} \.{width} \sym{normal dimension}.
+\rule\sym{dimension}:\index{dimension+\sym{dimension}}
+  a dimension as in \cs{vskip} \.{0pt} \.{plus} \sym{dimension}.
+\rule\sym{name}:\index{dimension+\sym{dimension}}
+  a name as in \cs{input} \sym{name}.
+\rule\sym{vertical list}:\index{vertical list+\sym{vertical list}}
+  a token list  with matching braces as in
+  \cs{vbox}\.{\LB}\sym{vertical list}\.{\RB}.
+\rule\sym{horizontal list}:\index{horizontal list+\sym{horizontal list}}
+  a token list  with matching braces as in
+  \cs{hbox}\.{\LB}\sym{horizontal list}\.{\RB}.
+\rule\sym{general text}:\index{general text+\sym{general text}}
+  a token list with matching braces as in
+  \cs{write}\.{\LB}\sym{general text}\.{\RB}.
+\medskip
+\enditemize
+
+\subsection{Version and Revision}
+The control sequences \cs{HINTversion}\index{HINTversion+\cs{HINTversion}}
+and \cs{HINTsubversion}\index{HINTsubversion+\cs{HINTsubversion}} are
+used to determine the version and subversion numbers of the HINT output format
+that is generated by Hi\TeX. It can be used as part of the output as 
+in \verbatim|\the\HINTversion|.
+The most important use, however, is testing whether the current \TeX\ engine
+will in fact produce \HINT\ output.
+As an example the file {\tt ifhint.tex}\index{ifhint.tex+{\tt ifhint.tex}}
+contains the following code:
+
+
+\verbatim/
+\newif\ifhint
+\expandafter\ifx\csname HINTversion\endcsname\relax
+  \hintfalse\else\hinttrue\fi/
+
+
+\subsection{Images}
+The primitive \cs{HINTimage}\index{HINTimage+\cs{HINTimage}}
+includes an image\index{image} in a document.
+The syntax is as follows:
+
+\medskip
+\cs{HINTimage}  \opt{\.{=}} \sym{name}
+\opt{\sym{width}} \opt{\sym{height}} 
+\medskip
+
+The optional equal sign can be added to make the code look nicer.
+The \sym{name} specifies the image file.
+The width specification determines the width of the image. If omitted,
+Hi\TeX\ tries to determine the image's width from the image file.
+The same holds for the height specification.
+
+\medskip
+\rule \sym{width}\index{width+\sym{width}}:\.{width} \sym{normal dimension}.
+\rule \sym{height}\index{height+\sym{height}}:\.{height} \sym{normal dimension}.
+\medskip
+
+Note that a \sym{normal dimension} that is computed from \cs{hsize}
+or \cs{vsize} retains this dependency when processed by Hi\TeX.
+This allows an image to adapt to the size of the viewing area.
+Scaling in the \HINT\ viewer will, however, never change the
+aspect ratio of an image. So it may become smaller or larger,
+but it will never be distorted.
+For this reason, Hi\TeX\ will inspect the image file to determine the
+aspect ratio\index{aspect ratio} of the stored image.
+The width and height values as given in the \TeX\ file serve
+as the maximum values for the actual width and height. When rendering,
+the image will become as large as possible within the given bounds.
+If \TeX\ does not specify neither width nor height, the image file
+must specify the absolute width and height of the image.
+It is considered an error if valid settings for the image's width and height
+can not be obtained.
+
+\subsection{Links, Labels, and Outlines}
+A link\index{link} in a \HINT\ document refers to another location in the same document.
+It can be used to navigate to that location.
+A link is defined using the primitives 
+\cs{HINTstartlink}\index{HINTstartlink+\cs{HINTstartlink}}
+and \cs{HINTendlink}\index{HINTendlink+\cs{HINTendlink}}.
+Neither of them can be used in vertical mode.
+The text between the start and the end of the link
+constitutes the visible part of the link. Depending on the user interface, clicking
+or tapping or otherwise activating the link (e.g. pronouncing)
+will navigate to the destination of the link.
+The user interface might provide a visual clue to make the user aware of the
+available links but it also may choose to leave the visual clues to the author
+of the document (e.g. using a special image or a special font).
+
+The syntax is 
+\cs{HINTstartlink}  \sym{destination}
+and
+\cs{HINTendlink}
+with
+
+\medskip
+\rule \sym{destination}\index{destination+\sym{destination}}:\.{goto} \sym{label}.
+\rule \sym{label}\index{label+\sym{label}}:
+  \.{name} \.{\LB}\sym{general text}\.{\RB} \OR\ \.{num} \sym{integer}.
+\medskip
+
+As you can see, the link refers to its destination using a label
+which is either a name or a number.
+The destination can be defined by using the 
+\cs{HINTdest}\index{HINTdest+\cs{HINTdest}} primitive.
+Forward and backward links are allowed; the definition of a lable can either
+preceede or follow the use of the label. If at the end of the document a label
+is undefined, a warning is given, and the label will reference the beginning of the
+document.
+
+The syntax is
+\cs{HINTdest} \sym{label} \opt{\sym{placement}}
+with
+
+\medskip
+\rule\sym{placement}\index{placement+\sym{placement}}:
+\.{top}\index{top+{\tt top}} \OR\ \.{bot}\index{bot+{\tt bot}}.
+\medskip
+
+The optional placement argument specifies how to build the page 
+containing the destination location. \.{top} demands
+a page starting with the destination location. This is useful
+if the destination is for example the start of a section or chapter heading.
+Similarly \.{bot} asks for a page that ends with the destination location.
+The most common case is to omit the placement argument. In this case, the
+viewer will build a ``good'' page that includes the given destination.
+In case of a section heading, for example, it will most probably start the
+page with the section heading because section headings are usually preceded
+by a negative penalty that will convince the page builder that this is a good
+place to break the page. But if the section heading is immediately preceded
+by a chapter heading, the negative penalty found there will probably
+persuade the page builder to start with the chapter heading instead.
+
+There is a special label that has the form
+\.{name} \.{\LB}\.{HINT.home}\.{\RB}\index{HINT.home+{\tt HINT.home}}.
+It is used to mark the ``home page''\index{home page} of the document. User interfaces
+are encouraged to offer a button or keyboard shortcut to navigate to the
+document location labeled this way. The page should be a convenient
+starting point to explore the document. The typical place for this label
+would be the documents table of content.
+
+The labels that identify destinations in a document can also be used
+to define document outlines. A document outline\index{outline} is a document summary
+given as a hierarchical list of headings where each of them
+refers to a specific location in the document.
+
+The syntax is
+\cs{HINToutline}\index{HINToutline+\cs{HINToutline}}
+\sym{destination} \opt{\sym{depth}} \.{\LB}\sym{horizontal list}\.{\RB}.
+
+\medskip
+\rule \sym{depth}\index{depth+\sym{depth}}: \.{depth} \sym{integer}.
+\medskip
+
+The user interface can format the \sym{horizontal list} much like 
+a \cs{hbox} would do and displays it to the user. When the user selects
+this text, the document will be repositioned to show the destination location
+in the same way as with a link. In order to support also simpler
+user interfaces, the current \HINT\ backend also extracts the characters
+(and spaces) from the horizontal list (in top-left to bottom-right order)
+and makes this character string available to the user interface.
+
+
+The order in which outline items are defined is important because
+this is the order in which they will be presented to the reader of the
+document. The optional depth argument allows to structure 
+the list of outline items as a hierarchy. Outline items with a higher depth value are considered to be sub-items of items earlier in the list with lower
+depth values. If no depth value is given, the depth value is set to zero.
+It is not necessary to define depth values strictly consecutive.
+
+
+\subsection{Page Templates and Streams}\index{page template}\index{stream}
+
+To produce the final page, \TeX\ uses a special piece of program
+called the output routine\index{output routine}.  Because a \HINT\
+file is pure data, it can not contain output routines.  Instead it
+uses page templates to assemble pages from the main text, footnotes,
+floating illustrations, and other material.  I start here by
+describing how \HINT's page templates work and the special syntax used
+to specify them in a \TeX\ file that is about to be processed with
+Hi\TeX.  For those interested in how the design decision was made and
+how page templates relate to \TeX's page building mechanism, a
+separate section follows at the end.
+
+The syntax of a page template specification is:
+\cs{HINTsetpage}\index{HINTsetpage+\cs{HINTsetpage}}
+\sym{integer} \opt{\.{=}} \sym{name} 
+\opt{\sym{priority}} \opt{\sym{width}} \opt{\sym{height}}
+\.{\LB}\sym{vertical list} \sym{stream definition list}\.{\RB}
+
+
+The \sym{integer} specifies the page templates number in the range 1
+to 255.  The number 0 is reserved for the build in page template of
+the \HINT\ file format, which is used if no other page template has
+been defined. The page template 0 can not be redefined.
+The \sym{name} associates a name with the page template.  The name can
+be displayed by the \HINT\ viewer to help the user selecting a
+suitable page template.
+
+After the name follows an optional priority; it is used to select the
+``best page template'' if multiple templates are available. The
+default value is~1. The build-in template has priority~0.
+
+\medskip
+\rule\sym{priority}\index{priority+\sym{priority}}: {\tt priority} \sym{integer}.
+\medskip
+
+
+After that follows an optional width and height of the full page
+including the margins.  After subtracting \cs{hsize} from the width
+and \cs{vsize} from the height, the remainder is used for the margins
+around the displayed text.  For example giving the width as
+1.2\cs{hsize} will leave 0.1\cs{hsize} for the margins on both sides.
+In this case the margins will grow together with the available width
+of the display.  If the width is computed by adding 20pt
+to \cs{hsize}, the margin will be 10pt on both sides.  In this case
+the margin will not grow with the size of the display, but it will
+grow with the magnification factor.  Of course both methods can be
+used together.  The default is \cs{hsize} for the width and \cs{vsize}
+for the height so there are no margins.
+
+The following \sym{vertical list} defines the page itself. It should assign suitable values
+to \cs{topskip} and \cs{maxdepth} because the values valid at the end of the vertical list
+are stored in the page template and are used in the page building process. 
+The vertical list usually also specifies the insertion of content streams using a \sym{stream insert point}.
+
+\medskip
+\rule\sym{stream insert point}\index{stream insert point+\sym{stream insert point}}:
+  \cs{HINTstream} \sym{integer}.
+\medskip
+
+Here  the \sym{integer} must be in the range 0 to 254. The value 255 is invalid;
+the value 0 indicates the main body of text (what \TeX's page builder would normally put into
+box 255 before calling the output routine).
+Otherwise, the \sym{integer} is TeX's insertion number, that is the number of \TeX's box 
+containing the insertions. As usual, this box is filled using \TeX's \cs{insert} primitive. 
+So after plain \TeX\ has defined \cs{footins},
+the footnotes for the current page can be inserted after the main body of text in the \sym{vertical list}
+by saying \cs{HINTstream}\.0 followed by \cs{HINTstream}\cs{footins}.
+Of course you might want to have a footnote rule and a small skip to separate the 
+footnotes ---if there are any---from the main text. This can be achieved by a suitable
+\sym{stream definition} in the \sym{stream definition list}.
+
+\medskip
+\rule\sym{stream definition list}\index{stream definition list+\sym{stream definition list}}:
+  \OR\ \sym{stream definition list} \sym{stream definition}.
+\rule\sym{stream definition}\index{stream definition+\sym{stream definition}}:
+  \cs{HINTsetstream} \sym{integer}  \opt{\.{=}}
+\opt{{\tt preferred} \sym{integer}}
+\opt{\.{next} \sym{integer}}
+\opt{\.{ratio} \sym{integer}} \.{\LB}\sym{vertical list}\.{\RB}.
+\medskip
+
+
+The first \sym{integer} is the streams insertion number $i$,
+and it must match the \sym{integer} 
+previously used in the \sym{stream insert point}.
+Then follows the optional specification of a prefered stream with insertion number $p$,
+a next stream with insertion number $n$, and a split ratio $r$.
+If $r>0$, the contributions to stream $i$ are split between
+stream $p$ and $n$  in the ratio $r/1000$ for $p$ and $1-r/1000$ for $n$
+before contributing streams $p$ and $r$ to the page.
+Else if $p\ge0$ any insertion to stream $i$ is moved to stream $p$ as long as possible,
+and if $n\ge0$ we move an insert to stream $n$ if there is ``no room left'' in $p$ nor in $i$.
+How much ``room'' is available for the insertions is specified inside the vertical list
+that follows.
+Here \cs{dimen}$i$ should be set to the maximum total height of the insertions in class $i$ per page. 
+\cs{count}$i$ should be set to the magnification factor $f$,
+such that inserting a box of height $h$ will contribute $h*f/1000$ to the main page;
+and \cs{skip}$i$ should be set to the extra space needed if an insertion in class $i$ is present.
+
+This extra space is usually taken up by material that is inserted before and after the insertions,
+such as for example the footnote rule. This material can be defined by a 
+\sym{before list} and an \sym{after list}.
+
+\medskip\index{HINTbefore+\cs{HINTbefore}}\index{HINTafter+\cs{HINTafter}}
+\rule \sym{before list}\index{before list+\sym{before list}}:
+  \cs{HINTbefore} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
+\rule \sym{after list}\index{after list+\sym{after list}}:
+  \cs{HINTafter} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
+\medskip
+
+If you are interested in the design decision that motivate the definitions that have
+be given in this section, you should read the next section.
+
+
+\section{Replacing \TeX's Page Builder}
+
+\TeX\ uses an output\index{output routine} routine to finalize the page. 
+The output outine takes the material which the page builder had accumulated in {\tt box255}
+and attaches headers, footers, and floating material
+like figures, tables, and footnotes. The latter material is specified by insert nodes
+while headers and footers are often constructed using mark nodes.
+Running an output routine requires the full power of the \TeX\ engine and is not 
+part of the \HINT\ viewer. Therefore, \HINT\ replaces output routines by page templates\index{template}.
+\TeX\ can use different output routines for different parts of a book---for example
+the index might use a different output routine than the main body of text.
+
+\TeX\ uses insertions to describe floating content that is not necessarily displayed 
+where it is specified. Three examples may illustrate this:
+\itemize
+\item Footnotes\footnote*{Like this one.}  are specified in the middle of the text but are displayed at the
+bottom of the page.  Several
+footnotes\index{footnote} on the same page are collected and displayed together. The
+page layout may specify a short rule to separate footnotes from the
+main text, and if there are many short footnotes, it may use two columns
+to display them.  In extreme cases, the page layout may demand a long
+footnote to be split and continued on the next page.
+
+\item Illustrations\index{illustration} may be displayed exactly where specified if there is enough
+room on the page, but may move to the top of the page, the bottom of the page,
+the top of next page, or a separate page at the end of the chapter.
+
+\item Margin notes\index{margin note} are displayed in the margin on the same page starting at the top
+of the margin.
+\enditemize
+
+\HINT\ uses page templates and content streams to achieve similar effects.
+But before I describe the page building\index{page building} mechanisms of \HINT,
+let me summarize \TeX's page builder.
+
+\subsection{\TeX's page building mechanism}
+\TeX's page builder ignores leading glue\index{glue}, kern\index{kern},
+and penalty\index{penalty} nodes until the first
+box\index{box node} or rule\index{rule node} node is encountered;
+whatsit\index{whatsit node} nodes do not really contribute anything to
+a page; mark\index{mark node} nodes are recorded for later use.  Once
+the first box, rule, or insert\index{insert node} arrives, \TeX\ makes
+copies of all parameters that influence the page building process and
+uses these copies. These parameters are the \.{page\_goal} and the
+\.{page\_max\_depth}. Further, the variables {\tt page\_total}, {\tt page\_shrink},
+{\tt page\_stretch}, {\tt page\_depth}, and {\tt in\-sert\_pe\-nal\-ties} are
+initialized to zero.  The top skip\index{top skip} adjustment is made
+when the first box or rule arrives---possibly after an insert.
+Now the page builder accumulates material: normal material goes
+into {\tt box255}\index{box 255} and will change {\tt page\_total}, {\tt page\_shrink}, 
+{\tt page\_stretch}, and {\tt page\_depth}. The latter is adjusted so that 
+is does not exceed {\tt page\_max\_depth}.
+
+The handling of inserts\index{insert node} is more complex.
+\TeX\ creates an insert class using {\tt newinsert}. This reserves a number $i$
+and four registers: {\tt box\hair$i$} for the inserted material,
+{\tt count\hair$i$} for the magnification factor $f$, {\tt dimen\hair$i$}
+for the maximum size per page $d$, and {\tt skip\hair$i$} for the
+extra space needed on a page if there are any insertions of class $i$.
+
+For example plain \TeX\ allocates $n=254$ for footnotes\index{footnote} and sets
+{\tt count254} to~$1000$, {\tt dimen254} to 8in, and {\tt skip254} to {\tt \BS big\-skip\-amount}.
+
+An insertion node will specify the insertion class $i$, some vertical material,
+its natural height plus depth $x$, a {\tt split\-\_top\-\_skip}, a {\tt split\-\_max\_depth},
+and a {\tt floa\-ting\-\_pe\-nal\-ty}. 
+
+
+Now assume that an insert node with subtype 254 arrives at the page builder.
+If this is the first such insert, \TeX\ will decrease the {\tt page\_goal}
+by the width of {\tt skip254} and adds its stretchability and shrinkability
+to the total stretchability and shrinkability of the page. Later,
+the output routine will add some space and the footnote rule to fill just that
+much space and add just that much shrinkability and stretchability to the page.
+Then \TeX\ will normally add the vertical material in the insert node to
+{\tt box254} and decrease the {\tt page\_goal} by $x\times f/1000$.
+
+Special processing is required if \TeX\ detects that there is not enough space on
+the current page to accommodate the complete insertion.
+If already a previous insert did not fit on the page, simply the {\tt floating\_penalty}
+as given in the insert node is added to the total {\tt insert\_penalties}.
+Otherwise \TeX\ will test that the total natural height plus depth of {\tt box254} 
+including $x$ does not exceed the maximum size $d$ and that the 
+${\tt page\_total} + {\tt page\_depth} + x\times f/1000 - {\tt page\_shrink} \le {\tt page\_goal}$.
+If one of these tests fails, the current insertion
+is split in such a way as to make the size of the remaining insertions just pass the tests
+just stated.
+
+Whenever a glue node, or penalty node, or a kern node that is followed by glue arrives
+at the page builder, it rates the current position as a possible end of the page based on
+the shrinkability of the page and the difference between {\tt page\_total} and {\tt page\_goal}.
+As the page fills, the page breaks tend to become better and better until the
+page starts to get overfull and the page breaks get worse and worse until
+they reach the point where they become {\tt awful\_bad}. At that point,
+the page builder returns to the best page break found so far and fires up the 
+output routine.
+
+
+\subsection{\HINT\ Page Templates}
+Let's look at the problems that show up when implementing a replacement for \TeX's
+page building mechanism.
+
+\enumerate
+\item 
+An insertion node can not always specify its height $x$ because insertions may contain paragraphs that need
+to be broken in lines and the height of a paragraph depends in some non obvious way on
+its width. 
+
+\item 
+Before the viewer can compute the height $x$, it needs to know the width of the insertion. Just imagine
+displaying footnotes in two columns or setting notes in the margin. Knowing the width, it
+can pack the vertical material and derive its height and depth.
+
+\item
+\TeX's plain format provides an insert macro that checks whether there is still space
+on the current page, and if so, it creates a contribution to the main text body, otherwise it
+creates a {\tt topinsert}. Such a decision needs to be postponed to the \HINT\ viewer.
+
+\item
+\HINT\ has no output routines that would specify something like the space and the rule preceding the footnote.
+
+\item 
+\TeX's output routines have the ability to inspect the content of the boxes,
+split them, and distribute the content over the page.
+For example, the output routine for an index set in two column format might
+expect a box containing index entries up to a height of $2\times\.{vsize}$.
+It will split this box in the middle and display the top part in the left
+column and the bottom part in the right column. With this approach, the
+last page will show two partly filled columns of about equal size.
+
+\item
+\HINT\ has no mark nodes that could be used to create page headers or footers.
+Marks, like output routines, contain token lists and need the full \TeX\ interpreter
+for processing them. Hence, \HINT\ does not support mark nodes.
+\endenumerate
+
+
+Instead of output routines, \HINT\ uses page templates.
+Page templates are basically vertical boxes with \sym{stream insert points} marking the 
+positions where the content of the box registers, filled by the page builder,
+should appear. 
+To output the page, the viewer traverses the page template,
+replaces the placeholders by the appropriate box content, and 
+sets the glue. 
+
+It is only natural to treat the page's main body,
+inserts, and marks using the same mechanism. We call this
+mechanism a content stream\index{stream}. 
+Content streams are identified by a stream number in the range 0 to 254;
+the number 255 is used to indicate an invalid stream number.
+The stream number 0 is reserved for the main content stream; it is always defined.
+
+\medskip
+{\small \advance \leftskip by 30pt \advance \rightskip by 30pt 
+It is planed to implement a replacement for \TeX's mark nodes using
+different types of streams:
+\itemize
+\item normal streams correspond to \TeX's inserts and accumulate content on the page,
+\item first\index{first stream} streams correspond to \TeX's first marks and will contain only the first insertion of the page,
+\item last\index{last stream} streams correspond to \TeX's bottom marks and will contain only the last insertion of the page, and
+\item top\index{top stream} streams correspond to \TeX's top marks. Top streams are not yet implemented.
+\enditemize
+\medskip
+}
+
+Nodes from the content section are considered contributions to stream~0 except
+for insert nodes which will specify the stream number explicitly. 
+If the stream is not defined or is not used in the current page template, its content is simply ignored.
+
+The page builder needs a mechanism to redirect contributions from one content
+stream to another content stream based on the availability of space.
+Hence a \HINT\ content stream can optionally specify a preferred stream number,
+where content should go if there is still space available, a next stream number,
+where content should go if the present stream has no more space available, and
+a split ratio if the content is to be split between these two streams before
+filling in the template.
+
+Various stream parameters govern the treatment of contributions to the stream
+and the page building process.
+
+\itemize
+\item The magnification factor $f$: Inserting a box of height $h$ to this stream will contribute $h\times f/1000$
+to the height of the page under construction. For example, a stream
+that uses a two column format will have an $f$ value of 500; a stream
+that specifies notes that will be displayed in the page margin will
+have an $f$ value of zero.
+
+\item The height $h$: The extended dimension $h$ gives the maximum height this 
+stream is allowed to occupy on the current page.
+To continue the previous example, a stream that will be split into two columns
+will have $h=2\cdot\.{vsize}$ , and a stream that specifies
+notes that will be displayed in the page margin will have
+$h=1\cdot\.{vsize}$.  You can restrict the amount of space occupied by
+footnotes to the bottom quarter by setting the corresponding $h$ value
+to $h=0.25\cdot\.{vsize}$.
+
+\item The depth $d$: The dimension $d$ gives the maximum depth this 
+stream is allowed to have after formatting.
+
+\item The width $w$: The extended dimension $w$ gives the width of this stream 
+when formatting its content. For example margin notes
+should have the width of the margin less some surrounding space.
+
+\item The ``before'' list $b$: If there are any contributions to this
+stream on the current page, the material in list $b$
+is inserted {\it before\/} the material from the stream itself. For
+example, the short line that separates the footnotes from the main
+page will go, together with some surrounding space, into the list~$b$.
+
+\item The top skip glue $g$: This glue is inserted between the material
+from list $b$ and the first box of the stream, reduced
+by the height of the first box. Hence it specifies the distance between
+the material in $b$ and the first baseline of the stream content.
+
+\item The ``after'' list $a$: The list $a$ is treated like list $b$ but
+its material is placed {\it after\/} the  material from the stream itself.
+
+\item The ``preferred'' stream number $p$:  If $p\ne 255$, it is the number of 
+the {\it preferred\/} stream. If stream $p$ has still
+enough room to accommodate the current contribution, move the
+contribution to stream $p$, otherwise keep it.  For example, you can
+move an illustration to the main content stream, provided there is
+still enough space for it on the current page, by setting $p=0$.
+
+\item The ``next'' stream number $n$: If $n\ne 255$, it is the number of the 
+{\it next\/} stream. If a contribution can not be
+accommodated in stream $p$ nor in the current stream, treat it as an
+insertion to stream $n$.  For example, you can move contributions to
+the next column after the first column is full, or move illustrations
+to a separate page at the end of the chapter.
+
+\item The split ratio\index{split ratio} $r$: If $r$ is positive, both $p$ and $n$ must 
+be valid stream numbers and contents is not immediately moved to stream $p$ or $n$ as described before.
+Instead the content is kept in the stream itself until the current page is complete.
+Then, before inserting the streams into the page template, the content of
+this stream is formatted as a vertical box, the vertical box is
+split into a top fraction and a bottom fraction in the ratio $r/1000$
+for the top and $(1000-r)/1000$ for the bottom, and finally the top
+fraction is moved to stream $p$ and the bottom fraction to stream
+$n$. You can use this feature for example to implement footnotes
+arranged in two columns of about equal size. By collecting all the
+footnotes in one stream and then splitting the footnotes with $r=500$
+before placing them on the page into a right and left column.  Even
+three or more columns can be implemented by cascades of streams using
+this mechanism.
+\enditemize
+
+\HINT\ allows multiple page templates but Hi\TeX\ currently does not implement
+restricting them to individual page ranges and the viewer selects
+the page template with the highest priority. To support different output media, the page
+templates are named and a suitable user interface may offer the user a selection
+of possible page layouts. In this way, the page layout remains in the hands of the
+book designer, and the user has still the opportunity to pick a layout that best fits
+the display device.
+
+The build-in page template with number 0 is always defined and has priority 0.
+It will display just the main content stream. It puts a small margin 
+of $\.{hsize}/8 -4.5\hbox{pt}$ all around it.
+Given a letter size page, 8.5 inch wide, this formula yields a margin of 1 inch,
+matching \TeX's plain format. The margin will be positive as long as
+the page is wider than $1/2$ inch. For narrower pages, there will be no
+margin at all. In general, the \HINT\ viewer will never set {\tt hsize} larger
+than the width of the page and {\tt vsize} larger than its height.
+
+%8.5 in should give 1 inch margin 2/17
+%612pt should give 72pt margin
+%72pt = 612/8-4.5pt
+%This would give a positive margin starting at 36pt or 1/2 inch
+
+
+%\appendix
+
+%\plainsection{References}
+
+%{\baselineskip=11pt
+%\def\bfblrm{\small\rm}%
+%\def\bblem{\small\it}%
+%\bibliography{../hint}
+%\bibliographystyle{plain}
+%}
+
+\plainsection{Index}
+{
+\def\_{{\tt \UL}} % underline in a string
+\catcode`\_=\active \let_=\_ % underline is a letter
+\input hitexman.ind
+}
+
+\write\cont{} % ensure that the contents file isn't empty
+%  \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
+\closeout\cont% the contents information has been fully gathered
+\inx
+\fin
+\end
