@@ -1,0 +1,16 @@
+
+% quote '+'
+
+actual '+'
+encap ':'
+preamble "\\beginindex\n"
+postamble "\\endindex\n"
+headings_flag 1
+heading_prefix "\\indexheading "
+symhead_positive "{Symbols}"
+numhead_positive "{Numbers}"
+
+delim_0 "\\quad "
+delim_1 "\\quad "
+delim_2 "\\quad "
+
