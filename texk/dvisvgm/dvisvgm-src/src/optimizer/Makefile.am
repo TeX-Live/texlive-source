@@ -2,6 +2,7 @@ noinst_LIBRARIES = liboptimizer.a
 
 liboptimizer_a_SOURCES = \
 	AttributeExtractor.hpp      AttributeExtractor.cpp \
+	ClipPathReassigner.hpp      ClipPathReassigner.cpp \
 	DependencyGraph.hpp \
 	GroupCollapser.hpp          GroupCollapser.cpp  \
 	OptimizerModule.hpp \
@@ -11,4 +12,7 @@ liboptimizer_a_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
   	WSNodeRemover.hpp           WSNodeRemover.cpp
 
-AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include
+include ../../libs/defs.am
+
+AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include $(XXHASH_CFLAGS)
+

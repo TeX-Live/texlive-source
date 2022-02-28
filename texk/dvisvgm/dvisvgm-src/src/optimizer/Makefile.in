@@ -88,6 +88,10 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
+@HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
+@HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
+@HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 subdir = dvisvgm-src/src/optimizer
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
@@ -120,9 +124,10 @@ am__v_AR_1 =
 liboptimizer_a_AR = $(AR) $(ARFLAGS)
 liboptimizer_a_LIBADD =
 am_liboptimizer_a_OBJECTS = AttributeExtractor.$(OBJEXT) \
-	GroupCollapser.$(OBJEXT) RedundantElementRemover.$(OBJEXT) \
-	SVGOptimizer.$(OBJEXT) TextSimplifier.$(OBJEXT) \
-	TransformSimplifier.$(OBJEXT) WSNodeRemover.$(OBJEXT)
+	ClipPathReassigner.$(OBJEXT) GroupCollapser.$(OBJEXT) \
+	RedundantElementRemover.$(OBJEXT) SVGOptimizer.$(OBJEXT) \
+	TextSimplifier.$(OBJEXT) TransformSimplifier.$(OBJEXT) \
+	WSNodeRemover.$(OBJEXT)
 liboptimizer_a_OBJECTS = $(am_liboptimizer_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -140,6 +145,7 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/AttributeExtractor.Po \
+	./$(DEPDIR)/ClipPathReassigner.Po \
 	./$(DEPDIR)/GroupCollapser.Po \
 	./$(DEPDIR)/RedundantElementRemover.Po \
 	./$(DEPDIR)/SVGOptimizer.Po ./$(DEPDIR)/TextSimplifier.Po \
@@ -209,7 +215,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-am__DIST_COMMON = $(srcdir)/Makefile.in \
+am__DIST_COMMON = $(srcdir)/../../libs/defs.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../build-aux/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
@@ -223,8 +229,8 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-BROTLI_CFLAGS = @BROTLI_CFLAGS@
-BROTLI_LIBS = @BROTLI_LIBS@
+BROTLI_CFLAGS = @BROTLI_CFLAGS@ $(am__append_1)
+BROTLI_LIBS = @BROTLI_LIBS@ $(am__append_2)
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -305,8 +311,8 @@ STRIP = @STRIP@
 VERSION = @VERSION@
 WARNING_CFLAGS = @WARNING_CFLAGS@
 WARNING_CXXFLAGS = @WARNING_CXXFLAGS@
-WOFF2_CFLAGS = @WOFF2_CFLAGS@
-WOFF2_LIBS = @WOFF2_LIBS@
+WOFF2_CFLAGS = @WOFF2_CFLAGS@ $(am__append_3)
+WOFF2_LIBS = @WOFF2_LIBS@ $(am__append_4)
 ZLIB_DEPEND = @ZLIB_DEPEND@
 ZLIB_INCLUDES = @ZLIB_INCLUDES@
 ZLIB_LIBS = @ZLIB_LIBS@
@@ -368,6 +374,7 @@ top_srcdir = @top_srcdir@
 noinst_LIBRARIES = liboptimizer.a
 liboptimizer_a_SOURCES = \
 	AttributeExtractor.hpp      AttributeExtractor.cpp \
+	ClipPathReassigner.hpp      ClipPathReassigner.cpp \
 	DependencyGraph.hpp \
 	GroupCollapser.hpp          GroupCollapser.cpp  \
 	OptimizerModule.hpp \
@@ -377,12 +384,16 @@ liboptimizer_a_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
   	WSNodeRemover.hpp           WSNodeRemover.cpp
 
-AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include
+@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+@HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
+@HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
+@HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
+AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include $(XXHASH_CFLAGS)
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .cpp .lo .o .obj
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../libs/defs.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -402,6 +413,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
+$(srcdir)/../../libs/defs.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -427,6 +439,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AttributeExtractor.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClipPathReassigner.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupCollapser.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RedundantElementRemover.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOptimizer.Po@am__quote@ # am--include-marker
@@ -595,6 +608,7 @@ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
 
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/AttributeExtractor.Po
+	-rm -f ./$(DEPDIR)/ClipPathReassigner.Po
 	-rm -f ./$(DEPDIR)/GroupCollapser.Po
 	-rm -f ./$(DEPDIR)/RedundantElementRemover.Po
 	-rm -f ./$(DEPDIR)/SVGOptimizer.Po
@@ -647,6 +661,7 @@ installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/AttributeExtractor.Po
+	-rm -f ./$(DEPDIR)/ClipPathReassigner.Po
 	-rm -f ./$(DEPDIR)/GroupCollapser.Po
 	-rm -f ./$(DEPDIR)/RedundantElementRemover.Po
 	-rm -f ./$(DEPDIR)/SVGOptimizer.Po

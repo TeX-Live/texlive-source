@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2022-01-18
+.\"      Date: 2022-02-26
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.13.2
+.\"    Source: dvisvgm 2.13.3
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "2022\-01\-18" "dvisvgm 2\&.13\&.2" "dvisvgm Manual"
+.TH "DVISVGM" "1" "2022\-02\-26" "dvisvgm 2\&.13\&.3" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -628,7 +628,16 @@ or
 \fBid\fR, prevents this\&.
 .RE
 .PP
-\fBremove\-clippath\fR
+\fBreassign\-clippaths\fR
+.RS 4
+Collects all
+\fBclipPath\fR
+elements that differ only by their IDs\&. Afterwards, the duplicates are removed so that only one remains\&. All
+\fBclip\-path\fR
+attributes referencing one of the duplicates are updated accordingly\&.
+.RE
+.PP
+\fBremove\-clippaths\fR
 .RS 4
 Removes all redundant
 \fIclipPath\fR

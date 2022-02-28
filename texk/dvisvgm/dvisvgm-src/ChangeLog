@@ -1,3 +1,42 @@
+2022-02-27  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.13.3 
+
+  * NEWS: 
+  updated NEWS 
+
+2022-02-26  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * doc/dvisvgm.1, doc/dvisvgm.txt.in, src/optimizer/ClipPathReassigner.cpp, 
+    src/optimizer/ClipPathReassigner.hpp, src/optimizer/Makefile.am, 
+    src/optimizer/SVGOptimizer.cpp: 
+  added optimizer module to remove identical clipPath elements 
+
+  * doc/dvisvgm.1, doc/dvisvgm.txt.in, src/optimizer/SVGOptimizer.cpp: 
+  renamed optimizer module 'remove-clippath' to 'remove-clippaths' 
+
+  * src/optimizer/Makefile.am: 
+  added missing include path 
+
+2022-02-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/BoundingBox.cpp, src/BoundingBox.hpp, src/PsSpecialHandler.cpp, 
+    src/PsSpecialHandler.hpp: 
+  avoid adding clip-path attributes to all elements created from EPS/PDF 
+  files 
+
+2022-02-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PsSpecialHandler.cpp: 
+  moved 'transform' attribute of 'svg' element to wrapping group
+closes 
+  #178 
+
+  * src/PsSpecialHandler.cpp: 
+  properly wrap 'svg' element with group 
+
 2022-02-22  Martin Gieseking  <martin.gieseking@uos.de>
 
   * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
