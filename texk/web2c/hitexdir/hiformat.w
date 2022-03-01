@@ -24,7 +24,8 @@
 % dealings in this Software without prior written authorization from the
 % copyright holders.
 
-\input ../hint.sty
+\input btxmac.tex
+\input hint.sty
 
 %% defining how to display certain C identifiers
 

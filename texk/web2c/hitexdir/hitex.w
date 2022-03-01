@@ -5175,8 +5175,9 @@ that will be defined later.
 @d tracing_scan_tokens_code (etex_int_base+3) /*show pseudo file open and close*/
 @d tracing_nesting_code (etex_int_base+4) /*show incomplete groups and ifs within files*/
 @d saving_vdiscards_code (etex_int_base+5) /*save items discarded from vlists*/
-@d expand_depth_code (etex_int_base+6) /*maximum depth for expansion---\eTeX*/
-@d eTeX_state_code (etex_int_base+7) /*\eTeX\ state variables*/
+@d saving_hyph_codes_code (etex_int_base+6) /*save hyphenation codes for languages*/
+@d expand_depth_code (etex_int_base+7) /*maximum depth for expansion---\eTeX*/
+@d eTeX_state_code (etex_int_base+8) /*\eTeX\ state variables*/
 @d etex_int_pars (eTeX_state_code+eTeX_states) /*total number of \eTeX's integer parameters*/
 @#
 @d int_pars etex_int_pars /*total number of integer parameters*/
@@ -5248,8 +5249,9 @@ that will be defined later.
 @d tracing_ifs int_par(tracing_ifs_code)
 @d tracing_scan_tokens int_par(tracing_scan_tokens_code)
 @d tracing_nesting int_par(tracing_nesting_code)
-@d expand_depth int_par(expand_depth_code)
 @d saving_vdiscards int_par(saving_vdiscards_code)
+@d saving_hyph_codes int_par(saving_hyph_codes_code)
+@d expand_depth int_par(expand_depth_code)
 
 @<Assign the values |depth_threshold:=show_box_depth|...@>=
 depth_threshold=show_box_depth;
@@ -18137,6 +18139,7 @@ if (trie_not_ready) init_trie();
 #endif
 @;@/
 cur_lang=init_cur_lang;l_hyf=init_l_hyf;r_hyf=init_r_hyf;
+set_hyph_index;
 }
 
 @ The letters $c_1\ldots c_n$ that are candidates for hyphenation are placed
@@ -18210,8 +18213,9 @@ loop@+{@+if (is_char_node(s))
     goto resume;
     }
   else goto done1;
-  if (lc_code(c)!=0)
-    if ((lc_code(c)==c)||(uc_hyph > 0)) goto done2;
+  set_lc_code(c);
+  if (hc[0]!=0)
+    if ((hc[0]==c)||(uc_hyph > 0)) goto done2;
     else goto done1;
 resume: prev_s=s;s=link(prev_s);
   }
@@ -18227,9 +18231,10 @@ hn=0;
 loop@+{@+if (is_char_node(s))
     {@+if (font(s)!=hf) goto done3;
     hyf_bchar=character(s);c=qo(hyf_bchar);
-    if (lc_code(c)==0) goto done3;
+    set_lc_code(c);
+    if (hc[0]==0) goto done3;
     if (hn==63) goto done3;
-    hb=s;incr(hn);hu[hn]=c;hc[hn]=lc_code(c);hyf_bchar=non_char;
+    hb=s;incr(hn);hu[hn]=c;hc[hn]=hc[0];hyf_bchar=non_char;
     }
   else if (type(s)==ligature_node)
     @<Move the characters of a ligature node to |hu| and |hc|; but |goto done3|
@@ -18253,9 +18258,10 @@ to get to |done3| with |hn==0| and |hb| not set to any value.
 j=hn;q=lig_ptr(s);@+if (q > null) hyf_bchar=character(q);
 while (q > null)
   {@+c=qo(character(q));
-  if (lc_code(c)==0) goto done3;
+  set_lc_code(c);
+  if (hc[0]==0) goto done3;
   if (j==63) goto done3;
-  incr(j);hu[j]=c;hc[j]=lc_code(c);@/
+  incr(j);hu[j]=c;hc[j]=hc[0];@/
   q=link(q);
   }
 hb=s;hn=j;
@@ -18907,6 +18913,13 @@ str_number @!s, @!t; /*strings being compared or stored*/
 pool_pointer @!u, @!v; /*indices into |str_pool|*/
 scan_left_brace(); /*a left brace must follow \.{\\hyphenation}*/
 set_cur_lang;
+#ifdef @!INIT
+if (trie_not_ready)
+  {@+hyph_index=0;goto not_found1;
+  }
+#endif
+set_hyph_index;
+not_found1:
 @<Enter as many hyphenation exceptions as are listed, until coming to a right
 brace; then |return|@>;
 }
@@ -18939,7 +18952,8 @@ error();
 
 @ @<Append a new letter or hyphen@>=
 if (cur_chr=='-') @<Append the value |n| to list |p|@>@;
-else{@+if (lc_code(cur_chr)==0)
+else{@+set_lc_code(cur_chr);
+  if (hc[0]==0)
     {@+print_err("Not a letter");
 @.Not a letter@>
     help2("Letters in \\hyphenation words must have \\lccode>0.",@/
@@ -18947,7 +18961,7 @@ else{@+if (lc_code(cur_chr)==0)
     error();
     }
   else if (n < 63)
-    {@+incr(n);hc[n]=lc_code(cur_chr);
+    {@+incr(n);hc[n]=hc[0];
     }
   }
 
@@ -19243,6 +19257,7 @@ because we finish with the former just before we need the latter.
 @<Get ready to compress the trie@>=
 @<Sort \(t)the hyphenation...@>;
 for (p=0; p<=trie_size; p++) trie_hash[p]=0;
+hyph_root=compress_trie(hyph_root);
 trie_root=compress_trie(trie_root); /*identify equivalent subtries*/
 for (p=0; p<=trie_ptr; p++) trie_ref[p]=0;
 for (p=0; p<=255; p++) trie_min[p]=p+1;
@@ -19331,11 +19346,12 @@ value~0, which properly implements an ``empty'' family.
 @<Move the data into |trie|@>=
 h.rh=0;h.b0=min_quarterword;h.b1=min_quarterword; /*|trie_link=0|,
   |trie_op=min_quarterword|, |trie_char=qi(0)|*/
-if (trie_root==0)  /*no patterns were given*/
+if (trie_max==0)  /*no patterns were given*/
   {@+for (r=0; r<=256; r++) trie[r]=h;
   trie_max=256;
   }
-else{@+trie_fix(trie_root); /*this fixes the non-holes in |trie|*/
+else{@+if (hyph_root > 0) trie_fix(hyph_root);
+  if (trie_root > 0) trie_fix(trie_root); /*this fixes the non-holes in |trie|*/
   r=0; /*now we will zero out all the holes*/
   @/do@+{s=trie_link(r);trie[r]=h;r=s;
   }@+ while (!(r > trie_max));
@@ -19374,11 +19390,13 @@ bool @!digit_sensed; /*should the next digit be treated as a letter?*/
 quarterword @!v; /*trie op code*/
 trie_pointer @!p, @!q; /*nodes of trie traversed during insertion*/
 bool @!first_child; /*is |p==trie_l[q]|?*/
-ASCII_code @!c; /*character being inserted*/
+int @!c; /*character being inserted*/
 if (trie_not_ready)
   {@+set_cur_lang;scan_left_brace(); /*a left brace must follow \.{\\patterns}*/
   @<Enter all of the patterns into a linked trie, until coming to a right
 brace@>;
+  if (saving_hyph_codes > 0)
+    @<Store hyphenation codes for current language@>;
   }
 else{@+print_err("Too late for ");print_esc("patterns");
   help1("All patterns must be given before typesetting begins.");
@@ -19484,6 +19502,7 @@ two_halves @!h; /*template used to zero out |trie|'s holes*/
 if (trie_root!=0)
   {@+first_fit(trie_root);trie_pack(trie_root);
   }
+if (hyph_root!=0) @<Pack all stored |hyph_codes|@>;
 @<Move the data into |trie|@>;
 trie_not_ready=false;
 }
@@ -24932,6 +24951,7 @@ print_ln();print_int(hyph_count);print(" hyphenation exception");
 if (hyph_count!=1) print_char('s');
 if (trie_not_ready) init_trie();
 dump_int(trie_max);
+dump_int(hyph_start);
 for (k=0; k<=trie_max; k++) dump_hh(trie[k]);
 dump_int(trie_op_ptr);
 for (k=1; k<=trie_op_ptr; k++)
@@ -24963,6 +24983,7 @@ undump_size(0, trie_size,"trie size", j);
 #ifdef @!INIT
 trie_max=j;
 #endif
+undump(0, j, hyph_start);
 for (k=0; k<=j; k++) undump_hh(trie[k]);
 undump_size(0, trie_op_size,"trie op size", j);
 #ifdef @!INIT
@@ -26267,7 +26288,9 @@ goto done;
 @ @<Let |d| be the width of the whatsit |p|@>=d=0
 
 @ @d adv_past(A) @+if (subtype(A)==language_node)
-    {@+cur_lang=what_lang(A);l_hyf=what_lhm(A);r_hyf=what_rhm(A);@+}
+    {@+cur_lang=what_lang(A);l_hyf=what_lhm(A);r_hyf=what_rhm(A);
+    set_hyph_index;
+    }
 
 @<Advance \(p)past a whatsit node in the \(l)|line_break| loop@>=@+
 adv_past(cur_p)
@@ -26583,6 +26606,8 @@ primitive("tracingnesting", assign_int, int_base+tracing_nesting_code);@/
 @!@:tracing\_nesting\_}{\.{\\tracingnesting} primitive@>
 primitive("savingvdiscards", assign_int, int_base+saving_vdiscards_code);@/
 @!@:saving\_vdiscards\_}{\.{\\savingvdiscards} primitive@>
+primitive("savinghyphcodes", assign_int, int_base+saving_hyph_codes_code);@/
+@!@:saving\_hyph\_codes\_}{\.{\\savinghyphcodes} primitive@>
 
 @ @d every_eof equiv(every_eof_loc)
 
@@ -26596,6 +26621,7 @@ case tracing_ifs_code: print_esc("tracingifs");@+break;
 case tracing_scan_tokens_code: print_esc("tracingscantokens");@+break;
 case tracing_nesting_code: print_esc("tracingnesting");@+break;
 case saving_vdiscards_code: print_esc("savingvdiscards");@+break;
+case saving_hyph_codes_code: print_esc("savinghyphcodes");@+break;
 
 @ In order to handle \.{\\everyeof} we need an array |eof_seen| of
 boolean variables.
@@ -28488,6 +28514,76 @@ if (sa_index(p) < dimen_val_limit) free_node(p, word_node_size);
 else free_node(p, pointer_node_size);
 }@+ while (!(sa_chain==null));
 }
+
+@ When reading \.{\\patterns} while \.{\\savinghyphcodes} is positive
+the current |lc_code| values are stored together with the hyphenation
+patterns for the current language.  They will later be used instead of
+the |lc_code| values for hyphenation purposes.
+
+The |lc_code| values are stored in the linked trie analogous to patterns
+$p_1$ of length~1, with |hyph_root==trie_r[0]| replacing |trie_root| and
+|lc_code(p_1)| replacing the |trie_op| code.  This allows to compress
+and pack them together with the patterns with minimal changes to the
+existing code.
+
+@d hyph_root trie_r[0] /*root of the linked trie for |hyph_codes|*/
+
+@<Initialize table entries...@>=
+hyph_root=0;hyph_start=0;
+
+@ @<Store hyphenation codes for current language@>=
+{@+c=cur_lang;first_child=false;p=0;
+@/do@+{q=p;p=trie_r[q];
+}@+ while (!((p==0)||(c <= so(trie_c[p]))));
+if ((p==0)||(c < so(trie_c[p])))
+  @<Insert a new trie node between |q| and |p|, and make |p| point to it@>;
+q=p; /*now node |q| represents |cur_lang|*/
+@<Store all current |lc_code| values@>;
+}
+
+@ We store all nonzero |lc_code| values, overwriting any previously
+stored values (and possibly wasting a few trie nodes that were used
+previously and are not needed now).  We always store at least one
+|lc_code| value such that |hyph_index| (defined below) will not be zero.
+
+@<Store all current |lc_code| values@>=
+p=trie_l[q];first_child=true;
+for (c=0; c<=255; c++)
+  if ((lc_code(c) > 0)||((c==255)&&first_child))
+    {@+if (p==0)
+      @<Insert a new trie node between |q| and |p|, and make |p| point to
+it@>@;
+    else trie_c[p]=si(c);
+    trie_o[p]=qi(lc_code(c));
+    q=p;p=trie_r[q];first_child=false;
+    }
+if (first_child) trie_l[q]=0;@+else trie_r[q]=0
+
+@ We must avoid to ``take'' location~1, in order to distinguish between
+|lc_code| values and patterns.
+
+@<Pack all stored |hyph_codes|@>=
+{@+if (trie_root==0) for (p=0; p<=255; p++) trie_min[p]=p+2;
+first_fit(hyph_root);trie_pack(hyph_root);
+hyph_start=trie_ref[hyph_root];
+}
+
+@ The global variable |hyph_index| will point to the hyphenation codes
+for the current language.
+
+@d set_hyph_index  /*set |hyph_index| for current language*/
+  if (trie_char(hyph_start+cur_lang)!=qi(cur_lang)
+    ) hyph_index=0; /*no hyphenation codes for |cur_lang|*/
+  else hyph_index=trie_link(hyph_start+cur_lang)
+@#
+@d set_lc_code(A)  /*set |hc[0]| to hyphenation or lc code for |A|*/
+  if (hyph_index==0) hc[0]=lc_code(A);
+  else if (trie_char(hyph_index+A)!=qi(A)) hc[0]=0;
+  else hc[0]=qo(trie_op(hyph_index+A))
+
+@<Glob...@>=
+static trie_pointer @!hyph_start; /*root of the packed trie for |hyph_codes|*/
+static trie_pointer @!hyph_index; /*pointer to hyphenation codes for |cur_lang|*/
 
 @ When |saving_vdiscards| is positive then the glue, kern, and penalty
 nodes removed by the page builder or by \.{\\vsplit} from the top of a
