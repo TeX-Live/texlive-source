@@ -1,3 +1,10 @@
+2022-03-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* help.h,
+	* tangle.ch,
+	* tangleboot.pin,
+	* weave.ch: Permit user-defined output file names.
+
 2022-02-24  Karl Berry  <karl@freefriends.org>
 
 	* dvitype.ch (scan_bop, [99]): output a newline between

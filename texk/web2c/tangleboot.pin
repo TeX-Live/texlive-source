@@ -118,12 +118,14 @@ strictmode:=false;
 end else if(strcmp(longoptions[optionindex].name,'length')=0)then begin
 len:=atoi(optarg);if(len<=0)or(len>maxidlength)then len:=maxidlength;
 unambiglength:=len;end;until getoptreturnval=-1;
-if(optind+1<>argc)and(optind+2<>argc)then begin writeln(stderr,'tangle',
-': Need one or two file arguments.');usage('tangle');end;
+if(optind+1>argc)or(optind+3<argc)then begin writeln(stderr,'tangle',
+': Need one to three file arguments.');usage('tangle');end;
 webname:=extendfilename(cmdline(optind),'web');
-if optind+2=argc then begin chgname:=extendfilename(cmdline(optind+1),
-'ch');end;pascalname:=basenamechangesuffix(webname,'.web','.p');end;
-{:188}procedure initialize;var{16:}i:0..255;{:16}{41:}wi:0..2;
+if optind+2<=argc then begin if strcmp(chartostring('-'),cmdline(optind
++1))<>0 then chgname:=extendfilename(cmdline(optind+1),'ch');end;
+if optind+3=argc then pascalname:=extendfilename(cmdline(optind+2),
+chartostring('p'))else pascalname:=basenamechangesuffix(webname,'.web',
+'.p');end;{:188}procedure initialize;var{16:}i:0..255;{:16}{41:}wi:0..2;
 {:41}{45:}zi:0..4;{:45}{51:}h:0..hashsize;
 {:51}begin kpsesetprogramname(argv[0],'tangle');parsearguments;
 {10:}history:=0;{:10}{14:}xchr[32]:=' ';xchr[33]:='!';xchr[34]:='"';

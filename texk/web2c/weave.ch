@@ -440,19 +440,23 @@ begin
   until getopt_return_val = -1;
 
   {Now |optind| is the index of first non-option on the command line.}
-  if (optind + 1 <> argc) and (optind + 2 <> argc) then begin
-    write_ln (stderr, my_name, ': Need one or two file arguments.');
+  if (optind + 1 > argc) or (optind + 3 < argc) then begin
+    write_ln (stderr, my_name, ': Need one to three file arguments.');
     usage (my_name);
   end;
 
   {Supply |".web"| and |".ch"| extensions if necessary.}
   web_name := extend_filename (cmdline (optind), 'web');
-  if optind + 2 = argc then begin
-    chg_name := extend_filename (cmdline (optind + 1), 'ch');
+  if optind + 2 <= argc then begin
+    if strcmp(char_to_string('-'), cmdline (optind + 1)) <> 0 then
+      chg_name := extend_filename (cmdline (optind + 1), 'ch');
   end;
 
   {Change |".web"| to |".tex"| and use the current directory.}
-  tex_name := basename_change_suffix (web_name, '.web', '.tex');
+  if optind + 3 = argc then
+    tex_name := extend_filename (cmdline (optind + 2), 'tex')
+  else
+    tex_name := basename_change_suffix (web_name, '.web', '.tex');
 end;
 
 @ Here are the options we allow.  The first is one of the standard GNU options.

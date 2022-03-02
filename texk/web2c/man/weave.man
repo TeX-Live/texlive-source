@@ -1,4 +1,4 @@
-.TH WEAVE 1 "09 January 2022" "Web2C @VERSION@"
+.TH WEAVE 1 "02 March 2022" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -21,7 +21,12 @@ weave \- translate WEB to TeX
 .B weave
 .RB [ \-x ]
 .IR webfile [ \fB.web\fP ]
-.RI [ changefile [ \fB.ch\fP ]]
+[ {
+.IR changefile [ \fB.ch\fP ]
+|\-}
+[
+.IR outfile [ \fB.tex\fP ]
+] ]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete
@@ -49,7 +54,8 @@ are redefined.)
 .PP
 The output \*(TX file name is formed by adding
 .B .tex
-to the root of the \*(WB file name.
+to the root of the \*(WB file name or from the third argument.
+In this case you can specify '-' as an empty change file.
 .PP
 There are several macros
 that probably should be redefined by
