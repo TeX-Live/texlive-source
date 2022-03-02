@@ -21150,13 +21150,16 @@ static bool its_all_over(void) /*do this when \.{\\end} or \.{\\dump} occurs*/
 {@+
 if (privileged())
   {@+if ((page_head==page_tail)&&(dead_cycles==0))
-    {@+pointer p=head;
-       if (option_no_empty_page)
-         while (p!=tail)
+    {
+       if (head==tail) return true;
+       else if (option_no_empty_page)
+       { pointer p=link(head);
+         while (p!=null)
          { if (is_visible(p)) break;
            else p=link(p);
          }
-       if (p==tail) return true;
+         if (p==null) return true;
+       }
     }
   back_input(); /*we will try to end again after ejecting residual material*/
   tail_append(new_set_node());
@@ -30791,7 +30794,7 @@ static void build_page(void)
   do
   { pointer p= link(contrib_head);
     pointer q=null; /* for output nodes */
-    pointer *t; /*the tail of the output nodes*/
+    pointer *t=NULL; /*the tail of the output nodes*/
     bool eject=(type(p)==penalty_node && penalty(p)<=eject_penalty);
     @<Record the bottom mark@>@;
     @<Suppress empty pages if requested@>@;
@@ -30860,6 +30863,11 @@ an eject penalty until either something gets printed on the page or
 another eject penalty comes along. To override the delayed output,
 a penalty less or equal to a double |eject_penalty| can be used.
 The function |its_all_over| is an example for such a use.
+It seems that the eliminated nodes do not contain anything of value
+for the output routine, but the output routine might have other
+resources, like the first column of a two column page, which it might
+put back on the contribution list. So it is wise to call the output routine
+and give it a chance.
 
 @<Suppress empty pages if requested@>=
 if (option_no_empty_page &&
@@ -31049,7 +31057,7 @@ if (!is_char_node(*p))
 @ @<Fire up the output routine for |q|@>=
 { pointer r=new_null_box();type(r)=vlist_node;
   subtype(r)=0;shift_amount(r)=0;height(r)=hvsize;
-  if (t==NULL) list_ptr(r)=new_glue(ss_glue);
+  if (t==NULL) list_ptr(r)=null;
   else { list_ptr(r)=q;  *t=new_glue(ss_glue); }
   flush_node_list(box(255)); /* just in case \dots */
   box(255)=r;
