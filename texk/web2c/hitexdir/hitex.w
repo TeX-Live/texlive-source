@@ -21149,8 +21149,14 @@ and contribution list are empty, and when the last output was not a
 static bool its_all_over(void) /*do this when \.{\\end} or \.{\\dump} occurs*/
 {@+
 if (privileged())
-  {@+if ((page_head==page_tail)&&(head==tail)&&(dead_cycles==0))
-    {@+return true;
+  {@+if ((page_head==page_tail)&&(dead_cycles==0))
+    {@+pointer p=head;
+       if (option_no_empty_page)
+         while (p!=tail)
+         { if (is_visible(p)) break;
+           else p=link(p);
+         }
+       if (p==tail) return true;
     }
   back_input(); /*we will try to end again after ejecting residual material*/
   tail_append(new_set_node());
@@ -30913,6 +30919,14 @@ static bool is_visible(pointer p)
     default: return true;
   }
 }
+
+@ Because we will need this procedure in the |its_all_over| function.
+We add a forward declaration
+
+@<Forward declarations@>=
+static bool is_visible(pointer p);
+
+
 @ An important feature of the new routine is the call to
 |hfix_defaults|.  It occurs when the first ``visible mark'' is placed
 in the output. At that point we record the current values of \TeX's
