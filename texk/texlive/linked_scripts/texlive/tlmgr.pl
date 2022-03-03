@@ -1,14 +1,14 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 61401 2021-12-24 22:42:10Z karl $
+# $Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
 #
-# Copyright 2008-2021 Norbert Preining
+# Copyright 2008-2022 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 61401 $';
-my $datrev = '$Date: 2021-12-24 23:42:10 +0100 (Fri, 24 Dec 2021) $';
+my $svnrev = '$Revision: 62273 $';
+my $datrev = '$Date: 2022-02-28 09:52:17 +0100 (Mon, 28 Feb 2022) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4306,7 +4306,7 @@ sub show_one_package_detail {
         $binsize += $binsz{$a} if defined($binsz{$a});
         my $atlp = $tlpdb->get_package($tlp->name . ".$a");
         if (!$atlp) {
-          tlwarn("$prg: cannot find depending package" . $tlp->name . ".$a\n");
+          tlwarn("$prg: cannot find depending package " . $tlp->name . ".$a\n");
           return($F_WARNING);
         }
         my %abinsz = %{$atlp->binsize};
@@ -10236,7 +10236,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 61401 2021-12-24 22:42:10Z karl $
+$Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
