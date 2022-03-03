@@ -141,6 +141,7 @@
 @define function makesuffix ();
 @define function odd ();
 @define function ord ();
+@define function removesuffix ();
 @define function round ();
 @define function strcmp ();
 @define function stringcast ();

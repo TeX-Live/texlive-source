@@ -74,7 +74,7 @@ to the root of the \*(WB file name.
 An optional second output file is a string pool file,
 whose name is formed by adding
 .B .pool
-to the root of the \*(WB file name.
+to the root of the Pascal file name.
 .\"=====================================================================
 .SH "OPTIONS"
 This version of

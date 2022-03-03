@@ -1,3 +1,7 @@
+2022-03-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* tangle.man: Clarify the creation of the pool file name.
+
 2022-03-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* tangle.man,

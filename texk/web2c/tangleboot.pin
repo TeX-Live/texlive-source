@@ -45,9 +45,9 @@ scanninghex:boolean;{:143}{156:}nextcontrol:eightbits;
 {:156}{164:}currepltext:textpointer;{:164}{171:}modulecount:0..12287;
 {:171}{179:}{troubleshooting:boolean;ddt:integer;dd:integer;
 debugcycle:integer;debugskipped:integer;}{:179}{185:}{wo:0..2;}
-{:185}{199:}webname,chgname,pascalname,poolname:constcstring;
+{:185}{200:}webname,chgname,pascalname,poolname:constcstring;
 forceuppercase,forcelowercase,allowunderlines,strictmode:boolean;
-unambiglength:0..maxidlength;{:199}{30:}{procedure debughelp;forward;}
+unambiglength:0..maxidlength;{:200}{30:}{procedure debughelp;forward;}
 {:30}{31:}procedure error;var j:0..outbufsize;k,l:0..bufsize;
 begin if phaseone then{32:}begin if changing then write(stdout,
 '. (change file ')else write(stdout,'. (');
@@ -64,37 +64,37 @@ write(stdout,'... ');end{:33};fflush(stdout);history:=2;
 {:31}{188:}procedure parsearguments;const noptions=10;
 var longoptions:array[0..noptions]of getoptstruct;
 getoptreturnval:integer;optionindex:cinttype;currentoption:0..noptions;
-len:integer;begin{189:}currentoption:=0;
+len:integer;begin{190:}currentoption:=0;
 longoptions[currentoption].name:='help';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:189}{190:}longoptions[currentoption].name:='version';
+{:190}{191:}longoptions[currentoption].name:='version';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:190}{191:}longoptions[currentoption].name:='mixedcase';
+{:191}{192:}longoptions[currentoption].name:='mixedcase';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:191}{192:}longoptions[currentoption].name:='uppercase';
+{:192}{193:}longoptions[currentoption].name:='uppercase';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:192}{193:}longoptions[currentoption].name:='lowercase';
+{:193}{194:}longoptions[currentoption].name:='lowercase';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:193}{194:}longoptions[currentoption].name:='underlines';
+{:194}{195:}longoptions[currentoption].name:='underlines';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:194}{195:}longoptions[currentoption].name:='strict';
+{:195}{196:}longoptions[currentoption].name:='strict';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:195}{196:}longoptions[currentoption].name:='loose';
+{:196}{197:}longoptions[currentoption].name:='loose';
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:196}{197:}longoptions[currentoption].name:='length';
+{:197}{198:}longoptions[currentoption].name:='length';
 longoptions[currentoption].hasarg:=1;longoptions[currentoption].flag:=0;
 longoptions[currentoption].val:=0;currentoption:=currentoption+1;
-{:197}{198:}longoptions[currentoption].name:=0;
+{:198}{199:}longoptions[currentoption].name:=0;
 longoptions[currentoption].hasarg:=0;longoptions[currentoption].flag:=0;
-longoptions[currentoption].val:=0;{:198};
+longoptions[currentoption].val:=0;{:199};
 unambiglength:=defunambiglength;
 repeat getoptreturnval:=getoptlongonly(argc,argv,'',longoptions,
 addressof(optionindex));if getoptreturnval=-1 then begin;
@@ -118,14 +118,17 @@ strictmode:=false;
 end else if(strcmp(longoptions[optionindex].name,'length')=0)then begin
 len:=atoi(optarg);if(len<=0)or(len>maxidlength)then len:=maxidlength;
 unambiglength:=len;end;until getoptreturnval=-1;
-if(optind+1>argc)or(optind+3<argc)then begin writeln(stderr,'tangle',
-': Need one to three file arguments.');usage('tangle');end;
+{189:}if(optind+1>argc)or(optind+3<argc)then begin writeln(stderr,
+'tangle',': Need one to three file arguments.');usage('tangle');end;
 webname:=extendfilename(cmdline(optind),'web');
 if optind+2<=argc then begin if strcmp(chartostring('-'),cmdline(optind
 +1))<>0 then chgname:=extendfilename(cmdline(optind+1),'ch');end;
-if optind+3=argc then pascalname:=extendfilename(cmdline(optind+2),
-chartostring('p'))else pascalname:=basenamechangesuffix(webname,'.web',
-'.p');end;{:188}procedure initialize;var{16:}i:0..255;{:16}{41:}wi:0..2;
+if optind+3=argc then begin pascalname:=extendfilename(cmdline(optind+2)
+,chartostring('p'));
+poolname:=extendfilename(removesuffix(pascalname),'pool');
+end else begin pascalname:=basenamechangesuffix(webname,'.web','.p');
+poolname:=basenamechangesuffix(webname,'.web','.pool');end;{:189}end;
+{:188}procedure initialize;var{16:}i:0..255;{:16}{41:}wi:0..2;
 {:41}{45:}zi:0..4;{:45}{51:}h:0..hashsize;
 {:51}begin kpsesetprogramname(argv[0],'tangle');parsearguments;
 {10:}history:=0;{:10}{14:}xchr[32]:=' ';xchr[33]:='!';xchr[34]:='"';
@@ -229,8 +232,7 @@ k:=k+1;i:=i+1;end;byteptr[w]:=k;bytestart[nameptr+3]:=k;
 nameptr:=nameptr+1;
 if buffer[idfirst]<>34 then ilk[p]:=t else{64:}begin ilk[p]:=1;
 if l-doublechars=2 then equiv[p]:=buffer[idfirst+1]+1073741824 else
-begin if stringptr=256 then begin poolname:=basenamechangesuffix(webname
-,'.web','.pool');rewritebin(pool,poolname);end;
+begin if stringptr=256 then rewritebin(pool,poolname);
 equiv[p]:=stringptr+1073741824;l:=l-doublechars-1;
 if l>99 then begin writeln(stdout);
 write(stdout,'! Preprocessed string is too long');error;end;
