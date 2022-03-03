@@ -667,6 +667,9 @@ runpopen (char *cmd, const char *mode)
   char *safecmd = NULL;
   char *cmdname = NULL;
   int allow;
+#if IS_pTeX && !defined(WIN32)
+  char *cmd2 = NULL;
+#endif
 
 #ifdef WIN32
   char *pp;
@@ -676,14 +679,27 @@ runpopen (char *cmd, const char *mode)
   }
 #endif
 
+#if IS_pTeX && !defined(WIN32)
+  cmd2 = (char *)ptenc_from_internal_enc_string_to_utf8((unsigned char *)cmd);
+  if (!cmd2) cmd2=(char *)cmd;
+#endif
+
   /* If restrictedshell == 0, any command is allowed. */
   if (restrictedshell == 0)
     allow = 1;
   else
+#if IS_pTeX && !defined(WIN32)
+    allow = shell_cmd_is_allowed (cmd2, &safecmd, &cmdname);
+#else
     allow = shell_cmd_is_allowed (cmd, &safecmd, &cmdname);
+#endif
 
   if (allow == 1)
+#if IS_pTeX && !defined(WIN32)
+    f = popen (cmd2, mode);
+#else
     f = popen (cmd, mode);
+#endif
   else if (allow == 2)
     f = popen (safecmd, mode);
   else if (allow == -1)
@@ -692,6 +708,9 @@ runpopen (char *cmd, const char *mode)
   else
     fprintf (stderr, "\nrunpopen command not allowed: %s\n", cmdname);
 
+#if IS_pTeX && !defined(WIN32)
+  if (cmd!=cmd2) free(cmd2);
+#endif
   if (safecmd)
     free (safecmd);
   if (cmdname)

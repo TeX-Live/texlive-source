@@ -1,8 +1,14 @@
+2022-03-03  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* texmfmp.c: Convert the argument of runpopen to utf8 for pTeX.
+	  https://github.com/texjporg/tex-jp-build/issues/81
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* openclose.c (open_input): Reencode nameoffile to utf8 for pTeX.
 	* texmfmp.c: Change type of str_pool to unsigned short for pTeX.
 	  We use only 0--511, and use flag 0x100 for Japanese char.
+	  https://github.com/texjporg/tex-jp-build/issues/81
 
 2022-01-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
