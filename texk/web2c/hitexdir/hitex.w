@@ -1824,7 +1824,9 @@ amounts of user interaction:
 @<Glob...@>=
 static int @!interaction; /*current level of interaction*/
 
-@ @<Set init...@>=interaction=error_stop_mode;
+@ @<Set init...@>=
+if (interaction_option<0) interaction=error_stop_mode;
+else interaction=interaction_option;
 
 @ \TeX\ is careful not to call |error| when the print |selector| setting
 might be unusual. The only possible values of |selector| at the time of
@@ -25029,6 +25031,7 @@ tracing_stats=0
 
 @ @<Undump a couple more things and the closing check word@>=
 undump(batch_mode, error_stop_mode, interaction);
+if (interaction_option>=0) interaction=interaction_option;
 undump(0, str_ptr, format_ident);
 undump_int(x);
 if ((x!=69069)||eof(fmt_file)) goto bad_fmt
@@ -33983,9 +33986,8 @@ by this option, and finally the value to store in the flag variable.
 
 Besides the flag variables that occur in the table,
 a few string variables may be set using the options.
-The following is a complete list of these variables---except
-for the the |interaction| variable of \TeX.
-Flag variables are initialized with |-1| to indicate an undefined value;
+The following is a complete list of these variables.
+Variables are initialized with |-1| to indicate an undefined value;
 string variables are initialized with |NULL|.
 
 @<Global...@>=
@@ -33994,6 +33996,7 @@ static int etexp=0;
 static int ltxp=0;
 static int parsefirstlinep=-1;
 static int filelineerrorstylep=-1;
+static int interaction_option=-1;
 static const char *user_progname=NULL, *output_directory=NULL, *c_job_name=NULL;
 static char *dump_name=NULL;@#
 int option_no_empty_page=true, option_hyphen_first=true;
@@ -34085,15 +34088,17 @@ else if (ARGUMENT_IS("version")){@+
 }
 
 
-@ The ``interaction'' option sets \TeX's |interaction| variable
+@ The ``interaction'' option sets the |interaction_option| variable
 based on its string argument contained in the |optarg| variable.
+If defined, the |interaction_option| will be used to set \TeX's
+|interaction| variable in the |initialize| and the |undump| functions.
 
 @<handle the option at |option_index|@>=
 else @+if (ARGUMENT_IS ("interaction"))@t\2@> {
-      if (STREQ (optarg, "batchmode"))        interaction = batch_mode;
-      else if (STREQ (optarg, "nonstopmode")) interaction = nonstop_mode;
-      else if (STREQ (optarg, "scrollmode"))  interaction = scroll_mode;
-      else if (STREQ (optarg, "errorstopmode")) interaction = error_stop_mode;
+      if (STREQ (optarg, "batchmode"))        interaction_option = batch_mode;
+      else if (STREQ (optarg, "nonstopmode")) interaction_option = nonstop_mode;
+      else if (STREQ (optarg, "scrollmode"))  interaction_option = scroll_mode;
+      else if (STREQ (optarg, "errorstopmode")) interaction_option = error_stop_mode;
       else WARNING1 ("Ignoring unknown argument `%s' to --interaction", optarg);
     }
 
