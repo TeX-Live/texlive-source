@@ -42,16 +42,7 @@ These iterations consist of two steps:
 the library and program modules, and finds (should find) nothing to be
 done.
 
-4.2 Build problems
-==================
-
-If configuring or building a module fails, you should first try to find
-and fix the problem.  Failing that, a possible workaround is to remove
-the subdirectory for that module from the build tree (so 'configure'
-won't try to run there, and finally rerun the top level 'make' (or
-'./Build' '--no-clean').
-
-4.3 Build in parallel
+4.2 Build in parallel
 =====================
 
 The TL build system carefully formulates dependencies as well as 'make'
@@ -63,7 +54,7 @@ N>1 or even 'make -j') that can considerably speed up the TL build.
 using a configure cache file, i.e., specifying the 'configure' option
 '-C' (recommended).
 
-4.4 Build distribution
+4.3 Build distribution
 ======================
 
 Running 'make dist' at the top level creates a tarball
@@ -76,7 +67,7 @@ Makefiles, but the result is not a complete or even usable TeX system,
 since all the support files are lacking; *note Installing::.  We do not
 actually distribute any such tarball, and have no plans to do so.
 
-4.5 Build one package
+4.4 Build one package
 =====================
 
 To build one package, the basic idea is to use the 'configure' option
@@ -87,8 +78,8 @@ invoked to build an individual program or library, first building any
 required libraries.
 
    Here is an example from start to finish for working on 'dvipdfm-x'.
-(Unfortunately, this does not suffice for building the TeX engines; see
-the next section.)
+Unfortunately, this does not suffice for building the TeX engines; see
+the next section.
 
      mkdir mydir && cd mydir  # new working directory
 
@@ -106,9 +97,16 @@ the next section.)
      # Do the make:
      make >&outm || echo fail
 
-     # Test:
+     # Run the tests:
      cd texk/dvipdfm-x
      make check
+
+     # Run the new binary in the buil tree, finding support files
+     # in a separate tree for a TeX Live release YYYY
+     # (Bourne shell syntax):
+     TEXMFROOT=/usr/local/texlive/YYYY \
+     TEXMFCNF=$TEXMFROOT/texmf-dist/web2c \
+     ./xdvipdfmx ...
 
    Then you can modify source files in 'mydir/texk/dvipdfm-x' and rerun
 'make' in 'mydir/Work/texk/dvipdfm-x' to rebuild; that build directory
@@ -126,10 +124,13 @@ desired; check the output from 'configure --help'.  It is also a good
 idea to run 'make check' after making any changes, to ensure that
 whatever tests have been written still pass.
 
-   Finally, the above retrieves the entire TL source tree (several
-hundred megabytes).  It is natural to ask if this is really necessary.
-Strictly speaking, the answer is no, but it is vastly more convenient to
-do so.  If you cut down the source tree, you must also give additional
+Reducing source download size
+.............................
+
+The above retrieves the entire TL source tree (several hundred
+megabytes).  It is natural to ask if this is really necessary.  Strictly
+speaking, the answer is no, but it is vastly more convenient to do so.
+If you cut down the source tree, you must also give additional
 'configure' flags to individually disable using system versions of
 libraries, or the intricacies of the dependencies (such as 'teckit'
 requiring 'zlib') will have undesired side effects.  For an example of
@@ -137,26 +138,46 @@ this approach, see the 'build-pdftex.sh' script in the 'pdftex'
 development source (details at <http://pdftex.org>), which is indeed
 such a cut-down TL source tree.
 
-   Some libraries and programs require C++11.  If you want to build with
-an older compiler lacking such support, you need to (re)move those
-source directories; specifying '--disable' for them does not suffice,
-unfortunately.  Specifically, before running 'configure':
+GCC used by default
+...................
 
-     rm -rf libs/icu libs/graphite2 texk/dvisvgm
-
-   Also, even with '--disable-all-pkgs', dependencies are (currently)
-checked.  For instance, if a (non-MacOSX) system does not have
-'fontconfig', XeTeX cannot be built (*note Prerequisites::), and
-'configure' will terminate even with '--disable-xetex'.  To proceed
-without such dependencies, specify '--enable-missing' also.  (Patches to
-improve this would be most welcome.)
-
-   By default, the 'gcc' compilers will be used if present; otherwise,
+By default, the 'gcc' compilers will be used if present; otherwise,
 individual packages may use something different.  You can explicitly
 specify the compilers to be used with the environment variables 'CC',
 'CXX', and 'OBJCXX'.
 
-4.6 Build one engine
+Removing C+11 dependency
+........................
+
+Some libraries and programs require C++11; one such is XeTeX. If you
+want to build with an older compiler lacking such support, you need to
+(re)move those source directories; unfortunately, specifying '--disable'
+for them does not suffice.  It's also necessary to specify
+'--disable-xetex' explicitly.  Specifically, before running 'configure
+--disable-xetex ...':
+
+     rm -rf libs/icu libs/graphite2 texk/dvisvgm texk/web2c/xetexdir
+
+   Also, even with '--disable-all-pkgs', dependencies are (currently)
+checked.  One notable case: if a (non-MacOS) system does not have
+'fontconfig', XeTeX cannot be built (*note Prerequisites::), and
+'configure' will terminate even with '--disable-xetex'.  To proceed
+without such dependencies, specify '--enable-missing' also.
+
+   As of 2022, HarfBuzz also requires C++11.  Therefore even more would
+have to be disabled and removed, notably including 'luahbtex', the
+standard engine used for LuaLaTeX.  Removing that would not be
+acceptable for builds intended for distribution; but perhaps for testing
+the above information could still be useful.
+
+   In general, the TL 'configure' will run in all directories.
+Therefore a general workaround for build problems is to remove failing
+directories from the tree, and also specify the relevant '--disable-...'
+option(s).
+
+   Patches to improve all this would be most welcome.
+
+4.5 Build one engine
 ====================
 
 Unfortunately, there is one common case where the steps in the preceding
@@ -170,16 +191,20 @@ original TeX:
 
      cd Work        # top build directory
      ../configure --without-x --disable-shared --disable-all-pkgs \
-                  --enable-tex --disable-synctex -C CFLAGS=-g CXXFLAGS=-g
+                  --enable-tex --disable-synctex --disable-xetex \
+                  --enable-missing -C CFLAGS=-g CXXFLAGS=-g
      make
      cd texk/web2c  # cd engine build directory
      make tex       # must specify target
 
    The first 'make' run will configure everything, and even build the
-libraries, even though the packages are disabled.  The source tree can
-be cut down to just what is needed for the given engine (the separate
-pdfTeX and LuaTeX source repositories do this, for example), but see
-caveats in previous section.
+libraries, even though the packages are disabled.
+
+   The source tree can be cut down to just what is needed for the given
+engine (the separate pdfTeX and LuaTeX source repositories do this, for
+example), but see caveats in previous section.  When the
+'--disable-xetex' and '--enable-missing' options are needed is also
+explained in the previous section.
 
    If you want to debug an X-related program or shared library setup, or
 other variants, change the 'configure' options accordingly.  Either
@@ -188,10 +213,31 @@ other variants, change the 'configure' options accordingly.  Either
    Then it is necessary to again specify the target engine ('tex', in
 the above) in the 'make'.
 
-   All this is somewhat unfortunate.  We hope to improve the situation
-in the future.  Patches are welcome.
+   All these complications are rather unfortunate.  Patches are welcome.
 
-4.7 Cross compilation
+Testing one engine
+..................
+
+To run only the tests for a given engine, say 'hitex':
+
+     make -C $ww check SUBDIRS=. TESTS='$(hitex_tests)'
+
+where '$ww' is the web2c build directory, that is,
+'ww=/wherever/Build/source/Work/texk/web2c'.
+
+   It's also possible to run individual tests the same way, using the
+test name exactly as specified in the '.am' file:
+
+     make -C $ww check SUBDIRS=. TESTS=hitexdir/tests/hello.test
+
+   If you get tired of looking at the 'Entering'/'Leaving directory'
+lines, you can add the (GNU) make option '--no-print-dir'.
+
+   You may find it useful to put lengthy incantations like this into a
+trivial shell script with a short name (say, 'hitst').  Then you just
+run 'hitst' and edit the file when necessary to change things around.
+
+4.6 Cross compilation
 =====================
 
 In a cross compilation a "build" system is used to create binaries to be
@@ -209,14 +255,14 @@ canonical host name, but note that this should _not_ be '--host=HOST'
 (*note (autoconf)Hosts and Cross-Compilation::).
 
    In order to build, e.g., 32-bit binaries with 'clang' on a 64-bit
-MacOSX system one could use:
+MacOS system one could use:
 
      TL_BUILD_ENV="CC='clang -arch i386' \
        CXX='clang++ -arch i386' \
        OBJCXX='clang++ -arch i386'" \
        ./Build --build=i386-apple-darwin
 
-4.7.1 Cross configuring
+4.6.1 Cross configuring
 -----------------------
 
 In a standard cross compilation, binaries for the host system cannot
@@ -262,7 +308,7 @@ C and C++ programs required for the build process as configure arguments
      BUILDCXXFLAGS=...
      BUILDLDFLAGS=...
 
-4.7.2 Cross problems
+4.6.2 Cross problems
 --------------------
 
 The fact that binaries for the host system cannot be executed on the

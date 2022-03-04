@@ -1,4 +1,3 @@
-# $Id: TLConfig.pm 62186 2022-02-26 17:51:21Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
 # Copyright 2007-2021 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -7,7 +6,7 @@
 use strict; use warnings;
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 62186 $';
+my $svnrev = '$Revision: 62096 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -62,7 +61,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-our $ReleaseYear = 2022;
+our $ReleaseYear = 2021;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.

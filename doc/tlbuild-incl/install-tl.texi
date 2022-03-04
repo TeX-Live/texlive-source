@@ -24,8 +24,6 @@ install-tl [@emph{option}]...
 
 install-tl-windows.bat [@emph{option}]...
 
-install-tl-advanced.bat [@emph{option}]...
-
 @node install-tl DESCRIPTION
 @appendixsec DESCRIPTION
 
@@ -171,6 +169,12 @@ actions.  To install multiple custom binary sets, manually rename
 For more information on custom binaries, see
 @url{https://tug.org/texlive/custom-bin.html}.  For general information on
 building TeX Live, see @url{https://tug.org/texlive/build.html}.
+
+@item @strong{-debug-fakenet}
+@anchor{install-tl @strong{-debug-fakenet}}
+
+Pretend we're doing a network install, for the sole purpose of testing
+broken downloads via moving package files aside in a tlnet mirror.
 
 @item @strong{-debug-translation}
 @anchor{install-tl @strong{-debug-translation}}
@@ -515,9 +519,6 @@ Set the default paper size for all relevant programs; must be either
 @item @code{TEXLIVE_INSTALL_PREFIX}
 @anchor{install-tl @code{TEXLIVE_INSTALL_PREFIX}}
 
-@item @code{TEXLIVE_INSTALL_TEXDIR}
-@anchor{install-tl @code{TEXLIVE_INSTALL_TEXDIR}}
-
 @item @code{TEXLIVE_INSTALL_TEXMFCONFIG}
 @anchor{install-tl @code{TEXLIVE_INSTALL_TEXMFCONFIG}}
 
@@ -536,11 +537,13 @@ Set the default paper size for all relevant programs; must be either
 @item @code{TEXLIVE_INSTALL_TEXMFSYSVAR}
 @anchor{install-tl @code{TEXLIVE_INSTALL_TEXMFSYSVAR}}
 
-Specify the respective directories.  @code{TEXLIVE_INSTALL_PREFIX} defaults
-to @code{/usr/local/texlive}, while @code{TEXLIVE_INSTALL_TEXDIR} defaults to
-the release directory within that prefix, e.g.,
-@code{/usr/local/texlive/2016}.  All the defaults can be seen by running the
+Specify the respective directories. @code{TEXLIVE_INSTALL_PREFIX} defaults
+to @code{/usr/local/texlive}. All the defaults can be seen by running the
 installer interactively and then typing @code{D} for the directory menu.
+
+To override the so-called @code{TEXDIR}, which defaults to the release
+directory within that prefix, e.g., @code{/usr/local/texlive/2020}, use a
+profile file (q.v.).
 
 @item @code{NOPERLDOC}
 @anchor{install-tl @code{NOPERLDOC}}
@@ -556,5 +559,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: install-tl 58938 2021-04-21 21:26:24Z karl $
+$Id: install-tl 62146 2022-02-22 22:48:10Z karl $
 

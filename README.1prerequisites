@@ -6,32 +6,41 @@
 ***************
 
 Overall, building the TeX Live programs, when using all libraries from
-the TL source tree, requires C and C++11 compilers and GNU 'make'.  If
-'make' from your 'PATH' is not GNU make, you can set the 'MAKE'
-environment variable to whatever is necessary.
+the TL source tree, requires C and C++11 compilers, GNU 'make', and
+Python.
 
-   GNU 'make' is required only because of some third-party libraries,
-notably FreeType; all the TL-maintained directories (and
-Automake/Autoconf output in general) work with any reasonable 'make'.
+   * If 'make' from your 'PATH' is not GNU 'make', you can set the
+     'MAKE' environment variable to whatever is necessary.
 
-   A C++11 compiler is similarly required because of the third-party
-library ICU; the program 'dvisvgm' also requires C++11.  It is possible
-to build everything else with older compilers, but you have to remove
-the C++11-dependent sources.  *Note Build one package::.
+     GNU 'make' is required only because of third-party libraries,
+     notably FreeType.  Automake/Autoconf output in general, and the
+     TL-maintained directories, work with any reasonable 'make'.(1)
+
+   * A C++11 compiler is similarly required because of the third-party
+     libraries ICU and HarfBuzz (at least); the program 'dvisvgm' also
+     requires C++11.  It is possible to build what remains with older
+     compilers, but you have to remove the C++11-dependent sources.
+     *Note Build one package::.
+
+   * Python is required by ICU tests.  (If you know how to disable these
+     tests and thus eliminate the requirement, please write.)
 
    A few programs in the tree have additional requirements:
 
 'web2c'
-     requires 'perl' for some tests run by 'make check'.
+     requires 'perl' for some tests run by 'make check'.  Incidentally,
+     the TeX Live installer ('install-tl') and manager ('tlmgr') are
+     also written in Perl, but this does not matter for compiling the
+     sources.
 
 'xdvik'
 'xpdfopen'
-     require X11 headers and libraries, typically in "development"
+     require X11 headers and libraries, typically in devel(opment)
      packages that are not installed by default.
 
 'xetex'
      requires 'fontconfig' (again both headers and library), or, for
-     MacOSX only, the 'ApplicationServices' and 'Cocoa' frameworks.
+     MacOS only, the 'ApplicationServices' and 'Cocoa' frameworks.
 
 'xindy'
      requires GNU 'clisp', 'libsigsegv', and 'libiconv'; additionally,
@@ -60,6 +69,14 @@ expect:
    If you haven't modified any source files, and infrastructure tools
 such as 'autoconf' or 'makeinfo' are still being run, check your
 timestamps--notably, 'use-commit-times' must be set to 'yes' in your
-Subversion configuration (*note Build system tools::).  Barring buggy
-commits, no infrastructure tools are needed to do a normal build.
+Subversion configuration (*note Build system tools::).  No
+infrastructure tools are needed to do a normal build (barring bugs).
+
+   ---------- Footnotes ----------
+
+   (1) There is one exception in TL: the 'tangle-sh' and related rules
+use '$@' to mean the target name, a feature not present in all 'make's.
+This could be alleviated by laborious editing, but since there's no way
+to avoid GNU 'make' for builds of the entire tree, it does not seem
+worth the trouble.
 

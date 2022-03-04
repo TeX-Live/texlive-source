@@ -27,12 +27,12 @@ many extra hassles, so don't do that, tempting as it may be.
 
    Currently the versions we use are:
 
-     autoconf (GNU Autoconf) 2.69
-     automake (GNU automake) 1.16.2
-     bison (GNU Bison) 3.7.4
+     autoconf (GNU Autoconf) 2.71
+     automake (GNU automake) 1.16.5
+     bison (GNU Bison) 3.8.2
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.4.6
-     m4 (GNU M4) 1.4.18
+     m4 (GNU M4) 1.4.19
      makeinfo (GNU texinfo) 6.7
 
    These versions should be used to update the generated files (e.g.,
@@ -409,7 +409,7 @@ modifications documented in 'TLpatches/*', and a wrapper 'configure.ac'
 and 'Makefile.am' that descends into 'xindy-src'.
 
    The 'xindy' build requires a 'make' that supports a 'VPATH' build,
-can handle all targets, and do not refer to '${top_srcdir}' or
+can handle all targets, and does not refer to '${top_srcdir}' or
 '${top_builddir}'.  The fragment 'xindy/ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([xindy], , [disable])
@@ -569,13 +569,41 @@ end, also make sure that the whole tree builds from scratch.
    After final success, don't forget to commit.  (Or email the TL
 maintainers with the patch.)
 
-   Caveat: adding a new TeX engine is not completely different, but it's
-not all that similar, either.  In that case, the work is done inside a
-new subdirectory of 'texk/web2c/'.  Many things are common to all the
-engines, other things need to be copied and possibly modified for each
-one, yet others are unique to each.  No general recipe is possible.
+6.6.2 Adding a new engine
+-------------------------
 
-6.6.2 Adding a new generic library module
+Adding a new TeX engine is not completely different from adding a
+program, but it's not all that similar, either.  In this case, the main
+work is done by creating a new subdirectory of 'texk/web2c/' for the
+engine.  The subdirectory is conventionally named ending in 'dir', like
+'pdftexdir' and 'xetexdir', to avoid clashes with executable names.
+
+   The source files for the new engine should be put in this
+'NEWENGINEdir' subdirectory.  Also, a file
+'NEWENGINEdir/am/NEWENGINE.am' (e.g., 'pdftexdir/am/pdftex.am' is needed
+with the Makefile fragment needed to build it.
+
+   The overall 'web2c/Makefile.am' needs to have an 'include' statement
+added to insert that 'NEWENGINE.am' file.
+
+   In 'web2c/ac/web2c.ac', a line needs to be added in the definition of
+the 'kpse_tex_progs' variable to include it in the build.  That line
+specifies whether the new engine is built by default, and the additional
+libraries requires.
+
+   For examples of building engines in CWEB, you can check the existing
+'hitexdir' and 'mplibdir' directories; these are somewhat simpler than
+LuaTeX.  Of course, every engine will have its own unique features and
+requirements, so existing examples will only take you so far.
+
+   Web2c is built as one "package", with each subdirectory's '.am'
+fragment inserted with an Automake 'include'.  This means that, for
+instance, '$(srcdir)' is '.../web2c', not '.../webdir/enginedir'.  It is
+a difficult setup to come to terms with, but the alternative is to
+recurse into each engine subdirectory, and that would be far worse
+(*note (automake)Directories::).
+
+6.6.3 Adding a new generic library module
 -----------------------------------------
 
 A generic library module in a subdirectory 'libs/LIB' must not depend on
@@ -614,7 +642,7 @@ library.  In addition, the definition of the M4 macro
 line:
    'AC_REQUIRE([KPSE_LIB_SYSTEM_FLAGS])'
 
-6.6.3 Adding a new TeX-specific library module
+6.6.4 Adding a new TeX-specific library module
 ----------------------------------------------
 
 A TeX-specific library module in a subdirectory 'texk/LIB' may depend on

@@ -839,8 +839,8 @@ is available in a remote repository using
 @item @strong{--data @code{item1,item2,...}}
 @anchor{tlmgr @strong{--data @code{item1@comma{}item2@comma{}...}}}
 
-If the option @code{--data} is given, its argument must be a comma separated
-list of field names from: @code{name}, @code{category}, @code{localrev},
+If the option @code{--data} is given, its argument must be a comma or colon 
+separated list of field names from: @code{name}, @code{category}, @code{localrev},
 @code{remoterev}, @code{shortdesc}, @code{longdesc}, @code{installed}, @code{size},
 @code{relocatable}, @code{depends}, @code{cat-version}, @code{cat-date}, @code{cat-license},
 plus various @code{cat-contact-*} fields (see below).
@@ -1386,9 +1386,10 @@ written to the terminal.
 
 @end table
 
-This action does not automatically remove symlinks to executables from
-system directories; you need to run @code{tlmgr path remove} (@ref{tlmgr path,, path})
-yourself if you are using this feature and want stale symlinks removed.
+Except with @code{--all}, this @code{remove} action does not automatically
+remove symlinks to executables from system directories; you need to run
+@code{tlmgr path remove} (@ref{tlmgr path,, path}) yourself if you remove an individual
+package with a symlink in a system directory.
 
 @node tlmgr repository
 @appendixsubsec repository
@@ -1902,62 +1903,56 @@ where the spaces are optional but the @code{=} is required.
 The allowed keys are:
 
 @table @asis
-@item @code{auto-remove}, value 0 or 1 (default 1), same as command-line option.
-@anchor{tlmgr @code{auto-remove}@comma{} value 0 or 1 (default 1)@comma{} same as command-line option.}
+@item @code{auto-remove =} 0 or 1 (default 1), same as command-line option.
+@anchor{tlmgr @code{auto-remove =} 0 or 1 (default 1)@comma{} same as command-line option.}
 
-@item @code{gui-expertmode}, value 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.
-@anchor{tlmgr @code{gui-expertmode}@comma{} value 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.}
+@item @code{gui-expertmode =} 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.
+@anchor{tlmgr @code{gui-expertmode =} 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.}
 
-@item @code{gui-lang} @emph{llcode}, with a language code value as with the command-line option.
-@anchor{tlmgr @code{gui-lang} @emph{llcode}@comma{} with a language code value as with the command-line option.}
+@item @code{gui-lang =} @emph{llcode}, with a language code value as with the command-line option.
+@anchor{tlmgr @code{gui-lang =} @emph{llcode}@comma{} with a language code value as with the command-line option.}
 
-@item @code{no-checksums}, value 0 or 1 (default 0, see below).
-@anchor{tlmgr @code{no-checksums}@comma{} value 0 or 1 (default 0@comma{} see below).}
+@item @code{no-checksums =} 0 or 1 (default 0, see below).
+@anchor{tlmgr @code{no-checksums =} 0 or 1 (default 0@comma{} see below).}
 
-@item @code{persistent-downloads}, value 0 or 1 (default 1), same as command-line option.
-@anchor{tlmgr @code{persistent-downloads}@comma{} value 0 or 1 (default 1)@comma{} same as command-line option.}
+@item @code{persistent-downloads =} 0 or 1 (default 1), same as command-line option.
+@anchor{tlmgr @code{persistent-downloads =} 0 or 1 (default 1)@comma{} same as command-line option.}
 
-@item @code{require-verification}, value 0 or 1 (default 0), same as command-line option.
-@anchor{tlmgr @code{require-verification}@comma{} value 0 or 1 (default 0)@comma{} same as command-line option.}
+@item @code{require-verification =} 0 or 1 (default 0), same as command-line option.
+@anchor{tlmgr @code{require-verification =} 0 or 1 (default 0)@comma{} same as command-line option.}
 
-@item @code{tkfontscale}, value any float. Controls the scaling of fonts in the Tk based frontends.
-@anchor{tlmgr @code{tkfontscale}@comma{} value any float. Controls the scaling of fonts in the Tk based frontends.}
+@item @code{tkfontscale =} @emph{floating-point number} (default 1.0); scaling factor for fonts in the Tk-based frontends.
+@anchor{tlmgr @code{tkfontscale =} @emph{floating-point number} (default 1.0); scaling factor for fonts in the Tk-based frontends.}
 
-@item @code{update-exclude}, value: comma-separated list of packages (no space allowed). Same as the command line option @code{--exclude} for the action @code{update}.
-@anchor{tlmgr @code{update-exclude}@comma{} value: comma-separated list of packages (no space allowed). Same as the command line option @code{--exclude} for the action @code{update}.}
+@item @code{update-exclude =} @emph{comma-separated list of packages} (no spaces allowed). Same as the command line option @code{--exclude} for the @code{update} action.
+@anchor{tlmgr @code{update-exclude =} @emph{comma-separated list of packages} (no spaces allowed). Same as the command line option @code{--exclude} for the @code{update} action.}
 
-@item @code{verify-downloads}, value 0 or 1 (default 1), same as command-line option.
-@anchor{tlmgr @code{verify-downloads}@comma{} value 0 or 1 (default 1)@comma{} same as command-line option.}
+@item @code{verify-downloads =} 0 or 1 (default 1), same as command-line option.
+@anchor{tlmgr @code{verify-downloads =} 0 or 1 (default 1)@comma{} same as command-line option.}
 
 @end table
 
 The system-wide config file can contain one additional key:
 
 @table @asis
-@item @code{allowed-actions} @emph{action1} [,@emph{action},...] The value is a comma-separated list of @code{tlmgr} actions which are allowed to be executed when @code{tlmgr} is invoked in system mode (that is, without @code{--usermode}).
-@anchor{tlmgr @code{allowed-actions} @emph{action1} [@comma{}@emph{action}@comma{}...] The value is a comma-separated list of @code{tlmgr} actions which are allowed to be executed when @code{tlmgr} is invoked in system mode (that is@comma{} without @code{--usermode}).}
-
-This allows distributors to include the @code{tlmgr} in their packaging, but
-allow only a restricted set of actions that do not interfere with their
-distro package manager.  For native TeX Live installations, it doesn't
-make sense to set this.
+@item @code{allowed-actions =} @emph{action1}[,@emph{action2},...] The value is a comma-separated list (no spaces) of @code{tlmgr} actions which are allowed to be executed when @code{tlmgr} is invoked in system mode (that is, without @code{--usermode}). This allows distributors to include @code{tlmgr} in their packaging, but allow only a restricted set of actions that do not interfere with their distro package manager. For native TeX Live installations, it doesn't make sense to set this.
+@anchor{tlmgr @code{allowed-actions =} @emph{action1}[@comma{}@emph{action2}@comma{}...] The value is a comma-separated list (no spaces) of @code{tlmgr} actions which are allowed to be executed when @code{tlmgr} is invoked in system mode (that is@comma{} without @code{--usermode}). This allows distributors to include @code{tlmgr} in their packaging@comma{} but allow only a restricted set of actions that do not interfere with their distro package manager. For native TeX Live installations@comma{} it doesn't make sense to set this.}
 
 @end table
 
-The @code{no-checksums} key needs more explanation.  By default, package
-checksums computed and stored on the server (in the TLPDB) are compared
-to checksums computed locally after downloading.  @code{no-checksums}
-disables this process.
-
-The checksum algorithm is SHA-512.  Your system must have one of (looked
-for in this order) the Perl @code{Digest::SHA} module, the @code{openssl}
-program (@url{https://openssl.org}), the @code{sha512sum} program (from GNU
-Coreutils, @url{https://www.gnu.org/software/coreutils}), or finally the
-@code{shasum} program (just to support old Macs).  If none of these are
-available, a warning is issued and @code{tlmgr} proceeds without checking
-checksums.  (Incidentally, other SHA implementations, such as the pure
-Perl and pure Lua modules, are much too slow to be usable in our
-context.)  @code{no-checksums} avoids the warning.
+Finally, the @code{no-checksums} key needs more explanation. By default,
+package checksums computed and stored on the server (in the TLPDB) are
+compared to checksums computed locally after downloading.
+@code{no-checksums} disables this process. The checksum algorithm is
+SHA-512. Your system must have one of (looked for in this order) the
+Perl @code{Digest::SHA} module, the @code{openssl} program
+(@url{https://openssl.org}), the @code{sha512sum} program (from GNU Coreutils,
+@url{https://www.gnu.org/software/coreutils}), or finally the @code{shasum}
+program (just to support old Macs). If none of these are available, a
+warning is issued and @code{tlmgr} proceeds without checking checksums.
+@code{no-checksums} avoids the warning. (Incidentally, other SHA
+implementations, such as the pure Perl and pure Lua modules, are much
+too slow to be usable in our context.)
 
 @node tlmgr CRYPTOGRAPHIC VERIFICATION
 @appendixsec CRYPTOGRAPHIC VERIFICATION
@@ -2108,7 +2103,6 @@ just as in normal mode.
 
 In user mode, these actions operate only on the user tree's
 configuration files and/or @code{texlive.tlpdb}.
-creates configuration files in user tree
 
 @node tlmgr MULTIPLE REPOSITORIES
 @appendixsec MULTIPLE REPOSITORIES
@@ -2764,5 +2758,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 58938 2021-04-21 21:26:24Z karl $
+$Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
 
