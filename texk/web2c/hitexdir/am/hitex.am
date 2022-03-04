@@ -23,7 +23,8 @@ endif HITEX
 
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) 
 hitex_CPPFLAGS += -I$(srcdir)/libmd5
-hitex_CPPFLAGS += -DINIT -DSTAT -DDEBUG
+hitex_CPPFLAGS += -DINIT -DSTAT
+# -DDEBUG drops into an interactive debugging session.
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a
 hitex_LDADD += libmd5.a
 hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a

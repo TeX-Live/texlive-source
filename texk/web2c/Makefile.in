@@ -4649,7 +4649,8 @@ euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/
 # If that changes, have to set at top level and use +=.
 @HITEX_TRUE@man1_MANS = hitexdir/hishrink.man hitexdir/histretch.man hitexdir/hitex.man
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
-	-DINIT -DSTAT -DDEBUG
+	-DINIT -DSTAT
+# -DDEBUG drops into an interactive debugging session.
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a libmd5.a
 hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
 #
