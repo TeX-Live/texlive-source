@@ -25,16 +25,22 @@
 % copyright holders.
 
 \input cwebmac
+\input btxmac.tex
 \input hint.sty
 
 \makeindex
 \maketoc
 
 \titletrue
-\pageno=-2
+%\pageno=-2
 
-\def\lastrevision{${}$Revision: 2541 ${}$}
-\def\lastdate{${}$Date: 2021-10-26 09:03:28 +0200 (Tue, 26 Oct 2021) ${}$}
+\def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
+\setrevision$Revision: 2705 $
+\def\setdate$#1(#2) ${\gdef\lastdate{#2}}
+\setdate$Date: 2022-03-04 16:48:46 +0100 (Fri, 04 Mar 2022) $
+
+
+\null
 
 \font\largetitlefont=cmssbx10 scaled\magstep4
 \font\Largetitlefont=cmssbx10 at 40pt
@@ -47,10 +53,10 @@
 {
   \baselineskip=1cm\parindent=0pt
   \largetitlefont\raggedright  Hi\TeX\par
-  \vskip 10pt plus 0.3fill
+  \vskip 10pt plus 0.1fill
   \leftline{\smalltitlefont User Manual} 
   \vskip-3pt
-  \vskip 10pt plus 0.3fill
+  \vskip 10pt plus 0.5fill
   \hskip 0pt plus 2fill \it  F\"ur Beatriz\hskip 0pt plus 0.5fill\hbox{}
   \vskip 10pt plus 3fill
   \leftline{\smalltitlefont Version 1.1 (Draft)}
@@ -58,23 +64,52 @@
   \raggedright\baselineskip=12pt
   \bf MARTIN RUCKERT \ \it Munich University of Applied Sciences\par
   \bigskip
-  \lastdate, \lastrevision\par
-  \smallskip
 }
-{\raggedright\advance\rightskip 3.5pc 
-\def\:{\discretionary{}{}{}}
-\noindent
-Internet page  {\tt http:\://hint.\:userweb.\:mwn.\:de/\:hint/\:format.html}
-may contain current information about this book, downloadable software,
-and news. 
+\eject
 
-\smallskip
-\noindent
+\titletrue
+\begingroup
+\figrm
+\parindent=0pt
+
+{\raggedright\advance\rightskip 3.5pc 
+The author has taken care in the preparation of this document,
+but makes no expressed or implied warranty of any kind and assumes no
+responsibility for errors or omissions. No liability is assumed for
+incidental or consequential damages in connection with or arising out
+of the use of the information or programs contained herein.
+\bigskip
+{\def\:{\discretionary{}{}{}}
+Internet page  {\tt http:\://hint.\:userweb.\:mwn.\:de/\:hint/hitex.html}
+may contain current information, downloadable software,
+and news.}
+
+\vfill
 Copyright $\copyright$ 2022 by Martin Ruckert
 \smallskip
+All rights reserved.
+\smallskip
+This publication is protected by copyright, and permission must be
+obtained prior to any prohibited reproduction, storage in
+a~retrieval system, or transmission in any form or by any means, electronic,
+mechanical, photocopying, recording, or likewise.
+To obtain permission to use material from this work, please submit a written
+request to Martin Ruckert,
+Hochschule M\"unchen,
+Fakult\"at f\"ur Informatik und Mathematik,
+Lothstrasse 64,
+80335 M\"unchen,
+Germany.
+\medskip
+{\tt ruckert\:@cs.hm.edu}
+\medskip
+Revision: \lastrevision,\quad Date: \lastdate\par
 }
+\eject
+\endgroup
+
 \frontmatter
-\pageno=-1
+\pageno=3%
 
 \tableofcontent
 
@@ -86,7 +121,7 @@ Copyright $\copyright$ 2022 by Martin Ruckert
 \def\sym#1{\rs$<${\it #1\/}$>$\rs}
 \def\OR{\rs${}\vert{}$\rs}
 \def\opt#1{\rs$[{}$#1${}]$\rs}
-\def\cs#1{\.{\BS #1}}
+\def\ctl#1{{\tt\BS #1}}
 
 \section{Hi\TeX\ primitives}
 
@@ -113,40 +148,40 @@ added to \TeX.
 \itemize
 \item We use a {\tt typewriter font}\index{typewriter font}
 for text that occurs \index{verbatim}verbatim in the \TeX\ document.
-\item We use \sym{italics} enclosed in pointed brakets to denote symbols\index{symbol+\sym{symbol}}.
+\item We use \sym{italics} enclosed in pointed brackets to denote symbols\index{symbol+\sym{symbol}}.
 \item We use rules\index{rule} to define the meaning of symbols.
 A rule starts with the symbol
 to be explained, followed by a colon ``{\bf :}'', and then the text that this symbol
 stands for. A rule ends with a period ``{\bf .}''.
 \item Optional\index{optional+\opt{optional}} parts of the rule's text
 are enclosed in \opt{square brackets}.
-\item Alternatives\index{alternative} are seperated by a vertical bar ``\OR''\index{\OR}.
-\item Some symbols refere to text that is defined as part of standard \TeX. These are explained here by an example:
+\item Alternatives\index{alternative} are separated by a vertical bar ``\OR''\index{\OR}.
+\item Some symbols refer to text that is defined as part of standard \TeX. These are explained here by an example:
 
 \medskip
 \rule\sym{integer}: \index{integer+\sym{integer}}
-  an integer as in  \cs{penalty}\sym{integer}.
+  an integer as in  \ctl{penalty}\sym{integer}.
 \rule\sym{normal dimension}:\index{normal dimension+\sym{normal dimension}}
-  a dimension as in \cs{hrule} \.{width} \sym{normal dimension}.
+  a dimension as in \ctl{hrule} \.{width} \sym{normal dimension}.
 \rule\sym{dimension}:\index{dimension+\sym{dimension}}
-  a dimension as in \cs{vskip} \.{0pt} \.{plus} \sym{dimension}.
+  a dimension as in \ctl{vskip} \.{0pt} \.{plus} \sym{dimension}.
 \rule\sym{name}:\index{dimension+\sym{dimension}}
-  a name as in \cs{input} \sym{name}.
+  a name as in \ctl{input} \sym{name}.
 \rule\sym{vertical list}:\index{vertical list+\sym{vertical list}}
   a token list  with matching braces as in
-  \cs{vbox}\.{\LB}\sym{vertical list}\.{\RB}.
+  \ctl{vbox}\.{\LB}\sym{vertical list}\.{\RB}.
 \rule\sym{horizontal list}:\index{horizontal list+\sym{horizontal list}}
   a token list  with matching braces as in
-  \cs{hbox}\.{\LB}\sym{horizontal list}\.{\RB}.
+  \ctl{hbox}\.{\LB}\sym{horizontal list}\.{\RB}.
 \rule\sym{general text}:\index{general text+\sym{general text}}
   a token list with matching braces as in
-  \cs{write}\.{\LB}\sym{general text}\.{\RB}.
+  \ctl{write}\.{\LB}\sym{general text}\.{\RB}.
 \medskip
 \enditemize
 
 \subsection{Version and Revision}
-The control sequences \cs{HINTversion}\index{HINTversion+\cs{HINTversion}}
-and \cs{HINTsubversion}\index{HINTsubversion+\cs{HINTsubversion}} are
+The control sequences \ctl{HINTversion}\index{HINTversion+\ctl{HINTversion}}
+and \ctl{HINTsubversion}\index{HINTsubversion+\ctl{HINTsubversion}} are
 used to determine the version and subversion numbers of the HINT output format
 that is generated by Hi\TeX. It can be used as part of the output as 
 in \verbatim|\the\HINTversion|.
@@ -158,17 +193,17 @@ contains the following code:
 
 \verbatim/
 \newif\ifhint
-\expandafter\ifx\csname HINTversion\endcsname\relax
+\expandafter\ifx\ctlname HINTversion\endcsname\relax
   \hintfalse\else\hinttrue\fi/
 
 
 \subsection{Images}
-The primitive \cs{HINTimage}\index{HINTimage+\cs{HINTimage}}
+The primitive \ctl{HINTimage}\index{HINTimage+\ctl{HINTimage}}
 includes an image\index{image} in a document.
 The syntax is as follows:
 
 \medskip
-\cs{HINTimage}  \opt{\.{=}} \sym{name}
+\ctl{HINTimage}  \opt{\.{=}} \sym{name}
 \opt{\sym{width}} \opt{\sym{height}} 
 \medskip
 
@@ -183,8 +218,8 @@ The same holds for the height specification.
 \rule \sym{height}\index{height+\sym{height}}:\.{height} \sym{normal dimension}.
 \medskip
 
-Note that a \sym{normal dimension} that is computed from \cs{hsize}
-or \cs{vsize} retains this dependency when processed by Hi\TeX.
+Note that a \sym{normal dimension} that is computed from \ctl{hsize}
+or \ctl{vsize} retains this dependency when processed by Hi\TeX.
 This allows an image to adapt to the size of the viewing area.
 Scaling in the \HINT\ viewer will, however, never change the
 aspect ratio of an image. So it may become smaller or larger,
@@ -203,8 +238,8 @@ can not be obtained.
 A link\index{link} in a \HINT\ document refers to another location in the same document.
 It can be used to navigate to that location.
 A link is defined using the primitives 
-\cs{HINTstartlink}\index{HINTstartlink+\cs{HINTstartlink}}
-and \cs{HINTendlink}\index{HINTendlink+\cs{HINTendlink}}.
+\ctl{HINTstartlink}\index{HINTstartlink+\ctl{HINTstartlink}}
+and \ctl{HINTendlink}\index{HINTendlink+\ctl{HINTendlink}}.
 Neither of them can be used in vertical mode.
 The text between the start and the end of the link
 constitutes the visible part of the link. Depending on the user interface, clicking
@@ -215,9 +250,9 @@ available links but it also may choose to leave the visual clues to the author
 of the document (e.g. using a special image or a special font).
 
 The syntax is 
-\cs{HINTstartlink}  \sym{destination}
+\ctl{HINTstartlink}  \sym{destination}
 and
-\cs{HINTendlink}
+\ctl{HINTendlink}
 with
 
 \medskip
@@ -229,14 +264,14 @@ with
 As you can see, the link refers to its destination using a label
 which is either a name or a number.
 The destination can be defined by using the 
-\cs{HINTdest}\index{HINTdest+\cs{HINTdest}} primitive.
-Forward and backward links are allowed; the definition of a lable can either
-preceede or follow the use of the label. If at the end of the document a label
+\ctl{HINTdest}\index{HINTdest+\ctl{HINTdest}} primitive.
+Forward and backward links are allowed; the definition of a label can either
+precede or follow the use of the label. If at the end of the document a label
 is undefined, a warning is given, and the label will reference the beginning of the
 document.
 
 The syntax is
-\cs{HINTdest} \sym{label} \opt{\sym{placement}}
+\ctl{HINTdest} \sym{label} \opt{\sym{placement}}
 with
 
 \medskip
@@ -272,7 +307,7 @@ given as a hierarchical list of headings where each of them
 refers to a specific location in the document.
 
 The syntax is
-\cs{HINToutline}\index{HINToutline+\cs{HINToutline}}
+\ctl{HINToutline}\index{HINToutline+\ctl{HINToutline}}
 \sym{destination} \opt{\sym{depth}} \.{\LB}\sym{horizontal list}\.{\RB}.
 
 \medskip
@@ -280,7 +315,7 @@ The syntax is
 \medskip
 
 The user interface can format the \sym{horizontal list} much like 
-a \cs{hbox} would do and displays it to the user. When the user selects
+a \ctl{hbox} would do and displays it to the user. When the user selects
 this text, the document will be repositioned to show the destination location
 in the same way as with a link. In order to support also simpler
 user interfaces, the current \HINT\ backend also extracts the characters
@@ -310,7 +345,7 @@ how page templates relate to \TeX's page building mechanism, a
 separate section follows at the end.
 
 The syntax of a page template specification is:
-\cs{HINTsetpage}\index{HINTsetpage+\cs{HINTsetpage}}
+\ctl{HINTsetpage}\index{HINTsetpage+\ctl{HINTsetpage}}
 \sym{integer} \opt{\.{=}} \sym{name} 
 \opt{\sym{priority}} \opt{\sym{width}} \opt{\sym{height}}
 \.{\LB}\sym{vertical list} \sym{stream definition list}\.{\RB}
@@ -334,36 +369,36 @@ default value is~1. The build-in template has priority~0.
 
 
 After that follows an optional width and height of the full page
-including the margins.  After subtracting \cs{hsize} from the width
-and \cs{vsize} from the height, the remainder is used for the margins
+including the margins.  After subtracting \ctl{hsize} from the width
+and \ctl{vsize} from the height, the remainder is used for the margins
 around the displayed text.  For example giving the width as
-1.2\cs{hsize} will leave 0.1\cs{hsize} for the margins on both sides.
+1.2\ctl{hsize} will leave 0.1\ctl{hsize} for the margins on both sides.
 In this case the margins will grow together with the available width
 of the display.  If the width is computed by adding 20pt
-to \cs{hsize}, the margin will be 10pt on both sides.  In this case
+to \ctl{hsize}, the margin will be 10pt on both sides.  In this case
 the margin will not grow with the size of the display, but it will
 grow with the magnification factor.  Of course both methods can be
-used together.  The default is \cs{hsize} for the width and \cs{vsize}
+used together.  The default is \ctl{hsize} for the width and \ctl{vsize}
 for the height so there are no margins.
 
 The following \sym{vertical list} defines the page itself. It should assign suitable values
-to \cs{topskip} and \cs{maxdepth} because the values valid at the end of the vertical list
+to \ctl{topskip} and \ctl{maxdepth} because the values valid at the end of the vertical list
 are stored in the page template and are used in the page building process. 
 The vertical list usually also specifies the insertion of content streams using a \sym{stream insert point}.
 
 \medskip
 \rule\sym{stream insert point}\index{stream insert point+\sym{stream insert point}}:
-  \cs{HINTstream} \sym{integer}.
+  \ctl{HINTstream} \sym{integer}.
 \medskip
 
 Here  the \sym{integer} must be in the range 0 to 254. The value 255 is invalid;
 the value 0 indicates the main body of text (what \TeX's page builder would normally put into
 box 255 before calling the output routine).
 Otherwise, the \sym{integer} is TeX's insertion number, that is the number of \TeX's box 
-containing the insertions. As usual, this box is filled using \TeX's \cs{insert} primitive. 
-So after plain \TeX\ has defined \cs{footins},
+containing the insertions. As usual, this box is filled using \TeX's \ctl{insert} primitive. 
+So after plain \TeX\ has defined \ctl{footins},
 the footnotes for the current page can be inserted after the main body of text in the \sym{vertical list}
-by saying \cs{HINTstream}\.0 followed by \cs{HINTstream}\cs{footins}.
+by saying \ctl{HINTstream}\.0 followed by \ctl{HINTstream}\ctl{footins}.
 Of course you might want to have a footnote rule and a small skip to separate the 
 footnotes ---if there are any---from the main text. This can be achieved by a suitable
 \sym{stream definition} in the \sym{stream definition list}.
@@ -372,7 +407,7 @@ footnotes ---if there are any---from the main text. This can be achieved by a su
 \rule\sym{stream definition list}\index{stream definition list+\sym{stream definition list}}:
   \OR\ \sym{stream definition list} \sym{stream definition}.
 \rule\sym{stream definition}\index{stream definition+\sym{stream definition}}:
-  \cs{HINTsetstream} \sym{integer}  \opt{\.{=}}
+  \ctl{HINTsetstream} \sym{integer}  \opt{\.{=}}
 \opt{{\tt preferred} \sym{integer}}
 \opt{\.{next} \sym{integer}}
 \opt{\.{ratio} \sym{integer}} \.{\LB}\sym{vertical list}\.{\RB}.
@@ -382,7 +417,7 @@ footnotes ---if there are any---from the main text. This can be achieved by a su
 The first \sym{integer} is the streams insertion number $i$,
 and it must match the \sym{integer} 
 previously used in the \sym{stream insert point}.
-Then follows the optional specification of a prefered stream with insertion number $p$,
+Then follows the optional specification of a preferred stream with insertion number $p$,
 a next stream with insertion number $n$, and a split ratio $r$.
 If $r>0$, the contributions to stream $i$ are split between
 stream $p$ and $n$  in the ratio $r/1000$ for $p$ and $1-r/1000$ for $n$
@@ -391,30 +426,106 @@ Else if $p\ge0$ any insertion to stream $i$ is moved to stream $p$ as long as po
 and if $n\ge0$ we move an insert to stream $n$ if there is ``no room left'' in $p$ nor in $i$.
 How much ``room'' is available for the insertions is specified inside the vertical list
 that follows.
-Here \cs{dimen}$i$ should be set to the maximum total height of the insertions in class $i$ per page. 
-\cs{count}$i$ should be set to the magnification factor $f$,
+Here \ctl{dimen}$i$ should be set to the maximum total height of the insertions in class $i$ per page. 
+\ctl{count}$i$ should be set to the magnification factor $f$,
 such that inserting a box of height $h$ will contribute $h*f/1000$ to the main page;
-and \cs{skip}$i$ should be set to the extra space needed if an insertion in class $i$ is present.
+and \ctl{skip}$i$ should be set to the extra space needed if an insertion in class $i$ is present.
 
 This extra space is usually taken up by material that is inserted before and after the insertions,
 such as for example the footnote rule. This material can be defined by a 
 \sym{before list} and an \sym{after list}.
 
-\medskip\index{HINTbefore+\cs{HINTbefore}}\index{HINTafter+\cs{HINTafter}}
+\medskip\index{HINTbefore+\ctl{HINTbefore}}\index{HINTafter+\ctl{HINTafter}}
 \rule \sym{before list}\index{before list+\sym{before list}}:
-  \cs{HINTbefore} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
+  \ctl{HINTbefore} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
 \rule \sym{after list}\index{after list+\sym{after list}}:
-  \cs{HINTafter} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
+  \ctl{HINTafter} \opt{\.{=}} \.{\LB}\sym{vertical list}\.{\RB}.
 \medskip
 
 If you are interested in the design decision that motivate the definitions that have
-be given in this section, you should read the next section.
+be given in this section, you should read section~\secref{build}.
+
+\section{Other Primitives}
+When I started the \HINT\ project in 2017,
+I tried to keep the project as small as possible to increase the
+chances that I would be able to complete it. So one design decision
+was to keep things simple---or to quote Albert Einstein: ``Make things 
+as simple as possible, but not simpler''. The other imperative was:
+keep things out of the viewer if possible because I do not know
+how much processing power or battery power is available.
+As a consequence, I focused on Donald Knuth' original \TeX,
+disregarding all later extensions like \eTeX\ or \LaTeX, and I
+decided that the \TeX\ interpreter would not need to run in the
+viewer.
+
+By now, the state of the \HINT\ project is far beyond of what
+I had expected then, and the processing power of even low-cost
+mobile devices is far better than expected especially when programming the
+graphics card directly using OpenEGL.
+
+But the line breaking routine, which is running in the viewer, and the
+HINT file format, which specifies all the parameters for the
+line breaking algorithm, covers just the line breaking of 
+Donald Knuth's original \TeX. Therefore the viewer will
+also do just that, and Hi\TeX\ can not produce files
+doing more than that. Of course that might not be so
+for ever.
+Similarly, the decision to keep the TeX interpreter
+out of the HINT viewer implies that \HINT\ files do
+not contain token lists. This means that there are
+no output routines and no marks.
+To replace them, the \HINT\ file format includes
+page templates. I have described the technical
+means to specify page templates above and try to explain
+the rationale behind it below, but \HINT's page templates 
+are at the time of this writing a largely untested area.
+
+Since I consider the support for \LaTeX\ to be crucial for
+the success of the \HINT\ project, quite a few primitives
+have been added to Hi\TeX\ that go beyond \TeX's original
+specification. 
+
+First, the primitives of \eTeX\ have been
+added with the exception of those primitives that deal with
+line breaking, with right to left reading, and with marks. 
+Here is a list of \eTeX\ primitives that are missing in Hi\TeX:
+\itemize
+\item\ctl{TeXXeTstate} (current reading direction)
+\item\ctl{beginL}, \ctl{endL}  (switching reading direction)
+\item\ctl{beginR}, \ctl{endR} (switching reading direction)
+\item\ctl{predisplaydirection}  (reading direction)
+\item\ctl{lastlinefit}  (line breaking)
+\item\ctl{marks}  (multiple marks)
+\item\ctl{botmarks}, \ctl{splitbotmarks}   (multiple marks)
+\item\ctl{firstmarks}, \ctl{splitfirstmarks}  (multiple marks)
+\item\ctl{topmarks}  (multiple marks)
+\enditemize 
+
+Second, the primitives required to support
+\LaTeX\ were added using Thierry Larondes implementation of \Prote.
+
+\itemize
+\item\ctl{Proteversion}, \ctl{Proterevision} (version information)
+\item\ctl{resettimer}, \ctl{elapsedtime} (timing information)
+\item\ctl{creationdate}, \ctl{filemoddate}, \ctl{filesize},
+     \ctl{filedump}, \ctl{mdfivesum} (file information)
+\item\ctl{shellescape} (Currently only a dummy implementation.)
+\item\ctl{setrandomseed}, \ctl{randomseed},
+     \ctl{normaldeviate}, \ctl{uniformdeviate} (random numbers)
+\item\ctl{expanddepth}, \ctl{expanded} (programming)
+\item\ctl{ifincsname}, \ctl{ifprimitive} \ctl{primitive} (programming)
+\item\ctl{savepos}, \ctl{lastxpos}, \ctl{lastypos}, \ctl{pageheight},
+     \ctl{pagewidth} (Only dummy implementations since this information
+      is not available to Hi\TeX\ at runtime.)
+\item\ctl{strcmp} (comparing strings)
+\enditemize 
 
 
-\section{Replacing \TeX's Page Builder}
+
+\section{Replacing \TeX's Page Builder}\label{build}
 
 \TeX\ uses an output\index{output routine} routine to finalize the page. 
-The output outine takes the material which the page builder had accumulated in {\tt box255}
+The output outline takes the material which the page builder had accumulated in {\tt box255}
 and attaches headers, footers, and floating material
 like figures, tables, and footnotes. The latter material is specified by insert nodes
 while headers and footers are often constructed using mark nodes.
@@ -702,6 +813,7 @@ than the width of the page and {\tt vsize} larger than its height.
 \write\cont{} % ensure that the contents file isn't empty
 %  \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
 \closeout\cont% the contents information has been fully gathered
+
 \inx
 \fin
 \end

@@ -1365,7 +1365,8 @@
 
 \ifbook\let\pagelabel=\relax\else
 \ifpdf
-\def\pagelabel{\pdfdest name {page.\thepageno} fitv\relax}
+\def\pagelabel{%\message{pagelabel=\thepageno}
+\pdfdest name {page.\thepageno} fitv\relax}
 \else
 \let\pagelabel=\relax
 \fi\fi
