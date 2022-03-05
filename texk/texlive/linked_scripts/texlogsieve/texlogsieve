@@ -150,7 +150,50 @@ in the LaTeX log file:
        \pagegoal =635.97621pt, \pagetotal =368.07768pt.
        (from exam.cls)
 
- * Error messages TODO describe them here
+ * Error messages -> when an error occurs, TeX usually writes something
+   like "! Some error" followed by lines that resemble a stack trace of
+   where the error occurred. For example, this input:
+
+       Some text \blah, something else
+
+   would result in
+
+       ! Undefined control sequence.
+       l.5 Some text \blah
+                          , something else
+
+   With option -file-line-error, the exclamation is replaced by an
+   indication like "filename:linenum:".
+
+   The "stack trace" is comprised of pairs of lines. By default, LaTeX
+   only shows the last pair (depending on \errorcontextlines) and, when
+   there are more lines, they are replaced by a line with " ..." (right
+   after the line starting with "!"). In each pair of lines, the first
+   one indicates the line content leading up to the error and the
+   second one shows the subsequent content. The first line is at most
+   half_error_line characters long (default 50) and the second line
+   is at most error_line characters long (default 79). The second line
+   is indented to start after the end of the first, as in the example
+   above. If the content of a line does not fit, a part of it (the
+   beginning for the first line and the end for the second line) may
+   be replaced by "...".
+
+   LaTeX errors usually follow the format
+
+       ! LaTeX/Package/Class BLAH Error: some description
+       See the BLAH documentation for explanation.
+       Type H <return> for immediate help.
+        ...
+       l.5 First error line
+                           second error line
+
+   In errorstop mode, such errors are followed by a "?" prompt.
+
+   Finally, runaway arguments have a different format:
+
+       Runaway argument?
+       some text\ETC.
+       ! SOMETHING ended...
 
 To complicate things, TeX by default wraps (breaks) any line longer
 than max_print_line characters (by default, 79). Since some messages
@@ -178,8 +221,10 @@ over/underfull box messages.
 
 So, if at all possible, it is a very good idea to set max_print_line
 to a really large value (such as 100,000), effectively disabling line
-wrapping. It was useful in the 1980s, but not anymore (your terminal
-or editor wraps automatically).
+wrapping. It was useful in the 1980s, but not anymore (your terminal or
+editor wraps automatically). Likewise, error_line and half_error_line
+should be, respectively, 254 and 238 (more about these values here:
+https://tex.stackexchange.com/a/525972).
 
 
 ----------------------
@@ -559,7 +604,7 @@ function main(arg)
   end
 
   -- dispatch remaining messages, if any
-  epilogueHandler:flush()
+  if nextHandler then nextHandler:flush() end
   flushUnrecognizedMessages()
   dispatch(nil) -- end the output coroutine
 end
@@ -699,6 +744,9 @@ function initializeGlobals()
   -- messages, this is set to true (used in showSummary)
   SHOULD_RERUN_LATEX = false
 
+  -- Did we detect any error messages?
+  ERRORS_DETECTED = false
+
   -- detectEngine() may set one of these to true
   LUATEX = false
   XETEX = false
@@ -707,6 +755,9 @@ function initializeGlobals()
   -- we announce the filename first. This is used to detect the change
   -- in file - used by showFileBanner()
   lastFileBanner = ""
+
+  -- Should we print "No important messages to show" at the end?
+  nothingWasPrinted = true
 end
 
 function initializeKpse()
@@ -729,6 +780,7 @@ function initializeKpse()
 end
 
 function registerHandlers()
+  table.insert(beginningOfLineHandlers, errorHandler)
   table.insert(beginningOfLineHandlers, citationHandler)
   table.insert(beginningOfLineHandlers, referenceHandler)
   table.insert(beginningOfLineHandlers, labelHandler)
@@ -950,7 +1002,7 @@ Options:
 
   --version
   if vars.version then
-      print("texlogsieve 1.0.0")
+      print("texlogsieve 1.1.1")
       print("Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>")
       print("License GPLv3+: GNU GPL version 3 or later "
             .. "<https://gnu.org/licenses/gpl.html>.")
@@ -1374,6 +1426,12 @@ function adjustSeverity(msg)
   formatted = trim(msg:realToString())
   if formatted == "" then return end
 
+  DEFAULT_FORCED_DEBUG = {
+    -- This is a harmless message caused by a bug in the
+    -- biblatex-abnt package that can safely be ignored
+    "File 'brazilian%-abnt%-abnt%.lbx' not found!",
+  }
+
   DEFAULT_FORCED_INFO = {
     "File %b`' already exists on the system%."
             .. "%s*Not generating it from",
@@ -1386,6 +1444,8 @@ function adjustSeverity(msg)
     'Unused \\captionsetup%b[]',
     "Unknown feature `' in font %b`'", -- empty feature, not a problem
   }
+
+  DEFAULT_FORCED_WARNING = {}
 
   DEFAULT_FORCED_CRITICAL = {
     "Label %b`' multiply defined",
@@ -1403,11 +1463,27 @@ function adjustSeverity(msg)
 
 
   -- We do things this way so that user-defined strings override these
-  -- defaults (note that there is no "return" in the first two blocks)
+  -- defaults (note that there is no "return" in the DEFAULT_FORCED... blocks)
+  if msg.severity ~= DEBUG then
+      for _, val in ipairs(DEFAULT_FORCED_DEBUG) do
+          if string.find(formatted, val) or string.find(msg.content, val) then
+              msg.severity = DEBUG
+          end
+      end
+  end
+
   if msg.severity ~= INFO then
       for _, val in ipairs(DEFAULT_FORCED_INFO) do
           if string.find(formatted, val) or string.find(msg.content, val) then
               msg.severity = INFO
+          end
+      end
+  end
+
+  if msg.severity ~= WARNING then
+      for _, val in ipairs(DEFAULT_FORCED_WARNING) do
+          if string.find(formatted, val) or string.find(msg.content, val) then
+              msg.severity = WARNING
           end
       end
   end
@@ -1497,6 +1573,8 @@ function finishProcessingMessages()
   if PAGE_DELAY and not ONLY_SUMMARY then showRemainingMessages() end
 
   if SHOW_SUMMARY then showSummary() end
+
+  if nothingWasPrinted then print("No important messages to show") end
 end
 
 function showFileBanner(msg)
@@ -1554,6 +1632,8 @@ function showMessage(msg)
 
               pageinfo = spaces
           end
+
+          nothingWasPrinted = false
       end
   end
 
@@ -1567,15 +1647,15 @@ function showPageMessages()
 end
 
 function showRemainingMessages()
-  local thereIsSomething = false
+  local somethingAfterLastPage = false
   for _, msg in ipairs(currentPageMessages) do
       if trim(msg:toString()) ~= "" then
-          thereIsSomething = true
+          somethingAfterLastPage = true
           break
       end
   end
 
-  if thereIsSomething then
+  if somethingAfterLastPage then
       print()
       local txt = "After last page:"
       if COLOR then txt = bgreen(txt) end
@@ -1589,20 +1669,22 @@ function showRemainingMessages()
 end
 
 function showSummary()
-  local thereIsSomething = false
+  local somethingInSummary = false
 
-  if SHOULD_RERUN_LATEX then
-      thereIsSomething = true
+  if SHOULD_RERUN_LATEX or ERRORS_DETECTED then
+      somethingInSummary = true
   else
       for _, summary in ipairs(summaries) do
           if trim(summary:toString()) ~= "" then
-              thereIsSomething = true
+              somethingInSummary = true
               break
           end
       end
   end
 
-  if not thereIsSomething then return end
+  if not somethingInSummary then return end
+
+  nothingWasPrinted = false
 
   if not ONLY_SUMMARY then
       print("")
@@ -1626,6 +1708,13 @@ function showSummary()
 
   if SHOULD_RERUN_LATEX then
       local txt = "** LaTeX says you should rerun **"
+      if COLOR then txt = red(txt) end
+      print(txt)
+      print()
+  end
+
+  if ERRORS_DETECTED then
+      local txt = "** There were errors during processing! Generated PDF is probably defective **"
       if COLOR then txt = red(txt) end
       print(txt)
       print()
@@ -1728,6 +1817,139 @@ function HandlerPrototype:newMessage()
   return Message:new()
 end
 
+-- We use this after the main loop ends (we reached the end of the
+-- input file) to output any messages that have not been fully
+-- processed by whatever is defined as nextHandler. Typically, this
+-- is epilogueHandler, which does not know when to finish processing
+-- and depends on "someone" calling flush when the file ends. However,
+-- others may use it as well in case the file is truncated (which may
+-- happen if there were errors).
+function HandlerPrototype:flush()
+  if self.message ~= nil then
+      dispatch(self.message)
+      self.message = nil
+  end
+end
+
+-------------------------------------------------------------------------------
+-- errorHandler
+--
+-- This simply identifies errors and defines "ERRORS_DETECTED" as true. The
+-- line with the message is output directly with no further processing, which
+-- means the other lines that belong to the error are output as unrecognized
+-- messages. We could be more thorough here and handle the whole message, but
+-- that is not really necessary, all we want is ERRORS_DETECTED.
+--
+-- We might get away with just detecting lines that start with "! ", but
+-- that might fail with a wrapped line, so we go the extra mile to make
+-- sure this is really an error.
+-------------------------------------------------------------------------------
+
+errorHandler = HandlerPrototype:new()
+
+errorHandler.patterns = {
+    -- basic LaTeX error messages follow these patterns
+    'Package .- Error: ',
+    'Class .- Error: ',
+    'LaTeX Error: ',
+    -- This list comes from The LaTeX Companion 2nd ed.
+    'Undefined control sequence',
+    'Missing .- inserted',
+    'Counter too large',
+    'Double %S+script',
+    'Extra',
+    'Font .- not loaded',
+    'Illegal ',
+    'Misplaced ',
+    'Missing number, treated as zero',
+    'Not a letter',
+    'Paragraph ended before .- was completed',
+    'TeX capacity exceeded',
+    'Text line contains an invalid character',
+    'Use of .- match its definition',
+    "You can't use .- in .- mode",
+    'A .- was supposed to be here',
+    'Argument of .- has an extra',
+    'Dimension too large',
+    'File ended while',
+    'Font .- not load',
+    "I can't",
+    'Improper',
+    'Incompatible',
+    'Incomplete',
+    'Infinite glue',
+    'Interruption',
+    'Limit controls must follow',
+    'No room for a new',
+    'Number too big',
+    'Only one %# is allowed',
+    "Sorry, I can't find",
+    'You already have nine',
+}
+
+function errorHandler:canDoit(position)
+  if position == nil then position = 0 end
+  local line = Lines:get(position)
+  if line == nil then return false, {} end
+
+  -- This error does not start with "! " or "file:line: "
+  local _, last = string.find(line, '^Runaway argument%?')
+  if last then return true, {} end
+
+  -- If the line does not start with "! " or "file:line: ", get out.
+  _, last = string.find(line, '^! ')
+  if not last then
+      _, last = string.find(line, '^' .. filepat .. ':%d+: ')
+      if not last then return false, {} end
+  end
+
+  -- OK, this might be an error, but we need to be sure;
+  -- let's look for a known error message
+  local candidateText = string.sub(line, last +1)
+  for _, pat in ipairs(self.patterns) do
+      _, last = string.find(candidateText,  pat)
+      if last ~= nil then break end
+  end
+  if last then return true, {} end
+
+  -- Not a known error message; let's look for a line number
+  -- or "Type  H <return>  for immediate help"
+  position = position +1
+  local found = false
+  while not found and position < Lines:numLines() do
+      local first = string.find(Lines:get(position), '^l%.%d+ ')
+      if first then found = true end
+
+      first = string.find(Lines:get(position),
+                         '^Type%s+H %<return%>%s+for immediate help%.')
+      if first then found = true end
+
+      position = position +1
+  end
+
+  if found then
+      return true, {}
+  else
+      return false, {}
+  end
+end
+
+function errorHandler:doit()
+  local myTurn, data = self:canDoit()
+  if not myTurn then return false end
+
+  flushUnrecognizedMessages()
+
+  local msg = self:newMessage()
+  msg.content = Lines.current
+  msg.severity = UNKNOWN
+  dispatch(msg)
+
+  Lines:handledChars()
+  ERRORS_DETECTED = true
+  return true
+end
+
 
 -------------------------------------------------------------------------------
 -- epilogueHandler
@@ -1737,6 +1959,10 @@ end
 -- the whole group of lines together, which means we do not need to have
 -- dedicated rules for each line in them. Also, there are some lines here
 -- that are not wrapped as the rest.
+--
+-- After epilogueHandler starts processing, it just consumes every line it
+-- sees, i.e., it does not know when to call dispatch(). When the file ends,
+-- main() needs to call flush() to make it output the lines it read.
 -------------------------------------------------------------------------------
 
 epilogueHandler = HandlerPrototype:new()
@@ -1805,12 +2031,6 @@ function epilogueHandler:handleOtherLines()
   Lines:handledChars()
   nextHandler = self
   return true
-end
-
--- We do not know when the epilogue ends, so main()
--- calls this after the last line is read
-function epilogueHandler:flush()
-    if self.message ~= nil then dispatch(self.message) end
 end
 
 
@@ -1900,6 +2120,7 @@ function fpHandler:process()
                                .. "fpHandler:process()\n")
 
           dispatch(self.message)
+          self.message = nil
           self.doit = self.startProcessing
           self.stack = Stack:new()
           return true
@@ -1931,6 +2152,7 @@ function fpHandler:processClose(last)
 
   if self.stack:empty() then
       dispatch(self.message)
+      self.message = nil
       self.doit = self.startProcessing
   else
       nextHandler = self
@@ -2006,6 +2228,7 @@ function underOverFullBoxHandler:handleFirstLine()
 
       self.doit = self.handleFirstLine
       dispatch(self.message)
+      self.message = nil
       return true
   end
 
@@ -2037,6 +2260,7 @@ function underOverFullBoxHandler:handleClosing()
   end
 
   dispatch(self.message)
+  self.message = nil
   self.doit = self.handleFirstLine
   return true
 end
@@ -2166,6 +2390,7 @@ function stringsHandler:handleLines()
                        .. "stringsHandler:handleLines()\n")
 
       dispatch(self.message)
+      self.message = nil
       self.doit = self.handleFirstLine
       return true
   end
@@ -2184,6 +2409,7 @@ function stringsHandler:handleLines()
   if self.patternLineNumber >= #self.patternLines then
       self:processCaptures()
       dispatch(self.message)
+      self.message = nil
       self.doit = self.handleFirstLine
   else
       self.patternLineNumber = self.patternLineNumber +1
@@ -2346,10 +2572,16 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^Lua module: luaotfload ' .. datepat
                    .. ' %S+ Lua based OpenType font support',
 
+  '^Lua module: microtype ' .. datepat .. ' %S+ microtype module%.',
+
   '^luaotfload | init : Context OpenType loader version.*',
 
   '^luaotfload | init : Loading fontloader '
                    .. '["“][^"]+["”] from .-["“][^"]+["”]%.',
+
+  '^luaotfload | db : Font names database not found, generating new one%.',
+
+  '^luaotfload | db : This can take several minutes; please be patient%.',
 
   -- there may be dots in the path, so we need to
   -- anchor the final dot to the end of the line
@@ -2431,6 +2663,10 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^Requested font ".-" at [%d%.]+pt',
   '^Requested font ".-" scaled %d+',
 
+  '^<QR code requested for ".-" in version .->',
+
+  '^' .. datepat .. ' %S+ pgflibraryvectorian%.code%.tex',
+
   -- Usually these are warnings, but for font "nil", why bother?
   '^luaotfload | aux : font no %d+ %(nil%) does not define feature '
                             .. '.- for script .- with language %S+',
@@ -2483,6 +2719,26 @@ anywhereDebugStringsHandler.patterns = {
           .. " Typewriter text macros based on txfonts %(msharpe%)",
 
   '^%s*%* soulpos %- computing points %- it may take a few seconds %*',
+
+  -- package qrcode
+  '^%s*<Calculating QR code for ".-" in version .->',
+  '^%s*<Splitting off block %d+>',
+  '^%s*<Making error block %d+>',
+  '^%s*<Interleaving datablocks of length %d+\\? and %d+: [ %d,]+%.>',
+  '^%s*<Interleaving errorblocks of length %d+: [ %d,]+%.>',
+  '^%s*<Interleaving complete%.>',
+  '^%s*<Writing data%.%.%.%s?done%.>',
+  '^%s*<Applying Mask %d+%.%.%.%s?done%. Calculating penalty%.%.%.%s?penalty is %d+>',
+  '^%s*<Selected Mask %d+>',
+  '^%s*<Encoding and writing format string%.%.%.%s?done%.>',
+  '^%s*<Encoding and writing version information%.%.%.%s?done%.>',
+  '^%s*<Saving QR code to memory%.%.%.%s?done%.>',
+  '^%s*<Writing QR code to aux file%.%.%.%s?done%.>',
+  '^%s*<Printing matrix%.%.%.%s?done%.>',
+  '^%s*<Error%-correction level increased from %S+%s?  to %S+ at no cost%.>',
+  '^%s*<Inserting dummy QR code in draft mode for "[^"]+" in version .-%.>',
+  '^%s*<Copying the QR code for "[^"]+" in version .- as previously calculated%.>',
+  '^%s*<Reading QR code for "[^"]+" at level %S+ from aux file%.>',
 }
 
 
@@ -2506,6 +2762,8 @@ beginningOfLineInfoStringsHandler.patterns = {
   "^No file .-%.ind%.",
   "^No file .-%.bbl%.",
   "^No file .-%.gls%.",
+
+  'luaotfload | db : Reload initiated %(formats: .-%); reason: Font ".-" not found%.',
 
   "^reledmac reminder:%s*\n"
         .. "%s*The number of the footnotes in this section "
@@ -2595,6 +2853,9 @@ anywhereInfoStringsHandler.patterns = {
   '^%s*ASCII Hyphenation patterns for American English',
   '^%s*UTF%-8 %S+ hyphenation patterns',
   '^%s*EC %S+ hyphenation patterns',
+
+  "^%s*<Requested QR version '[^']+' is too small for desired text%.%s?Version increased to '[^']+' to fit text%.>",
+
 }
 
 
@@ -2609,6 +2870,7 @@ beginningOfLineWarningStringsHandler.patterns = {
 
   '^luaotfload | aux : font no .- %b() defines no feature for script %S+',
   '^luaotfload | aux : no font with id %d+',
+  '^luaotfload | resolve : sequence of 3 lookups yielded nothing appropriate%.',
 
   "^warning  %(pdf backend%): ignoring duplicate destination "
                             .. "with the name '.-'",
@@ -2826,6 +3088,7 @@ function genericLatexHandler:handleOtherLines()
           self.message.linenum = self.linenum
       end
       dispatch(self.message)
+      self.message = nil
   end
 
   return true
@@ -3614,6 +3877,7 @@ function utf8FontMapHandler:handleSecondLine()
       self.message.content = self.message.content .. '\n' .. Lines.current
       Lines:handledChars()
       dispatch(self.message)
+      self.message = nil
       self.doit = self.handleFirstLine
       return true
   end
@@ -3632,6 +3896,7 @@ function utf8FontMapHandler:handleSecondLine()
   -- The second line was neither "no UTF-8 mapping..." nor
   -- "processing UTF-8 mapping" - this should never happen
   dispatch(self.message)
+  self.message = nil
   io.stderr:write("    texlogsieve: parsing error in "
                    .. "utf8FontMapHandler:handleSecondLine()\n")
 
@@ -3662,6 +3927,7 @@ function utf8FontMapHandler:handleOtherLines()
                    "^Now handling font encoding (%S+) %.%.%.") then
       -- give up and start processing the new message (should not happen)
       dispatch(self.message)
+      self.message = nil
       flushUnrecognizedMessages()
       io.stderr:write("    texlogsieve: parsing error in "
                        .. "utf8FontMapHandler:handleOtherLines()\n")
@@ -3689,6 +3955,7 @@ function utf8FontMapHandler:handleOtherLines()
 
   -- wrap up for the third and fourth possibilities
   dispatch(self.message)
+  self.message = nil
   self.doit = self.handleFirstLine
   self.numTries = 0
   self.foundOtherLines = false
@@ -3788,12 +4055,12 @@ Message.rerunMessages = {
   {
     WARNING,
     'longtable',
-    'Table widths have changed%. Rerun LaTeX%.'
+    'Table %S+s have changed%. Rerun LaTeX%.'
   },
   {
     WARNING,
     'longtable',
-    'Column widths have changed\nin table'
+    'Column %S+s have changed\nin table'
   },
   {
     WARNING,
@@ -3814,6 +4081,459 @@ Message.rerunMessages = {
     WARNING,
     'hyperref',
     'Rerun to get /PageLabels entry%.'
+  },
+  {
+    WARNING,
+    'hyperref',
+    "Rerun to get outlines right\nor use package `bookmark'",
+  },
+  {
+    WARNING,
+    'backref',
+    'Rerun to get bibliographical references right',
+  },
+  {
+    WARNING,
+    'pbalance',
+    'Last two%-column page cols not balanced%. Rerun LaTeX%.',
+  },
+  {
+    WARNING,
+    'simurgh',
+    'unjustified poem%. rerun lualatex to get poem right%.',
+  },
+  {
+    WARNING,
+    'bidipoem',
+    'Unjustified poem%. Rerun XeLaTeX to get poem right',
+  },
+  {
+    WARNING,
+    'biblatex',
+    'Page references have changed%.\nRerun to get references right%.',
+  },
+  {
+    WARNING,
+    'biblatex',
+    'Please rerun LaTeX%. Page breaks have changed%.',
+  },
+  {
+    WARNING,
+    'biblatex',
+    'Please rerun LaTeX%.',
+  },
+  {
+    WARNING,
+    'bidi-perpage',
+    "Counter %b`' may not have been reset per page%. Rerun to reset counter %b`' per page%.",
+  },
+  {
+    WARNING,
+    'Changebar',
+    'Changebar info has changed%.\nRerun to get the bars right',
+  },
+  {
+    WARNING,
+    'thumbs',
+    '\\th@mbmaxwidtha undefined%.\nRerun to get the thumb marks width right%.',
+  },
+  {
+    WARNING,
+    'thumbs',
+    'Rerun to get the thumb marks width right%.',
+  },
+  {
+    WARNING,
+    'thumbs',
+    'Warning: Rerun to get list of thumbs right!',
+  },
+  {
+    WARNING,
+    'thumbs',
+    'File .-%.tmb not found%.\nRerun to get thumbs overview page%(s%) right%.',
+  },
+  {
+    WARNING,
+    'xdoc2',
+    'Page breaks may have changed%.\nRerun to get marginal material right%.',
+  },
+  {
+    WARNING,
+    'bibtopic',
+    'Rerun to get indentation of bibitems right%.',
+  },
+  {
+    WARNING,
+    'polytable',
+    'Column widths have changed%. Rerun LaTeX%.',
+  },
+  {
+    WARNING,
+    'mpostinl',
+    'figure%(s%) may have changed%. Rerun to update figures',
+  },
+  {
+    WARNING,
+    'uftag',
+    'label .- unknown %- rerun',
+  },
+  {
+    WARNING,
+    'uftag',
+    'structure with label .- is unknown rerun',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, mciteplus
+    'Rerun to ensure correct mciteplus label max width/count',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, mciteplus
+    'Mciteplus max count has changed',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, mciteplus
+    'Mciteplus max width has changed',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, upmethodology
+    'Project Task%(s%) may have changed%.\nRerun to get cross%-references right',
+  },
+  {
+    WARNING,
+    'media9',
+    'Rerun to get internal references right!',
+  },
+  {
+    WARNING,
+    'pdfbase',
+    'Rerun to get internal references right!',
+  },
+  {
+    WARNING,
+    'revtex4',
+    'Endnote numbers changed: rerun LaTeX',
+  },
+  {
+    WARNING,
+    'natbib',
+    'Citation%(s%) may have changed%.\nRerun to get citations correct',
+  },
+  {
+    WARNING,
+    'gridset',
+    'Grid position labels may have changed%.\nRerun to get grid positions right%.',
+  },
+  {
+    WARNING,
+    'datagidx',
+    'Rerun required to sort the index/glossary databases',
+  },
+  {
+    WARNING,
+    'datagidx',
+    'Rerun required to ensure the index/glossary location lists are up%-to%-date',
+  },
+  {
+    WARNING,
+    'exframe',
+    'points changed for .- .-; rerun to fix',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually,
+    'Rerun to get page numbers of acronym .- in acronym list right',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, acro
+    'Acronyms may have changed. Please rerun LaTeX',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, acro
+    'Rerun to get barriers of acronym .- right',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, acro
+    'Rerun to get acronym list right',
+  },
+  {
+    WARNING,
+    'changes',
+    'LaTeX rerun needed for list of changes',
+  },
+  {
+    WARNING,
+    'changes',
+    'LaTeX rerun needed for summary of changes',
+  },
+  {
+    WARNING,
+    'totcount',
+    'Rerun to get correct total counts',
+  },
+  {
+    WARNING,
+    'longfigure',
+    '.- .-s have changed%. Rerun %S-%.',
+  },
+  {
+    WARNING,
+    'knowledge',
+    "The label '[^']+' could not be found while searching for '[^']+'%. Possibly rerun latex%.",
+  },
+  {
+    WARNING,
+    'scope',
+    "Unknown label %b`'%. Possibly rerun latex%.",
+  },
+  {
+    WARNING,
+    'scope',
+    "The area %b`' can't be found in context%. Possibly rerun latex%.",
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, constants
+    'Label%(s%) for constants may have changed%. Rerun to get cross%-references right',
+  },
+  {
+    WARNING,
+    'keyvaltable',
+    "No row data available for name '[^']+'%. A LaTeX rerun might be needed\nfor the row data to be available",
+  },
+  {
+    WARNING,
+    'totalcount',
+    'Total counter%(s%) have changed%.\nRerun to get them right',
+  },
+  {
+    WARNING,
+    'caption',
+    "%b`' support has been changed%.\nRerun to get captions right",
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, enotez
+    'Endnotes may have changed%. Rerun to get them right%.',
+  },
+  {
+    WARNING,
+    'autobreak',
+    'Layout may have changed%.\nRerun to get layout correct',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, eqparbox
+    "Rerun to correct the width of eqparbox %b`'",
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, eqparbox
+    "Rerun to correct eqparbox widths",
+  },
+  {
+    WARNING,
+    'lineno',
+    'Linenumber reference failed, rerun to get it right',
+  },
+  {
+    WARNING,
+    'xsavebox',
+    'Rerun to get internal references right!',
+  },
+  {
+    WARNING,
+    'notespage',
+    'New notes pages were added%. Please rerun LaTeX to get header marks right%.',
+  },
+  {
+    WARNING,
+    'linegoal',
+    '\\linegoal value on page .- has changed\n since last run%. Please rerun to get\nthe correct value',
+  },
+  {
+    WARNING,
+    'pgfgantt',
+    'Gantt chart expansion may have changed%. Rerun to get expansion right',
+  },
+  {
+    WARNING,
+    'lastpage',
+    'Rerun to get the references right',
+  },
+  {
+    WARNING,
+    'animate',
+    '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@ Rerun to get internal references right! @\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@',
+  },
+  {
+    WARNING,
+    'notes2bib',
+    'To get notes in the correct order, please run:\n 1%) LaTeX\n 2%) BibTeX\n 3%) LaTeX',
+  },
+  {
+    WARNING,
+    'xsim',
+    'Exercise properties may have changed%. Rerun to get them synchronized%.',
+  },
+  {
+    WARNING,
+    'backcite',
+    'Backcite%(s%) may have changed%.\nRerun to get back references right',
+  },
+  {
+    WARNING,
+    'hyper',
+    'Hyper anchor%(s%) may have changed%.\nRerun to get hyper references right',
+  },
+  {
+    WARNING,
+    'footbib',
+    'Bibliography not yet stable%. Rerun LaTeX',
+  },
+  {
+    WARNING,
+    'glossaries',
+    'Navigation panel has changed%. Rerun LaTeX',
+  },
+  {
+    WARNING,
+    'fancylabel',
+    'Fancylabels may have changed%. Please run latex again%.',
+  },
+  {
+    WARNING,
+    'papermas',
+    'Number of pages may have changed%.\nRerun to get it right',
+  },
+  {
+    WARNING,
+    'standalone',
+    "Sub-preamble of file '[^']+' has changed%. Content will be ignored%. Please rerun LaTeX!",
+  },
+  {
+    WARNING,
+    'movie15',
+    '@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@ Rerun to get object references right! @@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@',
+  },
+  {
+    WARNING,
+    'atenddvi',
+    'Rerun LaTeX, last page not yet found',
+  },
+  {
+    WARNING,
+    'atenddvi',
+    'Rerun LaTeX, last page has changed',
+  },
+  {
+    WARNING,
+    'transparent',
+    'Rerun to get transparencies right',
+  },
+  {
+    WARNING,
+    'accessibility',
+    'Changed paragraphs, rerun to get it right',
+  },
+  {
+    WARNING,
+    'exam',
+    'Point totals have changed%. Rerun to get point totals right',
+  },
+  {
+    WARNING,
+    'scrlayer-notecolumn',
+    'MD5 of slnc%-file changed%.\nLast: .-\nNew: .-\nAt least one more LaTeX rerun needed to\nmake note columns right',
+  },
+--[[
+-- why are these "INFO"? Maybe they appear even when no rerun is needed?
+  {
+    INFO,
+    'scrlayer-notecolumn',
+    'No text label for \\syncwithnotecolumn%.\nNeed rerun to sync position',
+  },
+  {
+    INFO,
+    'scrlayer-notecolumn',
+    "No note label for sync with note column\n%b`'%.\nNeed rerun to sync position",
+  },
+  {
+    INFO,
+    'scrlayer-notecolumn',
+    'Last note page before last text page%.\nNeed rerun to sync position',
+  },
+  {
+    INFO,
+    'scrlayer-notecolumn',
+    'Last note position before last text\nposition%.\nNeed rerun to sync position',
+  },
+--]]
+  {
+    WARNING,
+    'LaTeX', -- actually, vhistory
+    'Rerun LaTeX to get the history of versions%.',
+  },
+  {
+    WARNING,
+    'bgteubner',
+    'Indentation for theorem titles has been ..creased%.\nRerun to adjust the indentation',
+  },
+  {
+    WARNING,
+    'pageslts',
+    'Label%(s%) may have changed%.\nRerun to get cross-references right',
+  },
+  {
+    WARNING,
+    'limap',
+    'Table .-s have changed%. Rerun LaTeX%.',
+  },
+  {
+    WARNING,
+    'uniq',
+    "%b`' is unique now%.\nRerun LaTeX to pick up the change",
+  },
+  {
+    WARNING,
+    'uniq',
+    "%b`' is not unique anymore%.\nRerun LaTeX to pick up the change",
+  },
+  {
+    WARNING,
+    'uniq',
+    'Uniquenesses have changed.%s?\nRerun LaTeX to pick up the change',
+  },
+  {
+    WARNING,
+    'bibunits',
+    'Label%(s%) may have changed%. Rerun to get cross%-references right',
+  },
+  {
+    WARNING,
+    'ocgx2',
+    'Rerun to get OCG references right!',
+  },
+  {
+    WARNING,
+    'glossaries',
+    "Missing pre%-location tag for %b`'%. Rerun required",
+  },
+  {
+    WARNING,
+    'mparhack',
+    'Marginpars may have changed%.\nRerun to get them right',
+  },
+  {
+    WARNING,
+    'LaTeX', -- actually, etaremune
+    'Etaremune labels have changed%.\n%s+Rerun to get them right',
   },
 }
 
@@ -5161,9 +5881,19 @@ function guessUnquotedFilename(line, position)
       for i = longest, alreadyCheckedIdx +1, -1 do
           local candidate = string.sub(line, 1, i)
 
-          -- We are gradually removing chars from the end of the
-          -- string; if we reach a slash, only the directories remain
-          if string.sub(candidate, #candidate) == "/" then break end
+          -- We are gradually removing chars from the end of the string.
+          -- We could just do that, but there is a possible optimization:
+          -- if the string is part of a filename that is wrapped and we
+          -- reach a slash, only the directories remain and we do not need
+          -- to continue reducing, we can proceed to unwrap the line.
+          -- However, the line may not be wrapped at all: instead, it
+          -- might include a (shorter) filename followed by something else
+          -- (such as a URL) that includes a slash character. So, we can
+          -- only optimize if we know for sure that this is not the case. We
+          -- can be sure that this is not the case when there are no spaces
+          -- in the candidate string.
+          if not string.find(candidate, ' ')
+              and string.sub(candidate, #candidate) == "/" then break end
 
           if checkIfFileExists(candidate) then
               filename = candidate
@@ -5188,6 +5918,8 @@ function guessUnquotedFilename(line, position)
 end
 
 function readFls(logfilename)
+  if not string.find(logfilename, '%.log$') then return end
+
   local flsfilename = string.gsub(logfilename, '%.log$', '.fls')
 
   -- Let's be reasonably sure that we are not dealing
