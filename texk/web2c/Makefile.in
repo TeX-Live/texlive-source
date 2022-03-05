@@ -4647,7 +4647,9 @@ euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/
 # At the moment, these are the only man pages handled in the
 # conglomerated web2c/Makefile[.am]. (All the others are in man/.)
 # If that changes, have to set at top level and use +=.
-@HITEX_TRUE@man1_MANS = hitexdir/hishrink.man hitexdir/histretch.man hitexdir/hitex.man
+@HITEX_TRUE@man1_MANS = hitexdir/man/hishrink.man hitexdir/man/histretch.man \
+@HITEX_TRUE@            hitexdir/man/hitex.man
+
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
 	-DINIT -DSTAT
 # -DDEBUG drops into an interactive debugging session.

@@ -14,7 +14,8 @@ hiall: hitex hishrink histretch
 # At the moment, these are the only man pages handled in the
 # conglomerated web2c/Makefile[.am]. (All the others are in man/.)
 # If that changes, have to set at top level and use +=.
-man1_MANS = hitexdir/hishrink.man hitexdir/histretch.man hitexdir/hitex.man
+man1_MANS = hitexdir/man/hishrink.man hitexdir/man/histretch.man \
+            hitexdir/man/hitex.man
 endif HITEX
 
 ## Debugging for the parser as usual.
