@@ -281,7 +281,12 @@ TEXINPUTS.context       = $TEXMFDOTDIR;$TEXMF/tex/{context,plain,generic,}//
 % OpTeX.
 TEXINPUTS.optex         = $TEXMFDOTDIR;$TEXMF/tex/{optex,plain,generic,}//
 
-% jadetex.
+% HiTeX.
+TEXINPUTS.hilatex       = $TEXMFDOTDIR;$TEXMF/tex/{hilatex,latex,hitex,generic,}//
+TEXINPUTS.hilatex-dev   = $TEXMFDOTDIR;$TEXMF/tex/{latex-dev,hilatex,latex,hitex,generic,}//
+TEXINPUTS.hitex         = $TEXMFDOTDIR;$TEXMF/tex/{hitex,plain,generic,latex,}//
+
+% JadeTeX.
 TEXINPUTS.jadetex       = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,latex,}//
 TEXINPUTS.pdfjadetex    = $TEXMFDOTDIR;$TEXMF/tex/{jadetex,latex,generic,latex,}//
 

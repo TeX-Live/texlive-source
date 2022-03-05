@@ -3,7 +3,7 @@
 # This is not run as part of the build, just a convenience used by hand
 # from the Build/source/... directory.
 
-INSTALL_DATA = cp -pf
+INSTALL_DATA = cp -pfv
 
 texmf_dist = ../../../../../../Master/texmf-dist
 hitex_makeindex_dir = $(texmf_dist)/makeindex/hitex/hint.ist
@@ -13,4 +13,4 @@ install:
 	$(INSTALL_DATA) hint.ist $(hitex_makeindex_dir)
 	for f in hiformat.hnt hiformat.pdf hint.sty \
 	         hitexman.hnt hitexman.pdf hitexman.tex; do \
-	  $(INSTALL_DATA) $$f $(hitex_doc_dir) || exit 1; done
+	  $(INSTALL_DATA) $$f $(hitex_doc_dir)/ || exit 1; done
