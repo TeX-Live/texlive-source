@@ -6,12 +6,13 @@
 INSTALL_DATA = cp -pfv
 
 texmf_dist = ../../../../../../Master/texmf-dist
-hitex_doc_dir = $(texmf_dist)/tex/hitex/base
+hitex_tex_dir = $(texmf_dist)/tex/hitex/base
 #
 install:
 	for f in hilatex.ini hiltxpage.tex hiplainpage.tex \
 	         hitex.ini ifhint.tex; do \
-	  $(INSTALL_DATA) $$f $(hitex_doc_dir)/ || exit 1; done
+	  $(INSTALL_DATA) $$f $(hitex_tex_dir)/ || exit 1; done
+	cd $(hitex_tex_dir) && /bin/pwd && svn status
 
 fmt: hitex.fmt
 hitex.fmt: hitex.ini
