@@ -125,6 +125,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
                also: https://osdn.jp/projects/eptex
         etex - maintained here
       euptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
+       hitex - https://hint.userweb.mwn.de/hint/hitex.html
   mflua[jit] - https://serveur-svn.lri.fr/svn/modhel/mflua
                also: http://www.luatex.org/download.html
     mplibdir - http://tug.org/metapost/
@@ -138,7 +139,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
        xetex - http://tug.org/xetex/
    
-xdvik 22.87.04 - checked 15mar20
+xdvik 22.87.06 - checked 18feb22
   http://sourceforge.net/projects/xdvi/files/xdvik/
   Procedure for updating xdvik from sourceforge release:
 tar xf ...
