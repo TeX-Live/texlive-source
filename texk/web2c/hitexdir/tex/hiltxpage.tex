@@ -24,8 +24,14 @@
 % copyright holders.
 
 \ifhint
+% Usefull settings for HINT files
+\pretolerance=1000
+\tolerance=2000
+\emergencystretch=16pt
+\overfullrule=0pt
 \textwidth=\hsize
 \textheight=\vsize
+% HINT page template for footnotes and topinserts
 \newinsert\topins
 \skip\topins=0pt % no space added when a topinsert is present
 \count\topins=1000 % magnification factor (1 to 1)
@@ -68,11 +74,3 @@
   }
 }% end page template
 \fi
-
-% the footins had this:
-%    \before = 
-%     {\vskip 0pt plus 1filll\vskip 9pt plus 4pt minus 2pt
-%      \kern -3pt
-%      \hrule width 5em
-%      \kern 2.6pt}
-%  }
