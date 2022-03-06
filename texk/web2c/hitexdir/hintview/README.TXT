@@ -17,7 +17,7 @@ libdl, libglew, libglfw3 libfreetype, libX11, libXrandr, libXinerama,
 Documentation
 -------------
 The command line options, keystrokes, and mouse actions are described
-in hintview.1 ind the man/ subdirectory.
+in hintview.1 in the man/ subdirectory.
 
 
 
