@@ -1,3 +1,11 @@
+2.98
+  Fix beaming in 6/2 time by setting mapfb(5) and (6) = 0 in make1bar(...) 
+2.97
+  Fix problem with beaming after new movement command
+2.96 and 2.95
+  replace and '\','/'. and '"' with chax(); 
+  eliminate do loops with shared last line
+  delete superfluous comments in source
 2.94
   Allow moving dots on main and chord note in 2-note termolos
   Add definitions of \hbp and \hbpp to pmx.tex

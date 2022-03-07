@@ -1,11 +1,20 @@
 #! /bin/sh
 
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright (C) 2021 Bob Tennent <rdt@cs.queensu.ca>
 # You may freely use, modify and/or distribute this file.
 
 rm -f barsant* pmxaerr.dat
+if test -r "$srcdir/tests/barsant.pmx"; then
+  : # standalone pmx
+elif test -r "$srcdir/pmx-src/tests/barsant.pmx"; then
+  srcdir=$srcdir/pmx-src # in TL
+else
+  echo "$0: cannot find tests/barsant.pmx" >&2
+  exit 1
+fi
 
-cp $test_src/barsant.pmx .
+
+cp "$test_src/barsant.pmx" . || exit 1
 
 failed=
 
