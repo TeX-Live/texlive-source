@@ -1,3 +1,8 @@
+2022-03-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* fwrite.c: output to file instead of accumulating too much.
+	https://github.com/texjporg/tex-jp-build/issues/137
+
 2022-01-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* fread.c: Adapt to arguments of input_line2() in ptexenc-1.4.0.
