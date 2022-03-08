@@ -114,6 +114,19 @@ recorder_start(void)
     recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
     
     cwd = xgetcwd();
+#if defined(_WIN32)
+    {
+      wchar_t *wpwd;
+      if (file_system_codepage != 0 &&
+          file_system_codepage != win32_codepage) {
+        wpwd = get_wstring_from_mbstring(win32_codepage, cwd, wpwd=NULL);
+        free (cwd);
+        cwd = get_mbstring_from_wstring(file_system_codepage, wpwd, cwd=NULL);
+        free (wpwd);
+      }
+    }
+#endif /* _WIN32 */
+
     fprintf(recorder_file, "PWD %s\n", cwd);
     free(cwd);
 }
