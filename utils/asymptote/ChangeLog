@@ -1,3 +1,298 @@
+commit 70dcf303c069ce3669f5f589aa3642650665278b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 11:40:50 2022 -0700
+
+    Improve diagnostic.
+
+commit 72e4dd6c5c4561fb489d60e37b8033bfbe8f7e0b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 10:22:23 2022 -0700
+
+    Fix diagnostic.
+
+commit ca02b6f4a34e8171ce888dbbb732d6705d075653
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 10:03:50 2022 -0700
+
+    TRANSPARENCY: Fix export.
+
+commit 54ed5ea241a6c58946b0d57a813dbf184cf99413
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 00:18:02 2022 -0700
+
+    TRANSPARENCY: Store GPUindexing count in first half of offset SSBO.
+
+commit fe52fff8f5d413dd0a34de7a035cfee00d940dc7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 12:47:55 2022 -0700
+
+    TRANSPARENCY: Save an SSBO by storing maxSize in countBuffer.
+
+commit bf4e5b66c12868256765bfdc68a91913c4e513f5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 6 10:22:31 2022 -0700
+
+    TRANSPARENCY: Use a separate count buffer.
+
+commit f5989b52a8aa9a8f50c93240ebf28d240508b86f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 5 22:56:35 2022 -0700
+
+    Remove unused uniform.
+
+commit 8194c27001d46765cb7914df9751e5aa367a6d51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 5 18:15:11 2022 -0700
+
+    Reformat.
+
+commit d54990432603803f5166eab92cd7a63d53ed696b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 5 15:46:28 2022 -0700
+
+    Use no more than 8 SSBOs; avoid unnecessary count lookup.
+
+commit 496c16cbdde3c4d52667d10e248c59ed04c5531f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 5 12:51:14 2022 -0700
+
+    Reduce number of SSBOs by one.
+
+commit 616460b1dd97ec326f4cf47a6c01ce4b301efb20
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 23:37:28 2022 -0700
+
+    Fix offscreen export.
+
+commit 096e6ecadea8279ce0c9d8d1aa2279615f341688
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 20:34:56 2022 -0700
+
+    TRANSPARENCY: Define m1 and r only when needed.
+
+commit 49b90ca22992f97a9b314d2ac4e2da9b6e17dd40
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 15:55:11 2022 -0700
+
+    Fix GPUinterlock=false.
+
+commit 4b8738823adfbe292a90f0a6a037b4e9716e95d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 10:33:02 2022 -0700
+
+    TRANSPARENCY: Set initial (minimum) maxSize to 8.
+
+commit 1d530b46f61741e8598dd425301894bb529a77a6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 4 03:15:21 2022 -0700
+
+    TRANSPARENCY: Remove unused variable.
+
+commit 21e44728d8bd82570dd54b7a5a2abfc94b594e88
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 3 23:39:55 2022 -0700
+
+    TRANSPARENCY: Reduce ARRAYSIZE requirement.
+
+commit f22a8995636f039280018b6779199aac008fe852
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 3 22:19:58 2022 -0700
+
+    TRANSPARENCY: Choose optimal ARRAYSIZE.
+
+commit 43b9472bb85a9b7f72168ebbb2a9fe9472ad2a8f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 3 13:46:21 2022 -0700
+
+    TRANSPARENCY: Sort indices rather than colors.
+
+commit c44585b6711d7d2d9194066e2f51055325e52149
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 25 21:25:06 2022 -0700
+
+    TRANSPARENCY: Automatically determine optimal number of work groups.
+
+commit 876ada0dff7e8f074eb58433b531de6db7c9ea96
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 22:27:23 2022 -0700
+
+    TRANSPARENCY: Avoid unnecessary uniform.
+
+commit 258eb141fb034b8ed28f98ce9517249bb032299e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 22:15:21 2022 -0700
+
+    TRANSPARENCY: Standardize notation.
+
+commit e175bd35ac515c45f0b061ed6ebd12976ef1d6ec
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 21:48:32 2022 -0700
+
+    TRANSPARENCY: Reorganize buffers.
+
+commit 3a80fa70f07145e828a94f2154228d395f6beaac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 15:42:02 2022 -0700
+
+    Use fewer (but larger) workgroups for sum2.
+
+commit 2a2689c3ddf9c196881b53ce79c809ef8663c783
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 12:57:16 2022 -0700
+
+    Improve performance and reduce GPU to CPU communication by adding another summation phase.
+
+commit c9e2e9199a7de723e4ef112c603777a90a7015e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 20 00:22:26 2022 -0700
+
+    Preprocess global sums on GPU.
+
+commit efb89680a9bca82f38fa0ab5c8faf1e5dc584b3e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 18 17:52:54 2022 -0700
+
+    Fix commit 45f445c9c6a8f9d2f5d4c743464113e827b86ec8.
+
+commit 365f243576c84a0a55099f7a263222154356ea8e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 16 23:04:22 2022 -0700
+
+    Optimize code.
+
+commit 6aea8f369dfa696881627bc1769a2131a9a626ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 16 22:56:20 2022 -0700
+
+    Simplify code.
+
+commit 39fad88b4b2ad2fb3e29d7253d8a6d300cdd9137
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 16 22:30:44 2022 -0700
+
+    TRANSPARENCY: Partially revert commit e2cf1e35d0d9655d63e96c72d9d315522844d704.
+
+commit 45f445c9c6a8f9d2f5d4c743464113e827b86ec8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 16 14:05:37 2022 -0700
+
+    Fix noGPUindexing.
+
+commit 78f7513e603b96cf377ea6d0c3edfd8d17fed85c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 16 12:04:29 2022 -0700
+
+    Optimize offset buffer operations.
+
+commit c33986dd8ff7c2de982155687193204cbe308897
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 15 23:13:19 2022 -0700
+
+    Account for final pixel.
+
+commit e2cf1e35d0d9655d63e96c72d9d315522844d704
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 14 11:29:28 2022 -0700
+
+    Update memory barriers.
+
+commit fb36448a1614a942b51598e84897df23e4da59c6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 14 10:19:42 2022 -0700
+
+    Implement GPUarraySize setting.
+
+commit 8bf8455b6e6fba5c64d5316481e37595b485b7ad
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 14 08:36:59 2022 -0700
+
+    Avoid negative indices.
+
+commit 89bcd66b00ddc1f7279a934fa6521fb12cedfd2d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 14 00:05:56 2022 -0700
+
+    Compute global partial sums on the CPU, including the number of fragments.
+
+commit 31001ddf5780071c70f679375b5fbf25ff269117
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 13 21:30:14 2022 -0700
+
+    Remove obsolete code.
+
+commit e53b4363cfb8dd6bf3df6207cafaf1e4562f3cda
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 13 00:54:12 2022 -0700
+
+    Simplify code.
+
+commit 43ee1f02932d1569db65628202461d4e5977fd72
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 9 16:53:47 2022 -0700
+
+    Fix tensorshade fillrule.
+
+commit a76b469c94bd4f0d482abfb04b443590672e926e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 9 16:53:37 2022 -0700
+
+    Fix lastrevision.
+
+commit 0b595f83adfce03d016b10a0b976b7cd47deab28
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 9 15:41:37 2022 -0700
+
+    XASY: Change QRect to QRectF.
+
+commit 3b60274d30e38f06b5e0620598d85ed8ceccb592
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 6 21:57:32 2022 -0700
+
+    Implement GPUlocalSizeX setting.
+
+commit e4ff24b20656652c0f4a4f340df6eed6e8b13c9c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 6 16:10:46 2022 -0700
+
+    Restrict last revision to NVIDIA cards.
+
+commit 1251f044b4fd4683bca6fbd4de896eb2214ece19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 6 15:35:01 2022 -0700
+
+    Optimize presum shader.
+
+commit fb32ab35ee6f7a61bbffc643df4ef74db39b4e16
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 6 13:42:54 2022 -0700
+
+    Document dvisvgmMultipleFiles=true; option for speeding up xasy deconstruction
+    with PDF TeX engines.
+
+commit 166e785ae28fa8dd9943b5261e1d6a4c7e50f6ad
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 5 23:23:17 2022 -0700
+
+    Implement real operator ecast(rational r) up to maxDenominator=100000.
+
+commit 8959d93ffd8abbf8d7d3ea7edd33f0d6d180c933
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 5 20:21:25 2022 -0700
+
+    Fix issue #301: broken links.
+
+commit aecbedad10cf705398dcb9ba2ce60b36b1c2e1dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 5 15:42:09 2022 -0700
+
+    Remove unused uniform.
+
+commit 1922c3ba7daa62370a91b52f0b16cfda1c461efb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 5 00:23:09 2022 -0700
+
+    Increment version to 2.79.
+
 commit 83b0213063787b8cfdd68fe274b78b5867e5e9b6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Feb 4 23:50:57 2022 -0700

@@ -30,37 +30,50 @@ float Roughness;
 
 #ifdef HAVE_SSBO
 
-layout(binding=0, std430) buffer sumBuffer {
-  uint sum[];
-};
-
-layout(binding=1, std430) buffer offsetBuffer {
+layout(binding=0, std430) buffer offsetBuffer {
   uint offset[];
 };
 
+#ifdef GPUINDEXING
+
+#if defined(TRANSPARENT) || (!defined(HAVE_INTERLOCK) && !defined(OPAQUE))
+uniform uint offset2;
+uniform uint m1;
+uniform uint r;
+#endif
+
+layout(binding=2, std430) buffer localSumBuffer {
+  uint localSum[];
+};
+
+layout(binding=3, std430) buffer globalSumBuffer {
+  uint globalSum[];
+};
+#else
 layout(binding=2, std430) buffer countBuffer {
   uint count[];
 };
+#endif
 
-layout(binding=3, std430) buffer fragmentBuffer {
+layout(binding=4, std430) buffer fragmentBuffer {
   vec4 fragment[];
 };
 
-layout(binding=4, std430) buffer depthBuffer {
+layout(binding=5, std430) buffer depthBuffer {
   float depth[];
 };
 
-layout(binding=5, std430) buffer opaqueBuffer {
+layout(binding=6, std430) buffer opaqueBuffer {
   vec4 opaqueColor[];
 };
 
-layout(binding=6, std430) buffer opaqueDepthBuffer {
+layout(binding=7, std430) buffer opaqueDepthBuffer {
   float opaqueDepth[];
 };
 
 uniform uint width;
-uniform uint M;
-uniform uint r;
+uniform uint pixels;
+
 #endif
 
 #ifdef NORMAL
@@ -261,11 +274,13 @@ void main()
 #ifdef HAVE_SSBO
   uint headIndex=uint(gl_FragCoord.y)*width+uint(gl_FragCoord.x);
 #if defined(TRANSPARENT) || (!defined(HAVE_INTERLOCK) && !defined(OPAQUE))
-  uint listIndex=
 #ifdef GPUINDEXING
-    sum[headIndex < r*(M+1u) ? headIndex/(M+1u) : (headIndex-r)/M]+
+  uint p=headIndex < r*(m1+1u) ? headIndex/(m1+1u) : (headIndex-r)/m1;
+  uint listIndex=localSum[p]+localSum[offset2+p/m2]+globalSum[p/(m2*m2)]+
+    atomicAdd(offset[pixels+headIndex],-1u)-1u;
+#else
+  uint listIndex=offset[headIndex]-atomicAdd(count[headIndex],1u)-1u;
 #endif
-    offset[headIndex]+atomicAdd(count[headIndex],1u);
   fragment[listIndex]=outColor;
   depth[listIndex]=gl_FragCoord.z;
 #ifndef WIREFRAME
@@ -274,12 +289,13 @@ void main()
 #else
 #ifndef OPAQUE
 #ifdef HAVE_INTERLOCK
-beginInvocationInterlockARB();
-if(opaqueDepth[headIndex] == 0.0 || gl_FragCoord.z < opaqueDepth[headIndex]) {
-  opaqueDepth[headIndex]=gl_FragCoord.z;
-  opaqueColor[headIndex]=outColor;
-}
-endInvocationInterlockARB();
+  beginInvocationInterlockARB();
+  if(opaqueDepth[headIndex] == 0.0 || gl_FragCoord.z < opaqueDepth[headIndex])
+    {
+    opaqueDepth[headIndex]=gl_FragCoord.z;
+    opaqueColor[headIndex]=outColor;
+  }
+  endInvocationInterlockARB();
 #endif
 #endif
 #endif

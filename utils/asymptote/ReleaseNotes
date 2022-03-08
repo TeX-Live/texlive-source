@@ -1,3 +1,11 @@
+Release Notes for Version 2.79
+
+The transparency shader was further optimized. The tensorshade fillrule was
+fixed. A compatibility fix was made to xasyBezierInterface.py.
+A real operator ecast(rational r) was implemented up to maxDenominator=100000. 
+The dvisvgmMultipleFiles option, which speeds up xasy deconstruction with
+PDF TeX engines, was documented.   
+
 Release Notes for Version 2.78
 
 The transparency shader was further optimized; an incorrect buffer size and
@@ -2398,5 +2406,3 @@ the frame for filling with a background color; they also return the boundary
 as a guide. A workaround was added for a bug in gcc version 3.3 to
 facilitate compilation under Darwin (MacOS). Many internal coding
 improvements were made.
-
-LocalWords:  MSWindows SVG Xasy
