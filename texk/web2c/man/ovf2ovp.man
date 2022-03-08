@@ -1,4 +1,4 @@
-.TH OVF2OVP 1 "14 April 2016" "Web2C @VERSION@"
+.TH OVF2OVP 1 "8 March 2022" "Web2C @VERSION@"
 .PP 
 .SH "NAME" 
 ovf2ovp \- convert virtual font file and associated font metrics to property-list format
@@ -60,9 +60,11 @@ Omega Virtual Font file
 .PP 
 .SH "BUGS" 
 .PP 
-Send bug reports to <http://lists.tug.org/tex-k>
-(mailing list); may also check if the same bug is present in
-\fBvftovp\fP(1)\&.  General discussion of Omega (and Aleph) can take place
+Email bug reports to <https://lists.tug.org/tex-k>
+(mailing list); good to check if the same bug is present in
+\fBvftovp\fP(1)\&.
+.PP
+General discussion of Omega (and Aleph) can take place
 on the <http://lists.tug.org/omega> mailing list.
 .PP 
 .SH "SEE ALSO" 
@@ -85,15 +87,10 @@ for ArborText, Inc\&.  He wrote a somewhat similar program called
 .RE 
 .PP
 Thus, \fBovf2ovp\fP is based on the WEB source code for \fBvftovp\fP(1),
-although nowadays it is a link to \fBomfonts\fP, implemented entirely in
-C.
+although nowadays it is a link to \fBomfonts\fP, implemented entirely in C.
 .PP 
-The primary authors of Omega are John Plaice and Yannis Haralambous.
+The primary authors of Omega were John Plaice and Yannis Haralambous.
 Omega (and Aleph) are now maintained as part of TeX Live.
 .PP 
-This manual page was written by C\&.M\&. Connelly
-<cmc@debian\&.org>, for
-the Debian GNU/Linux system\&.  It may be used by other distributions
-without contacting the author\&.  Any mistakes or omissions in the
-manual page are my fault; inquiries about or corrections to this
-manual page should be directed to me (and not to the primary author)\&.
+This manual page was written by C\&.M\&. Connelly for the Debian
+GNU/Linux system\&. It is also now maintained as part of TeX Live.

@@ -1,3 +1,9 @@
+2022-03-08  Karl Berry  <karl@freefriends.org>
+
+	* mkindex.1: update contact info.
+	Report from G\"unter Essers,
+	https://tug.org/pipermail/tex-k/2022-March/003776.html
+
 2021-09-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mkind.h, scanid.[ch], scanst.c:

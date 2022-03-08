@@ -1,3 +1,12 @@
+2022-03-08  Karl Berry  <karl@freefriends.org>
+
+	* mkocp.man,
+	* mkofm.man,
+	* otp2ocp.man,
+	* outocp.man: update contact info.
+	Report from G\"unter Essers,
+	https://tug.org/pipermail/tex-k/2022-March/003776.html
+
 2021-08-06  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* otp-lexer.l, otp-parser.y: Avoid MSVC compiler errors
