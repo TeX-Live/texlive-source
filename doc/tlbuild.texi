@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2022
-@set month-year February 2022
+@set month-year March 2022
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -1632,7 +1632,7 @@ This subdirectory contains the sources for @file{asy} and @file{xasy}
 but due to its complexity and prerequisites (e.g., OpenGL) it is
 not part of the TL build system.  These programs must be built and
 installed independently, but are included on the TL DVD together with
-their support files.  See @url{https://tug.org/build.html#asymptote}.
+their support files.  See @url{https://tug.org/texlive/build.html#asymptote}.
 
 @node Extending @TL{}
 @section Extending @TL{}
