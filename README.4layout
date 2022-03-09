@@ -453,7 +453,7 @@ This subdirectory contains the sources for 'asy' and 'xasy' but due to
 its complexity and prerequisites (e.g., OpenGL) it is not part of the TL
 build system.  These programs must be built and installed independently,
 but are included on the TL DVD together with their support files.  See
-<https://tug.org/build.html#asymptote>.
+<https://tug.org/texlive/build.html#asymptote>.
 
 6.6 Extending TeX Live
 ======================
