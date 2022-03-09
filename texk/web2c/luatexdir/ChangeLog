@@ -1,3 +1,6 @@
+2022-03-10 Luigi Scarso <luigi.scarso@gmail.com>
+    *  -[no-]parse-first-line is now an unrecognized option (thanks to K.Berry)
+
 2022-02-28 Luigi Scarso <luigi.scarso@gmail.com>
     * pass node to latelua function call (H.Hagen)
 
