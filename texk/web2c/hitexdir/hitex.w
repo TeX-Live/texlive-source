@@ -34320,15 +34320,16 @@ Therefore we record {\tt texmf.cnf} with the following code:
 
 @<record {\tt texmf.cnf}@>=
 if (recorder_enabled) {
-  char *p = kpse_find_file_generic ("texmf.cnf", kpse_cnf_format, 0, 1);
+  string *p = kpse_find_file_generic ("texmf.cnf", kpse_cnf_format, 0, 1);
   if (p && *p) {
-    char *pp = p;
+    string *pp = p;
     while (*p) {
-    recorder_record_input (*p);
-    free (*p);
-    p++;
+      recorder_record_input (*p);
+      free (*p);
+      p++;
     }
   free (pp);
+  }
 }
 
 
