@@ -666,7 +666,7 @@ restart:
         else out_state=verbatim; break;
       case '/': C_putc('/'); out_state=post_slash; break;
       case '*': if (out_state==post_slash) C_putc(' ');
-        @=/* fall through */@>@;@;
+        @=/* fall through */@>@;
       default: C_putc(cur_char); out_state=normal; break;
     }
 }
