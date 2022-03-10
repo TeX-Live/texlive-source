@@ -606,7 +606,7 @@ delete_glue_ref(split_top_ptr(p));
 free_node(p,ins_node_size);goto done;
 }
 case whatsit_node:/*1387:*/
-#line 25382 "htex.w"
+#line 25384 "htex.w"
 
 {switch(subtype(p)){
 case close_node:case language_node:free_node(p,small_node_size);break;
@@ -735,7 +735,7 @@ ins_ptr(r)= copy_node_list(ins_ptr(p));
 words= ins_node_size-1;
 }break;
 case whatsit_node:/*1386:*/
-#line 25264 "htex.w"
+#line 25266 "htex.w"
 
 switch(subtype(p)){
 case open_node:{r= get_node(open_node_size);words= open_node_size;
@@ -1360,7 +1360,7 @@ link(q)= p;p= q;
 #line 13121 "htex.w"
 break;
 case whatsit_node:/*1389:*/
-#line 25462 "htex.w"
+#line 25464 "htex.w"
 
 if(subtype(p)==image_node)
 {if(image_height(p)> h)h= image_height(p);
@@ -1525,7 +1525,7 @@ if(width(p)+s> w)w= width(p)+s;
 #line 13348 "htex.w"
 break;
 case whatsit_node:/*1388:*/
-#line 25456 "htex.w"
+#line 25458 "htex.w"
 
 if(subtype(p)==image_node)
 {if(image_width(p)> w)w= image_width(p);
@@ -2521,7 +2521,7 @@ cur_p= link(cur_p);
 switch(type(cur_p)){
 case hlist_node:case vlist_node:case rule_node:act_width= act_width+width(cur_p);break;
 case whatsit_node:/*1391:*/
-#line 25472 "htex.w"
+#line 25474 "htex.w"
 
 adv_past(cur_p)
 
@@ -2824,7 +2824,7 @@ cur_height= cur_height+prev_dp+height(p);prev_dp= depth(p);
 goto not_found;
 }
 case whatsit_node:/*1394:*/
-#line 25481 "htex.w"
+#line 25483 "htex.w"
 
 goto not_found
 
@@ -2978,7 +2978,7 @@ goto contribute;
 #line 19692 "htex.w"
 break;
 case whatsit_node:/*1393:*/
-#line 25478 "htex.w"
+#line 25480 "htex.w"
 
 goto contribute
 
@@ -3437,7 +3437,7 @@ if(subtype(p)>=a_leaders)goto found;
 #line 22034 "htex.w"
 break;
 case whatsit_node:/*1390:*/
-#line 25468 "htex.w"
+#line 25470 "htex.w"
 d= 0
 
 /*:1390*/

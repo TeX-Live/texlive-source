@@ -34260,22 +34260,22 @@ recorder_change_filename (const char *new_name)
    return;
 #if defined(_WIN32)
    fclose (recorder_file); /* An opened file cannot be renamed. */
-#endif /* _WIN32 */
+#endif /* |_WIN32| */
    if (output_directory) {
      temp = concat3(output_directory, DIR_SEP_STRING, new_name);
      new_name = temp;
    }
 
-   /* On windows, renaming fails if a file with new_name exists. */
+   /* On windows, renaming fails if a file with |new_name| exists. */
 #if defined(_WIN32)
    remove (new_name); /* Renaming fails if a file with the |new_name| exists. */
-#endif /* _WIN32 */
+#endif /*  |_WIN32| */
    rename(recorder_name, new_name);
    free(recorder_name);
    recorder_name = xstrdup(new_name);
 #if defined(_WIN32)
    recorder_file = xfopen (recorder_name, FOPEN_A_MODE);
-#endif /* _WIN32 */
+#endif /* |_WIN32| */
    if (temp)
      free (temp);
 }

@@ -1,19 +1,19 @@
 	/*512:*/
-	#line 10457 "format.w"
+	#line 10466 "format.w"
 
 #ifndef _HFORMAT_H_
 #define _HFORMAT_H_
 	/*357:*/
-	#line 7848 "format.w"
+	#line 7858 "format.w"
 
 #define REF_RNG(K,N) if ((int)(N)>max_ref[K]) QUIT("Reference %d to %s out of range [0 - %d]",\
   (N),definition_name[K],max_ref[K])
 	/*:357*/	/*358:*/
-	#line 7862 "format.w"
+	#line 7872 "format.w"
 
 #define MAX_REF(K) ((K)==label_kind?0xFFFF:0xFF)
 	/*:358*/	/*431:*/
-	#line 9317 "format.w"
+	#line 9326 "format.w"
 
 #ifdef WIN32
 #define SIZE_F "0x%x"
@@ -23,7 +23,7 @@
 #ifdef DEBUG
 #define DBG(FLAGS,...) ((debugflags & (FLAGS))?LOG(__VA_ARGS__):0)
 #else
-#define DBG(FLAGS,...) 0
+#define DBG(FLAGS,...) (void)0
 #endif
 #define DBGTAG(A,P) DBG(DBGTAGS,"tag [%s,%d] at " SIZE_F "\n",NAME(A),INFO(A),(P)-hstart)
 
@@ -32,10 +32,10 @@
 
 #define TAGERR(A) QUIT("Unknown tag [%s,%d] at " SIZE_F "\n",NAME(A),INFO(A),hpos-hstart)
 	/*:431*/
-	#line 10460 "format.w"
+	#line 10469 "format.w"
 
 	/*418:*/
-	#line 9055 "format.w"
+	#line 9065 "format.w"
 
 #define DBGNONE     0x0
 #define DBGBASIC    0x1
@@ -55,25 +55,25 @@
 #define DBGRENDER   0x4000
 #define DBGLABEL    0x8000
 	/*:418*/
-	#line 10461 "format.w"
+	#line 10470 "format.w"
 
 	/*12:*/
-	#line 640 "format.w"
+	#line 641 "format.w"
 
 #define KIND(T)      (((T)>>3)&0x1F)
 #define NAME(T)      content_name[KIND(T)]
 #define INFO(T)      ((T)&0x7)
 #define TAG(K,I)     (((K)<<3)|(I))
 	/*:12*/	/*77:*/
-	#line 1639 "format.w"
+	#line 1640 "format.w"
 
 #define ROUND(X)     ((int)((X)>=0.0?floor((X)+0.5):ceil((X)-0.5)))
 	/*:77*/	/*112:*/
-	#line 2139 "format.w"
+	#line 2140 "format.w"
 
 #define RUNNING_DIMEN 0xC0000000
 	/*:112*/	/*131:*/
-	#line 2481 "format.w"
+	#line 2482 "format.w"
 
 #define ZERO_GLUE(G) ((G).w.w==0  && (G).w.h==0.0  && (G).w.v==0.0  && (G).p.f==0.0 && (G).m.f==0.0)
 	/*:131*/	/*244:*/
@@ -99,18 +99,18 @@
 
 #define MAX_BANNER 256
 	/*:310*/	/*323:*/
-	#line 6888 "format.w"
+	#line 6890 "format.w"
 
 #define MAX_TAG_DISTANCE 32
 	/*:323*/
-	#line 10462 "format.w"
+	#line 10471 "format.w"
 
 	/*6:*/
-	#line 492 "format.w"
+	#line 493 "format.w"
 
 #define DEF_KIND(C,D,N) C##_kind= N
 typedef enum{	/*9:*/
-	#line 561 "format.w"
+	#line 562 "format.w"
 
 DEF_KIND(text,text,0),
 DEF_KIND(list,list,1),
@@ -146,21 +146,21 @@ DEF_KIND(undefined3,undefined3,30),
 DEF_KIND(penalty,int,31)
 
 	/*:9*/
-	#line 494 "format.w"
+	#line 495 "format.w"
 ,	/*10:*/
-	#line 600 "format.w"
+	#line 601 "format.w"
 
 font_kind= glyph_kind,int_kind= penalty_kind,dimen_kind= kern_kind,label_kind= link_kind,outline_kind= link_kind
 	/*:10*/
-	#line 494 "format.w"
+	#line 495 "format.w"
 }Kind;
 #undef DEF_KIND
 	/*:6*/	/*11:*/
-	#line 626 "format.w"
+	#line 627 "format.w"
 
 typedef enum{b000= 0,b001= 1,b010= 2,b011= 3,b100= 4,b101= 5,b110= 6,b111= 7}Info;
 	/*:11*/	/*56:*/
-	#line 1301 "format.w"
+	#line 1302 "format.w"
 
 
 #define FLT_M_BITS 23
@@ -172,36 +172,36 @@ typedef enum{b000= 0,b001= 1,b010= 2,b011= 3,b100= 4,b101= 5,b110= 6,b111= 7}Inf
 #define DBL_EXCESS 1023
 
 	/*:56*/	/*76:*/
-	#line 1634 "format.w"
+	#line 1635 "format.w"
 
 typedef int32_t Scaled;
 #define ONE ((Scaled)(1<<16))
 	/*:76*/	/*81:*/
-	#line 1690 "format.w"
+	#line 1691 "format.w"
 
 typedef Scaled Dimen;
 #define MAX_DIMEN ((Dimen)(0x3FFFFFFF))
 	/*:81*/	/*86:*/
-	#line 1746 "format.w"
+	#line 1747 "format.w"
 
 typedef struct{
 Dimen w;float32_t h,v;
 }Xdimen;
 	/*:86*/	/*95:*/
-	#line 1890 "format.w"
+	#line 1891 "format.w"
 
 typedef enum{normal_o= 0,fil_o= 1,fill_o= 2,filll_o= 3}Order;
 typedef struct{float64_t f;Order o;}Stretch;
 typedef union{float32_t f;uint32_t u;}Stch;
 	/*:95*/	/*130:*/
-	#line 2471 "format.w"
+	#line 2472 "format.w"
 
 typedef struct{
 Xdimen w;
 Stretch p,m;
 }Glue;
 	/*:130*/	/*180:*/
-	#line 3894 "format.w"
+	#line 3895 "format.w"
 
 typedef struct{
 Glue bs,ls;
@@ -218,14 +218,14 @@ int next;
 uint32_t pos0;uint8_t f;
 }Label;
 	/*:250*/	/*381:*/
-	#line 8382 "format.w"
+	#line 8392 "format.w"
 
 #define MAX_FONT_PARAMS 11
 	/*:381*/
-	#line 10463 "format.w"
+	#line 10472 "format.w"
 
 	/*393:*/
-	#line 8617 "format.w"
+	#line 8627 "format.w"
 
 typedef enum{
 zero_int_no= 0,
@@ -254,7 +254,7 @@ floating_penalty_no= 22
 }Int_no;
 #define MAX_INT_DEFAULT floating_penalty_no
 	/*:393*/	/*395:*/
-	#line 8690 "format.w"
+	#line 8700 "format.w"
 
 typedef enum{
 zero_dimen_no= 0,
@@ -270,7 +270,7 @@ math_quad_no= 9
 }Dimen_no;
 #define MAX_DIMEN_DEFAULT math_quad_no
 	/*:395*/	/*397:*/
-	#line 8735 "format.w"
+	#line 8745 "format.w"
 
 typedef enum{
 zero_xdimen_no= 0,
@@ -279,7 +279,7 @@ vsize_xdimen_no= 2
 }Xdimen_no;
 #define MAX_XDIMEN_DEFAULT vsize_xdimen_no
 	/*:397*/	/*399:*/
-	#line 8759 "format.w"
+	#line 8769 "format.w"
 
 typedef enum{
 zero_skip_no= 0,
@@ -300,42 +300,42 @@ par_fill_skip_no= 14
 }Glue_no;
 #define MAX_GLUE_DEFAULT par_fill_skip_no
 	/*:399*/	/*401:*/
-	#line 8845 "format.w"
+	#line 8855 "format.w"
 
 typedef enum{
 zero_baseline_no= 0
 }Baseline_no;
 #define MAX_BASELINE_DEFAULT zero_baseline_no
 	/*:401*/	/*403:*/
-	#line 8870 "format.w"
+	#line 8880 "format.w"
 
 typedef enum{
 zero_label_no= 0
 }Label_no;
 #define MAX_LABEL_DEFAULT zero_label_no
 	/*:403*/	/*405:*/
-	#line 8884 "format.w"
+	#line 8894 "format.w"
 
 typedef enum{
 zero_stream_no= 0
 }Stream_no;
 #define MAX_STREAM_DEFAULT zero_stream_no
 	/*:405*/	/*407:*/
-	#line 8900 "format.w"
+	#line 8910 "format.w"
 
 typedef enum{
 zero_page_no= 0
 }Page_no;
 #define MAX_PAGE_DEFAULT zero_page_no
 	/*:407*/	/*409:*/
-	#line 8917 "format.w"
+	#line 8927 "format.w"
 
 typedef enum{
 zero_range_no= 0
 }Range_no;
 #define MAX_RANGE_DEFAULT zero_range_no
 	/*:409*/
-	#line 10464 "format.w"
+	#line 10473 "format.w"
 
 
 extern const char*content_name[32];

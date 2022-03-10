@@ -1,25 +1,25 @@
 	/*515:*/
-	#line 10559 "format.w"
+	#line 10568 "format.w"
 
 	/*1:*/
-	#line 328 "format.w"
+	#line 329 "format.w"
 
 typedef struct{uint32_t c;uint8_t f;}Glyph;
 	/*:1*/	/*113:*/
-	#line 2166 "format.w"
+	#line 2167 "format.w"
 
 typedef struct{
 Dimen h,d,w;
 }Rule;
 	/*:113*/	/*122:*/
-	#line 2280 "format.w"
+	#line 2281 "format.w"
 
 typedef struct{
 bool x;
 Xdimen d;
 }Kern;
 	/*:122*/	/*140:*/
-	#line 2701 "format.w"
+	#line 2702 "format.w"
 
 typedef struct{
 Kind k;
@@ -27,29 +27,29 @@ uint32_t p;
 uint32_t s;
 }List;
 	/*:140*/	/*148:*/
-	#line 3123 "format.w"
+	#line 3124 "format.w"
 
 typedef enum{txt_font= 0x00,txt_global= 0x08,txt_local= 0x11,
 txt_cc= 0x1D,txt_node= 0x1E,txt_hyphen= 0x1F,
 txt_glue= 0x20,txt_ignore= 0xFB}Txt;
 	/*:148*/	/*159:*/
-	#line 3390 "format.w"
+	#line 3391 "format.w"
 
 typedef struct{Kind k;int n;}Ref;
 	/*:159*/	/*160:*/
-	#line 3427 "format.w"
+	#line 3428 "format.w"
 
 typedef struct{Dimen h,d,w,a;float32_t r;int8_t s,o;List l;}Box;
 	/*:160*/	/*187:*/
-	#line 3983 "format.w"
+	#line 3984 "format.w"
 
 typedef struct{uint8_t f;List l;}Lig;
 	/*:187*/	/*195:*/
-	#line 4100 "format.w"
+	#line 4101 "format.w"
 
 typedef struct{bool x;List p,q;uint8_t r;}Disc;
 	/*:195*/	/*228:*/
-	#line 4658 "format.w"
+	#line 4659 "format.w"
 
 typedef struct{
 uint16_t n;
@@ -72,10 +72,10 @@ uint16_t r;
 typedef
 struct{uint8_t pg;uint32_t pos;bool on;int link;}RangePos;
 	/*:299*/
-	#line 10560 "format.w"
+	#line 10569 "format.w"
 
 	/*333:*/
-	#line 7240 "format.w"
+	#line 7242 "format.w"
 
 typedef struct{
 uint64_t pos;
@@ -86,16 +86,16 @@ uint8_t*buffer;
 uint32_t bsize;
 }Entry;
 	/*:333*/
-	#line 10561 "format.w"
+	#line 10570 "format.w"
 
 	/*37:*/
-	#line 1067 "format.w"
+	#line 1068 "format.w"
 
 #define HGET_STRING(S) S= (char*)hpos;\
  while(hpos<hend && *hpos!=0) { RNG("String character",*hpos,0x20,0x7E); hpos++;}\
  hpos++;
 	/*:37*/	/*146:*/
-	#line 2870 "format.w"
+	#line 2871 "format.w"
 
 #define HGET_LIST(I,L) \
     (L).s= hget_list_size(I); hget_size_boundary(I);\
@@ -105,7 +105,7 @@ uint32_t bsize;
       if (s!=(L).s) \
       QUIT("List sizes at 0x%x and " SIZE_F " do not match 0x%x != 0x%x",node_pos+1,hpos-hstart-I-1,(L).s,s);}
 	/*:146*/	/*319:*/
-	#line 6841 "format.w"
+	#line 6843 "format.w"
 
 #define HGET_ERROR  QUIT("HGET overrun in section %d at " SIZE_F "\n",section_no,hpos-hstart)
 #define HEND   ((hpos<=hend)?0:(HGET_ERROR,0))
@@ -116,7 +116,7 @@ uint32_t bsize;
 #define HGET32(X) ((X)= (hpos[0]<<24)+(hpos[1]<<16)+(hpos[2]<<8)+hpos[3],hpos+= 4,HEND)
 #define HGETTAG(A) A= HGET8,DBGTAG(A,hpos-1)
 	/*:319*/	/*344:*/
-	#line 7468 "format.w"
+	#line 7470 "format.w"
 
 #define HGET_SIZE(I) \
   if ((I)&b100) { \
@@ -140,7 +140,7 @@ uint32_t bsize;
   hset_entry(&(E),i,s,xs,file_name); \
 }
 	/*:344*/	/*464:*/
-	#line 9827 "format.w"
+	#line 9836 "format.w"
 
 #define HBACK(X) ((hpos-(X)<hstart)?(QUIT("HTEG underflow\n"),NULL):(hpos-= (X)))
 
@@ -150,7 +150,7 @@ uint32_t bsize;
 #define HTEG32(X) (HBACK(4),(X)= (hpos[0]<<24)+(hpos[1]<<16)+(hpos[2]<<8)+hpos[3])
 #define HTEGTAG(X) X= HTEG8,DBGTAG(X,hpos)
 	/*:464*/
-	#line 10562 "format.w"
+	#line 10571 "format.w"
 
 
 extern Entry*dir;
