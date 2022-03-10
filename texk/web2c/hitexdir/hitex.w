@@ -906,7 +906,7 @@ static bool a_open_in(alpha_file *f) /*open a text file for input*/
 }
 
 static bool b_open_in(byte_file *f)   /*open a binary file for input*/
-{@+f->f= open_in((char *)name_of_file+1,kpse_tfm_format,"r");
+{@+f->f= open_in((char *)name_of_file+1,kpse_tfm_format,"rb");
    if (f->f!=NULL) get(*f);
    return f->f!=NULL && ferror(f->f)==0;
 }
