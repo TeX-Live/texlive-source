@@ -1,3 +1,10 @@
+2022-03-10  Karl Berry  <karl@freefriends.org>
+
+	* tfmload.c (tfmopen): include area when searching, as with pkopen.
+	Report from Igor Liferenko, 9 Mar 2022 13:43:48.
+	
+	* loadfont.c (pkopen): "PK font" in error message when not found.
+
 2022-02-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tfmload.c:
