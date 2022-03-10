@@ -1,6 +1,8 @@
 2022-03-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,
+	* common.c,
+	* common.w,
 	* ctang-w2c.ch,
 	* ctangle.c,
 	* ctangle.w,
