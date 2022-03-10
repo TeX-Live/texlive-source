@@ -1,3 +1,14 @@
+2022-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Make 'fall thru' comments active.
+
 2022-02-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.c,

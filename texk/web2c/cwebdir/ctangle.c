@@ -866,7 +866,7 @@ case string:if(out_state==verbatim)out_state= normal;
 else out_state= verbatim;break;
 case'/':C_putc('/');out_state= post_slash;break;
 case'*':if(out_state==post_slash)C_putc(' ');
-
+/* fall through */
 default:C_putc(cur_char);out_state= normal;break;
 }
 }
@@ -1627,7 +1627,7 @@ if(*(loc-1)!='>')
 err_print("! Double @ should be used in control text");
 
 break;
-}
+}/* otherwise fall through */
 default:err_print("! Double @ should be used in limbo");
 
 }
