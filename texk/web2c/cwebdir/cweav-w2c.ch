@@ -523,10 +523,10 @@ if (show_progress) fputs(_("\nWriting the output file..."),stdout);
 @z
 
 @x
-        } @=/* otherwise fall through */@>
+        } @=/* otherwise fall through */@>@;
       default: err_print("! Improper macro definition"); break;
 @y
-        } @=/* otherwise fall through */@>
+        } @=/* otherwise fall through */@>@;
       default: err_print(_("! Improper macro definition")); break;
 @z
 

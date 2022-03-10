@@ -1556,7 +1556,7 @@ Section 233--234.
       case end_translation: return;
       case identifier: case res_word: @<Output an identifier@>@; break;
       case section_code: @<Output a section name@>@; break;
-      case math_rel: out_str("\\MRL{"@q}@>); @=/* fall through */@>
+      case math_rel: out_str("\\MRL{"@q}@>); @=/* fall through */@>@;
 @.\\MRL@>
       case noop: case inserted: break;
       case cancel: case big_cancel: c=0; b=a;
@@ -1578,11 +1578,11 @@ Section 233--234.
         if (a!=big_force) {
           out_str("\\1\\1"); goto reswitch;
         }
-        else dindent_pending=true; @=/* fall through */@>
+        else dindent_pending=true; @=/* fall through */@>@;
       case indent: case outdent: case opt: case backup: case break_space:
       case force: case big_force: case preproc_line: @<Output a control,
         look ahead in case of line breaks, possibly |goto reswitch|@>@; break;
-      case quoted_char: out(*(cur_tok++)); @=/* fall through */@>
+      case quoted_char: out(*(cur_tok++)); @=/* fall through */@>@;
       case qualifier: break;
       default: out(a); /* otherwise |a| is an ordinary character */
     }
@@ -1598,7 +1598,7 @@ Section 233--234.
       case end_translation: return;
       case identifier: case res_word: @<Output an identifier@>@; break;
       case section_code: @<Output a section name@>@; break;
-      case math_rel: out_str("\\MRL{"@q}@>); @=/* fall through */@>
+      case math_rel: out_str("\\MRL{"@q}@>); @=/* fall through */@>@;
 @.\\MRL@>
       case noop: case inserted: break;
       case cancel: case big_cancel: c=0; b=a;
@@ -1620,11 +1620,11 @@ Section 233--234.
         if (a!=big_force) {
           out_str("\\1\\1"); goto reswitch;
         }
-        else dindent_pending=true; @=/* fall through */@>
+        else dindent_pending=true; @=/* fall through */@>@;
       case indent: case outdent: case opt: case backup: case break_space:
       case force: case big_force: case preproc_line: @<Output a control,
         look ahead in case of line breaks, possibly |goto reswitch|@>@; break;
-      case quoted_char: out(*(cur_tok++)); @=/* fall through */@>
+      case quoted_char: out(*(cur_tok++)); @=/* fall through */@>@;
       case qualifier: break;
       default: out(a); /* otherwise |a| is an ordinary character */
     }
@@ -1673,12 +1673,12 @@ Section 240.
 @x
     case ' ': case '\\': case '#': case '%': case '$': case '^':
     case '{': case '}': case '~': case '&': case '_':
-      out('\\'); @=/* falls through */@>
+      out('\\'); @=/* falls through */@>@;
 @y
     case ' ': case '\\': case '#': case '%': @/
     case '$': case '^': case '{': case '}': @/
     case '~': case '&': case '_': @/
-      out('\\'); @=/* falls through */@>
+      out('\\'); @=/* falls through */@>@;
 @z
 
 Section 242.
