@@ -751,6 +751,8 @@ void errorexit(int errorcode)
         case  pipcr : fprintf(stderr, "Cannot create pipe to pager\n");
                       break;
 #endif
+        case  bdfnt : fprintf(stderr, "Fail to get font information\n");
+                      break;
         default     : fprintf(stderr, "Unkown error code\n");
                       break;
     };

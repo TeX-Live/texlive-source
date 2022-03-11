@@ -96,6 +96,7 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #if !defined(MSDOS)
 #define pipcr   20              /* cannot creat pipe                 */
 #endif
+#define bdfnt   21              /* fail to get font info             */
 
 
 
