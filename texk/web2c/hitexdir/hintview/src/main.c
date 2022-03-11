@@ -79,7 +79,6 @@ void error_callback(int error, const char* description)
 
 GLFWwindow* window;
 int px_h=1024, px_v=768; // size in pixel
-int page_h, page_v; // size in scaled points
 double x_dpi, y_dpi;
 #define SCALE_MIN 0.2
 #define SCALE_NORMAL 1.0

@@ -3645,8 +3645,8 @@ if(!hcheck_banner("hint"))
 {hint_unmap();return 0;}
 hget_directory();
 hget_definition_section();
-page_v= hvsize= dimen_def[vsize_dimen_no];
-page_h= hhsize= dimen_def[hsize_dimen_no];
+hvsize= dimen_def[vsize_dimen_no];
+hhsize= dimen_def[hsize_dimen_no];
 hget_content_section();
 leak_clear();
 clear_map();
