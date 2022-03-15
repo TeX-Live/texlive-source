@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2022-02-24"
+release_date = "2022-03-15"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -134,7 +134,7 @@ else
 end
 
 if #checkconfigs > 1 then
-  if options["target"] == "check" then
+  if options["target"] == "check" or options["target"] == "bundlecheck" then
     local errorlevel = 0
     local failed = { }
     for i = 1, #checkconfigs do
