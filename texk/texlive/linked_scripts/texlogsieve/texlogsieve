@@ -1002,7 +1002,7 @@ Options:
 
   --version
   if vars.version then
-      print("texlogsieve 1.1.1")
+      print("texlogsieve 1.1.2")
       print("Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>")
       print("License GPLv3+: GNU GPL version 3 or later "
             .. "<https://gnu.org/licenses/gpl.html>.")
@@ -2544,6 +2544,7 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^%s*restricted system commands enabled%.',
   '^%s*entering extended mode',
   '^%s*restricted \\write18 enabled%.',
+  '^%s*\\write18 enabled%.',
   '^%s*%%%&%-line parsing enabled%.',
 
   -- Two diferent ways of saying "**jobname":
@@ -2586,12 +2587,14 @@ beginningOfLineDebugStringsHandler.patterns = {
   -- there may be dots in the path, so we need to
   -- anchor the final dot to the end of the line
   '^luaotfload | conf : Root cache directory is "?[^"]-"?%.$',
+  '^luaotfload | db : Font names database loaded from .-%.luc%.gz',
   '^luaotfload | db : Font names database loaded from .-%.luc',
   '^luaotfload | cache : Lookup cache loaded from .-%.luc%.',
   '^luaotfload | main : initialization completed in [%d%.]+ seconds',
 
   '^Lua%-only attribute.-=%s*%S+',
   "^Inserting %b`' at position .- in %b`'%.",
+  "^Removing +%b`' from %b`'%.",
 
   "^For additional information on amsmath, use the `%?' option%.",
 
@@ -3725,7 +3728,7 @@ function closeSquareBracketHandler:canDoit(position)
   if position == 0 then return true, {first = first} end
 
   local linenum = 0
-  local pending = openFiles:size()
+  local pending = shipouts:size()
   local unpaired = 0
 
   while linenum < position do
