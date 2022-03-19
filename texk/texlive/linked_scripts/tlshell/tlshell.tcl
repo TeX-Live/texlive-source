@@ -1,10 +1,10 @@
 #!/bin/sh
 # next line ignored by wish but not by sh \
-TK_SILENCE_DEPRECATION=1 exec wish "$0" "$@"
+TK_SILENCE_DEPRECATION=1 exec wish "$0" -- "$@"
 # The above environment variable is set to suppress
 # a warning message under MacOS Catalina and Big Sur
 
-# Copyright 2017-2021 Siep Kroonenberg
+# Copyright 2017-2022 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -2285,7 +2285,7 @@ proc run_external {cmd {mess ""}} {
 }
 
 proc about_cmd {} {
-  set msg "\u00a9 2017-2021 Siep Kroonenberg\n\n"
+  set msg "\u00a9 2017-2022 Siep Kroonenberg\n\n"
   append msg [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]
   tk_messageBox -message $msg
 }
@@ -3088,6 +3088,22 @@ proc initialize {} {
   Are you sure you want to continue?" $::instroot]]
     if {$ans ne "yes"} {exit}
   }
+  # handle -h[elp] and -v[ersion parameters;
+  # do not pass these on to the upcoming tlmgr pipe
+  set i $::argc
+  while 1 {
+    incr i -1
+    if {$i<0} break
+    set s [lindex $::argv $i]
+    if {$s eq "-h" || $s eq "-help"} {
+      tk_messageBox -message [__ "See internal help"] \
+                   -icon info -type ok
+      set ::argv [lreplace $::argv $i $i]
+    } elseif {$s eq "-v" || $s eq "-version"} {
+      set ::argv [lreplace $::argv $i $i]
+    }
+  }
+  set ::argc [llength $::argv]
 
   start_tlmgr {*}$::argv
   if {$::tcl_platform(platform) eq "windows"} {
