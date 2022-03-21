@@ -1,3 +1,7 @@
+2022-03-21  Karl Berry  <karl@tug.org>
+
+	* TL'22 release.
+
 2022-03-03  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.defines: Add 'removesuffix' declaration.

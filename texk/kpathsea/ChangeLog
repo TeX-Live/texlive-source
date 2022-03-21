@@ -1,3 +1,7 @@
+2022-03-21  Karl Berry  <karl@tug.org>
+
+	* TL'22 release.
+
 2022-03-05  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (TEXINPUTS.hi*tex): new entries.

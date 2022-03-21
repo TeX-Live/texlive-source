@@ -6,7 +6,7 @@
 INSTALL_DATA = cp -pfv
 
 texmf_dist = ../../../../../../Master/texmf-dist
-hitex_makeindex_dir = $(texmf_dist)/makeindex/hitex/hint.ist
+hitex_makeindex_dir = $(texmf_dist)/makeindex/hitex
 hitex_doc_dir = $(texmf_dist)/doc/hitex/base
 #
 install:

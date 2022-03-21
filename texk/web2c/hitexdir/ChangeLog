@@ -1,3 +1,7 @@
+2022-03-21  Karl Berry  <karl@tug.org>
+
+	* TL'22 release.
+
 2022-02-26  Karl Berry  <karl@tug.org>
 
 	* am/hitex.am (man1_MANS): install hi*.man directly from here,

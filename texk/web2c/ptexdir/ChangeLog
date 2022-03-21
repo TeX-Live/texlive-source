@@ -1,3 +1,7 @@
+2022-03-21  Karl Berry  <karl@tug.org>
+
+	* TL'22 release.
+
 2022-02-20  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pbibtex.ch: Improve substring$ to truncate at least one

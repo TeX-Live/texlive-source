@@ -1,7 +1,7 @@
 This file records noteworthy changes.  (Public domain.)
 
 
-2022 (for TeX Live 2022)
+2022 (for TeX Live 2022, 21 March 2022)
 
 * new hitex engine included, which outputs HINT files for display on
 mobile devices. HINT viewers for GNU/Linux, Windows, and Android are

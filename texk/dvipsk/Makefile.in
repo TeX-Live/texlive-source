@@ -722,8 +722,8 @@ dvips_TEXINFOS = contrib/config.proto dvips.help
 DISTCLEANFILES = $(DVIS) $(PSS) beginfontk1.ps eepic-nan.ps pfbincl.ps \
 	*badnews* same-name.out afmtest.tfm dvipstst.ps missfont.log \
 	mtest.ps missing-image.ps overflow-color-push.ps \
-	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjf-g.ofm \
-	upjv-g.ofm upjf_full.ps upjf_omit.ps
+	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjv.vf \
+	upjf-g.ofm upjv-g.ofm upjf_full.ps upjf_omit.ps
 enc_DATA = dvips-all.enc
 prolog_DATA = $(prologues)
 dist_prologues = \
@@ -760,8 +760,7 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	overflow-psbox.tex testdata/Makefile_upjf testdata/upjf.tex \
 	testdata/upjf.dvi testdata/upjf.map testdata/upjf.tfm \
 	testdata/upjf-g.tfm testdata/upjf-r.tfm testdata/upjf_full.vf \
-	testdata/upjf_omit.vf testdata/upjf_full.cnf \
-	testdata/upjf_omit.cnf testdata/upjv.tfm testdata/upjv-g.tfm  \
+	testdata/upjf_omit.vf testdata/upjv.tfm testdata/upjv-g.tfm \
 	testdata/upjv-r.tfm testdata/upjv_full.vf \
 	testdata/upjv_omit.vf testdata/upjf-g00.opl \
 	testdata/upjf-g00.ofm testdata/upjv-g00.opl \

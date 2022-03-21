@@ -1,5 +1,5 @@
 dnl $Id$
-dnl   Copyright 2016-2021 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2022 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -9,4 +9,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current TeX Live tarball version
-m4_define([tex_live_tardate], [2021-03-23])
+m4_define([tex_live_tardate], [2022-03-21])

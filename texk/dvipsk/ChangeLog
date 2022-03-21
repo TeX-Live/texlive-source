@@ -1,3 +1,7 @@
+2022-03-21  Karl Berry  <karl@tug.org>
+
+	* TL'22 release.
+
 2022-03-10  Karl Berry  <karl@freefriends.org>
 
 	* tfmload.c (tfmopen): include area when searching, as with pkopen.
