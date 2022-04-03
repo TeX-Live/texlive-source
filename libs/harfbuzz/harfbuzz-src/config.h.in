@@ -12,6 +12,10 @@
 /* Have cairo-ft support in cairo graphics library */
 #undef HAVE_CAIRO_FT
 
+/* Define to 1 if you have the
+   `cairo_user_font_face_set_render_color_glyph_func' function. */
+#undef HAVE_CAIRO_USER_FONT_FACE_SET_RENDER_COLOR_GLYPH_FUNC
+
 /* Have chafa terminal graphics library */
 #undef HAVE_CHAFA
 

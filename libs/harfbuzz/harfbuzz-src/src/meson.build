@@ -92,6 +92,28 @@ hb_base_sources = files(
   'hb-ot-layout-gdef-table.hh',
   'hb-ot-layout-gpos-table.hh',
   'hb-ot-layout-gsub-table.hh',
+  'OT/Layout/GSUB/Common.hh',
+  'OT/Layout/GSUB/Sequence.hh',
+  'OT/Layout/GSUB/SingleSubstFormat1.hh',
+  'OT/Layout/GSUB/SingleSubstFormat2.hh',
+  'OT/Layout/GSUB/SingleSubst.hh',
+  'OT/Layout/GSUB/MultipleSubstFormat1.hh',
+  'OT/Layout/GSUB/MultipleSubst.hh',
+  'OT/Layout/GSUB/AlternateSubstFormat1.hh',
+  'OT/Layout/GSUB/AlternateSubst.hh',
+  'OT/Layout/GSUB/AlternateSet.hh',
+  'OT/Layout/GSUB/LigatureSubstFormat1.hh',
+  'OT/Layout/GSUB/LigatureSubst.hh',
+  'OT/Layout/GSUB/LigatureSet.hh',
+  'OT/Layout/GSUB/Ligature.hh',
+  'OT/Layout/GSUB/ReverseChainSingleSubst.hh',
+  'OT/Layout/GSUB/ReverseChainSingleSubstFormat1.hh',
+  'OT/Layout/GSUB/ContextSubst.hh',
+  'OT/Layout/GSUB/ChainContextSubst.hh',
+  'OT/Layout/GSUB/ExtensionSubst.hh',
+  'OT/Layout/GSUB/SubstLookupSubTable.hh',
+  'OT/Layout/GSUB/SubstLookup.hh',
+  'OT/Layout/GSUB/GSUB.hh',
   'hb-ot-layout-gsubgpos.hh',
   'hb-ot-layout-jstf-table.hh',
   'hb-ot-layout.cc',
@@ -276,11 +298,15 @@ hb_subset_sources = files(
   'hb-subset-input.hh',
   'hb-subset-plan.cc',
   'hb-subset-plan.hh',
+  'hb-subset-repacker.cc',
   'hb-subset.cc',
   'hb-subset.hh',
 )
 
-hb_subset_headers = files('hb-subset.h')
+hb_subset_headers = files(
+  'hb-subset.h',
+  'hb-subset-repacker.h'
+)
 
 hb_gobject_sources = files(
   'hb-gobject-structs.cc'

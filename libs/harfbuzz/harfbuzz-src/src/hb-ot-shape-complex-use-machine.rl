@@ -73,9 +73,10 @@ export H	= 12; # HALANT
 
 export HN	= 13; # HALANT_NUM
 export ZWNJ	= 14; # Zero width non-joiner
+export WJ	= 16; # Word joiner
 export R	= 18; # REPHA
 export CS	= 43; # CONS_WITH_STACKER
-export HVM	= 44; # HALANT_OR_VOWEL_MODIFIER
+export IS	= 44; # INVISIBLE_STACKER
 export Sk	= 48; # SAKOT
 export G	= 49; # HIEROGLYPH
 export J	= 50; # HIEROGLYPH_JOINER
@@ -106,12 +107,12 @@ export FMBlw	= 46; # CONS_FINAL_MOD	UIPC = Bottom
 export FMPst	= 47; # CONS_FINAL_MOD	UIPC = Not_Applicable
 
 
-h = H | HVM | Sk;
+h = H | IS | Sk;
 
 consonant_modifiers = CMAbv* CMBlw* ((h B | SUB) CMAbv? CMBlw*)*;
 medial_consonants = MPre? MAbv? MBlw? MPst?;
-dependent_vowels = VPre* VAbv* VBlw* VPst*;
-vowel_modifiers = HVM? VMPre* VMAbv* VMBlw* VMPst*;
+dependent_vowels = VPre* VAbv* VBlw* VPst* | H;
+vowel_modifiers = VMPre* VMAbv* VMBlw* VMPst*;
 final_consonants = FAbv* FBlw* FPst*;
 final_modifiers = FMAbv* FMBlw* | FMPst?;
 
@@ -134,7 +135,7 @@ symbol_cluster_tail = SMAbv+ SMBlw* | SMBlw+;
 
 virama_terminated_cluster_tail =
 	consonant_modifiers
-	h
+	IS
 ;
 virama_terminated_cluster =
 	complex_syllable_start
@@ -152,14 +153,15 @@ standard_cluster =
 	complex_syllable_start
 	complex_syllable_tail
 ;
+tail = complex_syllable_tail | sakot_terminated_cluster_tail | symbol_cluster_tail | virama_terminated_cluster_tail;
 broken_cluster =
 	R?
-	(complex_syllable_tail | number_joiner_terminated_cluster_tail | numeral_cluster_tail | symbol_cluster_tail | virama_terminated_cluster_tail | sakot_terminated_cluster_tail)
+	(tail | number_joiner_terminated_cluster_tail | numeral_cluster_tail)
 ;
 
 number_joiner_terminated_cluster = N number_joiner_terminated_cluster_tail;
 numeral_cluster = N numeral_cluster_tail?;
-symbol_cluster = (O | GB) symbol_cluster_tail?;
+symbol_cluster = (O | GB) tail?;
 hieroglyph_cluster = SB+ | SB* G SE* (J SE* (G SE*)?)*;
 other = any;
 
@@ -194,7 +196,9 @@ struct machine_index_t :
 			  typename Iter::item_t>
 {
   machine_index_t (const Iter& it) : it (it) {}
-  machine_index_t (const machine_index_t& o) : it (o.it) {}
+  machine_index_t (const machine_index_t& o) : hb_iter_with_fallback_t<machine_index_t<Iter>,
+								       typename Iter::item_t> (),
+					       it (o.it), is_null (o.is_null) {}
 
   static constexpr bool is_random_access_iterator = Iter::is_random_access_iterator;
   static constexpr bool is_sorted_iterator = Iter::is_sorted_iterator;
@@ -206,14 +210,28 @@ struct machine_index_t :
   void __forward__ (unsigned n) { it += n; }
   void __prev__ () { --it; }
   void __rewind__ (unsigned n) { it -= n; }
+
   void operator = (unsigned n)
-  { unsigned index = (*it).first; if (index < n) it += n - index; else if (index > n) it -= index - n; }
-  void operator = (const machine_index_t& o) { *this = (*o.it).first; }
-  bool operator == (const machine_index_t& o) const { return (*it).first == (*o.it).first; }
+  {
+    assert (n == 0);
+    is_null = true;
+  }
+  explicit operator bool () { return !is_null; }
+
+  void operator = (const machine_index_t& o)
+  {
+    is_null = o.is_null;
+    unsigned index = (*it).first;
+    unsigned n = (*o.it).first;
+    if (index < n) it += n - index; else if (index > n) it -= index - n;
+  }
+  bool operator == (const machine_index_t& o) const
+  { return is_null ? o.is_null : !o.is_null && (*it).first == (*o.it).first; }
   bool operator != (const machine_index_t& o) const { return !(*this == o); }
 
   private:
   Iter it;
+  bool is_null = false;
 };
 struct
 {
@@ -229,7 +247,7 @@ HB_FUNCOBJ (machine_index);
 
 static bool
 not_ccs_default_ignorable (const hb_glyph_info_t &i)
-{ return !(i.use_category() == USE(CGJ) && _hb_glyph_info_is_default_ignorable (&i)); }
+{ return i.use_category() != USE(CGJ); }
 
 static inline void
 find_syllables_use (hb_buffer_t *buffer)
