@@ -14453,7 +14453,7 @@ fi
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2022\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2023/dev\"" >>confdefs.h
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

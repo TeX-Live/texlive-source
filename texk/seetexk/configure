@@ -14117,7 +14117,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2022\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2023/dev\"" >>confdefs.h
 
 
 ac_fn_c_check_func "$LINENO" "strerror" "ac_cv_func_strerror"
