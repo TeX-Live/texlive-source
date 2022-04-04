@@ -645,10 +645,12 @@ const_string WEAVEHELP[] = {
 
 #ifdef TWILL
 const_string TWILLHELP[] = {
-    "Usage: twill [OPTION]... WEBFILE[.web] [CHANGEFILE[.ch]]",
+    "Usage: twill [OPTION] WEBFILE[.web] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]",
     "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes.",
     "  Default CHANGEFILE is " DEV_NULL ";",
-    "  TeX output goes to the basename of WEBFILE extended with `.tex'.",
+    "  TeX output goes to the basename of WEBFILE extended with `.tex',",
+    "  unless otherwise specified by OUTFILE;",
+    "  in this case, '-' specifies a null CHANGEFILE.",
     "",
     "-x          omit cross-reference information",
     "-help       display this help and exit",

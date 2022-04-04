@@ -18,15 +18,11 @@
 .SH NAME
 weave \- translate WEB to TeX
 .SH SYNOPSIS
-.B weave
-.RB [ \-x ]
-.IR webfile [ \fB.web\fP ]
-[ {
-.IR changefile [ \fB.ch\fP ]
-|\-}
-[
-.IR outfile [ \fB.tex\fP ]
-] ]
+.PP
+\f[B]weave\f[R] [\f[B]-x\f[R]]
+\f[I]webfile\f[R][\f[B].web\f[R]]
+[{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
+[\f[I]outfile\f[R][\f[B].tex\f[R]]]]
 .\"=====================================================================
 .SH DESCRIPTION
 This manual page is not meant to be exhaustive.  The complete

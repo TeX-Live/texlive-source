@@ -1,4 +1,4 @@
-.TH WEAVE 1 "09 January 2022" "Web2C @VERSION@"
+.TH WEAVE 1 "02 April 2022" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -18,10 +18,11 @@
 .SH NAME
 twill \- translate WEB to TeX
 .SH SYNOPSIS
-.B twill
-.RB [ \-x ]
-.IR webfile [ \fB.web\fP ]
-.RI [ changefile [ \fB.ch\fP ]]
+.PP
+\f[B]twill\f[R] [\f[B]-x\f[R]]
+\f[I]webfile\f[R][\f[B].web\f[R]]
+[{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
+[\f[I]outfile\f[R][\f[B].tex\f[R]]]]
 .\"=====================================================================
 .SH DESCRIPTION
 The
@@ -41,7 +42,7 @@ says to omit the indexes, module name list, and table of contents pages.
 .I CONTENTS.tex
 file will still be written when the \*(TX file is processed,
 however, unless some macros in
-.I webmac.tex
+.I twimac-web.tex
 are redefined.)
 .PP
 The output \*(TX file name is formed by adding
