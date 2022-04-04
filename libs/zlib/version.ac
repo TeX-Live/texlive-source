@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current zlib version
-m4_define([zlib_version], [1.2.11])
+m4_define([zlib_version], [1.2.12])

@@ -1,75 +1,7 @@
-Changes applied to the zlib-1.2.11/ tree as obtained from:
-	http://zlib.net/zlib-1.2.11.tar.xz
+Changes applied to the zlib-1.2.12/ tree as obtained from:
+	http://zlib.net/zlib-1.2.12.tar.xz
 
 Removed:
 	Makefile
 	zconf.h
 	doc/rfc*
-
-Converted Dos/Win line ends to native:
-	contrib/dotzlib/DotZLib/AssemblyInfo.cs
-	contrib/dotzlib/DotZLib/ChecksumImpl.cs
-	contrib/dotzlib/DotZLib/CircularBuffer.cs
-	contrib/dotzlib/DotZLib/CodecBase.cs
-	contrib/dotzlib/DotZLib/Deflater.cs
-	contrib/dotzlib/DotZLib/DotZLib.cs
-	contrib/dotzlib/DotZLib/DotZLib.csproj
-	contrib/dotzlib/DotZLib/GZipStream.cs
-	contrib/dotzlib/DotZLib/Inflater.cs
-	contrib/dotzlib/DotZLib/UnitTests.cs
-	contrib/dotzlib/DotZLib.build
-	contrib/dotzlib/DotZLib.sln
-	contrib/dotzlib/LICENSE_1_0.txt
-	contrib/dotzlib/readme.txt
-	contrib/gcc_gvmat64/gvmat64.S
-	contrib/masmx64/bld_ml64.bat
-	contrib/masmx64/gvmat64.asm
-	contrib/masmx64/inffas8664.c
-	contrib/masmx64/inffasx64.asm
-	contrib/masmx64/readme.txt
-	contrib/masmx86/bld_ml32.bat
-	contrib/masmx86/inffas32.asm
-	contrib/masmx86/match686.asm
-	contrib/masmx86/readme.txt
-	contrib/testzlib/testzlib.c
-	contrib/testzlib/testzlib.txt
-	contrib/vstudio/readme.txt
-	contrib/vstudio/vc10/miniunz.vcxproj
-	contrib/vstudio/vc10/miniunz.vcxproj.filters
-	contrib/vstudio/vc10/minizip.vcxproj
-	contrib/vstudio/vc10/minizip.vcxproj.filters
-	contrib/vstudio/vc10/testzlib.vcxproj
-	contrib/vstudio/vc10/testzlib.vcxproj.filters
-	contrib/vstudio/vc10/testzlibdll.vcxproj
-	contrib/vstudio/vc10/testzlibdll.vcxproj.filters
-	contrib/vstudio/vc10/zlib.rc
-	contrib/vstudio/vc10/zlibstat.vcxproj
-	contrib/vstudio/vc10/zlibstat.vcxproj.filters
-	contrib/vstudio/vc10/zlibvc.def
-	contrib/vstudio/vc10/zlibvc.sln
-	contrib/vstudio/vc10/zlibvc.vcxproj
-	contrib/vstudio/vc10/zlibvc.vcxproj.filters
-	contrib/vstudio/vc11/miniunz.vcxproj
-	contrib/vstudio/vc11/minizip.vcxproj
-	contrib/vstudio/vc11/testzlib.vcxproj
-	contrib/vstudio/vc11/testzlibdll.vcxproj
-	contrib/vstudio/vc11/zlib.rc
-	contrib/vstudio/vc11/zlibstat.vcxproj
-	contrib/vstudio/vc11/zlibvc.def
-	contrib/vstudio/vc11/zlibvc.sln
-	contrib/vstudio/vc11/zlibvc.vcxproj
-	contrib/vstudio/vc9/miniunz.vcproj
-	contrib/vstudio/vc9/minizip.vcproj
-	contrib/vstudio/vc9/testzlib.vcproj
-	contrib/vstudio/vc9/testzlibdll.vcproj
-	contrib/vstudio/vc9/zlib.rc
-	contrib/vstudio/vc9/zlibstat.vcproj
-	contrib/vstudio/vc9/zlibvc.def
-	contrib/vstudio/vc9/zlibvc.sln
-	contrib/vstudio/vc9/zlibvc.vcproj
-
-Added newline at end of file:
-	contrib/dotzlib/DotZLib/ChecksumImpl.cs
-	contrib/dotzlib/LICENSE_1_0.txt
-	contrib/testzlib/testzlib.txt
-

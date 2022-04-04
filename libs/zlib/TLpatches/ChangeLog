@@ -1,3 +1,8 @@
+2022-04-05  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import zlib-1.2.12.
+	* Remove patch-01-not-define-WIDECHAR-for-cygwin
+
 2017-01-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	Import zlib-1.2.11.

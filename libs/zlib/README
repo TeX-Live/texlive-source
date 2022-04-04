@@ -1,4 +1,4 @@
-	Building zlib-1.2.11 as part of the TL tree
+	Building zlib-1.2.12 as part of the TL tree
 	==========================================
 
 This directory libs/zlib/ uses a proxy Makefile.am to build the zlib library
@@ -15,4 +15,4 @@ translated into equivalent test in libs/zlib/configure.ac.
 =============================
 
 2009-01-28	Peter Breitenlohner <peb@mppmu.mpg.de>
-2017-01-15	Akira Kakuto <kakuto@fuk.kindai.ac.jp>
+2022-04-05	Akira Kakuto <kakuto@jcom.zaq.ne.jp>
