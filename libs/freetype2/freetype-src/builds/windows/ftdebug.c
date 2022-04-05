@@ -4,7 +4,7 @@
  *
  *   Debugging and logging component for Win32 (body).
  *
- * Copyright (C) 1996-2022 by
+ * Copyright (C) 1996-2021 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -136,8 +136,6 @@
 
     va_start( ap, fmt );
     vfprintf( stderr, fmt, ap );
-#if ( defined( _WIN32_WINNT ) && _WIN32_WINNT >= 0x0400 ) || \
-    ( defined( _WIN32_WCE )   && _WIN32_WCE   >= 0x0600 )
     if ( IsDebuggerPresent() )
     {
       static char  buf[1024];
@@ -146,7 +144,6 @@
       vsnprintf( buf, sizeof buf, fmt, ap );
       OutputDebugStringA( buf );
     }
-#endif
     va_end( ap );
   }
 
@@ -162,8 +159,6 @@
 
     va_start( ap, fmt );
     vfprintf( stderr, fmt, ap );
-#if ( defined( _WIN32_WINNT ) && _WIN32_WINNT >= 0x0400 ) || \
-    ( defined( _WIN32_WCE )   && _WIN32_WCE   >= 0x0600 )
     if ( IsDebuggerPresent() )
     {
       static char  buf[1024];
@@ -172,7 +167,6 @@
       vsnprintf( buf, sizeof buf, fmt, ap );
       OutputDebugStringA( buf );
     }
-#endif
     va_end( ap );
 
     exit( EXIT_FAILURE );

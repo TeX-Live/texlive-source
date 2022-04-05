@@ -8,7 +8,7 @@
  * parse compressed PCF fonts, as found with many X11 server
  * distributions.
  *
- * Copyright (C) 2010-2022 by
+ * Copyright (C) 2010-2021 by
  * Joel Klinghed.
  *
  * based on `src/gzip/ftgzip.c'
@@ -102,11 +102,10 @@
 
     FT_Byte    input[FT_BZIP2_BUFFER_SIZE];  /* input read buffer  */
 
-    FT_Byte    buffer[FT_BZIP2_BUFFER_SIZE]; /* output buffer          */
-    FT_ULong   pos;                          /* position in output     */
+    FT_Byte    buffer[FT_BZIP2_BUFFER_SIZE]; /* output buffer      */
+    FT_ULong   pos;                          /* position in output */
     FT_Byte*   cursor;
     FT_Byte*   limit;
-    FT_Bool    reset;                        /* reset before next read */
 
   } FT_BZip2FileRec, *FT_BZip2File;
 
@@ -154,7 +153,6 @@
     zip->limit  = zip->buffer + FT_BZIP2_BUFFER_SIZE;
     zip->cursor = zip->limit;
     zip->pos    = 0;
-    zip->reset  = 0;
 
     /* check .bz2 header */
     {
@@ -230,7 +228,6 @@
       zip->limit  = zip->buffer + FT_BZIP2_BUFFER_SIZE;
       zip->cursor = zip->limit;
       zip->pos    = 0;
-      zip->reset  = 0;
 
       BZ2_bzDecompressInit( bzstream, 0, 0 );
     }
@@ -305,23 +302,18 @@
 
       err = BZ2_bzDecompress( bzstream );
 
-      if ( err != BZ_OK )
+      if ( err == BZ_STREAM_END )
       {
-        zip->reset = 1;
-
-        if ( err == BZ_STREAM_END )
-        {
-          zip->limit = (FT_Byte*)bzstream->next_out;
-          if ( zip->limit == zip->cursor )
-            error = FT_THROW( Invalid_Stream_Operation );
-          break;
-        }
-        else
-        {
-          zip->limit = zip->cursor;
-          error      = FT_THROW( Invalid_Stream_Operation );
-          break;
-        }
+        zip->limit = (FT_Byte*)bzstream->next_out;
+        if ( zip->limit == zip->cursor )
+          error = FT_THROW( Invalid_Stream_Operation );
+        break;
+      }
+      else if ( err != BZ_OK )
+      {
+        zip->limit = zip->cursor;
+        error      = FT_THROW( Invalid_Stream_Operation );
+        break;
       }
     }
 
@@ -371,9 +363,9 @@
     FT_Error  error;
 
 
-    /* Reset inflate stream if seeking backwards or bzip reported an error. */
-    /* Yes, that is not too efficient, but it saves memory :-)              */
-    if ( pos < zip->pos || zip->reset )
+    /* Reset inflate stream if we're seeking backwards.        */
+    /* Yes, that is not too efficient, but it saves memory :-) */
+    if ( pos < zip->pos )
     {
       error = ft_bzip2_file_reset( zip );
       if ( error )

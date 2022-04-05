@@ -5,7 +5,7 @@
 /*    Mac FOND support.  Written by just@letterror.com.                    */
 /*  Heavily Fixed by mpsuzuki, George Williams and Sean McBride            */
 /*                                                                         */
-/*  Copyright (C) 1996-2022 by                                             */
+/*  Copyright (C) 1996-2021 by                                             */
 /*  Just van Rossum, David Turner, Robert Wilhelm, and Werner Lemberg.     */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -97,7 +97,7 @@
 
 #define FT_DEPRECATED_ATTRIBUTE
 
-#include <freetype/ftmac.h>
+#include FT_MAC_H
 
   /* undefine blocking-macros in ftmac.h */
 #undef FT_GetFile_From_Mac_Name

@@ -9,7 +9,7 @@
   <string>English</string>
 
   <key>CFBundleExecutable</key>
-  <string>freetype</string>
+  <string>FreeType</string>
 
   <key>CFBundleGetInfoString</key>
   <string>FreeType ${PROJECT_VERSION}</string>

@@ -4,7 +4,7 @@
  *
  *   High-level 'sfnt' driver interface (specification).
  *
- * Copyright (C) 1996-2022 by
+ * Copyright (C) 1996-2021 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -309,33 +309,6 @@ FT_BEGIN_HEADER
                               FT_Stream            stream,
                               FT_Bitmap           *amap,
                               TT_SBit_MetricsRec  *ametrics );
-
-
-  /**************************************************************************
-   *
-   * @functype:
-   *   TT_Load_Svg_Doc_Func
-   *
-   * @description:
-   *   Scan the SVG document list to find the document containing the glyph
-   *   that has the ID 'glyph*XXX*', where *XXX* is the value of
-   *   `glyph_index` as a decimal integer.
-   *
-   * @inout:
-   *   glyph ::
-   *     The glyph slot from which pointers to the SVG document list is to be
-   *     grabbed.  The results are stored back in the slot.
-   *
-   * @input:
-   *   glyph_index ::
-   *     The index of the glyph that is to be looked up.
-   *
-   * @return:
-   *   FreeType error code.  0 means success.
-   */
-  typedef FT_Error
-  (*TT_Load_Svg_Doc_Func)( FT_GlyphSlot  glyph,
-                           FT_UInt       glyph_index );
 
 
   /**************************************************************************
@@ -973,11 +946,6 @@ FT_BEGIN_HEADER
     TT_Get_Name_Func     get_name;
     TT_Get_Name_ID_Func  get_name_id;
 
-    /* OpenType SVG Support */
-    TT_Load_Table_Func    load_svg;
-    TT_Free_Table_Func    free_svg;
-    TT_Load_Svg_Doc_Func  load_svg_doc;
-
   } SFNT_Interface;
 
 
@@ -1029,10 +997,7 @@ FT_BEGIN_HEADER
           colr_blend_,                   \
           get_metrics_,                  \
           get_name_,                     \
-          get_name_id_,                  \
-          load_svg_,                     \
-          free_svg_,                     \
-          load_svg_doc_ )                \
+          get_name_id_ )                 \
   static const SFNT_Interface  class_ =  \
   {                                      \
     goto_table_,                         \
@@ -1077,10 +1042,7 @@ FT_BEGIN_HEADER
     colr_blend_,                         \
     get_metrics_,                        \
     get_name_,                           \
-    get_name_id_,                        \
-    load_svg_,                           \
-    free_svg_,                           \
-    load_svg_doc_                        \
+    get_name_id_                         \
   };
 
 

@@ -4,7 +4,7 @@
  *
  *   FreeType integer types definitions.
  *
- * Copyright (C) 1996-2022 by
+ * Copyright (C) 1996-2021 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -221,10 +221,9 @@
 #define FT_INT64   __int64
 #define FT_UINT64  unsigned __int64
 
-#elif defined( __WATCOMC__ ) && __WATCOMC__ >= 1100  /* Watcom C++ */
+#elif defined( __WATCOMC__ )   /* Watcom C++ */
 
-#define FT_INT64   long long int
-#define FT_UINT64  unsigned long long int
+  /* Watcom doesn't provide 64-bit data types */
 
 #elif defined( __MWERKS__ )    /* Metrowerks CodeWarrior */
 
