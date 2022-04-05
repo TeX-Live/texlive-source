@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
+# $Id: tlmgr.pl 62899 2022-04-04 17:45:51Z karl $
 #
 # Copyright 2008-2022 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -7,8 +7,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 62273 $';
-my $datrev = '$Date: 2022-02-28 09:52:17 +0100 (Mon, 28 Feb 2022) $';
+my $svnrev = '$Revision: 62899 $';
+my $datrev = '$Date: 2022-04-04 19:45:51 +0200 (Mon, 04 Apr 2022) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7339,9 +7339,6 @@ TeX Live $TeXLive::TLConfig::ReleaseYear is frozen
 and will no longer be routinely updated.  This happens when a new
 release is made, or will be made shortly.
 
-If you're willing to help with pretesting a new release, and we hope
-you are, please see https://tug.org/texlive/pretest.html.
-
 For general status information about TeX Live, see its home page:
 https://tug.org/texlive
 
@@ -10236,7 +10233,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
+$Id: tlmgr.pl 62899 2022-04-04 17:45:51Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
