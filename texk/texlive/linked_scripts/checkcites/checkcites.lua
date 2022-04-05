@@ -1,7 +1,8 @@
 #!/usr/bin/env texlua
 -- -----------------------------------------------------------------
 -- checkcites.lua
--- Copyright 2012, 2019, Enrico Gregorio, Paulo Roberto Massa Cereda
+-- Copyright 2012, 2019, Enrico Gregorio, Paulo Cereda
+-- Copyright 2022, Enrico Gregorio, Island of TeX
 --
 -- This work may be distributed and/or modified under the conditions
 -- of the LaTeX  Project Public License, either version  1.3 of this
@@ -14,11 +15,11 @@
 -- and version  1.3 or later is  part of all distributions  of LaTeX
 -- version 2005/12/01 or later.
 --
--- This  work  has the  LPPL  maintenance  status `maintained'.  the
--- current maintainers of  this work are the  original authors. This
+-- This  work  has the  LPPL  maintenance  status `maintained'.  The
+-- current maintainers of  this  work  are  the  Island of TeX. This
 -- work consists of the file checkcites.lua.
 --
--- Project repository: http://github.com/cereda/checkcites
+-- Project repository: https://gitlab.com/islandoftex/checkcites
 -- -----------------------------------------------------------------
 
 -- Checks if the table contains the element.
@@ -387,7 +388,7 @@ backends.biber = function(lines, _)
       end
     else
       hit = string.match(line, '^%s*<bcf:datasource type="file" ' ..
-            'datatype="%w+">(.+)</bcf:datasource>$')
+            'datatype="%w+" glob="false">(.+)</bcf:datasource>$')
       if hit then
         parts = split(hit, '[^,%s]+')
         for _, v in ipairs(parts) do
@@ -485,10 +486,9 @@ print("|  _|   | -_|  _| '_|  _| |  _| -_|_ -|")
 print("|___|_|_|___|___|_,_|___|_|_| |___|___|")
 print()
   print(wrap('checkcites.lua -- a reference ' ..
-             'checker script (v2.4)', 74))
-  print(wrap('Copyright (c) 2012, 2019, ' ..
-             'Enrico Gregorio, Paulo ' ..
-             'Roberto Massa Cereda', 74))
+             'checker script (v2.5)', 74))
+  print(wrap('Copyright (c) 2012, 2019, Enrico Gregorio, Paulo Cereda', 74))
+  print(wrap('Copyright (c) 2022, Enrico Gregorio, Island of TeX', 74))
 end
 
 -- Operation namespace
@@ -670,8 +670,8 @@ local function checkcites(args)
   if keys['version'] or keys['help'] then
     if keys['version'] then
       print()
-      print(wrap('checkcites.lua, version 2.4 (dated September ' ..
-                 '3, 2019)', 74))
+      print(wrap('checkcites.lua, version 2.5 (dated March ' ..
+                 '22, 2022)', 74))
 
       print(pad('-', 74))
       print(wrap('You can find more details about this ' ..
@@ -679,13 +679,12 @@ local function checkcites(args)
                  'in the official source code repository:', 74))
 
       print()
-      print('https://github.com/cereda/checkcites')
+      print('https://gitlab.com/islandoftex/checkcites')
 
       print()
       print(wrap('The checkcites.lua script is licensed ' ..
                  'under the LaTeX Project Public License, ' ..
-                 'version 1.3. The current maintainers ' ..
-                 'are the original authors.', 74))
+                 'version 1.3.', 74))
     else
       print()
       print(wrap('Usage: ' .. args[0] .. ' [ [ --all | --unused | ' ..
