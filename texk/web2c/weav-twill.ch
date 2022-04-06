@@ -71,8 +71,10 @@ or to make this code usable by anyone else but its author.]
 @z
 
 @x 77c58
+@d my_name=='weave'
 @d banner=='This is WEAVE, Version 4.5'
 @y
+@d my_name=='twill'
 @d banner=='This is TWILL, Version 4.5'
 @z
 
