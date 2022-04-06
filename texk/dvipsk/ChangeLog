@@ -1,3 +1,9 @@
+2022-02-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tfmload.c:
+	Warn if interpreting OFM FONTDIR as pTeX vertical writing
+	with option -d 4.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.
