@@ -1,3 +1,9 @@
+2022-04-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {dvi,dvipdfmx,tfm}.c, dvi.h:
+	Warn if interpreting OFM FONTDIR as pTeX vertical writing
+	with option -v.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

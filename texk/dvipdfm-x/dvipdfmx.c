@@ -121,6 +121,7 @@ double paper_height             = 842.0;
 static double x_offset          = 72.0;
 static double y_offset          = 72.0;
 int    landscape_mode           = 0;
+int    dvi_ptex_with_vert       = 0;
 static int    translate_origin  = 0;
 
 static int has_paper_option = 0;
