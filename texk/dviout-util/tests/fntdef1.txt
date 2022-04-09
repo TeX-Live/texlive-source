@@ -1,0 +1,215 @@
+pre 2 25400000 473628672 1000 27 ' TeX output 2022.03.17:2207'
+fntdef1 7 0x4BF16079 655360 655360 0 5 'cmr10'
+fntdef1 24 0x1AF22256 655360 655360 0 6 'cmbx10'
+fntdef1 25 0xFD00273A 655360 655360 0 6 'cmti10'
+fntdef1 26 0x70AE304A 655360 655360 0 6 'cmsl10'
+ [1]
+bop 1 0 0 0 0 0 0 0 0 0 -1
+xxx1 31 'papersize=614.295pt,794.96999pt'
+down4 41484288
+push
+down4 -39649280
+push
+push
+right3 4063232
+xxx1 17 'color push  Black'
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+down4 37683200
+push
+right3 4063232
+down4 -36044800
+xxx1 26 'header=l3backend-dvips.pro'
+down3 655360
+push
+right3 983040
+fntnum7
+setchar12
+setchar114
+setchar115
+setchar116
+ "rst"
+right3 218453
+setchar112
+setchar97
+setchar103
+setchar101
+setchar46
+ "page."
+pop
+pop
+down3 1966080
+push
+right3 4063232
+xxx1 17 'color push  Black'
+push
+right4 11141120
+setchar49
+ "1"
+pop
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+eop
+ [2]
+bop 2 0 0 0 0 0 0 0 0 0 129
+down4 41484288
+push
+down4 -39649280
+push
+push
+right3 4063232
+xxx1 17 'color push  Black'
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+down4 37683200
+push
+down4 -35389440
+push
+right3 5046272
+fntnum24
+setchar115
+setchar101
+setchar99
+setchar111
+setchar110
+setchar100
+ "second"
+right3 251220
+setchar112
+setchar97
+setchar103
+setchar101
+setchar46
+ "page."
+pop
+pop
+down3 1966080
+push
+right3 4063232
+xxx1 17 'color push  Black'
+push
+right4 11141120
+fntnum7
+setchar50
+ "2"
+pop
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+eop
+ [3]
+bop 3 0 0 0 0 0 0 0 0 0 384
+down4 41484288
+push
+down4 -39649280
+push
+push
+right3 4063232
+xxx1 17 'color push  Black'
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+down4 37683200
+push
+down4 -35389440
+push
+right3 5046272
+fntnum25
+setchar116
+setchar104
+setchar105
+setchar114
+ "thir"
+w3 -33497
+setchar100
+ "d"
+right3 234471
+setchar112
+ "p"
+w0
+setchar97
+setchar103
+setchar101
+setchar46
+ "age."
+pop
+pop
+down3 1966080
+push
+right3 4063232
+xxx1 17 'color push  Black'
+push
+right4 11141120
+fntnum7
+setchar51
+ "3"
+pop
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+eop
+ [4]
+bop 4 0 0 0 0 0 0 0 0 0 573
+down4 41484288
+push
+down4 -39649280
+push
+push
+right3 4063232
+xxx1 17 'color push  Black'
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+down4 37683200
+push
+down4 -35389440
+push
+right3 5046272
+fntnum26
+setchar102
+setchar111
+setchar117
+setchar114
+setchar116
+setchar104
+ "fourth"
+right3 218453
+setchar112
+setchar97
+setchar103
+setchar101
+setchar46
+ "page."
+pop
+pop
+down3 1966080
+push
+right3 4063232
+xxx1 17 'color push  Black'
+push
+right4 11141120
+fntnum7
+setchar52
+ "4"
+pop
+right4 22609920
+xxx1 9 'color pop'
+pop
+pop
+eop
+post 766 25400000 473628672 1000 41484288 26673152 3 4
+fntdef1 26 0x70AE304A 655360 655360 0 6 'cmsl10'
+fntdef1 25 0xFD00273A 655360 655360 0 6 'cmti10'
+fntdef1 24 0x1AF22256 655360 655360 0 6 'cmbx10'
+fntdef1 7 0x4BF16079 655360 655360 0 5 'cmr10'
+post_post 955 2 223 223 223 223 223 223 223

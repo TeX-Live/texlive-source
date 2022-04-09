@@ -1,0 +1,168 @@
+variety sequences-6
+pre 2 25400000 473628672 1000 27 ' TeX output 2022.03.17:2207'
+bop 1 0 0 0 0 0 0 0 0 0 -1
+special1 31 'papersize=614.295pt,794.96999pt'
+d4 41484288
+[
+d4 -39649280
+[
+[
+r3 4063232
+special1 17 'color push  Black'
+r4 22609920
+special1 9 'color pop'
+]
+]
+d4 37683200
+[
+r3 4063232
+d4 -36044800
+special1 26 'header=l3backend-dvips.pro'
+d3 655360
+[
+r3 983040
+fd1 7 11374260171 655360 655360 0 5 '' 'cmr10'
+fn7
+\0C
+(rst)
+r3 218453
+(page.)
+]
+]
+d3 1966080
+[
+r3 4063232
+special1 17 'color push  Black'
+[
+r4 11141120
+(1)
+]
+r4 22609920
+special1 9 'color pop'
+]
+]
+eop
+bop 2 0 0 0 0 0 0 0 0 0 42
+d4 41484288
+[
+d4 -39649280
+[
+[
+r3 4063232
+special1 17 'color push  Black'
+r4 22609920
+special1 9 'color pop'
+]
+]
+d4 37683200
+[
+d4 -35389440
+[
+r3 5046272
+fd1 24 3274421126 655360 655360 0 6 '' 'cmbx10'
+fn24
+(second)
+r3 251220
+(page.)
+]
+]
+d3 1966080
+[
+r3 4063232
+special1 17 'color push  Black'
+[
+r4 11141120
+fn7
+(2)
+]
+r4 22609920
+special1 9 'color pop'
+]
+]
+eop
+bop 3 0 0 0 0 0 0 0 0 0 318
+d4 41484288
+[
+d4 -39649280
+[
+[
+r3 4063232
+special1 17 'color push  Black'
+r4 22609920
+special1 9 'color pop'
+]
+]
+d4 37683200
+[
+d4 -35389440
+[
+r3 5046272
+fd1 25 37500023472 655360 655360 0 6 '' 'cmti10'
+fn25
+(thir)
+w3 -33497
+(d)
+r3 234471
+(p)
+w0
+(age.)
+]
+]
+d3 1966080
+[
+r3 4063232
+special1 17 'color push  Black'
+[
+r4 11141120
+fn7
+(3)
+]
+r4 22609920
+special1 9 'color pop'
+]
+]
+eop
+bop 4 0 0 0 0 0 0 0 0 0 529
+d4 41484288
+[
+d4 -39649280
+[
+[
+r3 4063232
+special1 17 'color push  Black'
+r4 22609920
+special1 9 'color pop'
+]
+]
+d4 37683200
+[
+d4 -35389440
+[
+r3 5046272
+fd1 26 16053430112 655360 655360 0 6 '' 'cmsl10'
+fn26
+(fourth)
+r3 218453
+(page.)
+]
+]
+d3 1966080
+[
+r3 4063232
+special1 17 'color push  Black'
+[
+r4 11141120
+fn7
+(4)
+]
+r4 22609920
+special1 9 'color pop'
+]
+]
+eop
+post 744 25400000 473628672 1000 41484288 26673152 3 4
+fd1 26 16053430112 655360 655360 0 6 '' 'cmsl10'
+fd1 25 37500023472 655360 655360 0 6 '' 'cmti10'
+fd1 24 3274421126 655360 655360 0 6 '' 'cmbx10'
+fd1 7 11374260171 655360 655360 0 5 '' 'cmr10'
+post_post 955 2 223 223 223 223 223 223 223

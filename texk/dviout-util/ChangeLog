@@ -1,3 +1,14 @@
+2022-04-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvispc.c, dd.h:
+	Accept FNTDEF between PRE--BOP and between EOP--BOP.
+	* dvispc.test, tests/fntdef0.tex, tests/fntdef[0123].{dvi,txt},
+	tests/fntdef[03]-dtl,txt, tests/put{,j}.txt, Makefile.am:
+	Add new tests.
+	* configure.ac: Version 20220409.
+	* COPYING: Copyright year.
+	https://github.com/texjporg/tex-jp-build/issues/138
+
 2021-07-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvispc.c: Output text files by "wb" mode.

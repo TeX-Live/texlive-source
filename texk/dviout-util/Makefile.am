@@ -49,8 +49,14 @@ EXTRA_DIST += tests/oldindep.spc \
 	tests/longspec.tex tests/longspec.dvi \
 	tests/flatnest.tex tests/flatnest.dvi \
 	tests/jisx0208.dvi tests/jisx0208.txt \
-	tests/putj.dump.dvi tests/putj.dump.txt \
-	tests/put.dump.dvi tests/put.dump.txt
+	tests/putj.dump.dvi tests/putj.txt \
+	tests/put.dump.dvi tests/put.txt \
+	tests/fntdef0.tex \
+	tests/fntdef0.dvi tests/fntdef0.txt \
+	tests/fntdef1.dvi tests/fntdef1.txt \
+	tests/fntdef2.dvi tests/fntdef2.txt \
+	tests/fntdef3.dvi tests/fntdef3.txt \
+	tests/fntdef0-dtl.txt tests/fntdef3-dtl.txt
 DISTCLEANFILES = x*oldindep.spc \
 	x*oldindepa.txt x*oldindepax.dvi \
 	x*oldindep.dry x*oldindepout.dvi \
