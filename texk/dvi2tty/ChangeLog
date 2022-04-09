@@ -1,3 +1,14 @@
+2022-04-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	dvi2tty-6.0.1.
+	* dvistuff.c:
+	Accept FNTDEF between PRE--BOP and between EOP--BOP.
+	* test/fntdef0.tex, test/fntdef[0123].dvi,
+	  dvi2tty.test, fntdef0.tty, Makefile.am:
+	Add new tests.
+	* version.ac: Update version number.
+	https://github.com/texjporg/tex-jp-build/issues/138
+
 2022-03-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvi2tty.[ch], dvistuff.c: Error exit if fail to get font,

@@ -46,5 +46,15 @@ rc=0
 
 ./dvi2tty -Eu -a $test_src/table.dvi >tableEua.out && diff $srcdir/tableEua.tty tableEua.out || rc=9
 
+## different position of FNTDEF and NOP
+./dvi2tty $test_src/fntdef0.dvi >fntdef0.out && diff $srcdir/fntdef0.tty fntdef0.out || rc=1
+
+./dvi2tty $test_src/fntdef1.dvi >fntdef1.out && diff $srcdir/fntdef0.tty fntdef1.out || rc=2
+
+./dvi2tty $test_src/fntdef2.dvi >fntdef2.out && diff $srcdir/fntdef0.tty fntdef2.out || rc=3
+
+./dvi2tty $test_src/fntdef3.dvi >fntdef3.out && diff $srcdir/fntdef0.tty fntdef3.out || rc=4
+
+
 exit $rc
 

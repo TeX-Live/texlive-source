@@ -560,7 +560,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 EXTRA_DIST = $(DVI2TTY_TREE) TLpatches $(TESTS) ligtest.dis \
-	ligtest.tty test.tty testc.tty tests.tty testu.tty
+	ligtest.tty test.tty testc.tty tests.tty testu.tty fntdef0.tty
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed

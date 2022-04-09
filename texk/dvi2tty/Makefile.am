@@ -61,6 +61,7 @@ EXTRA_DIST += ligtest.dis
 DISTCLEANFILES = ligtest.dout
 ## dvi2tty.test
 EXTRA_DIST += ligtest.tty test.tty testc.tty tests.tty testu.tty
+EXTRA_DIST += fntdef0.tty
 DISTCLEANFILES += ligtest.out test.out testc.out tests.out testu.out
 DISTCLEANFILES += table.out tablec.out tables.out tableu.out tableuC.out
 DISTCLEANFILES += tableEu.out tableEu1.out tableEuC.out tableEua.out
