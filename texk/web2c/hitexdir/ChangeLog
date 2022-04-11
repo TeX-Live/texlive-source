@@ -1,3 +1,8 @@
+2022-04-11  Martin Ruckert <ruckert@cs.hm.edu>
+
+	* eliminating string as a anlias fro char* in hitex.w
+	* adding an optional gtk open file dialog to hintview
+	* replacing texture2D (deprecated) by texture in the FragementShader of hintview
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.
