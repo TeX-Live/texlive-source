@@ -90,7 +90,7 @@ static const char FragmentShader[]=
   "uniform int Image;\n"
 
   "void main()\n"
-  "{ vec4 texColor = texture2D( theTexture, UV );\n"
+  "{ vec4 texColor = texture( theTexture, UV );\n"
     "if (Image==1) color = texColor;\n"
     "else\n"
     "{ color.a = pow(texColor.r,Gamma);\n"

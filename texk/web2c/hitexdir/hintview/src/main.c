@@ -147,6 +147,77 @@ static int new_file_time(void)
   return 0;
 }
 
+
+static int set_hin_name(char *fn)
+{  size_t sl;
+  if (hin_name!=NULL) { free(hin_name); hin_name=NULL; }
+  { hin_name=malloc(strlen(fn)+1);
+    if (hin_name==NULL)
+    { herror("Out of memory for file name", fn);
+      return 0;
+    }
+    strcpy(hin_name,fn);
+  }
+  sl=strlen(hin_name);
+  if (sl>4 && strncmp(hin_name+sl-4,".hnt",4)!=0)
+  {  herror("Unknown File Type,I dont know how to open this file", hin_name);
+    return 0;
+  }
+  return 1;
+}
+
+#if (WITH_GTK==2) ||  (WITH_GTK==3)
+#include <gtk/gtk.h>
+
+static int file_chooser(void)
+{ GtkWidget *dialog;
+  GtkFileFilter *filter;
+  gint res;
+
+  if ( !gtk_init_check( NULL, NULL ) )
+  { fprintf(stderr,"ERROR: Unable to initialize GTK\n");
+       return 0;
+  }
+
+  dialog = gtk_file_chooser_dialog_new ("Open File",
+					NULL,/* no parent */
+                                      GTK_FILE_CHOOSER_ACTION_OPEN,
+                                      "_Cancel", GTK_RESPONSE_CANCEL,
+                                      "_Open", GTK_RESPONSE_ACCEPT,
+                                      NULL);
+  
+  filter = gtk_file_filter_new();
+  gtk_file_filter_set_name( filter, "HINT file" );
+  gtk_file_filter_add_pattern( filter, "*.hnt");
+  gtk_file_chooser_add_filter( GTK_FILE_CHOOSER(dialog), filter );
+
+  res = gtk_dialog_run (GTK_DIALOG (dialog));
+  if (res == GTK_RESPONSE_ACCEPT)
+  { char *fn;
+    fn = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+    res=set_hin_name(fn);
+    g_free (fn);
+  }
+  else
+    res=0;
+  gtk_widget_destroy (dialog);
+  while (gtk_events_pending()) gtk_main_iteration();
+  return res;
+}
+#else
+static int file_chooser(void)
+{ return 0; }
+#endif
+
+
+static int set_input_file(char *fn)
+{ 
+  if (fn!=NULL)
+    return set_hin_name(fn);
+  else  
+    return file_chooser();
+}
+
 int dark = 0, loading=0, autoreload=0, home=0;
 
 int usage(void)
@@ -174,8 +245,7 @@ int help(void)
 }
 
 int command_line(int argc, char *argv[])
-{ size_t sl;
-  int i;
+{ int i;
   for (i=1; argv[i]!=NULL && argv[i][0]=='-'; i++)
     { switch (argv[i][1])
       { case '-':
@@ -194,17 +264,9 @@ int command_line(int argc, char *argv[])
         default: return usage();
       }
     }
-  if (argv[i]==NULL)
+  if (!set_input_file(argv[i]))
     return usage();
-  if (hin_name!=NULL) free(hin_name);
-  hin_name=malloc(strlen(argv[i])+1);
-  if (hin_name==NULL)
-    return herror("Out of memory for file name", argv[i]);
-  strcpy(hin_name,argv[i]);
-  sl=strlen(hin_name);
-  if (sl>4 && strncmp(hin_name+sl-4,".hnt",4)!=0)
-    return herror("Unknown File Type,I dont know how to open this file", argv[1]);
-return 1;	
+  return 1;	
 }
 
 GLFWcursor *drag_cursor, *hand_cursor, *arrow_cursor;
@@ -265,11 +327,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     clear_cursor();
     break;
+  case CTRL(GLFW_KEY_S): /* search */
     break;
-  case CTRL(GLFW_KEY_F): /* find */
+  case CTRL(GLFW_KEY_F): /* file */
+    if (set_input_file(NULL))
+      open_file(home);
     break;
-  case CTRL(GLFW_KEY_O): /* outlines */
-    break;
+   case CTRL(GLFW_KEY_O): /* outlines */
   default:
     // LOG("key %d, scan %d, action %d, mosd %d\n",key, scancode, action, mods);
     break;
@@ -416,7 +480,6 @@ int main(int argc, char *argv[])
   hint_resize(px_h,px_v,scale*x_dpi,scale*y_dpi);
   if (!open_file(home))
     return 1;
-  hint_page_home();
   if (setjmp(error_exit)==0)
     do
     { hint_render();
