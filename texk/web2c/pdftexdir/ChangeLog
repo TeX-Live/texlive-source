@@ -1,3 +1,10 @@
+2022-04-12  Marcel Kr\"uger  <tex@2krueger.de>
+
+	* pdftex.web (Write out resource list): Write forms last,
+	to avoid recursive xforms clobbering |pdfpagegroupval|.
+	https://tug.org/pipermail/pdftex/2022-April/009276.html
+	https://tug.org/pipermail/pdftex/2022-April/009280.html
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.
