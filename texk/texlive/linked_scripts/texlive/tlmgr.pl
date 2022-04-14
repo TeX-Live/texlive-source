@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 62899 2022-04-04 17:45:51Z karl $
+# $Id: tlmgr.pl 63018 2022-04-13 00:49:43Z karl $
 #
 # Copyright 2008-2022 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
@@ -7,8 +7,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 62899 $';
-my $datrev = '$Date: 2022-04-04 19:45:51 +0200 (Mon, 04 Apr 2022) $';
+my $svnrev = '$Revision: 63018 $';
+my $datrev = '$Date: 2022-04-13 02:49:43 +0200 (Wed, 13 Apr 2022) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5614,6 +5614,7 @@ sub check_files {
     tlpkg/texlive.tlpdb tlpkg/tlpobj tlpkg/texlive.profile
     texmf-config/ texmf-var/
     texmf.cnf texmfcnf.lua install-tl.log
+    tlmgr.log tlmgr-commands.log
   !;
   my %tltreefiles = %{$tltree->{'_allfiles'}};
   my @tlpdbfiles = keys %filetopacks;
@@ -9648,6 +9649,11 @@ just as in normal mode.
 In user mode, these actions operate only on the user tree's
 configuration files and/or C<texlive.tlpdb>.
 
+=head2 User mode logs
+
+In user mode, C<tlmgr.log> and <tlmgr-commands.log> are written in the 
+C<USERTREE/web2c/> directlry instead of C<TEXMFSYSVAR/web2c/>.
+
 =head1 MULTIPLE REPOSITORIES
 
 The main TeX Live repository contains a vast array of packages.
@@ -10233,7 +10239,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 62899 2022-04-04 17:45:51Z karl $
+$Id: tlmgr.pl 63018 2022-04-13 00:49:43Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
