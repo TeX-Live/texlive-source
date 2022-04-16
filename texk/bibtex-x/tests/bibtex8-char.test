@@ -1,0 +1,43 @@
+#! /bin/sh -vx
+#
+# Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$srcdir/tests
+BIBINPUTS=$srcdir/tests
+export TEXMFCNF BSTINPUTS BIBINPUTS
+
+
+## test for add.period$
+cp $srcdir/tests/perioda.aux tests/xperioda.aux
+./bibtex8 tests/xperioda || rc=3
+diff $srcdir/tests/perioda.bbl tests/xperioda.bbl || rc=4
+
+## test for substring$
+cp $srcdir/tests/substra.aux tests/xsubstra.aux
+./bibtex8 tests/xsubstra || rc=5
+diff $srcdir/tests/substra.bbl tests/xsubstra.bbl || rc=6
+
+## test for text.length$, text.prefix$
+cp $srcdir/tests/txtprfxa.aux tests/xtxtprfxa.aux
+./bibtex8 tests/xtxtprfxa || rc=7
+diff $srcdir/tests/txtprfxa.bbl tests/xtxtprfxa.bbl || rc=8
+
+## test for width$
+cp $srcdir/tests/widtha.aux tests/xwidtha.aux
+./bibtex8 --csfile sort1.csf tests/xwidtha || rc=9
+diff $srcdir/tests/widtha.bbl tests/xwidtha.bbl || rc=10
+
+## test for chr.to.int$, int.to.str$, int.to.chr$
+cp $srcdir/tests/chara.aux tests/xchara.aux
+./bibtex8 tests/xchara || rc=11
+diff $srcdir/tests/chara.bbl tests/xchara.bbl || rc=12
+
+
+exit $rc
+

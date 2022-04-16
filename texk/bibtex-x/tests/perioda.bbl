@@ -1,0 +1,14 @@
+\section*{Test result}
+\begin{itemize}
+\item[~~] ABC xyz
+\item[ap] ABC xyz.
+\item[~~] ABC xyz.
+\item[ap] ABC xyz.
+\item[~~] ABC xyz!
+\item[ap] ABC xyz!
+\item[~~] ABC xyz?
+\item[ap] ABC xyz?
+\item[~~] ABC xyz,
+\item[ap] ABC xyz,.
+\end{itemize}
+\endinput

@@ -3408,6 +3408,9 @@ BEGIN
  * non|right_brace| characters, to see if we have to add the |period|.
  ***************************************************************************/
   BEGIN
+#ifdef UTF_8
+    UChar ch;
+#endif
     sp_ptr = str_start[pop_lit1 + 1];
     sp_end = str_start[pop_lit1];
     while (sp_ptr > sp_end)
@@ -3419,12 +3422,24 @@ BEGIN
       END
     END
 Loop_Exit_Label:
+#ifdef UTF_8
+    ch = str_pool[sp_ptr];
+    if (utf8len(str_pool[sp_ptr]) != 1 && utf8len(str_pool[sp_ptr-1]) != 2 && utf8len(str_pool[sp_ptr-2]) == 3)
+      ch = ((str_pool[sp_ptr-2]&0x0f) <<12) | ((str_pool[sp_ptr-1]&0x3f) << 6) | (str_pool[sp_ptr]&0x3f);
+    switch (ch)
+#else
     switch (str_pool[sp_ptr])
+#endif
     BEGIN
       case PERIOD:
       case QUESTION_MARK:
       case EXCLAMATION_MARK:
-	REPUSH_STRING;
+#ifdef UTF_8
+      case 0x203C: case 0x203D: case 0x2047: /* ‼ ‽ ⁇ */
+      case 0x2048: case 0x2049: case 0x3002: /* ⁈ ⁉ 。 */
+      case 0xFF01: case 0xFF0E: case 0xFF1F: /* ！ ． ？ */
+#endif
+        REPUSH_STRING;
         break;
       default:
 

@@ -349,7 +349,7 @@ __EXTERN__ Integer_T                    total_ex_count;
 __EXTERN__ AlphaFile_T                  aux_file[AUX_STACK_SIZE + 1];
 __EXTERN__ StrNumber_T                  aux_list[AUX_STACK_SIZE + 1];
 __EXTERN__ Integer_T                    aux_ln_stack[AUX_STACK_SIZE + 1];
-__EXTERN__ Integer_T                    char_width[LAST_ASCII_CHAR + 1];
+__EXTERN__ Integer_T                    char_width[LAST_LATIN_CHAR + 1];
 __EXTERN__ IDType_T                     id_class[LAST_ASCII_CHAR + 1];
 __EXTERN__ LexType_T                    lex_class[LAST_ASCII_CHAR + 1];
 __EXTERN__ unsigned char                xchr[LAST_ASCII_CHAR + 1];

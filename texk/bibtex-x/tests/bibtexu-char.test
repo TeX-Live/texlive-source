@@ -1,0 +1,44 @@
+#! /bin/sh -vx
+#
+# Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$srcdir/tests
+BIBINPUTS=$srcdir/tests
+export TEXMFCNF BSTINPUTS BIBINPUTS
+
+
+## test for add.period$
+cp $srcdir/tests/periodu.aux tests/xperiodu.aux
+./bibtexu tests/xperiodu || rc=3
+diff $srcdir/tests/periodu.bbl tests/xperiodu.bbl || rc=4
+
+## test for substring$
+cp $srcdir/tests/substru.aux tests/xsubstru.aux
+./bibtexu tests/xsubstru || rc=5
+diff $srcdir/tests/substru.bbl tests/xsubstru.bbl || rc=6
+
+## test for text.length$, text.prefix$
+cp $srcdir/tests/txtprfxu.aux tests/xtxtprfxu.aux
+./bibtexu tests/xtxtprfxu || rc=7
+diff $srcdir/tests/txtprfxu.bbl tests/xtxtprfxu.bbl || rc=8
+
+## test for width$
+##   (FIXME) Greek, Cyrillic are not impremented yet
+cp $srcdir/tests/widthu.aux tests/xwidthu.aux
+./bibtexu tests/xwidthu || rc=9
+diff $srcdir/tests/widthu.bbl tests/xwidthu.bbl || rc=10
+
+## test for chr.to.int$, int.to.str$, int.to.chr$
+cp $srcdir/tests/charu.aux tests/xcharu.aux
+./bibtexu tests/xcharu || rc=11
+diff $srcdir/tests/charu.bbl tests/xcharu.bbl || rc=12
+
+
+exit $rc
+

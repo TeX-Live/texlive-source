@@ -115,6 +115,17 @@ int32_t                 icu_strToUpper (UChar * tarup,
                                 int32_t tucap,
                                 UChar * target,
                                 int32_t tarlen);
+int32_t                 icu_toUChar32s (BufType_T buf,
+                                      BufPointer_T bf_ptr,
+                                      BufPointer_T len,
+                                      UChar32 * target,
+                                      int32_t tarcap,
+                                      UChar * buf16);
+int32_t                 icu_fromUChar32s (unsigned char * dest,
+                                        int32_t destcap,
+                                        const UChar32 * src,
+                                        int32_t srclen,
+                                        UChar * buf16);
 #define  utf8len(a)  ((a)<0x80 ? 1 : ((a)<0xc2 ? -2 : ((a)<0xe0 ? 2 : ((a)<0xf0 ? 3 : ((a)<0xf5 ? 4 : -1)))))
 #endif
 void                    a_close (const AlphaFile_T file_pointer);

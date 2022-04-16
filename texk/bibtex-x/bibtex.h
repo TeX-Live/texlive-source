@@ -339,6 +339,12 @@
 #else
 #define LAST_ASCII_CHAR             127
 #endif                          /* SUPPORT_8BIT */
+#ifdef UTF_8
+#define LAST_LATIN_CHAR             0x17F
+#define LAST_UCS_CHAR               0x10FFFF
+#else
+#define LAST_LATIN_CHAR             LAST_ASCII_CHAR
+#endif
 
 
 /***************************************************************************

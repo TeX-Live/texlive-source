@@ -1,0 +1,305 @@
+\section*{Test result}
+\begin{itemize}
+\item[orig] ABCDEFG tuvwxyz
+\item[1 1] A
+\item[1 2] AB
+\item[1 3] ABC
+\item[1 4] ABCD
+\item[1 5] ABCDE
+\item[1 6] ABCDEF
+\item[1 7] ABCDEFG
+\item[1 1] A
+\item[2 1] B
+\item[3 1] C
+\item[4 1] D
+\item[5 1] E
+\item[6 1] F
+\item[7 1] G
+\item[-1 1] z
+\item[-1 2] yz
+\item[-1 3] xyz
+\item[-1 4] wxyz
+\item[-1 5] vwxyz
+\item[-1 6] uvwxyz
+\item[-1 7] tuvwxyz
+\item[-2 7]  tuvwxy
+\item[-3 7] G tuvwx
+\item[-4 7] FG tuvw
+\item[-5 7] EFG tuv
+\item[-6 7] DEFG tu
+\item[-7 7] CDEFG t
+\item[-1 7] tuvwxyz
+\item[-2 6] tuvwxy
+\item[-3 5] tuvwx
+\item[-4 4] tuvw
+\item[-5 3] tuv
+\item[-6 2] tu
+\item[-7 1] t
+\item[-1 8]  tuvwxyz
+\item[-2 7]  tuvwxy
+\item[-3 6]  tuvwx
+\item[-4 5]  tuvw
+\item[-5 4]  tuv
+\item[-6 3]  tu
+\item[-7 2]  t
+\item[-8 1] t
+\item[orig] ÅÇÈÎØÜÝ åçèîøüý
+\item[1 1] Å
+\item[1 2] ÅÇ
+\item[1 3] ÅÇÈ
+\item[1 4] ÅÇÈÎ
+\item[1 5] ÅÇÈÎØ
+\item[1 6] ÅÇÈÎØÜ
+\item[1 7] ÅÇÈÎØÜÝ
+\item[1 1] Å
+\item[2 1] Ç
+\item[3 1] È
+\item[4 1] Î
+\item[5 1] Ø
+\item[6 1] Ü
+\item[7 1] Ý
+\item[-1 1] ý
+\item[-1 2] üý
+\item[-1 3] øüý
+\item[-1 4] îøüý
+\item[-1 5] èîøüý
+\item[-1 6] çèîøüý
+\item[-1 7] åçèîøüý
+\item[-2 7]  åçèîøü
+\item[-3 7] Ý åçèîø
+\item[-4 7] ÜÝ åçèî
+\item[-5 7] ØÜÝ åçè
+\item[-6 7] ÎØÜÝ åç
+\item[-7 7] ÈÎØÜÝ å
+\item[-1 7] åçèîøüý
+\item[-2 6] åçèîøü
+\item[-3 5] åçèîø
+\item[-4 4] åçèî
+\item[-5 3] åçè
+\item[-6 2] åç
+\item[-7 1] å
+\item[-1 8]  åçèîøüý
+\item[-2 7]  åçèîøü
+\item[-3 6]  åçèîø
+\item[-4 5]  åçèî
+\item[-5 4]  åçè
+\item[-6 3]  åç
+\item[-7 2]  å
+\item[-8 1] å
+\item[orig] ΑΒΓΔΕΖΗ στυφχψω
+\item[1 1] Α
+\item[1 2] ΑΒ
+\item[1 3] ΑΒΓ
+\item[1 4] ΑΒΓΔ
+\item[1 5] ΑΒΓΔΕ
+\item[1 6] ΑΒΓΔΕΖ
+\item[1 7] ΑΒΓΔΕΖΗ
+\item[1 1] Α
+\item[2 1] Β
+\item[3 1] Γ
+\item[4 1] Δ
+\item[5 1] Ε
+\item[6 1] Ζ
+\item[7 1] Η
+\item[-1 1] ω
+\item[-1 2] ψω
+\item[-1 3] χψω
+\item[-1 4] φχψω
+\item[-1 5] υφχψω
+\item[-1 6] τυφχψω
+\item[-1 7] στυφχψω
+\item[-2 7]  στυφχψ
+\item[-3 7] Η στυφχ
+\item[-4 7] ΖΗ στυφ
+\item[-5 7] ΕΖΗ στυ
+\item[-6 7] ΔΕΖΗ στ
+\item[-7 7] ΓΔΕΖΗ σ
+\item[-1 7] στυφχψω
+\item[-2 6] στυφχψ
+\item[-3 5] στυφχ
+\item[-4 4] στυφ
+\item[-5 3] στυ
+\item[-6 2] στ
+\item[-7 1] σ
+\item[-1 8]  στυφχψω
+\item[-2 7]  στυφχψ
+\item[-3 6]  στυφχ
+\item[-4 5]  στυφ
+\item[-5 4]  στυ
+\item[-6 3]  στ
+\item[-7 2]  σ
+\item[-8 1] σ
+\item[orig] АБВГДЕЖ щъыьэюя
+\item[1 1] А
+\item[1 2] АБ
+\item[1 3] АБВ
+\item[1 4] АБВГ
+\item[1 5] АБВГД
+\item[1 6] АБВГДЕ
+\item[1 7] АБВГДЕЖ
+\item[1 1] А
+\item[2 1] Б
+\item[3 1] В
+\item[4 1] Г
+\item[5 1] Д
+\item[6 1] Е
+\item[7 1] Ж
+\item[-1 1] я
+\item[-1 2] юя
+\item[-1 3] эюя
+\item[-1 4] ьэюя
+\item[-1 5] ыьэюя
+\item[-1 6] ъыьэюя
+\item[-1 7] щъыьэюя
+\item[-2 7]  щъыьэю
+\item[-3 7] Ж щъыьэ
+\item[-4 7] ЕЖ щъыь
+\item[-5 7] ДЕЖ щъы
+\item[-6 7] ГДЕЖ щъ
+\item[-7 7] ВГДЕЖ щ
+\item[-1 7] щъыьэюя
+\item[-2 6] щъыьэю
+\item[-3 5] щъыьэ
+\item[-4 4] щъыь
+\item[-5 3] щъы
+\item[-6 2] щъ
+\item[-7 1] щ
+\item[-1 8]  щъыьэюя
+\item[-2 7]  щъыьэю
+\item[-3 6]  щъыьэ
+\item[-4 5]  щъыь
+\item[-5 4]  щъы
+\item[-6 3]  щъ
+\item[-7 2]  щ
+\item[-8 1] щ
+\item[orig] あいうえおかき　ユヨワヰヱヲン
+\item[1 1] あ
+\item[1 2] あい
+\item[1 3] あいう
+\item[1 4] あいうえ
+\item[1 5] あいうえお
+\item[1 6] あいうえおか
+\item[1 7] あいうえおかき
+\item[1 1] あ
+\item[2 1] い
+\item[3 1] う
+\item[4 1] え
+\item[5 1] お
+\item[6 1] か
+\item[7 1] き
+\item[-1 1] ン
+\item[-1 2] ヲン
+\item[-1 3] ヱヲン
+\item[-1 4] ヰヱヲン
+\item[-1 5] ワヰヱヲン
+\item[-1 6] ヨワヰヱヲン
+\item[-1 7] ユヨワヰヱヲン
+\item[-2 7] 　ユヨワヰヱヲ
+\item[-3 7] き　ユヨワヰヱ
+\item[-4 7] かき　ユヨワヰ
+\item[-5 7] おかき　ユヨワ
+\item[-6 7] えおかき　ユヨ
+\item[-7 7] うえおかき　ユ
+\item[-1 7] ユヨワヰヱヲン
+\item[-2 6] ユヨワヰヱヲ
+\item[-3 5] ユヨワヰヱ
+\item[-4 4] ユヨワヰ
+\item[-5 3] ユヨワ
+\item[-6 2] ユヨ
+\item[-7 1] ユ
+\item[-1 8] 　ユヨワヰヱヲン
+\item[-2 7] 　ユヨワヰヱヲ
+\item[-3 6] 　ユヨワヰヱ
+\item[-4 5] 　ユヨワヰ
+\item[-5 4] 　ユヨワ
+\item[-6 3] 　ユヨ
+\item[-7 2] 　ユ
+\item[-8 1] ユ
+\item[orig] 一二三四五六七　肆伍陸漆捌玖拾
+\item[1 1] 一
+\item[1 2] 一二
+\item[1 3] 一二三
+\item[1 4] 一二三四
+\item[1 5] 一二三四五
+\item[1 6] 一二三四五六
+\item[1 7] 一二三四五六七
+\item[1 1] 一
+\item[2 1] 二
+\item[3 1] 三
+\item[4 1] 四
+\item[5 1] 五
+\item[6 1] 六
+\item[7 1] 七
+\item[-1 1] 拾
+\item[-1 2] 玖拾
+\item[-1 3] 捌玖拾
+\item[-1 4] 漆捌玖拾
+\item[-1 5] 陸漆捌玖拾
+\item[-1 6] 伍陸漆捌玖拾
+\item[-1 7] 肆伍陸漆捌玖拾
+\item[-2 7] 　肆伍陸漆捌玖
+\item[-3 7] 七　肆伍陸漆捌
+\item[-4 7] 六七　肆伍陸漆
+\item[-5 7] 五六七　肆伍陸
+\item[-6 7] 四五六七　肆伍
+\item[-7 7] 三四五六七　肆
+\item[-1 7] 肆伍陸漆捌玖拾
+\item[-2 6] 肆伍陸漆捌玖
+\item[-3 5] 肆伍陸漆捌
+\item[-4 4] 肆伍陸漆
+\item[-5 3] 肆伍陸
+\item[-6 2] 肆伍
+\item[-7 1] 肆
+\item[-1 8] 　肆伍陸漆捌玖拾
+\item[-2 7] 　肆伍陸漆捌玖
+\item[-3 6] 　肆伍陸漆捌
+\item[-4 5] 　肆伍陸漆
+\item[-5 4] 　肆伍陸
+\item[-6 3] 　肆伍
+\item[-7 2] 　肆
+\item[-8 1] 肆
+\item[orig] 櫛杓屠冤𦥑𠮟𠀋𡈽𥝱𨦇𡚴𠷡𧘕𧘔𩸽
+\item[1 1] 櫛
+\item[1 2] 櫛杓
+\item[1 3] 櫛杓屠
+\item[1 4] 櫛杓屠冤
+\item[1 5] 櫛杓屠冤𦥑
+\item[1 6] 櫛杓屠冤𦥑𠮟
+\item[1 7] 櫛杓屠冤𦥑𠮟𠀋
+\item[1 1] 櫛
+\item[2 1] 杓
+\item[3 1] 屠
+\item[4 1] 冤
+\item[5 1] 𦥑
+\item[6 1] 𠮟
+\item[7 1] 𠀋
+\item[-1 1] 𩸽
+\item[-1 2] 𧘔𩸽
+\item[-1 3] 𧘕𧘔𩸽
+\item[-1 4] 𠷡𧘕𧘔𩸽
+\item[-1 5] 𡚴𠷡𧘕𧘔𩸽
+\item[-1 6] 𨦇𡚴𠷡𧘕𧘔𩸽
+\item[-1 7] 𥝱𨦇𡚴𠷡𧘕𧘔𩸽
+\item[-2 7] 𡈽𥝱𨦇𡚴𠷡𧘕𧘔
+\item[-3 7] 𠀋𡈽𥝱𨦇𡚴𠷡𧘕
+\item[-4 7] 𠮟𠀋𡈽𥝱𨦇𡚴𠷡
+\item[-5 7] 𦥑𠮟𠀋𡈽𥝱𨦇𡚴
+\item[-6 7] 冤𦥑𠮟𠀋𡈽𥝱𨦇
+\item[-7 7] 屠冤𦥑𠮟𠀋𡈽𥝱
+\item[-1 7] 𥝱𨦇𡚴𠷡𧘕𧘔𩸽
+\item[-2 6] 𥝱𨦇𡚴𠷡𧘕𧘔
+\item[-3 5] 𥝱𨦇𡚴𠷡𧘕
+\item[-4 4] 𥝱𨦇𡚴𠷡
+\item[-5 3] 𥝱𨦇𡚴
+\item[-6 2] 𥝱𨦇
+\item[-7 1] 𥝱
+\item[-1 8] 𡈽𥝱𨦇𡚴𠷡𧘕𧘔𩸽
+\item[-2 7] 𡈽𥝱𨦇𡚴𠷡𧘕𧘔
+\item[-3 6] 𡈽𥝱𨦇𡚴𠷡𧘕
+\item[-4 5] 𡈽𥝱𨦇𡚴𠷡
+\item[-5 4] 𡈽𥝱𨦇𡚴
+\item[-6 3] 𡈽𥝱𨦇
+\item[-7 2] 𡈽𥝱
+\item[-8 1] 𥝱
+\end{itemize}
+\endinput

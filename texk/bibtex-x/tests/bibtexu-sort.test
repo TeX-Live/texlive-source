@@ -1,0 +1,36 @@
+#! /bin/sh -vx
+#
+# Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# You may freely use, modify and/or distribute this file.
+
+test -d tests || mkdir -p tests
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$srcdir/tests
+BIBINPUTS=$srcdir/tests
+export TEXMFCNF BSTINPUTS BIBINPUTS
+
+rm -f tests/xsortu-*.bbl tests/xcaseu.bbl
+
+for loc in en az da fi tr; do
+
+## test for sorting and change.case$
+cp $srcdir/tests/sortu.aux tests/xsortu-$loc.aux
+./bibtexu -o $loc tests/xsortu-$loc || rc=1
+diff $srcdir/tests/sortu-$loc.bbl tests/xsortu-$loc.bbl || rc=2
+
+done
+
+
+## test for change.case$
+cp $srcdir/tests/caseu.aux tests/xcaseu.aux
+./bibtexu tests/xcaseu || rc=3
+diff $srcdir/tests/caseu.bbl tests/xcaseu.bbl || rc=4
+
+
+exit $rc
+
+
+

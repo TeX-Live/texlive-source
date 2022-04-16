@@ -547,7 +547,11 @@ BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
     push_lit_stk (0, STK_INT);
   END
+#ifdef UTF_8
+  else if (LENGTH (pop_lit1) != utf8len(str_pool[str_start[pop_lit1]]))
+#else
   else if (LENGTH (pop_lit1) != 1)
+#endif
   BEGIN
     PRINT ("\"");
     PRINT_POOL_STR (pop_lit1);
@@ -556,7 +560,13 @@ BEGIN
   END
   else
   BEGIN
+#ifdef UTF_8
+    UChar32 ch;
+    U8_GET_OR_FFFD(&str_pool[str_start[pop_lit1]], 0, 0, -1, ch);
+    push_lit_stk (ch, STK_INT);
+#else
     push_lit_stk (str_pool[str_start[pop_lit1]], STK_INT);
+#endif
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 377 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -1503,15 +1513,40 @@ BEGIN
     print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
     push_lit_stk (s_null, STK_STR);
   END
-  else if ((pop_lit1 < 0) || (pop_lit1 > 127))
+#if UTF_8
+  else if ((pop_lit1 < 0) || (pop_lit1 > LAST_UCS_CHAR))
+#else
+  else if ((pop_lit1 < 0) || (pop_lit1 > LAST_ASCII_CHAR))
+#endif
   BEGIN
-    BST_EX_WARN2 ("%ld isn't valid ASCII", (long) pop_lit1);
+    BST_EX_WARN2 ("%ld isn't valid character code", (long) pop_lit1);
     push_lit_stk (s_null, STK_STR);
   END
   else
   BEGIN
     STR_ROOM (1);
+#if UTF_8
+    BEGIN
+      UChar ch0[3] = {0};
+      unsigned char ch1[5] = {0}, *ch;
+      if (pop_lit1> 0xFFFF)
+      BEGIN
+        ch0[0] = U16_LEAD(pop_lit1);
+        ch0[1] = U16_TRAIL(pop_lit1);
+      END
+      else
+        ch0[0] = pop_lit1;
+      icu_fromUChars(ch1, 5, ch0, 3);
+      ch=ch1;
+      while(*ch)
+      BEGIN
+        APPEND_CHAR (*ch);
+        INCR (ch);
+      END
+    END
+#else
     APPEND_CHAR (pop_lit1);
+#endif
     push_lit_stk (make_string (), STK_STR);
   END
 END
@@ -2011,10 +2046,17 @@ We transform the character to Unicode and then get the substring, then
 back to UTF-8. 23/sep/2009
 */
     Integer_T str_length = LENGTH (pop_lit3);
-    UChar uchs[BUF_SIZE+1];
+    UChar32 uchs[BUF_SIZE+1];
+    UChar uch16[BUF_SIZE+1];
     int32_t utcap = BUF_SIZE+1;
-    int32_t ulen = icu_toUChars(str_pool,str_start[pop_lit3],str_length,uchs, utcap);
+    int32_t ulen;
+    unsigned char frUch1[BUF_SIZE+1];
+    unsigned char frUch2[BUF_SIZE+1];
+    int32_t frUchCap = BUF_SIZE + 1;
+    int32_t lenfrUch;
+    int32_t ptrfrUch;
 
+    ulen = icu_toUChar32s(str_pool,str_start[pop_lit3],str_length,uchs,utcap,uch16);
     sp_length = ulen;
 #else
     sp_length = LENGTH (pop_lit3);
@@ -2023,14 +2065,14 @@ back to UTF-8. 23/sep/2009
     BEGIN
       if ((pop_lit2 == 1) || (pop_lit2 == -1))
       BEGIN
-	REPUSH_STRING;
+        REPUSH_STRING;
         goto Exit_Label;
       END
     END
 
     if ((pop_lit1 <= 0) || (pop_lit2 == 0)
-	    || (pop_lit2 > (Integer_T) sp_length)
-	    || (pop_lit2 < -(Integer_T) sp_length))
+            || (pop_lit2 > (Integer_T) sp_length)
+            || (pop_lit2 < -(Integer_T) sp_length))
     BEGIN
       push_lit_stk (s_null, STK_STR);
       goto Exit_Label;
@@ -2046,20 +2088,13 @@ back to UTF-8. 23/sep/2009
     BEGIN
       if (pop_lit2 > 0)
       BEGIN
-#ifdef UTF_8
-        unsigned char frUch1[BUF_SIZE+1];
-        unsigned char frUch2[BUF_SIZE+1];
-        int32_t frUchCap = BUF_SIZE + 1;
-        int32_t lenfrUch;
-        int32_t ptrfrUch;
-#endif
         if (pop_lit1 > (sp_length - (pop_lit2 - 1)))
         BEGIN
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
 #ifdef UTF_8
-        lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1);
-        ptrfrUch = icu_fromUChars(frUch2, frUchCap, uchs, pop_lit2-1);
+        lenfrUch = icu_fromUChar32s(frUch1, frUchCap, &uchs[pop_lit2-1], pop_lit1, uch16);
+        ptrfrUch = icu_fromUChar32s(frUch2, frUchCap, uchs, pop_lit2-1, uch16);
         sp_ptr = str_start[pop_lit3] + ptrfrUch;
         sp_end = sp_ptr + lenfrUch;
 #else
@@ -2071,7 +2106,7 @@ back to UTF-8. 23/sep/2009
           if (pop_lit3 >= cmd_str_ptr)
           BEGIN
             str_start[pop_lit3 + 1] = sp_end;
-	    UNFLUSH_STRING;
+            UNFLUSH_STRING;
             INCR (lit_stk_ptr);
             goto Exit_Label;
           END
@@ -2079,21 +2114,14 @@ back to UTF-8. 23/sep/2009
       END
       else
       BEGIN
-#ifdef UTF_8
-        unsigned char  frUch1[BUF_SIZE+1];
-        unsigned char  frUch2[BUF_SIZE+1];
-        int32_t frUchCap = BUF_SIZE + 1;
-        int32_t lenfrUch;
-        int32_t ptrfrUch;
-#endif
         pop_lit2 = -pop_lit2;
         if (pop_lit1 > (Integer_T) (sp_length - (pop_lit2 - 1)))
         BEGIN
           pop_lit1 = sp_length - (pop_lit2 - 1);
         END
 #ifdef UTF_8
-        lenfrUch = icu_fromUChars(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1);
-        ptrfrUch = icu_fromUChars(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1);
+        lenfrUch = icu_fromUChar32s(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1, uch16);
+        ptrfrUch = icu_fromUChar32s(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1, uch16);
         sp_ptr = str_start[pop_lit3] + ptrfrUch;
         sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
         sp_ptr = sp_end - lenfrUch;
@@ -2463,7 +2491,31 @@ BEGIN
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 448 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
-
+#ifdef UTF_8
+Integer_T    char_width_uni (ASCIICode_T * str)
+BEGIN
+  Integer_T ch;
+  U8_GET_OR_FFFD(str, 0, 0, -1, ch);
+  if (ch<=LAST_LATIN_CHAR)
+    return ( char_width[ch] );
+  else
+  BEGIN
+    switch ( u_getIntPropertyValue(ch, UCHAR_EAST_ASIAN_WIDTH) )
+    BEGIN
+    case U_EA_WIDE:
+    case U_EA_FULLWIDTH:
+        return ( 1000 );
+    case U_EA_HALFWIDTH:
+        return ( 500 );
+    case U_EA_NARROW:
+    case U_EA_NEUTRAL:
+    case U_EA_AMBIGUOUS:
+    default:
+        return ( 700 );
+    END
+  END
+END
+#endif
 
 /***************************************************************************
  * WEB section number:	 450
@@ -2593,10 +2645,22 @@ BEGIN
                   END
                   else
                   BEGIN
+#if UTF_8
                     string_width = string_width
-					+ char_width[ex_buf[ex_buf_ptr]];
+                                     + char_width_uni(&ex_buf[ex_buf_ptr]);
+#else
+                    string_width = string_width
+                                     + char_width[ex_buf[ex_buf_ptr]];
+#endif
                   END
+#if UTF_8
+                  if (utf8len(ex_buf[ex_buf_ptr])>0)
+                    ex_buf_ptr = ex_buf_ptr + utf8len(ex_buf[ex_buf_ptr]);
+                  else
+                    INCR (ex_buf_ptr);
+#else
                   INCR (ex_buf_ptr);
+#endif
                 END
               END
               DECR (ex_buf_ptr);
@@ -2607,7 +2671,7 @@ BEGIN
             BEGIN
               string_width = string_width + char_width[LEFT_BRACE];
             END
-  	END
+          END
           else
           BEGIN
             string_width = string_width + char_width[LEFT_BRACE];
@@ -2620,9 +2684,20 @@ BEGIN
         END
         else
         BEGIN
+#if UTF_8
+          string_width = string_width + char_width_uni(&ex_buf[ex_buf_ptr]);
+#else
           string_width = string_width + char_width[ex_buf[ex_buf_ptr]];
+#endif
         END
+#if UTF_8
+        if (utf8len(ex_buf[ex_buf_ptr])>0)
+          ex_buf_ptr = ex_buf_ptr + utf8len(ex_buf[ex_buf_ptr]);
+        else
+          INCR (ex_buf_ptr);
+#else
         INCR (ex_buf_ptr);
+#endif
       END
       check_brace_level (pop_lit1);
     END

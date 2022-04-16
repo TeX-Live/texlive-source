@@ -1,0 +1,77 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+# Using test data from Philipp Lehman <lehman@gmx.net>
+
+test -d tests || mkdir -p tests
+
+# Create bib data
+mk_bib () {
+  for i
+  do
+    for j in 0 1 2 3 4 5 6 7 8 9; do
+      for k in 0 1 2 3 4 5 6 7 8 9; do
+        for l in 0 1 2 3 4 5 6 7 8 9; do
+          cat <<EOF
+@Type{key$i$j$k$l,
+  field001	  = {Value 001},
+  field002	  = {Value 002},
+  field003	  = {Value 003},
+  field004	  = {Value 004},
+  field005	  = {Value 005},
+  field006	  = {Value 006},
+  field007	  = {Value 007},
+  field008	  = {Value 008},
+  field009	  = {Value 009},
+  field010	  = {Value 010}
+}
+
+EOF
+        done
+      done
+    done
+  done
+}
+
+# Create aux data
+mk_aux () {
+  cat <<EOF
+\relax
+\citation{*}
+\bibstyle{$1}
+\bibdata{memtest}
+EOF
+}
+
+for t in 1 2 3; do
+
+  mk_aux memdata$t >tests/memtest$t.aux
+
+  env=
+
+  case $t in
+  1) mk_bib 0 >tests/memtest.bib;;
+  2) mk_bib 1 >>tests/memtest.bib;;
+  3) env='ent_str_size=2000 glob_str_size=2000';;
+  esac
+
+  echo "Running memtest$t ..."
+
+  eval $env \
+    TEXMFCNF=$srcdir/../kpathsea \
+    BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
+    BIBINPUTS=./tests \
+    ./bibtex8 tests/memtest$t || exit 1
+
+  cp -p tests/memtest$t.aux tests/memtestu$t.aux
+  eval $env \
+    TEXMFCNF=$srcdir/../kpathsea \
+    BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
+    BIBINPUTS=./tests \
+    ./bibtexu tests/memtestu$t || exit 2
+
+done
+

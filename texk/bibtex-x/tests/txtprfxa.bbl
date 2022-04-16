@@ -1,0 +1,22 @@
+\section*{Test result}
+\begin{itemize}
+\item[orig] ABCDEFG tuvwxyz
+\item[len] 15
+\item[1] A
+\item[2] AB
+\item[3] ABC
+\item[4] ABCD
+\item[5] ABCDE
+\item[6] ABCDEF
+\item[7] ABCDEFG
+\item[orig] ÅÇÈÎØÜİ åçèîøüı
+\item[len] 15
+\item[1] Å
+\item[2] ÅÇ
+\item[3] ÅÇÈ
+\item[4] ÅÇÈÎ
+\item[5] ÅÇÈÎØ
+\item[6] ÅÇÈÎØÜ
+\item[7] ÅÇÈÎØÜİ
+\end{itemize}
+\endinput

@@ -1,0 +1,67 @@
+\section*{Test result}
+\begin{itemize}
+\item[orig] ABCDEFG tuvwxyz
+\item[len] 15
+\item[1] A
+\item[2] AB
+\item[3] ABC
+\item[4] ABCD
+\item[5] ABCDE
+\item[6] ABCDEF
+\item[7] ABCDEFG
+\item[orig] ÅÇÈÎØÜÝ åçèîøüý
+\item[len] 15
+\item[1] Å
+\item[2] ÅÇ
+\item[3] ÅÇÈ
+\item[4] ÅÇÈÎ
+\item[5] ÅÇÈÎØ
+\item[6] ÅÇÈÎØÜ
+\item[7] ÅÇÈÎØÜÝ
+\item[orig] ΑΒΓΔΕΖΗ στυφχψω
+\item[len] 15
+\item[1] Α
+\item[2] ΑΒ
+\item[3] ΑΒΓ
+\item[4] ΑΒΓΔ
+\item[5] ΑΒΓΔΕ
+\item[6] ΑΒΓΔΕΖ
+\item[7] ΑΒΓΔΕΖΗ
+\item[orig] АБВГДЕЖ щъыьэюя
+\item[len] 15
+\item[1] А
+\item[2] АБ
+\item[3] АБВ
+\item[4] АБВГ
+\item[5] АБВГД
+\item[6] АБВГДЕ
+\item[7] АБВГДЕЖ
+\item[orig] あいうえおかき　ユヨワヰヱヲン
+\item[len] 15
+\item[1] あ
+\item[2] あい
+\item[3] あいう
+\item[4] あいうえ
+\item[5] あいうえお
+\item[6] あいうえおか
+\item[7] あいうえおかき
+\item[orig] 一二三四五六七　肆伍陸漆捌玖拾
+\item[len] 15
+\item[1] 一
+\item[2] 一二
+\item[3] 一二三
+\item[4] 一二三四
+\item[5] 一二三四五
+\item[6] 一二三四五六
+\item[7] 一二三四五六七
+\item[orig] 櫛杓屠冤𦥑𠮟𠀋𡈽𥝱𨦇𡚴𠷡𧘕𧘔𩸽
+\item[len] 15
+\item[1] 櫛
+\item[2] 櫛杓
+\item[3] 櫛杓屠
+\item[4] 櫛杓屠冤
+\item[5] 櫛杓屠冤𦥑
+\item[6] 櫛杓屠冤𦥑𠮟
+\item[7] 櫛杓屠冤𦥑𠮟𠀋
+\end{itemize}
+\endinput

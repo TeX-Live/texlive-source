@@ -1,3 +1,29 @@
+2022-04-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Bump version to 3.80 (16 apr 2022).
+	* bibtex-2.c, bibtex-4.c, bibtex.h, gblvars.h:
+	Support width$ for Latin-1 characters in bibtex8.
+	Support width$ for Latin-1, Latin Extended-A, CJK characters in bibtexu.
+	Note other character sets (Greek, Cyrillic, etc.) are not impremented yet.
+	* bibtex-2.c, bibtex-4.c, gblproc.h:
+	Support substring$ for characters on Unicode supplementary planes in bibtexu.
+	* bibtex-3.c:
+	Ignore add.period$ after Unicode punctuation marks ‼⁇⁈⁉‽！？。 ． in bibtexu.
+	* bibtex-4.c:
+	Accept characters over ASCII by int.to.char$ in bibtex8 & bibtexu.
+	Accept multibyte characters by char.to.int$ in bibtexu.
+	* Makefile.am,
+	tests/bibtex8u-mem.test, tests/bibtex[8u]-{sort,char}.test,
+	tests/sortu.aux, tests/sortu-{az,da,en,fi,tr}.bbl, tests/testdatau.bib,
+	tests/txtprfx[au].{aux,bbl}, tests/testtxtprfx.bst,
+	tests/case[au].{aux,bbl}, tests/testcase[au].bib, tests/testcase.bst,
+	tests/char[au].{aux,bbl}, tests/testchar[au].bib, tests/testchar.bst,
+	tests/period[au].{aux,bbl}, tests/testperiod[au].bib, tests/testperiod.bst,
+	tests/substr[au].{aux,bbl}, tests/testsubstr[au].bib, tests/testsubstr.bst,
+	tests/width[au].{aux,bbl}, tests/testwidth[au].bib, tests/testwidth.bst:
+	Add new tests.
+
 2022-02-05  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac,

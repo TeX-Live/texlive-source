@@ -1,0 +1,53 @@
+\section*{Test result}
+\begin{itemize}
+\item 　  i2str: 12288  i2chr: 　
+\item A  i2str: 65  i2chr: A
+\item Å  i2str: 197  i2chr: Å
+\item C  i2str: 67  i2chr: C
+\item Ç  i2str: 199  i2chr: Ç
+\item D  i2str: 68  i2chr: D
+\item E  i2str: 69  i2chr: E
+\item È  i2str: 200  i2chr: È
+\item i  i2str: 105  i2chr: i
+\item î  i2str: 238  i2chr: î
+\item o  i2str: 111  i2chr: o
+\item u  i2str: 117  i2chr: u
+\item ü  i2str: 252  i2chr: ü
+\item y  i2str: 121  i2chr: y
+\item ý  i2str: 253  i2chr: ý
+\item Ð  i2str: 208  i2chr: Ð
+\item ø  i2str: 248  i2chr: ø
+\item Α  i2str: 913  i2chr: Α
+\item Β  i2str: 914  i2chr: Β
+\item Γ  i2str: 915  i2chr: Γ
+\item χ  i2str: 967  i2chr: χ
+\item ψ  i2str: 968  i2chr: ψ
+\item ω  i2str: 969  i2chr: ω
+\item А  i2str: 1040  i2chr: А
+\item Б  i2str: 1041  i2chr: Б
+\item В  i2str: 1042  i2chr: В
+\item э  i2str: 1101  i2chr: э
+\item ю  i2str: 1102  i2chr: ю
+\item я  i2str: 1103  i2chr: я
+\item 가  i2str: 44032  i2chr: 가
+\item 글  i2str: 44544  i2chr: 글
+\item 나  i2str: 45208  i2chr: 나
+\item 다  i2str: 45796  i2chr: 다
+\item 텍  i2str: 53581  i2chr: 텍
+\item 한  i2str: 54620  i2chr: 한
+\item あ  i2str: 12354  i2chr: あ
+\item い  i2str: 12356  i2chr: い
+\item う  i2str: 12358  i2chr: う
+\item ヱ  i2str: 12529  i2chr: ヱ
+\item ヲ  i2str: 12530  i2chr: ヲ
+\item ン  i2str: 12531  i2chr: ン
+\item 一  i2str: 19968  i2chr: 一
+\item 三  i2str: 19977  i2chr: 三
+\item 二  i2str: 20108  i2chr: 二
+\item 𠮟  i2str: 134047  i2chr: 𠮟
+\item 拾  i2str: 25342  i2chr: 拾
+\item 捌  i2str: 25420  i2chr: 捌
+\item 玖  i2str: 29590  i2chr: 玖
+\item 𥝱  i2str: 153457  i2chr: 𥝱
+\end{itemize}
+\endinput

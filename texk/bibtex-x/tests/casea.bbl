@@ -1,0 +1,12 @@
+\section*{Test result}
+\begin{itemize}
+\item[~] ABC HIJ XYZ abc hij xyz
+\item[u] ABC HIJ XYZ ABC HIJ XYZ
+\item[l] abc hij xyz abc hij xyz
+\item[t] Abc hij xyz abc hij xyz
+\item[~] РСТ ЦЧШ деж ийк мно рст цчш єѕі јљњ ќ§ў
+\item[u] РСТ ЦЧШ деж ийк мно РСТ ЦЧШ деж ийк мно
+\item[l] рст цчш єѕі јљњ ќ§ў рст цчш єѕі јљњ ќ§ў
+\item[t] Рст цчш єѕі јљњ ќ§ў рст цчш єѕі јљњ ќ§ў
+\end{itemize}
+\endinput
