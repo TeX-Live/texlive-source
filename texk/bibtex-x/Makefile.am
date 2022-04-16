@@ -137,7 +137,7 @@ DISTCLEANFILES += tests/xyannis.aux tests/xyannis.bbl tests/xyannis.blg
 ## tests/bibtexu-sort.test
 EXTRA_DIST += tests/sortu.aux \
 	tests/sortu-az.bbl tests/sortu-da.bbl tests/sortu-en.bbl \
-	tests/sortu-fi.bbl tests/sortu-tr.bbl tests/testdatau.bib \
+	tests/sortu-fi.bbl tests/sortu-tr.bbl tests/testsortu.bib \
 	tests/caseu.aux tests/caseu.bbl tests/testcaseu.bib
 DISTCLEANFILES += tests/xsortu-*.aux tests/xsortu-*.bbl tests/xsortu-*.blg \
 	tests/xcaseu.aux tests/xcaseu.bbl tests/xcaseu.blg

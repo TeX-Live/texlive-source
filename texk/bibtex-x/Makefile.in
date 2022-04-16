@@ -677,7 +677,7 @@ EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/sort.aux \
 	tests/urange.bib tests/yannis.aux tests/yannis.bbl \
 	tests/yannis.bib tests/sortu.aux tests/sortu-az.bbl \
 	tests/sortu-da.bbl tests/sortu-en.bbl tests/sortu-fi.bbl \
-	tests/sortu-tr.bbl tests/testdatau.bib tests/caseu.aux \
+	tests/sortu-tr.bbl tests/testsortu.bib tests/caseu.aux \
 	tests/caseu.bbl tests/testcaseu.bib tests/periodu.aux \
 	tests/periodu.bbl tests/testperiodu.bib tests/substru.aux \
 	tests/substru.bbl tests/testsubstru.bib tests/txtprfxu.aux \
