@@ -113,4 +113,33 @@ jobs:
           files: texlive-bin-x86_64-linuxmusl.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  docker_armhf_job:
+    runs-on: ubuntu-latest
+    name: x86_64-linuxmusl build job
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: checkout tl build docker
+        uses: actions/checkout@v2
+        with:
+          repository: TeX-Live/tl-build-docker-action
+          ref: v4
+          path: actions/TeX-Live/tl-build-docker-action
+      - name: arm runner
+        uses: actions/checkout@v2
+        with:
+          base_image: raspbian_lite:2020-02-13
+          commands: |
+            ./actions/TeX-Live/tl-build-docker-action/entrypoint.sh armhf-linux
+          copy_artifact_path: texlive-bin-armhf-linux.tar.gz
+      - name: find file step
+        run: ls -l
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: texlive-bin-armhf-linux.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
