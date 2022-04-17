@@ -115,7 +115,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   docker_armhf_job:
     runs-on: ubuntu-latest
-    name: x86_64-linuxmusl build job
+    name: armhf-linux build job
     steps:
       - name: checkout
         uses: actions/checkout@v2
@@ -126,7 +126,7 @@ jobs:
           ref: v4
           path: actions/TeX-Live/tl-build-docker-action
       - name: arm runner
-        uses: actions/checkout@v2
+        uses: pguyot/arm-runner-action@v2
         with:
           base_image: raspbian_lite:2020-02-13
           commands: |
