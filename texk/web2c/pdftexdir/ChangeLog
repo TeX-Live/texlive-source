@@ -1,3 +1,13 @@
+2022-04-17  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_omit_info_dict_code),
+	(pdf_omit_info_dict):new parameter.
+	(Put each...): add it.
+	(Output the cross-reference stream dictionary),
+	(Output the trailer): omit /Info if parameter is nonzero.
+	Request by Ulrike for the pdf A-4 standard.
+	https://tug.org/pipermail/pdftex/2022-April/009282.html
+
 2022-04-12  Marcel Kr\"uger  <tex@2krueger.de>
 
 	* pdftex.web (Write out resource list): Write forms last,
