@@ -129,6 +129,7 @@ jobs:
         uses: pguyot/arm-runner-action@v2
         with:
           base_image: raspbian_lite:2020-02-13
+          image_additional_mb: 4096
           commands: |
             ./actions/TeX-Live/tl-build-docker-action/entrypoint.sh armhf-linux
           copy_artifact_path: texlive-bin-armhf-linux.tar.gz
