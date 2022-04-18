@@ -123,7 +123,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: TeX-Live/tl-build-docker-action
-          ref: v4
+          ref: v5
           path: actions/TeX-Live/tl-build-docker-action
       - name: arm runner
         uses: pguyot/arm-runner-action@v2
