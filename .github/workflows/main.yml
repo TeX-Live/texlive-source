@@ -131,6 +131,8 @@ jobs:
           base_image: raspbian_lite:2020-02-13
           image_additional_mb: 4096
           commands: |
+            sudo apt-get -y update
+            sudo apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
             ./actions/TeX-Live/tl-build-docker-action/entrypoint.sh armhf-linux
           copy_artifact_path: texlive-bin-armhf-linux.tar.gz
       - name: find file step
