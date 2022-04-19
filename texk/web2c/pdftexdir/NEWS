@@ -1,5 +1,8 @@
-pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022)
+pdfTeX 3.141592653-2.6-1.40.25
+- changes:
+  - new primitive \pdfomitinfodict to omit /Info dictionary completely.
 
+pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022)
 - changes:
   - new primitive \showstream to redirect \show output.
   - new primitives \partokenname, \partokencontext to control \par insertion.
