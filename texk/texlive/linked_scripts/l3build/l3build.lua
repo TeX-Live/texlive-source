@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2022-04-12"
+release_date = "2022-04-19"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -156,7 +156,7 @@ if #checkconfigs > 1 then
         if config ~= "build" then
           testdir = testdir .. "-" .. config
         end
-        for _,i in ipairs(filelist(testdir,"*" .. os_diffext)) do
+        for _,i in ipairs(ordered_filelist(testdir,"*" .. os_diffext)) do
           print("  - " .. testdir .. "/" .. i)
         end
         print("")
