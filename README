@@ -33,7 +33,9 @@ aarch64-linux:
   ./Build --enable-arm-neon=check
 
 armhf-linux:
+  Built on contextgarden, see below.
   Raspbian/Raspberry Pi OS (Debian Buster)
+  Previously, built by Simon Dales:
   gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1)
   ./Build --enable-xindy CLISP=${BUILD_ROOT_DIR}/clisp/clisp-build/clisp}
   armhf-linux binaries are created and tested on RPi;
