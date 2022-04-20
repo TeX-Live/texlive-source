@@ -2121,10 +2121,9 @@ back to UTF-8. 23/sep/2009
         END
 #ifdef UTF_8
         lenfrUch = icu_fromUChar32s(frUch1, frUchCap, &uchs[ulen - (pop_lit2-1) - pop_lit1], pop_lit1, uch16);
-        ptrfrUch = icu_fromUChar32s(frUch2, frUchCap, &uchs[ulen - pop_lit2], pop_lit2-1, uch16);
+        ptrfrUch = icu_fromUChar32s(frUch2, frUchCap, uchs, ulen - (pop_lit2-1) - pop_lit1, uch16);
         sp_ptr = str_start[pop_lit3] + ptrfrUch;
-        sp_end = str_start[pop_lit3 + 1] - ptrfrUch;
-        sp_ptr = sp_end - lenfrUch;
+        sp_end = sp_ptr + lenfrUch;
 #else
         sp_end = str_start[pop_lit3 + 1] - (pop_lit2 - 1);
         sp_ptr = sp_end - pop_lit1;

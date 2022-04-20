@@ -9,7 +9,7 @@
 \item[5] ABCDE
 \item[6] ABCDEF
 \item[7] ABCDEFG
-\item[orig] ÅÇÈÎØÜÝ åçèîøüý
+\item[orig] ÅÇÈÎØÜÝ~åçèîøüý
 \item[len] 15
 \item[1] Å
 \item[2] ÅÇ
@@ -18,6 +18,15 @@
 \item[5] ÅÇÈÎØ
 \item[6] ÅÇÈÎØÜ
 \item[7] ÅÇÈÎØÜÝ
+\item[orig] AÇう冤EÜЖ~tçユ漆𡚴xюω
+\item[len] 16
+\item[1] A
+\item[2] AÇ
+\item[3] AÇう
+\item[4] AÇう冤
+\item[5] AÇう冤E
+\item[6] AÇう冤EÜ
+\item[7] AÇう冤EÜЖ
 \item[orig] ΑΒΓΔΕΖΗ στυφχψω
 \item[len] 15
 \item[1] Α
