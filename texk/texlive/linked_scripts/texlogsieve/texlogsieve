@@ -553,7 +553,7 @@ line as the under/overfull box message (both are \message's). The
 offending text, if any, always starts at the beginning of a line and
 ends at the end of a line.
 
-About the description: https://tex.stackexchange.com/a/367589/217608
+About the description: https://tex.stackexchange.com/a/367589
 
 This all means that handling these messages from a pipe is different
 than from the log file, because in the log file you know there will
@@ -1002,7 +1002,7 @@ Options:
 
   --version
   if vars.version then
-      print("texlogsieve 1.1.2")
+      print("texlogsieve 1.1.3")
       print("Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>")
       print("License GPLv3+: GNU GPL version 3 or later "
             .. "<https://gnu.org/licenses/gpl.html>.")
@@ -1887,66 +1887,116 @@ errorHandler.patterns = {
     'You already have nine',
 }
 
+function errorHandler:isErrorLine(line)
+  local _, last = string.find(line, '^! ')
+  if not last then
+      _, last = string.find(line, '^' .. filepat .. ':%d+: ')
+  end
+
+  return last
+end
+
+function errorHandler:isRunawayLine(line)
+  local _, last = string.find(line, '^Runaway argument%?')
+  return last
+end
+
 function errorHandler:canDoit(position)
   if position == nil then position = 0 end
   local line = Lines:get(position)
   if line == nil then return false, {} end
 
   -- This error does not start with "! " or "file:line: "
-  local _, last = string.find(line, '^Runaway argument%?')
-  if last then return true, {} end
+  local last = self:isRunawayLine(line)
+  if last then return true, {numLines = 1} end
 
-  -- If the line does not start with "! " or "file:line: ", get out.
-  _, last = string.find(line, '^! ')
-  if not last then
-      _, last = string.find(line, '^' .. filepat .. ':%d+: ')
-      if not last then return false, {} end
-  end
+  last = self:isErrorLine(line)
+  if not last then return false, {} end
 
-  -- OK, this might be an error, but we need to be sure;
-  -- let's look for a known error message
-  local candidateText = string.sub(line, last +1)
-  for _, pat in ipairs(self.patterns) do
-      _, last = string.find(candidateText,  pat)
-      if last ~= nil then break end
-  end
-  if last then return true, {} end
-
-  -- Not a known error message; let's look for a line number
-  -- or "Type  H <return>  for immediate help"
+  -- Looks like an error; Let's look ahead to identify the other
+  -- lines that are part of the error message. We do not want to
+  -- look too much ahead, so we just scan the current buffer.
   position = position +1
-  local found = false
-  while not found and position < Lines:numLines() do
-      local first = string.find(Lines:get(position), '^l%.%d+ ')
-      if first then found = true end
+  local lastline = nil
+  while position < Lines:numLines() do
+      -- if there is a second error, don't look further ahead
+      if self:isErrorLine(Lines:get(position))
+              or self:isRunawayLine(Lines:get(position))
 
-      first = string.find(Lines:get(position),
-                         '^Type%s+H %<return%>%s+for immediate help%.')
-      if first then found = true end
+      then break end
+
+      if string.find(Lines:get(position), '^l%.%d+ ') then
+          local length = string.len(Lines:get(position))
+          if string.find(Lines:get(position +1),
+                         "^" .. string.rep(" ", length))
+          then
+              lastline = position +1 -- the following line is the last
+          else
+              -- the following line is empty, so it was skipped
+              -- when reading the file
+              lastline = position
+          end
+      end
+
+      if string.find(Lines:get(position),
+                         '^Type%s+H %<return%>%s+for immediate help%.') then
+          lastline = position
+      end
 
       position = position +1
   end
 
-  if found then
-      return true, {}
+  if lastline then
+      -- position starts at zero, so numlines needs +1
+      return true, {numLines = lastline +1}
   else
-      return false, {}
+      -- This looks like an error, but there is no "l.NUM" line following
+      -- it, so it is probably a false positive. Still, let's check for
+      -- some known error messages.
+      local candidateText = string.sub(line, last +1)
+      for _, pat in ipairs(self.patterns) do
+          _, last = string.find(candidateText, pat)
+          if last ~= nil then return true, {numLines = 1} end
+      end
   end
+
+  return false, {} -- this was really a false positive
 end
 
-function errorHandler:doit()
+function errorHandler:handleFirstLine()
   local myTurn, data = self:canDoit()
   if not myTurn then return false end
 
   flushUnrecognizedMessages()
 
-  local msg = self:newMessage()
-  msg.content = Lines.current
-  msg.severity = UNKNOWN
-  dispatch(msg)
-
-  Lines:handledChars()
   ERRORS_DETECTED = true
+
+  self.message = self:newMessage()
+  self.message.severity = UNKNOWN
+  self.message.content = Lines.current
+  Lines:handledChars()
+
+  self.processed = 1
+  self.numLines = data.numLines
+  self.doit = self.handleLines
+  nextHandler = self
+
+  return true
+end
+
+errorHandler.doit = errorHandler.handleFirstLine
+
+function errorHandler:handleLines()
+  if self.processed >= self.numLines then
+      self.doit = self.handleFirstLine
+      dispatch(self.message)
+  else
+      self.message.content = self.message.content .. '\n' .. Lines.current
+      Lines:handledChars()
+      self.processed = self.processed +1
+      nextHandler = self
+  end
+
   return true
 end
 
@@ -2687,6 +2737,10 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^%-%- Using %S+ output%.',
   '^%-%- Verifying Times compatible math font%.',
   '^%-%- %S+ loaded, OK%.',
+
+  -- From libertinust1math.sty
+  '^amsthm loaded',
+  '^amsthm NOT loaded',
 }
 
 
