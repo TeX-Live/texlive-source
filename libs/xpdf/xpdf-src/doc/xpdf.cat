@@ -3,7 +3,7 @@ xpdf(1)                     General Commands Manual                    xpdf(1)
 
 
 NAME
-       xpdf - Portable Document Format (PDF) file viewer (version 4.03)
+       xpdf - Portable Document Format (PDF) file viewer (version 4.04)
 
 SYNOPSIS
        xpdf [options] [PDF-file [:page | +dest]] ...
@@ -44,9 +44,9 @@ DESCRIPTION
 CONFIGURATION FILE
        Xpdf reads a configuration file at startup.  It first tries to find the
        user's private config file, ~/.xpdfrc.  If that doesn't exist, it looks
-       for  a  system-wide  config  file, typically /usr/local/etc/xpdfrc (but
-       this location can be changed when xpdf is built).   See  the  xpdfrc(5)
-       man page for details.
+       for a system-wide config file, typically /etc/xpdfrc (but this location
+       can be changed when xpdf is built).  See the  xpdfrc(5)  man  page  for
+       details.
 
 OPTIONS
        The  following  command  line  options are available.  All command line
@@ -500,6 +500,9 @@ COMMANDS
 
        help   Open the help URL.
 
+       hideMenuBar
+              Hide the menu bar.
+
        hideToolbar
               Hide the toolbar.
 
@@ -537,6 +540,18 @@ COMMANDS
 
        openFile(file)
               Open the specified file in the current tab.
+
+       openFile2(file,page,dest,passwd,location)
+              Open the specified file.  If dest is not empty, go to the speci-
+              fied named destination.  Else, if page is not empty, go  to  the
+              specified  page number.  If password is not empty, it is used as
+              the PDF password.  If location is "win", open the file in a  new
+              window;  if  it  is  "tab", open in a new tab; if it is "check",
+              open in the current tab, but only  if  the  specified  PDF  file
+              isn't  already  open;  else open in the current tab.  Any/all of
+              the arguments, other than file, can be empty strings.  For exam-
+              ple:
+              openFile2(test.pdf,7,,,tab)
 
        openFileAtDest(file,dest)
               Open  the  specified  file  in  the current tab at the specified
@@ -711,8 +726,23 @@ COMMANDS
               Set  the selection to the specified coordinates on the specified
               page.
 
+       showAttachmentsPane
+              Shows the attachments in the outline/layers/attachments pane.
+
+       showDocumentInfo
+              Open the document information dialog.
+
        showKeyBindings
               Open the key bindings dialog.
+
+       showLayersPane
+              Shows the layers in the outline/layers/attachments pane.
+
+       showMenuBar
+              Show the menu bar.
+
+       showOutlinePane
+              Shows the outline in the outline/layers/attachments pane.
 
        showToolbar
               Show the toolbar.
@@ -747,6 +777,9 @@ COMMANDS
 
        toggleFullScreenMode
               Toggle between full-screen and window modes.
+
+       toggleMenuBar
+              Toggle the menu bar between shown and hidden.
 
        toggleSelectMode
               Toggle between block and linear selection mode.
@@ -825,7 +858,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  xpdf  software  and  documentation are copyright 1996-2021 Glyph &
+       The  xpdf  software  and  documentation are copyright 1996-2022 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -835,4 +868,4 @@ SEE ALSO
 
 
 
-                                  28 Jan 2021                          xpdf(1)
+                                  18 Apr 2022                          xpdf(1)

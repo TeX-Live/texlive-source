@@ -162,6 +162,10 @@ public:
   GBool okToAddNotes(GBool ignoreOwnerPW = gFalse)
     { return xref->okToAddNotes(ignoreOwnerPW); }
 
+  // Is the PDF file damaged?  This checks to see if the xref table
+  // was constructed by the repair code.
+  GBool isDamaged() { return xref->isRepaired(); }
+
   // Is this document linearized?
   GBool isLinearized();
 

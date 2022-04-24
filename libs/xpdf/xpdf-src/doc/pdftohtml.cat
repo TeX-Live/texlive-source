@@ -4,7 +4,7 @@ pdftohtml(1)                General Commands Manual               pdftohtml(1)
 
 NAME
        pdftohtml  -  Portable Document Format (PDF) to HTML converter (version
-       4.03)
+       4.04)
 
 SYNOPSIS
        pdftohtml [options] PDF-file HTML-dir
@@ -20,9 +20,9 @@ DESCRIPTION
 CONFIGURATION FILE
        Pdftohtml  reads  a  configuration  file at startup.  It first tries to
        find the user's private config file, ~/.xpdfrc.  If that doesn't exist,
-       it looks for a system-wide config file, typically /usr/local/etc/xpdfrc
-       (but this location can be changed when pdftohtml is  built).   See  the
-       xpdfrc(5) man page for details.
+       it looks for a system-wide config file, typically /etc/xpdfrc (but this
+       location can be changed when pdftohtml is built).   See  the  xpdfrc(5)
+       man page for details.
 
 OPTIONS
        Many  of  the following options can be set with configuration file com-
@@ -48,30 +48,59 @@ OPTIONS
               larger '-r' value will allow the viewer to zoom in farther with-
               out upscaling artifacts in the background.
 
+       -vstretch number
+              Specifies a vertical stretch factor.  Setting this  to  a  value
+              greater  than  1.0  will stretch each page vertically, spreading
+              out the lines.  This also  stretches  the  background  image  to
+              match.
+
+       -embedbackground
+              Embeds  the  background image as base64-encoded data directly in
+              the HTML file, rather than storing it as a separate file.
+
        -nofonts
               Disable extraction of embedded  fonts.   By  default,  pdftohtml
               extracts  TrueType and OpenType fonts.  Disabling extraction can
               work around problems with buggy fonts.
 
+       -embedfonts
+              Embeds any extracted fonts as base64-encoded  data  directly  in
+              the HTML file, rather than storing them as separate files.
+
        -skipinvisible
               Don't draw invisible text.  By default, invisible text (commonly
               used in OCR'ed PDF files) is drawn as transparent (alpha=0) HTML
-              text.  This option tells pdftohtml  to  discard  invisible  text
+              text.   This  option  tells  pdftohtml to discard invisible text
               entirely.
 
        -allinvisible
-              Treat  all  text as invisible.  By default, regular (non-invisi-
-              ble) text is not drawn in the background image, and  is  instead
-              drawn  with  HTML on top of the image.  This option tells pdfto-
-              html to include the regular text in the  background  image,  and
+              Treat all text as invisible.  By default,  regular  (non-invisi-
+              ble)  text  is not drawn in the background image, and is instead
+              drawn with HTML on top of the image.  This option  tells  pdfto-
+              html  to  include  the regular text in the background image, and
               then draw it as transparent (alpha=0) HTML text.
 
+       -formfields
+              Convert AcroForm text and checkbox fields  to  HTML  input  ele-
+              ments.  This also removes text (e.g., underscore characters) and
+              erases background image content (e.g., lines or  boxes)  in  the
+              field areas.
+
+       -table Use  table  mode when performing the underlying text extraction.
+              This will generally produce better output when the  PDF  content
+              is  a  full-page table.  NB: This does not generate HTML tables;
+              it just changes the way text is split up.
+
        -opw password
-              Specify  the  owner  password  for the PDF file.  Providing this
+              Specify the owner password for the  PDF  file.   Providing  this
               will bypass all security restrictions.
 
        -upw password
               Specify the user password for the PDF file.
+
+       -verbose
+              Print  a status message (to stdout) before processing each page.
+              [config file: printStatusInfo]
 
        -q     Don't print any messages or errors.  [config file: errQuiet]
 
@@ -102,7 +131,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdftohtml software and documentation are copyright 1996-2021 Glyph
+       The  pdftohtml software and documentation are copyright 1996-2022 Glyph
        & Cog, LLC.
 
 SEE ALSO
@@ -112,4 +141,4 @@ SEE ALSO
 
 
 
-                                  28 Jan 2021                     pdftohtml(1)
+                                  18 Apr 2022                     pdftohtml(1)

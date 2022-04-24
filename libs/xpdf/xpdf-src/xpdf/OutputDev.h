@@ -229,10 +229,10 @@ public:
   virtual void psXObject(Stream *psStream, Stream *level1Stream) {}
 
   //----- transparency groups and soft masks
-  virtual void beginTransparencyGroup(GfxState *state, double *bbox,
-				      GfxColorSpace *blendingColorSpace,
-				      GBool isolated, GBool knockout,
-				      GBool forSoftMask) {}
+  virtual GBool beginTransparencyGroup(GfxState *state, double *bbox,
+				       GfxColorSpace *blendingColorSpace,
+				       GBool isolated, GBool knockout,
+				       GBool forSoftMask) { return gTrue; }
   virtual void endTransparencyGroup(GfxState *state) {}
   virtual void paintTransparencyGroup(GfxState *state, double *bbox) {}
   virtual void setSoftMask(GfxState *state, double *bbox, GBool alpha,

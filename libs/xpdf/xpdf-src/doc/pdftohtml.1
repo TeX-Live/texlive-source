@@ -1,8 +1,8 @@
-.\" Copyright 1997-2021 Glyph & Cog, LLC
-.TH pdftohtml 1 "28 Jan 2021"
+.\" Copyright 1997-2022 Glyph & Cog, LLC
+.TH pdftohtml 1 "18 Apr 2022"
 .SH NAME
 pdftohtml \- Portable Document Format (PDF) to HTML converter
-(version 4.03)
+(version 4.04)
 .SH SYNOPSIS
 .B pdftohtml
 [options]
@@ -22,9 +22,8 @@ will report an error.
 .SH CONFIGURATION FILE
 Pdftohtml reads a configuration file at startup.  It first tries to
 find the user's private config file, ~/.xpdfrc.  If that doesn't
-exist, it looks for a system-wide config file, typically
-/usr/local/etc/xpdfrc (but this location can be changed when pdftohtml
-is built).  See the
+exist, it looks for a system-wide config file, typically /etc/xpdfrc
+(but this location can be changed when pdftohtml is built).  See the
 .BR xpdfrc (5)
 man page for details.
 .SH OPTIONS
@@ -50,10 +49,23 @@ zoom level is controlled by the \'-z' option.  Specifying a larger
 \'-r' value will allow the viewer to zoom in farther without upscaling
 artifacts in the background.
 .TP
+.BI \-vstretch " number"
+Specifies a vertical stretch factor.  Setting this to a value greater
+than 1.0 will stretch each page vertically, spreading out the lines.
+This also stretches the background image to match.
+.TP
+.B \-embedbackground
+Embeds the background image as base64-encoded data directly in the
+HTML file, rather than storing it as a separate file.
+.TP
 .B \-nofonts
 Disable extraction of embedded fonts.  By default, pdftohtml extracts
 TrueType and OpenType fonts.  Disabling extraction can work around
 problems with buggy fonts.
+.TP
+.B \-embedfonts
+Embeds any extracted fonts as base64-encoded data directly in the HTML
+file, rather than storing them as separate files.
 .TP
 .B \-skipinvisible
 Don't draw invisible text.  By default, invisible text (commonly used
@@ -67,12 +79,27 @@ on top of the image.  This option tells pdftohtml to include the
 regular text in the background image, and then draw it as transparent
 (alpha=0) HTML text.
 .TP
+.B \-formfields
+Convert AcroForm text and checkbox fields to HTML input elements.
+This also removes text (e.g., underscore characters) and erases
+background image content (e.g., lines or boxes) in the field areas.
+.TP
+.B \-table
+Use table mode when performing the underlying text extraction.  This
+will generally produce better output when the PDF content is a
+full-page table.  NB: This does not generate HTML tables; it just
+changes the way text is split up.
+.TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
 bypass all security restrictions.
 .TP
 .BI \-upw " password"
 Specify the user password for the PDF file.
+.TP
+.B \-verbose
+Print a status message (to stdout) before processing each page.
+.RB "[config file: " printStatusInfo ]
 .TP
 .B \-q
 Don't print any messages or errors.
@@ -114,7 +141,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftohtml software and documentation are copyright 1996-2021 Glyph
+The pdftohtml software and documentation are copyright 1996-2022 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

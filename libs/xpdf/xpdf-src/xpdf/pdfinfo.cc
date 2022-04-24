@@ -126,6 +126,10 @@ int main(int argc, char *argv[]) {
   fileName = argv[1];
 
   // read config file
+  if (cfgFileName[0] && !pathIsFile(cfgFileName)) {
+    error(errConfig, -1, "Config file '{0:s}' doesn't exist or isn't a file",
+	  cfgFileName);
+  }
   globalParams = new GlobalParams(cfgFileName);
   if (textEncName[0]) {
     globalParams->setTextEncoding(textEncName);

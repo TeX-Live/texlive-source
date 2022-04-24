@@ -299,6 +299,7 @@ XRef::XRef(BaseStream *strA, GBool repair) {
 
   ok = gTrue;
   errCode = errNone;
+  repaired = gFalse;
   size = 0;
   last = -1;
   entries = NULL;
@@ -336,6 +337,7 @@ XRef::XRef(BaseStream *strA, GBool repair) {
       errCode = errDamaged;
       return;
     }
+    repaired = gTrue;
 
   // if the 'repair' flag is not set, read the xref table
   } else {
@@ -512,7 +514,7 @@ GBool XRef::readXRefTable(GFileOffset *pos, int offset, XRefPosSet *posSet) {
   char buf[6];
   GFileOffset off, pos2;
   GBool more;
-  int first, n, newSize, gen, i, c;
+  int first, n, digit, newSize, gen, i, c;
 
   str->setPos(start + *pos + offset);
 
@@ -531,7 +533,11 @@ GBool XRef::readXRefTable(GFileOffset *pos, int offset, XRefPosSet *posSet) {
     }
     first = 0;
     do {
-      first = (first * 10) + (c - '0');
+      digit = c - '0';
+      if (first > (INT_MAX - digit) / 10) {
+	goto err1;
+      }
+      first = (first * 10) + digit;
       c = str->getChar();
     } while (c >= '0' && c <= '9');
     if (!Lexer::isSpace(c)) {
@@ -542,13 +548,17 @@ GBool XRef::readXRefTable(GFileOffset *pos, int offset, XRefPosSet *posSet) {
     } while (Lexer::isSpace(c));
     n = 0;
     do {
-      n = (n * 10) + (c - '0');
+      digit = c - '0';
+      if (n > (INT_MAX - digit) / 10) {
+	goto err1;
+      }
+      n = (n * 10) + digit;
       c = str->getChar();
     } while (c >= '0' && c <= '9');
     if (!Lexer::isSpace(c)) {
       goto err1;
     }
-    if (first < 0 || n < 0 || first > INT_MAX - n) {
+    if (first > INT_MAX - n) {
       goto err1;
     }
     if (first + n > size) {
@@ -822,7 +832,8 @@ GBool XRef::readXRefStreamSection(Stream *xrefStr, int *w, int first, int n) {
       }
       gen = (gen << 8) + c;
     }
-    if (gen < 0 || gen > INT_MAX) {
+    // some PDF generators include a free entry with gen=0xffffffff
+    if ((gen < 0 || gen > INT_MAX) && type != 0) {
       return gFalse;
     }
     if (entries[i].offset == (GFileOffset)-1) {
@@ -908,7 +919,9 @@ GBool XRef::constructXRef() {
       // skip any PDF whitespace except for '\0'
       while (*p == '\t' || *p == '\n' || *p == '\x0c' ||
 	     *p == '\r' || *p == ' ') {
-	startOfLine = *p == '\n' || *p == '\r';
+	if (*p == '\n' || *p == '\r') {
+	  startOfLine = gTrue;
+	}
 	++p;
       }
       if (!strncmp(p, "stream", 6)) {
@@ -924,7 +937,11 @@ GBool XRef::constructXRef() {
 	startOfLine = gFalse;
       }
     } else {
-      startOfLine = *p == '\n' || *p == '\r';
+      if (*p == '\n' || *p == '\r') {
+	startOfLine = gTrue;
+      } else if (!Lexer::isSpace(*p & 0xff)) {
+	startOfLine = gFalse;
+      }
       ++p;
     }
   }
@@ -948,6 +965,16 @@ GBool XRef::constructXRef() {
   }
 
   gfree(streamObjNums);
+
+  // if the file is encrypted, then any objects fetched here will be
+  // incorrect (because decryption is not yet enabled), so clear the
+  // cache to avoid that problem
+  for (int i = 0; i < xrefCacheSize; ++i) {
+    if (cache[i].num >= 0) {
+      cache[i].obj.free();
+      cache[i].num = -1;
+    }
+  }
 
   if (rootNum < 0) {
     error(errSyntaxError, -1, "Couldn't find trailer dictionary");

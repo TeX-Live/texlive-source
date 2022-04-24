@@ -1,8 +1,8 @@
-.\" Copyright 2005-2021 Glyph & Cog, LLC
-.TH pdftoppm 1 "28 Jan 2021"
+.\" Copyright 2005-2022 Glyph & Cog, LLC
+.TH pdftoppm 1 "18 Apr 2022"
 .SH NAME
 pdftoppm \- Portable Document Format (PDF) to Portable Pixmap (PPM)
-converter (version 4.03)
+converter (version 4.04)
 .SH SYNOPSIS
 .B pdftoppm
 [options]
@@ -28,9 +28,8 @@ when converting a single page).
 .SH CONFIGURATION FILE
 Pdftoppm reads a configuration file at startup.  It first tries to
 find the user's private config file, ~/.xpdfrc.  If that doesn't
-exist, it looks for a system-wide config file, typically
-/usr/local/etc/xpdfrc (but this location can be changed when pdftoppm
-is built).  See the
+exist, it looks for a system-wide config file, typically /etc/xpdfrc
+(but this location can be changed when pdftoppm is built).  See the
 .BR xpdfrc (5)
 man page for details.
 .SH OPTIONS
@@ -79,6 +78,10 @@ bypass all security restrictions.
 .BI \-upw " password"
 Specify the user password for the PDF file.
 .TP
+.B \-verbose
+Print a status message (to stdout) before processing each page.
+.RB "[config file: " printStatusInfo ]
+.TP
 .B \-q
 Don't print any messages or errors.
 .RB "[config file: " errQuiet ]
@@ -110,7 +113,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdftoppm software and documentation are copyright 1996-2021 Glyph
+The pdftoppm software and documentation are copyright 1996-2022 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

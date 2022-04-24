@@ -4,7 +4,7 @@ pdfimages(1)                General Commands Manual               pdfimages(1)
 
 NAME
        pdfimages  -  Portable  Document  Format (PDF) image extractor (version
-       4.03)
+       4.04)
 
 SYNOPSIS
        pdfimages [options] PDF-file image-root
@@ -26,9 +26,9 @@ DESCRIPTION
 CONFIGURATION FILE
        Pdfimages  reads  a  configuration  file at startup.  It first tries to
        find the user's private config file, ~/.xpdfrc.  If that doesn't exist,
-       it looks for a system-wide config file, typically /usr/local/etc/xpdfrc
-       (but this location can be changed when pdfimages is  built).   See  the
-       xpdfrc(5) man page for details.
+       it looks for a system-wide config file, typically /etc/xpdfrc (but this
+       location can be changed when pdfimages is built).   See  the  xpdfrc(5)
+       man page for details.
 
 OPTIONS
        Many  of  the following options can be set with configuration file com-
@@ -65,6 +65,10 @@ OPTIONS
        -upw password
               Specify the user password for the PDF file.
 
+       -verbose
+              Print  a status message (to stdout) before processing each page.
+              [config file: printStatusInfo]
+
        -q     Don't print any messages or errors.  [config file: errQuiet]
 
        -v     Print copyright and version information.
@@ -85,14 +89,14 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  pdfimages software and documentation are copyright 1998-2021 Glyph
+       The pdfimages software and documentation are copyright 1998-2022  Glyph
        & Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
+       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdftopng(1), xpdfrc(5)
        http://www.xpdfreader.com/
 
 
 
-                                  28 Jan 2021                     pdfimages(1)
+                                  18 Apr 2022                     pdfimages(1)

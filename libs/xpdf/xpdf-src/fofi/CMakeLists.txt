@@ -20,6 +20,8 @@ add_library(fofi_objs OBJECT
   FoFiType1.cc
   FoFiType1C.cc
 )
+set_property(TARGET fofi_objs
+             PROPERTY POSITION_INDEPENDENT_CODE True)
 
 add_library(fofi
   $<TARGET_OBJECTS:fofi_objs>

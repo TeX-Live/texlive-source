@@ -1,11 +1,11 @@
 Xpdf
 ====
 
-version 4.03
-2021-jan-28
+version 4.04
+2022-apr-18
 
 The Xpdf software and documentation are
-copyright 1996-2021 Glyph & Cog, LLC.
+copyright 1996-2022 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
@@ -154,6 +154,7 @@ Xpdf uses the following libraries:
 * libpng [http://www.libpng.com/pub/png/libpng.html] (used by pdftohtml
   and pdftopng)
 * zlib [http://zlib.net/] (used by pdftohtml)
+* Qt [https://www.qt.io/]
 
 
 Acknowledgments

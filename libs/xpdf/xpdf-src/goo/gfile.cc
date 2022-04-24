@@ -54,16 +54,23 @@ GString *getHomeDir() {
   //---------- VMS ----------
   return new GString("SYS$LOGIN:");
 
-#elif defined(__EMX__) || defined(_WIN32)
-  //---------- OS/2+EMX and Win32 ----------
+#elif defined(_WIN32)
+  //---------- Win32 ----------
   char *s;
   GString *ret;
 
-#ifdef _WIN32
   if ((s = getenv("USERPROFILE")))
-#else
+    ret = new GString(s);
+  else
+    ret = new GString(".");
+  return ret;
+
+#elif defined(__EMX__)
+  //---------- OS/2+EMX ----------
+  char *s;
+  GString *ret;
+
   if ((s = getenv("HOME")))
-#endif
     ret = new GString(s);
   else
     ret = new GString(".");
@@ -335,11 +342,11 @@ GString *makePathAbsolute(GString *path) {
 
 #elif defined(_WIN32)
   //---------- Win32 ----------
-  char buf[_MAX_PATH];
+  char buf[MAX_PATH];
   char *fp;
 
   buf[0] = '\0';
-  if (!GetFullPathNameA(path->getCString(), _MAX_PATH, buf, &fp)) {
+  if (!GetFullPathNameA(path->getCString(), MAX_PATH, buf, &fp)) {
     path->clear();
     return path;
   }
@@ -395,6 +402,19 @@ GString *makePathAbsolute(GString *path) {
     }
   }
   return path;
+#endif
+}
+
+GBool pathIsFile(const char *path) {
+#ifdef _WIN32
+  wchar_t wPath[winMaxLongPath + 1];
+  fileNameToUCS2(path, wPath, winMaxLongPath + 1);
+  DWORD attr = GetFileAttributesW(wPath);
+  return attr != INVALID_FILE_ATTRIBUTES &&
+         !(attr & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_DEVICE));
+#else
+  struct stat statBuf;
+  return stat(path, &statBuf) == 0 && S_ISREG(statBuf.st_mode);
 #endif
 }
 
@@ -613,16 +633,16 @@ FILE *openFile(const char *path, const char *mode) {
 #if defined(_WIN32)
   return fopen(path, mode);
 #if 0
-  wchar_t wPath[_MAX_PATH + 1];
+  wchar_t wPath[winMaxLongPath + 1];
   wchar_t wMode[8];
   int i;
 
-  fileNameToUCS2(path, wPath, sizeof(wPath) / sizeof(wchar_t));
+  fileNameToUCS2(path, wPath, winMaxLongPath + 1);
   for (i = 0; mode[i] && i < sizeof(wMode)/sizeof(wchar_t) - 1; ++i) {
     wMode[i] = (wchar_t)(mode[i] & 0xff);
   }
   wMode[i] = (wchar_t)0;
-  readWindowsShortcut(wPath, _MAX_PATH + 1);
+  readWindowsShortcut(wPath, winMaxLongPath + 1);
   return _wfopen(wPath, wMode);
 #endif /* 0 */
 #elif defined(VMS)
@@ -663,8 +683,8 @@ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
     fprintf(stderr, "IPersistFile.Load failed: 0x%08x\n", hres);
     exit(1);
   }
-  wchar_t target[_MAX_PATH + 1];
-  hres = shellLink->GetPath(target, _MAX_PATH + 1, NULL, 0);
+  wchar_t target[winMaxLongPath + 1];
+  hres = shellLink->GetPath(target, winMaxLongPath + 1, NULL, 0);
   if (FAILED(hres)) {
     return;
   }
@@ -682,6 +702,10 @@ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
 
 int makeDir(const char *path, int mode) {
 #ifdef _WIN32
+  /*
+  wchar_t wPath[winMaxLongPath + 1];
+  return _wmkdir(fileNameToUCS2(path, wPath, winMaxLongPath + 1));
+  */
   return _mkdir(path);
 #else
   return mkdir(path, (mode_t)mode);

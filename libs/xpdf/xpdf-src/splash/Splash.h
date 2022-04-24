@@ -182,12 +182,13 @@ public:
 			 SplashCoord x1, SplashCoord y1);
   // NB: uses untransformed coordinates.
   SplashError clipToPath(SplashPath *path, GBool eo);
-  void setSoftMask(SplashBitmap *softMask);
+  void setSoftMask(SplashBitmap *softMask, GBool deleteBitmap = gTrue);
   void setInTransparencyGroup(SplashBitmap *groupBackBitmapA,
 			      int groupBackXA, int groupBackYA,
 			      SplashGroupDestInitMode groupDestInitModeA,
 			      GBool nonIsolated, GBool knockout);
   void forceDeferredInit(int y, int h);
+  GBool checkTransparentRect(int x, int y, int w, int h);
   void setTransfer(Guchar *red, Guchar *green, Guchar *blue, Guchar *gray);
   void setOverprintMask(Guint overprintMask);
   void setEnablePathSimplification(GBool en);
@@ -228,11 +229,15 @@ public:
   //    [x' y' 1] = [x y 1] * mat
   // Note that the Splash y axis points downward, and the image source
   // is assumed to produce pixels in raster order, starting from the
-  // top line.
+  // top line.  If [interpolate] is false, no filtering is done when
+  // upsampling.  If [antialias] is false, no filtering is done when
+  // upsampling (overriding the [interpolate] flag), and threshold
+  // filtering is done when downsampling.
   SplashError fillImageMask(GString *imageTag,
 			    SplashImageMaskSource src, void *srcData,
 			    int w, int h, SplashCoord *mat,
-			    GBool glyphMode, GBool interpolate);
+			    GBool glyphMode, GBool interpolate,
+			    GBool antialias);
 
   // Draw an image.  This will read <h> lines of <w> pixels from
   // <src>, starting with the top line.  These pixels are assumed to

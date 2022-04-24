@@ -316,6 +316,7 @@ public:
   GBool getDisableFreeTypeHinting();
   GBool getAntialias();
   GBool getVectorAntialias();
+  GBool getImageMaskAntialias();
   GBool getAntialiasPrinting();
   StrokeAdjustMode getStrokeAdjust();
   ScreenType getScreenType();
@@ -328,6 +329,7 @@ public:
   GBool getEnablePathSimplification();
   GBool getDrawAnnotations();
   GBool getDrawFormFields();
+  GBool getEnableXFA();
   GBool getOverprintPreview() { return overprintPreview; }
   GString *getPaperColor();
   GString *getMatteColor();
@@ -340,13 +342,16 @@ public:
   GBool getMapNumericCharNames();
   GBool getMapUnknownCharNames();
   GBool getMapExtTrueTypeFontsViaUnicode();
+  GBool getUseTrueTypeUnicodeMapping();
   GBool isDroppedFont(const char *fontName);
   GList *getKeyBinding(int code, int mods, int context);
   GList *getAllKeyBindings();
   int getNumPopupMenuCmds();
   PopupMenuCmd *getPopupMenuCmd(int idx);
   GString *getTabStateFile();
+  GBool getSavePageNumbers();
   GBool getPrintCommands();
+  GBool getPrintStatusInfo();
   GBool getErrQuiet();
   GString *getDebugLogFile();
   void debugLogPrintf(const char *fmt, ...);
@@ -401,6 +406,7 @@ public:
   void setMapExtTrueTypeFontsViaUnicode(GBool map);
   void setTabStateFile(char *tabStateFileA);
   void setPrintCommands(GBool printCommandsA);
+  void setPrintStatusInfo(GBool printStatusInfoA);
   void setErrQuiet(GBool errQuietA);
 
 #ifdef _WIN32
@@ -559,6 +565,7 @@ private:
   GBool disableFreeTypeHinting;	// FreeType hinting disable flag
   GBool antialias;		// font anti-aliasing enable flag
   GBool vectorAntialias;	// vector anti-aliasing enable flag
+  GBool imageMaskAntialias;	// image mask anti-aliasing enable flag
   GBool antialiasPrinting;	// allow anti-aliasing when printing
   StrokeAdjustMode strokeAdjust; // stroke adjustment mode
   ScreenType screenType;	// halftone screen type
@@ -572,6 +579,7 @@ private:
     enablePathSimplification;
   GBool drawAnnotations;	// draw annotations or not
   GBool drawFormFields;		// draw form fields or not
+  GBool enableXFA;		// enable XFA form parsing
   GBool overprintPreview;	// enable overprint preview
   GString *paperColor;		// paper (page background) color
   GString *matteColor;		// matte (background outside of page) color
@@ -586,11 +594,17 @@ private:
   GBool mapUnknownCharNames;	// map unknown char names?
   GBool mapExtTrueTypeFontsViaUnicode;  // map char codes to GID via Unicode
 				        //   for external TrueType fonts?
+  GBool useTrueTypeUnicodeMapping;	// use the Unicode cmaps in TrueType
+					//   fonts, rather than the PDF
+					//   ToUnicode mapping
   GHash *droppedFonts;		// dropped fonts [int]
   GList *keyBindings;		// key & mouse button bindings [KeyBinding]
   GList *popupMenuCmds;		// popup menu commands [PopupMenuCmd]
   GString *tabStateFile;	// path for the tab state save file
+  GBool savePageNumbers;	// save page number when file is closed
+				//   and restore page number when opened
   GBool printCommands;		// print the drawing commands
+  GBool printStatusInfo;	// print status info for each page
   GBool errQuiet;		// suppress error messages?
   GString *debugLogFile;	// path for debug log file
 

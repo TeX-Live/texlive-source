@@ -1,6 +1,6 @@
-diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
---- xpdf-4.03/goo/gfile.cc	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/goo/gfile.cc	Mon Feb 01 13:13:50 2021
+diff -ur xpdf-4.04/goo/gfile.cc xpdf-src/goo/gfile.cc
+--- xpdf-4.04/goo/gfile.cc	Tue Apr 19 06:11:23 2022
++++ xpdf-src/goo/gfile.cc	Sun Apr 24 10:45:35 2022
 @@ -7,6 +7,9 @@
  // Copyright 1996-2003 Glyph & Cog, LLC
  //
@@ -11,19 +11,7 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  
  #include <aconf.h>
  
-@@ -56,7 +59,11 @@
-   char *s;
-   GString *ret;
- 
-+#ifdef _WIN32
-+  if ((s = getenv("USERPROFILE")))
-+#else
-   if ((s = getenv("HOME")))
-+#endif
-     ret = new GString(s);
-   else
-     ret = new GString(".");
-@@ -405,6 +412,7 @@
+@@ -429,6 +432,7 @@
  #endif
  }
  
@@ -31,7 +19,7 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  GBool openTempFile(GString **name, FILE **f,
  		   const char *mode, const char *ext) {
  #if defined(_WIN32)
-@@ -519,10 +527,11 @@
+@@ -543,6 +547,7 @@
    return gTrue;
  #endif
  }
@@ -39,29 +27,24 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  
  GBool createDir(char *path, int mode) {
  #ifdef _WIN32
--  return !mkdir(path);
-+  return !_mkdir(path);
- #else
-   return !mkdir(path, mode);
- #endif
-@@ -602,6 +611,8 @@
+@@ -626,6 +631,8 @@
  
  FILE *openFile(const char *path, const char *mode) {
  #if defined(_WIN32)
 +  return fopen(path, mode);
 +#if 0
-   wchar_t wPath[_MAX_PATH + 1];
+   wchar_t wPath[winMaxLongPath + 1];
    wchar_t wMode[8];
    int i;
-@@ -613,6 +624,7 @@
+@@ -637,6 +644,7 @@
    wMode[i] = (wchar_t)0;
-   readWindowsShortcut(wPath, _MAX_PATH + 1);
+   readWindowsShortcut(wPath, winMaxLongPath + 1);
    return _wfopen(wPath, wMode);
 +#endif /* 0 */
  #elif defined(VMS)
    return fopen(path, mode, "ctx=stm");
  #else
-@@ -620,6 +632,7 @@
+@@ -644,6 +652,7 @@
  #endif
  }
  
@@ -69,7 +52,7 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  #ifdef _WIN32
  void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
    size_t n = wcslen(wPath);
-@@ -665,11 +678,11 @@
+@@ -689,11 +698,15 @@
    wcscpy(wPath, target);
  }
  #endif
@@ -77,13 +60,15 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  
  int makeDir(const char *path, int mode) {
  #ifdef _WIN32
--  wchar_t wPath[_MAX_PATH + 1];
--  return _wmkdir(fileNameToUCS2(path, wPath, sizeof(wPath) / sizeof(wchar_t)));
++  /*
+   wchar_t wPath[winMaxLongPath + 1];
+   return _wmkdir(fileNameToUCS2(path, wPath, winMaxLongPath + 1));
++  */
 +  return _mkdir(path);
  #else
    return mkdir(path, (mode_t)mode);
  #endif
-@@ -728,6 +741,7 @@
+@@ -752,6 +765,7 @@
  #endif
  }
  
@@ -91,28 +76,29 @@ diff -ur xpdf-4.03/goo/gfile.cc xpdf-src/goo/gfile.cc
  void fixCommandLine(int *argc, char **argv[]) {
  #ifdef _WIN32
    int argcw;
-@@ -753,3 +767,4 @@
+@@ -777,3 +791,4 @@
    LocalFree(argvw);
  #endif
  }
 +#endif /* !PDF_PARSER_ONLY */
-diff -ur xpdf-4.03/goo/gfile.h xpdf-src/goo/gfile.h
---- xpdf-4.03/goo/gfile.h	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/goo/gfile.h	Mon Feb 01 13:14:50 2021
-@@ -91,12 +91,6 @@
+diff -ur xpdf-4.04/goo/gfile.h xpdf-src/goo/gfile.h
+--- xpdf-4.04/goo/gfile.h	Tue Apr 19 06:11:23 2022
++++ xpdf-src/goo/gfile.h	Sun Apr 24 10:48:58 2022
+@@ -100,11 +100,13 @@
  // UCS-2 and calls _wfopen().  On other OSes, this simply calls fopen().
  extern FILE *openFile(const char *path, const char *mode);
  
--#ifdef _WIN32
--// If [wPath] is a Windows shortcut (.lnk file), read the target path
--// and store it back into [wPath].
--extern void readWindowsShortcut(wchar_t *wPath, size_t wPathSize);
--#endif
--
++#if 0
+ #ifdef _WIN32
+ // If [wPath] is a Windows shortcut (.lnk file), read the target path
+ // and store it back into [wPath].
+ extern void readWindowsShortcut(wchar_t *wPath, size_t wPathSize);
+ #endif
++#endif /* 0 */
+ 
  // Create a directory.  On Windows, this converts the path from UTF-8
  // to UCS-2 and calls _wmkdir(), ignoring the mode argument.  On other
- // OSes, this simply calls mkdir().
-@@ -130,6 +124,8 @@
+@@ -139,6 +141,8 @@
  
  // On Windows, this gets the Unicode command line and converts it to
  // UTF-8.  On other systems, this is a nop.
@@ -121,20 +107,30 @@ diff -ur xpdf-4.03/goo/gfile.h xpdf-src/goo/gfile.h
 +#endif /* !PDF_PARSER_ONLY */
  
  #endif
-diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
---- xpdf-4.03/xpdf/GlobalParams.cc	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/xpdf/GlobalParams.cc	Mon Feb 01 12:20:24 2021
-@@ -5,6 +5,9 @@
- // Copyright 2001-2003 Glyph & Cog, LLC
- //
- //========================================================================
-+//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-+//  See top-level ChangeLog for a list of all modifications
-+//========================================================================
- 
- #include <aconf.h>
- 
-@@ -44,8 +47,12 @@
+diff -ur xpdf-4.04/xpdf/Error.cc xpdf-src/xpdf/Error.cc
+--- xpdf-4.04/xpdf/Error.cc	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/Error.cc	Sun Apr 24 11:27:58 2022
+@@ -77,11 +77,14 @@
+     (*errorCbk)(errorCbkData, category, (int)pos, sanitized->getCString());
+   } else {
+     fflush(stdout);
++    /* Label the error messages for pdftex's use as libxpdf.
++       It would be cleaner to use the callback feature, but seems
++       like too much trouble at this late date. */
+     if (pos >= 0) {
+-      fprintf(stderr, "%s (%d): %s\n",
++      fprintf(stderr, "\nlibxpdf: %s (%d): %s\n",
+ 	      errorCategoryNames[category], (int)pos, sanitized->getCString());
+     } else {
+-      fprintf(stderr, "%s: %s\n",
++      fprintf(stderr, "\nlibxpdf: %s: %s\n",
+ 	      errorCategoryNames[category], sanitized->getCString());
+     }
+     fflush(stderr);
+diff -ur xpdf-4.04/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
+--- xpdf-4.04/xpdf/GlobalParams.cc	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/GlobalParams.cc	Sun Apr 24 11:07:30 2022
+@@ -44,8 +44,12 @@
  #include "GlobalParams.h"
  
  #ifdef _WIN32
@@ -149,7 +145,7 @@ diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
  #endif
  
  #if MULTITHREADED
-@@ -787,6 +794,7 @@
+@@ -794,6 +798,7 @@
    f = NULL;
    fileName = NULL;
    if (cfgFileName && cfgFileName[0]) {
@@ -157,7 +153,7 @@ diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
      fileName = new GString(cfgFileName);
      if (!(f = fopen(fileName->getCString(), "r"))) {
        delete fileName;
-@@ -819,6 +827,7 @@
+@@ -826,6 +831,7 @@
      parseFile(fileName, f);
      delete fileName;
      fclose(f);
@@ -165,7 +161,7 @@ diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
    }
  }
  
-@@ -2358,8 +2367,11 @@
+@@ -2378,8 +2384,11 @@
  				   base14->fontNum,
  				   displayFontTab[i].obliqueFactor));
        } else {
@@ -177,9 +173,9 @@ diff -ur xpdf-4.03/xpdf/GlobalParams.cc xpdf-src/xpdf/GlobalParams.cc
        }
      }
    }
-diff -ur xpdf-4.03/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
---- xpdf-4.03/xpdf/GlobalParams.h	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/xpdf/GlobalParams.h	Mon Feb 01 12:23:07 2021
+diff -ur xpdf-4.04/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
+--- xpdf-4.04/xpdf/GlobalParams.h	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/GlobalParams.h	Sun Apr 24 11:08:50 2022
 @@ -5,6 +5,9 @@
  // Copyright 2001-2003 Glyph & Cog, LLC
  //
@@ -199,9 +195,9 @@ diff -ur xpdf-4.03/xpdf/GlobalParams.h xpdf-src/xpdf/GlobalParams.h
  
    ~GlobalParams();
  
-diff -ur xpdf-4.03/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
---- xpdf-4.03/xpdf/PDFDoc.cc	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/xpdf/PDFDoc.cc	Mon Feb 01 13:01:20 2021
+diff -ur xpdf-4.04/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
+--- xpdf-4.04/xpdf/PDFDoc.cc	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/PDFDoc.cc	Sun Apr 24 11:19:50 2022
 @@ -114,6 +114,7 @@
    ok = setup(ownerPassword, userPassword);
  }
@@ -210,7 +206,7 @@ diff -ur xpdf-4.03/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  #ifdef _WIN32
  PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
  	       GString *userPassword, PDFCore *coreA) {
-@@ -161,23 +162,29 @@
+@@ -161,23 +162,28 @@
    ok = setup(ownerPassword, userPassword);
  }
  #endif
@@ -218,29 +214,29 @@ diff -ur xpdf-4.03/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  
  PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
  	       GString *userPassword, PDFCore *coreA) {
-+/*
++#if 0
  #ifdef _WIN32
    OSVERSIONINFO version;
  #endif
-+*/
++#endif /* 0 */
    Object obj;
-+/*
++#if 0
  #ifdef _WIN32
    Unicode u;
    int i, j;
  #endif
-+*/
- 
+-
++#endif /* 0 */
    init(coreA);
  
    fileName = new GString(fileNameA);
  
  #if defined(_WIN32)
 +#if 0
-   wchar_t wPath[MAX_PATH + 1];
+   wchar_t wPath[winMaxLongPath + 1];
    i = 0;
    j = 0;
-@@ -197,8 +204,11 @@
+@@ -197,8 +203,11 @@
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
      file = _wfopen(fileNameU, wfopenReadMode);
    } else {
@@ -252,34 +248,34 @@ diff -ur xpdf-4.03/xpdf/PDFDoc.cc xpdf-src/xpdf/PDFDoc.cc
  #elif defined(VMS)
    file = fopen(fileName->getCString(), fopenReadMode, "ctx=stm");
  #else
-@@ -603,6 +613,7 @@
+@@ -608,6 +617,7 @@
    GBool ret;
  
    // NB: _wfopen is only available in NT
-+/*
++#if 0
    version.dwOSVersionInfoSize = sizeof(version);
    GetVersionEx(&version);
    if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
-@@ -612,12 +623,15 @@
+@@ -617,12 +627,15 @@
      path2w[i] = 0;
      f = _wfopen(path2w, L"wb");
    } else {
-+*/
-     for (i = 0; i < pathLen && i < _MAX_PATH; ++i) {
++#endif /* 0 */
+     for (i = 0; i < pathLen && i < MAX_PATH; ++i) {
        path2c[i] = (char)path[i];
      }
      path2c[i] = 0;
      f = fopen(path2c, "wb");
-+/*
++#if 0
    }
-+*/
++#endif /* 0 */
    if (!f) {
      return gFalse;
    }
-diff -ur xpdf-4.03/xpdf/Page.cc xpdf-src/xpdf/Page.cc
---- xpdf-4.03/xpdf/Page.cc	Thu Jan 28 07:23:51 2021
-+++ xpdf-src/xpdf/Page.cc	Mon Feb 01 12:31:27 2021
-@@ -485,9 +485,9 @@
+diff -ur xpdf-4.04/xpdf/Page.cc xpdf-src/xpdf/Page.cc
+--- xpdf-4.04/xpdf/Page.cc	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/Page.cc	Sun Apr 24 11:22:49 2022
+@@ -531,9 +531,9 @@
    delete links;
  }
  
@@ -290,16 +286,16 @@ diff -ur xpdf-4.03/xpdf/Page.cc xpdf-src/xpdf/Page.cc
    GfxState *state;
    int i;
  
-@@ -504,5 +504,5 @@
+@@ -550,5 +550,5 @@
      ctm[i] = state->getCTM()[i];
    }
    delete state;
 -}
  #endif
 +}
-diff -ur xpdf-4.03/xpdf/config.h xpdf-src/xpdf/config.h
---- xpdf-4.03/xpdf/config.h	Thu Jan 28 07:23:52 2021
-+++ xpdf-src/xpdf/config.h	Mon Feb 01 12:34:28 2021
+diff -ur xpdf-4.04/xpdf/config.h xpdf-src/xpdf/config.h
+--- xpdf-4.04/xpdf/config.h	Tue Apr 19 06:11:23 2022
++++ xpdf-src/xpdf/config.h	Sun Apr 24 11:24:23 2022
 @@ -80,11 +80,6 @@
  // popen
  //------------------------------------------------------------------------
@@ -312,23 +308,3 @@ diff -ur xpdf-4.03/xpdf/config.h xpdf-src/xpdf/config.h
  #if defined(VMS) || defined(VMCMS) || defined(DOS) || defined(OS2) || defined(__EMX__) || defined(_WIN32) || defined(__DJGPP__)
  #define POPEN_READ_MODE "rb"
  #else
-diff -ur xpdf-4.03/xpdf/Error.cc xpdf-src/xpdf/Error.cc
---- xpdf-4.03/xpdf/Error.cc	Thu Jan 28 07:23:52 2021
-+++ xpdf-src/xpdf/Error.cc	Mon Feb 01 12:34:28 2021
-@@ -77,11 +77,14 @@
-     (*errorCbk)(errorCbkData, category, (int)pos, sanitized->getCString());
-   } else {
-     fflush(stdout);
-+    /* Label the error messages for pdftex's use as libxpdf.
-+       It would be cleaner to use the callback feature, but seems
-+       like too much trouble at this late date. */
-     if (pos >= 0) {
--      fprintf(stderr, "%s (%d): %s\n",
-+      fprintf(stderr, "\nlibxpdf: %s (%d): %s\n",
- 	      errorCategoryNames[category], (int)pos, sanitized->getCString());
-     } else {
--      fprintf(stderr, "%s: %s\n",
-+      fprintf(stderr, "\nlibxpdf: %s: %s\n",
- 	      errorCategoryNames[category], sanitized->getCString());
-     }
-     fflush(stderr);

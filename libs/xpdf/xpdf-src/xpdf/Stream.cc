@@ -52,6 +52,14 @@ static GBool setDJSYSFLAGS = gFalse;
 #endif
 
 //------------------------------------------------------------------------
+
+// An LZW/Flate decompression bomb is detected if the output size
+// exceeds decompressionBombSizeThreshold and the decompression ratio
+// exceeds decompressionBombRatioThreshold.
+#define decompressionBombSizeThreshold 50000000
+#define decompressionBombRatioThreshold 200
+
+//------------------------------------------------------------------------
 // Stream (base class)
 //------------------------------------------------------------------------
 
@@ -148,7 +156,7 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
   } else if (obj.isArray()) {
     for (i = 0; i < obj.arrayGetLength(); ++i) {
       obj.arrayGet(i, &obj2, recursion);
-      if (params.isArray())
+      if (params.isArray() && i < params.arrayGetLength())
 	params.arrayGet(i, &params2, recursion);
       else
 	params2.initNull();
@@ -305,6 +313,8 @@ Stream *Stream::makeFilter(char *name, Stream *str, Object *params,
     globals.free();
   } else if (!strcmp(name, "JPXDecode")) {
     str = new JPXStream(str);
+  } else if (!strcmp(name, "Crypt")) {
+    // this is handled in Parser::makeStream()
   } else {
     error(errSyntaxError, getPos(), "Unknown filter '{0:s}'", name);
     str = new EOFStream(str);
@@ -384,6 +394,7 @@ ImageStream::~ImageStream() {
 }
 
 void ImageStream::reset() {
+  str->disableDecompressionBombChecking();
   str->reset();
 }
 
@@ -935,7 +946,11 @@ void MemStream::setPos(GFileOffset pos, int dir) {
   if (dir >= 0) {
     i = (Guint)pos;
   } else {
-    i = (Guint)(start + length - pos);
+    if (pos > start + length) {
+      i = 0;
+    } else {
+      i = (Guint)(start + length - pos);
+    }
   }
   if (i < start) {
     i = start;
@@ -1221,6 +1236,7 @@ LZWStream::LZWStream(Stream *strA, int predictor, int columns, int colors,
   eof = gFalse;
   inputBits = 0;
   clearTable();
+  checkForDecompressionBombs = gTrue;
 }
 
 LZWStream::~LZWStream() {
@@ -1238,6 +1254,11 @@ Stream *LZWStream::copy() {
   } else {
     return new LZWStream(str->copy(), 1, 0, 0, 0, early);
   }
+}
+
+void LZWStream::disableDecompressionBombChecking() {
+  checkForDecompressionBombs = gFalse;
+  FilterStream::disableDecompressionBombChecking();
 }
 
 int LZWStream::getChar() {
@@ -1386,8 +1407,10 @@ GBool LZWStream::processNextCode() {
   totalOut += seqLength;
 
   // check for a 'decompression bomb'
-  if (totalOut > 50000000 && totalIn < totalOut / 250) {
-    error(errSyntaxError, getPos(), "Decompression bomb in flate stream");
+  if (checkForDecompressionBombs &&
+      totalOut > decompressionBombSizeThreshold &&
+      totalIn < totalOut / decompressionBombRatioThreshold) {
+    error(errSyntaxError, getPos(), "Decompression bomb in LZW stream");
     eof = gTrue;
     return gFalse;
   }
@@ -2638,6 +2661,7 @@ DCTStream::DCTStream(Stream *strA, GBool colorXformA):
     FilterStream(strA) {
   int i;
 
+  prepared = gFalse;
   colorXform = colorXformA;
   progressive = interleaved = gFalse;
   width = height = 0;
@@ -2683,6 +2707,7 @@ void DCTStream::reset() {
     // force an EOF condition
     progressive = gTrue;
     y = height;
+    prepared = gTrue;
     return;
   }
 
@@ -2719,56 +2744,7 @@ void DCTStream::reset() {
     }
   }
 
-  if (progressive || !interleaved) {
-
-    // allocate a buffer for the whole image
-    bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
-    bufHeight = ((height + mcuHeight - 1) / mcuHeight) * mcuHeight;
-    if (bufWidth <= 0 || bufHeight <= 0 ||
-	bufWidth > INT_MAX / bufWidth / (int)sizeof(int)) {
-      error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
-      y = height;
-      return;
-    }
-    for (i = 0; i < numComps; ++i) {
-      frameBuf[i] = (int *)gmallocn(bufWidth * bufHeight, sizeof(int));
-      memset(frameBuf[i], 0, bufWidth * bufHeight * sizeof(int));
-    }
-
-    // read the image data
-    do {
-      restartMarker = 0xd0;
-      restart();
-      readScan();
-    } while (readHeader(gFalse));
-
-    // decode
-    decodeImage();
-
-    // initialize counters
-    comp = 0;
-    x = 0;
-    y = 0;
-
-  } else {
-
-    if (scanInfo.numComps != numComps) {
-      error(errSyntaxError, getPos(), "Invalid scan in sequential DCT stream");
-      y = height;
-      return;
-    }
-
-    // allocate a buffer for one row of MCUs
-    bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
-    rowBuf = (Guchar *)gmallocn(numComps * mcuHeight, bufWidth);
-    rowBufPtr = rowBufEnd = rowBuf;
-
-    // initialize counters
-    y = -mcuHeight;
-
-    restartMarker = 0xd0;
-    restart();
-  }
+  prepared = gFalse;
 }
 
 GBool DCTStream::checkSequentialInterleaved() {
@@ -2808,6 +2784,9 @@ void DCTStream::close() {
 int DCTStream::getChar() {
   int c;
 
+  if (!prepared) {
+    prepare();
+  }
   if (progressive || !interleaved) {
     if (y >= height) {
       return EOF;
@@ -2837,6 +2816,9 @@ int DCTStream::getChar() {
 }
 
 int DCTStream::lookChar() {
+  if (!prepared) {
+    prepare();
+  }
   if (progressive || !interleaved) {
     if (y >= height) {
       return EOF;
@@ -2859,6 +2841,9 @@ int DCTStream::lookChar() {
 int DCTStream::getBlock(char *blk, int size) {
   int nRead, nAvail, n;
 
+  if (!prepared) {
+    prepare();
+  }
   if (progressive || !interleaved) {
     if (y >= height) {
       return 0;
@@ -2898,6 +2883,76 @@ int DCTStream::getBlock(char *blk, int size) {
     }
   }
   return nRead;
+}
+
+void DCTStream::prepare() {
+  int i;
+
+  if (progressive || !interleaved) {
+
+    // allocate a buffer for the whole image
+    bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
+    bufHeight = ((height + mcuHeight - 1) / mcuHeight) * mcuHeight;
+    if (bufWidth <= 0 || bufHeight <= 0 ||
+	bufWidth > INT_MAX / bufWidth / (int)sizeof(int)) {
+      error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
+      y = height;
+      prepared = gTrue;
+      return;
+    }
+#if USE_EXCEPTIONS
+    try {
+#endif
+      for (i = 0; i < numComps; ++i) {
+	frameBuf[i] = (int *)gmallocn(bufWidth * bufHeight, sizeof(int));
+	memset(frameBuf[i], 0, bufWidth * bufHeight * sizeof(int));
+      }
+#if USE_EXCEPTIONS
+    } catch (GMemException) {
+      error(errSyntaxError, getPos(), "Out of memory in DCT stream");
+      y = height;
+      prepared = gTrue;
+      return;
+    }
+#endif
+
+    // read the image data
+    do {
+      restartMarker = 0xd0;
+      restart();
+      readScan();
+    } while (readHeader(gFalse));
+
+    // decode
+    decodeImage();
+
+    // initialize counters
+    comp = 0;
+    x = 0;
+    y = 0;
+
+  } else {
+
+    if (scanInfo.numComps != numComps) {
+      error(errSyntaxError, getPos(), "Invalid scan in sequential DCT stream");
+      y = height;
+      prepared = gTrue;
+      return;
+    }
+
+    // allocate a buffer for one row of MCUs
+    bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
+    rowBuf = (Guchar *)gmallocn(numComps * mcuHeight, bufWidth);
+    rowBufPtr = rowBufEnd = rowBuf;
+
+    // initialize counters
+    y = -mcuHeight;
+
+    restartMarker = 0xd0;
+    restart();
+  }
+
+  prepared = gTrue;
 }
 
 void DCTStream::restart() {
@@ -3841,6 +3896,9 @@ GBool DCTStream::readHeader(GBool frame) {
       if (!readScanInfo()) {
 	return gFalse;
       }
+      if (frame) {
+	interleaved = scanInfo.numComps == numComps;
+      }
       doScan = gTrue;
       break;
     case 0xdb:			// DQT
@@ -4006,7 +4064,6 @@ GBool DCTStream::readScanInfo() {
     error(errSyntaxError, getPos(), "Bad DCT scan info block");
     return gFalse;
   }
-  interleaved = scanInfo.numComps == numComps;
   for (j = 0; j < numComps; ++j) {
     scanInfo.comp[j] = gFalse;
   }
@@ -4911,6 +4968,7 @@ FlateStream::FlateStream(Stream *strA, int predictor, int columns,
   litCodeTab.codes = NULL;
   distCodeTab.codes = NULL;
   memset(buf, 0, flateWindow);
+  checkForDecompressionBombs = gTrue;
 }
 
 FlateStream::~FlateStream() {
@@ -4934,6 +4992,11 @@ Stream *FlateStream::copy() {
   } else {
     return new FlateStream(str->copy(), 1, 0, 0, 0);
   }
+}
+
+void FlateStream::disableDecompressionBombChecking() {
+  checkForDecompressionBombs = gFalse;
+  FilterStream::disableDecompressionBombChecking();
 }
 
 void FlateStream::reset() {
@@ -5198,7 +5261,9 @@ void FlateStream::readSome() {
   totalOut += remain;
 
   // check for a 'decompression bomb'
-  if (totalOut > 50000000 && totalIn < totalOut / 250) {
+  if (checkForDecompressionBombs &&
+      totalOut > decompressionBombSizeThreshold &&
+      totalIn < totalOut / decompressionBombRatioThreshold) {
     error(errSyntaxError, getPos(), "Decompression bomb in flate stream");
     endOfBlock = eof = gTrue;
     remain = 0;
@@ -5249,8 +5314,7 @@ GBool FlateStream::startBlock() {
       goto err;
     check |= (c & 0xff) << 8;
     if (check != (~blockLen & 0xffff))
-      error(errSyntaxError, getPos(),
-	    "Bad uncompressed block length in flate stream");
+      goto err;
     codeBuf = 0;
     codeSize = 0;
     totalIn += 4;

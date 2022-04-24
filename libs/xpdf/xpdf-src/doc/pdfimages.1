@@ -1,8 +1,8 @@
-.\" Copyright 1998-2021 Glyph & Cog, LLC
-.TH pdfimages 1 "28 Jan 2021"
+.\" Copyright 1998-2022 Glyph & Cog, LLC
+.TH pdfimages 1 "18 Apr 2022"
 .SH NAME
 pdfimages \- Portable Document Format (PDF) image extractor
-(version 4.03)
+(version 4.04)
 .SH SYNOPSIS
 .B pdfimages
 [options]
@@ -29,9 +29,8 @@ color inversion, etc. done by the PDF content stream is ignored.
 .SH CONFIGURATION FILE
 Pdfimages reads a configuration file at startup.  It first tries to
 find the user's private config file, ~/.xpdfrc.  If that doesn't
-exist, it looks for a system-wide config file, typically
-/usr/local/etc/xpdfrc (but this location can be changed when pdfimages
-is built).  See the
+exist, it looks for a system-wide config file, typically /etc/xpdfrc
+(but this location can be changed when pdfimages is built).  See the
 .BR xpdfrc (5)
 man page for details.
 .SH OPTIONS
@@ -71,6 +70,10 @@ bypass all security restrictions.
 .BI \-upw " password"
 Specify the user password for the PDF file.
 .TP
+.B \-verbose
+Print a status message (to stdout) before processing each page.
+.RB "[config file: " printStatusInfo ]
+.TP
 .B \-q
 Don't print any messages or errors.
 .RB "[config file: " errQuiet ]
@@ -102,7 +105,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdfimages software and documentation are copyright 1998-2021 Glyph
+The pdfimages software and documentation are copyright 1998-2022 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

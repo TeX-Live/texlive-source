@@ -25,6 +25,7 @@
 #include "SplashBitmap.h"
 #include "Splash.h"
 #include "SplashOutputDev.h"
+#include "Error.h"
 #include "config.h"
 
 static int firstPage = 1;
@@ -39,6 +40,7 @@ static char antialiasStr[16] = "";
 static char vectorAntialiasStr[16] = "";
 static char ownerPassword[33] = "";
 static char userPassword[33] = "";
+static GBool verbose = gFalse;
 static GBool quiet = gFalse;
 static char cfgFileName[256] = "";
 static GBool printVersion = gFalse;
@@ -71,6 +73,8 @@ static ArgDesc argDesc[] = {
    "owner password (for encrypted files)"},
   {"-upw",    argString,   userPassword,   sizeof(userPassword),
    "user password (for encrypted files)"},
+  {"-verbose", argFlag,    &verbose,       0,
+   "print per-page status information"},
   {"-q",      argFlag,     &quiet,         0,
    "don't print any messages or errors"},
   {"-cfg",        argString,      cfgFileName,    sizeof(cfgFileName),
@@ -102,7 +106,7 @@ int main(int argc, char *argv[]) {
   GString *ownerPW, *userPW;
   SplashColor paperColor;
   SplashOutputDev *splashOut;
-  GBool ok;
+  GBool ok, toStdout, printStatusInfo;
   int exitCode;
   int pg;
   png_structp png;
@@ -134,6 +138,10 @@ int main(int argc, char *argv[]) {
   pngRoot = argv[2];
 
   // read config file
+  if (cfgFileName[0] && !pathIsFile(cfgFileName)) {
+    error(errConfig, -1, "Config file '{0:s}' doesn't exist or isn't a file",
+	  cfgFileName);
+  }
   globalParams = new GlobalParams(cfgFileName);
   globalParams->setupBaseFonts(NULL);
   if (enableFreeTypeStr[0]) {
@@ -150,6 +158,9 @@ int main(int argc, char *argv[]) {
     if (!globalParams->setVectorAntialias(vectorAntialiasStr)) {
       fprintf(stderr, "Bad '-aaVector' value on command line\n");
     }
+  }
+  if (verbose) {
+    globalParams->setPrintStatusInfo(verbose);
   }
   if (quiet) {
     globalParams->setErrQuiet(quiet);
@@ -185,6 +196,10 @@ int main(int argc, char *argv[]) {
     lastPage = doc->getNumPages();
 
 
+  // check for stdout; set up to print per-page status info
+  toStdout = !strcmp(pngRoot, "-");
+  printStatusInfo = !toStdout && globalParams->getPrintStatusInfo();
+
   // write PNG files
   if (mono) {
     paperColor[0] = 0xff;
@@ -201,10 +216,15 @@ int main(int argc, char *argv[]) {
   }
   splashOut->startDoc(doc->getXRef());
   for (pg = firstPage; pg <= lastPage; ++pg) {
+    if (printStatusInfo) {
+      fflush(stderr);
+      printf("[processing page %d]\n", pg);
+      fflush(stdout);
+    }
     doc->displayPage(splashOut, pg, resolution, resolution, rotate,
 		     gFalse, gTrue, gFalse);
     if (mono) {
-      if (!strcmp(pngRoot, "-")) {
+      if (toStdout) {
 	f = stdout;
 #ifdef _WIN32
 	_setmode(_fileno(f), _O_BINARY);
@@ -222,7 +242,7 @@ int main(int argc, char *argv[]) {
       finishPNG(&png, &pngInfo);
       fclose(f);
     } else if (gray) {
-      if (!strcmp(pngRoot, "-")) {
+      if (toStdout) {
 	f = stdout;
 #ifdef _WIN32
 	_setmode(_fileno(f), _O_BINARY);
@@ -241,7 +261,7 @@ int main(int argc, char *argv[]) {
       finishPNG(&png, &pngInfo);
       fclose(f);
     } else { // RGB
-      if (!strcmp(pngRoot, "-")) {
+      if (toStdout) {
 	f = stdout;
 #ifdef _WIN32
 	_setmode(_fileno(f), _O_BINARY);

@@ -1076,6 +1076,10 @@ public:
   double getLastX() { return subpaths[n-1]->getLastX(); }
   double getLastY() { return subpaths[n-1]->getLastY(); }
 
+  // Get the current point
+  double getCurX();
+  double getCurY();
+
   // Move the current point.
   void moveTo(double x, double y);
 

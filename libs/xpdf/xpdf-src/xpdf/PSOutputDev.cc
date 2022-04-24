@@ -1481,6 +1481,7 @@ void PSOutputDev::init(PSOutputFunc outputFuncA, void *outputStreamA,
   rotate0 = -1;
   clipLLX0 = clipLLY0 = 0;
   clipURX0 = clipURY0 = -1;
+  expandSmallPages = globalParams->getPSExpandSmaller();
 
   // initialize font lists, etc.
   for (i = 0; i < 14; ++i) {
@@ -1580,6 +1581,11 @@ PSOutputDev::~PSOutputDev() {
     cc = customColors;
     customColors = cc->next;
     delete cc;
+  }
+  if (t3String) {
+    // this will only happen if the 'd1' operator is used outside of a
+    // Type 3 CharProc
+    delete t3String;
   }
 }
 
@@ -3827,6 +3833,7 @@ void PSOutputDev::setupImage(Ref id, Stream *str, GBool mask,
   }
 
   // filters
+  str->disableDecompressionBombChecking();
   if (level < psLevel2) {
     useLZW = useRLE = gFalse;
     useCompressed = gFalse;
@@ -4265,6 +4272,7 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
       }
       break;
     case psLevel1Sep:
+#if SPLASH_CMYK
       writePSFmt("{0:d} {1:d} 8 [{2:d} 0 0 {3:d} 0 {4:d}] pdfIm1Sep\n",
 		 w, h, w, -h, h);
       p = bitmap->getDataPtr() + (h - 1) * bitmap->getRowSize();
@@ -4299,6 +4307,8 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
 	processColors |= psProcessBlack;
       }
       break;
+      // if !SPLASH_CMYK: fall through
+#endif
     case psLevel2:
     case psLevel2Gray:
     case psLevel2Sep:
@@ -4510,7 +4520,7 @@ void PSOutputDev::startPage(int pageNum, GfxState *state) {
     } else if ((globalParams->getPSShrinkLarger() &&
 		(width * userUnit > imgWidth2 ||
 		 height * userUnit > imgHeight2)) ||
-	       (globalParams->getPSExpandSmaller() &&
+	       (expandSmallPages &&
 		(width * userUnit < imgWidth2 &&
 		 height * userUnit < imgHeight2))) {
       xScale = (double)imgWidth2 / (double)width;

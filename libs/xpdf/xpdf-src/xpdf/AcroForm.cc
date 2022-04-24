@@ -18,6 +18,7 @@
 #include "gmempp.h"
 #include "GString.h"
 #include "GList.h"
+#include "GlobalParams.h"
 #include "Error.h"
 #include "Object.h"
 #include "PDFDoc.h"
@@ -348,13 +349,15 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
   if (acroFormObjA->isDict()) {
     acroForm = new AcroForm(docA, acroFormObjA);
 
-    if (!acroFormObjA->dictLookup("XFA", &xfaObj)->isNull()) {
-      acroForm->xfaScanner = XFAScanner::load(&xfaObj);
-      if (!catalog->getNeedsRendering()) {
-	acroForm->isStaticXFA = gTrue;
+    if (globalParams->getEnableXFA()) {
+      if (!acroFormObjA->dictLookup("XFA", &xfaObj)->isNull()) {
+	acroForm->xfaScanner = XFAScanner::load(&xfaObj);
+	if (!catalog->getNeedsRendering()) {
+	  acroForm->isStaticXFA = gTrue;
+	}
       }
+      xfaObj.free();
     }
-    xfaObj.free();
 
     if (acroFormObjA->dictLookup("NeedAppearances", &obj1)->isBool()) {
       acroForm->needAppearances = obj1.getBool();

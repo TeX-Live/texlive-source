@@ -1,17 +1,22 @@
-.\" Copyright 2002-2021 Glyph & Cog, LLC
-.TH xpdfrc 5 "28 Jan 2021"
+.\" Copyright 2002-2022 Glyph & Cog, LLC
+.TH xpdfrc 5 "18 Apr 202"
 .SH NAME
-xpdfrc \- configuration file for Xpdf tools (version 4.03)
+xpdfrc \- configuration file for Xpdf tools (version 4.04)
 .SH DESCRIPTION
-All of the Xpdf tools read a single configuration file.  If you have a
+All of the Xpdf tools read a single configuration file.
+.PP
+On Linux/Unix/MacOS: if you have a
 .I .xpdfrc
 file in your home directory, it will be read.  Otherwise, a
 system-wide configuration file will be read from
-.IR /usr/local/etc/xpdfrc ,
+.IR /etc/xpdfrc ,
 if it exists.  (This is its default location; depending on build
-options, it may be placed elsewhere.)  On Win32 systems, the
+options, it may be placed elsewhere.)
+.PP
+On Windows: the file must be named
 .I xpdfrc
-file should be placed in the same directory as the executables.
+(no leading dot, no extension), and must be placed in the same
+directory as the executable (pdftotext.exe, xpdf.exe, etc.)
 .PP
 The xpdfrc file consists of a series of configuration options, one
 per line.  Blank lines and lines starting with a \'#' (comments) are
@@ -437,6 +442,12 @@ mapExtTrueTypeFontsViaUnicode is set to "no", Xpdf will assume the
 character codes are GIDs (i.e., use an identity mapping).  This
 defaults to "yes".
 .TP
+.BI useTrueTypeUnicodeMapping " yes | no"
+If set to "yes", the Xpdf tools will use the Unicode encoding
+information in TrueType fonts (16-bit only), if avaiable, to override
+the PDF ToUnicode maps.  Otherwise, the ToUnicode maps are always used
+when present.  This defaults to "no".
+.TP
 .BI dropFont " font-name"
 Drop all text drawn in the specified font.  To drop text drawn in
 unnamed fonts, use:
@@ -467,6 +478,10 @@ anti-aliasing control provided by the old "t1libControl" and
 .BR vectorAntialias " yes | no"
 Enables or disables anti-aliasing of vector graphics in the PDF
 rasterizer.  This defaults to "yes".
+.TP
+.BR imageMaskAntialias " yes | no"
+Enables or disables anti-aliasing of image masks (when downsampling or
+upsampling) in the PDF rasterizer.  This defaults to "yes".
 .TP
 .BR antialiasPrinting " yes | no"
 If this is "yes", bitmaps sent to the printer will be antialiased
@@ -736,9 +751,25 @@ value is "yes".
 If set to "no", form fields will not be drawn or printed.  The default
 value is "yes".
 .TP
+.BI enableXFA " yes | no"
+If an XFA form is present, and this option is set to "yes", Xpdf will
+parse the XFA form and use certain XFA information to override
+AcroForm information.  If set to "no", the XFA form will not be read.
+The default value is "yes".
+.TP
+.BI savePageNumbers " yes | no"
+If set to "yes", xpdf will save the current page numbers of all open
+files in ~/.xpdf.pages when the files are closed (or when quitting
+xpdf).  Next time the file is opened, the last-viewed page number will
+be restored.  The default value is "yes".
+.TP
 .BI printCommands " yes | no"
 If set to "yes", drawing commands are printed as they're executed
 (useful for debugging).  This defaults to "no".
+.TP
+.BI printStatusInfo
+If set to "yes", print a status message (to stdout) before each page
+is processed.  This defaults to "no".
 .TP
 .BI errQuiet " yes | no"
 If set to "yes", this suppresses all error and warning messages from
@@ -798,7 +829,7 @@ launchCommand   viewer-script
 .fi
 .SH FILES
 .TP
-.B /usr/local/etc/xpdfrc
+.B /etc/xpdfrc
 This is the default location for the system-wide configuration file.
 Depending on build options, it may be placed elsewhere.
 .TP
@@ -806,7 +837,7 @@ Depending on build options, it may be placed elsewhere.
 This is the user's configuration file.  If it exists, it will be read
 in place of the system-wide file.
 .SH AUTHOR
-The Xpdf software and documentation are copyright 1996-2021 Glyph &
+The Xpdf software and documentation are copyright 1996-2022 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

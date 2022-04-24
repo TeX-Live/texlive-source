@@ -623,7 +623,7 @@ void Catalog::loadPage2(int pg, int relPg, PageTreeNode *node) {
     // merge the PageAttrs
     attrs = new PageAttrs(node->parent ? node->parent->attrs
 			               : (PageAttrs *)NULL,
-			  pageObj.getDict());
+			  pageObj.getDict(), xref);
 
     // if "Kids" exists, it's an internal node
     if (pageObj.dictLookup("Kids", &kidsObj)->isArray()) {

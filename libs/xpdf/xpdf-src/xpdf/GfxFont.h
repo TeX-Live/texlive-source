@@ -135,6 +135,10 @@ public:
   static GfxFont *makeFont(XRef *xref, const char *tagA,
 			   Ref idA, Dict *fontDict);
 
+  // Create a simple default font, to substitute for an undefined font
+  // object.
+  static GfxFont *makeDefaultFont(XRef *xref);
+
   GfxFont(const char *tagA, Ref idA, GString *nameA,
 	  GfxFontType typeA, Ref embFontIDA);
 
@@ -357,6 +361,7 @@ public:
 
 private:
 
+  void readTrueTypeUnicodeMapping(XRef *xref);
   void getHorizontalMetrics(CID cid, double *w);
   void getVerticalMetrics(CID cid, double *h,
 			  double *vx, double *vy);
@@ -398,8 +403,10 @@ public:
 
 private:
 
-  int hashFontObject(Object *obj);
-  void hashFontObject1(Object *obj, FNVHash *h);
+  friend class GfxFont;
+
+  static int hashFontObject(Object *obj);
+  static void hashFontObject1(Object *obj, FNVHash *h);
 
   GHash *fonts;			// hash table of fonts -- this may
 				//   include duplicates, i.e., when

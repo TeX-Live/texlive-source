@@ -527,6 +527,7 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, int pageNum, Dict *resDict,
   xref = doc->getXRef();
   subPage = gFalse;
   printCommands = globalParams->getPrintCommands();
+  defaultFont = NULL;
 
   // start the resource stack
   res = new GfxResources(xref, resDict, NULL);
@@ -574,6 +575,7 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
   xref = doc->getXRef();
   subPage = gTrue;
   printCommands = globalParams->getPrintCommands();
+  defaultFont = NULL;
 
   // start the resource stack
   res = new GfxResources(xref, resDict, NULL);
@@ -609,6 +611,9 @@ Gfx::Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
 }
 
 Gfx::~Gfx() {
+  if (defaultFont) {
+    delete defaultFont;
+  }
   if (!subPage) {
     out->endPage();
   }
@@ -2080,12 +2085,19 @@ void Gfx::doTilingPatternFill(GfxTilingPattern *tPat,
   // Adobe's behavior
   state->setFillPattern(NULL);
   state->setStrokePattern(NULL);
+  state->setFillOverprint(gFalse);
+  state->setStrokeOverprint(gFalse);
+  state->setOverprintMode(0);
   if (tPat->getPaintType() == 2 && (cs = patCS->getUnder())) {
     state->setFillColorSpace(cs->copy());
     out->updateFillColorSpace(state);
     state->setStrokeColorSpace(cs->copy());
     out->updateStrokeColorSpace(state);
-    state->setStrokeColor(state->getFillColor());
+    if (stroke) {
+      state->setFillColor(state->getStrokeColor());
+    } else {
+      state->setStrokeColor(state->getFillColor());
+    }
     out->updateFillColor(state);
     out->updateStrokeColor(state);
     state->setIgnoreColorOps(gTrue);
@@ -3564,8 +3576,10 @@ void Gfx::opSetFont(Object args[], int numArgs) {
 
 void Gfx::doSetFont(GfxFont *font, double size) {
   if (!font) {
-    state->setFont(NULL, 0);
-    return;
+    if (!defaultFont) {
+      defaultFont = GfxFont::makeDefaultFont(xref);
+    }
+    font = defaultFont;
   }
   if (printCommands) {
     printf("  font: tag=%s name='%s' %g\n",
@@ -3847,7 +3861,7 @@ void Gfx::doShowText(GString *s) {
     newCTM[2] *= state->getFontSize();
     newCTM[3] *= state->getFontSize();
     newCTM[0] *= state->getHorizScaling();
-    newCTM[2] *= state->getHorizScaling();
+    newCTM[1] *= state->getHorizScaling();
     curX = state->getCurX();
     curY = state->getCurY();
     oldParser = parser;
@@ -4035,7 +4049,7 @@ void Gfx::doIncCharCount(GString *s) {
 
 void Gfx::opXObject(Object args[], int numArgs) {
   char *name;
-  Object obj1, obj2, obj3, refObj;
+  Object xObj, refObj, obj2, obj3;
   GBool ocSaved, oc;
 #if OPI_SUPPORT
   Object opiDict;
@@ -4045,18 +4059,31 @@ void Gfx::opXObject(Object args[], int numArgs) {
     return;
   }
   name = args[0].getName();
-  if (!res->lookupXObject(name, &obj1)) {
+  // NB: we get both the reference and the object here, to make sure
+  // they refer to the same object.  There's a problematic corner
+  // case: if the resource dict contains an entry for [name] with a
+  // reference to a nonexistent object ("/name 99999 0 R", where
+  // object 99999 doesn't exist), and a parent resource dict contains
+  // a valid entry with the same name, then lookupXObjectNF() will
+  // return "99999 0 R", but lookupXObject() will return the valid
+  // entry.  This causes problems for doImage() and doForm().
+  if (!res->lookupXObjectNF(name, &refObj)) {
     return;
   }
-  if (!obj1.isStream()) {
+  if (!refObj.fetch(xref, &xObj)) {
+    refObj.free();
+    return;
+  }
+  if (!xObj.isStream()) {
     error(errSyntaxError, getPos(), "XObject '{0:s}' is wrong type", name);
-    obj1.free();
+    xObj.free();
+    refObj.free();
     return;
   }
 
   // check for optional content key
   ocSaved = ocState;
-  obj1.streamGetDict()->lookupNF("OC", &obj2);
+  xObj.streamGetDict()->lookupNF("OC", &obj2);
   if (doc->getOptionalContent()->evalOCObject(&obj2, &oc)) {
     ocState &= oc;
   }
@@ -4066,32 +4093,28 @@ void Gfx::opXObject(Object args[], int numArgs) {
   try {
 #endif
 #if OPI_SUPPORT
-    obj1.streamGetDict()->lookup("OPI", &opiDict);
+    xObj.streamGetDict()->lookup("OPI", &opiDict);
     if (opiDict.isDict()) {
       out->opiBegin(state, opiDict.getDict());
     }
 #endif
-    obj1.streamGetDict()->lookup("Subtype", &obj2);
+    xObj.streamGetDict()->lookup("Subtype", &obj2);
     if (obj2.isName("Image")) {
       if (out->needNonText()) {
-	res->lookupXObjectNF(name, &refObj);
-	doImage(&refObj, obj1.getStream(), gFalse);
-	refObj.free();
+	doImage(&refObj, xObj.getStream(), gFalse);
       }
     } else if (obj2.isName("Form")) {
-      res->lookupXObjectNF(name, &refObj);
       if (out->useDrawForm() && refObj.isRef()) {
 	if (ocState) {
 	  out->drawForm(refObj.getRef());
 	}
       } else {
-	doForm(&refObj, &obj1);
+	doForm(&refObj, &xObj);
       }
-      refObj.free();
     } else if (obj2.isName("PS")) {
       if (ocState) {
-	obj1.streamGetDict()->lookup("Level1", &obj3);
-	out->psXObject(obj1.getStream(),
+	xObj.streamGetDict()->lookup("Level1", &obj3);
+	out->psXObject(xObj.getStream(),
 		       obj3.isStream() ? obj3.getStream() : (Stream *)NULL);
       }
     } else if (obj2.isName()) {
@@ -4110,13 +4133,16 @@ void Gfx::opXObject(Object args[], int numArgs) {
 #endif
 #if USE_EXCEPTIONS
   } catch (GMemException e) {
-    obj1.free();
+    xObj.free();
+    refObj.free();
     throw;
   }
 #endif
-  obj1.free();
 
   ocState = ocSaved;
+
+  xObj.free();
+  refObj.free();
 }
 
 GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
@@ -4143,6 +4169,10 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
   if (!ocState && !inlineImg) {
     return gTrue;
   }
+
+  // images can have arbitrarily high compression ratios, but the
+  // data size is inherently limited
+  str->disableDecompressionBombChecking();
 
   // get info from the stream
   bits = 0;
@@ -4248,6 +4278,7 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 
     // if drawing is disabled, skip over inline image data
     if (!ocState) {
+      str->disableDecompressionBombChecking();
       str->reset();
       n = height * ((width + 7) / 8);
       for (i = 0; i < n; ++i) {
@@ -4339,6 +4370,7 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	goto err1;
       }
       maskStr = smaskObj.getStream();
+      maskStr->disableDecompressionBombChecking();
       maskDict = smaskObj.streamGetDict();
       maskDict->lookup("Width", &obj1);
       if (obj1.isNull()) {
@@ -4487,6 +4519,7 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	goto err1;
       }
       maskStr = maskObj.getStream();
+      maskStr->disableDecompressionBombChecking();
       maskDict = maskObj.streamGetDict();
       maskDict->lookup("Width", &obj1);
       if (obj1.isNull()) {
@@ -4559,6 +4592,7 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
 	      " in uncolored Type 3 char or tiling pattern");
       }
       if (inlineImg) {
+	str->disableDecompressionBombChecking();
 	str->reset();
 	n = height * ((width * colorMap->getNumPixelComps() *
 		       colorMap->getBits() + 7) / 8);
@@ -4569,7 +4603,7 @@ GBool Gfx::doImage(Object *ref, Stream *str, GBool inlineImg) {
     // draw it
     } else {
       if (haveSoftMask) {
-	dict->lookupNF("Mask", &maskRef);
+	dict->lookupNF("SMask", &maskRef);
 	out->drawSoftMaskedImage(state, ref, str, width, height, colorMap,
 				 &maskRef, maskStr, maskWidth, maskHeight,
 				 maskColorMap,
@@ -4654,13 +4688,18 @@ void Gfx::doForm(Object *strRef, Object *str) {
 
   // get bounding box
   dict->lookup("BBox", &bboxObj);
-  if (!bboxObj.isArray()) {
+  if (!(bboxObj.isArray() && bboxObj.arrayGetLength() == 4)) {
     bboxObj.free();
     error(errSyntaxError, getPos(), "Bad form bounding box");
     return;
   }
   for (i = 0; i < 4; ++i) {
     bboxObj.arrayGet(i, &obj1);
+    if (!obj1.isNum()) {
+      bboxObj.free();
+      error(errSyntaxError, getPos(), "Bad form bounding box");
+      return;
+    }
     bbox[i] = obj1.getNum();
     obj1.free();
   }
@@ -4668,10 +4707,14 @@ void Gfx::doForm(Object *strRef, Object *str) {
 
   // get matrix
   dict->lookup("Matrix", &matrixObj);
-  if (matrixObj.isArray()) {
+  if (matrixObj.isArray() && matrixObj.arrayGetLength() == 6) {
     for (i = 0; i < 6; ++i) {
       matrixObj.arrayGet(i, &obj1);
-      m[i] = obj1.getNum();
+      if (obj1.isNum()) {
+	m[i] = obj1.getNum();
+      } else {
+	m[i] = 0;
+      }
       obj1.free();
     }
   } else {
@@ -4769,22 +4812,27 @@ void Gfx::drawForm(Object *strRef, Dict *resDict,
     groupAttrsObj.free();
     strObj.free();
 
-    traceBegin(oldBaseMatrix, softMask ? "begin soft mask" : "begin t-group");
-    if (state->getBlendMode() != gfxBlendNormal) {
-      state->setBlendMode(gfxBlendNormal);
-      out->updateBlendMode(state);
+    if (!out->beginTransparencyGroup(state, bbox, blendingColorSpace,
+				     isolated, knockout, softMask)) {
+      transpGroup = gFalse;
     }
-    if (state->getFillOpacity() != 1) {
-      state->setFillOpacity(1);
-      out->updateFillOpacity(state);
+
+    if (softMask || transpGroup) {
+      traceBegin(oldBaseMatrix, softMask ? "begin soft mask" : "begin t-group");
+      if (state->getBlendMode() != gfxBlendNormal) {
+	state->setBlendMode(gfxBlendNormal);
+	out->updateBlendMode(state);
+      }
+      if (state->getFillOpacity() != 1) {
+	state->setFillOpacity(1);
+	out->updateFillOpacity(state);
+      }
+      if (state->getStrokeOpacity() != 1) {
+	state->setStrokeOpacity(1);
+	out->updateStrokeOpacity(state);
+      }
+      out->clearSoftMask(state);
     }
-    if (state->getStrokeOpacity() != 1) {
-      state->setStrokeOpacity(1);
-      out->updateStrokeOpacity(state);
-    }
-    out->clearSoftMask(state);
-    out->beginTransparencyGroup(state, bbox, blendingColorSpace,
-				isolated, knockout, softMask);
   }
 
   // set new base matrix

@@ -405,7 +405,9 @@ void FoFiType1C::convertToType1(char *psName, const char **newEncoding,
   eexecWrite(&eb, "/password 5839 def\n");
   if (privateDicts[0].nBlueValues) {
     eexecWrite(&eb, "/BlueValues [");
-    for (i = 0; i < privateDicts[0].nBlueValues; ++i) {
+    // number of entries must be even
+    int n = privateDicts[0].nBlueValues & ~1;
+    for (i = 0; i < n; ++i) {
       buf = GString::format("{0:s}{1:d}",
 			    i > 0 ? " " : "", privateDicts[0].blueValues[i]);
       eexecWrite(&eb, buf->getCString());
@@ -415,7 +417,9 @@ void FoFiType1C::convertToType1(char *psName, const char **newEncoding,
   }
   if (privateDicts[0].nOtherBlues) {
     eexecWrite(&eb, "/OtherBlues [");
-    for (i = 0; i < privateDicts[0].nOtherBlues; ++i) {
+    // number of entries must be even
+    int n = privateDicts[0].nOtherBlues & ~1;
+    for (i = 0; i < n; ++i) {
       buf = GString::format("{0:s}{1:d}",
 			    i > 0 ? " " : "", privateDicts[0].otherBlues[i]);
       eexecWrite(&eb, buf->getCString());
@@ -425,7 +429,9 @@ void FoFiType1C::convertToType1(char *psName, const char **newEncoding,
   }
   if (privateDicts[0].nFamilyBlues) {
     eexecWrite(&eb, "/FamilyBlues [");
-    for (i = 0; i < privateDicts[0].nFamilyBlues; ++i) {
+    // number of entries must be even
+    int n = privateDicts[0].nFamilyBlues & ~1;
+    for (i = 0; i < n; ++i) {
       buf = GString::format("{0:s}{1:d}",
 			    i > 0 ? " " : "", privateDicts[0].familyBlues[i]);
       eexecWrite(&eb, buf->getCString());
@@ -435,7 +441,9 @@ void FoFiType1C::convertToType1(char *psName, const char **newEncoding,
   }
   if (privateDicts[0].nFamilyOtherBlues) {
     eexecWrite(&eb, "/FamilyOtherBlues [");
-    for (i = 0; i < privateDicts[0].nFamilyOtherBlues; ++i) {
+    // number of entries must be even
+    int n = privateDicts[0].nFamilyOtherBlues & ~1;
+    for (i = 0; i < n; ++i) {
       buf = GString::format("{0:s}{1:d}", i > 0 ? " " : "",
 			    privateDicts[0].familyOtherBlues[i]);
       eexecWrite(&eb, buf->getCString());

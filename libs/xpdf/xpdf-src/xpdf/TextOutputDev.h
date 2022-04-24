@@ -99,7 +99,12 @@ public:
 class TextFontInfo {
 public:
 
+  // Create a TextFontInfo for the current font in [state].
   TextFontInfo(GfxState *state);
+
+  // Create a dummy TextFontInfo.
+  TextFontInfo();
+
   ~TextFontInfo();
 
   GBool matches(GfxState *state);
@@ -225,6 +230,7 @@ public:
   double getBaseline();
   int getRotation() { return rot; }
   GList *getWords() { return words; }
+  Unicode *getUnicode() { return text; }
   int getLength() { return len; }
   double getEdge(int idx) { return edge[idx]; }
   GBool getHyphenated() { return hyphenated; }
@@ -476,6 +482,16 @@ public:
   // be problematic when converting text to Unicode.
   GBool problematicForUnicode() { return problematic; }
 
+  // Add a 'special' character to this TextPage.  This is currently
+  // used by pdftohtml to insert markers for form fields.
+  void addSpecialChar(double xMin, double yMin, double xMax, double yMax,
+		      int rot, TextFontInfo *font, double fontSize,
+		      Unicode u);
+
+  // Remove characters that fall inside a region.
+  void removeChars(double xMin, double yMin, double xMax, double yMax,
+		   double xOverlapThresh, double yOverlapThresh);
+
 private:
 
   void startPage(GfxState *state);
@@ -524,6 +540,8 @@ private:
 		char *eol, int eolLen);
   void encodeFragment(Unicode *text, int len, UnicodeMap *uMap,
 		      GBool primaryLR, GString *s);
+  GBool unicodeEffectiveTypeLOrNum(Unicode u, Unicode left, Unicode right);
+  GBool unicodeEffectiveTypeR(Unicode u, Unicode left, Unicode right);
 
   // analysis
   int rotateChars(GList *charsA);
@@ -539,14 +557,16 @@ private:
   GList *separateOverlappingText(GList *charsA);
   TextColumn *buildOverlappingTextColumn(GList *overlappingChars);
   TextBlock *splitChars(GList *charsA);
-  TextBlock *split(GList *charsA, int rot);
+  TextBlock *split(GList *charsA, int rot, GBool vertOnly);
   GList *getChars(GList *charsA, double xMin, double yMin,
 		  double xMax, double yMax);
   void findGaps(GList *charsA, int rot,
 		double *xMinOut, double *yMinOut,
 		double *xMaxOut, double *yMaxOut,
-		double *avgFontSizeOut,
+		double *avgFontSizeOut, double *minFontSizeOut,
+		GList *splitLines,
 		TextGaps *horizGaps, TextGaps *vertGaps);
+  void mergeSplitLines(GList *charsA, int rot, GList *splitLines);
   void tagBlock(TextBlock *blk);
   void insertLargeChars(GList *largeChars, TextBlock *blk);
   void insertLargeCharsInFirstLeaf(GList *largeChars, TextBlock *blk);
@@ -570,6 +590,7 @@ private:
   void getLineChars(TextBlock *blk, GList *charsA);
   double computeWordSpacingThreshold(GList *charsA, int rot);
   int getCharDirection(TextChar *ch);
+  int getCharDirection(TextChar *ch, TextChar *left, TextChar *right);
   int assignPhysLayoutPositions(GList *columns);
   void assignLinePhysPositions(GList *columns);
   void computeLinePhysWidth(TextLine *line, UnicodeMap *uMap);

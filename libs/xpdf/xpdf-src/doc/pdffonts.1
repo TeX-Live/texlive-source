@@ -1,8 +1,8 @@
-.\" Copyright 1999-2021 Glyph & Cog, LLC
-.TH pdffonts 1 "28 Jan 2021"
+.\" Copyright 1999-2022 Glyph & Cog, LLC
+.TH pdffonts 1 "18 Apr 2022"
 .SH NAME
 pdffonts \- Portable Document Format (PDF) font analyzer (version
-4.03)
+4.04)
 .SH SYNOPSIS
 .B pdffonts
 [options]
@@ -84,9 +84,8 @@ CID TrueType (OT) -- OpenType with CID TrueType data
 .SH CONFIGURATION FILE
 Pdffonts reads a configuration file at startup.  It first tries to
 find the user's private config file, ~/.xpdfrc.  If that doesn't
-exist, it looks for a system-wide config file, typically
-/usr/local/etc/xpdfrc (but this location can be changed when pdffonts
-is built).  See the
+exist, it looks for a system-wide config file, typically /etc/xpdfrc
+(but this location can be changed when pdffonts is built).  See the
 .BR xpdfrc (5)
 man page for details.
 .SH OPTIONS
@@ -147,7 +146,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The pdffonts software and documentation are copyright 1996-2021 Glyph
+The pdffonts software and documentation are copyright 1996-2022 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

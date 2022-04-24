@@ -58,6 +58,7 @@ static double marginTop = 0;
 static double marginBottom = 0;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
+static GBool verbose = gFalse;
 static GBool quiet = gFalse;
 static char cfgFileName[256] = "";
 static GBool listEncodings = gFalse;
@@ -94,7 +95,7 @@ static ArgDesc argDesc[] = {
   {"-eol",     argString,   textEOL,        sizeof(textEOL),
    "output end-of-line convention (unix, dos, or mac)"},
   {"-nopgbrk", argFlag,     &noPageBreaks,  0,
-   "don't insert page breaks between pages"},
+   "don't insert a page break at the end of each page"},
   {"-bom",     argFlag,     &insertBOM,     0,
    "insert a Unicode BOM at the start of the text file"},
   {"-marginl", argFP,       &marginLeft,    0,
@@ -109,6 +110,8 @@ static ArgDesc argDesc[] = {
    "owner password (for encrypted files)"},
   {"-upw",     argString,   userPassword,   sizeof(userPassword),
    "user password (for encrypted files)"},
+  {"-verbose", argFlag,    &verbose,       0,
+   "print per-page status information"},
   {"-q",       argFlag,     &quiet,         0,
    "don't print any messages or errors"},
   {"-cfg",     argString,   cfgFileName,    sizeof(cfgFileName),
@@ -162,6 +165,10 @@ int main(int argc, char *argv[]) {
   ok = parseArgs(argDesc, &argc, argv);
   if (ok && listEncodings) {
     // list available encodings
+    if (cfgFileName[0] && !pathIsFile(cfgFileName)) {
+      error(errConfig, -1, "Config file '{0:s}' doesn't exist or isn't a file",
+	    cfgFileName);
+    }
     globalParams = new GlobalParams(cfgFileName);
     GList *encs = globalParams->getAvailableTextEncodings();
     for (int i = 0; i < encs->getLength(); ++i) {
@@ -182,6 +189,10 @@ int main(int argc, char *argv[]) {
   fileName = argv[1];
 
   // read config file
+  if (cfgFileName[0] && !pathIsFile(cfgFileName)) {
+    error(errConfig, -1, "Config file '{0:s}' doesn't exist or isn't a file",
+	  cfgFileName);
+  }
   globalParams = new GlobalParams(cfgFileName);
   if (textEncName[0]) {
     globalParams->setTextEncoding(textEncName);
@@ -193,6 +204,9 @@ int main(int argc, char *argv[]) {
   }
   if (noPageBreaks) {
     globalParams->setTextPageBreaks(gFalse);
+  }
+  if (verbose) {
+    globalParams->setPrintStatusInfo(verbose);
   }
   if (quiet) {
     globalParams->setErrQuiet(quiet);
@@ -246,6 +260,9 @@ int main(int argc, char *argv[]) {
       textFileName = new GString(fileName);
     }
     textFileName->append(".txt");
+  }
+  if (textFileName->cmp("-") == 0) {
+    globalParams->setPrintStatusInfo(gFalse);
   }
 
   // get page range

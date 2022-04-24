@@ -70,6 +70,9 @@ public:
   // Get the error code (if isOk() returns false).
   int getErrorCode() { return errCode; }
 
+  // Was the xref constructed by the repair code?
+  GBool isRepaired() { return repaired; }
+
   // Set the encryption parameters.
   void setEncryption(int permFlagsA, GBool ownerPasswordOkA,
 		     Guchar *fileKeyA, int keyLengthA, int encVersionA,
@@ -135,6 +138,8 @@ private:
   int rootNum, rootGen;		// catalog dict
   GBool ok;			// true if xref table is valid
   int errCode;			// error code (if <ok> is false)
+  GBool repaired;		// set if the xref table was constructed by
+				//   the repair code
   Object trailerDict;		// trailer dictionary
   GFileOffset lastXRefPos;	// offset of last xref table
   GFileOffset lastStartxrefPos;	// offset of 'startxref' at end of file

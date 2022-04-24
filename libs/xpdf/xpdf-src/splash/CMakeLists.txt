@@ -40,6 +40,8 @@ if (HAVE_SPLASH)
     SplashXPathScanner.cc
     ${DTYPE_SRCS}
   )
+  set_property(TARGET splash_objs
+               PROPERTY POSITION_INDEPENDENT_CODE True)
 
   add_library(splash
     $<TARGET_OBJECTS:splash_objs>

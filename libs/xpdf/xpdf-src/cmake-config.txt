@@ -4,7 +4,7 @@
 #
 # CMake script to do misc cmake config and platform-specific config.
 #
-# Copyright 2015 Glyph & Cog, LLC
+# Copyright 2021 Glyph & Cog, LLC
 #
 #========================================================================
 
@@ -25,38 +25,32 @@ include(GNUInstallDirs)
 
 enable_language(CXX)
 
-#--- set default C/C++ compiler flags for Unix
-#    and add a 'Profiling' build mode
+#--- add a 'Profiling' build mode
 if (CMAKE_GENERATOR STREQUAL "Unix Makefiles")
-  if (CYGWIN)
-    set(PIC_FLAG "")
-  elseif (CMAKE_HOST_SYSTEM_NAME MATCHES "AIX")
-    set(PIC_FLAG "-qPIC")
-  else ()
-    set(PIC_FLAG "-fPIC")
-  endif ()
-  set(CMAKE_C_FLAGS_DEBUG "-g -O -Wall ${PIC_FLAG}")
-  set(CMAKE_CXX_FLAGS_DEBUG "-g -O -Wall ${PIC_FLAG}")
-  set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-g -O -Wall ${PIC_FLAG}")
-  set(CMAKE_C_FLAGS_RELEASE "-O3 -Wall ${PIC_FLAG}")
-  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall ${PIC_FLAG}")
-  set(CMAKE_EXE_LINKER_FLAGS_RELEASE "-O2 -Wall ${PIC_FLAG}")
-  set(CMAKE_C_FLAGS_PROFILING "-g -pg -O -Wall ${PIC_FLAG}"
-      CACHE STRING "C compiler flags for profiling mode")
-  set(CMAKE_CXX_FLAGS_PROFILING "-g -pg -O -Wall ${PIC_FLAG}"
-      CACHE STRING "C++ compiler flags for profiling mode")
-  set(CMAKE_EXE_LINKER_FLAGS_PROFILING "-g -pg -O -Wall ${PIC_FLAG}"
-      CACHE STRING "linker flags for profiling mode")
+  set(CMAKE_C_FLAGS_PROFILING "-g -pg -O -Wall"
+      CACHE STRING "C compiler flags for profiling mode"
+      FORCE)
+  set(CMAKE_CXX_FLAGS_PROFILING "-g -pg -O -Wall"
+      CACHE STRING "C++ compiler flags for profiling mode"
+      FORCE)
+  set(CMAKE_EXE_LINKER_FLAGS_PROFILING "-g -pg -O -Wall"
+      CACHE STRING "linker flags for profiling mode"
+      FORCE)
+  set(CMAKE_SHARED_LINKER_FLAGS_PROFILING "-g -pg -O -Wall"
+      CACHE STRING "shared linker flags for profiling mode"
+      FORCE)
   mark_as_advanced(
     CMAKE_C_FLAGS_PROFILING
     CMAKE_CXX_FLAGS_PROFILING
-    CMAKE_EXE_LINKER_FLAGS_PROFILING)
+    CMAKE_EXE_LINKER_FLAGS_PROFILING
+    CMAKE_SHARED_LINKER_FLAGS_PROFILING)
   set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
-      "Choose build mode - options are: None Debug Release RelWithDebInfo MinSizeRel Profiling")
+      "Choose build mode - options are: None Debug Release RelWithDebInfo MinSizeRel Profiling"
+      FORCE)
 endif ()
 
 #--- set default C/C++ compiler flags for Windows
-if (WIN32)
+if (MSVC)
   option(USE_MT_IN_DEBUG "use /MT instead of /MTd in debug builds" OFF)
   foreach (var CMAKE_C_FLAGS_DEBUG CMAKE_CXX_FLAGS_DEBUG
                CMAKE_C_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELEASE
@@ -108,7 +102,7 @@ option(XPDFRC_DATADIR "directory to use for the DATADIR xpdfrc variable" "")
 if (XPDFRC_DATADIR)
   set(XPDFRC_DATADIR_DEFINE "#define XPDFRC_DATADIR \"${XPDFRC_DATADIR}\"")
 else ()
-  set(XPDFRC_DATADIR_DEFINE "/* #undef SYSTEM_XPDFRC */")
+  set(XPDFRC_DATADIR_DEFINE "/* #undef XPDFRC_DATADIR */")
 endif ()
 if (WIN32)
   option(XPDFWIDGET_PRINTING "include printing support in XpdfWidget" OFF)
@@ -211,14 +205,20 @@ find_package(PNG)
 
 
 #--- look for Qt
-find_package(Qt5Widgets QUIET)
-if (Qt5Widgets_FOUND)
-  find_package(Qt5Network)
-  find_package(Qt5PrintSupport)
+find_package(Qt6Widgets QUIET)
+if (Qt6Widgets_FOUND)
+  find_package(Qt6Network)
+  find_package(Qt6PrintSupport)
 else ()
-  find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork)
+  find_package(Qt5Widgets QUIET)
+  if (Qt5Widgets_FOUND)
+    find_package(Qt5Network)
+    find_package(Qt5PrintSupport)
+  else ()
+    find_package(Qt4 COMPONENTS QtCore QtGui QtNetwork)
+  endif ()
 endif ()
-if(Qt5Widgets_FOUND)
+if (Qt5Widgets_FOUND)
   message(STATUS "Qt5 found")
   if (XPDFWIDGET_PRINTING)
     set(QT_INCLUDES "${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS} ${Qt5PrintSupport_INCLUDE_DIRS}")
@@ -245,7 +245,34 @@ if(Qt5Widgets_FOUND)
   endif ()
   # remove "-fPIE" here because we added "-fPIC" above
   string(REPLACE "-fPIE" "" QT_CFLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-elseif(QT4_FOUND)
+elseif (Qt6Widgets_FOUND)
+  message(STATUS "Qt6 found")
+  if (XPDFWIDGET_PRINTING)
+    set(QT_INCLUDES "${Qt6Widgets_INCLUDE_DIRS} ${Qt6Network_INCLUDE_DIRS} ${Qt6PrintSupport_INCLUDE_DIRS}")
+    set(QT_DEFINITIONS "${Qt6Widgets_DEFINITIONS} ${Qt6Network_DEFINITIONS} ${Qt6PrintSupport_DEFINITIONS}")
+    set(QT_LIBRARIES Qt6::Widgets Qt6::Network Qt6::PrintSupport)
+  else ()
+    set(QT_INCLUDES "${Qt6Widgets_INCLUDE_DIRS} ${Qt6Network_INCLUDE_DIRS}")
+    set(QT_DEFINITIONS "${Qt6Widgets_DEFINITIONS} ${Qt6Network_DEFINITIONS}")
+    set(QT_LIBRARIES Qt6::Widgets Qt6::Network)
+  endif ()
+  if (XPDFWIDGET_PRINTING)
+    if (APPLE)
+      set(EXTRA_QT_LIBRARIES "-framework ApplicationServices")
+    elseif (UNIX)
+      find_package(Cups)
+      if (CUPS_FOUND)
+        set(EXTRA_QT_LIBRARIES ${CUPS_LIBRARIES})
+      else ()
+        set (XPDFWIDGET_PRINTING OFF)
+      endif ()
+    else ()
+      set(EXTRA_QT_LIBRARIES "")
+    endif ()
+  endif ()
+  # remove "-fPIE" here because we added "-fPIC" above
+  string(REPLACE "-fPIE" "" QT_CFLAGS "${Qt6Widgets_EXECUTABLE_COMPILE_FLAGS}")
+elseif (QT4_FOUND)
   message(STATUS "Qt4 found")
   if (XPDFWIDGET_PRINTING)
     if (APPLE)
@@ -261,9 +288,9 @@ elseif(QT4_FOUND)
       set(EXTRA_QT_LIBRARIES "")
     endif ()
   endif ()
-else()
+else ()
   message(STATUS "No Qt library found")
-endif()
+endif ()
 
 #--- look for libpaper
 find_library(PAPER_LIBRARY

@@ -202,6 +202,7 @@ struct JPXTileComp {
 
   //----- computed
   Guint x0, y0, x1, y1;		// bounds of the tile-comp, in ref coords
+  Guint x0r, y0r;		// x0 >> reduction, y0 >> reduction
   Guint w, h;			// data size = {x1 - x0, y1 - y0} >> reduction
 
   //----- image data
@@ -228,6 +229,8 @@ struct JPXTile {
   Guint x0, y0, x1, y1;		// bounds of the tile, in ref coords
   Guint maxNDecompLevels;	// max number of decomposition levels used
 				//   in any component in this tile
+  Guint maxNPrecincts;		// max number of precints in any
+				//   component/res level in this tile
 
   //----- progression order loop counters
   Guint comp;			// component
@@ -294,6 +297,7 @@ public:
 
 private:
 
+  void decodeImage();
   void fillReadBuf();
   void getImageParams2(int *bitsPerComponent, StreamColorSpaceMode *csMode);
   JPXDecodeResult readBoxes();
@@ -329,6 +333,7 @@ private:
 
   BufStream *bufStr;		// buffered stream (for lookahead)
 
+  GBool decoded;		// set when the image has been decoded
   Guint nComps;			// number of components
   Guint *bpc;			// bits per component, for each component
   Guint width, height;		// image size

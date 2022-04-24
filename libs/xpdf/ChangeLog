@@ -1,3 +1,8 @@
+2022-04-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* Import xpdf-4.04.
+	* version.ac: Adjust.
+
 2021-05-10  Karl Berry  <karl@freefriends.org>
 
 	* xpdf-src/xpdf/Error.cc (error): label error messages

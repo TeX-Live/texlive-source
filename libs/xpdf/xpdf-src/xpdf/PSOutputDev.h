@@ -264,6 +264,8 @@ public:
     { rotate0 = rotateA; }
   void setClip(double llx, double lly, double urx, double ury)
     { clipLLX0 = llx; clipLLY0 = lly; clipURX0 = urx; clipURY0 = ury; }
+  void setExpandSmallPages(GBool expand)
+    { expandSmallPages = expand; }
   void setUnderlayCbk(void (*cbk)(PSOutputDev *psOut, void *data),
 		      void *data)
     { underlayCbk = cbk; underlayCbkData = data; }
@@ -474,6 +476,7 @@ private:
   int rotate0;			// rotation angle (0, 90, 180, 270)
   double clipLLX0, clipLLY0,
          clipURX0, clipURY0;
+  GBool expandSmallPages;	// expand smaller pages to fill paper
   double tx, ty;		// global translation for current page
   double xScale, yScale;	// global scaling for current page
   int rotate;			// rotation angle for current page

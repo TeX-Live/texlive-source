@@ -35,6 +35,7 @@ static GBool dumpRaw = gFalse;
 static GBool list = gFalse;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
+static GBool verbose = gFalse;
 static GBool quiet = gFalse;
 static char cfgFileName[256] = "";
 static GBool printVersion = gFalse;
@@ -55,6 +56,8 @@ static ArgDesc argDesc[] = {
    "owner password (for encrypted files)"},
   {"-upw",    argString,   userPassword,   sizeof(userPassword),
    "user password (for encrypted files)"},
+  {"-verbose", argFlag,    &verbose,       0,
+   "print per-page status information"},
   {"-q",      argFlag,     &quiet,         0,
    "don't print any messages or errors"},
   {"-cfg",        argString,      cfgFileName,    sizeof(cfgFileName),
@@ -98,7 +101,14 @@ int main(int argc, char *argv[]) {
   imgRoot = argv[2];
 
   // read config file
+  if (cfgFileName[0] && !pathIsFile(cfgFileName)) {
+    error(errConfig, -1, "Config file '{0:s}' doesn't exist or isn't a file",
+	  cfgFileName);
+  }
   globalParams = new GlobalParams(cfgFileName);
+  if (verbose) {
+    globalParams->setPrintStatusInfo(verbose);
+  }
   if (quiet) {
     globalParams->setErrQuiet(quiet);
   }

@@ -469,6 +469,12 @@ void Splash::pipeRun(SplashPipe *pipe, int x0, int x1, int y,
 
     if (pipe->noTransparency && !state->blendFunc) {
 
+      //----- handle overprint
+
+      if (overprintMaskPtr) {
+	*overprintMaskPtr++ = 0xffffffff;
+      }
+
       //----- result color
 
       switch (bitmap->mode) {
@@ -650,7 +656,19 @@ void Splash::pipeRun(SplashPipe *pipe, int x0, int x1, int y,
 	// This path is only used when Splash::composite() is called to
 	// composite a non-isolated group onto the backdrop.  In this
 	// case, shape is the source (group) alpha.
-	t = (aDest * 255) / shape - aDest;
+	//
+	// In a nested non-isolated group, i.e., if the destination is
+	// also a non-isolated group (state->inNonIsolatedGroup), we
+	// need to compute the corrected alpha, because the
+	// destination is is storing group alpha (same computation as
+	// blitCorrectedAlpha).
+	if (alpha0Ptr) {
+	  t = *alpha0Ptr;
+	  t = (Guchar)(aDest + t - div255(aDest * t));
+	} else {
+	  t = aDest;
+	}
+	t = (t * 255) / shape - t;
 	switch (bitmap->mode) {
 #if SPLASH_CMYK
 	case splashModeCMYK8:
@@ -3916,10 +3934,13 @@ class ImageMaskScaler {
 public:
 
   // Set up a MaskScaler to scale from [srcWidth]x[srcHeight] to
-  // [scaledWidth]x[scaledHeight].
+  // [scaledWidth]x[scaledHeight].  The [interpolate] flag controls
+  // filtering on upsampling, and the [antialias] flag controls
+  // filtering on downsampling.
   ImageMaskScaler(SplashImageMaskSource aSrc, void *aSrcData,
 		  int aSrcWidth, int aSrcHeight,
-		  int aScaledWidth, int aScaledHeight, GBool aInterpolate);
+		  int aScaledWidth, int aScaledHeight,
+		  GBool aInterpolate, GBool aAntialias);
 
   ~ImageMaskScaler();
 
@@ -3934,10 +3955,13 @@ public:
 private:
 
   void vertDownscaleHorizDownscale();
+  void vertDownscaleHorizDownscaleThresh();
   void vertDownscaleHorizUpscaleNoInterp();
   void vertDownscaleHorizUpscaleInterp();
+  void vertDownscaleHorizUpscaleThresh();
   void vertUpscaleHorizDownscaleNoInterp();
   void vertUpscaleHorizDownscaleInterp();
+  void vertUpscaleHorizDownscaleThresh();
   void vertUpscaleHorizUpscaleNoInterp();
   void vertUpscaleHorizUpscaleInterp();
 
@@ -3979,7 +4003,7 @@ private:
 ImageMaskScaler::ImageMaskScaler(SplashImageMaskSource aSrc, void *aSrcData,
 				 int aSrcWidth, int aSrcHeight,
 				 int aScaledWidth, int aScaledHeight,
-				 GBool aInterpolate) {
+				 GBool aInterpolate, GBool aAntialias) {
   tmpBuf0 = NULL;
   tmpBuf1 = NULL;
   tmpBuf2 = NULL;
@@ -4002,9 +4026,15 @@ ImageMaskScaler::ImageMaskScaler(SplashImageMaskSource aSrc, void *aSrcData,
     tmpBuf0 = (Guchar *)gmalloc(srcWidth);
     accBuf = (Guint *)gmallocn(srcWidth, sizeof(Guint));
     if (scaledWidth <= srcWidth) {
-      scalingFunc = &ImageMaskScaler::vertDownscaleHorizDownscale;
+      if (!aAntialias) {
+	scalingFunc = &ImageMaskScaler::vertDownscaleHorizDownscaleThresh;
+      } else {
+	scalingFunc = &ImageMaskScaler::vertDownscaleHorizDownscale;
+      }
     } else {
-      if (aInterpolate) {
+      if (!aAntialias) {
+	scalingFunc = &ImageMaskScaler::vertDownscaleHorizUpscaleThresh;
+      } else if (aInterpolate) {
 	scalingFunc = &ImageMaskScaler::vertDownscaleHorizUpscaleInterp;
       } else {
 	scalingFunc = &ImageMaskScaler::vertDownscaleHorizUpscaleNoInterp;
@@ -4016,7 +4046,14 @@ ImageMaskScaler::ImageMaskScaler(SplashImageMaskSource aSrc, void *aSrcData,
     yq = scaledHeight % srcHeight;
     yt = 0;
     yn = 0;
-    if (aInterpolate) {
+    if (!aAntialias) {
+      tmpBuf0 = (Guchar *)gmalloc(srcWidth);
+      if (scaledWidth <= srcWidth) {
+	scalingFunc = &ImageMaskScaler::vertUpscaleHorizDownscaleThresh;
+      } else {
+	scalingFunc = &ImageMaskScaler::vertUpscaleHorizUpscaleNoInterp;
+      }
+    } else if (aInterpolate) {
       yInvScale = (SplashCoord)srcHeight / (SplashCoord)scaledHeight;
       tmpBuf0 = (Guchar *)gmalloc(srcWidth);
       tmpBuf1 = (Guchar *)gmalloc(srcWidth);
@@ -4099,6 +4136,43 @@ void ImageMaskScaler::vertDownscaleHorizDownscale() {
   }
 }
 
+void ImageMaskScaler::vertDownscaleHorizDownscaleThresh() {
+  //--- vert downscale
+  int yStep = yp;
+  yt += yq;
+  if (yt >= scaledHeight) {
+    yt -= scaledHeight;
+    ++yStep;
+  }
+  memset(accBuf, 0, srcWidth * sizeof(Guint));
+  for (int i = 0; i < yStep; ++i) {
+    (*src)(srcData, tmpBuf0);
+    for (int j = 0; j < srcWidth; ++j) {
+      accBuf[j] += tmpBuf0[j];
+    }
+  }
+
+  //--- horiz downscale
+  int acc;
+  int xt = 0;
+  int unscaledIdx = 0;
+  for (int scaledIdx = 0; scaledIdx < scaledWidth; ++scaledIdx) {
+    int xStep = xp;
+    xt += xq;
+    if (xt >= scaledWidth) {
+      xt -= scaledWidth;
+      ++xStep;
+    }
+
+    acc = 0;
+    for (int i = 0; i < xStep; ++i) {
+      acc += accBuf[unscaledIdx];
+      ++unscaledIdx;
+    }
+    line[scaledIdx] = acc > ((xStep * yStep) >> 1) ? (Guchar)255 : (Guchar)0;
+  }
+}
+
 void ImageMaskScaler::vertDownscaleHorizUpscaleNoInterp() {
   //--- vert downscale
   int yStep = yp;
@@ -4166,6 +4240,40 @@ void ImageMaskScaler::vertDownscaleHorizUpscaleInterp() {
       x1 = srcWidth - 1;
     }
     line[scaledIdx] = (Guchar)(int)(s0 * accBuf[x0] + s1 * accBuf[x1]);
+  }
+}
+
+void ImageMaskScaler::vertDownscaleHorizUpscaleThresh() {
+  //--- vert downscale
+  int yStep = yp;
+  yt += yq;
+  if (yt >= scaledHeight) {
+    yt -= scaledHeight;
+    ++yStep;
+  }
+  memset(accBuf, 0, srcWidth * sizeof(Guint));
+  for (int i = 0; i < yStep; ++i) {
+    (*src)(srcData, tmpBuf0);
+    for (int j = 0; j < srcWidth; ++j) {
+      accBuf[j] += tmpBuf0[j];
+    }
+  }
+
+  //--- horiz upscale
+  int xt = 0;
+  int scaledIdx = 0;
+  for (int srcIdx = 0; srcIdx < srcWidth; ++srcIdx) {
+    int xStep = xp;
+    xt += xq;
+    if (xt >= srcWidth) {
+      xt -= srcWidth;
+      ++xStep;
+    }
+    Guchar buf = accBuf[srcIdx] > (Guint)(yStep >> 1) ? (Guchar)255 : (Guchar)0;
+    for (int i = 0; i < xStep; ++i) {
+      line[scaledIdx] = buf;
+      ++scaledIdx;
+    }
   }
 }
 
@@ -4253,6 +4361,40 @@ void ImageMaskScaler::vertUpscaleHorizDownscaleInterp() {
       ++unscaledIdx;
     }
     line[scaledIdx] = (Guchar)((255 * acc) / xStep);
+  }
+}
+
+void ImageMaskScaler::vertUpscaleHorizDownscaleThresh() {
+  //--- vert upscale
+  if (yn == 0) {
+    yn = yp;
+    yt += yq;
+    if (yt >= srcHeight) {
+      yt -= srcHeight;
+      ++yn;
+    }
+    (*src)(srcData, tmpBuf0);
+  }
+  --yn;
+
+  //--- horiz downscale
+  int acc;
+  int xt = 0;
+  int unscaledIdx = 0;
+  for (int scaledIdx = 0; scaledIdx < scaledWidth; ++scaledIdx) {
+    int xStep = xp;
+    xt += xq;
+    if (xt >= scaledWidth) {
+      xt -= scaledWidth;
+      ++xStep;
+    }
+
+    acc = 0;
+    for (int i = 0; i < xStep; ++i) {
+      acc += tmpBuf0[unscaledIdx];
+      ++unscaledIdx;
+    }
+    line[scaledIdx] = acc > (xStep >> 1) ? (Guchar)255 : (Guchar)0;
   }
 }
 
@@ -4585,8 +4727,8 @@ SplashError Splash::clipToPath(SplashPath *path, GBool eo) {
   return state->clipToPath(path, eo);
 }
 
-void Splash::setSoftMask(SplashBitmap *softMask) {
-  state->setSoftMask(softMask);
+void Splash::setSoftMask(SplashBitmap *softMask, GBool deleteBitmap) {
+  state->setSoftMask(softMask, deleteBitmap);
 }
 
 void Splash::setInTransparencyGroup(SplashBitmap *groupBackBitmapA,
@@ -4606,6 +4748,41 @@ void Splash::setInTransparencyGroup(SplashBitmap *groupBackBitmapA,
 void Splash::forceDeferredInit(int y, int h) {
   useDestRow(y);
   useDestRow(y + h - 1);
+}
+
+// Check that alpha is 0 in the specified rectangle.
+// NB: This doesn't work correctly in a non-isolated group, because
+//     the rasterizer temporarily stores alpha_g instead of alpha.
+GBool Splash::checkTransparentRect(int x, int y, int w, int h) {
+  if (state->inNonIsolatedGroup) {
+    return gFalse;
+  }
+
+
+  if (!bitmap->alpha) {
+    return gFalse;
+  }
+  int yy0, yy1;
+  if (groupDestInitMode == splashGroupDestPreInit) {
+    yy0 = y;
+    yy1 = y + h - 1;
+  } else {
+    // both splashGroupDestInitZero and splashGroupDestInitCopy set
+    // alpha to zero, so anything outside of groupDestInit[YMin,YMax]
+    // will have alpha=0
+    yy0 = (y > groupDestInitYMin) ? y : groupDestInitYMin;
+    yy1 = (y + h - 1 < groupDestInitYMax) ? y + h - 1 : groupDestInitYMax;
+  }
+  Guchar *alphaP = &bitmap->alpha[yy0 * bitmap->alphaRowSize + x];
+  for (int yy = yy0; yy <= yy1; ++yy) {
+    for (int xx = 0; xx < w; ++xx) {
+      if (alphaP[xx] != 0) {
+	return gFalse;
+      }
+    }
+    alphaP += bitmap->getAlphaRowSize();
+  }
+  return gTrue;
 }
 
 void Splash::setTransfer(Guchar *red, Guchar *green, Guchar *blue,
@@ -5749,7 +5926,8 @@ struct SplashDrawImageMaskRowData {
 SplashError Splash::fillImageMask(GString *imageTag,
 				  SplashImageMaskSource src, void *srcData,
 				  int w, int h, SplashCoord *mat,
-				  GBool glyphMode, GBool interpolate) {
+				  GBool glyphMode, GBool interpolate,
+				  GBool antialias) {
   if (debugMode) {
     printf("fillImageMask: w=%d h=%d mat=[%.2f %.2f %.2f %.2f %.2f %.2f]\n",
 	   w, h, (double)mat[0], (double)mat[1], (double)mat[2],
@@ -5763,28 +5941,35 @@ SplashError Splash::fillImageMask(GString *imageTag,
 
   //--- compute image bbox, check clipping
   GBool flipsOnly = splashAbs(mat[1]) <= 0.0001 && splashAbs(mat[2]) <= 0.0001;
+  GBool rot90Only = splashAbs(mat[0]) <= 0.0001 && splashAbs(mat[3]) <= 0.0001;
   GBool horizFlip = gFalse;
   GBool vertFlip = gFalse;
   int xMin, yMin, xMax, yMax;
   if (flipsOnly) {
     horizFlip = mat[0] < 0;
     vertFlip = mat[3] < 0;
-    if (vertFlip) {
-      if (horizFlip) {    // bottom-up, mirrored
-	getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
-	getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
-      } else {            // bottom-up
-	getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
-	getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
-      }
+    if (horizFlip) {
+      getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
     } else {
-      if (horizFlip) {    // top-down, mirrored
-	getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
-	getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
-      } else {            // top-down
-	getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
-	getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
-      }
+      getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
+    }
+    if (vertFlip) {
+      getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
+    } else {
+      getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
+    }
+  } else if (rot90Only) {
+    horizFlip = mat[2] < 0;
+    vertFlip = mat[1] < 0;
+    if (horizFlip) {
+      getImageBounds(mat[2] + mat[4], mat[4], &xMin, &xMax);
+    } else {
+      getImageBounds(mat[4], mat[2] + mat[4], &xMin, &xMax);
+    }
+    if (vertFlip) {
+      getImageBounds(mat[1] + mat[5], mat[5], &yMin, &yMax);
+    } else {
+      getImageBounds(mat[5], mat[1] + mat[5], &yMin, &yMax);
     }
   } else {
     int xx = splashRound(mat[4]);		// (0,0)
@@ -5860,7 +6045,7 @@ SplashError Splash::fillImageMask(GString *imageTag,
   if (clipRes == splashClipAllInside) {
     drawRowFunc = &Splash::drawImageMaskRowNoClip;
   } else {
-    if (vectorAntialias) {
+    if (antialias) {
       drawRowFunc = &Splash::drawImageMaskRowClipAA;
     } else {
       drawRowFunc = &Splash::drawImageMaskRowClipNoAA;
@@ -5873,7 +6058,7 @@ SplashError Splash::fillImageMask(GString *imageTag,
       int scaledWidth = xMax - xMin;
       int scaledHeight = yMax - yMin;
       ImageMaskScaler scaler(src, srcData, w, h,
-			     scaledWidth, scaledHeight, interpolate);
+			     scaledWidth, scaledHeight, interpolate, antialias);
       Guchar *tmpLine = NULL;
       if (horizFlip) {
 	tmpLine = (Guchar *)gmalloc(scaledWidth);
@@ -5910,6 +6095,50 @@ SplashError Splash::fillImageMask(GString *imageTag,
 	}
       }
       gfree(tmpLine);
+    }
+
+  //--- 90/270 rotation
+  } else if (rot90Only && !veryLarge) {
+    if (clipRes != splashClipAllOutside) {
+
+      // scale the mask
+      int scaledWidth = yMax - yMin;
+      int scaledHeight = xMax - xMin;
+      ImageMaskScaler scaler(src, srcData, w, h,
+			     scaledWidth, scaledHeight, interpolate, antialias);
+      Guchar *scaledMask = (Guchar *)gmallocn(scaledHeight, scaledWidth);
+      Guchar *ptr = scaledMask;
+      for (int y = 0; y < scaledHeight; ++y) {
+	scaler.nextLine();
+	memcpy(ptr, scaler.data(), scaledWidth);
+	ptr += scaledWidth;
+      }
+
+      // draw it
+      Guchar *tmpLine = (Guchar *)gmalloc(scaledHeight);
+      for (int y = 0; y < scaledWidth; ++y) {
+	if (vertFlip) {
+	  ptr = scaledMask + (scaledWidth - 1 - y);
+	} else {
+	  ptr = scaledMask + y;
+	}
+	if (horizFlip) {
+	  ptr += (scaledHeight - 1) * scaledWidth;
+	  for (int x = 0; x < scaledHeight; ++x) {
+	    tmpLine[x] = *ptr;
+	    ptr -= scaledWidth;
+	  }
+	} else {
+	  for (int x = 0; x < scaledHeight; ++x) {
+	    tmpLine[x] = *ptr;
+	    ptr += scaledWidth;
+	  }
+	}
+	(this->*drawRowFunc)(&dd, tmpLine, xMin, yMin + y, scaledHeight);
+      }
+
+      gfree(tmpLine);
+      gfree(scaledMask);
     }
 
   //--- arbitrary transform
@@ -5963,7 +6192,7 @@ SplashError Splash::fillImageMask(GString *imageTag,
     Guchar *scaledMask = (Guchar *)gmallocn(scaledHeight, scaledWidth);
     if (downscaling) {
       ImageMaskScaler scaler(src, srcData, w, h,
-			     scaledWidth, scaledHeight, interpolate);
+			     scaledWidth, scaledHeight, interpolate, antialias);
       Guchar *ptr = scaledMask;
       for (int y = 0; y < scaledHeight; ++y) {
 	scaler.nextLine();
@@ -5982,7 +6211,7 @@ SplashError Splash::fillImageMask(GString *imageTag,
     }
 
     // draw it
-    if (interpolate) {
+    if (interpolate && antialias) {
       drawImageMaskArbitraryInterp(scaledMask,
 				   &dd, drawRowFunc, invMat,
 				   scaledWidth, scaledHeight,
@@ -6259,28 +6488,35 @@ SplashError Splash::drawImage(GString *imageTag,
 
   //--- compute image bbox, check clipping
   GBool flipsOnly = splashAbs(mat[1]) <= 0.0001 && splashAbs(mat[2]) <= 0.0001;
+  GBool rot90Only = splashAbs(mat[0]) <= 0.0001 && splashAbs(mat[3]) <= 0.0001;
   GBool horizFlip = gFalse;
   GBool vertFlip = gFalse;
   int xMin, yMin, xMax, yMax;
   if (flipsOnly) {
     horizFlip = mat[0] < 0;
     vertFlip = mat[3] < 0;
-    if (vertFlip) {
-      if (horizFlip) {    // bottom-up, mirrored
-	getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
-	getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
-      } else {            // bottom-up
-	getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
-	getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
-      }
+    if (horizFlip) {
+      getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
     } else {
-      if (horizFlip) {    // top-down, mirrored
-	getImageBounds(mat[0] + mat[4], mat[4], &xMin, &xMax);
-	getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
-      } else {            // top-down
-	getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
-	getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
-      }
+      getImageBounds(mat[4], mat[0] + mat[4], &xMin, &xMax);
+    }
+    if (vertFlip) {
+      getImageBounds(mat[3] + mat[5], mat[5], &yMin, &yMax);
+    } else {
+      getImageBounds(mat[5], mat[3] + mat[5], &yMin, &yMax);
+    }
+  } else if (rot90Only) {
+    horizFlip = mat[2] < 0;
+    vertFlip = mat[1] < 0;
+    if (horizFlip) {
+      getImageBounds(mat[2] + mat[4], mat[4], &xMin, &xMax);
+    } else {
+      getImageBounds(mat[4], mat[2] + mat[4], &xMin, &xMax);
+    }
+    if (vertFlip) {
+      getImageBounds(mat[1] + mat[5], mat[5], &yMin, &yMax);
+    } else {
+      getImageBounds(mat[5], mat[1] + mat[5], &yMin, &yMax);
     }
   } else {
     int xx = splashRound(mat[4]);		// (0,0)
@@ -6435,6 +6671,83 @@ SplashError Splash::drawImage(GString *imageTag,
       delete scaler;
     }
 
+  //--- 90/270 rotation
+  } else if (rot90Only && !veryLarge) {
+    if (clipRes != splashClipAllOutside) {
+
+      // scale the image
+      int scaledWidth = yMax - yMin;
+      int scaledHeight = xMax - xMin;
+      Guchar *scaledColor, *scaledAlpha;
+      GBool freeScaledImage;
+      getScaledImage(imageTag, src, srcData, w, h, nComps,
+		     scaledWidth, scaledHeight, srcMode, srcAlpha, interpolate,
+		     &scaledColor, &scaledAlpha, &freeScaledImage);
+
+      // draw it
+      Guchar *tmpLine = (Guchar *)gmallocn(scaledHeight, nComps);
+      Guchar *tmpAlphaLine = NULL;
+      if (srcAlpha) {
+	tmpAlphaLine = (Guchar *)gmalloc(scaledHeight);
+      }
+      for (int y = 0; y < scaledWidth; ++y) {
+	Guchar *ptr, *alphaPtr;
+	if (vertFlip) {
+	  ptr = scaledColor + (scaledWidth - 1 - y) * nComps;
+	  if (srcAlpha) {
+	    alphaPtr = scaledAlpha + (scaledWidth - 1 - y);
+	  }
+	} else {
+	  ptr = scaledColor + y * nComps;
+	  if (srcAlpha) {
+	    alphaPtr = scaledAlpha + y;
+	  }
+	}
+	if (horizFlip) {
+	  ptr += (scaledHeight - 1) * scaledWidth * nComps;
+	  Guchar *q = tmpLine;
+	  for (int x = 0; x < scaledHeight; ++x) {
+	    for (int i = 0; i < nComps; ++i) {
+	      *q++ = ptr[i];
+	    }
+	    ptr -= scaledWidth * nComps;
+	  }
+	  if (srcAlpha) {
+	    alphaPtr += (scaledHeight - 1) * scaledWidth;
+	    q = tmpAlphaLine;
+	    for (int x = 0; x < scaledHeight; ++x) {
+	      *q++ = *alphaPtr;
+	      alphaPtr -= scaledWidth;
+	    }
+	  }
+	} else {
+	  Guchar *q = tmpLine;
+	  for (int x = 0; x < scaledHeight; ++x) {
+	    for (int i = 0; i < nComps; ++i) {
+	      *q++ = ptr[i];
+	    }
+	    ptr += scaledWidth * nComps;
+	  }
+	  if (srcAlpha) {
+	    q = tmpAlphaLine;
+	    for (int x = 0; x < scaledHeight; ++x) {
+	      *q++ = *alphaPtr;
+	      alphaPtr += scaledWidth;
+	    }
+	  }
+	}
+	(this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
+			     xMin, yMin + y, scaledHeight);
+      }
+
+      gfree(tmpLine);
+      gfree(tmpAlphaLine);
+      if (freeScaledImage) {
+	gfree(scaledColor);
+	gfree(scaledAlpha);
+      }
+    }
+
   //--- arbitrary transform
   } else {
     // estimate of size of scaled image
@@ -6518,14 +6831,13 @@ ImageScaler *Splash::getImageScaler(GString *imageTag,
 				    GBool srcAlpha, GBool interpolate) {
   // Notes:
   //
-  // * If the scaled image width or height is greater than 2000, we
-  //   don't cache it.
+  // * If the scaled image is more than 8 Mpixels, we don't cache it.
   //
   // * Caching is done on the third consecutive use (second
   //   consecutive reuse) of an image; this avoids overhead on the
   //   common case of single-use images.
 
-  if (scaledWidth < 2000 && scaledHeight < 2000 &&
+  if (scaledWidth < 8000000 / scaledHeight &&
       imageCache->match(imageTag, scaledWidth, scaledHeight,
 			srcMode, srcAlpha, interpolate)) {
     if (imageCache->colorData) {
@@ -6570,13 +6882,12 @@ void Splash::getScaledImage(GString *imageTag,
 			    GBool *freeScaledImage) {
   // Notes:
   //
-  // * If the scaled image width or height is greater than 2000, we
-  //   don't cache it.
+  // * If the scaled image is more than 8 Mpixels, we don't cache it.
   //
   // * This buffers the whole image anyway, so there's no reason to
   //   skip caching on the first reuse.
 
-  if (scaledWidth >= 2000 || scaledHeight >= 2000) {
+  if (scaledWidth >= 8000000 / scaledHeight) {
     int lineSize;
     if (scaledWidth < INT_MAX / nComps) {
       lineSize = scaledWidth * nComps;

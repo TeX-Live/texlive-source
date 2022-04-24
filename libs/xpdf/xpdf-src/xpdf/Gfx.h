@@ -188,6 +188,7 @@ private:
   GBool subPage;		// is this a sub-page object?
   GBool printCommands;		// print the drawing commands (for debugging)
   GfxResources *res;		// resource stack
+  GfxFont *defaultFont;		// font substituted for undefined fonts
   int opCounter;		// operation counter (used to decide when
 				//   to check for an abort)
 

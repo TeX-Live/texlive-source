@@ -3,15 +3,19 @@ xpdfrc(5)                     File Formats Manual                    xpdfrc(5)
 
 
 NAME
-       xpdfrc - configuration file for Xpdf tools (version 4.03)
+       xpdfrc - configuration file for Xpdf tools (version 4.04)
 
 DESCRIPTION
-       All  of the Xpdf tools read a single configuration file.  If you have a
-       .xpdfrc file in your home directory, it will  be  read.   Otherwise,  a
-       system-wide configuration file will be read from /usr/local/etc/xpdfrc,
-       if it exists.  (This  is  its  default  location;  depending  on  build
-       options,  it  may  be  placed elsewhere.)  On Win32 systems, the xpdfrc
-       file should be placed in the same directory as the executables.
+       All of the Xpdf tools read a single configuration file.
+
+       On Linux/Unix/MacOS: if you have a .xpdfrc file in your home directory,
+       it will be read.  Otherwise, a system-wide configuration file  will  be
+       read  from  /etc/xpdfrc,  if it exists.  (This is its default location;
+       depending on build options, it may be placed elsewhere.)
+
+       On Windows: the file must be named xpdfrc (no leading  dot,  no  exten-
+       sion),  and  must  be  placed  in  the same directory as the executable
+       (pdftotext.exe, xpdf.exe, etc.)
 
        The xpdfrc file consists of a series of configuration options, one  per
        line.   Blank  lines  and  lines  starting  with  a  '#' (comments) are
@@ -385,8 +389,14 @@ TEXT CONTROL AND CHARACTER MAPPING
               character codes are GIDs (i.e., use an identity mapping).   This
               defaults to "yes".
 
+       useTrueTypeUnicodeMapping yes | no
+              If  set  to  "yes", the Xpdf tools will use the Unicode encoding
+              information in TrueType fonts (16-bit  only),  if  avaiable,  to
+              override  the PDF ToUnicode maps.  Otherwise, the ToUnicode maps
+              are always used when present.  This defaults to "no".
+
        dropFont font-name
-              Drop  all  text drawn in the specified font.  To drop text drawn
+              Drop all text drawn in the specified font.  To drop  text  drawn
               in unnamed fonts, use:
 
                   dropFont ""
@@ -395,114 +405,119 @@ TEXT CONTROL AND CHARACTER MAPPING
 
 RASTERIZER SETTINGS
        enableFreeType yes | no
-              Enables or disables use of FreeType (a TrueType /  Type  1  font
+              Enables  or  disables  use of FreeType (a TrueType / Type 1 font
               rasterizer).  This is only relevant if the Xpdf tools were built
               with  FreeType  support.   ("enableFreeType"  replaces  the  old
               "freetypeControl" option.)  This option defaults to "yes".
 
        disableFreeTypeHinting yes | no
-              If  this  is  set to "yes", FreeType hinting will be forced off.
+              If this is set to "yes", FreeType hinting will  be  forced  off.
               This option defaults to "no".
 
        antialias yes | no
-              Enables or disables font anti-aliasing in  the  PDF  rasterizer.
+              Enables  or  disables  font anti-aliasing in the PDF rasterizer.
               This option affects all font rasterizers.  ("antialias" replaces
               the anti-aliasing control provided by the old "t1libControl" and
               "freetypeControl" options.)  This default to "yes".
 
        vectorAntialias yes | no
-              Enables  or disables anti-aliasing of vector graphics in the PDF
+              Enables or disables anti-aliasing of vector graphics in the  PDF
               rasterizer.  This defaults to "yes".
 
+       imageMaskAntialias yes | no
+              Enables  or disables anti-aliasing of image masks (when downsam-
+              pling or upsampling) in the PDF rasterizer.   This  defaults  to
+              "yes".
+
        antialiasPrinting yes | no
-              If  this  is  "yes",  bitmaps  sent  to  the  printer  will   be
-              antialiased  (according to the "antialias" and "vectorAntialias"
-              settings).  If  this  is  "no",  printed  bitmaps  will  not  be
+              If   this  is  "yes",  bitmaps  sent  to  the  printer  will  be
+              antialiased (according to the "antialias" and  "vectorAntialias"
+              settings).   If  this  is  "no",  printed  bitmaps  will  not be
               antialiased.  This defaults to "no".
 
        strokeAdjust yes | no | cad
-              Sets  the  stroke  adjustment  mode.   If set to "no", no stroke
+              Sets the stroke adjustment mode.  If  set  to  "no",  no  stroke
               adjustment will be done.  If set to "yes", normal stroke adjust-
-              ment  will  be done: horizontal and vertical lines will be moved
-              by up to half a pixel to make  them  look  cleaner  when  vector
+              ment will be done: horizontal and vertical lines will  be  moved
+              by  up  to  half  a  pixel to make them look cleaner when vector
               anti-aliasing is enabled.  If set to "cad", a slightly different
               stroke adjustment algorithm will be used to ensure that lines of
               the same original width will always have the same adjusted width
-              (at the expense of allowing gaps and overlaps  between  adjacent
+              (at  the  expense of allowing gaps and overlaps between adjacent
               lines).  This defaults to "yes".
 
        forceAccurateTiling yes | no
-              If  this is set to "yes", the TilingType is forced to 2 (no dis-
-              tortion) for all tiling patterns, regardless of the  setting  in
+              If this is set to "yes", the TilingType is forced to 2 (no  dis-
+              tortion)  for  all tiling patterns, regardless of the setting in
               the pattern dictionary.  This defaults to "no".
 
        screenType dispersed | clustered | stochasticClustered
-              Sets  the halftone screen type, which will be used when generat-
-              ing a monochrome (1-bit) bitmap.  The  three  options  are  dis-
-              persed-dot  dithering, clustered-dot dithering (with a round dot
-              and  45-degree  screen  angle),  and  stochastic   clustered-dot
-              dithering.   By default, "stochasticClustered" is used for reso-
+              Sets the halftone screen type, which will be used when  generat-
+              ing  a  monochrome  (1-bit)  bitmap.  The three options are dis-
+              persed-dot dithering, clustered-dot dithering (with a round  dot
+              and   45-degree  screen  angle),  and  stochastic  clustered-dot
+              dithering.  By default, "stochasticClustered" is used for  reso-
               lutions of 300 dpi and higher, and "dispersed" is used for reso-
               lutions lower then 300 dpi.
 
        screenSize integer
-              Sets  the size of the (square) halftone screen threshold matrix.
-              By default, this is 4 for dispersed-dot dithering, 10 for  clus-
-              tered-dot   dithering,  and  100  for  stochastic  clustered-dot
+              Sets the size of the (square) halftone screen threshold  matrix.
+              By  default, this is 4 for dispersed-dot dithering, 10 for clus-
+              tered-dot  dithering,  and  100  for  stochastic   clustered-dot
               dithering.
 
        screenDotRadius integer
-              Sets the halftone screen dot radius.  This  is  only  used  when
-              screenType  is set to stochasticClustered, and it defaults to 2.
-              In clustered-dot mode, the dot radius  is  half  of  the  screen
+              Sets  the  halftone  screen  dot radius.  This is only used when
+              screenType is set to stochasticClustered, and it defaults to  2.
+              In  clustered-dot  mode,  the  dot  radius is half of the screen
               size.  Dispersed-dot dithering doesn't have a dot radius.
 
        screenGamma float
               Sets the halftone screen gamma correction parameter.  Gamma val-
-              ues greater than 1 make the output brighter; gamma  values  less
+              ues  greater  than 1 make the output brighter; gamma values less
               than 1 make it darker.  The default value is 1.
 
        screenBlackThreshold float
-              When  halftoning,  all values below this threshold are forced to
+              When halftoning, all values below this threshold are  forced  to
               solid black.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 0.
 
        screenWhiteThreshold float
-              When  halftoning,  all values above this threshold are forced to
+              When halftoning, all values above this threshold are  forced  to
               solid white.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 1.
 
        minLineWidth float
-              Set  the minimum line width, in device pixels.  This affects the
-              rasterizer only, not the PostScript converter  (except  when  it
-              uses  rasterization  to handle transparency).  The default value
+              Set the minimum line width, in device pixels.  This affects  the
+              rasterizer  only,  not  the PostScript converter (except when it
+              uses rasterization to handle transparency).  The  default  value
               is 0 (no minimum).
 
        enablePathSimplification yes | no
-              If set to "yes", simplify paths  by  removing  points  where  it
-              won't  make  a significant difference to the shape.  The default
+              If  set  to  "yes",  simplify  paths by removing points where it
+              won't make a significant difference to the shape.   The  default
               value is "no".
 
        overprintPreview yes | no
               If set to "yes", generate overprint preview output, honoring the
-              OP/op/OPM  settings  in the PDF file.  Ignored for non-CMYK out-
+              OP/op/OPM settings in the PDF file.  Ignored for  non-CMYK  out-
               put.  The default value is "no".
 
 VIEWER SETTINGS
        These settings only apply to the Xpdf GUI PDF viewer.
 
        initialZoom percentage | page | width
-              Sets the initial zoom factor.  A number specifies  a  zoom  per-
-              centage,  where  100 means 72 dpi.  You may also specify 'page',
-              to fit the page to the window size, or 'width', to fit the  page
+              Sets  the  initial  zoom factor.  A number specifies a zoom per-
+              centage, where 100 means 72 dpi.  You may also  specify  'page',
+              to  fit the page to the window size, or 'width', to fit the page
               width to the window width.
 
        defaultFitZoom percentage
               If xpdf is started with fit-page or fit-width zoom and no window
-              geometry, it will calculate a desired window size based  on  the
-              PDF  page  size and this defaultFitZoom value.  I.e., the window
-              size will be chosen such that exactly one page will fit  in  the
-              window  at  this  zoom factor (which must be a percentage).  The
+              geometry,  it  will calculate a desired window size based on the
+              PDF page size and this defaultFitZoom value.  I.e.,  the  window
+              size  will  be chosen such that exactly one page will fit in the
+              window at this zoom factor (which must be  a  percentage).   The
               default value is based on the screen resolution.
 
        initialDisplayMode single | continuous | sideBySideSingle | sideBySide-
@@ -515,23 +530,23 @@ VIEWER SETTINGS
               "no", xpdf opens with the toolbar hidden.  The default is "yes".
 
        initialSidebarState yes | no
-              If  set  to  "yes",  xpdf opens with the sidebar (tabs, outline,
-              etc.)  visible.  If set to "no", xpdf  opens  with  the  sidebar
+              If set to "yes", xpdf opens with  the  sidebar  (tabs,  outline,
+              etc.)   visible.   If  set  to "no", xpdf opens with the sidebar
               collapsed.  The default is "yes".
 
        initialSidebarWidth width
-              Sets  the  initial sidebar width, in pixels.  This is only rele-
-              vant if initialSidebarState is  "yes".   The  default  value  is
+              Sets the initial sidebar width, in pixels.  This is  only  rele-
+              vant  if  initialSidebarState  is  "yes".   The default value is
               zero, which tells xpdf to use an internal default size.
 
        initialSelectMode block | linear
-              Sets  the  initial selection mode.  The default setting is "lin-
+              Sets the initial selection mode.  The default setting  is  "lin-
               ear".
 
        paperColor color
               Set the "paper color", i.e., the background of the page display.
-              The  color  can be #RRGGBB (hexadecimal) or a named color.  This
-              option will not work well with PDF files  that  do  things  like
+              The color can be #RRGGBB (hexadecimal) or a named  color.   This
+              option  will  not  work  well with PDF files that do things like
               filling in white behind the text.
 
        matteColor color
@@ -540,7 +555,7 @@ VIEWER SETTINGS
               a named color.
 
        fullScreenMatteColor color
-              Set  the  matte  color  for  full-screen mode.  The color can be
+              Set the matte color for full-screen  mode.   The  color  can  be
               #RRGGBB (hexadecimal) or a named color.
 
        selectionColor color
@@ -548,14 +563,14 @@ VIEWER SETTINGS
               or a named color.
 
        reverseVideoInvertImages yes | no
-              If  set to "no", xpdf's reverse-video mode inverts text and vec-
-              tor graphic content, but not images.   If  set  to  "yes",  xpdf
+              If set to "no", xpdf's reverse-video mode inverts text and  vec-
+              tor  graphic  content,  but  not  images.  If set to "yes", xpdf
               inverts images as well.  The default is "no".
 
        popupMenuCmd title command ...
-              Add  a  command to the popup menu.  Title is the text to be dis-
-              played in the menu.  Command is an Xpdf command  (see  the  COM-
-              MANDS  section  of  the xpdf(1) man page for details).  Multiple
+              Add a command to the popup menu.  Title is the text to  be  dis-
+              played  in  the  menu.  Command is an Xpdf command (see the COM-
+              MANDS section of the xpdf(1) man page  for  details).   Multiple
               commands are separated by whitespace.
 
        maxTileWidth pixels
@@ -563,11 +578,11 @@ VIEWER SETTINGS
               ing pages.  This defaults to 1500.
 
        maxTileHeight pixels
-              Set  the maximum height of tiles to be used by xpdf when raster-
+              Set the maximum height of tiles to be used by xpdf when  raster-
               izing pages.  This defaults to 1500.
 
        tileCacheSize tiles
-              Set the maximum number of tiles to be cached by xpdf  when  ras-
+              Set  the  maximum number of tiles to be cached by xpdf when ras-
               terizing pages.  This defaults to 10.
 
        workerThreads numThreads
@@ -575,16 +590,16 @@ VIEWER SETTINGS
               izing pages.  This defaults to 1.
 
        launchCommand command
-              Sets the command executed when  you  click  on  a  "launch"-type
-              link.   The  intent  is  for  the command to be a program/script
-              which determines the file type and runs the appropriate  viewer.
-              The  command  line will consist of the file to be launched, fol-
-              lowed by any parameters specified with the  link.   Do  not  use
-              "%s"  in  "command".   By  default, this is unset, and Xpdf will
+              Sets  the  command  executed  when  you click on a "launch"-type
+              link.  The intent is for the  command  to  be  a  program/script
+              which  determines the file type and runs the appropriate viewer.
+              The command line will consist of the file to be  launched,  fol-
+              lowed  by  any  parameters  specified with the link.  Do not use
+              "%s" in "command".  By default, this is  unset,  and  Xpdf  will
               simply try to execute the file (after prompting the user).
 
        movieCommand command
-              Sets the command executed when you click on a movie  annotation.
+              Sets  the command executed when you click on a movie annotation.
               The string "%s" will be replaced with the movie file name.  This
               has no default value.
 
@@ -592,7 +607,7 @@ VIEWER SETTINGS
               Sets the default printer used in the viewer's print dialog.
 
        bind modifiers-key context command ...
-              Add a key or mouse button binding.  Modifiers  can  be  zero  or
+              Add  a  key  or  mouse button binding.  Modifiers can be zero or
               more of:
 
                   shift-
@@ -628,14 +643,14 @@ VIEWER SETTINGS
                   overLink / offLink        (mouse over link or not)
                   scrLockOn / scrLockOff    (scroll lock on/off)
 
-              The  context  string  can  include  only one of each pair in the
+              The context string can include only one  of  each  pair  in  the
               above list.
 
-              Command is an Xpdf command (see  the  COMMANDS  section  of  the
-              xpdf(1)  man page for details).  Multiple commands are separated
+              Command  is  an  Xpdf  command  (see the COMMANDS section of the
+              xpdf(1) man page for details).  Multiple commands are  separated
               by whitespace.
 
-              The bind command replaces any existing binding, but only  if  it
+              The  bind  command replaces any existing binding, but only if it
               was defined for the exact same modifiers, key, and context.  All
               tokens (modifiers, key, context, commands) are case-sensitive.
 
@@ -653,10 +668,10 @@ VIEWER SETTINGS
               See the xpdf(1) man page for more examples.
 
        unbind modifiers-key context
-              Removes a key binding established with the bind  command.   This
-              is  most useful to remove default key bindings before establish-
-              ing new ones (e.g., if the default  key  binding  is  given  for
-              "any"  context, and you want to create new key bindings for mul-
+              Removes  a  key binding established with the bind command.  This
+              is most useful to remove default key bindings before  establish-
+              ing  new  ones  (e.g.,  if  the default key binding is given for
+              "any" context, and you want to create new key bindings for  mul-
               tiple contexts).
 
        tabStateFile path
@@ -665,16 +680,32 @@ VIEWER SETTINGS
 
 MISCELLANEOUS SETTINGS
        drawAnnotations yes | no
-              If  set  to "no", annotations will not be drawn or printed.  The
+              If set to "no", annotations will not be drawn or  printed.   The
               default value is "yes".
 
        drawFormFields yes | no
-              If set to "no", form fields will not be drawn or  printed.   The
+              If  set  to "no", form fields will not be drawn or printed.  The
               default value is "yes".
 
+       enableXFA yes | no
+              If an XFA form is present, and this option is set to "yes", Xpdf
+              will parse the XFA form and use certain XFA information to over-
+              ride AcroForm information.  If set to "no", the  XFA  form  will
+              not be read.  The default value is "yes".
+
+       savePageNumbers yes | no
+              If  set to "yes", xpdf will save the current page numbers of all
+              open files in ~/.xpdf.pages when the files are closed  (or  when
+              quitting  xpdf).   Next time the file is opened, the last-viewed
+              page number will be restored.  The default value is "yes".
+
        printCommands yes | no
-              If  set  to  "yes", drawing commands are printed as they're exe-
+              If set to "yes", drawing commands are printed  as  they're  exe-
               cuted (useful for debugging).  This defaults to "no".
+
+       printStatusInfo
+              If  set to "yes", print a status message (to stdout) before each
+              page is processed.  This defaults to "no".
 
        errQuiet yes | no
               If set to "yes", this suppresses all error and warning  messages
@@ -733,7 +764,7 @@ EXAMPLES
 
 
 FILES
-       /usr/local/etc/xpdfrc
+       /etc/xpdfrc
               This  is  the default location for the system-wide configuration
               file.  Depending on build options, it may be placed elsewhere.
 
@@ -742,7 +773,7 @@ FILES
               read in place of the system-wide file.
 
 AUTHOR
-       The  Xpdf  software  and  documentation are copyright 1996-2021 Glyph &
+       The  Xpdf  software  and  documentation are copyright 1996-2022 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -752,4 +783,4 @@ SEE ALSO
 
 
 
-                                  28 Jan 2021                        xpdfrc(5)
+                                  18 Apr 202                         xpdfrc(5)

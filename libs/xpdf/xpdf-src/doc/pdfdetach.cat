@@ -4,7 +4,7 @@ pdfdetach(1)                General Commands Manual               pdfdetach(1)
 
 NAME
        pdfdetach  -  Portable  Document  Format  (PDF)  document embedded file
-       extractor (version 4.03)
+       extractor (version 4.04)
 
 SYNOPSIS
        pdfdetach [options] [PDF-file]
@@ -16,9 +16,9 @@ DESCRIPTION
 CONFIGURATION FILE
        Pdfdetach  reads  a  configuration  file at startup.  It first tries to
        find the user's private config file, ~/.xpdfrc.  If that doesn't exist,
-       it looks for a system-wide config file, typically /usr/local/etc/xpdfrc
-       (but this location can be changed when  pdfinfo  is  built).   See  the
-       xpdfrc(5) man page for details.
+       it looks for a system-wide config file, typically /etc/xpdfrc (but this
+       location can be changed when pdfinfo is built).  See the xpdfrc(5)  man
+       page for details.
 
 OPTIONS
        Some  of  the following options can be set with configuration file com-
@@ -79,7 +79,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdfinfo software and documentation are copyright 1996-2021 Glyph  &
+       The pdfinfo software and documentation are copyright 1996-2022 Glyph  &
        Cog, LLC.
 
 SEE ALSO
@@ -89,4 +89,4 @@ SEE ALSO
 
 
 
-                                  28 Jan 2021                     pdfdetach(1)
+                                  18 Apr 2022                     pdfdetach(1)

@@ -4,7 +4,7 @@ pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 4.03)
+       (PNG) converter (version 4.04)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -22,9 +22,9 @@ DESCRIPTION
 CONFIGURATION FILE
        Pdftopng reads a configuration file at startup.  It first tries to find
        the user's private config file, ~/.xpdfrc.  If that doesn't  exist,  it
-       looks  for  a  system-wide config file, typically /usr/local/etc/xpdfrc
-       (but this location can be changed when pdftopng  is  built).   See  the
-       xpdfrc(5) man page for details.
+       looks  for  a  system-wide config file, typically /etc/xpdfrc (but this
+       location can be changed when pdftopng is built).  See the xpdfrc(5) man
+       page for details.
 
 OPTIONS
        Many  of  the following options can be set with configuration file com-
@@ -70,6 +70,10 @@ OPTIONS
        -upw password
               Specify the user password for the PDF file.
 
+       -verbose
+              Print  a status message (to stdout) before processing each page.
+              [config file: printStatusInfo]
+
        -q     Don't print any messages or errors.  [config file: errQuiet]
 
        -v     Print copyright and version information.
@@ -90,14 +94,14 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The pdftopng software and documentation are copyright 1996-2021 Glyph &
+       The pdftopng software and documentation are copyright 1996-2022 Glyph &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
+       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdfimages(1), xpdfrc(5)
        http://www.xpdfreader.com/
 
 
 
-                                  28 Jan 2021                      pdftopng(1)
+                                  18 Apr 2022                      pdftopng(1)

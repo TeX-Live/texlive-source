@@ -421,7 +421,15 @@ void PDFCore::finishUpdate(GBool addToHist, GBool checkForChangedFile) {
   }
 
   // redraw
-  invalidateWholeWindow();
+  // - if the bitmap is available (e.g., we just scrolled), we want to
+  //   redraw immediately; if not, postpone the redraw until a
+  //   tileDone or tick (incremental update) to avoid "flashing" the
+  //   screen (drawing a blank background, followed by the actual
+  //   content slightly later)
+  getWindowBitmap(gTrue);
+  if (bitmapFinished) {
+    invalidateWholeWindow();
+  }
   updateScrollbars();
 
   // add to history
@@ -436,21 +444,28 @@ void PDFCore::addToHistory() {
 
   cur = &history[historyCur];
   h.page = tileMap->getMidPage();
+  h.fileName = NULL;
 #ifdef _WIN32
   if (doc->getFileNameU()) {
-    h.fileName = (wchar_t *)gmallocn(MAX_PATH + 1, sizeof(wchar_t));
-    if (GetFullPathNameW(doc->getFileNameU(), MAX_PATH + 1,
-			 h.fileName, NULL) == 0) {
-      h.fileName = NULL;
+    wchar_t dummy;
+    // NB: if the buffer is too small, GetFullPathNameW returns a
+    // *maximum* required buffer size, which may be larger than the
+    // size actually used by the second call (it looks like it just
+    // adds the size of the current directory and the sizef of the
+    // input path)
+    DWORD nChars = GetFullPathNameW(doc->getFileNameU(), 1, &dummy, NULL);
+    if (nChars > 0) {
+      h.fileName = (wchar_t *)gmallocn(nChars, sizeof(wchar_t));
+      if (GetFullPathNameW(doc->getFileNameU(), nChars,
+			   h.fileName, NULL) == 0) {
+	gfree(h.fileName);
+	h.fileName = NULL;
+      }
     }
-  } else {
-    h.fileName = NULL;
   }
 #else
   if (doc->getFileName()) {
     h.fileName = doc->getFileName()->copy();
-  } else {
-    h.fileName = NULL;
   }
 #endif
   if (historyBLen > 0 && h.page == cur->page) {

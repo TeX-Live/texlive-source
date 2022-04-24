@@ -224,6 +224,11 @@ Annot::Annot(PDFDoc *docA, Dict *dict, Ref *refA) {
     }
   }
   obj1.free();
+  // Acrobat ignores borders with unreasonable widths
+  if (borderWidth > 1 && (borderWidth > xMax - xMin ||
+			  borderWidth > yMax - yMin)) {
+    borderWidth = 0;
+  }
   if (dict->lookup("C", &obj1)->isArray() &&
       (obj1.arrayGetLength() == 1 ||
        obj1.arrayGetLength() == 3 ||

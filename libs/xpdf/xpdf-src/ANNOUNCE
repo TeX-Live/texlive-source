@@ -1,4 +1,4 @@
-Subject: ANNOUNCE: Xpdf 4.03 - a PDF viewer and related tools
+Subject: ANNOUNCE: Xpdf 4.04 - a PDF viewer and related tools
 
 Glyph & Cog, LLC is pleased to announce a new version of Xpdf, the
 open source Portable Document Format (PDF) viewer.  The Xpdf project
@@ -10,7 +10,7 @@ non-graphical components (pdftops, pdftotext, etc.) run on Linux,
 Unix, Windows, MacOSX, and pretty much any other system with a decent
 C++ compiler.
 
-4.03 is primarily a bug fix release.  There are some new features:
+4.04 is primarily a bug fix release.  There are some new features:
 
 * XpdfReader improvements:
   - Implemented selection extension via shift-click, and word/line

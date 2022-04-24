@@ -1,11 +1,11 @@
 Xpdf
 ====
 
-version 4.03
-2021-jan-28
+version 4.04
+2022-apr-18
 
 The Xpdf software and documentation are
-copyright 1996-2021 Glyph & Cog, LLC.
+copyright 1996-2022 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
@@ -33,7 +33,7 @@ different systems.
 
     - CMake 2.8.8 or newer
     - FreeType 2.0.5 or newer
-    - Qt 4.8.x or 5.x (for xpdf only)
+    - Qt 5.x or 6.x (for xpdf only)
     - libpng (for pdftoppm and pdftohtml)
     - zlib (for pdftoppm and pdftohtml)
 

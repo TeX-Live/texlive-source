@@ -1882,10 +1882,10 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
     idet = 1 / idet;
     clipXC = 0.5 * (clipXMin + clipXMax);
     clipYC = 0.5 * (clipYMin + clipYMax);
-    ix = (int)((yStepX * (tileYMin - clipYC) - (tileXMin - clipXC) * yStepY)
-	       * idet + 0.5);
-    iy = (int)((xStepX * (clipYC - tileYMin) - (clipXC - tileXMin) * xStepY)
-	       * idet + 0.5);
+    ix = (int)floor((yStepX * (tileYMin - clipYC)
+		     - (tileXMin - clipXC) * yStepY) * idet + 0.5);
+    iy = (int)floor((xStepX * (clipYC - tileYMin)
+		     - (clipXC - tileXMin) * xStepY) * idet + 0.5);
     adjXMin = (int)floor(tileXMin + ix * xStepX + iy * yStepX + 0.5);
     adjYMin = (int)floor(tileYMin + ix * xStepY + iy * yStepY + 0.5);
     sx = tileW / (tileXMax - tileXMin);
@@ -1895,38 +1895,6 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
     yStepX = (int)floor(sx * yStepX + 0.5);
     yStepY = (int)floor(sy * yStepY + 0.5);
   }
-
-  // compute tile matrix = PTM * BTM * Mtranslate * Mscale * iCTM
-  //                     = mat * CTM * Mtranslate * Mscale * iCTM
-  ctm = state->getCTM();
-  idet = 1 / (ctm[0] * ctm[3] - ctm[1] * ctm[2]);
-  ictm[0] = ctm[3] * idet;
-  ictm[1] = -ctm[1] * idet;
-  ictm[2] = -ctm[2] * idet;
-  ictm[3] = ctm[0] * idet;
-  ictm[4] = (ctm[2] * ctm[5] - ctm[3] * ctm[4]) * idet;
-  ictm[5] = (ctm[1] * ctm[4] - ctm[0] * ctm[5]) * idet;
-  // mat * CTM
-  mat1[0] = mat[0] * ctm[0] + mat[1] * ctm[2];
-  mat1[1] = mat[0] * ctm[1] + mat[1] * ctm[3];
-  mat1[2] = mat[2] * ctm[0] + mat[3] * ctm[2];
-  mat1[3] = mat[2] * ctm[1] + mat[3] * ctm[3];
-  mat1[4] = mat[4] * ctm[0] + mat[5] * ctm[2] + ctm[4];
-  mat1[5] = mat[4] * ctm[1] + mat[5] * ctm[3] + ctm[5];
-  // mat * CTM * (Mtranslate * Mscale)
-  mat2[0] = mat1[0] * sx;
-  mat2[1] = mat1[1] * sy;
-  mat2[2] = mat1[2] * sx;
-  mat2[3] = mat1[3] * sy;
-  mat2[4] = mat1[4] * sx - sx * tileXMin;
-  mat2[5] = mat1[5] * sy - sy * tileYMin;
-  // mat * CTM * (Mtranslate * Mscale) * iCTM
-  tileMat[0] = mat2[0] * ictm[0] + mat2[1] * ictm[2];
-  tileMat[1] = mat2[0] * ictm[1] + mat2[1] * ictm[3];
-  tileMat[2] = mat2[2] * ictm[0] + mat2[3] * ictm[2];
-  tileMat[3] = mat2[2] * ictm[1] + mat2[3] * ictm[3];
-  tileMat[4] = mat2[4] * ictm[0] + mat2[5] * ictm[2] + ictm[4];
-  tileMat[5] = mat2[4] * ictm[1] + mat2[5] * ictm[3] + ictm[5];
 
   // compute tiling range:
   // - look at the four corners of the clipping bbox
@@ -1989,10 +1957,65 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   } else if (ty > tyMax) {
     tyMax = ty;
   }
-  ixMin = (int)floor(txMin);
-  ixMax = (int)ceil(txMax);
-  iyMin = (int)floor(tyMin);
-  iyMax = (int)ceil(tyMax);
+  ixMin = (int)ceil(txMin);
+  ixMax = (int)floor(txMax) + 1;
+  iyMin = (int)ceil(tyMin);
+  iyMax = (int)floor(tyMax) + 1;
+
+  // special case: pattern tile is larger than clipping bbox
+  if (ixMax - ixMin == 1 && iyMax - iyMin == 1) {
+    // reduce the tile size to just the clipping bbox -- this improves
+    // performance in cases where just a small portion of one tile is
+    // needed
+    tileW = (int)(clipXMax - clipXMin + 0.5);
+    tileH = (int)(clipYMax - clipYMin + 0.5);
+    if (tileW < 1) {
+      tileW = 1;
+    }
+    if (tileH < 1) {
+      tileH = 1;
+    }
+    tileXMin += clipXMin - (adjXMin + ixMin * xStepX + iyMin * yStepX);
+    tileYMin += clipYMin - (adjYMin + ixMin * xStepY + iyMin * yStepY);
+    ixMin = 0;
+    iyMin = 0;
+    ixMax = 1;
+    iyMax = 1;
+    adjXMin = clipXMin;
+    adjYMin = clipYMin;
+  }
+
+  // compute tile matrix = PTM * BTM * Mtranslate * Mscale * iCTM
+  //                     = mat * CTM * Mtranslate * Mscale * iCTM
+  ctm = state->getCTM();
+  idet = 1 / (ctm[0] * ctm[3] - ctm[1] * ctm[2]);
+  ictm[0] = ctm[3] * idet;
+  ictm[1] = -ctm[1] * idet;
+  ictm[2] = -ctm[2] * idet;
+  ictm[3] = ctm[0] * idet;
+  ictm[4] = (ctm[2] * ctm[5] - ctm[3] * ctm[4]) * idet;
+  ictm[5] = (ctm[1] * ctm[4] - ctm[0] * ctm[5]) * idet;
+  // mat * CTM
+  mat1[0] = mat[0] * ctm[0] + mat[1] * ctm[2];
+  mat1[1] = mat[0] * ctm[1] + mat[1] * ctm[3];
+  mat1[2] = mat[2] * ctm[0] + mat[3] * ctm[2];
+  mat1[3] = mat[2] * ctm[1] + mat[3] * ctm[3];
+  mat1[4] = mat[4] * ctm[0] + mat[5] * ctm[2] + ctm[4];
+  mat1[5] = mat[4] * ctm[1] + mat[5] * ctm[3] + ctm[5];
+  // mat * CTM * (Mtranslate * Mscale)
+  mat2[0] = mat1[0] * sx;
+  mat2[1] = mat1[1] * sy;
+  mat2[2] = mat1[2] * sx;
+  mat2[3] = mat1[3] * sy;
+  mat2[4] = mat1[4] * sx - sx * tileXMin;
+  mat2[5] = mat1[5] * sy - sy * tileYMin;
+  // mat * CTM * (Mtranslate * Mscale) * iCTM
+  tileMat[0] = mat2[0] * ictm[0] + mat2[1] * ictm[2];
+  tileMat[1] = mat2[0] * ictm[1] + mat2[1] * ictm[3];
+  tileMat[2] = mat2[2] * ictm[0] + mat2[3] * ictm[2];
+  tileMat[3] = mat2[2] * ictm[1] + mat2[3] * ictm[3];
+  tileMat[4] = mat2[4] * ictm[0] + mat2[5] * ictm[2] + ictm[4];
+  tileMat[5] = mat2[4] * ictm[1] + mat2[5] * ictm[3] + ictm[5];
 
   // create a temporary bitmap
   origBitmap = bitmap;
@@ -2068,8 +2091,8 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   } else {
     for (iy = iyMin; iy < iyMax; ++iy) {
       for (ix = ixMin; ix < ixMax; ++ix) {
-	x = (int)(adjXMin + ix * xStepX + iy * yStepX + 0.5);
-	y = (int)(adjYMin + ix * xStepY + iy * yStepY + 0.5);
+	x = (int)floor(adjXMin + ix * xStepX + iy * yStepX + 0.5);
+	y = (int)floor(adjYMin + ix * xStepY + iy * yStepY + 0.5);
 	if (overprintMaskBitmap) {
 	  splash->compositeWithOverprint(tileBitmap, overprintMaskBitmap,
 					 0, 0, x, y, tileW, tileH,
@@ -2722,7 +2745,8 @@ void SplashOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
   imgTag = makeImageTag(ref, gfxRenderingIntentRelativeColorimetric, NULL);
   splash->fillImageMask(imgTag,
 			&imageMaskSrc, &imgMaskData, width, height, mat,
-			t3GlyphStack != NULL, interpolate);
+			t3GlyphStack != NULL, interpolate,
+			globalParams->getImageMaskAntialias());
 
   if (inlineImg) {
     while (imgMaskData.y < height) {
@@ -2772,12 +2796,16 @@ void SplashOutputDev::setSoftMaskFromImageMask(GfxState *state,
 		     mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
   maskSplash->setEnablePathSimplification(
 		     globalParams->getEnablePathSimplification());
+  if (splash->getSoftMask()) {
+    maskSplash->setSoftMask(splash->getSoftMask(), gFalse);
+  }
   clearMaskRegion(state, maskSplash, 0, 0, 1, 1);
   maskColor[0] = 0xff;
   maskSplash->setFillPattern(new SplashSolidColor(maskColor));
   imgTag = makeImageTag(ref, gfxRenderingIntentRelativeColorimetric, NULL);
   maskSplash->fillImageMask(imgTag, &imageMaskSrc, &imgMaskData,
-			    width, height, mat, gFalse, interpolate);
+			    width, height, mat, gFalse, interpolate,
+			    globalParams->getImageMaskAntialias());
   delete imgTag;
   delete imgMaskData.imgStr;
   str->close();
@@ -3273,7 +3301,8 @@ void SplashOutputDev::drawMaskedImage(GfxState *state, Object *ref,
     maskSplash->setFillPattern(new SplashSolidColor(maskColor));
     // use "glyph mode" here to get the correct scaled size
     maskSplash->fillImageMask(NULL, &imageMaskSrc, &imgMaskData,
-			      maskWidth, maskHeight, mat, gTrue, interpolate);
+			      maskWidth, maskHeight, mat, gTrue, interpolate,
+			      globalParams->getImageMaskAntialias());
     delete imgMaskData.imgStr;
     maskStr->close();
     delete maskSplash;
@@ -3818,10 +3847,10 @@ void SplashOutputDev::clearMaskRegion(GfxState *state,
   }
 }
 
-void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
-					     GfxColorSpace *blendingColorSpace,
-					     GBool isolated, GBool knockout,
-					     GBool forSoftMask) {
+GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
+					      GfxColorSpace *blendingColorSpace,
+					      GBool isolated, GBool knockout,
+					      GBool forSoftMask) {
   SplashTransparencyGroup *transpGroup;
   SplashBitmap *backdropBitmap;
   SplashColor color;
@@ -3914,6 +3943,28 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   }
   if (h < 1) {
     h = 1;
+  }
+
+  // optimization: a non-isolated group drawn with alpha=1 and
+  // Blend=Normal and backdrop alpha=0 is equivalent to drawing
+  // directly onto the backdrop (i.e., a regular non-t-group Form)
+  // notes:
+  // - if we are already in a non-isolated group, it means the
+  //   backdrop alpha is non-zero (otherwise the parent non-isolated
+  //   group would have been optimized away)
+  // - if there is a soft mask in place, then source alpha is not 1
+  //   (i.e., source alpha = fillOpacity * softMask)
+  // - both the parent and child groups must be non-knockout
+  if (!isolated &&
+      !splash->getInNonIsolatedGroup() &&
+      !knockout &&
+      !splash->getInKnockoutGroup() &&
+      !forSoftMask &&
+      !splash->getSoftMask() &&
+      state->getFillOpacity() == 1 &&
+      state->getBlendMode() == gfxBlendNormal &&
+      splash->checkTransparentRect(tx, ty, w, h)) {
+    return gFalse;
   }
 
   // push a new stack entry
@@ -4042,6 +4093,8 @@ void SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   state->shiftCTM(-tx, -ty);
   updateCTM(state, 0, 0, 0, 0, 0, 0);
   ++nestCount;
+
+  return gTrue;
 }
 
 void SplashOutputDev::endTransparencyGroup(GfxState *state) {
