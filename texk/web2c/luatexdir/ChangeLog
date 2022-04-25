@@ -1,3 +1,9 @@
+2022-04-25  Luigi Scarso <luigi.scarso@gmail.com>
+    * kpse find_file and lookup also search in --output-directory
+
+2022-04-21  Luigi Scarso <luigi.scarso@gmail.com>
+    * Wrong array size extended node_fields_whatsit_pdf_action (HH)
+
 2022-04-18 Luigi Scarso <luigi.scarso@gmail.com>
     * Fix for Bug: Null-byte in csname not handled correctly (thanks to H. Menke)
 
