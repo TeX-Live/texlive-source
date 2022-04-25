@@ -3414,12 +3414,11 @@ find_input_file(integer s)
 #endif
     /* Look in -output-directory first, if the filename is not
        absolute.  This is because we want the pdf* functions to
-       be able to find the same files as \openin */
+       be able to find the same files as \openin.  */
     if (output_directory && !kpse_absolute_p (filename, false)) {
-        string pathname;
-
-        pathname = concat3(output_directory, DIR_SEP_STRING, filename);
-        if (!access(pathname, R_OK) && !dir_p (pathname)) {
+        string pathname = concat3(output_directory, DIR_SEP_STRING, filename);
+        /* If there happens to be a directory by that name, never mind.  */
+        if (access(pathname, R_OK) == 0 && !dir_p (pathname)) {
 #if IS_pTeX && !defined(WIN32)
             if (fname1) free(filename);
 #endif
