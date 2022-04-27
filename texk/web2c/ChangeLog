@@ -1,3 +1,7 @@
+2022-04-27  Andreas Scherer  <https://ascherer.github.io>
+
+	* weav-twill.ch: Avoid non-POSIX conflict with Solaris 11.4.
+
 2022-04-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* weav-twill.ch: My name is 'twill'.
