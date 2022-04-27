@@ -1,3 +1,6 @@
+2022-04-26  Luigi Scarso <luigi.scarso@gmail.com>
+    * \mathitalicsmode=2 (enforce old school fonts italics code path) (H.Hagen)
+
 2022-04-25  Luigi Scarso <luigi.scarso@gmail.com>
     * kpse find_file and lookup also search in --output-directory
 
