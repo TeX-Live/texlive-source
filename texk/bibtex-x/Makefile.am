@@ -116,11 +116,13 @@ EXTRA_DIST += tests/perioda.aux tests/perioda.bbl tests/testperioda.bib tests/te
 	tests/substra.aux tests/substra.bbl tests/testsubstra.bib tests/testsubstr.bst \
 	tests/txtprfxa.aux tests/txtprfxa.bbl tests/testtxtprfx.bst \
 	tests/widtha.aux tests/widtha.bbl tests/testwidtha.bib tests/testwidth.bst \
-	tests/chara.aux tests/chara.bbl tests/testchara.bib tests/testchar.bst
+	tests/chara.aux tests/chara.bbl tests/testchara.bib tests/testchar.bst \
+	tests/namea.aux tests/namea.bbl tests/ltnbib.bib tests/testname.bst
 DISTCLEANFILES += tests/xsubstra.aux tests/xsubstra.bbl tests/xsubstra.blg \
 	tests/xtxtprfxa.aux tests/txtprfxa.bbl tests/xtxtprfxa.blg \
 	tests/xwidtha.aux tests/widtha.bbl tests/xwidtha.blg \
-	tests/xchara.aux tests/xchara.bbl tests/xchara.blg
+	tests/xchara.aux tests/xchara.bbl tests/xchara.blg \
+	tests/xnamea.aux tests/xnamea.bbl tests/xnamea.blg
 ##
 ## tests/bibtexu-basic.test
 EXTRA_DIST += tests/ubasic.aux tests/ubasic.bbl tests/ubasic.bib
@@ -147,12 +149,16 @@ EXTRA_DIST += tests/periodu.aux tests/periodu.bbl tests/testperiodu.bib \
 	tests/substru.aux tests/substru.bbl tests/testsubstru.bib \
 	tests/txtprfxu.aux tests/txtprfxu.bbl \
 	tests/widthu.aux tests/widthu.bbl tests/testwidthu.bib \
-	tests/charu.aux tests/charu.bbl tests/testcharu.bib
+	tests/charu.aux tests/charu.bbl tests/testcharu.bib \
+	tests/nameu.aux tests/nameu.bbl tests/mlgbib.bib \
+	tests/iscjku.aux tests/iscjku.bbl tests/testiscjku.bib tests/testiscjk.bst
 DISTCLEANFILES += tests/xperiodu.aux tests/xperiodu.bbl tests/xperiodu.blg \
 	tests/xsubstru.aux tests/xsubstru.bbl tests/xsubstru.blg \
 	tests/xtxtprfxu.aux tests/txtprfxu.bbl tests/xtxtprfxu.blg \
 	tests/xwidthu.aux tests/widthu.bbl tests/xwidthu.blg \
-	tests/xcharu.aux tests/xcharu.bbl tests/xcharu.blg
+	tests/xcharu.aux tests/xcharu.bbl tests/xcharu.blg \
+	tests/xnameu.aux tests/xnameu.bbl tests/xnameu.blg \
+	tests/xiscjku.aux tests/xiscjku.bbl tests/xiscjku.blg
 
 ## Not used
 ##

@@ -38,6 +38,11 @@ cp $srcdir/tests/chara.aux tests/xchara.aux
 ./bibtex8 tests/xchara || rc=11
 diff $srcdir/tests/chara.bbl tests/xchara.bbl || rc=12
 
+## test for num.names$, format.name$
+cp $srcdir/tests/namea.aux tests/xnamea.aux
+./bibtexu tests/xnamea || rc=13
+diff $srcdir/tests/namea.bbl tests/xnamea.bbl || rc=14
+
 
 exit $rc
 

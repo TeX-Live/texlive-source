@@ -4,9 +4,7 @@
 **
 **  MODULE
 **
-**      $RCSfile: gblprocs.h,v $
-**      $Revision: 3.71 $
-**      $Date: 1996/08/18 20:47:30 $
+**      file: gblprocs.h
 **
 **  DESCRIPTION
 **
@@ -392,6 +390,11 @@ void                    x_type (void);
 void                    x_warning (void);
 void                    x_width (void);
 void                    x_write (void);
+void                    x_bit_and (void);
+void                    x_bit_or (void);
+#ifdef UTF_8
+void                    x_is_cjk_string (void);
+#endif
 
 
 /*

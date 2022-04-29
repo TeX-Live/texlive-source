@@ -4,9 +4,7 @@
 **
 **  MODULE
 **
-**      $RCSfile: bibtex-4.c,v $
-**      $Revision: 3.71 $
-**      $Date: 1996/08/18 20:47:30 $
+**      file: bibtex-4.c
 **
 **  DESCRIPTION
 **
@@ -965,7 +963,14 @@ BEGIN
       END
       if (ex_buf_ptr < ex_buf_length)
       BEGIN
-	ex_buf_ptr = ex_buf_ptr - 4;
+#ifdef UTF_8
+        if (ex_buf[ex_buf_ptr-3]==0xE3 || ex_buf[ex_buf_ptr-3]==0xEF)
+          /* expect U+3001 "、" or U+FF0C "，" :: Ideographic/Fulwidth Comma */
+          ex_buf_ptr = ex_buf_ptr - 3;
+        else
+          /* expect "and " or "AND " */
+#endif
+        ex_buf_ptr = ex_buf_ptr - 4;
       END
       if (num_names < pop_lit2)
       BEGIN
@@ -2493,7 +2498,7 @@ END
 #ifdef UTF_8
 Integer_T    char_width_uni (ASCIICode_T * str)
 BEGIN
-  Integer_T ch;
+  UChar32 ch;
   U8_GET_OR_FFFD(str, 0, 0, -1, ch);
   if (ch<=LAST_LATIN_CHAR)
     return ( char_width[ch] );
@@ -2732,3 +2737,135 @@ BEGIN
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 454 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+void          x_bit_and (void)
+BEGIN
+  pop_lit_stk (&pop_lit1, &pop_typ1);
+  pop_lit_stk (&pop_lit2, &pop_typ2);
+  if (pop_typ1 != STK_INT)
+  BEGIN
+    print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
+    push_lit_stk (0, STK_INT);
+  END
+  else if (pop_typ2 != STK_INT)
+  BEGIN
+    print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
+    push_lit_stk (0, STK_INT);
+  END
+  else
+  BEGIN
+    push_lit_stk (pop_lit1 & pop_lit2, STK_INT);
+  END
+END
+void          x_bit_or (void)
+BEGIN
+  pop_lit_stk (&pop_lit1, &pop_typ1);
+  pop_lit_stk (&pop_lit2, &pop_typ2);
+  if (pop_typ1 != STK_INT)
+  BEGIN
+    print_wrong_stk_lit (pop_lit1, pop_typ1, STK_INT);
+    push_lit_stk (0, STK_INT);
+  END
+  else if (pop_typ2 != STK_INT)
+  BEGIN
+    print_wrong_stk_lit (pop_lit2, pop_typ2, STK_INT);
+    push_lit_stk (0, STK_INT);
+  END
+  else
+  BEGIN
+    push_lit_stk (pop_lit1 | pop_lit2, STK_INT);
+  END
+END
+#ifdef UTF_8
+
+#define FULLWIDTH_DIGIT_0    0xFF10
+#define FULLWIDTH_DIGIT_9    0xFF19
+#define FULLWIDTH_CAPITAL_A  0xFF21
+#define FULLWIDTH_CAPITAL_Z  0xFF3A
+#define FULLWIDTH_SMALL_A    0xFF41
+#define FULLWIDTH_SMALL_Z    0xFF5A
+#define HALFWIDTH_KATAKANA_WO         0xFF66
+#define HALFWIDTH_KATAKANA_SMALL_TSU  0xFF6F
+#define HALFWIDTH_KATAKANA_A          0xFF71
+#define HALFWIDTH_KATAKANA_N          0xFF9D
+
+void          x_is_cjk_string (void)
+BEGIN
+  pop_lit_stk (&pop_lit1, &pop_typ1);
+  if (pop_typ1 != STK_STR)
+  BEGIN
+    print_wrong_stk_lit (pop_lit1, pop_typ1, STK_STR);
+    push_lit_stk (-1, STK_INT);
+  END
+  else
+  BEGIN
+    ex_buf_length = 0;
+    add_buf_pool (pop_lit1);
+    string_width = 0;
+    BEGIN
+      ex_buf_ptr = 0;
+      while (ex_buf_ptr < ex_buf_length)
+      BEGIN
+        UChar32 ch;
+        U8_NEXT_OR_FFFD(ex_buf, ex_buf_ptr, -1, ch);
+        switch ( ublock_getCode(ch) )
+        BEGIN
+      /* hanzi */
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS:
+          case UBLOCK_CJK_COMPATIBILITY_IDEOGRAPHS:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_C:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_D:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_E:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_F:
+          case UBLOCK_CJK_UNIFIED_IDEOGRAPHS_EXTENSION_G:
+            string_width |= 0x001;
+            break;
+      /* kana */
+          case UBLOCK_HIRAGANA:
+          case UBLOCK_KATAKANA:
+          case UBLOCK_KATAKANA_PHONETIC_EXTENSIONS:
+          case UBLOCK_KANA_EXTENDED_A:
+          case UBLOCK_KANA_EXTENDED_B:
+          case UBLOCK_SMALL_KANA_EXTENSION:
+            string_width |= 0x002;
+            break;
+      /* hangul */
+          case UBLOCK_HANGUL_SYLLABLES:
+          case UBLOCK_HANGUL_JAMO:
+          case UBLOCK_HANGUL_JAMO_EXTENDED_A:
+          case UBLOCK_HANGUL_JAMO_EXTENDED_B:
+          case UBLOCK_HANGUL_COMPATIBILITY_JAMO:
+            string_width |= 0x004;
+            break;
+      /* bopomofo */
+          case UBLOCK_BOPOMOFO:
+          case UBLOCK_BOPOMOFO_EXTENDED:
+            string_width |= 0x008;
+            break;
+          case UBLOCK_HALFWIDTH_AND_FULLWIDTH_FORMS:
+      /* Fullwidth ASCII variants  except for U+FF01..FF0F, U+FF1A..FF20, U+FF3B..FF40, U+FF5B..FF5E */
+            if (  (FULLWIDTH_DIGIT_0  <=ch && ch<=FULLWIDTH_DIGIT_9  )
+               || (FULLWIDTH_CAPITAL_A<=ch && ch<=FULLWIDTH_CAPITAL_Z)
+               || (FULLWIDTH_SMALL_A  <=ch && ch<=FULLWIDTH_SMALL_Z  ) )
+              string_width |= 0x800;
+      /* Halfwidth Katakana variants  except for U+FF65, U+FF70, U+FF9E..FF9F */
+            if (  (HALFWIDTH_KATAKANA_WO <=ch && ch<=HALFWIDTH_KATAKANA_SMALL_TSU )
+               || (HALFWIDTH_KATAKANA_A  <=ch && ch<=HALFWIDTH_KATAKANA_N  ) )
+              string_width |= 0x002;
+            break;
+      /* miscellaneous */
+          case UBLOCK_KANBUN:
+          case UBLOCK_KANGXI_RADICALS:
+          case UBLOCK_CJK_RADICALS_SUPPLEMENT:
+            string_width |= 0x800;
+            break;
+        END
+      END
+    END
+/*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 451 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
+
+    push_lit_stk (string_width, STK_INT);
+  END
+END
+#endif

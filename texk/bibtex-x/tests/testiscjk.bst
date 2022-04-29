@@ -1,19 +1,21 @@
-% BibTeX test style file
+% BibTeXu test style file
 % Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 % You may freely use, modify and/or distribute this file.
+%
+% Test for built-in functions is.cjk.str$ and is.kanji.str$
 
 ENTRY {field}{}{}
 
 FUNCTION {output_entry} {
-  "\item[orig] " field * write$ newline$
-  "\item[len] " field text.length$ int.to.str$ * write$ newline$
-  "\item[1] " field #1 text.prefix$ * write$ newline$
-  "\item[2] " field #2 text.prefix$ * write$ newline$
-  "\item[3] " field #3 text.prefix$ * write$ newline$
-  "\item[4] " field #4 text.prefix$ * write$ newline$
-  "\item[5] " field #5 text.prefix$ * write$ newline$
-  "\item[6] " field #6 text.prefix$ * write$ newline$
-  "\item[7] " field #7 text.prefix$ * write$ newline$
+  "\item " field * write$
+      ": " field is.cjk.str$ int.to.str$ * write$
+      " " field is.kanji.str$ int.to.str$ * write$
+      " hz:"   field is.cjk.str$ #1    & int.to.str$ * write$
+      " kn:"   field is.cjk.str$ #2    & int.to.str$ * write$
+      " hg:"   field is.cjk.str$ #4    & int.to.str$ * write$
+      " bp:"   field is.cjk.str$ #8    & int.to.str$ * write$
+      " misc:" field is.cjk.str$ #2048 & int.to.str$ * write$
+      newline$
 }
 
 FUNCTION {type} {output_entry}

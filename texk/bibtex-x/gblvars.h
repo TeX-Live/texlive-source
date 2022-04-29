@@ -4,9 +4,7 @@
 **
 **  MODULE
 **
-**      $RCSfile: gblvars.h,v $
-**      $Revision: 3.71 $
-**      $Date: 1996/08/18 20:47:30 $
+**      file: gblvars.h
 **
 **  DESCRIPTION
 **
@@ -119,6 +117,8 @@ __EXTERN__ Integer_T                    aux_name_length;
 __EXTERN__ AuxNumber_T                  aux_ptr;
 
 __EXTERN__ HashLoc_T                    b_add_period;
+__EXTERN__ HashLoc_T                    b_bit_and;
+__EXTERN__ HashLoc_T                    b_bit_or;
 __EXTERN__ HashLoc_T                    b_call_type;
 __EXTERN__ HashLoc_T                    b_change_case;
 __EXTERN__ HashLoc_T                    b_chr_to_int;
@@ -156,6 +156,9 @@ __EXTERN__ HashLoc_T                    b_warning;
 __EXTERN__ HashLoc_T                    b_while;
 __EXTERN__ HashLoc_T                    b_width;
 __EXTERN__ HashLoc_T                    b_write;
+#ifdef UTF_8
+__EXTERN__ HashLoc_T                    b_cjk_string;
+#endif
 __EXTERN__ Integer_T                    bad;
 __EXTERN__ AlphaFile_T                  bbl_file;
 __EXTERN__ Integer_T                    bbl_line_num;

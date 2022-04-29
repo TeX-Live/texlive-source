@@ -4,9 +4,7 @@
 **
 **  MODULE
 **
-**      $RCSfile: bibtex-2.c,v $
-**      $Revision: 3.71 $
-**      $Date: 1996/08/18 20:47:30 $
+**      file: bibtex-2.c
 **
 **  DESCRIPTION
 **
@@ -208,6 +206,12 @@ BEGIN
 	    break;
 	  case N_MINUS:
 	    x_minus ();
+	    break;
+	  case N_BIT_AND:
+	    x_bit_and ();
+	    break;
+	  case N_BIT_OR:
+	    x_bit_or ();
 	    break;
 	  case N_CONCATENATE:
 	    x_concatenate ();
@@ -468,6 +472,11 @@ End_While_Label: DO_NOTHING;
 	  case N_WRITE:
 	    x_write ();
 	    break;
+#ifdef UTF_8
+	  case N_IS_CJK_STRING:
+	    x_is_cjk_string ();
+	    break;
+#endif
 	  default:
 	    CONFUSION ("Unknown built-in function");
 	    break;
@@ -3590,7 +3599,19 @@ BEGIN
   and_found = FALSE;
   while (( ! and_found) && (ex_buf_ptr < ex_buf_length))
   BEGIN
+#ifdef UTF_8
+    UChar32 ch;
+    U8_GET(&ex_buf[ex_buf_ptr], 0, 0, -1, ch);
+    if (ch<0)
+    BEGIN
+      INCR (ex_buf_ptr);
+      preceding_white = FALSE;
+      continue;
+    END
+    switch (ch)
+#else
     switch (ex_buf[ex_buf_ptr])
+#endif
     BEGIN
       case 'a':
       case 'A':
@@ -3625,6 +3646,21 @@ BEGIN
 
         preceding_white = FALSE;
         break;
+#ifdef UTF_8
+      case 0x3001:                /* "、" Ideographic Comma */
+      case 0xFF0C:                /* "，" Fullwidth Comma   */
+        ex_buf_ptr = ex_buf_ptr + 3;
+        preceding_white = FALSE;
+        and_found = TRUE;
+        break;
+      case 0x3000:                /* "　" Ideographic Space */
+        ex_buf[ex_buf_ptr  ] = SPACE;
+        ex_buf[ex_buf_ptr+1] = SPACE;
+        ex_buf[ex_buf_ptr+2] = SPACE;
+        ex_buf_ptr = ex_buf_ptr + 3;
+        preceding_white = TRUE;
+        break;
+#endif
       case LEFT_BRACE:
         INCR (brace_level);
         INCR (ex_buf_ptr);
@@ -3667,6 +3703,11 @@ BEGIN
         END
         else
         BEGIN
+#ifdef UTF_8
+          if (utf8len(ex_buf[ex_buf_ptr])>0)
+            ex_buf_ptr = ex_buf_ptr + utf8len(ex_buf[ex_buf_ptr]);
+          else
+#endif
           INCR (ex_buf_ptr);
           preceding_white = FALSE;
         END

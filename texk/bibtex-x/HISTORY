@@ -1,12 +1,20 @@
 ******************************************************************************
-FILE: $RCSfile: HISTORY,v $
-      $Revision: 3.71 $
-      $Date: 1996/08/18 20:42:32 $
+FILE: HISTORY
 ******************************************************************************
 
 
 8-Bit BibTeX CHANGE HISTORY
 ---------------------------
+
+v4.00   29-April-2022      TANAKA Takuji
+  - Added operators bitwise AND "&" and bitwise OR "|" to built-in
+    functions in style files.
+
+v3.80   16-April-2022      TANAKA Takuji
+  - Supported Latin-1 characters by built-in function width$ in style
+    files.
+  - Accepted characters over ASCII by built-in function int.to.chr$
+    in style files.
 
 31-May-2005	Karl Berry
   - Applied utils.c patch from Arne J\"orgensen for space character

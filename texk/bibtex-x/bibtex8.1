@@ -1,4 +1,4 @@
-.TH BIBTEX8 "1" "March 2019" "bibtex8 3.71" "User Commands"
+.TH BIBTEX8 "1" "April 2022" "bibtex8 4.00" "User Commands"
 .SH NAME
 bibtex8 \- 8-bit Big BibTeX
 .SH SYNOPSIS
@@ -86,6 +86,24 @@ allow ## unique strings.
 .TP
 \fB\-\-mwizfuns\fR ##
 allow ## wizard functions (deprecated).
+
+.SH 8BIT LATIN LETTERS SUPPORT
+.PP
+.B BibTeX8
+supports extended features to handle 8bit latin letters.
+Several built-in functions in bibliography styles are enhanced as follows.
+.TP
+\fB&\fR
+Pops the top two (integer) literals and pushes their bitwise AND.
+.TP
+\fB|\fR
+Pops the top two (integer) literals and pushes their bitwise OR.
+.TP
+\fBchr.to.int$\fR, \fBint.to.chr$\fR
+The function is the same as original BibTeX but 8bit characters are accepted.
+.TP
+\fBwidth$\fR
+The function is the same as original BibTeX but letters of Latin-1 are supported.
 .SH SEE ALSO
 More detailed description of
 .B BibTeX8

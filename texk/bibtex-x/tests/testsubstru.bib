@@ -1,9 +1,18 @@
 @Type{ascii,
   field = {ABCDEFG tuvwxyz},
 }
+@Type{ascii-a,
+  field = {{AB}CDEFG tuvwx{yz}},
+}
+@Type{ascii-b,
+  field = {{{AB}CD}EFG tuv{wx{yz}}},
+}
 
 @Type{latin1,
   field = {ÅÇÈÎØÜÝ~åçèîøüý},
+}
+@Type{latin1-b,
+  field = {{{ÅÇ}ÈÎ}ØÜÝ~åçè{îø{üý}}},
 }
 
 @Type{greek,
@@ -21,9 +30,15 @@
 @Type{hanzi,
   field = {一二三四五六七　肆伍陸漆捌玖拾},
 }
+@Type{hanzi-b,
+  field = {{{一二}三四}五六七　肆伍陸{漆捌{玖拾}}},
+}
 
 @Type{hanzi2,
   field = {櫛杓屠冤𦥑𠮟𠀋𡈽𥝱𨦇𡚴𠷡𧘕𧘔𩸽},
+}
+@Type{hanzi2-b,
+  field = {{{櫛杓}屠冤}𦥑𠮟𠀋𡈽𥝱𨦇𡚴{𠷡𧘕{𧘔𩸽}}},
 }
 
 @Type{mix,

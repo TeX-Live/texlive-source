@@ -1,0 +1,63 @@
+\section*{Test result}
+\begin{itemize}
+\item ︵︶︷︸︹︺︻︼︽︾: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ㈀㈁㈂㈠㈡㈢㈱㋐㋑㋒: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ＠: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ＼: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ＃: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item 𚿰𚿱𚿲𚿳𚿵𚿶𚿷𚿸: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item ■: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item △: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ◇: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ●: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ☀: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ☁: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ☂: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ☃: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ⿰⿱⿲⿳⿴⿵⿶⿷⿸⿹⿺⿻: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ㇀㇁㇂㇃㇠㇡㇢㇣: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item 〄々〆〇【】〠〽: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ㆑㆒㆓㆔㆙㆚㆛㆜㆝㆞㆟: 2048 2048 hz:0 kn:0 hg:0 bp:0
+  misc:2048
+\item ¢£§©®±µ¶: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ￡: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ￦: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ０: 2048 2048 hz:0 kn:0 hg:0 bp:0 misc:2048
+\item ９: 2048 2048 hz:0 kn:0 hg:0 bp:0 misc:2048
+\item Ａ: 2048 2048 hz:0 kn:0 hg:0 bp:0 misc:2048
+\item ACDE iouy: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ĂĆĎĘ ĭőůŷ: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ÅÇÐÈ îøüý: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item mix 나비蝴蝶: 5 5 hz:1 kn:0 hg:4 bp:0 misc:0
+\item mix てふ나비蝴蝶ㄏㄨˊㄉㄧㄝˊ⾍: 2063 2063 hz:1 kn:2 hg:4
+  bp:8 misc:2048
+\item mix てふ蝴蝶: 3 3 hz:1 kn:2 hg:0 bp:0 misc:0
+\item mix 蝴蝶ㄏㄨˊㄉㄧㄝˊ⾍: 2057 2057 hz:1 kn:0 hg:0 bp:8 misc:2048
+\item ｚ: 2048 2048 hz:0 kn:0 hg:0 bp:0 misc:2048
+\item ΑΒΓΔφχψω: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item АБВГьэюя: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ᄀᄁᄂᄃᇶᇷᇸᇹ: 4 4 hz:0 kn:0 hg:4 bp:0 misc:0
+\item ㄱㄲㄳㄴㆉㆊㆋㆌ: 4 4 hz:0 kn:0 hg:4 bp:0 misc:0
+\item 가나다라마한글텍: 4 4 hz:0 kn:0 hg:4 bp:0 misc:0
+\item ꥠꥡꥢꥣꥤꥥꥦꥧ: 4 4 hz:0 kn:0 hg:4 bp:0 misc:0
+\item ힰힱힲힳힴힵힶힷ: 4 4 hz:0 kn:0 hg:4 bp:0 misc:0
+\item あいうえゐゑをん: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item アイウエヰヱヲン: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item ｱｲｳﾜｦﾝ: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item ㌀㌁㌂㌃㌄㌅㌆㌇: 0 0 hz:0 kn:0 hg:0 bp:0 misc:0
+\item ㇰㇱㇲㇳㇴㇵㇶㇷㇸㇹㇺㇻㇼㇽㇾㇿ: 2 2 hz:0 kn:2 hg:0 bp:0
+  misc:0
+\item 𛅐𛅑𛅒𛅤𛅥𛅦𛅧: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item 𛄀𛄁𛄂𛄃𛄄𛄅𛄆𛄇: 2 2 hz:0 kn:2 hg:0 bp:0 misc:0
+\item ㄅㄆㄇㄈㄦㄧㄨㄩ: 8 8 hz:0 kn:0 hg:0 bp:8 misc:0
+\item ㆠㆡㆢㆣㆤㆥㆦㆧ: 8 8 hz:0 kn:0 hg:0 bp:8 misc:0
+\item 一二三四漆捌玖拾: 1 1 hz:1 kn:0 hg:0 bp:0 misc:0
+\item 𪜀𪜁𪜂𪜃𪜄𪜅𪜆𪜇: 1 1 hz:1 kn:0 hg:0 bp:0 misc:0
+\item 㐂㒵㓛㞍㟢㐆㐬㐮㔫㚑㐧: 1 1 hz:1 kn:0 hg:0 bp:0 misc:0
+\item ⺐⺒⺓⺔⺖⺗⺘⺙⻭⻯⻲: 2048 2048 hz:0 kn:0 hg:0 bp:0
+  misc:2048
+\item 櫛杓𦥑𠮟𠀋𡈽𥝱𡚴: 1 1 hz:1 kn:0 hg:0 bp:0 misc:0
+\item 豈更車賈滑串句龜: 1 1 hz:1 kn:0 hg:0 bp:0 misc:0
+\item ⿎⿏⿐⿑⿒⿓⿔⿕: 2048 2048 hz:0 kn:0 hg:0 bp:0 misc:2048
+\end{itemize}
+\endinput

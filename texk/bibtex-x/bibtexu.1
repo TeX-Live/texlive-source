@@ -1,4 +1,4 @@
-.TH BIBTEXU "1" "March 2019" "bibtexu 3.71" "User Commands"
+.TH BIBTEXU "1" "April 2022" "bibtexu 4.00" "User Commands"
 .SH NAME
 bibtexu \- UTF-8 Big BibTeX
 .SH SYNOPSIS
@@ -54,6 +54,57 @@ set min_crossrefs to ##.
 .TP
 \fB\-\-mstrings\fR ##
 allow ## unique strings.
+.SH UNICODE SUPPORT
+.PP
+.B BibTeXu
+supports extended features to handle Unicode characters.
+Several built-in functions in bibliography styles are enhanced as follows.
+.TP
+\fB&\fR
+Pops the top two (integer) literals and pushes their bitwise AND.
+.TP
+\fB|\fR
+Pops the top two (integer) literals and pushes their bitwise OR.
+.TP
+\fBadd.period$\fR
+Pops the top (string) literal, adds a `.' to it if the last non`}'
+character isn't a `.', `?', `!' or a Unicode punctuation mark and pushes this resulting string.
+The mark may be U+203C, U+203D, U+2047, U+2048, U+2049, U+3002, U+FF01, U+FF0E or U+FF1F.
+.TP
+\fBchr.to.int$\fR
+Pops the top (string) literal, makes sure it's a multibyte string of a single Unicode code point,
+converts it to the corresponding Unicode scalar value (integer), and pushes this integer.
+.TP
+\fBint.to.chr$\fR
+Pops the top (integer) literal, interpreted as the Unicode scalar value of a single code point,
+converts it to the corresponding single character multibyte string, and pushes this string.
+.TP
+\fBnum.names$\fR, \fBformat.name$\fR
+The function is the same as original BibTeX but
+an Ideographic/Fullwidth Comma (U+3001, U+FF0C) in addition to an " and " string is
+accepted as a sepalator between persons and
+Ideographic Space (U+3000) in addition to a space " " is accepted as a sepalator between a family name and a given name.
+.TP
+\fBsubstring$\fR, \fBtext.length$\fR, \fBtext.prefix$\fR
+The function is the same as original BibTeX but the unit of operand numbers is Unicode code point.
+.TP
+\fBchange.case$\fR
+The function is the same as original BibTeX but letters of
+non-english Latin, Greek and Cyrillic are supported.
+.TP
+\fBwidth$\fR
+The function is the same as original BibTeX but letters of Latin-1 and Latin Extended-A
+and CJK characters are supported.
+.TP
+\fBis.cjk.str$\fR
+Pops the top (string) literal, set flag bits to an integer if CJK characters are found in the string,
+and pushes the resulting integer, otherwise pushes 0.
+Flags 0x001, 0x002, 0x004, 0x008 and 0x800 are corresponding to Hanzi (Kanji, Hanja), Kana, Hangul,
+Bopomofo and other CJK characters, respectively.
+For example, an integer 0x003 will be pushed if Hanzi and Kana characters are found in a poped string literal.
+.TP
+\fBis.kanji.str$\fR
+Same as \fBis.cjk.str$\fR for compatibility with (u)pBibTeX.
 .SH SEE ALSO
 More detailed description of
 .B BibTeXu

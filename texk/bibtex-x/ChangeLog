@@ -1,3 +1,40 @@
+2022-04-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Bump version to 4.00 (29 apr 2022).
+
+	Both BibTeX8 and BibTeXu::
+	* bibtex.[ch], utils.[ch], datatype.h, gblprocs.h, gblvars.h, sysdep.h,
+	version.h, bibtex-[1234].c, HISTORY:
+	Remove keywords for RCS from headers since we do not use RCS anymore.
+	* bibtex-[234].c, bibtex.h, gblprocs.h, gblvars.h:
+	Add operators bitwise AND "&" and bitwise OR "|" to built-in functions
+	in style files.
+	* bibtex8.1, bibtexu.1, HISTORY: Update documents.
+	* Makefile.am, tests/bibtex[8u]-char.test,
+	tests/testcase.bst tests/testchar.bst,
+	tests/period[au].bbl, tests/testperiod[au].bib, tests/testperiod.bst,
+	tests/substr[au].bbl, tests/testsubstr[au].bib, tests/testsubstr.bst,
+	tests/txtprfx[au].bbl, tests/testtxtprfx.bst,
+	tests/width[au].bbl, tests/testwidth[au].bib, tests/testwidth.bst,
+	tests/name[au].{aux,bbl}, tests/{ltn,mlg}bib, tests/testname.bst,
+	tests/iscjku.{aux,bbl}, tests/testiscjku.bib, tests/testiscjk.bst:
+	Update tests.
+
+	BibTeXu only::
+	* bibtex-1.c:
+	Inhibit breaking lines between space and characters rather than Latin,
+	Greek, Cyrillic and Hangul Cyllables.
+	* bibtex-[234].c, bibtex.h, gblprocs.h, gblvars.h:
+	Add built-in functions is.cjk.str$ and is.kanji.str$ in style files
+	to check wheter a string is CJK or not.
+	* bibtex-[24].c:
+	Enhance built-in functions num.names$ and format.name$ in style files.
+	Ideographic/Fullwidth Comma ("、" U+3001, "，" U+FF0C) in addition to
+	an " and " string is accepted as a sepalator between persons.
+	Ideographic Space ("　" U+3000) in addition to a space " " is accepted
+	as a sepalator between a family name and a given name.
+
 2022-04-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:

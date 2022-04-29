@@ -4,9 +4,7 @@
 **
 **  MODULE
 **
-**      $RCSfile: bibtex.h,v $
-**      $Revision: 3.71 $
-**      $Date: 1996/08/18 20:47:30 $
+**      file: bibtex.h
 **
 **  DESCRIPTION
 **
@@ -1346,7 +1344,14 @@
 #define N_WHILE                     34
 #define N_WIDTH                     35
 #define N_WRITE                     36
-#define NUM_BLT_IN_FNS              37
+#define N_BIT_AND                   37
+#define N_BIT_OR                    38
+#ifdef UTF_8
+#define N_IS_CJK_STRING             39
+#define NUM_BLT_IN_FNS              40
+#else
+#define NUM_BLT_IN_FNS              39
+#endif
 
 /***************************************************************************
  * WEB section number:  338

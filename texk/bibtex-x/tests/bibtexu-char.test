@@ -39,6 +39,16 @@ cp $srcdir/tests/charu.aux tests/xcharu.aux
 ./bibtexu tests/xcharu || rc=11
 diff $srcdir/tests/charu.bbl tests/xcharu.bbl || rc=12
 
+## test for num.names$, format.name$
+cp $srcdir/tests/nameu.aux tests/xnameu.aux
+./bibtexu tests/xnameu || rc=13
+diff $srcdir/tests/nameu.bbl tests/xnameu.bbl || rc=14
+
+## test for is.knj.str$
+cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
+./bibtexu tests/xiscjku || rc=15
+diff $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
+
 
 exit $rc
 

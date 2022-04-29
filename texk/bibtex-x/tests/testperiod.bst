@@ -1,3 +1,7 @@
+% BibTeX test style file
+% Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+% You may freely use, modify and/or distribute this file.
+
 ENTRY {field}{}{}
 
 FUNCTION {output_entry} {

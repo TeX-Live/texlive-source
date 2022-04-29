@@ -672,20 +672,23 @@ EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/sort.aux \
 	tests/txtprfxa.bbl tests/testtxtprfx.bst tests/widtha.aux \
 	tests/widtha.bbl tests/testwidtha.bib tests/testwidth.bst \
 	tests/chara.aux tests/chara.bbl tests/testchara.bib \
-	tests/testchar.bst tests/ubasic.aux tests/ubasic.bbl \
-	tests/ubasic.bib tests/urange.aux tests/urange.bbl \
-	tests/urange.bib tests/yannis.aux tests/yannis.bbl \
-	tests/yannis.bib tests/sortu.aux tests/sortu-az.bbl \
-	tests/sortu-da.bbl tests/sortu-en.bbl tests/sortu-fi.bbl \
-	tests/sortu-tr.bbl tests/testsortu.bib tests/caseu.aux \
-	tests/caseu.bbl tests/testcaseu.bib tests/periodu.aux \
-	tests/periodu.bbl tests/testperiodu.bib tests/substru.aux \
-	tests/substru.bbl tests/testsubstru.bib tests/txtprfxu.aux \
-	tests/txtprfxu.bbl tests/widthu.aux tests/widthu.bbl \
-	tests/testwidthu.bib tests/charu.aux tests/charu.bbl \
-	tests/testcharu.bib bt371csf.zip dos-dj.mak dos-emx.mak \
-	os2.mak unix.mak csf/00readme.txt csf/COPYING csf/HISTORY \
-	csf/file_id.diz
+	tests/testchar.bst tests/namea.aux tests/namea.bbl \
+	tests/ltnbib.bib tests/testname.bst tests/ubasic.aux \
+	tests/ubasic.bbl tests/ubasic.bib tests/urange.aux \
+	tests/urange.bbl tests/urange.bib tests/yannis.aux \
+	tests/yannis.bbl tests/yannis.bib tests/sortu.aux \
+	tests/sortu-az.bbl tests/sortu-da.bbl tests/sortu-en.bbl \
+	tests/sortu-fi.bbl tests/sortu-tr.bbl tests/testsortu.bib \
+	tests/caseu.aux tests/caseu.bbl tests/testcaseu.bib \
+	tests/periodu.aux tests/periodu.bbl tests/testperiodu.bib \
+	tests/substru.aux tests/substru.bbl tests/testsubstru.bib \
+	tests/txtprfxu.aux tests/txtprfxu.bbl tests/widthu.aux \
+	tests/widthu.bbl tests/testwidthu.bib tests/charu.aux \
+	tests/charu.bbl tests/testcharu.bib tests/nameu.aux \
+	tests/nameu.bbl tests/mlgbib.bib tests/iscjku.aux \
+	tests/iscjku.bbl tests/testiscjku.bib tests/testiscjk.bst \
+	bt371csf.zip dos-dj.mak dos-emx.mak os2.mak unix.mak \
+	csf/00readme.txt csf/COPYING csf/HISTORY csf/file_id.diz
 DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
 	tests/memtest.bib tests/memtest?.* tests/memtestu?.* \
 	tests/xsort[123].aux tests/xsort[123].bbl tests/xsort[123].blg \
@@ -694,6 +697,7 @@ DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
 	tests/xtxtprfxa.aux tests/txtprfxa.bbl tests/xtxtprfxa.blg \
 	tests/xwidtha.aux tests/widtha.bbl tests/xwidtha.blg \
 	tests/xchara.aux tests/xchara.bbl tests/xchara.blg \
+	tests/xnamea.aux tests/xnamea.bbl tests/xnamea.blg \
 	tests/xubasic.aux tests/xubasic.bbl tests/xubasic.blg \
 	tests/xurange.aux tests/xurange.bbl tests/xurange.blg \
 	tests/xyannis.aux tests/xyannis.bbl tests/xyannis.blg \
@@ -703,7 +707,9 @@ DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
 	tests/xsubstru.aux tests/xsubstru.bbl tests/xsubstru.blg \
 	tests/xtxtprfxu.aux tests/txtprfxu.bbl tests/xtxtprfxu.blg \
 	tests/xwidthu.aux tests/widthu.bbl tests/xwidthu.blg \
-	tests/xcharu.aux tests/xcharu.bbl tests/xcharu.blg
+	tests/xcharu.aux tests/xcharu.bbl tests/xcharu.blg \
+	tests/xnameu.aux tests/xnameu.bbl tests/xnameu.blg \
+	tests/xiscjku.aux tests/xiscjku.bbl tests/xiscjku.blg
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
