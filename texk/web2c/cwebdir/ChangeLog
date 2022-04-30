@@ -1,3 +1,9 @@
+2022-04-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Fix a preprocessor issue (gb_io.w).
+
 2022-03-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

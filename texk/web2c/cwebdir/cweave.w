@@ -2644,7 +2644,7 @@ to be performed.
 
 @<Cases for |exp|@>=
 if (cat1==lbrace || cat1==int_like || cat1==decl) {
-  make_underlined(pp); big_app1(pp); big_app(dindent);
+  make_underlined(pp); big_app(dindent); big_app1(pp);
   reduce(pp,1,fn_decl,0,1);
 }
 else if (cat1==unop) squash(pp,2,exp,-2,2);
