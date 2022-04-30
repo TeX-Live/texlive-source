@@ -502,6 +502,14 @@ top_srcdir = @top_srcdir@
 AM_CFLAGS = $(WARNING_CFLAGS)
 lacheck_SOURCES = lacheck.l
 nodist_man1_MANS = lacheck.1
+
+#
+# To remake in the build directory even though maintainer mode is
+# enabled (where $xu is the texk/utils source directory):
+#   cd Work/utils/lacheck && make am__skiplex= all \
+#   && ./lacheck $xu/lacheck/test-def.tex
+# (or make check, etc.).
+#
 TESTS = lacheck.test test-def.test
 dist_check_SCRIPTS = $(TESTS)
 EXTRA_DIST = test.old test.tex test-def.tex test-def.xout lacheck.hlp \

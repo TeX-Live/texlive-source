@@ -2,17 +2,35 @@
 % This file is public domain.
 
 \documentclass{report}
-\newcommand{\defaultleftmargin}{0.25in}
-\setlength{\oddsidemargin}{\defaultleftmargin}
-\providecommand{\defaultmargin}{0.25in}\def\defx{\defy}
+%\newcommand{\defaultleftmargin}{0.25in}
+%\setlength{\oddsidemargin}{\defaultleftmargin}
+%\providecommand{\defaultmargin}{0.25in}\def\defx{\defy}
+
+% based on report:
+% Date: Mon, 25 Apr 2022 15:37:27 -0600
+% From: Michael Clark
+%
+\def\ibx{\textit{#1}}          % \def with nested braces in rhs
+\newcommand\ibx{\textit{#1}}   % \newcommand\foo
+\newcommand{\ibx}{\textit{#1}} % \newcommand{\foo}
+\newcommand{\ibx}{\textbf{\textit{#1}}} % more nesting
+
+% *-form
+\newcommand*{\ibxstar}{\textit{#1}}
+
+% arg count
+\newcommand{\ibx}[1]{\textit{#1}}
+
+% optarg default
+\newcommand{\ibx}[1][dflt]{\textit{#1}}
+
+
 \begin{document}
 \end{document}
- 
-% BTW, to remake in the build directory even though maintainer mode is
-% enabled (where $xu is the texk/utils source directory):
-% cd Work/utils/lacheck && make am__skiplex= all \
-% && ./lacheck $xu/lacheck/test-def.tex # or make check, etc.
 
+% See Makefile.am for rebuild + test recipe.
+
+% emacs-page
 % [https://tug.org/pipermail/tex-live/2019-January/043083.html]
 % 
 % Date: Thu, 24 Jan 2019 19:11:18 -0800
@@ -45,3 +63,37 @@
 % Edit: The issue appears to not be limited to newcommand. I get the same
 % error for the line:
 % \setlength{\oddsidemargin}{\defaultleftmargin} 
+
+
+% emacs-page
+% https://tug.org/pipermail/tex-live/2022-April/048096.html
+% Date: Mon, 25 Apr 2022 15:37:27 -0600
+% From: Michael Clark <clark.michael.c@gmail.com>
+% To:  <tex-live@tug.org>
+% Subject: lacheck is confused when curly brackets are inside a \newcommand
+% 
+% Example latex file (foo.tex):
+% 
+%     \newcommand{\boldx}[1]{{\bf #1}}
+%     \newcommand{\ibx}[1]{\textbf{\textit{#1}}}
+% 
+% lacheck output:
+% 
+%     "foo.tex", line 1: <- unmatched "}"
+%     "foo.tex", line 1: -> unmatched "beginning of file foo.tex"
+%     "foo.tex", line 2: <- unmatched "}"
+%     "foo.tex", line 1: -> unmatched "beginning of file foo.tex"
+% 
+% I pulled the example commands from
+% https://www.physicsread.com/latex-bold/ showing two useful cases. One,
+% using a command inside of a newcommand, and the other creates a group
+% to isolate the scope of the command to the included text.
+% 
+% Replacing \newcommand with \newcommand* reports no error as expected.
+% If an error is expected behavior for \newcommand, it would be nice if
+% the error message were more clear, as the brackets are correctly
+% matched.
+% 
+% Thank you for maintaining this tool. I'd need to devote longer than I
+% have to figure out where to go from line 391 of lacheck.l
+% (https://tug.org/svn/texlive/trunk/Build/source/utils/lacheck/lacheck.l?view=markup#l391)

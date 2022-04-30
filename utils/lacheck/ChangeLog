@@ -1,3 +1,12 @@
+2022-05-01  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (lacheck_version): 1.30.
+	* lacheck.l (newcommand): start group counting.
+	try to handle *-form, [N] arg count, [dflt] opt arg default.
+	(<<EOF>>): check for unmatched definitions.
+	Original report from Michael Clark,
+	https://tug.org/pipermail/tex-live/2022-April/048096.html
+
 2019-07-09  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (lacheck_version): 1.29.
