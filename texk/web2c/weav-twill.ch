@@ -43,18 +43,18 @@ Limbo.
 % Version 4.5 (based on WEAVE 4.5) was hacked together on 04 Jan 2022.
 @z
 
-@x 48c24
-  \centerline{\titlefont The {\ttitlefont WEAVE} processor}
-@y
-  \centerline{\titlefont The {\ttitlefont TWILL} processor}
-@z
-
 @x 43c19
 \let\maybe=\iffalse
 \def\title{WEAVE changes for C}
 @y
 \let\maybe=\iftrue
 \def\title{TWILL for \TeX~Live}
+@z
+
+@x 48c24
+  \centerline{\titlefont The {\ttitlefont WEAVE} processor}
+@y
+  \centerline{\titlefont The {\ttitlefont TWILL} processor}
 @z
 
 Section 1.

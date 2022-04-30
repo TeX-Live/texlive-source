@@ -1,3 +1,8 @@
+2022-04-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* weav-twill.ch,
+	* weave.ch: Reshuffle '\title' changes..
+
 2022-04-27  Andreas Scherer  <https://ascherer.github.io>
 
 	* weav-twill.ch: Avoid non-POSIX conflict with Solaris 11.4.

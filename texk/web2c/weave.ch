@@ -48,9 +48,8 @@
 % (more recent changes in the ChangeLog)
 
 @x [0] WEAVE: print changes only
-\pageno=\contentspagenumber \advance\pageno by 1
+\def\title{WEAVE}
 @y
-\pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
 \def\title{WEAVE changes for C}
 @z
