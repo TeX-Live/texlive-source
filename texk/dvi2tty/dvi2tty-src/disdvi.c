@@ -690,7 +690,7 @@ unsigned long num(int size)
 
     pc += size;
     for (i = size; i > 0; i--)
-        x = (x << 8) + (unsigned) getc(dvifp);
+        x = (x << 8) + (unsigned long) getc(dvifp);
 
     return x;
 
