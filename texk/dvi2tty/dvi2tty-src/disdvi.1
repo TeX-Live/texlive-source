@@ -1,9 +1,9 @@
-.TH DISDVI 1 "25 March 2019"
+.TH DISDVI 1 "1 May 2022"
 .SH NAME
 disdvi \- `disassemble' a (p)TeX or XeTeX DVI file
 .SH SYNOPSIS
 .B disdvi
-.RB [ \-p ]
+.RB [ \-p ] [ \-u ] [ \-Eenc ]
 .RI [ dvi_file [ \fB.dvi\fP ]]
 .br
 .B disdvi \-x
@@ -16,8 +16,27 @@ interprets the contents of
 .I dvi_file
 or
 .I xdv_file
-printing the DVI commands and text in a human-readable ASCII format on
-the standard output.
+printing the DVI commands and text in a human-readable ASCII/multibyte
+format on the standard output.
+.PP
+.B Options:
+.PP
+.TP
+.B -p
+Handle ASCII pTeX dvi file.
+.TP
+.B -u
+Handle upTeX dvi file.
+.TP
+.B -Eenc
+Set output multibyte encoding. The enc argument 'e', 's', 'j', and 'u'
+denotes EUC-JP, Shift_JIS, ISO-2022-JP, and UTF-8, respectively.
+.TP
+.B -x
+Handle XeTeX xdv file.
+.TP
+.B -h
+Show a help massage and exit successfully.
 .SH "SEE ALSO"
 .BR dvi2tty (1)
 .SH AUTHOR

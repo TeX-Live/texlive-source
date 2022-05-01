@@ -18,8 +18,6 @@
  *
  */
 
-#define VERSION "6.0.0"
-
 #define Progname "dvi2tty"
 #define Copyright "Copyright (C) 1984, 1985, 1986 Svante Lindahl.\n\
 Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
@@ -42,12 +40,8 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#if defined(MSDOS) || (defined(WIN32) && !defined(__MINGW32__))
+#if (defined(WIN32) && !defined(__MINGW32__))
 # include <malloc.h>
-#else
-# if !defined(THINK_C)
-#  include <unistd.h>
-# endif
 #endif
 
 #define nil         NULL
@@ -56,7 +50,7 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
  * Define the maximum width of the terminal
  * (this is also used to define the with of the line structure in dvistuff.c)
  */
-#define MAXTERMWIDTH	332
+#define MAXTERMWIDTH    332
 
 #include <ptexenc/ptexenc.h>
 #include <ptexenc/unicode.h>
@@ -93,9 +87,7 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #define illch   17              /* character code out of range       */
 #define filop   18              /* cannot access file                */
 #define filcr   19              /* cannot creat file                 */
-#if !defined(MSDOS)
 #define pipcr   20              /* cannot creat pipe                 */
-#endif
 #define bdfnt   21              /* fail to get font info             */
 
 
@@ -159,15 +151,7 @@ extern FILE *output;                   /* output file (dvi2tty.c)            */
  */
 
 /* dvi2tty.c */
-#if defined(MSDOS)
-void errorexit(int);
-#else
 void errorexit(int errorcode);
-#endif
 
 /* dvistuff.c */
-#if defined(MSDOS)
 void dvimain(void);
-#else
-void dvimain(void);
-#endif

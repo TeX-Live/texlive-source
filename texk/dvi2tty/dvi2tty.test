@@ -5,55 +5,49 @@
 # You may freely use, modify and/or distribute this file.
 
 test_src=$srcdir/$DVI2TTY_TREE/test
+test_out=$srcdir/output
 
-unset DVI2TTY	# nullify dvi2tty options (if any)
+unset DVI2TTY   # nullify dvi2tty options (if any)
 
+rm -f *.out
 rc=0
 
-./dvi2tty $test_src/test.dvi >test.out && diff $srcdir/test.tty test.out || rc=1
-
-./dvi2tty -c $test_src/test.dvi >testc.out && diff $srcdir/testc.tty testc.out || rc=2
-
-./dvi2tty -s $test_src/test.dvi >tests.out && diff $srcdir/tests.tty tests.out || rc=3
-
-./dvi2tty -u $test_src/test.dvi >testu.out && diff $srcdir/testu.tty testu.out || rc=4
-
-./dvi2tty -Eu $test_src/test.dvi >testEu.out && diff $srcdir/testEu.tty testEu.out || rc=6
+./dvi2tty $test_src/test.dvi >test.out && diff $test_out/test.tty test.out || rc=1
+./dvi2tty -c $test_src/test.dvi >testc.out && diff $test_out/testc.tty testc.out || rc=2
+./dvi2tty -s $test_src/test.dvi >tests.out && diff $test_out/tests.tty tests.out || rc=3
+./dvi2tty -u $test_src/test.dvi >testu.out && diff $test_out/testu.tty testu.out || rc=4
+./dvi2tty -Eu $test_src/test.dvi >testEu.out && diff $test_out/testEu.tty testEu.out || rc=6
 
 
-./dvi2tty $test_src/ligtest >ligtest.out && diff $srcdir/ligtest.tty ligtest.out || rc=1
-
-./dvi2tty -u $test_src/ligtest >ligtestu.out && diff $srcdir/ligtestu.tty ligtestu.out || rc=4
-
-./dvi2tty -Eu $test_src/ligtest >ligtestEu.out && diff $srcdir/ligtestEu.tty ligtestEu.out || rc=6
+./dvi2tty $test_src/ligtest >ligtest.out && diff $test_out/ligtest.tty ligtest.out || rc=11
+./dvi2tty -u $test_src/ligtest >ligtestu.out && diff $test_out/ligtestu.tty ligtestu.out || rc=14
+./dvi2tty -Eu $test_src/ligtest >ligtestEu.out && diff $test_out/ligtestEu.tty ligtestEu.out || rc=16
 
 
-./dvi2tty $test_src/table.dvi >table.out && diff $srcdir/table.tty table.out || rc=1
+./dvi2tty $test_src/table.dvi >table.out && diff $test_out/table.tty table.out || rc=21
+./dvi2tty -c $test_src/table.dvi >tablec.out && diff $test_out/tablec.tty tablec.out || rc=22
+./dvi2tty -s $test_src/table.dvi >tables.out && diff $test_out/tables.tty tables.out || rc=23
+./dvi2tty -u $test_src/table.dvi >tableu.out && diff $test_out/tableu.tty tableu.out || rc=24
+./dvi2tty -u -C $test_src/table.dvi >tableuC.out && diff $test_out/tableuC.tty tableuC.out || rc=25
+./dvi2tty -Eu $test_src/table.dvi >tableEu.out && diff $test_out/tableEu.tty tableEu.out || rc=26
+./dvi2tty -Eu1 $test_src/table.dvi >tableEu1.out && diff $test_out/tableEu1.tty tableEu1.out || rc=27
+./dvi2tty -Eu -C $test_src/table.dvi >tableEuC.out && diff $test_out/tableEuC.tty tableEuC.out || rc=28
+./dvi2tty -Eu -a $test_src/table.dvi >tableEua.out && diff $test_out/tableEua.tty tableEua.out || rc=29
 
-./dvi2tty -c $test_src/table.dvi >tablec.out && diff $srcdir/tablec.tty tablec.out || rc=2
 
-./dvi2tty -s $test_src/table.dvi >tables.out && diff $srcdir/tables.tty tables.out || rc=3
+## CJK by pTeX / upTeX
+./dvi2tty -A -Eu -w100 -o ptex1Eu.out $test_src/ptex1.dvi && diff $test_out/ptex1Eu.tty ptex1Eu.out || rc=34
+./dvi2tty -J -Eu -w100 -o ptex1EuJ.out $test_src/ptex1.dvi  && diff $test_out/ptex1Eu.tty ptex1EuJ.out || rc=35
 
-./dvi2tty -u $test_src/table.dvi >tableu.out && diff $srcdir/tableu.tty tableu.out || rc=4
+./dvi2tty -U -Eu -w100 -o uptex1.out $test_src/uptex1.dvi && diff $test_out/uptex1.tty uptex1.out || rc=36
+./dvi2tty -J -Eu -w100 -o uptex1J.out $test_src/uptex1.dvi && diff $test_out/uptex1.tty uptex1J.out || rc=37
 
-./dvi2tty -u -C $test_src/table.dvi >tableuC.out && diff $srcdir/tableuC.tty tableuC.out || rc=5
-
-./dvi2tty -Eu $test_src/table.dvi >tableEu.out && diff $srcdir/tableEu.tty tableEu.out || rc=6
-
-./dvi2tty -Eu1 $test_src/table.dvi >tableEu1.out && diff $srcdir/tableEu1.tty tableEu1.out || rc=7
-
-./dvi2tty -Eu -C $test_src/table.dvi >tableEuC.out && diff $srcdir/tableEuC.tty tableEuC.out || rc=8
-
-./dvi2tty -Eu -a $test_src/table.dvi >tableEua.out && diff $srcdir/tableEua.tty tableEua.out || rc=9
 
 ## different position of FNTDEF and NOP
-./dvi2tty $test_src/fntdef0.dvi >fntdef0.out && diff $srcdir/fntdef0.tty fntdef0.out || rc=1
-
-./dvi2tty $test_src/fntdef1.dvi >fntdef1.out && diff $srcdir/fntdef0.tty fntdef1.out || rc=2
-
-./dvi2tty $test_src/fntdef2.dvi >fntdef2.out && diff $srcdir/fntdef0.tty fntdef2.out || rc=3
-
-./dvi2tty $test_src/fntdef3.dvi >fntdef3.out && diff $srcdir/fntdef0.tty fntdef3.out || rc=4
+./dvi2tty $test_src/fntdef0.dvi >fntdef0.out && diff $test_out/fntdef0.tty fntdef0.out || rc=41
+./dvi2tty $test_src/fntdef1.dvi >fntdef1.out && diff $test_out/fntdef0.tty fntdef1.out || rc=42
+./dvi2tty $test_src/fntdef2.dvi >fntdef2.out && diff $test_out/fntdef0.tty fntdef2.out || rc=43
+./dvi2tty $test_src/fntdef3.dvi >fntdef3.out && diff $test_out/fntdef0.tty fntdef3.out || rc=44
 
 
 exit $rc

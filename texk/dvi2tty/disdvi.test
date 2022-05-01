@@ -5,8 +5,23 @@
 # You may freely use, modify and/or distribute this file.
 
 test_src=$srcdir/$DVI2TTY_TREE/test
+test_out=$srcdir/output
+
+rm -f *.dout
+rc=0
 
 ./disdvi $test_src/ligtest >ligtest.dout \
-	&& diff $srcdir/ligtest.dis ligtest.dout \
-	|| exit 1
+	&& diff $test_out/ligtest.dis ligtest.dout \
+	|| rc=1
 
+./disdvi $test_src/ptex1.dvi >ptex1.dout \
+	&& diff $test_out/ptex1.dis ptex1.dout || rc=2
+./disdvi $test_src/uptex1.dvi >uptex1.dout \
+	&& diff $test_out/uptex1.dis uptex1.dout || rc=3
+./disdvi -p -Eu $test_src/ptex2.dvi >ptex2Eu.dout \
+	&& diff $test_out/ptex2Eu.dis ptex2Eu.dout || rc=9
+./disdvi -u -Eu $test_src/uptex2.dvi >uptex2Eu.dout \
+	&& diff $test_out/uptex2Eu.dis uptex2Eu.dout || rc=10
+
+
+exit $rc

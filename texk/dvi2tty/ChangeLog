@@ -1,3 +1,24 @@
+2022-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	dvi2tty-6.0.2.
+	* dvi2tty.[ch], version.ac: Bump version to 6.0.2 20220501
+	Use VERSION in c-auto.h.
+	* disdvi.c: Bump version to 2.27 20220501
+	* disdvi.c: Add new options -u, -Eenc to support printing
+	multibite characters for SET[23] with PTEXENC library.
+	* dvi2tty.c: Exit with no error code by -h option.
+	* output/*.tty, output/*.dis: Moved the directory.
+	* dvi2tty.test, disdvi.test, Makefile.am,
+	test/ptex[12].{tex,dvi}, test/uptex[12].{tex,dvi},
+	output/ptex1Eu.tty, output/uptex1.tty,
+	output/ptex{1,2Eu}.dis, output/uptex{1,2Eu}.dis:
+	Add new tests.
+	* dvi2tty.1, disdvi.1: Update manuals.
+	* README.MAC, README.VMS, dvi2tty.DCL, UNIXtoMacLib/*:
+	Remove obsolete files.
+	* dvi2tty.[ch], dvistuff.c, disdvi.c:
+	Remove obsolete #defined VMS, THINK_C, AMIGA, MSDOS.
+
 2022-04-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	dvi2tty-6.0.1.

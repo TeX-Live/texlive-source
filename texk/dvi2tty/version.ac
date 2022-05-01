@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current dvi2tty version
-m4_define([dvi2tty_version], [6.0.1])
+m4_define([dvi2tty_version], [6.0.2])

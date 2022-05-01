@@ -116,9 +116,9 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_disdvi_OBJECTS = @DVI2TTY_TREE@/disdvi.$(OBJEXT)
 disdvi_OBJECTS = $(am_disdvi_OBJECTS)
-disdvi_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-disdvi_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+disdvi_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -126,7 +126,6 @@ am__v_lt_1 =
 am_dvi2tty_OBJECTS = @DVI2TTY_TREE@/dvi2tty.$(OBJEXT) \
 	@DVI2TTY_TREE@/dvistuff.$(OBJEXT)
 dvi2tty_OBJECTS = $(am_dvi2tty_OBJECTS)
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
 dvi2tty_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -559,21 +558,29 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-EXTRA_DIST = $(DVI2TTY_TREE) TLpatches $(TESTS) ligtest.dis \
-	ligtest.tty test.tty testc.tty tests.tty testu.tty fntdef0.tty
+EXTRA_DIST = $(DVI2TTY_TREE) TLpatches $(TESTS) output/ligtest.dis \
+	output/ptex1.dis output/uptex1.dis output/ptex2Eu.dis \
+	output/uptex2Eu.dis output/test.tty output/testc.tty \
+	output/tests.tty output/testu.tty output/testEu.tty \
+	output/ligtest.tty output/ligtestu.tty output/ligtestEu.tty \
+	output/table.tty output/tablec.tty output/tables.tty \
+	output/tableu.tty output/tableuC.tty output/tableEu.tty \
+	output/tableEu1.tty output/tableEuC.tty output/tableEua.tty \
+	output/ptex1Eu.tty output/uptex1.tty output/fntdef0.tty
 NEVER_DIST = `find . $(NEVER_NAMES)`
 
 # Files not to be distributed
 NEVER_NAMES = -name .svn $(NEVER_NAMES_SUB)
 NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
-AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA
+AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA -DPTEXENC
 AM_CFLAGS = $(WARNING_CFLAGS)
 LDADD = $(KPATHSEA_LIBS)
 disdvi_SOURCES = \
 	@DVI2TTY_TREE@/commands.h \
 	@DVI2TTY_TREE@/disdvi.c
 
+disdvi_LDADD = $(PTEXENC_LIBS) $(LDADD)
 dvi2tty_SOURCES = \
 	@DVI2TTY_TREE@/commands.h \
 	@DVI2TTY_TREE@/dvi2tty.c \
@@ -588,9 +595,12 @@ man1_MANS = \
 
 TESTS = disdvi.test dvi2tty.test
 AM_TESTS_ENVIRONMENT = DVI2TTY_TREE=$(DVI2TTY_TREE); export DVI2TTY_TREE;
-DISTCLEANFILES = ligtest.dout ligtest.out test.out testc.out tests.out \
-	testu.out table.out tablec.out tables.out tableu.out \
-	tableuC.out tableEu.out tableEu1.out tableEuC.out tableEua.out
+DISTCLEANFILES = ligtest.dout ptex1.dis uptex1.dis ptex2Eu.dis \
+	uptex2Eu.dis test.out testc.out tests.out testu.out testEu.out \
+	ligtest.out ligtestu.out ligtestEu.out table.out tablec.out \
+	tables.out tableu.out tableuC.out tableEu.out tableEu1.out \
+	tableEuC.out tableEua.out ptex1Eu.out ptex1EuJ.out uptex1.out \
+	uptex1J.out fntdef0.out fntdef1.out fntdef2.out fntdef3.out
 all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -1344,7 +1354,7 @@ uninstall-man: uninstall-man1
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 
-$(disdvi_OBJECTS): $(KPATHSEA_DEPEND)
+$(disdvi_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
 $(dvi2tty_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)
 
