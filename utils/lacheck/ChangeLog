@@ -1,9 +1,14 @@
 2022-05-01  Karl Berry  <karl@freefriends.org>
 
+	* lacheck.l (newcommand): we don't need to explicitly match
+	[N] and [dflt]; instead, just match anything up to the {
+	(as was already done).
+
 	* configure.ac (lacheck_version): 1.30.
 	* lacheck.l (newcommand): start group counting.
 	try to handle *-form, [N] arg count, [dflt] opt arg default.
 	(<<EOF>>): check for unmatched definitions.
+	* test-def.tex: some more tests of this.
 	Original report from Michael Clark,
 	https://tug.org/pipermail/tex-live/2022-April/048096.html
 

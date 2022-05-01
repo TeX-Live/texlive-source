@@ -24,8 +24,8 @@
  * Created On      : Sun May 26 18:11:58 1991
  * 
  * HISTORY
- * 01-May-2022          Karl Berry
- *    Count initial { of definitions, and more \newcommand features.
+ * 02-May-2022          Karl Berry
+ *    Count initial { of definitions, and support \newcommand* (etc.).
  *    Report from Michael Clark,
  *    https://tug.org/pipermail/tex-live/2022-April/048096.html.
  *    Version number now 1.30.
@@ -391,16 +391,16 @@ symbol ("$"("\\"{atoz}+|.)"$"|"\\#"|"\\$"|"\\%"|"\\ref")
        and/or with \...command[N] argument count;
      To allow for arbitrary control sequence names, we match
        the braced name as anything not containing a }.
-     To handle optional argument specifications, we assume the { is on
-       the same line as the csname.
      We assume the control sequence name is either a single character or
        one or more English letters, a-zA-Z, as usual with TeX.
-     We assume the optional argument default does not contain a ].
+     To handle the [N] argument count and [dflt] optional argument
+       default specifications, we just match anything after the control
+       sequence up to the next {, which we assume starts the definition.
      We don't do anything with the definition; the only purpose is to
        count braces. */
-"\\"(provide|(re)?newcommand)[ \t\n]*(\*[ \t\n]*)?(\{\\[^}]+\}|\\([a-zA-Z]+|.))[ \t\n]*(\[[0-9]\](\[[^]]*\])?)?[ \t\n]*[^{]*\{	{ ++def_count; BEGIN(DEF); }
+"\\"(provide|(re)?newcommand)[ \t\n]*(\*[ \t\n]*)?(\{\\[^}]+\}|\\([a-zA-Z]+|.))[^{]*\{	{ ++def_count; BEGIN(DEF); }
 
-  /*                          ws     optional*    ({\cs}      |\cs)                     [N]?      [dflt]?             .*     {defn}
+  /*                          ws     optional*    ({\cs}      |\cs)            .*?      {defn}
 
      Pre-2019 rule was (see test-def.tex):
      "\\"[exg]?(def|newcommand)[^\n\{]+ 	BEGIN(DEF);
