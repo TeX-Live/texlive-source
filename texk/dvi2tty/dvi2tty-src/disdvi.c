@@ -446,15 +446,15 @@ void postamble(void)
 
     printf("POST      last page offset : %06ld\n", sget4());
     printf("%06ld: ", pc);
-    printf("          numerator        : %ld\n", get4());
+    printf("          numerator        : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          denominator      : %ld\n", get4());
+    printf("          denominator      : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          magnification    : %ld\n", get4());
+    printf("          magnification    : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          max page height  : %ld\n", get4());
+    printf("          max page height  : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          max page width   : %ld\n", get4());
+    printf("          max page width   : %lu\n", get4());
     printf("%06ld: ", pc);
     printf("          stack size needed: %d\n", (int) get2());
     printf("%06ld: ", pc);
@@ -476,11 +476,11 @@ void preamble(void)
 
     printf("PRE       version          : %d\n", (int) get1());
     printf("%06ld: ", pc);
-    printf("          numerator        : %ld\n", get4());
+    printf("          numerator        : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          denominator      : %ld\n", get4());
+    printf("          denominator      : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          magnification    : %ld\n", get4());
+    printf("          magnification    : %lu\n", get4());
     printf("%06ld: ", pc);
     i = (int) get1();
     printf("          job name (%3d)   :", i);
@@ -502,7 +502,7 @@ void postpostamble(void)
 {
     register int i;
  
-    printf("POSTPOST  postamble offset : %06ld\n", get4());
+    printf("POSTPOST  postamble offset : %06lu\n", get4());
     printf("%06ld: ", pc);
     printf("          version          : %d\n", (int) get1());
     while ((i = (int) get1()) == TRAILER) {
@@ -558,11 +558,11 @@ void fontdef(int x)
     fntnum = num(x);
     printf("FNT_DEF%d: %ld\n", x, fntnum);
     printf("%06ld: ", pc);           /* avoid side-effect on pc in get4() */
-    printf("          checksum         : %ld\n", get4());
+    printf("          checksum         : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          scale            : %ld\n", get4());
+    printf("          scale            : %lu\n", get4());
     printf("%06ld: ", pc);
-    printf("          design           : %ld\n", get4());
+    printf("          design           : %lu\n", get4());
     printf("%06ld: ", pc);
     printf("          name             : ");
     namelen = (int) get1() + (int) get1();
@@ -690,7 +690,7 @@ unsigned long num(int size)
 
     pc += size;
     for (i = size; i > 0; i--)
-        x = (x << 8) + (unsigned long) getc(dvifp);
+        x = (x << 8) + (unsigned) getc(dvifp);
 
     return x;
 
@@ -797,7 +797,7 @@ void natfontdef(int opcode)
     fntnum = num(4);
     printf("NAT_FNT:  %ld\n", fntnum);
     printf("%06ld: ", pc);
-    printf("          scale            : %ld\n", get4());
+    printf("          scale            : %lu\n", get4());
     printf("%06ld: ", pc);
     flags = get2();
     printf("          flags            : %d\n", flags);
