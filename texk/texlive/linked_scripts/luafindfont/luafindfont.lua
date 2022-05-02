@@ -4,10 +4,10 @@
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
 -- REQUIREMENTS:  luatex v.0.80 or later; packages lualibs, xindex-lapp
---       AUTHOR:  Herbert Voß  (C) 2021-11-27
+--       AUTHOR:  Herbert Voß  (C) 2022-05-01
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-   local version = 0.06
+   local version = 0.07
 luafindfont.version = version
 
 --[[
@@ -63,6 +63,7 @@ while i <= #arg do
     -n,--nosymbolicnames
     -o,--otfinfo (default 0)
     -i,--info (default 0)
+    -x, --xetex 
     -v, --verbose
     -m,--max_string (default 90)
     <font> (string)  ]])
@@ -70,6 +71,8 @@ while i <= #arg do
     args_verbose = 1
   elseif arg[i] == "-n" or arg[i] == "--nosymbolicnames" then
     args_nosymbolicnames = 1
+  elseif arg[i] == "-x" or arg[i] == "--xetex" then
+    args_xetex = 1
   elseif arg[i] == "-o" or arg[i] == "--otfinfo" then
     local o_arg = arg[i+1]
     otfinfo_arg = "i"
@@ -174,10 +177,12 @@ function getFileLocation()
 end
 
 function readBinaryOrZippedFile(file)
-  print("Check for file "..file)
+  if vlevel > 0 then print("Check for file "..file..".luc") end
   local f,err = io.open (file..".luc", "rb") 
   if not f then
-    if vlevel > 0 then print("There is no binary data file ... ") end
+    if vlevel > 0 then 
+      print("There is no binary data file ... checking for lua.gz")
+    end
     f,err = io.open (file..".lua.gz", "r") 
     if not f then
       if vlevel > 0 then print("There is no gzipped data file ... ") end
@@ -308,20 +313,43 @@ local Path = "Path"
 local SymbolicName = "Symbolic Name"
 local lfdNr = "No."
 if (font_str ~= "*") and not noSymbolicNames then
-    print(string.format("%4s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
+  if args_xetex then
+    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,SymbolicName,Path,"X")) 
+  else      
+    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
+  end
+else
+  if args_xetex then
+    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,Path,"X")) 
   else
-    print(string.format("%4s %"..l_max[1].."s  %"..l_max[3].."s",lfdNr,Fontname,Path)) 
+    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s",lfdNr,Fontname,Path)) 
+  end
 end
 
+local kpsewhich = "0" -- test if font is present for xetex
 for i, v in ipairs(fontList) do
   local path = getFileParts(v["fullpath"],"path")
   if string.len(path) > l_max[3] then
     path = string.sub (path, 1, minChars).."..."..string.sub (path, string.len(path)-maxStrLength+minChars+4)    
   end
-  if (font_str ~= "*") and not noSymbolicNames then
-    print(string.format("%4d. %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",i,v["basename"],v["familyname"],path)) 
+  local exrun = io.popen("kpsewhich "..v["basename"],'r')
+  if string.len(exrun:read('*all')) > 0 then
+    kpsewhich = "1"
   else
-    print(string.format("%4d. %"..l_max[1].."s  %"..l_max[3].."s",i,v["basename"],path)) 
+    kpsewhich = "0"
+  end
+  if (font_str ~= "*") and not noSymbolicNames then
+    if args_xetex then
+      print(string.format("%4d. %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".." %3s",i,v["basename"],v["familyname"],path,kpsewhich)) 
+    else
+      print(string.format("%4d. %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",i,v["basename"],v["familyname"],path)) 
+    end
+  else
+    if args_xetex then
+      print(string.format("%4d. %"..l_max[1].."s  %"..l_max[3].."s".." %3s",i,v["basename"],path,kpsewhich)) 
+    else    
+      print(string.format("%4d. %"..l_max[1].."s  %"..l_max[3].."s",i,v["basename"],path)) 
+    end
   end
 end
 
