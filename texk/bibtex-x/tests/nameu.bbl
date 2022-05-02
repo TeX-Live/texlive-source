@@ -2,22 +2,18 @@
 \begin{itemize}
 \item Brian Wilson Kernighan and Dennis MacAlistair Ritchie
  [1] {ff} Brian~Wilson {ll} Kernighan {vv}  {jj}
- | Brian~WilsonKernighan | Brian~Wilson Kernighan | Kernighan, B.~W. | B.~W.
-  Kernighan
+ | Brian~WilsonKernighan | Brian~Wilson Kernighan | Kernighan, B.~W. | B.~W. Kernighan
  [2] {ff} Dennis~MacAlistair {ll} Ritchie {vv}  {jj}
- | Dennis~MacAlistairRitchie | Dennis~MacAlistair Ritchie | Ritchie, D.~M. |
-  D.~M. Ritchie
+ | Dennis~MacAlistairRitchie | Dennis~MacAlistair Ritchie | Ritchie, D.~M. | D.~M. Ritchie
 \item Brüder Grimm
  [1] {ff} Brüder {ll} Grimm {vv}  {jj}
  | BrüderGrimm | Brüder Grimm | Grimm, B. | B.~Grimm
 \item Carl Maria von Weber
  [1] {ff} Carl~Maria {ll} Weber {vv} von {jj}
- | Carl~MariavonWeber | Carl~Maria von Weber | von Weber, C.~M. | C.~M.
-  v.~Weber
+ | Carl~MariavonWeber | Carl~Maria von Weber | von Weber, C.~M. | C.~M. v.~Weber
 \item Conte de Lautréamont
  [1] {ff} Conte {ll} Lautréamont {vv} de {jj}
- | ContedeLautréamont | Conte de Lautréamont | de~Lautréamont, C. |
-  C.~d.~Lautréamont
+ | ContedeLautréamont | Conte de Lautréamont | de~Lautréamont, C. | C.~d.~Lautréamont
 \item Kernighan, Brian W. AND Ritchie, Dennis M.
  [1] {ff} Brian~W. {ll} Kernighan {vv}  {jj}
  | Brian~W.Kernighan | Brian~W. Kernighan | Kernighan, B.~W. | B.~W. Kernighan
@@ -25,30 +21,25 @@
  | Dennis~M.Ritchie | Dennis~M. Ritchie | Ritchie, D.~M. | D.~M. Ritchie
 \item King, Jr., Martin Luther
  [1] {ff} Martin~Luther {ll} King {vv}  {jj} Jr.
- | Martin~LutherKingJr. | Martin~Luther King Jr. | King, Jr., M.~L. | M.~L.
-  King, Jr.
+ | Martin~LutherKingJr. | Martin~Luther King Jr. | King, Jr., M.~L. | M.~L. King, Jr.
 \item Marcel Proust
  [1] {ff} Marcel {ll} Proust {vv}  {jj}
  | MarcelProust | Marcel Proust | Proust, M. | M.~Proust
 \item Διογένης Λαέρτιος
  [1] {ff} Διογένης {ll} Λαέρτιος {vv}  {jj}
- | ΔιογένηςΛαέρτιος | Διογένης Λαέρτιος |
-  Λαέρτιος, Δ. | Δ. Λαέρτιος
+ | ΔιογένηςΛαέρτιος | Διογένης Λαέρτιος | Λαέρτιος, Δ. | Δ. Λαέρτιος
 \item Булгаков, Михаил Афанасьевич
  [1] {ff} Михаил~Афанасьевич {ll} Булгаков {vv}  {jj}
- | Михаил~АфанасьевичБулгаков |
-  Михаил~Афанасьевич Булгаков | Булгаков,
-  М.~А. | М.~А. Булгаков
+ | Михаил~АфанасьевичБулгаков | Михаил~Афанасьевич Булгаков |
+  Булгаков, М.~А. | М.~А. Булгаков
 \item Мико́ла Васи́льович Го́голь
  [1] {ff} Мико́ла~Васи́льович {ll} Го́голь {vv}  {jj}
- | Мико́ла~Васи́льовичГо́голь |
-  Мико́ла~Васи́льович Го́голь | Го́голь,
-  М.~В. | М.~В. Го́голь
+ | Мико́ла~Васи́льовичГо́голь | Мико́ла~Васи́льович Го́голь |
+  Го́голь, М.~В. | М.~В. Го́голь
 \item 김 시습
  [1] {ff} 김 {ll} 시습 {vv}  {jj}
  | 김시습 | 김 시습 | 시습, 김. | 김. 시습
-\item テスト てすと and 名無 権兵衛、 何　誰兵衛， 無名
-  　戦士 and John Smith and Schmidt, Hans
+\item テスト てすと and 名無 権兵衛、 何　誰兵衛， 無名 　戦士 and John Smith and Schmidt, Hans
  [1] {ff} テスト {ll} てすと {vv}  {jj}
  | テストてすと | テスト てすと | てすと, テ. | テ. てすと
  [2] {ff} 名無 {ll} 権兵衛 {vv}  {jj}
@@ -86,7 +77,6 @@
  [1] {ff} 髙島 {ll} 𠮷野 {vv}  {jj}
  | 髙島𠮷野 | 髙島 𠮷野 | 𠮷野, 髙. | 髙. 𠮷野
  [2] {ff} 𡈽方 {ll} 𠀋之助 {vv}  {jj}
- | 𡈽方𠀋之助 | 𡈽方 𠀋之助 | 𠀋之助, 𡈽. | 𡈽.
-  𠀋之助
+ | 𡈽方𠀋之助 | 𡈽方 𠀋之助 | 𠀋之助, 𡈽. | 𡈽. 𠀋之助
 \end{itemize}
 \endinput

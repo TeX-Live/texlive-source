@@ -174,6 +174,9 @@ __EXTERN__ Boolean_T                    bst_seen;
 __EXTERN__ StrNumber_T                  bst_str;
 __EXTERN__ BufPointer_T                 buf_ptr1;
 __EXTERN__ BufPointer_T                 buf_ptr2;
+#ifdef KPATHSEA
+__EXTERN__ Integer_T                    max_print_line;
+#endif
 
 __EXTERN__ Boolean_T                    citation_seen;
 __EXTERN__ Boolean_T                    cite_found;

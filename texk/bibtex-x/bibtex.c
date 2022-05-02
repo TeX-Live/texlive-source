@@ -103,6 +103,7 @@
 #ifdef KPATHSEA
 #include <kpathsea/config.h>
 #include <kpathsea/progname.h>
+#include <kpathsea/variable.h>
 #endif
 
 #include "sysdep.h"
@@ -228,6 +229,9 @@ int                     main (int argc, char **argv)
 BEGIN
     extern Integer8_T       history;
     int			    exit_status;
+#ifdef KPATHSEA
+    char *mpl;
+#endif
 
     /*-
     **------------------------------------------------------------------------
@@ -262,6 +266,11 @@ BEGIN
 
 #ifdef KPATHSEA
     kpse_set_program_name(argv[0], PROGNAME);
+    mpl = kpse_var_value("max_print_line");
+    if (mpl)
+        max_print_line = atoi(mpl);
+    else
+        max_print_line = 79;  /* default */
 #endif
 
     history = SPOTLESS;

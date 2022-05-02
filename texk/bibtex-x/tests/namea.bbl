@@ -1,34 +1,29 @@
 \section*{Test result}
 \begin{itemize}
+\item Carl Maria von Weber
+ [1] {ff} Carl~Maria {ll} Weber {vv} von {jj}
+ | Carl~MariavonWeber | Carl~Maria von Weber | von Weber, C.~M. | C.~M. v.~Weber
+\item Conte de Lautréamont
+ [1] {ff} Conte {ll} Lautréamont {vv} de {jj}
+ | ContedeLautréamont | Conte de Lautréamont | de~Lautréamont, C. | C.~d.~Lautréamont
+\item King, Jr., Martin Luther
+ [1] {ff} Martin~Luther {ll} King {vv}  {jj} Jr.
+ | Martin~LutherKingJr. | Martin~Luther King Jr. | King, Jr., M.~L. | M.~L. King, Jr.
 \item Brian Wilson Kernighan and Dennis MacAlistair Ritchie
  [1] {ff} Brian~Wilson {ll} Kernighan {vv}  {jj}
- | Brian~WilsonKernighan | Brian~Wilson Kernighan | Kernighan, B.~W. | B.~W.
-  Kernighan
+ | Brian~WilsonKernighan | Brian~Wilson Kernighan | Kernighan, B.~W. | B.~W. Kernighan
  [2] {ff} Dennis~MacAlistair {ll} Ritchie {vv}  {jj}
- | Dennis~MacAlistairRitchie | Dennis~MacAlistair Ritchie | Ritchie, D.~M. |
-  D.~M. Ritchie
+ | Dennis~MacAlistairRitchie | Dennis~MacAlistair Ritchie | Ritchie, D.~M. | D.~M. Ritchie
 \item Brüder Grimm
  [1] {ff} Brüder {ll} Grimm {vv}  {jj}
  | BrüderGrimm | Brüder Grimm | Grimm, B. | B.~Grimm
-\item Carl Maria von Weber
- [1] {ff} Carl~Maria {ll} Weber {vv} von {jj}
- | Carl~MariavonWeber | Carl~Maria von Weber | von Weber, C.~M. | C.~M.
-  v.~Weber
-\item Conte de Lautréamont
- [1] {ff} Conte {ll} Lautréamont {vv} de {jj}
- | ContedeLautréamont | Conte de Lautréamont | de~Lautréamont, C. |
-  C.~d.~Lautréamont
+\item Marcel Proust
+ [1] {ff} Marcel {ll} Proust {vv}  {jj}
+ | MarcelProust | Marcel Proust | Proust, M. | M.~Proust
 \item Kernighan, Brian W. AND Ritchie, Dennis M.
  [1] {ff} Brian~W. {ll} Kernighan {vv}  {jj}
  | Brian~W.Kernighan | Brian~W. Kernighan | Kernighan, B.~W. | B.~W. Kernighan
  [2] {ff} Dennis~M. {ll} Ritchie {vv}  {jj}
  | Dennis~M.Ritchie | Dennis~M. Ritchie | Ritchie, D.~M. | D.~M. Ritchie
-\item King, Jr., Martin Luther
- [1] {ff} Martin~Luther {ll} King {vv}  {jj} Jr.
- | Martin~LutherKingJr. | Martin~Luther King Jr. | King, Jr., M.~L. | M.~L.
-  King, Jr.
-\item Marcel Proust
- [1] {ff} Marcel {ll} Proust {vv}  {jj}
- | MarcelProust | Marcel Proust | Proust, M. | M.~Proust
 \end{itemize}
 \endinput

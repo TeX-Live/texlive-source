@@ -89,7 +89,7 @@
 */
 #ifndef __VERSION_H__
 # define __VERSION_H__              1
-# define PACKAGE_DATE               "(29 apr 2022)"
+# define PACKAGE_DATE               "(2 may 2022)"
 # define VERSION                    PACKAGE_VERSION " " PACKAGE_DATE
 #endif                          /* __VERSION_H__ */
 

@@ -41,7 +41,7 @@ diff $srcdir/tests/charu.bbl tests/xcharu.bbl || rc=12
 
 ## test for num.names$, format.name$
 cp $srcdir/tests/nameu.aux tests/xnameu.aux
-./bibtexu tests/xnameu || rc=13
+max_print_line=119 ./bibtexu tests/xnameu || rc=13
 diff $srcdir/tests/nameu.bbl tests/xnameu.bbl || rc=14
 
 ## test for is.knj.str$
