@@ -1,3 +1,10 @@
+2022-05-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w,
+	* prod-cweave.w,
+	* prod-twill.w,
+	* prod.w: Use non-breaking thin space for simple cast.
+
 2022-04-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch,

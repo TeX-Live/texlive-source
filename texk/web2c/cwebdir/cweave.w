@@ -2714,7 +2714,7 @@ if (cat1==binop) {
 @ @<Cases for |cast|@>=
 if (cat1==lpar) squash(pp,2,lpar,-1,21);
 else if (cat1==exp) {
-  big_app1_insert(pp,' '); reduce(pp,2,exp,-2,21);
+  big_app1(pp); app_str("\\,"); big_app1(pp+1); reduce(pp,2,exp,-2,21);
 }
 else if (cat1==semi) reduce(pp,0,exp,-2,22);
 

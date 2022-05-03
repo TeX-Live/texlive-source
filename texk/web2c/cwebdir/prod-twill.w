@@ -90,7 +90,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |binop| |binop| & |binop| \hfill
                         $|math_rel|\,\.\{B_1\.\}\.\{B_2\.\}\.\}$ & |>>=|\cr
 \+& |cast| \alt |lpar| |exp| & \alt |lpar| |exp| \hfill
-  \alt $CL$ $C\.\ E$ & \malt {$(\&{double})(x+2)$} {(\&{double}) $x$} \cr
+  \alt $CL$ $C\.{\\,}E$ & \malt {$(\&{double})(x+2)$} {(\&{double})\,$x$} \cr
 \+& |cast| |semi| & |exp| |semi| & |(int);|\cr
 \+& |sizeof_like| |cast| & |exp| & |sizeof (double)|\cr
 \+& |sizeof_like| |exp| & |exp| \hfill $S\.\ E$ & \&{sizeof} $x$\cr
