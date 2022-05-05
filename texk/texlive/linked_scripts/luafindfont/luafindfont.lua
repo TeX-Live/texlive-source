@@ -4,10 +4,10 @@
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
 -- REQUIREMENTS:  luatex v.0.80 or later; packages lualibs, xindex-lapp
---       AUTHOR:  Herbert Voß  (C) 2022-05-01
+--       AUTHOR:  Herbert Voß  (C) 2022-05-05
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-   local version = 0.07
+   local version = 0.08
 luafindfont.version = version
 
 --[[
@@ -42,12 +42,13 @@ if #arg == 0 then
 end
 
 local args_verbose = 0
-local args_nosymbolixnames = 0
+local args_nosymbolicnames = false
 local args_otfinfo = 0
 local args_info = 0
+local args_xetex = 0
 local args_max_string = 90
 
-local otfinfo_arg
+local otfinfo_arg = ""
 local fontNo = 0
 
 local i = 1
@@ -61,6 +62,7 @@ while i <= #arg do
     parameter handling
     -h,--help
     -n,--nosymbolicnames
+      ,--no-symbolic-names
     -o,--otfinfo (default 0)
     -i,--info (default 0)
     -x, --xetex 
@@ -69,8 +71,8 @@ while i <= #arg do
     <font> (string)  ]])
   elseif arg[i] == "-v" or arg[i] == "--verbose" then
     args_verbose = 1
-  elseif arg[i] == "-n" or arg[i] == "--nosymbolicnames" then
-    args_nosymbolicnames = 1
+  elseif (arg[i] == "-n") or (arg[i] == "--nosymbolicnames") or (arg[i] == "--no-symbolic-names") then
+    args_nosymbolicnames = true
   elseif arg[i] == "-x" or arg[i] == "--xetex" then
     args_xetex = 1
   elseif arg[i] == "-o" or arg[i] == "--otfinfo" then
@@ -110,6 +112,16 @@ while i <= #arg do
   i = i + 1
 end
 
+if args_verbose > 0 then
+  print("Parameter:")
+  print("args_verbose = "..args_verbose)
+  print("args_nosymbolicnames = "..tostring(args_nosymbolicnames))
+  print("args_xetex = "..args_xetex)
+  print("otfinfo_arg = "..otfinfo_arg)
+  print("fontNo = "..fontNo)
+  print("args_max_string = "..args_max_string)
+end
+  
 if not args_font then
   print("No fontname given, will close ...")
   os.exit()
@@ -124,10 +136,13 @@ local font_str = args_font:lower():gsub("%s+", ""):split("&")
 if #font_str == 1 then font_str[2] = "" end
 
 local luaVersion = _VERSION
-print("We are using "..luaVersion)
-if font_str[2] ~= "" then
-  print('Looking for font \"'..font_str[1]..' & '..font_str[2]..'\"')
-else
+if vlevel > 0 then 
+  print("We are using "..luaVersion)
+  if font_str[2] ~= "" then
+     print('Looking for font \"'..font_str[1]..' & '..font_str[2]..'\"')
+  end
+end
+if font_str[1] == "*" or vlevel > 0 then 
   print('Looking for font \"'..font_str[1]..'\"')
 end
 
@@ -243,7 +258,7 @@ fontData = readBinaryOrZippedFile(fontListFile)
 
 if not fontData then   
   print("umghhh ....")
-  print("It does not work! I'll give it up ... :-(")
+  print("It does not work! I cannote find the base data file ... I'll give it up ... :-(")
   os.exit()
 end
 
@@ -290,7 +305,7 @@ local fontList = {}
 local l_max = {1, 1, 1}
 for i, v in ipairs(fontDataMap) do 
   if v["familyname"] then
-      if (string.find (v["familyname"]:lower(), font_str[1], 1, true)  and string.find (v["basename"]:lower(), font_str[2], 1, true) ) or (font_str == "*") then
+      if (string.find (v["familyname"]:lower(), font_str[1], 1, true)  and string.find (v["basename"]:lower(), font_str[2], 1, true) ) or (font_str[1] == "*") then
 --	print(string.format("%2d. %30s %20s  %50s",j,v["basename"],v["familyname"],v["fullpath"])) 
         fontList[#fontList+1] = v
         local fullpath = getFileParts(v["fullpath"],"path")  -- strip file name
@@ -312,14 +327,15 @@ local Fontname = "Fontname"
 local Path = "Path"
 local SymbolicName = "Symbolic Name"
 local lfdNr = "No."
+
 if (font_str ~= "*") and not noSymbolicNames then
-  if args_xetex then
+  if args_xetex > 0 then
     print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,SymbolicName,Path,"X")) 
   else      
     print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
   end
 else
-  if args_xetex then
+  if args_xetex > 0 then
     print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,Path,"X")) 
   else
     print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s",lfdNr,Fontname,Path)) 
@@ -339,13 +355,13 @@ for i, v in ipairs(fontList) do
     kpsewhich = "0"
   end
   if (font_str ~= "*") and not noSymbolicNames then
-    if args_xetex then
+    if args_xetex > 0 then
       print(string.format("%4d. %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".." %3s",i,v["basename"],v["familyname"],path,kpsewhich)) 
     else
       print(string.format("%4d. %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",i,v["basename"],v["familyname"],path)) 
     end
   else
-    if args_xetex then
+    if args_xetex > 0 then
       print(string.format("%4d. %"..l_max[1].."s  %"..l_max[3].."s".." %3s",i,v["basename"],path,kpsewhich)) 
     else    
       print(string.format("%4d. %"..l_max[1].."s  %"..l_max[3].."s",i,v["basename"],path)) 
@@ -355,7 +371,7 @@ end
 
 if fontNo > 0 then
   print()
-  print("Run otfinfo -"..otfinfo_arg..": "..fontNo)
+  print("Running otfinfo -"..otfinfo_arg.." on font no."..fontNo)
   local font = fontList[fontNo]["fullpath"]
   print("otfinfo -"..otfinfo_arg.." \""..font.."\"")
   local exrun = io.popen("otfinfo -"..otfinfo_arg.." \""..font.."\"", 'r') -- ".." font may have spaces
