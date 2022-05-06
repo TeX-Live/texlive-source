@@ -194,6 +194,7 @@ endif WEB
 EXTRA_DIST += $(web_tests)
 
 ## bibtex.test
+EXTRA_DIST += tests/xampl.bib
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## tests/bibtex-longline-test.pl
 DISTCLEANFILES += longline.aux longline.bbl longline.bib longline.blg

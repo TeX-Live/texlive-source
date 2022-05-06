@@ -1,0 +1,212 @@
+\newcommand{\noopsort}[1]{} \newcommand{\printfirst}[2]{#1}
+  \newcommand{\singleletter}[1]{#1} \newcommand{\switchargs}[2]{#2#1}
+\begin{thebibliography}{}
+
+\bibitem[Aamport, 1986a]{article-minimal}
+Aamport, L.~A. (1986a).
+\newblock The gnats and gnus document preparation system.
+\newblock {\em \mbox{G-Animal's} Journal}.
+
+\bibitem[Aamport, 1986b]{article-full}
+Aamport, L.~A. (1986b).
+\newblock The gnats and gnus document preparation system.
+\newblock {\em \mbox{G-Animal's} Journal}, 41(7):73+.
+\newblock This is a full ARTICLE entry.
+
+\bibitem[Aamport, 1986c]{article-crossref}
+Aamport, L.~A. (1986c).
+\newblock The gnats and gnus document preparation system.
+\newblock In \cite{whole-journal}, pages 73+.
+\newblock This is a cross-referencing ARTICLE entry.
+
+\bibitem[GAJ, 1986]{whole-journal}
+GAJ (1986).
+\newblock {\em \mbox{G-Animal's} Journal}, 41(7).
+\newblock The entire issue is devoted to gnats and gnus (this entry is a
+  cross-referenced ARTICLE (journal)).
+
+\bibitem[Knuth, 1968]{whole-set}
+Knuth, D.~E. ({\noopsort{1973a}}{\switchargs{--90}{1968}}).
+\newblock {\em The Art of Computer Programming}.
+\newblock Four volumes. Addison-Wesley.
+\newblock Seven volumes planned (this is a cross-referenced set of BOOKs).
+
+\bibitem[Knuth, 1973a]{inbook-minimal}
+Knuth, D.~E. ({\noopsort{1973b}}1973a).
+\newblock {\em Fundamental Algorithms}, chapter 1.2.
+\newblock Addison-Wesley.
+
+\bibitem[Knuth, 1973b]{inbook-full}
+Knuth, D.~E. ({\noopsort{1973b}}1973b).
+\newblock {\em Fundamental Algorithms}, volume~1 of {\em The Art of Computer
+  Programming}, section 1.2, pages 10--119.
+\newblock Addison-Wesley, Reading, Massachusetts, second edition.
+\newblock This is a full INBOOK entry.
+
+\bibitem[Knuth, 1973c]{inbook-crossref}
+Knuth, D.~E. ({\noopsort{1973b}}1973c).
+\newblock {\em Fundamental Algorithms}, section 1.2.
+\newblock Volume~1 of \cite{whole-set}, second edition.
+\newblock This is a cross-referencing INBOOK entry.
+
+\bibitem[Knuth, 1981a]{book-full}
+Knuth, D.~E. ({\noopsort{1973c}}1981a).
+\newblock {\em Seminumerical Algorithms}, volume~2 of {\em The Art of Computer
+  Programming}.
+\newblock Addison-Wesley, Reading, Massachusetts, second edition.
+\newblock This is a full BOOK entry.
+
+\bibitem[Knuth, 1981b]{book-minimal}
+Knuth, D.~E. ({\noopsort{1973c}}1981b).
+\newblock {\em Seminumerical Algorithms}.
+\newblock Addison-Wesley.
+
+\bibitem[Knuth, 1981c]{book-crossref}
+Knuth, D.~E. ({\noopsort{1973c}}1981c).
+\newblock {\em Seminumerical Algorithms}.
+\newblock Volume~2 of \cite{whole-set}, second edition.
+\newblock This is a cross-referencing BOOK entry.
+
+\bibitem[Kn{\printfirst{v}{1987}}, ]{booklet-minimal}
+Kn{\printfirst{v}{1987}}.
+\newblock The programming of computer art.
+
+\bibitem[Knvth, 1988]{booklet-full}
+Knvth, J.~C. (1988).
+\newblock The programming of computer art.
+\newblock Vernier Art Center, Stanford, California.
+\newblock This is a full BOOKLET entry.
+
+\bibitem[Lincoll, 1977a]{incollection-minimal}
+Lincoll, D.~D. (1977a).
+\newblock Semigroups of recurrences.
+\newblock In {\em High Speed Computer and Algorithm Organization}. Academic
+  Press.
+
+\bibitem[Lincoll, 1977b]{incollection-full}
+Lincoll, D.~D. (1977b).
+\newblock Semigroups of recurrences.
+\newblock In Lipcoll, D.~J., Lawrie, D.~H., and Sameh, A.~H., editors, {\em
+  High Speed Computer and Algorithm Organization}, number~23 in Fast Computers,
+  part~3, pages 179--183. Academic Press, New York, third edition.
+\newblock This is a full INCOLLECTION entry.
+
+\bibitem[Lincoll, 1977c]{incollection-crossref}
+Lincoll, D.~D. (1977c).
+\newblock Semigroups of recurrences.
+\newblock In \cite{whole-collection}, pages 179--183.
+\newblock This is a cross-referencing INCOLLECTION entry.
+
+\bibitem[Lipcoll et~al., 1977]{whole-collection}
+Lipcoll, D.~J., Lawrie, D.~H., and Sameh, A.~H., editors (1977).
+\newblock {\em High Speed Computer and Algorithm Organization}.
+\newblock Number~23 in Fast Computers. Academic Press, New York, third edition.
+\newblock This is a cross-referenced BOOK (collection) entry.
+
+\bibitem[Manmaker, ]{manual-minimal}
+Manmaker.
+\newblock {\em The Definitive Computer Manual}.
+
+\bibitem[Manmaker, 1986]{manual-full}
+Manmaker, L. (1986).
+\newblock {\em The Definitive Computer Manual}.
+\newblock Chips-R-Us, Silicon Valley, silver edition.
+\newblock This is a full MANUAL entry.
+
+\bibitem[Masterly, 1988a]{mastersthesis-minimal}
+Masterly, {\'{E}}. (1988a).
+\newblock Mastering thesis writing.
+\newblock Master's thesis, Stanford University.
+
+\bibitem[Masterly, 1988b]{mastersthesis-full}
+Masterly, {\'{E}}. (1988b).
+\newblock Mastering thesis writing.
+\newblock Master's project, Stanford University, English Department.
+\newblock This is a full MASTERSTHESIS entry.
+
+\bibitem[Missilany, ]{misc-minimal}
+Missilany.
+\newblock This is a minimal MISC entry.
+
+\bibitem[Missilany, 1984]{misc-full}
+Missilany, J.-B. (1984).
+\newblock Handing out random pamphlets in airports.
+\newblock Handed out at O'Hare.
+\newblock This is a full MISC entry.
+
+\bibitem[Oaho et~al., 1983a]{inproceedings-minimal}
+Oaho, A.~V., Ullman, J.~D., and Yannakakis, M. (1983a).
+\newblock On notions of information transfer in {VLSI} circuits.
+\newblock In {\em Proc. Fifteenth Annual ACM Symposium on the Theory of
+  Computing}.
+
+\bibitem[Oaho et~al., 1983b]{inproceedings-full}
+Oaho, A.~V., Ullman, J.~D., and Yannakakis, M. (1983b).
+\newblock On notions of information transfer in {VLSI} circuits.
+\newblock In Oz, W.~V. and Yannakakis, M., editors, {\em Proc. Fifteenth Annual
+  ACM Symposium on the Theory of Computing}, number~17 in All ACM Conferences,
+  pages 133--139, Boston. The OX Association for Computing Machinery, Academic
+  Press.
+\newblock This is a full INPROCEDINGS entry.
+
+\bibitem[Oaho et~al., 1983c]{inproceedings-crossref}
+Oaho, A.~V., Ullman, J.~D., and Yannakakis, M. (1983c).
+\newblock On notions of information transfer in {VLSI} circuits.
+\newblock In \cite{whole-proceedings}, pages 133--139.
+\newblock This is a cross-referencing INPROCEEDINGS entry.
+
+\bibitem[OX{\singleletter{stoc}}, 1983a]{whole-proceedings}
+OX{\singleletter{stoc}} (1983a).
+\newblock {\em Proc. Fifteenth Annual Symposium on the Theory of Computing},
+  Boston. The OX Association for Computing Machinery.
+\newblock This is a cross-referenced PROCEEDINGS.
+
+\bibitem[OX{\singleletter{stoc}}, 1983b]{proceedings-minimal}
+OX{\singleletter{stoc}} (1983b).
+\newblock {\em Proc. Fifteenth Annual Symposium on the Theory of Computing}.
+
+\bibitem[Oz and Yannakakis, 1983]{proceedings-full}
+Oz, W.~V. and Yannakakis, M., editors (1983).
+\newblock {\em Proc. Fifteenth Annual Symposium on the Theory of Computing},
+  number~17 in All ACM Conferences, Boston. The OX Association for Computing
+  Machinery, Academic Press.
+\newblock This is a full PROCEEDINGS entry.
+
+\bibitem[Phony-Baloney, 1988a]{phdthesis-minimal}
+Phony-Baloney, F.~P. (1988a).
+\newblock {\em Fighting Fire with Fire: Festooning {F}rench Phrases}.
+\newblock PhD thesis, Fanstord University.
+
+\bibitem[Phony-Baloney, 1988b]{phdthesis-full}
+Phony-Baloney, F.~P. (1988b).
+\newblock {\em Fighting Fire with Fire: Festooning {F}rench Phrases}.
+\newblock {PhD} dissertation, Fanstord University, Department of French.
+\newblock This is a full PHDTHESIS entry.
+
+\bibitem[Terrific, 1988]{techreport-minimal}
+Terrific, T. (1988).
+\newblock An {$O(n \log n / \! \log\log n)$} sorting algorithm.
+\newblock Technical report, Fanstord University.
+
+\bibitem[T{\'{e}}rrific, 1988]{techreport-full}
+T{\'{e}}rrific, T. (1988).
+\newblock An {$O(n \log n / \! \log\log n)$} sorting algorithm.
+\newblock Wishful Research Result~7, Fanstord University, Computer Science
+  Department, Fanstord, California.
+\newblock This is a full TECHREPORT entry.
+
+\bibitem[{\"{U}}nderwood et~al., ]{unpublished-minimal}
+{\"{U}}nderwood, U., {\~N}et, N., and {\={P}}ot, P.
+\newblock Lower bounds for wishful research results.
+\newblock Talk at Fanstord University (this is a minimal UNPUBLISHED entry).
+
+\bibitem[{\"{U}}nderwood et~al., 1988]{unpublished-full}
+{\"{U}}nderwood, U., {\~N}et, N., and {\={P}}ot, P. (1988).
+\newblock Lower bounds for wishful research results.
+\newblock Talk at Fanstord University (this is a full UNPUBLISHED entry).
+
+\bibitem[Volume-2, ]{random-note-crossref}
+Volume-2.
+\newblock Volume~2 is listed under Knuth \cite{book-full}.
+
+\end{thebibliography}

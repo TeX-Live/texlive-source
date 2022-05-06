@@ -347,6 +347,12 @@ incr(current_option);
 @ An element with all zeros always ends the list.
 @z
 
+@x
+begin kpse_set_program_name (argv[0], 'pbibtex');
+@y
+begin kpse_set_program_name (argv[0], 'upbibtex');
+@z
+
 @x procedure x_is_kanji_str
 procedure x_is_kanji_str;
 label exit;

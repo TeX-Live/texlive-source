@@ -1,3 +1,9 @@
+2022-05-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmf.cnf (max_print_line):
+	Now it applies to BibTeX family:
+	bibtex, pbibtex, upbibtex, bibtex8 and bibtexu.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

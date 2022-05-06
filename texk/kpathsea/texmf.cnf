@@ -864,6 +864,7 @@ gf_buf_size = 16384  % MF
 % 30 < half_error_line < error_line - 15;
 % 60 <= max_print_line;
 % These apply to TeX, Metafont, and MetaPost.
+% "max_print_line" applies to BibTeX family.
 error_line = 79
 half_error_line = 50
 max_print_line = 79

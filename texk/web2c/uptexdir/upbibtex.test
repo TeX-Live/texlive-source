@@ -5,6 +5,7 @@
 # You may freely use, modify and/or distribute this file.
 
 test -d uptests || mkdir -p uptests
+rm -f uptests/xexampl.*
 
 cp $srcdir/tests/exampl.aux uptests/xexampl.aux
 
@@ -12,4 +13,5 @@ TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/tests \
   BIBINPUTS=$srcdir/tests \
   ./upbibtex uptests/xexampl || exit 1
+diff $srcdir/tests/exampl.bbl uptests/xexampl.bbl || exit 2
 
