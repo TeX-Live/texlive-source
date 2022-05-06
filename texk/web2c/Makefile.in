@@ -3200,7 +3200,7 @@ TEST_EXTENSIONS = .pl .test
 EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	triptrap-sh tangle.web tangle.ch tangleboot.pin cwebdir \
 	ctangleboot.cin cwebboot.cin tangle.test $(web_programs:=.web) \
-	$(web_programs:=.ch) $(web_tests) tests/xampl.bib \
+	$(web_programs:=.ch) $(web_tests) tests/exampl.bbl \
 	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
 	tests/bibtex-bigauth.aux tests/bibtex-bigauth.bib \
 	tests/bibtex-bigauth.tex tests/auxinclude.aux \
