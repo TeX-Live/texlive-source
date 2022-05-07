@@ -6,7 +6,7 @@
 	Accept max_print_line variable in kpathsea.
 	We can define max_print_line.bibtex8 or max_print_line.bibtexu
 	in texmf.cnf.
-	* tests/bibtex[8u]-char.test, tests/name[au].,bbl:
+	* tests/bibtex[8u]-char.test, tests/name[au].bbl:
 	Update tests.
 
 2022-04-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>

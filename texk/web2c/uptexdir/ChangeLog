@@ -1,3 +1,10 @@
+2022-05-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* upbibtex.ch:
+	Support Latin-1, Latin Extended-A, Greek and Cyrillic on change.case$.
+	Ignore add.period$ after Interrobang ‽.
+	Make is.kanji.str$ false for Ideographic Description Characters.
+
 2022-05-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upbibtex.ch: Fix bug on kpse_set_progname.
