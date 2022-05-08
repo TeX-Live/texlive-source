@@ -660,8 +660,8 @@ bibtexu_tests = tests/bibtexu.test tests/bibtexu-basic.test \
                 tests/bibtexu-sort.test tests/bibtexu-char.test
 
 TESTS = $(am__append_3) $(am__append_4)
-EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/sort.aux \
-	tests/sort1.bbl tests/sort2.bbl tests/sort3.bbl \
+EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/exampl.bbl \
+	tests/sort.aux tests/sort1.bbl tests/sort2.bbl tests/sort3.bbl \
 	tests/sort1.csf tests/sort2.csf tests/sort3.csf \
 	tests/testdata.bib tests/teststyle.bst tests/sort1.bbl \
 	tests/sort2.bbl tests/sort3.bbl tests/casea.aux \

@@ -1,3 +1,18 @@
+2022-05-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version.h:
+	Bump version to 4.00 (8 may 2022).
+	* bibtex-2.c:
+	Set LEGAL_ID_CHAR to id_class of 8bit characters.
+	* Makefile.am, tests/bibtex[8u].test,
+	tests/bibtex8-char.test, tests/bibtexu-sort.test,
+	tests/test{case,char,name,period,substr,txtprfx,width,iscjk}.bst,
+	tests/case[au].bbl, tests/chara.bbl, tests/name[au].bbl,
+	tests/substra.bbl, tests/txtprfxa.bbl, tests/yannis.bbl,
+	tests/exampl.bbl, tests/ltnbib.bib, tests/mlgbib.bib,
+	tests/testcase[au].bib, tests/yannis.bib:
+	Update tests.
+
 2022-05-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version.h:

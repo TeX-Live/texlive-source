@@ -15,15 +15,15 @@ FUNCTION {type} {output_entry}
 
 READ
 
-FUNCTION {set_sortkey} {
+FUNCTION {set_sort_key} {
   field 'sort.key$ :=
 }
 
-ITERATE {set_sortkey}
+ITERATE {set_sort_key}
 
 SORT
 
-FUNCTION {output_beg} {
+FUNCTION {output_bgn} {
   "\section*{Test result}" write$ newline$
   "\begin{itemize}" write$ newline$
 }
@@ -33,7 +33,7 @@ FUNCTION {output_end} {
   "\endinput" write$ newline$
 }
 
-EXECUTE {output_beg}
+EXECUTE {output_bgn}
 
 ITERATE {call.type$}
 

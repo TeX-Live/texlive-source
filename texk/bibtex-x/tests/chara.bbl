@@ -1,20 +1,20 @@
 \section*{Test result}
 \begin{itemize}
 \item A  i2str: 65  i2chr: A
+\item Å  i2str: 197  i2chr: Å
 \item C  i2str: 67  i2chr: C
+\item Ç  i2str: 199  i2chr: Ç
 \item D  i2str: 68  i2chr: D
 \item E  i2str: 69  i2chr: E
+\item È  i2str: 200  i2chr: È
 \item i  i2str: 105  i2chr: i
+\item î  i2str: 238  i2chr: î
 \item o  i2str: 111  i2chr: o
 \item u  i2str: 117  i2chr: u
-\item y  i2str: 121  i2chr: y
-\item Å  i2str: 197  i2chr: Å
-\item Ç  i2str: 199  i2chr: Ç
-\item Ğ  i2str: 208  i2chr: Ğ
-\item È  i2str: 200  i2chr: È
-\item î  i2str: 238  i2chr: î
-\item ø  i2str: 248  i2chr: ø
 \item ü  i2str: 252  i2chr: ü
+\item y  i2str: 121  i2chr: y
+\item Ğ  i2str: 208  i2chr: Ğ
+\item ø  i2str: 248  i2chr: ø
 \item ı  i2str: 253  i2chr: ı
 \end{itemize}
 \endinput

@@ -5,6 +5,7 @@
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
+rm -f tests/xexampl.*
 
 cp $srcdir/../web2c/tests/exampl.aux tests/xexampl.aux
 
@@ -12,4 +13,5 @@ TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/../web2c/tests \
   BIBINPUTS=$srcdir/../web2c/tests \
   ./bibtex8 -7 tests/xexampl || test $? = 1 || exit 1
+diff $srcdir/tests/exampl.bbl tests/xexampl.bbl || exit 2
 

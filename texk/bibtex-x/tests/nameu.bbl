@@ -1,5 +1,8 @@
 \section*{Test result}
 \begin{itemize}
+\item Albert Camus
+ [1] {ff} Albert {ll} Camus {vv}  {jj}
+ | AlbertCamus | Albert Camus | Camus, A. | A.~Camus
 \item Brian Wilson Kernighan and Dennis MacAlistair Ritchie
  [1] {ff} Brian~Wilson {ll} Kernighan {vv}  {jj}
  | Brian~WilsonKernighan | Brian~Wilson Kernighan | Kernighan, B.~W. | B.~W. Kernighan

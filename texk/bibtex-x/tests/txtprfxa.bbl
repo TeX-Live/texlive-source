@@ -9,6 +9,15 @@
 \item[5] ABCDE
 \item[6] ABCDEF
 \item[7] ABCDEFG
+\item[orig] егхньэщ~ЕГХНЬЭЩ
+\item[len] 15
+\item[1] е
+\item[2] ег
+\item[3] егх
+\item[4] егхн
+\item[5] егхнь
+\item[6] егхньэ
+\item[7] егхньэщ
 \item[orig] {AB}CDEFG tuvwx{yz}
 \item[len] 15
 \item[1] {A}
@@ -27,15 +36,6 @@
 \item[5] {{AB}CD}E
 \item[6] {{AB}CD}EF
 \item[7] {{AB}CD}EFG
-\item[orig] егхньэщ~ЕГХНЬЭЩ
-\item[len] 15
-\item[1] е
-\item[2] ег
-\item[3] егх
-\item[4] егхн
-\item[5] егхнь
-\item[6] егхньэ
-\item[7] егхньэщ
 \item[orig] {{ег}хн}ьэщ~ЕГХ{НЬ{ЭЩ}}
 \item[len] 15
 \item[1] {{е}}

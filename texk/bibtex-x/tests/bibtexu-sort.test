@@ -26,7 +26,7 @@ done
 
 ## test for change.case$
 cp $srcdir/tests/caseu.aux tests/xcaseu.aux
-./bibtexu tests/xcaseu || rc=3
+max_print_line=99 ./bibtexu tests/xcaseu || rc=3
 diff $srcdir/tests/caseu.bbl tests/xcaseu.bbl || rc=4
 
 

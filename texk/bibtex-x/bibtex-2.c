@@ -2548,6 +2548,31 @@ BEGIN
     id_class[EQUALS_SIGN] = ILLEGAL_ID_CHAR;
     id_class[LEFT_BRACE] = ILLEGAL_ID_CHAR;
     id_class[RIGHT_BRACE] = ILLEGAL_ID_CHAR;
+#ifdef SUPPORT_8BIT
+#ifdef UTF_8
+    for (i=0x80; i<=0xBF; i++)
+    BEGIN
+        id_class[i] = LEGAL_ID_CHAR;
+    END
+    for (i=0xC2; i<=0xF4; i++)
+    BEGIN
+        id_class[i] = LEGAL_ID_CHAR;
+    END
+#else
+    for (i=0xC0; i<=0xD6; i++)
+    BEGIN
+        id_class[i] = LEGAL_ID_CHAR;
+    END
+    for (i=0xD8; i<=0xF6; i++)
+    BEGIN
+        id_class[i] = LEGAL_ID_CHAR;
+    END
+    for (i=0xF8; i<=0xFF; i++)
+    BEGIN
+        id_class[i] = LEGAL_ID_CHAR;
+    END
+#endif
+#endif
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 33 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
 
 /***************************************************************************

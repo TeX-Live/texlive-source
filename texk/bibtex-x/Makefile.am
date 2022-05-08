@@ -95,6 +95,7 @@ tests/bibtexu.log tests/bibtexu-basic.log tests/bibtexu-range.log \
 EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests)
 DISTCLEANFILES =
 ## tests/bibtex8.test
+EXTRA_DIST += tests/exampl.bbl
 DISTCLEANFILES += tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg
 ## tests/bibtexu.test
 ##
