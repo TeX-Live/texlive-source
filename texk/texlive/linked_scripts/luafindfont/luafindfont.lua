@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
-
+--
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
@@ -7,7 +7,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2022-05-05
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-   local version = 0.08
+      local version = 0.09
 luafindfont.version = version
 
 --[[
@@ -34,6 +34,7 @@ kpse.set_program_name("luatex")
 local f = kpse.find_file("lualibs.lua")
 
 require("lualibs")  -- all part of LuaTeX
+
 --require("luafindfont-utflib")
 
 if #arg == 0 then
@@ -112,7 +113,13 @@ while i <= #arg do
   i = i + 1
 end
 
-if args_verbose > 0 then
+local vlevel = args_verbose
+
+function logprint(str)
+  if vlevel > 0 then print(str) end
+end
+
+if vlevel > 0 then
   print("Parameter:")
   print("args_verbose = "..args_verbose)
   print("args_nosymbolicnames = "..tostring(args_nosymbolicnames))
@@ -127,7 +134,6 @@ if not args_font then
   os.exit()
 end
 
-local vlevel = args_verbose
 --local otfinfo = args_otfinfo
 local info = args_info
 local noSymbolicNames = args_nosymbolicnames
@@ -153,12 +159,14 @@ function getFileParts(fullpath,part)
   else return file end
 end
 
+-- for fileparts see also file fontloader-l-file.lua in /luaotfload
+
 function getFileLocation()
   local cachepaths = kpse.expand_var('$TEXMFCACHE') or ""
   if cachepaths == "" or cachepaths == "$TEXMFCACHE" then
     cachepaths = kpse.expand_var('$TEXMFVAR') or ""
   end
-  if vlevel > 0 then print("cachepaths: ",cachepaths) end
+  logprint("cachepaths: "..cachepaths)
   if cachepaths == "" then
     print("umghhh ....")
     print("No cache path found ... ")
@@ -169,14 +177,14 @@ function getFileLocation()
   else
     paths = string.split(cachepaths,":")
   end
-  if vlevel > 0 then print ("Pathes: ", paths[1], paths[2]) end
+  logprint ("Pathes: "..paths[1]..", "..paths[2])
   local file = paths[1].."/luatex-cache/generic/names" 
-  if vlevel > 0 then print("try: ",file) end
+  logprint("try path: "..file)
   local f,err = io.open (file.."/test.tmp", "w") 
   if not f and #paths > 1 then
-    if vlevel > 0 then print("first path has no file, I'll try the second one ...") end
+    logprint("first path has no file, I'll try the second one ...")
     file = paths[2].."/luatex-cache/generic/names"
-  if vlevel > 0 then print("try: ",file) end
+    logprint("try path: "..file)
     f,err = io.open (file.."/test.tmp", "w") 
     if not f then
       print("Error getting file location: \n",err)
@@ -192,41 +200,50 @@ function getFileLocation()
 end
 
 function readBinaryOrZippedFile(file)
-  if vlevel > 0 then print("Check for file "..file..".luc") end
+  logprint("Check for file "..file..".luc.gz")
+  local f,err = io.open (file..".luc.gz", "rb") 
+  if f then
+    logprint("Found a zipped binary data file ... ") 
+    local chunk = gzip.decompress(f:read"*all")
+    f:close()
+    local func = load (chunk, "b")
+    str = func()
+    return str
+  end
+  logprint("There is no zipped binary data file ... ") 
+  logprint("Check for unzipped file "..file..".luc")
   local f,err = io.open (file..".luc", "rb") 
-  if not f then
-    if vlevel > 0 then 
-      print("There is no binary data file ... checking for lua.gz")
-    end
-    f,err = io.open (file..".lua.gz", "r") 
-    if not f then
-      if vlevel > 0 then print("There is no gzipped data file ... ") end
-      f,err = io.open (file..".lua", "r") 
-      if not f then
-        if vlevel > 0 then print("There is no data file ... ") end
-        print("Error reading file: ",err)
-        return nil
-      else
-        if vlevel > 0 then print("Found a normal data file ... ") end
-        local str = dofile(f)
-        f:close()
-        return str
-      end
-    else  
-      if vlevel > 0 then print("Found a gzipped data file ... ") end
-      local str = f:read("*all")
-      local str2 = loadstring(gzip.decompress(str))
-      str = str2()
-      f:close()
-      return str
-    end
-  else
-    if vlevel > 0 then print("Found a binary data file ... ") end
+  if f then
+    logprint("Found a binary data file ... ") 
     local chunk = f:read"*all"
     f:close()
     local func = load (chunk, "b")
     str = func()
     return str
+  end
+  logprint("There is no binary data file ... ") 
+  logprint("Check for zipped file "..file..".lua.gz")
+  f,err = io.open (file..".lua.gz", "rb") 
+  if f then
+    logprint("Found a gzipped data file ... ")
+    local str = f:read("*all")
+    local str2 = loadstring(gzip.decompress(str))
+    str = str2()
+    f:close()
+    return str
+  end
+  logprint("There is no gzipped data file ... ") 
+  logprint("Check for file "..file..".lua")
+  f,err = io.open (file..".lua", "r") 
+  if f then
+    logprint("Found a normal data file ... ")
+    local str = dofile(f)
+    f:close()
+    return str
+  else
+    logprint("There is no data file ... ")
+    print("Error reading file: ",err)
+    return nil
   end
 end
 
@@ -239,7 +256,6 @@ function compareEntries(f1, f2)
     return false
   end
 end
-
 
 local fontData = {}
 local fontListFile = getFileLocation()
@@ -302,6 +318,7 @@ fontDataMap = newFontDataMap
 
 local j = 1
 local fontList = {}
+-- now calculate the longest string for all colums
 local l_max = {1, 1, 1}
 for i, v in ipairs(fontDataMap) do 
   if v["familyname"] then
@@ -323,9 +340,9 @@ end
 if l_max[3] > maxStrLength then l_max[3] = maxStrLength end
 
 local minChars = 26
-local Fontname = "Fontname"
+local Fontname = "Filename"
 local Path = "Path"
-local SymbolicName = "Symbolic Name"
+local SymbolicName = "Symbolic name"
 local lfdNr = "No."
 
 if (font_str ~= "*") and not noSymbolicNames then
