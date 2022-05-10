@@ -24,7 +24,7 @@ FILE *vfopen(char *name)
 	fputc(202,fp); /* ID */
 	fputc(0,fp); /* comment size */
 	fputnum(0,4,fp); /* TFM check sum */
-	fputnum(10*(1<<20),4,fp); /* TFM design size */
+	fputnum(unit,4,fp); /* TFM design size */
 
 	fputc(243,fp); /* fnt_def1 */
 	fputc(1+fidshift,fp); /* Font ID */

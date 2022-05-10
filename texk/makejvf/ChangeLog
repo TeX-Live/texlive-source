@@ -1,3 +1,9 @@
+2022-05-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* write.c: The DESIGNSIZE of output VF should be consistent with
+	that of input JFM.
+	https://github.com/texjporg/tex-jp-build/issues/140
+
 2022-01-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c, main.c: Update references Unicode blocks Blocks-14.0.0.txt.
