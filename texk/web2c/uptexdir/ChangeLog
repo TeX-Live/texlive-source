@@ -1,3 +1,9 @@
+2022-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* upbibtex.ch:
+	Accept multibyte characters by int.to.chr$ and chr.to.int$, i.e.
+	chr is corresponding to one single character multibyte string.
+
 2022-05-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upbibtex.ch:

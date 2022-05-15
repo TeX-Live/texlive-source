@@ -1,9 +1,9 @@
 @x
 @d my_name=='pbibtex'
-@d banner=='This is pBibTeX, Version 0.99d-j0.34'
+@d banner=='This is pBibTeX, Version 0.99d-j0.35'
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.34-u1.28'
+@d banner=='This is upBibTeX, Version 0.99d-j0.35-u1.28'
 @z
 
 @x
@@ -258,10 +258,12 @@ var i:0..last_text_char;    {this is the first one declared}
         end;
 @z
 
-@x
-    if(str_pool[str_start[pop_lit1]]>127) then { a KANJI char is 2byte long }
+@x x_chr_to_int
+        push_lit_stk(toDVI(fromBUFF(str_pool, str_start[pop_lit1]+2, str_start[pop_lit1])),stk_int)
+                                        { a KANJI char is 2byte long }
 @y
-    if(str_pool[str_start[pop_lit1]]>127) then { a KANJI char is |2..4|byte long }
+        push_lit_stk(toDVI(fromBUFF(str_pool, str_start[pop_lit1]+length(pop_lit1), str_start[pop_lit1])),stk_int)
+                                        { a KANJI char is |2..4|byte long }
 @z
 
 @x
@@ -355,6 +357,31 @@ var i:0..last_text_char;    {this is the first one declared}
         if multibytelen(name_buf[name_bf_ptr]) > 3 then
             append_ex_buf_char_and_check (name_buf[name_bf_ptr+3]);
         name_bf_ptr := name_bf_ptr + multibytelen(name_buf[name_bf_ptr])-1;
+@z
+
+@x x_int_to_chr
+    str_room(2);
+    if (pop_lit1>127) then begin
+        append_char (Hi(k));
+        append_char (Lo(k));
+    end
+    else
+        append_char (pop_lit1);
+    push_lit_stk (make_string, stk_str);
+    end;
+@y
+    str_room(4);
+    k:=toBUFF(k);
+    if (BYTE1(k)>0) then
+        append_char (BYTE1(k));
+    if (BYTE2(k)>0) then
+        append_char (BYTE2(k));
+    if (BYTE3(k)>0) then
+        append_char (BYTE3(k));
+    { always }
+        append_char (BYTE4(k));
+    push_lit_stk (make_string, stk_str);
+    end;
 @z
 
 @x

@@ -11,6 +11,7 @@
 @define function multistrlen ();
 @define function multistrlenshort ();
 @define function multistrlenfilename ();
+@define function multibytelen ();
 @define function fromBUFF ();
 @define function fromBUFFshort ();
 @define function toBUFF ();

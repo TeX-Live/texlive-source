@@ -30,12 +30,14 @@
 % 2022-02-20    Still version 0.34 by H. Yamashita (-> TL'22 version)
 %   * Improve substring$ to truncate at least one character when trying to
 %     start counting from the middle byte of the first or last Japanese character.
+% 2022-05-15    Version 0.35 by Takuji Tanaka (-> TL'23 version)
+%   * Accept multibyte characters by int.to.chr$ and chr.to.int$.
 
 @x [0] only print chnages
 \def\title{\BibTeX\ }
 @y
 \let\maybe=\iffalse
-\def\title{J\BibTeX\ 0.34 Changes for C Version \BibTeX\ }
+\def\title{J\BibTeX\ 0.35 Changes for C Version \BibTeX\ }
 @z
 
 @x
@@ -45,7 +47,7 @@
 @y
  \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont J\BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.99d-j0.34---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.99d-j0.35---\today)} \vfill}
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,7 +58,7 @@
 @d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
 @y
 @d my_name=='pbibtex'
-@d banner=='This is pBibTeX, Version 0.99d-j0.34'
+@d banner=='This is pBibTeX, Version 0.99d-j0.35'
   {printed when the program starts}
 @z
 
@@ -339,7 +341,7 @@ case (str_pool[sp_ptr]) of
         @<Add the |period| (it's necessary) and push@>
 @z
 
-@x Changes for JBibTeX by Shouichi Matsui [377]
+@x x_chr_to_int
 else if (length(pop_lit1) <> 1) then
     begin
     print ('"');
@@ -347,15 +349,25 @@ else if (length(pop_lit1) <> 1) then
     bst_ex_warn ('" isn''t a single character');
     push_lit_stk (0, stk_int);
     end
+else
+    push_lit_stk (str_pool[str_start[pop_lit1]], stk_int);
+                                        {push the (|ASCII_code|) integer}
 @y
-else if (length(pop_lit1) <> 1) then
-    if(str_pool[str_start[pop_lit1]]>127) then { a KANJI char is 2byte long }
+else if (length(pop_lit1) = multibytelen(str_pool[str_start[pop_lit1]])) then
+    begin
+    if (length(pop_lit1) = 1) then
         push_lit_stk(str_pool[str_start[pop_lit1]],stk_int)
-    else begin
-        print ('"');
-        print_pool_str (pop_lit1);
-        bst_ex_warn ('" isn''t a single character');
-        push_lit_stk (0, stk_int);
+                                        {push the (|ASCII_code|) integer}
+    else
+        push_lit_stk(toDVI(fromBUFF(str_pool, str_start[pop_lit1]+2, str_start[pop_lit1])),stk_int)
+                                        { a KANJI char is 2byte long }
+    end
+else
+    begin
+    print ('"');
+    print_pool_str (pop_lit1);
+    bst_ex_warn ('" isn''t a single character');
+    push_lit_stk (0, stk_int);
     end
 @z
 
@@ -460,6 +472,60 @@ end;
         goto loop_exit;
         end
     else if ((name_buf[name_bf_ptr] = left_brace) and
+@z
+
+@x x_int_to_chr
+procedure x_int_to_chr;
+begin
+pop_lit_stk (pop_lit1,pop_typ1);
+if (pop_typ1 <> stk_int) then
+    begin
+    print_wrong_stk_lit (pop_lit1,pop_typ1,stk_int);
+    push_lit_stk (s_null, stk_str);
+    end
+else if ((pop_lit1 < 0) or (pop_lit1 > 127)) then
+    begin
+    bst_ex_warn (pop_lit1:0,' isn''t valid ASCII');
+    push_lit_stk (s_null, stk_str);
+    end
+else
+    begin
+    str_room(1);
+    append_char (pop_lit1);
+    push_lit_stk (make_string, stk_str);
+    end;
+end;
+@y
+procedure x_int_to_chr;
+var k:integer;
+begin
+pop_lit_stk (pop_lit1,pop_typ1);
+if (pop_typ1 <> stk_int) then
+    begin
+    print_wrong_stk_lit (pop_lit1,pop_typ1,stk_int);
+    push_lit_stk (s_null, stk_str);
+    end
+else begin
+k:=pop_lit1;
+if (pop_lit1 > 127) then k:=fromDVI(pop_lit1);
+if ((pop_lit1 < 0) or ((pop_lit1 > 127) and (k = 0))) then
+    begin
+    bst_ex_warn (pop_lit1:0,' isn''t valid character code');
+    push_lit_stk (s_null, stk_str);
+    end
+else
+    begin
+    str_room(2);
+    if (pop_lit1>127) then begin
+        append_char (Hi(k));
+        append_char (Lo(k));
+    end
+    else
+        append_char (pop_lit1);
+    push_lit_stk (make_string, stk_str);
+    end;
+end;
+end;
 @z
 
 @x Changes for JBibTeX by Shouichi Matsui [437]
