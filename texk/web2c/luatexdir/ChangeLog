@@ -1,3 +1,6 @@
+2022-05-15  Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed a memory leak in mplib (H.Hagen)
+
 2022-04-26  Luigi Scarso <luigi.scarso@gmail.com>
     * \mathitalicsmode=2 (enforce old school fonts italics code path) (H.Hagen)
 
