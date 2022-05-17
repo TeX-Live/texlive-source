@@ -1,3 +1,12 @@
+2022-05-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version.h:
+	Bump version to 4.00 (17 may 2022).
+	* bibtex-4.c, bibtex.h:
+	Fix a bug of text.prefix$ in bibtexu.
+	* tests/testsubstr[au].bib, substr[au].bbl, txtprfx[au].bbl:
+	Update tests.
+
 2022-05-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version.h:

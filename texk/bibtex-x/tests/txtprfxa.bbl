@@ -45,5 +45,14 @@
 \item[5] {{≈«}»Œ}ÿ
 \item[6] {{≈«}»Œ}ÿ‹
 \item[7] {{≈«}»Œ}ÿ‹›
+\item[orig] {\a}≈Â{\b}∆Ê{\c}«Á
+\item[len] 9
+\item[1] {\a}
+\item[2] {\a}≈
+\item[3] {\a}≈Â
+\item[4] {\a}≈Â{\b}
+\item[5] {\a}≈Â{\b}∆
+\item[6] {\a}≈Â{\b}∆Ê
+\item[7] {\a}≈Â{\b}∆Ê{\c}
 \end{itemize}
 \endinput

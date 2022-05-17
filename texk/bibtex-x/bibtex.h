@@ -1485,7 +1485,7 @@
   else if ((ch >= 0xC2) && (ch <= 0xDF)) { do_2; } \
   else if ((ch >= 0xE0) && (ch <= 0xEF)) { do_3; } \
   else if ((ch >= 0xF0) && (ch <= 0xF4)) { do_4; } \
-  else printf("this isn't a right UTF-8 char!\n")
+  else printf("this (%x) isn't a right UTF-8 char!\n", ch)
 
 
 /***************************************************************************
