@@ -3,7 +3,7 @@
 	* version.h:
 	Bump version to 4.00 (17 may 2022).
 	* bibtex-4.c, bibtex.h:
-	Fix a bug of text.prefix$ in bibtexu.
+	Fix a bug of text.prefix$ and text.length$ in bibtexu.
 	* tests/testsubstr[au].bib, substr[au].bbl, txtprfx[au].bbl:
 	Update tests.
 
