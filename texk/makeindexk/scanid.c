@@ -434,7 +434,7 @@ scan_no(char no[], int npg[], short *count, short *type)
         }
         if (strspn(no,"ivxlcdm")>1) type_guess[*count] = ROML;
     }  else if (IS_ROMAN_UPPER(no[0]) && IS_ALPHA_UPPER(no[0])
-            && strchr(page_prec,ROMAN_LOWER) && strchr(page_prec,ALPHA_LOWER)) {
+            && strchr(page_prec,ROMAN_UPPER) && strchr(page_prec,ALPHA_UPPER)) {
         if (strspn(no,"IVXLCDM")==1       /* ambiguous */
             && type_guess[*count] != ROMU && type_guess[*count] != ALPU) {
             type_guess[*count] = strspn(no,"IVX")==1 ? ROMU : ALPU;
