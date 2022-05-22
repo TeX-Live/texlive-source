@@ -1,3 +1,14 @@
+2022-05-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fread.c:
+	Modify heuristic detection of page number types
+	for ambiguous ones between roman number and alphabet.
+	* tests/mendex.test, tests/pprec[567].ist,
+	tests/romalp[ABCD].idx, tests/romalpA-[56].ind,
+	tests/romalp[BD]-[567].ind, tests/romalpC-5.ind, Makefile.am:
+	Update tests.
+	* version.h: Date [22-May-2022]
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

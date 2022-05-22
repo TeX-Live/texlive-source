@@ -1,68 +1,83 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017-2021 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* range*.* pprec*.*
+rm -f foo.* uni.* range*.* pprec*.* romalp*.*
+rc=0
 
 ./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
-	&& diff $srcdir/tests/foo.ind foo.ind1 || exit 1
+	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=1
 
 cat $srcdir/tests/foo.idx | ./mendex >foo.ind2 2>foo.ilg2 \
-	&& diff $srcdir/tests/foo.ind foo.ind2 || exit 1
+	&& diff $srcdir/tests/foo.ind foo.ind2 || rc=2
 
 ./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
 	$srcdir/tests/uni.idx -o uni.ind1 -t uni.ilg1 \
-	&& diff $srcdir/tests/uni.ind uni.ind1 || exit 1
+	&& diff $srcdir/tests/uni.ind uni.ind1 || rc=3
 
 cat $srcdir/tests/uni.idx | \
 	./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
 	>uni.ind2 2>uni.ilg2 \
-	&& diff $srcdir/tests/uni.ind uni.ind2 || exit 1
+	&& diff $srcdir/tests/uni.ind uni.ind2 || rc=4
 
 ./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni1.ist -s $srcdir/tests/uni2.ist \
 	$srcdir/tests/uni.idx -o uni.ind3 -t uni.ilg3 \
-	&& diff $srcdir/tests/uni.ind uni.ind3 || exit 1
+	&& diff $srcdir/tests/uni.ind uni.ind3 || rc=5
+
 
 # test for range suffix_2p, suffix_3p, suffix_mp
-./mendex -s $srcdir/tests/range1.ist $srcdir/tests/range.idx \
-	-o range1.ind1 -t range1.ilg \
-	&& diff $srcdir/tests/range1.ind range1.ind1 || exit 1
+for num in 1 2 3; do
+./mendex -s $srcdir/tests/range$num.ist $srcdir/tests/range.idx \
+	-o range$num.ind1 -t range$num.ilg \
+	&& diff $srcdir/tests/range$num.ind range$num.ind1 || rc=6
+done
 
-./mendex -s $srcdir/tests/range2.ist $srcdir/tests/range.idx \
-	-o range2.ind1 -t range2.ilg \
-	&& diff $srcdir/tests/range2.ind range2.ind1 || exit 1
-
-./mendex -s $srcdir/tests/range3.ist $srcdir/tests/range.idx \
-	-o range3.ind1 -t range3.ilg \
-	&& diff $srcdir/tests/range3.ind range3.ind1 || exit 1
 
 # test for page_precedence and suffix_3p
-./mendex -s $srcdir/tests/pprec0.ist $srcdir/tests/pprecA.idx \
-	-o pprecA-0.ind1 -t pprecA-0.ilg \
-	&& diff $srcdir/tests/pprecA-0.ind pprecA-0.ind1 || exit 1
+sfx=A
+for num in 0 1 2; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
+	-o pprec$sfx-$num.ind1 -t pprec$sfx-$num.ilg \
+	&& diff $srcdir/tests/pprec$sfx-$num.ind pprec$sfx-$num.ind1 || rc=7
+done
+sfx=B
+for num in 0 3 4; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
+	-o pprec$sfx-$num.ind1 -t pprec$sfx-$num.ilg \
+	&& diff $srcdir/tests/pprec$sfx-$num.ind pprec$sfx-$num.ind1 || rc=8
+done
 
-./mendex -s $srcdir/tests/pprec1.ist $srcdir/tests/pprecA.idx \
-	-o pprecA-1.ind1 -t pprecA-1.ilg \
-	&& diff $srcdir/tests/pprecA-1.ind pprecA-1.ind1 || exit 1
 
-./mendex -s $srcdir/tests/pprec2.ist $srcdir/tests/pprecA.idx \
-	-o pprecA-2.ind1 -t pprecA-2.ilg \
-	&& diff $srcdir/tests/pprecA-2.ind pprecA-2.ind1 || exit 1
+# test for page_precedence, heuristic detection if a letter is Roman or Alpha
+sfx=A
+for num in 5 6; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
+	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=9
+done
+sfx=B
+for num in 5 6 7; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
+	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=10
+done
+sfx=C
+for num in 5; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
+	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=11
+done
+sfx=D
+for num in 5 6 7; do
+./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
+	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=12
+done
 
-./mendex -s $srcdir/tests/pprec0.ist $srcdir/tests/pprecB.idx \
-	-o pprecB-0.ind1 -t pprecB-0.ilg \
-	&& diff $srcdir/tests/pprecB-0.ind pprecB-0.ind1 || exit 1
 
-./mendex -s $srcdir/tests/pprec3.ist $srcdir/tests/pprecB.idx \
-	-o pprecB-3.ind1 -t pprecB-3.ilg \
-	&& diff $srcdir/tests/pprecB-3.ind pprecB-3.ind1 || exit 1
-
-./mendex -s $srcdir/tests/pprec4.ist $srcdir/tests/pprecB.idx \
-	-o pprecB-4.ind1 -t pprecB-4.ilg \
-	&& diff $srcdir/tests/pprecB-4.ind pprecB-4.ind1 || exit 1
-
+exit $rc
