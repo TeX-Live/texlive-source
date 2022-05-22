@@ -57,7 +57,20 @@ EXTRA_DIST += $(TESTS)
 
 ## tests/upmendex.test
 EXTRA_DIST += tests/foo.idx tests/foo.ind \
-	tests/uni.idx tests/uni.dict tests/uni.ist tests/uni.ind \
-	tests/pprec0.ist tests/pprec1.ist tests/pprec2.ist tests/pprecA.idx \
-	tests/pprecA-0.ind tests/pprecA-1.ind tests/pprecA-2.ind
-DISTCLEANFILES = foo.* uni.* pprec*.*
+	tests/uni.idx tests/uni.dict tests/uni.ist \
+	tests/uni1.ist tests/uni2.ist tests/uni.ind \
+	tests/range.idx tests/range2.ist tests/range2.ist tests/range3.ist \
+	tests/range1.ind tests/range2.ind tests/range3.ind \
+	tests/pprec0.ist tests/pprec1.ist tests/pprec2.ist tests/pprec3.ist \
+	tests/pprec4.ist tests/pprec5.ist tests/pprec6.ist tests/pprec7.ist \
+	tests/pprecA.idx tests/pprecA-0.ind tests/pprecA-1.ind tests/pprecA-2.ind \
+	tests/pprecB.idx tests/pprecB-0.ind tests/pprecB-3.ind tests/pprecB-4.ind \
+	tests/romalpA.idx tests/romalpA-5.ind tests/romalpA-6.ind \
+	tests/romalpB.idx tests/romalpB-5.ind tests/romalpB-6.ind tests/romalpB-7.ind \
+	tests/romalpC.idx tests/romalpC-5.ind \
+	tests/romalpD.idx tests/romalpD-5.ind tests/romalpD-6.ind tests/romalpD-7.ind
+DISTCLEANFILES = foo.* uni.* range*.* pprec*.* romalp*.*
+EXTRA_DIST += tests/locale1.ist tests/locale2.ist tests/rule.idx \
+	tests/attr1.ist tests/attr1.ind tests/locale1.ind tests/locale2-rule.ind \
+	tests/rule1.ist tests/rule2.ist tests/rule3.ist tests/rule4.ist rule.ind
+DISTCLEANFILES += locale*.* attr*.* rule*.*

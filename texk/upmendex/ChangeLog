@@ -1,3 +1,15 @@
+2022-05-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.01  Stable version.
+	* configure.ac: Bump version.
+	* fread.c:
+	Modify heuristic detection of page number types
+	for ambiguous ones between roman number and alphabet.
+	* tests/upmendex.test, tests/pprec[567].ist,
+	tests/romalp[ABCD].idx, tests/romalpA-[56].ind,
+	tests/romalp[BD]-[567].ind, tests/romalpC-5.ind, Makefile.am:
+	Update tests.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

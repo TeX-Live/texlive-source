@@ -1,0 +1,14 @@
+\begin{theindex}
+
+  \item bar, I-i-10-C-c, I-i-20-C-c, I-ii-10-C-c, I-ii-20-C-c, I-iii-10-C-c, I-iii-20-C-c, I-v-10-C-c, I-v-20-C-c, I-x-10-C-c, I-x-20-C-c, I-l-10-C-c, I-l-20-C-c, I-c-10-C-c, I-c-20-C-c, I-d-10-C-c, I-d-20-C-c, I-m-10-C-c, I-m-20-C-c
+  \item baz, I-i-10-A-c, I-i-10-B-c, I-i-10-C-c, I-i-10-D-c, I-i-10-I-c, I-i-10-L-c, I-i-10-M-c, I-i-10-V-c, I-i-10-X-c, I-i-20-A-c, I-i-20-B-c, I-i-20-C-c, I-i-20-D-c, I-i-20-I-c, I-i-20-L-c, I-i-20-M-c, I-i-20-V-c, I-i-20-X-c
+
+  \indexspace
+
+  \item foo, I-i-10-C-c, I-i-20-C-c, II-i-10-C-c, II-i-20-C-c, III-i-10-C-c, III-i-20-C-c, V-i-10-C-c, V-i-20-C-c, X-i-10-C-c, X-i-20-C-c, L-i-10-C-c, L-i-20-C-c, C-i-10-C-c, C-i-20-C-c, D-i-10-C-c, D-i-20-C-c, M-i-10-C-c, M-i-20-C-c
+
+  \indexspace
+
+  \item qux, I-i-10-C-a--I-i-10-C-d, I-i-10-C-i, I-i-10-C-l, I-i-10-C-m, I-i-10-C-v, I-i-10-C-x, I-i-20-C-a--I-i-20-C-d, I-i-20-C-i, I-i-20-C-l, I-i-20-C-m, I-i-20-C-v, I-i-20-C-x
+
+\end{theindex}
