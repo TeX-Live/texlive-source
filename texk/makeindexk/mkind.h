@@ -343,9 +343,9 @@ If any array overflows, please report to tex-k@tug.org.
 /*====================================================================*/
 
 #if USE_KPATHSEA
-#define VERSION       "version 2.16 [TeX Live " TEX_LIVE_VERSION "] (kpathsea + Thai support)"
+#define VERSION       "version 2.17 [TeX Live " TEX_LIVE_VERSION "] (kpathsea + Thai support)"
 #else
-#define VERSION       "version 2.16 [19-Sep-2021] (with Thai support)"
+#define VERSION       "version 2.17 [22-May-2022] (with Thai support)"
 #endif
 
 #define PUT_VERSION { \

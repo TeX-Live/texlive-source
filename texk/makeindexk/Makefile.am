@@ -48,6 +48,16 @@ EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
 	tests/nested-range-bb.tex tests/nested-range-bb.idx
 DISTCLEANFILES = nested-range.ilg nested-range.ind
 ## tests/makeindex.test
-EXTRA_DIST += tests/sample.idx tests/sample.ind
-DISTCLEANFILES += sample.*
+EXTRA_DIST += tests/sample.idx tests/sample.ind \
+	tests/range.idx tests/range2.ist tests/range2.ist tests/range3.ist \
+	tests/range1.ind tests/range2.ind tests/range3.ind \
+	tests/pprec0.ist tests/pprec1.ist tests/pprec2.ist tests/pprec3.ist \
+	tests/pprec4.ist tests/pprec5.ist tests/pprec6.ist tests/pprec7.ist \
+	tests/pprecA.idx tests/pprecA-0.ind tests/pprecA-1.ind tests/pprecA-2.ind \
+	tests/pprecB.idx tests/pprecB-0.ind tests/pprecB-3.ind tests/pprecB-4.ind \
+	tests/romalpA.idx tests/romalpA-5.ind tests/romalpA-6.ind \
+	tests/romalpB.idx tests/romalpB-5.ind tests/romalpB-6.ind tests/romalpB-7.ind \
+	tests/romalpC.idx tests/romalpC-5.ind \
+	tests/romalpD.idx tests/romalpD-5.ind tests/romalpD-6.ind tests/romalpD-7.ind
+DISTCLEANFILES += sample.* range*.* pprec*.* romalp*.*
 
