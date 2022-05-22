@@ -1,3 +1,11 @@
+2022-05-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* ctwill-w2c.ch,
+	* cweave.w,
+	* prod-cweave.w,
+	* prod.w: Fix production rule 117 similar to rule 35.
+
 2022-05-03  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w,

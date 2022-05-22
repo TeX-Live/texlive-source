@@ -333,7 +333,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 Rules 1, 38, 52, and 73: The \\{din}s and \\{out}s are suppressed if
 \.{CWEAVE} has been invoked with the \.{-i} option.
 
-Rule 35: The |exp| must not be immediately followed by |lpar|, |lbrack|,
+Rules 35, 117: The |exp| must not be immediately followed by |lpar|, |lbrack|,
 |exp|, or~|cast|.
 
 Rule 41: The |big_force| becomes |force| if \.{CWEAVE} has been invoked with the
@@ -360,9 +360,6 @@ must not be immediately followed by a |binop|.
 
 Rule 114: The |operator_like| must not be immediately followed by
 |raw_ubin|.
-
-Rule 117: The |exp| must not be immediately followed by |lpar|, |exp|,
-or |cast|.
 
 Rule 123: The mathness of the |colon| or |base| changes to `yes'.
 

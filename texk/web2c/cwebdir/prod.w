@@ -265,7 +265,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |typedef_like| |comma| & |typedef_like| \hfill $TC\.\ $ &
     \&{typedef} \&{int} \&x,\cr
 \+& |typedef_like| |semi| & |decl| & \&{typedef} \&{int} $\&x,\&y$;\cr
-\+& |typedef_like| |ubinop| \alt |cast| |ubinop| & 
+\+& |typedef_like| |ubinop| \alt |cast| |ubinop| &
     |typedef_like| \alt |cast| |ubinop| \hfill
     \alt $C=\.\{U\.\}C$ $U_2=\.\{U_1\.\}U_2$ \unskip &
     \&{typedef} |*|{}|*|(\&{CPtr})\cr
@@ -329,7 +329,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \parindent=0pt
 \dag{\bf Notes}
 \yskip
-Rule 35: The |exp| must not be immediately followed by |lpar|, |lbrack|,
+Rules 35, 117: The |exp| must not be immediately followed by |lpar|, |lbrack|,
 |exp|, or~|cast|.
 
 Rule 48: The |exp| or |int_like| must not be immediately followed by |base|.
@@ -351,9 +351,6 @@ must not be immediately followed by a |binop|.
 
 Rule 114: The |operator_like| must not be immediately followed by
 |raw_ubin|.
-
-Rule 117: The |exp| must not be immediately followed by |lpar|, |exp|,
-or |cast|.
 
 Rule 123: The mathness of the |colon| or |base| changes to `yes'.
 

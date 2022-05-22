@@ -834,7 +834,7 @@ if ((cat1==int_like || cat1==cast) && (cat2==comma || cat2==semi))
 else if (cat1==int_like) {
   big_app1_insert(pp,' '); reduce(pp,2,typedef_like,0,116);
 }
-else if (cat1==exp && cat2!=lpar && cat2!=exp && cat2!=cast) {
+else if (cat1==exp && cat2!=lpar && cat2!=lbrack && cat2!=exp && cat2!=cast) {
   make_underlined(pp+1); make_reserved(pp+1);
   big_app1_insert(pp,' '); reduce(pp,2,typedef_like,0,117);
 }

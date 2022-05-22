@@ -13,7 +13,7 @@
 # entire resulting derived work is given a different name and distributed
 # under the terms of a permission notice identical to this one.
 
-# 
+#
 # Read the README file, then edit this file to reflect local conditions
 #
 
@@ -138,7 +138,7 @@ common.o: common.c
 	$(CC) $(CFLAGS) -DCWEBINPUTS=\"$(CWEBINPUTS)\" -c common.c
 
 ctangle: ctangle.o common.o
-	$(CC) $(LINKFLAGS) -o ctangle ctangle.o common.o 
+	$(CC) $(LINKFLAGS) -o ctangle ctangle.o common.o
 
 ctangle.c: ctangle.w $(TCHANGES) common.h
 	$(CTANGLE) ctangle $(TCHANGES)
