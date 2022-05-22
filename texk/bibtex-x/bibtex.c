@@ -268,7 +268,10 @@ BEGIN
     kpse_set_program_name(argv[0], PROGNAME);
     mpl = kpse_var_value("max_print_line");
     if (mpl)
+    BEGIN
         max_print_line = atoi(mpl);
+        free(mpl);
+    END
     else
         max_print_line = 79;  /* default */
 #endif
@@ -282,7 +285,7 @@ BEGIN
     initialize ();
 
     if (log_file != NULL) {
-        FPRINTF (log_file, "%s\n", BANNER);
+        FPRINTF (log_file, "%s-x%s (%s)\n", BANNER, EXT_VERSION, TL_VERSION);
         FPRINTF (log_file, "Implementation:  %s\n", IMPLEMENTATION);
         FPRINTF (log_file, "Release version: %s\n", VERSION);
 #ifdef UTF_8
