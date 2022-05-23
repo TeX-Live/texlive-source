@@ -1,3 +1,10 @@
+2022-05-23  Thanh Han The  <hanthethanh@gmail.com>
+
+	* writettf.c (ttf_write_OS2): don't complain about v4 of OS/2
+	table, present in GentiumPlus-Regular.ttf, v6.101,
+	released recently. Also, make the complaint about future versions
+	a warning instead of a failure.
+
 2022-04-17  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_omit_info_dict_code),
