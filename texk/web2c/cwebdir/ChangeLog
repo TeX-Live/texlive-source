@@ -1,3 +1,13 @@
+2022-05-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* prod-cweave.w,
+	* prod-twill.w,
+	* prod.w: Unambiguous prductions 83 and 121.
+
 2022-05-23  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

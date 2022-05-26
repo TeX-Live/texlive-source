@@ -290,7 +290,7 @@ static void print_text(text_pointer p);
 
 @ @c
 #if 0
-@t\4\4@>static void
+static void
 print_text( /* prints a token list for debugging; not used in |main| */
 @z
 

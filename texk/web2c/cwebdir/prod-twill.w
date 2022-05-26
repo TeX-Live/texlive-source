@@ -212,7 +212,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |section_scrap| |semi| & |stmt|\hfill $MS$ |force|
    &$\langle\,$section name$\,\rangle$;\cr
 \+& |section_scrap| & |exp| &$\langle\,$section name$\,\rangle$\cr
-\+& |insert| \\{any} & \\{any} & \.{\v\#include\v}\cr
+\+& |insert| |function| & |function| & \#\&{include} before \\{main}\cr
 \+& |prelangle| & |binop| \hfill \.< & $<$ not in template\cr
 \+& |prerangle| & |binop| \hfill \.> & $>$ not in template\cr
 \+& |langle| |prerangle| & |cast| \hfill $L\.{\\,}P$ & $\langle\,\rangle$\cr
@@ -264,7 +264,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+\dag202\enspace& |typedef_like| |int_like| |raw_int| & |typedef_like| |int_like| |exp| &
   \&{typedef} \&{int} \&{foo}\cr
 \global\prodno=121
-\+& |delete_like| |lpar| |rpar| & |delete_like|\hfill $DL\.{\\,}R$
+\+& |delete_like| |lbrack| |rbrack| & |delete_like|\hfill $DL\.{\\,}R$
     & \&{delete}[\,] \cr
 \+& |delete_like| |exp| & |exp| \hfill $D\.\ E$ & \&{delete} $p$ \cr
 \+\dagit& |question| |exp| \alt |colon| |base| & |binop|

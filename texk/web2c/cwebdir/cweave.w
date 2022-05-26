@@ -2979,8 +2979,8 @@ if (cat1==semi) {
 else reduce(pp,0,exp,-2,82);
 
 @ @<Cases for |insert|@>=
-if (cat1)
-  squash(pp,2,cat1,0,83);
+if (cat1==function)
+  squash(pp,2,function,0,83);
 
 @ @<Cases for |prelangle|@>=
 init_mathness=cur_mathness=yes_math;
@@ -3106,7 +3106,7 @@ else if (cat1==ubinop && (cat2==ubinop || cat2==cast)) {
 }
 
 @ @<Cases for |delete_like|@>=
-if (cat1==lpar && cat2==rpar) {
+if (cat1==lbrack && cat2==rbrack) {
   big_app2(pp); app_str("\\,"); big_app1(pp+2);
 @.\\,@>
   reduce(pp,3,delete_like,0,121);
@@ -3931,9 +3931,9 @@ make_output(void) /* outputs the equivalents of tokens */
           if ((a<indent && !(b==big_cancel&&a==' ')) @|
             || (a>big_force && a!=dindent)) break;
           switch (a) {
+          case dindent: c++; @=/* fall through */@>@;
           case indent: c++; break;
           case outdent: c--; break;
-          case dindent: c+=2; break;
           case opt: a=get_output();
           }
         }
