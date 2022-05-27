@@ -1,6 +1,12 @@
 2022-05-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
-	* mp.w: Typo.
+        * mp.w: Typo.
+
+2022-05-23  Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed mp_begin_iteration (H.Hagen)
+
+2022-05-15  Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed a memory leak in mplib (H.Hagen)
 
 2022-03-21  Karl Berry  <karl@tug.org>
 	* TL'22 release.
