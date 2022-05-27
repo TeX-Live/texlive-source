@@ -21169,7 +21169,7 @@ void mp_begin_iteration (MP mp) {
       p->value_mod = mp_suffix_sym;
     }
     mp_get_x_next (mp);
-    if (p->value_mod = mp_expr_sym && cur_cmd() == mp_within_token) {
+    if (p->value_mod == mp_expr_sym && cur_cmd() == mp_within_token) {
       @<Set up a picture iteration@>;
     } else {
       @<Check for the assignment in a loop header@>;
