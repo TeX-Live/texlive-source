@@ -335,7 +335,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
     cat3==semi || cat3==rpar))
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
-else if (cat1==lbrace || cat1==int_like || cat1==decl) {
+else if (cat1==int_like || cat1==lbrace || cat1==decl) {
   big_app(dindent); squash(pp,1,fn_decl,0,38);
 }
 else if (cat1==semi) squash(pp,2,decl,-1,39);
@@ -355,7 +355,7 @@ else if ((cat1==binop||cat1==colon) && cat2==exp && (cat3==comma ||
     cat3==semi || cat3==rpar))
   squash(pp,3,decl_head,-1,36);
 else if (cat1==cast) squash(pp,2,decl_head,-1,37);
-else if (cat1==lbrace || cat1==int_like || cat1==decl) {
+else if (cat1==int_like || cat1==lbrace || cat1==decl) {
   if (indent_param_decl) big_app(dindent);
   squash(pp,1,fn_decl,0,38);
 }
@@ -412,10 +412,10 @@ else if (cat1==stmt) {
 @z
 
 @x
-  big_app1_insert(pp, (cat1==function || cat1==decl) ? big_force :
+  big_app1_insert(pp, (cat1==decl || cat1==function) ? big_force :
      force_lines ? force : break_space); reduce(pp,2,cat1,-1,76);
 @y
-  big_app1_insert(pp, (cat1==function || cat1==decl) ? @|
+  big_app1_insert(pp, (cat1==decl || cat1==function) ? @|
      ( order_decl_stmt ? big_force : force ) : @|
      ( force_lines ? force : break_space ) ); reduce(pp,2,cat1,-1,76);
 @z

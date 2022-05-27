@@ -56,7 +56,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 |insert| & \altt\\{any} {\\{any} \\{any}} {\\{any} \\{any} \\{any}}
 & stmt; \4\4 \C{comment}\cr
 \+\dagit& |exp| \altt|lbrace| |int_like| |decl|
-    & |fn_decl| \altt|lbrace| |int_like| |decl| \hfill $F=E^*\,\\{din}$
+    & |fn_decl| \altt|lbrace| |int_like| |decl| \hfill $F=\\{din}\,E^*$
     & \malt {\\{main}(\,) $\{$}
             {$\\{main}(\\{ac},\\{av}){}$ \&{int} \\{ac};} \cr
 \+& |exp| |unop| & |exp| & $x\PP$ \cr
@@ -118,7 +118,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
     & \malt {\&{int} $f(\&{int}\ x=2)$} {\&{int} $b$ : 1} \cr
 \+& |decl_head| |cast| & |decl_head| & \&{int} $f$(\&{int})\cr
 \+\dagit& |decl_head| \altt|int_like| |lbrace| |decl| & |fn_decl|
-                   \altt|int_like| |lbrace| |decl| \hfill $F=D\,\\{din}$
+                   \altt|int_like| |lbrace| |decl| \hfill $F=\\{din}\,D$
     & \&{long} \\{time}(\,) $\{$\cr
 \+& |decl_head| |semi| & |decl| & \&{int} $n$;\cr
 \+& |decl| |decl| & |decl| \hfill $D_1\,|force|\,D_2$
@@ -166,7 +166,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
        $|force|\,E\,\\{in}\,\\{bsp}\,S\,\\{out}\,|force|$
     & \&{else} $x=0;$\cr
 \+& |else_head| \alt|stmt| |exp| & |stmt| \hfill
-       $|force|\,E\,\\{bsp}\,|noop|\,|cancel|\,S\,\\{bsp}$
+       $|force|\,E\,\\{bsp}\,|noop|\,|cancel|\,S\,\\{force}$
     & $\!\!$ \&{else} $\{x=0;\}$\cr
 \+& |if_clause| |lbrace| & |if_head| |lbrace| & \&{if} ($x$) $\{$\cr
 \+& |if_clause| |stmt| |else_like| |if_like| & |if_like| \hfill
@@ -193,7 +193,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |case_like| |colon| & |tag| & |default:|\cr
 \+& |case_like| |exp| & |exp| \hfill $C\.\ E$ & |return 0|\cr
 \+\dagit& |catch_like| \alt|cast| |exp| & |fn_decl| \hfill
-    $C$\alt $C$ $E$ \unskip \\{din} & |catch (...)|\cr
+    $C$\,\\{din}\,\alt $C$ $E$ & |catch (...)|\cr
 \+& |tag| |tag| & |tag| \hfill $T_1\,\\{bsp}\,T_2$ & |case 0: case 1:|\cr
 \+& |tag| \altt|stmt| |decl| |function| & \altt|stmt| |decl| |function|
        \hfill $|force|\,\\{back}\,T\,\\{bsp}\,S$
@@ -296,7 +296,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |using_like| & |int_like| & \&{using} not in attributes \cr
 \+& |struct_like| |attr| & |struct_like| \hfill $S\.\ A$
     & \&{struct} [[\\{deprecated}]]\cr
-\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
+\+& |exp| |attr| & |exp| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
 \+& |attr| |typedef_like| & |typedef_like| \hfill $A\.\ T$
     & |[[deprecated]] typedef| \cr
 \+& |raw_int| |lbrack| & |exp| & |int[3]| \cr
@@ -313,10 +313,10 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |exp| |colcol| |int_like| & |int_like| & $\\{std}\DC\&{atomic}$ \cr
 \advance\midcol-30pt
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |comma| &
-  |langle| \hfill $LS$\alt $E^{**}$ $I^{**}$ \unskip $C$
+  |langle| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $C$
    & $\langle$\&{typename} $t,$\cr
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |prerangle| &
-  |cast| \hfill $LS$\alt $E^{**}$ $I^{**}$ \unskip $P$
+  |cast| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $P$
     & $\langle$\&{typename} $t\rangle$ \cr
 \advance\midcol30pt
 \+& |template_like| |cast| |struct_like| & |struct_like| \hfill $T\.\ CS$ &

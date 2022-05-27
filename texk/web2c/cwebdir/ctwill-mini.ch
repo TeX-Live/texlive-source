@@ -878,9 +878,9 @@ Section 123.
 Section 124.
 
 @x l.291
-\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
+\+& |exp| |attr| & |exp| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
 @y
-\+& |exp| |attr| & |attr| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
+\+& |exp| |attr| & |exp| \hfill $E\.\ A$ & \&{enum} $\{x\ [[\ldots]]\}$ \cr
 \endgroup
 
 @ Cont.
@@ -1287,9 +1287,9 @@ Section 170.
 Section 173.
 
 @x
-if (cat1==else_like || cat1==if_like || cat1==define_like)
+if (cat1==if_like || cat1==else_like || cat1==define_like)
 @y
-if (cat1==else_like || cat1==if_like || cat1==define_like) @/
+if (cat1==if_like || cat1==else_like || cat1==define_like) @/
 @z
 
 @x
