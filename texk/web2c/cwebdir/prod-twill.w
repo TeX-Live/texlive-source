@@ -109,7 +109,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |colcol| \alt|exp| |int_like| & \alt|exp| |int_like| \hfill
      |qualifier| $C$\alt$E$ $I$ & \&C\DC$x$\cr
 \+& |colcol| |colcol| & |colcol| & \&C\DC\&B\DC\cr
-\+& |decl_head| |comma| & |decl_head| \hfill $DC\.\ $ & \&{int} $x,{}$ \cr
+\+& |decl_head| |comma| & |decl_head| \hfill $DC$\,|opt|9 & \&{int} $x,{}$ \cr
 \+& |decl_head| |ubinop| & |decl_head| \hfill $D\.\{U\.\}$ & |int *|\cr
 \+\dagit& |decl_head| |exp| & |decl_head| \hfill $DE^*$ & \&{int} $x$ \cr
 \+& |decl_head| \alt|binop| |colon| |exp| \altt|comma| |semi| |rpar| &
@@ -308,7 +308,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |exp| |colcol| |int_like| & |int_like| & $\\{std}\DC\&{atomic}$ \cr
 \advance\midcol-30pt
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |comma| &
-  |langle| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $C$
+  |langle| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $C$\,\\{opt}9
    & $\langle$\&{typename} $t,$\cr
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |prerangle| &
   |cast| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $P$

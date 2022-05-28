@@ -323,7 +323,7 @@ if(cat1==lbrace || cat1==int_like || cat1==decl) {
 @x
 @ @<Cases for |decl_head|@>=
 if (cat1==comma) {
-  big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
+  big_app2(pp); app(opt); app('9'); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
   big_app1_insert(pp,'{'); big_app('}'); reduce(pp,2,decl_head,-1,34);
@@ -342,7 +342,7 @@ else if (cat1==semi) squash(pp,2,decl,-1,39);
 @y
 @ @<Cases for |decl_head|@>=
 if (cat1==comma) {
-  big_app2(pp); big_app(' '); reduce(pp,2,decl_head,-1,33);
+  big_app2(pp); app(opt); app('9'); reduce(pp,2,decl_head,-1,33);
 }
 else if (cat1==ubinop) {
   big_app1_insert(pp,'{'); big_app('}');

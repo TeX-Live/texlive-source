@@ -109,7 +109,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |colcol| \alt|exp| |int_like| & \alt|exp| |int_like| \hfill
      |qualifier| $C$\alt$E$ $I$ & \&C\DC$x$\cr
 \+& |colcol| |colcol| & |colcol| & \&C\DC\&B\DC\cr
-\+& |decl_head| |comma| & |decl_head| \hfill $DC\.\ $ & \&{int} $x,{}$ \cr
+\+& |decl_head| |comma| & |decl_head| \hfill $DC$\,|opt|9 & \&{int} $x,{}$ \cr
 \+& |decl_head| |ubinop| & |decl_head| \hfill $D\.\{U\.\}$ & |int *|\cr
 \+\dagit& |decl_head| |exp| & |decl_head| \hfill $DE^*$ & \&{int} $x$ \cr
 \+& |decl_head| \alt|binop| |colon| |exp| \altt|comma| |semi| |rpar| &
@@ -262,9 +262,9 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
     \&{typedef} \&{char}\cr
 \+\dagit& |typedef_like| |exp| & |typedef_like| \hfill $T\.\ E^{**}$ &
     \&{typedef} \&I \.{@@[@@]} (|*|\&P)\cr
-\+& |typedef_like| |comma| & |typedef_like| \hfill $TC\.\ $ &
+\+& |typedef_like| |comma| & |typedef_like| \hfill $TC$ &
     \&{typedef} \&{int} \&x,\cr
-\+& |typedef_like| |semi| & |decl| & \&{typedef} \&{int} $\&x,\&y$;\cr
+\+& |typedef_like| |semi| & |decl| & \&{typedef} \&{int} $\&x,{}$ $\&y$;\cr
 \+& |typedef_like| |ubinop| \alt |cast| |ubinop| &
     |typedef_like| \alt |cast| |ubinop| \hfill
     \alt $C=\.\{U\.\}C$ $U_2=\.\{U_1\.\}U_2$ \unskip &
@@ -313,7 +313,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |exp| |colcol| |int_like| & |int_like| & $\\{std}\DC\&{atomic}$ \cr
 \advance\midcol-30pt
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |comma| &
-  |langle| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $C$
+  |langle| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $C$\,\\{opt}9
    & $\langle$\&{typename} $t,$\cr
 \+\dagit& |langle| |struct_like| \alt |exp| |int_like| |prerangle| &
   |cast| \hfill $LS$\.\ \alt $E^{**}$ $I^{**}$ \unskip $P$
