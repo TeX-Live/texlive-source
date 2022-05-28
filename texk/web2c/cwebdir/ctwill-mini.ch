@@ -1298,6 +1298,30 @@ if (cat1==if_like || cat1==else_like || cat1==define_like) @/
 } else @/ if (cat1==exp || cat1==function) {
 @z
 
+Section 178.
+
+@x l.3017
+      app(opt); app('9'); reduce(pp,4,langle,0,153);
+    }
+    else reduce(pp,4,cast,-1,154);
+@y
+      app(opt); app('9'); reduce(pp,4,langle,0,153);
+    } @+
+    else reduce(pp,4,cast,-1,154);
+@z
+
+Section 179.
+
+@x l.3028
+  big_app1_insert(pp,' '); reduce(pp,2,struct_like,0,155);
+}
+else reduce(pp,0,raw_int,0,91);
+@y
+  big_app1_insert(pp,' '); reduce(pp,2,struct_like,0,155);
+} @+
+else reduce(pp,0,raw_int,0,91);
+@z
+
 Section 181.
 
 @x
