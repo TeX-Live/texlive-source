@@ -1,3 +1,7 @@
+2022-05-28  Karl Berry  <karl@tug.org>
+
+	* tlbuild.texi (Build one package): typo, buil -> build.
+
 2022-02-19  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Prerequisites): C++11 required by HarfBuzz;
