@@ -2317,9 +2317,11 @@ tokens, and intercalates a `\.{\$}' token if necessary.  When in
 doubt what to use, use |big_app|.
 
 @d app(a) *(tok_ptr++)=(token)(a)
+@#
 @d big_app2(a) big_app1(a);@+big_app1(a+1)
 @d big_app3(a) big_app2(a);@+big_app1(a+2)
 @d big_app4(a) big_app3(a);@+big_app1(a+3)
+@#
 @d big_app1_insert(p,c) big_app1(p);@+big_app(c);@+big_app1(p+1)
 @d big_app1_insert_str(p,s) big_app1(p);@+app_str(s);@+big_app1(p+1)
 @d big_app2_insert(p,c) big_app2(p);@+big_app(c);@+big_app2(p+2)
@@ -2358,6 +2360,11 @@ static int cur_mathness, init_mathness;
 understanding the format by comparing the code with the symbolic
 productions as they were listed earlier.
 
+@d begin_math if (cur_mathness==maybe_math) init_mathness=yes_math;
+              else if (cur_mathness==no_math) app_str("${}")
+@d end_math   if (cur_mathness==maybe_math) init_mathness=no_math;
+              else if (cur_mathness==yes_math) app_str("{}$")
+
 @c
 static void
 app_str(
@@ -2372,12 +2379,10 @@ token a)
 {
         if (a==' ' || (a>=big_cancel && a<=big_force) || a==dindent)
             /* non-math token */ {
-                if (cur_mathness==maybe_math) init_mathness=no_math;
-                else if (cur_mathness==yes_math) app_str("{}$");
+                end_math;
                 cur_mathness=no_math;
         } else {
-                if (cur_mathness==maybe_math) init_mathness=yes_math;
-                else if (cur_mathness==no_math) app_str("${}");
+                begin_math;
                 cur_mathness=yes_math;
         }
         app(a);
@@ -2389,13 +2394,11 @@ scrap_pointer a)
 {
   switch (a->mathness % 4) { /* left boundary */
   case (no_math):
-    if (cur_mathness==maybe_math) init_mathness=no_math;
-    else if (cur_mathness==yes_math) app_str("{}$");
+    end_math;
     cur_mathness=a->mathness / 4; /* right boundary */
     break;
   case (yes_math):
-    if (cur_mathness==maybe_math) init_mathness=yes_math;
-    else if (cur_mathness==no_math) app_str("${}");
+    begin_math;
     cur_mathness=a->mathness / 4; /* right boundary */
     break;
   case (maybe_math): /* no changes */ break;
