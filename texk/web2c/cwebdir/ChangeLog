@@ -1,3 +1,7 @@
+2022-05-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.w: Amend reference to COMMON interface.
+
 2022-05-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w: DRY up section 120.

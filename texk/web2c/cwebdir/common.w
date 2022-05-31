@@ -66,8 +66,8 @@ The file begins with a few basic definitions.
 @<Global variables@>@/
 @<Predeclaration of procedures@>
 
-@ The details will be filled in due course.  The interface of this module
-is included first.  It is also used by the main programs.
+@ The details will be filled in due course.  The interface |"common.h"| of this
+\.{COMMON} module is included first.  It is also used by the main programs.
 
 @i common.h
 
