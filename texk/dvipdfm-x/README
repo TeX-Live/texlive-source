@@ -1,19 +1,26 @@
+$Id$
 dvipdfmx and xdvipdfmx for TeX Live
 ===================================
+dvipdfmx is a DVI-to-PDF translator. It requires the Kpathsea library
+for patch searching.
 
 This package is released under the GNU GPL, version 2, or (at your
 option) any later version.
-
-dvipdfmx is now maintained as part of TeX Live.
 
 Mailing list for bug reports and all discussion:
 https://lists.tug.org/dvipdfmx; anyone can join the list, but it is not
 necessary to join to post. Archives are public.
 
+dvipdfmx is now maintained as part of TeX Live, https://tug.org/texlive.
+Info on building only one program from TL, like this one:
+  https://tug.org/texinfohtml/tlbuild.html#Build-one-package
+TeX Live general build info:
+  https://tug.org/texlive/build.html
+
 xdvipdfmx
 =========
 xdvipdfmx is an extended version of dvipdfmx, and is now incorporated in
-the same sources.
+the same sources. In the installation, dvipdfmx is a symlink to xdvipdfmx.
 
 The extensions provided by xdvipdfmx provide support for the Extended DVI
 (.xdv) format used by xetex, including support for platform-native fonts
@@ -47,17 +54,7 @@ happens across this file.
    Hirata and its modified one, dvipdfm-kor, by Jin-Hwan Cho.
 
 
-2. Installation
-   ------------
-
-   Currently, dvipdfmx is distributed as part of TeX Live. For TeX Live users,
-   please refer to the following site
-
-     https://www.tug.org/texlive/svn/ 
-
-   for an instruction on how to obtain and build the dvipdfmx program.
-
-3. Random number generating function
+2. Random number generating function
    ---------------------------------
 
    Prefixes of font names are calculated by using a function which

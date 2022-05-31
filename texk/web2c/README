@@ -9,10 +9,20 @@ or WEB-to-C translator.
 Web2c no longer exists as a separate distribution.  It is maintained as
 part of TeX Live (http://tug.org/texlive).
 
-See `NEWS' for changes by release,
-`ChangeLog` for all changes.
-`PROJECTS' for some old rainy-day ideas.
+Mailing list for bug reports and all general discussion:
+https://lists.tug.org/tex-k; anyone can join the list, but it is not
+necessary to join to post. Archives are public.
 
+See `NEWS' for changes by release, `ChangeLog` for all changes,
+`PROJECTS' for some old rainy-day ideas.
 If present, see *dir/README for more details on each package.
 
+Info on building only one of the engines here:
+  https://tug.org/texinfohtml/tlbuild.html#Build-one-engine
+TeX Live general build info:
+  https://tug.org/texlive/build.html
+Mailing list for build issues (same setup as tex-k, above):
+  https://lists.tug.org/tlbuild
+
+The original TeX and Metafont programs by Donald Knuth are public domain.
 Web2c is free software.

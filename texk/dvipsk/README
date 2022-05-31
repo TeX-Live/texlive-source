@@ -2,12 +2,24 @@ $Id$
 This directory contains Dvips, Tom Rokicki's dvips, a DVI-to-PostScript
 translator.  It requires the Kpathsea library for path searching.
 
-See `NEWS' for changes by release, `ChangeLog` for all changes.
-See `../kpathsea/BUGS' for details on reporting bugs.
-
 Dvips is free software; Tom's original files are public domain.  The
 files Karl wrote (originally for the Free Software Foundation) are
 covered by the GNU General Public License -- see the files COPYING*.
+
+Mailing list for bug reports and all general discussion:
+https://lists.tug.org/tex-k; anyone can join the list, but it is not
+necessary to join to post. Archives are public.
+
+See `NEWS' for changes by release, `ChangeLog` for all changes.
+
+dvips is now maintained as part of TeX Live, https://tug.org/texlive.
+Info on building only one program from TL, like this one:
+  https://tug.org/texinfohtml/tlbuild.html#Build-one-package
+TeX Live general build info:
+  https://tug.org/texlive/build.html
+Mailing list for build issues (same setup as tex-k, above):
+  https://lists.tug.org/tlbuild
+
 -------------------------------------------------------------------------
 The documentation is in the file dvips.texi.
 

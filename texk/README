@@ -23,8 +23,7 @@ afm2pl - maintained here
   old info: http://tex.aanhet.net/afm2pl/
 
 bibtex-x - maintained here, contains
-  bibtex8
-  bibtexu
+  bibtex8, bibtexu
     old info: http://omega.enstb.org/yannis/bibtexu/
 
 chktex 1.7.6 - checked 15mar20
@@ -53,12 +52,11 @@ dviout-util - by Japanese TeX Development Community (Hironobu, Takuji et al.)
   but also: https://github.com/aminophen/dviout-util
 
 dvipdfm-x - maintained here, by us, contains
-  dvipdfmx
-  xdvipdfmx
+  dvipdfmx and xdvipdfmx.
     old info: http://project.ktug.org/dvipdfmx/
 
-dvipng 1.17 - checked 06jan20
-  http://mirror.ctan.org/dviware/dvipng/
+dvipng 1.17 - checked 31may22
+  https://mirror.ctan.org/dviware/dvipng/
 
 dvipos - maintained here, by us
 
@@ -70,14 +68,14 @@ dvisvgm 2.13.3 - checked 28feb22
   https://ctan.org/pkg/dvisvgm
 
 gregorio 6.0.0 - checked 14mar21
-  CTAN/support/gregoriotex/gregorio-6.0.0.zip
+  https://mirror.ctan.org/support/gregoriotex/gregorio-6.0.0.zip
 
 gsftopk - from Paul Vojta's xdvi.
 
 kpathsea - maintained here, by us
 
-lcdf-typetools 2.108 - checked 15mar20
-  http://www.lcdf.org/type/
+lcdf-typetools 2.108 - checked 31may22
+  https://www.lcdf.org/type/
 
 makeindexk - maintained here, by us
 
@@ -110,7 +108,7 @@ ttf2pk2 - maintained here, by us
 ttfdump - maintained here, by us, since Taiwan upstream apparently gone.
 
 upmendex 1.01 - by Takuji Tanaka
-  http://www.ctan.org/pkg/upmendex
+  https://ctan.org/pkg/upmendex
   https://github.com/t-tk/upmendex-package
 
 web2c - maintained here, by us - core web2c, plain tex, etc.
@@ -139,8 +137,8 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
        xetex - http://tug.org/xetex/
    
-xdvik 22.87.06 - checked 18feb22
-  http://sourceforge.net/projects/xdvi/files/xdvik/
+xdvik 22.87.06 - checked 31may22
+  https://sourceforge.net/projects/xdvi/files/xdvik/
   Procedure for updating xdvik from sourceforge release:
 tar xf ...
 diff -crN2 \
