@@ -1653,6 +1653,16 @@ UnicodeStringTest::TestBogus() {
     if(test1>=test2 || !(test2>test1) || test1.compare(test2)>=0 || !(test2.compare(test1)>0)) {
         errln("bogus<empty failed");
     }
+
+    // test that copy constructor of bogus is bogus & clone of bogus is nullptr
+    {
+        test3.setToBogus();
+        UnicodeString test3Copy(test3);
+        UnicodeString *test3Clone = test3.clone();
+        assertTrue(WHERE, test3.isBogus());
+        assertTrue(WHERE, test3Copy.isBogus());
+        assertTrue(WHERE, test3Clone == nullptr);
+    }
 }
 
 // StringEnumeration ------------------------------------------------------- ***
@@ -2354,7 +2364,7 @@ void UnicodeStringTest::TestLargeAppend() {
         } else if (total <= INT32_MAX) {
             // Check that a string of exactly the maximum size works
             UnicodeString str2;
-            int32_t remain = INT32_MAX - total;
+            int32_t remain = static_cast<int32_t>(INT32_MAX - total);
             char16_t *buf2 = str2.getBuffer(remain);
             if (buf2 == nullptr) {
                 // if somehow memory allocation fail, return the test

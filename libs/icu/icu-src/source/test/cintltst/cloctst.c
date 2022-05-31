@@ -1552,18 +1552,18 @@ static void TestSimpleDisplayNames()
 static void TestUninstalledISO3Names()
 {
   /* This test checks to make sure getISO3Language and getISO3Country work right
-     even for locales that are not installed. */
+     even for locales that are not installed (and some installed ones). */
     static const char iso2Languages [][4] = {     "am", "ba", "fy", "mr", "rn",
-                                        "ss", "tw", "zu" };
+                                        "ss", "tw", "zu", "sr" };
     static const char iso3Languages [][5] = {     "amh", "bak", "fry", "mar", "run",
-                                        "ssw", "twi", "zul" };
+                                        "ssw", "twi", "zul", "srp" };
     static const char iso2Countries [][6] = {     "am_AF", "ba_BW", "fy_KZ", "mr_MO", "rn_MN",
-                                        "ss_SB", "tw_TC", "zu_ZW" };
+                                        "ss_SB", "tw_TC", "zu_ZW", "sr_XK" };
     static const char iso3Countries [][4] = {     "AFG", "BWA", "KAZ", "MAC", "MNG",
-                                        "SLB", "TCA", "ZWE" };
+                                        "SLB", "TCA", "ZWE", "XKK" };
     int32_t i;
 
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
       UErrorCode err = U_ZERO_ERROR;
       const char *test;
       test = uloc_getISO3Language(iso2Languages[i]);
@@ -1571,7 +1571,7 @@ static void TestUninstalledISO3Names()
          log_err("Got wrong ISO3 code for %s : Expected \"%s\", got \"%s\". %s\n",
                      iso2Languages[i], iso3Languages[i], test, myErrorName(err));
     }
-    for (i = 0; i < 8; i++) {
+    for (i = 0; i < 9; i++) {
       UErrorCode err = U_ZERO_ERROR;
       const char *test;
       test = uloc_getISO3Country(iso2Countries[i]);
@@ -3207,6 +3207,18 @@ static void TestAcceptLanguage(void) {
             }
         }
     }
+
+    // API coverage
+    status = U_ZERO_ERROR;
+    static const char *const supported[] = { "en-US", "en-GB", "de-DE", "ja-JP" };
+    const char * desired[] = { "de-LI", "en-IN", "zu", "fr" };
+    available = uenum_openCharStringsEnumeration(supported, UPRV_LENGTHOF(supported), &status);
+    tmp[0]=0;
+    rc = uloc_acceptLanguage(tmp, 199, &outResult, desired, UPRV_LENGTHOF(desired), available, &status);
+    if (U_FAILURE(status) || rc != 5 || uprv_strcmp(tmp, "de_DE") != 0 || outResult == ULOC_ACCEPT_FAILED) {
+        log_err("uloc_acceptLanguage() failed to do a simple match\n");
+    }
+    uenum_close(available);
 }
 
 static const char* LOCALE_ALIAS[][2] = {
@@ -7052,6 +7064,14 @@ static void TestUldnNameVariants() {
                     uloPtr->displayLocale, uloPtr->displayOptions[0], uloPtr->displayOptions[1], uloPtr->displayOptions[2],
                     u_errorName(status) );
             continue;
+        }
+        // API coverage: Expect to get back the dialect handling which is
+        // the first item in the displayOptions test data.
+        UDialectHandling dh = uldn_getDialectHandling(uldn);
+        UDisplayContext dhContext = (UDisplayContext)dh;  // same numeric values
+        if (dhContext != uloPtr->displayOptions[0]) {
+            log_err("uldn_getDialectHandling()=%03X != expected UDisplayContext %03X\n",
+                    dhContext, uloPtr->displayOptions[0]);
         }
         const UldnItem * itemPtr = uloPtr->testItems;
         int32_t itemCount = uloPtr->countItems;

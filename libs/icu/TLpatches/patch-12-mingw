@@ -1,7 +1,7 @@
 	We don't want this for TeX Live cross compilation.
 
---- source/config/mh-mingw~	2021-10-28 09:04:57.000000000 -0700
-+++ source/config/mh-mingw	2022-01-16 14:45:28.817000693 -0800
+--- source/config/mh-mingw~	2022-04-07 15:41:55.000000000 -0700
++++ source/config/mh-mingw	2022-05-30 13:23:15.072518726 -0700
 @@ -76,25 +76,7 @@
  STATIC_O = ao
  

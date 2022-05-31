@@ -1,3 +1,10 @@
+2022-05-30  Karl Berry  <karl@freefriends.org>
+
+	* Update for icu-71.1.
+	* patch-02-configure-solaris: remove, applied upstream.
+	* patch-15-pow: remove, applied upstream.
+	Other patches did not need changes, apart from re-diffing.
+
 2022-01-26  Mojca Miklavec  <mojca.miklavec.lists@gmail.com>
 
 	* patch-10-ES: remove, applied upstream

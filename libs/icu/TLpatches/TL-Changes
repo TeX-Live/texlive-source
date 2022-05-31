@@ -1,7 +1,7 @@
 Changes applied to the icu tree as obtained from:
+   github.com/unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz
+        and icu4c-71_1-data.zip
    github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
-   github.com/unicode-org/icu/releases/download/release-68-2/icu4c-68_2-src.tgz
-        and icu4c-68_2-data.zip
             icu4c-70_1-data.zip
 
 cd $Build/source/libs/icu       # for whatever $Build directory
@@ -28,12 +28,12 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 
 # patch --backup -p0 for all ../TLpatches/patch-* files.
 # Save original (since not committed yet)
-# and diff after each to update patch-* file.
+# and diff -u2 after each to update patch-* file.
 # Don't lose our leading comments.
 
-# autoreconf in the TL directory (Build/source/libs/icu); don't run
-# autoreconf in the icu-src/source/ directory, it fails due to missing
-# pkg-config prerequisites. (Thus we patch configure, not just
+# autoreconf in the TL directory (Build/source/libs/icu); 
+# don't run autoreconf in the icu-src/source/ directory, it fails due to
+# missing pkg-config prerequisites. (Thus we patch configure, not just
 # configure.ac; not worth more effort for our small change of preferring gcc.)
 # 
 # rebuild; must rerun configure (not just config.status),
@@ -43,7 +43,7 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-ver=70
+ver=71
 srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt${ver}l.dat 
 cd $Work/libs/icu/icu-build/data/out/build/icudt${ver}l
 indat=../../tmp/icudt${ver}l.dat

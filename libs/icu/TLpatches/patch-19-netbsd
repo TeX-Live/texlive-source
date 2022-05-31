@@ -2,9 +2,9 @@
 	From: Marc Baudoin <babafou@babafou.eu.org>
 	tlbuild
 
---- source/common/uposixdefs.h~	2022-01-16 14:46:51.036231730 -0800
-+++ source/common/uposixdefs.h	2022-01-16 14:47:26.072904130 -0800
-@@ -78,3 +78,7 @@
+--- source/common/uposixdefs.h~	2022-04-07 15:41:55.000000000 -0700
++++ source/common/uposixdefs.h	2022-05-30 13:25:39.198799302 -0700
+@@ -75,3 +75,7 @@
  #endif
  
 +#if defined(__cplusplus) && defined(__NetBSD__)

@@ -87,6 +87,7 @@ void NumberFormatterApiTest::runIndexedTest(int32_t index, UBool exec, const cha
         TESTCASE_AUTO(unitUsageSkeletons);
         TESTCASE_AUTO(unitCurrency);
         TESTCASE_AUTO(unitInflections);
+        TESTCASE_AUTO(unitNounClass);
         TESTCASE_AUTO(unitGender);
         TESTCASE_AUTO(unitNotConvertible);
         TESTCASE_AUTO(unitPercent);
@@ -99,6 +100,7 @@ void NumberFormatterApiTest::runIndexedTest(int32_t index, UBool exec, const cha
         TESTCASE_AUTO(roundingFractionFigures);
         TESTCASE_AUTO(roundingOther);
         TESTCASE_AUTO(roundingIncrementRegressionTest);
+        TESTCASE_AUTO(roundingPriorityCoverageTest);
         TESTCASE_AUTO(grouping);
         TESTCASE_AUTO(padding);
         TESTCASE_AUTO(integerWidth);
@@ -127,6 +129,7 @@ void NumberFormatterApiTest::runIndexedTest(int32_t index, UBool exec, const cha
         TESTCASE_AUTO(toObject);
         TESTCASE_AUTO(toDecimalNumber);
         TESTCASE_AUTO(microPropsInternals);
+        TESTCASE_AUTO(formatUnitsAliases);
     TESTCASE_AUTO_END;
 }
 
@@ -1747,6 +1750,46 @@ void NumberFormatterApiTest::unitUsage() {
             30500,
             u"350 m");
 
+    assertFormatSingle(u"Fuel consumption: inverted units",                                     //
+                       u"unit/liter-per-100-kilometer usage/vehicle-fuel",                      //
+                       u"unit/liter-per-100-kilometer usage/vehicle-fuel",                      //
+                       NumberFormatter::with()                                                  //
+                           .unit(MeasureUnit::forIdentifier("liter-per-100-kilometer", status)) //
+                           .usage("vehicle-fuel"),                                              //
+                       Locale("en-US"),                                                         //
+                       6.6,                                                                     //
+                       "36 mpg");
+
+    assertFormatSingle(u"Fuel consumption: inverted units, divide-by-zero, en-US",              //
+                       u"unit/liter-per-100-kilometer usage/vehicle-fuel",                      //
+                       u"unit/liter-per-100-kilometer usage/vehicle-fuel",                      //
+                       NumberFormatter::with()                                                  //
+                           .unit(MeasureUnit::forIdentifier("liter-per-100-kilometer", status)) //
+                           .usage("vehicle-fuel"),                                              //
+                       Locale("en-US"),                                                         //
+                       0,                                                                       //
+                       u"∞ mpg");
+
+    assertFormatSingle(u"Fuel consumption: inverted units, divide-by-zero, en-ZA",      //
+                       u"unit/mile-per-gallon usage/vehicle-fuel",                      //
+                       u"unit/mile-per-gallon usage/vehicle-fuel",                      //
+                       NumberFormatter::with()                                          //
+                           .unit(MeasureUnit::forIdentifier("mile-per-gallon", status)) //
+                           .usage("vehicle-fuel"),                                      //
+                       Locale("en-ZA"),                                                 //
+                       0,                                                               //
+                       u"∞ l/100 km");
+
+    assertFormatSingle(u"Fuel consumption: inverted units, divide-by-inf",              //
+                       u"unit/mile-per-gallon usage/vehicle-fuel",                      //
+                       u"unit/mile-per-gallon usage/vehicle-fuel",                      //
+                       NumberFormatter::with()                                          //
+                           .unit(MeasureUnit::forIdentifier("mile-per-gallon", status)) //
+                           .usage("vehicle-fuel"),                                      //
+                       Locale("de-CH"),                                                 //
+                       uprv_getInfinity(),                                              //
+                       u"0 L/100 km");
+
     // Test calling `.usage("")` should unset the existing usage.
     // First: without usage
     assertFormatSingle(u"Rounding Mode propagates: rounding up",
@@ -1853,10 +1896,6 @@ void NumberFormatterApiTest::unitUsage() {
                        Locale("en-US"),                                                 //
                        1,                                                               //
                        "0.019 psi");
-
-    // TODO(icu-units#38): improve unit testing coverage. E.g. add vehicle-fuel
-    // triggering inversion conversion code. Test with 0 too, to see
-    // divide-by-zero behaviour.
 }
 
 void NumberFormatterApiTest::unitUsageErrorCodes() {
@@ -2384,7 +2423,7 @@ void NumberFormatterApiTest::unitInflections() {
             {"centimeter", "de", nullptr, 1, u"1 Zentimeter"},
             {"centimeter", "de", "genitive", 1, u"1 Zentimeters"},
             {"centimeter", "de", "dative", 10, u"10 Zentimetern"},
-            // TODO(CLDR-14502): check that these inflections are correct, and
+            // TODO(CLDR-14582): check that these inflections are correct, and
             // whether CLDR needs any rules for them (presumably CLDR spec
             // should mention it, if it's a consistent rule):
             {"meter-and-centimeter", "de", nullptr, 1.01, u"1 Meter, 1 Zentimeter"},
@@ -2399,6 +2438,307 @@ void NumberFormatterApiTest::unitInflections() {
     // TODO: add a usage case that selects between preferences with different
     // genders (e.g. year, month, day, hour).
     // TODO: look at "↑↑↑" cases: check that inheritance is done right.
+}
+
+using icu::NounClass;
+void NumberFormatterApiTest::unitNounClass() {
+    IcuTestErrorCode status(*this, "unitNounClass");
+    const struct TestCase {
+        const char *locale;
+        const char *unitIdentifier;
+        const NounClass expectedNounClass;
+    } cases[] = {
+        {"de", "inch", NounClass::MASCULINE},
+        {"de", "yard", NounClass::NEUTER},
+        {"de", "meter", NounClass::MASCULINE},
+        {"de", "liter", NounClass::MASCULINE},
+        {"de", "second", NounClass::FEMININE},
+        {"de", "minute", NounClass::FEMININE},
+        {"de", "hour", NounClass::FEMININE},
+        {"de", "day", NounClass::MASCULINE},
+        {"de", "year", NounClass::NEUTER},
+        {"de", "gram", NounClass::NEUTER},
+        {"de", "watt", NounClass::NEUTER},
+        {"de", "bit", NounClass::NEUTER},
+        {"de", "byte", NounClass::NEUTER},
+
+        {"fr", "inch", NounClass::MASCULINE},
+        {"fr", "yard", NounClass::MASCULINE},
+        {"fr", "meter", NounClass::MASCULINE},
+        {"fr", "liter", NounClass::MASCULINE},
+        {"fr", "second", NounClass::FEMININE},
+        {"fr", "minute", NounClass::FEMININE},
+        {"fr", "hour", NounClass::FEMININE},
+        {"fr", "day", NounClass::MASCULINE},
+        {"fr", "year", NounClass::MASCULINE},
+        {"fr", "gram", NounClass::MASCULINE},
+
+        // grammaticalFeatures deriveCompound "per" rule takes the gender of the
+        // numerator unit:
+        {"de", "meter-per-hour", NounClass::MASCULINE},
+        {"fr", "meter-per-hour", NounClass::MASCULINE},
+        {"af", "meter-per-hour", NounClass::OTHER}, // ungendered language
+
+        // French "times" takes gender from first value, German takes the
+        // second. Prefix and power does not have impact on gender for these
+        // languages:
+        {"de", "square-decimeter-square-second", NounClass::FEMININE},
+        {"fr", "square-decimeter-square-second", NounClass::MASCULINE},
+
+        // TODO(icu-units#149): percent and permille bypasses LongNameHandler
+        // when unitWidth is not FULL_NAME:
+        // // Gender of per-second might be that of percent? TODO(icu-units#28)
+        // {"de", "percent", NounClass::NEUTER},
+        // {"fr", "percent", NounClass::MASCULINE},
+
+        // Built-in units whose simple units lack gender in the CLDR data file
+        {"de", "kilopascal", NounClass::NEUTER},
+        {"fr", "kilopascal", NounClass::MASCULINE},
+        // {"de", "pascal", NounClass::OTHER},
+        // {"fr", "pascal", NounClass::OTHER},
+
+        // Built-in units that lack gender in the CLDR data file
+        // {"de", "revolution", NounClass::OTHER},
+        // {"de", "radian", NounClass::OTHER},
+        // {"de", "arc-minute", NounClass::OTHER},
+        // {"de", "arc-second", NounClass::OTHER},
+        {"de", "square-yard", NounClass::NEUTER},    // POWER
+        {"de", "square-inch", NounClass::MASCULINE}, // POWER
+        // {"de", "dunam", NounClass::OTHER},
+        // {"de", "karat", NounClass::OTHER},
+        // {"de", "milligram-ofglucose-per-deciliter", NounClass::OTHER}, // COMPOUND, ofglucose
+        // {"de", "millimole-per-liter", NounClass::OTHER},               // COMPOUND, mole
+        // {"de", "permillion", NounClass::OTHER},
+        // {"de", "permille", NounClass::OTHER},
+        // {"de", "permyriad", NounClass::OTHER},
+        // {"de", "mole", NounClass::OTHER},
+        {"de", "liter-per-kilometer", NounClass::MASCULINE}, // COMPOUND
+        {"de", "petabyte", NounClass::NEUTER},               // PREFIX
+        {"de", "terabit", NounClass::NEUTER},                // PREFIX
+        // {"de", "century", NounClass::OTHER},
+        // {"de", "decade", NounClass::OTHER},
+        {"de", "millisecond", NounClass::FEMININE}, // PREFIX
+        {"de", "microsecond", NounClass::FEMININE}, // PREFIX
+        {"de", "nanosecond", NounClass::FEMININE},  // PREFIX
+        // {"de", "ampere", NounClass::OTHER},
+        // {"de", "milliampere", NounClass::OTHER}, // PREFIX, ampere
+        // {"de", "ohm", NounClass::OTHER},
+        // {"de", "calorie", NounClass::OTHER},
+        // {"de", "kilojoule", NounClass::OTHER}, // PREFIX, joule
+        // {"de", "joule", NounClass::OTHER},
+        {"de", "kilowatt-hour", NounClass::FEMININE}, // COMPOUND
+        // {"de", "electronvolt", NounClass::OTHER},
+        // {"de", "british-thermal-unit", NounClass::OTHER},
+        // {"de", "therm-us", NounClass::OTHER},
+        // {"de", "pound-force", NounClass::OTHER},
+        // {"de", "newton", NounClass::OTHER},
+        // {"de", "gigahertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"de", "megahertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"de", "kilohertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"de", "hertz", NounClass::OTHER},
+        // {"de", "em", NounClass::OTHER},
+        // {"de", "pixel", NounClass::OTHER},
+        // {"de", "megapixel", NounClass::OTHER},
+        // {"de", "pixel-per-centimeter", NounClass::OTHER}, // COMPOUND, pixel
+        // {"de", "pixel-per-inch", NounClass::OTHER},       // COMPOUND, pixel
+        // {"de", "dot-per-centimeter", NounClass::OTHER},   // COMPOUND, dot
+        // {"de", "dot-per-inch", NounClass::OTHER},         // COMPOUND, dot
+        // {"de", "dot", NounClass::OTHER},
+        // {"de", "earth-radius", NounClass::OTHER},
+        {"de", "decimeter", NounClass::MASCULINE},  // PREFIX
+        {"de", "micrometer", NounClass::MASCULINE}, // PREFIX
+        {"de", "nanometer", NounClass::MASCULINE},  // PREFIX
+        // {"de", "light-year", NounClass::OTHER},
+        // {"de", "astronomical-unit", NounClass::OTHER},
+        // {"de", "furlong", NounClass::OTHER},
+        // {"de", "fathom", NounClass::OTHER},
+        // {"de", "nautical-mile", NounClass::OTHER},
+        // {"de", "mile-scandinavian", NounClass::OTHER},
+        // {"de", "point", NounClass::OTHER},
+        // {"de", "lux", NounClass::OTHER},
+        // {"de", "candela", NounClass::OTHER},
+        // {"de", "lumen", NounClass::OTHER},
+        // {"de", "metric-ton", NounClass::OTHER},
+        // {"de", "microgram", NounClass::NEUTER}, // PREFIX
+        // {"de", "ton", NounClass::OTHER},
+        // {"de", "stone", NounClass::OTHER},
+        // {"de", "ounce-troy", NounClass::OTHER},
+        // {"de", "carat", NounClass::OTHER},
+        {"de", "gigawatt", NounClass::NEUTER},  // PREFIX
+        {"de", "milliwatt", NounClass::NEUTER}, // PREFIX
+        // {"de", "horsepower", NounClass::OTHER},
+        // {"de", "millimeter-ofhg", NounClass::OTHER},
+        // {"de", "pound-force-per-square-inch", NounClass::OTHER}, // COMPOUND, pound-force
+        // {"de", "inch-ofhg", NounClass::OTHER},
+        // {"de", "bar", NounClass::OTHER},
+        // {"de", "millibar", NounClass::OTHER}, // PREFIX, bar
+        // {"de", "atmosphere", NounClass::OTHER},
+        // {"de", "pascal", NounClass::OTHER},      // PREFIX, kilopascal? neuter?
+        // {"de", "hectopascal", NounClass::OTHER}, // PREFIX, pascal, neuter?
+        // {"de", "megapascal", NounClass::OTHER},  // PREFIX, pascal, neuter?
+        // {"de", "knot", NounClass::OTHER},
+        {"de", "pound-force-foot", NounClass::MASCULINE}, // COMPOUND
+        {"de", "newton-meter", NounClass::MASCULINE},     // COMPOUND
+        {"de", "cubic-kilometer", NounClass::MASCULINE},  // POWER
+        {"de", "cubic-yard", NounClass::NEUTER},          // POWER
+        {"de", "cubic-inch", NounClass::MASCULINE},       // POWER
+        {"de", "megaliter", NounClass::MASCULINE},        // PREFIX
+        {"de", "hectoliter", NounClass::MASCULINE},       // PREFIX
+        // {"de", "pint-metric", NounClass::OTHER},
+        // {"de", "cup-metric", NounClass::OTHER},
+        {"de", "acre-foot", NounClass::MASCULINE}, // COMPOUND
+        // {"de", "bushel", NounClass::OTHER},
+        // {"de", "barrel", NounClass::OTHER},
+        // Units missing gender in German also misses gender in French:
+        // {"fr", "revolution", NounClass::OTHER},
+        // {"fr", "radian", NounClass::OTHER},
+        // {"fr", "arc-minute", NounClass::OTHER},
+        // {"fr", "arc-second", NounClass::OTHER},
+        {"fr", "square-yard", NounClass::MASCULINE}, // POWER
+        {"fr", "square-inch", NounClass::MASCULINE}, // POWER
+        // {"fr", "dunam", NounClass::OTHER},
+        // {"fr", "karat", NounClass::OTHER},
+        {"fr", "milligram-ofglucose-per-deciliter", NounClass::MASCULINE}, // COMPOUND
+        // {"fr", "millimole-per-liter", NounClass::OTHER},                        // COMPOUND, mole
+        // {"fr", "permillion", NounClass::OTHER},
+        // {"fr", "permille", NounClass::OTHER},
+        // {"fr", "permyriad", NounClass::OTHER},
+        // {"fr", "mole", NounClass::OTHER},
+        {"fr", "liter-per-kilometer", NounClass::MASCULINE}, // COMPOUND
+        // {"fr", "petabyte", NounClass::OTHER},                     // PREFIX
+        // {"fr", "terabit", NounClass::OTHER},                      // PREFIX
+        // {"fr", "century", NounClass::OTHER},
+        // {"fr", "decade", NounClass::OTHER},
+        {"fr", "millisecond", NounClass::FEMININE}, // PREFIX
+        {"fr", "microsecond", NounClass::FEMININE}, // PREFIX
+        {"fr", "nanosecond", NounClass::FEMININE},  // PREFIX
+        // {"fr", "ampere", NounClass::OTHER},
+        // {"fr", "milliampere", NounClass::OTHER}, // PREFIX, ampere
+        // {"fr", "ohm", NounClass::OTHER},
+        // {"fr", "calorie", NounClass::OTHER},
+        // {"fr", "kilojoule", NounClass::OTHER}, // PREFIX, joule
+        // {"fr", "joule", NounClass::OTHER},
+        // {"fr", "kilowatt-hour", NounClass::OTHER}, // COMPOUND
+        // {"fr", "electronvolt", NounClass::OTHER},
+        // {"fr", "british-thermal-unit", NounClass::OTHER},
+        // {"fr", "therm-us", NounClass::OTHER},
+        // {"fr", "pound-force", NounClass::OTHER},
+        // {"fr", "newton", NounClass::OTHER},
+        // {"fr", "gigahertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"fr", "megahertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"fr", "kilohertz", NounClass::OTHER}, // PREFIX, hertz
+        // {"fr", "hertz", NounClass::OTHER},
+        // {"fr", "em", NounClass::OTHER},
+        // {"fr", "pixel", NounClass::OTHER},
+        // {"fr", "megapixel", NounClass::OTHER},
+        // {"fr", "pixel-per-centimeter", NounClass::OTHER}, // COMPOUND, pixel
+        // {"fr", "pixel-per-inch", NounClass::OTHER},       // COMPOUND, pixel
+        // {"fr", "dot-per-centimeter", NounClass::OTHER},   // COMPOUND, dot
+        // {"fr", "dot-per-inch", NounClass::OTHER},         // COMPOUND, dot
+        // {"fr", "dot", NounClass::OTHER},
+        // {"fr", "earth-radius", NounClass::OTHER},
+        {"fr", "decimeter", NounClass::MASCULINE},  // PREFIX
+        {"fr", "micrometer", NounClass::MASCULINE}, // PREFIX
+        {"fr", "nanometer", NounClass::MASCULINE},  // PREFIX
+        // {"fr", "light-year", NounClass::OTHER},
+        // {"fr", "astronomical-unit", NounClass::OTHER},
+        // {"fr", "furlong", NounClass::OTHER},
+        // {"fr", "fathom", NounClass::OTHER},
+        // {"fr", "nautical-mile", NounClass::OTHER},
+        // {"fr", "mile-scandinavian", NounClass::OTHER},
+        // {"fr", "point", NounClass::OTHER},
+        // {"fr", "lux", NounClass::OTHER},
+        // {"fr", "candela", NounClass::OTHER},
+        // {"fr", "lumen", NounClass::OTHER},
+        // {"fr", "metric-ton", NounClass::OTHER},
+        // {"fr", "microgram", NounClass::MASCULINE}, // PREFIX
+        // {"fr", "ton", NounClass::OTHER},
+        // {"fr", "stone", NounClass::OTHER},
+        // {"fr", "ounce-troy", NounClass::OTHER},
+        // {"fr", "carat", NounClass::OTHER},
+        // {"fr", "gigawatt", NounClass::OTHER}, // PREFIX
+        // {"fr", "milliwatt", NounClass::OTHER},
+        // {"fr", "horsepower", NounClass::OTHER},
+        {"fr", "millimeter-ofhg", NounClass::MASCULINE},
+        // {"fr", "pound-force-per-square-inch", NounClass::OTHER}, // COMPOUND, pound-force
+        {"fr", "inch-ofhg", NounClass::MASCULINE},
+        // {"fr", "bar", NounClass::OTHER},
+        // {"fr", "millibar", NounClass::OTHER}, // PREFIX, bar
+        // {"fr", "atmosphere", NounClass::OTHER},
+        // {"fr", "pascal", NounClass::OTHER},      // PREFIX, kilopascal?
+        // {"fr", "hectopascal", NounClass::OTHER}, // PREFIX, pascal
+        // {"fr", "megapascal", NounClass::OTHER},  // PREFIX, pascal
+        // {"fr", "knot", NounClass::OTHER},
+        // {"fr", "pound-force-foot", NounClass::OTHER},
+        // {"fr", "newton-meter", NounClass::OTHER},
+        {"fr", "cubic-kilometer", NounClass::MASCULINE}, // POWER
+        {"fr", "cubic-yard", NounClass::MASCULINE},      // POWER
+        {"fr", "cubic-inch", NounClass::MASCULINE},      // POWER
+        {"fr", "megaliter", NounClass::MASCULINE},       // PREFIX
+        {"fr", "hectoliter", NounClass::MASCULINE},      // PREFIX
+        // {"fr", "pint-metric", NounClass::OTHER},
+        // {"fr", "cup-metric", NounClass::OTHER},
+        {"fr", "acre-foot", NounClass::FEMININE}, // COMPOUND
+        // {"fr", "bushel", NounClass::OTHER},
+        // {"fr", "barrel", NounClass::OTHER},
+        // Some more French units missing gender:
+        // {"fr", "degree", NounClass::OTHER},
+        {"fr", "square-meter", NounClass::MASCULINE}, // POWER
+        // {"fr", "terabyte", NounClass::OTHER},              // PREFIX, byte
+        // {"fr", "gigabyte", NounClass::OTHER},              // PREFIX, byte
+        // {"fr", "gigabit", NounClass::OTHER},               // PREFIX, bit
+        // {"fr", "megabyte", NounClass::OTHER},              // PREFIX, byte
+        // {"fr", "megabit", NounClass::OTHER},               // PREFIX, bit
+        // {"fr", "kilobyte", NounClass::OTHER},              // PREFIX, byte
+        // {"fr", "kilobit", NounClass::OTHER},               // PREFIX, bit
+        // {"fr", "byte", NounClass::OTHER},
+        // {"fr", "bit", NounClass::OTHER},
+        // {"fr", "volt", NounClass::OTHER},
+        // {"fr", "watt", NounClass::OTHER},
+        {"fr", "cubic-meter", NounClass::MASCULINE}, // POWER
+
+        // gender-lacking builtins within compound units
+        {"de", "newton-meter-per-second", NounClass::MASCULINE},
+
+        // TODO(ICU-21494): determine whether list genders behave as follows,
+        // and implement proper getListGender support (covering more than just
+        // two genders):
+        // // gender rule for lists of people: de "neutral", fr "maleTaints"
+        // {"de", "day-and-hour-and-minute", NounClass::NEUTER},
+        // {"de", "hour-and-minute", NounClass::FEMININE},
+        // {"fr", "day-and-hour-and-minute", NounClass::MASCULINE},
+        // {"fr", "hour-and-minute", NounClass::FEMININE},
+    };
+
+    LocalizedNumberFormatter formatter;
+    FormattedNumber fn;
+    for (const TestCase &t : cases) {
+        formatter = NumberFormatter::with()
+                        .unit(MeasureUnit::forIdentifier(t.unitIdentifier, status))
+                        .locale(Locale(t.locale));
+        fn = formatter.formatDouble(1.1, status);
+        assertEquals(UnicodeString("Testing NounClass with default width, unit: ") + t.unitIdentifier +
+                         ", locale: " + t.locale,
+                     t.expectedNounClass, fn.getNounClass(status));
+        status.assertSuccess();
+
+        formatter = NumberFormatter::with()
+                        .unit(MeasureUnit::forIdentifier(t.unitIdentifier, status))
+                        .unitWidth(UNUM_UNIT_WIDTH_FULL_NAME)
+                        .locale(Locale(t.locale));
+        fn = formatter.formatDouble(1.1, status);
+        assertEquals(UnicodeString("Testing NounClass with UNUM_UNIT_WIDTH_FULL_NAME, unit: ") +
+                         t.unitIdentifier + ", locale: " + t.locale,
+                     t.expectedNounClass, fn.getNounClass(status));
+        status.assertSuccess();
+    }
+
+    // Make sure getNounClass does not return garbage for languages without noun classes.
+    formatter = NumberFormatter::with().locale(Locale::getEnglish());
+    fn = formatter.formatDouble(1.1, status);
+    status.assertSuccess();
+    assertEquals("getNounClasses for a not supported language", NounClass::OTHER,
+                 fn.getNounClass(status));
 }
 
 void NumberFormatterApiTest::unitGender() {
@@ -2975,6 +3315,28 @@ void NumberFormatterApiTest::roundingFraction() {
             Locale::getEnglish(),
             1,
             "1");
+
+    assertFormatSingle(
+            u"Hide If Whole with Rounding Mode A (ICU-21881)",
+            u".00/w rounding-mode-floor",
+            u".00/w rounding-mode-floor",
+            NumberFormatter::with().precision(Precision::fixedFraction(2)
+                .trailingZeroDisplay(UNUM_TRAILING_ZERO_HIDE_IF_WHOLE))
+                .roundingMode(UNUM_ROUND_FLOOR),
+            Locale::getEnglish(),
+            3.009,
+            "3");
+
+    assertFormatSingle(
+            u"Hide If Whole with Rounding Mode B (ICU-21881)",
+            u".00/w rounding-mode-half-up",
+            u".00/w rounding-mode-half-up",
+            NumberFormatter::with().precision(Precision::fixedFraction(2)
+                .trailingZeroDisplay(UNUM_TRAILING_ZERO_HIDE_IF_WHOLE))
+                .roundingMode(UNUM_ROUND_HALFUP),
+            Locale::getEnglish(),
+            3.001,
+            "3");
 }
 
 void NumberFormatterApiTest::roundingFigures() {
@@ -2995,6 +3357,15 @@ void NumberFormatterApiTest::roundingFigures() {
             Locale::getEnglish(),
             -98.7654321,
             u"-98.8");
+
+    assertFormatSingle(
+            u"Fixed Significant at rounding boundary",
+            u"@@@",
+            u"@@@",
+            NumberFormatter::with().precision(Precision::fixedSignificantDigits(3)),
+            Locale::getEnglish(),
+            9.999,
+            u"10.0");
 
     assertFormatSingle(
             u"Fixed Significant Zero",
@@ -3156,7 +3527,7 @@ void NumberFormatterApiTest::roundingFractionFigures() {
     assertFormatDescending(
             u"FracSig withSignificantDigits STRICT",
             u"precision-integer/@#s",
-            u"./@#",
+            u"./@#s",
             NumberFormatter::with().precision(Precision::maxFraction(0)
                 .withSignificantDigits(1, 2, UNUM_ROUNDING_PRIORITY_STRICT)),
             Locale::getEnglish(),
@@ -3180,7 +3551,7 @@ void NumberFormatterApiTest::roundingFractionFigures() {
             1,
             u"1.00");
 
-    // Trailing zeros are always retained:
+    // Trailing zeros follow the strategy that was chosen:
     assertFormatSingle(
             u"FracSig withSignificantDigits Trailing Zeros STRICT",
             u".0/@@@s",
@@ -3189,7 +3560,7 @@ void NumberFormatterApiTest::roundingFractionFigures() {
                 .withSignificantDigits(3, 3, UNUM_ROUNDING_PRIORITY_STRICT)),
             Locale::getEnglish(),
             1,
-            u"1.00");
+            u"1.0");
 
     assertFormatSingle(
             u"FracSig withSignificantDigits at rounding boundary",
@@ -3199,7 +3570,7 @@ void NumberFormatterApiTest::roundingFractionFigures() {
                     .withSignificantDigits(3, 3, UNUM_ROUNDING_PRIORITY_STRICT)),
             Locale::getEnglish(),
             9.99,
-            u"10.0");
+            u"10");
 
     assertFormatSingle(
             u"FracSig with Trailing Zero Display",
@@ -3397,6 +3768,42 @@ void NumberFormatterApiTest::roundingOther() {
             u"0.0",
             u"0.0");
 
+    assertFormatSingle(
+            u"Large integer increment",
+            u"precision-increment/24000000000000000000000",
+            u"precision-increment/24000000000000000000000",
+            NumberFormatter::with().precision(Precision::incrementExact(24, 21)),
+            Locale::getEnglish(),
+            3.1e22,
+            u"24,000,000,000,000,000,000,000");
+
+    assertFormatSingle(
+            u"Quarter rounding",
+            u"precision-increment/250",
+            u"precision-increment/250",
+            NumberFormatter::with().precision(Precision::incrementExact(250, 0)),
+            Locale::getEnglish(),
+            700,
+            u"750");
+
+    assertFormatSingle(
+            u"ECMA-402 limit",
+            u"precision-increment/.00000000000000000020",
+            u"precision-increment/.00000000000000000020",
+            NumberFormatter::with().precision(Precision::incrementExact(20, -20)),
+            Locale::getEnglish(),
+            333e-20,
+            u"0.00000000000000000340");
+
+    assertFormatSingle(
+            u"ECMA-402 limit with increment = 1",
+            u"precision-increment/.00000000000000000001",
+            u"precision-increment/.00000000000000000001",
+            NumberFormatter::with().precision(Precision::incrementExact(1, -20)),
+            Locale::getEnglish(),
+            4321e-21,
+            u"0.00000000000000000432");
+
     assertFormatDescending(
             u"Currency Standard",
             u"currency/CZK precision-currency-standard",
@@ -3581,6 +3988,67 @@ void NumberFormatterApiTest::roundingIncrementRegressionTest() {
         .formatDouble(5.625, status)
         .toString(status);
     assertEquals("ICU-21668", u"5,000", increment);
+}
+
+void NumberFormatterApiTest::roundingPriorityCoverageTest() {
+    IcuTestErrorCode status(*this, "roundingPriorityCoverageTest");
+    struct TestCase {
+        double input;
+        const char16_t* expectedRelaxed0113;
+        const char16_t* expectedStrict0113;
+        const char16_t* expectedRelaxed1133;
+        const char16_t* expectedStrict1133;
+    } cases[] = {
+        { 0.9999, u"1",      u"1",     u"1.00",    u"1.0" },
+        { 9.9999, u"10",     u"10",    u"10.0",    u"10.0" },
+        { 99.999, u"100",    u"100",   u"100.0",   u"100" },
+        { 999.99, u"1000",   u"1000",  u"1000.0",  u"1000" },
+
+        { 0, u"0", u"0", u"0.00", u"0.0" },
+
+        { 9.876,  u"9.88",   u"9.9",   u"9.88",   u"9.9" },
+        { 9.001,  u"9",      u"9",     u"9.00",   u"9.0" },
+    };
+    for (const auto& cas : cases) {
+        auto precisionRelaxed0113 = Precision::minMaxFraction(0, 1)
+            .withSignificantDigits(1, 3, UNUM_ROUNDING_PRIORITY_RELAXED);
+        auto precisionStrict0113 = Precision::minMaxFraction(0, 1)
+            .withSignificantDigits(1, 3, UNUM_ROUNDING_PRIORITY_STRICT);
+        auto precisionRelaxed1133 = Precision::minMaxFraction(1, 1)
+            .withSignificantDigits(3, 3, UNUM_ROUNDING_PRIORITY_RELAXED);
+        auto precisionStrict1133 = Precision::minMaxFraction(1, 1)
+            .withSignificantDigits(3, 3, UNUM_ROUNDING_PRIORITY_STRICT);
+
+        auto messageBase = DoubleToUnicodeString(cas.input);
+
+        auto check = [&](
+            const char16_t* name,
+            const UnicodeString& expected,
+            const Precision& precision
+        ) {
+            assertEquals(
+                messageBase + name,
+                expected,
+                NumberFormatter::withLocale(Locale::getEnglish())
+                    .precision(precision)
+                    .grouping(UNUM_GROUPING_OFF)
+                    .formatDouble(cas.input, status)
+                    .toString(status)
+            );
+        };
+
+        check(u" Relaxed 0113", cas.expectedRelaxed0113, precisionRelaxed0113);
+        if (status.errIfFailureAndReset()) continue;
+
+        check(u" Strict 0113", cas.expectedStrict0113, precisionStrict0113);
+        if (status.errIfFailureAndReset()) continue;
+
+        check(u" Relaxed 1133", cas.expectedRelaxed1133, precisionRelaxed1133);
+        if (status.errIfFailureAndReset()) continue;
+
+        check(u" Strict 1133", cas.expectedStrict1133, precisionStrict1133);
+        if (status.errIfFailureAndReset()) continue;
+    }
 }
 
 void NumberFormatterApiTest::grouping() {
@@ -5707,6 +6175,37 @@ void NumberFormatterApiTest::microPropsInternals() {
     assertEquals("Copy Assigned capacity", 4, copyAssigned.mixedMeasures.getCapacity());
 }
 
+void NumberFormatterApiTest::formatUnitsAliases() {
+    IcuTestErrorCode status(*this, "formatUnitsAliases");
+
+    struct TestCase {
+        const MeasureUnit measureUnit;
+        const UnicodeString expectedFormat;
+    } testCases[]{
+        // Aliases
+        {MeasureUnit::getMilligramPerDeciliter(), u"2 milligrams per deciliter"},
+        {MeasureUnit::getLiterPer100Kilometers(), u"2 liters per 100 kilometers"},
+        {MeasureUnit::getPartPerMillion(), u"2 parts per million"},
+        {MeasureUnit::getMillimeterOfMercury(), u"2 millimeters of mercury"},
+
+        // Replacements
+        {MeasureUnit::getMilligramOfglucosePerDeciliter(), u"2 milligrams per deciliter"},
+        {MeasureUnit::forIdentifier("millimeter-ofhg", status), u"2 millimeters of mercury"},
+        {MeasureUnit::forIdentifier("liter-per-100-kilometer", status), u"2 liters per 100 kilometers"},
+        {MeasureUnit::forIdentifier("permillion", status), u"2 parts per million"},
+    };
+
+    for (const auto &testCase : testCases) {
+        UnicodeString actualFormat = NumberFormatter::withLocale(icu::Locale::getEnglish())
+                                         .unit(testCase.measureUnit)
+                                         .unitWidth(UNumberUnitWidth::UNUM_UNIT_WIDTH_FULL_NAME)
+                                         .formatDouble(2.0, status)
+                                         .toString(status);
+
+        assertEquals("test unit aliases", testCase.expectedFormat, actualFormat);
+    }
+}
+
 /* For skeleton comparisons: this checks the toSkeleton output for `f` and for
  * `conciseSkeleton` against the normalized version of `uskeleton` - this does
  * not round-trip uskeleton itself.
@@ -5882,7 +6381,7 @@ NumberFormatterApiTest::assertFormatSingle(
         // Only compare normalized skeletons: the tests need not provide the normalized forms.
         // Use the normalized form to construct the testing formatter to ensure no loss of info.
         UnicodeString normalized = NumberFormatter::forSkeleton(skeleton, status).toSkeleton(status);
-        assertEquals(message + ": Skeleton:", normalized, f.toSkeleton(status));
+        assertEquals(message + ": Skeleton", normalized, f.toSkeleton(status));
         LocalizedNumberFormatter l3 = NumberFormatter::forSkeleton(normalized, status).locale(locale);
         UnicodeString actual3 = l3.formatDouble(input, status).toString(status);
         assertEquals(message + ": Skeleton Path: '" + normalized + "': " + input, expected, actual3);

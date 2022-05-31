@@ -3357,6 +3357,7 @@ void NumberFormatTest::TestRoundingPattern() {
 
 void NumberFormatTest::checkRounding(DecimalFormat* df, double base, int iterations, double increment) {
     df->setRoundingIncrement(increment);
+    assertEquals("Rounding increment round-trip", increment, df->getRoundingIncrement());
     double lastParsed=INT32_MIN; //Intger.MIN_VALUE
     for (int i=-iterations; i<=iterations;i++) {
         double iValue=base+(increment*(i*0.1));
@@ -4889,9 +4890,9 @@ NumberFormatTest::TestParseCurrencyInUCurr() {
         "Peruvian soles1.00",
         "Peruvian sol (1863\\u20131965)1.00",
         "Peruvian soles (1863\\u20131965)1.00",
-        "Philippine Piso1.00",
-        "Philippine piso1.00",
-        "Philippine pisos1.00",
+        "Philippine Peso1.00",
+        "Philippine peso1.00",
+        "Philippine pesos1.00",
         "Platinum1.00",
         "Platinum1.00",
         "Polish Zloty (1950\\u20131995)1.00",
@@ -5826,9 +5827,9 @@ NumberFormatTest::TestParseCurrencyInUCurr() {
         "1.00 Peruvian soles random",
         "1.00 Peruvian sol (1863\\u20131965) random",
         "1.00 Peruvian soles (1863\\u20131965) random",
-        "1.00 Philippine Piso random",
-        "1.00 Philippine piso random",
-        "1.00 Philippine pisos random",
+        "1.00 Philippine Peso random",
+        "1.00 Philippine peso random",
+        "1.00 Philippine pesos random",
         "1.00 Platinum random",
         "1.00 Platinum random",
         "1.00 Polish Zloty (1950\\u20131995) random",

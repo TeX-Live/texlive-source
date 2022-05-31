@@ -7,4 +7,4 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl  m4-include this file to define the current ICU version as icu_version.
-m4_define([icu_version], [70.1])
+m4_define([icu_version], [71.1])
