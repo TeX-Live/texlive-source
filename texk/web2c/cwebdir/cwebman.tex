@@ -1337,6 +1337,7 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 }
 
 /*:27*//*32:*/
+#line 296 "common.w"
 !endgroup
 \endgroup
 \vfill\eject
@@ -1390,7 +1391,7 @@ ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\\{buffer}[\T{0}]\I\.{'@'}){}$\1\5
 \&{continue};\2\6
 \&{if} (\\{xisupper}(\\{buffer}[\T{1}]))\1\5
-${}\\{buffer}[\T{1}]\K\\{tolower}{}$((\&{int}) \\{buffer}[\T{1}]);\2\6
+${}\\{buffer}[\T{1}]\K\\{tolower}((\&{int})\,\\{buffer}[\T{1}]);{}$\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'x'}){}$\1\5
 \&{break};\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'y'}\V\\{buffer}[\T{1}]\E\.{'z'}\V\\{buffer}[%
@@ -1468,7 +1469,7 @@ ${}\\{change\_line}\PP;{}$\6
 \&{if} ${}(\\{buffer}[\T{0}]\I\.{'@'}){}$\1\5
 \&{continue};\2\6
 \&{if} (\\{xisupper}(\\{buffer}[\T{1}]))\1\5
-${}\\{buffer}[\T{1}]\K\\{tolower}{}$((\&{eight\_bits}) \\{buffer}[\T{1}]);\2\6
+${}\\{buffer}[\T{1}]\K\\{tolower}((\&{int})\,\\{buffer}[\T{1}]);{}$\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'x'}){}$\1\5
 \&{break};\2\6
 \&{if} ${}(\\{buffer}[\T{1}]\E\.{'y'}\V\\{buffer}[\T{1}]\E\.{'z'}\V\\{buffer}[%
