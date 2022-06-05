@@ -1,5 +1,43 @@
 2022-06-05  Andreas Scherer  <https://ascherer.github.io>
 
+	* Makefile,
+	* comm-mac.ch,
+	* comm-mini.ch,
+	* comm-ql.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctang-pc.ch,
+	* ctang-ql.ch,
+	* ctang-vms.ch,
+	* ctang-w2c.ch,
+	* ctang-w32.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-pc.ch,
+	* cweav-ql.ch,
+	* cweav-vms.ch,
+	* cweav-w2c.ch,
+	* cweav-w32.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* po/cweb-tl.pot,
+	* po/cweb.pot,
+	* po/de/cweb-tl.po,
+	* po/de/cweb.po,
+	* po/it/cweb.po,
+	* prod-cweave.w,
+	* prod-twill.w,
+	* prod.w: CWEB 4.8 release.
+
+2022-06-05  Andreas Scherer  <https://ascherer.github.io>
+
 	* cweave.w,
 	* cwebman-w2c.ch,
 	* cwebman.tex: Update borderline cases.

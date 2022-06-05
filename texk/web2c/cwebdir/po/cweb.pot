@@ -523,15 +523,15 @@ msgid "Sorting:"
 msgstr ""
 
 #: ctang-i18n.ch:17
-msgid "This is CTANGLE (Version 4.7 [CWEBbin 2022.1])"
+msgid "This is CTANGLE (Version 4.8 [CWEBbin 2022.2])"
 msgstr ""
 
 #: cweav-twill.ch:61
-msgid "This is CTWILL (Version 4.7 [CWEBbin 2022.1])"
+msgid "This is CTWILL (Version 4.8 [CWEBbin 2022.2])"
 msgstr ""
 
 #: cweav-i18n.ch:17 cweav-twill.ch:42
-msgid "This is CWEAVE (Version 4.7 [CWEBbin 2022.1])"
+msgid "This is CWEAVE (Version 4.8 [CWEBbin 2022.2])"
 msgstr ""
 
 #: cweav-i18n.ch:301 cweav-i18n.ch:309

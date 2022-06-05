@@ -10,9 +10,9 @@ created:
 (these changes not necessary for initial bootstrapping)
 
 @x section 1 (01-FEB-1992 ST)
-@d banner "This is CTANGLE (Version 4.7)"
+@d banner "This is CTANGLE (Version 4.8)"
 @y
-@d banner "This is CTANGLE (VAX/VMS Version 4.7)"
+@d banner "This is CTANGLE (VAX/VMS Version 4.8)"
 @z
 
 @x section 4 (01-FEB-1992 ST)
