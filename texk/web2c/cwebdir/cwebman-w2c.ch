@@ -210,6 +210,14 @@ Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
 @x
+the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.
+@y
+the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.%
+\cwebfootnote{This extended version of \.{CWEB} acknowledges the \.{-o} option
+to suppress the extra space globally.}
+@z
+
+@x
 \section Hypertext and hyperdocumentation.
 @y
 \vfill\eject

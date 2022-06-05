@@ -3602,7 +3602,7 @@ section, it will be made into a scrap when |finish_C| is called.
 There's a known bug here, in cases where an adjacent scrap is
 |prelangle| or |prerangle|. Then the \TEX/ string can disappear
 when the \.{\\langle} or \.{\\rangle} becomes \.{<} or \.{>}.
-For example, if the user writes \.{\v x<@@ty@@>\v}, the \TEX/ string
+For example, if the user writes \.{\v x<@@ty@@><42\v}, the \TEX/ string
 \.{\\hbox\{y\}} eventually becomes part of an |insert| scrap, which is combined
 with a |prelangle| scrap and eventually lost. The best way to work around
 this bug is probably to enclose the \.{@@t...@@>} in \.{@@[...@@]} so that
