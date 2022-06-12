@@ -28,7 +28,6 @@ extern PTENCDLL const char *ptexenc_version_string;
 extern PTENCDLL int infile_enc_auto;
 #if defined(WIN32)
 extern PTENCDLL FILE *Poptr;
-extern PTENCDLL char * ptexenc_nkf(FILE *f);
 #endif
 
 #define KANJI_OPTS "{jis|euc|sjis|utf8}"
