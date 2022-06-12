@@ -72,7 +72,8 @@ long UTF8StoUCS(unsigned char *s)
     }
 }
 
-#if 0 /* not used */
+/* used only for debug */
+#ifdef DEBUG
 int UCStoUTF8S(long ucs, unsigned char *s)
 {
     if (ucs < 0x80) {
@@ -96,7 +97,7 @@ int UCStoUTF8S(long ucs, unsigned char *s)
     }
     return 0; /* unsupported */
 }
-#endif /* 0 */
+#endif /* DEBUG */
 
 
 long UCStoUTF8(long ucs)

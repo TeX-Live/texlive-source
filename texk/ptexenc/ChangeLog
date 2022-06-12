@@ -1,3 +1,11 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c, unicode.c, ptexenc/ptexenc.h, ptexenc/unicode.h:
+	Add new functions ptenc_guess_enc() and set_guess_file_enc()
+	to support guessing input file encodings.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* version.ac: Bump to 1.4.2/dev.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

@@ -5,6 +5,9 @@
 #ifndef PTEXENC_PTEXENC_H
 #define PTEXENC_PTEXENC_H
 
+#ifdef WIN32
+#include <ptexenc/c-auto.h>
+#endif
 #include <kpathsea/types.h>
 
 #if defined (WIN32) && !defined (__MINGW32__) && !defined (NO_PTENC_DLL)
@@ -22,9 +25,10 @@
 #endif
 
 extern PTENCDLL const char *ptexenc_version_string;
+extern PTENCDLL int infile_enc_auto;
 #if defined(WIN32)
 extern PTENCDLL FILE *Poptr;
-extern PTENCDLL int infile_enc_auto;
+extern PTENCDLL char * ptexenc_nkf(FILE *f);
 #endif
 
 #define KANJI_OPTS "{jis|euc|sjis|utf8}"
@@ -32,6 +36,7 @@ extern PTENCDLL int infile_enc_auto;
 /* enable/disable UPTEX */
 extern PTENCDLL void enable_UPTEX (boolean enable);
 extern PTENCDLL void set_prior_file_enc(void);
+extern PTENCDLL void set_guess_file_enc(boolean enable);
 extern PTENCDLL void ptenc_ptex_mode(const boolean enable);
 
 /* get/set Kanji encoding by string */
