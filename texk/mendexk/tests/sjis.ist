@@ -1,0 +1,10 @@
+% -*- coding: shift_jis -*-
+
+delim_0 "\\leaders\\hbox{$\\cdot$}\\hfill "
+delim_1 "\\leaders\\hbox{$\\cdot$}\\hfill "
+delim_2 "\\leaders\\hbox{$\\cdot$}\\hfill "
+
+lethead_flag 1
+lethead_prefix "\n\\centerline{\\bfseries ŸŸŸ "
+lethead_suffix  " ŸŸŸ}\\par\\nobreak"
+

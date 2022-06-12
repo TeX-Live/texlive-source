@@ -1,3 +1,12 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* main.c:
+	Support guessing input file encodings.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* tests/mendex.test, tests/{sjis,euc}.ist, Makefile.am:
+	Update tests.
+	* version.h: Date [12-Jun-2022]
+
 2022-05-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fread.c:

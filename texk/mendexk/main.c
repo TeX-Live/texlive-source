@@ -40,14 +40,12 @@ int main(int argc, char **argv)
 			fprintf (stderr, "Ignoring bad kanji encoding \"%s\".\n", p);
 	}
 
-#ifdef WIN32
 	p = kpse_var_value ("guess_input_kanji_encoding");
 	if (p) {
 		if (*p == '1' || *p == 'y' || *p == 't')
 			infile_enc_auto = 1;
 		free(p);
 	}
-#endif
 
 	kp_ist.var_name = "INDEXSTYLE";
 	kp_ist.path = DEFAULT_INDEXSTYLES; /* default path. */
@@ -189,13 +187,15 @@ int main(int argc, char **argv)
 
 			case '-':
 				if (strlen(argv[i])==2) chkopt=0;
+				if (strcmp(argv[i],"--guess-input-enc"   )==0) infile_enc_auto=1;
+				if (strcmp(argv[i],"--no-guess-input-enc")==0) infile_enc_auto=0;
 				if (strcmp(argv[i],"--help")!=0) break;
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2022 Japanese TeX Development Community\n");
 				fprintf(stderr,"usage:\n");
-				fprintf(stderr,"%% mendex [-ilqrcgfEJSU] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--] [idx0 idx1 ...]\n");
+				fprintf(stderr,"%% mendex [-ilqrcgfEJSU] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--[no-]guess-input-enc] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
 				fprintf(stderr,"-i      use stdin as the input file.\n");
 				fprintf(stderr,"-l      use letter ordering.\n");
@@ -215,6 +215,7 @@ int main(int argc, char **argv)
 				fprintf(stderr,"-S      ShiftJIS mode.\n");
 				fprintf(stderr,"-U      UTF-8 mode.\n");
 				fprintf(stderr,"-I enc  internal encoding for keywords (enc: euc or utf8).\n");
+				fprintf(stderr,"--[no-]guess-input-enc  disable/enable to guess input file encoding.\n");
 				fprintf(stderr,"idx...  input files.\n");
 				fprintf(stderr,"\nEmail bug reports to %s.\n", BUG_ADDRESS);
 				exit(0);

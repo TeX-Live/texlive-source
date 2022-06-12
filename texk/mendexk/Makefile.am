@@ -59,6 +59,7 @@ EXTRA_DIST += $(TESTS)
 EXTRA_DIST += tests/foo.idx tests/foo.ind \
 	tests/uni.idx tests/uni.dict tests/uni.ist \
 	tests/uni1.ist tests/uni2.ist tests/uni.ind \
+	tests/sjis.ist tests/euc.ist \
 	tests/range.idx tests/range2.ist tests/range2.ist tests/range3.ist \
 	tests/range1.ind tests/range2.ind tests/range3.ind \
 	tests/pprec0.ist tests/pprec1.ist tests/pprec2.ist tests/pprec3.ist \

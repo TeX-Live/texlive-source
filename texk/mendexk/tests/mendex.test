@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* range*.* pprec*.* romalp*.*
+rm -f foo.* uni.* range*.* pprec*.* romalp*.* sjis.* euc.*
 rc=0
 
 ./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
@@ -28,6 +28,16 @@ cat $srcdir/tests/uni.idx | \
 ./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni1.ist -s $srcdir/tests/uni2.ist \
 	$srcdir/tests/uni.idx -o uni.ind3 -t uni.ilg3 \
 	&& diff $srcdir/tests/uni.ind uni.ind3 || rc=5
+
+cat $srcdir/tests/uni.idx | \
+	guess_input_kanji_encoding=1 ./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/sjis.ist \
+	>sjis.ind1 2>sjis.ilg1 \
+	&& diff $srcdir/tests/uni.ind sjis.ind1 || rc=20
+
+cat $srcdir/tests/uni.idx | \
+	./mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/euc.ist --guess-input-enc \
+	>euc.ind1 2>euc.ilg1 \
+	&& diff $srcdir/tests/uni.ind euc.ind1 || rc=21
 
 
 # test for range suffix_2p, suffix_3p, suffix_mp
