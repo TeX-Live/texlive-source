@@ -199,7 +199,9 @@ endif UPWEB
 ## Test data and results
 ##
 ## uptexdir/upbibtex.test
-DISTCLEANFILES += uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg
+EXTRA_DIST += tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl
+DISTCLEANFILES += uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
+	uptests/xenc*.*
 ## uptexdir/updvitype.test
 DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ
 ## uptexdir/uppltotf.test

@@ -1,3 +1,11 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmf.cnf (guess_input_kanji_encoding):
+	Support guessing input file encodings for unix-like platforms.
+	(It has already been supported on Windows.)
+	Now we set default on for (e)p(la)tex, pbibtex & mendex.
+	https://github.com/texjporg/tex-jp-build/issues/142
+
 2022-05-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* texmf.cnf (max_print_line):

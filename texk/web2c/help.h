@@ -373,6 +373,7 @@ const_string PBIBTEXHELP[] = {
     "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
     "  along with a log file AUXFILE.blg."
     "",
+    "[-no]-guess-input-enc  disable/enable to guess input file encoding",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8)",
     "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",
     "-terse                 do not print progress reports",
@@ -533,6 +534,7 @@ const_string UPBIBTEXHELP[] = {
     "  Write bibliography for entries in AUXFILE to AUXFILE.bbl,",
     "  along with a log file AUXFILE.blg."
     "",
+    "[-no]-guess-input-enc  disable/enable to guess input file encoding",
     "-kanji=STRING          set Japanese encoding (STRING=euc|jis|sjis|utf8|uptex)",
     "-kanji-internal=STRING set Japanese internal encoding (STRING=euc|uptex)",
     "-min-crossrefs=NUMBER  include item after NUMBER cross-refs; default 2",

@@ -1836,10 +1836,8 @@ static struct option long_options[]
       { "no-mktex",                  1, 0, 0 },
 #endif /* TeX or MF */
 #if IS_pTeX
-#ifdef WIN32
       { "guess-input-enc",           0, &infile_enc_auto, 1 },
       { "no-guess-input-enc",        0, &infile_enc_auto, 0 },
-#endif
       { "kanji",                     1, 0, 0 },
       { "kanji-internal",            1, 0, 0 },
 #endif /* IS_pTeX */

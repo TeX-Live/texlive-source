@@ -5,13 +5,38 @@
 # You may freely use, modify and/or distribute this file.
 
 test -d uptests || mkdir -p uptests
-rm -f uptests/xexampl.*
+rm -f uptests/xexampl.* uptests/xenc*.*
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$srcdir/tests
+BIBINPUTS=$srcdir/tests
+export TEXMFCNF BSTINPUTS BIBINPUTS
 
 cp $srcdir/tests/exampl.aux uptests/xexampl.aux
 
-TEXMFCNF=$srcdir/../kpathsea \
-  BSTINPUTS=$srcdir/tests \
-  BIBINPUTS=$srcdir/tests \
-  ./upbibtex uptests/xexampl || exit 1
-diff $srcdir/tests/exampl.bbl uptests/xexampl.bbl || exit 2
+./upbibtex uptests/xexampl || rc=1
+diff $srcdir/tests/exampl.bbl uptests/xexampl.bbl || rc=2
+
+
+cp $srcdir/tests/enc.aux uptests/xenc.aux
+
+guess_input_kanji_encoding=1 ./upbibtex uptests/xenc || rc=3
+diff $srcdir/tests/enc-u.bbl uptests/xenc.bbl || rc=4
+
+
+cp $srcdir/tests/enc-e.aux uptests/xenc-e.aux
+
+guess_input_kanji_encoding=1 ./upbibtex -kanji=euc uptests/xenc-e || rc=5
+diff $srcdir/tests/enc-eu.bbl uptests/xenc-e.bbl || rc=6
+
+
+cp $srcdir/tests/enc-s.aux uptests/xenc-s.aux
+
+./upbibtex -guess-input-enc -kanji=sjis uptests/xenc-s || rc=7
+diff $srcdir/tests/enc-su.bbl uptests/xenc-s.bbl || rc=8
+
+
+exit $rc
 

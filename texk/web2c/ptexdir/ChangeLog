@@ -1,3 +1,11 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* kanji.[ch], pbibtex.ch:
+	Support guessing input file encodings.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* tests/pbibtex.test, am/ptex.am:
+	Add tests for guess encodings & pBibTeX.
+
 2022-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pbibtex.ch, ptex.defines:

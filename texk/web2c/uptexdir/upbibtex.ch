@@ -462,9 +462,9 @@ sp_end := tpe;
 @z
 
 @x
-const n_options = 6; {Pascal won't count array lengths for us.}
+const n_options = 8; {Pascal won't count array lengths for us.}
 @y
-const n_options = 7; {Pascal won't count array lengths for us.}
+const n_options = 9; {Pascal won't count array lengths for us.}
 @z
 
 @x

@@ -99,9 +99,7 @@ const_string EPTEXHELP[] = {
     "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -228,9 +226,7 @@ const_string EUPTEXHELP[] = {
     "-cnf-line=STRING        parse STRING as a configuration file line",
     "-etex                   enable e-TeX extensions",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -497,9 +493,7 @@ const_string PTEXHELP[] = {
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",
@@ -624,9 +618,7 @@ const_string UPTEXHELP[] = {
     "",
     "-cnf-line=STRING        parse STRING as a configuration file line",
     "-fmt=NAME               use NAME instead of program name or %&format.",
-#if defined(WIN32)
     "[-no]-guess-input-enc   disable/enable to guess input file encoding",
-#endif
     "-halt-on-error          stop processing at the first error",
     "[-no]-file-line-error   disable/enable file:line:error style messages",
     "-ini                    be iniptex.",

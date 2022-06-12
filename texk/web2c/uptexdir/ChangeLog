@@ -1,3 +1,11 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* kanji.[ch], upbibtex.ch:
+	Support guessing input file encodings.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* tests/upbibtex.test, am/uptex.am:
+	Add tests for guess encodings & upBibTeX.
+
 2022-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upbibtex.ch:

@@ -3277,18 +3277,23 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/Changes.txt ptexdir/INSTALL.txt ptexdir/README.txt \
 	$(ptex_tests) $(pweb_tests) ptexdir/tests/nissya_bib.aux \
 	ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
-	tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst \
-	ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi \
-	ptexdir/tests/samplea.typ ptexdir/tests/min10.pl \
-	ptexdir/tests/min10.tfm ptexdir/tests/tmin10.pl \
-	ptexdir/tests/tmin10.tfm ptexdir/tests/skipjfmp.pl \
-	ptexdir/tests/skipjfmp.tfm ptexdir/ptrip/ptrip.diffs \
-	ptexdir/ptrip/texmf.cnf $(eptex_web_srcs) $(eptex_ch_srcs) \
-	eptexdir/eptex.defines eptexdir/ChangeLog eptexdir/Changes.txt \
-	eptexdir/README.txt $(eptex_tests) \
-	eptexdir/eptrip/eptrip.diffs eptexdir/eptrip/eptrip.log \
-	eptexdir/eptrip/eptrip.tex eptexdir/eptrip/texmf.cnf \
-	eptexdir/pdfprimitive.test \
+	tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib \
+	tests/enc-sjis.bib tests/enc-euc.bib tests/enc-utf8.bib \
+	tests/enc-utf8a.bib tests/enc-utf8b.bib tests/enc-amb0.bib \
+	tests/enc-amb1.bib tests/enc-amb2.bib tests/enc.aux \
+	tests/enc-e.aux tests/enc-s.aux tests/enc-p.bbl \
+	tests/enc-ep.bbl tests/enc-sp.bbl tests/memdata1.bst \
+	tests/memdata2.bst tests/memdata3.bst ptexdir/tests/goth10.tfm \
+	ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ \
+	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
+	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
+	ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm \
+	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf \
+	$(eptex_web_srcs) $(eptex_ch_srcs) eptexdir/eptex.defines \
+	eptexdir/ChangeLog eptexdir/Changes.txt eptexdir/README.txt \
+	$(eptex_tests) eptexdir/eptrip/eptrip.diffs \
+	eptexdir/eptrip/eptrip.log eptexdir/eptrip/eptrip.tex \
+	eptexdir/eptrip/texmf.cnf eptexdir/pdfprimitive.test \
 	eptexdir/tests/pdfprimitive-test.tex \
 	eptexdir/tests/pdfprimitive-eptex.log $(uptex_web_srcs) \
 	$(uptex_ch_srcs) uptexdir/uptex.defines ptexdir/pbibtex.ch \
@@ -3296,6 +3301,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/ppltotf.ch uptexdir/uppltotf.ch ptexdir/ptftopl.ch \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.jis \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
+	tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl \
 	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
 	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
 	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
@@ -3618,30 +3624,30 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	ptests/nissya_bib.* ptests/xexampl.aux ptests/xexampl.bbl \
-	ptests/xexampl.blg ptests/memtest.bib ptests/memtest?.* \
-	ptests/xstory.dvityp ptests/xpagenum.typ ptests/xcmr10.tfm \
-	ptests/xcmr10.pl ptests/xsample.typ ptests/x*min10.* \
-	ptests/xskipjfmp.* ptrip.diffs $(nodist_eptex_SOURCES) \
-	eptex.web eptex.ch eptex-web2c eptex.p eptex.pool eptex-tangle \
-	eptrip.diffs pdfprimitive-eptex.* $(nodist_uptex_SOURCES) \
-	uptex.web uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
-	$(upweb_programs:=.c) $(upweb_programs:=.h) \
-	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
-	$(upweb_programs:=.web) uptests/xexampl.aux \
-	uptests/xexampl.bbl uptests/xexampl.blg uptests/xstory.dvityp \
-	uptests/xpagenum.typ uptests/xcmr10.tfm uptests/xcmr10.pl \
-	uptests/x*min10.* uptests/xtestnewu.* uptests/xuparse.* \
-	uptests/yuparse.* uptests/ygkhuge*.* uptrip.diffs \
-	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
-	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	pdfprimitive-euptex.* $(nodist_hitex_SOURCES) \
-	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
-	hiformat-tangle hitex-tangle hello.log rule.log \
-	$(nodist_pdftex_SOURCES) pdftex-final.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
-	pdfimage.log pdfimage.pdf expanded.log cnfline.log \
-	partoken-ok.log partoken-xfail.log postV3.afm postV7.afm \
-	test-13.pdf test-13.xref test-15.pdf test-15.xref \
+	ptests/xexampl.blg ptests/xenc*.* ptests/memtest.bib \
+	ptests/memtest?.* ptests/xstory.dvityp ptests/xpagenum.typ \
+	ptests/xcmr10.tfm ptests/xcmr10.pl ptests/xsample.typ \
+	ptests/x*min10.* ptests/xskipjfmp.* ptrip.diffs \
+	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
+	eptex.pool eptex-tangle eptrip.diffs pdfprimitive-eptex.* \
+	$(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c uptex.p \
+	uptex.pool uptex-tangle $(upweb_programs:=.c) \
+	$(upweb_programs:=.h) $(upweb_programs:=.p) \
+	$(upweb_programs:=-web2c) $(upweb_programs:=.web) \
+	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
+	uptests/xenc*.* uptests/xstory.dvityp uptests/xpagenum.typ \
+	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/x*min10.* \
+	uptests/xtestnewu.* uptests/xuparse.* uptests/yuparse.* \
+	uptests/ygkhuge*.* uptrip.diffs $(nodist_euptex_SOURCES) \
+	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
+	euptex-tangle euptrip.diffs pdfprimitive-euptex.* \
+	$(nodist_hitex_SOURCES) $(nodist_hishrink_SOURCES) \
+	$(nodist_histretch_SOURCES) hiformat-tangle hitex-tangle \
+	hello.log rule.log $(nodist_pdftex_SOURCES) pdftex-final.ch \
+	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
+	cnfline.log partoken-ok.log partoken-xfail.log postV3.afm \
+	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
 	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
 	$(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
 	xetex.p xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \

@@ -1,3 +1,13 @@
+2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* texmfmp-help.h ((e)(u)pTeX), help.h ((u)pBibTeX):
+	Support guessing input file encodings.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* tests/enc-{asc,jis,sjis,euc,utf8{,a,b},amb[012]}.bib,
+	tests/enc{,-[es]}.aux, tests/testfield.bst,
+	tests/enc-{,[es]}[pu].bbl:
+	Add tests for guess encodings & (u)pBibTeX.
+
 2022-06-05  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: CWEB 4.8 release.
