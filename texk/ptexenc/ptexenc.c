@@ -809,7 +809,7 @@ static int infile_enc[NOFILE]; /* ENC_UNKNOWN (=0): not determined
 
 /* guess file encoding */
 /*
-    asumption:
+    assumption:
       No halfwidth katakana in Shift_JIS
       No SS2 nor SS3 in EUC-JP
       JIS X 0208 only and no platform dependent characters in Shift_JIS, EUC-JP
@@ -930,8 +930,7 @@ char *ptenc_guess_enc(FILE *fp)
                 continue;
             }
             cu8[pos_utf8] = k0;
-            pos_utf8++;
-            if (pos_utf8==len_utf8) {
+            if (pos_utf8==1) {
                 if ((cu8[0]==0xE0 && cu8[1]<0xA0) ||
                     (cu8[0]==0xED && cu8[1]>0x9F) ||
                     (cu8[0]==0xF0 && cu8[1]<0x90)) { /* illegal combination in UTF-8 */
@@ -939,6 +938,9 @@ char *ptenc_guess_enc(FILE *fp)
                     pos_utf8 = 0;
                     continue;
                 }
+            }
+            pos_utf8++;
+            if (pos_utf8==len_utf8) {
 #ifdef DEBUG
                 for (i=0; i<len_utf8; i++) str0[i] = cu8[i];
                 str0[i] = '\0';
