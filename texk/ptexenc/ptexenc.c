@@ -955,6 +955,8 @@ char *ptenc_guess_enc(FILE *fp)
         }
     }
 
+    if (pos_db)   maybe_sjis = maybe_euc = 0;
+    if (pos_utf8) maybe_utf8 = 0;
     if (is_ascii)
         strcpy(enc,"ASCII");
     else if (maybe_sjis+maybe_euc+maybe_utf8>1) {
