@@ -826,7 +826,8 @@ char *ptenc_guess_enc(FILE *fp)
 #endif /* DEBUG */
     enc = xmalloc(sizeof(char)*18);
 
-    while ((k0 = fgetc(fp)) != EOF && maybe_sjis+maybe_euc+maybe_utf8>1) {
+    while ((k0 = fgetc(fp)) != EOF &&
+           (maybe_sjis+maybe_euc+maybe_utf8>1 || pos_db || pos_utf8)) {
         lbyte++;
         if (k0==ESC) {
             k0 = fgetc(fp);
@@ -858,15 +859,18 @@ char *ptenc_guess_enc(FILE *fp)
                 if (maybe_sjis) {
                     cdb[1] = k0;
                     k1 = JIStoUCS2(SJIStoJIS(HILO(cdb[0],cdb[1])));
-                    if (k1) {
 #ifdef DEBUG
+                    fprintf(stderr, "Character for guess encoding: 0x%02X%02X", cdb[0], cdb[1]);
+                    if (k1) {
                         i = UCStoUTF8S(k1, str0);
                         str0[i] = '\0';
-                        fprintf(stderr, "Character for guess encoding: 0x%02X%02X", cdb[0], cdb[1]);
                         fprintf(stderr, " sjis (%s)\n", str0);
-#endif /* DEBUG */
-                        continue;
+                    } else {
+                        fprintf(stderr, " not sjis\n");
                     }
+#endif /* DEBUG */
+                    if (k1)
+                        continue;
                 }
                 maybe_sjis = 0;
             }
@@ -897,8 +901,8 @@ char *ptenc_guess_enc(FILE *fp)
             }
             pos_db = 0;
 #ifdef DEBUG
+            fprintf(stderr, "Character for guess encoding: 0x%02X%02X", cdb[0], cdb[1]);
             if (maybe_sjis || maybe_euc) {
-                fprintf(stderr, "Character for guess encoding: 0x%02X%02X", cdb[0], cdb[1]);
                 if (maybe_sjis) {
                     i = UCStoUTF8S(k1, str0);
                     str0[i] = '\0';
@@ -910,6 +914,8 @@ char *ptenc_guess_enc(FILE *fp)
                     fprintf(stderr, " euc (%s)", str0);
                 }
                 fprintf(stderr, "\n");
+            } else {
+                fprintf(stderr, " not sjis nor euc\n");
             }
 #endif /* DEBUG */
         }
@@ -955,8 +961,10 @@ char *ptenc_guess_enc(FILE *fp)
         }
     }
 
-    if (pos_db)   maybe_sjis = maybe_euc = 0;
-    if (pos_utf8) maybe_utf8 = 0;
+    if (k0==EOF) {
+        if (pos_db)   maybe_sjis = maybe_euc = 0;
+        if (pos_utf8) maybe_utf8 = 0;
+    }
     if (is_ascii)
         strcpy(enc,"ASCII");
     else if (maybe_sjis+maybe_euc+maybe_utf8>1) {
