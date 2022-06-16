@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.21",       --TAGVERSION
-    date          = "2022-03-18", --TAGDATE
+    version       = "3.22",       --TAGVERSION
+    date          = "2022-06-15", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -1155,19 +1155,7 @@ function actions.query (job)
 
     local query = job.query
 
-    local tmpspec = {
-        name          = query,
-        lookup        = "name",
-        specification = query,
-        optsize       = 0,
-        features      = { },
-    }
-
-    tmpspec = fonts.names.handle_request (tmpspec)
-
-    if not tmpspec.size then
-        tmpspec.size = 655360 --- assume 10pt
-    end
+    local tmpspec = fonts.definers.analyze (query, 655360)
 
     local foundname, subfont, success, needle
 
