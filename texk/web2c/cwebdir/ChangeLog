@@ -1,3 +1,7 @@
+2022-06-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebmac.tex: Fix \pdfURL for 'valid' output.
+
 2022-06-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile: New target for CTAN packaging.

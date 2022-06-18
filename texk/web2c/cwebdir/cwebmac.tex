@@ -295,12 +295,12 @@
 \fi % End of common macros
 
 \def\pdfURL#1#2{\ifpdftex\pdfannotlink height \theheight depth \thedepth
-  attr {/Border [0 0 0]} user { /Type /Action /Subtype /Link /A
+  attr {/Border [0 0 0]} user { /Type /Annot /Subtype /Link /A
       << /S /URI /URI (#2) >>}\Blue #1\Black \pdfendlink % changed in 3.69
   \else \ifpdf{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
       depth \thedepth << /Border [0 0 0]
-      /Type /Action /Subtype /Link /A << /S /URI /URI (#2) >> >>}\box0\relax}%
+      /Type /Annot /Subtype /Link /A << /S /URI /URI (#2) >> >>}\box0\relax}%
   \else #1 ({\tt#2})\fi\fi}
 {\catcode`\~=12 \gdef\TILDE/{~}} % ~ in a URL
 {\catcode`\_=12 \gdef\UNDER/{_}} % _ in a URL
