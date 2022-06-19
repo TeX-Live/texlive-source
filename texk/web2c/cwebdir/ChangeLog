@@ -1,8 +1,12 @@
 2022-06-19  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.ch,
+	* ctwill-mini.ch,
 	* cwebmac.tex,
 	* cwebman-w2c.ch,
 	* cwebman.tex,
+	* texinputs/dctproofmac.tex,
+	* texinputs/dctwimac.tex,
 	* texinputs/pdfctwimac.tex: Use 'iftex.sty' for TeX engine tests.
 
 2022-06-18  Andreas Scherer  <https://ascherer.github.io>

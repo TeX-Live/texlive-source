@@ -18,7 +18,7 @@
 
 @x
 \input cwebmac
-\acrofalse\pdffalse\acrohintfalse
+\pdffalse\acrohintfalse
 @y
 \input cwebmac
 @z
@@ -37,7 +37,7 @@
         \centerline{\sectionfont\def\.##1{{\twelvett##1}} #1}\nobreak\vskip 6pt
         \everypar{\hskip-\parindent\everypar{}}}
 @y
-\ifacro
+\ifpdf
   \pdfpagewidth=\pagewidth \advance\pdfpagewidth by 2cm
   \pdfpageheight=\pageheight \advance\pdfpageheight by 3cm
   \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
@@ -50,7 +50,7 @@
 \def\subsections{0}
 \outer\def\section #1.{\penalty-500\bigskip
         \centerline{\sectionfont\def\.##1{{\twelvett##1}}
-  \ifacro\vbox to 0pt{\kern-2.5ex\relax
+  \ifpdf\vbox to 0pt{\kern-2.5ex\relax
     \ifpdftex\pdfdest num \destcount fitbh\relax
     \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
     \def\.##1{##1}\def\TeX{TeX}%
@@ -69,7 +69,7 @@
 \def\appC{17}
 
 \def\Appendix#1{\leavevmode
-  \ifacro\ifpdftex
+  \ifpdf\ifpdftex
     \pdfstartlink attr{/Border[0 0 0]} goto num\csname app#1\endcsname\relax
     \Blue\hbox{Appendix}~#1\Black
     \pdfendlink
@@ -82,7 +82,7 @@
 
 \newcount\subdestcount \subdestcount=151\relax
 
-\outer\def\subsection #1.{\ifacro
+\outer\def\subsection #1.{\ifpdf
     \ifpdftex\pdfdest num \subdestcount fitbh\relax
       \pdfoutline goto num \subdestcount {#1}\relax
     \else\special{pdf: dest (\the\subdestcount) [ @thispage /FitBH @ypos ]}%
@@ -142,10 +142,11 @@ email address in a \.{CWEB} file (e.g.,
 it cannot find them in the current directory.
 @y
 it cannot find them in the current directory.%
-\cwebfootnote{\acrofalse In this extended implementation, if an \.{@i}nclude
-file can not be found in the current directory, \.{CWEB} will use the
-conventions of the \Kpathsea/ library as outlined in section~\X93:File lookup
-with \Kpathsea/\X~of \pdfURL{appendix~D}{common-changes.pdf} to look for it.
+\cwebfootnote{In this extended implementation, if an \.{@i}nclude file can not
+be found in the current directory, \.{CWEB} will use the conventions of the
+\Kpathsea/ library as outlined in {\pdffalse\acrohintfalse section~\X93:File
+lookup with \Kpathsea/\X~of} \pdfURL{appendix~D}{common-changes.pdf} to look
+for it.
 % FIXME
 (This is true for any other input or change file lookup.)}
 @z
@@ -195,7 +196,7 @@ of output instead of the English ones. (Off by default.) (Has no effect on
 @x
 Sometimes things don't work as smoothly, and you get a bunch of
 @y
-\acrofalse\pdffalse\acrohintfalse
+\pdffalse\acrohintfalse
 Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
@@ -204,8 +205,8 @@ Sometimes things don't work as smoothly, and you get a bunch of
 @y
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
 \ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
-\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
-\ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
+\ifpdftex\ifnum\pdfoutput>0\pdftrue\fi\fi
+\ifpdf\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
 @x
@@ -302,7 +303,7 @@ And here's what the same excerpt looks like when typeset.
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 \subsection Final document.
 
-\acrofalse\pdffalse\acrohintfalse
+\pdffalse\acrohintfalse
 And here's what the same excerpt looks like when typeset.
 (Can you spot the typographical niceties used in the \.{CWEB} code?)
 \let\K=\leftarrow
@@ -314,8 +315,8 @@ And here's what the same excerpt looks like when typeset.
 @y
 \vfil\eject\titletrue
 \ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
-\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
-\ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
+\ifpdftex\ifnum\pdfoutput>0 \pdftrue\fi\fi
+\ifpdf\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
 @x

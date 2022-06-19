@@ -3,7 +3,7 @@ Section 1.
 @x
 @** Introduction.
 @y
-\ifacro \ifx\undefined\pdfpagewidth\else
+\ifpdf \ifx\undefined\pdfpagewidth\else
   \pdfpagewidth=\pagewd \advance\pdfpagewidth by 2cm
   \pdfpageheight=\pageht \advance\pdfpageheight by 5cm
   \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
