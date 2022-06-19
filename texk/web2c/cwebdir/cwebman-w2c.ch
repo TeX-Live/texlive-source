@@ -204,7 +204,7 @@ Sometimes things don't work as smoothly, and you get a bunch of
 @y
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
 \ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
-\ifpdf\acrotrue\fi
+\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
 \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
@@ -314,7 +314,7 @@ And here's what the same excerpt looks like when typeset.
 @y
 \vfil\eject\titletrue
 \ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
-\ifpdf\acrotrue\fi
+\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
 \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
