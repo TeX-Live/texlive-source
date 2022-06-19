@@ -1,25 +1,22 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.5 --- October 2021
+% Version 4.9 --- June 2022
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+', 'pdftex', and 'xetex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL4.5+LNCS+PDF}
-
-\newif\ifpdf
-\ifx\pdf+\pdftrue\fi
+\xdef\fmtversion{\fmtversion+CTWILL4.9+LNCS+PDF}
+\input iftex.sty % TeX engine tests
+\ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
-\ifx\undefined\XeTeXrevision\else\pdftrue\fi % XeTeX produces PDF output
-\newif\ifpdftex
-\ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
-\else \pdftextrue \pdfoutput=1
+\ifxetex\pdftrue\fi % XeTeX produces PDF output
+\ifpdftex % pdfTeX produces PDF output if \pdfoutput>0
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
-\fi\fi
-\newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
+\fi
+\newif\ifacro \ifpdf\acrotrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -243,7 +240,7 @@
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
 \newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
 \newcount\countA \countA=0 \newcount\countB \countB=0
-\newcount\countC \countC=0
+\newcount\countC \countC=0 \newcount\countD \countD=0
 \newif\iftokprocessed \newif\ifTnum \newif\ifinstr
 {\def\\{\global\let\spacechar= }\\ }
 
@@ -283,12 +280,12 @@
     {\noexpand\pdflink{\the\toksC}{\romannumeral\the\toksC}}\toksC={}\global\countC=0}
 \def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
 \def\pdfURL#1#2{\ifpdftex\pdfannotlink height\ht\strutbox depth\dp\strutbox
-  attr {/Border [0 0 0]} user {/Type /Action /Subtype /Link /A
+  attr {/Border [0 0 0]} user {/Type /Annot /Subtype /Link /A
       << /S /URI /URI (#2) >>}\PDFlinkcolor #1\Black \pdfendlink
   \else\ifpdf{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth\space height \theheight
       \space depth \thedepth\space << /Border [0 0 0]
-      /Type /Action /Subtype /Link /A << /S /URI /URI (#2) >> >>}\box0\relax}%
+      /Type /Annot /Subtype /Link /A << /S /URI /URI (#2) >> >>}\box0\relax}%
   \else #1 ({\tt#2})\fi\fi}
 {\catcode`\~=12 \gdef\TILDE/{~}} % ~ in a URL
 {\catcode`\_=12 \gdef\UNDER/{_}} % _ in a URL
@@ -652,8 +649,8 @@
   %\global\advance\pageno by1}
 %\def\topofcontents{\centerline{\titlefont\title}\vskip.7in
   %\vfill} % this material will start the table of contents page
-%\def\startpdf{\ifpdftex\pdfcatalog{/PageMode /UseOutlines}\else
-    %\ifpdf{\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
+%\def\startpdf{\ifpdftex\ifnum\pdfoutput>0 \pdfcatalog{/PageMode /UseOutlines}\fi
+  %\else \ifpdf{\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
 %\def\botofcontents{\vfill
   %\centerline{\covernote}} % this material will end the table of contents page
 %\def\covernote{}
@@ -679,8 +676,9 @@
 \def\fin{\ifacro \message{Section names:}
   \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
   \def\outsecname{Names of the sections}
-  \ifpdftex \makebookmarks
-    \pdfoutline goto num 1 count -\secno {\outsecname}
+  \ifpdftex \makebookmarks \countsections
+    \pdfdest name {NOS} fith
+    \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
@@ -692,6 +690,10 @@
         /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
   \fi \readsections \fi}
 \def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
+\def\countsections{\message{Number of named sections:}
+  {\def\I{\global\advance\countD by 1}\def\X##1\X{\relax}
+  \def\Q##1.{\relax}\def\Qs##1.{\relax}\def\U##1.{\relax}\def\Us##1.{\relax}
+  \readsections\relax}\message{\the\countD}}
 \def\writebookmarkline#1#2#3#4#5{{%
   \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
   \pdfoutline goto num #3 count -\expnumber{chunk#2.#3} {#5}}}

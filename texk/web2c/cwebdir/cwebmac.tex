@@ -1,24 +1,19 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.8 --- June 2022
+% Version 4.9 --- June 2022
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB4.8}
-\chardef\cwebversion=4 \chardef\cwebrevision=8
-\newif\ifpdf
-\ifx\pdf+\pdftrue\fi
+\xdef\fmtversion{\fmtversion+CWEB4.9}
+\chardef\cwebversion=4 \chardef\cwebrevision=9
+\input iftex.sty % TeX engine tests
+\ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
-\ifx\undefined\XeTeXrevision\else\pdftrue\fi % XeTeX produces PDF output
-\newif\ifpdftex
-\ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
-%\else \pdftextrue \pdfoutput=1 \input pdfcolor \let\setcolor\pdfsetcolor \fi\fi
-\else \pdftextrue \pdfoutput=1 % changed in 3.69
+\ifxetex\pdftrue\fi % XeTeX produces PDF output
+\ifpdftex % pdfTeX produces PDF output if \pdfoutput>0
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
-\fi\fi
-\newif\ifhint
-\ifx\HINTversion\undefined \hintfalse \else \hinttrue \fi
-\newif\ifacro \ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
+\fi
+\newif\ifacro \ifpdf\acrotrue\fi
 \newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
@@ -433,8 +428,8 @@
 \def\title{\expandafter\uppercase\expandafter{\jobname}}
 \def\topofcontents{\centerline{\titlefont\title}\vskip.7in
   \vfill} % this material will start the table of contents page
-\def\startpdf{\ifpdftex\pdfcatalog{/PageMode /UseOutlines}\else
-    \ifpdf{\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
+\def\startpdf{\ifpdftex\ifnum\pdfoutput>0 \pdfcatalog{/PageMode /UseOutlines}\fi
+  \else \ifpdf{\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
 \def\botofcontents{\vfill
   \centerline{\covernote}} % this material will end the table of contents page
 \def\covernote{}
@@ -495,7 +490,8 @@
 \def\fin{\par\vfill\eject % this is done when we are ending the index
   \ifpagesaved\null\vfill\eject\fi % output a null index column
   \if L\lr\else\null\vfill\eject\fi % finish the current page
-  \ifpdftex \makebookmarks \countsections \fi % added in Version 3.68 and 4.9
+  \ifpdftex \ifnum\pdfoutput>0 \makebookmarks % added in Version 3.68
+    \countsections \fi\fi % and in Version 4.9
   \parfillskip 0pt plus 1fil
   \def\grouptitle{NAMES OF THE SECTIONS}
   \let\topsecno=\nullsec

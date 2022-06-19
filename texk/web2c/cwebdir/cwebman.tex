@@ -2,7 +2,7 @@
 
 \def\tangref{3} % where the main explanation of CTANGLing is given
 \input cwebmac
-\acrofalse\pdffalse\pdftexfalse\hintfalse\acrohintfalse
+\acrofalse\pdffalse\acrohintfalse
 \def\page{\box255 } \normalbottom
 \parskip 0pt plus 1pt
 \def\RA{\char'31 } % right arrow
@@ -1345,7 +1345,7 @@ strncpy(change_buffer,buffer,(size_t)(limit-buffer+1));
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CWEAVE}}
 
 Here is the corresponding excerpt from \.{common.tex}.
-(Code for section 31 is omitted for space reasons.)
+\ifhint\relax\else(Code for section 31 is omitted for space reasons.)\fi
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
@@ -1418,6 +1418,15 @@ ${}\{{}$\1\6
 \4${}\}{}$\2\5
 \&{while} ${}(\\{limit}\E\\{buffer}){}$;\par
 \U27.\fi
+!ifhint
+\M{31}\B\X31:Move \PB{\\{buffer}} and \PB{\\{limit}} to \PB{\\{change\_buffer}}
+and \PB{\\{change\_limit}}\X${}\E{}$\6
+$\\{change\_limit}\K\\{change\_buffer}+(\&{ptrdiff\_t})(\\{limit}-%
+\\{buffer});{}$\6
+${}\\{strncpy}(\\{change\_buffer},\39\\{buffer},\39(\&{size\_t})(\\{limit}-%
+\\{buffer}+\T{1})){}$;\par
+\Us27\ET32.\fi
+!fi
 !endgroup
 \endgroup
 \vfil\eject

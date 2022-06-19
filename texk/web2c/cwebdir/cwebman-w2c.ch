@@ -18,7 +18,7 @@
 
 @x
 \input cwebmac
-\acrofalse\pdffalse\pdftexfalse\hintfalse\acrohintfalse
+\acrofalse\pdffalse\acrohintfalse
 @y
 \input cwebmac
 @z
@@ -195,7 +195,7 @@ of output instead of the English ones. (Off by default.) (Has no effect on
 @x
 Sometimes things don't work as smoothly, and you get a bunch of
 @y
-\acrofalse\pdftexfalse\pdffalse
+\acrofalse\pdffalse\acrohintfalse
 Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
@@ -203,10 +203,9 @@ Sometimes things don't work as smoothly, and you get a bunch of
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
 @y
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
-\ifx\pdf+\pdftrue\fi
-\ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
-\else \pdftextrue \pdfoutput=1\fi\fi
-\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
+\ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
+\ifpdf\acrotrue\fi
+\ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
 @x
@@ -303,7 +302,7 @@ And here's what the same excerpt looks like when typeset.
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 \subsection Final document.
 
-\acrofalse\pdftexfalse\pdffalse
+\acrofalse\pdffalse\acrohintfalse
 And here's what the same excerpt looks like when typeset.
 (Can you spot the typographical niceties used in the \.{CWEB} code?)
 \let\K=\leftarrow
@@ -314,10 +313,9 @@ And here's what the same excerpt looks like when typeset.
 \vfil\eject\titletrue
 @y
 \vfil\eject\titletrue
-\ifx\pdf+\pdftrue\fi
-\ifx\pdfoutput\undefined \pdftexfalse \else\ifnum\pdfoutput=0 \pdftexfalse
-\else \pdftextrue \pdfoutput=1\fi\fi
-\ifpdf\acrotrue\fi \ifpdftex\acrotrue\fi
+\ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
+\ifpdf\acrotrue\fi
+\ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
 @x
