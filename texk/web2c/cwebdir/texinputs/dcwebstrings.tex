@@ -36,5 +36,6 @@
 
 \def\redefcon{\message{Inhaltsverzeichnis:}
   \def\grouptitle{INHALTSVERZEICHNIS:}
-  \def\headerline{\hfil Abschnitt\hbox to3em{\hss Seite}}
+  \def\headerline{\hfil Abschnitt\ifhint\else\hbox to3em{\hss Seite}\fi}
+                                 % No Page in HINT
 }

@@ -27,6 +27,7 @@
 % Version 3.64 [p20] --- Andreas Scherer, March 2002
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [p22] --- Andreas Scherer, March 2016
+% Version 4.9 --- Andreas Scherer, June 2022
 
 \ifx\undefined\botofcontents\input cwebmac.tex\fi
 
@@ -53,28 +54,28 @@
 \def\fin{\par\vfill\eject % this is done when we are ending the index
   \ifpagesaved\null\vfill\eject\fi % output a null index column
   \if L\lr\else\null\vfill\eject\fi % finish the current page
-  \ifpdftex \makebookmarks \fi % added in Version 3.68
+  \ifpdf \ifpdftex \makebookmarks % added in Version 3.68
+    \countsections \fi\fi % and in Version 4.9
   \parfillskip 0pt plus 1fil
   \let\topsecno=\nullsec
   \redeffin
   \output={\normaloutput\page\lheader\rheader}
   \setpage
-  \def\note##1##2.{\quad{\eightrm##1~\ifacro{\pdfnote##2.}\else{##2}\fi.}}
+  \def\note##1##2.{\quad{\eightrm##1~\ifacrohint{\pdfnote##2.}\else{##2}\fi.}}
   \def\I{\par\hangindent 2em}\let\*=*
-  \ifacro \let\Xpdf\X
+  \ifpdf \let\Xpdf\X
   \ifpdftex \pdfdest name {NOS} fith
-    \pdfoutline goto name {NOS} count -\secno {\outsecname}
+    \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
-  \else\ifpdf
-    \special{pdf: outline -1 << /Title (\outsecname)
+  \else \special{pdf: outline -1 << /Title (\outsecname)
       /Dest [ @thispage /FitH @ypos ] >>}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \special{pdf: outline 0 << /Title (\the\toksE)
         /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
-  \fi\fi\fi
+  \fi\fi
   \readsections}
 \def\con{\par\vfill\eject % finish the section names
 % \ifodd\pageno\else\titletrue\null\vfill\eject\fi % for duplex printers
@@ -83,6 +84,7 @@
   \titletrue % prepare to output the table of contents
   \pageno=\contentspagenumber
   \redefcon
+  \ifhint\HINThome\fi% Mark the Table of contents as home page
   \topofcontents \startpdf
   \line{\headerline}
   \let\ZZ=\contentsline
