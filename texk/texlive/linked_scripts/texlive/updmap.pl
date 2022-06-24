@@ -1,20 +1,19 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 59152 2021-05-09 21:49:52Z karl $
+# $Id: updmap.pl 63644 2022-06-18 22:30:39Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2021 Norbert Preining
+# Copyright 2011-2022 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
 # History:
-# Original shell script (C) 2002 Thomas Esser
+# Original shell script (C) 2002 Thomas Esser, released to the public domain.
 # first perl variant by Fabrice Popineau
-# later adaptions by Reinhard Kotucha and Karl Berry
-# the original versions were licensed under the following agreement:
-# Anyone may freely use, modify, and/or distribute this file, without
+# later adaptions by Reinhard Kotucha, and Karl Berry.
+# The current implementation is a complete rewrite.
 
-my $svnid = '$Id: updmap.pl 59152 2021-05-09 21:49:52Z karl $';
+my $svnid = '$Id: updmap.pl 63644 2022-06-18 22:30:39Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -27,10 +26,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2021-05-09 23:49:52 +0200 (Sun, 09 May 2021) $';
+my $lastchdate = '$Date: 2022-06-19 00:30:39 +0200 (Sun, 19 Jun 2022) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 59152 $';
+my $svnrev = '$Revision: 63644 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -481,7 +480,8 @@ sub main {
   }
 
   if (!$opts{'nohash'}) {
-    print "$prg: Updating ls-R files.\n" if !$opts{'quiet'};
+    my $not = $opts{"dry-run"} ? " not (-n)" : "";
+    print "$prg:$not updating ls-R files.\n" if !$opts{'quiet'};
     $updLSR->{exec}() unless $opts{"dry-run"};
   }
 
@@ -1026,7 +1026,8 @@ sub mkMaps {
   # directory unless we are going to put something there.
   setupOutputDir("pxdvi") if $pxdviUse eq "true";
 
-  print_and_log ("\n$prg is creating new map files"
+  my $not = $opts{"dry-run"} ? " not (-n)" : "";
+  print_and_log ("\n$prg is$not creating new map files"
          . "\nusing the following configuration:"
          . "\n  LW35 font names                  : "
          .      "$mode ($mode_origin)"
@@ -1248,7 +1249,7 @@ sub mkMaps {
 
   our $link = &setupSymlinks($dvipsPreferOutline, $dvipsoutputdir, $pdftexDownloadBase14, $pdftexoutputdir);
 
-  print_and_log ("\nFiles generated:\n");
+  print_and_log ("\nFiles$not generated:\n");
   sub dir {
     my ($d, $f, $target)=@_;
     our $link;
@@ -1391,8 +1392,7 @@ listed below).
   }
 
   close LOG unless $opts{'dry-run'};
-  print "\nTranscript written on \"$logfile\".\n" if !$opts{'quiet'};
-
+  print "\nTranscript$not written on: $logfile\n" if !$opts{'quiet'};
 }
 
 
