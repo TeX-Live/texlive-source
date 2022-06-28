@@ -92,6 +92,15 @@ hb_base_sources = files(
   'hb-ot-layout-gdef-table.hh',
   'hb-ot-layout-gpos-table.hh',
   'hb-ot-layout-gsub-table.hh',
+  'OT/glyf/glyf.hh',
+  'OT/glyf/glyf-helpers.hh',
+  'OT/glyf/loca.hh',
+  'OT/glyf/path-builder.hh',
+  'OT/glyf/Glyph.hh',
+  'OT/glyf/GlyphHeader.hh',
+  'OT/glyf/SimpleGlyph.hh',
+  'OT/glyf/CompositeGlyph.hh',
+  'OT/glyf/SubsetGlyph.hh',
   'OT/Layout/GSUB/Common.hh',
   'OT/Layout/GSUB/Sequence.hh',
   'OT/Layout/GSUB/SingleSubstFormat1.hh',
@@ -135,30 +144,29 @@ hb_base_sources = files(
   'hb-ot-os2-unicode-ranges.hh',
   'hb-ot-post-macroman.hh',
   'hb-ot-post-table.hh',
-  'hb-ot-shape-complex-arabic-fallback.hh',
-  'hb-ot-shape-complex-arabic-joining-list.hh',
-  'hb-ot-shape-complex-arabic-table.hh',
-  'hb-ot-shape-complex-arabic-win1256.hh',
-  'hb-ot-shape-complex-arabic.cc',
-  'hb-ot-shape-complex-arabic.hh',
-  'hb-ot-shape-complex-default.cc',
-  'hb-ot-shape-complex-hangul.cc',
-  'hb-ot-shape-complex-hebrew.cc',
-  'hb-ot-shape-complex-indic-table.cc',
-  'hb-ot-shape-complex-indic.cc',
-  'hb-ot-shape-complex-indic.hh',
-  'hb-ot-shape-complex-khmer.cc',
-  'hb-ot-shape-complex-khmer.hh',
-  'hb-ot-shape-complex-myanmar.cc',
-  'hb-ot-shape-complex-myanmar.hh',
-  'hb-ot-shape-complex-syllabic.cc',
-  'hb-ot-shape-complex-syllabic.hh',
-  'hb-ot-shape-complex-thai.cc',
-  'hb-ot-shape-complex-use-table.hh',
-  'hb-ot-shape-complex-use.cc',
-  'hb-ot-shape-complex-vowel-constraints.cc',
-  'hb-ot-shape-complex-vowel-constraints.hh',
-  'hb-ot-shape-complex.hh',
+  'hb-ot-shaper-arabic-fallback.hh',
+  'hb-ot-shaper-arabic-joining-list.hh',
+  'hb-ot-shaper-arabic-pua.hh',
+  'hb-ot-shaper-arabic-table.hh',
+  'hb-ot-shaper-arabic-win1256.hh',
+  'hb-ot-shaper-arabic.cc',
+  'hb-ot-shaper-arabic.hh',
+  'hb-ot-shaper-default.cc',
+  'hb-ot-shaper-hangul.cc',
+  'hb-ot-shaper-hebrew.cc',
+  'hb-ot-shaper-indic-table.cc',
+  'hb-ot-shaper-indic.cc',
+  'hb-ot-shaper-indic.hh',
+  'hb-ot-shaper-khmer.cc',
+  'hb-ot-shaper-myanmar.cc',
+  'hb-ot-shaper-syllabic.cc',
+  'hb-ot-shaper-syllabic.hh',
+  'hb-ot-shaper-thai.cc',
+  'hb-ot-shaper-use-table.hh',
+  'hb-ot-shaper-use.cc',
+  'hb-ot-shaper-vowel-constraints.cc',
+  'hb-ot-shaper-vowel-constraints.hh',
+  'hb-ot-shaper.hh',
   'hb-ot-shape-fallback.cc',
   'hb-ot-shape-fallback.hh',
   'hb-ot-shape-normalize.cc',
@@ -206,19 +214,19 @@ hb_base_ragel_generated_sources = files(
   'hb-buffer-deserialize-json.hh',
   'hb-buffer-deserialize-text.hh',
   'hb-number-parser.hh',
-  'hb-ot-shape-complex-indic-machine.hh',
-  'hb-ot-shape-complex-khmer-machine.hh',
-  'hb-ot-shape-complex-myanmar-machine.hh',
-  'hb-ot-shape-complex-use-machine.hh',
+  'hb-ot-shaper-indic-machine.hh',
+  'hb-ot-shaper-khmer-machine.hh',
+  'hb-ot-shaper-myanmar-machine.hh',
+  'hb-ot-shaper-use-machine.hh',
 )
 hb_base_ragel_sources = [
   'hb-buffer-deserialize-json.rl',
   'hb-buffer-deserialize-text.rl',
   'hb-number-parser.rl',
-  'hb-ot-shape-complex-indic-machine.rl',
-  'hb-ot-shape-complex-khmer-machine.rl',
-  'hb-ot-shape-complex-myanmar-machine.rl',
-  'hb-ot-shape-complex-use-machine.rl',
+  'hb-ot-shaper-indic-machine.rl',
+  'hb-ot-shaper-khmer-machine.rl',
+  'hb-ot-shaper-myanmar-machine.rl',
+  'hb-ot-shaper-use-machine.rl',
 ]
 
 hb_base_headers = files(
@@ -227,6 +235,7 @@ hb_base_headers = files(
   'hb-blob.h',
   'hb-buffer.h',
   'hb-common.h',
+  'hb-cplusplus.hh',
   'hb-deprecated.h',
   'hb-draw.h',
   'hb-face.h',
@@ -324,7 +333,9 @@ if not has_ragel and get_option('ragel_subproject')
     has_ragel = true
 endif
 if not has_ragel
-  warning('You have to install ragel if you are going to develop HarfBuzz itself')
+  if not meson.is_subproject()
+    warning('You have to install ragel if you are going to develop HarfBuzz itself')
+  endif
 else
   ragel_helper = find_program('gen-ragel-artifacts.py')
   foreach rl : hb_base_ragel_sources
@@ -674,7 +685,7 @@ if have_gobject
       nsversion: '0.0',
       identifier_prefix: 'hb_',
       symbol_prefix: ['hb', 'hb_gobject'],
-      includes: ['GObject-2.0'],
+      includes: ['GObject-2.0', 'freetype2-2.0'],
       export_packages: ['harfbuzz-gobject'],
       header: 'hb-gobject.h',
       install: true,
@@ -715,6 +726,7 @@ if get_option('tests').enabled()
 
   env = environment()
   env.set('srcdir', meson.current_source_dir())
+  env.set('base_srcdir', meson.source_root())
   env.set('builddir', meson.current_build_dir())
   env.set('libs', meson.current_build_dir()) # TODO: Merge this with builddir after autotools removal
   HBSOURCES = []

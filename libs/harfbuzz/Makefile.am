@@ -47,6 +47,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-buffer-verify.cc \
 	@HARFBUZZ_TREE@/src/hb-buffer.cc \
 	@HARFBUZZ_TREE@/src/hb-cache.hh \
+	@HARFBUZZ_TREE@/src/hb-cplusplus.hh \
 	@HARFBUZZ_TREE@/src/hb-cff-interp-common.hh \
 	@HARFBUZZ_TREE@/src/hb-cff-interp-cs-common.hh \
 	@HARFBUZZ_TREE@/src/hb-cff-interp-dict-common.hh \
@@ -188,30 +189,33 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-metrics.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-metrics.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-fallback.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-joining-list.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-arabic-win1256.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-default.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hangul.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-hebrew.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-table.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-syllabic.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-thai.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-vowel-constraints.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic-fallback.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic-joining-list.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic-pua.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic-win1256.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-arabic.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-default.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-hangul.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-hebrew.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-indic-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-indic-table.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-indic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-indic.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-khmer-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-khmer.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-myanmar-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-myanmar.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-syllabic.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-syllabic.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-thai.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-use-machine.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-use-table.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-use.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-vowel-constraints.cc \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper-vowel-constraints.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-shaper.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-normalize.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-shape-fallback.hh \
@@ -223,13 +227,18 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-var-gvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-hvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-mvar-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-vorg-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-indic-machine.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-khmer-machine.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-myanmar-machine.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-shape-complex-use-machine.hh
+	@HARFBUZZ_TREE@/src/hb-ot-vorg-table.hh
 ##
 libharfbuzz_a_SOURCES += \
+	@HARFBUZZ_TREE@/src/OT/glyf/glyf.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/glyf-helpers.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/loca.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/path-builder.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/Glyph.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/GlyphHeader.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/SimpleGlyph.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/CompositeGlyph.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/SubsetGlyph.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/Common.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/Sequence.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SingleSubstFormat1.hh \
@@ -251,7 +260,10 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/ExtensionSubst.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SubstLookupSubTable.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SubstLookup.hh \
-	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/GSUB.hh
+	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/GSUB.hh \
+	@HARFBUZZ_TREE@/src/graph/graph.hh \
+	@HARFBUZZ_TREE@/src/graph/serialize.hh
+
 
 ## Graphite library
 AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)

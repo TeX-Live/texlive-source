@@ -146,23 +146,24 @@ struct ValueFormat : HBUINT16
     if (!use_x_device && !use_y_device) return ret;
 
     const VariationStore &store = c->var_store;
+    auto *cache = c->var_store_cache;
 
     /* pixel -> fractional pixel */
     if (format & xPlaDevice) {
-      if (use_x_device) glyph_pos.x_offset  += (base + get_device (values, &ret)).get_x_delta (font, store);
+      if (use_x_device) glyph_pos.x_offset  += (base + get_device (values, &ret)).get_x_delta (font, store, cache);
       values++;
     }
     if (format & yPlaDevice) {
-      if (use_y_device) glyph_pos.y_offset  += (base + get_device (values, &ret)).get_y_delta (font, store);
+      if (use_y_device) glyph_pos.y_offset  += (base + get_device (values, &ret)).get_y_delta (font, store, cache);
       values++;
     }
     if (format & xAdvDevice) {
-      if (horizontal && use_x_device) glyph_pos.x_advance += (base + get_device (values, &ret)).get_x_delta (font, store);
+      if (horizontal && use_x_device) glyph_pos.x_advance += (base + get_device (values, &ret)).get_x_delta (font, store, cache);
       values++;
     }
     if (format & yAdvDevice) {
       /* y_advance values grow downward but font-space grows upward, hence negation */
-      if (!horizontal && use_y_device) glyph_pos.y_advance -= (base + get_device (values, &ret)).get_y_delta (font, store);
+      if (!horizontal && use_y_device) glyph_pos.y_advance -= (base + get_device (values, &ret)).get_y_delta (font, store, cache);
       values++;
     }
     return ret;
@@ -465,9 +466,9 @@ struct AnchorFormat3
     *y = font->em_fscale_y (yCoordinate);
 
     if (font->x_ppem || font->num_coords)
-      *x += (this+xDeviceTable).get_x_delta (font, c->var_store);
+      *x += (this+xDeviceTable).get_x_delta (font, c->var_store, c->var_store_cache);
     if (font->y_ppem || font->num_coords)
-      *y += (this+yDeviceTable).get_y_delta (font, c->var_store);
+      *y += (this+yDeviceTable).get_y_delta (font, c->var_store, c->var_store_cache);
   }
 
   bool sanitize (hb_sanitize_context_t *c) const
@@ -2881,7 +2882,7 @@ struct PosLookupSubTable
 
 struct PosLookup : Lookup
 {
-  typedef struct PosLookupSubTable SubTable;
+  using SubTable = PosLookupSubTable;
 
   const SubTable& get_subtable (unsigned int i) const
   { return Lookup::get_subtable<SubTable> (i); }
@@ -2917,7 +2918,6 @@ struct PosLookup : Lookup
       c->set_lookup_inactive (this_index);
       return hb_closure_lookups_context_t::default_return_value ();
     }
-    c->set_recurse_func (dispatch_closure_lookups_recurse_func);
 
     hb_closure_lookups_context_t::return_t ret = dispatch (c);
     return ret;
@@ -2930,12 +2930,8 @@ struct PosLookup : Lookup
     dispatch (&c);
   }
 
-  static inline bool apply_recurse_func (hb_ot_apply_context_t *c, unsigned int lookup_index);
-
   template <typename context_t>
   static typename context_t::return_t dispatch_recurse_func (context_t *c, unsigned int lookup_index);
-
-  HB_INTERNAL static hb_closure_lookups_context_t::return_t dispatch_closure_lookups_recurse_func (hb_closure_lookups_context_t *c, unsigned this_index);
 
   template <typename context_t, typename ...Ts>
   typename context_t::return_t dispatch (context_t *c, Ts&&... ds) const
@@ -2956,6 +2952,8 @@ struct PosLookup : Lookup
 struct GPOS : GSUBGPOS
 {
   static constexpr hb_tag_t tableTag = HB_OT_TAG_GPOS;
+
+  using Lookup = PosLookup;
 
   const PosLookup& get_lookup (unsigned int i) const
   { return static_cast<const PosLookup &> (GSUBGPOS::get_lookup (i)); }
@@ -3024,7 +3022,8 @@ static void
 propagate_attachment_offsets (hb_glyph_position_t *pos,
 			      unsigned int len,
 			      unsigned int i,
-			      hb_direction_t direction)
+			      hb_direction_t direction,
+			      unsigned nesting_level = HB_MAX_NESTING_LEVEL)
 {
   /* Adjusts offsets of attached glyphs (both cursive and mark) to accumulate
    * offset of glyph they are attached to. */
@@ -3039,7 +3038,10 @@ propagate_attachment_offsets (hb_glyph_position_t *pos,
   if (unlikely (j >= len))
     return;
 
-  propagate_attachment_offsets (pos, len, j, direction);
+  if (unlikely (!nesting_level))
+    return;
+
+  propagate_attachment_offsets (pos, len, j, direction, nesting_level - 1);
 
   assert (!!(type & ATTACH_TYPE_MARK) ^ !!(type & ATTACH_TYPE_CURSIVE));
 
@@ -3121,13 +3123,16 @@ template <typename context_t>
   return l.dispatch (c);
 }
 
-/*static*/ inline hb_closure_lookups_context_t::return_t PosLookup::dispatch_closure_lookups_recurse_func (hb_closure_lookups_context_t *c, unsigned this_index)
+template <>
+inline hb_closure_lookups_context_t::return_t
+PosLookup::dispatch_recurse_func<hb_closure_lookups_context_t> (hb_closure_lookups_context_t *c, unsigned this_index)
 {
   const PosLookup &l = c->face->table.GPOS.get_relaxed ()->table->get_lookup (this_index);
   return l.closure_lookups (c, this_index);
 }
 
-/*static*/ bool PosLookup::apply_recurse_func (hb_ot_apply_context_t *c, unsigned int lookup_index)
+template <>
+inline bool PosLookup::dispatch_recurse_func<hb_ot_apply_context_t> (hb_ot_apply_context_t *c, unsigned int lookup_index)
 {
   const PosLookup &l = c->face->table.GPOS.get_relaxed ()->table->get_lookup (lookup_index);
   unsigned int saved_lookup_props = c->lookup_props;

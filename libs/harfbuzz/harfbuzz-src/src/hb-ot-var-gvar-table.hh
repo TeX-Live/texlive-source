@@ -45,9 +45,10 @@ struct contour_point_t
 
   void translate (const contour_point_t &p) { x += p.x; y += p.y; }
 
-  uint8_t flag;
-  float x, y;
-  bool is_end_point;
+  float x = 0.f;
+  float y = 0.f;
+  uint8_t flag = 0;
+  bool is_end_point = false;
 };
 
 struct contour_point_vector_t : hb_vector_t<contour_point_t>
@@ -55,16 +56,24 @@ struct contour_point_vector_t : hb_vector_t<contour_point_t>
   void extend (const hb_array_t<contour_point_t> &a)
   {
     unsigned int old_len = length;
-    resize (old_len + a.length);
-    for (unsigned int i = 0; i < a.length; i++)
-      (*this)[old_len + i] = a[i];
+    if (unlikely (!resize (old_len + a.length)))
+      return;
+    auto arrayZ = this->arrayZ + old_len;
+    unsigned count = a.length;
+    for (unsigned int i = 0; i < count; i++)
+      arrayZ[i] = a.arrayZ[i];
   }
 
   void transform (const float (&matrix)[4])
   {
-    for (unsigned int i = 0; i < length; i++)
+    if (matrix[0] == 1.f && matrix[1] == 0.f &&
+	matrix[2] == 0.f && matrix[3] == 1.f)
+      return;
+    auto arrayZ = this->arrayZ;
+    unsigned count = length;
+    for (unsigned i = 0; i < count; i++)
     {
-      contour_point_t &p = (*this)[i];
+      contour_point_t &p = arrayZ[i];
       float x_ = p.x * matrix[0] + p.y * matrix[2];
 	   p.y = p.x * matrix[1] + p.y * matrix[3];
       p.x = x_;
@@ -73,8 +82,12 @@ struct contour_point_vector_t : hb_vector_t<contour_point_t>
 
   void translate (const contour_point_t& delta)
   {
-    for (unsigned int i = 0; i < length; i++)
-      (*this)[i].translate (delta);
+    if (delta.x == 0.f && delta.y == 0.f)
+      return;
+    auto arrayZ = this->arrayZ;
+    unsigned count = length;
+    for (unsigned i = 0; i < count; i++)
+      arrayZ[i].translate (delta);
   }
 };
 
@@ -89,7 +102,7 @@ struct TupleVariationHeader
   const TupleVariationHeader &get_next (unsigned axis_count) const
   { return StructAtOffset<TupleVariationHeader> (this, get_size (axis_count)); }
 
-  float calculate_scalar (const int *coords, unsigned int coord_count,
+  float calculate_scalar (hb_array_t<int> coords, unsigned int coord_count,
 			  const hb_array_t<const F2DOT14> shared_tuples) const
   {
     hb_array_t<const F2DOT14> peak_tuple;
@@ -538,8 +551,7 @@ struct gvar
     bool apply_deltas_to_points (hb_codepoint_t glyph, hb_font_t *font,
 				 const hb_array_t<contour_point_t> points) const
     {
-      /* num_coords should exactly match gvar's axisCount due to how GlyphVariationData tuples are aligned */
-      if (!font->num_coords || font->num_coords != table->axisCount) return true;
+      if (!font->num_coords) return true;
 
       if (unlikely (glyph >= table->glyphCount)) return true;
 
@@ -565,8 +577,8 @@ struct gvar
 	if (points[i].is_end_point)
 	  end_points.push (i);
 
-      int *coords = font->coords;
-      unsigned num_coords = font->num_coords;
+      auto coords = hb_array (font->coords, font->num_coords);
+      unsigned num_coords = table->axisCount;
       hb_array_t<const F2DOT14> shared_tuples = (table+table->sharedTuples).as_array (table->sharedTupleCount * table->axisCount);
       do
       {
