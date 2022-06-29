@@ -221,7 +221,7 @@ struct GlyphVariationData
       {
 	const HBUINT8 *base = &(var_data+var_data->data);
 	const HBUINT8 *p = base;
-	if (!unpack_points (p, shared_indices, var_data_bytes)) return false;
+	if (!unpack_points (p, shared_indices, (const HBUINT8 *) (var_data_bytes.arrayZ + var_data_bytes.length))) return false;
 	data_offset = p - base;
       }
       return true;
@@ -271,7 +271,7 @@ struct GlyphVariationData
 
   static bool unpack_points (const HBUINT8 *&p /* IN/OUT */,
 			     hb_vector_t<unsigned int> &points /* OUT */,
-			     const hb_bytes_t &bytes)
+			     const HBUINT8 *end)
   {
     enum packed_point_flag_t
     {
@@ -279,21 +279,21 @@ struct GlyphVariationData
       POINT_RUN_COUNT_MASK = 0x7F
     };
 
-    if (unlikely (!bytes.check_range (p))) return false;
+    if (unlikely (p + 1 > end)) return false;
 
     uint16_t count = *p++;
     if (count & POINTS_ARE_WORDS)
     {
-      if (unlikely (!bytes.check_range (p))) return false;
+      if (unlikely (p + 1 > end)) return false;
       count = ((count & POINT_RUN_COUNT_MASK) << 8) | *p++;
     }
-    points.resize (count);
+    if (unlikely (!points.resize (count))) return false;
 
     unsigned int n = 0;
     uint16_t i = 0;
     while (i < count)
     {
-      if (unlikely (!bytes.check_range (p))) return false;
+      if (unlikely (p + 1 > end)) return false;
       uint16_t j;
       uint8_t control = *p++;
       uint16_t run_count = (control & POINT_RUN_COUNT_MASK) + 1;
@@ -301,8 +301,7 @@ struct GlyphVariationData
       {
 	for (j = 0; j < run_count && i < count; j++, i++)
 	{
-	  if (unlikely (!bytes.check_range ((const HBUINT16 *) p)))
-	    return false;
+	  if (unlikely (p + HBUINT16::static_size > end)) return false;
 	  n += *(const HBUINT16 *)p;
 	  points[i] = n;
 	  p += HBUINT16::static_size;
@@ -312,7 +311,7 @@ struct GlyphVariationData
       {
 	for (j = 0; j < run_count && i < count; j++, i++)
 	{
-	  if (unlikely (!bytes.check_range (p))) return false;
+	  if (unlikely (p + 1 > end)) return false;
 	  n += *p++;
 	  points[i] = n;
 	}
@@ -324,7 +323,7 @@ struct GlyphVariationData
 
   static bool unpack_deltas (const HBUINT8 *&p /* IN/OUT */,
 			     hb_vector_t<int> &deltas /* IN/OUT */,
-			     const hb_bytes_t &bytes)
+			     const HBUINT8 *end)
   {
     enum packed_delta_flag_t
     {
@@ -337,7 +336,7 @@ struct GlyphVariationData
     unsigned int count = deltas.length;
     while (i < count)
     {
-      if (unlikely (!bytes.check_range (p))) return false;
+      if (unlikely (p + 1 > end)) return false;
       uint8_t control = *p++;
       unsigned int run_count = (control & DELTA_RUN_COUNT_MASK) + 1;
       unsigned int j;
@@ -347,16 +346,14 @@ struct GlyphVariationData
       else if (control & DELTAS_ARE_WORDS)
 	for (j = 0; j < run_count && i < count; j++, i++)
 	{
-	  if (unlikely (!bytes.check_range ((const HBUINT16 *) p)))
-	    return false;
+	  if (unlikely (p + HBUINT16::static_size > end)) return false;
 	  deltas[i] = *(const HBINT16 *) p;
 	  p += HBUINT16::static_size;
 	}
       else
 	for (j = 0; j < run_count && i < count; j++, i++)
 	{
-	  if (unlikely (!bytes.check_range (p)))
-	    return false;
+	  if (unlikely (p + 1 > end)) return false;
 	  deltas[i] = *(const HBINT8 *) p++;
 	}
       if (j < run_count)
@@ -518,19 +515,17 @@ struct gvar
     ~accelerator_t () { table.destroy (); }
 
     private:
-    struct x_getter { static float get (const contour_point_t &p) { return p.x; } };
-    struct y_getter { static float get (const contour_point_t &p) { return p.y; } };
 
-    template <typename T>
     static float infer_delta (const hb_array_t<contour_point_t> points,
 			      const hb_array_t<contour_point_t> deltas,
-			      unsigned int target, unsigned int prev, unsigned int next)
+			      unsigned int target, unsigned int prev, unsigned int next,
+			      float contour_point_t::*m)
     {
-      float target_val = T::get (points[target]);
-      float prev_val = T::get (points[prev]);
-      float next_val = T::get (points[next]);
-      float prev_delta = T::get (deltas[prev]);
-      float next_delta = T::get (deltas[next]);
+      float target_val = points[target].*m;
+      float prev_val = points[prev].*m;
+      float next_val = points[next].*m;
+      float prev_delta =  deltas[prev].*m;
+      float next_delta =  deltas[next].*m;
 
       if (prev_val == next_val)
 	return (prev_delta == next_delta) ? prev_delta : 0.f;
@@ -541,7 +536,7 @@ struct gvar
 
       /* linear interpolation */
       float r = (target_val - prev_val) / (next_val - prev_val);
-      return (1.f - r) * prev_delta + r * next_delta;
+      return prev_delta + r * (next_delta - prev_delta);
     }
 
     static unsigned int next_index (unsigned int i, unsigned int start, unsigned int end)
@@ -565,12 +560,12 @@ struct gvar
 
       /* Save original points for inferred delta calculation */
       contour_point_vector_t orig_points;
-      orig_points.resize (points.length);
+      if (unlikely (!orig_points.resize (points.length))) return false;
       for (unsigned int i = 0; i < orig_points.length; i++)
-	orig_points[i] = points[i];
+	orig_points.arrayZ[i] = points.arrayZ[i];
 
       contour_point_vector_t deltas; /* flag is used to indicate referenced point */
-      deltas.resize (points.length);
+      if (unlikely (!deltas.resize (points.length))) return false;
 
       hb_vector_t<unsigned> end_points;
       for (unsigned i = 0; i < points.length; ++i)
@@ -580,6 +575,10 @@ struct gvar
       auto coords = hb_array (font->coords, font->num_coords);
       unsigned num_coords = table->axisCount;
       hb_array_t<const F2DOT14> shared_tuples = (table+table->sharedTuples).as_array (table->sharedTupleCount * table->axisCount);
+
+      hb_vector_t<unsigned int> private_indices;
+      hb_vector_t<int> x_deltas;
+      hb_vector_t<int> y_deltas;
       do
       {
 	float scalar = iterator.current_tuple->calculate_scalar (coords, num_coords, shared_tuples);
@@ -589,33 +588,30 @@ struct gvar
 	if (unlikely (!iterator.var_data_bytes.check_range (p, length)))
 	  return false;
 
-	hb_bytes_t bytes ((const char *) p, length);
-	hb_vector_t<unsigned int> private_indices;
+	const HBUINT8 *end = p + length;
+
 	bool has_private_points = iterator.current_tuple->has_private_points ();
 	if (has_private_points &&
-	    !GlyphVariationData::unpack_points (p, private_indices, bytes))
+	    !GlyphVariationData::unpack_points (p, private_indices, end))
 	  return false;
 	const hb_array_t<unsigned int> &indices = has_private_points ? private_indices : shared_indices;
 
 	bool apply_to_all = (indices.length == 0);
 	unsigned int num_deltas = apply_to_all ? points.length : indices.length;
-	hb_vector_t<int> x_deltas;
-	x_deltas.resize (num_deltas);
-	if (!GlyphVariationData::unpack_deltas (p, x_deltas, bytes))
-	  return false;
-	hb_vector_t<int> y_deltas;
-	y_deltas.resize (num_deltas);
-	if (!GlyphVariationData::unpack_deltas (p, y_deltas, bytes))
-	  return false;
+	if (unlikely (!x_deltas.resize (num_deltas))) return false;
+	if (unlikely (!GlyphVariationData::unpack_deltas (p, x_deltas, end))) return false;
+	if (unlikely (!y_deltas.resize (num_deltas))) return false;
+	if (unlikely (!GlyphVariationData::unpack_deltas (p, y_deltas, end))) return false;
 
 	for (unsigned int i = 0; i < deltas.length; i++)
 	  deltas[i].init ();
 	for (unsigned int i = 0; i < num_deltas; i++)
 	{
 	  unsigned int pt_index = apply_to_all ? i : indices[i];
-	  deltas[pt_index].flag = 1;	/* this point is referenced, i.e., explicit deltas specified */
-	  deltas[pt_index].x += x_deltas[i] * scalar;
-	  deltas[pt_index].y += y_deltas[i] * scalar;
+	  if (unlikely (pt_index >= deltas.length)) continue;
+	  deltas.arrayZ[pt_index].flag = 1;	/* this point is referenced, i.e., explicit deltas specified */
+	  deltas.arrayZ[pt_index].x += x_deltas.arrayZ[i] * scalar;
+	  deltas.arrayZ[pt_index].y += y_deltas.arrayZ[i] * scalar;
 	}
 
 	/* infer deltas for unreferenced points */
@@ -659,20 +655,20 @@ struct gvar
 	    {
 	      i = next_index (i, start_point, end_point);
 	      if (i == next) break;
-	      deltas[i].x = infer_delta<x_getter> (orig_points.as_array (), deltas.as_array (), i, prev, next);
-	      deltas[i].y = infer_delta<y_getter> (orig_points.as_array (), deltas.as_array (), i, prev, next);
+	      deltas[i].x = infer_delta (orig_points.as_array (), deltas.as_array (), i, prev, next, &contour_point_t::x);
+	      deltas[i].y = infer_delta (orig_points.as_array (), deltas.as_array (), i, prev, next, &contour_point_t::y);
 	      if (--unref_count == 0) goto no_more_gaps;
 	    }
 	  }
-no_more_gaps:
+	no_more_gaps:
 	  start_point = end_point + 1;
 	}
 
 	/* apply specified / inferred deltas to points */
 	for (unsigned int i = 0; i < points.length; i++)
 	{
-	  points[i].x += deltas[i].x;
-	  points[i].y += deltas[i].y;
+	  points.arrayZ[i].x += deltas.arrayZ[i].x;
+	  points.arrayZ[i].y += deltas.arrayZ[i].y;
 	}
       } while (iterator.move_to_next ());
 

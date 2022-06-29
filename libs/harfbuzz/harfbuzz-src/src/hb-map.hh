@@ -34,6 +34,8 @@
  * hb_hashmap_t
  */
 
+extern HB_INTERNAL const hb_codepoint_t minus_1;
+
 template <typename K, typename V,
 	  bool minus_one = false>
 struct hb_hashmap_t
@@ -77,10 +79,14 @@ struct hb_hashmap_t
 
     template <bool v = minus_one,
 	      hb_enable_if (v == false)>
-    static const V& default_value () { return Null(V); };
+    static inline const V& default_value () { return Null(V); };
     template <bool v = minus_one,
 	      hb_enable_if (v == true)>
-    static const V& default_value () { static const V minus_1 = -1; return minus_1; };
+    static inline const V& default_value ()
+    {
+      static_assert (hb_is_same (V, hb_codepoint_t), "");
+      return minus_1;
+    };
 
     void clear ()
     {
@@ -211,7 +217,7 @@ struct hb_hashmap_t
   void del (K key) { set_with_hash (key, hb_hash (key), item_t::default_value (), true); }
 
   /* Has interface. */
-  typedef V value_t;
+  typedef const V& value_t;
   value_t operator [] (K k) const { return get (k); }
   bool has (K key, const V **vp = nullptr) const
   {

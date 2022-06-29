@@ -117,6 +117,28 @@ struct SimpleGlyph
     first_flag = (uint8_t) first_flag | FLAG_OVERLAP_SIMPLE;
   }
 
+  static bool read_flags (const HBUINT8 *&p /* IN/OUT */,
+			  contour_point_vector_t &points_ /* IN/OUT */,
+			  const HBUINT8 *end)
+  {
+    unsigned count = points_.length;
+    for (unsigned int i = 0; i < count;)
+    {
+      if (unlikely (p + 1 > end)) return false;
+      uint8_t flag = *p++;
+      points_.arrayZ[i++].flag = flag;
+      if (flag & FLAG_REPEAT)
+      {
+	if (unlikely (p + 1 > end)) return false;
+	unsigned int repeat_count = *p++;
+	unsigned stop = hb_min (i + repeat_count, count);
+	for (; i < stop;)
+	  points_.arrayZ[i++].flag = flag;
+      }
+    }
+    return true;
+  }
+
   static bool read_points (const HBUINT8 *&p /* IN/OUT */,
 			   contour_point_vector_t &points_ /* IN/OUT */,
 			   const HBUINT8 *end,
@@ -124,12 +146,12 @@ struct SimpleGlyph
 			   const simple_glyph_flag_t short_flag,
 			   const simple_glyph_flag_t same_flag)
   {
-    float v = 0;
+    int v = 0;
 
     unsigned count = points_.length;
     for (unsigned i = 0; i < count; i++)
     {
-      uint8_t flag = points_[i].flag;
+      unsigned flag = points_[i].flag;
       if (flag & short_flag)
       {
 	if (unlikely (p + 1 > end)) return false;
@@ -157,7 +179,9 @@ struct SimpleGlyph
   {
     const HBUINT16 *endPtsOfContours = &StructAfter<HBUINT16> (header);
     int num_contours = header.numberOfContours;
-    if (unlikely (!bytes.check_range (&endPtsOfContours[num_contours - 1]))) return false;
+    assert (num_contours);
+    /* One extra item at the end, for the instruction-count below. */
+    if (unlikely (!bytes.check_range (&endPtsOfContours[num_contours]))) return false;
     unsigned int num_points = endPtsOfContours[num_contours - 1] + 1;
 
     points_.alloc (num_points + 4); // Allocate for phantom points, to avoid a possible copy
@@ -171,26 +195,13 @@ struct SimpleGlyph
     const HBUINT8 *p = &StructAtOffset<HBUINT8> (&endPtsOfContours[num_contours + 1],
 						 endPtsOfContours[num_contours]);
 
+    if (unlikely ((const char *) p < bytes.arrayZ)) return false; /* Unlikely overflow */
     const HBUINT8 *end = (const HBUINT8 *) (bytes.arrayZ + bytes.length);
-
-    /* Read flags */
-    for (unsigned int i = 0; i < num_points;)
-    {
-      if (unlikely (p + 1 > end)) return false;
-      uint8_t flag = *p++;
-      points_[i++].flag = flag;
-      if (flag & FLAG_REPEAT)
-      {
-	if (unlikely (p + 1 > end)) return false;
-	unsigned int repeat_count = *p++;
-	unsigned stop = hb_min (i + repeat_count, num_points);
-	for (; i < stop;)
-	  points_.arrayZ[i++].flag = flag;
-      }
-    }
+    if (unlikely (p >= end)) return false;
 
     /* Read x & y coordinates */
-    return read_points (p, points_, end, &contour_point_t::x,
+    return read_flags (p, points_, end)
+        && read_points (p, points_, end, &contour_point_t::x,
 			FLAG_X_SHORT, FLAG_X_SAME)
 	&& read_points (p, points_, end, &contour_point_t::y,
 			FLAG_Y_SHORT, FLAG_Y_SAME);

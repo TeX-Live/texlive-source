@@ -261,6 +261,35 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SubstLookupSubTable.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SubstLookup.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/GSUB.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/CursivePosFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkLigPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/PairPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/Anchor.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/AnchorFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkLigPosFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/PairPosFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/ExtensionPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/ChainContextPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/Common.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/ValueFormat.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/AnchorMatrix.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkBasePosFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/AnchorFormat3.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/PosLookup.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkMarkPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/PairPosFormat2.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkBasePos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkMarkPosFormat1.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/SinglePos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkArray.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/CursivePos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/PosLookupSubTable.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/MarkRecord.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/AnchorFormat2.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/ContextPos.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/SinglePosFormat2.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/SinglePosFormat1.hh \
 	@HARFBUZZ_TREE@/src/graph/graph.hh \
 	@HARFBUZZ_TREE@/src/graph/serialize.hh
 
