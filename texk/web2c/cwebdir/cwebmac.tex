@@ -348,9 +348,9 @@
    {\noexpand\the\pageno}{\the\toksE}}}\next % \ZZ{title}{depth}{sec}{page}{ss}
   \ifpdf \ifpdftex\expandafter\xdef\csname curr#1\endcsname{\secno}
     \ifnum#1>0\countB=#1 \advance\countB by-1
-      \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi\fi
+      \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi
   \else \special{pdf: outline #1 << /Title (\the\toksE) /Dest
-    [ @thispage /FitH @ypos ] >>}\fi
+    [ @thispage /FitH @ypos ] >>}\fi \fi
   \ifon\startsection{\bf#3.\quad}\ignorespaces}
 \def\MN#1{\par % common code for \M, \N
   {\xdef\secstar{#1}\let\*=\empty\xdef\secno{#1}}% remove \* from section name
