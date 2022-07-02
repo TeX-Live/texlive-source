@@ -1,11 +1,12 @@
 2022-07-02  Andreas Scherer  <https://ascherer.github.io>
 
-	* cwebmac.tex: Fix \ifpdf logic.
+	* cwebmac.tex,
+	* texinputs/pdfctwimac.tex: Fix \ifpdf logic.
 
 2022-06-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/dcwebmac.tex,
-	* texinputs,dcwebstrings.tex,
+	* texinputs/dcwebstrings.tex,
 	* texinputs/fcwebman.tex,
 	* texinputs/icwebmac.tex: Update translated macros.
 

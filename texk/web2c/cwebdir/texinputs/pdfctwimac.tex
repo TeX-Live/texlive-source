@@ -444,14 +444,14 @@
       \gdef\rrhead{\let\i=I\uppercase{\ignorespaces#3}}
   \fi
   \message{*\secno} % progress report
-  \ifpdftex\def\stripprefix##1>{}\def\gtitletoks{#3}%
+  \ifpdf \ifpdftex\def\stripprefix##1>{}\def\gtitletoks{#3}%
     \edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
     {\immediate\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
       {\noexpand\the\pageno}{\the\toksE}}} % \ZZ{title}{depth}{sec}{page}{ss}
     \expandafter\xdef\csname curr#1\endcsname{\secno}
     \ifnum#1>0\countB=#1 \advance\countB by-1
       \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi
-  \else\ifpdf\special{pdf: outline #1 << /Title (\the\toksE) /Dest
+  \else \special{pdf: outline #1 << /Title (\the\toksE) /Dest
     [ @thispage /FitH @ypos ] >>}\fi\fi
   \startsection{\bf\ignorespaces#3.\quad}\ignorespaces}
 \def\expnumber#1{\expandafter\ifx\csname#1\endcsname\relax 0%
