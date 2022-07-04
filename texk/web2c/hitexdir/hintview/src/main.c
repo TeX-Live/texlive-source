@@ -78,30 +78,145 @@ void error_callback(int error, const char* description)
 }
 
 GLFWwindow* window;
-int px_h=1024, px_v=768; // size in pixel
-double x_dpi, y_dpi;
 #define SCALE_MIN 0.2
 #define SCALE_NORMAL 1.0
 #define SCALE_MAX 5.0
 double scale=SCALE_NORMAL;
 uint64_t pos; /* position of current page */
 
+
+/* Getting the dpi for a window is not as simple as one might think,
+   because windows might dynamically move between monitors.
+
+
+   To get a list of monitors use:
+   int monitor_count;
+   GLFWmonitor** monitors = glfwGetMonitors(&monitor_count);
+
+   To get notified about connecting or disconnecting of monitors use:
+   glfwSetMonitorCallback(monitor_callback)
+   the callback should refresh the pointer and count returned
+   from  glfwGetMonitors.
+
+   for a monitor, we can get:
+
+   - its physical size:
+   int width_mm, height_mm;
+   glfwGetMonitorPhysicalSize(monitor, &width_mm, &height_mm);
+
+   - its position (upper left) in screen coordinates:
+   int xpos, ypos;
+   glfwGetMonitorPos(monitor, &xpos, &ypos);
+
+   - its video mode:
+   GLFWvidmode* mode = glfwGetVideoMode(monitor);
+ 
+   and through the video mode the mode->width and mode->height
+   in screen coordinates.
+
+   Using this information, we can 
+   - get the area of a monitor by its position width and height
+     in screen coordinates and
+   - convert screen coordinates
+     for the monitor into physical coordinates.
+   
+   To determine the monitor where a window is currently displayed
+   screen coordinates must be used.
+
+   we get the window size in screen coordinates using:
+   int width, height;
+   glfwGetWindowSize(window, &width, &height);
+
+   we get the window position (upper left) in screen coordinates using:
+   int xpos, ypos;
+   glfwGetWindowPos(window, &xpos, &ypos);
+   
+   Matching the window position against the monitor area we can find
+   the monitor on which we have the window position.
+
+   Using the information about the monitor, we can convert the
+   size of the window from screen coordinates to physical sizes.
+
+   To obtain the resolution of a window we use the size of the
+   windows framebuffer, which is in pixels either with
+   int width, height;
+   glfwGetFramebufferSize(window, &width, &height);
+
+   or by getting a notification using:
+   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+   void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+   {
+    glViewport(0, 0, width, height);
+   }
+
+*/
+
+/* Monitors */
+static int monitor_count;
+static GLFWmonitor** monitors;
+
+static void monitor_callback(GLFWmonitor* monitor, int event)
+{  monitors=glfwGetMonitors(&monitor_count);
+  if (monitors==NULL || monitor_count==0)
+    error_callback(0,"Unable to find a monitor");
+  LOG("monitors %d\n",monitor_count);
+}
+
+static void init_monitors(void)
+{ monitor_callback(NULL,0);
+  glfwSetMonitorCallback(monitor_callback);
+}
+
+static int m_width, m_height;
+int width_mm, height_mm;
+
+static int find_monitor(int x, int y)
+/* return monitor for screen coordinates (x, y) */
+{ int i;
+  for (i=0; i< monitor_count; i++)
+  {  int mx, my;
+    glfwGetMonitorPos(monitors[i], &mx, &my);
+    if (x>= mx && y >= my ) 
+    { const GLFWvidmode *mode = glfwGetVideoMode(monitors[i]); 	
+      if (x <= mx+mode->width && y<=my+mode->height)
+      { m_width=mode->width; m_height=mode->height;
+        glfwGetMonitorPhysicalSize(monitors[i], &width_mm, &height_mm);
+        LOG("Monitor pos: %d x %d, size: %d x %d, %dmm x %dmm\n",mx,my,m_width,m_height,width_mm, height_mm);
+        return i;
+      }
+    }
+  }
+  return 0;
+}
+
+int px_h=1024, px_v=768; // size in pixel
+double x_dpi, y_dpi;
+
+void set_dpi(GLFWwindow* window, int px, int py)
+{ int wx, wy, ww, wh, i;
+  glfwGetWindowPos(window, &wx, &wy);
+  glfwGetWindowSize(window, &ww, &wh);
+  find_monitor(wx,wy);
+  x_dpi=25.5*px*m_width/width_mm/ww;
+  y_dpi=25.5*py*m_height/height_mm/wh;
+  LOG("Window pos:  %d x %d, size: %d x %d,  %dpx x %dpx\n",wx, wy,ww,wh,px,py);
+  LOG("dpi: %f x %f\n",x_dpi,y_dpi);
+}
+
 void framebuffer_size_callback(GLFWwindow* window, int w, int h)
 { px_h=w; px_v=h;
   glViewport(0, 0, w, h);
+  set_dpi(window,w,h);
   //LOG("w=%d, h=%d\n",w,h);
   hint_resize(px_h,px_v,scale*x_dpi,scale*y_dpi);
   hint_page();
 }
 
-void getDPI(void)
-{ int widthMM, heightMM;
-  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
-  glfwGetMonitorPhysicalSize(monitor, &widthMM, &heightMM);
-  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-  x_dpi = mode->width / (widthMM / 25.4);
-  y_dpi = mode->height / (heightMM / 25.4);
-  //LOG("xdpi=%f, ydpi=%f\n",x_dpi,y_dpi);
+void init_dpi(GLFWwindow* window)
+{ int px,py;
+  glfwGetFramebufferSize(window, &px, &py);
+  set_dpi(window,px,py);
 }
 
 void hint_unmap(void)
@@ -455,8 +570,9 @@ int create_window(void)
   hand_cursor = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
   arrow_cursor = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
 
-  getDPI();
- 
+  //getDPI();
+  init_monitors();
+  init_dpi(window);
   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
   glfwSetKeyCallback(window, key_callback);
   glfwSetCursorEnterCallback(window,cursor_enter_callback);

@@ -1,3 +1,10 @@
+2022-06-04  Martin Ruckert <ruckert@cs.hm.edu>
+
+	* documentation and typograhic improvements
+	* replacing float/unfloat by unfix/fix to eliminate the float macro
+	* replacing continue by resume to eliminate continue macro
+	* fixing use of hpos in HPUTCONTENT after reallocation
+
 2022-04-11  Martin Ruckert <ruckert@cs.hm.edu>
 
 	* eliminating string as a anlias fro char* in hitex.w

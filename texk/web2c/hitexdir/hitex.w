@@ -198,14 +198,25 @@
   \let\_=\UL % underline in a string
   \let\&=\AM % ampersand in a string
   #1\kern.05em}}
+\def\&#1{\leavevmode\hbox{\bf\def\_{\UL}%
+  #1\/\kern.05em}} % boldface type for reserved words
+\def\\#1{\leavevmode\hbox{\it\def\_{\UL}%
+  #1\/\kern.05em}} % italic type for identifiers
+\def\vb#1{{\rm #1}}
 \def\^{\ifmmode\mathchar"222 \else\char`^ \fi} % pointer or hat
 \def\LQ{{\tt\char'22}} % left quote in a string
 \def\RQ{{\tt\char'23}} % right quote in a string
+\def\UL{{\tt\char`\_}} % underline character in a C identifier
 \def\dotdot{\mathrel{.\,.}} % double dot, used only in math mode
 @s dotdot TeX
+@s alpha_file int
+@s byte_file int
+@s word_file int
 @* Introduction.
-This is Hi\TeX, a program derived from and extending the capabilities
-of \TeX\ plus \eTeX\ plus \Prote\ plus the \TeX\ Live extensions.
+This is Hi\TeX, a program derived from \TeX, extending its capabilities
+using \eTeX and \Prote, and adding functions common to other engines from
+the \TeX\ Live distribution. Hi\TeX\ writes output files in
+the \HINT\ file format. Like \TeX, it is
 a document compiler intended to produce typesetting of high
 quality.
 The \PASCAL\ program that follows is the definition of \TeX82, a standard
@@ -421,12 +432,12 @@ static int s_no(const char *str);
 strange behavior that sometimes occurs when \TeX\ is being installed or
 when system wizards are fooling around with \TeX\ without quite knowing
 what they are doing. Such code will not normally be compiled; it is
-delimited by the codewords `$|debug|\ldots|debug|$', with apologies
+delimited by the codewords `$|@t\#\&{ifdef} \.{DEBUG}@>|\ldots|@t\#\&{endif}@>|$', with apologies
 to people who wish to preserve the purity of English.
 
 Similarly, there is some conditional code delimited by
-`$|stat|\ldots|tats|$' that is intended for use when statistics are to be
-kept about \TeX's memory usage.  The |stat| $\ldots$ |tats| code also
+`$|@t\#\&{ifdef} \.{STAT}@>|\ldots|@t\#\&{endif}@>|$' that is intended for use when statistics are to be
+kept about \TeX's memory usage.  The |@t\#\&{ifdef} \.{STAT}@>| $\ldots$ |@t\#\&{endif}@>| code also
 implements diagnostic information for \.{\\tracingparagraphs},
 \.{\\tracingpages}, and \.{\\tracingrestores}.
 @^debugging@>
@@ -437,7 +448,7 @@ version called \.{INITEX}, which does the extra calculations needed to
 initialize \TeX's internal tables; and (2)~there is a shorter and faster
 production version, which cuts the initialization to a bare minimum.
 Parts of the program that are needed in (1) but not in (2) are delimited by
-|#ifdef| |INIT|\dots\ |#endif|.
+the codewords `$|@t\#\&{ifdef} \.{INIT}@>|\ldots|@t\#\&{endif}@>|$'.
 
 \TeX\ Live has established the common practice
 to select the initialization code at runtime
@@ -458,6 +469,9 @@ contained in a system dependent header file.
 @s int32_t int
 @s uint32_t int
 @s halfword int
+@s nonnegative_integer int
+@s small_number int
+@s glue_ratio double
 @s in TeX
 @s line normal
 @s to   do
@@ -468,7 +482,7 @@ contained in a system dependent header file.
 #include <math.h>
 
 @ Further it is necessary to define some build in primitives of
-\PASCAL\ that are otherwise not available in \CEE/.
+\PASCAL\ that are otherwise not available in~\CEE/.
 @:PASCAL H}{\ph@>
 
 @d odd(X)       ((X)&1)
@@ -813,8 +827,8 @@ right of these assignment statements to |chr(i)|.
 @^system dependencies@>
 
 @<Set init...@>=
-for (i=0; i<=037; i++) xchr[i]=chr(i); /* k\TeX\ */
-for (i=0177; i<=0377; i++) xchr[i]=chr(i); /* k\TeX\ */
+for (i=0; i<=037; i++) xchr[i]=chr(i); /* \TeX\ Live*/
+for (i=0177; i<=0377; i++) xchr[i]=chr(i); /* \TeX\ Live*/
 
 @ The following system-independent code makes the |xord| array contain a
 suitable inverse to the information in |xchr|. Note that if |xchr[i]==xchr[j]|
@@ -885,10 +899,11 @@ static unsigned char @!name_of_file0[file_name_size+1]={0},
 static int @!name_length;@/ /*this many characters are actually
   relevant in |name_of_file| (the rest are blank)*/
 
-@ k\TeX\ uses the {\tt kpathsearch} library to implement access to files.
-So most of the code to find and open files is contained in two functions,
-|open_in| and |open_out| defined later.
-\TeX's file-opening functions do not to issue their own
+@ To open files, \TeX\ used \PASCAL's |reset| function.
+Now we use the {\tt kpathsearch} library to implement new functions.
+Most of the code to find and open files is contained in two functions,
+|open_in| and |open_out|, defined later.
+\TeX's file-opening functions do not issue their own
 error messages if something goes wrong. If a file identified by
 |name_of_file| cannot be found,
 or if such a file cannot be opened for some other reason
@@ -1146,14 +1161,14 @@ not be typed immediately after~`\.{**}'.)
 
 @d loc cur_input.loc_field /*location of first unread character in |buffer|*/
 
-@ The following program calls |input_command_line|
+@ The following routine calls |input_command_line|
 to retrieve a possible command line.
 @^system dependencies@>
 
 @p static bool init_terminal(void) /*gets the terminal input started*/
 {@+
 t_open_in;
-if (input_command_line()) return true; /* k\TeX\ */
+if (input_command_line()) return true; /* \TeX\ Live */
 loop@+{@+wake_up_terminal;pascal_write(term_out,"**");update_terminal;
 @.**@>
   if (!input_ln(&term_in, true))  /*this shouldn't happen*/
@@ -1487,25 +1502,25 @@ by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 @^system dependencies@>
 
 @<Basic printing procedures@>=
-#define put(F)    @[fwrite(&((F).d),sizeof((F).d),1,(F).f)@]
-#define get(F)    @[fread(&((F).d),sizeof((F).d),1,(F).f)@]
+#define @[put(F)@]    @[fwrite(&((F).d)@],@[sizeof((F).d),1,(F).f)@]@;
+#define @[get(F)@]    @[fread(&((F).d),sizeof((F).d),1,(F).f)@]
 
-#define pascal_close(F)    @[fclose((F).f)@]
-#define eof(F)    @[feof((F).f)@]
-#define eoln(F)    @[((F).d=='\n'||eof(F))@]
-#define erstat(F)   @[((F).f==NULL?-1:ferror((F).f))@]
+#define @[pascal_close(F)@]    @[fclose((F).f)@]
+#define @[eof(F)@]    @[feof((F).f)@]
+#define @[eoln(F)@]    @[((F).d=='\n'||eof(F))@]
+#define @[erstat(F)@]   @[((F).f==NULL?-1:ferror((F).f))@]
 
-#define pascal_read(F,X) @[((X)=(F).d,get(F))@]
-#define read_ln(F)  @[do get(F); while (!eoln(F))@]
+#define @[pascal_read(F,X)@] @[((X)=(F).d,get(F))@]
+#define @[read_ln(F)@]  do get(F); while (!eoln(F))
 
-#define pascal_write(F, FMT,...)    @[fprintf(F.f,FMT,## __VA_ARGS__)@]
-#define write_ln(F,...)    @[pascal_write(F,__VA_ARGS__"\n")@]
+#define @[pascal_write(F, FMT,...)@]    @[fprintf(F.f,FMT,## __VA_ARGS__)@]
+#define @[write_ln(F,...)@]    @[pascal_write(F,__VA_ARGS__"\n")@]
 
-#define wterm(FMT,...) @[pascal_write(term_out,FMT, ## __VA_ARGS__)@]
-#define wterm_ln(FMT,...) @[wterm(FMT "\n", ## __VA_ARGS__)@]
+#define @[wterm(FMT,...)@] @[pascal_write(term_out,FMT, ## __VA_ARGS__)@]
+#define @[wterm_ln(FMT,...)@] @[wterm(FMT "\n", ## __VA_ARGS__)@]
 #define wterm_cr         @[pascal_write(term_out,"\n")@]
-#define wlog(FMT, ...) @[pascal_write(log_file,FMT, ## __VA_ARGS__)@]
-#define wlog_ln(FMT, ...)   @[wlog(FMT "\n", ## __VA_ARGS__)@]
+#define @[wlog(FMT, ...)@] @[pascal_write(log_file,FMT, ## __VA_ARGS__)@]
+#define @[wlog_ln(FMT, ...)@]   @[wlog(FMT "\n", ## __VA_ARGS__)@]
 #define wlog_cr         @[pascal_write(log_file,"\n")@]
 
 @ To end a line of text output, we call |print_ln|.
@@ -1571,7 +1586,7 @@ assumes that it is always safe to print a visible ASCII character.)
 
 @<Basic print...@>=
 static void print(char *s) /* the simple version */
-{ while (*s!=0) print_char(*s++);@+
+{ @+while (*s!=0) print_char(*s++);@+
 }
 
 static void printn(int @!s) /*prints string |s|*/
@@ -1624,8 +1639,8 @@ incorrect, but the discrepancy is not serious since we assume that this
 part of the program is system dependent.
 @^system dependencies@>
 
-k\TeX, according to the conventions of \TeX\ Live,
- prints the |dump_name| if no format identifier is known.
+According to the conventions of \TeX\ Live,
+ we print the |dump_name| if no format identifier is known.
 @<Initialize the output...@>=
 wterm("%s",banner);
 if (format_ident==0) wterm_ln(" (preloaded format=%s)", dump_name);
@@ -1808,7 +1823,7 @@ message may be printed.
 @<Error handling...@>=
 void print_err(char *s)
 {@+if (interaction==error_stop_mode) wake_up_terminal;
-  if (filelineerrorstylep) print_file_line(); /* k\TeX\ */
+  if (filelineerrorstylep) print_file_line(); /* \TeX\ Live */
   else print_nl("! ");
   print(s);
 }
@@ -1994,7 +2009,7 @@ switch (c) {
 case '0': case '1': case '2': case '3':
   case '4': case '5': case '6': case '7':
   case '8': case '9': if (deletions_allowed)
-  @<Delete \(c)|c-"0"| tokens and |goto continue|@>@;@+break;
+  @<Delete \(c)|c-"0"| tokens and |goto resume|@>@;@+break;
 @t\4\4@>@;
 #ifdef @!DEBUG
 case 'D': {@+debug_help();goto resume;@+}
@@ -2006,7 +2021,7 @@ case 'E': if (base_ptr > 0) if (input_stack[base_ptr].name_field >= 256)
   print(" at line ");print_int(line);
   interaction=scroll_mode;jump_out();
   } @+break;
-case 'H': @<Print the help information and |goto continue|@>@;
+case 'H': @<Print the help information and |goto resume|@>@;
 case 'I': @<Introduce new material from the terminal and |return|@>@;
 case 'Q': case 'R': case 'S': @<Change the interaction level and |return|@>@;
 case 'X': {@+interaction=scroll_mode;jump_out();
@@ -2447,15 +2462,15 @@ routines cited there must be modified to allow negative glue ratios.)
 
 @d set_glue_ratio_zero(A) A=0.0 /*store the representation of zero ratio*/
 @d set_glue_ratio_one(A) A=1.0 /*store the representation of unit ratio*/
-@d float(A) ((double)(A)) /*convert from |glue_ratio| to type |double|*/
-@d unfloat(A) ((glue_ratio)(A)) /*convert from |double| to type |glue_ratio|*/
+@d unfix(A) ((double)(A)) /*convert from |glue_ratio| to type |double|*/
+@d fix(A) ((glue_ratio)(A)) /*convert from |double| to type |glue_ratio|*/
 @d float_constant(A) ((double)(A)) /*convert |int| constant to |double|*/
 
 @<Types...@>=
 #if __SIZEOF_FLOAT__==4
 typedef float float32_t;
 #else
-#error  float type must have size 4
+#error  @=float type must have size 4@>
 #endif
 typedef float @!glue_ratio; /*one-word representation of a glue expansion factor*/
 
@@ -2596,7 +2611,7 @@ static void print_word(memory_word @!w)
    /*prints |w| in all ways*/
 {@+print_int(w.i);print_char(' ');@/
 print_scaled(w.sc);print_char(' ');@/
-print_scaled(round(unity*float(w.gr)));print_ln();@/
+print_scaled(round(unity*unfix(w.gr)));print_ln();@/
 @^real multiplication@>
 print_int(w.hh.lh);print_char('=');print_int(w.hh.b0);print_char(':');
 print_int(w.hh.b1);print_char(';');print_int(w.hh.rh);print_char(' ');@/
@@ -2666,7 +2681,7 @@ is possible to prepare a version of \TeX\ that keeps track of current and
 maximum memory usage. When code between the delimiters |
 #ifdef @!STAT
 | $\ldots$
-|tats| is not ``commented out,'' \TeX\ will run a bit slower but it will
+|@t\#\&{endif}@>| is not ``commented out,'' \TeX\ will run a bit slower but it will
 report these statistics when |tracing_stats| is sufficiently large.
 
 @<Glob...@>=
@@ -3904,7 +3919,7 @@ floating point underflow on the author's computer.
 @^dirty \PASCAL@>
 
 @<Display the value of |glue_set(p)|@>=
-g=float(glue_set(p));
+g=unfix(glue_set(p));
 if ((g!=float_constant(0))&&(glue_sign(p)!=normal))
   {@+print(", glue set ");
   if (glue_sign(p)==shrinking) print("- ");
@@ -4203,7 +4218,7 @@ e.g., `\.{\\catcode \`\\\${} = 3}' to make \.{\char'44} a math delimiter,
 and the command code |math_shift| is equal to~3. Some other codes have
 been made adjacent so that |case| statements in the program need not consider
 cases that are widely spaced, or so that |case| statements can be replaced
-by |if (| statements.
+by |if| statements.
 
 At any rate, here is the list, for future reference. First come the
 ``catcode'' commands, several of which share their numeric codes with
@@ -8493,23 +8508,23 @@ always fail the test `|cur_tok==info(r)|' in the following algorithm.
 resume: get_token(); /*set |cur_tok| to the next token of input*/
 if (cur_tok==info(r))
   @<Advance \(r)|r|; |goto found| if the parameter delimiter has been fully
-matched, otherwise |goto continue|@>;
+matched, otherwise |goto resume|@>;
 @<Contribute the recently matched tokens to the current parameter, and |goto
-continue| if a partial match is still in effect; but abort if |s=null|@>;
+resume| if a partial match is still in effect; but abort if |s=null|@>;
 if (cur_tok==par_token) if (long_state!=long_call)
   @<Report a runaway argument and abort@>;
 if (cur_tok < right_brace_limit)
   if (cur_tok < left_brace_limit)
     @<Contribute an entire group to the current parameter@>@;
-  else@<Report an extra right brace and |goto continue|@>@;
-else@<Store the current token, but |goto continue| if it is a blank space
+  else@<Report an extra right brace and |goto resume|@>@;
+else@<Store the current token, but |goto resume| if it is a blank space
 that would become an undelimited parameter@>;
 incr(m);
 if (info(r) > end_match_token) goto resume;
 if (info(r) < match_token) goto resume;
 found: if (s!=null) @<Tidy up the parameter just scanned, and tuck it away@>@;
 
-@ @<Store the current token, but |goto continue| if it is...@>=
+@ @<Store the current token, but |goto resume| if it is...@>=
 {@+if (cur_tok==space_token)
   if (info(r) <= end_match_token)
     if (info(r) >= match_token) goto resume;
@@ -8530,7 +8545,7 @@ if ((info(r) >= match_token)&&(info(r) <= end_match_token))
 else goto resume;
 }
 
-@ @<Report an extra right brace and |goto continue|@>=
+@ @<Report an extra right brace and |goto resume|@>=
 {@+back_input();print_err("Argument of ");sprint_cs(warning_index);
 @.Argument of \\x has...@>
 print(" has an extra }");
@@ -13029,14 +13044,14 @@ if (g_sign!=normal)
   {@+if (g_sign==stretching)
     {@+if (stretch_order(g)==g_order)
       {@+cur_glue=cur_glue+stretch(g);
-      vet_glue(float(glue_set(this_box))*cur_glue);
+      vet_glue(unfix(glue_set(this_box))*cur_glue);
 @^real multiplication@>
       cur_g=round(glue_temp);
       }
     }
   else if (shrink_order(g)==g_order)
       {@+cur_glue=cur_glue-shrink(g);
-      vet_glue(float(glue_set(this_box))*cur_glue);
+      vet_glue(unfix(glue_set(this_box))*cur_glue);
       cur_g=round(glue_temp);
       }
   }
@@ -13197,14 +13212,14 @@ if (g_sign!=normal)
   {@+if (g_sign==stretching)
     {@+if (stretch_order(g)==g_order)
       {@+cur_glue=cur_glue+stretch(g);
-      vet_glue(float(glue_set(this_box))*cur_glue);
+      vet_glue(unfix(glue_set(this_box))*cur_glue);
 @^real multiplication@>
       cur_g=round(glue_temp);
       }
     }
   else if (shrink_order(g)==g_order)
       {@+cur_glue=cur_glue-shrink(g);
-      vet_glue(float(glue_set(this_box))*cur_glue);
+      vet_glue(unfix(glue_set(this_box))*cur_glue);
       cur_g=round(glue_temp);
       }
   }
@@ -13588,7 +13603,7 @@ common_ending|}@>@;
 @ @<Determine horizontal glue stretch setting...@>=
 {@+@<Determine the stretch order@>;
 glue_order(r)=o;glue_sign(r)=stretching;
-if (total_stretch[o]!=0) glue_set(r)=unfloat(x/(double)total_stretch[o]);
+if (total_stretch[o]!=0) glue_set(r)=fix(x/(double)total_stretch[o]);
 @^real division@>
 else{@+glue_sign(r)=normal;
   set_glue_ratio_zero(glue_set(r)); /*there's nothing to stretch*/
@@ -13647,7 +13662,7 @@ begin_diagnostic();show_box(r);end_diagnostic(true)
 @ @<Determine horizontal glue shrink setting...@>=
 {@+@<Determine the shrink order@>;
 glue_order(r)=o;glue_sign(r)=shrinking;
-if (total_shrink[o]!=0) glue_set(r)=unfloat((-x)/(double)total_shrink[o]);
+if (total_shrink[o]!=0) glue_set(r)=fix((-x)/(double)total_shrink[o]);
 @^real division@>
 else{@+glue_sign(r)=normal;
   set_glue_ratio_zero(glue_set(r)); /*there's nothing to shrink*/
@@ -13757,7 +13772,7 @@ common_ending|}@>@;
 @ @<Determine vertical glue stretch setting...@>=
 {@+@<Determine the stretch order@>;
 glue_order(r)=o;glue_sign(r)=stretching;
-if (total_stretch[o]!=0) glue_set(r)=unfloat(x/(double)total_stretch[o]);
+if (total_stretch[o]!=0) glue_set(r)=fix(x/(double)total_stretch[o]);
 @^real division@>
 else{@+glue_sign(r)=normal;
   set_glue_ratio_zero(glue_set(r)); /*there's nothing to stretch*/
@@ -13796,7 +13811,7 @@ begin_diagnostic();show_box(r);end_diagnostic(true)
 @ @<Determine vertical glue shrink setting...@>=
 {@+@<Determine the shrink order@>;
 glue_order(r)=o;glue_sign(r)=shrinking;
-if (total_shrink[o]!=0) glue_set(r)=unfloat((-x)/(double)total_shrink[o]);
+if (total_shrink[o]!=0) glue_set(r)=fix((-x)/(double)total_shrink[o]);
 @^real division@>
 else{@+glue_sign(r)=normal;
   set_glue_ratio_zero(glue_set(r)); /*there's nothing to shrink*/
@@ -16514,12 +16529,12 @@ s=link(s);v=glue_ptr(s);link(u)=new_glue(v);u=link(u);
 subtype(u)=tab_skip_code+1;t=t+width(v);
 if (glue_sign(p)==stretching)
   {@+if (stretch_order(v)==glue_order(p))
-    t=t+round(float(glue_set(p))*stretch(v));
+    t=t+round(unfix(glue_set(p))*stretch(v));
 @^real multiplication@>
   }
 else if (glue_sign(p)==shrinking)
   {@+if (shrink_order(v)==glue_order(p))
-    t=t-round(float(glue_set(p))*shrink(v));
+    t=t-round(unfix(glue_set(p))*shrink(v));
   }
 s=link(s);link(u)=new_null_box();u=link(u);t=t+width(s);
 if (mode==-vmode) width(u)=width(s);@+else
@@ -16535,14 +16550,14 @@ if (t==width(r))
 else if (t > width(r))
   {@+glue_sign(r)=stretching;
   if (glue_stretch(r)==0) set_glue_ratio_zero(glue_set(r));
-  else glue_set(r)=unfloat((t-width(r))/(double)glue_stretch(r));
+  else glue_set(r)=fix((t-width(r))/(double)glue_stretch(r));
 @^real division@>
   }
 else{@+glue_order(r)=glue_sign(r);glue_sign(r)=shrinking;
   if (glue_shrink(r)==0) set_glue_ratio_zero(glue_set(r));
   else if ((glue_order(r)==normal)&&(width(r)-t > glue_shrink(r)))
     set_glue_ratio_one(glue_set(r));
-  else glue_set(r)=unfloat((width(r)-t)/(double)glue_shrink(r));
+  else glue_set(r)=fix((width(r)-t)/(double)glue_shrink(r));
   }
 width(r)=w;type(r)=hlist_node;
 }
@@ -16556,14 +16571,14 @@ if (t==height(r))
 else if (t > height(r))
   {@+glue_sign(r)=stretching;
   if (glue_stretch(r)==0) set_glue_ratio_zero(glue_set(r));
-  else glue_set(r)=unfloat((t-height(r))/(double)glue_stretch(r));
+  else glue_set(r)=fix((t-height(r))/(double)glue_stretch(r));
 @^real division@>
   }
 else{@+glue_order(r)=glue_sign(r);glue_sign(r)=shrinking;
   if (glue_shrink(r)==0) set_glue_ratio_zero(glue_set(r));
   else if ((glue_order(r)==normal)&&(height(r)-t > glue_shrink(r)))
     set_glue_ratio_one(glue_set(r));
-  else glue_set(r)=unfloat((height(r)-t)/(double)glue_shrink(r));
+  else glue_set(r)=fix((height(r)-t)/(double)glue_shrink(r));
   }
 height(r)=w;type(r)=vlist_node;
 }
@@ -16972,12 +16987,12 @@ no_break_yet=true;prev_r=active;old_l=0;
 do_all_six(copy_to_cur_active);
 loop@+{@+resume: r=link(prev_r);
   @<If node |r| is of type |delta_node|, update |cur_active_width|, set |prev_r|
-and |prev_prev_r|, then |goto continue|@>;
+and |prev_prev_r|, then |goto resume|@>;
   @<If a line number class has ended, create new active nodes for the best
 feasible breaks in that class; then |return| if |r=last_active|, otherwise
 compute the new |line_width|@>;
   @<Consider the demerits for a line from |r| to |cur_p|; deactivate node
-|r| if it should no longer be active; then |goto continue| if a line from
+|r| if it should no longer be active; then |goto resume| if a line from
 |r| to |cur_p| is infeasible, otherwise record a new feasible break@>;
   }
 end: ;
@@ -18439,7 +18454,7 @@ hyphen_passed=0;t=hold_head;w=0;link(hold_head)=null;
 @<Set up data structures with the cursor following position |j|@>;
 resume: @<If there's a ligature or kern at the cursor position, update the
 data structures, possibly advancing~|j|; continue until the cursor moves@>;
-@<Append a ligature and/or kern to the translation; |goto continue| if the
+@<Append a ligature and/or kern to the translation; |goto resume| if the
 stack of inserted ligatures is nonempty@>;
 return j;
 }
@@ -18514,7 +18529,7 @@ loop@+{@+if (next_char(q)==test_char) if (skip_byte(q) <= stop_flag)
         }
       if (op_byte(q) < kern_flag)
       @<Carry out a ligature replacement, updating the cursor structure and
-possibly advancing~|j|; |goto continue| if the cursor doesn't advance, otherwise
+possibly advancing~|j|; |goto resume| if the cursor doesn't advance, otherwise
 |goto done|@>;
       w=char_kern(hf, q);goto done; /*this kern will be inserted below*/
      }
@@ -20153,7 +20168,7 @@ we know its successor.
 switch (type(p)) {
 case hlist_node: case vlist_node: case rule_node: if (page_contents < box_there)
     @<Initialize the current page, insert the \.{\\topskip} glue ahead of
-|p|, and |goto continue|@>@;
+|p|, and |goto resume|@>@;
   else@<Prepare to move a box or rule node to the current page, then |goto
 contribute|@>@;@+break;
 case whatsit_node: @<Prepare to move whatsit |p| to the current page, then
@@ -26516,7 +26531,7 @@ place when a `virgin' \.{eINITEX} starts without reading a format file.
 Later on the values of all \eTeX\ state variables are inherited when
 \.{eVIRTEX} (or \.{eINITEX}) reads a format file.
 
-The code below is designed to work for cases where `$|init|\ldots|tini|$'
+The code below is designed to work for cases where `$|@t\#\&{ifdef} \.{INIT}@>|\ldots|@t\#\&{endif}@>|$'
 is a run-time switch.
 
 @<Enable \eTeX\ and furthermore Prote, if requested@>=
@@ -31435,7 +31450,7 @@ if (x==0)
     }
  else if (x> 0)
 	  { glue_order(r)= sto;glue_sign(r)= stretching;
-        if (total_stretch[sto]!=0)glue_set(r)= unfloat(x/(double)total_stretch[sto]);
+        if (total_stretch[sto]!=0)glue_set(r)= fix(x/(double)total_stretch[sto]);
         else
 	    { glue_sign(r)= normal;
 	      set_glue_ratio_zero(glue_set(r));
@@ -31456,7 +31471,7 @@ if (x==0)
   else /* if (x<0) */
     {
       glue_order(r)= sho;glue_sign(r)= shrinking;
-      if (total_shrink[sho]!=0)glue_set(r)= unfloat((-x)/(double)total_shrink[sho]);
+      if (total_shrink[sho]!=0)glue_set(r)= fix((-x)/(double)total_shrink[sho]);
       else
 	{ glue_sign(r)= normal;
 	  set_glue_ratio_zero(glue_set(r));
@@ -32895,14 +32910,15 @@ void hout_string(int s)
 @<Hi\TeX\ macros@>=
 
 #define HPUTCONTENT(F,D)        \
-  { uint8_t *_p;                \
+  { uint32_t _p;                \
     uint8_t _f;                 \
     HPUTNODE; /* allocate */    \
-    _p=hpos++; /* tag */        \
+    _p=hpos++-hstart; /* tag */ \
     _f=F(D);                    \
-    *_p=_f; DBGTAG(_f,_p);      \
+    *(hstart+_p)=_f; DBGTAG(_f,hstart+_p);      \
     DBGTAG(_f,hpos); HPUT8(_f); \
   }
+
 @*1 Labels.
 The only label that must always exist is the zero label. It is used
 to mark the ``home'' position of a document.
