@@ -36,6 +36,7 @@ upjf.dvi: upjf.tex
 	uplatex upjf.tex
 	dvispc -a upjf.dvi upjf.dvitxt
 	sed -i '/xxx/d' upjf.dvitxt
+	sed -i -e "4i xxx1 176 'pdf:docinfo<</Title(upTeXを試す)/Subject(시험)/Creator(LaTeX with hyperref)/Author(☃ ☀)/Producer(dvipdfm)/Keywords(超鏈接; ハイパーリンク; 하이퍼링크)>>'" upjf.dvitxt
 	dvispc -x upjf.dvitxt upjf.dvi
 	rm upjf.dvitxt
 

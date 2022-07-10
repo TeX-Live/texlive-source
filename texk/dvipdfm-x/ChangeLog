@@ -1,3 +1,13 @@
+2022-07-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {dvipdfmx,spc_pdfm}.c, dpxconf.{c,h}, man/dvipdfmx.1:
+	Add a new option --pdfm-str-utf8 to make pdfmark and/or bookmark
+	by upLaTeX + hyperref/pdfcomment package + dvipdfmx without CMap.
+	* dvipdfmx-upjf.test, tests/Makefile_upjf, tests/upjf.dvi:
+	Add tests for the option --pdfm-str-utf8.
+	https://github.com/texjporg/tex-jp-build/issues/143
+	* configure.ac: version 20220710.
+
 2022-06-15  Clerk Ma  <maqiyuan130324@vip.qq.com>
 
 	* cidtype2.c, tt_cmap.c: Support some TrueType fonts in macOS

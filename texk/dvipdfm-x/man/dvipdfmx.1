@@ -139,6 +139,9 @@ Read
 as another include file, after reading the default
 .IR dvipdfmx.cfg .
 .TP 5
+.B \-\-\^kpathsea-debug number
+Have Kpathsea output debugging information; `-1' for everything (voluminous).
+.TP 5
 .B \-\^l
 Select landscape mode.  In other words, exchange the 
 .I x
@@ -160,6 +163,11 @@ file is derived from the input, that is,
 Select the papersize by name (e.g.,
 .BR letter ", " legal ", " ledger ", " tabloid ", " a3 ", " a4 ", or " a5
 )
+.TP 5
+.B \-\-\^pdfm-str-utf8
+Assume PDFMark strings in
+.B \especial
+commands are encoded in UTF-8.
 .TP 5
 .B \-\^q
 Quiet mode.
@@ -233,9 +241,6 @@ Results of the
 option are cumulative (e.g., 
 .B \-\^vv
 increases the verbosity by two increments).  Maximum verbosity is four.
-.TP 5
-.B \-\-\^kpathsea-debug number
-Have Kpathsea output debugging information; `-1' for everything (voluminous).
 .TP 5
 .B \-\^x x_offset
 Set the left margin to 
