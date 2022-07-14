@@ -1,5 +1,5 @@
-/*372:*/
-#line 7534 "hint.w"
+/*373:*/
+#line 7545 "hint.w"
 
 #include "basetypes.h"
 #include <string.h> 
@@ -238,7 +238,7 @@ tail_append(p);}
   label_has_name(p)= 0;\
   tail_append(p);}
 /*:193*/
-#line 7546 "hint.w"
+#line 7557 "hint.w"
 
 /*84:*/
 #line 1318 "hint.w"
@@ -441,7 +441,7 @@ tail_append(p);}
   label_has_name(p)= 0;\
   tail_append(p);}
 /*:194*/
-#line 7547 "hint.w"
+#line 7558 "hint.w"
 
 
 /*21:*/
@@ -472,7 +472,7 @@ typedef struct ParamDef{
 struct ParamDef*next;
 Param p;}ParamDef;
 /*:37*/
-#line 7549 "hint.w"
+#line 7560 "hint.w"
 
 
 
@@ -576,18 +576,18 @@ scaled hvsize,hhsize;
 #line 4285 "hint.w"
 
 int page_v,page_h,offset_v,offset_h;
-/*:244*//*301:*/
-#line 5564 "hint.w"
+/*:244*//*299:*/
+#line 5496 "hint.w"
 
 hint_Link*hint_links= NULL;
 int max_link= -1;
-/*:301*//*359:*/
-#line 7231 "hint.w"
+/*:299*//*360:*/
+#line 7240 "hint.w"
 
 jmp_buf error_exit;
 char herror_string[MAX_HERROR];
-/*:359*/
-#line 7552 "hint.w"
+/*:360*/
+#line 7563 "hint.w"
 
 /*3:*/
 #line 211 "hint.w"
@@ -626,7 +626,7 @@ static pointer hteg_list_pointer(void);
 
 static scaled hget_xdimen_node(void);
 /*:124*/
-#line 7553 "hint.w"
+#line 7564 "hint.w"
 
 /*9:*/
 #line 268 "hint.w"
@@ -2021,7 +2021,7 @@ shift_amount(p)+= offset_h;
 streams[0].p= q;
 }
 /*:247*//*272:*/
-#line 4973 "hint.w"
+#line 4974 "hint.w"
 
 static int trv_string_size= 0;
 static char trv_string[256];
@@ -2049,8 +2049,8 @@ trv_hlist(p);
 trv_string[trv_string_size]= 0;
 return trv_string;
 }
-/*:272*//*369:*/
-#line 7463 "hint.w"
+/*:272*//*370:*/
+#line 7474 "hint.w"
 
 static pointer leaks[1<<16]= {0};
 
@@ -2090,8 +2090,8 @@ if(leaks[i]!=0)
 fprintf(stderr,"ERROR:leak final: p=%d, s=%d\n",i,leaks[i]);
 #endif
 }
-/*:369*/
-#line 7554 "hint.w"
+/*:370*/
+#line 7565 "hint.w"
 
 /*1:*/
 #line 126 "hint.w"
@@ -2627,7 +2627,7 @@ QUIT("Text in paragraph not yet implemented");
 return null;
 }
 /*:160*/
-#line 7555 "hint.w"
+#line 7566 "hint.w"
 
 /*80:*/
 #line 1260 "hint.w"
@@ -2992,7 +2992,7 @@ line_break_params= save_lbp;
 }
 
 /*:170*/
-#line 7556 "hint.w"
+#line 7567 "hint.w"
 
 
 /*18:*/
@@ -3710,18 +3710,18 @@ store_map(tail,pos,0);
 return false;
 }
 /*:241*//*263:*/
-#line 4757 "hint.w"
+#line 4758 "hint.w"
 
 int hint_get_outline_max(void)
 {return max_outline;}
 /*:263*//*268:*/
-#line 4837 "hint.w"
+#line 4838 "hint.w"
 
 hint_Outline*hint_get_outlines(void)
 {return hint_outlines;
 }
 /*:268*//*270:*/
-#line 4896 "hint.w"
+#line 4897 "hint.w"
 
 static bool trv_ignore= false;
 static bool trv_skip_space= false;
@@ -3787,7 +3787,7 @@ p= link(p);
 }
 }
 /*:270*/
-#line 7558 "hint.w"
+#line 7569 "hint.w"
 
 
-/*:372*/
+/*:373*/

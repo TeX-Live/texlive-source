@@ -1,5 +1,5 @@
 /*1410:*/
-#line 25693 "htex.w"
+#line 25704 "htex.w"
 
 #define banner "This is TeX, Version 3.141592653 (HINT)" \
 
@@ -139,8 +139,8 @@ history= fatal_error_stop;jump_out() ; \
 
 #define set_glue_ratio_zero(A) A= 0.0
 #define set_glue_ratio_one(A) A= 1.0
-#define float(A) ((double) (A) ) 
-#define unfloat(A) ((glue_ratio) (A) ) 
+#define unfix(A) ((double) (A) ) 
+#define fix(A) ((glue_ratio) (A) ) 
 #define float_constant(A) ((double) (A) )  \
 
 #define min_quarterword 0
@@ -1724,10 +1724,10 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define end_write_token cs_token_flag+end_write \
 
 
-#line 25694 "htex.w"
+#line 25705 "htex.w"
 
 enum{/*11:*/
-#line 362 "htex.w"
+#line 374 "htex.w"
 
 mem_max= 65534,
 
@@ -1768,36 +1768,36 @@ file_name_size= 1024,
 empty_string= 256
 
 /*:11*/
-#line 25695 "htex.w"
+#line 25706 "htex.w"
 };
 /*18:*/
-#line 502 "htex.w"
+#line 514 "htex.w"
 
 typedef uint8_t ASCII_code;
 
 /*:18*//*25:*/
-#line 738 "htex.w"
+#line 750 "htex.w"
 
 typedef uint8_t eight_bits;
 typedef struct{FILE*f;text_char d;}alpha_file;
 typedef struct{FILE*f;eight_bits d;}byte_file;
 
 /*:25*//*38:*/
-#line 1098 "htex.w"
+#line 1111 "htex.w"
 
 typedef int32_t pool_pointer;
 typedef int16_t str_number;
 typedef uint8_t packed_ASCII_code;
 
 /*:38*//*104:*/
-#line 2194 "htex.w"
+#line 2206 "htex.w"
 
 typedef int scaled;
 typedef int32_t nonnegative_integer;
 typedef int8_t small_number;
 
 /*:104*//*113:*/
-#line 2405 "htex.w"
+#line 2417 "htex.w"
 
 #if __SIZEOF_FLOAT__==4
 typedef float float32_t;
@@ -1807,7 +1807,7 @@ typedef float float32_t;
 typedef float glue_ratio;
 
 /*:113*//*117:*/
-#line 2514 "htex.w"
+#line 2526 "htex.w"
 
 typedef uint8_t quarterword;
 typedef uint16_t halfword;
@@ -1835,12 +1835,12 @@ four_quarters qqqq;
 typedef struct{FILE*f;memory_word d;}word_file;
 
 /*:117*//*155:*/
-#line 3245 "htex.w"
+#line 3257 "htex.w"
 
 typedef int8_t glue_ord;
 
 /*:155*//*221:*/
-#line 4408 "htex.w"
+#line 4420 "htex.w"
 
 typedef struct{int16_t mode_field;
 pointer head_field,tail_field;
@@ -1856,12 +1856,12 @@ memory_word aux_field;
 }list_state_record;
 
 /*:221*//*279:*/
-#line 5997 "htex.w"
+#line 6009 "htex.w"
 
 typedef int8_t group_code;
 
 /*:279*//*310:*/
-#line 6576 "htex.w"
+#line 6588 "htex.w"
 
 typedef struct{
 quarterword state_field,index_field;
@@ -1869,28 +1869,28 @@ halfword start_field,loc_field,limit_field,name_field;
 }in_state_record;
 
 /*:310*//*558:*/
-#line 10858 "htex.w"
+#line 10870 "htex.w"
 
 typedef uint8_t internal_font_number;
 typedef uint16_t font_index;
 
 /*:558*//*605:*/
-#line 12050 "htex.w"
+#line 12062 "htex.w"
 
 typedef int8_t dvi_index;
 
 /*:605*//*944:*/
-#line 18316 "htex.w"
+#line 18328 "htex.w"
 
 typedef uint16_t trie_pointer;
 
 /*:944*//*949:*/
-#line 18385 "htex.w"
+#line 18397 "htex.w"
 
 typedef int16_t hyph_pointer;
 
 /*:949*/
-#line 25696 "htex.w"
+#line 25707 "htex.w"
 
 extern void list_init(void);
 extern void hpack_page(void);

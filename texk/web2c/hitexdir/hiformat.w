@@ -5343,7 +5343,7 @@ An undefined label has |where| equal to zero.
 @
 
 @<common variables@>=
-Label *labels;
+Label *labels=NULL;
 int first_label=-1;
 @
 The variable |first_label| will be used together with the |next| field of

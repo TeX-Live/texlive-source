@@ -198,7 +198,7 @@
 \def\TUG{\TeX\ \UG}
 \def\tug{\acro{TUG}}
 \def\UG{Users Group}
-\ifacro
+\ifpdf
 \sanitizecommand{\TeX}{TeX}
 \sanitizecommand{\eTeX}{eTeX}
 \sanitizecommand{\Prote}{PRoTE}
@@ -1503,7 +1503,7 @@
 \else\ifpdf
 \def\includefig#1{\leavevmode\hbox{\immediate\pdfximage{image/#1.pdf}\pdfrefximage\pdflastximage}}
 \else\ifhint
- \def\includefig#1{\image=image/#1.png\relax}
+ \def\includefig#1{\HINTimage=image/#1.png\relax}
 \else
   \input epsf.tex
   \def\includefig#1{\epsfbox{image/#1.eps}}% this is a \leavevmode\hbox{...}

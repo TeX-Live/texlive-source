@@ -40,24 +40,14 @@
 
 #define VERSION 1
 #define REVISION 3
-#define PATCHLEVEL 0
+#define PATCHLEVEL 1
 
-#if 0
-#include "rendernative.h" /* rendernative needs gcache_s */
-#else
-extern void nativeInit(void);
-extern void nativeClear(void);
-extern void nativeSetDark(int dark);
-#endif
 #include "error.h"
 #include "basetypes.h"
 #include "format.h"
 #include "get.h"
 #include "hint.h"
 #include "hrender.h"
-
-FILE* hlog;
-jmp_buf error_exit;
 
 /* Error Handling */
 int herror(const char *title, const char *message)
@@ -405,7 +395,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     break;
   case CTRL(GLFW_KEY_N):
     dark=!dark;
-    nativeSetDark(dark);
+    hint_dark(dark);
     break;
   case KEY(GLFW_KEY_HOME):
   case CTRL(GLFW_KEY_H):
@@ -581,7 +571,7 @@ int create_window(void)
 
   glfwSetCursorPos(window, px_h/2, px_v/2);
  
-  nativeInit();
+  hint_render_on();
   return 1;
 }
 

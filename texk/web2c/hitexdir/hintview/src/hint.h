@@ -1,5 +1,5 @@
-/*371:*/
-#line 7521 "hint.w"
+/*372:*/
+#line 7532 "hint.w"
 
 #ifndef _HINT_H_
 #define _HINT_H_
@@ -110,7 +110,7 @@ extern bool hint_backward(void);
 
 extern scaled hvsize,hhsize;
 /*:243*//*264:*/
-#line 4770 "hint.w"
+#line 4771 "hint.w"
 
 typedef struct{
 uint64_t pos;
@@ -121,47 +121,47 @@ char*title;
 }hint_Outline;
 extern hint_Outline*hint_outlines;
 /*:264*//*265:*/
-#line 4788 "hint.w"
+#line 4789 "hint.w"
 
 #define LABEL_UNDEF 0
 #define LABEL_TOP 1
 #define LABEL_BOT 2
 #define LABEL_MID 3
 /*:265*//*269:*/
-#line 4847 "hint.w"
+#line 4848 "hint.w"
 
 extern int hint_get_outline_max(void);
 extern hint_Outline*hint_get_outlines(void);
 extern uint64_t hint_outline_page(int i);
 /*:269*//*271:*/
-#line 4962 "hint.w"
+#line 4963 "hint.w"
 
 extern void trv_init(void(*f)(uint32_t c));
 extern void trv_vlist(pointer p);
 extern void trv_hlist(pointer p);
-/*:271*//*300:*/
-#line 5554 "hint.w"
+/*:271*//*298:*/
+#line 5486 "hint.w"
 
 typedef struct{
 uint64_t pos;
 uint8_t where;
-int top,bottom,left,right;
+scaled top,bottom,left,right;
 }hint_Link;
 extern hint_Link*hint_links;
 extern int max_link;
-/*:300*//*305:*/
-#line 5716 "hint.w"
+/*:298*//*303:*/
+#line 5649 "hint.w"
 
 extern int hint_find_link(scaled x,scaled y,scaled precission);
 extern uint64_t hint_link_page(int i);
-/*:305*//*370:*/
-#line 7504 "hint.w"
+/*:303*//*371:*/
+#line 7515 "hint.w"
 
 extern void leak_in(pointer p,int s);
 extern void leak_out(pointer p,int s);
-/*:370*/
-#line 7528 "hint.w"
+/*:371*/
+#line 7539 "hint.w"
 
 
 #endif
-/*:371*/
+/*:372*/

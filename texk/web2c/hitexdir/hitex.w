@@ -124,7 +124,7 @@
 \let\mc=\ninerm % medium caps for names like SAIL
 \def\Prote{{\tenrm P\kern-0.1em R\kern-0.15em\raise.11ex\hbox{o}%
   \kern-0.22em T\kern-0.05em E}}
-\ifacro
+\ifpdftex
 \sanitizecommand{\eTeX}{eTeX}
 \sanitizecommand{\Prote}{PRoTE}
 \fi
@@ -133,7 +133,7 @@
 \def\eTeX{$\varepsilon$-\TeX}
 \font\sf=cmss10 % used for the HINT name
 \def\HINT{\leavevmode\hbox{\sf HINT\spacefactor1000}}
-\ifacro\sanitizecommand{\HINT}{HINT}\fi
+\ifpdftex\sanitizecommand{\HINT}{HINT}\fi
 \font\revrm=xbmc10 % for right-to-left text
 % to generate xbmc10 (i.e., reflected cmbx10) use a file
 % xbmc10.mf containing:
@@ -3114,13 +3114,12 @@ split insertion of the same class.  There is one more field, the
 
 @ A |mark_node| has a |mark_ptr| field that points to the reference count
 of a token list that contains the user's \.{\\mark} text.
-This field occupies a full word instead of a halfword, because
-there's nothing to put in the other halfword; it is easier in \PASCAL\ to
-use the full word than to risk leaving garbage in the unused half.
+In addition there is a |mark_class| field that contains the mark class.
 
 @d mark_node 4 /*|type| of a mark node*/
 @d small_node_size 2 /*number of words to allocate for most node types*/
-@d mark_ptr(A) mem[A+1].i /*head of the token list for a mark*/
+@d mark_ptr(A) link(A+1) /*head of the token list for a mark*/
+@d mark_class(A) info(A+1) /*the mark class*/
 
 @ An |adjust_node|, which occurs only in horizontal lists,
 specifies material that will be moved out into the surrounding
@@ -3129,7 +3128,8 @@ operation.  The |adjust_ptr| field points to the vlist containing this
 material.
 
 @d adjust_node 5 /*|type| of an adjust node*/
-@d adjust_ptr(A) mark_ptr(A) /*vertical list to be moved out of horizontal list*/
+@d adjust_ptr(A) mem[A+1].i
+   /*vertical list to be moved out of horizontal list*/
 
 @ A |ligature_node|, which occurs only in horizontal lists, specifies
 a character that was fabricated from the interaction of two or more
@@ -4019,7 +4019,11 @@ append_char('|');show_node_list(post_break(p));flush_char; /*recursive call*/
 }
 
 @ @<Display mark |p|@>=
-{@+print_esc("mark");print_mark(mark_ptr(p));
+{@+print_esc("mark");
+if (mark_class(p)!=0)
+  {@+print_char('s');print_int(mark_class(p));
+  }
+print_mark(mark_ptr(p));
 }
 
 @ @<Display adjustment |p|@>=
@@ -4264,6 +4268,7 @@ expanded by `\.{\\the}'.
 @d vmove 22 /*vertical motion ( \.{\\raise}, \.{\\lower} )*/
 @d un_hbox 23 /*unglue a box ( \.{\\unhbox}, \.{\\unhcopy} )*/
 @d un_vbox 24 /*unglue a box ( \.{\\unvbox}, \.{\\unvcopy} )*/
+   /*( or \.{\\pagediscards}, \.{\\splitdiscards} )*/
 @d remove_item 25 /*nullify last item ( \.{\\unpenalty},
   \.{\\unkern}, \.{\\unskip} )*/
 @d hskip 26 /*horizontal glue ( \.{\\hskip}, \.{\\hfil}, etc.~)*/
@@ -6041,7 +6046,9 @@ case hrule: print_esc("hrule");@+break;
 case ignore_spaces: print_esc("ignorespaces");@+break;
 case insert: print_esc("insert");@+break;
 case ital_corr: print_esc("/");@+break;
-case mark: print_esc("mark");@+break;
+case mark: {@+print_esc("mark");
+  if (chr_code > 0) print_char('s');
+  } @+break;
 case math_accent: print_esc("mathaccent");@+break;
 case math_char_num: print_esc("mathchar");@+break;
 case math_choice: print_esc("mathchoice");@+break;
@@ -6724,7 +6731,7 @@ symbolic form, including the expansion of a macro or mark.
 if (cur_cmd >= call)
   {@+print_char(':');print_ln();token_show(cur_chr);
   }
-else if (cur_cmd==top_bot_mark)
+else if ((cur_cmd==top_bot_mark)&&(cur_chr < marks_code))
   {@+print_char(':');print_ln();
   token_show(cur_mark[cur_chr]);
   }
@@ -8339,6 +8346,8 @@ global array of five pointers; we refer to the individual entries of this
 array by symbolic names |top_mark|, etc. The value of |top_mark| is either
 |null| or a pointer to the reference count of a token list.
 
+@d marks_code 5 /*add this for \.{\\topmarks} etc.*/
+@#
 @d top_mark_code 0 /*the mark in effect at the previous page break*/
 @d first_mark_code 1 /*the first mark between |top_mark| and |bot_mark|*/
 @d bot_mark_code 2 /*the mark in effect at the current page break*/
@@ -8372,20 +8381,25 @@ primitive("splitbotmark", top_bot_mark, split_bot_mark_code);
 @!@:split\_bot\_mark\_}{\.{\\splitbotmark} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
-case top_bot_mark: switch (chr_code) {
+case top_bot_mark: {@+switch ((chr_code%marks_code)) {
   case first_mark_code: print_esc("firstmark");@+break;
   case bot_mark_code: print_esc("botmark");@+break;
   case split_first_mark_code: print_esc("splitfirstmark");@+break;
   case split_bot_mark_code: print_esc("splitbotmark");@+break;
   default:print_esc("topmark");
+  }
+  if (chr_code >= marks_code) print_char('s');
   } @+break;
 
 @ The following code is activated when |cur_cmd==top_bot_mark| and
 when |cur_chr| is a code like |top_mark_code|.
 
 @<Insert the \(a)appropriate mark text into the scanner@>=
-{@+if (cur_mark[cur_chr]!=null)
-  begin_token_list(cur_mark[cur_chr], mark_text);
+{@+t=cur_chr%marks_code;
+if (cur_chr >= marks_code) scan_register_num();@+else cur_val=0;
+if (cur_val==0) cur_ptr=cur_mark[t];
+else@<Compute the mark pointer for mark type |t| and class |cur_val|@>;
+if (cur_ptr!=null) begin_token_list(cur_ptr, mark_text);
 }
 
 @ Now let's consider |macro_call| itself, which is invoked when \TeX\ is
@@ -19728,7 +19742,8 @@ The original box becomes ``void'' if and only if it has been entirely
 extracted.  The extracted box is ``void'' if and only if the original
 box was void (or if it was, erroneously, an hlist box).
 
-@p static pointer vsplit(halfword @!n, scaled @!h)
+@p @t\4@>@<Declare the function called |do_marks|@>@;
+static pointer vsplit(halfword @!n, scaled @!h)
    /*extracts a page of height |h| from box |n|*/
 {@+
 pointer v; /*the box to be split*/
@@ -19736,6 +19751,8 @@ pointer p; /*runs through the vlist*/
 pointer q; /*points to where the break occurs*/
 cur_val=n;fetch_box(v);
 flush_node_list(split_disc);split_disc=null;
+if (sa_mark!=null)
+  if (do_marks(vsplit_init, 0, sa_mark)) sa_mark=null;
 if (split_first_mark!=null)
   {@+delete_token_ref(split_first_mark);split_first_mark=null;
   delete_token_ref(split_bot_mark);split_bot_mark=null;
@@ -19771,7 +19788,8 @@ if (type(v)!=vlist_node)
 p=list_ptr(v);
 if (p==q) list_ptr(v)=null;
 else loop@+{@+if (type(p)==mark_node)
-    if (split_first_mark==null)
+    if (mark_class(p)!=0) @<Update the current marks for |vsplit|@>@;
+    else if (split_first_mark==null)
       {@+split_first_mark=mark_ptr(p);
       split_bot_mark=split_first_mark;
       token_ref_count(split_first_mark)=@|
@@ -20402,6 +20420,8 @@ int @!save_vbadness; /*saved value of |vbadness|*/
 scaled @!save_vfuzz; /*saved value of |vfuzz|*/
 pointer @!save_split_top_skip; /*saved value of |split_top_skip|*/
 @<Set the value of |output_penalty|@>;
+if (sa_mark!=null)
+  if (do_marks(fire_up_init, 0, sa_mark)) sa_mark=null;
 if (bot_mark!=null)
   {@+if (top_mark!=null) delete_token_ref(top_mark);
   top_mark=bot_mark;add_token_ref(top_mark);
@@ -20410,6 +20430,8 @@ if (bot_mark!=null)
 @<Put the \(o)optimal current page into box 255, update |first_mark| and |bot_mark|,
 append insertions to their boxes, and put the remaining nodes back on the
 contribution list@>;
+if (sa_mark!=null)
+  if (do_marks(fire_up_done, 0, sa_mark)) sa_mark=null;
 if ((top_mark!=null)&&(first_mark==null))
   {@+first_mark=top_mark;add_token_ref(top_mark);
   }
@@ -20446,7 +20468,9 @@ while (p!=best_page_break)
        @<Either insert the material specified by node |p| into the appropriate
 box, or hold it for the next page; also delete node |p| from the current page@>;
     }
-  else if (type(p)==mark_node) @<Update the values of |first_mark| and |bot_mark|@>;
+  else if (type(p)==mark_node)
+    if (mark_class(p)!=0) @<Update the current marks for |fire_up|@>@;
+    else@<Update the values of |first_mark| and |bot_mark|@>;
   prev_p=p;p=link(prev_p);
   }
 split_top_skip=save_split_top_skip;
@@ -21945,7 +21969,12 @@ case outline_group: hfinish_outline_group();@+break;
 @ @<Declare act...@>=
 static void make_mark(void)
 {@+pointer p; /*new node*/
+halfword @!c; /*the mark class*/
+if (cur_chr==0) c=0;
+else{@+scan_register_num();c=cur_val;
+  }
 p=scan_toks(false, true);p=get_node(small_node_size);
+mark_class(p)=c;
 type(p)=mark_node;subtype(p)=0; /*the |subtype| is not used*/
 mark_ptr(p)=def_ref;link(tail)=p;tail=p;
 }
@@ -25277,6 +25306,8 @@ if (c==1)
 #ifdef @!INIT
 for (c=top_mark_code; c<=split_bot_mark_code; c++)
     if (cur_mark[c]!=null) delete_token_ref(cur_mark[c]);
+  if (sa_mark!=null)
+    if (do_marks(destroy_marks, 0, sa_mark)) sa_mark=null;
   for (c=last_box_code; c<=vsplit_code; c++) flush_node_list(disc_ptr[c]);
   if (last_glue!=max_halfword) delete_glue_ref(last_glue);
   store_fmt_file();return;
@@ -28005,6 +28036,31 @@ for count and dimen values, |zero_glue| for glue (skip and muskip)
 values, void for boxes, and |null| for token lists (and current marks
 discussed below).
 
+Similarly there are 32768 mark classes; the command \.{\\marks}|n|
+creates a mark node for a given mark class |0 <= n <= 32767| (where
+\.{\\marks0} is synonymous to \.{\\mark}).  The page builder (actually
+the |fire_up| routine) and the |vsplit| routine maintain the current
+values of |top_mark|, |first_mark|, |bot_mark|, |split_first_mark|, and
+|split_bot_mark| for each mark class.  They are accessed as
+\.{\\topmarks}|n| etc., and \.{\\topmarks0} is again synonymous to
+\.{\\topmark}.  As in \TeX\ the five current marks for mark class zero
+are realized as |cur_mark| array.  The additional current marks are
+again realized as tree structure with individual mark classes existing
+only when needed.
+
+@<Generate all \eTeX...@>=
+primitive("marks", mark, marks_code);
+@!@:marks\_}{\.{\\marks} primitive@>
+primitive("topmarks", top_bot_mark, top_mark_code+marks_code);
+@!@:top\_marks\_}{\.{\\topmarks} primitive@>
+primitive("firstmarks", top_bot_mark, first_mark_code+marks_code);
+@!@:first\_marks\_}{\.{\\firstmarks} primitive@>
+primitive("botmarks", top_bot_mark, bot_mark_code+marks_code);
+@!@:bot\_marks\_}{\.{\\botmarks} primitive@>
+primitive("splitfirstmarks", top_bot_mark, split_first_mark_code+marks_code);
+@!@:split\_first\_marks\_}{\.{\\splitfirstmarks} primitive@>
+primitive("splitbotmarks", top_bot_mark, split_bot_mark_code+marks_code);
+@!@:split\_bot\_marks\_}{\.{\\splitbotmarks} primitive@>
 
 @ The |scan_register_num| procedure scans a register number that must
 not exceed 255 in compatibility mode resp.\ 32767 in extended mode.
@@ -28323,6 +28379,136 @@ else{@+t=sa_type(p);
   }
 print_char('}');end_diagnostic(false);
 }
+#endif
+
+@ Here we compute the pointer to the current mark of type |t| and mark
+class |cur_val|.
+
+@<Compute the mark pointer...@>=
+{@+find_sa_element(mark_val, cur_val, false);
+if (cur_ptr!=null)
+  if (odd(t)) cur_ptr=link(cur_ptr+(t/2)+1);
+  else cur_ptr=info(cur_ptr+(t/2)+1);
+}
+
+@ The current marks for all mark classes are maintained by the |vsplit|
+and |fire_up| routines and are finally destroyed (for \.{INITEX} only)
+@.INITEX@>
+by the |final_cleanup| routine.  Apart from updating the current marks
+when mark nodes are encountered, these routines perform certain actions
+on all existing mark classes.  The recursive |do_marks| procedure walks
+through the whole tree or a subtree of existing mark class nodes and
+preforms certain actions indicted by its first parameter |a|, the action
+code.  The second parameter |l| indicates the level of recursion (at
+most four); the third parameter points to a nonempty tree or subtree.
+The result is |true| if the complete tree or subtree has been deleted.
+
+@d vsplit_init 0 /*action code for |vsplit| initialization*/
+@d fire_up_init 1 /*action code for |fire_up| initialization*/
+@d fire_up_done 2 /*action code for |fire_up| completion*/
+@d destroy_marks 3 /*action code for |final_cleanup|*/
+@#
+@d sa_top_mark(A) info(A+1) /*\.{\\topmarks}|n|*/
+@d sa_first_mark(A) link(A+1) /*\.{\\firstmarks}|n|*/
+@d sa_bot_mark(A) info(A+2) /*\.{\\botmarks}|n|*/
+@d sa_split_first_mark(A) link(A+2) /*\.{\\splitfirstmarks}|n|*/
+@d sa_split_bot_mark(A) info(A+3) /*\.{\\splitbotmarks}|n|*/
+
+@<Declare the function called |do_marks|@>=
+static bool do_marks(small_number @!a, small_number @!l, pointer @!q)
+{@+int i; /*a four bit index*/
+if (l < 4)  /*|q| is an index node*/
+  {@+for (i=0; i<=15; i++)
+    {@+get_sa_ptr;
+    if (cur_ptr!=null) if (do_marks(a, l+1, cur_ptr)) delete_sa_ptr;
+    }
+  if (sa_used(q)==0)
+    {@+free_node(q, index_node_size);q=null;
+    }
+  }
+else /*|q| is the node for a mark class*/
+  {@+switch (a) {
+  @<Cases for |do_marks|@>@;
+  }  /*there are no other cases*/
+  if (sa_bot_mark(q)==null) if (sa_split_bot_mark(q)==null)
+    {@+free_node(q, mark_class_node_size);q=null;
+    }
+  }
+return(q==null);
+}
+
+@ At the start of the |vsplit| routine the existing |split_fist_mark|
+and |split_bot_mark| are discarded.
+
+@<Cases for |do_marks|@>=
+case vsplit_init: if (sa_split_first_mark(q)!=null)
+  {@+delete_token_ref(sa_split_first_mark(q));sa_split_first_mark(q)=null;
+  delete_token_ref(sa_split_bot_mark(q));sa_split_bot_mark(q)=null;
+  } @+break;
+
+@ We use again the fact that |split_first_mark==null| if and only if
+|split_bot_mark==null|.
+
+@<Update the current marks for |vsplit|@>=
+{@+find_sa_element(mark_val, mark_class(p), true);
+if (sa_split_first_mark(cur_ptr)==null)
+  {@+sa_split_first_mark(cur_ptr)=mark_ptr(p);
+  add_token_ref(mark_ptr(p));
+  }
+else delete_token_ref(sa_split_bot_mark(cur_ptr));
+sa_split_bot_mark(cur_ptr)=mark_ptr(p);
+add_token_ref(mark_ptr(p));
+}
+
+@ At the start of the |fire_up| routine the old |top_mark| and
+|first_mark| are discarded, whereas the old |bot_mark| becomes the new
+|top_mark|.  An empty new |top_mark| token list is, however, discarded
+as well in order that mark class nodes can eventually be released.  We
+use again the fact that |bot_mark!=null| implies |first_mark!=null|; it
+also knows that |bot_mark==null| implies |top_mark==first_mark==null|.
+
+@<Cases for |do_marks|@>=
+case fire_up_init: if (sa_bot_mark(q)!=null)
+  {@+if (sa_top_mark(q)!=null) delete_token_ref(sa_top_mark(q));
+  delete_token_ref(sa_first_mark(q));sa_first_mark(q)=null;
+  if (link(sa_bot_mark(q))==null)  /*an empty token list*/
+    {@+delete_token_ref(sa_bot_mark(q));sa_bot_mark(q)=null;
+    }
+  else add_token_ref(sa_bot_mark(q));
+  sa_top_mark(q)=sa_bot_mark(q);
+  } @+break;
+
+@ @<Cases for |do_marks|@>=
+case fire_up_done: if ((sa_top_mark(q)!=null)&&(sa_first_mark(q)==null))
+  {@+sa_first_mark(q)=sa_top_mark(q);add_token_ref(sa_top_mark(q));
+  } @+break;
+
+@ @<Update the current marks for |fire_up|@>=
+{@+find_sa_element(mark_val, mark_class(p), true);
+if (sa_first_mark(cur_ptr)==null)
+  {@+sa_first_mark(cur_ptr)=mark_ptr(p);
+  add_token_ref(mark_ptr(p));
+  }
+if (sa_bot_mark(cur_ptr)!=null) delete_token_ref(sa_bot_mark(cur_ptr));
+sa_bot_mark(cur_ptr)=mark_ptr(p);add_token_ref(mark_ptr(p));
+}
+
+@ Here we use the fact that the five current mark pointers in a mark
+class node occupy the same locations as the the first five pointers of
+an index node.  For systems using a run-time switch to distinguish
+between \.{VIRTEX} and \.{INITEX}, the codewords `$|@t\#\&{ifdef} \.{INIT}@>|\ldots|@t\#\&{endif}@>|$'
+surrounding the following piece of code should be removed.
+@.INITEX@>
+@^system dependencies@>
+
+@<Cases for |do_marks|@>=
+#ifdef @!INIT
+case destroy_marks: for (i=top_mark_code; i<=split_bot_mark_code; i++)
+  {@+get_sa_ptr;
+  if (cur_ptr!=null)
+    {@+delete_token_ref(cur_ptr);put_sa_ptr(null);
+    }
+  }
 #endif
 
 @ The command code |internal_register| is used for `\.{\\count}', `\.{\\dimen}',
