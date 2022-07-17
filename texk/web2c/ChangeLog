@@ -1,3 +1,11 @@
+2022-07-16  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (25.369, <Suppress expansion ...>): disallow
+	\noexpand\endwrite, else we get a seg fault because of fetching
+	mem[null]. Fix from drf.
+	Original report: https://tex.stackexchange.com/questions/609423
+	TeX bug entry: https://tug.org/texmfbug/newbug.html#B155endwrite
+
 2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* texmfmp-help.h ((e)(u)pTeX), help.h ((u)pBibTeX):

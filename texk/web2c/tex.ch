@@ -1522,7 +1522,7 @@ aligning:begin print(" while scanning preamble"); info(p):=right_brace_token+"}"
 absorbing:begin print(" while scanning text"); info(p):=right_brace_token+"}";
 @z
 
-@x [25.366]
+@x [25.366] l.7672 - expansion depth overflow
 begin cv_backup:=cur_val; cvl_backup:=cur_val_level; radix_backup:=radix;
 @y
 begin
@@ -1531,14 +1531,22 @@ if expand_depth_count>=expand_depth then overflow("expansion depth",expand_depth
 cv_backup:=cur_val; cvl_backup:=cur_val_level; radix_backup:=radix;
 @z
 
-@x [25.366]
+@x [25.366] l.7678 - expansion depth overflow
 cur_order:=co_backup; link(backup_head):=backup_backup;
 @y
 cur_order:=co_backup; link(backup_head):=backup_backup;
 decr(expand_depth_count);
 @z
 
-@x [27.484] set limit when fatal_error
+% Original report: https://tex.stackexchange.com/questions/609423
+% TeX bug entry: https://tug.org/texmfbug/newbug.html#B155endwrite
+@x [25.369] l.7717 - disallow \noexpand\endwrite
+if t>=cs_token_flag then
+@y
+if (t>=cs_token_flag)and(t<>end_write_token) then
+@z
+
+@x [27.484] l.9495 - set limit when fatal_error
 else fatal_error("*** (cannot \read from terminal in nonstop modes)")
 @y
 else begin
