@@ -1,0 +1,52 @@
+From c59b380364076c90aac01bc1a996e954cda5d6ab Mon Sep 17 00:00:00 2001
+From: Andreas Scherer <andreas_github@freenet.de>
+Date: Sun, 17 Jul 2022 19:46:50 +0200
+Subject: [PATCH] Fix harfbuzz 4.4.1 for older g++.
+
+---
+ libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh b/libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh
+index 86d045208..c79d15506 100644
+--- a/libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh
++++ b/libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh
+@@ -166,26 +166,29 @@ HB_DEFINE_VTABLE (unicode_funcs);
+ 
+ } // namespace hb
+ 
++namespace std {
++
+ template<typename T>
+-struct std::hash<hb::shared_ptr<T>>
++struct hash<hb::shared_ptr<T>>
+ {
+-    std::size_t operator()(const hb::shared_ptr<T>& v) const noexcept
++    size_t operator()(const hb::shared_ptr<T>& v) const noexcept
+     {
+-        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
++        size_t h = hash<decltype (v.get ())>{}(v.get ());
+         return h;
+     }
+ };
+ 
+ template<typename T>
+-struct std::hash<hb::unique_ptr<T>>
++struct hash<hb::unique_ptr<T>>
+ {
+-    std::size_t operator()(const hb::unique_ptr<T>& v) const noexcept
++    size_t operator()(const hb::unique_ptr<T>& v) const noexcept
+     {
+-        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
++        size_t h = hash<decltype (v.get ())>{}(v.get ());
+         return h;
+     }
+ };
+ 
++} // namespace std
+ 
+ #endif /* __cplusplus */
+ 
+-- 
+2.37.1
+

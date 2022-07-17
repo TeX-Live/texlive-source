@@ -166,26 +166,29 @@ HB_DEFINE_VTABLE (unicode_funcs);
 
 } // namespace hb
 
+namespace std {
+
 template<typename T>
-struct std::hash<hb::shared_ptr<T>>
+struct hash<hb::shared_ptr<T>>
 {
-    std::size_t operator()(const hb::shared_ptr<T>& v) const noexcept
+    size_t operator()(const hb::shared_ptr<T>& v) const noexcept
     {
-        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
+        size_t h = hash<decltype (v.get ())>{}(v.get ());
         return h;
     }
 };
 
 template<typename T>
-struct std::hash<hb::unique_ptr<T>>
+struct hash<hb::unique_ptr<T>>
 {
-    std::size_t operator()(const hb::unique_ptr<T>& v) const noexcept
+    size_t operator()(const hb::unique_ptr<T>& v) const noexcept
     {
-        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
+        size_t h = hash<decltype (v.get ())>{}(v.get ());
         return h;
     }
 };
 
+} // namespace std
 
 #endif /* __cplusplus */
 
