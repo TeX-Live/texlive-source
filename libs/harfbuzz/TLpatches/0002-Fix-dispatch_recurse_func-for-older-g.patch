@@ -1,0 +1,62 @@
+From 72135e7c1af4812dc5e856d94ff1ba3fda867365 Mon Sep 17 00:00:00 2001
+From: Andreas Scherer <andreas_github@freenet.de>
+Date: Mon, 18 Jul 2022 17:24:20 +0200
+Subject: [PATCH 2/2] Fix 'dispatch_recurse_func' for older g++.
+
+---
+ libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gpos-table.hh | 6 +++++-
+ libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gsub-table.hh | 7 +++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+diff --git a/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gpos-table.hh b/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gpos-table.hh
+index 064d31cdf..59795cbba 100644
+--- a/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gpos-table.hh
++++ b/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gpos-table.hh
+@@ -35,6 +35,9 @@ namespace OT {
+ 
+ using Layout::GPOS_impl::PosLookup;
+ 
++namespace Layout {
++namespace GPOS_impl {
++
+ // TODO(garretrieger): Move into new layout directory.
+ /* Out-of-class implementation for methods recursing */
+ #ifndef HB_NO_OT_LAYOUT
+@@ -68,7 +71,8 @@ inline bool PosLookup::dispatch_recurse_func<hb_ot_apply_context_t> (hb_ot_apply
+ }
+ #endif
+ 
++} /* namespace GPOS_impl */
++} /* namespace Layout */
+ } /* namespace OT */
+ 
+-
+ #endif /* HB_OT_LAYOUT_GPOS_TABLE_HH */
+diff --git a/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gsub-table.hh b/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gsub-table.hh
+index 462542025..9e7f40c07 100644
+--- a/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gsub-table.hh
++++ b/libs/harfbuzz/harfbuzz-src/src/hb-ot-layout-gsub-table.hh
+@@ -36,6 +36,9 @@ namespace OT {
+ using Layout::GSUB::SubstLookup;
+ using Layout::GSUB::ExtensionSubst;
+ 
++namespace Layout {
++namespace GSUB {
++
+ // TODO(garretrieger): Move into the new layout directory.
+ /* Out-of-class implementation for methods recursing */
+ 
+@@ -82,8 +85,8 @@ inline bool SubstLookup::dispatch_recurse_func<hb_ot_apply_context_t> (hb_ot_app
+ }
+ #endif
+ 
+-
++} /* namespace GSUB */
++} /* namespace Layout */
+ } /* namespace OT */
+ 
+-
+ #endif /* HB_OT_LAYOUT_GSUB_TABLE_HH */
+-- 
+2.37.1
+

@@ -1,6 +1,8 @@
-2022-07/18  Andreas Scherer  <andreas_github@freenet.de>
+2022-07-18  Andreas Scherer  <andreas_github@freenet.de>
 
-	Add 0001-Fix-harfbuzz-4.4.1-for-older-g for older gcc.
+	* 0001-Fix-harfbuzz-4.4.1-for-older-g.patch,
+	* 0002-Fix-dispatch_recurse_func-for-older-g.patch:
+	Try to fix namespace/template conundrum for g++ 5 and 6.
 
 2022-06-30  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 

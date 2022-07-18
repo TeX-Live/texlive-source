@@ -1,7 +1,7 @@
-From c59b380364076c90aac01bc1a996e954cda5d6ab Mon Sep 17 00:00:00 2001
+From d4005a1970a82222198d0a106ee54a71707d059b Mon Sep 17 00:00:00 2001
 From: Andreas Scherer <andreas_github@freenet.de>
 Date: Sun, 17 Jul 2022 19:46:50 +0200
-Subject: [PATCH] Fix harfbuzz 4.4.1 for older g++.
+Subject: [PATCH 1/2] Fix harfbuzz 4.4.1 for older g++.
 
 ---
  libs/harfbuzz/harfbuzz-src/src/hb-cplusplus.hh | 15 +++++++++------
