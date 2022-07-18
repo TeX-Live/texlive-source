@@ -36,6 +36,9 @@ namespace OT {
 using Layout::GSUB::SubstLookup;
 using Layout::GSUB::ExtensionSubst;
 
+namespace Layout {
+namespace GSUB {
+
 // TODO(garretrieger): Move into the new layout directory.
 /* Out-of-class implementation for methods recursing */
 
@@ -82,8 +85,8 @@ inline bool SubstLookup::dispatch_recurse_func<hb_ot_apply_context_t> (hb_ot_app
 }
 #endif
 
-
+} /* namespace GSUB */
+} /* namespace Layout */
 } /* namespace OT */
-
 
 #endif /* HB_OT_LAYOUT_GSUB_TABLE_HH */
