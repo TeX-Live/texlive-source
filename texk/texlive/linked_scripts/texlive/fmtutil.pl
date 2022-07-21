@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 60154 2021-08-03 21:55:56Z karl $
+# $Id: fmtutil.pl 63934 2022-07-19 01:58:57Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 60154 2021-08-03 21:55:56Z karl $';
-my $lastchdate = '$Date: 2021-08-03 23:55:56 +0200 (Tue, 03 Aug 2021) $';
+my $svnid = '$Id: fmtutil.pl 63934 2022-07-19 01:58:57Z preining $';
+my $lastchdate = '$Date: 2022-07-19 03:58:57 +0200 (Tue, 19 Jul 2022) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 60154 $';
+my $svnrev = '$Revision: 63934 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -808,6 +808,13 @@ sub rebuild_one_format {
   if ($opts{"dry-run"}) {
     print_info("would copy log file to: $destdir/$logfile\n");
   } else {
+    # Add the actual invocation to the end of the log file
+    if (open(my $fd, ">>", $logfile)) {
+      print $fd "# actual command line used during this run\n# $cmdline\n";
+      close($fd);
+    } else {
+      print_deferred_error("cannot append cmdline to log file");
+    }
     # Here and in the following we use copy instead of move
     # to make sure that in SElinux enabled cases the rules of
     # the destination directory are applied.
