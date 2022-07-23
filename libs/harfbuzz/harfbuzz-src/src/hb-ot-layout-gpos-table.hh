@@ -29,12 +29,9 @@
 #ifndef HB_OT_LAYOUT_GPOS_TABLE_HH
 #define HB_OT_LAYOUT_GPOS_TABLE_HH
 
-#include "OT/Layout/GPOS.hh"
+#include "OT/Layout/GPOS/GPOS.hh"
 
 namespace OT {
-
-using Layout::GPOS_impl::PosLookup;
-
 namespace Layout {
 namespace GPOS_impl {
 
@@ -74,5 +71,6 @@ inline bool PosLookup::dispatch_recurse_func<hb_ot_apply_context_t> (hb_ot_apply
 } /* namespace GPOS_impl */
 } /* namespace Layout */
 } /* namespace OT */
+
 
 #endif /* HB_OT_LAYOUT_GPOS_TABLE_HH */

@@ -166,14 +166,18 @@ HB_DEFINE_VTABLE (unicode_funcs);
 
 } // namespace hb
 
+/* Workaround for GCC < 7, see:
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56480
+ * https://stackoverflow.com/a/25594741 */
 namespace std {
+
 
 template<typename T>
 struct hash<hb::shared_ptr<T>>
 {
-    size_t operator()(const hb::shared_ptr<T>& v) const noexcept
+    std::size_t operator()(const hb::shared_ptr<T>& v) const noexcept
     {
-        size_t h = hash<decltype (v.get ())>{}(v.get ());
+        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
         return h;
     }
 };
@@ -181,12 +185,13 @@ struct hash<hb::shared_ptr<T>>
 template<typename T>
 struct hash<hb::unique_ptr<T>>
 {
-    size_t operator()(const hb::unique_ptr<T>& v) const noexcept
+    std::size_t operator()(const hb::unique_ptr<T>& v) const noexcept
     {
-        size_t h = hash<decltype (v.get ())>{}(v.get ());
+        std::size_t h = std::hash<decltype (v.get ())>{}(v.get ());
         return h;
     }
 };
+
 
 } // namespace std
 

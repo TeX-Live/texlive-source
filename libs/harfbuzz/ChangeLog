@@ -1,6 +1,11 @@
+2022-07-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import harfbuzz-5.0.1.
+	* version.ac, Makefile.am: Adjusted.
+
 2022-07/18  Andreas Scherer  <andreas_github@freenet.de>
 
-	Add a patch 0001-Fix-harfbuzz-4.4.1-for-older-g for older gcc.
+	Add a patch 0001-Fix-harfbuzz-4.4.1-for-older-g.patch for older gcc.
 
 2022-06-30  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 

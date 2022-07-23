@@ -1,3 +1,10 @@
+2022-07-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Imported harfbuzz-5.0.1 source tree from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/5.0.1/
+	* 0001-Fix-harfbuzz-4.4.1-for-older-g.patch: Remove.
+	* 0002-Fix-dispatch_recurse_func-for-older-g.patch: Remove.
+
 2022-07-18  Andreas Scherer  <andreas_github@freenet.de>
 
 	* 0001-Fix-harfbuzz-4.4.1-for-older-g.patch,

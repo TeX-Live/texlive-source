@@ -80,6 +80,7 @@ include (FindPythonInterp)
 ## Functions and headers
 include (CheckFunctionExists)
 include (CheckIncludeFile)
+include (CheckIncludeFiles)
 macro (check_funcs) # Similar to AC_CHECK_FUNCS of autotools
   foreach (func_name ${ARGN})
     string(TOUPPER ${func_name} definition_to_add)
@@ -308,9 +309,16 @@ if (WIN32 AND HB_HAVE_UNISCRIBE)
 endif ()
 
 if (WIN32 AND HB_HAVE_DIRECTWRITE)
+  if (CMAKE_VERSION VERSION_GREATER 3.12)
+    check_include_files("windows.h;dwrite_1.h" HAVE_DWRITE_1_H LANGUAGE CXX)
+  else ()
+    check_include_files("windows.h;dwrite_1.h" HAVE_DWRITE_1_H)
+  endif ()
+  if (NOT HAVE_DWRITE_1_H)
+    message(FATAL_ERROR "DirectWrite was enabled explicitly, but required header is missing")
+  endif ()
   add_definitions(-DHAVE_DIRECTWRITE)
   list(APPEND project_headers ${PROJECT_SOURCE_DIR}/src/hb-directwrite.h)
-  list(APPEND THIRD_PARTY_LIBS dwrite rpcrt4)
 endif ()
 
 if (HB_HAVE_GOBJECT)
@@ -426,7 +434,7 @@ target_include_directories(harfbuzz PUBLIC
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/harfbuzz>")
 if (HB_HAVE_FREETYPE AND TARGET freetype)
-  target_link_libraries(harfbuzz PUBLIC freetype)
+  target_link_libraries(harfbuzz freetype)
 endif ()
 
 
