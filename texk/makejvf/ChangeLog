@@ -1,3 +1,8 @@
+2022-07-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uniblock.c, main.c: Update references Unicode blocks Blocks-15.0.0.txt.
+	* version.h, configure.ac: Bump version to 20220723.
+
 2022-05-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* write.c: The DESIGNSIZE of output VF should be consistent with
@@ -8,7 +13,7 @@
 
 	* uniblock.c, main.c: Update references Unicode blocks Blocks-14.0.0.txt.
 	* COPYRIGHT: Update copyright year.
-	* version.h, configure{,.ac}: Bump version to 20220121.
+	* version.h, configure.ac: Bump version to 20220121.
 
 2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
@@ -23,7 +28,7 @@
 
 	* main.c, write.c, makejvf.h:
 	Add -O option: Omit entries in VF for characters with default metric.
-	* version.h, configure{,.ac}: Bump version.
+	* version.h, configure.ac: Bump version.
 	* tests/skipjfmp_omit.vf: New test files.
 	* Makefile.am, makejvf.test: Add new tests.
 	Thanks to @aminophen for help.
