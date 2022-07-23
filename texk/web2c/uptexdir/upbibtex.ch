@@ -3,7 +3,7 @@
 @d banner=='This is pBibTeX, Version 0.99d-j0.35'
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.35-u1.28'
+@d banner=='This is upBibTeX, Version 0.99d-j0.35-u1.29'
 @z
 
 @x
@@ -553,7 +553,7 @@ function is_char_kanji_upbibtex(@!c:integer):boolean;
 label exit;
 var k:integer;
 begin
-  { based on upTeX-1.28 kcatcode status: 16,17,19->true / 15,18->false }
+  { based on upTeX-1.29 kcatcode status: 16,17,19->true / 15,18->false }
   is_char_kanji_upbibtex := true;
   if (is_internalUPTEX) then begin { should be in sync with |kcat_code| of uptex-m.ch }
     k := kcatcodekey(c);
@@ -570,8 +570,8 @@ begin
     else if k=@"93 then return { Hangul Syllables }
     else if k=@"94 then return { Hangul Jamo Extended-B }
     else if k=@"99 then return { CJK Compatibility Ideographs }
-    else if (k>=@"10A)and(k<=@"10D) then return { Kana Extended-B .. Small Kana Extension }
-    else if (k>=@"135)and(k<=@"13B) then return { CJK Unified Ideographs Extension B .. G }
+    else if (k>=@"10D)and(k<=@"110) then return { Kana Extended-B .. Small Kana Extension }
+    else if (k>=@"13B)and(k<=@"142) then return { CJK Unified Ideographs Extension B .. H }
     else if k=@"1FE then return { Fullwidth digit and latin alphabet }
     else if k=@"1FF then return; { Halfwidth katakana }
     end
