@@ -256,6 +256,7 @@ EOF
     exit $?
     ;;
   cl | *[/\\]cl | cl.exe | *[/\\]cl.exe | \
+  clang-cl | *[/\\]clang-cl | clang-cl.exe | *[/\\]clang-cl.exe | \
   icl | *[/\\]icl | icl.exe | *[/\\]icl.exe )
     func_cl_wrapper "$@"      # Doesn't return...
     ;;
