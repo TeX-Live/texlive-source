@@ -1,3 +1,6 @@
+2022-07-31  Luigi Scarso <luigi.scarso@gmail.com>
+    * Fixed loading .tex when  --output-directory is enabled
+
 2022-07-30  Luigi Scarso <luigi.scarso@gmail.com>
     * Backtrack replace pointer when successive disc in exceptions  (H.Hagen)
 
