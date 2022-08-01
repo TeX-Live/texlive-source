@@ -162,6 +162,7 @@ EXTRA_DIST += harfbuzz-subset.pc.in
 
 harfbuzz-subset.cc: Makefile.sources
 	$(AM_V_GEN) \
+	LANG=C; \
 	for f in \
 		$(HB_BASE_sources) \
 		$(HB_SUBSET_sources) \
@@ -295,6 +296,7 @@ $(srcdir)/%.hh: $(srcdir)/%.rl
 
 harfbuzz.cc: Makefile.sources
 	$(AM_V_GEN) \
+	LANG=C; \
 	for f in \
 		$(HB_BASE_sources) \
 		$(HB_GLIB_sources) \
@@ -411,7 +413,7 @@ test_priority_queue_SOURCES = test-priority-queue.cc hb-static.cc
 test_priority_queue_CPPFLAGS = $(HBCFLAGS)
 test_priority_queue_LDADD = libharfbuzz.la $(HBLIBS)
 
-test_repacker_SOURCES = test-repacker.cc hb-static.cc
+test_repacker_SOURCES = test-repacker.cc hb-static.cc graph/gsubgpos-context.cc
 test_repacker_CPPFLAGS = $(HBCFLAGS)
 test_repacker_LDADD = libharfbuzz.la libharfbuzz-subset.la $(HBLIBS)
 

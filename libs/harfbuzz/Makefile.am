@@ -134,7 +134,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
-	@HARFBUZZ_TREE@/src/hb-subset-repacker.cc \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \
 	@HARFBUZZ_TREE@/src/hb-ucd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ucd.cc \
