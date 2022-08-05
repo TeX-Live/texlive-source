@@ -1,3 +1,6 @@
+2022-08-05  Luigi Scarso <luigi.scarso@gmail.com> 
+     * Fixed a missed lua_settop in lua_appendtovlist_callback() (thanks to Hironori KITAGAWA)
+
 2022-07-31  Luigi Scarso <luigi.scarso@gmail.com>
     * Fixed loading .tex when  --output-directory is enabled
 
