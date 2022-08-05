@@ -176,7 +176,13 @@ in the LaTeX log file:
    is indented to start after the end of the first, as in the example
    above. If the content of a line does not fit, a part of it (the
    beginning for the first line and the end for the second line) may
-   be replaced by "...".
+   be replaced by "...". error_line must be < 255 and half_error_line
+   must be < error_line -15. If error_line >= max_print_line or
+   half_error_line >= max_print_line, TeX does line wrapping as usual
+   (see below). If either is exactly max_print_line (which is true
+   for the default values), things get confusing, so TeX may add a
+   blank line when wrapping.
+
 
    LaTeX errors usually follow the format
 
@@ -620,10 +626,8 @@ function moreData()
   while Lines:numLines() < 15 do
       tmp = logfile:read("*line")
       if tmp == nil then break end
-      -- We *need* to remove blank lines here because
-      -- sometimes a wrapped line is followed by a blank
-      -- line, which messes our detection of wrapped lines.
-      if tmp ~= "" then Lines:append(tmp) end
+      -- Do not skip blank lines here, we need to do it in Lines:append()
+      Lines:append(tmp)
   end
 
   -- proceed to the next line
@@ -743,6 +747,9 @@ function initializeGlobals()
   -- When we detect one of the many "please rerun LaTeX"
   -- messages, this is set to true (used in showSummary)
   SHOULD_RERUN_LATEX = false
+
+  -- If there were parse errors, we should say so in showSummary
+  PARSE_ERROR = false
 
   -- Did we detect any error messages?
   ERRORS_DETECTED = false
@@ -898,42 +905,7 @@ function detectEngine()
   Lines:append(line)
 end
 
-function processCommandLine(args)
-  HEARTBEAT = true
-  PAGE_DELAY = true
-  ONLY_SUMMARY = false
-  SHOW_SUMMARY = true
-  SHOW_SHIPOUTS = false
-  RAW = false
-  SILENCE_REPETITIONS = true
-  MINLEVEL = WARNING
-  BE_REDUNDANT = false
-  FILE_BANNER = true
-  DETAILED_UNDEROVER_SUMMARY = true
-  DETAILED_REFERENCE_SUMMARY = true
-  DETAILED_CITATION_SUMMARY = true
-
-  COLOR = false
-
-  SILENCE_STRINGS = {}
-  SILENCE_PKGS = {} -- just the package names
-  SEMISILENCE_FILES = {} -- filenames (without leading path), file globs work
-  SILENCE_FILES_RECURSIVE = {} -- same
-
-  -- The user may redefine the severity level of some messages.
-  FORCED_DEBUG = {}
-  FORCED_INFO = {}
-  FORCED_WARNING = {}
-  FORCED_CRITICAL = {}
-
-  -- "-l level -c configFile"
-  local optionsWithArgs = "lc"
-  local vars = simpleGetopt(args, optionsWithArgs)
-
-  --help
-  -- "-h"
-  if vars.help or vars.h then
-      local msg = [[
+helpmsg = [[
 Usage: texlogsieve [OPTION]... [INPUT FILE]
 texlogsieve reads a LaTeX log file (or the standard input), filters
 out less relevant messages, and displays a summary report.
@@ -994,23 +966,60 @@ Options:
                                          text EXCERPT to CRITICAL; can be used
                                          multiple times
   -c cfgfile, --config-file=cfgfile      read options from given config file
-                                         in addition to texlogsieverc
+                                         in addition to default config files
+  -v, --verbose                          Display info on texlogsieve config
   -h, --help                             give this help list
   --version                              print program version]]
 
-      for _, line in ipairs(linesToTable(msg)) do print(line) end
+versionmsg = [[
+texlogsieve 1.3.0
+Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.]]
+
+function processCommandLine(args)
+  HEARTBEAT = true
+  PAGE_DELAY = true
+  ONLY_SUMMARY = false
+  SHOW_SUMMARY = true
+  SHOW_SHIPOUTS = false
+  RAW = false
+  SILENCE_REPETITIONS = true
+  MINLEVEL = WARNING
+  BE_REDUNDANT = false
+  FILE_BANNER = true
+  DETAILED_UNDEROVER_SUMMARY = true
+  DETAILED_REFERENCE_SUMMARY = true
+  DETAILED_CITATION_SUMMARY = true
+
+  COLOR = false
+
+  SILENCE_STRINGS = {}
+  SILENCE_PKGS = {} -- just the package names
+  SEMISILENCE_FILES = {} -- filenames (without leading path), file globs work
+  SILENCE_FILES_RECURSIVE = {} -- same
+
+  -- The user may redefine the severity level of some messages.
+  FORCED_DEBUG = {}
+  FORCED_INFO = {}
+  FORCED_WARNING = {}
+  FORCED_CRITICAL = {}
+
+  -- "-l level -c configFile"
+  local optionsWithArgs = "lc"
+  local vars = simpleGetopt(args, optionsWithArgs)
+
+  --help
+  -- "-h"
+  if vars.help or vars.h then
+      for _, line in ipairs(linesToTable(helpmsg)) do print(line) end
       os.exit(0)
   end
 
   --version
   if vars.version then
-      print("texlogsieve 1.2.0")
-      print("Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>")
-      print("License GPLv3+: GNU GPL version 3 or later "
-            .. "<https://gnu.org/licenses/gpl.html>.")
-      print("This is free software: you are free to change "
-            .. "and redistribute it.")
-      print("There is NO WARRANTY, to the extent permitted by law.")
+      for _, line in ipairs(linesToTable(versionmsg)) do print(line) end
       os.exit(0)
   end
 
@@ -1027,6 +1036,21 @@ Options:
 
   -- Add the default config file to the beginning of the list
   local filename = kpse.find_file('texlogsieverc')
+  if filename ~= nil then table.insert(configFileNames, 1, filename) end
+
+  if os.type == "unix" then
+      filename = kpse.find_file(os.getenv("HOME") .. "/.texlogsieverc")
+  else
+      -- https://docs.microsoft.com/en-us/windows/deployment/usmt/usmt-recognized-environment-variables
+      -- %LOCALAPPDATA% corresponds to C:\Users\<username>\AppData\Local .
+      filename = kpse.find_file(os.getenv("%LOCALAPPDATA%") .. "/texlogsieverc")
+      if filename == nil then
+          -- %APPDATA% is "C:\Users\<username>\AppData\Roaming" or
+          -- "C:\Documents and Settings\<username>\Application Data"
+          filename = kpse.find_file(os.getenv("%APPDATA%") .. "/texlogsieverc")
+      end
+  end
+
   if filename ~= nil then table.insert(configFileNames, 1, filename) end
 
   for _, filename in ipairs(configFileNames) do
@@ -1353,6 +1377,39 @@ Options:
   vars['set-to-level-critical'] = nil
 
 
+  --verbose
+  -- "-v"
+  if vars['verbose'] or vars.v then
+      local msg = ""
+
+      for _, name in ipairs(configFileNames) do msg = msg .. name .. ", " end
+
+      if msg == "" then
+          print("texlogsieve: no config files, using defaults")
+      else
+          msg = string.sub(msg, 1, -3)
+          print("texlogsieve: using config files: " .. msg)
+      end
+
+      msg = "texlogsieve: minlevel is "
+      if     MINLEVEL == 0 then msg = msg .. 'DEBUG'
+      elseif MINLEVEL == 1 then msg = msg .. 'INFO'
+      elseif MINLEVEL == 2 then msg = msg .. 'WARNING'
+      elseif MINLEVEL == 3 then msg = msg .. 'CRITICAL'
+      else                      msg = msg .. 'UNKNOWN'
+      end
+
+      print(msg)
+
+      if RAW then
+          print("texlogsieve: using raw (unwrap-only) mode")
+      end
+  end
+
+  vars['verbose'] = nil
+  vars.v = nil
+
+
   local unknown_options = false
   for k, v in pairs(vars) do
       print('    texlogsieve: unknown option "' .. k .. '"')
@@ -1581,13 +1638,13 @@ function finishProcessingMessages()
 end
 
 function showFileBanner(msg)
+  if msg.filename == "DUMMY" then PARSE_ERROR = true end
+
   if not FILE_BANNER then return end
 
   if msg.filename ~= nil
                 and msg.filename ~= ""
                 and msg.filename ~= lastFileBanner
-                -- TODO: "DUMMY" should never happen, but
-                --       what should we do if it does?
   then
       lastFileBanner = msg.filename
       local txt = "From file " .. msg.filename .. ":"
@@ -1674,7 +1731,7 @@ end
 function showSummary()
   local somethingInSummary = false
 
-  if SHOULD_RERUN_LATEX or ERRORS_DETECTED then
+  if SHOULD_RERUN_LATEX or ERRORS_DETECTED or PARSE_ERROR then
       somethingInSummary = true
   else
       for _, summary in ipairs(summaries) do
@@ -1711,6 +1768,15 @@ function showSummary()
 
   if SHOULD_RERUN_LATEX then
       local txt = "** LaTeX says you should rerun **"
+      if COLOR then txt = red(txt) end
+      print(txt)
+      print()
+  end
+
+  if PARSE_ERROR then
+      local txt = "** texlogsieve got confused during log processing **" ..
+                  "\n" .. "   messages may be missing or filenames may be" ..
+                  "\n" .. "   incorrect, check the LaTeX logfile directly"
       if COLOR then txt = red(txt) end
       print(txt)
       print()
@@ -2169,8 +2235,10 @@ function fpHandler:process()
       else
           -- This should never happen, but if it does
           -- we will probably end up in an endless loop
-          io.stderr:write("    texlogsieve: parsing error in "
-                               .. "fpHandler:process()\n")
+          io.stderr:write("    texlogsieve: parsing error near input line "
+                               .. Lines.linenum .. " (fpHandler:process)\n")
+
+          PARSE_ERROR = true
 
           dispatch(self.message)
           self.message = nil
@@ -2199,8 +2267,10 @@ function fpHandler:processClose(last)
   Lines:handledChars(last)
 
   if self.stack:pop() == nil then
-      io.stderr:write("    texlogsieve: parsing error in "
-                       .. "fpHandler:processClose()\n")
+      io.stderr:write("    texlogsieve: parsing error near input line "
+                           .. Lines.linenum .. " (fpHandler:processClose)\n")
+
+      PARSE_ERROR = true
   end
 
   if self.stack:empty() then
@@ -2276,8 +2346,11 @@ function underOverFullBoxHandler:handleFirstLine()
   end
 
   if last == nil then
-      io.stderr:write("    texlogsieve: parsing error in "
-                       .. "underOverFullBoxHandler:handleFirstLine()\n")
+      io.stderr:write("    texlogsieve: parsing error near input line "
+                           .. Lines.linenum
+                           .. " (underOverFullBoxHandler:handleFirstLine)\n")
+
+      PARSE_ERROR = true
 
       self.doit = self.handleFirstLine
       dispatch(self.message)
@@ -2439,8 +2512,11 @@ function stringsHandler:handleLines()
   for _, val in ipairs(tmp) do table.insert(self.captures, val) end
 
   if last == nil then
-      io.stderr:write("    texlogsieve: parsing error in "
-                       .. "stringsHandler:handleLines()\n")
+      io.stderr:write("    texlogsieve: parsing error near input line "
+                           .. Lines.linenum
+                           .. " (stringsHandler:handleLines)\n")
+
+      PARSE_ERROR = true
 
       dispatch(self.message)
       self.message = nil
@@ -3570,9 +3646,11 @@ function openParensHandler:doit()
       flushUnrecognizedMessages()
       local last = unwrapUntilStringMatches(data.filename)
       if last == nil then
-          io.stderr:write("    texlogsieve: parsing error in "
-                           .. "openParensHandler:doit()\n")
+          io.stderr:write("    texlogsieve: parsing error near input line "
+                               .. Lines.linenum
+                               .. " (openParensHandler:doit)\n")
 
+          PARSE_ERROR = true
       else
           Lines:handledChars(last)
       end
@@ -3772,9 +3850,11 @@ function openSquareBracketHandler:doit()
       flushUnrecognizedMessages()
       local last = unwrapUntilStringMatches(data.latexPage)
       if last == nil then
-          io.stderr:write("    texlogsieve: parsing error in "
-                           .. "openSquareBracketHandler:doit()\n")
+          io.stderr:write("    texlogsieve: parsing error near input line "
+                               .. Lines.linenum
+                               .. " (openSquareBracketHandler:doit)\n")
 
+          PARSE_ERROR = true
       else
           Lines:handledChars(last)
       end
@@ -3993,9 +4073,11 @@ function utf8FontMapHandler:handleSecondLine()
   -- "processing UTF-8 mapping" - this should never happen
   dispatch(self.message)
   self.message = nil
-  io.stderr:write("    texlogsieve: parsing error in "
-                   .. "utf8FontMapHandler:handleSecondLine()\n")
+  io.stderr:write("    texlogsieve: parsing error near input line "
+                       .. Lines.linenum
+                       .. " (utf8FontMapHandler:handleSecondLine)\n")
 
+  PARSE_ERROR = true
   Lines:handledChars()
   self.doit = self.handleFirstLine
   return true
@@ -4025,9 +4107,11 @@ function utf8FontMapHandler:handleOtherLines()
       dispatch(self.message)
       self.message = nil
       flushUnrecognizedMessages()
-      io.stderr:write("    texlogsieve: parsing error in "
-                       .. "utf8FontMapHandler:handleOtherLines()\n")
+      io.stderr:write("    texlogsieve: parsing error near input line "
+                           .. Lines.linenum
+                           .. " (utf8FontMapHandler:handleOtherLines)\n")
 
+      PARSE_ERROR = true
       self.numTries = 0
       self.foundOtherLines = false
       self.doit = self.handleFirstLine
@@ -4972,8 +5056,8 @@ function SummaryPrototype:pageAndFileList(messages)
             if files[msg.filename] == nil then
                 files[msg.filename] = {}
             end
-            if msg.linenum ~= "" then
-                table.insert(files[msg.filename], msg.linenum)
+            if tonumber(msg.linenum) then
+                table.insert(files[msg.filename], tonumber(msg.linenum))
             end
         end
     end
@@ -5146,22 +5230,6 @@ end
 
 unusedLabelsSummary = citationsSummary:new()
 unusedLabelsSummary.header = 'Unused labels:'
-
-function unusedLabelsSummary:processSingleMessageList(messages)
-  local text = ""
-  local pages, files = self:pageAndFileList(messages)
-  local key = messages[1].key
-  if key == "" then key = '???' end
-
-  if self:detailed() then
-      if COLOR then key = red(key) end
-      text = key .. ' in ' .. pages .. " (" .. files .. ")"
-  else
-      text = key
-  end
-
-  return text
-end
 
 
 -- This is a little different from the others; we do not want to
@@ -5368,6 +5436,66 @@ end
 
 function Stack:empty()
     return #self == 0
+end
+
+
+--[[ ##### QUEUE ##### ]]--
+-- Adapted from https://www.lua.org/pil/11.4.html (in 2022)
+-- We use this for the input line counter
+
+Queue = {}
+
+function Queue:new()
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+  o.first = 0
+  o.last = -1
+  return o
+end
+
+function Queue:pushleft(val)
+  self.first = self.first -1
+  self[self.first] = val
+end
+
+function Queue:pushright(val)
+  self.last = self.last +1
+  self[self.last] = val
+end
+
+function Queue:popleft()
+  if self.first > self.last then return nil end
+  local val = self[self.first]
+  self[self.first] = nil
+  self.first = self.first +1
+  return val
+end
+
+function Queue:popright()
+  if self.first > self.last then return nil end
+  local val = self[self.last]
+  self[self.last] = nil
+  self.last = self.last -1
+  return val
+end
+
+function Queue:peekleft()
+  if self.first > self.last then return nil end
+  return self[self.first]
+end
+
+function Queue:peekright()
+  if self.first > self.last then return nil end
+  return self[self.last]
+end
+
+function Queue:size()
+  return self.last - self.first +1
+end
+
+function Queue:empty()
+    return self.first > self.last
 end
 
 
@@ -5644,11 +5772,19 @@ original length was max_print_line characters).
 
 Lines = {}
 Lines.wrapped = {} -- memoization
+Lines.linenum = 0
+Lines.blankLines = Queue:new()
 
 function Lines:gotoNextLine()
   self.current = table.remove(self, 1)
   self.currentWrapped = table.remove(self.wrapped, 1)
   self.atBeginningOfLine = true
+
+  self.linenum = self.linenum +1
+  -- blank lines have to be counted too
+  if not self.blankLines:empty() then
+      self.linenum = self.linenum + self.blankLines:popleft()
+  end
 
   -- When unwrapping lines, we need to check whether a line is of
   -- the "right" size. However, we modify the content of currentLine
@@ -5691,8 +5827,23 @@ function Lines:len(n)
 end
 
 function Lines:append(x)
-    table.insert(self, x)
-    table.insert(self.wrapped, "unknown") -- cannot use "nil"
+    -- We *need* to remove blank lines here because sometimes a wrapped
+    -- line is followed by a blank line, which messes our detection of
+    -- wrapped lines. However, the line we skip here is not the line we
+    -- are processing right now; we will encounter it in the future. So,
+    -- to keep line numbers right, we need to adjust the count later too.
+    if x == "" then
+        if not self.blankLines:empty() then
+            self.blankLines:pushright(self.blankLines:popright() +1)
+        else
+            self.blankLines:pushright(1)
+        end
+    else
+        self.blankLines:pushright(0)
+
+        table.insert(self, x)
+        table.insert(self.wrapped, "unknown") -- cannot use "nil"
+    end
 end
 
 function Lines:get(n)
@@ -5847,9 +5998,11 @@ function unwrapUntilPatternMatches(pat)
       if Lines:seemsWrapped() then
           Lines:unwrapOneLine()
       else
-          io.stderr:write("    texlogsieve: parsing error in "
-                           .. "unwrapUntilPatternMatches()\n")
+          io.stderr:write("    texlogsieve: parsing error near input line "
+                               .. Lines.linenum
+                               .. " (unwrapUntilPatternMatches)\n")
 
+          PARSE_ERROR = true
           break
       end
   end
@@ -6008,9 +6161,10 @@ function guessQuotedFilename(line, position)
 
       -- no closing quote or the line is too short; can we unwrap this line?
       if not Lines:seemsWrapped(position) then
-          io.stderr:write("    texlogsieve: parsing error in "
-                           .. "guessQuotedFilename()\n")
+          io.stderr:write("    texlogsieve: parsing error near input line "
+                               .. Lines.linenum .. " (guessQuotedFilename)\n")
 
+          PARSE_ERROR = true
           return true, nil
       end
 
