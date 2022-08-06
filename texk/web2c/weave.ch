@@ -325,6 +325,89 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
+@x [148] Purify 'reduce' and 'squash'.
+@d production(#)==@!debug prod(#) gubed; goto found
+@d reduce(#)==red(#); production
+@d production_end(#)==@!debug prod(#) gubed; goto found;
+  end
+@d squash(#)==begin sq(#); production_end
+@y
+@d production(#)==@!debug prod(#) gubed; goto found; end
+@d reduce(#)==begin red(#); production
+@d squash(#)==begin sq(#); production
+@z
+
+@x [151] Special case 'k=0'.
+else if cat[pp+1]=simp then squash(pp+1,1,math,0)(4)
+@y
+else if cat[pp+1]=simp then reduce(pp+1,0,math,0)(4)
+@z
+
+@x [157] Special case 'k=0'.
+squash(pp,1,intro,-3)(14)
+@y
+reduce(pp,0,intro,-3)(14)
+@z
+
+@x [161] Special case 'k=0'.
+else squash(pp,1,simp,-2)(25)
+@y
+else reduce(pp,0,simp,-2)(25)
+@z
+
+@x [162] Special case 'k=0'.
+else if cat[pp+1]=simp then squash(pp+1,1,math,0)(35)
+@y
+else if cat[pp+1]=simp then reduce(pp+1,0,math,0)(35)
+@z
+
+@x [166] Special case 'k=0'.
+squash(pp,1,terminator,-3)(42)
+@y
+reduce(pp,0,terminator,-3)(42)
+@z
+
+@x [167] Special case 'k=0'.
+if cat[pp+1]=close then squash(pp,1,stmt,-2)(43)
+@y
+if cat[pp+1]=close then reduce(pp,0,stmt,-2)(43)
+@z
+
+@x
+  begin app(force); app(backup); app2(pp); reduce(pp,2,intro,-3)(44);
+@y
+  begin app(force); app(backup); squash(pp,2,intro,-3)(44);
+@z
+
+@x [169] Special case 'k=0'.
+squash(pp,1,stmt,-2)(50)
+@y
+reduce(pp,0,stmt,-2)(50)
+@z
+
+@x [170] Special case 'k=0'.
+if cat[pp+1]=beginning then squash(pp,1,stmt,-2)(51)
+@y
+if cat[pp+1]=beginning then reduce(pp,0,stmt,-2)(51)
+@z
+
+@x [172] Move special case 'k=1' from 'squash' to special case 'k=0' here.
+scrap list.
+@y
+scrap list.  This procedure takes advantage of the simplification that
+occurs when |k=0|.
+@z
+
+@x
+begin cat[j]:=c; trans[j]:=text_ptr; freeze_text;
+@y
+begin cat[j]:=c;
+if k>0 then
+  begin
+    trans[j]:=text_ptr; freeze_text;
+  end;
+@z
+
 @x [172] Fix spacing.
 @<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>;
 @y
@@ -337,6 +420,34 @@ if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @ @<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>=
 @z
 
+@x [174] Rewrite 'squash' to match description in section [148].
+@ Similarly, the `|squash|' macro invokes a procedure called `|sq|'. This
+procedure takes advantage of the simplification that occurs when |k=1|.
+@y
+@ Similarly, the `|squash|' macro invokes a procedure called `|sq|', which
+combines |app|${}_k$ and |red| for matching numbers~|k|.
+@z
+
+@x
+var i:0..max_scraps; {index into scrap memory}
+begin if k=1 then
+  begin cat[j]:=c; @<Change |pp|...@>;
+  end
+else  begin for i:=j to j+k-1 do
+    begin app1(i);
+    end;
+  red(j,k,c,d);
+  end;
+@y
+begin
+  case k of
+  1: begin app1(j);@+ end;
+  2: begin app2(j);@+ end;
+  3: begin app3(j);@+ end;
+  othercases confusion('squash')
+  endcases;@/
+  red(j,k,c,d);
+@z
 @x [239] omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y

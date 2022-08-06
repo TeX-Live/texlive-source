@@ -1,3 +1,7 @@
+2022-08-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.ch: Rewrite 'squash' to match description in section 148.
+
 2022-07-16  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (25.369, <Suppress expansion ...>): disallow
