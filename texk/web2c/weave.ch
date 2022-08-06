@@ -373,7 +373,7 @@ if cat[pp+1]=close then squash(pp,1,stmt,-2)(43)
 if cat[pp+1]=close then reduce(pp,0,stmt,-2)(43)
 @z
 
-@x
+@x [167] Apply 'squash(...,2,...)'.
   begin app(force); app(backup); app2(pp); reduce(pp,2,intro,-3)(44);
 @y
   begin app(force); app(backup); squash(pp,2,intro,-3)(44);
@@ -448,6 +448,7 @@ begin
   endcases;@/
   red(j,k,c,d);
 @z
+
 @x [239] omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y
