@@ -1,3 +1,7 @@
+2022-08-16  Luigi Scarso <luigi.scarso@gmail.com> 
+     * Accent 0xFFFD but still error on invalid utf (compatible) (H.Hagen)
+     * omitinfodict added: \pdfvariable omitinfodict 1 omit Info dicttionary (H.Hagen)
+
 2022-08-05  Luigi Scarso <luigi.scarso@gmail.com> 
      * Fixed a missed lua_settop in lua_appendtovlist_callback() (thanks to Hironori KITAGAWA)
 
