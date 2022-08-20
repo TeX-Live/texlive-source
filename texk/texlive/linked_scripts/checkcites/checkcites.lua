@@ -372,8 +372,8 @@ backends.biber = function(lines, _)
   local citations, bibliography = {}, {}
   local asterisk, parts, hit = false
   for _, line in ipairs(lines) do
-    hit = string.match(line, '^%s*<bcf:citekey order="%d+">' ..
-          '(.+)</bcf:citekey>$')
+    hit = string.match(line, '^%s*<bcf:citekey order="%d+" ' ..
+          'intorder="%d+">(.+)</bcf:citekey>$')
     if hit then
       if hit ~= '*' then
         parts = split(hit, '[^,%s]+')
@@ -486,7 +486,7 @@ print("|  _|   | -_|  _| '_|  _| |  _| -_|_ -|")
 print("|___|_|_|___|___|_,_|___|_|_| |___|___|")
 print()
   print(wrap('checkcites.lua -- a reference ' ..
-             'checker script (v2.5)', 74))
+             'checker script (v2.6)', 74))
   print(wrap('Copyright (c) 2012, 2019, Enrico Gregorio, Paulo Cereda', 74))
   print(wrap('Copyright (c) 2022, Enrico Gregorio, Island of TeX', 74))
 end
@@ -670,8 +670,8 @@ local function checkcites(args)
   if keys['version'] or keys['help'] then
     if keys['version'] then
       print()
-      print(wrap('checkcites.lua, version 2.5 (dated March ' ..
-                 '22, 2022)', 74))
+      print(wrap('checkcites.lua, version 2.6 (dated August ' ..
+                 '20, 2022)', 74))
 
       print(pad('-', 74))
       print(wrap('You can find more details about this ' ..
