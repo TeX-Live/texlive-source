@@ -1,3 +1,8 @@
+2022-08-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* help.h: New option '+u' for CTANGLE.
+
 2022-08-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Rewrite 'squash' to match description in section 148.

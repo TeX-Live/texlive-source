@@ -330,7 +330,7 @@ static boolean output_defs_seen= false;
 /*:52*//*57:*/
 #line 703 "ctangle.w"
 
-static char translit[128][translit_length];
+static char translit[0200][translit_length];
 
 /*:57*//*62:*/
 #line 779 "ctangle.w"
@@ -484,7 +484,7 @@ cur_out_file= end_output_files= output_files+max_files;
 
 {
 int i;
-for(i= 0;i<128;i++)sprintf(translit[i],"X%02X",(unsigned int)(128+i));
+for(i= 0;i<0200;i++)sprintf(translit[i],"X%02X",(unsigned int)(0200+i));
 }
 
 /*:58*//*63:*/
@@ -1607,7 +1607,7 @@ char*beg;
 sscanf(loc-3,"%x",&i);
 while(xisspace(*loc)&&loc<limit)loc++;
 beg= loc;
-while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||*loc=='_'))loc++;
+while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||isxalpha(*loc)))loc++;
 if(loc-beg>=translit_length)
 err_print("! Replacement string in @l too long");
 

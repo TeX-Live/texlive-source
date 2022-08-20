@@ -182,13 +182,13 @@ more logical than indenting them.) (Has no effect on \.{CTANGLE}.)
 \hfil\vskip\normallineskip
 \option l This option takes the string of characters to its right as its
 argument to switch between different user languages and macro packages.
-For example, if you call \.{CWEAVE} with the `\.{+ld}' (or `\.{-ld}') option,
-the German \.{CWEB} macros \.{dcwebmac.tex} will be loaded in the first line
-of output instead of the English ones. (Off by default.) (Has no effect on
-\.{CTANGLE}.)
+(Off by default.) (Has no effect on \.{CTANGLE}.)
 \hfil\vskip\normallineskip
 \option o Separate declarations and the first statement in a function block.
-(On by default.) (Has no effect on\break\hbox{}\qquad\.{CTANGLE}.)}
+(On by default.) (Has no effect on \.{CTANGLE}.)
+\hfil\vskip\normallineskip
+\option u Transliteration of UTF-8 multi-byte characters.
+(Off by default.) (Has no effect on \.{CWEAVE}.)}
 
 \yskip
 @z

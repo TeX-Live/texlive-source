@@ -142,6 +142,8 @@
 
 #define translit_length 10 \
 
+#define transliterate_utf_eight flags['u'] \
+
 #define ignore 00
 #define ord 0302
 #define control_text 0303
@@ -274,7 +276,7 @@ extern FILE*active_file;
 extern FILE*check_file;
 
 /*:15*//*116:*/
-#line 506 "cwebdir/ctang-w2c.ch"
+#line 555 "cwebdir/ctang-w2c.ch"
 
 extern char cb_banner[];
 
@@ -357,7 +359,7 @@ static boolean output_defs_seen= false;
 /*:52*//*57:*/
 #line 703 "cwebdir/ctangle.w"
 
-static char translit[128][translit_length];
+static char translit[0200][translit_length];
 
 /*:57*//*62:*/
 #line 779 "cwebdir/ctangle.w"
@@ -512,9 +514,10 @@ cur_out_file= end_output_files= output_files+max_files;
 
 {
 int i;
-for(i= 0;i<128;i++)sprintf(translit[i],"X%02X",(unsigned int)(128+i));
+for(i= 0;i<0200;i++)sprintf(translit[i],"X%02X",(unsigned int)(0200+i));
 }
 
+#line 180 "cwebdir/ctang-w2c.ch"
 /*:58*//*63:*/
 #line 782 "cwebdir/ctangle.w"
 {
@@ -540,7 +543,7 @@ ccode['\'']= ord;
 section_text[0]= ' ';
 
 /*:78*//*117:*/
-#line 509 "cwebdir/ctang-w2c.ch"
+#line 558 "cwebdir/ctang-w2c.ch"
 
 strncpy(cb_banner,banner,max_banner-1);
 
@@ -754,11 +757,11 @@ writeloop:/*50:*/
 if(check_for_change){
 fclose(C_file);C_file= NULL;
 /*106:*/
-#line 389 "cwebdir/ctang-w2c.ch"
+#line 438 "cwebdir/ctang-w2c.ch"
 
 if((C_file= fopen(C_file_name,"r"))!=NULL){
 /*107:*/
-#line 396 "cwebdir/ctang-w2c.ch"
+#line 445 "cwebdir/ctang-w2c.ch"
 
 boolean comparison= false;
 
@@ -767,7 +770,7 @@ fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*108:*/
-#line 410 "cwebdir/ctang-w2c.ch"
+#line 459 "cwebdir/ctang-w2c.ch"
 
 do{
 char x[BUFSIZ],y[BUFSIZ];
@@ -777,17 +780,17 @@ comparison= (x_size==y_size)&&!memcmp(x,y,x_size);
 }while(comparison&&!feof(C_file)&&!feof(check_file));
 
 /*:108*/
-#line 403 "cwebdir/ctang-w2c.ch"
+#line 452 "cwebdir/ctang-w2c.ch"
 
 
 fclose(C_file);C_file= NULL;
 fclose(check_file);check_file= NULL;
 
 /*:107*/
-#line 391 "cwebdir/ctang-w2c.ch"
+#line 440 "cwebdir/ctang-w2c.ch"
 
 /*109:*/
-#line 421 "cwebdir/ctang-w2c.ch"
+#line 470 "cwebdir/ctang-w2c.ch"
 
 if(comparison)
 remove(check_file_name);
@@ -797,7 +800,7 @@ rename(check_file_name,C_file_name);
 }
 
 /*:109*/
-#line 392 "cwebdir/ctang-w2c.ch"
+#line 441 "cwebdir/ctang-w2c.ch"
 
 }else
 rename(check_file_name,C_file_name);
@@ -810,7 +813,7 @@ for(an_output_file= end_output_files;an_output_file> cur_out_file;){
 an_output_file--;
 sprint_section_name(output_file_name,*an_output_file);
 if(check_for_change)/*105:*/
-#line 380 "cwebdir/ctang-w2c.ch"
+#line 429 "cwebdir/ctang-w2c.ch"
 {
 if((C_file= fopen(output_file_name,"a"))==NULL)
 fatal(_("! Cannot open output file "),output_file_name);
@@ -841,14 +844,14 @@ flush_buffer();
 if(check_for_change){
 fclose(C_file);C_file= NULL;
 /*110:*/
-#line 434 "cwebdir/ctang-w2c.ch"
+#line 483 "cwebdir/ctang-w2c.ch"
 
 if(0==strcmp("/dev/stdout",output_file_name))
 /*112:*/
-#line 461 "cwebdir/ctang-w2c.ch"
+#line 510 "cwebdir/ctang-w2c.ch"
 {
 /*115:*/
-#line 492 "cwebdir/ctang-w2c.ch"
+#line 541 "cwebdir/ctang-w2c.ch"
 
 char in_buf[BUFSIZ+1];
 int in_size;
@@ -858,7 +861,7 @@ fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*:115*/
-#line 462 "cwebdir/ctang-w2c.ch"
+#line 511 "cwebdir/ctang-w2c.ch"
 
 do{
 in_size= fread(in_buf,sizeof(char),BUFSIZ,check_file);
@@ -867,7 +870,7 @@ fprintf(stdout,"%s",in_buf);
 }while(!feof(check_file));
 fclose(check_file);check_file= NULL;
 /*111:*/
-#line 451 "cwebdir/ctang-w2c.ch"
+#line 500 "cwebdir/ctang-w2c.ch"
 
 if(comparison)
 remove(check_file_name);
@@ -877,19 +880,19 @@ rename(check_file_name,output_file_name);
 }
 
 /*:111*/
-#line 469 "cwebdir/ctang-w2c.ch"
+#line 518 "cwebdir/ctang-w2c.ch"
 
 }
 
 /*:112*/
-#line 436 "cwebdir/ctang-w2c.ch"
+#line 485 "cwebdir/ctang-w2c.ch"
 
 else if(0==strcmp("/dev/stderr",output_file_name))
 /*113:*/
-#line 474 "cwebdir/ctang-w2c.ch"
+#line 523 "cwebdir/ctang-w2c.ch"
 {
 /*115:*/
-#line 492 "cwebdir/ctang-w2c.ch"
+#line 541 "cwebdir/ctang-w2c.ch"
 
 char in_buf[BUFSIZ+1];
 int in_size;
@@ -899,7 +902,7 @@ fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*:115*/
-#line 475 "cwebdir/ctang-w2c.ch"
+#line 524 "cwebdir/ctang-w2c.ch"
 
 do{
 in_size= fread(in_buf,sizeof(char),BUFSIZ,check_file);
@@ -908,7 +911,7 @@ fprintf(stderr,"%s",in_buf);
 }while(!feof(check_file));
 fclose(check_file);check_file= NULL;
 /*111:*/
-#line 451 "cwebdir/ctang-w2c.ch"
+#line 500 "cwebdir/ctang-w2c.ch"
 
 if(comparison)
 remove(check_file_name);
@@ -918,20 +921,20 @@ rename(check_file_name,output_file_name);
 }
 
 /*:111*/
-#line 482 "cwebdir/ctang-w2c.ch"
+#line 531 "cwebdir/ctang-w2c.ch"
 
 }
 
 /*:113*/
-#line 438 "cwebdir/ctang-w2c.ch"
+#line 487 "cwebdir/ctang-w2c.ch"
 
 else if(0==strcmp("/dev/null",output_file_name))
 /*114:*/
-#line 487 "cwebdir/ctang-w2c.ch"
+#line 536 "cwebdir/ctang-w2c.ch"
 {
 boolean comparison= true;
 /*111:*/
-#line 451 "cwebdir/ctang-w2c.ch"
+#line 500 "cwebdir/ctang-w2c.ch"
 
 if(comparison)
 remove(check_file_name);
@@ -941,17 +944,17 @@ rename(check_file_name,output_file_name);
 }
 
 /*:111*/
-#line 489 "cwebdir/ctang-w2c.ch"
+#line 538 "cwebdir/ctang-w2c.ch"
 
 }
 
 /*:114*/
-#line 440 "cwebdir/ctang-w2c.ch"
+#line 489 "cwebdir/ctang-w2c.ch"
 
 else{
 if((C_file= fopen(output_file_name,"r"))!=NULL){
 /*107:*/
-#line 396 "cwebdir/ctang-w2c.ch"
+#line 445 "cwebdir/ctang-w2c.ch"
 
 boolean comparison= false;
 
@@ -960,7 +963,7 @@ fatal(_("! Cannot open output file "),check_file_name);
 
 
 /*108:*/
-#line 410 "cwebdir/ctang-w2c.ch"
+#line 459 "cwebdir/ctang-w2c.ch"
 
 do{
 char x[BUFSIZ],y[BUFSIZ];
@@ -970,17 +973,17 @@ comparison= (x_size==y_size)&&!memcmp(x,y,x_size);
 }while(comparison&&!feof(C_file)&&!feof(check_file));
 
 /*:108*/
-#line 403 "cwebdir/ctang-w2c.ch"
+#line 452 "cwebdir/ctang-w2c.ch"
 
 
 fclose(C_file);C_file= NULL;
 fclose(check_file);check_file= NULL;
 
 /*:107*/
-#line 443 "cwebdir/ctang-w2c.ch"
+#line 492 "cwebdir/ctang-w2c.ch"
 
 /*111:*/
-#line 451 "cwebdir/ctang-w2c.ch"
+#line 500 "cwebdir/ctang-w2c.ch"
 
 if(comparison)
 remove(check_file_name);
@@ -990,7 +993,7 @@ rename(check_file_name,output_file_name);
 }
 
 /*:111*/
-#line 444 "cwebdir/ctang-w2c.ch"
+#line 493 "cwebdir/ctang-w2c.ch"
 
 }else
 rename(check_file_name,output_file_name);
@@ -1074,15 +1077,25 @@ case'\n':if(protect&&out_state!=verbatim)C_putc(' ');
 if(protect||out_state==verbatim)C_putc('\\');
 flush_buffer();if(out_state!=verbatim)out_state= normal;break;
 /*59:*/
-#line 712 "cwebdir/ctangle.w"
+#line 206 "cwebdir/ctang-w2c.ch"
 
+#line 713 "cwebdir/ctangle.w"
 case identifier:
 if(out_state==num_or_id)C_putc(' ');
 for(j= (cur_val+name_dir)->byte_start,k= (cur_val+name_dir+1)->byte_start;
 j<k;j++)
-if((eight_bits)(*j)<0200)C_putc(*j);
+#line 214 "cwebdir/ctang-w2c.ch"
+if(ishigh(*j)){
 
-else C_printf("%s",translit[(eight_bits)(*j)-0200]);
+if(transliterate_utf_eight){
+if((eight_bits)(*j)>=0360)j+= 3;
+else if((eight_bits)(*j)>=0340)j+= 2;
+else if((eight_bits)(*j)>=0300)j+= 1;
+}
+C_printf("%s",translit[(eight_bits)(*j)-0200]);
+}
+else C_putc(*j);
+#line 720 "cwebdir/ctangle.w"
 out_state= num_or_id;break;
 
 /*:59*/
@@ -1188,7 +1201,7 @@ if(loc> limit){
 if(is_long_comment){
 if(get_line())return comment_continues= true;
 else{
-#line 180 "cwebdir/ctang-w2c.ch"
+#line 229 "cwebdir/ctang-w2c.ch"
 err_print(_("! Input ended in mid-comment"));
 #line 853 "cwebdir/ctangle.w"
 
@@ -1203,7 +1216,7 @@ loc++;return comment_continues= false;
 }
 if(c=='@'){
 if(ccode[(eight_bits)*loc]==new_section){
-#line 186 "cwebdir/ctang-w2c.ch"
+#line 235 "cwebdir/ctang-w2c.ch"
 err_print(_("! Section name ended in mid-comment"));loc--;
 #line 866 "cwebdir/ctangle.w"
 
@@ -1311,13 +1324,13 @@ delim= *loc++;*++id_loc= delim;
 while(true){
 if(loc>=limit){
 if(*(limit-1)!='\\'){
-#line 192 "cwebdir/ctang-w2c.ch"
+#line 241 "cwebdir/ctang-w2c.ch"
 err_print(_("! String didn't end"));loc= limit;break;
 #line 1016 "cwebdir/ctangle.w"
 
 }
 if(get_line()==false){
-#line 198 "cwebdir/ctang-w2c.ch"
+#line 247 "cwebdir/ctang-w2c.ch"
 err_print(_("! Input ended in middle of string"));loc= buffer;break;
 #line 1020 "cwebdir/ctangle.w"
 
@@ -1337,7 +1350,7 @@ c= (eight_bits)*loc++;
 if(++id_loc<=section_text_end)*id_loc= (char)c;
 }
 if(id_loc>=section_text_end){
-#line 204 "cwebdir/ctang-w2c.ch"
+#line 253 "cwebdir/ctang-w2c.ch"
 fputs(_("\n! String too long: "),stdout);
 #line 1038 "cwebdir/ctangle.w"
 
@@ -1371,14 +1384,14 @@ else if(c=='@')/*75:*/
 
 switch(c= ccode[(eight_bits)*loc++]){
 case ignore:continue;
-#line 210 "cwebdir/ctang-w2c.ch"
+#line 259 "cwebdir/ctang-w2c.ch"
 case translit_code:err_print(_("! Use @l in limbo only"));continue;
 #line 1053 "cwebdir/ctangle.w"
 
 case control_text:while((c= skip_ahead())=='@');
 
 if(*(loc-1)!='>')
-#line 216 "cwebdir/ctang-w2c.ch"
+#line 265 "cwebdir/ctang-w2c.ch"
 err_print(_("! Double @ should be used in control text"));
 #line 1058 "cwebdir/ctangle.w"
 
@@ -1394,7 +1407,7 @@ char*k= section_text;
 
 while(true){
 if(loc> limit&&get_line()==false){
-#line 234 "cwebdir/ctang-w2c.ch"
+#line 283 "cwebdir/ctang-w2c.ch"
 err_print(_("! Input ended in section name"));
 #line 1120 "cwebdir/ctangle.w"
 
@@ -1410,13 +1423,13 @@ if(c=='>'){
 loc+= 2;break;
 }
 if(ccode[(eight_bits)c]==new_section){
-#line 246 "cwebdir/ctang-w2c.ch"
+#line 295 "cwebdir/ctang-w2c.ch"
 err_print(_("! Section name didn't end"));break;
 #line 1147 "cwebdir/ctangle.w"
 
 }
 if(ccode[(eight_bits)c]==section_name){
-#line 252 "cwebdir/ctang-w2c.ch"
+#line 301 "cwebdir/ctang-w2c.ch"
 err_print(_("! Nesting of section names not allowed"));break;
 #line 1151 "cwebdir/ctangle.w"
 
@@ -1434,7 +1447,7 @@ c= (eight_bits)' ';if(*(k-1)==' ')k--;
 *k= (char)c;
 }
 if(k>=section_text_end){
-#line 240 "cwebdir/ctang-w2c.ch"
+#line 289 "cwebdir/ctang-w2c.ch"
 fputs(_("\n! Section name too long: "),stdout);
 #line 1133 "cwebdir/ctangle.w"
 
@@ -1482,7 +1495,7 @@ case string:/*81:*/
 
 id_first= loc++;*(limit+1)= '@';*(limit+2)= '>';
 while(*loc!='@'||*(loc+1)!='>')loc++;
-#line 258 "cwebdir/ctang-w2c.ch"
+#line 307 "cwebdir/ctang-w2c.ch"
 if(loc>=limit)err_print(_("! Verbatim string didn't end"));
 #line 1165 "cwebdir/ctangle.w"
 
@@ -1501,7 +1514,7 @@ if(*++loc=='\'')loc++;
 while(*loc!='\''){
 if(*loc=='@'){
 if(*(loc+1)!='@')
-#line 222 "cwebdir/ctang-w2c.ch"
+#line 271 "cwebdir/ctang-w2c.ch"
 err_print(_("! Double @ should be used in ASCII constant"));
 #line 1082 "cwebdir/ctangle.w"
 
@@ -1509,7 +1522,7 @@ else loc++;
 }
 loc++;
 if(loc> limit){
-#line 228 "cwebdir/ctang-w2c.ch"
+#line 277 "cwebdir/ctang-w2c.ch"
 err_print(_("! String didn't end"));loc= limit-1;break;
 #line 1088 "cwebdir/ctangle.w"
 
@@ -1615,7 +1628,7 @@ char*try_loc= loc;
 while(*try_loc==' '&&try_loc<limit)try_loc++;
 if(*try_loc=='+'&&try_loc<limit)try_loc++;
 while(*try_loc==' '&&try_loc<limit)try_loc++;
-#line 294 "cwebdir/ctang-w2c.ch"
+#line 343 "cwebdir/ctang-w2c.ch"
 if(*try_loc=='=')err_print(_("! Missing `@ ' before a named section"));
 #line 1291 "cwebdir/ctangle.w"
 
@@ -1651,7 +1664,7 @@ store_id(a);
 
 }
 break;
-#line 282 "cwebdir/ctang-w2c.ch"
+#line 331 "cwebdir/ctang-w2c.ch"
 case output_defs_code:if(t!=section_name)err_print(_("! Misplaced @h"));
 #line 1263 "cwebdir/ctangle.w"
 
@@ -1690,7 +1703,7 @@ app_repl(a);
 while(id_first<id_loc){
 if(*id_first=='@'){
 if(*(id_first+1)=='@')id_first++;
-#line 300 "cwebdir/ctang-w2c.ch"
+#line 349 "cwebdir/ctang-w2c.ch"
 else err_print(_("! Double @ should be used in string"));
 #line 1308 "cwebdir/ctangle.w"
 
@@ -1744,7 +1757,7 @@ break;
 case'\\':c= '\\';break;
 case'\'':c= '\'';break;
 case'\"':c= '\"';break;
-#line 306 "cwebdir/ctang-w2c.ch"
+#line 355 "cwebdir/ctang-w2c.ch"
 default:err_print(_("! Unrecognized escape sequence"));
 #line 1357 "cwebdir/ctangle.w"
 
@@ -1764,7 +1777,7 @@ app_repl(constant);
 break;
 case definition:case format_code:case begin_C:if(t!=section_name)goto done;
 else{
-#line 288 "cwebdir/ctang-w2c.ch"
+#line 337 "cwebdir/ctang-w2c.ch"
 err_print(_("! @d, @f and @c are ignored in C text"));continue;
 #line 1281 "cwebdir/ctangle.w"
 
@@ -1780,7 +1793,7 @@ break;
 default:app_repl(a);
 }
 done:next_control= (eight_bits)a;
-#line 276 "cwebdir/ctang-w2c.ch"
+#line 325 "cwebdir/ctang-w2c.ch"
 if(text_ptr> text_info_end)overflow(_("text"));
 #line 1216 "cwebdir/ctangle.w"
 cur_text= text_ptr;(++text_ptr)->tok_start= tok_ptr;
@@ -1819,7 +1832,7 @@ if(next_control==definition){
 
 while((next_control= get_next())=='\n');
 if(next_control!=identifier){
-#line 312 "cwebdir/ctang-w2c.ch"
+#line 361 "cwebdir/ctang-w2c.ch"
 err_print(_("! Definition flushed, must start with identifier"));
 #line 1430 "cwebdir/ctangle.w"
 
@@ -1930,7 +1943,7 @@ while(xisspace(*loc)&&loc<limit)loc++;
 loc+= 3;
 if(loc> limit||!xisxdigit(*(loc-3))||!xisxdigit(*(loc-2))
 ||(*(loc-3)>='0'&&*(loc-3)<='7')||!xisspace(*(loc-1)))
-#line 332 "cwebdir/ctang-w2c.ch"
+#line 381 "cwebdir/ctang-w2c.ch"
 err_print(_("! Improper hex number following @l"));
 #line 1529 "cwebdir/ctangle.w"
 
@@ -1940,9 +1953,9 @@ char*beg;
 sscanf(loc-3,"%x",&i);
 while(xisspace(*loc)&&loc<limit)loc++;
 beg= loc;
-while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||*loc=='_'))loc++;
+while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||isxalpha(*loc)))loc++;
 if(loc-beg>=translit_length)
-#line 338 "cwebdir/ctang-w2c.ch"
+#line 387 "cwebdir/ctang-w2c.ch"
 err_print(_("! Replacement string in @l too long"));
 #line 1539 "cwebdir/ctangle.w"
 
@@ -1959,12 +1972,12 @@ case format_code:case'@':break;
 case control_text:if(c=='q'||c=='Q'){
 while((c= (char)skip_ahead())=='@');
 if(*(loc-1)!='>')
-#line 318 "cwebdir/ctang-w2c.ch"
+#line 367 "cwebdir/ctang-w2c.ch"
 err_print(_("! Double @ should be used in control text"));
 #line 1511 "cwebdir/ctangle.w"
 
 break;
-#line 325 "cwebdir/ctang-w2c.ch"
+#line 374 "cwebdir/ctang-w2c.ch"
 }/* otherwise fall through */
 default:err_print(_("! Double @ should be used in limbo"));
 #line 1515 "cwebdir/ctangle.w"
@@ -1979,7 +1992,7 @@ default:err_print(_("! Double @ should be used in limbo"));
 
 void
 print_stats(void){
-#line 351 "cwebdir/ctang-w2c.ch"
+#line 400 "cwebdir/ctang-w2c.ch"
 puts(_("\nMemory usage statistics:"));
 printf(_("%td names (out of %ld)\n"),
 (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
@@ -1992,5 +2005,5 @@ printf(_("%td tokens (out of %ld)\n"),
 (ptrdiff_t)(tok_ptr-tok_mem),(long)max_toks);
 }
 
-#line 364 "cwebdir/ctang-w2c.ch"
+#line 413 "cwebdir/ctang-w2c.ch"
 /*:103*/

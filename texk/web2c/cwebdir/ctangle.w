@@ -690,8 +690,8 @@ case period_ast: C_putc('.');@+C_putc('*'); out_state=normal; break;
 case minus_gt_ast: C_putc('-');@+C_putc('>');@+C_putc('*'); out_state=normal;
     break;
 
-@ When an identifier is output to the \CEE/ file, characters in the
-range 128--255 must be changed into something else, so the \CEE/
+@ When an identifier is output to the \CEE/ file, characters in the range
+128--255 (|0200|--|0377|) must be changed into something else, so the \CEE/
 compiler won't complain.  By default, \.{CTANGLE} converts the
 character with code $16 x+y$ to the three characters `\.X$xy$', but
 a different transliteration table can be specified.  Thus a German
@@ -701,12 +701,12 @@ This makes debugging a lot less confusing.
 @d translit_length 10
 
 @<Private...@>=
-static char translit[128][translit_length];
+static char translit[0200][translit_length];
 
 @ @<Set init...@>=
 {
   int i;
-  for (i=0;i<128;i++) sprintf(translit[i],"X%02X",(unsigned int)(128+i));
+  for (i=0;i<0200;i++) sprintf(translit[i],"X%02X",(unsigned int)(0200+i));
 }
 
 @ @<Case of an identifier@>=@t\1\quad@>
@@ -1533,7 +1533,7 @@ skip_limbo(void)
     sscanf(loc-3,"%x",&i);
     while(xisspace(*loc)&&loc<limit) loc++;
     beg=loc;
-    while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||*loc=='_')) loc++;
+    while(loc<limit&&(xisalpha(*loc)||xisdigit(*loc)||isxalpha(*loc))) loc++;
     if (loc-beg>=translit_length)
       err_print("! Replacement string in @@l too long");
 @.Replacement string in @@l...@>

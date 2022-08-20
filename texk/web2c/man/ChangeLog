@@ -1,3 +1,7 @@
+2022-08-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man: New option '+u' for CTANGLE.
+
 2022-06-05  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man: CWEB 4.8 release.

@@ -65,6 +65,7 @@ const_string CTANGLEHELP[] = {
     "-dN         set 'kpathsea_debug' to N (0..127)",
     "+k          keep separators in numeric literals in the output",
     "+s          print usage statistics",
+    "+u          transliterate UTF-8 characters in C code",
     "--help      display this help and exit",
     "--version   output version information and exit",
     NULL

@@ -14,7 +14,7 @@
 . ftr VB CB
 . ftr VBI CBI
 .\}
-.TH "CWEB" "1" "July 27, 2021" "Web2c @VERSION@" "General Commands Manual"
+.TH "CWEB" "1" "August 20, 2022" "Web2c @VERSION@" "General Commands Manual"
 .hy
 .SH NAME
 .PP
@@ -70,7 +70,7 @@ There are, however, a few differences worth noting:
 .IP \[bu] 2
 Options \f[B]--help\f[R], \f[B]--quiet\f[R], \f[B]--verbose\f[R],
 \f[B]--version\f[R], and flags \f[B]+c\f[R], \f[B]-i\f[R], \f[B]-o\f[R],
-and \f[B]+lX\f[R] are new in CWEBbin and TeX\ Live.
+\f[B]+u\f[R], and \f[B]+lX\f[R] are new in CWEBbin and TeX\ Live.
 .IP \[bu] 2
 Option \f[B]+lX\f[R] is accompanied by several wrapper files for
 \f[B]cwebmac.tex\f[R] with translated captions for German
@@ -120,6 +120,8 @@ The first batch of options are common to both \f[B]ctangle\f[R] and
 There is one other option applicable to \f[B]ctangle\f[R] only:
 .IP \[bu] 2
 \f[B]+k\f[R]: keep separators in numeric literals in the output
+.IP \[bu] 2
+\f[B]+u\f[R]: transliterate UTF-8 charcters in C code
 .PP
 There are seven other options applicable to \f[B]cweave\f[R] only:
 .IP \[bu] 2

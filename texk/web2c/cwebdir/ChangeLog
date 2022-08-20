@@ -1,3 +1,10 @@
+2022-08-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* cwebman-w2c.ch: New option '+u' for CTANGLE.
+
 2022-07-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebmac.tex,
