@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-08-21.14}
+\def\texinfoversion{2022-08-20.19}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -739,7 +739,8 @@ where each line of input produces a line of output.}
     \vskip0pt plus -\dimen0
     \vskip \dimen0
     \penalty9999
-    \vskip -\dimen0\relax
+    \vskip -\dimen0
+    \penalty0\relax % this hides the above glue from \safewhatsit and \dobreak
   \fi
 }
 
@@ -10334,21 +10335,21 @@ directory should work if nowhere else does.}
 %
 \def\unicodechardefs{%
   \DeclareUnicodeCharacter{0020}{ } % space
-  \DeclareUnicodeCharacter{0021}{\char"21}
-  \DeclareUnicodeCharacter{0022}{\char"22}
-  \DeclareUnicodeCharacter{0023}{\char"23}
-  \DeclareUnicodeCharacter{0024}{\char"24}
-  \DeclareUnicodeCharacter{0025}{\char"25}
-  \DeclareUnicodeCharacter{0026}{\char"26}
-  \DeclareUnicodeCharacter{0027}{\char"27}
-  \DeclareUnicodeCharacter{0028}{\char"28}
-  \DeclareUnicodeCharacter{0029}{\char"29}
-  \DeclareUnicodeCharacter{002A}{\char"2A}
-  \DeclareUnicodeCharacter{002B}{\char"2B}
-  \DeclareUnicodeCharacter{002C}{\char"2C}
-  \DeclareUnicodeCharacter{002D}{\char"2D}
-  \DeclareUnicodeCharacter{002E}{\char"2E}
-  \DeclareUnicodeCharacter{002F}{\char"2F}
+  \DeclareUnicodeCharacter{0021}{\char"21 }% % space to terminate number
+  \DeclareUnicodeCharacter{0022}{\char"22 }%
+  \DeclareUnicodeCharacter{0023}{\char"23 }%
+  \DeclareUnicodeCharacter{0024}{\char"24 }%
+  \DeclareUnicodeCharacter{0025}{\char"25 }%
+  \DeclareUnicodeCharacter{0026}{\char"26 }%
+  \DeclareUnicodeCharacter{0027}{\char"27 }%
+  \DeclareUnicodeCharacter{0028}{\char"28 }%
+  \DeclareUnicodeCharacter{0029}{\char"29 }%
+  \DeclareUnicodeCharacter{002A}{\char"2A }%
+  \DeclareUnicodeCharacter{002B}{\char"2B }%
+  \DeclareUnicodeCharacter{002C}{\char"2C }%
+  \DeclareUnicodeCharacter{002D}{\char"2D }%
+  \DeclareUnicodeCharacter{002E}{\char"2E }%
+  \DeclareUnicodeCharacter{002F}{\char"2F }%
   \DeclareUnicodeCharacter{0030}{0}%
   \DeclareUnicodeCharacter{0031}{1}%
   \DeclareUnicodeCharacter{0032}{2}%
@@ -10359,13 +10360,13 @@ directory should work if nowhere else does.}
   \DeclareUnicodeCharacter{0037}{7}%
   \DeclareUnicodeCharacter{0038}{8}%
   \DeclareUnicodeCharacter{0039}{9}%
-  \DeclareUnicodeCharacter{003A}{\char"3A}
-  \DeclareUnicodeCharacter{003B}{\char"3B}
-  \DeclareUnicodeCharacter{003C}{\char"3C}
-  \DeclareUnicodeCharacter{003D}{\char"3D}
-  \DeclareUnicodeCharacter{003E}{\char"3E}
-  \DeclareUnicodeCharacter{003F}{\char"3F}
-  \DeclareUnicodeCharacter{0040}{\char"40}
+  \DeclareUnicodeCharacter{003A}{\char"3A }%
+  \DeclareUnicodeCharacter{003B}{\char"3B }%
+  \DeclareUnicodeCharacter{003C}{\char"3C }%
+  \DeclareUnicodeCharacter{003D}{\char"3D }%
+  \DeclareUnicodeCharacter{003E}{\char"3E }%
+  \DeclareUnicodeCharacter{003F}{\char"3F }%
+  \DeclareUnicodeCharacter{0040}{\char"40 }%
   \DeclareUnicodeCharacter{0041}{A}%
   \DeclareUnicodeCharacter{0042}{B}%
   \DeclareUnicodeCharacter{0043}{C}%
@@ -10392,12 +10393,12 @@ directory should work if nowhere else does.}
   \DeclareUnicodeCharacter{0058}{X}%
   \DeclareUnicodeCharacter{0059}{Y}%
   \DeclareUnicodeCharacter{005A}{Z}%
-  \DeclareUnicodeCharacter{005B}{\char"5B}
-  \DeclareUnicodeCharacter{005C}{\char"5C}
-  \DeclareUnicodeCharacter{005D}{\char"5D}
-  \DeclareUnicodeCharacter{005E}{\char"5E}
-  \DeclareUnicodeCharacter{005F}{\char"5F}
-  \DeclareUnicodeCharacter{0060}{\char"60}
+  \DeclareUnicodeCharacter{005B}{\char"5B }%
+  \DeclareUnicodeCharacter{005C}{\char"5C }%
+  \DeclareUnicodeCharacter{005D}{\char"5D }%
+  \DeclareUnicodeCharacter{005E}{\char"5E }%
+  \DeclareUnicodeCharacter{005F}{\char"5F }%
+  \DeclareUnicodeCharacter{0060}{\char"60 }%
   \DeclareUnicodeCharacter{0061}{a}%
   \DeclareUnicodeCharacter{0062}{b}%
   \DeclareUnicodeCharacter{0063}{c}%
@@ -10424,10 +10425,10 @@ directory should work if nowhere else does.}
   \DeclareUnicodeCharacter{0078}{x}%
   \DeclareUnicodeCharacter{0079}{y}%
   \DeclareUnicodeCharacter{007A}{z}%
-  \DeclareUnicodeCharacter{007B}{\char"7B}
-  \DeclareUnicodeCharacter{007C}{\char"7C}
-  \DeclareUnicodeCharacter{007D}{\char"7D}
-  \DeclareUnicodeCharacter{007E}{\char"7E}
+  \DeclareUnicodeCharacter{007B}{\char"7B }%
+  \DeclareUnicodeCharacter{007C}{\char"7C }%
+  \DeclareUnicodeCharacter{007D}{\char"7D }%
+  \DeclareUnicodeCharacter{007E}{\char"7E }%
   % \DeclareUnicodeCharacter{007F}{} % DEL
   %
   \DeclareUnicodeCharacter{00A0}{\tie}%
@@ -11114,24 +11115,26 @@ directory should work if nowhere else does.}
 % provide a definition macro to replace/pass-through a Unicode character
 %
 \def\DeclareUnicodeCharacterNative#1#2{%
-  \catcode"#1=\active
-  \def\dodeclareunicodecharacternative##1##2##3{%
+  \ifnum"#1>"7F % only make non-ASCII chars active
+    \catcode"#1=\active
+    \def\dodeclareunicodecharacternative##1##2##3{%
+      \begingroup
+        \uccode`\~="##2\relax
+        \uppercase{\gdef~}{%
+          \ifpassthroughchars
+            ##1%
+          \else
+            ##3%
+          \fi
+        }
+      \endgroup
+    }
     \begingroup
-      \uccode`\~="##2\relax
-      \uppercase{\gdef~}{%
-        \ifpassthroughchars
-          ##1%
-        \else
-          ##3%
-        \fi
-      }
+      \uccode`\.="#1\relax
+      \uppercase{\def\UTFNativeTmp{.}}%
+      \expandafter\dodeclareunicodecharacternative\UTFNativeTmp{#1}{#2}%
     \endgroup
-  }
-  \begingroup
-    \uccode`\.="#1\relax
-    \uppercase{\def\UTFNativeTmp{.}}%
-    \expandafter\dodeclareunicodecharacternative\UTFNativeTmp{#1}{#2}%
-  \endgroup
+  \fi
 }
 
 % Native Unicode handling (XeTeX and LuaTeX) character replacing definition.
