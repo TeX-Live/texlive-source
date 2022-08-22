@@ -55,6 +55,6 @@ extern int shell_cmd_is_allowed(const char *, char **, char **);
 #include <lauxlib.h>
 extern int luaopen_kpse(lua_State * L);
 
-#include <mfluadir/potrace/potracelib.h>
+#include <potracelib.h>
 
 #endif /* MFLUAC_H */

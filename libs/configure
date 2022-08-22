@@ -860,6 +860,9 @@ with_system_pixman
 with_system_gd
 with_gd_includes
 with_gd_libdir
+with_system_potrace
+with_potrace_includes
+with_potrace_libdir
 with_system_freetype2
 with_system_libpng
 with_system_libpaper
@@ -1702,6 +1705,11 @@ Optional Packages:
   --with-system-gd        use installed gd headers and library
   --with-gd-includes=DIR  gd headers installed in DIR
   --with-gd-libdir=DIR    gd library installed in DIR
+  --with-system-potrace   use installed potrace headers and library
+  --with-potrace-includes=DIR
+                          potrace headers installed in DIR
+  --with-potrace-libdir=DIR
+                          potrace library installed in DIR
   --with-system-freetype2 use installed freetype2 headers and library
                           (requires freetype-config)
   --with-system-libpng    use installed libpng headers and library (requires
@@ -4802,6 +4810,7 @@ esac
 
 test "x$enable_web2c:$enable_mflua" = xyes:yes && {
   need_lua53=yes
+  need_potrace=yes
 }
 # Check whether --enable-mfluajit was given.
 if test ${enable_mfluajit+y}
@@ -4829,6 +4838,7 @@ esac
 
 test "x$enable_web2c:$enable_mfluajit" = xyes:yes && {
   need_luajit=yes
+  need_potrace=yes
 }
 
 # Check whether --with-mf-x-toolkit was given.
@@ -6140,6 +6150,39 @@ test "x$need_gd" = xyes && {
   need_freetype2=yes
 }
 
+## libs/potrace/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/potrace/
+## configure options and TL libraries required for potrace
+
+# Check whether --with-system-potrace was given.
+if test ${with_system_potrace+y}
+then :
+  withval=$with_system_potrace;
+fi
+
+# Check whether --with-potrace-includes was given.
+if test ${with_potrace_includes+y}
+then :
+  withval=$with_potrace_includes;
+fi
+
+# Check whether --with-potrace-libdir was given.
+if test ${with_potrace_libdir+y}
+then :
+  withval=$with_potrace_libdir;
+fi
+if test "x$with_system_potrace" = x; then
+  if test -f $srcdir/../libs/potrace/configure; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`potrace' headers and library from TL tree" >&5
+printf "%s\n" "$as_me: Assuming \`potrace' headers and library from TL tree" >&6;}
+    with_system_potrace=no
+  else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming installed \`potrace' headers and library" >&5
+printf "%s\n" "$as_me: Assuming installed \`potrace' headers and library" >&6;}
+    with_system_potrace=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-potrace=$with_system_potrace'"
+fi
+
 ## libs/freetype2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/freetype2/
 ## configure options and TL libraries required for freetype2
 
@@ -7395,6 +7438,12 @@ if test -x $srcdir/gd/configure; then
   CONF_SUBDIRS="gd $CONF_SUBDIRS"
 else
   echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/gd/configure' >&5
+fi
+if test -x $srcdir/potrace/configure; then
+  test "x$with_system_potrace" != xyes && test "x$need_potrace" = xyes && MAKE_SUBDIRS="potrace $MAKE_SUBDIRS"
+  CONF_SUBDIRS="potrace $CONF_SUBDIRS"
+else
+  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/potrace/configure' >&5
 fi
 if test -x $srcdir/freetype2/configure; then
   test "x$with_system_freetype2" != xyes && test "x$need_freetype2" = xyes && MAKE_SUBDIRS="freetype2 $MAKE_SUBDIRS"

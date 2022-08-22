@@ -388,6 +388,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
 	$(top_srcdir)/../../m4/kpse-mpfr-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-pixman-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-pplib-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-ptexenc-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-socket-libs.m4 \
@@ -1117,11 +1118,7 @@ libmfluaotfcc_a_OBJECTS = $(am_libmfluaotfcc_a_OBJECTS)
 libmfluapotrace_a_AR = $(AR) $(ARFLAGS)
 libmfluapotrace_a_LIBADD =
 am_libmfluapotrace_a_OBJECTS =  \
-	mfluadir/potrace/libmfluapotrace_a-curve.$(OBJEXT) \
-	mfluadir/potrace/libmfluapotrace_a-decompose.$(OBJEXT) \
-	mfluadir/potrace/libmfluapotrace_a-luafunc.$(OBJEXT) \
-	mfluadir/potrace/libmfluapotrace_a-potracelib.$(OBJEXT) \
-	mfluadir/potrace/libmfluapotrace_a-trace.$(OBJEXT)
+	mfluadir/potrace/libmfluapotrace_a-luafunc.$(OBJEXT)
 libmfluapotrace_a_OBJECTS = $(am_libmfluapotrace_a_OBJECTS)
 libmplibbackends_a_AR = $(AR) $(ARFLAGS)
 libmplibbackends_a_LIBADD =
@@ -1466,7 +1463,8 @@ dist_mflua_OBJECTS = mfluadir/mflua-mfluaextra.$(OBJEXT)
 mflua_OBJECTS = $(dist_mflua_OBJECTS)
 mflua_DEPENDENCIES = libmflua.a libmfluaotfcc.a libmfluapotrace.a \
 	libmflualpeg.a $(am__DEPENDENCIES_2) $(windowlib) \
-	$(am__DEPENDENCIES_9) $(am__DEPENDENCIES_6)
+	$(am__DEPENDENCIES_9) $(am__DEPENDENCIES_6) \
+	$(am__DEPENDENCIES_1)
 mflua_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mflua_LDFLAGS) $(LDFLAGS) -o $@
@@ -1475,7 +1473,7 @@ nodist_mflua_nowin_OBJECTS = $(am__objects_42)
 mflua_nowin_OBJECTS = $(nodist_mflua_nowin_OBJECTS)
 mflua_nowin_DEPENDENCIES = libmflua.a libmfluaotfcc.a \
 	libmfluapotrace.a libmflualpeg.a $(am__DEPENDENCIES_2) \
-	$(windowlib) $(am__DEPENDENCIES_6)
+	$(windowlib) $(am__DEPENDENCIES_6) $(am__DEPENDENCIES_1)
 mflua_nowin_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mflua_nowin_LDFLAGS) $(LDFLAGS) -o $@
@@ -1483,7 +1481,8 @@ dist_mfluajit_OBJECTS = mfluajitdir/mfluajit-mfluajitextra.$(OBJEXT)
 mfluajit_OBJECTS = $(dist_mfluajit_OBJECTS)
 mfluajit_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 	libmfluapotrace.a libmfluajitlpeg.a $(am__DEPENDENCIES_2) \
-	$(windowlib) $(am__DEPENDENCIES_9) $(am__DEPENDENCIES_1)
+	$(windowlib) $(am__DEPENDENCIES_9) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 mfluajit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mfluajit_LDFLAGS) $(LDFLAGS) -o $@
@@ -1492,7 +1491,7 @@ nodist_mfluajit_nowin_OBJECTS = $(am__objects_43)
 mfluajit_nowin_OBJECTS = $(nodist_mfluajit_nowin_OBJECTS)
 mfluajit_nowin_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 	libmfluapotrace.a libmfluajitlpeg.a $(am__DEPENDENCIES_2) \
-	$(windowlib) $(am__DEPENDENCIES_1)
+	$(windowlib) $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 mfluajit_nowin_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
 	$(AM_CFLAGS) $(CFLAGS) $(mfluajit_nowin_LDFLAGS) $(LDFLAGS) -o \
@@ -2364,11 +2363,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po \
 	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po \
 	mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po \
-	mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po \
-	mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po \
 	mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Po \
-	mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po \
-	mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po \
 	mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po \
 	mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po \
 	mplibdir/$(DEPDIR)/libmputil_a-avl.Po \
@@ -3061,6 +3056,9 @@ PIXMAN_DEPEND = @PIXMAN_DEPEND@
 PIXMAN_INCLUDES = @PIXMAN_INCLUDES@
 PIXMAN_LIBS = @PIXMAN_LIBS@
 PKG_CONFIG = @PKG_CONFIG@
+POTRACE_DEPEND = @POTRACE_DEPEND@
+POTRACE_INCLUDES = @POTRACE_INCLUDES@
+POTRACE_LIBS = @POTRACE_LIBS@
 PPLIB_DEPEND = @PPLIB_DEPEND@
 PPLIB_INCLUDES = @PPLIB_INCLUDES@
 PPLIB_LIBS = @PPLIB_LIBS@
@@ -3929,11 +3927,11 @@ nodist_call_mflua_SOURCES = callexe.c
 call_mflua_LDADD = 
 dist_mflua_SOURCES = mfluadir/mfluaextra.c mfluadir/mfluaextra.h mfluadir/mflua_version.h
 mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)
-mflua_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS)
+mflua_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_LDFLAGS = -export-dynamic
 nodist_mflua_nowin_SOURCES = $(dist_mflua_SOURCES)
 mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)
-mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(LUA_LIBS)
+mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_nowin_LDFLAGS = -export-dynamic
 
 # MFLua C sources
@@ -4223,27 +4221,15 @@ libmfluaotfcc_a_SOURCES = \
 	mfluadir/otfcc/lib/table/TSI5.c 
 
 libmfluapotrace_a_CPPFLAGS = \
-        -I$(top_srcdir)/mfluadir/potrace 
+	-I$(top_srcdir)/mfluadir/potrace \
+	$(POTRACE_INCLUDES)
 
 libmfluapotrace_a_CFLAGS = # $(WARNING_CFLAGS)
 
 #nodist_libmfluapotrace_a_SOURCES = $(libmfluapotrace_sources)
 libmfluapotrace_a_SOURCES = \
-	mfluadir/potrace/auxiliary.h \
-	mfluadir/potrace/bitmap.h \
-	mfluadir/potrace/config.h \
-	mfluadir/potrace/curve.c \
-	mfluadir/potrace/curve.h \
-	mfluadir/potrace/decompose.c \
-	mfluadir/potrace/decompose.h \
-	mfluadir/potrace/lists.h \
 	mfluadir/potrace/luafunc.c \
-	mfluadir/potrace/luafunc.h \
-	mfluadir/potrace/potracelib.c \
-	mfluadir/potrace/potracelib.h \
-	mfluadir/potrace/progress.h \
-	mfluadir/potrace/trace.c \
-	mfluadir/potrace/trace.h
+	mfluadir/potrace/luafunc.h 
 
 libmflualpeg_a_CPPFLAGS = \
 	-I$(top_srcdir)/mfluadir/luapeg \
@@ -4259,11 +4245,11 @@ nodist_call_mfluajit_SOURCES = callexe.c
 call_mfluajit_LDADD = 
 dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
 mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS)
+mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 nodist_mfluajit_nowin_SOURCES = $(dist_mfluajit_SOURCES)
 mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(LUAJIT_LIBS)
+mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
 # MFLuaJIT C sources
@@ -7778,19 +7764,7 @@ mfluadir/potrace/$(am__dirstamp):
 mfluadir/potrace/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) mfluadir/potrace/$(DEPDIR)
 	@: > mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
-mfluadir/potrace/libmfluapotrace_a-curve.$(OBJEXT):  \
-	mfluadir/potrace/$(am__dirstamp) \
-	mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
-mfluadir/potrace/libmfluapotrace_a-decompose.$(OBJEXT):  \
-	mfluadir/potrace/$(am__dirstamp) \
-	mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
 mfluadir/potrace/libmfluapotrace_a-luafunc.$(OBJEXT):  \
-	mfluadir/potrace/$(am__dirstamp) \
-	mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
-mfluadir/potrace/libmfluapotrace_a-potracelib.$(OBJEXT):  \
-	mfluadir/potrace/$(am__dirstamp) \
-	mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
-mfluadir/potrace/libmfluapotrace_a-trace.$(OBJEXT):  \
 	mfluadir/potrace/$(am__dirstamp) \
 	mfluadir/potrace/$(DEPDIR)/$(am__dirstamp)
 
@@ -9217,11 +9191,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@mplibdir/$(DEPDIR)/libmputil_a-avl.Po@am__quote@ # am--include-marker
@@ -16289,34 +16259,6 @@ mfluadir/otfcc/lib/table/libmfluaotfcc_a-TSI5.obj: mfluadir/otfcc/lib/table/TSI5
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluaotfcc_a_CPPFLAGS) $(CPPFLAGS) $(libmfluaotfcc_a_CFLAGS) $(CFLAGS) -c -o mfluadir/otfcc/lib/table/libmfluaotfcc_a-TSI5.obj `if test -f 'mfluadir/otfcc/lib/table/TSI5.c'; then $(CYGPATH_W) 'mfluadir/otfcc/lib/table/TSI5.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/otfcc/lib/table/TSI5.c'; fi`
 
-mfluadir/potrace/libmfluapotrace_a-curve.o: mfluadir/potrace/curve.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-curve.o -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-curve.o `test -f 'mfluadir/potrace/curve.c' || echo '$(srcdir)/'`mfluadir/potrace/curve.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/curve.c' object='mfluadir/potrace/libmfluapotrace_a-curve.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-curve.o `test -f 'mfluadir/potrace/curve.c' || echo '$(srcdir)/'`mfluadir/potrace/curve.c
-
-mfluadir/potrace/libmfluapotrace_a-curve.obj: mfluadir/potrace/curve.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-curve.obj -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-curve.obj `if test -f 'mfluadir/potrace/curve.c'; then $(CYGPATH_W) 'mfluadir/potrace/curve.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/curve.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/curve.c' object='mfluadir/potrace/libmfluapotrace_a-curve.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-curve.obj `if test -f 'mfluadir/potrace/curve.c'; then $(CYGPATH_W) 'mfluadir/potrace/curve.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/curve.c'; fi`
-
-mfluadir/potrace/libmfluapotrace_a-decompose.o: mfluadir/potrace/decompose.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-decompose.o -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-decompose.o `test -f 'mfluadir/potrace/decompose.c' || echo '$(srcdir)/'`mfluadir/potrace/decompose.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/decompose.c' object='mfluadir/potrace/libmfluapotrace_a-decompose.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-decompose.o `test -f 'mfluadir/potrace/decompose.c' || echo '$(srcdir)/'`mfluadir/potrace/decompose.c
-
-mfluadir/potrace/libmfluapotrace_a-decompose.obj: mfluadir/potrace/decompose.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-decompose.obj -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-decompose.obj `if test -f 'mfluadir/potrace/decompose.c'; then $(CYGPATH_W) 'mfluadir/potrace/decompose.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/decompose.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/decompose.c' object='mfluadir/potrace/libmfluapotrace_a-decompose.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-decompose.obj `if test -f 'mfluadir/potrace/decompose.c'; then $(CYGPATH_W) 'mfluadir/potrace/decompose.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/decompose.c'; fi`
-
 mfluadir/potrace/libmfluapotrace_a-luafunc.o: mfluadir/potrace/luafunc.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-luafunc.o -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-luafunc.o `test -f 'mfluadir/potrace/luafunc.c' || echo '$(srcdir)/'`mfluadir/potrace/luafunc.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Po
@@ -16330,34 +16272,6 @@ mfluadir/potrace/libmfluapotrace_a-luafunc.obj: mfluadir/potrace/luafunc.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/luafunc.c' object='mfluadir/potrace/libmfluapotrace_a-luafunc.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-luafunc.obj `if test -f 'mfluadir/potrace/luafunc.c'; then $(CYGPATH_W) 'mfluadir/potrace/luafunc.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/luafunc.c'; fi`
-
-mfluadir/potrace/libmfluapotrace_a-potracelib.o: mfluadir/potrace/potracelib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-potracelib.o -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-potracelib.o `test -f 'mfluadir/potrace/potracelib.c' || echo '$(srcdir)/'`mfluadir/potrace/potracelib.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/potracelib.c' object='mfluadir/potrace/libmfluapotrace_a-potracelib.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-potracelib.o `test -f 'mfluadir/potrace/potracelib.c' || echo '$(srcdir)/'`mfluadir/potrace/potracelib.c
-
-mfluadir/potrace/libmfluapotrace_a-potracelib.obj: mfluadir/potrace/potracelib.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-potracelib.obj -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-potracelib.obj `if test -f 'mfluadir/potrace/potracelib.c'; then $(CYGPATH_W) 'mfluadir/potrace/potracelib.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/potracelib.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/potracelib.c' object='mfluadir/potrace/libmfluapotrace_a-potracelib.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-potracelib.obj `if test -f 'mfluadir/potrace/potracelib.c'; then $(CYGPATH_W) 'mfluadir/potrace/potracelib.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/potracelib.c'; fi`
-
-mfluadir/potrace/libmfluapotrace_a-trace.o: mfluadir/potrace/trace.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-trace.o -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-trace.o `test -f 'mfluadir/potrace/trace.c' || echo '$(srcdir)/'`mfluadir/potrace/trace.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/trace.c' object='mfluadir/potrace/libmfluapotrace_a-trace.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-trace.o `test -f 'mfluadir/potrace/trace.c' || echo '$(srcdir)/'`mfluadir/potrace/trace.c
-
-mfluadir/potrace/libmfluapotrace_a-trace.obj: mfluadir/potrace/trace.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -MT mfluadir/potrace/libmfluapotrace_a-trace.obj -MD -MP -MF mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Tpo -c -o mfluadir/potrace/libmfluapotrace_a-trace.obj `if test -f 'mfluadir/potrace/trace.c'; then $(CYGPATH_W) 'mfluadir/potrace/trace.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/trace.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Tpo mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mfluadir/potrace/trace.c' object='mfluadir/potrace/libmfluapotrace_a-trace.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmfluapotrace_a_CPPFLAGS) $(CPPFLAGS) $(libmfluapotrace_a_CFLAGS) $(CFLAGS) -c -o mfluadir/potrace/libmfluapotrace_a-trace.obj `if test -f 'mfluadir/potrace/trace.c'; then $(CYGPATH_W) 'mfluadir/potrace/trace.c'; else $(CYGPATH_W) '$(srcdir)/mfluadir/potrace/trace.c'; fi`
 
 libmplibbackends_a-pngout.o: pngout.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibbackends_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplibbackends_a-pngout.o -MD -MP -MF $(DEPDIR)/libmplibbackends_a-pngout.Tpo -c -o libmplibbackends_a-pngout.o `test -f 'pngout.c' || echo '$(srcdir)/'`pngout.c
@@ -20664,11 +20578,7 @@ distclean: distclean-recursive
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po
 	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po
 	-rm -f mplibdir/$(DEPDIR)/libmputil_a-avl.Po
@@ -21452,11 +21362,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f mfluadir/otfcc/lib/vf/$(DEPDIR)/libmfluaotfcc_a-vq.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-luafunc.Po
 	-rm -f mfluadir/otfcc/src/$(DEPDIR)/libmfluaotfcc_a-otfccdll.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-curve.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-decompose.Po
 	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-luafunc.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-potracelib.Po
-	-rm -f mfluadir/potrace/$(DEPDIR)/libmfluapotrace_a-trace.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit-mfluajitextra.Po
 	-rm -f mfluajitdir/$(DEPDIR)/mfluajit_nowin-mfluajitextra.Po
 	-rm -f mplibdir/$(DEPDIR)/libmputil_a-avl.Po
@@ -21617,6 +21523,7 @@ $(proglib): $(proglib_sources)
 @FREETYPE2_RULE@
 @PIXMAN_RULE@
 @CAIRO_RULE@
+@POTRACE_RULE@
 @GMP_RULE@
 @MPFR_RULE@
 @XPDF_RULE@
@@ -21945,7 +21852,7 @@ $(libmfluaotfcc_a_OBJECTS): $(LUA_DEPEND)
 
 #EXTRA_DIST += 
 
-$(libmfluapotrace_a_OBJECTS): $(LUA_DEPEND)
+$(libmfluapotrace_a_OBJECTS): $(LUA_DEPEND) $(POTRACE_DEPEND)
 
 $(libmflualpeg_a_OBJECTS): $(LUA_DEPEND)
 

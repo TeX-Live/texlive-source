@@ -1,0 +1,188 @@
+.\" Copyright (C) 2001-2019 Peter Selinger.
+.\" This file is part of Potrace. It is free software and it is covered
+.\" by the GNU General Public License. See the file COPYING for details.
+.\" 
+.TH mkbitmap 1 "@DATE@" "Version @VERSION@"
+.SH NAME
+mkbitmap \- transform images into bitmaps with scaling and filtering
+.SH SYNOPSIS
+
+.nf
+.B mkbitmap [\fIoptions\fP] [\fIfilename...\fP]
+.fi
+.SH DESCRIPTION
+
+\fBmkbitmap\fP reads an image, and applies one or more of the
+following operations to it, in this order: inversion, highpass
+filtering, scaling, and thresholding. Each operation can be
+individually controlled and turned on or off.
+
+The principal use of \fBmkbitmap\fP is to convert color or greyscale
+images into a format suitable as input for other programs,
+particularly the tracing program \fBpotrace\fP(1). It is particularly
+useful for converting scanned line art, such as cartoons, handwritten
+text, etc., to high-resolution bilevel images.
+
+\fIHighpass filtering\fP can be used to ensure that foreground
+features such as lines and text are preserved, while at the same time
+compensating for uneven background. Optional \fIblurring\fP can be
+applied to smooth out the image and remove visual noise. \fIScaling\fP
+is important because a scanned greyscale image contains more visual
+detail than a bilevel image at the same resolution. By scaling the
+image to a higher resolution (using interpolation) before thresholding
+it, some of this detail is preserved. \fIThresholding\fP means
+converting a greyscale image to a bilevel image using only black and
+white pixels. Pixels that are darker than a certain threshold value
+are converted to black.  Optional \fIinversion\fP is useful if the
+input image shows bright features on dark background, such as a
+picture of chalk drawings on a blackboard.
+
+Supported input formats are PNM (PBM, PGM, PPM) and BMP. The output
+formats are PBM for bitmaps, and PGM for greymaps. 
+.SH OPTIONS
+
+.SS General options:
+.TP 15
+.B -h, --help
+print help message and exit.
+.TP
+.B -v, --version
+print version info and exit.
+.TP
+.B -l, --license
+print license info and exit.
+.PD
+.SS Input/output options:
+.TP 15
+.B \fIfilename\fP
+If filename arguments are given, then \fBmkbitmap\fP will by default
+create one output file for each input filename given. The name of the
+output file is obtained from the input filename by changing its suffix
+to ".pbm" or ".pgm". If the name of the input file and output file
+would be identical, then an additional suffix "-out" is appended to
+the output filename. If no filename arguments are given, then
+\fBmkbitmap\fP acts as a filter, reading from standard input and
+writing to standard output. A filename of "-" may be given to specify
+reading from standard input; the output for this argument will then be
+written to standard output. Each input file may contain one or more
+images.
+.TP
+.B -o \fIfilename\fP, --output \fIfilename\fP
+write output to this file. All output is concatenated and directed to
+the specified file. This overrides the default behavior of creating
+one output file for each input file. A filename of "-" may be given to
+specify writing to standard output. 
+.PD
+.SS Image processing options:
+.TP 15
+.B -x, --nodefaults
+Turn off default options. Normally, the following options are
+preselected by default: \fB-f 4 -s 2 -3 -t 0.45\fP. The \fB-x\fP option
+disables these defaults; thus, \fBmkbitmap -x\fP does nothing but copy
+a greyscale image from the input to the output. Other processing
+options can then be added one by one; e.g., \fBmkbitmap -xf10\fP does
+only highpass filtering, \fBmkbitmap -xt0.5\fP does only thresholding,
+etc. 
+.TP
+.B -i, --invert
+Invert the input image. If this option is chosen, it is applied to the
+image before any other operation. It is used to deal with
+white-on-black images, such as photographs of chalk drawings on a
+blackboard. Note that the behavior of this option is not in general
+the same as inverting the \fIoutput\fP bitmap, unless the thresholding
+value is also inverted. 
+.TP
+.B -f \fIn\fP, --filter \fIn\fP
+Apply a highpass filter to the image. This filter is approximately
+Gaussian and non-directional. The effect is to preserve small detail
+while compensating for background gradients. The parameter \fIn\fP is
+a radius (in pixels) which corresponds approximately to the size of
+details which should be preserved. More precisely, the filter is
+implemented by subtracting a blurred version of the image from the
+original image. The parameter \fIn\fP is equal to the standard
+deviation of the blur. The output of the filtering step is a
+normalized image whose average brightness is exactly 0.5. The default
+filter radius is 4.
+.TP
+.B -n, --nofilter
+Turn off highpass filtering.
+.TP
+.B -b \fIn\fP, --blur \fIn\fP
+Blur the image. The effect is to smooth out fine details and to
+reduce visual noise in the image. The parameter \fIn\fP is the
+blurring radius, and should be chosen small (1 is a good value to
+start with). This is implemented as an approximately Gaussian,
+non-directional blur with standard deviation proportional to
+\fIn\fP. Blurring is applied after the highpass filter, but before
+scaling and thresholding.  If this option is not given, the default is
+not to apply any blurring.
+.TP
+.B -s \fIn\fP, --scale \fIn\fP
+Scale the image by an integer factor \fIn\fP>0. Scaling is done after
+highpass filtering, but before the thresholding step. A scaling factor
+of 1 indicates that no scaling is to be done. Otherwise, interpolation is
+used to fill in the in-between pixels. If the output of \fBmkbitmap\fP
+is to be used as input to a tracing program such as \fBpotrace\fP, a
+scaling factor of 2 is recommended. This preserved the right amount of
+detail for the tracing algorithm to work well. If a scaling factor of
+1 is used, too much detail is lost. If a scaling factor of 3 or higher
+is used, the interpolation tends to "invent" detail which was not
+present in the original image, thus preventing \fBpotrace\fP from
+doing a good job.
+.TP
+.B -1, --linear
+Use linear interpolation when scaling to a higher resolution. This is
+slightly faster, but less nice, than the default cubic interpolation.
+.TP
+.B -3, --cubic
+Use cubic interpolation when scaling to a higher resolution. This is
+the default. It is slower than linear interpolation, but leads to
+better results. 
+.TP
+.B -t \fIn\fP, --threshold \fIn\fP
+Set the threshold grey value for bilevel conversion. The parameter
+\fIn\fP is a brightness value between 0 for black and 1 for white. 
+Any pixels below this brightness will be converted to black (thus,
+smaller values of \fIn\fP will lead to whiter output).
+.TP
+.B -g, --grey
+Disable bilevel conversion. If this option is given, processing stops
+after the scaling step and a greymap is output. 
+.PD
+.SH EXIT STATUS
+
+The exit status is 0 on successful completion, 1 if the command line
+was invalid, and 2 on any other error. 
+.SH VERSION
+
+@VERSION@
+.SH AUTHOR
+
+Peter Selinger <selinger at users.sourceforge.net>
+.SH WEB SITE AND SUPPORT
+
+\fBmkbitmap\fP is distributed as part of the \fBpotrace\fP package,
+and the latest version is available from
+http://potrace.sourceforge.net/.  This site also contains
+documentation and information on how to obtain support.
+.SH SEE ALSO
+
+\fBpotrace\fP(1)
+.SH COPYRIGHT
+
+Copyright (C) 2001-2019 Peter Selinger
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software Foundation,
+Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+See also http://www.gnu.org/.

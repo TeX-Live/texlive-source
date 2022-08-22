@@ -41,7 +41,7 @@ dvisvgm_LDADD += \
 	$(LIBGS_LIBS)
 
 dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
-dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
+dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
 
 libdvisvgm_a_SOURCES = \
 	AGLTable.hpp \
@@ -243,3 +243,5 @@ CLEANFILES = *.gcda *.gcno
 @FREETYPE2_RULE@
 # Rebuild libz:
 @ZLIB_RULE@
+# Rebuild potrace:
+@POTRACE_RULE@

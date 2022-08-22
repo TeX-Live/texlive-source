@@ -26,7 +26,7 @@ man_MANS = $(dvisvgm_srcdir)/doc/dvisvgm.1
 include $(srcdir)/../../am/dist_hook.am
 NEVER_NAMES += $(NEVER_NAMES_SUB)
 
-dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
+dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
 #
 config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force

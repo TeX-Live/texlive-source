@@ -1,3 +1,9 @@
+2022-08-22 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* ac/web2c.ac: add potrace as dependency of mflua/mfluajit
+	* Makefile.am: add @POTRACE_RULE@
+	* configure.ac: add KPSE_POTRACE_FLAGS
+
 2022-08-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

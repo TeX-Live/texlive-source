@@ -1,3 +1,8 @@
+2022-08-22 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): add potrace.
+	* Add kpse-potrace-flags.m4.
+
 2021-06-28  Karl Berry  <karl@freefriends.org>
 
 	* README: list the macros obsoleted by autoconf 2.70 which we use.

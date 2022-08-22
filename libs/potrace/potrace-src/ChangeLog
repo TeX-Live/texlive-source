@@ -1,0 +1,435 @@
+ChangeLog
+
+v1.16 2019/09/17
+	(2019/09/16) PS1 - portability: use AC_USE_SYSTEM_EXTENSIONS
+        instead of individual feature test macros.
+	(2019/09/16) PS1 - automake: handle conditional sources better.
+	(2019/05/16) PS1 - normalize rotation angle
+	(2019/02/26) PS1 - portability: use binary file i/o in OS/2,
+	suggested by Dave Yeo.
+	(2018/07/27) PS1 - autoconf: renamed --enable-local-getopt as
+	--with-included-getopt.
+	(2018/07/26) PS1 - test suite: adjusted tolerances.
+	(2017/08/06) PS1 - fixed a potential arithmetic overflow. Fixes
+	bugs #23 and #24 reported by Henri Salo.
+
+v1.15 2017/08/05
+	(2017/08/05) PS1 - use round() instead of rint()
+	(2017/08/05) PS1 - portability: set both _POSIX_C_SOURCE and
+	_NETBSD_SOURCE to enable strdup prototype in string.h, as
+	_XOPEN_SOURCE=500 doesn't work on macOS, _XOPEN_SOURCE=600 doesn't
+	work on SunOS, and _POSIX_C_SOURCE alone doesn't work on Minix.
+	(2017/08/02) PS1 - fixed a potential arithmetic overflow.
+	(2017/06/17) PS1 - fixed a bug with very large bitmaps. Reported
+	by Michael Voříšek.
+	(2017/03/05) PS1 - autoconf: added --enable-local-getopt to avoid
+	using the system-wide getopt library (it may still end up being
+	used on GNU systems).
+	(2017/03/05) PS1 - portability: moved getopt.h to a subdirectory,
+	to be included only when needed. Reported by Daniel Macks.
+	(2017/03/05) PS1 - portability: use _XOPEN_SOURCE=600 to fix macOS
+	warning.
+	(2017/02/27) PS1 - fixed more buffer overflows (not security
+	critical), including one reported by Agostino Sarubbo. This also
+	fixes CVE-2017-12067.
+
+v1.14 2017/02/19
+	(2017/02/19) PS1 - speed: use clang as default compiler if
+	available, and no longer use -ffloat-store even with gcc.
+	(2017/02/18) PS1 - corrected some exit codes, added some missing
+	error handlers.
+	(2017/02/17) PS1 - mkbitmap: bugfixes and improvements in parsing
+	image files.
+	(2017/02/15) PS1 - truncate the image size when bitmap data ends
+	prematurely. This fixes CVE-2016-8686, where Potrace appeared to
+	be "hanging" on a crafted input file.
+	(2017/02/14) PS1 - test suite: added tests for plain pnm files.
+	(2017/01/08) PS1 - fixed potential compiler issues due to signed
+	arithmetic overflow and arithmetic shifting.
+	(2017/01/07) PS1 - enable use of negative dy in bitmap data.
+	(2017/01/07) PS1 - test suite: moved data files to a subdirectory.
+	(2017/01/07) PS1 - test suite: added a check for -i flag.
+	(2017/01/07) PS1 - fixed buffer overflow CVE-2016-8685, reported
+	by Agostino Sarubbo.
+	(2015/10/24) PS1 - portability: use const char * for string
+	constants, required by C++11. Reported by Martin Gieseking.
+	(2015/10/24) PS1 - portability: extra spaces around string macros,
+	required by C++11. Reported by Martin Gieseking.
+	(2015/10/24) PS1 - portability: added more potential C compilers
+	to autoconf. Suggested by Nelson Beebe.
+
+v1.13 2015/10/22
+	(2015/07/18) PS1 - fixed heap overflows, null pointer dereference
+	bugs and a memory leak. Reported by Agostino Sarubbo.
+	(2015/05/17) PS1 - man page: show which backends are dimension
+	based, and state more clearly that svg backend defaults to 72dpi.
+	(2015/04/11) PS1 - portability: ssize_t not supported on some
+	systems; use ptrdiff_t instead. Reported by Martin Gieseking.
+	(2015/03/28) PS1 - portability: added missing #includes for c99,
+	reported by Nelson Beebe.
+	(2015/03/27) PS1 - include config.h before other header files,
+	reported by Peter Breitenlohner.
+	(2015/03/26) PS1 - fixed division by zero bug triggered by bitmap
+	of dimension 1x0. Reported by Tomasz Buchert.
+
+v1.12 2015/03/24
+	(2015/03/20) PS1 - fixed memory overflow bug triggered by very
+	large bitmaps. Fixes RedHat bug #955808 reported by Vincent Danen
+	and Debian bug #778646 reported by Moritz Muehlenhoff.
+	(2014/09/06) PS1 - test suite: added binary-check, to check that
+	files are written in binary mode. Mostly relevant on Windows.
+	(2014/09/06) PS1 - portability: fixed potential binary file mode
+	bug on MinGW64.
+	(2014/03/30) PS1 - man pages: fixed leading blank page with
+	groff -man -Tps.
+	(2013/12/29) PS1 - portability: made regular expressions in test
+	suite POSIX compliant, reported by Ben Bullock.
+	(2013/05/14) PS1 - distribution: removed libtool from distribution.
+
+v1.11 2013/02/19
+	(2013/02/10) PS1 - bitops.c: added "cc" as a clobbered register.
+	(2012/09/13) PS1 - GeoJSON backend: -u option affects rounding,
+	not scaling.
+	(2012/09/12) CH1 - added GeoJSON backend.
+	(2012/03/04) PS1 - minor change in behavior of alphamax parameter:
+	make a corner if alpha >= alphamax (instead of >). This makes
+	little practical difference, except when alphamax = 0, in which
+	case we now get a polygon. Fixes bug #3495854, reported by
+	scribbleink.
+	(2012/02/24) PS1 - added support for BMP format with bitfields.
+
+v1.10 2011/08/19
+	(2011/08/07) PS1 - added --tight option
+	(2011/08/05) PS1 - backends: simplified dimension calculations
+	(2011/08/05) PS1 - eps backend: prevent integer overflow in
+	bounding box.
+	(2011/08/05) PS1 - disallow resolution of 0 dpi.
+	(2011/08/05) PS1 - man page: added BACKEND TYPES section
+	(2011/08/05) PS1 - fixed default scaling at 72dpi for
+	variable-sized backends
+	(2011/08/02) PS1 - new gimppath backend produces SVG output
+	suitable for current versions of Gimp.
+	(2011/08/02) PS1 - added a --flat option for the SVG backend.
+	(2011/07/31) PS1 - test suite: renamed *.out files to prevent
+	make's built-in implicit rules from accidentally overwriting them.
+	(2011/07/26) PS1 - added DXF backend. Thanks to Jonas Benedett
+	Dorr for testing.
+	(2011/07/26) PS1 - use high resolution bounding box in EPS, PDF,
+	and SVG backends
+	(2011/05/13) PS1 - autoconf: CADD can now be given at compile time
+
+v1.9 2010/12/21
+	(2010/12/20) PS1 - getopt.h: fixed compiler warnings
+	(2010/12/20) PS1 - added --tty option to specify progress bar
+	rendering at runtime.
+	(2010/12/20) PS1 - added simplified progress bar for Windows or
+	other dumb terminals. New --enable-dumb-tty configuration option.
+	(2010/12/16) PS1 - test suite: fixed bug where a failed test was
+	not reported in backend-check.sh
+	(2010/12/15) PS1 - test suite: support for $EXEEXT
+	(2010/12/15) PS1 - optimized penalty3 inner loop, 4.6% speedup.
+	(2010/12/15) PS1 - autoconf: new CADD variable to add to CFLAGS
+	(2010/12/15) PS1 - fixed some compiler warnings, added some error
+	handlers, and added some cosmetic top-level free's.
+	(2010/11/25) PS1 - added support for some BMP version 4 and 5
+	files, and for top-down BMP files. Suggested by Kanwar Sangwan.
+	(2010/11/13) PS1 - don't enter filter mode if -- is used
+	(2010/11/09) PS1 - greymap.h, bitmap.h: drop unneeded dependencies
+	(2010/09/07) PS1 - autoconf: fixed getopt_long test to allow
+	cross-compiling, bug #3061403, reported by Igor Filippov.
+	(2010/08/31) PS1 - test suite: added environment variables
+	CHECK_POTRACE and CHECK_MKBITMAP to allow binaries outside the
+	build tree to be tested
+	(2010/08/09) PS1 - autoconf: converted to libtool
+	(2010/08/05) PS1 - autoconf: renamed configure.in as configure.ac
+	(2010/08/05) PS1 - autoconf: added --with-libpotrace to optionally
+	install the Potrace library and header files.
+	(2009/08/03) PS1 - portability: c++ wrapper in potracelib.h,
+	suggested by Peter Jankuliak.
+	(2009/05/13) PS1 - added pdfpage backend for fixed pagesize PDF
+	output.
+	(2009/04/07) PS1 - decompose.c: minor optimization
+	(2008/10/08) PS1 - mkbitmap: speed increase by 8% to 26% by
+	eliminating unnecessary bounds checks and interpolation.
+	(2008/10/05) PS1 - trace.c: separate function for path reversal
+	(2008/10/03) PS1 - progress.h: do the right thing if progress ==
+	NULL
+	(2008/10/03) PS1 - moved detrand() to auxiliary.h
+	(2008/08/21) PS1 - mkbitmap: added --blur option.
+	(2008/08/12) PS1 - combined the old -V option with -v.
+	(2008/08/12) PS1 - test suite: adjusted tolerances to fix bug
+	#1745456
+	(2007/12/31) PS1 - include curve.h where path_t is used
+	(2007/12/28) PS1 - flush stderr when interleaved with stdout
+	(2007/12/28) PS1 - portability: don't hardcode size of short int
+	(2007/11/09) PS1 - eps backend: use save-restore to avoid
+	polluting caller's dictionary and for page independence.
+	(2007/05/22) PS1 - xfig backend: added depth to opaque components
+	to avoid them floating to the background. Suggested by Rafael
+	Laboissiere.
+
+v1.8 2007/04/09
+	(2007/04/08) PS1 - portability: use 'test' instead of '[' in shell
+	scripts.
+	(2007/04/08) PS1 - test suite: run PDF checks as a separate test.
+	(2007/04/06) PS1 - fixed logical expressions in flate.c
+	(2007/02/19) PS1 - portability: replacements for inline and M_PI
+	(2007/01/16) PS1 - test suite: added checks for rotation in
+	PostScript, PDF, and PGM backends
+	(2007/01/16) PS1 - pdf backend: added rotation
+	(2007/01/16) PS1 - pdf backend: renamed shipcom() function
+	(2007/01/14) PS1 - autoconf: check if getopt_long reorders its
+	arguments.
+	(2007/01/13) PS1 - made pseudo-random number generation
+	thread-safe and much faster.
+	(2006/12/20) PS1 - renamed some structures in lzw.c, main.h
+	(2006/12/20) PS1 - portability: fixed some compiler issues for
+	Amiga, reported by Andreas Kleinert.
+	(2006/12/20) PS1 - main.c: changed some return types to void.
+	(2006/08/14) PS1 - made curve.c:privcurve_free_members() static.
+	(2005/12/22) PS1 - renamed README.win as README-WIN
+	(2005/11/11) PS1 - portability: use binary file i/o in Cygwin.
+	Suggested by Henry He.
+	(2005/06/24) PS1 - potracelib: fixed allocation bug, reported by
+	Jung Shin.
+	(2005/06/23) PS1 - potracelib_demo.c: free resources properly.
+	(2005/06/23) PS1 - initialize unused private state to 0.
+	(2005/06/23) PS1 - decompose.c: improved memory allocation scheme.
+	(2005/05/06) PS1 - added "alphacurve" field to private curve
+	structure, so that backends that don't use the public interface
+	(such as the EPS backend) can be warned of non-conforming curves.
+
+v1.7 2005/03/06
+	(2005/03/05) PS1 - fixed progress bar subrange bug.
+
+v1.6 2005/02/27
+	(2005/02/22) PS1 - added "epsilon" feature to progress bar.
+	(2005/02/22) PS1 - documentation: changed potracelib documentation
+	to TeX format.
+	(2005/02/07) PS1 - tweaked progress bar
+	(2005/01/24) PS1 - added --progress option to potrace frontend.
+	(2005/01/24) PS1 - potracelib: added progress bar interface.
+	(2005/01/23) PS1 - fixed overflow bug in fast summing code.
+	(2005/01/23) PS1 - rewrote trace.c:bestpolygon(). This speeds up
+	potrace by 20% on typical data and up to 60% in some bad cases.
+	(2004/12/07) PS1 - documentation: added potracelib.txt
+	(2004/12/07) PS1 - renamed aux.h as auxiliary.h, since aux is an
+	invalid filename in Windows.
+	(2004/12/06) PS1 - API: added default parameters
+	(2004/12/06) PS1 - API: added potrace_state_t
+	(2004/12/06) PS1 - API: added "const" qualifiers
+	(2004/12/06) PS1 - removed conv and areac fields from privpath_t.
+	(2004/12/06) PS1 - changed bounding box handling in decompose.c
+	(2004/12/06) PS1 - split curve_t into public and private parts.
+	(2004/12/06) PS1 - moved curve/path allocation to curve.c.
+	(2004/12/06) PS1 - renamed a type in lzw.h.
+	(2004/12/06) PS1 - renamed source files.
+	(2004/12/04) PS1 - split path_t into public and private parts.
+	(2004/12/03) PS1 - split core functionality from user interface.
+	(2004/12/03) PS1 - moved parts of bitmap.h to potracelib.h. Split
+	bitmap.c into bitmap.c and bitmap_io.c. Moved path decomposition
+	auxiliary functions from bitmap.c to path.c.
+	(2004/12/03) PS1 - converted some stray local functions to static
+	(2004/12/01) PS1 - moved basic curve data type definitions to
+	potracelib.h
+	(2004/12/01) PS1 - collected some repeatedly used macros in aux.h
+	(2004/12/01) PS1 - started to create API to potrace core
+	functionality in potracelib.c and potracelib.h. Also added new
+	libpotrace.a target.
+	(2004/12/01) PS1 - made curve.c and path.c reentrant by removing
+	global variable "info".
+	(2004/11/28) PS1 - made a85* auxiliary functions static in
+	flate.c.
+	(2004/11/28) PS1 - pdf backend: removed arbitrary page limit.
+	(2004/11/24) PS1 - pdf backend: replaced ftell() by explicit byte
+	count to work correctly with stdout.
+	(2004/11/24) PS1 - portability: use binary file i/o in MinGW.
+	(2004/10/08) PS1 - minor cleanup in backend_pdf.c.
+	(2004/09/21) PS1 - replace -O3 compilation default by -O2; inlined
+	critical functions manually instead.
+	(2004/09/18) PS1 - slightly optimized multiplications in
+	curve.c:bezier(). Thanks to Thomas M.Ott for suggesting it.
+	(2004/09/16) PS1 - list of backends in help message is now
+	generated.
+	(2004/09/16) PS1 - test suite: added test for pdf backend.
+	(2004/09/14) PS1 - removed bits.c, renamed bits.h to bitops.h, and
+	use static inline functions instead of macros.
+	(2004/09/14) PS1 - test suite: adjusted tolerances.
+	(2004/09/12) PS1 - mkbitmap: when reading plain pbm files, use
+	colors 0 and 255, not 0 and 1.
+	(2004/09/12) PS1 - potrace and mkbitmap: don't complain about
+	"junk at the end of file" if the junk is whitespace and
+	comments. Treat files which contain only whitespace and comments
+	as empty.
+	(2004/08/05) TA1 - added pdf backend.
+
+v1.5 2004/07/08
+	(2004/07/08) PS1 - removed dependency on external "compress"
+	program. Removed ztops.c, added lzw.c, bits.c.
+	(2004/03/17) PS1 - don't leave temporary file /tmp/have_compress.*
+	lying around.
+	(2004/03/06) PS1 - fixed a type error in have_compress.c:28.
+
+v1.4 2004/03/06
+	(2004/03/05) PS1 - removed the compile-time check for the
+	"compress" program and replaced it by a run-time check.
+	(2004/03/03) PS1 - ztops.c: fixed compression bug where garbage
+	was added after the end of stream.
+	(2004/02/09) PS1 - further optimized the speed of the function
+	path.c:pathlist_to_tree, which now takes less than 0.1% of total
+	running time.
+	(2004/02/09) PS1 - distribution: removed potrace.{ps,pdf} from
+	distribution, changed textfiles to DOS mode in Cygwin distribution
+	(2004/01/19) PS1 - corrected a bug in 1.2 which caused an enormous
+	slowdown in the function path.c:pathlist_to_tree.
+	(2004/01/17) PS1 - test suite: better quoting in shell scripts to
+	be more robust against spaces in filenames etc.
+	(2004/01/17) PS1 - test suite and ztops.c: respect TEMPDIR
+	environment variable, if set.
+
+v1.3 2004/01/15
+	(2004/01/14) PS1 - test suite: adjusted tolerances.
+	(2004/01/13) PS1 - when reading a bitmap of width or height 0,
+	pretend the offending dimension is 1. This is not 100% logical
+	in all cases, but better than producing garbage.
+	(2004/01/13) PS1 - fixed bounding box in xfig backend.
+	(2004/01/13) PS1 - added missing gsave/grestore to ps backend.
+	(2004/01/07) PS1 - autoconf: search for zlib.h in
+	${prefix}/include and for libz.so in ${prefix}/lib, in case they
+	are not found elsewhere.
+	(2004/01/07) PS1 - eliminated some unused variables.
+        (2004/01/07) PS1 - portability: eliminated typeof() from
+	mkbitmap.c
+	(2004/01/07) PS1 - test suite: added a test for empty bitmaps.
+	(2003/12/25) PS1 - fixed bug #866223: potrace crashes when applied
+	to an empty bitmap.
+	(2003/12/25) PS1 - when options -2 or -3 are unsupported, ignore
+	them rather than failing, for improved compatibility.
+	(2003/12/25) PS1 - autoconf: added --disable-zlib configuration
+	option and improved error messages for missing zlib.h or libz.so
+	(2003/12/25) PS1 - portability: eliminated dynamic arrays in
+	mkbitmap.c
+	(2003/12/25) PS1 - test suite: added a check for mkbitmap.
+	(2003/12/25) PS1 - test suite: more portable filesize checking in
+	backend-check.sh
+
+v1.2 2003/12/23
+	(2003/12/23) PS1 - added an xfig backend.
+	(2003/12/23) PS1 - added --group option to group related shapes
+	together in SVG backend.
+	(2003/12/23) PS1 - added --opaque option to paint white shapes
+	opaquely, instead of leaving them transparent, in PS/EPS and SVG
+	backends.
+	(2003/12/23) PS1 - rewrote path decomposition algorithm to
+	calculate path containment tree, to be used for grouping.
+	(2003/12/23) PS1 - test suite: added a check of postscript output
+	using ghostscript.
+	(2003/09/18) PS1 - autoconf: added tests for -lm and -lz
+	libraries, and for zlib.h header file.
+	(2003/09/18) PS1 - portability: cleaned up code so that it can be
+	compiled with a C++ compiler.
+	(2003/09/17) PS1 - code cleanup in main.c:main().
+	(2003/09/17) PS1 - added mkbitmap program.
+	(2003/09/17) PS1 - added -ffloat-store compiler flag for improved
+	floating point predictability.
+	(2003/09/12) PS1 - test suite: added test for BMP runlength
+	encoding.
+	(2003/09/12) PS1 - fixed frontend for BMP runlength encoding.
+	(2003/09/11) PS1 - autoconf: added test to work around gcc
+	compiler bug 12243, which affected curve.c:adjust_vertices().
+	(2003/09/11) PS1 - renamed pbm.c as bitmap.c, pgm.c as greymap.c
+	(2003/09/11) PS1 - moved some bitmap details from path.c to pbm.c
+	(2003/09/10) PS1 - renamed pbm.h macros to start with BM_
+	(2003/09/02) PS1 - portability: added missing fallback value for
+	M_PI to backend_pgm.c.
+	(2003/08/28) PS1 - specialized matrix solving code for n=2.
+	(2003/08/28) PS1 - portability (and scalability): eliminated
+	dynamic arrays.
+	(2003/08/28) PS1 - portability: replaced vsnprintf by vsprintf.
+	(2003/08/28) PS1 - portability: provided fallback value for M_PI
+	(2003/08/27) PS1 - autoconf: now checks whether the compress
+	program works, not just whether it exists.
+	(2003/08/27) PS1 - test suite: wrote three tests for "make check"
+	(2003/08/27) PS1 - portability: fixed some floating point errors
+	on DEC Alpha: division by zero and log of zero.
+	(2003/08/27) PS1 - changed bitmap representation to take advantage
+	of 64-bit architectures.
+	(2003/08/27) PS1 - changed default scaling in ps and eps modes for
+	small page sizes.
+	(2003/08/26) PS1 - allow arguments of command line options -b, -z,
+	-P to be abbreviated by "unambiguous prefix".
+	(2003/08/26) PS1 - added rotation to gimppath backend.
+	(2003/08/24) PS1 - portability: removed GNU extensions from printf
+	format strings in backend_eps.
+	(2003/08/22) PS1 - converted --unit to double value.
+	(2003/08/22) PS1 - added experimental gimppath backend.
+	(2003/08/20) PS1 - close paths in postscript/eps backend.
+	(2003/08/20) PS1 - fixed bug in parsing command line options: long
+	options --cleartext, --level2, --level3 did not work properly.
+	Thanks to George Williams for reporting this bug.
+
+v1.1 2003/08/18
+	(2003/08/17) PS1 - replaced calc_lon algorithm by a faster
+	implementation. This results in speedups of up to factor 3.3 for
+	certain large input files.
+	(2003/08/17) PS1 - added --invert option.
+	(2003/08/17) PS1 - improved error messages on wrong file format.
+	(2003/08/17) PS1 - code cleanup to build under fussier compilers.
+	Thanks to Nelson Beebe for submitting compiler logs for a large
+	number of setups.
+	(2003/08/17) PS1 - renamed curve.c:quad as quadform to avoid name
+	clash on IBM AIX, Compaq/DEC ODF/1.
+	(2003/08/17) PS1 - autoconf: let user override CFLAGS at configure
+	time, and use -Wall and -O3 only for gcc compiler
+	(2003/08/16) PS1 - added --blacklevel option to control
+	image-to-bitmap conversion
+	(2003/08/16) PS1 - added ability to read BMP files. Changed error
+	reporting in case of empty files, or if there is junk at the end
+	of a file in multipage mode.
+	(2003/08/14) PS1 - as a convenience, now also read files in PGM
+	and PPM format and convert to bitmap by simple threshold method.
+	This is because many programs, including the Gimp and the *topnm
+	tools, produce PNM output which must be further converted to PBM.
+	(2003/08/14) PS1 - rearranged order of options in usage message.
+	(2003/08/14) PS1 - implemented -d1 option for SVG backend. This
+	outputs a jaggy bitmap with no smoothing.
+	(2003/08/14) PS1 - autoconf: improved handling of
+	--enable-compress
+	(2003/08/14) PS1 - added SVG backend.
+	(2003/08/14) PS1 - renamed old -s option as -S
+	(2003/08/12) PS1 - added README.win
+	(2003/08/12) PS1 - autoconf: fixed bug #787182: added non-standard
+	compile time options to help message for ./configure script
+
+v1.0 2003/08/10
+	(2003/08/10) PS1 - added file i/o code
+	(2003/08/08) PS1 - optimized number of times the penalty3 function
+	is called. Speedups of factor 2.7 were observed on large files.
+	(2003/08/08) PS1 - added --opttolerance and --alphamax options.
+	(2003/08/07) PS1 - autoconf: changed configure.in so that test for
+	compress is omitted when the user overrides it - this prevents a
+	wrong cached value to be read.
+	(2003/08/07) PS1 - keep output flushed in postscript mode
+	(2003/08/07) PS1 - fixed memory leak in multiple page mode
+	(2003/08/06) PS1 - replaced --opticurve by --longcurve option;
+	opticurve is now the default
+	(2003/08/06) PS1 - added opticurve sensitivity to pgm backend
+	(2003/08/06) PS1 - restricted opticurves to be bounded away from
+	180 degrees
+	(2003/08/06) PS1 - allow margins and papersize to determine width
+	if it is not defined by other means in postscript mode
+	(2003/08/06) PS1 - added ability to read multiple bitmaps in
+	postscript mode
+	(2003/08/05) PS1 - new --longcoding option
+	(2003/08/05) PS1 - new optimized eps backend which works with
+	opticurve.
+	(2003/07/31) PS1 - replaced O(n^3) calc_lon algorithm by a new
+	O(n^2) algorithm. Observed speedups of factor 80.
+	(2003/07/27) PS1 - added --opticurve option and integrated
+	opticurve code in curve.c
+	(2003/06/04) PS1 - made bm_to_pathlist a lot more efficient by
+	scanning and clearing only bounding box of mask in inner scan.
+	(2002/11/17) PS1 - changed bm_to_pathlist prototype to use
+	explicit return value.
+	(2002/10/09) PS1 - autoconf: added automake/autoconf scripts in
+	preparation for public distribution.

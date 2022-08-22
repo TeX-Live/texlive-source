@@ -48,6 +48,7 @@ KPSE_COND_WIN32
 KPSE_KPATHSEA_FLAGS
 KPSE_FREETYPE2_FLAGS
 KPSE_ZLIB_FLAGS
+KPSE_POTRACE_FLAGS
 
 KPSE_SAVE_FLAGS
 
@@ -229,7 +230,6 @@ AC_CONFIG_FILES([Makefile
 	dvisvgm-src/libs/clipper/Makefile
 	dvisvgm-src/libs/ff-woff/Makefile
 	dvisvgm-src/libs/md5/Makefile
-	dvisvgm-src/libs/potrace/Makefile
 	dvisvgm-src/libs/variant/Makefile
 	dvisvgm-src/libs/woff2/Makefile
 	dvisvgm-src/libs/xxHash/Makefile

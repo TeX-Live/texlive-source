@@ -99,6 +99,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-warnings.m4 \
 	$(top_srcdir)/../../m4/kpse-win32.m4 \
 	$(top_srcdir)/../../m4/kpse-zlib-flags.m4 \
@@ -303,6 +304,9 @@ PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
+POTRACE_DEPEND = @POTRACE_DEPEND@
+POTRACE_INCLUDES = @POTRACE_INCLUDES@
+POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
 SET_MAKE = @SET_MAKE@
@@ -384,8 +388,7 @@ liboptimizer_a_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
   	WSNodeRemover.hpp           WSNodeRemover.cpp
 
-@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-@HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
+@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
 AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include $(XXHASH_CFLAGS)

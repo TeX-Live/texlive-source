@@ -719,6 +719,10 @@ GMP_RULE
 GMP_DEPEND
 GMP_LIBS
 GMP_INCLUDES
+POTRACE_RULE
+POTRACE_DEPEND
+POTRACE_LIBS
+POTRACE_INCLUDES
 CAIRO_RULE
 CAIRO_DEPEND
 CAIRO_LIBS
@@ -1089,6 +1093,9 @@ with_system_libpng
 with_system_freetype2
 with_system_pixman
 with_system_cairo
+with_system_potrace
+with_potrace_includes
+with_potrace_libdir
 with_system_gmp
 with_gmp_includes
 with_gmp_libdir
@@ -1855,6 +1862,11 @@ Optional Packages:
                           pkg-config)
   --with-system-cairo     use installed cairo headers and library (requires
                           pkg-config)
+  --with-system-potrace   use installed potrace headers and library
+  --with-potrace-includes=DIR
+                          potrace headers installed in DIR
+  --with-potrace-libdir=DIR
+                          potrace library installed in DIR
   --with-system-gmp       use installed gmp headers and library
   --with-gmp-includes=DIR gmp headers installed in DIR
   --with-gmp-libdir=DIR   gmp library installed in DIR
@@ -20055,6 +20067,7 @@ esac
 
 test "x$enable_web2c:$enable_mflua" = xyes:yes && {
   need_lua53=yes
+  need_potrace=yes
 }
 # Check whether --enable-mfluajit was given.
 if test ${enable_mfluajit+y}
@@ -20082,6 +20095,7 @@ esac
 
 test "x$enable_web2c:$enable_mfluajit" = xyes:yes && {
   need_luajit=yes
+  need_potrace=yes
 }
 
 # Check whether --with-mf-x-toolkit was given.
@@ -27141,6 +27155,45 @@ $(CAIRO_DEPEND): ${top_builddir}/../../libs/cairo/cairo/cairo.h
 	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/cairo/cairo/cairo.h:
 	cd ${top_builddir}/../../libs/cairo && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+##tldbg _KPSE_LIB_FLAGS: Setup potrace (-lpotrace) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=potrace, libname=potrace, options=, tlincl=-IBLD/libs/potrace/include, tllib=BLD/libs/potrace/libpotrace.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/potrace/include/potrace.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: potrace (potrace) .
+
+# Check whether --with-system-potrace was given.
+if test ${with_system_potrace+y}
+then :
+  withval=$with_system_potrace;
+fi
+
+# Check whether --with-potrace-includes was given.
+if test ${with_potrace_includes+y}
+then :
+  withval=$with_potrace_includes;
+fi
+
+# Check whether --with-potrace-libdir was given.
+if test ${with_potrace_libdir+y}
+then :
+  withval=$with_potrace_libdir;
+fi
+if test "x$with_system_potrace" = xyes; then
+  if $PKG_CONFIG POTRACE; then
+  POTRACE_INCLUDES=`$PKG_CONFIG POTRACE --cflags`
+  POTRACE_LIBS=`$PKG_CONFIG POTRACE --libs`
+elif test "x$need_POTRACE:$with_system_POTRACE" = xyes:yes; then
+  as_fn_error $? "did not find POTRACE" "$LINENO" 5
+fi
+else
+  POTRACE_INCLUDES="-I$kpse_BLD/libs/potrace/include"
+  POTRACE_LIBS="$kpse_BLD/libs/potrace/libpotrace.a"
+  POTRACE_DEPEND='${top_builddir}/../../libs/potrace/libpotrace.a'
+  POTRACE_RULE='# Rebuild libpotrace
+$(POTRACE_DEPEND): ${top_builddir}/../../libs/potrace/include/potrace.h
+	cd ${top_builddir}/../../libs/potrace && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/potrace/include/potrace.h:
+	cd ${top_builddir}/../../libs/potrace && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 ##tldbg _KPSE_LIB_FLAGS: Setup gmp (-lgmp) flags.

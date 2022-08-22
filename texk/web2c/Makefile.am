@@ -125,6 +125,8 @@ $(proglib): $(proglib_sources)
 @PIXMAN_RULE@
 ## Rebuild libcairo
 @CAIRO_RULE@
+## Rebuild libpotrace
+@POTRACE_RULE@
 ## Rebuild libgmp
 @GMP_RULE@
 ## Rebuild libmpfr

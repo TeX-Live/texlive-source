@@ -4,8 +4,7 @@ BROTLI_LIBS += ../libs/brotli/libbrotli.a
 endif
 
 if !HAVE_POTRACE
-POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-POTRACE_LIBS = ../libs/potrace/libpotrace.a
+POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 endif
 
 if !HAVE_WOFF2

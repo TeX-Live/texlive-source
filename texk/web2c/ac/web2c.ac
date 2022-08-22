@@ -54,8 +54,8 @@ m4_foreach([Kpse_Prog], [kpse_tex_progs],
 dnl [PROG, BUILD-OR-NO, NOWIN-OR-NO, TEXT, REQUIRED-LIBS]
 m4_define([kpse_mf_progs], [dnl
 [[mf],       [yes], [yes], [METAFONT], []],
-[[mflua],    [yes], [no],  [MFLua],    [lua53]],
-[[mfluajit], [yes], [no],  [MFLuaJIT], [luajit]],
+[[mflua],    [yes], [no],  [MFLua],    [lua53 potrace]],
+[[mfluajit], [yes], [no],  [MFLuaJIT], [luajit potrace]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_mf_progs],
            [m4_ifset([Kpse_Prog],
