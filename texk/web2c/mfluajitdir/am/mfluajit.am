@@ -41,11 +41,11 @@ endif !MFLUAJITN
 endif WIN32
 
 dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
-mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) $(LUAJIT_DEFINES)
 mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 nodist_mfluajit_nowin_SOURCES = $(dist_mfluajit_SOURCES)
-mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) $(LUAJIT_DEFINES)
 mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
@@ -61,7 +61,7 @@ EXTRA_LIBRARIES += libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlp
 mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
 dist_libmfluajit_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmfluajit_a_SOURCES = $(mfluajit_c_h) mfluajit-pool.c
-libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DMF_LUA -DJIT
+libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) -DMF_LUA -DJIT
 
 # We must create mfluajitd.h before building the libmfluajit_a_OBJECTS.
 $(libmfluajit_a_OBJECTS): mfluajitd.h

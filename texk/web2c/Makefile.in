@@ -3926,11 +3926,11 @@ call_mflua_CPPFLAGS = -DEXEPROG=\"mflua.exe\"
 nodist_call_mflua_SOURCES = callexe.c
 call_mflua_LDADD = 
 dist_mflua_SOURCES = mfluadir/mfluaextra.c mfluadir/mfluaextra.h mfluadir/mflua_version.h
-mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)
+mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)  $(POTRACE_INCLUDES)
 mflua_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_LDFLAGS = -export-dynamic
 nodist_mflua_nowin_SOURCES = $(dist_mflua_SOURCES)
-mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)
+mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)  $(POTRACE_INCLUDES)
 mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_nowin_LDFLAGS = -export-dynamic
 
@@ -3938,7 +3938,7 @@ mflua_nowin_LDFLAGS = -export-dynamic
 mflua_c_h = mfluaini.c mflua0.c mfluacoerce.h mfluad.h
 dist_libmflua_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmflua_a_SOURCES = $(mflua_c_h) mflua-pool.c
-libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) -DMF_LUA
+libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES)  $(POTRACE_INCLUDES) -DMF_LUA
 mflua_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch
@@ -4244,11 +4244,11 @@ call_mfluajit_CPPFLAGS = -DEXEPROG=\"mfluajit.exe\"
 nodist_call_mfluajit_SOURCES = callexe.c
 call_mfluajit_LDADD = 
 dist_mfluajit_SOURCES = mfluajitdir/mfluajitextra.c mfluajitdir/mfluajitextra.h mfluadir/mflua_version.h
-mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) $(LUAJIT_DEFINES)
 mfluajit_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 nodist_mfluajit_nowin_SOURCES = $(dist_mfluajit_SOURCES)
-mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
+mfluajit_nowin_CPPFLAGS = $(mfluajit_CPPFLAGS) -DMFNOWIN $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) $(LUAJIT_DEFINES)
 mfluajit_nowin_LDADD = libmfluajit.a libmfluaotfcc.a libmfluapotrace.a libmfluajitlpeg.a $(LDADD) $(windowlib) $(LUAJIT_LIBS) $(POTRACE_LIBS)
 mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
@@ -4256,7 +4256,7 @@ mfluajit_nowin_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 mfluajit_c_h = mfluajitini.c mfluajit0.c mfluajitcoerce.h mfluajitd.h
 dist_libmfluajit_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmfluajit_a_SOURCES = $(mfluajit_c_h) mfluajit-pool.c
-libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) -DMF_LUA -DJIT
+libmfluajit_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES)  $(POTRACE_INCLUDES) -DMF_LUA -DJIT
 mfluajit_web_srcs = \
 	mf.web \
 	mfluadir/mf-lua.ch \

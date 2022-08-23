@@ -41,11 +41,11 @@ endif !MFLUAN
 endif WIN32
 
 dist_mflua_SOURCES = mfluadir/mfluaextra.c mfluadir/mfluaextra.h mfluadir/mflua_version.h
-mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)
+mflua_CPPFLAGS = $(AM_CPPFLAGS) $(X_CFLAGS) $(LUA_INCLUDES)  $(POTRACE_INCLUDES)
 mflua_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(mf_x_libs) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_LDFLAGS = -export-dynamic
 nodist_mflua_nowin_SOURCES = $(dist_mflua_SOURCES)
-mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)
+mflua_nowin_CPPFLAGS = $(mflua_CPPFLAGS) -DMFNOWIN $(LUA_INCLUDES)  $(POTRACE_INCLUDES)
 mflua_nowin_LDADD = libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a $(LDADD) $(windowlib) $(LUA_LIBS) $(POTRACE_LIBS)
 mflua_nowin_LDFLAGS = -export-dynamic
 
@@ -61,7 +61,7 @@ EXTRA_LIBRARIES += libmflua.a libmfluaotfcc.a libmfluapotrace.a libmflualpeg.a
 mflua_c_h = mfluaini.c mflua0.c mfluacoerce.h mfluad.h
 dist_libmflua_a_SOURCES = luatexdir/lua/lkpselib.c mfluadir/mfluac.c mfluadir/mfluac.h
 nodist_libmflua_a_SOURCES = $(mflua_c_h) mflua-pool.c
-libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) -DMF_LUA
+libmflua_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES)  $(POTRACE_INCLUDES) -DMF_LUA
 
 # We must create mfluad.h before building the libmflua_a_OBJECTS.
 $(libmflua_a_OBJECTS): mfluad.h
