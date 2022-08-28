@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 62822 2022-03-20 08:34:54Z siepo $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2022 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -8,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 62822 $';
+my $svnrev = '$Revision: 63645 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -43,6 +42,8 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::run_cmd($cmd [, @envvars ]);
   TeXLive::TLUtils::system_pipe($prog, $infile, $outfile, $removeIn, @args);
   TeXLive::TLUtils::diskfree($path);
+  TeXLive::TLUtils::get_user_home();
+  TeXLive::TLUtils::expand_tilde($str);
 
 =head2 File utilities
 
@@ -234,6 +235,8 @@ BEGIN {
     &run_cmd
     &system_pipe
     &diskfree
+    &get_user_home
+    &expand_tilde
     &announce_execute_actions
     &add_symlinks
     &remove_symlinks
@@ -540,6 +543,7 @@ sub platform_desc {
     return "$platform_name{$platform}";
   } else {
     my ($CPU,$OS) = split ('-', $platform);
+    $OS = "" if ! defined $OS; # e.g., -force-platform foo
     return "$CPU with " . ucfirst "$OS";
   }
 }
@@ -815,6 +819,43 @@ computing the disk space.
 
 sub diskfree {
   my $td = shift;
+  my ($output, $retval);
+  if (win32()) {
+    # the powershell one-liner only works from win8 on.
+    my @winver = Win32::GetOSVersion();
+    if ($winver[1]<=6 && $winver[2]<=1) {
+      return -1;
+    }
+    my $avl;
+    if ($td =~ /^[a-zA-Z]:/) {
+      my $drv = substr($td,0,1);
+      # ea ignore: error action ignore: no output at all
+      my $cmd = "powershell -nologo -noninteractive -noprofile -command " .
+       "\"get-psdrive -name $drv -ea ignore |select-object free |format-wide\"";
+      ($output, $retval) = run_cmd($cmd);
+      # ignore exit code, just parse the output, which should
+      # consist of empty lines and a number surrounded by spaces
+      my @lines = split(/\r*\n/, $output);
+      foreach (@lines) {
+        chomp $_;
+        if ($_ !~ /^\s*$/) {
+          $_ =~ s/^\s*//;
+          $_ =~ s/\s*$//;
+          $avl = $_;
+          last;
+        }
+      }
+      if ($avl !~ /^[0-9]+$/) {
+        return (-1);
+      } else {
+        return (int($avl/(1024*1024)));
+      }
+    } else {
+      # maybe UNC drive; do not try to handle this
+      return -1;
+    }
+  }
+  # now windows case has been taken care of
   return (-1) if (! $::progs{"df"});
   # drop final /
   $td =~ s!/$!!;
@@ -831,22 +872,53 @@ sub diskfree {
   }
   $td .= "/" if ($td !~ m!/$!);
   return (-1) if (! -e $td);
-  debug("Checking for free diskspace in $td\n");
-  my ($output, $retval) = run_cmd("df -P \"$td\"", POSIXLY_CORRECT => 1);
+  debug("checking diskfree() in $td\n");
+  ($output, $retval) = run_cmd("df -P \"$td\"", POSIXLY_CORRECT => 1);
   if ($retval == 0) {
     # Output format should be this:
     # Filesystem      512-blocks       Used  Available Capacity Mounted on
     # /dev/sdb3       6099908248 3590818104 2406881416      60% /home
     my ($h,$l) = split(/\n/, $output);
     my ($fs, $nrb, $used, $avail, @rest) = split(' ', $l);
-    debug("disk space: used=$used (512-block), avail=$avail (512-block)\n");
+    debug("diskfree: used=$used (512-block), avail=$avail (512-block)\n");
     # $avail is in 512-byte blocks, so we need to divide by 2*1024 to
     # obtain Mb. Require that at least 100M remain free.
     return (int($avail / 2048));
   } else {
-    # error in running df -P out of whatever reason
+    # error in running df -P for whatever reason
     return (-1);
   }
+}
+
+=item C<get_user_home()>
+
+Returns the current user's home directory (C<$HOME> on Unix,
+C<$USERPROFILE> on Windows, and C<~> if none of the two are
+set. Save in package variable C<$user_home_dir> after computing.
+
+=cut
+
+# only search for home directory once, and save expansion here
+my $user_home_dir;
+
+sub get_user_home {
+  return $user_home_dir if ($user_home_dir);
+  $user_home_dir = getenv (win32() ? 'USERPROFILE' : 'HOME') || '~';
+  return $user_home_dir;
+}
+
+=item C<expand_tilde($str)>
+
+Expands initial C<~> with the user's home directory in C<$str> if
+available, else leave C<~> in place.
+
+=cut
+
+sub expand_tilde {
+  my $str = shift;
+  my $h = get_user_home();
+  $str =~ s/^~/$h/;
+  return $str;
 }
 
 =back

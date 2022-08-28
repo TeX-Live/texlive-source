@@ -6,7 +6,7 @@
 use strict; use warnings;
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 62232 $';
+my $svnrev = '$Revision: 63068 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
