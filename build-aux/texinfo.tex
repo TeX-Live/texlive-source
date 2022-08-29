@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-08-20.19}
+\def\texinfoversion{2022-08-27.12}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -2803,13 +2803,22 @@ end
 % @var unconditionally uses \sl.  This gives consistency for
 % parameter names whether they are in @def, @table @code or a
 % regular paragraph.
+%  To get ttsl font for @var when used in code context, @set txicodevaristt.
 % The \null is to reset \spacefactor.
 \def\aftersmartic{}
 \def\var#1{%
   \let\saveaftersmartic = \aftersmartic
   \def\aftersmartic{\null\let\aftersmartic=\saveaftersmartic}%
-  {\sl #1}\smartitaliccorrection
+  \ifusingtt{%
+    \ifflagclear{txicodevaristt}%
+       {{\sl #1}}%
+       {{\ttsl #1}}%
+  }{{\sl #1}}%
+  \smartitaliccorrection
 }
+
+% To be removed after next release
+\def\SETtxicodevaristt{}% @set txicodevaristt
 
 \let\i=\smartitalic
 \let\slanted=\smartslanted
@@ -3448,10 +3457,16 @@ $$%
      \ifx\textnominalsize\xwordpt
        % for 10pt running text, lllsize (8pt) is too small for the A in LaTeX.
        % Revert to plain's \scriptsize, which is 7pt.
-       \count255=\the\fam $\fam\count255 \scriptstyle A$%
+       % \count255=\the\fam $\fam\count255 \scriptstyle A$%
+         \switchtolllsize A%
      \else
-       % For 11pt, we can use our lllsize.
-       \switchtolllsize A%
+       \iffalse % x\curfontsize\smallword
+         % For footnotes and indices
+         \count255=\the\fam $\fam\count255 \scriptstyle A$%
+       \else
+         % For 11pt, we can use our lllsize.
+         \switchtolllsize A%
+       \fi
      \fi
      }%
      \vss
@@ -3459,6 +3474,7 @@ $$%
   \kern-.15em
   \TeX
 }
+\def\smallword{small}
 
 % Some math mode symbols.  Define \ensuremath to switch into math mode
 % unless we are already there.  Expansion tricks may not be needed here,
