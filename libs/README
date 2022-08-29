@@ -52,6 +52,9 @@ mpfr 4.1.0 - checked 12jul20
 pixman 0.40.0 - checked 21apr20
   http://cairographics.org/releases/
 
+potrace 1.16 - checked 29aug22
+  http://potrace.sourceforge.net
+
 pplib 2.05.0 - checked 21apr20
   https://github.com/contextgarden/pplib
 

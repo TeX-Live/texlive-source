@@ -1,0 +1,18 @@
+Changes applied to the potrace-1.16/ tree as obtained from:
+	http://potrace.sourceforge.net
+
+Removed:
+	Makefile.in
+	aclocal.m4
+	compile
+	config.guess
+	config.sub
+	configure
+	depcomp
+	install-sh
+	ltmain.sh
+	m4/
+	missing
+	mkinstalldirs
+	src/Makefile.in
+	test-driver
