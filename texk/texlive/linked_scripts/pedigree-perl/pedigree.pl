@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright (C) 2006-2021 Boris Veytsman & Leila Akhmadeeva
+# Copyright (C) 2006-2022 Boris Veytsman & Leila Akhmadeeva
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ Pedigree::MarriageNode(3), Pedigree::Area(3).
 
 =head1  AUTHOR
 
-Boris Veytsman, Leila Akhmadeeva, 2006-2021
+Boris Veytsman, Leila Akhmadeeva, 2006-2022
 
 
 =cut
@@ -111,12 +111,14 @@ use vars qw($opt_c $opt_d $opt_o $opt_s $opt_v);
 my $TLMaster;      # Where TeXlive is
 my $TLCONF;        # TL config file
 my $TLCONFLOCAL;   # TL local config file
-chomp($TLMaster = `kpsewhich -var-value=TEXMFROOT`);
-if (length($TLMaster)) {
-    unshift @INC, "$TLMaster/texmf-dist/scripts/pedigree-perl";
-    $TLCONF = "$TLMaster/texmf-config/pedigree/pedigree.cfg";
-    chomp($TLCONFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
-    $TLCONFLOCAL .= "/pedigree/pedigree.cfg";
+BEGIN {
+    chomp($TLMaster = `kpsewhich -var-value=TEXMFROOT`);
+    if (length($TLMaster)) {
+	unshift @INC, "$TLMaster/texmf-dist/scripts/pedigree-perl";
+	$TLCONF = "$TLMaster/texmf-config/pedigree/pedigree.cfg";
+	chomp($TLCONFLOCAL = `kpsewhich -var-value=TEXMFLOCAL`);
+	$TLCONFLOCAL .= "/pedigree/pedigree.cfg";
+    }
 }
 
 use Getopt::Std;
@@ -129,9 +131,9 @@ use Pedigree;
 
 my $USAGE="Usage: $0 [-c configuration_file] [-d] [-o output_file] [-s start_id] input_file\n";
 my $COPYRIGHT=<<END;
-$0 Version 0.5, October 2021
+$0 Version 2.1, August 2022
 
-Copyright (C) 2006-2021 Boris Veytsman & Leila Akhmadeeva
+Copyright (C) 2006-2022 Boris Veytsman & Leila Akhmadeeva
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
