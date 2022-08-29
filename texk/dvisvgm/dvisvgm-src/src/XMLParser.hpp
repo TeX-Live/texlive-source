@@ -1,5 +1,5 @@
 /*************************************************************************
-** AttributeExtractor.hpp                                               **
+** XMLParser.hpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
 ** Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>   **
@@ -18,43 +18,41 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#pragma once
+#ifndef XMLPARSER_HPP
+#define XMLPARSER_HPP
 
-#include <set>
 #include <string>
-#include "OptimizerModule.hpp"
-#include "../XMLNode.hpp"
+#include "MessageException.hpp"
+#include "SVGTree.hpp"
 
-/** Moves common attributes of adjacent elements to enclosing groups. */
-class AttributeExtractor : public OptimizerModule {
-	using Attribute = XMLElement::Attribute;
-
-	/** Represents a range of adjacent nodes where all elements have a common attribute. */
-	struct AttributeRun {
-		public:
-			AttributeRun (const Attribute &attr, XMLElement *first);
-			XMLNode* first () {return _first;}
-			XMLNode* last ()  {return _last;}
-			int length () const {return _length;}
-
-		private:
-			int _length;  ///< run length excluding non-element nodes
-			XMLNode *_first, *_last;  ///< first and last node in run
-	};
-
-	public:
-		void execute (XMLElement*, XMLElement *context) override {execute(context, true);};
-		const char* info () const override;
-		static bool groupable (const XMLElement &elem);
-		static bool extractable (const Attribute &attr, XMLElement &element);
-
-	protected:
-		void execute (XMLElement *context, bool recurse);
-		XMLNode* extractAttribute (XMLElement *elem);
-		bool extracted (const Attribute &attr) const;
-
-	private:
-		std::set<std::string> _extractedAttributes;
-		static constexpr int MIN_RUN_LENGTH = 3;
+struct XMLParserException : MessageException {
+	explicit XMLParserException (const std::string &msg) : MessageException(msg) {}
 };
 
+class XMLParser {
+	using AppendFunc = void (SVGTree::*)(std::unique_ptr<XMLNode>);
+	using PushFunc = void (SVGTree::*)(std::unique_ptr<SVGElement>);
+	using PopFunc = void (SVGTree::*)();
+	using NameStack = std::vector<std::string>;
+
+	public:
+		XMLParser (AppendFunc append, PushFunc push, PopFunc pop)
+				: _append(append), _pushContext(push), _popContext(pop) {}
+
+		void parse (const std::string &xml, SVGTree &svgTree, bool finish=false);
+		void finish (SVGTree &svgTree);
+
+	protected:
+		void openElement (const std::string &tag, SVGTree &svgTree);
+		void closeElement (const std::string &tag, SVGTree &svgTree);
+
+	private:
+		AppendFunc _append;
+		PushFunc _pushContext;
+		PopFunc _popContext;
+		std::string _xmlbuf;
+		NameStack _nameStack;  ///< names of nested elements still missing a closing tag
+		bool _error=false;
+};
+
+#endif

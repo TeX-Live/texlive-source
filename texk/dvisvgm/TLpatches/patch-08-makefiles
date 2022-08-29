@@ -1,39 +1,42 @@
-diff --strip-trailing-cr -u1 -r dvisvgm-2.13/Makefile.am dvisvgm-src/Makefile.am
---- dvisvgm-2.13/Makefile.am	2022-01-18 05:39:00.000000000 -0800
-+++ dvisvgm-src/Makefile.am	2022-01-21 09:15:51.800456322 -0800
-@@ -7,3 +7,3 @@
+diff --strip-trailing-cr -ur dvisvgm-2.14/Makefile.am dvisvgm-src/Makefile.am
+--- dvisvgm-2.14/Makefile.am	2022-01-18 22:39:00.000000000 +0900
++++ dvisvgm-src/Makefile.am	2022-08-29 21:34:21.000000000 +0900
+@@ -5,7 +5,7 @@
+ 
+ AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
 -SUBDIRS = libs m4 src tests doc
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
-Only in dvisvgm-2.13: aclocal.m4
-Only in dvisvgm-2.13: ar-lib
-Only in dvisvgm-2.13: compile
-Only in dvisvgm-2.13: config.guess
-Only in dvisvgm-2.13: config.sub
-Only in dvisvgm-2.13: configure
-Only in dvisvgm-2.13: depcomp
-Only in dvisvgm-2.13: install-sh
-diff --strip-trailing-cr -u1 -r dvisvgm-2.13/libs/ff-woff/Makefile.am dvisvgm-src/libs/ff-woff/Makefile.am
---- dvisvgm-2.13/libs/ff-woff/Makefile.am	2019-04-12 07:39:46.000000000 -0700
-+++ dvisvgm-src/libs/ff-woff/Makefile.am	2022-01-21 09:15:51.801456314 -0800
-@@ -85,3 +85,3 @@
+ 
+ if USE_BUNDLED_LIBS
+diff --strip-trailing-cr -ur dvisvgm-2.14/libs/ff-woff/Makefile.am dvisvgm-src/libs/ff-woff/Makefile.am
+--- dvisvgm-2.14/libs/ff-woff/Makefile.am	2019-04-12 23:39:46.000000000 +0900
++++ dvisvgm-src/libs/ff-woff/Makefile.am	2022-08-29 21:34:21.000000000 +0900
+@@ -83,7 +83,7 @@
+ 
+ EXTRA_DIST = LICENSE
  
 -AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_CFLAGS)
 +AM_CFLAGS = -I$(srcdir)/inc -I$(srcdir)/fontforge $(ZLIB_INCLUDES)
  
-Only in dvisvgm-2.13: ltmain.sh
-Only in dvisvgm-2.13: m4
-Only in dvisvgm-2.13: missing
-diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Makefile.am
---- dvisvgm-2.13/src/Makefile.am	2022-01-18 05:39:00.000000000 -0800
-+++ dvisvgm-src/src/Makefile.am	2022-01-21 09:15:51.801456314 -0800
-@@ -6,3 +6,3 @@
+ @CODE_COVERAGE_RULES@
+ 
+diff --strip-trailing-cr -ur dvisvgm-2.14/src/Makefile.am dvisvgm-src/src/Makefile.am
+--- dvisvgm-2.14/src/Makefile.am	2022-07-14 16:53:39.000000000 +0900
++++ dvisvgm-src/src/Makefile.am	2022-08-29 21:34:21.000000000 +0900
+@@ -4,7 +4,7 @@
+ ## Process this file with automake.
+ 
  bin_PROGRAMS     = dvisvgm
 -noinst_LTLIBRARIES = libdvisvgm.la
 +noinst_LIBRARIES = libdvisvgm.a
  SUBDIRS = optimizer
-@@ -16,9 +16,7 @@
+ 
+ dvisvgm_SOURCES = \
+@@ -14,13 +14,11 @@
+ include ../libs/defs.am
+ 
  dvisvgm_LDADD = \
 -	$(noinst_LTLIBRARIES) \
 +	$(noinst_LIBRARIES) \
@@ -46,7 +49,11 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 -	$(ZLIB_LIBS)
 +	$(XXHASH_LIBS)
  
-@@ -37,5 +35,13 @@
+ if ENABLE_WOFF
+ dvisvgm_LDADD += \
+@@ -35,9 +33,17 @@
+ dvisvgm_LDADD += $(LIBCRYPTO_LIBS)
+ endif
  
 -dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
 +dvisvgm_LDADD += \
@@ -62,7 +69,11 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 +
 +libdvisvgm_a_SOURCES = \
  	AGLTable.hpp \
-@@ -164,20 +170,14 @@
+ 	BasicDVIReader.hpp           BasicDVIReader.cpp \
+ 	Bezier.hpp                   Bezier.cpp \
+@@ -164,28 +170,32 @@
+ 	ZLibOutputStream.hpp
+ 
  if ENABLE_WOFF
 -libdvisvgm_la_SOURCES += ffwrapper.c ffwrapper.h
 +libdvisvgm_a_SOURCES += ffwrapper.c ffwrapper.h
@@ -88,7 +99,7 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 -	$(CODE_COVERAGE_CFLAGS)
 +	-I$(dvisvgm_srcdir)/libs/variant/include
  
-@@ -185,3 +185,13 @@
+ AM_CXXFLAGS += \
  	$(POTRACE_CFLAGS) \
 -	$(XXHASH_CFLAGS)
 +	$(XXHASH_CFLAGS) \
@@ -103,12 +114,20 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
  
-@@ -196,4 +206,2 @@
+ AM_LDFLAGS = \
+ 	$(KPSE_LIBS) \
+@@ -196,8 +206,6 @@
+ 	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
+ 	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
  
 -AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
 -
  AM_CXXFLAGS +=  \
-@@ -208,5 +216,6 @@
+ 	$(BROTLI_CFLAGS) \
+ 	$(WOFF2_CFLAGS)
+@@ -208,9 +216,10 @@
+ AM_CXXFLAGS += $(LIBCRYPTO_CFLAGS)
+ endif
  
 -AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
  endif
@@ -116,11 +135,16 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 +# TL: do not try to rebuild these source files.
 +if ! TEXLIVE_BUILD
  
-@@ -224,2 +233,3 @@
+ # the command-line parser class is generated from options.xml by opt2cpp
+ $(srcdir)/CommandLine.hpp: options.xml
+@@ -224,7 +233,15 @@
+ 	fi
+ 
  psdefs.ps: ;
 +endif ! TEXLIVE_BUILD
  
-@@ -228 +238,8 @@
+ @CODE_COVERAGE_RULES@
+ 
  CLEANFILES = *.gcda *.gcno
 +
 +# Rebuild libkpathsea:
@@ -129,15 +153,15 @@ diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/Makefile.am dvisvgm-src/src/Mak
 +@FREETYPE2_RULE@
 +# Rebuild libz:
 +@ZLIB_RULE@
-Only in dvisvgm-src/src: Makefile.am~
-diff --strip-trailing-cr -u1 -r dvisvgm-2.13/src/optimizer/Makefile.am dvisvgm-src/src/optimizer/Makefile.am
---- dvisvgm-2.13/src/optimizer/Makefile.am	2019-12-06 00:42:54.000000000 -0800
-+++ dvisvgm-src/src/optimizer/Makefile.am	2022-01-21 09:15:51.801456314 -0800
-@@ -1,4 +1,4 @@
+diff --strip-trailing-cr -ur dvisvgm-2.14/src/optimizer/Makefile.am dvisvgm-src/src/optimizer/Makefile.am
+--- dvisvgm-2.14/src/optimizer/Makefile.am	2022-08-12 15:52:19.000000000 +0900
++++ dvisvgm-src/src/optimizer/Makefile.am	2022-08-29 21:34:21.000000000 +0900
+@@ -1,6 +1,6 @@
 -noinst_LTLIBRARIES = liboptimizer.la
 +noinst_LIBRARIES = liboptimizer.a
  
 -liboptimizer_la_SOURCES = \
 +liboptimizer_a_SOURCES = \
  	AttributeExtractor.hpp      AttributeExtractor.cpp \
-Only in dvisvgm-2.13: test-driver
+ 	ClipPathReassigner.hpp      ClipPathReassigner.cpp \
+ 	DependencyGraph.hpp \

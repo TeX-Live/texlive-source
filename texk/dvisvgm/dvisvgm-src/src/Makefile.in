@@ -170,8 +170,9 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.hpp \
 	FontStyle.hpp FontWriter.hpp FontWriter.cpp GFGlyphTracer.hpp \
 	GFGlyphTracer.cpp GFReader.hpp GFReader.cpp GFTracer.hpp \
 	GFTracer.cpp Ghostscript.hpp Ghostscript.cpp Glyph.hpp \
-	GlyphTracerMessages.hpp GraphicsPath.hpp HashFunction.hpp \
-	HashFunction.cpp HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
+	GlyphTracerMessages.hpp GraphicsPath.hpp \
+	GraphicsPathParser.hpp HashFunction.hpp HashFunction.cpp \
+	HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
 	HyperlinkManager.hpp HyperlinkManager.cpp ImageToSVG.hpp \
 	ImageToSVG.cpp InputBuffer.hpp InputBuffer.cpp InputReader.hpp \
 	InputReader.cpp JFM.hpp JFM.cpp Length.hpp Length.cpp \
@@ -209,8 +210,9 @@ am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.hpp \
 	Unicode.cpp utility.hpp utility.cpp VectorIterator.hpp \
 	VectorStream.hpp VFActions.hpp VFReader.hpp VFReader.cpp \
 	windows.hpp XMLDocument.hpp XMLDocument.cpp XMLNode.hpp \
-	XMLNode.cpp XMLString.hpp XMLString.cpp XXHashFunction.hpp \
-	ZLibOutputStream.hpp ffwrapper.c ffwrapper.h
+	XMLNode.cpp XMLParser.hpp XMLParser.cpp XMLString.hpp \
+	XMLString.cpp XXHashFunction.hpp ZLibOutputStream.hpp \
+	ffwrapper.c ffwrapper.h
 @ENABLE_WOFF_TRUE@am__objects_1 = ffwrapper.$(OBJEXT)
 am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	BgColorSpecialHandler.$(OBJEXT) Bitmap.$(OBJEXT) \
@@ -252,7 +254,8 @@ am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
 	TpicSpecialHandler.$(OBJEXT) TriangularPatch.$(OBJEXT) \
 	TrueTypeFont.$(OBJEXT) TTFAutohint.$(OBJEXT) Unicode.$(OBJEXT) \
 	utility.$(OBJEXT) VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) \
-	XMLNode.$(OBJEXT) XMLString.$(OBJEXT) $(am__objects_1)
+	XMLNode.$(OBJEXT) XMLParser.$(OBJEXT) XMLString.$(OBJEXT) \
+	$(am__objects_1)
 libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
@@ -330,9 +333,9 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Po \
 	./$(DEPDIR)/TriangularPatch.Po ./$(DEPDIR)/TrueTypeFont.Po \
 	./$(DEPDIR)/Unicode.Po ./$(DEPDIR)/VFReader.Po \
 	./$(DEPDIR)/XMLDocument.Po ./$(DEPDIR)/XMLNode.Po \
-	./$(DEPDIR)/XMLString.Po ./$(DEPDIR)/dvisvgm.Po \
-	./$(DEPDIR)/ffwrapper.Po ./$(DEPDIR)/psdefs.Po \
-	./$(DEPDIR)/utility.Po
+	./$(DEPDIR)/XMLParser.Po ./$(DEPDIR)/XMLString.Po \
+	./$(DEPDIR)/dvisvgm.Po ./$(DEPDIR)/ffwrapper.Po \
+	./$(DEPDIR)/psdefs.Po ./$(DEPDIR)/utility.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -636,8 +639,9 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.hpp \
 	FontStyle.hpp FontWriter.hpp FontWriter.cpp GFGlyphTracer.hpp \
 	GFGlyphTracer.cpp GFReader.hpp GFReader.cpp GFTracer.hpp \
 	GFTracer.cpp Ghostscript.hpp Ghostscript.cpp Glyph.hpp \
-	GlyphTracerMessages.hpp GraphicsPath.hpp HashFunction.hpp \
-	HashFunction.cpp HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
+	GlyphTracerMessages.hpp GraphicsPath.hpp \
+	GraphicsPathParser.hpp HashFunction.hpp HashFunction.cpp \
+	HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
 	HyperlinkManager.hpp HyperlinkManager.cpp ImageToSVG.hpp \
 	ImageToSVG.cpp InputBuffer.hpp InputBuffer.cpp InputReader.hpp \
 	InputReader.cpp JFM.hpp JFM.cpp Length.hpp Length.cpp \
@@ -675,8 +679,9 @@ libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.hpp \
 	Unicode.cpp utility.hpp utility.cpp VectorIterator.hpp \
 	VectorStream.hpp VFActions.hpp VFReader.hpp VFReader.cpp \
 	windows.hpp XMLDocument.hpp XMLDocument.cpp XMLNode.hpp \
-	XMLNode.cpp XMLString.hpp XMLString.cpp XXHashFunction.hpp \
-	ZLibOutputStream.hpp $(am__append_8)
+	XMLNode.cpp XMLParser.hpp XMLParser.cpp XMLString.hpp \
+	XMLString.cpp XXHashFunction.hpp ZLibOutputStream.hpp \
+	$(am__append_8)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
 	$(am__append_10)
@@ -885,6 +890,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFReader.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLDocument.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLNode.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLParser.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLString.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvisvgm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ffwrapper.Po@am__quote@ # am--include-marker
@@ -1245,6 +1251,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/VFReader.Po
 	-rm -f ./$(DEPDIR)/XMLDocument.Po
 	-rm -f ./$(DEPDIR)/XMLNode.Po
+	-rm -f ./$(DEPDIR)/XMLParser.Po
 	-rm -f ./$(DEPDIR)/XMLString.Po
 	-rm -f ./$(DEPDIR)/dvisvgm.Po
 	-rm -f ./$(DEPDIR)/ffwrapper.Po
@@ -1388,6 +1395,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/VFReader.Po
 	-rm -f ./$(DEPDIR)/XMLDocument.Po
 	-rm -f ./$(DEPDIR)/XMLNode.Po
+	-rm -f ./$(DEPDIR)/XMLParser.Po
 	-rm -f ./$(DEPDIR)/XMLString.Po
 	-rm -f ./$(DEPDIR)/dvisvgm.Po
 	-rm -f ./$(DEPDIR)/ffwrapper.Po

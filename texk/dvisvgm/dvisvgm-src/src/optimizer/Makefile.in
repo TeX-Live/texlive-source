@@ -386,7 +386,7 @@ liboptimizer_a_SOURCES = \
 	SVGOptimizer.hpp            SVGOptimizer.cpp \
 	TextSimplifier.hpp          TextSimplifier.cpp \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
-  	WSNodeRemover.hpp           WSNodeRemover.cpp
+	WSNodeRemover.hpp           WSNodeRemover.cpp
 
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash

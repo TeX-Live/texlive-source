@@ -22,7 +22,6 @@
 #include <array>
 #include <string>
 #include <vector>
-#include "AttributeExtractor.hpp"
 #include "GroupCollapser.hpp"
 #include "TransformSimplifier.hpp"
 #include "../XMLNode.hpp"
@@ -83,8 +82,8 @@ void GroupCollapser::execute (XMLElement *context, int depth) {
 		XMLNode *next=child->next();
 		if (XMLElement *childElement = child->toElement()) {
 			execute(childElement, depth+1);
-			// check for groups without attributes and remove them
-			if (childElement->name() == "g" && childElement->attributes().empty()) {
+			// remove empty groups and groups without attributes
+			if (childElement->name() == "g" && (childElement->attributes().empty() || (!childElement->hasAttribute("id") && childElement->empty(true)))) {
 				remove_ws_nodes(childElement);
 				if (XMLNode *firstUnwrappedNode = XMLElement::unwrap(childElement))
 					next = firstUnwrappedNode;
@@ -127,7 +126,7 @@ bool GroupCollapser::moveAttributes (XMLElement &source, XMLElement &dest) {
 			dest.addAttribute("transform", transform);
 			movedAttributes.emplace_back("transform");
 		}
-		else if (AttributeExtractor::inheritable(attr)) {
+		else if (attr.inheritable()) {
 			dest.addAttribute(attr.name, attr.value);
 			movedAttributes.emplace_back(attr.name);
 		}

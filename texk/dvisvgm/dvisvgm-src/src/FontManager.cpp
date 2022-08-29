@@ -145,7 +145,7 @@ const VirtualFont* FontManager::getVF () const {
 static unique_ptr<Font> create_font (const string &filename, const string &fontname, int fontindex, uint32_t checksum, double dsize, double ssize) {
 	string ext;
 	if (const char *dot = strrchr(filename.c_str(), '.'))
-		ext = dot+1;
+		ext = util::tolower(dot+1);
 	if (!ext.empty() && FileFinder::instance().lookup(filename)) {
 		if (ext == "pfb")
 			return PhysicalFont::create(fontname, checksum, dsize, ssize, PhysicalFont::Type::PFB);
@@ -271,8 +271,13 @@ int FontManager::registerFont (uint32_t fontnum, string filename, int fontIndex,
 			newfont = font->clone(ptsize, style, color);
 	}
 	else {
-		if (!FileSystem::exists(path))
-			path = FileFinder::instance().lookup(filename, false);
+		if (!FileSystem::exists(path)) {
+			const char *fontFormats[] = {nullptr, "otf", "ttf"};
+			for (const char *format : fontFormats) {
+				if ((path = FileFinder::instance().lookup(filename, format, false)) != nullptr)
+					break;
+			}
+		}
 		if (path) {
 			newfont.reset(new NativeFontImpl(path, fontIndex, ptsize, style, color));
 			newfont->findAndAssignBaseFontMap();

@@ -93,6 +93,7 @@ libdvisvgm_a_SOURCES = \
 	Glyph.hpp \
 	GlyphTracerMessages.hpp \
 	GraphicsPath.hpp \
+	GraphicsPathParser.hpp \
 	HashFunction.hpp             HashFunction.cpp \
 	HtmlSpecialHandler.hpp       HtmlSpecialHandler.cpp \
 	HyperlinkManager.hpp         HyperlinkManager.cpp \
@@ -163,6 +164,7 @@ libdvisvgm_a_SOURCES = \
 	windows.hpp \
 	XMLDocument.hpp              XMLDocument.cpp \
 	XMLNode.hpp                  XMLNode.cpp \
+	XMLParser.hpp                XMLParser.cpp \
 	XMLString.hpp                XMLString.cpp \
 	XXHashFunction.hpp \
 	ZLibOutputStream.hpp

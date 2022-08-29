@@ -1,3 +1,167 @@
+2022-08-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp, src/HashFunction.hpp, src/HyperlinkManager.hpp, 
+    src/Opacity.hpp, src/SVGElement.hpp, src/TFM.cpp, 
+    src/optimizer/Makefile.am, src/utility.hpp: 
+  fixed indentations 
+
+2022-08-09  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.14 
+
+  * configure.ac: 
+  removed redundant macros from configure.ac 
+
+2022-07-28  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/CLCommandLine.cpp, src/CMap.cpp, src/DVIReader.cpp, 
+    src/DvisvgmSpecialHandler.cpp, src/FileFinder.cpp, src/FilePath.cpp, 
+    src/Font.cpp, src/FontMap.cpp, src/HyperlinkManager.cpp, src/MapLine.cpp, 
+    src/MetafontWrapper.cpp, src/PDFParser.cpp, src/PageSize.cpp, 
+    src/PapersizeSpecialHandler.cpp, src/PsSpecialHandler.cpp, 
+    src/SVGOutput.cpp, src/SVGTree.cpp, src/Unicode.cpp, src/XMLNode.cpp, 
+    src/XMLParser.cpp, src/XMLString.cpp, src/dvisvgm.cpp, src/utility.cpp: 
+  adapted types of variables used for string positions 
+
+  * src/DvisvgmSpecialHandler.cpp: 
+  reordered if/else statement 
+
+  * src/MiKTeXCom.cpp: 
+  replaced C-style cast 
+
+2022-07-22  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicsPathParser.hpp: 
+  updated year in copyright statement 
+
+  * src/XMLParser.cpp: 
+  handle GraphicsPathParserExceptions in XMLParser 
+
+  * src/GraphicsPathParser.hpp: 
+  improved position information of GraphicsPathParserException 
+
+2022-07-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * libs/woff2/include/woff2/encode.h, libs/woff2/include/woff2/output.h, 
+    libs/woff2/src/font.cc, libs/woff2/src/glyph.cc, libs/woff2/src/glyph.h, 
+    libs/woff2/src/normalize.cc, libs/woff2/src/transform.cc, 
+    libs/woff2/src/woff2_enc.cc, libs/woff2/src/woff2_out.cc: 
+  applied latest upstream changes to woff2 
+  library
+https://github.com/google/woff2/commit/62ae7a4c1ec7fb38adbf1294924db5924489889a 
+
+  * libs/woff2/src/normalize.cc, libs/woff2/src/woff2_enc.cc: 
+  woff2: removed unused variables to prevent compiler warnings 
+
+  * libs/woff2/src/font.cc, libs/woff2/src/normalize.cc: 
+  woff2: adapted variable types to prevent warnings 
+
+  * src/dvisvgm.cpp: 
+  added prefix to XML error messages 
+
+2022-07-17  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/MiKTeXCom.cpp: 
+  updated output of MiKTeX version number 
+
+  * src/PDFParser.cpp: 
+  prevent warning about [[nodiscard]] return value 
+
+2022-07-11  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicsPathParser.hpp: 
+  minor code tweaks in GraphicsPathParser 
+
+  * src/DvisvgmSpecialHandler.cpp, src/DvisvgmSpecialHandler.hpp, 
+    src/Makefile.am, src/XMLParser.cpp, src/XMLParser.hpp, 
+    tests/DvisvgmSpecialTest.cpp: 
+  moved XMLParser from DvisvgmSpecialHandler to separate class 
+
+  * src/XMLParser.cpp: 
+  parse and reformat definitions of raw graphics paths 
+
+2022-06-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/XMLNode.cpp, src/XMLNode.hpp, src/optimizer/GroupCollapser.cpp: 
+  optimizer: improved removal of redundant group elements 
+
+  * src/XMLNode.cpp, src/XMLNode.hpp, src/optimizer/AttributeExtractor.cpp, 
+    src/optimizer/AttributeExtractor.hpp, src/optimizer/GroupCollapser.cpp, 
+    src/optimizer/TextSimplifier.cpp: 
+  moved inheritability check of attributes to Attribute struct 
+
+2022-06-29  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontWriter.cpp: 
+  ensure proper representation of empty glyphs in SFD files 
+
+2022-06-25  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FileFinder.cpp, src/FontManager.cpp: 
+  ignore letter case when looking up file suffixes 
+
+  * src/FileFinder.cpp: 
+  MiKTeX: handle lookup of TrueType files similar to kpathsea
+Look for 
+  .ttf, .ttc, and .dfont suffixes 
+
+  * src/FontManager.cpp: 
+  XFontDef: lookup font formats rather than specific suffixes 
+
+2022-06-24  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/FontManager.cpp: 
+  XFontDef: added support for font filenames without suffix 
+
+2022-05-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * README.md: 
+  Removed paragraph about Ghostscript's new PDF interpreter
+
+because the 
+  old interpreter is still available in recent GS releases and can be 
+  reactivated by dvisvgm. 
+
+2022-04-20  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
+    src/version.hpp: 
+  set version to 2.13.4 
+
+  * NEWS: 
+  updated NEWS 
+
+2022-04-18  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/PSInterpreter.cpp: 
+  updated URL to GS documentation of -dNEWPDF 
+
+2022-04-01  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * m4/ax_cxx_compile_stdcxx.m4: 
+  updated ax_cxx_compile_stdcxx.m4 to version 14 
+
+2022-03-31  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated FreeType to version 2.12 
+
+2022-03-30  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * .appveyor.yml: 
+  updated zlib to version 1.2.12 
+
+  * src/PSInterpreter.cpp: 
+  disable new PDF interpreter when using GS >= 9.56.0 
+
+2022-03-14  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/ImageToSVG.cpp: 
+  reset bounding box before converting next PDF page
+closes #182 
+
 2022-02-27  Martin Gieseking  <martin.gieseking@uos.de>
 
   * .appveyor.yml, configure.ac, doc/dvisvgm.1, src/Doxyfile, 
@@ -1340,6 +1504,12 @@ image processing is stopped now instead of leaving GS with an
 
   * doc/dvisvgm.txt.in: 
   manpage: added info on default values listed by --help 
+
+2020-01-19  Martin Gieseking  <martin.gieseking@uos.de>
+
+  * src/GraphicsPathParser.hpp, src/Makefile.am, 
+    tests/GraphicsPathParserTest.cpp, tests/Makefile.am: 
+  added class to parse SVG path commands 
 
 2020-01-17  Martin Gieseking  <martin.gieseking@uos.de>
 

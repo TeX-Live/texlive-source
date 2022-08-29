@@ -21,7 +21,6 @@
 #include <config.h>
 #ifdef MIKTEX
 	#include "MiKTeXCom.hpp"
-	#include "utility.hpp"
 #else
 	#ifdef KPSE_CXX_UNSAFE
 	extern "C" {
@@ -43,6 +42,7 @@
 #include "Message.hpp"
 #include "MessageException.hpp"
 #include "Process.hpp"
+#include "utility.hpp"
 
 std::string FileFinder::_argv0;
 std::string FileFinder::_progname;
@@ -120,12 +120,12 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 	if (ftype)
 		ext = ftype;
 	else {
-		size_t pos = fname.rfind('.');
+		auto pos = fname.rfind('.');
 		if (pos == std::string::npos)
 			return nullptr;  // no extension and no file type => no search
 		ext = fname.substr(pos+1);
 	}
-
+	ext = util::tolower(ext);
 #ifdef _WIN32
 	if (ext == "dll" || ext == "exe")
 		return lookupExecutable(fname);
@@ -140,7 +140,18 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 		return _pathbuf.empty() ? nullptr : _pathbuf.c_str();
 	}
 	try {
-		return _miktex->findFile(fname.c_str());
+		if (!ftype) // no file type given?
+			return _miktex->findFile(fname.c_str());  // lookup given filename
+		// handle file type "ttf" similar to kpathsea and look for .ttf, .ttc, and .dfont
+		std::vector<std::string> suffixes{ext};
+		if (ext == "ttf") {
+			suffixes.emplace_back("ttc");
+			suffixes.emplace_back("dfont");
+		}
+		for (const auto &suffix : suffixes) {
+			if (const char *path = _miktex->findFile((fname+"."+suffix).c_str()))
+				return path;
+		}
 	}
 	catch (const MessageException &e) {
 		return nullptr;
@@ -181,8 +192,8 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 		std::free(path);
 		return _pathbuf.c_str();
 	}
-	return nullptr;
 #endif  // !MIKTEX
+	return nullptr;
 }
 
 
@@ -191,7 +202,7 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
  *  @param[in] fname name of file to look up
  *  @return file path on success, 0 otherwise */
 const char* FileFinder::findMappedFile (std::string fname) const {
-	size_t pos = fname.rfind('.');
+	auto pos = fname.rfind('.');
 	if (pos == std::string::npos)
 		return nullptr;
 	const std::string ext  = fname.substr(pos+1);  // file extension
@@ -214,7 +225,7 @@ const char* FileFinder::findMappedFile (std::string fname) const {
  *  @param[in] fname name of file to build
  *  @return file path on success, 0 otherwise */
 const char* FileFinder::mktex (const std::string &fname) const {
-	size_t pos = fname.rfind('.');
+	auto pos = fname.rfind('.');
 	if (!_enableMktex || pos == std::string::npos)
 		return nullptr;
 

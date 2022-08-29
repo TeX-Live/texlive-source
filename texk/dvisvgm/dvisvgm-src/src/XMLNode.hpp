@@ -118,6 +118,7 @@ class XMLElement : public XMLNode {
 	public:
 		struct Attribute {
 			Attribute (std::string nam, std::string val) : name(std::move(nam)), value(std::move(val)) {}
+			bool inheritable () const;
 			std::string name;
 			std::string value;
 		};
@@ -146,7 +147,7 @@ class XMLElement : public XMLNode {
 		XMLNode* firstChild () const {return _firstChild.get();}
 		XMLNode* lastChild () const {return _lastChild;}
 		std::ostream& write (std::ostream &os) const override;
-		bool empty () const {return !_firstChild;}
+		bool empty (bool ignoreWhitespace=false) const;
 		Attributes& attributes () {return _attributes;}
 		const Attributes& attributes () const {return _attributes;}
 		XMLNodeIterator begin () {return XMLNodeIterator(_firstChild.get());}
