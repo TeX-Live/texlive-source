@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 48681 2018-09-16 23:03:58Z karl $
+# $Id: epstopdf.pl 64235 2022-08-29 22:52:01Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,9 +35,10 @@
 #
 # emacs-page
 #
-my $ver = "2.28";
+my $ver = "2.29";
+#  2022/08/29 v2.29 (Karl Berry)
 #  2018/09/17 v2.28 (Karl Berry)
-#    * -dCompatibilityLevel=1.5 by default, since gs9.25 switched to 1.7.
+#    * use gswin64c on 64-bit Windows.
 #  2017/09/14 v2.27 (Karl Berry)
 #    * extract value from --gsopt with $3 not $2 (extra regexp group
 #      added previously), and check it with ^(...)$ so anchors apply to all.
@@ -189,9 +190,9 @@ my $ver = "2.28";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 48681 2018-09-16 23:03:58Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 64235 2022-08-29 22:52:01Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2018 Karl Berry et al.
+Copyright 2009-2022 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -204,7 +205,15 @@ my $on_windows = $^O =~ /^(MSWin|msys$)/;
 my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
 
 ### ghostscript command name
-my $GS = $on_windows ? "gswin32c" : "gs";
+my $GS = "gs";
+if ($on_windows) {
+  if ($ENV{"PROCESSOR_ARCHITECTURE"} eq "AMD64"
+      || $ENV{"PROCESSOR_ARCHITEW6432"} eq "AMD64") {
+    $GS = "gswin64c";
+  } else {
+    $GS = "gswin32c";  
+  }
+}
 
 ### restricted mode
 my $restricted = 0;
@@ -480,6 +489,7 @@ if ($restricted && $on_windows) {
   # $mydirname is the location of the Perl script
   $kpsewhich = "$mydirname/../../../bin/win32/$kpsewhich";
   $GS = "$mydirname/../../../tlpkg/tlgs/bin/$GS";
+  debug "restricted Windows gs: $GS";
 }
 debug "kpsewhich command: $kpsewhich";
 
