@@ -1,4 +1,4 @@
-.TH DETEX 1 "4 March 2021" "Purdue University"
+.TH DETEX 1 "30 August 2022" "Purdue University"
 .SH NAME
 detex \- a filter to strip \fITeX\fP commands from a .tex file.
 .SH SYNOPSIS
@@ -96,7 +96,7 @@ files.  Like \fITeX\fP, it interprets a leading or trailing `:' as the default
 TEXINPUTS.  It does \fInot\fP support the `//' directory expansion magic sequence.
 .PP
 Detex now handles the basic \fITeX\fP ligatures as a special case, replacing the
-ligatures with acceptable charater substitutes.  This eliminates
+ligatures with acceptable character substitutes.  This eliminates
 spelling errors introduced by merely removing them.  The ligatures are
 \\aa, \\ae, \\oe, \\ss, \\o, \\l (and their upper-case
 equivalents).  The special "dotless" characters \\i and \\j are also

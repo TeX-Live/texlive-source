@@ -1,5 +1,5 @@
 .\"	$Id$
-.TH VLNA 1 "March 30 2009"
+.TH VLNA 1 "August 30 2022"
 .nh
 .SH NAME
 vlna \- adds tilde after each non-syllabic preposition
@@ -10,7 +10,7 @@ vlna \- adds tilde after each non-syllabic preposition
 .SH PREFACE
 There exists a special Czech and Slovak typographical rule: you cannot
 leave the non-syllabic preposition on the end of one line and continue
-writting text on next line. For example, 
+writing text on next line. For example, 
 you cannot write down the text "v lese" (in a forest) like 
 "v<new-line>lese". The program vlna adds the asciitilde
 between such preposition and the next word and removes the space(s) in

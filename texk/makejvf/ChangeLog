@@ -1,3 +1,8 @@
+2022-08-30  Karl Berry  <karl@freefriends.org>
+
+	* makejvf.1: typo fixes from Hilmar Preu\ss{}e,
+	https://tug.org/pipermail/tex-live/2022-June/048227.html
+
 2022-07-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c, main.c: Update references Unicode blocks Blocks-15.0.0.txt.

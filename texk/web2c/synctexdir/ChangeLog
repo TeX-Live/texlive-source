@@ -1,7 +1,13 @@
+2022-08-30  Karl Berry  <karl@freefriends.org>
+
+	* man1/synctex.1,
+	* man5/synctex.5: typo fixes from Hilmar Preu\ss{}e,
+	https://tug.org/pipermail/tex-live/2022-June/048227.html
+
 2022-05-31  Karl Berry  <karl@freefriends.org>
 
-	* synctex.c (synctexterminate): insert missing \ne
-	before SyncTeX written on "..." (quoted case).
+	* synctex.c (synctexterminate): insert missing \n
+	before ``SyncTeX written on "..." ...'' (quoted case).
 	Report from jerome.lelong, tex-k 31 May 2022 16:34:44.
 
 2022-03-21  Karl Berry  <karl@tug.org>

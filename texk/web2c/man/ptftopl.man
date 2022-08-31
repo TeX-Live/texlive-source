@@ -1,4 +1,4 @@
-.TH PTFTOPL 1 "15 March 2019" "Web2C @VERSION@"
+.TH PTFTOPL 1 "30 August 2022" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -12,7 +12,7 @@
 .if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-ptftopl, uptftopl \- Convert Japanese p\*(TX font metric (JFM) files to propery list
+ptftopl, uptftopl \- Convert Japanese p\*(TX font metric (JFM) files to property list
 .SH SYNOPSIS
 .B ptftopl
 .RI [ OPTIONS ]

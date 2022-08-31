@@ -1,4 +1,4 @@
-.TH TIE 1 "8 June 2020" "Web2C @VERSION@"
+.TH TIE 1 "30 August 2022" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 tie \- merge or apply WEB change files
@@ -13,7 +13,7 @@ tie \- merge or apply WEB change files
 The
 .B tie
 program is used to process multiple change files used with the WEB
-system for literate programming.  The WEB programs allow to apply
+system for literate programming.  The WEB programs allows one to apply
 patches to a source file (the
 .IR masterfile )
 by means of a number of change files (often only a single change file
@@ -52,4 +52,5 @@ special requirements in TIE.
 .\"=====================================================================
 .SH "AUTHOR"
 Klaus Guntermann, TH Darmstadt, Institut f. Theoretische Informatik.  Man page
-by Joachim Schnitter, TH Darmstadt, Phys. Chemie I.
+by Joachim Schnitter, TH Darmstadt, Phys. Chemie I. Maintained as part
+of TeX Live.

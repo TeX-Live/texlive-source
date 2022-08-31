@@ -1,4 +1,4 @@
-.Dd Jan 17, 2018
+.Dd Aug 30, 2022
 .Dt SYNCTEX 5
 .Os "Independent"
 .\"
@@ -312,7 +312,7 @@ If there is no postamble, it means that the typesetting process did not end corr
 .El
 .Sh The post scriptum
 The post scriptum contains material possibly added by 3rd parties.
-It allows to append some transformation (shift and magnify).
+It allows one to append some transformation (shift and magnify).
 Typically, one applies a dvi to pdf filter with offset options and magnification,
 then he appends the same options to the synctex file, for example
 .Bd -literal -offset indent
@@ -362,6 +362,7 @@ last full point available above.
 The Synchronize TeXnology is essentially due to Jerome Laurens,
 with useful suggestions by some well known actors of the TeX world.
 .\" .Sh BUGS              \" Document known, unremedied bugs 
+SyncTeX is maintained as part of TeX Live.
 .Sh HISTORY           \" Document history if command behaves in a unique manner
 This document has been updated on Sat Apr 22 09:57:20 UTC 2017 to include \\pdfxform support.
 .\" nroff -man synctex.5 | less

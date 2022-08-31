@@ -1,3 +1,9 @@
+2022-08-30  Karl Berry  <karl@freefriends.org>
+
+	* bibtex8.1,
+	* bibtexu.1: typo fixes from Hilmar Preu\ss{}e,
+	https://tug.org/pipermail/tex-live/2022-June/048227.html
+
 2022-05-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version.h:

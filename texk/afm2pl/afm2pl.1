@@ -5,7 +5,7 @@
 .\"    Manual: afm2pl
 .\"    Source: 
 .\"
-.TH "AFM2PL" "1" "May 2009" "" "afm2pl"
+.TH "AFM2PL" "1" "30 August 2022" "" "afm2pl"
 .\" disable hyphenation
 .nh
 .\" disable justification (adjust text to left margin only)
@@ -31,7 +31,7 @@ The distribution contains uppercased and lowercased versions of texnansi, viz\&.
 check your mapfiles
 if you have old afm2pl\-generated fonts using these\&.
 .PP
-Return value: 0 if no error; a negative number indicating the number of missing glyphs if conversion was otherwise successfull but glyphs are missing, and 1 in case of error\&.
+Return value: 0 if no error; a negative number indicating the number of missing glyphs if conversion was otherwise successful but glyphs are missing, and 1 in case of error\&.
 .SH "OPTIONS"
 .PP
 \fB\-p\fR \fIencoding_file\fR
@@ -41,7 +41,7 @@ afm2pl\-name\&.enc
 exists, afm2pl will use this file instead of
 name\&.enc, unless an option
 \-n
-is given\&. The generated mapfile entry (see below) instructs pdftex or the dvi driver to reencode the font on the fly\&. On\-the\-fly reencoding does not require virtual fonts\&.
+is given\&. The generated mapfile entry (see below) instructs pdftex or the dvi driver to re-encode the font on the fly\&. On\-the\-fly reencoding does not require virtual fonts\&.
 .RE
 .PP
 \fB\-o\fR
@@ -460,10 +460,7 @@ Except that arguably a narrowed Courier is less jarring than a full-width Courie
 .IP " 2." 4
 Font installation the shallow way
 .RS 4
-\%http://www.tug.org/TUGboat/Articles/tb27-1/tb86kroonenberg-fonts.pdf
+\%https://tug.org/TUGboat/tb27-1/tb86kroonenberg-fonts.pdf
 .RE
-.IP " 3." 4
-TUGboat
-.RS 4
-\%http://www.tug.org/TUGboat/
-.RE
+afm2pl is maintained as part of TeX Live.
+

@@ -1336,7 +1336,7 @@ install-data-hook: install-man1-links
 
 uninstall-hook: uninstall-bin-links uninstall-man1-links
 @MAINTAINER_MODE_TRUE@dvilj.man: dvilj.pod dvi2xx.c
-@MAINTAINER_MODE_TRUE@	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+@MAINTAINER_MODE_TRUE@	pod2man --center="TeX Live" --release="Version $(VERSION)" $< >$@
 dvilj.ps: dvilj.man
 	man -t -l $< >$@
 

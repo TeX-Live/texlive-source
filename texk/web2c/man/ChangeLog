@@ -1,3 +1,9 @@
+2022-08-30  Karl Berry  <karl@freefriends.org>
+
+	* ptftopl.man,
+	* tie.man: typo fixes from Hilmar Preu\ss{}e,
+	https://tug.org/pipermail/tex-live/2022-June/048227.html
+
 2022-08-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweb.man: New option '+u' for CTANGLE.

@@ -7,7 +7,7 @@
 .if n .ds LX LaTeX
 \"=====================================================================
 .SH NAME
-chkdvifont \- CHecK DVI/tfm/font file and tell informations of FONTs
+chkdvifont \- CHecK DVI/tfm/font file and report information of FONTs
 .SH SYNOPSIS
 .B chkdvifont
 [\fB\-s\fR] [\fB\-c\fR] [\fB-{f|F}\fI<font_data_file>\fR]

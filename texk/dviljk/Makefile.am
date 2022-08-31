@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dviljk/
 ##
-## Copyright (C) 2009-2014 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DKPATHSEA
@@ -77,7 +79,7 @@ uninstall-hook: uninstall-bin-links uninstall-man1-links
 VERSION = `grep 'define VERSION' $(srcdir)/dvi2xx.c | sed -e 's/^.*version //' -e 's/).*//'`
 if MAINTAINER_MODE
 dvilj.man: dvilj.pod dvi2xx.c
-	pod2man --center="TeX-Live" --release="Version $(VERSION)" $< >$@
+	pod2man --center="TeX Live" --release="Version $(VERSION)" $< >$@
 endif MAINTAINER_MODE
 dvilj.ps: dvilj.man
 	man -t -l $< >$@

@@ -200,7 +200,7 @@ appended.
 
 If I<filename> is B<->, the DVI file is read from standard input and
 the resulting PCL document is written to standard output. (Please
-remember that thhe DVI file must be seekable, even if it's stdin.)
+remember that the DVI file must be seekable, even if it's stdin.)
 
 =back
 
@@ -246,7 +246,7 @@ This is mostly used to keep absolute positions in PCL files.
 
 =item B<psfile>=I<file> B<llx>=I<x0> B<lly>=I<y0> B<urx>=I<x1> B<ury>=I<y1> B<rwi>=I<s>
 
-Convert Postscript file I<file> to HP PCL, by Ghostscript with device
+Convert PostScript file I<file> to HP PCL, by Ghostscript with device
 C<ljetplus>, and insert the resulting graphics file at the current
 position, rewriting absolute position escape sequences. I<file> is
 searched with kpathsea(3), see below.
@@ -260,7 +260,7 @@ B<Please note: The specific semantics of this special is not known.>
 In particular, the B<rwi> parameter is some scale factor; but even
 looking at the source code it is not quite clear what the special's
 author intended to implement here. In addition, it is unclear what
-dimensions are used to specify the corners, Postscript points or PCL
+dimensions are used to specify the corners, PostScript points or PCL
 dots.
 
 I<If you happen to know the psfile semantics, or if you spent the work
@@ -454,7 +454,7 @@ placing first the printed pages into the paper tray).
 
 If B<-D1> was specified only odd pages will be printed, B<-D2> can be
 used for even pages. A trailing C<-> (as in B<-D->, B<-D1-> or
-B<-D2->) supresses printing of empty pages which are generated for
+B<-D2->) suppresses printing of empty pages which are generated for
 padding otherwise.
 
 The driver allows the B<-D> option for both print-directions
@@ -573,7 +573,7 @@ if you have questions about PCL escape sequences.
 =item B<13210> and B<13211>
 
 PCL 5 Technical Reference Manual (part I and II). This is the
-full-detailled explanation that you need to look up if you don't
+fully detailed explanation that you need to look up if you don't
 understand how the printer works. Part I is the actual manual, part II
 explains HP-GL/2 and has overall tips.
 
@@ -603,8 +603,9 @@ dviljk fork by Karl Berry.
 Joachim Schrod <jschrod@acm.org> supplied security fixes and updated
 this man page.
 
+dviljk is currently maintained as part of TeX Live.
 
 =head1 LICENSE
 
 dvi2xx is public domain software. dviljk changes are covered by the
-GNU General Public License.
+GNU General Public License. 
