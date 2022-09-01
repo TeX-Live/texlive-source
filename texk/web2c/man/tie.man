@@ -13,7 +13,7 @@ tie \- merge or apply WEB change files
 The
 .B tie
 program is used to process multiple change files used with the WEB
-system for literate programming.  The WEB programs allows one to apply
+system for literate programming.  The WEB programs allow one to apply
 patches to a source file (the
 .IR masterfile )
 by means of a number of change files (often only a single change file

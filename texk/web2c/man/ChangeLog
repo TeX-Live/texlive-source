@@ -1,3 +1,7 @@
+2022-09-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie.man: Fix the recent fix.
+
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
 	* ptftopl.man,
