@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.41
+ local version = 0.43
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -56,6 +56,7 @@ local args = require ('xindex-lapp') [[
     -p,--prefix (default L)
     -u,--use_UCA
     -s,--use_stdin
+    -V,--version
     <files...> (default stdin) .idx file(s)
 ]]
 
@@ -65,6 +66,10 @@ local args = require ('xindex-lapp') [[
     Two -v flags, v is { true, true }
     Three -v flags, v is { true, true, true } 
 ]]
+
+if args.version then
+  print("xindex version "..xindex.version)
+end
 
 vlevel = not args.v[1] and 0 or #args.v
 not_quiet = not args["quiet"]
@@ -98,6 +103,15 @@ end
 require('xindex-baselib')
 
 local nInFiles = #args.files
+
+-- print(#args.files,args.files_name[1])
+
+if not useStdInput and not args.files_name then
+  print("Use option -s for StdIn or define an input data file!")
+  os.exit()
+end
+
+
 if not useStdInput then
   if vlevel == 3 then
     print(tostring(nInFiles).." input file(s): ")
