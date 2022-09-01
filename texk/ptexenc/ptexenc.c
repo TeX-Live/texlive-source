@@ -42,7 +42,8 @@ const char *ptexenc_version_string = PTEXENCVERSION;
 #if defined(WIN32)
 FILE *Poptr;
 #endif
-int infile_enc_auto = 0;
+int infile_enc_auto = 2;
+/* 0: guess disabled, 1: guess enabled, 2: unspecified */
 
 static int     file_enc = ENC_UNKNOWN;
 static int internal_enc = ENC_UNKNOWN;
@@ -990,6 +991,19 @@ char *ptenc_guess_enc(FILE *fp)
     return enc;
 }
 
+void ptenc_set_infile_enc_auto(void)
+{
+   char *p;
+   if (infile_enc_auto == 2) {
+     p = kpse_var_value ("guess_input_kanji_encoding");
+     if (p) {
+       if (*p == '1' || *p == 'y' || *p == 't')  infile_enc_auto = 1;
+       free(p);
+     }
+   }
+   if (infile_enc_auto == 2) infile_enc_auto = 0;
+}
+
 /* input line with encoding conversion */
 long input_line2(FILE *fp, unsigned char *buff, unsigned char *buff2,
                  long pos, const long buffsize, int *lastchar)
@@ -1009,7 +1023,9 @@ long input_line2(FILE *fp, unsigned char *buff, unsigned char *buff2,
             fprintf(stderr, "Detect UTF-8 with BOM #%d\n", fd);
 #endif /* DEBUG */
         }
-        else if (infile_enc_auto && fd != fileno(stdin)) {
+        else {
+          if (infile_enc_auto == 2) ptenc_set_infile_enc_auto();
+          if (infile_enc_auto && fd != fileno(stdin)) {
             char *enc;
             getc4(fp);
             getc4(fp);
@@ -1024,8 +1040,9 @@ long input_line2(FILE *fp, unsigned char *buff, unsigned char *buff2,
                 infile_enc[fd] = get_file_enc();
             }
             if (enc) free(enc);
+          }
+          else infile_enc[fd] = get_file_enc();
         }
-        else infile_enc[fd] = get_file_enc();
     }
 
     while (last < buffsize-30 && (i=getc4(fp)) != EOF && i!='\n' && i!='\r') {

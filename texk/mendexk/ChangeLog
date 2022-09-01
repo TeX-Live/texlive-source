@@ -1,3 +1,11 @@
+2022-09-01 Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>
+
+	* main.c:
+	Initialization of infile_enc_auto is moved to ptexenc.
+	Moved calls of KP_entry_filetype() (after checking options).
+	These changes prevent unwanted looking for texmf.cnf.
+	https://github.com/texjporg/tex-jp-build/pull/144
+
 2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* main.c:

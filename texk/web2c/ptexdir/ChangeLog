@@ -1,3 +1,9 @@
+2022-09-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* kanji.c: Initialization of infile_enc_auto is moved to ptexenc.
+	This change prevents unwanted looking for texmf.cnf.
+	https://github.com/texjporg/tex-jp-build/pull/144
+
 2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* kanji.[ch], pbibtex.ch:
