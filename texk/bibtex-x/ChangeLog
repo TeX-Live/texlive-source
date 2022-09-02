@@ -1,3 +1,9 @@
+2022-09-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* bibtex.c:
+	Initialize max_print_line after checking options.
+	This change prevents unwanted looking for texmf.cnf.
+
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
 	* bibtex8.1,

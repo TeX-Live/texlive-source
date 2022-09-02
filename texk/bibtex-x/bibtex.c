@@ -264,6 +264,9 @@ BEGIN
     number_of_command_line_args = argc;
     command_line_arg_strings = (char **) argv;
 
+    history = SPOTLESS;
+    parse_cmd_line (argc, argv);
+
 #ifdef KPATHSEA
     kpse_set_program_name(argv[0], PROGNAME);
     mpl = kpse_var_value("max_print_line");
@@ -275,9 +278,6 @@ BEGIN
     else
         max_print_line = 79;  /* default */
 #endif
-
-    history = SPOTLESS;
-    parse_cmd_line (argc, argv);
 
     set_array_sizes ();
     report_search_paths ();
