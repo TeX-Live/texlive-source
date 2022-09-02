@@ -630,6 +630,34 @@ main(int argc, char **argv)
    setrlimit(RLIMIT_STACK, &rl);
 #endif
 #ifdef KPATHSEA
+   if (argc > 1) {
+      if (argc == 2 && strncmp(argv[1], "-?", 2) == 0) {
+         printf("%s %s\n", banner, banner2);
+         help(0);
+         exit(0);
+      }
+      if (argc == 2 && strncmp(argv[1], "-v", 2) == 0) {
+         printf("%s %s\n", banner, banner2);
+         exit(0);
+      }
+      /* print information and exit if dvips finds options --help or --version */
+      if (strlen(argv[1]) == 6 && strcmp(argv[1], "--help") == 0) {
+         help (0);
+         exit (0);
+      }
+      if (strlen (argv[1]) == 9 && strcmp(argv[1], "--version") == 0) {
+         puts (BANNER);
+         puts (kpathsea_version_string);
+         puts ("Copyright 2022 Radical Eye Software.\n\
+There is NO warranty.  You may redistribute this software\n\
+under the terms of the GNU General Public License\n\
+and the Dvips copyright.\n\
+For more information about these matters, see the files\n\
+named COPYING and dvips.h.\n\
+Primary author of Dvips: T. Rokicki.");
+         exit (0);
+      }
+   }
    kpse_set_program_name (argv[0], "dvips");
    kpse_set_program_enabled (kpse_pk_format, MAKE_TEX_PK_BY_DEFAULT, kpse_src_compile);
 #ifdef WIN32
@@ -682,36 +710,6 @@ main(int argc, char **argv)
    if (dd(D_SEARCH)) KPSE_DEBUG_SET (KPSE_DEBUG_SEARCH);
 #endif /* KPATHSEA && KPSE_DEBUG */
 #endif /* DEBUG */
-#ifdef KPATHSEA
-   if (argc > 1) {
-      if (argc == 2 && strncmp(argv[1], "-?", 2) == 0) {
-         printf("%s %s\n", banner, banner2);
-         help(0);
-         exit(0);
-      }
-      if (argc == 2 && strncmp(argv[1], "-v", 2) == 0) {
-         printf("%s %s\n", banner, banner2);
-         exit(0);
-      }
-      /* print information and exit if dvips finds options --help or --version */
-      if (strlen(argv[1]) == 6 && strcmp(argv[1], "--help") == 0) {
-         help (0);
-         exit (0);
-      }
-      if (strlen (argv[1]) == 9 && strcmp(argv[1], "--version") == 0) {
-         puts (BANNER);
-         puts (kpathsea_version_string);
-         puts ("Copyright 2022 Radical Eye Software.\n\
-There is NO warranty.  You may redistribute this software\n\
-under the terms of the GNU General Public License\n\
-and the Dvips copyright.\n\
-For more information about these matters, see the files\n\
-named COPYING and dvips.h.\n\
-Primary author of Dvips: T. Rokicki.");
-         exit (0);
-      }
-   }
-#endif /* KPATHSEA */
 #endif /* VMS */
    dvips_debug_flag = 0;
    { /* for compilers incompatible with c99 */
