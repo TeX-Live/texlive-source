@@ -4,10 +4,10 @@
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
 -- REQUIREMENTS:  luatex v.0.80 or later; packages lualibs, xindex-lapp
---       AUTHOR:  Herbert Voß  (C) 2022-05-05
+--       AUTHOR:  Herbert Voß  (C) 2022-09-02
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.09
+      local version = 0.10
 luafindfont.version = version
 
 --[[
@@ -146,10 +146,9 @@ if vlevel > 0 then
   print("We are using "..luaVersion)
   if font_str[2] ~= "" then
      print('Looking for font \"'..font_str[1]..' & '..font_str[2]..'\"')
+  else 
+     print('Looking for font \"'..font_str[1]..'\"')
   end
-end
-if font_str[1] == "*" or vlevel > 0 then 
-  print('Looking for font \"'..font_str[1]..'\"')
 end
 
 function getFileParts(fullpath,part)
@@ -172,17 +171,24 @@ function getFileLocation()
     print("No cache path found ... ")
     return ""
   end  
-  if os.type == "windows" then
+  local windows = (os.type == "windows")
+  if windows then logprint ("System: Windows")
+             else logprint ("System: macOS or Linux")
+  end
+  if windows then
     paths = string.split(cachepaths,";")
   else
     paths = string.split(cachepaths,":")
   end
-  logprint ("Pathes: "..paths[1]..", "..paths[2])
+  logprint ("Paths: [1]"..paths[1])
+  if #paths > 1 then
+    logprint("       [2]"..paths[2])
+  end
   local file = paths[1].."/luatex-cache/generic/names" 
   logprint("try path: "..file)
   local f,err = io.open (file.."/test.tmp", "w") 
   if not f and #paths > 1 then
-    logprint("first path has no file, I'll try the second one ...")
+    logprint("first path has no file, I'll try the second one, if exists ...")
     file = paths[2].."/luatex-cache/generic/names"
     logprint("try path: "..file)
     f,err = io.open (file.."/test.tmp", "w") 
