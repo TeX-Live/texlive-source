@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-08-27.12}
+\def\texinfoversion{2022-09-01.06}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -240,9 +240,6 @@
 % that the text looks ok even though it passes the margin).
 %
 \def\finalout{\overfullrule=0pt }
-
-\newdimen\outerhsize \newdimen\outervsize % set by the paper size routines
-\newdimen\topandbottommargin \topandbottommargin=.75in
 
 % Output a mark which sets \thischapter, \thissection and \thiscolor.
 % We dump everything together because we only have one kind of mark.
@@ -3457,10 +3454,9 @@ $$%
      \ifx\textnominalsize\xwordpt
        % for 10pt running text, lllsize (8pt) is too small for the A in LaTeX.
        % Revert to plain's \scriptsize, which is 7pt.
-       % \count255=\the\fam $\fam\count255 \scriptstyle A$%
-         \switchtolllsize A%
+       \count255=\the\fam $\fam\count255 \scriptstyle A$%
      \else
-       \iffalse % x\curfontsize\smallword
+       \ifx\curfontsize\smallword
          % For footnotes and indices
          \count255=\the\fam $\fam\count255 \scriptstyle A$%
        \else
@@ -3979,7 +3975,7 @@ $$%
 \global\oddfootline={\hfil}
 \global\evenheadline={\line{\folio\hfil\thistitle}}
 \global\oddheadline={\line{\thischapter\hfil\folio}}
-\global\evenchapheadline={\line{\folio\hfil}}
+\global\evenchapheadline={\line{\folio\hfil\thistitle}}
 \global\oddchapheadline={\line{\hfil\folio}}
 \global\let\contentsalignmacro = \chapoddpage
 }
@@ -11233,13 +11229,9 @@ directory should work if nowhere else does.}
   %
   \vsize = #1\relax
   \advance\vsize by \topskip
-  \outervsize = \vsize
-  \advance\outervsize by 2\topandbottommargin
   \txipageheight = \vsize
   %
   \hsize = #2\relax
-  \outerhsize = \hsize
-  \advance\outerhsize by 0.5in
   \txipagewidth = \hsize
   %
   \normaloffset = #4\relax
@@ -11406,6 +11398,8 @@ directory should work if nowhere else does.}
 
 % Default value of \hfuzz, for suppressing warnings about overfull hboxes.
 \hfuzz = 1pt
+
+\ifx\eTeXversion\thisisundefined\else \lastlinefit=500 \fi
 
 
 \message{and turning on texinfo input format.}
