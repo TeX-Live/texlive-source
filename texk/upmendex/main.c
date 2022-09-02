@@ -45,15 +45,6 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	kp_ist.var_name = "INDEXSTYLE";
-	kp_ist.path = DEFAULT_INDEXSTYLES; /* default path. */
-	kp_ist.suffix = "ist";
-	KP_entry_filetype(&kp_ist);
-	kp_dict.var_name = "INDEXDICTIONARY";
-	kp_dict.path = DEFAULT_INDEXDICTS; /* default path */
-	kp_dict.suffix = "dict";
-	KP_entry_filetype(&kp_dict);
-
 /*   check options   */
 
 	for (i=1,j=k=0;i<argc && j<256;i++) {
@@ -190,6 +181,15 @@ int main(int argc, char **argv)
 		}
 	}
 	idxcount=j+fsti;
+
+	kp_ist.var_name = "INDEXSTYLE";
+	kp_ist.path = DEFAULT_INDEXSTYLES; /* default path. */
+	kp_ist.suffix = "ist";
+	KP_entry_filetype(&kp_ist);
+	kp_dict.var_name = "INDEXDICTIONARY";
+	kp_dict.path = DEFAULT_INDEXDICTS; /* default path */
+	kp_dict.suffix = "dict";
+	KP_entry_filetype(&kp_dict);
 
 /*   check option errors   */
 
