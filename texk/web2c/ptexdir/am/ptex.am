@@ -181,7 +181,6 @@ pweb_tests = \
 	ptexdir/ptftopl.test
 pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
 pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
-pweb_tests += ptexdir/pbibtex-char.test
 pweb_tests += ptexdir/sample.test
 pweb_tests += ptexdir/yokotate.test
 pweb_tests += ptexdir/skipjfmp.test

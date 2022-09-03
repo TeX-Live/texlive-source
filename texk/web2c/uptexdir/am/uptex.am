@@ -174,7 +174,6 @@ upweb_tests = \
 	uptexdir/uparse.test \
 	uptexdir/gkhuge.test \
 	uptexdir/upkcat.test
-upweb_tests += uptexdir/upbibtex-char.test
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)

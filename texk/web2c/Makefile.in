@@ -4470,8 +4470,7 @@ pweb_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test ptexdir/ptftopl.test \
 	ptexdir/pbibtex-openout-test.pl \
 	ptexdir/pbibtex-longline-test.pl ptexdir/pbibtex-mem.test \
-	ptexdir/nissya.test ptexdir/pbibtex-char.test \
-	ptexdir/sample.test ptexdir/yokotate.test \
+	ptexdir/nissya.test ptexdir/sample.test ptexdir/yokotate.test \
 	ptexdir/skipjfmp.test
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 \
 	$(ZLIB_INCLUDES) $(am__append_145)
@@ -4576,11 +4575,17 @@ uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
 uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test
-upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
-	uptexdir/uppltotf.test uptexdir/uptftopl.test \
-	uptexdir/yokotate.test uptexdir/newjfm.test \
-	uptexdir/uparse.test uptexdir/gkhuge.test uptexdir/upkcat.test \
-	uptexdir/upbibtex-char.test
+upweb_tests = \
+	uptexdir/upbibtex.test \
+	uptexdir/updvitype.test \
+	uptexdir/uppltotf.test \
+	uptexdir/uptftopl.test \
+	uptexdir/yokotate.test \
+	uptexdir/newjfm.test \
+	uptexdir/uparse.test \
+	uptexdir/gkhuge.test \
+	uptexdir/upkcat.test
+
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
 	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_149)
 
