@@ -3279,9 +3279,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	tests/enc-sjis.bib tests/enc-euc.bib tests/enc-utf8.bib \
 	tests/enc-utf8a.bib tests/enc-utf8b.bib tests/enc-amb0.bib \
 	tests/enc-amb1.bib tests/enc-amb2.bib tests/enc.aux \
-	tests/enc-e.aux tests/enc-s.aux tests/enc-p.bbl \
-	tests/enc-ep.bbl tests/enc-sp.bbl tests/memdata1.bst \
-	tests/memdata2.bst tests/memdata3.bst ptexdir/tests/goth10.tfm \
+	tests/enc-e.aux tests/enc-s.aux tests/enc-u.aux \
+	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl \
+	tests/enc-up.bbl tests/memdata1.bst tests/memdata2.bst \
+	tests/memdata3.bst ptexdir/tests/goth10.tfm \
 	ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ \
 	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
 	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
@@ -3300,16 +3301,16 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.jis \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
 	tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl \
-	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
-	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
-	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
-	uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm \
-	uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm \
-	uptexdir/tests/gkhugeng.err uptexdir/uptrip/uptrip.diffs \
-	uptexdir/uptrip/texmf.cnf $(euptex_web_srcs) $(euptex_ch_srcs) \
-	euptexdir/euptex.defines euptexdir/COPYRIGHT \
-	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
-	euptexdir/EUPTEX.txt $(euptex_tests) \
+	tests/enc-uu.bbl uptexdir/tests/umin10.pl \
+	uptexdir/tests/umin10.tfm uptexdir/tests/utmin10.pl \
+	uptexdir/tests/utmin10.tfm uptexdir/tests/testnewu.pl \
+	uptexdir/tests/testnewu.tfm uptexdir/tests/uparse.pl \
+	uptexdir/tests/uparse.tfm uptexdir/tests/gkhugeok.tfm \
+	uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err \
+	uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf \
+	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
+	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
+	euptexdir/ChangeLog euptexdir/EUPTEX.txt $(euptex_tests) \
 	eptexdir/eptrip/eptrip.log eptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \
@@ -4469,7 +4470,8 @@ pweb_tests = ptexdir/pbibtex.test ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test ptexdir/ptftopl.test \
 	ptexdir/pbibtex-openout-test.pl \
 	ptexdir/pbibtex-longline-test.pl ptexdir/pbibtex-mem.test \
-	ptexdir/nissya.test ptexdir/sample.test ptexdir/yokotate.test \
+	ptexdir/nissya.test ptexdir/pbibtex-char.test \
+	ptexdir/sample.test ptexdir/yokotate.test \
 	ptexdir/skipjfmp.test
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 \
 	$(ZLIB_INCLUDES) $(am__append_145)
@@ -4574,17 +4576,11 @@ uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
 uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test
-upweb_tests = \
-	uptexdir/upbibtex.test \
-	uptexdir/updvitype.test \
-	uptexdir/uppltotf.test \
-	uptexdir/uptftopl.test \
-	uptexdir/yokotate.test \
-	uptexdir/newjfm.test \
-	uptexdir/uparse.test \
-	uptexdir/gkhuge.test \
-	uptexdir/upkcat.test
-
+upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
+	uptexdir/uppltotf.test uptexdir/uptftopl.test \
+	uptexdir/yokotate.test uptexdir/newjfm.test \
+	uptexdir/uparse.test uptexdir/gkhuge.test uptexdir/upkcat.test \
+	uptexdir/upbibtex-char.test
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
 	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_149)
 

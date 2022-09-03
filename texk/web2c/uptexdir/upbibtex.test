@@ -9,6 +9,8 @@ rm -f uptests/xexampl.* uptests/xenc*.*
 
 rc=0
 
+./upbibtex -version || rc=100
+
 TEXMFCNF=$srcdir/../kpathsea
 BSTINPUTS=$srcdir/tests
 BIBINPUTS=$srcdir/tests
@@ -36,6 +38,41 @@ cp $srcdir/tests/enc-s.aux uptests/xenc-s.aux
 
 ./upbibtex -guess-input-enc -kanji=sjis uptests/xenc-s || rc=7
 diff $srcdir/tests/enc-su.bbl uptests/xenc-s.bbl || rc=8
+
+
+cp $srcdir/tests/enc-u.aux uptests/xenc-u0.aux
+
+./upbibtex -no-guess-input-enc uptests/xenc-u0 || rc=9
+diff $srcdir/tests/enc-uu.bbl uptests/xenc-u0.bbl || rc=10
+./upbibtex -guess-input-enc uptests/xenc-u0 || rc=11
+diff $srcdir/tests/enc-uu.bbl uptests/xenc-u0.bbl || rc=12
+
+
+## -kanji-internal=euc, compatible with pbibtex
+cp $srcdir/tests/enc.aux uptests/xenc-u-e.aux
+
+guess_input_kanji_encoding=1 ./upbibtex -kanji-internal=euc uptests/xenc-u-e || rc=53
+diff $srcdir/tests/enc-p.bbl uptests/xenc-u-e.bbl || rc=54
+
+
+cp $srcdir/tests/enc-e.aux uptests/xenc-e-e.aux
+
+guess_input_kanji_encoding=1 ./upbibtex -kanji=euc -kanji-internal=euc uptests/xenc-e-e || rc=55
+diff $srcdir/tests/enc-ep.bbl uptests/xenc-e-e.bbl || rc=56
+
+
+cp $srcdir/tests/enc-s.aux uptests/xenc-s-e.aux
+
+./upbibtex -guess-input-enc -kanji=sjis -kanji-internal=euc uptests/xenc-s-e || rc=57
+diff $srcdir/tests/enc-sp.bbl uptests/xenc-s-e.bbl || rc=58
+
+
+cp $srcdir/tests/enc-u.aux uptests/xenc-u0-e.aux
+
+./upbibtex -no-guess-input-enc -kanji-internal=euc uptests/xenc-u0-e || rc=59
+diff $srcdir/tests/enc-up.bbl uptests/xenc-u0-e.bbl || rc=60
+./upbibtex -guess-input-enc -kanji-internal=euc uptests/xenc-u0-e || rc=61
+diff $srcdir/tests/enc-up.bbl uptests/xenc-u0-e.bbl || rc=62
 
 
 exit $rc

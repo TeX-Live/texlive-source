@@ -7,6 +7,8 @@
 test -d tests || mkdir -p tests
 rm -f tests/xexampl.*
 
+./bibtex -version || exit 100
+
 cp $srcdir/tests/exampl.aux tests/xexampl.aux
 
 TEXMFCNF=$srcdir/../kpathsea \

@@ -181,6 +181,7 @@ pweb_tests = \
 	ptexdir/ptftopl.test
 pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
 pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
+pweb_tests += ptexdir/pbibtex-char.test
 pweb_tests += ptexdir/sample.test
 pweb_tests += ptexdir/yokotate.test
 pweb_tests += ptexdir/skipjfmp.test
@@ -214,8 +215,8 @@ DISTCLEANFILES += ptests/nissya_bib.*
 EXTRA_DIST += tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
 	tests/enc-euc.bib tests/enc-utf8.bib tests/enc-utf8a.bib tests/enc-utf8b.bib \
 	tests/enc-amb0.bib tests/enc-amb1.bib tests/enc-amb2.bib \
-	tests/enc.aux tests/enc-e.aux tests/enc-s.aux \
-	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl
+	tests/enc.aux tests/enc-e.aux tests/enc-s.aux tests/enc-u.aux \
+	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl tests/enc-up.bbl
 DISTCLEANFILES += ptests/xexampl.aux ptests/xexampl.bbl ptests/xexampl.blg \
 	ptests/xenc*.*
 ## ptexdir/pbibtex-mem.test

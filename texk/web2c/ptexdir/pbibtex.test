@@ -9,6 +9,8 @@ rm -f ptests/xexampl.* ptests/xenc*.*
 
 rc=0
 
+./pbibtex -version || rc=100
+
 TEXMFCNF=$srcdir/../kpathsea
 BSTINPUTS=$srcdir/tests
 BIBINPUTS=$srcdir/tests
@@ -36,6 +38,14 @@ cp $srcdir/tests/enc-s.aux ptests/xenc-s.aux
 
 ./pbibtex -guess-input-enc -kanji=sjis ptests/xenc-s || rc=7
 diff $srcdir/tests/enc-sp.bbl ptests/xenc-s.bbl || rc=8
+
+
+cp $srcdir/tests/enc-u.aux ptests/xenc-u0.aux
+
+./pbibtex -no-guess-input-enc ptests/xenc-u0 || rc=9
+diff $srcdir/tests/enc-up.bbl ptests/xenc-u0.bbl || rc=10
+./pbibtex -guess-input-enc ptests/xenc-u0 || rc=11
+diff $srcdir/tests/enc-up.bbl ptests/xenc-u0.bbl || rc=12
 
 
 exit $rc

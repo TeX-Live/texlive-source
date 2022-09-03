@@ -1,3 +1,12 @@
+2022-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* bibtex.ch:
+	Check options before initialization of kpathsearch parameters.
+	This change prevents unwanted looking for texmf.cnf.
+	https://github.com/texjporg/tex-jp-build/issues/145
+	* bibtex.test, tests/enc-u.aux, tests/enc-u{p,u}.bbl:
+	Update tests for ((u)p)BibTeX.
+
 2022-08-22 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* ac/web2c.ac: add potrace as dependency of mflua/mfluajit

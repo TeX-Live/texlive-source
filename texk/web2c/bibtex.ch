@@ -118,6 +118,7 @@ max_cites := MAX_CITES;
 wiz_fn_space := WIZ_FN_SPACE;
 lit_stk_size := LIT_STK_SIZE;
 @#
+@<Process a possible command line@>
 setup_params;
 @#
 {Add one to the sizes because that's what bibtex uses.}
@@ -761,7 +762,6 @@ command-line arguments.
 procedure get_the_top_level_aux_file_name;
 label aux_found,@!aux_not_found;
 begin
-  @<Process a possible command line@>
   {Leave room for the \.., the extension, the junk byte at the
    beginning, and the null byte at the end.}
   name_of_file := xmalloc_array (ASCII_code, strlen (cmdline (optind)) + 5);

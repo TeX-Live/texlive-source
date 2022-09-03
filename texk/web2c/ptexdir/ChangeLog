@@ -1,3 +1,12 @@
+2022-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pbibtex.ch:
+	Check options before initialization of kpathsearch parameters.
+	This change prevents unwanted looking for texmf.cnf.
+	https://github.com/texjporg/tex-jp-build/issues/145
+	* tests/pbibtex.test, am/ptex.am:
+	Update tests for pBibTeX.
+
 2022-09-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* kanji.c: Initialization of infile_enc_auto is moved to ptexenc.
