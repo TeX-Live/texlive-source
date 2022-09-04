@@ -415,8 +415,6 @@ static int unescape(const unsigned char *src, UChar *dest)
 
 int is_latin(UChar *c)
 {
-	UChar32 c32;
-
 	if (((*c>=L'A')&&(*c<=L'Z'))||((*c>=L'a')&&(*c<=L'z'))) return 1;
 	else if ((*c==0x00AA)||(*c==0x00BA)) return 1; /* Latin-1 Supplement */
 	else if ((*c>=0x00C0)&&(*c<=0x00D6)) return 1;
@@ -436,6 +434,7 @@ int is_latin(UChar *c)
 	                     &&(*c<=0x24E9)) return 1; /* CIRCLED LATIN SMALL LETTER */
 
 	if (is_surrogate_pair(c)) {
+		UChar32 c32;
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
 		if      ((c32>=0x10780) && (c32<=0x107BF)) return 2; /* Latin Extended-F */
 		else if ((c32>=0x1DF00) && (c32<=0x1DFFF)) return 2; /* Latin Extended-G */
@@ -471,8 +470,6 @@ int is_numeric(UChar *c)
 
 int is_jpn_kana(UChar *c)
 {
-	UChar32 c32;
-
 	if       (*c==0x30A0)                return 0; /* KATAKANA-HIRAGANA DOUBLE HYPHEN */
 	else if  (*c==0x30FB)                return 0; /* KATAKANA MIDDLE DOT */
 	else if ((*c>=0x3040)&&(*c<=0x30FF)) return 1; /* Hiragana, Katakana */
@@ -482,6 +479,7 @@ int is_jpn_kana(UChar *c)
 	else if ((*c>=0x3300)&&(*c<=0x3357)) return 1; /* Squared Katakana words */
 
 	if (is_surrogate_pair(c)) {
+		UChar32 c32;
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
 		if ((c32>=0x1B130) && (c32<=0x1B16F)) return 2; /* Small Kana Extensions */
 		else if ((c32==0x1B000))              return 2; /* KATAKANA LETTER ARCHAIC E */
@@ -507,8 +505,6 @@ int is_kor_hngl(UChar *c)
 
 int is_hanzi(UChar *c)
 {
-	UChar32 c32;
-
 	if      ((*c>=0x2E80)                          /* CJK Radicals Supplement */
 	                     &&(*c<=0x2FDF)) return 1; /* Kangxi Radicals */
 	else if ((*c>=0x31C0)&&(*c<=0x31EF)) return 1; /* CJK Strokes */
@@ -518,10 +514,11 @@ int is_hanzi(UChar *c)
 	else if ((*c>=0xF900)&&(*c<=0xFAFF)) return 1; /* CJK Compatibility Ideographs */
 
 	if (is_surrogate_pair(c)) {
+		UChar32 c32;
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
 		if ((c32>=0x20000) &&         /* CJK Unified Ideographs Extension B,C,D,E,F */
 		                              /* CJK Compatibility Ideographs Supplement */
-		    (c32<=0x3134F)) return 2; /* CJK Unified Ideographs Extension G */
+		    (c32<=0x323AF)) return 2; /* CJK Unified Ideographs Extension G,H */
 	}
 	return 0;
 }
@@ -541,7 +538,13 @@ int is_cyrillic(UChar *c)
 	else if ((*c>=0x1C80)&&(*c<=0x1C8F)) return 1; /* Cyrillic Extended-C */
 	else if ((*c>=0x2DE0)&&(*c<=0x2DFF)) return 1; /* Cyrillic Extended-A */
 	else if ((*c>=0xA640)&&(*c<=0xA69F)) return 1; /* Cyrillic Extended-B */
-	else return 0;
+
+	if (is_surrogate_pair(c)) {
+		UChar32 c32;
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+		if ((c32>=0x1E030) && (c32<=0x1E08F)) return 2; /* Cyrillic Extended-D */
+	}
+	return 0;
 }
 
 int is_greek(UChar *c)
@@ -558,7 +561,13 @@ int is_devanagari(UChar *c)
 	                     &&(*c<=0x096F)) return 0; /* Devanagari Digit */
 	else if ((*c>=0x0900)&&(*c<=0x097F)) return 1; /* Devanagari */
 	else if ((*c>=0xA8E0)&&(*c<=0xA8FF)) return 1; /* Devanagari Extended */
-	else return 0;
+
+	if (is_surrogate_pair(c)) {
+		UChar32 c32;
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+		if ((c32>=0x11B00) && (c32<=0x11B5F)) return 2; /* Devanagari Extended-A */
+	}
+	return 0;
 }
 
 int is_thai(UChar *c)
@@ -600,7 +609,13 @@ int is_arabic(UChar *c)
 	                     &&(*c<=0x08FF)) return 1; /* Arabic Extended-A */
 	else if ((*c>=0xFB50)&&(*c<=0xFDFF)) return 1; /* Arabic Presentation Forms-A */
 	else if ((*c>=0xFE70)&&(*c<=0xFEFF)) return 1; /* Arabic Presentation Forms-B */
-	else return 0;
+
+	if (is_surrogate_pair(c)) {
+		UChar32 c32;
+		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
+		if ((c32>=0x10EC0) && (c32<=0x10EFF)) return 2; /* Arabic Extended-C */
+	}
+	return 0;
 }
 
 int is_hebrew(UChar *c)

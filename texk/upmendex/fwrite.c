@@ -812,6 +812,8 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				ini[0]=0x307B; break;  /* ほ */
 			case 0x1B000:                  /* 𛀀 */
 				ini[0]=0x3048; break;  /* え */
+			case 0x1B132: case 0x1B155:
+				ini[0]=0x3053; break;  /* こ */
 			case 0x1B150: case 0x1B164:
 				ini[0]=0x3090; break;  /* ゐ */
 			case 0x1B151: case 0x1B165:
@@ -908,6 +910,15 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		return;
 	}
 	else if (is_devanagari(&ch)||is_thai(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
+		if (ch==0x626) {  /* Arabic Letter Yeh with Hamza Above for Uyghur */
+			strY[0]=0x626; strY[1]=L'\0'; /* Yeh with Hamza Above */
+			strZ[0]=0x628; strZ[1]=L'\0'; /* Beh */
+			order = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
+			if (order==UCOL_LESS) {
+				ini[0]=strY[0]; ini[1]=strY[1];
+				return;
+			}
+		}
 		if (ch==0x929||ch==0x931||ch==0x934||(0x958<=ch&&ch<=0x95F) /* Devanagary */
 			||(0x622<=ch&&ch<=0x626)||ch==0x6C0||ch==0x6C2||ch==0x6D3 /* Arabic */
 			||(0xFB50<=ch&&ch<=0xFDFF) /* Arabic Presentation Forms-A */
@@ -958,7 +969,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		}
 	}
 	if (ch==0x0C6||ch==0x0E6||ch==0x152||ch==0x153||ch==0x132||ch==0x133
-		||ch==0x0DF||ch==0x1E9E||ch==0x13F||ch==0x140||ch==0x490||ch==0x491) {
+		||ch==0x0DF||ch==0x1E9E||ch==0x13F||ch==0x140||ch==0x149||ch==0x490||ch==0x491) {
 		strX[0] = u_toupper(ch);  strX[1] = 0x00; /* ex. "Æ" "Œ" */
 		switch (ch) {
 			case 0x0C6: case 0x0E6:        /* Æ æ */
@@ -974,6 +985,8 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				strZ[0] = 0x49; break; /* I   */
 			case 0x13F: case 0x140:        /* Ŀ ŀ */
 				strZ[0] = 0x4C; break; /* L   */
+			case 0x149:                    /* ŉ   */
+				strZ[0] = 0x4E; break; /* N   */
 			case 0x490: case 0x491:        /* Ґ ґ */
 				strZ[0] = 0x413; break; /* Г   */
 		}
@@ -1041,9 +1054,22 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				}
 			}
 		}
+		/* NG for Welsh */
+		if (strX[0]==0x4E && strX[1]==0x47) {                            /* NG */
+			strY[0]=0x4E; strY[1]=L'\0';                             /* N   */
+			strZ[0]=0x4E; strZ[1]=0x47; strZ[2]=0x5A; strZ[3]=L'\0'; /* NGZ */
+			order = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
+			if (order==UCOL_LESS) {
+				ini[0]=strX[0]; ini[1]=strX[1]; /* NG */
+				ini[2]=L'\0';
+				return;
+			}
+		}
 		/* other digraphs */
-		if(((strX[0]==0x43 || strX[0]==0x44 || strX[0]==0x53 || strX[0]==0x54 || strX[0]==0x58 || strX[0]==0x5A)
-		                                     && strX[1]==0x48) || /* CH DH SH TH XH ZH */
+		if(((strX[0]==0x43 || strX[0]==0x44 || strX[0]==0x50 || strX[0]==0x52 || strX[0]==0x53 || strX[0]==0x54 ||
+		     strX[0]==0x58 || strX[0]==0x5A) && strX[1]==0x48) || /* CH DH PH RH SH TH XH ZH */
+		    (strX[0]==0x44 && strX[1]==0x44) ||                   /* DD */
+		    (strX[0]==0x46 && strX[1]==0x46) ||                   /* FF */
 		    (strX[0]==0x4C && strX[1]==0x4C) ||                   /* LL */
 		   ((strX[0]==0x47 || strX[0]==0x4C || strX[0]==0x4E) && strX[1]==0x4A) || /* GJ LJ NJ */
 		    (strX[0]==0x52 && strX[1]==0x52) ||                   /* RR */

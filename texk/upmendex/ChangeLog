@@ -1,3 +1,17 @@
+2022-09-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.02  Stable version.
+	* configure.ac: Bump version.
+	* fwrite.c:
+	Support U+1B132, U+1B155 Hiragana/Katakana Letter Small Ko.
+	They have not been supported yet but will be supported in ICU collator.
+	Support U+0626 Arabic Letter Yeh with Hamza Above for Uyghur.
+	Support U+0149 Latin Small Letter N Preceded By Apostrophe for Afrikaans.
+	Support digraphs dd, ff, ng, ph, rh for Welsh.
+	* sort.c: Add Latin Extended-F and -G.
+	Add CJK Unified Ideograph Extension H, Cyrillic Extended-D,
+	Devanagari Extended-A and Arabic Extended-C in Unicode 15.0.
+
 2022-09-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* main.c:
