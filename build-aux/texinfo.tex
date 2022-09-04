@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-09-01.06}
+\def\texinfoversion{2022-09-03.12}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -4363,8 +4363,7 @@ $$%
 % undo it ourselves.
 \def\headitemfont{\b}% for people to use in the template row; not changeable
 \def\headitem{%
-  \checkenv\multitable
-  \crcr
+  \crcr % must appear first
   \gdef\headitemcrhook{\nobreak}% attempt to avoid page break after headings
   \global\everytab={\bf}% can't use \headitemfont since the parsing differs
   \the\everytab % for the first item
