@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-09-03.12}
+\def\texinfoversion{2022-09-04.08}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -7812,6 +7812,8 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 % Print arguments.  Use slanted for @def*, typewriter for @deftype*.
 \def\defunargs#1{%
   \df \ifdoingtypefn \tt \else \sl \fi
+  \ifflagclear{txicodevaristt}{}%
+    {\def\var##1{{\setregularquotes \ttsl ##1}}}%
   #1%
 }
 
