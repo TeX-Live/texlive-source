@@ -972,7 +972,7 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.3.0
+texlogsieve 1.3.1
 Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
@@ -1037,21 +1037,29 @@ function processCommandLine(args)
   -- Add the default config file to the beginning of the list
   local filename = kpse.find_file('texlogsieverc')
   if filename ~= nil then table.insert(configFileNames, 1, filename) end
+  filename = nil
 
   if os.type == "unix" then
-      filename = kpse.find_file(os.getenv("HOME") .. "/.texlogsieverc")
+      local dirname = os.getenv("HOME") -- should never be nil, but...
+      if dirname then
+          filename = kpse.find_file(dirname .. "/.texlogsieverc")
+      end
   else
       -- https://docs.microsoft.com/en-us/windows/deployment/usmt/usmt-recognized-environment-variables
       -- %LOCALAPPDATA% corresponds to C:\Users\<username>\AppData\Local .
-      filename = kpse.find_file(os.getenv("%LOCALAPPDATA%") .. "/texlogsieverc")
-      if filename == nil then
-          -- %APPDATA% is "C:\Users\<username>\AppData\Roaming" or
-          -- "C:\Documents and Settings\<username>\Application Data"
-          filename = kpse.find_file(os.getenv("%APPDATA%") .. "/texlogsieverc")
+      -- %APPDATA% is "C:\Users\<username>\AppData\Roaming" or
+      -- "C:\Documents and Settings\<username>\Application Data"
+      for _, envdir in ipairs({"LOCALAPPDATA", "APPDATA"}) do
+          local dirname = os.getenv(envdir)
+          if dirname then
+              filename = kpse.find_file(dirname .. "/texlogsieverc")
+              if filename then break end
+          end
       end
   end
 
   if filename ~= nil then table.insert(configFileNames, 1, filename) end
+  filename = nil
 
   for _, filename in ipairs(configFileNames) do
       local configFile = assert(io.open(filename, "r"))
