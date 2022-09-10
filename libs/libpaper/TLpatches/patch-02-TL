@@ -1,6 +1,6 @@
-diff -ur libpaper-1.1.24+nmu2.orig/lib/paper.c libpaper-1.1.24+nmu2/lib/paper.c
---- libpaper-1.1.24+nmu2.orig/lib/paper.c	2010-04-24 14:12:11.000000000 +0200
-+++ libpaper-1.1.24+nmu2/lib/paper.c	2013-10-24 15:45:37.955710461 +0200
+diff -ur libpaper-1.1.28.orig/lib/paper.c libpaper-1.1.28/lib/paper.c
+--- libpaper-1.1.28.orig/lib/paper.c	2018-12-03 06:15:41.000000000 +0900
++++ libpaper-1.1.28/lib/paper.c	2022-09-10 19:13:15.000000000 +0900
 @@ -87,24 +87,11 @@
  }
  
@@ -56,7 +56,7 @@ diff -ur libpaper-1.1.24+nmu2.orig/lib/paper.c libpaper-1.1.24+nmu2/lib/paper.c
      }
  
      if (paperenv) {
-@@ -145,61 +120,6 @@
+@@ -145,64 +120,6 @@
  	    return strcpy(paperstr, paperenv);
      }
  
@@ -102,7 +102,10 @@ diff -ur libpaper-1.1.24+nmu2.orig/lib/paper.c libpaper-1.1.24+nmu2/lib/paper.c
 -		fclose(ps);
 -
 -		paperstr = malloc((strlen(papername) + 1) * sizeof(char));
--		if (! paperstr) return 0;
+-		if (! paperstr) {
+-		    free(papername);
+-		    return 0;
+-		}
 -
 -		strcpy(paperstr, papername);
 -		free(papername);
@@ -118,9 +121,10 @@ diff -ur libpaper-1.1.24+nmu2.orig/lib/paper.c libpaper-1.1.24+nmu2/lib/paper.c
      paperdef = defaultpapername();
      paperstr = malloc((strlen(paperdef) + 1) * sizeof(char));
      
-diff -ur libpaper-1.1.24+nmu2.orig/man/paperconf.1.in libpaper-1.1.24+nmu2/man/paperconf.1.in
---- libpaper-1.1.24+nmu2.orig/man/paperconf.1.in	2012-05-03 21:05:12.000000000 +0200
-+++ libpaper-1.1.24+nmu2/man/paperconf.1.in	2013-10-25 08:27:54.783329615 +0200
+Only in libpaper-1.1.28/lib: paper.c.orig
+diff -ur libpaper-1.1.28.orig/man/paperconf.1.in libpaper-1.1.28/man/paperconf.1.in
+--- libpaper-1.1.28.orig/man/paperconf.1.in	2012-05-04 04:05:12.000000000 +0900
++++ libpaper-1.1.28/man/paperconf.1.in	2022-09-10 19:09:11.000000000 +0900
 @@ -1,4 +1,4 @@
 -.TH PAPERCONF 1 "24 April 2001"
 +.TH PAPERCONF 1 "25 October 2013"

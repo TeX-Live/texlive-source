@@ -64,6 +64,10 @@ variable is not set.
 .B @RUNPARTSDIR@
 Directory of scripts to run after the paper size has been changed.
 This package puts no scripts here, but other packages may.
+.B run-parts
+is used to run the scripts, therefore their names must comply with 
+.B run-part's
+naming requirements.
 .SH AUTHOR
 Yves Arrouye <arrouye@debian.org>
 .SH SEE ALSO

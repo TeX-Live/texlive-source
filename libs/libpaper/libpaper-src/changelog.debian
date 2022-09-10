@@ -1,0 +1,791 @@
+libpaper (1.1.28) unstable; urgency=medium
+
+  * Completely fixed #927226.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 26 Jun 2019 00:04:32 +0200
+
+libpaper (1.1.27) unstable; urgency=medium
+
+  * Fixed a circular dependency in debian/rules that left libpaper1.config
+    not built. See #927226.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 23 Jun 2019 21:27:03 +0200
+
+libpaper (1.1.26) unstable; urgency=medium
+
+  * Check for ucf presence in the postrm script. See #916197 and #916198.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue, 11 Dec 2018 11:50:45 +0100
+
+libpaper (1.1.25) unstable; urgency=medium
+
+  * Fixed C4 dimension, closes: #829203
+  * Added debian/source/format file.
+  * Updated debian/copyright in order to refer to GPL-2 instead of
+    GPL, closes: #729004
+  * Fixed several lintian warnings about debian/* files.
+  * Update to debian standard version 3.9.8 without any fix.
+  * Correctly free() memory, closes: #914815
+  * Updated paperconfig man page for run-parts, closes: #594931
+  * Changed rules in order to cross build, closes: #693968
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 09 Dec 2018 10:28:40 +0100
+
+libpaper (1.1.24+nmu5) unstable; urgency=medium
+
+  [ Helmut Grohne ]
+  * Non-maintainer upload.
+  * Fix /tmp file vulnerability in debian/rules clean target
+    (Closes: #841722)
+
+ -- Jonathan Wiltshire <jmw@debian.org>  Fri, 11 Nov 2016 11:28:37 +0000
+
+libpaper (1.1.24+nmu4) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Fix ""Multi-Arch: same" but postrm removes arch-independent
+    configuration":
+    Guard removal of /etc/papersize in libpaper1.postrm with check for
+    DPKG_MAINTSCRIPT_PACKAGE_REFCOUNT; depend on dpkg (>= 1.17.2).
+    Thanks to Ivo De Decker for the proposal.
+    (Closes: #682420)
+  * Debconf template translations:
+    - new: Polish, thanks Michał Kułach, closes: #658159
+    - updated: Turkish, thanks Atila KOÇ, closes: #688293
+
+ -- gregor herrmann <gregoa@debian.org>  Sat, 01 Nov 2014 14:35:13 +0100
+
+libpaper (1.1.24+nmu3) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Use dh_autoreconf to update configury for new architectures. (Closes: #700358)
+
+ -- Wookey <wookey@debian.org>  Fri, 04 Apr 2014 00:48:01 +0000
+
+libpaper (1.1.24+nmu2) unstable; urgency=low
+
+  * Add multiarch support (Closes: #649672)
+  * Fix option-parsing headers for non-linux OSes (Closes: #542851)
+  * Correct DL size in paperconf (Closes: #475683)
+
+ -- Wookey <wookey@wookware.org>  Wed, 02 May 2012 17:52:10 +0000
+
+libpaper (1.1.24+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Fix pending l10n issues. Debconf translations:
+    - Danish (Joe Hansen).  Closes: #599843
+
+ -- Christian Perrier <bubulle@debian.org>  Fri, 06 May 2011 07:07:12 +0200
+
+libpaper (1.1.24) unstable; urgency=low
+
+  * Small changes to simplify portability (Closes: #578884, #578885, #578886, #578887)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 24 Apr 2010 14:13:52 +0200
+
+libpaper (1.1.23+nmu2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Lintian fixes:
+    - Bump debhelper compatibility level to 7
+    - As a consequence, replace calls to "dh_clean -k" by "dh_prep"
+    - Add ${misc:Depends} to binary packages dependencies to
+      properly cope with dependencies triggerred by debhelper
+      utilities
+  * Fix pending l10n issues. Debconf translations:
+    - Slovak (Ivan Masár).  Closes: #534463
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 24 Feb 2010 22:34:25 +0100
+
+libpaper (1.1.23+nmu1) unstable; urgency=low
+
+  * Non-maintainer upload to fix pending l10n issues.
+  * Debconf translations:
+    - Finnish. Closes: #448419
+    - Basque. Closes: #485430
+  * [Lintian] No longer ignore errors by "make distclean"
+  * [Lintian] Make the package binNMUable by replacing ${Source-Version}
+    by ${binary:Version} in dependencies
+  * [Lintian] drop (invalid) NEWS.Debian file that documents a very old
+    transition
+
+ -- Christian Perrier <bubulle@debian.org>  Wed, 28 May 2008 07:45:35 +0200
+
+libpaper (1.1.23) unstable; urgency=low
+
+  [ Tormod Volden ]
+  * Use defaultpapername() if systempapername() fails, as suggested
+    in lib/paper.h. This makes paperconf return a default papersize
+    instead of failing if /etc/papersize doesn't exist.
+    Closes: #376346.
+
+  [ Giuseppe Sacco ]
+  * Added hungarian translation: Closes: #433726.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Fri, 28 Sep 2007 18:42:18 +0200
+
+libpaper (1.1.22) unstable; urgency=low
+
+  [ Christian Perrier ]
+  * Debconf templates and debian/control reviewed by the debian-l10n-
+    english team as part of the Smith review project. Closes: #433065
+  * Debconf translation updates:
+    - French
+    - Basque. Closes: #433765
+    - Japanese. Closes: #433781
+    - Vietnamese. Closes: #433796
+    - Czech. Closes: #434004
+    - Italian. Closes: #434058
+    - Russian. Closes: #434070
+    - Galician. Closes: #434315
+    - Spanish. Closes: #434674
+    - German. Closes: #434793
+    - Dutch. Closes: #435326
+    - Swedish. Closes: #435339
+    - Brazilian Portuguese. Closes: #435695, #435696
+    - Portuguese. Closes: #435716
+    - Catalan. Closes: #435722
+
+  [ Giuseppe Sacco ]
+  * Applied proposed patch for i18n fix as proposed by Christian Perrier
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 08 Aug 2007 21:04:14 +0200
+
+libpaper (1.1.21) unstable; urgency=low
+
+  * Added support for hooks called when reconfigured (Closes: #375669)
+  * Added config.sub and config.guess as asked by maintainers non Debian systems.
+  * Added russian debconf translation (Closes: #397171)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 20 Nov 2006 23:57:06 +0100
+
+libpaper (1.1.20) unstable; urgency=low
+
+  * Update spanish translation by Carlos Valdivia Yagüe (Closes: #384930)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 28 Aug 2006 08:42:49 +0200
+
+libpaper (1.1.19) unstable; urgency=low
+
+  * Resolved the circular dependency between libpaper1 and libpaper-utils
+    (Closes: #369818, #370100, #370311)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 11 Jun 2006 17:55:23 +0200
+
+libpaper (1.1.18) unstable; urgency=low
+
+  * Fix dependency (Closes: #369818)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  1 Jun 2006 17:44:13 +0200
+
+libpaper (1.1.17) unstable; urgency=low
+
+  * now postrm deletes conffiles during purge (Closes: #367529)
+  * simplified the way to get informations from current locale (Closes: #367567)
+  * use CURDIR instead of PWD in debian/rules to make it work on
+    autobuilders with sudo (Closes: #367589)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Wed, 17 May 2006 07:41:49 +0200
+
+libpaper (1.1.16) unstable; urgency=low
+
+  * Added patch by Martin Michlmayr (Closes: #367361)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Mon, 15 May 2006 15:04:17 +0200
+
+libpaper (1.1.15) unstable; urgency=low
+
+  * Reverted version numbering to debian native
+  * changed the way to "guess" the correct page dimensions based on
+    current locale (Closes: #288693, #320534)
+  * Updated Changelog and Copyright information (Closes: #366486)
+  * Added galician debconf translation (Closes: #361811)
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 13 May 2006 16:03:28 +0200
+
+libpaper (1.1.14-7) unstable; urgency=low
+
+  * Correctly handle RUNPARTSDIRVAR. Again, thanks to Stephen Gildea.
+  * Call autoconf while building all packages.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Tue,  4 Apr 2006 14:22:41 +0200
+
+libpaper (1.1.14-6) unstable; urgency=low
+
+  * Added patch by Stephen Gildea for RUNPARTSDIRVAR (Closes: #352693)
+  * /etc/papersize is always removed on purge (Closes: #355690)
+  * Corrected two typos on papersize man page (Closes: #349958)
+  * Corrected two typos on paperconf man page (Closes: #349959)
+  * Corrected the way configure is called, see #285426.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 19 Mar 2006 19:07:04 +0100
+
+libpaper (1.1.14-5) unstable; urgency=low
+
+  * Added vi translation (Closes: #312445)
+  * Corrected paperconfig man page (Closes: #335321)
+  * Correctly documented the run-parts callback
+  * Fixed LC_ALL and LANG when calling AWK in order to generate numbers
+    using '.' instead of ',' in C sources.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat,  7 Jan 2006 22:18:06 +0100
+
+libpaper (1.1.14-4) unstable; urgency=low
+
+  * Added da translation (Closes: #296990)
+  * Added a hook for calling applications when papersize changes (Closes: #345466)
+  * Depends on debconf-2.0 (Closes: #332004)
+  * Removed dummy packages (Closes: #322048)
+  * Fixed passing --build and --host tp configure. (Closes: #285426)
+  * Added sv translation (Closes: #334753)
+  * Check for ufc configuration file before deleting /etc/papersize (Closes: #327076)
+  * Increased Standards-Version.
+  * Added italian translation.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Thu,  5 Jan 2006 10:37:12 +0100
+
+libpaper (1.1.14-3) unstable; urgency=medium
+
+  * Added an explaination of how to add a new paper format, see #278017.
+  * Used medium urgency in order to get into sarge.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sun, 24 Oct 2004 11:21:03 +0200
+
+libpaper (1.1.14-2) unstable; urgency=low
+
+  * Moved libpaper-dev and libpaperg-dev from section devel to libdevel.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 23 Oct 2004 12:45:25 +0200
+
+libpaper (1.1.14-1) unstable; urgency=medium
+
+  * New maintaier
+  * New Dutch po-debconf translation
+  * New Czech po-debconf translation
+  * New pt_BR po-debconf translation
+  * Applied patch by Frank Küster for a smoother upgrade from woody
+  * Applied patch by Magnus Fromreide in order to add measure units.
+
+ -- Giuseppe Sacco <eppesuig@debian.org>  Sat, 23 Oct 2004 11:56:26 +0200
+
+libpaper (1.1.14-0.4) unstable; urgency=medium
+
+  * And yet another NMU
+  * Only try to run ucf if it is available on purge since we
+    can't be sure (Closes: #264249) Thx to Ryan Murray for
+    noticing.
+  * Update French translation of debconf templates. (Closes: #263152)
+  * Update Portuguese (Brasilian) translation of debconf templates.
+    (Closes: #264212)
+  * Urgency medium to get this into sarge in time
+
+ -- Frank Lichtenheld <djpig@debian.org>  Wed, 18 Aug 2004 11:21:34 +0200
+
+libpaper (1.1.14-0.3) unstable; urgency=low
+
+  * Third NMU to increase the dependencies on debconf (>= 1.3.22)
+    and ucf (>= 0.28). Thanks David Golombek for noticing.
+    (Closes: #261844)
+  * Update Japanese translation of debconf templates. (Closes: #260820)
+  * Update German translation of debconf templates.
+  * Add Ukrainian translation of debconf templates. (Closes: #261637)
+
+ -- Frank Lichtenheld <djpig@debian.org>  Wed, 28 Jul 2004 21:17:55 +0200
+
+libpaper (1.1.14-0.2) unstable; urgency=low
+
+  * Second NMU to acknowledge the fact that it was me, not Fabio that
+    uploaded the last NMU and so I am responsible for any breakages
+    caused...
+
+ -- Frank Lichtenheld <djpig@debian.org>  Tue, 20 Jul 2004 21:18:55 +0200
+
+libpaper (1.1.14-0.1) unstable; urgency=low
+
+  * NMU
+  * Switch libpaper1.config from perl to sh for the sake of consistency
+    and simplicity.
+  * Add title template so that can be translated.
+  * Switch _Choises: to __Choises: to help translator teams. (Closes: #238049)
+  * Add Depends: ucf to libpaper1 and rewrite maintainer's scripts.
+    (Closes: #245403, #216471)
+  * Update Czech translation of debconf templates. (Closes: #232061)
+  * Update French translation of debconf templates. (Closes: #238649)
+  * Update Turkish translation of debconf templates. (Closes: #246070)
+  * Update Dutch translation of debconf templates. (Closes: #246551)
+  * Update German translation of debconf templates. (Closes: #251733)
+
+ -- Fabio M. Di Nitto <fabbione@fabbione.net>  Wed, 30 Jun 2004 14:23:44 +0200
+
+libpaper (1.1.14) unstable; urgency=low
+
+  * Explicitly choose NOT to include a menu option for paper-config,
+  Closes: #187603
+  * Move the notice about the changed meanins of the PAPERSIZE & PAPERCONF
+    environment variables to NEWS.Debian.  This has the added advantage of
+    elimiating the the one non-medium level debconf prompt in this package,
+  Closes: #200503, #226254
+  * Convert to po-debconf for i10n support,
+  Closes: #201787
+  * Be explicit about the order of environment variable evaluation and the
+    "value of tlast resort" in both the paperconf.1 and papersize.5 man
+    pages,
+  Closes: #212974
+  * Add JA debconf translation,
+  Closes: #213069
+
+ -- Stephen Zander <gibreel@debian.org>  Mon, 19 Jan 2004 20:22:39 -0800
+
+libpaper (1.1.13) unstable; urgency=low
+
+  * Correct the weird guid bit setting in the source package,
+  Closes: #177560
+  * Create /etc/papersize in the libpaper1 postinst;this code got lost in
+    the last release,
+  Closes: #181023
+
+ -- Stephen Zander <gibreel@debian.org>  Wed, 26 Feb 2003 00:49:47 -0800
+
+libpaper (1.1.12) unstable; urgency=low
+
+  * No longer coonflict with libpaperg & libpaperg-dev, just replace &
+    provide.  I don't want a bunch of bugs about how dpkg complains that
+    it doesn't have a package to configure after unpacking.  The conflict
+    will return when the dummy packages disappear after the next Debian
+    release.
+  * Build the dummy packages in the binary-indep rule not the binary-arch
+    rule,
+  Closes: #174386
+  * Add 'Replaces: libpaperg (<< 1.1.9), libpaper1 (<< 1.1.10)' to
+    libpaper-utils instaed of using diversion hackery.  I finally get how
+    these fields interact.
+  Closes: #174810
+
+ -- Stephen Zander <gibreel@debian.org>  Tue, 31 Dec 2002 16:57:07 -0800
+
+libpaper (1.1.11) unstable; urgency=low
+
+  * Further updates to the libpaper-utils templates courtesy of Branden
+    Robinson <branden@debian.org>,
+  Closes: #170829
+  * Correct the missing references to PAPERCONFVAR in paperconfig.in
+    (thanks to Junichi Uekawa <dancer@netfort.gr.jp>)
+  Closes: #173043
+
+ -- Stephen Zander <gibreel@debian.org>  Thu, 19 Dec 2002 17:13:33 -0800
+
+libpaper (1.1.10) unstable; urgency=low
+
+  * Working out which packages depend on libpaper1 is easy:
+    	apt-cache showpkg libpaper1
+    Working out which packages should use libpaper but don't is not the
+    responsibility of this package,
+  Closes: #153471
+  * Create a libpaper-utils package to hold paperconf & paperconfig,
+  Closes: #169152
+  * Include -I$(topsrcdir)/lib in paperconf_CPPFLAGS so we can find
+    <paper.h>,
+  Closes: #169154, #169376
+  * Improve the template descriptions (thanks to Branden Robinson
+    <branden@debian.org> & Thomas Schoepf <schoepf@debian.org>)
+  Closes: #169195, #169270
+  * Make the dummy libpaperg package depend on libpaper-utils, so the
+    naming migration is complete,
+  Closes: #169215
+  * Specifiy the default papersize file name in the papersize man page,
+  Closes: #169693
+
+ -- Stephen Zander <gibreel@debian.org>  Mon, 18 Nov 2002 22:05:09 -0800
+
+libpaper (1.1.9) unstable; urgency=low
+
+  * Two release have gone by with libpaperg so it should be safe to C/R/P
+    against.  Rename the package to be in-line with current naming
+    standards (libpaper<SONAME>, libpaper-dev).  Provide a dummy
+    libpaperg-dev to aid the transition
+  * Reverse the meanings of the PAPERCONF & PAPERSIZE environment
+    variables.  Their current meanings violate the principle of least
+    surprise (i.e. people expect PAPERSIZE to be a paper size etc not the
+    path to a file and the expect PAPERCONF to be a configuration file not
+    a paper size).  The previous meanings will be supported for backward
+    compatibility *only* until the next Debian release,
+  Closes: #159579
+  * Allow America as a synonym for US when deciding whether to default to
+    letter or a4 paper size,
+  Closes: #155843
+  * Rebuild using the latest automake & DESTDIR= to fix breakage in the
+    .la file and allow for building outside the source tree,
+  Closes: #160228, #161163
+  * Include <errno.h> instead of using 'extern int errno',
+  Closes: #168521
+
+ -- Stephen Zander <gibreel@debian.org>  Sun, 10 Nov 2002 15:49:09 -0800
+
+libpaper (1.1.8) unstable; urgency=high
+
+  * Ensure changes made during reconfiguration take effect,
+  Closes: #136702
+  * Remove debconf code from preinst as it's not necessary,
+  Closes: #143838
+
+ -- Stephen Zander <gibreel@debian.org>  Sun, 21 Apr 2002 20:23:22 -0700
+
+libpaper (1.1.7) unstable; urgency=low
+
+  * Bring debconf template handling in line with i10n recommendations,
+  Closes: #133821
+
+ -- Stephen Zander <gibreel@debian.org>  Sat, 23 Feb 2002 16:21:20 -0800
+
+libpaper (1.1.6) unstable; urgency=low
+
+  * Close an additional bug related to the config typos in the previous
+    version of the package,
+  Closes: #132672
+  * Update the french translation in the debconf template file,
+  Closes: #133821
+  * Remove /usr/bin/paperconf from debconf configuration; it served no
+    useful purpose anyway,
+  Closes: #134066
+
+ -- Stephen Zander <gibreel@debian.org>  Fri, 22 Feb 2002 12:09:35 -0800
+
+libpaper (1.1.5) unstable; urgency=medium
+
+  * Fix some careless typos in the debconf config script,
+  Closes: #132660, #132663
+
+ -- Stephen Zander <gibreel@debian.org>  Wed,  6 Feb 2002 16:55:26 -0800
+
+libpaper (1.1.4) unstable; urgency=low
+
+  * New maintainer,
+  Closes: #130829
+  * Provide default paper size based on timezone,
+  Closes: #48303
+  * Add documentation for papername, paperpswidth & paperpsheight,
+  Closes: #112733
+  * Prevent libpaperg from reasking for a paper size when /etc/papersize
+    exists,
+  Closes: #131335
+
+ -- Stephen Zander <gibreel@debian.org>  Tue,  5 Feb 2002 19:54:41 -0800
+
+libpaper (1.1.3) unstable; urgency=low
+
+  * Orphaned this package.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Fri, 25 Jan 2002 12:59:59 +0100
+
+libpaper (1.1.2) unstable; urgency=high
+
+  * Fix debian/config to get dpkg-reconfigure working.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Tue,  4 Dec 2001 10:41:42 +0100
+
+libpaper (1.1.1) unstable; urgency=high
+
+  * Hardcoded the papersizes in debian/templates.
+    (closes: #115347)
+  * #define MAXPATHLEN in src/paperconf.c if it isn't already
+    defined. This should fix the compilation on GNU/Hurd.
+    (closes: #103850)
+  * Updated libtool.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Sat, 17 Nov 2001 15:13:56 +0100
+
+libpaper (1.1.0) unstable; urgency=low
+
+  * Changed the build system to use automake and libtool.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Sun, 23 Sep 2001 00:34:41 +0200
+
+libpaper (1.0.10) unstable; urgency=low
+
+  * Add a" || true" to the removal of the diversions in the
+    preinst of libpaperg. (closes: #112977)
+  * Renamed configure.in to configure.ac.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Fri, 21 Sep 2001 13:51:58 +0200
+
+libpaper (1.0.9) unstable; urgency=high
+
+  * Don't ask the debconf question when the user had the potato
+    package installed. (closes: #95030)
+  * The potato package didn't remove the diversion correctly.
+    Remove it in the preinst of libpaperg. (closes: #112247)
+  * s/defaultpapersize/defaultpapername/ in systempapername (3).
+    (This time in the right file...)
+  * Updated config.guess and config.sub. (closes: #88550, #94793)
+  * Added spanish and brazilian portuguese translations of the
+    debconf template. (closes: #103245, #106239)
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Tue, 18 Sep 2001 00:07:13 +0200
+
+libpaper (1.0.8.1) unstable; urgency=high
+
+  * copy in new config.{guess,sub} to get support for new architectures.
+    Closes: #94793
+
+ -- LaMont Jones <lamont@debian.org>  Mon,  9 Jul 2001 21:39:34 -0600
+
+libpaper (1.0.8) unstable; urgency=high
+
+  * Corrected a small error in paperconf (1). (closes: #91230)
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Sun, 15 Apr 2001 01:00:20 +0200
+
+libpaper (1.0.7) unstable; urgency=low
+
+  * libpaperg-dev replaces libpaperg (<< 1.0.5). (closes: #90508)
+  * Corrected the sections of the binary packages:
+      libpaperg    : text -> libs
+      libpaperg-dev: text -> devel
+  * Removed dh_testversion from debian/rules.
+  * Added a Hungarian translation of the debconf template. Thanks
+    to KORN Andras <korn@chardonnay.math.bme.hu> for this.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Wed, 21 Mar 2001 18:24:15 +0100
+
+libpaper (1.0.6) unstable; urgency=medium
+
+  * Depend on the latest version of debconf in unstable to avoid the
+    problems with the ancient version in testing. (closes: #90199)
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Mon, 19 Mar 2001 08:39:16 +0100
+
+libpaper (1.0.5) unstable; urgency=low
+
+  * Run paperconfig in the postinst only when /etc/papersize doesn't
+    exist. (closes: #74691, #76809, #77070)
+  * Changed paperconfig to show a usage message and exit with
+    error code 1 when called without parameters. (closes: #73643)
+  * s/systempapersize()/systempapername()/ in systempapername (3).
+    (closes: #83580)
+  * Added German, French and Swedish translations of the template file.
+    (closes: #83970, #84705)
+  * Changed the English template to suggest "a4" as well as "letter".
+    (closes: #84254)
+  * Moved the section 3 man pages from libpaperg to libpaperg-dev.
+  * s/Debian::DebConf::Client::ConfModule/Debconf::Client::ConfModule/
+    in debian/config.
+  * libpaperg does now conflict with libpaper. I removed some stuff
+    that did let both packages being installed together.
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Sat,  3 Mar 2001 13:40:57 +0100
+
+libpaper (1.0.4) unstable; urgency=low
+
+  * New maintainer.
+  * libpaper is now a native Debian package.
+  * Removed the libc5 libpaper package.
+  * Added a libpaperg-dev package. (closes: #75660)
+  * Rewritten debian/rules based on debhelper.
+  * /usr/doc -> /usr/share/doc
+  * /usr/man -> /usr/share/man
+  * Updated the copyright file.
+  * Removed the obsolete examples directory.
+  * Updated config.guess and config.sub and added support for GNU/Hurd
+    in configure.in. (closes: #39036)
+  * Added Build-Depends.
+  * Standards-Version: 3.1.1
+
+ -- Adrian Bunk <bunk@fs.tum.de>  Mon, 18 Sep 2000 23:29:42 +0200
+
+libpaper (1.0.3-14) unstable; urgency=low
+
+  * Added debconf support, thaks to the patch by
+    John Goerzen <jgoerzen@progenylinux.com> (Closes: Bug#70959).
+
+ -- Marco Pistore <pistore@debian.org>  Tue, 12 Sep 2000 07:26:25 +0200
+
+libpaper (1.0.3-13) unstable frozen; urgency=low
+
+  * Fixed preinst and postrm scripts for the libpaperg package,
+    so that diversions are handled correctly (Closes: Bug#49205)
+  * Fixed bugs in lib/paper.c file that made function systempapername
+    if file /etc/papersize is present but not readable (also
+    dixed memory lead in the same function) (Closes: Bug#63582)
+  * Now file /etc/papersize is chmod 644 after creation in
+    paperconfig, to override root's umask.
+
+ -- Marco Pistore <pistore@debian.org>  Sun, 14 May 2000 19:32:17 +0200
+
+libpaper (1.0.3-12.2) unstable; urgency=low
+
+  * Fixed a syntax error in debian/control introduced by the last NMU:
+    The Architecture: list is separated by spaces not commas.
+
+ -- Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de>  Wed,  2 Jun 1999 13:16:28 +0200
+
+libpaper (1.0.3-12.1) unstable; urgency=low
+
+  * Added support for arm architecture in config.guess
+
+ -- Tor Slettnes <tor@slett.net>  Mon, 22 Mar 1999 17:40:50 -0800
+
+libpaper (1.0.3-12) unstable; urgency=low
+
+  * Added sparc among the libc5 compat architectures in debian/rules
+    (Closes: Bug#30173)
+  * Now function systempapername return the paper name in the correct
+    case (Closes: Bug#29911)
+
+ -- Marco Pistore <pistore@di.unipi.it>  Tue,  8 Dec 1998 09:50:04 +0100
+
+libpaper (1.0.3-11) unstable; urgency=low
+
+  * added some "|| true" in the paperconfig script, so that it does not
+    fail even if called with "bash -e" (closes: Bug#26014)
+
+ -- Marco Pistore <pistore@di.unipi.it>  Sat, 22 Aug 1998 15:39:30 +0200
+
+libpaper (1.0.3-10) unstable frozen; urgency=low
+
+  * Now libpaper does not depend anymore on libpaperg (this was  
+    the release critical bug#22942). In previous versions, the
+    dependency was added so that the executables /usr/bin/paperconf and 
+    /usr/sbin/paperconfig (that were present only in libpaperg), could
+    be used also from the old (i.e., bo) packages that depends on libpaper
+    (in bo, libpaper provided both the libraries and the executables,
+    so both of them should be provided to a package that depends on libpaper).
+    Now, the executables are present in both packages, and libpaperg
+    uses dpkg-divert to "move away" the libpaper binaries when
+    libpaperg is installed (closes: Bug#22942)
+  * Removed "sparc" in debian/rules from the libraries that require 
+    libc5 support (closes: Bug#22082)
+  * Added some new #include in the source (changes in the c headers?)
+
+ -- Marco Pistore <pistore@di.unipi.it>  Sun, 14 Jun 1998 20:02:11 +0200
+
+libpaper (1.0.3-9) unstable frozen; urgency=low
+
+  * I forgot to upload previous version also to FROZEN!
+    BRIAN, please include this in HAMM, since it closes a bug (20566) 
+    and assures that copyright appears in /usr/doc/libpaper.
+
+ -- Marco Pistore <pistore@di.unipi.it>  Sun,  5 Apr 1998 19:18:00 +0200
+
+libpaper (1.0.3-8) unstable; urgency=low
+
+  * Now paperconfig converts the given paper name into the correctly
+    capitalized name. I.e., "paperconfig -p LeTtEr" sets the system paper
+    to "letter" (closes: Bug#20566).
+  * Now paperconfig uses /usr/bin/pager as default pager if ${PAGER} is 
+    unset. 
+  * Changelogs and copyright now appear also in the libc5 package.
+    /usr/doc/libpaper is no more a link to /usr/doc/libpaperg; hence
+    in the preinst script of the libc5 package the link is transformed 
+    into a void directory if needed.
+
+ -- Marco Pistore <pistore@di.unipi.it>  Fri,  3 Apr 1998 23:23:01 +0200
+
+libpaper (1.0.3-7) unstable frozen; urgency=low
+
+  * Only the shared libs are compiled with -fPIC and all libs are 
+    compiled with -D_REENTRANT
+  * Corrected wrong permissions for some files
+  * Docs of libc6 version are now in libpaperg
+  * Symlinks have been fixed
+  * /etc/papersize is removed on purge
+  * ldconfig is called in postinst and postrm
+
+ -- Marco Pistore <pistore@di.unipi.it>  Thu, 12 Mar 1998 23:52:53 +0100
+
+libpaper (1.0.3-6) unstable; urgency=low
+
+  * Modified debian/rules so that the "build" target works correctly
+      (bug 15827)
+  * Added options to paperconf to use centimetres, millimetres and inches
+      as units for paper size (bug 5928)
+
+ -- Marco Pistore <pistore@di.unipi.it>  Sun, 11 Jan 1998 17:49:55 +0100
+
+libpaper (1.0.3-5) unstable; urgency=low
+
+  * Corrected many man pages, so that "which" works with the .so 
+    directive (bugs 4993 and 12121) 
+  * Now shared libraries are strippend with --strip-unneeded 
+    (bugs 5133 and 8310)
+  * Small changes in the README files (bug 7833)
+  * Fixed security hole in paperconfig (superuser uses file in /tmp: 
+    bug 11607) 
+  * File "configure" regenerated with a more recent version of autoconf 
+
+ -- Marco Pistore <pistore@di.unipi.it>  Mon, 27 Oct 1997 23:54:51 +0100
+
+libpaper (1.0.3-4) unstable; urgency=low
+
+  * Libc6 (hamm) version
+  * Now we have two binary packages:
+    - libpaperg (which is like the old libpaper packages, but it is
+      compiled for libc6 libraries), and
+    - libpaper  (which contains static and shared libraries compiled
+      for libc5)
+  * The debian/* files have been largely rewritten
+  * Small changes in Makefile.in
+  * /etc/papersize is now a conffile
+
+ -- Marco Pistore <pistore@di.unipi.it>  Fri, 26 Sep 1997 19:06:24 +0200
+
+libpaper (1.0.3-3) unstable; urgency=LOW
+
+  * Suppressed the error message output produced by the call to paperconf
+      in the paperconfig script.
+
+ -- Yves Arrouye <Yves.Arrouye@marin.fdn.fr>  Sat, 28 Sep 1996 11:54:58 +0200
+
+libpaper (1.0.3-2) unstable; urgency=LOW
+
+  * Removed the overriden CFLAGS and LDFLAGS in debian/rules (fixes bug
+      #4581).
+
+ -- Yves Arrouye <Yves.Arrouye@marin.fdn.fr>  Wed, 25 Sep 1996 09:04:30 +0200
+
+libpaper (1.0.3-1) unstable; urgency=LOW
+
+  * Put a call to ldconfig back into postinst.
+  * Put the manpage suffix paper back (so we have xxx.3paper).
+  * Upgraded to libpaper 1.0.3 which has a complete set of manual
+      pages.
+
+ -- Yves Arrouye <Yves.Arrouye@marin.sevy.fr>  Tue, 24 Sep 1996 07:49:30 +0200
+
+libpaper (1.0.2-3) unstable; urgency=LOW
+
+  * Removed the call to ldconfig in the postrm, since the library and its
+      symbolic mode are in the correct order.
+
+ -- Yves Arrouye <Yves.Arrouye@marin.fdn.fr>  Tue, 17 Sep 1996 19:27:59 +0200
+
+libpaper (1.0.2-2) unstable; urgency=LOW
+
+  * Switched to the new source format.
+  * Corrected Makefile.in for clean target.
+
+ -- Yves Arrouye <arrouye@marin.sevy.fr>  Thu, 5 Sep 1996 11:49:05 +0200
+
+libpaper (1.0.1-2) unstable; urgency=LOW
+
+  * Renamed PAPER env. var to PAPERCONF.
+  * Changes in paperconfig(8) to unset the PAPERCONF variable, to use the
+      file specified by the $PAPERSIZE variable and to rewrite the file
+      only when really needed.
+  * The postinst does not ask if whitespace and comments should be removed
+      because paperconfig(8) handles that.
+
+ -- Yves Arrouye <arrouye@marin.sevy.fr>  Thu, 5 Sep 1996 11:21:52 +0200
+
+libpaper (1.0.1-1) unstable; urgency=LOW
+
+  * Corrected bug #4139 (/etc/papersize was a conffile modified by
+      scripts) and added paperconfig(8).
+  * Renamed paper(1) to paperconf(1) (fixes bugs #4137 and #4138).
+  * Removed postrm which called ldconfig(8) (fixes bug #4251).
+  * Added TODO file.
+
+ -- Yves Arrouye <arrouye@marin.sevy.fr>  Sat, 24 Aug 1996 11:22:56 +0200
+
+
+

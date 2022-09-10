@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([libpaper], [1.1.9])
+AC_INIT([libpaper], [1.1.27])
 AC_CONFIG_SRCDIR([configure.ac])
 AM_INIT_AUTOMAKE([no-define])
 AM_CONFIG_HEADER(config.h)

@@ -1,5 +1,6 @@
 dnl
-dnl   Copyright (C) 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
+dnl   Copyright 2022 Karl Berry <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
@@ -8,4 +9,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current libpaper version
-m4_define([libpaper_version], [1.1.24+nmu2])
+m4_define([libpaper_version], [1.1.28])
