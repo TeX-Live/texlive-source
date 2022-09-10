@@ -81,7 +81,7 @@ static void zzip_mem_entry_pipe(ZZIP_MEM_DISK* disk,
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_mem_disk_fread (buffer, 1024, 1, file)))
+	while (0 < (len = zzip_mem_disk_fread (buffer, 1024, 1, file)))
 	    fwrite (buffer, len, 1, out);
 	
 	zzip_mem_disk_fclose (file);
@@ -115,7 +115,7 @@ static void zzip_mem_entry_test(ZZIP_MEM_DISK* disk,
     {
 	unsigned long crc = crc32 (0L, NULL, 0);
 	unsigned char buffer[1024]; int len; 
-	while ((len = zzip_mem_disk_fread (buffer, 1024, 1, file))) {
+	while (0 < (len = zzip_mem_disk_fread (buffer, 1024, 1, file))) {
 	    crc = crc32 (crc, buffer, len);
 	}
 	

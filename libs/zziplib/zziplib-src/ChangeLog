@@ -1,3 +1,21 @@
+2021-01-04  gdraheim@github
+    * The testbuilds were fixed to make cmake install and automake install the same
+    * The cmake install did need patches for man3 installation on Unix
+    * The cmake install did need patches for dll installation on Windows
+    * The cmake install did need patches for dylib installation on MacOS
+    * The cmake install did need patches for pkgconfig generation
+    * Bump testbuilds to modern distro versions (ubuntu 20.04 centos 7.9 / 8.3)
+    * Takeover docker_mirror.py for air-gap testings (for testbuilds.py)
+    * handle UNZZIP-NOTFOUND in cmake and mark Ubuntu 'unzip' to be broken
+    * merge patches for zzip_pread feature from Max Kellermann
+    * merge patches for some bugs being found and reported via GitHub issues
+    * run azure-pipelines with -DZZIP_TESTCVE=OFF to skip CVE *.zip downloads
+    * use zziptests.py --downloadonly to get the CVE zip files for local storage
+    * The ninja builds for cmake were run regularly as it seems to be widely used.
+    * AND ... rename configure.ac to old.configure.ac to break outdated packaging scripts
+    * ....... see testbuilds/*-am-*.dockerfile that it still works to rename them back
+    * release 0.13.72
+
 2020-04-14  gdraheim@github
     * The testbuilds allow to compile and test for different os via docker
     * The testbuilds allow to compare new cmake to automake install results

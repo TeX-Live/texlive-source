@@ -22,7 +22,7 @@ static void zzip_entry_fprint(ZZIP_ENTRY* entry, FILE* out)
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_entry_fread (buffer, 1024, 1, file)))
+	while (0 < (len = zzip_entry_fread (buffer, 1024, 1, file)))
 	    fwrite (buffer, len, 1, out);
 
 	zzip_entry_fclose (file);
@@ -35,7 +35,7 @@ static void zzip_cat_file(FILE* disk, char* name, FILE* out)
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_entry_fread (buffer, 1024, 1, file)))
+	while (0 < (len = zzip_entry_fread (buffer, 1024, 1, file)))
 	    fwrite (buffer, len, 1, out);
 	
 	zzip_entry_fclose (file);

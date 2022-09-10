@@ -26,7 +26,7 @@ static void unzzip_big_entry_fprint(ZZIP_ENTRY* entry, FILE* out)
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_entry_fread (buffer, 1024, 1, file)))
+	while (0 < (len = zzip_entry_fread (buffer, 1024, 1, file)))
 	{
 	    DBG2("entry read %i", len);
 	    fwrite (buffer, len, 1, out);
@@ -45,7 +45,7 @@ static void unzzip_cat_file(FILE* disk, char* name, FILE* out)
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_entry_fread (buffer, 1024, 1, file)))
+	while (0 < (len = zzip_entry_fread (buffer, 1024, 1, file)))
 	    fwrite (buffer, len, 1, out);
 	
 	zzip_entry_fclose (file);

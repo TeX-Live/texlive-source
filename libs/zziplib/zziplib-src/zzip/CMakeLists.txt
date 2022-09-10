@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.1)
-project(zzip VERSION "0.13.71" LANGUAGES C)
+project(zzip VERSION "0.13.72" LANGUAGES C)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts")
 
@@ -18,8 +18,16 @@ option(BUILD_STATIC_LIBS "Build the static library" OFF)
 option(MSVC_STATIC_RUNTIME "Build with static runtime libs (/MT)" ON)
 option(ZZIPMMAPPED "Build libzzipmmapped (not fully portable)" ON)
 option(ZZIPFSEEKO "Build libzzipfseeko (based on posix.1 api)" ON)
-option(ZZIPCOMPAT "Build compatibility with old libzzip releases" ON)
-option(ZZIPLIBTOOL "Ensure binary compatibility with libtool" ON)
+
+if(UNIX)
+option(ZZIP_COMPAT "Build compatibility with old libzzip releases" ON)
+option(ZZIP_LIBTOOL "Ensure binary compatibility with libtool" ON)
+option(ZZIP_PKGCONFIG "Generate pkg-config files for linking" ON)
+else()
+option(ZZIP_COMPAT "Build compatibility with old libzzip releases" OFF)
+option(ZZIP_LIBTOOL "Ensure binary compatibility with libtool" OFF)
+option(ZZIP_PKGCONFIG "Generate pkg-config files for linking" OFF)
+endif()
 
 # used in zzip/_config.h
 set(ZZIP_PACKAGE "${PROJECT_NAME}lib")
@@ -27,7 +35,7 @@ set(ZZIP_VERSION "${PROJECT_VERSION}")
 set(ZZIP_PACKAGE_NAME "${PROJECT_NAME}lib")
 set(ZZIP_PACKAGE_VERSION "${PROJECT_VERSION}")
 
-if(ZZIPCOMPAT)
+if(ZZIP_COMPAT OR ZZIP_PKGCONFIG)
 find_package ( UnixCommands REQUIRED ) # bash cp mv rm gzip tar
 endif()
 
@@ -58,6 +66,7 @@ check_include_files ( "sys/param.h" ZZIP_HAVE_SYS_PARAM_H )
 check_include_files ( "sys/stat.h" ZZIP_HAVE_SYS_STAT_H )
 check_include_files ( "sys/types.h" ZZIP_HAVE_SYS_TYPES_H )
 check_include_files ( unistd.h ZZIP_HAVE_UNISTD_H )
+check_function_exists ( pread ZZIP_HAVE_PREAD )
 check_include_files ( winbase.h ZZIP_HAVE_WINBASE_H )
 check_include_files ( windows.h ZZIP_HAVE_WINDOWS_H )
 check_include_files ( winnt.h ZZIP_HAVE_WINNT_H )
@@ -193,7 +202,7 @@ set_target_properties(libzzipmmapped PROPERTIES OUTPUT_NAME "zzipmmapped" RELEAS
 SET_TARGET_PROPERTIES(libzzipmmapped PROPERTIES VERSION ${VERNUM}.${FIXNUM} SOVERSION ${VERNUM})
 endif()
 
-if(ZZIPCOMPAT)
+if(ZZIP_COMPAT)
 add_custom_command(OUTPUT compat/zzip.h
    COMMAND ${BASH} -c "rm -rf compat; mkdir compat"
    COMMAND ${BASH} -c "echo '#ifndef ZZIP_WARNING'     > compat/zzip.h"
@@ -212,9 +221,9 @@ add_custom_command(OUTPUT compat/zzip.h
    BYPRODUCTS compat/zziplib.h compat/zzip-io.h
    VERBATIM)
 add_custom_target(compat ALL DEPENDS compat/zzip.h)
-endif()
+endif(ZZIP_COMPAT)
 
-if(UNIX)
+if(ZZIP_PKGCONFIG)
 join_paths(libdir "\${prefix}" "${CMAKE_INSTALL_LIBDIR}")
 join_paths(includedir "\${prefix}" "${CMAKE_INSTALL_INCLUDEDIR}")
 add_custom_command(OUTPUT zziplib.pc
@@ -235,24 +244,26 @@ add_custom_command(OUTPUT zziplib.pc
    BYPRODUCTS zzipmmapped.pc zzipfseeko.pc
    VERBATIM)
 add_custom_target(pkgconfig ALL DEPENDS zziplib.pc)
-endif()
+endif(ZZIP_PKGCONFIG)
 
 # install ########################################################
 set(outdir ${CMAKE_CURRENT_BINARY_DIR})
 
-if(UNIX)
+if(ZZIP_PKGCONFIG)
 install(FILES ${outdir}/zziplib.pc ${outdir}/zzipmmapped.pc ${outdir}/zzipfseeko.pc
         DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig" )
 endif()
 
 install(FILES ${libzzip_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zzip )
 install(TARGETS libzzip 
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 if(ZZIPFSEEKO)
 install(FILES ${libzzipfseeko_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zzip )
 install(TARGETS libzzipfseeko 
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
@@ -260,11 +271,12 @@ endif()
 if(ZZIPMMAPPED)
 install(FILES ${libzzipmmapped_HDRS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/zzip )
 install(TARGETS libzzipmmapped
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
-if(ZZIPCOMPAT)
+if(ZZIP_COMPAT)
   install(FILES ${outdir}/compat/zzip.h ${outdir}/compat/zziplib.h ${outdir}/compat/zzip-io.h 
           DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
   if(CMAKE_SHARED_LIBRARY_SONAME_C_FLAG)
@@ -276,6 +288,10 @@ if(ZZIPCOMPAT)
     get_target_property(libversion libzzip VERSION)
     install(CODE "execute_process(COMMAND bash -c \"set -e
         cd $DESTDIR/${libdir}
+        if [ -f ${lib}${libname}${librelease}.${libversion}${dll} ]; then
+          # Fix for APPLE where dylib goes in the end
+          ln -s ${lib}${libname}${librelease}.${libversion}${dll} ${lib}${libname}${librelease}${dll}.${libversion}
+        fi
         [ -f ${lib}${libname}${librelease}${dll}.${libversion} ] || exit 0
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${librelease}${dll}
@@ -289,7 +305,7 @@ if(ZZIPCOMPAT)
   endif()
 endif()
 
-if(ZZIPLIBTOOL)
+if(ZZIP_LIBTOOL)
   if(CMAKE_SHARED_LIBRARY_SONAME_C_FLAG)
     set(lib ${CMAKE_SHARED_LIBRARY_PREFIX})
     set(dll ${CMAKE_SHARED_LIBRARY_SUFFIX})
@@ -299,6 +315,10 @@ if(ZZIPLIBTOOL)
     get_target_property(libversion libzzip VERSION)
     install(CODE "execute_process(COMMAND bash -c \"set -e
         cd $DESTDIR/${libdir}
+        if [ -f ${lib}${libname}${librelease}.${libversion}${dll} ]; then
+          # Fix for APPLE where dylib goes in the end
+          ln -s ${lib}${libname}${librelease}.${libversion}${dll} ${lib}${libname}${librelease}${dll}.${libversion}
+        fi
         [ -f ${lib}${libname}${librelease}${dll}.${libversion} ] || exit 0
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${dll}
@@ -309,11 +329,16 @@ if(ZZIPLIBTOOL)
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${librelease}${dll}.12
         \")")
+    if(ZZIPFSEEKO)
     get_target_property(libname libzzipfseeko OUTPUT_NAME)
     get_target_property(librelease libzzipfseeko RELEASE_POSTFIX)
     get_target_property(libversion libzzipfseeko VERSION)
     install(CODE "execute_process(COMMAND bash -c \"set -e
         cd $DESTDIR/${libdir}
+        if [ -f ${lib}${libname}${librelease}.${libversion}${dll} ]; then
+          # Fix for APPLE where dylib goes in the end
+          ln -s ${lib}${libname}${librelease}.${libversion}${dll} ${lib}${libname}${librelease}${dll}.${libversion}
+        fi
         [ -f ${lib}${libname}${librelease}${dll}.${libversion} ] || exit 0
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${dll}
@@ -324,11 +349,17 @@ if(ZZIPLIBTOOL)
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${librelease}${dll}.12
         \")")
+    endif(ZZIPFSEEKO)
+    if(ZZIPMMAPPED)
     get_target_property(libname libzzipmmapped OUTPUT_NAME)
     get_target_property(librelease libzzipmmapped RELEASE_POSTFIX)
     get_target_property(libversion libzzipmmapped VERSION)
     install(CODE "execute_process(COMMAND bash -c \"set -e
         cd $DESTDIR/${libdir}
+        if [ -f ${lib}${libname}${librelease}.${libversion}${dll} ]; then
+          # Fix for APPLE where dylib goes in the end
+          ln -s ${lib}${libname}${librelease}.${libversion}${dll} ${lib}${libname}${librelease}${dll}.${libversion}
+        fi
         [ -f ${lib}${libname}${librelease}${dll}.${libversion} ] || exit 0
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${dll}
@@ -339,5 +370,14 @@ if(ZZIPLIBTOOL)
         echo -n .. Installing: `pwd`
         ln -svf ${lib}${libname}${librelease}${dll}.${libversion} ${lib}${libname}${librelease}${dll}.12
         \")")
-  endif()
-endif()
+    endif(ZZIPMMAPPED)
+  endif(CMAKE_SHARED_LIBRARY_SONAME_C_FLAG)
+endif(ZZIP_LIBTOOL)
+
+## messages ##############################################
+
+message(STATUS "lib zzipfseeko  to be compiled: ${ZZIPFSEEKO}")
+message(STATUS "lib zzipmmapped to be compiled: ${ZZIPFSEEKO}")
+message(STATUS "lib zzip symlinks as by libtool: ${ZZIP_LIBTOOL}")
+message(STATUS "installing zzip compat headers: ${ZZIP_COMPAT}")
+message(STATUS "installing zzip pkgconfig files: ${ZZIP_PKGCONFIG}")

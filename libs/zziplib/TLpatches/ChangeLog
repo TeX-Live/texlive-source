@@ -1,7 +1,11 @@
+2022-09-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import zziplib-0.13.72.
+
 2020-04-23 Luigi Scarso <luigi.scarso@gmail.com>
 
-	* Import zziplib-0.13.71. 
-	  Patches nad TL-Changes unchanged.
+	* Import zziplib-0.13.71.
+	  Patches and TL-Changes unchanged.
 
 2018-03-18  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 

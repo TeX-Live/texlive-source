@@ -34,7 +34,7 @@ static void unzzip_cat_file(ZZIP_DIR* disk, char* name, FILE* out)
     if (file) 
     {
 	char buffer[1024]; int len;
-	while ((len = zzip_file_read (file, buffer, 1024))) 
+	while (0 < (len = zzip_file_read (file, buffer, 1024))) 
 	{
 	    fwrite (buffer, 1, len, out);
 	}

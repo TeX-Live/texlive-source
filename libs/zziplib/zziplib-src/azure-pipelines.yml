@@ -28,7 +28,7 @@ steps:
     mkdir build
   displayName: 'build dir'
 - script: |
-    cd build && cmake -DTESTFLAGS=--xmlresults=TEST-zziplibs.xml ..
+    cd build && cmake -DTESTFLAGS=--xmlresults=TEST-zziplibs.xml -DZZIP_TESTCVE=OFF ..
   displayName: 'configure'
 - script: |
     cd build && make all VERBOSE=1

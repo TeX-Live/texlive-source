@@ -1,6 +1,6 @@
-diff -ur lib.h.orig lib.h 
---- lib.h.orig	2018-06-26 21:16:01.758253475 +0200
-+++ lib.h	2018-06-26 21:16:15.786252900 +0200
+diff -ur zziplib-0.13.72.orig/zzip/lib.h zziplib-0.13.72/zzip/lib.h
+--- zziplib-0.13.72.orig/zzip/lib.h	2021-01-05 08:05:08.000000000 +0900
++++ zziplib-0.13.72/zzip/lib.h	2022-09-10 21:41:22.000000000 +0900
 @@ -16,6 +16,7 @@
  #include <zzip/zzip.h>
  #include <zzip/plugin.h>

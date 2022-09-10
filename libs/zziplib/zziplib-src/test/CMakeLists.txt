@@ -1,5 +1,5 @@
 cmake_minimum_required (VERSION 3.1)
-project(zziptest VERSION "0.13.71" LANGUAGES C)
+project(zziptest VERSION "0.13.72" LANGUAGES C)
 
 if(NOT CMAKE_BUILD_TYPE) 
     set(CMAKE_BUILD_TYPE Release)
@@ -13,6 +13,7 @@ option(BUILD_SHARED_LIBS "Build a shared library" ON)
 option(BUILD_STATIC_LIBS "Build the static library" OFF)
 option(BUILD_TESTS "Build test programs" OFF)
 option(MSVC_STATIC_RUNTIME "Build with static runtime libs (/MT)" ON)
+option(ZZIP_TESTCVE "Run old CVE in zziptests.py testsuite" ON)
 
 # Zlib library needed
 find_package ( ZLIB REQUIRED )
@@ -20,12 +21,24 @@ find_package ( ZLIB REQUIRED )
 find_package ( PythonInterp 3.5 REQUIRED )
 find_package ( UnixCommands REQUIRED ) # bash cp mv rm gzip tar
 find_program ( MKZIP zip)
+find_program ( UNZIP unzip)
 
 set(EXEEXT ${CMAKE_EXECUTABLE_SUFFIX})
 set(README ${CMAKE_SOURCE_DIR}/README)
 set(PY ${PYTHON_EXECUTABLE})
+set(outdir ${CMAKE_CURRENT_BINARY_DIR})
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR})
 set(topdir ${CMAKE_SOURCE_DIR})
+
+# downloads ########################################################
+if(ZZIP_TESTCVE)
+include(ExternalProject)
+ExternalProject_Add(zziptestdownloads
+   DOWNLOAD_COMMAND ${PY} ${srcdir}/zziptests.py --downloadonly -vv
+   CONFIGURE_COMMAND ""
+   BUILD_COMMAND ${CMAKE_COMMAND} -E create_symlink "${outdir}/zziptestdownloads-prefix/src/tmp.download" "${outdir}/tmp.download"
+   INSTALL_COMMAND "")
+endif(ZZIP_TESTCVE)
 
 # targets ########################################################
 add_executable(zzipself    zzipself.c)
@@ -52,7 +65,7 @@ add_custom_target(sfx ALL DEPENDS zzipshowme${EXEEXT})
 endif()
 
 add_custom_target(tests
-   COMMAND ${PY} ${srcdir}/zziptests.py --exeext=${EXEEXT} --topsrcdir=${topdir} -v ${TESTFLAGS}
+   COMMAND ${PY} ${srcdir}/zziptests.py --exeext=${EXEEXT} --topsrcdir=${topdir} -v ${TESTFLAGS} --downloads=${ZZIP_TESTCVE} -Z ${MKZIP} -U ${UNZIP}
    DEPENDS ../bins/zzcat ../bins/zzdir ../bins/zziptest ../bins/zzxorcat ../bins/zzxorcopy)
 add_custom_command(OUTPUT ../bins/zzcat COMMMAND cd ../bins && $(MAKE) zzcat)
 add_custom_command(OUTPUT ../bins/zzdir COMMMAND cd ../bins && $(MAKE) zzdir)

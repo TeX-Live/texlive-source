@@ -15,20 +15,30 @@ import xml.etree.ElementTree as ET
 
 logg = logging.getLogger("dbk2man")
 
+def decodes(text):
+    if not text: return text
+    try:
+        return text.decode("utf-8")
+    except:
+        try:
+            return text.decode("latin-1")
+        except:
+            return str(text)
+
 def esc(text):
-    text = str(text)
+    text = decodes(text)
     text = text.replace(".", "\\&.")
     text = text.replace("-", "\\-")
     return text
 def unescape(text):
-    text = str(text)
+    text = decodes(text)
     text = text.replace('&lt;', '<')
     text = text.replace('&gt;', '>')
     text = text.replace('&quot;', '"')
     text = text.replace('&amp;', '&')
     return text
 def htm(text):
-    text = str(text)
+    text = decodes(text)
     text = text.replace('&', '&amp;')
     text = text.replace('<', '&lt;')
     text = text.replace('>', '&gt;')
@@ -177,7 +187,7 @@ def refsynopsisdiv2man(refsynopsisdiv, title = ""):
         funcs = 0
         for funcprototype in funcsynopsis.findall("funcprototype"):
             item = ET.tostring(funcprototype)
-            item = str(item)
+            item = decodes(item)
             item = item.replace("<funcprototype>","")
             item = item.replace("</funcprototype>","")
             if False:
@@ -221,7 +231,7 @@ def refsynopsisdiv2htm(refsynopsisdiv, title = ""):
         funcs = 0
         for funcprototype in funcsynopsis.findall("funcprototype"):
             item = ET.tostring(funcprototype)
-            item = str(item)
+            item = decodes(item)
             item = item.replace("<funcprototype>","")
             item = item.replace("</funcprototype>","")
             item = item.replace("<funcdef>","")
@@ -294,7 +304,7 @@ def refsect2htm(refsect, title = ""):
 
 def para2man(para):
    item = unescape(ET.tostring(para))
-   item = str(item)
+   item = decodes(item)
    item = item.replace("\n", " ")
    item = item.replace("  ", " ")
    item = item.replace("  ", " ")
@@ -312,7 +322,7 @@ def para2man(para):
 
 def para2htm(para):
    item = unescape(ET.tostring(para))
-   item = str(item)
+   item = decodes(item)
    item = item.replace("\n", " ")
    item = item.replace("  ", " ")
    item = item.replace("  ", " ")
@@ -387,7 +397,7 @@ def refentry2(man, refentry, subdirectory = ".", title = ""):
                 refentrytitle = manpage
             filename = "%s/man%s/%s.%s" % (subdirectory, manvolnum, manpage, manvolnum)
             if manpage != refentrytitle:
-                manpagetext = ".so %s.%s\n" % (refentrytitle, manvolnum)
+                manpagetext = ".so man%s/%s.%s\n" % (manvolnum, refentrytitle, manvolnum)
                 writefile(filename, manpagetext)
             else:
                 manpagetext = text

@@ -2,37 +2,50 @@
 
 # the 'all' target is included from the 'configure'd Makefile
 
-default:
-	@ test -f Makefile || test -d build || (set -x ; mkdir build ; cd build && sh ../configure --prefix=$$HOME)
-	@ test -f Makefile || test ! -f build/Makefile || (set -x ; cd build && $(MAKE) all)
-	@ test -f Makefile || test ! -f build/Makefile || echo 'DONE (cd build && make all) - please run (cd build && make check) now'
-	@ test ! -f Makefile || test -f build/Makefile || $(MAKE) all
-	@ test ! -f Makefile || test -f build/Makefile || echo 'DONE make all - please run make check (before make install)'
+BUILDSOURCES=..
+BUILD=build
+CMAKE=cmake
+NINJA=ninja
+PREFIX=$$HOME/local
 
-cm cmake: ; rm -rf build; mkdir build; cd build && cmake .. -DCMAKE_INSTALL_PREFIX:PATH=$$HOME/local
-am autom: ; rm -rf build2; mkdir build2; cd build2 && sh ../configure --prefix=$$HOME/local --enable-sdl
-2: ; cd build2 && $(MAKE) all
+.PHONY: build docs bins test tests testbuilds
 
-new: ; rm -rf build; $(MAKE) default
+default: build
+build:
+	@ test -f Makefile || test -d $(BUILD) || (set -x ; mkdir $(BUILD) ; cd $(BUILD) && $(CMAKE) $(BUILDSOURCES) -DCMAKE_INSTALL_PREFIX:PATH=$(PREFIX) $(OPTIONS))
+	@ test -f Makefile || test ! -d $(BUILD) || test ! -f $(BUILD)/Makefile || (set -x ; cd $(BUILD) && $(MAKE) all)
+	@ test -f Makefile || test ! -d $(BUILD) || test ! -f $(BUILD)/rules.ninja || (set -x ; cd $(BUILD) && $(NINJA) all)
+	@ test -f Makefile || test ! -d $(BUILD) || test ! -f $(BUILD)/Makefile || echo 'DONE (cd $(BUILD) && $(MAKE) all) - please run (cd $(BUILD) && $(MAKE) check VERBOSE=1) now'
+	@ test -f Makefile || test ! -d $(BUILD) || test ! -f $(BUILD)/rules.ninja || echo 'DONE (cd $(BUILD) && $(NINJA) all) - please run (cd $(BUILD) && $(NINJA) check) now'
 
-auto:
-	aclocal -I m4 && autoconf -I m4 && autoheader && automake
+new: ; rm -rf $(BUILD); $(MAKE) build
 
-boottrap:
-	rm -rf .deps .libs
-	rm -f config.guess config.sub stamp-h.in
-	rm -f install-sh ltconfig ltmain.sh depcomp mkinstalldirs
-	rm -f config.h config.h.in config.log config.cache configure
-	rm -f aclocal.m4 Makefile Makefile.in
-	aclocal 
-	autoconf 
-	autoheader 
-	automake -a -c 
+ninja: ; rm -rf $(BUILD) && $(MAKE) build OPTIONS=-GNinja
+nmake: ; rm -rf $(BUILD) && $(MAKE) build OPTIONS=-GNmake
+cmake: ; rm -rf $(BUILD) && $(MAKE) build "OPTIONS=-DZZIP_MANPAGES=OFF -DZZIP_INSTALL_BINS=OFF -DZZIP_TESTCVE=OFF"
 
--include Makefile
+check checks:
+	@ test ! -f $(BUILD)/Makefile    || (set -x; cd $(BUILD) && $(MAKE) $@ VERBOSE=1)
+	@ test ! -f $(BUILD)/rules.ninja || (set -x; cd $(BUILD) && $(NINJA) $@)
+install docs:
+	@ test ! -f $(BUILD)/Make        || (set -x; cd $(BUILD) && $(MAKE) $@)
+	@ test ! -f $(BUILD)/rules.ninja || (set -x; cd $(BUILD) && $(NINJA) $@)
 
-test_%: ; python3 testbuilds.py $@ -vv
+un uninstalls:
+	@ case "$(PREFIX)" in */local) echo rm -rf "'$(PREFIX)'" ; rm -rf "$(PREFIX)" ;; *) echo skipped rm -rf "'$(PREFIX)'" ;; esac
+
+rms: ; docker images --format '{{.Repository}} {{.ID}}' | grep localhost:5000/systemctl/ | cut -d ' ' -f 2 | xargs --no-run-if-empty docker rmi -f
+rmi: ; docker images --format '{{.Repository}} {{.ID}}' | grep localhost:5000/zziplib/ | cut -d ' ' -f 2 | xargs --no-run-if-empty docker rmi -f
+rmf: ; docker ps -a --format '{{.Image}} {{.ID}}' | grep localhost:5000/zziplib/ | cut -d ' ' -f 2 | xargs --no-run-if-empty docker rm -f
+
+st_%: ; python3 testbuilds.py te$@ -vv --no-cache
 tests:  ; python3 testbuilds.py -vv
+testbuilds: ; python3 testbuilds.py -vv --no-cache
+test_%: ; cd build/test && python3 ../../test/zziptests.py $@ -vv
+
+downloads:
+	- rm -rf test/tmp.download build/test/tmp.download
+	cd build/test && python3 ../../test/zziptests.py --downloadonly -vv
 
 version:
 	oldv=`sed -e '/zziplib.VERSION/!d' -e 's:.*zziplib.VERSION."::' -e 's:".*::' CMakeLists.txt` \
@@ -43,3 +56,6 @@ version:
 	; sed -i -e "s:$$oldv:$$newv:" */CMakeLists.txt \
 	; sed -i -e "s:$$oldv:$$newv:" CMakeLists.txt \
 	; git diff -U0
+
+-include GNUmakefile.win10
+-include docker_mirror.mk

@@ -1,6 +1,6 @@
-diff -ur zziplib-0.13.69/zzip/plugin.c zziplib-src/zzip/plugin.c
---- zziplib-0.13.69/zzip/plugin.c	Sat Mar 17 21:46:45 2018
-+++ zziplib-src/zzip/plugin.c	Sun Mar 18 08:04:42 2018
+diff -ur zziplib-0.13.72.orig/zzip/plugin.c zziplib-0.13.72/zzip/plugin.c
+--- zziplib-0.13.72.orig/zzip/plugin.c	2021-01-05 08:05:08.000000000 +0900
++++ zziplib-0.13.72/zzip/plugin.c	2022-09-10 21:43:00.000000000 +0900
 @@ -41,7 +41,7 @@
      return st.st_size;
  }

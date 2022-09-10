@@ -2,6 +2,16 @@
 def _src_to_xml(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt")
 
+def decodes(text):
+    if not text: return text
+    try:
+        return text.decode("utf-8")
+    except:
+        try:
+            return text.decode("latin-1")
+        except:
+            return str(text)
+
 class TextFile:
     def __init__(self, filename = None):
         self.filename = filename
@@ -13,8 +23,8 @@ class TextFile:
         if self.filename is None:
             return False
         try:
-            fd = open(self.filename, "r")
-            self.src_text = fd.read()
+            fd = open(self.filename, "rb")
+            self.src_text = decodes(fd.read())
             fd.close()
             return True
         except IOError as e:

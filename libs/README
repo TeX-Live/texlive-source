@@ -68,5 +68,5 @@ xpdf 4.04 - checked 24apr22
 zlib 1.2.12 - checked 05apr22
   http://www.zlib.net/ - used by many
 
-zziplib 0.13.71 - checked 23apr20
+zziplib 0.13.72 - checked 10sep22
   https://github.com/gdraheim/zziplib/releases

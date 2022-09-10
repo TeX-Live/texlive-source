@@ -57,7 +57,7 @@ int rezzip_make (int argc, char ** argv)
 		continue;
 	    }
 
-	    while ((n = read (input, buf, 16)))
+	    while (0 < (n = read (input, buf, 16)))
 	    {
 		zzip_write (output, buf, n);
 	    }
