@@ -16,7 +16,7 @@ static int range_check(struct index ind, int count, char *lbuff, FILE *fp);
 static void linecheck(char *lbuff, char *tmpbuff, FILE *fp, int force);
 static void crcheck(char *lbuff, FILE *fp);
 static void index_normalize(UChar *istr, UChar *ini, int *chset);
-static int initial_cmp_char(UChar *ini, UChar ch);
+static int initial_cmp_char(UChar *ini, UChar *ch);
 static int init_hanzi_header(void);
 static const UNormalizer2 *unormalizer_NFD, *unormalizer_NFKD;
 static int turkish_i;
@@ -166,9 +166,9 @@ static int pnumconv2(struct page *p)
 /*   write ind file   */
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
-	int i,j,hpoint=0,tpoint=0,ipoint=0,jpoint=0,block_open=0;
+	int i,j,k,hpoint=0,tpoint=0,ipoint=0,jpoint=0,block_open=0;
 	char lbuff[BUFFERLEN],obuff[BUFFERLEN];
-	UChar datama[256],initial[INITIALLENGTH],initial_prev[INITIALLENGTH];
+	UChar initial[INITIALLENGTH],initial_prev[INITIALLENGTH];
 	int chset,chset_prev;
 	FILE *fp=NULL;
 	UErrorCode perr;
@@ -182,7 +182,6 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 #endif
 	}
 
-	convert(atama,datama);
 	fputs(preamble,fp);
 
 	if (fpage>0) {
@@ -228,31 +227,35 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			else if (chset==CH_KANA) {
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
-					for (j=hpoint;j<(u_strlen(datama));j++) {
-						if (initial_cmp_char(initial,datama[j])) {
-							fprint_uchar(fp,&atama[j-1],M_NONE,1);
+					for (j=hpoint;j<(u_strlen(kana_head));) {
+						if (initial_cmp_char(initial,&kana_head[j])) {
+							k=j;  U16_BACK_1(kana_head, 0, k);
+							fprint_uchar(fp,&kana_head[k],M_NONE,1);
 							hpoint=j;
 							break;
 						}
+						U16_FWD_1(kana_head, j, -1);
 					}
-					if (j==(u_strlen(datama))) {
-						fprint_uchar(fp,&atama[j-1],M_NONE,1);
+					if (j==(u_strlen(kana_head))) {
+						k=j;  U16_BACK_1(kana_head, 0, k);
+						fprint_uchar(fp,&kana_head[k],M_NONE,1);
 					}
 					fputs(lethead_suffix,fp);
 				}
 				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
 				SPRINTF(lbuff,"%s%s",item_0,obuff);
-				for (hpoint=0;hpoint<(u_strlen(datama));hpoint++) {
-					if (initial_cmp_char(initial,datama[hpoint])) {
+				for (hpoint=0;hpoint<(u_strlen(kana_head));) {
+					if (initial_cmp_char(initial,&kana_head[hpoint])) {
 						break;
 					}
+					U16_FWD_1(kana_head, hpoint, -1);
 				}
 			}
 			else if (chset==CH_HANGUL) {
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
 					for (j=tpoint;j<(u_strlen(hangul_head));j++) {
-						if (initial_cmp_char(initial,hangul_head[j])) {
+						if (initial_cmp_char(initial,&hangul_head[j])) {
 							fprint_uchar(fp,&hangul_head[j-1],M_NONE,1);
 							tpoint=j;
 							break;
@@ -266,7 +269,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
 				SPRINTF(lbuff,"%s%s",item_0,obuff);
 				for (tpoint=0;tpoint<(u_strlen(hangul_head));tpoint++) {
-					if (initial_cmp_char(initial,hangul_head[tpoint])) {
+					if (initial_cmp_char(initial,&hangul_head[tpoint])) {
 						break;
 					}
 				}
@@ -274,31 +277,35 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 			else if (chset==CH_DEVANAGARI) {
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
-					for (j=jpoint;j<(u_strlen(devanagari_head));j++) {
-						if (initial_cmp_char(initial,devanagari_head[j])) {
-							fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+					for (j=jpoint;j<(u_strlen(devanagari_head));) {
+						if (initial_cmp_char(initial,&devanagari_head[j])) {
+							k=j;  U16_BACK_1(devanagari_head, 0, k);
+							fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
 							jpoint=j;
 							break;
 						}
+						U16_FWD_1(devanagari_head, j, -1);
 					}
 					if (j==(u_strlen(devanagari_head))) {
-						fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+						k=j;  U16_BACK_1(devanagari_head, 0, k);
+						fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
 					}
 					fputs(lethead_suffix,fp);
 				}
 				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
 				SPRINTF(lbuff,"%s%s",item_0,obuff);
-				for (jpoint=0;jpoint<(u_strlen(devanagari_head));jpoint++) {
-					if (initial_cmp_char(initial,devanagari_head[jpoint])) {
+				for (jpoint=0;jpoint<(u_strlen(devanagari_head));) {
+					if (initial_cmp_char(initial,&devanagari_head[jpoint])) {
 						break;
 					}
+					U16_FWD_1(devanagari_head, jpoint, -1);
 				}
 			}
 			else if (chset==CH_THAI) {
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
 					for (j=ipoint;j<(u_strlen(thai_head));j++) {
-						if (initial_cmp_char(initial,thai_head[j])) {
+						if (initial_cmp_char(initial,&thai_head[j])) {
 							fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
 							ipoint=j;
 							break;
@@ -312,7 +319,7 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				widechar_to_multibyte(obuff,BUFFERLEN,ind[i].idx[0]);
 				SPRINTF(lbuff,"%s%s",item_0,obuff);
 				for (ipoint=0;ipoint<(u_strlen(thai_head));ipoint++) {
-					if (initial_cmp_char(initial,thai_head[ipoint])) {
+					if (initial_cmp_char(initial,&thai_head[ipoint])) {
 						break;
 					}
 				}
@@ -379,24 +386,26 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 			}
 			else if (chset==CH_KANA) {
-				for (j=hpoint;j<(u_strlen(datama));j++) {
-					if (initial_cmp_char(initial,datama[j])) {
+				for (j=hpoint;j<(u_strlen(kana_head));) {
+					if (initial_cmp_char(initial,&kana_head[j])) {
 						break;
 					}
+					U16_FWD_1(kana_head, j, -1);
 				}
 				if ((j!=hpoint)||(j==0)) {
 					hpoint=j;
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
+						k=j;  U16_BACK_1(kana_head, 0, k);
 						fputs(lethead_prefix,fp);
-						fprint_uchar(fp,&atama[j-1],M_NONE,1);
+						fprint_uchar(fp,&kana_head[k],M_NONE,1);
 						fputs(lethead_suffix,fp);
 					}
 				}
 			}
 			else if (chset==CH_HANGUL) {
 				for (j=tpoint;j<(u_strlen(hangul_head));j++) {
-					if (initial_cmp_char(initial,hangul_head[j])) {
+					if (initial_cmp_char(initial,&hangul_head[j])) {
 						break;
 					}
 				}
@@ -411,24 +420,26 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 				}
 			}
 			else if (chset==CH_DEVANAGARI) {
-				for (j=jpoint;j<(u_strlen(devanagari_head));j++) {
-					if (initial_cmp_char(initial,devanagari_head[j])) {
+				for (j=jpoint;j<(u_strlen(devanagari_head));) {
+					if (initial_cmp_char(initial,&devanagari_head[j])) {
 						break;
 					}
+					U16_FWD_1(devanagari_head, j, -1);
 				}
 				if ((j!=jpoint)||(j==0)) {
 					jpoint=j;
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
+						k=j;  U16_BACK_1(devanagari_head, 0, k);
 						fputs(lethead_prefix,fp);
-						fprint_uchar(fp,&devanagari_head[j-1],M_NONE,1);
+						fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
 						fputs(lethead_suffix,fp);
 					}
 				}
 			}
 			else if (chset==CH_THAI) {
 				for (j=ipoint;j<(u_strlen(thai_head));j++) {
-					if (initial_cmp_char(initial,thai_head[j])) {
+					if (initial_cmp_char(initial,&thai_head[j])) {
 						break;
 					}
 				}
@@ -812,6 +823,13 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				ini[0]=0x307B; break;  /* ほ */
 			case 0x1B000:                  /* 𛀀 */
 				ini[0]=0x3048; break;  /* え */
+			case 0x1B11F: case 0x1B122:    /* Archaic WU 𛄟 𛄢 */
+				ini[0]=0xD82C; ini[1]=0xDD1F; ini[2]=L'\0';
+				break;
+			case 0x1B120:                  /* Archaic YI 𛄠 */
+				ini[0]=0xD82C; ini[1]=0xDD20; ini[2]=L'\0'; break;
+			case 0x1B121:                  /* Archaic YE 𛄡 */
+				ini[0]=0xD82C; ini[1]=0xDD21; ini[2]=L'\0'; break;
 			case 0x1B132: case 0x1B155:
 				ini[0]=0x3053; break;  /* こ */
 			case 0x1B150: case 0x1B164:
@@ -907,6 +925,10 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			else hi=mi;
 		}
 		u_strcpy(ini,hz_index[lo-1].idx);
+		return;
+	}
+	else if (is_devanagari(istr)==2) {
+		ini[0]=istr[0]; ini[1]=istr[1]; ini[2]=L'\0';
 		return;
 	}
 	else if (is_devanagari(&ch)||is_thai(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
@@ -1091,12 +1113,14 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	return;
 }
 
-static int initial_cmp_char(UChar *ini, UChar ch)
+static int initial_cmp_char(UChar *ini, UChar *ch)
 {
-	UChar initial_tmp[INITIALLENGTH],istr[2];
-	int chset;
-	istr[0]=ch;
-	istr[1]=L'\0';
+	UChar initial_tmp[INITIALLENGTH],istr[3];
+	int chset, l;
+	l = is_surrogate_pair(ch) ? 2 : 1;
+	          istr[0]=ch[0];
+	if (l==2) istr[1]=ch[1];
+	          istr[l]=L'\0';
 
 	index_normalize(istr, initial_tmp, &chset);
 	return (ss_comp(ini, initial_tmp)<0);

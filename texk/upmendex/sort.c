@@ -483,11 +483,13 @@ int is_jpn_kana(UChar *c)
 		c32=U16_GET_SUPPLEMENTARY(*c,*(c+1));
 		if ((c32>=0x1B130) && (c32<=0x1B16F)) return 2; /* Small Kana Extensions */
 		else if ((c32==0x1B000))              return 2; /* KATAKANA LETTER ARCHAIC E */
+		else if ((c32>=0x1B11F)                         /* HIRAGANA LETTER ARCHAIC WU */
+		                   && (c32<=0x1B122)) return 2; /* KATAKANA LETTER ARCHAIC WU */
 		else if ((c32==0x1F200))              return 2; /* SQUARE HIRAGANA HOKA */
 	}
 	return 0;
-		/* ICU 65 does not seem to support
-		   "Kana Supplement" and "Kana Extended-A" yet. (2020/02/16) */
+		/* ICU 71.1 does not seem to support
+		   most of "Kana Supplement" and "Kana Extended-A" yet. (2022/09/11) */
 }
 
 int is_kor_hngl(UChar *c)

@@ -1,3 +1,10 @@
+2022-09-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.03  Stable version.
+	* configure.ac: Bump version.
+	* main.c, sort.c, convert.c, fwrite.c, kana.h:
+	Support U+1B11F..1B122 Hiragana/Katakana Letter Archaic Wu, Yi, Ye.
+
 2022-09-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 1.02  Stable version.
