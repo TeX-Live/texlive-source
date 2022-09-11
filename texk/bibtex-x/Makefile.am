@@ -70,8 +70,8 @@ btdocdir = $(datarootdir)/texmf-dist/doc/bibtex8
 dist_btdoc_DATA = \
 	00readme.txt \
 	HISTORY \
-	csfile.txt \
-	file_id.diz
+	file_id.diz \
+	csf/csfile.txt
 
 ## Tests.
 ##
@@ -164,12 +164,7 @@ DISTCLEANFILES += tests/xperiodu.aux tests/xperiodu.bbl tests/xperiodu.blg \
 ## Not used
 ##
 EXTRA_DIST += \
-	bt371csf.zip \
 	dos-dj.mak \
 	dos-emx.mak \
 	os2.mak \
-	unix.mak \
-	csf/00readme.txt \
-	csf/COPYING \
-	csf/HISTORY \
-	csf/file_id.diz
+	unix.mak

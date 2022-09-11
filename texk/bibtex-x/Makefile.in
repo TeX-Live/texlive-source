@@ -649,8 +649,8 @@ btdocdir = $(datarootdir)/texmf-dist/doc/bibtex8
 dist_btdoc_DATA = \
 	00readme.txt \
 	HISTORY \
-	csfile.txt \
-	file_id.diz
+	file_id.diz \
+	csf/csfile.txt
 
 bibtex8_tests = tests/bibtex8.test tests/bibtex8u-mem.test \
                 tests/bibtex8-sort.test tests/bibtex8-char.test
@@ -687,8 +687,7 @@ EXTRA_DIST = $(bibtex8_tests) $(bibtexu_tests) tests/exampl.bbl \
 	tests/charu.bbl tests/testcharu.bib tests/nameu.aux \
 	tests/nameu.bbl tests/mlgbib.bib tests/iscjku.aux \
 	tests/iscjku.bbl tests/testiscjku.bib tests/testiscjk.bst \
-	bt371csf.zip dos-dj.mak dos-emx.mak os2.mak unix.mak \
-	csf/00readme.txt csf/COPYING csf/HISTORY csf/file_id.diz
+	dos-dj.mak dos-emx.mak os2.mak unix.mak
 DISTCLEANFILES = tests/xexampl.aux tests/xexampl.bbl tests/xexampl.blg \
 	tests/memtest.bib tests/memtest?.* tests/memtestu?.* \
 	tests/xsort[123].aux tests/xsort[123].bbl tests/xsort[123].blg \

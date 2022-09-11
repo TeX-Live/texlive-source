@@ -1,7 +1,5 @@
 ******************************************************************************
-FILE: $RCSfile: 00readme.txt,v $
-      $Revision: 3.71 $
-      $Date: 1996/08/18 20:38:55 $
+FILE: 00readme.txt
 ******************************************************************************
 
 
@@ -60,7 +58,7 @@ Contents
 This abstract is in a format suitable for inclusion in BBS description files
 (file_id.diz):
 
-    (v3.71) "big" BibTeX with full 8-bit support
+    (BibTeX8) "big" BibTeX with full 8-bit support
 
     An enhanced, portable C version of BibTeX.  
     Enhanced by conversion to "big" (32-bit) 
@@ -152,6 +150,9 @@ uncertain at the moment.
 
 2.  Distribution Kits and Where to Find Them
 --------------------------------------------
+
+Note by TeX Live team - This section is an old description by the original
+author Niel Kempson. Currently (2022) BibTeX8 is shipped with TL.
 
 8-bit BibTeX is distributed as a set of ZIP files created by the freely
 available implementation of ZIP by the Info-ZIP project.  The files have all
@@ -882,7 +883,8 @@ Licences that accompany them.
 10.  Change Log
 ---------------
 
-$Log: 00readme.txt,v $
+For later changes by TeX Live, please refer to HISTORY.
+
 Revision 3.71  1996/08/18  20:38:55  kempson
 Official release 3.71 (see HISTORY for details).
 
