@@ -442,7 +442,7 @@ texmf_other_scripts = \
 	texlive/mktexmf \
 	texlive/mktexpk \
 	texlive/mktextfm \
-	texlive/rungs.tlu \
+	texlive/rungs.lua \
 	texlive/tlmgr.pl \
 	texlive/updmap-sys.sh \
 	texlive/updmap-user.sh \
