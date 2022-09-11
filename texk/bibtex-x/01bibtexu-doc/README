@@ -22,21 +22,23 @@ on 2009-11-21 [2, 3].
 
 References:
   [1] http://omega2.enstb.org/yannis/ (dead link)
-  [2] https://www.gutenberg.eu.org/Journee-GUTenberg-2009
-  [3] Lettre GUTenberg 36 published in 2010
-
+  [2] https://www.gutenberg-asso.fr/Journee-GUTenberg-2009
+  [3] https://www.gutenberg-asso.fr/Lettre-GUTenberg-36 (abstract of talk)
 
 Status of BibTeXu in TeX Live
 =============================
 
-BibTeXu has been integrated into TeX Live 2010.
-The one shipped with TL is updated so that BibTeX, BibTeX8 and BibTeXu
+BibTeXu was originally integrated into TeX Live 2010.
+A (minimal) man page for it is included. Besides this README, we are not
+aware of any other documentation for it.
+
+The version shipped with TL is updated so that BibTeX, BibTeX8 and BibTeXu
 share more or less the same behavior wrt memory allocation, etc.
 Peter Breitenlohner put in the massive efforts needed to make this
 work in the TL build system and use the same ICU library as XeTeX.
 
 The BibTeXu that shipped with TL did not work as expected before 2018,
-but in 2019 a rework started and it works perfectly again since 2022.
+but in 2019 a rework started and it works reasonably well since 2022.
 
 The files in examples/ show the expected behavior:
   * test.tex: the input XeLaTeX source, which uses a Unicode font
@@ -52,6 +54,5 @@ by executing the following lines:
     $ bibtexu -l fr -o fr test
     $ xelatex test
 
-
-This README file was written by TeX Live team, on 2022-09-10.
-Public domain.
+This README file was written by the TeX Live team. Public domain.
+$Id$

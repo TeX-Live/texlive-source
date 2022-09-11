@@ -6,6 +6,8 @@ FILE: HISTORY
 8-Bit BibTeX CHANGE HISTORY
 ---------------------------
 
+(For later changes, see the ./ChangeLog file.)
+
 v4.00   29-April-2022      TANAKA Takuji
   - Added operators bitwise AND "&" and bitwise OR "|" to built-in
     functions in style files.

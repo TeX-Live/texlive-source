@@ -69,8 +69,8 @@ dist_csf_DATA = \
 btdocdir = $(datarootdir)/texmf-dist/doc/bibtex8
 
 dist_btdoc_DATA = \
-	00readme.txt \
-	HISTORY \
+	00bibtex8-readme.txt \
+	00bibtex8-history.txt \
 	file_id.diz \
 	csf/csfile.txt
 
