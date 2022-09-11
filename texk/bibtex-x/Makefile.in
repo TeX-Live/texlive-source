@@ -113,8 +113,8 @@ am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(dist_btdoc_DATA) $(dist_csf_DATA) \
-	$(am__DIST_COMMON)
+	$(am__configure_deps) $(dist_btdoc_DATA) $(dist_btudoc_DATA) \
+	$(dist_btuex_DATA) $(dist_csf_DATA) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
@@ -124,7 +124,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @BIBTEX8_TRUE@am__EXEEXT_1 = bibtex8$(EXEEXT)
 @BIBTEXU_TRUE@am__EXEEXT_2 = bibtexu$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" \
-	"$(DESTDIR)$(btdocdir)" "$(DESTDIR)$(csfdir)"
+	"$(DESTDIR)$(btdocdir)" "$(DESTDIR)$(btudocdir)" \
+	"$(DESTDIR)$(btuexdir)" "$(DESTDIR)$(csfdir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__objects_1 = bibtex8-bibtex-1.$(OBJEXT) bibtex8-bibtex-2.$(OBJEXT) \
 	bibtex8-bibtex-3.$(OBJEXT) bibtex8-bibtex-4.$(OBJEXT) \
@@ -242,7 +243,8 @@ am__uninstall_files_from_dir = { \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(dist_man1_MANS)
-DATA = $(dist_btdoc_DATA) $(dist_csf_DATA)
+DATA = $(dist_btdoc_DATA) $(dist_btudoc_DATA) $(dist_btuex_DATA) \
+	$(dist_csf_DATA)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP) \
 	config.h.in
 # Read a list of newline-separated strings from the standard input,
@@ -634,6 +636,8 @@ nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
 bibtexu_CPPFLAGS = $(AM_CPPFLAGS) $(ICU_INCLUDES) -DUTF_8
 bibtexu_LDADD = $(KPATHSEA_LIBS) $(ICU_LIBS) $(PTHREAD_LIB) $(ICU_LIBS_EXTRA)
 dist_man1_MANS = bibtex8.1 bibtexu.1
+
+### BibTeX8 distribution
 csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 dist_csf_DATA = \
 	csf/88591lat.csf \
@@ -651,6 +655,19 @@ dist_btdoc_DATA = \
 	HISTORY \
 	file_id.diz \
 	csf/csfile.txt
+
+
+### BibTeXu distribution
+btudocdir = $(datarootdir)/texmf-dist/doc/bibtexu
+btuexdir = $(datarootdir)/texmf-dist/doc/bibtexu/examples
+dist_btudoc_DATA = \
+	01bibtexu-doc/README
+
+dist_btuex_DATA = \
+	01bibtexu-doc/examples/test.bbl \
+	01bibtexu-doc/examples/test.bib \
+	01bibtexu-doc/examples/test.pdf \
+	01bibtexu-doc/examples/test.tex
 
 bibtex8_tests = tests/bibtex8.test tests/bibtex8u-mem.test \
                 tests/bibtex8-sort.test tests/bibtex8-char.test
@@ -1146,6 +1163,48 @@ uninstall-dist_btdocDATA:
 	@list='$(dist_btdoc_DATA)'; test -n "$(btdocdir)" || list=; \
 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
 	dir='$(DESTDIR)$(btdocdir)'; $(am__uninstall_files_from_dir)
+install-dist_btudocDATA: $(dist_btudoc_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_btudoc_DATA)'; test -n "$(btudocdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(btudocdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(btudocdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(btudocdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(btudocdir)" || exit $$?; \
+	done
+
+uninstall-dist_btudocDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_btudoc_DATA)'; test -n "$(btudocdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(btudocdir)'; $(am__uninstall_files_from_dir)
+install-dist_btuexDATA: $(dist_btuex_DATA)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_btuex_DATA)'; test -n "$(btuexdir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(btuexdir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(btuexdir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_DATA) $$files '$(DESTDIR)$(btuexdir)'"; \
+	  $(INSTALL_DATA) $$files "$(DESTDIR)$(btuexdir)" || exit $$?; \
+	done
+
+uninstall-dist_btuexDATA:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_btuex_DATA)'; test -n "$(btuexdir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(btuexdir)'; $(am__uninstall_files_from_dir)
 install-dist_csfDATA: $(dist_csf_DATA)
 	@$(NORMAL_INSTALL)
 	@list='$(dist_csf_DATA)'; test -n "$(csfdir)" || list=; \
@@ -1559,7 +1618,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS) $(DATA) config.h
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(btdocdir)" "$(DESTDIR)$(csfdir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(btdocdir)" "$(DESTDIR)$(btudocdir)" "$(DESTDIR)$(btuexdir)" "$(DESTDIR)$(csfdir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -1631,8 +1690,8 @@ info: info-am
 
 info-am:
 
-install-data-am: install-dist_btdocDATA install-dist_csfDATA \
-	install-man
+install-data-am: install-dist_btdocDATA install-dist_btudocDATA \
+	install-dist_btuexDATA install-dist_csfDATA install-man
 
 install-dvi: install-dvi-am
 
@@ -1693,6 +1752,7 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_btdocDATA \
+	uninstall-dist_btudocDATA uninstall-dist_btuexDATA \
 	uninstall-dist_csfDATA uninstall-man
 
 uninstall-man: uninstall-man1
@@ -1708,16 +1768,18 @@ uninstall-man: uninstall-man1
 	distclean-libtool distclean-tags distcleancheck distdir \
 	distuninstallcheck dvi dvi-am html html-am info info-am \
 	install install-am install-binPROGRAMS install-data \
-	install-data-am install-dist_btdocDATA install-dist_csfDATA \
-	install-dvi install-dvi-am install-exec install-exec-am \
-	install-html install-html-am install-info install-info-am \
-	install-man install-man1 install-pdf install-pdf-am install-ps \
+	install-data-am install-dist_btdocDATA install-dist_btudocDATA \
+	install-dist_btuexDATA install-dist_csfDATA install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-man1 install-pdf install-pdf-am install-ps \
 	install-ps-am install-strip installcheck installcheck-am \
 	installdirs maintainer-clean maintainer-clean-generic \
 	mostlyclean mostlyclean-compile mostlyclean-generic \
 	mostlyclean-libtool pdf pdf-am ps ps-am recheck tags tags-am \
 	uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-dist_btdocDATA uninstall-dist_csfDATA uninstall-man \
+	uninstall-dist_btdocDATA uninstall-dist_btudocDATA \
+	uninstall-dist_btuexDATA uninstall-dist_csfDATA uninstall-man \
 	uninstall-man1
 
 .PRECIOUS: Makefile

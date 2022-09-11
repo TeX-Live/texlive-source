@@ -1,0 +1,73 @@
+﻿\documentclass{article}
+\title{Test file for Bib\TeX u}
+\author{Yannis Haralambous}
+\begin{document}
+\maketitle
+\font\x="Arial Unicode MS"
+\let\em\x
+\x
+
+This is a test file for Bib\TeX u. The BIB file is as follows:
+
+\medskip
+
+\noindent@book\{cle1,\\
+	Author = \{Διογένης\},\\
+	Publisher = \{Τὰ σοφὰ βιβλία\},\\
+	Title = \{Μήπως εἴδατε τὸ φανάρι μου;\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle2,\\
+	Author = \{Échelon, Nicolas\},\\
+	Publisher = \{Les Éditions du désastre\},\\
+	Title = \{La vie est un long fleuve tranquille\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle3,\\
+	Author = \{天堂最新的章节表, 格的儿子\},\\
+	Publisher = \{Les Éditions du désastre\},\\
+	Title = \{製版・文書処理システム Ω\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle4,\\
+	Author = \{Tarantin, Nicolas\},\\
+	Publisher = \{Les Éditions du désastre\},\\
+	Title = \{En revenant de Tarascon\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle5,\\
+	Author = \{Ζαχαρόπουλος, Ζαχαρίας\},\\
+	Publisher = \{Ἐκδόσεις τῶν χαμένων ἐλπίδων\},\\
+	Title = \{Μοῦ λένε νὰ μὴν κλαίω, μὰ τί νὰ κάνω, ἀφοῦ σὲ χάνω\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle6,\\
+	Author = \{天王最新章, 节列表\},\\
+	Publisher = \{Les Éditions du désastre\},\\
+	Title = \{製版・文書処理システム Ω\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle7,\\
+	Author = \{Ἕλληνας, Μῆτσος\},\\
+	Publisher = \{Ἐκδοτικὸς οἶκος «Δὲν βαριέσαι»\},\\
+	Title = \{Τὸ καλὸ παράδειγμα\},\\
+	Year = \{2009\}\}\\
+
+\noindent@book\{cle8,\\
+	Author = \{Œtingen, Nicolas\},\\
+	Publisher = \{Les Éditions du désastre\},\\
+	Title = \{Un livre\},\\
+	Year = \{2009\}\}\\
+
+\medskip
+
+As you can see, we have mixed together entries in French, Greek and Chinese. The challenge of the French entries is that Échelon should be sorted as ”echelon” and Œtingen sorted as “oetingen” so that the right order is : Échelon < Œtingen < Tartarin.
+
+Same problem in Greek: Ἕλληνας should be sorted as “ελληνας” and hence should appear between Διογένης and Ζαχαρόπουλος.
+
+Have fun with Bib\TeX u! Once testing and debugging is finished we will write a paper for TUGboat.
+
+\nocite{*}
+\bibliographystyle{plain}
+\bibliography{test}
+\end{document}

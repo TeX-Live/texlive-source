@@ -1,0 +1,57 @@
+BibTeXu: a Unicode compliant version of BibTeX
+======================================================================
+
+BibTeXu is the Unicode-compliant version of BibTeX, that reads (only)
+UTF-8 encoded files.  It was written by Yannis Haralambous and his
+students of Télécom Bretagne.
+
+New features in this tool include:
+  * UTF-8 compatibility of Unicode encoding
+  * integration of sort and case-change routines from the ICU library
+  * dependency on Unix locale (which can also be indicated manually
+    through a command line option)
+
+In less technical terms, BibTeXu allows the processing of
+bibliographic references in all scripts of the world while leaving
+some flexibility in the method of sorting and changing of case.
+
+The first release of BibTeXu (sources + precompiled binaries) was
+dated on 2009-09-23, which appeared on the website by Yannis [1].
+It was later presented at Journée GUTenberg, a conference in France,
+on 2009-11-21 [2, 3].
+
+References:
+  [1] http://omega2.enstb.org/yannis/ (dead link)
+  [2] https://www.gutenberg.eu.org/Journee-GUTenberg-2009
+  [3] Lettre GUTenberg 36 published in 2010
+
+
+Status of BibTeXu in TeX Live
+=============================
+
+BibTeXu has been integrated into TeX Live 2010.
+The one shipped with TL is updated so that BibTeX, BibTeX8 and BibTeXu
+share more or less the same behavior wrt memory allocation, etc.
+Peter Breitenlohner put in the massive efforts needed to make this
+work in the TL build system and use the same ICU library as XeTeX.
+
+The BibTeXu that shipped with TL did not work as expected before 2018,
+but in 2019 a rework started and it works perfectly again since 2022.
+
+The files in examples/ show the expected behavior:
+  * test.tex: the input XeLaTeX source, which uses a Unicode font
+              covering Latin, Greek and Chinese
+  * test.bib: the input BIB file
+  * test.bbl: the output of BibTeXu (with options -l fr -o fr)
+  * test.pdf: final output of XeLaTeX
+
+The above files were prepared by Yannis using BibTeXu 2009-09-23 with
+ICU 4.2.1, and you will get effectively the same result using TL2022
+by executing the following lines:
+    $ xelatex test
+    $ bibtexu -l fr -o fr test
+    $ xelatex test
+
+
+This README file was written by TeX Live team, on 2022-09-10.
+Public domain.

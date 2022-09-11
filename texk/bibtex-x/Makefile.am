@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/bibtex-x/
 ##
-## Copyright 2017-2021 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -38,7 +38,6 @@ bibtex8_CPPFLAGS = $(AM_CPPFLAGS) -DSUPPORT_8BIT
 $(bibtex8_OBJECTS): $(KPATHSEA_DEPEND)
 bibtex8_LDADD = $(KPATHSEA_LIBS)
 
-
 bibtexu_SOURCES = $(common_sources)
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_bibtexu_SOURCES = dummy.cxx
@@ -52,6 +51,8 @@ dist_man1_MANS = bibtex8.1 bibtexu.1
 @KPATHSEA_RULE@
 ## Rebuild libsicuxxx
 @ICU_RULE@
+
+### BibTeX8 distribution
 
 csfdir = $(datarootdir)/texmf-dist/bibtex/csf/base
 
@@ -72,6 +73,20 @@ dist_btdoc_DATA = \
 	HISTORY \
 	file_id.diz \
 	csf/csfile.txt
+
+### BibTeXu distribution
+
+btudocdir = $(datarootdir)/texmf-dist/doc/bibtexu
+btuexdir = $(datarootdir)/texmf-dist/doc/bibtexu/examples
+
+dist_btudoc_DATA = \
+	01bibtexu-doc/README
+
+dist_btuex_DATA = \
+	01bibtexu-doc/examples/test.bbl \
+	01bibtexu-doc/examples/test.bib \
+	01bibtexu-doc/examples/test.pdf \
+	01bibtexu-doc/examples/test.tex
 
 ## Tests.
 ##
