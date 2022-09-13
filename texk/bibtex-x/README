@@ -1,0 +1,20 @@
+$Id$
+Originally written by Karl Berry, 2022. Public domain.
+
+This directory, Build/source/texk/bibtex-x, contains the sources for
+bibtex8 (supporting 8-bit character sets) and bibtexu (supporting
+Unicode).
+
+See the 00* and 01* files, and the man pages, for what documentation
+there is about the programs. (Not much.)
+
+History: bibtex8 was written first, by Niel Kempson and Alejandro
+Aguilar-Sierra, ca.1996. bibtexu was derived from bibtex8 by Yannis
+Haralambous and his students, ca.2009. Peter Breitenlohner integrated
+bibtexu into TeX Live, and the Japanese TeX Development Community
+(notably TANAKA Takuji) has brought it up to date in the years since.
+
+Both are now maintained as part of TeX Live.
+Please report bugs to tex-k@tug.org (https://lists.tug.org/tex-k).
+For general discussion, use biblio@tug.org (https://lists.tug.org/biblio).
+

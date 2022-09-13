@@ -1,3 +1,8 @@
+2022-09-12  Karl Berry  <karl@freefriends.org>
+
+	* README: new file to mention both programs.
+	* bibtex8.1: remove old addresses for Kempson and Aguilar-Sierra.
+
 2022-09-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* bibtex.c:
