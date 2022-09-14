@@ -5,8 +5,8 @@ uses control, strings, globals, preamble, lyrics, mtx, analyze,
 { CMO: addition/change by Christian Mondrup }
 
 {* M-Tx preprocessor to PMX     Dirk Laurie }
-const version = '0.63a';
-      version_date = '<8 April 2018>';
+const version = '0.63b';
+      version_date = '<11 April 2018>';
 
 {* See file "Corrections" for updates }
 

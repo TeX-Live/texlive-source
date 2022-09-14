@@ -28,7 +28,7 @@ AC_PROG_RANLIB
 # Checks for libraries.
 
 # Checks for header files.
-AC_CHECK_HEADERS([memory.h stddef.h stdlib.h string.h strings.h])
+AC_CHECK_HEADERS([memory.h stddef.h stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_SIZE_T

@@ -3,6 +3,11 @@ Corrections and enhancements to M-Tx starting from 0.53
    
 Newest items at top. You might also want to look at file `MAINTENANCE`.
 
+Version 0.63d
+-------------
+
+Uninitialized variable correction in function grep.  RDT 2022-07-27.
+
 Version 0.63
 ------------
 

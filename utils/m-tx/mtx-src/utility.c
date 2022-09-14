@@ -307,6 +307,7 @@ void grep(Char *source_, Char *pattern_, Char *target)
     V.p1[V.i] = 1;
     V.p2[V.i] = 0;
   }
+  V.matching = true;     /*  missing initialization RDT 2022-07-26  */
   while (V.matching && V.p <= strlen(V.pattern) && V.s <= strlen(V.source))
     subgrep(&V);
   *product = '\0';

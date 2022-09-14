@@ -1,11 +1,20 @@
 #! /bin/sh -vx
 
-# Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2021 Bob Tennent <rdt@cs.queensu.ca>
 # You may freely use, modify and/or distribute this file.
 
 rm -f mozart*
+if test -r "$srcdir/tests/mozart.mtx"; then
+  : # standalone mtx
+elif test -r "$srcdir/mtx-src/tests/mozart.mtx"; then
+  srcdir=$srcdir/mtx-src # in TL
+else
+  echo "$0: cannot find tests/mozart.mtx" >&2
+  exit 1
+fi
 
-cp $srcdir/tests/mozart.mtx .
+
+cp "$srcdir/tests/mozart.mtx" . || exit 1
 
 set -x
 

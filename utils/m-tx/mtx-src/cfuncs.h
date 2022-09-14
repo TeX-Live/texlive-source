@@ -3,7 +3,7 @@
 #ifndef CFUNCS_H
 # define CFUNCS_H
 
-#define STRINGS_H
+# define STRINGS_H
 typedef char Char;
 typedef void Void;
 #define Static static
@@ -28,7 +28,7 @@ typedef void Void;
 # define _FNSIZE 120
 #endif
 
-typedef unsigned  boolean;
+typedef unsigned char  boolean;
 #define false 0
 #define true 1
 

@@ -1,5 +1,5 @@
 all: globals.c mtx.c preamble.c lyrics.c analyze.c mtxline.c\
-  status.c uptext.c prepmx.c files.c notes.c multfile.c utility.c control.c strings.c
+  status.c uptext.c prepmx.c files.c notes.c multfile.c utility.c control.c 
 
 %.c: %.pas 
 	p2c -a -LTurbo $*.pas

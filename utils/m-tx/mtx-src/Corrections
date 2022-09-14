@@ -3,10 +3,22 @@ Corrections and enhancements to M-Tx starting from 0.53
    
 Newest items at top. You might also want to look at file `MAINTENANCE`.
 
+Version 0.63d
+-------------
+
+Added initialization to matching in utility.{pas,c}. Thanks to
+Raphael Isemann for reporting that matching was uninitialized. (RDT)
+
+Version 0.63b
+-------------
+
+Added -ansi to AM_CFLAGS in Makefile.am (RDT)
+
+
 Version 0.63a
 -------------
 
-Commented out apparently spurious begin...end block in preambleDefaults 
+Commented out spurious begin...end block in preambleDefaults 
 in preamble.pas.  (RDT)
 
 Version 0.63

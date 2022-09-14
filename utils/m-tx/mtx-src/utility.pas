@@ -1,4 +1,5 @@
 unit utility;  { DPL 2004-03-22 }
+{ uninitialized variable correction in function grep; RDT 2022-07-27 }
 
 { Utilities, mainly aids to parsing }
 
@@ -162,6 +163,7 @@ procedure grep(var source, pattern, target: string);
 begin
   index := 0; s := 1; p := 1;
   for i:=0 to 9 do begin p1[i]:=1; p2[i]:=0 end;
+  matching := true;  { added by RDT 2022-07-27  }
   while matching and (p<=length(pattern)) and (s<=length(source)) do subgrep;
   product := ''; trigger := false;
   for t:=1 to length(target) do if trigger then

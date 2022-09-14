@@ -3,8 +3,7 @@
 ##
 
 INCLUDES = -I$(srcdir)/libp2c
-AM_CFLAGS = #$(WARNING_CFLAGS)
-
+AM_CFLAGS = -ansi #$(WARNING_CFLAGS) 
 bin_PROGRAMS = prepmx
 
 ## prepmx_SOURCES =  config.h
@@ -35,7 +34,7 @@ prepmx_SOURCES = \
 	prepmx.c \
 	status.c \
 	status.h \
-##      strings.c \  ## p2c generated, replaced by cfuncs.c
+##	strings.c \
 	strings.h \
 	uptext.c \
 	uptext.h \

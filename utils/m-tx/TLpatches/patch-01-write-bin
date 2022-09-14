@@ -1,6 +1,6 @@
-diff -ur mtx-0.63a/files.c mtx-src/files.c
---- mtx-0.63a/files.c	Tue Jan 09 01:39:42 2018
-+++ mtx-src/files.c	Wed Apr 25 18:07:12 2018
+diff -ur mtx-0.63d.orig/files.c mtx-0.63d/files.c
+--- mtx-0.63d.orig/files.c	2022-07-26 05:35:12.000000000 +0900
++++ mtx-0.63d/files.c	2022-09-14 22:07:11.000000000 +0900
 @@ -289,9 +289,9 @@
    pushFile(infilename);
    strcpy(outfile_NAME, outfilename);
@@ -13,9 +13,9 @@ diff -ur mtx-0.63a/files.c mtx-src/files.c
    _SETIO(outfile != NULL, FileNotFound);
    strcpy(stylefile_NAME, stylefilename);
    if (stylefile != NULL)
-diff -ur mtx-0.63a/globals.c mtx-src/globals.c
---- mtx-0.63a/globals.c	Tue Jan 09 01:39:42 2018
-+++ mtx-src/globals.c	Wed Apr 25 18:07:37 2018
+diff -ur mtx-0.63d.orig/globals.c mtx-0.63d/globals.c
+--- mtx-0.63d.orig/globals.c	2022-07-26 05:35:12.000000000 +0900
++++ mtx-0.63d/globals.c	2022-09-14 22:07:11.000000000 +0900
 @@ -230,7 +230,7 @@
      if (outfile != NULL)
        fclose(outfile);

@@ -234,7 +234,7 @@ typedef char *Anyptr;
 #endif
 
 #define Register    register  /* Register variables */
-#define Char        char      /* Characters (not bytes) */
+typedef  char        Char;      /* Characters (not bytes) */
 
 #ifndef Static
 # define Static     static    /* Private global funcs and vars */
