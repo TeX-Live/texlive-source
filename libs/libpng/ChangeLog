@@ -1,3 +1,8 @@
+2022-09-16 Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import libpng-1.6.38.
+	* version.ac: Adjust.
+
 2020-03-14  Karl Berry  <karl@freefriends.org>
 
 	Import VSX support from upstream to TL configure.
