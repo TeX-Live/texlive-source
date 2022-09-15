@@ -35,7 +35,8 @@
 #
 # emacs-page
 #
-my $ver = "2.29";
+my $ver = "2.30";
+#  2022/09/05 v2.30 (Siep Kroonenberg)
 #  2022/08/29 v2.29 (Karl Berry)
 #  2018/09/17 v2.28 (Karl Berry)
 #    * use gswin64c on 64-bit Windows.
@@ -207,11 +208,18 @@ my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
 ### ghostscript command name
 my $GS = "gs";
 if ($on_windows) {
+  $GS = "gswin32c";
   if ($ENV{"PROCESSOR_ARCHITECTURE"} eq "AMD64"
       || $ENV{"PROCESSOR_ARCHITEW6432"} eq "AMD64") {
-    $GS = "gswin64c";
-  } else {
-    $GS = "gswin32c";  
+    # prefer gswin64c.exe if on searchpath
+    my @pdirs = split( /;/, $ENV{"PATH"});
+    foreach $d (@pdirs) {
+      $d = substr ($d, 1, -1) if (substr ($d,1,1) eq '"');
+      if (-f $d . "/gswin64c.exe") {
+        $GS = "gswin64c";
+        last;
+      }
+    }
   }
 }
 
