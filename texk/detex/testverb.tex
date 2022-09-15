@@ -1,0 +1,22 @@
+% $Id$
+% Sadly, this is not tested as part of make check; if you feel so
+% inclined, please add it. For now, just including the file for the record.
+% 
+% The problem was that the \verb parsing in detex.l did not check for
+% going past eof when looking for the matching delimiter. With random
+% stuff following the \verb, this would typically cause a crash ("in
+% __memmove_avx_unaligned_erms") as buffers filled with junk.
+% 
+% Testing for eof before the opening delimiter catches another case in
+% the code.
+% 
+% Also, as long as we're here, might as well check that the closing
+% delimiter is found on the same line as the opening, since that's what
+% LaTeX requires.
+% 
+% Bug report sent by Preston Moore to tlsecurity, 08 Jun 2022 22:21:28.
+%
+\begin{document} % force interpretation as LaTeX
+\verb+ok+
+\verb|
+\verb

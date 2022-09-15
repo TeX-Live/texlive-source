@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/detex/
 ##
-## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -43,7 +43,7 @@ dist_check_SCRIPTS = detex.test
 TESTS = detex.test
 detex.log: detex$(EXEEXT)
 
-EXTRA_DIST += test.lout test.tex test.tout
+EXTRA_DIST += test.lout test.tex test.tout testverb.tex
 
 CLEANFILES = test.out texmf.cnf
 

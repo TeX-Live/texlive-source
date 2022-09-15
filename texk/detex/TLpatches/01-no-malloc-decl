@@ -1,0 +1,13 @@
+--- detex-src/detex.l	(revision 64397)
++++ detex-src/detex.l	(working copy)
+@@ -110,7 +110,10 @@
+ #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
+ #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
+ 
++/* avoid gratuitous gcc warning from passing -D for this on command line */
++#ifndef NO_MALLOC_DECL
+ #define NO_MALLOC_DECL
++#endif
+ 
+ void LineBreak();
+ void Ignore();

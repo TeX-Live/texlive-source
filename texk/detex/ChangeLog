@@ -1,3 +1,19 @@
+2022-09-15  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (detex_version): 2.8.91.
+
+2022-09-14  Karl Berry  <karl@freefriends.org>
+
+	* detex-src/detex.l (NO_MALLOC_DECL) [!NO_MALLOC_DECL]: make
+	#define conditional to placate gcc. (-D on cmdline)
+	(\verb): rewrite to look for both eof (ErrorExit)
+	and eol (Warning). Original bug report sent by Preston Moore
+	to tlsecurity, 08 Jun 2022 22:21:28.
+	* testverb.tex: show some of the cases (not added to make check,
+	with apologies).
+	* Makefile.am (EXTRA_DIST): add testverb.tex.
+	* .gdbinit: new trivial file with gdb helpers.
+
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
 	* detex-src/detex.man: typo fixes from Hilmar Preu\ss{}e,

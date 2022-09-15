@@ -110,7 +110,10 @@
 #define STRIPARGS(x)	cArgs=x; LaBEGIN LaMacro2
 #define	CITE(x)		if (fLatex && !fCite) KILLARGS(x)
 
+/* avoid gratuitous gcc warning from passing -D for this on command line */
+#ifndef NO_MALLOC_DECL
 #define NO_MALLOC_DECL
+#endif
 
 void LineBreak();
 void Ignore();
@@ -346,15 +349,30 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 							footnoteLevel = currBracesLevel;
 							++currBracesLevel;
 							}
-<Normal>"\\verb" /* ignore \verb<ch>...<ch> */	{   if (fLatex) {
-						 	char verbchar, c;
-						 	verbchar = input();
-						 	while ((c = input()) != verbchar)
-							    /*if (c == '\n')
-								NEWLINE;*/
-								putchar(c);
-						    }
-						    IGNORE;
+<Normal>"\\verb" /* ignore \verb<ch>...<ch> */	{
+  /* Sorry to use different formatting, but it seemed better not
+     to cram all this code over in the rightmost 20 chars. */
+  if (fLatex) {
+    char verbchar, c;
+    verbchar = input();
+    if (verbchar != EOF) {
+      while ((c = input()) != verbchar && c != '\n' && c != EOF) {
+        putchar(c);
+      }
+    }
+    /* would be nice to include input filenames and line numbers */
+    if (verbchar == EOF || c == EOF) {
+      /* do this test first in case verbchar is eof */
+      ErrorExit("\\verb not complete before eof");
+    }
+    if (c == '\n') {
+      char delim[2];
+      delim[0] = verbchar;
+      delim[1] = 0;
+      Warning("\\verb not terminated before eol, delimiter", delim);
+    }
+  }
+  IGNORE;
 						}
 
 <Normal>"\\newcommand"				{ LATEX; KILLARGS(2); }
@@ -1093,7 +1111,8 @@ UsageExit(void)
 {
 	(void)printf("\n%s [ -clnrstw1 ] [ -e environment-list ] [ filename[.tex] ... ]\n",
 		sbProgName);
-	puts("  -c  echo LaTeX \\cite, \\ref, and \\pageref values\n  \
+	puts("Strip (La)TeX commands from the input.\n\n  \
+-c  echo LaTeX \\cite, \\ref, and \\pageref values\n  \
 -e  <env-list> list of LaTeX environments to ignore\n  \
 -l  force latex mode\n  \
 -n  do not follow \\input, \\include and \\subfile\n  \
@@ -1102,7 +1121,10 @@ UsageExit(void)
 -t  force tex mode\n  \
 -w  word only output\n  \
 -1  outputs the original file name and line number in the beginning of each line\n  \
--v  show program version and exit");
+-v  show program version and exit\n\
+\n\
+opendetex home page: https://github.com/pkubowicz/opendetex");
+	(void)printf("opendetex version %s\n", VERSION);
 	exit(0);
 }
 
@@ -1113,7 +1135,6 @@ UsageExit(void)
 void
 VersionExit(void)
 {
-	(void)printf("\nOpenDetex version %s\nhttps://github.com/pkubowicz/opendetex\n",
-		VERSION);
+	(void)printf("\nopendetex version %s\n", VERSION);
 	exit(0);
 }
