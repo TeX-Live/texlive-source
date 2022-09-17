@@ -1,3 +1,8 @@
+2022-09-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fwrite.c:
+	Fix a bug on Thai words started with vowel followed by consonant.
+
 2022-09-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* version 1.03  Stable version.

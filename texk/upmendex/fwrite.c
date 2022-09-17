@@ -927,11 +927,20 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		u_strcpy(ini,hz_index[lo-1].idx);
 		return;
 	}
+	else if (is_thai(&ch)) {
+		if (istr[0]>=0x0E2F && (istr[1]>0x0E00 && istr[1]<0x0E2F)) {
+			/* Vowel followed by Consonant */
+			ini[0]=istr[1];
+		} else {
+			ini[0]=istr[0];
+		}
+		return;
+	}
 	else if (is_devanagari(istr)==2) {
 		ini[0]=istr[0]; ini[1]=istr[1]; ini[2]=L'\0';
 		return;
 	}
-	else if (is_devanagari(&ch)||is_thai(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
+	else if (is_devanagari(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
 		if (ch==0x626) {  /* Arabic Letter Yeh with Hamza Above for Uyghur */
 			strY[0]=0x626; strY[1]=L'\0'; /* Yeh with Hamza Above */
 			strZ[0]=0x628; strZ[1]=L'\0'; /* Beh */
