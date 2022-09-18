@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-09-15.17}
+\def\texinfoversion{2022-09-18.02}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -314,16 +314,8 @@
 \newbox\footlinebox
 
 % When outputting the double column layout for indices, an output routine
-% is run several times, which hides the original value of \topmark.  This
-% can lead to a page heading being output and duplicating the chapter heading
-% of the index.  Hence, save the contents of \topmark at the beginning of
-% the output routine.  The saved contents are valid until we actually
-% \shipout a page.
-%
-% (We used to run a short output routine to actually set \topmark and
-% \firstmark to the right values, but if this was called with an empty page
-% containing whatsits for writing index entries, the whatsits would be thrown
-% away and the index auxiliary file would remain empty.)
+% is run several times, hiding the original value of \topmark.  Hence, save
+% \topmark at the beginning.
 %
 \newtoks\savedtopmark
 \newif\iftopmarksaved
@@ -348,15 +340,9 @@
   %
   \checkchapterpage
   %
-  % Retrieve the information for the headings from the marks in the page,
-  % and call Plain TeX's \makeheadline and \makefootline, which use the
-  % values in \headline and \footline.
-  %
-  % Common context changes for both heading and footing.
-  % Do this outside of the \shipout so @code etc. will be expanded in
-  % the headline as they should be, not taken literally (outputting ''code).
+  % Make the heading and footing.  \makeheadline and \makefootline
+  % use the contents of \headline and \footline.
   \def\commonheadfootline{\let\hsize=\txipagewidth \texinfochars}
-  %
   \ifodd\pageno \getoddheadingmarks \else \getevenheadingmarks \fi
   \global\setbox\headlinebox = \vbox{\commonheadfootline \makeheadline}%
   \ifodd\pageno \getoddfootingmarks \else \getevenfootingmarks \fi
@@ -613,21 +599,6 @@
 
 % @? is an end-of-sentence query.
 \def\?{?\spacefactor=\endofsentencespacefactor\space}
-
-% @frenchspacing on|off  says whether to put extra space after punctuation.
-%
-\def\onword{on}
-\def\offword{off}
-%
-\parseargdef\frenchspacing{%
-  \def\temp{#1}%
-  \ifx\temp\onword \plainfrenchspacing
-  \else\ifx\temp\offword \plainnonfrenchspacing
-  \else
-    \errhelp = \EMsimple
-    \errmessage{Unknown @frenchspacing option `\temp', must be on|off}%
-  \fi\fi
-}
 
 % @w prevents a word break.  Without the \leavevmode, @w at the
 % beginning of a paragraph, when TeX is still in vertical mode, would
@@ -2864,6 +2835,24 @@ end
 \catcode`@=\other
 \def\endofsentencespacefactor{3000}% default
 
+% @frenchspacing on|off  says whether to put extra space after punctuation.
+%
+\def\onword{on}
+\def\offword{off}
+%
+\let\frenchspacingsetting\plainnonfrenchspacing % used in output routine
+\parseargdef\frenchspacing{%
+  \def\temp{#1}%
+  \ifx\temp\onword \let\frenchspacingsetting\plainfrenchspacing
+  \else\ifx\temp\offword \let\frenchspacingsetting\plainnonfrenchspacing
+  \else
+    \errhelp = \EMsimple
+    \errmessage{Unknown @frenchspacing option `\temp', must be on|off}%
+  \fi\fi
+  \frenchspacingsetting
+}
+
+
 % @t, explicit typewriter.
 \def\t#1{%
   {\tt \defcharsdefault \plainfrenchspacing #1}%
@@ -3840,15 +3829,16 @@ $$%
 \newtoks\oddfootline     % footline on odd pages
 
 % Now make \makeheadline and \makefootline in Plain TeX use those variables
-\headline={{\textfonts\rm
+\headline={{\textfonts\rm\frenchspacingsetting
             \ifchapterpage
               \ifodd\pageno\the\oddchapheadline\else\the\evenchapheadline\fi
             \else
               \ifodd\pageno\the\oddheadline\else\the\evenheadline\fi
             \fi}}
 
-\footline={{\textfonts\rm \ifodd\pageno \the\oddfootline
-                            \else \the\evenfootline \fi}\HEADINGShook}
+\footline={{\textfonts\rm\frenchspacingsetting
+            \ifodd\pageno \the\oddfootline \else \the\evenfootline \fi}%
+           \HEADINGShook}
 \let\HEADINGShook=\relax
 
 % Commands to set those variables.
@@ -11403,8 +11393,6 @@ directory should work if nowhere else does.}
 
 % Default value of \hfuzz, for suppressing warnings about overfull hboxes.
 \hfuzz = 1pt
-
-\ifx\eTeXversion\thisisundefined\else \lastlinefit=500 \fi
 
 
 \message{and turning on texinfo input format.}
