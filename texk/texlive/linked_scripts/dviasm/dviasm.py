@@ -6,7 +6,7 @@
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 # Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 # Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
-# Copyright (C) 2019-2020 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+# Copyright (C) 2019-2022 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ DVI_ID = 2; DVIV_ID = 3; XDVI_ID = 6; XDV_ID = 7;
 DVI_IDS = (DVI_ID, DVIV_ID, XDVI_ID, XDV_ID)
 
 def warning(msg):
-  sys.stderr.write('%s\n' % msg)
+  sys.stderr.write('warning: %s\n' % msg)
 
 def ValidID(dvi_id):
     if dvi_id not in DVI_IDS:
@@ -606,6 +606,12 @@ class DVI(object):
     # WriteFontDefinitions
     self.WriteFontDefinitions(fp)
     # WritePages
+    if not self.pages:
+      # dvistd0.pdf, Section A.1:
+      # > A DVI file consists of a ``preamble,'' followed by a sequence of
+      # > one or more "pages," followed by a ``postamble.''
+      warning('one or more pages required!')
+      self.pages.append({'count':[1,0,0,0,0,0,0,0,0,0], 'content':[]})
     stackdepth = 0; loc = -1
     for page in self.pages:
       w = x = y = z = 0; stack = []
@@ -677,7 +683,7 @@ class DVI(object):
       fp.write(b''.join(s))
     # WritePostamble
     post_loc = fp.tell()
-    fp.write(b''.join([bytes.fromhex('%02x' % POST), PutSignedQuad(loc), PutSignedQuad(self.numerator), PutSignedQuad(self.denominator), PutSignedQuad(self.mag), PutSignedQuad(self.max_v), PutSignedQuad(self.max_h), Put2Bytes(stackdepth+1), Put2Bytes(len(self.pages))]))
+    fp.write(b''.join([bytes.fromhex('%02x' % POST), PutSignedQuad(loc), PutSignedQuad(self.numerator), PutSignedQuad(self.denominator), PutSignedQuad(self.mag), PutSignedQuad(self.max_v), PutSignedQuad(self.max_h), Put2Bytes(stackdepth), Put2Bytes(len(self.pages))]))
     # WriteFontDefinitions
     self.WriteFontDefinitions(fp)
     # WritePostPostamble
@@ -937,6 +943,12 @@ class DVI(object):
         fp.write("(%s) " % self.byconv(self.font_def[e]['design_size']))
       fp.write("at %s\n" % self.byconv(self.font_def[e]['scaled_size']))
     # DumpPages
+    if not self.pages:
+      # dvistd0.pdf, Section A.1:
+      # > A DVI file consists of a ``preamble,'' followed by a sequence of
+      # > one or more "pages," followed by a ``postamble.''
+      warning('one or more pages required!')
+      self.pages.append({'count':[1,0,0,0,0,0,0,0,0,0], 'content':[]})
     for page in self.pages:
       fp.write("\n[page" + (" %d"*10 % tuple(page['count'])) + "]\n")
       indent = 0
@@ -1163,12 +1175,12 @@ binary format. It is fully documented at
 Please report bugs to
   https://github.com/aminophen/dviasm"""
 
-  version = """This is %prog-20200918
+  version = """This is %prog-20220918
 
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
-Copyright (C) 2019-2020 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+Copyright (C) 2019-2022 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1249,11 +1261,17 @@ def IsDVI(fname):
 if __name__ == '__main__':
   (options, args) = ProcessOptions()
   aDVI = DVI(unit=options.unit)
-  if IsDVI(args[0]): # dvi -> dump
-    aDVI.Load(args[0])
+  if os.path.isfile(args[0]): fname = args[0]
+  elif os.path.isfile(args[0] + '.xdv'): fname = args[0] + '.xdv'
+  elif os.path.isfile(args[0] + '.dvi'): fname = args[0] + '.dvi'
+  else:
+    sys.stderr.write('File %s not found\n' % args[0])
+    sys.exit(1)
+  if IsDVI(fname): # dvi -> dump
+    aDVI.Load(fname)
     if options.output: aDVI.Dump(options.output, tabsize=options.tabsize, encoding=options.encoding)
     else:              aDVI.DumpToFile(sys.stdout, tabsize=options.tabsize, encoding=options.encoding)
   else: # dump -> dvi
-    aDVI.Parse(args[0], encoding=options.encoding)
+    aDVI.Parse(fname, encoding=options.encoding)
     if options.output: aDVI.Save(options.output)
     else:              aDVI.SaveToFile(sys.stdout.buffer)
