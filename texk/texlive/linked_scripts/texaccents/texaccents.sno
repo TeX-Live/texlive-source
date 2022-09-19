@@ -1,0 +1,274 @@
+#!/usr/bin/env snobol4
+# texaccents.sno
+# version 1.0.1
+# 2022.08.23 -- 2022.09.17
+# guido.milanese@unicatt.it
+# Transforms LaTeX accents to their UTF8 equivalents
+# accepts both LaTeX and Bibtex codes:
+# examples: \'a \'{a} {\"a} and even  {\'{a}}
+# 	tables of accents imported from:
+# 	https://github.com/hayk314/LaTex-handler -- Author: Hayk Aleksanyan
+#     with my integrations, including ligatures as \ae{}
+# requires snobol4: see http://www.regressive.org/snobol4/csnobol4/curr/
+
+#################################################################
+# MIT License -  Copyright (c) 2022 Guido Milanese
+# See file LICENSE in this package
+#################################################################
+
+******************************************************
+* FUNCTIONS
+******************************************************
+
+*-- Function INITIALISE
+*-- opens files, imports functions
+            define("initialise()") 
+			:(initialise_end)
+initialise
+initialise_bg
+* INCLUDE FILES
+-include "delete.inc"
+-include "host.inc"
+-include "newline.inc"
+-include "grepl.inc" ;* essential! calls repl internally
+	MAX = 8000000 ;* max size of input/output files = 8 megs
+	NL = newline()
+	HELP_MSG = "texaccents 1.0.1" NL 
++  "Converts legacy (La)TeX accents and ligatures to Unicode" NL
++  "Usage:     texaccents.sno INFILE OUTFILE" NL
++  "--help     print this help, then exit" NL
++  "--version  print version number, then exit" NL
++  "Report bugs to <guido.milanese@unicatt.it>" NL
++  "CTAN page of the package: <https://www.ctan.org/pkg/texaccents>"
+ 
+	VERS_MSG = "texaccents 1.0.1" NL NL
++  "Copyright (c) 2022  Guido Milanese" NL NL
++  "This is free software; see the source for copying conditions.  There is NO" NL
++  "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." NL nl
++  "Written by Guido Milanese <guido.milanese@unicatt.it>"
+
+
+#######################################################
+# opens input / output files
+#######################################################
+* Defines and checks Input & Output
+* help request -- exits. Both "--help" and "-help" are valid
+	((host(2,2) ? "-help") (Terminal = HELP_MSG)) :s(end)
+* version request -- exits. Both "--version" and "-version" are valid
+	((host(2,2) ? "-version") (Terminal = VERS_MSG)) :s(end)
+* Normal input-output with error messages. 
+* Error messages are used by MAIN if necessary
+	(~(infile  = host(2,2)) ((Terminal = HELP_MSG)  (ERROR_MSG = "Input error"))) :s(freturn)
+	(~(outfile = host(2,3)) ((Terminal = HELP_MSG) (ERROR_MSG = "Output error"))) :s(freturn)
+      INPUT('r_f',1,"B " MAX, Infile)       :f(freturn)
+		Terminal = "Reading text from " Infile
+      OUTPUT('w_f',2,"B " MAX, Outfile)     :f(freturn)
+initialise_rt   initialise   =  r_f         :(return)
+initialise_end
+
+#####################################################################################
+*-- Function NORMACC
+*-- Changes TeX accents without curly brackets to the standard form
+*-- \'a --> \'{a}
+*-- and replaces ligatures such as \ae --> æ | \oe --> œ 
+*-- requires GREPL
+#####################################################################################
+            define("normacc(Pass)")
+	P_shortacc = notany('{') 
++               ((('\' any("'`" '"' "^=~.")) . Pre_shortacc) 
++               (any(&ucase &lcase) . Letter_shortacc)) . V_shortacc 
+				:(normacc_end)
+normacc
+normacc_bg  Pass ? P_shortacc		:f(normacc_lg)
+				Pass ? V_shortacc = Pre_shortacc '{' Letter_shortacc '}' :(normacc_bg)
+normacc_lg  Pass2 = grepl(Pass,
++  "\ae{} \oe{} \AE{} \OE{} \dh{} \DH{} \th{} \TH{} \o{} \O{} \l{} \L{} ",
++  "æ      œ    Æ     Œ      ð     Ð     þ     Þ     ø    Ø    ł    Ł ")
+				Terminal = "Ligatures tranformed"
+normacc_rt   normacc   =  Pass2   :(return)
+normacc_end
+*
+* The pattern to normalise accents -- as \'a -- is defined as follows:
+* 1. there must be no '{' before backslash: otherwise the pattern would trap also
+*    BibTex codes such as {\'a}
+* 2. find a backslash followed by any char of the list. Saved as "Pre_sortacc"
+* 3. find the accented letter. Saved as Letter_shortacc
+* 4. The whole structure is saved as V_shortacc
+*    The programme will save the whole structure and substitute it in the text with:
+*    Pre_shortacc (as \') + '{' + Letter_shortacc + '}'
+*    in this way the short form -- \'a -- is transformed to the canonical \'{a}
+* 
+* Ligatures and special chars are simply replaced with GREPL.
+ 
+#####################################################################################
+*-- Function CLEANACC
+*-- Substitutes plain letters to Unicode accents, using the sets provides by TRANSACC
+*-- \'{a} will output á
+#####################################################################################
+            define("cleanacc(Text,Acc1,Acc2)")   :(cleanacc_end)
+* Acc1 is the original LaTeX code e.g. \"{a}
+* Acc2, at the time of calling the function, is e.g. \"{ä}
+cleanacc
+cleanacc_bg
+*				removes paretheses: \"{ä} --> \"ä
+				Acc2 = delete(Acc2,"{}")
+* moves 2 chars and saves what remains, i.e. the letter
+* \"ä --> ä 			
+				Acc2 ? len(2) (rem . Acc2)
+* in text replaces e.g. \"{a} with ä
+* the substitution is done ONCE for the whole text
+				Text = repl(Text,Acc1,Acc2)
+ 				Terminal = "Working on " Acc2
+cleanacc_rt   cleanacc   =  Text                :(return)
+cleanacc_end
+
+#######################################################
+*-- Function TRANSACC
+*-- transforms LaTeX/Bibtex accents to Unicode
+#######################################################
+            define("transacc(Pass)")
+* Pass is the input text
+*
+* Accents used by Latex, e.g. \'{a} = acute accent over 'a'
+				Lat_acc = 
++  any('"' "'" "`" 'H' '^' 'v' 'u' 'c' '.' 'd' 'k' '~' '=' 'b' 'r' ) 
++  . V_lat_acc
+*
+* The pattern says:
+* '\' + Lat_acc OR ('{\' + Lat_acc + '{' OR nothing)
+* any letter, saved as C_noacc + '}' + '}' OR nothing
+* Lat_acc is already defined above and saved ad V_lat_acc
+* Examples \'{a} -- {\'a} -- {\'{a}} (\'a was already "normalised")
+	 P_lat_code = 
++   ( 
++   (('\' Lat_acc '{') | ('{\'  Lat_acc ('{' | '') )) 
++   (any(&lcase &ucase) . C_noacc) '}' ('}' | '')  ) . V_lat_code
+				:(transacc_end)
+transacc
+transacc_bg 
+latcode_bg  V_lat_code   =  ;* cleans previous value
+				V_lat_code_2 =  ;* cleans previous value
+* Scans input text to locate the pattern
+* if no other LaTeX accents, fails and returns to main
+* if yes, goes to the section that transforms this accent.
+* e.g. if the accent is umlaut, will jump to TR"
+* After each transformation we have:
+*   1. the original code,    e.g. \"{a} or \"a or {\"a}
+*   2. the transformed code, e.g. \"{ä} or \"ä or {\"ä}
+* Each section calls CLEANCLODE
+* CLEANCODE will remove all the {}\ and the LaTeX accent
+* and substitute in the input text e.g. \"{ä} with ä
+            Pass ? P_lat_code	:f(latcode_nd)
+		:($('TR' V_lat_acc))
+
+TR" ;* umlaut
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c E e H h I i K k M m N n O o P p Q q S s T t U u V v W w X x Y y Z z ",
++ "Ä ä B̈ b̈ C̈ c̈ Ë ë Ḧ ḧ Ï ï K̈ k̈ M̈ m̈ N̈ n̈ Ö ö P̈ p̈ Q̈ q̈ S̈ s̈ T̈ ẗ Ü ü V̈ v̈ Ẅ ẅ Ẍ ẍ Ÿ ÿ Z̈ z̈ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR' ;* acute
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e F f G g H h I i J j K k L l M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z ",
++ "Á á B́ b́ Ć ć D́ d́ É é F́ f́ Ǵ ǵ H́ h́ Í í J́ ȷ́ Ḱ ḱ Ĺ ĺ Ḿ ḿ Ń ń Ó ó Ṕ ṕ Q́ q́ Ŕ ŕ Ś ś T́ t́ Ú ú V́ v́ Ẃ ẃ X́ x́ Ý ý Ź ź ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRH ;* double acute - \H{o} Hungarian
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a E e I i M m O o U u ",
++ "A̋ a̋ E̋ e̋ I̋ i̋ M̋ m̋ Ő ő Ű ű ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR` ;* grave
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a Æ æ E e H h I i K k M m N n O o R r S s T t U u V v W w X x Y y Z z ",
++ "À à Æ̀ æ̀ È è H̀ h̀ Ì ì K̀ k̀ M̀ m̀ Ǹ ǹ Ò ò R̀ r̀ S̀ s̀ T̀ t̀ Ù ù V̀ v̀ Ẁ ẁ X̀ x̀ Ỳ ỳ Z̀ z̀ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR^ ;*  circumflex \^{o}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e G g H h I i J j K k L l M m N n O o R r S s T t U u V v W w X x Y y Z z ",
++ "Â â B̂ b̂ Ĉ ĉ D̂ d̂ Ê ê Ĝ ĝ Ĥ ĥ Î î Ĵ ĵ K̂ k̂ L̂ l̂ M̂ m̂ N̂ n̂ Ô ô R̂ r̂ Ŝ ŝ T̂ t̂ Û û V̂ v̂ Ŵ ŵ X̂ x̂ Ŷ ŷ Ẑ ẑ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRv ;* caron hraceck \v{s}
+* For accents that are also normal letters 
+* we need to restore the accent to its original value
+* This applies to: v u c d k b r
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e F f G g H h I i J j K k L l M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z ",
++ "Ǎ ǎ B̌ b̌ Č č Ď ď Ě ě F̌ f̌ Ǧ ǧ Ȟ ȟ Ǐ ǐ J̌ ǰ Ǩ ǩ Ľ ľ M̌ m̌ Ň ň Ǒ ǒ P̌ p̌ Q̌ q̌ Ř ř Š š Ť ť Ǔ ǔ V̌ v̌ W̌ w̌ X̌ x̌ Y̌ y̌ Ž ž ")
+	V_lat_code_2 = repl(V_lat_code_2,"\v̌","\v")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRu ;* breve  \u{o}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a C c E e G g I i K k M m N n O o P p R r T t U u V v X x Y y ",
++ "Ă ă C̆ c̆ Ĕ ĕ Ğ ğ Ĭ ĭ K̆ k̆ M̆ m̆ N̆ n̆ Ŏ ŏ P̆ p̆ R̆ r̆ T̆ t̆ Ŭ ŭ V̆ v̆ X̆ x̆ Y̆ y̆ ")
+	V_lat_code_2 = repl(V_lat_code_2,"\ŭ","\u")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRc ;* cedilla \c{c}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e G g H h I i K k L l M m N n O o Q q R r S s T t U u X x Z z ",
++ "A̧ a̧ B̧ b̧ Ç ç Ḑ ḑ Ȩ ȩ Ģ ģ Ḩ ḩ I̧ i̧ Ķ ķ Ļ ļ M̧ m̧ Ņ ņ O̧ o̧ Q̧ q̧ Ŗ ŗ Ş ş Ţ ţ U̧ u̧ X̧ x̧ Z̧ z̧ ")
+	V_lat_code_2 = repl(V_lat_code_2,"\ç","\c")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR. ;* dot \.{o}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e F f G g H h I i K k L l M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z ",
++ "Ȧ ȧ Ḃ ḃ Ċ ċ Ḋ ḋ Ė ė Ḟ ḟ Ġ ġ Ḣ ḣ İ i̇̀ K̇ k̇ L̇ l̇ Ṁ ṁ Ṅ ṅ Ȯ ȯ Ṗ ṗ Q̇ q̇ Ṙ ṙ Ṡ ṡ Ṫ ṫ U̇ u̇ V̇ v̇ Ẇ ẇ Ẋ ẋ Ẏ ẏ Ż ż ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRd ;* dot under the letter \d{u}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a B b C c D d E e F f G g H h I i J j K k L l M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z ",
++ "Ạ ạ Ḅ ḅ C̣ c̣ Ḍ ḍ Ẹ ẹ F̣ f̣ G̣ g̣ Ḥ ḥ Ị ị J̣ j̣ Ḳ ḳ Ḷ ḷ Ṃ ṃ Ṇ ṇ Ọ ọ P̣ p̣ Q̣ q̣ Ṛ ṛ Ṣ ṣ Ṭ ṭ Ụ ụ Ṿ ṿ Ẉ ẉ X̣ x̣ Ỵ ỵ Ẓ ẓ ")
+	V_lat_code_2 = repl(V_lat_code_2,"\ḍ","\d")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRk ;* ogonek \k{a}
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a E e I i O o U u Y y ",
++ "Ą ą Ę ę Į į Ǫ ǫ Ų ų Y̨ y̨ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR~ ;* tilde \~o
+				V_lat_code_2 = grepl(V_lat_code,
++ "A a E e I i N n O o U u V v Y y ",
++ "Ã ã Ẽ ẽ Ĩ ĩ Ñ ñ Õ õ Ũ ũ Ṽ ṽ Ỹ ỹ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TR= ;* macron \=a \={a}
+				V_lat_code_2 = grepl(V_lat_code,
++  "A a B b C c D d E e G g I i J j K k M m N n O o P p Q q R r S s T t U u V v W w X x Y y Z z ",
++  "Ā ā B̄ b̄ C̄ c̄ D̄ d̄ Ē ē Ḡ ḡ Ī ī J̄ j̄ K̄ k̄ M̄ m̄ N̄ n̄ Ō ō P̄ p̄ Q̄ q̄ R̄ r̄ S̄ s̄ T̄ t̄ Ū ū V̄ v̄ W̄ w̄ X̄ x̄ Ȳ ȳ Z̄ z̄ ")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRb ;* bar under the letter \b{a}
+				V_lat_code_2 = grepl(V_lat_code,
++  "A a B b C c D d E e G g H h I i J j K k L l M m N n O o P p R r S s T t U u X x Y y Z z ",
++  "A̱ a̱ Ḇ ḇ C̱ c̱ Ḏ ḏ E̱ e̱ G̱ g̱ H̱ ẖ I̱ i̱ J̱ j̱ Ḵ ḵ Ḻ ḻ M̱ m̱ Ṉ ṉ O̱ o̱ P̱ p̱ Ṟ ṟ S̱ s̱ Ṯ ṯ U̱ u̱ X̱ x̱ Y̱ y̱ Ẕ ẕ ")
+	V_lat_code_2 = repl(V_lat_code_2,"\ḇ","\b")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+TRr ;* ring over the letter \r{a}
+				V_lat_code_2 = grepl(V_lat_code,
++  "A a B b C c D d E e F f G g H h I i J j K k L l M m N n O o P p Q q r R S s U u V v W w X x Y y Z z ",
++  "Å å B̊ b̊ C̊ c̊ D̊ d̊ E̊ e̊ F̊ f̊ G̊ g̊ H̊ h̊ I̊ i̊ J̊ j̊ K̊ k̊ L̊ l̊ M̊ m̊ N̊ n̊ O̊ o̊ P̊ p̊ Q̊ q̊ r̊ R̊ S̊ s̊ Ů ů V̊ v̊ W̊ ẘ X̊ x̊ Y̊ ẙ Z̊ z̊ ")
+	V_lat_code_2 = repl(V_lat_code_2,"\r̊","\r")
+	 Pass = cleanacc(Pass,V_lat_code,V_lat_code_2) :(latcode_bg)
+
+latcode_nd  
+				transacc = Pass  :(return)
+transacc_end
+
+#######################################################
+#                  MAIN
+#######################################################
+	(~(texfile = initialise()) (terminal = "Could not start programme - " ERROR_MSG)) :s(end)
+	Texfile = normacc(Texfile)
+   (((w_f = transacc(texfile)) (Terminal = "Done. File " Outfile " written")), 
++                              (Terminal = "Conversion failed"))
+end

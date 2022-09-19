@@ -16,6 +16,7 @@ pdftex-quiet/pdftex-quiet
 pdfxup/pdfxup
 pst-pdf/ps4pdf
 simpdftex/simpdftex
+texaccents/texaccents.sno
 texlive-extra/allcm.sh
 texlive-extra/allneeded.sh
 texlive-extra/dvi2fax.sh
