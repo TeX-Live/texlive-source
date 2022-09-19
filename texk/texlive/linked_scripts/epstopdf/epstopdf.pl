@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 64235 2022-08-29 22:52:01Z karl $
+# $Id: epstopdf.pl 64317 2022-09-08 01:25:27Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,11 @@
 #
 my $ver = "2.30";
 #  2022/09/05 v2.30 (Siep Kroonenberg)
+#    * still use gswin32c if gswin64c.exe not on PATH.
 #  2022/08/29 v2.29 (Karl Berry)
+#    * use gswin64c.exe on 64-bit Windows.
 #  2018/09/17 v2.28 (Karl Berry)
-#    * use gswin64c on 64-bit Windows.
+#    * -dCompatibilityLevel=1.5 by default, since gs9.25 switched to 1.7.
 #  2017/09/14 v2.27 (Karl Berry)
 #    * extract value from --gsopt with $3 not $2 (extra regexp group
 #      added previously), and check it with ^(...)$ so anchors apply to all.
@@ -191,7 +193,7 @@ my $ver = "2.30";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 64235 2022-08-29 22:52:01Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 64317 2022-09-08 01:25:27Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2022 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -211,8 +213,8 @@ if ($on_windows) {
   $GS = "gswin32c";
   if ($ENV{"PROCESSOR_ARCHITECTURE"} eq "AMD64"
       || $ENV{"PROCESSOR_ARCHITEW6432"} eq "AMD64") {
-    # prefer gswin64c.exe if on searchpath
-    my @pdirs = split( /;/, $ENV{"PATH"});
+    # prefer gswin64c.exe if on search path.
+    my @pdirs = split(/;/, $ENV{"PATH"});
     foreach $d (@pdirs) {
       $d = substr ($d, 1, -1) if (substr ($d,1,1) eq '"');
       if (-f $d . "/gswin64c.exe") {
