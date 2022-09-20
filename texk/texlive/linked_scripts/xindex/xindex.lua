@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.43
+ local version = 0.45
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -69,6 +69,7 @@ local args = require ('xindex-lapp') [[
 
 if args.version then
   print("xindex version "..xindex.version)
+  os.exit()
 end
 
 vlevel = not args.v[1] and 0 or #args.v
