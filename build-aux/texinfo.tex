@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-09-18.02}
+\def\texinfoversion{2022-09-21.15}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -9318,6 +9318,12 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \imagexxx #1,,,,,\finish
   \fi
 }
+
+% Approximate height of a line in the standard text font.
+\newdimen\capheight
+\setbox0=\vbox{\tenrm H}
+\capheight=\ht0
+
 %
 % Arguments to @image:
 % #1 is (mandatory) image filename; we tack on .eps extension.
@@ -9347,7 +9353,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     %
     % Place image in a \vtop for a top page margin that is (close to) correct,
     % as \topskip glue is relative to the first baseline.
-    \vtop\bgroup\hrule height 0pt\vskip-\parskip
+    \vtop\bgroup \kern -\capheight \vskip-\parskip
   \fi
   %
   % Enter horizontal mode so that indentation from an enclosing
