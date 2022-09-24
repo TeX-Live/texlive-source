@@ -1,3 +1,8 @@
+2022-09-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c: Skip guessing file encoding if input is from pipe.
+	https://github.com/texjporg/tex-jp-build/issues/148
+
 2022-09-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptexenc.c: Initialize infile_enc_auto only when this variable

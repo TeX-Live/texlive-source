@@ -16,6 +16,7 @@
 #include <ptexenc/unicode-jp.h>
 
 #include <ctype.h>
+#include <sys/stat.h>
 
 #define ENC_UNKNOWN  0
 #define ENC_JIS      1
@@ -1024,8 +1025,16 @@ long input_line2(FILE *fp, unsigned char *buff, unsigned char *buff2,
 #endif /* DEBUG */
         }
         else {
+          struct stat st;
           if (infile_enc_auto == 2) ptenc_set_infile_enc_auto();
-          if (infile_enc_auto && fd != fileno(stdin)) {
+#ifdef DEBUG
+          if (infile_enc_auto) {
+            fprintf(stderr, "\nInput fd: %d, stdin?: %d, pipe?: %d\n", fd,
+                 fd==fileno(stdin), (fstat(fd, &st)==0 && S_ISFIFO(st.st_mode)));
+          }
+#endif /* DEBUG */
+          if (infile_enc_auto && fd != fileno(stdin)
+              && !(fstat(fd, &st)==0 && S_ISFIFO(st.st_mode))) {
             char *enc;
             getc4(fp);
             getc4(fp);

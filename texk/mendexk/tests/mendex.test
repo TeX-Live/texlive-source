@@ -7,7 +7,7 @@
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* range*.* pprec*.* romalp*.* sjis.* euc.*
+rm -f foo.* uni.* range*.* pprec*.* romalp*.* sjis.* euc.* enc*.*
 rc=0
 
 ./mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
@@ -87,6 +87,35 @@ for num in 5 6 7; do
 ./mendex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
 	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
 	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=12
+done
+
+# guess file encoding
+# input from file
+for enc in j e s u; do
+./mendex --guess-input-enc -s $srcdir/tests/jis.ist -d $srcdir/tests/enc.dic $srcdir/tests/enc-$enc.idx \
+	-o enc-$enc.ind1 -t enc-$enc.ilg \
+	&& diff $srcdir/tests/enc-x.ind enc-$enc.ind1 || rc=101
+done
+
+for enc in j u; do
+./mendex --no-guess-input-enc -s $srcdir/tests/uni.ist -d $srcdir/tests/enc.dic $srcdir/tests/enc-$enc.idx \
+	-o enc-$enc.ind1 -t enc-$enc.ilg \
+	&& diff $srcdir/tests/enc-x.ind enc-$enc.ind1 || rc=102
+done
+
+# input from pipe
+for enc in j u; do
+cat $srcdir/tests/enc-$enc.idx | \
+	./mendex --guess-input-enc -i -s $srcdir/tests/euc.ist -d $srcdir/tests/enc.dic \
+	-o enc-p-$enc.ind1 -t enc-p-$enc.ilg \
+	&& diff $srcdir/tests/enc-x.ind enc-p-$enc.ind1 || rc=103
+done
+
+# imput from redirect
+for enc in j u; do
+./mendex --guess-input-enc -i -s $srcdir/tests/sjis.ist -d $srcdir/tests/enc.dic < $srcdir/tests/enc-$enc.idx \
+	-o enc-r-$enc.ind1 -t enc-r-$enc.ilg \
+	&& diff $srcdir/tests/enc-x.ind enc-r-$enc.ind1 || rc=104
 done
 
 

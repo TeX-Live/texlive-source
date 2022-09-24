@@ -1,0 +1,10 @@
+% -*- coding: iso-2022-jp -*-
+
+delim_0 "\\leaders\\hbox{$\\cdot$}\\hfill "
+delim_1 "\\leaders\\hbox{$\\cdot$}\\hfill "
+delim_2 "\\leaders\\hbox{$\\cdot$}\\hfill "
+
+lethead_flag 1
+lethead_prefix "\n\\centerline{\\bfseries ◆◆◆ "
+lethead_suffix  " ◆◆◆}\\par\\nobreak"
+
