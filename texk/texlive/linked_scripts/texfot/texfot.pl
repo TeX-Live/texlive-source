@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $
+# $Id: texfot,v 1.47 2022/09/24 16:38:13 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $';
+my $ident = '$Id: texfot,v 1.47 2022/09/24 16:38:13 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -21,6 +21,7 @@ use IO::File;   # use new_tmpfile for that stderr.
 use Getopt::Long qw(:config require_order);
 use Pod::Usage;
 
+my @opt_accept = ();
 my $opt_debug = 0;
 my @opt_ignore = ();
 my $opt_interactive = 0;
@@ -36,6 +37,7 @@ exit (&main ());
 # 
 sub main {
   my $ret = GetOptions (
+    "accept=s"     => \@opt_accept,
     "debug!"       => \$opt_debug,
     "ignore=s"     => \@opt_ignore,
     "interactive!" => \$opt_interactive,
@@ -90,9 +92,9 @@ sub main {
   
   # Be sure everything is drained.
   &debug ("starting waitpid() for $pid")  ;
-  waitpid ($pid, 0) || die "$prog: waitpid($pid) failed: $!\n";
+  waitpid ($pid, 0) || die "$prg: waitpid($pid) failed: $!\n";
   my $child_exit_status = $? >> 8;
-  &debug ("child exit status = $exit_status\n");
+  &debug ("child exit status = $child_exit_status\n");
 
   &debug ("processing stderr from child");
   seek (TEXERR, 0, 0) || warn "seek(stderr) failed: $!";
@@ -129,6 +131,17 @@ sub process_output {
       next;
     }
     
+    # don't anchor user accept patterns, leave it up to them.
+    for my $user_accept (@opt_accept) {
+      &debug ("checking user accept '$user_accept'\n");
+      if (/${user_accept}/) {
+        &debug ("  found user accept ($user_accept)\n");
+        print $prefix;
+        print $line;
+        next;
+      }
+    }
+
     &debug ("checking ignores\n");
     next if /^(
       LaTeX\ Warning:\ You\ have\ requested\ package
@@ -148,13 +161,13 @@ sub process_output {
      |!\ $
     )/x;
     
-    # don't anchor user ignores, leave it up to them.
+    # don't anchor user ignore patterns either.
     for my $user_ignore (@opt_ignore) {
       &debug ("checking user ignore '$user_ignore'\n");
       next LINE if /${user_ignore}/;
     }
 
-    &debug ("checking for print_next\n");
+    &debug ("checking for print_next pattern\n");
     if (/^(
       .*?:[0-9]+:        # usual file:lineno: form
      |!                  # usual ! form
@@ -189,6 +202,7 @@ sub process_output {
      |all\ text\ was\ ignored\ after\ line
      |.*Fatal\ error
      |.*for\ symbol.*on\ input\ line
+     |\#\#
     )/x) {
       &debug ("  matched for showing ($1)\n");
       print $prefix;
@@ -225,8 +239,8 @@ texfot [I<option>]... I<texcmd> [I<texarg>...]
 =head1 DESCRIPTION
 
 C<texfot> invokes I<texcmd> with the given I<texarg> arguments,
-filtering the online output for ``interesting'' messages.  Its exit
-value is that of I<texcmd>.  Examples:
+filtering the online output for ``interesting'' messages. Its exit
+value is that of I<texcmd>. Examples:
 
   # Sample basic invocation:
   texfot pdflatex file.tex
@@ -238,15 +252,22 @@ value is that of I<texcmd>.  Examples:
   # Example of more complex engine invocation:
   texfot xelatex --recorder '\nonstopmode\input file'
 
+Here is an example of what the output looks like (in its entirety) on an
+error-free run:
+
+  /path/to/texfot: invoking: pdflatex hello.ltx
+  This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex)
+  Output written on hello.pdf (1 page, 94415 bytes).
+
 Aside from its own options, described below, C<texfot> just runs the
 given command with the given arguments (same approach to command line
-syntax as C<env>, C<nice>, C<time>, C<timeout>, etc.).  Thus, C<texfot>
-works with any engine and any command line options.
+syntax as C<env>, C<nice>, C<timeout>, etc.). Thus, C<texfot> works with
+any engine and any command line options.
 
 C<texfot> does not look at the log file or any other possible output
 file(s); it only looks at the standard output and standard error from
-the command.  stdout is processed first, then stderr.  Lines from stderr
-have an identifying prefix.  C<texfot> writes all accepted lines to its
+the command. stdout is processed first, then stderr. Lines from stderr
+have an identifying prefix. C<texfot> writes all accepted lines to its
 stdout.
 
 The messages shown are intended to be those which likely need action by
@@ -265,31 +286,33 @@ If the ``next line'' needs to be printed (see below), print it.
 
 =item 2.
 
+Otherwise, if the line matches any user-supplied list of regexps to
+accept (given with C<--accept>, see below), in that order, print it.
+
+=item 3.
+
 Otherwise, if the line matches the built-in list of regexps to ignore,
 or any user-supplied list of regexps to ignore (given with C<--ignore>,
 see below), in that order, ignore it.
 
-=item 3.
+=item 4.
 
 Otherwise, if the line matches the list of regexps for which the next
 line (two lines in all) should be shown, show this line and set the
-``next line'' flag for the next time around the loop.  Examples are the
+``next line'' flag for the next time around the loop. Examples are the
 common C<!> and C<filename:lineno:> error messages, which are generally
 followed by a line with specific detail about the error.
 
-=item 4.
+=item 5.
 
 Otherwise, if the line matches the list of regexps to show, show it.
 
-=item 5.
+=item 6.
 
 Otherwise, the default: if the line came from stdout, ignore it; if the
-line came from stderr, print it (to stdout).  This distinction is made
+line came from stderr, print it (to stdout). This distinction is made
 because TeX engines write relatively few messages to stderr, and it's
 likely that any such should be considered.
-
-It would be easy to add more options to allow for user additions to the
-various regex lists, if that ever seems useful.  Or email me (see end).
 
 =back
 
@@ -303,8 +326,8 @@ in the source.
 
 Incidentally, although nothing in this basic operation is specific to
 TeX engines, all the regular expressions included in the program are
-specific to TeX.  So in practice the program isn't useful except with
-TeX engines, although it would be easy enough to adapt it (if there was
+specific to TeX. So in practice the program isn't useful except with TeX
+engines, although it would be easy enough to adapt it (if there was
 anything else as verbose as TeX to make that useful).
 
 =head1 OPTIONS
@@ -315,28 +338,35 @@ output for that).
 
 The first non-option terminates C<texfot>'s option parsing, and the
 remainder of the command line is invoked as the TeX command, without
-further parsing.  For example, C<texfot --debug tex
+further parsing. For example, C<texfot --debug tex
 --debug> will output debugging information from both C<texfot> and
 C<tex>.
 
 Options may start with either - or --, and may be unambiguously
-abbreviated.  It is best to use the full option name in scripts, though,
+abbreviated. It is best to use the full option name in scripts, though,
 to avoid possible collisions with new options in the future.
 
 =over 4
+
+=item C<--accept> I<regexp>
+
+Accept lines in the TeX output matching (Perl) I<regexp>. Can be
+repeated. This list is checked first, so any and all matches will be
+shown, regardless of other options. These regexps are not automatically
+anchored (or otherwise altered), simply used as-is.
 
 =item C<--debug>
 
 =item C<--no-debug>
 
-Output (or not) what is being done on standard error.  Off by default.
+Output (or not) what the program is doing to standard error; off by default.
 
 =item C<--ignore> I<regexp>
 
-Ignore lines in the TeX output matching (Perl) I<regexp>.  Can be
-repeated.  Adds to the default set of ignore regexps rather than
-replacing.  These regexps are not automatically anchored (or otherwise
-altered), simply used as-is.
+Ignore lines in the TeX output matching (Perl) I<regexp>. Can be
+repeated. Adds to the default set of ignore regexps rather than
+replacing. Like the acceptance regexps, these are not automatically
+anchored (or otherwise altered).
 
 =item C<--interactive>
 
@@ -344,14 +374,14 @@ altered), simply used as-is.
 
 By default, standard input to the TeX process is closed so that TeX's
 interactive mode (waiting for input upon error, the C<*> prompt, etc.)
-is never entered.  Giving C<--interactive> allows interaction to happen.
+is never entered. Giving C<--interactive> allows interaction to happen.
 
 =item C<--quiet>
 
 =item C<--no-quiet>
 
-By default, the TeX command being invoked is reported on standard output.
-C<--quiet> omits that reporting. To get a completely silent run,
+By default, the TeX command being invoked is reported on standard
+output. C<--quiet> omits that reporting. To get a completely silent run,
 redirect standard output: S<C<texfot ... E<gt>/dev/null>>. (The only
 messages to standard error should be errors from C<texfot> itself, so it
 shouldn't be necessary to redirect that, but of course that can be done
@@ -362,13 +392,13 @@ as well.)
 =item C<--no-stderr>
 
 The default is for C<texfot> to report everything written to stderr by
-the TeX command (on stdout).  C<--no-stderr> omits that reporting.
-(Some programs, C<dvisvgm> is one, can be rather verbose on stderr.)
+the TeX command (on stdout). C<--no-stderr> omits that reporting. (Some
+programs, C<dvisvgm> is one, can be rather verbose on stderr.)
 
 =item C<--tee> I<file>
 
 By default, the output being filtered is C<tee>-ed, before filtering, to
-make it easy to check the full output in case of problems. 
+make it easy to check the full output in case of problems.
 
 The default I<file> is C<$TMPDIR/fot.>I<uid>; if C<TMPDIR> is not set,
 C<TMP> is used if set; if neither is set, the default directory is
@@ -393,19 +423,18 @@ Display this help and exit successfully.
 
 I wrote this because, in my work as a TUGboat editor
 (L<https://tug.org/TUGboat>, journal submissions always welcome!), I run
-and rerun many documents, many times each. It was easy to lose
-warnings I needed to see in the mass of unvarying and uninteresting
-output from TeX, such as style files being read and fonts being used. I
-wanted to see all and only those messages which needed some action by
-me.
+and rerun many documents, many times each. It was easy to lose warnings
+I needed to see in the mass of unvarying and uninteresting output from
+TeX, such as style files being read and fonts being used. I wanted to
+see all and only those messages which needed some action by me.
 
 I found some other programs of a similar nature, the LaTeX package
 C<silence>, and plenty of other (La)TeX wrappers, but it seemed none of
-them did what I wanted.  Either they read the log file (I wanted the
-online output only), or they output more or less than I wanted, or they
-required invoking TeX differently (I wanted to keep my build process
-exactly the same, most critically the TeX invocation, which can get
-complicated).  Hence I wrote this.
+them did what I wanted. Either they read the log file (I wanted to look
+at only the online output), or they output more or less than I wanted,
+or they required invoking TeX differently (I wanted to keep my build
+process exactly the same, most critically the TeX invocation, which can
+get complicated). Hence I wrote this little script.
 
 Here are some keywords if you want to explore other options:
 texloganalyser, pydflatex, logfilter, latexmk, rubber, arara, and
@@ -417,17 +446,17 @@ don't support C<texfot> there.
 
 The name comes from the C<trip.fot> and C<trap.fot> files that are part
 of Knuth's trip and trap torture tests, which record the online output
-from the programs.  I am not sure what "fot" stands for in trip and
-trap, but I can pretend that it stands for "filter online transcript" in
-the present S<case :).>
+from the programs. I am not sure what "fot" stands for in trip and trap,
+but I can pretend that it stands for "filter online transcript" in the
+present S<case :).>
 
 =head1 AUTHORS AND COPYRIGHT
 
 This script and its documentation were written by Karl Berry and both
-are released to the public domain.  Email C<karl@freefriends.org> with
-bug reports.  It has no home page beyond the package on CTAN:
+are released to the public domain. Email C<karl@freefriends.org> with
+bug reports. It has no home page beyond the package page on CTAN:
 L<https://ctan.org/pkg/texfot>.
 
-  $Id: texfot,v 1.45 2022/02/17 18:42:02 karl Exp $
+  $Id: texfot,v 1.47 2022/09/24 16:38:13 karl Exp $
 
 =cut
