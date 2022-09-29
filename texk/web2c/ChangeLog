@@ -1,3 +1,14 @@
+2022-09-28  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (halting_on_error_p): new variable, set when we start to
+	halt_on_error, and exit immediately if seen again.
+	* mf.ch: likewise.
+	(The cause is that close_files_and_terminate tries to close out
+	the dvi file nicely, which includes figuring out the
+	magnification, so if the magnification is already set, there's a
+	"recursive" error, which caused an infloop.)
+	Report from Bachir Bendrissou, tlsecurity 28 Sep 2022 12:28:10.
+
 2022-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* bibtex.ch:

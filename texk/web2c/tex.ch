@@ -575,6 +575,7 @@ tini@/
 @!file_line_error_style_p:cinttype; {format messages as file:line:error}
 @!eight_bit_p:cinttype; {make all characters printable by default}
 @!halt_on_error_p:cinttype; {stop at first error}
+@!halting_on_error_p:boolean; {already trying to halt?}
 @!quoted_filename:boolean; {current filename is quoted}
 {Variables for source specials}
 @!src_specials_p : boolean;{Whether |src_specials| are enabled at all}
@@ -875,7 +876,12 @@ print_char("."); show_context;
 @y
 print_char("."); show_context;
 if (halt_on_error_p) then begin
-  history:=fatal_error_stop; jump_out;
+  {If |close_files_and_terminate| generates an error, we'll end up back
+   here; just give up in that case. If files are truncated, too bad.}
+  if (halting_on_error_p) then do_final_end; {quit immediately}
+  halting_on_error_p:=true;
+  history:=fatal_error_stop;
+  jump_out;
 end;
 @z
 
@@ -4494,9 +4500,15 @@ system-dependent section allows easy integration of Web2c and e-\TeX, etc.)
 @ The |edit_name_start| will be set to point into |str_pool| somewhere after
 its beginning if \TeX\ is supposed to switch to an editor on exit.
 
+Initialize the |stop_at_space| variable for filename parsing.
+
+Initialize the |halting_on_error_p| variable to avoid infloop with
+\.{--halt-on-error}.
+
 @<Set init...@>=
 edit_name_start:=0;
 stop_at_space:=true;
+halting_on_error_p:=false;
 
 @ These are used when we regenerate the representation of the first 256
 strings.

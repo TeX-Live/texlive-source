@@ -207,6 +207,7 @@ tini@/
 @!file_line_error_style_p:c_int_type; {output file:line:error style errors.}
 @!eight_bit_p:c_int_type; {make all characters printable by default}
 @!halt_on_error_p:c_int_type; {stop at first error}
+@!halting_on_error_p:boolean; {already trying to halt?}
 @!quoted_filename:boolean; {current filename is quoted}
 @z
 
@@ -675,7 +676,12 @@ print_char("."); show_context;
 @y
 print_char("."); show_context;
 if (halt_on_error_p) then begin
-  history:=fatal_error_stop; jump_out;
+  {If |close_files_and_terminate| generates an error, we'll end up back
+   here; just give up in that case. If files are truncated, too bad.}
+  if (halting_on_error_p) then do_final_end; {quit immediately}
+  halting_on_error_p:=true;
+  history:=fatal_error_stop;
+  jump_out;
 end;
 @z
 
@@ -1983,9 +1989,15 @@ Here are the variables used to hold ``switch-to-editor'' information.
 @ The |edit_name_start| will be set to point into |str_pool| somewhere after
 its beginning if \MF\ is supposed to switch to an editor on exit.
 
+Initialize the |stop_at_space| variable for filename parsing.
+
+Initialize the |halting_on_error_p| variable to avoid infloop with
+\.{--halt-on-error}.
+
 @<Set init...@>=
 edit_name_start:=0;
 stop_at_space:=true;
+halting_on_error_p:=false;
 
 @ Dumping the |xord|, |xchr|, and |xprn| arrays.  We dump these always
 in the format, so a TCX file loaded during format creation can set a
