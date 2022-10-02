@@ -1,3 +1,6 @@
+2022-09-29  Luigi Scarso <luigi.scarso@gmail.com> 
+     * Fixed an infinite loop with --halt-on-error option (K.Berry)
+     
 2022-08-16  Luigi Scarso <luigi.scarso@gmail.com> 
      * Accent 0xFFFD but still error on invalid utf (compatible) (H.Hagen)
      * omitinfodict added: \pdfvariable omitinfodict 1 omit Info dicttionary (H.Hagen)
