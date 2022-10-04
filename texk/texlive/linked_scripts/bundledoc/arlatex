@@ -9,7 +9,7 @@
 
 ########################################################################
 # arlatex                                                              #
-# Copyright (C) 2018 Scott Pakin                                       #
+# Copyright (C) 2018-2022 Scott Pakin                                  #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -27,7 +27,7 @@
 ########################################################################
 
 use 5.006;                    # Fail gracefully if we're not using Perl v5.6.0.
-our $VERSION = "1.03";        # Specify the version of arlatex.
+our $VERSION = "1.1";         # Specify the version of arlatex.
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename;
@@ -50,7 +50,7 @@ sub includefile ($)
     next if $basefilename eq $baseoutfile;    # Don't let a file overwrite itself.
     $basefilename = "\"$basefilename\"" if $basefilename =~ /\s/ && substr($basefilename, 0, 1) ne '"';
     open (SOMEFILE, "<$filename") || die "${progname}: $! ($filename)\n";
-    print OUTFILE "\\begin{filecontents*}{$basefilename}\n";
+    print OUTFILE "\\begin{filecontents*}[overwrite]{$basefilename}\n";
     print OUTFILE <SOMEFILE>;
     print OUTFILE "\\end{filecontents*}\n";
     close SOMEFILE;
@@ -88,7 +88,6 @@ open (OUTFILE, ">$outfile") || die "${progname}: $! ($outfile)\n";
 while ($entirefile[0] =~ /^\s*(\%.*)?$/) {
     print OUTFILE (shift @entirefile);
 }
-print OUTFILE "\\IfFileExists{filecontents.sty}{\\RequirePackage{filecontents}}{}\n";
 my @expandedARGV;
 foreach my $filename (@ARGV) {
     if (-f $filename) {
@@ -268,14 +267,14 @@ See the B<bundledoc> documentation for more information.
 
 =head1 CAVEATS
 
-B<arlatex> makes use of LaTeX2e's C<filecontents*> environment.
-C<filecontents*> refuses to overwrite an existing file.  However, it
-also refuses to create a file that exists I<anywhere> that LaTeX can
-find it.  That is, if the user running B<latex> on an
-B<arlatex>-generated F<.tex> file already has a
-F</usr/share/texmf/tex/latex/whatever/whatever.sty> file then
-C<filecontents*> will refuse to create a F<whatever.sty> file, even in
-a different directory.
+B<arlatex> makes use of LaTeX's C<filecontents*> environment.  It
+passes C<filecontents*> the C<overwrite> option to indicate that
+existing files with the same name should be overwritten.  Be
+forewarned that building the generated file will overwrite the files
+used to create it.
+
+It is best to avoid bundling binary files (e.g., included graphics)
+with B<arlatex>.  These typically do not extract cleanly.
 
 
 =head1 SEE ALSO
