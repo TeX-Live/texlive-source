@@ -453,7 +453,7 @@ am__DIST_COMMON = $(dist_man1_MANS) $(srcdir)/Makefile.in \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap COPYING \
-	ChangeLog
+	ChangeLog README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)

@@ -22350,7 +22350,7 @@ hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
 
 # Generating hitables.c using himktables.
 hitables.c: himktables$(EXEEXT)
-	./himktables > $@ || { rm -f hitables.c; exit 1; }
+	./himktables$(EXEEXT) > $@ || { rm -f hitables.c; exit 1; }
 
 # hitex, histretch, and hishrink all need (at least) some 
 # of the sources generated from hiformat.w.

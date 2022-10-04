@@ -75,7 +75,7 @@ hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
 
 # Generating hitables.c using himktables.
 hitables.c: himktables$(EXEEXT)
-	./himktables > $@ || { rm -f hitables.c; exit 1; }
+	./himktables$(EXEEXT) > $@ || { rm -f hitables.c; exit 1; }
 
 # hitex
 nodist_hitex_SOURCES = hitables.c hiput.c $(hitex_c)
