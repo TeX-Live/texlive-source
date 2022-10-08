@@ -86,7 +86,7 @@ static void fprint_uchar(FILE *fp, const UChar *a, const int mode, const int len
 		olen=u_strToUpper(istr,INITIALLENGTH,istr,wclen,"",&perr);
 	} else if (mode==M_TO_LOWER) {
 		perr=U_ZERO_ERROR;
-		olen=u_strToLower(istr,INITIALLENGTH,istr,wclen, istr[0]==0x130&&turkish_i?"tr":"", &perr);
+		olen=u_strToLower(istr,INITIALLENGTH,istr,wclen, istr[0]==0x130&&turkish_i==2?"tr":"", &perr);
 	} else if (mode==M_TO_TITLE) {
 		perr=U_ZERO_ERROR;
 		olen=u_strToTitle(istr,INITIALLENGTH,istr,wclen,NULL,"",&perr);
@@ -828,7 +828,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				break;
 			case 0x1B120:                  /* Archaic YI 𛄠 */
 				ini[0]=0xD82C; ini[1]=0xDD20; ini[2]=L'\0'; break;
-			case 0x1B121:                  /* Archaic YE 𛄡 */
+			case 0x1B121: case 0x1B001:    /* Archaic YE 𛄡 𛀁 */
 				ini[0]=0xD82C; ini[1]=0xDD21; ini[2]=L'\0'; break;
 			case 0x1B132: case 0x1B155:
 				ini[0]=0x3053; break;  /* こ */
@@ -928,8 +928,9 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		return;
 	}
 	else if (is_thai(&ch)) {
-		if (istr[0]>=0x0E2F && (istr[1]>0x0E00 && istr[1]<0x0E2F)) {
-			/* Vowel followed by Consonant */
+		if ((istr[0]>=0x0E40 && istr[0]<=0x0E44) && (istr[1]>=0x0E01 && istr[1]<=0x0E2E)) {
+			/* Thai reordering :: Vowel followed by Consonant */
+			/* https://unicode-org.github.io/icu/userguide/collation/concepts.html#thailao-reordering */
 			ini[0]=istr[1];
 		} else {
 			ini[0]=istr[0];
@@ -974,12 +975,17 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	}
 	if (ch==0x049||ch==0x069||ch==0x130||ch==0x131||ch==0x0CE||ch==0x0EE) {
 		/* check dotted/dotless İ,I,i,ı and Î,î for Turkish */
-		strX[0] = 0x131;  strX[1] = 0x5A;  strX[2] = 0x00;  /* ıZ */
-		strZ[0] = 0x069;  strZ[1] = 0x00;                   /* i  */
-		order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
-		if (order==UCOL_GREATER) {
+		if (turkish_i==0) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_SECONDARY);
+			strX[0] = 0x131;  strX[1] = 0x069;  strX[2] = 0x00; /* ıi */
+			strZ[0] = 0x049;  strZ[1] = 0x130;  strZ[2] = 0x00; /* Iİ */
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			turkish_i = (order==UCOL_EQUAL) ? 2 : 1;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (turkish_i==2) {
 			ini[0] = (ch==0x049||ch==0x131) ? 0x131 : 0x130; /* ı or İ */
-			turkish_i=1;
 			return;
 		}
 	}
@@ -991,7 +997,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			strX[0] = 0x059;  strX[1] = 0x00; /* Y */
 			strZ[0] = 0x049;  strZ[1] = 0x00; /* I */
 			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
-			if (order==UCOL_EQUAL) i_y_mode=2; else i_y_mode=1;
+			i_y_mode = (order==UCOL_EQUAL) ? 2 : 1;
 			ucol_setStrength(icu_collator, strgth);
 		}
 		if (i_y_mode==2) {

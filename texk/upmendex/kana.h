@@ -195,6 +195,7 @@ UChar extkanatable[]={
 	0x308d, /* ろ */
 	0
 };
+int kana_ye_mode=0;
 
 
 UChar GANADA[]={

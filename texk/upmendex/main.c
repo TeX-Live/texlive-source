@@ -284,6 +284,7 @@ int main(int argc, char **argv)
 		break;
 	}
 	if (u_strlen(kana_head)==0) u_strcpy(kana_head,atama);
+	init_icu_collator();
 
 /*   read idx file   */
 

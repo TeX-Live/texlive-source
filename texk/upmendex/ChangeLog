@@ -1,3 +1,13 @@
+2022-10-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.05  Stable version.
+	* configure.ac: Bump version.
+	* main.c, sort.c, fwrite.c, {,ex}kana.h, mendex.h:
+	Support U+1B001 Hiragana Letter Archaic Ye.
+	* fwrite.c:
+	Strict check for dotted/dotless I/i in Turkish.
+	Strict check for Thai reordering.
+
 2022-09-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fwrite.c:

@@ -47,6 +47,7 @@ int dicread(const char *filename);
 int lastpage(const char *filename);
 
 /* sort.c */
+void init_icu_collator();
 void wsort(struct index *ind, int num);
 void pagesort(struct index *ind, int num);
 int is_latin(UChar *c);
