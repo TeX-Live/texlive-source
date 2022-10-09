@@ -2,7 +2,7 @@
 
 	* version 1.05  Stable version.
 	* configure.ac: Bump version.
-	* main.c, sort.c, fwrite.c, {,ex}kana.h, mendex.h:
+	* main.c, sort.c, convert.c, fwrite.c, {,ex}kana.h, mendex.h:
 	Support U+1B001 Hiragana Letter Archaic Ye.
 	* fwrite.c:
 	Strict check for dotted/dotless I/i in Turkish.

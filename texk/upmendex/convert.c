@@ -46,6 +46,11 @@ void initkanatable(void)
 		if (aiueo[i]==0xd82c) {
 			i++;
 			if (aiueo[i]==0xdd1f) aiueo[i]+=3;  /* U+1B11F -> U+1B122 */
+			if (aiueo[i]==0xdd21) {
+				UChar ch[] = {0xd82c, 0xdc01, 0x0};
+				if (is_jpn_kana(ch))
+					AIUEO[i]=0xdc01;    /* U+1B121 -> U+1B001 */
+			}
 		}
 		else
 			aiueo[i]+=KATATOP-HIRATOP; /* hiragana -> katakana */
