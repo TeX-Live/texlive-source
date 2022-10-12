@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-09-21.15}
+\def\texinfoversion{2022-10-01.15}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -2544,34 +2544,30 @@ end
   \scriptfont\sffam=\sevensf
 }
 
-%
 
-% The font-changing commands (all called \...fonts) redefine the meanings
-% of \STYLEfont, instead of just \STYLE.  We do this because \STYLE needs
-% to also set the current \fam for math mode.  Our \STYLE (e.g., \rm)
-% commands hardwire \STYLEfont to set the current font.
+
+% \defineassignfonts{SIZE} -
+%   Define sequence \assignfontsSIZE, which switches between font sizes
+% by redefining the meanings of \STYLEfont.  (Just \STYLE additionally sets
+% the current \fam for math mode.)
 %
-% The fonts used for \ifont are for "math italics"  (\itfont is for italics
-% in regular text).  \syfont is also used in math mode only.
-%
-% Each font-changing command also sets the names \lsize (one size lower)
-% and \lllsize (three sizes lower).  These relative commands are used
-% in, e.g., the LaTeX logo and acronyms.
-%
-% This all needs generalizing, badly.
-%
+\def\defineassignfonts#1{%
+  \expandafter\edef\csname assignfonts#1\endcsname{%
+    \let\noexpand\rmfont\csname #1rm\endcsname
+    \let\noexpand\itfont\csname #1it\endcsname
+    \let\noexpand\slfont\csname #1sl\endcsname
+    \let\noexpand\bffont\csname #1bf\endcsname
+    \let\noexpand\ttfont\csname #1tt\endcsname
+    \let\noexpand\smallcaps\csname #1sc\endcsname
+    \let\noexpand\sffont  \csname #1sf\endcsname
+    \let\noexpand\ifont   \csname #1i\endcsname
+    \let\noexpand\syfont  \csname #1sy\endcsname
+    \let\noexpand\ttslfont\csname #1ttsl\endcsname
+  }
+}
 
 \def\assignfonts#1{%
-  \expandafter\let\expandafter\rmfont\csname #1rm\endcsname
-  \expandafter\let\expandafter\itfont\csname #1it\endcsname
-  \expandafter\let\expandafter\slfont\csname #1sl\endcsname
-  \expandafter\let\expandafter\bffont\csname #1bf\endcsname
-  \expandafter\let\expandafter\ttfont\csname #1tt\endcsname
-  \expandafter\let\expandafter\smallcaps\csname #1sc\endcsname
-  \expandafter\let\expandafter\sffont  \csname #1sf\endcsname
-  \expandafter\let\expandafter\ifont   \csname #1i\endcsname
-  \expandafter\let\expandafter\syfont  \csname #1sy\endcsname
-  \expandafter\let\expandafter\ttslfont\csname #1ttsl\endcsname
+  \csname assignfonts#1\endcsname
 }
 
 \newif\ifrmisbold
@@ -2595,12 +2591,21 @@ end
    \csname\curfontstyle\endcsname
 }%
 
+% Define the font-changing commands (all called \...fonts).
+% Each font-changing command also sets the names \lsize (one size lower)
+% and \lllsize (three sizes lower).  These relative commands are used
+% in, e.g., the LaTeX logo and acronyms.
+%
+% Note: The fonts used for \ifont are for "math italics"  (\itfont is for
+% italics in regular text).  \syfont is also used in math mode only.
+%
 \def\definefontsetatsize#1#2#3#4#5{%
+  \defineassignfonts{#1}%
 \expandafter\def\csname #1fonts\endcsname{%
   \def\curfontsize{#1}%
   \def\lsize{#2}\def\lllsize{#3}%
   \csname rmisbold#5\endcsname
-  \assignfonts{#1}%
+  \csname assignfonts#1\endcsname
   \resetmathfonts
   \setleading{#4}%
 }}
@@ -2645,17 +2650,22 @@ end
 % Check if we are currently using a typewriter font.  Since all the
 % Computer Modern typewriter fonts have zero interword stretch (and
 % shrink), and it is reasonable to expect all typewriter fonts to have
-% this property, we can check that font parameter.
-%
-\def\ifmonospace{\ifdim\fontdimen3\font=0pt }
+% this property, we can check that font parameter. #1 is what to
+% print if we are indeed using \tt; #2 is what to print otherwise.
+\def\ifusingtt#1#2{\ifdim \fontdimen3\font=0pt #1\else #2\fi}
+
+% Same as above, but check for italic font.  Actually this also catches
+% non-italic slanted fonts since it is impossible to distinguish them from
+% italic fonts.  But since this is only used by $ and it uses \sl anyway
+% this is not a problem.
+\def\ifusingit#1#2{\ifdim \fontdimen1\font>0pt #1\else #2\fi}
+
 
 % Check if internal flag is clear, i.e. has not been @set.
 \def\ifflagclear#1#2#3{%
   \expandafter\ifx\csname SET#1\endcsname\relax
   #2\else#3\fi
 }
-
-
 
 {
 \catcode`\'=\active
@@ -2672,33 +2682,28 @@ end
 % lilypond developers report.  xpdf does work with the regular 0x27.
 %
 \def\codequoteright{%
-  \ifmonospace
-    \ifflagclear{txicodequoteundirected}{%
-      \ifflagclear{codequoteundirected}{%
-        '%
-      }{\char'15 }%
-    }{\char'15 }%
-  \else
-    '%
-  \fi
+  \ifusingtt
+      {\ifflagclear{txicodequoteundirected}%
+          {\ifflagclear{codequoteundirected}%
+              {'}%
+              {\char'15 }}%
+          {\char'15 }}%
+      {'}%
 }
-%
+
 % and a similar option for the left quote char vs. a grave accent.
 % Modern fonts display ASCII 0x60 as a grave accent, so some people like
 % the code environments to do likewise.
+% \relax disables Spanish ligatures ?` and !` of \tt font.
 %
 \def\codequoteleft{%
-  \ifmonospace
-    \ifflagclear{txicodequotebacktick}{%
-      \ifflagclear{codequotebacktick}{%
-        % [Knuth] pp. 380,381,391
-        % \relax disables Spanish ligatures ?` and !` of \tt font.
-        \relax`%
-      }{\char'22 }%
-    }{\char'22 }%
-  \else
-    \relax`%
-  \fi
+  \ifusingtt
+      {\ifflagclear{txicodequotebacktick}%
+          {\ifflagclear{codequotebacktick}%
+              {\relax`}%
+              {\char'22 }}%
+          {\char'22 }}%
+      {\relax`}%
 }
 
 % Commands to set the quote options.
@@ -2817,20 +2822,29 @@ end
 \def\nohyphenation{\hyphenchar\font = -1  \aftergroup\restorehyphenation}
 \def\restorehyphenation{\hyphenchar\font = `- }
 
+\newif\iffrenchspacing
+\frenchspacingfalse
+
 % Set sfcode to normal for the chars that usually have another value.
 % Can't use plain's \frenchspacing because it uses the `\x notation, and
 % sometimes \x has an active definition that messes things up.
 %
 \catcode`@=11
   \def\plainfrenchspacing{%
-    \sfcode`\.=\@m \sfcode`\?=\@m \sfcode`\!=\@m
-    \sfcode`\:=\@m \sfcode`\;=\@m \sfcode`\,=\@m
-    \def\endofsentencespacefactor{1000}% for @. and friends
+    \iffrenchspacing\else
+      \frenchspacingtrue
+      \sfcode`\.=\@m \sfcode`\?=\@m \sfcode`\!=\@m
+      \sfcode`\:=\@m \sfcode`\;=\@m \sfcode`\,=\@m
+      \def\endofsentencespacefactor{1000}% for @. and friends
+    \fi
   }
   \def\plainnonfrenchspacing{%
-    \sfcode`\.3000\sfcode`\?3000\sfcode`\!3000
-    \sfcode`\:2000\sfcode`\;1500\sfcode`\,1250
-    \def\endofsentencespacefactor{3000}% for @. and friends
+    \iffrenchspacing
+      \frenchspacingfalse
+       \sfcode`\.3000\sfcode`\?3000\sfcode`\!3000
+       \sfcode`\:2000\sfcode`\;1500\sfcode`\,1250
+       \def\endofsentencespacefactor{3000}% for @. and friends
+    \fi
   }
 \catcode`@=\other
 \def\endofsentencespacefactor{3000}% default
@@ -3389,8 +3403,8 @@ $$%
 \let\atchar=\@
 
 % @{ @} @lbracechar{} @rbracechar{} all generate brace characters.
-\def\lbracechar{{\ifmonospace\char123\else\ensuremath\lbrace\fi}}
-\def\rbracechar{{\ifmonospace\char125\else\ensuremath\rbrace\fi}}
+\def\lbracechar{{\ifusingtt{\char123}{\ensuremath\lbrace}}}
+\def\rbracechar{{\ifusingtt{\char125}{\ensuremath\rbrace}}}
 \let\{=\lbracechar
 \let\}=\rbracechar
 
@@ -3537,7 +3551,7 @@ $$%
 
 % @pounds{} is a sterling sign, which Knuth put in the CM italic font.
 %
-\def\pounds{\ifmonospace{\ecfont\char"BF}\else{\it\$}\fi}
+\def\pounds{{\ifusingtt{\ecfont\char"BF}{\it\$}}}
 
 % @euro{} comes from a separate font, depending on the current style.
 % We use the free feym* fonts from the eurosym package by Henrik
@@ -3651,18 +3665,17 @@ $$%
   % hopefully nobody will notice/care.
   \edef\ecsize{\csname\curfontsize ecsize\endcsname}%
   \edef\nominalsize{\csname\curfontsize nominalsize\endcsname}%
-  \ifmonospace
-    % typewriter:
-    \font\thisecfont = #1ctt\ecsize \space at \nominalsize
-  \else
-    \ifx\curfontstyle\bfstylename
-      % bold:
-      \font\thisecfont = #1cb\ifusingit{i}{x}\ecsize \space at \nominalsize
-    \else
-      % regular:
-      \font\thisecfont = #1c\ifusingit{ti}{rm}\ecsize \space at \nominalsize
-    \fi
-  \fi
+  \ifusingtt
+      % typewriter:
+     {\font\thisecfont = #1ctt\ecsize \space at \nominalsize}%
+  % else
+     {\ifx\curfontstyle\bfstylename
+        % bold:
+        \font\thisecfont = #1cb\ifusingit{i}{x}\ecsize \space at \nominalsize
+      \else
+        % regular:
+        \font\thisecfont = #1c\ifusingit{ti}{rm}\ecsize \space at \nominalsize
+      \fi}%
   \thisecfont
 }
 
@@ -3695,11 +3708,11 @@ $$%
 % only change font for tt for correct kerning and to avoid using
 % \ecfont unless necessary.
 \def\quotedblleft{%
-  \ifmonospace{\ecfont\char"10}\else{\char"5C}\fi
+  \ifusingtt{{\ecfont\char"10}}{{\char"5C}}%
 }
 
 \def\quotedblright{%
-  \ifmonospace{\ecfont\char"11}\else{\char`\"}\fi
+  \ifusingtt{{\ecfont\char"11}}{{\char`\"}}%
 }
 
 
@@ -9338,13 +9351,6 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \makevalueexpandable
   \ifvmode
     \imagevmodetrue
-  \else \ifx\centersub\centerV
-    % for @center @image, we need a vbox so we can have our vertical space
-    \imagevmodetrue
-    \vbox\bgroup % vbox has better behavior than vtop here
-  \fi\fi
-  %
-  \ifimagevmode
     \medskip
     % Usually we'll have text after the image which will insert
     % \parskip glue, so insert it here too to equalize the space
@@ -9356,14 +9362,17 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \vtop\bgroup \kern -\capheight \vskip-\parskip
   \fi
   %
-  % Enter horizontal mode so that indentation from an enclosing
-  %  environment such as @quotation is respected.
-  % However, if we're at the top level, we don't want the
-  %  normal paragraph indentation.
-  % On the other hand, if we are in the case of @center @image, we don't
-  %  want to start a paragraph, which will create a hsize-width box and
-  %  eradicate the centering.
-  \ifx\centersub\centerV \else \imageindent \fi
+  \ifx\centersub\centerV
+    % For @center @image, enter vertical mode and add vertical space
+    % Enter an extra \parskip because @center doesn't add space itself.
+    \vbox\bgroup\vskip\parskip\medskip\vskip\parskip
+  \else
+    % Enter horizontal mode so that indentation from an enclosing
+    %  environment such as @quotation is respected.
+    % However, if we're at the top level, we don't want the
+    %  normal paragraph indentation.
+    \imageindent
+  \fi
   %
   % Output the image.
   \ifpdf
@@ -9388,7 +9397,10 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \egroup
     \medskip  % space after a standalone image
   \fi
-  \ifx\centersub\centerV \egroup \fi
+  \ifx\centersub\centerV % @center @image
+    \medskip
+    \egroup % close \vbox
+  \fi
 \endgroup}
 
 
@@ -11401,6 +11413,130 @@ directory should work if nowhere else does.}
 \hfuzz = 1pt
 
 
+\message{microtype,}
+
+% protrusion, from Thanh's protcode.tex.
+\def\mtsetprotcode#1{%
+  \rpcode#1`\!=200  \rpcode#1`\,=700  \rpcode#1`\-=700  \rpcode#1`\.=700
+  \rpcode#1`\;=500  \rpcode#1`\:=500  \rpcode#1`\?=200
+  \rpcode#1`\'=700
+  \rpcode#1 34=500  % ''
+  \rpcode#1 123=300 % --
+  \rpcode#1 124=200 % ---
+  \rpcode#1`\)=50   \rpcode#1`\A=50   \rpcode#1`\F=50   \rpcode#1`\K=50
+  \rpcode#1`\L=50   \rpcode#1`\T=50   \rpcode#1`\V=50   \rpcode#1`\W=50
+  \rpcode#1`\X=50   \rpcode#1`\Y=50   \rpcode#1`\k=50   \rpcode#1`\r=50
+  \rpcode#1`\t=50   \rpcode#1`\v=50   \rpcode#1`\w=50   \rpcode#1`\x=50
+  \rpcode#1`\y=50
+  %
+  \lpcode#1`\`=700
+  \lpcode#1 92=500  % ``
+  \lpcode#1`\(=50   \lpcode#1`\A=50   \lpcode#1`\J=50   \lpcode#1`\T=50
+  \lpcode#1`\V=50   \lpcode#1`\W=50   \lpcode#1`\X=50   \lpcode#1`\Y=50
+  \lpcode#1`\v=50   \lpcode#1`\w=50   \lpcode#1`\x=50   \lpcode#1`\y=0
+  %
+  \mtadjustprotcode#1\relax
+}
+
+\def\mtadjustprotcode#1{%
+  \countA=0
+  \loop
+    \ifcase\lpcode#1\countA\else
+      \mtadjustcp\lpcode#1\countA
+    \fi
+    \ifcase\rpcode#1\countA\else
+      \mtadjustcp\rpcode#1\countA
+    \fi
+    \advance\countA 1
+  \ifnum\countA < 256 \repeat
+}
+
+\newcount\countB
+\def\mtadjustcp#1#2#3{%
+  \setbox\boxA=\hbox{%
+    \ifx#2\font\else#2\fi
+    \char#3}%
+  \countB=\wd\boxA
+  \multiply\countB #1#2#3\relax
+  \divide\countB \fontdimen6 #2\relax
+  #1#2#3=\countB\relax
+}
+
+\ifx\XeTeXrevision\thisisundefined
+  \ifx\luatexversion\thisisundefined
+    \ifpdf % pdfTeX
+      \mtsetprotcode\textrm
+      \def\mtfontexpand#1{\pdffontexpand#1 20 20 1 autoexpand\relax}
+    \else % TeX
+      \def\mtfontexpand#1{}
+    \fi
+  \else % LuaTeX
+    \mtsetprotcode\textrm
+    \def\mtfontexpand#1{\expandglyphsinfont#1 20 20 1\relax}
+  \fi
+\else % XeTeX
+  \mtsetprotcode\textrm
+  \def\mtfontexpand#1{}
+\fi
+
+
+\newif\ifmicrotype
+
+\def\microtypeON{%
+  \microtypetrue
+  %
+  \ifx\XeTeXrevision\thisisundefined
+    \ifx\luatexversion\thisisundefined
+      \ifpdf % pdfTeX
+        \pdfadjustspacing=2
+        \pdfprotrudechars=2
+      \fi
+    \else % LuaTeX
+      \adjustspacing=2
+      \protrudechars=2
+    \fi
+  \else % XeTeX
+    \XeTeXprotrudechars=2
+  \fi
+  %
+  \mtfontexpand\textrm
+  \mtfontexpand\textsl
+  \mtfontexpand\textbf
+}
+
+\def\microtypeOFF{%
+  \microtypefalse
+  %
+  \ifx\XeTeXrevision\thisisundefined
+    \ifx\luatexversion\thisisundefined
+      \ifpdf % pdfTeX
+        \pdfadjustspacing=0
+        \pdfprotrudechars=0
+      \fi
+    \else % LuaTeX
+      \adjustspacing=0
+      \protrudechars=0
+    \fi
+  \else % XeTeX
+    \XeTeXprotrudechars=0
+  \fi
+}
+
+\microtypeON
+
+\parseargdef\microtype{%
+  \def\txiarg{#1}%
+  \ifx\txiarg\onword
+    \microtypeON
+  \else\ifx\txiarg\offword
+    \microtypeOFF
+  \else
+    \errhelp = \EMsimple
+    \errmessage{Unknown @microtype option `\txiarg', must be on|off}%
+  \fi\fi
+}
+
+
 \message{and turning on texinfo input format.}
 
 \def^^L{\par} % remove \outer, so ^L can appear in an @comment
@@ -11419,23 +11555,6 @@ directory should work if nowhere else does.}
 \catcode`\_=\other \def\normalunderscore{_}
 \catcode`\|=\other \def\normalverticalbar{|}
 \catcode`\~=\other \def\normaltilde{~}
-
-% This macro is used to make a character print one way in \tt
-% (where it can probably be output as-is), and another way in other fonts,
-% where something hairier probably needs to be done.
-%
-% #1 is what to print if we are indeed using \tt; #2 is what to print
-% otherwise.  Since all the Computer Modern typewriter fonts have zero
-% interword stretch (and shrink), and it is reasonable to expect all
-% typewriter fonts to have this, we can check that font parameter.
-%
-\def\ifusingtt#1#2{\ifdim \fontdimen3\font=0pt #1\else #2\fi}
-
-% Same as above, but check for italic font.  Actually this also catches
-% non-italic slanted fonts since it is impossible to distinguish them from
-% italic fonts.  But since this is only used by $ and it uses \sl anyway
-% this is not a problem.
-\def\ifusingit#1#2{\ifdim \fontdimen1\font>0pt #1\else #2\fi}
 
 % Set catcodes for Texinfo file
 
