@@ -6,8 +6,9 @@
 # Modified by Joachim Kock, May 2003
 # Modified by Gerben Wierda, April 2007
 # Modified by Bruno Voisin and Herbert Schulz, September 2018
+# Typos corrected by Karl Berry, October 2022.
 
-# COPYRIGHT Gerben Wierda 2001--2018
+# COPYRIGHT Gerben Wierda 2001--2022
 # This file is free software. You are free to use this file in any way you like
 # However, if you change it you should note in this file that you did and who
 # you are, you also need to change the version string if you do. That way
@@ -87,7 +88,7 @@
 # Version 2.8:	Checked into CVS.
 #		Added handling of outdir for TeX
 # Version 2.9:	Added auto-outdir flag
-# Version 2.10:	Changed --outdir behaviour to mimick TEXMFOUTPUT,
+# Version 2.10:	Changed --outdir behaviour to mimic TEXMFOUTPUT,
 #		removed --auto-outdir
 # Version 2.11:	Fixed typo
 # Version 2.12:	RCS changes, from now on, the version number is the RCS number
@@ -101,7 +102,7 @@
 #		display a blank page until the new version is ready.
 # 2003/05/21	Joachim's modification used /bin/cp. Gerben made it truly
 #		atomic by using /bin/cp in combination with /bin/mv
-# 2003/11/23	Added supportfor passing flasg to tex at the request of
+# 2003/11/23	Added support for passing flags to tex at the request of
 #		Dick Koch.
 # 2004/09/05	Bugfix: make it work better with directories with whitespace
 #		in their name
@@ -122,18 +123,19 @@
 #		options to be added to the distiller application; 
 #		e.g. "-dCompatibilityLevel=1.5 -dNOSAFER".
 #		Removed uses of echo -n.
-# 2018/09/24 Added -dCompatibilityLevel=15 into the distillerprog definition
-#		and removed quotes around execution of ${distillerprog} so it can
-#		contain options.
-
+# 2018/09/24    Added -dCompatibilityLevel=15 into the distillerprog definition
+#		and removed quotes around execution of ${distillerprog}
+#		so it can contain options.
+# 2022/10/12    Fix typos; no functional changes.
+# 
 # FEATURE: it seems -u +foo.map -u -foo.map does not work. So --extradvipsopts
 # cannot be used to remove a map from the standard list
 
-# BUG: Handling of file name extensions is not completely equialent to TeX
+# BUG: Handling of file name extensions is not completely equivalent to TeX
 # i.e. foo.bar.bla gets you foo.bar.pdf not foo.bar.bla.pdf
 # Hint: Give all extensions explicitly on the command line
 
-version='20180924'
+version='20221012'
 calledas=`basename "$0"`
 if [ "${calledas}" = "simpdftex" ]
 then
@@ -232,7 +234,7 @@ Arguments:
 		Display this message and exit
 	--no-echo-version
 		Do not echo location and version of this script. Does not exit
-		so can be used tochange info to the output of a real run
+		so can be used to change info to the output of a real run
 	--debug
 		Add some debug output
 	--extendedname
@@ -298,7 +300,7 @@ Arguments:
 	--distiller prog
 		Use a distiller different from ps2pdf which is the default.
 		Argument must be an executable or executable script that
-		gets called iwth two arguments: input file (PS) and output
+		gets called with two arguments: input file (PS) and output
 		file (PDF). E.g.:
 		--distiller=/usr/local/alternate/bin/ps2pdf
 		--distiller=pstill
@@ -329,7 +331,7 @@ Arguments:
 		overrides other flags that set dvipdfmopts.
 	--outdir dir
 		Write files here *if* our current directory is unwritable. This
-		mimicks the TEXMFOUTPUT environment variable of TeX, but
+		mimics the TEXMFOUTPUT environment variable of TeX, but
 		differently. The current dir becomes the value of --outdir and
 		the directory where the old current dir is added to TEXINPUTS.
 		This is more robust for reading and locating files.
@@ -648,15 +650,15 @@ main()
 
 	if [ "${startwithdvi}" = "yes" ]; then
 		if [ "${keeppsfile}" = "yes" ]; then
-			/bin/echo "### Succesfully generated ${savedpdffile} and ${savedpsfile}"
+			/bin/echo "### Successfully generated ${savedpdffile} and ${savedpsfile}"
 		else
-			/bin/echo "### Succesfully generated ${savedpdffile}"
+			/bin/echo "### Successfully generated ${savedpdffile}"
 		fi
 	else
 		if [ "${keeppsfile}" = "yes" ]; then
-			/bin/echo "### Succesfully generated ${dvifile}, ${savedpdffile} and ${savedpsfile}"
+			/bin/echo "### Successfully generated ${dvifile}, ${savedpdffile} and ${savedpsfile}"
 		else
-			/bin/echo "### Succesfully generated ${dvifile} and ${savedpdffile}"
+			/bin/echo "### Successfully generated ${dvifile} and ${savedpdffile}"
 		fi
 	fi
 
