@@ -21,9 +21,9 @@
 project(
   'pixman',
   ['c'],
-  version : '0.40.0',
+  version : '0.42.0',
   license : 'MIT',
-  meson_version : '>= 0.50.0',
+  meson_version : '>= 0.52.0',
   default_options : ['buildtype=debugoptimized'],
 )
 
@@ -37,6 +37,12 @@ add_project_arguments(
     '-fno-strict-aliasing',
     '-fvisibility=hidden',
     '-Wundef',
+    # -ftrapping-math is the default for gcc, but -fno-trapping-math is the
+    # default for clang.  The FLOAT_IS_ZERO macro is used to guard against
+    # floating-point exceptions, however with -fno-trapping-math, the compiler
+    # can reorder floating-point operations so that they occur before the guard.
+    # Note, this function is ignored in clang < 10.0.0.
+    '-ftrapping-math'
   ]),
   language : ['c']
 )
@@ -275,6 +281,22 @@ elif use_neon.enabled()
   error('NEON Support unavailable, but required')
 endif
 
+use_a64neon = get_option('a64-neon')
+have_a64neon = false
+if not use_a64neon.disabled()
+  if host_machine.cpu_family() == 'aarch64'
+    if cc.compiles(files('a64-neon-test.S'), name : 'NEON A64 Intrinsic Support')
+      have_a64neon = true
+    endif
+  endif
+endif
+
+if have_a64neon
+  config.set10('USE_ARM_A64_NEON', true)
+elif use_a64neon.enabled()
+  error('A64 NEON Support unavailable, but required')
+endif
+
 use_iwmmxt = get_option('iwmmxt')
 have_iwmmxt = false
 iwmmxt_flags = ['-flax-vector-conversions', '-Winline']
@@ -390,10 +412,8 @@ else
   dep_openmp = null_dep
 endif
 
-dep_gtk = dependency('gtk+-2.0', version : '>= 2.16', required : get_option('gtk'))
+dep_gtk = dependency('gtk+-3.0', required : get_option('gtk'))
 dep_glib = dependency('glib-2.0', required : get_option('gtk'))
-dep_pixman = dependency('pixman-1', required : get_option('gtk'),
-                        version : '>= ' + meson.project_version())
 
 dep_png = null_dep
 if not get_option('libpng').disabled()
@@ -472,15 +492,25 @@ foreach h : ['sys/mman.h', 'fenv.h', 'unistd.h']
   endif
 endforeach
 
-# gcc on Windows only warns that __declspec(thread) isn't supported,
-# passing -Werror=attributes makes it fail.
-if (host_machine.system() == 'windows' and
-    cc.compiles('int __declspec(thread) foo;',
-                args : cc.get_supported_arguments(['-Werror=attributes']),
-                name : 'TLS via __declspec(thread)'))
-  config.set('TLS', '__declspec(thread)')
-elif cc.compiles('int __thread foo;', name : 'TLS via __thread')
-  config.set('TLS', '__thread')
+use_tls = get_option('tls')
+have_tls = ''
+if not use_tls.disabled()
+  # gcc on Windows only warns that __declspec(thread) isn't supported,
+  # passing -Werror=attributes makes it fail.
+  if (host_machine.system() == 'windows' and
+      cc.compiles('int __declspec(thread) foo;',
+                  args : cc.get_supported_arguments(['-Werror=attributes']),
+                  name : 'TLS via __declspec(thread)'))
+    have_tls = '__declspec(thread)'
+  elif cc.compiles('int __thread foo;', name : 'TLS via __thread')
+    have_tls = '__thread'
+  endif
+endif
+
+if have_tls != ''
+  config.set('TLS', have_tls)
+elif use_tls.enabled()
+  error('Compiler TLS Support unavailable, but required')
 endif
 
 if cc.links('''
@@ -528,15 +558,17 @@ version_conf.set('PIXMAN_VERSION_MICRO', split[2])
 add_project_arguments('-DHAVE_CONFIG_H', language : ['c'])
 
 subdir('pixman')
-subdir('test')
-subdir('demos')
+
+if not get_option('tests').disabled()
+  subdir('test')
+  subdir('demos')
+endif
 
 pkg = import('pkgconfig')
-pkg.generate(
+pkg.generate(libpixman,
   name : 'Pixman',
   filebase : 'pixman-1',
   description : 'The pixman library (version 1)',
-  libraries : libpixman,
   subdirs: 'pixman-1',
   version : meson.project_version(),
 )

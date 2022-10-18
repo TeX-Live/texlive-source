@@ -54,6 +54,11 @@ option(
   description : 'Use ARM NEON intrinsic optimized paths',
 )
 option(
+  'a64-neon',
+  type : 'feature',
+  description : 'Use ARM A64 NEON intrinsic optimized paths',
+)
+option(
   'iwmmxt',
   type : 'feature',
   description : 'Use ARM IWMMXT intrinsic optimized paths',
@@ -75,9 +80,19 @@ option(
   description : 'Use GNU style inline assembler',
 )
 option(
+  'tls',
+  type : 'feature',
+  description : 'Use compiler support for thread-local storage',
+)
+option(
+  'cpu-features-path',
+  type : 'string',
+  description : 'Path to platform-specific cpu-features.[ch] for systems that do not provide it (e.g. Android)',
+)
+option(
   'openmp',
   type : 'feature',
-  description : 'Enable openmp support',
+  description : 'Enable OpenMP for tests',
 )
 option(
   'timers',
@@ -94,10 +109,15 @@ option(
 option(
   'gtk',
   type : 'feature',
-  description : 'Enable tests using GTK',
+  description : 'Enable demos using GTK',
 )
 option(
   'libpng',
   type : 'feature',
-  description : 'Use libpng'
+  description : 'Use libpng in tests'
+)
+option(
+  'tests',
+  type : 'feature',
+  description : 'Build tests and demos'
 )

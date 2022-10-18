@@ -1,4 +1,4 @@
-	Building pixman-0.40.0 as part of the TL tree
+	Building pixman-0.42.0 as part of the TL tree
 	=============================================
 
 This directory libs/pixman/ uses a proxy Makefile.am to build the pixman
@@ -12,4 +12,4 @@ been translated into equivalent test in libs/pixman/configure.ac.
 
 2012-11-10	Taco Hoekwater <taco@metatex.org>
 2012-11-15	Peter Breitenlohner <peb@mppmu.mpg.de>
-2020-04-21	Akira Kakuto <kakuto@w32tex.org>
+2022-10-19	Akira Kakuto <kakuto@jcom.zaq.ne.jp>
