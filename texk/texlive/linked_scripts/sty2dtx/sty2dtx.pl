@@ -9,11 +9,19 @@ sty2dtx -- Converts a LaTeX .sty file to a documented .dtx file
 
 =head1 VERSION
 
-Version: v2.3
+Version: v2.4 - 2022/10/18
+
+=head1 LINKS
+
+CTAN: https://ctan.org/pkg/sty2dtx
+
+Repository: https://github.com/MartinScharrer/sty2dtx
+
+Issues: https://github.com/MartinScharrer/sty2dtx/issues
 
 =head1 COPYRIGHT
 
-Copyright (c) 2010-2012 Martin Scharrer <martin@scharrer-online.de>
+Copyright (c) 2010-2022 Martin Scharrer <martin.scharrer@web.de>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -26,7 +34,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 =head1 DESCRIPTION
@@ -220,7 +228,7 @@ Produce DTX file for a class:
 
 Martin Scharrer 
 
-E-mail: L<martin@scharrer-online.de>
+E-mail: L<martin.scharrer@web.de>
 
 WWW: L<http://www.scharrer-online.de>
 
@@ -229,7 +237,7 @@ WWW: L<http://www.scharrer-online.de>
 ################################################################################
 use Pod::Usage;
 
-my $VERSION = "v2.3";
+my $VERSION = "v2.4";
 $VERSION =~ tr/-/\//;
 
 my $TITLE = << "EOT";
@@ -329,11 +337,11 @@ my $rmacrodef  = qr/
      )
     \\(
           [gex]?def \s* \\                                   # TeX definitions
-        | (?:new|renew|provide)command\s* \*? \s* {? \s* \\  # LaTeX definitions
-        | \@namedef{?                                        # Definition by name only
+        | (?:new|renew|provide)command\s* \*? \s* \{? \s* \\ # LaTeX definitions
+        | \@namedef\{?                                       # Definition by name only
      )
      ($rmacroname)                                           # Macro name without backslash
-     \s* }?                                                  # Potential closing brace
+     \s* \}?                                                 # Potential closing brace
      (.*)                                                    # Rest of line
     /xms;
 
@@ -342,19 +350,19 @@ my $rkeydef  = qr/
     \\
     (define\@[a-z]*key)
     \s*
-    {([^}]+)}                                                # Key family
+    \{([^}]+)\}                                              # Key family
     \s*
-    {([^}]+)}                                                # Key name
+    \{([^}]+)\}                                              # Key name
      (.*)                                                    # Rest of line
     /xms;
 
 my $renvdef = qr/
     ^                                                        # Begin of line (no whitespaces!)
      \\(
-        (?:new|renew|provide)environment\s* { \s*            # LaTeX definitions
+        (?:new|renew|provide)environment\s* \{ \s*           # LaTeX definitions
      )
      ($renvname)                                             # Environment names follow same rules as macro names
-     \s* }                                                   # closing brace
+     \s* \}                                                  # closing brace
      (.*)                                                    # Rest of line
     /xms;
 
@@ -378,6 +386,7 @@ sub close_environment {
 }
 
 my ( $mday, $mon, $year ) = ( localtime(time) )[ 3 .. 5 ];
+$mday = sprintf( "%02d", $mday );
 $mon = sprintf( "%02d", $mon + 1 );
 $year += 1900;
 
@@ -748,7 +757,7 @@ while (<>) {
     # Real comments are either: 1) starting with a '%' at SOL or 2) are followed
     # by at least one whitespace. This exclude (most) commented out code.
     elsif (/^%|^\s*%\s/) {
-        if (!$removeenvs || !/^%\s+\\(?:begin|end){(?:macro|environment|macrocode|key)}/) {
+        if (!$removeenvs || !/^%\s+\\(?:begin|end)\{(?:macro|environment|macrocode|key)\}/) {
             $_ =~ s/^\s*//;
             if ($comments || !/^%\s*$/){
                 $comments .= $_;
