@@ -2,13 +2,13 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.49
+# Version : 4.50
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
 
 # This file is distributed as part of the glossaries LaTeX package.
-# Copyright 2019 Nicola L.C. Talbot
+# Copyright 2007-2022 Nicola L.C. Talbot
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
 # of this license or any later version.
@@ -28,12 +28,18 @@
 # glossary-mcols.sty, glossary-super.sty, glossary-superragged.sty, 
 # glossary-tree.sty, glossaries-compatible-207.sty, 
 # glossaries-compatible-307.sty, glossaries-accsupp.sty, 
-# glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
+# glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.l2h.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.49 (2021-11-01)";
+my $version="4.50 (2022-10-14)";
 
 # History:
+# v4.50:
+#   * Added -e (don't fix encap clashes)
+#   * Add check for glsignore with encap clashes
+#   * Don't fix encap clash if counter or prefix different
+#   * Added check for illegal page
+#   * Added brazil, brazilian, canadian and canadien mappings
 # v4.48-4.49:
 #   * No change. (Version number updated in line with glossaries.sty)
 # v4.47:
@@ -142,9 +148,10 @@ use strict;
 use warnings;
 # v2.05 added $opt_d
 # v2.08 added $opt_x and $opt_m
+# v4.50 added $opt_e
 use vars qw($opt_q $opt_t $opt_o $opt_s $opt_p $opt_g $opt_c $opt_r
    $opt_l $opt_i $opt_L $opt_n $opt_C $opt_d $opt_x $opt_m $opt_Q
-   $opt_k);
+   $opt_k $opt_e);
 
 
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
@@ -153,7 +160,7 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 # .tex file)
 # v1.5 added -n (print the command that would be issued but
 # don't actually run the command)
-getopts('s:o:t:p:L:C:ilqQkrcgnd:x:m:');
+getopts('s:o:t:p:L:C:ilqQkrcgnd:x:m:e');
 
 unless ($#ARGV == 0)
 {
@@ -169,7 +176,11 @@ my %languagemap =
 (
   'american'  => 'english',
   'austrian'  => 'german',
+  'brazil'    => 'portuguese',# v4.50
+  'brazilian' => 'portuguese',# v4.50
   'british'   => 'english',
+  'canadian'  => 'english',# v4.50
+  'canadien'  => 'french',# v4.50
   'francais'  => 'french',
   'frenchb'   => 'french',
   'germanb'   => 'german',
@@ -242,10 +253,11 @@ my %xindy_error_text =
         "\nRemember to use package option 'nomain' if you don't\n".
         "want to use the main glossary.",
 #v2.21: fixed spelling of \GlsAddXdyLocation
+#v4.50: added reference to esclocations
     'badlocation' =>
         "You may have forgotten to add a location \n"
         . "class with \\GlsAddXdyLocation or you may have \n"
-        . "the format incorrect.\n",
+        . "the format incorrect or you may need \nthe package option esclocations=true.\n",
     'comp207' => "You may need to add 'compatible-2.07' package option.",
     'noxdyfile' => "Style file not found. (Have you used \\noist by mistake?)"
  );
@@ -363,6 +375,8 @@ unless ($istfile)
 my $xindyapp = ($opt_x ? $opt_x :'xindy');
 my $makeindexapp = ($opt_m ? $opt_m :'makeindex');
 
+my $fixencapclash = ($opt_e ? 0 : 1);
+
 # v2.11 check for backslash character if on Windows
 if ($^O=~/Win/)
 {
@@ -386,6 +400,8 @@ my $mkidxopts = '';
 
 if ($opt_i)
 {
+# This option is of limited use as the basename must be supplied to
+# makeglossaries 
    $mkidxopts .= " -i";
 }
 
@@ -545,7 +561,7 @@ if ($ext)
    else
    {
       &makeindex("$name.$ext",$outfile,$transcript,$istfile,
-                 $mkidxopts,$opt_q, $opt_n, $makeindexapp, 1);
+                 $mkidxopts,$opt_q, $opt_n, $makeindexapp, $fixencapclash);
    }
 
 
@@ -672,7 +688,7 @@ else
       else
       {
          &makeindex($inputfile,$outfile,$transcript,
-                    $istfile,$mkidxopts,$opt_q,$opt_n, $makeindexapp, 1);
+                    $istfile,$mkidxopts,$opt_q,$opt_n, $makeindexapp, $fixencapclash);
       }
    }
 }
@@ -952,7 +968,16 @@ sub run_app{
       }
    }
 
-   if ($log=~/\(0 entries accepted,/
+   my $accepted = 1;
+   my $rejected = 0;
+
+   if ($log=~/\((\d+) entries accepted, (\d+) rejected\)/)
+   {
+      $accepted = $1;
+      $rejected = $2;
+   }
+
+   if ($accepted == 0 or $rejected > 0
     or ( ($log=~/(\d+) warnings?/ and $1 gt 0))
     or $log=~/not found/)
    {
@@ -972,8 +997,9 @@ sub run_app{
                $errno = $xdynotist;
                last;
             }
-            elsif (/## Warning \(.*\):\s*$/)
+            elsif (/## Warning \(.*\):\s*$/ or /^!! Input index error/)
             {
+               # v4.50: added check for Input index error
                $warnings .= $_ . <TRANS>;
             }
          }
@@ -1023,7 +1049,7 @@ sub makeindex{
           "\nPossible cause of problem:\n\n".  $diagnostic . "\n\n":
           "\n"
         ),
-        "Check '$trans' for details\n";
+        "Exit status: $errno. Check '$trans' for details\n";
    }
 
    # 2.18: added check and repair for multiple encaps
@@ -1031,12 +1057,94 @@ sub makeindex{
    {
       warn $warnings unless $quiet;
 
-      if ($repairencaps and $warnings=~/multiple encaps/)
+      my $multiencaps = $repairencaps and ($warnings=~/multiple encaps/);
+
+      # 4.50: added check for illegal page and cs in page
+
+      my $illegalpage = ($warnings=~/Illegal [A-Za-z]+ (number|digit)/);
+
+      # 'Illegal space within numerals in second argument'
+      # and 'No closing delimiter for second argument' most likely
+      # mean that a command has ended up in the location
+
+      my $csinlocation = ($warnings=~/(Illegal space|No closing delimiter).* second argument/);
+
+      # 4.50: added check for illegal page number
+      if ($multiencaps or $illegalpage or $csinlocation)
       {
          unless ($quiet)
          {
-            print "Multiple encaps detected. Attempting to remedy.\n";
+            my $msg = '';
+
+            if ($multiencaps)
+            {
+               $msg = "multiple encaps";
+            }
+
+            if ($illegalpage)
+            {
+               if ($msg)
+               {
+                  $msg .= ', ';
+               }
+
+               $msg .= "illegal page number";
+            }
+
+            if ($csinlocation)
+            {
+               if ($msg)
+               {
+                  $msg .= ', ';
+               }
+
+               $msg .= "potential LaTeX commands in location";
+            }
+
+            print "Encap/location issue: $msg detected. Attempting to remedy.\n";
+
             print "Reading $in...\n";
+         }
+
+         my $page_invalid_regex = '[^a-zA-Z0-9\.]';
+         my $pagecomp = '.';
+         my $regexpagecomp = '\.';
+
+         if ($illegalpage)
+         {
+            # get the page compositor from the .ist file
+            if (open INFD, $ist)
+            {
+               while (<INFD>)
+               {
+                  if (/page_compositor "(.)"/)
+                  {
+                     $pagecomp = $1;
+                     last;
+                  }
+               }
+
+               close INFD;
+            }
+            else
+            {
+               warn "Can't open '$ist' $!\n";
+            }
+
+            if ($pagecomp eq '.' or $pagecomp eq '-' 
+                or $pagecomp eq '\\'or $pagecomp eq ']')
+            {
+               $regexpagecomp = "\\$pagecomp";
+            }
+            else
+            {
+               $regexpagecomp = $pagecomp;
+            }
+
+            if ($pagecomp ne '.')
+            {
+               $page_invalid_regex = "[^a-zA-Z0-9$regexpagecomp]";
+            }
          }
 
          # if $in can't be opened at this point something wrong
@@ -1049,65 +1157,185 @@ sub makeindex{
 
          while (<INFD>)
          {
-            if (/\\glossaryentry\{(.*)\|([^\|]*)\}\{(.*?)\}/)
+            # The encap usually starts with setentrycounter but may have
+            # ( or ) to indicate the start or end of a range.
+            # The encap will be glsseeformat for cross-references.
+            # \glossentry and \subglossentry may be preceded by
+            # \glsnonextpages or \glsnextpages
+
+            if (/\\glossaryentry\{(.*(?:\\glossentry|\\subglossentry\{\d+\}))\{([^\|]*)\}\|([^\|]*)\}\{(.*)\}$/)
             {
                my %entry = 
                 (
-                   'entry' => $1,
-                   'encap' => $2,
-                   'location' => $3
+                   'entry' => "$1\{$2\}",
+                   'label' => $2,
+                   'encap' => $3,
+                   'location' => $4,
+                   'counter'=>'',
+                   'prefix'=>''
                 );
+
+               # Find the page counter (not available with
+               # cross-references)
+               if ($entry{'encap'}=~/setentrycounter\[(.*)\]\{([a-zA-Z0-9]+)\}"\\/)
+               {
+                  $entry{'prefix'} = $1;
+                  $entry{'counter'} = $2;
+               }
+
+               # First move any commands out of the location.
+               if ($csinlocation)
+               {
+                  my $loc = $entry{'location'};
+                  my $encap = $entry{'encap'};
+
+                  # This is only designed for locations in the form
+                  # \cs{num} but allow for \protect\cs
+                  if ($loc=~m/^(?:\\protect *)?\\([A-Za-z\@]+) *\{(.*)\}$/)
+                  {
+                     my $cs = $1;
+                     $loc = $2;
+
+                     # Normal glossary indexing will have the encap
+                     # start with setentrycounter[prefix]{counter}
+                     # This won't match a cross-reference (see) but
+                     # that has its location always set to Z.
+
+                     if ($encap=~/^(setentrycounter\[.*\]\{.*\}"\\)(.*)$/)
+                     {
+                        $entry{'encap'} = "$1glslocationcstoencap\{$2\}\{$cs\}";
+
+                        unless ($quiet)
+                        {
+                           print "Invalid location '$entry{location}' detected for entry '$entry{label}'. Replaced with '$loc'\n";
+                        }
+                     }
+                     elsif (not $quiet)
+                     {
+                        warn "Invalid location '$entry{location}' detected for entry '$entry{label}' has unexpected encap '$encap'. Location replaced with '$loc'\n";
+                     }
+
+                     $entry{'location'} = $loc;
+                  }
+               }
+
+               if ($illegalpage)
+               {
+                  my $loc = $entry{'location'};
+
+                  if ($loc=~s/($page_invalid_regex)+/$pagecomp/g)
+                  {
+                     unless ($quiet)
+                     {
+                        print "Invalid location '$entry{location}' detected for entry '$entry{label}'. Replaced with '$loc'\n";
+                     }
+
+                  }
+
+                  if ($loc=~s/^($regexpagecomp)+//)
+                  {
+                     unless ($quiet)
+                     {
+                        print "Invalid location '$entry{location}' (starts with page compositor) detected for entry '$entry{label}'. Replaced with '$loc'\n";
+                     }
+                  }
+
+                  if ($loc=~s/($regexpagecomp)+$//)
+                  {
+                     unless ($quiet)
+                     {
+                        print "Invalid location '$entry{location}' (ends with page compositor) detected for entry '$entry{label}'. Replaced with '$loc'\n";
+                     }
+                  }
+
+                  if ($loc eq '')
+                  {
+                     unless ($quiet)
+                     {
+                        print "Invalid empty location detected for entry '$entry{label}'. Replaced with 0 (encap: glsignore).\n";
+                     }
+
+                     $loc = '0';
+                     $entry{'encap'} = 'glsignore';
+                  }
+
+                  $entry{'location'} = $loc;
+               }
 
                my $add = 1;
 
-               for (my $idx = 0; $idx <= $#entries; $idx++)
+               if ($multiencaps)
                {
-                  my $existing = $entries[$idx];
-
-                  if ($entry{'entry'} eq $existing->{'entry'}
-                  and $entry{'location'} eq $existing->{'location'}
-                  and $entry{'encap'} ne $existing->{'encap'})
+                  for (my $idx = 0; $idx <= $#entries; $idx++)
                   {
-                     $add = 0 if ($add == 1);
+                     my $existing = $entries[$idx];
 
-                     # Range encaps should take precedence.
+                     #v4.50: added check for prefix and counter
+                     # Since the encap includes the prefix and
+                     # counter information, the same location and
+                     # format for different counters or prefixes
+                     # will be considered an encap clash by
+                     # makeindex, but shouldn't be merged.
 
-                     if ($entry{'encap'}=~/^[\(\)]/)
+                     if ($entry{'entry'} eq $existing->{'entry'}
+                     and $entry{'location'} eq $existing->{'location'}
+                     and $entry{'prefix'} eq $existing->{'prefix'}
+                     and $entry{'counter'} eq $existing->{'counter'}
+                     and $entry{'encap'} ne $existing->{'encap'})
                      {
-                        $add = 2;
-
-                        if ($existing->{'encap'}=~/^[\(\)]/)
+                        unless ($quiet)
                         {
-                           # too complicated, keep both
-
-                           last;
+                           if ($entry{'counter'} eq '' and $entry{'location'} eq 'Z')
+                           {
+                              print "Encap clash for entry '$entry{label}' possibly caused by multiple cross-reference instances\n";
+                           }
+                           else
+                           {
+                              print "Encap clash detected for entry '$entry{label}', counter: '$entry{counter}', location: '$entry{location}'. Encap '$entry{encap}' clashes with '$existing->{'encap'}'\n";
+                           }
                         }
-                        else
-                        {
-                           # remove existing
 
-                           splice @entries, $idx, 1;
+                        $add = 0 if ($add == 1);
 
-                           $idx--;
-                        }
-                     }
-                     elsif ($existing->{'encap'}=~/^[\(\)]/)
-                     {
+                        # Range encaps should take precedence.
+
                         if ($entry{'encap'}=~/^[\(\)]/)
                         {
-                           # too complicated, keep both
+                           $add = 2;
 
-                           $add = 1;
-                           last;
+                           if ($existing->{'encap'}=~/^[\(\)]/)
+                           {
+                              # too complicated, keep both
+
+                              last;
+                           }
+                           else
+                           {
+                              # remove existing
+
+                              splice @entries, $idx, 1;
+
+                              $idx--;
+                           }
                         }
-                        # (otherwise drop new entry)
-                     }
-                     elsif (&encap_overrides($entry{'encap'},
-                                   $existing->{'encap'}))
-                     {
-                        $entries[$idx] = \%entry;
-                     }
-                  } 
+                        elsif ($existing->{'encap'}=~/^[\(\)]/)
+                        {
+                           if ($entry{'encap'}=~/^[\(\)]/)
+                           {
+                              # too complicated, keep both
+
+                              $add = 1;
+                              last;
+                           }
+                           # (otherwise drop new entry)
+                        }
+                        elsif (&encap_overrides($entry{'encap'},
+                                      $existing->{'encap'}))
+                        {
+                           $entries[$idx] = \%entry;
+                        }
+                     } 
+                  }
                }
 
                push @entries, \%entry if $add > 0;
@@ -1156,9 +1384,19 @@ sub makeindex{
 # as it would need a corresponding LaTeX command. (bib2gls deals
 # with this better through its --map-formats switcn.)
 # 2.21 check for range encap moved earlier
+# 4.50 add check for glsignore
 
 sub encap_overrides{
   my ($newencap, $existing) = @_;
+
+  if ($newencap=~/\\glsignore\s*$/)
+  {
+     return 0;
+  }
+  elsif ($existing=~/\\glsignore\s*$/)
+  {
+     return 1;
+  }
 
   ($existing=~/\\glsnumberformat\s*$/ or $newencap!~/\\glsnumberformat\s*$/ )
 }
@@ -1189,58 +1427,114 @@ sub xindy{
    }
 
    # most languages work with xindy's default codepage, but
-   # some don't, so if the codepage isn't specific, check
+   # some don't, so if the codepage isn't specified, check
    # the known cases that will generate an error
    # and supply a default. (For all other cases, it's up to the 
    # user to supply a codepage.)
+   #
+   # Now that glossaries.sty v4.50 will default to 'utf8' if
+   # \inputencodingname hasn't been defined or is empty, this also
+   # needs to check 'utf8'.
 
 # v2.01 changed 'if ($codepage eq "")' to 'unless ($codepage)'
-   unless ($codepage)
+# v4.50 changed to conditional to include encoding without modifiers
+
+   if ($codepage eq '' or $codepage=~/^utf8|latin\d+|cp\d+$/)
    {
       if ($language eq 'dutch')
       {
-         $codepage = "ij-as-ij";
+         if ($codepage eq '')
+         {
+            $codepage = "ij-as-ij";
+         }
+         else
+         {
+            $codepage = "ij-as-ij-$codepage";
+         }
       }
       elsif ($language eq 'german')
       {
-         $codepage = "din5007";
+         if ($codepage eq '')
+         {
+            $codepage = "din5007";
+         }
+         else
+         {
+            $codepage = "din5007-$codepage";
+         }
       }
       elsif ($language eq 'gypsy')
       {
-         $codepage = "northrussian";
+         if ($codepage eq '')
+         {
+            $codepage = "northrussian";
+         }
+         else
+         {
+            $codepage = "northrussian-$codepage";
+         }
       }
-      elsif ($language eq 'hausa')
+      elsif ($language eq 'hausa' and $codepage eq '')
       {
-         $codepage = "utf";
+         $codepage = "utf8";
       }
-      elsif ($language eq 'klingon')
+      elsif ($language eq 'klingon' and $codepage eq '')
       {
-         $codepage = "utf";
+         $codepage = "utf8";
       }
-      elsif ($language eq 'latin')
+      elsif ($language eq 'latin' and $codepage eq '')
       {
-         $codepage = "utf";
+         $codepage = "utf8";
       }
       elsif ($language eq 'mongolian')
       {
-         $codepage = "cyrillic";
+         if ($codepage eq '')
+         {
+            $codepage = "cyrillic";
+         }
+         else
+         {
+            $codepage = "cyrillic-$codepage";
+         }
       }
       elsif ($language eq 'slovak')
       {
-         $codepage = "small";
+         if ($codepage eq '')
+         {
+            $codepage = "small";
+         }
+         else
+         {
+            $codepage = "small-$codepage";
+         }
       }
       elsif ($language eq 'spanish')
       {
-         $codepage = "modern";
+         if ($codepage eq '')
+         {
+            $codepage = "modern";
+         }
+         else
+         {
+            $codepage = "modern-$codepage";
+         }
       }
       elsif ($language eq 'vietnamese')
       {
-         $codepage = "utf";
+         if ($codepage eq '')
+         {
+            $codepage = "utf8";
+         }
+         else
+         {
+            $codepage = "utf8-$codepage";
+         }
       }
    }
    elsif ($language eq 'german' and $codepage!~/(din5007|duden|braille)/)
    {
 #v2.16 added check for german din/duden
+#v4.50 now redundant? may be removed in the next version
 
       $codepage = "din5007-$codepage";
    }
@@ -1535,6 +1829,7 @@ sub HELP_MESSAGE{
    print "(See makeindex documentation for further details on these ";
    print "options.)\n\n";
    print "-c\t\tCompress intermediate blanks.\n";
+   print "-e\t\tDon't attempt to fix multiple encaps.\n";
    print "-g\t\tEmploy German word ordering.\n";
    print "-p <num>\tSet the starting page number to be <num>.\n";
    print "-r\t\tDisable implicit page range formation.\n";
@@ -1567,7 +1862,7 @@ makeglossaries  - Calls makeindex/xindy for LaTeX documents using glossaries pac
 B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-Q>] [B<-k>] [B<-n>]
 [B<-s> I<file>] [B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
 [B<-p> I<num>] [B<-r>] [B<-d> I<aux dir>] [B<-m> I<file>] [B<-x> I<file>]
-[B<--version>] [B<--help>] I<basename>
+[B<-e>] [B<--version>] [B<--help>] I<basename>
 
 =head1 DESCRIPTION
 
@@ -1584,18 +1879,41 @@ the option arguments to B<makeglossaries>.
 
 =over 4
 
-=item B<-q>
+=item B<-e>
 
-Quiet mode. Reduces chatter to standard output.
+Don't attempt to repair multiple encaps or illegal page number (B<makeindex> only).
 
-=item B<-Q>
+=item B<-c>
 
-Silences warning about being unable to fork.
+Compress intermediate blanks (B<makeindex> only).
+
+=item B<-d> I<aux dir>
+
+Specify the directory the .aux, .glo etc files are located.
+Defaults to the parent directory of the base file I<filename>.
+
+=item B<-g>
+
+Employ German word ordering (B<makeindex> only).
 
 =item B<-k>
 
 Don't try forking with piped redirection. (Lessens the
 effect of -q)
+
+=item B<-l>
+
+Letter ordering.
+
+=item B<-L> I<language>
+
+This option only has an effect if B<xindy> is called. Sets the
+language. See B<xindy> documentation for further details.
+
+=item B<-m> I<file>
+
+Specify the full path name for B<makeindex> to I<file> in the 
+event that B<makeindex> isn't on the operating system's path.
 
 =item B<-n>
 
@@ -1607,6 +1925,20 @@ Use I<file> as the output file. (Only suitable for documents
 containing a single glossary, otherwise each glossary will be
 overridden.)
 
+=item B<-p> I<num>
+
+Sets the starting page number to be I<num> (B<makeindex> only).
+
+=item B<-q>
+
+Quiet mode. Reduces chatter to standard output.
+
+=item B<-Q>
+
+Silences warning about being unable to fork.
+
+=item B<-r>
+
 =item B<-s> I<file>
 
 Use I<file> as the style file. Note that if you use this option,
@@ -1617,40 +1949,7 @@ they have different style files.
 
 Use I<file> as the transcript file.
 
-=item B<-l>
-
-Letter ordering.
-
-=item B<-L> I<language>
-
-This option only has an effect if B<xindy> is called. Sets the
-language. See B<xindy> documentation for further details.
-
-=item B<-c>
-
-Compress intermediate blanks (B<makeindex> only).
-
-=item B<-g>
-
-Employ German word ordering (B<makeindex> only).
-
-=item B<-p> I<num>
-
-Sets the starting page number to be I<num> (B<makeindex> only).
-
-=item B<-r>
-
 Disable implicit page range formation (B<makeindex> only).
-
-=item B<-d> I<aux dir>
-
-Specify the directory the .aux, .glo etc files are located.
-Defaults to the parent directory of the base file I<filename>.
-
-=item B<-m> I<file>
-
-Specify the full path name for B<makeindex> to I<file> in the 
-event that B<makeindex> isn't on the operating system's path.
 
 =item B<-x> I<file>
 

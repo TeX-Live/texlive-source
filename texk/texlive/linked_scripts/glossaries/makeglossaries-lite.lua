@@ -14,7 +14,7 @@
    use the Perl makeglossaries script.
   
    This file is distributed as part of the glossaries LaTeX package.
-   Copyright 2019 Nicola L.C. Talbot
+   Copyright 2015-2022 Nicola L.C. Talbot
    This work may be distributed and/or modified under the
    conditions of the LaTeX Project Public License, either version 1.3
    of this license or any later version.
@@ -32,11 +32,11 @@
    glossary-mcols.sty, glossary-super.sty, glossary-superragged.sty, 
    glossary-tree.sty, glossaries-compatible-207.sty, 
    glossaries-compatible-307.sty, glossaries-accsupp.sty, 
-   glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.perl.
+   glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.l2h.
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
-   * 4.48 - 4.49:
+   * 4.48 - 4.50:
      - no change.
    * 4.47:
      - Added hybrid instructions if record option detected but not \makeglossaries
@@ -70,7 +70,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.49 (2021-11-01)"
+thisversion = "4.50 (2022-10-14)"
 
 quiet = false
 dryrun = false
