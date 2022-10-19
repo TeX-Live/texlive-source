@@ -52,7 +52,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2021  Boris Veytsman
+Copyright (C) 2014-2022  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -61,13 +61,24 @@ extent permitted by law.
 
 =cut
 
-use strict;
+use strict; use warnings;
+use Cwd;
+use File::Basename;
+use File::Spec;
+
 BEGIN {
     # find files relative to our installed location within TeX Live
     chomp(my $TLMaster = `kpsewhich -var-value=TEXMFROOT`); # TL root
     if (length($TLMaster)) {
 	unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
     }
+     # find development bibtexperllibs in sibling checkout to this script,
+     # even if $0 is a symlink. All irrelevant when using from an installation.
+     my $real0 = Cwd::abs_path($0);
+     my $scriptdir = File::Basename::dirname($real0);
+     my $dev_btxperllibs = Cwd::abs_path("$scriptdir/../bibtexperllibs");
+     # we need the lib/ subdirectories inside ...
+     unshift (@INC, glob ("$dev_btxperllibs/*/lib")) if -d $dev_btxperllibs;
 }
 use IO::File;
 use BibTeX::Parser;

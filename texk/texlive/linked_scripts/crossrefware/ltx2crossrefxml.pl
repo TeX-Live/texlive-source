@@ -88,7 +88,6 @@ upload. The variables which are used are these:
     $abbrevTitle = "ABBR. TTL."; # optional
     $coden = "CODEN";            # optional
 
-
 For a given run, all C<.rpi> data read is assumed to belong to the
 journal that is specified in the configuration file. More precisely, the
 configuration data is written as a C<journal_metadata> element, with
@@ -247,10 +246,10 @@ Boris Veytsman L<https://github.com/borisveytsman/crossrefware>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2012-2021  Boris Veytsman
+Copyright (C) 2012-2022  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
-terms of the GNU General Public License
+terms of the GNU General Public License (any version)
 L<https://www.gnu.org/licenses/gpl.html>.  There is NO WARRANTY, to the
 extent permitted by law.
 
@@ -313,13 +312,13 @@ Releases: https://ctan.org/pkg/crossrefware
 END
 
  my $VERSION = <<END;
-ltx2crossrefxml (crossrefware) 2.51
+ltx2crossrefxml (crossrefware) 2.52
 This is free software: you are free to change and redistribute it, under
 the terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html (any version).
 There is NO WARRANTY, to the extent permitted by law.
 
-Written by Boris Veytsman.
+Written by Boris Veytsman with many additions by Karl Berry
 END
  use Getopt::Long;
  my %opts;
@@ -390,7 +389,11 @@ END
 	 foreach my $issue (keys %{$papers{$year}->{$volume}}) {
 	     PrintIssueHead($year, $volume, $issue);
 	     my $paperList = $papers{$year}->{$volume}->{$issue};
-	     foreach my $paper (@{$paperList}) {
+             #warn "papers for year=$year,  volume=$volume, issue=$issue\n";
+             # Nice to have the issue.xml in some stable order, so sort
+             # by starting page. Doesn't matter if it's not perfect.
+	     foreach my $paper (sort { $a->{startpage} cmp $b->{startpage} }
+				     @{$paperList}) {
 		 PrintPaper($paper);
 	     }
 	 }
@@ -456,6 +459,7 @@ sub AddPaper {
     open (RPI, $rpifile)
       or die "open($rpifile) failed: $! (did you process $file?)\n";
     my %data;
+    #warn "reading rpi file: $rpifile\n";
     while (<RPI>) {
 	chomp;
         if (/^%([^=]*)\s*=\s*(.*)\s*$/) {
@@ -478,13 +482,15 @@ sub AddPaper {
 
     # Die if the fields we use unconditionally are empty. Not all of
     # them are required by the schema, but we can wait to generalize.
-    foreach my $field (qw(title year volume issue startpage endpage doi)) {
+    foreach my $field (qw(title year volume issue startpage endpage doi
+                          paperUrl)) {
         if (! $data{$field}) {
             die ("$0: field must not be empty: $field\n  "
                  . &debug_hash_as_string("whole hash", %data));
         }
     }
 
+    #warn &debug_hash_as_string("new issue $data{volume}:$data{issue}", %data);
     push @{$papers{$data{year}}->{$data{volume}}->{$data{issue}}}, \%data;
 }
 
@@ -558,10 +564,10 @@ sub AddBibliography {
     
     # We look in the .rpi files too, which will generally have none.
     if (@result == 0 && $bibfile =~ /\.bbl$/) {
-        warn "$0: no \\bibitems found in: $bibfile\n";
+        warn "$0: *** no \\bibitems found in: $bibfile\n";
     } elsif ($insidebibliography) {
-        warn "$0: no \\end{thebibliography} found in: $bibfile\n";
-        warn "$0:   so the last bib entry is missing.\n";
+        warn "$0: *** no \\end{thebibliography} found in: $bibfile\n";
+        warn "$0:       so the last bib entry is missing!\n";
     }
     return @result;
 }
@@ -587,6 +593,7 @@ END
 ###############################################################
 sub PrintPaper {
     my $paper = shift;
+    #warn (&debug_hash_as_string ("doing paper", $paper));
     my $title = SanitizeText($paper->{title});
     my $url = GetURL($paper);
     my $publication_type = GetPublicationType($paper->{publicationType});
@@ -736,22 +743,27 @@ sub PrintAuthor {
              . " $orig_author\n");
     }
 
+    # for both author types, organization and person, we have to output
+    # the sequence number and the contributor role, which we assume to
+    # be author.
+    my $author_elts = qq!sequence="$seq" contributor_role="author"!;
     # for organizations, nothing to do but output it.
     if ($organization) {
         my $line = SanitizeText($author);
         print OUT <<END;
-        <organization>$line</organization>
+        <organization $author_elts>$line</organization>
 END
         return;
     }
     
     # what's left is the common case of a person, not an organization.
     print OUT <<END;
-        <person_name sequence="$seq" contributor_role="author">
+        <person_name $author_elts>
 END
 
-
+    # must split the person's name.
     my $person=new BibTeX::Parser::Author ($author);
+    #warn (debug_list_as_string ($author, $person));
 
     if ($person->first) {
         my $line = $person->first;
@@ -881,5 +893,18 @@ sub debug_hash_as_string {
   $str .= join (",", @items);
   $str .= "}";
 
+  return "$str\n";
+}
+
+##############################################################
+#  debug_list_as_string($LABEL, LIST)
+#
+# Same but for lists.
+##############################################################
+sub debug_list_as_string {
+  my ($label) = shift;
+  my (@list) = (ref $_[0] && $_[0] =~ /.*ARRAY.*/) ? @{$_[0]} : @_;
+
+  my $str = "$label [" . join (",", @list) . "]";
   return "$str\n";
 }
