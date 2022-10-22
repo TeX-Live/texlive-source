@@ -1,3 +1,12 @@
+2022-10-22  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+
+	* com16bit.ch: Sync with tex.ch changes:
+	  - 2022-07-16 r63916 to disallow \noexpand\endwrite.
+	  - 2021-07-22 r60013 explicit fmt loading error.
+	  - 2022-09-28 r64547 protect against recursive --halt-on-error.
+	* comsrcspec.ch: Sync with tex.ch changes:
+	  - 2022-09-28 r64547 protect against recursive --halt-on-error.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

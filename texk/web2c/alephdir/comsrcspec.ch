@@ -10,6 +10,7 @@
 @!parse_first_line_p:cinttype; {parse the first line for options}
 @!file_line_error_style_p:cinttype; {format messages as file:line:error}
 @!halt_on_error_p:boolean; {allow only on error.}
+@!halting_on_error_p:boolean; {already trying to halt?}
 
 @!src_specials_p : boolean;
 @!insert_src_special_auto : boolean;
@@ -62,7 +63,12 @@ print_char("."); show_context;
 @y
 print_char("."); show_context;
 if (halt_on_error_p) then begin
-  history:=fatal_error_stop; jump_out;
+  {If |close_files_and_terminate| generates an error, we'll end up back
+   here; just give up in that case. If files are truncated, too bad.}
+  if (halting_on_error_p) then do_final_end; {quit immediately}
+  halting_on_error_p:=true;
+  history:=fatal_error_stop;
+  jump_out;
 end;
 @z
 
