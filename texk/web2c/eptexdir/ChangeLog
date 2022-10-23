@@ -1,3 +1,8 @@
+2022-10-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* pdfutils.ch: Import a patch (2021-06-25 @h20y6m) to
+	  avoid access to uninitialized variables.
+
 2022-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* pdfutils.ch: Adapt to upstream tex.ch.
