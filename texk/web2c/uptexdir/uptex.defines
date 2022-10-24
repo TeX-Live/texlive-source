@@ -36,6 +36,7 @@
 @define function fromSJIS ();
 @define function fromKUTEN ();
 @define function fromUCS ();
+@define function toJIS ();
 @define function toUCS ();
 
 @define function notkanjicharseq ();

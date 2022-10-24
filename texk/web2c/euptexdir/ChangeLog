@@ -1,3 +1,7 @@
+2022-10-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* euptex.defines: Add toJIS.
+
 2022-03-21  Karl Berry  <karl@tug.org>
 
 	* TL'22 release.

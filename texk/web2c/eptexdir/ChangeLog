@@ -1,3 +1,8 @@
+2022-10-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* char-warning-eptex.ch: Adapt to pTeX 4.1.0.
+	* eptex.defines: Add toJIS.
+
 2022-10-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdfutils.ch: Import a patch (2021-06-25 @h20y6m) to

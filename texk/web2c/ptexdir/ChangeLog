@@ -1,3 +1,10 @@
+2022-10-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Add a new syntax \font [in jis/ucs].
+	New primitives: \tojis, \ptextracingfonts and \ptexfontname.
+	* ptex.defines: Add toJIS.
+	* ptex_version.h: Version p4.1.0.
+
 2022-10-23  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: initialize k in adjust_hlist.
@@ -31,7 +38,7 @@
 	* pbibtex.ch, ptex.defines:
 	Accept multibyte characters by int.to.chr$ and chr.to.int$, i.e.
 	chr is corresponding to one single character multibyte string.
-	Bump version to j0.35
+	Bump version to j0.35.
 
 2022-05-06  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 

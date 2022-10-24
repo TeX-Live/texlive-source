@@ -34,6 +34,7 @@
 @define function fromKUTEN ();
 @define function UCStoUTF8 ();
 @define function fromUCS ();
+@define function toJIS ();
 @define function toUCS ();
 
 @define function notkanjicharseq ();
