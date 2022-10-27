@@ -1,3 +1,12 @@
+2022-10-27  Martin Ruckert <ruckert@cs.hm.edu>
+
+	* documentation and typograhic improvements
+	* changing the keyword prefered to preferred
+	* rewriting the scan_file_name function to comply with TeX Live
+	  Eliminating the special file name buffer and reverting to the
+	  traditional use of the string pool.
+	* initializing hlog early to allow for early HINT format errors
+
 2022-06-04  Martin Ruckert <ruckert@cs.hm.edu>
 
 	* documentation and typograhic improvements
