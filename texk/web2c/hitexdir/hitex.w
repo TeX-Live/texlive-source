@@ -7572,7 +7572,7 @@ when detecting a blank line.
 
 The same is true for the input, for the warning message, since input
 is expected by default before every scanning and hence setting of
-\.{cur_cs}.
+|cur_cs|.
 
 @<Glob...@>=
 static pointer @!par_loc; /*location of `\.{\\par}' in |eqtb|*/
