@@ -7,7 +7,7 @@
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=.; exoprt TEXINPUTS
+TEXINPUTS=.; export TEXINPUTS
 
 FILE=pdfprimitive-euptex
 

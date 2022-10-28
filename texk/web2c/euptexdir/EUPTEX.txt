@@ -1,10 +1,10 @@
-                            e-upTeX �ɂ���
+                            e-upTeX について
 
-e-upTeX �� �k�� �O�T���� (H7K) h_kitagawa2001@yahoo.co.jp �ɂ���āAupTeX ��
-e-TeX �g���@�\���������ꂽ���̂ł��B�܂����������_�v�Z�@�\���t�����Ď�����
-�Ă���܂��B�ڍׂ� $TEXMFMAIN/doc/eptex/ �ȉ��ɖk�삳��ɂ�镶��������܂�
-�̂ŁA������Q�Ƃ��Ă��������B�Ȃ� $TEXMFMAIN/doc/eptex/ �ȉ��̕����́A
-ptex-3.1.10-w32.tar.bz2 ���C���X�g�[������Ɠ���܂��B
+e-upTeX は 北川 弘典さん (H7K) h_kitagawa2001@yahoo.co.jp によって、upTeX に
+e-TeX 拡張機能が実装されたものです。また浮動小数点計算機能も付加して実装し
+てあります。詳細は $TEXMFMAIN/doc/eptex/ 以下に北川さんによる文書があります
+ので、それを参照してください。なお $TEXMFMAIN/doc/eptex/ 以下の文書は、
+ptex-3.1.10-w32.tar.bz2 をインストールすると入ります。
 
 -- 
 A. Kakuto
