@@ -1,3 +1,12 @@
+2022-10-28  Luigi Scarso <luigi.scarso@gmail.com> 
+    * \variablefam (backport from luametatex, handy for latex) (H .Hagen)
+
+2022-10-22  Luigi Scarso <luigi.scarso@gmail.com> 
+     * STOP COMMITS TO SVN REPO -- WORK IN PROGRESS
+
+2022-10-22  Luigi Scarso <luigi.scarso@gmail.com> 
+     * porting texlive patch r53155 -- WORK IN PROGRESS
+
 2022-09-29  Luigi Scarso <luigi.scarso@gmail.com> 
      * Fixed an infinite loop with --halt-on-error option (K.Berry)
 
