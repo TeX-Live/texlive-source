@@ -21,10 +21,10 @@
 project(
   'pixman',
   ['c'],
-  version : '0.42.0',
+  version : '0.42.2',
   license : 'MIT',
   meson_version : '>= 0.52.0',
-  default_options : ['buildtype=debugoptimized'],
+  default_options : ['c_std=gnu99', 'buildtype=debugoptimized'],
 )
 
 config = configuration_data()

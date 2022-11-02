@@ -49,7 +49,7 @@ luajit 2.1.0-beta3 - checked 20jun17
 mpfr 4.1.0 - checked 12jul20
   http://ftp.gnu.org/gnu/mpfr/
 
-pixman 0.42.0 - checked 19oct22
+pixman 0.42.2 - checked 03nov22
   http://cairographics.org/releases/
 
 potrace 1.16 - checked 29aug22

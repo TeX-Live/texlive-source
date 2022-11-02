@@ -54,7 +54,7 @@ AC_PREREQ([2.57])
 
 m4_define([pixman_major], 0)
 m4_define([pixman_minor], 42)
-m4_define([pixman_micro], 0)
+m4_define([pixman_micro], 2)
 
 m4_define([pixman_version],[pixman_major.pixman_minor.pixman_micro])
 
@@ -510,7 +510,7 @@ case $host_os in
       # binaries aren't flagged as only able to run on MMX/SSE/SSSE3 capable
       # CPUs since they check at runtime before using those instructions.
       # Not all linkers grok the mapfile format so we check for that first.
-      if test "$host_cpu" == "i386" -o "$host_cpu" == "x86_64"; then
+      if test "$host_cpu" = "i386" -o "$host_cpu" = "x86_64"; then
 	 use_hwcap_mapfile=no
 	 AC_MSG_CHECKING(whether to use a hardware capability map file)
 	 hwcap_save_LDFLAGS="$LDFLAGS"

@@ -1,3 +1,8 @@
+2022-11-03  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import pixman-0.42.2.
+	* patch-01-hide-symbols: Adapted.
+
 2022-10-19  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import pixman-0.42.0.

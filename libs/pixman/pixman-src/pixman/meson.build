@@ -135,4 +135,8 @@ idep_pixman = declare_dependency(
   include_directories : inc_pixman,
 )
 
+if meson.version().version_compare('>= 0.54.0')
+  meson.override_dependency('pixman-1', idep_pixman)
+endif
+
 install_headers('pixman.h', subdir : 'pixman-1')
