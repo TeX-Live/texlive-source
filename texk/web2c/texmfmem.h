@@ -63,6 +63,8 @@
 */
 
 /* Aleph is sufficiently different to separate the definition. */
+/* pTeX, upTeX, e-pTeX and e-upTeX define max_quarterword=@"FFFF,
+   so a similar memory structure is applicable. */
 #if !defined(Aleph) && !defined(pTeX) && !defined(epTeX) && !defined(eupTeX) && !defined(upTeX)
 
 typedef union

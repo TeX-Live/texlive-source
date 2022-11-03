@@ -458,6 +458,12 @@ if last<>first then print_unread_buffer_with_ptenc(first,last);
 @z
 
 @x
+@d max_quarterword=255 {largest allowable value in a |quarterword|}
+@y
+@d max_quarterword=@"FFFF {largest allowable value in a |quarterword|}
+@z
+
+@x
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @y
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
@@ -4588,6 +4594,17 @@ inhibit_glue_flag:=false;
   cur_kanji_skip:=space_ptr(head); cur_xkanji_skip:=xspace_ptr(head);
   add_glue_ref(cur_kanji_skip); add_glue_ref(cur_xkanji_skip);
   u:=hpack(link(head),natural); w:=width(u);
+@z
+
+@x [37.???] l.????? - increased max_quarterword
+if n>max_quarterword then confusion("256 spans"); {this can happen, but won't}
+@^system dependencies@>
+@:this can't happen 256 spans}{\quad 256 spans@>
+@y
+if n>max_quarterword then confusion("too many spans");
+   {this can happen, but won't}
+@^system dependencies@>
+@:this can't happen too many spans}{\quad too many spans@>
 @z
 
 @x [37.799] l.16331 - fin_row: pTeX: call adjust_hlist

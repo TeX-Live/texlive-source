@@ -1,3 +1,10 @@
+2022-11-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Increase max_quarterword to 0xFFFF on pTeX.
+	This is safe (and also necessary) as texmfmem.h already has
+	similar memory structure as upTeX, epTeX and eupTeX.
+	(Bug introduced on commit 2022-01-22)
+
 2022-10-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Add a new syntax \font [in jis/ucs].
