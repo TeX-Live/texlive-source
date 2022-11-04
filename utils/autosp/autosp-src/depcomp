@@ -1,7 +1,7 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2018-03-07.03; # UTC
+scriptversion=2022-09-18.14; # UTC
 
 # Copyright (C) 1999-2022 Free Software Foundation, Inc.
 
@@ -197,7 +197,7 @@ gcc3)
   ;;
 
 gcc)
-## Note that this doesn't just cater to obsosete pre-3.x GCC compilers.
+## Note that this doesn't just cater to obsolete pre-3.x GCC compilers.
 ## but also to in-use compilers like IMB xlc/xlC and the HP C compiler.
 ## (see the conditional assignment to $gccflag above).
 ## There are various ways to get dependency output from gcc.  Here's
