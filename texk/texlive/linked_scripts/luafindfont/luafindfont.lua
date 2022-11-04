@@ -7,7 +7,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2022-09-02
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.10
+      local version = 0.11
 luafindfont.version = version
 
 --[[
@@ -50,6 +50,7 @@ local args_xetex = 0
 local args_max_string = 90
 
 local otfinfo_arg = ""
+local mtxrun = 0
 local fontNo = 0
 
 local i = 1
@@ -66,10 +67,15 @@ while i <= #arg do
       ,--no-symbolic-names
     -o,--otfinfo (default 0)
     -i,--info (default 0)
+    -I,--Info (default 0)
     -x, --xetex 
     -v, --verbose
+    -V, --version
     -m,--max_string (default 90)
     <font> (string)  ]])
+  elseif arg[i] == "-V" or arg[i] == "--version" then
+    print("version "..version)
+    os.exit()
   elseif arg[i] == "-v" or arg[i] == "--verbose" then
     args_verbose = 1
   elseif (arg[i] == "-n") or (arg[i] == "--nosymbolicnames") or (arg[i] == "--no-symbolic-names") then
@@ -98,6 +104,15 @@ while i <= #arg do
       print("Option -i needs a following fontnumber!")
       args_info = 0
     end
+  elseif arg[i] == "-I" or arg[i] == "--Info" then
+    mtxrun = 1
+    local I_arg = arg[i+1]
+    fontNo = tonumber(I_arg)
+    if not fontNo then
+      print("Option -I needs a following fontnumber!")
+      fontNo = 0
+    end
+    i = i + 1
   elseif arg[i] == "-m" or arg[i] == "--max_string" then
     local string_len = tonumber(arg[i+1])
     if string_len then
@@ -121,12 +136,12 @@ end
 
 if vlevel > 0 then
   print("Parameter:")
-  print("args_verbose = "..args_verbose)
-  print("args_nosymbolicnames = "..tostring(args_nosymbolicnames))
-  print("args_xetex = "..args_xetex)
-  print("otfinfo_arg = "..otfinfo_arg)
-  print("fontNo = "..fontNo)
-  print("args_max_string = "..args_max_string)
+  print("  args_verbose = "..args_verbose)
+  print("  args_nosymbolicnames = "..tostring(args_nosymbolicnames))
+  print("  args_xetex = "..args_xetex)
+  print("  otfinfo_arg = "..otfinfo_arg)
+  print("  fontNo = "..fontNo)
+  print("  args_max_string = "..args_max_string)
 end
   
 if not args_font then
@@ -136,6 +151,7 @@ end
 
 --local otfinfo = args_otfinfo
 local info = args_info
+local Info = args_Info
 local noSymbolicNames = args_nosymbolicnames
 local maxStrLength = args_max_string
 local font_str = args_font:lower():gsub("%s+", ""):split("&")
@@ -392,7 +408,7 @@ for i, v in ipairs(fontList) do
   end
 end
 
-if fontNo > 0 then
+if fontNo > 0 and mtxrun == 0 then
   print()
   print("Running otfinfo -"..otfinfo_arg.." on font no."..fontNo)
   local font = fontList[fontNo]["fullpath"]
@@ -433,6 +449,19 @@ if info > 0 then
     end
   end
 end
+
+if mtxrun > 0 then
+  print()
+  print("Running mtxrun on font no."..fontNo)
+--  local font = fontList[fontNo]["fullpath"]
+  local font = fontList[fontNo]["basename"]
+  print("mtxrun --script fonts --list --info --file \""..font.."\"")
+  local exrun = io.popen("mtxrun --script fonts --list --info --file \""..font.."\"", 'r') -- ".." font may have spaces
+  local output = exrun:read('*all')
+  print(output)
+  exrun:close()
+end
+
 --print(require 'xindex-pretty'.dump(fontData["families"]["system"]["otf"])) --["families"]["system"]["otf"]))
 
 
