@@ -1,3 +1,9 @@
+2022-11-05  Sam James  <sam@gentoo.org>
+
+	* configure.ac (Ghostscript version): #include <stdlib.h>
+	to declare exit and placate clang16.
+	https://tug.org/pipermail/tlbuild/2022q4/005269.html
+
 2022-08-29  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* dvisvgm-src/*, version.ac: 2.14; update sources and patches.

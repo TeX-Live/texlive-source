@@ -94,6 +94,7 @@ else
 	# query Ghostscript version
 	AC_MSG_CHECKING([Ghostscript version])
 	AC_RUN_IFELSE([AC_LANG_SOURCE([#include <stdio.h>
+		#include <stdlib.h>
 		#include <ghostscript/iapi.h>
 		int main () {
 			gsapi_revision_t r;

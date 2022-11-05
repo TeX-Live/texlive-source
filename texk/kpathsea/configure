@@ -14633,7 +14633,8 @@ then :
 else $as_nop
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-int fork() { exit(1); }
+#include <stdlib.h>
+                                                 int fork() { exit(1); }
                                                  int vfork() { exit(1); }
                                                  extern char *getcwd();
                                                  char path[100];

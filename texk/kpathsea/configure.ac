@@ -45,7 +45,8 @@ if test "x$ac_cv_func_getcwd" = xyes; then
 # We only need to run this if we have getcwd.
 AC_CACHE_CHECK([whether getcwd uses fork or vfork],
                [kb_cv_func_getcwd_forks],
-               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[int fork() { exit(1); }
+               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
+                                                 int fork() { exit(1); }
                                                  int vfork() { exit(1); }
                                                  extern char *getcwd();
                                                  char path[100];]],

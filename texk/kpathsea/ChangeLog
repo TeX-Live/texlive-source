@@ -1,3 +1,9 @@
+2022-11-05  Sam James  <sam@gentoo.org>
+
+	* configure.ac (Ghostscript version): #include <stdlib.h>
+	to declare exit and placate clang16.
+	https://tug.org/pipermail/tlbuild/2022q4/005269.html
+
 2022-06-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* texmf.cnf (guess_input_kanji_encoding):

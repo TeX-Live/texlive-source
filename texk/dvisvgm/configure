@@ -23415,6 +23415,7 @@ else $as_nop
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <stdio.h>
+		#include <stdlib.h>
 		#include <ghostscript/iapi.h>
 		int main () {
 			gsapi_revision_t r;
