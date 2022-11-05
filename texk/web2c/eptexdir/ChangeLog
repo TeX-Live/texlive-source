@@ -1,3 +1,8 @@
+2022-11-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex.ech: Adapt to ptex-base.ch.
+	https://github.com/texjporg/tex-jp-build/issues/152
+
 2022-10-24  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* char-warning-eptex.ch: Adapt to pTeX 4.1.0.
