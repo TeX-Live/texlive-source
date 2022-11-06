@@ -1,3 +1,8 @@
+2022-11-06  Sam James  <sam@gentoo.org>
+
+	* basename.c: placate clang16.
+	https://tug.org/pipermail/tlbuild/2022q4/005273.html
+
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
 	* pk2bm.1,

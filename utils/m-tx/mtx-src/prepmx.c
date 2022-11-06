@@ -769,7 +769,7 @@ Static void topOfPMXfile(void)
 }
 
 
-main(int argc, Char *argv[])
+int main(int argc, Char *argv[])
 {  /* ---- Main program ------------------------ */
   PASCAL_MAIN(argc, argv);
   strcpy(this_version, version);

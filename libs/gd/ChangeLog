@@ -1,3 +1,8 @@
+2022-11-06  Sam James  <sam@gentoo.org>
+
+	* libgd-src/tests/xpm/bug00185.c: placate clang16.
+	https://tug.org/pipermail/tlbuild/2022q4/005273.html
+
 2021-09-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import libgd-2.3.3.

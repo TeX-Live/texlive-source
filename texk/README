@@ -24,7 +24,6 @@ afm2pl - maintained here
 
 bibtex-x - maintained here, contains
   bibtex8, bibtexu
-    old info: http://omega.enstb.org/yannis/bibtexu/
 
 chktex 1.7.6 - checked 15mar20
   http://mirror.ctan.org/support/chktex/
@@ -34,9 +33,11 @@ cjkutils 4.8.5 - checked 22jan22
   http://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
   http://www.nongnu.org/cjk/
 
-detex 2.8.9 - checked 4mar21
-  https://github.com/pkubowicz/opendetex/releases
-    old info: http://www.cs.purdue.edu/homes/trinkle/detex/
+detex 2.8.9 - maintained here
+  maintained for a time (untouched since 2020, checked 14sep22):
+    https://github.com/pkubowicz/opendetex/releases
+    (would be useful to look at open issues there for bugs)
+  original author: http://www.cs.purdue.edu/homes/trinkle/detex/
 
 dtl - maintained here, by Takuji
 

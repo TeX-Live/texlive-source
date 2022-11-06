@@ -5,7 +5,7 @@
 
 /* To check memory leaks, run such as 'valgrind --leak-check=full ./bug00185' */
 int
-main()
+main(void)
 {
 	gdImagePtr im;
 	char *path;

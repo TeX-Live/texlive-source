@@ -1,0 +1,13 @@
+diff --git a/libs/gd/libgd-src/tests/xpm/bug00185.c b/libs/gd/libgd-src/tests/xpm/bug00185.c
+index 3056ed950..37659d6a4 100644
+--- a/libs/gd/libgd-src/tests/xpm/bug00185.c
++++ b/libs/gd/libgd-src/tests/xpm/bug00185.c
+@@ -5,7 +5,7 @@
+ 
+ /* To check memory leaks, run such as 'valgrind --leak-check=full ./bug00185' */
+ int
+-main()
++main(void)
+ {
+ 	gdImagePtr im;
+ 	char *path;

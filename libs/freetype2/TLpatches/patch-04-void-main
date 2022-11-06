@@ -1,0 +1,13 @@
+diff --git a/libs/freetype2/freetype-src/builds/unix/freetype2.m4 b/libs/freetype2/freetype-src/builds/unix/freetype2.m4
+index 0cafc8e8c..51843f5fa 100644
+--- a/libs/freetype2/freetype-src/builds/unix/freetype2.m4
++++ b/libs/freetype2/freetype-src/builds/unix/freetype2.m4
+@@ -121,7 +121,7 @@ AC_DEFUN([AC_CHECK_FT2],
+ #include <stdlib.h>
+ 
+ int
+-main()
++main(void)
+ {
+   FT_Library library;
+   FT_Error  error;

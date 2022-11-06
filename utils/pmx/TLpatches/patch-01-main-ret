@@ -1,0 +1,13 @@
+diff --git a/utils/pmx/pmx-src/libf2c/main.c b/utils/pmx/pmx-src/libf2c/main.c
+index 453974904..f485a0cd0 100644
+--- a/utils/pmx/pmx-src/libf2c/main.c
++++ b/utils/pmx/pmx-src/libf2c/main.c
+@@ -106,7 +106,7 @@ char **xargv;
+ #ifdef KR_headers
+ main(argc, argv) int argc; char **argv;
+ #else
+-main(int argc, char **argv)
++int main(int argc, char **argv)
+ #endif
+ {
+ xargc = argc;

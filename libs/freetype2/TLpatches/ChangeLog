@@ -1,3 +1,8 @@
+2022-11-06  Karl Berry  <karl@freefriends.org>
+
+	* patch-01-do-not-export-internal-zlib: add.
+	* patch-04-void-main: add (see ../ChangeLog).
+
 2022-05-07  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import freetype-2.12.1 source tree from:
