@@ -3,7 +3,7 @@
 # latexdiff - differences two latex files on the word level
 #             and produces a latex file with the differences marked up.
 #
-#   Copyright (C) 2004-20  F J Tilmann (tilmann@gfz-potsdam.de)
+#   Copyright (C) 2004-22  F J Tilmann (tilmann@gfz-potsdam.de)
 #
 # Repository/issue tracker:   https://github.com/ftilmann/latexdiff
 # CTAN page:          http://www.ctan.org/pkg/latexdiff
@@ -23,6 +23,38 @@
 # Detailed usage information at the end of the file
 #
 #
+# Note references to issue numbers are for the github repository of latexdiff: https://github.com/ftilmann/latexdiff
+#
+# Version 1.3.3:
+# New features:
+#  - Option --no-del to remove all deleted text (merge contributed by github user tdegeus PR #252, fixing issue #66
+#
+# Bug fixes:
+#  - Abbreviations involving punctuations within them. They need special treatment because otherwise in some
+#    circumstances the gnoring of white space differences in conjunction with merging according to MINWORDSBLOCK rule
+#    could turn 'i.e.' into 'i.\PAR e.' (see https://github.com/ftilmann/latexdiff/issues/269). A few abbreviations
+#    are now hard-coded and treated as atomic: 
+#    English: i.e., e.g.   Deutsch: z.B.
+#    (fixes issue #269)
+#  - In WHOLE and COARSE math modes, now properly treat math environments with arguments such as \alignat. Fixes #251
+#  - For FINE math mode, multiple improvments to the processing work flow yield more robust outcomes. In particular, changes 
+#    to the equation type, e.g. \begin{displaymath} -> \begin{equation}  without modifications  now usually no longer result 
+#    in errors. (Partially) fixes issues #235  and #244. 
+#  - When encountering deleted math array environments such as align or eqnarray, rather than replacing them with  a 
+#    fixed replacement environment (e.g. align* or eqnarray*), an asterisk is now added to the original command, which 
+#    in amsmath (and with eqnarray) will result in the same environment but without line numbers. Config variable MATHARRREPL
+#    is therefore (nearly) redundant, and a depracation warning is given when it is set. Reference to MATHARRREPL are have
+#    been removed from the manual (there is one exception, when it's still being used: sometimes latexdiff can figure out
+#    that there is a deleted array environment, but does not know which one. In this case, MATHARRREPL is still being used
+#    to encapsulate these parts of the source, and therefore it is still set internally.  But this is a quite rare situation). 
+#    Fixes issue #216
+#  - Unlike 'array' environment, 'split' (amsmath) does not work in argument of \DIFadd or \DIFdl in UNDERLINE modes; therefore remove it from ARRENV configuration variable. 
+#     Exclude \begin and \end in math environments in COARSE and WHOLE modes. Fixes #258. Fixes #109
+#  - --flatten now works for empty files. Fixes issue #242
+#  - improved processing of Chinese and Japanese texts in that splitting is done based on characters. Thanks to LuXu (Oliver Lew) in git for working this out. Fixes #229, fixes #145
+
+
+
 # Version 1.3.2
 # API adaptions:
 #  - latexdiff now completes with exit code 0 after --help or --version command (see issue #248)
@@ -31,7 +63,7 @@
 #  - Support for additional macros from import package (\import, \inputfrom, \includefrom, \subimport,\subinputfrom, \subincludefrom). Provided by janniklasrose in PR #243 (fixes #239)
 #  - replace default driver dvips->pdftex
 # Bug fixes:
-#  - fix issue #206 affecting proper markup of text commands which are not safe cmd's at the same time and have multiple arguments
+#  - fix issue #206 affecting proper markup of text commands which are not also safe cmd's and have multiple arguments
 #  - fix issue #210 by adding \eqref (amsmath package) to the list of safe commands
 #  - fix bug reported in issue #168 mangled verbatim line environment 
 #  - fix bug reported in issue #218 by replacing \hspace{0pt} after \mbox{..} auxiliary commands with \hskip0pt.
@@ -676,8 +708,8 @@ my ($algodiffversion)=split(/ /,$Algorithm::Diff::VERSION);
 
 
 my ($versionstring)=<<EOF ;
-This is LATEXDIFF 1.3.2 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
-  (c) 2004-2021 F J Tilmann
+This is LATEXDIFF 1.3.3 (Algorithm::Diff $Algorithm::Diff::VERSION, Perl $^V)
+  (c) 2004-2022 F J Tilmann
 EOF
 
 # Hash with defaults for configuration variables. These marked undef have default values constructed from list defined in the DATA block
@@ -686,13 +718,13 @@ my %CONFIG=(
    MINWORDSBLOCK => 3, # minimum number of tokens to form an independent block
                         # shorter identical blocks will be merged to the previous word
    SCALEDELGRAPHICS => 0.5, # factor with which deleted figures will be scaled down (i.e. 0.5 implies they are shown at half linear size)
-                             # this is only used for --graphics-markup=BOTH option
+                             # this is only used for --dgraphics-markup=BOTH option
    FLOATENV => undef ,   # Environments in which FL variants of defined commands are used
    PICTUREENV => undef ,   # Environments in which all change markup is removed
    MATHENV => undef ,           # Environments turning on display math mode (code also knows about \[ and \])
    MATHREPL => 'displaymath',  # Environment introducing deleted maths blocks
    MATHARRENV => undef ,           # Environments turning on eqnarray math mode
-   MATHARRREPL => 'eqnarray*',  # Environment introducing deleted maths blocks
+   MATHARRREPL => 'eqnarray*',  # Environment introducing deleted maths blocks (note that now the starred varieties are being used, so this is only used to replace MATHMODE environments (where original environment is unknown)
    ARRENV => undef , # Environments making arrays in math mode.  The underlining style does not cope well with those - as a result in-text math environments are surrounded by \mbox{ } if any of these commands is used in an inline math block
    COUNTERCMD => undef,
                                         # COUNTERCMD textcmds which are associated with a counter
@@ -746,7 +778,7 @@ my ($ARRENV,
 
 
 my $LABELCMD='(?:label)';                # matching commands are disabled within deleted blocks - mostly useful for maths mode, as otherwise it would be fine to just not add those to SAFECMDLIST
-my @UNSAFEMATHCMD=('qedhere','intertext');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
+my @UNSAFEMATHCMD=('qedhere','intertext','begin','end');           # Commands which are definitely unsafe for marking up in math mode (amsmath qedhere only tested to not work with UNDERLINE markup) (only affects WHOLE and COARSE math markup modes). Note that unlike text mode (or FINE math mode0 deleted unsafe commands are not deleted but simply taken outside \DIFdel
 my $MBOXINLINEMATH=0; # if set to 1 then surround marked-up inline maths expression with \mbox ( to get around compatibility
                       # problems between some maths packages and ulem package
 
@@ -802,7 +834,7 @@ my @MBOXCMDLIST=();   # patterns for commands which are in principle safe but wh
 my @MBOXCMDEXCL=();           # all the patterns in MBOXCMDLIST will be appended to SAFECMDLIST
 
 my @KEEPCMDLIST=( qr/^bibitem$/ );   # patterns for commands which should not be deleted in nominally delete text passages
-my @KEEPCMDEXCL=();          
+my @KEEPCMDEXCL=();
 
 my ($i,$j,$l);
 my ($old,$new);
@@ -823,6 +855,7 @@ my ($type,$subtype,$floattype,$config,$preamblefile,$encoding,$nolabel,$visiblel
     $replacecontext1,$appendcontext1,
     $replacecontext2,$appendcontext2,
     $help,$verbose,$driver,$version,$ignorewarnings,
+    $onlyadditions,
     $enablecitmark,$disablecitmark,$allowspaces,$flatten,$nolinks,$debug,$earlylatexdiffpreamble);  ###$disablemathmark,
 my ($mboxsafe);
 # MNEMNONICS for mathmarkup
@@ -857,6 +890,7 @@ my ($pkg,%packages);
 # Defaults
 $mathmarkup=COARSE;
 $verbose=0;
+$onlyadditions=0;
 # output debug and intermediate files, set to 0 in final distribution
 $debug=0; 
 # insert preamble directly after documentclass - experimental feature, set to 0 in final distribution
@@ -919,8 +953,9 @@ GetOptions('type|t=s' => \$type,
 	   'driver=s'=> \$driver,
 	   'flatten' => \$flatten,
 	   'filter-script=s' => \$filterscript,
-       'ignore-filter-stderr' => \$ignorefilterstderr,
+	   'ignore-filter-stderr' => \$ignorefilterstderr,
 	   'no-links' => \$nolinks,
+	   'no-del' => \$onlyadditions,
 	   'version' => \$version,
 	   'help|h' => \$help,
 	   'debug!' => \$debug ) or die "Use latexdiff -h to get help.\n" ;
@@ -1108,7 +1143,9 @@ foreach  ( keys(%CONFIG) ) {
   elsif ( $_ eq "MATHENV" ) { $MATHENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "MATHREPL" ) { $MATHREPL = $CONFIG{$_} ; }
   elsif ( $_ eq "MATHARRENV" ) { $MATHARRENV = liststringtoregex($CONFIG{$_}) ; }
-  elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ; }
+  elsif ( $_ eq "MATHARRREPL" ) { $MATHARRREPL = $CONFIG{$_} ; 
+				  print STDERR "WARNING: Setting MATHARRREPL is depracated. Generally deleted math array environments will be set to their starred varieties and the setting of MATHARREPL is ignored.\n\n" unless $MATHARRREPL =~ /eqnarray\*/ ; 
+				}
   elsif ( $_ eq "ARRENV" ) { $ARRENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMENV" ) { $VERBATIMENV = liststringtoregex($CONFIG{$_}) ; }
   elsif ( $_ eq "VERBATIMLINEENV" ) { $VERBATIMLINEENV = liststringtoregex($CONFIG{$_}) ; }
@@ -1184,40 +1221,57 @@ push(@SAFECMDLIST, qr/^QLEFTBRACE$/, qr/^QRIGHTBRACE$/);
   }
   my $abrat0 = '(?:[^<>])*';
 
-  my $quotemarks = '(?:\'\')|(?:\`\`)';
-  my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
-  my $number='-?\d*\.\d*';
-  my $mathpunct='[+=<>\-\|]';
+
+# variable definitions are in order that they are matched
   my $and = '&';
-  my $coords= '[\-.,\s\d]*';
-# quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
-# such that a\_b is interpreted as a{\_}b by latex but a{\_b} by perl
+  my $quotemarks = '(?:\'\')|(?:\`\`)';
+  # some common abbreviations involving punctuations within them. They need special treatment because otherwise in some
+  # circumstances the gnoring of white space differences in conjunction with merging according to MINWORDSBLOCK rule
+  # could turn 'i.e.' into 'i.\PAR e.' (see https://github.com/ftilmann/latexdiff/issues/269)
+  # English: i.e., e.g.   Deutsch: z.B.
+  my $abbreviation='(?:i\. ?e\.|e\. ?g\.|z\. ?B\.)' ;
+  my $number='-?\d*\.\d*'; 
+
+  # word: sequence of letters or accents followed by letter
+  my $word_cj='\p{Han}|\p{InHiragana}|\p{InKatakana}';
+  my $word='(?:' . $word_cj . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_cj . ')))+)';
+
+  # quoted underscore - this needs special treatment as perl treats _ as a letter (\w) but latex does not
+  # such that a\_b would otherwise be interpreted as a{\_}b by latex but a{\_b} by latexdiff
   my $quotedunderscore='\\\\_';
-# word: sequence of letters or accents followed by letter
-  my $word_ja='\p{Han}+|\p{InHiragana}+|\p{InKatakana}+';
-  my $word='(?:' . $word_ja . '|(?:(?:[-\w\d*]|\\\\[\"\'\`~^][A-Za-z\*])(?!(?:' . $word_ja . ')))+)';
+  # Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
+  my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
+  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
 
   # for selected commands, the number of arguments is known, and we can therefore allow spaces between command and its argument
   # Note that it is still expected that the arguments are blocks marked by parentheses rather than single characters, and that intervening comments will inhibit the association
-  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
   my $predefinedcmdoptseq12='\\\\(?:href|bibfield|bibinfo)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){2}';  # Commands with one optional and two non-optional arguments
-#  my $predefinedcmdoptseq11='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one optional and one non-optional arguments
-# \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
+  my $predefinedcmdoptseq01='\\\\(?:url|BibitemShut)\s*\s*(?:\{'. $pat_n . '\}\s*){1}';  # Commands with one non-optional argument
+  # \bibitem in revtex styles appears to be always followed by \BibItemOpen. We bind \BibItemOpen to the bibitem (if present) in order to prevent the comparison algorithm to interpret the \BibItemOpen as an identical part of the sequence; this interpretation can lead to added and removed entries to the reference list to become mixed.
   my $predefinedbibitem='\\\\(?:bibitem)\s*(?:\['.$brat_n.'\])?\s*(?:\{'. $pat_n . '\})(?:%?\s*\\\\BibitemOpen)?';  # Commands with one optional and one non-optional arguments
-
   my $predefinedcmdoptseq='(?:'.$predefinedcmdoptseq12.'|'.$predefinedcmdoptseq01.'|'.$predefinedbibitem.')';
 
-  my $cmdleftright='\\\\(?:left|right|[Bb]igg?[lrm]?|middle)\s*(?:[<>()\[\]|\.]|\\\\(?:[|{}]|\w+))';
-# standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
+  # standard $cmdoptseq (default: no intrevening spaces, controlled by extraspcae) - a final open parentheses is merged to the commend if it exists to deal properly with multi-argument text command
+  my $coords= '[\-.,\s\d]*';
   my $cmdoptseq='\\\\[\w\d@\*]+'.$extraspace.'(?:(?:<'.$abrat0.'>|\['.$brat_n.'\]|\{'. $pat_n . '\}|\(' . $coords .'\))'.$extraspace.')*\{?';
-# Handle tex \def macro: \def\MAKRONAME#1[#2]#3{DEFINITION}
-  my $defseq='\\\\def\\\\[\w\d@\*]+(?:#\d+|\[#\d+\])+(?:\{'. $pat_n . '\})?';
+
+  # inline math $....$ or \(..\)
+  ### the commented out version is simpler but for some reason cannot cope with newline (in spite of s option) - need to include \newline explicitly
+  ###  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(].*?\\\\[)]';
+  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';         
+  ### test version (this seems to give the same results as version above)
+  ## the current maths command cannot cope with newline within the math expression
+  ### my $math='\$(?:[^$]|\\\$)*?\$|\\[(].*?\\[)]';
+  ###  my $math='\$(?:[^$]|\\\$)*\$';
+
   my $backslashnl='\\\\\n';
   my $oneletcmd='\\\\.\*?(?:\['.$brat_n.'\]|\{'. $pat_n . '\})*';
-  my $math='\$(?:[^$]|\\\$)*?\$|\\\\[(](?:.|\n)*?\\\\[)]';
-## the current maths command cannot cope with newline within the math expression
   my $comment='%[^\n]*\n';
-  my $pat=qr/(?:\A\s*)?(?:${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
+  my $punct='[0.,\/\'\`:;\"\?\(\)\[\]!~\p{IsNonAsciiPunct}\p{IsNonAsciiS}]';
+  my $mathpunct='[+=<>\-\|]';
+
+  # Assembled pattern
+  my $pat=qr/(?:\A\s*)?(?:${abbreviation}|${and}|${quotemarks}|${number}|${word}|$quotedunderscore|${defseq}|$cmdleftright|${predefinedcmdoptseq}|${cmdoptseq}|${math}|${backslashnl}|${oneletcmd}|${comment}|${punct}|${mathpunct}|\{|\})\s*/ ;
 
 
 
@@ -1636,7 +1690,8 @@ if ( iscmd("label",\@SAFECMDLIST,\@SAFECMDEXCL) ) {
 
 print STDERR "Preprocessing body.  " if $verbose;
 preprocess($oldbody,$newbody);
-
+writedebugfile($oldbody,'old-preprocess');
+writedebugfile($newbody,'new-preprocess');
 
 # run difference algorithm
 @diffbody=bodydiff($oldbody, $newbody);
@@ -1725,7 +1780,7 @@ sub show_configuration {
     print "ITEMCMD=$ITEMCMD\n";
     print "LISTENV=$LISTENV\n";
     print "MATHARRENV=$MATHARRENV\n";
-    print "MATHARRREPL=$MATHARRREPL\n";
+#    print "MATHARRREPL=$MATHARRREPL\n";     # this is not deprecated and thus no longer shown
     print "MATHENV=$MATHENV\n";
     print "MATHREPL=$MATHREPL\n";
     print "MINWORDSBLOCK=$MINWORDSBLOCK\n";
@@ -1969,7 +2024,7 @@ sub flatten {
           if ( -f $importfilepath ) {
               # If file exists, replace input or include command with expanded input
               #TODO: need remove_endinput & newpage similar to other replacements inside flatten
-              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding) or die "Could not open file ",$fullfile,": $!";
+              $replacement=flatten(read_file_with_encoding($importfilepath, $encoding), $preamble,$importfilepath,$encoding); 
           } else {
               # if file does not exist, do not expand include or input command (do not warn if fname contains #[0-9] as it is then likely part of a command definition
               # and is not meant to be expanded directly 
@@ -1996,7 +2051,7 @@ sub flatten {
             # content of file becomes replacement value (use recursion), add \newpage if the command was include
             if ( -f $fullfile ) {
 	      # If file exists, replace input or include command with expanded input
-	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding) or die "Could not open file ",$fullfile,": $!";
+	      $replacement=flatten(read_file_with_encoding($fullfile, $encoding), $preamble,$filename,$encoding);  
 	      $replacement = remove_endinput($replacement); 
 	      # \include always starts a new page; use explicit \newpage command to simulate this
 	    } else {
@@ -2038,7 +2093,7 @@ sub flatten {
 	     ($subpreamble,$subbody,$subpost)=splitdoc($subfile,'\\\\begin\{document\}','\\\\end\{document\}');
 	     ###           $subfile=~s|^.*\\begin{document}||s; 
 	     ###           $subfile=~s|\\end{document}.*$||s;
-	     $replacement=flatten($subbody, $preamble,$filename,$encoding);
+	     $replacement=flatten($subbody, $preamble,$fullfile,$encoding);
 	     ### $replacement = remove_endinput($replacement); 
 	   } else {
 	      # if file does not exist, do not expand subfile
@@ -2069,7 +2124,7 @@ sub flatten {
      print STDERR "DEBUG looking for file ",File::Spec->catfile($dirname,$fname), "\n" if $debug;
      # content of file becomes replacement value (do not use recursion), add \newpage if the command was include
      ###$replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
-     $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding) or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
+     $replacement=read_file_with_encoding(File::Spec->catfile($dirname,$fname), $encoding); # (cannot on apparent failure as this triggers for empty fie. Original:  or die "Couldn't find file ",File::Spec->catfile($dirname,$fname),": $!";
      # Add a new line if it not already there (note that the matching operator needs to use different delimiters, as we are still inside an outer scope that takes precedence
      $replacement .= "\n" unless  $replacement =~ m(\n$)  ;
      "$begline\\begin{$verbenv}$verboptions\n$replacement\\end{$verbenv}\n";
@@ -2722,7 +2777,7 @@ sub marktags {
           # for latexrevise
           push (@$retval,$command,"%\n{$AUXCMD\n",marktags("","",$open,$close,$opencmd,$closecmd,$comment,\@argtext),$closingbracket);
         } elsif ( iscmd($commandword,,\@MATHTEXTCMDLIST, \@MATHTEXTCMDEXCL) ) {
-	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\	
+	  # MATHBLOCK pseudo command: consider all commands safe, except & and \\, \begin and \end and a few package sprcific one (look at UNSAFEMATHCMD definition)	
 	  # Keep these commands even in deleted blocks, hence set $opencmd and $closecmd (5th and 6th argument of marktags) to 
 	  # ""
 	  local @SAFECMDLIST=(".*"); 
@@ -2863,7 +2918,9 @@ sub preprocess {
     s/\\begin\{($PICTUREENV)}(.*?)\\end\{\1}/\\PICTUREBLOCK$1\{$2\}/sg;
     #    For math-mode COARSE,WHOLE or NONE option -convert all \begin{MATH} .. \end{MATH}
     #    into \MATHBLOCKMATH{...} commands, where MATH is any valid math environment
-    #    Also convert all array environments into ARRAYBLOCK environments
+    #    Also convert all array environments into ARRAYBLOCK environments.
+    #    Where these environments have arguments they become optional arguments to the MATHBLOCK command enclosed in < > brackets
+    #    Example: \begin{alignat}{3} ... \end{alignat} will turn into \MATHBLOCKalignat[{3}]{ ... }
 
     if ( $mathmarkup != FINE ) {
       # DIFANCHORARRB and DIFANCHORARRE, DIFANCHORMATHB and DIFANCHORMATHE markers are inserted here to encourage the matching algorithm
@@ -2877,6 +2934,9 @@ sub preprocess {
 
       take_comments_and_newline_from_frac();
 
+      # Convert Math environments with arguments 
+      s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}((?:\[$brat_n\])|(?:\{$pat_n\}))+(.*?)\\end\{\1\}/\\MATHBLOCK$1\[$2\]\{$3\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
+      # Convert Math environments without arguments
       s/\\begin\{($MATHENV|$MATHARRENV|SQUAREBRACKET)\}(.*?)\\end\{\1\}/\\MATHBLOCK$1\{$2\\DIFANCHORMATHB \}\\DIFANCHORMATHE /sg;
     }
 
@@ -3003,7 +3063,7 @@ sub writedebugfile {
 # carry out the following post-processing steps for all arguments:
 # * Remove STOP token from the end
 # * Replace \RIGHTBRACE by }
-# *  change citation commands within comments to protect from processing (using marker CITEDIF)
+# * If option --no-del is set delete all deleted blocks
 # 1. Check all deleted blocks: 
 #    a.where a deleted block contains a matching \begin and
 #      \end environment (these will be disabled by a %DIFDELCMD statements), for selected environments enable
@@ -3018,7 +3078,7 @@ sub writedebugfile {
 #    pairs
 #    c. Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
 #       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
-#       will be replaced by $MATHARRREPL
+#       will be replaced by their equivalent with a * appended, e.g. align -> align*
 #    d. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
 #    d. place \cite commands in mbox'es (for UNDERLINE style)
 #
@@ -3048,9 +3108,9 @@ sub writedebugfile {
 # Note have to manually synchronize substitution commands below and 
 # DIF.. command names in the header
 sub postprocess {
-  my ($begin,$len,$cnt,$float,$delblock,$addblock);
+  my ($begin,$len,$float,$delblock,$addblock); ### $cnt
   # second level blocks
-  my ($begin2,$cnt2,$len2,$eqarrayblock,$mathblock);
+  my ($begin2,$len2,$eqarrayblock,$eqblock,$mathblock); ### $cnt2
 
   my (@textparts,@newtextparts,@liststack,$listtype,$listlast);
 
@@ -3069,8 +3129,13 @@ sub postprocess {
     # up. This case should be rare, so I just leave this in the diff file output. Not really elegant
     # but can still be dealt with later if it results in problems. 
     s/%DIFDELCMD < \\RIGHTBRACE/%DIFDELCMD < \\MBLOCKRIGHTBRACE/g ;
-    # Replace \RIGHTBRACE by }    
+    # Replace \RIGHTBRACE by }
     s/\\RIGHTBRACE/}/g;
+
+    # Optional: Remove deleted block entirely
+    if ($onlyadditions) {
+        s/\\DIFdelbegin.*?\\DIFdelend//sg ;
+    }
 
     # Check all deleted blocks: where a deleted block contains a matching \begin and
     #    \end environment (these will be disabled by a %DIFDELCMD statements), enable
@@ -3078,11 +3143,15 @@ sub postprocess {
     #    is properly within math mode).  For math mode environments replace numbered equation
     #    environments with their display only variety (so that equation numbers in new file and
     #    diff file are identical)
+    writedebugfile($_,'postprocess1');
+
 
     while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
+      # special processing within each deleted block
       ###    while ( m/\\DIFdelbegin.*?\\DIFdelend/sg ) {
       ###      print STDERR "DEBUG Match delblock \n||||$&||||\n at ",pos,"\n";
-      $cnt=0;
+      my $arrenv;    # dummy variable only needed within this block
+      my @symbols;   # another temporary variable
       $len=length($&);
       $begin=pos($_) - $len;
       $delblock=$&;
@@ -3103,24 +3172,29 @@ sub postprocess {
       ### an error
       # displayed math environments
       ###0.5:     $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
+
       if ($mathmarkup == FINE ) {
+        # if block contains both beginning and and markers for an explicit math environment, restore opening and closing commands
 	$delblock=~ s/(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHREPL}$AUXCMD\n$1$3\n\\end{$MATHREPL}$AUXCMD\n$4/sg;
 	# also transform the opposite pair \end{displaymath} .. \begin{displaymath} but we have to be careful not to interfere with the results of the transformation in the line directly above
 	### pre-0.42 obsolete version which did not work on eqnarray test      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHREPL}$AUXCMD\n$3\n\\begin{$MATHREPL}$AUXCMD\n$4/sg;
 	###0.5:      $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
-	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end\{MATHMODE\}$AUXCMD\n$1$3\n\\begin\{MATHMODE\}$AUXCMD\n$4/sg;
-  
+	$delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\begin\{\2\})/\\end\{MATHMODE\}$AUXCMD\n$1$3\n\\begin\{MATHMODE\}$AUXCMD\n$4/sg;
+
         # now look for unpaired %DIFDELCMD < \begin{MATHENV}; if found add \begin{$MATHREPL} and insert \end{$MATHREPL} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHREPL}$AUXCMD\n/sg ) {
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\begin\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHREPL}$AUXCMD\n/sg ) {
+	  ### print STDERR "BINGO: begin block: \nBefore: |" . substr($_,$begin,$len) . "|\n" if $debug ;
 	  $delblock =~ s/(\\DIFdelend$)/\\end{$MATHREPL}$AUXCMD\n$1/s ;
+	  ### print STDERR "After: |" . $delblock . "|\n\n" if $debug ;
         }
         # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end\{MATHMODE\}$AUXCMD\n/sg ) {
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\end\{((?:$MATHENV)|SQUAREBRACKET)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end\{MATHMODE\}$AUXCMD\n/sg ) {
+	  ### print STDERR "BINGO: end block:\nBefore: |" . substr($_,$begin,$len) . "|\n" if $debug;
 	  $delblock =~ s/(\\DIFdelend$)/\\begin\{MATHMODE\}$AUXCMD\n$1/s ;
+	  ### print STDERR "After: |" . $delblock . "|\n\n" if $debug ;
 	}
-
 
 	### pre-0.42      # same as above for special case \[.\] (latex abbreviation for displaymath)
         ### pre-0.42      $delblock=~ s/(\%DIFDELCMD < \s*\\\[\s*?\n())(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\\])/$1\\\[$AUXCMD\n$3\n\\\]$AUXCMD\n$4/sg;
@@ -3128,42 +3202,68 @@ sub postprocess {
         # equation array environment
         ###pre-0.3      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?\n)(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/$1\\begin{$MATHARRREPL}$AUXCMD\n$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
         ###0.5      $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
-        $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
+	###1.3.2         $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}.*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$MATHARRREPL}$AUXCMD\n$1$3\n\\end{$MATHARRREPL}$AUXCMD\n$4/sg;
+	# Example Input: %DIFDELCMD < \begin{alignat}{2} \n\exp(ix)&=&\cos(x)+i\sin(x)\n%DIFDECMD < \end{alignat}
+        #                < $1                <$2   >><$3>  < $4                      ><$5                       >
+	# Example Output:\begin{alignat*}{2}%DIFAUXCMD\n\%DIFDELCMD\begin{align}\n\exp(ix)&=&\cos(x)+i\sin(x)\n\end{align*}%DIFAUXCMD\n%DIFDELCMD > \end{alignat*}
+        $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}(.*?)(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(\%DIFDELCMD < \s*\\end\{\2\})/\\begin{$2*}$3$AUXCMD\n$1$4\n\\end{$2*}$AUXCMD\n$5/sg;
         ###  pre-0.42 obsolete version which did not work on eqnarray test     $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?\n)(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/$1\\end{$MATHARRREPL}$AUXCMD\n$3\n\\begin{$MATHARRREPL}$AUXCMD\n$4/sg;
-        $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+        $delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))(.*?[^\n]?)\n?(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\begin\{\2\})/\\end{MATHMODE}$AUXCMD\n$1$3\n\\begin{MATHMODE}$AUXCMD\n$4/sg;
+        ### print STDERR "STEP1: |" . $delblock . "|\n\n" if $debug ;
 
         # now look for unpaired %DIFDELCMD < \begin{MATHARRENV}; if found add \begin{$MATHARRREPL} and insert \end{$MATHARRREPL} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\begin\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\begin{$MATHARRREPL}$AUXCMD\n/sg ) {
-	  $delblock =~ s/(\\DIFdelend$)/\\end{$MATHARRREPL}$AUXCMD\n$1/s ;
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\begin\{($MATHARRENV)\}(.*?)(?:$DELCMDCLOSE|\n))/$1\\begin{$2*}$3$AUXCMD\n/sg ) {
+	  $arrenv=$2;
+	  $delblock =~ s/(\\DIFdelend$)/\\end{$arrenv*}}$AUXCMD\n$1/s ;
         }
+        ### print STDERR "STEP2: |" . $delblock . "|\n\n" if $debug ;
+
         # now look for unpaired %DIFDELCMD < \end{MATHENV}; if found add \end{MATHMODE} and insert \begin{MATHMODE} 
         # just before end of block; again we use look-behind assertion to avoid matching constructions which have already been converted
-        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \s*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
+        if ($delblock=~ s/(?<!${AUXCMD}\n)(\%DIFDELCMD < \h*\\end\{($MATHARRENV)\}\s*?(?:$DELCMDCLOSE|\n))/$1\\end{MATHMODE}$AUXCMD\n/sg ) {
 	  $delblock =~ s/(\\DIFdelend$)/\\begin{MATHMODE}$AUXCMD\n$1/s ;
         }
 
 	# parse $delblock for deleted and reinstated eqnarray* environments - within those reinstate \\ and & commands
 	###      while ( $delblock =~ m/\\begin{$MATHARRREPL}$AUXCMD\n.*?\n\\end{$MATHARRREPL}$AUXCMD\n/sg ) {
-        while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
+        ### while ( $delblock =~ m/\\begin\Q{$MATHARRREPL}$AUXCMD\E\n.*?\n\\end\Q{$MATHARRREPL}$AUXCMD\E\n/sg ) {
+	while ( $delblock =~ m/\\begin\{$MATHARRENV\*}[^\n]*?$AUXCMD\n.*?\n\\end\{$MATHARRENV\*\}$AUXCMD\n/sg ) {
 	  ###	      print STDERR "DEBUG Match eqarrayblock $& at ",pos,"\n";
-	  $cnt2=0;
 	  $len2=length($&);
 	  $begin2=pos($delblock) - $len2;
 	  $eqarrayblock=$&;
 	  # reinstate deleted & and \\ commands
-	  $eqarrayblock=~ s/(\%DIFDELCMD < \s*(\&|\\\\)\s*?(?:$DELCMDCLOSE|\n))/$1$2$AUXCMD\n/sg ;
-	  
+	  ### $eqarrayblock=~ s/(\%DIFDELCMD < \s*(\&|\\\\)\s*?(?:$DELCMDCLOSE|\n))/$1$2$AUXCMD\n/sg ;
+	  $eqarrayblock    =~ s/(\%DIFDELCMD < (.*?(?:\&|\\\\).*)(?:$DELCMDCLOSE|\n))/
+        	  # The pattern captures comments with at least one of & or \\
+                  @symbols= split(m@((?:&|\\\\)\s*)@,$2);   #  extract & and \\ and other material from sequence 
+                  @symbols= grep ( m@&|\\\\\s*@, @symbols); #  select & and \\ (and subsequent spaces)
+                  "$1@symbols$AUXCMD\n"
+            /eg ;
+	  ### print STDERR "Modified block:|$eqarrayblock|\n" if  $debug;
+	  # splice in modified block
 	  substr($delblock,$begin2,$len2)=$eqarrayblock;
 	  pos($delblock) = $begin2 + length($eqarrayblock);
 	}
+
       } elsif ( $mathmarkup == COARSE || $mathmarkup == WHOLE ) {
 	#       Convert MATHBLOCKmath commands to their uncounted numbers (e.g. convert equation -> displaymath
 	#       (environments defined in $MATHENV will be replaced by $MATHREPL, and  environments in $MATHARRENV
-	#       will be replaced by $MATHARRREPL
-	$delblock=~ s/\\MATHBLOCK($MATHENV)\{($pat_n)\}/\\MATHBLOCK$MATHREPL\{$2\}/sg;
-	$delblock=~ s/\\MATHBLOCK($MATHARRENV)\{($pat_n)\}/\\MATHBLOCK$MATHARRREPL\{$2\}/sg;
+	#       will be replaced by their starred variety 
+	$delblock=~ s/\\MATHBLOCK($MATHENV)((?:\[$brat_n\])?)\{($pat_n)\}/\\MATHBLOCK$MATHREPL$2\{$3\}/sg;
+	$delblock=~ s/\\MATHBLOCK($MATHARRENV)((?:\[$brat_n\])?)\{($pat_n)\}/\\MATHBLOCK$1\*$2\{$3\}/sg;
       }
+
+      # Replacing math array environments with their starred varieties in deleted blocks as implemented now causes double asterisks
+      # in situation where there had been starred already, e.g. \begin{alignat*} is turned into \begin{alignat**}
+      # The following command seeks to undo this double-starring. It is a little bit of a hack because it relies on the fact that **
+      # double-starred math array environment does not occur naturally
+      $delblock =~ s/($MATHARRENV)(?<=\*)\*/$1/sg;
+
+      print STDERR "DELBLOCK after maths processing: |" . $delblock . "|\n\n" if $debug ;
+
+
       # Reinstate completely deleted list environments. note that items within the 
       # environment will still be commented out.  They will be restored later
       $delblock=~ s/(\%DIFDELCMD < \s*\\begin\{($LISTENV)\}\s*?(?:\n|$DELCMDCLOSE))(.*?)(\%DIFDELCMD < \s*\\end\{\2\})/{
@@ -3171,7 +3271,6 @@ sub postprocess {
 															###   "$1\\begin{$2}$AUXCMD\n". restore_item_commands($3). "\n\\end{$2}$AUXCMD\n$4";
 															"$1\\begin{$2}$AUXCMD\n$3\n\\end{$2}$AUXCMD\n$4";
 														       }/esg;
-
       ###      $delblock=~ s/\\begin\{$MATHENV}$AUXCMD/\\begin{$MATHREPL}$AUXCMD/g;
       ###      $delblock=~ s/\\end\{$MATHENV}$AUXCMD/\\end{$MATHREPL}$AUXCMD/g;
       ###      $delblock=~ s/\\begin\{$MATHARRENV}$AUXCMD/\\begin{$MATHARRREPL}$AUXCMD/g;
@@ -3191,8 +3290,7 @@ sub postprocess {
 
       #     c. If in-line math mode contains array environment, enclose the whole environment in \mbox'es
       while ( $delblock =~ m/($math)(\s*)/sg ) {
-	#	      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
-	$cnt2=0;
+##		      print STDERR "DEBUG Delblock Match math $& at ",pos,"\n";
 	$len2=length($&);
 	$begin2=pos($delblock) - $len2;
 	$mathblock="%\n\\mbox{$AUXCMD\n$1\n}$AUXCMD\n";
@@ -3215,6 +3313,8 @@ sub postprocess {
       ###	$delblock=~s/(\\($CITECMD)${extraspace}(?:<$abrat0>${extraspace})?(?:\[$brat0\]${extraspace}){0,2}\{$pat_n\})(\s*)/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/msg ;
       ###      } 
       # if MBOXINLINEMATH is set, protect inlined math environments with an extra mbox
+
+
       if ( $MBOXINLINEMATH ) {
 	# note additional \newline after command is omitted from output if right at the end of deleted block (otherwise a spurious empty line is generated)
 	$delblock=~s/($math)(?:[\s\n]*)?/\\mbox{$AUXCMD\n$1\n}$AUXCMD\n/sg;
@@ -3245,12 +3345,10 @@ sub postprocess {
 
     # make the array modification in added blocks
     while ( m/\\DIFaddbegin.*?\\DIFaddend/sg ) {
-      $cnt=0;
       $len=length($&);
       $begin=pos($_) - $len;
       $addblock=$&;
       while ( $addblock =~ m/($math)(\s*)/sg ) {
-	$cnt2=0;
 	$len2=length($&);
 	$begin2=pos($addblock) - $len2;
 	$mathblock="%\n\\mbox{$AUXCMD\n$1\n}$AUXCMD\n";
@@ -3313,30 +3411,52 @@ sub postprocess {
 
 
 
-    # Replace MATHMODE environments from step 1a above by the correct Math environment
-
-    # The next line is complicated.  The negative look-ahead insertion makes sure that no \end{$MATHENV} (or other mathematical
-    # environments) are between the \begin{$MATHENV} and \end{MATHMODE} commands. This is necessary as the minimal matching 
-    # is not globally minimal but only 'locally' (matching is beginning from the left side of the string)
+    # Replace MATHMODE environments from step 1a above by the correct Math environment and remove unncessary pairings
+    
     if ( $mathmarkup == FINE ) {
-      1 while s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:.(?!(?:\\end\{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin\{MATHMODE})))*?)\\end\{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
-      1 while s/\\begin\{MATHMODE}((?:.(?!\\end\{MATHMODE}))*?)\\end\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
+      # look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
+      # \begin{..} ... \end{..} pairs
+      s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET|MATHMODE)\}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end\{\1\}$AUXCMD\n/$2/sg;       
+      # \end{..} .... \begin{..} pairs
+      s/\\end\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET|MATHMODE)\}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\begin\{\1\}$AUXCMD\n/$2/sg;       
+
+      writedebugfile($_,'postprocess15');
+      # The next line is complicated.  The negative look-ahead insertion makes sure that no \end{$MATHENV} (or other mathematical
+      # environments) are between the \begin{$MATHENV} and \end{MATHMODE} commands. This is necessary as the minimal matching 
+      # is not globally minimal but only 'locally' (matching is beginning from the left side of the string)
+      # [NB: Do not be tempted to prettify the expression with /x modified. It seems this is applied after strings are expanded so will ignore spaces in strings
+      1 while s/(?<!$DELCMDOPEN)\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}((?:${DELCMDOPEN}[^\n]*|.(?!(?:\\end\{(?:(?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}|\\begin\{MATHMODE})))*?)\\end\{MATHMODE}/\\begin{$1}$2\\end{$1}/s;
+      writedebugfile($_,'postprocess16');
+      1 while s/\\begin\{MATHMODE}((?:.(?!\\end\{MATHMODE}))*?)(?<!$DELCMDOPEN)\\end\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)}/\\begin{$2}$1\\end{$2}/s;
       # convert remaining \begin{MATHMODE} \end{MATHMODE} (and not containing & or \\ )into MATHREPL environments
       s/\\begin\{MATHMODE\}((?:(.(?!(?<!\\)\&|\\\\))*)?)\\end\{MATHMODE\}/\\begin{$MATHREPL}$1\\end{$MATHREPL}/sg;
       # others into MATHARRREPL
       s/\\begin\{MATHMODE\}(.*?)\\end\{MATHMODE\}/\\begin{$MATHARRREPL}$1\\end{$MATHARRREPL}/sg;
-
-      # now look for AUXCMD math-mode pairs which have only comments (or empty lines between them), and remove the added commands
-      s/\\begin\{((?:$MATHENV)|(?:$MATHARRENV)|SQUAREBRACKET)\}$AUXCMD\n((?:\s*%.[^\n]*\n)*)\\end\{\1\}$AUXCMD\n/$2/sg;       
+      # Final cleanup of all equation environments: Sometimes I end up with %DIFDELCMD < \PAR lines, which I need to make sure do not get expanded into
+      # actual empty lines within equation environments (later part)
+      while (  m/\\begin\{((?:$MATHENV|$MATHARRENV|SQUAREBRACKET)\*?)}.*?(?<!\%DIFDELCMD < )\\end\{\1}/sg ) {
+	$len=length($&);
+	$begin=pos($_) - $len;
+	$eqblock=$&;
+	$eqblock =~ s/(%DIFDELCMD < )([^\n]*?)\\PAR\n/$1$2\n$1\n/sg;
+	#     splice in modified delblock
+	print STDERR "DEBUG EQBLOCK: |$eqblock|\n\n" if $debug;
+	substr($_,$begin,$len)=$eqblock;
+	pos = $begin + length($eqblock);
+      }
     } else {
       #   math modes OFF,WHOLE,COARSE: Convert \MATHBLOCKmath{..} commands back to environments
-      s/\\MATHBLOCK($MATHENV|$MATHARRENV|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
+      # with optionl argument to MATHBLOCK, e.g \MATHBLOCKalignat[{3}]{ ...}
+      s/\\MATHBLOCK($MATHENV|$MATHARRENV\*?|SQUAREBRACKET)\[($brat0)\]\{($pat_n)\}/\\begin{$1}$2$3\\end{$1}/sg;
+      # without optional argument e.g \MATHBLOCKalign{ ...}
+      s/\\MATHBLOCK($MATHENV|$MATHARRENV\*?|SQUAREBRACKET)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # convert ARRAYBLOCK.. commands back to environments
       s/\\ARRAYBLOCK($ARRENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
       # get rid of the DIFANCHOR markers, first the delete comments, then everywhere
       s/%DIFDELCMD < \\DIFANCHOR(?:MATH|ARR)[BE] (?:\n%DIFDELCMD < )?%%%\n//g ;
       s/\\DIFANCHOR(?:MATH|ARR)[BE] //g;
     }
+    writedebugfile($_,'postprocess2');
 
     #  Convert all PICTUREblock{..} commands back to the appropriate environments
     s/\\PICTUREBLOCK($PICTUREENV)\{($pat_n)\}/\\begin{$1}$2\\end{$1}/sg;
@@ -3360,7 +3480,6 @@ sub postprocess {
     #    within floats (currently recognised float environments: plate,table,figure
     #    plus starred varieties).
     while ( m/\\begin\{($FLOATENV)\}.*?\\end\{\1\}/sg ) {
-      $cnt=0;
       $len=length($&);
       $begin=pos($_) - $len;
       $float=$&;
@@ -3916,7 +4035,6 @@ be real files (not pipes or similar) as they are opened twice.
                           ITEMCMD (RegEx)
                           LISTENV (RegEx)
                           MATHARRENV (RegEx)
-                          MATHARRREPL (String)
                           MATHENV (RegEx)
                           MATHREPL (String)
                           MINWORDSBLOCK (Integer)
@@ -3998,6 +4116,10 @@ Other configuration options:
                       of changes in tables. In this case please use option --graphics-markup=none as a 
                       work-around. 
 
+--no-del               Suppress deleted text from the diff. It is similar in effect to the BOLD style, 
+                       but the deleted text ist not just invisible in the output, it is also not included in the
+                       diff text file. This can be more robust than just making it invisible. 
+
 --disable-citation-markup 
 --disable-auto-mbox    Suppress citation markup and markup of other vulnerable commands in styles 
                        using ulem (UNDERLINE,FONTSTRIKE, CULINECHBAR)
@@ -4007,6 +4129,8 @@ Other configuration options:
 --enforce-auto-mbox    Protect citation commands and other vulnerable commands in changed sections 
                        with \\mbox command, i.e. use default behaviour for ulem package for other packages
                        (the two options are identical and are simply aliases)
+
+
 
 Miscellaneous options
 
@@ -4282,11 +4406,6 @@ The following packages trigger special behaviour:
 
 =over 8
 
-=item C<amsmath> 
-
-Configuration variable MATHARRREPL is set to C<align*> (Default: C<eqnarray*>). (Note that many of the 
-amsmath array environments are already recognised by default as such)
-
 =item C<endfloat> 
 
 Ensure that C<\begin{figure}> and C<\end{figure}> always appear by themselves on a line.
@@ -4440,8 +4559,6 @@ C<LISTENV>  (RegEx)
 
 C<MATHARRENV> (RegEx)
 
-C<MATHARRREPL> (String)
-
 C<MATHENV> (RegEx)
 
 C<MATHREPL> (String)
@@ -4541,6 +4658,12 @@ In some circumstances "Misplaced \noalign" error can occur if there are certain 
 of changes in tables. In this case please use C<--graphics-markup=none> as a 
 work-around. 
 
+
+=item B<--no-del> 
+
+Suppress deleted text from the diff. It is similar in effect to the BOLD style, 
+but the deleted text ist not just invisible in the output, it is also not included in the diff text file. 
+This can be more robust than just making it invisible. 
 
 =item B<--disable-citation-markup> or B<--disable-auto-mbox>
 
@@ -4706,7 +4829,7 @@ No visible markup (but generic markup commands will still be inserted.
 
 =item C<BOLD>
 
-Added text is set in bold face, discarded is not shown.
+Added text is set in bold face, discarded is not shown. (also see --no-del option for another possibility to hide deleted text)
 
 =item C<PDFCOMMENT>
 
@@ -4851,12 +4974,6 @@ rather than being commented out.
 
 [ Default: C<MATHENV>=S<C<(?:displaymath|equation)> >, C<MATHREPL>=S<C<displaymath> >]
 
-=item C<MATHARRENV>,C<MATHARRREPL>
-
-as C<MATHENV>,C<MATHREPL> but for equation arrays
-
-[ Default: C<MATHARRENV>=S<C<eqnarray\*?> >, C<MATHREPL>=S<C<eqnarray> >]
-
 =item C<MINWORDSBLOCK>
 
 Minimum number of tokens required to form an independent block. This value is
@@ -4965,8 +5082,8 @@ I<latexdiff-fast> requires the I<diff> command to be present.
 
 =head1 AUTHOR
 
-Version 1.3.2
-Copyright (C) 2004-2021 Frederik Tilmann
+Version 1.3.3
+Copyright (C) 2004-2022 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License Version 3
@@ -5191,6 +5308,8 @@ min
 Pr
 sec
 sup
+quad
+qquad
 bibfield
 bibinfo
 [Hclbkdruvt]
@@ -5278,6 +5397,7 @@ DIFnomarkup
 %%BEGIN MATHENV CONFIG
 equation[*]?
 displaymath
+math
 DOLLARDOLLAR
 %%END MATHENV CONFIG
 
@@ -5298,8 +5418,9 @@ array
 [pbvBV]?matrix
 smallmatrix
 cases
-split
 %%END ARRENV CONFIG
+# split
+
 
 %%BEGIN COUNTERCMD CONFIG
 footnote

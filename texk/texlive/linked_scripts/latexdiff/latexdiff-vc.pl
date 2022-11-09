@@ -27,7 +27,7 @@
 #
 # TODO/IDEAS: - option to call external pre-processing codes
 # version 1.3.2:
-#    - bug fix: when setting config variables with the command lines it is now possible to use quotes to includes spaces in the value, e.g. "-c LATEX=pdflatex --shell-escape'
+#    - bug fix: when setting config variables with the command lines it is now possible to use quotes to includes spaces in the value, e.g. -c LATEX="pdflatex --shell-escape"
 #    - bug fix: --only-changes is not compatible with graphics markup. --graphics-markup=none is now set automatically
 #    - when --pdf or --postscript is select, then replace tildes in version names with underscores in output file (e.g. diffHEAD_1 instead of diff HEAD~1. This is necessary because pdflatex strips ~n strings at the end of the filename, when generating output file names
 
@@ -147,7 +147,8 @@ if ( $help ) {
 }
 
 if ( $version ) {
-  die $versionstring ; 
+  print STDERR $versionstring ;  
+  exit 0; 
 }
 
 if ( $so ) {
@@ -867,7 +868,7 @@ or send them to I<tilmann -- AT -- gfz-potsdam.de>.  Include the version number 
 
 =head1 AUTHOR
 
-Version 1.2.1
+Version 1.3.2
 Copyright (C) 2005-2017 Frederik Tilmann
 
 This program is free software; you can redistribute it and/or modify
