@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-10-01.15}
+\def\texinfoversion{2022-11-07.17}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -5270,7 +5270,10 @@ $$%
         \xdef\trimmed{\segment}%
         \xdef\trimmed{\expandafter\eatspaces\expandafter{\trimmed}}%
         \xdef\indexsortkey{\trimmed}%
-        \ifx\indexsortkey\empty\xdef\indexsortkey{ }\fi
+        \ifx\indexsortkey\empty
+          \message{Empty index sort key near line \the\inputlineno}%
+          \xdef\indexsortkey{ }%
+        \fi
       }\fi
       %
       % Append to \fullindexsortkey.
@@ -6399,6 +6402,16 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\Yappendixkeyword{Yappendix}
 \def\Yomitfromtockeyword{Yomitfromtoc}
 %
+%
+% Definitions for @thischapter. These can be overridden in translation
+% files.
+\def\thischapterAppendix{%
+  \putwordAppendix{} \thischapternum: \thischaptername}
+
+\def\thischapterChapter{%
+  \putwordChapter{} \thischapternum: \thischaptername}
+%
+%
 \def\chapmacro#1#2#3{%
   \expandafter\ifx\thisenv\titlepage\else
     \checkenv{}% chapters, etc., should not start inside an environment.
@@ -6421,22 +6434,14 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \xdef\currentchapterdefs{%
       \gdef\noexpand\thischaptername{\the\toks0}%
       \gdef\noexpand\thischapternum{\appendixletter}%
-      % \noexpand\putwordAppendix avoids expanding indigestible
-      % commands in some of the translations.
-      \gdef\noexpand\thischapter{\noexpand\putwordAppendix{}
-                                 \noexpand\thischapternum:
-                                 \noexpand\thischaptername}%
+      \let\noexpand\thischapter\noexpand\thischapterAppendix
     }%
   \else
     \toks0={#1}%
     \xdef\currentchapterdefs{%
       \gdef\noexpand\thischaptername{\the\toks0}%
       \gdef\noexpand\thischapternum{\the\chapno}%
-      % \noexpand\putwordChapter avoids expanding indigestible
-      % commands in some of the translations.
-      \gdef\noexpand\thischapter{\noexpand\putwordChapter{}
-                                 \noexpand\thischapternum:
-                                 \noexpand\thischaptername}%
+      \let\noexpand\thischapter\noexpand\thischapterChapter
     }%
   \fi\fi\fi
   %
@@ -6522,6 +6527,12 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\subsubsecheadingskip{\subsecheadingskip}
 \def\subsubsecheadingbreak{\subsecheadingbreak}
 
+% Definition for @thissection. This can be overridden in translation
+% files.
+\def\thissectionDef{%
+  \putwordSection{} \thissectionnum: \thissectionname}
+%
+
 
 % Print any size, any type, section title.
 %
@@ -6563,11 +6574,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
         \xdef\currentsectiondefs{%
           \gdef\noexpand\thissectionname{\the\toks0}%
           \gdef\noexpand\thissectionnum{#4}%
-          % \noexpand\putwordSection avoids expanding indigestible
-          % commands in some of the translations.
-          \gdef\noexpand\thissection{\noexpand\putwordSection{}
-                                     \noexpand\thissectionnum:
-                                     \noexpand\thissectionname}%
+          \let\noexpand\thissection\noexpand\thissectionDef
         }%
       \fi
     \else
@@ -6576,11 +6583,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
         \xdef\currentsectiondefs{%
           \gdef\noexpand\thissectionname{\the\toks0}%
           \gdef\noexpand\thissectionnum{#4}%
-          % \noexpand\putwordSection avoids expanding indigestible
-          % commands in some of the translations.
-          \gdef\noexpand\thissection{\noexpand\putwordSection{}
-                                     \noexpand\thissectionnum:
-                                     \noexpand\thissectionname}%
+          \let\noexpand\thissection\noexpand\thissectionDef
         }%
       \fi
     \fi\fi\fi
@@ -7120,12 +7123,19 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \startsavinginserts
   \lskip=\leftskip \rskip=\rightskip
   \leftskip=0pt\rightskip=0pt % we want these *outside*.
+  %
+  % Set paragraph width for text inside cartouche.  There are
+  % left and right margins of 3pt each plus two vrules 0.4pt each.
   \cartinner=\hsize \advance\cartinner by-\lskip
   \advance\cartinner by-\rskip
+  \advance\cartinner by -6.8pt
+  %
+  % For drawing top and bottom of cartouche.  Each corner char
+  % adds 6pt and we take off the width of a rule to line up with the
+  % right boundary perfectly.
   \cartouter=\hsize
-  \advance\cartouter by 18.4pt	% allow for 3pt kerns on either
-				% side, and for 6pt waste from
-				% each corner char, and rule thickness
+  \advance\cartouter by 11.6pt
+  %
   \normbskip=\baselineskip \normpskip=\parskip \normlskip=\lineskip
   %
   % If this cartouche directly follows a sectioning command, we need the
@@ -8900,11 +8910,10 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       \xrefprintnodename\printedrefname
       %
       \ifflagclear{txiomitxrefpg}{%
-        % But we always want a comma and a space:
-        ,\space
-        %
+        % We always want a comma
+        ,%
         % output the `page 3'.
-        \turnoffactive \putwordpage\tie\refx{#1-pg}%
+        \turnoffactive \putpageref{#1}%
         % Add a , if xref followed by a space
         \if\space\noexpand\tokenafterxref ,%
         \else\ifx\	\tokenafterxref ,% @TAB
@@ -8919,6 +8928,10 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \fi
   \endlink
 \endgroup}
+
+% can be overridden in translation files
+\def\putpageref#1{%
+  \space\putwordpage\tie\refx{#1-pg}}
 
 % Output a cross-manual xref to #1.  Used just above (twice).
 %
@@ -11438,17 +11451,18 @@ directory should work if nowhere else does.}
   \mtadjustprotcode#1\relax
 }
 
+\newcount\countC
 \def\mtadjustprotcode#1{%
-  \countA=0
+  \countC=0
   \loop
-    \ifcase\lpcode#1\countA\else
-      \mtadjustcp\lpcode#1\countA
+    \ifcase\lpcode#1\countC\else
+      \mtadjustcp\lpcode#1\countC
     \fi
-    \ifcase\rpcode#1\countA\else
-      \mtadjustcp\rpcode#1\countA
+    \ifcase\rpcode#1\countC\else
+      \mtadjustcp\rpcode#1\countC
     \fi
-    \advance\countA 1
-  \ifnum\countA < 256 \repeat
+    \advance\countC 1
+  \ifnum\countC < 256 \repeat
 }
 
 \newcount\countB
