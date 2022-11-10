@@ -1,3 +1,6 @@
+2022-11-10  Luigi Scarso <luigi.scarso@gmail.com> 
+    * Better error message if setlocale fails
+
 2022-10-28  Luigi Scarso <luigi.scarso@gmail.com> 
     * \variablefam (backport from luametatex, handy for latex) (H .Hagen)
 
