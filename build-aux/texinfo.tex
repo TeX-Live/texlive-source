@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2022-11-07.17}
+\def\texinfoversion{2022-11-12.22}
 %
 % Copyright 1985, 1986, 1988, 1990-2022 Free Software Foundation, Inc.
 %
@@ -3691,7 +3691,10 @@ $$%
 
 % @textdegree - the normal degrees sign.
 %
-\def\textdegree{$^\circ$}
+\def\textdegree{%
+   \ifmmode ^\circ
+   \else {\tcfont \char 176}%
+   \fi}
 
 % Laurent Siebenmann reports \Orb undefined with:
 %  Textures 1.7.7 (preloaded format=plain 93.10.14)  (68K)  16 APR 2004 02:38
@@ -8428,21 +8431,21 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \ifcase\paramno
   % 0
     \expandafter\xdef\csname\the\macname\endcsname{%
-      \bgroup
+      \begingroup
         \noexpand\spaceisspace
         \noexpand\endlineisspace
         \noexpand\expandafter % skip any whitespace after the macro name.
         \expandafter\noexpand\csname\the\macname @@@\endcsname}%
     \expandafter\xdef\csname\the\macname @@@\endcsname{%
-      \egroup
+      \endgroup
       \noexpand\scanmacro{\macrobody}}%
   \or % 1
     \expandafter\xdef\csname\the\macname\endcsname{%
-       \bgroup
+       \begingroup
        \noexpand\braceorline
        \expandafter\noexpand\csname\the\macname @@@\endcsname}%
     \expandafter\xdef\csname\the\macname @@@\endcsname##1{%
-      \egroup
+      \endgroup
       \noexpand\scanmacro{\macrobody}%
       }%
   \else % at most 9
@@ -8453,7 +8456,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       % @MACNAME@@@ removes braces surrounding the argument list.
       % @MACNAME@@@@ scans the macro body with arguments substituted.
       \expandafter\xdef\csname\the\macname\endcsname{%
-        \bgroup
+        \begingroup
         \noexpand\expandafter  % This \expandafter skip any spaces after the
         \noexpand\macroargctxt % macro before we change the catcode of space.
         \noexpand\expandafter
@@ -8467,7 +8470,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       \expandafter\xdef
       \expandafter\expandafter
         \csname\the\macname @@@@\endcsname\paramlist{%
-          \egroup\noexpand\scanmacro{\macrobody}}%
+          \endgroup\noexpand\scanmacro{\macrobody}}%
     \else % 10 or more:
       \expandafter\xdef\csname\the\macname\endcsname{%
         \noexpand\getargvals@{\the\macname}{\argl}%
@@ -10063,7 +10066,7 @@ directory should work if nowhere else does.}
   \gdefchar^^ae{\v Z}
   \gdefchar^^af{\dotaccent Z}
   %
-  \gdefchar^^b0{\textdegree{}}
+  \gdefchar^^b0{\textdegree}
   \gdefchar^^b1{\ogonek{a}}
   \gdefchar^^b2{\ogonek{ }}
   \gdefchar^^b3{\l}
@@ -10486,7 +10489,7 @@ directory should work if nowhere else does.}
   \DeclareUnicodeCharacter{00AE}{\registeredsymbol{}}%
   \DeclareUnicodeCharacter{00AF}{\={ }}%
   %
-  \DeclareUnicodeCharacter{00B0}{\ringaccent{ }}%
+  \DeclareUnicodeCharacter{00B0}{\textdegree}
   \DeclareUnicodeCharacter{00B1}{\ensuremath\pm}%
   \DeclareUnicodeCharacter{00B2}{$^2$}%
   \DeclareUnicodeCharacter{00B3}{$^3$}%
@@ -10990,7 +10993,7 @@ directory should work if nowhere else does.}
   %
   \DeclareUnicodeCharacter{20AC}{\euro{}}%
   %
-  \DeclareUnicodeCharacter{2192}{\expansion{}}%
+  \DeclareUnicodeCharacter{2192}{\arrow}%
   \DeclareUnicodeCharacter{21D2}{\result{}}%
   %
   % Mathematical symbols
