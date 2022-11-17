@@ -1,4 +1,4 @@
-# Copyright 2000-2020 Free Software Foundation, Inc.
+# Copyright 2000-2022 Free Software Foundation, Inc.
 # This Makefile.am is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
@@ -9,10 +9,11 @@
 # PARTICULAR PURPOSE.
 
 
-# Since we do not require GNU "make", let's select the POSIX behavior to
-# uniformize the behavior a bit more with various "make" implementations
-# and ease maintenance. This target should be removed only if one day,
-# we need to require GNU "make".
+# The ".POSIX" line is needed in particular for GNU "make", so that
+# recipes are invoked as if the shell had been passed the -e flag.
+# But note that since GNU Automake adds non-comment lines before it
+# in its generated Makefile, this does not ensure POSIX behavior with
+# other "make" implementations.
 .POSIX:
 
 EXTRA_DIST = round_raw_generic.c jyn_asympt.c				\
@@ -95,7 +96,7 @@ libmpfr_la_LIBADD = @LIBOBJS@
 #        3.1.x    5:x:1
 #        4.0.x    6:x:0
 #        4.1.x    7:x:1
-libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 7:0:1
+libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 7:1:1
 
 GET_PATCHES_SH = $(top_srcdir)/tools/get_patches.sh
 PATCHES = $(top_srcdir)/PATCHES

@@ -1,6 +1,6 @@
-diff -ur mpfr-4.1.0/src/mparam_h.in mpfr-src/src/mparam_h.in
---- mpfr-4.1.0/src/mparam_h.in	Thu Jan 09 03:11:13 2020
-+++ mpfr-src/src/mparam_h.in	Sun Jul 12 16:40:20 2020
+diff -ur mpfr-4.1.1/src/mparam_h.in mpfr-src/src/mparam_h.in
+--- mpfr-4.1.1/src/mparam_h.in	Fri Jan 07 00:27:38 2022
++++ mpfr-src/src/mparam_h.in	Fri Nov 18 05:45:03 2022
 @@ -31,6 +31,8 @@
  /* Note: the different macros used here are those defined by gcc,
     for example with gcc -mtune=native -dM -E -xc /dev/null */

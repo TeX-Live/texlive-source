@@ -1,4 +1,4 @@
-Copyright 1999-2020 Free Software Foundation, Inc.
+Copyright 1999-2022 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -108,7 +108,7 @@ Table of contents:
 - a function to compute the hash of a floating-point number
   (suggested by Patrick Pelissier)
 - implement new functions from the C++17 standard:
-  http://en.cppreference.com/w/cpp/numeric/special_math
+  https://en.cppreference.com/w/cpp/numeric/special_functions
   assoc_laguerre, assoc_legendre, comp_ellint_1, comp_ellint_2, comp_ellint_3,
   cyl_bessel_i, cyl_bessel_j, cyl_bessel_k, cyl_neumann, ellint_1, ellint_2,
   ellint_3, hermite, legendre, laguerre, sph_bessel, sph_legendre,
@@ -133,7 +133,7 @@ Table of contents:
   HypergeometricU(a,b,s) = 1/gamma(a)*int(exp(-su)*u^(a-1)*(1+u)^(b-a-1),
                                     u=0..infinity)
   JacobiThetaNullK
-  PolylogP, PolylogD, PolylogDold: see http://arxiv.org/abs/math.CA/0702243
+  PolylogP, PolylogD, PolylogDold: see https://arxiv.org/abs/math/0702243
     and the references herein.
   JBessel(n, x) = BesselJ(n+1/2, x)
   KBessel, KBessel2 [2nd kind]
@@ -249,7 +249,7 @@ Table of contents:
     and Polygamma Function: psi^{(m)}(x) for m >= 0, x > 0.
 - functions from ISO/IEC 24747:2009 (Extensions to the C Library,
   to Support Mathematical Special Functions).
-  Standard: http://www.iso.org/iso/catalogue_detail.htm?csnumber=38857
+  Standard: https://www.iso.org/standard/38857.html
   Draft: http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1292.pdf
   Rationale: http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1244.pdf
   See also: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2010/n3060.pdf
@@ -360,10 +360,10 @@ Table of contents:
   4000 bits, and up to a 75% memory improvement in his Arb implementation, by
   using recursive instead of iterative binary splitting:
   https://github.com/fredrik-johansson/arb/blob/master/elefun/exp_sum_bs_powtab.c
-- improve mpfr_grandom using the algorithm in http://arxiv.org/abs/1303.6257
+- improve mpfr_grandom using the algorithm in https://arxiv.org/abs/1303.6257
 - implement a mpfr_sqrthigh algorithm based on Mulders' algorithm, with a
   basecase variant
-- use mpn_div_q to speed up mpfr_div. However mpn_div_q, which is new in
+- use mpn_div_q to speed up mpfr_div. However, mpn_div_q, which is new in
   GMP 5, is not documented in the GMP manual, thus we are not sure it
   guarantees to return the same quotient as mpn_tdiv_qr.
   Also mpfr_div uses the remainder computed by mpn_divrem. A workaround would
@@ -380,8 +380,8 @@ Table of contents:
   gamma(x+k): instead of performing k products by x+i, we could precompute
   x^2, ..., x^m for m ~ sqrt(k), and perform only sqrt(k) products.
   One could also use the series for 1/gamma(x), see for example
-  http://dlmf.nist.gov/5/7/ or formula (36) from
-  http://mathworld.wolfram.com/GammaFunction.html
+  https://dlmf.nist.gov/5/7/ or formula (36) from
+  https://mathworld.wolfram.com/GammaFunction.html
 - improve the computation of Bernoulli numbers: instead of computing just one
   B[2n] at a time in mpfr_bernoulli_internal, we could compute several at a
   time, sharing the expensive computation of the 1/p^(2n) series.
@@ -662,7 +662,7 @@ Table of contents:
   one gets a warning with Clang. This is just an example; this needs to be
   done in a clean way.
   See:
-    http://stackoverflow.com/a/3430353/3782797
+    https://stackoverflow.com/a/3430353/3782797
     https://hamberg.no/erlend/posts/2013-02-18-static-array-indices.html
 
 - change most mpfr_urandomb occurrences to mpfr_urandom in the tests?

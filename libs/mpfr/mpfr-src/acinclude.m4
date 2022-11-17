@@ -1,6 +1,6 @@
 dnl  MPFR specific autoconf macros
 
-dnl  Copyright 2000, 2002-2020 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002-2022 Free Software Foundation, Inc.
 dnl  Contributed by the AriC and Caramba projects, INRIA.
 dnl
 dnl  This file is part of the GNU MPFR Library.
@@ -40,7 +40,6 @@ AC_DEFUN([MPFR_CONFIGS],
 AC_REQUIRE([AC_OBJEXT])
 AC_REQUIRE([MPFR_CHECK_LIBM])
 AC_REQUIRE([MPFR_CHECK_LIBQUADMATH])
-AC_REQUIRE([AC_HEADER_TIME])
 AC_REQUIRE([AC_CANONICAL_HOST])
 
 dnl Features for the MPFR shared cache. This needs to be done
@@ -62,6 +61,10 @@ dnl (such as with Debian's autoconf-archive 20160320-1), which contains
 dnl AX_PTHREAD_ZOS_MISSING, etc. It is not documented, but see:
 dnl   https://lists.gnu.org/archive/html/autoconf/2015-03/msg00011.html
 dnl
+dnl AX_PTHREAD is now in the MPFR repository (m4/ax_pthread.m4), but we
+dnl should leave this test, just in case there is some issue loading it
+dnl (or any other reason).
+dnl
 dnl Note: each time a change is done in m4_pattern_forbid, autogen.sh
 dnl should be tested with and without ax_pthread.m4 availability (in
 dnl the latter case, there should be an error).
@@ -69,7 +72,9 @@ dnl the latter case, there should be an error).
     AX_PTHREAD([])
     if test "$ax_pthread_ok" = yes; then
       CC="$PTHREAD_CC"
+      CXX="$PTHREAD_CXX"
       CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+      CXXFLAGS="$CXXFLAGS $PTHREAD_CFLAGS"
       LIBS="$LIBS $PTHREAD_LIBS"
 dnl Do a compilation test, as this is currently not done by AX_PTHREAD.
 dnl Moreover, MPFR needs pthread_rwlock_t, which is conditionally defined
@@ -119,7 +124,7 @@ AC_CHECK_HEADER([stdarg.h],[AC_DEFINE([HAVE_STDARG],1,[Define if stdarg])],
     AC_MSG_ERROR([stdarg.h or varargs.h not found]))])
 
 dnl sys/fpu.h - MIPS specific
-AC_CHECK_HEADERS([sys/time.h sys/fpu.h])
+AC_CHECK_HEADERS([sys/fpu.h])
 
 dnl Android has a <locale.h>, but not the following members.
 AC_CHECK_MEMBERS([struct lconv.decimal_point, struct lconv.thousands_sep],,,
@@ -1465,46 +1470,81 @@ EOF
  rm -f conftest*
 ])])
 
+
+dnl  MPFR_HAVE_LIB
+dnl  -------------
+dnl
+dnl  Similar to AC_CHECK_LIB, but without checking any function.
+dnl  This is useful, because AC_CHECK_LIB has compatibility issues
+dnl  with GCC's -Werror, such has
+dnl    error: infinite recursion detected [-Werror=infinite-recursion]
+dnl  if "main" is checked, or
+dnl    error: conflicting types for built-in function 'floor'; expected
+dnl    'double(double)' [-Werror=builtin-declaration-mismatch]
+dnl  if "floor" is checked (since "char floor ();" is used by autoconf).
+dnl
+dnl  In the future, use AC_SEARCH_LIBS instead?
+
+AC_DEFUN([MPFR_HAVE_LIB], [
+saved_LIBS="$LIBS"
+LIBS="-l$1 $LIBS"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[]])], $2)
+LIBS="$saved_LIBS"
+])
+
+
 dnl  MPFR_CHECK_LIBM
 dnl  ---------------
-dnl  Determine a math library -lm to use.
+dnl  Determine math libraries to use.
+dnl  The actual functions will individually be checked later.
 
 AC_DEFUN([MPFR_CHECK_LIBM],
 [AC_REQUIRE([AC_CANONICAL_HOST])
 AC_SUBST(MPFR_LIBM,'')
 case $host in
-  *-*-beos* | *-*-cygwin* | *-*-pw32*)
-    # According to libtool AC CHECK LIBM, these systems don't have libm
+  *-*-beos* | *-*-cegcc* | *-*-cygwin* | *-*-haiku* | *-*-pw32* | *-*-darwin*)
+    # According to libtool.m4:
+    #   These systems don't have libm, or don't need it.
     ;;
   *-*-solaris*)
-    # On Solaris the math functions new in C99 are in -lm9x.
-    # FIXME: Do we need -lm9x as well as -lm, or just instead of?
-    AC_CHECK_LIB(m9x, main, MPFR_LIBM="-lm9x")
-    AC_CHECK_LIB(m,   main, MPFR_LIBM="$MPFR_LIBM -lm")
+    # On Solaris, some additional math functions are in -lm9x.
+    # For MPFR, https://docs.oracle.com/cd/E19957-01/806-3568/ncg_lib.html
+    # says that ceil, floor and rint are provided by libm. We would also
+    # like nearbyint when available, but there is no mention of it in this
+    # doc. Just in case, let's check for it in m9x, e.g. if it is added in
+    # the future.
+    MPFR_HAVE_LIB(m9x, MPFR_LIBM="-lm9x")
+    MPFR_HAVE_LIB(m, MPFR_LIBM="$MPFR_LIBM -lm")
     ;;
   *-ncr-sysv4.3*)
-    # FIXME: What does -lmw mean?  Libtool AC CHECK LIBM does it this way.
+    # The following AC_CHECK_LIB line about -lmw is copied from libtool.m4,
+    # but do we need it? This has never been tested in MPFR. See commits
+    #   6d34bd85f038abeaeeb77aa8f65b562623cc38bc (1999-02-13)
+    #   e65f46d3fc4eb98d25ee94ad8e6f51c5846c8fe3 (1999-03-20)
+    # in the libtool repository.
     AC_CHECK_LIB(mw, _mwvalidcheckl, MPFR_LIBM="-lmw")
-    AC_CHECK_LIB(m, main, MPFR_LIBM="$MPFR_LIBM -lm")
+    MPFR_HAVE_LIB(m, MPFR_LIBM="$MPFR_LIBM -lm")
     ;;
   *)
-    AC_CHECK_LIB(m, main, MPFR_LIBM="-lm")
+    MPFR_HAVE_LIB(m, MPFR_LIBM="-lm")
     ;;
 esac
 ])
 
 dnl  MPFR_CHECK_LIBQUADMATH
-dnl  ---------------
+dnl  ----------------------
 dnl  Determine a math library -lquadmath to use.
+
 AC_DEFUN([MPFR_CHECK_LIBQUADMATH],
 [AC_REQUIRE([AC_CANONICAL_HOST])
 AC_SUBST(MPFR_LIBQUADMATH,'')
 case $host in
   *)
-    AC_CHECK_LIB(quadmath, main, MPFR_LIBQUADMATH="-lquadmath")
+    MPFR_HAVE_LIB(quadmath, MPFR_LIBQUADMATH="-lquadmath")
     ;;
 esac
 ])
+
 
 dnl  MPFR_LD_SEARCH_PATHS_FIRST
 dnl  --------------------------

@@ -1,4 +1,4 @@
-Copyright 1999-2020 Free Software Foundation, Inc.
+Copyright 1999-2022 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -37,17 +37,17 @@ MPFR).
    not been done yet and if patches are available. You can check
    on the release page:
 
-     https://www.mpfr.org/mpfr-4.1.0/
+     https://www.mpfr.org/mpfr-4.1.1/
 
    which may have additional information. The patches can be applied
    with commands like:
 
-     wget https://www.mpfr.org/mpfr-4.1.0/allpatches
+     wget --no-config https://www.mpfr.org/mpfr-4.1.1/allpatches
      patch -N -Z -p1 < allpatches
 
    or
 
-     curl https://www.mpfr.org/mpfr-4.1.0/allpatches | patch -N -Z -p1
+     curl https://www.mpfr.org/mpfr-4.1.1/allpatches | patch -N -Z -p1
 
    (Those instructions are for the GNU patch command, for example
    /usr/bin/gpatch on Solaris.)
@@ -133,7 +133,7 @@ install recent versions of some utilities such as texinfo.
 
 * Type "make dvi" to produce the documentation in the DVI format.
 
-* Type "make ps" to produce the documentation in the Postscript format.
+* Type "make ps" to produce the documentation in the PostScript format.
 
 * Type "make html" to produce the documentation in the HTML format
   (in several pages); if you want only one output HTML file, then
@@ -218,7 +218,7 @@ specific architecture.
 
 --disable-thread-safe   build MPFR without TLS. By default, TLS support
                         is detected automatically, and MPFR is built as
-                        thread safe if supported. However this detection
+                        thread safe if supported. However, this detection
                         is only a heuristic: TLS can be detected as
                         supported while its support is incomplete or
                         buggy (MPFR tests may fail). In such a case,
@@ -387,7 +387,7 @@ Several documents may help you to solve the problem:
   * the FAQ (either the FAQ.html file distributed with MPFR, or the
     on-line version <https://www.mpfr.org/faq.html>, which may be more
     up-to-date);
-  * the MPFR web page for this version <https://www.mpfr.org/mpfr-4.1.0/>,
+  * the MPFR web page for this version <https://www.mpfr.org/mpfr-4.1.1/>,
     which lists bugs found in this version and provides some patches.
 
 If the "configure" fails, please check that the C compiler and its

@@ -1,3 +1,8 @@
+2022-11-18  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import mpfr-4.1.1.
+	* version.ac: Adjust.
+
 2020-07-12  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import mpfr-4.1.0.
