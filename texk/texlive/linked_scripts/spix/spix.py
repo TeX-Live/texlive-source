@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright 2020 Louis Paternault
+# Copyright 2020-2022 Louis Paternault
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ import subprocess
 import sys
 
 NAME = "SpiX"
-VERSION = "1.1.0"
+VERSION = "1.3.0"
 
 RE_EMPTY = re.compile("^ *$")
 RE_COMMENT = re.compile("^ *%")
@@ -75,9 +75,11 @@ def compiletex(filename, *, dryrun=False):
     env["basename"] = filename.stem
 
     try:
+        # pylint: disable=unspecified-encoding
         with open(filename, errors="ignore") as file:
             for snippet in parse_lines(file.readlines()):
                 print(snippet)
+                sys.stdout.flush()
                 if dryrun:
                     continue
 
@@ -86,10 +88,10 @@ def compiletex(filename, *, dryrun=False):
                     cwd=(pathlib.Path.cwd() / filename).parent,
                     env=env,
                 )
-    except subprocess.CalledProcessError:
-        raise SpixError()
+    except subprocess.CalledProcessError as error:
+        raise SpixError() from error
     except IsADirectoryError as error:
-        raise SpixError(str(error))
+        raise SpixError(str(error)) from error
 
 
 def commandline_parser():
