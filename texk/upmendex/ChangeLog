@@ -3,7 +3,8 @@
 	* version 1.07  Stable version.
 	* configure.ac: Bump version.
 	* sort.c, fwrite.c, {,ex}hanzi.h:
-	Improve detection of hanzi header.
+	Improve detection of hanzi header to support
+	polyphone (多音字).
 
 2022-11-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
