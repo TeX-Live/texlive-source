@@ -13,6 +13,7 @@
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
+\let\ifacro=\ifpdf
 \newif\ifacrohint \ifpdf\acrohinttrue\fi \ifhint\acrohinttrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
