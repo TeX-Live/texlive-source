@@ -1,5 +1,5 @@
-Changes applied to the libpng-1.6.38/ tree as obtained from:
-	https://sourceforge.net/projects/libpng/files/libpng16/1.6.38/
+Changes applied to the libpng-1.6.39/ tree as obtained from:
+	https://sourceforge.net/projects/libpng/files/libpng16/1.6.39/
 
 Copied:
 	scripts/pnglibconf.h.prebuilt -> pnglibconf.h
