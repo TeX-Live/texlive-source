@@ -1,3 +1,8 @@
+2022-11-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch,
+	* cweave.w: Fix an issue with math macros.
+
 2022-08-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctang-w2c.ch,
