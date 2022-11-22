@@ -1,3 +1,7 @@
+2022-11-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebmac.tex: Fix border case 'reflect.w'.
+
 2022-11-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch,
