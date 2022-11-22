@@ -2260,9 +2260,7 @@ Author of gsftopk: Paul Vojta.");
 
 #if defined(WIN32)
        /* TeXLive uses its own Ghostscript */  
-#if !defined(_WIN64)
         texlive_gs_init();
-#endif
 #endif
 
 #endif
