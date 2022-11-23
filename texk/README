@@ -127,8 +127,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
        hitex - https://hint.userweb.mwn.de/hint/hitex.html
   mflua[jit] - https://serveur-svn.lri.fr/svn/modhel/mflua
                also: http://www.luatex.org/download.html
-    mplibdir - http://tug.org/metapost/
-               also: http://www.luatex.org/download.html
+    mplibdir - https://tug.org/metapost/
       luatex - http://luatex.org/
       pdftex - http://pdftex.org/
    [u]pmpost - nothing current, see README for old info

@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 59060 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2021-05-03 05:50:12 +0200 (Mon, 03 May 2021) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 64296 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2022-09-05 21:26:00 +0200 (Mon, 05 Sep 2022) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -712,12 +712,18 @@ else
 	     ..TEXDIR..'/tlpkg/tlgs/Resource;'
 	     ..TEXDIR..'/tlpkg/tlgs/kanji;'
 	     ..os.getenv('WINDIR')..'/Fonts;'..TEXMFDIST..'/fonts')
-  os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
-  GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
-  GSNAME = 'gswin32c.exe'
-  GSDIR = TEXDIR..'/tlpkg/tlgs/bin'
+  if is_64bit_windows_os() then
+    os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll64.dll')
+    GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin64c.exe'
+    GSNAME = 'gswin64c.exe'
+  else
+    os.setenv('GS_DLL', TEXDIR..'/tlpkg/tlgs/bin/gsdll32.dll')
+    GSEXE = TEXDIR..'/tlpkg/tlgs/bin/gswin32c.exe'
+    GSNAME = 'gswin32c.exe'
+  end
 end
 -- now setup the path so that the gs program will be found
+GSDIR = TEXDIR..'/tlpkg/tlgs/bin'
 PATH = prepend_path(PATH, GSDIR, BINDIR)
 os.setenv('PATH', PATH);
 
