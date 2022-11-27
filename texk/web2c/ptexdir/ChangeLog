@@ -1,3 +1,11 @@
+2022-11-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/{nissya,pdvitype,yokotate}.test, tests/nissya_bib.bbl,
+	tests/chcode.pl, tests/chcode-{jis,utf8,euc,sjis}.pl, tests/chcode.tfm,
+	tests/ptex[34].{tex,dvi}, tests/ptex[34]a-{jis,utf8}.typ, am/ptex.am:
+	Add tests for pTeX compatible mode of tools for upTeX.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2022-11-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Increase max_quarterword to 0xFFFF on pTeX.

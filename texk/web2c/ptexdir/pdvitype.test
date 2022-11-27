@@ -16,5 +16,17 @@ fi
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
-  ./pdvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >ptests/xpagenum.typ || exit 1
+  ./pdvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >ptests/xpagenum.typ || exit 2
 
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS=$srcdir/ptexdir/tests:$srcdir/tests
+export TEXMFCNF TFMFONTS
+
+for enc in utf8 jis; do
+for doc in ptex3 ptex4; do
+  ./pdvitype -kanji=$enc $srcdir/ptexdir/tests/$doc.dvi >ptests/x$doc-$enc.typ || exit 3
+  sed 1d ptests/x$doc-$enc.typ >ptests/x${doc}a-$enc.typ
+  diff $srcdir/ptexdir/tests/${doc}a-$enc.typ ptests/x${doc}a-$enc.typ || exit 4
+done
+done

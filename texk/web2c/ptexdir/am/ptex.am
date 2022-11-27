@@ -179,18 +179,24 @@ pweb_tests = \
 	ptexdir/pdvitype.test \
 	ptexdir/ppltotf.test \
 	ptexdir/ptftopl.test
-pweb_tests += ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl
-pweb_tests += ptexdir/pbibtex-mem.test ptexdir/nissya.test
-pweb_tests += ptexdir/sample.test
-pweb_tests += ptexdir/yokotate.test
-pweb_tests += ptexdir/skipjfmp.test
-ptexdir/pbibtex.log ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
-	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
-ptexdir/pdvitype.log ptexdir/sample.log: pdvitype$(EXEEXT)
+## pBibTeX
+pweb_tests += \
+	ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl \
+	ptexdir/pbibtex-mem.test ptexdir/nissya.test
+## pDviType
+pweb_tests += \
+	ptexdir/sample.test
+# ppPLtoTF/pTFtoPL
+pweb_tests += \
+	ptexdir/yokotate.test ptexdir/skipjfmp.test
+ptexdir/pbibtex.log: pbibtex$(EXEEXT)
+ptexdir/pdvitype.log: pdvitype$(EXEEXT)
 ptexdir/ppltotf.log: ppltotf$(EXEEXT)
 ptexdir/ptftopl.log: ptftopl$(EXEEXT)
-ptexdir/yokotate.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
-ptexdir/skipjfmp.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
+ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
+	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
+ptexdir/sample.log: pdvitype$(EXEEXT)
+ptexdir/yokotate.log ptexdir/skipjfmp.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
 
 EXTRA_DIST += $(ptex_tests) $(pweb_tests)
 DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
@@ -208,7 +214,8 @@ endif PWEB
 ## Test data and results
 ##
 ## ptexdir/nissya.test
-EXTRA_DIST += ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst ptexdir/tests/sample.bib
+EXTRA_DIST += ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
+	ptexdir/tests/nissya_bib.bbl
 DISTCLEANFILES += ptests/nissya_bib.*
 ## ptexdir/pbibtex.test
 EXTRA_DIST += tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
@@ -222,18 +229,24 @@ DISTCLEANFILES += ptests/xexampl.aux ptests/xexampl.bbl ptests/xexampl.blg \
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
 DISTCLEANFILES += ptests/memtest.bib ptests/memtest?.*
 ## ptexdir/pdvitype.test
-DISTCLEANFILES += ptests/xstory.dvityp ptests/xpagenum.typ
+EXTRA_DIST += ptexdir/tests/ptex3.tex ptexdir/tests/ptex3.dvi \
+	ptexdir/tests/ptex4.tex ptexdir/tests/ptex4.dvi \
+	ptexdir/tests/ptex3a-jis.typ ptexdir/tests/ptex3a-utf8.typ \
+	ptexdir/tests/ptex4a-jis.typ ptexdir/tests/ptex4a-utf8.typ
+DISTCLEANFILES += ptests/xstory.dvityp ptests/xpagenum.typ ptests/xptex[34]*.typ
 ## ptexdir/ppltotf.test
 DISTCLEANFILES += ptests/xcmr10.tfm
 ## ptexdir/ptftopl.test
 DISTCLEANFILES += ptests/xcmr10.pl
 ## ptexdir/sample.test
 EXTRA_DIST += ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ
-DISTCLEANFILES += ptests/xsample.typ
+DISTCLEANFILES += ptests/xsample*.typ
 ## ptexdir/yokotate.test
 EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
 EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
-DISTCLEANFILES += ptests/x*min10.*
+EXTRA_DIST += ptexdir/tests/chcode.pl ptexdir/tests/chcode-jis.pl ptexdir/tests/chcode.tfm \
+	ptexdir/tests/chcode-utf8.pl ptexdir/tests/chcode-euc.pl ptexdir/tests/chcode-sjis.pl
+DISTCLEANFILES += ptests/x*min10.* ptests/xchcode*.*
 ## ptexdir/skipjfmp.test
 EXTRA_DIST += ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm
 DISTCLEANFILES += ptests/xskipjfmp.*

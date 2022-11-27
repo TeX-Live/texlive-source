@@ -14,4 +14,5 @@ TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/ptexdir/tests \
   BIBINPUTS=$srcdir/ptexdir/tests \
   ./pbibtex ptests/nissya_bib || exit 1
+  diff $srcdir/ptexdir/tests/nissya_bib.bbl ptests/nissya_bib.bbl || exit 2
 

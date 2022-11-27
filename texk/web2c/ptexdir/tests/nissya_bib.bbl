@@ -1,0 +1,77 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This bbl file is created through nissya.bst
+%  nissya.bst is available at
+%  <http://hey.to/KO-ichi>
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx\undefined\bysame
+\newcommand{\bysame}{\rule[.5ex]{4zw}{.15pt}}
+\fi
+
+\begin{thebibliography}{xx}
+
+\nissyaitem[Fischer]{C S Fischer}{Fischer,~C.~S.}{C.~S.
+  Fischer}{1992=2000}{fschr92j}
+Fischer,~C.~S.,\hspace{.3em}1992, {\em America Calling: A Social History of the
+  Telephone to 1940,} California: University of California Press.（＝2000,
+  吉見俊哉・松田美佐・片岡みい子訳『電話するアメリカ』NTT出版.~）
+
+\nissyaitem[Granovetter]{M S Granovetter}{Granovetter,~M.~S.}{M.~S.
+  Granovetter}{1973}{gms1}
+Granovetter,~M.~S.,\hspace{.3em}1973,  ``The Strength of Weak Ties,'' {\em
+  American Journal of Sociology,} 78:  1360--80.
+
+\nissyaitem[樋口]{樋口耕一}{樋口耕一}{樋口耕一}{2001}{hgc1}
+樋口耕一, ~2001,
+  「電子コミュニティにおけるメディア特性の影響 ---同期メディアと非同期メディア」『年報人間科学』22:
+  91--106．
+
+\nissyaitem[樋口]{樋口耕一}{樋口耕一}{樋口耕一}{2003}{hgc3}
+\bysame , ~2003, 「コンピュータ・コーディングの実践」『年報人間科学』24:
+  193--214．
+
+\nissyaitem[川端]{川端亮}{川端亮}{川端亮}{2001a}{kwbt1}
+川端亮, ~2001a,
+  「コンピュータ・コーディングによる宗教的ライフヒストリーの記述」『宗教と社会』7:
+  133--54．
+
+\nissyaitem[川端]{川端亮}{川端亮}{川端亮}{2001b}{kwbt}
+\bysame , ~2001b,
+  「コンピューターを用いた自由回答のコーティング」『社会情報』10(1): 135--48．
+
+\nissyaitem[川端編]{川端亮}{川端亮編}{川端亮編}{1999}{kwbt99}
+川端亮編著, ~1999,
+  『非定型データのコーディング・システムとその利用』平成8年度～10年度科学研究費補助金(基盤研究(A)(1))(課題番号 08551003)研究成果報告書,\hspace{.6em}大阪大学．
+
+\nissyaitem[川端・樋口]{川端亮・樋口耕一}{川端亮・樋口耕一}{川端亮・樋口耕一}{2003}{kh2003}
+川端亮・樋口耕一, ~2003,
+  「インターネットに対する人々の意識 ---自由回答の分析から」『大阪大学大学院人間科学研究科紀要』29:
+  163--81．
+
+\nissyaitem[Lonkila]{M Lonkila}{Lonkila,~M.}{M.~Lonkila}{1995}{Lonkila1995}
+Lonkila,~M.,\hspace{.3em}1995,  ``Grounded Theory as an Emerging Paradigm for
+  Computer-Assisted Qualitative Data Analysis,''  U.~Kelle ed., {\em
+  Computer-Aided Qualitative Analysis,} London: Sage,  41--51.
+
+\nissyaitem[直井ほか]{直井優}{直井優ほか}{直井優ほか}{2003}{nsi2003}
+直井優・菅野剛・岩渕亜希子, ~2003,
+  「情報化社会に関する全国調査（JIS2001）の概要」『大阪大学大学院人間科学研究科紀要』29:
+  23--66．
+
+\nissyaitem[日本社会学会編集委員会]{日本社会学会編集委員会}{日本社会学会編集委員会}{日本社会学会編集委員会}{1999}{jsrstyle}
+日本社会学会編集委員会, ~1999,
+  「社会学評論スタイルガイド」（ http://wwwsoc.nii.ac.jp/jss/\\JSRstyle/JSRstyle.html
+  \ 2003.6.27）．
+
+\nissyaitem[Wellman]{B Wellman}{Wellman,~B.}{B.~Wellman}{1998}{cmcjdb44}
+Wellman,~B.,\hspace{.3em}1998,  ``A Computer Network is a Social Network,''
+  {\em SIGGROUP Bulletin,} 19(3):  41--8.
+
+\nissyaitem[Wellman \& Hampton]{B Wellman  K N Hampton}{Wellman,~B. \&
+  Hampton,~K.~N.}{B.~Wellman \& K.~N. Hampton}{1999}{netville2}
+Wellman,~B. \& K.~N. Hampton,\hspace{.3em}1999,  ``Living Networked On and
+  Offline,'' {\em Contemporary Sociology,} 28(6):  648--55.
+
+\end{thebibliography}

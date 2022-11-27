@@ -6,6 +6,9 @@
 
 test -d uptests || mkdir -p uptests
 
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
+
 # Test inputs
 testdir=$srcdir/uptexdir/tests
 
@@ -15,9 +18,33 @@ for font in umin10 utmin10; do
   ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
-  TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
-    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 1
+  ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
+    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 2
 
 done
 
+
+# Test inputs
+testdir=$srcdir/ptexdir/tests
+
+# Testing pPLtoTF/pTFtoPL compatible mode for character range & encoding.
+for font in chcode; do
+
+  ./uppltotf -kanji=utf8 $testdir/$font.pl uptests/x$font.tfm && \
+    cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 3
+
+  ./uptftopl -kanji=utf8 -charcode-format octal $testdir/$font.tfm uptests/x$font.pl && \
+    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 4
+
+for enc in utf8 euc sjis jis; do
+
+  ./uppltotf -kanji=$enc $testdir/$font-$enc.pl uptests/x$font-$enc.tfm && \
+    cmp $testdir/$font.tfm uptests/x$font-$enc.tfm && echo || exit 5
+
+  ./uptftopl -kanji=$enc $testdir/$font.tfm uptests/x$font-$enc.pl && \
+    if [ $enc = utf8 ]; then \
+      sed -i".bak" -e "y/―～∥－￠￡￢/—〜‖−¢£¬/" uptests/x$font-$enc.pl; fi && \
+    diff $testdir/$font-$enc.pl uptests/x$font-$enc.pl && echo || exit 6
+
+done
+done

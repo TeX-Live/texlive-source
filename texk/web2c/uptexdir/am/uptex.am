@@ -161,27 +161,34 @@ EXTRA_DIST += \
 	uptexdir/ChangeLog
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-uptexdir/upver.log: uptex$(EXEEXT)
+uptexdir/upver.log uptexdir/upkcat.log: uptex$(EXEEXT)
 upweb_tests = \
 	uptexdir/upbibtex.test \
 	uptexdir/updvitype.test \
 	uptexdir/uppltotf.test \
-	uptexdir/uptftopl.test \
-	uptexdir/yokotate.test \
-	uptexdir/newjfm.test \
-	uptexdir/uparse.test \
-	uptexdir/gkhuge.test \
-	uptexdir/upkcat.test
+	uptexdir/uptftopl.test
+## upBibTeX
+upweb_tests += \
+	uptexdir/upbibtex-openout-test.pl uptexdir/upbibtex-longline-test.pl \
+	uptexdir/upbibtex-mem.test uptexdir/nissya.test
+## upDviType
+upweb_tests += \
+	uptexdir/sample.test
+# uppPLtoTF/upTFtoPL
+upweb_tests += \
+	uptexdir/yokotate.test uptexdir/skipjfmp.test \
+	uptexdir/newjfm.test uptexdir/uparse.test uptexdir/gkhuge.test
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
 uptexdir/uptftopl.log: uptftopl$(EXEEXT)
-uptexdir/yokotate.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
-uptexdir/newjfm.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
-uptexdir/uparse.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
-uptexdir/gkhuge.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+uptexdir/upbibtex-openout-test.log uptexdir/upbibtex-longline-test.log \
+	uptexdir/upbibtex-mem.log uptexdir/nissya.log: upbibtex$(EXEEXT)
+uptexdir/sample.log: pdvitype$(EXEEXT)
+uptexdir/yokotate.log uptexdir/skipjfmp.log \
+	uptexdir/newjfm.log uptexdir/uparse.log uptexdir/gkhuge.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 
 EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
@@ -198,20 +205,29 @@ endif UPWEB
 
 ## Test data and results
 ##
+## uptexdir/nissya.test
+DISTCLEANFILES += uptests/nissya_bib.*
 ## uptexdir/upbibtex.test
 EXTRA_DIST += tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl tests/enc-uu.bbl
 DISTCLEANFILES += uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
 	uptests/xenc*.*
+## uptexdir/upbibtex-mem.test
+DISTCLEANFILES += uptests/memtest.bib uptests/memtest?.*
 ## uptexdir/updvitype.test
-DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ
+EXTRA_DIST += uptexdir/tests/uptex3.tex uptexdir/tests/uptex3.dvi \
+	uptexdir/tests/uptex4.tex uptexdir/tests/uptex4.dvi \
+	uptexdir/tests/uptex3a.typ uptexdir/tests/uptex4a.typ
+DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ uptests/x*ptex[34]*.typ
 ## uptexdir/uppltotf.test
 DISTCLEANFILES += uptests/xcmr10.tfm
 ## uptexdir/uptftopl.test
 DISTCLEANFILES += uptests/xcmr10.pl
+## ptexdir/sample.test
+DISTCLEANFILES += uptests/xsample*.typ
 ## uptexdir/yokotate.test
 EXTRA_DIST += uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm
 EXTRA_DIST += uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm
-DISTCLEANFILES += uptests/x*min10.*
+DISTCLEANFILES += uptests/x*min10.* uptests/xchcode*.*
 ## uptexdir/newjfm.test
 EXTRA_DIST += uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm
 DISTCLEANFILES += uptests/xtestnewu.*
@@ -221,6 +237,8 @@ DISTCLEANFILES += uptests/xuparse.* uptests/yuparse.*
 ## uptexdir/gkhuge.test
 EXTRA_DIST += uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err
 DISTCLEANFILES += uptests/ygkhuge*.*
+## uptexdir/skipjfmp.test
+DISTCLEANFILES += uptests/xskipjfmp.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
