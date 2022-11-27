@@ -40,8 +40,9 @@ for enc in utf8 euc sjis jis; do
 
   ./ptftopl -kanji=$enc $testdir/$font.tfm ptests/x$font-$enc.pl && \
     if [ $enc = utf8 ]; then \
-      sed -i".bak" -e "y/―～∥－￠￡￢/—〜‖−¢£¬/" ptests/x$font-$enc.pl; fi && \
+      perl -i".bak" -CD -pe "use utf8; tr/―～∥－￠￡￢/—〜‖−¢£¬/" ptests/x$font-$enc.pl; fi && \
     diff $testdir/$font-$enc.pl ptests/x$font-$enc.pl && echo || exit 6
+
 
 done
 done
