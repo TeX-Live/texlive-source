@@ -1,6 +1,6 @@
 /* mktexfmt.c
 
-   Copyright 2000, 2017 Akira Kakuto.
+   Copyright 2000, 2022 Akira Kakuto.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@
 */
 #include <kpathsea/kpathsea.h>
 
-#define VERSION "0.2"
+#define VERSION "0.3"
 
 int main(int ac, char **av)
 {
@@ -50,12 +50,14 @@ int main(int ac, char **av)
   p = kpse_program_name;
   if(ac != 2) {
     fprintf(stderr,"%s : Usage %s formatname\n", p, p);
-    fprintf(stderr,"formatname :  (foo.fmt, foo.base, foo.mem)\n");
+    fprintf(stderr,"formatname :  foo.fmt, foo.base\n");
+    fprintf(stderr,"              extension can be omitted\n");
     return 1;
   }
   if(!strncmp(av[1], "-h", 2) || !strncmp(av[1], "--h", 3)) {
     fprintf(stderr,"%s : Usage %s formatname\n", p, p);
-    fprintf(stderr,"formatname :  (foo.fmt, foo.base, foo.mem)\n");
+    fprintf(stderr,"formatname :  foo.fmt, foo.base\n");
+    fprintf(stderr,"              extension can be omitted\n");
     return 0;
   }
   if(!strncmp(av[1], "-v", 2) || !strncmp(av[1], "--v", 3)) {
@@ -83,17 +85,15 @@ int main(int ac, char **av)
   strcpy(orgname, av[1]);
 
   p = strrchr(av[1], '.');
-  if(!p) {
-    fprintf(stderr, "formatname needs a suffix.\n");
-    return 1;
-  }
 
-  if(stricmp(p, ".fmt") && stricmp(p, ".base") && stricmp(p, ".mem")) {
-    fprintf(stderr, "%s : unknown format type.\n", av[1]);
-    return 1;
-  }
+  if (p) {
+    if(stricmp(p, ".fmt") && stricmp(p, ".base") && stricmp(p, ".mem")) {
+      fprintf(stderr, "%s : unknown format type.\n", av[1]);
+      return 1;
+    }
 
   *p = '\0';
+  }
 
 /* save stdout and stdin */
   savo = _dup(fileno(stdout));
@@ -131,10 +131,5 @@ int main(int ac, char **av)
 /* close nul device */
   fclose(fnul);
 
-  fmtname = kpse_find_file(orgname , kpse_fmt_format, 0);
-  if(fmtname) {
-    printf("%s\n", fmtname);
-    free(fmtname);
-  }
   return 0;
 }
