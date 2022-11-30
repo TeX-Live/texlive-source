@@ -1,3 +1,10 @@
+2022-11-30  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (Finish the PDF file): omit call to pdf_print_info
+	if pdf_omit_info_dict = 0. Report from Ulrike,
+	https://tug.org/pipermail/pdftex/2022-November/009308.html
+	(from pdftex r885)
+
 2022-05-23  Thanh Han The  <hanthethanh@gmail.com>
 
 	* writettf.c (ttf_write_OS2): don't complain about v4 of OS/2
