@@ -365,10 +365,9 @@ known as `\Prote'.
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
 @#
-@d QUOTE(X) #X
-@d HINT_VER_STR(X,Y) "HINT version " QUOTE(X) "." QUOTE(Y)
-@d banner "This is HiTeX, Version 3.141592653, " HINT_VER_STR(HINT_VERSION,HINT_SUB_VERSION)
-   /*printed when \TeX\ starts*/
+@d banner "This is HiTeX, Version 3.141592653"
+          eTeX_version_string"-"HINT_VERSION_STRING" "TL_VERSION
+          /*printed when \TeX\ starts*/
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -34088,7 +34087,17 @@ The code that follows is organized in three parts.
 Some code for \TeX\ Live must come before
 the definition of \TeX's macros because
 it uses include files containing identifiers that are in conflict
-with \TeX's macros. The remaining two parts are first auxiliary functions and then
+with \TeX's macros or modify these macros. For example
+\TeX's |banner| is modified by adding the \TeX\ Live version.
+
+@<Header files and function declarations@>=
+#ifdef WEB2CVERSION
+#define TL_VERSION "(TeX Live "WEB2CVERSION")"
+#else
+#define TL_VERSION
+#endif
+
+@ The remaining two parts are first auxiliary functions and then
 those functions that are called from the ``classic'' \TeX\ code.
 
 @p @<\TeX\ Live auxiliary functions@>@;
@@ -34357,7 +34366,7 @@ static int argument_is(struct option *opt, char * s)
 if (ARGUMENT_IS("help")) usage_help();
 else if (ARGUMENT_IS("version")){@+
        printf(banner@, "\n"@/
-              "eTeX version "@, eTeX_version_string@, "\n"@/
+              "HINT version "@,HINT_VERSION_STRING@,"\n"@/
               "Prote version "@, Prote_version_string@, "\n");
        exit(0);@+
 }

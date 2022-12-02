@@ -6720,7 +6720,7 @@ bool hcheck_banner(char *magic)
   { MESSAGE("Wrong HINT subversion: got %d, expected %d\n",v,HINT_SUB_VERSION); return false; }
   if (*t!=' ' && *t!='\n')
   { MESSAGE("Space expected in banner after HINT subversion\n"); return false; }
-  LOG("%s file version %d.%d:%s",magic,HINT_VERSION, HINT_SUB_VERSION, t);
+  LOG("%s file version " HINT_VERSION_STRING ":%s", magic, t);
   DBG(DBGDIR,"banner size=0x%x\n",hbanner_size);
   return true;
 }
@@ -6766,7 +6766,7 @@ and a (short) comment as the second argument.
 @<function to write the banner@>=
 
 static size_t hput_banner(char *magic, char *str)
-{ size_t s=fprintf(hout,"%s %d.%d %s\n",magic,HINT_VERSION,HINT_SUB_VERSION,str);
+{ size_t s=fprintf(hout,"%s " HINT_VERSION_STRING " %s\n",magic,str);
   if (s>MAX_BANNER) QUIT("Banner too big"); 
   return s;
 }
@@ -9140,7 +9140,7 @@ are supported in addition to the short options.
       switch(option)
       { case '-': 
           if (strcmp(*argv,"--version")==0)
-          { fprintf(stderr,"%s version %d.%d\n",prog_name, HINT_VERSION, HINT_SUB_VERSION);
+          { fprintf(stderr,"%s version " HINT_VERSION_STRING "\n",prog_name);
             exit(0);
           }
           else if (strcmp(*argv,"--help")==0) 
@@ -10456,6 +10456,9 @@ typedef double float64_t;
 #endif
 #define HINT_VERSION 1
 #define HINT_SUB_VERSION 4
+#define AS_STR(X) #X
+#define VERSION_AS_STR(X,Y) AS_STR(X) "." AS_STR(Y)
+#define HINT_VERSION_STRING VERSION_AS_STR(HINT_VERSION, HINT_SUB_VERSION)
 #endif
 @
 

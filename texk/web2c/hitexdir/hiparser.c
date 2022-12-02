@@ -69,7 +69,7 @@
 /* First part of user prologue.  */
 #line 2 "parser.y"
 
-	#line 10777 "format.w"
+	#line 10780 "format.w"
 	
 #include "hibasetypes.h"
 #include <string.h>
