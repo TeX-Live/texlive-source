@@ -4657,7 +4657,7 @@ euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/
 @HITEX_TRUE@            hitexdir/man/hitex.man
 
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
-	-DINIT -DSTAT
+	-DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\""
 # -DDEBUG drops into an interactive debugging session.
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a libmd5.a
 hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
