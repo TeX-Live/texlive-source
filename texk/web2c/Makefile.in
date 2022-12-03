@@ -3303,9 +3303,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	eptexdir/pdfprimitive.test \
 	eptexdir/tests/pdfprimitive-test.tex \
 	eptexdir/tests/pdfprimitive-eptex.log $(uptex_web_srcs) \
-	$(uptex_ch_srcs) uptexdir/uptex.defines ptexdir/pbibtex.ch \
-	uptexdir/upbibtex.ch ptexdir/pdvitype.ch uptexdir/updvitype.ch \
-	ptexdir/ppltotf.ch uptexdir/uppltotf.ch ptexdir/ptftopl.ch \
+	$(uptex_ch_srcs) uptexdir/uptex.defines uptexdir/upbibtex.ch \
+	uptexdir/updvitype.ch uptexdir/uppltotf.ch \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.jis \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
 	tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl \
@@ -22270,32 +22269,32 @@ upbibtex-web2c: upbibtex.p $(web2c_depend) uptexdir/uptex.defines web2c/cvtbib.s
 	@$(web2c) upbibtex
 upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 	$(up_tangle) upbibtex upbibtex
-upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch ptexdir/pbibtex.ch
-	$(tie_m) bibtex.web bibtex.ch ptexdir/pbibtex.ch
+upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
+	$(tie_m) bibtex.web bibtex.ch
 updvitype.c updvitype.h: updvitype-web2c
 	@$(web2c) updvitype
 updvitype-web2c: updvitype.p $(web2c_depend) uptexdir/uptex.defines
 	@$(web2c) updvitype
 updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 	$(up_tangle) updvitype updvitype
-updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch ptexdir/pdvitype.ch
-	$(tie_m) dvitype.web dvitype.ch ptexdir/pdvitype.ch
+updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
+	$(tie_m) dvitype.web dvitype.ch
 uppltotf.c uppltotf.h: uppltotf-web2c
 	@$(web2c) uppltotf
 uppltotf-web2c: uppltotf.p $(web2c_depend) uptexdir/uptex.defines
 	@$(web2c) uppltotf
 uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
 	$(up_tangle) uppltotf uppltotf
-uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch ptexdir/ppltotf.ch
-	$(tie_m) pltotf.web pltotf.ch ptexdir/ppltotf.ch
+uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
+	$(tie_m) pltotf.web pltotf.ch
 uptftopl.c uptftopl.h: uptftopl-web2c
 	@$(web2c) uptftopl
 uptftopl-web2c: uptftopl.p $(web2c_depend) uptexdir/uptex.defines
 	@$(web2c) uptftopl
 uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 	$(up_tangle) uptftopl uptftopl
-uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch ptexdir/ptftopl.ch
-	$(tie_m) tftopl.web tftopl.ch ptexdir/ptftopl.ch
+uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
+	$(tie_m) tftopl.web tftopl.ch
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
@@ -22304,7 +22303,7 @@ uptexdir/uppltotf.log: uppltotf$(EXEEXT)
 uptexdir/uptftopl.log: uptftopl$(EXEEXT)
 uptexdir/upbibtex-openout-test.log uptexdir/upbibtex-longline-test.log \
 	uptexdir/upbibtex-mem.log uptexdir/nissya.log: upbibtex$(EXEEXT)
-uptexdir/sample.log: pdvitype$(EXEEXT)
+uptexdir/sample.log: updvitype$(EXEEXT)
 uptexdir/yokotate.log uptexdir/skipjfmp.log \
 	uptexdir/newjfm.log uptexdir/uparse.log uptexdir/gkhuge.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

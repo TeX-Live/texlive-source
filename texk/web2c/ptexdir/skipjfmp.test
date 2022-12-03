@@ -1,5 +1,6 @@
 #! /bin/sh -vx
 # $Id$
+# Copyright 2018-2022 Japanese TeX Development Community <issue@texjp.org>
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
