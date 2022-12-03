@@ -1,3 +1,6 @@
+2022-12-03  Luigi Scarso <luigi.scarso@gmail.com> 
+    * Make disc node prev. pointers more uniform (M.Krüger)
+
 2022-11-20  Luigi Scarso <luigi.scarso@gmail.com> 
     * set \variablefam = -1 as initial value (H.Hagen).
 
