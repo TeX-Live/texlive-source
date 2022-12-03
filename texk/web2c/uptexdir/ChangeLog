@@ -1,6 +1,16 @@
+2022-12-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* up{bibtex,dvitype,pltotf,tftopl}.ch, am/uptex.am:
+	Merge change files/binaries for pTeX tools into upTeX tools.
+	Now pTeX tools (pbibtex, pdvitype, ppltotf, ptftopl) run
+	as the compatible mode.
+	* upbibtex.ch: version j0.36-u1.29
+	https://github.com/texjporg/tex-jp-build/issues/32
+	https://github.com/texjporg/tex-jp-build/issues/154
+
 2022-11-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* tests/{nissya,sample,skipjfmp,upbibtex-mem,updvitype,yokotate}.test,
+	* {nissya,sample,skipjfmp,upbibtex-mem,updvitype,yokotate}.test,
 	upbibtex-{longline,openout}-test.pl,
 	tests/uptex[34].{tex,dvi}, tests/uptex[34]a.typ, am/uptex.am:
 	Add tests for pTeX compatible mode of tools for upTeX.
@@ -26,7 +36,7 @@
 	Check options before initialization of kpathsearch parameters.
 	This change prevents unwanted looking for texmf.cnf.
 	https://github.com/texjporg/tex-jp-build/issues/145
-	* tests/upbibtex.test, am/uptex.am:
+	* upbibtex.test, am/uptex.am:
 	Update tests for upBibTeX.
 
 2022-09-01  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
@@ -49,7 +59,7 @@
 	* kanji.[ch], upbibtex.ch:
 	Support guessing input file encodings.
 	https://github.com/texjporg/tex-jp-build/issues/142
-	* tests/upbibtex.test, am/uptex.am:
+	* upbibtex.test, am/uptex.am:
 	Add tests for guess encodings & upBibTeX.
 
 2022-05-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>

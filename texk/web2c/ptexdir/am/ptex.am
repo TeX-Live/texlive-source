@@ -10,7 +10,7 @@ ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
 ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
 p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
-pweb_programs = pbibtex pdvitype ppltotf ptftopl
+#pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 ## pTeX library
 ##
@@ -30,10 +30,10 @@ libkanji_a_CPPFLAGS = $(ptex_cppflags)
 if PTEX
 bin_PROGRAMS += ptex
 endif PTEX
-if PWEB
-bin_PROGRAMS += $(pweb_programs)
-endif PWEB
-EXTRA_PROGRAMS += ptex $(pweb_programs)
+#if PWEB
+#bin_PROGRAMS += $(pweb_programs)
+#endif PWEB
+#EXTRA_PROGRAMS += ptex $(pweb_programs)
 
 ptex_CPPFLAGS = $(ptex_cppflags)
 
@@ -94,71 +94,71 @@ DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 
 ## pBibTeX
 ## 
-nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
-pbibtex_SOURCES = ptexdir/kanji.h
-pbibtex_CPPFLAGS = $(ptex_cppflags)
-pbibtex_LDADD  = $(ptex_ldadd)
-pbibtex_DEPENDENCIES = $(ptex_dependencies)
-pbibtex.c pbibtex.h: pbibtex-web2c
-	@$(web2c) pbibtex
-pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
-	@$(web2c) pbibtex
-pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
-	$(p_tangle) pbibtex pbibtex
-pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
-	$(tie_m) bibtex.web bibtex.ch
-EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
+#nodist_pbibtex_SOURCES = pbibtex.c pbibtex.h
+#pbibtex_SOURCES = ptexdir/kanji.h
+#pbibtex_CPPFLAGS = $(ptex_cppflags)
+#pbibtex_LDADD  = $(ptex_ldadd)
+#pbibtex_DEPENDENCIES = $(ptex_dependencies)
+#pbibtex.c pbibtex.h: pbibtex-web2c
+#	@$(web2c) pbibtex
+#pbibtex-web2c: pbibtex.p $(web2c_depend) ptexdir/ptex.defines web2c/cvtbib.sed
+#	@$(web2c) pbibtex
+#pbibtex.p: tangle$(EXEEXT) pbibtex.web ptexdir/pbibtex.ch
+#	$(p_tangle) pbibtex pbibtex
+#pbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
+#	$(tie_m) bibtex.web bibtex.ch
+#EXTRA_DIST += ptexdir/pbibtex.ch web2c/cvtbib.sed
 
 ## pDVItype
 ## 
-nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
-pdvitype_SOURCES = ptexdir/kanji.h
-pdvitype_CPPFLAGS = $(ptex_cppflags) -DHEX_CHAR_CODE
-pdvitype_LDADD = $(ptex_ldadd)
-pdvitype_DEPENDENCIES = $(ptex_dependencies)
-pdvitype.c pdvitype.h: pdvitype-web2c
-	@$(web2c) pdvitype
-pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
-	@$(web2c) pdvitype
-pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
-	$(p_tangle) pdvitype pdvitype
-pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
-	$(tie_m) dvitype.web dvitype.ch
-EXTRA_DIST += ptexdir/pdvitype.ch
+#nodist_pdvitype_SOURCES = pdvitype.c pdvitype.h
+#pdvitype_SOURCES = ptexdir/kanji.h
+#pdvitype_CPPFLAGS = $(ptex_cppflags) -DHEX_CHAR_CODE
+#pdvitype_LDADD = $(ptex_ldadd)
+#pdvitype_DEPENDENCIES = $(ptex_dependencies)
+#pdvitype.c pdvitype.h: pdvitype-web2c
+#	@$(web2c) pdvitype
+#pdvitype-web2c: pdvitype.p $(web2c_depend) ptexdir/ptex.defines
+#	@$(web2c) pdvitype
+#pdvitype.p: tangle$(EXEEXT) pdvitype.web ptexdir/pdvitype.ch
+#	$(p_tangle) pdvitype pdvitype
+#pdvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
+#	$(tie_m) dvitype.web dvitype.ch
+#EXTRA_DIST += ptexdir/pdvitype.ch
 
 ## pPLtoTF
 ## 
-nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
-ppltotf_SOURCES = ptexdir/kanji.h
-ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
-ppltotf_LDADD  = $(ptex_ldadd)
-ppltotf_DEPENDENCIES = $(ptex_dependencies)
-ppltotf.c ppltotf.h: ppltotf-web2c
-	@$(web2c) ppltotf
-ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
-	@$(web2c) ppltotf
-ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
-	$(p_tangle) ppltotf ppltotf
-ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
-	$(tie_m) pltotf.web pltotf.ch
-EXTRA_DIST += ptexdir/ppltotf.ch
+#nodist_ppltotf_SOURCES = ppltotf.c ppltotf.h
+#ppltotf_SOURCES = ptexdir/kanji.h
+#ppltotf_CPPFLAGS = $(ptex_cppflags) -DPRESERVE_PUTC
+#ppltotf_LDADD  = $(ptex_ldadd)
+#ppltotf_DEPENDENCIES = $(ptex_dependencies)
+#ppltotf.c ppltotf.h: ppltotf-web2c
+#	@$(web2c) ppltotf
+#ppltotf-web2c: ppltotf.p $(web2c_depend) ptexdir/ptex.defines
+#	@$(web2c) ppltotf
+#ppltotf.p: tangle$(EXEEXT) ppltotf.web ptexdir/ppltotf.ch
+#	$(p_tangle) ppltotf ppltotf
+#ppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
+#	$(tie_m) pltotf.web pltotf.ch
+#EXTRA_DIST += ptexdir/ppltotf.ch
 
 ## pTFtoPL
 ## 
-nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
-ptftopl_SOURCES = ptexdir/kanji.h
-ptftopl_CPPFLAGS = $(ptex_cppflags)
-ptftopl_LDADD  = $(ptex_ldadd)
-ptftopl_DEPENDENCIES = $(ptex_dependencies)
-ptftopl.c ptftopl.h: ptftopl-web2c
-	@$(web2c) ptftopl
-ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
-	@$(web2c) ptftopl
-ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
-	$(p_tangle) ptftopl ptftopl
-ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
-	$(tie_m) tftopl.web tftopl.ch
-EXTRA_DIST += ptexdir/ptftopl.ch
+#nodist_ptftopl_SOURCES = ptftopl.c ptftopl.h
+#ptftopl_SOURCES = ptexdir/kanji.h
+#ptftopl_CPPFLAGS = $(ptex_cppflags)
+#ptftopl_LDADD  = $(ptex_ldadd)
+#ptftopl_DEPENDENCIES = $(ptex_dependencies)
+#ptftopl.c ptftopl.h: ptftopl-web2c
+#	@$(web2c) ptftopl
+#ptftopl-web2c: ptftopl.p $(web2c_depend) ptexdir/ptex.defines
+#	@$(web2c) ptftopl
+#ptftopl.p: tangle$(EXEEXT) ptftopl.web ptexdir/ptftopl.ch
+#	$(p_tangle) ptftopl ptftopl
+#ptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
+#	$(tie_m) tftopl.web tftopl.ch
+#EXTRA_DIST += ptexdir/ptftopl.ch
 
 ## 
 EXTRA_DIST += \
@@ -174,21 +174,21 @@ EXTRA_DIST += \
 ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 ptexdir/pver.log: ptex$(EXEEXT)
-pweb_tests = \
-	ptexdir/pbibtex.test \
-	ptexdir/pdvitype.test \
-	ptexdir/ppltotf.test \
-	ptexdir/ptftopl.test
+#pweb_tests = \
+#	ptexdir/pbibtex.test \
+#	ptexdir/pdvitype.test \
+#	ptexdir/ppltotf.test \
+#	ptexdir/ptftopl.test
 ## pBibTeX
-pweb_tests += \
-	ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl \
-	ptexdir/pbibtex-mem.test ptexdir/nissya.test
+#pweb_tests += \
+#	ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl \
+#	ptexdir/pbibtex-mem.test ptexdir/nissya.test
 ## pDviType
-pweb_tests += \
-	ptexdir/sample.test
+#pweb_tests += \
+#	ptexdir/sample.test
 # ppPLtoTF/pTFtoPL
-pweb_tests += \
-	ptexdir/yokotate.test ptexdir/skipjfmp.test
+#pweb_tests += \
+#	ptexdir/yokotate.test ptexdir/skipjfmp.test
 ptexdir/pbibtex.log: pbibtex$(EXEEXT)
 ptexdir/pdvitype.log: pdvitype$(EXEEXT)
 ptexdir/ppltotf.log: ppltotf$(EXEEXT)
