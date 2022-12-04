@@ -6,49 +6,72 @@
 # If either input-file or output-file is omitted, they are replaced by
 # stdin or stdout respectively.
 #
-# See http://purl.org/nxg/dist/urlbst for documentation
+# See https://purl.org/nxg/dist/urlbst for documentation
 #
-# Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray <http://nxg.me.uk>
+# Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray <https://nxg.me.uk>
 #
 # This program is distributed under the terms of the
 # GNU General Public Licence, v2.0.
-# The modifications to the input .bst files are asserted as Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray,
+# The modifications to the input .bst files are asserted as Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray,
 # and distributed under the terms of the LaTeX Project Public Licence.
 # See the package README for further dicussion of licences.
 
-$version = '0.8';
+$version = '0.9';
+$releasedate = '2022 December 1';
 ($progname = $0) =~ s/.*\///;
 $mymarker = "% $progname";
 $mymarkerend = "% ...$progname to here";
-$myurl = 'http://purl.org/nxg/dist/urlbst';
-
+$homepageurl = 'https://purl.org/nxg/dist/urlbst';
+$repourl = 'https://heptapod.host/nxg/urlbst';
 
 $infile = '-';
 $outfile = '-';
 
-$addeprints = 1;     # if true (nonzero) we add support for eprints
+# eprint support
+$settings{addeprints} = 1;
+$docstring{addeprints} = '0=no eprints; 1=include eprints';
 $literals{eprintprefix} = 'arXiv:';	# make these settable with --eprint? syntax?
-$eprinturl = 'http://arxiv.org/abs/';
+$docstring{eprintprefix} = "text prefix printed before eprint ref";
+$literals{eprinturl} = 'https://arxiv.org/abs/';
+$docstring{eprinturl} = 'prefix to make URL from eprint ref';
 
-$adddoiresolver = 1;
+# DOI resolver
+$settings{adddoi} = 1;
+$docstring{adddoi} = '0=no DOI resolver; 1=include it';
 $literals{doiprefix} = 'doi:';
-$doiurl = 'https://doi.org/';
+$docstring{doiprefix} = 'printed text to introduce DOI';
+$literals{doiurl} = 'https://doi.org/';
+$docstring{doiurl} = 'prefix to make URL from DOI';
+$settings{doiform} = 0;
+$docstring{doiform} = '0=with href; 1=with \\doi{}';
 
-$addpubmedresolver = 1;
+# PUBMED resolver
+$settings{addpubmed} = 1;
+$docstring{addpubmed} = '0=no PUBMED resolver; 1=include it';
 $literals{pubmedprefix} = 'PMID:';
-$pubmedurl = 'http://www.ncbi.nlm.nih.gov/pubmed/';
+$docstring{pubmedprefix} = 'text prefix printed before PUBMED ref';
+$literals{pubmedurl} = 'http://www.ncbi.nlm.nih.gov/pubmed/';
+$docstring{pubmedurl} = 'prefix to make URL from PUBMED';
 
-$makehref = 0;
+# how do we make hypterlinks
+$settings{hrefform} = 0;
+$docstring{hrefform} = '0=no crossrefs; 1=hypertex hrefs; 2=hyperref hrefs';
 $literals{urlintro} = "URL: ";
-$inlinelinks = 0;
+$docstring{urlintro} = 'text prefix before URL';
+$settings{inlinelinks} = 0;
+$docstring{inlinelinks} = '0=URLs explicit; 1=URLs attached to titles';
 
-$literals{online} = "online";
-$literals{cited} = "cited ";
-$literals{linktext} = "[link]";
+# other text
+$literals{onlinestring} = "online";
+$docstring{onlinestring} = 'label that a resource is online';
+$literals{citedstring} = "cited ";
+$docstring{citedstring} = 'label in "lastchecked" remark';
+$literals{linktextstring} = "[link]";
+$docstring{linktextstring} = 'anonymous link text';
 
 $automatic_output_filename = 0;
 
-$Usage = "$progname [--eprint] [--doi] [--pubmed]\n    [--nohyperlinks] [--[no]inlinelinks] [--hypertex] [--hyperref]\n    [--literal key=value]\n    [--help] [input-file [output-file]]";
+$Usage = "$progname [--literal key=value]\n    [--setting key=value]\n    [--help] [input-file [output-file]]";
 
 # Magic environment variable: if this is set, then we're being called from a Platypus wrapper
 # See http://www.sveinbjorn.org/platypus
@@ -58,27 +81,29 @@ if ($ENV{"CALLED_FROM_PLATYPUS"}) {
 
 while ($#ARGV >= 0) {
     if ($ARGV[0] eq '--eprint') {
-	$addeprints = 1;
+	$settings{addeprints} = 1;
     } elsif ($ARGV[0] eq '--noeprint') {
-	$addeprints = 0;
+	$settings{addeprints} = 0;
     } elsif ($ARGV[0] eq '--doi') {
-        $adddoiresolver = 1;
+        $settings{adddoi} = 1;
     } elsif ($ARGV[0] eq '--nodoi') {
-        $adddoiresolver = 0;
+        $settings{adddoi} = 0;
     } elsif ($ARGV[0] eq '--pubmed') {
-        $addpubmedresolver = 1;
+        $settings{addpubmed} = 1;
     } elsif ($ARGV[0] eq '--nopubmed') {
-        $addpubmedresolver = 0;
+        $settings{addpubmed} = 0;
     } elsif ($ARGV[0] eq '--nohyperlinks') {
-        $makehref = 0;
+        $settings{hrefform} = 0;
+    } elsif ($ARGV[0] eq '--hyperlinks') {
+        $settings{hrefform} = 1; # redundant with --hypertex, for consistency
     } elsif ($ARGV[0] eq '--hypertex') {
-	$makehref = 1;
+	$settings{hrefform} = 1;
     } elsif ($ARGV[0] eq '--hyperref') {
-	$makehref = 2;
+	$settings{hrefform} = 2;
     } elsif ($ARGV[0] eq '--inlinelinks') {
-        $inlinelinks = 1;
+        $settings{inlinelinks} = 1;
     } elsif ($ARGV[0] eq '--noinlinelinks') {
-        $inlinelinks = 0;
+        $settings{inlinelinks} = 0;
     } elsif ($ARGV[0] eq '--automatic-output') {
         $automatic_output_filename = 1;
     } elsif ($ARGV[0] eq '--literal') {
@@ -93,16 +118,42 @@ while ($#ARGV >= 0) {
             $showstrings = 1;
         }
         if ($showstrings) {
-            print "    Possible literal strings (and defaults) are...\n";
+            print "Possible literal strings (and defaults) are...\n";
             while (($k, $v) = each (%literals)) {
-                print "        $k ($v)\n";
+                print "  $k  \t$docstring{$k} [$v]\n";
+            }
+            exit(0);
+        }
+    } elsif ($ARGV[0] eq '--setting') {
+        shift;
+        my $showstrings = 0;
+        if ((($k, $v) = ($ARGV[0] =~ /^(\w+)=(.*)/)) && exists $settings{$k}) {
+            $settings{$k} = $v;
+        } elsif ($ARGV[0] eq 'help') {
+            $showstrings = 1;
+        } else {
+            print "No setting found in $ARGV[0]; ignoring that\n";
+            $showstrings = 1;
+        }
+        if ($showstrings) {
+            print "Possible settings (and defaults) are...\n";
+            while (($k, $v) = each (%settings)) {
+                print "  $k  \t$docstring{$k} [$v]\n";
             }
             exit(0);
         }
     } elsif ($ARGV[0] eq '--help') {
         print <<EOD;
-urlbst version $version
-    Usage: $Usage
+urlbst version $version, $releasedate
+Usage: $Usage
+
+    Options:
+      --literal key=value set one of the literal strings
+                          (see `--literal help' for possibilities)
+      --setting key=value (as --literal)
+      --help              print this help
+
+    Convenience options (can also be controlled using --setting):
       --[no]eprint        include support for `eprint' fields
       --[no]doi           include support for `doi' field
       --[no]pubmed        include support for `pubmed' field
@@ -111,18 +162,19 @@ urlbst version $version
       --hypertex          include HyperTeX-style hyperlink support
       --hyperref          include {hyperref}-style hyperlink support
                           (generally better)
-      --literal key=value set one of the literal strings
-                          (see `--literal help' for possibilities)
-      --help              print this help
+
     Input and output files may be given as `-' (default) to indicate stdin/out.
+
+    Homepage:     $homepageurl
+    Repository:   $repourl
 
 EOD
         printf("    Defaults:\n");
-        printf("      eprint refs    %s\n", ($addeprints ? "included" : "not included"));
-        printf("      DOIs           %s\n", ($adddoiresolver ? "included" : "not included"));
-        printf("      PUBMED refs    %s\n", ($addpubmedresolver ? "included" : "not included"));
-        printf("      hyperlinks     %s\n", ($makehref==0 ? "none" : $makehref==1 ? "hypertex" : "hyperref"));
-        printf("      inline links   %s\n", ($inlinelinks ? "included" : "not included"));
+        printf("      eprint refs    %s\n", ($settings{addeprints} ? "included" : "not included"));
+        printf("      DOIs           %s\n", ($settings{adddoi} ? "included" : "not included"));
+        printf("      PUBMED refs    %s\n", ($settings{addpubmed} ? "included" : "not included"));
+        printf("      hyperlinks     %s\n", ($settings{hrefform}==0 ? "none" : $settings{hrefform}==1 ? "hypertex" : "hyperref"));
+        printf("      inline links   %s\n", ($settings{inlinelinks} ? "included" : "not included"));
         exit(0);
     } elsif ($ARGV[0] =~ /^-/) {
         die "Unrecognised option $ARGV[0]: Usage: $Usage\n";
@@ -136,13 +188,13 @@ EOD
     shift(@ARGV);
 }
 
-if ($inlinelinks && $makehref == 0) {
+if ($settings{inlinelinks} && $settings{hrefform} == 0) {
     print <<'EOD';
 Warning: --inlinelinks and --nohyperlinks were both specified (possibly
     implicitly).  That combination makes no sense, so I'll ignore
     --nohyperlinks and use --hyperref instead
 EOD
-    $makehref = 2;
+    $settings{hrefform} = 2;
 }
 
 if ($automatic_output_filename) {
@@ -200,16 +252,16 @@ open (OUT, ">$outfile") || die "Can't open $outfile to write";
 # make it less ugly, and more robust.
 
 print OUT "%%% Modification of BibTeX style file ", ($infile eq '-' ? '<stdin>' : $infile), "\n";
-print OUT "%%% ... by $progname, version $version (marked with \"$mymarker\")\n%%% See <$myurl>\n";
-print OUT "%%% Modifications Copyright 2002-03, 2005-12, 2014, 2019, Norman Gray,\n";
+print OUT "%%% ... by $progname, version $version (marked with \"$mymarker\")\n%%% See <$homepageurl> and repository <$repourl>\n";
+print OUT "%%% Modifications Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray,\n";
 print OUT "%%% and distributed under the terms of the LPPL; see README for discussion.\n";
 print OUT "%%%\n";
 print OUT "%%% Added webpage entry type, and url and lastchecked fields.\n";
-print OUT "%%% Added eprint support.\n"   if ($addeprints);
-print OUT "%%% Added DOI support.\n"      if ($adddoiresolver);
-print OUT "%%% Added PUBMED support.\n"   if ($addpubmedresolver);
-print OUT "%%% Added HyperTeX support.\n" if ($makehref == 1);
-print OUT "%%% Added hyperref support.\n" if ($makehref == 2);
+print OUT "%%% Added eprint support.\n"   if ($settings{addeprints});
+print OUT "%%% Added DOI support.\n"      if ($settings{adddoi});
+print OUT "%%% Added PUBMED support.\n"   if ($settings{addpubmed});
+print OUT "%%% Added HyperTeX support.\n" if ($settings{hrefform} == 1);
+print OUT "%%% Added hyperref support.\n" if ($settings{hrefform} == 2);
 print OUT "%%% Original headers follow...\n\n";
 
 $found{initconsts} = 0;
@@ -232,7 +284,7 @@ while (<IN>) {
         print OUT;
         next;
     };
-    
+
     /^ *ENTRY/ && do {
 	# Work through the list of entry types, finding what ones are there.
 	# If we find a URL entry there already, object, since these edits
@@ -280,30 +332,25 @@ STRINGS { urlintro
   eprinturl eprintprefix doiprefix doiurl pubmedprefix pubmedurl
   citedstring onlinestring linktextstring
   openinlinelink closeinlinelink }
-INTEGERS { hrefform inlinelinks makeinlinelink
-  addeprints adddoiresolver addpubmedresolver }
+INTEGERS { hrefform doiform inlinelinks makeinlinelink
+  addeprints adddoi addpubmed }
 FUNCTION {init.urlbst.variables}
 {
   % The following constants may be adjusted by hand, if desired
 
   % The first set allow you to enable or disable certain functionality.
-  #$addeprints 'addeprints :=         % 0=no eprints; 1=include eprints
-  #$adddoiresolver 'adddoiresolver :=     % 0=no DOI resolver; 1=include it
-  #$addpubmedresolver 'addpubmedresolver :=     % 0=no PUBMED resolver; 1=include it
-  #$makehref 'hrefform :=           % 0=no crossrefs; 1=hypertex xrefs; 2=hyperref refs
-  #$inlinelinks 'inlinelinks :=        % 0=URLs explicit; 1=URLs attached to titles
+EOD
 
-  % String constants, which you _might_ want to tweak.
-  "$literals{urlintro}" 'urlintro := % prefix before URL; typically "Available from:" or "URL":
-  "$literals{online}" 'onlinestring := % indication that resource is online; typically "online"
-  "$literals{cited}" 'citedstring := % indicator of citation date; typically "cited "
-  "$literals{linktext}" 'linktextstring := % dummy link text; typically "[link]"
-  "$eprinturl" 'eprinturl := % prefix to make URL from eprint ref
-  "$literals{eprintprefix}" 'eprintprefix := % text prefix printed before eprint ref; typically "arXiv:"
-  "$doiurl" 'doiurl := % prefix to make URL from DOI
-  "$literals{doiprefix}" 'doiprefix :=      % text prefix printed before DOI ref; typically "doi:"
-  "$pubmedurl" 'pubmedurl := % prefix to make URL from PUBMED
-  "$literals{pubmedprefix}" 'pubmedprefix :=      % text prefix printed before PUBMED ref; typically "PMID:"
+      while (($k, $v) = each(%settings)) {
+          print OUT "  #$v '$k :=\t% $docstring{$k}\n";
+      }
+
+      print OUT "\n  % String constants, which you _might_ want to tweak.\n";
+      while (($k, $v) = each(%literals)) {
+          print OUT "  \"$v\" '$k :=\t% $docstring{$k}\n";
+      }
+
+      print OUT <<EOD;
 
   % The following are internal state variables, not configuration constants,
   % so they shouldn't be fiddled with.
@@ -311,7 +358,7 @@ FUNCTION {init.urlbst.variables}
   "" 'openinlinelink :=     % ditto
   "" 'closeinlinelink :=    % ditto
 }
-INTEGERS { 
+INTEGERS {
   bracket.state
   outside.brackets
   open.brackets
@@ -346,21 +393,21 @@ EOD
     };
 
     /^ *FUNCTION *\{format.doi\}/ && do {
-        #print STDERR "$progname: style file $infile already supports DOIs; urlbst format.doi disabled\n(see generated .bst style: you may need to make edits near \$adddoiresolver)\n";
+        #print STDERR "$progname: style file $infile already supports DOIs; urlbst format.doi disabled\n(see generated .bst style: you may need to make edits near \$settings{adddoi})\n";
         $found{formatdoi} = 1;
-        $adddoiresolver = 0;
+        $settings{adddoi} = 0;
     };
 
     /^ *FUNCTION *\{format.eprint\}/ && do {
-        #print STDERR "$progname: style file $infile already supports eprints; urlbst format.eprint disabled\n(see generated .bst style: you may need to make edits near \$addeprints)\n";
+        #print STDERR "$progname: style file $infile already supports eprints; urlbst format.eprint disabled\n(see generated .bst style: you may need to make edits near \$settings{addeprints})\n";
         $found{formateprint} = 1;
-        $addeprints = 0;
+        $settings{addeprints} = 0;
     };
 
     /^ *FUNCTION *\{format.pubmed\}/ && do {
-        #print STDERR "$progname: style file $infile already supports Pubmed; urlbst format.pubmed disabled\n(see generated .bst style: you may need to make edits near \$addpubmedresolver)\n";
+        #print STDERR "$progname: style file $infile already supports Pubmed; urlbst format.pubmed disabled\n(see generated .bst style: you may need to make edits near \$settings{addpubmed})\n";
         $found{formatpubmed} = 1;
-        $addpubmedresolver = 0;
+        $settings{addpubmed} = 0;
     };
 
     /^ *FUNCTION *{output\.nonnull}/ && do {
@@ -469,8 +516,8 @@ FUNCTION {uand}
 { 'skip$ { pop$ #0 } if$ } % 'and' (which isn't defined at this point in the file)
 FUNCTION {possibly.setup.inlinelink}
 { makeinlinelink hrefform #0 > uand
-    { doi empty$ adddoiresolver uand
-        { pubmed empty$ addpubmedresolver uand
+    { doi empty$ adddoi uand
+        { pubmed empty$ addpubmed uand
             { eprint empty$ addeprints uand
                 { url empty$
                     { "" }
@@ -535,14 +582,14 @@ FUNCTION {output.nonnull}
       bracket.state open.brackets =
         { " [" * }
         { ", " * } % bracket.state will be within.brackets
-      if$ 
-      s * 
+      if$
+      s *
       close.brackets 'bracket.state :=
     }
   if$
 }
 
-% Call this function just before adding something which should be presented in 
+% Call this function just before adding something which should be presented in
 % brackets.  bracket.state is handled specially within output.nonnull.
 FUNCTION {inbrackets}
 { bracket.state close.brackets =
@@ -583,14 +630,14 @@ FUNCTION {make.href.null}
 }
 % make hypertex specials
 FUNCTION {make.href.hypertex}
-{ 
+{
   "\special {html:<a href=" quote$ *
   swap$ * quote$ * "> }" * swap$ *
   "\special {html:</a>}" *
 }
 % make hyperref specials
 FUNCTION {make.href.hyperref}
-{ 
+{
   "\href {" swap$ * "} {\path{" * swap$ * "}}" *
 }
 FUNCTION {make.href}
@@ -636,13 +683,17 @@ EOD
 FUNCTION {format.doi}
 { doi empty$
     { "" }
-    { doiprefix doi * doiurl doi * make.href }
+    { doiform #1 =
+        { "\doi{" doi * "}" * }
+        { doiprefix doi * doiurl doi * make.href }
+      if$
+    }
   if$
 }
 EOD
     output_replacement_function($found{formatdoi},
                                 'format.doi',
-                                'adddoiresolver',
+                                'adddoi',
                                 $formatdoifunction);
 
     $formatpubmedfunction = <<'EOD';
@@ -655,7 +706,7 @@ FUNCTION {format.pubmed}
 EOD
     output_replacement_function($found{formatpubmed},
                                 'format.pubmed',
-                                'addpubmedresolver',
+                                'addpubmed',
                                 $formatpubmedfunction);
 
     print OUT <<'EOD';
@@ -666,10 +717,10 @@ EOD
 % the URL and the lastchecked in brackets.
 FUNCTION {output.url}
 { url empty$
-    'skip$ 
-    { new.block 
+    'skip$
+    { new.block
       format.url output
-      format.lastchecked output 
+      format.lastchecked output
     }
   if$
 }
@@ -682,7 +733,7 @@ FUNCTION {output.web.refs}
     { % If the generated DOI will be the same as the URL,
       % then don't print the URL (thanks to Joseph Wright for this code,
       % at http://tex.stackexchange.com/questions/5660)
-      adddoiresolver 
+      adddoi
           doiurl doi empty$ { "X" } { doi } if$ * % DOI URL to be generated
           url empty$ { "Y" } { url } if$          % the URL, or "Y" if empty
           =                                       % are the strings equal?
@@ -694,11 +745,11 @@ FUNCTION {output.web.refs}
         { format.eprint output.nonnull }
         'skip$
       if$
-      adddoiresolver doi empty$ not and
+      adddoi doi empty$ not and
         { format.doi output.nonnull }
         'skip$
       if$
-      addpubmedresolver pubmed empty$ not and
+      addpubmed pubmed empty$ not and
         { format.pubmed output.nonnull }
         'skip$
       if$
@@ -736,7 +787,7 @@ FUNCTION {fin.entry}
 % Webpage entry type.
 % Title and url fields required;
 % author, note, year, month, and lastchecked fields optional
-% See references 
+% See references
 %   ISO 690-2 http://www.nlc-bnc.ca/iso/tc46sc9/standard/690-2e.htm
 %   http://www.classroom.net/classroom/CitingNetResources.html
 %   http://neal.ctstateu.edu/history/cite.html
@@ -793,7 +844,7 @@ sub output_replacement_function {
 %%% and disabled urlbst's version; proceed with some caution.
 EOD
 
-        print STDERR "$progname: WARNING: style file $infile already includes a $function_name function;\nyou may need to disable the urlbst version by setting \$$disabling_variable to zero.\nYou might want to edit the output file (search for $function_name).\n";
+        print STDERR "$progname: WARNING: style file $infile already includes a $function_name function;\nyou may need to disable the urlbst version by setting \$settings{$disabling_variable} to zero.\nYou might want to edit the output file (search for $function_name).\n";
 
         ($t = $function_definition_string) =~ s/\n/\n%%% /g;
         print OUT "%%% " . $t . "$mymarker\n";
