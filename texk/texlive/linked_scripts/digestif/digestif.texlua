@@ -1,0 +1,25 @@
+#!/usr/bin/env texlua
+-- Use an invalid directory name in order not to allow kpse to search
+-- in the current directory.
+os.setenv("TEXMFDOTDIR", package.config:find("^\\") and "NUL" or "/dev/null")
+kpse.set_program_name("luatex")
+local zip = require "zip"
+local archive = kpse.find_file("digestif.zip")
+  or error("Can't find 'digestif.zip' archive")
+local function digestif_searcher(modname)
+  local submod = modname:match("^digestif%.(.+)")
+  if not submod then return end
+  local zipfile = zip.open(archive)
+  local luafile = zipfile and zipfile:open(submod .. ".lua")
+  if not luafile then
+    return "\n\t[digestif] no file '"..submod..".lua' in '"..archive.."'"
+  end
+  local chunk = luafile:read("*a")
+  luafile:close(); zipfile:close()
+  return load(chunk, "="..archive.."#"..submod..".lua")
+end
+-- Search inside digestif.zip when requiring digestif.* modules.
+table.insert(package.searchers, 2, digestif_searcher)
+-- Search inside digestif.zip when loading the *.tags data files.
+table.insert(require "digestif.config".data_dirs, archive)
+require "digestif.langserver".main(arg)
