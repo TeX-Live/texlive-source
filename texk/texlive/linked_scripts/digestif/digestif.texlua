@@ -4,7 +4,7 @@
 os.setenv("TEXMFDOTDIR", package.config:find("^\\") and "NUL" or "/dev/null")
 kpse.set_program_name("luatex")
 local zip = require "zip"
-local archive = kpse.find_file("digestif.zip")
+local archive = kpse.find_file("digestif.zip", "texmfscripts")
   or error("Can't find 'digestif.zip' archive")
 local function digestif_searcher(modname)
   local submod = modname:match("^digestif%.(.+)")
