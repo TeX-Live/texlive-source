@@ -1,3 +1,9 @@
+2022-12-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex-m.ch: Add kcatcode to a character which is made
+	by \char and \kchar.
+	https://github.com/texjporg/tex-jp-build/issues/103
+
 2022-12-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* up{bibtex,dvitype,pltotf,tftopl}.ch, am/uptex.am:
