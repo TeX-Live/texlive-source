@@ -1327,7 +1327,10 @@ eqtb[auto_xspacing_code]:=eqtb[cat_code_base];
 for k:=0 to 255 do
   begin cat_code(k):=other_char; kcat_code(k):=other_kchar;
   math_code(k):=hi(k); sf_code(k):=1000;
-  auto_xsp_code(k):=0; inhibit_xsp_code(k):=0; inhibit_xsp_type(k):=0;
+  auto_xsp_code(k):=0;
+  end;
+for k:=0 to 1023 do
+  begin inhibit_xsp_code(k):=0; inhibit_xsp_type(k):=0;
   kinsoku_code(k):=0; kinsoku_type(k):=0;
   end;
 @z
