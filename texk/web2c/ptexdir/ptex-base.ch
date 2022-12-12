@@ -2373,18 +2373,16 @@ procedure scan_something_internal(@!level:small_number;@!negative:boolean);
 var m:halfword; {|chr_code| part of the operand token}
 @y
 var m:halfword; {|chr_code| part of the operand token}
+@!q,@!r:pointer; {general purpose indices}
 @!tx:pointer; {effective tail node}
 @!qx:halfword; {general purpose index}
 @z
 @x [26.413] l.8345 - pTeX: scan_something_internal
-begin m:=cur_chr;
 case cur_cmd of
 def_code: @<Fetch a character code from some table@>;
 toks_register,assign_toks,def_family,set_font,def_font: @<Fetch a token list or
   font identifier, provided that |level=tok_val|@>;
 @y
-@!q,@!r:pointer;
-begin m:=cur_chr;
 case cur_cmd of
 assign_kinsoku: @<Fetch breaking penalty from some table@>;
 assign_inhibit_xsp_code: @<Fetch inhibit type from some table@>;
@@ -2884,8 +2882,8 @@ if_tdir_code: b:=(abs(direction)=dir_tate);
 if_ydir_code: b:=(abs(direction)=dir_yoko);
 if_ddir_code: b:=(abs(direction)=dir_dtou);
 if_mdir_code: b:=(direction<0);
-if_void_code, if_hbox_code, if_vbox_code, if_tbox_code, if_ybox_code, if_dbox_code, if_mbox_code:
-  @<Test box register status@>;
+if_tbox_code, if_ybox_code, if_dbox_code, if_mbox_code,
+if_void_code, if_hbox_code, if_vbox_code: @<Test box register status@>;
 if_jfont_code, if_tfont_code:
   begin scan_font_ident;
   if this_if=if_jfont_code then b:=(font_dir[cur_val]=dir_yoko)
