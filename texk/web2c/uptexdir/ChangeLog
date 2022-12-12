@@ -1,3 +1,10 @@
+2022-12-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex—m.ch: Fix a bug that \inhibitxspcode after Japanese
+	character was ineffective due to lack of mod max_cjk_val.
+	See comments on 2022-12-11.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2022-12-09  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex-m.ch: Add kcatcode to a character which is made

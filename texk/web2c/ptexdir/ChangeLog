@@ -1,3 +1,7 @@
+2022-12-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch: Increase INHIBIT/KINSOKU table size to 1024.
+
 2022-12-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	am/ptex.am:
