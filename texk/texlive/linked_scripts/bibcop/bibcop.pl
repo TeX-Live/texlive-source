@@ -26,6 +26,9 @@ package bibcop;
 use warnings;
 use strict;
 
+# Hash of incoming command line arguments.
+my %args = map { $_ => 1 } @ARGV;
+
 # If you want to add an extra check, just create a new procedure
 # named as "check_*".
 
@@ -237,6 +240,17 @@ sub check_volume {
   }
 }
 
+# Check the right format of the 'number.'
+sub check_number {
+  my (%item) = @_;
+  if (exists $item{'number'}) {
+    my $number = $item{'number'};
+    if (not $item{'number'} =~ /^[1-9][0-9]*$/) {
+      return "The format of the 'number' is wrong"
+    }
+  }
+}
+
 # Check the right format of the 'pages.'
 sub check_pages {
   my (%item) = @_;
@@ -387,8 +401,9 @@ sub only_words {
 sub clean_tex {
   my ($tex) = @_;
   $tex =~ s/\s+/ /g;
-  $tex =~ s/^\{+//g;
-  $tex =~ s/\}+$//g;
+  $tex =~ s/^\s+//g;
+  $tex =~ s/\s+$//g;
+  while ($tex =~ s/^\{(.+)\}$/$1/g) {};
   return $tex;
 }
 
@@ -406,7 +421,32 @@ sub listed_keys {
   return '(' . join(', ', @sorted) . ')';
 }
 
-my %args = map { $_ => 1 } @ARGV;
+# Print ERROR message to the console and die.
+sub error {
+  my ($txt) = @_;
+  print $txt . "\n";
+  exit 1;
+}
+
+# Print DEBUG message to the console.
+sub debug {
+  my ($txt) = @_;
+  if (exists $args{'--latex'}) {
+    print '% ';
+  }
+  print $txt . "\n";
+}
+
+# Print INFO message to the console.
+sub warning {
+  my ($txt) = @_;
+  if (exists $args{'--latex'}) {
+    print "\\PackageWarningNoLine{bibcop}{$txt}\n";
+  } else {
+    print $txt . "\n";
+  }
+}
+
 if (@ARGV+0 eq 0 or exists $args{'--help'}) {
   debug("Bibcop is a Style Checker of .bib Files\n" .
     "Usage: bibcop [<options>] <.bib file path>\n" .
@@ -415,7 +455,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'}) {
     "  --fix     Fix the errors and print a new version of the .bib file to the console\n" .
     "  --latex   Report errors in LaTeX format using \\PackageWarningNoLine command");
 } elsif (exists $args{'--version'}) {
-  debug('0.0.2');
+  debug('0.0.3');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   open(my $fh, '<', $file);
@@ -460,32 +500,6 @@ if (@ARGV+0 eq 0 or exists $args{'--help'}) {
         warning("$err, in the '$item{':name'}' bibitem");
       }
     }
-  }
-}
-
-# Print ERROR message to the console and die.
-sub error {
-  my ($txt) = @_;
-  print $txt . "\n";
-  exit 1;
-}
-
-# Print DEBUG message to the console.
-sub debug {
-  my ($txt) = @_;
-  if (exists $args{'--latex'}) {
-    print '% ';
-  }
-  print $txt . "\n";
-}
-
-# Print INFO message to the console.
-sub warning {
-  my ($txt) = @_;
-  if (exists $args{'--latex'}) {
-    print "\\PackageWarningNoLine{bibcop}{$txt}\n";
-  } else {
-    print $txt . "\n";
   }
 }
 
