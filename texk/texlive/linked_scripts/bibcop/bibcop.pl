@@ -32,36 +32,36 @@ my %args = map { $_ => 1 } @ARGV;
 # If you want to add an extra check, just create a new procedure
 # named as "check_*".
 
-# Only these keys are allowed and only these types of items.
+# Only these tags are allowed and only these types of entries.
 my %blessed = (
-  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'publisher?'],
+  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'publisher?', 'pages?'],
   'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'organization?', 'volume?'],
   'book' => ['doi', 'title', 'author', 'year', 'publisher'],
   'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?'],
 );
 
-# Check the presence of mandatory keys.
-sub check_mandatory_keys {
-  my (%item) = @_;
-  my $type = $item{':type'};
+# Check the presence of mandatory tags.
+sub check_mandatory_tags {
+  my (%entry) = @_;
+  my $type = $entry{':type'};
   my $mandatory = $blessed{$type};
-  foreach my $key (@$mandatory) {
-    if ($key =~ /^.*\?$/) {
+  foreach my $tag (@$mandatory) {
+    if ($tag =~ /^.*\?$/) {
       next;
     }
-    if (not(exists $item{$key})) {
-      my $listed = listed_keys(%item);
-      return "A mandatory '$key' key for '\@$type' is missing among $listed"
+    if (not(exists $entry{$tag})) {
+      my $listed = listed_tags(%entry);
+      return "A mandatory '$tag' tag for '\@$type' is missing among $listed"
     }
   }
   if (exists $blessed{$type}) {
     my %required = map { $_ => 1 } @$mandatory;
-    foreach my $key (keys %item) {
-      if ($key =~ /^:/) {
+    foreach my $tag (keys %entry) {
+      if ($tag =~ /^:/) {
         next;
       }
-      if (not(exists $required{$key}) && not(exists $required{$key . '?'})) {
-        return "The '$key' key is not suitable for '$type', use only these: (@$mandatory)"
+      if (not(exists $required{$tag}) && not(exists $required{$tag . '?'})) {
+        return "The '$tag' tag is not suitable for '$type', use only these: (@$mandatory)"
       }
     }
   }
@@ -69,14 +69,14 @@ sub check_mandatory_keys {
 
 # Check that all major words are capitalized.
 sub check_capitalization {
-  my (%item) = @_;
-  my %keys = map { $_ => 1 } qw/title booktitle journal/;
+  my (%entry) = @_;
+  my %tags = map { $_ => 1 } qw/title booktitle journal publisher organization/;
   my %minors = map { $_ => 1 } qw/in of at to by the a an and or as if up via yet nor but off on for into/;
-  foreach my $key (keys %item) {
-    if (not exists $keys{$key}) {
+  foreach my $tag (keys %entry) {
+    if (not exists $tags{$tag}) {
       next;
     }
-    my $value = $item{$key};
+    my $value = $entry{$tag};
     my @words = only_words($value);
     my $pos = 0;
     foreach my $word (@words) {
@@ -88,10 +88,10 @@ sub check_capitalization {
         next;
       }
       if (exists $minors{lc($word)} and $pos gt 1) {
-        return "All minor words in the '$key' must be lower-cased, while '$word' (no.$pos) is not"
+        return "All minor words in the '$tag' must be lower-cased, while '$word' (no.$pos) is not"
       }
       if ($word =~ /^[a-z].*/) {
-        return "All major words in the '$key' must be capitalized, while '$word' (no.$pos) is not"
+        return "All major words in the '$tag' must be capitalized, while '$word' (no.$pos) is not"
       }
     }
   }
@@ -99,9 +99,9 @@ sub check_capitalization {
 
 # Check that the 'author' is formatted correctly.
 sub check_author {
-  my (%item) = @_;
-  if (exists $item{'author'} and not $item{'author'} =~ /^\{.+\}$/) {
-    my $author = clean_tex($item{'author'});
+  my (%entry) = @_;
+  if (exists $entry{'author'} and not $entry{'author'} =~ /^\{.+\}$/) {
+    my $author = clean_tex($entry{'author'});
     if (not $author =~ /^[A-Z][^ ]+(,( [A-Z][^ ]+)+)?( and [A-Z][^ ]+(,( [A-Z][^ ]+)+)?)*( and others)?$/) {
       return "The format of the 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
     }
@@ -113,20 +113,20 @@ sub check_author {
 
 # Check that titles don't have shortened words with a tailing dot.
 sub check_shortenings {
-  my (%item) = @_;
-  my %keys = map { $_ => 1 } qw/title booktitle journal/;
-  foreach my $key (keys %item) {
-    if (not exists $keys{$key}) {
+  my (%entry) = @_;
+  my %tags = map { $_ => 1 } qw/title booktitle journal/;
+  foreach my $tag (keys %entry) {
+    if (not exists $tags{$tag}) {
       next;
     }
-    my $value = $item{$key};
+    my $value = $entry{$tag};
     my @words = only_words($value);
     foreach my $word (@words) {
       if (not $word =~ /^[A-Za-z]/) {
         next;
       }
       if ($word =~ /^.*\.$/) {
-        return "Do not shorten the words in the '$key', such as '$word'"
+        return "Do not shorten the words in the '$tag', such as '$word'"
       }
     }
   }
@@ -134,15 +134,59 @@ sub check_shortenings {
 
 # Check the right format of the 'title' and 'booktitle.'
 sub check_titles {
-  my (%item) = @_;
-  my @keys = qw/title booktitle/;
-  foreach my $key (@keys) {
-    if (not exists($item{$key})) {
+  my (%entry) = @_;
+  my @tags = qw/title booktitle/;
+  foreach my $tag (@tags) {
+    if (not exists($entry{$tag})) {
       next;
     }
-    my $title = $item{$key};
+    my $title = $entry{$tag};
     if (not $title =~ /^\{.+\}$/) {
-      return "The '$key' must be wrapped in double curled brackets"
+      return "The '$tag' must be wrapped in double curled brackets"
+    }
+  }
+}
+
+# Check the right format of the tags for arXiv.
+# See https://arxiv.org/help/arxiv_identifier
+sub check_arXiv {
+  my (%entry) = @_;
+  if (exists($entry{'archiveprefix'})) {
+    if (not exists $entry{'eprint'}) {
+      return "The 'eprint' is mandatory when 'archiveprefix' is there"
+    }
+    if (not $entry{'eprint'} =~ /^[0-9]{4}\.[0-9]{4,5}(v[0-9]+)?$/) {
+      return "The 'eprint' must have two integers separated by a dot"
+    }
+    my $eprint = $entry{'eprint'};
+    my ($head, $tail) = split(/\./, $eprint);
+    my $year = substr($head, 0, 2);
+    my $month = substr($head, 2);
+    if ($month > 12) {
+      return "The month '$month' of the 'eprint' is wrong, it can't be bigger than 12"
+    }
+    if (not exists $entry{'primaryclass'}) {
+      return "The 'primaryclass' is mandatory when 'archiveprefix' is there"
+    }
+    if (not $entry{'primaryclass'} =~ /^[a-z]{2,}\.[A-Z]{2}$/) {
+      return "The 'primaryclass' must have two parts, like 'cs.PL'"
+    }
+  }
+}
+
+# Check that organization is not mentioned in the booktitle.
+sub check_org_in_booktitle {
+  my (%entry) = @_;
+  my @orgs = ( 'ACM', 'IEEE' );
+  if (exists($entry{'booktitle'})) {
+    my $title = $entry{'booktitle'};
+    foreach my $o (@orgs) {
+      if ($title =~ /^.*\Q$o\E.*$/) {
+        return "The '$o' organization must not be mentioned in the booktitle, use 'publisher' tag instead"
+      }
+    }
+    if ($title =~ /^.*(ACM|IEEE).*$/) {
+      return "Don't mention the"
     }
   }
 }
@@ -150,47 +194,79 @@ sub check_titles {
 # Check that no values have tailing dots.
 # Check that there are no spaces before commans.
 sub check_typography {
-  my (%item) = @_;
-  foreach my $key (keys %item) {
-    if ($key =~ /^:.*/) {
+  my (%entry) = @_;
+  my %symbols = (
+    '.' => 'dot',
+    ',' => 'comma',
+    ';' => 'semi-colon',
+    ':' => 'colon',
+    '!' => 'exclamation mark',
+    '?' => 'question mark',
+    '-' => 'dash',
+    '--' => 'double dash',
+    '---' => 'triple dash',
+  );
+  my @spaces_around = ( '---' );
+  my @no_spaces_around = ( '--', '-' );
+  my @no_space_before = ( '.', ',', ';', ':', '?', '!' );
+  my @bad_tails = ( '.', ',', ';', ':', '-' );
+  foreach my $tag (keys %entry) {
+    if ($tag =~ /^:.*/) {
       next;
     }
-    my $value = $item{$key};
-    if ($value =~ /.*\.$/ and $key ne 'author') {
-      return "The '$key' must not end with a dot"
+    my $value = $entry{$tag};
+    foreach my $s (@bad_tails) {
+      if ($s eq '.' and $tag eq 'author') {
+        next;
+      }
+      if ($value =~ /^.*\Q$s\E$/) {
+        return "The '$tag' must not end with a $symbols{$s}"
+      }
     }
-    if ($value =~ /.* ,.*/) {
-      return "In the '$key', do not put a space before the comma"
+    foreach my $s (@no_space_before) {
+      if ($value =~ /^.*\s\Q$s\E.*$/) {
+        return "In the '$tag', do not put a space before a $symbols{$s}"
+      }
+    }
+    foreach my $s (@spaces_around) {
+      if ($value =~ /^.*[^\s]\Q$s\E.*$/ or $value =~ /^.*\Q$s\E[^\s].*$/) {
+        return "In the '$tag', put spaces around a $symbols{$s}"
+      }
+    }
+    foreach my $s (@no_spaces_around) {
+      if ($value =~ /^.*\s\Q$s\E\s.*$/) {
+        return "In the '$tag', don't put spaces around a $symbols{$s}"
+      }
     }
   }
 }
 
 # Check the year is not mentioned in titles.
 sub check_year_in_titles {
-  my (%item) = @_;
-  my @keys = qw/title booktitle journal/;
-  foreach my $key (@keys) {
-    if (not exists($item{$key})) {
+  my (%entry) = @_;
+  my @tags = qw/title booktitle journal/;
+  foreach my $tag (@tags) {
+    if (not exists($entry{$tag})) {
       next;
     }
-    my @words = only_words($item{$key});
+    my @words = only_words($entry{$tag});
     foreach my $word (@words) {
       if ($word =~ /^[1-9][0-9]{3}$/) {
-        return "The '$key' must not contain the year $word, it is enough to have the 'year' key"
+        return "The '$tag' must not contain the year $word, it is enough to have the 'year' tag"
       }
     }
   }
 }
 
-# Check the right format of the 'booktitle' in the 'inproceedings' item.
+# Check the right format of the 'booktitle' in the 'inproceedings' entry.
 sub check_booktile_of_inproceedings {
-  my (%item) = @_;
-  my $key = 'inproceedings';
-  if ($item{':type'} eq $key) {
-    if (exists $item{'booktitle'}) {
-      my @words = only_words($item{'booktitle'});
+  my (%entry) = @_;
+  my $tag = 'inproceedings';
+  if ($entry{':type'} eq $tag) {
+    if (exists $entry{'booktitle'}) {
+      my @words = only_words($entry{'booktitle'});
       if (lc($words[0]) ne 'proceedings' or lc($words[1]) ne 'of' or lc($words[2]) ne 'the') {
-        return "The '$key' must start with 'Proceedings of the ...'"
+        return "The '$tag' must start with 'Proceedings of the ...'"
       }
     }
   }
@@ -198,10 +274,10 @@ sub check_booktile_of_inproceedings {
 
 # Check the right format of the 'doi.'
 sub check_doi {
-  my (%item) = @_;
-  if (exists $item{'doi'}) {
-    my $doi = $item{'doi'};
-    if (not $item{'doi'} =~ /^[0-9a-zA-Z.]+\/[0-9a-zA-Z._\-]+$/) {
+  my (%entry) = @_;
+  if (exists $entry{'doi'}) {
+    my $doi = $entry{'doi'};
+    if (not $doi =~ /^[0-9a-zA-Z.]+\/[0-9a-zA-Z._\-)(]+$/) {
       return "The format of the 'doi' is wrong"
     }
   }
@@ -209,10 +285,10 @@ sub check_doi {
 
 # Check the right format of the 'year.'
 sub check_year {
-  my (%item) = @_;
-  if (exists $item{'year'}) {
-    my $year = $item{'year'};
-    if (not $item{'year'} =~ /^[0-9]{3,4}$/) {
+  my (%entry) = @_;
+  if (exists $entry{'year'}) {
+    my $year = $entry{'year'};
+    if (not $year =~ /^[0-9]{3,4}$/) {
       return "The format of the 'year' is wrong"
     }
   }
@@ -220,10 +296,10 @@ sub check_year {
 
 # Check the right format of the 'month.'
 sub check_month {
-  my (%item) = @_;
-  if (exists $item{'month'}) {
-    my $month = $item{'month'};
-    if (not $item{'month'} =~ /^[1-9]|10|11|12$/) {
+  my (%entry) = @_;
+  if (exists $entry{'month'}) {
+    my $month = $entry{'month'};
+    if (not $month =~ /^[1-9]|10|11|12$/) {
       return "The format of the 'month' is wrong"
     }
   }
@@ -231,10 +307,10 @@ sub check_month {
 
 # Check the right format of the 'volume.'
 sub check_volume {
-  my (%item) = @_;
-  if (exists $item{'volume'}) {
-    my $volume = $item{'volume'};
-    if (not $item{'volume'} =~ /^[1-9][0-9]*$/) {
+  my (%entry) = @_;
+  if (exists $entry{'volume'}) {
+    my $volume = $entry{'volume'};
+    if (not $volume =~ /^[1-9][0-9]*$/) {
       return "The format of the 'volume' is wrong"
     }
   }
@@ -242,10 +318,10 @@ sub check_volume {
 
 # Check the right format of the 'number.'
 sub check_number {
-  my (%item) = @_;
-  if (exists $item{'number'}) {
-    my $number = $item{'number'};
-    if (not $item{'number'} =~ /^[1-9][0-9]*$/) {
+  my (%entry) = @_;
+  if (exists $entry{'number'}) {
+    my $number = $entry{'number'};
+    if (not $number =~ /^[1-9][0-9]*$/) {
       return "The format of the 'number' is wrong"
     }
   }
@@ -253,14 +329,17 @@ sub check_number {
 
 # Check the right format of the 'pages.'
 sub check_pages {
-  my (%item) = @_;
-  if (exists $item{'pages'}) {
-    my $pages = $item{'pages'};
-    if (not $item{'pages'} =~ /^[1-9][0-9]*--[1-9][0-9]*|[1-9][0-9]*$/) {
+  my (%entry) = @_;
+  if (exists $entry{'pages'}) {
+    my $pages = $entry{'pages'};
+    if (not $pages =~ /^([1-9][0-9]*--[1-9][0-9]*|[1-9][0-9]*)$/) {
       return "The format of the 'pages' is wrong"
     }
     my @parts = split(/--/, $pages);
     if (@parts+0 eq 2) {
+      if ($parts[0] eq $parts[1]) {
+        return "The 'pages' mentions the same page twice, just use it once"
+      }
       if ($parts[0] gt $parts[1]) {
         return "The 'pages' are in the wrong order"
       }
@@ -268,9 +347,9 @@ sub check_pages {
   }
 }
 
-# Check one item.
-sub process_item {
-  my (%item) = @_;
+# Check one entry.
+sub process_entry {
+  my (%entry) = @_;
   my @checks;
   foreach my $entry (keys %bibcop::) {
     if ($entry =~ /^check_/) {
@@ -281,7 +360,7 @@ sub process_item {
   my @errors;
   foreach my $check (@sorted) {
     no strict 'refs';
-    my $err = $check->(%item);
+    my $err = $check->(%entry);
     if ($err ne '') {
       push(@errors, $err);
     }
@@ -290,14 +369,14 @@ sub process_item {
 }
 
 # Parse the incoming .bib file and return an array
-# of hash-maps, where each one is a bibitem.
-sub bibitems {
+# of hash-maps, where each one is a bibentry.
+sub entries {
   my ($bib) = @_;
-  my @items;
+  my @entries;
   my $s = 'top';
-  my %item;
+  my %entry;
   my $acc = '';
-  my $key = '';
+  my $tag = '';
   my $lineno = 0;
   my $nest = 0;
   my $escape = 0;
@@ -309,56 +388,56 @@ sub bibitems {
       # ignore the EOL
       $lineno = $lineno + 1;
     } elsif ($char eq '@' and $s eq 'top') {
-      %item = ();
+      %entry = ();
       $s = 'start';
       $acc = '';
     } elsif ($char =~ /[a-z]/ and $s eq 'start') {
       # @article
     } elsif ($char eq '{' and $s eq 'start') {
-      $item{':type'} = substr($acc, 1);
+      $entry{':type'} = substr($acc, 1);
       $acc = '';
       $s = 'body';
     } elsif ($char =~ /[a-zA-Z]/ and $s eq 'body') {
       $acc = '';
-      $s = 'key';
-    } elsif ($char =~ /[a-zA-Z0-9_]/ and $s eq 'key') {
-      # reading the key
+      $s = 'tag';
+    } elsif ($char =~ /[a-zA-Z0-9_]/ and $s eq 'tag') {
+      # reading the tag
     } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'value') {
       # reading the value without quotes or brackets
-    } elsif ($char eq ',' and $s eq 'key') {
-      $item{':name'} = $acc;
+    } elsif ($char eq ',' and $s eq 'tag') {
+      $entry{':name'} = $acc;
       $s = 'body';
-    } elsif ($char eq '=' and $s eq 'key') {
-      $key = $acc;
+    } elsif ($char eq '=' and $s eq 'tag') {
+      $tag = $acc;
       $s = 'value';
       $acc = '';
     } elsif ($char eq ',' and $s eq 'value') {
-      if (not exists $item{lc($key)}) {
+      if (not exists $entry{lc($tag)}) {
         my $tex = substr($acc, 1);
         $tex =~ s/\s//g;
-        $item{lc($key)} = $tex;
+        $entry{lc($tag)} = $tex;
       }
       $s = 'body';
     } elsif ($char eq '}' and $s eq 'body') {
-      push(@items, { %item });
+      push(@entries, { %entry });
       $s = 'top';
     } elsif ($char eq '}' and $s eq 'value') {
-      if (not exists $item{lc($key)}) {
+      if (not exists $entry{lc($tag)}) {
         my $tex = substr($acc, 1);
         $tex =~ s/\s//g;
-        $item{lc($key)} = $tex;
+        $entry{lc($tag)} = $tex;
       }
-      push(@items, { %item });
+      push(@entries, { %entry });
       $s = 'top';
-    } elsif ($char eq '}' and $s eq 'key') {
-      $item{':name'} = $acc;
-      push(@items, { %item });
+    } elsif ($char eq '}' and $s eq 'tag') {
+      $entry{':name'} = $acc;
+      push(@entries, { %entry });
       $s = 'top';
     } elsif ($char eq '"' and $s eq 'value') {
       $s = 'quote';
       $acc = '';
     } elsif ($char eq '"' and $s eq 'quote') {
-      $item{lc($key)} = substr($acc, 1);
+      $entry{lc($tag)} = substr($acc, 1);
       $s = 'value';
     } elsif ($s eq 'quote') {
       # nothing
@@ -374,13 +453,13 @@ sub bibitems {
       } elsif ($char eq '}' and $escape ne 1) {
         $nest = $nest - 1;
         if ($nest eq 0) {
-          $item{lc($key)} = substr($acc, 1);
+          $entry{lc($tag)} = substr($acc, 1);
           $s = 'value';
         }
       }
       $escape = 0;
     } else {
-      print "\\PackageWarningNoLine{bibcop}{It is impossible to parse the .bib file, because I do not know what to do with '$char' at line #$lineno (s=$s)}\n";
+      warning("It is impossible to parse the .bib file, because I do not know what to do with '$char' at line #$lineno (s=$s)");
       last;
     }
     if ($char eq ' ' and not($s =~ /quote|brackets/)) {
@@ -388,7 +467,7 @@ sub bibitems {
     }
     $acc = $acc . $char;
   }
-  return @items;
+  return @entries;
 }
 
 # Takes the text and returns only list of words seen there.
@@ -407,15 +486,15 @@ sub clean_tex {
   return $tex;
 }
 
-# Take a bibitem and print all its keys as a comma-separated string.
-sub listed_keys {
-  my (%item) = @_;
+# Take a bibentry and print all its tags as a comma-separated string.
+sub listed_tags {
+  my (%entry) = @_;
   my @list;
-  foreach my $key (keys %item) {
-    if ($key =~ /^:.*/) {
+  foreach my $tag (keys %entry) {
+    if ($tag =~ /^:.*/) {
       next;
     }
-    push(@list, $key);
+    push(@list, $tag);
   }
   my @sorted = sort @list;
   return '(' . join(', ', @sorted) . ')';
@@ -424,12 +503,28 @@ sub listed_keys {
 # Print ERROR message to the console and die.
 sub error {
   my ($txt) = @_;
-  print $txt . "\n";
+  if (exists $args{'--latex'}) {
+    print "\\PackageError{bibcop}{$txt}\n";
+  } else {
+    print $txt . "\n";
+  }
   exit 1;
 }
 
 # Print DEBUG message to the console.
 sub debug {
+  my ($txt) = @_;
+  if (exists $args{'--verbose'}) {
+    if (exists $args{'--latex'}) {
+      print "\\message{bibcop: $txt^^J}\n";
+    } else {
+      print $txt . "\n";
+    }
+  }
+}
+
+# Print INFO message to the console.
+sub info {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
     print '% ';
@@ -447,57 +542,64 @@ sub warning {
   }
 }
 
-if (@ARGV+0 eq 0 or exists $args{'--help'}) {
-  debug("Bibcop is a Style Checker of .bib Files\n" .
-    "Usage: bibcop [<options>] <.bib file path>\n" .
-    "  --version Print the current version of the tool and exit\n" .
-    "  --help    Print this help screen\n" .
-    "  --fix     Fix the errors and print a new version of the .bib file to the console\n" .
-    "  --latex   Report errors in LaTeX format using \\PackageWarningNoLine command");
-} elsif (exists $args{'--version'}) {
-  debug('0.0.3');
+if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
+  info("Bibcop is a Style Checker of BibTeX Files\n\n" .
+    "Usage:\n" .
+    "  bibcop [<options>] <.bib file path>\n\n" .
+    "Options:\n" .
+    "  -v, --version   Print the current version of the tool and exit\n" .
+    "  -?, --help      Print this help screen\n" .
+    "      --fix       Fix the errors and print a new version of the .bib file to the console\n" .
+    "      --verbose   Print supplementary debugging information\n" .
+    "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
+    "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
+} elsif (exists $args{'--version'} or exists $args{'-v'}) {
+  info('0.0.4');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
+  if (not $file) {
+    error('File name must be specified');
+  }
   open(my $fh, '<', $file);
   my $bib; { local $/; $bib = <$fh>; }
-  my @items = bibitems($bib);
+  my @entries = entries($bib);
   if (exists $args{'--fix'}) {
-    for my $i (0..(@items+0 - 1)) {
-      my %item = %{ $items[$i] };
-      my $type = $item{':type'};
+    for my $i (0..(@entries+0 - 1)) {
+      my %entry = %{ $entries[$i] };
+      my $type = $entry{':type'};
       if (not exists $blessed{$type}) {
-        error("I don't know what to do with \@$type type of bibitem");
+        error("I don't know what to do with \@$type type of bibentry");
       }
-      my $keys = $blessed{$item{':type'}};
-      my %allowed = map { $_ => 1 } @$keys;
+      my $tags = $blessed{$entry{':type'}};
+      my %allowed = map { $_ => 1 } @$tags;
       my @lines;
-      foreach my $key (keys %item) {
-        if ($key =~ /^:/) {
+      foreach my $tag (keys %entry) {
+        if ($tag =~ /^:/) {
           next;
         }
-        if (not exists $allowed{$key} and not exists $allowed{$key . '?'}) {
+        if (not exists $allowed{$tag} and not exists $allowed{$tag . '?'}) {
           next;
         }
-        my $value = clean_tex($item{$key});
-        if ($key =~ /title|booktitle|journal/) {
+        my $value = clean_tex($entry{$tag});
+        if ($tag =~ /title|booktitle|journal/) {
           $value = '{' . $value . '}';
         }
-        push(@lines, "  $key = {$value},");
+        push(@lines, "  $tag = {$value},");
       }
-      debug("\@$type\{$item{':name'},");
+      info("\@$type\{$entry{':name'},");
       my @sorted = sort @lines;
       foreach my $line (@sorted) {
-        debug($line);
+        info($line);
       }
-      debug("}\n");
+      info("}\n");
     }
   } else {
-    debug((@items+0) . ' bibitems found in ' . $file);
-    for my $i (0..(@items+0 - 1)) {
-      my %item = %{ $items[$i] };
-      debug("Checking $item{':name'} (#$i)...");
-      foreach my $err (process_item(%item)) {
-        warning("$err, in the '$item{':name'}' bibitem");
+    debug((@entries+0) . ' entries found in ' . $file);
+    for my $i (0..(@entries+0 - 1)) {
+      my %entry = %{ $entries[$i] };
+      debug("Checking $entry{':name'} (no.$i)...");
+      foreach my $err (process_entry(%entry)) {
+        warning("$err, in the '$entry{':name'}' bib entry");
       }
     }
   }
