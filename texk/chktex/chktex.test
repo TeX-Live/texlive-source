@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -9,7 +9,7 @@ rm -f chktest
 (bld=`pwd`
   cd $srcdir/$CHKTEX_TREE || exit 1
   CHKTEX_CONFIG=chktexrc \
-    $bld/chktex -mall -r -g0 -lchktexrc -v5 Test.tex || exit 1
+    $bld/chktex -mall -r -g0 -l../chktexrc -v5 Test.tex || exit 1
 ) >chktest || exit 1
 
 diff $srcdir/$CHKTEX_TREE/Test.posix-ere.out chktest || exit 1

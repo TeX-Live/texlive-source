@@ -1,3 +1,8 @@
+2022-12-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import chktex-1.7.8.
+	* patch-04-finderrs: removed.
+
 2016-09-15  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>
 
 	* Import chktex-1.7.6.

@@ -47,6 +47,7 @@ LIBS=@LIBS@
 LDFLAGS=@LDFLAGS@
 LN_S=@LN_S@
 LATEX=@LATEX@
+PDFLATEX=@PDFLATEX@
 DVIPS=@DVIPS@
 PS2PDF=ps2pdf
 PERL5=@PERL5@
@@ -64,7 +65,7 @@ VPATH=$(srcdir)
 
 #####################################################################
 
-EXTRA_DIST=configure.in Makefile.in stamp-h.in config.h.in rmeheader.in \
+EXTRA_DIST=configure.ac Makefile.in stamp-h.in config.h.in rmeheader.in \
 	MakeHTML.pl ChkTeX.tex.in aclocal.m4 NEWS \
 	chkweb deweb.in COPYING chktex.1 chkweb.1 deweb.1 \
 	input.tex Test.tex Test.pcre.out Test.posix-ere.out Test.nore.out configure \
@@ -72,7 +73,7 @@ EXTRA_DIST=configure.in Makefile.in stamp-h.in config.h.in rmeheader.in \
 	$(wildcard m4/*.m4)
 
 # created by configure
-CONFIG_DIST=ChkTeX.tex
+CONFIG_DIST=ChkTeX.tex ChkTeXRC.tex chktexrc
 
 # created at make time
 BUILT_DIST=chktex.doc chkweb.doc deweb.doc README ChkTeX.dvi
@@ -85,7 +86,7 @@ SOURCEFILES=$(CSOURCES) $(wildcard $(CSOURCES:.c=.h)) types.h
 
 DISTFILES=$(EXTRA_DIST) $(SOURCEFILES)
 
-all: chktex
+all: chktex chktexrc
 
 DISTDIR:=chktex-@PACKAGE_VERSION@
 dist: $(DISTDIR).tar.gz
@@ -124,7 +125,7 @@ endif
 
 OBJS= ChkTeX.o FindErrs.o OpSys.o Resource.o Utility.o
 
-MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 Test.tex || :)
+MAKETEST= (builddir=`pwd` ; cd $(srcdir) ; $${builddir}/chktex -mall -r -g0 -lchktexrc -v5 -q Test.tex || :)
 
 # We can't grep the output of chtex because it might not be built yet
 TestOutFile := $(shell sed -n 's/.*HAVE_\(.*RE\) 1.*/\1/p' config.h | tr "A-Z_" "a-z-")
@@ -133,14 +134,14 @@ TestOutFile := Test.nore.out
 else
 TestOutFile := Test.$(TestOutFile).out
 endif
-$(srcdir)/$(TestOutFile): $(srcdir)/Test.tex
+$(srcdir)/$(TestOutFile): $(srcdir)/Test.tex $(srcdir)/input/file
 	-rm -f $(srcdir)/$(TestOutFile)
 	@echo ""
 	@echo "***Warning: creating $(TestOutFile)***"
 	@echo ""
 	$(MAKETEST) 1> $(srcdir)/$(TestOutFile)
 
-check: chktex $(srcdir)/$(TestOutFile)
+check: chktex $(srcdir)/$(TestOutFile) chktexrc
 	@echo ">>> Testing that checking algorithms work correctly..."
 	@-rm -f chktest
 	$(MAKETEST) 1> chktest
@@ -154,6 +155,7 @@ check: chktex $(srcdir)/$(TestOutFile)
 		echo "results were *supposed* to be..."; \
 		diff -u $(srcdir)/$(TestOutFile) chktest; \
 	fi
+	$(srcdir)/tests/run-tests.sh `pwd` "$(srcdir)"
 
 
 chktex: $(OBJS)
@@ -233,12 +235,12 @@ endif
 
 ###################### AUTOCONF REMAKING ################################
 
-$(srcdir)/configure: configure.in aclocal.m4
+$(srcdir)/configure: configure.ac aclocal.m4
 	cd $(srcdir) && autoconf
 
 #autoheader might not change config.h.in, so touch a stamp file.
 $(srcdir)/config.h.in: stamp-h.in
-$(srcdir)/stamp-h.in: configure.in aclocal.m4
+$(srcdir)/stamp-h.in: configure.ac aclocal.m4
 	cd $(srcdir) && autoheader
 	echo timestamp > $(srcdir)/stamp-h.in
 
@@ -260,7 +262,14 @@ config.status: configure
 %.doc: %.1
 	$(GROFF) $< > $@
 
-ChkTeX.dvi: ChkTeX.tex
+ChkTeXRC.tex: chktexrc.in MakeChkTeXRC.pl
+	 $(PERL5) $(srcdir)/MakeChkTeXRC.pl --latex $(srcdir)/chktexrc.in > ChkTeXRC.tex
+
+chktexrc: chktexrc.in  MakeChkTeXRC.pl
+	 $(PERL5) $(srcdir)/MakeChkTeXRC.pl --chktexrc $(srcdir)/chktexrc.in > chktexrc
+
+
+ChkTeX.dvi: ChkTeX.tex ChkTeXRC.tex
 ifdef LATEX
 	$(LATEX) ChkTeX.tex
 else
@@ -271,8 +280,13 @@ endif
 ChkTeX.ps: ChkTeX.dvi
 	$(DVIPS) -o ChkTeX.ps ChkTeX.dvi
 
+ifdef PDFLATEX
+ChkTeX.pdf: ChkTeX.tex ChkTeXRC.tex
+	$(PDFLATEX) -interaction=nonstopmode ChkTeX.tex
+else
 ChkTeX.pdf: ChkTeX.ps
 	$(PS2PDF) $< $@
+endif
 
 cover:
 	-./chktex -h

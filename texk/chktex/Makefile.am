@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/chktex/
 ##
-## Copyright 2017 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 ## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -88,7 +88,7 @@ uninstall-hook: uninstall-links
 # resource file
 configdir = $(datarootdir)/texmf-dist/chktex
 
-config_DATA = $(CHKTEX_TREE)/chktexrc
+config_DATA = $(CHKTEX_TREE)/../chktexrc
 
 # documentation
 pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex

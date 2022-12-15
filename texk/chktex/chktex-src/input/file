@@ -1,0 +1,8 @@
+% -*- TeX -*-
+% chktex-file 22
+% This file tests that file suppressions are only valid in the current file.
+
+% It also ensures that git will create the input/
+% directory.  That ensures that the \input input in Test.tex is able
+% to distinguish between directories and regular files.
+% This was bug #56520.

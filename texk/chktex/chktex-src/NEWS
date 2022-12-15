@@ -1,6 +1,48 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.8 (2022-10-17), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fix some packaging issues for CTAN
+
+1.7.7 (2022-10-17), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Fix false positives
+    * Fix overzealous warning of x between numbers #60184
+    * Handle nested mathmode e.g. \ensuremath #60197
+    * Add many citation commands from biblatex #56608
+    * Add support for breqn package #62631
+    * WipeArg on \graphicspath #47593
+    * WipeArg on LuaTeX macros which contain lua code #53146
+    * Add \itshape to Silent section https://tex.stackexchange.com/questions/627808/why-does-chktex-complain-when-there-is-a-space-after-itshape-but-not-when-bfse
+    * Make QuoteStyle warnings work with end of sentence punctuation #53494
+    * When checking for inter-word spacing, ignore certain punctuation #54751, #53347
+    * Allow \frenchspacing to turn off warning 13 (intersentence spacing)
+    * Don't warn about space before a parenthesis at the beginning of the line if the previous line ended with a comment (and no space) #109479
+    * Make exit status 2 or 3 (not 1) when warnings or errors are found.  Some callers expected a return value of 1 to mean an internal error. #53129
+
+  * Fix many bugs
+    * Make ChkTeX process longer lines, especially on Windows.  This doesn't fix the problem entirely, but it should amerliorate it to a large extent.
+    * Make file suppressions only apply to the file they are in.  This allows putting all the "badness" into one file. #57809
+    * Add check to make sure input is a regular file and not a directory #56520
+    * Add support for relative paths in sub directories #53494
+    * Manage ConTeXt environments separately from LaTeX environments #51179
+    * Change argument order to avoid undefined behavior in va_start()
+
+  * New warnings and features
+    * Add regex for unescaped optional arguments inside optional arguments #56657
+    * Support RC settings on the command line #56486
+    * Warn about phrases that match DashExcpt _except_ for the hyphens #58886
+    * Add CmdSpaceStyle option to Ignore spacing problems after commands #60809, #60380
+    * Add support for finding chktexrc files in XDG locations #61405
+    * Add new warning when ChkTeX gets confused about mathmode
+
+  * Improved documentation
+    * Make chktexrc somewhat literate and creating ChkTeXRC.tex as well.
+    * Make "keywords" link to the appropriate chktexrc variable documentation
+    * Add note about chktexrc and link to documentation in the help message #50004 #61179
+    * Indicate that debug is a bit field instead of a level
+
 1.7.6 (2016-09-09), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Properly copy and free strings.  This caused incorrect file

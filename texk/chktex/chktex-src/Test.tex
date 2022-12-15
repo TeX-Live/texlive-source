@@ -13,10 +13,6 @@ are nonsense in a TeXnical manner.
 So is this \foo
 \smallskip This is a not. $\foo Neither$ is this.
 
-\startsection[title={Testing ConTeXt}]
-These should now be an error.
-\stoptext
-
 % Warning 2
 
 This is a faulty reference to \ref{foo}
@@ -55,7 +51,7 @@ in plain TeX---are the key
 % Using DashExcpt
 The Birch--Swinnerton-Dyer conjecture is correct.
 The Birch--Swinnerton--Dyer conjecture is not correct.
-The Birch-Swinnerton-Dyer conjecture is not correct (but not caught).
+The Birch-Swinnerton-Dyer conjecture is not correct (is now caught).
 
 % Warning 9-10
 
@@ -70,6 +66,18 @@ The Birch-Swinnerton-Dyer conjecture is not correct (but not caught).
 
 \begin{foo} \begin{bar} \end{bar}\end{foo}
 
+% Warning 47 -- ConTeXt environment mismatch -- split from 9
+\startsection[title={Testing ConTeXt}]
+These should now be an error.
+\stoptext
+\starttext
+
+% (Un)fortunately, this is not an error
+\begin{foo}
+\startbar
+\end{foo}
+\stopbar
+
 % Warning 11
 
 Foo...bar. $1,...,3$. $1+...+3$. $1,\cdots,3$. $1\cdot\ldots\cdot3$.
@@ -80,10 +88,30 @@ Foo\dots bar. $1,\ldots,3$. $1+\cdots+3$. $1,\ldots,3$. $1\cdot\cdots\cdot3$.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george
 1st.\ foo Inc.\ ab.cd.\ foo ab.cd.\ Foo.\ bar baz., billy.; bob.:\ joe.!\ frank.?\ james..\ george
 
+% Bug 54751
+
+Mr. ``X'' and Mrs. \(Y\)
+
+% ignore commands by default
+\Mr. ``X'' and \Mrs. \(Y\)
+
 % Warning 13
 
 Look at THIS! It's an error.
 Look at THIS\@! It's an error. D. E. Knuth.
+
+% after frenchspacing it's not an error
+\frenchspacing
+Look at THIS! It's not an error.
+Look at THIS\@! It's not an error. D. E. Knuth.
+
+% warning again
+\nonfrenchspacing
+Look at THIS! It's an error.
+Look at THIS\@! It's not an error. D. E. Knuth.
+
+% ignore commands by default
+Look at \THIS\@! It's not an error. D. E. Knuth.
 
 % Warning 14
 
@@ -133,10 +161,12 @@ Do you understand?
 
 \input input.tex
 \input input
+\input input/file
 
 % Warning 29
 The program opens a screen sized 640x200 pixels
 The program opens a screen sized $640\times200$ pixels
+Approximately $\frac{2x}{1+x}$ $x$s shouldn't be errors.
 
 % Warning 30
 
@@ -197,9 +227,33 @@ You should always write a good introduction.
 For every $p\not|n$ you have an ugly prime which doesn't divide $n$.
 For every $p\nmid n$ you have a cute prime which doesn't divide $n$.
 
+% Warning about optional arguments inside optional arguments
+\begin{something}[\cite2[1231]{adadsd}]\end{something}
+[dasd{dasda[ ads[ dasd ]]}]
+adssd[ {}[]]
+\begin{something}[\cite{adadsd}[1231]]\end{something}
+\begin{something}[ ][\cite{adadsd}[1231]]\end{something}
+
+% Shouldn't warn
+\begin{something}[{\cite{adadsd}[1231]}]\end{something}
+\begin{something}[{\cite{{adadsd}}[1231]}]\end{something}
+\begin{something}[{\cite{adadsd}[1231]}]\end{something}
+\begin{something}[ ]{\cite{adadsd}[1231]}\end{something}
+\begin{something}[ ][{\cite{adadsd}[1231]}]\end{something}
+\begin{something}[{} ]{\cite{adadsd}[1231]}\end{something}
+
+
 % Math mode check
 \ensuremath{sin x\text{is not the same as sin x, but is the same as $sin x$}}
 Also, $x(3)\text{ is not x(3) but it is $x(3)$}$
+
+% breqn mode check
+\begin{darray*}
+sin x
+\begin{dsuspend}
+is not the same as sin x, but is the same as $sin x$
+\end{dsuspend}
+\end{darray*}
 
 This is\\% a comment. Nothing here should be checked(right)?
 a broken line.
@@ -226,6 +280,23 @@ In section~\ref{sec:4} it is suppressed. % chktex -1
 \begin{verbatim}
 \this is
 \end{verbatim} FOO
+
+% WipeArg
+\autocite[34-35]{text--1---1}
+
+% Bug 60197 -- "double math mode" should be handled okay
+\begin{align}
+    \begin{array} {l}
+        abc
+    \end{array} \\
+    3 - 2 = 1
+    \pi
+\end{align}
+
+
+% Warning 49
+
+\]
 
 % Warning 16,15
 

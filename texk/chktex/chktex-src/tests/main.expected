@@ -1,0 +1,27 @@
+Message 22 in main.tex: Comment displayed.
+%% main.tex  
+^
+Message 22 in sub1/file.tex: Comment displayed.
+%% comment1  
+^
+Message 22 in sub1/subsub/subsubfile.tex: Comment displayed.
+%% subsubcomment  
+^
+Message 22 in sub1/file.tex: Comment displayed.
+%% comment2  
+^
+Message 22 in sub1/subsub/subsubfile.tex: Comment displayed.
+%% subsubcomment  
+^
+Message 22 in sub2/file1.tex: Comment displayed.
+%% comment 2.1  
+^
+Message 22 in sub2/file2.tex: Comment displayed.
+%% comment 2.2  
+^
+Message 22 in sub2/file1.tex: Comment displayed.
+%% comment 2.1 cont.  
+^
+Message 22 in sub2/file2.tex: Comment displayed.
+%% comment 2.2  
+^

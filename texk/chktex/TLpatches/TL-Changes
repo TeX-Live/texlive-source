@@ -1,6 +1,6 @@
-Changes applied to the chktex-1.7.6 tree as obtained from:
+Changes applied to the chktex-1.7.8 tree as obtained from:
 	http://mirror.ctan.org/support/chktex/
-	http://download.savannah.gnu.org/releases/chktex/chktex-1.7.6.tar.gz
+	http://download.savannah.gnu.org/releases/chktex/chktex-1.7.8.tar.gz
 
 Remove:
 	aclocal.m4
@@ -8,6 +8,13 @@ Remove:
 	configure
 	install-sh
 	stamp-h.in
+	m4/
 
 Rename:
 	chkweb -> chkweb.sh
+
+Moved to top directory:
+	ChkTeX.pdf
+
+Generate chktexrc in the top directory:
+	perl MakeChkTeXRC.pl --chktexrc chktexrc.in >chktexrc

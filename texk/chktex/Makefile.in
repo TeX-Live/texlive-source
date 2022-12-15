@@ -638,7 +638,7 @@ texmf_SCRIPTS = $(CHKTEX_TREE)/chkweb.sh
 
 # resource file
 configdir = $(datarootdir)/texmf-dist/chktex
-config_DATA = $(CHKTEX_TREE)/chktexrc
+config_DATA = $(CHKTEX_TREE)/../chktexrc
 
 # documentation
 pdfdocdir = $(datarootdir)/texmf-dist/doc/chktex

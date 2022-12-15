@@ -1,3 +1,8 @@
+2022-12-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import ChkTeX 1.7.8.
+	* Makefile.am, chktex.test, version.ac: adapted.
+
 2021-07-13  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* regex/regexec.c: Avoid MSVC compiler error.

@@ -27,7 +27,7 @@ dnl
 
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(ChkTeX, 1.7.6)
+AC_INIT([ChkTeX],[1.7.8])
 AC_SUBST(SCRIPTS)
 AC_SUBST(BUILT_SCRIPTS)
 AC_SUBST(CLEAN)
@@ -111,6 +111,7 @@ fi
 
 AC_CHECK_PROGS(GROFF, 'groff -man -P-bu -Tlatin1' 'nroff -man', 'nroff -man')
 
+AC_PATH_PROG(PDFLATEX, pdflatex, no)
 AC_PATH_PROG(LATEX, latex, no)
 dnl if test "$LATEX" = no; then
 dnl	AC_MSG_ERROR([No LaTeX on the system, cannot find latex program.])
@@ -125,8 +126,6 @@ dnl Checks for libraries.
 AC_CHECK_LIB(termlib, tgetent)
 AC_CHECK_LIB(termcap, tgetent)
 
-dnl Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(limits.h stat.h strings.h stdarg.h dnl
 sys/stat.h termcap.h termlib.h unistd.h)
@@ -188,6 +187,7 @@ else
 fi
 
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([stamp-h], [echo timestamp > stamp-h])
-AC_OUTPUT(Makefile deweb rmeheader ChkTeX.tex)
+AC_CONFIG_FILES([Makefile deweb rmeheader ChkTeX.tex])
+AC_OUTPUT

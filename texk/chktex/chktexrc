@@ -1,0 +1,794 @@
+##  Example resource file for ChkTeX.
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 2 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+##
+## For more information visit https://www.nongnu.org/chktex/
+##
+
+## chktexrc file format
+#
+# The chktecrc file is essentially a bunch of variable assignments.
+# There are two types of variables, those that take single items and
+# those that take lists.
+#
+# In turn, there are two types of lists, case-sensitive and case-insentive.
+# Case-sensitive lists are delimited by `{' and `}'
+# while case-insensitive are delimited by `[' and `]'.
+# Only some variables support case insensitive lists, since in many
+# cases it doesn't make sense and would be unnecessarily slow.  Those
+# variables that *do* support case-insensitive lists will be marked as
+# such throughout the file.
+#
+# Variables can be set with or without an equals sign.  If included, the
+# `=' causes the variable to be overwritten.  This is the only thing
+# that makes sense for varibles taking a single item and so we always
+# include it in that case.  For list variables, omitting the equals
+# sign will cause the items in the list to be appended instead of
+# overwriting the entire list.
+#
+# Below are all the ways in which a variable can be set.  Note that lists
+# can span lines, though this is not shown here for brevity.
+#
+#
+# VariableName = item
+# # Overwrites
+# VariableName = { Item1 Item2 ... }
+# VariableName = [ item1 item2 ... ]
+# VariableName = { Item1 Item2 ... } [ item item ... ]
+# VariableName = [ item1 item2 ... ] { Item Item ... }
+# # Appends
+# VariableName { Item3 Item4 ... }
+# VariableName [ item3 item4 ... ]
+# VariableName { Item3 Item4 ... } [ item item ... ]
+# VariableName [ item3 item4 ... ] { Item Item ... }
+#
+#
+# Comments begin with `#', and continue for the end of the line.
+# Blank lines plus leading and trailing spaces are ignored.
+# Items are separated by spaces.
+# Newlines are considered spaces, but can't be escaped.
+# You can use double quotes `"' to surround an item with spaces, or you can
+# escape spaces as described later.
+#
+# Detection of tokens like `}' are somewhat context sensitve---they
+# have to be preceded by a space (or newline).  This allows them to be
+# part of an item without escaping.  Since some variables require such
+# characters, this generally makes life easier.
+#
+# To include characters that might otherwise interfere, escape
+# sequences are provided.  They are similar to those in C, but use
+# `!' instead of `\' for obvious reasons.
+# The entire list is below.
+#
+#   Sequence    Resulting character 
+#   `! '        Space 
+#   `!"'        `"' 
+#   `!#'        `#' 
+#   `!!'        `!' 
+#   `!{'        `{' 
+#   `!}'        `}' 
+#   `!['        `[' 
+#   `!]'        `]' 
+#   `!='        `=' 
+#   `!b'        Backspace 
+#   `!n'        New line 
+#   `!r'        Carriage return 
+#   `!t'        Tab 
+#   `!f'        Form feed 
+#   `!xNN'      NN must be a hexadecimal number (00 - ff),
+#                  both characters must be included. 
+#   `!dNNN'     NNN must be a decimal number (000 - 255), all
+#                  three characters must be included.
+#                  Unspecified results if NNN > 377. 
+#   `!NNN'      NNN must be a octal number (000 - 377), all
+#                  three characters must be included.
+#                  Unspecified results if NNN > 377.
+
+## Available Settings
+#
+# All avaiable settings follow.
+#
+
+## QuoteStyle
+#
+# The type of quote-style you are using.  There are currently two
+# styles:
+#
+#  Traditional:
+#      "An example," he said, "would be great."
+#
+#  Logical:
+#      "An example", he said, "would be great".
+#
+QuoteStyle = Logical
+
+
+## TabSize
+#
+# The width of a tab.  This is used for formatting the error message.
+# Only positive integers are allowed.
+#
+TabSize = 8
+
+
+## CmdSpaceStyle
+#
+# How to treat a command is followed by punction.  In all cases the
+# warnings are also governed by the main warning settings, namely
+# warnings 12 and 13 about interword and intersentence spacings.
+#
+# If set to Ignore, then it won't print any warnings when pucntuation
+# follows a command.
+#
+#
+# If CmdSpaceStyle is set to InterWord, then it will print warnings
+# when interword spacing should (potentially) be used.  For example,
+# without a command the following will trigger warning 12
+#
+#     `I've seen a UFOs, etc. in my life.'
+#
+# And if set to InterWord, so will
+#
+#     `I've seen a UFOs, \etc. in my life.'
+#
+#
+# If set to InterSentence, then it will print warnings when
+# intersentence spacing should (potentially) be used.  For example,
+# without a command the following will trigger warning 13
+#
+#     `I've seen an UFO! Right over there!'
+#
+# And if set to InterSentence, so will
+#
+#     `I've seen an \UFO! Right over there!'
+#
+#
+# Setting CmdSpaceStyle to Both will cause warnings to be printed in
+# both cases.
+#
+CmdSpaceStyle = Ignore
+
+
+## CmdLine
+#
+# Default command-line options.  For instance, you might like to put
+# `-v2' here.
+#
+CmdLine
+{
+}
+
+
+## UserWarn
+#
+# Arbitrary strings to warn about.  You can put here to help you find
+# your own little foibles.  See also UserWarnRegex.
+#
+# These patterns will be searched for throughout the text; regardless
+# of whether they appear as normal text, commands, in math mode, etc.
+# They are *not* found in comments.
+#
+# Suppose you define a special command like this:
+#    \def\unknown{\large\bf??}
+# which you use whenever you don't have some information at the time
+# of writing.  Thus, it makes sense to warn on it, and this is a
+# convenient way to do so.
+#
+UserWarn
+{
+    \unknown
+    # One should write \chktex or Chk\TeX - never ChkTeX.
+    ChkTeX
+}
+[ # You may put case-insensitive patterns here.
+]
+
+
+## UserWarnRegex
+#
+# A more sophisticated version of UserWarn using regular
+# expressions.  Use of these will be automatically disabled if ChkTeX
+# was built without regular expression support.  Because ChkTeX can be
+# with support for either POSIX or PCRE flavors of regular expression,
+# some of the following will not apply in all cases.  An expression
+# can be defined only when PCRE is enabled by prepending the
+# expression with `PCRE:' and similarly with `POSIX:'.
+#
+# These patterns will be searched for, no matter whether they appear
+# as normal text, commands, or arguments.  However, they will *not*
+# match in verbatim environments (see VerbEnvir).
+#
+# Remember that you have to escape (with a `!') the characters
+# `"#!=', as well as spaces and `{}[]' if they are
+# proceeded by a space.
+#
+# When using PCRE regular expressions, you can use `(?i)' to make
+# the expression case insensitive.  See the man pages (man pcresyntax)
+# or the nicely formatted http://perldoc.perl.org/perlre.html for
+# documentation on the regular expression syntax.  Note, however, that
+# some the features of perl regular expression are not available such
+# as running code (callouts), and replacing.
+#
+# An initial PCRE-style comment `(?# ... )' can be used
+# to change what is displayed, thereby reminding yourself how to fix
+# the problem.  This works even for POSIX expressions.
+#
+UserWarnRegex
+{
+    (?!#Always! use! \nmid)\\not! *(\||\\mid)
+
+    # Capitalize section when saying Section 6.
+    (?!#-1:Capitalize! before! references)PCRE:\b(chapter|(sub)?section|theorem|lemma|proposition|corollary|appendix)~\\ref
+    (?!#1:Capitalize! before! references)POSIX:([^[:alnum:]]|^)(chapter|(sub)?section|theorem|lemma|proposition|corollary|appendix)~\\ref
+
+    # Spell it introduction
+    # PCRE:(?i)\bintro\b(?!#Spell! it! out.! This! comment! is! not! used.)
+    # POSIX:([^[:alnum:]]|^)intro([^[:alnum:]]|$)
+
+    # Pretty tables--see http://texdoc.net/texmf-dist/doc/latex/booktabs/booktabs.pdf
+    (?!#-2:Use! \toprule,! midrule,! or! \bottomrule! from! booktabs)\\hline
+    # This relies on it being on a single line, and not having anything
+    # else on that line.  With PCRE we could match balanced [] and {},
+    # but I wonder if it's worth the complexity...
+    (?!#-2:Vertical! rules! in! tables! are! ugly)\\begin\{(array|tabularx?\*?)\}(\[.*\])?\{.*\|.*\}
+
+    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
+
+}
+
+
+## TeXInputs
+#
+# A list of paths where ChkTeX should look for files it `\input's.
+# By default, the current directory is searched (not recursively, use
+# `//' for that, see below).
+#
+# A `//' postfix is supported:
+# if you append a double path-separator we'll recursively search that
+# directory's directories.  MS-DOS users must append `\\'
+# instead, e.g. `C:\EMTEX\\'.  In order to search an
+# entire directory tree, you must use *three* slashes,
+# e.g. `c:\\\' or `///'.
+#
+TeXInputs
+{
+}
+
+
+## OutFormat
+#
+# Output formats which can be selected from the command-line.  The
+# `-v' option simply indexes into this list.  By default, entry number
+# *two* in this list is chosen (counting from 0), and `-v'
+# without any parameter selects entry number *three*.
+#
+# For explanation of the `%' format specifiers see the
+# documentation of the `--format' command-line argument
+# in the manual.
+#
+# Recall that to use `!' is the escape character, not `\'.
+#
+OutFormat
+{
+    # -v0; silent mode
+    %f%b%l%b%c%b%n%b%m!n
+    # -v1; normal mode
+    "%k %n in %f line %l: %m!n%r%s%t!n%u!n"
+    # -v2; fancy mode
+    "%k %n in %f line %l: %m!n%r%i%s%I%t!n!n"
+    # -v3; lacheck mode
+    "!"%f!", line %l: %m!n"
+    # -v4; verbose lacheck mode
+    "!"%f!", line %l: %m!n%r%s%t!n%u!n"
+    # -v5; no line number, ease auto-test
+    "%k %n in %f: %m!n%r%s%t!n%u!n"
+    # -v6; emacs compilation mode
+    "!"%f!", line %l.%c:(#%n) %m!n"
+}
+
+
+## Silent
+#
+# Commands which should not trigger a warning if terminated by a space.
+# This warning will not trigger in math mode.
+#
+# You can also specify regular expressions in the `[]'
+# section in case you have many custom macros that can be safely
+# terminated with a space.
+#
+Silent
+{
+    \rm \em \bf \it \sl \sf \sc \tt \selectfont
+    \rmfamily \sffamily \ttfamily \mdseries \bfseries \itshape
+    \slshape \scshape \relax
+    \vskip \pagebreak \nopagebreak
+
+    \textrm \textem \textbf \textit \textsl \textsf \textsc \texttt
+
+    \clearpage \ddots \dotfill \flushbottom \fussy \indent \linebreak
+    \onecolumn \pagebreak \pushtabs \poptabs \scriptsize \sloppy
+    \twocolumn \vdots
+    \today \kill \newline \thicklines \thinlines
+
+    \columnsep \space \item \tiny \footnotesize \small \normalsize
+    \normal \large \Large \LARGE \huge \Huge \printindex
+
+    \newpage \listoffigures \listoftables \tableofcontents
+    \maketitle \makeindex
+
+    \hline \hrule \vrule
+
+    \centering
+
+    \noindent \expandafter
+
+    \makeatletter \makeatother
+
+    \columnseprule
+
+    \textwidth \textheight \hsize \vsize
+
+    \if \fi \else
+
+    \csname \endcsname
+
+    \z@ \p@  warning \typeout
+
+    \dots \ldots \input \endinput \nextline \leavevmode \cdots
+    \appendix \listfiles \and \quad \bigskip \medskip \smallskip
+    \hskip \vfill \vfil \hfill \hfil \topmargin \oddsidemargin
+    \frenchspacing \nonfrenchspacing
+    \begingroup \endgroup \par
+
+    \vrefwarning \upshape \headheight \headsep \hoffset \voffset
+    \cdot \qquad \left \right \qedhere \xspace
+
+    \addlinespace \cr \fill \frontmatter
+    \toprule \midrule \bottomrule
+}[
+    # Here you can put regular expressions to match Silent macros.  It
+    # was designed for use with many custom macros sharing a common
+    # prefix, but can of course be used for other things.
+
+    # Support ConTeXt to at least some extent
+    \\start.* \\stop.*
+]
+
+
+## HyphDash
+#
+# The number of dashes allowed between two alphabetic characters.
+# Use 0 to always return an error.  For example:
+#      foo-bar 
+#      Use of two--dashes is not usually allowed in English. 
+#      like this---see?
+#
+# For English, this will often be a single dash (hyphen).  If you like
+# m-dashes with no spaces between them and the surrounding words, then
+# it should include 3 as well.  There *are* cases when an n-dash
+# is valid between two alphabetic characters.  See DashExcpt.
+#
+HyphDash { 1 3 }
+
+
+## NumDash
+#
+# The number of dashes allowed between two numeric characters.
+# Use 0 to always return an error.  This does *not* apply in
+# math mode.  For example:
+#      123--456 is a range 
+#      $12-4$ \% okay because it's in math mode
+#
+# For English, this should be 2 because an n-dash is used to indicate
+# a range of numbers and subtraction should be in math mode where this
+# does not apply.
+#
+NumDash  { 2 }
+
+
+## WordDash
+#
+# The number of dashes allowed between two space characters.
+# Use 0 to always return an error.  For example:
+#      not like - this,  
+#      or like -- this.  
+#      like this --- see?
+#
+WordDash { 3 }
+
+
+## DashExcpt
+#
+# Exceptions to the dash rules above.  For example, an n-dash
+# `--' between words is usually wrong, but in some cases it is correct,
+# such as when naming a theorem.  The Birch--Swinnerton-Dyer
+# conjecture is one example where the difference matters.  You can
+# tell that Birch is one person and Swinnerton-Dyer is another based
+# on the dashes used.
+#
+# Adding line suppressions for these is possible, but can quickly
+# become tedious if a certain theorem is referenced often.  For this
+# reason exceptions can be specified here.  They are case-sensitive.
+#
+# Unfortunately, there are no warnings if the dashes are surrounded by differing
+# types of characters.  For example:
+#      like this ---see? (space and alphabet)  
+#      a--123            (number and alphabet) 
+#      a.--b.            (other character, namely `.')
+# Similarly, no warnings are issued if the hyphenation is correct,
+# according to the other rules, for example:
+#      Birch-Swinnerton-Dyer
+#
+DashExcpt
+{
+    Birch--Swinnerton-Dyer
+}
+
+
+## WipeArg
+#
+# Commands whose arguments aren't LaTeX code, and thus should be
+# ignored.
+#
+# After the command, you may place arguments (separated from the
+# command with a colon) that should be wiped.  Use `[]' for optional
+# arguments, `{}' for required ones, and `*' if the command supports a
+# star variant.  Some commands (e.g. `\cmidrule') use `()' to
+# delimit an optional argument and so this syntax is supported as well.
+#
+# For instance, if you would like to wipe the `\newcommand' command,
+# you would declare it as `\newcommand:*[][]{}' since it has a
+# star variant, two optional arguments, and one required argument.
+#
+# These commands may be ``evaluated'' before they're wiped, so you will
+# typically list filehandling commands and similar here.
+#
+WipeArg
+{
+    \label:{} \ref:{} \eqref:{} \vref:{} \pageref:{} \index:[]{}
+    \cite:[][]{} \nocite:{}
+    \input:{} \verbatiminput:[]{} \listinginput:[]{}{}
+    \graphicspath:{}
+    \verbatimtabinput:[]{} \include:{} \includeonly:{}
+    \bibitem:[]{}
+    \cline:{} \cmidrule:[](){}
+    \href:{}{}
+    # Cleveref -- there are many others that could be here as well...
+    \cref:*{} \cpageref:*{} \crefrange:*{}{} \cpagerefrange:*{}{}
+    \Cref:*{} \Cpageref:*{} \Crefrange:*{}{} \Cpagerefrange:*{}{}
+    # natbib
+    \citet:*[][]{} \citep:*[][]{} \citealt:*{} \citealp:*[]{} \citeauthor:*{}
+    \Citet:*[][]{} \Citep:*[][]{} \Citealt:*{} \Citealp:*[]{} \Citeauthor:{}
+    \citetext:{} \citeyear:*{} \citeyearpar:{}
+    # biblatex - not including special commands
+    \autocite:*[][]{} \autocites:*[][]{} \Autocite:*[][]{} \Autocites:*[][]{}
+    \parencite:*[][]{} \parencites:*[][]{} \Parencite:*[][]{} \Parencites:*[][]{}
+    \footcite:*{} \footcites:*[][]{} \Footcite:*[][]{} \Footcites:*[][]{}
+    \textcite:*{} \textcites:*[][]{} \Textcite:*[][]{} \Textcites:*[][]{}
+    \citeauthor:*{} \citeauthors:*[][]{} \Citeauthor:*[][]{} \Citeauthors:*[][]{}
+    \citeyear:*{} \citeyears:*[][]{} \Citeyear:*[][]{} \Citeyears:*[][]{}
+    \citetitle:*{} \citetitles:*[][]{} \Citetitle:*[][]{} \Citetitles:*[][]{}
+    # tipa which uses "
+    \textipa:{}
+    # LuaTeX
+    \directlua:{} \luaescapestring:{}
+}
+
+
+## MathEnvir
+#
+# Environments which typeset their contents as mathematics.
+# This turns on/off some warnings.
+#
+# A `*' variant is automatically added for each keyword.
+#
+MathEnvir
+{
+    displaymath math eqnarray array equation
+    align alignat gather flalign multline
+    dmath dgroup darray
+}
+
+
+## TextEnvir
+#
+# Environments which typeset their contents as text, for use inside
+# mathematics.  This turns on/off some warnings.
+#
+TextEnvir
+{
+    dsuspend
+}
+
+
+## MathCmd
+#
+# Commands whose argument will be typeset as mathematics.
+# The commands are assumed to have one mandatory argument which is in
+# math mode.  This turns on/off some warnings.
+#
+MathCmd
+{
+    \ensuremath
+}
+
+
+## TextCmd
+#
+# Commands whose argument will *not* be typeset as
+# mathematics even if it would otherwise be in math mode.
+# The commands are assumed to have one mandatory argument which is in
+# text mode.  This turns on/off some warnings.
+#
+TextCmd
+{
+    \text \intertext \shortintertext \mbox \condition
+}
+
+
+## VerbEnvir
+#
+# Environments containing non-LaTeX content of some kind, and
+# therefore should not trigger any warnings.
+#
+# A `*' variant is automatically added for each keyword.
+#
+VerbEnvir
+{
+    verbatim comment listing verbatimtab rawhtml errexam picture texdraw
+    filecontents pgfpicture tikzpicture minted lstlisting IPA
+}
+
+
+## Abbrev
+#
+# Abbreviations not automatically handled by ChkTeX.
+#
+# ChkTeX automagically catches most abbreviations; the ones we need to
+# list here, are those which are most likely to be followed by a word
+# with an upper-case letter which is not the beginning of a new
+# sentence.
+#
+# The case-insensitive abbreviations are not fully case-insensitive.
+# Rather, only the first character is case-insensitive, while the
+# remaining characters are case-sensitive.
+#
+# To speed up the searching process somewhat, we require that these
+# end in a `.' which should not be a problem in practice.
+#
+# Much of this work (both the abbreviations below, and the regular
+# expressions necessary to catch the remaining automatically) have
+# been provided by Russ Bubley, <russ@scs.leeds.ac.uk>.
+#
+Abbrev
+{
+    # Ordinals
+    1st. 2nd. 3rd. 4th.
+    # Titles
+    Mr. Mrs. Miss. Ms. Dr. Prof. St.
+    #
+    # Days
+    # Mon. Tue. Wed. Thu. Fri. Sat. Sun.
+    #
+    # Months
+    # Jan. Feb. Mar. Apr. May. Jun. Jul. Aug. Sep. Oct. Nov. Dec.
+    #
+    # Letters
+    # Kt. Jr.
+    #
+    # Corporate
+    # Co. Ltd.
+    #
+    # Addresses
+    # Rd. Dr. St. Ave. Cres. Gdns. Sq. Circ. Terr. Pl. Arc. La. Clo. Ho. Est. Gn.
+    #
+    # Misc.
+    # oe. pbab. ps. rsvp. Tx.
+}
+[
+    # The first letter is case-insensitive in the abbrevs in this
+    # list. Due to the nature of the checking algorithm used for
+    # this, entries consisting of only one character will be
+    # silently ignored.
+    #
+    # Latin
+    # cf. "et al." etc. qed. qv. viz.
+    #
+    # Corporate
+    # inc. plc.
+    #
+    # Misc
+    # fax. pcs. qty. tel. misc.
+]
+
+
+## IJAccent
+#
+# Commands which add accents above characters.  This means that `\i' or `\j'
+# (`\imath' and `\jmath' in mathmode) should be used instead of `i' and `j'.
+#
+# Other accent commands such as `\c', `\d', and `\b', put their accent under
+# the character, and thus should be used with normal `i's and `j's.
+#
+IJAccent
+{
+    \hat \check \breve \acute \grave \tilde \bar \vec \dot \ddot
+    \' \` \^ \" \~ \= \. \u \v \H \t
+}
+
+
+## Italic
+#
+# Commands which need italic correction when the group is terminated.
+#
+Italic
+{
+    \it \em \sl \itshape \slshape
+}
+
+
+## NonItalic
+#
+# Commands which makes the font non-italic.
+#
+NonItalic
+{
+    \bf \rm \sf \tt \sc
+    \upshape
+}
+
+
+## ItalCmd
+#
+# Commands which put their argument into italic (and thus possibly
+# needs italic correction in the end).
+#
+# This is currently empty, since `\textit', `\textsl', and `\emph'
+# automatically add italic corecction.
+#
+ItalCmd
+{
+}
+
+
+## PostLink
+#
+# Commands in front of which a page break is highly undesirable.
+# Thus there should be no space in front of them.
+#
+PostLink
+{
+    \index \label
+}
+
+
+## NotPreSpaced
+#
+# Commands that should not have a space in front of them for various
+# reasons.  Much the same as PostLink, but produces a different warning.
+#
+NotPreSpaced
+{
+    \footnote \footnotemark \/
+}
+
+
+## Linker
+#
+# Commands that should be prepended with a `~'.  For example
+#     `look in table~\ref{foo}'
+# to avoid the references being split across lines.
+#
+Linker
+{
+    \ref \vref \pageref \eqref \cite
+}
+
+
+## CenterDots
+#
+# Commands or characters which should have `\cdots' in between.
+# For example, $1+2+3+\cdots+n$.
+#
+CenterDots
+{
+    = + - \cdot \div & \times \geq \leq < >
+}
+
+
+## LowDots
+#
+# Commands or characters which should have `\ldots' in between.
+# For example, $1,2,3,\ldots,n$.
+#
+LowDots
+{
+    . , ;
+}
+
+
+## MathRoman
+#
+# Words that should appear in roman (upright) in math mode.  There are
+# certain aliases for mathematical operators (like sin or cos) that
+# appear in roman rather than the usual italic (slanted) font.
+#
+# These entries do not need a leading slash since the mistake is often
+# to *not* include the leading slash.
+#
+MathRoman
+{
+    log lg ln lim limsup liminf sin arcsin sinh cos arccos cosh tan
+    arctan tanh cot coth sec csc max min sup inf arg ker dim hom det
+    exp Pr gcd deg bmod pmod mod
+}
+
+
+## Primitives
+#
+# Commands that are used in TeX but have become unnecessary in
+# LaTeX, as there are LaTeX commands which do the same.  Purists
+# should thus avoid these in their code.
+#
+Primitives
+{
+   \above \advance \catcode \chardef \closein \closeout \copy \count
+   \countdef \cr \crcr \csname \delcode \dimendef \dimen \divide
+   \expandafter \font \hskip \vskip \openout
+}
+
+
+## NoCharNext
+#
+# Commands and a set of characters that should *not* follow them.  For
+# example, in math mode, `\left' should be followed by a delimiter
+# which is to change size.  Therefore, it should not be followed by the
+# end of math mode `$' or a grouping character `{' or `}'.
+#
+# The format is `\command:characters'.
+#
+NoCharNext
+{
+   \left:{}$ \right:{}$
+}
+
+
+## VerbClear
+#
+# The character to replace verbatim text with.
+#
+# The arguments of commands listed in WipeArg, as well as
+# `\verb+...+' commands, are replaced with an innocuous character
+# to prevent that data from inadvertantly producing a warning.
+#
+# This should not contain an alphabetic character (in case the user
+# writes (`\foo\verb+bar+'), neither should it contain be one of
+# LaTeX's reserved characters (`#$%&~_^\{}'), or any parenthesis
+# character (`()[]{}').  If possible, don't use a punctuation
+# character or any spacing characters either.  All of these characters
+# have warnings associated with them and thus could cause spurious
+# warnings to appear.
+#
+# The asterisk is also unsuitable, as some commands behave in another
+# way if they are appended with an asterisk.  Which more or less
+# leaves us with the pipe.
+#
+# Please note that this may also be a `string', which will be
+# repeated until the proper length is reached.
+#
+VerbClear = "|"
+
+
+## That's all for now - Happy LaTeXing!

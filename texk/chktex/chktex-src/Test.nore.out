@@ -19,12 +19,6 @@ So is this \foo
 Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
 \smallskip This is a not. $\foo Neither$ is this.  
                           ^^^^^^^^^^^^^^
-Message 1 in Test.tex: Command terminated with space.
-\stoptext  
-         ^
-Message 9 in Test.tex: `section' expected, found `text'.
-\stoptext  
-     ^^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 2  
 ^
@@ -136,11 +130,17 @@ The Birch--Swinnerton--Dyer conjecture is not correct.
 Message 8 in Test.tex: Wrong length of dash may have been used.
 The Birch--Swinnerton--Dyer conjecture is not correct.  
                      ^^
+Message 8 in Test.tex: Wrong length of dash may have been used.
+The Birch-Swinnerton-Dyer conjecture is not correct (is now caught).  
+         ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 9-10  
 ^
 Message 22 in Test.tex: Comment displayed.
 % Brackets:  
+^
+Message 37 in Test.tex: You should avoid spaces in front of parenthesis.
+)}{[])} }}}]]])))  
 ^
 Message 10 in Test.tex: Solo `)' found.
 )}{[])} }}}]]])))  
@@ -193,6 +193,27 @@ Message 9 in Test.tex: `quux' expected, found `baz'.
 Message 10 in Test.tex: Solo `asoi' found.
 \begin{quux} \begin{baz} \end{quux} \end{baz} \end{asoi} \begin{dobedo}  
                                               ^^^^
+Message 22 in Test.tex: Comment displayed.
+% Warning 47 -- ConTeXt environment mismatch -- split from 9  
+^
+Message 1 in Test.tex: Command terminated with space.
+\stoptext  
+         ^
+Message 47 in Test.tex: `section' expected, found `text' (ConTeXt).
+\stoptext  
+     ^^^^
+Message 1 in Test.tex: Command terminated with space.
+\starttext  
+          ^
+Message 22 in Test.tex: Comment displayed.
+% (Un)fortunately, this is not an error  
+^
+Message 1 in Test.tex: Command terminated with space.
+\startbar  
+         ^
+Message 1 in Test.tex: Command terminated with space.
+\stopbar  
+        ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 11  
 ^
@@ -260,11 +281,38 @@ Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
 1st. Foo Inc. Ab.cd. foo ab.cd. Foo. bar baz., billy.; bob.: joe.! frank.? james.. george  
                                                                                  ^
 Message 22 in Test.tex: Comment displayed.
+% Bug 54751  
+^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+Mr. ``X'' and Mrs. \(Y\)  
+   ^
+Message 12 in Test.tex: Interword spacing (`\ ') should perhaps be used.
+Mr. ``X'' and Mrs. \(Y\)  
+                  ^
+Message 22 in Test.tex: Comment displayed.
+% ignore commands by default  
+^
+Message 22 in Test.tex: Comment displayed.
 % Warning 13  
 ^
 Message 13 in Test.tex: Intersentence spacing (`\@') should perhaps be used.
 Look at THIS! It's an error.  
             ^
+Message 22 in Test.tex: Comment displayed.
+% after frenchspacing it's not an error  
+^
+Message 22 in Test.tex: Comment displayed.
+% warning again  
+^
+Message 13 in Test.tex: Intersentence spacing (`\@') should perhaps be used.
+Look at THIS! It's an error.  
+            ^
+Message 22 in Test.tex: Comment displayed.
+% ignore commands by default  
+^
+Message 21 in Test.tex: This command might not be intended.
+Look at \THIS\@! It's not an error. D. E. Knuth.  
+             ^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 14  
 ^
@@ -358,6 +406,12 @@ Message 1 in input.tex: Command terminated with space.
 Message 11 in input.tex: You should use \ldots to achieve an ellipsis.
 \this is a test of whether the file is actually inputted...  
                                                         ^^^
+Message 22 in input/file: Comment displayed.
+% -*- TeX -*-  
+^
+Message 22 in input/file: Comment displayed.
+% chktex-file 22  
+^
 Message 22 in Test.tex: Comment displayed.
 % Warning 29  
 ^
@@ -367,6 +421,12 @@ The program opens a screen sized 640x200 pixels
 Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
 The program opens a screen sized $640\times200$ pixels  
                                  ^^^^^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Approximately $\frac{2x}{1+x}$ $x$s shouldn't be errors.  
+              ^^^^^^^^^^^^^^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+Approximately $\frac{2x}{1+x}$ $x$s shouldn't be errors.  
+                               ^^^
 Message 22 in Test.tex: Comment displayed.
 % Warning 30  
 ^
@@ -451,6 +511,9 @@ Message 22 in Test.tex: Comment displayed.
 Message 38 in Test.tex: You should not use punctuation in front of quotes.
 ``An example,'' he said, ``would be great.''  
             ^
+Message 38 in Test.tex: You should not use punctuation in front of quotes.
+``An example,'' he said, ``would be great.''  
+                                         ^
 Message 22 in Test.tex: Comment displayed.
 % Warning 39  
 ^
@@ -536,6 +599,12 @@ Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
 For every $p\nmid n$ you have a cute prime which doesn't divide $n$.  
                                                                 ^^^
 Message 22 in Test.tex: Comment displayed.
+% Warning about optional arguments inside optional arguments  
+^
+Message 22 in Test.tex: Comment displayed.
+% Shouldn't warn  
+^
+Message 22 in Test.tex: Comment displayed.
 % Math mode check  
 ^
 Message 35 in Test.tex: You should perhaps use `\sin' instead.
@@ -556,6 +625,18 @@ Also, $x(3)\text{ is not x(3) but it is $x(3)$}$
 Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
 Also, $x(3)\text{ is not x(3) but it is $x(3)$}$  
                                         ^^^^^^
+Message 22 in Test.tex: Comment displayed.
+% breqn mode check  
+^
+Message 35 in Test.tex: You should perhaps use `\sin' instead.
+sin x  
+^^^
+Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
+is not the same as sin x, but is the same as $sin x$  
+                                             ^^^^^^^
+Message 35 in Test.tex: You should perhaps use `\sin' instead.
+is not the same as sin x, but is the same as $sin x$  
+                                              ^^^
 Message 22 in Test.tex: Comment displayed.
 This is\\% a comment. Nothing here should be checked(right)?  
          ^
@@ -596,6 +677,18 @@ Message 31 in Test.tex: This text may be ignored.
 \end{verbatim} FOO  
                ^^^
 Message 22 in Test.tex: Comment displayed.
+% WipeArg  
+^
+Message 22 in Test.tex: Comment displayed.
+% Bug 60197 -- "double math mode" should be handled okay  
+^
+Message 22 in Test.tex: Comment displayed.
+% Warning 49  
+^
+Message 49 in Test.tex: Expected math mode to be on here.
+\]  
+^
+Message 22 in Test.tex: Comment displayed.
 % Warning 16,15  
 ^
 Message 45 in Test.tex: Use \[ ... \] instead of $$ ... $$.
@@ -613,6 +706,9 @@ Message 22 in Test.tex: Comment displayed.
 Message 22 in Test.tex: Comment displayed.
 % There should be no newline at the end of this file to test bug #46539 
 ^
+Message 48 in Test.tex: No match found for `text' (ConTeXt).
+\starttext  
+      ^^^^
 Message 16 in Test.tex: Mathmode still on at end of LaTeX file.
 
 

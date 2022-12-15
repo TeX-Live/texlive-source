@@ -1,0 +1,989 @@
+#### -*- conf -*- ####
+##### TODO: Do I want a TOC? Index?...
+##### TODO: Use something besides errexam?
+##### TODO: Color/frame for default value
+###############################################################################
+#### This fiie is input to a simple "tangle" process.  The extions of .in is
+#### a little misleading in that it's not managed by autotools or m4.  Sorry.
+####
+#### Two different files are created from this file by calling MakeChkTeXRC.pl
+#### 1. chktexrc, a self-documenting chktecrc example
+####   a. Lines with 3 (or more) leading #'s are discarded
+####   b. Other lines are kept as is
+#### 2. ChkTeXRC.tex, LaTeX documentation for chktecrc.
+####   a. Lines with 4 (or more) leading #'s are discarded
+####   b. Lines with 0 or 2 (exactly) leading #'s are discarded
+####   c. Lines with 1 or 3 (exactly) leading #'s are turned in (LaTeX-only) lines
+####
+#### In other words
+####   1. Lines with 1 or 3 leading #'s are included in the LaTeX
+####      documentation with the  #'s stripped off
+####   2. Lines with 0, 1 or 2 are included as is in the example
+####      chktexrc file
+####  #
+###############################################################################
+##  Example resource file for ChkTeX.
+##
+##  This program is free software; you can redistribute it and/or modify
+##  it under the terms of the GNU General Public License as published by
+##  the Free Software Foundation; either version 2 of the License, or
+##  (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+##
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+##
+## For more information visit https://www.nongnu.org/chktex/
+##
+
+### \subsubsection{The \rsrc\ file format}
+## chktexrc file format
+#
+# The chktecrc file is essentially a bunch of variable assignments.
+# There are two types of variables, those that take single items and
+# those that take lists.
+#
+# In turn, there are two types of lists, case-sensitive and case-insentive.
+# Case-sensitive lists are delimited by @verb@{@endverb@ and @verb@}@endverb@
+# while case-insensitive are delimited by @verb@[@endverb@ and @verb@]@endverb@.
+# Only some variables support case insensitive lists, since in many
+# cases it doesn't make sense and would be unnecessarily slow.  Those
+# variables that @emph@do@endemph@ support case-insensitive lists will be marked as
+# such throughout the file.
+#
+# Variables can be set with or without an equals sign.  If included, the
+# @verb@=@endverb@ causes the variable to be overwritten.  This is the only thing
+# that makes sense for varibles taking a single item and so we always
+# include it in that case.  For list variables, omitting the equals
+# sign will cause the items in the list to be appended instead of
+# overwriting the entire list.
+#
+# Below are all the ways in which a variable can be set.  Note that lists
+# can span lines, though this is not shown here for brevity.
+#
+#
+### \begin{verbatim}
+# VariableName = item
+# # Overwrites
+# VariableName = { Item1 Item2 ... }
+# VariableName = [ item1 item2 ... ]
+# VariableName = { Item1 Item2 ... } [ item item ... ]
+# VariableName = [ item1 item2 ... ] { Item Item ... }
+# # Appends
+# VariableName { Item3 Item4 ... }
+# VariableName [ item3 item4 ... ]
+# VariableName { Item3 Item4 ... } [ item item ... ]
+# VariableName [ item3 item4 ... ] { Item Item ... }
+### \end{verbatim}
+#
+#
+# Comments begin with @verb@#@endverb@, and continue for the end of the line.
+# Blank lines plus leading and trailing spaces are ignored.
+# Items are separated by spaces.
+# Newlines are considered spaces, but can't be escaped.
+# You can use double quotes @verb@"@endverb@ to surround an item with spaces, or you can
+# escape spaces as described later.
+#
+# Detection of tokens like @verb@}@endverb@ are somewhat context sensitve---they
+# have to be preceded by a space (or newline).  This allows them to be
+# part of an item without escaping.  Since some variables require such
+# characters, this generally makes life easier.
+#
+# To include characters that might otherwise interfere, escape
+# sequences are provided.  They are similar to those in C, but use
+# @verb@!@endverb@ instead of @verb@\@endverb@ for obvious reasons.
+# The entire list is below.
+#
+### \vspace{0.5\baselineskip}
+### \begin{tabular}{p{0.2\textwidth}p{0.7\textwidth}}
+#   @bf Sequence   @&@ @bf Resulting character @\\@
+#   @verb@! @endverb@      @&@  Space @\\@
+#   @verb@!"@endverb@      @&@  @verb@"@endverb@ @\\@
+#   @verb@!#@endverb@      @&@  @verb@#@endverb@ @\\@
+#   @verb@!!@endverb@      @&@  @verb@!@endverb@ @\\@
+#   @verb@!{@endverb@      @&@  @verb@{@endverb@ @\\@
+#   @verb@!}@endverb@      @&@  @verb@}@endverb@ @\\@
+#   @verb@![@endverb@      @&@  @verb@[@endverb@ @\\@
+#   @verb@!]@endverb@      @&@  @verb@]@endverb@ @\\@
+#   @verb@!=@endverb@      @&@  @verb@=@endverb@ @\\@
+#   @verb@!b@endverb@      @&@  Backspace @\\@
+#   @verb@!n@endverb@      @&@  New line @\\@
+#   @verb@!r@endverb@      @&@  Carriage return @\\@
+#   @verb@!t@endverb@      @&@  Tab @\\@
+#   @verb@!f@endverb@      @&@  Form feed @\\@
+#   @verb@!xNN@endverb@    @&@  NN must be a hexadecimal number (00 - ff),
+#                  both characters must be included. @\\@
+#   @verb@!dNNN@endverb@   @&@  NNN must be a decimal number (000 - 255), all
+#                  three characters must be included.
+#                  Unspecified results if NNN > 377. @\\@
+#   @verb@!NNN@endverb@    @&@  NNN must be a octal number (000 - 377), all
+#                  three characters must be included.
+#                  Unspecified results if NNN > 377.
+### \end{tabular}
+
+### \subsubsection{Settings in the \rsrc\ file}
+## Available Settings
+#
+# All avaiable settings follow.
+#
+
+## QuoteStyle
+### \medskip
+### \begin{chktexrcsimplevar}{QuoteStyle}
+#
+# The type of quote-style you are using.  There are currently two
+# styles:
+#
+#  Traditional:
+###  \begin{errexam}
+#      "An example," he said, "would be great."
+###  \end{errexam}
+#
+#  Logical:
+###  \begin{errexam}
+#      "An example", he said, "would be great".
+###  \end{errexam}
+#
+### \chktexrcdefault\begin{verbatim}
+QuoteStyle = Logical
+### \end{verbatim}
+### \end{chktexrcsimplevar}
+
+
+## TabSize
+### \begin{chktexrcsimplevar}{TabSize}
+#
+# The width of a tab.  This is used for formatting the error message.
+# Only positive integers are allowed.
+#
+### \chktexrcdefault\begin{verbatim}
+TabSize = 8
+### \end{verbatim}
+### \end{chktexrcsimplevar}
+
+
+## CmdSpaceStyle
+### \medskip
+### \begin{chktexrcsimplevar}{CmdSpaceStyle}
+#
+# How to treat a command is followed by punction.  In all cases the
+# warnings are also governed by the main warning settings, namely
+# warnings 12 and 13 about interword and intersentence spacings.
+### These can be found on page~\pageref{warn:interword}.
+#
+# If set to Ignore, then it won't print any warnings when pucntuation
+# follows a command.
+#
+#
+# If CmdSpaceStyle is set to InterWord, then it will print warnings
+# when interword spacing should (potentially) be used.  For example,
+# without a command the following will trigger warning 12
+#
+###  \begin{errexam}
+#     @verb@I've seen a UFOs, etc. in my life.@endverb@
+###  \end{errexam}
+#
+# And if set to InterWord, so will
+#
+###  \begin{errexam}
+#     @verb@I've seen a UFOs, \etc. in my life.@endverb@
+###  \end{errexam}
+#
+#
+# If set to InterSentence, then it will print warnings when
+# intersentence spacing should (potentially) be used.  For example,
+# without a command the following will trigger warning 13
+#
+###  \begin{errexam}
+#     @verb@I've seen an UFO! Right over there!@endverb@
+###  \end{errexam}
+#
+# And if set to InterSentence, so will
+#
+###  \begin{errexam}
+#     @verb@I've seen an \UFO! Right over there!@endverb@
+###  \end{errexam}
+#
+#
+# Setting CmdSpaceStyle to Both will cause warnings to be printed in
+# both cases.
+#
+### \chktexrcdefault\begin{verbatim}
+CmdSpaceStyle = Ignore
+### \end{verbatim}
+### \end{chktexrcsimplevar}
+
+
+## CmdLine
+### \begin{chktexrclistvar}{CmdLine}
+#
+# Default command-line options.  For instance, you might like to put
+# @verb@-v2@endverb@ here.
+#
+### \chktexrcdefault\begin{verbatim}
+CmdLine
+{
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## UserWarn
+### \begin{chktexrclistvar*}{UserWarn}
+#
+# Arbitrary strings to warn about.  You can put here to help you find
+# your own little foibles.  See also@ref@UserWarnRegex@endref@.
+#
+# These patterns will be searched for throughout the text; regardless
+# of whether they appear as normal text, commands, in math mode, etc.
+# They are @emph@not@endemph@ found in comments.
+#
+# Suppose you define a special command like this:
+### \begin{verbatim}
+#    \def\unknown{\large\bf??}
+### \end{verbatim}
+# which you use whenever you don't have some information at the time
+# of writing.  Thus, it makes sense to warn on it, and this is a
+# convenient way to do so.
+#
+### \chktexrcdefault\begin{verbatim}
+UserWarn
+{
+    \unknown
+    # One should write \chktex or Chk\TeX - never ChkTeX.
+    ChkTeX
+}
+[ # You may put case-insensitive patterns here.
+]
+### \end{verbatim}
+### \end{chktexrclistvar*}
+
+
+## UserWarnRegex
+### \begin{chktexrclistvar}{UserWarnRegex}
+#
+# A more sophisticated version of@ref@UserWarn@endref@ using regular
+# expressions.  Use of these will be automatically disabled if @ChkTeX@
+# was built without regular expression support.  Because @ChkTeX@ can be
+# with support for either POSIX or PCRE flavors of regular expression,
+# some of the following will not apply in all cases.  An expression
+# can be defined only when PCRE is enabled by prepending the
+# expression with @verb@PCRE:@endverb@ and similarly with @verb@POSIX:@endverb@.
+#
+# These patterns will be searched for, no matter whether they appear
+# as normal text, commands, or arguments.  However, they will @emph@not@endemph@
+# match in verbatim environments (see@ref@VerbEnvir@endref@).
+#
+# Remember that you have to escape (with a @verb@!@endverb@) the characters
+# @verb@"#!=@endverb@, as well as spaces and @verb@{}[]@endverb@ if they are
+# proceeded by a space.
+#
+# When using PCRE regular expressions, you can use @verb@(?i)@endverb@ to make
+# the expression case insensitive.  See the man pages (man pcresyntax)
+# or the nicely formatted http://perldoc.perl.org/perlre.html for
+# documentation on the regular expression syntax.  Note, however, that
+# some the features of perl regular expression are not available such
+# as running code (callouts), and replacing.
+#
+# An initial PCRE-style comment @verb@(?# ... )@endverb@ can be used
+# to change what is displayed, thereby reminding yourself how to fix
+# the problem.  This works even for POSIX expressions.
+#
+### \chktexrcdefault\begin{verbatim}
+UserWarnRegex
+{
+    (?!#Always! use! \nmid)\\not! *(\||\\mid)
+
+    # Capitalize section when saying Section 6.
+    (?!#-1:Capitalize! before! references)PCRE:\b(chapter|(sub)?section|theorem|lemma|proposition|corollary|appendix)~\\ref
+    (?!#1:Capitalize! before! references)POSIX:([^[:alnum:]]|^)(chapter|(sub)?section|theorem|lemma|proposition|corollary|appendix)~\\ref
+
+    # Spell it introduction
+    # PCRE:(?i)\bintro\b(?!#Spell! it! out.! This! comment! is! not! used.)
+    # POSIX:([^[:alnum:]]|^)intro([^[:alnum:]]|$)
+
+    # Pretty tables--see http://texdoc.net/texmf-dist/doc/latex/booktabs/booktabs.pdf
+    (?!#-2:Use! \toprule,! midrule,! or! \bottomrule! from! booktabs)\\hline
+    # This relies on it being on a single line, and not having anything
+    # else on that line.  With PCRE we could match balanced [] and {},
+    # but I wonder if it's worth the complexity...
+    (?!#-2:Vertical! rules! in! tables! are! ugly)\\begin\{(array|tabularx?\*?)\}(\[.*\])?\{.*\|.*\}
+
+    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
+
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## TeXInputs
+### \begin{chktexrclistvar}{TeXInputs}
+#
+# A list of paths where @ChkTeX@ should look for files it @verb@\input@endverb@s.
+# By default, the current directory is searched (not recursively, use
+# @verb@//@endverb@ for that, see below).
+#
+# A @verb@//@endverb@ postfix is supported:
+# if you append a double path-separator we'll recursively search that
+# directory's directories.  MS-DOS users must append @verb@\\@endverb@
+# instead, e.g. @verb@C:\EMTEX\\@endverb@.  In order to search an
+# entire directory tree, you must use @emph@three@endemph@ slashes,
+# e.g. @verb@c:\\\@endverb@ or @verb@///@endverb@.
+#
+### \chktexrcdefault\begin{verbatim}
+TeXInputs
+{
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## OutFormat
+### \begin{chktexrclistvar}{OutFormat}
+#
+# Output formats which can be selected from the command-line.  The
+# @verb@-v@endverb@ option simply indexes into this list.  By default, entry number
+# @emph@two@endemph@ in this list is chosen (counting from 0), and @verb@-v@endverb@
+# without any parameter selects entry number @emph@three@endemph@.
+#
+# For explanation of the @verb@%@endverb@ format specifiers see the
+# documentation of the @verb@--format@endverb@ command-line argument
+### \begin{comment}
+# in the manual.
+### \end{comment}
+### on page~\pageref{clarg:format}.
+#
+# Recall that to use @verb@!@endverb@ is the escape character, not @verb@\@endverb@.
+#
+### \chktexrcdefault\begin{verbatim}
+OutFormat
+{
+    # -v0; silent mode
+    %f%b%l%b%c%b%n%b%m!n
+    # -v1; normal mode
+    "%k %n in %f line %l: %m!n%r%s%t!n%u!n"
+    # -v2; fancy mode
+    "%k %n in %f line %l: %m!n%r%i%s%I%t!n!n"
+    # -v3; lacheck mode
+    "!"%f!", line %l: %m!n"
+    # -v4; verbose lacheck mode
+    "!"%f!", line %l: %m!n%r%s%t!n%u!n"
+    # -v5; no line number, ease auto-test
+    "%k %n in %f: %m!n%r%s%t!n%u!n"
+    # -v6; emacs compilation mode
+    "!"%f!", line %l.%c:(#%n) %m!n"
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## Silent
+### \begin{chktexrclistvar*}{Silent}
+#
+# Commands which should not trigger a warning if terminated by a space.
+# This warning will not trigger in math mode.
+#
+# You can also specify regular expressions in the @verb@[]@endverb@
+# section in case you have many custom macros that can be safely
+# terminated with a space.
+#
+### \chktexrcdefault\begin{verbatim}
+Silent
+{
+    \rm \em \bf \it \sl \sf \sc \tt \selectfont
+    \rmfamily \sffamily \ttfamily \mdseries \bfseries \itshape
+    \slshape \scshape \relax
+    \vskip \pagebreak \nopagebreak
+
+    \textrm \textem \textbf \textit \textsl \textsf \textsc \texttt
+
+    \clearpage \ddots \dotfill \flushbottom \fussy \indent \linebreak
+    \onecolumn \pagebreak \pushtabs \poptabs \scriptsize \sloppy
+    \twocolumn \vdots
+    \today \kill \newline \thicklines \thinlines
+
+    \columnsep \space \item \tiny \footnotesize \small \normalsize
+    \normal \large \Large \LARGE \huge \Huge \printindex
+
+    \newpage \listoffigures \listoftables \tableofcontents
+    \maketitle \makeindex
+
+    \hline \hrule \vrule
+
+    \centering
+
+    \noindent \expandafter
+
+    \makeatletter \makeatother
+
+    \columnseprule
+
+    \textwidth \textheight \hsize \vsize
+
+    \if \fi \else
+
+    \csname \endcsname
+
+    \z@ \p@ \@warning \typeout
+
+    \dots \ldots \input \endinput \nextline \leavevmode \cdots
+    \appendix \listfiles \and \quad \bigskip \medskip \smallskip
+    \hskip \vfill \vfil \hfill \hfil \topmargin \oddsidemargin
+    \frenchspacing \nonfrenchspacing
+    \begingroup \endgroup \par
+
+    \vrefwarning \upshape \headheight \headsep \hoffset \voffset
+    \cdot \qquad \left \right \qedhere \xspace
+
+    \addlinespace \cr \fill \frontmatter
+    \toprule \midrule \bottomrule
+}[
+    # Here you can put regular expressions to match Silent macros.  It
+    # was designed for use with many custom macros sharing a common
+    # prefix, but can of course be used for other things.
+
+    # Support ConTeXt to at least some extent
+    \\start.* \\stop.*
+]
+### \end{verbatim}
+### \end{chktexrclistvar*}
+
+
+## HyphDash
+### \begin{chktexrclistvar}{HyphDash}
+#
+# The number of dashes allowed between two alphabetic characters.
+# Use 0 to always return an error.  For example:
+###  \begin{errexam}
+#      foo-bar @\\@
+#      Use of two--dashes is not usually allowed in English. @\\@
+#      like this---see?
+###  \end{errexam}
+#
+# For English, this will often be a single dash (hyphen).  If you like
+# m-dashes with no spaces between them and the surrounding words, then
+# it should include 3 as well.  There @emph@are@endemph@ cases when an n-dash
+# is valid between two alphabetic characters.  See@ref@DashExcpt@endref@.
+#
+### \chktexrcdefault\begin{verbatim}
+HyphDash { 1 3 }
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## NumDash
+### \begin{chktexrclistvar}{NumDash}
+#
+# The number of dashes allowed between two numeric characters.
+# Use 0 to always return an error.  This does @emph@not@endemph@ apply in
+# math mode.  For example:
+###  \begin{errexam}
+#      123--456 is a range @\\@
+#      $12-4$ \% okay because it's in math mode
+###  \end{errexam}
+#
+# For English, this should be 2 because an n-dash is used to indicate
+# a range of numbers and subtraction should be in math mode where this
+# does not apply.
+#
+### \chktexrcdefault\begin{verbatim}
+NumDash  { 2 }
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## WordDash
+### \begin{chktexrclistvar}{WordDash}
+#
+# The number of dashes allowed between two space characters.
+# Use 0 to always return an error.  For example:
+###  \begin{errexam}
+#      not like - this,  @\\@
+#      or like -- this.  @\\@
+#      like this --- see?
+###  \end{errexam}
+#
+### \chktexrcdefault\begin{verbatim}
+WordDash { 3 }
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## DashExcpt
+### \begin{chktexrclistvar}{DashExcpt}
+#
+# Exceptions to the dash rules above.  For example, an n-dash
+# @verb@--@endverb@ between words is usually wrong, but in some cases it is correct,
+# such as when naming a theorem.  The Birch--Swinnerton-Dyer
+# conjecture is one example where the difference matters.  You can
+# tell that Birch is one person and Swinnerton-Dyer is another based
+# on the dashes used.
+#
+# Adding line suppressions for these is possible, but can quickly
+# become tedious if a certain theorem is referenced often.  For this
+# reason exceptions can be specified here.  They are case-sensitive.
+#
+# Unfortunately, there are no warnings if the dashes are surrounded by differing
+# types of characters.  For example:
+###  \begin{errexam}
+#      like this ---see? (space and alphabet)  @\\@
+#      a--123            (number and alphabet) @\\@
+#      a.--b.            (other character, namely @verb@.@endverb@)
+###  \end{errexam}
+# Similarly, no warnings are issued if the hyphenation is correct,
+# according to the other rules, for example:
+###  \begin{errexam}
+#      Birch-Swinnerton-Dyer
+###  \end{errexam}
+#
+### \chktexrcdefault\begin{verbatim}
+DashExcpt
+{
+    Birch--Swinnerton-Dyer
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## WipeArg
+### \begin{chktexrclistvar}{WipeArg}
+#
+# Commands whose arguments aren't @LaTeX@ code, and thus should be
+# ignored.
+#
+# After the command, you may place arguments (separated from the
+# command with a colon) that should be wiped.  Use @verb@[]@endverb@ for optional
+# arguments, @verb@{}@endverb@ for required ones, and @verb@*@endverb@ if the command supports a
+# star variant.  Some commands (e.g.\@ @verb@\cmidrule@endverb@) use @verb@()@endverb@ to
+# delimit an optional argument and so this syntax is supported as well.
+#
+# For instance, if you would like to wipe the @verb@\newcommand@endverb@ command,
+# you would declare it as @verb@\newcommand:*[][]{}@endverb@ since it has a
+# star variant, two optional arguments, and one required argument.
+#
+# These commands may be ``evaluated'' before they're wiped, so you will
+# typically list filehandling commands and similar here.
+#
+### \chktexrcdefault\begin{verbatim}
+WipeArg
+{
+    \label:{} \ref:{} \eqref:{} \vref:{} \pageref:{} \index:[]{}
+    \cite:[][]{} \nocite:{}
+    \input:{} \verbatiminput:[]{} \listinginput:[]{}{}
+    \graphicspath:{}
+    \verbatimtabinput:[]{} \include:{} \includeonly:{}
+    \bibitem:[]{}
+    \cline:{} \cmidrule:[](){}
+    \href:{}{}
+    # Cleveref -- there are many others that could be here as well...
+    \cref:*{} \cpageref:*{} \crefrange:*{}{} \cpagerefrange:*{}{}
+    \Cref:*{} \Cpageref:*{} \Crefrange:*{}{} \Cpagerefrange:*{}{}
+    # natbib
+    \citet:*[][]{} \citep:*[][]{} \citealt:*{} \citealp:*[]{} \citeauthor:*{}
+    \Citet:*[][]{} \Citep:*[][]{} \Citealt:*{} \Citealp:*[]{} \Citeauthor:{}
+    \citetext:{} \citeyear:*{} \citeyearpar:{}
+    # biblatex - not including special commands
+    \autocite:*[][]{} \autocites:*[][]{} \Autocite:*[][]{} \Autocites:*[][]{}
+    \parencite:*[][]{} \parencites:*[][]{} \Parencite:*[][]{} \Parencites:*[][]{}
+    \footcite:*{} \footcites:*[][]{} \Footcite:*[][]{} \Footcites:*[][]{}
+    \textcite:*{} \textcites:*[][]{} \Textcite:*[][]{} \Textcites:*[][]{}
+    \citeauthor:*{} \citeauthors:*[][]{} \Citeauthor:*[][]{} \Citeauthors:*[][]{}
+    \citeyear:*{} \citeyears:*[][]{} \Citeyear:*[][]{} \Citeyears:*[][]{}
+    \citetitle:*{} \citetitles:*[][]{} \Citetitle:*[][]{} \Citetitles:*[][]{}
+    # tipa which uses "
+    \textipa:{}
+    # LuaTeX
+    \directlua:{} \luaescapestring:{}
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## MathEnvir
+### \begin{chktexrclistvar}{MathEnvir}
+#
+# Environments which typeset their contents as mathematics.
+# This turns on/off some warnings.
+#
+# A @verb@*@endverb@ variant is automatically added for each keyword.
+#
+### \chktexrcdefault\begin{verbatim}
+MathEnvir
+{
+    displaymath math eqnarray array equation
+    align alignat gather flalign multline
+    dmath dgroup darray
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## TextEnvir
+### \begin{chktexrclistvar}{TextEnvir}
+#
+# Environments which typeset their contents as text, for use inside
+# mathematics.  This turns on/off some warnings.
+#
+### \chktexrcdefault\begin{verbatim}
+TextEnvir
+{
+    dsuspend
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## MathCmd
+### \begin{chktexrclistvar}{MathCmd}
+#
+# Commands whose argument will be typeset as mathematics.
+# The commands are assumed to have one mandatory argument which is in
+# math mode.  This turns on/off some warnings.
+#
+### \chktexrcdefault\begin{verbatim}
+MathCmd
+{
+    \ensuremath
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## TextCmd
+### \begin{chktexrclistvar}{TextCmd}
+#
+# Commands whose argument will @emph@not@endemph@ be typeset as
+# mathematics even if it would otherwise be in math mode.
+# The commands are assumed to have one mandatory argument which is in
+# text mode.  This turns on/off some warnings.
+#
+### \chktexrcdefault\begin{verbatim}
+TextCmd
+{
+    \text \intertext \shortintertext \mbox \condition
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## VerbEnvir
+### \begin{chktexrclistvar}{VerbEnvir}
+#
+# Environments containing non-@LaTeX@ content of some kind, and
+# therefore should not trigger any warnings.
+#
+# A @verb@*@endverb@ variant is automatically added for each keyword.
+#
+### \chktexrcdefault\begin{verbatim}
+VerbEnvir
+{
+    verbatim comment listing verbatimtab rawhtml errexam picture texdraw
+    filecontents pgfpicture tikzpicture minted lstlisting IPA
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## Abbrev
+### \begin{chktexrclistvar*}{Abbrev}
+#
+# Abbreviations not automatically handled by @ChkTeX@.
+#
+# @ChkTeX@ automagically catches most abbreviations; the ones we need to
+# list here, are those which are most likely to be followed by a word
+# with an upper-case letter which is not the beginning of a new
+# sentence.
+#
+# The case-insensitive abbreviations are not fully case-insensitive.
+# Rather, only the first character is case-insensitive, while the
+# remaining characters are case-sensitive.
+#
+# To speed up the searching process somewhat, we require that these
+# end in a @verb@.@endverb@ which should not be a problem in practice.
+#
+# Much of this work (both the abbreviations below, and the regular
+# expressions necessary to catch the remaining automatically) have
+# been provided by Russ Bubley, <russ@scs.leeds.ac.uk>.
+#
+### \chktexrcdefault\begin{verbatim}
+Abbrev
+{
+    # Ordinals
+    1st. 2nd. 3rd. 4th.
+    # Titles
+    Mr. Mrs. Miss. Ms. Dr. Prof. St.
+    #
+    # Days
+    # Mon. Tue. Wed. Thu. Fri. Sat. Sun.
+    #
+    # Months
+    # Jan. Feb. Mar. Apr. May. Jun. Jul. Aug. Sep. Oct. Nov. Dec.
+    #
+    # Letters
+    # Kt. Jr.
+    #
+    # Corporate
+    # Co. Ltd.
+    #
+    # Addresses
+    # Rd. Dr. St. Ave. Cres. Gdns. Sq. Circ. Terr. Pl. Arc. La. Clo. Ho. Est. Gn.
+    #
+    # Misc.
+    # oe. pbab. ps. rsvp. Tx.
+}
+[
+    # The first letter is case-insensitive in the abbrevs in this
+    # list. Due to the nature of the checking algorithm used for
+    # this, entries consisting of only one character will be
+    # silently ignored.
+    #
+    # Latin
+    # cf. "et al." etc. qed. qv. viz.
+    #
+    # Corporate
+    # inc. plc.
+    #
+    # Misc
+    # fax. pcs. qty. tel. misc.
+]
+### \end{verbatim}
+### \end{chktexrclistvar*}
+
+
+## IJAccent
+### \begin{chktexrclistvar}{IJAccent}
+#
+# Commands which add accents above characters.  This means that @verb@\i@endverb@ or @verb@\j@endverb@
+# (@verb@\imath@endverb@ and @verb@\jmath@endverb@ in mathmode) should be used instead of @verb@i@endverb@ and @verb@j@endverb@.
+#
+# Other accent commands such as @verb@\c@endverb@, @verb@\d@endverb@, and @verb@\b@endverb@, put their accent under
+# the character, and thus should be used with normal @verb@i@endverb@s and @verb@j@endverb@s.
+#
+### \chktexrcdefault\begin{verbatim}
+IJAccent
+{
+    \hat \check \breve \acute \grave \tilde \bar \vec \dot \ddot
+    \' \` \^ \" \~ \= \. \u \v \H \t
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## Italic
+### \begin{chktexrclistvar}{Italic}
+#
+# Commands which need italic correction when the group is terminated.
+#
+### \chktexrcdefault\begin{verbatim}
+Italic
+{
+    \it \em \sl \itshape \slshape
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## NonItalic
+### \begin{chktexrclistvar}{NonItalic}
+#
+# Commands which makes the font non-italic.
+#
+### \chktexrcdefault\begin{verbatim}
+NonItalic
+{
+    \bf \rm \sf \tt \sc
+    \upshape
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## ItalCmd
+### \begin{chktexrclistvar}{ItalCmd}
+#
+# Commands which put their argument into italic (and thus possibly
+# needs italic correction in the end).
+#
+# This is currently empty, since @verb@\textit@endverb@, @verb@\textsl@endverb@, and @verb@\emph@endverb@
+# automatically add italic corecction.
+#
+### \chktexrcdefault\begin{verbatim}
+ItalCmd
+{
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## PostLink
+### \begin{chktexrclistvar}{PostLink}
+#
+# Commands in front of which a page break is highly undesirable.
+# Thus there should be no space in front of them.
+#
+### \chktexrcdefault\begin{verbatim}
+PostLink
+{
+    \index \label
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## NotPreSpaced
+### \begin{chktexrclistvar}{NotPreSpaced}
+#
+# Commands that should not have a space in front of them for various
+# reasons.  Much the same as@ref@PostLink@endref@, but produces a different warning.
+#
+### \chktexrcdefault\begin{verbatim}
+NotPreSpaced
+{
+    \footnote \footnotemark \/
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## Linker
+### \begin{chktexrclistvar}{Linker}
+#
+# Commands that should be prepended with a @verb@~@endverb@.  For example
+###  \begin{errexam}
+#     @verb@look in table~\ref{foo}@endverb@
+###  \end{errexam}
+# to avoid the references being split across lines.
+#
+### \chktexrcdefault\begin{verbatim}
+Linker
+{
+    \ref \vref \pageref \eqref \cite
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## CenterDots
+### \begin{chktexrclistvar}{CenterDots}
+#
+# Commands or characters which should have @verb@\cdots@endverb@ in between.
+# For example, $1+2+3+\cdots+n$.
+#
+### \chktexrcdefault\begin{verbatim}
+CenterDots
+{
+    = + - \cdot \div & \times \geq \leq < >
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## LowDots
+### \begin{chktexrclistvar}{LowDots}
+#
+# Commands or characters which should have @verb@\ldots@endverb@ in between.
+# For example, $1,2,3,\ldots,n$.
+#
+### \chktexrcdefault\begin{verbatim}
+LowDots
+{
+    . , ;
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## MathRoman
+### \begin{chktexrclistvar}{MathRoman}
+#
+# Words that should appear in roman (upright) in math mode.  There are
+# certain aliases for mathematical operators (like sin or cos) that
+# appear in roman rather than the usual italic (slanted) font.
+#
+# These entries do not need a leading slash since the mistake is often
+# to @emph@not@endemph@ include the leading slash.
+#
+### \chktexrcdefault\begin{verbatim}
+MathRoman
+{
+    log lg ln lim limsup liminf sin arcsin sinh cos arccos cosh tan
+    arctan tanh cot coth sec csc max min sup inf arg ker dim hom det
+    exp Pr gcd deg bmod pmod mod
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## Primitives
+### \begin{chktexrclistvar}{Primitives}
+#
+# Commands that are used in @TeX@ but have become unnecessary in
+# @LaTeX@, as there are @LaTeX@ commands which do the same.  Purists
+# should thus avoid these in their code.
+#
+### \chktexrcdefault\begin{verbatim}
+Primitives
+{
+   \above \advance \catcode \chardef \closein \closeout \copy \count
+   \countdef \cr \crcr \csname \delcode \dimendef \dimen \divide
+   \expandafter \font \hskip \vskip \openout
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## NoCharNext
+### \begin{chktexrclistvar}{NoCharNext}
+#
+# Commands and a set of characters that should @emph@not@endemph@ follow them.  For
+# example, in math mode, @verb@\left@endverb@ should be followed by a delimiter
+# which is to change size.  Therefore, it should not be followed by the
+# end of math mode @verb@$@endverb@ or a grouping character @verb@{@endverb@ or @verb@}@endverb@.
+#
+# The format is @verb@\command:characters@endverb@.
+#
+### \chktexrcdefault\begin{verbatim}
+NoCharNext
+{
+   \left:{}$ \right:{}$
+}
+### \end{verbatim}
+### \end{chktexrclistvar}
+
+
+## VerbClear
+### \begin{chktexrcsimplevar}{VerbClear}
+#
+# The character to replace verbatim text with.
+#
+# The arguments of commands listed in@ref@WipeArg@endref@, as well as
+# @verb@\verb+...+@endverb@ commands, are replaced with an innocuous character
+# to prevent that data from inadvertantly producing a warning.
+#
+# This should not contain an alphabetic character (in case the user
+# writes (@verb@\foo\verb+bar+@endverb@), neither should it contain be one of
+# @LaTeX@'s reserved characters (@verb@#$%&~_^\{}@endverb@), or any parenthesis
+# character (@verb@()[]{}@endverb@).  If possible, don't use a punctuation
+# character or any spacing characters either.  All of these characters
+# have warnings associated with them and thus could cause spurious
+# warnings to appear.
+#
+# The asterisk is also unsuitable, as some commands behave in another
+# way if they are appended with an asterisk.  Which more or less
+# leaves us with the pipe.
+#
+# Please note that this may also be a @verb@string@endverb@, which will be
+# repeated until the proper length is reached.
+#
+### \chktexrcdefault\begin{verbatim}
+VerbClear = "|"
+### \end{verbatim}
+### \end{chktexrcsimplevar}
+
+
+## That's all for now - Happy @LaTeX@ing!

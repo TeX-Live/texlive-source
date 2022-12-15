@@ -54,10 +54,34 @@
   {\noindent\large%
     \begin{tabularx}{\linewidth}{lY}%
       \bf Warning \theerrornum:  & \texttt{#1}%
-    \end{tabularx}}\stepcounter{errornum}\nopagebreak[4]}
+  \end{tabularx}}\stepcounter{errornum}\nopagebreak[4]}
+
+\newcommand{\fmtrc}[1]{%
+  {\noindent\large%
+    %% \begin{tabularx}{\linewidth}{lY}%
+    \phantomsection%
+    \bf\texttt{#1}%
+    \label{rc:#1}
+    %% \end{tabularx}
+  }\nopagebreak[4]}
 
 \newenvironment{errdesc}[1]{\noindent\fmted{#1}\begin{quote}}{\end{quote}%
 \pagebreak[3]}
+
+\newcommand\Keyword[1]{\marginpar{\texttt{\hfill\hyperref[rc:#1]{#1}}}}
+\newcommand{\chktexrcdefault}{\noindent The default value is}
+\newenvironment{chktexrcvar}[2]{%
+  \smallskip\pagebreak[2]%
+  %% \Keyword{#1}
+  \fmtrc{#1} #2 Variable%
+  \begin{quote}}{%
+  \end{quote}\pagebreak[3]}
+\newenvironment{chktexrcsimplevar}[1]{\begin{chktexrcvar}{#1}{Simple}}{\end{chktexrcvar}}
+\newenvironment{chktexrclistvar}[1]{\begin{chktexrcvar}{#1}{List}}{\end{chktexrcvar}}
+\newenvironment{chktexrclistvar*}[1]{\begin{chktexrcvar}{#1}{Lowercase-able List}}{\end{chktexrcvar}}
+
+%% \newenvironment{chktexrclistvar}[1]{\fmtrc{#1}List Variable}{}
+%% \newenvironment{chktexrclistvar*}[1]{\fmtrc{#1}List Variable with Lowercase}{}
 
 \newenvironment{html}{\comment}{\endcomment}
 \newenvironment{rawhtml}{\comment}{\endcomment}
@@ -80,6 +104,15 @@
 %!\newcommand{\chktex}{ChkTeX}
 %!\newcommand{\slash}{/}
 %endlatex
+
+% PDF table of contents
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  allcolors=blue,
+  pdfpagemode=UseOutlines
+}
+\usepackage{hypcap}
 
 
 \title{\chktex\ v@PACKAGE_VERSION@}
@@ -370,7 +403,7 @@ A few words on installation on various platforms:
 \paragraph{Note:} You \emph{must} install the new \rsrc\ file; \chktex\ will
 fail to function otherwise!
 
-    After   doing   this,   you   may  enhance  \chktex'  behaviour  by
+    After   doing   this,   you   may  enhance  \chktex's  behaviour  by
 reading/editing the \rsrc\ file.
 
 %latex
@@ -391,7 +424,7 @@ A UNIX-compliant template format follows:
 \end{tabularx}
 
 
-\subsubsection{Options}
+\subsubsection{Comamndline Options}
 
 These are the options \chktex\ currently accepts.
 Please note that single-lettered options requiring a numerical or no
@@ -510,6 +543,7 @@ File:Line:Column:Warning number:Warning message
       longer time to parse, but much more informative in use.
     \end{description}
 
+  \phantomsection\label{clarg:format}%
   \item[\texttt{-f [-{}-format]}] Specifies the format of the output.
     This is done using a format similar to \Cmd{printf()}, where we
     support the specifiers listed below.
@@ -739,6 +773,10 @@ The syntax is nearly the same, namely
   \verb+% chktex-file ##+
 \end{center}
 
+
+\input{ChkTeXRC.tex}
+
+
 \subsubsection{Hints}
 I've tried to collect some advice that may be useful --- if you have a
 favourite hint, feel free to send it to me!
@@ -863,10 +901,9 @@ Error messages set in {\it italic type\/} are turned off by default.
 Where margin paragraphs are listed in the text, they refer to the
 keyword in the \rsrc\ file which controls the discussed warning.
 
-\newcommand\Keyword[1]{\marginpar{\texttt{\hfill\\ #1}}}
-
 \smallskip\pagebreak[2]
-\Keyword{Silent}
+\phantomsection
+\Keyword{Silent}\label{warn:silent}
 \begin{errdesc}{Command terminated with space.}
   You tried to terminate a command with a blank space.  Usually, this
   is an error as these are ignored by \LaTeX. In most cases, you would
@@ -917,7 +954,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{Italic\\ItalCmd\\NonItalic}
+\Keyword{Italic}
+\Keyword{ItalCmd}
+\Keyword{NonItalic}
 \begin{errdesc}{Italic correction (`\BS/') found in non-italic
     buffer.}
   If you try to use the \verb@\/@ command when \chktex\ believes that
@@ -932,7 +971,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{Italic\\ItalCmd\\NonItalic}
+\Keyword{Italic}
+\Keyword{ItalCmd}
+\Keyword{NonItalic}
 \begin{errdesc}{Italic correction (`\BS/') found more than once.}
   If the buffer is italic, and you try to use the \verb@\/@ command
   more than once, you'll get this warning.
@@ -946,7 +987,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{Italic\\ItalCmd\\NonItalic}
+\Keyword{Italic}
+\Keyword{ItalCmd}
+\Keyword{NonItalic}
 \begin{errdesc}{No italic correction (`\BS/') found.}
   You get this error if \chktex\ believes that you are switching from
   italic to non-italic, and you've forgot to use the \verb@\/@ command
@@ -977,7 +1020,10 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
-\Keyword{HyphDash\\NumDash\\WordDash\\DashExcpt}
+\Keyword{HyphDash}
+\Keyword{NumDash}
+\Keyword{WordDash}
+\Keyword{DashExcpt}
 \begin{errdesc}{Wrong length of dash may have been used.}
   This warning suggests that a wrong number of dashes may have been
   used.  It does this by classifying the dash according to the the
@@ -1036,7 +1082,8 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \end{errdesc}
 
-\Keyword{CenterDots\\LowDots}
+\Keyword{CenterDots}
+\Keyword{LowDots}
 \begin{errdesc}{You should use `\%s' to achieve  an ellipsis.}
   Simply typing three \Cmd{.} in a row will not give a perfect spacing
   between the dots.  The \verb@\ldots@ is much more suitable for this.
@@ -1057,32 +1104,41 @@ keyword in the \rsrc\ file which controls the discussed warning.
   \end{errexam}
 \end{errdesc}
 
+\phantomsection
+\label{warn:interword}
 \Keyword{Abbrev}
+\Keyword{CmdSpaceStyle}
 \begin{errdesc}{Interword spacing (`\BS\ ') should perhaps be used.}
 
   One of the specified abbreviations were found. Unless you have
   previously said \verb@\frenchspacing@, you'll have incorrect
-  spacing, which one should avoid if possible.
+  spacing, which one should avoid if possible. The error will be suppressed
+  if you have used  \verb@\frenchspacing@.
 
   You can also specify case-insensitive abbreviations in \texttt{[]}, though
   only the first letter is actually case-insensitive.
 
   \begin{errexam}
-    \verb@This is an example, i.e.@\underline{\tt\ }\verb@an demonstration.@ \\*
-    This is an example, i.e. an demonstration.        \\*
+    \verb@This is an example, i.e.@\underline{\tt\ }\verb@a demonstration.@ \\*
+    This is an example, i.e. a demonstration.        \\*
     \smallskip
-    \verb@This is an example, i.e.\ an demonstration.@   \\*
-    This is an example, i.e.\ an demonstration.        \\*
+    \verb@This is an example, i.e.\ a demonstration.@   \\*
+    This is an example, i.e.\ a demonstration.        \\*
   \end{errexam}
 \end{errdesc}
 
+\phantomsection
+\label{warn:intersentence}
+\Keyword{CmdSpaceStyle}
 \begin{errdesc}{Intersentence spacing (`\BS{}@') should perhaps be used.}
 
-  \LaTeX' detection of whether a period ends a sentence or not, is
+  \LaTeX's detection of whether a period ends a sentence or not, is
   only based upon the character in front of the period. If it's
   uppercase, it assumes that it does not end a sentence. While this
   may be correct in many cases, it may be incorrect in others.
   \chktex\ thus outputs this warning in every such case.
+
+  The error will be suppressed if you have used \verb@\frenchspacing@.
 
   \begin{errexam}
     \verb@I've seen an UFO!@\underline{\tt\ }\verb@Right over there!@ \\*
@@ -1119,7 +1175,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 \end{errdesc}
 
 \Keyword{MathEnvir}
-\begin{errdesc}{Mathmode still on at end of LaTeX  file.}
+\begin{errdesc}{Mathmode still on at end of LaTeX file.}
   This error is triggered if you at some point have turned on
   mathmode, and \chktex\ couldn't see that you remembered to turn it
   off.
@@ -1149,13 +1205,13 @@ keyword in the \rsrc\ file which controls the discussed warning.
     "'" (ASCII 180).} On some keyboards you might get the wrong quote.
   This quote looks, IMHO, \emph{ugly} compared to the standard
   quotes, it doesn't even come out as a quote!  Just see in the
-  example.
-
+  example.  In fact, this doesn't even compile anymore, so the warning is
+  probably obsolete.
 
   \begin{errexam}
     \verb@``There@\underline{\tt '}\verb@s quotes and there@\underline{\tt  '}\verb@s quotes@
     \underline{\tt ''} \\* % ''
-    ``There´s quotes and there´s quotes´´ \\* % ''
+    % ``There´s quotes and there´s quotes´´ \\* % ''
     \smallskip
     \verb@``There's quotes and there's quotes''@ \\*
     ``There's quotes and there's quotes'' \\*
@@ -1265,7 +1321,9 @@ keyword in the \rsrc\ file which controls the discussed warning.
 
 \end{errdesc}
 
-\Keyword{Italic\\ItalCmd\\NonItalic}
+\Keyword{Italic}
+\Keyword{ItalCmd}
+\Keyword{NonItalic}
 \begin{errdesc}{Don't use \BS/ in front of small punctuation.}
   Italic correction should generally \emph{not} be used in front of
   small punctuation characters like `.' and `,'; as it looks better
@@ -1316,7 +1374,6 @@ keyword in the \rsrc\ file which controls the discussed warning.
   Certain implementations of the \verb@verbatim@ environment and
   derivations of that, ignore all text on the same line as
   \verb@\end{verbatim}@.  This will warn you about this.
-
 
 \end{errdesc}
 
@@ -1434,7 +1491,7 @@ keyword in the \rsrc\ file which controls the discussed warning.
 \begin{errdesc}{You should put punctuation outside inner/inside
     display math mode.}
   As recommended in the \TeX{}book, you should try to put punctuation
-  outside inner math mode, as this is gets formatted better.
+  outside inner math mode, as it is formatted better.
 
   Similarily, you should let any final punctuation in display math
   mode end up within it. Look at the following example, which was
@@ -1561,6 +1618,28 @@ keyword in the \rsrc\ file which controls the discussed warning.
   Some error messages might be clearer with \verb+\(...\)+.
 
 \end{errdesc*}
+
+\fmted{`\%s' expected, found  `\%s' (ConTeXt).}
+\begin{errdesc}{Solo `\%s' found (ConTeXt).}
+
+% \begin{errdesc}{`\%s' expected, found `\%s' (ConTeXt).}
+
+  Similar to warnings~9 and 10, these tracks environments, but Con\TeX{}t{} environments rather than \LaTeX.
+  They are tracked as separate messages to allow being turned on and off independently thereby allowing people to use macros that start with \verb+\start+.
+
+\end{errdesc}
+
+\begin{errdesc}{Expected math mode to be \%s here.}
+
+  Similar to warning~16, this warns when \chktex{} got confused about math mode.
+  In theory, for a well formed \LaTeX{} document this should never happen, but the following (invalid) documents will cause the warning.
+  This is because the \verb+$+ will exit math mode (which \verb+\ensuremath+ entered), and then exiting \verb+\ensuremath+ finds that we are in text mode which shouldn't happen.
+
+  \begin{errexam}
+    \verb+\ensuremath{ \frac{x}{3} $ y\times 7}+\\*
+  \end{errexam}
+
+\end{errdesc}
 
 \section{Future plans}
 
