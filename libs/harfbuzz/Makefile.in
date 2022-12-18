@@ -834,6 +834,7 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-aat-map.cc \
 	@HARFBUZZ_TREE@/src/hb-aat-map.hh \
 	@HARFBUZZ_TREE@/src/hb-array.hh \
+	@HARFBUZZ_TREE@/src/hb-multimap.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-font.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-base-table.hh \
@@ -906,6 +907,9 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/SimpleGlyph.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/CompositeGlyph.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/SubsetGlyph.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/VarCompositeGlyph.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/composite-iter.hh \
+	@HARFBUZZ_TREE@/src/OT/glyf/coord-setter.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/Coverage.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/CoverageFormat1.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/CoverageFormat2.hh \
