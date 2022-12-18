@@ -37,7 +37,7 @@ my %blessed = (
   'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'publisher?', 'pages?'],
   'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'organization?', 'volume?'],
   'book' => ['doi', 'title', 'author', 'year', 'publisher'],
-  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?'],
+  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?', 'url?'],
 );
 
 # Check the presence of mandatory tags.
@@ -347,6 +347,23 @@ sub check_pages {
   }
 }
 
+# Check unescaped symbols.
+sub check_unescaped_symbols {
+  my (%entry) = @_;
+  my @symbols = ( '&' );
+  foreach my $tag (keys %entry) {
+    if ($tag =~ /^:.*/) {
+      next;
+    }
+    my $value = $entry{$tag};
+    foreach my $s (@symbols) {
+      if ($value =~ /^(.*[^\\{]|)\Q$s\E.*$/) {
+        return "The '$tag' contains a dangerous unescaped symbol (wrap it in curled brackets if you really need it)"
+      }
+    }
+  }
+}
+
 # Check one entry.
 sub process_entry {
   my (%entry) = @_;
@@ -387,10 +404,15 @@ sub entries {
     } elsif ($char eq "\n") {
       # ignore the EOL
       $lineno = $lineno + 1;
-    } elsif ($char eq '@' and $s eq 'top') {
-      %entry = ();
-      $s = 'start';
-      $acc = '';
+    } elsif ($s eq 'top') {
+      if ($char eq '@') {
+        %entry = ();
+        $s = 'start';
+        $acc = '';
+      } else {
+        warning("Each BibTeX entry must start with '\@', what is '$char'?");
+        last;
+      }
     } elsif ($char =~ /[a-z]/ and $s eq 'start') {
       # @article
     } elsif ($char eq '{' and $s eq 'start') {
@@ -408,24 +430,28 @@ sub entries {
       $entry{':name'} = $acc;
       $s = 'body';
     } elsif ($char eq '=' and $s eq 'tag') {
-      $tag = $acc;
+      my $t = lc($acc);
+      if (exists $entry{$t}) {
+        warning("The tag '$t' is seen more than once");
+      }
+      $tag = $t;
       $s = 'value';
       $acc = '';
     } elsif ($char eq ',' and $s eq 'value') {
-      if (not exists $entry{lc($tag)}) {
+      if (not exists $entry{$tag}) {
         my $tex = substr($acc, 1);
         $tex =~ s/\s//g;
-        $entry{lc($tag)} = $tex;
+        $entry{$tag} = $tex;
       }
       $s = 'body';
     } elsif ($char eq '}' and $s eq 'body') {
       push(@entries, { %entry });
       $s = 'top';
     } elsif ($char eq '}' and $s eq 'value') {
-      if (not exists $entry{lc($tag)}) {
+      if (not exists $entry{$tag}) {
         my $tex = substr($acc, 1);
         $tex =~ s/\s//g;
-        $entry{lc($tag)} = $tex;
+        $entry{$tag} = $tex;
       }
       push(@entries, { %entry });
       $s = 'top';
@@ -437,7 +463,7 @@ sub entries {
       $s = 'quote';
       $acc = '';
     } elsif ($char eq '"' and $s eq 'quote') {
-      $entry{lc($tag)} = substr($acc, 1);
+      $entry{$tag} = substr($acc, 1);
       $s = 'value';
     } elsif ($s eq 'quote') {
       # nothing
@@ -453,7 +479,7 @@ sub entries {
       } elsif ($char eq '}' and $escape ne 1) {
         $nest = $nest - 1;
         if ($nest eq 0) {
-          $entry{lc($tag)} = substr($acc, 1);
+          $entry{$tag} = substr($acc, 1);
           $s = 'value';
         }
       }
@@ -505,10 +531,11 @@ sub error {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
     print "\\PackageError{bibcop}{$txt}\n";
+    exit 0;
   } else {
-    print $txt . "\n";
+    print STDERR $txt . "\n";
+    exit 1;
   }
-  exit 1;
 }
 
 # Print DEBUG message to the console.
@@ -554,13 +581,13 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.4');
+  info('0.0.5');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
     error('File name must be specified');
   }
-  open(my $fh, '<', $file);
+  open(my $fh, '<', $file) or error('Cannot open file: ' . $file);
   my $bib; { local $/; $bib = <$fh>; }
   my @entries = entries($bib);
   if (exists $args{'--fix'}) {
@@ -568,7 +595,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
       my %entry = %{ $entries[$i] };
       my $type = $entry{':type'};
       if (not exists $blessed{$type}) {
-        error("I don't know what to do with \@$type type of bibentry");
+        error("I don't know what to do with \@$type type of BibTeX entry");
       }
       my $tags = $blessed{$entry{':type'}};
       my %allowed = map { $_ => 1 } @$tags;
@@ -599,7 +626,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
       my %entry = %{ $entries[$i] };
       debug("Checking $entry{':name'} (no.$i)...");
       foreach my $err (process_entry(%entry)) {
-        warning("$err, in the '$entry{':name'}' bib entry");
+        warning("$err, in the '$entry{':name'}' entry");
       }
     }
   }
