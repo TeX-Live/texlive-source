@@ -1,3 +1,8 @@
+2022-12-20  Karl Berry  <karl@freefriends.org>
+
+	* doc/kpathsea.texi (Supported file formats): add .lua (LUAINPUTS).
+	Report from Werner Lemberg.
+
 2022-11-05  Sam James  <sam@gentoo.org>
 
 	* configure.ac (Ghostscript version): #include <stdlib.h>
