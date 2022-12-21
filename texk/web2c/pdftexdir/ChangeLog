@@ -1,3 +1,14 @@
+2022-12-21  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_omit_info_procset_code),
+	(pdf_omit_procset): new parameter \pdfomitprocset.
+	(Put each...): add it.
+	(Generate ProcSet if desired): rename from <Generate ProcSet>;
+	output /ProcSet if the parameter is negative,
+	or if the parameter is zero and we are generating PDF 1.x (not 2.x).
+	Request by Ross,
+	https://tug.org/pipermail/pdftex/2022-December/009310.html
+
 2022-11-30  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (Finish the PDF file): omit call to pdf_print_info
@@ -15,7 +26,7 @@
 2022-04-17  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_omit_info_dict_code),
-	(pdf_omit_info_dict):new parameter.
+	(pdf_omit_info_dict): new parameter \pdfomitinfodict.
 	(Put each...): add it.
 	(Output the cross-reference stream dictionary),
 	(Output the trailer): omit /Info if parameter is nonzero.
