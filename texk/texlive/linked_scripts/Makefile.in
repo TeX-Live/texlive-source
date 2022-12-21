@@ -312,7 +312,8 @@ texmf_shell_scripts = \
 	texosquery/texosquery-jre8.sh \
 	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
-	wordcount/wordcount.sh
+	wordcount/wordcount.sh \
+	xput/xputserver
 
 texmf_other_scripts = \
 	a2ping/a2ping.pl \
