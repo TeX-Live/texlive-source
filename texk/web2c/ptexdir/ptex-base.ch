@@ -6861,6 +6861,13 @@ undump_things(char_base[null_font], font_ptr+1-null_font);
   font_info:=xmalloc_array (memory_word, font_mem_size);
 @z
 
+@x
+fix_date_and_time;@/
+@y
+last:=ptenc_conv_first_line(loc, last, buffer, buf_size); limit:=last;
+fix_date_and_time;@/
+@z
+
 @x [51.1337] l.25563 - pTeX:
   font_check:=xmalloc_array(four_quarters, font_max);
 @y

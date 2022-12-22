@@ -1,3 +1,12 @@
+2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h:
+	Add a new function ptenc_conv_first_line()
+	to accept file names with JIS X 0208 characters
+	in `(e)(u)ptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+	* version.ac: Bump to 1.4.3/dev.
+
 2022-09-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptexenc.c: Skip guessing file encoding if input is from pipe.

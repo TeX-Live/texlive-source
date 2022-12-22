@@ -24,6 +24,7 @@
 @define function putc2 ();
 @define function fputs2 ();
 @define function inputline2 ();
+@define function ptencconvfirstline ();
 
 @define function setinfileenc ();
 @define function setstdinenc ();

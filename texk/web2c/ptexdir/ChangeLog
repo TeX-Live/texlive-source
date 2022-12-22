@@ -1,3 +1,17 @@
+2022-12-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test, am/ptex.am:
+	Add tests for file names with JIS X 0208 characters
+	in `ptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
+2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* ptex-base.ch, ptex.defines, kanji.h, am/ptex.am:
+	Accept file names with JIS X 0208 characters
+	in `ptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
 2022-12-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Increase INHIBIT/KINSOKU table size to 1024.

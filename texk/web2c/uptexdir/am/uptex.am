@@ -165,7 +165,7 @@ EXTRA_DIST += \
 	uptexdir/ChangeLog
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log: uptex$(EXEEXT)
 upweb_tests = \

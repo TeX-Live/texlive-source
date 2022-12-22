@@ -4499,7 +4499,7 @@ ptex_ch_srcs = \
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 \
 	$(ZLIB_INCLUDES) $(am__append_144)
 
@@ -4602,7 +4602,7 @@ uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/uppltotf.test uptexdir/uptftopl.test \

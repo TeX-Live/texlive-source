@@ -1,6 +1,20 @@
+2022-12-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test, am/ptex.am:
+	Add tests for file names with JIS X 0208 characters
+	in `uptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
+2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* uptex.defines, kanji.h, am/uptex.am:
+	Accept file names with JIS X 0208 characters
+	in `uptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
 2022-12-12  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
-	* uptex—m.ch: Fix a bug that \inhibitxspcode after Japanese
+	* uptex-m.ch: Fix a bug that \inhibitxspcode after Japanese
 	character was ineffective due to lack of mod max_cjk_val.
 	See comments on 2022-12-11.
 	https://github.com/texjporg/tex-jp-build/issues/32

@@ -1,0 +1,23 @@
+% fn‚³‚´”g-sjis.tex
+% Shift_JIS encoding
+\catcode`\{=1
+\catcode`\}=2
+
+\immediate\write16{JOB[\jobname] :: We are in fn‚³‚´”g-sjis.tex}
+
+\immediate\openout0=\jobname.txt
+\immediate\write0{abc ƒ¿ƒÀƒÁ „p„q„r ‚ ƒA¦ “V’nl}
+\immediate\closeout0
+
+\immediate\openout1=fn‚³‚´”g-sjis-tmp.tex
+\immediate\write1{\relax}
+\immediate\closeout1
+
+% current directory
+\input "|cat fn‚³‚´”g-sjis-tmp.tex"
+\input fn‚³‚´”g-sjis-tmp.tex
+
+% vir kpathsearch
+\input fn}~€˜÷-utf8.tex
+
+\relax\end

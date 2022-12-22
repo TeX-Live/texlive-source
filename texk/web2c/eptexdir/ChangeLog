@@ -1,3 +1,10 @@
+2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* eptex.defines:
+	Accept file names with JIS X 0208 characters
+	in `eptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
 2022-11-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* eptex.ech: Adapt to ptex-base.ch.
