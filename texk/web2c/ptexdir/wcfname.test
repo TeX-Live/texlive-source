@@ -20,7 +20,7 @@ for doc in fnさざ波-$fenc; do
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   ./ptex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >ptests/$doc-$ienc-term.log || $rc=1
   mv $doc-$ienc.txt $doc-$ienc.log $doc-tmp.tex ptests/
-  diff ptests/$doc-$ienc.txt $srcdir/tests/fn-utf8.txt || $rc=2
+  diff ptests/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || $rc=2
 
 done
 done

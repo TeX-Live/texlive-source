@@ -31,7 +31,7 @@ for doc in fnさざ波-$fenc; do
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   ./uptex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >uptests/$doc-$ienc-term.log || $rc=1
   mv $doc-$ienc.txt $doc-$ienc.log $doc-tmp.tex uptests/
-  diff uptests/$doc-$ienc.txt $srcdir/tests/fn-utf8.txt || $rc=2
+  diff uptests/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || $rc=2
 
 done
 done

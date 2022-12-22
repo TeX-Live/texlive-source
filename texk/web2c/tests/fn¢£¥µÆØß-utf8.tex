@@ -1,0 +1,23 @@
+% fn¢£¥µÆØß-utf8.tex
+% UTF-8 encoding, including Latin-1 characters
+\catcode`\{=1
+\catcode`\}=2
+
+\immediate\write16{JOB[\jobname] :: We are in fn¢£¥µÆØß-utf8.tex}
+
+\immediate\openout0=\jobname.txt
+\immediate\write0{abc αβγ абв あア※￥ 天地人}
+\immediate\closeout0
+
+\immediate\openout1=fn¢£¥µÆØß-utf8-tmp.tex
+\immediate\write1{\relax}
+\immediate\closeout1
+
+% current directory
+\input "|cat fn¢£¥µÆØß-utf8-tmp.tex"
+\input fn¢£¥µÆØß-utf8-tmp.tex
+
+% vir kpathsearch
+\input fn±×÷§¶-utf8.tex
+
+\relax\end

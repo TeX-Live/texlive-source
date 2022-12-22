@@ -1,0 +1,32 @@
+#! /bin/sh -vx
+#
+# Copyright 2022 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d xetests || mkdir -p xetests
+rm -f xetests/fn*.log xetests/fn*.txt xetests/fn*.tex
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+TEXINPUTS=$srcdir/tests:.
+export TEXMFCNF TEXINPUTS
+
+if [ "$COMSPEC" != "" ]; then
+  echo "*** We guess OS is Windows."
+  command_line_encoding=utf8
+  export command_line_encoding
+fi
+
+fenc="utf8"
+for doc in fn¢£¥µÆØß-$fenc fnさざ波-$fenc; do
+
+  echo '>>> Document:'$doc '  File Encoding:'$fenc
+  ./xetex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >xetests/$doc-term.log || $rc=1
+  mv $doc.txt $doc.log $doc-tmp.tex xetests/
+  diff xetests/$doc.txt $srcdir/tests/fn-utf8.txt || $rc=2
+
+done
+
+
+exit $rc

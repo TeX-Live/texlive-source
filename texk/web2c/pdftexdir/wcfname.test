@@ -1,0 +1,33 @@
+#! /bin/sh -vx
+#
+# Copyright 2022 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+test -d pdftests || mkdir -p pdftests
+rm -f pdftests/fn*.log pdftests/fn*.txt pdftests/fn*.tex
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+TEXINPUTS=$srcdir/tests:.
+export TEXMFCNF TEXINPUTS
+
+if [ "$COMSPEC" != "" ]; then
+  echo "*** We guess OS is Windows."
+  command_line_encoding=utf8
+  export command_line_encoding
+fi
+
+fenc="utf8"
+for doc in fn¢£¥µÆØß-$fenc fnさざ波-$fenc; do
+
+  echo '>>> Document:'$doc '  File Encoding:'$fenc
+  ./pdftex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >pdftests/$doc-term.log || $rc=1
+  mv $doc.txt $doc.log $doc-tmp.tex pdftests/
+##   It does not work.
+##  diff pdftests/$doc.txt $srcdir/tests/fn-$enc.txt || $rc=2
+
+done
+
+
+exit $rc
