@@ -12,6 +12,8 @@ TEXMFCNF=$srcdir/../kpathsea
 TEXINPUTS=uptests:.
 export TEXMFCNF TEXINPUTS
 
+LC_ALL=C.UTF-8; LANGUAGE=C.UTF-8; export LC_ALL LANGUAGE
+
 perl $srcdir/tests/fn-generate.perl || exit 128
 mv fn*.tex uptests/
 
