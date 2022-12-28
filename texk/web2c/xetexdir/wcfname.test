@@ -26,7 +26,7 @@ for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc; do
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc
   ./xetex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >xetests/$doc-term.log || rc=1
-  mv $doc.txt $doc.log $doc-tmp.tex xetests/
+  mv $doc.txt $doc.log fn*-tmp.tex xetests/
   diff xetests/$doc.txt $srcdir/tests/fn-utf8.txt || rc=2
 
 done
