@@ -1,3 +1,9 @@
+2022-12-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/fn-generate.perl, tests/fn-{utf8,euc,sjis}.txt,
+	Makefile.in:
+	Tests for file names with wide characters & {pdf,Xe,p,up}TeX.
+
 2022-09-28  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (halting_on_error_p): new variable, set when we start to

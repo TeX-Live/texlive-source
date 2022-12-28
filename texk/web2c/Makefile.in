@@ -3238,14 +3238,16 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	tests/bibtex-bigauth.aux tests/bibtex-bigauth.bib \
 	tests/bibtex-bigauth.tex tests/auxinclude.aux \
 	tests/auxinclude.bbl tests/auxinclude.bib tests/auxinclude.tex \
-	tests/auxinclude2.aux tests/auxinclude2.tex tests/allbib.aux \
-	tests/allbib.tex tests/apalike.bst tests/badpl.pl \
-	tests/badtfm.tfm tests/badvf.tfm tests/badvf.vf \
-	tests/badvpl.vpl tests/batch.tex tests/check.log \
-	tests/cmr10.600gf tests/cmr10.pk tests/cmr10.pl \
-	tests/cmr10.tfm tests/cmr7.tfm tests/cmr8.tfm tests/cmti10.tfm \
-	tests/cmtt10.tfm tests/cmtt8.tfm tests/dict tests/eight.tex \
-	tests/end.tex tests/exampl.aux tests/exampl.tex tests/gray.tfm \
+	tests/auxinclude2.aux tests/auxinclude2.tex \
+	tests/fn-generate.perl tests/fn-utf8.txt tests/fn-euc.txt \
+	tests/fn-sjis.txt tests/allbib.aux tests/allbib.tex \
+	tests/apalike.bst tests/badpl.pl tests/badtfm.tfm \
+	tests/badvf.tfm tests/badvf.vf tests/badvpl.vpl \
+	tests/batch.tex tests/check.log tests/cmr10.600gf \
+	tests/cmr10.pk tests/cmr10.pl tests/cmr10.tfm tests/cmr7.tfm \
+	tests/cmr8.tfm tests/cmti10.tfm tests/cmtt10.tfm \
+	tests/cmtt8.tfm tests/dict tests/eight.tex tests/end.tex \
+	tests/exampl.aux tests/exampl.tex tests/gray.tfm \
 	tests/hello.tex tests/io.mf tests/just.texi tests/label.mp \
 	tests/label.mpx tests/logo8.tfm tests/longline.aux \
 	tests/longline.bib tests/longline.tex tests/longtfm.tex \
@@ -3666,57 +3668,58 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
 	ptests/nissya_bib.* ptests/xexampl.aux ptests/xexampl.bbl \
-	ptests/xexampl.blg ptests/xenc*.* ptests/memtest.bib \
-	ptests/memtest?.* ptests/xstory.dvityp ptests/xpagenum.typ \
-	ptests/xptex[34]*.typ ptests/xcmr10.tfm ptests/xcmr10.pl \
-	ptests/xsample*.typ ptests/x*min10.* ptests/xchcode*.* \
-	ptests/xskipjfmp.* ptrip.diffs $(nodist_eptex_SOURCES) \
-	eptex.web eptex.ch eptex-web2c eptex.p eptex.pool eptex-tangle \
-	eptrip.diffs pdfprimitive-eptex.* $(nodist_uptex_SOURCES) \
-	uptex.web uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
-	$(upweb_programs:=.c) $(upweb_programs:=.h) \
-	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
-	$(upweb_programs:=.web) uptests/nissya_bib.* \
-	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
-	uptests/xenc*.* uptests/memtest.bib uptests/memtest?.* \
-	uptests/xstory.dvityp uptests/xpagenum.typ \
-	uptests/x*ptex[34]*.typ uptests/xcmr10.tfm uptests/xcmr10.pl \
-	uptests/xsample*.typ uptests/x*min10.* uptests/xchcode*.* \
-	uptests/xtestnewu.* uptests/xuparse.* uptests/yuparse.* \
-	uptests/ygkhuge*.* uptests/xskipjfmp.* uptrip.diffs \
-	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
-	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	pdfprimitive-euptex.* $(nodist_hitex_SOURCES) \
-	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
-	hiformat-tangle hitex-tangle hello.log rule.log \
-	$(nodist_pdftex_SOURCES) pdftex-final.ch pdftex-web2c pdftex.p \
-	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
-	pdfimage.log pdfimage.pdf expanded.log cnfline.log \
-	partoken-ok.log partoken-xfail.log postV3.afm postV7.afm \
-	test-13.pdf test-13.xref test-15.pdf test-15.xref \
-	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
-	$(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
-	xetex.p xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \
-	bug73.tex filedump.log filedump.out filedump.tex \
-	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
-	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	ofm2opl.web opl2ofm.web ovf2ovp.web ovp2ovf.web \
-	omegaware/bad*.* omegaware/tests/charwdr.* \
-	omegaware/tests/charwdv.* omegaware/tests/xcheck* \
-	omegaware/tests/xlevel1.* omegaware/tests/xlig*.* ofont*vf \
-	omegaware/tests/xpagenum.* omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	ocftest.* omegaware/tests/xinbmp* omegaware/tests/xoverbmp* \
-	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
-	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
-	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
-	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	ptests/xexampl.blg ptests/xenc*.* ptests/fn*.* \
+	ptests/memtest.bib ptests/memtest?.* ptests/xstory.dvityp \
+	ptests/xpagenum.typ ptests/xptex[34]*.typ ptests/xcmr10.tfm \
+	ptests/xcmr10.pl ptests/xsample*.typ ptests/x*min10.* \
+	ptests/xchcode*.* ptests/xskipjfmp.* ptrip.diffs \
+	$(nodist_eptex_SOURCES) eptex.web eptex.ch eptex-web2c eptex.p \
+	eptex.pool eptex-tangle eptrip.diffs pdfprimitive-eptex.* \
+	$(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c uptex.p \
+	uptex.pool uptex-tangle $(upweb_programs:=.c) \
+	$(upweb_programs:=.h) $(upweb_programs:=.p) \
+	$(upweb_programs:=-web2c) $(upweb_programs:=.web) \
+	uptests/nissya_bib.* uptests/xexampl.aux uptests/xexampl.bbl \
+	uptests/xexampl.blg uptests/xenc*.* uptests/fn*.* \
+	uptests/memtest.bib uptests/memtest?.* uptests/xstory.dvityp \
+	uptests/xpagenum.typ uptests/x*ptex[34]*.typ \
+	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/xsample*.typ \
+	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu.* \
+	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
+	uptests/xskipjfmp.* uptrip.diffs $(nodist_euptex_SOURCES) \
+	euptex.web euptex.ch euptex-web2c euptex.p euptex.pool \
+	euptex-tangle euptrip.diffs pdfprimitive-euptex.* \
+	$(nodist_hitex_SOURCES) $(nodist_hishrink_SOURCES) \
+	$(nodist_histretch_SOURCES) hiformat-tangle hitex-tangle \
+	hello.log rule.log $(nodist_pdftex_SOURCES) pdftex-final.ch \
+	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
+	cnfline.log partoken-ok.log partoken-xfail.log pdftests/fn*.* \
+	postV3.afm postV7.afm test-13.pdf test-13.xref test-15.pdf \
+	test-15.xref $(nodist_libluatex_sources) luaimage.* \
+	luajitimage.* $(nodist_xetex_SOURCES) xetex.web xetex-final.ch \
+	xetex-web2c xetex.p xetex.pool xetex-tangle bug73.fmt \
+	bug73.log bug73.out bug73.tex filedump.log filedump.out \
+	filedump.tex xetests/fn*.* $(omegaware_programs:=.c) \
+	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
+	$(omegaware_programs:=-web2c) ofm2opl.web opl2ofm.web \
+	ovf2ovp.web ovp2ovf.web omegaware/bad*.* \
+	omegaware/tests/charwdr.* omegaware/tests/charwdv.* \
+	omegaware/tests/xcheck* omegaware/tests/xlevel1.* \
+	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xpagenum.* \
+	omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* ocftest.* omegaware/tests/xinbmp* \
+	omegaware/tests/xoverbmp* omegaware/tests/xrealnum.* \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample*.out omegaware/tests/shortend.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	omegaware/tests/yrepeat* omegaware/tests/*yarabic* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
@@ -4499,7 +4502,7 @@ ptex_ch_srcs = \
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 \
 	$(ZLIB_INCLUDES) $(am__append_144)
 
@@ -4602,7 +4605,7 @@ uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/uppltotf.test uptexdir/uptftopl.test \
@@ -4792,7 +4795,8 @@ pdftex_ch_srcs = \
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
   pdftexdir/pdfimage.test pdftexdir/expanded.test \
-  pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test
+  pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
+  pdftexdir/wcfname.test
 
 ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
@@ -5507,7 +5511,8 @@ libxetex_prereq = xetexd.h $(xetex_dependencies)
 xetex_tests = \
 	xetexdir/xetex-filedump.test \
 	xetexdir/xetex-bug73.test \
-	xetexdir/xetex.test
+	xetexdir/xetex.test \
+	xetexdir/wcfname.test
 
 omegaware_programs = odvicopy odvitype otangle wofm2opl wopl2ofm wovf2ovp wovp2ovf
 ow_tangle = WEBINPUTS=$(srcdir)/omegaware $(buildenv) $(TANGLE)
@@ -22078,7 +22083,7 @@ ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
 ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
 	$(tie_c) ptex.web $(ptex_ch_srcs)
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-ptexdir/pver.log: ptex$(EXEEXT)
+ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
 #pweb_tests = \
 #	ptexdir/pbibtex.test \
 #	ptexdir/pdvitype.test \
@@ -22206,7 +22211,7 @@ uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie_m) tftopl.web tftopl.ch
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-uptexdir/upver.log uptexdir/upkcat.log: uptex$(EXEEXT)
+uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -22324,7 +22329,8 @@ pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
   pdftexdir/pdfimage.log pdftexdir/expanded.log \
-  pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log: pdftex$(EXEEXT)
+  pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
+  pdftexdir/wcfname.log: pdftex$(EXEEXT)
 
 # (end of pdftex.am)
 pdftexdir/ttf2afm.log: ttf2afm$(EXEEXT)
@@ -22467,7 +22473,8 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 xetex-final.ch: tie$(EXEEXT) $(xetex_ch_srcs)
 	$(tie_c) $(xetex_ch_srcs)
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
-xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log xetexdir/xetex.log: xetex$(EXEEXT)
+xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log xetexdir/xetex.log \
+  xetexdir/wcfname.log: xetex$(EXEEXT)
 
 # (end of xetex.am)
 odvicopy.c odvicopy.h: odvicopy-web2c

@@ -1,3 +1,10 @@
+2022-12-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test, am/uptex.am:
+	Add tests for file names with JIS X 0208 & UTF-8 characters
+	in `uptex --kanji-internal={euc,sjis,uptex}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+
 2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* uptex.defines, kanji.h, am/uptex.am:

@@ -237,6 +237,9 @@ DISTCLEANFILES += badvf.* tests/xptmr*.vpl
 DISTCLEANFILES += badvpl.* tests/yptmr*.*
 ## weave.test
 DISTCLEANFILES += pooltype.tex
+## {pdftexdir,xetexdir,ptexdir,uptexdir}/wcfname.test
+EXTRA_DIST += tests/fn-generate.perl
+EXTRA_DIST += tests/fn-utf8.txt tests/fn-euc.txt tests/fn-sjis.txt
 
 ## Test data
 ##

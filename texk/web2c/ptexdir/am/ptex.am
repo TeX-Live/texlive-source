@@ -171,9 +171,9 @@ EXTRA_DIST += \
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-ptexdir/pver.log: ptex$(EXEEXT)
+ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
 #pweb_tests = \
 #	ptexdir/pbibtex.test \
 #	ptexdir/pdvitype.test \
@@ -224,7 +224,7 @@ EXTRA_DIST += tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib tests/enc-
 	tests/enc.aux tests/enc-e.aux tests/enc-s.aux tests/enc-u.aux \
 	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl tests/enc-up.bbl
 DISTCLEANFILES += ptests/xexampl.aux ptests/xexampl.bbl ptests/xexampl.blg \
-	ptests/xenc*.*
+	ptests/xenc*.* ptests/fn*.*
 ## ptexdir/pbibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
 DISTCLEANFILES += ptests/memtest.bib ptests/memtest?.*

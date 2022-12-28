@@ -105,11 +105,13 @@ EXTRA_DIST += \
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
   pdftexdir/pdfimage.test pdftexdir/expanded.test \
-  pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test
+  pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
+  pdftexdir/wcfname.test
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
   pdftexdir/pdfimage.log pdftexdir/expanded.log \
-  pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log: pdftex$(EXEEXT)
+  pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
+  pdftexdir/wcfname.log: pdftex$(EXEEXT)
 
 EXTRA_DIST += $(pdftex_tests)
 
@@ -137,5 +139,8 @@ DISTCLEANFILES += cnfline.log
 ## partoken.test
 EXTRA_DIST += tests/partoken-ok.tex tests/partoken-xfail.tex
 DISTCLEANFILES += partoken-ok.log partoken-xfail.log
+
+## wcfname.test
+DISTCLEANFILES += pdftests/fn*.*
 
 # (end of pdftex.am)
