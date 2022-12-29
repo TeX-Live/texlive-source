@@ -1,6 +1,6 @@
 pdfTeX 3.141592653-2.6-1.40.25
 - changes:
-  - new primitive \pdfomitinfodict to omit /Info dictionary completely.
+  - new primitive \pdfinfoomitdict to omit /Info dictionary completely.
   - new primitive \pdfomitprocset to control omitting /ProcSet array;
     /ProcSet is included if this parameter is negative, or if this
     parameter is zero and pdftex is generating PDF 1.x output.

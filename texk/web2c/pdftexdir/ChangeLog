@@ -1,3 +1,9 @@
+2022-12-28  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (Display the whatsit...) <pdf_dest_node>: indicate
+	if a pdfdest is a struct (pdftex r888). Report from Ulrike Fischer,
+	https://tug.org/pipermail/pdftex/2022-December/009315.html
+
 2022-12-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test, am/pdftex.am:
