@@ -1,3 +1,9 @@
+2023-01-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h:
+	Remove unused function ptenc_get_command_line_args().
+	* version.ac, COPYRIGHT: Update copyright year.
+
 2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptexenc.c, ptexenc/ptexenc.h:
