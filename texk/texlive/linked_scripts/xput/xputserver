@@ -13,6 +13,8 @@
 # LaTeX version 2008/05/04 or later.
 #
 
+version=1.0.2
+
 _convert() {
   turbo=$1
   filename=$2
@@ -229,18 +231,27 @@ import() {
 }
 
 startturbo() {
-  file=$1
+  file="$(echo $1 | sed -e 's/\.pdflatex$//g')"
   if [ -f $file.tex ]; then
     tmpdir=$( mktemp -d 2>/dev/null )/xputturbo$( date "+%Y%m%d%H%M%S" )$RANDOM
     mkdir $tmpdir
 
     cp $file.tex $tmpdir/xputturbobatchoptimizexyz.tex
 
-    engine=$(echo $(ps -p $PPID -o command | sed -e 's/[A-Z]//g'| sed -e 's/ .*//g' | tr -d '\n'))
+    command=$(echo $(ps -p $PPID -o command ))
+    engine=$(echo $command | sed -e 's/^[A-Z ]*//g' | sed -e 's/ .*//g' | tr -d '\n')
+
+    case "$command" in
+      *-shell-escape*) 
+        shellescape="--shell-escape"
+        ;;
+    esac
+
     if [ "$engine" = "xelatex" ]; then
       nopdf="-no-pdf"
     fi
-    $engine -interaction=batchmode $nopdf --output-directory $tmpdir $tmpdir/xputturbobatchoptimizexyz.tex > /dev/null
+
+    $engine $shellescape -interaction=batchmode $nopdf --output-directory $tmpdir $tmpdir/xputturbobatchoptimizexyz.tex > /dev/null
 
     rm -rf $tmpdir
   fi
@@ -285,11 +296,73 @@ batchoptimize() {
   done
 }
 
+usage() {
+  cat <<HELP_USAGE
+This script is intended for internal use of the Xput LaTeX class.
+
+usage: xputserver getwidth % FILE
+       xputserver optimize % FILE % FILENAME % EXTENSION % ORIGINALWIDTH % ORIGINALHEIGHT % CROPLEFT % CROPRIGHT % CROPTOP % CROPBOTTOM % DENSITY % WIDTH % HEIGHT % DOWNSAMPLETHRESHOLD % UNSHARP % QUALITY
+       xputserver makeshadow % FILENAME % STANDARDDEVIATION % OPACITY % COLOR % WIDTH % HEIGHT % FRAMEWIDTH % FRAMEHEIGHT % MARGIN % BORDERRADIUS
+       xputserver start [% import % [GRAPHICSPATH]] [% turbo % JOBNAME]
+       xputserver batchoptimize % BATCHLIST
+       xputserver --help
+       xputserver --version
+       
+   FILE                 filename with extension (eg. IMG1234.JPEG)
+   FILENAME             filename without extension (eg. IMG1234)
+   EXTENSION            optimized file extension (.jpg|.png)
+   DENSITY              density in ppi (eg. 72)
+   DOWNSAMPLETHRESHOLD  downsample threshold (integer >= 100)
+   UNSHARP              unsharp filter (eg. 2x1)
+   QUALITY              quality (integer > 0, <= 100)
+   STANDARDDEVIATION    standard deviation (decimal > 0.0)
+   OPACITY              opacity (decimal >= 0.0, <= 1.0)
+   COLOR                color string (eg. pink)
+   GRAPHICSPATH         list of directories (eg. {images/}{tmp/})
+   JOBNAME              LaTeX filename without extension (eg. my-document)
+   BATCHLIST            a flat list of batch items where each batch item is
+                        a flat list of the 15 parameters required by the
+                        command \`xputserver optimize\`
+
+   All other parameters are length dimensions.
+   The command \`xputserver optimize\` expects integer values in the LaTeX
+   unit sp (eg. 65536).
+   The command \`xputserver makeshadow\` expects decimal values in a SVG
+   compatible unit (eg. 420.0pt).
+
+   Running \`xputserver getwidth\` returns the width in pixels for the given
+   image file.
+
+   Running \`xputserver optimize\` creates a cropped, rezised, sharpend and
+   compressed image and stores it in the cache directory.
+
+   Running \`xputserver makeshadow\` creates a shadow image and stores it in
+   the cache directory.
+
+   Running \`xputserver start\` with the import parameter triggers the image
+   import (see xputmanual.pdf chapter "Image Optimization").
+   Running the command with the parameter turbo, where the jobname is the
+   filename of the Xput document, processes the document in a special batch
+   mode, that creates a batch list and calls the command
+   \`xputserver batchoptimize\`.
+
+   Running \`xputserver batchoptimize\` optimizes multiple images in parallel.
+
+   Running \`xputserver --help\` returns this man page.
+
+   Running \`xputserver --version\` returns the Xput version.
+HELP_USAGE
+}
+
+if [ "$1" = --version ]; then
+  echo Xput Server $version
+  exit
+fi
+
 input=$( echo "$@" | sed -e 's/\\//g' | sed -e 's/ %/%/g' | sed -e 's/% /%/g' )
 IFS="%"
 set -- $input
 IFS=" "
-shift
 
 case "$1" in
 getwidth)
@@ -334,5 +407,5 @@ batchoptimize)
   echo ok
   ;;
 *)
-  echo 🤖 Hi, I serve the Xput LaTeX class.
+  usage
 esac
