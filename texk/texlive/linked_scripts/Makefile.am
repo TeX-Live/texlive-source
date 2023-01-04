@@ -99,6 +99,7 @@ texmf_shell_scripts = \
 	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
 	wordcount/wordcount.sh \
+	xput/xput \
 	xput/xputserver
 
 texmf_other_scripts = \

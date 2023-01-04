@@ -40,6 +40,7 @@ texosquery/texosquery-jre8.sh
 tikztosvg/tikztosvg
 typeoutfileinfo/typeoutfileinfo.sh
 wordcount/wordcount.sh
+xput/xput
 xput/xputserver
 a2ping/a2ping.pl
 accfonts/mkt1font
