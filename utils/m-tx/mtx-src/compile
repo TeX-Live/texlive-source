@@ -3,7 +3,7 @@
 
 scriptversion=2018-03-07.03; # UTC
 
-# Copyright (C) 1999-2021 Free Software Foundation, Inc.
+# Copyright (C) 1999-2023 Free Software Foundation, Inc.
 # Written by Tom Tromey <tromey@cygnus.com>.
 #
 # This program is free software; you can redistribute it and/or modify
@@ -256,6 +256,7 @@ EOF
     exit $?
     ;;
   cl | *[/\\]cl | cl.exe | *[/\\]cl.exe | \
+  clang-cl | *[/\\]clang-cl | clang-cl.exe | *[/\\]clang-cl.exe | \
   icl | *[/\\]icl | icl.exe | *[/\\]icl.exe )
     func_cl_wrapper "$@"      # Doesn't return...
     ;;
