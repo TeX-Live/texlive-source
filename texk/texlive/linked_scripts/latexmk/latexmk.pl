@@ -1,8 +1,44 @@
 #!/usr/bin/env perl
 use warnings;
 
+# ???!!! TO DO 9 Aug 2022:
+#     0. RETHINK warning listing handling etc, including warnings as
+#        errors, bad warnings as errors.  Must systematize.  Code is too split
+#        up.
+# 1b. ===> In any case, check treatment of runs that give an error.
+# 2. Think generally through logic of error handling.  E.g., error in
+#    xelatex: should dvipdfmx be run?  (Or with config. variable for the
+#    post-primaries.)  Currently it's run.  Probably correct: viewed file,
+#    if it can be made, can be useful for error diagnosis.  Also:
+#    consistency between direct making of pdf file and indirect.
+#    But abort after error can also be useful.
+#    DONE 3. Are post-primaries guaranteed to be run in correct order?
+#    YES: See definition of @post_primary.
+# 4. Clean up rdb_diagnose_changes2.
+# COMMENTED OUT FOR NOW 5. Perhaps, remove use of kpsewhich in case of disappeared files?
+# 6. Review rdb_make and rdb_make1 again.
+# 7. Start in -pvc when prior run gave error: There's an error report after
+#    the first make.  Same outside -pvc if have error run, then run
+#    latexmk; it reports error from previous run.
+# 9, Re %pass and rdb_rerun_needed: Perhaps remove outside_make_loop, and
+#    have separate subroutine for use by make_preview_continuous, and
+#    standard rdb_rerun_needed calls it and then does its source_rule
+#    stuff.
+# 10. Do I need to make rdb_user_changes better?
+#
+# OK 12. Is classification of post_primary watertight?  They are intended to
+#     be outside any loop.  Start with target files, and call encountered
+#     rules post_primary until a primary is encountered.  That assumes that
+#     on the pathway to target from primary, source files are not generated
+#     by non-primary rules.
+#     There's no requirement for post_primaries to be outside dependency
+#     loops. The make algorithm handles that. All that matters is that this
+#     commonly so, and therefore we are doing an appropriate ordering of
+#     examination of rules, by pre-primary, primary, post-primary.
+#     Post-primaries always have primary as a prerequisite for the source
+#     files. 
 
-## Copyright John Collins 1998-2022
+## Copyright John Collins 1998-2023
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -43,8 +79,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.78';
-$version_details = "$My_name, John Collins, 18 Nov. 2022. Version $version_num";
+$version_num = '4.79';
+$version_details = "$My_name, John Collins, 7 Jan. 2023. Version $version_num";
 
 use Config;
 use File::Basename;
@@ -81,6 +117,10 @@ use Cwd;
 use Cwd "abs_path"; 
 use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd.
 use Digest::MD5;
+
+# **WARNING**: Don't import time; that overrides core function time(), and messes up
+#  
+use Time::HiRes;
 
 #################################################
 #
@@ -1304,7 +1344,12 @@ $analyze_input_log_always = 1; # Always analyze .log for input files in the
                         # To keep backward compatibility with older versions
                         # of latexmk, the default is to set
                         # $analyze_input_log_always to 1.
-
+$fls_uses_out_dir = 0;  # Whether fls file is to be in out directory (as with
+                        # pre-Oct-2020 MiKTeX), or in aux directory (as with
+                        # newer versions of MiKTeX).
+                        # If the implementation of *latex puts the fls file in
+                        # the other directory, I will copy it to the directory
+                        # I am configured to use.
 
 
 # Which kinds of file do I have requests to make?
@@ -1379,6 +1424,21 @@ $pvc_timeout_mins = 30;
 # Timing information
 # Whether to report processing time: 
 our $show_time = 0;
+
+# Whether times computed are clock times (HiRes) since Epoch, or are
+# processing times for this process and child processes, as reported by
+# times().  Second is the best, if accurate.  But on MSWin32, times()
+# appears not to included subprocess times, so we use clock time instead.
+our $times_are_clock = ($^O eq "MSWin32" );
+
+# Allowance for different granularity in time since Epoch and file mtime.
+# Needed in testing whether a file was generated during a run of a program.
+# FAT file system: 2 sec granularity. Others 1 sec or less.
+# Perl CORE's mtime in stat: 1 sec.
+# Perl CORE's time(): 1 sec.  Time::HiRes::time(): Much less than 1 sec.
+our $filetime_slop = 2;
+
+
 # Data for 1 run and global (ending in '0'):
 our ( $processing_time1, $processing_time0, @timings1, @timings0);
 &init_timing_all;
@@ -2206,7 +2266,7 @@ if ( $bad_options > 0 ) {
     &exit_help( "Bad options specified" );
 }
 
-print "$My_name: This is $version_details, version: $version_num.\n",
+print "$My_name: This is $version_details.\n",
    unless $silent;
 
 &config_to_mine;
@@ -2691,15 +2751,12 @@ foreach $filename ( @file_list )
                     );
         &rdb_set_rule_net;
     }
+
     # At this point, the file and rule databases are correctly initialized
     # either from the fdb_latexmk database (corresponding to the state at
     # the end of the previous run of latexmk), or from default initialization,
     # assisted by dependency information from log files about previous
     # run, if the log file exists.
-    # PERHAPS if fdb_latexmk doesn't exist but appropriate output files exist,
-    #   we could assume there was a previous run that completed.  Then new
-    #   run of *latex etc isn't needed until files are changed; then we
-    #   should set the file data from the on-disk state.
 
     if ( $cleanup_mode ) { &do_small_cleanup; }
     if ( $cleanup_mode == 1 ) { &do_extra_cleanup; }
@@ -2709,16 +2766,13 @@ foreach $filename ( @file_list )
         # No aux file => set up trivial aux file 
         #    and corresponding fdb_file.  Arrange them to provoke one run 
         #    as minimum, but no more if actual aux file is trivial.
-        #    (Useful on big files without cross references.)
+        #    (Useful on short simple files.)
         # If aux file doesn't exist, then any fdb file is surely
-        #    wrong.
-        # Previously, I had condition for this as being both aux and
-        #    fdb files failing to exist.  But it's not obvious what to
-        #    do if aux exists and fdb doesn't.  So I won't do anything.
+        #    wrong. So updating it to current state is sensible.
+        print( "No existing .aux file, so I'll make a simple one, and require run of *latex.\n")
+            unless $silent;
         &set_trivial_aux_fdb;
     }
-
-
 
     if ($go_mode == 3) {
         # Force primaries to be remade.
@@ -3255,13 +3309,16 @@ sub rdb_initialize_rules {
     }
     #   ???!!!  REVISE
     foreach my $rule ( keys %rule_template ) {
-        my ( $cmd_type, $ext_cmd, $int_cmd, $source, $dest, $base, $DUMMY, $PA_extra_gen ) = @{$rule_template{$rule}};
+        my ( $cmd_type, $ext_cmd, $int_cmd, $source, $dest, $base,
+             $DUMMY, $PA_extra_gen, $PA_extra_source )
+            = @{$rule_template{$rule}};
         if ( ! $PA_extra_gen ) { $PA_extra_gen = []; }
+        if ( ! $PA_extra_source ) { $PA_extra_source = []; }
         my $needs_making = 0;
         # Substitute in the filename variables, since we will use
         # those for determining filenames.  But delay expanding $cmd 
         # until run time, in case of changes.
-        foreach ($base, $source, $dest, @$PA_extra_gen ) {
+        foreach ($base, $source, $dest, @$PA_extra_gen, @$PA_extra_source ) {
             s/%R/$root_filename/g;
             s/%Y/$aux_dir1/;
             s/%Z/$out_dir1/;
@@ -3272,7 +3329,7 @@ sub rdb_initialize_rules {
         }
         rdb_create_rule( $rule, $cmd_type, $ext_cmd, $int_cmd, $DUMMY, 
                          $source, $dest, $base,
-                         $needs_making, undef, undef, 1, $PA_extra_gen );
+                         $needs_making, undef, undef, 1, $PA_extra_gen, $PA_extra_source );
     } # End rule iteration
 
     # At this point, all the rules are active.
@@ -3356,11 +3413,11 @@ sub rdb_set_rule_templates {
     my $PA_update = ['do_update_view', $viewer_update_method, $viewer_update_signal, 0, 1];
 
     %rule_list = (
-        'dvilualatex'  => [ 'primary',  "$dvilualatex",  '',      "%T",        $dvi_name,  "%R",   1, [$log_name] ],
-        'latex'     => [ 'primary',  "$latex",     '',            "%T",        $dvi_name,  "%R",   1, [$log_name] ],
-        'lualatex'  => [ 'primary',  "$lualatex",  '',            "%T",        $pdf_name,  "%R",   1, [$log_name] ],
-        'pdflatex'  => [ 'primary',  "$pdflatex",  '',            "%T",        $pdf_name,  "%R",   1, [$log_name] ],
-        'xelatex'   => [ 'primary',  "$xelatex",   '',            "%T",        $xdv_name,  "%R",   1, [$log_name] ],
+        'dvilualatex'  => [ 'primary',  "$dvilualatex",  '',      "%T",        $dvi_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
+        'latex'     => [ 'primary',  "$latex",     '',            "%T",        $dvi_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
+        'lualatex'  => [ 'primary',  "$lualatex",  '',            "%T",        $pdf_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
+        'pdflatex'  => [ 'primary',  "$pdflatex",  '',            "%T",        $pdf_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
+        'xelatex'   => [ 'primary',  "$xelatex",   '',            "%T",        $xdv_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
         'dvipdf'    => [ 'external', "$dvipdf",    'do_viewfile', $dvi_final,  $pdf_name,  "%Z%R", 1 ],
         'xdvipdfmx' => [ 'external', "$xdvipdfmx", 'do_viewfile', $xdv_final,  $pdf_name,  "%Z%R", 1 ],
         'dvips'     => [ 'external', "$dvips",     'do_viewfile', $dvi_final,  $ps_name,   "%Z%R", 1 ],
@@ -3576,10 +3633,7 @@ sub set_trivial_aux_fdb {
     fprint8 $aux_file, "\\gdef \\\@abspage\@last{1}\n";
     close($aux_file);
 
-    if (!$silent) { print "After making new aux file, require run of *latex.\n"; }
     foreach my $rule (keys %possible_primaries ) { 
-        rdb_ensure_file( $rule, $texfile_name );
-        rdb_ensure_file( $rule, $aux_main );
         rdb_one_rule(  $rule,  
                        sub{ $$Pout_of_date = 1; }
                     );
@@ -4235,9 +4289,17 @@ sub process_rc_file {
     }
     push @rc_files_read, $rc_file;
 
-    # I could use the do command of perl, but the preceeding -r test
-    # to get good diagnostics gets the wrong result under cygwin
-    # (e.g., on /cygdrive/c/latexmk/LatexMk)
+    # I could use the do function of perl, but:
+    # 1. The preceeding -r test (in an earlier version of latexmk) to get
+    #    good diagnostics gets the wrong result under cygwin (e.g., on
+    #    /cygdrive/c/latexmk/LatexMk).  I forget now (Nov. 2022) what the
+    #    problem was exactly.
+    # 2. The do function searches directories in @INC, which is not wanted
+    #    here, where the aim is to execute code in a specific file in a
+    #    specific directory.  In addition, '.' isn't in the default @INC in
+    #    current versions of Perl (Nov. 2022), so "do latexmkrc;" for
+    #    latexmkrc in cwd fails.
+    # So I'll read the rc file and eval its contents.
     if ( !-e $rc_file ) {
         warn "$My_name: The rc-file '$rc_file' does not exist\n";
         return 1;
@@ -4252,6 +4314,12 @@ sub process_rc_file {
         # Read all contents of file into $code:
         { local $/ = undef; $code = <$RCH>;}
         close $RCH;
+        if (! is_valid_utf8($code) ) {
+            die "$My_name: Rc-file '$rc_file' is not in UTF-8 coding. You should save\n",
+                "   it in UTF-8 coding for use with current latexmk.\n";
+        }
+        my $BOM = Encode::encode( 'UTF-8', "\N{U+FEFF}" );
+        $code =~ s/^$BOM//;
         eval $code;
     }
     else {
@@ -4653,8 +4721,8 @@ sub view_file_via_temporary {
 #**************************************************
 
 sub check_biber_log {
-    # Check for biber warnings:
-    # Usage: check_biber_log( base_of_biber_run, \@biber_source )
+    # Check for biber warnings, and report source files.
+    # Usage: check_biber_log( base_of_biber_run, \@biber_datasource )
     # return 0: OK;
     #        1: biber warnings;
     #        2: biber errors;
@@ -4664,12 +4732,11 @@ sub check_biber_log {
     #        6: missing file, one of which is control file
     #       10: only error is missing \citation commands.
     #       11: Malformed bcf file (normally due to error in pdflatex run)
-    # Side effect: add source files @biber_source
-    # N.B. @biber_source is already initialized by caller to contain
-    #   whatever source files (currently .bcf) it already knows about.
+    # Side effect: add source files @biber_datasource
+    # N.B. @biber_datasource is already initialized by caller.
     #   So do **not** initialize it here.
     my $base = $_[0];
-    my $Pbiber_source = $_[1];
+    my $Pbiber_datasource = $_[1];
     my $blg_name = "$base.blg";
     open( my $blg_file, "<", $blg_name )
       or return 3;
@@ -4747,7 +4814,7 @@ sub check_biber_log {
                 # copy of a remote file).
                 # So I have included a condition above that the file must
                 # exist to be included in the source-file list.
-                push @$Pbiber_source, $file;
+                push @$Pbiber_datasource, $file;
             }
         }
         elsif ( /> INFO - WARNINGS: ([\d]+)\s*$/ ) {
@@ -4758,14 +4825,14 @@ sub check_biber_log {
         }
     }
     close $blg_file;
-    @$Pbiber_source = uniqs( @$Pbiber_source );
+    @$Pbiber_datasource = uniqs( @$Pbiber_datasource );
     @not_found = uniqs( @not_found );
-    push @$Pbiber_source, @not_found;
+    push @$Pbiber_datasource, @not_found;
 
     if ($control_file_malformed){return 11;} 
 
-    if ( ($#not_found < 0) && ($#$Pbiber_source >= 0) ) {
-        print "$My_name: Found biber source file(s) [@$Pbiber_source]\n"
+    if ( ($#not_found < 0) && ($#$Pbiber_datasource >= 0) ) {
+        print "$My_name: Found biber source file(s) [@$Pbiber_datasource]\n"
         unless $silent;
     }
     elsif ( ($#not_found == 0) && ($not_found[0] =~ /\.bib$/) ) {
@@ -4988,7 +5055,14 @@ sub set_names {
     # Note: Only MiKTeX allows out_dir ne aux_dir. It puts
     #       .fls file in out_dir, not aux_dir, which seems
     #       not natural.
-    $fls_name = "%Z%R.fls";
+    if ($fls_uses_out_dir) {
+        $fls_name = "%Z%R.fls";
+        $fls_name_alt = "%Y%R.fls";
+    }
+    else {
+        $fls_name = "%Y%R.fls";
+        $fls_name_alt = "%Z%R.fls";
+    }
     $dvi_name  = "%Z%R.dvi";
     $dviF_name = "%Z%R.dviF";
     $ps_name   = "%Z%R.ps";
@@ -5000,7 +5074,7 @@ sub set_names {
     ## puts .xdv file in aux_dir.  So we must use %Y not %Z:
     $xdv_name   = "%Y%R.xdv";
 
-    foreach ( $aux_main, $log_name, $fdb_name, $fls_name,
+    foreach ( $aux_main, $log_name, $fdb_name, $fls_name, $fls_name_alt,
               $dvi_name, $ps_name, $pdf_name, $xdv_name, $dviF_name, $psF_name ) {
         s/%R/$root_filename/g;
         s/%Y/$aux_dir1/;
@@ -5022,24 +5096,164 @@ sub set_names {
 
 #**************************************************
 
-sub move_out_files_from_aux {
-    # Move output and fls files to out_dir
-    # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
-    foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps', 'synctex', 'synctex.gz' ) {
-        # Include fls file, because MiKTeX puts it in out_dir, rather than
-        # aux_dir, which would seem more natural.  We must maintain
-        # compatibility.
-        my $from =  "$aux_dir1$root_filename.$ext";
-        my $to = "$out_dir1$root_filename.$ext" ;
-        if ( test_gen_file( $from ) ) {
-            if (! $silent) { print "$My_name: Moving '$from' to '$to'\n"; }
-            my $ret = move( $from, $to );
-            if ( ! $ret ) { die "  That failed, with message '$!'\n";}
+sub correct_aux_out_files {
+    # Deal with situations after a *latex run where files are in different
+    # directories than expected (specifically aux v. output directory).
+    # Do minimal fix ups to allow latexmk to analyze dependencies with log
+    # and fls files in expected places
+    if ( $emulate_aux && ($aux_dir ne $out_dir) ) {
+        # Move output and fls files to out_dir
+        # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
+        foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps', 'synctex', 'synctex.gz' ) {
+            if ( ($ext eq 'fls') && ! $fls_uses_out_dir ) {next;}
+            my $from =  "$aux_dir1$root_filename.$ext";
+            my $to = "$out_dir1$root_filename.$ext" ;
+            if ( test_gen_file( $from ) ) {
+                if (! $silent) { print "$My_name: Moving '$from' to '$to'\n"; }
+                my $ret = move( $from, $to );
+                if ( ! $ret ) { die "  That failed, with message '$!'\n";}
+            }
         }
     }
-}
 
-#***************************************************
+    # Deal with log file in unexpected place (e.g., lack of support by *latex
+    # of -aux-directory option.
+    &find_set_log;
+
+    # Fix ups on fls file:
+    if ($recorder) {
+        # Deal with following special cases:
+        #   1. Some implemenations of *latex give fls files of name latex.fls
+        #      or pdflatex.fls instead of $root_filename.fls.
+        #   2. In some implementations, the writing of the fls file (memory
+        #      of old implementations) may not respect the -output-directory
+        #      and -aux-directory options.
+        #   3. Implementations don't agree on which directory (aux or output)
+        #      the fls is written to.  (E.g., MiKTeX changed its behavior in
+        #      Oct 2020.)
+        #   4. Some implementations (TeXLive) don't use -aux-directory.
+        # Situation on implementations, when $emulate_aux is off:
+        #   TeXLive: implements -output-directory only, and gives a non-fatal
+        #      warning for -aux-directory. Symptoms:
+        #         .log, .fls, .aux files written to intended output directory.
+        #         .log file reports TeXLive implementation
+        #     Correct reaction: Turn $emulate_aux on and rerun *latex.  The
+        #         variety of files that can be written by packages is too
+        #         wide to allow simple prescription of a fix up.
+        #  MiKTeX: Pre-Oct-2020: fls file written to out dir.
+        #          Post-Oct-2020: fls file written to aux dir.
+        #  Other names:
+        #  Some older versions wrote pdflatex.fls or latex.fls
+        #  Current TeXLive: the fls file is initially written with the name
+        #    <program name><process number>.fls, and then changed to the
+        #   correct name.  Under some error conditions, the change of name
+        #   does not happen.
+
+        my $std_fls_file = $fls_name;
+        my @other_fls_names = ( );
+        if ( $rule =~ /^pdflatex/ ) {
+            push @other_fls_names, "pdflatex.fls";
+        }
+        else {
+            push @other_fls_names, "latex.fls";
+        }
+        if ( $aux_dir1 ne '' ) {
+            push @other_fls_names, "$root_filename.fls";
+            # The fls file may be in the opposite directory to the
+            # one configured by $fls_uses_out_dir:
+            push @other_fls_names, $fls_name_alt;
+        }
+        # Find the first non-standard fls file and copy it to the standard
+        # place. But only do this if the file time is compatible with being
+        # generated in the current run, and if the standard fls file hasn't
+        # been made in the current run,  as tested by the use of
+        # test_gen_file; that avoids problems with fls files left over from
+        # earlier runs with other versions of latex.
+        if ( ! test_gen_file( $std_fls_file ) ) {
+            foreach my $cand (@other_fls_names) {
+                if ( test_gen_file( $cand ) ) {
+                    print "$My_name: Copying '$cand' to '$std_fls_file'.\n";
+                    copy $cand, $std_fls_file;
+                    last;
+                }
+            }
+        }
+        if ( ! test_gen_file( $std_fls_file ) ) {
+            warn "$My_name: fls file doesn't appear to have been made.\n";
+        }
+    }
+} # END correct_aux_out_files
+
+#-----------------
+
+sub find_set_log {
+    # Locate the log file, generated on this run.
+    # It should be in aux_dir. But:
+    #  1. With a sufficiently severe error in *latex, no log file was generated.
+    #  2. With aux_dir ne out_dir and emulate_aux off and a (TeXLive) *latex
+    #     that doesn't support aux_dir, the log file is in out_dir.
+    #  3. If the specified command has no %O or if *latex doesn't support
+    #     out_dir (hence not TeXLive and not MiKTeX), the log file would
+    #     be in cwd.
+    #
+    #  3 is fatal error.
+    #  2 is handled by turning emulate_aux on, after which next run of *latex
+    #    handles problem.
+    #  1 is like any other error.
+    #  4 is treated like 1 (log file not found).
+    #
+    # Returns 
+    #    0 log file not found;
+    #    1 log file in aux_dir i.e., correct place;
+    #    2 log file **not** in aux_dir but in out_dir,
+    #      emulate_aux turned on, commands fixed,
+    #      and log file copied to aux_dir
+    # If the log file is found in cwd, report it and give fatal error.
+    
+    my $where_log = -1; # Nothing analyzed yet
+
+    if ( test_gen_file( "$aux_dir1$root_filename.log" ) ) {
+        # .log file is in expected place.
+        $where_log = 1;
+    }
+    elsif ( (! $emulate_aux) && test_gen_file( "$out_dir1$root_filename.log" ) ) {
+        warn "$My_name: .log file in '$out_dir' instead of expected '$aux_dir'\n",
+             "   But emulate_aux is off.  So I'll turn it on.\n",
+             "   I'll copy the log file to the correct place.\n",
+             "   The next run of *latex **SHOULD** not have this problem.\n";
+        copy( "$out_dir1$root_filename.log", "$aux_dir1$root_filename.log" );
+        $where_log = 2;
+        $emulate_aux = 1;
+        $emulate_aux_switched = 1;
+        # Fix up commands to have fudged use of directories for
+        # use with non-aux-dir-supported *latex engines.
+        foreach ( $$Pext_cmd ) {
+            s/ -output-directory=[^ ]*(?= )//g;
+            s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
+        }
+    }
+    elsif ( test_gen_file( "$root_filename.log" ) ) {
+        # .log file is not in out_dir nor in aux_dir, but is in cwd.
+        # Presumably there is a configuration error
+        # that prevents the directories from being used by latex.
+        die "$My_name: The log file found was '$root_filename.log' instead of\n",
+            "  '$aux_dir1$root_filename.log'.  Probably a configuration error\n",
+            "  prevented the use of the -aux-directory and/or the -output-directory\n",
+            "  options with the *latex command.\n",
+            "  I'll stop.\n";
+    }
+    else {
+        # No .log file found
+        $failure = 1;
+        $$Plast_result = 2;
+        $where_log = 0;
+        $failure_msg 
+            = "*LaTeX didn't generate the expected log file '$log_name'\n";
+    }
+    return $where_log;
+} #END find_set_log
+
+#************************************************************
 
 sub parse_log {
 # Use: parse_log( log_file_name,
@@ -5872,75 +6086,6 @@ sub get_log_file {
 
 #=====================================
 
-sub find_set_log {
-    # Locate the log file, generated on this run.
-    # It should be in aux_dir. But:
-    #  1. With a sufficiently severe error in *latex, no log file was generated.
-    #  2. With aux_dir ne out_dir and emulate_aux off and a (TeXLive) *latex
-    #     that doesn't support aux_dir, the log file is in out_dir.
-    #  3. If the specified command has no %O or if *latex doesn't support
-    #     out_dir (hence not TeXLive and not MiKTeX), the log file would
-    #     be in cwd.
-    #
-    #  3 is fatal error.
-    #  2 is handled by turning emulate_aux on, after which next run of *latex
-    #    handles problem.
-    #  1 is like any other error.
-    #  4 is treated like 1 (log file not found).
-    #
-    # Returns 
-    #    0 log file not found;
-    #    1 log file in aux_dir i.e., correct place;
-    #    2 log file **not** in aux_dir but in out_dir,
-    #      emulate_aux turned on, commands fixed,
-    #      and log file copied to aux_dir
-    # If the log file is found in cwd, report it and give fatal error.
-    
-    my $where_log = -1; # Nothing analyzed yet
-
-    if ( test_gen_file( "$aux_dir1$root_filename.log" ) ) {
-        # .log file is in expected place.
-        $where_log = 1;
-    }
-    elsif ( (! $emulate_aux) && test_gen_file( "$out_dir1$root_filename.log" ) ) {
-        warn "$My_name: .log file in '$out_dir' instead of expected '$aux_dir'\n",
-             "   But emulate_aux is off.  So I'll turn it on.\n",
-             "   I'll copy the log file to the correct place.\n",
-             "   The next run of *latex **SHOULD** not have this problem.\n";
-        copy( "$out_dir1$root_filename.log", "$aux_dir1$root_filename.log" );
-        $where_log = 2;
-        $emulate_aux = 1;
-        $emulate_aux_switched = 1;
-        # Fix up commands to have fudged use of directories for
-        # use with non-aux-dir-supported *latex engines.
-        foreach ( $$Pext_cmd ) {
-            s/ -output-directory=[^ ]*(?= )//g;
-            s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
-        }
-    }
-    elsif ( test_gen_file( "$root_filename.log" ) ) {
-        # .log file is not in out_dir nor in aux_dir, but is in cwd.
-        # Presumably there is a configuration error
-        # that prevents the directories from being used by latex.
-        die "$My_name: The log file found was '$root_filename.log' instead of\n",
-            "  '$aux_dir1$root_filename.log'.  Probably a configuration error\n",
-            "  prevented the use of the -aux-directory and/or the -output-directory\n",
-            "  options with the *latex command.\n",
-            "  I'll stop.\n";
-    }
-    else {
-        # No .log file found
-        $failure = 1;
-        $$Plast_result = 2;
-        $where_log = 0;
-        $failure_msg 
-            = "*LaTeX didn't generate the expected log file '$log_name'\n";
-    }
-    return $where_log;
-} #END find_set_log
-
-#************************************************************
-
 sub parse_fls {
     my $start_time = processing_time();  
     my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write, $Ppwd_latex ) = @_;
@@ -6044,31 +6189,44 @@ sub parse_fls {
             if ( (exists $$Poutputs{$file}) && (! exists $$Pinputs{$file}) ) {
                 $$Pfirst_read_after_write{$file} = 1;
             }
-            # Take precautions against main destination file being listed as INPUT file
-            # This results, e.g., from hyperxmp (2020/10/05 v. 5.6) reading the pdf file
-            # size, and triggers an infinite loop, unless we omit the pdf file from the 
-            # list of input files.  (Hyperxmp v. 5.7 2010/11/01 doesn't give this problem.)
-            # There's a related issue with the log file, when acmart.cls is used with
-            # xelatex.  (I don't work out what causes this, e.g., what package.)
-            # Test on basenames rather than full name to evade in a simple-minded way
-            # alias issues with the directory part.
+            # Take precautions when the main destination file (or pdf file) or the log
+            # file are listed as INPUT files in the .fls file.
+            # At present, the known cases are caused by hyperxmp, which reads file metadata
+            # for certain purposes (e.g., setting a current date and time, or finding the
+            # pdf file size).  These uses are legitimate, but the files should not be
+            # treated as genuine source files for *latex.
+            # Note that both the pdf and log files have in their contents strings for
+            # time and date, so in general their contents don't stabilize between runs
+            # of *latex.  Hence adding them to the list of source files on the basis of
+            # their appearance in the list of input files in the .fls file would cause
+            # an incorrect infinite loop in the reruns of *latex.
+            #
+            # Older versions of hyperxmp (e.g., 2020/10/05 v. 5.6) reported the pdf file
+            # as an input file.
+            # The current version when used with xelatex reports the .log file as an
+            # input file. 
+            #
+            # The test for finding the relevant .pdf (or .dvi ...) and .log files is
+            # on basenames rather than full name to evade in a simple-minded way
+            # alias issues with the directory part:
             if ( basename($file) eq $pdf_base ) {
                 warn "$My_name: !!!!!!!!!!! Fls file lists main pdf **output** file as an input\n",
-                     "   file for rule '$rule'. I won't treat as a source file, since that leads\n",
-                     "   to an infinite loop.\n",
-                    "    This can be caused by the hyperxmp package in an old version.\n",
-                    "    You should update to hyperxmp in ver. 5.7 or higher\n";
+                     "   file for rule '$rule'. I won't treat as a source file, since that can\n",
+                     "   lead to an infinite loop.\n",
+                     "   This situation can be caused by the hyperxmp package in an old version,\n",
+                     "   in which case you can ignore this message.\n";
             } elsif ( basename($file) eq $out_base ) {
                 warn "$My_name: !!!!!!!!!!! Fls file lists main **output** file as an input\n",
-                     "   file for rule '$rule'. I won't treat as a source file, since that leads\n",
-                     "   to an infinite loop.\n",
-                    "    This can be caused by the hyperxmp package in an old version.\n",
-                    "    You should update to hyperxmp in ver. 5.7 or higher\n";
+                     "   file for rule '$rule'. I won't treat as a source file, since that can\n",
+                     "   lead to an infinite loop.\n",
+                     "   This situation can be caused by the hyperxmp package in an old version,\n",
+                     "   in which case you can ignore this message.\n";
             } elsif ( basename($file) eq $log_base ) {
-                warn "$My_name: !!!!!!!!!!! Fls file lists log file as an input\n",
-                     "   file for rule '$rule'. I won't treat it as a source file, since\n",
-                    "   there appear to be no good uses for it.\n",
-                    "   This behavior happens at least under acmart.cls with xelatex\n";
+                warn "$My_name: !!!!!!!!!!! Fls file lists log file as an input file for\n",
+                     "   rule '$rule'. I won't treat it as a source file.\n",
+                     "   This situation can occur when the hyperxmp package is used with\n",
+                     "   xelatex; the package reads the .log file's metadata to set current\n",
+                     "   date and time.  In this case you can safely ignore this message.\n";
             } else {
                 $$Pinputs{$file} = 1;
             }
@@ -6298,14 +6456,14 @@ sub parse_aux {
     return 1;
 } #END parse_aux
 
-
-
 #************************************************************
 
 sub parse_aux1
 # Parse single aux file for bib files.  
 # Usage: &parse_aux1( aux_file_name )
-#   Append newly found bib_filenames in @$Pbib_files, already 
+#   Append newly found names of .bib files to %bib_files, already
+#        initialized/in use.
+#   Append newly found names of .bst files to %bst_files, already
 #        initialized/in use.
 #   Append aux_file_name to @$Paux_files if aux file opened
 #   Recursively check \@input aux files
@@ -6364,6 +6522,70 @@ AUX_LINE:
 } #END parse_aux1
 
 #************************************************************
+
+sub parse_bcf {
+    # Parse bcf file for bib and other source files.  
+    # Usage: parse_bcf( $bcf_file, \@new_bib_files )
+    # If can't open bcf file, then
+    #    Return 0 and leave @new_bib_files empty
+    # Else set @new_bib_files from information in the
+    #       bcf files 
+    #    And:
+    #    Return 1 if no problems
+    #    Return 2 with @new_bib_files empty if there are no relevant source
+    #      file lines.
+    #    Return 3 if I couldn't locate all the bib_files
+    # A full parse of .bcf file as XML would need an XML parsing module, which
+    # is not in a default installation of Perl, notably in TeXLive's perl for
+    # Win32 platform.  To avoid requiring the installation, just search the
+    # .bcf file for the relevant lines.
+
+    my $bcf_file = $_[0];
+    my $Pbib_files = $_[1];
+    # Default return value
+    @$Pbib_files = ();
+    # Map file specs (from datasource lines) to actual filenames:
+    local %bib_files = ();
+    my @not_found_bib = ();
+
+    open(my $bcf_fh, $bcf_file)
+    || do {
+       warn "$My_name: Couldn't find bcf file '$bcf_file'\n";
+       return 0; 
+    };
+    while ( <$bcf_fh> ) {
+        $_ = utf8_to_mine($_);
+        if ( /^\s*<bcf:datasource type=\"file\"\s+datatype=\"bibtex\"\s+glob=\"false\">(.+)<\/bcf:datasource>/ ) {
+            $bib_files{$1} = '';
+        }
+    }
+    close $bcf_fh;
+
+    find_files( \%bib_files, 'bib', 'bib', $Pbib_files, \@not_found_bib );
+    if ( $#{$Pbib_files} == -1 ) {
+        # 
+        print "$My_name: No .bib files listed in .bcf file '$bcf_file'\n";
+        return 2;
+    }
+
+    show_array( "$My_name: Bibliography file(s) form .bcf file:", @$Pbib_files )
+        unless $silent;
+    if (@not_found_bib) {
+        show_array(
+            "Bib file(s) not found in search path:",
+            @not_found_bib );
+    }
+    if (@not_found_bib) {
+        if ($force_mode) {
+            warn "$My_name: Failed to find one or more bibliography files in search path.\n";
+            warn "====BUT force_mode is on, so I will continue. There may be problems ===\n";
+        }
+        return 3;
+    }
+    return 1;
+
+} #END parse_bcf
+
 
 #************************************************************
 #************************************************************
@@ -7204,33 +7426,35 @@ sub rdb_set_latex_deps {
         my @new_bib_files = ();
         my @new_aux_files = ();
         my @new_bst_files = ();
-        my @biber_source = ( "$bbl_base.bcf" );
+        my $bcf_file =  "$bbl_base.bcf";
         my $bib_program = 'bibtex';
-        if ( test_gen_file( "$bbl_base.bcf" ) ) {
-             $bib_program = 'biber';
+        if ( test_gen_file( $bcf_file ) ) {
+            $bib_program = 'biber';
         }
         my $from_rule = "$bib_program $bbl_base";
         print "=======  Dealing with '$from_rule'\n" if ($diagnostics);
         # Don't change to use activation and deactivation here, rather than
         # creation and removal of rules.  This is because rules are to be
-        # created on the fly here with details corresponding to current. So
-        # activating a previously inactive rule, which is out-of-date, may
-        # cause trouble.
+        # created on the fly here with details corresponding to current state
+        # of .tex source file(s). So activating a previously inactive rule,
+        # which is out-of-date, may cause trouble.
         if ($bib_program eq 'biber') {
-            check_biber_log( $bbl_base, \@biber_source );
             # Remove OPPOSITE kind of bbl generation:
             rdb_remove_rule( "bibtex $bbl_base" );
+
+            parse_bcf( $bcf_file, \@new_bib_files );
         }
         else {
-            parse_aux( "$bbl_base.aux", \@new_bib_files, \@new_aux_files, \@new_bst_files );
             # Remove OPPOSITE kind of bbl generation:
             rdb_remove_rule( "biber $bbl_base" );
+            
+            parse_aux( "$bbl_base.aux", \@new_bib_files, \@new_aux_files, \@new_bst_files );
         }
         if ( ! rdb_rule_exists( $from_rule ) ){
             print "   ===Creating rule '$from_rule'\n" if ($diagnostics);
             if ( $bib_program eq 'biber' ) {
                 rdb_create_rule( $from_rule, 'external', $biber, '', 1,
-                                 "$bbl_base.bcf", $bbl_file, $bbl_base, 1, 0, 0, 1, [ "$bbl_base.blg" ]  );
+                                 $bcf_file, $bbl_file, $bbl_base, 1, 0, 0, 1, [ "$bbl_base.blg" ]  );
             }
             else {
                 rdb_create_rule( $from_rule, 'external', $bibtex, 'run_bibtex', 1,
@@ -7242,7 +7466,7 @@ sub rdb_set_latex_deps {
         rdb_one_rule( $from_rule, sub { %old_sources = %$PHsource; } );
         my @new_sources = ( @new_bib_files, @new_aux_files, @new_bst_files );
         if ( $bib_program eq 'biber' ) {
-            push @new_sources, @biber_source;
+            push @new_sources, $bcf_file;
         }
         foreach my $source ( @new_sources ) {
             print "  ===Source file '$source' for '$from_rule'\n"
@@ -7468,10 +7692,12 @@ sub test_gen_file {
     #    and for those TeX engines (not MiKTeX) that put \openout lines in log
     #    file.
     # b. By the file existing and being at least as new as the system
-    #    time at the start of the run. 
+    #    time at the start of the run.  But make an allowance ($filetime_slop) for
+    #    differences in granularity between reported system time and reported
+    #    file mtimes.
     my $file = shift;
     return exists $generated_log{$file} || $generated_fls{$file}
-           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time));
+           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time - $filetime_slop ));
 }
 
 #************************************************************
@@ -8393,16 +8619,12 @@ sub rdb_make1 {
         if ($bibtex_use == 0) {
            $bibtex_not_run = 2;
         }
-        else {
-            if ( $rule =~ /^biber/ ) {
-                warn "$My_name: ???!!!==== Using biber OMITTING TEST on missing bib files\n";
-            }
-            elsif ( ($bibtex_use == 1) || ($bibtex_use == 1.5) ) {
-                foreach ( keys %$PHsource ) {
-                    if ( ( /\.bib$/ ) && (! -e $_) ) {
-                        push @missing_bib_files, $_;
-                        $bibtex_not_run = 1;
-                    }
+        elsif ( ($bibtex_use == 1) || ($bibtex_use == 1.5) ) {
+            # Conditional run of bibtex (or biber) depending on existence of .bib file.
+            foreach ( keys %$PHsource ) {
+                if ( ( /\.bib$/ ) && (! -e $_) ) {
+                    push @missing_bib_files, $_;
+                    $bibtex_not_run = 1;
                 }
             }
         }
@@ -8579,7 +8801,7 @@ sub rdb_run1 {
 
     if ($latex_like) { run_hooks( 'before_xlatex' ); }
 
-    my $time = processing_time();
+    my $time_start = processing_time();
    
     if ($int_cmd) {
         print "For rule '$rule', use internal command '\&$int_cmd( @int_args_for_printing )' ...\n"
@@ -8597,8 +8819,7 @@ sub rdb_run1 {
         $$Plast_result = 2;
         $$Plast_message = "Bug or configuration error; incorrect command type";
     }
-    $time = processing_time() - $time;
-    add_timing( $time, $rule );
+    add_timing( processing_time() - $time_start, $rule );
 
 #============================================================================
 
@@ -8611,17 +8832,15 @@ sub rdb_run1 {
     #
     $$Pout_of_date = $$Pout_of_date_user = 0;
     if ($latex_like) {
-        if ( $emulate_aux && ($aux_dir ne $out_dir) ) {
-            &move_out_files_from_aux;
-        }
+        &correct_aux_out_files;
         run_hooks( 'after_xlatex' );
         $return = analyze_latex_run( $return );
         run_hooks( 'after_xlatex_analysis' );
     }
     elsif ( $rule =~ /^biber/ ) {
-        my @biber_source = ( );
-        my $retcode = check_biber_log( $$Pbase, \@biber_source );
-        foreach my $source ( @biber_source ) {
+        my @biber_datasource = ( );
+        my $retcode = check_biber_log( $$Pbase, \@biber_datasource );
+        foreach my $source ( @biber_datasource ) {
 #           if ( $source =~ /\"/ ) {next; }
             print "  ===Source file '$source' for '$rule'\n"
                if ($diagnostics);
@@ -8681,16 +8900,6 @@ sub rdb_run1 {
             unlink $$Pdest;
             # The missing bbl file is now not an error:
             $return = -2;
-# ??????? BCF
-# Following is intended to work, but creates infinite loop
-# in malformed bcf file situation under -pvc.
-# since on each check for change in ANY file, pvc finds changed file
-# Need to restrict pvc reruns to case of changed USER files
-#           # To give good properties for *latex rule, it is best
-#           # to have a valid bbl file that exists:
-#           create_empty_file( $$Pdest );
-#            $return = 0;
-            
         }
     }
     elsif ( $rule =~ /^bibtex/ ) {
@@ -8860,8 +9069,6 @@ sub Run_subst {
     return $return;
 } #END Run_subst
 
-#-----------------
-
 sub analyze_latex_run {
     # Call: analyze_latex_run(old_ret_code)
     # Analyze results of run of *latex (or whatever was run instead) from
@@ -8885,56 +9092,12 @@ sub analyze_latex_run {
     # Need to worry about changed directory, changed output extension
     # Where else is $missing_dvi_pdf set?  Was it initialized?
     if (-e $$Pdest) { $missing_dvi_pdf = '';}
-
-    # Handle case that log file is caused to be in an unexpected place,
-    #   from a configuration error:
-    &find_set_log;
     
-    if ($recorder) {
-        # Handle problem that some version of *latex give fls files
-        #    of name latex.fls or pdflatex.fls instead of $root_filename.fls.
-        # Also that setting of -output-directory -aux-directory is not 
-        #    respected by *latex, at least in some versions.
-
-        my $std_fls_file = $fls_name;
-        my @other_fls_names = ( );
-        if ( $rule =~ /^pdflatex/ ) {
-            push @other_fls_names, "pdflatex.fls";
-        }
-        else {
-            push @other_fls_names, "latex.fls";
-        }
-        if ( $aux_dir1 ne '' ) {
-            push @other_fls_names, "$root_filename.fls";
-            # MiKTeX uses out_dir for .fls. However, it seems logical to
-            # me for .fls to be in aux_dir.  So I'll allow for this
-            # Possibility, although I don't know if it has been used.
-            push @other_fls_names, "$aux_dir1$root_filename.fls";
-        }
-        # Find the first non-standard fls file and copy it to the standard
-        # place. But only do this if the file time is compatible with being
-        # generated in the current run, and if the standard fls file hasn't
-        # been made in the current run,  as tested by the use of
-        # test_gen_file; that avoids problems with fls files leftover from
-        # earlier runs with other versions of latex.
-        if ( ! test_gen_file( $std_fls_file ) ) {
-            foreach my $cand (@other_fls_names) {
-                if ( test_gen_file( $cand ) ) {
-                    copy $cand, $std_fls_file;
-                    last;
-                }
-            }
-        }
-        if ( ! test_gen_file( $std_fls_file ) ) {
-            warn "$My_name: fls file doesn't appear to have been made.\n";
-        }
-    }
-
     # Find current set of source files:
     my ($missing_dirs, $PA_missing_subdirs, $bad_warnings) = &rdb_set_latex_deps;
     if ($bad_warning_is_error && $bad_warnings) {
         warn "$My_name: Serious warnings in .log configured to be errors\n";
-        $return ||= $bad_warnings;
+        $return ||= $bad_warnings;1
     }
 
     # For each file of the kind made by epstopdf.sty during a run, 
@@ -9303,46 +9466,7 @@ sub rdb_file_change1 {
 
 #************************************************************
 
-#sub rdb_diagnose_changes {
-#    # ???!!! delete after using ideas in rdb_diagnose_changes2
-#    # Call: rdb_diagnose_changes or rdb_diagnose_changes( heading, show_out_of_date_rules )
-#    # Precede the message by the optional heading, else by "$My_name: " 
-#    my ($heading, $show_out_of_date_rules) = @_;
-#    our ( @changed, %changed_rules, @disappeared, @no_dest, @rules_to_apply,
-#          @rules_never_run );
-#    
-#    if ($#rules_never_run >= 0) {
-#        show_array( "${heading}Rules & subrules not known to be previously run:", @rules_never_run );
-#    }
-#    if ( ($#changed >= 0) || (keys %changed_rules > 0) || ($#disappeared >= 0) || ($#no_dest >= 0) ) {
-#        print "${heading}File changes, etc:\n";
-#        if ( $#changed >= 0 ) {
-#            # ???!!! Modify to allow for case of 
-#            show_array( " Changed files, or newly in use/created since previous run(s):", uniqs(@changed) );
-#        }
-#        if ( $#disappeared >= 0 ) {
-#            show_array( " No-longer-existing files:", uniqs(@disappeared) );
-#        }
-#        if ( $#no_dest >= 0 ) {
-#            show_array( " Non-existent destination for:", uniqs(@no_dest) );
-#        }
-#        if ( keys %changed_rules > 0 ) {
-#            print "  Rule(s) that have been run and require run of dependent rule:\n";
-#            while (my ($s_rule, $d_rule) = each %changed_rules) {
-#                print "      '$s_rule' which requires run of '$d_rule'\n";
-#            }
-#        }
-#    }
-#    if ($show_out_of_date_rules) {
-#        show_array( "${heading}Overall, the following rules became out-of-date:",
-#                    uniqs(@rules_to_apply));
-#    }
-#}  #END rdb_diagnose_changes
-
-#----------------------------
-
 sub rdb_diagnose_changes2 {
-    # ???!!! Examine rdb_diagnose_changes for ideas in old version to use here.
     # Call: rdb_diagnose_changes2( \%changes, heading, show_out_of_date_rules )
 
     my ($PHchanges, $heading, $show_out_of_date_rules) = @_;
@@ -9710,31 +9834,35 @@ sub rdb_create_rule {
     # rdb_create_rule( rule, command_type, ext_cmd, int_cmd, DUMMY,
     #                  source, dest, base, 
     #                  needs_making, run_time, check_time, set_file_not_exists,
-    #                  ref_to_array_of_specs_of_extra_generated_files )
+    #                  ref_to_array_of_specs_of_extra_generated_files,
+    #                  ref_to_array_of_specs_of_extra_source_files )
     # int_cmd is either a string naming a perl subroutine or it is a
     # reference to an array containing the subroutine name and its
     # arguments. 
     # Makes rule.  Update rule if it already exists.
-    # Omitted arguments: replaced by 0 or '' as needed.
+    # Omitted arguments: replaced by 0, '', or [] as needed.
     # Rule is made active
 # ==== Sets rule data ====
     my ( $rule, $cmd_type, $ext_cmd, $PAint_cmd, $DUMMY, 
          $source, $dest, $base, 
          $needs_making, $run_time, $check_time, $set_file_not_exists,
-         $extra_gen ) = @_;
+         $PAextra_gen, $PAextra_source ) = @_;
+    # Set defaults for undefined arguments
     foreach ( $needs_making, $run_time, $check_time, $DUMMY ) {
         if (! defined $_) { $_ = 0; }
+    }
+    foreach ( $cmd_type, $ext_cmd, $PAint_cmd, $source, $dest, $base, 
+              $set_file_not_exists ) {
+        if (! defined $_) { $_ = ''; }
+    }
+    foreach ( $PAextra_gen, $PAextra_source ) {
+        if (! defined $_) { $_ = []; }
     }
     my $last_result = -1;
     my $no_history = ($run_time <= 0);
     my $active = 1;
     my $changed = 0;
 
-    # Set defaults, and normalize parameters:
-    foreach ( $cmd_type, $ext_cmd, $PAint_cmd, $source, $dest, $base, 
-              $set_file_not_exists ) {
-        if (! defined $_) { $_ = ''; }
-    }
     if ( ($source =~ /\"/) || ($dest =~ /\"/) || ($base =~ /\"/) ) {
         die "$My_name: Error. In rdb_create_rule to create rule\n",
             "    '$rule',\n",
@@ -9752,22 +9880,18 @@ sub rdb_create_rule {
         # COPY the referenced array:
         $PAint_cmd = [ @$PAint_cmd ];
     }
-    my $PA_extra_gen = [];
-    if ($extra_gen) {
-        @$PA_extra_gen = @$extra_gen;
-    }
     $rule_db{$rule} = 
         [  [$cmd_type, $ext_cmd, $PAint_cmd, $no_history, 
             $source, $dest, $base,
             $needs_making, 0, $run_time, $check_time, $changed,
-            $last_result, '', $PA_extra_gen ],
+            $last_result, '', $PAextra_gen ],
            {},
            {},
            {},
            {}
         ];
-    if ($source) {
-       rdb_ensure_file( $rule, $source, undef, $set_file_not_exists );  
+    foreach my $file ($source, @$PAextra_source ) {
+        if ($file) { rdb_ensure_file( $rule, $file, undef, $set_file_not_exists ); }
     }
     rdb_one_rule( $rule, \&rdb_initialize_generated );
     if ($active) { rdb_activate($rule); }
@@ -9831,10 +9955,13 @@ sub rdb_ensure_file {
     #    (a) by default initialize it to current file state.
     #    (b) but if the fourth argument, set_not_exists, is true, 
     #        initialize the item as if the file does not exist.
-    #        This case is typically used when the log file for a run
-    #        of latex/pdflatex claims that the file was non-existent
-    #        at the beginning of a run. 
-#============ rule and file data set here ======================================
+    #        This case is typically used
+    #         (1) when the log file for a run of latex/pdflatex claims
+    #             that the file was non-existent at the beginning of a
+    #             run.
+    #         (2) When initializing rules, when there is no previous
+    #             known run under the control of latexmk.
+#============ NOTE: rule and file data set here ===============================
     my $rule = shift;
     local ( $new_file, $new_from_rule, $set_not_exists ) = @_;
     if ( ! rdb_rule_exists( $rule ) ) {
@@ -10290,9 +10417,18 @@ sub get_time_size {
 
 #************************************************************
 
-sub processing_time
-{  my ($user, $system, $cuser, $csystem) = times();
-   return $user + $system + $cuser + $csystem;
+sub processing_time {
+    # Return time used.
+    # Either total processing time of process and child processes as reported
+    # in pieces by times(), or HiRes time since Epoch depending on setting of
+    # $times_are_clock.
+    # That variable is to be set on OSs (MSWin32) where times() does not
+    # include time for subprocesses.
+    if ($times_are_clock) {
+        return Time::HiRes::time();
+    }
+    my ($user, $system, $cuser, $csystem) = times();
+    return $user + $system + $cuser + $csystem;
 }
 
 #************************************************************
