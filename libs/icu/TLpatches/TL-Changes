@@ -1,8 +1,6 @@
 Changes applied to the icu tree as obtained from:
-   github.com/unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz
-        and icu4c-71_1-data.zip
-   github.com/unicode-org/icu/releases/download/release-70-1/icu4c-70_1-src.tgz
-            icu4c-70_1-data.zip
+  github.com/unicode-org/icu/releases/download/release-72-1/icu4c-72_1-src.tgz
+        and icu4c-72_1-data.zip
 
 cd $Build/source/libs/icu       # for whatever $Build directory
 # update version.ac
@@ -43,7 +41,7 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-ver=71
+ver=72
 srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt${ver}l.dat 
 cd $Work/libs/icu/icu-build/data/out/build/icudt${ver}l
 indat=../../tmp/icudt${ver}l.dat
@@ -62,7 +60,7 @@ $icupkg -r 'lang/*' $indat $outdat && \mv $outdat $indat
 $icupkg -r 'region/*' $indat $outdat && \mv $outdat $indat
 $icupkg -r 'rfc*.spp' $indat $outdat && \mv $outdat $indat
 $icupkg -r 'zone/*' $indat $outdat && \mv $outdat $indat
-ls -l $indat $srcdat # indat should be smaller
+ls -l $indat $srcdat # indat should be about 2/3 the size
 cp $indat $srcdat
 
 # update icu/ChangeLog and icu/TLpatches/ChangeLog.

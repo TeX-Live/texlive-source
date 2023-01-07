@@ -1,7 +1,7 @@
 	No `s' for STATIC_PREFIX.
 
---- source/config/Makefile.inc.in~	2022-04-07 15:41:55.000000000 -0700
-+++ source/config/Makefile.inc.in	2022-05-30 13:23:53.633058660 -0700
+--- source/config/Makefile.inc.in~	2022-10-18 17:53:21.000000000 -0700
++++ source/config/Makefile.inc.in	2023-01-07 15:09:50.833789452 -0800
 @@ -47,5 +47,5 @@
  
  # Static library prefix and file extension
@@ -9,8 +9,8 @@
 +STATIC_PREFIX =
  LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
  A = a
---- source/icudefs.mk.in~	2022-04-07 15:41:55.000000000 -0700
-+++ source/icudefs.mk.in	2022-05-30 13:23:53.633058660 -0700
+--- source/icudefs.mk.in~	2022-10-18 17:53:21.000000000 -0700
++++ source/icudefs.mk.in	2023-01-07 15:09:50.856789320 -0800
 @@ -214,5 +214,5 @@
  ## If we can't use the shared libraries, use the static libraries
  ifneq ($(ENABLE_SHARED),YES)
