@@ -453,8 +453,8 @@ fatal("! Cannot open output file ",tex_file_name);
 static boolean input_ln(
 FILE*fp)
 {
-register int c= EOF;
-register char*k;
+int c= EOF;
+char*k;
 if(feof(fp))return false;
 limit= k= buffer;
 while(k<=buffer_end&&(c= getc(fp))!=EOF&&c!='\n')
@@ -1169,7 +1169,7 @@ scan_args(void)
 {
 char*dot_pos;
 char*name_pos;
-register char*s;
+char*s;
 boolean found_web= false,found_change= false,found_out= false;
 
 

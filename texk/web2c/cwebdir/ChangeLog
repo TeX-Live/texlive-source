@@ -1,3 +1,12 @@
+2023-01-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-mac.ch,
+	* common.c,
+	* common.w,
+	* ctwill-w2c.ch,
+	* refsort.ch,
+	* twinx.ch: C++17 has removed 'register' storage class.
+
 2022-11-22  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebmac.tex: Fix border case 'reflect.w'.

@@ -1918,7 +1918,7 @@ It advances |loc| past the title found.
 @c static sixteen_bits title_lookup(void)
 {
   char *first=loc,*last; /* boundaries */
-  register name_pointer *p;
+  name_pointer *p;
   if (*loc=='"') {
     while (++loc<=limit && *loc!='"') if (*loc=='\\') loc++;
   } else if (*loc=='{') {

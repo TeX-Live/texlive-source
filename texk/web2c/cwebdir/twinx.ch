@@ -60,6 +60,12 @@ turns it into uppercase form.
 @<Scan file |f|...@>=
 @z
 
+@x l.56 C++17 removed 'register' storage class.
+  if (strncmp(buf,"\\def\\title\{",11)==0) {@+register char *p,*q;
+@y
+  if (strncmp(buf,"\\def\\title\{",11)==0) {@+char *p,*q;
+@z
+
 @x l.57 FIX: Fetch only the first word from the '\title'.
     for (p=buf+11,q=title;*p && *p!='}';p++) *q++=*p;
 @y
@@ -92,12 +98,36 @@ char *save_string(
   char *s)
 @z
 
+@x l.118 C++17 removed 'register' storage class.
+  register char *p,*q; register int l;
+@y
+  char *p,*q; int l;
+@z
+
 Section 6.
 
 @x l.145
 node *new_node()
 @y
 node *new_node(void)
+@z
+
+@x l.181 C++17 removed 'register' storage class.
+register node* main_node; /* current end of main list */
+@y
+node* main_node; /* current end of main list */
+@z
+
+@x l.195 C++17 removed 'register' storage class.
+while (1) {@+register node *cur_node;
+@y
+while (1) {@+node *cur_node;
+@z
+
+@x l.213 C++17 removed 'register' storage class.
+{@+register char *p,*q;@+register int bal=1;
+@y
+{@+char *p,*q;@+int bal=1;
 @z
 
 Section 11.
@@ -113,6 +143,23 @@ Section 11.
     }
 @z
 
+@x l.289 C++17 removed 'register' storage class.
+while (1) {@+register node *p,*q,*r,*s,*t;
+@y
+while (1) {@+node *p,*q,*r,*s,*t;
+@z
+
+@x l.308 C++17 removed 'register' storage class.
+do@+{@+register int d;
+@y
+do@+{@+int d;
+@z
+
+@x l.323 C++17 removed 'register' storage class.
+do@+{@+register int d;
+@y
+do@+{@+int d;
+@z
 Section 17.
 
 @x l.347
@@ -123,7 +170,20 @@ int compare(
   node *p, node *q)
 @z
 
+
+@x l.349 C++17 removed 'register' storage class.
+{@+register unsigned char *pp,*qq;
+@y
+{@+unsigned char *pp,*qq;
+@z
+
 Section 19.
+
+@x l.378 C++17 removed 'register' storage class.
+{@+register int j;
+@y
+{@+int j;
+@z
 
 @x l.379 Compiler warning.
   for (j=1;collate[j];j++) ord[collate[j]]=j;
@@ -141,16 +201,36 @@ void collapse(
   node *p, node *q)
 @z
 
+@x l.392 C++17 removed 'register' storage class.
+{@+register node *x;
+@y
+{@+node *x;
+@z
+
+@x l.403 C++17 removed 'register' storage class.
+{@+register node *x;
+@y
+{@+node *x;
+@z
+
 Section 22.
 
 @x l.414 Compiler warning.
 {@+register char *p=x->id;
 @y
-{@+register const char *p=x->id;
+{@+const char *p=x->id;
 @z
 
 @x l.434 FIX: Don't mask already masked underscore.
     if (*p=='_') putchar('\\');
 @y
     if (*p=='_'&&*(p-1)!='\\') putchar('\\');
+@z
+
+@x l.441 C++17 removed 'register' storage class.
+{@+register node *y=x->data.n,*z=NULL;
+  while (y) {@+register node *w;
+@y
+{@+node *y=x->data.n,*z=NULL;
+  while (y) {@+node *w;
 @z

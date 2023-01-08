@@ -27,10 +27,32 @@ main()
 int main()
 @z
 
+@x 'register' removed in C++17.
+  register char *p,*q;
+  register int n; /* current number of items */
+  register item *x, **y;
+@y
+  char *p,*q;
+  int n; /* current number of items */
+  item *x, **y;
+@z
+
 @x variable not used
 { register int k;
 @y
 {
+@z
+
+@x 'register' removed in C++17
+{ register int toggle=0;
+@y
+{ int toggle=0;
+@z
+
+@x 'register' removed in C++17
+{ register int toggle=0;
+@y
+{ int toggle=0;
 @z
 
 @x add 'Index.' section

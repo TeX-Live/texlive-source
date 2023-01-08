@@ -18,8 +18,8 @@ support |feof|, |getc|, and |ungetc| you may have to change things here.
 static boolean input_ln( /* copies a line into |buffer| or returns |false| */
 FILE *fp) /* what file to read from */
 {
-  register int c=EOF; /* character read; initialized so some compilers won't complain */
-  register char *k; /* where next character goes */
+  int c=EOF; /* character read; initialized so some compilers won't complain */
+  char *k; /* where next character goes */
   if (feof(fp)) return false; /* we have hit end-of-file */
   limit = k = buffer; /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
@@ -46,8 +46,8 @@ line endings, so that \.{CWEB} will works with ASCII files stored in
 static boolean input_ln( /* copies a line into |buffer| or returns |false| */
 FILE *fp) /* what file to read from */
 {
-  register int  c=EOF; /* character read; initialized so some compilers won't complain */
-  register char *k; /* where next character goes */
+  int  c=EOF; /* character read; initialized so some compilers won't complain */
+  char *k; /* where next character goes */
   if (feof(fp)) return false; /* we have hit end-of-file */
   limit = k = buffer; /* beginning of buffer */
   while (true) {
