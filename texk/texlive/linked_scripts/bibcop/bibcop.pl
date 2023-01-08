@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 # (The MIT License)
 #
-# Copyright (c) 2022 Yegor Bugayenko
+# Copyright (c) 2022-2023 Yegor Bugayenko
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the 'Software'), to deal
@@ -530,7 +530,7 @@ sub listed_tags {
 sub error {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
-    print "\\PackageError{bibcop}{$txt}\n";
+    print "\\PackageError{bibcop}{$txt}{}\n";
     exit 0;
   } else {
     print STDERR $txt . "\n";
@@ -581,7 +581,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.5');
+  info('0.0.6');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
