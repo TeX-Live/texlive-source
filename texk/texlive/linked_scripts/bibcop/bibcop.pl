@@ -205,10 +205,17 @@ sub check_typography {
     '-' => 'dash',
     '--' => 'double dash',
     '---' => 'triple dash',
+    '(' => 'opening bracket',
+    ')' => 'closing bracket',
+    '[' => 'opening square bracket',
+    ']' => 'closing square bracket',
   );
   my @spaces_around = ( '---' );
   my @no_spaces_around = ( '--', '-' );
-  my @no_space_before = ( '.', ',', ';', ':', '?', '!' );
+  my @no_space_before = ( '.', ',', ';', ':', '?', '!', ')', ']' );
+  my @no_space_after = ( '(', '[' );
+  my @space_before = ( '(', '[' );
+  my @space_after = ( ')', ']' );
   my @bad_tails = ( '.', ',', ';', ':', '-' );
   foreach my $tag (keys %entry) {
     if ($tag =~ /^:.*/) {
@@ -228,6 +235,22 @@ sub check_typography {
         return "In the '$tag', do not put a space before a $symbols{$s}"
       }
     }
+    foreach my $s (@no_space_after) {
+      if ($value =~ /^.*\Q$s\E\s.*$/) {
+        return "In the '$tag', do not put a space after a $symbols{$s}"
+      }
+    }
+    foreach my $s (@space_before) {
+      if ($value =~ /^.*[^\s]\Q$s\E.*$/) {
+        return "In the '$tag', put a space before a $symbols{$s}"
+      }
+    }
+    foreach my $s (@space_after) {
+      my $p = join('', @no_space_before);
+      if ($value =~ /^.*\Q$s\E[^\s\Q$p\E].*$/) {
+        return "In the '$tag', put a space after a $symbols{$s}"
+      }
+    }
     foreach my $s (@spaces_around) {
       if ($value =~ /^.*[^\s]\Q$s\E.*$/ or $value =~ /^.*\Q$s\E[^\s].*$/) {
         return "In the '$tag', put spaces around a $symbols{$s}"
@@ -236,6 +259,24 @@ sub check_typography {
     foreach my $s (@no_spaces_around) {
       if ($value =~ /^.*\s\Q$s\E\s.*$/) {
         return "In the '$tag', don't put spaces around a $symbols{$s}"
+      }
+    }
+  }
+}
+
+# Check that no values have non-ASCII symbols.
+sub check_ascii {
+  my (%entry) = @_;
+  foreach my $tag (keys %entry) {
+    if ($tag =~ /^:.*/) {
+      next;
+    }
+    my $value = $entry{$tag};
+    for my $pos (0..length($value)-1) {
+      my $char = substr($value, $pos, 1);
+      my $ord = ord($char);
+      if ($ord < 20 or $ord > 0x7f) {
+        return "In the '$tag', don't use Unicode symbol '0x" . (sprintf '%04x', $ord) . "'"
       }
     }
   }
@@ -419,10 +460,10 @@ sub entries {
       $entry{':type'} = substr($acc, 1);
       $acc = '';
       $s = 'body';
-    } elsif ($char =~ /[a-zA-Z]/ and $s eq 'body') {
+    } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'body') {
       $acc = '';
       $s = 'tag';
-    } elsif ($char =~ /[a-zA-Z0-9_]/ and $s eq 'tag') {
+    } elsif ($char =~ /[a-zA-Z0-9_\.\-\/]/ and $s eq 'tag') {
       # reading the tag
     } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'value') {
       # reading the value without quotes or brackets
@@ -485,7 +526,7 @@ sub entries {
       }
       $escape = 0;
     } else {
-      warning("It is impossible to parse the .bib file, because I do not know what to do with '$char' at line #$lineno (s=$s)");
+      warning("It is impossible to parse the .bib file, because I do not know what to do with '$char' at line no.$lineno (s=$s)");
       last;
     }
     if ($char eq ' ' and not($s =~ /quote|brackets/)) {
@@ -581,7 +622,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.6');
+  info('0.0.7');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
