@@ -4,7 +4,7 @@ dnl WARNING! C code starting with # (preprocessor directives) must not
 dnl be indented!
 
 AC_COPYRIGHT([
-Copyright 1999-2022 Free Software Foundation, Inc.
+Copyright 1999-2023 Free Software Foundation, Inc.
 Contributed by the AriC and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
@@ -26,7 +26,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 ])
 
 dnl Add check-news when it checks for more than 15 lines
-AC_INIT([MPFR],[4.1.1])
+AC_INIT([MPFR],[4.2.0])
 
 dnl AC_CANONICAL_HOST is needed by this configure.ac file.
 dnl AC_CANONICAL_TARGET is not explicitly needed, but may be required by
@@ -430,6 +430,15 @@ AC_LANG(C)
 dnl AM_PROG_AR is needed so that ar-lib (wrapper for Microsoft lib.exe)
 dnl gets installed by "automake -i" (if absent, "automake --warnings=all"
 dnl gives a warning).
+dnl However, if GMP chooses a non-default mode (a.k.a. ABI), this test may
+dnl fail. The reason is that GMP provides GMP_CC and GMP_CFLAGS to get the
+dnl right commands to compile (and link?) in the chosen non-default mode,
+dnl but does not provide a macro for the archiver (if such a special command
+dnl is needed). In case of failure, the user needs to either force GMP to
+dnl use the default mode or provide an AR variable for MPFR's configure.
+dnl Example: on power-aix, "gcc -c -O2 -maix64 -mpowerpc64 -mtune=power7"
+dnl is used, but "ar cru" fails. Solution: use AR="ar -X64" NM="nm -B -X64"
+dnl as said in the INSTALL file ("Notes on AIX/PowerPC").
 AM_PROG_AR
 
 dnl This must done before MPFR_CONFIGS.
@@ -473,8 +482,6 @@ dnl (__GMP_CFLAGS macro in gmp.h) above. The consequence is that this
 dnl might yield a compilation failure if the -Werror option appears in
 dnl __GMP_CFLAGS. But in this case, since -Werror is not used by default,
 dnl one may expect that the user would also set CFLAGS for MPFR.
-dnl Note: When the compiler is GCC not in C++ mode, -Wc++-compat may be
-dnl interesting, but it has been introduced in GCC 4.1 only.
 if test "$test_CFLAGS" != set && test -n "$GCC"; then
   CFLAGS="-Wpointer-arith $CFLAGS"
   AC_MSG_CHECKING(whether the selected language is C++)
@@ -485,12 +492,20 @@ error
 #endif
   ]], [[]])],[
     AC_MSG_RESULT(no)
+    dnl The option -Wc++-compat is available in GCC 4.1.0 and newer.
+    [
+    case `$CC --version | $SED -e 's/^[^ ]* //' -e 's/([^)]*) //' -e 1q` in
+      2.*|3.*|4.0*) ;;
+      *) CFLAGS="-Wc++-compat $CFLAGS" ;;
+    esac
     CFLAGS="-Wmissing-prototypes $CFLAGS"
+    ]
   ],[
     AC_MSG_RESULT(yes)
     CFLAGS="-Wmissing-declarations -Wno-sign-compare $CFLAGS"
   ])
   CFLAGS="-Wall $CFLAGS"
+  AC_MSG_NOTICE([using CFLAGS="$CFLAGS"])
 fi
 
 AM_PROG_CC_C_O

@@ -71,7 +71,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/get_si.c \
 	@MPFR_TREE@/src/get_str.c \
 	@MPFR_TREE@/src/get_z.c \
-	@MPFR_TREE@/src/get_z_exp.c \
+	@MPFR_TREE@/src/get_z_2exp.c \
 	@MPFR_TREE@/src/get_ui.c \
 	@MPFR_TREE@/src/gmp_op.c \
 	@MPFR_TREE@/src/init.c \
@@ -113,7 +113,7 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/set_str.c \
 	@MPFR_TREE@/src/set_ui_2exp.c \
 	@MPFR_TREE@/src/set_z.c \
-	@MPFR_TREE@/src/set_z_exp.c \
+	@MPFR_TREE@/src/set_z_2exp.c \
 	@MPFR_TREE@/src/set_zero.c \
 	@MPFR_TREE@/src/setmax.c \
 	@MPFR_TREE@/src/setmin.c \
@@ -138,10 +138,14 @@ nodist_libmpfr_a_SOURCES = \
 unused_sources = \
 	@MPFR_TREE@/src/acos.c \
 	@MPFR_TREE@/src/acosh.c \
+	@MPFR_TREE@/src/acosu.c \
 	@MPFR_TREE@/src/ai.c \
 	@MPFR_TREE@/src/asin.c \
+	@MPFR_TREE@/src/asinu.c \
 	@MPFR_TREE@/src/asinh.c \
 	@MPFR_TREE@/src/atanh.c \
+	@MPFR_TREE@/src/atan2u.c \
+	@MPFR_TREE@/src/atanu.c \
 	@MPFR_TREE@/src/bernoulli.c \
 	@MPFR_TREE@/src/beta.c \
 	@MPFR_TREE@/src/buildopt.c \
@@ -150,8 +154,10 @@ unused_sources = \
 	@MPFR_TREE@/src/cmp_d.c \
 	@MPFR_TREE@/src/cmp_ld.c \
 	@MPFR_TREE@/src/cmpabs_ui.c \
+	@MPFR_TREE@/src/compound.c \
 	@MPFR_TREE@/src/copysign.c \
 	@MPFR_TREE@/src/cosh.c \
+	@MPFR_TREE@/src/cosu.c \
 	@MPFR_TREE@/src/cot.c \
 	@MPFR_TREE@/src/coth.c \
 	@MPFR_TREE@/src/csc.c \
@@ -170,6 +176,8 @@ unused_sources = \
 	@MPFR_TREE@/src/erf.c \
 	@MPFR_TREE@/src/erfc.c \
 	@MPFR_TREE@/src/exp10.c \
+	@MPFR_TREE@/src/exp10m1.c \
+	@MPFR_TREE@/src/exp2m1.c \
 	@MPFR_TREE@/src/expm1.c \
 	@MPFR_TREE@/src/factorial.c \
 	@MPFR_TREE@/src/fits_intmax.c \
@@ -179,6 +187,7 @@ unused_sources = \
 	@MPFR_TREE@/src/fits_ushort.c \
 	@MPFR_TREE@/src/fma.c \
 	@MPFR_TREE@/src/fmma.c \
+	@MPFR_TREE@/src/fmod_ui.c \
 	@MPFR_TREE@/src/fms.c \
 	@MPFR_TREE@/src/fpif.c \
 	@MPFR_TREE@/src/frac.c \
@@ -207,6 +216,8 @@ unused_sources = \
 	@MPFR_TREE@/src/iszero.c \
 	@MPFR_TREE@/src/jn.c \
 	@MPFR_TREE@/src/li2.c \
+	@MPFR_TREE@/src/log10p1.c \
+	@MPFR_TREE@/src/log2p1.c \
 	@MPFR_TREE@/src/lngamma.c \
 	@MPFR_TREE@/src/log10.c \
 	@MPFR_TREE@/src/log1p.c \
@@ -227,6 +238,9 @@ unused_sources = \
 	@MPFR_TREE@/src/pow_ui.c \
 	@MPFR_TREE@/src/pow_z.c \
 	@MPFR_TREE@/src/print_raw.c \
+	@MPFR_TREE@/src/powr.c \
+	@MPFR_TREE@/src/pow_sj.c \
+	@MPFR_TREE@/src/pow_uj.c \
 	@MPFR_TREE@/src/print_rnd_mode.c \
 	@MPFR_TREE@/src/printf.c \
 	@MPFR_TREE@/src/random_deviate.c \
@@ -253,6 +267,7 @@ unused_sources = \
 	@MPFR_TREE@/src/setsign.c \
 	@MPFR_TREE@/src/signbit.c \
 	@MPFR_TREE@/src/sinh.c \
+	@MPFR_TREE@/src/sinu.c \
 	@MPFR_TREE@/src/sinh_cosh.c \
 	@MPFR_TREE@/src/stack_interface.c \
 	@MPFR_TREE@/src/sub_d.c \
@@ -261,6 +276,7 @@ unused_sources = \
 	@MPFR_TREE@/src/sum.c \
 	@MPFR_TREE@/src/tan.c \
 	@MPFR_TREE@/src/tanh.c \
+	@MPFR_TREE@/src/tanu.c \
 	@MPFR_TREE@/src/total_order.c \
 	@MPFR_TREE@/src/uceil_exp2.c \
 	@MPFR_TREE@/src/uceil_log2.c \

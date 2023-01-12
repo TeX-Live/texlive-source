@@ -1,6 +1,6 @@
 dnl  MPFR specific autoconf macros
 
-dnl  Copyright 2000, 2002-2022 Free Software Foundation, Inc.
+dnl  Copyright 2000, 2002-2023 Free Software Foundation, Inc.
 dnl  Contributed by the AriC and Caramba projects, INRIA.
 dnl
 dnl  This file is part of the GNU MPFR Library.
@@ -302,22 +302,23 @@ static double get_max (void) { static volatile double d = DBL_MAX; return d; }
 fi
 
 dnl Check if subnormal numbers are supported.
-dnl for the binary64 format, the smallest normal number is 2^(-1022)
-dnl for the binary32 format, the smallest normal number is 2^(-126)
-dnl Note: One could double-check with the value of the macros
-dnl DBL_HAS_SUBNORM and FLT_HAS_SUBNORM, when defined (C2x), but
-dnl neither tests would be reliable on implementations with partial
-dnl subnormal support. Anyway, this check is useful only for the
-dnl tests. Thus in doubt, assume that subnormals are not supported,
-dnl in order to disable the corresponding tests (which could fail).
+dnl For the binary64 format, the smallest normal number is 2^(-1022).
+dnl For the binary32 format, the smallest normal number is 2^(-126).
+dnl Do not use the corresponding HAVE_SUBNORM_* macros as they
+dnl are not available when cross-compiling. For the tests, use
+dnl the have_subnorm_* functions if need be.
+dnl Note: "volatile" is needed to avoid -ffast-math optimizations
+dnl (default in icx 2021.2.0, which also sets the FZ and DAZ bits
+dnl of the x86-64 MXCSR register to disregard subnormals).
 AC_CACHE_CHECK([for subnormal double-precision numbers],
 mpfr_cv_have_subnorm_dbl, [
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 int main (void) {
-  double x = 2.22507385850720138309e-308;
-  fprintf (stderr, "%e\n", x / 2.0);
-  return 2.0 * (double) (x / 2.0) != x;
+  volatile double x = 2.22507385850720138309e-308, y;
+  y = x / 2.0;
+  fprintf (stderr, "%e\n", y);
+  return 2.0 * y != x;
 }
 ]])],
    [mpfr_cv_have_subnorm_dbl="yes"],
@@ -333,9 +334,10 @@ mpfr_cv_have_subnorm_flt, [
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
 int main (void) {
-  float x = 1.17549435082229e-38;
-  fprintf (stderr, "%e\n", x / 2.0);
-  return 2.0 * (float) (x / 2.0) != x;
+  volatile float x = 1.17549435082229e-38, y;
+  y = x / 2.0f;
+  fprintf (stderr, "%e\n", (double) y);
+  return 2.0f * y != x;
 }
 ]])],
    [mpfr_cv_have_subnorm_flt="yes"],
@@ -392,6 +394,12 @@ fi
 dnl Check whether NAN != NAN (as required by the IEEE-754 standard,
 dnl but not by the ISO C standard). For instance, this is false with
 dnl MIPSpro 7.3.1.3m under IRIX64. By default, assume this is true.
+dnl Note that this test may not detect all issues. For instance, with
+dnl icx 2021.2.0 (and default fast-math), the result depends on whether
+dnl the identifier has internal or external linkage:
+dnl   https://community.intel.com/t5/Intel-oneAPI-Base-Toolkit/icx-2021-2-0-bug-incorrect-NaN-comparison-using-an-identifier/m-p/1286869
+dnl TODO: change "NAN == NAN" to "NaN is supported" and rename
+dnl the MPFR_NANISNAN macro?
 AC_CACHE_CHECK([if NAN == NAN], mpfr_cv_nanisnan, [
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <stdio.h>
@@ -506,27 +514,6 @@ static int f (double (*func)(double)) { return 0; }
    AC_MSG_RESULT(yes)
    AC_DEFINE(HAVE_NEARBYINT, 1,[Have ISO C99 nearbyint function])
 ],[AC_MSG_RESULT(no)])
-
-dnl Check if _mulx_u64 is provided
-dnl Note: This intrinsic is not standard. We need a run because
-dnl it may be provided but not working as expected (with ICC 15,
-dnl one gets an "Illegal instruction").
-AC_MSG_CHECKING([for _mulx_u64])
-AC_RUN_IFELSE([AC_LANG_PROGRAM([[
-#include <immintrin.h>
-]], [[
- unsigned long long h1, h2;
- _mulx_u64(17, 42, &h1);
- _mulx_u64(-1, -1, &h2);
- return h1 == 0 && h2 == -2 ? 0 : 1;
-]])],
-  [AC_MSG_RESULT(yes)
-   AC_DEFINE(HAVE_MULX_U64, 1,[Have a working _mulx_u64 function])
-  ],
-  [AC_MSG_RESULT(no)
-  ],
-  [AC_MSG_RESULT([cannot test, assume no])
-  ])
 
 LIBS="$saved_LIBS"
 
