@@ -4487,7 +4487,7 @@ eptex_ch_srcs = \
 
 # e-pTeX Tests
 #
-eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test eptexdir/epver.test
+eptex_tests = eptexdir/eptriptest.test eptexdir/pdfprimitive.test eptexdir/epver.test eptexdir/wcfname.test
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
 uptex_dependencies = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
@@ -4603,7 +4603,7 @@ euptex_ch_srcs = \
 
 # e-upTeX Tests
 #
-euptex_tests = euptexdir/euptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test
+euptex_tests = euptexdir/euptriptest.test euptexdir/eptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test euptexdir/wcfname.test
 
 # At the moment, these are the only man pages handled in the
 # conglomerated web2c/Makefile[.am]. (All the others are in man/.)
@@ -22082,7 +22082,7 @@ eptex.ch: tie$(EXEEXT) eptex.web $(eptex_ch_srcs)
 	$(tie_c) eptex.web $(eptex_ch_srcs)
 eptexdir/eptriptest.log: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 eptexdir/pdfprimitive.log: eptex$(EXEEXT)
-eptexdir/epver.log: eptex$(EXEEXT)
+eptexdir/epver.log eptexdir/wcfname.log: eptex$(EXEEXT)
 eptrip.diffs: eptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: eptrip-clean
@@ -22191,7 +22191,7 @@ euptex.web: tie$(EXEEXT) $(euptex_web_srcs)
 # Generate euptex.ch
 euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
 	$(tie_c) euptex.web $(euptex_ch_srcs)
-euptexdir/euptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+euptexdir/euptriptest.log euptexdir/eptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
 euptexdir/eupver.log: euptex$(EXEEXT)
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

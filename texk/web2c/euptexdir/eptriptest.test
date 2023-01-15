@@ -1,0 +1,143 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2011-2014 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2010 Hironori Kitagawa <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+testdir=$abs_srcdir/triptrap
+etestdir=$abs_srcdir/etexdir/etrip
+eptestdir=$abs_srcdir/eptexdir/eptrip
+
+TEXMFCNF=$eptestdir; export TEXMFCNF
+
+rm -rf eupptripdir
+mkdir eupptripdir
+cd eupptripdir
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
+
+echo ">>> Running e-TRIP test for e-upTeX-euc." >&2
+echo ">>> See $eptestdir/eptrip.diffs for example of acceptable diffs." >&2
+
+# pTeX outputs direction of boxes.
+P_SED1='s/, yoko direction//;s/yoko direction, //'
+P_SED2='s/yoko(math) direction, //'
+
+is_OK=:
+
+set -x
+
+echo "*** TRIP test for e-pTeX in compatibility mode ***."
+
+../pltotf $testdir/trip.pl trip.tfm || exit 1
+
+../tftopl ./trip.tfm trip.pl || exit 1
+
+diff $testdir/trip.pl trip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $testdir/trip.tex .
+
+rm -f trip.log
+../euptex --kanji-internal=euc --progname=epinitex --ini <$testdir/trip1.in >cptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
+sed "$P_SED1" trip.log >  cptripin.log || exit 1
+diff $testdir/tripin.log cptripin.log
+
+# May as well test non-ini second time through.
+rm -f trip.log
+../euptex --kanji-internal=euc --progname=eptex <$testdir/trip2.in >cptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > cptrip.log
+diff $testdir/trip.fot cptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log cptrip.log 
+
+mv tripos.tex cptripos.tex
+diff $testdir/tripos.tex cptripos.tex
+
+eval ../dvitype $dvitype_args trip.dvi >cptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ cptrip.typ
+
+mv trip.fmt ctrip.fmt
+
+# =================================
+
+echo "*** TRIP test for e-pTeX in extended mode ***."
+
+rm -f trip.log
+../euptex --kanji-internal=euc --progname=epinitex --ini <$etestdir/etrip1.in >xptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by etrip1.in, investigate!" >&2
+  exit 1
+fi
+sed "$P_SED1" trip.log >  xptripin.log || exit 1
+diff $testdir/tripin.log xptripin.log
+
+# May as well test non-ini second time through.
+rm -f trip.log
+../euptex --kanji-internal=euc --progname=eptex <$etestdir/trip2.in >xptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > xptrip.log
+diff $testdir/trip.fot xptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log xptrip.log 
+
+mv tripos.tex xptripos.tex
+diff $testdir/tripos.tex xptripos.tex
+
+eval ../dvitype $dvitype_args trip.dvi >xptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ xptrip.typ
+
+mv trip.fmt xtrip.fmt
+
+# =================================
+
+echo "*** e-TeX specific part of e-TRIP test for e-pTeX ***."
+
+../pltotf $etestdir/etrip.pl etrip.tfm || exit 1
+
+../tftopl ./etrip.tfm etrip.pl || exit 1
+
+diff $etestdir/etrip.pl etrip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $eptestdir/eptrip.tex etrip.tex
+
+../euptex --kanji-internal=euc --progname=epinitex --ini <$etestdir/etrip2.in >eptripin.fot
+if test ! -s etrip.fmt; then
+  echo "*** etrip.fmt not created by etrip2.in, investigate!" >&2
+  exit 1
+fi
+sed "$P_SED1" etrip.log > eptripin.log || exit 1
+diff $etestdir/etripin.log eptripin.log
+
+# May as well test non-ini second time through.
+../euptex --kanji-internal=euc --progname=eptex <$etestdir/etrip3.in >eptrip.fot
+sed "$P_SED1;$P_SED2" etrip.log > eptrip.log
+diff $etestdir/etrip.fot eptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $eptestdir/eptrip.log eptrip.log
+
+mv etrip.out eptrip.out
+diff $etestdir/etrip.out eptrip.out
+
+eval ../dvitype $dvitype_args etrip.dvi >eptrip.typ || exit 1
+$DIFF $DIFFFLAGS $etestdir/etrip.typ eptrip.typ
+
+$is_OK || {
+  echo ">>> There were some errors." >&2
+  exit 1
+}
+
