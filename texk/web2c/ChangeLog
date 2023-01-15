@@ -1,3 +1,10 @@
+2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, ac/web2c.ac (ptex, uptex):
+	Remove binaries of (u)pTeX (ptex, uptex). Now we use alias
+	of e-upTeX (eptex, euptex) for (u)pTeX (ptex, uptex).
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-01-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebboot.cin: C++ has removed 'register' storage class.
