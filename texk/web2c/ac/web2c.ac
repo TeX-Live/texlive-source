@@ -31,9 +31,7 @@ dnl [PROG, BUILD-OR-NO, SYNC-OR-NO, TEXT, REQUIRED-LIBS]
 m4_define([kpse_tex_progs], [dnl
 [[tex],       [yes], [no],  [TeX],        []],
 [[etex],      [no],  [yes], [e-TeX],      [zlib]],
-[[ptex],      [yes], [yes], [pTeX],       [ptexenc zlib]],
 [[eptex],     [yes], [yes], [e-pTeX],     [ptexenc zlib]],
-[[uptex],     [yes], [yes], [upTeX],      [ptexenc zlib]],
 [[euptex],    [yes], [yes], [e-upTeX],    [ptexenc zlib]],
 [[aleph],     [yes], [],    [Aleph],      []],
 [[hitex],     [yes], [],    [HiTeX],      [zlib]],

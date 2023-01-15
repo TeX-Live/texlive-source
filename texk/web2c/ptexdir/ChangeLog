@@ -1,3 +1,19 @@
+2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexextra.h:
+	Make AUTHOR "Japanese TeX Development Community".
+	* {nissya,pbibtex{,-mem},pdvitype,sample}.test,
+	{ppltotf,ptftopl,skipjfmp,yokotate}.test,
+	pbibtex-{longline,openout}-test.pl:
+	Remove unused tests.
+	* {pbibtex,pdvitype,ppltotf,ptftopl}.ch:
+	Remove unused change files.
+	* am/ptex.am:
+	Remove binaries of pTeX (ptex).
+	Now we use alias of e-pTeX (eptex) for pTeX (ptex).
+	https://github.com/texjporg/tex-jp-build/issues/32
+	* COPYRIGHT: copyright year.
+
 2022-12-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test, am/ptex.am:

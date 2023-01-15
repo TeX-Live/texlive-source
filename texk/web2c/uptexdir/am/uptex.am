@@ -20,9 +20,9 @@ libukanji_a_CPPFLAGS = $(uptex_cppflags)
 
 ## upTeX
 ##
-if UPTEX
-bin_PROGRAMS += uptex
-endif UPTEX
+#if UPTEX
+#bin_PROGRAMS += uptex
+#endif UPTEX
 if UPWEB
 bin_PROGRAMS += $(upweb_programs)
 endif UPWEB
@@ -165,7 +165,7 @@ EXTRA_DIST += \
 	uptexdir/ChangeLog
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
+#uptex_tests = uptexdir/uptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
 uptexdir/uptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log: uptex$(EXEEXT)
 upweb_tests = \
@@ -198,11 +198,11 @@ EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
 	$(upweb_programs:=.p) $(upweb_programs:=-web2c) $(upweb_programs:=.web)
 
-if UPTEX
-TESTS += $(uptex_tests)
-TRIPTRAP += uptrip.diffs
-TRIPTRAP_CLEAN += uptrip-clean
-endif UPTEX
+#if UPTEX
+#TESTS += $(uptex_tests)
+#TRIPTRAP += uptrip.diffs
+#TRIPTRAP_CLEAN += uptrip-clean
+#endif UPTEX
 if UPWEB
 TESTS += $(upweb_tests)
 endif UPWEB

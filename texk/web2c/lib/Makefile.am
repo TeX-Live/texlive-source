@@ -10,9 +10,9 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 @KPATHSEA_RULE@
 
 noinst_LIBRARIES = lib.a
-if PTEX
+if EPTEX
 noinst_LIBRARIES += libp.a
-endif PTEX
+endif EPTEX
 EXTRA_LIBRARIES = libp.a
 
 ## We don't compile `texmfmp.c'; this file is included from 'texextra.c'

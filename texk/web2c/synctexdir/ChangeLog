@@ -1,3 +1,7 @@
+2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* am/synctex.am: Remove ptex and uptex.
+
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
 	* man1/synctex.1,

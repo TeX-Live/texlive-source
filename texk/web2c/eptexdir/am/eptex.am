@@ -9,6 +9,7 @@
 ##
 if EPTEX
 bin_PROGRAMS += eptex
+bin_links += eptex$(EXEEXT):ptex
 endif EPTEX
 EXTRA_PROGRAMS += eptex
 

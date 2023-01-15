@@ -9,6 +9,7 @@
 ##
 if EUPTEX
 bin_PROGRAMS += euptex
+bin_links += euptex$(EXEEXT):uptex
 endif EUPTEX
 EXTRA_PROGRAMS += euptex
 

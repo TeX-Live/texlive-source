@@ -206,12 +206,12 @@ m4_foreach([Kpse_Win], [kpse_mf_win],
 
 AM_CONDITIONAL([WEB], [test "x$enable_web_progs" != xno])
 
-AS_IF([test "x$enable_ptex:$enable_eptex" = xno:no],
+AS_IF([test "x$enable_eptex" = xno:no],
       [enable_pweb_progs=no],
       [enable_pweb_progs=$enable_web_progs])
 AM_CONDITIONAL([PWEB], [test "x$enable_pweb_progs" != xno])
 
-AS_IF([test "x$enable_uptex:$enable_euptex" = xno:no],
+AS_IF([test "x$enable_euptex" = xno:no],
       [enable_upweb_progs=no],
       [enable_upweb_progs=$enable_web_progs])
 AM_CONDITIONAL([UPWEB], [test "x$enable_upweb_progs" != xno])

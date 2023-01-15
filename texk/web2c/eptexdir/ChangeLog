@@ -1,3 +1,16 @@
+2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test, am/eptex.am:
+	Add tests for file names with JIS X 0208 characters
+	in `eptex --kanji-internal={euc,sjis}`.
+	https://github.com/texjporg/tex-jp-build/issues/136
+	* eptexextra.h:
+	Make AUTHOR "Japanese TeX Development Community".
+	* am/eptex.am:
+	Now we use alias of e-pTeX (eptex) for pTeX (ptex).
+	https://github.com/texjporg/tex-jp-build/issues/32
+	* COPYRIGHT: Add.
+
 2022-12-22  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.defines:

@@ -8,9 +8,7 @@
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
 ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
-p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
-#pweb_programs = pbibtex pdvitype ppltotf ptftopl
 
 ## pTeX library
 ##
@@ -25,26 +23,7 @@ EXTRA_LIBRARIES += libkanji.a
 libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h ptexdir/kanji_dump.c
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
 
-## pTeX
-##
-if PTEX
-bin_PROGRAMS += ptex
-endif PTEX
-#if PWEB
-#bin_PROGRAMS += $(pweb_programs)
-#endif PWEB
-#EXTRA_PROGRAMS += ptex $(pweb_programs)
-
 ptex_CPPFLAGS = $(ptex_cppflags)
-
-# With --enable-ipc, pTeX may need to link with -lsocket.
-ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
-ptex_DEPENDENCIES = $(ptex_dependencies)
-
-# pTeX C sources
-ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
-nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c
-dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h ptexdir/ptex_version.h
 
 # We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h ptexdir/ptex_version.h
@@ -92,7 +71,7 @@ EXTRA_DIST += $(ptex_web_srcs) $(ptex_ch_srcs) ptexdir/ptex.defines
 DISTCLEANFILES += $(nodist_ptex_SOURCES) ptex.web ptex.ch ptex-web2c \
 	ptex.p ptex.pool ptex-tangle
 
-## 
+##
 EXTRA_DIST += \
 	ptexdir/COPYRIGHT \
 	ptexdir/COPYRIGHT.jis \
@@ -101,53 +80,10 @@ EXTRA_DIST += \
 	ptexdir/INSTALL.txt \
 	ptexdir/README.txt
 
-# pTeX Tests
-#
-ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
-ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
-#pweb_tests = \
-#	ptexdir/pbibtex.test \
-#	ptexdir/pdvitype.test \
-#	ptexdir/ppltotf.test \
-#	ptexdir/ptftopl.test
-## pBibTeX
-#pweb_tests += \
-#	ptexdir/pbibtex-openout-test.pl ptexdir/pbibtex-longline-test.pl \
-#	ptexdir/pbibtex-mem.test ptexdir/nissya.test
-## pDviType
-#pweb_tests += \
-#	ptexdir/sample.test
-# ppPLtoTF/pTFtoPL
-#pweb_tests += \
-#	ptexdir/yokotate.test ptexdir/skipjfmp.test
-ptexdir/pbibtex.log: pbibtex$(EXEEXT)
-ptexdir/pdvitype.log: pdvitype$(EXEEXT)
-ptexdir/ppltotf.log: ppltotf$(EXEEXT)
-ptexdir/ptftopl.log: ptftopl$(EXEEXT)
-ptexdir/pbibtex-openout-test.log ptexdir/pbibtex-longline-test.log \
-	ptexdir/pbibtex-mem.log ptexdir/nissya.log: pbibtex$(EXEEXT)
-ptexdir/sample.log: pdvitype$(EXEEXT)
-ptexdir/yokotate.log ptexdir/skipjfmp.log: ppltotf$(EXEEXT) ptftopl$(EXEEXT)
-
-EXTRA_DIST += $(ptex_tests) $(pweb_tests)
-DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
-	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
-
-if PTEX
-TESTS += $(ptex_tests)
-TRIPTRAP += ptrip.diffs
-TRIPTRAP_CLEAN += ptrip-clean
-endif PTEX
-if PWEB
-TESTS += $(pweb_tests)
-endif PWEB
-
 ## Test data and results
 ##
 ## ptexdir/nissya.test
-EXTRA_DIST += ptexdir/tests/nissya_bib.aux ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
-	ptexdir/tests/nissya_bib.bbl
+EXTRA_DIST += ptexdir/tests/nissya.bst ptexdir/tests/sample.bib
 DISTCLEANFILES += ptests/nissya_bib.*
 ## ptexdir/pbibtex.test
 EXTRA_DIST += tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
