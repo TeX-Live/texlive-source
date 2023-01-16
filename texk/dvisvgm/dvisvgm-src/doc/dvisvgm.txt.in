@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // This file is part of dvisvgm -- a fast DVI to SVG converter          //
-// Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>   //
+// Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   //
 //                                                                      //
 // This program is free software; you can redistribute it and/or        //
 // modify it under the terms of the GNU General Public License as       //
@@ -22,7 +22,7 @@ Martin Gieseking <@PACKAGE_BUGREPORT@>
 :man source: dvisvgm
 :man version: @VERSION@
 :man manual: dvisvgm Manual
-:revdate: 2022-02-26 19:08 +0100
+:revdate: 2022-10-14 12:56 +0200
 
 Name
 ----
@@ -206,6 +206,14 @@ In order to apply these color names rather than their RGB values, call dvisvgm w
 Adds comments with further information about selected data to the SVG file. Currently, only
 font elements and font CSS rules related to native fonts are annotated.
 
+*embed-bitmaps*::
+Embeds the contents of bitmap files into the generated SVG files instead of adding file references.
+Because of the base64-encoded data, the SVG files are usually much bigger but at the same time
+more portable because they don't rely on external bitmap files.
++
+This option only affects bitmaps referenced in DVI/XDV files, e.g. added by +\includegraphics+.
+Bitmaps in PostScript or PDF files are always embedded. Also see option *bitmap-format*.
+
 *-E, --eps*::
 If this option is given, dvisvgm does not expect a DVI but a single or multiple EPS input files,
 and tries to convert them to SVG. In order to do so, a single 'psfile' special command is created
@@ -224,15 +232,18 @@ given, dvisvgm analyzes the actual shape of each character and derives a usually
 
 *-f, --font-format*='format'::
 Selects the file format used to embed font data into the generated SVG output when converting DVI
-files. It has no effect when converting PDF or PostScript files. Text fragments present in these
-files are always converted to path elements.
+or PDF files. The latter require the new mutool-based PDF handler introduced with dvisvgm 3.0 (also
+see option *--pdf*). Option *--font-format* has no effect when converting PDF or PostScript files
+using Ghostscript. Text fragments present in these files are then always converted to path elements.
 +
 Following formats are supported: +SVG+ (that's the default), +TTF+ (TrueType), +WOFF+, and +WOFF2+
 (Web Open Font Format version 1 and 2).
 By default, dvisvgm creates unhinted fonts that might look bad on low-resolution devices. In order to
 improve the display quality, the generated TrueType, WOFF, or WOFF2 fonts can be autohinted. The
 autohinter is enabled by appending +,autohint+ or +,ah+ to the font format,
-e.g. +--font-format=woff,autohint+ or +--fwoff,ah+.
+e.g. +--font-format=woff,autohint+ or +--fwoff,ah+. This functionality requires the
+https://freetype.org/ttfautohint[ttfautohint library]. If it's not available or can't be found,
+dvisvgm issues a corresponding warning message.
 +
 Option *--font-format* is only available if dvisvgm was built with WOFF support enabled.
 
@@ -459,10 +470,11 @@ The following list describes the currently available optimizer modules.
   expression is used.
 
 *-o, --output*='pattern'::
-Sets the pattern that determines the names of the generated SVG files. The required parameter
-'pattern' may consist of an arbitrary sequence of characters which make up the filenames. With the
-exception of the following mentioned variables and expressions, all characters are treated as static
-parts of the filenames and are therefore identical for all pages processed during a run of dvisvgm.
+Sets the pattern that determines the names of the generated SVG files, optionally including the file
+path. The required parameter 'pattern' may consist of an arbitrary sequence of characters which make
+up the filenames or file paths relative to the current working directory. With the exception of the
+following mentioned variables and expressions, all characters are treated as static parts of the
+filenames/folders and are therefore identical for all pages processed during a run of dvisvgm.
 The strings +%f+, +%p+, +%P+, +%n+, +%N+, +%hd+, +%ho+, and +%hc+ are variables that can be used as
 part of the pattern. +%f+ expands to the base name of the DVI file, i.e. the filename without suffix,
 +%p+ is the current page number, and +%P+ the total number of pages in the DVI file. The variables
@@ -475,7 +487,7 @@ digits, the number is padded with leading zeros.
 Example: +%3p+ enforces 3 digits for the current page number (001, 002, etc.). Without an explicit
 width specifier, +%p+ gets the same number of digits as +%P+.
 +
-If you need more control over the numbering, you can use arithmetic expressions as part of a pattern.
+If you need more control over the numbering, you can use arithmetic expressions as part of the pattern.
 The syntax is +%(+'expr'+)+ where 'expr' may contain additions, subtractions, multiplications, and
 integer divisions with common precedence. The variables *p* and *P* contain the current page number
 and the total number of pages, respectively. For example, +--output="%f-%(p-1)"+ creates filenames
@@ -498,6 +510,7 @@ list of single page numbers and/or page ranges. A page range is a pair of number
 a hyphen, e.g. 5-12. Thus, a page sequence might look like this: 2-4,6,9-12,15. It doesn't matter
 if a page is given more than once or if page ranges overlap. dvisvgm always extracts the page
 numbers in ascending order and converts them only once.
++
 In order to stay compatible with previous versions, the default page sequence is 1. dvisvgm
 therefore converts only the first page and not the whole document if option *--page* is omitted.
 Usually, page ranges consist of two numbers denoting the first and last page to be converted.
@@ -507,6 +520,10 @@ pages up to page 10, +--page=10-+ converts all pages starting with page 10.
 Please consider that the page values don't refer to the page numbers printed on the
 corresponding page. Instead, the physical page count is expected, where the first page always
 gets number 1.
++
+At the end of the range sequence an optional filter specifier can be added. Currently, the two
+filters +:even+ and +:odd+ are supported which restrict the preceding values to even or odd
+numbers. For example, +--page=1-11,20:even+ is equivalent to +--page=2,4,6,8,10,20+.
 
 *-H, --page-hashes*[='params']::
 If this option is given, dvisvgm computes hash values of all pages to be processed. As long as the
@@ -554,10 +571,20 @@ forces dvisvgm to convert a DVI page even if a file with the target name already
 If this option is given, dvisvgm does not expect a DVI but a PDF input file, and tries to convert
 it to SVG. Similar to the conversion of DVI files, only the first page is processed by default.
 Option *--page* can be used to select different pages, page ranges, and/or page sequences.
-The conversion is realized by creating a single 'pdffile' special command which is forwarded to
-the PostScript special handler. Therefore, this option is only available if dvisvgm was built
-with PostScript support enabled, and requires Ghostscript to be accessible. See option *--libgs*
-for further information.
++
+If a Ghostcript version < 10.1.0 is found, dvisvgm uses Ghostscript to process the PDF file. In
+this case, the conversion is realized by creating a single 'pdffile' special command which is
+forwarded to dvisvgm's PostScript special handler. Therefore, this option is only available if
+dvisvgm was built with PostScript support enabled, and requires Ghostscript to be accessible.
+See option *--libgs* for further information.
++
+As of Ghostscript 10.1.0, this will no longer work due to the introduction of a new PDF interpreter.
+Therefore, an alternative conversion module based on https://mupdf.com/docs/mutool.html[mutool]
+has been introduced. It's automatically invoked if Ghostscript can't be used and if a working
++mutool+ executable is present in a directory which is part of the system's search path.
++
+Alternatively, environment variable +DVISVGM_PDF_PROC+ can be used to select the PDF processor.
+The currently supported values are +gs+ and +mutool+.
 
 *-d, --precision*='digits'::
 Specifies the maximal number of decimal places applied to floating-point attribute values.
@@ -596,8 +623,15 @@ system's temporary folder by default, e.g. +/tmp+ on Linux systems. Option *--tm
 to specify a different location. Please note that dvisvgm does not create this folder if it doesn't
 exist. Therefore, you must ensure that it's actually present before running dvisvgm.
 +
-If the optional parameter 'path' is omitted, dvisvgm prints the location of the system's
-temp folder and exits.
+In order to prevent colliding files caused by parallel calls of dvisvgm, the program doesn't write
+the files directly in the specified directory but furthermore creates a uniquely named subfolder in
+there, where the temporary files will be placed. This can be prevented by appending +//+ or +\\+
+(on Windows) to the specified directory name. For example, +--tmpdir=.//+ creates the temporary files
+directly in the current working directory, while +--tmpdir=.+ places them in a dedicated subfolder of
+the current working directory.
++
+If the optional parameter 'path' of option *--tmpdir* is omitted, dvisvgm prints the location of the
+system's temp folder and exits.
 
 *-a, --trace-all*=['retrace']::
 This option forces dvisvgm to vectorize not only the glyphs actually required to render the
@@ -990,6 +1024,12 @@ All malformed entries in the list are silently ignored.
 *Example:* +er=01:pi=\*5+ sets the colors of error messages (+er+) to red (+1+) on black (+0+), and those
 of progress indicators (+pi+) to cyan (+5+) on default background (+*+).
 
+Variable *DVISVGM_PDF_PROC* allows you to select the desired PDF processor. dvisvgm requires either
+Ghostscript (version < 10.1.0) or mutool to process PDF files. IF *DVISVGM_PDF_PROC* is not set, dvisvgm
+tries to detect the available processors. See option *--pdf* for further information. To select a
+specific PDF processor, you can set *DVISVGM_PDF_PROC* to +gs+ or +mutool+ which forces the use of
+Ghostscript and mutool respectively.
+
 Files
 -----
 The location of the following files is determined by the kpathsea library.
@@ -1025,7 +1065,7 @@ Written by {author} <{email}>
 
 Copying
 -------
-Copyright (C) 2005-2022 Martin Gieseking. Free use of this software is
+Copyright (C) 2005-2023 Martin Gieseking. Free use of this software is
 granted under the terms of the GNU General Public License (GPL) version 3
 or, (at your option) any later version.
 

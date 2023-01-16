@@ -1,11 +1,11 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
 bin_PROGRAMS     = dvisvgm
 noinst_LIBRARIES = libdvisvgm.a
-SUBDIRS = optimizer
+SUBDIRS = fonts optimizer ttf
 
 dvisvgm_SOURCES = \
 	CommandLine.hpp \
@@ -15,6 +15,7 @@ include ../libs/defs.am
 
 dvisvgm_LDADD = \
 	$(noinst_LIBRARIES) \
+	fonts/libbase14fonts.a \
 	optimizer/liboptimizer.a \
 	../libs/clipper/libclipper.a \
 	$(POTRACE_LIBS) \
@@ -22,7 +23,7 @@ dvisvgm_LDADD = \
 
 if ENABLE_WOFF
 dvisvgm_LDADD += \
-	../libs/ff-woff/libfontforge.a \
+	ttf/libttf.a \				  
 	$(WOFF2_LIBS) \
 	$(BROTLI_LIBS)
 endif
@@ -117,9 +118,10 @@ libdvisvgm_a_SOURCES = \
 	Pair.hpp \
 	PapersizeSpecialHandler.hpp  PapersizeSpecialHandler.cpp \
 	PathClipper.hpp              PathClipper.cpp \
+	PDFHandler.hpp               PDFHandler.cpp \
 	PDFParser.hpp                PDFParser.cpp \
 	PdfSpecialHandler.hpp        PdfSpecialHandler.cpp \
-	PDFToSVG.hpp \
+	PDFToSVG.hpp                 PDFToSVG.cpp \
 	PreScanDVIReader.hpp         PreScanDVIReader.cpp \
 	Process.hpp                  Process.cpp \
 	psdefs.cpp \
@@ -153,8 +155,6 @@ libdvisvgm_a_SOURCES = \
 	ToUnicodeMap.hpp             ToUnicodeMap.cpp \
 	TpicSpecialHandler.hpp       TpicSpecialHandler.cpp \
 	TriangularPatch.hpp          TriangularPatch.cpp \
-	TrueTypeFont.hpp             TrueTypeFont.cpp \
-	TTFAutohint.hpp              TTFAutohint.cpp \
 	Unicode.hpp                  Unicode.cpp \
 	utility.hpp                  utility.cpp \
 	VectorIterator.hpp \
@@ -168,10 +168,6 @@ libdvisvgm_a_SOURCES = \
 	XMLString.hpp                XMLString.cpp \
 	XXHashFunction.hpp \
 	ZLibOutputStream.hpp
-
-if ENABLE_WOFF
-libdvisvgm_a_SOURCES += ffwrapper.c ffwrapper.h
-endif
 
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 

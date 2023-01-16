@@ -158,10 +158,15 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	UtilityTest$(EXEEXT) VectorIteratorTest$(EXEEXT) \
 	VectorStreamTest$(EXEEXT) XMLNodeTest$(EXEEXT) \
 	XMLStringTest$(EXEEXT)
-@ENABLE_WOFF_TRUE@am__append_10 = ../libs/ff-woff/libfontforge.a
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_compile_flag.m4 \
+	$(top_srcdir)/m4/ax_code_coverage.m4 \
+	$(top_srcdir)/m4/ax_cxx_compile_stdcxx.m4 \
+	$(top_srcdir)/m4/ax_gcc_builtin.m4 $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
@@ -192,7 +197,7 @@ am__DEPENDENCIES_4 =
 am__DEPENDENCIES_6 = $(POTRACE_LIBS) $(XXHASH_LIBS) \
 	$(am__DEPENDENCIES_3) $(am__append_7) $(am__DEPENDENCIES_5)
 am__DEPENDENCIES_7 = libgtest.la ../src/libdvisvgm.la \
-	$(am__DEPENDENCIES_6) $(am__append_10) $(am__DEPENDENCIES_4)
+	$(am__DEPENDENCIES_6) $(am__DEPENDENCIES_4)
 BezierTest_DEPENDENCIES = $(am__DEPENDENCIES_7)
 am_BitmapTest_OBJECTS = BitmapTest-BitmapTest.$(OBJEXT)
 BitmapTest_OBJECTS = $(am_BitmapTest_OBJECTS)
@@ -1043,7 +1048,7 @@ nodist_hashcheck_SOURCES = hashcheck.cpp
 hashcheck_CPPFLAGS = $(LIBS_CFLAGS)
 hashcheck_LDADD = $(LIBS_LIBS)
 TESTLIBS = libgtest.la ../src/libdvisvgm.la $(LIBS_LIBS) -lfreetype \
-	$(am__append_10) $(CODE_COVERAGE_LDFLAGS)
+	$(CODE_COVERAGE_LDFLAGS)
 BezierTest_SOURCES = BezierTest.cpp testutil.hpp
 BezierTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 BezierTest_LDADD = $(TESTLIBS)
@@ -1238,9 +1243,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(srcdir)/../libs/defs.am $(am__co
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu tests/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign tests/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu tests/Makefile
+	  $(AUTOMAKE) --foreign tests/Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
 	  *config.status*) \

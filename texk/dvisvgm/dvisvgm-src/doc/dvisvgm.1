@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2022-02-26
+.\"      Date: 2022-10-14
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 2.14
+.\"    Source: dvisvgm 3.0.1
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "2022\-02\-26" "dvisvgm 2\&.14" "dvisvgm Manual"
+.TH "DVISVGM" "1" "2022\-10\-14" "dvisvgm 3\&.0\&.1" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -299,6 +299,15 @@ predefined colors (\m[blue]https://www.w3.org/TR/SVG11/types.html#ColorKeywords\
 Adds comments with further information about selected data to the SVG file\&. Currently, only font elements and font CSS rules related to native fonts are annotated\&.
 .RE
 .PP
+\fBembed\-bitmaps\fR
+.RS 4
+Embeds the contents of bitmap files into the generated SVG files instead of adding file references\&. Because of the base64\-encoded data, the SVG files are usually much bigger but at the same time more portable because they don\(cqt rely on external bitmap files\&.
+.sp
+This option only affects bitmaps referenced in DVI/XDV files, e\&.g\&. added by
+\fB\eincludegraphics\fR\&. Bitmaps in PostScript or PDF files are always embedded\&. Also see option
+\fBbitmap\-format\fR\&.
+.RE
+.PP
 \fB\-E, \-\-eps\fR
 .RS 4
 If this option is given, dvisvgm does not expect a DVI but a single or multiple EPS input files, and tries to convert them to SVG\&. In order to do so, a single
@@ -317,7 +326,10 @@ given, dvisvgm analyzes the actual shape of each character and derives a usually
 .PP
 \fB\-f, \-\-font\-format\fR=\fIformat\fR
 .RS 4
-Selects the file format used to embed font data into the generated SVG output when converting DVI files\&. It has no effect when converting PDF or PostScript files\&. Text fragments present in these files are always converted to path elements\&.
+Selects the file format used to embed font data into the generated SVG output when converting DVI or PDF files\&. The latter require the new mutool\-based PDF handler introduced with dvisvgm 3\&.0 (also see option
+\fB\-\-pdf\fR)\&. Option
+\fB\-\-font\-format\fR
+has no effect when converting PDF or PostScript files using Ghostscript\&. Text fragments present in these files are then always converted to path elements\&.
 .sp
 Following formats are supported:
 \fBSVG\fR
@@ -333,7 +345,8 @@ or
 to the font format, e\&.g\&.
 \fB\-\-font\-format=woff,autohint\fR
 or
-\fB\-\-fwoff,ah\fR\&.
+\fB\-\-fwoff,ah\fR\&. This functionality requires the
+ttfautohint library (\m[blue]https://freetype.org/ttfautohint\m[])\&. If it\(cqs not available or can\(cqt be found, dvisvgm issues a corresponding warning message\&.
 .sp
 Option
 \fB\-\-font\-format\fR
@@ -671,9 +684,9 @@ expression, it\(cqs assigned to the attribute\&. Otherwise, the matrix expressio
 .PP
 \fB\-o, \-\-output\fR=\fIpattern\fR
 .RS 4
-Sets the pattern that determines the names of the generated SVG files\&. The required parameter
+Sets the pattern that determines the names of the generated SVG files, optionally including the file path\&. The required parameter
 \fIpattern\fR
-may consist of an arbitrary sequence of characters which make up the filenames\&. With the exception of the following mentioned variables and expressions, all characters are treated as static parts of the filenames and are therefore identical for all pages processed during a run of dvisvgm\&. The strings
+may consist of an arbitrary sequence of characters which make up the filenames or file paths relative to the current working directory\&. With the exception of the following mentioned variables and expressions, all characters are treated as static parts of the filenames/folders and are therefore identical for all pages processed during a run of dvisvgm\&. The strings
 \fB%f\fR,
 \fB%p\fR,
 \fB%P\fR,
@@ -701,7 +714,7 @@ enforces 3 digits for the current page number (001, 002, etc\&.)\&. Without an e
 gets the same number of digits as
 \fB%P\fR\&.
 .sp
-If you need more control over the numbering, you can use arithmetic expressions as part of a pattern\&. The syntax is
+If you need more control over the numbering, you can use arithmetic expressions as part of the pattern\&. The syntax is
 \fB%(\fR\fIexpr\fR\fB)\fR
 where
 \fIexpr\fR
@@ -745,13 +758,24 @@ is a single\-page document\&. Otherwise, multiple SVG files
 .RS 4
 This option selects the pages to be processed\&. Parameter
 \fIranges\fR
-consists of a comma\-separated list of single page numbers and/or page ranges\&. A page range is a pair of numbers separated by a hyphen, e\&.g\&. 5\-12\&. Thus, a page sequence might look like this: 2\-4,6,9\-12,15\&. It doesn\(cqt matter if a page is given more than once or if page ranges overlap\&. dvisvgm always extracts the page numbers in ascending order and converts them only once\&. In order to stay compatible with previous versions, the default page sequence is 1\&. dvisvgm therefore converts only the first page and not the whole document if option
+consists of a comma\-separated list of single page numbers and/or page ranges\&. A page range is a pair of numbers separated by a hyphen, e\&.g\&. 5\-12\&. Thus, a page sequence might look like this: 2\-4,6,9\-12,15\&. It doesn\(cqt matter if a page is given more than once or if page ranges overlap\&. dvisvgm always extracts the page numbers in ascending order and converts them only once\&.
+.sp
+In order to stay compatible with previous versions, the default page sequence is 1\&. dvisvgm therefore converts only the first page and not the whole document if option
 \fB\-\-page\fR
 is omitted\&. Usually, page ranges consist of two numbers denoting the first and last page to be converted\&. If the conversion should start at page 1, or if it should continue up to the last DVI page, the first or second range number can be omitted, respectively\&. Example:
 \fB\-\-page=\-10\fR
 converts all pages up to page 10,
 \fB\-\-page=10\-\fR
 converts all pages starting with page 10\&. Please consider that the page values don\(cqt refer to the page numbers printed on the corresponding page\&. Instead, the physical page count is expected, where the first page always gets number 1\&.
+.sp
+At the end of the range sequence an optional filter specifier can be added\&. Currently, the two filters
+\fB:even\fR
+and
+\fB:odd\fR
+are supported which restrict the preceding values to even or odd numbers\&. For example,
+\fB\-\-page=1\-11,20:even\fR
+is equivalent to
+\fB\-\-page=2,4,6,8,10,20\fR\&.
 .RE
 .PP
 \fB\-H, \-\-page\-hashes\fR[=\fIparams\fR]
@@ -827,11 +851,26 @@ forces dvisvgm to convert a DVI page even if a file with the target name already
 .RS 4
 If this option is given, dvisvgm does not expect a DVI but a PDF input file, and tries to convert it to SVG\&. Similar to the conversion of DVI files, only the first page is processed by default\&. Option
 \fB\-\-page\fR
-can be used to select different pages, page ranges, and/or page sequences\&. The conversion is realized by creating a single
+can be used to select different pages, page ranges, and/or page sequences\&.
+.sp
+If a Ghostcript version < 10\&.1\&.0 is found, dvisvgm uses Ghostscript to process the PDF file\&. In this case, the conversion is realized by creating a single
 \fIpdffile\fR
-special command which is forwarded to the PostScript special handler\&. Therefore, this option is only available if dvisvgm was built with PostScript support enabled, and requires Ghostscript to be accessible\&. See option
+special command which is forwarded to dvisvgm\(cqs PostScript special handler\&. Therefore, this option is only available if dvisvgm was built with PostScript support enabled, and requires Ghostscript to be accessible\&. See option
 \fB\-\-libgs\fR
 for further information\&.
+.sp
+As of Ghostscript 10\&.1\&.0, this will no longer work due to the introduction of a new PDF interpreter\&. Therefore, an alternative conversion module based on
+mutool (\m[blue]https://mupdf.com/docs/mutool.html\m[])
+has been introduced\&. It\(cqs automatically invoked if Ghostscript can\(cqt be used and if a working
+\fBmutool\fR
+executable is present in a directory which is part of the system\(cqs search path\&.
+.sp
+Alternatively, environment variable
+\fBDVISVGM_PDF_PROC\fR
+can be used to select the PDF processor\&. The currently supported values are
+\fBgs\fR
+and
+\fBmutool\fR\&.
 .RE
 .PP
 \fB\-d, \-\-precision\fR=\fIdigits\fR
@@ -887,8 +926,20 @@ on Linux systems\&. Option
 \fB\-\-tmpdir\fR
 can be used to specify a different location\&. Please note that dvisvgm does not create this folder if it doesn\(cqt exist\&. Therefore, you must ensure that it\(cqs actually present before running dvisvgm\&.
 .sp
+In order to prevent colliding files caused by parallel calls of dvisvgm, the program doesn\(cqt write the files directly in the specified directory but furthermore creates a uniquely named subfolder in there, where the temporary files will be placed\&. This can be prevented by appending
+\fB//\fR
+or
+\fB\e\e\fR
+(on Windows) to the specified directory name\&. For example,
+\fB\-\-tmpdir=\&.//\fR
+creates the temporary files directly in the current working directory, while
+\fB\-\-tmpdir=\&.\fR
+places them in a dedicated subfolder of the current working directory\&.
+.sp
 If the optional parameter
 \fIpath\fR
+of option
+\fB\-\-tmpdir\fR
 is omitted, dvisvgm prints the location of the system\(cqs temp folder and exits\&.
 .RE
 .PP
@@ -1614,6 +1665,8 @@ T}
 .sp 1
 .sp
 \fBExample:\fR \fBer=01:pi=*5\fR sets the colors of error messages (\fBer\fR) to red (\fB1\fR) on black (\fB0\fR), and those of progress indicators (\fBpi\fR) to cyan (\fB5\fR) on default background (\fB*\fR)\&.
+.sp
+Variable \fBDVISVGM_PDF_PROC\fR allows you to select the desired PDF processor\&. dvisvgm requires either Ghostscript (version < 10\&.1\&.0) or mutool to process PDF files\&. IF \fBDVISVGM_PDF_PROC\fR is not set, dvisvgm tries to detect the available processors\&. See option \fB\-\-pdf\fR for further information\&. To select a specific PDF processor, you can set \fBDVISVGM_PDF_PROC\fR to \fBgs\fR or \fBmutool\fR which forces the use of Ghostscript and mutool respectively\&.
 .SH "FILES"
 .sp
 The location of the following files is determined by the kpathsea library\&. To check the actual kpathsea configuration you can use the \fBkpsewhich\fR utility\&.
@@ -1715,4 +1768,4 @@ Please report bugs using the bug tracker at GitHub (\m[blue]https://github.com/m
 Written by Martin Gieseking <\m[blue]\fBmartin\&.gieseking@uos\&.de\fR\m[]>
 .SH "COPYING"
 .sp
-Copyright \(co 2005\-2022 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.
+Copyright \(co 2005\-2023 Martin Gieseking\&. Free use of this software is granted under the terms of the GNU General Public License (GPL) version 3 or, (at your option) any later version\&.

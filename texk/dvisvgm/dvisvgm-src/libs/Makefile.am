@@ -3,8 +3,8 @@
 ##
 ## Process this file with automake.
 
-SUBDIRS = clipper md5 variant xxHash
+SUBDIRS = boost clipper md5 variant xxHash
 
 if ENABLE_WOFF
-SUBDIRS += brotli ff-woff woff2
+SUBDIRS += brotli woff2
 endif

@@ -227,15 +227,17 @@ AC_SUBST(AM_LDFLAGS)
 AC_CONFIG_FILES([Makefile
 	dvisvgm-src/Makefile
 	dvisvgm-src/libs/Makefile
+	dvisvgm-src/libs/boost/Makefile
 	dvisvgm-src/libs/brotli/Makefile
 	dvisvgm-src/libs/clipper/Makefile
-	dvisvgm-src/libs/ff-woff/Makefile
 	dvisvgm-src/libs/md5/Makefile
 	dvisvgm-src/libs/variant/Makefile
 	dvisvgm-src/libs/woff2/Makefile
 	dvisvgm-src/libs/xxHash/Makefile
 	dvisvgm-src/src/Makefile
 	dvisvgm-src/src/version.hpp
+	dvisvgm-src/src/fonts/Makefile
 	dvisvgm-src/src/optimizer/Makefile
+	dvisvgm-src/src/ttf/Makefile
 ])dnl TL: skipping tests/* and doc/*
 AC_OUTPUT
