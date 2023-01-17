@@ -1,5 +1,9 @@
+2023-01-17  Luigi Scarso <luigi.scarso@gmail.com> 
+    * \pdfvariable omitmediabox 1 (H.Hagen)
+    * luatex 1.16.0
+
 2022-12-05  Luigi Scarso <luigi.scarso@gmail.com> 
-    * complementaty patch for revision 7551 (lua end compatibility) (H.Hagen)
+    * complementary patch for revision 7551 (lua end compatibility) (H.Hagen)
 
 2022-12-03  Luigi Scarso <luigi.scarso@gmail.com> 
     * Track last node in ligature handling (M.Krüger)
