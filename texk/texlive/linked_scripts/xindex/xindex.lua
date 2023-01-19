@@ -6,11 +6,11 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 22 2022-02-11 12:18:15Z hvoss $
+-- $Id: xindex.lua 22 2023-01-18 12:18:15Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.45
+ local version = 0.46
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -51,8 +51,8 @@ local args = require ('xindex-lapp') [[
     -b,--no_labels
     -i,--ignoreSpace
     -o,--output (default "")
-    -k --checklang               same as * star for checking aux file
-    -l,--language (default en)   or * for detecting the language from the aux file
+    -k,--checklang               
+    -l,--language (default en)   
     -p,--prefix (default L)
     -u,--use_UCA
     -s,--use_stdin
@@ -239,10 +239,13 @@ escape_chars = { -- by default " is the escape char
 
 outFile = io.open(outfilename,"w+")
 
+check_language = args["checklang"]
 local aux_language = ""
 
-if args["checklang"] or (args["language"] == "*") then
-  writeLog(2,'Check language in aux file\n',0) 
+
+if check_language then
+  print("check aux file for unknown language")
+--  writeLog(2,'Check language in aux file\n',0) 
   -- \babel@aux{german}{}        package babel
   -- \selectlanguage *[variant=german,spelling=new,]{german}   package polyglossia
   local auxfile = inFiles[1]:split(".")[1]..".aux"
@@ -256,9 +259,9 @@ if args["checklang"] or (args["language"] == "*") then
       break
     else
       if string.find(str, "babel@aux{")  then        
-  --      print("Babel defunden: "..str)
+--        print("Babel gefunden: "..str)
         str = str:match("{..+}$")   -- get last word {language}
-  --      print("Babel: "..str)
+        print("Babel: "..str)
         aux_language = str:sub(2,(#str-3))
         break
       end
@@ -293,6 +296,7 @@ if (indexheader[language] == nil) then
   writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
   language = "en"
 end  
+
 index_header = indexheader[language]
 if vlevel > 0 then for i=1,#index_header do writeLog(2,index_header[i].."\n",1) end end
 if (folium[language] == nil) then
