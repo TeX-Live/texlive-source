@@ -2,15 +2,20 @@
 
 This file is part of the __SyncTeX__ package.
 
-[//]: # (Version: 1.21)
-[//]: # (Date: Sun Oct 15 15:09:55 UTC 2017)
+[//]: # (Version: 1.22)
+[//]: # (Date: Mon May 11 16:05:02 UTC 2020)
 
 ## Important
 
+* Changes in version `1.22`
+
+  * Typos fixed in code and printed comments
+  * Code cleaning (`static` keyword added)
+  * Bug fixed (Missing `va_end`)
+
 * Changes in version `1.21`
 
-	* Display query returns more results (as much as `1.18`)
-	* Remove a `\` character from the name of 2 test files.
+	* Remove a `\` character from the name ot 2 test files.
 	* Change variable name `class` to `class_` because the former is a reserved keyword in C++.
 	* Adding a more portable unused variable management.
 	* Various cosmetic changes in the source code, including explicit declaration of `void` in forward function declaration.

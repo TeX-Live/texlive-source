@@ -1,3 +1,28 @@
+2023-01-19  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Comparing TL r55094 (by JL) and GH 2020 branch.
+
+	  * Changed files (on https://github.com/jlaurens/synctex):
+	    synctex_main.c
+	    synctex_parser.c
+	    synctex_parser_readme.md
+	    synctex_parser_utils.c
+
+	  - Fix compilation with clang with -Wformat-nonliteral.
+	    https://github.com/jlaurens/synctex/pull/38
+	  - Fix build when compiling with -Werror=implicit-function-declaration.
+	    https://github.com/jlaurens/synctex/pull/39
+	  - More explanations.
+	  - Remove recursion form _synctex_free_handle_old.
+	  - Fix a Bug in post scriptum parser y_offset.
+	    https://github.com/jlaurens/synctex/issues/50
+	  - Fix a Memory leak when opening files.
+	    https://github.com/jlaurens/synctex/issues/49
+	  - Fix memleaks when a file cannot be parsed.
+	    https://github.com/jlaurens/synctex/issues/48
+	  - Fix memleaks when freeing iterators
+	    https://github.com/jlaurens/synctex/issues/55
+
 2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/synctex.am: Remove ptex and uptex.
