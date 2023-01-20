@@ -1,3 +1,6 @@
+2023-01-19 Luigi Scarso <luigi.scarso@gmail.com>
+    * MetaPost: svg->dx, svg->dy are now double (better precision) .
+
 2022-07-31 Luigi Scarso <luigi.scarso@gmail.com>
     * MetaPost: Working on the file extension (work in progress).
 
