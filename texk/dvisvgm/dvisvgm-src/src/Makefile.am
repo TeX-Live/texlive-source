@@ -1,11 +1,11 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
 bin_PROGRAMS     = dvisvgm
-noinst_LIBRARIES = libdvisvgm.a
-SUBDIRS = optimizer
+noinst_LTLIBRARIES = libdvisvgm.la
+SUBDIRS = fonts optimizer ttf
 
 dvisvgm_SOURCES = \
 	CommandLine.hpp \
@@ -14,15 +14,15 @@ dvisvgm_SOURCES = \
 include ../libs/defs.am
 
 dvisvgm_LDADD = \
-	$(noinst_LIBRARIES) \
-	optimizer/liboptimizer.a \
+	$(noinst_LTLIBRARIES) \
 	../libs/clipper/libclipper.a \
 	$(POTRACE_LIBS) \
 	$(XXHASH_LIBS)
 
 if ENABLE_WOFF
+SUBDIRS += ttf
+
 dvisvgm_LDADD += \
-	../libs/ff-woff/libfontforge.a \
 	$(WOFF2_LIBS) \
 	$(BROTLI_LIBS)
 endif
@@ -36,14 +36,17 @@ endif
 dvisvgm_LDADD += \
 	$(KPATHSEA_LIBS) \
 	$(FREETYPE2_LIBS) \
-	$(FONTFORGE_LIBS) \
 	$(ZLIB_LIBS) \
 	$(LIBGS_LIBS)
 
-dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES)
-dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
+dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
+dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
 
-libdvisvgm_a_SOURCES = \
+if TEXLIVE_BUILD
+dvisvgm_DEPENDENCIES += $(POTRACE_DEPEND)
+endif
+
+libdvisvgm_la_SOURCES = \
 	AGLTable.hpp \
 	BasicDVIReader.hpp           BasicDVIReader.cpp \
 	Bezier.hpp                   Bezier.cpp \
@@ -117,9 +120,10 @@ libdvisvgm_a_SOURCES = \
 	Pair.hpp \
 	PapersizeSpecialHandler.hpp  PapersizeSpecialHandler.cpp \
 	PathClipper.hpp              PathClipper.cpp \
+	PDFHandler.hpp               PDFHandler.cpp \
 	PDFParser.hpp                PDFParser.cpp \
 	PdfSpecialHandler.hpp        PdfSpecialHandler.cpp \
-	PDFToSVG.hpp \
+	PDFToSVG.hpp                 PDFToSVG.cpp \
 	PreScanDVIReader.hpp         PreScanDVIReader.cpp \
 	Process.hpp                  Process.cpp \
 	psdefs.cpp \
@@ -153,8 +157,6 @@ libdvisvgm_a_SOURCES = \
 	ToUnicodeMap.hpp             ToUnicodeMap.cpp \
 	TpicSpecialHandler.hpp       TpicSpecialHandler.cpp \
 	TriangularPatch.hpp          TriangularPatch.cpp \
-	TrueTypeFont.hpp             TrueTypeFont.cpp \
-	TTFAutohint.hpp              TTFAutohint.cpp \
 	Unicode.hpp                  Unicode.cpp \
 	utility.hpp                  utility.cpp \
 	VectorIterator.hpp \
@@ -169,8 +171,10 @@ libdvisvgm_a_SOURCES = \
 	XXHashFunction.hpp \
 	ZLibOutputStream.hpp
 
+libdvisvgm_la_LIBADD = fonts/libbase14fonts.la optimizer/liboptimizer.la
+
 if ENABLE_WOFF
-libdvisvgm_a_SOURCES += ffwrapper.c ffwrapper.h
+libdvisvgm_la_LIBADD += ttf/libttf.la
 endif
 
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
@@ -202,13 +206,14 @@ AM_LDFLAGS = \
 	$(CODE_COVERAGE_LDFLAGS)
 
 if ENABLE_WOFF
-AM_CFLAGS +=  \
-	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
-	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
+AM_CXXFLAGS += $(TTFAUTOHINT_CFLAGS)
 
 AM_CXXFLAGS +=  \
 	$(BROTLI_CFLAGS) \
 	$(WOFF2_CFLAGS)
+
+AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
+endif
 
 if USE_BUNDLED_MD5
 AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
@@ -216,10 +221,8 @@ else
 AM_CXXFLAGS += $(LIBCRYPTO_CFLAGS)
 endif
 
-endif
-
 # TL: do not try to rebuild these source files.
-if ! TEXLIVE_BUILD
+if !TEXLIVE_BUILD
 
 # the command-line parser class is generated from options.xml by opt2cpp
 $(srcdir)/CommandLine.hpp: options.xml
@@ -233,12 +236,11 @@ $(srcdir)/psdefs.cpp: psdefs.ps
 	fi
 
 psdefs.ps: ;
-endif ! TEXLIVE_BUILD
-
-@CODE_COVERAGE_RULES@
+endif !TEXLIVE_BUILD
 
 CLEANFILES = *.gcda *.gcno
 
+if TEXLIVE_BUILD
 # Rebuild libkpathsea:
 @KPATHSEA_RULE@
 # Rebuild libfreetype:
@@ -247,3 +249,4 @@ CLEANFILES = *.gcda *.gcno
 @ZLIB_RULE@
 # Rebuild potrace:
 @POTRACE_RULE@
+endif TEXLIVE_BUILD

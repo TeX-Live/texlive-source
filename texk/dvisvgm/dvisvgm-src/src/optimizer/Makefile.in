@@ -90,11 +90,13 @@ build_triplet = @build@
 host_triplet = @host@
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
+#endif TEXLIVE_BUILD
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 subdir = dvisvgm-src/src/optimizer
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
+	$(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
@@ -116,20 +118,17 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-AM_V_AR = $(am__v_AR_@AM_V@)
-am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
-am__v_AR_0 = @echo "  AR      " $@;
-am__v_AR_1 = 
-liboptimizer_a_AR = $(AR) $(ARFLAGS)
-liboptimizer_a_LIBADD =
-am_liboptimizer_a_OBJECTS = AttributeExtractor.$(OBJEXT) \
-	ClipPathReassigner.$(OBJEXT) GroupCollapser.$(OBJEXT) \
-	RedundantElementRemover.$(OBJEXT) SVGOptimizer.$(OBJEXT) \
-	TextSimplifier.$(OBJEXT) TransformSimplifier.$(OBJEXT) \
-	WSNodeRemover.$(OBJEXT)
-liboptimizer_a_OBJECTS = $(am_liboptimizer_a_OBJECTS)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+liboptimizer_la_LIBADD =
+am_liboptimizer_la_OBJECTS = AttributeExtractor.lo \
+	ClipPathReassigner.lo GroupCollapser.lo \
+	RedundantElementRemover.lo SVGOptimizer.lo TextSimplifier.lo \
+	TransformSimplifier.lo WSNodeRemover.lo
+liboptimizer_la_OBJECTS = $(am_liboptimizer_la_OBJECTS)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -145,20 +144,16 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/AttributeExtractor.Po \
-	./$(DEPDIR)/ClipPathReassigner.Po \
-	./$(DEPDIR)/GroupCollapser.Po \
-	./$(DEPDIR)/RedundantElementRemover.Po \
-	./$(DEPDIR)/SVGOptimizer.Po ./$(DEPDIR)/TextSimplifier.Po \
-	./$(DEPDIR)/TransformSimplifier.Po \
-	./$(DEPDIR)/WSNodeRemover.Po
+am__depfiles_remade = ./$(DEPDIR)/AttributeExtractor.Plo \
+	./$(DEPDIR)/ClipPathReassigner.Plo \
+	./$(DEPDIR)/GroupCollapser.Plo \
+	./$(DEPDIR)/RedundantElementRemover.Plo \
+	./$(DEPDIR)/SVGOptimizer.Plo ./$(DEPDIR)/TextSimplifier.Plo \
+	./$(DEPDIR)/TransformSimplifier.Plo \
+	./$(DEPDIR)/WSNodeRemover.Plo
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
 	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
@@ -192,8 +187,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(liboptimizer_a_SOURCES)
-DIST_SOURCES = $(liboptimizer_a_SOURCES)
+SOURCES = $(liboptimizer_la_SOURCES)
+DIST_SOURCES = $(liboptimizer_la_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -375,8 +370,8 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = liboptimizer.a
-liboptimizer_a_SOURCES = \
+noinst_LTLIBRARIES = liboptimizer.la
+liboptimizer_la_SOURCES = \
 	AttributeExtractor.hpp      AttributeExtractor.cpp \
 	ClipPathReassigner.hpp      ClipPathReassigner.cpp \
 	DependencyGraph.hpp \
@@ -388,6 +383,15 @@ liboptimizer_a_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
 	WSNodeRemover.hpp           WSNodeRemover.cpp
 
+
+# Gets automake warnings:
+#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
+#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
+#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
+#if !TEXLIVE_BUILD
+#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+#POTRACE_LIBS = ../libs/potrace/libpotrace.a
+#else
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
@@ -427,13 +431,19 @@ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; \
+	locs=`for p in $$list; do echo $$p; done | \
+	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
+	      sort -u`; \
+	test -z "$$locs" || { \
+	  echo rm -f $${locs}; \
+	  rm -f $${locs}; \
+	}
 
-liboptimizer.a: $(liboptimizer_a_OBJECTS) $(liboptimizer_a_DEPENDENCIES) $(EXTRA_liboptimizer_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f liboptimizer.a
-	$(AM_V_AR)$(liboptimizer_a_AR) liboptimizer.a $(liboptimizer_a_OBJECTS) $(liboptimizer_a_LIBADD)
-	$(AM_V_at)$(RANLIB) liboptimizer.a
+liboptimizer.la: $(liboptimizer_la_OBJECTS) $(liboptimizer_la_DEPENDENCIES) $(EXTRA_liboptimizer_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(CXXLINK)  $(liboptimizer_la_OBJECTS) $(liboptimizer_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -441,14 +451,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AttributeExtractor.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClipPathReassigner.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupCollapser.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RedundantElementRemover.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOptimizer.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TextSimplifier.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TransformSimplifier.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WSNodeRemover.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/AttributeExtractor.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ClipPathReassigner.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GroupCollapser.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RedundantElementRemover.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOptimizer.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TextSimplifier.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TransformSimplifier.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WSNodeRemover.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -572,7 +582,7 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(LTLIBRARIES)
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -606,18 +616,18 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	mostlyclean-am
 
 distclean: distclean-am
-		-rm -f ./$(DEPDIR)/AttributeExtractor.Po
-	-rm -f ./$(DEPDIR)/ClipPathReassigner.Po
-	-rm -f ./$(DEPDIR)/GroupCollapser.Po
-	-rm -f ./$(DEPDIR)/RedundantElementRemover.Po
-	-rm -f ./$(DEPDIR)/SVGOptimizer.Po
-	-rm -f ./$(DEPDIR)/TextSimplifier.Po
-	-rm -f ./$(DEPDIR)/TransformSimplifier.Po
-	-rm -f ./$(DEPDIR)/WSNodeRemover.Po
+		-rm -f ./$(DEPDIR)/AttributeExtractor.Plo
+	-rm -f ./$(DEPDIR)/ClipPathReassigner.Plo
+	-rm -f ./$(DEPDIR)/GroupCollapser.Plo
+	-rm -f ./$(DEPDIR)/RedundantElementRemover.Plo
+	-rm -f ./$(DEPDIR)/SVGOptimizer.Plo
+	-rm -f ./$(DEPDIR)/TextSimplifier.Plo
+	-rm -f ./$(DEPDIR)/TransformSimplifier.Plo
+	-rm -f ./$(DEPDIR)/WSNodeRemover.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -663,14 +673,14 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-am
-		-rm -f ./$(DEPDIR)/AttributeExtractor.Po
-	-rm -f ./$(DEPDIR)/ClipPathReassigner.Po
-	-rm -f ./$(DEPDIR)/GroupCollapser.Po
-	-rm -f ./$(DEPDIR)/RedundantElementRemover.Po
-	-rm -f ./$(DEPDIR)/SVGOptimizer.Po
-	-rm -f ./$(DEPDIR)/TextSimplifier.Po
-	-rm -f ./$(DEPDIR)/TransformSimplifier.Po
-	-rm -f ./$(DEPDIR)/WSNodeRemover.Po
+		-rm -f ./$(DEPDIR)/AttributeExtractor.Plo
+	-rm -f ./$(DEPDIR)/ClipPathReassigner.Plo
+	-rm -f ./$(DEPDIR)/GroupCollapser.Plo
+	-rm -f ./$(DEPDIR)/RedundantElementRemover.Plo
+	-rm -f ./$(DEPDIR)/SVGOptimizer.Plo
+	-rm -f ./$(DEPDIR)/TextSimplifier.Plo
+	-rm -f ./$(DEPDIR)/TransformSimplifier.Plo
+	-rm -f ./$(DEPDIR)/WSNodeRemover.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -692,7 +702,7 @@ uninstall-am:
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
-	clean-generic clean-libtool clean-noinstLIBRARIES \
+	clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	cscopelist-am ctags ctags-am distclean distclean-compile \
 	distclean-generic distclean-libtool distclean-tags distdir dvi \
 	dvi-am html html-am info info-am install install-am \

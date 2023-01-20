@@ -1,7 +1,9 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2022 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
+
+include $(top_srcdir)/dvisvgm-src/aminclude_static.am
 
 AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING

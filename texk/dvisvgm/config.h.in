@@ -164,6 +164,12 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
+/* Define to 1 if the system has the `__builtin_clz' built-in function */
+#undef HAVE___BUILTIN_CLZ
+
+/* The machine triplet of the host system */
+#undef HOST_SYSTEM
+
 /* Define to 1 if the kpathsea headers are not C++ safe. */
 #undef KPSE_CXX_UNSAFE
 
@@ -199,9 +205,6 @@
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
-
-/* The machine triplet of the target system */
-#undef TARGET_SYSTEM
 
 /* Define to 1 if your <sys/time.h> declares `struct tm'. */
 #undef TM_IN_SYS_TIME

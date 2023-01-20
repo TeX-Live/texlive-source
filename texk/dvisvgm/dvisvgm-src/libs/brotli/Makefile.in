@@ -90,7 +90,8 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = dvisvgm-src/libs/brotli
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
+	$(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
@@ -931,8 +932,6 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
-
-@HAVE_BROTLI_FALSE@@CODE_COVERAGE_RULES@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

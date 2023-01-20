@@ -13,6 +13,9 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
+
+# aminclude_static.am generated automatically by Autoconf
+# from AX_AM_MACROS_STATIC on Tue Jan 10 14:41:23 CET 2023
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -89,7 +92,8 @@ build_triplet = @build@
 host_triplet = @host@
 subdir = dvisvgm-src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
+	$(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
@@ -164,7 +168,8 @@ am__define_uniq_tagged_files = \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
 DIST_SUBDIRS = $(SUBDIRS)
-am__DIST_COMMON = $(srcdir)/Makefile.in AUTHORS COPYING ChangeLog \
+am__DIST_COMMON = $(srcdir)/Makefile.in \
+	$(top_srcdir)/dvisvgm-src/aminclude_static.am AUTHORS COPYING \
 	INSTALL NEWS README
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 am__relativize = \
@@ -348,17 +353,34 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+@CODE_COVERAGE_ENABLED_TRUE@GITIGNOREFILES := $(GITIGNOREFILES) $(CODE_COVERAGE_OUTPUT_FILE) $(CODE_COVERAGE_OUTPUT_DIRECTORY)
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_cap = $(code_coverage_v_lcov_cap_$(V))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_cap_ = $(code_coverage_v_lcov_cap_$(AM_DEFAULT_VERBOSITY))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_cap_0 = @echo "  LCOV   --capture" $(CODE_COVERAGE_OUTPUT_FILE);
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_ign = $(code_coverage_v_lcov_ign_$(V))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_ign_ = $(code_coverage_v_lcov_ign_$(AM_DEFAULT_VERBOSITY))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_lcov_ign_0 = @echo "  LCOV   --remove /tmp/*" $(CODE_COVERAGE_IGNORE_PATTERN);
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_genhtml = $(code_coverage_v_genhtml_$(V))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_genhtml_ = $(code_coverage_v_genhtml_$(AM_DEFAULT_VERBOSITY))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_v_genhtml_0 = @echo "  GEN   " "$(CODE_COVERAGE_OUTPUT_DIRECTORY)";
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_quiet = $(code_coverage_quiet_$(V))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_quiet_ = $(code_coverage_quiet_$(AM_DEFAULT_VERBOSITY))
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_quiet_0 = --quiet
+
+# sanitizes the test-name: replaces with underscores: dashes and dots
+@CODE_COVERAGE_ENABLED_TRUE@code_coverage_sanitize = $(subst -,_,$(subst .,_,$(1)))
+@CODE_COVERAGE_ENABLED_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS := $(AM_DISTCHECK_CONFIGURE_FLAGS) --disable-code-coverage
+@USE_BUNDLED_LIBS_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS = --enable-bundled-libs
 AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
 SUBDIRS = libs src #not for TL: m4 tests doc
 ACLOCAL_AMFLAGS = -I m4
-@USE_BUNDLED_LIBS_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS = --enable-bundled-libs
 @CODE_COVERAGE_ENABLED_TRUE@lcov_dir = $(top_builddir)/lcov
 @CODE_COVERAGE_ENABLED_TRUE@lcov_file = $(lcov_dir)/lcov.info
 all: all-recursive
 
 .SUFFIXES:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/dvisvgm-src/aminclude_static.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -378,6 +400,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__maybe_remake_depfiles);; \
 	esac;
+$(top_srcdir)/dvisvgm-src/aminclude_static.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
@@ -668,6 +691,106 @@ uninstall-am:
 
 .PRECIOUS: Makefile
 
+
+# Code coverage
+#
+# Optional:
+#  - CODE_COVERAGE_DIRECTORY: Top-level directory for code coverage reporting.
+#    Multiple directories may be specified, separated by whitespace.
+#    (Default: $(top_builddir))
+#  - CODE_COVERAGE_OUTPUT_FILE: Filename and path for the .info file generated
+#    by lcov for code coverage. (Default:
+#    $(PACKAGE_NAME)-$(PACKAGE_VERSION)-coverage.info)
+#  - CODE_COVERAGE_OUTPUT_DIRECTORY: Directory for generated code coverage
+#    reports to be created. (Default:
+#    $(PACKAGE_NAME)-$(PACKAGE_VERSION)-coverage)
+#  - CODE_COVERAGE_BRANCH_COVERAGE: Set to 1 to enforce branch coverage,
+#    set to 0 to disable it and leave empty to stay with the default.
+#    (Default: empty)
+#  - CODE_COVERAGE_LCOV_SHOPTS_DEFAULT: Extra options shared between both lcov
+#    instances. (Default: based on )
+#  - CODE_COVERAGE_LCOV_SHOPTS: Extra options to shared between both lcov
+#    instances. (Default: )
+#  - CODE_COVERAGE_LCOV_OPTIONS_GCOVPATH: --gcov-tool pathtogcov
+#  - CODE_COVERAGE_LCOV_OPTIONS_DEFAULT: Extra options to pass to the
+#    collecting lcov instance. (Default: )
+#  - CODE_COVERAGE_LCOV_OPTIONS: Extra options to pass to the collecting lcov
+#    instance. (Default: )
+#  - CODE_COVERAGE_LCOV_RMOPTS_DEFAULT: Extra options to pass to the filtering
+#    lcov instance. (Default: empty)
+#  - CODE_COVERAGE_LCOV_RMOPTS: Extra options to pass to the filtering lcov
+#    instance. (Default: )
+#  - CODE_COVERAGE_GENHTML_OPTIONS_DEFAULT: Extra options to pass to the
+#    genhtml instance. (Default: based on )
+#  - CODE_COVERAGE_GENHTML_OPTIONS: Extra options to pass to the genhtml
+#    instance. (Default: )
+#  - CODE_COVERAGE_IGNORE_PATTERN: Extra glob pattern of files to ignore
+#
+# The generated report will be titled using the $(PACKAGE_NAME) and
+# $(PACKAGE_VERSION). In order to add the current git hash to the title,
+# use the git-version-gen script, available online.
+# Optional variables
+# run only on top dir
+@CODE_COVERAGE_ENABLED_TRUE@ ifeq ($(abs_builddir), $(abs_top_builddir))
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_DIRECTORY ?= $(top_builddir)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_OUTPUT_FILE ?= $(PACKAGE_NAME)-$(PACKAGE_VERSION)-coverage.info
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_OUTPUT_DIRECTORY ?= $(PACKAGE_NAME)-$(PACKAGE_VERSION)-coverage
+
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_BRANCH_COVERAGE ?=
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_SHOPTS_DEFAULT ?= $(if $(CODE_COVERAGE_BRANCH_COVERAGE),--rc lcov_branch_coverage=$(CODE_COVERAGE_BRANCH_COVERAGE))
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_SHOPTS ?= $(CODE_COVERAGE_LCOV_SHOPTS_DEFAULT)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_OPTIONS_GCOVPATH ?= --gcov-tool "$(GCOV)"
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_OPTIONS_DEFAULT ?= $(CODE_COVERAGE_LCOV_OPTIONS_GCOVPATH)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_OPTIONS ?= $(CODE_COVERAGE_LCOV_OPTIONS_DEFAULT)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_RMOPTS_DEFAULT ?=
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_LCOV_RMOPTS ?= $(CODE_COVERAGE_LCOV_RMOPTS_DEFAULT)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_GENHTML_OPTIONS_DEFAULT ?=$(if $(CODE_COVERAGE_BRANCH_COVERAGE),--rc genhtml_branch_coverage=$(CODE_COVERAGE_BRANCH_COVERAGE))
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_GENHTML_OPTIONS ?= $(CODE_COVERAGE_GENHTML_OPTIONS_DEFAULT)
+@CODE_COVERAGE_ENABLED_TRUE@CODE_COVERAGE_IGNORE_PATTERN ?=
+
+# Use recursive makes in order to ignore errors during check
+@CODE_COVERAGE_ENABLED_TRUE@check-code-coverage:
+@CODE_COVERAGE_ENABLED_TRUE@	-$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) -k check
+@CODE_COVERAGE_ENABLED_TRUE@	$(AM_V_at)$(MAKE) $(AM_MAKEFLAGS) code-coverage-capture
+
+# Capture code coverage data
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-capture: code-coverage-capture-hook
+@CODE_COVERAGE_ENABLED_TRUE@	$(code_coverage_v_lcov_cap)$(LCOV) $(code_coverage_quiet) $(addprefix --directory ,$(CODE_COVERAGE_DIRECTORY)) --capture --output-file "$(CODE_COVERAGE_OUTPUT_FILE).tmp" --test-name "$(call code_coverage_sanitize,$(PACKAGE_NAME)-$(PACKAGE_VERSION))" --no-checksum --compat-libtool $(CODE_COVERAGE_LCOV_SHOPTS) $(CODE_COVERAGE_LCOV_OPTIONS)
+@CODE_COVERAGE_ENABLED_TRUE@	$(code_coverage_v_lcov_ign)$(LCOV) $(code_coverage_quiet) $(addprefix --directory ,$(CODE_COVERAGE_DIRECTORY)) --remove "$(CODE_COVERAGE_OUTPUT_FILE).tmp" "/tmp/*" $(CODE_COVERAGE_IGNORE_PATTERN) --output-file "$(CODE_COVERAGE_OUTPUT_FILE)" $(CODE_COVERAGE_LCOV_SHOPTS) $(CODE_COVERAGE_LCOV_RMOPTS)
+@CODE_COVERAGE_ENABLED_TRUE@	-@rm -f "$(CODE_COVERAGE_OUTPUT_FILE).tmp"
+@CODE_COVERAGE_ENABLED_TRUE@	$(code_coverage_v_genhtml)LANG=C $(GENHTML) $(code_coverage_quiet) $(addprefix --prefix ,$(CODE_COVERAGE_DIRECTORY)) --output-directory "$(CODE_COVERAGE_OUTPUT_DIRECTORY)" --title "$(PACKAGE_NAME)-$(PACKAGE_VERSION) Code Coverage" --legend --show-details "$(CODE_COVERAGE_OUTPUT_FILE)" $(CODE_COVERAGE_GENHTML_OPTIONS)
+@CODE_COVERAGE_ENABLED_TRUE@	@echo "file://$(abs_builddir)/$(CODE_COVERAGE_OUTPUT_DIRECTORY)/index.html"
+
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-clean:
+@CODE_COVERAGE_ENABLED_TRUE@	-$(LCOV) --directory $(top_builddir) -z
+@CODE_COVERAGE_ENABLED_TRUE@	-rm -rf "$(CODE_COVERAGE_OUTPUT_FILE)" "$(CODE_COVERAGE_OUTPUT_FILE).tmp" "$(CODE_COVERAGE_OUTPUT_DIRECTORY)"
+@CODE_COVERAGE_ENABLED_TRUE@	-find . \( -name "*.gcda" -o -name "*.gcno" -o -name "*.gcov" \) -delete
+
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-dist-clean:
+@CODE_COVERAGE_ENABLED_TRUE@ else # ifneq ($(abs_builddir), $(abs_top_builddir))
+@CODE_COVERAGE_ENABLED_TRUE@check-code-coverage:
+
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-capture: code-coverage-capture-hook
+
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-clean:
+
+@CODE_COVERAGE_ENABLED_TRUE@code-coverage-dist-clean:
+@CODE_COVERAGE_ENABLED_TRUE@ endif # ifeq ($(abs_builddir), $(abs_top_builddir))
+# Use recursive makes in order to ignore errors during check
+@CODE_COVERAGE_ENABLED_FALSE@check-code-coverage:
+@CODE_COVERAGE_ENABLED_FALSE@	@echo "Need to reconfigure with --enable-code-coverage"
+# Capture code coverage data
+@CODE_COVERAGE_ENABLED_FALSE@code-coverage-capture: code-coverage-capture-hook
+@CODE_COVERAGE_ENABLED_FALSE@	@echo "Need to reconfigure with --enable-code-coverage"
+
+@CODE_COVERAGE_ENABLED_FALSE@code-coverage-clean:
+
+@CODE_COVERAGE_ENABLED_FALSE@code-coverage-dist-clean:
+
+# Hook rule executed before code-coverage-capture, overridable by the user
+code-coverage-capture-hook:
+
+.PHONY: check-code-coverage code-coverage-capture code-coverage-dist-clean code-coverage-clean code-coverage-capture-hook
 
 @CODE_COVERAGE_ENABLED_TRUE@lcov-report:
 @CODE_COVERAGE_ENABLED_TRUE@	@mkdir -p $(lcov_dir)

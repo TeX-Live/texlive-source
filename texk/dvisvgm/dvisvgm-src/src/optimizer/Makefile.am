@@ -1,6 +1,6 @@
-noinst_LIBRARIES = liboptimizer.a
+noinst_LTLIBRARIES = liboptimizer.la
 
-liboptimizer_a_SOURCES = \
+liboptimizer_la_SOURCES = \
 	AttributeExtractor.hpp      AttributeExtractor.cpp \
 	ClipPathReassigner.hpp      ClipPathReassigner.cpp \
 	DependencyGraph.hpp \

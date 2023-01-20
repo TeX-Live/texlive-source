@@ -92,30 +92,28 @@ host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
+#endif TEXLIVE_BUILD
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
-@ENABLE_WOFF_TRUE@am__append_5 = \
-@ENABLE_WOFF_TRUE@	../libs/ff-woff/libfontforge.a \
+@ENABLE_WOFF_TRUE@am__append_5 = ttf
+@ENABLE_WOFF_TRUE@am__append_6 = \
 @ENABLE_WOFF_TRUE@	$(WOFF2_LIBS) \
 @ENABLE_WOFF_TRUE@	$(BROTLI_LIBS)
 
-@USE_BUNDLED_MD5_TRUE@am__append_6 = ../libs/md5/libmd5.a
-@USE_BUNDLED_MD5_FALSE@am__append_7 = $(LIBCRYPTO_LIBS)
-@ENABLE_WOFF_TRUE@am__append_8 = ffwrapper.c ffwrapper.h
-@WIN32_TRUE@am__append_9 = -DTEXLIVEWIN32
-@ENABLE_WOFF_TRUE@am__append_10 = \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/fontforge \
-@ENABLE_WOFF_TRUE@	-I$(dvisvgm_srcdir)/libs/ff-woff/inc
-
-@ENABLE_WOFF_TRUE@am__append_11 = \
-@ENABLE_WOFF_TRUE@	$(BROTLI_CFLAGS) \
-@ENABLE_WOFF_TRUE@	$(WOFF2_CFLAGS)
-
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_TRUE@am__append_12 = -I$(dvisvgm_srcdir)/libs/md5
-@ENABLE_WOFF_TRUE@@USE_BUNDLED_MD5_FALSE@am__append_13 = $(LIBCRYPTO_CFLAGS)
+@USE_BUNDLED_MD5_TRUE@am__append_7 = ../libs/md5/libmd5.a
+@USE_BUNDLED_MD5_FALSE@am__append_8 = $(LIBCRYPTO_LIBS)
+@TEXLIVE_BUILD_TRUE@am__append_9 = $(POTRACE_DEPEND)
+@ENABLE_WOFF_TRUE@am__append_10 = ttf/libttf.la
+@WIN32_TRUE@am__append_11 = -DTEXLIVEWIN32
+@ENABLE_WOFF_TRUE@am__append_12 = $(TTFAUTOHINT_CFLAGS) \
+@ENABLE_WOFF_TRUE@	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
+@ENABLE_WOFF_TRUE@am__append_13 = $(TTFAUTOHINT_LIBS)
+@USE_BUNDLED_MD5_TRUE@am__append_14 = -I$(dvisvgm_srcdir)/libs/md5
+@USE_BUNDLED_MD5_FALSE@am__append_15 = $(LIBCRYPTO_CFLAGS)
 subdir = dvisvgm-src/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
+	$(top_srcdir)/../../m4/ax_cxx_compile_stdcxx.m4 \
 	$(top_srcdir)/../../m4/kpse-common.m4 \
 	$(top_srcdir)/../../m4/kpse-cxx-hack.m4 \
 	$(top_srcdir)/../../m4/kpse-freetype2-flags.m4 \
@@ -139,135 +137,49 @@ CONFIG_CLEAN_FILES = version.hpp
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-LIBRARIES = $(noinst_LIBRARIES)
-ARFLAGS = cru
-AM_V_AR = $(am__v_AR_@AM_V@)
-am__v_AR_ = $(am__v_AR_@AM_DEFAULT_V@)
-am__v_AR_0 = @echo "  AR      " $@;
-am__v_AR_1 = 
-libdvisvgm_a_AR = $(AR) $(ARFLAGS)
-libdvisvgm_a_LIBADD =
-am__libdvisvgm_a_SOURCES_DIST = AGLTable.hpp BasicDVIReader.hpp \
-	BasicDVIReader.cpp Bezier.hpp Bezier.cpp \
-	BgColorSpecialHandler.hpp BgColorSpecialHandler.cpp Bitmap.hpp \
-	Bitmap.cpp BoundingBox.hpp BoundingBox.cpp Calculator.hpp \
-	Calculator.cpp Character.hpp CharMapID.hpp CharMapID.cpp \
-	CLCommandLine.hpp CLCommandLine.cpp CMap.hpp CMap.cpp \
-	CMapManager.hpp CMapManager.cpp CMapReader.hpp CMapReader.cpp \
-	CLOption.hpp Color.hpp Color.cpp ColorSpecialHandler.hpp \
-	ColorSpecialHandler.cpp CommandLine.hpp Directory.hpp \
-	Directory.cpp DVIActions.hpp DLLoader.hpp DLLoader.cpp \
-	DVIReader.hpp DVIReader.cpp DvisvgmSpecialHandler.hpp \
-	DvisvgmSpecialHandler.cpp DVIToSVG.hpp DVIToSVG.cpp \
-	DVIToSVGActions.hpp DVIToSVGActions.cpp EllipticalArc.hpp \
-	EllipticalArc.cpp EmSpecialHandler.hpp EmSpecialHandler.cpp \
-	EncFile.hpp EncFile.cpp EPSFile.hpp EPSFile.cpp EPSToSVG.hpp \
-	FileFinder.hpp FileFinder.cpp FilePath.hpp FilePath.cpp \
-	FileSystem.hpp FileSystem.cpp FixWord.hpp Font.hpp Font.cpp \
-	FontCache.hpp FontCache.cpp FontEncoding.hpp FontEncoding.cpp \
-	FontEngine.hpp FontEngine.cpp FontManager.hpp FontManager.cpp \
-	FontMap.hpp FontMap.cpp FontMetrics.hpp FontMetrics.cpp \
-	FontStyle.hpp FontWriter.hpp FontWriter.cpp GFGlyphTracer.hpp \
-	GFGlyphTracer.cpp GFReader.hpp GFReader.cpp GFTracer.hpp \
-	GFTracer.cpp Ghostscript.hpp Ghostscript.cpp Glyph.hpp \
-	GlyphTracerMessages.hpp GraphicsPath.hpp \
-	GraphicsPathParser.hpp HashFunction.hpp HashFunction.cpp \
-	HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
-	HyperlinkManager.hpp HyperlinkManager.cpp ImageToSVG.hpp \
-	ImageToSVG.cpp InputBuffer.hpp InputBuffer.cpp InputReader.hpp \
-	InputReader.cpp JFM.hpp JFM.cpp Length.hpp Length.cpp \
-	macros.hpp MapLine.hpp MapLine.cpp Matrix.hpp Matrix.cpp \
-	MD5HashFunction.hpp Message.hpp Message.cpp \
-	MessageException.hpp MetafontWrapper.hpp MetafontWrapper.cpp \
-	NoPsSpecialHandler.hpp NoPsSpecialHandler.cpp \
-	NumericRanges.hpp Opacity.hpp Opacity.cpp PageRanges.hpp \
-	PageRanges.cpp PageSize.hpp PageSize.cpp Pair.hpp \
-	PapersizeSpecialHandler.hpp PapersizeSpecialHandler.cpp \
-	PathClipper.hpp PathClipper.cpp PDFParser.hpp PDFParser.cpp \
-	PdfSpecialHandler.hpp PdfSpecialHandler.cpp PDFToSVG.hpp \
-	PreScanDVIReader.hpp PreScanDVIReader.cpp Process.hpp \
-	Process.cpp psdefs.cpp PSFilter.hpp PSInterpreter.hpp \
-	PSInterpreter.cpp PSPattern.hpp PSPattern.cpp \
-	PSPreviewFilter.hpp PSPreviewFilter.cpp PsSpecialHandler.hpp \
-	PsSpecialHandler.cpp RangeMap.hpp RangeMap.cpp \
-	ShadingPatch.hpp ShadingPatch.cpp SignalHandler.hpp \
-	SignalHandler.cpp SourceInput.hpp SourceInput.cpp \
-	SpecialActions.hpp SpecialHandler.hpp SpecialManager.hpp \
-	SpecialManager.cpp StreamReader.hpp StreamReader.cpp \
-	StreamWriter.hpp StreamWriter.cpp Subfont.hpp Subfont.cpp \
-	SVGCharHandler.hpp SVGCharHandler.cpp \
-	SVGCharHandlerFactory.hpp SVGCharHandlerFactory.cpp \
-	SVGCharPathHandler.hpp SVGCharPathHandler.cpp \
-	SVGCharTspanTextHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGElement.hpp SVGElement.cpp SVGOutput.hpp SVGOutput.cpp \
-	SVGSingleCharTextHandler.hpp SVGSingleCharTextHandler.cpp \
-	SVGTree.hpp SVGTree.cpp System.hpp System.cpp \
-	TensorProductPatch.hpp TensorProductPatch.cpp Terminal.hpp \
-	Terminal.cpp TFM.hpp TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
-	TpicSpecialHandler.hpp TpicSpecialHandler.cpp \
-	TriangularPatch.hpp TriangularPatch.cpp TrueTypeFont.hpp \
-	TrueTypeFont.cpp TTFAutohint.hpp TTFAutohint.cpp Unicode.hpp \
-	Unicode.cpp utility.hpp utility.cpp VectorIterator.hpp \
-	VectorStream.hpp VFActions.hpp VFReader.hpp VFReader.cpp \
-	windows.hpp XMLDocument.hpp XMLDocument.cpp XMLNode.hpp \
-	XMLNode.cpp XMLParser.hpp XMLParser.cpp XMLString.hpp \
-	XMLString.cpp XXHashFunction.hpp ZLibOutputStream.hpp \
-	ffwrapper.c ffwrapper.h
-@ENABLE_WOFF_TRUE@am__objects_1 = ffwrapper.$(OBJEXT)
-am_libdvisvgm_a_OBJECTS = BasicDVIReader.$(OBJEXT) Bezier.$(OBJEXT) \
-	BgColorSpecialHandler.$(OBJEXT) Bitmap.$(OBJEXT) \
-	BoundingBox.$(OBJEXT) Calculator.$(OBJEXT) CharMapID.$(OBJEXT) \
-	CLCommandLine.$(OBJEXT) CMap.$(OBJEXT) CMapManager.$(OBJEXT) \
-	CMapReader.$(OBJEXT) Color.$(OBJEXT) \
-	ColorSpecialHandler.$(OBJEXT) Directory.$(OBJEXT) \
-	DLLoader.$(OBJEXT) DVIReader.$(OBJEXT) \
-	DvisvgmSpecialHandler.$(OBJEXT) DVIToSVG.$(OBJEXT) \
-	DVIToSVGActions.$(OBJEXT) EllipticalArc.$(OBJEXT) \
-	EmSpecialHandler.$(OBJEXT) EncFile.$(OBJEXT) EPSFile.$(OBJEXT) \
-	FileFinder.$(OBJEXT) FilePath.$(OBJEXT) FileSystem.$(OBJEXT) \
-	Font.$(OBJEXT) FontCache.$(OBJEXT) FontEncoding.$(OBJEXT) \
-	FontEngine.$(OBJEXT) FontManager.$(OBJEXT) FontMap.$(OBJEXT) \
-	FontMetrics.$(OBJEXT) FontWriter.$(OBJEXT) \
-	GFGlyphTracer.$(OBJEXT) GFReader.$(OBJEXT) GFTracer.$(OBJEXT) \
-	Ghostscript.$(OBJEXT) HashFunction.$(OBJEXT) \
-	HtmlSpecialHandler.$(OBJEXT) HyperlinkManager.$(OBJEXT) \
-	ImageToSVG.$(OBJEXT) InputBuffer.$(OBJEXT) \
-	InputReader.$(OBJEXT) JFM.$(OBJEXT) Length.$(OBJEXT) \
-	MapLine.$(OBJEXT) Matrix.$(OBJEXT) Message.$(OBJEXT) \
-	MetafontWrapper.$(OBJEXT) NoPsSpecialHandler.$(OBJEXT) \
-	Opacity.$(OBJEXT) PageRanges.$(OBJEXT) PageSize.$(OBJEXT) \
-	PapersizeSpecialHandler.$(OBJEXT) PathClipper.$(OBJEXT) \
-	PDFParser.$(OBJEXT) PdfSpecialHandler.$(OBJEXT) \
-	PreScanDVIReader.$(OBJEXT) Process.$(OBJEXT) psdefs.$(OBJEXT) \
-	PSInterpreter.$(OBJEXT) PSPattern.$(OBJEXT) \
-	PSPreviewFilter.$(OBJEXT) PsSpecialHandler.$(OBJEXT) \
-	RangeMap.$(OBJEXT) ShadingPatch.$(OBJEXT) \
-	SignalHandler.$(OBJEXT) SourceInput.$(OBJEXT) \
-	SpecialManager.$(OBJEXT) StreamReader.$(OBJEXT) \
-	StreamWriter.$(OBJEXT) Subfont.$(OBJEXT) \
-	SVGCharHandler.$(OBJEXT) SVGCharHandlerFactory.$(OBJEXT) \
-	SVGCharPathHandler.$(OBJEXT) SVGCharTspanTextHandler.$(OBJEXT) \
-	SVGElement.$(OBJEXT) SVGOutput.$(OBJEXT) \
-	SVGSingleCharTextHandler.$(OBJEXT) SVGTree.$(OBJEXT) \
-	System.$(OBJEXT) TensorProductPatch.$(OBJEXT) \
-	Terminal.$(OBJEXT) TFM.$(OBJEXT) ToUnicodeMap.$(OBJEXT) \
-	TpicSpecialHandler.$(OBJEXT) TriangularPatch.$(OBJEXT) \
-	TrueTypeFont.$(OBJEXT) TTFAutohint.$(OBJEXT) Unicode.$(OBJEXT) \
-	utility.$(OBJEXT) VFReader.$(OBJEXT) XMLDocument.$(OBJEXT) \
-	XMLNode.$(OBJEXT) XMLParser.$(OBJEXT) XMLString.$(OBJEXT) \
-	$(am__objects_1)
-libdvisvgm_a_OBJECTS = $(am_libdvisvgm_a_OBJECTS)
+LTLIBRARIES = $(noinst_LTLIBRARIES)
+libdvisvgm_la_DEPENDENCIES = fonts/libbase14fonts.la \
+	optimizer/liboptimizer.la $(am__append_10)
+am_libdvisvgm_la_OBJECTS = BasicDVIReader.lo Bezier.lo \
+	BgColorSpecialHandler.lo Bitmap.lo BoundingBox.lo \
+	Calculator.lo CharMapID.lo CLCommandLine.lo CMap.lo \
+	CMapManager.lo CMapReader.lo Color.lo ColorSpecialHandler.lo \
+	Directory.lo DLLoader.lo DVIReader.lo DvisvgmSpecialHandler.lo \
+	DVIToSVG.lo DVIToSVGActions.lo EllipticalArc.lo \
+	EmSpecialHandler.lo EncFile.lo EPSFile.lo FileFinder.lo \
+	FilePath.lo FileSystem.lo Font.lo FontCache.lo FontEncoding.lo \
+	FontEngine.lo FontManager.lo FontMap.lo FontMetrics.lo \
+	FontWriter.lo GFGlyphTracer.lo GFReader.lo GFTracer.lo \
+	Ghostscript.lo HashFunction.lo HtmlSpecialHandler.lo \
+	HyperlinkManager.lo ImageToSVG.lo InputBuffer.lo \
+	InputReader.lo JFM.lo Length.lo MapLine.lo Matrix.lo \
+	Message.lo MetafontWrapper.lo NoPsSpecialHandler.lo Opacity.lo \
+	PageRanges.lo PageSize.lo PapersizeSpecialHandler.lo \
+	PathClipper.lo PDFHandler.lo PDFParser.lo PdfSpecialHandler.lo \
+	PDFToSVG.lo PreScanDVIReader.lo Process.lo psdefs.lo \
+	PSInterpreter.lo PSPattern.lo PSPreviewFilter.lo \
+	PsSpecialHandler.lo RangeMap.lo ShadingPatch.lo \
+	SignalHandler.lo SourceInput.lo SpecialManager.lo \
+	StreamReader.lo StreamWriter.lo Subfont.lo SVGCharHandler.lo \
+	SVGCharHandlerFactory.lo SVGCharPathHandler.lo \
+	SVGCharTspanTextHandler.lo SVGElement.lo SVGOutput.lo \
+	SVGSingleCharTextHandler.lo SVGTree.lo System.lo \
+	TensorProductPatch.lo Terminal.lo TFM.lo ToUnicodeMap.lo \
+	TpicSpecialHandler.lo TriangularPatch.lo Unicode.lo utility.lo \
+	VFReader.lo XMLDocument.lo XMLNode.lo XMLParser.lo \
+	XMLString.lo
+libdvisvgm_la_OBJECTS = $(am_libdvisvgm_la_OBJECTS)
+AM_V_lt = $(am__v_lt_@AM_V@)
+am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__append_4)
 am__DEPENDENCIES_3 = $(am__append_2)
-@ENABLE_WOFF_TRUE@am__DEPENDENCIES_4 = ../libs/ff-woff/libfontforge.a \
-@ENABLE_WOFF_TRUE@	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_3)
-AM_V_lt = $(am__v_lt_@AM_V@)
-am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
-am__v_lt_0 = --silent
-am__v_lt_1 = 
+@ENABLE_WOFF_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) \
+@ENABLE_WOFF_TRUE@	$(am__DEPENDENCIES_3)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -283,60 +195,79 @@ am__v_at_1 =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Po \
-	./$(DEPDIR)/Bezier.Po ./$(DEPDIR)/BgColorSpecialHandler.Po \
-	./$(DEPDIR)/Bitmap.Po ./$(DEPDIR)/BoundingBox.Po \
-	./$(DEPDIR)/CLCommandLine.Po ./$(DEPDIR)/CMap.Po \
-	./$(DEPDIR)/CMapManager.Po ./$(DEPDIR)/CMapReader.Po \
-	./$(DEPDIR)/Calculator.Po ./$(DEPDIR)/CharMapID.Po \
-	./$(DEPDIR)/Color.Po ./$(DEPDIR)/ColorSpecialHandler.Po \
-	./$(DEPDIR)/DLLoader.Po ./$(DEPDIR)/DVIReader.Po \
-	./$(DEPDIR)/DVIToSVG.Po ./$(DEPDIR)/DVIToSVGActions.Po \
-	./$(DEPDIR)/Directory.Po ./$(DEPDIR)/DvisvgmSpecialHandler.Po \
-	./$(DEPDIR)/EPSFile.Po ./$(DEPDIR)/EllipticalArc.Po \
-	./$(DEPDIR)/EmSpecialHandler.Po ./$(DEPDIR)/EncFile.Po \
-	./$(DEPDIR)/FileFinder.Po ./$(DEPDIR)/FilePath.Po \
-	./$(DEPDIR)/FileSystem.Po ./$(DEPDIR)/Font.Po \
-	./$(DEPDIR)/FontCache.Po ./$(DEPDIR)/FontEncoding.Po \
-	./$(DEPDIR)/FontEngine.Po ./$(DEPDIR)/FontManager.Po \
-	./$(DEPDIR)/FontMap.Po ./$(DEPDIR)/FontMetrics.Po \
-	./$(DEPDIR)/FontWriter.Po ./$(DEPDIR)/GFGlyphTracer.Po \
-	./$(DEPDIR)/GFReader.Po ./$(DEPDIR)/GFTracer.Po \
-	./$(DEPDIR)/Ghostscript.Po ./$(DEPDIR)/HashFunction.Po \
-	./$(DEPDIR)/HtmlSpecialHandler.Po \
-	./$(DEPDIR)/HyperlinkManager.Po ./$(DEPDIR)/ImageToSVG.Po \
-	./$(DEPDIR)/InputBuffer.Po ./$(DEPDIR)/InputReader.Po \
-	./$(DEPDIR)/JFM.Po ./$(DEPDIR)/Length.Po \
-	./$(DEPDIR)/MapLine.Po ./$(DEPDIR)/Matrix.Po \
-	./$(DEPDIR)/Message.Po ./$(DEPDIR)/MetafontWrapper.Po \
-	./$(DEPDIR)/NoPsSpecialHandler.Po ./$(DEPDIR)/Opacity.Po \
-	./$(DEPDIR)/PDFParser.Po ./$(DEPDIR)/PSInterpreter.Po \
-	./$(DEPDIR)/PSPattern.Po ./$(DEPDIR)/PSPreviewFilter.Po \
-	./$(DEPDIR)/PageRanges.Po ./$(DEPDIR)/PageSize.Po \
-	./$(DEPDIR)/PapersizeSpecialHandler.Po \
-	./$(DEPDIR)/PathClipper.Po ./$(DEPDIR)/PdfSpecialHandler.Po \
-	./$(DEPDIR)/PreScanDVIReader.Po ./$(DEPDIR)/Process.Po \
-	./$(DEPDIR)/PsSpecialHandler.Po ./$(DEPDIR)/RangeMap.Po \
-	./$(DEPDIR)/SVGCharHandler.Po \
-	./$(DEPDIR)/SVGCharHandlerFactory.Po \
-	./$(DEPDIR)/SVGCharPathHandler.Po \
-	./$(DEPDIR)/SVGCharTspanTextHandler.Po \
-	./$(DEPDIR)/SVGElement.Po ./$(DEPDIR)/SVGOutput.Po \
-	./$(DEPDIR)/SVGSingleCharTextHandler.Po ./$(DEPDIR)/SVGTree.Po \
-	./$(DEPDIR)/ShadingPatch.Po ./$(DEPDIR)/SignalHandler.Po \
-	./$(DEPDIR)/SourceInput.Po ./$(DEPDIR)/SpecialManager.Po \
-	./$(DEPDIR)/StreamReader.Po ./$(DEPDIR)/StreamWriter.Po \
-	./$(DEPDIR)/Subfont.Po ./$(DEPDIR)/System.Po \
-	./$(DEPDIR)/TFM.Po ./$(DEPDIR)/TTFAutohint.Po \
-	./$(DEPDIR)/TensorProductPatch.Po ./$(DEPDIR)/Terminal.Po \
-	./$(DEPDIR)/ToUnicodeMap.Po ./$(DEPDIR)/TpicSpecialHandler.Po \
-	./$(DEPDIR)/TriangularPatch.Po ./$(DEPDIR)/TrueTypeFont.Po \
-	./$(DEPDIR)/Unicode.Po ./$(DEPDIR)/VFReader.Po \
-	./$(DEPDIR)/XMLDocument.Po ./$(DEPDIR)/XMLNode.Po \
-	./$(DEPDIR)/XMLParser.Po ./$(DEPDIR)/XMLString.Po \
-	./$(DEPDIR)/dvisvgm.Po ./$(DEPDIR)/ffwrapper.Po \
-	./$(DEPDIR)/psdefs.Po ./$(DEPDIR)/utility.Po
+am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Plo \
+	./$(DEPDIR)/Bezier.Plo ./$(DEPDIR)/BgColorSpecialHandler.Plo \
+	./$(DEPDIR)/Bitmap.Plo ./$(DEPDIR)/BoundingBox.Plo \
+	./$(DEPDIR)/CLCommandLine.Plo ./$(DEPDIR)/CMap.Plo \
+	./$(DEPDIR)/CMapManager.Plo ./$(DEPDIR)/CMapReader.Plo \
+	./$(DEPDIR)/Calculator.Plo ./$(DEPDIR)/CharMapID.Plo \
+	./$(DEPDIR)/Color.Plo ./$(DEPDIR)/ColorSpecialHandler.Plo \
+	./$(DEPDIR)/DLLoader.Plo ./$(DEPDIR)/DVIReader.Plo \
+	./$(DEPDIR)/DVIToSVG.Plo ./$(DEPDIR)/DVIToSVGActions.Plo \
+	./$(DEPDIR)/Directory.Plo \
+	./$(DEPDIR)/DvisvgmSpecialHandler.Plo ./$(DEPDIR)/EPSFile.Plo \
+	./$(DEPDIR)/EllipticalArc.Plo ./$(DEPDIR)/EmSpecialHandler.Plo \
+	./$(DEPDIR)/EncFile.Plo ./$(DEPDIR)/FileFinder.Plo \
+	./$(DEPDIR)/FilePath.Plo ./$(DEPDIR)/FileSystem.Plo \
+	./$(DEPDIR)/Font.Plo ./$(DEPDIR)/FontCache.Plo \
+	./$(DEPDIR)/FontEncoding.Plo ./$(DEPDIR)/FontEngine.Plo \
+	./$(DEPDIR)/FontManager.Plo ./$(DEPDIR)/FontMap.Plo \
+	./$(DEPDIR)/FontMetrics.Plo ./$(DEPDIR)/FontWriter.Plo \
+	./$(DEPDIR)/GFGlyphTracer.Plo ./$(DEPDIR)/GFReader.Plo \
+	./$(DEPDIR)/GFTracer.Plo ./$(DEPDIR)/Ghostscript.Plo \
+	./$(DEPDIR)/HashFunction.Plo \
+	./$(DEPDIR)/HtmlSpecialHandler.Plo \
+	./$(DEPDIR)/HyperlinkManager.Plo ./$(DEPDIR)/ImageToSVG.Plo \
+	./$(DEPDIR)/InputBuffer.Plo ./$(DEPDIR)/InputReader.Plo \
+	./$(DEPDIR)/JFM.Plo ./$(DEPDIR)/Length.Plo \
+	./$(DEPDIR)/MapLine.Plo ./$(DEPDIR)/Matrix.Plo \
+	./$(DEPDIR)/Message.Plo ./$(DEPDIR)/MetafontWrapper.Plo \
+	./$(DEPDIR)/NoPsSpecialHandler.Plo ./$(DEPDIR)/Opacity.Plo \
+	./$(DEPDIR)/PDFHandler.Plo ./$(DEPDIR)/PDFParser.Plo \
+	./$(DEPDIR)/PDFToSVG.Plo ./$(DEPDIR)/PSInterpreter.Plo \
+	./$(DEPDIR)/PSPattern.Plo ./$(DEPDIR)/PSPreviewFilter.Plo \
+	./$(DEPDIR)/PageRanges.Plo ./$(DEPDIR)/PageSize.Plo \
+	./$(DEPDIR)/PapersizeSpecialHandler.Plo \
+	./$(DEPDIR)/PathClipper.Plo ./$(DEPDIR)/PdfSpecialHandler.Plo \
+	./$(DEPDIR)/PreScanDVIReader.Plo ./$(DEPDIR)/Process.Plo \
+	./$(DEPDIR)/PsSpecialHandler.Plo ./$(DEPDIR)/RangeMap.Plo \
+	./$(DEPDIR)/SVGCharHandler.Plo \
+	./$(DEPDIR)/SVGCharHandlerFactory.Plo \
+	./$(DEPDIR)/SVGCharPathHandler.Plo \
+	./$(DEPDIR)/SVGCharTspanTextHandler.Plo \
+	./$(DEPDIR)/SVGElement.Plo ./$(DEPDIR)/SVGOutput.Plo \
+	./$(DEPDIR)/SVGSingleCharTextHandler.Plo \
+	./$(DEPDIR)/SVGTree.Plo ./$(DEPDIR)/ShadingPatch.Plo \
+	./$(DEPDIR)/SignalHandler.Plo ./$(DEPDIR)/SourceInput.Plo \
+	./$(DEPDIR)/SpecialManager.Plo ./$(DEPDIR)/StreamReader.Plo \
+	./$(DEPDIR)/StreamWriter.Plo ./$(DEPDIR)/Subfont.Plo \
+	./$(DEPDIR)/System.Plo ./$(DEPDIR)/TFM.Plo \
+	./$(DEPDIR)/TensorProductPatch.Plo ./$(DEPDIR)/Terminal.Plo \
+	./$(DEPDIR)/ToUnicodeMap.Plo \
+	./$(DEPDIR)/TpicSpecialHandler.Plo \
+	./$(DEPDIR)/TriangularPatch.Plo ./$(DEPDIR)/Unicode.Plo \
+	./$(DEPDIR)/VFReader.Plo ./$(DEPDIR)/XMLDocument.Plo \
+	./$(DEPDIR)/XMLNode.Plo ./$(DEPDIR)/XMLParser.Plo \
+	./$(DEPDIR)/XMLString.Plo ./$(DEPDIR)/dvisvgm.Po \
+	./$(DEPDIR)/psdefs.Plo ./$(DEPDIR)/utility.Plo
 am__mv = mv -f
+CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_@AM_V@)
+am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
+am__v_CXX_0 = @echo "  CXX     " $@;
+am__v_CXX_1 = 
+CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
+am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
+am__v_CXXLD_0 = @echo "  CXXLD   " $@;
+am__v_CXXLD_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
@@ -355,25 +286,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
-LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CXXFLAGS) $(CXXFLAGS)
-AM_V_CXX = $(am__v_CXX_@AM_V@)
-am__v_CXX_ = $(am__v_CXX_@AM_DEFAULT_V@)
-am__v_CXX_0 = @echo "  CXX     " $@;
-am__v_CXX_1 = 
-CXXLINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
-	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
-am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
-am__v_CXXLD_0 = @echo "  CXXLD   " $@;
-am__v_CXXLD_1 = 
-SOURCES = $(libdvisvgm_a_SOURCES) $(dvisvgm_SOURCES)
-DIST_SOURCES = $(am__libdvisvgm_a_SOURCES_DIST) $(dvisvgm_SOURCES)
+SOURCES = $(libdvisvgm_la_SOURCES) $(dvisvgm_SOURCES)
+DIST_SOURCES = $(libdvisvgm_la_SOURCES) $(dvisvgm_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -412,7 +326,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = fonts optimizer ttf
 am__DIST_COMMON = $(srcdir)/../libs/defs.am $(srcdir)/Makefile.in \
 	$(srcdir)/version.hpp.in $(top_srcdir)/../../build-aux/depcomp
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -445,10 +359,7 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AM_LDFLAGS = \
-	$(KPSE_LIBS) \
-	$(CODE_COVERAGE_LDFLAGS)
-
+AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_13)
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -600,103 +511,174 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-noinst_LIBRARIES = libdvisvgm.a
-SUBDIRS = optimizer
+noinst_LTLIBRARIES = libdvisvgm.la
+SUBDIRS = fonts optimizer ttf $(am__append_5)
 dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
+
+# Gets automake warnings:
+#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
+#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
+#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
+#if !TEXLIVE_BUILD
+#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+#POTRACE_LIBS = ../libs/potrace/libpotrace.a
+#else
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
-dvisvgm_LDADD = $(noinst_LIBRARIES) optimizer/liboptimizer.a \
-	../libs/clipper/libclipper.a $(POTRACE_LIBS) $(XXHASH_LIBS) \
-	$(am__append_5) $(am__append_6) $(am__append_7) \
-	$(KPATHSEA_LIBS) $(FREETYPE2_LIBS) $(FONTFORGE_LIBS) \
+dvisvgm_LDADD = $(noinst_LTLIBRARIES) ../libs/clipper/libclipper.a \
+	$(POTRACE_LIBS) $(XXHASH_LIBS) $(am__append_6) $(am__append_7) \
+	$(am__append_8) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
 	$(ZLIB_LIBS) $(LIBGS_LIBS)
-dvisvgm_DEPENDENCIES = $(noinst_LIBRARIES) $(KPATHSEA_DEPEND) \
-	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
-libdvisvgm_a_SOURCES = AGLTable.hpp BasicDVIReader.hpp \
-	BasicDVIReader.cpp Bezier.hpp Bezier.cpp \
-	BgColorSpecialHandler.hpp BgColorSpecialHandler.cpp Bitmap.hpp \
-	Bitmap.cpp BoundingBox.hpp BoundingBox.cpp Calculator.hpp \
-	Calculator.cpp Character.hpp CharMapID.hpp CharMapID.cpp \
-	CLCommandLine.hpp CLCommandLine.cpp CMap.hpp CMap.cpp \
-	CMapManager.hpp CMapManager.cpp CMapReader.hpp CMapReader.cpp \
-	CLOption.hpp Color.hpp Color.cpp ColorSpecialHandler.hpp \
-	ColorSpecialHandler.cpp CommandLine.hpp Directory.hpp \
-	Directory.cpp DVIActions.hpp DLLoader.hpp DLLoader.cpp \
-	DVIReader.hpp DVIReader.cpp DvisvgmSpecialHandler.hpp \
-	DvisvgmSpecialHandler.cpp DVIToSVG.hpp DVIToSVG.cpp \
-	DVIToSVGActions.hpp DVIToSVGActions.cpp EllipticalArc.hpp \
-	EllipticalArc.cpp EmSpecialHandler.hpp EmSpecialHandler.cpp \
-	EncFile.hpp EncFile.cpp EPSFile.hpp EPSFile.cpp EPSToSVG.hpp \
-	FileFinder.hpp FileFinder.cpp FilePath.hpp FilePath.cpp \
-	FileSystem.hpp FileSystem.cpp FixWord.hpp Font.hpp Font.cpp \
-	FontCache.hpp FontCache.cpp FontEncoding.hpp FontEncoding.cpp \
-	FontEngine.hpp FontEngine.cpp FontManager.hpp FontManager.cpp \
-	FontMap.hpp FontMap.cpp FontMetrics.hpp FontMetrics.cpp \
-	FontStyle.hpp FontWriter.hpp FontWriter.cpp GFGlyphTracer.hpp \
-	GFGlyphTracer.cpp GFReader.hpp GFReader.cpp GFTracer.hpp \
-	GFTracer.cpp Ghostscript.hpp Ghostscript.cpp Glyph.hpp \
-	GlyphTracerMessages.hpp GraphicsPath.hpp \
-	GraphicsPathParser.hpp HashFunction.hpp HashFunction.cpp \
-	HtmlSpecialHandler.hpp HtmlSpecialHandler.cpp \
-	HyperlinkManager.hpp HyperlinkManager.cpp ImageToSVG.hpp \
-	ImageToSVG.cpp InputBuffer.hpp InputBuffer.cpp InputReader.hpp \
-	InputReader.cpp JFM.hpp JFM.cpp Length.hpp Length.cpp \
-	macros.hpp MapLine.hpp MapLine.cpp Matrix.hpp Matrix.cpp \
-	MD5HashFunction.hpp Message.hpp Message.cpp \
-	MessageException.hpp MetafontWrapper.hpp MetafontWrapper.cpp \
-	NoPsSpecialHandler.hpp NoPsSpecialHandler.cpp \
-	NumericRanges.hpp Opacity.hpp Opacity.cpp PageRanges.hpp \
-	PageRanges.cpp PageSize.hpp PageSize.cpp Pair.hpp \
-	PapersizeSpecialHandler.hpp PapersizeSpecialHandler.cpp \
-	PathClipper.hpp PathClipper.cpp PDFParser.hpp PDFParser.cpp \
-	PdfSpecialHandler.hpp PdfSpecialHandler.cpp PDFToSVG.hpp \
-	PreScanDVIReader.hpp PreScanDVIReader.cpp Process.hpp \
-	Process.cpp psdefs.cpp PSFilter.hpp PSInterpreter.hpp \
-	PSInterpreter.cpp PSPattern.hpp PSPattern.cpp \
-	PSPreviewFilter.hpp PSPreviewFilter.cpp PsSpecialHandler.hpp \
-	PsSpecialHandler.cpp RangeMap.hpp RangeMap.cpp \
-	ShadingPatch.hpp ShadingPatch.cpp SignalHandler.hpp \
-	SignalHandler.cpp SourceInput.hpp SourceInput.cpp \
-	SpecialActions.hpp SpecialHandler.hpp SpecialManager.hpp \
-	SpecialManager.cpp StreamReader.hpp StreamReader.cpp \
-	StreamWriter.hpp StreamWriter.cpp Subfont.hpp Subfont.cpp \
-	SVGCharHandler.hpp SVGCharHandler.cpp \
-	SVGCharHandlerFactory.hpp SVGCharHandlerFactory.cpp \
-	SVGCharPathHandler.hpp SVGCharPathHandler.cpp \
-	SVGCharTspanTextHandler.hpp SVGCharTspanTextHandler.cpp \
-	SVGElement.hpp SVGElement.cpp SVGOutput.hpp SVGOutput.cpp \
+dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES) $(KPATHSEA_DEPEND) \
+	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(am__append_9)
+libdvisvgm_la_SOURCES = \
+	AGLTable.hpp \
+	BasicDVIReader.hpp           BasicDVIReader.cpp \
+	Bezier.hpp                   Bezier.cpp \
+	BgColorSpecialHandler.hpp    BgColorSpecialHandler.cpp \
+	Bitmap.hpp                   Bitmap.cpp \
+	BoundingBox.hpp              BoundingBox.cpp \
+	Calculator.hpp               Calculator.cpp \
+	Character.hpp \
+	CharMapID.hpp                CharMapID.cpp \
+	CLCommandLine.hpp            CLCommandLine.cpp \
+	CMap.hpp                     CMap.cpp \
+	CMapManager.hpp              CMapManager.cpp \
+	CMapReader.hpp               CMapReader.cpp \
+	CLOption.hpp \
+	Color.hpp                    Color.cpp \
+	ColorSpecialHandler.hpp      ColorSpecialHandler.cpp \
+	CommandLine.hpp \
+	Directory.hpp                Directory.cpp \
+	DVIActions.hpp \
+	DLLoader.hpp                 DLLoader.cpp \
+	DVIReader.hpp                DVIReader.cpp \
+	DvisvgmSpecialHandler.hpp    DvisvgmSpecialHandler.cpp \
+	DVIToSVG.hpp                 DVIToSVG.cpp \
+	DVIToSVGActions.hpp          DVIToSVGActions.cpp \
+	EllipticalArc.hpp            EllipticalArc.cpp \
+	EmSpecialHandler.hpp         EmSpecialHandler.cpp \
+	EncFile.hpp                  EncFile.cpp \
+	EPSFile.hpp                  EPSFile.cpp \
+	EPSToSVG.hpp \
+	FileFinder.hpp               FileFinder.cpp \
+	FilePath.hpp                 FilePath.cpp \
+	FileSystem.hpp               FileSystem.cpp \
+	FixWord.hpp \
+	Font.hpp                     Font.cpp \
+	FontCache.hpp                FontCache.cpp \
+	FontEncoding.hpp             FontEncoding.cpp \
+	FontEngine.hpp               FontEngine.cpp \
+	FontManager.hpp              FontManager.cpp \
+	FontMap.hpp                  FontMap.cpp \
+	FontMetrics.hpp              FontMetrics.cpp \
+	FontStyle.hpp \
+	FontWriter.hpp               FontWriter.cpp \
+	GFGlyphTracer.hpp            GFGlyphTracer.cpp \
+	GFReader.hpp                 GFReader.cpp \
+	GFTracer.hpp                 GFTracer.cpp \
+	Ghostscript.hpp              Ghostscript.cpp \
+	Glyph.hpp \
+	GlyphTracerMessages.hpp \
+	GraphicsPath.hpp \
+	GraphicsPathParser.hpp \
+	HashFunction.hpp             HashFunction.cpp \
+	HtmlSpecialHandler.hpp       HtmlSpecialHandler.cpp \
+	HyperlinkManager.hpp         HyperlinkManager.cpp \
+	ImageToSVG.hpp               ImageToSVG.cpp \
+	InputBuffer.hpp              InputBuffer.cpp \
+	InputReader.hpp              InputReader.cpp \
+	JFM.hpp                      JFM.cpp \
+	Length.hpp                   Length.cpp \
+	macros.hpp \
+	MapLine.hpp                  MapLine.cpp \
+	Matrix.hpp                   Matrix.cpp \
+	MD5HashFunction.hpp \
+	Message.hpp                  Message.cpp \
+	MessageException.hpp \
+	MetafontWrapper.hpp          MetafontWrapper.cpp \
+	NoPsSpecialHandler.hpp       NoPsSpecialHandler.cpp \
+	NumericRanges.hpp \
+	Opacity.hpp                  Opacity.cpp \
+	PageRanges.hpp               PageRanges.cpp \
+	PageSize.hpp                 PageSize.cpp \
+	Pair.hpp \
+	PapersizeSpecialHandler.hpp  PapersizeSpecialHandler.cpp \
+	PathClipper.hpp              PathClipper.cpp \
+	PDFHandler.hpp               PDFHandler.cpp \
+	PDFParser.hpp                PDFParser.cpp \
+	PdfSpecialHandler.hpp        PdfSpecialHandler.cpp \
+	PDFToSVG.hpp                 PDFToSVG.cpp \
+	PreScanDVIReader.hpp         PreScanDVIReader.cpp \
+	Process.hpp                  Process.cpp \
+	psdefs.cpp \
+	PSFilter.hpp \
+	PSInterpreter.hpp            PSInterpreter.cpp \
+	PSPattern.hpp                PSPattern.cpp \
+	PSPreviewFilter.hpp          PSPreviewFilter.cpp \
+	PsSpecialHandler.hpp         PsSpecialHandler.cpp \
+	RangeMap.hpp                 RangeMap.cpp \
+	ShadingPatch.hpp             ShadingPatch.cpp \
+	SignalHandler.hpp            SignalHandler.cpp \
+	SourceInput.hpp              SourceInput.cpp \
+	SpecialActions.hpp \
+	SpecialHandler.hpp \
+	SpecialManager.hpp           SpecialManager.cpp \
+	StreamReader.hpp             StreamReader.cpp \
+	StreamWriter.hpp             StreamWriter.cpp \
+	Subfont.hpp                  Subfont.cpp \
+	SVGCharHandler.hpp           SVGCharHandler.cpp \
+	SVGCharHandlerFactory.hpp    SVGCharHandlerFactory.cpp \
+	SVGCharPathHandler.hpp       SVGCharPathHandler.cpp \
+	SVGCharTspanTextHandler.hpp  SVGCharTspanTextHandler.cpp \
+	SVGElement.hpp               SVGElement.cpp \
+	SVGOutput.hpp                SVGOutput.cpp \
 	SVGSingleCharTextHandler.hpp SVGSingleCharTextHandler.cpp \
-	SVGTree.hpp SVGTree.cpp System.hpp System.cpp \
-	TensorProductPatch.hpp TensorProductPatch.cpp Terminal.hpp \
-	Terminal.cpp TFM.hpp TFM.cpp ToUnicodeMap.hpp ToUnicodeMap.cpp \
-	TpicSpecialHandler.hpp TpicSpecialHandler.cpp \
-	TriangularPatch.hpp TriangularPatch.cpp TrueTypeFont.hpp \
-	TrueTypeFont.cpp TTFAutohint.hpp TTFAutohint.cpp Unicode.hpp \
-	Unicode.cpp utility.hpp utility.cpp VectorIterator.hpp \
-	VectorStream.hpp VFActions.hpp VFReader.hpp VFReader.cpp \
-	windows.hpp XMLDocument.hpp XMLDocument.cpp XMLNode.hpp \
-	XMLNode.cpp XMLParser.hpp XMLParser.cpp XMLString.hpp \
-	XMLString.cpp XXHashFunction.hpp ZLibOutputStream.hpp \
-	$(am__append_8)
+	SVGTree.hpp                  SVGTree.cpp \
+	System.hpp                   System.cpp \
+	TensorProductPatch.hpp       TensorProductPatch.cpp \
+	Terminal.hpp                 Terminal.cpp \
+	TFM.hpp                      TFM.cpp \
+	ToUnicodeMap.hpp             ToUnicodeMap.cpp \
+	TpicSpecialHandler.hpp       TpicSpecialHandler.cpp \
+	TriangularPatch.hpp          TriangularPatch.cpp \
+	Unicode.hpp                  Unicode.cpp \
+	utility.hpp                  utility.cpp \
+	VectorIterator.hpp \
+	VectorStream.hpp \
+	VFActions.hpp \
+	VFReader.hpp                 VFReader.cpp \
+	windows.hpp \
+	XMLDocument.hpp              XMLDocument.cpp \
+	XMLNode.hpp                  XMLNode.cpp \
+	XMLParser.hpp                XMLParser.cpp \
+	XMLString.hpp                XMLString.cpp \
+	XXHashFunction.hpp \
+	ZLibOutputStream.hpp
+
+libdvisvgm_la_LIBADD = fonts/libbase14fonts.la \
+	optimizer/liboptimizer.la $(am__append_10)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
-AM_CFLAGS = $(WARNING_CFLAGS) $(ZLIB_INCLUDES) $(CODE_COVERAGE_CFLAGS) \
-	$(am__append_10)
+AM_CFLAGS = $(WARNING_CFLAGS) \
+	$(ZLIB_INCLUDES) \
+	$(CODE_COVERAGE_CFLAGS)
+
 AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
 	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
 	$(XXHASH_CFLAGS) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) $(LIBGS_INCLUDES) \
-	$(CODE_COVERAGE_CFLAGS) $(am__append_9) $(am__append_11) \
-	$(am__append_12) $(am__append_13)
+	$(CODE_COVERAGE_CFLAGS) $(am__append_11) $(am__append_12) \
+	$(am__append_14) $(am__append_15)
 CLEANFILES = *.gcda *.gcno
 all: all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .cpp .lo .o .obj
+.SUFFIXES: .cpp .lo .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../libs/defs.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -779,13 +761,19 @@ clean-binPROGRAMS:
 	echo " rm -f" $$list; \
 	rm -f $$list
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+clean-noinstLTLIBRARIES:
+	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
+	@list='$(noinst_LTLIBRARIES)'; \
+	locs=`for p in $$list; do echo $$p; done | \
+	      sed 's|^[^/]*$$|.|; s|/[^/]*$$||; s|$$|/so_locations|' | \
+	      sort -u`; \
+	test -z "$$locs" || { \
+	  echo rm -f $${locs}; \
+	  rm -f $${locs}; \
+	}
 
-libdvisvgm.a: $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_DEPENDENCIES) $(EXTRA_libdvisvgm_a_DEPENDENCIES) 
-	$(AM_V_at)-rm -f libdvisvgm.a
-	$(AM_V_AR)$(libdvisvgm_a_AR) libdvisvgm.a $(libdvisvgm_a_OBJECTS) $(libdvisvgm_a_LIBADD)
-	$(AM_V_at)$(RANLIB) libdvisvgm.a
+libdvisvgm.la: $(libdvisvgm_la_OBJECTS) $(libdvisvgm_la_DEPENDENCIES) $(EXTRA_libdvisvgm_la_DEPENDENCIES) 
+	$(AM_V_CXXLD)$(CXXLINK)  $(libdvisvgm_la_OBJECTS) $(libdvisvgm_la_LIBADD) $(LIBS)
 
 dvisvgm$(EXEEXT): $(dvisvgm_OBJECTS) $(dvisvgm_DEPENDENCIES) $(EXTRA_dvisvgm_DEPENDENCIES) 
 	@rm -f dvisvgm$(EXEEXT)
@@ -797,135 +785,110 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BasicDVIReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bezier.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BgColorSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bitmap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BoundingBox.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CLCommandLine.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapManager.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Calculator.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CharMapID.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Color.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColorSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DLLoader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIToSVG.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIToSVGActions.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Directory.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DvisvgmSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EPSFile.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EllipticalArc.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EncFile.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileFinder.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilePath.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystem.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Font.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontCache.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEncoding.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEngine.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontManager.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontMap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontMetrics.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontWriter.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFGlyphTracer.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFTracer.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Ghostscript.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HashFunction.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HtmlSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HyperlinkManager.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageToSVG.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputBuffer.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JFM.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Length.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapLine.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Matrix.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NoPsSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Opacity.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFParser.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPattern.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPreviewFilter.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageRanges.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PapersizeSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathClipper.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PdfSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PreScanDVIReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Process.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RangeMap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandlerFactory.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharPathHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharTspanTextHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGElement.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOutput.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGSingleCharTextHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShadingPatch.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceInput.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Subfont.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TFM.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TTFAutohint.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TensorProductPatch.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Terminal.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToUnicodeMap.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TpicSpecialHandler.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangularPatch.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TrueTypeFont.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Unicode.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFReader.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLDocument.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLNode.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLParser.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLString.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BasicDVIReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bezier.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BgColorSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bitmap.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/BoundingBox.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CLCommandLine.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMap.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapManager.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CMapReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Calculator.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CharMapID.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Color.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ColorSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DLLoader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIToSVG.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DVIToSVGActions.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Directory.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DvisvgmSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EPSFile.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EllipticalArc.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EmSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/EncFile.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileFinder.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FilePath.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FileSystem.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Font.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontCache.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEncoding.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontEngine.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontManager.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontMap.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontMetrics.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/FontWriter.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFGlyphTracer.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/GFTracer.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Ghostscript.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HashFunction.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HtmlSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HyperlinkManager.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ImageToSVG.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputBuffer.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/InputReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JFM.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Length.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MapLine.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Matrix.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NoPsSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Opacity.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFParser.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFToSVG.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPattern.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPreviewFilter.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageRanges.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PapersizeSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PathClipper.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PdfSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PreScanDVIReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Process.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RangeMap.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandlerFactory.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharPathHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharTspanTextHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGElement.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGOutput.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGSingleCharTextHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGTree.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShadingPatch.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceInput.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Subfont.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/System.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TFM.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TensorProductPatch.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Terminal.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ToUnicodeMap.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TpicSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/TriangularPatch.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Unicode.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VFReader.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLDocument.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLNode.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLParser.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLString.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dvisvgm.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ffwrapper.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psdefs.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/psdefs.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utility.Plo@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
 	@echo '# dummy' >$@-t && $(am__mv) $@-t $@
 
 am--depfiles: $(am__depfiles_remade)
-
-.c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
-@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -1115,7 +1078,7 @@ distdir-am: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(LIBRARIES)
+all-am: Makefile $(PROGRAMS) $(LTLIBRARIES)
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)"; do \
@@ -1155,108 +1118,107 @@ maintainer-clean-generic:
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-noinstLIBRARIES mostlyclean-am
+	clean-noinstLTLIBRARIES mostlyclean-am
 
 distclean: distclean-recursive
-		-rm -f ./$(DEPDIR)/BasicDVIReader.Po
-	-rm -f ./$(DEPDIR)/Bezier.Po
-	-rm -f ./$(DEPDIR)/BgColorSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/Bitmap.Po
-	-rm -f ./$(DEPDIR)/BoundingBox.Po
-	-rm -f ./$(DEPDIR)/CLCommandLine.Po
-	-rm -f ./$(DEPDIR)/CMap.Po
-	-rm -f ./$(DEPDIR)/CMapManager.Po
-	-rm -f ./$(DEPDIR)/CMapReader.Po
-	-rm -f ./$(DEPDIR)/Calculator.Po
-	-rm -f ./$(DEPDIR)/CharMapID.Po
-	-rm -f ./$(DEPDIR)/Color.Po
-	-rm -f ./$(DEPDIR)/ColorSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/DLLoader.Po
-	-rm -f ./$(DEPDIR)/DVIReader.Po
-	-rm -f ./$(DEPDIR)/DVIToSVG.Po
-	-rm -f ./$(DEPDIR)/DVIToSVGActions.Po
-	-rm -f ./$(DEPDIR)/Directory.Po
-	-rm -f ./$(DEPDIR)/DvisvgmSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/EPSFile.Po
-	-rm -f ./$(DEPDIR)/EllipticalArc.Po
-	-rm -f ./$(DEPDIR)/EmSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/EncFile.Po
-	-rm -f ./$(DEPDIR)/FileFinder.Po
-	-rm -f ./$(DEPDIR)/FilePath.Po
-	-rm -f ./$(DEPDIR)/FileSystem.Po
-	-rm -f ./$(DEPDIR)/Font.Po
-	-rm -f ./$(DEPDIR)/FontCache.Po
-	-rm -f ./$(DEPDIR)/FontEncoding.Po
-	-rm -f ./$(DEPDIR)/FontEngine.Po
-	-rm -f ./$(DEPDIR)/FontManager.Po
-	-rm -f ./$(DEPDIR)/FontMap.Po
-	-rm -f ./$(DEPDIR)/FontMetrics.Po
-	-rm -f ./$(DEPDIR)/FontWriter.Po
-	-rm -f ./$(DEPDIR)/GFGlyphTracer.Po
-	-rm -f ./$(DEPDIR)/GFReader.Po
-	-rm -f ./$(DEPDIR)/GFTracer.Po
-	-rm -f ./$(DEPDIR)/Ghostscript.Po
-	-rm -f ./$(DEPDIR)/HashFunction.Po
-	-rm -f ./$(DEPDIR)/HtmlSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/HyperlinkManager.Po
-	-rm -f ./$(DEPDIR)/ImageToSVG.Po
-	-rm -f ./$(DEPDIR)/InputBuffer.Po
-	-rm -f ./$(DEPDIR)/InputReader.Po
-	-rm -f ./$(DEPDIR)/JFM.Po
-	-rm -f ./$(DEPDIR)/Length.Po
-	-rm -f ./$(DEPDIR)/MapLine.Po
-	-rm -f ./$(DEPDIR)/Matrix.Po
-	-rm -f ./$(DEPDIR)/Message.Po
-	-rm -f ./$(DEPDIR)/MetafontWrapper.Po
-	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/Opacity.Po
-	-rm -f ./$(DEPDIR)/PDFParser.Po
-	-rm -f ./$(DEPDIR)/PSInterpreter.Po
-	-rm -f ./$(DEPDIR)/PSPattern.Po
-	-rm -f ./$(DEPDIR)/PSPreviewFilter.Po
-	-rm -f ./$(DEPDIR)/PageRanges.Po
-	-rm -f ./$(DEPDIR)/PageSize.Po
-	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/PathClipper.Po
-	-rm -f ./$(DEPDIR)/PdfSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/PreScanDVIReader.Po
-	-rm -f ./$(DEPDIR)/Process.Po
-	-rm -f ./$(DEPDIR)/PsSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/RangeMap.Po
-	-rm -f ./$(DEPDIR)/SVGCharHandler.Po
-	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Po
-	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Po
-	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Po
-	-rm -f ./$(DEPDIR)/SVGElement.Po
-	-rm -f ./$(DEPDIR)/SVGOutput.Po
-	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Po
-	-rm -f ./$(DEPDIR)/SVGTree.Po
-	-rm -f ./$(DEPDIR)/ShadingPatch.Po
-	-rm -f ./$(DEPDIR)/SignalHandler.Po
-	-rm -f ./$(DEPDIR)/SourceInput.Po
-	-rm -f ./$(DEPDIR)/SpecialManager.Po
-	-rm -f ./$(DEPDIR)/StreamReader.Po
-	-rm -f ./$(DEPDIR)/StreamWriter.Po
-	-rm -f ./$(DEPDIR)/Subfont.Po
-	-rm -f ./$(DEPDIR)/System.Po
-	-rm -f ./$(DEPDIR)/TFM.Po
-	-rm -f ./$(DEPDIR)/TTFAutohint.Po
-	-rm -f ./$(DEPDIR)/TensorProductPatch.Po
-	-rm -f ./$(DEPDIR)/Terminal.Po
-	-rm -f ./$(DEPDIR)/ToUnicodeMap.Po
-	-rm -f ./$(DEPDIR)/TpicSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/TriangularPatch.Po
-	-rm -f ./$(DEPDIR)/TrueTypeFont.Po
-	-rm -f ./$(DEPDIR)/Unicode.Po
-	-rm -f ./$(DEPDIR)/VFReader.Po
-	-rm -f ./$(DEPDIR)/XMLDocument.Po
-	-rm -f ./$(DEPDIR)/XMLNode.Po
-	-rm -f ./$(DEPDIR)/XMLParser.Po
-	-rm -f ./$(DEPDIR)/XMLString.Po
+		-rm -f ./$(DEPDIR)/BasicDVIReader.Plo
+	-rm -f ./$(DEPDIR)/Bezier.Plo
+	-rm -f ./$(DEPDIR)/BgColorSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/Bitmap.Plo
+	-rm -f ./$(DEPDIR)/BoundingBox.Plo
+	-rm -f ./$(DEPDIR)/CLCommandLine.Plo
+	-rm -f ./$(DEPDIR)/CMap.Plo
+	-rm -f ./$(DEPDIR)/CMapManager.Plo
+	-rm -f ./$(DEPDIR)/CMapReader.Plo
+	-rm -f ./$(DEPDIR)/Calculator.Plo
+	-rm -f ./$(DEPDIR)/CharMapID.Plo
+	-rm -f ./$(DEPDIR)/Color.Plo
+	-rm -f ./$(DEPDIR)/ColorSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/DLLoader.Plo
+	-rm -f ./$(DEPDIR)/DVIReader.Plo
+	-rm -f ./$(DEPDIR)/DVIToSVG.Plo
+	-rm -f ./$(DEPDIR)/DVIToSVGActions.Plo
+	-rm -f ./$(DEPDIR)/Directory.Plo
+	-rm -f ./$(DEPDIR)/DvisvgmSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/EPSFile.Plo
+	-rm -f ./$(DEPDIR)/EllipticalArc.Plo
+	-rm -f ./$(DEPDIR)/EmSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/EncFile.Plo
+	-rm -f ./$(DEPDIR)/FileFinder.Plo
+	-rm -f ./$(DEPDIR)/FilePath.Plo
+	-rm -f ./$(DEPDIR)/FileSystem.Plo
+	-rm -f ./$(DEPDIR)/Font.Plo
+	-rm -f ./$(DEPDIR)/FontCache.Plo
+	-rm -f ./$(DEPDIR)/FontEncoding.Plo
+	-rm -f ./$(DEPDIR)/FontEngine.Plo
+	-rm -f ./$(DEPDIR)/FontManager.Plo
+	-rm -f ./$(DEPDIR)/FontMap.Plo
+	-rm -f ./$(DEPDIR)/FontMetrics.Plo
+	-rm -f ./$(DEPDIR)/FontWriter.Plo
+	-rm -f ./$(DEPDIR)/GFGlyphTracer.Plo
+	-rm -f ./$(DEPDIR)/GFReader.Plo
+	-rm -f ./$(DEPDIR)/GFTracer.Plo
+	-rm -f ./$(DEPDIR)/Ghostscript.Plo
+	-rm -f ./$(DEPDIR)/HashFunction.Plo
+	-rm -f ./$(DEPDIR)/HtmlSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/HyperlinkManager.Plo
+	-rm -f ./$(DEPDIR)/ImageToSVG.Plo
+	-rm -f ./$(DEPDIR)/InputBuffer.Plo
+	-rm -f ./$(DEPDIR)/InputReader.Plo
+	-rm -f ./$(DEPDIR)/JFM.Plo
+	-rm -f ./$(DEPDIR)/Length.Plo
+	-rm -f ./$(DEPDIR)/MapLine.Plo
+	-rm -f ./$(DEPDIR)/Matrix.Plo
+	-rm -f ./$(DEPDIR)/Message.Plo
+	-rm -f ./$(DEPDIR)/MetafontWrapper.Plo
+	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/Opacity.Plo
+	-rm -f ./$(DEPDIR)/PDFHandler.Plo
+	-rm -f ./$(DEPDIR)/PDFParser.Plo
+	-rm -f ./$(DEPDIR)/PDFToSVG.Plo
+	-rm -f ./$(DEPDIR)/PSInterpreter.Plo
+	-rm -f ./$(DEPDIR)/PSPattern.Plo
+	-rm -f ./$(DEPDIR)/PSPreviewFilter.Plo
+	-rm -f ./$(DEPDIR)/PageRanges.Plo
+	-rm -f ./$(DEPDIR)/PageSize.Plo
+	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PathClipper.Plo
+	-rm -f ./$(DEPDIR)/PdfSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PreScanDVIReader.Plo
+	-rm -f ./$(DEPDIR)/Process.Plo
+	-rm -f ./$(DEPDIR)/PsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/RangeMap.Plo
+	-rm -f ./$(DEPDIR)/SVGCharHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Plo
+	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGElement.Plo
+	-rm -f ./$(DEPDIR)/SVGOutput.Plo
+	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGTree.Plo
+	-rm -f ./$(DEPDIR)/ShadingPatch.Plo
+	-rm -f ./$(DEPDIR)/SignalHandler.Plo
+	-rm -f ./$(DEPDIR)/SourceInput.Plo
+	-rm -f ./$(DEPDIR)/SpecialManager.Plo
+	-rm -f ./$(DEPDIR)/StreamReader.Plo
+	-rm -f ./$(DEPDIR)/StreamWriter.Plo
+	-rm -f ./$(DEPDIR)/Subfont.Plo
+	-rm -f ./$(DEPDIR)/System.Plo
+	-rm -f ./$(DEPDIR)/TFM.Plo
+	-rm -f ./$(DEPDIR)/TensorProductPatch.Plo
+	-rm -f ./$(DEPDIR)/Terminal.Plo
+	-rm -f ./$(DEPDIR)/ToUnicodeMap.Plo
+	-rm -f ./$(DEPDIR)/TpicSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/TriangularPatch.Plo
+	-rm -f ./$(DEPDIR)/Unicode.Plo
+	-rm -f ./$(DEPDIR)/VFReader.Plo
+	-rm -f ./$(DEPDIR)/XMLDocument.Plo
+	-rm -f ./$(DEPDIR)/XMLNode.Plo
+	-rm -f ./$(DEPDIR)/XMLParser.Plo
+	-rm -f ./$(DEPDIR)/XMLString.Plo
 	-rm -f ./$(DEPDIR)/dvisvgm.Po
-	-rm -f ./$(DEPDIR)/ffwrapper.Po
-	-rm -f ./$(DEPDIR)/psdefs.Po
-	-rm -f ./$(DEPDIR)/utility.Po
+	-rm -f ./$(DEPDIR)/psdefs.Plo
+	-rm -f ./$(DEPDIR)/utility.Plo
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -1302,105 +1264,104 @@ install-ps-am:
 installcheck-am:
 
 maintainer-clean: maintainer-clean-recursive
-		-rm -f ./$(DEPDIR)/BasicDVIReader.Po
-	-rm -f ./$(DEPDIR)/Bezier.Po
-	-rm -f ./$(DEPDIR)/BgColorSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/Bitmap.Po
-	-rm -f ./$(DEPDIR)/BoundingBox.Po
-	-rm -f ./$(DEPDIR)/CLCommandLine.Po
-	-rm -f ./$(DEPDIR)/CMap.Po
-	-rm -f ./$(DEPDIR)/CMapManager.Po
-	-rm -f ./$(DEPDIR)/CMapReader.Po
-	-rm -f ./$(DEPDIR)/Calculator.Po
-	-rm -f ./$(DEPDIR)/CharMapID.Po
-	-rm -f ./$(DEPDIR)/Color.Po
-	-rm -f ./$(DEPDIR)/ColorSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/DLLoader.Po
-	-rm -f ./$(DEPDIR)/DVIReader.Po
-	-rm -f ./$(DEPDIR)/DVIToSVG.Po
-	-rm -f ./$(DEPDIR)/DVIToSVGActions.Po
-	-rm -f ./$(DEPDIR)/Directory.Po
-	-rm -f ./$(DEPDIR)/DvisvgmSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/EPSFile.Po
-	-rm -f ./$(DEPDIR)/EllipticalArc.Po
-	-rm -f ./$(DEPDIR)/EmSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/EncFile.Po
-	-rm -f ./$(DEPDIR)/FileFinder.Po
-	-rm -f ./$(DEPDIR)/FilePath.Po
-	-rm -f ./$(DEPDIR)/FileSystem.Po
-	-rm -f ./$(DEPDIR)/Font.Po
-	-rm -f ./$(DEPDIR)/FontCache.Po
-	-rm -f ./$(DEPDIR)/FontEncoding.Po
-	-rm -f ./$(DEPDIR)/FontEngine.Po
-	-rm -f ./$(DEPDIR)/FontManager.Po
-	-rm -f ./$(DEPDIR)/FontMap.Po
-	-rm -f ./$(DEPDIR)/FontMetrics.Po
-	-rm -f ./$(DEPDIR)/FontWriter.Po
-	-rm -f ./$(DEPDIR)/GFGlyphTracer.Po
-	-rm -f ./$(DEPDIR)/GFReader.Po
-	-rm -f ./$(DEPDIR)/GFTracer.Po
-	-rm -f ./$(DEPDIR)/Ghostscript.Po
-	-rm -f ./$(DEPDIR)/HashFunction.Po
-	-rm -f ./$(DEPDIR)/HtmlSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/HyperlinkManager.Po
-	-rm -f ./$(DEPDIR)/ImageToSVG.Po
-	-rm -f ./$(DEPDIR)/InputBuffer.Po
-	-rm -f ./$(DEPDIR)/InputReader.Po
-	-rm -f ./$(DEPDIR)/JFM.Po
-	-rm -f ./$(DEPDIR)/Length.Po
-	-rm -f ./$(DEPDIR)/MapLine.Po
-	-rm -f ./$(DEPDIR)/Matrix.Po
-	-rm -f ./$(DEPDIR)/Message.Po
-	-rm -f ./$(DEPDIR)/MetafontWrapper.Po
-	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/Opacity.Po
-	-rm -f ./$(DEPDIR)/PDFParser.Po
-	-rm -f ./$(DEPDIR)/PSInterpreter.Po
-	-rm -f ./$(DEPDIR)/PSPattern.Po
-	-rm -f ./$(DEPDIR)/PSPreviewFilter.Po
-	-rm -f ./$(DEPDIR)/PageRanges.Po
-	-rm -f ./$(DEPDIR)/PageSize.Po
-	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/PathClipper.Po
-	-rm -f ./$(DEPDIR)/PdfSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/PreScanDVIReader.Po
-	-rm -f ./$(DEPDIR)/Process.Po
-	-rm -f ./$(DEPDIR)/PsSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/RangeMap.Po
-	-rm -f ./$(DEPDIR)/SVGCharHandler.Po
-	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Po
-	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Po
-	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Po
-	-rm -f ./$(DEPDIR)/SVGElement.Po
-	-rm -f ./$(DEPDIR)/SVGOutput.Po
-	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Po
-	-rm -f ./$(DEPDIR)/SVGTree.Po
-	-rm -f ./$(DEPDIR)/ShadingPatch.Po
-	-rm -f ./$(DEPDIR)/SignalHandler.Po
-	-rm -f ./$(DEPDIR)/SourceInput.Po
-	-rm -f ./$(DEPDIR)/SpecialManager.Po
-	-rm -f ./$(DEPDIR)/StreamReader.Po
-	-rm -f ./$(DEPDIR)/StreamWriter.Po
-	-rm -f ./$(DEPDIR)/Subfont.Po
-	-rm -f ./$(DEPDIR)/System.Po
-	-rm -f ./$(DEPDIR)/TFM.Po
-	-rm -f ./$(DEPDIR)/TTFAutohint.Po
-	-rm -f ./$(DEPDIR)/TensorProductPatch.Po
-	-rm -f ./$(DEPDIR)/Terminal.Po
-	-rm -f ./$(DEPDIR)/ToUnicodeMap.Po
-	-rm -f ./$(DEPDIR)/TpicSpecialHandler.Po
-	-rm -f ./$(DEPDIR)/TriangularPatch.Po
-	-rm -f ./$(DEPDIR)/TrueTypeFont.Po
-	-rm -f ./$(DEPDIR)/Unicode.Po
-	-rm -f ./$(DEPDIR)/VFReader.Po
-	-rm -f ./$(DEPDIR)/XMLDocument.Po
-	-rm -f ./$(DEPDIR)/XMLNode.Po
-	-rm -f ./$(DEPDIR)/XMLParser.Po
-	-rm -f ./$(DEPDIR)/XMLString.Po
+		-rm -f ./$(DEPDIR)/BasicDVIReader.Plo
+	-rm -f ./$(DEPDIR)/Bezier.Plo
+	-rm -f ./$(DEPDIR)/BgColorSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/Bitmap.Plo
+	-rm -f ./$(DEPDIR)/BoundingBox.Plo
+	-rm -f ./$(DEPDIR)/CLCommandLine.Plo
+	-rm -f ./$(DEPDIR)/CMap.Plo
+	-rm -f ./$(DEPDIR)/CMapManager.Plo
+	-rm -f ./$(DEPDIR)/CMapReader.Plo
+	-rm -f ./$(DEPDIR)/Calculator.Plo
+	-rm -f ./$(DEPDIR)/CharMapID.Plo
+	-rm -f ./$(DEPDIR)/Color.Plo
+	-rm -f ./$(DEPDIR)/ColorSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/DLLoader.Plo
+	-rm -f ./$(DEPDIR)/DVIReader.Plo
+	-rm -f ./$(DEPDIR)/DVIToSVG.Plo
+	-rm -f ./$(DEPDIR)/DVIToSVGActions.Plo
+	-rm -f ./$(DEPDIR)/Directory.Plo
+	-rm -f ./$(DEPDIR)/DvisvgmSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/EPSFile.Plo
+	-rm -f ./$(DEPDIR)/EllipticalArc.Plo
+	-rm -f ./$(DEPDIR)/EmSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/EncFile.Plo
+	-rm -f ./$(DEPDIR)/FileFinder.Plo
+	-rm -f ./$(DEPDIR)/FilePath.Plo
+	-rm -f ./$(DEPDIR)/FileSystem.Plo
+	-rm -f ./$(DEPDIR)/Font.Plo
+	-rm -f ./$(DEPDIR)/FontCache.Plo
+	-rm -f ./$(DEPDIR)/FontEncoding.Plo
+	-rm -f ./$(DEPDIR)/FontEngine.Plo
+	-rm -f ./$(DEPDIR)/FontManager.Plo
+	-rm -f ./$(DEPDIR)/FontMap.Plo
+	-rm -f ./$(DEPDIR)/FontMetrics.Plo
+	-rm -f ./$(DEPDIR)/FontWriter.Plo
+	-rm -f ./$(DEPDIR)/GFGlyphTracer.Plo
+	-rm -f ./$(DEPDIR)/GFReader.Plo
+	-rm -f ./$(DEPDIR)/GFTracer.Plo
+	-rm -f ./$(DEPDIR)/Ghostscript.Plo
+	-rm -f ./$(DEPDIR)/HashFunction.Plo
+	-rm -f ./$(DEPDIR)/HtmlSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/HyperlinkManager.Plo
+	-rm -f ./$(DEPDIR)/ImageToSVG.Plo
+	-rm -f ./$(DEPDIR)/InputBuffer.Plo
+	-rm -f ./$(DEPDIR)/InputReader.Plo
+	-rm -f ./$(DEPDIR)/JFM.Plo
+	-rm -f ./$(DEPDIR)/Length.Plo
+	-rm -f ./$(DEPDIR)/MapLine.Plo
+	-rm -f ./$(DEPDIR)/Matrix.Plo
+	-rm -f ./$(DEPDIR)/Message.Plo
+	-rm -f ./$(DEPDIR)/MetafontWrapper.Plo
+	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/Opacity.Plo
+	-rm -f ./$(DEPDIR)/PDFHandler.Plo
+	-rm -f ./$(DEPDIR)/PDFParser.Plo
+	-rm -f ./$(DEPDIR)/PDFToSVG.Plo
+	-rm -f ./$(DEPDIR)/PSInterpreter.Plo
+	-rm -f ./$(DEPDIR)/PSPattern.Plo
+	-rm -f ./$(DEPDIR)/PSPreviewFilter.Plo
+	-rm -f ./$(DEPDIR)/PageRanges.Plo
+	-rm -f ./$(DEPDIR)/PageSize.Plo
+	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PathClipper.Plo
+	-rm -f ./$(DEPDIR)/PdfSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PreScanDVIReader.Plo
+	-rm -f ./$(DEPDIR)/Process.Plo
+	-rm -f ./$(DEPDIR)/PsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/RangeMap.Plo
+	-rm -f ./$(DEPDIR)/SVGCharHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Plo
+	-rm -f ./$(DEPDIR)/SVGCharPathHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGCharTspanTextHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGElement.Plo
+	-rm -f ./$(DEPDIR)/SVGOutput.Plo
+	-rm -f ./$(DEPDIR)/SVGSingleCharTextHandler.Plo
+	-rm -f ./$(DEPDIR)/SVGTree.Plo
+	-rm -f ./$(DEPDIR)/ShadingPatch.Plo
+	-rm -f ./$(DEPDIR)/SignalHandler.Plo
+	-rm -f ./$(DEPDIR)/SourceInput.Plo
+	-rm -f ./$(DEPDIR)/SpecialManager.Plo
+	-rm -f ./$(DEPDIR)/StreamReader.Plo
+	-rm -f ./$(DEPDIR)/StreamWriter.Plo
+	-rm -f ./$(DEPDIR)/Subfont.Plo
+	-rm -f ./$(DEPDIR)/System.Plo
+	-rm -f ./$(DEPDIR)/TFM.Plo
+	-rm -f ./$(DEPDIR)/TensorProductPatch.Plo
+	-rm -f ./$(DEPDIR)/Terminal.Plo
+	-rm -f ./$(DEPDIR)/ToUnicodeMap.Plo
+	-rm -f ./$(DEPDIR)/TpicSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/TriangularPatch.Plo
+	-rm -f ./$(DEPDIR)/Unicode.Plo
+	-rm -f ./$(DEPDIR)/VFReader.Plo
+	-rm -f ./$(DEPDIR)/XMLDocument.Plo
+	-rm -f ./$(DEPDIR)/XMLNode.Plo
+	-rm -f ./$(DEPDIR)/XMLParser.Plo
+	-rm -f ./$(DEPDIR)/XMLString.Plo
 	-rm -f ./$(DEPDIR)/dvisvgm.Po
-	-rm -f ./$(DEPDIR)/ffwrapper.Po
-	-rm -f ./$(DEPDIR)/psdefs.Po
-	-rm -f ./$(DEPDIR)/utility.Po
+	-rm -f ./$(DEPDIR)/psdefs.Plo
+	-rm -f ./$(DEPDIR)/utility.Plo
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -1423,7 +1384,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--depfiles check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool clean-noinstLIBRARIES \
+	clean-generic clean-libtool clean-noinstLTLIBRARIES \
 	cscopelist-am ctags ctags-am distclean distclean-compile \
 	distclean-generic distclean-libtool distclean-tags distdir dvi \
 	dvi-am html html-am info info-am install install-am \
@@ -1455,16 +1416,14 @@ uninstall-am: uninstall-binPROGRAMS
 
 @TEXLIVE_BUILD_FALSE@psdefs.ps: ;
 
-@CODE_COVERAGE_RULES@
-
 # Rebuild libkpathsea:
-@KPATHSEA_RULE@
+@TEXLIVE_BUILD_TRUE@@KPATHSEA_RULE@
 # Rebuild libfreetype:
-@FREETYPE2_RULE@
+@TEXLIVE_BUILD_TRUE@@FREETYPE2_RULE@
 # Rebuild libz:
-@ZLIB_RULE@
+@TEXLIVE_BUILD_TRUE@@ZLIB_RULE@
 # Rebuild potrace:
-@POTRACE_RULE@
+@TEXLIVE_BUILD_TRUE@@POTRACE_RULE@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

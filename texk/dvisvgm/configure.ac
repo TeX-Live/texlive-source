@@ -2,7 +2,7 @@ dnl $Id$
 dnl Process this file with autoconf to produce a configure script
 dnl for dvisvgm in TeX Live.
 dnl
-dnl   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2015-2023 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -10,15 +10,16 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 dnl  Adapted for TeX Live from original dvisvgm configure.ac
-dnl  Copyright 2005-2022 Martin Gieseking
+dnl  Copyright 2005-2023 Martin Gieseking
 dnl
 AC_PREREQ([2.65])
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
-DATE="August 2022"
+DATE="January 2023"
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
+AC_CONFIG_MACRO_DIRS([dvisvgm-src/m4])dnl ax_gcc_builtin
 AC_CONFIG_AUX_DIR([../../build-aux])
 
 AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
@@ -28,17 +29,17 @@ AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 AM_PROG_AR
 KPSE_COMMON([dvisvgm])
 
-AH_TEMPLATE([TARGET_SYSTEM], [The machine triplet of the target system])
-AC_DEFINE_UNQUOTED([TARGET_SYSTEM], ["$target"])
+AH_TEMPLATE([HOST_SYSTEM], [The machine triplet of the host system])
+AC_DEFINE_UNQUOTED([HOST_SYSTEM], ["$host"])
 
+# Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX([11])
+dnl AM_PROG_AR is above.
 LT_INIT
 KPSE_CXX_HACK
 
-AC_PROG_RANLIB
 AC_LANG(C)
 
 AC_CHECK_HEADERS([sys/time.h sys/timeb.h xlocale.h])
@@ -166,6 +167,7 @@ AC_STRUCT_TM
 # Check for library functions.
 AC_FUNC_STAT
 AC_CHECK_FUNCS_ONCE([ftime gettimeofday sigaction umask uselocale])
+AX_GCC_BUILTIN(__builtin_clz)
 
 AC_SEARCH_LIBS(clock_gettime, rt)dnl for Solaris 10 and other old libc
 
@@ -175,6 +177,11 @@ AC_ARG_ENABLE([woff],
 	[enable_woff=yes])
 AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
 
+AC_ARG_WITH([ttfautohint],
+	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
+	[with_ttfautohint="$withval"],
+	[with_ttfautohint=no])
+
 AC_DEFINE([HAVE_LIBKPATHSEA], 1, [Define to 1 if you have the `kpathsea' library (-lkpathsea).])
 AC_DEFINE([HAVE_LIBFREETYPE], 1, [Define to 1 if you have the `freetype2' library (-lfreetype).])
 AC_DEFINE([HAVE_LIBZ], 1, [Define to 1 if you have the `z' library (-lz).])
@@ -182,9 +189,8 @@ if false; then
   AC_DEFINE([KPSE_CXX_UNSAFE], 1, [Define to 1 if the kpathsea headers are not C++ safe.])
 fi
 
-# TL: skip ttfautohint?
-
-# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
+# Add option to enable linking of bundled libraries (brotli, woff2, xxhash).
+# TL: potrace not bundled.
 AC_ARG_ENABLE([bundled-libs],
 	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])],
 	[use_bundled_libs=yes])
@@ -196,10 +202,12 @@ AM_CONDITIONAL([USE_BUNDLED_LIBS], [test "x$use_bundled_libs" = "xyes" dnl
 AM_CONDITIONAL([USE_BUNDLED_MD5], true)
 
 # TL: these conditionals for system libraries are in the Makefile.am's.
-AM_CONDITIONAL(HAVE_POTRACE, false)
 AM_CONDITIONAL(HAVE_BROTLI, false)
 AM_CONDITIONAL(HAVE_WOFF2, false)
 AM_CONDITIONAL(HAVE_XXHASH, false)
+
+# TL: now includes potrace in libs, so always true.
+AM_CONDITIONAL(HAVE_POTRACE, true)
 
 # TL: not going to build_manpage (which is the default).
 # TL: not going to attempt code coverage; need to subst it away.
@@ -227,15 +235,17 @@ AC_SUBST(AM_LDFLAGS)
 AC_CONFIG_FILES([Makefile
 	dvisvgm-src/Makefile
 	dvisvgm-src/libs/Makefile
+	dvisvgm-src/libs/boost/Makefile
 	dvisvgm-src/libs/brotli/Makefile
 	dvisvgm-src/libs/clipper/Makefile
-	dvisvgm-src/libs/ff-woff/Makefile
 	dvisvgm-src/libs/md5/Makefile
 	dvisvgm-src/libs/variant/Makefile
 	dvisvgm-src/libs/woff2/Makefile
 	dvisvgm-src/libs/xxHash/Makefile
 	dvisvgm-src/src/Makefile
 	dvisvgm-src/src/version.hpp
+	dvisvgm-src/src/fonts/Makefile
 	dvisvgm-src/src/optimizer/Makefile
+	dvisvgm-src/src/ttf/Makefile
 ])dnl TL: skipping tests/* and doc/*
 AC_OUTPUT
