@@ -1,3 +1,17 @@
+2023-01-20  Phelype Oleinik  <phe.h.o1@gmail.com>
+
+	* pdftex.web: implement shipout keyword for delayed expansion
+	with \pdfliteral and \special, like non-\immediate \write.
+	(pdf_out_literal): check for pdf_lateliteral_node.
+	(pdf_special): check for latespecial_node.
+	(latespecial_node): new @d (4)
+	(pdf_lateliteral_node): new @d (pdftex_first_extension_code + 1).
+	(Implement \.{\\special}),
+	(Implement \.{\\pdfliteral}): look for `shipout' keyword.
+	(scan_pdf_ext_late_toks): new procedure.
+	(Display the whatsit) <latespecial_node, <pdf_lateliteral_node>:
+	new cases.
+
 2022-12-28  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (Display the whatsit...) <pdf_dest_node>: indicate

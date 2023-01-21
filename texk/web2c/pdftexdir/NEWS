@@ -1,5 +1,7 @@
 pdfTeX 3.141592653-2.6-1.40.25
 - changes:
+  - new keyword `shipout' for \special and \pdfliteral, delaying
+    expansion until the node is shipped out, like non-\immediate \write.
   - new primitive \pdfinfoomitdict to omit /Info dictionary completely.
   - new primitive \pdfomitprocset to control omitting /ProcSet array;
     /ProcSet is included if this parameter is negative, or if this
