@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2016-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2016-2023 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -16,6 +16,9 @@ AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
 KPSE_BASIC([libpng])
+
+# Because we use $host_cpu below.
+KPSE_CANONICAL_HOST
 
 AC_CONFIG_HEADERS([config.h])
 
@@ -96,7 +99,7 @@ AC_ARG_ENABLE([arm-neon],
          AC_DEFINE([PNG_ARM_NEON_OPT], [0],
                    [Disable ARM Neon optimizations])
          # Prevent inclusion of the assembler files below:
-         enable_arm_neon=no;;
+         enable_arm_neon=no ;;
       check)
          AC_DEFINE([PNG_ARM_NEON_CHECK_SUPPORTED], [],
                    [Check for ARM Neon support at run-time]);;
@@ -113,16 +116,21 @@ AC_ARG_ENABLE([arm-neon],
          AC_MSG_ERROR([--enable-arm-neon=${enable_arm_neon}: invalid value])
    esac])
 
-# Add ARM specific files to all builds where the host_cpu is arm ('arm*') or
-# where ARM optimizations were explicitly requested (this allows a fallback if a
-# future host CPU does not match 'arm*')
+# Add ARM-specific files to all builds where the host_cpu is arm ('arm*') or
+# where ARM optimizations were explicitly requested (this allows a fallback
+#  if a future host CPU does not match 'arm*')
 
 AM_CONDITIONAL([PNG_ARM_NEON],
    [test "$enable_arm_neon" != 'no' &&
     case "$host_cpu" in
-      arm*|aarch64*) :;;
-      *)    test "$enable_arm_neon" != '';;
+      arm*|aarch64*) : ;;
+      *)    test "$enable_arm_neon" != '' ;;
     esac])
+
+AM_COND_IF([PNG_ARM_NEON],
+  AC_MSG_NOTICE([[arm_neon opts on (host_cpu=$host_cpu)]]),
+  AC_MSG_NOTICE([[arm_neon opts off (host_cpu=$host_cpu)]]),
+)
 
 # emacs-page
 # PowerPC
@@ -142,8 +150,8 @@ AS_HELP_STRING([[[--enable-powerpc-vsx]]],
          # disable the default enabling on __ppc64__ systems:
          AC_DEFINE([PNG_POWERPC_VSX_OPT], [0],
                    [Disable POWERPC VSX optimizations])
-         # Prevent inclusion of the platform specific files below:
-         enable_powerpc_vsx=no;;
+         # Prevent inclusion of the platform-specific files below:
+         enable_powerpc_vsx=no ;;
       check)
          AC_DEFINE([PNG_POWERPC_VSX_CHECK_SUPPORTED], [],
                    [Check for POWERPC VSX support at run-time])
@@ -157,22 +165,24 @@ AS_HELP_STRING([[[--enable-powerpc-vsx]]],
                    [Enable POWERPC VSX optimizations])
          AC_MSG_WARN([--enable-powerpc-vsx: please specify 'check' or 'api', if]
             [you want the optimizations unconditionally pass '-maltivec -mvsx']
-            [or '-mcpu=power8'to the compiler.]);;
+            [or '-mcpu=power8' to the compiler.]);;
       *)
          AC_MSG_ERROR([--enable-powerpc-vsx=${enable_powerpc_vsx}: invalid value])
    esac])
 
-# Add PowerPC specific files to all builds where the host_cpu is powerpc('powerpc*') or
-# where POWERPC optimizations were explicitly requested (this allows a fallback if a
-# future host CPU does not match 'powerpc*')
+# Add PowerPC-specific files to all builds where $host_cpu is powerpc('powerpc*')
+# or where PowerPC optimizations were explicitly requested (this allows a fallback
+# if a future host CPU does not match 'powerpc*')
 
 AM_CONDITIONAL([PNG_POWERPC_VSX],
    [test "$enable_powerpc_vsx" != 'no' &&
     case "$host_cpu" in
-      powerpc*|ppc64*) :;;
+      powerpc*|ppc64*) : ;;
     esac])
-
-
+AM_COND_IF([PNG_POWERPC_VSX],
+  AC_MSG_NOTICE([[powerpc_vsx opts on (host_cpu=$host_cpu)]]),
+  AC_MSG_NOTICE([[powerpc_vsx opts off (host_cpu=$host_cpu)]]),
+)
 AC_CONFIG_FILES([Makefile include/Makefile])
 
 AC_OUTPUT

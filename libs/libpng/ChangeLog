@@ -1,3 +1,12 @@
+2023-01-22  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (KPSE_CANONICAL_HOST): call this,
+	since we use $host_cpu in the optimization checks.
+	Else could be determined wrong. Report from Dick Koch,
+	karl mail 22 Jan 2023 00:43:11.
+	(PNG_ARM_NEON, PNG_POWERPC_VSX): report results;
+	also sync comments with upstream (trivial typos).
+
 2022-11-21 Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import libpng-1.6.39.

@@ -676,6 +676,14 @@ am__fastdepCCAS_TRUE
 CCASDEPMODE
 CCASFLAGS
 CCAS
+host_os
+host_vendor
+host_cpu
+host
+build_os
+build_vendor
+build_cpu
+build
 WARNING_CFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
@@ -1400,6 +1408,10 @@ Program names:
   --program-prefix=PREFIX            prepend PREFIX to installed program names
   --program-suffix=SUFFIX            append SUFFIX to installed program names
   --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
+
+System types:
+  --build=BUILD     configure for building on BUILD [guessed]
+  --host=HOST       cross-compile to build programs to run on HOST [BUILD]
 _ACEOF
 fi
 
@@ -2433,7 +2445,7 @@ as_fn_append ac_header_c_list " sys/types.h sys_types_h HAVE_SYS_TYPES_H"
 as_fn_append ac_header_c_list " unistd.h unistd_h HAVE_UNISTD_H"
 
 # Auxiliary files required by this configure script.
-ac_aux_files="compile missing install-sh"
+ac_aux_files="config.guess config.sub compile missing install-sh"
 
 # Locations in which to look for auxiliary files.
 ac_aux_dir_candidates="${srcdir}/../../build-aux"
@@ -4601,6 +4613,89 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+# Because we use $host_cpu below.
+
+
+  # Make sure we can run config.sub.
+$SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL ${ac_aux_dir}config.sub" "$LINENO" 5
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+printf %s "checking build system type... " >&6; }
+if test ${ac_cv_build+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "${ac_aux_dir}config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "${ac_aux_dir}config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+printf "%s\n" "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+printf %s "checking host system type... " >&6; }
+if test ${ac_cv_host+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "${ac_aux_dir}config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+printf "%s\n" "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+if test "x$host_alias" != x && test "x$build_alias" = x
+then :
+  as_fn_error $? "when cross-compiling you must specify both --host and --build." "$LINENO" 5
+fi
+eval kpse_build_alias=\${build_alias-$build}
+
+
 ac_config_headers="$ac_config_headers config.h"
 
 
@@ -6582,7 +6677,7 @@ then :
 printf "%s\n" "#define PNG_ARM_NEON_OPT 0" >>confdefs.h
 
          # Prevent inclusion of the assembler files below:
-         enable_arm_neon=no;;
+         enable_arm_neon=no ;;
       check)
 
 printf "%s\n" "#define PNG_ARM_NEON_CHECK_SUPPORTED /**/" >>confdefs.h
@@ -6607,14 +6702,14 @@ printf "%s\n" "$as_me: WARNING: --enable-arm-neon: please specify 'check' or 'ap
 fi
 
 
-# Add ARM specific files to all builds where the host_cpu is arm ('arm*') or
-# where ARM optimizations were explicitly requested (this allows a fallback if a
-# future host CPU does not match 'arm*')
+# Add ARM-specific files to all builds where the host_cpu is arm ('arm*') or
+# where ARM optimizations were explicitly requested (this allows a fallback
+#  if a future host CPU does not match 'arm*')
 
  if test "$enable_arm_neon" != 'no' &&
     case "$host_cpu" in
-      arm*|aarch64*) :;;
-      *)    test "$enable_arm_neon" != '';;
+      arm*|aarch64*) : ;;
+      *)    test "$enable_arm_neon" != '' ;;
     esac; then
   PNG_ARM_NEON_TRUE=
   PNG_ARM_NEON_FALSE='#'
@@ -6623,6 +6718,14 @@ else
   PNG_ARM_NEON_FALSE=
 fi
 
+
+if test -z "$PNG_ARM_NEON_TRUE"; then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: arm_neon opts on (host_cpu=$host_cpu)" >&5
+printf "%s\n" "$as_me: arm_neon opts on (host_cpu=$host_cpu)" >&6;}
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: arm_neon opts off (host_cpu=$host_cpu)" >&5
+printf "%s\n" "$as_me: arm_neon opts off (host_cpu=$host_cpu)" >&6;}
+fi
 
 # emacs-page
 # PowerPC
@@ -6639,8 +6742,8 @@ then :
 
 printf "%s\n" "#define PNG_POWERPC_VSX_OPT 0" >>confdefs.h
 
-         # Prevent inclusion of the platform specific files below:
-         enable_powerpc_vsx=no;;
+         # Prevent inclusion of the platform-specific files below:
+         enable_powerpc_vsx=no ;;
       check)
 
 printf "%s\n" "#define PNG_POWERPC_VSX_CHECK_SUPPORTED /**/" >>confdefs.h
@@ -6659,23 +6762,23 @@ printf "%s\n" "#define PNG_POWERPC_VSX_OPT 2" >>confdefs.h
 
          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: --enable-powerpc-vsx: please specify 'check' or 'api', if
             you want the optimizations unconditionally pass '-maltivec -mvsx'
-            or '-mcpu=power8'to the compiler." >&5
+            or '-mcpu=power8' to the compiler." >&5
 printf "%s\n" "$as_me: WARNING: --enable-powerpc-vsx: please specify 'check' or 'api', if
             you want the optimizations unconditionally pass '-maltivec -mvsx'
-            or '-mcpu=power8'to the compiler." >&2;};;
+            or '-mcpu=power8' to the compiler." >&2;};;
       *)
          as_fn_error $? "--enable-powerpc-vsx=${enable_powerpc_vsx}: invalid value" "$LINENO" 5
    esac
 fi
 
 
-# Add PowerPC specific files to all builds where the host_cpu is powerpc('powerpc*') or
-# where POWERPC optimizations were explicitly requested (this allows a fallback if a
-# future host CPU does not match 'powerpc*')
+# Add PowerPC-specific files to all builds where $host_cpu is powerpc('powerpc*')
+# or where PowerPC optimizations were explicitly requested (this allows a fallback
+# if a future host CPU does not match 'powerpc*')
 
  if test "$enable_powerpc_vsx" != 'no' &&
     case "$host_cpu" in
-      powerpc*|ppc64*) :;;
+      powerpc*|ppc64*) : ;;
     esac; then
   PNG_POWERPC_VSX_TRUE=
   PNG_POWERPC_VSX_FALSE='#'
@@ -6684,8 +6787,13 @@ else
   PNG_POWERPC_VSX_FALSE=
 fi
 
-
-
+if test -z "$PNG_POWERPC_VSX_TRUE"; then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: powerpc_vsx opts on (host_cpu=$host_cpu)" >&5
+printf "%s\n" "$as_me: powerpc_vsx opts on (host_cpu=$host_cpu)" >&6;}
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: powerpc_vsx opts off (host_cpu=$host_cpu)" >&5
+printf "%s\n" "$as_me: powerpc_vsx opts off (host_cpu=$host_cpu)" >&6;}
+fi
 ac_config_files="$ac_config_files Makefile include/Makefile"
 
 
