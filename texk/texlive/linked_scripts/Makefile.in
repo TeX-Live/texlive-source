@@ -283,6 +283,8 @@ texmf_shell_scripts = \
 	listbib/listbib \
 	listings-ext/listings-ext.sh \
 	ltxfileinfo/ltxfileinfo \
+	pagelayout/pagelayoutapi \
+	pagelayout/textestvis \
 	pdfbook2/pdfbook2 \
 	pdfjam/pdfjam \
 	pdftex-quiet/pdftex-quiet \
@@ -312,9 +314,7 @@ texmf_shell_scripts = \
 	texosquery/texosquery-jre8.sh \
 	tikztosvg/tikztosvg \
 	typeoutfileinfo/typeoutfileinfo.sh \
-	wordcount/wordcount.sh \
-	xput/xput \
-	xput/xputserver
+	wordcount/wordcount.sh
 
 texmf_other_scripts = \
 	a2ping/a2ping.pl \

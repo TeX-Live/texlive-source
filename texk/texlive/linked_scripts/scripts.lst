@@ -10,6 +10,8 @@ latexfileversion/latexfileversion
 listbib/listbib
 listings-ext/listings-ext.sh
 ltxfileinfo/ltxfileinfo
+pagelayout/pagelayoutapi
+pagelayout/textestvis
 pdfbook2/pdfbook2
 pdfjam/pdfjam
 pdftex-quiet/pdftex-quiet
@@ -40,8 +42,6 @@ texosquery/texosquery-jre8.sh
 tikztosvg/tikztosvg
 typeoutfileinfo/typeoutfileinfo.sh
 wordcount/wordcount.sh
-xput/xput
-xput/xputserver
 a2ping/a2ping.pl
 accfonts/mkt1font
 accfonts/vpl2ovp
