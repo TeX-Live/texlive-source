@@ -1,3 +1,11 @@
+2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* am/eptex.am:
+	Revert options --enable-ptex(-synctex) for configure.
+	By default, we do not build binary of pTeX (ptex)
+	and we use alias of e-pTeX (eptex) for it.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test, am/eptex.am:

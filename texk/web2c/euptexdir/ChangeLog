@@ -1,3 +1,11 @@
+2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* am/euptex.am:
+	Revert options --enable-uptex(-synctex) for configure.
+	By default, we do not build binary of upTeX (uptex)
+	and we use alias of e-upTeX (euptex) for it.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test, am/euptex.am:

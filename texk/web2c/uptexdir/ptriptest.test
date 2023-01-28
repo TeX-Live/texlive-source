@@ -1,0 +1,72 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+testdir=$abs_srcdir/triptrap
+ptestdir=$abs_srcdir/ptexdir/ptrip
+
+TEXMFCNF=$ptestdir; export TEXMFCNF
+
+rm -rf upptripdir
+mkdir upptripdir
+cd upptripdir
+
+dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
+
+echo ">>> Running TRIP test for upTeX-euc." >&2
+echo ">>> See $ptestdir/ptrip.diffs for example of acceptable diffs." >&2
+
+# pTeX outputs direction of boxes.
+P_SED1='s/, yoko direction//;s/yoko direction, //'
+P_SED2='s/yoko(math) direction, //'
+
+is_OK=:
+
+set -x
+
+echo "*** TRIP test for upTeX-euc ***."
+
+../pltotf $testdir/trip.pl trip.tfm || exit 1
+
+../tftopl ./trip.tfm trip.pl || exit 1
+
+diff $testdir/trip.pl trip.pl || is_OK=false
+
+# get same filename in log
+$LN_S $testdir/trip.tex .
+
+rm -f trip.log
+../uptex --kanji-internal=euc --progname=pinitex --ini <$testdir/trip1.in >ptripin.fot
+if test ! -s trip.fmt; then
+  echo "*** trip.fmt not created by trip1.in, investigate!" >&2
+  exit 1
+fi
+sed "$P_SED1" trip.log >  ptripin.log || exit 1
+diff $testdir/tripin.log ptripin.log
+
+# May as well test non-ini second time through.
+rm -f trip.log
+../uptex --kanji-internal=euc --progname=ptex <$testdir/trip2.in >ptrip.fot
+sed "$P_SED1;$P_SED2" trip.log > ptrip.log
+diff $testdir/trip.fot ptrip.fot
+
+# We use $DIFF instead of `diff' only for those files where there
+# might actually be legitimate numerical differences.
+$DIFF $DIFFFLAGS $testdir/trip.log ptrip.log
+
+mv tripos.tex ptripos.tex
+diff $testdir/tripos.tex ptripos.tex || is_OK=false
+
+eval ../dvitype $dvitype_args trip.dvi >ptrip.typ || exit 1
+$DIFF $DIFFFLAGS $testdir/trip.typ ptrip.typ
+
+$is_OK || {
+  echo ">>> There were some errors." >&2
+  exit 1
+}
+

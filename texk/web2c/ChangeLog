@@ -1,3 +1,11 @@
+2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.in, ac/web2c.ac (ptex, uptex):
+	Revert options --enable-(u)ptex(-synctex) for configure.
+	By default, we do not build binaries of (u)pTeX (ptex, uptex)
+	and we use alias of e-upTeX (eptex, euptex) for them.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-01-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, ac/web2c.ac (ptex, uptex):

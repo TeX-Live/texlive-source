@@ -8,6 +8,7 @@
 ptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 ptex_ldadd = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
 ptex_dependencies = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(ZLIB_DEPEND) $(default_dependencies)
+p_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/ptexdir:$(srcdir) $(buildenv) $(TANGLE)
 
 
 ## pTeX library
@@ -23,7 +24,26 @@ EXTRA_LIBRARIES += libkanji.a
 libkanji_a_SOURCES = ptexdir/kanji.c ptexdir/kanji.h ptexdir/kanji_dump.c
 libkanji_a_CPPFLAGS = $(ptex_cppflags)
 
+## pTeX
+##
+if PTEX
+bin_PROGRAMS += ptex
+endif PTEX
+#if PWEB
+#bin_PROGRAMS += $(pweb_programs)
+#endif PWEB
+#EXTRA_PROGRAMS += ptex $(pweb_programs)
+
 ptex_CPPFLAGS = $(ptex_cppflags)
+
+# With --enable-ipc, pTeX may need to link with -lsocket.
+ptex_LDADD = $(ptex_ldadd) $(ipc_socketlibs)
+ptex_DEPENDENCIES = $(ptex_dependencies)
+
+# pTeX C sources
+ptex_c_h = ptexini.c ptex0.c ptexcoerce.h ptexd.h
+nodist_ptex_SOURCES = $(ptex_c_h) ptex-pool.c
+dist_ptex_SOURCES = ptexdir/ptexextra.c ptexdir/ptexextra.h ptexdir/ptex_version.h
 
 # We must create ptexd.h and ptexdir/ptex_version.h before building the ptex_OBJECTS.
 ptex_prereq = ptexd.h ptexdir/ptex_version.h
@@ -79,6 +99,25 @@ EXTRA_DIST += \
 	ptexdir/Changes.txt \
 	ptexdir/INSTALL.txt \
 	ptexdir/README.txt
+
+# pTeX Tests
+#
+ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
+ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
+
+EXTRA_DIST += $(ptex_tests) $(pweb_tests)
+DISTCLEANFILES += $(pweb_programs:=.c) $(pweb_programs:=.h) \
+	$(pweb_programs:=.p) $(pweb_programs:=-web2c) $(pweb_programs:=.web)
+
+if PTEX
+TESTS += $(ptex_tests)
+TRIPTRAP += ptrip.diffs
+TRIPTRAP_CLEAN += ptrip-clean
+endif PTEX
+if PWEB
+TESTS += $(pweb_tests)
+endif PWEB
 
 ## Test data and results
 ##

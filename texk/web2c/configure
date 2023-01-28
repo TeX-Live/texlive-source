@@ -834,10 +834,18 @@ EUPTEX_SYNCTEX_FALSE
 EUPTEX_SYNCTEX_TRUE
 EUPTEX_FALSE
 EUPTEX_TRUE
+UPTEX_SYNCTEX_FALSE
+UPTEX_SYNCTEX_TRUE
+UPTEX_FALSE
+UPTEX_TRUE
 EPTEX_SYNCTEX_FALSE
 EPTEX_SYNCTEX_TRUE
 EPTEX_FALSE
 EPTEX_TRUE
+PTEX_SYNCTEX_FALSE
+PTEX_SYNCTEX_TRUE
+PTEX_FALSE
+PTEX_TRUE
 ETEX_SYNCTEX_FALSE
 ETEX_SYNCTEX_TRUE
 ETEX_FALSE
@@ -1034,8 +1042,12 @@ enable_tex
 enable_tex_synctex
 enable_etex
 enable_etex_synctex
+enable_ptex
+enable_ptex_synctex
 enable_eptex
 enable_eptex_synctex
+enable_uptex
+enable_uptex_synctex
 enable_euptex
 enable_euptex_synctex
 enable_aleph
@@ -1773,8 +1785,12 @@ Optional Features:
   --enable-tex-synctex      build TeX with SyncTeX support
   --enable-etex           compile and install e-TeX
   --disable-etex-synctex    build e-TeX without SyncTeX support
+  --enable-ptex           compile and install pTeX
+  --disable-ptex-synctex    build pTeX without SyncTeX support
   --disable-eptex         do not compile and install e-pTeX
   --disable-eptex-synctex   build e-pTeX without SyncTeX support
+  --enable-uptex          compile and install upTeX
+  --disable-uptex-synctex   build upTeX without SyncTeX support
   --disable-euptex        do not compile and install e-upTeX
   --disable-euptex-synctex  build e-upTeX without SyncTeX support
   --disable-aleph         do not compile and install Aleph
@@ -19712,6 +19728,28 @@ fi
 test "x$enable_web2c:$enable_etex" = xyes:yes && {
   need_zlib=yes
 }
+# Check whether --enable-ptex was given.
+if test ${enable_ptex+y}
+then :
+  enableval=$enable_ptex;
+fi
+case $enable_ptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_ptex=no ;;
+esac
+
+# Check whether --enable-ptex-synctex was given.
+if test ${enable_ptex_synctex+y}
+then :
+  enableval=$enable_ptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_ptex" = xyes:yes && {
+  need_ptexenc=yes
+  need_zlib=yes
+}
 # Check whether --enable-eptex was given.
 if test ${enable_eptex+y}
 then :
@@ -19731,6 +19769,28 @@ then :
 fi
 
 test "x$enable_web2c:$enable_eptex" = xyes:yes && {
+  need_ptexenc=yes
+  need_zlib=yes
+}
+# Check whether --enable-uptex was given.
+if test ${enable_uptex+y}
+then :
+  enableval=$enable_uptex;
+fi
+case $enable_uptex in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_uptex=no ;;
+esac
+
+# Check whether --enable-uptex-synctex was given.
+if test ${enable_uptex_synctex+y}
+then :
+  enableval=$enable_uptex_synctex;
+fi
+
+test "x$enable_web2c:$enable_uptex" = xyes:yes && {
   need_ptexenc=yes
   need_zlib=yes
 }
@@ -22376,6 +22436,35 @@ else
   ETEX_SYNCTEX_TRUE='#'
   ETEX_SYNCTEX_FALSE=
 fi
+ if test "x$enable_ptex" = xyes; then
+  PTEX_TRUE=
+  PTEX_FALSE='#'
+else
+  PTEX_TRUE='#'
+  PTEX_FALSE=
+fi
+
+case $enable_native_texlive_build:$enable_ptex_synctex in #(
+  yes:yes | no:yes | no:no) :
+     ;; #(
+  *) :
+    if test -z "$enable_ptex_synctex"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-ptex-synctex=yes'" >&5
+printf "%s\n" "$as_me: Assuming \`--enable-ptex-synctex=yes'" >&6;}
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&5
+printf "%s\n" "$as_me: WARNING: Enforcing \`--enable-ptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_ptex_synctex=yes ;;
+esac
+ if test "x$enable_ptex_synctex" = xyes; then
+  PTEX_SYNCTEX_TRUE=
+  PTEX_SYNCTEX_FALSE='#'
+else
+  PTEX_SYNCTEX_TRUE='#'
+  PTEX_SYNCTEX_FALSE=
+fi
  if test "x$enable_eptex" = xyes; then
   EPTEX_TRUE=
   EPTEX_FALSE='#'
@@ -22404,6 +22493,35 @@ esac
 else
   EPTEX_SYNCTEX_TRUE='#'
   EPTEX_SYNCTEX_FALSE=
+fi
+ if test "x$enable_uptex" = xyes; then
+  UPTEX_TRUE=
+  UPTEX_FALSE='#'
+else
+  UPTEX_TRUE='#'
+  UPTEX_FALSE=
+fi
+
+case $enable_native_texlive_build:$enable_uptex_synctex in #(
+  yes:yes | no:yes | no:no) :
+     ;; #(
+  *) :
+    if test -z "$enable_uptex_synctex"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-uptex-synctex=yes'" >&5
+printf "%s\n" "$as_me: Assuming \`--enable-uptex-synctex=yes'" >&6;}
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&5
+printf "%s\n" "$as_me: WARNING: Enforcing \`--enable-uptex-synctex=yes' (native TeX Live build)" >&2;}
+fi
+         enable_uptex_synctex=yes ;;
+esac
+ if test "x$enable_uptex_synctex" = xyes; then
+  UPTEX_SYNCTEX_TRUE=
+  UPTEX_SYNCTEX_FALSE='#'
+else
+  UPTEX_SYNCTEX_TRUE='#'
+  UPTEX_SYNCTEX_FALSE=
 fi
  if test "x$enable_euptex" = xyes; then
   EUPTEX_TRUE=
@@ -28300,12 +28418,28 @@ if test -z "${ETEX_SYNCTEX_TRUE}" && test -z "${ETEX_SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"ETEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
+if test -z "${PTEX_TRUE}" && test -z "${PTEX_FALSE}"; then
+  as_fn_error $? "conditional \"PTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${PTEX_SYNCTEX_TRUE}" && test -z "${PTEX_SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"PTEX_SYNCTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${EPTEX_TRUE}" && test -z "${EPTEX_FALSE}"; then
   as_fn_error $? "conditional \"EPTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${EPTEX_SYNCTEX_TRUE}" && test -z "${EPTEX_SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"EPTEX_SYNCTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${UPTEX_TRUE}" && test -z "${UPTEX_FALSE}"; then
+  as_fn_error $? "conditional \"UPTEX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${UPTEX_SYNCTEX_TRUE}" && test -z "${UPTEX_SYNCTEX_FALSE}"; then
+  as_fn_error $? "conditional \"UPTEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${EUPTEX_TRUE}" && test -z "${EUPTEX_FALSE}"; then
