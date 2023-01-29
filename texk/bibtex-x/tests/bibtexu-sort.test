@@ -1,18 +1,20 @@
 #! /bin/sh -vx
-#
-# Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# $Id$
+# Copyright 2022-2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+test -d tests || mkdir tests
+test -d tests || exit 1
 
-rc=0
-
-TEXMFCNF=$srcdir/../kpathsea
-BSTINPUTS=$srcdir/tests
-BIBINPUTS=$srcdir/tests
-export TEXMFCNF BSTINPUTS BIBINPUTS
+LC_ALL=C; export LC_ALL; LANGUAGE=C; export LANGUAGE
+#
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+BSTINPUTS=$srcdir/tests; export BSTINPUTS
+BIBINPUTS=$srcdir/tests; export BIBINPUTS
 
 rm -f tests/xsortu-*.bbl tests/xcaseu.bbl
+
+rc=0
 
 for loc in en az da fi tr; do
 
@@ -29,8 +31,4 @@ cp $srcdir/tests/caseu.aux tests/xcaseu.aux
 max_print_line=99 ./bibtexu tests/xcaseu || rc=3
 diff $srcdir/tests/caseu.bbl tests/xcaseu.bbl || rc=4
 
-
 exit $rc
-
-
-

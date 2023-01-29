@@ -1,3 +1,11 @@
+2023-01-29  Karl Berry  <karl@freefriends.org>
+
+	* tests/bibtexu-sort.test,
+	* tests/bibtexu-char.test: set LC_ALL and LANGUAGE to avoid
+	locale-dependent failure. Report from Johannes Hielscher,
+	tlbuild mail 29 Jan 2023 16:28:24.
+	(Also minor shell portability changes.)
+
 2022-09-12  Karl Berry  <karl@freefriends.org>
 
 	* README: new file to mention both programs.

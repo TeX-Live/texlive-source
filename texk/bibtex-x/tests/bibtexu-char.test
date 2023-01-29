@@ -1,17 +1,19 @@
 #! /bin/sh -vx
-#
-# Copyright 2022 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# $Id$
+# Copyright 2022-2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+test -d tests || mkdir tests
+test -d tests || exit 1
+
+LC_ALL=C; export LC_ALL; LANGUAGE=C; export LANGUAGE
+#
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+BSTINPUTS=$srcdir/tests; export BSTINPUTS
+BIBINPUTS=$srcdir/tests; export BIBINPUTS
+
 
 rc=0
-
-TEXMFCNF=$srcdir/../kpathsea
-BSTINPUTS=$srcdir/tests
-BIBINPUTS=$srcdir/tests
-export TEXMFCNF BSTINPUTS BIBINPUTS
-
 
 ## test for add.period$
 cp $srcdir/tests/periodu.aux tests/xperiodu.aux
@@ -49,6 +51,4 @@ cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
 ./bibtexu tests/xiscjku || rc=15
 diff $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
 
-
 exit $rc
-
