@@ -8,16 +8,16 @@
 #
 # See https://purl.org/nxg/dist/urlbst for documentation
 #
-# Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray <https://nxg.me.uk>
+# Copyright 2002–23, Norman Gray <https://nxg.me.uk>
 #
 # This program is distributed under the terms of the
 # GNU General Public Licence, v2.0.
-# The modifications to the input .bst files are asserted as Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray,
+# The modifications to the input .bst files are asserted as Copyright 2002–23, Norman Gray,
 # and distributed under the terms of the LaTeX Project Public Licence.
 # See the package README for further dicussion of licences.
 
-$version = '0.9';
-$releasedate = '2022 December 1';
+$version = '0.9.1';
+$releasedate = '2023 January 30';
 ($progname = $0) =~ s/.*\///;
 $mymarker = "% $progname";
 $mymarkerend = "% ...$progname to here";
@@ -253,7 +253,7 @@ open (OUT, ">$outfile") || die "Can't open $outfile to write";
 
 print OUT "%%% Modification of BibTeX style file ", ($infile eq '-' ? '<stdin>' : $infile), "\n";
 print OUT "%%% ... by $progname, version $version (marked with \"$mymarker\")\n%%% See <$homepageurl> and repository <$repourl>\n";
-print OUT "%%% Modifications Copyright 2002-03, 2005-12, 2014, 2019, 2022, Norman Gray,\n";
+print OUT "%%% Modifications Copyright 2002–23, Norman Gray,\n";
 print OUT "%%% and distributed under the terms of the LPPL; see README for discussion.\n";
 print OUT "%%%\n";
 print OUT "%%% Added webpage entry type, and url and lastchecked fields.\n";
@@ -501,6 +501,19 @@ sub print_output_functions {
     print OUT "$mymarker...\n";
 
     print OUT <<'EOD';
+% Minimal DOI parsing.
+% Given a DOI on the stack, check whether it starts with 'doiurl' or not.
+% In either case, leave on the stack first a DOI with, and then a DOI without, the URL prefix.
+FUNCTION {parse.doi}
+{
+  #1 doiurl text.length$ substring$
+  doiurl =
+    { doi
+      doi doiurl text.length$ #1 + #999 substring$ }
+    { doiurl doi *
+      doi }
+  if$
+}
 % The following three functions are for handling inlinelink.  They wrap
 % a block of text which is potentially output with write$ by multiple
 % other functions, so we don't know the content a priori.
@@ -527,7 +540,12 @@ FUNCTION {possibly.setup.inlinelink}
               if$ }
             { pubmedurl pubmed * }
           if$ }
-        { doiurl doi * }
+%        { doiurl doi * }
+        { doi empty$
+            { "XXX" }
+            { doi parse.doi pop$ }
+          if$
+        }
       if$
       % an appropriately-formatted URL is now on the stack
       hrefform #1 = % hypertex
@@ -683,9 +701,11 @@ EOD
 FUNCTION {format.doi}
 { doi empty$
     { "" }
-    { doiform #1 =
-        { "\doi{" doi * "}" * }
-        { doiprefix doi * doiurl doi * make.href }
+    { doi parse.doi % leaves "https://doi.org/DOI" DOI on the stack
+      's := 't :=
+      doiform #1 =
+        { "\doi{" s * "}" * }
+        { doiprefix s * t make.href }
       if$
     }
   if$
@@ -731,10 +751,11 @@ FUNCTION {output.web.refs}
   inlinelinks
     'skip$ % links were inline -- don't repeat them
     { % If the generated DOI will be the same as the URL,
-      % then don't print the URL (thanks to Joseph Wright for this code,
+      % then don't print the URL (thanks to Joseph Wright
+      % for (the original version of) this code,
       % at http://tex.stackexchange.com/questions/5660)
       adddoi
-          doiurl doi empty$ { "X" } { doi } if$ * % DOI URL to be generated
+          doi empty$ { "X" } { doi parse.doi pop$ } if$ % DOI URL to be generated
           url empty$ { "Y" } { url } if$          % the URL, or "Y" if empty
           =                                       % are the strings equal?
           and
