@@ -270,7 +270,7 @@ static struct ublock ublock_data[] = {
   {0x11600, 0x1165F, ENTRY_NO  , 0}, /* Modi */
   {0x11660, 0x1167F, ENTRY_NO  , 0}, /* Mongolian Supplement */
   {0x11680, 0x116CF, ENTRY_NO  , 0}, /* Takri */
-  {0x11700, 0x1173F, ENTRY_NO  , 0}, /* Ahom */
+  {0x11700, 0x1174F, ENTRY_NO  , 0}, /* Ahom */
   {0x11800, 0x1184F, ENTRY_NO  , 0}, /* Dogra */
   {0x118A0, 0x118FF, ENTRY_NO  , 0}, /* Warang Citi */
   {0x11900, 0x1195F, ENTRY_NO  , 0}, /* Dives Akuru */
@@ -306,7 +306,7 @@ static struct ublock ublock_data[] = {
   {0x17000, 0x187FF, ENTRY_NO  , 0}, /* Tangut */
   {0x18800, 0x18AFF, ENTRY_NO  , 0}, /* Tangut Components */
   {0x18B00, 0x18CFF, ENTRY_NO  , 0}, /* Khitan Small Script */
-  {0x18D00, 0x18D8F, ENTRY_NO  , 0}, /* Tangut Supplement */
+  {0x18D00, 0x18D7F, ENTRY_NO  , 0}, /* Tangut Supplement */
   {0x1AFF0, 0x1AFFF, ENTRY_NO  , 0}, /* Kana Extended-B */
   {0x1B000, 0x1B0FF, ENTRY_NO  , 0}, /* Kana Supplement */
   {0x1B100, 0x1B12F, ENTRY_NO  , 0}, /* Kana Extended-A */
