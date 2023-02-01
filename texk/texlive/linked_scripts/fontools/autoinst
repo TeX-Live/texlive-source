@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2022 Marc Penninga.
+    Copyright (C) 2005-2023 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20220124';
+my $VERSION = '20230201';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -129,15 +129,17 @@ sub main {
             LaTeX::create_support_files(\@workitems, $family, $to_nfss);
             Otftotfm::run_commands(\@commands, $family, $log);
 
-            if ($ARGV{t1suffix}) {
-                Work::modify_fontnames($family, $fontlist);
-            }
+            if (!$ARGV{manual}) {
+                if ($ARGV{t1suffix}) {
+                    Work::modify_fontnames($family, $fontlist);
+                }
 
-            print <<"END_MESSAGE_UPDMAP";
+                print <<"END_MESSAGE_UPDMAP";
 [INFO]      Done generating fonts!
             Please update TeX's databases (by calling 'texhash' and 'updmap'
             or their equivalents on your system) before using these fonts.
 END_MESSAGE_UPDMAP
+            }
         }
 
         $log->close();
@@ -587,6 +589,7 @@ sub parse {
     my $metadata = _get_metadata($filename);
 
     $self->_parse_metadata($metadata)
+         ->_parse_cffdata()
          ->_parse_os2data()
          ->_parse_featuredata()
          ->_parse_sizedata()
@@ -631,6 +634,15 @@ sub _parse_metadata {
         $data->{$key} =~ s/\s+//xmsg;
     }
 
+    for my $item (qw(family subfamily fullname)) {
+        if (!$data->{$item}) {
+            die <<"END_ERR_METADATA_MISSING"
+[ERROR]     Parsing font metadata failed for $self->{filename}:
+            could not find '$item' metadata item
+END_ERR_METADATA_MISSING
+        }
+    }
+
     $data->{family}    =  $data->{preferredfamily} || $data->{family};
     $data->{subfamily} =  $data->{preferredsubfamily} || $data->{subfamily};
     $data->{fullname}  =~ s/\A$data->{family}//xms;
@@ -638,7 +650,7 @@ sub _parse_metadata {
 
     # clean up family name (it's used in LaTeX command names)
     my @DIGITS = qw(Zero One Two Three Four Five Six Seven Eight Nine);
-    $data->{family}    =~ s/(?: LT | MT)(?: Std | Pro )\z//xms;
+    $data->{family}    =~ s/(?: LT | MT)(?: Std | Pro )//xms;
     $data->{family}    =~ s/(\d)/$DIGITS[$1]/xmsge;
     $data->{family}    =~ s/[^A-Za-z]+//xmsg;
 
@@ -785,6 +797,47 @@ sub _parse_metadata {
         : ($self->{weight} eq 'regular') ? $self->{width}
         :                                  $self->{weight} . $self->{width}
         ;
+
+    return $self;
+}
+
+
+# --------------------------------------------------------------------------
+#   Reads the 'Name INDEX' entry from the CFF table, if that exists.
+#
+#   We need this entry only because cfftot1 uses it instead of
+# --------------------------------------------------------------------------
+sub _parse_cffdata {
+    my $self = shift;
+
+    my $tables;
+    eval {
+        my $cmd = qq(otfinfo --tables "$self->{filename}");
+        open my $otfinfo, '-|:raw', $cmd
+            or die "could not fork(): $!";
+        $tables = do { local $/; <$otfinfo> };
+        close $otfinfo
+            or die "'$cmd' failed";
+    } or warn "[WARNING]   $@";
+
+    if (index($tables, 'CFF') == -1) {
+        $self->{cff_name} = $self->{name};
+        return $self;
+    }
+
+    my $cff_table;
+    eval {
+        my $cmd = qq(otfinfo --dump-table "CFF" "$self->{filename}");
+        open my $otfinfo, '-|:raw', $cmd
+            or die "could not fork(): $!";
+        $cff_table = do { local $/; <$otfinfo> };
+        close $otfinfo
+            or die "'$cmd' failed";
+    } or warn "[WARNING]   $@";
+
+    my ($name_index) = unpack '@8C/Z', $cff_table;
+
+    $self->{cff_name} = $name_index;
 
     return $self;
 }
@@ -1098,36 +1151,36 @@ END_STY_HEADER
 
 END_STY_XKEYVAL
 
+    my ($figurestyle_default, $figurealign_default);
     if ($seen{LF} or $seen{TLF}) {
         print {$STY}
             "\\DeclareOptionX{lining}{\\edef\\$fam\@figurestyle{LF}}\n";
+        $figurestyle_default = 'LF';
     }
     if ($seen{OsF} or $seen{TOsF}) {
         print {$STY}
             "\\DeclareOptionX{oldstyle}{\\edef\\$fam\@figurestyle{OsF}}\n";
+        $figurestyle_default = 'OsF';
     }
     if ($seen{TLF} or $seen{TOsF}) {
         print {$STY}
             "\\DeclareOptionX{tabular}{\\edef\\$fam\@figurealign{T}}\n";
+        $figurealign_default = 'T';
     }
     if ($seen{LF} or $seen{OsF}) {
         print {$STY}
             "\\DeclareOptionX{proportional}{\\edef\\$fam\@figurealign{}}\n";
+        $figurealign_default = '';
     }
 
     print {$STY} <<"END_STY_MAINFONT";
+\\edef\\$fam\@figurestyle{$figurestyle_default}
+\\edef\\$fam\@figurealign{$figurealign_default}
+
 \\DeclareOptionX{mainfont}{
     \\renewcommand{\\familydefault}{\\$ARGV{nfss}default}
 }
 END_STY_MAINFONT
-
-    my $defaults
-        = $seen{OsF}  ? 'oldstyle,proportional'
-        : $seen{TOsF} ? 'oldstyle,tabular'
-        : $seen{LF}   ? 'lining,proportional'
-        : $seen{TLF}  ? 'lining,tabular'
-        :               die "[ERROR]     Internal bug, please report!"
-        ;
 
     for my $series (qw(heavy black extrabold demibold semibold bold)) {
         if ( $seen{$series} ) {
@@ -1144,6 +1197,7 @@ END_STY_MAINFONT
                 "{$series}}\n";
         }
     }
+    print {$STY} "\n";
 
     if ($ARGV{math}) {
         print {$STY} <<"END_STY_MATHOPTION";
@@ -1160,24 +1214,32 @@ END_STY_MAINFONT
 
 END_STY_MATHOPTION
 
-        if ($seen{LF} or $seen{TLF}) {
-            print {$STY} "\\newcommand*{\\$fam\@mathfigurestyle}{LF}\n";
-        }
-        elsif ($seen{OsF} or $seen{TOsF}) {
-            print {$STY} "\\newcommand*{\\$fam\@mathfigurestyle}{OsF}\n";
-        }
-
+        my ($mathfigurestyle_default, $mathfigurealign_default);
         if ($seen{OsF} or $seen{TOsF}) {
             print {$STY}
-                "\\DeclareOptionX{matholdstyle}\n",
-                "    {\\renewcommand*{\\$fam\@mathfigurestyle}{OsF}}\n";
+                "\\DeclareOptionX{matholdstyle}{\\edef\\$fam\@mathfigurestyle{OsF}}\n";
+            $mathfigurestyle_default = 'OsF';
         }
         if ($seen{LF} or $seen{TLF}) {
             print {$STY}
-                "\\DeclareOptionX{mathlining}\n",
-                "    {\\renewcommand{\\$fam\@mathfigurestyle}{LF}}\n";
+                "\\DeclareOptionX{mathlining}{\\edef\\$fam\@mathfigurestyle{LF}}\n";
+            $mathfigurestyle_default = 'LF';
         }
-        print {$STY} "\n";
+        if ($seen{LF} or $seen{OsF}) {
+            print {$STY}
+                "\\DeclareOptionX{mathproportional}{\\edef\\$fam\@mathfigurealign{}}\n";
+            $mathfigurealign_default = '';
+        }
+        if ($seen{TLF} or $seen{TOsF}) {
+            print {$STY}
+                "\\DeclareOptionX{mathtabular}{\\edef\\$fam\@mathfigurealign{T}}\n";
+            $mathfigurealign_default = 'T';
+        }
+        print {$STY} <<"END_STY_MATHDEFAULTS";
+\\edef\\$fam\@mathfigurestyle{$mathfigurestyle_default}
+\\edef\\$fam\@mathfigurealign{$mathfigurealign_default}
+
+END_STY_MATHDEFAULTS
 
         if ($seen{sw}) {
             print {$STY} <<"END_STY_MATHCALOPTION";
@@ -1189,17 +1251,15 @@ END_STY_MATHCALOPTION
     }
 
     print {$STY} <<"END_STY_PROCESSOPTIONS";
-\\ExecuteOptionsX{$defaults}
 \\ProcessOptionsX\\relax
 
 END_STY_PROCESSOPTIONS
 
-    print {$STY} <<"END_STY_PACKAGES";
-\\RequirePackage{@{[ $seen{TS1} ? "fontenc,textcomp" : "fontenc" ]}}
-\\RequirePackage{ifthen}
-\\RequirePackage{mweights}
-
-END_STY_PACKAGES
+    print {$STY} "\\RequirePackage[@{[ join ',', grep { $_ ne 'OT1' } @{$ARGV{encoding}} ]}]{fontenc}\n";
+    print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
+    print {$STY} "\\RequirePackage{ifthen}\n";
+    print {$STY} "\\RequirePackage{mweights}\n";
+    print {$STY} "\n";
 
     print {$STY} <<'END_STY_FONTAXES_START';
 \IfFileExists{fontaxes.sty}{
@@ -1226,6 +1286,13 @@ END_STY_FONTAXES_SW
     \DeclareTextFontCommand{\textsup}{\supfigures}
     \let\textsu\textsup
     \let\textsuperior\textsup
+    \let\@oldtextsuperscript\textsuperscript
+    \def\textsuperscript{\@ifstar\@oldtextsuperscript\textsup}
+    \def\@makefnmark{%
+        \mbox{\footnotemarkfont\textsuperscript{\@thefnmark}}}
+    \@ifundefined{ftntm@font}%
+        {\let\footnotemarkfont\normalfont}%
+        {\let\footnotemarkfont\ftntm@font}
 
 END_STY_FONTAXES_SUP
     }
@@ -1240,6 +1307,8 @@ END_STY_FONTAXES_SUP
     \DeclareTextFontCommand{\textinf}{\inffigures}
     \let\textin\textinf
     \let\textinferior\textinf
+    \let\@oldtextsubscript\textsubscript
+    \def\textsubscript{\@ifstar\@oldtextsubscript\textinf}
 
 END_STY_FONTAXES_INF
     }
@@ -1340,27 +1409,44 @@ END_STYLE_REST
 
     if ($ARGV{math}) {
         print {$STY} <<"END_STY_MATH";
+% Logically these definitions belong inside the \\if$fam\@math,
+% but somehow Latex doesn't like that.
 \\newif\\if$fam\@mathLATINup\\$fam\@mathLATINupfalse
 \\newif\\if$fam\@mathlatinup\\$fam\@mathlatinupfalse
 \\newif\\if$fam\@mathGREEKup\\$fam\@mathGREEKupfalse
 \\newif\\if$fam\@mathgreekup\\$fam\@mathgreekupfalse
 
 \\if$fam\@math
-    \\DeclareSymbolFont{newoperators}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
-    \\SetSymbolFont{newoperators}{bold}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{TeX}}
+        {\\$fam\@mathGREEKuptrue}
+        {}
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{french}}
+        {\\$fam\@mathLATINuptrue
+         \\$fam\@mathGREEKuptrue
+         \\$fam\@mathgreekuptrue}
+        {}
+    \\ifthenelse{\\equal{\\$fam\@mathstyle}{upright}}
+        {\\$fam\@mathLATINuptrue
+         \\$fam\@mathlatinuptrue
+         \\$fam\@mathGREEKuptrue
+         \\$fam\@mathgreekuptrue}
+        {}
 
-    \\DeclareSymbolFont{newletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
-    \\SetSymbolFont{newletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
+    \\DeclareSymbolFont{newoperators}  {OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+    \\SetSymbolFont{newoperators}{bold}{OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+
+    \\DeclareSymbolFont{newletters}  {OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
+    \\SetSymbolFont{newletters}{bold}{OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
 
     \\DeclareSymbolFontAlphabet{\\mathrm}{newoperators}
     \\DeclareSymbolFontAlphabet{\\mathnormal}{newletters}
 
     \\def\\operator\@font{\\mathgroup\\symnewoperators}
-    \\SetMathAlphabet{\\mathit}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
-    \\SetMathAlphabet{\\mathit}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
+    \\SetMathAlphabet{\\mathit}{normal}{OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{it}
+    \\SetMathAlphabet{\\mathit}{bold}  {OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{it}
 
-    \\SetMathAlphabet{\\mathbf}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
-    \\SetMathAlphabet{\\mathbf}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+    \\SetMathAlphabet{\\mathbf}{normal}{OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+    \\SetMathAlphabet{\\mathbf}{bold}  {OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
 
     \\def\\re\@DeclareMathSymbol#1#2#3#4{%
         \\if\\relax\\noexpand#1\\let#1=\\undefined\\fi
@@ -1439,8 +1525,10 @@ END_STYLE_REST
     \\re\@DeclareMathSymbol{Y}{\\mathalpha}{newletters}{`Y}
     \\re\@DeclareMathSymbol{Z}{\\mathalpha}{newletters}{`Z}
 
-    \\re\@DeclareMathSymbol{\\imath}{\\mathord}{newletters}{"7B}
-    \\re\@DeclareMathSymbol{\\jmath}{\\mathord}{newletters}{"7C}
+    \\re\@DeclareMathSymbol{\\partial}{\\mathord}{newletters}{"40}
+    \\re\@DeclareMathSymbol{\\ell}    {\\mathord}{newletters}{"60}
+    \\re\@DeclareMathSymbol{\\imath}  {\\mathord}{newletters}{"7B}
+    \\re\@DeclareMathSymbol{\\jmath}  {\\mathord}{newletters}{"7C}
 
     %
     %   A number of math symbol declarations have been commented out,
@@ -1528,21 +1616,6 @@ END_STYLE_REST
         \\re\@DeclareMathSymbol{\\varphi}    {\\mathord}{newletters}{"27}
     \\fi
 
-    \\ifthenelse{\\equal{\\$fam\@mathstyle}{TeX}}
-        {\\$fam\@mathGREEKuptrue}
-        {}
-    \\ifthenelse{\\equal{\\$fam\@mathstyle}{french}}
-        {\\$fam\@mathLATINuptrue
-         \\$fam\@mathGREEKuptrue
-         \\$fam\@mathgreekuptrue}
-        {}
-    \\ifthenelse{\\equal{\\$fam\@mathstyle}{upright}}
-        {\\$fam\@mathLATINuptrue
-         \\$fam\@mathlatinuptrue
-         \\$fam\@mathGREEKuptrue
-         \\$fam\@mathgreekuptrue}
-        {}
-
     \\if$fam\@mathLATINup
         \\re\@DeclareMathSymbol{A}{\\mathalpha}{newoperators}{`A}
         \\re\@DeclareMathSymbol{B}{\\mathalpha}{newoperators}{`B}
@@ -1573,8 +1646,8 @@ END_STYLE_REST
     \\fi
 
     \\if$fam\@mathlatinup
-        \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
-        \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+        \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+        \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
 
         \\re\@DeclareMathSymbol{a}{\\mathord}{upletters}{`a}
         \\re\@DeclareMathSymbol{b}{\\mathord}{upletters}{`b}
@@ -1624,8 +1697,8 @@ END_STYLE_REST
         \\fi
 
         \\if$fam\@mathgreekup
-            \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
-            \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
+            \\DeclareSymbolFont{upletters}  {OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
+            \\SetSymbolFont{upletters}{bold}{OML}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
 
             \\re\@DeclareMathSymbol{\\alpha}     {\\mathord}{upletters}{"0B}
             \\re\@DeclareMathSymbol{\\beta}      {\\mathord}{upletters}{"0C}
@@ -1665,8 +1738,8 @@ END_STY_MATH
         if ($seen{sw}) {
             print {$STY} <<"END_STY_MATHCAL";
 \\if$fam\@mathcal
-    \\SetMathAlphabet{\\mathcal}{normal}{OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{sw}
-    \\SetMathAlphabet{\\mathcal}{bold}  {OT1}{$fam-\\$fam\@figurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{sw}
+    \\SetMathAlphabet{\\mathcal}{normal}{OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{sw}
+    \\SetMathAlphabet{\\mathcal}{bold}  {OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{sw}
 \\fi
 
 END_STY_MATHCAL
@@ -1907,6 +1980,7 @@ I'm using the following options:
     math:               @{[ $ARGV{math} ? 'yes' : 'no' ]}
     mathspacing:        $ARGV{mathspacing}
 
+    auto/manual:        @{[ $ARGV{manual} ? 'manual' : 'auto' ]}
     fontname suffix:    @{[ $ARGV{t1suffix} || '(none)' ]}
 
 END_ARGUMENTS
@@ -2097,6 +2171,7 @@ Possible options:
     -math                   Generate basic math fonts
     -mathspacing=AMOUNT     Letterspace the math fonts by AMOUNT/1000 em
 
+    -manual                 Manual mode (see documentation)
     -t1suffix=SUFFIX        Add SUFFIX to name of generated pfb fonts
 
     font[s]                 The fonts (.otf or .ttf format) to install.
@@ -2127,6 +2202,7 @@ END_USAGE
     target          => '',
     vendor          => 'lcdftools',
     typeface        => '',
+    manual          => '0',     # 0 = no, 1 = yes
     dryrun          => '0',     # 0 = no, 1 = yes
     logfile         => '',
     figurekern      => '1',     # 0 = no, 1 = yes
@@ -2175,6 +2251,7 @@ sub parse_options {
         'target=s'            => \$ARGV{target},
         'vendor=s'            => \$ARGV{vendor},
         'typeface=s'          => \$ARGV{typeface},
+        'manual'              => \$ARGV{manual},
         'dryrun'              => \$ARGV{dryrun},
         'figurekern!'         => \$ARGV{figurekern},
         'logfile=s'           => \$ARGV{logfile},
@@ -2287,7 +2364,7 @@ sub create_command {
             || Util::any( map { $_ eq 'liga' } @{$workitem->{features}} );
 
     return join q( ), 'otftotfm',
-                      '--automatic',
+                      ($ARGV{manual} ? '--pl' : '--automatic'),
                       "--encoding=$workitem->{enc_file}",
                       $targetdirs,
                       '--no-updmap',
@@ -2313,44 +2390,52 @@ sub create_command {
 
 
 # --------------------------------------------------------------------------
-#   Executes all commands.
+#   Executes (or saves to file, when $ARGV{manual} is true) all commands.
 # --------------------------------------------------------------------------
 sub run_commands {
     my ($commandlist, $family, $log) = @_;
 
-    my $n_cmds = scalar @{$commandlist};
-    my ($log_ncmds, $ceil) = (1, 10);
-    while ($n_cmds >= $ceil) {
-        $log_ncmds++;
-        $ceil *= 10;
+    if ($ARGV{manual}) {
+        open my $BAT, '>', 'autoinst.bat'
+            or die "[ERROR]     Can't create 'autoinst.bat': $!";
+        print {$BAT} "$_\n" for @{$commandlist};
+        close $BAT;
     }
-    my $template = sprintf "%%%dd of %%%dd", $log_ncmds, $log_ncmds;
-    my $l_template = 4 + 2 * $log_ncmds;
-    $| = 1; # autoflush
-    print "[INFO]      Generating fonts for $family: ", " " x $l_template;
+    else {
+        my $n_cmds = scalar @{$commandlist};
+        my ($log_ncmds, $ceil) = (1, 10);
+        while ($n_cmds >= $ceil) {
+            $log_ncmds++;
+            $ceil *= 10;
+        }
+        my $template = sprintf "%%%dd of %%%dd", $log_ncmds, $log_ncmds;
+        my $l_template = 4 + 2 * $log_ncmds;
+        $| = 1; # autoflush
+        print "[INFO]      Generating fonts for $family: ", " " x $l_template;
 
-    my $i_cmd  = 1;
-    my $oops = 0;
-    for my $command (@{$commandlist}) {
-        print "\b" x $l_template;
-        printf $template, $i_cmd++, $n_cmds;
-        open my $otftotfm, '-|', "$command 2>&1"
-            or die "could not fork(): $!";
-        my $msgs = do { local $/; <$otftotfm> };
-        close $otftotfm
-            or do {
-            warn "\n$command\n\n$msgs\n";
-            $log->log("\n$command\n\n$msgs\n");
-            $oops = 1;
-        };
-    }
-    print "\n";
-    $| = 0;
-    if ($oops) {
-        warn <<"END_OTFTOTFM_WARNING";
+        my $i_cmd  = 1;
+        my $oops = 0;
+        for my $command (@{$commandlist}) {
+            print "\b" x $l_template;
+            printf $template, $i_cmd++, $n_cmds;
+            open my $otftotfm, '-|', "$command 2>&1"
+                or die "could not fork(): $!";
+            my $msgs = do { local $/; <$otftotfm> };
+            close $otftotfm
+                or do {
+                warn "\n$command\n\n$msgs\n";
+                $log->log("\n$command\n\n$msgs\n");
+                $oops = 1;
+            };
+        }
+        print "\n";
+        $| = 0;
+        if ($oops) {
+            warn <<"END_OTFTOTFM_WARNING";
 [ERROR]     One or more calls to 'otftotfm' returned a non-zero status code;
             please check the messages above and in the log file.
 END_OTFTOTFM_WARNING
+        }
     }
 
     return;
@@ -2705,7 +2790,7 @@ sub process_encoding_options {
     # or have an accompanying .enc file in the current directory.
     my @encodings = split /,/, $ARGV{encoding};
     for my $enc (@encodings) {
-        if ($enc !~ m/\A(OT1|T1|TS1|LY1|LGR|T2[ABC]|T3|TS3)\z/xmsi) {
+        if ($enc !~ m/\A(OT1|T[1345]|T2[ABC]|TS[13]|LY1|LGR|CS|L7X|QX)\z/xmsi) {
             my $try = $enc;
             $try .= '.enc' if $try !~ m/[.]enc\z/xmsi;
             if (!-e $try) {
@@ -2753,7 +2838,12 @@ sub process_encoding_options {
 sub process_target_options{
 
     my $localtarget = File::Spec->catdir( Cwd::getcwd(), 'autoinst_output' );
-    if (!$ARGV{target}) {
+    if ($ARGV{manual}) {
+        warn "[WARNING]   Option '-target' overridden by '-manual'!\n"
+            if $ARGV{target};
+        $ARGV{target} = $localtarget;
+    }
+    elsif (!$ARGV{target}) {
         my $is_windows_os = ( $^O =~ /^MSWin/i );
         my $kpsepath = $is_windows_os
             ? eval { qx( kpsewhich -expand-var=\$TEXMFLOCAL;\$TEXMFHOME ) }
@@ -3086,7 +3176,7 @@ sub cleanup {
     }
     else {
         ($workitem->{enc_file} = $workitem->{encoding})
-            =~ s{ \A (OT1|OML|T1|TS1|LY1|LGR|T2[ABC]|T3|TS3) \z }
+            =~ s{ \A (OT1|OML|T[1345]|T2[ABC]|TS[13]|LY1|LGR|CS|L7X|QX) \z }
                 {fontools_\L$1\E}xmsi;
     }
 
@@ -3144,6 +3234,9 @@ sub modify_fontnames {
 
     # The otftotfm-generated map file refers to the original otf files;
     # we need to change this to use our name-modified Type1 fonts instead.
+    # Note that cfftot1 uses the Name INDEX from the CFF table,
+    # not the PostScript name from the name table. These two names are
+    # usually equal,  but not necessarily (sec 5.4.2 in OpenType spec).
     my $mapfile = File::Spec->catfile(
         $ARGV{target},
         'fonts',
@@ -3178,17 +3271,23 @@ sub modify_fontnames {
         }
         my $newfullfam = $full_family . q( ) . $ARGV{t1suffix};
 
-        my $newname = $font->{name};
-        if ($newname =~ m/$family/xms) {
-            $newname =~ s/$family/$newfam/xms;
+        my $newname;
+        if ($font->{cff_name} =~ m/$family/xms) {
+            ($newname = $font->{cff_name}) =~ s/$family/$newfam/xms;
         }
         else {
-            $newname =~ s/(.+?)(-|\z)/$1$ARGV{t1suffix$2}/xms;
+            (my $dashfam = $font->{originalfamily}) =~ s/[ ]/-/xmsg;
+            if ($font->{cff_name} =~ m/$dashfam(.+)/xms) {
+                $newname = $dashfam . '-' . $ARGV{t1suffix} . $1;
+            }
+            else {
+                $newname = $font->{cff_name} . $ARGV{t1suffix};
+            }
         }
 
         for my $suffix (q(), q(LCDFJ)) {
             my $oldfn = File::Spec->catfile(
-                $pfb_dir, $font->{name} . $suffix . '.pfb');
+                $pfb_dir, $font->{cff_name} . $suffix . '.pfb');
             my $newfn = File::Spec->catfile(
                 $pfb_dir, $newname . $suffix . '.pfb');
 
@@ -3207,7 +3306,7 @@ sub modify_fontnames {
 
             for (@pfbdata) {
                 if (m/%!PS-AdobeFont-1.0:[ ] | \/FontName[ ]/xms) {
-                    s/$font->{name}/$newname/;
+                    s/$font->{cff_name}/$newname/;
                 }
                 if (m/\/Notice[ ]/xms) {
                     s/[(]/($NOTICE/xms;
@@ -3227,7 +3326,7 @@ sub modify_fontnames {
 
             unlink $oldfn unless $oldfn eq $newfn;
 
-            $mapdata =~ s/$font->{name}$suffix.pfb/$newname$suffix.pfb/g;
+            $mapdata =~ s/$font->{cff_name}$suffix(?!-)/$newname$suffix/g;
         }
     }
 
@@ -3345,10 +3444,10 @@ in roman, italic and slanted shapes.
 =item -
 
 Families with "Titling" characters;
-these "... replace the default glyphs
+these I<"... replace the default glyphs
 with corresponding forms designed specifically for titling.
 These may be all-capital and/or larger on the body,
-and adjusted for viewing at larger sizes"
+and adjusted for viewing at larger sizes">
 (according to the OpenType Specification).
 
 =item -
@@ -3443,16 +3542,16 @@ yourself.
 Choose which figure style to use.
 The defaults are "oldstyle" and "proportional" (if available).
 
-=item C<<< scale=I<< <number> >> >>>, C<scale=MatchLowercase>
+=item C<<< scale=I<< <factor> >> >>>, C<scale=MatchLowercase>
 
-Scale the font by a factor of I<< <number> >>.
-E.g., to increase the size of the font by 5%, use
-C<<< \usepackage[scale=1.05]{I<< <FontFamily> >>} >>>.
+Scale the font by I<< <factor> >>;
+as an example, C<<< \usepackage[scale=1.05]{I<< <FontFamily> >>} >>>
+will increase the font's size by 5%.
 The special value C<MatchLowercase> may be used to scale the font
 so that its x-height matches that of the current main font
 (which is usually Computer Modern Roman, unless you have loaded
 another font package before this one).
-The name C<scaled> may be used as a synonym for C<scale>.
+The word "scale" may also be spelled as "scaled".
 
 =item C<medium>, C<book>, C<text>, C<normal>, C<regular>
 
@@ -3490,15 +3589,21 @@ to place swash on F<fontaxes>' secondary shape axis (F<fontaxes> places it
 on the primary shape axis) to make them behave properly when nested, so that
 C<\swshape\upshape> will give upright swash.
 
+Finally, the style file redefines Latex's C<\textsuperscript> and
+C<\textsubscript> commands to use the fonts' superior and inferior figures,
+and modifies Latex's footnote mechanism to use C<\textsuperscript>
+instead of reduced-size numerals from the regular text font.
+The old versions of these commands are still available as
+C<\textsuperscript*> and C<\textsubscript*>.
+
 There are no commands for accessing the numerator and denominator
 fonts; these can be selected using F<fontaxes>' standard commands,
 e.g., C<\fontfigurestyle{numerator}\selectfont>.
 
-These commands are only generated for existing shapes and number styles;
-no commands are generated for shapes and styles that are missing from
-your fonts.
-Also these commands are built on top of F<fontaxes>, so if that package
-cannot be found, you're limited to using the lower-level commands from
+Once again: all these commands are only generated for existing shapes and number styles;
+no commands are generated for shapes and styles that are missing from your fonts.
+Note that all these commands are built on top of F<fontaxes>; if that package
+cannot be found, you're limited to using lower-level commands from
 standard NFSS (C<\fontfamily>, C<\fontseries>, C<\fontshape> etc.).
 
 By default, B<autoinst> generates text fonts with OT1, LY1 and T1
@@ -3524,14 +3629,14 @@ to access these math fonts:
 
 Use these fonts for the maths in your document.
 
-=item C<mathlining>, C<matholdstyle>
+=item C<mathlining>, C<matholdstyle>, C<mathtabular>, C<mathproportional>
 
-Choose which figure style to use in maths.
-The default is "mathlining".
+Choose which figure style and alignment to use in maths.
+The defaults are "mathlining" and "mathtabular".
 
 =item C<mathcal>
 
-Use the swash characters from your fonts as the C<\mathcal> alphabet.
+Use the swash characters from these fonts as the C<\mathcal> alphabet.
 (This option will only exist if your fonts actually contain swash characters,
 plus a C<swsh> feature to access them).
 
@@ -3559,7 +3664,7 @@ before loading the B<autoinst>-generated style file.
 Finally, note that B<autoinst> doesn't check if your fonts actually contains
 all of the required characters;
 it just assumes that they do and sets up the style file accordingly.
-Even if your fonts contain greek, characters such as C<\varepsilon>
+Even if your fonts do contain greek, characters such as C<\varepsilon>
 may be missing.
 You may also find that some glyphs I<are> present in your fonts,
 but don't work well in equations or don't match with other symbols;
@@ -3658,13 +3763,16 @@ are not compatible with files generated by newer versions.
 Since F<pdfTeX> cannot subset otf-flavoured OpenType fonts,
 I<otftotfm> will convert such fonts to Type1 (pfb) format.
 However, many fonts (at least those licensed under the SIL Open Font License)
-do not allow distributing such converted versions under their original name.
+do not allow redistributing such converted versions under their original name.
 
-To meet these licensing requirements, B<autoinst> provides
-a I<-t1suffix> command-line option that appends
-a user-defined suffix to the names
+In order to try to meet such licensing requirements, B<autoinst> provides
+a I<-t1suffix> command-line option that appends a suffix to the names
 (both the filename and the internal font name)
 of all generated Type1 fonts; see L</COMMAND-LINE OPTIONS> below.
+
+Please note that I am not a lawyer and do not guarantee that
+this suffix is sufficient to meet the license's requirements.
+When in doubt, consult a real lawyer!
 
 
 =head2 Sorry, LIGTABLE too long for me to handle
@@ -3673,10 +3781,15 @@ The LIGTABLE in TeX's F<tfm> files, which contains a font's ligatures
 and kerning pairs, is limited to about 32,500 entries (2^15 - 256).
 If the number of ligatures plus kerns in a font is higher than that limit,
 I<pltotf> and I<vptovf> will complain loudly and ignore the excess entries.
-This happens at least with Adobe's Source Serif 4 and Minion 3.
+This happens at least with Adobe's Source Serif 4 and Minion 3 font families.
+Even when I<pltotf> and I<vptovf> don't warn about the LIGTABLE's size,
+you may still find that I<pdftex> crashes with a
+C<Bad metric (TFM) file> error.
 The best way to handle this situation is to use B<autoinst>'s C<-extra> option
 to raise F<otftotfm>'s value for the C<--min-kern> parameter, which causes it
-to ignore small kerning pairs: C<-extra='--min-kern=5.0'>.
+to ignore small kerning pairs: C<-extra='--min-kern=6.0'>.
+Finding the correct value for the C<--min-kern> parameter may require some
+trial and error.
 
 
 =head2 A note for MiKTeX users
@@ -3763,8 +3876,8 @@ For each encoding argument, B<autoinst> will first check if it is
 the filename of an encoding file, and if found it will use that;
 otherwise the argument is assumed to be the name of one of
 the built-in encodings.
-Currently B<autoinst> comes with built-in support for the OT1, T1/TS1, LY1, LGR,
-T2A/B/C and T3/TS3 encodings.
+Currently B<autoinst> comes with built-in support for the OT1, T1/TS1, LY1,
+T2A/B/C, T3/TS3, T4, T5, LGR, CS, L7X and QX encodings.
 (These files are called F<fontools_ot1.enc> etc. to avoid name clashes
 with other packages; the F<fontools_> prefix may be omitted.)
 
@@ -3970,6 +4083,38 @@ Pass I<extra options> to the commands for I<otftotfm>.
 To prevent I<extra options> from accidentily being interpreted as
 options to B<autoinst>, they should be properly quoted.
 
+=item B<-manual>
+
+Manual mode; for users who want to post-process the generated files
+and commands. By default, B<autoinst> immediately executes all
+F<otftotfm> commands it generates;
+in manual mode, these are instead written to a file F<autoinst.bat>.
+Furthermore it tells F<otftotfm> to generate human readable (and editable)
+F<pl/vpl> files instead of the default F<tfm/vf> ones,
+and to place all generated files in a subdirectory C<./autoinst_output/>
+of the current directory, rather than install them into your TeX installation.
+
+When using this option, you need to execute the following manual steps after
+B<autoinst> has finished:
+
+=over 2
+
+=item - run F<pltotf> and F<vptovf> on the generated F<pl> and F<vf> files,
+to convert them to F<tfm/vf> format;
+
+=item - move all generated files to a proper TEXMF tree,
+and, if necessary, update the filename database;
+
+=item - tell TeX about the new F<map> file
+(usually by running C<updmap> or similar).
+
+=back
+
+Note that some options (I<-target>, I<-vendor> and I<-typeface>)
+are meaningless, and hence ignored, in manual mode.
+
+Also note that font name modification doesn't happen in manual mode.
+
 =item B<-nofigurekern>
 
 Some fonts provide kerning pairs for tabular figures.
@@ -4016,7 +4161,7 @@ don't paraphase.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2022 Marc Penninga.
+Copyright (C) 2005-2023 Marc Penninga.
 
 
 =head1 LICENSE
@@ -4039,7 +4184,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20220124.
+This document describes B<autoinst> version 20230201.
 
 
 =head1 RECENT CHANGES
@@ -4047,6 +4192,21 @@ This document describes B<autoinst> version 20220124.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2023-02-01>
+
+Added support for the T4, T5, CS, L7X and QX encodings.
+
+=item I<2023-01-31>
+
+If the fonts contain superior and/or inferior figures,
+the generated style file now redefines the C<\textsuperscript>
+and C<\textsubscript> commands, and patches Latex's footnote
+mechanism to use these figures
+(inspired by the F<realscripts> package).
+Fixed a few bugs in metadata parsing, style file generation
+and the C<-t1suffix> option, so that the latter also works
+for dvips and dvipdfmx.
 
 =item I<2021-11-15>
 
@@ -4077,6 +4237,13 @@ Font info parsing failed for Microsoft Sitka and LucasFonts Thesis.
 The I<-encoding> option now also accepts filenames of encoding files
 in directories other than the current directory.
 Directory names containing spaces do (or at least should) also work.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2020-12-18>
 
@@ -4128,13 +4295,6 @@ an argument to I<-inferiors>.
 =item I<2020-01-29>
 
 Don't create empty subdirectories in the target TEXMF tree.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2019-11-18>
 
@@ -4258,7 +4418,7 @@ Fine-tuned the decision where to put generated files;
 in particular, create $TEXMFHOME if it doesn't already exist
 and $TEXMFLOCAL isn't user-writable.
 
-When we can't find a user-writable TEXMF tree,
+In manual mode, or when we can't find a user-writable TEXMF tree,
 put all generated files into a subdirectory C<./autoinst_output/>
 instead of all over the current working directory.
 
