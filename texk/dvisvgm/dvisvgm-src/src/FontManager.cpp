@@ -325,18 +325,18 @@ int FontManager::registerFont (uint32_t fontnum, const string &filename, int fon
 
 /** Registers a native font that is referenced by its name instead of a DVI font number.
  *  @param[in] fname filename/path of the font file
+ *  @param[in] fontname font name used if the font file doesn't provide one
  *  @param[in] ptsize font size in PS points
  *  return global ID assigned to the font */
-int FontManager::registerFont (const std::string &fname, double ptsize) {
+int FontManager::registerFont (const string &fname, string fontname, double ptsize) {
 	if (fname.empty())
 		return -1;
-	string fontname;
 	if (fname.size() > 6 && fname.substr(0,6) == "sys://") {
 		fontname = fname.substr(6);
 		if (!find_base14_font(fontname))
 			return -1;
 	}
-	else if (!FileSystem::exists(fname) || (fontname = FontEngine::instance().getPSName(fname)).empty())
+	else if (!FileSystem::exists(fname) || (fontname.empty() && (fontname = FontEngine::instance().getPSName(fname)).empty()))
 		return -1;
 	int id = fontID(fontname, ptsize);
 	if (id >= 0)
@@ -345,7 +345,7 @@ int FontManager::registerFont (const std::string &fname, double ptsize) {
 	id = fontID(fontname);
 	if (id < 0) {
 		nativeFont = util::make_unique<NativeFontImpl>(fname, fontname, ptsize);
-		_name2id.emplace(std::move(fontname), _fonts.size());
+		_name2id.emplace(std::move(fontname), int(_fonts.size()));
 	}
 	else {
 		auto *nf = font_cast<NativeFont*>(getFontById(id));

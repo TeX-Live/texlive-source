@@ -139,19 +139,6 @@ string PDFHandler::mutoolVersion () {
 }
 
 
-/** Returns the bounding box of a selected PDF page. */
-BoundingBox PDFHandler::bbox (string &fname, int pageno) {
-	BoundingBox bbox;
-	string arraystr = mtShow(fname, "pages/" + to_string(pageno) + "/MediaBox");
-	if (arraystr.substr(0, 4) == "null")
-		arraystr = mtShow(fname, "pages/" + to_string(pageno) + "/Parent/MediaBox");
-	auto vec = parse_pdf_array<double>(arraystr);
-	if (vec.size() == 4)
-		bbox = BoundingBox(vec[0], vec[1], vec[2], vec[3]);
-	return bbox;
-}
-
-
 /** Converts a single page of a PDF file to SVG. If no context element is given,
  *  the SVG page contents are added to a page group element of the SVG tree.
  *  Otherwise, they are added to the context element which is not inserted into
@@ -220,14 +207,11 @@ void PDFHandler::finishFile () {
 
 void PDFHandler::initPage (int pageno, unique_ptr<SVGElement> context) {
 	_pageno = pageno;
-	_bbox = bbox(_fname, pageno);
-	if (context) {
+	if (!context)
+		_svg->newPage(_pageno);
+	else {
 		_context = context.get();
 		_svg->pushPageContext(std::move(context));
-	}
-	else {
-		_svg->newPage(_pageno);
-		_svg->setBBox(_bbox);
 	}
 	// collect sequence of images referenced on current page
 	collectObjects();
@@ -287,7 +271,8 @@ void PDFHandler::elementClosed (XMLElement *trcElement) {
 	struct Handler {
 		const char *name;
 		void (PDFHandler::*func)(XMLElement*);
-	} handlers[9] = {
+	} handlers[10] = {
+		{"page", &PDFHandler::doPage},
 		{"stroke_path", &PDFHandler::doStrokePath},
 		{"fill_path", &PDFHandler::doFillPath},
 		{"fill_image", &PDFHandler::doFillImage},
@@ -306,6 +291,13 @@ void PDFHandler::elementClosed (XMLElement *trcElement) {
 	else
 		return;
 	XMLElement::detach(trcElement);  // remove element from XML tree, it's no longer needed
+}
+
+
+void PDFHandler::doPage (XMLElement *trcPageElement) {
+	auto vec = parse_attr_value<vector<double>>(trcPageElement, "mediabox");
+	if (vec.size() == 4)
+		_bbox = BoundingBox(vec[0], vec[1], vec[2], vec[3]);
 }
 
 
@@ -645,8 +637,9 @@ void PDFHandler::doFillText (XMLElement *trcFillTextElement) {
 				filename = it->second.fname;
 			if (filename.empty())
 				filename = "sys://"+fontname;
-			double ptsize = abs(trm[0]);
-			int fontID = FontManager::instance().registerFont(filename, ptsize);
+			double ptsize = matrix_extent({trm[0], trm[1], 0, trm[2], trm[3]});
+			ptsize = round(10*ptsize)/10;
+			int fontID = FontManager::instance().registerFont(filename, fontname, ptsize);
 			if (fontID >= 0) {
 				auto font = font_cast<NativeFont*>(FontManager::instance().getFontById(fontID));
 				if (font != _currentFont) {
@@ -789,7 +782,6 @@ void PDFHandler::collectObjects () {
 	_objDict = parse_pdf_dict<ObjID>(mtShow("pages/" + to_string(_pageno) + "/Resources/XObject"));
 	// replace referenced font IDs by actual IDs used for extracted fonts
 	for (auto &entry : _objDict) {
-		string objtype = mtShow(to_string(entry.second.num)+"/Type", SearchPattern(R"(/(\w+))", "$1"));
 		// store filenames of non-font object in object map
 		auto fnameIt = _extractedFiles.find(entry.second.num);
 		entry.second.fname = fnameIt != _extractedFiles.end() ? tmpdir+fnameIt->second : "";
@@ -798,6 +790,10 @@ void PDFHandler::collectObjects () {
 		if (entry.second.substr(0, 5) == "font-") {
 			string filepath = tmpdir+entry.second;  // path to font file
 			string fontname = strip_subset_prefix(FontEngine::instance().getPSName(filepath));
+			// If the extracted font file doesn't contain a font name,
+			// try to get it from the corresponding PDF object.
+			if (fontname.empty())
+				fontname = mtShow(to_string(entry.first)+"/FontName", SearchPattern(R"(/(\w+))", "$1"));
 			_objDict.emplace(fontname, ObjID(entry.first, 0, filepath));
 		}
 	}

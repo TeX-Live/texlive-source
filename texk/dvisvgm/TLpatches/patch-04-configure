@@ -1,5 +1,5 @@
---- dvisvgm-3.0.1/configure.ac	2023-01-10 05:23:42.000000000 -0800
-+++ ./configure.ac	2023-01-19 15:35:24.739713575 -0800
+--- dvisvgm-3.0.2/configure.ac	2023-01-29 23:25:49.000000000 -0800
++++ ./configure.ac	2023-01-19 17:55:07.781367630 -0800
 @@ -1,15 +1,32 @@
 -# This file is part of dvisvgm
 -# Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
@@ -7,8 +7,8 @@
 -# Process this file with autoconf to produce a configure script.
 -
 -AC_PREREQ([2.69])
--AC_INIT([dvisvgm],[3.0.1],[martin.gieseking@uos.de])
-+dnl $Id: configure.ac 64941 2022-11-05 15:43:53Z karl $
+-AC_INIT([dvisvgm],[3.0.2],[martin.gieseking@uos.de])
++dnl $Id: configure.ac 65593 2023-01-20 01:55:04Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl

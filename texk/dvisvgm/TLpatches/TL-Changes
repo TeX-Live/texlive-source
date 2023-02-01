@@ -7,10 +7,11 @@ Changes applied to the original dvisvgm source as obtained from:
 Update version in ./version.ac.
 Update DATE and copyrights in configure.ac.
 
+ver=3.NEW.VER
 mv dvisvgm-src dvisvgm-prev
-tar xf dvisvgm-VER.tar.gz
-mv dvisvgm-VER dvisvgm-src
-tar xf dvisvgm-VER.tar.gz # again, so we can compare orig release to ours
+tar xf dvisvgm-$ver.tar.gz
+mv dvisvgm-$ver dvisvgm-src
+tar xf dvisvgm-$ver.tar.gz # again, so we can compare orig release to ours
 
 # remove common and generated files:
 cd dvisvgm-src
@@ -43,6 +44,6 @@ patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles
 autoreconf
 
 # before committing, update patches:
-diff -u2 dvisvgm-3.0.1/configure.ac ./ >TLpatches/patch-04-configure
-for m in `(cd ./dvisvgm-src && find -name Makefile.am)`; do \
-  diff -u2 dvisvgm-{3.0.1,src}/$m; done >TLpatches/patch-08-makefiles
+diff -u2 dvisvgm-$ver/configure.ac ./ >TLpatches/patch-04-configure
+for m in `(cd ./dvisvgm-src && find -name Makefile.am -o -name defs.am)`; do \
+  diff -u2 dvisvgm-{$ver,src}/$m; done >TLpatches/patch-08-makefiles

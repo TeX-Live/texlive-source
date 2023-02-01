@@ -1,5 +1,5 @@
---- dvisvgm-3.0.1/./Makefile.am	2023-01-10 05:22:18.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2023-01-19 15:27:47.262096221 -0800
+--- dvisvgm-3.0.2/./Makefile.am	2023-01-17 00:55:33.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2023-02-01 15:05:49.038254644 -0800
 @@ -4,9 +4,9 @@
  ## Process this file with automake.
  
@@ -12,8 +12,27 @@
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
  
---- dvisvgm-3.0.1/./libs/Makefile.am	2023-01-10 05:22:18.000000000 -0800
-+++ dvisvgm-src/./libs/Makefile.am	2023-01-19 15:14:57.121900128 -0800
+--- dvisvgm-3.0.2/./libs/defs.am	2022-12-06 08:13:36.000000000 -0800
++++ dvisvgm-src/./libs/defs.am	2023-02-01 15:07:30.036487762 -0800
+@@ -5,6 +5,14 @@
+ 
+ if !HAVE_POTRACE
+-POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+-POTRACE_LIBS = ../libs/potrace/libpotrace.a
++# Gets automake warnings:
++#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
++#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
++#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
++#if !TEXLIVE_BUILD
++#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
++#POTRACE_LIBS = ../libs/potrace/libpotrace.a
++#else
++POTRACE_CFLAGS = $(POTRACE_INCLUDES)
++#endif TEXLIVE_BUILD
+ endif
+ 
+--- dvisvgm-3.0.2/./libs/Makefile.am	2023-01-17 00:55:33.000000000 -0800
++++ dvisvgm-src/./libs/Makefile.am	2023-02-01 15:05:49.038254644 -0800
 @@ -4,5 +4,9 @@
  ## Process this file with automake.
  
@@ -25,8 +44,8 @@
 +endif
  
  if ENABLE_WOFF
---- dvisvgm-3.0.1/./src/Makefile.am	2023-01-10 05:22:18.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2023-01-19 15:45:32.415222210 -0800
+--- dvisvgm-3.0.2/./src/Makefile.am	2023-01-17 00:55:33.000000000 -0800
++++ dvisvgm-src/./src/Makefile.am	2023-02-01 15:05:49.038254644 -0800
 @@ -17,8 +17,6 @@
  	$(noinst_LTLIBRARIES) \
  	../libs/clipper/libclipper.a \
