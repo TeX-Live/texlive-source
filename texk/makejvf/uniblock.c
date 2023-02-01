@@ -25,7 +25,7 @@ struct ublock {
      Adobe-GB1-5/                   Adobe-GB1-5 materials
         cid2code.txt (Version 12/05/2017)
      Adobe-Japan1-7/                Adobe-Japan1-7 materials
-        cid2code.txt (Version 07/30/2019)
+        cid2code.txt (Version 05/18/2022)
      Adobe-Korea1-2/                Adobe-Korea1-2 materials
         cid2code.txt (Version 01/31/2012)
  Following code points are omitted from ENTRY_J:
@@ -35,6 +35,7 @@ struct ublock {
    Latin Extended-D           U+A7B5      Latin Small Letter Beta   15909
    Latin Extended-E           U+AB53      Latin Small Letter Chi    15911
    Geometric Shapes Extended  U+1F79C     Diamond Target            12244
+   CJK Unified Ideographs Extension H   U+31350     ---             19130
 */
 
 static struct ublock ublock_data[] = {
