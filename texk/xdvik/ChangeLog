@@ -1,3 +1,9 @@
+2023-02-02  Florian Weimer  <fweimer@redhat.com>
+
+	* m4/xdvi-func-setsid-in-fork.m4.c99-4: avoid implicit
+	declarations of wait and exit, to appease C99.
+	https://tug.org/pipermail/tex-live/2023-January/048833.html
+
 2022-02-13  Paul Vojta  <vojta@math.berkeley.edu>
 
 	* dvi-init.c (make_backup_fp): call new try_dup, and existing

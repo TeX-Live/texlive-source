@@ -22,6 +22,9 @@ AC_DEFUN([XDVI_FUNC_SETSID_IN_VFORK],
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 #ifdef HAVE_VFORK_H
 #include <vfork.h>
 #endif]],
@@ -40,7 +43,7 @@ AC_DEFUN([XDVI_FUNC_SETSID_IN_VFORK],
 
     while (wait(&status) != child)
       ;
-    exit(
+    _exit(
 	 /* Was there some problem with vforking?  */
 	 child < 0
 

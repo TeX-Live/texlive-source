@@ -16406,6 +16406,9 @@ else $as_nop
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 #ifdef HAVE_VFORK_H
 #include <vfork.h>
 #endif
@@ -16427,7 +16430,7 @@ main (void)
 
     while (wait(&status) != child)
       ;
-    exit(
+    _exit(
 	 /* Was there some problem with vforking?  */
 	 child < 0
 
