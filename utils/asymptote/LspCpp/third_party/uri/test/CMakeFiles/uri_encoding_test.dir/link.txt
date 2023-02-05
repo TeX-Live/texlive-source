@@ -1,1 +1,0 @@
-/bin/c++ -D_FILE_OFFSET_BITS=64 -DUSEGC -std=c++11 -Wall -Werror -Wno-parentheses -O2 -g -DNDEBUG -rdynamic CMakeFiles/uri_encoding_test.dir/uri_encoding_test.cpp.o -o ../tests/uri_encoding_test  -lpthread ../src/libnetwork-uri.a ../../../lib/libgtest_main.a ../../../lib/libgtest.a -lpthread 

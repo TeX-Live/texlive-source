@@ -1,3 +1,1824 @@
+commit 430c7a661c060568720f6d65e611a2087ea1dde6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 22:48:26 2023 -0700
+
+    Fix Makefile dependencies.
+
+commit 1e0c04c25ddb2dfc9a4f3423628d39ff494e4b32
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 18:05:11 2023 -0700
+
+    Revert "Fix Makefile dependency."
+    
+    This reverts commit 826581af2fb2882ab82804e0593217da85ae58bd.
+
+commit 826581af2fb2882ab82804e0593217da85ae58bd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 18:01:07 2023 -0700
+
+    Fix Makefile dependency.
+
+commit 2255877e2ee304c38dee5b7b52d113255c0622fd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 17:48:00 2023 -0700
+
+    Revert "Improve last revision."
+    
+    This reverts commit e7d475fa66c429851bbc45bcc0017a3ac5eef02a.
+
+commit 4dafd8313cda0aad2a05abfdc91fc30ce88d7385
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 15:12:28 2023 -0700
+
+    Add high-resolution clock; update FFT support.
+
+commit 56c39a80704b2bb93e808ad74591a8834c3ccca5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 21 12:03:49 2023 -0700
+
+    Account for linewidth in labelmargin.
+
+commit 37f564040bec2ff6059f5c4872950be17586b885
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 3 20:37:17 2023 -0700
+
+    Add option to show summary of environment settings.
+
+commit 76f2f4d727261e4e2b466e2ea9d32bb4baf6c466
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 12 22:19:03 2022 -0700
+
+    Avoid division by zero.
+
+commit 46d6ea7351699bbed0418ec6d7f2195011178e5a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 28 20:20:35 2022 -0700
+
+    Improve example of multiple shipout.
+
+commit dce2e0d3b94b59dddcca6bb95c38548e2021821a
+Merge: ee0d1a4a a42e056e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 13 00:10:12 2022 -0700
+
+    Merge pull request #341 from yarusome/master
+    
+    Fixing `inversion inversion(circle, circle)`
+
+commit ee0d1a4a80ff0b30383f297f3ab64bebafd1c07c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Nov 13 00:00:45 2022 -0700
+
+    Fix issue #308: runtime error when drawing degenerate path with TexHead arrow.
+
+commit 0ff56f1ecaff0f5e6da0acd0e7ff6f152cd52c56
+Merge: eb89fd60 1834e488
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 12 23:06:21 2022 -0700
+
+    Merge pull request #354 from vectorgraphics/fix-debian-bug-1023920-xasy
+    
+    XASY: Round numpy.float64 to int for Qt compatibiltiy.
+
+commit eb89fd60d71a5836b05ae0ed17f7525b2723714d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 12 22:50:04 2022 -0700
+
+    Fix bug in XDR reads due to uninitialized variable.
+
+commit 1834e4883a0781944b5eb3e459a35984ad24d14d
+Author: Supakorn Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Nov 12 12:22:45 2022 -0700
+
+    XASY: Round numpy.float64 to int for Qt compatibiltiy.
+    
+    This fixes Debian bug #1023920 (https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1023920).
+
+commit a64162166a3b2146902971d87ba2da3af53ebd5e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Nov 1 21:22:49 2022 -0600
+
+    Use Bland's rule even on artificial variables.
+
+commit 4f326abc01934c83380ca6e0d399dc5f33819e76
+Merge: e7d475fa 38d018f6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 31 15:03:46 2022 -0600
+
+    Merge pull request #351 from bmwiedemann/date
+    
+    Allow to override build date with SOURCE_DATE_EPOCH
+
+commit 38d018f6bc6d2341718a67193c4cbb99a07be698
+Author: Bernhard M. Wiedemann <bwiedemann@suse.de>
+Date:   Mon Oct 31 21:46:54 2022 +0100
+
+    Allow to override build date with SOURCE_DATE_EPOCH
+    
+    in order to make builds reproducible.
+    See https://reproducible-builds.org/ for why this is good
+    and https://reproducible-builds.org/specs/source-date-epoch/
+    for the definition of this variable.
+    
+    Signed-off-by: Bernhard M. Wiedemann <bwiedemann@suse.de>
+
+commit e7d475fa66c429851bbc45bcc0017a3ac5eef02a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 27 00:21:20 2022 -0600
+
+    Improve last revision.
+
+commit b5ac744cb044c42a9d2f79a58d37b46444e24caa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Oct 26 23:57:50 2022 -0600
+
+    Fix Makefile dependency.
+
+commit 8afff2c11b36ea54edf01b32452550bf12843a93
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 23 01:15:48 2022 -0600
+
+    Terminate phase1 of simplex method once a zero-cost solution is found.
+
+commit e7b5c30816f5db7b243222c1c4c10d087294eece
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Oct 22 22:33:15 2022 -0600
+
+    Make evince the default UNIX PDF viewer.
+
+commit 8bc175d31f77312baea3660e5f29dbc35ab2cbdf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 21 22:33:36 2022 -0600
+
+    Remove spurious tests in glew.c.
+
+commit 0d49a356d0ee1d0f579cb224856f0947a3e1cdc3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Oct 21 22:20:12 2022 -0600
+
+    Check for bison and flex but not libm.
+
+commit f495186f075bc3b686aa53bc80def7fbd91edb97
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 18 00:32:09 2022 -0600
+
+    Add diagostic control to rationalSimplex.asy.
+
+commit d1a336cd3caaea8cae7bd1cc5a9f98175ba18979
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 13 17:08:53 2022 -0600
+
+    Improve diagnostic in rationalSimplex.
+
+commit 20a79dbf5f005bacf3fb55fceb1c33cc8b79c4b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Oct 13 17:04:50 2022 -0600
+
+    Update example.
+
+commit 0e13fdc3d0226f153d1859db3ec43eb3d2fb2007
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 9 13:45:34 2022 -0600
+
+    Remove obsolete code.
+
+commit ea5bb5e69ecdc26a576205825c62c5ede14622cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Oct 9 10:55:22 2022 -0600
+
+    Change default UNIX postscript viewer to evince; remove remaining references to gsview.
+
+commit 6d556b7a78d1680702abcdc0972ecf6c458ced88
+Merge: 681daee0 7696801a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 30 17:10:52 2022 -0600
+
+    Merge branch 'Qt'.
+
+commit 681daee01c6832a5d86e79e17018806b433e1805
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 30 14:44:03 2022 -0600
+
+    Remove unused code.
+
+commit 7696801ae99fe0654030ccdb805df8ba506907cf
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Sep 24 21:39:03 2022 -0600
+
+    XASY: Fix arrowhead changing bug.
+
+commit 7201430c829e273e4ad3ff13391a87ff9f83b373
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Sep 21 21:32:07 2022 -0600
+
+    Disable PDF image compression for non-pdf output.
+
+commit 78662d51f5b9b1b5038cc0e1a41527552f49d181
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 15:31:23 2022 -0600
+
+    Clean up more asy-latex files.
+
+commit 2c15485d146a43fbf6234d3fa0cec191a1a768b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 14:01:30 2022 -0600
+
+    Increment version to 2.84.
+
+commit 2ac4c5f85acd6b0a04865be937279dc29fadb76e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 11:27:55 2022 -0600
+
+    Fix default export extension.
+
+commit 40fd9804c037e1424e8e05498ce66f618bce5c58
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 01:17:37 2022 -0600
+
+    XASY: Implement color interface.
+
+commit f313efb692d567d300cd9e4931ea276cf0d1f74f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 01:01:10 2022 -0600
+
+    XASY: Remove obsolete code.
+
+commit 288ccc888480326cc6d3d4276498edf331a2bd7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 17 00:49:25 2022 -0600
+
+    XASY: Implement solid pen; disable unimplemented color interface.
+
+commit 5b436a4eb99c50dce13e856c12cda7b7729cf02f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 16 23:05:54 2022 -0600
+
+    XASY: Convert from asy to Qt pattern.
+
+commit 2f9dc5be12dca41d2e0413d2c94f0359c60f6919
+Merge: f3e3ed1a 2bf7c010
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 16 21:19:37 2022 -0600
+
+    Merge branch 'Qt'.
+
+commit 2bf7c010ef6a46dee4d79b6b2b84ccddd51b0d3c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 16 21:14:17 2022 -0600
+
+    XASY: Fix arrowify bug.
+
+commit 6b8e2c390808f67f76e611861caa634188732558
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 16 15:28:47 2022 -0600
+
+    Simplify vectorfield example.
+
+commit 14476dda18ae3a6a00d441762505f4d4683eac9b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 23:32:21 2022 -0600
+
+    Allow specifying only endpoint of vector in vectorfield.
+
+commit 65e039f72730a196ce89eb1d4194e9eaf8a97b43
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 23:24:31 2022 -0600
+
+    Fix vectorfield scaling.
+
+commit b488009dcb56876362e073780e894307b21864cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 21:38:11 2022 -0600
+
+    Remove diagnostic.
+
+commit 32d191daf3832e462b51e6a66df1a4f7ecda10cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 21:06:03 2022 -0600
+
+    Fix vectorfield scaling.
+
+commit ef690c9363b3d973f07f20e58a9d6764c8b67c6b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 11 21:56:54 2022 -0600
+
+    Fix integer quotient bug introduced in 1e1e6cbbcfe65b58ead8e04d5e2b302ed011acd8.
+
+commit 997f87e375387fcb4fbbda66db62bc2332f42b2c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 4 22:31:36 2022 -0600
+
+    Remove arrows from slopefield; fix scaling in vectorfield routines.
+
+commit f3e3ed1a216fa3e31878ac4d6169875099508c80
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Sep 16 15:28:47 2022 -0600
+
+    Simplify vectorfield example.
+
+commit 845985e11a46f3406fc80ddf4e22cf5bc0adea3b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 23:32:21 2022 -0600
+
+    Allow specifying only endpoint of vector in vectorfield.
+
+commit d0be9ddfcb8f004a520bb80f89739fa3378d06e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 23:24:31 2022 -0600
+
+    Fix vectorfield scaling.
+
+commit fd5c3f906f0b5565bddefae6a10f88ecb525796a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 21:38:11 2022 -0600
+
+    Remove diagnostic.
+
+commit 54e4567585ad4d694cbca6d4fe640e154f67af22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Sep 15 21:06:03 2022 -0600
+
+    Fix vectorfield scaling.
+
+commit 1d0e4cc886b840f87a726b40e6f9626b14568acc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 11 21:56:54 2022 -0600
+
+    Fix integer quotient bug introduced in 1e1e6cbbcfe65b58ead8e04d5e2b302ed011acd8.
+
+commit 01c0fad312146968a0fee96ba9282eccff6dc470
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 4 22:31:36 2022 -0600
+
+    Remove arrows from slopefield; fix scaling in vectorfield routines.
+
+commit d2a1f5d2984d4e558285426290a8c36d1dd9e18f
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Aug 28 23:46:13 2022 -0600
+
+    XASY: Fix saving bugs.
+
+commit e766b2f8cc069ac8bb28eb74b4ff47b1eaf7a50c
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Aug 27 03:12:24 2022 -0600
+
+    XASY: Remove debug print statements.
+
+commit 6d326fef6aa47d027ae159e9f9aeb60b67a1a657
+Merge: bbdba2da d48103a9
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Aug 27 03:07:16 2022 -0600
+
+    Merge branch 'Qt' of https://github.com/vectorgraphics/asymptote into Qt
+
+commit bbdba2da493f0c95caf971d267e67f6f29d2573e
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Aug 27 03:07:12 2022 -0600
+
+    XASY: Fix arrow dash render issue.
+
+commit d48103a9ad3de95caa1ff18ed6f2666128801166
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 26 00:29:01 2022 -0600
+
+    XASY: Apply KEY to begingroup().
+
+commit 2191ec77923ddbdb742abfe9fdcf0f9c1ffa4505
+Merge: 539b8367 98a183dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 26 00:13:20 2022 -0600
+
+    Merge branch 'master' into Qt.
+
+commit 98a183dcfbef510cae7f3ac45438f948fb82758b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 26 00:08:44 2022 -0600
+
+    XASY: Fix begingroup transformation.
+
+commit 539b83671f0b4c1c8d1a17565aa025dd130efc2e
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Aug 25 01:29:14 2022 -0600
+
+    XASY: Fix noncommutativity with arrows and fills.
+
+commit a42e056e27e7737695b18fd84842eb481893e531
+Author: yarusome <97945148+yarusome@users.noreply.github.com>
+Date:   Wed Aug 24 22:55:15 2022 +0800
+
+    Fixed `inversion inversion(circle, circle)`
+
+commit 03b46aa391c31f809eae74524ef73b777c1dcc68
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 22 16:43:42 2022 -0600
+
+    Initialize globalObjectCounter to 1.
+
+commit c7e925123f538a59d55e6e2a998d87a254ac194a
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Aug 21 00:33:36 2022 -0600
+
+    XASY: Fix arrow rendering glitch.
+
+commit 86bc2acae142bdee83515c31ad8d4f393501b22d
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Aug 14 23:05:22 2022 -0600
+
+    XASY: Fix layout warning messages.
+
+commit 2d243189a39087701ce6450623f0c67860ff8c37
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Aug 13 18:39:52 2022 -0600
+
+    XASY: Fix translation arrow issue.
+
+commit 21e2e4ea0fe288247999f38eca30d90e6d524f9c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 11 22:43:58 2022 +0200
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "b6fb8491"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "b6fb8491"
+    git-subrepo:
+      version:  "0.4.3"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "2f68596"
+
+commit c9e57ede64853386a5db6ed7e8f2f1b080345c0f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 11 22:41:45 2022 +0200
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "526e85a5"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "526e85a5"
+    git-subrepo:
+      version:  "0.4.3"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "2f68596"
+
+commit a2405537b3da29db4c77403273f18113daeb73b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 11 22:32:43 2022 +0200
+
+    Update asygl.
+
+commit cf0e0be0be7c0b2be3cf36234d631515c1c5acd9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 11 22:30:14 2022 +0200
+
+    Fix triangle groups.
+
+commit aa0954499ae7cdce7fc131441dff04c09d15076a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 11 14:50:46 2022 +0200
+
+    Add missing file.
+
+commit 06d9f8f16828f6f803360aef602251ee680293a7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 10 17:08:48 2022 +0200
+
+    Remove version number from CTAN top level directory.
+
+commit 103f78f49c890ea7d6998355a89b291991b89ddf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 10 12:42:27 2022 +0200
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "0e34158d"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "0e34158d"
+    git-subrepo:
+      version:  "0.4.3"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "2f68596"
+
+commit 4920559af405da4d32bfd86403a32cc0e88677bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 10 12:37:08 2022 +0200
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "d9cd4f6d"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "d9cd4f6d"
+    git-subrepo:
+      version:  "0.4.3"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "2f68596"
+
+commit 8bd894e51d17f39a7c6275d7e23701a3b278c4bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 10 11:43:36 2022 +0200
+
+    Simplify code.
+
+commit f7557e41a68a0580a19c90d775f0d8f2d92de026
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Aug 7 17:00:31 2022 +0200
+
+    Increment version to 2.83.
+
+commit 94c770a177aae2dc11e19f70cc9f22ff649d7cea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 6 22:17:24 2022 +0200
+
+    Update asygl.
+
+commit 9893d408fec128d76b50e3bef24ef6181beef0bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 6 22:12:33 2022 +0200
+
+    Use floating point WebGL colors.
+
+commit 89dac594687cd2892851a685c52a092e86db85a7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Aug 6 06:52:30 2022 +1000
+
+    Avoid global variables in AsyGL library.
+
+commit a57d71e7f9857ceba05b9d2fc926953d385971b5
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Aug 4 02:00:02 2022 -0600
+
+    XASY: Add rough intelligent dash patterns.
+
+commit 0ab3eae561e21fcf5a906becf75483291db032d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 3 22:14:33 2022 +0200
+
+    Preserve the terminal environment under MSDOS by ignoring the wait flag.
+
+commit 87f76fb7e5f3387643491fa123c18cf2be987006
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 1 23:36:30 2022 +0200
+
+    Enforce a unique normal and pen for each vertex in a PRC triangle group.
+
+commit f8d9c943899f592b20f9da01b51b223540536a63
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jul 30 21:50:25 2022 -0600
+
+    XASY: Fix arrow swapping bug.
+
+commit 8e28af4e33a62630f82652552988c02267821578
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 29 21:10:05 2022 +0200
+
+    Revert "Simplify code."
+    
+    This reverts commit 587a21490bf6d3892ddeab36dc8d8acdd3cec32c.
+
+commit 52170aac260c33ead0eddef60c527bcde782348c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 29 19:19:55 2022 +0200
+
+    Fix patch mode.
+
+commit b401886d804f4c5e870c69339c50dd76a97f0ea5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 29 19:08:18 2022 +0200
+
+    Revert "Simplify code."
+    
+    This reverts commit dc9d231185c9b01bd8d32c2bbbc87001caa1f4d8.
+
+commit c53b2c5fd4cc2d4bbf4afb071534786c09e70542
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 29 12:53:45 2022 +0200
+
+    Fix segmentation fault.
+
+commit 0703107b953e0610a96776d059904af1cfb1c83e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 29 12:13:03 2022 +0200
+
+    Fix segmentation fault.
+
+commit e4dcdfbdef66e861d31bfe9ebbe722d66eafb3df
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 28 11:47:28 2022 -0600
+
+    XASY: Update option menu names to match asymptote.
+
+commit b5a059a24c57f866c165d388a37a159a9fd723c7
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 28 11:46:50 2022 -0600
+
+    XASY: Add asyPen cap options.
+
+commit d6e0c8ae5f4811f1f30ff59db450723fe291f241
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 28 11:44:04 2022 -0600
+
+    XASY: Allow arrow pen types.
+
+commit b52467ba7f780cdb31a1776e0338388614a21dd3
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 28 01:50:07 2022 -0600
+
+    XASY: Preserve shape fill status when arrowifying.
+
+commit 3433888b9a26fa85995617bfdc1e51137b198692
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 28 05:55:22 2022 +1000
+
+    Fix defaultfilename for v3d files.
+
+commit 12740e6ff703bbab76629f065dd574f6242d130d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 28 05:45:36 2022 +1000
+
+    Revert commented diagnostic.
+
+commit ff99318b814d8b02a503897a41269c7bb3ebbb61
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue Jul 26 20:54:00 2022 -0600
+
+    XASY: Fix line mode menu glitch.
+
+commit b2af1e079781e7bc53d7804b1622c0486e484b18
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue Jul 26 20:46:05 2022 -0600
+
+    XASY: Give opacity hint.
+
+commit ec217a2261828eed41835da88c9bfa97af5ec2bc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 20:47:12 2022 +0200
+
+    Move v3d specification back to GitHub now that LaTeX markdown is supported.
+
+commit cb6aeda7ff3c1ed42bb04ed45ba26ce5061797f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 15:18:10 2022 +0200
+
+    List ambiguous functions.
+
+commit 60df18eea453855571ee4a2cc3f45878a4fe52d9
+Merge: fa284421 4fe6f9fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 04:17:33 2022 -0600
+
+    Merge pull request #327 from jamadagni/master
+    
+    Additions to geometry.asy
+
+commit fa28442195bd99b9bac87e3ff752953ac57ee172
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 12:05:54 2022 +0200
+
+    Remove extraneous include.
+
+commit 3514430ddbdbf89e21b560202c06801c42ab590f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 12:05:24 2022 +0200
+
+    Optimize dvisvgm output.
+
+commit a7588cad36589cc3df2b1bc66123e8c94b681a39
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 26 11:57:05 2022 +0200
+
+    Make dvisvgmMultipleFiles true by default.
+
+commit 8f18ae72e3f12db006aabb23a5045c149a9a821a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 25 14:21:16 2022 -0600
+
+    Fix BUG #329: Fraction bars in labels are always black with PDF texengines.
+
+commit 9fe061906f7b5d0e334299c917effeb283989237
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon Jul 25 01:21:11 2022 -0600
+
+    XASY: Add rough version of opacity.
+
+commit acb00a464f88dfef0e36046925cd3df24a643e12
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jul 23 22:17:29 2022 -0600
+
+    XASY: Add rough version of pen caps.
+
+commit 3878760d3335d907ef6de6b251835eff51274395
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jul 23 21:53:27 2022 -0600
+
+    XASY: Add alpha line styles.
+
+commit 9573bc9448c759acd5fa820567d16f90d971acde
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon Jul 18 10:50:48 2022 -0600
+
+    XASY: Fix filled arrow grouping issue.
+
+commit d5dfdeba88d17eaccfea41798c4fd3a221d03f6a
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jul 16 22:08:18 2022 -0600
+
+    XASY: Add tabs to context menu.
+
+commit 4fe6f9fb1633ebcfff637bf2140f042b7d802245
+Author: Shriramana Sharma <samjnaa@gmail.com>
+Date:   Thu Jul 14 22:34:15 2022 +0530
+
+    add fill and filldraw for circle,ellipse,triangle,triangle[]
+
+commit 8b8ad63d73e25bc098840c61b16a869184a6cdb2
+Author: Shriramana Sharma <samjnaa@gmail.com>
+Date:   Thu Jul 14 20:19:38 2022 +0530
+
+    add path operator ecast(segment)
+
+commit 006cb4c48cae38fdd710a885df0d38fa172ed640
+Author: Shriramana Sharma <samjnaa@gmail.com>
+Date:   Thu Jul 14 19:57:20 2022 +0530
+
+    add path operator cast(triangle), fix points order
+
+commit dc9d231185c9b01bd8d32c2bbbc87001caa1f4d8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 14 09:22:08 2022 -0600
+
+    Simplify code.
+
+commit b7db8911e3b2cbcc3c6330312b49acb0e06213b9
+Author: Shriramana Sharma <samjnaa@gmail.com>
+Date:   Thu Jul 14 19:47:02 2022 +0530
+
+    rename geometry.orthocentercenter to geometry.orthocenter
+
+commit fb60e629731adba9460cbb9297cf9def84baf897
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 14 01:17:14 2022 -0600
+
+    XASY: Fix arrow fill selection.
+
+commit de64e70501d4219220d8ecfeebd99effcb07f732
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jul 14 01:05:34 2022 -0600
+
+    XASY: Add hidden code for color options.
+
+commit 587a21490bf6d3892ddeab36dc8d8acdd3cec32c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 13 16:56:14 2022 -0600
+
+    Simplify code.
+
+commit 55d3dab28f6e3698b020cd6125690e65045c6091
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jul 13 04:07:01 2022 -0600
+
+    XASY: Allow basic arrow curve filling.
+
+commit 3961ec5be64d394e86e89d4ca30b176d4b5ecf62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 10 10:52:38 2022 -0600
+
+    Fix issue #320.
+
+commit 694902944ba06f3c77dad9bc0bcc4e465fa7e1d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 9 20:12:27 2022 -0600
+
+    Address issue #320.
+
+commit e88b4b19b53141cc8a070c2eea1b343b5ae88b0e
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jul 6 23:19:20 2022 -0600
+
+    XASY: Fix object rendering error.
+
+commit 5794434a3392e8c9da44340c4c5a5ab56d55621c
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jul 6 23:13:19 2022 -0600
+
+    XASY: Set size of context menu.
+
+commit 33bf1141c1bb787bd5518dcfa9f73a4f48d37dfa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 6 23:05:40 2022 -0600
+
+    Output mean color only for PRC.
+
+commit 522aa30a31feeebfab9d9886200fa25c888cf41f
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue Jul 5 15:16:15 2022 -0600
+
+    XASY: Remove deprecated fill changing method.
+
+commit ee191384db269c183b116f717fab11cb6ba4684b
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue Jul 5 15:07:51 2022 -0600
+
+    XASY: Add default indicators for arrow options.
+
+commit 7cbd28939b01da0f96980864698d7d704c9c1a9c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 5 00:45:07 2022 -0600
+
+    Delete troublesome style file.
+
+commit 534d1361a7343dfc653a8b129d3392c0baba68f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 5 00:41:00 2022 -0600
+
+    Update asygl.
+
+commit 6cea12dfe927edec9aa784ab4b133f9b12ebde1d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 5 00:36:47 2022 -0600
+
+    WebGL: Support backwards compatibility.
+
+commit 323eb79327cf179491107d4ec3e3d6e994b324aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 4 23:56:02 2022 -0600
+
+    WebGL: Compute Bezier curve bounds.
+
+commit 482d04bdad8a25d274d1719f6653ff4d4c7b3250
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 4 17:05:47 2022 -0600
+
+    WEBGL: Compute triangle group bounds.
+
+commit 72de9111632b3370f362740ab42cb6ce0238888b
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon Jul 4 11:04:02 2022 -0600
+
+    XASY: Show hints for default arrow size and angle.
+
+commit 00cd7219a9794f21ecd3209411889b25523322e0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 4 00:04:25 2022 -0600
+
+    WEBGL: Compute Bezier triangle bounds in WebGL. Remove Min and Max.
+
+commit 42bc4a3b4e0f187e265c353fc9e7766cf8165b95
+Merge: a45aaa1e 30ad132f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 3 22:09:06 2022 -0600
+
+    Merge branch 'master' into webglbounds.
+
+commit 30ad132f3a7dd182792d24a150aaa45de332ee8b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 3 19:34:37 2022 -0600
+
+    Simplify workflow.
+
+commit e15ba5b1e764cff6b75520d41c8fb96a03730d4e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 3 18:56:08 2022 -0600
+
+    Fix BUG #319: Rename NOCACHE to NoOutputFonts to address yet another Ghostscript backwards incompatibility (in Ghostscript version 9.56).
+
+commit 12a778be453f9319faeac99edfa25c0498bf2024
+Merge: d393a76b 48625bd2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 29 13:06:59 2022 -0600
+
+    Merge branch 'compute3'.
+
+commit 48625bd2b66ca904af42e308c5bf8d0b5571de39
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 29 13:03:58 2022 -0600
+
+    Fix typo.
+
+commit e89c84c47bed90bca961e6bd26f8a8e7e3c8c3a0
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Jun 26 23:53:52 2022 -0600
+
+    XASY: Fix arrow reflection bug.
+
+commit 149229fd5ac11209c9fa1f73d5b0d3ed4c2af7f4
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jun 25 00:03:29 2022 -0600
+
+    XASY: Fix context menu object selection quirks.
+
+commit 81c731e85cdd1803921322e7608306ff9109c0d8
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jun 23 21:47:06 2022 -0600
+
+    XASY: Finalize saving fix.
+
+commit d531d9e1a96ef2c589b76e38c1a3817cac0d5d95
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jun 22 00:49:55 2022 -0600
+
+    XASY: Progress on saving bug.
+
+commit d393a76b3960455b4285806771e705faa54c20d8
+Merge: 0669e4fb d8cacc97
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 21 15:44:12 2022 -0600
+
+    Merge pull request #317 from vectorgraphics/dependabot/pip/GUI/numpy-1.22.0
+    
+    Bump numpy from 1.21.0 to 1.22.0 in /GUI
+
+commit d8cacc97b70f35914ba89baf8c564af93af42edc
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Tue Jun 21 21:32:47 2022 +0000
+
+    Bump numpy from 1.21.0 to 1.22.0 in /GUI
+    
+    Bumps [numpy](https://github.com/numpy/numpy) from 1.21.0 to 1.22.0.
+    - [Release notes](https://github.com/numpy/numpy/releases)
+    - [Changelog](https://github.com/numpy/numpy/blob/main/doc/HOWTO_RELEASE.rst)
+    - [Commits](https://github.com/numpy/numpy/compare/v1.21.0...v1.22.0)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: numpy
+      dependency-type: direct:production
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit d9c5fb35f0f2967f4a9af2a1df65aaa64996f861
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon Jun 20 02:40:52 2022 -0600
+
+    XASY: Improve how list options are created.
+
+commit e395fb2dd6250a78fd6ce8fd134e2cbf6dda9936
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jun 16 23:17:39 2022 -0600
+
+    XASY: Fix text entry bug.
+
+commit 134ebc7ff7947248ed281383a7026586d54b6567
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu Jun 16 21:20:34 2022 -0600
+
+    XASY: Refactor reflection code.
+
+commit 63932b2597a406fddbb98763c353fee01aba2524
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Jun 12 23:53:38 2022 -0600
+
+    XASY: Refactoring and quality enhancement.
+
+commit 8677a0f1a2571f1b38fc1589cf12f6341f69b659
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 12 10:32:22 2022 -0600
+
+    TRANSPARENCY: Save 4 bytes in shuffle array.
+
+commit 83e09ca618a9063f0d8c272dd855be9e081c19b1
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jun 11 20:16:52 2022 -0600
+
+    XASY: Make options dynamic.
+
+commit 292500e5c8d7762b8a49e62665c07221c3bee395
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat Jun 11 20:05:04 2022 -0600
+
+    XASY: Add confirm button for the context menu.
+
+commit 8097098c7938bcc1acc92e7aa5ca675160f47e23
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Fri Jun 10 21:37:38 2022 -0600
+
+    XASY: Add fill type options.
+
+commit 6d42edf99fcc672a4f7ab3d098c82eaa76c2e90c
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Fri Jun 10 21:23:30 2022 -0600
+
+    XASY: Add arrow angle changing options.
+
+commit d9d7a49824f5976135d4b82f554a6a6181ee7087
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Fri Jun 10 21:12:42 2022 -0600
+
+    XASY: Add arrow sizes.
+
+commit a45aaa1e948343e6a6d86391f26f4f132e17e6bd
+Merge: 5f676ec6 0669e4fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 9 19:01:27 2022 -0600
+
+    Merge branch 'master' into webglbounds.
+
+commit 0669e4fb0fc358ae9555d3db375f3568365b740b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 9 19:00:57 2022 -0600
+
+    Compute tight bounds of Bezier patches and triangles.
+
+commit 5f676ec6a4cc13ce7e382f8b5204df700e97e2b4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 9 17:35:45 2022 -0600
+
+    Compute Bezier patch bounds in WebGL.
+
+commit 4f51b82701aea7a9c14b89aa833fa10152f2d8c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 9 17:26:50 2022 -0600
+
+    Fix formatting.
+
+commit 5d6189436d95bbbf6f443d67cc9744af3338ff89
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jun 8 17:54:34 2022 -0600
+
+    XASY: Fix selection crashing bug.
+
+commit ebf5014696e14f74b17b8a6c2ce740c15e15c657
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed Jun 8 17:51:54 2022 -0600
+
+    XASY: Clean up code used for testing.
+
+commit 2879110f7a1ebb3c03cfbb01d68bfc4edbce466a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 6 21:45:14 2022 -0600
+
+    Derive size from offset in blend shader.
+
+commit 597d08b0ae468babf8c9a7b956d14c11415c1946
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 5 13:06:39 2022 -0600
+
+    Update to latest prefixsum shader.
+
+commit f061f1483550229f592eab9b3e0425a2d6e608c3
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Jun 5 00:55:47 2022 -0600
+
+    XASY: Fix arrow style selection bug.
+
+commit a2f9702924d4ec7592ba5241a9bc1a40aeb25733
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun Jun 5 00:44:26 2022 -0600
+
+    XASY: Add more arrow types.
+
+commit 75baa00f90034b6de5ccb2dc57b10d723effb4e3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 4 21:02:02 2022 -0600
+
+    Restore zero shader.
+
+commit a95c328913df1d0b6ec0ecdb89dae48577556525
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 3 00:45:00 2022 -0600
+
+    Automatically choose optimal sum2 shader.
+
+commit ba6fcdce8f4e90da7944a9ddec6fbd0ab617181e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 16:05:07 2022 -0600
+
+    Optimize sum shaders.
+
+commit 5db78fbb79c6711d250748e47a08381eff4f9a04
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 2 09:26:49 2022 -0600
+
+    Generalize sum2 shader.
+
+commit 70a7c559bbac4e1939552b4228704bdf60a753df
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 1 16:10:04 2022 -0600
+
+    Use optimized binomial tree reduce in sum1 shader.
+
+commit 9271bd55970b7ba76e265d4dd9a89a932b8981aa
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 31 17:57:06 2022 -0600
+
+    XASY: Code improvements and arrow copying setup.
+
+commit 98939bfe5406905d51b64ae90ccb56822f6f97c3
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 31 17:51:19 2022 -0600
+
+    XASY: Allow dearrowification.
+
+commit d9eab3fb70031cdaa4de8ff14147eb6e895ec317
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 31 17:12:09 2022 -0600
+
+    XASY: Snap focus to canvas when objects change.
+
+commit 9b853eead5d61728663ed5c457b4764800a70f17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 31 13:33:33 2022 -0600
+
+    Optimize sum1 shader.
+
+commit aa4700c2d91fcd17fd1768bd7df45ccd788c20d7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 31 11:58:45 2022 -0600
+
+    Revert cd7092db3a5f297df6b735c91b4989caf8e60609.
+
+commit be2310a8affc0abf3e8d330489e2ff1f491c3df9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 31 11:20:20 2022 -0600
+
+    Fix memory barriers.
+
+commit 7df45601fd0e38a252e4c68929ed54d9c286e971
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 31 10:45:45 2022 -0600
+
+    Fix memory barriers; optimize Hillis-Steele algorithm.
+
+commit 64ca0f99828ac592896b524aa79b043101210e24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 30 23:05:02 2022 -0600
+
+    Add missing shader.
+
+commit 411ffcbc0b0cf626a36ab66bb342656a1e1da2e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 30 19:00:48 2022 -0600
+
+    Finish partial sums.
+
+commit fa12530d3f7a7d2e84c330ffa35181df38580831
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon May 30 11:59:22 2022 -0600
+
+    XASY: Rough version of adding arrowheads.
+
+commit 8519ee922db934d05f0945b93ef17e4b24fe6ea2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 30 10:58:37 2022 -0600
+
+    Implement bezier(real a, real b, real c, real d, real t).
+
+commit a728266f13a123f772294b50e2a58b50c28091ef
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 23:24:34 2022 -0600
+
+    Avoid unnecessary differential computations.
+
+commit c5ff5bd2628c05dcf52acd6502a851d78cce3510
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 23:18:15 2022 -0600
+
+    Defer fragment buffer resizing as long as possible.
+
+commit 952e340b05bbd3b6ad5f191f74e0669a5055c2ac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 23:06:37 2022 -0600
+
+    Fix noGPUindexing.
+
+commit 044dc63915cb19f8106f2e8ebb5df91cf15cdf4f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 22:59:22 2022 -0600
+
+    Disable subdivision crack adjustments for transparent patches.
+
+commit 8bd698940d42574cbe6c7a3c7170039157b43196
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 22:46:26 2022 -0600
+
+    Fix commit f57b4f8b9ead42f092cb706960bf10b6b8d55e30.
+
+commit 8931b432b64b6b90e934bc502c62fffe47a4a8cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 22:11:32 2022 -0600
+
+    Standardize names.
+
+commit bf9e1ee6c40f9de385992ecef5ca0b8c46f3f63b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 21:55:36 2022 -0600
+
+    Improve performance.
+
+commit 77d25cd8a9151b5a32ecb6169b5973284a28a955
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 19:13:12 2022 -0600
+
+    Fix maximum depth detection.
+
+commit cd7092db3a5f297df6b735c91b4989caf8e60609
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 15:49:18 2022 -0600
+
+    Use atomicCounterExchange to reset compression counter.
+
+commit 711b1a1666ae0b622a0a79c6275d4076523bb4ba
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun May 29 15:18:50 2022 -0600
+
+    XASY: Add basic logic for replacing objects.
+
+commit e407a7c34129589fcbb0a86d42925592e7d3f8b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 14:42:47 2022 -0600
+
+    Finish implementing feedback to CPU.
+
+commit f57b4f8b9ead42f092cb706960bf10b6b8d55e30
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 10:51:02 2022 -0600
+
+    Send feedback to CPU.
+
+commit 5801785e5729fda77f88fabdd7ddbd0e53a48851
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 00:57:57 2022 -0600
+
+    Revert "Store opaqueDepth in alpha channel of opaqueColor."
+    
+    This reverts commit 431d19384d090f11daeed3dc449dc61d2ed5e309.
+
+commit 431d19384d090f11daeed3dc449dc61d2ed5e309
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 29 00:04:35 2022 -0600
+
+    Store opaqueDepth in alpha channel of opaqueColor.
+
+commit a35d30b911d256832fe067f638aec75fdad79814
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 28 23:28:28 2022 -0600
+
+    Test 2-stage algorithm.
+
+commit 64942510ac5d30470cdd22e777cd0b1a38a6ff69
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 28 23:00:33 2022 -0600
+
+    Test 3-stage algorithm.
+
+commit 1c3176bb63ff4ab159bdea150174382c6f6b2b70
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat May 28 22:27:39 2022 -0600
+
+    XASY: Setup work for adding arrowheads.
+
+commit e84bf41ae59bb60cdff9357fc0c7f7faf8933174
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 28 11:19:37 2022 -0600
+
+    Add const qualifier.
+
+commit 0f0a04b64cccd21c656ec7a69565f43cf8e6a7b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 27 23:26:36 2022 -0600
+
+    Implement GPUblockSize.
+
+commit 58ddb9f87dcee756366d82b48424c3fe1bac19d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 27 23:02:11 2022 -0600
+
+    Disable GPUcompression by default.
+
+commit 7dae0ee579ba48d52d4687b79e87506e989a8ce2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 27 22:48:47 2022 -0600
+
+    Use a single improved shader to avoid bank conflicts.
+
+commit 4712edd628e9742417b7d83b4d38d2721bae370e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 25 09:32:56 2022 -0600
+
+    Simplify code.
+
+commit 1bfbb8215540524f4182744d836031d2223915ed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 25 09:27:17 2022 -0600
+
+    Revert "Perform all sums on the GPU."
+    
+    This reverts commit 574eb027cf53064cfb27e8ab09333a7775b2e094.
+
+commit f377f169236460849e5507e75f50ea8e3955aeba
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 24 00:05:26 2022 -0600
+
+    XASY: Change options based on item type.
+
+commit 33cc6fcb9e5ca77a4565db00465345c2b28318d0
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Mon May 23 23:33:53 2022 -0600
+
+    XASY: Make reflection relative to object.
+
+commit 574eb027cf53064cfb27e8ab09333a7775b2e094
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 23 22:59:08 2022 -0600
+
+    Perform all sums on the GPU.
+
+commit d270aa2012843aa592d2ada3b390ded7c1c3c35f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 23 19:28:39 2022 -0600
+
+    Implement Hillis-Steele algorithm in second stage.
+
+commit b182742a8ac29f1fbf1f37228492a09236c0e0ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 23 17:35:04 2022 -0600
+
+    Add another compute shader stage to reduce bandwidth to CPU.
+
+commit 85e78f59600fde0f6214212012c80ff539474a13
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 23 16:10:44 2022 -0600
+
+    Avoid use of localSumBuffer.
+
+commit 4d4159b5ec2eafa2bb3ba0837d863690af66ce4e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 23 15:30:10 2022 -0600
+
+    Use a single compute shader.
+
+commit aeabf93463cb35e55e7d86bd2a460f1616d44939
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun May 22 23:31:07 2022 -0600
+
+    XASY: Fix minor reflection bug.
+
+commit ea491e1af487809aeca6832227cc2d5aac7ab9d5
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun May 22 23:21:56 2022 -0600
+
+    XASY: Add options reflection to context menu.
+
+commit 3c38347c7c0c3a55b0677a7089bf3a662d1515fd
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun May 22 00:51:39 2022 -0600
+
+    XASY: Prevent context menu crashing.
+
+commit 13aa6344ac37b2303deb1e4e6d6a24d9b260762f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 19 20:57:45 2022 -0600
+
+    Improve documentation of rotate(real, triple).
+
+commit 68ff3758a11c9ab62c517b219cd6321b6c8a17ff
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed May 18 23:26:19 2022 -0600
+
+    XASY: Change filling method.
+
+commit e867b1fe04293de229d6c133d7cf21a5a9906b13
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 17 01:52:30 2022 -0600
+
+    XASY: Display icon.
+
+commit a6d8511834b0dab1dd3580ec0920fbde5cc76042
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 17 01:51:30 2022 -0600
+
+    XASY: Display icon.
+
+commit 0f5cb6b88b5c1e3a68ef42f0b441ed4812aa1392
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Tue May 17 01:32:27 2022 -0600
+
+    XASY: Remove redundant menu.
+
+commit c1ec3a89279d567cf4a910557546137aac2c0ee3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 14 12:27:51 2022 -0600
+
+    Increment version to 2.82.
+
+commit 4347e589ed5e4fc4f03d4fdafced28f6345f21a7
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat May 14 00:09:48 2022 -0600
+
+    XASY: Minor quality improvements to the options window.
+
+commit 429a50bc7199fcbc5b081369dcb75f92ba766a87
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sat May 14 00:01:55 2022 -0600
+
+    XASY: Alpha version of context menu.
+
+commit 920c0886c23e20db270d04337e59c4d9e069dc63
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 13 23:17:54 2022 -0600
+
+    Fix CYGWIN warning.
+
+commit c895e09915302ae276740f1cc91afd834658ae37
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 13 22:31:19 2022 -0600
+
+    Fix bug #313: opaque rendering on platforms lacking GL_ARB_fragment_shader_interlock.
+
+commit 1c3deeb0cd6bab28ebde0abc9d04c0302fa84713
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed May 11 22:59:01 2022 -0600
+
+    XASY: Finalize alpha version of fill/unfill.
+
+commit 1bb18d1c97b1c05aaff755fbfcc8e4b0a9852776
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Wed May 11 22:48:53 2022 -0600
+
+    XASY: Setup work for context menus.
+
+commit fc7dac6887136289035eaa4f7f60fcbee1dc3967
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 11 18:29:56 2022 -0600
+
+    Update documentation.
+
+commit d54736762baaf6b675311c0e5791f6aa5792ae57
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 11 16:40:43 2022 -0600
+
+    Document surface constructor for solids of revolution.
+
+commit f910ea19eee9f240045594bf049f363cc8181ac4
+Merge: de70a958 72b0fe36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 10 22:20:00 2022 -0600
+
+    Merge branch 'Qt'.
+
+commit de70a958b3844210142a9066b20bfce2a62bde4f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 10 21:38:21 2022 -0600
+
+    Zero offset buffer when required.
+
+commit 72b0fe3685729e059337082dcd5585ae7fa20f50
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Sun May 8 22:38:36 2022 -0600
+
+    XASY: Fix crashes from opening xasy files.
+
+commit a14f4a75cd8f6d0f9cf6c4217e70baa690e4a1ad
+Author: chaumont-arch <chaumont@ualberta.ca>
+Date:   Thu May 5 23:11:47 2022 -0600
+
+    XASY: Fix bounding box drawing issue.
+
+commit 27d52fa7a6356cda473eb24acac77e822c6fb09d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 3 12:20:43 2022 -0600
+
+    Port to MacOS.
+
+commit e23a5527b710aa3cbf83d1d0a682aa5c6a49b62c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 24 10:24:46 2022 -0600
+
+    Fix bug #310: Missing slash in temporary file path.
+
+commit 365df5651ce0728fa3607d05ae1396668f374197
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 10 09:35:38 2022 -0600
+
+    Rename example.
+
+commit 253349484d7d76aeb639428f02e5c08779fbe094
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 10 00:31:20 2022 -0600
+
+    Add missing typedef.
+
+commit 29967ac62cb69bf3e3196b8cdf5e714007eabce2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 10 00:20:20 2022 -0600
+
+    Fix last commit.
+
+commit 6f10abaa6611c52cb8040b5715218287202b5510
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 10 00:18:32 2022 -0600
+
+    Consult pkg-config for readline library.
+
+commit 5af8022000bd9d3ab21e7c3548e92e9d59dd3c07
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 10 00:11:15 2022 -0600
+
+    Fix issue #40: Consult pkg-config.
+
+commit 4bd54e14498523c06a2e4cecf20e7c4c6851299d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 8 23:23:37 2022 -0600
+
+    Fix issue #309.
+
+commit 2ffee49a7e3fe5180a96332d529eae8bfe7a8316
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 9 14:49:43 2022 +1000
+
+    Move global typedef within namespace.
+
+commit 8f2ce216a6f5537d74a6b691fcd416a344570007
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 8 17:03:24 2022 -0600
+
+    Implement real Schur decomposition.
+
+commit 0f2ad99bcd3b7cb85ba66d4576ada8438da9c288
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 8 16:23:26 2022 -0600
+
+    Implement Schur decomposition.
+
+commit 5b705e7dece21fb809a43e25b4e97c1707a21152
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 5 23:28:53 2022 -0600
+
+    Add example; remove empty directories.
+
+commit b00f9fc3c2bf1b3b3cb311faf7098c149088e3cb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 5 21:48:56 2022 -0600
+
+    Increment version to 2.81.
+
+commit 52f5c99018d24883f6e115ae72beaa88a15d0669
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 5 11:32:10 2022 -0600
+
+    Fix last revision.
+
+commit 6992734bf38c28328ba829944596fa43d3d40512
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 4 23:00:20 2022 -0600
+
+    TRANSPARENCY: Restrict number and size of workgroups as needed.
+
+commit 561986f58f96e407e92979207d66d4bc864b9556
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Apr 3 21:56:20 2022 -0600
+
+    TRANSPARENCY: Optimize global summation on CPU.
+
+commit e80e073ca6e2bfdc06c277ba17544e71533cecf7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 29 23:04:53 2022 -0600
+
+    TRANSPARENCY: Fix export.
+
+commit 0fb93b6435910d57594ab4fc5542efd9e0543103
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 28 09:44:08 2022 -0600
+
+    TRANSPARENCY: Check for empty pixels with -noGPUCOMPRESS.
+
+commit 6d3df54aa7801a97ce35824dfa6ffc9109b1a4eb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 28 09:29:58 2022 -0600
+
+    TRANSPARENCY: Fix buffer allocation.
+
+commit 36c947e404b55985d949c7d2313e2f94334762f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 28 08:22:31 2022 -0600
+
+    TRANSPARENCY: Use no more than 8 SSBOs.
+
+commit 5e1c855ab8287c60a278d3ed3eb93e7eca644418
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 27 13:21:14 2022 -0600
+
+    Implement GPUcompress=false option for non-NVIDIA GPU cards.
+
+commit 554a81c8898bc97d0d4841178e92f5ee3d2a5f22
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 26 12:33:24 2022 -0600
+
+    Fix commit 56df79e03bb18523f47be46620b7be5e62d92eac.
+
+commit 9d0c1b6afea89eeba8c90b54c1f3ee73fd8094a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 26 11:24:03 2022 -0600
+
+    TRANSPARENCY: Fix floating point exception.
+
+commit 56df79e03bb18523f47be46620b7be5e62d92eac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 26 10:23:23 2022 -0600
+
+    TRANSPARENCY: Fix export when GPUindexing=false.
+
+commit 25650a26253bfcc81b4a7d4448f352e41236d392
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 26 09:52:06 2022 -0600
+
+    TRANSPARENCY: Fix segmentation fault.
+
+commit 5649ac09e2deb90d4929b34e47677395bac20b48
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 25 22:17:45 2022 -0600
+
+    TRANSPARENCY: Fix atomic counter initialization.
+
+commit f88c7598b4b01a1d4c0c0bd5412a48d1a0eb5160
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 25 00:56:59 2022 -0600
+
+    TRANSPARENCY: Transmit maxSize in global sum array.
+
+commit 3e0cd170f6fe57e38265fff7547d2374ae05bee6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 23 23:29:14 2022 -0600
+
+    TRANSPARENCY: Discard empty counts.
+
+commit afe3b3291af5d8f02ebb2e286612d90fa96cf7c1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 21 09:50:25 2022 -0600
+
+    TRANSPARENCY: Fix data format.
+
+commit d962523e868ae3240b4196cdaf498337dde34ff3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 20 10:43:27 2022 -0600
+
+    TRANSPARENCY: Transfer maxSize via globalSum buffer.
+
+commit a0c83db864e01587c64c47c96004e62455682ecc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 22:52:32 2022 -0600
+
+    TRANSPARENCY: Check ARRAYSIZE on every frame.
+
+commit 50aaba78229e7401a1d3863ab3c4184dfc432585
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 22:10:22 2022 -0600
+
+    TRANSPARENCY: Don't zero offset buffer.
+
+commit 6ac4803bd0c0af840dcf8609087d521883fe46ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 18:28:38 2022 -0600
+
+    TRANSPARENCY: Improve last revision.
+
+commit bd35596b24cde31b551ae4c6a3ea02e97ce1f0b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 15:13:35 2022 -0600
+
+    TRANSPARENCY: Optimize case of one transparent fragment.
+
+commit 8b061a48bdf27b5e142bf48869087c73562169fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 14:46:06 2022 -0600
+
+    TRANSPARENCY: Simplify code.
+
+commit 9946580b30f18817b09a46ab62fd9e20d113b303
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 19 14:06:40 2022 -0600
+
+    TRANSPARENCY: Fix depth lookup.
+
+commit 4c6980c4001d493e83d8ba5d11ba56d9f21c38c9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 18 22:50:54 2022 -0600
+
+    TRANSPARENCY: Conditionally define uniform.
+
+commit 638bb757747216fae868e8a6e152b6eb690c30ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 14 12:25:40 2022 -0600
+
+    Implement weighted least-squares fit.
+
+commit 6afedcba8989cac33ce677387160528d828ea269
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 19:28:03 2022 -0600
+
+    TRANSPARENCY: Combine local index and depth into structure.
+
+commit fd3d794762fd6e532b916318625d4361f54467bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 17:15:29 2022 -0600
+
+    Remove unused code.
+
+commit dbafbb86b583bc1671f6111c7518219efb74de18
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 17:01:26 2022 -0600
+
+    Merge conditionals.
+
+commit a6e12dda261cad07593c988952b2fe62cf317600
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 13 14:19:01 2022 -0600
+
+    Avoid unnecessary writes to OpaqueDepth SSBO.
+
+commit 115e01faf97e2b1cc6b9ba9c8928d80bc0b00aa0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 10 12:01:47 2022 -0700
+
+    Use UNIX line terminators.
+
+commit b007afcc67cf18fd431492f9f2cf449daac10b95
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 10 11:56:22 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "a311aa1d"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "19411f6c"
+    git-subrepo:
+      version:  "0.4.3"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "2f68596"
+
+commit 0ce8a977de9a3f01ac63c895d56da4f3848d2035
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 8 23:56:24 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "574c2530"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "95cf6780"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit d12b2dd06788452e0a4fe68b10cc181c6747e42d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 8 23:36:37 2022 -0700
+
+    Remove all invisible files from release.
+
+commit 1cc029d5b9f573282f0e36daa12c28366130fce8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 21:09:49 2022 -0700
+
+    LSP: Clean up generated files; fix permissions.
+
+commit c7e039c39c71323575a1c80ffc2405ab244339b0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 20:04:26 2022 -0700
+
+    git subrepo commit (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "05c9d022"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "b1e44c8f"
+    git-subrepo:
+      version:  "0.4.1"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "a04d8c2"
+
+commit 94fe097db546f1de9e5b43e6b31fe1d2d4e4edaf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Mar 7 14:23:48 2022 -0700
+
+    Increment version to 2.80.
+
 commit 70dcf303c069ce3669f5f589aa3642650665278b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Mar 7 11:40:50 2022 -0700

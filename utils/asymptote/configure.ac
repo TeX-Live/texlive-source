@@ -3,7 +3,7 @@
 # this file.
 
 AC_PREREQ(2)
-AC_INIT([Asymptote],[2.79],[https://github.com/vectorgraphics/asymptote/issues])
+AC_INIT([Asymptote],[2.84],[https://github.com/vectorgraphics/asymptote/issues])
 VERSION=$PACKAGE_VERSION
 AC_SUBST(VERSION)
 m4_include([ax_pthread.m4])
@@ -114,7 +114,14 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_MAKE_SET
-AC_PROG_YACC
+
+AC_ARG_VAR([BISON], [bison command])
+AC_CHECK_PROG([BISON], [bison -y], [yes], [no])
+AS_IF([test "x$BISON" = "xno"], [AC_MSG_ERROR([bison not found])])
+
+AC_ARG_VAR([FLEX], [flex command])
+AC_CHECK_PROG([FLEX], [flex -y], [yes], [no])
+AS_IF([test "x$FLEX" = "xno"], [AC_MSG_ERROR([flex not found])])
 
 if test "$GXX" = yes ; then
    ac_gcc_version=`echo __GNUC__ | $CC -E - | grep -v ^\#`
@@ -148,7 +155,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
                    DEFINE([<unordered_map>])),
   [AC_CHECK_HEADER(ext/hash_map,,OPTIONS=$OPTIONS"-DNOHASH ")])])
 
-ASYGLVERSION=1.01
+ASYGLVERSION=1.02
 
 GCVERSION=8.2.0
 ATOMICVERSION=7.6.12
@@ -169,7 +176,7 @@ enable system Boehm garbage collector)]
                         fi
                         ])
 
-OPTIONS="-D_FILE_OFFSET_BITS=64 "
+OPTIONS="-D_FILE_OFFSET_BIS=64 "
 GCLIB=
 GCPPLIB=
 INCL="-I."
@@ -236,8 +243,6 @@ AC_ARG_ENABLE(gc-full-debug,
  fi
 ])
 
-INCL=$INCL" -I/usr/include/tirpc"
-
 if test "$OSTYPE" = "msdos"; then
 CPPFLAGS=$CPPFLAGS" -D__MSDOS__ -I/usr/include/w32api -I/usr/include -DCALLBACK=__stdcall $INCL"
 else
@@ -261,8 +266,8 @@ AC_SUBST(OPTIONS)
 AC_SUBST(GLEW)
 
 # Checks for libraries.
-AC_SEARCH_LIBS([lgamma],[m c],,
-AC_MSG_ERROR([*** Please install libm on your system ***]))
+#AC_SEARCH_LIBS([lgamma],[m c],,
+#AC_MSG_ERROR([*** Please install libm on your system ***]))
 AC_CHECK_LIB([z], [deflate],,
 AC_MSG_ERROR([*** Please install libz or zlib-devel on your system ***]))
 
@@ -350,6 +355,8 @@ LDFLAGS=$LDFLAGS0
 ])
 
 if test "x$enable_readline" != "xno"; then
+CPPFLAGS="$CPPFLAGS "`pkg-config --cflags readline`
+LDFLAGS="$LDFLAGS "`pkg-config --libs readline`
 AC_COMPILE_IFELSE([
 AC_LANG_PROGRAM([
 #include <stdio.h>
@@ -374,11 +381,20 @@ AC_ARG_ENABLE(fftw,
 [AS_HELP_STRING(--enable-fftw[[[=yes]]],enable FFTW Library)])
 
 if test "x$enable_fftw" != "xno"; then
-
+CPPFLAGS="$CPPFLAGS "`pkg-config --cflags fftw3`
+LDFLAGS="$LDFLAGS "`pkg-config --libs fftw3`
 AC_CHECK_HEADER(fftw3.h,
 AC_CHECK_LIB_STATIC([fftw3],[fftw_execute],HAVE_LIBFFTW3,
            AC_MSG_NOTICE([*** Could not find libfftw3: will compile without optional fast Fourier transforms. ***])),
      AC_MSG_NOTICE([*** Header file fftw3.h not found: will compile without optional fast Fourier transforms. ***]))
+fi
+
+AC_ARG_ENABLE(eigen,
+[AS_HELP_STRING(--enable-eigen[[[=yes]]],enable Eigen Library)])
+
+if test "x$enable_eigen" != "xno"; then
+CPPFLAGS="$CPPFLAGS "`pkg-config --cflags eigen3`
+AC_CHECK_HEADERS(Eigen/Dense)
 fi
 
 # Checks for header files.
@@ -387,6 +403,14 @@ AC_CHECK_HEADERS([fenv.h stddef.h libintl.h])
 AC_CHECK_HEADERS(fpu_control.h)
 AC_CHECK_FUNCS([feenableexcept])
 
+case "$OSTYPE" in
+     darwin*)
+     ;;
+     *)
+     CPPFLAGS="$CPPFLAGS "`pkg-config --cflags libtirpc`
+     LDFLAGS="$LDFLAGS "`pkg-config --libs libtirpc`
+     ;;
+esac
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "xstream.h"])],
                    [AC_SEARCH_LIBS([xdrstdio_create],[nsl tirpc])
@@ -398,6 +422,8 @@ AC_ARG_ENABLE(gsl,
 [AS_HELP_STRING(--enable-gsl[[[=yes]]],enable GNU Scientific Library)])
 
 if test "x$enable_gsl" != "xno"; then
+  CPPFLAGS="$CPPFLAGS "`pkg-config --cflags gsl`
+  LDFLAGS="$LDFLAGS "`pkg-config --libs gsl`
   AC_CHECK_HEADER(gsl/gsl_sf.h,
    AC_CHECK_LIB([gsl], gsl_sf_debye_6, [AC_DEFINE(HAVE_LIBGSL,1,
    DEFINE_LIB[gsl]) LIBS=$LIBS"-lgsl -lgslcblas "],

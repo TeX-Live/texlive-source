@@ -1,7 +1,7 @@
 # LspCpp
 
 ## Dependencies
-`LspCpp` depends on boost, rapidjson, utfcpp, uri, and threadpool.
+`LspCpp` depends on boost, rapidjson, utfcpp, uri.
 
 ## Build
 
@@ -50,3 +50,4 @@
 [1]: https://github.com/cquery-project/cquery "cquery:"
 [2]: https://www.javacardos.com/tools "JcKit:"
 [3]: https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore "Package Restore"
+

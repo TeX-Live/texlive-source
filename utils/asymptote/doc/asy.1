@@ -31,6 +31,12 @@ in the user's home directory using the long form:
 For a complete
 description, see the Info files.
 .TP
+.B \-GPUblockSize n      
+Compute shader block size [8].
+.TP
+.B \-GPUcompress         
+Compress GPU transparent fragment counts [false].
+.TP
 .B \-GPUindexing         
 Compute indexing partial sums on GPU [true].
 .TP
@@ -38,7 +44,7 @@ Compute indexing partial sums on GPU [true].
 Use fragment shader interlock [true].
 .TP
 .B \-GPUlocalSize n      
-Compute shader local size [16].
+Compute shader local size [256].
 .TP
 .B \-V,\-View             
 View output; command-line only.
@@ -51,6 +57,7 @@ Center, Bottom, Top, or Zero page alignment [C].
 .TP
 .B \-aligndir pair       
 Directional page alignment (overrides align) [(0,0)].
+-animating             [false]
 .TP
 .B \-antialias n         
 Antialiasing width for rasterized output [2].
@@ -61,7 +68,7 @@ Automatically activate 3D scene [true].
 .B \-autobillboard       
 3D labels always face viewer by default [true].
 .TP
-.B \-autoimport string   
+.B \-autoimport str      
 Module to automatically import.
 .TP
 .B \-autoplain           
@@ -83,22 +90,23 @@ Mask fpu exceptions in batch mode [false].
 View output in batch mode [false].
 .TP
 .B \-bw                  
-Convert all colors to black and white [false].
+Convert all colors to black and white false.
 .TP
 .B \-cd directory        
 Set current directory; command-line only.
 .TP
 .B \-cmyk                
-Convert rgb colors to cmyk [false].
+Convert rgb colors to cmyk false.
 .TP
-.B \-c,\-command string   
+.B \-c,\-command str      
 Command to autoexecute.
 .TP
 .B \-compact             
-Conserve memory at the expense of speed [false].
+Conserve memory at the expense of speed false.
 .TP
 .B \-compress            
 Compress images in PDF output [true].
+-convertOptions str    []
 .TP
 .B \-d,\-debug            
 Enable debugging messages [false].
@@ -111,12 +119,17 @@ Default output file precision [7].
 .TP
 .B \-divisor n           
 Garbage collect using purge(divisor=n) [2].
+-dvipsOptions str      []
 .TP
 .B \-dvisvgmMultipleFiles
-dvisvgm supports multiple files [false].
+dvisvgm supports multiple files [true].
+-dvisvgmOptions str    []
 .TP
 .B \-embed               
 Embed rendered preview image [true].
+.TP
+.B \-e,\-environment      
+Show summary of environment settings; command-line only.
 .TP
 .B \-exitonEOF           
 Exit interactive mode on EOF [true].
@@ -129,21 +142,25 @@ Additional frame delay [0].
 .TP
 .B \-framerate frames/s  
 Animation speed [30].
+-glOptions str         []
 .TP
 .B \-globalread          
-Allow read from other directory [true].
+Allow read from other directory true.
 .TP
 .B \-globalwrite         
-Allow write to other directory [false].
+Allow write to other directory false.
 .TP
 .B \-gray                
-Convert all colors to grayscale [false].
+Convert all colors to grayscale false.
+-gsOptions str         []
 .TP
 .B \-h,\-help             
 Show summary of options; command-line only.
 .TP
 .B \-historylines n      
 Retain n lines of history [1000].
+-htmlviewerOptions str
+-hyperrefOptions str   [setpagesize=false,unicode,pdfborder=0 0 0]
 .TP
 .B \-ibl                 
 Enable environment map image-based lighting [false].
@@ -151,10 +168,10 @@ Enable environment map image-based lighting [false].
 .B \-iconify             
 Iconify rendering window [false].
 .TP
-.B \-image string        
+.B \-image str           
 Environment image name [snowyField].
 .TP
-.B \-imageDir string     
+.B \-imageDir str        
 Environment image library directory [ibl].
 .TP
 .B \-inlineimage         
@@ -162,6 +179,9 @@ Generate inline embedded image [false].
 .TP
 .B \-inlinetex           
 Generate inline TeX code [false].
+.TP
+.B \-inpipe n            
+Input pipe [-1].
 .TP
 .B \-interactiveMask     
 Mask fpu exceptions in interactive mode [true].
@@ -171,6 +191,7 @@ View output in interactive mode [true].
 .TP
 .B \-interactiveWrite    
 Write expressions entered at the prompt to stdout [true].
+-interrupt             [false]
 .TP
 .B \-k,\-keep             
 Keep intermediate files [false].
@@ -226,14 +247,25 @@ Convert each output file to specified format.
 .B \-o,\-outname name     
 Alternative output directory/filename.
 .TP
+.B \-outpipe n           
+Output pipe [-1].
+.TP
+.B \-paperheight bp      
+Default page height [0].
+.TP
+.B \-paperwidth bp       
+Default page width [0].
+.TP
 .B \-p,\-parseonly        
 Parse file [false].
 .TP
 .B \-pdfreload           
 Automatically reload document in pdfviewer [false].
+-pdfreloadOptions str  []
 .TP
 .B \-pdfreloaddelay usec 
 Delay before attempting initial pdf reload [750000].
+-pdfviewerOptions str  []
 .TP
 .B \-position pair       
 Initial 3D rendering screen position [(0,0)].
@@ -244,11 +276,12 @@ Embed 3D PRC graphics in PDF output [false].
 .B \-prerender resolution
 Prerender V3D objects (0 implies vector output) [0].
 .TP
-.B \-prompt string       
+.B \-prompt str          
 Prompt [> ].
 .TP
-.B \-prompt2 string      
+.B \-prompt2 str         
 Continuation prompt for multiline input  [..].
+-psviewerOptions str   []
 .TP
 .B \-q,\-quiet            
 Suppress welcome text and noninteractive stdout [false].
@@ -263,10 +296,10 @@ Resize step [1.2].
 reverse 3D animations [false].
 .TP
 .B \-rgb                 
-Convert cmyk colors to rgb [false].
+Convert cmyk colors to rgb false.
 .TP
 .B \-safe                
-Disable system call [true].
+Disable system call true.
 .TP
 .B \-scroll n            
 Scroll standard output n lines at a time [0].
@@ -310,11 +343,11 @@ Run LaTeX twice (to resolve references) [false].
 .B \-twosided            
 Use two-sided 3D lighting model for rendering [true].
 .TP
-.B \-u,\-user string      
+.B \-u,\-user str         
 General purpose user string.
 .TP
 .B \-v,\-verbose          
-Increase verbosity level (can specify multiple times) [0].
+Increase verbosity level (can specify multiple times) 0.
 .TP
 .B \-version             
 Show version; command-line only.
@@ -328,7 +361,7 @@ Horizontal and vertical 3D viewport margin [(0.5,0.5)].
 .B \-wait                
 Wait for child processes to finish before exiting [false].
 .TP
-.B \-warn string         
+.B \-warn str            
 Enable warning; command-line only.
 .TP
 .B \-webgl2              

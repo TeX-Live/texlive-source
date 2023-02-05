@@ -1,10 +1,13 @@
-#ifdef GPUINDEXING
-layout(binding=0, std430) buffer offsetBuffer {
-  uint count[];
+#ifdef GPUCOMPRESS
+layout(binding=1, std430) buffer indexBuffer
+{
+  uint index[];
 };
 #else
-layout(binding=2, std430) buffer countBuffer {
-  uint count[];
+layout(binding=2, std430) buffer countBuffer
+{
+  uint maxSize;
+  uint index[];
 };
 #endif
 
@@ -12,6 +15,6 @@ uniform uint width;
 
 void main()
 {
-  atomicAdd(count[uint(gl_FragCoord.y)*width+uint(gl_FragCoord.x)],1u);
+  atomicAdd(index[uint(gl_FragCoord.y)*width+uint(gl_FragCoord.x)],1u);
   discard;
 }

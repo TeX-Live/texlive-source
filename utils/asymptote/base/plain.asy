@@ -171,7 +171,7 @@ string[] reverse(string[] a) {return a[reverse(a.length)];}
 real[] uniform(real a, real b, int n)
 {
   if(n <= 0) return new real[];
-  return a+(b-a)/n*sequence(n+1);
+  return a+sequence(n+1)/n*(b-a);
 }
 
 void eval(string s, bool embedded=false)
@@ -264,7 +264,7 @@ struct cputime {
 cputime cputime()
 {
   static processtime last;
-  real [] a=_cputime();
+  real[] a=_cputime();
   cputime cputime;
   real clock=a[4];
   cputime.parent.user=a[0];
@@ -300,6 +300,34 @@ void write(string s="", cputime c, string format=cputimeformat,
            suffix suffix=endl)
 {
   write(stdout,s,c,format,suffix);
+}
+
+struct realschur {
+  real[][] U;
+  real[][] T;
+}
+
+realschur schur(real[][] a)
+{
+  real[][][] S=_schur(a);
+  realschur schur;
+  schur.U=S[0];
+  schur.T=S[1];
+  return schur;
+}
+
+struct schur {
+  pair[][] U;
+  pair[][] T;
+}
+
+schur schur(pair[][] a)
+{
+  pair[][][] S=_schur(a);
+  schur schur;
+  schur.U=S[0];
+  schur.T=S[1];
+  return schur;
 }
 
 if(settings.autoimport != "") {

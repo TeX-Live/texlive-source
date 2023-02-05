@@ -1,4 +1,4 @@
-# Install script for directory: /u/bowman/camp/LspCpp/third_party/uri/src
+# Install script for directory: /usr/local/src/asymptote-2.84/LspCpp/third_party/uri/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -42,7 +42,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/bin/objdump")
 endif()
 
-if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/u/bowman/camp/LspCpp/third_party/uri/src/libnetwork-uri.a")
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "/usr/local/src/asymptote-2.84/LspCpp/third_party/uri/src/libnetwork-uri.a")
 endif()
 

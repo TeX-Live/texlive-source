@@ -1,2 +1,2 @@
-const char *REVISION="2.79";
-const char *AsyGLVersion="1.01";
+const char *REVISION="2.84";
+const char *AsyGLVersion="1.02";

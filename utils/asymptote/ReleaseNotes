@@ -1,3 +1,48 @@
+Release Notes for Version 2.84
+
+PDF image compression is now disabled by default for alternative output
+formats. The default UNIX postscript and PDF viewers were changed to evince.
+Makefile dependencies were fixed. A Qt compatibility bug was fixed in Xasy.
+A bug in XDR reads was fixed. A runtime error in the TexHead arrow was fixed.
+An inversion bug was fixed in the geometry module. A division by zero error
+in the vectorfield function was fixed. An option to display environment
+settings was added. The default labelmargin function now accounts for
+the pen linewidth. The resolution of the wall clock timer was improved.
+
+Release Notes for Version 2.83
+
+WebGL triangle groups were fixed. Context menus were added to Xasy objects
+to allow one to edit the fill type, line type, color, line cap, and
+optionally add arrowheads. Support for begingroup() and endgroup() was
+added to Xasy. Scaling in the vectorfield function was fixed.
+A quotient(x,y) bug when -1 < x/y < 0, introduced in version 2.42, was fixed.
+
+Release Notes for Version 2.82
+
+Support for Ghostscript 9.56 was added.
+Ambiguous functions are listed.
+The dvisvgmMultipleFiles option is now enabled by default. 
+A bug in generating PDF labels was fixed.
+The mean color of multicoloured patches is output only for PRC code.
+Subdivision crack adjustments were disabled for transparent patches.
+The OpenGL transparency shader was further accelerated.
+WebGL bounding boxes are now computed by the client upon loading.
+Version 1.02 of the AsyGL library was released.
+
+Release Notes for Version 2.81
+
+Schur decompositions were implemented. A bug in uniform() was fixed.
+The Xasy bounding box and a crash when opening Xasy files were fixed.
+The transparency offset buffer is zeroed when GPU compression is unavailable.
+The surface constructor for solids of revolution was documented.
+Support for pkg-config was added. Opaque rendering on platforms lacking
+GL_ARB_fragment_shader_interlock was fixed.
+
+Release Notes for Version 2.80
+
+Compression of empty transparent pixel counts and other optimizations were
+implemented in the transparency shader. A weighted least-squares fit was added.
+
 Release Notes for Version 2.79
 
 The transparency shader was further optimized. The tensorshade fillrule was

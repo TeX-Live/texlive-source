@@ -1,38 +1,40 @@
-layout(local_size_x=LOCAL_SIZE_X) in;
+layout(local_size_x=LOCALSIZE) in;
+
+const uint groupSize=LOCALSIZE*BLOCKSIZE;
 
 uniform uint elements;
 
-layout(binding=0, std430) buffer offsetBuffer
+layout(binding=2, std430) buffer countBuffer
 {
-  uint offset[];
+  uint maxSize;
+  uint count[];
 };
 
-layout(binding=2, std430) buffer localSumBuffer
+layout(binding=3, std430) buffer globalSumBuffer
 {
-  uint localSum[];
+  uint globalSum[];
 };
 
-void main(void)
+shared uint groupSum[LOCALSIZE];
+
+void main()
 {
-  uint id=gl_GlobalInvocationID.x;
+  uint id=gl_LocalInvocationID.x;
+  uint dataOffset=gl_WorkGroupID.x*groupSize+id;
+  uint stop=dataOffset+groupSize;
+  uint sum=0u;
+  for(uint i=dataOffset; i < stop; i += LOCALSIZE)
+    sum += count[i];
 
-  uint m=elements/(gl_WorkGroupSize.x*gl_NumWorkGroups.x);
-  uint r=elements-m*gl_WorkGroupSize.x*gl_NumWorkGroups.x;
-  uint row,stop;
-  if(id < r) {
-    row=m*id+id;
-    stop=row+m+1u;
-  } else {
-    row=m*id+r;
-    stop=row+m;
+  groupSum[id]=sum;
+  barrier();
+
+  for(uint s=LOCALSIZE/2; s > 0u; s >>= 1u) {
+    if(id < s)
+      groupSum[id] += groupSum[id+s];
+    barrier();
   }
 
-  uint Sum=offset[row];
-  offset[elements+row]=Sum;
-  for(uint i=row+1u; i < stop; ++i) {
-    Sum += offset[i];
-    offset[elements+i]=Sum;
-  }
-
-  localSum[id+1u]=Sum;
+  if(id == 0u)
+    globalSum[gl_WorkGroupID.x]=groupSum[0u];
 }
