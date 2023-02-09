@@ -1,3 +1,171 @@
+commit 9e242d4e7d6d79656c09d4f6c7c385dd7ea61bb3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 8 21:30:27 2023 -0700
+
+    Draw dot after drawing path.
+
+commit 0dd86a75c53fc8594e8550ac358b95b2daba830b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 7 19:21:03 2023 -0700
+
+    Add example.
+
+commit 5b310d898d8ce2d66190b5c3410115781e73f0d3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 5 11:07:46 2023 -0700
+
+    Fix centering; center image on load.
+
+commit 05cb5a04fb894f851253d52fd946658a8a546ff4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 5 00:36:41 2023 -0700
+
+    XASY: Work around QtSvg pattern bug.
+
+commit ed2b2a9a18109e7fb68b0fc15d40289d7bf20680
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 4 23:58:33 2023 -0700
+
+    Fix Makefile.
+
+commit a2fd93bd2cf7fa8c0276b00d162a0cf09182ee5e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 4 22:25:08 2023 -0700
+
+    XASY: Update script before exporting.
+
+commit a9a35e7aaf4f83c99db14f2e6684108d11fcaae3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 1 21:56:53 2023 -0700
+
+    Fix bug #367: implement intersection of path3 with Bezier triangle.
+
+commit 52c5cda4dca781353d1be0a11ea02f38be516cca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 1 21:55:34 2023 -0700
+
+    Simplify example.
+
+commit d3152c29ca4c39cb637a890aed71e3167a3656c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 30 18:30:56 2023 -0700
+
+    Improve example.
+
+commit c42ce7a03a4f4c98d81bd5757f1e9c9e51d0541d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 29 09:25:08 2023 -0700
+
+    Test errno after nanosleep.
+
+commit 0676ac869042030eb76a6585bdc016e54087d842
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 29 01:21:50 2023 -0700
+
+    Fix animation keyboard controls.
+
+commit 6c85282196c75fdb7da77517326a7345b5e2c29e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 29 00:16:58 2023 -0700
+
+    Fix animation timer.
+
+commit 40011877aa03fd1594ce0de0739f2aa9d0ed3d0d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 21:54:35 2023 -0700
+
+    Fix more uninitialized variables.
+
+commit ac287ab2984413fd146f87b668cb65795372fe31
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 21:31:01 2023 -0700
+
+    Avoid division by zero.
+
+commit 28591ba3bebbdc425acb439cefa5f9a0c5e59896
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 21:18:49 2023 -0700
+
+    Fix uninitialized variable.
+
+commit 070ee4d0b6ba764d7e9d2b238a3780aafde9fbb8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 16:08:47 2023 -0700
+
+    Fix #366: Question about python scripts.
+
+commit e68cfb31b17b45dfb12dca4d97c2156e97e21fc8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 13:47:54 2023 -0700
+
+    Update URL.
+
+commit 37f21840e26bc41c1602a26c3829daaf26fe1764
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 11:19:31 2023 -0700
+
+    Make installing icons_rc.py optional.
+
+commit 4a94516e434ba41b11d9f1a18136a699591c751a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 10:58:31 2023 -0700
+
+    Retain icons_rc.py.
+
+commit c40e2402f87b7a7362dfb9ff8f5341a197bdc82d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 10:42:18 2023 -0700
+
+    Pregenerate icons_rc.py.
+
+commit a955d6e5dd5bcee68a8fcfa072b26e18ecd8ed64
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 10:13:34 2023 -0700
+
+    Improve resolution of cputime().change.user.
+
+commit 5d234e8f8e3a17f4c35de63428a193295929ce3e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 10:10:07 2023 -0700
+
+    Implement alternatives to CLOCK_THREAD_CPUTIME_ID.
+
+commit 63d9f300e782d6242cd4aa00acf7fbc4fd53c2e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 28 08:02:08 2023 -0700
+
+    Fix compilation without FFTW.
+
+commit 72670f2b7e77a8d6e1b44b82f3a240f75205416b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 26 22:19:00 2023 -0700
+
+    Workaround broken offscreen graphics drivers.
+
+commit eb513a46a5da7023cd1c9da1178f6ed7485619f8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 24 15:18:23 2023 -0700
+
+    Increase initial heapsize under MSDOS.
+
+commit 66b92e0f40fa648bd8c5de108ebc9d8990c7d8da
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 23 00:26:07 2023 -0700
+
+    Update year in copyright.
+
+commit 7dc8177972493e333cb00c6c9ea979a5dad16f44
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 22 22:27:56 2023 -0700
+
+    Add include for usleep.
+
+commit ec067315e03ac9b3b19bba3685043188bd2da0e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 22 22:06:10 2023 -0700
+
+    Increment version to 2.85.
+
 commit 430c7a661c060568720f6d65e611a2087ea1dde6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 21 22:48:26 2023 -0700

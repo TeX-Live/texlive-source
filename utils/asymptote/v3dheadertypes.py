@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Enum class for v3dheadertypes
 """ AUTO-GENERATED from v3dheadertypes.csv """
-# Generated at 2023-01-23 00:17:44
+# Generated at 2023-02-09 04:54:07
 
 class v3dheadertypes:
     v3dheadertypes_canvasWidth=1

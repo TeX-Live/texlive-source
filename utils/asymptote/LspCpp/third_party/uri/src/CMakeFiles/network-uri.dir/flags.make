@@ -4,7 +4,7 @@
 # compile CXX with /bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/src/asymptote-2.84/LspCpp/third_party/uri/src -I/usr/local/src/asymptote-2.84/LspCpp/third_party/uri/include
+CXX_INCLUDES = -I/usr/local/src/asymptote-2.85/LspCpp/third_party/uri/src -I/usr/local/src/asymptote-2.85/LspCpp/third_party/uri/include
 
 CXX_FLAGS = -fPIE -D_FILE_OFFSET_BIS=64 -DUSEGC  -I../gc-8.2.0/include -std=c++11 -Wall -Werror -Wno-parentheses -O2 -g -DNDEBUG
 
