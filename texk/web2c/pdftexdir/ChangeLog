@@ -1,3 +1,8 @@
+2023-12-28  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web: use real space char for \pdfinterwordspaceon,
+	but only works for fonts containing the real space char.
+
 2023-01-20  Phelype Oleinik  <phe.h.o1@gmail.com>
 
 	* pdftex.web: implement shipout keyword for delayed expansion
