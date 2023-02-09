@@ -1,3 +1,11 @@
+2023-02-09  Karl Berry  <karl@freefriends.org>
+
+	* version.ac (kpse_dev): no more /dev.
+	* NEWS,
+	* doc/kpathsea.texi,
+	* kpsewhich.c,
+	* texmf.cnf: copyright 2023.
+
 2022-12-20  Karl Berry  <karl@freefriends.org>
 
 	* doc/kpathsea.texi (Supported file formats): add .lua (LUAINPUTS).

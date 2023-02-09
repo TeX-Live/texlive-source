@@ -11,4 +11,4 @@ dnl Keep package and shared library versions the same;
 dnl see kpathsea/version.ac.
 dnl
 dnl This file is m4-included from configure.ac.
-m4_define([ptexenc_version], [1.4.3/dev])
+m4_define([ptexenc_version], [1.4.3])

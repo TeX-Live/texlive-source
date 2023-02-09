@@ -1,3 +1,12 @@
+2022-01-18  Karl Berry  <karl@freefriends.org>
+
+	* NEWS,
+	* afm2tfm.c,
+	* dvips.c,
+	* dvips.h,
+	* dvips.texi,
+	* configure.ac: version 2023.1 and copyright 2023.
+
 2022-09-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvips.c:

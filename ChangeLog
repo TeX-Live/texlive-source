@@ -1,6 +1,10 @@
+2023-02-09  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: 2023, no more /dev.
+
 2022-03-21  Karl Berry  <karl@freefriends.org>
 
-	* tardate.ac (tex_live_tardate): 2020-03-21 for TL'22.
+	* tardate.ac (tex_live_tardate): 2022-03-21 for TL'22.
 
 2022-01-18  Karl Berry  <karl@freefriends.org>
 

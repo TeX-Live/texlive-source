@@ -1,3 +1,10 @@
+2021-02-17  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]25 for TL23..
+
 2023-12-28  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web: use real space char for \pdfinterwordspaceon,

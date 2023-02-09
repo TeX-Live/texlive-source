@@ -1,6 +1,9 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+dvips 2023.1 (TeX Live 2023):
+  Check --help and --version early to avoid looking for texmf.cnf.
+
 dvips 2022.1 (TeX Live 2022):
   New option (and config file directive) -landscaperotate: try to
     automatically match rotated page content and paper sizes; in the past,

@@ -1,6 +1,10 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+6.3.5 (for TeX Live 2023)
+* Support guessing input file encodings for Unix-ish platforms, as on
+  Windows; enabled for (e)p(la)tex, pbibtex, mendex.
+
 6.3.4 (for TeX Live 2022)
 * First return path from kpsewhich -all is now the same as non-all.
   (Internally, str_list_uniqify retains ordering.)

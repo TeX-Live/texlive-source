@@ -1664,11 +1664,11 @@ Optional Features:
   --enable-tex-synctex        build TeX with SyncTeX support
   --enable-etex             compile and install e-TeX
   --disable-etex-synctex      build e-TeX without SyncTeX support
-  --disable-ptex            do not compile and install pTeX
+  --enable-ptex             compile and install pTeX
   --disable-ptex-synctex      build pTeX without SyncTeX support
   --disable-eptex           do not compile and install e-pTeX
   --disable-eptex-synctex     build e-pTeX without SyncTeX support
-  --disable-uptex           do not compile and install upTeX
+  --enable-uptex            compile and install upTeX
   --disable-uptex-synctex     build upTeX without SyncTeX support
   --disable-euptex          do not compile and install e-upTeX
   --disable-euptex-synctex    build e-upTeX without SyncTeX support
@@ -5408,7 +5408,7 @@ case $enable_ptex in #(
   yes | no) :
      ;; #(
   *) :
-    enable_ptex=yes ;;
+    enable_ptex=no ;;
 esac
 
 # Check whether --enable-ptex-synctex was given.
@@ -5452,7 +5452,7 @@ case $enable_uptex in #(
   yes | no) :
      ;; #(
   *) :
-    enable_uptex=yes ;;
+    enable_uptex=no ;;
 esac
 
 # Check whether --enable-uptex-synctex was given.
@@ -26430,11 +26430,11 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:
-** Configuration summary for $PACKAGE_STRING (2023/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2023$with_banner_add):
 
    $msg_compiling" >&5
 printf "%s\n" "
-** Configuration summary for $PACKAGE_STRING (2023/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2023$with_banner_add):
 
    $msg_compiling" >&6; }
 case $kpse_src$kpse_bld in

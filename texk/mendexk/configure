@@ -14116,7 +14116,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2023/dev\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2023\"" >>confdefs.h
 
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if C99 variadic macros are supported" >&5

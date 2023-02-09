@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
-				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2022 Japanese TeX Development Community\n");
+				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2023 Japanese TeX Development Community\n");
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJSU] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--[no-]guess-input-enc] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");

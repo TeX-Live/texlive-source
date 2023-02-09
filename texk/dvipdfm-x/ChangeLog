@@ -1,3 +1,9 @@
+2023-02-09  Karl Berry  <karl@freefriends.org>
+
+	* xbb.c (show_version),
+	* configure.ac,
+	* dvipdfmx.c (show_version): copyright 2023.
+
 2022-07-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {dvipdfmx,spc_pdfm}.c, dpxconf.{c,h}, man/dvipdfmx.1:

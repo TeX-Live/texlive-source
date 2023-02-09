@@ -1,5 +1,8 @@
 ==============================================================
-XeTeX 0.999994
+XeTeX 0.999995
+
+==============================================================
+XeTeX 0.999994 (February 2022)
 
 * New wrapper scripts xetex-unsafe and xelatex-unsafe for XeTeX
   documents requiring PSTricks transparency. For safety, use LuaTeX instead.

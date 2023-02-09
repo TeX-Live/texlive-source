@@ -1,3 +1,7 @@
+2023-02-09  Karl Berry  <karl@tug.org>
+
+	* version.ac: remove /dev, for TL23.
+
 2023-01-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptexenc.c, ptexenc/ptexenc.h:

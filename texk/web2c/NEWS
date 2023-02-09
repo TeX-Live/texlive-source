@@ -1,6 +1,19 @@
 This file records noteworthy changes.  (Public domain.)
 
 
+2023 (for TeX Live 2023)
+
+* (u)pTeX: now using as aliases of e(u)ptex. Also support guessing input
+  encodings with these and (u)pbibtex.
+
+* bibtex: check options early to avoid looking for texmf.cnf unnecessarily;
+    use max_print_line texmf.cnf variable.
+
+* ctangle: with option +u, transliterate UTF-8 in C source.
+
+* mflua{,jit}: add potrace support.
+
+
 2022 (for TeX Live 2022, 21 March 2022)
 
 * new hitex engine included, which outputs HINT files for display on
