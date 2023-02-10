@@ -12,8 +12,11 @@
 #  endif
 #endif
 
-/* we use "static" for all platforms */
-#define ZLIB_INTERNAL
+#ifdef HAVE_HIDDEN
+#  define ZLIB_INTERNAL __attribute__((visibility ("hidden")))
+#else
+#  define ZLIB_INTERNAL
+#endif
 
 #include <stdio.h>
 #include "zlib.h"
@@ -200,9 +203,9 @@ typedef struct {
 typedef gz_state FAR *gz_statep;
 
 /* shared functions */
-static void ZLIB_INTERNAL gz_error OF((gz_statep, int, const char *));
+void ZLIB_INTERNAL gz_error OF((gz_statep, int, const char *));
 #if defined UNDER_CE
-static char ZLIB_INTERNAL *gz_strwinerror OF((DWORD error));
+char ZLIB_INTERNAL *gz_strwinerror OF((DWORD error));
 #endif
 
 /* GT_OFF(x), where x is an unsigned value, is true if x > maximum z_off64_t
@@ -211,6 +214,6 @@ static char ZLIB_INTERNAL *gz_strwinerror OF((DWORD error));
 #ifdef INT_MAX
 #  define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > INT_MAX)
 #else
-static unsigned ZLIB_INTERNAL gz_intmax OF((void));
+unsigned ZLIB_INTERNAL gz_intmax OF((void));
 #  define GT_OFF(x) (sizeof(int) == sizeof(z_off64_t) && (x) > gz_intmax())
 #endif

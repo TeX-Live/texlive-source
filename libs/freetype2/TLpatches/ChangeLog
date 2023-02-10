@@ -1,3 +1,11 @@
+2023-02-11  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import freetype-2.13.0 source tree from:
+	  http://download.savannah.gnu.org/releases/freetype.
+	* patch-01-do-not-export-internal-zlib: remove.
+	* patch-04-void-main: remove.
+	* patch-05-windows-static: add.
+
 2022-11-06  Karl Berry  <karl@freefriends.org>
 
 	* patch-01-do-not-export-internal-zlib: add.

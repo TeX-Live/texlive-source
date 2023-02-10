@@ -10,7 +10,9 @@
 #  include "gzguts.h"
 #endif
 
-static z_const char * const z_errmsg[10] = {
+#ifndef Z_FREETYPE
+
+z_const char * const z_errmsg[10] = {
     (z_const char *)"need dictionary",     /* Z_NEED_DICT       2  */
     (z_const char *)"stream end",          /* Z_STREAM_END      1  */
     (z_const char *)"",                    /* Z_OK              0  */
@@ -24,12 +26,12 @@ static z_const char * const z_errmsg[10] = {
 };
 
 
-static const char * ZEXPORT zlibVersion()
+const char * ZEXPORT zlibVersion()
 {
     return ZLIB_VERSION;
 }
 
-static uLong ZEXPORT zlibCompileFlags()
+uLong ZEXPORT zlibCompileFlags()
 {
     uLong flags;
 
@@ -61,9 +63,11 @@ static uLong ZEXPORT zlibCompileFlags()
 #ifdef ZLIB_DEBUG
     flags += 1 << 8;
 #endif
+    /*
 #if defined(ASMV) || defined(ASMINF)
     flags += 1 << 9;
 #endif
+     */
 #ifdef ZLIB_WINAPI
     flags += 1 << 10;
 #endif
@@ -117,9 +121,9 @@ static uLong ZEXPORT zlibCompileFlags()
 #  ifndef verbose
 #    define verbose 0
 #  endif
-static int ZLIB_INTERNAL z_verbose = verbose;
+int ZLIB_INTERNAL z_verbose = verbose;
 
-static void ZLIB_INTERNAL z_error (
+void ZLIB_INTERNAL z_error(
     char *m)
 {
     fprintf(stderr, "%s\n", m);
@@ -130,11 +134,13 @@ static void ZLIB_INTERNAL z_error (
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-static const char * ZEXPORT zError(
+const char * ZEXPORT zError(
     int err)
 {
     return ERR_MSG(err);
 }
+
+#endif  /* !Z_FREETYPE */
 
 #if defined(_WIN32_WCE) && _WIN32_WCE < 0x800
     /* The older Microsoft C Run-Time Library for Windows CE doesn't have
@@ -146,7 +152,7 @@ static const char * ZEXPORT zError(
 
 #ifndef HAVE_MEMCPY
 
-static void ZLIB_INTERNAL zmemcpy(
+void ZLIB_INTERNAL zmemcpy(
     Bytef* dest,
     const Bytef* source,
     uInt  len)
@@ -157,7 +163,9 @@ static void ZLIB_INTERNAL zmemcpy(
     } while (--len != 0);
 }
 
-static int ZLIB_INTERNAL zmemcmp(
+#ifndef Z_FREETYPE
+
+int ZLIB_INTERNAL zmemcmp(
     const Bytef* s1,
     const Bytef* s2,
     uInt  len)
@@ -170,7 +178,7 @@ static int ZLIB_INTERNAL zmemcmp(
     return 0;
 }
 
-static void ZLIB_INTERNAL zmemzero(
+void ZLIB_INTERNAL zmemzero(
     Bytef* dest,
     uInt  len)
 {
@@ -179,6 +187,7 @@ static void ZLIB_INTERNAL zmemzero(
         *dest++ = 0;  /* ??? to be unrolled */
     } while (--len != 0);
 }
+#endif  /* !Z_FREETYPE */
 #endif
 
 #ifndef Z_SOLO
@@ -214,7 +223,7 @@ local ptr_table table[MAX_PTR];
  * a protected system like OS/2. Use Microsoft C instead.
  */
 
-static voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned size)
+voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, unsigned items, unsigned size)
 {
     voidpf buf;
     ulg bsize = (ulg)items*size;
@@ -240,7 +249,7 @@ static voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, unsigned items, unsigned siz
     return buf;
 }
 
-static void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
+void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr)
 {
     int n;
 
@@ -277,13 +286,13 @@ static void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
 #  define _hfree   hfree
 #endif
 
-static voidpf ZLIB_INTERNAL zcalloc (voidpf opaque, uInt items, uInt size)
+voidpf ZLIB_INTERNAL zcalloc(voidpf opaque, uInt items, uInt size)
 {
     (void)opaque;
     return _halloc((long)items, size);
 }
 
-static void ZLIB_INTERNAL zcfree (voidpf opaque, voidpf ptr)
+void ZLIB_INTERNAL zcfree(voidpf opaque, voidpf ptr)
 {
     (void)opaque;
     _hfree(ptr);
@@ -302,7 +311,7 @@ extern voidp  calloc OF((uInt items, uInt size));
 extern void   free   OF((voidpf ptr));
 #endif
 
-static voidpf ZLIB_INTERNAL zcalloc (
+voidpf ZLIB_INTERNAL zcalloc(
     voidpf opaque,
     unsigned items,
     unsigned size)
@@ -312,7 +321,7 @@ static voidpf ZLIB_INTERNAL zcalloc (
                               (voidpf)calloc(items, size);
 }
 
-static void ZLIB_INTERNAL zcfree (
+void ZLIB_INTERNAL zcfree(
     voidpf opaque,
     voidpf ptr)
 {

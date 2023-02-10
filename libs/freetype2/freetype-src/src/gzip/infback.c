@@ -25,7 +25,7 @@ local void fixedtables OF((struct inflate_state FAR *state));
    windowBits is in the range 8..15, and window is a user-supplied
    window and output buffer that is 2**windowBits bytes.
  */
-static int ZEXPORT inflateBackInit_(
+int ZEXPORT inflateBackInit_(
     z_streamp strm,
     int windowBits,
     unsigned char FAR *window,
@@ -66,6 +66,7 @@ static int ZEXPORT inflateBackInit_(
     state->window = window;
     state->wnext = 0;
     state->whave = 0;
+    state->sane = 1;
     return Z_OK;
 }
 
@@ -247,7 +248,7 @@ local void fixedtables(
    inflateBack() can also return Z_STREAM_ERROR if the input parameters
    are not correct, i.e. strm is Z_NULL or the state was not initialized.
  */
-static int ZEXPORT inflateBack(
+int ZEXPORT inflateBack(
     z_streamp strm,
     in_func in,
     void FAR *in_desc,
@@ -605,31 +606,33 @@ static int ZEXPORT inflateBack(
             break;
 
         case DONE:
-            /* inflate stream terminated properly -- write leftover output */
+            /* inflate stream terminated properly */
             ret = Z_STREAM_END;
-            if (left < state->wsize) {
-                if (out(out_desc, state->window, state->wsize - left))
-                    ret = Z_BUF_ERROR;
-            }
             goto inf_leave;
 
         case BAD:
             ret = Z_DATA_ERROR;
             goto inf_leave;
 
-        default:                /* can't happen, but makes compilers happy */
+        default:
+            /* can't happen, but makes compilers happy */
             ret = Z_STREAM_ERROR;
             goto inf_leave;
         }
 
-    /* Return unused input */
+    /* Write leftover output and return unused input */
   inf_leave:
+    if (left < state->wsize) {
+        if (out(out_desc, state->window, state->wsize - left) &&
+            ret == Z_STREAM_END)
+            ret = Z_BUF_ERROR;
+    }
     strm->next_in = next;
     strm->avail_in = have;
     return ret;
 }
 
-static int ZEXPORT inflateBackEnd(
+int ZEXPORT inflateBackEnd(
     z_streamp strm)
 {
     if (strm == Z_NULL || strm->state == Z_NULL || strm->zfree == (free_func)0)

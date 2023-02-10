@@ -8,7 +8,7 @@
  * parse compressed PCF fonts, as found with many X11 server
  * distributions.
  *
- * Copyright (C) 2002-2022 by
+ * Copyright (C) 2002-2023 by
  * David Turner, Robert Wilhelm, and Werner Lemberg.
  *
  * This file is part of the FreeType project, and may only be used,
@@ -70,23 +70,20 @@
   /* so that configuration with `FT_CONFIG_OPTION_SYSTEM_ZLIB' might   */
   /* include the wrong `zconf.h' file, leading to errors.              */
 
-  /* `HAVE_HIDDEN` should be defined if                                 */
-  /*                                                                    */
-  /*   __attribute__((visibility("hidden")))                            */
-  /*                                                                    */
-  /* is supported by the compiler, which prevents internal symbols from */
-  /* being exported by the library.                                     */
 #if defined( __GNUC__ ) ||  defined( __clang__ )
-#define HAVE_HIDDEN  1
-#define ZEXPORT
-#define ZEXTERN      static
-#else
 #define ZEXPORT
 #define ZEXTERN      static
 #endif
 
-#define Z_SOLO      1
-#define Z_FREETYPE  1
+/* In TeX Live, we use the same linking as above for Windows */
+#if defined( _WIN32 )
+#define ZEXPORT
+#define ZEXTERN      static
+#endif
+
+#define HAVE_MEMCPY  1
+#define Z_SOLO       1
+#define Z_FREETYPE   1
 
 #if defined( _MSC_VER )      /* Visual C++ (and Intel C++)   */
   /* We disable the warning `conversion from XXX to YYY,     */
@@ -99,7 +96,9 @@
 
 #if defined( __GNUC__ )
 #pragma GCC diagnostic push
+#ifndef __cplusplus
 #pragma GCC diagnostic ignored "-Wstrict-prototypes"
+#endif
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wredundant-decls"
 #endif
@@ -159,28 +158,6 @@
 
     FT_MEM_FREE( address );
   }
-
-
-#if !defined( FT_CONFIG_OPTION_SYSTEM_ZLIB ) && !defined( USE_ZLIB_ZCALLOC )
-
-  static voidpf ZLIB_INTERNAL
-  zcalloc ( voidpf    opaque,
-            unsigned  items,
-            unsigned  size )
-  {
-    return ft_gzip_alloc( opaque, items, size );
-  }
-
-
-  static void ZLIB_INTERNAL
-  zcfree( voidpf  opaque,
-          voidpf  ptr )
-  {
-    ft_gzip_free( opaque, ptr );
-  }
-
-#endif /* !SYSTEM_ZLIB && !USE_ZLIB_ZCALLOC */
-
 
 /***************************************************************************/
 /***************************************************************************/
@@ -791,6 +768,9 @@
       return FT_THROW( Array_Too_Large );
 
     if ( err == Z_DATA_ERROR )
+      return FT_THROW( Invalid_Table );
+
+    if ( err == Z_NEED_DICT )
       return FT_THROW( Invalid_Table );
 
     return FT_Err_Ok;

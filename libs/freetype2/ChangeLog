@@ -1,3 +1,8 @@
+2023-02-11  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import freetype-2.13.0.
+	* version.ac: Adjusted.
+
 2022-11-06  Sam James  <sam@gentoo.org>
 
 	* freetype-src/builds/unix/freetype2.m4: placate clang16.
