@@ -59,12 +59,14 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-dispatch.hh \
 	@HARFBUZZ_TREE@/src/hb-draw.cc \
 	@HARFBUZZ_TREE@/src/hb-draw.hh \
+	@HARFBUZZ_TREE@/src/hb-face-builder.cc \
 	@HARFBUZZ_TREE@/src/hb-face.hh \
 	@HARFBUZZ_TREE@/src/hb-face.cc \
 	@HARFBUZZ_TREE@/src/hb-font.hh \
 	@HARFBUZZ_TREE@/src/hb-font.cc \
 	@HARFBUZZ_TREE@/src/hb-iter.hh \
 	@HARFBUZZ_TREE@/src/hb-kern.hh \
+	@HARFBUZZ_TREE@/src/hb-limits.hh \
 	@HARFBUZZ_TREE@/src/hb-map.hh \
 	@HARFBUZZ_TREE@/src/hb-map.cc \
 	@HARFBUZZ_TREE@/src/hb-machinery.hh \
@@ -85,8 +87,6 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-cff2-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-gasp-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color-cbdt-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color-colrv1-closure.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-cmap-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-face.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-face.hh \
@@ -112,6 +112,12 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-tag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-common.hh \
+	@HARFBUZZ_TREE@/src/hb-outline.cc \
+	@HARFBUZZ_TREE@/src/hb-outline.hh \
+	@HARFBUZZ_TREE@/src/hb-paint-extents.cc \
+	@HARFBUZZ_TREE@/src/hb-paint-extents.hh \
+	@HARFBUZZ_TREE@/src/hb-paint.cc \
+	@HARFBUZZ_TREE@/src/hb-paint.hh \
 	@HARFBUZZ_TREE@/src/hb-sanitize.hh \
 	@HARFBUZZ_TREE@/src/hb-serialize.hh \
 	@HARFBUZZ_TREE@/src/hb-set-digest.hh \
@@ -135,6 +141,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \
 	@HARFBUZZ_TREE@/src/hb-ucd-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ucd.cc \
@@ -144,7 +151,8 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-vector.hh \
 	@HARFBUZZ_TREE@/src/hb-utf.hh \
 	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-json.hh \
-	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text.hh \
+	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text-glyphs.hh \
+	@HARFBUZZ_TREE@/src/hb-buffer-deserialize-text-unicode.hh \
 	@HARFBUZZ_TREE@/src/hb-fallback-shape.cc \
 	@HARFBUZZ_TREE@/src/hb.hh
 
@@ -177,10 +185,6 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-layout-jstf-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-layout.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-color.cc \
-	@HARFBUZZ_TREE@/src/hb-ot-color-colr-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color-cpal-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color-sbix-table.hh \
-	@HARFBUZZ_TREE@/src/hb-ot-color-svg-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-map.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-map.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-math.cc \
@@ -231,6 +235,12 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/hb-ot-vorg-table.hh
 ##
 libharfbuzz_a_SOURCES += \
+	@HARFBUZZ_TREE@/src/OT/Color/CBDT/CBDT.hh \
+	@HARFBUZZ_TREE@/src/OT/Color/COLR/COLR.hh \
+	@HARFBUZZ_TREE@/src/OT/Color/COLR/colrv1-closure.hh \
+	@HARFBUZZ_TREE@/src/OT/Color/CPAL/CPAL.hh \
+	@HARFBUZZ_TREE@/src/OT/Color/sbix/sbix.hh \
+	@HARFBUZZ_TREE@/src/OT/Color/svg/svg.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/glyf.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/glyf-helpers.hh \
 	@HARFBUZZ_TREE@/src/OT/glyf/loca.hh \
@@ -247,6 +257,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/CoverageFormat1.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/CoverageFormat2.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/Common/RangeRecord.hh \
+	@HARFBUZZ_TREE@/src/OT/Layout/GDEF/GDEF.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/Common.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/Sequence.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GSUB/SingleSubstFormat1.hh \
@@ -301,6 +312,7 @@ libharfbuzz_a_SOURCES += \
 	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/SinglePosFormat2.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/SinglePos.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/GPOS/ValueFormat.hh \
+	@HARFBUZZ_TREE@/src/OT/name/name.hh \
 	@HARFBUZZ_TREE@/src/OT/Layout/types.hh \
 	@HARFBUZZ_TREE@/src/graph/graph.hh \
 	@HARFBUZZ_TREE@/src/graph/serialize.hh
