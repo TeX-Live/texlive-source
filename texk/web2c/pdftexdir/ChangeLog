@@ -1,3 +1,10 @@
+2023-02-12  Phelype Oleinik <phe.h.o1@gmail.com>
+        and Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web (Implement \.{\\special}): add comments explaining
+	that write_stream(tail):=null is an overflow assignment with the
+	current memory_word structure, and is overwritten in enctex2.ch.
+
 2023-02-11  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.ch (pdf_font_has_space_char): xmalloc and maintain new array.

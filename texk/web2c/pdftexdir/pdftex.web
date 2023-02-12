@@ -34003,6 +34003,21 @@ end
 list as in \.{\\xdef} and \.{\\mark}.  When marked with \.{shipout}, we keep
 tokens unexpanded for now.
 
+Unfortunately, the |write_stream(tail):=null| done here is not a valid
+assignment in Web2C, because |null| (a.k.a.\ |min_halfword|) is a large
+negative number ($-268435455 = -@"FFFFFFF$, set in \.{tex.ch}); too
+large to fit in the {\bf short} structure element that's being assigned.
+The warning from gcc~8.5.0 was:
+
+\.{pdftex0.c: In function 'doextension':}
+\.{pdftex0.c:37849:40: warning: overflow in conversion from 'long int' to 'short int'}
+\.{changes value from '-268435455' to '1' [-Woverflow]}\hfil\break
+\.{  mem [curlist .tailfield + 1 ].hh.b0 = -268435455L ;}
+
+The correct thing to do is not immediately evident. However, for Web2C,
+it does not matter, because these lines are changed for enc\TeX, in
+\.{enctex2.ch}, and now zero is assigned, instead of |null|.
+
 @<Implement \.{\\special}@>=
 begin if scan_keyword("shipout") then
 begin new_whatsit(latespecial_node,write_node_size); write_stream(tail):=null;

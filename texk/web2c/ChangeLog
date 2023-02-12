@@ -1,3 +1,11 @@
+2023-02-12  Phelype Oleinik <phe.h.o1@gmail.com>
+        and Karl Berry  <karl@freefriends.org>
+
+	* enctexdir/enctex2.ch: make parallel change for ``late''
+	\special shipout. This code is what avoids the invalid
+	write_stream(tail):=null assignment in the original code.
+	See pdftex.web (Implement \.{\\special}) for more.
+
 2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* Makefile.in, ac/web2c.ac (ptex, uptex):
