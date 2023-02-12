@@ -661,11 +661,12 @@ boolean isscalable(internalfontnumber f)
 
 boolean hasspacechar(internalfontnumber f)
 {
+    fm_entry *fm;
+    fe_entry *fe;
     if (!isscalable(f))
         return false;
 
-    fm_entry *fm = (fm_entry *)pdffontmap[f];
-    fe_entry *fe;
+    fm = (fm_entry *)pdffontmap[f];
 
     /* if a font is not re-encoded via its map entry, we assume it has no space char */
     if (is_reencoded(fm) && (fe = get_fe_entry(fm->encname)) != NULL) {
