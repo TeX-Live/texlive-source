@@ -39,9 +39,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 { functions from mapfile.c }
 @define function hasfmentry();
 @define function isscalable();
+@define function hasspacechar();
 @define procedure checkextfm();
 @define procedure pdfmapfile();
 @define procedure pdfmapline();
+@define procedure pdfmaplinesp;
 @define procedure pdfinitmapfile();
 
 { functions from utils.c }

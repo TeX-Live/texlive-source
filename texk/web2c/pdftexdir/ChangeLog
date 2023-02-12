@@ -1,3 +1,23 @@
+2023-02-11  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.ch (pdf_font_has_space_char): xmalloc and maintain new array.
+	* pdftex.web (pdf_init_font): update pdf_font_has_space_char array.
+	(pdf_read_dummy_font): use pdf_space_font_name instead of
+	hardwired "dummy-space".
+	(pdf_begin_string): use real space char if pdf_font_has_space_char,
+	else call pdf_insert_interword_space.
+	(pdf_space_font_code): new \pdfspacefont primitive.
+	(Put each ...): define it.
+	(Cases of |print_cmd_chr|...): print it.
+	(Declare act...): switch on it.
+	(Implement \.{\\pdfspacefont}): implement it.
+	(Glob...): declare pdf_space_font_name.
+	(Set init...): initialize it.
+	* pdftex.defines,
+	* ptexlib.h,
+	* mapfile.c (hasspacechar, pdfmaplinesp): new fns.
+	* NEWS: mention new behavior.
+
 2021-02-17  Karl Berry  <karl@tug.org>
 
         * NEWS,

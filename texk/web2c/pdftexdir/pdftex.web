@@ -15225,11 +15225,6 @@ begin
     get_slant := slant(f);
 end;
 
-function new_dummy_font: internal_font_number;
-begin
-    new_dummy_font := read_font_info(null_cs, "dummy", "", -1000);
-end;
-
 @ Helper for debugging purposes:
 
 @p procedure short_display_n(@!p, m:integer); {prints highlights of list |p|}
@@ -15973,7 +15968,6 @@ DVI}
 @!pdf_last_fs: internal_font_number; {last font size in PDF output page}
 @!pdf_dummy_font: internal_font_number; {font used to insert artificial interword spaces}
 
-
 @ Following procedures implement low-level subroutines to convert \TeX{}
 internal structures to PDF page description.
 
@@ -16126,6 +16120,7 @@ begin
 
     {create a new font object for |f|}
     pdf_create_obj(obj_type_font, f);
+    pdf_font_has_space_char[f] := hasspacechar(f);
     pdf_use_font(f, obj_ptr);
 end;
 
@@ -16182,7 +16177,8 @@ end;
 procedure pdf_read_dummy_font;
 begin
     if pdf_dummy_font = null_font then begin
-        pdf_dummy_font := read_font_info(null_cs, "dummy-space", "", one_bp);
+        pdf_dummy_font := read_font_info(null_cs, pdf_space_font_name, "", -1000);
+        pdfmaplinesp;
         pdf_mark_char(pdf_dummy_font, 32);
     end;
 end;
@@ -16253,17 +16249,26 @@ begin
     end;
 
     if (must_insert_space) then begin
-        pdf_out(" ");
-        save_pdf_delta_h := pdf_delta_h;
-        adv_char_width(f, 32, 3); { to get |adv_char_width_s| and |adv_char_width_s_out|}
-        pdf_delta_h := save_pdf_delta_h;
-        s := s - adv_char_width_s;
-        s_out := s_out - adv_char_width_s_out;
-        cur_h := cur_h - char_width(f)(char_info(f)(32));
+        {insert a real space char from the font when possible}
+        if pdf_font_has_space_char[f]  then begin
+            pdf_out(" ");
+            save_pdf_delta_h := pdf_delta_h;
+            adv_char_width(f, 32, 3); { to get |adv_char_width_s| and |adv_char_width_s_out|}
+            s := s - adv_char_width_s;
+            s_out := s_out - adv_char_width_s_out;
+            pdf_mark_char(f, 32);
+        end
+        else
+            must_end_string := true;
     end;
 
     if must_end_string then begin
         pdf_end_string;
+        {insert a space char from the dummy font if needed}
+        if (must_insert_space) and (not pdf_font_has_space_char[f]) then begin
+            pdf_insert_interword_space; {this will change |pdf_f|}
+            pdf_set_font(f);
+        end;
         pdf_set_textmatrix(v, v_out, f);
         pdf_f := f;
         s := 0;
@@ -20516,6 +20521,7 @@ location |adjust_tail|.
 @ @<Glob...@>=
 @!pdf_font_blink: ^internal_font_number; {link to base font (used for expanded fonts only)}
 @!pdf_font_elink: ^internal_font_number; {link to expanded fonts (used for base fonts only)}
+@!pdf_font_has_space_char: ^boolean; {has font a real space char?}
 @!pdf_font_stretch: ^integer; {link to font expanded by stretch limi}
 @!pdf_font_shrink: ^integer; {link to font expanded by shrink limit}
 @!pdf_font_step: ^integer;  {amount of one step of expansion}
@@ -33720,7 +33726,8 @@ stays the same.
 @d pdf_fake_space_node         == pdftex_first_extension_code + 40
 @d pdf_running_link_off_node   == pdftex_first_extension_code + 41
 @d pdf_running_link_on_node    == pdftex_first_extension_code + 42
-@d pdftex_last_extension_code  == pdftex_first_extension_code + 42
+@d pdf_space_font_code         == pdftex_first_extension_code + 43
+@d pdftex_last_extension_code  == pdftex_first_extension_code + 43
 
 @<Put each...@>=
 primitive("openout",extension,open_node);@/
@@ -33819,6 +33826,8 @@ primitive("pdfrunninglinkoff",extension,pdf_running_link_off_node);@/
 @!@:pdf_running_link_off_}{\.{\\pdfrunninglinkoff} primitive@>
 primitive("pdfrunninglinkon",extension,pdf_running_link_on_node);@/
 @!@:pdf_running_link_on_}{\.{\\pdfrunninglinkon} primitive@>
+primitive("pdfspacefont",extension,pdf_space_font_code);@/
+@!@:pdf_space_font_}{\.{\\pdfspacefont} primitive@>
 
 @ The variable |write_loc| just introduced is used to provide an
 appropriate error message in case of ``runaway'' write texts.
@@ -33876,6 +33885,7 @@ extension: case chr_code of
   pdf_fake_space_node: print_esc("pdffakespace");
   pdf_running_link_off_node: print_esc("pdfrunninglinkoff");
   pdf_running_link_on_node: print_esc("pdfrunninglinkon");
+  pdf_space_font_code: print_esc("pdfspacefont");
   othercases print("[unknown extension!]")
   endcases;
 
@@ -33939,6 +33949,7 @@ begin case cur_chr of
   pdf_fake_space_node: @<Implement \.{\\pdffakespace}@>;
   pdf_running_link_off_node: @<Implement \.{\\pdfrunninglinkoff}@>;
   pdf_running_link_on_node: @<Implement \.{\\pdfrunninglinkon}@>;
+  pdf_space_font_code: @<Implement \.{\\pdfspacefont}@>;
 othercases confusion("ext1")
 @:this can't happen ext1}{\quad ext1@>
 endcases;
@@ -35323,6 +35334,14 @@ begin
     new_whatsit(pdf_running_link_on_node, small_node_size);
 end
 
+@ @<Implement \.{\\pdfspacefont}@>=
+begin
+    check_pdfoutput("\pdfspacefont", true);
+    scan_pdf_ext_toks;
+    pdf_space_font_name := tokens_to_string(def_ref);
+    delete_token_ref(def_ref);
+end
+
 @ The following function are needed for outputting article thread.
 
 @<Declare procedures needed in |do_ext...@>=
@@ -36182,6 +36201,7 @@ thread}
 @!pdf_trailer_id_toks: pointer; {custom Trailer ID}
 @!gen_faked_interword_space: boolean; {flag to turn on/off faked interword spaces}
 @!gen_running_link: boolean; {flag to turn on/off running link}
+@!pdf_space_font_name: str_number; {name of font used for inter-word space in PDF output}
 
 @ @<Set init...@>=
 pdf_first_outline:= 0;
@@ -36199,6 +36219,8 @@ pdf_trailer_toks := null;
 pdf_trailer_id_toks := null;
 gen_faked_interword_space := false;
 gen_running_link := true;
+pdf_space_font_name := "pdftexspace";
+
 
 @ The following procedures are needed for outputting whatsit nodes for
 \pdfTeX{}.

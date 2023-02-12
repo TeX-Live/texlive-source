@@ -3,9 +3,17 @@ pdfTeX 3.141592653-2.6-1.40.25
   - new keyword `shipout' for \special and \pdfliteral, delaying
     expansion until the node is shipped out, like non-\immediate \write.
   - new primitive \pdfinfoomitdict to omit /Info dictionary completely.
-  - new primitive \pdfomitprocset to control omitting /ProcSet array;
+  - new primitive \pdfomitprocset to control omitting /ProcSet array:
     /ProcSet is included if this parameter is negative, or if this
     parameter is zero and pdftex is generating PDF 1.x output.
+  - with \pdfinterwordspaceon, if the current font's encoding has a /space
+    character at slot 32, it is used; otherwise, the /space from the
+    (new) default font "pdftexspace" is used. That default font can be
+    overridden with the new primitive \pdfspacefont. This same new
+    procedure is used for \pdffakespace.
+    (In the past, the inserted fake space was always taken from the font
+    "dummy-space", which contained a tiny space character. It turns out
+    a normally-sized space character works with more viewers.)
 
 - bugfixes:
   - finish omission of /Info dict when \pdfomitinfodict is not 0.
