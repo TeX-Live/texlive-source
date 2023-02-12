@@ -600,27 +600,6 @@ else if mubyte_out + mubyte_zero >= 2*mubyte_zero then
      else write_mubyte(tail) := mubyte_out + mubyte_zero;
 @z
 
-% see pdftex.web for more about this.
-@x [53.1353] - encTeX: late \special stores specialout and mubyteout values
-begin new_whatsit(latespecial_node,write_node_size); write_stream(tail):=null;
-p:=scan_toks(false,false); write_tokens(tail):=def_ref;
-@y
-begin new_whatsit(latespecial_node,write_node_size);
-if spec_out + mubyte_zero < 0 then write_stream(tail) := 0
-else if spec_out + mubyte_zero >= 2*mubyte_zero then
-       write_stream(tail) := 2*mubyte_zero - 1
-     else write_stream(tail) := spec_out + mubyte_zero;
-if mubyte_out + mubyte_zero < 0 then write_mubyte(tail) := 0
-else if mubyte_out + mubyte_zero >= 2*mubyte_zero then
-       write_mubyte(tail) := 2*mubyte_zero - 1
-     else write_mubyte(tail) := mubyte_out + mubyte_zero;
-if (spec_out = 2) or (spec_out = 3) then
-  if (mubyte_out > 2) or (mubyte_out = -1) or (mubyte_out = -2) then
-    write_noexpanding := true;
-p:=scan_toks(false,false); write_tokens(tail):=def_ref;
-write_noexpanding := false;
-@z
-
 @x [53.1353] - encTeX: \special stores specialout and mubyteout values
 begin new_whatsit(special_node,write_node_size); write_stream(tail):=null;
 p:=scan_toks(false,true); write_tokens(tail):=def_ref;
