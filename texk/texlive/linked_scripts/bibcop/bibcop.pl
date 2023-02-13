@@ -36,7 +36,7 @@ my %args = map { $_ => 1 } @ARGV;
 my %blessed = (
   'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'publisher?', 'pages?'],
   'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'organization?', 'volume?'],
-  'book' => ['doi', 'title', 'author', 'year', 'publisher'],
+  'book' => ['title', 'author', 'year', 'publisher', 'doi?'],
   'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?', 'url?'],
 );
 
@@ -232,35 +232,44 @@ sub check_typography {
     }
     foreach my $s (@no_space_before) {
       if ($value =~ /^.*\s\Q$s\E.*$/) {
-        return "In the '$tag', do not put a space before a $symbols{$s}"
+        return "In the '$tag', do not put a space before the $symbols{$s}"
       }
     }
     foreach my $s (@no_space_after) {
       if ($value =~ /^.*\Q$s\E\s.*$/) {
-        return "In the '$tag', do not put a space after a $symbols{$s}"
+        return "In the '$tag', do not put a space after the $symbols{$s}"
       }
     }
     foreach my $s (@space_before) {
       if ($value =~ /^.*[^\s]\Q$s\E.*$/) {
-        return "In the '$tag', put a space before a $symbols{$s}"
+        return "In the '$tag', put a space before the $symbols{$s}"
       }
     }
     foreach my $s (@space_after) {
       my $p = join('', @no_space_before);
       if ($value =~ /^.*\Q$s\E[^\s\Q$p\E].*$/) {
-        return "In the '$tag', put a space after a $symbols{$s}"
+        return "In the '$tag', put a space after the $symbols{$s}"
       }
     }
     foreach my $s (@spaces_around) {
       if ($value =~ /^.*[^\s]\Q$s\E.*$/ or $value =~ /^.*\Q$s\E[^\s].*$/) {
-        return "In the '$tag', put spaces around a $symbols{$s}"
+        return "In the '$tag', put spaces around the $symbols{$s}"
       }
     }
     foreach my $s (@no_spaces_around) {
       if ($value =~ /^.*\s\Q$s\E\s.*$/) {
-        return "In the '$tag', don't put spaces around a $symbols{$s}"
+        return "In the '$tag', don't put spaces around the $symbols{$s}"
       }
     }
+  }
+}
+
+# Check that the type is small letters.
+sub check_type_capitalization {
+  my (%entry) = @_;
+  my $type = $entry{':type'};
+  if (not $type =~ /^[a-z]+$/) {
+    return "The type '$type' must be lower-cased"
   }
 }
 
@@ -463,7 +472,7 @@ sub entries {
         warning("Each BibTeX entry must start with '\@', what is '$char'?");
         last;
       }
-    } elsif ($char =~ /[a-z]/ and $s eq 'start') {
+    } elsif ($char =~ /[a-zA-Z]/ and $s eq 'start') {
       # @article
     } elsif ($char eq '{' and $s eq 'start') {
       $entry{':type'} = substr($acc, 1);
@@ -472,7 +481,7 @@ sub entries {
     } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'body') {
       $acc = '';
       $s = 'tag';
-    } elsif ($char =~ /[a-zA-Z0-9_\.\-\/]/ and $s eq 'tag') {
+    } elsif ($char =~ /[a-zA-Z0-9_\.\-\/:]/ and $s eq 'tag') {
       # reading the tag
     } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'value') {
       # reading the value without quotes or brackets
@@ -631,7 +640,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.8');
+  info('0.0.9');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {

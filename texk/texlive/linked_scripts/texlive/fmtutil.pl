@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 63934 2022-07-19 01:58:57Z preining $
+# $Id: fmtutil.pl 65770 2023-02-09 21:26:50Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2021 Norbert Preining
+# Copyright 2014-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 63934 2022-07-19 01:58:57Z preining $';
-my $lastchdate = '$Date: 2022-07-19 03:58:57 +0200 (Tue, 19 Jul 2022) $';
+my $svnid = '$Id: fmtutil.pl 65770 2023-02-09 21:26:50Z karl $';
+my $lastchdate = '$Date: 2023-02-09 22:26:50 +0100 (Thu, 09 Feb 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 63934 $';
+my $svnrev = '$Revision: 65770 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -708,6 +708,13 @@ sub rebuild_one_format {
   $inifile = (split(' ', $addargs))[-1];
   # get rid of leading * in inifiles
   $inifile =~ s/^\*//;
+
+  # Add -kanji-internal option for create (e-)p(La)TeX format
+  # with (e-)upTeX's pTeX compatible mode.
+  if ($eng =~ /^e?uptex$/ && $fmt =~ /^e?p/ && $addargs !~ /-kanji-internal=/) {
+    my $kanji = win32() ? "sjis" : "euc";
+    $addargs = "-kanji-internal=$kanji " . $addargs;
+  }
 
   if ($fmt eq "metafun")       { $prgswitch .= "mpost"; }
   elsif ($fmt eq "mptopdf")    { $prgswitch .= "context"; }
