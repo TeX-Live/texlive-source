@@ -1,3 +1,9 @@
+2023-02-13  Karl Berry  <karl@freefriends.org>
+
+	* enctexdir/enctex-pdftex.ch: move "\special shipout"
+	change here, from enctex2.ch, so it is not applied to tex (which
+	doesn't have it).
+
 2023-02-12  Phelype Oleinik <phe.h.o1@gmail.com>
         and Karl Berry  <karl@freefriends.org>
 
