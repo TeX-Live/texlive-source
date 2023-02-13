@@ -1,3 +1,13 @@
+2023-01-20  Phelype Oleinik  <phelype.oleinik@latex-project.org>
+
+        * xetex.web: implement shipout keyword for delayed expansion
+        with \pdfliteral and \special, like non-\immediate \write.
+        (latespecial_node): new @d (4), and step @d for following parameters.
+        (Implement \.{\\special}): look for `shipout' keyword.
+        (Display the whatsit) <latespecial_node, <pdf_lateliteral_node>:
+        (special_out): check for latespecial_node.
+        new cases.
+
 2021-02-17  Karl Berry  <karl@tug.org>
 
         * NEWS,
