@@ -1,6 +1,6 @@
 cccccccccccccccccccccccccc
 cc                      
-cc  scor2prt 1/29/21 for PMX 2.94                     
+cc  scor2prt 2/19/16 for PMX 2.74                     
 cccccccccccccccccccccccccc
 c This program, developed by Don Simons (dsimons@roadrunner.com), is 
 c part of the PMX distribution, PMX is a preprocessor for MusiXTeX. In concert 
@@ -22,9 +22,6 @@ c
 c You should have received a copy of the GNU General Public License
 c along with this program.  If not, see <http://www.gnu.org/licenses/>.
 c
-c 1/29/21
-c   Reformat output statement for warning about full bar rests to
-c     eliminate use of H format specifier
 c 2/19/16
 c   Exit gracefully when last input line is comment, with mods in
 c     subroutine chkcom, adding logical argument goto999
@@ -110,7 +107,7 @@ cccccccccccccccccccccccccccccccccccccccccccccccc
       frstln = .true.
       lenhold = 0
       sq = char(92)
-      print*,'This is scor2prt for PMX 2.94, 29 January 2021'
+      print*,'This is scor2prt for PMX 2.74, 19 February 2016'
       numargs = iargc()
       if (numargs .eq. 0) then
         print*,'You could have entered a jobname on the command line,'
@@ -1141,8 +1138,8 @@ c
             wbrsym(1) = 'rd0'
             wbrsym(2) = 'r0d'
           else
-            write(*,'(a33,i3,a26)')' Any whole-bar rests of duration',
-     *         lenbar,'/64 will not be recognized'
+            write(*,'(33H Any whole-bar rests of duration ,i3,
+     *        26H/64 will not be recognized)') lenbar
           end if
         end if
       return

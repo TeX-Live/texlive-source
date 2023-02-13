@@ -1,3 +1,7 @@
+2023-02-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* Import pmx 3.0.0.
+
 2022-11-06  Sam James  <sam@gentoo.org>
 
 	* pmx-src/libf2c/main.c: placate clang16.

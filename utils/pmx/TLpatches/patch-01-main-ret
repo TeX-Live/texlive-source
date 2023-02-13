@@ -1,8 +1,7 @@
-diff --git a/utils/pmx/pmx-src/libf2c/main.c b/utils/pmx/pmx-src/libf2c/main.c
-index 453974904..f485a0cd0 100644
---- a/utils/pmx/pmx-src/libf2c/main.c
-+++ b/utils/pmx/pmx-src/libf2c/main.c
-@@ -106,7 +106,7 @@ char **xargv;
+diff -ur pmx-3.0.0/libf2c/main.c pmx-src/libf2c/main.c
+--- pmx-3.0.0/libf2c/main.c	Sat Feb 11 06:51:05 2023
++++ pmx-src/libf2c/main.c	Mon Feb 13 10:05:04 2023
+@@ -106,7 +106,7 @@
  #ifdef KR_headers
  main(argc, argv) int argc; char **argv;
  #else

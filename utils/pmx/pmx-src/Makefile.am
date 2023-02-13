@@ -238,7 +238,7 @@ PATCHES = libf2c/patch-01-binary libf2c/patch-03-DOS-line-endings \
 ## pmx.test
 EXTRA_DIST += tests/barsant.mid tests/barsant.pml tests/barsant.pmx \
 	tests/barsant.tex tests/barsant1.pmx tests/barsant2.pmx
-EXTRA_DIST += scor2prt.for pmx298.for 
+EXTRA_DIST += scor2prt.for pmx300.for 
 EXTRA_DIST += $(PATCHES)
 EXTRA_DIST += version.ac configure.ac Makefile.am Makefile.f2c
 EXTRA_DIST += pmx.tex

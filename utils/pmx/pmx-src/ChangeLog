@@ -1,3 +1,7 @@
+3.00
+  Provides an option to remove the limit of 9 on forced
+  beams. A side benefit of selecting the option is that all
+  beams are vectorized and 2-digit figured bass figures are allowed.
 2.98
   Fix beaming in 6/2 time by setting mapfb(5) and (6) = 0 in make1bar(...) 
 2.97
