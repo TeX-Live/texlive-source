@@ -1,6 +1,10 @@
+2023-02-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* eptex_version.h: Bump version 230214 for latespecial_node.
+
 2023-02-13  Phelype Oleinik  <phelype.oleinik@latex-project.org>
 
-        * xetex.web: implement shipout keyword for delayed expansion
+        * pdfutils.ch: implement shipout keyword for delayed expansion
         with \special, like non-\immediate \write.
         (latespecial_node): new @d (4), and step @d for following parameters.
         (Implement \.{\\special}): look for `shipout' keyword.
