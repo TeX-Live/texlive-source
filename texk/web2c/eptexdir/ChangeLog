@@ -1,6 +1,6 @@
 2023-02-14  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
-	* eptex_version.h: Bump version 230214 for latespecial_node.
+	* eptex.ech, eptex_version.h: Version 230214 for latespecial_node.
 
 2023-02-13  Phelype Oleinik  <phelype.oleinik@latex-project.org>
 
