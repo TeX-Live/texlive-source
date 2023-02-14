@@ -1,9 +1,9 @@
 #include "basetypes.h"
 #include "format.h"
 
-const char *content_name[32]={"text", "list", "param", "xdimen", "adjust", "glyph", "kern", "glue", "ligature", "disc", "language", "rule", "image", "leaders", "baseline", "hbox", "vbox", "par", "math", "table", "item", "hset", "vset", "hpack", "vpack", "stream", "page", "range", "link", "undefined2", "undefined3", "penalty"};
+const char *content_name[32]={"list", "param", "range", "xdimen", "adjust", "glyph", "kern", "glue", "ligature", "disc", "language", "rule", "image", "leaders", "baseline", "hbox", "vbox", "par", "math", "table", "item", "hset", "vset", "hpack", "vpack", "stream", "page", "link", "undefined1", "undefined2", "undefined3", "penalty"};
 
-const char *definition_name[32]={"text", "list", "param", "xdimen", "adjust", "font", "dimen", "glue", "ligature", "disc", "language", "rule", "image", "leaders", "baseline", "hbox", "vbox", "par", "math", "table", "item", "hset", "vset", "hpack", "vpack", "stream", "page", "range", "label", "undefined2", "undefined3", "int"};
+const char *definition_name[32]={"list", "param", "range", "xdimen", "adjust", "font", "dimen", "glue", "ligature", "disc", "language", "rule", "image", "leaders", "baseline", "hbox", "vbox", "par", "math", "table", "item", "hset", "vset", "hpack", "vpack", "stream", "page", "label", "undefined1", "undefined2", "undefined3", "int"};
 
 int max_outline=-1;
 
@@ -35,16 +35,16 @@ Baseline baseline_defaults[MAX_BASELINE_DEFAULT+1]={{{{0x0, 0.000000, 0.000000},
 
 Label label_defaults[MAX_LABEL_DEFAULT+1]={{0,LABEL_TOP,true,0,0,0}};
 
-int max_fixed[32]= {65536, 65536, -1, 2, 65536, -1, 0, 2, -1, -1, -1, -1, -1, -1, 0, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 0, 0, 0, -1, 65536, 65536, 0};
+int max_fixed[32]= {0, 0, 0, 2, 65536, -1, 0, 2, -1, -1, -1, -1, -1, -1, 0, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 65536, 0, 0, -1, 65536, 65536, 65536, 0};
 
-int max_default[32]= {-1, -1, -1, 2, -1, -1, 9, 14, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1, -1, 22};
+int max_default[32]= {0, 0, 0, 2, -1, -1, 9, 14, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1, -1, -1, 22};
 
-int max_ref[32]= {-1, -1, -1, 2, -1, -1, 9, 14, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1, -1, 22};
+int max_ref[32]= {0, 0, 0, 2, -1, -1, 9, 14, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, -1, -1, -1, 22};
 
 signed char hnode_size[0x100]= {
-0,0,0,0,0,0,0,0, /* text */
 0,0,0,0,0,0,0,0, /* list */
 0,0,0,0,0,0,0,0, /* param */
+0,0,0,0,0,0,0,0, /* range */
 0,6,6,10,6,10,10,14, /* xdimen */
 0,-4*1+0,0,0,0,0,0,0, /* adjust */
 0,4,5,6,7,0,0,0, /* glyph */
@@ -62,17 +62,51 @@ signed char hnode_size[0x100]= {
 -4*3+0,0,-4*2+1,0,-4*2+1,0,-4*1+2,0, /* par */
 -4*2+0,-4*2+1,-4*2+1,2,-4*1+1,-4*1+2,-4*1+2,2, /* math */
 -4*2+1,-4*2+1,-4*2+1,-4*2+1,-4*1+2,-4*1+2,-4*1+2,-4*1+2, /* table */
--4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*2+0,0, /* item */
+-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*1+0,-4*2+0, /* item */
 -4*18+0,-4*22+0,-4*22+0,-4*26+0,-4*17+1,-4*21+1,-4*21+1,-4*25+1, /* hset */
 -4*18+0,-4*22+0,-4*22+0,-4*26+0,-4*17+1,-4*21+1,-4*21+1,-4*25+1, /* vset */
 -4*2+0,-4*2+0,-4*6+0,-4*6+0,-4*1+1,-4*1+1,-4*5+1,-4*5+1, /* hpack */
 -4*6+0,-4*6+0,-4*10+0,-4*10+0,-4*5+1,-4*5+1,-4*9+1,-4*9+1, /* vpack */
--4*3+0,0,-4*2+1,0,0,0,0,0, /* stream */
+-4*3+0,0,-4*2+1,0,3,0,0,0, /* stream */
 0,0,0,0,0,0,0,0, /* page */
-0,0,0,0,0,0,0,0, /* range */
 3,4,3,4,0,0,0,0, /* link */
+0,0,0,0,0,0,0,0, /* undefined1 */
 0,0,0,0,0,0,0,0, /* undefined2 */
 0,0,0,0,0,0,0,0, /* undefined3 */
-3,3,4,0,0,0,0,0}; /* penalty */
+3,3,4,6,0,0,0,0}; /* penalty */
 
+
+uint8_t content_known[32]= {
+0x00, /* list */
+0x00, /* param */
+0x00, /* range */
+0xFE, /* xdimen */
+0x02, /* adjust */
+0x1E, /* glyph */
+0xFF, /* kern */
+0xFF, /* glue */
+0xFF, /* ligature */
+0xDD, /* disc */
+0xFF, /* language */
+0xFF, /* rule */
+0xFF, /* image */
+0xEF, /* leaders */
+0xFF, /* baseline */
+0xFF, /* hbox */
+0xFF, /* vbox */
+0x55, /* par */
+0xFF, /* math */
+0xFF, /* table */
+0xFF, /* item */
+0xFF, /* hset */
+0xFF, /* vset */
+0xFF, /* hpack */
+0xFF, /* vpack */
+0x15, /* stream */
+0x00, /* page */
+0x0F, /* link */
+0x00, /* undefined1 */
+0x00, /* undefined2 */
+0x00, /* undefined3 */
+0x0F}; /* penalty */
 

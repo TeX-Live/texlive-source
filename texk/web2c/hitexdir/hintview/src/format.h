@@ -1,19 +1,19 @@
-	/*512:*/
-	#line 10466 "format.w"
+	/*526:*/
+	#line 10759 "format.w"
 
 #ifndef _HFORMAT_H_
 #define _HFORMAT_H_
-	/*357:*/
-	#line 7858 "format.w"
+	/*366:*/
+	#line 8063 "format.w"
 
 #define REF_RNG(K,N) if ((int)(N)>max_ref[K]) QUIT("Reference %d to %s out of range [0 - %d]",\
   (N),definition_name[K],max_ref[K])
-	/*:357*/	/*358:*/
-	#line 7872 "format.w"
+	/*:366*/	/*367:*/
+	#line 8077 "format.w"
 
 #define MAX_REF(K) ((K)==label_kind?0xFFFF:0xFF)
-	/*:358*/	/*431:*/
-	#line 9326 "format.w"
+	/*:367*/	/*443:*/
+	#line 9552 "format.w"
 
 #ifdef WIN32
 #define SIZE_F "0x%x"
@@ -31,11 +31,11 @@
   if ((int)(N)<(int)(A)||(int)(N)>(int)(Z)) QUIT(S " %d out of range [%d - %d]",N,A,Z)
 
 #define TAGERR(A) QUIT("Unknown tag [%s,%d] at " SIZE_F "\n",NAME(A),INFO(A),hpos-hstart)
-	/*:431*/
-	#line 10469 "format.w"
+	/*:443*/
+	#line 10762 "format.w"
 
-	/*418:*/
-	#line 9065 "format.w"
+	/*430:*/
+	#line 9291 "format.w"
 
 #define DBGNONE     0x0
 #define DBGBASIC    0x1
@@ -54,67 +54,73 @@
 #define DBGFONT     0x2000
 #define DBGRENDER   0x4000
 #define DBGLABEL    0x8000
-	/*:418*/
-	#line 10470 "format.w"
+	/*:430*/
+	#line 10763 "format.w"
 
-	/*12:*/
-	#line 641 "format.w"
+	/*13:*/
+	#line 647 "format.w"
 
 #define KIND(T)      (((T)>>3)&0x1F)
 #define NAME(T)      content_name[KIND(T)]
 #define INFO(T)      ((T)&0x7)
 #define TAG(K,I)     (((K)<<3)|(I))
-	/*:12*/	/*77:*/
-	#line 1640 "format.w"
+	/*:13*/	/*78:*/
+	#line 1651 "format.w"
 
 #define ROUND(X)     ((int)((X)>=0.0?floor((X)+0.5):ceil((X)-0.5)))
-	/*:77*/	/*112:*/
-	#line 2140 "format.w"
+	/*:78*/	/*113:*/
+	#line 2153 "format.w"
 
 #define RUNNING_DIMEN 0xC0000000
-	/*:112*/	/*131:*/
-	#line 2482 "format.w"
+	/*:113*/	/*132:*/
+	#line 2495 "format.w"
 
 #define ZERO_GLUE(G) ((G).w.w==0  && (G).w.h==0.0  && (G).w.v==0.0  && (G).p.f==0.0 && (G).m.f==0.0)
-	/*:131*/	/*244:*/
-	#line 5140 "format.w"
+	/*:132*/	/*244:*/
+	#line 5177 "format.w"
 
 #define HINT_NO_POS 0xFFFFFFFF
 	/*:244*/	/*251:*/
-	#line 5338 "format.w"
+	#line 5375 "format.w"
 
 #define LABEL_UNDEF 0
 #define LABEL_TOP 1
 #define LABEL_BOT 2
 #define LABEL_MID 3
-	/*:251*/	/*302:*/
-	#line 6519 "format.w"
+	/*:251*/	/*311:*/
+	#line 6719 "format.w"
 
 #define ALLOCATE(R,S,T) ((R)= (T *)calloc((S),sizeof(T)),\
         (((R)==NULL)?QUIT("Out of memory for " #R):0))
 #define REALLOCATE(R,S,T) ((R)= (T *)realloc((R),(S)*sizeof(T)),\
         (((R)==NULL)?QUIT("Out of memory for " #R):0))
-	/*:302*/	/*310:*/
-	#line 6684 "format.w"
+	/*:311*/	/*319:*/
+	#line 6884 "format.w"
 
 #define MAX_BANNER 256
-	/*:310*/	/*323:*/
-	#line 6890 "format.w"
+	/*:319*/	/*332:*/
+	#line 7095 "format.w"
 
 #define MAX_TAG_DISTANCE 32
-	/*:323*/
-	#line 10471 "format.w"
+	/*:332*/	/*446:*/
+	#line 9617 "format.w"
+
+#define NODE_SIZE(H,T) ((T)==0?(H)+2:-4*((H)+1)+((T)-1))
+#define NODE_HEAD(N)   ((N)>0?(N)-2:-((N)>>2)-1)
+#define NODE_TAIL(N)   ((N)<0?((N)&0x3)+1:0)
+	/*:446*/
+	#line 10764 "format.w"
 
 	/*6:*/
-	#line 493 "format.w"
+	#line 496 "format.w"
 
 #define DEF_KIND(C,D,N) C##_kind= N
 typedef enum{	/*9:*/
-	#line 562 "format.w"
+	#line 564 "format.w"
 
-DEF_KIND(text,text,0),
-DEF_KIND(list,list,1),
-DEF_KIND(param,param,2),
+DEF_KIND(list,list,0),
+DEF_KIND(param,param,1),
+DEF_KIND(range,range,2),
 DEF_KIND(xdimen,xdimen,3),
 DEF_KIND(adjust,adjust,4),
 DEF_KIND(glyph,font,5),
@@ -139,28 +145,32 @@ DEF_KIND(hpack,hpack,23),
 DEF_KIND(vpack,vpack,24),
 DEF_KIND(stream,stream,25),
 DEF_KIND(page,page,26),
-DEF_KIND(range,range,27),
-DEF_KIND(link,label,28),
+DEF_KIND(link,label,27),
+DEF_KIND(undefined1,undefined1,28),
 DEF_KIND(undefined2,undefined2,29),
 DEF_KIND(undefined3,undefined3,30),
 DEF_KIND(penalty,int,31)
 
 	/*:9*/
-	#line 495 "format.w"
+	#line 498 "format.w"
 ,	/*10:*/
-	#line 601 "format.w"
+	#line 603 "format.w"
 
-font_kind= glyph_kind,int_kind= penalty_kind,dimen_kind= kern_kind,label_kind= link_kind,outline_kind= link_kind
+font_kind= glyph_kind,int_kind= penalty_kind,unknown_kind= penalty_kind,dimen_kind= kern_kind,label_kind= link_kind,outline_kind= link_kind
 	/*:10*/
-	#line 495 "format.w"
+	#line 498 "format.w"
 }Kind;
 #undef DEF_KIND
 	/*:6*/	/*11:*/
-	#line 627 "format.w"
+	#line 629 "format.w"
 
 typedef enum{b000= 0,b001= 1,b010= 2,b011= 3,b100= 4,b101= 5,b110= 6,b111= 7}Info;
-	/*:11*/	/*56:*/
-	#line 1302 "format.w"
+	/*:11*/	/*12:*/
+	#line 642 "format.w"
+
+typedef uint8_t Tag;
+	/*:12*/	/*57:*/
+	#line 1310 "format.w"
 
 
 #define FLT_M_BITS 23
@@ -171,44 +181,44 @@ typedef enum{b000= 0,b001= 1,b010= 2,b011= 3,b100= 4,b101= 5,b110= 6,b111= 7}Inf
 #define DBL_E_BITS 11
 #define DBL_EXCESS 1023
 
-	/*:56*/	/*76:*/
-	#line 1635 "format.w"
+	/*:57*/	/*77:*/
+	#line 1646 "format.w"
 
 typedef int32_t Scaled;
 #define ONE ((Scaled)(1<<16))
-	/*:76*/	/*81:*/
-	#line 1691 "format.w"
+	/*:77*/	/*82:*/
+	#line 1702 "format.w"
 
 typedef Scaled Dimen;
 #define MAX_DIMEN ((Dimen)(0x3FFFFFFF))
-	/*:81*/	/*86:*/
-	#line 1747 "format.w"
+	/*:82*/	/*87:*/
+	#line 1758 "format.w"
 
 typedef struct{
 Dimen w;float32_t h,v;
 }Xdimen;
-	/*:86*/	/*95:*/
-	#line 1891 "format.w"
+	/*:87*/	/*96:*/
+	#line 1902 "format.w"
 
 typedef enum{normal_o= 0,fil_o= 1,fill_o= 2,filll_o= 3}Order;
 typedef struct{float64_t f;Order o;}Stretch;
 typedef union{float32_t f;uint32_t u;}Stch;
-	/*:95*/	/*130:*/
-	#line 2472 "format.w"
+	/*:96*/	/*131:*/
+	#line 2485 "format.w"
 
 typedef struct{
 Xdimen w;
 Stretch p,m;
 }Glue;
-	/*:130*/	/*180:*/
-	#line 3895 "format.w"
+	/*:131*/	/*180:*/
+	#line 3939 "format.w"
 
 typedef struct{
 Glue bs,ls;
 Dimen lsl;
 }Baseline;
 	/*:180*/	/*250:*/
-	#line 5323 "format.w"
+	#line 5360 "format.w"
 
 typedef struct
 {uint32_t pos;
@@ -217,15 +227,15 @@ bool used;
 int next;
 uint32_t pos0;uint8_t f;
 }Label;
-	/*:250*/	/*381:*/
-	#line 8392 "format.w"
+	/*:250*/	/*390:*/
+	#line 8598 "format.w"
 
 #define MAX_FONT_PARAMS 11
-	/*:381*/
-	#line 10472 "format.w"
+	/*:390*/
+	#line 10765 "format.w"
 
-	/*393:*/
-	#line 8627 "format.w"
+	/*403:*/
+	#line 8837 "format.w"
 
 typedef enum{
 zero_int_no= 0,
@@ -253,8 +263,8 @@ hang_after_no= 21,
 floating_penalty_no= 22
 }Int_no;
 #define MAX_INT_DEFAULT floating_penalty_no
-	/*:393*/	/*395:*/
-	#line 8700 "format.w"
+	/*:403*/	/*405:*/
+	#line 8910 "format.w"
 
 typedef enum{
 zero_dimen_no= 0,
@@ -269,8 +279,8 @@ quad_no= 8,
 math_quad_no= 9
 }Dimen_no;
 #define MAX_DIMEN_DEFAULT math_quad_no
-	/*:395*/	/*397:*/
-	#line 8745 "format.w"
+	/*:405*/	/*407:*/
+	#line 8955 "format.w"
 
 typedef enum{
 zero_xdimen_no= 0,
@@ -278,8 +288,8 @@ hsize_xdimen_no= 1,
 vsize_xdimen_no= 2
 }Xdimen_no;
 #define MAX_XDIMEN_DEFAULT vsize_xdimen_no
-	/*:397*/	/*399:*/
-	#line 8769 "format.w"
+	/*:407*/	/*409:*/
+	#line 8979 "format.w"
 
 typedef enum{
 zero_skip_no= 0,
@@ -299,43 +309,50 @@ tab_skip_no= 13,
 par_fill_skip_no= 14
 }Glue_no;
 #define MAX_GLUE_DEFAULT par_fill_skip_no
-	/*:399*/	/*401:*/
-	#line 8855 "format.w"
+	/*:409*/	/*411:*/
+	#line 9065 "format.w"
 
 typedef enum{
 zero_baseline_no= 0
 }Baseline_no;
 #define MAX_BASELINE_DEFAULT zero_baseline_no
-	/*:401*/	/*403:*/
-	#line 8880 "format.w"
+	/*:411*/	/*413:*/
+	#line 9090 "format.w"
 
 typedef enum{
 zero_label_no= 0
 }Label_no;
 #define MAX_LABEL_DEFAULT zero_label_no
-	/*:403*/	/*405:*/
-	#line 8894 "format.w"
+	/*:413*/	/*415:*/
+	#line 9104 "format.w"
 
 typedef enum{
 zero_stream_no= 0
 }Stream_no;
 #define MAX_STREAM_DEFAULT zero_stream_no
-	/*:405*/	/*407:*/
-	#line 8910 "format.w"
+	/*:415*/	/*417:*/
+	#line 9120 "format.w"
 
 typedef enum{
 zero_page_no= 0
 }Page_no;
 #define MAX_PAGE_DEFAULT zero_page_no
-	/*:407*/	/*409:*/
-	#line 8927 "format.w"
+	/*:417*/	/*419:*/
+	#line 9137 "format.w"
 
 typedef enum{
 zero_range_no= 0
 }Range_no;
 #define MAX_RANGE_DEFAULT zero_range_no
-	/*:409*/
-	#line 10473 "format.w"
+	/*:419*/	/*421:*/
+	#line 9150 "format.w"
+
+typedef enum{
+empty_list_no= 0
+}List_no;
+#define MAX_LIST_DEFAULT empty_list_no
+	/*:421*/
+	#line 10766 "format.w"
 
 
 extern const char*content_name[32];
@@ -350,6 +367,7 @@ extern Glue glue_defaults[MAX_GLUE_DEFAULT+1];
 extern Baseline baseline_defaults[MAX_BASELINE_DEFAULT+1];
 extern Label label_defaults[MAX_LABEL_DEFAULT+1];
 extern signed char hnode_size[0x100];
+extern uint8_t content_known[32];
 
 #endif
-	/*:512*/
+	/*:526*/

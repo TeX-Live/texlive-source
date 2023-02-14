@@ -21795,9 +21795,19 @@ the \.{\\vtop} height is zero.
 
 
 @<Readjust the height...@>=
-{@+h=0;p=list_ptr(cur_box);
-if (p!=null) if (type(p) <= rule_node) h=height(p);
-depth(cur_box)=depth(cur_box)-h+height(cur_box);height(cur_box)=h;
+{@+if (type(cur_box)==vlist_node)
+  {@+h=0;p=list_ptr(cur_box);
+    if (p!=null && type(p) <= rule_node) h=height(p);
+    depth(cur_box)=depth(cur_box)-h+height(cur_box);height(cur_box)=h;
+  }
+  else if (type(cur_box) == whatsit_node)
+  { if (subtype(cur_box)==vpack_node)
+      pack_limit(cur_box)^=MAX_DIMEN+1;
+    else if(subtype(cur_box)==vset_node)
+    { height(cur_box)=height(cur_box)+depth(cur_box);
+      depth(cur_box)^=MAX_DIMEN+1;
+    }
+  }
 }
 
 @ A paragraph begins when horizontal-mode material occurs in vertical mode,
@@ -30938,7 +30948,7 @@ static void new_outline(pointer p)
   List l;
   uint32_t pos;
   pos=hpos-hstart;
-  l.k=list_kind; /* this eventually should be |text_kind| */
+  l.t=TAG(list_kind,b001); /* this eventually should be a text */
   hout_list_node(outline_ptr(p),pos,&l);
   hset_outline(m,r,outline_depth(p),pos);
   DBG(DBGLABEL,"New outline for label *%d\n",r);
@@ -31179,8 +31189,8 @@ For example \LaTeX\ redefines \.{\\protect} to be \.{\\noexpand}.
 As a consequence we have to implement a simplified version
 of \TeX's usual process to fire up the output routine.
 
-The |collect_output| routine takes a node list |p|,
-removes the output nodes and appends them to |q|, with |q|
+The |collect_output| routine takes a node list |*p|,
+removes the output nodes and appends them to |*q|, with |q|
 always pointing to the tail pointer.
 
 @<Hi\TeX\ auxiliary routines@>=
@@ -31199,7 +31209,16 @@ discretionary breaks.
 if (!is_char_node(*p))
 { pointer r=*p;
   switch (type(r))
-  { case whatsit_node:
+  {
+#if 0
+    case glue_node: /* possibly the output routine might like these */
+    case penalty_node:
+      { *p=link(r); link(r)=null; *q=r; q=&(link(r));
+        if (*p==null) return q;
+      }
+      break;
+#endif
+    case whatsit_node:
       switch (subtype(r))
       { case open_node: case write_node: case close_node:
         { *p=link(r); link(r)=null; *q=r; q=&(link(r));
@@ -31239,7 +31258,7 @@ if (!is_char_node(*p))
 @ @<Fire up the output routine for |q|@>=
 { pointer r=new_null_box();type(r)=vlist_node;
   subtype(r)=0;shift_amount(r)=0;height(r)=hvsize;
-  if (t==NULL) list_ptr(r)=null;
+  if (t==NULL) list_ptr(r)=null; /* or |new_glue(fill_glue);| ?  */
   else { list_ptr(r)=q;  *t=new_glue(fill_glue); }
   flush_node_list(box(255)); /* just in case \dots */
   box(255)=r;
@@ -32743,6 +32762,7 @@ ensure_font_no(post_break(p));
   DBG(DBGDEF,"Maximum disc reference: %d\n",max_ref[disc_kind]);
   for (i=0;i<=max_ref[disc_kind]; i++)
            HPUTDEF(hout_disc(dc_defined[i]),i);
+
 @*1 Parameter Lists.
 We store predefined parameter lists in a hash table in order to speed up
 finding existing parameter lists. The parameter list itself is stored as
@@ -32759,7 +32779,8 @@ static struct {int l; /* link */
   uint32_t n; /* number */
   uint32_t s; /* size */
   uint8_t *p; /* pointer */} pl_defined[PLH_SIZE]={{0}};
-static int pl_head=-1, *pl_tail=&pl_head;
+static int pl_head=0, *pl_tail=&pl_head;
+
 @ Next we define three short auxiliary routines and the |hget_param_list_no| function.
 
 @<Hi\TeX\ routines@>=
@@ -32769,7 +32790,7 @@ static uint32_t  hparam_list_hash(List *l)
   uint32_t i;
   for (i=0;i<l->s;i++)
     h=3*h+hstart[l->p+i];
-  return i;
+  return h;
 }
 
 static bool pl_equal(List *l, uint8_t *p)
@@ -32788,7 +32809,7 @@ static void pl_copy(List *l, uint8_t *p)
 static int hget_param_list_no(List *l)
 { uint32_t h;
   int i;
-  if (l->s<=0) return -1;
+  if (l->s<=0) return 0;
   h= hparam_list_hash(l);
   i = h%PLH_SIZE;
   while (pl_defined[i].p!=NULL)
@@ -32800,7 +32821,7 @@ static int hget_param_list_no(List *l)
   if (max_ref[param_kind]>=0xFF || section_no!=2) return -1;
   pl_defined[i].n=++max_ref[param_kind];
   *pl_tail=i; pl_tail=&(pl_defined[i].l);
-  pl_defined[i].l=-1;
+  pl_defined[i].l=0;
   pl_defined[i].h=h;
   pl_defined[i].s=l->s;
   ALLOCATE(pl_defined[i].p,l->s,uint8_t);
@@ -32830,21 +32851,22 @@ static void hdef_param_node(int ptype, int pnumber,int pvalue)
 parameter lists sorted by their reference number.
 
  @<Output parameter list definitions@>=
-  DBG(DBGDEF,"Defining %d parameter lists\n",max_ref[param_kind]+1);
-  for (i=pl_head;i>=0;i=pl_defined[i].l)
-  { int j;
+  DBG(DBGDEF,"Defining %d parameter lists\n",max_ref[param_kind]);
+  for (i=pl_head;i>0;i=pl_defined[i].l)
+  { int j,k;
     DBG(DBGDEF,"Defining parameter list %d, size 0x%x\n",i,pl_defined[i].s);
     j=hsize_bytes(pl_defined[i].s);
     HPUTX(1+1+j+1+pl_defined[i].s+1+j+1);
-    HPUTTAG(param_kind,j+1);
+    if (j==4) k=3; else k=j;
+    HPUTTAG(param_kind,k);
     HPUT8(pl_defined[i].n);
     hput_list_size(pl_defined[i].s,j);
-    HPUT8(0x100-j);
+    HPUT8(0x100-k);
     memcpy(hpos,pl_defined[i].p,pl_defined[i].s);
     hpos=hpos+pl_defined[i].s;
-    HPUT8(0x100-j);
+    HPUT8(0x100-k);
     hput_list_size(pl_defined[i].s,j);
-    HPUTTAG(param_kind,j+1);
+    HPUTTAG(param_kind,k);
   }
 @*1 Fonts.
 To store a font definition, we define the data type |Font|
@@ -33414,14 +33436,14 @@ static uint8_t hout_disc(pointer p)
   else
   { uint32_t lpos;
     lpos=hpos-hstart;
-    h.p.k=list_kind;
+    h.p.t=TAG(list_kind,b001);
     hout_list_node(pre_break(p),lpos,&(h.p));
     if (post_break(p)==null)
       h.q.s=0;
     else
     { uint32_t lpos;
       lpos=hpos-hstart;
-      h.q.k=list_kind;
+      h.q.t=TAG(list_kind,b001);
       hout_list_node(post_break(p),lpos,&(h.q));
     }
   }
@@ -33520,7 +33542,7 @@ signal ``use the defaults''.
   new_param_node(dimen_type,split_max_depth_code,depth(p));
   new_param_node(glue_type,split_top_skip_code,split_top_ptr(p));
   pos=hpos-hstart;
-  l.k=param_kind;
+  l.t=TAG(param_kind,b001);
   n=hout_param_list(link(temp_head),pos,&l);
   flush_node_list(link(temp_head));@+ link(temp_head)=null;
   if (n>=0) HPUT8(n); else i=b010;
@@ -33585,7 +33607,7 @@ case par_node:
 	else
         { xpos=hpos-hstart; hout_xdimen_node(p); xsize=(hpos-hstart)-xpos; i|=b100; }
         pos=hpos-hstart;
-        l.k=param_kind;
+        l.t=TAG(param_kind,b001);
 	m=hout_param_list(par_params(p),pos,&l);
         if (m>=0)
         { if (i&b100)
@@ -33622,7 +33644,7 @@ case par_node:
           int n;
           Info i=b000;
           pos=hpos-hstart;
-          l.k=param_kind;
+          l.t=TAG(param_kind,b001);
 	  n=hout_param_list(display_params(p),pos,&l);
           if (n>=0) HPUT8(n); else i|=b100;
           if (display_eqno(p)!=null && display_left(p))
@@ -33732,7 +33754,7 @@ static void hout_item_list(pointer p, bool v)
 { List l;
   uint32_t pos;
   DBG(DBGBASIC,"Writing Item List\n");
-  l.k=list_kind;
+  l.t=TAG(list_kind,b001);
   HPUTTAG(item_kind,b000);
   pos=hpos-hstart;
   HPUTX(2);
@@ -33757,7 +33779,7 @@ static void hout_align_list(pointer p, bool v)
 { List l;
   uint32_t pos;
   DBG(DBGBASIC,"Writing Align List\n");
-  l.k=list_kind;
+  l.t=TAG(list_kind,b001);
   pos=hpos-hstart;
   HPUTX(2);
   HPUT8(0); /* space for the tag */
@@ -33825,7 +33847,7 @@ static void hout_list_node2(pointer p)
 { List l;
   uint32_t pos;
   pos=hpos-hstart;
-  l.k=list_kind;
+  l.t=TAG(list_kind,b001);
   hout_list_node(p,pos,&l);
 }
 @ @<Hi\TeX\ function declarations@>=
@@ -33838,15 +33860,14 @@ The next function is like |hout_list_node| but restricted to parameter nodes.
 The parameter |p| is a pointer to a param node list.
 The function either finds a reference number to a predefined parameter list
    and returns the reference number,
- or it outputs the node list at position pos (that's where the tag goes),
-   sets |l->k|, |l->p| and |l->s|, and returns $-1$.
+or it outputs the node list at position pos (that's where the tag goes),
+   sets |l->t|, |l->p| and |l->s|, and returns $-1$.
 
 @<Hi\TeX\ routines@>=
 static int hout_param_list(pointer p, uint32_t pos, List *l)
 { int n;
   hpos=hstart+pos;
-  if (p==null)
-  {HPUTX(2); hpos++;hput_tags(pos,TAG(param_kind,1)); l->s=0; return -1;}
+  if (p==null) return 0;
   HPUTX(3);
   HPUT8(0); /* space for the tag */
   HPUT8(0); /* space for the list size */
@@ -34046,7 +34067,7 @@ static void hprint_text(pointer p)
 \item Tables where the width of a column depends on \.{\\hsize} or
       \.{\\vsize} are not tested and probably not yet supported.
 
-\item \.{\\vtop} and \.{\\vcenter} will not work if any dimension of the
+\item \.{\\vcenter} will not work if any dimension of the
       vertical list depends on \.{\\hsize} or \.{\\vsize}.
 
 \item The encoding of horizontal lists as texts is not yet supported,

@@ -1,5 +1,5 @@
 /*1410:*/
-#line 25704 "htex.w"
+#line 25709 "htex.w"
 
 #define banner "This is TeX, Version 3.141592653 (HINT)" \
 
@@ -1669,7 +1669,7 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define setstream_number(A) type(A+1) 
 #define setstream_insertion(A) subtype(A+1) 
 #define setstream_mag(A) link(A+1) 
-#define setstream_prefered(A) type(A+2) 
+#define setstream_preferred(A) type(A+2) 
 #define setstream_next(A) subtype(A+2) 
 #define setstream_ratio(A) link(A+2) 
 #define setstream_max(A) info(A+3) 
@@ -1724,7 +1724,7 @@ str_pool[k+2]= si(qo(w.b2) ) ;str_pool[k+3]= si(qo(w.b3) )  \
 #define end_write_token cs_token_flag+end_write \
 
 
-#line 25705 "htex.w"
+#line 25710 "htex.w"
 
 enum{/*11:*/
 #line 374 "htex.w"
@@ -1768,7 +1768,7 @@ file_name_size= 1024,
 empty_string= 256
 
 /*:11*/
-#line 25706 "htex.w"
+#line 25711 "htex.w"
 };
 /*18:*/
 #line 514 "htex.w"
@@ -1880,17 +1880,17 @@ typedef uint16_t font_index;
 typedef int8_t dvi_index;
 
 /*:605*//*944:*/
-#line 18328 "htex.w"
+#line 18331 "htex.w"
 
 typedef uint16_t trie_pointer;
 
 /*:944*//*949:*/
-#line 18397 "htex.w"
+#line 18400 "htex.w"
 
 typedef int16_t hyph_pointer;
 
 /*:949*/
-#line 25707 "htex.w"
+#line 25712 "htex.w"
 
 extern void list_init(void);
 extern void hpack_page(void);

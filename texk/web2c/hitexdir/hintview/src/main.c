@@ -48,9 +48,10 @@
 #include "get.h"
 #include "hint.h"
 #include "hrender.h"
+#include "rendernative.h"
 
 /* Error Handling */
-int herror(const char *title, const char *message)
+int hint_error(const char *title, const char *message)
 { fprintf(stderr,"ERROR %s: %s\n",title,message);
   return 0;
 }
@@ -63,8 +64,8 @@ int hmessage(char *title, char *format, ...)
 }
 
 void error_callback(int error, const char* description)
-{ herror("OpenGL",description);
-  longjmp(error_exit,1);
+{ hint_error("OpenGL",description);
+  longjmp(hint_error_exit,1);
 }
 
 GLFWwindow* window;
@@ -184,7 +185,7 @@ int px_h=1024, px_v=768; // size in pixel
 double x_dpi, y_dpi;
 
 void set_dpi(GLFWwindow* window, int px, int py)
-{ int wx, wy, ww, wh, i;
+{ int wx, wy, ww, wh;
   glfwGetWindowPos(window, &wx, &wy);
   glfwGetWindowSize(window, &ww, &wh);
   find_monitor(wx,wy);
@@ -258,14 +259,14 @@ static int set_hin_name(char *fn)
   if (hin_name!=NULL) { free(hin_name); hin_name=NULL; }
   { hin_name=malloc(strlen(fn)+1);
     if (hin_name==NULL)
-    { herror("Out of memory for file name", fn);
+    { hint_error("Out of memory for file name", fn);
       return 0;
     }
     strcpy(hin_name,fn);
   }
   sl=strlen(hin_name);
   if (sl>4 && strncmp(hin_name+sl-4,".hnt",4)!=0)
-  {  herror("Unknown File Type,I dont know how to open this file", hin_name);
+  {  hint_error("Unknown File Type,I dont know how to open this file", hin_name);
     return 0;
   }
   return 1;
@@ -326,7 +327,7 @@ static int set_input_file(char *fn)
 int dark = 0, loading=0, autoreload=0, home=0;
 
 int usage(void)
-{    return herror("Usage:", "hintview [options] file\n"
+{    return hint_error("Usage:", "hintview [options] file\n"
 		  "Call 'hintview --help' for details.\n");
 }
 
@@ -362,6 +363,10 @@ int command_line(int argc, char *argv[])
 	    else
 	      return usage();
 	case 'a': autoreload=1; break;
+        case 'd': 
+          i++; if (argv[i]==NULL) debugflags = -1;
+          else debugflags=strtol(argv[i],NULL,16);
+          break;
         case 'n': dark=1; break;
         case 'o': break;
         case 'z': scale=SCALE_NORMAL; break;
@@ -531,7 +536,7 @@ void cursor_enter_callback(GLFWwindow* window, int entered)
 int create_window(void)
 { if( !glfwInit() )
   {
-    herror("GLFW", "Failed to initialize GLFW\n" );
+    hint_error("GLFW", "Failed to initialize GLFW\n" );
     getchar();
     return 0;
   }
@@ -545,7 +550,7 @@ int create_window(void)
   /* Open a window and create its OpenGL context */
   window = glfwCreateWindow( px_h, px_v, "HintView", NULL, NULL);
   if( window == NULL ){
-    herror("GLFW","Failed to open GLFW window.\n"
+    hint_error("GLFW","Failed to open GLFW window.\n"
 	   "If you have an Intel GPU, they are not 3.3 compatible.\n"
 	   "Try the 2.1 version of the tutorials.\n" );
     glfwTerminate();
@@ -577,7 +582,7 @@ int create_window(void)
 
 int main(int argc, char *argv[])
 { hlog=stderr;
-  if (setjmp(error_exit)!=0) return 1;
+  if (setjmp(hint_error_exit)!=0) return 1;
   if (!command_line(argc,argv))
     return 1;
    if (!create_window())
@@ -586,7 +591,7 @@ int main(int argc, char *argv[])
   hint_resize(px_h,px_v,scale*x_dpi,scale*y_dpi);
   if (!open_file(home))
     return 1;
-  if (setjmp(error_exit)==0)
+  if (setjmp(hint_error_exit)==0)
     do
     { hint_render();
       glfwSwapBuffers(window);

@@ -43,7 +43,7 @@
 #ifdef DEBUG
 static void printGLString(const char *name, GLenum s) {
     const char *v = (const char *) glGetString(s);
-    LOGI("GL %s = %s\n", name, v);
+    LOG("GL %s = %s\n", name, v);
 }
 
 static void checkGlError(const char *op) 
@@ -94,7 +94,7 @@ static const char FragmentShader[]=
   "uniform int IsImage;\n"
 
   "void main()\n"
-  "{ vec4 texColor = texture( theTexture, UV );\n"
+  "{ vec4 texColor = texture2D( theTexture, UV );\n"
     "if (IsImage==1) color = texColor;\n"
     "else\n"
     "{ color.a = pow(texColor.r,Gamma);\n"
@@ -149,7 +149,7 @@ static void createProgram(void)
 
   if (!vertexID  || !fragmentID) return;
 
-    /* Create, linking, and check the program */
+  /* Create, linking, and check the program */
   ProgramID = glCreateProgram();
   glAttachShader(ProgramID, vertexID);
   glAttachShader(ProgramID, fragmentID);
@@ -307,13 +307,13 @@ void nativeInit(void)
   glEnable(GL_FRAMEBUFFER_SRGB);
   checkGlError("GL_FRAMEBUFFER_SRGB");
 
-  hint_clear_fonts(false);
+  hint_clear_fonts(true);
   mkRuleTexture();
   ImageID=0;
   //LOG("nativeInit Done\n");
 }
 
-// Unused ?
+
 void nativeClear(void)
 { glDeleteBuffers(1, &xybuffer);
   glDeleteBuffers(1, &uvbuffer);
@@ -440,7 +440,6 @@ void nativeImage(double x, double y, double w, double h, unsigned char *b, unsig
       format = GL_RG;
     else
       format = GL_RED;
-
     glGenTextures(1, &ImageID);
     glBindTexture(GL_TEXTURE_2D, ImageID);
     checkGlError("glBindTexture ImageID");
@@ -504,8 +503,8 @@ static void GLtexture(Gcache *g) {
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   g->GLtexture = texID;
   //MESSAGE("Generated GL texture %d",g->GLtexture);
@@ -526,7 +525,7 @@ void nativeSetFreeType(struct gcache_s *g)
 {GLtexture(g);}
 
 int round_to_pixel=1; /* makes sense only if using the native dpi, if using a multiple its of not much use*/
-double pixel_size_threshold= 72.27/150; /*round to pixel only if pixel size in pt is below threshold*/
+double pixel_size_threshold= 72.27/200; /*round to pixel only if pixel size in pt is above threshold*/
 void nativeGlyph(double x, double dx, double y, double dy, double w, double h, struct gcache_s *g, uint8_t s)
 /* given glyph g, display g at position x,y in size w,h. x, y, w, h are given in point */
 {  
@@ -584,16 +583,17 @@ void nativeFreeGlyph(struct gcache_s*g)
     }
 }
 
+
 /* no printing support so far, just placeholders */
 
-int nativePrintStart(int w,int h,unsigned char*bits)
+int nativePrintStart(int w, int h, int bpr, int bpp, unsigned char *bits)
+{ return 0;
+}
+
+int nativePrint(unsigned char *bits)
 { return 0;
 }
 
 int nativePrintEnd(void)
-{ return 0;
-}
-
-int nativePrint(unsigned char*bits)
 { return 0;
 }
