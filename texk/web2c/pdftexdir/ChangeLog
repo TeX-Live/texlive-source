@@ -1,3 +1,14 @@
+2023-02-14  Thanh Han The  <hanthethanh@gmail.com>
+
+	* tounicode.c (set_glyph_unicode): take new glyph_unicode_entry arg.
+	(is_last_byte_valid): new fn.
+	(write_tounicode): stop writing range when last byte of a
+	beginbfrange is no longer valid, that is, >255.
+	Report from Ben JW:
+	  https://tug.org/pipermail/tex-live/2023-February/048845.html
+	and corresponding veraPDF issue:
+	  https://github.com/veraPDF/veraPDF-library/issues/1253#issuecomment-1420125850
+
 2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* wcfname.test:

@@ -17,6 +17,8 @@ pdfTeX 3.141592653-2.6-1.40.25
 
 - bugfixes:
   - finish omission of /Info dict when \pdfomitinfodict is not 0.
+  - generated beginbfrange should no longer be invalid with certain
+    characters (that is, no longer have have a last byte >255).
   
 pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022)
 - changes:
