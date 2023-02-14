@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# Copyright 2022 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 use strict;
@@ -12,6 +12,7 @@ foreach $_ (<DATA>) {
     chomp;
     my ($encname, $fname0, $fname1) = split ' ', $_;
 
+    $fname0 = "$ARGV[0]/$fname0" if @ARGV;
     my $src = &make_str($encname, $fname0, $fname1);
 
     open(my $ofh, '>', $fname0) or die "Cannot open $fname0:$!";

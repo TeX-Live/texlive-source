@@ -1,3 +1,9 @@
+2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* tests/fn-generate.perl:
+	Avoid errors on parallel test processing.
+	Report from Ken Brown.
+
 2023-02-13  Karl Berry  <karl@freefriends.org>
 
 	* enctexdir/enctex-pdftex.ch: move "\special shipout"

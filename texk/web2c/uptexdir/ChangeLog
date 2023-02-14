@@ -1,3 +1,9 @@
+2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* wcfname.test:
+	Avoid errors on parallel test processing.
+	Report from Ken Brown.
+
 2023-01-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/uptex.am:

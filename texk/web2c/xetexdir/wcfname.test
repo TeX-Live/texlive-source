@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 #
-# Copyright 2022 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d xetests || mkdir -p xetests
@@ -8,12 +8,11 @@ rm -f xetests/fn*.log xetests/fn*.txt xetests/fn*.tex fn*.tex
 
 rc=0
 
-TEXMFCNF=$srcdir/../kpathsea
-TEXINPUTS=xetests:.
-export TEXMFCNF TEXINPUTS
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=xetests:.; export TEXINPUTS
 
-perl $srcdir/tests/fn-generate.perl || exit 128
-mv fn*-utf8.tex xetests/; rm -f fn*.tex
+perl $srcdir/tests/fn-generate.perl xetests || exit 128
+rm -f xetests/fn*-euc.tex xetests/fn*-sjis.tex
 
 if [ "$COMSPEC" != "" ]; then
   echo "*** We guess OS is Windows."

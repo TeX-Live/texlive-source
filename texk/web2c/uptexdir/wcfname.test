@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 #
-# Copyright 2022 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d uptests || mkdir -p uptests
@@ -8,9 +8,8 @@ rm -f uptests/fn*.log uptests/fn*.txt uptests/fn*.tex fn*.tex
 
 rc=0
 
-TEXMFCNF=$srcdir/../kpathsea
-TEXINPUTS=uptests:.
-export TEXMFCNF TEXINPUTS
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=uptests:.; export TEXINPUTS
 
 for loc in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8 ja_JP.UTF-8 ja_JP.utf8; do
   locale -a | grep $loc
@@ -26,8 +25,7 @@ if [ $ret = 1 ]; then
   LC_ALL=$loc; LANGUAGE=$loc; export LC_ALL LANGUAGE
 fi
 
-perl $srcdir/tests/fn-generate.perl || exit 128
-mv fn*.tex uptests/
+perl $srcdir/tests/fn-generate.perl uptests || exit 128
 
 # upTeX internal encoding
 fenc="utf8"
