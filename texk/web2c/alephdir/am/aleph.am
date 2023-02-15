@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -69,7 +69,8 @@ aleph_web_srcs = \
 	alephdir/eonewdir.ch \
 	alephdir/eover.ch \
 	alephdir/eopage.ch \
-	alephdir/eochar.ch
+	alephdir/eochar.ch \
+	alephdir/latespecial.ch
 aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie_m) $(aleph_web_srcs)
 

@@ -5477,7 +5477,8 @@ aleph_web_srcs = \
 	alephdir/eonewdir.ch \
 	alephdir/eover.ch \
 	alephdir/eopage.ch \
-	alephdir/eochar.ch
+	alephdir/eochar.ch \
+	alephdir/latespecial.ch
 
 
 # Generate aleph.ch

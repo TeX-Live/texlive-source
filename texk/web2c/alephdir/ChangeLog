@@ -1,3 +1,8 @@
+2023-02-15  Phelype Oleinik  <phelype.oleinik@latex-project.org>
+
+	* latespecial.ch: new change file for "\special shipout".
+	* am/aleph.am (aleph_web_srcs): add latespecial.ch.
+
 2022-10-22  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 
 	* com16bit.ch: Sync with tex.ch changes:
