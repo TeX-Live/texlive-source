@@ -25643,7 +25643,9 @@ for (k=0; k<=17; k++) write_open[k]=false;
 stays the same.
 
 @d immediate_code 4 /*command modifier for \.{\\immediate}*/
-@d set_language_code 5 /*command modifier for \.{\\setlanguage}*/
+@d latex_first_extension_code 5
+@d latespecial_node (latex_first_extension_code+0) /*|subtype| in whatsits that represent \.{\\special} things expanded during output*/
+@d set_language_code (latex_first_extension_code+1) /*command modifier for \.{\\setlanguage}*/
 @d TeX_last_extension_cmd_mod set_language_code
 
 @<Put each...@>=
@@ -25970,12 +25972,17 @@ cur_cs=k;p=scan_toks(false, false);write_tokens(tail)=def_ref;
 }
 
 @ When `\.{\\special\{...\}}' appears, we expand the macros in the token
-list as in \.{\\xdef} and \.{\\mark}.
+list as in \.{\\xdef} and \.{\\mark}.  When marked with \.{shipout}, we keep
+tokens unexpanded for now.
 
 @<Implement \.{\\special}@>=
+{@+if (scan_keyword("shipout"))
+{@+new_whatsit(latespecial_node, write_node_size);write_stream(tail)=null;
+p=scan_toks(false, false);write_tokens(tail)=def_ref;
+} else
 {@+new_whatsit(special_node, write_node_size);write_stream(tail)=null;
 p=scan_toks(false, true);write_tokens(tail)=def_ref;
-}
+} }
 
 @ Each new type of node that appears in our data structure must be capable
 of being displayed, copied, destroyed, and so on. The routines that we
@@ -26007,6 +26014,9 @@ case write_node: {@+print_write_whatsit("write", p);
   print_mark(write_tokens(p));
   } @+break;
 case close_node: print_write_whatsit("closeout", p);@+break;
+case latespecial_node: {@+print_esc("special");print(" shipout");
+  print_mark(write_tokens(p));
+  } @+break;
 case special_node: {@+print_esc("special");
   print_mark(write_tokens(p));
   } @+break;
@@ -26149,7 +26159,7 @@ default: print("whatsit?");
 switch (subtype(p)) {
 case open_node: {@+r=get_node(open_node_size);words=open_node_size;
   } @+break;
-case write_node: case special_node: {@+r=get_node(write_node_size);
+case write_node: case special_node: case latespecial_node: {@+r=get_node(write_node_size);
   add_token_ref(write_tokens(p));words=write_node_size;
   } @+break;
 case close_node: case language_node: {@+r=get_node(small_node_size);
@@ -26268,7 +26278,7 @@ default:confusion("ext2");
 @ @<Wipe out the whatsit...@>=
 {@+switch (subtype(p)) {
 case open_node: free_node(p, open_node_size);@+break;
-case write_node: case special_node: {@+delete_token_ref(write_tokens(p));
+case write_node: case special_node: case latespecial_node: {@+delete_token_ref(write_tokens(p));
   free_node(p, write_node_size);goto done;
   }
 case close_node: case language_node: free_node(p, small_node_size);@+break;
@@ -26380,20 +26390,14 @@ that actually send out the requested data. Let's do \.{\\special} first
 
 @<Declare procedures needed in |hlist_out|, |vlist_out|@>=
 static void special_out(pointer @!p)
-{@+int old_setting; /*holds print |selector|*/
-int @!k; /*index into |str_pool|*/
-synch_h;synch_v;@/
-old_setting=selector;selector=new_string;
-show_token_list(link(write_tokens(p)), null, pool_size-pool_ptr);
-selector=old_setting;
-str_room(1);
-if (cur_length < 256)
-  {@+dvi_out(xxx1);dvi_out(cur_length);
+{@+pointer @!q, @!r; /*temporary variables for list manipulation*/
+int @!old_mode; /*saved |mode|*/
+
+if (subtype(p)==latespecial_node)
+  {@+@<Expand macros in the token list and make |link(def_ref)| point to the
+result@>;
+  write_tokens(p)=def_ref;
   }
-else{@+dvi_out(xxx4);dvi_four(cur_length);
-  }
-for (k=str_start[str_ptr]; k<=pool_ptr-1; k++) dvi_out(so(str_pool[k]));
-pool_ptr=str_start[str_ptr]; /*erase the string*/
 }
 
 @ To write a token list, we must run it through \TeX's scanner, expanding
@@ -26470,7 +26474,7 @@ static void out_what(pointer @!p)
 switch (subtype(p)) {
 case open_node: case write_node: case close_node: @<Do some work that has
 been queued up for \.{\\write}@>@;@+break;
-case special_node:
+case special_node: case latespecial_node: special_out(p);@+break;
 case language_node:
 case save_pos_code: do_nothing;@+break;
 default:confusion("ext4");
@@ -31221,6 +31225,7 @@ if (!is_char_node(*p))
     case whatsit_node:
       switch (subtype(r))
       { case open_node: case write_node: case close_node:
+        case special_node: case latespecial_node:
         { *p=link(r); link(r)=null; *q=r; q=&(link(r));
           if (*p==null) return q;
         }
@@ -31301,6 +31306,7 @@ if (!is_char_node(p))
   { case whatsit_node:
       switch (subtype(p))
       { case open_node: case write_node: case close_node:
+        case special_node: case latespecial_node:
           out_what(p);
           break;
         case par_node: execute_output(par_list(p));
@@ -33569,6 +33575,7 @@ We have added custom whatsit nodes and now we switch based on the subtype.
         return;
     }
     break;
+
 @ For \TeX's whatsit nodes that handle output files, no code is generated;
 hence, we call |out_what| and simply remove the tag byte that is already
 in the output.
@@ -33582,10 +33589,9 @@ to mimic expanding inside an output routine.
 
 
 @<cases to output whatsit content nodes@>=
-     case open_node:
-     case write_node:
-     case close_node: out_what(p);
-     case special_node: hpos--; return;
+     case open_node: case write_node: case close_node:
+     case special_node: case latespecial_node: out_what(p);  hpos--; return;
+
 @*1 Paragraphs.
 When we output a paragraph node, we have to consider a special case:
 The parameter list is given by a reference number but the extended dimension
