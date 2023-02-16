@@ -13,8 +13,11 @@ epspdf conversion utility
        some refactoring; better handling of some corner cases
 0.6.5: eliminate .setpdfwrite from ghostscript commandlines,
        since this is now considered obsolete
+0.6.5.1: eliminate faulty check for writability system_tmpdir;
+      just error out when no tempdir for epspdf can be created.
+      Avoid spawn for MiKTeX.
 
-Copyright (C) 2006-2020 Siep Kroonenberg
+Copyright (C) 2006-2023 Siep Kroonenberg
 
 siepo at bitmuis nl
 
@@ -304,40 +307,8 @@ function find_on_path (prog)
   return false
 end -- find_on_path
 
-function dir_writable(d)
-  -- because directory attributes do not tell the whole story,
-  -- we actually try to create a file in the directory.
-  if not lfs.isdir(d) then
-    return false
-  end
-  -- try to create a new file, write to it and delete it afterwards
-  for i=1,1000 do
-    local s = d .. '/' .. tostring(i)
-    if not lfs.isfile(s) then
-      local fh = io.open(s, "w")
-      if fh then
-        fh:write('test')
-        fh:close()
-        if lfs.isfile(s) then
-          if lfs.attributes(s, 'size') > 0 then
-            os.remove(s)
-            return true
-          else
-            os.remove(s)
-            return false -- open and write resulted in empty file
-          end -- lfs.attributes
-        else
-          return false -- open and write did not result in a file
-        end -- lfs.isfile
-      end -- fh
-      return false -- filename available; could not open for write
-    end -- not lfs.isfile
-  end -- for
-  return false
-end
-
 function system_tempdir ()
-  local d
+  local d = false
   if os.type=='windows' then
     d = os.getenv('TEMP')
     if not d then
@@ -350,9 +321,6 @@ function system_tempdir ()
     end
   end
   -- cygwin: $TEMP=/tmp, root '/' being root of cygwin installation
-  if d and not dir_writable(d) then
-    d = false
-  end
   return d
 end
 
@@ -402,6 +370,20 @@ function tab_combine (t)
   end
   return res
 end -- tab_combine
+
+-- workaround for miktex spawn problem
+function spawnexec(cmd)
+  if is_miktex then
+    if type(cmd)=='table' then
+      return os.execute(table.concat(cmd, ' '))
+      -- there is no need for quoting in the cases used
+    else
+      return os.execute(cmd)
+    end
+  else
+    return os.spawn(cmd)
+  end
+end
 
 -- files ----------------------------------------------------
 -- Copy a file in chunks, with optional length and offset.
@@ -1547,13 +1529,7 @@ function PsPdf:pdf_crop()
   -- if os.type=='unix' then
     cmd = {luatex_prog, '--safer', '--no-shell-escape', textemp}
     log_cmd(cmd)
-    res = os.spawn(cmd)
-  -- else
-  --   cmd = luatex_prog..' --safer --no-shell-escape '..textemp
-  --   log_cmd({cmd})
-  --   -- os.execute('timeout /t 1 /nobreak >nul')
-  --   res = os.execute(cmd)
-  -- end
+    res = spawnexec(cmd)
     if res and res==0 and lfs.attributes(pdftemp, 'size')>0 then
     psp = PsPdf:from_path(pdftemp)
     options.bbox = false
@@ -1583,7 +1559,7 @@ function PsPdf:eps_to_pdf()
   cmd = tab_combine({cmd, pdf_tail_options})
   table.insert(cmd, self.path)
   log_cmd(cmd)
-  local res = os.spawn(cmd)
+  local res = spawnexec(cmd)
   if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
     psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
     options.gray = false
@@ -1623,7 +1599,7 @@ function PsPdf:pdf_to_pdf()
   cmd = tab_combine({cmd, pdf_tail_options})
   table.insert(cmd, self.path)
   log_cmd(cmd)
-  local res = os.spawn(cmd)
+  local res = spawnexec(cmd)
   if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
     psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
     options.gray = false
@@ -1655,10 +1631,9 @@ function PsPdf:pdf_to_eps()
       -- which are usually harmless and for which I know no easy fix
       -- pdftops -q does not do the trick on Windows,
       -- and redirection to logfile gives access denied under miktex
-      -- res = os.spawn({'cmd', '/c', table.concat(cmd, ' ')..' 2>>'..log_bsl})
       res = os.execute(table.concat(cmd, ' ')..' 2>nul')
     else
-      res = os.spawn(cmd)
+      res = spawnexec(cmd)
     end
     if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
       psp.pages = 1
@@ -1732,7 +1707,7 @@ function PsPdf:pdf_to_eps()
     table.insert(cmd, '-sOutputFile='..psp.path)
     table.insert(cmd, self.path)
     log_cmd(cmd)
-    res = os.spawn(cmd)
+    res = spawnexec(cmd)
     if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
       psp.pages = 1
       options.page = false
@@ -1762,7 +1737,7 @@ function PsPdf:ps_to_pdf()
   cmd = tab_combine({cmd, pdf_tail_options})
   table.insert(cmd, self.path)
   log_cmd(cmd)
-  local res = os.spawn(cmd)
+  local res = spawnexec(cmd)
   if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
     psp.pages, psp.miver, psp.maver = pdf_props(psp.path)
     options.gray = false
@@ -1805,10 +1780,9 @@ function PsPdf:pdf_to_ps()
     -- which are usually harmless and for which I know no easy fix
     -- pdftops -q does not do the trick on Windows,
     -- and redirection to logfile gives access denied under miktex
-    -- res = os.spawn({'cmd', '/c', table.concat(cmd, ' ')..' 2>>'..log_bsl})
     res = os.execute(table.concat(cmd, ' ')..' 2>nul')
   else
-    res = os.spawn(cmd)
+    res = spawnexec(cmd)
   end
   if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
     options.page = false
@@ -1833,7 +1807,7 @@ function PsPdf:ps_to_ps()
   table.insert(cmd, '-sOutputFile#'..psp.path)
   table.insert(cmd, self.path)
   log_cmd(cmd)
-  local res = os.spawn(cmd)
+  local res = spawnexec(cmd)
   if res and res==0 and lfs.attributes(psp.path, 'size')>0 then
     options.gray = false
     return psp
@@ -1901,9 +1875,12 @@ function any_to_any()
     if settings.pdf_target and (settings.pdf_target~='default') then
       table.insert(pdf_options, '-dPDFSETTINGS#/'..settings.pdf_target)
     end
-    if settings.pdf_target~='screen' and settings.pdf_target~='ebook' then
-      pdf_tail_options = {
-        '-c', '<</NeverEmbed [ ] >> setdistillerparams', '-f'}
+    if not is_miktex then
+      -- options below cause trouble with unpacked cmd table
+      if settings.pdf_target~='screen' and settings.pdf_target~='ebook' then
+        pdf_tail_options = {
+          '-c', '<</NeverEmbed [ ] >> setdistillerparams', '-f'}
+      end
     end
   end
 
@@ -2063,7 +2040,7 @@ function any_to_any()
       end
       if (not need_gs) and options.page then
         psp = psp:pdf_crop()
-        -- less invasive that page selection by gs
+        -- less invasive than page selection by gs
       end
       if need_gs then
         psp = psp:pdf_to_pdf() -- will handle page selection too
@@ -2395,7 +2372,7 @@ do -- main program
     -- a couple of functions only available during command-line parsing
 
     local function show_version ()
-      print('Epspdf version 0.6.4\nCopyright (c) 2006-2019 Siep Kroonenberg')
+      print('Epspdf version 0.6.5.1\nCopyright (c) 2006-2023 Siep Kroonenberg')
     end
 
     local function help (mess) -- requires opts array
@@ -2649,10 +2626,16 @@ do -- main program
   -- a directory under a dedicated temp directory, which has a better chance
   -- of getting cleaned up by the system.
 
-  lfs.chdir(system_tempdir() or out_dir)
-  -- no check for failure; we create a subdirectory in
-  -- whatever is the current directory
-  tempdir = os.tmpdir()
+  for i, d in pairs({system_tempdir(), out_dir}) do
+    if not lfs.chdir(d) then
+      io.stdout:write('cannot cd into '..d..'\n')
+      goto continue
+    end
+    tempdir = os.tmpdir()
+    if not tempdir then goto continue end
+    break
+    ::continue::
+  end
   if not tempdir then
     errror('Cannot create directory for temporary files')
   end
