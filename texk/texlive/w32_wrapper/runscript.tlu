@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 64296 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2022-09-05 21:26:00 +0200 (Mon, 05 Sep 2022) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 65362 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2022-12-26 20:12:37 +0100 (Mon, 26 Dec 2022) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -853,8 +853,8 @@ end
 
 if not ARGV then
   os.setenv('TEXMF', TEXMFDIST)
-  local extlist = '.tlu;.texlua;.pl;.lua;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;\0'
-  local progfullname = search_path(progname, BINDIR, '.tlu;.bat;.cmd') or
+  local extlist = '.lua;.tlu;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;.texlua;\0'
+  local progfullname = search_path(progname, BINDIR, '.lua;.tlu;.bat;.cmd') or
                        find_texmfscript(progname, extlist)
   os.setenv('TEXMF', nil)
   if progfullname == nil then
