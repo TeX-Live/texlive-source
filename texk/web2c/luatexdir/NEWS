@@ -11,6 +11,9 @@ LuaTeX 1.16.0 2023-02-18
 - More efficient <tt>\fontdimen</tt> allocation.
 - Ignore paragraphs with only a local par node followed by direction
 synchronization nodes.
+- configurable default family
+- improved r2l annotation areas
+- support for deferred literals and specials
 
 
 
