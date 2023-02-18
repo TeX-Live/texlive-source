@@ -19,7 +19,9 @@ pdfTeX 3.141592653-2.6-1.40.25
   - finish omission of /Info dict when \pdfomitinfodict is not 0.
   - generated beginbfrange should no longer be invalid with certain
     characters (that is, no longer have have a last byte >255).
-  
+  - include base and accent glyph in /CharSet when the Type 1 seac
+    operator is used (e.g., Lucida, DejaVu Serif).
+
 pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022)
 - changes:
   - new primitive \showstream to redirect \show output.

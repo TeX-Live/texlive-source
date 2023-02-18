@@ -1,5 +1,13 @@
 2023-02-14  Thanh Han The  <hanthethanh@gmail.com>
 
+	* writet1.c (cs_mark) <CS_SEAC>: look for the composite(d) glyphs too,
+	to include in /CharSet. Original report from John Lienhard
+	for Lucida: https://tug.org/pipermail/lucida/2023-February/000922.html
+	Also happens with DejaVuSerif: tests/31-CharSet-miss-composite-char.
+	(pdftex r902)
+
+2023-02-14  Thanh Han The  <hanthethanh@gmail.com>
+
 	* tounicode.c (set_glyph_unicode): take new glyph_unicode_entry arg.
 	(is_last_byte_valid): new fn.
 	(write_tounicode): stop writing range when last byte of a
@@ -47,7 +55,7 @@
         * NEWS,
         * pdftex_version.h,
         * pdftex.web (pdftex_revision, pdftex_version_string):
-        version [1.40.]25 for TL23..
+        version [1.40.]25 for TL23.
 
 2023-12-28  Thanh Han The  <hanthethanh@gmail.com>
 
