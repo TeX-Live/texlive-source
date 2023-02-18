@@ -1,6 +1,6 @@
 ## texk/web2c/luatexdir/am/mfluaotfcc.am: Makefile fragment for libmfluaotfcc.
 ##
-## Copyright (C) 2021 Luigi Scarso <tex-live@tug.org>
+## Copyright (C) 2023 Luigi Scarso <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 ## mfluaotfcc
