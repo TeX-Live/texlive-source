@@ -1,3 +1,18 @@
+==============================================================
+LuaTeX 1.16.0 2023-02-18 
+==============================================================
+
+- Support structured destinations from PDF 2.0.
+- PNG /Smask for PDF 2.0.
+- Variable font interface for luahbtex.
+- Different radical style defaults in mathdefaultsmode.
+- Optionally block selected discretionary creation.
+- Improvements for TrueType fonts implementation.
+- More efficient <tt>\fontdimen</tt> allocation.
+- Ignore paragraphs with only a local par node followed by direction
+synchronization nodes.
+
+
 
 
 ==============================================================
