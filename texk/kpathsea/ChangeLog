@@ -1,3 +1,7 @@
+2023-02-18  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2023.
+
 2023-02-09  Karl Berry  <karl@freefriends.org>
 
 	* version.ac (kpse_dev): no more /dev.

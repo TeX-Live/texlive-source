@@ -42,7 +42,7 @@ armhf-linux:
   they run on RPi, as well as ARMv7 CPUs, but are untested on non-RPi
   ARMv6 machines.
 
-i386-cygwin, x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
+x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
   TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
     LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
   ./Build
