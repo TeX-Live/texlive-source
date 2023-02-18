@@ -1,5 +1,5 @@
 /* ptexlib.h: macros for pdfTeX library code.
-Copyright 1996-2021 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2023 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
