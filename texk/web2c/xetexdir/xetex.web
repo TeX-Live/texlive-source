@@ -22995,8 +22995,16 @@ end;
 @ @<Insert glue for |split_top_skip|...@>=
 begin q:=new_skip_param(split_top_skip_code); link(prev_p):=q; link(q):=p;
   {now |temp_ptr=glue_ptr(q)|}
-if width(temp_ptr)>height(p) then width(temp_ptr):=width(temp_ptr)-height(p)
-else width(temp_ptr):=0;
+if XeTeX_upwards then
+  begin
+    if width(temp_ptr)>depth(p) then width(temp_ptr):=width(temp_ptr)-depth(p)
+    else width(temp_ptr):=0;
+  end
+else
+  begin
+    if width(temp_ptr)>height(p) then width(temp_ptr):=width(temp_ptr)-height(p)
+    else width(temp_ptr):=0;
+  end;
 p:=null;
 end
 
@@ -23632,8 +23640,16 @@ endcases
 begin if page_contents=empty then freeze_page_specs(box_there)
 else page_contents:=box_there;
 q:=new_skip_param(top_skip_code); {now |temp_ptr=glue_ptr(q)|}
-if width(temp_ptr)>height(p) then width(temp_ptr):=width(temp_ptr)-height(p)
-else width(temp_ptr):=0;
+if XeTeX_upwards then
+  begin
+    if width(temp_ptr)>depth(p) then width(temp_ptr):=width(temp_ptr)-depth(p)
+    else width(temp_ptr):=0;
+  end
+else
+  begin
+    if width(temp_ptr)>height(p) then width(temp_ptr):=width(temp_ptr)-height(p)
+    else width(temp_ptr):=0;
+  end;
 link(q):=p; link(contrib_head):=q; goto continue;
 end
 

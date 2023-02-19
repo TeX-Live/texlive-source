@@ -1,3 +1,19 @@
+2023-02-19  Martin Hosken  <martin_hosken@sil.org>
+
+	* xetex.web (Insert glue for |split_top_skip|...),
+	(Initialize the current page, insert the \.{\\topskip} glue...)
+	handle XeTeX_upwards case.
+	
+	When \XeTeXupwards mode is active (non-zero) line spacing
+	calculations are inverted, that is the lineskip is
+	calculated as \baselineskip - height(line-1) - depth(line),
+	instead of the normal \baselineskip - depth(line-1) - height(line).
+	This works fine.
+	But the lineskip calculation at the top of a page or vsplit needs
+	also to be inverted (\topskip, \splittopskip); that's what this
+	change does.
+	https://github.com/TeX-Live/texlive-source/pull/58
+
 2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* wcfname.test:
