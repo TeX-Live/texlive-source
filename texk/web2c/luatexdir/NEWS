@@ -1,24 +1,22 @@
 ==============================================================
-LuaTeX 1.17.0 2023-02-18 
+LuaTeX 1.16.0 2023-02-19
 ==============================================================
 
-- configurable default family
+- new "late special" feature by Phelype Oleinik,  adapted and
+  extended  by H.Hagen.
+- new primitive \variablefam:  use a family number as signal 
+  for using the current family. This permits classifying 
+  characters with a class and still let the family adapt.
+    \variablefam"24
+    \Umathchardef\foo "3 "24 123
+    \foo \fam9
+  results in a curly left brace taken from family 9 with class 
+  ‘relation’ and spacing around it will be accordingly.
 - improved r2l annotation areas
-- support for deferred literals and specials
 
-==============================================================
-LuaTeX 1.16.0 2022-03-12  (TeX Live 2022)
-==============================================================
+Several bug fixes (see ChangeLog).
 
-- Support structured destinations from PDF 2.0.
-- PNG /Smask for PDF 2.0.
-- Variable font interface for luahbtex.
-- Different radical style defaults in mathdefaultsmode.
-- Optionally block selected discretionary creation.
-- Improvements for TrueType fonts implementation.
-- More efficient <tt>\fontdimen</tt> allocation.
-- Ignore paragraphs with only a local par node followed by direction
-synchronization nodes.
+
 
 ==============================================================
 LuaTeX 1.15.0 2021-12-31 
