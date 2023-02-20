@@ -1,14 +1,14 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 63068 2022-04-18 05:58:07Z preining $
+# $Id: tlmgr.pl 65965 2023-02-20 17:26:54Z karl $
 #
-# Copyright 2008-2022 Norbert Preining
+# Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 63068 $';
-my $datrev = '$Date: 2022-04-18 07:58:07 +0200 (Mon, 18 Apr 2022) $';
+my $svnrev = '$Revision: 65965 $';
+my $datrev = '$Date: 2023-02-20 18:26:54 +0100 (Mon, 20 Feb 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -51,7 +51,7 @@ BEGIN {
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
       unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
-    $bindir = "$Master/bin/win32";
+    $bindir = "$Master/bin/windows";
     $kpsewhichname = "kpsewhich.exe";
     # path already set by wrapper batchfile
   } else {
@@ -96,7 +96,7 @@ use TeXLive::TLWinGoo;
 use TeXLive::TLDownload;
 use TeXLive::TLConfFile;
 use TeXLive::TLCrypto;
-TeXLive::TLUtils->import(qw(member info give_ctan_mirror win32 dirname
+TeXLive::TLUtils->import(qw(member info give_ctan_mirror wndws dirname
                             mkdirhier copy debug tlcmp repository_to_array));
 use TeXLive::TLPaper;
 
@@ -520,7 +520,7 @@ sub main {
     # and on Windows our Config.pm can apparently interfere, so always
     # skip it there.  Or if users have NOPERLDOC set in the environment.
     my @noperldoc = ();
-    if (win32() || $ENV{"NOPERLDOC"}) {
+    if (wndws() || $ENV{"NOPERLDOC"}) {
       @noperldoc = ("-noperldoc", "1");
     } else {
       if (!TeXLive::TLUtils::which("perldoc")) {
@@ -843,7 +843,7 @@ sub do_cmd_and_check {
   if ($opts{"dry-run"}) {
     $ret = $F_OK;
     $out = "";
-  } elsif (win32() && (! -r "$Master/bin/win32/luatex.dll")) {
+  } elsif (wndws() && (! -r "$Master/bin/windows/luatex.dll")) {
     # deal with the case where only scheme-infrastructure is installed
     # on Windows, thus no luatex.dll is available and the wrapper cannot be started
     tlwarn("Cannot run wrapper due to missing luatex.dll\n");
@@ -895,6 +895,7 @@ sub handle_execute_actions {
     if (defined($localtlpdb->get_package('context'))
 	    && (-x "$bindir/texlua" || -x "$bindir/texlua.exe")) {
       $errors += do_cmd_and_check("mtxrun --generate");
+      $errors += run_postinst_cmd("context --luatex --generate");
     }
     $::files_changed = 0;
   }
@@ -1013,7 +1014,7 @@ sub handle_execute_actions {
     if ($regenerate_language) {
       for my $ext ("dat", "def", "dat.lua") {
         my $lang = "language.$ext";
-        if (! TeXLive::TLUtils::win32()) {
+        if (! TeXLive::TLUtils::wndws()) {
           # Use full path for external command, except on Windows.
           $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
         }
@@ -1502,7 +1503,7 @@ sub action_path {
   }
   init_local_db();
   my $winadminmode = 0;
-  if (win32()) {
+  if (wndws()) {
     #
     # for w32 we do system wide vs user setting detection as follows:
     # - if --w32mode is NOT given,
@@ -1561,9 +1562,9 @@ sub action_path {
   }
   my $ret = $F_OK;
   if ($what =~ m/^add$/i) {
-    if (win32()) {
+    if (wndws()) {
       $ret |= TeXLive::TLUtils::w32_add_to_path(
-        $localtlpdb->root . "/bin/win32",
+        $localtlpdb->root . "/bin/windows",
         $winadminmode);
       # ignore this return value, since broadcase_env might return
       # nothing in case of errors, and there is no way around it.
@@ -1576,9 +1577,9 @@ sub action_path {
         $localtlpdb->option("sys_info"));
     }
   } elsif ($what =~ m/^remove$/i) {
-    if (win32()) {
+    if (wndws()) {
       $ret |= TeXLive::TLUtils::w32_remove_from_path(
-        $localtlpdb->root . "/bin/win32",
+        $localtlpdb->root . "/bin/windows",
         $winadminmode);
       # ignore this return value, since broadcase_env might return
       # nothing in case of errors, and there is no way around it.
@@ -3291,7 +3292,7 @@ sub action_update {
         }
         $updated{$pkg} = 1;
         next;
-      } elsif (win32() && ($pkg =~ m/$CriticalPackagesRegexp/)) {
+      } elsif (wndws() && ($pkg =~ m/$CriticalPackagesRegexp/)) {
         # we pretend that the update happened
         # in order to calculate file changes properly
         $updated{$pkg} = 1;
@@ -3395,7 +3396,7 @@ sub action_update {
             my $parentobj = $localtlpdb->get_package($parent);
             if (!defined($parentobj)) {
               # well, in this case we might have hit a package that only
-              # has .ARCH package, like psv.win32, so do nothing
+              # has .ARCH package, like psv.windows, so do nothing
               debug("$prg: .ARCH package without parent, not announcing postaction\n");
             } else {
               debug("$prg: announcing parent execute action for $pkg\n");
@@ -3410,7 +3411,7 @@ sub action_update {
         # TODO
         logpackage("failed update: $pkg ($rev -> $mediarevstr)");
         tlwarn("$prg: Installation of new version of $pkg failed, trying to unwind.\n");
-        if (win32()) {
+        if (wndws()) {
           # w32 is notorious for not releasing a file immediately
           # we experienced permission denied errors
           my $newname = $unwind_package;
@@ -3557,7 +3558,7 @@ sub action_update {
         my @found_pkgs = $localtlpdb->find_file($k);
         if ($#found_pkgs >= 0) {
           my $bad_file = 1;
-          if (win32()) {
+          if (wndws()) {
             # on w32 the packages have not been removed already,
             # so we check that the only package listed in @found_pkgs
             # is the one we are working on ($pkg)
@@ -3583,7 +3584,7 @@ sub action_update {
       }
     }
 
-    if (!win32()) {
+    if (!wndws()) {
       for my $f (@infra_files_to_be_removed) {
         # TODO actually unlink the stuff
         #unlink("$Master/$f");
@@ -3614,7 +3615,7 @@ sub action_update {
   }
 
   # infra update and tlmgr restart on w32 is done by the updater batch script
-  if (win32() && $opts{'self'} && !$opts{"list"} && @critical) {
+  if (wndws() && $opts{'self'} && !$opts{"list"} && @critical) {
     info("$prg: Preparing TeX Live infrastructure update...\n");
     for my $f (@infra_files_to_be_removed) {
       debug("file scheduled for removal $f\n");
@@ -3629,7 +3630,7 @@ sub action_update {
   }
 
   # only when we are not dry-running we restart the program
-  if (!win32() && $restart_tlmgr && !$opts{"dry-run"} && !$opts{"list"}) {
+  if (!wndws() && $restart_tlmgr && !$opts{"dry-run"} && !$opts{"list"}) {
     info("$prg: Restarting to complete update ...\n");
     debug("restarting tlmgr @::SAVEDARGV\n");
     # cleanup temp files before re-exec-ing tlmgr
@@ -4760,11 +4761,11 @@ sub action_option {
       # ignore generate_update which is no longer used or needed.
       next if ($o eq "generate_updmap");
       # ignore some things which are w32 specific
-      next if ($o eq "desktop_integration" && !win32());
-      next if ($o eq "file_assocs" && !win32());
-      next if ($o eq "w32_multi_user" && !win32());
+      next if ($o eq "desktop_integration" && !wndws());
+      next if ($o eq "file_assocs" && !wndws());
+      next if ($o eq "w32_multi_user" && !wndws());
       #
-      if (win32()) {
+      if (wndws()) {
         next if ($o =~ m/^sys_/);
       }
       if (defined $TLPDBOptions{$o}) {
@@ -4828,7 +4829,7 @@ sub action_option {
             # when running w32 do not allow that a non-admin users sets
             # this from false to true
             my $do_it = 0;
-            if (win32()) {
+            if (wndws()) {
               if (admin()) {
                 $do_it = 1;
               } else {
@@ -4937,9 +4938,9 @@ sub action_option {
 #
 sub action_platform {
   my $ret = $F_OK;
-  my @extra_w32_packs = qw/tlperl.win32 tlgs.win32
+  my @extra_w32_packs = qw/tlperl.windows tlgs.windows
                            collection-wintools
-                           dviout.win32 wintools.win32/;
+                           dviout.windows wintools.windows/;
   if ($^O =~ /^MSWin/i) {
     warn("action `platform' not supported on Windows\n");
     # return an error here so that we don't go into post-actions
@@ -5011,7 +5012,7 @@ sub action_platform {
         }
       }
     }
-    if (TeXLive::TLUtils::member('win32', @todoarchs)) {
+    if (TeXLive::TLUtils::member('windows', @todoarchs)) {
       # install the necessary w32 stuff
       for my $p (@extra_w32_packs) {
         info("install: $p\n");
@@ -5069,7 +5070,7 @@ sub action_platform {
         }
       }
     }
-    if (TeXLive::TLUtils::member('win32', @todoarchs)) {
+    if (TeXLive::TLUtils::member('windows', @todoarchs)) {
       for my $p (@extra_w32_packs) {
         info("remove: $p\n");
         $localtlpdb->remove_package($p) if (!$opts{"dry-run"});
@@ -5315,7 +5316,7 @@ Error message from creating MainWindow:
 # Return zero if successful, nonzero if failure.
 # 
 sub uninstall_texlive {
-  if (win32()) {
+  if (wndws()) {
     printf STDERR "Please use \"Add/Remove Programs\" from the Control Panel "
                   . "to uninstall TeX Live!\n";
     return ($F_ERROR);
@@ -5499,7 +5500,7 @@ sub init_tltree {
 
   # if we are on W32, die (no find).  
   my $arch = $localtlpdb->platform();
-  if ($arch eq "win32") {
+  if ($arch eq "windows") {
     tldie("$prg: sorry, cannot check this on Windows.\n");
   }
 
@@ -5516,6 +5517,7 @@ sub init_tltree {
 }
 
 sub action_check {
+  ddebug("starting action_check\n");
   my $svn = defined($opts{"use-svn"}) ? $opts{"use-svn"} : 0;
   my $what = shift @ARGV;
   $what || ($what = "all");
@@ -5776,6 +5778,7 @@ sub check_runfiles {
 # check executes
 #
 sub check_executes {
+  ddebug("starting check_executes\n");
   my $Master = $localtlpdb->root;
   my (%maps,%langcodes,%fmtlines);
   for my $pkg ($localtlpdb->list_packages) {
@@ -5799,8 +5802,10 @@ sub check_executes {
       }
     }
   }
+
+  ddebug(" check_executes: checking maps\n");
   my %badmaps;
-  foreach my $mf (keys %maps) {
+  foreach my $mf (sort keys %maps) {
     my @pkgsfound = @{$maps{$mf}};
     if ($#pkgsfound > 0) {
       tlwarn("$prg: map file $mf is referenced in the executes of @pkgsfound\n");
@@ -5840,9 +5845,11 @@ sub check_executes {
       print "\t$mf (execute in @{$badmaps{$mf}})\n";
     }
   }
+
+  ddebug(" check_executes: checking hyphcodes\n");
   my %badhyphcodes;
   my %problemhyphen;
-  foreach my $lc (keys %langcodes) {
+  foreach my $lc (sort keys %langcodes) {
     next if ($lc eq "zerohyph.tex");
     my @found = $localtlpdb->find_file("texmf-dist/tex/generic/hyph-utf8/loadhyph/$lc");
     if ($#found < 0) {
@@ -5868,7 +5875,7 @@ sub check_executes {
   #    print "\t$mf (@{$problemhyphen{$mf}})\n";
   #  }
   #}
-  #
+
   # what should be checked for the executes? we could check
   # - the existence of the engine in bin/i386-linux or all $arch
   # - the existence of the format name link/bat
@@ -5879,8 +5886,9 @@ sub check_executes {
   my %missingengines;
   my %missinginis;
   my @archs_to_check = $localtlpdb->available_architectures;
-  for (keys %fmtlines) {
-    my %r = TeXLive::TLUtils::parse_AddFormat_line("$_");
+  ddebug("archs_to_check: @archs_to_check\n");
+  for (sort keys %fmtlines) {
+    my %r = TeXLive::TLUtils::parse_AddFormat_line($_);
     if (defined($r{"error"})) {
       die "$r{'error'}, parsing $_, package(s) @{$fmtlines{$_}}";
     }
@@ -6005,7 +6013,7 @@ sub check_file {
     return 1;
   } else {
     # not -r, so check for the extensions .bat and .exe on windoze-ish.
-    if ($a =~ /win[0-9]|.*-cygwin/) {
+    if ($a =~ /windows|win[0-9]|.*-cygwin/) {
       if (-r "$f.exe" || -r "$f.bat") {
         return 1;
       }
@@ -6038,7 +6046,7 @@ sub check_depends {
     # For each package, check that it is a dependency of some collection.
     if (! exists $coll_deps{$pkg}) {
       # Except that schemes and our ugly Windows packages are ok.
-      push (@no_dep, $pkg) unless $pkg =~/^scheme-|\.win32$/;
+      push (@no_dep, $pkg) unless $pkg =~/^scheme-|\.windows$/;
     }
 
     # For each dependency, check that we have a package.
@@ -6156,7 +6164,7 @@ sub action_postaction {
     tlwarn("$prg: action postaction needs as second argument one from 'shortcut', 'fileassoc', 'script'\n");
     return;
   }
-  if (win32()) {
+  if (wndws()) {
     if ($opts{"w32mode"}) {
       if ($opts{"w32mode"} eq "user") {
         if (TeXLive::TLWinGoo::admin()) {
@@ -6191,7 +6199,7 @@ sub action_postaction {
     @todo = $localtlpdb->expand_dependencies("-only-arch", $localtlpdb, @todo);
   }
   if ($type =~ m/^shortcut$/i) {
-    if (!win32()) {
+    if (!wndws()) {
       tlwarn("$prg: action postaction shortcut only works on windows.\n");
       return;
     }
@@ -6205,7 +6213,7 @@ sub action_postaction {
       }
     }
   } elsif ($type =~ m/^fileassoc$/i) {
-    if (!win32()) {
+    if (!wndws()) {
       tlwarn("$prg: action postaction fileassoc only works on windows.\n");
       return;
     }
@@ -6919,7 +6927,7 @@ sub init_local_db {
   # - if we are on Windows, it does not start with Drive:[\/]
   if (! ( $location =~ m!^(https?|ftp)://!i  || 
           $location =~ m!$TeXLive::TLUtils::SshURIRegex!i ||
-          (win32() && (!(-e $location) || ($location =~ m!^.:[\\/]!) ) ) ) ) {
+          (wndws() && (!(-e $location) || ($location =~ m!^.:[\\/]!) ) ) ) ) {
     # seems to be a local path, try to normalize it
     my $testloc = abs_path($location);
     # however, if we were given a url, that will get "normalized" to the
@@ -10240,7 +10248,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 63068 2022-04-18 05:58:07Z preining $
+$Id: tlmgr.pl 65965 2023-02-20 17:26:54Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

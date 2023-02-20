@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 65770 2023-02-09 21:26:50Z karl $
+# $Id: fmtutil.pl 65932 2023-02-19 20:49:48Z siepo $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 65770 2023-02-09 21:26:50Z karl $';
-my $lastchdate = '$Date: 2023-02-09 22:26:50 +0100 (Thu, 09 Feb 2023) $';
+my $svnid = '$Id: fmtutil.pl 65932 2023-02-19 20:49:48Z siepo $';
+my $lastchdate = '$Date: 2023-02-19 21:49:48 +0100 (Sun, 19 Feb 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 65770 $';
+my $svnrev = '$Revision: 65932 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -42,9 +42,9 @@ use Cwd;
 # don't import anything automatically, this requires us to explicitly
 # call functions with TeXLive::TLUtils prefix, and makes it easier to
 # find and if necessary remove references to TLUtils
-use TeXLive::TLUtils qw();
+use TeXLive::TLUtils qw(wndws);
 
-require TeXLive::TLWinGoo if TeXLive::TLUtils::win32;
+require TeXLive::TLWinGoo if wndws();
 
 # numerical constants
 my $FMT_NOTSELECTED = 0;
@@ -53,8 +53,8 @@ my $FMT_FAILURE     = 2;
 my $FMT_SUCCESS     = 3;
 my $FMT_NOTAVAIL    = 4;
 
-my $nul = (win32() ? 'nul' : '/dev/null');
-my $sep = (win32() ? ';' : ':');
+my $nul = (wndws() ? 'nul' : '/dev/null');
+my $sep = (wndws() ? ';' : ':');
 
 my @deferred_stderr;
 my @deferred_stdout;
@@ -84,7 +84,7 @@ chomp(our $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
 chomp(our $TEXMFHOME = `kpsewhich -var-value=TEXMFHOME`);
 
 # make sure that on windows *everything* is in lower case for comparison
-if (win32()) {
+if (wndws()) {
   $TEXMFDIST = lc($TEXMFDIST);
   $TEXMFVAR = lc($TEXMFVAR);
   $TEXMFSYSVAR = lc($TEXMFSYSVAR);
@@ -280,7 +280,7 @@ sub main {
     # but for compatibility we'll silently keep the option.
     $cmd = 'edit';
     my $editor = $ENV{'VISUAL'} || $ENV{'EDITOR'};
-    $editor ||= (&win32 ? "notepad" : "vi");
+    $editor ||= (&wndws ? "notepad" : "vi");
     if (-r $changes_config_file) {
       &copyFile($changes_config_file, $bakFile);
     } else {
@@ -389,7 +389,7 @@ sub callback_build_formats {
   # So make our own temp dir.
   my $tmpdir = "";
   if (! $opts{"dry-run"}) {
-    if (win32()) {
+    if (wndws()) {
       my $foo;
       my $tmp_deflt = File::Spec->tmpdir;
       for my $i (1..5) {
@@ -519,7 +519,7 @@ sub callback_build_formats {
   print_info("failed to build: $err (@err)\n")       if ($err);
   print_info("total formats: $total\n");
   chdir($thisdir) || warn "chdir($thisdir) failed: $!";
-  if (win32()) {
+  if (wndws()) {
     # try to remove the tmpdir with all files
     TeXLive::TLUtils::rmtree($tmpdir);
   }
@@ -1199,7 +1199,7 @@ sub determine_config_files {
           die "$prg: Config file \"$f\" not found";
         }
       }
-      push @tmp, (win32() ? lc($f) : $f);
+      push @tmp, (wndws() ? lc($f) : $f);
     }
     @{$opts{'cnffile'}} = @tmp;
     # in case that config files are given on the command line, the first
@@ -1210,12 +1210,12 @@ sub determine_config_files {
     chomp(@all_files);
     my @used_files;
     for my $f (@all_files) {
-      push @used_files, (win32() ? lc($f) : $f);
+      push @used_files, (wndws() ? lc($f) : $f);
     }
     #
     my $TEXMFLOCALVAR;
     my @TEXMFLOCAL;
-    if (win32()) {
+    if (wndws()) {
       chomp($TEXMFLOCALVAR =`kpsewhich --expand-path=\$TEXMFLOCAL`);
       @TEXMFLOCAL = map { lc } split(/;/ , $TEXMFLOCALVAR);
     } else {
@@ -1351,7 +1351,7 @@ sub save_fmtutil {
 #   and reset it to the real home dir of root.
 
 sub reset_root_home {
-  if (!win32() && ($> == 0)) {  # $> is effective uid
+  if (!wndws() && ($> == 0)) {  # $> is effective uid
     my $envhome = $ENV{'HOME'};
     # if $HOME isn't an existing directory, we don't care.
     if (defined($envhome) && (-d $envhome)) {
@@ -1417,16 +1417,6 @@ sub print_deferred_warning {
 }
 sub print_deferred_error {
   push @deferred_stderr, "$prg [ERROR]: @_";
-}
-
-
-# copied from TeXLive::TLUtils to reduce dependencies
-sub win32 {
-  if ($^O =~ /^MSWin/i) {
-    return 1;
-  } else {
-    return 0;
-  }
 }
 
 

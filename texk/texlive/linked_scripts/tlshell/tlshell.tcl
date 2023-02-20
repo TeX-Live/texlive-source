@@ -1,10 +1,6 @@
-#!/bin/sh
-# next line ignored by wish but not by sh \
-TK_SILENCE_DEPRECATION=1 exec wish "$0" -- "$@"
-# The above environment variable is set to suppress
-# a warning message under MacOS Catalina and Big Sur
+#!/usr/bin/env wish
 
-# Copyright 2017-2022 Siep Kroonenberg
+# Copyright 2017-2023 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -357,7 +353,9 @@ proc selective_dis_enable {} {
   }
 
   # 64-bit windows
-  if {$::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
+  # we disable this menu, but we may possibly resurrect it later
+  # for windows on arm support; therefore 'if {0 && ...}
+  if {0 && $::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
     dis_enable_w64
   }
 }; # selective_dis_enable
@@ -939,7 +937,7 @@ proc get_packages_info_remote {} {
   unset -nocomplain ::loaded
   track_err
   set catv "rcat-version"
-  if {[dict get $::pkgs texlive.infra localrev] < 56458} { set catv "cat-version" }
+
   if [catch {run_cmd \
     "info --data name,remoterev,$catv,category,shortdesc"}] {
     do_debug [get_stacktrace]
@@ -2350,6 +2348,7 @@ Please configure a valid repository" $::repos(main)]
 # with 'unzip -T', but this can only be done AFTER downloading.
 # See also tcl commands 'file mtime', and 'clock scan'
 
+if 0 {
 # $::wprocessor will later decide whether a w64 menu will be created.
 if {$::tcl_platform(platform) eq "windows"} {
   set ::wprocessor $::env(PROCESSOR_ARCHITECTURE)
@@ -2630,7 +2629,7 @@ proc add_or_update_w64 {lr} {
   update idletasks
   return 1
 }
-
+}; # if 0
 ##### main window #####################################################
 
 proc populate_main {} {
@@ -2710,7 +2709,7 @@ proc populate_main {} {
     .mn.opt add command -label "[__ "Platforms"] ..." -command platforms_select
   }
 
-  if {$::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
+  if {0 && $::tcl_platform(platform) eq "windows" && $::wprocessor eq "AMD64"} {
     .mn add cascade -label "64-bit Windows" -menu .mn.w64
     menu .mn.w64
     set inx -1

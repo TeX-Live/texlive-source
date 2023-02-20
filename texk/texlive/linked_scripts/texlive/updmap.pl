@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 63644 2022-06-18 22:30:39Z karl $
+# $Id: updmap.pl 65932 2023-02-19 20:49:48Z siepo $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -13,7 +13,7 @@
 # later adaptions by Reinhard Kotucha, and Karl Berry.
 # The current implementation is a complete rewrite.
 
-my $svnid = '$Id: updmap.pl 63644 2022-06-18 22:30:39Z karl $';
+my $svnid = '$Id: updmap.pl 65932 2023-02-19 20:49:48Z siepo $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -26,17 +26,17 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2022-06-19 00:30:39 +0200 (Sun, 19 Jun 2022) $';
+my $lastchdate = '$Date: 2023-02-19 21:49:48 +0100 (Sun, 19 Feb 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 63644 $';
+my $svnrev = '$Revision: 65932 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
 
 use Getopt::Long qw(:config no_autoabbrev ignore_case_always);
 use strict;
-use TeXLive::TLUtils qw(mkdirhier mktexupd win32 basename dirname 
+use TeXLive::TLUtils qw(mkdirhier mktexupd wndws basename dirname 
   sort_uniq member touch);
 
 (my $prg = basename($0)) =~ s/\.pl$//;
@@ -53,7 +53,7 @@ chomp(my $TEXMFSYSCONFIG = `kpsewhich -var-value=TEXMFSYSCONFIG`);
 chomp(my $TEXMFHOME = `kpsewhich -var-value=TEXMFHOME`);
 
 # make sure that on windows *everything* is in lower case for comparison
-if (win32()) {
+if (wndws()) {
   $TEXMFDIST = lc($TEXMFDIST);
   $TEXMFVAR = lc($TEXMFVAR);
   $TEXMFSYSVAR = lc($TEXMFSYSVAR);
@@ -231,7 +231,7 @@ sub main {
       if (! -f $f) {
         die "$prg: Config file \"$f\" not found.";
       }
-      push @tmp, (win32() ? lc($f) : $f);
+      push @tmp, (wndws() ? lc($f) : $f);
     }
     @{$opts{'cnffile'}} = @tmp;
     # in case that config files are given on the command line, the first
@@ -242,12 +242,12 @@ sub main {
     chomp(@all_files);
     my @used_files;
     for my $f (@all_files) {
-      push @used_files, (win32() ? lc($f) : $f);
+      push @used_files, (wndws() ? lc($f) : $f);
     }
     #
     my $TEXMFLOCALVAR;
     my @TEXMFLOCAL;
-    if (win32()) {
+    if (wndws()) {
       chomp($TEXMFLOCALVAR =`kpsewhich --expand-path=\$TEXMFLOCAL`);
       @TEXMFLOCAL = map { lc } split(/;/ , $TEXMFLOCALVAR);
     } else {
@@ -421,7 +421,7 @@ sub main {
     # but for compatibility we'll silently keep the option.
     $cmd = 'edit';
     my $editor = $ENV{'VISUAL'} || $ENV{'EDITOR'};
-    $editor ||= (&win32 ? "notepad" : "vi");
+    $editor ||= (wndws() ? "notepad" : "vi");
     if (-r $changes_config_file) {
       &copyFile($changes_config_file, $bakFile);
     } else {
@@ -593,7 +593,7 @@ sub setupSymlinks {
 sub SymlinkOrCopy {
   my ($dir, $src, $dest) = @_;
   return ($src, $dest) if $opts{"dry-run"};
-  if (&win32 || $opts{'copy'}) {  # always copy
+  if (wndws() || $opts{'copy'}) {  # always copy
     &copyFile("$dir/$src", "$dir/$dest");
   } else { # symlink if supported by fs, copy otherwise
     system("cd \"$dir\" && ln -s $src $dest 2>/dev/null || "
@@ -2216,7 +2216,7 @@ sub merge_data {
 #   and reset it to the real home dir of root.
 
 sub reset_root_home {
-  if (!win32() && ($> == 0)) {  # $> is effective uid
+  if (!wndws() && ($> == 0)) {  # $> is effective uid
     my $envhome = $ENV{'HOME'};
     # if $HOME isn't an existing directory, we don't care.
     if (defined($envhome) && (-d $envhome)) {

@@ -8,7 +8,7 @@ use warnings;
 # hyperxmp-add-bytecount                                               #
 #   Adds/updates byteCount specification in XMP packet in pdf file(s)  #
 #   made by hyperxmp, with byteCount = file size.                      #
-# Copyright (C) 2020 John Collins <jcc8@psu.edu>                       #
+# Copyright (C) 2020-2022 John Collins <jcc8@psu.edu>                  #
 #    and Scott Pakin, <scott+hyxmp@pakin.org>                          #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
