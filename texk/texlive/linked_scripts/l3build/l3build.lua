@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-02-16"
+release_date = "2023-02-20"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -205,22 +205,23 @@ if #checkconfigs > 1 then
   end
 end
 if #checkconfigs == 1 and
-   checkconfigs[1] ~= "build" and
-   (options["target"] == "check" or options["target"] == "save" or options["target"] == "clean") then
-   local config = "./" .. gsub(checkconfigs[1],"%.lua$","") .. ".lua"
-   if fileexists(config) then
-     local savedtestfiledir = testfiledir
-     dofile(config)
-     testdir = testdir .. "-" .. checkconfigs[1]
-     -- Reset testsuppdir if required
-     if savedtestfiledir ~= testfiledir and
-       testsuppdir == savedtestfiledir .. "/support" then
-       testsuppdir = testfiledir .. "/support"
-     end
-   else
-     print("Error: Cannot find configuration " ..  checkconfigs[1])
-     exit(1)
-   end
+  checkconfigs[1] ~= "build" and
+  (options["target"] == "check" or options["target"] == "save" or options["target"] == "clean") then
+  local configname  = gsub(checkconfigs[1], "%.lua$", "")
+  local config = "./" .. configname .. ".lua"
+  if fileexists(config) then
+    local savedtestfiledir = testfiledir
+    dofile(config)
+    testdir = testdir .. "-" .. configname
+    -- Reset testsuppdir if required
+    if savedtestfiledir ~= testfiledir and
+      testsuppdir == savedtestfiledir .. "/support" then
+      testsuppdir = testfiledir .. "/support"
+    end
+  else
+    print("Error: Cannot find configuration " ..  checkconfigs[1])
+    exit(1)
+  end
 end
 
 -- Call the main function
