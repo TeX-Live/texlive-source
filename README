@@ -68,8 +68,8 @@ i386-solaris, x86_64-solaris:
 
 universal-darwin: See Master/source/mactexdoc.tar.xz.
 
-win32:
-  Makefiles written by hand, see Master/source/w32tex-src.tar.xz.
+windows:
+  Makefiles written by hand, see Master/source/windows-src.tar.xz.
   Visual Studio 2010 and Visual Studio 2015.
 
 x86_64-darwinlegacy:
