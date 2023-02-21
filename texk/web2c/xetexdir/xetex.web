@@ -30251,19 +30251,20 @@ that actually send out the requested data. Let's do \.{\\special} first
 procedure special_out(@!p:pointer);
 var old_setting:0..max_selector; {holds print |selector|}
 @!k:pool_pointer; {index into |str_pool|}
+@!h:halfword;
 @!q,@!r:pointer; {temporary variables for list manipulation}
 @!old_mode:integer; {saved |mode|}
 begin synch_h; synch_v;@/
 doing_special:=true;
-old_setting:=selector; selector:=new_string;
-selector:=old_setting;
+old_setting:=selector;
 if subtype(p)=latespecial_node then
   begin @<Expand macros in the token list
     and make |link(def_ref)| point to the result@>;
-  write_tokens(p):=def_ref;
-  end;
+    h:=def_ref;
+  end
+else h:=write_tokens(p);
 selector:=new_string;
-show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
+show_token_list(link(h),null,pool_size-pool_ptr);
 selector:=old_setting;
 str_room(1);
 if cur_length<256 then
@@ -30273,6 +30274,8 @@ else  begin dvi_out(xxx4); dvi_four(cur_length);
   end;
 for k:=str_start_macro(str_ptr) to pool_ptr-1 do dvi_out(so(str_pool[k]));
 pool_ptr:=str_start_macro(str_ptr); {erase the string}
+if subtype(p)=latespecial_node then
+  flush_list(def_ref);
 doing_special:=false;
 end;
 

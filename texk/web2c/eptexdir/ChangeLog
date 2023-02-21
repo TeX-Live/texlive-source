@@ -1,3 +1,8 @@
+2023-02-21  Phelype Oleinik  <phelype.oleinik@latex-project.org>
+
+	* pdfutils.ch: reduce memory usage for \special shipout,
+	a la HH/luatex.
+
 2023-02-14  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* wcfname.test:

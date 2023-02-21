@@ -1,3 +1,7 @@
+2023-02-21  Phelype Oleinik  <phelype.oleinik@latex-project.org>
+
+	* latespecial.ch: reduce memory usage, a la HH/luatex.
+
 2023-02-15  Phelype Oleinik  <phelype.oleinik@latex-project.org>
 
 	* latespecial.ch: new change file for "\special shipout".

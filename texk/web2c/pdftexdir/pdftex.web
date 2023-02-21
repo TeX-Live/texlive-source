@@ -18511,6 +18511,7 @@ need to declare some procedures needed in |pdf_hlist_out| and |pdf_vlist_out|.
 procedure pdf_out_literal(p:pointer);
 var old_setting:0..max_selector; {holds print |selector|}
     s: str_number;
+    h: halfword;
     @!q,@!r:pointer; {temporary variables for list manipulation}
     @!old_mode:integer; {saved |mode|}
 begin
@@ -18518,14 +18519,17 @@ begin
     if subtype(p)=pdf_lateliteral_node then
       begin @<Expand macros in the token list
         and make |link(def_ref)| point to the result@>;
-      pdf_literal_data(p):=def_ref;
-      end;
+      h:=def_ref;
+      end
+    else h:=pdf_literal_data(p);
     selector:=new_string;
-    show_token_list(link(pdf_literal_data(p)),null,pool_size-pool_ptr);
+    show_token_list(link(h),null,pool_size-pool_ptr);
     selector:=old_setting;
     s := make_string;
     literal(s, pdf_literal_mode(p), false);
     flush_str(s);
+    if subtype(p)=pdf_lateliteral_node then
+      flush_list(def_ref);
 end;
 
 procedure pdf_out_colorstack(p:pointer);
@@ -18636,6 +18640,7 @@ end;
 procedure pdf_special(p: pointer);
 var old_setting:0..max_selector; {holds print |selector|}
     s: str_number;
+    h: halfword;
     @!q,@!r:pointer; {temporary variables for list manipulation}
     @!old_mode:integer; {saved |mode|}
 begin
@@ -18644,14 +18649,17 @@ begin
     if subtype(p)=latespecial_node then
       begin @<Expand macros in the token list
         and make |link(def_ref)| point to the result@>;
-      write_tokens(p):=def_ref;
-      end;
+        h:=def_ref;
+      end
+    else h:=write_tokens(p);
     selector:=new_string;
-    show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
+    show_token_list(link(h),null,pool_size-pool_ptr);
     selector:=old_setting;
     s := make_string;
     literal(s, scan_special, true);
     flush_str(s);
+    if subtype(p)=latespecial_node then
+      flush_list(def_ref);
 end;
 
 procedure pdf_print_toks(p: pointer); {print tokens list |p|}
@@ -35959,6 +35967,7 @@ that actually send out the requested data. Let's do \.{\\special} first
 procedure special_out(@!p:pointer);
 var old_setting:0..max_selector; {holds print |selector|}
 @!k:pool_pointer; {index into |str_pool|}
+@!h:halfword;
 @!q,@!r:pointer; {temporary variables for list manipulation}
 @!old_mode:integer; {saved |mode|}
 begin synch_h; synch_v;@/
@@ -35967,10 +35976,11 @@ selector:=old_setting;
 if subtype(p)=latespecial_node then
   begin @<Expand macros in the token list
     and make |link(def_ref)| point to the result@>;
-  write_tokens(p):=def_ref;
-  end;
+    h:=def_ref;
+  end
+else h:=write_tokens(p);
 selector:=new_string;
-show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
+show_token_list(link(h),null,pool_size-pool_ptr);
 selector:=old_setting;
 str_room(1);
 if cur_length<256 then
@@ -35980,6 +35990,8 @@ else  begin dvi_out(xxx4); dvi_four(cur_length);
   end;
 for k:=str_start[str_ptr] to pool_ptr-1 do dvi_out(so(str_pool[k]));
 pool_ptr:=str_start[str_ptr]; {erase the string}
+if subtype(p)=latespecial_node then
+  flush_list(def_ref);
 end;
 
 @ To write a token list, we must run it through \TeX's scanner, expanding

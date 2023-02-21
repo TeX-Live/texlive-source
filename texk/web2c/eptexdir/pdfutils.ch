@@ -1689,10 +1689,12 @@ var old_setting:0..max_selector; {holds print |selector|}
 @!k:pool_pointer; {index into |str_pool|}
 begin synch_h; synch_v;@/
 old_setting:=selector; selector:=new_string;
+show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
 @y
 procedure special_out(@!p:pointer);
 label done;
 var old_setting:0..max_selector; {holds print |selector|}
+@!h:halfword;
 @!k:pool_pointer; {index into |str_pool|}
 @!q,@!r:pointer; {temporary variables for list manipulation}
 @!old_mode:integer; {saved |mode|}
@@ -1700,14 +1702,15 @@ var old_setting:0..max_selector; {holds print |selector|}
 @!bl: boolean;
 @!i: small_number;
 begin synch_h; synch_v;@/
-old_setting:=selector; selector:=new_string;
-selector:=old_setting;
+old_setting:=selector;
 if subtype(p)=latespecial_node then
   begin @<Expand macros in the token list
     and make |link(def_ref)| point to the result@>;
-  write_tokens(p):=def_ref;
-  end;
+    h:=def_ref;
+  end
+else h:=write_tokens(p);
 selector:=new_string;
+show_token_list(link(h),null,pool_size-pool_ptr);
 @z
 
 @x
@@ -1716,6 +1719,8 @@ pool_ptr:=str_start[str_ptr]; {erase the string}
 if read_papersize_special>0 then
   @<Determine whether this \.{\\special} is a papersize special@>;
 done: pool_ptr:=str_start[str_ptr]; {erase the string}
+if subtype(p)=latespecial_node then
+  flush_list(def_ref);
 @z
 
 @x

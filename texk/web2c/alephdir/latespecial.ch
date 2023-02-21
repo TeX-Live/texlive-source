@@ -74,18 +74,27 @@ begin synch_h; synch_v;@/
 old_setting:=selector; selector:=new_string;
 show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
 @y
+@!h:halfword;
 @!q,@!r:pointer; {temporary variables for list manipulation}
 @!old_mode:integer; {saved |mode|}
 begin synch_h; synch_v;@/
-old_setting:=selector; selector:=new_string;
-selector:=old_setting;
+old_setting:=selector;
 if subtype(p)=latespecial_node then
   begin @<Expand macros in the token list
     and make |link(def_ref)| point to the result@>;
-  write_tokens(p):=def_ref;
-  end;
+    h:=def_ref;
+  end
+else h:=write_tokens(p);
 selector:=new_string;
-show_token_list(link(write_tokens(p)),null,pool_size-pool_ptr);
+show_token_list(link(h),null,pool_size-pool_ptr);
+@z
+
+@x
+pool_ptr:=str_start(str_ptr); {erase the string}
+@y
+pool_ptr:=str_start(str_ptr); {erase the string}
+if subtype(p)=latespecial_node then
+  flush_list(def_ref);
 @z
 
 @x
