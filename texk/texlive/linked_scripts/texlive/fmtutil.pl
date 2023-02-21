@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 65932 2023-02-19 20:49:48Z siepo $
+# $Id: fmtutil.pl 65989 2023-02-20 21:52:59Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 65932 2023-02-19 20:49:48Z siepo $';
-my $lastchdate = '$Date: 2023-02-19 21:49:48 +0100 (Sun, 19 Feb 2023) $';
+my $svnid = '$Id: fmtutil.pl 65989 2023-02-20 21:52:59Z karl $';
+my $lastchdate = '$Date: 2023-02-20 22:52:59 +0100 (Mon, 20 Feb 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 65932 $';
+my $svnrev = '$Revision: 65989 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -711,8 +711,10 @@ sub rebuild_one_format {
 
   # Add -kanji-internal option for create (e-)p(La)TeX format
   # with (e-)upTeX's pTeX compatible mode.
-  if ($eng =~ /^e?uptex$/ && $fmt =~ /^e?p/ && $addargs !~ /-kanji-internal=/) {
-    my $kanji = win32() ? "sjis" : "euc";
+  if ($eng =~ /^e?uptex$/
+      && $fmt =~ /^e?p/
+      && $addargs !~ /-kanji-internal=/) {
+    my $kanji = wndws() ? "sjis" : "euc";
     $addargs = "-kanji-internal=$kanji " . $addargs;
   }
 
