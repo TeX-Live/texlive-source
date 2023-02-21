@@ -47,6 +47,13 @@ pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021) (March 23, 2021)
     different nesting level than \pdfstartlink". 
   - dump \pdfglyphtounicode assignments in fmt file.
   - ttf2afm outputs name information.
+  - If \tracinglostchars is set to 3 or more, missing characters will
+    result in an error, not just a message in the log file, and the
+    missing character code will be shown in hex.
+  - A new integer parameter \tracingstacklevels, if positive, and
+    \tracingmacros is also positive, causes a prefix indicating the macro
+    expansion depth to be output on each relevant log line. Also, macro
+    logging is truncated at a depth >= the parameter value.
 
 - bugfixes:
   - avoid crash in unusual autoexpand cases.
