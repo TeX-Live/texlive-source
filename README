@@ -25,12 +25,13 @@ that document).
 
 
 Build information for some of the platforms.
-See also Master/tlpkg/bin/tl-update-bindir
+See also Master/tlpkg/bin/tl-update-bindir.
 
 aarch64-linux:
+  Built on contextgarden, see below, except for asy:
   aarch64 Debian GNU/Linux 10 (buster)
   gcc (Debian 8.3.0-6) 8.3.0
-  ./Build --enable-arm-neon=check
+  ./Build --enable-arm-neon=on
 
 armhf-linux:
   Built on contextgarden, see below.
