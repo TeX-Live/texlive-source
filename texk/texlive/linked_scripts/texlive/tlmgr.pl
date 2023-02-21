@@ -1,14 +1,15 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 65965 2023-02-20 17:26:54Z karl $
-#
+# $Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
+# 
+# TeX Live Manager.
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 65965 $';
-my $datrev = '$Date: 2023-02-20 18:26:54 +0100 (Mon, 20 Feb 2023) $';
+my $svnrev = '$Revision: 65998 $';
+my $datrev = '$Date: 2023-02-21 02:33:24 +0100 (Tue, 21 Feb 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -895,7 +896,7 @@ sub handle_execute_actions {
     if (defined($localtlpdb->get_package('context'))
 	    && (-x "$bindir/texlua" || -x "$bindir/texlua.exe")) {
       $errors += do_cmd_and_check("mtxrun --generate");
-      $errors += run_postinst_cmd("context --luatex --generate");
+      $errors += do_cmd_and_check("context --luatex --generate");
     }
     $::files_changed = 0;
   }
@@ -10248,7 +10249,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 65965 2023-02-20 17:26:54Z karl $
+$Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
