@@ -1,0 +1,77 @@
+/*
+
+Launcher stub for tlmgr gui (with hidden console window)
+
+//////////////////////////////////////////////////
+
+This version has been replaced with a version which triggers a UAC
+prompt when appropriate. See Master/source/tlmgr-gui_UAC.zip.
+
+//////////////////////////////////////////////////
+
+Originally written in 2011 by Tomasz M. Trzeciak, Public Domain
+
+compiling with gcc (size optimized):
+echo 1 ICON "tlmgr-gui.ico">tlmgr-gui.rc
+windres tlmgr-gui.rc tlmgr-gui-rc.o
+gcc -Os -s -mwindows -o tlmgr-gui.exe tlmgr-gui-rc.o tlmgr-gui.c
+
+compiling with tcc (ver. 0.9.25), extra small size
+windres tlmgr-gui.rc tlmgr-gui-rc.o
+tcc -o tlmgr-gui.exe tlmgr-gui-rc.o tlmgr-gui.c
+
+*/
+
+#include <windows.h>
+
+static char msgbuf[4*MAX_PATH];
+#define DIE(...) { \
+  _snprintf( msgbuf, 4*MAX_PATH, __VA_ARGS__ ); \
+  MessageBox( NULL, msgbuf, "ERROR!", MB_ICONERROR | MB_SETFOREGROUND );\
+  return 1; \
+}
+
+static char cmdln[2*MAX_PATH];
+
+int APIENTRY WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShowint ) {
+
+  // get file name of this executable
+  
+  static char selfdir[MAX_PATH];
+  char *name, *ext, *s;
+  DWORD nchars = GetModuleFileName(NULL, selfdir, MAX_PATH);
+  if ( !nchars || (nchars == MAX_PATH) ) DIE( "cannot get own path" );
+  
+  // make command to execute
+  
+  if ( s = strrchr(selfdir, '\\') ) *s = '\0'; // remove file name part
+  strcat( cmdln, "\"" );
+  strcat( cmdln, selfdir );
+  strcat( cmdln, "\\tlmgr.bat\" -gui" );
+  
+  // create child process
+  
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  ZeroMemory( &si, sizeof(si) );
+  si.cb = sizeof(si);
+	si.dwFlags = STARTF_USESHOWWINDOW;
+	si.wShowWindow = SW_HIDE ;
+  ZeroMemory( &pi, sizeof(pi) );
+  
+  if( !CreateProcess(
+    NULL,     // module name (uses command line if NULL)
+    cmdln,    // command line
+    NULL,     // process security atrributes
+    NULL,     // thread security atrributes
+    TRUE,     // handle inheritance
+    0,        // creation flags, e.g. CREATE_NEW_CONSOLE, CREATE_NO_WINDOW, DETACHED_PROCESS
+    NULL,     // pointer to environment block (uses parent if NULL)
+    NULL,     // starting directory (uses parent if NULL)
+    &si,      // STARTUPINFO structure
+    &pi )     // PROCESS_INFORMATION structure
+  ) DIE( "command execution failed: %s", cmdln ); 
+  
+  return 0; 
+  
+}
