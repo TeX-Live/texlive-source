@@ -34,7 +34,7 @@ if args.help then
   print(msg)
   os.exit(0)
 elseif args.version then
-  print "ctanbib version 0.2a"
+  print "ctanbib version 0.2b"
   os.exit(0)
 elseif args.ctan then
   pkgurl = true
@@ -76,15 +76,18 @@ version = {$version},
 
 local dom = require('luaxml-domobject')
 
-local load_xml =  function(url)
+local load_xml =  function(url, verification)
   -- local command = io.popen("wget -qO- ".. url,"r")
-  local command = io.popen("curl -sS ".. url,"r")
+  local command = io.popen("curl --ssl-no-revoke -sS ".. url,"r")
+  local verification = verification or ""
+
+  if not command then return nil, "Cannot open Curl" end
 
   local info = command:read("*all")
   command:close()
 
-  if string.len(info) == 0 then
-    return false
+  if not info or string.len(info) == 0 or not info:match(verification) then
+    return nil, "Cannot load XML", info 
   end
   return dom.parse(info ), info
 end
@@ -102,7 +105,11 @@ end
 local author_list
 local fetch_author_list = function()
   if author_list then return author_list end
-  local authors = load_xml(authors_url)
+  local authors, msg = load_xml(authors_url, "<authors")
+  if not authors then 
+    print(msg)
+    os.exit()
+  end
   author_list = {}
   for _, author in ipairs(authors:query_selector("author")) do
     -- save all authors under they ID 
@@ -204,7 +211,7 @@ end
 
 for _, pkgname in ipairs(args) do
   local url = "https://ctan.org/xml/2.0/pkg/" .. pkgname .. "?author-name=true"
-  local record, info = load_xml(url)
+  local record, info = load_xml(url, "%<entry")
 
   if not verify_record(record) then
     print("% Cannot find entry for package "..pkgname)
