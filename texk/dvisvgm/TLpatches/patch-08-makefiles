@@ -1,5 +1,5 @@
---- dvisvgm-3.0.2/./Makefile.am	2023-01-17 00:55:33.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2023-02-01 15:05:49.038254644 -0800
+--- dvisvgm-3.0.3/./Makefile.am	2023-02-03 04:02:06.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2023-02-21 17:45:25.221197991 -0800
 @@ -4,9 +4,9 @@
  ## Process this file with automake.
  
@@ -12,8 +12,8 @@
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
  
---- dvisvgm-3.0.2/./libs/defs.am	2022-12-06 08:13:36.000000000 -0800
-+++ dvisvgm-src/./libs/defs.am	2023-02-01 15:07:30.036487762 -0800
+--- dvisvgm-3.0.3/./libs/defs.am	2019-03-09 04:09:01.000000000 -0800
++++ dvisvgm-src/./libs/defs.am	2023-02-21 17:45:25.221197991 -0800
 @@ -5,6 +5,14 @@
  
  if !HAVE_POTRACE
@@ -31,8 +31,8 @@
 +#endif TEXLIVE_BUILD
  endif
  
---- dvisvgm-3.0.2/./libs/Makefile.am	2023-01-17 00:55:33.000000000 -0800
-+++ dvisvgm-src/./libs/Makefile.am	2023-02-01 15:05:49.038254644 -0800
+--- dvisvgm-3.0.3/./libs/Makefile.am	2023-02-03 04:02:06.000000000 -0800
++++ dvisvgm-src/./libs/Makefile.am	2023-02-21 17:45:25.221197991 -0800
 @@ -4,5 +4,9 @@
  ## Process this file with automake.
  
@@ -44,8 +44,8 @@
 +endif
  
  if ENABLE_WOFF
---- dvisvgm-3.0.2/./src/Makefile.am	2023-01-17 00:55:33.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2023-02-01 15:05:49.038254644 -0800
+--- dvisvgm-3.0.3/./src/Makefile.am	2023-02-03 04:02:06.000000000 -0800
++++ dvisvgm-src/./src/Makefile.am	2023-02-21 17:45:25.221197991 -0800
 @@ -17,8 +17,6 @@
  	$(noinst_LTLIBRARIES) \
  	../libs/clipper/libclipper.a \

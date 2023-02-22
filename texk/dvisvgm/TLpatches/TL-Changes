@@ -18,8 +18,8 @@ cd dvisvgm-src
 rm ar-lib compile config.guess config.sub depcomp install-sh
 rm -rf autom4te.cache
 rm ltmain.sh missing test-driver 
-rm -f m4/l* # keep other m4 files
-rm -f aclocal.m4 configure # reduce chance of confusion?
+rm -f m4/l*                 # rm libtool-related, keep other m4 files
+rm -f aclocal.m4 configure  # reduce chance of confusion?
 #
 # files to add:
 svn status | sed -n 's/^\?//p'
