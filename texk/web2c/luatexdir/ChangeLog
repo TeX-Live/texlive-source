@@ -1,3 +1,6 @@
+2023-02-22  Luigi Scarso <luigi.scarso@gmail.com> 
+    *  fix latelua data reference (side effect of deferred late additions) (H.Hagen)
+
 2023-02-18  Luigi Scarso <luigi.scarso@gmail.com> 
     * Fixed the "Invalid unicode ranges in CMap beginbfrange operator bug" as in pdfTeX (Hàn Thế Thành)
 

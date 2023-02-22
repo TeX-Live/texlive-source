@@ -2201,13 +2201,15 @@ static void flush_node_wrapup_core(halfword p)
 {
     switch (subtype(p)) {
         case open_node:
-        case write_node:
         case close_node:
         case save_pos_node:
             break;
+        case write_node:
+            /* Not similar to elsewhere, already flushed? */
+            break;
         case special_node:
         case late_special_node:
-            delete_token_ref(write_tokens(p));
+            delete_token_ref(special_tokens(p));
             break;
         case late_lua_node:
             free_late_lua(p);
@@ -3482,11 +3484,11 @@ static void show_node_wrapup_core(int p)
             break;
         case special_node:
             tprint_esc("special");
-            print_mark(write_tokens(p));
+            print_mark(special_tokens(p));
             break;
         case late_special_node:
             tprint_esc("latespecial");
-            print_mark(write_tokens(p));
+            print_mark(late_lua_data(p));
             break;
         case late_lua_node:
             show_late_lua(p);
