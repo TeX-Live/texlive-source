@@ -1,3 +1,17 @@
+2023-02-23  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Sync with GH 2020 branch.
+
+	  * Changed files (on https://github.com/jlaurens/synctex):
+	    synctex_parser.c
+	    synctex_parser_utils.c
+	    synctex_parser_utils.h
+
+	  - Fix compilation on MSVC.
+	    https://github.com/jlaurens/synctex/pull/59
+	  - Fix some GCC warnings.
+	    https://github.com/jlaurens/synctex/pull/57
+
 2023-01-19  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Comparing TL r55094 (by JL) and GH 2020 branch.
