@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 # Inspired by latexpand by D. Musliner, University of Michigan
-# 2012-2019: Matthieu Moy <git@matthieu-moy.fr>
+# 2012-2023: Matthieu Moy <git@matthieu-moy.fr>
 # BSD License
 
 use strict;
@@ -20,6 +20,7 @@ my $keep_includes;
 my $empty_comments;
 my $help;
 my $long_help;
+my %defines = ();
 my $output;
 my $explain;
 my $show_graphics;
@@ -41,6 +42,7 @@ GetOptions (
 	'keep-comments' => \$keep_comments,
 	'keep-includes' => \$keep_includes,
 	'empty-comments' => \$empty_comments,
+	'define|d=s%' => \%defines,
 	'output|o=s' => \$output,
 	'explain' => \$explain,
 	'show-graphics' => \$show_graphics,
@@ -84,7 +86,7 @@ sub get_version
 {
 	# $VERSION's value will be substituted by 'make dist', but the
 	# next line won't (the string has to be broken to avoid it).
-	my $VERSION = 'v1.6';
+	my $VERSION = 'v1.7';
 	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
@@ -131,6 +133,13 @@ foreach my $file (@ARGV)
 	$makeatletter_found = 0;
 	$in_preamble = 1;
         $inside_import = "";
+        if ($file =~ /\.bib$/) {
+                warn "WARNING: latexpand is not meant to be used on BibTeX files like '$file'.\n" .
+                        "    Run latexpand on your main .tex file, using '--expand-bbl FILE'\n" .
+                        "    or '--biber FILE' if needed to inline the generated bbl file.\n";
+        } elsif (not $file =~ /\.tex$/) {
+                warn "WARNING: latexpand is meant to be used on .tex files, which $file isn't.\n";
+        }
 	process_file($file, "  ");
 }
 
@@ -153,10 +162,18 @@ sub process_file
 	my $commented_newline = 0;
 	while (my $line = <$FILE>) {
 		if ($line =~ /^[ \t]*\\endinput/) {
-			$line =~ s/(\\endinput.*)\n/% $1/;
+			# Surprisingly, text after \endinput on the
+			# same line is kept in output. Also, add a
+			# space (before %), automatically inserted by
+			# TeX at the end of file.
+			$line =~ s/\\endinput(.*)\n?/$1 % /;
 			$in_comment = 1;
 			process_line($line, $prefix, \$commented_newline);
 			last;
+		}
+		while (my ($k, $v) = each (%defines))
+		{
+			$line=~s!\\$k!$v!g;
 		}
 		process_line($line, $prefix, \$commented_newline, $file);
 		if ($line =~ /^%.*[^\n]\z/ || $line =~ /[^\\]%.*[^\n]\z/) {
@@ -218,12 +235,26 @@ sub process_line
 		print STDERR "Warning: consider using --makeatletter if the result is not compilable.\n";
 	}
 
-        # non-comment is a sequence of:
-        # - escaped character (\\.), including \% and \\
-        # - neither '%' nor '\'.
-        my $NON_COMMENT = '([^\\\\%]|\\\\.)*';
+	# non-comment is a sequence of:
+	# - escaped character (\\.), including \% and \\
+	# - neither '%' nor '\'.
+	my $NON_COMMENT = '([^\\\\%]|\\\\.)*';
 
 	unless ($keep_comments) {
+		# Special-case for \url{} commands, which may contain '%'
+		# characters. It's hard to catch them in $NON_COMMENT since we'd
+		# need a regexp so that "\url{foo" can't match as non-comment in
+		# the line \url{foo%bar}, but "\url{foo%bar}" would match.
+		# Escaping these '%' is not mandatory, but allowed, hence we can
+		# pre-process the line by escaping them, and let latexpand work
+		# as normal afterwards.
+		# While there are \url{URL} with unescaped % in URL ...
+		while (/^(.*\\url\{)(([^\\]%|[^}%])*)(\}.*)$/) {
+			my ($before, $url, $after) = ($1, $2, $4);
+			# escape unescaped % in URL
+			$url =~ s/([^\\])%/$1\\%/g;
+			$_ = $before . $url . $after ."\n";
+		}
 		if (!$empty_comments) {
 			# Include \n in pattern to avoid matching
 			# comments at end of files
@@ -235,8 +266,9 @@ sub process_line
 
 			# Special-case commands at end of line. We
 			# don't want "\\foo%\nbar" to become
-			# "\\foobar"
-			if (s/^($NON_COMMENT\\[[:alpha:]@]+)%.*\n/$1 /) {
+			# "\\foobar" (but we still want \@% to result
+			# in no space!)
+			if (s/^($NON_COMMENT\\([[:alpha:]]|[[:alpha:]@]{2,}))%.*\n/$1 /) {
 				$$commented_newline = 1;
 			} elsif (s/^($NON_COMMENT)%.*\n/$1/) {
 				# remove only the comment if the line has actual content
@@ -285,11 +317,14 @@ sub process_line
 			$full_filename = find_tex_file($full_filename, ":.tex");
 			if ($full_filename) {
 				say $prefix . "Found input for file: $full_filename\n";
-				# Surprisingly, space after filename
-				# in \input{foo.tex } is inserted
-				# _before_ the inclusion. Apply this
-				# rule in latexpand.
-				print $before . $trailing . $nl;
+				# Apparently, in some versions of LaTeX, a space
+				# after filename in \input{foo.tex } is inserted
+				# _before_ the inclusion. That was the case for
+                                # me when 31fa806 (deal with space after
+                                # filename in \input and \include, 2019-12-11)
+                                # was written, but is not anymore, hence we just
+                                # throw $trailing away.
+				print $before . $nl;
 				print "% start input $full_filename\n" if ($explain);
 				my $in_comment = process_file($full_filename, $prefix . "  ");
 				if ($explain) {
@@ -341,7 +376,7 @@ sub process_line
 				$_ = "";
 			}
 		} elsif (my ($before, $ignored, $args, $full_filename, $ignored, $after)
-			 = /^($NON_COMMENT)\\includegraphics[\[\s]+(.*?)[\s\]]$ARGUMENT(.*)$/) {
+			 = /^($NON_COMMENT)\\includegraphics(\[[^\]]*?\]|)$ARGUMENT(.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -352,11 +387,11 @@ sub process_line
                         }
                         if ($inside_import) {
                                 $full_filename = $inside_import . $full_filename;
-                                print "$before\\includegraphics[$args]{$full_filename}$after\n";
+                                print "$before\\includegraphics" . "$args" . "{$full_filename}$after\n";
                                 $_ = "";
                         }
 		} elsif (my ($before, $ignored, $args, $full_filename, $ignored, $after)
-			 = /^($NON_COMMENT)\\lstinputlisting[\[\s]+(.*?)[\s\]]$ARGUMENT(.*)$/) {
+			 = /^($NON_COMMENT)\\lstinputlisting(\[[^\]]*?\]|)$ARGUMENT(.*)$/) {
                         if ($explain) {
                                 print "% inside_import " . $inside_import ."\n";
                                 print "% before " . $before ."\n";
@@ -367,7 +402,7 @@ sub process_line
                         }
                         if ($inside_import) {
                                 $full_filename = $inside_import . $full_filename;
-                                print "$before\\lstinputlisting[$args]{$full_filename}$after\n";
+                                print "$before\\lstinputlisting" . "$args" . "{$full_filename}$after\n";
                                 $_ = "";
                         }
 		}
@@ -557,6 +592,10 @@ latexpand [options] FILE...
 	                 (similar to --expand-bbl FILE, but for
 	                 biber+biblatex).
 	--help           this help message
+	--define <key>=<val>, -d <key>=<val>
+	                 defines a macro key to be replaced by value, e.g.,
+	                 when called with -d foo=bar would replace all occurences
+	                 of \foo in the code with bar. Can be supplied multiple times.
 	--output <file>, -o <file>
 	                 generate output in <file>
 	--explain        generate explanatory comments in output
@@ -662,4 +701,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.6.
+This is latexpand version v1.7.
