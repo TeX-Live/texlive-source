@@ -131,7 +131,7 @@ pdftex pdftex language.def -translate-file=cp227.tcx *pdfetex.ini
 #
 # from platex:
 platex eptex language.dat *platex.ini
-platex-dev eptex language.dat *platex.ini
+platex-dev euptex language.dat *platex.ini
 #
 # from ptex:
 eptex eptex language.def *eptex.ini
