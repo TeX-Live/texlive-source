@@ -1,3 +1,7 @@
+2023-02-25  Karl Berry  <karl@tug.org>
+
+	* Build: show full uname -a.
+
 2023-02-09  Karl Berry  <karl@freefriends.org>
 
 	* version.ac: 2023, no more /dev.

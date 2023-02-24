@@ -117,7 +117,7 @@ cd $TL_WORKDIR || exit 1
   echo "starting TeX Live build at `date`"
   printf 'CMDLINE\t"%s"\n' "$0 $*"
   printf 'PWD\t"%s"\n'     "`pwd`"
-  printf 'UNAME\t"%s"\n'   "`uname`"
+  printf 'UNAME\t"%s"\n'   "`uname -a`"
   env | sort >buildenv.log
   echo "See also buildenv.log and buildinfo.log in `pwd`"
   echo
