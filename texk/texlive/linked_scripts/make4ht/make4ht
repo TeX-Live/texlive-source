@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.3l"
+local version = "v0.3m"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -120,7 +120,13 @@ make:match("tmp$", function(filename,params)
 
 make:match(".*",function(filename,par)
 	local outdir =  '' --par["outdir"] and par["outdir"] .."/" or ''
-	if par['outdir'] ~= "" then outdir = par['outdir'] .. '/' end
+	if par['outdir'] ~= "" then 
+    outdir = par['outdir'] .. '/' 
+  else
+    -- don't run unnecessary copy without output dir
+    log:info("No output directory")
+    return true
+  end
 	log:info("outdir: "..outdir)
 	local outfilename = outdir .. filename
 	mkutils.copy(filename,outfilename)
