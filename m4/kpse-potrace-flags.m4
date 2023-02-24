@@ -1,5 +1,6 @@
+# $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright (C) 2022 Luigi Scarso <tex-live@tug.org>
+# Copyright (C) 2022-2023 Luigi Scarso <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
 # gives unlimited permission to copy and/or distribute it,
@@ -27,5 +28,4 @@ AC_DEFUN([KPSE_POTRACE_OPTIONS], [_KPSE_LIB_OPTIONS([potrace], [$1])])
 
 # KPSE_POTRACE_SYSTEM_FLAGS
 # ------------------------
-AC_DEFUN([KPSE_POTRACE_SYSTEM_FLAGS], [dnl
-_KPSE_PKG_CONFIG_FLAGS([POTRACE], [POTRACE])])
+AC_DEFUN([KPSE_POTRACE_SYSTEM_FLAGS], [_KPSE_LIB_FLAGS_SYSTEM([potrace], [potrace])])

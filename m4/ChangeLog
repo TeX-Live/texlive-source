@@ -1,3 +1,10 @@
+2023-02-25  Werner Fink  <werner@suse.de>
+
+	* kpse-potrace-flags.m4 (KPSE_POTRACE_SYSTEM_FLAGS): define
+	using _KPSE_LIB_FLAGS_SYSTEM since there is no .pc file,
+	to allow --with-system-potrace to work.
+	https://tug.org/pipermail/tex-live/2023-February/048869.html
+
 2022-08-22 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* kpse-pkgs.m4 (KPSE_LIBS_PKGS): add potrace.
