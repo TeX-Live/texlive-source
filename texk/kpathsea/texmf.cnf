@@ -373,8 +373,8 @@ BIBINPUTS.upbibtex      = $TEXMFDOTDIR;$TEXMF/{upbibtex,pbibtex,bibtex}/bib//
 BSTINPUTS.upbibtex      = $TEXMFDOTDIR;$TEXMF/{upbibtex,pbibtex,bibtex}/bst//
 
 % BibTeXu bibliographies and style files.
-BIBINPUTS.bibtexu       = $TEXMFDOTDIR;$TEXMF/{bibtexu,pbibtex,bibtex}/bib//
-BSTINPUTS.bibtexu       = $TEXMFDOTDIR;$TEXMF/{bibtexu,pbibtex,bibtex}/bst//
+BIBINPUTS.bibtexu       = $TEXMFDOTDIR;$TEXMF/{bibtexu,upbibtex,pbibtex,bibtex}/bib//
+BSTINPUTS.bibtexu       = $TEXMFDOTDIR;$TEXMF/{bibtexu,upbibtex,pbibtex,bibtex}/bst//
 
 % .ris and .bltxml bibliography formats.
 RISINPUTS = $TEXMFDOTDIR;$TEXMF/biber/ris//
