@@ -1,3 +1,8 @@
+2023-02-24  Karl Berry  <karl@freefriends.org>
+
+	* freetype-src/configure: test for grep -E, don't assume it.
+	Not present on Solaris 5.10, for which we still build TL.
+
 2023-02-11  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import freetype-2.13.0.
