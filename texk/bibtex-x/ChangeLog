@@ -99,9 +99,9 @@
 	* bibtex-[24].c:
 	Enhance built-in functions num.names$ and format.name$ in style files.
 	Ideographic/Fullwidth Comma ("、" U+3001, "，" U+FF0C) in addition to
-	an " and " string is accepted as a sepalator between persons.
+	an " and " string is accepted as a separator between persons.
 	Ideographic Space ("　" U+3000) in addition to a space " " is accepted
-	as a sepalator between a family name and a given name.
+	as a separator between a family name and a given name.
 
 2022-04-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
