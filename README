@@ -1,153 +1,92 @@
-$Id$
-Copyright 2006-2023 TeX Users Group.
-You may freely use, modify and/or distribute this file.
+Id: README 62297 2022-02-28 22:13:17Z karl $
+Public domain.  Originally written 2005 by Karl Berry.
 
-This TeX Live directory contains the programs that use the kpathsea
-library for configuration and path searching, and the library itself.
+For a high-level overview of building TeX Live, see
+http://tug.org/texlive/build.html.  In brief:
 
-Some programs can be built on their own, but others, including kpathsea
-itself, cannot.  Instead, try using the script ../../Build or the
-equivalent configure && make. In general, for TeX Live we only test
-configuring the whole tree.
+- To configure and make the source tree, run ./Build.
+  This builds in subdirectory Work/, and installs into subdirectory inst/.
 
-Upstream sources and last-checked versions follow.  If a url is given,
-that is the upstream, although this does not mean the program is
-actively maintained.  Programs marked with a "?" are not (knowingly)
-maintained here, but the upstream is unknown.  If a program is knowingly
-maintained here in the TL repo, that is explicitly stated.
+- To build (mostly) without optimization, run ./Build --debug.
 
-Anyone -- please research and update any of this information.
+- If the make fails and you want to rebuild without starting from scratch:
+  cd Work/whatever/subdir && make
 
+Email tlbuild@tug.org if problems.
 
-afm2pl - maintained here
-  old info: http://tex.aanhet.net/afm2pl/
+(Nearly everything the Build script does can be overridden via
+environment variables; just take a look to see the names.)
 
-bibtex-x - maintained here, contains
-  bibtex8, bibtexu
+Many more details about the TL build system, such as configuring to work
+on a single program, adding new programs or libraries, documentation
+about the many pieces of the system, etc., are in the doc/tlbuild*
+document and the sibling README* files here (which are generated from
+that document).
 
-chktex 1.7.8 - checked 15dec22
-  http://mirror.ctan.org/support/chktex/
-  http://download.savannah.gnu.org/releases/chktex/
+
+Build information for some of the platforms.
+See also Master/tlpkg/bin/tl-update-bindir.
 
-cjkutils 4.8.5 - checked 22jan22
-  http://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
-  http://www.nongnu.org/cjk/
+aarch64-linux:
+  Built on contextgarden, see below, except for asy:
+  aarch64 Debian GNU/Linux 10 (buster)
+  gcc (Debian 8.3.0-6) 8.3.0
+  ./Build --enable-arm-neon=on
 
-detex 2.8.9 - maintained here
-  maintained for a time (untouched since 2020, checked 14sep22):
-    https://github.com/pkubowicz/opendetex/releases
-    (would be useful to look at open issues there for bugs)
-  original author: http://www.cs.purdue.edu/homes/trinkle/detex/
+armhf-linux:
+  Built on contextgarden, see below.
+  Raspbian/Raspberry Pi OS (Debian Buster)
+  Previously, built by Simon Dales:
+  gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1)
+  ./Build --enable-xindy CLISP=${BUILD_ROOT_DIR}/clisp/clisp-build/clisp}
+  armhf-linux binaries are created and tested on RPi;
+  they run on RPi, as well as ARMv7 CPUs, but are untested on non-RPi
+  ARMv6 machines.
 
-dtl - maintained here, by Takuji
+x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
+  TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
+    LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
+  ./Build
+  
+i386-freebsd, amd64-freebsd:
+  Built on contextgarden, see below.
+  FreeBSD 11.4
 
-dvi2tty 6.0.2 - checked 1may22
-  https://github.com/t-tk/dvi2tty/releases
+i386-linux: see travis below.
 
-dvidvi - maintained here
+i386-netbsd, amd64-netbsd:
+  NetBSD/amd64 9.2
+  gcc version 7.5.0 (nb4 20200810)
+    TL_MAKE=gmake CC=gcc CXX=g++ \
+    CFLAGS=-D_NETBSD_SOURCE \
+    CXXFLAGS='-D_NETBSD_SOURCE -std=c++11' \
+    LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
+  ./Build --enable-xindy CLISP=/usr/local/bin/clisp
 
-dviljk - maintained here, by Joachim Schrod
+i386-solaris, x86_64-solaris:
+  Built on contextgarden, see below.
+  Solaris 10, gcc 5.5.  See doc/README.solaris.
 
-dviout-util - by Japanese TeX Development Community (Hironobu, Takuji et al.)
-  https://github.com/texjporg/tex-jp-build
-  but also: https://github.com/aminophen/dviout-util
+universal-darwin: See Master/source/mactexdoc.tar.xz.
 
-dvipdfm-x - maintained here, by us, contains
-  dvipdfmx and xdvipdfmx.
-    old info: http://project.ktug.org/dvipdfmx/
+windows:
+  Makefiles written by hand, see Master/source/windows-src.tar.xz.
+  Visual Studio 2010 and Visual Studio 2015.
 
-dvipng 1.17 - checked 31may22
-  https://mirror.ctan.org/dviware/dvipng/
+x86_64-darwinlegacy:
+  Mac OS X 10.6, clang 5.0, libc++ required
+  auxiliary installer binaries: Mac OS X 10.6, gcc -std=c99.
+  https://github.com/TeXLive-M/texlive-buildbot
+  http://build.contextgarden.net/waterfall?tag=c/texlive
+  (These links have info on all platforms built by Mojca.)
 
-dvipos - maintained here, by us
-
-dvipsk - maintained here, by us
-
-dvisvgm 3.0.3 - checked 21feb23
-  https://dvisvgm.de/Downloads/
-  https://github.com/mgieseki/dvisvgm
-  https://ctan.org/pkg/dvisvgm
-
-gregorio 6.0.0 - checked 14mar21
-  https://mirror.ctan.org/support/gregoriotex/gregorio-6.0.0.zip
-
-gsftopk - from Paul Vojta's xdvi.
-
-kpathsea - maintained here, by us
-
-lcdf-typetools 2.108 - checked 31may22
-  https://www.lcdf.org/type/
-
-makeindexk - maintained here, by us
-
-makejvf - by Japanese TeX Development Community (Takuji, Hironobu et al.)
-  https://github.com/texjporg/tex-jp-build
-
-mendexk - by Japanese TeX Development Community (Takuji, Hironobu et al.)
-  https://github.com/texjporg/tex-jp-build
-
-musixtnt 2016-01-30 - checked 15mar20
-  http://mirror.ctan.org/macros/musixtnt/
-
-ps2pk - maintained here, by us
-
-psutils 1.23 - checked 16jan14
-  https://github.com/rrthomas/psutils/releases/
-
-ptexenc - maintained here, by us (Akira et al.)
-  but also: https://github.com/texjporg/tex-jp-build
-
-seetexk - maintained here, by us (Takuji, Hironobu et al.)
-
-tex4htk - part of tex4ht, needs full release
-  https://tug.org/tex4ht/
-
-texlive - scripts and files maintained here, by us
-
-ttf2pk2 - maintained here, by us
-
-ttfdump - maintained here, by us, since Taiwan upstream apparently gone.
-
-upmendex 1.07 - by Takuji Tanaka
-  https://ctan.org/pkg/upmendex
-  https://github.com/t-tk/upmendex-package
-
-web2c - maintained here, by us - core web2c, plain tex, etc.
-  The TeX variant dirs (pdftexdir, xetexdir, etc.)
-  updated here by their respective maintainers.  More info:
-       aleph - maintained here
-        ctie - CTAN
-        cweb - https://github.com/ascherer/cwebbin
-               (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
-               and ftp://ftp.cs.stanford.edu/pub/ctwill/)
-       eptex - https://github.com/texjporg/tex-jp-build
-               also: https://osdn.jp/projects/eptex
-        etex - maintained here
-      euptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
-       hitex - https://hint.userweb.mwn.de/hint/hitex.html
-  mflua[jit] - https://serveur-svn.lri.fr/svn/modhel/mflua
-               also: http://www.luatex.org/download.html
-    mplibdir - https://tug.org/metapost/
-      luatex - http://luatex.org/
-      pdftex - http://pdftex.org/
-   [u]pmpost - nothing current, see README for old info
-        ptex - https://github.com/texjporg/tex-jp-build
-               old info: https://asciidwango.github.io/ptex/
-     synctex - maintained here, but also https://github.com/jlaurens/synctex
-       uptex - http://www.t-lab.opal.ne.jp/tex/uptex_en.html
-       xetex - http://tug.org/xetex/
-   
-xdvik 22.87.06 - checked 31may22
-  https://sourceforge.net/projects/xdvi/files/xdvik/
-  Procedure for updating xdvik from sourceforge release:
-tar xf ...
-diff -crN2 \
-  -x .cvsignore -x configure -x autom4te.cache -x Makefile.in -x ChangeLog \
-  xdvik xdvik-22.87.03/texk/xdvik >/tmp/c
-cd xdvik
-patch -p1 </tmp/c
-reautoconf
-add import entry to ChangeLog, update texk/README
-remove unpacked ../xdvik-*
-make sure it builds.
-commit.
+i386-linux,
+x86_64-linux,
+x86_64-linuxmusl:
+  CentOS 7 Docker image with musl libc 1.1.5, plus gcc10:
+    yum -y install centos-release-scl-rh
+    yum -y install devtoolset-9-gcc-c++
+    yum install -y fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+  Binaries are taken from the CI testing via github;
+  see the source/.github/* files for details on how to build,
+  and tlpkg/bin/tl-update-bindir for updating binaries (in general).
