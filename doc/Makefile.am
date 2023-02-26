@@ -16,6 +16,7 @@ EXTRA_DIST = \
 
 # no reasonable way to avoid it with the pod doc.
 MAKEINFOFLAGS = --set INFO_SPECIAL_CHARS_WARNING=0
+MAKEINFOFLAGS += --disable-encoding
 
 #  autogenerate the top-level README files.
 readme-files: tlbuild.info

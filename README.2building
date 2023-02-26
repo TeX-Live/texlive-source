@@ -101,7 +101,7 @@ the next section.
      cd texk/dvipdfm-x
      make check
 
-     # Run the new binary in the buil tree, finding support files
+     # Run the new binary in the build tree, finding support files
      # in a separate tree for a TeX Live release YYYY
      # (Bourne shell syntax):
      TEXMFROOT=/usr/local/texlive/YYYY \

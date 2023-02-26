@@ -463,7 +463,7 @@ EXTRA_DIST = \
 
 
 # no reasonable way to avoid it with the pod doc.
-MAKEINFOFLAGS = --set INFO_SPECIAL_CHARS_WARNING=0
+MAKEINFOFLAGS = --set INFO_SPECIAL_CHARS_WARNING=0 --disable-encoding
 
 #  autogenerate texinfo from install-tl and tlmgr pod.
 # none of this is intended to be executed except manually.

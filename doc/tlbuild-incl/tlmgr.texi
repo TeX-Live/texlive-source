@@ -1,35 +1,18 @@
 @node tlmgr
 @appendix tlmgr
 
-@menu
-* tlmgr NAME::
-* tlmgr SYNOPSIS::
-* tlmgr DESCRIPTION::
-* tlmgr EXAMPLES::
-* tlmgr OPTIONS::
-* tlmgr ACTIONS::
-* tlmgr CONFIGURATION FILE FOR TLMGR::
-* tlmgr CRYPTOGRAPHIC VERIFICATION::
-* tlmgr USER MODE::
-* tlmgr MULTIPLE REPOSITORIES::
-* tlmgr GUI FOR TLMGR::
-* tlmgr MACHINE-READABLE OUTPUT::
-* tlmgr ENVIRONMENT VARIABLES::
-* tlmgr AUTHORS AND COPYRIGHT::
-@end menu
-
 @node tlmgr NAME
-@appendixsec NAME
+@appendixsec tlmgr NAME
 
 tlmgr - the native TeX Live Manager
 
 @node tlmgr SYNOPSIS
-@appendixsec SYNOPSIS
+@appendixsec tlmgr SYNOPSIS
 
 tlmgr [@emph{option}...] @emph{action} [@emph{option}...] [@emph{operand}...]
 
 @node tlmgr DESCRIPTION
-@appendixsec DESCRIPTION
+@appendixsec tlmgr DESCRIPTION
 
 @strong{tlmgr} manages an existing TeX Live installation, both packages and
 configuration options.  For information on initially downloading and
@@ -51,7 +34,7 @@ See @url{https://tug.org/texlive/doc} for all the TeX Live documentation
 available.
 
 @node tlmgr EXAMPLES
-@appendixsec EXAMPLES
+@appendixsec tlmgr EXAMPLES
 
 After successfully installing TeX Live, here are a few common operations
 with @code{tlmgr}:
@@ -61,7 +44,7 @@ with @code{tlmgr}:
 @anchor{tlmgr @code{tlmgr option repository ctan}}
 
 @item @code{tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet}
-@anchor{tlmgr @code{tlmgr option repository https://mirror.ctan.org/systems/texlive/tlnet}}
+@anchor{tlmgr @code{tlmgr option repository https@asis{:}//mirror.ctan.org/systems/texlive/tlnet}}
 
 Tell @code{tlmgr} to use a nearby CTAN mirror for future updates; useful if
 you installed TeX Live from the DVD image and want to have continuing
@@ -97,7 +80,7 @@ For all the capabilities and details of @code{tlmgr}, please read the
 following voluminous information.
 
 @node tlmgr OPTIONS
-@appendixsec OPTIONS
+@appendixsec tlmgr OPTIONS
 
 The following options to @code{tlmgr} are global options, not specific to
 any action.  All options, whether global or action-specific, can be
@@ -107,8 +90,8 @@ non-option argument will be the main action.  In all cases,
 between an option name and its value.
 
 @table @asis
-@item @strong{--repository} @emph{url|path}
-@anchor{tlmgr @strong{--repository} @emph{url|path}}
+@item @strong{@asis{}-@asis{}-@asis{}repository} @emph{url|path}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}repository} @emph{url|path}}
 
 Specify the package repository from which packages should be installed
 or updated, either a local directory or network location, as below. This
@@ -147,7 +130,7 @@ Locations can be specified as any of the following:
 @anchor{tlmgr @code{/some/local/dir}}
 
 @item @code{file:/some/local/dir}
-@anchor{tlmgr @code{file:/some/local/dir}}
+@anchor{tlmgr @code{file@asis{:}/some/local/dir}}
 
 Equivalent ways of specifying a local directory.
 
@@ -155,7 +138,7 @@ Equivalent ways of specifying a local directory.
 @anchor{tlmgr @code{ctan}}
 
 @item @code{https://mirror.ctan.org/systems/texlive/tlnet}
-@anchor{tlmgr @code{https://mirror.ctan.org/systems/texlive/tlnet}}
+@anchor{tlmgr @code{https@asis{:}//mirror.ctan.org/systems/texlive/tlnet}}
 
 Pick a CTAN mirror automatically, trying for one that is both nearby and
 up-to-date. The chosen mirror is used for the entire download. The bare
@@ -163,7 +146,7 @@ up-to-date. The chosen mirror is used for the entire download. The bare
 more about CTAN and its mirrors.)
 
 @item @code{http://server/path/to/tlnet}
-@anchor{tlmgr @code{http://server/path/to/tlnet}}
+@anchor{tlmgr @code{http@asis{:}//server/path/to/tlnet}}
 
 Standard HTTP. If the (default) LWP method is used, persistent
 connections are supported. TL can also use @code{curl} or @code{wget} to do the
@@ -172,7 +155,7 @@ downloads, or an arbitrary user-specified program, as described in the
 (@url{https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES}).
 
 @item @code{https://server/path/to/tlnet}
-@anchor{tlmgr @code{https://server/path/to/tlnet}}
+@anchor{tlmgr @code{https@asis{:}//server/path/to/tlnet}}
 
 Again, if the (default) LWP method is used, this supports persistent
 connections. Unfortunately, some versions of @code{wget} and @code{curl} do not
@@ -182,19 +165,19 @@ certificate roots. The simplest workaround for this problem is to use
 http or ftp.
 
 @item @code{ftp://server/path/to/tlnet}
-@anchor{tlmgr @code{ftp://server/path/to/tlnet}}
+@anchor{tlmgr @code{ftp@asis{:}//server/path/to/tlnet}}
 
 If the (default) LWP method is used, persistent connections are
 supported.
 
 @item @code{user@@machine:/path/to/tlnet}
-@anchor{tlmgr @code{user@@machine:/path/to/tlnet}}
+@anchor{tlmgr @code{user@@machine@asis{:}/path/to/tlnet}}
 
 @item @code{scp://user@@machine/path/to/tlnet}
-@anchor{tlmgr @code{scp://user@@machine/path/to/tlnet}}
+@anchor{tlmgr @code{scp@asis{:}//user@@machine/path/to/tlnet}}
 
 @item @code{ssh://user@@machine/path/to/tlnet}
-@anchor{tlmgr @code{ssh://user@@machine/path/to/tlnet}}
+@anchor{tlmgr @code{ssh@asis{:}//user@@machine/path/to/tlnet}}
 
 These forms are equivalent; they all use @code{scp} to transfer files. Using
 @code{ssh-agent} is recommended. (Info:
@@ -206,8 +189,8 @@ These forms are equivalent; they all use @code{scp} to transfer files. Using
 If the repository is on the network, trailing @code{/} characters and/or
 trailing @code{/tlpkg} and/or @code{/archive} components are ignored.  
 
-@item @strong{--gui} [@emph{action}]
-@anchor{tlmgr @strong{--gui} [@emph{action}]}
+@item @strong{@asis{}-@asis{}-@asis{}gui} [@emph{action}]
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}gui} [@emph{action}]}
 
 Two notable GUI front-ends for @code{tlmgr}, @code{tlshell} and @code{tlcockpit},
 are started up as separate programs; see their own documentation.
@@ -228,8 +211,8 @@ However, the native GUI requires Perl/TK, which is no longer included in
 TeX Live's Perl distribution for Windows. You may find @code{tlshell} or
 @code{tlcockpit} easier to work with. 
 
-@item @strong{--gui-lang} @emph{llcode}
-@anchor{tlmgr @strong{--gui-lang} @emph{llcode}}
+@item @strong{@asis{}-@asis{}-@asis{}gui-lang} @emph{llcode}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}gui-lang} @emph{llcode}}
 
 By default, the GUI tries to deduce your language from the environment
 (on Windows via the registry, on Unix via @code{LC_MESSAGES}). If that fails
@@ -244,54 +227,54 @@ necessarily completely translated) are: @w{English (en, default)},
 
 tlshell shares its message catalog with tlmgr.
 
-@item @strong{--command-logfile} @emph{file}
-@anchor{tlmgr @strong{--command-logfile} @emph{file}}
+@item @strong{@asis{}-@asis{}-@asis{}command-logfile} @emph{file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}command-logfile} @emph{file}}
 
 @code{tlmgr} logs the output of all programs invoked (mktexlr, mtxrun, fmtutil,
 updmap) to a separate log file, by default
 @code{TEXMFSYSVAR/web2c/tlmgr-commands.log}.  This option allows you to specify a
 different file for the log.
 
-@item @strong{--debug-translation}
-@anchor{tlmgr @strong{--debug-translation}}
+@item @strong{@asis{}-@asis{}-@asis{}debug-translation}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}debug-translation}}
 
 In GUI mode, this switch tells @code{tlmgr} to report any untranslated (or
 missing) messages to standard error.  This can help translators to see
 what remains to be done.
 
-@item @strong{--machine-readable}
-@anchor{tlmgr @strong{--machine-readable}}
+@item @strong{@asis{}-@asis{}-@asis{}machine-readable}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}machine-readable}}
 
 Instead of the normal output intended for human consumption, write (to
 standard output) a fixed format more suitable for machine parsing.  See
 the @ref{tlmgr MACHINE-READABLE OUTPUT,, MACHINE-READABLE OUTPUT} section below.
 
-@item @strong{--no-execute-actions}
-@anchor{tlmgr @strong{--no-execute-actions}}
+@item @strong{@asis{}-@asis{}-@asis{}no-execute-actions}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-execute-actions}}
 
 Suppress the execution of the execute actions as defined in the tlpsrc
 files.  Documented only for completeness, as this is only useful in
 debugging.
 
-@item @strong{--package-logfile} @emph{file}
-@anchor{tlmgr @strong{--package-logfile} @emph{file}}
+@item @strong{@asis{}-@asis{}-@asis{}package-logfile} @emph{file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}package-logfile} @emph{file}}
 
 @code{tlmgr} logs all package actions (install, remove, update, failed
 updates, failed restores) to a separate log file, by default
 @code{TEXMFSYSVAR/web2c/tlmgr.log}.  This option allows you to specify a
 different file for the log.
 
-@item @strong{--pause}
-@anchor{tlmgr @strong{--pause}}
+@item @strong{@asis{}-@asis{}-@asis{}pause}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}pause}}
 
 This option makes @code{tlmgr} wait for user input before exiting.  Useful on
 Windows to avoid disappearing command windows.
 
-@item @strong{--persistent-downloads}
-@anchor{tlmgr @strong{--persistent-downloads}}
+@item @strong{@asis{}-@asis{}-@asis{}persistent-downloads}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}persistent-downloads}}
 
-@item @strong{--no-persistent-downloads}
-@anchor{tlmgr @strong{--no-persistent-downloads}}
+@item @strong{@asis{}-@asis{}-@asis{}no-persistent-downloads}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-persistent-downloads}}
 
 For network-based installations, this option (on by default) makes
 @code{tlmgr} try to set up a persistent connection (using the @code{LWP} Perl
@@ -302,25 +285,25 @@ download for each package.
 If this is not possible, @code{tlmgr} will fall back to using @code{wget}.  To
 disable these persistent connections, use @code{--no-persistent-downloads}.
 
-@item @strong{--pin-file}
-@anchor{tlmgr @strong{--pin-file}}
+@item @strong{@asis{}-@asis{}-@asis{}pin-file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}pin-file}}
 
 Change the pinning file location from @code{TEXMFLOCAL/tlpkg/pinning.txt}
 (see @ref{tlmgr Pinning,, Pinning} below).  Documented only for completeness, as this is
 only useful in debugging.
 
-@item @strong{--usermode}
-@anchor{tlmgr @strong{--usermode}}
+@item @strong{@asis{}-@asis{}-@asis{}usermode}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}usermode}}
 
 Activates user mode for this run of @code{tlmgr}; see @ref{tlmgr USER MODE,, USER MODE} below.
 
-@item @strong{--usertree} @emph{dir}
-@anchor{tlmgr @strong{--usertree} @emph{dir}}
+@item @strong{@asis{}-@asis{}-@asis{}usertree} @emph{dir}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}usertree} @emph{dir}}
 
 Uses @emph{dir} for the tree in user mode; see @ref{tlmgr USER MODE,, USER MODE} below.
 
-@item @strong{--verify-repo=[none|main|all]}
-@anchor{tlmgr @strong{--verify-repo=[none|main|all]}}
+@item @strong{@asis{}-@asis{}-@asis{}verify-repo=[none|main|all]}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}verify-repo=[none|main|all]}}
 
 Defines the level of verification done: If @code{none} is specified, no
 verification whatsoever is done. If @code{main} is given and a working GnuPG
@@ -343,39 +326,6 @@ revision number for the loaded TeX Live Perl modules are shown, too.
 @node tlmgr ACTIONS
 @appendixsec ACTIONS
 
-@menu
-* tlmgr help::
-* tlmgr version::
-* tlmgr backup::
-* tlmgr candidates @emph{pkg}::
-* tlmgr check [@emph{option}...] [depends|executes|files|runfiles|texmfdbs|all]::
-* tlmgr conf::
-* tlmgr dump-tlpdb [@emph{option}...] [--json]::
-* tlmgr generate::
-* tlmgr gui::
-* tlmgr info::
-* tlmgr init-usertree::
-* tlmgr install [@emph{option}...] @emph{pkg}...::
-* tlmgr key::
-* tlmgr list::
-* tlmgr option::
-* tlmgr paper::
-* tlmgr path::
-* tlmgr pinning::
-* tlmgr platform::
-* tlmgr postaction::
-* tlmgr print-platform::
-* tlmgr print-platform-info::
-* tlmgr remove [@emph{option}...] @emph{pkg}...::
-* tlmgr repository::
-* tlmgr restore::
-* tlmgr search::
-* tlmgr shell::
-* tlmgr show::
-* tlmgr uninstall::
-* tlmgr update [@emph{option}...] [@emph{pkg}...]::
-@end menu
-
 @node tlmgr help
 @appendixsubsec help
 
@@ -397,8 +347,8 @@ If @code{-v} has been given the revisions of the used modules are reported, too.
 @appendixsubsec backup
 
 @table @asis
-@item @strong{backup [@emph{option}...] --all}
-@anchor{tlmgr @strong{backup [@emph{option}...] --all}}
+@item @strong{backup [@emph{option}...] @asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{backup [@emph{option}...] @asis{}-@asis{}-@asis{}all}}
 
 @item @strong{backup [@emph{option}...] @emph{pkg}...}
 @anchor{tlmgr @strong{backup [@emph{option}...] @emph{pkg}...}}
@@ -422,30 +372,30 @@ the @code{option} action.
 Options:
 
 @table @asis
-@item @strong{--backupdir} @emph{directory}
-@anchor{tlmgr @strong{--backupdir} @emph{directory}}
+@item @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory}}
 
 Overrides the @code{backupdir} option setting in the TLPDB.
 The @emph{directory} argument is required and must specify an existing,
 writable directory where backups are to be placed.
 
-@item @strong{--all}
-@anchor{tlmgr @strong{--all}}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all}}
 
 If @code{--clean} is not specified, make a backup of all packages in the TeX
 Live installation; this will take quite a lot of space and time.  If
 @code{--clean} is specified, all packages are pruned.
 
-@item @strong{--clean}[=@emph{N}]
-@anchor{tlmgr @strong{--clean}[=@emph{N}]}
+@item @strong{@asis{}-@asis{}-@asis{}clean}[=@emph{N}]
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}clean}[=@emph{N}]}
 
 Instead of making backups, prune the backup directory of old backups, as
 explained above. The optional integer argument @emph{N} overrides the
 @code{autobackup} option set in the TLPDB.  You must use @code{--all} or a list
 of packages together with this option, as desired.
 
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run}}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run}}
 
 Nothing is actually backed up or removed; instead, the actions to be
 performed are written to the terminal.
@@ -523,8 +473,8 @@ this. It checks that:
 Options:
 
 @table @asis
-@item @strong{--use-svn}
-@anchor{tlmgr @strong{--use-svn}}
+@item @strong{@asis{}-@asis{}-@asis{}use-svn}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}use-svn}}
 
 Use the output of @code{svn status} instead of listing the files; for
 checking the TL development repository. (This is run nightly.)
@@ -535,11 +485,11 @@ checking the TL development repository. (This is run nightly.)
 @appendixsubsec conf
 
 @table @asis
-@item @strong{conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]}
-@anchor{tlmgr @strong{conf [texmf|tlmgr|updmap [--conffile @emph{file}] [--delete] [@emph{key} [@emph{value}]]]}}
+@item @strong{conf [texmf|tlmgr|updmap [@asis{}-@asis{}-@asis{}conffile @emph{file}] [@asis{}-@asis{}-@asis{}delete] [@emph{key} [@emph{value}]]]}
+@anchor{tlmgr @strong{conf [texmf|tlmgr|updmap [@asis{}-@asis{}-@asis{}conffile @emph{file}] [@asis{}-@asis{}-@asis{}delete] [@emph{key} [@emph{value}]]]}}
 
-@item @strong{conf auxtrees [--conffile @emph{file}] [show|add|remove] [@emph{value}]}
-@anchor{tlmgr @strong{conf auxtrees [--conffile @emph{file}] [show|add|remove] [@emph{value}]}}
+@item @strong{conf auxtrees [@asis{}-@asis{}-@asis{}conffile @emph{file}] [show|add|remove] [@emph{value}]}
+@anchor{tlmgr @strong{conf auxtrees [@asis{}-@asis{}-@asis{}conffile @emph{file}] [show|add|remove] [@emph{value}]}}
 
 With only @code{conf}, show general configuration information for TeX Live,
 including active configuration files, path settings, and more.  This is
@@ -551,7 +501,7 @@ user-specific @code{tlmgr} configuration file (see below), or the first
 found (via @code{kpsewhich}) @code{updmap.cfg} file, respectively.
 
 If @emph{key} is given in addition, shows the value of only that @emph{key} in
-the respective file.  If option @emph{--delete} is also given, the value in
+the respective file.  If option @emph{@asis{}-@asis{}-@asis{}delete} is also given, the value in
 the given configuration file is entirely removed (not just commented
 out).
 
@@ -595,8 +545,8 @@ breakage is possible.
 
 @end table
 
-@node tlmgr dump-tlpdb [@emph{option}...] [--json]
-@appendixsubsec dump-tlpdb [@emph{option}...] [--json]
+@node tlmgr dump-tlpdb [@emph{option}...] [@asis{}-@asis{}-@asis{}json]
+@appendixsubsec dump-tlpdb [@emph{option}...] [@asis{}-@asis{}-@asis{}json]
 
 Dump complete local or remote TLPDB to standard output, as-is.  The
 output is analogous to the @code{--machine-readable} output; see
@@ -605,18 +555,18 @@ output is analogous to the @code{--machine-readable} output; see
 Options:
 
 @table @asis
-@item @strong{--local}
-@anchor{tlmgr @strong{--local}}
+@item @strong{@asis{}-@asis{}-@asis{}local}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}local}}
 
 Dump the local TLPDB.
 
-@item @strong{--remote}
-@anchor{tlmgr @strong{--remote}}
+@item @strong{@asis{}-@asis{}-@asis{}remote}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}remote}}
 
 Dump the remote TLPDB.
 
-@item @strong{--json}
-@anchor{tlmgr @strong{--json}}
+@item @strong{@asis{}-@asis{}-@asis{}json}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json}}
 
 Instead of dumping the actual content, the database is dumped as
 JSON. For the format of JSON output see @code{tlpkg/doc/JSON-formats.txt},
@@ -720,8 +670,8 @@ extension recreates only that given language file.
 Options:
 
 @table @asis
-@item @strong{--dest} @emph{output_file}
-@anchor{tlmgr @strong{--dest} @emph{output_file}}
+@item @strong{@asis{}-@asis{}-@asis{}dest} @emph{output_file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dest} @emph{output_file}}
 
 specifies the output file (defaults to the respective location in
 @code{TEXMFSYSVAR}).  If @code{--dest} is given to @code{generate language}, it
@@ -732,14 +682,14 @@ name of the @code{language.dat.lua} file.  (This is just to avoid
 overwriting; if you want a specific name for each output file, we
 recommend invoking @code{tlmgr} twice.)
 
-@item @strong{--localcfg} @emph{local_conf_file}
-@anchor{tlmgr @strong{--localcfg} @emph{local_conf_file}}
+@item @strong{@asis{}-@asis{}-@asis{}localcfg} @emph{local_conf_file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}localcfg} @emph{local_conf_file}}
 
 specifies the (optional) local additions (defaults to the respective
 location in @code{TEXMFLOCAL}).
 
-@item @strong{--rebuild-sys}
-@anchor{tlmgr @strong{--rebuild-sys}}
+@item @strong{@asis{}-@asis{}-@asis{}rebuild-sys}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}rebuild-sys}}
 
 tells @code{tlmgr} to run necessary programs after config files have been
 regenerated. These are:
@@ -814,30 +764,30 @@ but are still supported for backward compatibility.
 Options:
 
 @table @asis
-@item @strong{--list}
-@anchor{tlmgr @strong{--list}}
+@item @strong{@asis{}-@asis{}-@asis{}list}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}list}}
 
 If the option @code{--list} is given with a package, the list of contained
 files is also shown, including those for platform-specific dependencies.
 When given with schemes and collections, @code{--list} outputs their
 dependencies in a similar way.
 
-@item @strong{--only-installed}
-@anchor{tlmgr @strong{--only-installed}}
+@item @strong{@asis{}-@asis{}-@asis{}only-installed}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}only-installed}}
 
 If this option is given, the installation source will not be used; only
 locally installed packages, collections, or schemes are listed.
 
-@item @strong{--only-remote}
-@anchor{tlmgr @strong{--only-remote}}
+@item @strong{@asis{}-@asis{}-@asis{}only-remote}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}only-remote}}
 
 Only list packages from the remote repository. Useful when checking what
 is available in a remote repository using
 @code{tlmgr --repo ... --only-remote info}. Note that
 @code{--only-installed} and @code{--only-remote} cannot both be specified.
 
-@item @strong{--data @code{item1,item2,...}}
-@anchor{tlmgr @strong{--data @code{item1@comma{}item2@comma{}...}}}
+@item @strong{@asis{}-@asis{}-@asis{}data @code{item1,item2,...}}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}data @code{item1@comma{}item2@comma{}...}}}
 
 If the option @code{--data} is given, its argument must be a comma or colon 
 separated list of field names from: @code{name}, @code{category}, @code{localrev},
@@ -862,8 +812,8 @@ At this writing, the @code{cat-contact-*} fields include: @code{home},
 may be empty or a url value. A brief description is on the CTAN upload
 page for new packages: @url{https://ctan.org/upload}.
 
-@item @strong{--json}
-@anchor{tlmgr @strong{--json} 1}
+@item @strong{@asis{}-@asis{}-@asis{}json}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json} 1}
 
 In case @code{--json} is specified, the output is a JSON encoded array where
 each array element is the JSON representation of a single @code{TLPOBJ} but
@@ -893,34 +843,34 @@ By default this also installs all packages on which the given @emph{pkg}s are
 dependent.  Options:
 
 @table @asis
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run} 1}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run} 1}
 
 Nothing is actually installed; instead, the actions to be performed are
 written to the terminal.
 
-@item @strong{--file}
-@anchor{tlmgr @strong{--file}}
+@item @strong{@asis{}-@asis{}-@asis{}file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}file}}
 
 Instead of fetching a package from the installation repository, use
 the package files given on the command line.  These files must
 be standard TeX Live package files (with contained tlpobj file).
 
-@item @strong{--force}
-@anchor{tlmgr @strong{--force}}
+@item @strong{@asis{}-@asis{}-@asis{}force}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}force}}
 
 If updates to @code{tlmgr} itself (or other parts of the basic
 infrastructure) are present, @code{tlmgr} will bail out and not perform the
 installation unless this option is given.  Not recommended.
 
-@item @strong{--no-depends}
-@anchor{tlmgr @strong{--no-depends}}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends}}
 
 Do not install dependencies.  (By default, installing a package ensures
 that all dependencies of this package are fulfilled.)
 
-@item @strong{--no-depends-at-all}
-@anchor{tlmgr @strong{--no-depends-at-all}}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends-at-all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends-at-all}}
 
 Normally, when you install a package which ships binary files the
 respective binary package will also be installed.  That is, for a
@@ -929,8 +879,8 @@ an @code{i386-linux} system.  This option suppresses this behavior, and also
 implies @code{--no-depends}.  Don't use it unless you are sure of what you
 are doing.
 
-@item @strong{--reinstall}
-@anchor{tlmgr @strong{--reinstall}}
+@item @strong{@asis{}-@asis{}-@asis{}reinstall}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}reinstall}}
 
 Reinstall a package (including dependencies for collections) even if it
 already seems to be installed (i.e, is present in the TLPDB).  This is
@@ -939,11 +889,11 @@ useful to recover from accidental removal of files in the hierarchy.
 When re-installing, only dependencies on normal packages are followed
 (i.e., not those of category Scheme or Collection).
 
-@item @strong{--with-doc}
-@anchor{tlmgr @strong{--with-doc}}
+@item @strong{@asis{}-@asis{}-@asis{}with-doc}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}with-doc}}
 
-@item @strong{--with-src}
-@anchor{tlmgr @strong{--with-src}}
+@item @strong{@asis{}-@asis{}-@asis{}with-src}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}with-src}}
 
 While not recommended, the @code{install-tl} program provides an option to
 omit installation of all documentation and/or source files.  (By
@@ -1000,11 +950,11 @@ Synonym for @ref{tlmgr info,, info}.
 @appendixsubsec option
 
 @table @asis
-@item @strong{option [--json] [show]}
-@anchor{tlmgr @strong{option [--json] [show]}}
+@item @strong{option [@asis{}-@asis{}-@asis{}json] [show]}
+@anchor{tlmgr @strong{option [@asis{}-@asis{}-@asis{}json] [show]}}
 
-@item @strong{option [--json] showall|help}
-@anchor{tlmgr @strong{option [--json] showall|help}}
+@item @strong{option [@asis{}-@asis{}-@asis{}json] showall|help}
+@anchor{tlmgr @strong{option [@asis{}-@asis{}-@asis{}json] showall|help}}
 
 @item @strong{option @emph{key} [@emph{value}]}
 @anchor{tlmgr @strong{option @emph{key} [@emph{value}]}}
@@ -1119,11 +1069,11 @@ instead of only the current user.  All three options are on by default.
 @item @strong{paper [a4|letter]}
 @anchor{tlmgr @strong{paper [a4|letter]}}
 
-@item @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}>
-@anchor{tlmgr @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|--list]}>}
+@item @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|@asis{}-@asis{}-@asis{}list]}>
+@anchor{tlmgr @strong{<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [@emph{papersize}|@asis{}-@asis{}-@asis{}list]}>}
 
-@item @strong{paper --json}
-@anchor{tlmgr @strong{paper --json}}
+@item @strong{paper @asis{}-@asis{}-@asis{}json}
+@anchor{tlmgr @strong{paper @asis{}-@asis{}-@asis{}json}}
 
 @end table
 
@@ -1159,11 +1109,11 @@ settings.
 @appendixsubsec path
 
 @table @asis
-@item @strong{path [--w32mode=user|admin] add}
-@anchor{tlmgr @strong{path [--w32mode=user|admin] add}}
+@item @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] add}
+@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] add}}
 
-@item @strong{path [--w32mode=user|admin] remove}
-@anchor{tlmgr @strong{path [--w32mode=user|admin] remove}}
+@item @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] remove}
+@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] remove}}
 
 On Unix, adds or removes symlinks for executables, man pages, and info
 pages in the system directories specified by the respective options (see
@@ -1261,8 +1211,8 @@ Platform detection is needed to select the proper @code{xz} and
 Options:
 
 @table @asis
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run} 2}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run} 2}
 
 Nothing is actually installed; instead, the actions to be performed are
 written to the terminal.
@@ -1289,8 +1239,8 @@ line, or for all if @code{--all} is given.
 Options:
 
 @table @asis
-@item @strong{--w32mode=[user|admin]}
-@anchor{tlmgr @strong{--w32mode=[user|admin]}}
+@item @strong{@asis{}-@asis{}-@asis{}w32mode=[user|admin]}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}w32mode=[user|admin]}}
 
 If the option @code{--w32mode} is given the value @code{user}, all actions will
 only be carried out in the user-accessible parts of the
@@ -1298,16 +1248,16 @@ registry/filesystem, while the value @code{admin} selects the system-wide
 parts of the registry for the file associations.  If you do not have
 enough permissions, using @code{--w32mode=admin} will not succeed.
 
-@item @strong{--fileassocmode=[1|2]}
-@anchor{tlmgr @strong{--fileassocmode=[1|2]}}
+@item @strong{@asis{}-@asis{}-@asis{}fileassocmode=[1|2]}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}fileassocmode=[1|2]}}
 
 @code{--fileassocmode} specifies the action for file associations.  If it is
 set to 1 (the default), only new associations are added; if it is set to
 2, all associations are set to the TeX Live programs.  (See also
 @code{option fileassocs}.)
 
-@item @strong{--all}
-@anchor{tlmgr @strong{--all} 1}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all} 1}
 
 Carry out the postactions for all packages
 
@@ -1337,37 +1287,37 @@ collection dependencies of that collection.  However, when removing a
 package, dependencies are never removed.  Options:
 
 @table @asis
-@item @strong{--all}
-@anchor{tlmgr @strong{--all} 2}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all} 2}
 
 Uninstalls all of TeX Live, asking for confirmation unless @code{--force} is
 also specified.
 
-@item @strong{--backup}
-@anchor{tlmgr @strong{--backup}}
+@item @strong{@asis{}-@asis{}-@asis{}backup}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backup}}
 
-@item @strong{--backupdir} @emph{directory}
-@anchor{tlmgr @strong{--backupdir} @emph{directory} 1}
+@item @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory} 1}
 
 These options behave just as with the @ref{tlmgr update
-[@emph{option}...] [...], update,, update} action (q.v.), except they apply to making
+[@emph{option}...] [@emph{pkg}...],, update} action (q.v.), except they apply to making
 backups of packages before they are removed.  The default is to make
 such a backup, that is, to save a copy of packages before removal.
 
 The @ref{tlmgr restore,, restore} action explains how to restore from a backup.
 
-@item @strong{--no-depends}
-@anchor{tlmgr @strong{--no-depends} 1}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends} 1}
 
 Do not remove dependent packages.
 
-@item @strong{--no-depends-at-all}
-@anchor{tlmgr @strong{--no-depends-at-all} 1}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends-at-all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends-at-all} 1}
 
-See above under @ref{tlmgr install [@emph{option}...] @emph{pkg}..., install, install} (and beware).
+See above under @ref{tlmgr install [@emph{option}...] @emph{pkg}...,, install} (and beware).
 
-@item @strong{--force}
-@anchor{tlmgr @strong{--force} 1}
+@item @strong{@asis{}-@asis{}-@asis{}force}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}force} 1}
 
 By default, removal of a package or collection that is a dependency of
 another collection or scheme is not allowed.  With this option, the
@@ -1378,8 +1328,8 @@ is still listed in an installed collection or scheme will not be
 updated, and will be mentioned as @code{forcibly removed} in the output of
 @code{tlmgr update --list}.
 
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run} 3}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run} 3}
 
 Nothing is actually removed; instead, the actions to be performed are
 written to the terminal.
@@ -1463,8 +1413,8 @@ otherwise, all operations will fail!
 @item @strong{restore [@emph{option}...] @emph{pkg} [@emph{rev}]}
 @anchor{tlmgr @strong{restore [@emph{option}...] @emph{pkg} [@emph{rev}]}}
 
-@item @strong{restore [@emph{option}...] --all}
-@anchor{tlmgr @strong{restore [@emph{option}...] --all}}
+@item @strong{restore [@emph{option}...] @asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{restore [@emph{option}...] @asis{}-@asis{}-@asis{}all}}
 
 Restore a package from a previously-made backup.
 
@@ -1484,32 +1434,32 @@ specified, try to restore the package from the specified backup.
 Options:
 
 @table @asis
-@item @strong{--all}
-@anchor{tlmgr @strong{--all} 3}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all} 3}
 
 Try to restore the latest revision of all package backups found in the
 backup directory. Additional non-option arguments (like @emph{pkg}) are not
 allowed.
 
-@item @strong{--backupdir} @emph{directory}
-@anchor{tlmgr @strong{--backupdir} @emph{directory} 2}
+@item @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory} 2}
 
 Specify the directory where the backups are to be found. If not given it
 will be taken from the configuration setting in the TLPDB.
 
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run} 4}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run} 4}
 
 Nothing is actually restored; instead, the actions to be performed are
 written to the terminal.
 
-@item @strong{--force}
-@anchor{tlmgr @strong{--force} 2}
+@item @strong{@asis{}-@asis{}-@asis{}force}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}force} 2}
 
 Don't ask questions.
 
-@item @strong{--json}
-@anchor{tlmgr @strong{--json} 2}
+@item @strong{@asis{}-@asis{}-@asis{}json}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json} 2}
 
 When listing backups, the option @code{--json} turn on JSON output.
 The format is an array of JSON objects (@code{name}, @code{rev}, @code{date}).
@@ -1527,11 +1477,11 @@ If both @code{--json} and @code{--data} are given, @code{--json} takes precedenc
 @item @strong{search [@emph{option}...] @emph{what}}
 @anchor{tlmgr @strong{search [@emph{option}...] @emph{what}}}
 
-@item @strong{search [@emph{option}...] --file @emph{what}}
-@anchor{tlmgr @strong{search [@emph{option}...] --file @emph{what}}}
+@item @strong{search [@emph{option}...] @asis{}-@asis{}-@asis{}file @emph{what}}
+@anchor{tlmgr @strong{search [@emph{option}...] @asis{}-@asis{}-@asis{}file @emph{what}}}
 
-@item @strong{search [@emph{option}...] --all @emph{what}}
-@anchor{tlmgr @strong{search [@emph{option}...] --all @emph{what}}}
+@item @strong{search [@emph{option}...] @asis{}-@asis{}-@asis{}all @emph{what}}
+@anchor{tlmgr @strong{search [@emph{option}...] @asis{}-@asis{}-@asis{}all @emph{what}}}
 
 By default, search the names, short descriptions, and long descriptions
 of all locally installed packages for the argument @emph{what}, interpreted
@@ -1540,24 +1490,24 @@ as a (Perl) regular expression.
 Options:
 
 @table @asis
-@item @strong{--file}
-@anchor{tlmgr @strong{--file} 1}
+@item @strong{@asis{}-@asis{}-@asis{}file}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}file} 1}
 
 List all filenames containing @emph{what}.
 
-@item @strong{--all}
-@anchor{tlmgr @strong{--all} 4}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all} 4}
 
 Search everything: package names, descriptions and filenames.
 
-@item @strong{--global}
-@anchor{tlmgr @strong{--global}}
+@item @strong{@asis{}-@asis{}-@asis{}global}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}global}}
 
 Search the TeX Live Database of the installation medium, instead of the
 local installation.
 
-@item @strong{--word}
-@anchor{tlmgr @strong{--word}}
+@item @strong{@asis{}-@asis{}-@asis{}word}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}word}}
 
 Restrict the search of package names and descriptions (but not
 filenames) to match only full words.  For example, searching for
@@ -1645,7 +1595,7 @@ Synonym for @ref{tlmgr info,, info}.
 @node tlmgr uninstall
 @appendixsubsec uninstall
 
-Synonym for @ref{tlmgr remove [@emph{option}...] @emph{pkg}..., remove, remove}.
+Synonym for @ref{tlmgr remove [@emph{option}...] @emph{pkg}...,, remove}.
 
 @node tlmgr update [@emph{option}...] [@emph{pkg}...]
 @appendixsubsec update [@emph{option}...] [@emph{pkg}...]
@@ -1655,8 +1605,8 @@ at the installation source.  Either @code{--all} or at least one @emph{pkg} name
 must be specified.  Options:
 
 @table @asis
-@item @strong{--all}
-@anchor{tlmgr @strong{--all} 5}
+@item @strong{@asis{}-@asis{}-@asis{}all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}all} 5}
 
 Update all installed packages except for @code{tlmgr} itself. If updates to
 @code{tlmgr} itself are present, this gives an error, unless also the option
@@ -1695,8 +1645,8 @@ record the repository from which packages come from.)
 If you want to exclude some packages from the current update run (e.g.,
 due to a slow link), see the @code{--exclude} option below.
 
-@item @strong{--self}
-@anchor{tlmgr @strong{--self}}
+@item @strong{@asis{}-@asis{}-@asis{}self}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}self}}
 
 Update @code{tlmgr} itself (that is, the infrastructure packages) if updates
 to it are present. On Windows this includes updates to the private Perl
@@ -1716,14 +1666,14 @@ In short:
                              # ... this last at your own risk, not recommended!
 @end verbatim
 
-@item @strong{--dry-run}
-@anchor{tlmgr @strong{--dry-run} 5}
+@item @strong{@asis{}-@asis{}-@asis{}dry-run}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}dry-run} 5}
 
 Nothing is actually installed; instead, the actions to be performed are
 written to the terminal.  This is a more detailed report than @code{--list}.
 
-@item @strong{--list} [@emph{pkg}]
-@anchor{tlmgr @strong{--list} [@emph{pkg}]}
+@item @strong{@asis{}-@asis{}-@asis{}list} [@emph{pkg}]
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}list} [@emph{pkg}]}
 
 Concisely list the packages which would be updated, newly installed, or
 removed, without actually changing anything. 
@@ -1737,8 +1687,8 @@ same as @code{tlmgr update --list --all}).
 If neither @code{--all} nor @code{--self} is given, but specific package names are
 given, those packages are checked for updates.
 
-@item @strong{--exclude} @emph{pkg}
-@anchor{tlmgr @strong{--exclude} @emph{pkg}}
+@item @strong{@asis{}-@asis{}-@asis{}exclude} @emph{pkg}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}exclude} @emph{pkg}}
 
 Exclude @emph{pkg} from the update process.  If this option is given more
 than once, its arguments accumulate.
@@ -1761,8 +1711,8 @@ supported in these circumstances.
 This option can also be set permanently in the tlmgr config file with 
 the key @code{update-exclude}.
 
-@item @strong{--no-auto-remove} [@emph{pkg}...]
-@anchor{tlmgr @strong{--no-auto-remove} [@emph{pkg}...]}
+@item @strong{@asis{}-@asis{}-@asis{}no-auto-remove} [@emph{pkg}...]
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-auto-remove} [@emph{pkg}...]}
 
 By default, @code{tlmgr} tries to remove packages in an existing collection
 which have disappeared on the server, as described above under @code{--all}.
@@ -1771,8 +1721,8 @@ This option prevents such removals, either for all packages (with
 inconsistent TeX installation, since packages are not infrequently
 renamed or replaced by their authors. Therefore this is not recommended.
 
-@item @strong{--no-auto-install} [@emph{pkg}...]
-@anchor{tlmgr @strong{--no-auto-install} [@emph{pkg}...]}
+@item @strong{@asis{}-@asis{}-@asis{}no-auto-install} [@emph{pkg}...]
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-auto-install} [@emph{pkg}...]}
 
 Under normal circumstances @code{tlmgr} will install packages which are new
 on the server, as described above under @code{--all}.  This option prevents
@@ -1798,8 +1748,8 @@ is equivalent to
 Again, since packages are sometimes renamed or replaced, using this
 option is not recommended.
 
-@item @strong{--reinstall-forcibly-removed}
-@anchor{tlmgr @strong{--reinstall-forcibly-removed}}
+@item @strong{@asis{}-@asis{}-@asis{}reinstall-forcibly-removed}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}reinstall-forcibly-removed}}
 
 Under normal circumstances @code{tlmgr} will not install packages that have
 been forcibly removed by the user; that is, removed with @code{remove
@@ -1814,11 +1764,11 @@ installation with the server's idea of what is available:
   tlmgr update --reinstall-forcibly-removed --all
 @end verbatim
 
-@item @strong{--backup}
-@anchor{tlmgr @strong{--backup} 1}
+@item @strong{@asis{}-@asis{}-@asis{}backup}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backup} 1}
 
-@item @strong{--backupdir} @emph{directory}
-@anchor{tlmgr @strong{--backupdir} @emph{directory} 3}
+@item @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}backupdir} @emph{directory} 3}
 
 These two options control the creation of backups of packages @emph{before}
 updating; that is, backing up packages as currently installed.  If
@@ -1840,20 +1790,20 @@ incompatibility.
 
 The @ref{tlmgr restore,, restore} action explains how to restore from a backup.
 
-@item @strong{--no-depends}
-@anchor{tlmgr @strong{--no-depends} 2}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends} 2}
 
 If you call for updating a package normally all depending packages
 will also be checked for updates and updated if necessary. This switch
 suppresses this behavior.
 
-@item @strong{--no-depends-at-all}
-@anchor{tlmgr @strong{--no-depends-at-all} 2}
+@item @strong{@asis{}-@asis{}-@asis{}no-depends-at-all}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-depends-at-all} 2}
 
-See above under @ref{tlmgr install [@emph{option}...] @emph{pkg}..., install, install} (and beware).
+See above under @ref{tlmgr install [@emph{option}...] @emph{pkg}...,, install} (and beware).
 
-@item @strong{--force}
-@anchor{tlmgr @strong{--force} 3}
+@item @strong{@asis{}-@asis{}-@asis{}force}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}force} 3}
 
 Force update of normal packages, without updating @code{tlmgr} itself 
 (unless the @code{--self} option is also given).  Not recommended.
@@ -1993,10 +1943,6 @@ of these keys are obtainable from the standard key servers.
 
 Additional trusted keys can be added using the @code{key} action.
 
-@menu
-* tlmgr Configuration of GnuPG invocation::
-@end menu
-
 @node tlmgr Configuration of GnuPG invocation
 @appendixsubsec Configuration of GnuPG invocation
 
@@ -2064,12 +2010,6 @@ installed into a user tree.
 
 Description of changes of actions in user mode:
 
-@menu
-* tlmgr User mode install::
-* tlmgr User mode backup@comma{} restore@comma{} remove@comma{} update::
-* tlmgr User mode generate@comma{} option@comma{} paper::
-@end menu
-
 @node tlmgr User mode install
 @appendixsubsec User mode install
 
@@ -2104,6 +2044,12 @@ just as in normal mode.
 In user mode, these actions operate only on the user tree's
 configuration files and/or @code{texlive.tlpdb}.
 
+@node tlmgr User mode logs
+@appendixsubsec User mode logs
+
+In user mode, @code{tlmgr.log} and <tlmgr-commands.log> are written in the 
+@code{TEXMFVAR/web2c/} directlry instead of @code{TEXMFSYSVAR/web2c/}.
+
 @node tlmgr MULTIPLE REPOSITORIES
 @appendixsec MULTIPLE REPOSITORIES
 
@@ -2135,10 +2081,6 @@ adding a second repository does not actually enable installation of
 anything from there.  You also have to specify which packages should be
 taken from the new repository, by specifying so-called ``pinning''
 rules, described next.
-
-@menu
-* tlmgr Pinning::
-@end menu
 
 @node tlmgr Pinning
 @appendixsubsec Pinning
@@ -2246,20 +2188,8 @@ repository.  To load a different repository, see the @code{tlmgr} menu item.
 Finally, the status area at the bottom of the window gives additional
 information about what is going on.
 
-@menu
-* tlmgr Main display::
-* tlmgr Menu bar::
-* tlmgr GUI options::
-@end menu
-
 @node tlmgr Main display
 @appendixsubsec Main display
-
-@menu
-* tlmgr Display configuration area::
-* tlmgr Package list area::
-* tlmgr Main display action buttons::
-@end menu
 
 @node tlmgr Display configuration area
 @appendixsubsubsec Display configuration area
@@ -2501,14 +2431,9 @@ written to stdout).  The idea is that a program can get all the
 information it needs by reading stdout.
 
 Currently this option only applies to the 
-@ref{tlmgr update [@emph{option}...] [@emph{pkg}...], update, update},
-@ref{tlmgr install [@emph{option}...] @emph{pkg}..., install, install}, and
+@ref{tlmgr update [@emph{option}...] [@emph{pkg}...],, update},
+@ref{tlmgr install [@emph{option}...] @emph{pkg}...,, install}, and
 @ref{tlmgr option,, option} actions.
-
-@menu
-* tlmgr Machine-readable @code{update} and @code{install} output::
-* tlmgr Machine-readable @code{option} output::
-@end menu
 
 @node tlmgr Machine-readable @code{update} and @code{install} output
 @appendixsubsec Machine-readable @code{update} and @code{install} output
@@ -2758,5 +2683,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 62273 2022-02-28 08:52:17Z preining $
+$Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
 
