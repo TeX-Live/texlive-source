@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-02-20"
+release_date = "2023-02-26"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -118,17 +118,14 @@ if options["epoch"] then
 end
 epoch = normalise_epoch(epoch)
 
--- Sanity check
-check_engines()
-
 --
 -- Deal with multiple configs for tests
 --
 
 -- When we have specific files to deal with, only use explicit configs
--- (or just the std one)
+-- (or just the default one)
 if options["names"] then
-  checkconfigs = options["config"] or {stdconfig}
+  checkconfigs = options["config"] or {"build"}
 else
   checkconfigs = options["config"] or checkconfigs
 end
@@ -205,22 +202,28 @@ if #checkconfigs > 1 then
   end
 end
 if #checkconfigs == 1 and
-  checkconfigs[1] ~= "build" and
   (options["target"] == "check" or options["target"] == "save" or options["target"] == "clean") then
-  local configname  = gsub(checkconfigs[1], "%.lua$", "")
-  local config = "./" .. configname .. ".lua"
-  if fileexists(config) then
-    local savedtestfiledir = testfiledir
-    dofile(config)
-    testdir = testdir .. "-" .. configname
-    -- Reset testsuppdir if required
-    if savedtestfiledir ~= testfiledir and
-      testsuppdir == savedtestfiledir .. "/support" then
-      testsuppdir = testfiledir .. "/support"
-    end
+  if checkconfigs[1] == "build" then
+    -- Sanity check for default config
+    check_engines("build.lua")
   else
-    print("Error: Cannot find configuration " ..  checkconfigs[1])
-    exit(1)
+    local configname  = gsub(checkconfigs[1], "%.lua$", "")
+    local config = "./" .. configname .. ".lua"
+    if fileexists(config) then
+      local savedtestfiledir = testfiledir
+      dofile(config)
+      -- Sanity check for non-default config
+      check_engines(configname .. ".lua")
+      testdir = testdir .. "-" .. configname
+      -- Reset testsuppdir if required
+      if savedtestfiledir ~= testfiledir and
+        testsuppdir == savedtestfiledir .. "/support" then
+        testsuppdir = testfiledir .. "/support"
+      end
+    else
+      print("Error: Cannot find configuration " ..  configname .. ".lua")
+      exit(1)
+    end
   end
 end
 
