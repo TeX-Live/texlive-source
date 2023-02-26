@@ -5,7 +5,7 @@
 
 use strict;
 use warnings;
-use 5.010;
+use 5.008;
 use Encode;
 
 foreach $_ (<DATA>) {
