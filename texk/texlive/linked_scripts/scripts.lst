@@ -192,11 +192,4 @@ vpe/vpe.pl
 webquiz/webquiz.py
 xindex/xindex.lua
 yplan/yplan
-context/stubs/unix/context
-context/stubs/unix/contextjit
-context/stubs/unix/luatools
-context/stubs/unix/mtxrun
-context/stubs/unix/mtxrunjit
-context/stubs/unix/texexec
-context/stubs/unix/texmfstart
 '

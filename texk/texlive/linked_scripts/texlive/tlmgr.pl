@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
+# $Id: tlmgr.pl 66218 2023-02-27 17:09:29Z karl $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 65998 $';
-my $datrev = '$Date: 2023-02-21 02:33:24 +0100 (Tue, 21 Feb 2023) $';
+my $svnrev = '$Revision: 66218 $';
+my $datrev = '$Date: 2023-02-27 18:09:29 +0100 (Mon, 27 Feb 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -246,7 +246,7 @@ my %action_specification = (
     "function" => \&action_paper
   },
   "path" => {
-    "options"  => { "w32mode" => "=s" },
+    "options"  => { "windowsmode|w32mode" => "=s" },
     "run-post" => 0,
     "function" => \&action_path
   },
@@ -264,7 +264,7 @@ my %action_specification = (
     "options" => {
       "all" => 1,
       "fileassocmode" => "=i",
-      "w32mode" => "=s",
+      "windowsmode|w32mode" => "=s",
     },
     "run-post" => 0,
     "function" => \&action_postaction
@@ -883,7 +883,6 @@ sub handle_execute_actions {
   my $status_file = TeXLive::TLUtils::tl_tmpfile();
   my $fmtutil_args = "$common_fmtutil_args --status-file=$status_file";
 
-
   # if create_formats is false (NOT the default) we add --refresh so that
   # only existing formats are recreated
   if (!$localtlpdb->option("create_formats")) {
@@ -894,9 +893,10 @@ sub handle_execute_actions {
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
     if (defined($localtlpdb->get_package('context'))
-	    && (-x "$bindir/texlua" || -x "$bindir/texlua.exe")) {
-      $errors += do_cmd_and_check("mtxrun --generate");
-      $errors += do_cmd_and_check("context --luatex --generate");
+	    && (-x "$bindir/luametatex" || -x "$bindir/luametatex.exe")) {
+; # x86_64-linux binary too new
+#      $errors += do_cmd_and_check("mtxrun --generate");
+#      $errors += do_cmd_and_check("context --luatex --generate");
     }
     $::files_changed = 0;
   }
@@ -1506,56 +1506,56 @@ sub action_path {
   my $winadminmode = 0;
   if (wndws()) {
     #
-    # for w32 we do system wide vs user setting detection as follows:
-    # - if --w32mode is NOT given,
+    # for windows we do system wide vs. user setting detection as follows:
+    # - if --windowsmode is NOT given,
     #   - if admin
     #     --> honor opt_w32_multi_user setting in tlpdb
     #   - if not admin
     #     - if opt_w32_multi_user == NO
     #       --> do user path adjustment
     #     - if opt_w32_multi_user == YES
-    #       --> do nothing, warn that the setting is on, suggest --w32mode user
-    # - if --w32mode admin
+    #       --> do nothing, warn the setting is on, suggest --windowsmode user
+    # - if --windowsmode admin
     #   - if admin
     #     --> ignore opt_w32_multi_user and do system path adjustment
     #   - if non-admin
     #     --> do nothing but warn that user does not have privileges
-    # - if --w32mode user
+    # - if --windowsmode user
     #   - if admin
     #     --> ignore opt_w32_multi_user and do user path adjustment
     #   - if non-admin
     #     --> ignore opt_w32_multi_user and do user path adjustment
-    if (!$opts{"w32mode"}) {
+    if (!$opts{"windowsmode"}) {
       $winadminmode = $localtlpdb->option("w32_multi_user");
       if (!TeXLive::TLWinGoo::admin()) {
         if ($winadminmode) {
-          tlwarn("The TLPDB specifies system wide path adjustments\nbut you don't have admin privileges.\nFor user path adjustment please use\n\t--w32mode user\n");
+          tlwarn("The TLPDB specifies system wide path adjustments\nbut you don't have admin privileges.\nFor user path adjustment please use\n\t--windowsmode user\n");
           # and do nothing
           return ($F_ERROR);
         }
       }
     } else {
-      # we are in the block where a --w32mode argument is given
+      # we are in the block where a --windowsmode argument is given
       # we reverse the tests:
       if (TeXLive::TLWinGoo::admin()) {
         # in admin mode we simply use what is given on the cmd line
-        if ($opts{"w32mode"} eq "user") {
+        if ($opts{"windowsmode"} eq "user") {
           $winadminmode = 0;
-        } elsif ($opts{"w32mode"} eq "admin") {
+        } elsif ($opts{"windowsmode"} eq "admin") {
           $winadminmode = 1;
         } else {
-          tlwarn("$prg: unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
+          tlwarn("$prg: unknown --windowsmode mode: $opts{windowsmode}, should be 'admin' or 'user'\n");
           return ($F_ERROR);
         }
       } else {
         # we are non-admin
-        if ($opts{"w32mode"} eq "user") {
+        if ($opts{"windowsmode"} eq "user") {
           $winadminmode = 0;
-        } elsif ($opts{"w32mode"} eq "admin") {
-          tlwarn("$prg: You don't have the privileges to work in --w32mode admin\n");
+        } elsif ($opts{"windowsmode"} eq "admin") {
+          tlwarn("$prg: You don't have the privileges to work in --windowsmode admin\n");
           return ($F_ERROR);
         } else {
-          tlwarn("$prg: unknown --w32admin mode: $opts{w32mode}, should be 'admin' or 'user'\n");
+          tlwarn("$prg: unknown --windowsmode mode: $opts{windowsmode}, should be 'admin' or 'user'\n");
           return ($F_ERROR);
         }
       }
@@ -6145,7 +6145,7 @@ sub check_texmfdbs {
 # explicitly run the various post actions, e.g.,
 # on a client system or overriding global settings.
 # 
-# tlmgr postaction [--w32mode=user|admin] [--fileassocmode=1|2] [--all]
+# tlmgr postaction [--windowsmode=user|admin] [--fileassocmode=1|2] [--all]
 #    [install|remove] [shortcut|fileassoc|script] [<pkg>...]
 
 sub action_postaction {
@@ -6166,8 +6166,8 @@ sub action_postaction {
     return;
   }
   if (wndws()) {
-    if ($opts{"w32mode"}) {
-      if ($opts{"w32mode"} eq "user") {
+    if ($opts{"windowsmode"}) {
+      if ($opts{"windowsmode"} eq "user") {
         if (TeXLive::TLWinGoo::admin()) {
           debug("Switching to user mode on user request\n");
           TeXLive::TLWinGoo::non_admin();
@@ -6175,13 +6175,13 @@ sub action_postaction {
         # in user mode we also switch TEXMFSYSVAR to TEXMFVAR since
         # xetex.pl, but maybe others are writing to TEXMFSYSVAR
         chomp($ENV{"TEXMFSYSVAR"} = `kpsewhich -var-value TEXMFVAR`);
-      } elsif ($opts{"w32mode"} eq "admin") {
+      } elsif ($opts{"windowsmode"} eq "admin") {
         if (!TeXLive::TLWinGoo::admin()) {
-          tlwarn("$prg: you don't have the permissions for --w32mode=admin\n");
+          tlwarn("$prg: you don't have permission for --windowsmode=admin\n");
           return;
         }
       } else {
-        tlwarn("$prg: action postaction --w32mode can only be 'admin' or 'user'\n");
+        tlwarn("$prg: action postaction --windowsmode can only be 'admin' or 'user'\n");
         return;
       }
     }
@@ -8789,9 +8789,9 @@ settings.
 
 =over 4
 
-=item B<path [--w32mode=user|admin] add>
+=item B<path [--windowsmode=user|admin] add>
 
-=item B<path [--w32mode=user|admin] remove>
+=item B<path [--windowsmode=user|admin] remove>
 
 On Unix, adds or removes symlinks for executables, man pages, and info
 pages in the system directories specified by the respective options (see
@@ -8803,21 +8803,21 @@ command must be rerun as needed.
 On Windows, the registry part where the binary directory is added or
 removed is determined in the following way:
 
-If the user has admin rights, and the option C<--w32mode> is not given,
+If the user has admin rights, and the option C<--windowsmode> is not given,
 the setting I<w32_multi_user> determines the location (i.e., if it is
 on then the system path, otherwise the user path is changed).
 
-If the user has admin rights, and the option C<--w32mode> is given, this
+If the user has admin rights, and the option C<--windowsmode> is given, this
 option determines the path to be adjusted.
 
-If the user does not have admin rights, and the option C<--w32mode>
+If the user does not have admin rights, and the option C<--windowsmode>
 is not given, and the setting I<w32_multi_user> is off, the user path
 is changed, while if the setting I<w32_multi_user> is on, a warning is
 issued that the caller does not have enough privileges.
 
-If the user does not have admin rights, and the option C<--w32mode>
+If the user does not have admin rights, and the option C<--windowsmode>
 is given, it must be C<user> and the user path will be adjusted. If a
-user without admin rights uses the option C<--w32mode admin> a warning
+user without admin rights uses the option C<--windowsmode admin> a warning
 is issued that the caller does not have enough privileges.
 
 =back
@@ -8916,13 +8916,13 @@ Options:
 
 =over 4
 
-=item B<--w32mode=[user|admin]>
+=item B<--windowsmode=[user|admin]>
 
-If the option C<--w32mode> is given the value C<user>, all actions will
+If the option C<--windowsmode> is given the value C<user>, all actions will
 only be carried out in the user-accessible parts of the
 registry/filesystem, while the value C<admin> selects the system-wide
 parts of the registry for the file associations.  If you do not have
-enough permissions, using C<--w32mode=admin> will not succeed.
+enough permissions, using C<--windowsmode=admin> will not succeed.
 
 =item B<--fileassocmode=[1|2]>
 
@@ -10249,7 +10249,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
+$Id: tlmgr.pl 66218 2023-02-27 17:09:29Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

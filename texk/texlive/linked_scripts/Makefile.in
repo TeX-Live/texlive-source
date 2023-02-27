@@ -263,8 +263,7 @@ DISTCLEANFILES = scripts-list
 #
 # We support native builds, multiplatform or not, as well as distro builds.
 #
-EXTRA_DIST = scripts.lst context/stubs/unix/ctxtools \
-	context/stubs/unix/pstopdf ../../../build-aux/relpath
+EXTRA_DIST = scripts.lst ../../../build-aux/relpath
 
 # Copies of these scripts exist here for the sake of avoiding
 # dangling symlinks produced by `make install'.
@@ -468,19 +467,9 @@ texmf_other_scripts = \
 	xindex/xindex.lua \
 	yplan/yplan
 
-texmf_context_scripts = \
-	context/stubs/unix/context \
-	context/stubs/unix/contextjit \
-	context/stubs/unix/luatools \
-	context/stubs/unix/mtxrun \
-	context/stubs/unix/mtxrunjit \
-	context/stubs/unix/texexec \
-	context/stubs/unix/texmfstart
-
 nobase_dist_texmf_scripts_SCRIPTS = \
 	$(texmf_shell_scripts) \
-	$(texmf_other_scripts) \
-	$(texmf_context_scripts)
+	$(texmf_other_scripts)
 
 bin_links = \
 	allcm:allec \
@@ -496,9 +485,8 @@ bin_links = \
 
 relpath = $(SHELL) $(top_srcdir)/../../build-aux/relpath
 runscript = $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe
-ctxscript = $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.exe
 @WIN32_TRUE@WINEXT = $(EXEEXT)
-shell_scripts = $(texmf_shell_scripts) $(texmf_context_scripts)
+shell_scripts = $(texmf_shell_scripts)
 all: all-am
 
 .SUFFIXES:
@@ -762,19 +750,8 @@ install-data-hook: installdirs-local
 @WIN32_TRUE@	done
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/w32_wrapper/runscript.tlu $(DESTDIR)$(bindir)
-@WIN32_TRUE@	@for s in $(texmf_context_scripts); do \
-@WIN32_TRUE@	  t=`basename $$s | sed 's,\.[^/]*$$,,' | tr '[A-Z]' '[a-z]'`; \
-@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(ctxscript)' '$(DESTDIR)$(bindir)/$$t.exe'"; \
-@WIN32_TRUE@	  $(INSTALL_SCRIPT) $(ctxscript) $(DESTDIR)$(bindir)/$$t.exe; \
-@WIN32_TRUE@	done
+@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.dll $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(srcdir)/context/stubs/unix/mtxrun $(DESTDIR)$(bindir)/mtxrun.lua
-@WIN32_TRUE@	@for s in $(bin_links); do \
-@WIN32_TRUE@	  link=`echo $$s | sed 's,.*:,,'`; \
-@WIN32_TRUE@	  echo "$(INSTALL_SCRIPT) '$(runscript)' '$(DESTDIR)$(bindir)/$$link.exe'"; \
-@WIN32_TRUE@	  $(INSTALL_SCRIPT) $(runscript) $(DESTDIR)$(bindir)/$$link.exe || exit 1; \
-@WIN32_TRUE@	done
 @WIN32_FALSE@	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 @WIN32_FALSE@	if test -z "$$REL"; then \
 @WIN32_FALSE@	  echo 'unable to compute relative path for linked scripts' >&2; \
