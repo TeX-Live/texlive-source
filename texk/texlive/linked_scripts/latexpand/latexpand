@@ -86,7 +86,7 @@ sub get_version
 {
 	# $VERSION's value will be substituted by 'make dist', but the
 	# next line won't (the string has to be broken to avoid it).
-	my $VERSION = 'v1.7';
+	my $VERSION = 'v1.7.2';
 	if ($VERSION eq '@LATEXPAND' . '_VERSION@') {
 		my($vol,$dir,$file) = File::Spec->splitpath($0);
 		chdir($dir);
@@ -248,10 +248,19 @@ sub process_line
 		# Escaping these '%' is not mandatory, but allowed, hence we can
 		# pre-process the line by escaping them, and let latexpand work
 		# as normal afterwards.
+		# Known limitation: latexpand doesn't do balanced braces
+		# recognition, and just refuses both { and } within \url{}
+		# argument for %-detection to work ([^{}%] below). Fix should be
+		# possible using
+		# https://stackoverflow.com/questions/15301708/perl-regular-expression-match-nested-brackets
+		# but is it worth the trouble? (file an issue or send a merge
+		# request if you think it is)
+
 		# While there are \url{URL} with unescaped % in URL ...
-		while (/^(.*\\url\{)(([^\\]%|[^}%])*)(\}.*)$/) {
-			my ($before, $url, $after) = ($1, $2, $4);
-			# escape unescaped % in URL
+		my $NON_PERCENT = '([^\\}]%|[^{}%])*';
+		while (/^(?<before>.*\\url\{)(?<url>$NON_PERCENT[^\\}]%$NON_PERCENT)(?<after>\}.*)$/) {
+			my ($before, $url, $after) = ($+{before}, $+{url}, $+{after});
+			# escape unescaped % in URL, if any
 			$url =~ s/([^\\])%/$1\\%/g;
 			$_ = $before . $url . $after ."\n";
 		}
@@ -701,4 +710,4 @@ https://lacl.fr/~caubert/notes/portabilite-du-tex.html#dependances
 
 =head1 VERSION
 
-This is latexpand version v1.7.
+This is latexpand version v1.7.2.
