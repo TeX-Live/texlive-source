@@ -1109,11 +1109,11 @@ settings.
 @appendixsubsec path
 
 @table @asis
-@item @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] add}
-@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] add}}
+@item @strong{path [@asis{}-@asis{}-@asis{}windowsmode=user|admin] add}
+@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}windowsmode=user|admin] add}}
 
-@item @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] remove}
-@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}w32mode=user|admin] remove}}
+@item @strong{path [@asis{}-@asis{}-@asis{}windowsmode=user|admin] remove}
+@anchor{tlmgr @strong{path [@asis{}-@asis{}-@asis{}windowsmode=user|admin] remove}}
 
 On Unix, adds or removes symlinks for executables, man pages, and info
 pages in the system directories specified by the respective options (see
@@ -1125,21 +1125,21 @@ command must be rerun as needed.
 On Windows, the registry part where the binary directory is added or
 removed is determined in the following way:
 
-If the user has admin rights, and the option @code{--w32mode} is not given,
+If the user has admin rights, and the option @code{--windowsmode} is not given,
 the setting @emph{w32_multi_user} determines the location (i.e., if it is
 on then the system path, otherwise the user path is changed).
 
-If the user has admin rights, and the option @code{--w32mode} is given, this
+If the user has admin rights, and the option @code{--windowsmode} is given, this
 option determines the path to be adjusted.
 
-If the user does not have admin rights, and the option @code{--w32mode}
+If the user does not have admin rights, and the option @code{--windowsmode}
 is not given, and the setting @emph{w32_multi_user} is off, the user path
 is changed, while if the setting @emph{w32_multi_user} is on, a warning is
 issued that the caller does not have enough privileges.
 
-If the user does not have admin rights, and the option @code{--w32mode}
+If the user does not have admin rights, and the option @code{--windowsmode}
 is given, it must be @code{user} and the user path will be adjusted. If a
-user without admin rights uses the option @code{--w32mode admin} a warning
+user without admin rights uses the option @code{--windowsmode admin} a warning
 is issued that the caller does not have enough privileges.
 
 @end table
@@ -1239,14 +1239,14 @@ line, or for all if @code{--all} is given.
 Options:
 
 @table @asis
-@item @strong{@asis{}-@asis{}-@asis{}w32mode=[user|admin]}
-@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}w32mode=[user|admin]}}
+@item @strong{@asis{}-@asis{}-@asis{}windowsmode=[user|admin]}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}windowsmode=[user|admin]}}
 
-If the option @code{--w32mode} is given the value @code{user}, all actions will
+If the option @code{--windowsmode} is given the value @code{user}, all actions will
 only be carried out in the user-accessible parts of the
 registry/filesystem, while the value @code{admin} selects the system-wide
 parts of the registry for the file associations.  If you do not have
-enough permissions, using @code{--w32mode=admin} will not succeed.
+enough permissions, using @code{--windowsmode=admin} will not succeed.
 
 @item @strong{@asis{}-@asis{}-@asis{}fileassocmode=[1|2]}
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}fileassocmode=[1|2]}}
@@ -2683,5 +2683,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
+$Id: tlmgr.pl 66236 2023-02-27 21:44:33Z karl $
 

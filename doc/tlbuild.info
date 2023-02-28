@@ -3065,7 +3065,7 @@ This script and its documentation were written for the TeX Live
 distribution (<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-   $Id: install-tl 66112 2023-02-23 23:28:27Z karl $
+   $Id: install-tl 66236 2023-02-27 21:44:33Z karl $
 
 
 File: tlbuild.info,  Node: tlmgr,  Next: Index,  Prev: install-tl,  Up: Top
@@ -4155,9 +4155,9 @@ File: tlbuild.info,  Node: tlmgr path,  Next: tlmgr pinning,  Prev: tlmgr paper,
 B.6.17 path
 -----------
 
-*path [--w32mode=user|admin] add*
+*path [--windowsmode=user|admin] add*
 
-*path [--w32mode=user|admin] remove*
+*path [--windowsmode=user|admin] remove*
 
      On Unix, adds or removes symlinks for executables, man pages, and
      info pages in the system directories specified by the respective
@@ -4170,23 +4170,25 @@ B.6.17 path
      On Windows, the registry part where the binary directory is added
      or removed is determined in the following way:
 
-     If the user has admin rights, and the option '--w32mode' is not
+     If the user has admin rights, and the option '--windowsmode' is not
      given, the setting _w32_multi_user_ determines the location (i.e.,
      if it is on then the system path, otherwise the user path is
      changed).
 
-     If the user has admin rights, and the option '--w32mode' is given,
-     this option determines the path to be adjusted.
+     If the user has admin rights, and the option '--windowsmode' is
+     given, this option determines the path to be adjusted.
 
-     If the user does not have admin rights, and the option '--w32mode'
-     is not given, and the setting _w32_multi_user_ is off, the user
-     path is changed, while if the setting _w32_multi_user_ is on, a
-     warning is issued that the caller does not have enough privileges.
+     If the user does not have admin rights, and the option
+     '--windowsmode' is not given, and the setting _w32_multi_user_ is
+     off, the user path is changed, while if the setting
+     _w32_multi_user_ is on, a warning is issued that the caller does
+     not have enough privileges.
 
-     If the user does not have admin rights, and the option '--w32mode'
-     is given, it must be 'user' and the user path will be adjusted.  If
-     a user without admin rights uses the option '--w32mode admin' a
-     warning is issued that the caller does not have enough privileges.
+     If the user does not have admin rights, and the option
+     '--windowsmode' is given, it must be 'user' and the user path will
+     be adjusted.  If a user without admin rights uses the option
+     '--windowsmode admin' a warning is issued that the caller does not
+     have enough privileges.
 
 
 File: tlbuild.info,  Node: tlmgr pinning,  Next: tlmgr platform,  Prev: tlmgr path,  Up: tlmgr ACTIONS
@@ -4273,14 +4275,14 @@ B.6.20 postaction
 
      Options:
 
-     *--w32mode=[user|admin]*
+     *--windowsmode=[user|admin]*
 
-          If the option '--w32mode' is given the value 'user', all
+          If the option '--windowsmode' is given the value 'user', all
           actions will only be carried out in the user-accessible parts
           of the registry/filesystem, while the value 'admin' selects
           the system-wide parts of the registry for the file
           associations.  If you do not have enough permissions, using
-          '--w32mode=admin' will not succeed.
+          '--windowsmode=admin' will not succeed.
 
      *--fileassocmode=[1|2]*
 
@@ -5678,7 +5680,7 @@ This script and its documentation were written for the TeX Live
 distribution (<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-   $Id: tlmgr.pl 65998 2023-02-21 01:33:24Z karl $
+   $Id: tlmgr.pl 66236 2023-02-27 21:44:33Z karl $
 
 
 File: tlbuild.info,  Node: Index,  Prev: tlmgr,  Up: Top
@@ -6549,161 +6551,161 @@ Ref: tlmgr *paper [a4|letter]*160984
 Ref: tlmgr *<[xdvi|pdftex|dvips|dvipdfmx|context|psutils] paper [_papersize_|--list]*>161061
 Ref: tlmgr *paper --json*161077
 Node: tlmgr path162292
-Ref: tlmgr *path [--w32mode=user|admin] add*162454
-Ref: tlmgr *path [--w32mode=user|admin] remove*162492
-Node: tlmgr pinning163977
-Ref: tlmgr pinning show164218
-Ref: tlmgr pinning add _repo_ _pkgglob_...164291
-Ref: tlmgr pinning remove _repo_ _pkgglob_...164410
-Ref: tlmgr pinning remove _repo_ --all164563
-Node: tlmgr platform164617
-Ref: tlmgr *platform list|add|remove _platform_...*164803
-Ref: tlmgr *platform set _platform_*164830
-Ref: tlmgr *platform set auto*164851
-Ref: tlmgr *--dry-run* 2165729
-Node: tlmgr postaction165848
-Ref: tlmgr *postaction [_option_...] install [shortcut|fileassoc|script] [_pkg_...]*166078
-Ref: tlmgr *postaction [_option_...] remove [shortcut|fileassoc|script] [_pkg_...]*166152
-Ref: tlmgr *--w32mode=[user|admin]*166468
-Ref: tlmgr *--fileassocmode=[1|2]*166885
-Ref: tlmgr *--all* 1167171
-Node: tlmgr print-platform167226
-Node: tlmgr print-platform-info167557
-Node: tlmgr remove [_option_...] _pkg_...167857
-Ref: tlmgr *--all* 2168342
-Ref: tlmgr *--backup*168453
-Ref: tlmgr *--backupdir* _directory_ 1168480
-Ref: tlmgr *--no-depends* 1168885
-Ref: tlmgr *--no-depends-at-all* 1168948
-Ref: tlmgr *--force* 1169055
-Ref: tlmgr *--dry-run* 3169529
-Node: tlmgr repository169906
-Ref: tlmgr *repository list*170094
-Ref: tlmgr *repository list _path|url|tag_*170128
-Ref: tlmgr *repository add _path_ [_tag_]*170161
-Ref: tlmgr *repository remove _path|tag_*170193
-Ref: tlmgr *repository set _path_[#_tag_] [_path_[#_tag_] ...]*170247
-Ref: tlmgr *repository status*170268
-Ref: tlmgr The tag (which can be the same as the url);171495
-Node: tlmgr restore171973
-Ref: tlmgr *restore [_option_...] _pkg_ [_rev_]*172152
-Ref: tlmgr *restore [_option_...] --all*172183
-Ref: tlmgr *--all* 3172884
-Ref: tlmgr *--backupdir* _directory_ 2173099
-Ref: tlmgr *--dry-run* 4173281
-Ref: tlmgr *--force* 2173414
-Ref: tlmgr *--json* 2173461
-Node: tlmgr search173788
-Ref: tlmgr *search [_option_...] _what_*173952
-Ref: tlmgr *search [_option_...] --file _what_*173990
-Ref: tlmgr *search [_option_...] --all _what_*174027
-Ref: tlmgr *--file* 1174248
-Ref: tlmgr *--all* 4174311
-Ref: tlmgr *--global*174401
-Ref: tlmgr *--word*174529
-Node: tlmgr shell174844
-Ref: tlmgr protocol175579
-Ref: tlmgr help 1175643
-Ref: tlmgr version 1175696
-Ref: tlmgr quit, end, bye, byebye, EOF175764
-Ref: tlmgr restart175785
-Ref: tlmgr load [local|remote]175908
-Ref: tlmgr save175978
-Ref: tlmgr get [_var_] =item set [_var_ [_val_]]176101
-Node: tlmgr show176702
-Node: tlmgr uninstall176869
-Node: tlmgr update [_option_...] [_pkg_...]177101
-Ref: tlmgr *--all* 5177473
-Ref: tlmgr *--self*179653
-Ref: tlmgr *--dry-run* 5180418
-Ref: tlmgr *--list* [_pkg_]180596
-Ref: tlmgr *--exclude* _pkg_181286
-Ref: tlmgr *--no-auto-remove* [_pkg_...]182087
-Ref: tlmgr *--no-auto-install* [_pkg_...]182572
-Ref: tlmgr *--reinstall-forcibly-removed*183335
-Ref: tlmgr *--backup* 1183871
-Ref: tlmgr *--backupdir* _directory_ 3183898
-Ref: tlmgr *--no-depends* 2185065
-Ref: tlmgr *--no-depends-at-all* 2185269
-Ref: tlmgr *--force* 3185376
-Node: tlmgr CONFIGURATION FILE FOR TLMGR186367
-Ref: tlmgr auto-remove = 0 or 1 (default 1), same as command-line option.187369
-Ref: tlmgr gui-expertmode = 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.187501
-Ref: tlmgr gui-lang = _llcode_, with a language code value as with the command-line option.187585
-Ref: tlmgr no-checksums = 0 or 1 (default 0, see below).187634
-Ref: tlmgr persistent-downloads = 0 or 1 (default 1), same as command-line option.187709
-Ref: tlmgr require-verification = 0 or 1 (default 0), same as command-line option.187784
-Ref: tlmgr tkfontscale = _floating-point number_ (default 1.0); scaling factor for fonts in the Tk-based frontends.187892
-Ref: tlmgr update-exclude = _comma-separated list of packages_ (no spaces allowed). Same as the command line option --exclude for the update action.188037
-Ref: tlmgr verify-downloads = 0 or 1 (default 1), same as command-line option.188108
-Ref: tlmgr allowed-actions = _action1_[,_action2_,...] The value is a comma-separated list (no spaces) of tlmgr actions which are allowed to be executed when tlmgr is invoked in system mode (that is, without --usermode). This allows distributors to include tlmgr in their packaging, but allow only a restricted set of actions that do not interfere with their distro package manager. For native TeX Live installations, it doesn't make sense to set this.188625
-Node: tlmgr CRYPTOGRAPHIC VERIFICATION189457
-Node: tlmgr Configuration of GnuPG invocation191630
-Node: tlmgr USER MODE192268
-Node: tlmgr User mode install195139
-Node: tlmgr User mode backup, restore, remove, update196285
-Node: tlmgr User mode generate, option, paper196731
-Node: tlmgr User mode logs197098
-Node: tlmgr MULTIPLE REPOSITORIES197396
-Node: tlmgr Pinning199125
-Node: tlmgr GUI FOR TLMGR201048
-Node: tlmgr Main display202697
-Node: tlmgr Display configuration area202949
-Ref: tlmgr Status203310
-Ref: tlmgr Category203474
-Ref: tlmgr Match203660
-Ref: tlmgr Selection203841
-Ref: tlmgr Display configuration buttons204045
-Node: tlmgr Package list area204228
-Ref: tlmgr a checkbox204812
-Ref: tlmgr package name204948
-Ref: tlmgr local revision (and version)205047
-Ref: tlmgr remote revision (and version)205422
-Ref: tlmgr short description205719
-Node: tlmgr Main display action buttons205764
-Ref: tlmgr Update all installed206030
-Ref: tlmgr Update206402
-Ref: tlmgr Install206452
-Ref: tlmgr Remove206638
-Ref: tlmgr Backup206816
-Node: tlmgr Menu bar206973
-Ref: tlmgr tlmgr menu207196
-Ref: tlmgr Options menu207504
-Ref: tlmgr Actions menu208587
-Ref: tlmgr Help menu209015
-Node: tlmgr GUI options209149
-Ref: tlmgr -background _color_209395
-Ref: tlmgr -font " _fontname_ _fontsize_ "209460
-Ref: tlmgr -foreground _color_209618
-Ref: tlmgr -geometry _geomspec_209670
-Ref: tlmgr -xrm _xresource_209862
-Node: tlmgr MACHINE-READABLE OUTPUT210131
-Node: tlmgr Machine-readable update and install output210945
-Ref: tlmgr location-url _location_212221
-Ref: tlmgr total-bytes _count_212437
-Ref: tlmgr _pkgname_212847
-Ref: tlmgr _status_213057
-Ref: tlmgr d213135
-Ref: tlmgr f213195
-Ref: tlmgr u213374
-Ref: tlmgr r213420
-Ref: tlmgr a213543
-Ref: tlmgr i213721
-Ref: tlmgr I213840
-Ref: tlmgr _localrev_213942
-Ref: tlmgr _serverrev_214049
-Ref: tlmgr _size_214161
-Ref: tlmgr _runtime_214330
-Ref: tlmgr _esttot_214400
-Node: tlmgr Machine-readable option output214433
-Node: tlmgr ENVIRONMENT VARIABLES214945
-Ref: tlmgr TEXLIVE_COMPRESSOR215456
-Ref: tlmgr TEXLIVE_DOWNLOADER216304
-Ref: tlmgr TL_DOWNLOAD_PROGRAM216327
-Ref: tlmgr TL_DOWNLOAD_ARGS216347
-Ref: tlmgr TEXLIVE_PREFER_OWN217373
-Node: tlmgr AUTHORS AND COPYRIGHT218197
-Node: Index218595
+Ref: tlmgr *path [--windowsmode=user|admin] add*162458
+Ref: tlmgr *path [--windowsmode=user|admin] remove*162500
+Node: tlmgr pinning164015
+Ref: tlmgr pinning show164256
+Ref: tlmgr pinning add _repo_ _pkgglob_...164329
+Ref: tlmgr pinning remove _repo_ _pkgglob_...164448
+Ref: tlmgr pinning remove _repo_ --all164601
+Node: tlmgr platform164655
+Ref: tlmgr *platform list|add|remove _platform_...*164841
+Ref: tlmgr *platform set _platform_*164868
+Ref: tlmgr *platform set auto*164889
+Ref: tlmgr *--dry-run* 2165767
+Node: tlmgr postaction165886
+Ref: tlmgr *postaction [_option_...] install [shortcut|fileassoc|script] [_pkg_...]*166116
+Ref: tlmgr *postaction [_option_...] remove [shortcut|fileassoc|script] [_pkg_...]*166190
+Ref: tlmgr *--windowsmode=[user|admin]*166510
+Ref: tlmgr *--fileassocmode=[1|2]*166935
+Ref: tlmgr *--all* 1167221
+Node: tlmgr print-platform167276
+Node: tlmgr print-platform-info167607
+Node: tlmgr remove [_option_...] _pkg_...167907
+Ref: tlmgr *--all* 2168392
+Ref: tlmgr *--backup*168503
+Ref: tlmgr *--backupdir* _directory_ 1168530
+Ref: tlmgr *--no-depends* 1168935
+Ref: tlmgr *--no-depends-at-all* 1168998
+Ref: tlmgr *--force* 1169105
+Ref: tlmgr *--dry-run* 3169579
+Node: tlmgr repository169956
+Ref: tlmgr *repository list*170144
+Ref: tlmgr *repository list _path|url|tag_*170178
+Ref: tlmgr *repository add _path_ [_tag_]*170211
+Ref: tlmgr *repository remove _path|tag_*170243
+Ref: tlmgr *repository set _path_[#_tag_] [_path_[#_tag_] ...]*170297
+Ref: tlmgr *repository status*170318
+Ref: tlmgr The tag (which can be the same as the url);171545
+Node: tlmgr restore172023
+Ref: tlmgr *restore [_option_...] _pkg_ [_rev_]*172202
+Ref: tlmgr *restore [_option_...] --all*172233
+Ref: tlmgr *--all* 3172934
+Ref: tlmgr *--backupdir* _directory_ 2173149
+Ref: tlmgr *--dry-run* 4173331
+Ref: tlmgr *--force* 2173464
+Ref: tlmgr *--json* 2173511
+Node: tlmgr search173838
+Ref: tlmgr *search [_option_...] _what_*174002
+Ref: tlmgr *search [_option_...] --file _what_*174040
+Ref: tlmgr *search [_option_...] --all _what_*174077
+Ref: tlmgr *--file* 1174298
+Ref: tlmgr *--all* 4174361
+Ref: tlmgr *--global*174451
+Ref: tlmgr *--word*174579
+Node: tlmgr shell174894
+Ref: tlmgr protocol175629
+Ref: tlmgr help 1175693
+Ref: tlmgr version 1175746
+Ref: tlmgr quit, end, bye, byebye, EOF175814
+Ref: tlmgr restart175835
+Ref: tlmgr load [local|remote]175958
+Ref: tlmgr save176028
+Ref: tlmgr get [_var_] =item set [_var_ [_val_]]176151
+Node: tlmgr show176752
+Node: tlmgr uninstall176919
+Node: tlmgr update [_option_...] [_pkg_...]177151
+Ref: tlmgr *--all* 5177523
+Ref: tlmgr *--self*179703
+Ref: tlmgr *--dry-run* 5180468
+Ref: tlmgr *--list* [_pkg_]180646
+Ref: tlmgr *--exclude* _pkg_181336
+Ref: tlmgr *--no-auto-remove* [_pkg_...]182137
+Ref: tlmgr *--no-auto-install* [_pkg_...]182622
+Ref: tlmgr *--reinstall-forcibly-removed*183385
+Ref: tlmgr *--backup* 1183921
+Ref: tlmgr *--backupdir* _directory_ 3183948
+Ref: tlmgr *--no-depends* 2185115
+Ref: tlmgr *--no-depends-at-all* 2185319
+Ref: tlmgr *--force* 3185426
+Node: tlmgr CONFIGURATION FILE FOR TLMGR186417
+Ref: tlmgr auto-remove = 0 or 1 (default 1), same as command-line option.187419
+Ref: tlmgr gui-expertmode = 0 or 1 (default 1). This switches between the full GUI and a simplified GUI with only the most common settings.187551
+Ref: tlmgr gui-lang = _llcode_, with a language code value as with the command-line option.187635
+Ref: tlmgr no-checksums = 0 or 1 (default 0, see below).187684
+Ref: tlmgr persistent-downloads = 0 or 1 (default 1), same as command-line option.187759
+Ref: tlmgr require-verification = 0 or 1 (default 0), same as command-line option.187834
+Ref: tlmgr tkfontscale = _floating-point number_ (default 1.0); scaling factor for fonts in the Tk-based frontends.187942
+Ref: tlmgr update-exclude = _comma-separated list of packages_ (no spaces allowed). Same as the command line option --exclude for the update action.188087
+Ref: tlmgr verify-downloads = 0 or 1 (default 1), same as command-line option.188158
+Ref: tlmgr allowed-actions = _action1_[,_action2_,...] The value is a comma-separated list (no spaces) of tlmgr actions which are allowed to be executed when tlmgr is invoked in system mode (that is, without --usermode). This allows distributors to include tlmgr in their packaging, but allow only a restricted set of actions that do not interfere with their distro package manager. For native TeX Live installations, it doesn't make sense to set this.188675
+Node: tlmgr CRYPTOGRAPHIC VERIFICATION189507
+Node: tlmgr Configuration of GnuPG invocation191680
+Node: tlmgr USER MODE192318
+Node: tlmgr User mode install195189
+Node: tlmgr User mode backup, restore, remove, update196335
+Node: tlmgr User mode generate, option, paper196781
+Node: tlmgr User mode logs197148
+Node: tlmgr MULTIPLE REPOSITORIES197446
+Node: tlmgr Pinning199175
+Node: tlmgr GUI FOR TLMGR201098
+Node: tlmgr Main display202747
+Node: tlmgr Display configuration area202999
+Ref: tlmgr Status203360
+Ref: tlmgr Category203524
+Ref: tlmgr Match203710
+Ref: tlmgr Selection203891
+Ref: tlmgr Display configuration buttons204095
+Node: tlmgr Package list area204278
+Ref: tlmgr a checkbox204862
+Ref: tlmgr package name204998
+Ref: tlmgr local revision (and version)205097
+Ref: tlmgr remote revision (and version)205472
+Ref: tlmgr short description205769
+Node: tlmgr Main display action buttons205814
+Ref: tlmgr Update all installed206080
+Ref: tlmgr Update206452
+Ref: tlmgr Install206502
+Ref: tlmgr Remove206688
+Ref: tlmgr Backup206866
+Node: tlmgr Menu bar207023
+Ref: tlmgr tlmgr menu207246
+Ref: tlmgr Options menu207554
+Ref: tlmgr Actions menu208637
+Ref: tlmgr Help menu209065
+Node: tlmgr GUI options209199
+Ref: tlmgr -background _color_209445
+Ref: tlmgr -font " _fontname_ _fontsize_ "209510
+Ref: tlmgr -foreground _color_209668
+Ref: tlmgr -geometry _geomspec_209720
+Ref: tlmgr -xrm _xresource_209912
+Node: tlmgr MACHINE-READABLE OUTPUT210181
+Node: tlmgr Machine-readable update and install output210995
+Ref: tlmgr location-url _location_212271
+Ref: tlmgr total-bytes _count_212487
+Ref: tlmgr _pkgname_212897
+Ref: tlmgr _status_213107
+Ref: tlmgr d213185
+Ref: tlmgr f213245
+Ref: tlmgr u213424
+Ref: tlmgr r213470
+Ref: tlmgr a213593
+Ref: tlmgr i213771
+Ref: tlmgr I213890
+Ref: tlmgr _localrev_213992
+Ref: tlmgr _serverrev_214099
+Ref: tlmgr _size_214211
+Ref: tlmgr _runtime_214380
+Ref: tlmgr _esttot_214450
+Node: tlmgr Machine-readable option output214483
+Node: tlmgr ENVIRONMENT VARIABLES214995
+Ref: tlmgr TEXLIVE_COMPRESSOR215506
+Ref: tlmgr TEXLIVE_DOWNLOADER216354
+Ref: tlmgr TL_DOWNLOAD_PROGRAM216377
+Ref: tlmgr TL_DOWNLOAD_ARGS216397
+Ref: tlmgr TEXLIVE_PREFER_OWN217423
+Node: tlmgr AUTHORS AND COPYRIGHT218247
+Node: Index218645
 
 End Tag Table
 
