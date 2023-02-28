@@ -37,9 +37,9 @@ jobs:
     name: i386-linux build job
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: TeX-Live/tl-build-docker-action
           ref: v4
@@ -64,9 +64,9 @@ jobs:
     name: x86_64-linux build job
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: TeX-Live/tl-build-docker-action
           ref: v4
@@ -91,9 +91,9 @@ jobs:
     name: x86_64-linuxmusl build job
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: TeX-Live/tl-build-docker-action
           ref: v4
