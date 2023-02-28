@@ -500,7 +500,7 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = tl_support $(am__append_1)
-EXTRA_DIST = w32_wrapper w64_wrapper $(TESTS)
+EXTRA_DIST = windows_wrapper $(TESTS)
 TEST_EXTENSIONS = .pl
 TESTS = tests/updmap-cmdline-test.pl
 all: all-recursive

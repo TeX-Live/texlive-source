@@ -1,5 +1,8 @@
-2020-01-31  Karl Berry  <karl@tug.org>
+2023-02-28  Luigi Scarso  <luigi.scarso@gmail.com>
 
+	* Makefile.am (EXTRA_DIST): now just windows_wrapper.
+
+2020-01-31  Karl Berry  <karl@tug.org>
 
 	* tl_support: rename subdirectory from tl_scripts, since there is
 	only one (sub)script list.

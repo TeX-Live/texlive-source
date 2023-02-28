@@ -1,5 +1,5 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2022 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2023 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 64503 $';
+my $svnrev = '$Revision: 66236 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -26,7 +26,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::platform();
   TeXLive::TLUtils::platform_name($canonical_host);
   TeXLive::TLUtils::platform_desc($platform);
-  TeXLive::TLUtils::win32();
+  TeXLive::TLUtils::wndws();
   TeXLive::TLUtils::unix();
 
 =head2 System tools
@@ -105,12 +105,6 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::member($item, @list);
   TeXLive::TLUtils::merge_into(\%to, \%from);
   TeXLive::TLUtils::texdir_check($texdir);
-  TeXLive::TLUtils::quotify_path_with_spaces($path);
-  TeXLive::TLUtils::conv_to_w32_path($path);
-  TeXLive::TLUtils::native_slashify($internal_path);
-  TeXLive::TLUtils::forward_slashify($path_from_user);
-  TeXLive::TLUtils::give_ctan_mirror();
-  TeXLive::TLUtils::give_ctan_mirror_base();
   TeXLive::TLUtils::compare_tlpobjs($tlpA, $tlpB);
   TeXLive::TLUtils::compare_tlpdbs($tlpdbA, $tlpdbB);
   TeXLive::TLUtils::report_tlpdb_differences(\%ret);
@@ -119,6 +113,18 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::setup_sys_user_mode($prg,$optsref,$tmfc,$tmfsc,$tmfv,$tmfsv);
   TeXLive::TLUtils::prepend_own_path();
   TeXLive::TLUtils::repository_to_array($str);
+
+=head2 Windows and paths
+
+  TeXLive::TLUtils::quotify_path_with_spaces($path);
+  TeXLive::TLUtils::conv_to_w32_path($path);
+  TeXLive::TLUtils::native_slashify($internal_path);
+  TeXLive::TLUtils::forward_slashify($path_from_user);
+
+=head2 CTAN
+
+  TeXLive::TLUtils::give_ctan_mirror();
+  TeXLive::TLUtils::give_ctan_mirror_base();
 
 =head2 JSON
 
@@ -231,6 +237,7 @@ BEGIN {
     &give_ctan_mirror_base
     &create_mirror_list
     &extract_mirror_entry
+    &system_ok
     &wsystem
     &xsystem
     &run_cmd
@@ -264,7 +271,7 @@ BEGIN {
   @EXPORT = qw(setup_programs download_file process_logging_options
                tldie tlwarn info log debug ddebug dddebug debug
                debug_hash_str debug_hash
-               win32 xchdir xsystem run_cmd system_pipe sort_archs);
+               wndws xchdir xsystem run_cmd system_pipe sort_archs);
 }
 
 use Cwd;
@@ -284,7 +291,7 @@ our $SshURIRegex = '^((ssh|scp)://([^@]*)@([^/]*)/|([^@]*)@([^:]*):).*$';
 =item C<platform>
 
 If C<$^O =~ /MSWin/i> is true we know that we're on
-Windows and we set the global variable C<$::_platform_> to C<win32>.
+Windows and we set the global variable C<$::_platform_> to C<windows>.
 Otherwise we call C<platform_name> with the output of C<config.guess>
 as argument.
 
@@ -296,13 +303,16 @@ understands the C<$(...)> construct. This means that on old-enough
 systems, such as Solaris, we have to look for a shell. We use the value
 of the C<CONFIG_SHELL> environment variable if it is set, else
 C</bin/ksh> if it exists, else C</bin/bash> if it exists, else give up.
+Happily, C<config.guess> later reverted this change, but we keep our
+shell-finding code anyway to defend against future mistakes of the same ilk.
 
 =cut
 
 sub platform {
-  unless (defined $::_platform_) {
+  if (! defined $::_platform_) {
     if ($^O =~ /^MSWin/i) {
-      $::_platform_ = "win32";
+      # print STDERR "\$^O is $^O\n";
+      $::_platform_ = "windows";
     } else {
       my $config_guess = "$::installerdir/tlpkg/installer/config.guess";
 
@@ -527,7 +537,8 @@ sub platform_desc {
     'sparc-linux'      => 'GNU/Linux on Sparc',
     'sparc-solaris'    => 'Solaris on Sparc',
     'universal-darwin' => 'MacOSX current (10.14-) on ARM/x86_64',
-    'win32'            => 'Windows',
+    'win32'            => 'Windows (32-bit)',
+    'windows'          => 'Windows (64-bit)',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
     'x86_64-darwinlegacy' => 'MacOSX legacy (10.6-) on x86_64',
     'x86_64-dragonfly' => 'DragonFlyBSD on x86_64',
@@ -550,21 +561,21 @@ sub platform_desc {
 }
 
 
-=item C<win32>
+=item C<wndws>
 
 Return C<1> if platform is Windows and C<0> otherwise.  The test is
 currently based on the value of Perl's C<$^O> variable.
 
 =cut
 
-sub win32 {
+sub wndws {
   if ($^O =~ /^MSWin/i) {
     return 1;
   } else {
     return 0;
   }
   # the following needs config.guess, which is quite bad ...
-  # return (&platform eq "win32")? 1:0;
+  # return (&platform eq "windows")? 1:0;
 }
 
 
@@ -575,7 +586,7 @@ Return C<1> if platform is UNIX and C<0> otherwise.
 =cut
 
 sub unix {
-  return (&platform eq "win32")? 0:1;
+  return (&platform eq "windows")? 0:1;
 }
 
 
@@ -599,7 +610,7 @@ sub getenv {
   my $envvar=shift;
   my $var=$ENV{"$envvar"};
   return 0 unless (defined $var);
-  if (&win32) {
+  if (&wndws) {
     $var=~s!\\!/!g;  # change \ -> / (required by Perl)
   }
   return "$var";
@@ -621,7 +632,7 @@ sub which {
   my @PATH;
   my $PATH = getenv('PATH');
 
-  if (&win32) {
+  if (&wndws) {
     my @PATHEXT = split (';', getenv('PATHEXT'));
     push (@PATHEXT, '');  # in case argument contains an extension
     @PATH = split (';', $PATH);
@@ -699,6 +710,18 @@ sub xchdir {
   ddebug("xchdir($dir) ok\n");
 }
 
+=item C<system_ok($cmdline)>
+
+Run C<system($cmdline)> and return true if return status was zero, false
+if status was nonzero. Throw away stdout and stderr.
+
+=cut
+
+sub system_ok {
+  my ($cmdline) = @_;
+  `$cmdline >/dev/null 2>&1`;
+  return $? == 0;
+}
 
 =item C<wsystem($msg, @args)>
 
@@ -788,7 +811,7 @@ sub system_pipe {
   my ($prog, $infile, $outfile, $removeIn, @extraargs) = @_;
   
   my $progQuote = quotify_path_with_spaces($prog);
-  if (win32()) {
+  if (wndws()) {
     $infile =~ s!/!\\!g;
     $outfile =~ s!/!\\!g;
   }
@@ -821,7 +844,7 @@ computing the disk space.
 sub diskfree {
   my $td = shift;
   my ($output, $retval);
-  if (win32()) {
+  if (wndws()) {
     # the powershell one-liner only works from win8 on.
     my @winver = Win32::GetOSVersion();
     if ($winver[1]<=6 && $winver[2]<=1) {
@@ -874,19 +897,23 @@ sub diskfree {
   $td .= "/" if ($td !~ m!/$!);
   return (-1) if (! -e $td);
   debug("checking diskfree() in $td\n");
-  ($output, $retval) = run_cmd("df -P \"$td\"", POSIXLY_CORRECT => 1);
+  ($output, $retval) = run_cmd("df -Pk \"$td\"");
+    # With -k (mandated by POSIX), we should always get 1024-blocks.
+    # Otherwise, the POSIXLY_CORRECT envvar for GNU df would need to
+    # be set, to force 512-blocks; and the BLOCKSIZE envvar would need
+    # to be unset to avoid overriding.
   if ($retval == 0) {
     # Output format should be this:
-    # Filesystem      512-blocks       Used  Available Capacity Mounted on
-    # /dev/sdb3       6099908248 3590818104 2406881416      60% /home
+    # Filesystem      1024-blocks     Used Available Capacity Mounted on
+    # /dev/sdb3       209611780 67718736 141893044      33% /
     my ($h,$l) = split(/\n/, $output);
     my ($fs, $nrb, $used, $avail, @rest) = split(' ', $l);
-    debug("diskfree: used=$used (512-block), avail=$avail (512-block)\n");
-    # $avail is in 512-byte blocks, so we need to divide by 2*1024 to
-    # obtain Mb. Require that at least 100M remain free.
-    return (int($avail / 2048));
+    debug("diskfree: df -Pk output: $output");
+    debug("diskfree: used=$used (1024-block), avail=$avail (1024-block)\n");
+    # $avail is in 1024-byte blocks, so we divide by 1024 to obtain Mb.
+    return (int($avail / 1024));
   } else {
-    # error in running df -P for whatever reason
+    # error in running df -P for whatever reason, just skip the check.
     return (-1);
   }
 }
@@ -904,7 +931,7 @@ my $user_home_dir;
 
 sub get_user_home {
   return $user_home_dir if ($user_home_dir);
-  $user_home_dir = getenv (win32() ? 'USERPROFILE' : 'HOME') || '~';
+  $user_home_dir = getenv (wndws() ? 'USERPROFILE' : 'HOME') || '~';
   return $user_home_dir;
 }
 
@@ -939,7 +966,7 @@ Return both C<dirname> and C<basename>.  Example:
 sub dirname_and_basename {
   my $path=shift;
   my ($share, $base) = ("", "");
-  if (win32) {
+  if (wndws()) {
     $path=~s!\\!/!g;
   }
   # do not try to make sense of paths ending with /..
@@ -948,7 +975,7 @@ sub dirname_and_basename {
     # eliminate `/.' path components
     while ($path =~ s!/\./!/!) {};
     # UNC path? => first split in $share = //xxx/yy and $path = /zzzz
-    if (win32() and $path =~ m!^(//[^/]+/[^/]+)(.*)$!) {
+    if (wndws() and $path =~ m!^(//[^/]+/[^/]+)(.*)$!) {
       ($share, $path) = ($1, $2);
       if ($path =~ m!^/?$!) {
         $path = $share;
@@ -1006,7 +1033,7 @@ sub basename {
 
 sub tl_abs_path {
   my $path = shift;
-  if (win32) {
+  if (wndws()) {
     $path=~s!\\!/!g;
   }
   if (-e $path) {
@@ -1016,13 +1043,13 @@ sub tl_abs_path {
   } else{
     # collapse /./ components
     $path =~ s!/\./!/!g;
-    # no support for .. path components or for win32 long-path syntax
+    # no support for .. path components or for windows long-path syntax
     # (//?/ path prefix)
     die "Unsupported path syntax" if $path =~ m!/\.\./! || $path =~ m!/\.\.$!
       || $path =~ m!^\.\.!;
-    die "Unsupported path syntax" if win32() && $path =~ m!^//\?/!;
+    die "Unsupported path syntax" if wndws() && $path =~ m!^//\?/!;
     if ($path !~ m!^(.:)?/!) { # relative path
-      if (win32() && $path =~ /^.:/) { # drive letter
+      if (wndws() && $path =~ /^.:/) { # drive letter
         my $dcwd;
         # starts with drive letter: current dir on drive
         $dcwd = Cwd::getdcwd ($1);
@@ -1056,7 +1083,7 @@ sub dir_slash {
 sub dir_creatable {
   my $path=shift;
   #print STDERR "testing $path\n";
-  $path =~ s!\\!/!g if win32;
+  $path =~ s!\\!/!g if wndws;
   return 0 unless -d $path;
   $path .= '/' unless $path =~ m!/$!;
   #print STDERR "testing $path\n";
@@ -1098,7 +1125,7 @@ a fileserver.
 sub dir_writable {
   my ($path) = @_;
   return 0 unless -d $path;
-  $path =~ s!\\!/!g if win32;
+  $path =~ s!\\!/!g if wndws;
   $path .= '/' unless $path =~ m!/$!;
   my $i = 0;
   my $f;
@@ -1142,9 +1169,9 @@ sub mkdirhier {
     $ret = 1;
   } else {
     my $subdir = "";
-    # win32 is special as usual: we need to separate //servername/ part
+    # windows is special as usual: we need to separate //servername/ part
     # from the UNC path, since (! -d //servername/) tests true
-    $subdir = $& if ( win32() && ($tree =~ s!^//[^/]+/!!) );
+    $subdir = $& if ( wndws() && ($tree =~ s!^//[^/]+/!!) );
 
     my @dirs = split (/[\/\\]/, $tree);
     for my $dir (@dirs) {
@@ -1617,13 +1644,13 @@ sub removed_dirs {
     # what should we do with not existing entries????
     next if (! -r "$f");
     my $abs_f = Cwd::abs_path ($f);
-    # the following is necessary because on win32,
+    # the following is necessary because on windows,
     #   abs_path("tl-portable")
     # returns
     #   c:\tl test\...
     # and not forward slashes, while, if there is already a forward /
     # in the path, also the rest is done with forward slashes.
-    $abs_f =~ s!\\!/!g if win32();
+    $abs_f =~ s!\\!/!g if wndws();
     if (!$abs_f) {
       warn ("oops, no abs_path($f) from " . `pwd`);
       next;
@@ -1883,7 +1910,7 @@ sub do_postaction {
 
 sub _do_postaction_fileassoc {
   my ($how, $mode, $tlpobj, $pa) = @_;
-  return 1 unless win32();
+  return 1 unless wndws();
   my ($errors, %keyval) =
     parse_into_keywords($pa, qw/extension filetype/);
 
@@ -1921,7 +1948,7 @@ sub _do_postaction_fileassoc {
 
 sub _do_postaction_filetype {
   my ($how, $tlpobj, $pa) = @_;
-  return 1 unless win32();
+  return 1 unless wndws();
   my ($errors, %keyval) =
     parse_into_keywords($pa, qw/name cmd/);
 
@@ -1966,7 +1993,7 @@ sub _do_postaction_filetype {
 # associated program shows up in `open with' menu
 sub _do_postaction_progid {
   my ($how, $tlpobj, $pa) = @_;
-  return 1 unless win32();
+  return 1 unless wndws();
   my ($errors, %keyval) =
     parse_into_keywords($pa, qw/extension filetype/);
 
@@ -2016,7 +2043,7 @@ sub _do_postaction_script {
     return 0;
   }
   my $file = $keyval{'file'};
-  if (win32() && defined($keyval{'filew32'})) {
+  if (wndws() && defined($keyval{'filew32'})) {
     $file = $keyval{'filew32'};
   }
   my $texdir = `kpsewhich -var-value=TEXMFROOT`;
@@ -2046,7 +2073,7 @@ sub _do_postaction_script {
 
 sub _do_postaction_shortcut {
   my ($how, $tlpobj, $do_menu, $do_desktop, $pa) = @_;
-  return 1 unless win32();
+  return 1 unless wndws();
   my ($errors, %keyval) =
     parse_into_keywords($pa, qw/type name icon cmd args hide/);
 
@@ -2317,7 +2344,7 @@ sub add_remove_symlinks {
   my $plat_bindir = "$Master/bin/$arch";
 
   # nothing to do with symlinks on Windows, of course.
-  return if win32();
+  return if wndws();
 
   my $info_dir = "$Master/texmf-dist/doc/info";
   if ($mode eq "add") {
@@ -2403,7 +2430,7 @@ be called to make the changes immediately visible.
 
 sub w32_add_to_path {
   my ($bindir, $multiuser) = @_;
-  return if (!win32());
+  return if (!wndws());
 
   my $path = TeXLive::TLWinGoo::get_system_env() -> {'/Path'};
   $path =~ s/[\s\x00]+$//;
@@ -2648,7 +2675,7 @@ sub untar {
 
   # on w32 don't extract file modified time, because AV soft can open
   # files in the mean time causing time stamp modification to fail
-  my $taropt = win32() ? "xmf" : "xf";
+  my $taropt = wndws() ? "xmf" : "xf";
   if (system($tar, $taropt, $tarfile) != 0) {
     tlwarn("TLUtils::untar: $tar $taropt $tarfile failed (in $targetdir)\n");
     $ret = 0;
@@ -3146,7 +3173,7 @@ sub _download_file_lwp {
 
 sub _download_file_program {
   my ($url, $dest, $type) = @_;
-  if (win32()) {
+  if (wndws()) {
     $dest =~ s!/!\\!g;
   }
   
@@ -3195,7 +3222,7 @@ Return C</dev/null> on Unix and C<nul> on Windows.
 =cut
 
 sub nulldev {
-  return (&win32()) ? 'nul' : '/dev/null';
+  return (&wndws()) ? 'nul' : '/dev/null';
 }
 
 =item C<get_full_line ($fh)>
@@ -4058,7 +4085,7 @@ sub texdir_check {
   # Unfortunately we have lots of special characters.
   # On Windows, backslashes are normal but will already have been changed
   # to slashes by tl_abs_path. And we should only check for : on Unix.
-  my $colon = win32() ? "" : ":";
+  my $colon = wndws() ? "" : ":";
   if ($texdir =~ /[,$colon;\\{}\$]/) {
     if ($warn) {
       print "     !! TEXDIR value has problematic characters: $orig_texdir\n";
@@ -4071,7 +4098,7 @@ sub texdir_check {
     return 0;
   }
   # w32: for now, reject the root of a samba share
-  return 0 if win32() && $texdir =~ m!^//[^/]+/[^/]+$!;
+  return 0 if wndws() && $texdir =~ m!^//[^/]+/[^/]+$!;
 
   # if texdir already exists, make sure we can write into it.
   return dir_writable($texdir) if (-d $texdir);
@@ -4102,7 +4129,7 @@ are (erroneously) eradicated.
 
 sub quotify_path_with_spaces {
   my $p = shift;
-  my $m = win32() ? '[+=^&();,!%\s]' : '.';
+  my $m = wndws() ? '[+=^&();,!%\s]' : '.';
   if ( $p =~ m/$m/ ) {
     $p =~ s/"//g; # remove any existing double quotes
     $p = "\"$p\""; 
@@ -4150,13 +4177,13 @@ slashes after reading a path. They both are no-ops on Unix.
 
 sub native_slashify {
   my ($r) = @_;
-  $r =~ s!/!\\!g if win32();
+  $r =~ s!/!\\!g if wndws();
   return $r;
 }
 
 sub forward_slashify {
   my ($r) = @_;
-  $r =~ s!\\!/!g if win32();
+  $r =~ s!\\!/!g if wndws();
   return $r;
 }
 
@@ -4238,7 +4265,7 @@ END_NO_SSL
 # 
 sub query_ctan_mirror_curl {
   my $max_trial = 3;
-  my $warg = (win32() ? '-w "%{url_effective}" ' : "-w '%{url_effective}' ");
+  my $warg = (wndws() ? '-w "%{url_effective}" ' : "-w '%{url_effective}' ");
   for (my $i = 1; $i <= $max_trial; $i++) {
     # -L -> follow redirects
     # -s -> silent
@@ -4845,7 +4872,7 @@ sub mktexupd {
           die "mktexupd: exec file does not exist: $file" if (! -f $file);
         }
       }
-      my $delim= (&win32)? ';' : ':';
+      my $delim= (&wndws)? ';' : ':';
       my $TEXMFDBS;
       chomp($TEXMFDBS=`kpsewhich --show-path="ls-R"`);
 
@@ -4855,8 +4882,8 @@ sub mktexupd {
       foreach my $path (keys %files) {
         foreach my $db (@texmfdbs) {
           $db=substr($db, -1) if ($db=~m|/$|); # strip leading /
-          $db = lc($db) if win32();
-          my $up = (win32() ? lc($path) : $path);
+          $db = lc($db) if wndws();
+          my $up = (wndws() ? lc($path) : $path);
           if (substr($up, 0, length("$db/")) eq "$db/") {
             # we appended a / because otherwise "texmf" is recognized as a
             # substring of "texmf-dist".
@@ -4988,7 +5015,7 @@ directory for PATH.
 
 sub prepend_own_path {
   my $bindir = dirname(Cwd::abs_path(which('kpsewhich')));
-  if (win32()) {
+  if (wndws()) {
     $bindir =~ s!\\!/!g;
     $ENV{'PATH'} = "$bindir;$ENV{PATH}";
   } else {

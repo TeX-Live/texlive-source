@@ -1,7 +1,7 @@
 
 
 local svnrevision = string.match("$Revision: 65362 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2022-12-26 20:12:37 +0100 (Mon, 26 Dec 2022) $", "[-%d]+") or "2009-12-04"
+local svndate     = string.match("$Date: 2022-12-27 04:12:37 +0900 (火, 27 12 2022) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -78,7 +78,7 @@ local helpstr = [[
       runscript <script-name> [script arguments]
     
     If you prefer to call the script program simply by its name, copy 
-    and rename bin/win32/runscript.exe (or bin/win64/runscript.exe for
+    and rename bin/windows/runscript.exe (or bin/win64/runscript.exe for
     64-bit Windows) to <script-name>.exe and put it somewhere on the
     search path.]]
 
@@ -448,7 +448,7 @@ local function gettexmfdist()
 -- remove '/runscript.dll'
   a, b = string.find(str, '/', 1, true)
   str = string.sub(str,a+1)
--- remove '/win32'
+-- remove '/windows'
   a, b = string.find(str, '/', 1, true)
   str = string.sub(str,a+1)
 -- remove '/bin'
