@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 66218 2023-02-27 17:09:29Z karl $
+# $Id: tlmgr.pl 66236 2023-02-27 21:44:33Z karl $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 66218 $';
-my $datrev = '$Date: 2023-02-27 18:09:29 +0100 (Mon, 27 Feb 2023) $';
+my $svnrev = '$Revision: 66236 $';
+my $datrev = '$Date: 2023-02-27 22:44:33 +0100 (Mon, 27 Feb 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -892,11 +892,16 @@ sub handle_execute_actions {
 
   if ($::files_changed) {
     $errors += do_cmd_and_check("mktexlsr");
+    # see comments in install-tl about lmtx.
+    my $lmtx = "$bindir/luametatex";
     if (defined($localtlpdb->get_package('context'))
-	    && (-x "$bindir/luametatex" || -x "$bindir/luametatex.exe")) {
-; # x86_64-linux binary too new
-#      $errors += do_cmd_and_check("mtxrun --generate");
-#      $errors += do_cmd_and_check("context --luatex --generate");
+        && (-x "$lmtx" || -x "$lmtx.exe")
+        && TeXLive::TLUtils::system_ok("$lmtx --version")
+       ) {
+      $errors += do_cmd_and_check("mtxrun --generate");
+      $errors += do_cmd_and_check("context --luatex --generate");
+    } else {
+      debug("skipped ConTeXt cache regeneration\n");
     }
     $::files_changed = 0;
   }
@@ -10249,7 +10254,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 66218 2023-02-27 17:09:29Z karl $
+$Id: tlmgr.pl 66236 2023-02-27 21:44:33Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
