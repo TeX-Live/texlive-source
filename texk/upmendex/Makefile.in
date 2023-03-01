@@ -413,6 +413,7 @@ am__set_b = \
       b='$*';; \
   esac
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/c-auto.in \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -478,6 +479,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 GREP = @GREP@
 ICU_CONFIG = @ICU_CONFIG@
 ICU_DEPEND = @ICU_DEPEND@

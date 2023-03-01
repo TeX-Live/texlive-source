@@ -35,18 +35,23 @@ AC_DEFUN([KPSE_INIT],
 # _KPSE_USE_LIBTOOL()
 # -------------------
 AC_DEFUN([_KPSE_USE_LIBTOOL],
-[##tldbg $0: Generate a libtool script for use in configure tests.
+[echo 'tldbg:[$0] called, libtool package version: LT_PACKAGE_VERSION' >&AS_MESSAGE_LOG_FD
 AC_PROVIDE_IFELSE([LT_INIT], ,
                   [m4_fatal([$0: requires libtool])])[]dnl
 LT_OUTPUT
+#
 m4_append([AC_LANG(C)],
 [ac_link="./libtool --mode=link --tag=CC $ac_link"
 ])[]dnl
+#
 AC_PROVIDE_IFELSE([AC_PROG_CXX],
 [m4_append([AC_LANG(C++)],
 [ac_link="./libtool --mode=link --tag=CXX $ac_link"
 ])])[]dnl
 AC_LANG(_AC_LANG)[]dnl
+#
+# am_prog_ar needed for dvisvgm, at least.
+AM_PROG_AR
 ]) # _KPSE_USE_LIBTOOL
 
 # _KPSE_LIB_FLAGS(LIBDIR, LIBNAME, OPTIONS,

@@ -372,6 +372,7 @@ am__set_b = \
   esac
 am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	$(srcdir)/Makefile.in $(srcdir)/autoconf.h.in \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -462,6 +463,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@

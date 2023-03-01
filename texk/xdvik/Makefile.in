@@ -337,6 +337,7 @@ am__define_uniq_tagged_files = \
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/c-auto.in \
 	$(srcdir)/common.am $(srcdir)/xdvi-sh.in \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -423,6 +424,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@

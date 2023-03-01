@@ -1,6 +1,15 @@
-2022-05-29  Karl Berry  <karl@tug.org>
+2023-02-27  Karl Berry  <karl@tug.org>
 
-	*  (mv): r
+	* tlbuild-incl/tlmgr.texi: remake for path --windowsmode.
+
+2023-02-26  Karl Berry  <karl@tug.org>
+
+	* tlbuild-incl/tlmgr.texi,
+	* tlbuild-incl/install-tl.texi: remake for 2023 versions.
+
+2023-02-21  Karl Berry  <karl@tug.org>
+
+	* build-tools.txt: libtool-2.4.7.
 
 2022-05-28  Karl Berry  <karl@tug.org>
 

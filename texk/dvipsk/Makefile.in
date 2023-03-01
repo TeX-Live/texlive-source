@@ -483,7 +483,8 @@ TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(dist_man1_MANS) $(dvips_TEXINFOS) \
 	$(srcdir)/../../am/dist_hook.am $(srcdir)/Makefile.in \
-	$(srcdir)/c-auto.in $(top_srcdir)/../../build-aux/compile \
+	$(srcdir)/c-auto.in $(top_srcdir)/../../build-aux/ar-lib \
+	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -570,6 +571,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@

@@ -1,3 +1,8 @@
+2023-03-01  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (_KPSE_USE_LIBTOOL): tldbg output libtool
+	version; include AM_PROG_AR for dvisvgm.
+
 2023-02-25  Werner Fink  <werner@suse.de>
 
 	* kpse-potrace-flags.m4 (KPSE_POTRACE_SYSTEM_FLAGS): define
