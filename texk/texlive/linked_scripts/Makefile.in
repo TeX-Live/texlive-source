@@ -751,7 +751,6 @@ install-data-hook: installdirs-local
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
 @WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
-@WIN32_TRUE@	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.dll $(DESTDIR)$(bindir)
 @WIN32_FALSE@	@REL=`$(relpath) '$(DESTDIR)' '$(bindir)' '$(datarootdir)'`; \
 @WIN32_FALSE@	if test -z "$$REL"; then \
 @WIN32_FALSE@	  echo 'unable to compute relative path for linked scripts' >&2; \

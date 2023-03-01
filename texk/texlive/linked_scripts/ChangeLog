@@ -1,3 +1,8 @@
+2023-02-28  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (install-data-hook) [WIN32]: don't install
+	mtxrun.dll, since ConTeXt isn't handled here any more.
+
 2022-09-11  Reinhard Kotucha  <reinhard.kotucha@web.de>
 
 	* Makefile.am : rename rungs.tlu to rungs.lua

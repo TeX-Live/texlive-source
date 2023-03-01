@@ -302,7 +302,6 @@ if WIN32
 	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.dll $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.exe $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/runscript.tlu $(DESTDIR)$(bindir)
-	$(INSTALL_SCRIPT) $(top_srcdir)/$(WIN_WRAPPER)/context/mtxrun.dll $(DESTDIR)$(bindir)
 else !WIN32
 ## Name the link as the basename, removing any extension,
 ## except for listings-ext.sh, which is documented as that name.

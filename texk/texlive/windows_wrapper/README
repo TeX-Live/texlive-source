@@ -1,8 +1,11 @@
-This file and the graphics are public domain.
+$Id$	
+This README file and the graphics are public domain.
 
 This directory is for the generic TeX Live wrapper on Windows that is
 used for most scripts. The main file is runscript.tlu.
 
+runscript.exe/dll are copied here from the runtime (bin/windows) because
+../linked_scripts/Makefile[.am] installs them on Windows.
+
 *.svg are the sources for *.ico,
-and the *.ico are used in wrappers.
-Hence their locaton here.
+and the *.ico are used in wrappers. Hence their locaton here.
