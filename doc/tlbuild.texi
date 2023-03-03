@@ -887,7 +887,7 @@ points from @code{@var{bindir}/ps2eps} to
 @code{@var{datarootdir}/texmf-dist/scripts/ps2eps/ps2eps.pl}.  For
 Windows, a standard wrapper binary (copied to, e.g.,
 @code{@var{bindir}/ps2eps.exe}) serves the same purpose.  The source
-for the wrapper is in @file{texk/texlive/w32_wrapper}.
+for the wrapper is in @file{texk/texlive/windows_wrapper}.
 
 One reason for this is to avoid having many copies of the same
 script; a more important reason is that it guarantees the scripts will
@@ -1361,7 +1361,7 @@ Call @code{KPSE_COND_WIN32} and define the Automake conditional
 @pindex runscript.exe
 Call @code{KPSE_COND_WIN32} and define the Automake conditional
 @code{WIN32_WRAP} (@code{true} if the standard Windows wrapper
-(@file{texk/texlive/w32_wrapper/runscript.exe}) exists.  This wrapper
+(@file{texk/texlive/windows_wrapper/runscript.exe}) exists.  This wrapper
 is used on Windows instead of symlinks for the ``linked scripts''
 (@pxref{Linked scripts}).
 @end defmac
@@ -1369,7 +1369,7 @@ is used on Windows instead of symlinks for the ``linked scripts''
 @defmac KPSE_WIN32_CALL
 @pindex callexe.c
 Call @code{KPSE_COND_WIN32} and check if the file
-@file{texk/texlive/w32_wrapper/callexe.c} exists; if it does, create a
+@file{texk/texlive/windows_wrapper/callexe.c} exists; if it does, create a
 symlink in the build tree.  Compiling @file{callexe.c} with
 @code{-DEXEPROG='"@var{foo}.exe"'} and installing @file{callexe.exe}
 as @code{@var{bar}.exe} is used on Windows instead of a symlink

@@ -54,9 +54,9 @@ AC_CACHE_CHECK([for WIN64],
                                   [kpse_cv_have_win64=no])])
 AS_CASE([$kpse_cv_have_win64],
         [yes], [AS_IF([test "x$kpse_cv_have_win32=xmingw"],
-                      [WIN_WRAPPER=w64_mingw_wrapper],
-                      [WIN_WRAPPER=w64_wrapper])],
-               [WIN_WRAPPER=w32_wrapper])
+                      [WIN_WRAPPER=windows_mingw_wrapper],
+                      [WIN_WRAPPER=windows_wrapper])],
+               [WIN_WRAPPER=windows_wrapper])
 AC_SUBST([WIN_WRAPPER])
 AM_CONDITIONAL([WIN32_WRAP],
                [test -r "$srcdir/../../texk/texlive/$WIN_WRAPPER/runscript.exe"])
@@ -68,9 +68,9 @@ AM_CONDITIONAL([WIN32_WRAP],
 AC_DEFUN([KPSE_WIN32_CALL], [dnl
 AC_REQUIRE([KPSE_COND_WIN32])[]dnl
 AM_CONDITIONAL([WIN32_CALL],
-               [test -r "$srcdir/../texlive/w32_wrapper/callexe.c"])
+               [test -r "$srcdir/../texlive/windows_wrapper/callexe.c"])
 AM_COND_IF([WIN32],
-           [AC_CONFIG_LINKS([callexe.c:../texlive/w32_wrapper/callexe.c])])
+           [AC_CONFIG_LINKS([callexe.c:../texlive/windows_wrapper/callexe.c])])
 ]) # KPSE_WIN32_CALL
 
 # KPSE_DO_IF_WIN32(COMMAND)
