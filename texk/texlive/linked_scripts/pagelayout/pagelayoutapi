@@ -13,7 +13,7 @@
 # LaTeX version 2008/05/04 or later.
 #
 
-version=1.0.3
+version=1.0.4
 
 _convert() {
   turbo=$1
@@ -136,7 +136,7 @@ optimize() {
 }
 
 makeshadow() {
-  if command -v magick >/dev/null 2>&1; then
+  if command -v inkscape >/dev/null 2>&1; then
     filename=$1
     stdDeviation=$2
     opacity=$3
