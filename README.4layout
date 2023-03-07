@@ -263,13 +263,13 @@ due to the lack of symbolic links.
  -- Macro: KPSE_COND_WIN32_WRAP
      Call 'KPSE_COND_WIN32' and define the Automake conditional
      'WIN32_WRAP' ('true' if the standard Windows wrapper
-     ('texk/texlive/w32_wrapper/runscript.exe') exists.  This wrapper is
+     ('texk/texlive/windows_wrapper/runscript.exe') exists.  This wrapper is
      used on Windows instead of symlinks for the "linked scripts" (*note
      Linked scripts::).
 
  -- Macro: KPSE_WIN32_CALL
      Call 'KPSE_COND_WIN32' and check if the file
-     'texk/texlive/w32_wrapper/callexe.c' exists; if it does, create a
+     'texk/texlive/windows_wrapper/callexe.c' exists; if it does, create a
      symlink in the build tree.  Compiling 'callexe.c' with
      '-DEXEPROG='"FOO.exe"'' and installing 'callexe.exe' as 'BAR.exe'
      is used on Windows instead of a symlink 'BAR->FOO' for Unix-like
