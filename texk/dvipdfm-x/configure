@@ -17170,7 +17170,7 @@ else
 fi
 
 
- if test -r "$srcdir/../texlive/w32_wrapper/callexe.c"; then
+ if test -r "$srcdir/../texlive/windows_wrapper/callexe.c"; then
   WIN32_CALL_TRUE=
   WIN32_CALL_FALSE='#'
 else
@@ -17179,7 +17179,7 @@ else
 fi
 
 if test -z "$WIN32_TRUE"; then :
-  ac_config_links="$ac_config_links callexe.c:../texlive/w32_wrapper/callexe.c"
+  ac_config_links="$ac_config_links callexe.c:../texlive/windows_wrapper/callexe.c"
 
 fi
 
@@ -18215,7 +18215,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
-    "callexe.c") CONFIG_LINKS="$CONFIG_LINKS callexe.c:../texlive/w32_wrapper/callexe.c" ;;
+    "callexe.c") CONFIG_LINKS="$CONFIG_LINKS callexe.c:../texlive/windows_wrapper/callexe.c" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

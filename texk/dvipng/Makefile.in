@@ -448,7 +448,8 @@ am__set_b = \
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(srcdir)/../../am/bin_links.am \
 	$(srcdir)/../../am/dist_hook.am $(srcdir)/Makefile.in \
-	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/compile \
+	$(srcdir)/config.h.in $(top_srcdir)/../../build-aux/ar-lib \
+	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
 	$(top_srcdir)/../../build-aux/depcomp \
@@ -456,7 +457,7 @@ am__DIST_COMMON = $(srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
+	$(top_srcdir)/../texlive/windows_wrapper/callexe.c \
 	../../build-aux/ar-lib ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
@@ -536,6 +537,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@
 FREETYPE2_INCLUDES = @FREETYPE2_INCLUDES@
 FREETYPE2_LIBS = @FREETYPE2_LIBS@

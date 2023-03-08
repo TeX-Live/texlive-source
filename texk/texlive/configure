@@ -4318,12 +4318,12 @@ case $kpse_cv_have_win64 in #(
   yes) :
     if test "x$kpse_cv_have_win32=xmingw"
 then :
-  WIN_WRAPPER=w64_mingw_wrapper
+  WIN_WRAPPER=windows_mingw_wrapper
 else $as_nop
-  WIN_WRAPPER=w64_wrapper
+  WIN_WRAPPER=windows_wrapper
 fi ;; #(
   *) :
-    WIN_WRAPPER=w32_wrapper ;;
+    WIN_WRAPPER=windows_wrapper ;;
 esac
 
  if test -r "$srcdir/../../texk/texlive/$WIN_WRAPPER/runscript.exe"; then

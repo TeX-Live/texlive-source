@@ -471,6 +471,7 @@ am__set_b = \
 am__DIST_COMMON = $(dist_man1_MANS) $(srcdir)/Makefile.in \
 	$(srcdir)/config.h.in $(top_srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../am/man1_links.am \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -479,7 +480,7 @@ am__DIST_COMMON = $(dist_man1_MANS) $(srcdir)/Makefile.in \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
+	$(top_srcdir)/../texlive/windows_wrapper/callexe.c \
 	../../build-aux/ar-lib ../../build-aux/compile \
 	../../build-aux/config.guess ../../build-aux/config.sub \
 	../../build-aux/depcomp ../../build-aux/install-sh \
@@ -533,6 +534,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 GREP = @GREP@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@

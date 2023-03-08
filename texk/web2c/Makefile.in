@@ -2805,6 +2805,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	$(srcdir)/silent-sh.in $(srcdir)/synctexdir/am/synctex.am \
 	$(srcdir)/tangle-sh.in $(srcdir)/uptexdir/am/uptex.am \
 	$(srcdir)/web2c-sh.in $(srcdir)/xetexdir/am/xetex.am \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \
@@ -2813,7 +2814,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	$(top_srcdir)/../../build-aux/ltmain.sh \
 	$(top_srcdir)/../../build-aux/missing \
 	$(top_srcdir)/../../build-aux/test-driver \
-	$(top_srcdir)/../texlive/w32_wrapper/callexe.c \
+	$(top_srcdir)/../texlive/windows_wrapper/callexe.c \
 	$(top_srcdir)/luatexdir/luafontloader/ff-config.in \
 	$(top_srcdir)/synctexdir/synctex.pc.in ../../build-aux/ar-lib \
 	../../build-aux/compile ../../build-aux/config.guess \
@@ -2904,6 +2905,7 @@ EGREP = @EGREP@
 ETAGS = @ETAGS@
 EXEEXT = @EXEEXT@
 FGREP = @FGREP@
+FILECMD = @FILECMD@
 FONTCONFIG_INCLUDES = @FONTCONFIG_INCLUDES@
 FONTCONFIG_LIBS = @FONTCONFIG_LIBS@
 FREETYPE2_DEPEND = @FREETYPE2_DEPEND@

@@ -16299,7 +16299,7 @@ else
 fi
 
 
- if test -r "$srcdir/../texlive/w32_wrapper/callexe.c"; then
+ if test -r "$srcdir/../texlive/windows_wrapper/callexe.c"; then
   WIN32_CALL_TRUE=
   WIN32_CALL_FALSE='#'
 else
@@ -16308,7 +16308,7 @@ else
 fi
 
 if test -z "$WIN32_TRUE"; then :
-  ac_config_links="$ac_config_links callexe.c:../texlive/w32_wrapper/callexe.c"
+  ac_config_links="$ac_config_links callexe.c:../texlive/windows_wrapper/callexe.c"
 
 fi
 
@@ -17343,7 +17343,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "c-auto.h") CONFIG_HEADERS="$CONFIG_HEADERS c-auto.h:c-auto.in" ;;
-    "callexe.c") CONFIG_LINKS="$CONFIG_LINKS callexe.c:../texlive/w32_wrapper/callexe.c" ;;
+    "callexe.c") CONFIG_LINKS="$CONFIG_LINKS callexe.c:../texlive/windows_wrapper/callexe.c" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "win32/Makefile") CONFIG_FILES="$CONFIG_FILES win32/Makefile" ;;
 
