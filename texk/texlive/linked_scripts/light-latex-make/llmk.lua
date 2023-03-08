@@ -3,7 +3,7 @@
 --
 -- This is file `llmk.lua'.
 --
--- Copyright 2018-2021 Takuto ASAKURA (wtsnjp)
+-- Copyright 2018-2023 Takuto Asakura (wtsnjp)
 --   GitHub:   https://github.com/wtsnjp
 --   Twitter:  @wtsnjp
 --
@@ -39,9 +39,9 @@ local M = {}
 
 -- program information
 M.prog_name = 'llmk'
-M.version = '1.1.0'
-M.copyright = 'Copyright 2018-2021'
-M.author = 'Takuto ASAKURA (wtsnjp)'
+M.version = '1.2.0'
+M.copyright = 'Copyright 2018-2023'
+M.author = 'Takuto Asakura (wtsnjp)'
 M.llmk_toml = 'llmk.toml'
 
 -- exit codes
@@ -67,9 +67,11 @@ M.top_level_spec = {
   latex = {'string', 'lualatex'},
   llmk_version = {'string', nil},
   makeindex = {'string', 'makeindex'},
+  makeglossaries = {'string', 'makeglossaries'},
   max_repeat = {'integer', 5},
+  output_directory = {'string', nil},
   ps2pdf = {'string', 'ps2pdf'},
-  sequence = {'[string]', {'latex', 'bibtex', 'makeindex', 'dvipdf'}},
+  sequence = {'[string]', {'latex', 'bibtex', 'makeindex', 'makeglossaries', 'dvipdf'}},
   source = {'*[string]', nil},
 }
 
@@ -104,6 +106,7 @@ M.default_programs = {
       '-interaction=nonstopmode',
       '-file-line-error',
       '-synctex=1',
+      '-output-directory="%o"',
     },
     aux_file = '%B.aux',
     aux_empty_size = 9, -- "\\relax \n" is empty
@@ -112,6 +115,13 @@ M.default_programs = {
     target = '%B.idx',
     generated_target = true,
     postprocess = 'latex',
+  },
+  makeglossaries = {
+    target = '%B.glo',
+    generated_target = true,
+    postprocess = 'latex',
+    opts = {'-d "%o"'},
+    args = {'%b.glo'}, -- "%B.glo" will result in an error
   },
   ps2pdf = {
     target = '%B.ps',
@@ -180,18 +190,28 @@ function M.get_status(raw)
 end
 
 -- Replace config param to filename
-function M.replace_specifiers(str, source, target)
+function M.replace_specifiers(str, source, target, output_directory)
   local tmp = '/' .. source
-  local basename = tmp:match('^.*/(.*)%..*$')
+  local basename_match = tmp:match('^.*/(.*)%..*$')
 
   str = str:gsub('%%S', source)
   str = str:gsub('%%T', target)
 
-  if basename then
-    str = str:gsub('%%B', basename)
-  else
-    str = str:gsub('%%B', source)
+  local sub_basename = source
+  if basename_match then
+    sub_basename = basename_match
   end
+
+  local sub_output_directory = '.'
+  local sub_output_directory_basename = sub_basename
+  if output_directory then
+    sub_output_directory = output_directory
+    sub_output_directory_basename = output_directory .. '/' .. sub_basename
+  end
+
+  str = str:gsub('%%b', sub_basename)
+  str = str:gsub('%%o', sub_output_directory)
+  str = str:gsub('%%B', sub_output_directory_basename)
 
   return str
 end
@@ -380,7 +400,7 @@ local function update_config(config, tab)
   local config = merge_table(config, tab)
 
   -- set essential program names from top-level
-  local prg_names = {'latex', 'bibtex', 'makeindex', 'dvipdf', 'dvips', 'ps2pdf'}
+  local prg_names = {'latex', 'bibtex', 'makeindex', 'makeglossaries', 'dvipdf', 'dvips', 'ps2pdf'}
   for _, name in pairs(prg_names) do
     config = fetch_from_top_level(config, name)
   end
@@ -998,7 +1018,7 @@ local function setup_programs(fn, config)
       cur_target = fn
     else
       -- here, %T should be replaced by `fn`
-      cur_target = llmk.util.replace_specifiers(prog.target, fn, fn)
+      cur_target = llmk.util.replace_specifiers(prog.target, fn, fn, config.output_directory)
     end
 
     prog.target = cur_target
@@ -1018,11 +1038,11 @@ local function setup_programs(fn, config)
           if type(prog[k]) == 'table' then
             for ik, iv in ipairs(prog[k]) do
               if type(prog[k][ik]) == 'string' then
-                prog[k][ik] = llmk.util.replace_specifiers(iv, fn, cur_target)
+                prog[k][ik] = llmk.util.replace_specifiers(iv, fn, cur_target, config.output_directory)
               end
             end
           elseif type(prog[k]) == 'string' then
-            prog[k] = llmk.util.replace_specifiers(prog[k], fn, cur_target)
+            prog[k] = llmk.util.replace_specifiers(prog[k], fn, cur_target, config.output_directory)
           end
         end
       end
@@ -1087,7 +1107,7 @@ local function init_file_database(programs, fn, config)
   return fdb
 end
 
-local function construct_cmd(prog, fn, target)
+local function construct_cmd(prog)
   -- construct the option
   local cmd_opt = ''
 
@@ -1213,7 +1233,7 @@ local function run_program(name, prog, fn, fdb, postprocess)
   -- does target exist?
   if not llmk.core.dry_run and not lfs.isfile(prog.target) then
     llmk.util.dbg_print('run',
-      'Skiping "%s" because target (%s) does not exist',
+      'Skipping "%s" because target (%s) does not exist',
       prog.command, prog.target)
     return false
   end
@@ -1225,7 +1245,7 @@ local function run_program(name, prog, fn, fdb, postprocess)
         prog.target)
     elseif file_mtime(prog.target) < start_time then
       llmk.util.dbg_print('run',
-        'Skiping "%s" because target (%s) is not updated',
+        'Skipping "%s" because target (%s) is not updated',
         prog.command, prog.target)
       return false
     end
@@ -1235,7 +1255,7 @@ local function run_program(name, prog, fn, fdb, postprocess)
     end
   end
 
-  local cmd = construct_cmd(prog, fn, prog.target)
+  local cmd = construct_cmd(prog)
   if llmk.core.dry_run then
     print('Dry running: ' .. cmd)
     if #cond > 0 then
@@ -1306,6 +1326,11 @@ function M.run_sequence(fn, config)
   llmk.util.dbg_print('fdb', 'The initial file database is as follows:')
   llmk.util.dbg_print_table('fdb', fdb)
 
+  -- check if output directory exists
+  if config.output_directory and not lfs.isdir(config.output_directory) then
+    llmk.util.err_print('error', 'Output directory does not exist "%s"', config.output_directory)
+  end
+
   for _, name in ipairs(config.sequence) do
     llmk.util.dbg_print('run', 'Preparing for program "%s"', name)
     process_program(programs, name, fn, fdb, config)
@@ -1336,9 +1361,9 @@ local function remove(fn)
   end
 end
 
-local function replace_spec_and_remove_files(fns, source)
+local function replace_spec_and_remove_files(fns, source, output_directory)
   for _, fn in ipairs(fns) do
-    local replaced_fn = llmk.util.replace_specifiers(fn, source, source)
+    local replaced_fn = llmk.util.replace_specifiers(fn, source, source, output_directory)
     if lfs.isfile(replaced_fn) then
       remove(replaced_fn)
     end
@@ -1348,16 +1373,16 @@ end
 -- the actual process for the --clean action
 function M.clean(fn, config)
   llmk.util.err_print('info', 'Begining cleaning for "%s"', fn)
-  replace_spec_and_remove_files(config.clean_files, fn)
-  replace_spec_and_remove_files(config.extra_clean_files, fn)
+  replace_spec_and_remove_files(config.clean_files, fn, config.output_directory)
+  replace_spec_and_remove_files(config.extra_clean_files, fn, config.output_directory)
 end
 
 -- the actual process for the --clobber action
 function M.clobber(fn, config)
   llmk.util.err_print('info', 'Begining clobbering for "%s"', fn)
-  replace_spec_and_remove_files(config.clean_files, fn)
-  replace_spec_and_remove_files(config.extra_clean_files, fn)
-  replace_spec_and_remove_files(config.clobber_files, fn)
+  replace_spec_and_remove_files(config.clean_files, fn, config.output_directory)
+  replace_spec_and_remove_files(config.extra_clean_files, fn, config.output_directory)
+  replace_spec_and_remove_files(config.clobber_files, fn, config.output_directory)
 end
 
 llmk.cleaner = M
@@ -1460,7 +1485,7 @@ local function read_options()
     elseif (curr_arg == '-V') or (curr_arg == '--version') then
       return 'version' -- immediately show version
     elseif (curr_arg == '-c') or (curr_arg == '--clean') then
-      action = 'clean'      
+      action = 'clean'
     elseif (curr_arg == '-C') or (curr_arg == '--clobber') then
       action = 'clobber'
     -- debug
