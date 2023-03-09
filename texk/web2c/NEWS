@@ -1,7 +1,8 @@
 This file records noteworthy changes.  (Public domain.)
+See also */NEWS, */ChangeLog, etc.
 
 
-2023 (for TeX Live 2023)
+2023 (for TeX Live 2023, 9 March 2023)
 
 * (u)pTeX: now using as aliases of e(u)ptex. Also support guessing input
   encodings with these and (u)pbibtex.

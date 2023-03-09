@@ -9,3 +9,38 @@ runscript.exe/dll are copied here from the runtime (bin/windows) because
 
 *.svg are the sources for *.ico,
 and the *.ico are used in wrappers. Hence their locaton here.
+
+>From Siep:
+
+In this directory also are the icons and their sources for the GUI wrappers.
+
+The dviout- and TeXworks files are available from their source
+distributions.  tlcockpit.xcf is included in the tlcockpit package.
+epspdf.svg is in the epspdf package, under the name of logo.svg.
+The bitmap2eps-, tlmgr- and, psviewer icons- and svg files are by me and
+are only here.
+
+How I created and added the icons:
+
+The GIMP can be used to export the usual bitmap formats and .svg to
+icons. Naturally, it can also export .xcf, its own native format, to
+icons. It can even import .ico files, at least in the case of
+dviout.ico. So I consider dviout.ico its own source. In practice, I
+also used IcoFX, a windows utility.
+
+All icons are 256x256 pixels, which windows will resize
+as needed. Only dviout.ico is 128x128.
+
+Normally, icons are added during compilation. But for the 2023
+release, Akira Kakuto already provided the [w]runscript binaries
+along with the bulk of TL binaries. Therefore I opted for adding
+icons after the fact.  This can be done with ResourceHacker
+(http://angusj.com/resourcehacker/), even from the command-line:
+
+rename name.exe name-bk.exe
+rem create a resource script:
+echo 1 ICON name.ico >name.rc
+rem turn resource script plus icon into a binary resource:
+ResourceHacker -open name.rc -save name.res -action compile
+rem add resource to binary:
+ResourceHacker -open name-bk.exe -save name.exe -action add -res name.res

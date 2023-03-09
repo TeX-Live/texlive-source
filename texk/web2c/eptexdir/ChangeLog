@@ -1,3 +1,7 @@
+2023-03-09  Karl Berry  <karl@tug.org>
+
+	* TL'23 release.
+
 2023-02-21  Phelype Oleinik  <phelype.oleinik@latex-project.org>
 
 	* pdfutils.ch: reduce memory usage for \special shipout,
