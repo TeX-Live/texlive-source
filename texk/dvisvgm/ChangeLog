@@ -1,3 +1,10 @@
+2023-03-11  Karl Berry  <karl@freefriends.org>
+
+	* dvisvgm-src/src/Process.cpp: apply last-minute patch for
+	communication with mupdf, in lieu of importing the whole release.
+	https://github.com/mgieseki/dvisvgm/issues/232
+	https://github.com/mgieseki/dvisvgm/commit/f0ab3d07c942acc1d3fd0d8b94498a355fa92d6c.patch
+
 2023-02-28  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* dvisvgm-src/src/ttf/Makefile.am (AM_CXXFLAGS): add ZLIB_INCLUDES,
