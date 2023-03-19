@@ -1,3 +1,7 @@
+2023-03-20  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* texmfmp.c: Typo, missing !IS_pTeX in ipcpage().
+
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.

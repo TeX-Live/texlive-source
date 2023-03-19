@@ -1505,7 +1505,7 @@ ipcpage (int is_eof)
             strstartar[outputfilename - 65536L];
 #endif
     name = xmalloc (len + 1);
-#if !defined(Aleph)
+#if !defined(Aleph) && !IS_pTeX
     strncpy (name, (string)&strpool[strstart[outputfilename]], len);
 #else
     {
