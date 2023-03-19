@@ -16,8 +16,9 @@ dnl   Modifying or revoking interfaces (not backwards compatible)
 dnl     a.b.c => a+1.0.0
 dnl
 dnl   After a release:
-dnl     append "dev", to distinguish binaries built between releases.
+dnl   increment and append "dev", to distinguish binaries built between
+dnl   releases.
 dnl --------------------------------------------------------
 dnl
 dnl This file is m4-included from configure.ac.
-m4_define([kpse_version], [6.3.5])
+m4_define([kpse_version], [6.3.6/dev])
