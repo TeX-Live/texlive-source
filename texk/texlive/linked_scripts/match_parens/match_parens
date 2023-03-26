@@ -1,21 +1,23 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 
- MYNAME = File.basename($0)
-Version = '1.43'
+ Myname = File.basename($0)
+Version = '1.44'
 
+Help=
 <<'DOC'
 = match_parens - find mismatches of various brackets and quotes
 
 = Synopsis
 match_parens [filename]	
 
-Options:
--p,--pairs=S	set matching pairs to S (default: |{}[]()""“”''‘’|)
--n,--number=N	set number of mismatching characters shown to N (default: 10)
--l,--latex	convert |``...''| to |“...”| before testing
+== Options
+-h		print this help and exit
+-H,--help	print full documentation and exit
 -V,--version	print version and exit
--h,--help	print short help information and exit
+-l,--latex	convert ``...'' to “...” before testing
+-n,--number=N	set number of mismatching characters shown to N (default: 10)
+-p,--pairs=S	set matching pairs to S (default: {}[]()""“”''‘’)
    --test	do an internal test and exit
 
 = Description
@@ -45,23 +47,26 @@ supposed to start with |<html>| or |=begin rdoc| and to end with
 |</html>| or |=end|.
 
 = Options
+-h,--help	
+	print short help information and exit.
+-H,--Help	
+	print full documentation via less and exit.
+-V,--version	
+	print this script's version and exit.
+-l,--latex	
+	convert |``...''| to |“...”| before testing.
+-n,--number=N	
+	Set number of mismatching characters shown to N. By default, only the
+	first 10 are shown.
 -p,--pairs=S	
-	Set matching pairs to S (default: |{}[]()""“”''‘’|). For example, if you
-	want to look for mismatching ASCII single quotes /only/, use |--pairs="''"|.
+	Set matching pairs to S (default: |{}[]()""“”''‘’|). For
+	example, if you want to look for mismatching ASCII single quotes
+	/only/, use |--pairs="''"|.
 	Or, if you want to match braces and guillemets only, use |-p «»|.
 	Note that if html is detected in your text, |<>| is automatically added
 	to the pairs list. So by default, |<...>| is tested only in html, but
 	you can test that in other text by specifying the |<>| pair in the
 	|--pairs| option.
--n,--number=N	
-	Set number of mismatching characters shown to N. By default, only the
-	first 10 are shown.
--l,--latex	
-	convert |``...''| to |“...”|` before testing.
--V,--version	
-	print this script's version and exit.
--h,--help	
-	print short help information and exit.
    --test	
 	do an internal test and exit. Note that if, with the |--pairs| option,
 	you specify an other pairs list than the default, the test will
@@ -70,136 +75,180 @@ supposed to start with |<html>| or |=begin rdoc| and to end with
 
 = Examples
 Suppose we have two files, |good| and |bad|, containing these texts:
-	good:				bad:
-	This is a (simple) test 	This is a (simple test
-	without mismatches		containing mismatches
+
+good:	
+	This is a (simple) test
+	without mismatches
+
+bad:	
+	This is a (simple test
+	containing mismatches
 
 then here are some usage examples. First a simple test on these files:
-	$ match_parens good
-	      1 |	| This is a (simple) test
-	      2 |	| without mismatches
-	$ echo $?
-	0
-	$ match_parens bad
-	      1 | (	| This is a (simple test
-	      2 | (	| containing mismatches
-	$ echo $?
-	1
+   $ matchparens good
+         1 |	| This is a (simple) test
+         2 |	| without mismatches
+   $ echo $?
+   0
+   $ matchparens bad
+         1 | (	| This is a (simple test
+         2 | (	| containing mismatches
+   $ echo $?
+   1
 
 Just report if there are mismatches: 
-	$ match_parens good >/dev/null && echo fine || echo problems
-	fine
-	$ match_parens bad >/dev/null && echo fine || echo problems
-	problems
+   $ matchparens good >/dev/null && echo fine || echo problems
+   fine
+   $ matchparens bad >/dev/null && echo fine || echo problems
+   problems
 
 Report all tex files with mismatches in the current directory:
-	$ for i in *.tex; do match_parens $i >/dev/null || echo $i; done
+   $ for i in *.tex; do matchparens $i >/dev/null || echo $i; done
 
 Matches must be in correct order:
-	$ echo -e "This is a ([simple)] test\n" | match_parens
-	      1 ([)]	This is a ([simple)] test
-	      2 ([)]	
+   $ echo -e "This is a ([simple)] test\n" | match_parens
+         1 ([)]	This is a ([simple)] test
+         2 ([)]	
 
-= Changes
-Changes with respect to version 1.41:
-- test on more quote characters (single, double, ASCII, Unicode)
-- option for changing the character pairs to be tested
-- conversion of latex' ``...'' is now an option
-- built-in test option |--test|
+= Author
+[Wybo Dekker](wybo@dekkerdocumenten.nl)
 
-= Author and copyright
-Author	Wybo Dekker
-Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
-License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
+= Copyright
+Released under the [GNU General Public License](www.gnu.org/copyleft/gpl.html)
 DOC
 
 require 'optparse'
+require 'ostruct'
 
-number, input, latex, lineno,  s,  html,  test,  parenstext =
-    10, STDIN, false,      0, '', false, false, %q{{}[]()""“”''‘’}
+def help
+  system("echo \"#{Help}\" | less -P#{Myname}-#{Version.tr('.','·')}")
+end
 
-ARGV.options do |opt|
-  opt.banner = "#{MYNAME} - find mismatches of parentheses, braces, (angle) brackets, in texts\n"
-  opt.on('-p','--pairs=S',String,
-    "set matching pairs to S (default: #{parenstext})"
-  ) do |v|
-      parenstext = v
-    end
-  opt.on('-n','--number=N',Integer,
-    "set number of mismatching characters shown to N (default: #{number})"
-  ) do |v|
-      number = v
-    end
-  opt.on('-l','--latex',
-    'convert ``...'' to “...” before testing') do
-      latex=true
-    end
-  opt.on('-V','--version',
-    'print version and exit') do
+# Option defaults:
+$o = OpenStruct.new(
+    :number => 10,
+     :input => STDIN,
+     :latex => false,
+    :lineno => 0,
+         :s => '',
+      :html => false,
+      :test => false,
+:parenstext => %q{{}[]()""“”''‘’}
+)
+
+OptionParser.new(
+   banner = <<~EOD,
+	#{Myname} A find mismatches of various brackets and quotes\n
+	Usage: match_parens [filename]\n
+	Options:
+	EOD
+   width = 15, # 2x8-1
+   indent = ''
+) do |opts|
+
+   opts.on('-h',
+      'print this help and exit'
+   ) do
+      puts opts.to_s.sub(/^ *-I\n/,'').gsub(/                 /,'')
+      exit
+   end
+
+   opts.on('-H','--help',
+      'print full documentation via less and exit'
+   ) do
+      help
+      exit
+   end
+
+   opts.on('-V','--version',
+      'print version and exit'
+   ) do
       puts Version
       exit
-    end
-  opt.on('-h','--help',
-    'print this help and exit') do
-      puts opt.to_s.sub(/^ *-I\n/,'')
+   end
+
+   opts.on('-l','--latex',
+     'convert ``...'' to “...” before testing'
+   ) do
+      $o.latex=true
+   end
+
+   opts.on('-n','--number=N',Integer,
+     "set number of mismatching characters shown to N (default: #{$o.number})"
+   ) do |v|
+      $o.number = v
+   end
+
+   opts.on('-p','--pairs=S',String,
+     "set matching pairs to S (default: #{$o.parenstext})"
+   ) do |v|
+      $o.parenstext = v
+   end
+
+   opts.on('--test',
+     'do an internal test and exit'
+   ) do
+      $o.input = DATA
+      $o.test = true
+   end
+
+   opts.on('-I') do
+      system("instscript #{Myname}")
       exit
-    end
-  opt.on('--test',
-    'do an internal test and exit') do
-      input = DATA
-      test = true
-    end
-  opt.on('-I') do system("instscript --zip --pdf --markdown #{MYNAME}"); exit; end
-  opt.parse!
+   end
+
+   opts.parse!
 end
-parenshtml = parenstext =~ /<>/ ? parenstext : parenstext + '<>'
-parens = parenstext
+
+parenshtml = $o.parenstext =~ /<>/ ? $o.parenstext : $o.parenstext + '<>'
+parens = $o.parenstext
 
 arg = ARGV[0] || ''
 unless arg.empty?
-  test(?e,arg) or raise("file #{arg} does not exist")
-  test(?r,arg) or raise("file #{arg} is not readable")
-  input = File.new(arg)
+   test(?e,arg) or raise("file #{arg} does not exist")
+   test(?r,arg) or raise("file #{arg} is not readable")
+   $o.input = File.new(arg)
 end
-while x = input.gets()
-  # convert LaTeX's ``...'' to “...”
-  if latex
-    x = x.gsub(/``/,'“').gsub(/''/,'”')
-  end
+while x = $o.input.gets()
+   # convert LaTeX's ``...'' to “...”
+   if $o.latex
+      x = x.gsub(/``/,'“').gsub(/''/,'”')
+   end
 
-  # only inside html text we check <>, too:
-  if html && (x=~/^([# ]*=end)/ || x=~/<\/html>/i)
-    html = false
-    parens = parenstext
-  elsif x=~/^([# ]*=begin rdoc)/ || x=~/<html>/i
-    html = true
-    parens = parenshtml
-  end
-  # match any pair like (), {}, [], “”, <> in parens
-  re = Regexp.new(parens.scan(/../).join('|').gsub(/[{}()\[\]]/,'\\\\\&'))
+   # only inside html text we check <>, too:
+   if $o.html && (x=~/^([# ]*=end)/ || x=~/<\/html>/i)
+      $o.html = false
+      parens = $o.parenstext
+   elsif x=~/^([# ]*=begin rdoc)/ || x=~/<html>/i
+      $o.html = true
+      parens = parenshtml
+   end
+   # match any pair like (), {}, [], “”, <> in parens
+   re = Regexp.new(parens.scan(/../).join('|').gsub(/[{}()\[\]$]/,'\\\\\&'))
 
-  # move parens' characters into s
-  s << x.tr('^'+parens,'')
-  # remove matches from inside
-  while s.gsub!(re,'') do end
-  puts "%4d | %-*s | %s" % [lineno+=1,number,s.slice(0..number-1),x]
+   # move parens' characters into s
+   $o.s << x.tr('^'+parens,'')
+   # remove matches from inside
+   while $o.s.gsub!(re,'') do end
+   puts "%4d | %-*s | %s" % [$o.lineno+=1,$o.number,$o.s.slice(0..$o.number-1),x]
 end
 
-if test
-  if s != '“{”}'
-    raise("test failed! (final mismatch should be “{”})")
-  else
-    puts "test succeeded"
-  end
+if $o.test
+   if s != '“{”}'
+      raise("test failed! (final mismatch should be “{”})")
+   else
+      puts "test succeeded"
+   end
 else
-  exit s.empty? ? 0 : 1
+   exit $o.s.empty? ? 0 : 1
 end
 __END__
 This first line “{()}” has no mismatch
 but here ( we have one.
 It is even extended “{() with two more.
 
-Here comes an untested angle bracket <, but here }” all) mismatches are erased.
+Here comes an untested angle bracket <, but here }” all) mismatches
+are erased.
 
 =begin rdoc
 Inside html text now. ‘{There is an unmatched} single quote here.
