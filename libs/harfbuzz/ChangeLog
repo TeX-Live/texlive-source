@@ -1,3 +1,8 @@
+2023-03-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import harfbuzz-7.1.0.
+	* version.ac, Makefile.am: Adjusted.
+
 2023-02-21  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import harfbuzz-7.0.1.

@@ -112,6 +112,7 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-ot-tag.cc \
 	@HARFBUZZ_TREE@/src/hb-ot-tag-table.hh \
 	@HARFBUZZ_TREE@/src/hb-ot-var-common.hh \
+	@HARFBUZZ_TREE@/src/hb-ot-var-cvar-table.hh \
 	@HARFBUZZ_TREE@/src/hb-outline.cc \
 	@HARFBUZZ_TREE@/src/hb-outline.hh \
 	@HARFBUZZ_TREE@/src/hb-paint-extents.cc \
