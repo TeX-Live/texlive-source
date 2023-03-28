@@ -501,7 +501,7 @@ if ($restricted && $on_windows) {
   use File::Basename;
   my $mydirname = dirname $0;
   # $mydirname is the location of the Perl script
-  $kpsewhich = "$mydirname/../../../bin/win32/$kpsewhich";
+  $kpsewhich = "$mydirname/../../../bin/windows/$kpsewhich";
   debug "Restricted Windows kpsewhich: $kpsewhich";
   $GS = "$mydirname/../../../tlpkg/tlgs/bin/$GS";
   debug "Restricted Windows gs: $GS";
