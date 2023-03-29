@@ -8,6 +8,8 @@ use warnings;
 use 5.008;
 use Encode;
 
+my $st = 0;
+
 foreach $_ (<DATA>) {
     chomp;
     my ($encname, $fname0, $fname1) = split ' ', $_;
@@ -18,6 +20,8 @@ foreach $_ (<DATA>) {
     open(my $ofh, '>', $fname0) or die "Cannot open $fname0:$!";
     print $ofh $src;
 }
+
+exit($st ? 239 : 0);
 
 
 sub make_str ($$;$) {
@@ -60,7 +64,13 @@ $src .= <<END;
 \\relax\\end
 END
 
-    Encode::from_to($src, 'utf8', $encname) if ($encname !~ /UTF.*8/i);
+    if ($encname !~ /UTF.*8/i) {
+        my $ret = Encode::from_to($src, 'utf8', $encname);
+        if (!$ret) {
+            warn "fn-generate.perl: Encode::from_to() failed.\n";
+            $st++;
+        }
+    }
     return ($src);
 
 }

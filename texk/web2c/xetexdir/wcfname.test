@@ -11,7 +11,11 @@ rc=0
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS=xetests:.; export TEXINPUTS
 
-perl $srcdir/tests/fn-generate.perl xetests || exit 128
+perl $srcdir/tests/fn-generate.perl xetests
+pret=$?
+if [ $pret != 0 ] && [ $pret != 239 ]; then
+  exit 128
+fi
 rm -f xetests/fn*-euc.tex xetests/fn*-sjis.tex
 
 if [ "$COMSPEC" != "" ]; then
@@ -25,7 +29,7 @@ for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc; do
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc
   ./xetex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >xetests/$doc-term.log || rc=1
-  mv $doc.txt $doc.log fn*-tmp.tex xetests/
+  mv $doc.txt $doc.log xetests/
   diff xetests/$doc.txt $srcdir/tests/fn-utf8.txt || rc=2
 
 done

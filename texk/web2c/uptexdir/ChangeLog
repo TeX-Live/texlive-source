@@ -1,3 +1,10 @@
+2023-03-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test:
+	Skip tests for Shift_JIS & EUC-JP if conversion failed.
+	Report from Ken Moffat.
+	https://tug.org/pipermail/tex-k/2023-March/003911.html
+
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.

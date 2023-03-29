@@ -11,7 +11,11 @@ rc=0
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS=pdftests:.; export TEXINPUTS
 
-perl $srcdir/tests/fn-generate.perl pdftests || exit 128
+perl $srcdir/tests/fn-generate.perl pdftests
+pret=$?
+if [ $pret != 0 ] && [ $pret != 239 ]; then
+  exit 128
+fi
 rm -f pdftests/fn*-euc.tex pdftests/fn*-sjis.tex
 
 if [ "$COMSPEC" != "" ]; then
@@ -25,7 +29,7 @@ for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc; do
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc
   ./pdftex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >pdftests/$doc-term.log || rc=1
-  mv $doc.txt $doc.log fn*-tmp.tex pdftests/
+  mv $doc.txt $doc.log pdftests/
 ##   It does not work.
 ##  diff pdftests/$doc.txt $srcdir/tests/fn-$enc.txt || rc=2
 
