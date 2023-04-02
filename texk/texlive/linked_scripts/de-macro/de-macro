@@ -6,6 +6,8 @@ Licensed under the Academic Free Licence version 2.1
 
 						  DE-MACRO
 
+Version 1.4.1 - A small typo corrected.
+
 Version 1.4	 - Luca Citi made it python2.7 and python3 compatible.
 			   Peter Gacs improved the parsing of \input{<filename>},
 			   and made @ a letter in the style files.
@@ -415,7 +417,7 @@ class Char_stream(Stream):
 		including the % and all empty space after it.
 		"""
 		comment = ""
-		while self.uplegal() and "\n" != self .item:
+		while self.uplegal() and "\n" != self.item:
 			comment += self.item
 			self.next()
 		while self.uplegal() and blank_re.match(self.item):
