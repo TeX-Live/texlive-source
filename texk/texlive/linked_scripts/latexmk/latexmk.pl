@@ -1,43 +1,6 @@
 #!/usr/bin/env perl
 use warnings;
 
-# ???!!! TO DO 9 Aug 2022:
-#     0. RETHINK warning listing handling etc, including warnings as
-#        errors, bad warnings as errors.  Must systematize.  Code is too split
-#        up.
-# 1b. ===> In any case, check treatment of runs that give an error.
-# 2. Think generally through logic of error handling.  E.g., error in
-#    xelatex: should dvipdfmx be run?  (Or with config. variable for the
-#    post-primaries.)  Currently it's run.  Probably correct: viewed file,
-#    if it can be made, can be useful for error diagnosis.  Also:
-#    consistency between direct making of pdf file and indirect.
-#    But abort after error can also be useful.
-#    DONE 3. Are post-primaries guaranteed to be run in correct order?
-#    YES: See definition of @post_primary.
-# 4. Clean up rdb_diagnose_changes2.
-# COMMENTED OUT FOR NOW 5. Perhaps, remove use of kpsewhich in case of disappeared files?
-# 6. Review rdb_make and rdb_make1 again.
-# 7. Start in -pvc when prior run gave error: There's an error report after
-#    the first make.  Same outside -pvc if have error run, then run
-#    latexmk; it reports error from previous run.
-# 9, Re %pass and rdb_rerun_needed: Perhaps remove outside_make_loop, and
-#    have separate subroutine for use by make_preview_continuous, and
-#    standard rdb_rerun_needed calls it and then does its source_rule
-#    stuff.
-# 10. Do I need to make rdb_user_changes better?
-#
-# OK 12. Is classification of post_primary watertight?  They are intended to
-#     be outside any loop.  Start with target files, and call encountered
-#     rules post_primary until a primary is encountered.  That assumes that
-#     on the pathway to target from primary, source files are not generated
-#     by non-primary rules.
-#     There's no requirement for post_primaries to be outside dependency
-#     loops. The make algorithm handles that. All that matters is that this
-#     commonly so, and therefore we are doing an appropriate ordering of
-#     examination of rules, by pre-primary, primary, post-primary.
-#     Post-primaries always have primary as a prerequisite for the source
-#     files. 
-
 ## Copyright John Collins 1998-2023
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
@@ -79,8 +42,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.79';
-$version_details = "$My_name, John Collins, 7 Jan. 2023. Version $version_num";
+$version_num = '4.80';
+$version_details = "$My_name, John Collins, 4 Apr. 2023. Version $version_num";
 
 use Config;
 use File::Basename;
@@ -410,6 +373,7 @@ $log_wrap = 79;
 ## will give match to line starting "No data file found `filename'"
 @file_not_found = (
     '^No file\\s*(.*)\\.$',
+    '^No file\\s*(.+)\s*$',
     '^\\! LaTeX Error: File `([^\\\']*)\\\' not found\\.',
     '^\\! I can\\\'t find file `([^\\\']*)\\\'\\.',
     '.*?:\\d*: LaTeX Error: File `([^\\\']*)\\\' not found\\.',
@@ -946,6 +910,63 @@ $search_path_separator = ':';
 $tmpdir = ".";
 
 
+# Latexmk does tests on whether a particular generated file, e.g., log or
+# fls, has been generated on a current run of a rule, especially *latex, or
+# is leftover from previous runs.  This is done by finding whether or not
+# the modification time of the file is at least as recent as the system
+# time at the start of the run.  A file with a modification time
+# significantly less than the time at the start of the run is presumably
+# left over from a previous run and not generated in the currrent run.  (An
+# allowance is made in this comparison for the effects of granularity of
+# file-system times.  Such granularity can make a file time a second or two
+# earlier than the system time at which the file was last modified.)
+#
+# But generated files may be on a file system hosted by a server computer
+# that is different than the computer running latexmk.  There may there may
+# be an offset between the time on the two computers; this can make it
+# appear that the generated files were made before the run. Most of the
+# time, this problem does not arise, since (a) typical usage of latexmk is
+# with a local file system, and (b) current-day computers and operating
+# systems have their time synchronized accurately with a time server.
+#
+# But when latexmk sees symptoms of an excessive offset, it measures the
+# offset between the filesystem time and the system time. This involves
+# writing a temporary file, getting its modification time, and deleting
+# it.   The following variables are used for this purpose.
+
+#
+our $filetime_offset_measured = 0;       # Measurement not yet done.
+our $filetime_offset = 0;                # Filetime relative to system time.
+our $filetime_offset_report_threshold = 10; # Threshold beyond which filetime offsets
+                                     # are reported; large offsets indicate
+                                     # incorrect system time on at least one system.
+# The following variable gives the threshold for detection of left-over
+# file. It allows for (a) different granularity between system time and
+# filesystem time, (b) for some mismatch between file and system time.
+# Note that the making or not making of a file is controlled by the
+# state of the document being compiled and by latexmk's configuration.
+# So a file that is left over from a previous run and not overwritten
+# on the current run will have a file time at least many seconds less
+# than the current time, corresponding to the time scale for a human
+# run-edit-run cycle.
+#
+# Note that the making or not making of a file is controlled by the
+# state of the document being compiled and by latexmk's configuration.
+# So a file that is left over from a previous run and not overwritten
+# on the current run will have a file time at least many seconds less
+# than the current time, corresponding to the time scale for a human
+# run-edit-run cycle.  So one does NOT have to tune this variable
+# precisely. 
+#
+# Concerning granularity of file system 
+# FAT file system: 2 sec granularity. Others 1 sec or less.
+# Perl CORE's mtime in stat: 1 sec.
+# Perl CORE's time(): 1 sec.  Time::HiRes::time(): Much less than 1 sec.
+
+our $filetime_causality_threshold = 5;
+
+
+################################################################
 ################################################################
 
 
@@ -1387,6 +1408,11 @@ $dependents_phony = 0;  # Whether list(s) of dependencies includes phony targets
                         # (as with 'gcc -MP').
 $deps_file = '-';       # File for dependency list output.  Default stdout.
 $rules_list = 0;        # Whether to display list(s) of dependencies
+# Kind of escaping in names of files written to deps file.
+$deps_escape = 'none';
+# Allowed kinds of escape:
+%deps_escape_kinds =  ( 'none' => ' ', 'unix' => '\ ', 'nmake' => '^ ');
+
 @dir_stack = ();        # Stack of pushed directories, each of form of 
                         # pointer to array  [ cwd, good_cwd ], where
                         # good_cwd differs from cwd by being converted
@@ -1430,13 +1456,6 @@ our $show_time = 0;
 # times().  Second is the best, if accurate.  But on MSWin32, times()
 # appears not to included subprocess times, so we use clock time instead.
 our $times_are_clock = ($^O eq "MSWin32" );
-
-# Allowance for different granularity in time since Epoch and file mtime.
-# Needed in testing whether a file was generated during a run of a program.
-# FAT file system: 2 sec granularity. Others 1 sec or less.
-# Perl CORE's mtime in stat: 1 sec.
-# Perl CORE's time(): 1 sec.  Time::HiRes::time(): Much less than 1 sec.
-our $filetime_slop = 2;
 
 
 # Data for 1 run and global (ending in '0'):
@@ -1650,7 +1669,7 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     #       out_of_date, out_of_date_user,
                     #       time_of_last_run, time_of_last_file_check,
                     #       changed
-                    #       last_result, last_message,
+                    #       last_result, last_result_info, last_message,
                     #       default_extra_generated,
                     #      ]
                     # where 
@@ -1727,6 +1746,19 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     #                    important enough to be reported with 
                     #                    the error summary.  The warning
                     #                    message is stored in last_message.
+                    #     last_result_info is info about run that gave
+                    #         code in last_result. Currently used values:
+                    #              ''      No record of this rule being run
+                    #              'CURR'  Run of rule was in current
+                    #                      round of compilation. 
+                    #              'PREV'  Run of rule was in a previous
+                    #                      round of compilation (as with
+                    #                      -pvc), but in current invocation
+                    #                      of latexmk.
+                    #              'CACHE' Run of rule was in a previous
+                    #                      invocation of latexmk, with
+                    #                      last_result having been read
+                    #                      from fdb_latexmk file.
                     #     last_message is error message for last run
                     #     default_extra_generated is a reference to an array
                     #       of specifications of extra generated files (beyond
@@ -1950,8 +1982,7 @@ if ( $auto_rc_use ) {
 @command_line_file_list = ();
 $bad_options = 0;
 
-while ($_ = $ARGV[0])
-{
+while (defined($_ = $ARGV[0])) {
   # Make -- and - equivalent at beginning of option,
   # but save original for possible use in *latex command line
   $original = $_;
@@ -1976,6 +2007,12 @@ while ($_ = $ARGV[0])
   elsif (/^-d$/)     { $banner = 1; }
   elsif (/^-dependents$/ || /^-deps$/ || /^-M$/ ) { $dependents_list = 1; }
   elsif (/^-nodependents$/ || /^-dependents-$/ || /^-deps-$/) { $dependents_list = 0; }
+  elsif (/^-deps-escape=(.*)$/) {
+      if ( $deps_escape_kinds{$1} ) { $deps_escape = $1; }
+      else { warn "$My_name: In '$_', kind of escape is not one of those I know, which are\n",
+                   "   ", join( ' ', sort( keys %deps_escape_kinds )), "\n";
+      }
+  }
   elsif (/^-deps-out=(.*)$/) {
       $deps_file = $1;
       $dependents_list = 1; 
@@ -2758,8 +2795,7 @@ foreach $filename ( @file_list )
     # assisted by dependency information from log files about previous
     # run, if the log file exists.
 
-    if ( $cleanup_mode ) { &do_small_cleanup; }
-    if ( $cleanup_mode == 1 ) { &do_extra_cleanup; }
+    if ( $cleanup_mode ) { do_cleanup( $cleanup_mode ); }
     if ($cleanup_only) { next FILE; }
 
     if ( ! -e $aux_main ) {
@@ -2877,6 +2913,27 @@ if ( $do_cd && ($#dir_stack > -1) ) {
    &finish_dir_stack;
 }
 
+if ($filetime_offset_measured) {
+    if ( (abs($filetime_offset) >= $filetime_offset_report_threshold)
+         && ($diagnostics || ! $silent) )
+    {
+        warn "$My_name: I am working around an offset relative to my system time by\n",
+             "   $filetime_offset secs for file times in directory '$aux_dir1'.\n",
+             "   This **probably** indicates that \n",
+             "   (a) I ($my_name) am running on one computer, while the filesystem is\n",
+             "       hosted on a different computer/\n",
+             "   (b) There is a substantial time offset between system times on the two\n",
+             "       computers.\n",
+             "   (c) Therefore at least one of the computers has a misconfigured operating\n",
+             "       system such that its system time is not correctly synchronized with a\n",
+             "       time server.\n",
+             "   These issues are likely to cause problems with other software, and any\n",
+             "   such operating-system misconfigurations should be corrected.  By default\n",
+             "   current operating systems are configured to correctly synchronize system\n",
+             "   time when they are connected to the Internet\n";
+    }
+}
+
 if ($failure_count > 0) {
     if ( $#file_list > 0 ) {
         # Error occured, but multiple files were processed, so
@@ -2961,9 +3018,13 @@ sub show_timing_grand {
 
 sub set_tex_cmds {
     # Usage, e.g., set_tex_cmds( '%O %S' )
+    #             or  set_tex_cmds( '%C-dev %O %S' )
     my $args = $_[0];
     foreach my $cmd ( keys %possible_primaries ) {
-        ${$cmd} = "$cmd $args";
+        my $spec = $args;
+        if ( $spec =~ /%C/ ) { $spec =~ s/%C/$cmd/g; }
+        else { $spec = "$cmd $args"; }
+        ${$cmd} = $spec;
     }
     # N.B. See setting of $latex_default_switches, ...,
     # $xelatex_default_switches, etc, for any special options needed.
@@ -3646,17 +3707,65 @@ sub set_trivial_aux_fdb {
 #************************************************************
 #************************************************************
 
-sub do_extra_cleanup {
-    print "$My_name: Doing extra clean up (of final output files) for '$texfile_name'\n"
-        if ! $silent;
-    cleanup1( $aux_dir1, @final_output_exts );
-    if ( $out_dir1 ne $aux_dir1 ) { cleanup1( $out_dir1, @final_output_exts ); }
-}  # END do_extra_cleanup
+sub do_cleanup {
+    my $kind = $_[0];
+    if (! $kind ) { return; }
+    my @files_to_delete = ();
+    @dirs = ($aux_dir1);
+    if ($out_dir1 ne $aux_dir1) { push @dirs, $out_dir1; }
+    
+    push @files_to_delete, &get_small_cleanup;
+    if ($kind == 1) {
+        foreach my $dir1 (@dirs) {
+            push @files_to_delete, cleanup_get1( $dir1, @final_output_exts );
+        }
+    }
+    #    show_array( "Files to delete", sort @files_to_delete );
 
-#************************************************************
+    # Names of contents of directory are longer than the name of the directory,
+    # but contain the directory name as an initial segment.
+    # Therefore deleting files and directories in the order given by reverse
+    # sort deletes contents of directory before attempting to delete the
+    # directory:
+    unlink_or_move( reverse sort @files_to_delete );
+    
+    # If the fdb file (or log, fls and/or aux files) exist, it/they will have
+    #   been used to make a changed rule database.  But a cleanup implies
+    #   that we need a virgin rule database, corresponding to current state
+    #    of files (after cleanup) so we reset the rule database and rule net:
+    &rdb_initialize_rules;
+}
 
-sub do_small_cleanup {
-    # Assume dependency information from previous run has been obtained. 
+#----------------------------------------
+
+sub cleanup_get1 {
+    # Usage: cleanup_get1( directory, patterns_or_exts_without_period, ... )
+    # Return array of files obeying the specification in the given directory.
+    #     Specifications are either extensions to be appended to root_filename
+    #     or are patterns containing %R for root_filename of job, with possible
+    #        wildcards.
+    #  Directory name must include directory separator, e.g., './' or 'output/',
+    #  or be blank, i.e., suitable for prepending to file name.
+    
+    # The directory and the root file name are fixed names, so I must escape
+    # any glob metacharacters in them:
+    my $dir = fix_pattern( shift );
+    my $root_fixed = fix_pattern( $root_filename );
+    my @files = ();
+    foreach (@_) { 
+        my $name = ( /%R/ ? $_ : "%R.$_" );
+        $name =~ s/%R/${root_fixed}/;
+        $name = $dir.$name;
+        push @files, my_glob( "$name" );
+    }
+    return @files;
+} #END cleanup_get1
+
+#----------------------------------------
+
+sub get_small_cleanup {
+    # Get list of files to be deleted in a small cleanup.
+    # Assume dependency information from previous run has been obtained.
     my %other_generated = ();
     my %cusdep_generated = ();
     my @index_bibtex_generated = ();
@@ -3759,32 +3868,22 @@ sub do_small_cleanup {
     }
 
     my @clean_args = keys %generated_exts;
-    cleanup1( $aux_dir1, @clean_args );
-    if ( $out_dir1 ne $aux_dir1 ) { cleanup1( $out_dir1, @clean_args ); }
+    push @files, cleanup_get1( $aux_dir1, @clean_args );
+    if ( $out_dir1 ne $aux_dir1 ) { push @files, cleanup_get1( $out_dir1, @clean_args ); }
 
-    my @specific_deletions = @std_small_cleanup_files;
+    push @files, @std_small_cleanup_files;
     foreach my $file (@std_small_cleanup_files) {
         foreach my $dir ($aux_dir1, $out_dir1 ) {
-            if ($dir) { push @specific_deletions, "$dir$file"; }
+            if ($dir) { push @files, "$dir$file"; }
         }
     }
-    unlink_or_move( @specific_deletions,
-                    keys %index_bibtex_generated, 
-                    keys %aux_files );
+    push @files, keys %index_bibtex_generated, keys %aux_files;
 
-    if ($cleanup_includes_generated) {
-        unlink_or_move( keys %other_generated );
-    }
-    if ( $cleanup_includes_cusdep_generated) {
-        unlink_or_move( keys %cusdep_generated );
-    }
-    unlink_or_move( $fdb_name );
-    # If the fdb file (or log, fls and/or aux files), it/they will have been
-    #   used to make a changed rule database.  But a cleanup implies that we
-    #   need a virgin rule database, corresponding to current state of files,
-    #   so we reset the rule database and net:
-    &rdb_initialize_rules;
-}  # END do_small_cleanup
+    if ($cleanup_includes_generated) { push @files, keys %other_generated; }
+    if ( $cleanup_includes_cusdep_generated) { push @files, keys %cusdep_generated; }
+    push @files, $fdb_name;
+    return @files;
+}  # END get_small_cleanup
 
 #************************************************************
 
@@ -4211,6 +4310,14 @@ CHANGE:
         $have_break = 0;
         $last_action_time = time();
         $waiting = 1;
+        rdb_for_some(
+            [keys %rule_db],
+            sub{
+                if ($$Plast_result_info eq 'CURR') {
+                    $$Plast_result_info = 'PREV';
+                }
+            }
+        );
         print "\n=== Watching for updated files. Use ctrl/C to stop ...\n";
   WAIT: while (1) {
            sleep( $sleep_time );
@@ -4369,23 +4476,6 @@ sub execute_code_string {
 
 #************************************************************
 
-sub cleanup1 {
-    # Usage: cleanup1( directory, exts_without_period, ... )
-    #
-    # The directory and the root file name are fixed names, so I must escape
-    #   any glob metacharacters in them:
-    my $dir = fix_pattern( shift );
-    my $root_fixed = fix_pattern( $root_filename );
-    foreach (@_) { 
-        my $name = /%R/ ? $_ : "%R.$_";
-        $name =~ s/%R/${root_fixed}/;
-        $name = $dir.$name;
-        unlink_or_move( my_glob( "$name" ) );
-    }
-} #END cleanup1
-
-#************************************************************
-
 sub cleanup_cusdep_generated {
     # Remove files generated by custom dependencies
     rdb_for_actives( \&cleanup_one_cusdep_generated );
@@ -4523,6 +4613,8 @@ sub print_help
   "   -cd-   - Do NOT change to directory of source file when processing it\n",
   "   -dependents or -deps - Show list of dependent files after processing\n",
   "   -dependents- or -deps- - Do not show list of dependent files\n",
+  "   -deps-escape=<kind> - Set kind of escaping of spaces in names in deps file\n",    
+  "                 (Possible values: ", join( ' ', sort keys %deps_escape_kinds ), ")\n",
   "   -deps-out=file - Set name of output file for dependency list,\n",
   "                    and turn on showing of dependency list\n",
   "   -dF <filter> - Filter to apply to dvi file\n",
@@ -5100,25 +5192,30 @@ sub correct_aux_out_files {
     # Deal with situations after a *latex run where files are in different
     # directories than expected (specifically aux v. output directory).
     # Do minimal fix ups to allow latexmk to analyze dependencies with log
-    # and fls files in expected places
+    # and fls files in expected places.
+
+
+    # Deal with log file in unexpected place (e.g., lack of support by *latex
+    # of -aux-directory option.  This is to be done first, since a run of
+    # *latex always produces a log file unless there is a bad error, so
+    # this gives the best chance of diagnosing errors.
+    my $where_log = &find_set_log;
+
     if ( $emulate_aux && ($aux_dir ne $out_dir) ) {
-        # Move output and fls files to out_dir
+        # Move output files from aux_dir to out_dir
+        # Move fls file also, if the configuration is for fls in out_dir.
         # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
         foreach my $ext ( 'fls', 'dvi', 'pdf', 'ps', 'synctex', 'synctex.gz' ) {
             if ( ($ext eq 'fls') && ! $fls_uses_out_dir ) {next;}
             my $from =  "$aux_dir1$root_filename.$ext";
             my $to = "$out_dir1$root_filename.$ext" ;
-            if ( test_gen_file( $from ) ) {
+            if ( test_gen_file_time( $from ) ) {
                 if (! $silent) { print "$My_name: Moving '$from' to '$to'\n"; }
                 my $ret = move( $from, $to );
                 if ( ! $ret ) { die "  That failed, with message '$!'\n";}
             }
         }
     }
-
-    # Deal with log file in unexpected place (e.g., lack of support by *latex
-    # of -aux-directory option.
-    &find_set_log;
 
     # Fix ups on fls file:
     if ($recorder) {
@@ -5167,18 +5264,18 @@ sub correct_aux_out_files {
         # place. But only do this if the file time is compatible with being
         # generated in the current run, and if the standard fls file hasn't
         # been made in the current run,  as tested by the use of
-        # test_gen_file; that avoids problems with fls files left over from
+        # test_gen_file_time; that avoids problems with fls files left over from
         # earlier runs with other versions of latex.
-        if ( ! test_gen_file( $std_fls_file ) ) {
+        if ( ! test_gen_file_time ( $std_fls_file ) ) {
             foreach my $cand (@other_fls_names) {
-                if ( test_gen_file( $cand ) ) {
+                if ( test_gen_file_time( $cand ) ) {
                     print "$My_name: Copying '$cand' to '$std_fls_file'.\n";
                     copy $cand, $std_fls_file;
                     last;
                 }
             }
         }
-        if ( ! test_gen_file( $std_fls_file ) ) {
+        if ( ! test_gen_file_time( $std_fls_file ) ) {
             warn "$My_name: fls file doesn't appear to have been made.\n";
         }
     }
@@ -5186,37 +5283,120 @@ sub correct_aux_out_files {
 
 #-----------------
 
-sub find_set_log {
-    # Locate the log file, generated on this run.
-    # It should be in aux_dir. But:
-    #  1. With a sufficiently severe error in *latex, no log file was generated.
-    #  2. With aux_dir ne out_dir and emulate_aux off and a (TeXLive) *latex
-    #     that doesn't support aux_dir, the log file is in out_dir.
-    #  3. If the specified command has no %O or if *latex doesn't support
-    #     out_dir (hence not TeXLive and not MiKTeX), the log file would
-    #     be in cwd.
-    #
-    #  3 is fatal error.
-    #  2 is handled by turning emulate_aux on, after which next run of *latex
-    #    handles problem.
-    #  1 is like any other error.
-    #  4 is treated like 1 (log file not found).
-    #
+sub find_log {
+    # Locate log file generated on this run.
+    # Side effect: measure filetime offset if necessary.
+    # Don't take other actions.
     # Returns 
     #    0 log file not found;
     #    1 log file in aux_dir i.e., correct place;
-    #    2 log file **not** in aux_dir but in out_dir,
-    #      emulate_aux turned on, commands fixed,
-    #      and log file copied to aux_dir
-    # If the log file is found in cwd, report it and give fatal error.
-    
-    my $where_log = -1; # Nothing analyzed yet
+    #    2 log file **not** in aux_dir but in out_dir
+    #             (only applies if $emulate_aux off)
+    #    3 log file is in ., not aux_dir or out_dir.
+    #    4 log file in aux_dir, but out-of-date
+    #    5 log file in out_dir, but out-of-date,
+    #             (only applies if $emulate_aux off)
+    #    6 log file is in ., but out-of-date
 
-    if ( test_gen_file( "$aux_dir1$root_filename.log" ) ) {
-        # .log file is in expected place.
-        $where_log = 1;
+
+    my $where_log = -1; # Nothing analyzed yet
+    my $log_aux = "$aux_dir1$root_filename.log";
+    my $log_out = "$out_dir1$root_filename.log";
+    my $log_cwd = "./$root_filename.log";
+
+    # Basic tests first that assume accuracy of time of file system:
+    if ( test_gen_file_time( $log_aux ) ) {
+        # Expected case
+        return 1;
     }
-    elsif ( (! $emulate_aux) && test_gen_file( "$out_dir1$root_filename.log" ) ) {
+    elsif ( (! $emulate_aux) && test_gen_file_time( $log_out ) ) {
+        # *latex was called with -aux-directory option, but does not
+        # implement it (e.g., TeXLive's version)
+        return 2;
+    }
+    elsif ( test_gen_file_time( $log_cwd ) ) {
+        # Arrive here typically with configuration error so that aux_dir
+        # and/or out_dir aren't supplied to *latex.
+        return 3;
+    }
+
+    # Arrive here only if a log file with a time stamp not too much earlier
+    # than the run time has not found in a relevant place.
+    # If relevant files exist, then we must test for a serious offset
+    # between system time and filesystem time (i.e., filesystem server
+    # time).
+    if ( ! $filetime_offset_measured ) {
+        $filetime_offset = get_filetime_offset( $aux_dir1."tmp" );
+        $filetime_offset_measured = 1;
+    }
+
+    my @candidates = ( );
+    my $latest_mtime = undef;
+    my $latest_log = undef;
+
+    if ( -e $log_aux ) {
+        if ( test_gen_file_time( $log_aux ) ) { return 1; }
+        return 4;
+    }
+    # Get here if log file in aux doesn't exist or is apparently too old.
+    if ( (! $emulate_aux) && ( -e $log_out ) ) {
+        if (test_gen_file_time( $log_out ) ) { return 2; }
+        return 5;
+    }
+    if ( -e $log_cwd ) {
+        if (test_gen_file_time( $log_cwd ) ) { return 3; }
+        return 6;
+    }
+    return 0;
+}
+
+sub find_set_log {
+    # Locate the log file, generated on this run.
+    # It should be in aux_dir. But:
+    #  a. With aux_dir ne out_dir and emulate_aux off and a (TeXLive) *latex
+    #     that doesn't support aux_dir, the log file is in out_dir.
+    #  b. If the specified command has no %O or if *latex doesn't support
+    #     out_dir (hence not TeXLive and not MiKTeX), the log file would
+    #     be in cwd.
+    #  c. With a sufficiently severe error in *latex, no log file was generated.
+    #     Any log file that exists will be a left over from a previous run,
+    #     and hence have a filetime less than the system time at the start of
+    #     the current run.  (The strict filetime criterion is modified in the
+    #     implementation to allow for issues from file system's time
+    #     granularity, and mismatch of time on server hosting file system.)
+    #
+    # Possible return values, and side effects.
+    #    0 log file not found;
+    #    1 log file in aux_dir i.e., correct place;
+    #    2 log file **not** in aux_dir but in out_dir
+    #             (only applies if $emulate_aux off)
+    #      $emulate_aux turned on, commands fixed, log file copied to
+    #      aux_dir, and flags set to cause rerun
+    #    3 log file is in ., not aux_dir or out_dir.
+    #      Fatal error raised here, since cause is normally a configuration error
+    #      not an error caused by contents of user file.
+    #    4 log file in aux_dir, but out-of-date
+    #    5 log file in out_dir, but out-of-date,
+    #             (only applies if $emulate_aux off)
+    #    6 log file is in ., but out-of-date
+    #
+    # Cases: 0, 4, 5, 6 are error conditions to be handled by caller
+    #        2 is to be handled by caller by a rerun
+    #        1 is success.
+
+
+    my $log_aux = "$aux_dir1$root_filename.log";
+    my $log_out = "$out_dir1$root_filename.log";
+    my $log_cwd = "./$root_filename.log";
+
+    my $where_log = &find_log;
+    my $good_log_found = 0;
+
+    if ($where_log == 1 ) {
+        # As expected
+        $good_log_found = 1;
+    }
+    elsif ($where_log == 2 ) {
         warn "$My_name: .log file in '$out_dir' instead of expected '$aux_dir'\n",
              "   But emulate_aux is off.  So I'll turn it on.\n",
              "   I'll copy the log file to the correct place.\n",
@@ -5231,8 +5411,9 @@ sub find_set_log {
             s/ -output-directory=[^ ]*(?= )//g;
             s/ -aux(-directory=[^ ]*)(?= )/ -output$1/g;
         }
+        $good_log_found = 1;
     }
-    elsif ( test_gen_file( "$root_filename.log" ) ) {
+    if ($where_log == 3 ) {
         # .log file is not in out_dir nor in aux_dir, but is in cwd.
         # Presumably there is a configuration error
         # that prevents the directories from being used by latex.
@@ -5242,14 +5423,35 @@ sub find_set_log {
             "  options with the *latex command.\n",
             "  I'll stop.\n";
     }
-    else {
-        # No .log file found
+    elsif ($where_log == 4 ) {
+        warn "$My_name: The expected log file, '$log_aux', does exist, but it appears\n",
+            "   to be left over from a previous run: The time at the start of the\n",
+            "   current run was $$Prun_time, but the log file appears to have been\n",
+            "   created significantly earlier, at ", get_mtime($log_aux), ".\n";
+    }
+    elsif ($where_log == 5 ) {
+        warn "$My_name: The expected log file, '$log_aux', does not exist, but one is found\n",
+            "   in '$out_dir', but it apears to be left over from a previous run. The time\n",
+            "   at the start of the current run was $$Prun_time, but the log file appears to\n",
+            "   have been created significantly earlier, at ", get_mtime($log_out), ".\n";
+    }
+    elsif ($where_log == 6 ) {
+        warn "$My_name: The expected log file, '$log_aux', does not exist, but one is found\n",
+            "   in '.', but it apears to be left over from a previous run. The time\n",
+            "   at the start of the current run was $$Prun_time, but the log file appears to\n",
+            "   have been created significantly earlier, at ", get_mtime($log_cwd), ".\n";
+    }
+    elsif ($where_log == 0) {
+        warn "$My_name: No log file was found, neither the expected one, '$log_aux', nor one in '.'.\n";
+        if (! $emulate_aux) { warn "   I also looked in '$out_dir'\n"; }
+    }
+    if ( ! $good_log_found ) {
         $failure = 1;
         $$Plast_result = 2;
-        $where_log = 0;
         $failure_msg 
             = "*LaTeX didn't generate the expected log file '$log_name'\n";
     }
+    
     return $where_log;
 } #END find_set_log
 
@@ -6960,6 +7162,7 @@ sub rdb_read_set_rule {
     $$Prun_time = $run_time;
     $$Pcheck_time = $check_time;
     $$Plast_result = $last_result;
+    $$Plast_result_info = 'CACHE';
     
     # Deal with possibility that destination file in fdb_latexmk from
     # run differs from what is currently set. Often that just reflects a
@@ -7249,7 +7452,7 @@ sub rdb_set_latex_deps {
     # But we'll use the results later, so that they take priority over the findings
     # from the log file.
     local $fls_file_analyzed = 0;
-    if ($recorder && test_gen_file($fls_name) ) {
+    if ($recorder && test_gen_file_time($fls_name) ) {
         $fls_file_analyzed = 
             (0== parse_fls( $fls_name, \%source_fls, \%generated_fls, \%first_read_after_write, \$pwd_latex ));
         if (! $fls_file_analyzed ) {
@@ -7590,7 +7793,7 @@ NEW_SOURCE:
     }
     if ($diagnostics) {
         if ($num_new > 0 ) {
-            show_array( "$num_new new source files for rule '$rule':", @more_sources );k { print "   '$_'\n"; }
+            show_array( "$num_new new source files for rule '$rule':", @more_sources );
         }
         else {
             print "No new source files for rule '$rule':\n";
@@ -7684,20 +7887,25 @@ sub switch_output {
 
 sub test_gen_file {
     # Usage: test_gen_file( filename )
-    # Tests whether the file was generated during a run of *latex.
+    # Tests whether a file of given name was generated during current run
+    #   of *latex, with override of comparison of file and run time by
+    #   file being listed in %generated_log or %generated_fls
     # Assumes context for primary rule.
-    # Two kinds of test are used:
-    # a. From %generated_log and %generated_fls, which works after the fls and
-    #    log files hav been parsed, but in the log file only for certain files
-    #    and for those TeX engines (not MiKTeX) that put \openout lines in log
-    #    file.
-    # b. By the file existing and being at least as new as the system
-    #    time at the start of the run.  But make an allowance ($filetime_slop) for
-    #    differences in granularity between reported system time and reported
-    #    file mtimes.
     my $file = shift;
     return exists $generated_log{$file} || $generated_fls{$file}
-           || ( -e $file && ( get_mtime( $file ) >= $$Prun_time - $filetime_slop ));
+          || test_gen_file_time($file);
+}
+
+#************************************************************
+
+sub test_gen_file_time {
+    # Usage: test_gen_file_time( filename )
+    # Tests whether a file of given name exists and was generated during 
+    #   current run of *latex.  Comparison of file and run time used for
+    #   testing whether file was generated or is left over from a previous run.
+    #
+    my $file = shift;
+    return (-e $file) && ( get_mtime( $file ) >= $$Prun_time + $filetime_offset - $filetime_causality_threshold );
 }
 
 #************************************************************
@@ -7855,6 +8063,11 @@ sub rdb_one_dep {
         return;
     }
     local $new_dest = $file;
+    if ($$PHdest{$new_dest} ) {
+        # We already have a way of making the file.
+        # No need to find another one.
+        return;
+    }
     my ($base_name, $path, $toext) = fileparseA( $new_dest );
     $base_name = $path.$base_name;
     $toext =~ s/^\.//;
@@ -7863,6 +8076,7 @@ DEP:
     foreach my $dep ( @cus_dep_list ) {
         my ($fromext,$proptoext,$must,$func_name) = split('\s+',$dep);
         if ( $toext eq $proptoext ) {
+            # Look in search path for file of correct name:
             $base_name = rdb_find_source_file($base_name, $fromext);
             my $source = "$base_name.$fromext";
             # Found match of rule
@@ -7872,6 +8086,11 @@ DEP:
             if ( -e $source ) {
                 my $from_rule = "cusdep $fromext $toext $base_name";
                 my $new_new_dest = "$base_name.$toext";
+                if ($$PHdest{$new_new_dest} ) {
+                    # We already have a way of making the file.
+                    # No need to find another one.
+                    return;
+                }
                 if ($new_new_dest ne $new_dest) {
                     rdb_ensure_file( $rule, $new_new_dest );
                     $new_dest = $new_new_dest;
@@ -7919,6 +8138,11 @@ DEP:
             if ( -e $source ) {
                 $new_dest = "$base_name.$proptoext";
                 my $from_rule = "cusdep $fromext $proptoext $base_name";
+                if ( $$PHdest{$new_dest} ) {
+                    # We already have a way of making the file.
+                    # No need to find another one.
+                    return;
+                }
                 push @new_sources, $new_dest;
                 print "$My_name: Ensuring rule for '$from_rule', to make '$new_dest'\n"
                     if $diagnostics > -1;
@@ -8009,6 +8233,15 @@ sub deps_list {
     if ($dvi_mode) {push @dest_exts, '.dvi';}
     if ($postscript_mode) {push @dest_exts, '.ps';}
 
+    my $deps_space = ' ';
+    if ($deps_escape eq 'unix' ) { $deps_space = '\ '; }
+    elsif ($deps_escape eq 'nmake' ) { $deps_space = '^ '; }
+    $Pescape = sub { 
+                    my $name = shift;
+                    $name =~ s/ /$deps_space/g;
+                    return $name;
+    };
+
     my %source = ( $texfile_name => 1 );
     my @accessible_all = &rdb_accessible;
     rdb_for_some(
@@ -8036,9 +8269,9 @@ sub deps_list {
          # deps file out-of-date are the same as those that make the real
          # target file (e.g., .pdf) out-of-date. So the GNU method seems
          # completely unnecessary.
-       fprint8 $fh, "${out_dir1}${root_filename}${ext} :";
+       fprint8 $fh, &$Pescape(${out_dir1}.${root_filename}.${ext}), " :";
        foreach (sort keys %source) {
-           fprint8 $fh, "\\\n    $_";
+           fprint8 $fh, "\\\n    ", &$Pescape($_);
        }
        fprint8 $fh, "\n";
     }
@@ -8067,7 +8300,8 @@ sub rdb_show {
                  if ( !defined($_) ) { $_='undef';}
              }
              print "  [$rule]: '$$Pcmd_type' '$$Pext_cmd' '@int_cmd' $$Pno_history ",
-                   "'$$Psource' '$$Pdest' '$$Pbase' $$Pout_of_date $$Pout_of_date_user\n"; },
+                 "'$$Psource' '$$Pdest' '$$Pbase' $$Pout_of_date $$Pout_of_date_user\n";
+        },
         sub{ print "    '$file': $$Ptime $$Psize $$Pmd5 '", ($from_rules{$file} || ''), "'\n"; }
     );
     if ($count_rules <= 0) {
@@ -8554,26 +8788,33 @@ sub rdb_show_rule_errors {
     local @errors = ();
     local @warnings = ();
     rdb_for_actives( 
-               sub{
-                   if ($$Plast_message ne '') {
-                       if ($$Plast_result == 200) {
-                          push @warnings, "$rule: $$Plast_message";
-                       }
-                       else {
-                          push @errors, "$rule: $$Plast_message";
-                       }
-                   }
-                   elsif ($$Plast_result == 1) {
-                       push @errors, "$rule: failed to create output file";
-                   }
-                   elsif ($$Plast_result == 2) {
-                       push @errors, "$rule: gave an error";
-                   }
-                   elsif ($$Prun_time == 0) {
-                       #  This can have innocuous causes.  So don't report
-                   }
-               }
-              );
+        sub {
+            my $message_tail = "";
+            if ( $$Plast_result_info eq 'PREV' ) {
+                $message_tail = " in previous round of document compilation.";
+            }
+            elsif ( $$Plast_result_info eq 'CACHE' ) {
+                $message_tail = " in previous invocation of $my_name.";
+            }
+            if ($$Plast_message ne '') {
+                if ($$Plast_result == 200) {
+                    push @warnings, "$rule: $$Plast_message";
+                 }
+                 else {
+                    push @errors, "$rule: $$Plast_message";
+                 }
+            }
+            elsif ($$Plast_result == 1) {
+                push @errors, "$rule: failed to create output file$message_tail";
+            }
+            elsif ($$Plast_result == 2) {
+                push @errors, "$rule: gave an error$message_tail";
+            }
+            elsif ($$Prun_time == 0) {
+                #  This can have innocuous causes.  So don't report
+            }
+        }
+    );
     if ($#warnings > -1) { 
         show_array( "Collected warning summary (may duplicate other messages):". @warnings );
     }
@@ -8761,6 +9002,7 @@ sub rdb_run1 {
 
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
+    $$Plast_result_info = 'CURR';
     $$Plast_message = '';
     my $latex_like = ($$Pcmd_type eq 'primary'); 
 
@@ -8983,6 +9225,7 @@ sub rdb_dummy_run0 {
     $$Prun_time = time();
     $$Pchanged = 0;       # No special changes in files
     $$Plast_result = 0;
+    $$Plast_result_info = 'CURR';
     $$Plast_message = '';
 
     $$Pout_of_date = $$Pout_of_date_user = 0;
@@ -9343,7 +9586,7 @@ sub rdb_rerun_needed {
     }
 
     # Non-source-file-change reasons for rerun:
-    if ( ( ($$Prun_time == 0) || ( $$Plast_result == -1 ) )
+    if ( ( ($$Prun_time == 0) || ( $$Plast_result =~ /^-1/ ) )
          && ( $$Pcmd_type eq 'primary' ) )
     {
         # Never run.  Only use this test with primary, so we can get
@@ -9736,7 +9979,7 @@ sub rdb_one_rule {
            $Psource, $Pdest, $Pbase,
            $Pout_of_date, $Pout_of_date_user, $Prun_time, $Pcheck_time,
            $Pchanged,
-           $Plast_result, $Plast_message, $PA_extra_gen )
+           $Plast_result, $Plast_result_info, $Plast_message, $PA_extra_gen )
         = Parray( $PArule_data );
 
     &$rule_act1 if $rule_act1;
@@ -9830,7 +10073,6 @@ sub rdb_remove_rule {
 #************************************************************
 
 sub rdb_create_rule {
-    # ???!!! OUT OF DATE.  PLACE HOLDER for what was test_kind
     # rdb_create_rule( rule, command_type, ext_cmd, int_cmd, DUMMY,
     #                  source, dest, base, 
     #                  needs_making, run_time, check_time, set_file_not_exists,
@@ -9842,7 +10084,12 @@ sub rdb_create_rule {
     # Makes rule.  Update rule if it already exists.
     # Omitted arguments: replaced by 0, '', or [] as needed.
     # Rule is made active
-# ==== Sets rule data ====
+    # 5th argument DUMMY is argument that used to be used (test_kind), but
+    # is not used any more.  But I keep it there to avoid having to change
+    # calls, which are not only in the latexmk code itself, but may be in
+    # latexmkrc files created by others.
+    
+# ==== Set rule data from arguments ====
     my ( $rule, $cmd_type, $ext_cmd, $PAint_cmd, $DUMMY, 
          $source, $dest, $base, 
          $needs_making, $run_time, $check_time, $set_file_not_exists,
@@ -9859,6 +10106,7 @@ sub rdb_create_rule {
         if (! defined $_) { $_ = []; }
     }
     my $last_result = -1;
+    my $last_result_info = '';
     my $no_history = ($run_time <= 0);
     my $active = 1;
     my $changed = 0;
@@ -9884,7 +10132,7 @@ sub rdb_create_rule {
         [  [$cmd_type, $ext_cmd, $PAint_cmd, $no_history, 
             $source, $dest, $base,
             $needs_making, 0, $run_time, $check_time, $changed,
-            $last_result, '', $PAextra_gen ],
+            $last_result, $last_result_info, '', $PAextra_gen ],
            {},
            {},
            {},
@@ -10540,12 +10788,14 @@ sub unlink_or_move {
             if (!-e) {next;}
             if (-d) {
                 if (!rmdir) {
-                    warn "$My_name: Cannot remove directory '$_'\n";
+                    warn "$My_name: Cannot remove directory '$_'\n",
+                         "   Error message = '$!'\n";
                 }
             }
             else { 
                 if (!unlink) {
-                    warn "$My_name: Cannot remove file '$_'\n";
+                    warn "$My_name: Cannot remove file '$_'\n",
+                         "   Error message = '$!'\n";
                 }
             }
         }
@@ -10553,7 +10803,8 @@ sub unlink_or_move {
     else {
         foreach (@_) {
             if (-e $_ && ! move $_, "$del_dir/$_" ) {
-                warn "$My_name: Cannot move '$_' to '$del_dir/$_'\n";
+                warn "$My_name: Cannot move '$_' to '$del_dir/$_'\n",
+                     "   Error message = '$!'\n";
             }
         }
     }
@@ -10977,6 +11228,36 @@ sub split_search_path
         if ($list[$i] eq "") {$list[$i] = $default;}
     }
     return @list;
+}
+
+#################################
+
+sub get_filetime_offset {
+    # Usage: get_filetime_offset( prefix, [suffix] )
+    # Measures offset between filetime in a directory and system time
+    # Makes a temporary file of a unique name, and deletes in.
+    # Filename is of form concatenation of prefix, an integer, suffix.
+    # Prefix is normally of form dir/ or dir/tmp.
+    # Default default suffix ".tmp".
+    my $prefix = $_[0];
+    my $suffix = $_[1] || '.tmp';
+    my $tmp_file_count = 0;
+    while (1==1) {
+        # Find a new temporary file, and make it.
+        $tmp_file_count++;
+        my $tmp_file = "${prefix}${tmp_file_count}${suffix}";
+        if ( ! -e $tmp_file ) {
+            open( TMP, ">$tmp_file" ) 
+                or die "$My_name.get_filetime_offset: In measuring filetime offset, couldn't write to\n",
+                       "    temporary file '$tmp_file'\n";
+            my $time = time();
+            close(TMP);
+            my $offset = get_mtime($tmp_file) - $time;
+            unlink $tmp_file;
+            return $offset;
+         }
+     }
+     die "$My_name.get_filetime_offset: BUG TO ARRIVE HERE\n";
 }
 
 #################################
