@@ -163,6 +163,7 @@ texcount/texcount.pl
 texdef/texdef.pl
 texdiff/texdiff
 texdirflatten/texdirflatten
+texfindpkg/texfindpkg.lua
 texdoc/texdoc.tlu
 texfot/texfot.pl
 texlive/fmtutil-sys.sh

@@ -437,6 +437,7 @@ texmf_other_scripts = \
 	texdef/texdef.pl \
 	texdiff/texdiff \
 	texdirflatten/texdirflatten \
+	texfindpkg/texfindpkg.lua \
 	texdoc/texdoc.tlu \
 	texfot/texfot.pl \
 	texlive/fmtutil-sys.sh \
