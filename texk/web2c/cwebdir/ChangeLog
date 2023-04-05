@@ -1,3 +1,7 @@
+2023-04-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebmac.tex: Revert a few \ifacro from version 4.8.
+
 2023-01-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-mac.ch,
