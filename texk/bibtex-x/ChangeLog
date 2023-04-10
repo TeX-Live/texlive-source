@@ -1,3 +1,8 @@
+2023-04-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/substr[au].bbl, tests/testsubstr.bst:
+	Add more tests for substring$.
+
 2023-01-29  Karl Berry  <karl@freefriends.org>
 
 	* tests/bibtexu-sort.test,

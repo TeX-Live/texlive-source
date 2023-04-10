@@ -55,6 +55,11 @@
 \item[-6 3]  tu
 \item[-7 2]  t
 \item[-8 1]
+\item[1 1, 1 1] A
+\item[2 1, 1 1] B
+\item[3 1, 1 1] C
+\item[4 1, 1 1] D
+\item[5 1, 1 1] E
 \item[orig] ÅÇÈÎØÜİ~åçèîøüı
 \item[1 5] ÅÇÈÎØ
 \item[1 4] ÅÇÈÎ
@@ -110,6 +115,11 @@
 \item[-6 3] ~åç
 \item[-7 2] ~å
 \item[-8 1] ~
+\item[1 1, 1 1] Å
+\item[2 1, 1 1] Ç
+\item[3 1, 1 1] È
+\item[4 1, 1 1] Î
+\item[5 1, 1 1] Ø
 \item[orig] {AB}CDEFG tuvwx{yz}
 \item[1 5] {AB}C
 \item[1 4] {AB}
@@ -165,6 +175,11 @@
 \item[-6 3] uvw
 \item[-7 2] uv
 \item[-8 1] u
+\item[1 1, 1 1] {
+\item[2 1, 1 1] A
+\item[3 1, 1 1] B
+\item[4 1, 1 1] }
+\item[5 1, 1 1] C
 \item[orig] {{AB}CD}EFG tuv{wx{yz}}
 \item[1 5] {{AB}
 \item[1 4] {{AB
@@ -220,6 +235,11 @@
 \item[-6 3] {wx
 \item[-7 2] {w
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] A
+\item[4 1, 1 1] B
+\item[5 1, 1 1] }
 \item[orig] {{ÅÇ}ÈÎ}ØÜİ~åçè{îø{üı}}
 \item[1 5] {{ÅÇ}
 \item[1 4] {{ÅÇ
@@ -275,6 +295,11 @@
 \item[-6 3] {îø
 \item[-7 2] {î
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] Å
+\item[4 1, 1 1] Ç
+\item[5 1, 1 1] }
 \item[orig] {\a}Åå{\b}Ææ{\c}Çç
 \item[1 5] {\a}Å
 \item[1 4] {\a}
@@ -330,5 +355,10 @@
 \item[-6 3] Ææ{
 \item[-7 2] Ææ
 \item[-8 1] Æ
+\item[1 1, 1 1] {
+\item[2 1, 1 1] \
+\item[3 1, 1 1] a
+\item[4 1, 1 1] }
+\item[5 1, 1 1] Å
 \end{itemize}
 \endinput

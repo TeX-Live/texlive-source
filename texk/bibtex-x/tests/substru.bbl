@@ -55,6 +55,11 @@
 \item[-6 3]  tu
 \item[-7 2]  t
 \item[-8 1]
+\item[1 1, 1 1] A
+\item[2 1, 1 1] B
+\item[3 1, 1 1] C
+\item[4 1, 1 1] D
+\item[5 1, 1 1] E
 \item[orig] ÅÇÈÎØÜÝ~åçèîøüý
 \item[1 5] ÅÇÈÎØ
 \item[1 4] ÅÇÈÎ
@@ -110,6 +115,11 @@
 \item[-6 3] ~åç
 \item[-7 2] ~å
 \item[-8 1] ~
+\item[1 1, 1 1] Å
+\item[2 1, 1 1] Ç
+\item[3 1, 1 1] È
+\item[4 1, 1 1] Î
+\item[5 1, 1 1] Ø
 \item[orig] AÇう冤EÜЖ~tçユ漆𡚴xюω
 \item[1 5] AÇう冤E
 \item[1 4] AÇう冤
@@ -165,6 +175,11 @@
 \item[-6 3] tçユ
 \item[-7 2] tç
 \item[-8 1] t
+\item[1 1, 1 1] A
+\item[2 1, 1 1] Ç
+\item[3 1, 1 1] う
+\item[4 1, 1 1] 冤
+\item[5 1, 1 1] E
 \item[orig] {AB}CDEFG tuvwx{yz}
 \item[1 5] {AB}C
 \item[1 4] {AB}
@@ -220,6 +235,11 @@
 \item[-6 3] uvw
 \item[-7 2] uv
 \item[-8 1] u
+\item[1 1, 1 1] {
+\item[2 1, 1 1] A
+\item[3 1, 1 1] B
+\item[4 1, 1 1] }
+\item[5 1, 1 1] C
 \item[orig] {\a}Åå{\b}Ææ{\c}Çç
 \item[1 5] {\a}Å
 \item[1 4] {\a}
@@ -275,6 +295,11 @@
 \item[-6 3] Ææ{
 \item[-7 2] Ææ
 \item[-8 1] Æ
+\item[1 1, 1 1] {
+\item[2 1, 1 1] \
+\item[3 1, 1 1] a
+\item[4 1, 1 1] }
+\item[5 1, 1 1] Å
 \item[orig] {\a}αあ{\b}βい{\c}γう
 \item[1 5] {\a}α
 \item[1 4] {\a}
@@ -330,6 +355,11 @@
 \item[-6 3] βい{
 \item[-7 2] βい
 \item[-8 1] β
+\item[1 1, 1 1] {
+\item[2 1, 1 1] \
+\item[3 1, 1 1] a
+\item[4 1, 1 1] }
+\item[5 1, 1 1] α
 \item[orig] {\a}あα{\b}いβ{\c}うγ
 \item[1 5] {\a}あ
 \item[1 4] {\a}
@@ -385,6 +415,11 @@
 \item[-6 3] いβ{
 \item[-7 2] いβ
 \item[-8 1] い
+\item[1 1, 1 1] {
+\item[2 1, 1 1] \
+\item[3 1, 1 1] a
+\item[4 1, 1 1] }
+\item[5 1, 1 1] あ
 \item[orig] {{AB}CD}EFG tuv{wx{yz}}
 \item[1 5] {{AB}
 \item[1 4] {{AB
@@ -440,6 +475,11 @@
 \item[-6 3] {wx
 \item[-7 2] {w
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] A
+\item[4 1, 1 1] B
+\item[5 1, 1 1] }
 \item[orig] {{ÅÇ}ÈÎ}ØÜÝ~åçè{îø{üý}}
 \item[1 5] {{ÅÇ}
 \item[1 4] {{ÅÇ
@@ -495,6 +535,11 @@
 \item[-6 3] {îø
 \item[-7 2] {î
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] Å
+\item[4 1, 1 1] Ç
+\item[5 1, 1 1] }
 \item[orig] {{一二}三四}五六七　肆伍陸{漆捌{玖拾}}
 \item[1 5] {{一二}
 \item[1 4] {{一二
@@ -550,6 +595,11 @@
 \item[-6 3] {漆捌
 \item[-7 2] {漆
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] 一
+\item[4 1, 1 1] 二
+\item[5 1, 1 1] }
 \item[orig]
   {{櫛杓}屠冤}𦥑𠮟𠀋𡈽𥝱𨦇𡚴{𠷡𧘕{𧘔𩸽}}
 \item[1 5] {{櫛杓}
@@ -606,6 +656,11 @@
 \item[-6 3] {𠷡𧘕
 \item[-7 2] {𠷡
 \item[-8 1] {
+\item[1 1, 1 1] {
+\item[2 1, 1 1] {
+\item[3 1, 1 1] 櫛
+\item[4 1, 1 1] 杓
+\item[5 1, 1 1] }
 \item[orig] ΑΒΓΔΕΖΗ στυφχψω
 \item[1 5] ΑΒΓΔΕ
 \item[1 4] ΑΒΓΔ
@@ -661,6 +716,11 @@
 \item[-6 3]  στ
 \item[-7 2]  σ
 \item[-8 1]
+\item[1 1, 1 1] Α
+\item[2 1, 1 1] Β
+\item[3 1, 1 1] Γ
+\item[4 1, 1 1] Δ
+\item[5 1, 1 1] Ε
 \item[orig] АБВГДЕЖ щъыьэюя
 \item[1 5] АБВГД
 \item[1 4] АБВГ
@@ -716,6 +776,11 @@
 \item[-6 3]  щъ
 \item[-7 2]  щ
 \item[-8 1]
+\item[1 1, 1 1] А
+\item[2 1, 1 1] Б
+\item[3 1, 1 1] В
+\item[4 1, 1 1] Г
+\item[5 1, 1 1] Д
 \item[orig] あいうえおかき　ユヨワヰヱヲン
 \item[1 5] あいうえお
 \item[1 4] あいうえ
@@ -771,6 +836,11 @@
 \item[-6 3] 　ユヨ
 \item[-7 2] 　ユ
 \item[-8 1] 　
+\item[1 1, 1 1] あ
+\item[2 1, 1 1] い
+\item[3 1, 1 1] う
+\item[4 1, 1 1] え
+\item[5 1, 1 1] お
 \item[orig] 一二三四五六七　肆伍陸漆捌玖拾
 \item[1 5] 一二三四五
 \item[1 4] 一二三四
@@ -826,6 +896,11 @@
 \item[-6 3] 　肆伍
 \item[-7 2] 　肆
 \item[-8 1] 　
+\item[1 1, 1 1] 一
+\item[2 1, 1 1] 二
+\item[3 1, 1 1] 三
+\item[4 1, 1 1] 四
+\item[5 1, 1 1] 五
 \item[orig] 櫛杓屠冤𦥑𠮟𠀋𡈽𥝱𨦇𡚴𠷡𧘕𧘔𩸽
 \item[1 5] 櫛杓屠冤𦥑
 \item[1 4] 櫛杓屠冤
@@ -881,5 +956,10 @@
 \item[-6 3] 𡈽𥝱𨦇
 \item[-7 2] 𡈽𥝱
 \item[-8 1] 𡈽
+\item[1 1, 1 1] 櫛
+\item[2 1, 1 1] 杓
+\item[3 1, 1 1] 屠
+\item[4 1, 1 1] 冤
+\item[5 1, 1 1] 𦥑
 \end{itemize}
 \endinput

@@ -1,3 +1,9 @@
+2023-04-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* upbibtex.ch: Fix bug of substring$
+	from Yukimasa Morimi san:
+	https://github.com/texjporg/tex-jp-build/issues/157
+
 2023-03-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test:
