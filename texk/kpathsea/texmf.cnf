@@ -61,6 +61,9 @@
 % Sorry for the off-by-one-generation names.
 TEXMFROOT = $SELFAUTOPARENT
 
+% The various texmf trees used by TeX Live, follow.
+% They must must all have the TDS directory structure (https://tug.org/tds).
+
 % The main tree of distributed packages and programs:
 TEXMFDIST = $TEXMFROOT/texmf-dist
 
@@ -94,7 +97,7 @@ TEXMFCONFIG = ~/.texlive2023/texmf-config
 % value, hence the empty braces.
 TEXMFAUXTREES = {}
 
-% List all the texmf trees. For an explanation of what they are, see the
+% List of all the texmf trees. For an explanation of what they are, see the
 % TeX Live manual.
 %
 % For texconfig to work properly, TEXMFCONFIG and TEXMFVAR should be named
@@ -105,8 +108,8 @@ TEXMFAUXTREES = {}
 % generally a source of confusion to have different versions of a
 % package installed, whatever the trees, so try to avoid it.
 % 
-% The odd-looking $TEXMFAUXTREES$TEXMF... construct is so that if no auxtree is
-% ever defined (the 99% common case), no extra elements will be added to
+% The odd-looking $TEXMFAUXTREES$TEXMF... construct is so that if no auxtree
+% is defined (99% common case), no extra elements will be added to
 % the search paths. tlmgr takes care to end any value with a trailing comma.
 TEXMF = {$TEXMFAUXTREES$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFDIST}
 
@@ -114,7 +117,7 @@ TEXMF = {$TEXMFAUXTREES$TEXMFCONFIG,$TEXMFVAR,$TEXMFHOME,!!$TEXMFLOCAL,!!$TEXMFS
 % this is all and only the !! elements of TEXMF, so that mktexlsr does not
 % create ls-R files in the non-!! elements -- because if an ls-R is
 % present, it will be used, and the disk will not (usually) be searched,
-% regardless of !!.  Although in principle a directory listed here need
+% regardless of !!.  Although in theory a directory listed here need
 % not contain an ls-R file, in practice they all should.
 TEXMFDBS = {!!$TEXMFLOCAL,!!$TEXMFSYSCONFIG,!!$TEXMFSYSVAR,!!$TEXMFDIST}
 
@@ -157,9 +160,11 @@ WEB2C = $TEXMF/web2c
 % This variable exists only to be redefined; it is used in nearly all
 % search paths. If a document has source files not only in the current
 % directory but also in subdirectories, it is convenient to set
-% TEXMFDOTDIR=.// so that everything will be searched automatically.
+% TEXMFDOTDIR=.// so that everything will be searched automatically,
+% without the need to set up the TDS directory structure (since this is
+% a "directory" and not a "tree").
 % On the other hand, if you never want the current directory to be
-% searched at all, setting TEXMFDOTDIR=/nonesuch should come close.
+% searched at all, setting TEXMFDOTDIR=/nonesuch comes close.
 %
 TEXMFDOTDIR = .
 
