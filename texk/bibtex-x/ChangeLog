@@ -1,3 +1,10 @@
+2023-04-12  Karl Berry  <karl@freefriends.org>
+
+	* tests/bibtex8.test,
+	* tests/bibtexu.test: use different basenames for the
+	different bibtex programs. Hoping to fix report of sporadic
+	failures from Werner Fink, 12 Apr 2023 12:46:56.
+
 2023-04-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/substr[au].bbl, tests/testsubstr.bst:

@@ -1,17 +1,16 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2023 Karl Berry <tex-live@tug.org>
 # Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
-rm -f tests/xexampl.*
+rm -f tests/xexampl.* # different filenames than bibtexu.test
 
-cp $srcdir/../web2c/tests/exampl.aux tests/xexampl.aux
+cp $srcdir/../web2c/tests/exampl.aux tests/xexampl.aux || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/../web2c/tests \
   BIBINPUTS=$srcdir/../web2c/tests \
   ./bibtex8 -7 tests/xexampl || test $? = 1 || exit 1
 diff $srcdir/tests/exampl.bbl tests/xexampl.bbl || exit 2
-
