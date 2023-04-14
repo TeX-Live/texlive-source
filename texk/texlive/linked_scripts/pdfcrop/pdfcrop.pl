@@ -5,7 +5,7 @@ $^W=1; # turn warning on
 # pdfcrop.pl
 #
 # Copyright (C) 2002, 2004, 2005, 2008-2012 Heiko Oberdiek.
-#               2020                        Oberdiek Package Support Group
+#               2020-2023                   Oberdiek Package Support Group
 #
 # This program may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, version 1.3c or later.
@@ -18,10 +18,10 @@ $^W=1; # turn warning on
 my $prj         = 'pdfcrop';
 my $file        = "$prj.pl";
 my $program     = uc($&) if $file =~ /^\w+/;
-my $version     = "1.40";
-my $date        = "2020/06/06";
+my $version     = "1.41";
+my $date        = "2023/04/13";
 my $author      = "Heiko Oberdiek, Oberdiek Package Support Group";
-my $copyright   = "Copyright (c) 2002-2020 by $author.";
+my $copyright   = "Copyright (c) 2002-2023 by $author.";
 #
 # Reqirements: Perl5, Ghostscript
 # History:
@@ -106,9 +106,11 @@ my $copyright   = "Copyright (c) 2002-2020 by $author.";
 # 2020/05/24 v1.39: * adapted to pdfversion 2.0, corrected luatex support,
 #                      corrected a problem with xetex.
 # 2020/06/06 v1.40: * improved ghostscript detection on windows when a bash is used
-#                      added direct pdf version support to xetex. 
-
-
+#                      added direct pdf version support to xetex.
+# 2023/04/13 v1.41: * allow gswin64c in restricted mode, fix typos in messages issues 14, 17
+#                     add -q option, issue 7;
+#                     don't print whole help msg for unknown options, issue 7.
+#                     do not create two pages with xetex, issue 3 
 
 ### program identification
 my $title = "$program $version, $date - $copyright\n";
@@ -122,6 +124,7 @@ delete @ENV{qw(IFS CDPATH ENV BASH_ENV)};
 # Windows detection (no SIGHUP)
 my $Win = 0;
 $Win = 1 if $^O =~ /mswin32/i;
+$Win = 1 if $^O =~ /windows/i;
 $Win = 1 if $^O =~ /cygwin/i;
 use Config;
 my $archname = $Config{'archname'};
@@ -166,6 +169,7 @@ sub find_ghostscript () {
     $system = "dos" if $^O =~ /dos/i;
     $system = "os2" if $^O =~ /os2/i;
     $system = "win" if $^O =~ /mswin32/i;
+    $system = "win" if $^O =~ /windows/i;
     $system = "cygwin" if $^O =~ /cygwin/i;
     $system = "miktex" if defined($ENV{"TEXSYSTEM"}) and
                           $ENV{"TEXSYSTEM"} =~ /miktex/i;
@@ -176,7 +180,7 @@ sub find_ghostscript () {
         'unix' => [qw|gs gsc gswin64c gswin32c|],
         'dos' => [qw|gs386 gs|],
         'os2' => [qw|gsos2 gs|],
-        'win' => [qw|gswin32c gs|],
+        'win' => [qw|gswin32c gswin64c gs|],
         'cygwin' => [qw|gs gswin32c|],
         'miktex' => [qw|mgs gswin32c gs|]
     );
@@ -221,11 +225,11 @@ sub find_ghostscript () {
         $found = SearchRegistry();
     }
     if ($found) {
-        print "* Autodetected ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+        print "* Autodetected Ghostscript command: $::opt_gscmd\n" if $::opt_debug;
     }
     else {
         $::opt_gscmd = $$candidates_ref[0];
-        print "* Default ghostscript command: $::opt_gscmd\n" if $::opt_debug;
+        print "* Default Ghostscript command: $::opt_gscmd\n" if $::opt_debug;
     }
 }
 
@@ -350,6 +354,7 @@ $::opt_version    = 0;
 $::opt_help       = 0;
 $::opt_debug      = 0;
 $::opt_verbose    = 0;
+$::opt_quiet      = 0;
 $::opt_pdftexcmd  = "pdftex";
 $::opt_xetexcmd   = "xetex";
 $::opt_luatexcmd  = "luatex";
@@ -441,6 +446,7 @@ GetOptions(
   "version!",
   "debug!",
   "verbose!",
+  "quiet!",
   "gscmd=s",
   "pdftexcmd=s",
   "xetexcmd=s",
@@ -460,7 +466,8 @@ GetOptions(
   "restricted" => sub { $restricted = 1; },
   "pdfversion=s" => \$::opt_pdfversion,
   "uncompress!",
-) or usage(1);
+) or die "Try $0 --help for more information\n";
+
 !$::opt_help or usage(0);
 
 if ($::opt_version) {
@@ -472,7 +479,7 @@ $::opt_verbose = 1 if $::opt_debug;
 
 @ARGV >= 1 or usage(1);
 
-print $title;
+print $title if ! $::opt_quiet;
 
 print "* Restricted mode: ", ($restricted ? "enabled" : "disabled"), "\n"
         if $::opt_debug;
@@ -492,7 +499,7 @@ if ($::opt_bbox) {
     $::opt_bbox =~ s/\s+$//;
     $::opt_bbox =~ s/\s+/ /;
     if ($::opt_bbox =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box: $::opt_bbox\n" if $::opt_debug;
+        print "* Explicit Bounding Box: $::opt_bbox\n" if $::opt_debug;
     }
     else {
         die "$Error Parse error (option --bbox \"$::opt_bbox\")!\n";
@@ -503,7 +510,7 @@ if ($::opt_bbox_odd) {
     $::opt_bbox_odd =~ s/\s+$//;
     $::opt_bbox_odd =~ s/\s+/ /;
     if ($::opt_bbox_odd =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box for odd pages: $::opt_bbox_odd\n"
+        print "* Explicit Bounding Box for odd pages: $::opt_bbox_odd\n"
                 if $::opt_debug;
     }
     else {
@@ -515,7 +522,7 @@ if ($::opt_bbox_even) {
     $::opt_bbox_even =~ s/\s+$//;
     $::opt_bbox_even =~ s/\s+/ /;
     if ($::opt_bbox_even =~ /^-?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+ -?\d*\.?\d+$/) {
-        print "* Explicite Bounding Box for even pages: $::opt_bbox_even\n"
+        print "* Explicit Bounding Box for even pages: $::opt_bbox_even\n"
                 if $::opt_debug;
     }
     else {
@@ -583,14 +590,14 @@ if ($::opt_papersize ne '') {
             or die "$Error Invalid papersize ($::opt_papersize)!\n";
     $papersizes{$::opt_papersize}
             or die "$Error Unknown papersize ($::opt_papersize),"
-                   . " see ghostscript's documentation for option `-r'!\n";
+                   . " see Ghostscript's documentation for option `-r'!\n";
 }
 
 ### resolution validation (security)
 if ($::opt_resolution ne '') {
     $::opt_resolution =~ /^\d+(x\d+)?$/
             or die "$Error Invalid resolution ($::opt_resolution),"
-                   . " see ghostscript's documentation!\n";
+                   . " see Ghostscript's documentation!\n";
 }
 
 ### command name validation (security)
@@ -633,7 +640,7 @@ if ($restricted) {
         die "$Error LuaTeX program name must not be changed in restricted mode!\n";
     }
     if ($::opt_gscmd) {
-        $::opt_gscmd =~ /^(gs|mgs|gswin32c|gs386|gsos2)$/
+        $::opt_gscmd =~ /^(gs|mgs|gswin32c|gs386|gsos2|gswin64c)$/
         or $::opt_gscmd =~ /^gs[\-_]?(\d|\d[\.-_]?\d\d)c?$/
         or die "$Error: Invalid Ghostscript program name in restricted mode!\n";
     }
@@ -991,7 +998,7 @@ END_TMP_HEAD
     print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion;    
 }  
 else { # XeTeX
-    print TMP <<'END_TMP_HEAD';
+    print TMP <<'END_TMP_HEAD_A';
 \expandafter\ifx\csname XeTeXpdffile\endcsname\relax
   \errmessage{XeTeX not found or too old!}%
 \fi
@@ -1009,6 +1016,9 @@ else { # XeTeX
   \pdfpageheight=#5bp\relax
   \advance\pdfpageheight by -#3bp\relax
   \shipout\hbox{%
+END_TMP_HEAD_A
+print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}%\n" if $::opt_pdfversion; 
+print TMP <<'END_TMP_HEAD_B';
     \kern-1in%
     \kern-#2bp%
     \vbox{%
@@ -1038,11 +1048,10 @@ else { # XeTeX
     }%
   }%
 }
-END_TMP_HEAD
-print TMP "\\setpdfversion{$::opt_pdfmajorversion}{$::opt_pdfminorversion}\n" if $::opt_pdfversion; 
+END_TMP_HEAD_B
 }
 
-print "* Running ghostscript for BoundingBox calculation ...\n"
+print "* Running Ghostscript for BoundingBox calculation ...\n"
     if $::opt_verbose;
 print "* Ghostscript call: $::opt_gscmd @gsargs\n" if $::opt_debug;
 
@@ -1090,7 +1099,7 @@ $gs_pipe .= " 1>$null" unless $::opt_verbose;
 $gs_pipe .= " |";
 
 open(GS, $gs_pipe)
-        or die sprintf "$Error Cannot call ghostscript `%s' (%s)!\n",
+        or die sprintf "$Error Cannot call Ghostscript: `%s' (%s)!\n",
                        $::opt_gscmd, exterr;
 my $bb = ($::opt_hires) ? "%%HiResBoundingBox" : "%%BoundingBox";
 my $previous_line = 'Previous line';
@@ -1255,7 +1264,7 @@ if (!rename("$tmp.pdf", $outputfile)) {
 }
 
 print "==> $page page", (($page == 1) ? "" : "s"),
-      " written on `$outputfile'.\n";
+      " written on `$outputfile'.\n" if ! $::opt_quiet;
 
 $exit_code = 0;
 cleanup();
