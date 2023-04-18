@@ -1,0 +1,343 @@
+%%% Preliminary Draft for testing
+%%
+%% This is file `hhitex.def',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% hyperref.dtx  (with options: `pdftex,pdfform,outlines')
+%% 
+%% Copyright
+%% 1995-2001 Sebastian Rahtz, with portions written by David Carlisle and Heiko Oberdiek,
+%% 2001-2015 Heiko Oberdiek.
+%% 2016-2019 Oberdiek Package Support Group
+%% 2019-2022 LaTeX Project
+%%      https://github.com/latex3/hyperref/issues
+%% 
+%% This file is part of the `Hyperref Bundle'.
+%% -------------------------------------------
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3 or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%% 
+%% This work has the LPPL maintenance status `maintained'.
+%% 
+%% The Current Maintainer of this work is the LaTeX Project.
+%% 
+%% The list of all files belonging to the `Hyperref Bundle' is
+%% given in the file `manifest.txt'.
+%% 
+%% File: hyperref.dtx
+\ProvidesFile{hhitex.def}
+  [2022-09-22 v7.00t %
+  Hyperref driver for hiTeX]
+
+\chardef\Hy@VersionChecked=1 % prevent hyperref from checking the version.
+
+\ifHy@pdfpagelabels
+  \def\HyPL@StorePageLabel#1{%
+    \toks@\expandafter{\HyPL@Labels}%
+    \xdef\HyPL@Labels{%
+      \the\toks@
+      \the\Hy@abspage<<#1>>%
+    }%
+  }%
+%  \RequirePackage{atveryend}[2009/12/07]%
+%  \AtVeryEndDocument{%
+%    \HyPL@SetPageLabels
+%  }%
+\fi
+\begingroup\expandafter\expandafter\expandafter\endgroup
+\expandafter\ifx\csname pdf@escapestring\endcsname\relax
+  \begingroup
+    \catcode`\|=0 %
+    \@makeother\\%
+  |@firstofone{|endgroup
+    |def|Hy@pstringdef#1#2{%
+      |begingroup
+        |edef~{|string~}%
+        |xdef|Hy@gtemp{#2}%
+      |endgroup
+      |let#1|Hy@gtemp
+      |@onelevel@sanitize#1%
+      |edef#1{|expandafter|Hy@ExchangeBackslash#1\|@nil}%
+      |edef#1{|expandafter|Hy@ExchangeLeftParenthesis#1(|@nil}%
+      |edef#1{|expandafter|Hy@ExchangeRightParenthesis#1)|@nil}%
+    }%
+    |def|Hy@ExchangeBackslash#1\#2|@nil{%
+      #1%
+      |ifx|\#2|\%%
+      |else
+        \\%
+        |ltx@ReturnAfterFi{%
+          |Hy@ExchangeBackslash#2|@nil
+        }%
+      |fi
+    }%
+  }%
+  \def\Hy@ExchangeLeftParenthesis#1(#2\@nil{%
+    #1%
+    \ifx\\#2\\%
+    \else
+      \@backslashchar(%
+      \ltx@ReturnAfterFi{%
+        \Hy@ExchangeLeftParenthesis#2\@nil
+      }%
+    \fi
+  }%
+  \def\Hy@ExchangeRightParenthesis#1)#2\@nil{%
+    #1%
+    \ifx\\#2\\%
+    \else
+      \@backslashchar)%
+      \ltx@ReturnAfterFi{%
+        \Hy@ExchangeRightParenthesis#2\@nil
+      }%
+    \fi
+  }%
+\else
+  \def\Hy@pstringdef#1#2{%
+    \begingroup
+      \edef~{\string~}%
+      \xdef\Hy@gtemp{\pdf@escapestring{#2}}%
+    \endgroup
+    \let#1\Hy@gtemp
+  }%
+\fi
+\providecommand*{\XR@ext}{pdf}
+\Hy@setbreaklinks{true}
+\def\HyPat@ObjRef{%
+  [0-9]*[1-9][0-9]* 0 R%
+}
+
+\def\setpdflinkmargin#1{}%????
+\def\Hy@PutCatalog{}
+\Hy@WrapperDef\new@pdflink#1{%
+  \ifhmode
+    \@savsf\spacefactor
+  \fi
+  \Hy@SaveLastskip
+  \Hy@VerboseAnchor{#1}%
+  \Hy@pstringdef\Hy@pstringDest{\HyperDestNameFilter{#1}}%
+  \Hy@DestName\Hy@pstringDest\@pdfview
+  \Hy@RestoreLastskip
+  \ifhmode
+    \spacefactor\@savsf
+  \fi
+}
+\let\pdf@endanchor\@empty
+\def\Hy@DestName#1#2{%
+  \HINTdest name {#1}\relax
+}
+\providecommand*\@pdfborder{0 0 1}
+\providecommand*\@pdfborderstyle{}
+\def\Hy@undefinedname{UNDEFINED}
+\def\find@pdflink#1#2{%
+  \leavevmode
+  \protected@edef\Hy@testname{#2}%
+  \ifx\Hy@testname\@empty
+    \Hy@Warning{%
+      Empty destination name,\MessageBreak
+      using `\Hy@undefinedname'%
+    }%
+    \let\Hy@testname\Hy@undefinedname
+  \else
+    \Hy@pstringdef\Hy@testname{%
+      \expandafter\HyperDestNameFilter\expandafter{\Hy@testname}%
+    }%
+  \fi
+  \Hy@StartlinkName{%
+    %\ifHy@pdfa /F 4\fi
+%    \Hy@setpdfborder
+%    \Hy@setpdfhighlight
+%    \ifx\CurrentBorderColor\relax
+%    \else
+%      /C[\CurrentBorderColor]%
+%    \fi
+  }\Hy@testname
+  \expandafter\Hy@colorlink\csname @#1color\endcsname
+}
+\def\Hy@StartlinkName#1#2{%
+  \HINTstartlink goto name{#2}\relax
+}
+\def\close@pdflink{%
+  \Hy@endcolorlink
+  \Hy@VerboseLinkStop
+  \HINTendlink
+}
+\def\hyper@anchor#1{%
+  \new@pdflink{#1}\anchor@spot\pdf@endanchor
+}
+\def\hyper@anchorstart#1{%
+  \new@pdflink{#1}%
+  \Hy@activeanchortrue
+}
+\def\hyper@anchorend{%
+  \pdf@endanchor
+  \Hy@activeanchorfalse
+}
+\def\hyper@linkstart#1#2{%
+  \Hy@VerboseLinkStart{#1}{#2}%
+  \ltx@IfUndefined{@#1bordercolor}{%
+    \let\CurrentBorderColor\relax
+  }{%
+    \edef\CurrentBorderColor{\csname @#1bordercolor\endcsname}%
+  }%
+  \find@pdflink{#1}{#2}%
+}
+\def\hyper@linkend{\close@pdflink}
+\def\hyper@link#1#2#3{%
+  \Hy@VerboseLinkStart{#1}{#2}%
+  \ltx@IfUndefined{@#1bordercolor}{%
+    \let\CurrentBorderColor\relax
+  }{%
+    \edef\CurrentBorderColor{\csname @#1bordercolor\endcsname}%
+  }%
+  \find@pdflink{#1}{#2}#3\Hy@xspace@end
+  \close@pdflink
+}
+\let\CurrentBorderColor\@linkbordercolor
+\def\hyper@linkurl#1#2{}%
+\def\hyper@linkfile#1#2#3{}% anchor text, filename, linkname
+\def\@hyper@launch run:#1\\#2#3{}% filename, anchor text linkname
+\def\PDF@SetupDoc{}
+\def\PDF@FinishDoc{}%
+ 
+
+\def\Hy@writebookmark#1#2#3#4#5{%
+    % section number, text, label, level, file
+  \ifx\WriteBookmarks\relax%
+  \else
+     \HINToutline goto name{#3} depth #4 {#2}%
+  \fi
+}
+\def\Hy@currentbookmarklevel{0}
+\def\Hy@numberline#1{#1 }
+\def\Hy@OutlineRerunCheck{}
+\def\ReadBookmarks{}
+\def\Hy@OutlineName#1#2#3#4{}
+\ifHy@implicit
+\else
+  \expandafter\endinput
+\fi
+\newlength\Hy@SectionHShift
+\def\Hy@SectionAnchorHref#1{%
+  \ifx\protect\@typeset@protect
+    \Hy@@SectionAnchor{#1}%
+  \fi
+}
+\DeclareRobustCommand*{\Hy@@SectionAnchor}[1]{%
+  \leavevmode
+  \hbox to 0pt{%
+    \kern-\Hy@SectionHShift
+    \Hy@raisedlink{%
+      \hyper@anchorstart{#1}\hyper@anchorend
+    }%
+    \hss
+  }%
+}
+\@ifundefined{hyper@nopatch@sectioning}
+{
+\let\H@old@ssect\@ssect
+\def\@ssect#1#2#3#4#5{%
+  \Hy@MakeCurrentHrefAuto{section*}%
+  \setlength{\Hy@SectionHShift}{#1}%
+  \begingroup
+    \toks@{\H@old@ssect{#1}{#2}{#3}{#4}}%
+    \toks\tw@\expandafter{%
+      \expandafter\Hy@SectionAnchorHref\expandafter{\@currentHref}%
+      #5%
+    }%
+  \edef\x{\endgroup
+    \the\toks@{\the\toks\tw@}%
+  }\x
+}
+\let\H@old@schapter\@schapter
+\def\@schapter#1{%
+  \begingroup
+    \let\@mkboth\@gobbletwo
+    \Hy@MakeCurrentHrefAuto{\Hy@chapapp*}%
+    \Hy@raisedlink{%
+      \hyper@anchorstart{\@currentHref}\hyper@anchorend
+    }%
+  \endgroup
+  \H@old@schapter{#1}%
+}
+\ltx@IfUndefined{@chapter}{}{%
+  \let\Hy@org@chapter\@chapter
+  \def\@chapter{%
+    \def\Hy@next{%
+      \Hy@MakeCurrentHrefAuto{\Hy@chapapp*}%
+      \Hy@raisedlink{%
+        \hyper@anchorstart{\@currentHref}\hyper@anchorend
+      }%
+    }%
+    \ifnum\c@secnumdepth>\m@ne
+      \ltx@IfUndefined{if@mainmatter}%
+      \iftrue{\csname if@mainmatter\endcsname}%
+        \let\Hy@next\relax
+      \fi
+    \fi
+    \Hy@next
+    \Hy@org@chapter
+  }%
+}
+\let\H@old@part\@part
+\@ifundefined{chapter}
+  {\let\Hy@secnum@part\z@}
+  {\let\Hy@secnum@part\m@ne}
+\def\@part{%
+  \ifnum\Hy@secnum@part>\c@secnumdepth
+    \phantomsection
+  \fi
+  \H@old@part
+}
+\let\H@old@spart\@spart
+\def\@spart#1{%
+  \Hy@MakeCurrentHrefAuto{part*}%
+  \Hy@raisedlink{%
+    \hyper@anchorstart{\@currentHref}\hyper@anchorend
+  }%
+  \H@old@spart{#1}%
+}
+\let\H@old@sect\@sect
+\def\@sect#1#2#3#4#5#6[#7]#8{%
+  \ifnum #2>\c@secnumdepth
+    \expandafter\@firstoftwo
+  \else
+    \expandafter\@secondoftwo
+  \fi
+  {%
+    \Hy@MakeCurrentHrefAuto{section*}%
+    \setlength{\Hy@SectionHShift}{#3}%
+    \begingroup
+      \toks@{\H@old@sect{#1}{#2}{#3}{#4}{#5}{#6}[{#7}]}%
+      \toks\tw@\expandafter{%
+        \expandafter\Hy@SectionAnchorHref\expandafter{\@currentHref}%
+        #8%
+      }%
+    \edef\x{\endgroup
+      \the\toks@{\the\toks\tw@}%
+    }\x
+  }{%
+    \H@old@sect{#1}{#2}{#3}{#4}{#5}{#6}[{#7}]{#8}%
+  }%
+}
+}{}
+\expandafter\def\csname Parent-4\endcsname{}
+\expandafter\def\csname Parent-3\endcsname{}
+\expandafter\def\csname Parent-2\endcsname{}
+\expandafter\def\csname Parent-1\endcsname{}
+\expandafter\def\csname Parent0\endcsname{}
+\expandafter\def\csname Parent1\endcsname{}
+\expandafter\def\csname Parent2\endcsname{}
+\expandafter\def\csname Parent3\endcsname{}
+\expandafter\def\csname Parent4\endcsname{}
+\endinput
+%%
+%% End of file `hpdftex.def'.
