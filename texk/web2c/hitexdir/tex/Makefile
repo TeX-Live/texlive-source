@@ -10,12 +10,16 @@ hitex_tex_dir = $(texmf_dist)/tex/hitex/base
 #
 install:
 	for f in hilatex.ini hiltxpage.tex hiplainpage.tex \
-	         hitex.ini ifhint.tex; do \
+	         hitex.ini ifhint.tex hhitex.def ; do \
 	  $(INSTALL_DATA) $$f $(hitex_tex_dir)/ || exit 1; done
 	cd $(hitex_tex_dir) && /bin/pwd && svn status
 
 fmt: hitex.fmt
+
 hitex.fmt: hitex.ini
+	hitex -ini -etex -ltx $<
+
+hilatex.fmt: hilatex.ini
 	hitex -ini -etex -ltx $<
 
 clean:
