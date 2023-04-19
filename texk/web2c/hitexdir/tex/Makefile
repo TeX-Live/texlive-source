@@ -14,7 +14,7 @@ install:
 	  $(INSTALL_DATA) $$f $(hitex_tex_dir)/ || exit 1; done
 	cd $(hitex_tex_dir) && /bin/pwd && svn status
 
-fmt: hitex.fmt
+fmt: hitex.fmt hilatex.fmt
 
 hitex.fmt: hitex.ini
 	hitex -ini -etex -ltx $<
