@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.55.0',
-  version: '7.1.0',
+  version: '7.2.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     'cpp_rtti=false',       # Just to support msvc, we are passing -fno-rtti also anyway
@@ -373,7 +373,10 @@ foreach check : check_funcs
 endforeach
 
 subdir('src')
-subdir('util')
+
+if not get_option('utilities').disabled()
+  subdir('util')
+endif
 
 if not get_option('tests').disabled()
   subdir('test')
