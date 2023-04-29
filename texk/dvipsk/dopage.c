@@ -135,8 +135,9 @@ dochar:
       if (mychar>=curfnt->maxchars || !(cd->flags & EXISTS)) {
       /* try fallback */
          chardesctype *cd0;
+         int kind0;
          cd0 = curfnt->localfonts->desc->chardesc;
-         int kind0 = curfnt->localfonts->desc->kind;
+         kind0 = curfnt->localfonts->desc->kind;
          if (mychar<curfnt->localfonts->desc->maxchars && (cd0[mychar].flags & EXISTS)) {
 #ifdef DEBUG
             if (dd(D_FONTS))
