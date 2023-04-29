@@ -32,6 +32,21 @@ upjf-g00.ofm:
 upjv-g00.ofm:
 	opl2ofm upjv-g00.opl
 
+upjf-r00.ofm:
+	opl2ofm upjf-r00.opl
+
+upjv-r00.ofm:
+	opl2ofm upjv-r00.opl
+
+upjf1-r.tfm:
+	uppltotf upjf1-r.pl
+
+upjf1_full.vf:
+	jfmutil zvp02vf upjf1_full.zvp0
+
+upjf1_omit.vf:
+	jfmutil zvp02vf upjf1_omit.zvp0
+
 upjf.dvi: upjf.tex
 	uplatex upjf.tex
 	dvispc -a upjf.dvi upjf.dvitxt

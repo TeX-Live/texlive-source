@@ -725,7 +725,7 @@ DISTCLEANFILES = $(DVIS) $(PSS) beginfontk1.ps eepic-nan.ps pfbincl.ps \
 	*badnews* same-name.out afmtest.tfm dvipstst.ps missfont.log \
 	mtest.ps missing-image.ps overflow-color-push.ps \
 	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjv.vf \
-	upjf-g.ofm upjv-g.ofm upjf_full.ps upjf_omit.ps
+	upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf*_full.ps upjf*_omit*.ps
 enc_DATA = dvips-all.enc
 prolog_DATA = $(prologues)
 dist_prologues = \
@@ -766,15 +766,19 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/upjv-r.tfm testdata/upjv_full.vf \
 	testdata/upjv_omit.vf testdata/upjf-g00.opl \
 	testdata/upjf-g00.ofm testdata/upjv-g00.opl \
-	testdata/upjv-g00.ofm testdata/upjf_full.cnf \
-	testdata/upjf_omit.cnf NEWS TODO testdata/intoverflow.dvi \
-	testdata/vfnameoverflow.dvi atari cmfonts.map config.ps \
-	contrib/afm-extra contrib/colorsep.lpro contrib/configs \
-	contrib/crop.lpr contrib/latex209 contrib/treen.sh \
-	contrib/treen2.sh contrib/volker contrib/whichinpath \
-	cyrfonts.map eufonts.map flib.c hps/CHANGES_HPS.txt \
-	hps/README_HPS.txt lafonts.map makefont.c mvs psfonts.map tex \
-	vmcms vms
+	testdata/upjv-g00.ofm testdata/upjf-r00.opl \
+	testdata/upjf-r00.ofm testdata/upjv-r00.opl \
+	testdata/upjv-r00.ofm testdata/upjf1-r.pl testdata/upjf1-r.tfm \
+	testdata/upjf1_full.zvp0 testdata/upjf1_full.vf \
+	testdata/upjf1_omit.zvp0 testdata/upjf1_omit.vf \
+	testdata/upjf_full.cnf testdata/upjf_omit.cnf NEWS TODO \
+	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
+	cmfonts.map config.ps contrib/afm-extra contrib/colorsep.lpro \
+	contrib/configs contrib/crop.lpr contrib/latex209 \
+	contrib/treen.sh contrib/treen2.sh contrib/volker \
+	contrib/whichinpath cyrfonts.map eufonts.map flib.c \
+	hps/CHANGES_HPS.txt hps/README_HPS.txt lafonts.map makefont.c \
+	mvs psfonts.map tex vmcms vms
 CLEANFILES = $(prologues) texc.lpro
 TEST_EXTENSIONS = .pl .test
 TESTS = test-afm2tfm.test beginfontk1.test eepic-nan.test pfbincl.test \

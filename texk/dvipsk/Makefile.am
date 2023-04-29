@@ -193,8 +193,13 @@ EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdat
               testdata/upjv_full.vf testdata/upjv_omit.vf \
               testdata/upjf-g00.opl testdata/upjf-g00.ofm \
               testdata/upjv-g00.opl testdata/upjv-g00.ofm \
+              testdata/upjf-r00.opl testdata/upjf-r00.ofm \
+              testdata/upjv-r00.opl testdata/upjv-r00.ofm \
+              testdata/upjf1-r.pl testdata/upjf1-r.tfm \
+              testdata/upjf1_full.zvp0 testdata/upjf1_full.vf \
+              testdata/upjf1_omit.zvp0 testdata/upjf1_omit.vf \
               testdata/upjf_full.cnf testdata/upjf_omit.cnf
-DISTCLEANFILES += upjf.vf upjv.vf upjf-g.ofm upjv-g.ofm upjf_full.ps upjf_omit.ps
+DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf*_full.ps upjf*_omit*.ps
 
 EXTRA_DIST += \
 	NEWS \
