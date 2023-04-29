@@ -1,3 +1,21 @@
+2023-04-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {vf,tfm}.c:
+	Fallback multibyte characters in virtual fonts to
+	OFM fonts for (u)pTeX.
+	https://github.com/texjporg/tex-jp-build/issues/99
+	* configure.ac: version 20230429.
+	* dvipdfmx-upjf.test, Makefile_upjf, tests/upjf-r00.{ofm,opl},
+	tests/upjv-r00.{ofm,opl}, tests/upjf1-r.{tfm,pl},
+	tests/upjf1_{full,omit}.{vf,zvp0}, Makefile.am:
+	Add new tests for fallback virtual font to OFM.
+
+	The rule for virtual fonts (VF) fallback is extended:
+	If a VF has no entry of a codepoint and the first
+	MAPFONT designates an OFM for (u)pTeX, then we designate the
+	glyph (usually with a fullwidth metric) of the same codepoint
+	with the same metrics of the codepoint in the OFM.
+
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.

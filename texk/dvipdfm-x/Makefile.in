@@ -821,7 +821,8 @@ cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
-	ttc*.pdf upjf.vf upjv.vf upjf-g.ofm upjv-g.ofm upjf*.pdf
+	ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
+	upjf*.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
 	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
@@ -848,7 +849,11 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjv_full.vf tests/upjv_omit.vf tests/upjv-r.tfm \
 	tests/upjv-g.tfm tests/upjv.tfm tests/UPJF-UTF16-V \
 	tests/upjf-g00.opl tests/upjf-g00.ofm tests/upjv-g00.opl \
-	tests/upjv-g00.ofm tests/fullmap.dvi tests/fullmap.tex
+	tests/upjv-g00.ofm tests/upjf-r00.opl tests/upjf-r00.ofm \
+	tests/upjv-r00.opl tests/upjv-r00.ofm tests/upjf1-r.pl \
+	tests/upjf1-r.tfm tests/upjf1_full.zvp0 tests/upjf1_full.vf \
+	tests/upjf1_omit.zvp0 tests/upjf1_omit.vf tests/fullmap.dvi \
+	tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

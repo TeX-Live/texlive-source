@@ -1,21 +1,21 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2020-2022 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2020-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 TEXMFCNF=$srcdir/../kpathsea
-TFMFONTS="$srcdir/tests;$srcdir/data"
+TFMFONTS=".;$srcdir/tests;$srcdir/data"
 T1FONTS="$srcdir/tests;$srcdir/data"
 TEXFONTMAPS="$srcdir/tests;$srcdir/data"
 DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
 TEXPICTS=$srcdir/tests
-TEXFONTS="$srcdir/tests;."
+TEXFONTS=".;$srcdir/tests"
 SOURCE_DATE_EPOCH=1588474800
 export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS SOURCE_DATE_EPOCH
 
 failed=
 
-rm -f upjf.vf upjv.vf upjf-g.ofm upjv-g.ofm
+rm -f upjf.vf upjv.vf upjf-g.ofm upjv-g.ofm upjf-r.ofm upjv-r.ofm upjf-r.tfm
 
 echo "*** dvipdfmx: test for upjf_full.pdf" && echo \
 	&& cp $srcdir/tests/upjf_full.vf ./upjf.vf \
@@ -37,8 +37,52 @@ echo "*** dvipdfmx: test for upjf_omit.pdf" && echo \
 
 cmp ./upjf_full.pdf ./upjf_omit.pdf || failed="$failed dvipdfmx-upjf-cmp"
 
+echo "*** dvipdfmx: test for upjf_omit2.pdf" && echo \
+	&& cp $srcdir/tests/upjf-r00.ofm ./upjf-r.ofm \
+	&& cp $srcdir/tests/upjv-r00.ofm ./upjv-r.ofm \
+	&& ./xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf.map -o upjf.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf.pdf ./upjf_omit2.pdf \
+	&& echo && echo "dvipdfmx-upjf-vf_omit2 tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf-vf_omit2"
+
+cmp ./upjf_full.pdf ./upjf_omit2.pdf || failed="$failed dvipdfmx-upjf-cmp2"
+
+
+rm -f upjf-r.ofm upjv-r.ofm
+
+echo "*** dvipdfmx: test for upjf1_full.pdf" && echo \
+	&& cp $srcdir/tests/upjf1_full.vf ./upjf.vf \
+	&& cp $srcdir/tests/upjv_full.vf ./upjv.vf \
+	&& cp $srcdir/tests/upjf1-r.tfm ./upjf-r.tfm \
+	&& ./xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf.map -o upjf1.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf1.pdf ./upjf1_full.pdf \
+	&& echo && echo "dvipdfmx-upjf1-vf_full tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf1-vf_full"
+
+echo "*** dvipdfmx: test for upjf1_omit.pdf" && echo \
+	&& cp $srcdir/tests/upjf1_omit.vf ./upjf.vf \
+	&& cp $srcdir/tests/upjv_omit.vf ./upjv.vf \
+	&& ./xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf.map -o upjf1.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf1.pdf ./upjf1_omit.pdf \
+	&& echo && echo "dvipdfmx-upjf1-vf_omit tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf1-vf_omit"
+
+cmp ./upjf1_full.pdf ./upjf1_omit.pdf || failed="$failed dvipdfmx-upjf1-cmp"
+
+rm -f upjf-r.tfm
+
+echo "*** dvipdfmx: test for upjf1_omit2.pdf" && echo \
+	&& cp $srcdir/tests/upjf-r00.ofm ./upjf-r.ofm \
+	&& cp $srcdir/tests/upjv-r00.ofm ./upjv-r.ofm \
+	&& ./xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf.map -o upjf1.pdf $srcdir/tests/upjf.dvi \
+	&& mv ./upjf1.pdf ./upjf1_omit2.pdf \
+	&& echo && echo "dvipdfmx-upjf1-vf_omit2 tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf1-vf_omit2"
+
+cmp ./upjf1_full.pdf ./upjf1_omit2.pdf || failed="$failed dvipdfmx-upjf1-cmp"
+
+
 test -z "$failed" && exit 0
 echo
 echo "failed tests:$failed"
 exit 1
-
