@@ -1,5 +1,0 @@
-#!/bin/sh
-
-luajittex --luaonly $(dirname $0)/mtxrun "$@"
-
-# luajittex --luaonly ${0%jit} "$@"
