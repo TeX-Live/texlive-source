@@ -1,5 +1,5 @@
 #!/bin/sh
-version=3.03
+version=3.04
 #########################################################################
 ##                                                                     ##
 ##  pdfjam: A shell-script interface to the "pdfpages" LaTeX package   ##
@@ -7,7 +7,7 @@ version=3.03
 ##                                                                     ##
 ##  Author: David Firth (http://warwick.ac.uk/dfirth)                  ##
 ##                                                                     ##
-##  Usage: see https://github.com/DavidFirth/pdfjam                    ##
+##  Usage: see https://github.com/rrthomas/pdfjam                      ##
 ##         or "pdfjam --help"                                          ##
 ##                                                                     ##
 ##  Relies on:                                                         ##
@@ -135,6 +135,11 @@ where
                   Provide text for the  Title, Author, Subject and Keywords
                   in the output PDF file.  Requires the  LaTeX 'hyperref'
                   package.  These options, individually, over-ride --keepinfo.
+     --longedge
+     --shortedge
+		  Specify the direction in which double-sided pages are
+		  flipped. It may not work correctly in all cases, so if every
+		  other page is rotated 180°, flip this switch.
      --landscape
      --no-landscape
                   Specify landscape page orientation (or not) in the
@@ -180,20 +185,37 @@ where
      --vanilla
                   Suppress the reading of any site-wide or user-specific
                   configuration files.
+     --enc
+                  Specify a command-line encoding
+                  [Default for you at this site: enc=$enc]
      --KEY VALUE
                   Specify options to '\includepdfmerge', in the LaTeX
-                  'pdfpages' package.  Here KEY is the name of any of the
-                  many options for '\includepdfmerge', and VALUE is a
-                  corresponding value.  Examples are
+                  'pdfpages' package.  See the the pdfpages documentation
+                  (usually 'texdoc pdfpages') for more information.
+                  Here KEY is the name of any of the many options for
+                  '\includepdfmerge', and VALUE is a corresponding value.
+                  Examples:
                       --nup 2x1     (for 2-up side-by-side imposition)
                       --scale 0.7   (to scale all input pages to 70% size)
                       --offset '1cm 0.5cm'
                                     (to offset all pages -- note the quotes!)
                       --frame true  (to put a frame round each input page)
+                      --booklet true (to reorder the pages in signatures,
+                                      generally useful with --nup)
+                      --signature N (specify the signature size, as the 
+                                     number of original pages in a signature
+                                     in the final document. Caveat: booklet
+                                     is a short form for signature, so if 
+                                     you use booklet true, signature will be
+                                     ignored)
                       --trim '1cm 2cm 1cm 2cm' --clip true
                                     (to trim those amounts from left, bottom,
                                      right and top, respectively, of input 
                                      pages) 
+                      --angle NNN (The angle of rotation in degrees. Angles 
+                                   that are not either 90, 180 or 270 will
+                                   still create straight rectangular pages,
+                                   only the content will be rotated.)
                   etc., etc.  For more information see the manual for
                   the 'pdfpages' package, at
                   http://www.ctan.org/tex-archive/macros/latex/contrib/pdfpages
@@ -211,7 +233,7 @@ necessary.  Any user-specific configuration should be put in a file named
 if the '--vanilla' argument is used.)
 
 For more information, including a sample configuration file, see
-https://github.com/DavidFirth/pdfjam.
+https://github.com/rrthomas/pdfjam.
 "
 ##
 ##  END OF HELP TEXT
@@ -303,14 +325,14 @@ prattle () { ## second argument here is non-null for continuation lines
 	    if  test $lineCounter -eq 1  &&  test ! -n "${2}" ;
 	    then 
 		if test -w "$PDFJAM_MESSAGES_FILE"
-		then printf "$prefix1$indent %s\n" "$line" 1>/dev/null >> \
+		then printf "$prefix1$indent %s\n" "$line" >> \
                        "$PDFJAM_MESSAGES_FILE"
 		else messages="$messages$prefix1$indent $line$newline"  
                        ## msg file not made yet
 		fi
 	    else 
 		if test -w "$PDFJAM_MESSAGES_FILE"
-		then printf "$prefix2$indent %s\n" "$line" 1>/dev/null >> \
+		then printf "$prefix2$indent %s\n" "$line" >> \
                        "$PDFJAM_MESSAGES_FILE"
 		else messages="$messages$prefix2$indent $line$newline"  
                        ## msg file not made yet
@@ -342,7 +364,7 @@ prattle "This is pdfjam version ${version}."
 ##  once, the last instance prevails.)
 ##
 ##  An example configuration file can be found at
-##     https://github.com/DavidFirth/pdfjam
+##     https://github.com/rrthomas/pdfjam
 ##
 ##  The path searched for site-wide configuration files can be changed
 ##  by editing the variable 'configpath' at the top of this file.
@@ -353,15 +375,17 @@ prattle "This is pdfjam version ${version}."
 latex=$(command -v pdflatex)
 if [ -z "$latex" ] ; then latex="not found" ; fi
 ##
-##  Likewise for the pdfinfo (only needed for `--keepinfo'):
+##  Likewise for the pdfinfo and iconv (only needed for `--keepinfo'):
 ##
 pdfinfo=$(command -v pdfinfo)
 if [ -z "$pdfinfo" ] ; then pdfinfo="not found"; fi
+iconv=$(command -v iconv)
+if [ -z "$iconv" ] ; then iconv="not found"; fi
 ##
 ##
 ##  Next a permitted location for temporary files on your system:
 ##
-tempfileDir='/var/tmp'   ##  /var/tmp is standard on most unix systems
+tempfileDir=${TMPDIR:-'/tmp'}  ##  /tmp is standard on most unix systems
 ##
 ##
 ##  Default for the output file location:
@@ -370,6 +394,8 @@ outFile="$pwd"           ##  Output to the current working directory
 ##
 ##
 ##  A few more default settings for pdfjam:
+##
+shortedge='true'           ## Default paper is rotated shortedge when doing book
 ##
 runs=1                     ## Run latex just once
 ##
@@ -584,6 +610,14 @@ while test -n "${1}${2}"; do
 			tidy=false ;
 			callOptions="$callOptions --no-tidy" ;
 			;;
+		    --shortedge)
+			shortedge=true ;
+			callOptions="$callOptions --shortedge" ;
+			;;
+		    --longedge)
+			shortedge=false ;
+			callOptions="$callOptions --longedge" ;
+			;;
 		    --keepinfo)
 			keepinfo=true ;
 			callOptions="$callOptions --keepinfo" ;
@@ -680,6 +714,10 @@ while test -n "${1}${2}"; do
 			;;
 		    --preamble)
 			preamble="$preamble${2}" ;
+			shift ;;
+		    --enc) # command line encoding
+			enc="${2}"
+			callOptions="$callOptions ${1} ${2}"
 			shift ;;
 		    --*)
                         ##  options for \includepdfmerge
@@ -815,6 +853,12 @@ case $twoside in
     *)
 	twoside="" ;;
 esac
+case $shortedge in
+    true)
+	shortedge="" ;;
+    *)
+	shortedge='\usepackage{everyshi}\makeatletter\EveryShipout{\ifodd\c@page\pdfpageattr{/Rotate 180}\fi}\makeatother' ;;
+esac
 if test "$geometry" != false
 then
 ##  we haven't already found that geometry.sty is missing
@@ -843,7 +887,7 @@ documentOptions=$(printf "%s" "$documentOptions" | sed 's/^,//' | sed 's/,$//')
 if test $PDFJAM_CALL_NUMBER -eq 0  ## not a secondary call
 then
     ##  Check whether there's a suitable latex to use:
-    case $latex in
+    case "$latex" in
 	"not found")
 	    error_exit "can't find pdflatex!" $E_UNAVAILABLE
 	    ;;
@@ -868,31 +912,13 @@ then
     error_exit \
 	"LaTeX package pdfpages.sty is not installed" \
 	$E_UNAVAILABLE
-    (kpsewhich eso-pic.sty >/dev/null) ||
-    error_exit \
-	"LaTeX package eso-pic.sty not installed (see the pdfpages manual)" \
-	$E_UNAVAILABLE
-    (kpsewhich everyshi.sty >/dev/null) ||
-    error_exit \
-	"LaTeX package everyshi.sty not installed (see the pdfpages manual)" \
-	$E_UNAVAILABLE
-    if test "$keepinfo" = true ||
-	test -n "$pdfTitle$pdfSubject$pdfAuthor$pdfKeywords"
-    ##  ie, if hyperref is required
-    then
-	(kpsewhich hyperref.sty >/dev/null) || {
-	    prattle "LaTeX package hyperref.sty is not installed, so any"
-	    prattle "--keepinfo, --pdftitle,--pdfauthor, --pdfsubject or" 1
-	    prattle "--pdfkeywords setting will be ignored." 1
-	    hyperref=false
-	    if test "$batch" = true
-	    then
-		export hyperref   ## for use in any secondary calls
-	    fi
-	}
-    else
-	hyperref=false
-    fi
+
+    for pack in pdflscape eso-pic everyshi atbegshi ; do
+        (kpsewhich $pack.sty >/dev/null) ||
+        error_exit \
+	    "LaTeX package $pack.sty is not installed (see the pdfpages manual)" \
+	    $E_UNAVAILABLE
+    done
     if test "$geometry" = true
     ##  ie, if the 'geometry' package is needed for paper size
     then
@@ -907,38 +933,67 @@ then
 	}
     fi
 fi
-if test "$hyperref" = false
+if  test "$keepinfo" = true
 then
-    keepinfo=false
-    pdfTitle="" ; pdfAuthor="" ; pdfSubject="" ; pdfKeywords=""
-else
-    if  test "$keepinfo" = true
-    then
-	case $pdfinfo in
-	    "not found")
-		if test $PDFJAM_CALL_NUMBER -eq 0
-		then
-		  prattle \
-		  "The pdfinfo utility was not found, so --keepinfo is ignored."
-		fi
-		keepinfo=false
-		;;
-	    pdfinfo)
-		;;
-	    *)  ## $pdfinfo was set in a configuration file
-		if test ! -x "$pdfinfo"
-		then
-		    if test $PDFJAM_CALL_NUMBER -eq 0
-		    then
-			prattle \
-		     "No pdfinfo utility at $pdfinfo, so --keepinfo is ignored."
-			keepinfo=false
-		    fi
-		fi
-		;;
-	esac
-    fi
+    case "$pdfinfo" in
+	"not found")
+	  if test $PDFJAM_CALL_NUMBER -eq 0
+	  then
+	    prattle \
+	      "The pdfinfo utility was not found, so --keepinfo is ignored."
+	  fi
+	  keepinfo=false
+	  ;;
+	pdfinfo)
+	  ;;
+	*)  ## $pdfinfo was set in a configuration file
+	  if test ! -x "$pdfinfo"
+	  then
+	    if test $PDFJAM_CALL_NUMBER -eq 0
+	    then
+	      prattle \
+		"No pdfinfo utility at $pdfinfo, so --keepinfo is ignored."
+	      keepinfo=false
+	    fi
+	  fi
+	  ;;
+    esac
+    case "$iconv" in
+	"not found")
+	  if test $PDFJAM_CALL_NUMBER -eq 0
+	  then
+	    prattle \
+	      "The iconv utility was not found, so --keepinfo is ignored."
+	  fi
+	  keepinfo=false
+	  ;;
+	iconv)
+	  ;;
+	*)  ## $iconv was set in a configuration file
+	  if test ! -x "$iconv"
+	  then
+	    if test $PDFJAM_CALL_NUMBER -eq 0
+	    then
+	      prattle \
+		"No iconv utility at $iconv, so --keepinfo is ignored."
+	      keepinfo=false
+	    fi
+	  fi
+	  ;;
+    esac
 fi
+## A function to check if using non-Cygwin "${latex}" from Cygwin
+using_non_cygwin_latex_from_cygwin () {
+    if [ -z "${__cache__using_non_cygwin_latex_from_cygwin}" ]; then
+	if [ "$(uname -o)" = "Cygwin" ] \
+	    && "${latex}" -version | head -1 | grep -qv Cygwin; then
+	    __cache__using_non_cygwin_latex_from_cygwin=0
+	else
+	    __cache__using_non_cygwin_latex_from_cygwin=1
+	fi
+    fi
+    return "${__cache__using_non_cygwin_latex_from_cygwin}"
+}
 ##
 ##  END OF CHECKING THE SETUP
 ##
@@ -988,9 +1043,9 @@ else
 fi
 umask "$original_umask"
 ## Next is from the Cygwin patch contributed by Lucas
-case $(uname) in
-    *CYGWIN*) PDFJAM_TEMP_DIR=$(cygpath -w "$PDFJAM_TEMP_DIR");;
-esac
+if using_non_cygwin_latex_from_cygwin; then
+    PDFJAM_TEMP_DIR=$(cygpath -w "$PDFJAM_TEMP_DIR")
+fi
 ##
 ##  TEMPORARY DIRECTORY ALL DONE
 ##
@@ -1116,10 +1171,11 @@ do
 	    uniqueName="source-$counter.pdf"
 	    uniqueName="$PDFJAM_TEMP_DIR"/"$uniqueName"
 	    ## Next is from the Cygwin patch contributed by Lucas
-	    case $(uname) in
-		*CYGWIN*) cp "$sourceFullPath" "$uniqueName";;
-		*) ln -s "$sourceFullPath" "$uniqueName";;
-            esac
+	    if using_non_cygwin_latex_from_cygwin; then
+		cp "$sourceFullPath" "$uniqueName"
+	    else
+		ln -s "$sourceFullPath" "$uniqueName"
+	    fi
 	    ;;
     esac
     filePageList="$filePageList","$uniqueName","$pageSpec"
@@ -1130,38 +1186,55 @@ filePageList=$(printf "%s" "$filePageList" | \
 ##
 ##  Do the pdfinfo stuff (if relevant)...
 ##
-if  test "$hyperref" != false
-then
-    if test "$keepinfo" = true
-    then
-	prattle "Calling ${pdfinfo}..."  ;
-	PDFinfo=$(pdfinfo "$uniqueName");
-	pdftitl=$(printf "%s" "$PDFinfo" | \
-	    grep -e '^Title:'| 'sed s/^Title:\\\s\*//' | \
-	    sed -e 's/[#$%^&_{}~]/\\\&/g');
-	pdfauth=$(printf "%s" "$PDFinfo" | \
-	    grep -e '^Author:'| sed 's/^Author:\\\s\*//' | \
-	    sed -e 's/[#$%^&_{}~]/\\\&/g');
-	pdfsubj=$(printf "%s" "$PDFinfo" | \
-	    grep -e '^Subject:'| sed 's/^Subject:\\\s\*//' | \
-	    sed -e 's/[#$%^&_{}~]/\\\&/g');
-	pdfkeyw=$(printf "%s" "$PDFinfo" | \
-	    grep -e '^Keywords:'| sed 's/^Keywords:\\\s\*//' | \
-	    sed -e 's/[#$%^&_{}~]/\\\&/g');
+select_pdfinfo () {
+    printf '%s' "$2" | \
+    grep -e "^$1:" | \
+    sed -e 's/^'"$1"':\s*//'
+}
+echo_hex_iconv_utf16be () {
+    printf '%s' "$1" | \
+    "$iconv" -f utf8 -t utf16be | \
+    od -An -v -tx1 | \
+    tr -d '[:space:]'
+}
+echo_pdfinfodata () {
+    if [ -n "$2" ]; then
+	TMPA=$(echo_hex_iconv_utf16be "$2")
+	printf '%s' "/$1 <feff${TMPA}>"
     fi
-    if test -n "$pdfTitle" ; then
-	pdftitl="$pdfTitle"
-    fi
-    if test -n "$pdfAuthor" ; then
-	pdfauth="$pdfAuthor"
-    fi
-    if test -n "$pdfSubject" ; then
-	pdfsubj="$pdfSubject"
-    fi
-    if test -n "$pdfKeywords" ; then
-	pdfkeyw="$pdfKeywords"
-    fi
+}
+
+if test "$keepinfo" = true ; then
+    prattle "Calling ${pdfinfo}..."
+    PDFinfo=$(pdfinfo -enc UTF-8 "$uniqueName")
+    pdftitl=$(select_pdfinfo 'Title'    "$PDFinfo")
+    pdfauth=$(select_pdfinfo 'Author'   "$PDFinfo")
+    pdfsubj=$(select_pdfinfo 'Subject'  "$PDFinfo")
+    pdfkeyw=$(select_pdfinfo 'Keywords' "$PDFinfo")
 fi
+echo_iconv_from_enc () {
+    printf '%s' "$2" | \
+    "$iconv" -f "$1" -t utf8
+}
+if test -n "$pdfTitle" ; then
+    pdftitl=$(echo_iconv_from_enc "$enc" "$pdfTitle")
+fi
+if test -n "$pdfAuthor" ; then
+    pdfauth=$(echo_iconv_from_enc "$enc" "$pdfAuthor")
+fi
+if test -n "$pdfSubject" ; then
+    pdfsubj=$(echo_iconv_from_enc "$enc" "$pdfSubject")
+fi
+if test -n "$pdfKeywords" ; then
+    pdfkeyw=$(echo_iconv_from_enc "$enc" "$pdfKeywords")
+fi
+
+## Converting to PDF string
+raw_pdftitl=$(echo_pdfinfodata 'Title'    "$pdftitl")
+raw_pdfauth=$(echo_pdfinfodata 'Author'   "$pdfauth")
+raw_pdfsubj=$(echo_pdfinfodata 'Subject'  "$pdfsubj")
+raw_pdfkeyw=$(echo_pdfinfodata 'Keywords' "$pdfkeyw")
+
 ##
 ##  Now set up the files for latex...
 ##
@@ -1170,29 +1243,32 @@ texFile="$fileName".tex
 msgFile="$fileName".msgs
 tempFile="$PDFJAM_TEMP_DIR"/temp.tex
 ## Next is adapted from the Cygwin patch sent by Lucas
-case $(uname) in
-    *CYGWIN*) filePageList=$(echo "$filePageList" | sed 's~\\~/~g') ;;
-esac
+if using_non_cygwin_latex_from_cygwin; then
+    filePageList=$(echo "$filePageList" | sed 's~\\~/~g')
+fi
 (cat <<EndTemplate
 \batchmode
 \documentclass[$documentOptions]{article}
 \usepackage{color} \definecolor{bgclr}{RGB}{$pagecolor} \pagecolor{bgclr}
 \usepackage[$papersize]{geometry}
 \usepackage[utf8]{inputenc}
-\usepackage{hyperref}
-\hypersetup{pdftitle={$pdftitl}}
-\hypersetup{pdfauthor={$pdfauth}}
-\hypersetup{pdfsubject={$pdfsubj}}
-\hypersetup{pdfkeywords={$pdfkeyw}}
+\ifdefined\luatexversion% LuaLaTeX
+  \protected\def\pdfinfo{\pdfextension info}
+\fi
+\ifdefined\XeTeXversion% XeLaTeX
+  \protected\def\pdfinfo#1{\AtBeginDvi{\special{pdf:docinfo << #1 >>}}}
+\fi
+\ifdefined\pdfinfo%
+  \pdfinfo{%
+    $raw_pdftitl %
+    $raw_pdfauth %
+    $raw_pdfsubj %
+    $raw_pdfkeyw %
+  }%
+\fi
 \usepackage{pdfpages}
 EndTemplate
     )  > "$texFile"
-if test "$hyperref" = false; then  ## we don't need hyperref
-    cp "$texFile" "$tempFile"
-    sed '/\\\usepackage{hyperref}/d' "$tempFile" | \
-	sed '/\\\hypersetup.*/d' > "${texFile}"
-    rm "$tempFile"
-fi
 if test -z "$geometry" ; then geometry=false ; fi
 if test "$geometry" = false; then   ## geometry package is not to be used
     cp "$texFile" "$tempFile"
@@ -1206,6 +1282,7 @@ if test -z "$pagecolor"; then   ## color package is not needed
 fi
 (cat <<EndTemplate
 $preamble
+$shortedge
 \begin{document}
 \includepdfmerge[$miscOptions]{$filePageList}
 \end{document}
@@ -1232,7 +1309,7 @@ log file at
 to try to diagnose the problem."
 i=1
 while [ "$i" -le "$runs" ] ; do
-    $latex "$texFile" > "$msgFile" || {
+    "$latex" "$texFile" > "$msgFile" || {
         prattle "$failureText"
         error_exit "Run $i: Output file not written" $E_SOFTWARE
     }
@@ -1276,7 +1353,10 @@ then
     error_exit "no write permission at ${outFile}" $E_CANTCREATE
 fi
 #fileSize=$(wc -c < "$fileName.pdf" | sed 's/^\ *//')
-if cat "$fileName".pdf > "$outFile" 2>/dev/null
+## Avoid explicit output to /dev/stdout.
+if test "$outFile" = "/dev/stdout" \
+   && cat "$fileName".pdf 2> /dev/null \
+   || cat "$fileName".pdf > "$outFile" 2>/dev/null
 then
     prattle "Finished.  Output was written to '${outFile}'."
 else
