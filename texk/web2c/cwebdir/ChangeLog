@@ -1,3 +1,7 @@
+2023-05-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w: Omit thin space in inner TeX mode.
+
 2023-04-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w: Reduce whitespace in output section.

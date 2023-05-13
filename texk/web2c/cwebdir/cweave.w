@@ -2124,7 +2124,8 @@ identifier&|exp|: \.{\\\\\{}identifier with underlines and
  \.{\\X}$n$\.:translated section name\.{\\X}&maybe\cr
 \.{@@(@q)@>}\thinspace section name\thinspace\.{@@>}&|section_scrap|:
  \.{\\X}$n$\.{:\\.\{}section name with special characters
-      quoted\.{\\,\}\\X}&maybe\cr
+      quoted\.{\\,\}\\X}\footnote*{The \.{\\,} (thin space) is omitted
+      in ``inner \TeX\ mode.''}&maybe\cr
 \.{/*}\thinspace comment\thinspace\.{*/}&|insert|: |cancel|
       \.{\\C\{}translated comment\.\} |force|&no\cr
 \.{//}\thinspace comment&|insert|: |cancel|
@@ -4093,7 +4094,7 @@ out(':');
 if (an_output) out_str("\\.{"@q}@>);
 @.\\.@>
 @<Output the text of the section name@>@;
-if (an_output) out_str(@q{@>"\\,}");
+if (an_output) cur_mode==inner?out_str(@q{@>"}"):out_str(@q{@>"\\,}");
 out_str("\\X");
 
 @ @<Output the text...@>=
