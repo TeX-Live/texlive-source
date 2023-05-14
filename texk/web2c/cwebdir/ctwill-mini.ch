@@ -2012,18 +2012,18 @@ The current meaning of every identifier is initially `\.{\\uninitialized}'.
 @z
 
 @x
-must have fewer than 50 characters. If the \TeX\ part starts
+must have fewer than 80 characters. If the \TeX\ part starts
 @y
-must have fewer than 50 characters.
+must have fewer than 80 characters.
 
-@d max_tex_chars 50 /* limit on the \TeX\ part of a meaning */
+@d max_tex_chars 80 /* limit on the \TeX\ part of a meaning */
 @-s@>
 
 @ If the \TeX\ part starts
 @z
 
 @x
-@d max_tex_chars 50 /* limit on the \TeX\ part of a meaning */
+@d max_tex_chars 80 /* limit on the \TeX\ part of a meaning */
 @y
 @z
 

@@ -1456,7 +1456,7 @@ things you don't like.
 The meaning specified by \.{@@\$...@@>} generally has four components:
 an identifier (followed by space), a program name (enclosed in braces),
 a section number (followed by space), and a \TeX\ part. The \TeX\ part
-must have fewer than 50 characters. If the \TeX\ part starts
+must have fewer than 80 characters. If the \TeX\ part starts
 with `\.=', the mini-index entry will contain an equals sign instead
 of a colon; for example,
 $$\.{@@\$buf\_size \{PROG\}10 =\\T\{200\}@@>}$$
@@ -1498,7 +1498,7 @@ which are quite different from the change files you set up for tangling.
 
 (End of user manual.)
 
-@d max_tex_chars 50 /* limit on the \TeX\ part of a meaning */
+@d max_tex_chars 80 /* limit on the \TeX\ part of a meaning */
 
 @q Section 25->273. @>
 @* Temporary and permanent meanings.

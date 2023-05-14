@@ -2,7 +2,8 @@
 
 	* ctwill-mini.ch,
 	* ctwill-w2c.ch: Reshuffle fix for CTWILL;
-	permit '$' in C identifiers (from ctangle.w).
+	permit '$' in C identifiers (from ctangle.w);
+	extend 'ministring_buf' for 'mmotype.{w,ch}' (MMIX).
 
 2023-05-13  Andreas Scherer  <https://ascherer.github.io>
 
