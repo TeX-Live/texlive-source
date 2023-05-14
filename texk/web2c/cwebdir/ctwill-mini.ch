@@ -1052,9 +1052,9 @@ Section 135--136.
 @-cat1@>
 @-cat2@>
 @-cat3@>
-@$cat1 {CTWILL}136 =$(\\{pp}+\T{1})\MG\\{cat}$@>
-@$cat2 {CTWILL}136 =$(\\{pp}+\T{2})\MG\\{cat}$@>
-@$cat3 {CTWILL}136 =$(\\{pp}+\T{3})\MG\\{cat}$@>
+@$cat1 {CTWILL}135 =$(\\{pp}+\T{1})\MG\\{cat}$@>
+@$cat2 {CTWILL}135 =$(\\{pp}+\T{2})\MG\\{cat}$@>
+@$cat3 {CTWILL}135 =$(\\{pp}+\T{3})\MG\\{cat}$@>
 @z
 
 @x
@@ -1205,9 +1205,9 @@ should say, for example, `\.{@@!@@\^\\\&\{operator\}} \.{\$+\{=\}\$@@>}'
 @-no_ident_found@>
 @-case_found@>
 @-operator_found@>
-@$no_ident_found {CTWILL}138 =\hfil\break(\&{token\_pointer}) 0@>
-@$case_found {CTWILL}138 =\hfil\break(\&{token\_pointer}) 1@>
-@$operator_found {CTWILL}138 =\hfil\break(\&{token\_pointer}) 2@>
+@$no_ident_found {CTWILL}137 =\hfil\break(\&{token\_pointer}) 0@>
+@$case_found {CTWILL}137 =\hfil\break(\&{token\_pointer}) 1@>
+@$operator_found {CTWILL}137 =\hfil\break(\&{token\_pointer}) 2@>
 @z
 
 Section 139.
@@ -1230,7 +1230,7 @@ scrap_pointer p)
 make_reserved( /* make the first identifier in |p->trans| like |int| */
 scrap_pointer p)
 @-make_reserved@>
-@$make_reserved {CTWILL}140 \&{static} \&{void} (\,)@>
+@$make_reserved {CTWILL}139 \&{static} \&{void} (\,)@>
 @z
 
 Section 140.
@@ -1250,7 +1250,7 @@ make_underlined(
 /* underline the entry for the first identifier in |p->trans| */
 scrap_pointer p)
 @-make_underlined@>
-@$make_underlined {CTWILL}141 \&{static} \&{void} (\,)@>
+@$make_underlined {CTWILL}140 \&{static} \&{void} (\,)@>
 @z
 
 @x
@@ -1300,7 +1300,7 @@ Section 170.
 @y
 @d force_lines flags['f'] /* should each statement be on its own line? */
 @-force_lines@>
-@$force_lines {CTWILL}171 =\\{flags}[\.{'f'}]@>
+@$force_lines {CTWILL}170 =\\{flags}[\.{'f'}]@>
 @z
 
 Section 173.
@@ -1369,8 +1369,8 @@ Section 202.
 @ @<Print a snapsh...@>=
 @-n@>
 @%
+@$n {CTWILL}197 \&{short}@>
 @$n {CTWILL}198 \&{short}@>
-@$n {CTWILL}199 \&{short}@>
 @z
 
 Section 204.
@@ -1389,7 +1389,7 @@ Section 208.
         next_control==begin_short_comment) return;
 @y
 @-C_parse@>
-@$C_parse {CTWILL}209 \&{static} \&{void} (\,)@>
+@$C_parse {CTWILL}208 \&{static} \&{void} (\,)@>
     if (next_control=='|' || next_control==begin_comment @| ||
         next_control==begin_short_comment) return;
 @z
@@ -1546,7 +1546,7 @@ Section 220.
 @y
 @d make_pb flags['e']
 @-make_pb@>
-@$make_pb {CTWILL}221 =\\{flags}[\.{'e'}]@>
+@$make_pb {CTWILL}220 =\\{flags}[\.{'e'}]@>
 @z
 
 Section 224.
@@ -1558,9 +1558,9 @@ Section 224.
 @-cur_end@>
 @-cur_tok@>
 @-cur_mode@>
-@$cur_end {CTWILL}225 =\\{cur\_state}.\\{end\_field}]@>
-@$cur_tok {CTWILL}225 =\\{cur\_state}.\\{tok\_field}]@>
-@$cur_mode {CTWILL}225 =\\{cur\_state}.\\{mode\_field}]@>
+@$cur_end {CTWILL}224 =\\{cur\_state}.\\{end\_field}]@>
+@$cur_tok {CTWILL}224 =\\{cur\_state}.\\{tok\_field}]@>
+@$cur_mode {CTWILL}224 =\\{cur\_state}.\\{mode\_field}]@>
 @z
 
 Section 227.
@@ -1572,7 +1572,7 @@ text_pointer p)
 push_level( /* suspends the current level */
 text_pointer p)
 @-push_level@>
-@$push_level {CTWILL}228 \&{static} \&{void} (\,)@>
+@$push_level {CTWILL}227 \&{static} \&{void} (\,)@>
 @z
 
 Section 228.
@@ -1757,7 +1757,7 @@ Section 247.
 @y
 @ @d usage_sentinel (struct perm_meaning *)1
 @-usage_sentinel@>
-@$usage_sentinel {CTWILL}248 =(\&{struct} \&{perm\_meaning} ${}{*}{}$) \T{1}@>
+@$usage_sentinel {CTWILL}247 =(\&{struct} \&{perm\_meaning} ${}{*}{}$) \T{1}@>
 @<Translate the current section@>=@+ {
 @z
 
@@ -1770,7 +1770,7 @@ finish_C( /* finishes a definition or a \CEE/ part */
 finish_C( /* finishes a definition or a \CEE/ part */
   boolean visible) /* |true| if we should produce \TeX\ output */
 @-finish_C@>
-@$finish_C {CTWILL}252 \&{static} \&{void} (\,)@>
+@$finish_C {CTWILL}251 \&{static} \&{void} (\,)@>
 @z
 
 Section 252.
@@ -1810,7 +1810,7 @@ sixteen_bits flag)
 footnote( /* outputs section cross-references */
 sixteen_bits flag)
 @-footnote@>
-@$footnote {CTWILL}261 \&{static} \&{void} (\,)@>
+@$footnote {CTWILL}260 \&{static} \&{void} (\,)@>
 @z
 
 Section 261.
@@ -1860,10 +1860,9 @@ Section 271.
 @-head@>
 @-sort_ptr@>
 @-max_sorts@>
-@$depth {CTWILL}272 =\\{cat}@>
-@$head {CTWILL}272 =\\{trans\_plus}.\\{Head}@>
-@$sort_ptr {CTWILL}272 =\\{scrap\_ptr}@>
-@$max_sorts {CTWILL}272 =\\{max_scraps}@>
+@$depth {CTWILL}271 =\\{cat}@>
+@$head {CTWILL}271 =\\{trans\_plus}.\\{Head}@>
+@$sort_ptr {CTWILL}271 =\\{scrap\_ptr}@>
 @z
 
 Section 273.
@@ -1881,7 +1880,7 @@ Section 275.
 @y
 @ Procedure |unbucket| goes through the buckets and adds nonempty lists
 @-unbucket@>
-@$unbucket {CTWILL}276 \&{static} \&{void} (\,)@>
+@$unbucket {CTWILL}275 \&{static} \&{void} (\,)@>
 @z
 
 Section 276.
@@ -2043,7 +2042,7 @@ static struct perm_meaning {
 @y
 static struct perm_meaning {
 @-perm_meaning@>
-@$perm_meaning {CTWILL}293 \&{static} \&{struct}@>
+@$perm_meaning {CTWILL}292 \&{static} \&{struct}@>
 @z
 
 Section 301.
@@ -2066,7 +2065,7 @@ Section 302.
 @-c@>
 @-l@>
 @-make_ministring@>
-@$make_ministring {CTWILL}303 \&{static} \&{void} (\,)@>
+@$make_ministring {CTWILL}302 \&{static} \&{void} (\,)@>
 @z
 
 Section 303.
@@ -2099,8 +2098,8 @@ Section 311.
 @y
 @ @<Write the new meaning to the \.{.aux} file@>=
 @%
-@$p {CTWILL}296 \&{name\_pointer}@>
-@$q {CTWILL}296 \&{struct perm\_meaning} ${}{*}{}$@>
+@$p {CTWILL}295 \&{name\_pointer}@>
+@$q {CTWILL}295 \&{struct perm\_meaning} ${}{*}{}$@>
 @z
 
 Section 312.
@@ -2110,7 +2109,7 @@ Section 312.
 @y
 @<Flag the usage of this identifier, for the mini-index@>=
 @%
-@$p {CTWILL}219 \&{name\_pointer}@>
+@$p {CTWILL}218 \&{name\_pointer}@>
 @z
 
 Section 315.
@@ -2148,7 +2147,7 @@ Section 321.
 @y
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 @-indent_param_decl@>
-@$indent_param_decl {CTWILL}322 =\\{flags}[\.{'i'}]@>
+@$indent_param_decl {CTWILL}321 =\\{flags}[\.{'i'}]@>
 @z
 
 Section 322.
@@ -2158,7 +2157,7 @@ Section 322.
 @y
 @d order_decl_stmt flags['o'] /* should declarations and statements be separated? */
 @-order_decl_stmt@>
-@$order_decl_stmt {CTWILL}323 =\\{flags}[\.{'o'}]@>
+@$order_decl_stmt {CTWILL}322 =\\{flags}[\.{'o'}]@>
 @z
 
 Section 328.
