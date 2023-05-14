@@ -1580,7 +1580,7 @@ new_meaning(
 { char *first=id_first;
   while (xisspace(*first)) first++;
   loc=first;
-  while (xisalpha(*loc)||xisdigit(*loc)||*loc=='_') loc++;
+  while (xisalpha(*loc)||xisdigit(*loc)||isxalpha(*loc)) loc++;
   if (*loc++!=' ')
     err_print(_("! Identifier in meaning should be followed by space"));
   else {@+ int n=0;

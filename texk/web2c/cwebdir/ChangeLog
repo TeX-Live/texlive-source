@@ -1,7 +1,8 @@
 2023-05-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-mini.ch,
-	* ctwill-w2c.ch: Reshuffle fix for CTWILL.
+	* ctwill-w2c.ch: Reshuffle fix for CTWILL;
+	permit '$' in C identifiers (from ctangle.w).
 
 2023-05-13  Andreas Scherer  <https://ascherer.github.io>
 
