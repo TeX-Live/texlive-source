@@ -252,6 +252,16 @@ Section 37.
 @r @ Control codes are converted to \.{CWEAVE}'s internal
 @z
 
+Section 42.
+
+CTWILL hickups on comment and produces unmatched '$' in mini-index.
+
+@x l.646
+skip_TeX(void) /* skip past pure \TEX/ code */
+@y
+skip_TeX(void)
+@z
+
 Section 43.
 
 @x

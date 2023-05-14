@@ -279,12 +279,6 @@ part of all meanings.
 @z
 
 @x
-skip_TeX(void) /* skip past pure \TEX/ code */
-@y
-skip_TeX(void)
-@z
-
-@x
 \yskip\hang |xref_roman|, |xref_wildcard|, |xref_typewriter|, |TeX_string|,
 @y
 \yskip\hang |xref_roman|, |xref_wildcard|, |xref_typewriter|, |TeX_string|,

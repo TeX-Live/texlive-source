@@ -1,3 +1,8 @@
+2023-05-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch: Reshuffle fix for CTWILL.
+
 2023-05-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w: Omit thin space in inner TeX mode.
