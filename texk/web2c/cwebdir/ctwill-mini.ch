@@ -652,6 +652,15 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 @z
 
+@x l.2137
+\.{\\hbox\{}\thinspace stuff\/\thinspace\.\} to the following scrap.
+@y
+\.{\\hbox\{}\thinspace stuff\/\thinspace\.\} to the following scrap.
+
+\smallskip
+*The \.{\\,} (thin space) is omitted in ``inner \TeX\ mode.''
+@z
+
 Sections 117--125.
 
 @x l.7 line numbers refer to 'prod.w'

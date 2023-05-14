@@ -3,7 +3,8 @@
 	* ctwill-mini.ch,
 	* ctwill-w2c.ch: Reshuffle fix for CTWILL;
 	permit '$' in C identifiers (from ctangle.w);
-	extend 'ministring_buf' for 'mmotype.{w,ch}' (MMIX).
+	extend 'ministring_buf' for 'mmotype.{w,ch}' (MMIX);
+	add lost footnote (due to \unvbox255 in ctwimac.tex).
 
 2023-05-13  Andreas Scherer  <https://ascherer.github.io>
 
