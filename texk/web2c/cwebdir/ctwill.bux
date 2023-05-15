@@ -2,7 +2,7 @@
 @$ctwill {CTWILL}3 \&{enum} \&{cweb}@>
 @$cweave {CTWILL}3 \&{enum} \&{cweb}@>
 
-@$program {COMMON.W}18 \&{int}@>
+@$program {COMMON.W}18 \&{cweb}@>
 @$phase {COMMON.W}19 \&{int}@>
 @$common_init {COMMON.W}20 \&{void} (\,)@>
 @$section_text {COMMON.W}21 \&{char} [\,][\,]@>
