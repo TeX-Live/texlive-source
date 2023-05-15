@@ -1,5 +1,31 @@
 2023-05-14  Andreas Scherer  <https://ascherer.github.io>
 
+	* Makefile,
+	* comm-{mac,mini,ql,w2c}.ch,
+	* comm-w2c.h,
+	* common.h,
+	* common.w,
+	* ctang-{bs,pc,ql,vms,w2c,w32}.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-{mini,w2c}.ch,
+	* cweav-{bs,pc,ql,vms,w2c,w32}.ch,
+	* cweave.w,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* po/cweb-tl.pot,
+	* po/cweb.pot,
+	* po/de/cweb-tl.po,
+	* po/de/cweb.po,
+	* po/it/cweb.po,
+	* prod-{cweave,ctwill}.w,
+	* prod.w,
+	* texinputs/dcwebmac.tex,
+	* texinputs/pdfctwimac.tex: CWEB 4.9 release.
+
+2023-05-14  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctwill-mini.ch,
 	* ctwill-w2c.ch: Reshuffle fix for CTWILL;
 	permit '$' in C identifiers (from ctangle.w);

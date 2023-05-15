@@ -20,12 +20,12 @@ This file contributed by Barry Schwartz, trashman@crud.mn.org, 28 Jun 94.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.8)"
+@d banner "This is CWEAVE (Version 4.9)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.8pc/big)"
+@d banner "This is CWEAVE (Version 4.9pc/big)"
 @z
 
 

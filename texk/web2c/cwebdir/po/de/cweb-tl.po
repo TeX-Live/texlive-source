@@ -1,14 +1,14 @@
 # International version of CWEB (CWEBbin, TeXLive).
-# Copyright (C) 2021 Andreas Scherer et al.
+# Copyright (C) 2023 Andreas Scherer et al.
 # This file is distributed under the same license as the CWEB package.
-# Andreas Scherer <https://ascherer.github.io>, 2021.
+# Andreas Scherer <https://ascherer.github.io>.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2021\n"
+"Project-Id-Version: CWEBbin 2023\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-25 14:12+0100\n"
-"PO-Revision-Date: 2021-12-25 14:13+0100\n"
+"POT-Creation-Date: 2023-05-15 16:13+0200\n"
+"PO-Revision-Date: 2023-05-15 16:13+0200\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -33,16 +33,16 @@ msgid "%s: Need one to three file arguments.\n"
 msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
 
 #: ctang-texlive.ch:39
-msgid "This is CTANGLE, Version 4.8"
-msgstr "Dies ist CTANGLE, Version 4.8"
+msgid "This is CTANGLE, Version 4.9"
+msgstr "Dies ist CTANGLE, Version 4.9"
 
 #: ctwill-texlive.ch:39
-msgid "This is CTWILL, Version 4.8"
-msgstr "Dies ist CTWILL, Version 4.8"
+msgid "This is CTWILL, Version 4.9"
+msgstr "Dies ist CTWILL, Version 4.9"
 
 #: cweav-texlive.ch:39
-msgid "This is CWEAVE, Version 4.8"
-msgstr "Dies ist CWEAVE, Version 4.8"
+msgid "This is CWEAVE, Version 4.9"
+msgstr "Dies ist CWEAVE, Version 4.9"
 
 #: comm-texlive.ch:512
 #, c-format

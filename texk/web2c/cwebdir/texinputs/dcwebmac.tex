@@ -63,7 +63,7 @@
   \setpage
   \def\note##1##2.{\quad{\eightrm##1~\ifacrohint{\pdfnote##2.}\else{##2}\fi.}}
   \def\I{\par\hangindent 2em}\let\*=*
-  \ifpdf \let\Xpdf\X
+  \ifacro \let\Xpdf\X
   \ifpdftex \pdfdest name {NOS} fith
     \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%

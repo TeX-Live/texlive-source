@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.8 --- June 2022 (works also with later versions)
+% Version 4.9 --- May 2023 (works also with later versions)
 
 % Copyright (C) 1987,1990,1993 Silvio Levy and Donald E. Knuth
 

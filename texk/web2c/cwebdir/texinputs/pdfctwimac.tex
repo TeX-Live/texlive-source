@@ -16,6 +16,7 @@
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
+\let\ifacro=\ifpdf
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -234,7 +235,7 @@
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 \def\note#1#2.{\par\penalty5000
   \Y\noindent{\hangindent2\em\baselineskip10pt%
-    \eightrm#1~\ifpdf{\pdfnote#2.}\else#2\fi.\par}}
+    \eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
 
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
 \newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
@@ -243,7 +244,7 @@
 \newif\iftokprocessed \newif\ifTnum \newif\ifinstr
 {\def\\{\global\let\spacechar= }\\ }
 
-\ifpdf % The following are pdf macros
+\ifacro % The following are pdf macros
 \def\thewidth{\the\wd0 \space}
 \def\theheight{\the\ht\strutbox\space}
 \def\thedepth{\the\dp\strutbox\space}
@@ -392,7 +393,7 @@
 \def\stsec{\tenpoint\rightskip=0pt % get out of C mode (cf. \B)
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \noindent\strut{\let\*=\lapstar\bf\secno.\quad}%
-  \ifpdf \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
+  \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
     \ifpdftex \pdfdest num \secstar fith%
     \else \special{pdf: dest (\romannumeral\secstar)
       [ @thispage /FitH @ypos ]}\fi}}\fi}
@@ -434,7 +435,7 @@
 \outer\def\NN{\ifvoid\partialpage\leftfalse
   \else\ifdim\ht\partialpage<\pageht \lefttrue\else\leftfalse\fi\fi\NNN}
 \outer\def\NNN#1#2#3.{% beginning of starred section
-  \ifpdf{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
+  \ifacro{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
   \gdepth=#1\gtitle={#3}\def\secno{#2}\xdef\secstar{#2}
   \ifleft \flushout
     \gdef\rlhead{\let\i=I\uppercase{\ignorespaces#3}} % running left headline
@@ -476,7 +477,7 @@
 \let\W=\land % logical and
 \def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\sevenrm\kern.5em
-    \ifpdf{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
+    \ifacro{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le
 \let\ZZ=\let % now you can \write the control sequence \ZZ
@@ -608,7 +609,7 @@
 {\obeylines\gdef\makeinref#1 #2 #3
   {\ifsorted\else\ttoks={\[#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
   \hangindent=1em \noindent #2\miniform#3, %<== space!
-    \S\ifpdf{\pdfnote#1.}\else{#1}\fi.\par}}
+    \S\ifacro{\pdfnote#1.}\else{#1}\fi.\par}}
 {\obeylines\gdef\makeoutref#1 #2 #3
   {\ifsorted\else\ttoks={\]#1 #2 #3}\immediate\write\reffile{+ \the\ttoks}\fi %
   \hangindent=1em \noindent #2\miniform#3, \extref#1.\par}}
@@ -672,7 +673,7 @@
     \immediate\write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
     \immediate\closeout\cont % the contents information has been fully gathered
   \fi}
-\def\fin{\ifpdf \message{Section names:}
+\def\fin{\ifacro \message{Section names:}
   \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
   \def\outsecname{Names of the sections}
   \ifpdftex \makebookmarks \countsections
@@ -713,7 +714,7 @@
 %\def\contentsline#1#2#3#4#5{\ifnum#2=0 \smallbreak\fi
     %\line{\consetup{#2}#1
       %\rm\leaders\hbox to .5em{.\hfil}\hfil
-      %\ \ifpdf\pdflink{#3}{\romannumeral#3}\else#3\fi\hbox to3em{\hss#4}}}
+      %\ \ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi\hbox to3em{\hss#4}}}
 %\def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
   %\or % depth 0 (@*)
   %\or \hskip2em % depth 1 (@*1)
