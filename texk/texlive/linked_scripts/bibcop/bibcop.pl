@@ -40,6 +40,8 @@ my %blessed = (
   'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?', 'url?'],
 );
 
+my %minors = map { $_ => 1 } qw/in of at to by the a an and or as if up via yet nor but off on for into/;
+
 # Check the presence of mandatory tags.
 sub check_mandatory_tags {
   my (%entry) = @_;
@@ -71,7 +73,6 @@ sub check_mandatory_tags {
 sub check_capitalization {
   my (%entry) = @_;
   my %tags = map { $_ => 1 } qw/title booktitle journal publisher organization/;
-  my %minors = map { $_ => 1 } qw/in of at to by the a an and or as if up via yet nor but off on for into/;
   foreach my $tag (keys %entry) {
     if (not exists $tags{$tag}) {
       next;
@@ -241,13 +242,13 @@ sub check_typography {
       }
     }
     foreach my $s (@space_before) {
-      if ($value =~ /^.*[^\s]\Q$s\E.*$/) {
+      if ($value =~ /^.*[^\{\s]\Q$s\E.*$/) {
         return "In the '$tag', put a space before the $symbols{$s}"
       }
     }
     foreach my $s (@space_after) {
       my $p = join('', @no_space_before);
-      if ($value =~ /^.*\Q$s\E[^\s\Q$p\E].*$/) {
+      if ($value =~ /^.*\Q$s\E[^\}\s\Q$p\E].*$/) {
         return "In the '$tag', put a space after the $symbols{$s}"
       }
     }
@@ -433,6 +434,92 @@ sub process_entry {
     }
   }
   return @errors;
+}
+
+sub fix_author {
+  my ($value) = @_;
+  my @authors = split(/\s?and\s?/, $value);
+  foreach my $author (@authors) {
+    $author =~ s/^\s+|\s+$//g;
+    $author =~ s/ ([A-Z])($| )/ $1.$2/g;
+  }
+  return join(' and ', @authors);
+}
+
+sub fix_number {
+  my ($value) = @_;
+  $value =~ s/^0+//g;
+  return $value;
+}
+
+sub fix_capitalization {
+  my ($value) = @_;
+  my @words = split(/\s+/, $value);
+  my $pos = 0;
+  foreach my $word (@words) {
+    $pos += 1;
+    if (not $word =~ /^[A-Za-z]/) {
+      next;
+    }
+    if (exists $minors{$word}) {
+      next;
+    }
+    if (exists $minors{lc($word)} and $pos gt 1) {
+      $word = lc($word);
+      next;
+    }
+    if ($word =~ /^[a-z].*/) {
+      $word =~ s/^([a-z])/\U$1/g;
+    }
+    if (index($word, '-') != -1) {
+      $word =~ s/-([a-z])/-\U$1/g;
+    }
+  }
+  return join(' ', @words);
+}
+
+sub fix_title {
+  my ($value) = @_;
+  $value = fix_capitalization($value);
+  return $value;
+}
+
+sub fix_pages {
+  my ($value) = @_;
+  if ($value =~ /^[1-9][0-9]*$/) {
+    return $value;
+  }
+  my ($left, $right) = split(/---|--|-|—|\s/, $value);
+  $left =~ s/^0+//g;
+  $right =~ s/^0+//g;
+  return $left . '--' . $right;
+}
+
+sub fix_booktitle {
+  my ($value) = @_;
+  $value = fix_capitalization($value);
+  if (index($value, 'Proceedings ') != 0) {
+    $value = 'Proceedings of the ' . $value;
+  }
+  return $value;
+}
+
+sub fix_journal {
+  my ($value) = @_;
+  $value = fix_capitalization($value);
+  return $value;
+}
+
+sub fix_publisher {
+  my ($value) = @_;
+  $value = fix_capitalization($value);
+  return $value;
+}
+
+sub fix_organization {
+  my ($value) = @_;
+  $value = fix_capitalization($value);
+  return $value;
 }
 
 # Parse the incoming .bib file and return an array
@@ -640,7 +727,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.9');
+  info('0.0.10');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
@@ -667,6 +754,12 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
           next;
         }
         my $value = clean_tex($entry{$tag});
+        my $fixer = "fix_$tag";
+        my $fixed = $value;
+        if (defined &{$fixer}) {
+          no strict 'refs';
+          $value = $fixer->($value);
+        }
         if ($tag =~ /title|booktitle|journal/) {
           $value = '{' . $value . '}';
         }
