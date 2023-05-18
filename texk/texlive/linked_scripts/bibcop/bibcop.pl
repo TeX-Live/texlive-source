@@ -44,6 +44,9 @@ my %minors = map { $_ => 1 } qw/in of at to by the a an and or as if up via yet 
 
 # Check the presence of mandatory tags.
 sub check_mandatory_tags {
+  if (exists $args{'--no:tags'}) {
+    return;
+  }
   my (%entry) = @_;
   my $type = $entry{':type'};
   my $mandatory = $blessed{$type};
@@ -71,6 +74,9 @@ sub check_mandatory_tags {
 
 # Check that all major words are capitalized.
 sub check_capitalization {
+  if (exists $args{'--no:caps'}) {
+    return;
+  }
   my (%entry) = @_;
   my %tags = map { $_ => 1 } qw/title booktitle journal publisher organization/;
   foreach my $tag (keys %entry) {
@@ -101,14 +107,21 @@ sub check_capitalization {
 # Check that the 'author' is formatted correctly.
 sub check_author {
   my (%entry) = @_;
-  if (exists $entry{'author'} and not $entry{'author'} =~ /^\{.+\}$/) {
-    my $author = clean_tex($entry{'author'});
-    if (not $author =~ /^[A-Z][^ ]+(,( [A-Z][^ ]+)+)?( and [A-Z][^ ]+(,( [A-Z][^ ]+)+)?)*( and others)?$/) {
-      return "The format of the 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
-    }
-    if ($author =~ /.*[A-Z]([ ,]|$).*/) {
-      return "A shortened name must have a tailing dot, as in 'Knuth, Donald E.'"
-    }
+  if (not exists $entry{'author'}) {
+    return;
+  }
+  if ($entry{'author'} =~ /^\{.+\}$/) {
+    return;
+  }
+  my $author = clean_tex($entry{'author'});
+  if (index($author, '{') != -1) {
+    return;
+  }
+  if (not $author =~ /^[A-Z][^ ]+(,( [A-Z][^ ]+)+)?( and [A-Z][^ ]+(,( [A-Z][^ ]+)+)?)*( and others)?$/) {
+    return "The format of the 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
+  }
+  if ($author =~ /.*[A-Z]([ ,]|$).*/) {
+    return "A shortened name must have a tailing dot, as in 'Knuth, Donald E.'"
   }
 }
 
@@ -134,7 +147,10 @@ sub check_shortenings {
 }
 
 # Check the right format of the 'title' and 'booktitle.'
-sub check_titles {
+sub check_wrapping {
+  if (exists $args{'--no:wraps'}) {
+    return;
+  }
   my (%entry) = @_;
   my @tags = qw/title booktitle/;
   foreach my $tag (@tags) {
@@ -177,6 +193,9 @@ sub check_arXiv {
 
 # Check that organization is not mentioned in the booktitle.
 sub check_org_in_booktitle {
+  if (exists $args{'--no:org'}) {
+    return;
+  }
   my (%entry) = @_;
   my @orgs = ( 'ACM', 'IEEE' );
   if (exists($entry{'booktitle'})) {
@@ -311,6 +330,9 @@ sub check_year_in_titles {
 
 # Check the right format of the 'booktitle' in the 'inproceedings' entry.
 sub check_booktile_of_inproceedings {
+  if (exists $args{'--no:inproc'}) {
+    return;
+  }
   my (%entry) = @_;
   my $tag = 'inproceedings';
   if ($entry{':type'} eq $tag) {
@@ -325,6 +347,9 @@ sub check_booktile_of_inproceedings {
 
 # Check the right format of the 'doi.'
 sub check_doi {
+  if (exists $args{'--no:doi'}) {
+    return;
+  }
   my (%entry) = @_;
   if (exists $entry{'doi'}) {
     my $doi = $entry{'doi'};
@@ -339,8 +364,14 @@ sub check_year {
   my (%entry) = @_;
   if (exists $entry{'year'}) {
     my $year = $entry{'year'};
-    if (not $year =~ /^[0-9]{3,4}$/) {
-      return "The format of the 'year' is wrong"
+    if ($year =~ /^\{.+\}$/) {
+      return;
+    }
+    if (not $year =~ /^[0-9]+$/) {
+      return "The format of the 'year' is wrong, may only contain numbers or must be wrapped in curly braces"
+    }
+    if (not $year =~ /^[0-9]{4}$/) {
+      return "Exactly four digits must be present in the 'year', or it must be wrapped in curly braces"
     }
   }
 }
@@ -391,8 +422,8 @@ sub check_pages {
       if ($parts[0] eq $parts[1]) {
         return "The 'pages' mentions the same page twice, just use it once"
       }
-      if ($parts[0] gt $parts[1]) {
-        return "The 'pages' are in the wrong order"
+      if ($parts[0] > $parts[1]) {
+        return "The 'pages' are in the wrong order, since $parts[0] is greater than $parts[1]"
       }
     }
   }
@@ -429,7 +460,7 @@ sub process_entry {
   foreach my $check (@sorted) {
     no strict 'refs';
     my $err = $check->(%entry);
-    if ($err ne '') {
+    if (defined $err and $err ne '') {
       push(@errors, $err);
     }
   }
@@ -724,10 +755,17 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "  -?, --help      Print this help screen\n" .
     "      --fix       Fix the errors and print a new version of the .bib file to the console\n" .
     "      --verbose   Print supplementary debugging information\n" .
+    "      --no:XXX    Disable one of the following checks (e.g. --no:wraps):\n" .
+    "                    tags    Only some tags are allowed, while some of them are mandatory\n" .
+    "                    caps    All major words in titles and booktitles must be capitalized\n" .
+    "                    wraps   Double curly braces are required around titles and booktitles\n" .
+    "                    doi     The presence of the 'doi' tag is mandatory in all entries\n" .
+    "                    inproc  The booktitle of \@inproceedings must start with 'Proceedings of the'\n" .
+    "                    org     The booktitle may not mention ACM or IEEE\n" .
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.10');
+  info('0.0.11');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
