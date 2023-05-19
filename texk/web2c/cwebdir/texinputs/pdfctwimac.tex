@@ -452,8 +452,8 @@
     \expandafter\xdef\csname curr#1\endcsname{\secno}
     \ifnum#1>0\countB=#1 \advance\countB by-1
       \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi
-  \else \special{pdf: outline #1 << /Title (\the\toksE) /Dest
-    [ @thispage /FitH @ypos ] >>}\fi\fi
+  \else \special{pdf: outline #1 << /Title (\the\toksE)
+      /Dest [ @thispage /FitH @ypos ] >>}\fi \fi
   \startsection{\bf\ignorespaces#3.\quad}\ignorespaces}
 \def\expnumber#1{\expandafter\ifx\csname#1\endcsname\relax 0%
   \else \csname#1\endcsname \fi} % Petr Olsak's macros from texinfo.tex
