@@ -675,6 +675,7 @@
   \fi}
 \def\fin{\ifacro \message{Section names:}
   \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
+  \newrefs={} \output={\shipout\box255}
   \def\outsecname{Names of the sections}
   \ifpdftex \makebookmarks \countsections
     \pdfdest name {NOS} fith
@@ -682,8 +683,8 @@
     \def\X##1:##2\X{\firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
-  \else \output={\shipout\box255}
-    \special{pdf: outline -1 << /Title (\outsecname) >>}%
+  \else \special{pdf: outline -1 << /Title (\outsecname)
+      /Dest [ @thispage /FitH @ypos ] >>}
     \def\X##1:##2\X{\firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \special{pdf: outline 0 << /Title (\the\toksE)

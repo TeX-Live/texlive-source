@@ -1,3 +1,7 @@
+2023-05-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfctwimac.tex: Fix NOS section.
+
 2023-05-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,
