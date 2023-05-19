@@ -1,0 +1,57 @@
+%%
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%   http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2005/12/01 or later.
+%%
+%% This work has the LPPL maintenance status `maintained'.
+%%
+%% The Current Maintainer of this work is the LaTeX3 Project.
+%%
+%% https://github.com/latex3/graphics-def/issues
+%%
+
+% VERY MINIMAL hitex file for color/graphics
+\ProvidesFile{hitex.def}
+  [2023/04/17 v0.1a Graphics/color driver for hitex]
+
+
+\def\set@color{%
+ \special{}%
+ \hi@color@warn
+ \aftergroup\reset@color}
+\def\reset@color{\special{}}%
+
+\def\hi@color@warn{%
+  \PackageWarning{color}{color not supported\@gobble}%
+  \global\let\hi@color@warn\relax}
+  
+
+\def\color@rgb#1#2{\def#1{}}
+
+\def\Gin@extensions{.png,.jpg}
+\@namedef{Gin@rule@.png}#1{{png}{.png}{#1}}
+\@namedef{Gin@rule@.jpg}#1{{jpg}{.jpg}{#1}}
+
+
+\def\Gread@png#1{%
+\setbox\@tempboxa\hbox{\HINTimage=#1\relax}%
+      \def\Gin@llx{0}\let\Gin@lly\Gin@llx
+      \Gin@defaultbp\Gin@urx{\wd\@tempboxa}% = 0...
+      \Gin@defaultbp\Gin@ury{\ht\@tempboxa}% = 0...
+      %\def\Gin@urx{72}\let\Gin@ury\Gin@urx
+      \Gin@nat@height\Gin@ury bp
+      \Gin@nat@width\Gin@urx bp
+      }
+
+\def\Ginclude@png#1{%
+   \mbox{\HINTimage=#1 width \Gin@req@width height\Gin@req@height\relax}%
+}
+
+\let\Gread@jpg\Gread@png
+\let\Ginclude@jpg\Ginclude@png
+
+\endinput
