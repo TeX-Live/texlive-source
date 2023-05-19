@@ -47,10 +47,6 @@
 \titletrue
 
 
-\def\setrevision$#1: #2 ${\gdef\lastrevision{#2}}
-\setrevision$Revision$
-\def\setdate$#1(#2) ${\gdef\lastdate{#2}}
-\setdate$Date$
 
 \null
 
@@ -160,7 +156,8 @@ ISBN-13: 979-854992684-4\par
 First printing: August 2019\par
 Second edition: August 2021\par
 \medskip
-Revision: \lastrevision,\quad Date: \lastdate\par
+\def\lastrevision{Date: Thursday, May  4, 2023, 17:21:47}
+\lastrevision\par
 }
 }
 \endgroup
@@ -4658,14 +4655,14 @@ The new design described below allows images with extended dimensions.
 This covers the case of stretchable or shrinkable images inside of
 extended boxes.  The given extended dimensions are considered maximum
 values. The stretching or shrinking of images will always preserve the
-relation of width${}/{}$height, the aspect ratio.
+ $\hbox{aspect ratio}=\hbox{width}/\hbox{height}$.
 
 For convenience, we allow missing values in the long format, for
 example the aspect ratio, if they can be determined from the image
 data.  In the short format, the necessary information for a correct
 layout must be available without using the image data.
 
-In the long format, the only required parts of an image node are the
+In the long format, the only required parts of an image node are: the
 number of the auxiliary section where the image data can be found and
 the descriptive text which is there to make the document more
 accessible.  The section number is followed by the optional aspect
@@ -4675,7 +4672,7 @@ data. The node ends with the description.
 
 The short format, starts with the section number of the image data and
 ends with the description. Missing values for aspect ratio, width, and
-height are only allowed if they can be recomputed from the given data.
+height are only allowed if they can be recomputed from the image data.
 A missing width or height is represented by a reference to the zero
 extended dimension.  If the |b100| bit is set, the aspect ratio is
 present as a 32 bit floating point value followed by extended
@@ -4692,6 +4689,10 @@ The value |b000| is used for a reference to an image.
 The value |b011| indicates an immediate width and an immediate height.
 The value |b010| indicates an aspect ratio and an immediate width.
 The value |b001| indicates an aspect ratio and an immediate height.
+
+The following data type stores image information. The width and height
+are either given as extended dimensions either directly in |w| and |h|
+or as references in |wr| and |hr|.
 
 @<hint types@>=
 typedef struct {@+
@@ -4747,6 +4748,17 @@ image: image_spec list {$$=$1;};
 content_node: start IMAGE image END { hput_tags($1,TAG(image_kind,$3));};
 @
 
+When a short format file is generated, the image width and height must be
+determined if necessary from the image file.
+The following function will write this information into the long format file.
+Editing the image file at a later time and converting the short format
+file back to a long format file will preserve the old information.
+This is not allways a desirable effect. It would be possible to
+eliminate information about the image size when writing the long format
+if that information can be derived from the image file. The latter
+solution might have the disadvantage, that infomation about a
+desired image size might get lost when editing a image file.
+
 \writecode
 @<write functions@>=
 void hwrite_image(Image *x)
@@ -4788,14 +4800,6 @@ else if((I)==b001){ x.a=hget_float32(); HGET32(x.h.w);}\
 hwrite_image(&x);\
 {List d;  hget_list(&d);hwrite_list(&d);}}@/
 @
-
-
-
-Because the long format can omit part of the image specification
-which is required for the short format if the necessary information 
-is contained in the image data, we have to implement the extraction
-of image information before we can implement the |hput_image_spec|
-function.
 
 \putcode
 @<put functions@>=
@@ -4842,15 +4846,35 @@ Info hput_image_spec(uint32_t n, float32_t a,
 }
 @
 
+
+If extended dimensions are involved,
+the long format might very well specify different values than
+stored in the image.  In this case the given dimensions are
+interpreted as maximum dimensions. If the aspect ratio is missing,
+we use |hextract_image_dimens| to extract it from the image file.
+
+@<image functions@>=
+static void hput_image_aspect(int n,double a)
+{ 
+  if (a==0.0) {Dimen w,h; hextract_image_dimens(n,&a,&w,&h);}
+  if (a!=0.0) hput_float32(a);
+  else  QUIT("Unable to determine aspect ratio of image %s",dir[n].file_name);
+}
+@
+
 If no extended dimensions are involved in an image specification,
 we use |hput_image_dimen|.
+Because the long format can omit part of the image specification,
+we use |hextract_image_dimens| to extract information from
+the image file and merge this information
+with the data supplied in the long format.
 
 @<image functions@>=
 @<auxiliar image functions@>@;
 static Info hput_image_dimens(int n,float32_t a, Dimen w, Dimen h)
 { Dimen iw,ih;
   double ia;
-  hget_image_dimens(n,&ia,&iw,&ih);
+  hextract_image_dimens(n,&ia,&iw,&ih);
   @<merge stored image dimensions with dimensions given@>@;
   if (w!=0 && h!=0)
   { HPUT32(iw); HPUT32(ih); return b011; }
@@ -4865,53 +4889,42 @@ static Info hput_image_dimens(int n,float32_t a, Dimen w, Dimen h)
 }
 @
 
-If extended dimensions are involved, we need |hput_image_aspect|.
-@<image functions@>=
-static void hput_image_aspect(int n,double a)
-{ 
-  if (a==0.0) {Dimen w,h; hget_image_dimens(n,&a,&w,&h);}
-  if (a!=0.0) hput_float32(a);
-  else  QUIT("Unable to determine aspect ratio of image %d",n);
-}
-@
 
-
-When we have found the width, height or aspect ratio of the stored
-image, we can merge this information with the information given by the
-user.  Note that from width and height the aspect ratio can always be
-determined.  The user might very well specify different values than
-stored in the image.  In this case the user given dimensions are
-interpreted as maximum dimensions and the aspect ratio as given in the
-image file takes precedence over an user specified value.  This is
-accomplished by the following:
+If the width, height or aspect ratio is stored in the 
+image file, we can merge this information with the information given in
+the long format.
+It is considered an error, if the function |hextract_image_dimens|
+can not extract the aspect ratio. Absolute width and height values,
+however, might be missing. If the aspect ratio is computed from the
+number of horizontal and vertical pixels, these values are negated and
+returned instead of absolute width and height values.
+Hi\TeX\ for example, will use these values to guess the image size
+assuming square pixels and a fixed resolution of 72.27 dpi.
 
 @<merge stored image dimensions with dimensions given@>=
 { if (ia==0.0)
   { if (a!=0.0) ia=a;
     else if(w!=0 && h!=0) ia=(double)w/(double)h;
-    else QUIT("Unable to determine dimensions of image %d",n);
+    else QUIT("Unable to determine dimensions of image %s",dir[n].file_name);
   }
   if (w==0 && h==0)
-  { if (iw==0) iw=round(ih * ia);
-    else if (ih==0) ih=round(iw/ia);
+  { if (ih>0) iw=round(ih * ia);
+    else if (iw>0) ih=round(iw/ia);
   }
   else if (h==0) 
-  { iw=w; ih=round(w/ia); }
+  { iw=w;@+ ih=round(w/ia);@+ }
   else if (w==0) 
-  { ih=h; iw=round(h*ia);}
+  { ih=h;@+ iw=round(h*ia);@+}
   else 
-  { Dimen x;
-    x =  round(h*ia);
-    if (w>x) w = x;
-    x =  round(w/ia);
-    if (h>x) h=x;
-    ih = h;
-    iw = w;
+  { ih = h;@+
+    iw = w;@+
   }
 }
 @
 
-We define a few macros and variables for the reading of image files.
+Before we present the code to extract image dimensions from
+various types of image files, we define a few macros and
+variables for the reading these image files.
 
 @<auxiliar image functions@>=
 #define IMG_BUF_MAX 54
@@ -4947,8 +4960,7 @@ bitmap in pixels at offsets |0x12| and |0x16| stored as little-endian
 32 bit integers. At offsets |0x26| and |0x2A|, we find the horizontal
 and vertical resolution in pixel per meter stored in the same format.
 This is sufficient to compute the true width and height of the image
-in scaled points.  If either the width or the height is already known,
-we just use the aspect ratio and compute the missing value.
+in scaled points.
 
 The Windows Bitmap format is easy to process but not very
 efficient. So the support for this format in the \HINT\ format is
@@ -4998,6 +5010,8 @@ giving the horizontal and vertical pixels per unit, and a one byte
 unit specifier, which is either 0 for an undefined unit or 1 for the
 meter as unit. With an undefined unit, only the aspect ratio of the
 pixels and hence the aspect ratio of the image can be determined.
+It is not uncommon, however, that the resolution in such a case is given
+as dots per inch. So we decide to assume the latter.
 
 
 @<auxiliar image functions@>=
@@ -5023,26 +5037,31 @@ static bool get_PNG_info(FILE *f, char *fn, double *a, Dimen *w, Dimen *h)
     { xppu =(double)BigEndian32(8);  
       yppu =(double)BigEndian32(12);
       unit=img_buf[16];
-      if (unit==0)
-      { *a =(wpx/xppu)/(hpx/yppu);
+      if (unit==0) /* assuming unit is inch */
+      { *w=floor(0.5+ONE*72.27*wpx/xppu);
+        *h=floor(0.5+ONE*72.27*hpx/yppu);
+        *a =(wpx/xppu)/(hpx/yppu);
         return true;
       }
-      else if (unit==1)
+      else if (unit==1) /* unit is meter */
       {
-        *w=floor(0.5+ONE*(72.00/0.0254)*wpx/xppu);
-        *h=floor(0.5+ONE*(72.00/0.0254)*hpx/yppu);
+        *w=floor(0.5+ONE*(72.27/0.0254)*wpx/xppu);
+        *h=floor(0.5+ONE*(72.27/0.0254)*hpx/yppu);
         *a = (wpx/xppu)/(hpx/yppu);
         return true;
       }
       else
-        return false;
+        break;
     }
     else if  (Match4(4,'I', 'D', 'A', 'T'))
-      return false;
+      break;
     else
       pos=pos+12+size;
   }
-  return false;
+  *w=-wpx;
+  *h=-hpx;
+  *a =wpx/hpx;
+  return true;
 }
 @ 
 
@@ -5060,7 +5079,9 @@ vertical resolution both as 16 Bit big-endian integers.  To find the
 actual width and height, we have to search for a start of frame marker
 (|0xFF|, |0xC0|+$n$ with $0\le n\le 15$). Which is followed by the 2
 byte segment size, the 1 byte sample precission, the 2 byte height and
-the 2 byte width.
+the 2 byte width. Because here, in contrast to the PNG file format,
+the dots per inch can be specified explicitly, we will indeed treat
+the undefined unit as such.
 
 
 @<auxiliar image functions@>=
@@ -5089,17 +5110,19 @@ static bool get_JPG_info(FILE *f, char *fn,  double *a, Dimen *w, Dimen *h)
       wpx =(double)BigEndian16(7);
       if (unit==0)
       { *a = (wpx/xppu)/(hpx/yppu);
+        *w=-wpx;
+	*h=-hpx;
         return true;
       }
       else if (unit==1)
-      { *w = floor(0.5+ONE*72.00*wpx/xppu);
-        *h = floor(0.5+ONE*72.00*hpx/yppu);
+      { *w = floor(0.5+ONE*72.27*wpx/xppu);
+        *h = floor(0.5+ONE*72.27*hpx/yppu);
         *a = (wpx/xppu)/(hpx/yppu);
         return true;
       }
       else if (unit==2)
-      { *w = floor(0.5+ONE*(72.00/2.54)*wpx/xppu);
-        *h = floor(0.5+ONE*(72.00/2.54)*hpx/yppu);
+      { *w = floor(0.5+ONE*(72.27/2.54)*wpx/xppu);
+        *h = floor(0.5+ONE*(72.27/2.54)*hpx/yppu);
         *a = (wpx/xppu)/(hpx/yppu);
         return true;
       }
@@ -5124,15 +5147,18 @@ PostScript fonts and hence it has already the necessary interpreter.
 So it seems reasonable to put the burden of converting vector graphics
 into a Type 1 PostScript font on the generator of \HINT\ files
 and keep the \HINT\ viewer as small and simple as possible.
-Now we determine width, height
-and aspect ratio  based on an image file.
+An alternative which would impose only a slight burden on the \HINT\ file
+viewer ist the use of the rsvg library.
 
+After having considered the various types of image files,
+we now determine width, height and aspect ratio  based on
+such an image file.
 
-We combine all three functions into the |hget_image_dimens|
+We combine all the above functions into the |hextract_image_dimens|
 function.
 
-@<auxiliar image functions@>=
-static void hget_image_dimens(int n, double *a, Dimen *w, Dimen *h)
+@<image functions@>=
+void hextract_image_dimens(int n, double *a, Dimen *w, Dimen *h)
 { char *fn;
   FILE *f;
   *a=0.0;
@@ -5146,8 +5172,8 @@ static void hget_image_dimens(int n, double *a, Dimen *w, Dimen *h)
       !get_JPG_info(f,fn,a,w,h))
     DBG(DBGDEF,"Unknown image type %s",fn);
     fclose(f); 
-    DBG(DBGDEF,"image %d: width= %fpt height= %fpt\n",
-             n,*w/(double)ONE,*h/(double)ONE);
+    DBG(DBGDEF,"image %d: width= %fpt height= %fpt aspect=%f\n",
+             n,*w/(double)ONE,*h/(double)ONE,*a);
   }
 }
 @
@@ -8365,7 +8391,7 @@ void hget_definition(int n, Tag a, uint32_t node_pos)
 {@+ switch(KIND(a))
     { case font_kind: hget_font_def(n);@+ break;
       case param_kind:
-        {@+ List l; @+HGET_LIST(INFO(a),l); @+hwrite_parameters(&l); @+ break;@+} 
+        {@+ List l; l.t=a; @+HGET_LIST(INFO(a),l); @+hwrite_parameters(&l); @+ break;@+} 
       case page_kind: hget_page(); @+break;
       case dimen_kind:  hget_dimen(a); @+break;
       case xdimen_kind:
@@ -9551,9 +9577,9 @@ For portability, we first define the output specifier for expressions of type |s
 \index{RNG+\.{RNG}}\index{TAGERR+\.{TAGERR}}
 @<debug macros@>=
 #ifdef WIN32
-#define SIZE_F "0x%x"
+#define SIZE_F "0x%tx"
 #else
-#define SIZE_F "0x%zx"
+#define SIZE_F "0x%tx"
 #endif
 #ifdef DEBUG
 #define @[DBG(FLAGS,...)@] ((debugflags & (FLAGS))?LOG(__VA_ARGS__):0)
@@ -10995,6 +11021,7 @@ extern void hput_utf8(uint32_t c);
 extern Tag hput_ligature(Lig *l);
 extern Tag hput_disc(Disc *h);
 extern Info hput_span_count(uint32_t n);
+extern void hextract_image_dimens(int n, double *a, Dimen *w, Dimen *h);
 extern Info hput_image_spec(uint32_t n, float32_t a, uint32_t wr, Xdimen *w, uint32_t hr, Xdimen *h);
 extern void hput_string(char *str);
 extern void hput_range(uint8_t pg, bool on);

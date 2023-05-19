@@ -861,7 +861,7 @@ char *yytext;
 #line 1 "lexer.l"
 /*533:*/
 #line 3 "lexer.l"
-	#line 11040 "format.w"
+	#line 11067 "format.w"
 	
 #include "hibasetypes.h"
 #include "hierror.h"
@@ -917,7 +917,7 @@ static int scan_level= 0;
 
 float64_t xtof(char*x)
 {
-	#line 1388 "format.w"
+	#line 1385 "format.w"
 	int sign,digits,exp;
 	uint64_t mantissa= 0;
 	DBG(DBGFLOAT,"converting %s:\n",x);
@@ -997,7 +997,7 @@ float64_t xtof(char*x)
 	}
 	/*:62*/
 int yywrap(void){
-	#line 11051 "format.w"
+	#line 11078 "format.w"
 	return 1;}
 #ifdef _MSC_VER
 #pragma  warning( disable : 4267)

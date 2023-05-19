@@ -10614,8 +10614,9 @@ to place.
 @ Here now is the first of the system-dependent routines for file name scanning.
 @^system dependencies@>
 
-@p static void begin_name(void)
-{@+area_delimiter=0;ext_delimiter=0;
+@p static bool quoted_filename;
+static void begin_name(void)
+{@+area_delimiter=0;ext_delimiter=0; quoted_filename=false;
 }
 
 @ And here's the second. The string pool might change as the file name is
@@ -10624,15 +10625,11 @@ being scanned, since a new \.{\\csname} might be entered; therefore we keep
 string, instead of assigning an absolute address like |pool_ptr| to them.
 @^system dependencies@>
 
-
-The |ASCII_code| to use as a delimiter is specified also as a parameter.
-
-@p static bool more_name(ASCII_code @!c, ASCII_code d)
-{@+if (c==d) return false;
-else{@+str_room(1);append_char(c); /*contribute |c| to the current string*/
-  if ((c=='>')||(c==':'))
-    {@+area_delimiter=cur_length;ext_delimiter=0;
-    }
+@p static bool more_name(ASCII_code @!c)
+{@+if (c==' ' && !quoted_filename) return false;
+else if (c=='"') {@+quoted_filename=!quoted_filename; return true; }
+else {@+str_room(1);append_char(c); /*contribute |c| to the current string*/
+  if (IS_DIR_SEP(c)) {@+area_delimiter=cur_length;ext_delimiter=0; }
   else if (c=='.') ext_delimiter=cur_length;
   return true;
   }
@@ -10774,19 +10771,24 @@ a general text.
 
 @p static void scan_file_name(void)
 {@+
-ASCII_code d; /*the delimiter for |more_name|*/
 pool_pointer @!j, k; /*index into |str_pool|*/
 int @!old_setting; /*holds |selector| setting*/
 name_in_progress=true;begin_name();
-d=' '; /*traditional token delimiter*/
 @<Get the next non-blank non-relax...@>;
 if (cur_cmd==left_brace)
   @<Define a general text file name and |goto done|@>@;
-if (cur_chr=='"') {@+d='"';get_x_token();}
 loop@+{@+if ((cur_cmd > other_char)||(cur_chr > 255))  /*not a character*/
     {@+back_input();goto done;
     }
-  if (!more_name(cur_chr, d)) goto done;
+#if 0
+    /* This is from pdftex-final.ch. I don't know these `some cases',
+       and I am not sure whether the name should end even if quoting is on.*/
+    /*If |cur_chr| is a space and we're not scanning a token list, check
+      whether we're at the end of the buffer. Otherwise we end up adding
+      spurious spaces to file names in some cases.*/
+    if (cur_chr==' ' && state!=token_list && loc>limit) goto done;
+#endif
+  if (!more_name(cur_chr)) goto done;
   get_x_token();
   }
 done: end_name();name_in_progress=false;
@@ -10860,11 +10862,11 @@ pack_cur_name(e);
 }
 
 @ @<Scan file name in the buffer@>=
-{@+ASCII_code d=' '; /*traditional delimiter*/
+{@+
 begin_name();k=first;
 while ((buffer[k]==' ')&&(k < last)) incr(k);
 loop@+{@+if (k==last) goto done;
-  if (!more_name(buffer[k], d)) goto done;
+  if (!more_name(buffer[k])) goto done;
   incr(k);
   }
 done: end_name();
@@ -25527,14 +25529,15 @@ to hold the string numbers for name, area, and extension.
 @d baseline_node_no(A) mem[A+1].i /* baseline reference */@#
 
 @d image_node    hitex_ext+4  /*|subtype| that records an image */
-@d image_node_size 5 /* number of memory words in an |image_node| */
+@d image_node_size 6 /* number of memory words in an |image_node| */
 @d image_xwidth(A)  link(A+1)  /*extended width of image */
 @d image_xheight(A) info(A+1)  /*extended height of image */
-@d image_no(A)     link(A+2)  /* the section number */
-@d image_name(A)   info(A+2)  /*string number of file name */
-@d image_area(A)   info(A+3)  /*string number of file area */
-@d image_ext(A)    link(A+3)  /*string number of file extension */
-@d image_alt(A)    link(A+4)  /* alternative image description text */@#
+@d image_aspect(A)  mem[(A)+2].sc /* aspect ratio of image */
+@d image_no(A)     link(A+3)  /* the section number */
+@d image_name(A)   info(A+3)  /*string number of file name */
+@d image_area(A)   info(A+4)  /*string number of file area */
+@d image_ext(A)    link(A+4)  /*string number of file extension */
+@d image_alt(A)    link(A+5)  /* alternative image description text */@#
 
 @d hpack_node         hitex_ext+5 /* a hlist that needs to go to hpack */
 @d vpack_node         hitex_ext+6 /* a vlist that needs to go to vpackage */
@@ -25776,6 +25779,38 @@ case image_node:@/
     {@+scan_normal_dimen; image_xheight(p)=new_xdimen(cur_val,cur_hfactor,cur_vfactor); }
     else
       break;
+  }
+  { scaled iw,ih;
+    double ia;
+    pointer r,q;
+    hextract_image_dimens(image_no(p),&ia,&iw,&ih);
+    image_aspect(p)=round(ia*ONE);
+    r=image_xwidth(p);
+    q=image_xheight(p);
+    if (r==null && q==null)
+    { if (iw>0)
+      { image_xwidth(p)=r=new_xdimen(iw,0,0);
+        image_xheight(p)=q=new_xdimen(ih,0,0);
+      }
+      else if (iw<0)
+      { MESSAGE("Unable to determine size of image %s; using 72dpi.\n",
+		dir[image_no(p)].file_name);
+	image_xwidth(p)=r=new_xdimen(-iw*ONE,0,0);
+        image_xheight(p)=q=new_xdimen(-ih*ONE,0,0);
+      }
+      else
+      { MESSAGE("Unable to determine size of image %s; using 100pt x 100pt\n",
+		dir[image_no(p)].file_name);
+ 	image_xwidth(p)=r=new_xdimen(100*ONE,0,0);
+        image_xheight(p)=q=new_xdimen(100*ONE,0,0);
+     }
+    }
+    else if (r!=null && q==null)
+      image_xheight(p)=q=new_xdimen(round(xdimen_width(r)/ia),
+	      round(xdimen_hfactor(r)/ia),round(xdimen_vfactor(r)/ia));
+    else if (r==null && q!=null)
+       image_xwidth(p)=r=new_xdimen(round(xdimen_width(q)*ia),
+ 	      round(xdimen_hfactor(q)*ia),round(xdimen_vfactor(q)*ia));
   }
   if (abs(mode)==vmode)
   { prev_depth=ignore_depth; /* this could be deleted if baseline nodes treat
@@ -26079,6 +26114,7 @@ case image_node:
   print_esc("HINTimage(");
   print("width ");print_xdimen(image_xheight(p));
   print(" height "); print_xdimen(image_xwidth(p));
+  print(" aspect "); print_scaled(image_aspect(p));
   print("), section ");print_int(image_no(p));
   if (image_name(p)!=0) {print(", "); printn(image_name(p));}
   break;
@@ -30494,6 +30530,7 @@ static pointer new_image_node( str_number n, str_number a, str_number e)
   int i;
   char *fn;
   int l;
+
   p=get_node(image_node_size);type(p)=whatsit_node;subtype(p)=image_node;
   image_name(p)=n;
   image_area(p)=a;
@@ -30502,6 +30539,7 @@ static pointer new_image_node( str_number n, str_number a, str_number e)
   i=hnew_file_section(fn);
   image_no(p)=i;
   image_xwidth(p)=image_xheight(p)=image_alt(p)=null;
+  image_aspect(p)=0;
   return p;
 }
 
@@ -33937,7 +33975,7 @@ case outline_node: hpos--; new_outline(p);  return;
             h.h=xdimen_hfactor(r)/(double)ONE;
             h.v=xdimen_vfactor(r)/(double)ONE;
           }
-          tag=TAG(image_kind,hput_image_spec(image_no(p),0.0,0,&w,0,&h));
+          tag=TAG(image_kind,hput_image_spec(image_no(p),image_aspect(p)/(double)ONE,0,&w,0,&h));
           hout_list_node2(image_alt(p)); /* should eventually become  a text */
 	}
         break;
