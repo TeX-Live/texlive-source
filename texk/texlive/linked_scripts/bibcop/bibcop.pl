@@ -92,13 +92,25 @@ sub check_capitalization {
       }
       $pos = $pos + 1;
       if (exists $minors{$word}) {
-        next;
+        if ($pos eq 1) {
+          return "The minor word in the '$tag' must be upper-cased since it is the first one"
+        }
+        if (not $words[$pos - 2] =~ /^.*:$/) {
+          next;
+        }
+        return "The minor word in the '$tag' must be upper-cased, because it follows the colon"
       }
-      if (exists $minors{lc($word)} and $pos gt 1) {
-        return "All minor words in the '$tag' must be lower-cased, while '$word' (no.$pos) is not"
+      if (exists $minors{lc($word)}) {
+        if ($pos eq 1) {
+          next;
+        }
+        if ($words[$pos - 2] =~ /^.*:$/) {
+          next;
+        }
+        return "All minor words in the '$tag' must be lower-cased, while @{[as_position($pos)]} word '$word' is not"
       }
       if ($word =~ /^[a-z].*/) {
-        return "All major words in the '$tag' must be capitalized, while '$word' (no.$pos) is not"
+        return "All major words in the '$tag' must be capitalized, while @{[as_position($pos)]} word '$word' is not"
       }
     }
   }
@@ -117,11 +129,19 @@ sub check_author {
   if (index($author, '{') != -1) {
     return;
   }
-  if (not $author =~ /^[A-Z][^ ]+(,( [A-Z][^ ]+)+)?( and [A-Z][^ ]+(,( [A-Z][^ ]+)+)?)*( and others)?$/) {
-    return "The format of the 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
-  }
-  if ($author =~ /.*[A-Z]([ ,]|$).*/) {
-    return "A shortened name must have a tailing dot, as in 'Knuth, Donald E.'"
+  my @authors = split(/\s+and\s+/, $author);
+  my $pos = 0;
+  for my $a (@authors) {
+    $pos += 1;
+    if ($a eq 'others') {
+      next;
+    }
+    if (not $a =~ /^[A-Z][^ .]+( [A-Z][^ .]+)*(,( [A-Z][^ ]+)+)?$/) {
+      return "The format of @{[as_position($pos)]} 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
+    }
+    if ($author =~ /.*[A-Z]([ ,]|$).*/) {
+      return "A shortened name must have a tailing dot in @{[as_position($pos)]} 'author', as in 'Knuth, Donald E.'"
+    }
   }
 }
 
@@ -689,6 +709,22 @@ sub clean_tex {
   return $tex;
 }
 
+# Turn a number into a position, like 1 -> 1st, 2 -> 2nd, 3 -> 3rd, 4 -> 4th, and so on.
+sub as_position {
+  my ($i) = @_;
+  my $txt;
+  if ($i == 1) {
+    $txt = '1st';
+  } elsif ($i == 2) {
+    $txt = '2nd';
+  } elsif ($i == 3) {
+    $txt = '3rd';
+  } else {
+    $txt = "${i}th";
+  }
+  return "the $txt";
+}
+
 # Take a bibentry and print all its tags as a comma-separated string.
 sub listed_tags {
   my (%entry) = @_;
@@ -708,11 +744,10 @@ sub error {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
     print "\\PackageError{bibcop}{$txt}{}\n";
-    exit 0;
   } else {
     print STDERR $txt . "\n";
-    exit 1;
   }
+  fail();
 }
 
 # Print DEBUG message to the console.
@@ -746,6 +781,14 @@ sub warning {
   }
 }
 
+sub fail {
+  if (exists $args{'--latex'}) {
+    exit(0);
+  } else {
+    exit(1);
+  }
+}
+
 if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   info("Bibcop is a Style Checker of BibTeX Files\n\n" .
     "Usage:\n" .
@@ -765,7 +808,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.11');
+  info('0.0.12');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
@@ -812,12 +855,18 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     }
   } else {
     debug((@entries+0) . ' entries found in ' . $file);
+    my $found = 0;
     for my $i (0..(@entries+0 - 1)) {
       my %entry = %{ $entries[$i] };
       debug("Checking $entry{':name'} (no.$i)...");
       foreach my $err (process_entry(%entry)) {
         warning("$err, in the '$entry{':name'}' entry");
+        $found += 1;
       }
+    }
+    if ($found gt 0) {
+      debug("$found problem(s) found");
+      fail();
     }
   }
 }
