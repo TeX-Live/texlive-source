@@ -259,6 +259,20 @@ replacement part of a change file, or in an incomplete check if the
    if (c!=@' ' && c!=tab_mark && c!=@'\r')
 @z
 
+Section 29
+
+@x l.688
+@ There may be incomplete lines of the editor used does
+@y
+@ There may be incomplete lines if the editor used does
+@z
+
+@x l.691
+final line. Of the current line is empty, we just can \&{return}.
+@y
+final line. If the current line is empty, we just can \&{return}.
+@z
+
 Section 31
 
 @x l.742 -- print errors on 'stderr'
