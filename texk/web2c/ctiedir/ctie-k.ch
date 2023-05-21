@@ -571,10 +571,10 @@ e_of_ch_preamble (file_index i)
 if (out_mode==post) /* last line has been changed */
     fprintf(out_file, "@@z\n");
 @y
+if (out_mode==pre) /* last line has been deleted */
+    fprintf(out_file, "@@y\n"), out_mode=post;
 if (out_mode==post) /* last line has been changed */
     fprintf(out_file, "@@z\n");
-else if (out_mode==pre) /* last line has been deleted */
-    fprintf(out_file, "@@y\n@@z\n");
 @z
 
 @x l.1106

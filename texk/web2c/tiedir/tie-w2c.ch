@@ -418,13 +418,11 @@ if (out_mode==post) { /* last line has been changed */
    new_line(out_file);
    }
 @y
-if (out_mode==post) { /* last line has been changed */
-   fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'z'),out_file);
-   new_line(out_file);
-   }
-else if (out_mode==pre) { /* last line has been deleted */
+if (out_mode==pre) { /* last line has been deleted */
    fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'y'),out_file);
-   new_line(out_file);
+   new_line(out_file); out_mode=post;
+   }
+if (out_mode==post) { /* last line has been changed */
    fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'z'),out_file);
    new_line(out_file);
    }
