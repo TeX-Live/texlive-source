@@ -1,3 +1,7 @@
+2023-05-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctie-k.ch: Handle deletion of last line in 'master' file.
+
 2021-04-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctie-k.ch: Use 'putc' for single newline character.

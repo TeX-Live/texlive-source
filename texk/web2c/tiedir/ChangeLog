@@ -1,3 +1,7 @@
+2023-05-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Handle deletion of last line in 'master' file.
+
 2021-04-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Delete dot in banner line.

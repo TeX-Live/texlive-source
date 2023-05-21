@@ -396,6 +396,26 @@ if (prod_chf==chf)
 else
 @z
 
+Section 53.
+
+@x l.1133
+if (out_mode==post) { /* last line has been changed */
+   fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'z'),out_file);
+   new_line(out_file);
+   }
+@y
+if (out_mode==post) { /* last line has been changed */
+   fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'z'),out_file);
+   new_line(out_file);
+   }
+else if (out_mode==pre) { /* last line has been deleted */
+   fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'y'),out_file);
+   new_line(out_file);
+   fputc(map_xchr(@'@@'),out_file); fputc(map_xchr(@'z'),out_file);
+   new_line(out_file);
+   }
+@z
+
 Section 55
 
 @x l.1158
