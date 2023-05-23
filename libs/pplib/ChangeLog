@@ -1,2 +1,6 @@
+2023-05-23 Luigi Scarso luigi.scarso@gmail.com
+	* sync with the upstrem repo.:
+          fixes decryption failure on unreadable perms (Paweł Jackowski)
+
 2020-04-18 Luigi Scarso luigi.scarso@gmail.com
 	* Moved luatexdir/luapplib under libs/pplib.

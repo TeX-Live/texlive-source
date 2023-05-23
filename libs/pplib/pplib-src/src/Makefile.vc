@@ -19,9 +19,10 @@ CFLAGS=/W3 /D_CRT_SECURE_NO_DEPRECATE /O2
 # 4710: no inlined
 # 4711: inline expansion
 # 4706: assignment in conditionals
+# 4061: switch(enum) case label missing, even if default is there
 
 #WFLAGS= /W3 /D_CRT_SECURE_NO_DEPRECATE
-WFLAGS= /Wall /D_CRT_SECURE_NO_DEPRECATE /wd5045 /wd4820 /wd4456 /wd4457 /wd4668 /wd4244 /wd4127 /wd4131 /wd4464 /wd4201 /wd4710 /wd4711
+WFLAGS= /Wall /D_CRT_SECURE_NO_DEPRECATE /wd5045 /wd4820 /wd4456 /wd4457 /wd4668 /wd4244 /wd4127 /wd4131 /wd4464 /wd4201 /wd4710 /wd4711 /wd4061
 CFLAGS= $(WFLAGS) /O2
 
 #LFLAGS = /NODEFAULTLIB:LIBCMT # produces binary dependent from redistributable

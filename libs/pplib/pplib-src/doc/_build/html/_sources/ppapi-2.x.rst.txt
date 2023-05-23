@@ -677,15 +677,14 @@ It is a common practise to *protect* documents with an empty password. Such docu
 for a password), but some features (eg. printing) may restricted by the application.
 
 When ``pplib`` detects encryption, it follows Acrobat approach and first tries an empty password. If it succeeds, ``pplib`` proceeeds normally, providing
-an access to decrypted strings and streams, as if they weren't ciphered. If the document is protected with non-empty password, ``pplib`` gives
-a way to provide a password and proceed. Until you provide a password, ``ppdoc`` object returned by ``ppdoc_load()`` function has all object wntries
-set to ``null``.
+an access to decrypted strings and streams, as if they weren't ciphered. If the document is protected with non-empty password, you have to call
+``ppdoc_crypt_pass()``. Until you provide a password, ``ppdoc`` object returned by ``ppdoc_load()`` function has all object entries set to ``null``.
 
-After loading a document you should check encryption status with::
+Once the document is loaded, encryption status can be checked with::
 
   ppcrypt_status ppdoc_crypt_status (ppdoc *pdf);
 
-``ppcrypt_status`` (integer) may have the following values:
+``ppcrypt_status`` (enum) may have the following values:
 
   ``PPCRYPT_NONE`` - no encryption, go ahead
   ``PPCRYPT_DONE`` - encryption present but password succeeded, go ahead
@@ -697,10 +696,12 @@ If a password is needed, you can provide one with::
   ppcrypt_status ppdoc_crypt_pass (ppdoc *pdf, const void *userpass, size_t userpasslength,
                                                const void *ownerpass, size_t ownerpasslength);
 
-Well, yes, there are actually two passwords in encrypted documents. Relation between them is obscure to me, but enough
-to know that having one of them is enough to decrypt the document. If you know the password, you probably mean
-``userpass``, in which case you should put ``NULL`` as ``ownerpass``. The function returns ``PPCRYPT_DONE`` if the password
-succeeds and the previous status otherwise. Your custom loader function may look like that::
+Providing one of two is enough to decrypt the document.
+It is ok to use the same password for owner and user -- ``pplib`` will try both.
+
+The function returns ``PPCRYPT_DONE`` if the password succeeds and the previous crypt status otherwise.
+
+Your custom loader function may look like that::
 
   ppdoc *pdf;
   pdf = ppdoc_load("file.pdf");
@@ -712,8 +713,7 @@ succeeds and the previous status otherwise. Your custom loader function may look
     case PPCRYPT_DONE:
       return pdf;
     case PPCRYPT_PASS:
-      if (ppdoc_crypt_pass(pdf, "dummy", 5, NULL, 0) == PPCRYPT_DONE ||
-          ppdoc_crypt_pass(pdf, NULL, 0, "dummy", 5) == PPCRYPT_DONE)
+      if (ppdoc_crypt_pass(pdf, "dummy", 5, "dummy", 5) == PPCRYPT_DONE)
         return pdf;
       printf("sorry, password needed\n");
       ppdoc_free(pdf);
@@ -724,7 +724,7 @@ succeeds and the previous status otherwise. Your custom loader function may look
       return NULL;
   }
 
-[If you get ``PPCRYPT_FAIL`` it might mean *I failed*, so treat as a bug.]
+See ``pplib`` tests suite for a complete code.
 
 If you'd like to know what permissions are given/restricted to encrypted document::
 
@@ -750,6 +750,15 @@ In encrypted documents most of streams are encrypted. To check if a given stream
   ppstream_encrypted(stream) // macro, returns non-zero if encrypted
 
 Encryption is independent from compression, don't confuse with ``ppstream_compressed()``
+
+.. caution::
+   Starting from ``pplib v2.10`` all passwords should be passed as ``UTF-8``.
+   Earlier PDF encryption algorithms (/V 1..4, PDF 1.7) were based on ``PdfDocEncoding``.
+   Newer algorithms (/V 5, PDF 1.8-2.0) expect Unicode encoded as ``UTF-8``.
+   ``pplib`` API now expects ``UTF-8`` and if opening documents with older encryption methods,
+   it tries to make a conversion to 8-bit encoding. In earlier versions ``pplib`` didn't
+   make any password preprocessing, treating them as raw byte arrays.
+   So in case of passwords with fancy characters, it may behave differently.
 
 Pages
 -----

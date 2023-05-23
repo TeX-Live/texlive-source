@@ -95,7 +95,7 @@ v2.05
 uint8_t instead of ppbyte in internals; ppbyte intent is "the most natural 8-bit integer", so it is 'char',
 but internally we almost always need uint8_t (char may be signed or not..)
 
-TODO
-====
-- external streams (egzotic)
-
+v2.10
+-----
+Rework on encryption; algorithms /V5 /R6.
+Passwords passed to ppdoc_crypt_pass() should be UTF-8 (backward incompatible).

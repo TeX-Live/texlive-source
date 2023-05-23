@@ -1,5 +1,7 @@
 @ECHO OFF
 
+::set PATH=Q:\<wherepythonlives>\Scripts;%PATH%
+
 pushd %~dp0
 
 REM Command file for Sphinx documentation

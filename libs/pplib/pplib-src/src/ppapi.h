@@ -8,7 +8,7 @@
 
 #include "ppconf.h"
 
-#define pplib_version "v2.05 less toxic i hope"
+#define pplib_version "v2.2"
 #define pplib_author "p.jackowski@gust.org.pl"
 
 /* types */

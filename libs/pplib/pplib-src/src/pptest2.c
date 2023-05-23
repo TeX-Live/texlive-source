@@ -28,6 +28,9 @@ static int usage (const char *argv0)
 {
   printf("pplib " pplib_version ", " pplib_author "\n");
   printf("usage: %s file1.pdf file2.pdf ...\n", argv0);
+  printf("       %s file.pdf -u userpassword\n", argv0);
+  printf("       %s file.pdf -o ownerpassword\n", argv0);
+  printf("       %s file.pdf -p bothpasswords\n", argv0);
   return 0;
 }
 
@@ -36,11 +39,27 @@ static void log_callback (const char *message, void *alien)
   fprintf((FILE *)alien, "\nooops: %s\n", message);
 }
 
+static const char * get_next_argument (const char *opt, int *a, int argc, const char **argv)
+{
+  const char *next;
+  if ((*a) + 2 < argc)
+  {
+    next = argv[*a + 1];
+    if (strcmp(next, opt) == 0)
+    {
+      *a += 2;
+      return argv[*a];
+    }
+  }
+  return NULL;
+}
+
 int main (int argc, const char **argv)
 {
-  const char *filepath;
+  const char *filepath, *password;
   int a;
   ppdoc *pdf;
+  ppcrypt_status cryptstatus;
   ppref *pageref;
   ppdict *pagedict;
   int pageno;
@@ -61,6 +80,7 @@ int main (int argc, const char **argv)
   context = ppcontext_new();
   for (a = 1; a < argc; ++a)
   {
+    /* load */
     filepath = argv[a];
     printf("loading %s... ", filepath);
     pdf = ppdoc_load(filepath);
@@ -69,23 +89,35 @@ int main (int argc, const char **argv)
       printf("failed\n");
       continue;
     }
-    printf("done.\n");
-    switch (ppdoc_crypt_status(pdf))
+    printf("done\n");
+
+    /* decrypt */
+    if ((password = get_next_argument("-u", &a, argc, argv)) != NULL)
+      cryptstatus = ppdoc_crypt_pass(pdf, password, strlen(password), NULL, 0);
+    else if ((password = get_next_argument("-o", &a, argc, argv)) != NULL)
+      cryptstatus = ppdoc_crypt_pass(pdf, NULL, 0, password, strlen(password));
+    else if ((password = get_next_argument("-p", &a, argc, argv)) != NULL)
+      cryptstatus = ppdoc_crypt_pass(pdf, password, strlen(password), password, strlen(password));
+    else
+      cryptstatus = ppdoc_crypt_status(pdf);
+    switch (cryptstatus)
     {
       case PPCRYPT_NONE:
+        break;
       case PPCRYPT_DONE:
+        printf("opened with password '%s'\n", password != NULL ? password : "");
         break;
       case PPCRYPT_PASS:
-        if (ppdoc_crypt_pass(pdf, "dummy", 5, NULL, 0) == PPCRYPT_DONE || ppdoc_crypt_pass(pdf, NULL, 0, "dummy", 5) == PPCRYPT_DONE)
-          break;
-        printf("sorry, password needed\n");
+        printf("invalid password\n");
         ppdoc_free(pdf);
         continue;
       case PPCRYPT_FAIL:
-        printf("sorry, encryption failed\n");
+        printf("invalid encryption\n");
         ppdoc_free(pdf);
         continue;
     }
+
+    /* process */
     sprintf(outname, "%s.out", filepath);
     fh = fopen(outname, "wb");
     if (fh == NULL)

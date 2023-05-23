@@ -752,14 +752,13 @@ In that form they are unreadable and rather useless, you can’t even rewrite su
 It is a common practise to <em>protect</em> documents with an empty password. Such documents remain readable in Acrobat (just opens them without prompting
 for a password), but some features (eg. printing) may restricted by the application.</p>
 <p>When <code class="docutils literal notranslate"><span class="pre">pplib</span></code> detects encryption, it follows Acrobat approach and first tries an empty password. If it succeeds, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> proceeeds normally, providing
-an access to decrypted strings and streams, as if they weren’t ciphered. If the document is protected with non-empty password, <code class="docutils literal notranslate"><span class="pre">pplib</span></code> gives
-a way to provide a password and proceed. Until you provide a password, <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> object returned by <code class="docutils literal notranslate"><span class="pre">ppdoc_load()</span></code> function has all object wntries
-set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
-<p>After loading a document you should check encryption status with:</p>
+an access to decrypted strings and streams, as if they weren’t ciphered. If the document is protected with non-empty password, you have to call
+<code class="docutils literal notranslate"><span class="pre">ppdoc_crypt_pass()</span></code>. Until you provide a password, <code class="docutils literal notranslate"><span class="pre">ppdoc</span></code> object returned by <code class="docutils literal notranslate"><span class="pre">ppdoc_load()</span></code> function has all object entries set to <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
+<p>Once the document is loaded, encryption status can be checked with:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppcrypt_status</span> <span class="n">ppdoc_crypt_status</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">ppcrypt_status</span></code> (integer) may have the following values:</p>
+<p><code class="docutils literal notranslate"><span class="pre">ppcrypt_status</span></code> (enum) may have the following values:</p>
 <blockquote>
 <div><code class="docutils literal notranslate"><span class="pre">PPCRYPT_NONE</span></code> - no encryption, go ahead
 <code class="docutils literal notranslate"><span class="pre">PPCRYPT_DONE</span></code> - encryption present but password succeeded, go ahead
@@ -770,10 +769,10 @@ set to <code class="docutils literal notranslate"><span class="pre">null</span><
                                              <span class="n">const</span> <span class="n">void</span> <span class="o">*</span><span class="n">ownerpass</span><span class="p">,</span> <span class="n">size_t</span> <span class="n">ownerpasslength</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>Well, yes, there are actually two passwords in encrypted documents. Relation between them is obscure to me, but enough
-to know that having one of them is enough to decrypt the document. If you know the password, you probably mean
-<code class="docutils literal notranslate"><span class="pre">userpass</span></code>, in which case you should put <code class="docutils literal notranslate"><span class="pre">NULL</span></code> as <code class="docutils literal notranslate"><span class="pre">ownerpass</span></code>. The function returns <code class="docutils literal notranslate"><span class="pre">PPCRYPT_DONE</span></code> if the password
-succeeds and the previous status otherwise. Your custom loader function may look like that:</p>
+<p>Providing one of two is enough to decrypt the document.
+It is ok to use the same password for owner and user – <code class="docutils literal notranslate"><span class="pre">pplib</span></code> will try both.</p>
+<p>The function returns <code class="docutils literal notranslate"><span class="pre">PPCRYPT_DONE</span></code> if the password succeeds and the previous crypt status otherwise.</p>
+<p>Your custom loader function may look like that:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">;</span>
 <span class="n">pdf</span> <span class="o">=</span> <span class="n">ppdoc_load</span><span class="p">(</span><span class="s2">&quot;file.pdf&quot;</span><span class="p">);</span>
 <span class="k">if</span> <span class="p">(</span><span class="n">pdf</span> <span class="o">==</span> <span class="n">NULL</span><span class="p">)</span>
@@ -784,8 +783,7 @@ succeeds and the previous status otherwise. Your custom loader function may look
   <span class="n">case</span> <span class="n">PPCRYPT_DONE</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">pdf</span><span class="p">;</span>
   <span class="n">case</span> <span class="n">PPCRYPT_PASS</span><span class="p">:</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">ppdoc_crypt_pass</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">PPCRYPT_DONE</span> <span class="o">||</span>
-        <span class="n">ppdoc_crypt_pass</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="n">PPCRYPT_DONE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ppdoc_crypt_pass</span><span class="p">(</span><span class="n">pdf</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;dummy&quot;</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="n">PPCRYPT_DONE</span><span class="p">)</span>
       <span class="k">return</span> <span class="n">pdf</span><span class="p">;</span>
     <span class="n">printf</span><span class="p">(</span><span class="s2">&quot;sorry, password needed</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">);</span>
     <span class="n">ppdoc_free</span><span class="p">(</span><span class="n">pdf</span><span class="p">);</span>
@@ -797,7 +795,7 @@ succeeds and the previous status otherwise. Your custom loader function may look
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>[If you get <code class="docutils literal notranslate"><span class="pre">PPCRYPT_FAIL</span></code> it might mean <em>I failed</em>, so treat as a bug.]</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">pplib</span></code> tests suite for a complete code.</p>
 <p>If you’d like to know what permissions are given/restricted to encrypted document:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ppint</span> <span class="n">ppdoc_permissions</span> <span class="p">(</span><span class="n">ppdoc</span> <span class="o">*</span><span class="n">pdf</span><span class="p">);</span>
 </pre></div>
@@ -821,6 +819,16 @@ So except the check to <code class="docutils literal notranslate"><span class="p
 </pre></div>
 </div>
 <p>Encryption is independent from compression, don’t confuse with <code class="docutils literal notranslate"><span class="pre">ppstream_compressed()</span></code></p>
+<div class="admonition caution">
+<p class="first admonition-title">Caution</p>
+<p class="last">Starting from <code class="docutils literal notranslate"><span class="pre">pplib</span> <span class="pre">v2.10</span></code> all passwords should be passed as <code class="docutils literal notranslate"><span class="pre">UTF-8</span></code>.
+Earlier PDF encryption algorithms (/V 1..4, PDF 1.7) were based on <code class="docutils literal notranslate"><span class="pre">PdfDocEncoding</span></code>.
+Newer algorithms (/V 5, PDF 1.8-2.0) expect Unicode encoded as <code class="docutils literal notranslate"><span class="pre">UTF-8</span></code>.
+<code class="docutils literal notranslate"><span class="pre">pplib</span></code> API now expects <code class="docutils literal notranslate"><span class="pre">UTF-8</span></code> and if opening documents with older encryption methods,
+it tries to make a conversion to 8-bit encoding. In earlier versions <code class="docutils literal notranslate"><span class="pre">pplib</span></code> didn’t
+make any password preprocessing, treating them as raw byte arrays.
+So in case of passwords with fancy characters, it may behave differently.</p>
+</div>
 </div>
 <div class="section" id="pages">
 <h2>Pages<a class="headerlink" href="#pages" title="Permalink to this headline">¶</a></h2>
@@ -1025,7 +1033,7 @@ of some PDF boject fails due to invalid offsets. By default, <code class="docuti
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2019, p.jackowski@gust.org.pl.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.6.
     </div>
   </body>
 </html>
