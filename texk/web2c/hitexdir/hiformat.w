@@ -5148,7 +5148,7 @@ So it seems reasonable to put the burden of converting vector graphics
 into a Type 1 PostScript font on the generator of \HINT\ files
 and keep the \HINT\ viewer as small and simple as possible.
 An alternative which would impose only a slight burden on the \HINT\ file
-viewer ist the use of the rsvg library.
+viewer is the use of the rsvg library.
 
 After having considered the various types of image files,
 we now determine width, height and aspect ratio  based on
@@ -5930,18 +5930,49 @@ As a consequence, we can not just define a ``color change node''.
 Colors could be specified as an optional parameter of a glyph node, but the
 amount of data necessary would be considerable. In texts, on the other hand,
 a color change control code would be possible because we parse texts only in forward
-direction. The current font  would then become a current color and font with the appropriate
-changes for positions.  
+direction. The current font  would then become a current color and font.
 
-A more attractive alternative would be to specify colored fonts. 
-This would require an optional
-color argument for a font. For example one could have a cmr10 font in black as
-font number 3, and a cmr10 font in blue as font number 4. Having 256 different fonts,
+An attractive alternative would be colored fonts. 
+This would require an optional color argument for a font. 
+For example one could have a cmr10 font in black as
+font number 3, and the same cmr10 font in blue as font number 4. Having 256 different fonts,
 this is definitely a possibility because rarely you would need that many fonts 
 or that many colors. If necessary and desired, one could allow 16 bit font numbers
 of overcome the problem.
 
 Background colors could be associated with boxes as an optional parameter.
+In addition to the background color, a frame color and frame thickness
+for a box could be desirable. Because pages are using a page template there
+would be no need to an extra page color. The page color could simply be
+given as the color of the outer box in the template.
+Even for extended boxes such aditional parameters can be implemented.
+
+Colored boxes, however, are not the perfect solution for highlighting text
+because boxes interfer with line breaking. Enclosing a phrase in a box just
+to give it a special background will make it impossible for the line breaking
+routine to insert line breaks. Therefore, paragraph nodes might benefit from
+a color change command for the background (and foreground) color.
+
+
+\subsection{Rotation}
+When it comes to rotation, there is a big difference between printed books and
+computer displays. For example, if a book contains a table that is rotated
+to fill a page in landscape mode, the reader can rotate the book and read
+the table. If you are looking at the same page displayed on a 
+big computer monitor, you will most likely not turn the whole monitor.
+Instead your viewing application will be able to perform the rotation for you
+before displaying the page. A smart phone, on the other hand, is
+easy to turn. But very likely, it will try to be smart and rerenders the
+content on the display to keep the same orientation. 
+
+Occasionaly, however, rotation of text is a desirable feature. For example,
+if a table has lots of tall columns with lenghty column headers. It might be
+usefull to rotate the column headers in order to keep the column width within
+reasonable limits.
+
+A simple solution therefore would be optional parameters for boxes
+specifying center and angle for rotating the box.
+
 
 \subsection{Unknown Extensions}
 Starting with the inclusion in the \TeX\ Live 2022 distribution, the \HINT\ file format

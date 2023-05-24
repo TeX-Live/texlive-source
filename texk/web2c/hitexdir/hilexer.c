@@ -861,7 +861,7 @@ char *yytext;
 #line 1 "lexer.l"
 /*533:*/
 #line 3 "lexer.l"
-	#line 11067 "format.w"
+	#line 11098 "format.w"
 	
 #include "hibasetypes.h"
 #include "hierror.h"
@@ -997,7 +997,7 @@ float64_t xtof(char*x)
 	}
 	/*:62*/
 int yywrap(void){
-	#line 11078 "format.w"
+	#line 11109 "format.w"
 	return 1;}
 #ifdef _MSC_VER
 #pragma  warning( disable : 4267)

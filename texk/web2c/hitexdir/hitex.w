@@ -5169,7 +5169,8 @@ that will be defined later.
 @d right_hyphen_min_code 52 /*minimum right hyphenation fragment size*/
 @d holding_inserts_code 53 /*do not remove insertion nodes from \.{\\box255}*/
 @d error_context_lines_code 54 /*maximum intermediate line pairs shown*/
-@d tex_int_pars 55 /*total number of \TeX's integer parameters*/
+@d tracing_stack_levels_code 55 /*tracing |input_stack| level if |tracingmacros| positive*/
+@d tex_int_pars 56 /*total number of \TeX's integer parameters*/
 @#
 @d etex_int_base tex_int_pars /*base for \eTeX's integer parameters*/
 @d tracing_assigns_code etex_int_base /*show assignments*/
@@ -5246,6 +5247,7 @@ that will be defined later.
 @d right_hyphen_min int_par(right_hyphen_min_code)
 @d holding_inserts int_par(holding_inserts_code)
 @d error_context_lines int_par(error_context_lines_code)
+@d tracing_stack_levels int_par(tracing_stack_levels_code)
 @#
 @d tracing_assigns int_par(tracing_assigns_code)
 @d tracing_groups int_par(tracing_groups_code)
@@ -5319,6 +5321,7 @@ case left_hyphen_min_code: print_esc("lefthyphenmin");@+break;
 case right_hyphen_min_code: print_esc("righthyphenmin");@+break;
 case holding_inserts_code: print_esc("holdinginserts");@+break;
 case error_context_lines_code: print_esc("errorcontextlines");@+break;
+case tracing_stack_levels_code: print_esc("tracingstacklevels");@+break;
 @/@<Cases for |print_param|@>@/
 default:print("[unknown integer parameter!]");
 }
@@ -5440,6 +5443,8 @@ primitive("holdinginserts", assign_int, int_base+holding_inserts_code);@/
 @!@:holding\_inserts\_}{\.{\\holdinginserts} primitive@>
 primitive("errorcontextlines", assign_int, int_base+error_context_lines_code);@/
 @!@:error\_context\_lines\_}{\.{\\errorcontextlines} primitive@>
+primitive("tracingstacklevels", assign_int, int_base+tracing_stack_levels_code);@/
+@!@:tracing\_stack\_levels_}{\.{\\tracingstacklevels} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
 case assign_int: if (chr_code < count_base) print_param(chr_code-int_base);
@@ -8648,6 +8653,7 @@ strip off the enclosing braces. That's why |rbrace_ptr| was introduced.
 else pstack[n]=link(temp_head);
 incr(n);
 if (tracing_macros > 0)
+  if ((tracing_stack_levels==0)||(input_ptr < tracing_stack_levels))
   {@+begin_diagnostic();print_nl("");printn(match_chr);print_int(n);
   print("<-");show_token_list(pstack[n-1], null, 1000);
   end_diagnostic(false);
@@ -8655,8 +8661,19 @@ if (tracing_macros > 0)
 }
 
 @ @<Show the text of the macro being expanded@>=
-{@+begin_diagnostic();print_ln();print_cs(warning_index);
-token_show(ref_count);end_diagnostic(false);
+{@+begin_diagnostic();
+  if (tracing_stack_levels > 0)
+  { if (input_ptr < tracing_stack_levels)
+      {@+
+        int v=input_ptr;
+        print_ln();print_char('~');
+        while (v-- > 0) print_char('.');
+        print_cs(warning_index);token_show(ref_count);
+      }
+    else{@+print_char('~');print_char('~');print_cs(warning_index);}
+  }
+  else{@+print_ln();print_cs(warning_index);token_show(ref_count);}
+  end_diagnostic(false);
 }
 
 @* Basic scanning subroutines.
@@ -10977,6 +10994,17 @@ if (job_name==0)
 if (term_offset+length(name) > max_print_line-2) print_ln();
 else if ((term_offset > 0)||(file_offset > 0)) print_char(' ');
 print_char('(');incr(open_parens);slow_print(name);update_terminal;
+if (tracing_stack_levels > 0)
+{@+int v;
+  begin_diagnostic();print_ln();
+  print_char('~');
+  v=input_ptr-1;
+  if (v < tracing_stack_levels)
+    while (v-- > 0) print_char('.');
+  else print_char('~');
+  print("INPUT ");slow_print(cur_name);slow_print(cur_ext);print_ln();
+  end_diagnostic(false);
+}
 state=new_line;
 if (name==str_ptr-1)  /*conserve string pool space (but see note above)*/
   {@+flush_string;name=cur_name;

@@ -69,7 +69,7 @@
 /* First part of user prologue.  */
 #line 2 "parser.y"
 
-	#line 11108 "format.w"
+	#line 11139 "format.w"
 	
 #include "hibasetypes.h"
 #include <string.h>
@@ -81,7 +81,7 @@ extern char**hfont_name;
 
 	/*375:*/
 uint32_t definition_bits[0x100/32][32]= {
-	#line 8310 "format.w"
+	#line 8341 "format.w"
 	{0}};
 
 #define SET_DBIT(N,K) ((N)>0xFF?1:(definition_bits[N/32][K]	|= (1<<((N)&(32-1)))))
@@ -113,7 +113,7 @@ extern int yylex(void);
 	/*371:*/
 void hset_max(Kind k,int n)
 {
-	#line 8152 "format.w"
+	#line 8183 "format.w"
 	DBG(DBGDEF,"Setting max %s to %d\n",definition_name[k],n);
 	RNG("Maximum",n,max_fixed[k]+1,MAX_REF(k));
 	if(n>max_ref[k])
@@ -122,7 +122,7 @@ void hset_max(Kind k,int n)
 	/*:371*/	/*382:*/
 void check_param_def(Ref*df)
 {
-	#line 8463 "format.w"
+	#line 8494 "format.w"
 	if(df->k!=int_kind&&df->k!=dimen_kind&&df->k!=glue_kind)
 	QUIT("Kind %s not allowed in parameter list",definition_name[df->k]);
 	if(df->n<=max_fixed[df->k]||max_default[df->k]<df->n)
@@ -132,7 +132,7 @@ void check_param_def(Ref*df)
 extern int yylineno;
 int yyerror(const char*msg)
 {
-	#line 9603 "format.w"
+	#line 9634 "format.w"
 	QUIT(" in line %d %s",yylineno,msg);
 	return 0;
 	}
@@ -3264,7 +3264,7 @@ yyreduce:
   case 167: /* def_node: start "unknown" UNSIGNED UNSIGNED ">"  */
 #line 805 "parser.y"
                                             {
-	#line 5982 "format.w"
+	#line 6013 "format.w"
 	hput_tags((yyvsp[-4].u),hput_unknown_def((yyvsp[-2].u),(yyvsp[-1].u),0));}
 #line 3270 "parser.c"
     break;
@@ -3272,7 +3272,7 @@ yyreduce:
   case 168: /* def_node: start "unknown" UNSIGNED UNSIGNED UNSIGNED ">"  */
 #line 808 "parser.y"
                                                      {
-	#line 5983 "format.w"
+	#line 6014 "format.w"
 	hput_tags((yyvsp[-5].u),hput_unknown_def((yyvsp[-3].u),(yyvsp[-2].u),(yyvsp[-1].u)));}
 #line 3278 "parser.c"
     break;
@@ -3280,7 +3280,7 @@ yyreduce:
   case 169: /* content_node: start "unknown" UNSIGNED unknown_bytes unknown_nodes ">"  */
 #line 812 "parser.y"
                                                                    {
-	#line 5995 "format.w"
+	#line 6026 "format.w"
 	hput_tags((yyvsp[-5].u),hput_unknown((yyvsp[-5].u),(yyvsp[-3].u),(yyvsp[-2].u),(yyvsp[-1].u)));}
 #line 3286 "parser.c"
     break;
@@ -3288,7 +3288,7 @@ yyreduce:
   case 170: /* unknown_bytes: %empty  */
 #line 815 "parser.y"
               {
-	#line 5996 "format.w"
+	#line 6027 "format.w"
 	(yyval.u)= 0;}
 #line 3294 "parser.c"
     break;
@@ -3296,7 +3296,7 @@ yyreduce:
   case 171: /* unknown_bytes: unknown_bytes UNSIGNED  */
 #line 817 "parser.y"
                                        {
-	#line 5996 "format.w"
+	#line 6027 "format.w"
 	RNG("byte",(yyvsp[0].u),0,0xFF);HPUT8((yyvsp[0].u));(yyval.u)= (yyvsp[-1].u)+1;}
 #line 3302 "parser.c"
     break;
@@ -3304,7 +3304,7 @@ yyreduce:
   case 176: /* unknown_nodes: %empty  */
 #line 821 "parser.y"
               {
-	#line 5998 "format.w"
+	#line 6029 "format.w"
 	(yyval.u)= 0;}
 #line 3310 "parser.c"
     break;
@@ -3312,7 +3312,7 @@ yyreduce:
   case 177: /* unknown_nodes: unknown_nodes unknown_node  */
 #line 823 "parser.y"
                                            {
-	#line 5998 "format.w"
+	#line 6029 "format.w"
 	RNG("unknown subnodes",(yyvsp[-1].u),0,3);(yyval.u)= (yyvsp[-1].u)+1;}
 #line 3318 "parser.c"
     break;
@@ -3320,7 +3320,7 @@ yyreduce:
   case 178: /* stream_link: ref  */
 #line 827 "parser.y"
                {
-	#line 6433 "format.w"
+	#line 6464 "format.w"
 	REF_RNG(stream_kind,(yyvsp[0].u));}
 #line 3326 "parser.c"
     break;
@@ -3328,7 +3328,7 @@ yyreduce:
   case 179: /* stream_link: "*"  */
 #line 829 "parser.y"
                                                     {
-	#line 6433 "format.w"
+	#line 6464 "format.w"
 	HPUT8(255);}
 #line 3334 "parser.c"
     break;
@@ -3336,7 +3336,7 @@ yyreduce:
   case 180: /* stream_split: stream_link stream_link UNSIGNED  */
 #line 832 "parser.y"
                                              {
-	#line 6434 "format.w"
+	#line 6465 "format.w"
 	RNG("split ratio",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
 #line 3342 "parser.c"
     break;
@@ -3344,7 +3344,7 @@ yyreduce:
   case 181: /* $@8: %empty  */
 #line 835 "parser.y"
                                 {
-	#line 6435 "format.w"
+	#line 6466 "format.w"
 	RNG("magnification factor",(yyvsp[0].u),0,1000);HPUT16((yyvsp[0].u));}
 #line 3350 "parser.c"
     break;
@@ -3352,7 +3352,7 @@ yyreduce:
   case 183: /* stream_type: stream_info  */
 #line 839 "parser.y"
                        {
-	#line 6437 "format.w"
+	#line 6468 "format.w"
 	(yyval.info)= 0;}
 #line 3358 "parser.c"
     break;
@@ -3360,7 +3360,7 @@ yyreduce:
   case 184: /* stream_type: "first"  */
 #line 841 "parser.y"
                       {
-	#line 6437 "format.w"
+	#line 6468 "format.w"
 	(yyval.info)= 1;}
 #line 3366 "parser.c"
     break;
@@ -3368,7 +3368,7 @@ yyreduce:
   case 185: /* stream_type: "last"  */
 #line 843 "parser.y"
                      {
-	#line 6437 "format.w"
+	#line 6468 "format.w"
 	(yyval.info)= 2;}
 #line 3374 "parser.c"
     break;
@@ -3376,7 +3376,7 @@ yyreduce:
   case 186: /* stream_type: "top"  */
 #line 845 "parser.y"
                     {
-	#line 6437 "format.w"
+	#line 6468 "format.w"
 	(yyval.info)= 3;}
 #line 3382 "parser.c"
     break;
@@ -3384,7 +3384,7 @@ yyreduce:
   case 187: /* stream_def_node: start "stream (definition)" ref stream_type list xdimen_node glue_node list glue_node ">"  */
 #line 851 "parser.y"
 {
-	#line 6441 "format.w"
+	#line 6472 "format.w"
 	DEF((yyval.rf),stream_kind,(yyvsp[-7].u));hput_tags((yyvsp[-9].u),TAG(stream_kind,(yyvsp[-6].info)	|b100));}
 #line 3390 "parser.c"
     break;
@@ -3392,7 +3392,7 @@ yyreduce:
   case 188: /* stream_ins_node: start "stream (definition)" ref ">"  */
 #line 856 "parser.y"
 {
-	#line 6444 "format.w"
+	#line 6475 "format.w"
 	RNG("Stream insertion",(yyvsp[-1].u),0,max_ref[stream_kind]);hput_tags((yyvsp[-3].u),TAG(stream_kind,b100));}
 #line 3398 "parser.c"
     break;
@@ -3400,7 +3400,7 @@ yyreduce:
   case 191: /* stream: param_list list  */
 #line 862 "parser.y"
                       {
-	#line 6539 "format.w"
+	#line 6570 "format.w"
 	(yyval.info)= b010;}
 #line 3406 "parser.c"
     break;
@@ -3408,7 +3408,7 @@ yyreduce:
   case 192: /* stream: param_ref list  */
 #line 865 "parser.y"
                        {
-	#line 6540 "format.w"
+	#line 6571 "format.w"
 	(yyval.info)= b000;}
 #line 3414 "parser.c"
     break;
@@ -3416,7 +3416,7 @@ yyreduce:
   case 193: /* content_node: start "stream" stream_ref stream ">"  */
 #line 869 "parser.y"
 {
-	#line 6542 "format.w"
+	#line 6573 "format.w"
 	hput_tags((yyvsp[-4].u),TAG(stream_kind,(yyvsp[-1].info)));}
 #line 3422 "parser.c"
     break;
@@ -3424,7 +3424,7 @@ yyreduce:
   case 194: /* page_priority: %empty  */
 #line 873 "parser.y"
               {
-	#line 6645 "format.w"
+	#line 6676 "format.w"
 	HPUT8(1);}
 #line 3430 "parser.c"
     break;
@@ -3432,7 +3432,7 @@ yyreduce:
   case 195: /* page_priority: UNSIGNED  */
 #line 876 "parser.y"
                  {
-	#line 6646 "format.w"
+	#line 6677 "format.w"
 	RNG("page priority",(yyvsp[0].u),0,255);HPUT8((yyvsp[0].u));}
 #line 3438 "parser.c"
     break;
@@ -3440,7 +3440,7 @@ yyreduce:
   case 198: /* $@9: %empty  */
 #line 882 "parser.y"
            {
-	#line 6650 "format.w"
+	#line 6681 "format.w"
 	hput_string((yyvsp[0].s));}
 #line 3446 "parser.c"
     break;
@@ -3448,7 +3448,7 @@ yyreduce:
   case 199: /* $@10: %empty  */
 #line 884 "parser.y"
                                                           {
-	#line 6650 "format.w"
+	#line 6681 "format.w"
 	HPUT32((yyvsp[0].d));}
 #line 3454 "parser.c"
     break;
@@ -3456,7 +3456,7 @@ yyreduce:
   case 201: /* content_node: "<" "range" REFERENCE "on" ">"  */
 #line 891 "parser.y"
                                          {
-	#line 6763 "format.w"
+	#line 6794 "format.w"
 	REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),true);}
 #line 3462 "parser.c"
     break;
@@ -3464,7 +3464,7 @@ yyreduce:
   case 202: /* content_node: "<" "range" REFERENCE "off" ">"  */
 #line 894 "parser.y"
                                       {
-	#line 6764 "format.w"
+	#line 6795 "format.w"
 	REF(page_kind,(yyvsp[-2].u));hput_range((yyvsp[-2].u),false);}
 #line 3470 "parser.c"
     break;
@@ -3472,7 +3472,7 @@ yyreduce:
   case 204: /* $@11: %empty  */
 #line 900 "parser.y"
                                           {
-	#line 7462 "format.w"
+	#line 7493 "format.w"
 	new_directory((yyvsp[0].u)+1);new_output_buffers();}
 #line 3478 "parser.c"
     break;
@@ -3480,7 +3480,7 @@ yyreduce:
   case 208: /* entry: "<" "entry" UNSIGNED string ">"  */
 #line 905 "parser.y"
 {
-	#line 7465 "format.w"
+	#line 7496 "format.w"
 	RNG("Section number",(yyvsp[-2].u),3,max_section_no);hset_entry(&(dir[(yyvsp[-2].u)]),(yyvsp[-2].u),0,0,(yyvsp[-1].s));}
 #line 3486 "parser.c"
     break;
@@ -3488,7 +3488,7 @@ yyreduce:
   case 209: /* $@12: %empty  */
 #line 909 "parser.y"
                                     {
-	#line 8008 "format.w"
+	#line 8039 "format.w"
 	hput_definitions_start();}
 #line 3494 "parser.c"
     break;
@@ -3496,7 +3496,7 @@ yyreduce:
   case 210: /* definition_section: "<" "definitions" $@12 max_definitions definition_list ">"  */
 #line 913 "parser.y"
    {
-	#line 8010 "format.w"
+	#line 8041 "format.w"
 	hput_definitions_end();}
 #line 3502 "parser.c"
     break;
@@ -3504,7 +3504,7 @@ yyreduce:
   case 213: /* max_definitions: "<" "max" max_list ">"  */
 #line 919 "parser.y"
 {
-	#line 8126 "format.w"
+	#line 8157 "format.w"
 		/*253:*/
 	if(max_ref[label_kind]>=0)
 	ALLOCATE(labels,max_ref[label_kind]+1,Label);
@@ -3534,7 +3534,7 @@ yyreduce:
   case 216: /* max_value: "font" UNSIGNED  */
 #line 947 "parser.y"
                        {
-	#line 8130 "format.w"
+	#line 8161 "format.w"
 	hset_max(font_kind,(yyvsp[0].u));}
 #line 3540 "parser.c"
     break;
@@ -3542,7 +3542,7 @@ yyreduce:
   case 217: /* max_value: "int" UNSIGNED  */
 #line 950 "parser.y"
                          {
-	#line 8131 "format.w"
+	#line 8162 "format.w"
 	hset_max(int_kind,(yyvsp[0].u));}
 #line 3548 "parser.c"
     break;
@@ -3550,7 +3550,7 @@ yyreduce:
   case 218: /* max_value: "dimen" UNSIGNED  */
 #line 953 "parser.y"
                        {
-	#line 8132 "format.w"
+	#line 8163 "format.w"
 	hset_max(dimen_kind,(yyvsp[0].u));}
 #line 3556 "parser.c"
     break;
@@ -3558,7 +3558,7 @@ yyreduce:
   case 219: /* max_value: "ligature" UNSIGNED  */
 #line 956 "parser.y"
                           {
-	#line 8133 "format.w"
+	#line 8164 "format.w"
 	hset_max(ligature_kind,(yyvsp[0].u));}
 #line 3564 "parser.c"
     break;
@@ -3566,7 +3566,7 @@ yyreduce:
   case 220: /* max_value: "disc" UNSIGNED  */
 #line 959 "parser.y"
                       {
-	#line 8134 "format.w"
+	#line 8165 "format.w"
 	hset_max(disc_kind,(yyvsp[0].u));}
 #line 3572 "parser.c"
     break;
@@ -3574,7 +3574,7 @@ yyreduce:
   case 221: /* max_value: "glue" UNSIGNED  */
 #line 962 "parser.y"
                       {
-	#line 8135 "format.w"
+	#line 8166 "format.w"
 	hset_max(glue_kind,(yyvsp[0].u));}
 #line 3580 "parser.c"
     break;
@@ -3582,7 +3582,7 @@ yyreduce:
   case 222: /* max_value: "language" UNSIGNED  */
 #line 965 "parser.y"
                           {
-	#line 8136 "format.w"
+	#line 8167 "format.w"
 	hset_max(language_kind,(yyvsp[0].u));}
 #line 3588 "parser.c"
     break;
@@ -3590,7 +3590,7 @@ yyreduce:
   case 223: /* max_value: "rule" UNSIGNED  */
 #line 968 "parser.y"
                       {
-	#line 8137 "format.w"
+	#line 8168 "format.w"
 	hset_max(rule_kind,(yyvsp[0].u));}
 #line 3596 "parser.c"
     break;
@@ -3598,7 +3598,7 @@ yyreduce:
   case 224: /* max_value: "image" UNSIGNED  */
 #line 971 "parser.y"
                        {
-	#line 8138 "format.w"
+	#line 8169 "format.w"
 	hset_max(image_kind,(yyvsp[0].u));}
 #line 3604 "parser.c"
     break;
@@ -3606,7 +3606,7 @@ yyreduce:
   case 225: /* max_value: "leaders" UNSIGNED  */
 #line 974 "parser.y"
                          {
-	#line 8139 "format.w"
+	#line 8170 "format.w"
 	hset_max(leaders_kind,(yyvsp[0].u));}
 #line 3612 "parser.c"
     break;
@@ -3614,7 +3614,7 @@ yyreduce:
   case 226: /* max_value: "baseline" UNSIGNED  */
 #line 977 "parser.y"
                           {
-	#line 8140 "format.w"
+	#line 8171 "format.w"
 	hset_max(baseline_kind,(yyvsp[0].u));}
 #line 3620 "parser.c"
     break;
@@ -3622,7 +3622,7 @@ yyreduce:
   case 227: /* max_value: "xdimen" UNSIGNED  */
 #line 980 "parser.y"
                         {
-	#line 8141 "format.w"
+	#line 8172 "format.w"
 	hset_max(xdimen_kind,(yyvsp[0].u));}
 #line 3628 "parser.c"
     break;
@@ -3630,7 +3630,7 @@ yyreduce:
   case 228: /* max_value: "param" UNSIGNED  */
 #line 983 "parser.y"
                        {
-	#line 8142 "format.w"
+	#line 8173 "format.w"
 	hset_max(param_kind,(yyvsp[0].u));}
 #line 3636 "parser.c"
     break;
@@ -3638,7 +3638,7 @@ yyreduce:
   case 229: /* max_value: "stream (definition)" UNSIGNED  */
 #line 986 "parser.y"
                            {
-	#line 8143 "format.w"
+	#line 8174 "format.w"
 	hset_max(stream_kind,(yyvsp[0].u));}
 #line 3644 "parser.c"
     break;
@@ -3646,7 +3646,7 @@ yyreduce:
   case 230: /* max_value: "page" UNSIGNED  */
 #line 989 "parser.y"
                       {
-	#line 8144 "format.w"
+	#line 8175 "format.w"
 	hset_max(page_kind,(yyvsp[0].u));}
 #line 3652 "parser.c"
     break;
@@ -3654,7 +3654,7 @@ yyreduce:
   case 231: /* max_value: "range" UNSIGNED  */
 #line 992 "parser.y"
                        {
-	#line 8145 "format.w"
+	#line 8176 "format.w"
 	hset_max(range_kind,(yyvsp[0].u));}
 #line 3660 "parser.c"
     break;
@@ -3662,7 +3662,7 @@ yyreduce:
   case 232: /* max_value: "label" UNSIGNED  */
 #line 995 "parser.y"
                        {
-	#line 8146 "format.w"
+	#line 8177 "format.w"
 	hset_max(label_kind,(yyvsp[0].u));}
 #line 3668 "parser.c"
     break;
@@ -3670,7 +3670,7 @@ yyreduce:
   case 233: /* def_node: start "font" ref font ">"  */
 #line 1001 "parser.y"
                        {
-	#line 8346 "format.w"
+	#line 8377 "format.w"
 	DEF((yyval.rf),font_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),(yyvsp[-1].info));}
 #line 3676 "parser.c"
     break;
@@ -3678,7 +3678,7 @@ yyreduce:
   case 234: /* def_node: start "int" ref integer ">"  */
 #line 1004 "parser.y"
                                       {
-	#line 8347 "format.w"
+	#line 8378 "format.w"
 	DEF((yyval.rf),int_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
 #line 3684 "parser.c"
     break;
@@ -3686,7 +3686,7 @@ yyreduce:
   case 235: /* def_node: start "dimen" ref dimension ">"  */
 #line 1007 "parser.y"
                                       {
-	#line 8348 "format.w"
+	#line 8379 "format.w"
 	DEF((yyval.rf),dimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_dimen((yyvsp[-1].d)));}
 #line 3692 "parser.c"
     break;
@@ -3694,7 +3694,7 @@ yyreduce:
   case 236: /* def_node: start "language" ref string ">"  */
 #line 1010 "parser.y"
                                       {
-	#line 8349 "format.w"
+	#line 8380 "format.w"
 	DEF((yyval.rf),language_kind,(yyvsp[-2].u));hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
 #line 3700 "parser.c"
     break;
@@ -3702,7 +3702,7 @@ yyreduce:
   case 237: /* def_node: start "glue" ref glue ">"  */
 #line 1013 "parser.y"
                                 {
-	#line 8350 "format.w"
+	#line 8381 "format.w"
 	DEF((yyval.rf),glue_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
 #line 3708 "parser.c"
     break;
@@ -3710,7 +3710,7 @@ yyreduce:
   case 238: /* def_node: start "xdimen" ref xdimen ">"  */
 #line 1016 "parser.y"
                                     {
-	#line 8351 "format.w"
+	#line 8382 "format.w"
 	DEF((yyval.rf),xdimen_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_xdimen(&((yyvsp[-1].xd))));}
 #line 3716 "parser.c"
     break;
@@ -3718,7 +3718,7 @@ yyreduce:
   case 239: /* def_node: start "rule" ref rule ">"  */
 #line 1019 "parser.y"
                                 {
-	#line 8352 "format.w"
+	#line 8383 "format.w"
 	DEF((yyval.rf),rule_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
 #line 3724 "parser.c"
     break;
@@ -3726,7 +3726,7 @@ yyreduce:
   case 240: /* def_node: start "leaders" ref leaders ">"  */
 #line 1022 "parser.y"
                                       {
-	#line 8353 "format.w"
+	#line 8384 "format.w"
 	DEF((yyval.rf),leaders_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(leaders_kind,(yyvsp[-1].info)));}
 #line 3732 "parser.c"
     break;
@@ -3734,7 +3734,7 @@ yyreduce:
   case 241: /* def_node: start "baseline" ref baseline ">"  */
 #line 1025 "parser.y"
                                         {
-	#line 8354 "format.w"
+	#line 8385 "format.w"
 	DEF((yyval.rf),baseline_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(baseline_kind,(yyvsp[-1].info)));}
 #line 3740 "parser.c"
     break;
@@ -3742,7 +3742,7 @@ yyreduce:
   case 242: /* def_node: start "ligature" ref ligature ">"  */
 #line 1028 "parser.y"
                                         {
-	#line 8355 "format.w"
+	#line 8386 "format.w"
 	DEF((yyval.rf),ligature_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
 #line 3748 "parser.c"
     break;
@@ -3750,7 +3750,7 @@ yyreduce:
   case 243: /* def_node: start "disc" ref disc ">"  */
 #line 1031 "parser.y"
                                 {
-	#line 8356 "format.w"
+	#line 8387 "format.w"
 	DEF((yyval.rf),disc_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
 #line 3756 "parser.c"
     break;
@@ -3758,7 +3758,7 @@ yyreduce:
   case 244: /* def_node: start "image" ref image ">"  */
 #line 1034 "parser.y"
                                   {
-	#line 8357 "format.w"
+	#line 8388 "format.w"
 	DEF((yyval.rf),image_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(image_kind,(yyvsp[-1].info)));}
 #line 3764 "parser.c"
     break;
@@ -3766,7 +3766,7 @@ yyreduce:
   case 245: /* def_node: start "param" ref parameters ">"  */
 #line 1037 "parser.y"
                                        {
-	#line 8358 "format.w"
+	#line 8389 "format.w"
 	DEF((yyval.rf),param_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),hput_list((yyvsp[-4].u)+2,&((yyvsp[-1].l))));}
 #line 3772 "parser.c"
     break;
@@ -3774,7 +3774,7 @@ yyreduce:
   case 246: /* def_node: start "page" ref page ">"  */
 #line 1040 "parser.y"
                                 {
-	#line 8359 "format.w"
+	#line 8390 "format.w"
 	DEF((yyval.rf),page_kind,(yyvsp[-2].u));hput_tags((yyvsp[-4].u),TAG(page_kind,0));}
 #line 3780 "parser.c"
     break;
@@ -3782,7 +3782,7 @@ yyreduce:
   case 247: /* def_node: start "int" ref ref ">"  */
 #line 1045 "parser.y"
                          {
-	#line 8378 "format.w"
+	#line 8409 "format.w"
 	DEF_REF((yyval.rf),int_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(int_kind,0));}
 #line 3788 "parser.c"
     break;
@@ -3790,7 +3790,7 @@ yyreduce:
   case 248: /* def_node: start "dimen" ref ref ">"  */
 #line 1048 "parser.y"
                                 {
-	#line 8379 "format.w"
+	#line 8410 "format.w"
 	DEF_REF((yyval.rf),dimen_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(dimen_kind,0));}
 #line 3796 "parser.c"
     break;
@@ -3798,7 +3798,7 @@ yyreduce:
   case 249: /* def_node: start "glue" ref ref ">"  */
 #line 1051 "parser.y"
                                {
-	#line 8380 "format.w"
+	#line 8411 "format.w"
 	DEF_REF((yyval.rf),glue_kind,(yyvsp[-2].u),(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(glue_kind,0));}
 #line 3804 "parser.c"
     break;
@@ -3806,7 +3806,7 @@ yyreduce:
   case 251: /* def_list: def_list def_node  */
 #line 1056 "parser.y"
                           {
-	#line 8496 "format.w"
+	#line 8527 "format.w"
 	check_param_def(&((yyvsp[0].rf)));}
 #line 3812 "parser.c"
     break;
@@ -3814,7 +3814,7 @@ yyreduce:
   case 252: /* parameters: estimate def_list  */
 #line 1059 "parser.y"
                             {
-	#line 8497 "format.w"
+	#line 8528 "format.w"
 	(yyval.l).p= (yyvsp[0].u);(yyval.l).t= TAG(param_kind,b001);(yyval.l).s= (hpos-hstart)-(yyvsp[0].u);}
 #line 3820 "parser.c"
     break;
@@ -3822,7 +3822,7 @@ yyreduce:
   case 253: /* named_param_list: start "param" parameters ">"  */
 #line 1064 "parser.y"
 {
-	#line 8510 "format.w"
+	#line 8541 "format.w"
 	hput_tags((yyvsp[-3].u),hput_list((yyvsp[-3].u)+1,&((yyvsp[-1].l))));}
 #line 3828 "parser.c"
     break;
@@ -3830,7 +3830,7 @@ yyreduce:
   case 255: /* param_list: start parameters ">"  */
 #line 1068 "parser.y"
 {
-	#line 8512 "format.w"
+	#line 8543 "format.w"
 	hput_tags((yyvsp[-2].u),hput_list((yyvsp[-2].u)+1,&((yyvsp[-1].l))));}
 #line 3836 "parser.c"
     break;
@@ -3838,7 +3838,7 @@ yyreduce:
   case 257: /* font_head: string dimension UNSIGNED UNSIGNED  */
 #line 1076 "parser.y"
 {
-	#line 8658 "format.w"
+	#line 8689 "format.w"
 	uint8_t f= (yyvsp[-4].u);SET_DBIT(f,font_kind);hfont_name[f]= strdup((yyvsp[-3].s));(yyval.info)= hput_font_head(f,hfont_name[f],(yyvsp[-2].d),(yyvsp[-1].u),(yyvsp[0].u));}
 #line 3844 "parser.c"
     break;
@@ -3846,7 +3846,7 @@ yyreduce:
   case 260: /* font_param: start "penalty" fref penalty ">"  */
 #line 1083 "parser.y"
                               {
-	#line 8663 "format.w"
+	#line 8694 "format.w"
 	hput_tags((yyvsp[-4].u),hput_int((yyvsp[-1].i)));}
 #line 3852 "parser.c"
     break;
@@ -3854,7 +3854,7 @@ yyreduce:
   case 261: /* font_param: start "kern" fref kern ">"  */
 #line 1086 "parser.y"
                                  {
-	#line 8664 "format.w"
+	#line 8695 "format.w"
 	hput_tags((yyvsp[-4].u),hput_kern(&((yyvsp[-1].kt))));}
 #line 3860 "parser.c"
     break;
@@ -3862,7 +3862,7 @@ yyreduce:
   case 262: /* font_param: start "ligature" fref ligature ">"  */
 #line 1089 "parser.y"
                                          {
-	#line 8665 "format.w"
+	#line 8696 "format.w"
 	hput_tags((yyvsp[-4].u),hput_ligature(&((yyvsp[-1].lg))));}
 #line 3868 "parser.c"
     break;
@@ -3870,7 +3870,7 @@ yyreduce:
   case 263: /* font_param: start "disc" fref disc ">"  */
 #line 1092 "parser.y"
                                  {
-	#line 8666 "format.w"
+	#line 8697 "format.w"
 	hput_tags((yyvsp[-4].u),hput_disc(&((yyvsp[-1].dc))));}
 #line 3876 "parser.c"
     break;
@@ -3878,7 +3878,7 @@ yyreduce:
   case 264: /* font_param: start "glue" fref glue ">"  */
 #line 1095 "parser.y"
                                  {
-	#line 8667 "format.w"
+	#line 8698 "format.w"
 	hput_tags((yyvsp[-4].u),hput_glue(&((yyvsp[-1].g))));}
 #line 3884 "parser.c"
     break;
@@ -3886,7 +3886,7 @@ yyreduce:
   case 265: /* font_param: start "language" fref string ">"  */
 #line 1098 "parser.y"
                                        {
-	#line 8668 "format.w"
+	#line 8699 "format.w"
 	hput_string((yyvsp[-1].s));hput_tags((yyvsp[-4].u),TAG(language_kind,0));}
 #line 3892 "parser.c"
     break;
@@ -3894,7 +3894,7 @@ yyreduce:
   case 266: /* font_param: start "rule" fref rule ">"  */
 #line 1101 "parser.y"
                                  {
-	#line 8669 "format.w"
+	#line 8700 "format.w"
 	hput_tags((yyvsp[-4].u),hput_rule(&((yyvsp[-1].r))));}
 #line 3900 "parser.c"
     break;
@@ -3902,7 +3902,7 @@ yyreduce:
   case 267: /* font_param: start "image" fref image ">"  */
 #line 1104 "parser.y"
                                    {
-	#line 8670 "format.w"
+	#line 8701 "format.w"
 	hput_tags((yyvsp[-4].u),TAG(image_kind,(yyvsp[-1].info)));}
 #line 3908 "parser.c"
     break;
@@ -3910,7 +3910,7 @@ yyreduce:
   case 268: /* fref: ref  */
 #line 1108 "parser.y"
         {
-	#line 8672 "format.w"
+	#line 8703 "format.w"
 	RNG("Font parameter",(yyvsp[0].u),0,MAX_FONT_PARAMS);}
 #line 3916 "parser.c"
     break;
@@ -3918,7 +3918,7 @@ yyreduce:
   case 269: /* xdimen_ref: ref  */
 #line 1112 "parser.y"
               {
-	#line 8749 "format.w"
+	#line 8780 "format.w"
 	REF(xdimen_kind,(yyvsp[0].u));}
 #line 3924 "parser.c"
     break;
@@ -3926,7 +3926,7 @@ yyreduce:
   case 270: /* param_ref: ref  */
 #line 1115 "parser.y"
              {
-	#line 8750 "format.w"
+	#line 8781 "format.w"
 	REF(param_kind,(yyvsp[0].u));}
 #line 3932 "parser.c"
     break;
@@ -3934,7 +3934,7 @@ yyreduce:
   case 271: /* stream_ref: ref  */
 #line 1118 "parser.y"
               {
-	#line 8751 "format.w"
+	#line 8782 "format.w"
 	REF_RNG(stream_kind,(yyvsp[0].u));}
 #line 3940 "parser.c"
     break;
@@ -3942,7 +3942,7 @@ yyreduce:
   case 272: /* content_node: start "penalty" ref ">"  */
 #line 1124 "parser.y"
                      {
-	#line 8755 "format.w"
+	#line 8786 "format.w"
 	REF(penalty_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(penalty_kind,0));}
 #line 3948 "parser.c"
     break;
@@ -3950,7 +3950,7 @@ yyreduce:
   case 273: /* content_node: start "kern" explicit ref ">"  */
 #line 1128 "parser.y"
 {
-	#line 8757 "format.w"
+	#line 8788 "format.w"
 	REF(dimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-4].u),TAG(kern_kind,((yyvsp[-2].b))?b100:b000));}
 #line 3956 "parser.c"
     break;
@@ -3958,7 +3958,7 @@ yyreduce:
   case 274: /* content_node: start "kern" explicit "xdimen" ref ">"  */
 #line 1132 "parser.y"
 {
-	#line 8759 "format.w"
+	#line 8790 "format.w"
 	REF(xdimen_kind,(yyvsp[-1].u));hput_tags((yyvsp[-5].u),TAG(kern_kind,((yyvsp[-3].b))?b101:b001));}
 #line 3964 "parser.c"
     break;
@@ -3966,7 +3966,7 @@ yyreduce:
   case 275: /* content_node: start "glue" ref ">"  */
 #line 1135 "parser.y"
                            {
-	#line 8760 "format.w"
+	#line 8791 "format.w"
 	REF(glue_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(glue_kind,0));}
 #line 3972 "parser.c"
     break;
@@ -3974,7 +3974,7 @@ yyreduce:
   case 276: /* content_node: start "ligature" ref ">"  */
 #line 1138 "parser.y"
                                {
-	#line 8761 "format.w"
+	#line 8792 "format.w"
 	REF(ligature_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(ligature_kind,0));}
 #line 3980 "parser.c"
     break;
@@ -3982,7 +3982,7 @@ yyreduce:
   case 277: /* content_node: start "disc" ref ">"  */
 #line 1141 "parser.y"
                            {
-	#line 8762 "format.w"
+	#line 8793 "format.w"
 	REF(disc_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(disc_kind,0));}
 #line 3988 "parser.c"
     break;
@@ -3990,7 +3990,7 @@ yyreduce:
   case 278: /* content_node: start "rule" ref ">"  */
 #line 1144 "parser.y"
                            {
-	#line 8763 "format.w"
+	#line 8794 "format.w"
 	REF(rule_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(rule_kind,0));}
 #line 3996 "parser.c"
     break;
@@ -3998,7 +3998,7 @@ yyreduce:
   case 279: /* content_node: start "image" ref ">"  */
 #line 1147 "parser.y"
                             {
-	#line 8764 "format.w"
+	#line 8795 "format.w"
 	REF(image_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(image_kind,0));}
 #line 4004 "parser.c"
     break;
@@ -4006,7 +4006,7 @@ yyreduce:
   case 280: /* content_node: start "leaders" ref ">"  */
 #line 1150 "parser.y"
                               {
-	#line 8765 "format.w"
+	#line 8796 "format.w"
 	REF(leaders_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(leaders_kind,0));}
 #line 4012 "parser.c"
     break;
@@ -4014,7 +4014,7 @@ yyreduce:
   case 281: /* content_node: start "baseline" ref ">"  */
 #line 1153 "parser.y"
                                {
-	#line 8766 "format.w"
+	#line 8797 "format.w"
 	REF(baseline_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),TAG(baseline_kind,0));}
 #line 4020 "parser.c"
     break;
@@ -4022,7 +4022,7 @@ yyreduce:
   case 282: /* content_node: start "language" REFERENCE ">"  */
 #line 1156 "parser.y"
                                      {
-	#line 8767 "format.w"
+	#line 8798 "format.w"
 	REF(language_kind,(yyvsp[-1].u));hput_tags((yyvsp[-3].u),hput_language((yyvsp[-1].u)));}
 #line 4028 "parser.c"
     break;
@@ -4030,7 +4030,7 @@ yyreduce:
   case 283: /* glue_node: start "glue" ref ">"  */
 #line 1160 "parser.y"
                             {
-	#line 8769 "format.w"
+	#line 8800 "format.w"
 	REF(glue_kind,(yyvsp[-1].u));
 	if((yyvsp[-1].u)==zero_skip_no){hpos= hpos-2;(yyval.b)= false;}
 	else{hput_tags((yyvsp[-3].u),TAG(glue_kind,0));(yyval.b)= true;}}
@@ -4040,7 +4040,7 @@ yyreduce:
   case 284: /* $@13: %empty  */
 #line 1167 "parser.y"
                              {
-	#line 9216 "format.w"
+	#line 9247 "format.w"
 	hput_content_start();}
 #line 4046 "parser.c"
     break;
@@ -4048,7 +4048,7 @@ yyreduce:
   case 285: /* content_section: "<" "content" $@13 content_list ">"  */
 #line 1170 "parser.y"
 {
-	#line 9217 "format.w"
+	#line 9248 "format.w"
 	hput_content_end();hput_range_defs();hput_label_defs();}
 #line 4054 "parser.c"
     break;
