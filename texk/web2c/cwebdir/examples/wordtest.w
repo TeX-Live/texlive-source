@@ -166,7 +166,7 @@ default: print_usage: fprintf(stderr,
 @*Treaps. The most interesting part of this program is its sorting algorithm,
 which is based on the ``treap'' data structure of Aragon and Seidel
 [{\sl 30th IEEE Symposium on Foundations of Computer Science\/} (1989),
-540--546].
+540--545].
 @^Aragon, Cecilia Rodriguez@>@^Seidel, Raimund@>
 A treap is a binary tree whose nodes have two key fields. The primary
 key, which in our application is a word from the input, obeys

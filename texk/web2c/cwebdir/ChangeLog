@@ -1,3 +1,7 @@
+2023-05-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* examples/wordtest.w: Fix page number for Aragon and Seidel.
+
 2023-05-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* refsort.ch: Make room for larger index entries.
