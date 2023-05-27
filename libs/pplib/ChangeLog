@@ -1,6 +1,12 @@
+2023-05-27  Karl Berry  <karl@freefriends.org>
+
+	* pplib-src/test/out2: no period at end of message.
+
 2023-05-23 Luigi Scarso luigi.scarso@gmail.com
-	* sync with the upstrem repo.:
+
+	* sync with the upstream repo.:
           fixes decryption failure on unreadable perms (Paweł Jackowski)
 
 2020-04-18 Luigi Scarso luigi.scarso@gmail.com
+
 	* Moved luatexdir/luapplib under libs/pplib.
