@@ -56,6 +56,9 @@ sub check_mandatory_tags {
     }
     if (not(exists $entry{$tag})) {
       my $listed = listed_tags(%entry);
+      if ($tag eq 'doi' and exists $args{'--no:doi'}) {
+        next;
+      }
       return "A mandatory '$tag' tag for '\@$type' is missing among $listed"
     }
   }
@@ -83,19 +86,20 @@ sub check_capitalization {
     if (not exists $tags{$tag}) {
       next;
     }
+    my $tailed = qr/^.+(:|\?)$/;
     my $value = $entry{$tag};
     my @words = only_words($value);
     my $pos = 0;
     foreach my $word (@words) {
+      $pos = $pos + 1;
       if (not $word =~ /^[A-Za-z]/) {
         next;
       }
-      $pos = $pos + 1;
       if (exists $minors{$word}) {
         if ($pos eq 1) {
           return "The minor word in the '$tag' must be upper-cased since it is the first one"
         }
-        if (not $words[$pos - 2] =~ /^.*:$/) {
+        if (not $words[$pos - 2] =~ $tailed) {
           next;
         }
         return "The minor word in the '$tag' must be upper-cased, because it follows the colon"
@@ -104,7 +108,7 @@ sub check_capitalization {
         if ($pos eq 1) {
           next;
         }
-        if ($words[$pos - 2] =~ /^.*:$/) {
+        if ($words[$pos - 2] =~ $tailed) {
           next;
         }
         return "All minor words in the '$tag' must be lower-cased, while @{[as_position($pos)]} word '$word' is not"
@@ -261,6 +265,9 @@ sub check_typography {
     if ($tag =~ /^:.*/) {
       next;
     }
+    if ($tag eq 'doi') {
+      next;
+    }
     my $value = $entry{$tag};
     foreach my $s (@bad_tails) {
       if ($s eq '.' and $tag eq 'author') {
@@ -324,7 +331,13 @@ sub check_ascii {
     for my $pos (0..length($value)-1) {
       my $char = substr($value, $pos, 1);
       my $ord = ord($char);
-      if ($ord < 20 or $ord > 0x7f) {
+      if ($ord == 9 || $ord == 10 || $ord == 13) {
+        next;
+      }
+      if ($ord < 20) {
+        return "In the '$tag', don't use control symbol '0x" . (sprintf '%04x', $ord) . "'"
+      }
+      if ($ord > 0x7f) {
         return "In the '$tag', don't use Unicode symbol '0x" . (sprintf '%04x', $ord) . "'"
       }
     }
@@ -489,7 +502,7 @@ sub process_entry {
 
 sub fix_author {
   my ($value) = @_;
-  my @authors = split(/\s?and\s?/, $value);
+  my @authors = split(/\s+and\s+/, $value);
   foreach my $author (@authors) {
     $author =~ s/^\s+|\s+$//g;
     $author =~ s/ ([A-Z])($| )/ $1.$2/g;
@@ -797,6 +810,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "  -v, --version   Print the current version of the tool and exit\n" .
     "  -?, --help      Print this help screen\n" .
     "      --fix       Fix the errors and print a new version of the .bib file to the console\n" .
+    "  -i, --in-place  When used together with --fix, modifies the file in place, doesn't print it to the console\n" .
     "      --verbose   Print supplementary debugging information\n" .
     "      --no:XXX    Disable one of the following checks (e.g. --no:wraps):\n" .
     "                    tags    Only some tags are allowed, while some of them are mandatory\n" .
@@ -808,7 +822,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.12');
+  info('0.0.13');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
@@ -818,11 +832,15 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   my $bib; { local $/; $bib = <$fh>; }
   my @entries = entries($bib);
   if (exists $args{'--fix'}) {
+    my $fixed = '';
     for my $i (0..(@entries+0 - 1)) {
       my %entry = %{ $entries[$i] };
       my $type = $entry{':type'};
       if (not exists $blessed{$type}) {
         error("I don't know what to do with \@$type type of BibTeX entry");
+      }
+      if (not exists $entry{':name'}) {
+        error("I don't know what to do with an entry without a name");
       }
       my $tags = $blessed{$entry{':type'}};
       my %allowed = map { $_ => 1 } @$tags;
@@ -846,12 +864,19 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
         }
         push(@lines, "  $tag = {$value},");
       }
-      info("\@$type\{$entry{':name'},");
+      $fixed = $fixed . "\@$type\{$entry{':name'},\n";
       my @sorted = sort @lines;
       foreach my $line (@sorted) {
-        info($line);
+        $fixed = $fixed . $line . "\n";
       }
-      info("}\n");
+      $fixed = $fixed . "}\n\n";
+    }
+    if (exists $args{'-i'} or exists $args{'--in-place'}) {
+      open(my $out, '>', $file) or error('Cannot open file for writing: ' . $file);
+      print $out $fixed;
+      close($out);
+    } else {
+      info($fixed);
     }
   } else {
     debug((@entries+0) . ' entries found in ' . $file);
