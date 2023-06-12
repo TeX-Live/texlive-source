@@ -1,3 +1,7 @@
+2023-06-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctproofsort: Sort mini-indexes in CTWILL output.
+
 2023-05-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* examples/wordtest.w: Fix page number for Aragon and Seidel.
