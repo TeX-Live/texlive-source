@@ -25,26 +25,26 @@ open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
 my %mini_index; # storage for index entries of a section
 my $print_index=0; # do we collect and print a mini-index?
 
-foreach my $line (<TEX>) {
-	chomp($line);
-
-	if ('\\mini' eq $line) { # start of mini-index
+foreach my $line (<TEX>)
+{
+	if ("\\mini\n" eq $line) { # start of mini-index
 		$print_index=1;
 		%mini_index=(); # reset mini-index
-	} elsif ('}\\FI' eq $line) { # end of mini-index
-		foreach my $key (sort keys %mini_index) {
-			print "$mini_index{$key}\n";
+	} elsif ("}\\FI\n" eq $line) { # end of mini-index
+		foreach my $key (sort {"\L$a" cmp "\L$b"} keys %mini_index) {
+			print $mini_index{$key};
 		}
 		$print_index=0;
 	} elsif ($print_index) { # mini-index entry
 		my ($location,$key) = split / /, $line; # 2nd column is the key
 		$key=~s/\\//g; # strip TeX escape(s)
 		$key=~m/\w*\{(\w+)\}/; # extract plain key
+		$key=~m/\$(\w+)\$/ unless defined $1; # extract @f TeX key
 		$mini_index{$1}=$line; # store index entry
 		next; # print later
 	}
 
-	print "$line\n";
+	print $line;
 }
 
 close(TEX);
