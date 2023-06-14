@@ -134,7 +134,7 @@
 \newif\iftokprocessed \newif\ifTnum \newif\ifinstr
 {\def\\{\global\let\spacechar= }\\ }
 
-\ifpdf % The following are pdf macros
+\ifacro % The following are pdf macros
 \def\thewidth{\the\wd0 \space}
 \def\theheight{\the\ht\strutbox\space}
 \def\thedepth{\the\dp\strutbox\space}
@@ -262,7 +262,7 @@
 \let\pdflink=\HINTlink
 \fi % End of HINT macros
 
-% Common macros for \ifpdf and \ifhint
+% Common macros for \ifacro and \ifhint
 \ifacrohint
 \def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
 \def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
@@ -305,7 +305,7 @@
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \ifhint\HINTlabel\fi% Start page before section
   \noindent{\let\*=\lapstar\bf\secstar.\quad}%
-  \ifpdf \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
+  \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
     \ifpdftex \pdfdest num \secstar fith%
     \else \special{pdf: dest (\romannumeral\secstar)
       [ @thispage /FitH @ypos ]}\fi}}\fi}
@@ -338,7 +338,7 @@
 \outer\def\M#1{\MN{#1}\ifon\vfil\penalty-100\vfilneg % beginning of section
   \vskip\intersecskip\startsection\ignorespaces}
 \outer\def\N#1#2#3.{% beginning of starred section
-  \ifpdf{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
+  \ifacro{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
   \gdepth=#1\gtitle={#3}\MN{#2}%
   \ifon\ifnum#1<\secpagedepth \vfil\eject % force page break if depth is small
     \else\vfil\penalty-100\vfilneg\vskip\intersecskip\fi\fi
@@ -504,7 +504,7 @@
   \def\U{\note{Used in section}} % crossref for use of a section
   \def\Us{\note{Used in sections}} % crossref for uses of a section
   \def\I{\par\hangindent 2em}\let\*=*
-  \ifpdf \def\outsecname{Names of the sections} \let\Xpdf\X
+  \ifacro \def\outsecname{Names of the sections} \let\Xpdf\X
 %  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
   \ifpdftex \pdfdest name {NOS} fith % changed in version 3.69
     \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
@@ -551,7 +551,7 @@
       \ \ifhint
           \HINTlink{#3}{\romannumeral#3}% No page numbers in HINT
           \HINTcontents{#1}{#2}{#3}%
-        \else\ifpdf\pdflink{#3}{\romannumeral#3}\else#3\fi
+        \else\ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi
           \hbox to3em{\hss#4}\fi}}
 \def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
   \or % depth 0 (@*)

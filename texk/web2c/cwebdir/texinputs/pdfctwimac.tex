@@ -483,7 +483,7 @@
 \let\W=\land % logical and
 \def\X#1:#2\X{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi %$% section name
   \XX$\langle\,${\let\I=\ne#2\sevenrm\kern.5em
-    \ifacro{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
+    \ifpdf{\pdfnote#1.}\else#1\fi}$\,\rangle$\XX}
 \def\Y{\par\yskip}
 \let\Z=\le
 \let\ZZ=\let % now you can \write the control sequence \ZZ
