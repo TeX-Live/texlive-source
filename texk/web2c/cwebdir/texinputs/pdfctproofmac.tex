@@ -456,7 +456,7 @@
 {\obeylines
   \gdef\[#1 #2 #3
 {\noindent\kern.5\hsize #2\miniform#3, % mask line break!
-    \ifacrohint{\pdfnote#1.}\else{\S#1}\fi.\par}%
+    \ifacrohint{\S\pdfnote#1.}\else{\S#1}\fi.\par}%
   \gdef\]#1 #2 #3
 {\noindent\kern.5\hsize #2\miniform#3, \extref#1.\par}}
 \def\miniform{\futurelet\next\miniforma}
