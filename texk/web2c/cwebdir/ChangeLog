@@ -4,6 +4,7 @@
 	* cttwinxmac.tex,
 	* ctwimac.tex,
 	* texinputs/pdfctwimac.tex: Touch up for CWEB 4.9.
+	* ctwill-hint.ch: Revert two changes for HiTeX.
 	* texinputs/pdfctproofmac.tex: New macros for HiTeX.
 
 2023-06-12  Andreas Scherer  <https://ascherer.github.io>
