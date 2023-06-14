@@ -1,3 +1,11 @@
+2023-06-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctproofmac.tex,
+	* cttwinxmac.tex,
+	* ctwimac.tex,
+	* texinputs/pdfctwimac.tex: Touch up for CWEB 4.9.
+	* texinputs/pdfctproofmac.tex: New macros for HiTeX.
+
 2023-06-12  Andreas Scherer  <https://ascherer.github.io>
 
 	* proofsort: Sort mini-indexes in CTWILL output.

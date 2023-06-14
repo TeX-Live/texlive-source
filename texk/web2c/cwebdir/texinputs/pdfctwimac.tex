@@ -1,5 +1,5 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.9 --- June 2022
+% Version 4.9 --- June 2023
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+', 'pdftex', and 'xetex'
@@ -17,6 +17,10 @@
   \def\PDFlinkcolor{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
 \let\ifacro=\ifpdf
+\ifhint\message{These macros are not suitable for HiTeX.}
+  \message{Please use 'ctwill +P [+lpdf]' instead.}
+  \end
+\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -44,6 +48,8 @@
 \def\Cee{\CEE/} % for backward compatibility
 \def\Cpp{\CPLUSPLUS/} % for backward compatibility
 \def\9#1{}
+ % with this definition of \9 you can say @:sort key}{TeX code@>
+ % to alphabetize an index entry by the sort key but format with the TeX code
 \font\eightrm=cmr8
 \font\sixrm=cmr6
 \font\ninei=cmmi9
@@ -250,7 +256,7 @@
 \def\thedepth{\the\dp\strutbox\space}
 \ifpdftex
   \ifx\pdfannotlink\undefined\let\pdfannotlink\pdfstartlink\fi% for pdfTeX 0.14
-  \def\pdflink#1#2{\hbox{\pdfannotlink height\ht\strutbox depth\dp\strutbox
+  \def\pdflink#1#2{\hbox{\pdfannotlink height \theheight depth \thedepth
     attr{/Border [0 0 0]} goto num #1 \PDFlinkcolor #1\Black\pdfendlink}}
 \else\def\pdflink#1#2{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
@@ -423,7 +429,7 @@
 \let\G=\ge % greater than or equal sign
 % \H is long Hungarian umlaut accent
 \let\I=\ne % unequal sign
-\def\J{\.{@\&}} % TANGLE's join operation
+\def\J{\.{@\&}} % CTANGLE's join operation
 %\let\K== % assignment operator
 \let\K=\leftarrow % "honest" alternative to standard assignment operator
 % \L is Polish letter suppressed-L

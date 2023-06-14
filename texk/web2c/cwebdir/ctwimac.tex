@@ -1,9 +1,9 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.5 --- October 2021
+% Version 4.9 --- June 2023
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL4.5+LNCS}
+\xdef\fmtversion{\fmtversion+CTWILL4.9+LNCS}
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -31,6 +31,8 @@
 \def\Cee{\CEE/} % for backward compatibility
 \def\Cpp{\CPLUSPLUS/} % for backward compatibility
 \def\9#1{}
+ % with this definition of \9 you can say @:sort key}{TeX code@>
+ % to alphabetize an index entry by the sort key but format with the TeX code
 \font\eightrm=cmr8
 \font\sixrm=cmr6
 \font\ninei=cmmi9
@@ -251,7 +253,7 @@
 \let\G=\ge % greater than or equal sign
 % \H is long Hungarian umlaut accent
 \let\I=\ne % unequal sign
-\def\J{\.{@\&}} % TANGLE's join operation
+\def\J{\.{@\&}} % CTANGLE's join operation
 \let\K== % assignment operator
 %\let\K=\leftarrow % "honest" alternative to standard assignment operator
 % \L is Polish letter suppressed-L
