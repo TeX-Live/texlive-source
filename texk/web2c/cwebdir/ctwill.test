@@ -1,0 +1,53 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2023 Andreas Scherer <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+#
+# (1) Test the "classic" CTWILL procedure
+#
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ctie -m ctwill.w \
+    cweave.w ctwill-w2c.ch ctwill-mini.ch || exit 1
+
+# Prime the pump by running CTWILL twice
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ./ctwill ctwill.w || exit 1
+
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ./ctwill ctwill.w || exit 1
+
+# Run TeX for the first time
+TEXMFCNF=$srcdir/../kpathsea \
+  TEXINPUTS=$srcdir/cwebdir//: tex ctwill.tex || exit 1
+
+# Test CTWILL-REFSORT
+TEXMFCNF=$srcdir/../kpathsea \
+  ./ctwill-refsort < ctwill.ref > ctwill.sref || exit 1
+
+# Run TeX for the second time -- NOT!
+#TEXMFCNF=$srcdir/../kpathsea \
+  #TEXINPUTS=$srcdir/cwebdir//: tex ctwill.tex || exit 1
+
+#
+# (2) Test the "proofing" CTWILL procedure
+#
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ctie -m ctwill.w \
+    cweave.w ctwill-w2c.ch ctwill-mini.ch \
+    ctwill-hint.ch || exit 1
+
+# Running CTWILL once again, but with options +P +lpdf
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/cwebdir ./ctwill +P +lpdf ctwill.w || exit 1
+
+# Test CTWILL-PROOFSORT
+TEXMFCNF=$srcdir/../kpathsea \
+  ./ctwill-proofsort ctwill.tex > ctwill-sorted.tex || exit 1
+#mv ctwill-sorted.tex ctwill.tex || exit 1 # -- NOT!
+
+# Run pdfTeX once -- NOT!
+#TEXMFCNF=$srcdir/../kpathsea \
+  #TEXINPUTS=$srcdir/cwebdir//: pdftex ctwill.tex || exit 1
+
+exit 0

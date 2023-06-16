@@ -44,16 +44,17 @@ DISTCLEANFILES += tie.c
 
 ## Tests
 ##
-TESTS += ctiedir/ctie.test cwebdir/cweave.test tiedir/tie.test
+TESTS += ctiedir/ctie.test cwebdir/ctwill.test cwebdir/cweave.test tiedir/tie.test
 ctiedir/ctie.log: ctie$(EXEEXT)
 cwebdir/cweave.log: cweave$(EXEEXT)
 cwebdir/ctwill.log: ctwill$(EXEEXT)
-cwebdir/ctwill-refsort.log: ctwill-refsort$(EXEEXT)
-cwebdir/ctwill-twinx.log: ctwill-twinx$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 
 ## ctiedir/ctie.test
 DISTCLEANFILES += ctie.outc ctie.outm
+## cwebdir/ctwill.test
+DISTCLEANFILES += ctwill.w ctwill.tex ctwill.aux ctwill.idx ctwill.scn
+DISTCLEANFILES += ctwill.ref ctwill.sref ctwill.dvi ctwill-sorted.tex
 ## cwebdir/cweave.test
 DISTCLEANFILES += common.tex common.scn common.idx
 ## tiedir/tie.test

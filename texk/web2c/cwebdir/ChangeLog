@@ -1,6 +1,7 @@
 2023-06-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-proofsort: Rename from 'proofsort'.
+	* ctwill.test: Comprehensive test of the CTWILL system.
 
 2023-06-14  Andreas Scherer  <https://ascherer.github.io>
 
