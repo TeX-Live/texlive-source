@@ -14,15 +14,20 @@
 . ftr VB CB
 . ftr VBI CBI
 .\}
-.TH "CTWILL" "1" "June 5, 2022" "Web2c @VERSION@" "General Commands Manual"
+.TH "CTWILL" "1" "June 16, 2023" "Web2c @VERSION@" "General Commands Manual"
 .hy
 .SH NAME
 .PP
-ctwill, ctwill-refsort, ctwill-twinx - translate CWEB to TeX with mini-indexes
+ctwill, ctwill-proofsort, ctwill-refsort, ctwill-twinx - translate CWEB to TeX with
+mini-indexes
 .SH SYNOPSIS
 .PP
 \f[B]ctwill\f[R] [\f[I]options\f[R]] \f[I]webfile\f[R][.w]
 [{\f[I]changefile\f[R][.ch]|-} [\f[I]outfile\f[R][.tex]]]
+.PD 0
+.P
+.PD
+\f[B]ctwill-proofsort\f[R] \f[I]texfile\f[R].tex > \f[I]texfile\f[R]-sorted.tex
 .PD 0
 .P
 .PD
@@ -110,15 +115,27 @@ in braces), a section number (followed by space), and a TeX\ part.
 A special \f[I]proofmode\f[R] is provided so that you can check
 \f[B]ctwill\f[R]\[cq]s conclusions about cross-references.
 Run \f[B]ctwill\f[R] with the flag \f[B]+P\f[R], and TeX will produce a
-specially formatted document (\f[I]without\f[R] mini-indexes) in which
+specially formatted document with mini-indexes for each section, so that
 you can check that your specifications are correct.
+.PP
+This \f[I]proofmode\f[R] format is used in conjunction with
+\f[B]pdfctproofmac.tex\f[R] that creates active hyperlinks in PDF and HINT
+output.
+You can use \f[B]ctwill-proofsort\f[R] to get the index entries in alphabetical
+order; just invoke
+.IP \[bu] 2
+\f[B]ctwill-proofsort\f[R] \f[I]texfile\f[R].tex > \f[I]texfile\f[R]-sorted.tex
+.IP \[bu] 2
+\f[B]mv\f[R] \f[I]texfile\f[R]-sorted.tex \f[I]texfile\f[R].tex
+.PP
+after invoking \f[B]ctwill\f[R] (twice), but before invoking TeX (once).
 .PP
 More details how to use \f[B]ctwill\f[R] can be found in the first
 sections of its source code, respectively the change file
 \f[B]cweav-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
 A complete example with all bells and whistles is described in
 \f[B]Mini-Indexes for Literate Programs\f[R], pages 225\[en]245 of
-Knuth\[cq]s \f[B]Digital Typography\f[R].
+Knuth\[cq]s \f[B]Digital Typography\f[R] (\f[I]CSLI\f[R], 1999).
 .SH DIFFERENCES TO ORIGINAL CTWILL
 .PP
 The present incarnation of \f[B]ctwill\f[R] and its utilities tries hard
@@ -139,8 +156,8 @@ Option \f[B]+lX\f[R] is accompanied by example wrapper files for
 captions for German (\f[B]+ld\f[R]).
 .IP \[bu] 2
 Option \f[B]+lX\f[R] is also accompanied by an extended
-\f[B]pdfctwimac.tex\f[R] for production of PDF output with active
-hyperlinks (\f[B]+lpdf\f[R]).
+\f[B]pdfctwimac.tex\f[R] for production of PDF and HINT output with
+active hyperlinks (\f[B]+lpdf\f[R]).
 .IP \[bu] 2
 \f[B]ctwill\f[R] in TeX\ Live operates silently by default; use the
 \f[B]--verbose\f[R] option to get the original behavior.
@@ -232,8 +249,9 @@ In both cases you can request some prefix \f[I]X\f[R] with the
 dctwimac.tex\f[R] and \f[B]+Pld\f[R] will \f[B]\[rs]input
 dctproofmac.tex\f[R].
 A special application is the use of option \f[B]+lpdf\f[R] that will
-\f[B]\[rs]input pdfctwimac.tex\f[R] for production of PDF output with
-active hyperlinks.
+\f[B]\[rs]input pdfctwimac.tex\f[R] or \f[B]\[rs]input
+pdfctproofmac.tex\f[R] for production of PDF and HINT output with active
+hyperlinks.
 .IP \[bu] 2
 \f[I]webfile\f[R]\f[B].bux\f[R]: Reference definitions to resolve from
 other modules.
@@ -254,9 +272,9 @@ Silvio Levy (hardcopy version of \f[B]cwebman.tex\f[R] and the source
 code listings of \f[B]common.w\f[R], \f[B]ctangle.w\f[R], and
 \f[B]cweave.w\f[R]).
 .IP \[bu] 2
-Digital Typography: by D.\ E.\ Knuth.
+Digital Typography: by D.\ E.\ Knuth (\f[I]CSLI\f[R], 1999).
 .IP \[bu] 2
-Literate Programming: by D.\ E.\ Knuth.
+Literate Programming: by D.\ E.\ Knuth (\f[I]CSLI\f[R], 1992).
 .IP \[bu] 2
 Weaving a Program: by Wayne Sewell.
 .PP

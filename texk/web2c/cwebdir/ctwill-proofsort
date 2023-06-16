@@ -1,0 +1,115 @@
+#!/usr/bin/env perl
+# Public domain.  Originally written by Andreas Scherer, 2023.
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Getopt::Long qw(:config no_ignore_case bundling);
+use Pod::Usage;
+
+# We expect a TeX file as the single command-line parameter.
+my $progname = basename $0;
+die "$progname input_file\n" unless scalar @ARGV;
+
+Getopt::Long::GetOptions(
+  'help|?'  => \&help_handler,
+  'version' => sub { print version(); exit 0; }
+); # Getopt::Long::Getoptions()
+## help_handler()
+sub help_handler {
+  open(my $pipe, '|-', $ENV{PAGER} || 'less -e') or exit 1;
+  pod2usage(-message => version(), -output => $pipe,
+    -verbose => 99, -sections => "COPYRIGHT|SHORT DESCRIPTION|EXAMPLE");
+  close $pipe;
+  exit 0;
+}
+## version()
+sub version {
+  return "This is $progname (2023).\n";
+}
+
+my $tex = $ARGV[0];
+
+open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
+
+my %mini_index; # storage for index entries of a section
+my $print_index = 0; # do we collect and print a mini-index?
+
+foreach my $line (<TEX>)
+{
+	if ("\\mini\n" eq $line) { # start of mini-index
+		$print_index = 1;
+		%mini_index = (); # reset mini-index
+	} elsif ("}\\FI\n" eq $line) { # end of mini-index
+		foreach my $key (sort {"\L$a" cmp "\L$b"} keys %mini_index) {
+			print $mini_index{$key};
+		}
+		$print_index = 0;
+	} elsif ($print_index) { # mini-index entry
+		my ($location,$key) = split / /, $line; # 2nd column is the key
+		$key =~ s/\\//g; # strip TeX escape(s)
+		$key =~ m/\w*\{(\w+)\}/; # extract plain key
+		$key =~ m/\$(\w+)\$/ unless defined $1; # extract @f TeX key
+		$mini_index{$1} = $line; # store index entry
+		next; # print later
+	}
+
+	print $line;
+}
+
+close(TEX);
+
+exit 0;
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+ctwill-proofsort — Sort mini-indexes alphabetically
+
+=head1 COPYRIGHT
+
+Public domain.  Originally written by Andreas Scherer, 2023.
+
+=head1 SHORT DESCRIPTION
+
+This small Perl script 'ctwill-proofsort' sorts the mini-indexes for each
+section in the TeX file created by 'ctwill +P', i.e., prior to
+formatting with the 'ctproofmac.tex' macros.
+
+=over
+
+=item Run CTWILL twice on your CWEB program, creating 'texfile'.tex
+
+=item Invoke "ctwill-proofsort 'texfile'.tex > 'texfile'-sorted.tex"
+
+=item Invoke "mv 'texfile'-sorted.tex 'texfile'.tex"
+
+=item Run TeX on 'texfile'.tex
+
+=back
+
+See also "man ctwill" for more information on how to use the CTWILL system.
+
+=head1 EXAMPLE
+
+Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
+
+=over
+
+=item $ tie -c mmotype-twill.ch mmotype.{w,ch} mmotype-mini.ch
+
+=item $ ctwill +P -x mmotype mmotype-twill (run this two times)
+
+=item $ ctwill-proofsort mmotype.tex > mmotype-sorted.tex
+
+=item $ mv mmotype-sorted.tex mmotype.tex
+
+=item $ tex mmotype
+
+=back
+
+=cut
