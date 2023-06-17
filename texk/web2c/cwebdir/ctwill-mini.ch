@@ -3,12 +3,13 @@ Section 1.
 @x
 @** Introduction.
 @y
-\ifacro \ifx\undefined\pdfpagewidth\else
+\ifx\undefined\pdfpagewidth
+\else
   \pdfpagewidth=\pagewd \advance\pdfpagewidth by 2cm
   \pdfpageheight=\pageht \advance\pdfpageheight by 5cm
   \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
   \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
-\fi\fi
+\fi
 
 @** Introduction.
 @z

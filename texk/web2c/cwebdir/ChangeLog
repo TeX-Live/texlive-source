@@ -1,3 +1,8 @@
+2023-06-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-{mini,hint}.ch: Make ctwill.w plain-TeX-able again.
+	* ctwill.test: Make script executable and fix ./ctwill calls.
+
 2023-06-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-proofsort: Rename from 'proofsort'.

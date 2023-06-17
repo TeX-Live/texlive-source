@@ -119,15 +119,16 @@ noinst_PROGRAMS = tangleboot$(EXEEXT) ctangleboot$(EXEEXT) \
 	$(am__EXEEXT_38) $(am__EXEEXT_39) $(am__EXEEXT_40) \
 	$(am__EXEEXT_41) $(am__EXEEXT_42)
 TESTS = tangle.test $(am__EXEEXT_45) ctiedir/ctie.test \
-	cwebdir/cweave.test tiedir/tie.test $(am__append_6) \
-	$(am__append_16) $(am__append_25) $(am__append_34) \
-	$(am__append_42) $(am__append_55) $(am__append_56) \
-	$(am__append_58) $(am__append_62) $(am__EXEEXT_46) \
-	$(am__append_68) $(am__append_73) $(am__append_76) \
-	$(am__append_79) $(am__append_84) $(am__append_87) \
-	$(am__append_108) $(am__append_109) $(am__append_110) \
-	$(am__append_111) $(am__append_119) $(am__append_121) \
-	$(am__append_123) $(am__append_150) libmd5/md5.test
+	cwebdir/ctwill.test cwebdir/cweave.test tiedir/tie.test \
+	$(am__append_6) $(am__append_16) $(am__append_25) \
+	$(am__append_34) $(am__append_42) $(am__append_55) \
+	$(am__append_56) $(am__append_58) $(am__append_62) \
+	$(am__EXEEXT_46) $(am__append_68) $(am__append_73) \
+	$(am__append_76) $(am__append_79) $(am__append_84) \
+	$(am__append_87) $(am__append_108) $(am__append_109) \
+	$(am__append_110) $(am__append_111) $(am__append_119) \
+	$(am__append_121) $(am__append_123) $(am__append_150) \
+	libmd5/md5.test
 @WEB_TRUE@am__append_1 = $(web_programs)
 @WEB_TRUE@am__append_2 = $(web_tests)
 @TEX_TRUE@am__append_3 = tex
@@ -3544,9 +3545,11 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tests/xtexpool.typ badtfm.* tests/xcmr10*.pl badvf.* \
 	tests/xptmr*.vpl badvpl.* tests/yptmr*.* pooltype.tex ctie.c \
 	cweave.c ctwill.c ctwill-refsort.c ctwill-twinx.c tie.c \
-	ctie.outc ctie.outm common.tex common.scn common.idx tie.outc \
-	tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p \
-	tex.pool tex-tangle trip.diffs write18-quote.log mftrap.diffs \
+	ctie.outc ctie.outm ctwill.w ctwill.tex ctwill.aux ctwill.idx \
+	ctwill.scn ctwill.ref ctwill.sref ctwill.dvi ctwill-sorted.tex \
+	common.tex common.scn common.idx tie.outc tie.outm \
+	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
+	tex-tangle trip.diffs write18-quote.log mftrap.diffs \
 	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
 	mf-tangle mfluatrap.diffs $(nodist_libmflua_a_SOURCES) \
 	mflua.web mflua.ch mflua-web2c mflua.p mflua.pool mflua-tangle \
@@ -21510,8 +21513,6 @@ tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 ctiedir/ctie.log: ctie$(EXEEXT)
 cwebdir/cweave.log: cweave$(EXEEXT)
 cwebdir/ctwill.log: ctwill$(EXEEXT)
-cwebdir/ctwill-refsort.log: ctwill-refsort$(EXEEXT)
-cwebdir/ctwill-twinx.log: ctwill-twinx$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 $(tex_OBJECTS): $(tex_prereq)
 
