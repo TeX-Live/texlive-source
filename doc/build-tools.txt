@@ -4,4 +4,4 @@ bison (GNU Bison) 3.8.2
 flex 2.6.0
 ltmain.sh (GNU libtool) 2.4.7
 m4 (GNU M4) 1.4.19
-makeinfo (GNU texinfo) 7.0.2
+makeinfo (GNU texinfo) 7.0.3

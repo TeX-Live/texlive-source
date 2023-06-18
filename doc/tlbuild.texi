@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2023
-@set month-year February 2023
+@set month-year June 2023
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -618,6 +618,13 @@ name exactly as specified in the @file{.am} file:
 
 @example
 make -C $ww check SUBDIRS=. TESTS=hitexdir/tests/hello.test
+@end example
+
+Without the @code{SUBDIRS=.}, errors like this will show up, since
+@code{make} will descend into every directory.
+
+@example
+fatal: making test-suite.log: failed to create hitexdir/tests/hello.test
 @end example
 
 @vindex --no-print-directory @r{GNU make option}
