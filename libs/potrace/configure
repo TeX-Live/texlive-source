@@ -4211,7 +4211,7 @@ else $as_nop
 fi ;;
 esac
 
-##tldbg KPSE_BASIC: Remember potrace () as Kpse_Package (for future messages).
+echo 'tldbg:KPSE_BASIC called (pkg=potrace, amopt=)' >&5
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output

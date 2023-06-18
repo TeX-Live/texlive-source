@@ -1,3 +1,10 @@
+2023-06-18  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_BASIC, KPSE_COMMON): more tldbg.
+	(KPSE_COMMON): call AM_PROG_AR before LT_INIT here to avoid warning:
+	  configure.ac:46: warning: LT_INIT was called before AM_PROG_AR
+	(_KPSE_USE_LIBTOOL): instead of here.
+
 2023-03-01  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (_KPSE_USE_LIBTOOL): tldbg output libtool

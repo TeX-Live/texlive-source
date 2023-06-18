@@ -4630,7 +4630,7 @@ else $as_nop
 fi ;;
 esac
 
-##tldbg KPSE_BASIC: Remember cairo () as Kpse_Package (for future messages).
+echo 'tldbg:KPSE_BASIC called (pkg=cairo, amopt=)' >&5
 
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output

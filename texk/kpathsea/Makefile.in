@@ -571,6 +571,7 @@ am__set_b = \
 DIST_SUBDIRS = . doc man win32
 am__DIST_COMMON = $(srcdir)/../../am/rebuild.am $(srcdir)/Makefile.in \
 	$(srcdir)/c-auto.in $(srcdir)/kpathsea.pc.in \
+	$(top_srcdir)/../../build-aux/ar-lib \
 	$(top_srcdir)/../../build-aux/compile \
 	$(top_srcdir)/../../build-aux/config.guess \
 	$(top_srcdir)/../../build-aux/config.sub \

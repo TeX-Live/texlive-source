@@ -1,3 +1,7 @@
+2023-06-18  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: no more AM_PROG_AR, it's in KPSE_COMMON now.
+
 2023-03-11  Karl Berry  <karl@freefriends.org>
 
 	* dvisvgm-src/src/Process.cpp: apply last-minute patch for
