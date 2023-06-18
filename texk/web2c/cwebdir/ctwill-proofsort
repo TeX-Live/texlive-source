@@ -1,4 +1,5 @@
 #!/usr/bin/env perl
+# $Id$
 # Public domain.  Originally written by Andreas Scherer, 2023.
 
 use strict;
@@ -15,18 +16,18 @@ die "$progname input_file\n" unless scalar @ARGV;
 Getopt::Long::GetOptions(
   'help|?'  => \&help_handler,
   'version' => sub { print version(); exit 0; }
-); # Getopt::Long::Getoptions()
+) || die "$0: try --help if you need it.\n";
 ## help_handler()
 sub help_handler {
   open(my $pipe, '|-', $ENV{PAGER} || 'less -e') or exit 1;
   pod2usage(-message => version(), -output => $pipe,
-    -verbose => 99, -sections => "COPYRIGHT|SHORT DESCRIPTION|EXAMPLE");
+    -verbose => 99, -sections => "SHORT DESCRIPTION|EXAMPLE|COPYRIGHT");
   close $pipe;
   exit 0;
 }
 ## version()
 sub version {
-  return "This is $progname (2023).\n";
+  return "$progname $Revision$ $Date$\n";
 }
 
 my $tex = $ARGV[0];
@@ -68,11 +69,7 @@ exit 0;
 
 =head1 NAME
 
-ctwill-proofsort — Sort mini-indexes alphabetically
-
-=head1 COPYRIGHT
-
-Public domain.  Originally written by Andreas Scherer, 2023.
+ctwill-proofsort - Sort mini-indexes alphabetically
 
 =head1 SHORT DESCRIPTION
 
@@ -111,5 +108,11 @@ Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
 =item $ tex mmotype
 
 =back
+
+=head1 COPYRIGHT
+
+Public domain.  Originally written by Andreas Scherer, 2023.
+
+Contemporary development on https://github.com/ascherer/cwebbin.
 
 =cut

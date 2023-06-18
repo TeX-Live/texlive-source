@@ -1,9 +1,12 @@
+## $Id$
 ## texk/web2c/am/cweb.am: Makefile fragment for cweb programs (except ctangle).
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie cweave ctwill ctwill-refsort ctwill-twinx tie
+dist_bin_SCRIPTS = cwebdir/ctwill-proofsort
 EXTRA_DIST += ctiedir tiedir
 NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 
@@ -44,19 +47,19 @@ DISTCLEANFILES += tie.c
 
 ## Tests
 ##
-TESTS += ctiedir/ctie.test cwebdir/ctwill.test cwebdir/cweave.test tiedir/tie.test
-ctiedir/ctie.log: ctie$(EXEEXT)
-cwebdir/cweave.log: cweave$(EXEEXT)
-cwebdir/ctwill.log: ctwill$(EXEEXT)
-tiedir/tie.log: tie$(EXEEXT)
-
-## ctiedir/ctie.test
+TESTS += ctiedir/ctie.test
 DISTCLEANFILES += ctie.outc ctie.outm
-## cwebdir/ctwill.test
+ctiedir/ctie.log: ctie$(EXEEXT)
+
+TESTS += cwebdir/ctwill.test
 DISTCLEANFILES += ctwill.w ctwill.tex ctwill.aux ctwill.idx ctwill.scn
 DISTCLEANFILES += ctwill.ref ctwill.sref ctwill.dvi ctwill-sorted.tex
-## cwebdir/cweave.test
-DISTCLEANFILES += common.tex common.scn common.idx
-## tiedir/tie.test
-DISTCLEANFILES += tie.outc tie.outm
+cwebdir/ctwill.log: ctwill$(EXEEXT)
 
+TESTS += cwebdir/cweave.test
+DISTCLEANFILES += common.tex common.scn common.idx
+cwebdir/cweave.log: cweave$(EXEEXT)
+
+TESTS += tiedir/tie.test
+DISTCLEANFILES += tie.outc tie.outm
+tiedir/tie.log: tie$(EXEEXT)

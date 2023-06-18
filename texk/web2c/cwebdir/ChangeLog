@@ -1,3 +1,13 @@
+2023-06-18  Karl Berry  <karl@freefriends.org>
+
+	* ctwill-proofsort: die if getopt fails;
+	standardize version() output;
+	move COPYRIGHT to end of help, include github repo.
+	* ctwill.test: for now, exit before running TeX,
+	since building plain.fmt is too intensive.
+	Consistently use ./ctie instead of ctie since we want
+	the binary in the build directory.
+	
 2023-06-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-{mini,hint}.ch: Make ctwill.w plain-TeX-able again.

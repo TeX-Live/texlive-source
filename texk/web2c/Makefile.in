@@ -18,6 +18,7 @@
 
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -389,8 +390,8 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(am__syncinclude_HEADERS_DIST) \
-	$(am__DIST_COMMON)
+	$(am__configure_deps) $(dist_bin_SCRIPTS) \
+	$(am__syncinclude_HEADERS_DIST) $(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
@@ -440,9 +441,9 @@ am__EXEEXT_3 = odvicopy$(EXEEXT) odvitype$(EXEEXT) otangle$(EXEEXT) \
 @ALEPH_TRUE@am__EXEEXT_30 = aleph$(EXEEXT)
 @SYNCTEX_TRUE@am__EXEEXT_31 = synctex$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" \
-	"$(DESTDIR)$(libdir)" "$(DESTDIR)$(man1dir)" \
-	"$(DESTDIR)$(man5dir)" "$(DESTDIR)$(pkgconfigdir)" \
-	"$(DESTDIR)$(syncincludedir)"
+	"$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" \
+	"$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(syncincludedir)"
 @MF_TRUE@@WIN32_TRUE@am__EXEEXT_32 = call_mf$(EXEEXT)
 @MFLUA_TRUE@@WIN32_TRUE@am__EXEEXT_33 = call_mflua$(EXEEXT)
 @MFLUAJIT_TRUE@@WIN32_TRUE@am__EXEEXT_34 = call_mfluajit$(EXEEXT)
@@ -1693,6 +1694,7 @@ xetex_DEPENDENCIES = $(am__DEPENDENCIES_18) $(am__DEPENDENCIES_2) \
 xetex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(xetex_CXXFLAGS) \
 	$(CXXFLAGS) $(xetex_LDFLAGS) $(LDFLAGS) -o $@
+SCRIPTS = $(dist_bin_SCRIPTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -3814,6 +3816,7 @@ nodist_vftovp_SOURCES = vftovp.c vftovp.h
 nodist_vptovf_SOURCES = vptovf.c vptovf.h
 nodist_weave_SOURCES = weave.c weave.h
 nodist_twill_SOURCES = twill.c twill.h
+dist_bin_SCRIPTS = cwebdir/ctwill-proofsort
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
 nodist_ctwill_SOURCES = ctwill.c cweb.c
@@ -8350,6 +8353,41 @@ synctexdir/xetex-synctex.$(OBJEXT): synctexdir/$(am__dirstamp) \
 xetex$(EXEEXT): $(xetex_OBJECTS) $(xetex_DEPENDENCIES) $(EXTRA_xetex_DEPENDENCIES) 
 	@rm -f xetex$(EXEEXT)
 	$(AM_V_CXXLD)$(xetex_LINK) $(xetex_OBJECTS) $(xetex_LDADD) $(LIBS)
+install-dist_binSCRIPTS: $(dist_bin_SCRIPTS)
+	@$(NORMAL_INSTALL)
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(bindir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(bindir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  if test -f "$$d$$p"; then echo "$$d$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n' \
+	    -e 'h;s|.*|.|' \
+	    -e 'p;x;s,.*/,,;$(transform)' | sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1; } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) { files[d] = files[d] " " $$1; \
+	      if (++n[d] == $(am__install_max)) { \
+		print "f", d, files[d]; n[d] = 0; files[d] = "" } } \
+	    else { print "f", d "/" $$4, $$1 } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	     if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	     test -z "$$files" || { \
+	       echo " $(INSTALL_SCRIPT) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	       $(INSTALL_SCRIPT) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	     } \
+	; done
+
+uninstall-dist_binSCRIPTS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(dist_bin_SCRIPTS)'; test -n "$(bindir)" || exit 0; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	       sed -e 's,.*/,,;$(transform)'`; \
+	dir='$(DESTDIR)$(bindir)'; $(am__uninstall_files_from_dir)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -19530,8 +19568,8 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
 check: check-recursive
-all-am: Makefile $(PROGRAMS) $(LIBRARIES) $(LTLIBRARIES) $(MANS) \
-		$(DATA) $(HEADERS) ff-config.h
+all-am: Makefile $(PROGRAMS) $(LIBRARIES) $(LTLIBRARIES) $(SCRIPTS) \
+		$(MANS) $(DATA) $(HEADERS) ff-config.h
 install-EXTRAPROGRAMS: install-libLTLIBRARIES
 
 install-binPROGRAMS: install-libLTLIBRARIES
@@ -19540,7 +19578,7 @@ install-EXTRALTLIBRARIES: install-libLTLIBRARIES
 
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(syncincludedir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(pkgconfigdir)" "$(DESTDIR)$(syncincludedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -20475,8 +20513,8 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS install-libLIBRARIES \
-	install-libLTLIBRARIES
+install-exec-am: install-binPROGRAMS install-dist_binSCRIPTS \
+	install-libLIBRARIES install-libLTLIBRARIES
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 install-html: install-html-recursive
@@ -21246,9 +21284,9 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-libLIBRARIES \
-	uninstall-libLTLIBRARIES uninstall-man uninstall-pkgconfigDATA \
-	uninstall-syncincludeHEADERS
+uninstall-am: uninstall-binPROGRAMS uninstall-dist_binSCRIPTS \
+	uninstall-libLIBRARIES uninstall-libLTLIBRARIES uninstall-man \
+	uninstall-pkgconfigDATA uninstall-syncincludeHEADERS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1 uninstall-man5
@@ -21267,17 +21305,18 @@ uninstall-man: uninstall-man1 uninstall-man5
 	distclean-hdr distclean-libtool distclean-tags distcleancheck \
 	distdir distuninstallcheck dvi dvi-am html html-am info \
 	info-am install install-am install-binPROGRAMS install-data \
-	install-data-am install-dvi install-dvi-am install-exec \
-	install-exec-am install-exec-hook install-html install-html-am \
-	install-info install-info-am install-libLIBRARIES \
-	install-libLTLIBRARIES install-man install-man1 install-man5 \
-	install-pdf install-pdf-am install-pkgconfigDATA install-ps \
-	install-ps-am install-strip install-syncincludeHEADERS \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am recheck tags tags-am uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-hook \
+	install-data-am install-dist_binSCRIPTS install-dvi \
+	install-dvi-am install-exec install-exec-am install-exec-hook \
+	install-html install-html-am install-info install-info-am \
+	install-libLIBRARIES install-libLTLIBRARIES install-man \
+	install-man1 install-man5 install-pdf install-pdf-am \
+	install-pkgconfigDATA install-ps install-ps-am install-strip \
+	install-syncincludeHEADERS installcheck installcheck-am \
+	installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
+	recheck tags tags-am uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-dist_binSCRIPTS uninstall-hook \
 	uninstall-libLIBRARIES uninstall-libLTLIBRARIES uninstall-man \
 	uninstall-man1 uninstall-man5 uninstall-pkgconfigDATA \
 	uninstall-syncincludeHEADERS
@@ -21511,8 +21550,8 @@ ctwill-twinx.c: ctangle$(EXEEXT) cwebdir/twinx.w cwebdir/twinx.ch
 tie.c: ctangle$(EXEEXT) tiedir/tie.w tiedir/tie-w2c.ch
 	$(ctangle_silent)CWEBINPUTS=$(srcdir)/tiedir $(ctangle) tie.w tie-w2c.ch
 ctiedir/ctie.log: ctie$(EXEEXT)
-cwebdir/cweave.log: cweave$(EXEEXT)
 cwebdir/ctwill.log: ctwill$(EXEEXT)
+cwebdir/cweave.log: cweave$(EXEEXT)
 tiedir/tie.log: tie$(EXEEXT)
 $(tex_OBJECTS): $(tex_prereq)
 
