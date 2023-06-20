@@ -1,0 +1,47 @@
+!3
++ \]{GB\_\,GRAPH}9 \|{u} \&{util}
++ \]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
++ \]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
++ \]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
++ \]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
++ \]"<stdio.h>" \\{printf} \zip 
++ \]{GB\_\,GRAPH}20 \|{n} \&{long}
++ \]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
++ \]{GB\_\,GRAPH}10 \&{Arc} =\&{struct}
++ \]{GB\_\,GRAPH}9 \&{Vertex} =\&{struct}
++ \]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
++ \]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
++ \]{GB\_\,GRAPH}8 \|{I} \&{long}
++ \]{GB\_\,GRAPH}20 \|{m} \&{long}
++ \]"<stdlib.h>" \\{exit} \zip 
++ \]"<stdio.h>" \\{stderr} \zip 
++ \]"<stdio.h>" \\{fprintf} \zip 
++ \]"<stdio.h>" \\{sscanf} \zip 
++ \]{GB\_\,GRAPH}9 \|{v} \&{util}
+!5
++ \[1 \|{x} \&{register} \&{Vertex} ${}{*}{}$
++ \[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
++ \[1 \|{z} \&{Vertex} ${}{*}{}$
++ \[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
++ \[3 \\{taken} =\|v.\|I
++ \[1 \\{tmax} \&{Vertex} ${}{*}{}$
++ \[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
++ \[1 \|{g} \&{Graph} ${}{*}{}$
++ \[1 \\{deg} =\|u.\|I
++ \[1 \|{d} \&{register} \&{int}
++ \[1 \|{u} \&{register} \&{Vertex} ${}{*}{}$
++ \[1 \|{y} \&{Vertex} ${}{*}{}$
++ \[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
++ \[1 \\{modulus} \&{int}
++ \[1 \\{count} \&{int}
++ \]{GB\_\,GRAPH}9 \|{x} \&{util}
++ \]{GB\_\,GRAPH}9 \|{w} \&{util}
++ \]{GB\_\,GRAPH}20 \|{n} \&{long}
++ \]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
++ \]{GB\_\,GRAPH}8 \|{A} \&{Arc} ${}{*}{}$
++ \]{GB\_\,GRAPH}8 \|{V} \&{Vertex} ${}{*}{}$
++ \]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
++ \]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
++ \]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
++ \]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
++ \]"<stdio.h>" \\{printf} \zip 

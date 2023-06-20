@@ -1,0 +1,47 @@
+\]{GB\_\,GRAPH}10 \&{Arc} =\&{struct}
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\]"<stdlib.h>" \\{exit} \zip 
+\]"<stdio.h>" \\{fprintf} \zip 
+\]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
+\]{GB\_\,GRAPH}8 \|{I} \&{long}
+\]{GB\_\,GRAPH}20 \|{m} \&{long}
+\]{GB\_\,GRAPH}20 \|{n} \&{long}
+\]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\]"<stdio.h>" \\{printf} \zip 
+\]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
+\]"<stdio.h>" \\{sscanf} \zip 
+\]"<stdio.h>" \\{stderr} \zip 
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \|{u} \&{util}
+\]{GB\_\,GRAPH}9 \|{v} \&{util}
+\]{GB\_\,GRAPH}9 \&{Vertex} =\&{struct}
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\donewithpage3
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}8 \|{A} \&{Arc} ${}{*}{}$
+\[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\[1 \\{count} \&{int}
+\[1 \|{d} \&{register} \&{int}
+\[1 \\{deg} =\|u.\|I
+\[1 \|{g} \&{Graph} ${}{*}{}$
+\[1 \\{modulus} \&{int}
+\]{GB\_\,GRAPH}20 \|{n} \&{long}
+\]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\]"<stdio.h>" \\{printf} \zip 
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+\[3 \\{taken} =\|v.\|I
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\[1 \\{tmax} \&{Vertex} ${}{*}{}$
+\[1 \|{u} \&{register} \&{Vertex} ${}{*}{}$
+\[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}8 \|{V} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \|{w} \&{util}
+\[1 \|{x} \&{register} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \|{x} \&{util}
+\[1 \|{y} \&{Vertex} ${}{*}{}$
+\[1 \|{z} \&{Vertex} ${}{*}{}$
+\donewithpage5

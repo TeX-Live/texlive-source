@@ -1,0 +1,23 @@
+\I\X8:Decrease \PB{\|t}, if possible, and try the next possibility; or \PB{%
+\&{goto} \\{done}}\X
+\U4.
+\I\X6:Downdate the data structures to the state they were in when level \PB{%
+\|t} was entered\X
+\U4.
+\I\X4:Find all simple paths of length \PB{$\|g\MG\|n-\T{2}$} from \PB{\|v} to %
+\PB{\|z}, avoiding \PB{\|x}\X
+\U1.
+\I\X5:Increase \PB{\|t} and update the data structures to show that vertex \PB{%
+\|v} is now taken; \PB{\&{goto} \\{backtrack}} if no further moves are possible%
+\X
+\U4.
+\I\X7:Look at edge \PB{\|a} and its successors, advancing if it is a valid move%
+\X
+\U4.
+\I\X3:Prepare \PB{\|g} for backtracking, and find a vertex \PB{\|x} of minimum
+degree\X
+\U1.
+\I\X2:Process the command line, inputting the graph\X
+\U1.
+\I\X9:Record a solution\X
+\U5.

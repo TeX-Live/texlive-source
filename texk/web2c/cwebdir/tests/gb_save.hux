@@ -1,0 +1,29 @@
+@$MAX_SV_STRING {GB\_\,SAVE}1 =\T{4095}@>
+@$MAX_SV_ID {GB\_\,SAVE}1 =\T{154}@>
+
+@$restore_graph {GB\_\,SAVE}4 \&{Graph} ${}{*}(\,){}$@>
+
+@$panic {GB\_\,SAVE}5 =macro (\,)@>
+
+@$fillin {GB\_\,SAVE}7 =macro (\,)@>
+
+@$buffer {GB\_\,SAVE}13 =macro@>
+
+@$bad_type_code {GB\_\,SAVE}19 =\T{\^1}@>
+@$string_too_long {GB\_\,SAVE}19 =\T{\^2}@>
+@$addr_not_in_data_area {GB\_\,SAVE}19 =\T{\^4}@>
+@$addr_in_mixed_block {GB\_\,SAVE}19 =\T{\^8}@>
+@$bad_string_char {GB\_\,SAVE}19 =\T{\^10}@>
+@$ignored_data {GB\_\,SAVE}19 =\T{\^20}@>
+
+@$unk {GB\_\,SAVE}21 =\T{0}@>
+@$ark {GB\_\,SAVE}21 =\T{1}@>
+@$vrt {GB\_\,SAVE}21 =\T{2}@>
+@$mxt {GB\_\,SAVE}21 =\T{3}@>
+@$block_rep {GB\_\,SAVE}21 =\&{struct}@>
+
+@$lookup {GB\_\,SAVE}25 =macro (\,)@>
+
+@$append_comma {GB\_\,SAVE}37 =macro@>
+
+@$trans {GB\_\,SAVE}39 =macro (\,)@>

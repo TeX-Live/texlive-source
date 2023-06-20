@@ -1,0 +1,366 @@
+\input ctwimac
+\datethis
+\def\title{HAM}
+
+
+
+
+\N{1}{1}
+Hamiltonian cycles. This program finds all Hamiltonian cycles of
+an undirected graph. [It's a slight revision of the program published
+in my paper ``Mini-indexes for literate programs,'' {\sl Software---Concepts
+and Tools\/ \bf15} (1994), 2--11.] The input graph should be in
+Stanford GraphBase format, and should be named on the command line
+as, for example, \.{foo.gb}. An optional second command-line parameter
+is a modulus \PB{\|m}, which causes every $m$th solution to be printed.
+
+We use a utility field to record the vertex degrees.
+
+\Y\B\4\D$\\{deg}$ \5
+$\|u.{}$\|I\par
+\Y\B\8\#\&{include} \.{"gb\_graph.h"}\C{ the GraphBase data structures }\6
+\8\#\&{include} \.{"gb\_save.h"}\C{ \PB{\\{restore\_graph}} }\7
+\1\1\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,])\2%
+\2{}$\6
+${}\{{}$\1\6
+\&{Graph} ${}{*}\|g;{}$\6
+\&{Vertex} ${}{*}\|x,\39{*}\|y,\39{*}\|z,\39{*}\\{tmax};{}$\6
+\&{register} \&{Vertex} ${}{*}\|t,\39{*}\|u,\39{*}\|v;{}$\6
+\&{register} \&{Arc} ${}{*}\|a,\39{*}\\{aa};{}$\6
+\&{register} \&{int} \|d;\6
+\&{Arc} ${}{*}\|b,\39{*}\\{bb};{}$\6
+\&{int} \\{count}${}\K\T{0};{}$\6
+\&{int} \\{dmin}${},\39\\{modulus};{}$\7
+\X2:Process the command line, inputting the graph\X;\6
+\X3:Prepare \PB{\|g} for backtracking, and find a vertex \PB{\|x} of minimum
+degree\X;\6
+\&{for} ${}(\|v\K\|g\MG\\{vertices};{}$ ${}\|v<\|g\MG\\{vertices}+\|g\MG\|n;{}$
+${}\|v\PP){}$\1\5
+${}\\{printf}(\.{"\ \%ld"},\39\|v\MG\\{deg});{}$\2\6
+\\{printf}(\.{"\\n"});\C{ TEMPORARY CHECK }\6
+\&{if} ${}(\|x\MG\\{deg}<\T{2}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{"The\ minimum\ degree\ }\)\.{is\ \%ld\ (vertex\ \%s)!\\}\)%
+\.{n"},\39\|x\MG\\{deg},\39\|x\MG\\{name});{}$\6
+\&{return} ${}{-}\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{for} ${}(\|b\K\|x\MG\\{arcs};{}$ ${}\|b\MG\\{next};{}$ ${}\|b\K\|b\MG%
+\\{next}){}$\1\6
+\&{for} ${}(\\{bb}\K\|b\MG\\{next};{}$ \\{bb}; ${}\\{bb}\K\\{bb}\MG\\{next}){}$%
+\5
+${}\{{}$\1\6
+${}\|v\K\|b\MG\\{tip};{}$\6
+${}\|z\K\\{bb}\MG\\{tip};{}$\6
+\X4:Find all simple paths of length \PB{$\|g\MG\|n-\T{2}$} from \PB{\|v} to %
+\PB{\|z}, avoiding \PB{\|x}\X;\6
+\4${}\}{}$\2\2\6
+${}\\{printf}(\.{"Altogether\ \%d\ solut}\)\.{ions.\\n"},\39\\{count});{}$\6
+\&{for} ${}(\|v\K\|g\MG\\{vertices};{}$ ${}\|v<\|g\MG\\{vertices}+\|g\MG\|n;{}$
+${}\|v\PP){}$\1\5
+${}\\{printf}(\.{"\ \%ld"},\39\|v\MG\\{deg});{}$\2\6
+\\{printf}(\.{"\\n"});\C{ TEMPORARY CHECK, SHOULD AGREE WITH FORMER VALUES }\6
+\4${}\}{}$\2\par
+\mini
+\]{GB\_\,GRAPH}9 \|{u} \&{util}
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
+\]"<stdio.h>" \\{printf} \zip
+\]{GB\_\,GRAPH}20 \|{n} \&{long}
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \&{Arc} =\&{struct}
+\]{GB\_\,GRAPH}9 \&{Vertex} =\&{struct}
+\]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
+\]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
+\]{GB\_\,GRAPH}8 \|{I} \&{long}
+\]{GB\_\,GRAPH}20 \|{m} \&{long}
+}\FI
+
+\shortpage
+\M{2}
+\B\X2:Process the command line, inputting the graph\X${}\E{}$\6
+\&{if} ${}(\\{argc}>\T{1}){}$\1\5
+${}\|g\K\\{restore\_graph}(\\{argv}[\T{1}]){}$;\5
+\2\&{else}\1\5
+${}\|g\K\NULL;{}$\2\6
+\&{if} ${}(\\{argc}<\T{3}\V\\{sscanf}(\\{argv}[\T{2}],\39\.{"\%d"},\39{\AND}%
+\\{modulus})\I\T{1}){}$\1\5
+${}\\{modulus}\K\T{1000000000};{}$\2\6
+\&{if} ${}(\R\|g\V\\{modulus}\Z\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Usage:\ \%s\ foo.gb\ [m}\)\.{odulus]\\n"},\39%
+\\{argv}[\T{0}]);{}$\6
+${}\\{exit}({-}\T{1});{}$\6
+\4${}\}{}$\2\par
+\U1.
+\mini
+\]"<stdlib.h>" \\{exit} \zip
+\]"<stdio.h>" \\{stderr} \zip
+\]"<stdio.h>" \\{fprintf} \zip
+\[1 \\{modulus} \&{int}
+\]"<stdio.h>" \\{sscanf} \zip
+\[1 \\{argv} \&{char} ${}{*}[\,]{}$
+\]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
+\[1 \|{g} \&{Graph} ${}{*}{}$
+\[1 \\{argc} \&{int}
+}\FI
+
+\M{3}
+Vertices that have already appeared in the path are ``taken,'' and
+their \PB{\\{taken}} field is nonzero. Initially we make all those fields zero.
+
+\Y\B\4\D$\\{taken}$ \5
+$\|v.{}$\|I\par
+\Y\B\4\X3:Prepare \PB{\|g} for backtracking, and find a vertex \PB{\|x} of
+minimum degree\X${}\E{}$\6
+$\\{dmin}\K\|g\MG\|n;{}$\6
+\&{for} ${}(\|v\K\|g\MG\\{vertices};{}$ ${}\|v<\|g\MG\\{vertices}+\|g\MG\|n;{}$
+${}\|v\PP){}$\5
+${}\{{}$\1\6
+${}\|v\MG\\{taken}\K\T{0};{}$\6
+${}\|d\K\T{0};{}$\6
+\&{for} ${}(\|a\K\|v\MG\\{arcs};{}$ \|a; ${}\|a\K\|a\MG\\{next}){}$\1\5
+${}\|d\PP;{}$\2\6
+${}\|v\MG\\{deg}\K\|d;{}$\6
+\&{if} ${}(\|d<\\{dmin}){}$\1\5
+${}\\{dmin}\K\|d,\39\|x\K\|v;{}$\2\6
+\4${}\}{}$\2\par
+\U1.
+\mini
+\]{GB\_\,GRAPH}8 \|{I} \&{long}
+\]{GB\_\,GRAPH}9 \|{v} \&{util}
+\[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
+\[1 \|{x} \&{Vertex} ${}{*}{}$
+\[1 \\{deg} =\|u.\|I
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+\[1 \|{d} \&{register} \&{int}
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}20 \|{n} \&{long}
+\[1 \|{g} \&{Graph} ${}{*}{}$
+\[1 \\{dmin} \&{int}
+}\FI
+
+\N{1}{4}
+The data structures. I use one simple rule to cut off unproductive
+branches of the search tree: If one of the vertices we could move to next
+is adjacent to only one other unused vertex, we must move to it now.
+
+The moves will be recorded in the vertex array of \PB{\|g}. More precisely, the
+\PB{\|k}th vertex of the path will be \PB{$\|t\MG\\{vert}$} when \PB{\|t} is
+the \PB{\|k}th vertex of
+the graph. If the move was not forced, \PB{$\|t\MG\\{ark}$} will point to the
+Arc
+record representing the edge from \PB{$\|t\MG\\{vert}$} to \PB{$(\|t+\T{1})\MG%
+\\{vert}$}; otherwise
+\PB{$\|t\MG\\{ark}$} will be \PB{$\NULL$}.
+
+This program is a typical backtrack program. I am more comfortable doing
+it with labels and goto statements than with while loops, but some day
+I may learn my lesson.
+
+\Y\B\4\D$\\{vert}$ \5
+$\|w.{}$\|V\par
+\B\4\D$\\{ark}$ \5
+$\|x.{}$\|A\par
+\Y\B\4\X4:Find all simple paths of length \PB{$\|g\MG\|n-\T{2}$} from \PB{\|v}
+to \PB{\|z}, avoiding \PB{\|x}\X${}\E{}$\6
+$\|t\K\|g\MG\\{vertices}{}$;\5
+${}\\{tmax}\K\|t+\|g\MG\|n-\T{1};{}$\6
+${}\|x\MG\\{taken}\K\T{1}{}$;\5
+${}\|t\MG\\{vert}\K\|x{}$;\5
+${}\|t\MG\\{ark}\K\NULL;{}$\6
+\4\\{advance}:\5
+\X5:Increase \PB{\|t} and update the data structures to show that vertex \PB{%
+\|v} is now taken; \PB{\&{goto} \\{backtrack}} if no further moves are possible%
+\X;\6
+\4\\{try\_next}:\5
+\X7:Look at edge \PB{\|a} and its successors, advancing if it is a valid move%
+\X;\6
+\4\\{restore}:\5
+\X6:Downdate the data structures to the state they were in when level \PB{\|t}
+was entered\X;\6
+\4\\{backtrack}:\5
+\X8:Decrease \PB{\|t}, if possible, and try the next possibility; or \PB{%
+\&{goto} \\{done}}\X;\6
+\\{done}:\par
+\U1.
+\mini
+\[1 \|{x} \&{register} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \|{x} \&{util}
+\]{GB\_\,GRAPH}9 \|{w} \&{util}
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+\[1 \|{z} \&{Vertex} ${}{*}{}$
+\[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
+\[3 \\{taken} =\|v.\|I
+\]{GB\_\,GRAPH}20 \|{n} \&{long}
+\[1 \\{tmax} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}8 \|{A} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}8 \|{V} \&{Vertex} ${}{*}{}$
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+\[1 \|{g} \&{Graph} ${}{*}{}$
+}\FI
+
+\M{5}
+\B\X5:Increase \PB{\|t} and update the data structures to show that vertex \PB{%
+\|v} is now taken; \PB{\&{goto} \\{backtrack}} if no further moves are possible%
+\X${}\E{}$\6
+$\|t\PP;{}$\6
+${}\|t\MG\\{vert}\K\|v;{}$\6
+${}\|v\MG\\{taken}\K\T{1};{}$\6
+\&{if} ${}(\|v\E\|z){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\|t\E\\{tmax}){}$\1\5
+\X9:Record a solution\X;\2\6
+\&{goto} \\{backtrack};\6
+\4${}\}{}$\2\6
+\&{for} ${}(\\{aa}\K\|v\MG\\{arcs},\39\|y\K\NULL;{}$ \\{aa}; ${}\\{aa}\K\\{aa}%
+\MG\\{next}){}$\5
+${}\{{}$\1\6
+${}\|u\K\\{aa}\MG\\{tip};{}$\6
+${}\|d\K\|u\MG\\{deg}-\T{1};{}$\6
+\&{if} ${}(\|d\E\T{1}\W\|u\MG\\{taken}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} (\|y)\1\5
+\&{goto} \\{restore};\C{ restoration will stop at \PB{\\{aa}} }\2\6
+${}\|y\K\|u;{}$\6
+\4${}\}{}$\2\6
+${}\|u\MG\\{deg}\K\|d;{}$\6
+\4${}\}{}$\2\6
+\&{if} (\|y)\5
+${}\{{}$\1\6
+${}\|t\MG\\{ark}\K\NULL;{}$\6
+${}\|v\K\|y;{}$\6
+\&{goto} \\{advance};\6
+\4${}\}{}$\2\6
+${}\|a\K\|v\MG\\{arcs}{}$;\par
+\U4.
+\mini
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+\[4 \\{advance} label
+\[4 \\{ark} =\|x.\|A
+\[4 \\{restore} label
+\[1 \\{deg} =\|u.\|I
+\[1 \|{d} \&{register} \&{int}
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\[1 \|{u} \&{register} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\[1 \|{y} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
+\[4 \\{backtrack} label
+\[1 \\{tmax} \&{Vertex} ${}{*}{}$
+\[1 \|{z} \&{Vertex} ${}{*}{}$
+\[3 \\{taken} =\|v.\|I
+\[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
+\[4 \\{vert} =\|w.\|V
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+}\FI
+
+\M{6}
+\B\X6:Downdate the data structures to the state they were in when level \PB{%
+\|t} was entered\X${}\E{}$\6
+\&{for} ${}(\|a\K\|t\MG\\{vert}\MG\\{arcs};{}$ ${}\|a\I\\{aa};{}$ ${}\|a\K\|a%
+\MG\\{next}){}$\1\5
+${}\|a\MG\\{tip}\MG\\{deg}\PP{}$;\2\par
+\U4.
+\mini
+\[1 \\{deg} =\|u.\|I
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}9 \\{arcs} \&{Arc} ${}{*}{}$
+\[4 \\{vert} =\|w.\|V
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+}\FI
+
+\M{7}
+\B\X7:Look at edge \PB{\|a} and its successors, advancing if it is a valid move%
+\X${}\E{}$\6
+\&{while} (\|a)\5
+${}\{{}$\1\6
+${}\|v\K\|a\MG\\{tip};{}$\6
+\&{if} ${}(\|v\MG\\{taken}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\|t\MG\\{ark}\K\|a;{}$\6
+\&{goto} \\{advance};\6
+\4${}\}{}$\2\6
+${}\|a\K\|a\MG\\{next};{}$\6
+\4${}\}{}$\2\6
+\4\\{restore\_all}:\5
+${}\\{aa}\K\NULL{}$;\C{ all moves tried; we fall through to \PB{\\{restore}} }%
+\par
+\U4.
+\mini
+\[4 \\{restore} label
+\[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\[4 \\{advance} label
+\[4 \\{ark} =\|x.\|A
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+\[3 \\{taken} =\|v.\|I
+\]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
+\[1 \|{v} \&{register} \&{Vertex} ${}{*}{}$
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+}\FI
+
+\M{8}
+\B\X8:Decrease \PB{\|t}, if possible, and try the next possibility; or \PB{%
+\&{goto} \\{done}}\X${}\E{}$\6
+$\|t\MG\\{vert}\MG\\{taken}\K\T{0};{}$\6
+${}\|t\MM;{}$\6
+\&{if} ${}(\|t\MG\\{ark}){}$\5
+${}\{{}$\1\6
+${}\|a\K\|t\MG\\{ark}\MG\\{next};{}$\6
+\&{goto} \\{try\_next};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|t\E\|g\MG\\{vertices}){}$\1\5
+\&{goto} \\{done};\2\6
+\&{goto} \\{restore\_all};\C{ the move was forced }\par
+\U4.
+\mini
+\[7 \\{restore\_all} label
+\[4 \\{done} label
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\[1 \|{g} \&{Graph} ${}{*}{}$
+\[4 \\{try\_next} label
+\]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
+\[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
+\[4 \\{ark} =\|x.\|A
+\[3 \\{taken} =\|v.\|I
+\[4 \\{vert} =\|w.\|V
+\[1 \|{t} \&{register} \&{Vertex} ${}{*}{}$
+}\FI
+
+\M{9}
+\B\X9:Record a solution\X${}\E{}$\6
+${}\{{}$\1\6
+${}\\{count}\PP;{}$\6
+\&{if} ${}(\\{count}\MOD\\{modulus}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{"\%d:\ "},\39\\{count});{}$\6
+\&{for} ${}(\|u\K\|g\MG\\{vertices};{}$ ${}\|u\Z\\{tmax};{}$ ${}\|u\PP){}$\1\5
+${}\\{printf}(\.{"\%s\ "},\39\|u\MG\\{vert}\MG\\{name});{}$\2\6
+\\{printf}(\.{"\\n"});\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\par
+\U5.
+\mini
+\]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
+\[4 \\{vert} =\|w.\|V
+\[1 \\{tmax} \&{Vertex} ${}{*}{}$
+\]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
+\[1 \|{g} \&{Graph} ${}{*}{}$
+\[1 \|{u} \&{register} \&{Vertex} ${}{*}{}$
+\]"<stdio.h>" \\{printf} \zip
+\[1 \\{modulus} \&{int}
+\[1 \\{count} \&{int}
+}\FI
+
+\inx
+\fin
+\con

@@ -4,6 +4,8 @@
 	* ctwill-mini.ch,
 	* ctwill-w2c.ch,
 	* ctwill.bux: Use 'kpse_find_file' for '*.bux' files.
+	* ctwill.test,
+	* tests/: Comprehensive test of CTWILL and its utilities.
 
 2023-06-18  Karl Berry  <karl@freefriends.org>
 
