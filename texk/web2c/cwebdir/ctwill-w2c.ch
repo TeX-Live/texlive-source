@@ -1789,7 +1789,7 @@ strcat(aux_file_name,".bux");
 include_depth=1; /* we simulate \.{@@i} */
 strcpy(cur_file_name,aux_file_name); /* first in, third out */
 if ( (found_filename = kpse_find_cweb(cur_file_name)) @|
-    && ((cur_file=fopen(found_filename,"r"))) ) {
+    && (cur_file=fopen(found_filename,"r")) ) {
   @<Set up |cur_file_name| for opened |cur_file|@>@;
   cur_line=0; include_depth++;
 }
@@ -1798,7 +1798,7 @@ strcpy(cur_file_name,aux_file_name); /* second in, second out */
 if ((cur_file=fopen(cur_file_name,"r"))) { cur_line=0; include_depth++; }
 strcpy(cur_file_name,"system.bux"); /* third in, first out */
 if ( (found_filename = kpse_find_cweb(cur_file_name)) @|
-    && ((cur_file=fopen(found_filename,"r"))) ) {
+    && (cur_file=fopen(found_filename,"r")) ) {
   @<Set up |cur_file_name| for opened |cur_file|@>@;
   cur_line=0;
 }
@@ -2078,8 +2078,8 @@ if (strlen(found_filename) < max_file_name_length) {
   if (strcmp(cur_file_name,found_filename)) {
     strcpy(cur_file_name,found_filename + @|
       ((strncmp(found_filename,"./",2)==0) ? 2 : 0)); /* Strip path prefix */
-    free(found_filename);
   }
+  free(found_filename);
 }@+else fatal(_("! Filename too long\n"), found_filename);
 
 @** Index.
