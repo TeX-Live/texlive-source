@@ -37,6 +37,7 @@
 @x
 \def\title{CWEAVE (Version 4.9)}
 @y
+\def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
 \def\title{CTWILL (Version 4.9 [\TeX~Live])}
 @z
 
@@ -1787,12 +1788,20 @@ memcpy(aux_file_name,tex_file_name,strlen(tex_file_name)-4);
 strcat(aux_file_name,".bux");
 include_depth=1; /* we simulate \.{@@i} */
 strcpy(cur_file_name,aux_file_name); /* first in, third out */
-if ((cur_file=fopen(cur_file_name,"r"))) { cur_line=0; include_depth++; }
+if ( (found_filename = kpse_find_cweb(cur_file_name)) @|
+    && ((cur_file=fopen(found_filename,"r"))) ) {
+  @<Set up |cur_file_name| for opened |cur_file|@>@;
+  cur_line=0; include_depth++;
+}
 strcpy(aux_file_name+strlen(aux_file_name)-4,".aux");@/
 strcpy(cur_file_name,aux_file_name); /* second in, second out */
 if ((cur_file=fopen(cur_file_name,"r"))) { cur_line=0; include_depth++; }
 strcpy(cur_file_name,"system.bux"); /* third in, first out */
-if ((cur_file=fopen(cur_file_name,"r"))) cur_line=0;
+if ( (found_filename = kpse_find_cweb(cur_file_name)) @|
+    && ((cur_file=fopen(found_filename,"r"))) ) {
+  @<Set up |cur_file_name| for opened |cur_file|@>@;
+  cur_line=0;
+}
 else include_depth--;
 if (include_depth) { /* at least one new file was opened */
   while (get_next()==meaning) ; /* new meaning is digested */
@@ -2035,6 +2044,43 @@ extern char cb_banner[];
 
 @ @<Set init...@>=
   strncpy(cb_banner,banner,max_banner-1);
+
+@* File lookup with \Kpathsea/.  The \.{CTANGLE} and \.{CWEAVE} programs from
+the original \.{CWEB} package use the compile-time default directory or the
+value of the environment variable \.{CWEBINPUTS} as an alternative place to be
+searched for files, if they could not be found in the current directory.
+
+This version uses the \Kpathsea/ mechanism for searching files.
+The directories to be searched for come from three sources:
+\smallskip
+{\parindent1em
+\item{(a)} a user-set environment variable \.{CWEBINPUTS}
+    (overridden by \.{CWEBINPUTS\_cweb});
+\item{(b)} a line in \Kpathsea/ configuration file \.{texmf.cnf},\hfil\break
+    e.g., \.{CWEBINPUTS=\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}\hfil\break
+    or \.{CWEBINPUTS.cweb=\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//};
+\item{(c)} compile-time default directories (specified in
+    \.{texmf.in}),\hfil\break
+    i.e., \.{\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}.\par}
+@.CWEBINPUTS@>
+
+@s const_string int
+@s string int
+
+@d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
+
+@<Include files@>=
+#include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header;
+  for |@!kpse_find_file| */
+
+@ @<Set up |cur_file_name|...@>=
+if (strlen(found_filename) < max_file_name_length) {
+  if (strcmp(cur_file_name,found_filename)) {
+    strcpy(cur_file_name,found_filename + @|
+      ((strncmp(found_filename,"./",2)==0) ? 2 : 0)); /* Strip path prefix */
+    free(found_filename);
+  }
+}@+else fatal(_("! Filename too long\n"), found_filename);
 
 @** Index.
 @z

@@ -79,6 +79,7 @@
 @$scn_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$check_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$active_file {COMMON.W}83 \&{FILE} ${*}$@>
+@$found_filename {COMMON.W}83 \&{char} ${*}$@>
 
 @$use_language {COMMON.W}86 \&{const char} ${*}$@>
 
@@ -86,4 +87,6 @@
 
 @$cb_show_banner {COMMON.W}99 \&{void} (\,)@>
 
+@$kpse_cweb_format "<kpathsea/types.h>" \zip@>
+@$kpse_find_file "<kpathsea/tex-file.h>" \zip@>
 @$versionstring "<lib/lib.h>" \zip@>

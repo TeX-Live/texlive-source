@@ -1,3 +1,8 @@
+2023-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Changes in cwebdir/comm-w2c.h.
+
 2023-06-18  Karl Berry  <karl@freefriends.org>
 
 	* am/cweb.am (dist_bin_SCRIPTS): new script cwebdir/ctwill-proofsort.
