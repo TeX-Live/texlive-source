@@ -52,8 +52,7 @@ DISTCLEANFILES += ctie.outc ctie.outm
 ctiedir/ctie.log: ctie$(EXEEXT)
 
 TESTS += cwebdir/ctwill.test
-DISTCLEANFILES += ctwill.w ctwill.tex ctwill.aux ctwill.idx ctwill.scn
-DISTCLEANFILES += ctwill.ref ctwill.sref ctwill.dvi ctwill-sorted.tex
+DISTCLEANFILES += ham.aux ham.idx ham.scn ham.sref ham.tex ham-sorted.tex
 cwebdir/ctwill.log: ctwill$(EXEEXT)
 
 TESTS += cwebdir/cweave.test

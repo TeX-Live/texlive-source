@@ -3547,11 +3547,10 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tests/xtexpool.typ badtfm.* tests/xcmr10*.pl badvf.* \
 	tests/xptmr*.vpl badvpl.* tests/yptmr*.* pooltype.tex ctie.c \
 	cweave.c ctwill.c ctwill-refsort.c ctwill-twinx.c tie.c \
-	ctie.outc ctie.outm ctwill.w ctwill.tex ctwill.aux ctwill.idx \
-	ctwill.scn ctwill.ref ctwill.sref ctwill.dvi ctwill-sorted.tex \
-	common.tex common.scn common.idx tie.outc tie.outm \
-	$(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p tex.pool \
-	tex-tangle trip.diffs write18-quote.log mftrap.diffs \
+	ctie.outc ctie.outm ham.aux ham.idx ham.scn ham.sref ham.tex \
+	ham-sorted.tex common.tex common.scn common.idx tie.outc \
+	tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p \
+	tex.pool tex-tangle trip.diffs write18-quote.log mftrap.diffs \
 	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
 	mf-tangle mfluatrap.diffs $(nodist_libmflua_a_SOURCES) \
 	mflua.web mflua.ch mflua-web2c mflua.p mflua.pool mflua-tangle \
