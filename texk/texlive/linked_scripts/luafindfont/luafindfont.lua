@@ -1,13 +1,14 @@
 #!/usr/bin/env texlua
 --
+--  $Id: luafindfont.lua 734 2023-06-21 10:04:46Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
 -- REQUIREMENTS:  luatex v.0.80 or later; packages lualibs, xindex-lapp
---       AUTHOR:  Herbert Voß  (C) 2022-09-02
+--       AUTHOR:  Herbert Voß  (C) 2023-06-21
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.11
+      local version = 0.12
 luafindfont.version = version
 
 --[[
@@ -29,6 +30,8 @@ luafindfont(1)
 Report bugs to  hvoss@tug.org
 
 ]]
+
+-- mtxrun --script font --list --name --all --pattern=times
 
 kpse.set_program_name("luatex")
 local f = kpse.find_file("lualibs.lua")
@@ -56,7 +59,7 @@ local fontNo = 0
 local i = 1
 while i <= #arg do
   if arg[i] == "-h" or arg[i] == "--help" then
-    print("Version "..version..", Copyright 2021 by Herbert Voß") 
+    print("Version "..version..", Copyright 2021-23 by Herbert Voß") 
     print([[Syntax: luafindfont [options] <font> 
     By default the Lua program 'luafindfont' creates a list of the
     fonts which have in its names the given string.  
@@ -358,6 +361,12 @@ for i, v in ipairs(fontDataMap) do
   end
 end
 
+if #fontList == 0 then
+  print("There are no fonts with the given search name!\n")
+  os.exit()
+end
+
+
 -- print(l_max[1],l_max[2],l_max[3])
 if l_max[3] > maxStrLength then l_max[3] = maxStrLength end
 
@@ -387,11 +396,14 @@ for i, v in ipairs(fontList) do
   if string.len(path) > l_max[3] then
     path = string.sub (path, 1, minChars).."..."..string.sub (path, string.len(path)-maxStrLength+minChars+4)    
   end
-  local exrun = io.popen("kpsewhich "..v["basename"],'r')
-  if string.len(exrun:read('*all')) > 0 then
-    kpsewhich = "1"
-  else
+  if args_xetex > 0 then
     kpsewhich = "0"
+    local exrun = io.popen("kpsewhich "..v["basename"],'r')
+    if exrun then
+      if string.len(exrun:read('*all')) > 0 then
+        kpsewhich = "1"
+      end
+    end
   end
   if (font_str ~= "*") and not noSymbolicNames then
     if args_xetex > 0 then
@@ -410,40 +422,48 @@ end
 
 if fontNo > 0 and mtxrun == 0 then
   print()
-  print("Running otfinfo -"..otfinfo_arg.." on font no."..fontNo)
-  local font = fontList[fontNo]["fullpath"]
-  print("otfinfo -"..otfinfo_arg.." \""..font.."\"")
-  local exrun = io.popen("otfinfo -"..otfinfo_arg.." \""..font.."\"", 'r') -- ".." font may have spaces
-  local output = exrun:read('*all')
-  print(output)
-  exrun:close()
+  if fontNo > #fontList then
+  	print("given font number is greater than the number of the fontlist!")
+  else
+    print("Running otfinfo -"..otfinfo_arg.." on font no."..fontNo)
+    local font = fontList[fontNo]["fullpath"]
+    print("otfinfo -"..otfinfo_arg.." \""..font.."\"")
+    local exrun = io.popen("otfinfo -"..otfinfo_arg.." \""..font.."\"", 'r') -- ".." font may have spaces
+    local output = exrun:read('*all')
+    print(output)
+    exrun:close()
+  end
 end
 
 if info > 0 then
-  font = fontList[info]["familyname"]
-  print("\nFont: "..font)
-  local font_dir = {"local","system","texmf"}
-  local font_ext = {"ttf","otf","ttc"}
-  for j = 1,#font_dir do
-    for i = 1,#font_ext do
-      local fonttype = ""
-      local ext = font_ext[i]
-      local dir = font_dir[j]
-      if fontData["families"][dir][ext]  then  -- font extension exists?
-        local entry = fontData["families"][dir][ext][font]
-        if entry then
-          if entry["r"]  then fonttype = fonttype.."Regular "      end
-          if entry["b"]  then fonttype = fonttype.."| Bold "       end
-          if entry["i"]  then fonttype = fonttype.."| Italic "     end
-          if entry["bi"] then fonttype = fonttype.."| BoldItalic"  end
-          io.write("Fonttype "..ext.."("..dir..") --> ")
-          if #fonttype > 0 then
-            print("| "..fonttype.." |")
+  if info > #fontList then
+  	print("given font number is greater than the number of the fontlist!")
+  else
+    font = fontList[info]["familyname"]
+    print("\nFont: "..font)
+    local font_dir = {"local","system","texmf"}
+    local font_ext = {"ttf","otf","ttc"}
+    for j = 1,#font_dir do
+      for i = 1,#font_ext do
+        local fonttype = ""
+        local ext = font_ext[i]
+        local dir = font_dir[j]
+        if fontData["families"][dir][ext]  then  -- font extension exists?
+          local entry = fontData["families"][dir][ext][font]
+          if entry then
+            if entry["r"]  then fonttype = fonttype.."Regular "      end
+            if entry["b"]  then fonttype = fonttype.."| Bold "       end
+            if entry["i"]  then fonttype = fonttype.."| Italic "     end
+            if entry["bi"] then fonttype = fonttype.."| BoldItalic"  end
+            io.write("Fonttype "..ext.."("..dir..") --> ")
+            if #fonttype > 0 then
+              print("| "..fonttype.." |")
+            else
+              print(" undefined ") --- no regular definiert
+            end
           else
-            print(" undefined ") --- no regular definiert
+            print()
           end
-        else
-          print()
         end
       end
     end
