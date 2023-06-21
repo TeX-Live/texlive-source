@@ -11,12 +11,14 @@ use Pod::Usage;
 
 # We expect a TeX file as the single command-line parameter.
 my $progname = basename $0;
-die "$progname input_file\n" unless scalar @ARGV;
+my $usage = "$progname input_file\ntry --help if you need it.\n";
+
+die $usage unless scalar @ARGV;
 
 Getopt::Long::GetOptions(
   'help|?'  => \&help_handler,
   'version' => sub { print version(); exit 0; }
-) || die "$0: try --help if you need it.\n";
+) or die $usage;
 ## help_handler()
 sub help_handler {
   open(my $pipe, '|-', $ENV{PAGER} || 'less -e') or exit 1;
@@ -37,20 +39,31 @@ open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
 my %mini_index; # storage for index entries of a section
 my $print_index = 0; # do we collect and print a mini-index?
 
+# Scroll through the input file and look for blocks like
+# \mini
+# [LOCATION KEY TEXPART]*
+# }\FI
+# and sort them alphabetically by the KEYs.
+#
+# Every KEY contains a single C identifier (variable, type, function, etc.),
+# either as a single brace-enclosed argument of a TeX control sequence,
+# or as a single identifier in $math_mode$; the latter come from '@f'ormat
+# definitions. All internal backslashes are removed from the KEY before it
+# is used in the storage.
 foreach my $line (<TEX>)
 {
 	if ("\\mini\n" eq $line) { # start of mini-index
 		$print_index = 1;
-		%mini_index = (); # reset mini-index
+		%mini_index = (); # reset mini-index storage
 	} elsif ("}\\FI\n" eq $line) { # end of mini-index
 		foreach my $key (sort {"\L$a" cmp "\L$b"} keys %mini_index) {
 			print $mini_index{$key};
 		}
 		$print_index = 0;
 	} elsif ($print_index) { # mini-index entry
-		my ($location,$key) = split / /, $line; # 2nd column is the key
-		$key =~ s/\\//g; # strip TeX escape(s)
-		$key =~ m/\w*\{(\w+)\}/; # extract plain key
+		my (undef,$key) = split / /, $line; # 2nd column is the key
+		$key =~ s/\\//g; # strip internal TeX escape(s)
+		$key =~ m/\w*\{(\w+)\}/; # extract plain key from control seq.
 		$key =~ m/\$(\w+)\$/ unless defined $1; # extract @f TeX key
 		$mini_index{$1} = $line; # store index entry
 		next; # print later
@@ -79,17 +92,18 @@ formatting with the 'ctproofmac.tex' macros.
 
 =over
 
-=item Run CTWILL twice on your CWEB program, creating 'texfile'.tex
+=item Run CTWILL twice on your 'input_file'.w, creating 'input_file'.tex
 
-=item Invoke "ctwill-proofsort 'texfile'.tex > 'texfile'-sorted.tex"
+=item Invoke "ctwill-proofsort 'input_file'.tex > 'input_file'-sorted.tex"
 
-=item Invoke "mv 'texfile'-sorted.tex 'texfile'.tex"
+=item Invoke "mv 'input_file'-sorted.tex 'input_file'.tex"
 
-=item Run TeX on 'texfile'.tex
+=item Run TeX on 'input_file'.tex
 
 =back
 
-See also "man ctwill" for more information on how to use the CTWILL system.
+See also "man ctwill" for more information on how to use the CTWILL system,
+both with or without the '+P' option.
 
 =head1 EXAMPLE
 
