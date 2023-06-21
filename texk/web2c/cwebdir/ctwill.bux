@@ -19,6 +19,7 @@
 @$change_file {COMMON.W}25 \&{FILE} ${*}$@>
 @$file_name {COMMON.W}25 \&{char} [\,][\,]@>
 @$change_file_name {COMMON.W}25 \&{char} [\,]@>
+@$found_filename {COMMON.W}25 \&{char} ${*}$@>
 @$line {COMMON.W}25 \&{int} [\,]@>
 @$change_line {COMMON.W}25 \&{int}@>
 @$change_depth {COMMON.W}25 \&{int}@>
@@ -79,7 +80,6 @@
 @$scn_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$check_file {COMMON.W}83 \&{FILE} ${*}$@>
 @$active_file {COMMON.W}83 \&{FILE} ${*}$@>
-@$found_filename {COMMON.W}83 \&{char} ${*}$@>
 
 @$use_language {COMMON.W}86 \&{const char} ${*}$@>
 

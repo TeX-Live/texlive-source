@@ -133,7 +133,6 @@ extern FILE *change_file; /* change file */
 extern char file_name[][max_file_name_length];
   /* stack of non-change file names */
 extern char change_file_name[]; /* name of change file */
-extern char check_file_name[]; /* name of |check_file| */
 extern char *found_filename; /* filename found by |kpse_find_file| */
 extern int line[]; /* number of current line in the stacked files */
 extern int change_line; /* number of current line in change file */
@@ -230,6 +229,7 @@ extern char C_file_name[]; /* name of |C_file| */
 extern char tex_file_name[]; /* name of |tex_file| */
 extern char idx_file_name[]; /* name of |idx_file| */
 extern char scn_file_name[]; /* name of |scn_file| */
+extern char check_file_name[]; /* name of |check_file| */
 extern boolean flags[]; /* an option for each 7-bit code */
 extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
 

@@ -207,7 +207,6 @@ extern FILE*change_file;
 extern char file_name[][max_file_name_length];
 
 extern char change_file_name[];
-extern char check_file_name[];
 extern char*found_filename;
 extern int line[];
 extern int change_line;
@@ -217,7 +216,7 @@ extern boolean changing;
 extern boolean web_file_open;
 
 /*:7*//*9:*/
-#line 151 "cwebdir/comm-w2c.h"
+#line 150 "cwebdir/comm-w2c.h"
 
 extern sixteen_bits section_count;
 extern boolean changed_section[];
@@ -225,7 +224,7 @@ extern boolean change_pending;
 extern boolean print_where;
 
 /*:9*//*10:*/
-#line 165 "cwebdir/comm-w2c.h"
+#line 164 "cwebdir/comm-w2c.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -250,12 +249,12 @@ extern hash_pointer hash_end;
 extern hash_pointer h;
 
 /*:10*//*12:*/
-#line 209 "cwebdir/comm-w2c.h"
+#line 208 "cwebdir/comm-w2c.h"
 
 extern int history;
 
 /*:12*//*14:*/
-#line 226 "cwebdir/comm-w2c.h"
+#line 225 "cwebdir/comm-w2c.h"
 
 extern int argc;
 extern char**argv;
@@ -263,6 +262,7 @@ extern char C_file_name[];
 extern char tex_file_name[];
 extern char idx_file_name[];
 extern char scn_file_name[];
+extern char check_file_name[];
 extern boolean flags[];
 extern const char*use_language;
 
@@ -388,14 +388,14 @@ static eight_bits next_control;
 #line 71 "cwebdir/ctangle.w"
 
 /*8:*/
-#line 145 "cwebdir/comm-w2c.h"
+#line 144 "cwebdir/comm-w2c.h"
 
 extern boolean get_line(void);
 extern void check_complete(void);
 extern void reset_input(void);
 
 /*:8*//*11:*/
-#line 188 "cwebdir/comm-w2c.h"
+#line 187 "cwebdir/comm-w2c.h"
 
 extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
 extern name_pointer id_lookup(const char*,const char*,eight_bits);
@@ -408,7 +408,7 @@ extern void print_section_name(name_pointer);
 extern void sprint_section_name(char*,name_pointer);
 
 /*:11*//*13:*/
-#line 212 "cwebdir/comm-w2c.h"
+#line 211 "cwebdir/comm-w2c.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
