@@ -29,7 +29,7 @@ sub help_handler {
 }
 ## version()
 sub version {
-  return "$progname $Revision$ $Date$\n";
+  return '$progname $Revision$ $Date$\n';
 }
 
 my $tex = $ARGV[0];
