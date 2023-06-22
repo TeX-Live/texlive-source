@@ -8,12 +8,19 @@ use warnings;
 use File::Basename;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use Pod::Usage;
+use Unicode::Collate;
 
 # We expect a TeX file as the single command-line parameter.
 my $progname = basename $0;
-my $usage = "$progname input_file\ntry --help if you need it.\n";
+my $usage = "Usage: $progname input_file\n";
+if (@ARGV > 1) {
+  my $first = shift @ARGV;
+  $usage .= "extra file argument(s): @ARGV\n";
+  unshift @ARGV, $first;
+}
+$usage .= "try --help if you need it.\n";
 
-die $usage unless scalar @ARGV;
+die $usage unless scalar @ARGV == 1;
 
 Getopt::Long::GetOptions(
   'help|?'  => \&help_handler,
@@ -29,7 +36,7 @@ sub help_handler {
 }
 ## version()
 sub version {
-  return '$progname $Revision$ $Date$\n';
+  return $progname.' $Revision$ $Date$'."\n";
 }
 
 my $tex = $ARGV[0];
@@ -38,6 +45,7 @@ open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
 
 my %mini_index; # storage for index entries of a section
 my $print_index = 0; # do we collect and print a mini-index?
+my $collator = Unicode::Collate->new();
 
 # Scroll through the input file and look for blocks like
 # \mini
@@ -56,7 +64,7 @@ foreach my $line (<TEX>)
 		$print_index = 1;
 		%mini_index = (); # reset mini-index storage
 	} elsif ("}\\FI\n" eq $line) { # end of mini-index
-		foreach my $key (sort {"\L$a" cmp "\L$b"} keys %mini_index) {
+		foreach my $key ($collator->sort(keys %mini_index)) {
 			print $mini_index{$key};
 		}
 		$print_index = 0;

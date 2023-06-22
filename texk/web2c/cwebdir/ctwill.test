@@ -5,27 +5,21 @@
 
 testdir=$srcdir/cwebdir/tests
 
-#
-# (1) Test the "classic" CTWILL procedure
-#
-# Prime the pump by running CTWILL twice
-CWEBINPUTS=$testdir ./ctwill +lpdf ham ham || exit 1
-CWEBINPUTS=$testdir ./ctwill +lpdf ham ham || exit 1
+# Test CTWILL by running it twice
+CWEBINPUTS=$testdir ./ctwill ham ham || exit 1
+CWEBINPUTS=$testdir ./ctwill ham ham || exit 1
 
 # Test CTWILL-REFSORT
 ./ctwill-refsort < $testdir/ham.ref > ham.sref || exit 1
 diff ham.sref $testdir/ham.sref || exit 1
 
-#
-# (2) Test the "proofing" CTWILL procedure
-#
-CWEBINPUTS=$testdir ./ctwill +P +lpdf ham ham || exit 1
-CWEBINPUTS=$testdir ./ctwill +P +lpdf ham ham || exit 1
+# Test CTWILL-PROOFSORT
+# Perl script not available in builddir
+$testdir/../ctwill-proofsort ham.tex > ham-sorted.tex || exit 1
+diff ham-sorted.tex $testdir/ham-sorted.tex || exit 1
 
-# Test CTWILL-PROOFSORT---NOT!
-# First, it doesn't show up in Work/texk/web2c/ and
-# second, Perl complains about the unresolved $Revision$ and §Date$.
-#./ctwill-proofsort ham.tex > ham-sorted.tex || exit 1
-#diff ham-sorted.tex $testdir/ham-sorted.tex || exit 1
+# Test CTWILL-TWINX
+./ctwill-twinx ham.tex > index.tex
+diff index.tex $testdir/index.tex || exit 1
 
 exit 0

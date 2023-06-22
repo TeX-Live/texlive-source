@@ -1,3 +1,12 @@
+2023-06-20  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctproofmac.tex,
+	* cttwinxmac.tex,
+	* ctwimac.tex: Minor fixes, bug in TWINX macros.
+	* ctwill-proofsort: Avoid provoked user errors.
+	* ctwill.test,
+	* tests/index.tex: Shorter test suite, TWINX tested.
+
 2023-06-21  Karl Berry  <karl@freefriends.org>
 
 	* ctwill-proofsort: 'quotes' for $Revision$.
