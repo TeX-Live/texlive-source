@@ -393,11 +393,11 @@ boolean flags[128];
 FILE*C_file;
 FILE*tex_file;
 FILE*idx_file;
-#line 578 "cwebdir/comm-w2c.ch"
 FILE*scn_file;
-FILE*check_file;
-#line 1274 "cwebdir/common.w"
+#line 578 "cwebdir/comm-w2c.ch"
 FILE*active_file;
+FILE*check_file;
+#line 1275 "cwebdir/common.w"
 
 #line 595 "cwebdir/comm-w2c.ch"
 /*:83*//*86:*/

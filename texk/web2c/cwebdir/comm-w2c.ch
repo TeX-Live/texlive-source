@@ -573,9 +573,9 @@ cb_usage(program==ctangle ? "ctangle" : program==cweave ? "cweave" : "ctwill");
 @z
 
 @x
-FILE *scn_file; /* where list of sections from \.{CWEAVE} goes */
+FILE *active_file; /* currently active file for \.{CWEAVE} output */
 @y
-FILE *scn_file; /* where list of sections from \.{CWEAVE} goes */
+FILE *active_file; /* currently active file for \.{CWEAVE} output */
 FILE *check_file; /* temporary output file */
 @z
 
