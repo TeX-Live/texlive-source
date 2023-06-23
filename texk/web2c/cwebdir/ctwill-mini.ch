@@ -406,12 +406,12 @@ Section 58.
 @r @ @<Get a wide...@>={
 @z
 
-Section 63.
+Section 64.
 
 @x
-@ @<If end of name...@>=
+@ This function skips over a restricted context at relatively high speed.
 @y
-@r @ @<If end of name...@>=
+@r @ This function skips over a restricted context at relatively high speed.
 @z
 
 Section 65.
