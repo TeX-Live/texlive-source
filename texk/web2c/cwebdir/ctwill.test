@@ -8,6 +8,7 @@ testdir=$srcdir/cwebdir/tests
 # Test CTWILL by running it twice
 CWEBINPUTS=$testdir ./ctwill ham ham || exit 1
 CWEBINPUTS=$testdir ./ctwill ham ham || exit 1
+diff ham.tex $testdir/ham.tex || exit 1
 
 # Test CTWILL-REFSORT
 ./ctwill-refsort < $testdir/ham.ref > ham.sref || exit 1
