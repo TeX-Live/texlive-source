@@ -2064,9 +2064,6 @@ The directories to be searched for come from three sources:
     i.e., \.{\$TEXMFDOTDIR:\$TEXMF/texmf/cweb//}.\par}
 @.CWEBINPUTS@>
 
-@s const_string int
-@s string int
-
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
