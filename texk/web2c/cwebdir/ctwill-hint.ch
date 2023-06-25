@@ -1,23 +1,9 @@
-Section 1.
-
-@x
-\ifx\undefined\pdfpagewidth
-\else
-  \pdfpagewidth=\pagewd \advance\pdfpagewidth by 2cm
-  \pdfpageheight=\pageht \advance\pdfpageheight by 5cm
-  \ifpdftex \pdfhorigin=1cm \pdfvorigin=1cm
-  \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
-\fi
-
-@y
-@z
-
 Section 328.
 
 @x
-  strncpy(cb_banner,banner,max_banner-1);
+}@+else fatal(_("! Filename too long\n"), found_filename);
 @y
-  strncpy(cb_banner,banner,max_banner-1);
+}@+else fatal(_("! Filename too long\n"), found_filename);
 
 @** Index.
 If you have read and understood the code for Phase III above, you know what
