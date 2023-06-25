@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --
---  $Id: luafindfont.lua 734 2023-06-21 10:04:46Z herbert $
+--  $Id: luafindfont.lua 735 2023-06-22 19:12:29Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
@@ -8,7 +8,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2023-06-21
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.12
+      local version = 0.13
 luafindfont.version = version
 
 --[[
@@ -324,7 +324,9 @@ table.sort(fontDataMap,
 	    return false 
 	else 
 	    return string.lower(a["basename"]) < string.lower(b["basename"]) 
-	end end)
+	end 
+end)
+
 -- strip duplicates
 local newFontDataMap = {}
 if #fontDataMap > 0 then
@@ -403,7 +405,13 @@ for i, v in ipairs(fontList) do
       if string.len(exrun:read('*all')) > 0 then
         kpsewhich = "1"
       end
+    else
+      print("!!! There maybe a problem with font "..v["basename"].." kpsewhich doesn't work")
+      print(tostring(exrun))
+	  kpsewhich = "0"
+	  os.exit()
     end
+    exrun:close()
   end
   if (font_str ~= "*") and not noSymbolicNames then
     if args_xetex > 0 then
