@@ -60,6 +60,12 @@ Section 2.
 Section 4.
 
 @x
+For backward compatibility with pre-{\mc ANSI} compilers, we replace the
+@y
+And we replace the
+@z
+
+@x
 @d _(s) gettext(s)
 @y
 @d _(s) gettext(s)
