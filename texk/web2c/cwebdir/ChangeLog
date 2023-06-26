@@ -1,3 +1,10 @@
+2023-06-26  Karl Berry  <karl@freefriends.org>
+
+	* ctwill-proofsort: Unicode::Collate is required but may not be
+	available.
+	* ctwill.test: exit 0 if Unicode::Collate is not available,
+        so we don't fail in environments without it.
+
 2023-06-23  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.test: Check CTWILL output.

@@ -15,7 +15,9 @@ diff ham.tex $testdir/ham.tex || exit 1
 diff ham.sref $testdir/ham.sref || exit 1
 
 # Test CTWILL-PROOFSORT
-# Perl script not available in builddir
+# Perl script not available in builddir, and requires Unicode::Collate;
+# if that module is not available, just quit testing.
+perl -e 'use Unicode::Collate;' 2>/dev/null || exit 0
 $testdir/../ctwill-proofsort ham.tex > ham-sorted.tex || exit 1
 diff ham-sorted.tex $testdir/ham-sorted.tex || exit 1
 
