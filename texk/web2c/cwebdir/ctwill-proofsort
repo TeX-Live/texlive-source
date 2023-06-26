@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 # $Id$
+# $Id$
 # Public domain.  Originally written by Andreas Scherer, 2023.
 
 use strict;
@@ -9,15 +10,16 @@ use File::Basename;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use Pod::Usage;
 
+my $progname = basename $0;
+
 BEGIN {
   # Unicode::Collate has been around a long time,
   # but it's not part of core Perl.
   my $rc = eval { require Unicode::Collate; };
-  die "$0: the Unicode::Collate module is required\n" unless $rc;
+  die "$progname: the Unicode::Collate module is required\n" unless $rc;
 }
 
 # We expect a TeX file as the single command-line parameter.
-my $progname = basename $0;
 my $usage = "Usage: $progname input_file\n";
 if (@ARGV > 1) {
   my $first = shift @ARGV;
