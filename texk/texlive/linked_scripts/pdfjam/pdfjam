@@ -1,5 +1,5 @@
 #!/bin/sh
-version=3.04
+version=3.05
 #########################################################################
 ##                                                                     ##
 ##  pdfjam: A shell-script interface to the "pdfpages" LaTeX package   ##
@@ -152,15 +152,14 @@ where
      --paper PAPERSPEC  (or simply --PAPERSPEC)
                   Specify a LaTeX paper size, for example
                   '--paper a4paper' or simply '--a4paper' for ISO A4 paper.
-                  If the LaTeX 'geometry' package is installed, a wider range
-                  of paper sizes is available.  For details see documentation
+                  A wide range of paper sizes is available thanks to the
+                  LaTeX 'geometry' package.  For details see documentation
                   for LaTeX and/or the 'geometry' package.
                   [Default for you at this site: paper=$paper]
      --papersize '{WIDTH,HEIGHT}'
                   Specify a custom paper size, e.g.,
                       --papersize '{10in,18cm}'
                   (Note the braces, and the comma!)
-                  If the 'geometry' package is not found, this has no effect.
      --pagecolor RGBSPEC
                   Specify a background colour for the output pages.  The 
                   RGBSPEC must be a comma-separated trio of integers
@@ -413,22 +412,19 @@ suffix='pdfjam'            ##  Default filename suffix to be used when
 ##
 preamble=''                ##  Default LaTeX preamble string.
 ##
-##  Guess default paper size from locale if possible, otherwise A4
+##  Get default paper size from libpaper >= 2 if possible, otherwise guess A4
 ##
-if command -v locale >/dev/null ; then
-    paperheight=$(locale -k LC_PAPER | sed -e '1!d' -e 's/.*=//') ;
-    case $paperheight in
-	297)
-	    paper='a4paper' ;
-	    ;;
-	279)
-	    paper='letterpaper' ;
-	    ;;
-	*)
-	    paper='a4paper' ;
-	    ;;
-    esac
-else paper='a4paper' ;  ## fallback paper size is ISO A4
+if command -v paper >/dev/null ; then
+    paperspec=$(paper)
+    paperdimensions=$(echo "$paperspec" | cut -f 2 -d " ")
+    paperunit=$(echo "$paperspec" | cut -f 3 -d " ")
+    if test "$paperunit" = "pt"; then paperunit=bp; fi
+    paperwidth=$(echo "$paperdimensions" | cut -f 1 -d "x")
+    paperheight=$(echo "$paperdimensions" | cut -f 2 -d "x")
+    papersize="papersize={$paperheight$paperunit,$paperwidth$paperunit}"
+    paper='' ## We might not have a LaTeX-compatible name
+else
+    paper='a4paper'  ## fallback paper size is ISO A4
 fi
 ##
 ##  END OF SETTINGS MADE DIRECTLY WITHIN THE SCRIPT
@@ -670,31 +666,22 @@ while test -n "${1}${2}"; do
 			pagecolor="${2}" ;
 			callOptions="$callOptions ${1} ${2}" ;
 			shift ;;
-                    --a4paper | --a5paper | --b5paper | --letterpaper | \
-                        --executivepaper | --legalpaper)
-			##  standard LaTeX paper sizes
+		    --a0paper | --a1paper | --a2paper | --a3paper | \
+                        --a4paper | --a5paper | --a6paper | \
+                        --b0paper | --b1paper | --b2paper | \
+			--b3paper | --b4paper | --b5paper | --b6paper | \
+                        --c0paper | --c1paper | --c2paper | \
+			--c3paper | --c4paper | --c5paper | --c6paper | \
+                        --b0j | --b1j | --b2j | --b3j | --b4j | --b5j | --b6j | \
+                        --ansiapaper | --ansibpaper | --ansicpaper | \
+                        --ansidpaper | --ansiepaper | \
+                        --letterpaper | --legalpaper | --executivepaper)
 			paper=$(printf "%s" "${1}" | sed 's/^--//') ;
 			callOptions="$callOptions ${1}" ;
 			;;
-		    --a0paper | --a1paper | --a2paper | --a3paper | \
-                        --a6paper | --b0paper | --b1paper | --b2paper | \
-			--b3paper | --b4paper | --b6paper)
-			##  the 'geometry' package is needed
-			if test "$geometry" != false ;
-			then
-			    paper=$(printf "%s" "${1}" | sed 's/^--//') ;
-			    callOptions="$callOptions ${1}" ;
-			    geometry=true ;
-			fi ;
-			;;
 		    --papersize)
-			##  the 'geometry' package is needed
-			if test "$geometry" != false ;
-			then
-			    papersize="papersize=${2}" ;
-			    callOptions="$callOptions ${1} '${2}'" ;
-			    geometry=true ;
-			fi ;
+			papersize="papersize=${2}" ;
+			callOptions="$callOptions ${1} '${2}'" ;
 			shift ;;
 		    --landscape)
 			landscape=true ;
@@ -859,20 +846,6 @@ case $shortedge in
     *)
 	shortedge='\usepackage{everyshi}\makeatletter\EveryShipout{\ifodd\c@page\pdfpageattr{/Rotate 180}\fi}\makeatother' ;;
 esac
-if test "$geometry" != false
-then
-##  we haven't already found that geometry.sty is missing
-    case $paper in
-	a0paper | a1paper | a2paper | a3paper | \
-            a6paper | b0paper | b1paper | b2paper | \
-	    b3paper | b4paper | b6paper)
-	    ##  the 'geometry' package is needed
-	    geometry=true ;
-	    ;;
-	*)
-	    ;;
-    esac
-fi
 documentOptions="$paper","$orientation","$twoside"
 documentOptions=$(printf "%s" "$documentOptions" | sed 's/^,//' | sed 's/,$//')
 ##
@@ -913,25 +886,12 @@ then
 	"LaTeX package pdfpages.sty is not installed" \
 	$E_UNAVAILABLE
 
-    for pack in pdflscape eso-pic everyshi atbegshi ; do
+    for pack in geometry pdflscape eso-pic everyshi atbegshi ; do
         (kpsewhich $pack.sty >/dev/null) ||
         error_exit \
 	    "LaTeX package $pack.sty is not installed (see the pdfpages manual)" \
 	    $E_UNAVAILABLE
     done
-    if test "$geometry" = true
-    ##  ie, if the 'geometry' package is needed for paper size
-    then
-	(kpsewhich geometry.sty >/dev/null) || {
-	    prattle "LaTeX package geometry.sty is not installed, so only the"
-	    prattle "standard LaTeX paper sizes are available." 1
-	    geometry=false
-	    if test "$batch" = true
-	    then
-		export geometry   ## for use in any secondary calls
-	    fi
-	}
-    fi
 fi
 if  test "$keepinfo" = true
 then
@@ -1269,12 +1229,6 @@ fi
 \usepackage{pdfpages}
 EndTemplate
     )  > "$texFile"
-if test -z "$geometry" ; then geometry=false ; fi
-if test "$geometry" = false; then   ## geometry package is not to be used
-    cp "$texFile" "$tempFile"
-    sed '/\\\usepackage.*{geometry}/d' "$tempFile" > "$texFile"
-    rm "$tempFile"
-fi
 if test -z "$pagecolor"; then   ## color package is not needed
     cp "$texFile" "$tempFile"
     sed '/\\\usepackage.*{color}/d' "$tempFile" > "$texFile"
