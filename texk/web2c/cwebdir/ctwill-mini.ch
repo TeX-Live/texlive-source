@@ -1,3 +1,19 @@
+Formatting changes for CTWILL by Andreas Scherer
+This file is in the Public Domain.
+
+This extensive set of changes is my best attempt to format CTWILL with
+itself in DVI or PDF format, i.e., with the '[pdf]ctwimac.tex' macros. This
+produces output with 'mini-indexes' on each spread of pages.
+
+Apply these additional changes in the following two-step procedure:
+First create 'ctwill-w2c.ch' that mogrifies CWEAVE into CTWILL:
+$ tie -c ctwill-w2c.ch \
+> cweave.w cweav-{patch,extensions,output,i18n,twill}.ch \
+> cwtw-texlive.ch ctwill-texlive.ch
+Then create 'ctwill.w' that gets processed with TeX (plain, pdfTeX, XeTeX):
+$ ctie -m ctwill.w \
+> cweave.w ctwill-w2c.ch ctwill-mini.ch
+
 Section 1.
 
 @x

@@ -1,6 +1,5 @@
 #!/usr/bin/env perl
 # $Id$
-# $Id$
 # Public domain.  Originally written by Andreas Scherer, 2023.
 
 use strict;

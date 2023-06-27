@@ -1,3 +1,21 @@
+Formatting changes for CTWILL by Andreas Scherer
+This file is in the Public Domain.
+
+This extensive set of changes is my first attempt to format CTWILL with
+itself in HINT format, i.e., with the 'pdfctproofmac.tex' macros. This
+produces output with 'mini-indexes' for every section.
+
+Apply these additional changes in the following two-step procedure:
+First create 'ctwill-w2c.ch' that mogrifies CWEAVE into CTWILL:
+$ tie -c ctwill-w2c.ch \
+> cweave.w cweav-{patch,extensions,output,i18n,twill}.ch \
+> cwtw-texlive.ch ctwill-texlive.ch
+Then create 'ctwill.w' that gets processed with HiTeX:
+$ ctie -m ctwill.w \
+> cweave.w ctwill-w2c.ch ctwill-hint.ch
+
+Section 1.
+
 @x
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 @y

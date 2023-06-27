@@ -1,5 +1,10 @@
 2023-06-27  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctwill-{hint,mini}.ch: Add intro.
+	* ctwill-proofsort: Purge duplicate subversion tag.
+
+2023-06-27  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctwill-hint.ch: Stand-alone twin of ctwill-mini.ch.
 	* ctwill-proofsort: Don't print bare '$0'.
 	* ctwill.test: Test ctwill-proofsort last.
