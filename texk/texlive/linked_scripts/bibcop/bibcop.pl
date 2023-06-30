@@ -752,11 +752,18 @@ sub listed_tags {
   return '(' . join(', ', @sorted) . ')';
 }
 
+# Make sure the text can safely be rendered in TeX.
+sub escape_tex {
+  my ($tex) = @_;
+  $tex =~ s/[^a-zA-Z0-9-.,+)(:;@ '"]/?/g;
+  return $tex;
+}
+
 # Print ERROR message to the console and die.
 sub error {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
-    print "\\PackageError{bibcop}{$txt}{}\n";
+    print "\\PackageError{bibcop}{" . escape_tex($txt). "}{}\n";
   } else {
     print STDERR $txt . "\n";
   }
@@ -768,7 +775,7 @@ sub debug {
   my ($txt) = @_;
   if (exists $args{'--verbose'}) {
     if (exists $args{'--latex'}) {
-      print "\\message{bibcop: $txt^^J}\n";
+      print "\\message{bibcop: " . escape_tex($txt) . "^^J}\n";
     } else {
       print $txt . "\n";
     }
@@ -788,7 +795,7 @@ sub info {
 sub warning {
   my ($txt) = @_;
   if (exists $args{'--latex'}) {
-    print "\\PackageWarningNoLine{bibcop}{$txt}\n";
+    print "\\PackageWarningNoLine{bibcop}{" . escape_tex($txt) . "}\n";
   } else {
     print $txt . "\n";
   }
@@ -822,7 +829,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.13');
+  info('0.0.14');
 } else {
   my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
   if (not $file) {
