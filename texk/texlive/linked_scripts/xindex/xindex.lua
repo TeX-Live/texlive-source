@@ -10,7 +10,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.47
+ local version = 0.48
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -53,6 +53,7 @@ local args = require ('xindex-lapp') [[
     -o,--output (default "")
     -k,--checklang               
     -l,--language (default en)   
+    -g,--no_pagenumber
     -p,--prefix (default L)
     -u,--use_UCA
     -s,--use_stdin
@@ -358,6 +359,11 @@ if no_headings then
   writeLog(1,"Index without labels\n",1)
 else
   writeLog(1,"Index with labels\n",1)
+end
+
+show_pagenumber = not args["no_pagenumber"]
+if not show_pagenumber then
+  writeLog(1,"Output with NO pagenumbers!\n",1)
 end
 
 writeLog(2,"Open outputfile "..outfilename,0)
