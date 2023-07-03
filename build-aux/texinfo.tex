@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2023-06-08.14}
+\def\texinfoversion{2023-07-02.10}
 %
 % Copyright 1985, 1986, 1988, 1990-2023 Free Software Foundation, Inc.
 %
@@ -9023,6 +9023,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\link#1{\linkX[#1,,,]}
 \def\linkX[#1,#2,#3,#4]{%
   \begingroup
+  \unsepspaces
   \getprintedrefname{#1}{#2}{#3}%
   \startxreflink{#1}{#3}%
   \printedrefname
