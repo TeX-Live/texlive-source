@@ -9,4 +9,4 @@
 kpse.set_program_name("texlua", "citeproc-lua")
 
 local cli = require("citeproc-cli")
-cli.main()
+os.exit(cli.main())
