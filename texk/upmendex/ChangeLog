@@ -1,3 +1,10 @@
+2023-07-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fwrite.c, mendex.h:
+	Enable to build with system ICU DLL icu.dll
+	for Windows 10 version 1903 (May 2019 Update) or later.
+	https://learn.microsoft.com/en-us/windows/win32/intl/international-components-for-unicode--icu-
+
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.
