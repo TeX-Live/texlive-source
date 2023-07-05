@@ -404,11 +404,13 @@ main(int argc, char **argv)
 	int ac;
 	char **av, *enc;
 
-	kpse_set_program_name(argv[0], "dvibook");
-	enc = kpse_var_value("command_line_encoding");
-	if (get_command_line_args_utf8(enc, &ac, &av)) {
-		argc = ac;
-		argv = av;
+	if (argc>1) {
+		kpse_set_program_name(argv[0], "dvibook");
+		enc = kpse_var_value("command_line_encoding");
+		if (get_command_line_args_utf8(enc, &ac, &av)) {
+			argc = ac;
+			argv = av;
+		}
 	}
 #endif
 
