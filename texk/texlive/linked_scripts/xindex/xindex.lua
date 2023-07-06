@@ -6,11 +6,10 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- $Id: xindex.lua 22 2023-01-18 12:18:15Z hvoss $
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.48
+ local version = 0.49
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -55,7 +54,7 @@ local args = require ('xindex-lapp') [[
     -l,--language (default en)   
     -g,--no_pagenumber
     -p,--prefix (default L)
-    -u,--use_UCA
+    -u,--use_UCA 
     -s,--use_stdin
     -V,--version
     <files...> (default stdin) .idx file(s)
