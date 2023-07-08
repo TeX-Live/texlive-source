@@ -61,10 +61,8 @@
 
 @x
 @d max_refs 30000 /* number of cross-references; must be less than 65536 */
-@d max_scraps 5000 /* number of tokens in \CEE/ texts being parsed */
 @y
 @d max_refs 65535 /* number of cross-references; must be less than 65536 */
-@d max_scraps 5000 /* number of tokens in \CEE/ texts being parsed */
 @z
 
 @x

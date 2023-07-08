@@ -1,3 +1,8 @@
+2023-07-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Purge redundant change line.
+
 2023-06-27  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-{hint,mini}.ch: Add intro.
