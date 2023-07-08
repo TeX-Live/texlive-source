@@ -121,7 +121,9 @@
 
 #include <stdarg.h>
 #ifdef WIN32
+#if !defined(_MSC_VER)
 #include <getopt.h>
+#endif
 #else
 #include <unistd.h>
 #endif
@@ -133,7 +135,7 @@
 #include <kpathsea/paths.h>
 #include <kpathsea/variable.h>
 #include <kpathsea/lib.h>
-#ifndef WIN32
+#if !defined(WIN32) || defined(_MSC_VER)
 #include <kpathsea/getopt.h>
 #endif
 #endif
