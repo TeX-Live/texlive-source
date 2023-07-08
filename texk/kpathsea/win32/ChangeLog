@@ -1,3 +1,7 @@
+2023-07-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mktextfm.c: remove an unused variable.
+
 2020-01-31  Akira Kakuto  <kakuto@w32tex.org>
 
 	* mktextfm.c: if envvar MF_MODE_EXTRA_INFO is set, include the

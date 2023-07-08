@@ -27,7 +27,6 @@ int main(int ac, char **av)
 {
   int  savo, savi;
   FILE *fnul;
-  char *fmtname;
   char *p;
   char orgname[256];
 
