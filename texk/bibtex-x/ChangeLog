@@ -1,3 +1,7 @@
+2023-07-09  Karl Berry  <karl@freefriends.org>
+
+	* tests/bibtexu-char.test (is.knj.str$): test fails (rc=16).
+
 2023-07-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* utils.c, gblprocs.h:
