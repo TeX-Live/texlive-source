@@ -388,7 +388,7 @@ char check_file_name[max_file_name_length];
 boolean flags[128];
 
 /*:73*//*83:*/
-#line 1269 "cwebdir/common.w"
+#line 1267 "cwebdir/common.w"
 
 FILE*C_file;
 FILE*tex_file;
@@ -397,7 +397,7 @@ FILE*scn_file;
 #line 578 "cwebdir/comm-w2c.ch"
 FILE*active_file;
 FILE*check_file;
-#line 1275 "cwebdir/common.w"
+#line 1273 "cwebdir/common.w"
 
 #line 595 "cwebdir/comm-w2c.ch"
 /*:83*//*86:*/
@@ -608,7 +608,7 @@ fatal(_("! Cannot open output file "),check_file_name);
 else if((tex_file= fopen(tex_file_name,"wb"))==NULL)
 fatal(_("! Cannot open output file "),tex_file_name);
 }
-#line 1287 "cwebdir/common.w"
+#line 1285 "cwebdir/common.w"
 
 #line 613 "cwebdir/comm-w2c.ch"
 /*:84*/
@@ -1432,7 +1432,7 @@ change_file_name[max_file_name_length-2]= '\0';
 #line 1168 "cwebdir/common.w"
  while(--argc> 0){
 if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
-#line 1247 "cwebdir/common.w"
+#line 1245 "cwebdir/common.w"
 
 #line 521 "cwebdir/comm-w2c.ch"
 {
@@ -1477,7 +1477,7 @@ if(sscanf(++dot_pos,"%u",&kpathsea_debug)!=1)/*81:*/
 
 cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
-#line 1262 "cwebdir/common.w"
+#line 1260 "cwebdir/common.w"
 
 #line 572 "cwebdir/comm-w2c.ch"
 /*:81*/
@@ -1492,7 +1492,7 @@ default:flags[(eight_bits)*dot_pos]= flag_change;continue;
 break;
 }
 }
-#line 1250 "cwebdir/common.w"
+#line 1248 "cwebdir/common.w"
 
 #line 564 "cwebdir/comm-w2c.ch"
 /*:80*/
@@ -1516,7 +1516,7 @@ if(s-*argv> max_file_name_length-5)
 /*82:*/
 #line 572 "cwebdir/comm-w2c.ch"
 fatal(_("! Filename too long\n"),*argv);
-#line 1264 "cwebdir/common.w"
+#line 1262 "cwebdir/common.w"
 
 
 /*:82*/
@@ -1548,7 +1548,7 @@ if(s-*argv> max_file_name_length-4)
 /*82:*/
 #line 572 "cwebdir/comm-w2c.ch"
 fatal(_("! Filename too long\n"),*argv);
-#line 1264 "cwebdir/common.w"
+#line 1262 "cwebdir/common.w"
 
 
 /*:82*/
@@ -1572,7 +1572,7 @@ if(s-*argv> max_file_name_length-5)
 /*82:*/
 #line 572 "cwebdir/comm-w2c.ch"
 fatal(_("! Filename too long\n"),*argv);
-#line 1264 "cwebdir/common.w"
+#line 1262 "cwebdir/common.w"
 
 
 /*:82*/
@@ -1580,17 +1580,15 @@ fatal(_("! Filename too long\n"),*argv);
 
 if(dot_pos==NULL){
 sprintf(tex_file_name,"%s.tex",*argv);
-sprintf(idx_file_name,"%s.idx",*argv);
-sprintf(scn_file_name,"%s.scn",*argv);
 sprintf(C_file_name,"%s.c",*argv);
 }else{
 strcpy(tex_file_name,*argv);
 strcpy(C_file_name,*argv);
-if(make_xrefs){
 *dot_pos= '\0';
+}
+if(make_xrefs){
 sprintf(idx_file_name,"%s.idx",*argv);
 sprintf(scn_file_name,"%s.scn",*argv);
-}
 }
 found_out= true;
 }
@@ -1603,7 +1601,7 @@ else/*81:*/
 
 cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
-#line 1262 "cwebdir/common.w"
+#line 1260 "cwebdir/common.w"
 
 #line 572 "cwebdir/comm-w2c.ch"
 /*:81*/
@@ -1616,7 +1614,7 @@ if(!found_web)/*81:*/
 
 cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 
-#line 1262 "cwebdir/common.w"
+#line 1260 "cwebdir/common.w"
 
 #line 572 "cwebdir/comm-w2c.ch"
 /*:81*/

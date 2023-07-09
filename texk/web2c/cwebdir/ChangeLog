@@ -1,3 +1,9 @@
+2023-07-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-ql.ch,
+	* common.c,
+	* common.w: Don't create index/section file names.
+
 2023-07-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch,

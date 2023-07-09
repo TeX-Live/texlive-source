@@ -1228,17 +1228,15 @@ after the dot.  We must check that there is enough room in
     @<Complain about argument length@>@;
   if (dot_pos==NULL) {
     sprintf(tex_file_name,"%s.tex",*argv);
-    sprintf(idx_file_name,"%s.idx",*argv);
-    sprintf(scn_file_name,"%s.scn",*argv);
     sprintf(C_file_name,"%s.c",*argv);
   } else {
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
-    if (make_xrefs) { /* indexes will be generated */
-      *dot_pos='\0';
-      sprintf(idx_file_name,"%s.idx",*argv);
-      sprintf(scn_file_name,"%s.scn",*argv);
-    }
+    *dot_pos='\0'; /* string now ends where the dot was */
+  }
+  if (make_xrefs) { /* indexes will be generated */
+    sprintf(idx_file_name,"%s.idx",*argv);
+    sprintf(scn_file_name,"%s.scn",*argv);
   }
   found_out=true;
 }

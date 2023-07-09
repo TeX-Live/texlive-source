@@ -212,17 +212,15 @@ the routine as if it would work.
     @<Complain about argument length@>@;
   if (dot_pos==NULL) {
     sprintf(tex_file_name,"%s.tex",*argv);
-    sprintf(idx_file_name,"%s.idx",*argv);
-    sprintf(scn_file_name,"%s.scn",*argv);
     sprintf(C_file_name,"%s.c",*argv);
   } else {
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
-    if (make_xrefs) { /* indexes will be generated */
-      *dot_pos='\0';
-      sprintf(idx_file_name,"%s.idx",*argv);
-      sprintf(scn_file_name,"%s.scn",*argv);
-    }
+    *dot_pos='\0'; /* string now ends where the dot was */
+  }
+  if (make_xrefs) { /* indexes will be generated */
+    sprintf(idx_file_name,"%s.idx",*argv);
+    sprintf(scn_file_name,"%s.scn",*argv);
   }
   found_out=true;
 }
@@ -233,17 +231,15 @@ the routine as if it would work.
     @<Complain about argument length@>;
   if (dot_pos==NULL) {
     sprintf(tex_file_name,"%s_tex",*argv);
-    sprintf(idx_file_name,"%s_idx",*argv);
-    sprintf(scn_file_name,"%s_scn",*argv);
     sprintf(C_file_name,"%s_c",*argv);
   } else {
     strcpy(tex_file_name,*argv);
     strcpy(C_file_name,*argv);
-    if (make_xrefs) { /* indexes will be generated */
-      *dot_pos='\0';
-      sprintf(idx_file_name,"%s_idx",*argv);
-      sprintf(scn_file_name,"%s_scn",*argv);
-    }
+    *dot_pos='\0'; /* string now ends where the dot was */
+  }
+  if (make_xrefs) { /* indexes will be generated */
+    sprintf(idx_file_name,"%s_idx",*argv);
+    sprintf(scn_file_name,"%s_scn",*argv);
   }
   found_out=true;
 }

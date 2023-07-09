@@ -1,3 +1,7 @@
+2023-07-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: Regenerate boot source.
+
 2023-06-20  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
