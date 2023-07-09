@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 66407 2023-03-06 23:44:49Z karl $
+# $Id: epstopdf.pl 67585 2023-07-08 21:10:52Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,10 @@
 #
 # emacs-page
 #
-my $ver = "2.31";
+my $ver = "2.32";
+#  2023/07/08 2.32 (Karl Berry)
+#    * check that kpsewhich and gs are in PATH.
+#    * correct TL path for kpsewhich to bin/windows.
 #  2023/03/06 v2.31 (Karl Berry)
 #    * disallow --nosafer in restricted mode.
 #    * disallow output to pipes in restricted mode.
@@ -197,7 +200,7 @@ my $ver = "2.31";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 66407 2023-03-06 23:44:49Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 67585 2023-07-08 21:10:52Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2023 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -493,6 +496,7 @@ sub errorUsage { die "$program: Error: @_ (try --help for more information)\n"; 
 sub warnerr    { $restricted ? error(@_) : warning(@_); }
 
 ### debug messages
+debug "on_windows=$on_windows, on_windows_or_cygwin=$on_windows_or_cygwin";
 debug "Restricted mode activated" if $restricted;
 
 ### safer external commands for Windows in restricted mode
@@ -507,6 +511,53 @@ if ($restricted && $on_windows) {
   debug "Restricted Windows gs: $GS";
 }
 debug "kpsewhich command: $kpsewhich";
+
+### check that PROG is in PATH and executable, abort if not. It'd be
+# better to actually try running the program, but then we'd have to
+# either replicate Perl's logic for finding the command interpreter
+# (trivial on Unix, complicated on Windows), or do a fork/exec and close
+# the file descriptors ourselves, which seems too painful. Nor do we
+# want to load/assume File::Which. Instead we'll look along PATH
+# ourselves, which is good enough in practice for us, since the only
+# goal here is to give a better error message if the program isn't
+# available.
+sub check_prog_exists {
+  my ($prog) = @_;
+  my @w_ext = ("exe", "com", "bat");
+  debug " Checking if $prog is in PATH";
+
+  # absolute unix
+  if (! $on_windows_or_cygwin && $prog =~ m,^((\.(\.)?)?/),) {
+    return 1 if -x $prog; # absolute or explicitly relative
+    error "Required program $prog not found, given explicit directory";
+
+  # absolute windows: optional drive letter, then . or .., then \ or /.
+  } elsif ($on_windows_or_cygwin
+           && $prog =~ m,^(([a-zA-Z]:)?(\.(\.)?)?[/\\]),) {
+    return 1 if -x $prog;
+    for my $ext (@w_ext) {
+      return 1 if (-x "$prog.$ext");
+    }
+    error "Required program $prog not found, given explicit Windows directory";
+  }
+
+  # not absolute, check path
+  for my $dir (split ($on_windows_or_cygwin ? ";" : ":", $ENV{"PATH"})) {
+    $dir = "." if $dir eq ""; # empty path element
+    debug " Checking dir $dir";
+    if (-x "$dir/$prog") {
+      return 1;
+    } elsif ($on_windows_or_cygwin) {
+      for my $ext (@w_ext) {
+        return 1 if (-x "$dir/$prog.$ext");
+      }
+    }
+  }
+
+  # if made it through the whole loop, not found, so quit.
+  error "Required program $prog not found in PATH ($ENV{PATH})";
+}
+check_prog_exists ($kpsewhich);
 
 ### check if a name is "safe" according to kpse's open(in|out)_any
 # return true if name is ok, false otherwise
@@ -574,6 +625,8 @@ if ($::opt_gscmd) {
     $GS = $::opt_gscmd;
   }
 }
+debug "GS command: $GS";
+check_prog_exists ($GS);
 
 ### option (no)safer
 my $gs_opt_safer = "-dSAFER";
