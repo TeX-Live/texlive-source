@@ -136,6 +136,12 @@
 /* Define to 1 if you have the <usp10.h> header file. */
 #undef HAVE_USP10_H
 
+/* Have wasm-micro-runtime library */
+#undef HAVE_WASM
+
+/* Define to 1 if you have the <wasm_export.h> header file. */
+#undef HAVE_WASM_EXPORT_H
+
 /* Define to 1 if you have the <windows.h> header file. */
 #undef HAVE_WINDOWS_H
 
