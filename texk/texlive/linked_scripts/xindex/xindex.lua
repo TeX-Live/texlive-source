@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.49
+ local version = 0.51
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -45,6 +45,7 @@ local args = require ('xindex-lapp') [[
     -v...          Verbosity level; can be -v, -vv, -vvv
     -c,--config (default cfg)
     -e,--escapechar (default ")
+    -f,--fix_hyperref
     -n,--noheadings 
     -a,--no_casesensitive
     -b,--no_labels
@@ -112,7 +113,6 @@ if not useStdInput and not args.files_name then
   os.exit()
 end
 
-
 if not useStdInput then
   if vlevel == 3 then
     print(tostring(nInFiles).." input file(s): ")
@@ -168,8 +168,6 @@ else
   end
 end
 
-
-
 logFile = io.open(logfilename,"w+")
 require('xindex-lib')
 
@@ -224,13 +222,13 @@ writeLog(2," ... done\n",0)
 alphabet_lower_map = CreateCharListMap(alphabet_lower)
 alphabet_upper_map = CreateCharListMap(alphabet_upper)
 
-local esc_char = args.escapechar
+esc_char = args.escapechar
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
   {esc_char..'"', '//escapedquote//',     '"'    },
   {esc_char..'@', '//escapedat//',        '@'    },
   {esc_char..'|', '//escapedvert//',      '|'    },
-  {esc_char..'!', '//escapedexcl//',       '!'    }
+  {esc_char..'!', '//escapedexcl//',      '!'    }
 --  {esc_char..'%(', '//escapedparenleft//', '('    },  -- ( must beescaped
 --  {esc_char..'%)', '//escapedparenright//',')'    }   -- )  "      "
 }
@@ -363,6 +361,11 @@ end
 show_pagenumber = not args["no_pagenumber"]
 if not show_pagenumber then
   writeLog(1,"Output with NO pagenumbers!\n",1)
+end
+
+fix_hyperref = args["fix_hyperref"]
+if fix_hyperref then
+  writeLog(1,'fix hyperref with "|hyperpage -> \\textbar|hyperpage!\n',1)
 end
 
 writeLog(2,"Open outputfile "..outfilename,0)
