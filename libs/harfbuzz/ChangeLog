@@ -1,3 +1,8 @@
+2023-07-12  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import harfbuzz-8.0.1.
+	* version.ac: Adjusted.
+
 2023-07-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import harfbuzz-8.0.0.
