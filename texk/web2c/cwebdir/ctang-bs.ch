@@ -144,10 +144,8 @@ text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
 
 
 @x Section 31.
-  eight_bits *end_field; /* ending location of replacement text */
   eight_bits *byte_field; /* present location within replacement text */
 @y
-  eight_bits huge* end_field; /* ending location of replacement text */
   eight_bits huge* byte_field; /* present location within replacement text */
 @z
 

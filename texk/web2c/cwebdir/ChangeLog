@@ -1,3 +1,10 @@
+2023-07-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctang-{bs,w2c}.ch,
+	* ctangle.c,
+	+ ctangle.w,
+	* cweave.w: Merge 'cur_state' into 'stack'.
+
 2023-07-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-ql.ch,

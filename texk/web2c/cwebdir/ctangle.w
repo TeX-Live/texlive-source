@@ -247,13 +247,10 @@ sixteen_bits x)
 
 @** Stacks for output.  The output process uses a stack to keep track
 of what is going on at different ``levels'' as the sections are being
-written out.  Entries on this stack have five parts:
+written out.  Entries on this stack have four parts:
 
-\yskip\hang |end_field| is the |tok_mem| location where the replacement
-text of a particular level will end;
-
-\hang |byte_field| is the |tok_mem| location from which the next token
-on a particular level will be read;
+\yskip\hang |byte_field| is the |tok_mem| location from which the next
+token on a particular level will be read;
 
 \hang |name_field| points to the name corresponding to a particular level;
 
@@ -262,10 +259,10 @@ at a particular level;
 
 \hang |section_field| is the section number, or zero if this is a macro.
 
-\yskip\noindent The current values of these five quantities are referred to
-quite frequently, so they are stored in a separate place instead of in
-the |stack| array. We call the current values |cur_end|, |cur_byte|,
-|cur_name|, |cur_repl|, and |cur_section|.
+\yskip\noindent The current values of these four quantities are referred to
+quite frequently, so they are stored in an extra slot at the very end of the
+|stack| array.  We call the current values |cur_byte|, |cur_name|, |cur_repl|,
+and |cur_section|.
 
 The global variable |stack_ptr| tells how many levels of output are
 currently in progress. The end of all output occurs when the stack is
@@ -273,7 +270,6 @@ empty, i.e., when |stack_ptr==stack|.
 
 @<Typed...@>=
 typedef struct {
-  eight_bits *end_field; /* ending location of replacement text */
   eight_bits *byte_field; /* present location within replacement text */
   name_pointer name_field; /* |byte_start| index for text being output */
   text_pointer repl_field; /* |tok_start| index for text being output */
@@ -282,16 +278,16 @@ typedef struct {
 typedef output_state *stack_pointer;
 
 @ @d stack_size 50 /* number of simultaneous levels of macro expansion */
-@d cur_end cur_state.end_field /* current ending location in |tok_mem| */
+@d cur_state stack[stack_size+1] /* |cur_byte|, |cur_name|, |cur_repl|,
+  and |cur_section| */
 @d cur_byte cur_state.byte_field /* location of next output byte in |tok_mem|*/
 @d cur_name cur_state.name_field /* pointer to current name being expanded */
 @d cur_repl cur_state.repl_field /* pointer to current replacement text */
 @d cur_section cur_state.section_field /* current section number being expanded */
+@d cur_end (cur_repl+1)->tok_start /* current ending location in |tok_mem| */
 
 @<Private...@>=
-static output_state cur_state; /* |cur_end|, |cur_byte|, |cur_name|, |cur_repl|,
-  and |cur_section| */
-static output_state stack[stack_size+1]; /* info for non-current levels */
+static output_state stack[stack_size+2]; /* info for non-current levels */
 static stack_pointer stack_end=stack+stack_size; /* end of |stack| */
 static stack_pointer stack_ptr; /* first unused location in the output state stack */
 
@@ -303,7 +299,7 @@ error message will have been generated before we do any of the initialization.
 
 @<Initialize the output stacks@>=
 stack_ptr=stack+1; cur_name=name_dir; cur_repl=text_info->text_link+text_info;
-cur_byte=cur_repl->tok_start; cur_end=(cur_repl+1)->tok_start; cur_section=0;
+cur_byte=cur_repl->tok_start; cur_section=0;
 
 @ When the replacement text for name |p| is to be inserted into the output,
 the following subroutine is called to save the old level of output and get
@@ -322,8 +318,7 @@ name_pointer p)
   stack_ptr++;
   if (p!=NULL) { /* |p==NULL| means we are in |output_defs| */
     cur_name=p; cur_repl=(text_pointer)p->equiv;
-    cur_byte=cur_repl->tok_start; cur_end=(cur_repl+1)->tok_start;
-    cur_section=0;
+    cur_byte=cur_repl->tok_start; cur_section=0;
   }
 }
 
@@ -342,8 +337,7 @@ boolean flag) /* |flag==false| means we are in |output_defs| */
 {
   if (flag && cur_repl->text_link<section_flag) { /* link to a continuation */
     cur_repl=cur_repl->text_link+text_info; /* stay on the same level */
-    cur_byte=cur_repl->tok_start; cur_end=(cur_repl+1)->tok_start;
-    return;
+    cur_byte=cur_repl->tok_start; return;
   }
   stack_ptr--; /* go down to the previous level */
   if (stack_ptr>stack) cur_state=*stack_ptr;
@@ -574,7 +568,6 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     cur_name=*an_output_file;
     cur_repl=(text_pointer)cur_name->equiv;
     cur_byte=cur_repl->tok_start;
-    cur_end=(cur_repl+1)->tok_start;
     while (stack_ptr > stack) get_output();
     flush_buffer();
 }
@@ -596,6 +589,8 @@ static void out_char(eight_bits);
 
 @ @d C_printf(c,a) fprintf(C_file,c,a)
 @d C_putc(c) putc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
+@#
+@d macro_end (cur_text+1)->tok_start /* end of |macro| replacement text */
 
 @c
 static void
@@ -606,13 +601,12 @@ output_defs(void)
   for (cur_text=text_info+1; cur_text<text_ptr; cur_text++)
     if (cur_text->text_link==macro) { /* |cur_text| is the text for a |macro| */
       cur_byte=cur_text->tok_start;
-      cur_end=(cur_text+1)->tok_start;
       C_printf("%s","#define ");
       out_state=normal;
       protect=true; /* newlines should be preceded by |'\\'| */
-      while (cur_byte<cur_end) {
+      while (cur_byte<macro_end) {
         a=*cur_byte++;
-        if (cur_byte==cur_end && a=='\n') break; /* disregard a final newline */
+        if (cur_byte==macro_end && a=='\n') break; /* disregard a final newline */
         if (out_state==verbatim && a!=string && a!=constant && a!='\n')
           C_putc(a); /* a high-bit character can occur in a string */
 @^high-bit character handling@>
