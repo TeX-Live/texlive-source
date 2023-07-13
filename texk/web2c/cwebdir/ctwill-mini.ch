@@ -1592,9 +1592,13 @@ Section 224.
 Section 227.
 
 @x
+@ @c
+static void
 push_level( /* suspends the current level */
 text_pointer p)
 @y
+@r @ @c
+static void
 push_level( /* suspends the current level */
 text_pointer p)
 @-push_level@>
