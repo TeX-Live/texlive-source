@@ -1592,13 +1592,15 @@ Section 224.
 Section 227.
 
 @x
-@ @c
-static void
+@ To insert token-list |p| into the output, the |push_level| subroutine
+@y
+@r @ To insert token-list |p| into the output, the |push_level| subroutine
+@z
+
+@x
 push_level( /* suspends the current level */
 text_pointer p)
 @y
-@r @ @c
-static void
 push_level( /* suspends the current level */
 text_pointer p)
 @-push_level@>

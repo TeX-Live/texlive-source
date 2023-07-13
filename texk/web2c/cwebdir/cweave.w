@@ -3790,15 +3790,15 @@ static stack_pointer max_stack_ptr; /* largest value assumed by |stack_ptr| */
 @ @<Set init...@>=
 max_stack_ptr=stack;
 
+@ @<Predecl...@>=
+static void push_level(text_pointer);@/
+static void pop_level(void);
+
 @ To insert token-list |p| into the output, the |push_level| subroutine
 is called; it saves the old level of output and gets a new one going.
 The value of |cur_mode| is not changed.
 
-@<Predecl...@>=
-static void push_level(text_pointer);@/
-static void pop_level(void);
-
-@ @c
+@c
 static void
 push_level( /* suspends the current level */
 text_pointer p)
