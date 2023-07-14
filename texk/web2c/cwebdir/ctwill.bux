@@ -87,6 +87,9 @@
 
 @$cb_show_banner {COMMON.W}99 \&{void} (\,)@>
 
+@$inner {CTWILL}227 =$0$@>
+@$outer {CTWILL}227 =$1$@>
+
 @$kpse_cweb_format "<kpathsea/types.h>" \zip@>
 @$kpse_find_file "<kpathsea/tex-file.h>" \zip@>
 @$versionstring "<lib/lib.h>" \zip@>

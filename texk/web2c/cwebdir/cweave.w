@@ -3763,14 +3763,16 @@ currently in progress. The end of output occurs when an |end_translation|
 token is found, so the stack is never empty except when we first begin the
 output process.
 
-@d inner false /* mode value for \CEE/ texts within \TEX/ texts */
-@d outer true /* mode value for \CEE/ texts in sections */
-
+@s mode int
 @<Typed...@>=
+typedef enum {
+  @!inner, /* value of |mode| for \CEE/ texts within \TEX/ texts */
+  @!outer /* value of |mode| for \CEE/ texts in sections */
+} mode;
 typedef struct {
   token_pointer end_field; /* ending location of token list */
   token_pointer tok_field; /* present location within token list */
-  boolean mode_field; /* interpretation of control tokens */
+  mode mode_field; /* interpretation of control tokens */
 } output_state;
 typedef output_state *stack_pointer;
 
