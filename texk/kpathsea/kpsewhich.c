@@ -831,7 +831,8 @@ main (int argc,  string *argv)
      || strstr(kpse->program_name,"pdftex") || strstr(kpse->program_name,"pdflatex")
      || strstr(kpse->program_name,"dvipdfm") || strstr(kpse->program_name,"extractbb")
      || strstr(kpse->program_name,"xbb") || strstr(kpse->program_name,"ebb")
-     || strstr(kpse->program_name,"dvips") || strstr(kpse->program_name,"upmendex"))
+     || strstr(kpse->program_name,"dvips") || strstr(kpse->program_name,"upmendex")
+     || strstr(kpse->program_name,"bibtex8") || strstr(kpse->program_name,"bibtexu"))
   {
     if (strstr(kpse->program_name,"upmendex"))
       enc = "utf-8";
