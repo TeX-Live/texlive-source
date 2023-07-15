@@ -47,8 +47,8 @@ max_print_line=119 ./bibtexu tests/xnameu || rc=13
 diff $srcdir/tests/nameu.bbl tests/xnameu.bbl || rc=14
 
 ## test for is.knj.str$
-#cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
-#./bibtexu tests/xiscjku || rc=15
-#diff $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
+cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
+./bibtexu tests/xiscjku || rc=15
+diff $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
 
 exit $rc

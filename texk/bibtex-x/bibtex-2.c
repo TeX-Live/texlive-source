@@ -2203,10 +2203,10 @@ BEGIN
     if (MIN_PRINT_LINE < 3)
         bad = 1;
 
-    if (MAX_PRINT_LINE <= MIN_PRINT_LINE)
+    if (Max_Print_Line <= MIN_PRINT_LINE)
         bad = 10 * bad + 2;
 
-    if (MAX_PRINT_LINE >= Buf_Size)
+    if (Max_Print_Line >= Buf_Size)
         bad = 10 * bad + 3;
 
     if (Hash_Prime < 128)
@@ -2393,9 +2393,10 @@ BEGIN
 /*
 **  Full 8Bit Support Note [ASIERRA95]:
 **  BibTeX just must recognize characters greater than 127.
-**    for (i=128; i<=255; i++)
-**      xchr [i] = (unsigned char) i;
 */
+    for (i=128; i<=255; i++)
+      xchr [i] = (unsigned char) i;
+
 #endif                          /* SUPPORT_8BIT */
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 25 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -2458,13 +2459,10 @@ BEGIN
     END
 
 #ifdef SUPPORT_8BIT
-/*
-**    if (!Flag_7bit)
-**      for (i=128; i<=LAST_ASCII_CHAR; i++)
-**      BEGIN
-**	  xord[xchr[i]] = i;
-**      END
-*/
+    for (i=128; i<=LAST_ASCII_CHAR; i++)
+    BEGIN
+        xord[xchr[i]] = i;
+    END
 #endif                          /* SUPPORT_8BIT */
 
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 28 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/
@@ -3779,10 +3777,22 @@ BEGIN
 
   if (f != NULL)
   BEGIN
+#if defined(WIN32) && defined(KPATHSEA)
+#define  MAX_STR  780
+    unsigned char tmpstr[MAX_STR];
+    int j=0;
+    for (i=str_start[s]; i<=(str_start[s+1] - 1) && j<MAX_STR-1; i++, j++)
+    BEGIN
+      tmpstr[j] = xchr[str_pool[i]];
+    END
+    tmpstr[j] = '\0';
+    FPUTS (tmpstr, f);
+#else
     for (i=str_start[s]; i<=(str_start[s+1] - 1); i++)
     BEGIN
       FPUTC (xchr[str_pool[i]], f);
     END
+#endif
   END
 END
 /*^^^^^^^^^^^^^^^^^^^^^^^^^^ END OF SECTION 51 ^^^^^^^^^^^^^^^^^^^^^^^^^^^*/

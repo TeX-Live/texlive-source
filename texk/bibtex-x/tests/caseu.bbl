@@ -12,14 +12,14 @@
 \item[u] ABC HIJ XYZ ABC HIJ XYZ {ACE} {ace}
 \item[l] abc hij xyz abc hij xyz {ACE} {ace}
 \item[t] Abc hij xyz abc hij xyz {ACE} {ace}
+\item[~] ŌŎŒ ŖŦŲ ŴŶŸ ŹŻŽ ōŏœ ŗŧų ŵŷÿ źżž
+\item[u] ŌŎŒ ŖŦŲ ŴŶŸ ŹŻŽ ŌŎŒ ŖŦŲ ŴŶŸ ŹŻŽ
+\item[l] ōŏœ ŗŧų ŵŷÿ źżž ōŏœ ŗŧų ŵŷÿ źżž
+\item[t] Ōŏœ ŗŧų ŵŷÿ źżž ōŏœ ŗŧų ŵŷÿ źżž
 \item[~] SS S ß s
 \item[u] SS S SS S
 \item[l] ss s ß s
 \item[t] Ss s ß s
-\item[~] ŊŌŎ ŲŴŶ Ÿ ŹŻŽ ŋōŏ ųŵŷ ÿ źżž
-\item[u] ŊŌŎ ŲŴŶ Ÿ ŹŻŽ ŊŌŎ ŲŴŶ Ÿ ŹŻŽ
-\item[l] ŋōŏ ųŵŷ ÿ źżž ŋōŏ ųŵŷ ÿ źżž
-\item[t] Ŋōŏ ųŵŷ ÿ źżž ŋōŏ ųŵŷ ÿ źżž
 \item[~] ΑΒΓ ΠΡ ΣΤ ΧΨΩΪ αβγ πρ στ χψωϊ {ΑΠΣ} {απσ}
 \item[u] ΑΒΓ ΠΡ ΣΤ ΧΨΩΪ ΑΒΓ ΠΡ ΣΤ ΧΨΩΪ {ΑΠΣ} {απσ}
 \item[l] αβγ πρ στ χψωϊ αβγ πρ στ χψωϊ {ΑΠΣ} {απσ}

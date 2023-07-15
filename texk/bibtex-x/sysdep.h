@@ -190,7 +190,13 @@
 ** Some macros to satisfy ANSI C's strict (for C anyway) type checking.
 **============================================================================
 */
+#if defined(WIN32) && defined(KPATHSEA)
+#define FPRINTF                     (void) win32_fprintf
+#define FPUTS                       (void) win32_fputs
+#else
 #define FPRINTF                     (void) fprintf
+#define FPUTS                       (void) fputs
+#endif
 #define FPUTC                       (void) fputc
 #define PRINTF                      (void) printf
 #define PUTC                        (void) putc

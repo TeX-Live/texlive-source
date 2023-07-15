@@ -64,14 +64,14 @@ for t in 1 2 3; do
     TEXMFCNF=$srcdir/../kpathsea \
     BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
     BIBINPUTS=./tests \
-    ./bibtex8 tests/memtest$t || exit 1
+    ./bibtex8 -s tests/memtest$t || exit 1
 
   cp -p tests/memtest$t.aux tests/memtestu$t.aux
   eval $env \
     TEXMFCNF=$srcdir/../kpathsea \
     BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
     BIBINPUTS=./tests \
-    ./bibtexu tests/memtestu$t || exit 2
+    ./bibtexu -s tests/memtestu$t || exit 2
 
 done
 

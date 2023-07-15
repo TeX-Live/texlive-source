@@ -1,3 +1,19 @@
+2023-07-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Bump version to 4.01 (15 jul 2023).
+	* bibtex.{c,h}, bibtex-{1,2,3}.c, utils.c, gblvars.h:
+	Define "max_print_line" by function setup_bound_variable().
+	* bibtex-{1,4}.c:
+	Support characters defined by Unicode 15.0
+	and fix the degrade at 2023-07-08.
+	* bibtex-{2,3}.c, utils.c, sysdep.h:
+	Allow 8-bit/Unicode file names (both on Unix/Linux and Windows).
+	* tests/bibtexu-char.test: Enable test rc=16 again.
+	* tests/bibtex{8,u}.test, tests/bibtex8u-mem.test,
+	caseu.bbl, iscjku.bbl, testcaseu.bib, testiscjku.bib:
+	Update tests.
+
 2023-07-09  Karl Berry  <karl@freefriends.org>
 
 	* tests/bibtexu-char.test (is.knj.str$): test fails (rc=16).

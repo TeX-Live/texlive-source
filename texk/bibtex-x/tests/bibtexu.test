@@ -2,15 +2,46 @@
 # $Id$
 # Copyright 2017-2023 Karl Berry <tex-live@tug.org>
 # Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
+# Copyright 2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # You may freely use, modify and/or distribute this file.
 
 test -d tests || mkdir -p tests
-rm -f tests/uexampl.* # different filenames than bibtex8.test
 
-cp $srcdir/../web2c/tests/exampl.aux tests/uexampl.aux || exit 1
+rc=0
+
+rm -f tests/uex*.* # different filenames than bibtex8.test
+
+
+cp $srcdir/../web2c/tests/exampl.aux tests/uexampl.aux || rc=1
 
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/../web2c/tests \
   BIBINPUTS=$srcdir/../web2c/tests \
-  ./bibtexu tests/uexampl || test $? = 1 || exit 1
-diff $srcdir/tests/exampl.bbl tests/uexampl.bbl || exit 2
+  ./bibtexu -s -d all tests/uexampl || test $? = 1 || rc=2
+diff $srcdir/tests/exampl.bbl tests/uexampl.bbl || rc=3
+
+
+LC_ALL=C; export LC_ALL; LANGUAGE=C; export LANGUAGE
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$srcdir/../web2c/tests
+BIBINPUTS=$srcdir/../web2c/tests
+export TEXMFCNF BSTINPUTS BIBINPUTS
+
+
+cp $srcdir/../web2c/tests/exampl.aux tests/uex_пробный.aux || rc=4
+
+./bibtexu -s -d io tests/uex_пробный || test $? = 1 || rc=5
+diff $srcdir/tests/exampl.bbl tests/uex_пробный.bbl || rc=6
+
+
+cp $srcdir/../web2c/tests/exampl.aux tests/uex_试验.aux || rc=7
+
+./bibtexu -s -d io tests/uex_试验 || test $? = 1 || rc=8
+diff $srcdir/tests/exampl.bbl tests/uex_试验.bbl || rc=9
+
+
+## not exist, cause fatal error
+./bibtexu -d io tests/uex_δίκη || test $? = 1 && rc=10
+
+
+exit $rc
