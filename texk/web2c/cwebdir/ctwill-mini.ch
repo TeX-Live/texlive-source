@@ -1584,9 +1584,9 @@ Section 224.
 @-cur_end@>
 @-cur_tok@>
 @-cur_mode@>
-@$cur_end {CTWILL}224 =\\{cur\_state}.\\{end\_field}]@>
-@$cur_tok {CTWILL}224 =\\{cur\_state}.\\{tok\_field}]@>
-@$cur_mode {CTWILL}224 =\\{cur\_state}.\\{mode\_field}]@>
+@$cur_end {CTWILL}224 =\\{cur\_state}.\\{end\_field}@>
+@$cur_tok {CTWILL}224 =\\{cur\_state}.\\{tok\_field}@>
+@$cur_mode {CTWILL}224 =\\{cur\_state}.\\{mode\_field}@>
 @z
 
 Section 227.
