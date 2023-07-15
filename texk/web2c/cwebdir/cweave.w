@@ -2125,7 +2125,7 @@ identifier&|exp|: \.{\\\\\{}identifier with underlines and
 \.{@@(@q)@>}\thinspace section name\thinspace\.{@@>}&|section_scrap|:
  \.{\\X}$n$\.{:\\.\{}section name with special characters
       quoted\.{\\,\}\\X}\footnote*{The \.{\\,} (thin space) is omitted
-      in ``inner \TeX\ mode.''}&maybe\cr
+      in ``|inner| \TeX\ mode.''}&maybe\cr
 \.{/*}\thinspace comment\thinspace\.{*/}&|insert|: |cancel|
       \.{\\C\{}translated comment\.\} |force|&no\cr
 \.{//}\thinspace comment&|insert|: |cancel|

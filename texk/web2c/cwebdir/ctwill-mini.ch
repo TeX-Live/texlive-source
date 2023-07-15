@@ -686,7 +686,7 @@ The raw input is converted into scraps according to the following table,
 \.{\\hbox\{}\thinspace stuff\/\thinspace\.\} to the following scrap.
 
 \smallskip
-*The \.{\\,} (thin space) is omitted in ``inner \TeX\ mode.''
+*The \.{\\,} (thin space) is omitted in ``|inner| \TeX\ mode.''
 @z
 
 Sections 117--125.
