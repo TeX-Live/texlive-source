@@ -22,6 +22,13 @@ The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 @-banner@>
 @$banner {CTWILL}1 =\.{"This\ is\ CTWILL"}@>
+
+@$ctangle {CTWILL}3 \&{enum} \&{cweb}@>
+@$ctwill {CTWILL}3 \&{enum} \&{cweb}@>
+@$cweave {CTWILL}3 \&{enum} \&{cweb}@>
+
+@$inner {CTWILL}207 \&{enum} \&{mode}@>
+@$outer {CTWILL}207 \&{enum} \&{mode}@>
 @z
 
 Section 2.

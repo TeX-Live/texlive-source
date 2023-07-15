@@ -27,6 +27,13 @@ Section 1.
   \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
 \fi
 
+@$ctangle {CTWILL}3 \&{enum} \&{cweb}@>
+@$ctwill {CTWILL}3 \&{enum} \&{cweb}@>
+@$cweave {CTWILL}3 \&{enum} \&{cweb}@>
+
+@$inner {CTWILL}223 \&{enum} \&{mode}@>
+@$outer {CTWILL}223 \&{enum} \&{mode}@>
+
 @** Introduction.
 @z
 
