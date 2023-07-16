@@ -1947,15 +1947,7 @@ Section 279.
 @x
   cur_name=sort_ptr->head;
 @y
-  @+cur_name=sort_ptr->head;@/
-@z
-
-Section 280.
-
-@x
-        if (xislower(*j)) { out_str("\\\\");@+ break; }
-@y
-        if (xislower(*j)) { out_str("\\\\");@+ break;@+ }
+  cur_name=sort_ptr->head;@/
 @z
 
 Section 285.
