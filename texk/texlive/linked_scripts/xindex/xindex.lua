@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.51
+ local version = 0.53
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -43,21 +43,21 @@ local args = require ('xindex-lapp') [[
     -q,--quiet
     -h,--help
     -v...          Verbosity level; can be -v, -vv, -vvv
+    -V,--version
+    -a,--no_casesensitive
+    -b,--no_labels
     -c,--config (default cfg)
     -e,--escapechar (default ")
     -f,--fix_hyperref
-    -n,--noheadings 
-    -a,--no_casesensitive
-    -b,--no_labels
+    -g,--no_pagenumber
     -i,--ignoreSpace
-    -o,--output (default "")
     -k,--checklang               
     -l,--language (default en)   
-    -g,--no_pagenumber
+    -n,--noheadings 
+    -o,--output (default "")
     -p,--prefix (default L)
-    -u,--use_UCA 
     -s,--use_stdin
-    -V,--version
+    -u,--use_UCA 
     <files...> (default stdin) .idx file(s)
 ]]
 
@@ -223,17 +223,17 @@ alphabet_lower_map = CreateCharListMap(alphabet_lower)
 alphabet_upper_map = CreateCharListMap(alphabet_upper)
 
 esc_char = args.escapechar
+esc_char2 = esc_char..esc_char  
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
-  {esc_char..'"', '//escapedquote//',     '"'    },
-  {esc_char..'@', '//escapedat//',        '@'    },
-  {esc_char..'|', '//escapedvert//',      '|'    },
-  {esc_char..'!', '//escapedexcl//',      '!'    }
---  {esc_char..'%(', '//escapedparenleft//', '('    },  -- ( must beescaped
---  {esc_char..'%)', '//escapedparenright//',')'    }   -- )  "      "
+  {esc_char2,     '//escaped2//', esc_char    },
+  {esc_char..'@', '//escapedat//',    '@'    },
+  {esc_char..'|', '//escapedvert//',  '|'    },
+  {esc_char..'!', '//escapedexcl//',  '!'    },
+  {'',            '\\textbar',        '|'    },  
+  {'',            '\\braceLeft',      '{'    },  
+  {'',            '\\braceRight',     '}'    }
 }
-
--- esc_char..'%( is not needed because it can only appear after |
 
 outFile = io.open(outfilename,"w+")
 
