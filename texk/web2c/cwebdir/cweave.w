@@ -3805,11 +3805,8 @@ push_level( /* suspends the current level */
 text_pointer p)
 {
   if (stack_ptr==stack_end) overflow("stack");
-  if (stack_ptr>stack) { /* save current state */
-    stack_ptr->end_field=cur_end;
-    stack_ptr->tok_field=cur_tok;
-    stack_ptr->mode_field=cur_mode;
-  }
+  if (stack_ptr>stack) /* save current state */
+    *stack_ptr = cur_state;
   stack_ptr++;
   if (stack_ptr>max_stack_ptr) max_stack_ptr=stack_ptr;
   cur_tok=*p; cur_end=*(p+1);
