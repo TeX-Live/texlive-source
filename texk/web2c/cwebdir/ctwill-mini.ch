@@ -27,13 +27,6 @@ Section 1.
   \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
 \fi
 
-@$ctangle {CTWILL}3 \&{enum} \&{cweb}@>
-@$ctwill {CTWILL}3 \&{enum} \&{cweb}@>
-@$cweave {CTWILL}3 \&{enum} \&{cweb}@>
-
-@$inner {CTWILL}223 \&{enum} \&{mode}@>
-@$outer {CTWILL}223 \&{enum} \&{mode}@>
-
 @** Introduction.
 @z
 
@@ -67,6 +60,13 @@ faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 @-banner@>
 @$banner {CTWILL}1 =\.{"This\ is\ CTWILL"}@>
+
+@$ctangle {CTWILL}3 \&{enum} \&{cweb}@>
+@$ctwill {CTWILL}3 \&{enum} \&{cweb}@>
+@$cweave {CTWILL}3 \&{enum} \&{cweb}@>
+
+@$inner {CTWILL}223 \&{enum} \&{mode}@>
+@$outer {CTWILL}223 \&{enum} \&{mode}@>
 @z
 
 Section 2.
@@ -1618,11 +1618,10 @@ Section 228.
 
 @x
 force when the current level was begun. This subroutine will never be
-called when |stack_ptr==1|.
+called when |stack_ptr==1|. It is so simple, we declare it as a macro:
 @y
-force when the current level was begun.
-
-This subroutine will never be called when |stack_ptr==1|.
+force when the current level was begun.  It is so simple, we declare it as a
+macro.  This subroutine will never be called when |stack_ptr==1|.
 @z
 
 Section 233--234.

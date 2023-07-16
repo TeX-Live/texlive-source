@@ -3794,7 +3794,6 @@ max_stack_ptr=stack;
 
 @ @<Predecl...@>=
 static void push_level(text_pointer);@/
-static void pop_level(void);
 
 @ To insert token-list |p| into the output, the |push_level| subroutine
 is called; it saves the old level of output and gets a new one going.
@@ -3818,15 +3817,9 @@ text_pointer p)
 
 @ Conversely, the |pop_level| routine restores the conditions that were in
 force when the current level was begun. This subroutine will never be
-called when |stack_ptr==1|.
+called when |stack_ptr==1|. It is so simple, we declare it as a macro:
 
-@c
-static void
-pop_level(void)
-{
-  cur_end=(--stack_ptr)->end_field;
-  cur_tok=stack_ptr->tok_field; cur_mode=stack_ptr->mode_field;
-}
+@d pop_level cur_state = *(--stack_ptr)
 
 @ The |get_output| function returns the next byte of output that is not a
 reference to a token list. It returns the values |identifier| or |res_word|
@@ -3852,7 +3845,7 @@ static eight_bits
 get_output(void) /* returns the next token of output */
 {
   sixteen_bits a; /* current item read from |tok_mem| */
-  restart: while (cur_tok==cur_end) pop_level();
+  restart: while (cur_tok==cur_end) pop_level;
   a=*(cur_tok++);
   if (a>=0400) {
     cur_name=a % id_flag + name_dir;

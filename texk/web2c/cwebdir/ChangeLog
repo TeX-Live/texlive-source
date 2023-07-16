@@ -1,3 +1,8 @@
+2023-07-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch,
+	* cweave.w: 'pop_level' is a macro (again).
+
 2023-07-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.bux,
