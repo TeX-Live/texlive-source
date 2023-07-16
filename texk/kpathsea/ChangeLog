@@ -2,6 +2,7 @@
 
 	* kpsewhich.c: Allow Unicode file name for bibtex8 and bibtexu
 	in kpsewhich. (Windows only)
+	* texmf.cnf: Update comment.
 
 2023-04-11  Karl Berry  <karl@tug.org>
 

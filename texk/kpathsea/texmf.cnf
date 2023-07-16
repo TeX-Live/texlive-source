@@ -911,8 +911,8 @@ guess_input_kanji_encoding.mendex = 1
 % This variable is used on Windows only, and affects 4 TeX engines:
 % uptex, euptex, pdftex, xetex, and 2 drivers: dvips, [x]dvipdfmx.
 % Several applications also are affected by the variable:
-% dvi2tty.exe, disdvi.exe, dvibook.exe, dviconcat.exe, dviselect.exe,
-% dvitodvi.exe, and dvidvi.exe.
+% bibtex8.exe, bibtexu.exe, dvi2tty.exe, disdvi.exe, dvibook.exe,
+% dviconcat.exe, dviselect.exe, dvitodvi.exe, and dvidvi.exe.
 % Only values utf8 or utf-8 are meaningful. Other values are simply
 % ignored. If file names in sources and DVI or XDV files are ASCII
 % only, the value of command_line_encoding is irrelevant.
