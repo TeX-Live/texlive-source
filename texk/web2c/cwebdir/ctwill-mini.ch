@@ -1950,6 +1950,14 @@ Section 279.
   cur_name=sort_ptr->head;@/
 @z
 
+Section 281.
+
+@x
+  else {out_str("\\["); out_section(cur_val-def_flag); out(']');}
+@y
+  else {@+out_str("\\["); out_section(cur_val-def_flag); out(']');@+}
+@z
+
 Section 285.
 
 @x
@@ -2157,16 +2165,6 @@ Section 315.
 @y
 @ @<Predec...@>=@+static void out_mini(meaning_struct *);
 @-out_mini@>
-@z
-
-Section 316.
-
-@x
-@ Compare this code with section |@<Output the name...@>|.
-
-@<Mini-output...@>=
-@y
-@ @<Mini-output...@>=
 @z
 
 Section 318.

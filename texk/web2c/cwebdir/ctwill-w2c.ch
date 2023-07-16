@@ -1233,7 +1233,7 @@ out('.');
 switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
 @y
 @ We don't format the index completely; the \.{twinx} program does the
-rest of the job.
+rest of the job.  Compare this code with section |@<Mini-output...@>|.
 
 @<Output the name...@>=
 switch (cur_name->ilk) {
