@@ -1252,13 +1252,6 @@ switch (cur_name->ilk) {
 @z
 
 @x
-  case wildcard: out_str("\\9");@+ goto not_an_identifier;
-@y
-  case roman: out_str("  ");@+ goto not_an_identifier;
-  case wildcard: out_str("\\9");@+ goto not_an_identifier;
-@z
-
-@x
   case roman: not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom:
     out_str("$\\");
@@ -1267,6 +1260,7 @@ switch (cur_name->ilk) {
     out('$');
     goto name_done;
 @y
+  case roman: out_str("  ");
 not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom: out_str("\\$"); break;
 @.\\\$@>
@@ -1885,9 +1879,8 @@ switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
     if (is_tiny(cur_name)) out_str("\\|");
     else {
       for (j=cur_name->byte_start;j<(cur_name+1)->byte_start;j++)
-        if (xislower(*j)) goto lowcase;
-      goto allcaps;
-lowcase: out_str("\\\\");
+        if (xislower(*j)) { out_str("\\\\");@+ break; }
+      out_str("\\."); /* \.{UPPERCASE} */
     }
   break;
 @.\\|@>
@@ -1895,7 +1888,7 @@ lowcase: out_str("\\\\");
 @.\\\\@>
   case wildcard: out_str("\\9"); break;
 @.\\9@>
-  case typewriter: allcaps: out_str("\\.");
+  case typewriter: out_str("\\."); break;
 @.\\.@>
   case roman: break;
   case custom:

@@ -1950,6 +1950,14 @@ Section 279.
   @+cur_name=sort_ptr->head;@/
 @z
 
+Section 280.
+
+@x
+        if (xislower(*j)) { out_str("\\\\");@+ break; }
+@y
+        if (xislower(*j)) { out_str("\\\\");@+ break;@+ }
+@z
+
 Section 285.
 
 @x

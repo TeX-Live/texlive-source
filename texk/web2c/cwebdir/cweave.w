@@ -4774,9 +4774,8 @@ switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
     if (is_tiny(cur_name)) out_str("\\|");
     else {
       for (j=cur_name->byte_start;j<(cur_name+1)->byte_start;j++)
-        if (xislower(*j)) goto lowcase;
-      out_str("\\."); break;
-lowcase: out_str("\\\\");
+        if (xislower(*j)) { out_str("\\\\");@+ break; }
+      out_str("\\."); /* \.{UPPERCASE} */
     }
     break;
 @.\\|@>
@@ -4784,8 +4783,7 @@ lowcase: out_str("\\\\");
 @.\\\\@>
   case wildcard: out_str("\\9");@+ goto not_an_identifier;
 @.\\9@>
-  case typewriter: out_str("\\.");
-  @=/* fall through */@>@;
+  case typewriter: out_str("\\.");@+ goto not_an_identifier;
 @.\\.@>
   case roman: not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom:
