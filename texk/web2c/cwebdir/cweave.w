@@ -1443,8 +1443,8 @@ to overflow. To make this routine a little faster, we initialize position
 out_buf[0]='\\';
 
 @ A long line is broken at a blank space or just before a backslash that isn't
-preceded by another backslash. In the latter case, a |'%'| is output at
-the break.
+preceded by another backslash or a \TeX\ comment marker. In the latter case, a
+|'%'| is output at the break.
 
 @c
 static void
@@ -1456,7 +1456,7 @@ break_out(void) /* finds a way to break the output line */
     if (*k==' ') {
       flush_buffer(k,false,true); return;
     }
-    if (*(k--)=='\\' && *k!='\\') { /* we've decreased |k| */
+    if (*(k--)=='\\' && *k!='\\' && *k!='%') { /* we've decreased |k| */
       flush_buffer(k,true,true); return;
     }
   }

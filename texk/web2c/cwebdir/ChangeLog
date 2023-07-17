@@ -1,3 +1,7 @@
+2023-07-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w: Deal with malign user input.
+
 2023-07-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-mini.ch,

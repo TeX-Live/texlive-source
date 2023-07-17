@@ -325,6 +325,21 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
+@x [127] see https://tug.org/pipermail/tex-live/2023-July/049306.htm
+preceded by another backslash. In the latter case, a |"%"| is output at
+the break.
+@y
+preceded by another backslash or a \TeX\ comment marker. In the latter case, a
+|'%'| is output at the break.
+@z
+
+@x [127] deal with malign user input
+  if (d="\")and(out_buf[k-1]<>"\") then {in this case |k>1|}
+@y
+  if (d="\")and(out_buf[k-1]<>"\")and(out_buf[k-1]<>"%") then
+    {in this case |k>1|}
+@z
+
 @x [148] Purify 'reduce' and 'squash'.
 @d production(#)==@!debug prod(#) gubed; goto found
 @d reduce(#)==red(#); production
