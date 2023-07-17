@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-03-27"
+release_date = "2023-07-17"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -147,7 +147,7 @@ if #checkconfigs > 1 then
     end
     if next(failed) then
       for _,config in ipairs(failed) do
-        print("Failed tests for configuration " .. config .. ":")
+        print("Failed tests for configuration \"" .. config .. "\":")
         print("\n  Check failed with difference files")
         local testdir = testdir
         if config ~= "build" then
@@ -167,8 +167,8 @@ if #checkconfigs > 1 then
           end
           local f = open(testdir .. "/.savecommands")
           if not f then
-            print("Error: Cannot find save commands for configuration " ..
-              config)
+            print("Error: Cannot find save commands for configuration \"" ..
+              config .. "\"")
             exit(2)
           end
           for line in f:lines() do
@@ -221,7 +221,7 @@ if #checkconfigs == 1 and
         testsuppdir = testfiledir .. "/support"
       end
     else
-      print("Error: Cannot find configuration " ..  configname .. ".lua")
+      print("Error: Cannot find configuration \"" ..  configname .. ".lua\"")
       exit(1)
     end
   end
