@@ -680,7 +680,7 @@
     \immediate\closeout\cont % the contents information has been fully gathered
   \fi}
 \def\fin{\ifacro \message{Section names:}
-  \def\U##1.{} \def\Us##1.{} \let\I=\relax \let\*=*
+  \def\U##1.{} \def\Us##1.{} \def\Q##1.{} \def\Qs##1.{} \let\I=\relax \let\*=*
   \newrefs={} \output={\shipout\box255}
   \def\outsecname{Names of the sections}
   \ifpdftex \makebookmarks \countsections
