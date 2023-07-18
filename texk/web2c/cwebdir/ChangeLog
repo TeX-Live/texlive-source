@@ -1,3 +1,10 @@
+2023-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebdir/comm-mac.ch,
+	* cwebdir/comm-w2c.ch,
+	* cwebdir/common.c,
+	* cwebdir/common.w: Discard rest of overfull input line.
+
 2023-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* cweave.w: Deal with malign user input.

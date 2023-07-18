@@ -630,10 +630,10 @@ while(k<=buffer_end&&(c= getc(fp))!=EOF&&c!='\n')
 #line 92 "cwebdir/comm-w2c.ch"
 if((*(k++)= c)!=' '&&c!='\r')limit= k;
 #line 166 "cwebdir/common.w"
-if(k> buffer_end)
-if((c= getc(fp))!=EOF&&c!='\n'){
+if(k> buffer_end){
+while((c= getc(fp))!=EOF&&c!='\n');
 #line 98 "cwebdir/comm-w2c.ch"
-ungetc(c,fp);loc= buffer;err_print(_("! Input line too long"));
+loc= buffer;err_print(_("! Input line too long"));
 #line 169 "cwebdir/common.w"
 
 }

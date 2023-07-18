@@ -163,9 +163,9 @@ FILE *fp) /* what file to read from */
   limit = k = buffer; /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
-  if (k>buffer_end)
-    if ((c=getc(fp))!=EOF && c!='\n') {
-      ungetc(c,fp); loc=buffer; err_print("! Input line too long");
+  if (k>buffer_end) {
+    while ((c=getc(fp))!=EOF && c!='\n'); /* discard rest of line */
+    loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
     }
   if (c==EOF && limit==buffer) return false; /* there was nothing after

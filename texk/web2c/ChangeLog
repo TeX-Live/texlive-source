@@ -1,3 +1,7 @@
+2023-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebboot.cin: Discard rest of overfull input line.
+
 2023-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Deal with malign user input.
