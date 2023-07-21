@@ -76,8 +76,8 @@ Section 2.
 @y
 @r @ \.{CWEAVE} has a fairly straightforward outline.  It operates in
 @%
-@$show_banner {CTWILL}14 =\\{flags}[\.{'b'}]@>
-@$show_progress {CTWILL}14 =\\{flags}[\.{'p'}]@>
+@$show_banner {CTWILL}15 =\\{flags}[\.{'b'}]@>
+@$show_progress {CTWILL}15 =\\{flags}[\.{'p'}]@>
 @z
 
 Section 5.
@@ -130,9 +130,9 @@ Section 8.
 @-cur_file@>
 @-cur_file_name@>
 @-cur_line@>
-@$cur_file {CTWILL}7 =\\{file}[\\{include\_depth}]@>
-@$cur_file_name {CTWILL}7 =\hfil\break\\{file\_name}[\\{include\_depth}]@>
-@$cur_line {CTWILL}7 =\\{line}[\\{include\_depth}]@>
+@$cur_file {CTWILL}8 =\\{file}[\\{include\_depth}]@>
+@$cur_file_name {CTWILL}8 =\hfil\break\\{file\_name}[\\{include\_depth}]@>
+@$cur_line {CTWILL}8 =\\{line}[\\{include\_depth}]@>
 @z
 
 Section 11.
@@ -145,9 +145,9 @@ Section 11.
 @-llink@>
 @-rlink@>
 @-root@>
-@$llink {CTWILL}10 =\\{link}@>
-@$rlink {CTWILL}10 =\\{dummy}.\\{Rlink}@>
-@$root {CTWILL}10 =\\{name\_dir}$\MG$\\{rlink}@>
+@$llink {CTWILL}11 =\\{link}@>
+@$rlink {CTWILL}11 =\\{dummy}.\\{Rlink}@>
+@$root {CTWILL}11 =\\{name\_dir}$\MG$\\{rlink}@>
 @z
 
 Section 13.
@@ -171,12 +171,12 @@ extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
 @-show_stats@>
 @-make_xrefs@>
 @-check_for_change@>
-@$show_banner {CTWILL}14 =\\{flags}[\.{'b'}]@>
-@$show_progress {CTWILL}14 =\\{flags}[\.{'p'}]@>
-@$show_happiness {CTWILL}14 =\\{flags}[\.{'h'}]@>
-@$show_stats {CTWILL}14 =\\{flags}[\.{'s'}]@>
-@$make_xrefs {CTWILL}14 =\\{flags}[\.{'x'}]@>
-@$check_for_change {CTWILL}14 =\\{flags}[\.{'c'}]@>
+@$show_banner {CTWILL}15 =\\{flags}[\.{'b'}]@>
+@$show_progress {CTWILL}15 =\\{flags}[\.{'p'}]@>
+@$show_happiness {CTWILL}15 =\\{flags}[\.{'h'}]@>
+@$show_stats {CTWILL}15 =\\{flags}[\.{'s'}]@>
+@$make_xrefs {CTWILL}15 =\\{flags}[\.{'x'}]@>
+@$check_for_change {CTWILL}15 =\\{flags}[\.{'c'}]@>
 @z
 
 Section 16.
@@ -190,8 +190,8 @@ Section 16.
 @-c@>
 @-update_terminal@>
 @-new_line@>
-@$update_terminal {CTWILL}15 =\\{fflush}(\\{stdout})@>
-@$new_line {CTWILL}15 =\\{putchar}(\.{'\\n'})@>
+@$update_terminal {CTWILL}16 =\\{fflush}(\\{stdout})@>
+@$new_line {CTWILL}16 =\\{putchar}(\.{'\\n'})@>
 @z
 
 Section 17.
