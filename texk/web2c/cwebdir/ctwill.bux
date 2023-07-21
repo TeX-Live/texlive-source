@@ -83,7 +83,7 @@
 
 @$cb_banner {COMMON.W}87 \&{char} [\,]@>
 
-@$cb_show_banner {COMMON.W}99 \&{void} (\,)@>
+@$cb_show_banner {COMMON.W}101 \&{void} (\,)@>
 
 @$kpse_cweb_format "<kpathsea/types.h>" \zip@>
 @$kpse_find_file "<kpathsea/tex-file.h>" \zip@>
