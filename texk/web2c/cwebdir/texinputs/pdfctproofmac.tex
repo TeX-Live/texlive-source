@@ -320,10 +320,10 @@
   \hyphenpenalty 1000 % so strings can be broken (discretionary \ is inserted)
   \exhyphenpenalty 10000
   \global\ind=2 \1\ \unskip}
-\def\C#1{\5\5\quad$/\ast\,${\cmntfont #1}$\,\ast/$}
-\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
-%\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
-%\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
+%\def\C#1{\5\5\quad$/\ast\,${\cmntfont #1}$\,\ast/$}
+%\let\SHC\C % "// short comments" treated like "/* ordinary comments */"
+\def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
+\def\SHC#1{\5\5\quad$\diamond\,${\cmntfont#1}}
 \def\D{\defin{{\rm\#}define}} % macro definition
 \let\E=\equiv % equivalence sign
 \def\ET{ and~} % conjunction between two section numbers
@@ -333,8 +333,8 @@
 % \H is long Hungarian umlaut accent
 \let\I=\ne % unequal sign
 \def\J{\.{@\&}} % CTANGLE's join operation
-\let\K== % assignment operator
-%\let\K=\leftarrow % "honest" alternative to standard assignment operator
+%\let\K== % assignment operator
+\let\K=\leftarrow % "honest" alternative to standard assignment operator
 % \L is Polish letter suppressed-L
 \outer\def\M#1{\MN{#1}\ifon\vfil\penalty-100\vfilneg % beginning of section
   \vskip\intersecskip\startsection\ignorespaces}
