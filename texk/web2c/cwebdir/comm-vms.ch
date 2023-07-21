@@ -75,7 +75,7 @@ null device |"NL:"| should be used, when no changes are desired.
 @z
 
 @x section 85 (01-FEB-1992 ST)
-@** Index.
+@* Index.
 @y
 @* VAX/VMS specific code.
 We have used |SS$_NORMAL| and |SS$_ABORT| as return codes,
@@ -84,5 +84,5 @@ so we have to include the system message codes.
 @<Include files@>=
 #include ssdef /* we need VAX/VMS system messages */
 
-@** Index.
+@* Index.
 @z

@@ -4,25 +4,25 @@
 
 @$HAVE_GETTEXT "common.h" \zip@>
 
-@$init_p {CWEAVE.W}32 \&{void} (\,)@>
-@$init_node {CWEAVE.W}32 \&{void} (\,)@>
-@$names_match {CWEAVE.W}32 \&{boolean} (\,)@>
+@$DEV_NULL {COMMON.W}75 macro@>
+@$_DEV_NULL {COMMON.W}75 macro@>
 
 @$ac {CWEAVE.W}2 \&{int}@>
 @$av {CWEAVE.W}2 \&{char} ${*}{*}$@>
 @$main {CWEAVE.W}2 \&{int} (\,)@>
 
-@$print_stats {CWEAVE.W}262 \&{void} (\,)@>
+@$ilk {CWEAVE.W}20 \\{dummy.Ilk}@>
 
 @$xmem {CWEAVE.W}23 \&{xref\_info} [\,]@>
 
 @$xref {CWEAVE.W}24 \\{equiv\_or\_xref}@>
 
+@$init_p {CWEAVE.W}32 \&{void} (\,)@>
+@$init_node {CWEAVE.W}32 \&{void} (\,)@>
+@$names_match {CWEAVE.W}32 \&{boolean} (\,)@>
+
+@$print_stats {CWEAVE.W}270 \&{void} (\,)@>
+
 @$text_info {CTANGLE.W}20 \&{text} [\,]@>
 
 @$equiv {CTANGLE.W}22 \\{equiv\_or\_xref}@>
-
-@$ilk {CWEAVE.W}20 \\{dummy.Ilk}@>
-
-@$DEV_NULL {COMMON.W}75 macro@>
-@$_DEV_NULL {COMMON.W}75 macro@>

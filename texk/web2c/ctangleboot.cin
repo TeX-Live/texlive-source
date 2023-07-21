@@ -1,8 +1,8 @@
 /*1:*/
 #line 66 "cwebdir/ctangle.w"
 
-/*4:*/
-#line 54 "cwebdir/comm-w2c.h"
+/*5:*/
+#line 61 "cwebdir/comm-w2c.h"
 
 #include <ctype.h>  
 #include <kpathsea/simpletypes.h>  
@@ -15,17 +15,17 @@
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
-#line 66 "cwebdir/comm-w2c.h"
+#line 73 "cwebdir/comm-w2c.h"
 
 #if HAVE_GETTEXT
 #include <libintl.h> 
 #else
-#line 70 "cwebdir/comm-w2c.h"
+#line 77 "cwebdir/comm-w2c.h"
 #define gettext(a) a
 #endif
-#line 72 "cwebdir/comm-w2c.h"
+#line 79 "cwebdir/comm-w2c.h"
 
-/*:4*/
+/*:5*/
 #line 67 "cwebdir/ctangle.w"
 
 #define banner "This is CTANGLE, Version 4.9" \
@@ -186,24 +186,24 @@ ctangle,cweave,ctwill
 extern cweb program;
 extern int phase;
 
-/*:3*//*5:*/
-#line 94 "cwebdir/comm-w2c.h"
+/*:3*//*6:*/
+#line 101 "cwebdir/comm-w2c.h"
 
 extern char section_text[];
 extern char*section_text_end;
 extern char*id_first;
 extern char*id_loc;
 
-/*:5*//*6:*/
-#line 112 "cwebdir/comm-w2c.h"
+/*:6*//*7:*/
+#line 119 "cwebdir/comm-w2c.h"
 
 extern char buffer[];
 extern char*buffer_end;
 extern char*loc;
 extern char*limit;
 
-/*:6*//*7:*/
-#line 129 "cwebdir/comm-w2c.h"
+/*:7*//*8:*/
+#line 136 "cwebdir/comm-w2c.h"
 
 extern int include_depth;
 extern FILE*file[];
@@ -219,16 +219,16 @@ extern boolean input_has_ended;
 extern boolean changing;
 extern boolean web_file_open;
 
-/*:7*//*9:*/
-#line 150 "cwebdir/comm-w2c.h"
+/*:8*//*10:*/
+#line 157 "cwebdir/comm-w2c.h"
 
 extern sixteen_bits section_count;
 extern boolean changed_section[];
 extern boolean change_pending;
 extern boolean print_where;
 
-/*:9*//*10:*/
-#line 164 "cwebdir/comm-w2c.h"
+/*:10*//*11:*/
+#line 171 "cwebdir/comm-w2c.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -252,13 +252,13 @@ extern name_pointer hash[];
 extern hash_pointer hash_end;
 extern hash_pointer h;
 
-/*:10*//*12:*/
-#line 208 "cwebdir/comm-w2c.h"
+/*:11*//*13:*/
+#line 217 "cwebdir/comm-w2c.h"
 
 extern int history;
 
-/*:12*//*14:*/
-#line 225 "cwebdir/comm-w2c.h"
+/*:13*//*15:*/
+#line 234 "cwebdir/comm-w2c.h"
 
 extern int argc;
 extern char**argv;
@@ -270,8 +270,8 @@ extern char check_file_name[];
 extern boolean flags[];
 extern const char*use_language;
 
-/*:14*//*15:*/
-#line 241 "cwebdir/comm-w2c.h"
+/*:15*//*16:*/
+#line 250 "cwebdir/comm-w2c.h"
 
 extern FILE*C_file;
 extern FILE*tex_file;
@@ -280,7 +280,7 @@ extern FILE*scn_file;
 extern FILE*active_file;
 extern FILE*check_file;
 
-/*:15*//*116:*/
+/*:16*//*116:*/
 #line 553 "cwebdir/ctang-w2c.ch"
 
 extern char cb_banner[];
@@ -388,42 +388,45 @@ static eight_bits next_control;
 /*:82*/
 #line 71 "cwebdir/ctangle.w"
 
-/*8:*/
-#line 144 "cwebdir/comm-w2c.h"
+/*4:*/
+#line 44 "cwebdir/comm-w2c.h"
+
+extern void common_init(void);
+extern void cb_show_banner(void);
+
+extern void print_stats(void);
+
+/*:4*//*9:*/
+#line 151 "cwebdir/comm-w2c.h"
 
 extern boolean get_line(void);
 extern void check_complete(void);
 extern void reset_input(void);
 
-/*:8*//*11:*/
-#line 187 "cwebdir/comm-w2c.h"
+/*:9*//*12:*/
+#line 194 "cwebdir/comm-w2c.h"
 
-extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
 extern name_pointer id_lookup(const char*,const char*,eight_bits);
 
 extern name_pointer section_lookup(char*,char*,boolean);
-extern void init_node(name_pointer);
-extern void init_p(name_pointer,eight_bits);
 extern void print_prefix_name(name_pointer);
 extern void print_section_name(name_pointer);
 extern void sprint_section_name(char*,name_pointer);
 
-/*:11*//*13:*/
-#line 211 "cwebdir/comm-w2c.h"
+extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
+
+extern void init_node(name_pointer);
+extern void init_p(name_pointer,eight_bits);
+
+/*:12*//*14:*/
+#line 220 "cwebdir/comm-w2c.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
 extern void fatal(const char*,const char*);
 extern void overflow(const char*);
 
-/*:13*//*16:*/
-#line 250 "cwebdir/comm-w2c.h"
-
-extern void common_init(void);
-extern void print_stats(void);
-extern void cb_show_banner(void);
-
-/*:16*//*30:*/
+/*:14*//*30:*/
 #line 246 "cwebdir/ctangle.w"
 static void store_two_bytes(sixteen_bits);
 

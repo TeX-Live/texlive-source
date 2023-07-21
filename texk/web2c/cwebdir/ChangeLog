@@ -1,3 +1,13 @@
+2023-07-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-{mac,mini,vms,w2c}.ch,
+	* comm-w2c.h,
+	* common.bux,
+	* common.{c,h,w},
+	* ctangle.{c,w},
+	* ctwill-mini.ch,
+	* ctwill.bux: Match common.w with common.h.
+
 2023-07-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebdir/comm-mac.ch,

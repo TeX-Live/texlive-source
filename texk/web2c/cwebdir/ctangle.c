@@ -1,8 +1,8 @@
 /*1:*/
 #line 66 "ctangle.w"
 
-/*4:*/
-#line 44 "common.h"
+/*5:*/
+#line 49 "common.h"
 
 #include <ctype.h>  
 #include <stdbool.h>  
@@ -12,7 +12,7 @@
 #include <stdlib.h>  
 #include <string.h>  
 
-/*:4*/
+/*:5*/
 #line 67 "ctangle.w"
 
 #define banner "This is CTANGLE (Version 4.9)" \
@@ -166,24 +166,24 @@ typedef uint16_t sixteen_bits;
 extern boolean program;
 extern int phase;
 
-/*:3*//*5:*/
-#line 74 "common.h"
+/*:3*//*6:*/
+#line 79 "common.h"
 
 extern char section_text[];
 extern char*section_text_end;
 extern char*id_first;
 extern char*id_loc;
 
-/*:5*//*6:*/
-#line 92 "common.h"
+/*:6*//*7:*/
+#line 97 "common.h"
 
 extern char buffer[];
 extern char*buffer_end;
 extern char*loc;
 extern char*limit;
 
-/*:6*//*7:*/
-#line 109 "common.h"
+/*:7*//*8:*/
+#line 114 "common.h"
 
 extern int include_depth;
 extern FILE*file[];
@@ -198,16 +198,16 @@ extern boolean input_has_ended;
 extern boolean changing;
 extern boolean web_file_open;
 
-/*:7*//*9:*/
-#line 129 "common.h"
+/*:8*//*10:*/
+#line 134 "common.h"
 
 extern sixteen_bits section_count;
 extern boolean changed_section[];
 extern boolean change_pending;
 extern boolean print_where;
 
-/*:9*//*10:*/
-#line 143 "common.h"
+/*:10*//*11:*/
+#line 148 "common.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -231,13 +231,13 @@ extern name_pointer hash[];
 extern hash_pointer hash_end;
 extern hash_pointer h;
 
-/*:10*//*12:*/
-#line 187 "common.h"
+/*:11*//*13:*/
+#line 194 "common.h"
 
 extern int history;
 
-/*:12*//*14:*/
-#line 203 "common.h"
+/*:13*//*15:*/
+#line 210 "common.h"
 
 extern int argc;
 extern char**argv;
@@ -247,8 +247,8 @@ extern char idx_file_name[];
 extern char scn_file_name[];
 extern boolean flags[];
 
-/*:14*//*15:*/
-#line 217 "common.h"
+/*:15*//*16:*/
+#line 224 "common.h"
 
 extern FILE*C_file;
 extern FILE*tex_file;
@@ -256,7 +256,7 @@ extern FILE*idx_file;
 extern FILE*scn_file;
 extern FILE*active_file;
 
-/*:15*/
+/*:16*/
 #line 69 "ctangle.w"
 
 /*19:*/
@@ -358,41 +358,43 @@ static eight_bits next_control;
 /*:82*/
 #line 71 "ctangle.w"
 
-/*8:*/
-#line 123 "common.h"
+/*4:*/
+#line 43 "common.h"
+
+extern void common_init(void);
+extern void print_stats(void);
+
+/*:4*//*9:*/
+#line 128 "common.h"
 
 extern boolean get_line(void);
 extern void check_complete(void);
 extern void reset_input(void);
 
-/*:8*//*11:*/
-#line 166 "common.h"
+/*:9*//*12:*/
+#line 171 "common.h"
 
-extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
 extern name_pointer id_lookup(const char*,const char*,eight_bits);
 
 extern name_pointer section_lookup(char*,char*,boolean);
-extern void init_node(name_pointer);
-extern void init_p(name_pointer,eight_bits);
 extern void print_prefix_name(name_pointer);
 extern void print_section_name(name_pointer);
 extern void sprint_section_name(char*,name_pointer);
 
-/*:11*//*13:*/
-#line 190 "common.h"
+extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
+
+extern void init_node(name_pointer);
+extern void init_p(name_pointer,eight_bits);
+
+/*:12*//*14:*/
+#line 197 "common.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
 extern void fatal(const char*,const char*);
 extern void overflow(const char*);
 
-/*:13*//*16:*/
-#line 225 "common.h"
-
-extern void common_init(void);
-extern void print_stats(void);
-
-/*:16*//*30:*/
+/*:14*//*30:*/
 #line 246 "ctangle.w"
 static void store_two_bytes(sixteen_bits);
 

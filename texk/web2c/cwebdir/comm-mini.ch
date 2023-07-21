@@ -7,7 +7,7 @@ Limbo.
 \def\contentspagenumber{0}
 @z
 
-Section 3.
+Section 4.
 
 @x
 internationalization.
@@ -17,7 +17,7 @@ internationalization.
 @-S@>
 @z
 
-Section 5.
+Section 6.
 
 @x
 @ Code related to input routines:
@@ -26,7 +26,7 @@ Section 5.
 @-c@>
 @z
 
-Section 9.
+Section 10.
 
 @x
 @ Code related to identifier and section name storage:
@@ -35,7 +35,7 @@ Section 9.
 @-c@>
 @z
 
-Section 14.
+Section 15.
 
 @x
 @ Code related to output:

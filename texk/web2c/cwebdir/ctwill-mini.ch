@@ -80,7 +80,7 @@ Section 2.
 @$show_progress {CTWILL}14 =\\{flags}[\.{'p'}]@>
 @z
 
-Section 4.
+Section 5.
 
 @x
 For backward compatibility with pre-{\mc ANSI} compilers, we replace the
@@ -97,25 +97,31 @@ And we replace the
 @-HAVE_GETTEXT@>
 @z
 
-Section 5.
-
-@x
-@d compress(c) if (loc++<=limit) return c
-@y
-@d compress(c) if (loc++<=limit) return c
-@-c@>
-@z
-
 Section 6.
 
 @x
-@ Code related to input routines:
+@d compress(c) if (loc++<=limit) return c
 @y
-@ Code related to input routines:
+@d compress(c) if (loc++<=limit) return c
 @-c@>
 @z
 
 Section 7.
+
+@x
+@ Code related to input routines:
+@y
+@ Code related to input routines:
+@-c@>
+@z
+
+Section 8.
+
+@x
+@f line x /* make |line| an unreserved word */
+@y
+@s line x @q/* make |line| an unreserved word */@>
+@z
 
 @x
 @d cur_line line[include_depth] /* number of current line in current file */
@@ -129,7 +135,7 @@ Section 7.
 @$cur_line {CTWILL}7 =\\{line}[\\{include\_depth}]@>
 @z
 
-Section 10.
+Section 11.
 
 @x
 @ Code related to identifier and section name storage:
@@ -144,7 +150,7 @@ Section 10.
 @$root {CTWILL}10 =\\{name\_dir}$\MG$\\{rlink}@>
 @z
 
-Section 12.
+Section 13.
 
 @x
 @ Code related to error handling:
@@ -173,7 +179,7 @@ extern const char *use_language; /* prefix to \.{ctwimac.tex} in \TEX/ output */
 @$check_for_change {CTWILL}14 =\\{flags}[\.{'c'}]@>
 @z
 
-Section 15.
+Section 16.
 
 @x
 @ Code related to output:
@@ -188,15 +194,13 @@ Section 15.
 @$new_line {CTWILL}15 =\\{putchar}(\.{'\\n'})@>
 @z
 
-Section 16.
+Section 17.
 
 @x
-@ The procedure that gets everything rolling:
+@ The following parameters are sufficient to handle \TEX/ (converted to
 @y
-@r @ The procedure that gets everything rolling:
+@r @ The following parameters are sufficient to handle \TEX/ (converted to
 @z
-
-Section 17.
 
 @x
 @d long_buf_size (buf_size+longest_name) /* for \.{CWEAVE} */
@@ -1290,6 +1294,14 @@ scrap_pointer p)
     return; /* this happens, for example, in |case found:| */
 @y
     return; /* this happens, for example, in \&{case} \\{found}: */
+@z
+
+Section 141.
+
+@x
+  while (q != xmem) {
+@y
+  while (q != xmem) { @+
 @z
 
 Section 143.

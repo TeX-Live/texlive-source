@@ -40,6 +40,13 @@ typedef enum {
 extern cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 extern int phase; /* which phase are we in? */
 
+@ The procedure that gets everything rolling:
+@<Predecl...@>=
+extern void common_init(void);@/
+extern void cb_show_banner(void);
+@#
+extern void print_stats(void); /* defined in \.{ctangle.w} and \.{cweave.w} */
+
 @ You may have noticed that almost all \.{"strings"} in the \.{CWEB} sources
 are placed in the context of the `|_|'~macro.  This is just a shortcut for the
 `|@!gettext|' function from the ``GNU~gettext utilities.'' For systems that do
@@ -185,15 +192,17 @@ extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
 
 @ @<Predecl...@>=
-extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
 extern name_pointer id_lookup(const char *,const char *,eight_bits);
    /* looks up a string in the identifier table */
 extern name_pointer section_lookup(char *,char *,boolean); /* finds section name */
-extern void init_node(name_pointer);@/
-extern void init_p(name_pointer,eight_bits);@/
 extern void print_prefix_name(name_pointer);@/
 extern void print_section_name(name_pointer);@/
 extern void sprint_section_name(char *,name_pointer);
+@#
+extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
+/* three routines defined in \.{ctangle.w} and \.{cweave.w} */
+extern void init_node(name_pointer);@/
+extern void init_p(name_pointer,eight_bits);@/
 
 @ Code related to error handling:
 @d spotless 0 /* |history| value for normal jobs */
@@ -245,12 +254,6 @@ extern FILE *idx_file; /* where index from \.{CWEAVE} goes */
 extern FILE *scn_file; /* where list of sections from \.{CWEAVE} goes */
 extern FILE *active_file; /* currently active file for \.{CWEAVE} output */
 extern FILE *check_file; /* temporary output file */
-
-@ The procedure that gets everything rolling:
-@<Predecl...@>=
-extern void common_init(void);@/
-extern void print_stats(void);@/
-extern void cb_show_banner(void);
 
 @ The following parameters are sufficient to handle \TEX/ (converted to
 \.{CWEB}), so they should be sufficient for most applications of \.{CWEB}.

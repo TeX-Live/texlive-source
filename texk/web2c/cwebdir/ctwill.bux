@@ -23,15 +23,17 @@
 @$changing {COMMON.W}25 \&{boolean}@>
 @$web_file_open {COMMON.W}25 \&{boolean}@>
 
-@$reset_input {COMMON.W}35 \&{void} (\,)@>
+@$get_line {COMMON.W}35 \&{boolean} (\,)@>
 
-@$section_count {COMMON.W}37 \&{sixteen\_bits}@>
-@$changed_section {COMMON.W}37 \&{boolean} [\,]@>
-@$change_pending {COMMON.W}37 \&{boolean}@>
-@$print_where {COMMON.W}37 \&{boolean}@>
-@$get_line {COMMON.W}38 \&{boolean} (\,)@>
+@$check_complete {COMMON.W}39 \&{void} (\,)@>
 
-@$check_complete {COMMON.W}42 \&{void} (\,)@>
+@$reset_input {COMMON.W}40 \&{void} (\,)@>
+
+@$section_count {COMMON.W}42 \&{sixteen\_bits}@>
+@$changed_section {COMMON.W}42 \&{boolean} [\,]@>
+@$change_pending {COMMON.W}42 \&{boolean}@>
+@$print_where {COMMON.W}42 \&{boolean}@>
+
 @$byte_mem {COMMON.W}43 \&{char} [\,]@>
 @$byte_mem_end {COMMON.W}43 \&{char} ${*}$@>
 @$name_dir {COMMON.W}43 \&{name\_info} [\,]@>

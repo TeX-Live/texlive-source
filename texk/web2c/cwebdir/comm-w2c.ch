@@ -141,41 +141,6 @@ char *found_filename; /* filename found by |kpse_find_file| */
 @z
 
 @x
-if ((web_file=fopen(web_file_name,"r"))==NULL) {
-  strcpy(web_file_name,alt_web_file_name);
-  if ((web_file=fopen(web_file_name,"r"))==NULL)
-       fatal("! Cannot open input file ", web_file_name);
-}
-@y
-if ((found_filename=kpse_find_cweb(web_file_name))==NULL @|
-    || (web_file=fopen(found_filename,"r"))==NULL)
-  fatal(_("! Cannot open input file "), web_file_name);
-else if (strlen(found_filename) < max_file_name_length) {
-  /* Copy name for \#\&{line} directives. */
-  if (strcmp(web_file_name, found_filename))
-    strcpy(web_file_name, found_filename +
-      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
-  free(found_filename);
-} else fatal(_("! Filename too long\n"), found_filename);
-@z
-
-@x
-if ((change_file=fopen(change_file_name,"r"))==NULL)
-       fatal("! Cannot open change file ", change_file_name);
-@y
-if ((found_filename=kpse_find_cweb(change_file_name))==NULL @|
-    || (change_file=fopen(found_filename,"r"))==NULL)
-  fatal(_("! Cannot open change file "), change_file_name);
-else if (strlen(found_filename) < max_file_name_length) {
-  /* Copy name for \#\&{line} directives. */
-  if (strcmp(change_file_name, found_filename))
-    strcpy(change_file_name, found_filename +
-      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
-  free(found_filename);
-} else fatal(_("! Filename too long\n"), found_filename);
-@z
-
-@x
       err_print("! Include file name not given");
 @y
       err_print(_("! Include file name not given"));
@@ -285,6 +250,41 @@ The remainder of the \.{@@i} line after the file name is ignored.
     err_print("! Change file entry did not match");
 @y
     err_print(_("! Change file entry did not match"));
+@z
+
+@x
+if ((web_file=fopen(web_file_name,"r"))==NULL) {
+  strcpy(web_file_name,alt_web_file_name);
+  if ((web_file=fopen(web_file_name,"r"))==NULL)
+       fatal("! Cannot open input file ", web_file_name);
+}
+@y
+if ((found_filename=kpse_find_cweb(web_file_name))==NULL @|
+    || (web_file=fopen(found_filename,"r"))==NULL)
+  fatal(_("! Cannot open input file "), web_file_name);
+else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for \#\&{line} directives. */
+  if (strcmp(web_file_name, found_filename))
+    strcpy(web_file_name, found_filename +
+      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
+  free(found_filename);
+} else fatal(_("! Filename too long\n"), found_filename);
+@z
+
+@x
+if ((change_file=fopen(change_file_name,"r"))==NULL)
+       fatal("! Cannot open change file ", change_file_name);
+@y
+if ((found_filename=kpse_find_cweb(change_file_name))==NULL @|
+    || (change_file=fopen(found_filename,"r"))==NULL)
+  fatal(_("! Cannot open change file "), change_file_name);
+else if (strlen(found_filename) < max_file_name_length) {
+  /* Copy name for \#\&{line} directives. */
+  if (strcmp(change_file_name, found_filename))
+    strcpy(change_file_name, found_filename +
+      ((strncmp(found_filename,"./",2)==0) ? 2 : 0));
+  free(found_filename);
+} else fatal(_("! Filename too long\n"), found_filename);
 @z
 
 @x
@@ -608,7 +608,7 @@ else {
 @z
 
 @x
-@** Index.
+@* Index.
 @y
 @** Extensions to {\tentex CWEB}.  The following sections introduce new or
 improved features that have been created by numerous contributors over the
