@@ -29,7 +29,6 @@ First comes general stuff:
 
 @i iso_types.w
 
-
 @s boolean bool
 @<Common code...@>=
 typedef uint8_t eight_bits;
