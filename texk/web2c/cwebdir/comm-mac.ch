@@ -11,7 +11,7 @@ No changes to CTANGLE or CWEAVE are needed.
 
 @x section 23: Make input_ln accept \n, \r, \n\r, or \r\n as line endings
 @ In the unlikely event that your standard I/O library does not
-support |feof|, |getc|, and |ungetc| you may have to change things here.
+support |feof| and |getc| you may have to change things here.
 @^system dependencies@>
 
 @c

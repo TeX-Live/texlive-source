@@ -150,7 +150,7 @@ char *loc=buffer; /* points to the next character to be read from the buffer */
 char *limit=buffer; /* points to the last character in the buffer */
 
 @ In the unlikely event that your standard I/O library does not
-support |feof|, |getc|, and |ungetc| you may have to change things here.
+support |feof| and |getc| you may have to change things here.
 @^system dependencies@>
 
 @c
