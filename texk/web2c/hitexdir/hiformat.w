@@ -6975,8 +6975,8 @@ bool hcheck_banner(char *magic)
   { MESSAGE("Wrong HINT version: got %d.%d, expected %d.%d\n",
       v,s,HINT_VERSION,HINT_SUB_VERSION); return false; }
   if (s<HINT_SUB_VERSION)
-  { MESSAGE("Wrong HINT subversion: got %d.%d, expected %d.%d\n",
-      v,s,HINT_VERSION,HINT_SUB_VERSION); return false; }
+  { MESSAGE("Old HINT subversion: got %d.%d, expected %d.%d\n",
+      v,s,HINT_VERSION,HINT_SUB_VERSION); }
   else if (s>HINT_SUB_VERSION)
   { MESSAGE("New HINT subversion: got %d.%d, expected %d.%d, update your application\n",
       v,s,HINT_VERSION,HINT_SUB_VERSION); }
