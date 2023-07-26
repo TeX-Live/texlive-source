@@ -147,7 +147,6 @@ identifiers are \CEE/ or \CPLUSPLUS/ reserved words whose |ilk|
 explains how they are to be treated when \CEE/ code is being
 formatted.
 
-@d ilk dummy.Ilk
 @d normal 0 /* ordinary identifiers have |normal| ilk */
 @d roman 1 /* normal index entries have |roman| ilk */
 @d wildcard 2 /* user-formatted index entries have |wildcard| ilk */
@@ -355,7 +354,7 @@ tok_ptr=max_tok_ptr=tok_mem+1;@/
 tok_start[0]=tok_start[1]=tok_mem+1;@/
 text_ptr=max_text_ptr=tok_start+1;
 
-@ Here are the three procedures needed to complete |id_lookup|:
+@ Here are the two procedures needed to complete |id_lookup|:
 @c
 boolean names_match(
 name_pointer p, /* points to the proposed match */
@@ -366,14 +365,6 @@ eight_bits t) /* desired |ilk| */
   if (length(p)!=l) return false;
   if (p->ilk!=t && !(t==normal && abnormal(p))) return false;
   return !strncmp(first,p->byte_start,l);
-}
-
-void
-init_p(
-name_pointer p,
-eight_bits t)
-{
-  p->ilk=t; init_node(p);
 }
 
 void

@@ -1,3 +1,8 @@
+2023-06-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Purge 'init_p'.
+
 2023-06-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,

@@ -670,15 +670,16 @@ if (p==NULL) {
 }
 
 @ The information associated with a new identifier must be initialized
-in a slightly different way in \.{CWEAVE} than in \.{CTANGLE}; hence the
-|init_p| procedure.
+in a slightly different way in \.{CWEAVE} than in \.{CTANGLE}.
 
 @<Enter a new name...@>= {
   if (byte_ptr+l>byte_mem_end) overflow("byte memory");
   if (name_ptr>=name_dir_end) overflow("name");
   strncpy(byte_ptr,first,l);
   (++name_ptr)->byte_start=byte_ptr+=l;
-  init_p(p,t);
+  if (program==cweave) {
+    p->ilk=t; init_node(p);
+  }
 }
 
 @ If |p| is a |name_pointer| variable, as we have seen,

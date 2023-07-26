@@ -17,7 +17,6 @@
 
 @$xref {CWEAVE.W}24 \\{equiv\_or\_xref}@>
 
-@$init_p {CWEAVE.W}32 \&{void} (\,)@>
 @$init_node {CWEAVE.W}32 \&{void} (\,)@>
 @$names_match {CWEAVE.W}32 \&{boolean} (\,)@>
 

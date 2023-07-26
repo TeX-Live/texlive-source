@@ -302,6 +302,12 @@ else if (strlen(found_filename) < max_file_name_length) {
 @z
 
 @x
+  if (program==cweave) {
+@y
+  if (program!=ctangle) {
+@z
+
+@x
   if (s+name_len>byte_mem_end) overflow("byte memory");
   if (name_ptr+1>=name_dir_end) overflow("name");
 @y

@@ -162,10 +162,8 @@ eight_bits t) /* not used by \.{CTANGLE} */
   return length(p)==l && strncmp(first,p->byte_start,l)==0;
 }
 
-@ The common lookup routine |id_lookup| refers to separate routines |init_node|
-and |init_p| when the data structure grows. Actually |init_p| is called only by
-\.{CWEAVE}, but we need to declare a dummy version so that
-the loader won't complain of its absence.
+@ The common lookup routine |id_lookup| refers to a separate routine
+|init_node| when the data structure grows.
 
 @c
 void
@@ -174,8 +172,6 @@ name_pointer node)
 {
     node->equiv=(void *)text_info;
 }
-void
-init_p(name_pointer p,eight_bits t) {@+(void)p;@+(void)t;@+}
 
 @* Tokens.
 Replacement texts, which represent \CEE/ code in a compressed format,

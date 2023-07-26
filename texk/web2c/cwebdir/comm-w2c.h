@@ -166,6 +166,7 @@ extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
 @d rlink dummy.Rlink /* right link in binary search tree for section names */
 @d root name_dir->rlink /* the root of the binary search tree
   for section names */
+@d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=
 typedef struct name_info {
@@ -199,9 +200,8 @@ extern void print_section_name(name_pointer);@/
 extern void sprint_section_name(char *,name_pointer);
 @#
 extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
-/* three routines defined in \.{ctangle.w} and \.{cweave.w} */
+/* two routines defined in \.{ctangle.w} and \.{cweave.w} */
 extern void init_node(name_pointer);@/
-extern void init_p(name_pointer,eight_bits);@/
 
 @ Code related to error handling:
 @d spotless 0 /* |history| value for normal jobs */

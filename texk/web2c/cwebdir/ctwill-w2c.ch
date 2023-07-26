@@ -157,22 +157,24 @@ turned on during the first phase---NOT!
 @z
 
 @x
-@ Here are the three procedures needed to complete |id_lookup|:
+@ Here are the two procedures needed to complete |id_lookup|:
 @y
-@ Here are the three procedures needed to complete |id_lookup|:
+@ Here are the two procedures needed to complete |id_lookup|:
 @s perm_meaning int
 @z
 
 @x
-  p->ilk=t; init_node(p);
+  p->xref=(void *)xmem;
 @y
-  struct perm_meaning *q=get_meaning(p);
-  p->ilk=t; init_node(p);
-  q->stamp=0;
-  q->link=NULL;
-  q->perm.id=p;
-  q->perm.prog_no=q->perm.sec_no=0;
-  strcpy(q->perm.tex_part,"\\uninitialized");
+  p->xref=(void *)xmem;
+  if (p!=name_dir) {
+    struct perm_meaning *q=get_meaning(p);
+    q->stamp=0;
+    q->link=NULL;
+    q->perm.id=p;
+    q->perm.prog_no=q->perm.sec_no=0;
+    strcpy(q->perm.tex_part,"\\uninitialized");
+  }
 @z
 
 @x

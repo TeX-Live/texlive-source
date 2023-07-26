@@ -20,15 +20,3 @@ const char *first, /* position of first character of string */
 size_t l, /* length of identifier */
 eight_bits t) /* desired |ilk| */
 @z
-
-@x
-void
-init_p(
-name_pointer p,
-eight_bits t)
-@y
-void __cdecl
-init_p(
-name_pointer p,
-eight_bits t)
-@z

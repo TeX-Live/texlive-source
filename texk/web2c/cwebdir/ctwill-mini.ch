@@ -118,12 +118,6 @@ Section 7.
 Section 8.
 
 @x
-@f line x /* make |line| an unreserved word */
-@y
-@s line x @q/* make |line| an unreserved word */@>
-@z
-
-@x
 @d cur_line line[include_depth] /* number of current line in current file */
 @y
 @d cur_line line[include_depth] /* number of current line in current file */

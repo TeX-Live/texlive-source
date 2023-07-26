@@ -1,3 +1,21 @@
+2023-07-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-bs.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* comm-w32.ch,
+	* common.bux,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-w32.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w32.ch,
+	* cweave.w: Purge 'init_p'.
+
 2023-07-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-{mac,mini,vms,w2c}.ch,

@@ -16,7 +16,7 @@ by using "huge" pointers.
 
 
 @x Section 9.
-  for section names */
+@d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=
 typedef struct name_info {
@@ -34,7 +34,7 @@ typedef name_pointer *hash_pointer;
 extern char byte_mem[]; /* characters of names */
 extern char *byte_mem_end; /* end of |byte_mem| */
 @y
-  for section names */
+@d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @f huge extern
 

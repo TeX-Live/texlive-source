@@ -30,8 +30,6 @@ name_pointer node)
 {
     node->equiv=(void *)text_info;
 }
-void
-init_p(name_pointer p,eight_bits t) {@+(void)p;@+(void)t;@+}
 @y
 void
 init_node(
@@ -39,6 +37,4 @@ name_pointer node)
 {
     node->equiv=(void *)text_info;
 }
-void __cdecl
-init_p(name_pointer p,eight_bits t) {@+(void)p;@+(void)t;@+}
 @z

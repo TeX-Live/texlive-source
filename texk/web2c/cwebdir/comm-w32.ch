@@ -40,12 +40,6 @@ extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
 extern boolean __cdecl names_match(name_pointer,const char *,size_t,eight_bits);@/
 @z
 
-@x
-extern void init_p(name_pointer,eight_bits);@/
-@y
-extern void __cdecl init_p(name_pointer,eight_bits);@/
-@z
-
 @x section 75
 An omitted change file argument means that |"/dev/null"| should be used,
 @y
