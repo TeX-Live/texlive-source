@@ -583,10 +583,10 @@ static boolean output_defs_seen=false;
 static void output_defs(void);@/
 static void out_char(eight_bits);
 
-@ @d C_printf(c,a) fprintf(C_file,c,a)
-@d C_putc(c) putc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
+@ @d macro_end (cur_text+1)->tok_start /* end of |macro| replacement text */
 @#
-@d macro_end (cur_text+1)->tok_start /* end of |macro| replacement text */
+@d C_printf(c,a) fprintf(C_file,c,a)
+@d C_putc(c) putc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
 
 @c
 static void

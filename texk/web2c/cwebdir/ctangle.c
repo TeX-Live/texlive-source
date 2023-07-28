@@ -15,7 +15,7 @@
 /*:5*/
 #line 67 "ctangle.w"
 
-#define banner "This is CTANGLE (Version 4.9)" \
+#define banner "This is CTANGLE (Version 4.9win32)" \
 
 #define ctangle false
 #define cweave true \
@@ -126,10 +126,10 @@
 #define verbatim 4 \
 
 #define max_files 256
+#define macro_end (cur_text+1) ->tok_start \
+
 #define C_printf(c,a) fprintf(C_file,c,a) 
 #define C_putc(c) putc((int) (c) ,C_file)  \
-
-#define macro_end (cur_text+1) ->tok_start \
 
 #define translit_length 10 \
 
@@ -527,11 +527,13 @@ return wrap_up();
 /*:2*//*24:*/
 #line 155 "ctangle.w"
 
-boolean names_match(
+#line 19 "ctang-w32.ch"
+boolean __cdecl names_match(
 name_pointer p,
 const char*first,
 size_t l,
 eight_bits t)
+#line 161 "ctangle.w"
 {(void)t;
 return length(p)==l&&strncmp(first,p->byte_start,l)==0;
 }
@@ -539,12 +541,14 @@ return length(p)==l&&strncmp(first,p->byte_start,l)==0;
 /*:24*//*25:*/
 #line 168 "ctangle.w"
 
+#line 34 "ctang-w32.ch"
 void
 init_node(
 name_pointer node)
 {
 node->equiv= (void*)text_info;
 }
+#line 175 "ctangle.w"
 
 /*:25*//*29:*/
 #line 232 "ctangle.w"

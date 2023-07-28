@@ -1,3 +1,14 @@
+2023-07-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-mini.ch,
+	* comm-w2c.ch,
+	* common.bux,
+	* common.c,
+	* common.w,
+	* ctangle.c,
+	* ctangle.w,
+	* system.bux: Format 'common' with 'ctwill'.
+
 2023-07-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-bs.ch,

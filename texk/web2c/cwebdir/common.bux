@@ -1,11 +1,6 @@
-@$ctangle "common.h" \zip@>
-@$ctwill "common.h" \zip@>
-@$cweave "common.h" \zip@>
-
-@$HAVE_GETTEXT "common.h" \zip@>
-
-@$DEV_NULL {COMMON.W}75 macro@>
-@$_DEV_NULL {COMMON.W}75 macro@>
+@$ctangle {COMMON}2 \&{cweb}@>
+@$cweave {COMMON}2 \&{cweb}@>
+@$ctwill {COMMON}2 \&{cweb}@>
 
 @$ac {CWEAVE.W}2 \&{int}@>
 @$av {CWEAVE.W}2 \&{char} ${*}{*}$@>
@@ -25,3 +20,12 @@
 @$text_info {CTANGLE.W}20 \&{text} [\,]@>
 
 @$equiv {CTANGLE.W}22 \\{equiv\_or\_xref}@>
+
+@$kpse_set_program_name "<kpathsea/progname.h>" \zip@>
+@$kpse_find_file "<kpathsea/tex-file.h>" \zip@>
+@$kpathsea_debug "<kpathsea/types.h>" \zip@>
+@$kpse_cweb_format "<kpathsea/types.h>" \zip@>
+@$kpse_program_name "<kpathsea/types.h>" \zip@>
+@$kpse_var_expand "<kpathsea/variable.h>" \zip@>
+@$printversionandexit "<lib/lib.h>" \zip@>
+@$versionstring "<lib/lib.h>" \zip@>

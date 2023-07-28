@@ -26,6 +26,7 @@
 @$puts "<stdio.h>" \zip@>
 @$rename "<stdio.h>" \zip@>
 @$remove "<stdio.h>" \zip@>
+@$sscanf "<stdio.h>" \zip@>
 @$sprintf "<stdio.h>" \zip@>
 @$stderr "<stdio.h>" \zip@>
 @$stdin "<stdio.h>" \zip@>

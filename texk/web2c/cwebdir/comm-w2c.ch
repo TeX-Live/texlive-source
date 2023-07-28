@@ -76,7 +76,7 @@ cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
   @<Initialize pointers@>@;
 @y
   @<Initialize pointers@>@;
-  @<Set up |PROGNAME| feature and initialize the search path mechanism@>@;
+  @<Set up \.{PROGNAME} feature and initialize the search path mechanism@>@;
 @z
 
 @x
@@ -157,7 +157,7 @@ char *found_filename; /* filename found by |kpse_find_file| */
 stop reading it and start reading from the named include file.  The
 \.{@@i} line should give a complete file name with or without
 double quotes.
-If the environment variable \.{CWEBINPUTS} is set, or if the compiler flag
+If the environment variable |CWEBINPUTS| is set, or if the compiler flag
 of the same name was defined at compile time,
 \.{CWEB} will look for include files in the directory thus named, if
 it cannot find them in the current directory.
@@ -206,7 +206,6 @@ The remainder of the \.{@@i} line after the file name is ignored.
 
 @x
   if ((kk=getenv("CWEBINPUTS"))!=NULL) {
-@qCWEBINPUTS@>
     if ((l=strlen(kk))>max_file_name_length-2) too_long();
     strcpy(temp_file_name,kk);
   }
@@ -795,7 +794,7 @@ in the environment) its value will be used as the search path for filenames.
 This allows different flavors of \.{CWEB} to have different search paths.
 @.CWEBINPUTS@>
 
-@<Set up |PROGNAME| feature and initialize the search path mechanism@>=
+@<Set up \.{PROGNAME} feature and initialize the search path mechanism@>=
 kpse_set_program_name(argv[0], "cweb");
 
 @ When the files you expect are not found, the thing to do is to enable
