@@ -143,23 +143,54 @@ Section 11.
     }
 @z
 
+Section 12.
+
+@x l.246
+  do@+{
+@y
+  do {
+@z
+
+@x l.256
+  }@+while(fgets(buf,buf_size,f));
+@y
+  } while(fgets(buf,buf_size,f));
+@z
+
 @x l.289 C++17 removed 'register' storage class.
 while (1) {@+register node *p,*q,*r,*s,*t;
 @y
 while (1) {@+node *p,*q,*r,*s,*t;
 @z
 
+Section 15.
+
 @x l.308 C++17 removed 'register' storage class.
 do@+{@+register int d;
 @y
-do@+{@+int d;
+do {@+int d;
 @z
+
+@x l.316
+}@+while(1);
+@y
+} while(1);
+@z
+
+Section 16.
 
 @x l.323 C++17 removed 'register' storage class.
 do@+{@+register int d;
 @y
-do@+{@+int d;
+do {@+int d;
 @z
+
+@x l.338
+}@+while(1);
+@y
+} while(1);
+@z
+
 Section 17.
 
 @x l.347
