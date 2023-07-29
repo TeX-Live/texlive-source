@@ -15,7 +15,7 @@
 /*:5*/
 #line 67 "ctangle.w"
 
-#define banner "This is CTANGLE (Version 4.9win32)" \
+#define banner "This is CTANGLE (Version 4.9)" \
 
 #define ctangle false
 #define cweave true \
@@ -216,7 +216,7 @@ struct name_info*link;
 union{
 struct name_info*Rlink;
 
-char Ilk;
+eight_bits Ilk;
 }dummy;
 void*equiv_or_xref;
 }name_info;
@@ -527,13 +527,11 @@ return wrap_up();
 /*:2*//*24:*/
 #line 155 "ctangle.w"
 
-#line 19 "ctang-w32.ch"
-boolean __cdecl names_match(
+boolean names_match(
 name_pointer p,
 const char*first,
 size_t l,
 eight_bits t)
-#line 161 "ctangle.w"
 {(void)t;
 return length(p)==l&&strncmp(first,p->byte_start,l)==0;
 }
@@ -541,14 +539,12 @@ return length(p)==l&&strncmp(first,p->byte_start,l)==0;
 /*:24*//*25:*/
 #line 168 "ctangle.w"
 
-#line 34 "ctang-w32.ch"
 void
 init_node(
 name_pointer node)
 {
 node->equiv= (void*)text_info;
 }
-#line 175 "ctangle.w"
 
 /*:25*//*29:*/
 #line 232 "ctangle.w"

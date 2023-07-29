@@ -1,5 +1,12 @@
 2023-07-28  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* ctangle.c: Ilk is of type eight_bits.
+
+2023-07-28  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-mini.ch,
 	* comm-w2c.ch,
 	* common.bux,

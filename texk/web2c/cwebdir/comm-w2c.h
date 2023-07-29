@@ -175,7 +175,7 @@ typedef struct name_info {
   union {
     struct name_info *Rlink; /* right link in binary search tree for section
       names */
-    char Ilk; /* used by identifiers in \.{CWEAVE} only */
+    eight_bits Ilk; /* used by identifiers in \.{CWEAVE} only */
   } dummy;
   void *equiv_or_xref; /* info corresponding to names */
 } name_info; /* contains information about an identifier or section name */
