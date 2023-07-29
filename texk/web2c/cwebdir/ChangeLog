@@ -1,3 +1,19 @@
+2023-07-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-bs.ch,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Syntactic sugar.
+
 2023-07-28  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.h,

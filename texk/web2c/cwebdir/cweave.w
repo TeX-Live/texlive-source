@@ -100,7 +100,7 @@ char **av) /* argument values */
   phase_one(); /* read all the user's text and store the cross-references */
   phase_two(); /* read all the text again and translate it to \TEX/ form */
   phase_three(); /* output the cross-reference index */
-  if (tracing==fully && !show_progress) new_line;
+  if (tracing==fully && !show_progress) new_line();
   return wrap_up(); /* and exit gracefully */
 }
 
@@ -914,7 +914,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     fputs("\n! String too long: ",stdout);
 @.String too long@>
     term_write(section_text+1,25);
-    printf("..."); mark_error;
+    printf("..."); mark_error();
   }
   id_loc++;
   return string;
@@ -984,7 +984,7 @@ if (k>=section_text_end) {
   fputs("\n! Section name too long: ",stdout);
 @.Section name too long@>
   term_write(section_text+1,25);
-  printf("..."); mark_harmless;
+  printf("..."); mark_harmless();
 }
 if (*k==' ' && k>section_text) k--;
 
@@ -1078,7 +1078,7 @@ phase_one(void) {
      /* it will become |true| if any line changes */
   if (*(loc-1)=='*' && show_progress) {
     printf("*%d",(int)section_count);
-    update_terminal; /* print a progress report */
+    update_terminal(); /* print a progress report */
   }
   @<Store cross-references in the \TEX/ part of a section@>@;
   @<Store cross-references in the definition part of a section@>@;
@@ -1303,13 +1303,13 @@ name_pointer p) /* print anomalies in subtree |p| */
     if ((an_output=(cur_xref->num==file_flag))==true) cur_xref=cur_xref->xlink;
     if (cur_xref->num <def_flag) {
       fputs("\n! Never defined: <",stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @.Never defined: <section name>@>
     }
     while (cur_xref->num >=cite_flag) cur_xref=cur_xref->xlink;
     if (cur_xref==xmem && !an_output) {
       fputs("\n! Never used: <",stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @.Never used: <section name>@>
     }
     section_check(p->rlink);
@@ -1345,7 +1345,7 @@ of commented-out text).
 
 @d c_line_write(c) fflush(active_file),fwrite(out_buf+1,sizeof(char),c,active_file)
 @d tex_putc(c) putc(c,active_file)
-@d tex_new_line putc('\n',active_file)
+@d tex_new_line() putc('\n',active_file)
 @d tex_printf(c) fprintf(active_file,"%s",c)
 @d tex_puts(c) fputs(c,active_file)
 
@@ -1364,7 +1364,7 @@ boolean per_cent,boolean carryover)
     while (j>out_buf && *j==' ') j--;
   c_line_write(j-out_buf);
   if (per_cent) tex_putc('%');
-  tex_new_line; out_line++;
+  tex_new_line(); out_line++;
   if (carryover)
     while (j>out_buf)
       if (*j--=='%' && (j==out_buf || *j!='\\')) {
@@ -1463,7 +1463,7 @@ line by putting a |'%'| just before the last character.
   printf("\n! Line had to be broken (output l. %d):\n",out_line);
 @.Line had to be broken@>
   term_write(out_buf+1, out_ptr-out_buf-1);
-  new_line; mark_harmless;
+  new_line(); mark_harmless();
   flush_buffer(out_ptr-1,true,true); return;
 }
 
@@ -2236,7 +2236,7 @@ text_pointer p)
       default: @<Print token |r| in symbolic form@>@;
     }
   }
-  update_terminal;
+  update_terminal();
 }
 
 @ @<Predecl...@>=@+static void print_text(text_pointer p);
@@ -2352,9 +2352,9 @@ static int cur_mathness, init_mathness;
 understanding the format by comparing the code with the symbolic
 productions as they were listed earlier.
 
-@d begin_math if (cur_mathness==maybe_math) init_mathness=yes_math;
+@d begin_math() if (cur_mathness==maybe_math) init_mathness=yes_math;
               else if (cur_mathness==no_math) app_str("${}")
-@d end_math   if (cur_mathness==maybe_math) init_mathness=no_math;
+@d end_math() if (cur_mathness==maybe_math) init_mathness=no_math;
               else if (cur_mathness==yes_math) app_str("{}$")
 
 @c
@@ -2371,10 +2371,10 @@ token a)
 {
         if (a==' ' || (a>=big_cancel && a<=big_force) || a==dindent)
             /* non-math token */ {
-                end_math;
+                end_math();
                 cur_mathness=no_math;
         } else {
-                begin_math;
+                begin_math();
                 cur_mathness=yes_math;
         }
         app(a);
@@ -2386,11 +2386,11 @@ scrap_pointer a)
 {
   switch (a->mathness % 4) { /* left boundary */
   case (no_math):
-    end_math;
+    end_math();
     cur_mathness=a->mathness / 4; /* right boundary */
     break;
   case (yes_math):
-    begin_math;
+    begin_math();
     cur_mathness=a->mathness / 4; /* right boundary */
     break;
   case (maybe_math): /* no changes */ break;
@@ -3176,7 +3176,7 @@ current token list is empty and ready to be appended~to.
 Note that |freeze_text| does not check to see that |text_ptr| hasn't gotten
 too large, since it is assumed that this test was done beforehand.
 
-@d freeze_text *(++text_ptr)=tok_ptr
+@d freeze_text() *(++text_ptr)=tok_ptr
 
 @<Predecl...@>=
 static void reduce(scrap_pointer,short,eight_bits,short,short);@/
@@ -3197,7 +3197,7 @@ short d, short n)
   if (k>0) {
     j->trans=text_ptr;
     j->mathness=4*cur_mathness+init_mathness;
-    freeze_text;
+    freeze_text();
   }
   if (k>1) {
     for (i=j+k, i1=j+1; i<=lo_ptr; i++, i1++) {
@@ -3340,13 +3340,13 @@ for (j=scrap_base; j<=lo_ptr; j++) {
   if (j->mathness / 4 == yes_math) app('$');
   if (tok_ptr+6>tok_mem_end) overflow("token");
 }
-freeze_text; return text_ptr-1;
+freeze_text(); return text_ptr-1;
 
 @ @<If semi-tracing, show the irreducible scraps@>=
 if (lo_ptr>scrap_base && tracing==partly) {
   printf("\nIrreducible scrap sequence in section %d:",(int)section_count);
 @.Irreducible scrap sequence...@>
-  mark_harmless;
+  mark_harmless();
   for (j=scrap_base; j<=lo_ptr; j++) {
     putchar(' '); print_cat(j->cat);
   }
@@ -3354,7 +3354,7 @@ if (lo_ptr>scrap_base && tracing==partly) {
 
 @ @<If tracing,...@>=
 if (tracing==fully) {
-  printf("\nTracing after l. %d:\n",cur_line); mark_harmless;
+  printf("\nTracing after l. %d:\n",cur_line); mark_harmless();
 @.Tracing after...@>
   if (loc>buffer+50) {
     printf("...");
@@ -3399,7 +3399,7 @@ been appended:
 @d app_scrap(c,b) {
   (++scrap_ptr)->cat=(c); scrap_ptr->trans=text_ptr;
   scrap_ptr->mathness=5*(b); /* no no, yes yes, or maybe maybe */
-  freeze_text;
+  freeze_text();
 }
 
 @ @<Append the scr...@>=
@@ -3697,7 +3697,7 @@ outer_parse(void) /* makes scraps from \CEE/ tokens and comments */
 @.\\SHC@>
       bal=copy_comment(is_long_comment,1); next_control=ignore;
       while (bal>0) {
-        p=text_ptr; freeze_text; q=C_translate();
+        p=text_ptr; freeze_text(); q=C_translate();
          /* at this point we have |tok_ptr+6<=max_toks| */
         app(tok_flag+(int)(p-tok_start));
         if (make_pb) app_str("\\PB{");
@@ -3772,7 +3772,7 @@ typedef output_state *stack_pointer;
 @d cur_end cur_state.end_field /* current ending location in |tok_mem| */
 @d cur_tok cur_state.tok_field /* location of next output token in |tok_mem| */
 @d cur_mode cur_state.mode_field /* current mode of interpretation */
-@d init_stack stack_ptr=stack;cur_mode=outer /* initialize the stack */
+@d init_stack() stack_ptr=stack;cur_mode=outer /* initialize the stack */
 
 @<Private...@>=
 static output_state stack[stack_size+1]; /* info for non-current levels */
@@ -3807,7 +3807,7 @@ text_pointer p)
 force when the current level was begun. This subroutine will never be
 called when |stack_ptr==1|. It is so simple, we declare it as a macro:
 
-@d pop_level cur_state = *(--stack_ptr)
+@d pop_level() cur_state = *(--stack_ptr)
 
 @ The |get_output| function returns the next byte of output that is not a
 reference to a token list. It returns the values |identifier| or |res_word|
@@ -3833,7 +3833,7 @@ static eight_bits
 get_output(void) /* returns the next token of output */
 {
   sixteen_bits a; /* current item read from |tok_mem| */
-  restart: while (cur_tok==cur_end) pop_level;
+  restart: while (cur_tok==cur_end) pop_level();
   a=*(cur_tok++);
   if (a>=0400) {
     cur_name=a % id_flag + name_dir;
@@ -3904,7 +3904,7 @@ make_output(void) /* outputs the equivalents of tokens */
   boolean save_mode; /* value of |cur_mode| before a sequence of breaks */
   boolean dindent_pending=false; /* should a |dindent| be output? */
   app(end_translation); /* append a sentinel */
-  freeze_text; push_level(text_ptr-1);
+  freeze_text(); push_level(text_ptr-1);
   while (true) {
     a=get_output();
     reswitch: switch(a) {
@@ -4120,7 +4120,7 @@ while (k<k_limit) {
 if (*k++!='@@') {
   fputs("\n! Illegal control code in section name: <",stdout);
 @.Illegal control code...@>
-  print_section_name(cur_section_name); printf("> "); mark_error;
+  print_section_name(cur_section_name); printf("> "); mark_error();
 }
 
 @ The \CEE/ text enclosed in \pb\ should not contain `\.{\v}' characters,
@@ -4135,7 +4135,7 @@ while (true) {
   if (k>=k_limit) {
     fputs("\n! C text in section name didn't end: <",stdout);
 @.C text...didn't end@>
-    print_section_name(cur_section_name); printf("> "); mark_error; break;
+    print_section_name(cur_section_name); printf("> "); mark_error(); break;
   }
   b=*(k++);
   if (b=='@@' || (b=='\\' && delim!=0))
@@ -4186,8 +4186,8 @@ within a single section. The variables |out_line| or |out_ptr| will
 change if a section is non-null, so the following macros `|save_position|'
 and `|emit_space_if_needed|' are able to handle the situation:
 
-@d save_position save_line=out_line; save_place=out_ptr
-@d emit_space_if_needed if (save_line!=out_line || save_place!=out_ptr)
+@d save_position() save_line=out_line; save_place=out_ptr
+@d emit_space_if_needed() if (save_line!=out_line || save_place!=out_ptr)
   out_str("\\Y");
   space_checked=true;
 @.\\Y@>
@@ -4204,7 +4204,7 @@ static boolean group_found=false; /* has a starred section occurred? */
 @ @<Translate the current section@>= {
   section_count++;
   @<Output the code for the beginning of a new section@>@;
-  save_position;
+  save_position();
   @<Translate the \TEX/ part of the current section@>@;
   @<Translate the definition part of the current section@>@;
   @<Translate the \CEE/ part of the current section@>@;
@@ -4238,7 +4238,7 @@ else {
 @.\\N@>
   {@+ char s[32];@+sprintf(s,"{%d}",sec_depth+1);@+out_str(s);@+}
   if (show_progress)
-  printf("*%d",(int)section_count); update_terminal; /* print a progress report */
+  printf("*%d",(int)section_count); update_terminal(); /* print a progress report */
 }
 out('{'); out_section(section_count); out('}');
 
@@ -4247,7 +4247,7 @@ index entries are not copied and \CEE/ text within \pb\ is translated.
 
 @<Translate the \T...@>= do
   switch (next_control=copy_TeX()) {
-    case '|': init_stack; output_C(); break;
+    case '|': init_stack(); output_C(); break;
     case '@@': out('@@'); break;
     case TeX_string: case noop:
     case xref_roman: case xref_wildcard: case xref_typewriter:
@@ -4270,7 +4270,7 @@ the token memory is in its initial empty state.
 @<Translate the d...@>=
 space_checked=false;
 while (next_control<=definition) { /* |format_code| or |definition| */
-  init_stack;
+  init_stack();
   if (next_control==definition) @<Start a macro definition@>@;
   else @<Start a format definition@>@;
   outer_parse(); finish_C(format_visible); format_visible=true;
@@ -4327,7 +4327,7 @@ it starts after we scan the matching `\.)'.
 
 @<Start a macro...@>= {
   if (save_line!=out_line || save_place!=out_ptr || space_checked) app(backup);
-  if(!space_checked){emit_space_if_needed;save_position;}
+  if(!space_checked){emit_space_if_needed();save_position();}
   app_str("\\D"); /* this will produce `\#\&{define }' */
 @.\\D@>
   if ((next_control=get_next())!=identifier)
@@ -4357,7 +4357,7 @@ it starts after we scan the matching `\.)'.
 @ @<Start a format...@>= {
   doing_format=true;
   if(*(loc-1)=='s' || *(loc-1)=='S') format_visible=false;
-  if(!space_checked){emit_space_if_needed;save_position;}
+  if(!space_checked){emit_space_if_needed();save_position();}
   app_str("\\F"); /* this will produce `\&{format }' */
 @.\\F@>
   next_control=get_next();
@@ -4385,7 +4385,7 @@ static name_pointer this_section; /* the current section name, or zero */
 @ @<Translate the \CEE/...@>=
 this_section=name_dir;
 if (next_control<=section_name) {
-  emit_space_if_needed; init_stack;
+  emit_space_if_needed(); init_stack();
   if (next_control==begin_C) next_control=get_next();
   else {
     this_section=cur_section;
@@ -4552,7 +4552,7 @@ else {
   fclose(active_file);
 }
 if (show_happiness) {
-  if (show_progress) new_line;
+  if (show_progress) new_line();
   fputs("Done.",stdout);
 }
 check_complete(); /* was all of the change file used? */
@@ -4830,7 +4830,7 @@ name_pointer p)
   if (p) {
     section_print(p->llink); out_str("\\I");
 @.\\I@>
-    tok_ptr=tok_mem+1; text_ptr=tok_start+1; scrap_ptr=scrap_info; init_stack;
+    tok_ptr=tok_mem+1; text_ptr=tok_start+1; scrap_ptr=scrap_info; init_stack();
     app(section_flag+(int)(p-name_dir)); make_output();
     footnote(cite_flag);
     footnote(0); /* |cur_xref| was set by |make_output| */

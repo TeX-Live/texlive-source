@@ -186,8 +186,8 @@ extern void init_node(name_pointer);@/
 @d harmless_message 1 /* |history| value when non-serious info was printed */
 @d error_message 2 /* |history| value when an error was noted */
 @d fatal_message 3 /* |history| value when we had to stop prematurely */
-@d mark_harmless if (history==spotless) history=harmless_message
-@d mark_error history=error_message
+@d mark_harmless() if (history==spotless) history=harmless_message
+@d mark_error() history=error_message
 @d confusion(s) fatal("! This can't happen: ",s)
 @.This can't happen@>
 
@@ -217,8 +217,8 @@ extern char scn_file_name[]; /* name of |scn_file| */
 extern boolean flags[]; /* an option for each 7-bit code */
 
 @ Code related to output:
-@d update_terminal fflush(stdout) /* empty the terminal output buffer */
-@d new_line putchar('\n')
+@d update_terminal() fflush(stdout) /* empty the terminal output buffer */
+@d new_line() putchar('\n')
 @d term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)
 
 @<Common code...@>=

@@ -462,7 +462,7 @@ flush_buffer(void) /* writes one line to output file */
   if (cur_line % 100 == 0 && show_progress) {
     putchar('.');
     if (cur_line % 500 == 0) printf("%d",cur_line);
-    update_terminal; /* progress report */
+    update_terminal(); /* progress report */
   }
   cur_line++;
 }
@@ -515,14 +515,14 @@ phase_two (void) {
   @<Initialize the output stacks@>@;
   @<Output macro definitions if appropriate@>@;
   if (text_info->text_link==macro && cur_out_file==end_output_files) {
-    fputs("\n! No program text was specified.",stdout); mark_harmless;
+    fputs("\n! No program text was specified.",stdout); mark_harmless();
 @.No program text...@>
   }
   else {
     if (cur_out_file==end_output_files) {
       if (show_progress) {
         printf("\nWriting the output file (%s):",C_file_name);
-        update_terminal;
+        update_terminal();
       }
     }
     else {
@@ -530,7 +530,7 @@ phase_two (void) {
         fputs("\nWriting the output files:",stdout);
 @.Writing the output...@>
         printf(" (%s)",C_file_name);
-        update_terminal;
+        update_terminal();
       }
       if (text_info->text_link==macro) goto writeloop;
     }
@@ -538,7 +538,7 @@ phase_two (void) {
     flush_buffer();
 writeloop:   @<Write all the named output files@>@;
     if (show_happiness) {
-      if (show_progress) new_line;
+      if (show_progress) new_line();
       fputs("Done.",stdout);
     }
   }
@@ -558,7 +558,7 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
     if ((C_file=fopen(output_file_name,"wb"))==NULL)
       fatal("! Cannot open output file ",output_file_name);
 @.Cannot open output file@>
-    if (show_progress) { printf("\n(%s)",output_file_name); update_terminal; }
+    if (show_progress) { printf("\n(%s)",output_file_name); update_terminal(); }
     cur_line=1;
     stack_ptr=stack+1;
     cur_name=*an_output_file;
@@ -1122,7 +1122,7 @@ if (k>=section_text_end) {
   fputs("\n! Section name too long: ",stdout);
 @.Section name too long@>
   term_write(section_text+1,25);
-  printf("..."); mark_harmless;
+  printf("..."); mark_harmless();
 }
 if (*k==' ' && k>section_text) k--;
 
@@ -1374,7 +1374,7 @@ scan_section(void)
   sixteen_bits a; /* token for left-hand side of definition */
   section_count++; @+ no_where=true;
   if (*(loc-1)=='*' && show_progress) { /* starred section */
-    printf("*%d",(int)section_count); update_terminal;
+    printf("*%d",(int)section_count); update_terminal();
   }
   next_control=ignore;
   while (true) {

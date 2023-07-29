@@ -1017,7 +1017,7 @@ const char *s)
 {
   *s=='!'? printf("\n%s",s) : printf("%s",s);
   if (web_file_open) @<Print error location based on input buffer@>@;
-  update_terminal; mark_error;
+  update_terminal(); mark_error();
 }
 
 @ The error locations can be indicated by using the global variables
@@ -1040,7 +1040,7 @@ if (l>buffer) {
   for (k=buffer; k<l; k++)
     if (*k=='\t') putchar(' ');
     else putchar(*k); /* print the characters already read */
-  new_line;
+  new_line();
   for (k=buffer; k<l; k++) putchar(' '); /* space out the next line */
 }
 for (k=l; k<limit; k++) putchar(*k); /* print the part not yet read */
@@ -1064,7 +1064,7 @@ a status of |EXIT_SUCCESS| if and only if only harmless messages were printed.
 
 @c
 int wrap_up(void) {
-  if (show_progress) new_line;
+  if (show_progress) new_line();
   if (show_stats)
     print_stats(); /* print statistics about memory usage */
   @<Print the job |history|@>@;

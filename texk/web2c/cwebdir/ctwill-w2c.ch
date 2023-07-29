@@ -446,18 +446,18 @@ if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 
 @x
       fputs("\n! Never defined: <",stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @y
       fputs(_("\n! Never defined: <"),stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @z
 
 @x
       fputs("\n! Never used: <",stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @y
       fputs(_("\n! Never used: <"),stdout);
-      print_section_name(p); putchar('>'); mark_harmless;
+      print_section_name(p); putchar('>'); mark_harmless();
 @z
 
 @x
@@ -618,9 +618,9 @@ print_text( /* prints a token list for debugging; not used in |main| */
 @z
 
 @x
-  update_terminal;
+  update_terminal();
 @y
-  puts("|"); update_terminal;
+  puts("|"); update_terminal();
 @z
 
 @x
@@ -883,9 +883,9 @@ if (cat1==decl_head) {
 @z
 
 @x
-  printf("\nTracing after l. %d:\n",cur_line); mark_harmless;
+  printf("\nTracing after l. %d:\n",cur_line); mark_harmless();
 @y
-  printf(_("\nTracing after l. %d:\n"),cur_line); mark_harmless;
+  printf(_("\nTracing after l. %d:\n"),cur_line); mark_harmless();
 @z
 
 @x

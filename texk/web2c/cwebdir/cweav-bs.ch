@@ -30,7 +30,7 @@ is modified.
 
 
 @x Section 10.
-  for section names */
+@d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=
 typedef struct name_info {
@@ -39,7 +39,7 @@ typedef struct name_info {
   union {
     struct name_info *Rlink; /* right link in binary search tree for section
       names */
-    char Ilk; /* used by identifiers in \.{CWEAVE} only */
+    eight_bits Ilk; /* used by identifiers in \.{CWEAVE} only */
   } dummy;
   void *equiv_or_xref; /* info corresponding to names */
 } name_info; /* contains information about an identifier or section name */
@@ -55,7 +55,7 @@ extern name_pointer hash[]; /* heads of hash lists */
 extern hash_pointer hash_end; /* end of |hash| */
 extern hash_pointer h; /* index into hash-head array */
 @y
-  for section names */
+@d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @f huge extern
 
@@ -66,7 +66,7 @@ typedef struct name_info {
   union {
     struct name_info *Rlink; /* right link in binary search tree for section
       names */
-    char Ilk; /* used by identifiers in \.{CWEAVE} only */
+    eight_bits Ilk; /* used by identifiers in \.{CWEAVE} only */
   } dummy;
   union {
     char *equiv_member;
