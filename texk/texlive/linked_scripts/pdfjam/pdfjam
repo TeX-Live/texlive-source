@@ -1,5 +1,5 @@
 #!/bin/sh
-version=3.06
+version=3.07
 #########################################################################
 ##                                                                     ##
 ##  pdfjam: A shell-script interface to the "pdfpages" LaTeX package   ##
@@ -881,17 +881,15 @@ then
 	PATH="$modifyPath:$PATH"
 	export PATH
     fi
-    (kpsewhich pdfpages.sty >/dev/null) ||
-    error_exit \
-	"LaTeX package pdfpages.sty is not installed" \
-	$E_UNAVAILABLE
-
-    for pack in geometry pdflscape eso-pic everyshi atbegshi ; do
-        (kpsewhich $pack.sty >/dev/null) ||
-        error_exit \
-	    "LaTeX package $pack.sty is not installed (see the pdfpages manual)" \
-	    $E_UNAVAILABLE
-    done
+    case "$latex" in
+        *tectonic*) ;;
+        *)
+    	    (kpsewhich pdfpages.sty >/dev/null) ||
+    	        error_exit \
+	            "LaTeX package pdfpages.sty is not installed" \
+	            $E_UNAVAILABLE
+            ;;
+    esac
 fi
 if  test "$keepinfo" = true
 then
