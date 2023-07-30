@@ -3784,7 +3784,7 @@ static stack_pointer max_stack_ptr; /* largest value assumed by |stack_ptr| */
 max_stack_ptr=stack;
 
 @ @<Predecl...@>=
-static void push_level(text_pointer);@/
+static void push_level(text_pointer);
 
 @ To insert token-list |p| into the output, the |push_level| subroutine
 is called; it saves the old level of output and gets a new one going.

@@ -177,9 +177,9 @@ extern void print_prefix_name(name_pointer);@/
 extern void print_section_name(name_pointer);@/
 extern void sprint_section_name(char *,name_pointer);
 @#
-extern boolean names_match(name_pointer,const char *,size_t,eight_bits);@/
+extern boolean names_match(name_pointer,const char *,size_t,eight_bits);
 /* two routines defined in \.{ctangle.w} and \.{cweave.w} */
-extern void init_node(name_pointer);@/
+extern void init_node(name_pointer);
 
 @ Code related to error handling:
 @d spotless 0 /* |history| value for normal jobs */
