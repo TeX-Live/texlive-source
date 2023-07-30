@@ -977,7 +977,7 @@ name_pointer r) /* section name being compared */
           *pfirst=first+(ptrdiff_t)(ss-s);
           return extension; /* null extension */
         } else return equal;
-      else return (q->byte_start==(q+1)->byte_start)? equal: prefix;
+      else return length(q)==0? equal: prefix;
     case extension:
       if (!ispref) return bad_extension;
       first += ss-s;

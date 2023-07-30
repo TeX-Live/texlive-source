@@ -1496,9 +1496,9 @@ out_name(
 name_pointer p,
 boolean quote_xalpha)
 {
-  char *k, *k_end=(p+1)->byte_start; /* pointers into |byte_mem| */
+  char *k; /* pointer into |byte_mem| */
   out('{');
-  for (k=p->byte_start; k<k_end; k++) {
+  for (k=p->byte_start; k<(p+1)->byte_start; k++) {
     if (isxalpha(*k) && quote_xalpha) out('\\');
 @.\\\$@>
 @.\\\_@>

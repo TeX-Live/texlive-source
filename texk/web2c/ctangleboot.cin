@@ -1069,7 +1069,7 @@ static void
 out_char(
 eight_bits cur_char)
 {
-char*j,*k;
+char*j;
 restart:
 switch(cur_char){
 case'\n':if(protect&&out_state!=verbatim)C_putc(' ');
@@ -1081,8 +1081,8 @@ flush_buffer();if(out_state!=verbatim)out_state= normal;break;
 #line 703 "cwebdir/ctangle.w"
 case identifier:
 if(out_state==num_or_id)C_putc(' ');
-for(j= (cur_val+name_dir)->byte_start,k= (cur_val+name_dir+1)->byte_start;
-j<k;j++)
+for(j= (cur_val+name_dir)->byte_start;
+j<(cur_val+name_dir+1)->byte_start;j++)
 #line 212 "cwebdir/ctang-w2c.ch"
 if(ishigh(*j)){
 
@@ -1118,8 +1118,8 @@ C_printf("\n#line %d \"",(int)a);
 
 cur_val= (int)(*cur_byte++-0200)*0400;
 cur_val+= *cur_byte++;
-for(j= (cur_val+name_dir)->byte_start,k= (cur_val+name_dir+1)->byte_start;
-j<k;j++){
+for(j= (cur_val+name_dir)->byte_start;
+j<(cur_val+name_dir+1)->byte_start;j++){
 if(*j=='\\'||*j=='"')C_putc('\\');
 C_putc(*j);
 }

@@ -636,7 +636,7 @@ static void
 out_char(
 eight_bits cur_char)
 {
-  char *j, *k; /* pointer into |byte_mem| */
+  char *j; /* pointer into |byte_mem| */
 restart:
     switch (cur_char) {
       case '\n': if (protect && out_state!=verbatim) C_putc(' ');
@@ -702,8 +702,8 @@ static char translit[0200][translit_length];
 @ @<Case of an identifier@>=@t\1\quad@>
 case identifier:
   if (out_state==num_or_id) C_putc(' ');
-  for (j=(cur_val+name_dir)->byte_start, k=(cur_val+name_dir+1)->byte_start;
-       j<k; j++)
+  for (j=(cur_val+name_dir)->byte_start;
+       j<(cur_val+name_dir+1)->byte_start; j++)
     if ((eight_bits)(*j)<0200) C_putc(*j);
 @^high-bit character handling@>
     else C_printf("%s",translit[(eight_bits)(*j)-0200]);
@@ -725,8 +725,8 @@ case section_number:
 @:line}{\.{\#line}@>
     cur_val=(int)(*cur_byte++-0200)*0400;
     cur_val+=*cur_byte++; /* points to the file name */
-    for (j=(cur_val+name_dir)->byte_start, k=(cur_val+name_dir+1)->byte_start;
-         j<k; j++) {
+    for (j=(cur_val+name_dir)->byte_start;
+         j<(cur_val+name_dir+1)->byte_start; j++) {
       if (*j=='\\' || *j=='"') C_putc('\\');
       C_putc(*j);
     }
