@@ -95,9 +95,11 @@ Section 11.
 @-llink@>
 @-rlink@>
 @-root@>
+@-ilk@>
 @$llink {CTWILL}11 =\\{link}@>
 @$rlink {CTWILL}11 =\\{dummy}.\\{Rlink}@>
 @$root {CTWILL}11 =\\{name\_dir}$\MG$\\{rlink}@>
+@$ilk {CTWILL}11 =\\{dummy}.\\{Ilk}@>
 @z
 
 Section 13.
@@ -161,8 +163,6 @@ Section 20.
 @y
 @* Data structures exclusive to {\tt CWEAVE}.
 @-a@>
-@-ilk@>
-@$ilk {CTWILL}20 =\\{dummy}.\\{Ilk}@>
 @z
 
 Section 22.
