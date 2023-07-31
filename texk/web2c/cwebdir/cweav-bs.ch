@@ -187,13 +187,9 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 
 
 @x Section 97.
-  char *k, *k_end=(p+1)->byte_start; /* pointers into |byte_mem| */
-  out('{');
-  for (k=p->byte_start; k<k_end; k++) {
+  char *k; /* pointer into |byte_mem| */
 @y
-  char huge* k, huge* k_end=(p+1)->byte_start; /* pointers into |byte_mem| */
-  out('{');
-  for (k=p->byte_start; k<k_end; k++) {
+  char huge* *k; /* pointer into |byte_mem| */
 @z
 
 
