@@ -301,9 +301,9 @@ else if (strlen(found_filename) < max_file_name_length) {
 @z
 
 @x
-  if (program==cweave) {
+  if (program==cweave) p->ilk=t, init_node(p);
 @y
-  if (program!=ctangle) {
+  if (program!=ctangle) p->ilk=t, init_node(p);
 @z
 
 @x

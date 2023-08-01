@@ -676,9 +676,7 @@ in a slightly different way in \.{CWEAVE} than in \.{CTANGLE}.
   if (name_ptr>=name_dir_end) overflow("name");
   strncpy(byte_ptr,first,l);
   (++name_ptr)->byte_start=byte_ptr+=l;
-  if (program==cweave) {
-    p->ilk=t; init_node(p);
-  }
+  if (program==cweave) p->ilk=t, init_node(p);
 }
 
 @ If |p| is a |name_pointer| variable, as we have seen,

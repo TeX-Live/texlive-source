@@ -1,3 +1,9 @@
+2023-08-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* common.c,
+	* common.w: Squeeze section 51 to preserve page count.
+
 2023-07-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-bs.ch,
