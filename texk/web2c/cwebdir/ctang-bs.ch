@@ -154,10 +154,10 @@ text_ptr=text_info+1; text_ptr->tok_start=tok_mem;
 out_char(
 eight_bits cur_char)
 {
-  char *j, *k; /* pointer into |byte_mem| */
+  char *j; /* pointer into |byte_mem| */
 @y
 out_char(cur_char)
 eight_bits cur_char;
 {
-  char huge* j, huge* k; /* pointer into |byte_mem| */
+  char huge* j; /* pointer into |byte_mem| */
 @z

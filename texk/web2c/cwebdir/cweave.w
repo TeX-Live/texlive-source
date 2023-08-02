@@ -1482,7 +1482,7 @@ out_section(
 sixteen_bits n)
 {
   char s[6];
-  sprintf(s,"%d",(int)n); out_str(s);
+  snprintf(s,6,"%d",(int)n); out_str(s);
   if (changed_section[n]) out_str("\\*");
 @.\\*@>
 }
@@ -4236,7 +4236,7 @@ else {
   group_found=true;
   out_str("\\N");
 @.\\N@>
-  {@+ char s[32];@+sprintf(s,"{%d}",sec_depth+1);@+out_str(s);@+}
+  {@+ char s[32];@+snprintf(s,32,"{%d}",sec_depth+1);@+out_str(s);@+}
   if (show_progress)
   printf("*%d",(int)section_count); update_terminal(); /* print a progress report */
 }

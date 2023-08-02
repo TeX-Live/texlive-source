@@ -694,9 +694,9 @@ This makes debugging a lot less confusing.
 static char translit[0200][translit_length];
 
 @ @<Set init...@>=
-{
-  int i;
-  for (i=0;i<0200;i++) sprintf(translit[i],"X%02X",(unsigned int)(0200+i));
+{ int i;
+  for (i=0;i<0200;i++)
+     snprintf(translit[i],translit_length,"X%02X",(unsigned int)(0200+i));
 }
 
 @ @<Case of an identifier@>=@t\1\quad@>
