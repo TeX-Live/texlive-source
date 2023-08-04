@@ -1,3 +1,16 @@
+2023-08-04  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.bux,
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-bs.ch,
+	* cweav-pc.ch,
+	* cweav-vms.ch,
+	* cweav-w2c.ch,
+	* cweav-w32.ch,
+	* cweave.w: Desove section with internal array sizes.
+
 2023-08-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctang-bs.ch,

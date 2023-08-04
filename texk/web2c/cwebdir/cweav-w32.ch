@@ -7,7 +7,7 @@ This is the change file for CWEB's CWEAVE under Win32
 @d banner "This is CWEAVE (Version 4.9win32)"
 @z
 
-@x
+@x section 31
 boolean names_match(
 name_pointer p, /* points to the proposed match */
 const char *first, /* position of first character of string */

@@ -29,7 +29,7 @@ is modified.
 @z
 
 
-@x Section 10.
+@x Section 11.
 @d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=
@@ -87,7 +87,7 @@ extern hash_pointer h; /* index into hash-head array */
 @z
 
 
-@x Section 22.
+@x Section 21.
 typedef struct xref_info {
   sixteen_bits num; /* section number plus zero or |def_flag| */
   struct xref_info *xlink; /* pointer to the previous cross-reference */
@@ -102,7 +102,7 @@ typedef xref_info huge* xref_pointer;
 @z
 
 
-@x Section 23.
+@x Section 22.
 static xref_info xmem[max_refs]; /* contains cross-reference information */
 static xref_pointer xmem_end = xmem+max_refs-1;
 @y
@@ -111,14 +111,14 @@ static xref_pointer xmem_end;
 @z
 
 
-@x Section 24.
+@x Section 23.
 @d xref equiv_or_xref
 @y
 @d xref ptr_union.xref_member
 @z
 
 
-@x Section 24.
+@x Section 23.
 xref_ptr=xmem; init_node(name_dir); xref_switch=section_xref_switch=0;
 xmem->num=0; /* sentinel value */
 @y
@@ -128,7 +128,7 @@ xmem->num=0; /* sentinel value */
 @z
 
 
-@x Section 30. (to please Borland's C++, version 4.02)
+@x Section 29. (to please Borland's C++, version 4.02)
 static token tok_mem[max_toks]; /* tokens */
 static token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
 static token_pointer tok_ptr; /* first unused position in |tok_mem| */
@@ -146,7 +146,8 @@ static text_pointer tok_start_end; /* end of |tok_start| */
 static text_pointer text_ptr; /* first unused position in |tok_start| */
 @z
 
-@x Section 31. (goes with the previous change)
+
+@x Section 30. (goes with the previous change)
 tok_ptr=max_tok_ptr=tok_mem+1;@/
 tok_start[0]=tok_start[1]=tok_mem+1;@/
 text_ptr=max_text_ptr=tok_start+1;
@@ -158,14 +159,14 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 32.
+@x Section 31.
   p->xref=(void *)xmem;
 @y
   p->xref=(void huge*)xmem;
 @z
 
 
-@x Section 78.
+@x Section 77.
       if (unindexed(lhs)) { /* retain only underlined entries */
         xref_pointer q,r=NULL;
         for (q=(xref_pointer)lhs->xref;q>xmem;q=q->xlink)
@@ -186,35 +187,35 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 97.
+@x Section 96.
   char *k; /* pointer into |byte_mem| */
 @y
   char huge* *k; /* pointer into |byte_mem| */
 @z
 
 
-@x Section 218.
+@x Section 216.
   char *p; /* index into |byte_mem| */
 @y
   char huge *p; /* index into |byte_mem| */
 @z
 
 
-@x Section 253.
+@x Section 251.
     if (cur_name->xref!=(void *)xmem) {
 @y
     if (cur_name->xref!=(void huge*)xmem) {
 @z
 
 
-@x Section 255.
+@x Section 253.
 static char *cur_byte; /* index into |byte_mem| */
 @y
 static char huge* cur_byte; /* index into |byte_mem| */
 @z
 
 
-@x Section 264.
+@x Section 262.
 switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
 @y
 switch (cur_name->ilk) {@+char huge* j;@+@t}\6{\4@>
