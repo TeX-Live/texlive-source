@@ -1330,14 +1330,14 @@ else if (cat1==attr) {
 @+ else @/ if (cat1==attr) {
 @z
 
-Section 159.
+Section 169.
 
 @x
 @d force_lines flags['f'] /* should each statement be on its own line? */
 @y
 @d force_lines flags['f'] /* should each statement be on its own line? */
 @-force_lines@>
-@$force_lines {CTWILL}159 =\\{flags}[\.{'f'}]@>
+@$force_lines {CTWILL}169 =\\{flags}[\.{'f'}]@>
 @z
 
 Section 172.
