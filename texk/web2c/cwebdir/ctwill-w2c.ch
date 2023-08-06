@@ -598,41 +598,9 @@ null_scrap.trans=&tok_start[0];
 @z
 
 @x
-@d inner_tok_flag (5*id_flag) /* signifies a token list in `\pb' */
-
-@c
-static void
-print_text( /* prints a token list for debugging; not used in |main| */
-@y
-@d inner_tok_flag (5*id_flag) /* signifies a token list in `\pb' */
-
-@<Predecl...@>=
-#if 0
-static void print_text(text_pointer p);
-#endif
-
-@ @c
-#if 0
-static void
-print_text( /* prints a token list for debugging; not used in |main| */
-@z
-
-@x
   update_terminal();
 @y
   puts("|"); update_terminal();
-@z
-
-@x
-}
-@y
-}
-#endif
-@z
-
-@x
-@ @<Predecl...@>=@+static void print_text(text_pointer p);
-@y
 @z
 
 @x

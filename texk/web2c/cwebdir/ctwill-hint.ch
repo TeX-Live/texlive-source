@@ -436,6 +436,7 @@ Section 114.
 @ Token lists in |@!tok_mem| are composed of the following kinds of
 @y
 @ Token lists in |@!tok_mem| are composed of the following kinds of
+@-DEBUG@>
 @-p@>
 @-res_flag@>
 @-section_flag@>
@@ -445,6 +446,15 @@ Section 114.
 @$section_flag {CTWILL}114 =$\T{3}*\\{id\_flag}$@>
 @$tok_flag {CTWILL}114 =$\T{3}*\\{id\_flag}$@>
 @$inner_tok_flag {CTWILL}114 =$\T{4}*\\{id\_flag}$@>
+@z
+
+Section 115.
+
+@x l.2221
+@c
+@y
+@c
+@-DEBUG@>
 @z
 
 Section 117.

@@ -1,3 +1,11 @@
+2023-08-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Hide 'print_text' analytics.
+
 2023-08-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.bux,

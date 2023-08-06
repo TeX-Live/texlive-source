@@ -2210,9 +2210,18 @@ translated without line-break controls.
 @d tok_flag (4*id_flag) /* signifies a token list */
 @d inner_tok_flag (5*id_flag) /* signifies a token list in `\pb' */
 
+@<Predecl...@>=
+#ifdef DEBUG
+static void print_text(text_pointer p);
+#endif
+
+@ This function prints a token list for debugging;
+it is not used in |main| at this time.
+
 @c
+#ifdef DEBUG
 static void
-print_text( /* prints a token list for debugging; not used in |main| */
+print_text(
 text_pointer p)
 {
   token_pointer j; /* index into |tok_mem| */
@@ -2237,8 +2246,7 @@ text_pointer p)
   }
   update_terminal();
 }
-
-@ @<Predecl...@>=@+static void print_text(text_pointer p);
+#endif /* |DEBUG| */
 
 @ @<Print token |r|...@>=
 switch (r) {

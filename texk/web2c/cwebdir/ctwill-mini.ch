@@ -1030,6 +1030,7 @@ Section 128.
 @ Token lists in |@!tok_mem| are composed of the following kinds of
 @y
 @ Token lists in |@!tok_mem| are composed of the following kinds of
+@-DEBUG@>
 @-p@>
 @-res_flag@>
 @-section_flag@>
@@ -1039,6 +1040,15 @@ Section 128.
 @$section_flag {CTWILL}128 =$\T{3}*\\{id\_flag}$@>
 @$tok_flag {CTWILL}128 =$\T{3}*\\{id\_flag}$@>
 @$inner_tok_flag {CTWILL}128 =$\T{4}*\\{id\_flag}$@>
+@z
+
+Section 129.
+
+@x l.2221
+@c
+@y
+@c
+@-DEBUG@>
 @z
 
 Section 131.
