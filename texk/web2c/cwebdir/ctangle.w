@@ -519,24 +519,18 @@ phase_two (void) {
 @.No program text...@>
   }
   else {
-    if (cur_out_file==end_output_files) {
-      if (show_progress) {
-        printf("\nWriting the output file (%s):",C_file_name);
-        update_terminal();
-      }
-    }
-    else {
-      if (show_progress) {
-        fputs("\nWriting the output files:",stdout);
+    if (show_progress) {
+      printf(cur_out_file==end_output_files ? @|
+        "\nWriting the output file (%s):" : @|
+        "\nWriting the output files: (%s)",C_file_name);
 @.Writing the output...@>
-        printf(" (%s)",C_file_name);
-        update_terminal();
-      }
-      if (text_info->text_link==macro) goto writeloop;
+      update_terminal();
     }
-    while (stack_ptr>stack) get_output();
-    flush_buffer();
-writeloop:   @<Write all the named output files@>@;
+    if (text_info->text_link!=macro) {
+      while (stack_ptr>stack) get_output();
+      flush_buffer();
+    }
+    @<Write all the named output files@>@;
     if (show_happiness) {
       if (show_progress) new_line();
       fputs("Done.",stdout);

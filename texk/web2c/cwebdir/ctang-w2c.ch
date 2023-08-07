@@ -98,15 +98,11 @@
 @z
 
 @x
-        printf("\nWriting the output file (%s):",C_file_name);
+        "\nWriting the output file (%s):" : @|
+        "\nWriting the output files: (%s)",C_file_name);
 @y
-        printf(_("\nWriting the output file (%s):"),C_file_name);
-@z
-
-@x
-        fputs("\nWriting the output files:",stdout);
-@y
-        fputs(_("\nWriting the output files:"),stdout);
+       _("\nWriting the output file (%s):") : @|
+       _("\nWriting the output files: (%s)"),C_file_name);
 @z
 
 @x

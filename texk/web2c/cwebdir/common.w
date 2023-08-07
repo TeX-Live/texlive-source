@@ -313,7 +313,7 @@ check_change(void) /* switches to |change_file| if the buffers match */
       return;
     }
     if (limit>buffer+1 && buffer[0]=='@@') {
-      char xyz_code=xisupper(buffer[1])? tolower((int)buffer[1]): buffer[1];
+      if (xisupper(buffer[1])) buffer[1]=tolower((int)buffer[1]);
       @<If the current line starts with \.{@@y},
         report any discrepancies and |return|@>@;
     }
@@ -334,11 +334,11 @@ check_change(void) /* switches to |change_file| if the buffers match */
 @ @<Predecl...@>=@+static void check_change(void);
 
 @ @<If the current line starts with \.{@@y}...@>=
-if (xyz_code=='x' || xyz_code=='z') {
+if (buffer[1]=='x' || buffer[1]=='z') {
   loc=buffer+2; err_print("! Where is the matching @@y?");
 @.Where is the match...@>
   }
-else if (xyz_code=='y') {
+else if (buffer[1]=='y') {
   if (n>0) {
     loc=buffer+2;
     printf("\n! Hmm... %d ",n);
