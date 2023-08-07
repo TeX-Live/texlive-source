@@ -87,7 +87,7 @@ extern hash_pointer h; /* index into hash-head array */
 @z
 
 
-@x Section 21.
+@x Section 22.
 typedef struct xref_info {
   sixteen_bits num; /* section number plus zero or |def_flag| */
   struct xref_info *xlink; /* pointer to the previous cross-reference */
@@ -102,7 +102,7 @@ typedef xref_info huge* xref_pointer;
 @z
 
 
-@x Section 22.
+@x Section 23.
 static xref_info xmem[max_refs]; /* contains cross-reference information */
 static xref_pointer xmem_end = xmem+max_refs-1;
 @y
@@ -111,14 +111,14 @@ static xref_pointer xmem_end;
 @z
 
 
-@x Section 23.
+@x Section 24.
 @d xref equiv_or_xref
 @y
 @d xref ptr_union.xref_member
 @z
 
 
-@x Section 23.
+@x Section 24.
 xref_ptr=xmem; init_node(name_dir); xref_switch=section_xref_switch=0;
 xmem->num=0; /* sentinel value */
 @y
@@ -128,7 +128,7 @@ xmem->num=0; /* sentinel value */
 @z
 
 
-@x Section 29. (to please Borland's C++, version 4.02)
+@x Section 30. (to please Borland's C++, version 4.02)
 static token tok_mem[max_toks]; /* tokens */
 static token_pointer tok_mem_end = tok_mem+max_toks-1; /* end of |tok_mem| */
 static token_pointer tok_ptr; /* first unused position in |tok_mem| */
@@ -147,7 +147,7 @@ static text_pointer text_ptr; /* first unused position in |tok_start| */
 @z
 
 
-@x Section 30. (goes with the previous change)
+@x Section 31. (goes with the previous change)
 tok_ptr=max_tok_ptr=tok_mem+1;@/
 tok_start[0]=tok_start[1]=tok_mem+1;@/
 text_ptr=max_text_ptr=tok_start+1;
@@ -159,14 +159,14 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 31.
+@x Section 32.
   p->xref=(void *)xmem;
 @y
   p->xref=(void huge*)xmem;
 @z
 
 
-@x Section 77.
+@x Section 78.
       if (unindexed(lhs)) { /* retain only underlined entries */
         xref_pointer q,r=NULL;
         for (q=(xref_pointer)lhs->xref;q>xmem;q=q->xlink)
@@ -187,35 +187,35 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 96.
+@x Section 97.
   char *k; /* pointer into |byte_mem| */
 @y
   char huge* *k; /* pointer into |byte_mem| */
 @z
 
 
-@x Section 216.
+@x Section 218.
   char *p; /* index into |byte_mem| */
 @y
   char huge *p; /* index into |byte_mem| */
 @z
 
 
-@x Section 251.
+@x Section 253.
     if (cur_name->xref!=(void *)xmem) {
 @y
     if (cur_name->xref!=(void huge*)xmem) {
 @z
 
 
-@x Section 253.
+@x Section 255.
 static char *cur_byte; /* index into |byte_mem| */
 @y
 static char huge* cur_byte; /* index into |byte_mem| */
 @z
 
 
-@x Section 262.
+@x Section 264.
 switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
 @y
 switch (cur_name->ilk) {@+char huge* j;@+@t}\6{\4@>

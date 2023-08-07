@@ -12,14 +12,14 @@
 
 @$ilk {CWEAVE.W}11 \\{dummy.Ilk}@>
 
-@$xmem {CWEAVE.W}22 \&{xref\_info} [\,]@>
+@$xmem {CWEAVE.W}23 \&{xref\_info} [\,]@>
 
-@$xref {CWEAVE.W}23 \\{equiv\_or\_xref}@>
+@$xref {CWEAVE.W}24 \\{equiv\_or\_xref}@>
 
-@$init_node {CWEAVE.W}31 \&{void} (\,)@>
-@$names_match {CWEAVE.W}31 \&{boolean} (\,)@>
+@$init_node {CWEAVE.W}32 \&{void} (\,)@>
+@$names_match {CWEAVE.W}32 \&{boolean} (\,)@>
 
-@$print_stats {CWEAVE.W}269 \&{void} (\,)@>
+@$print_stats {CWEAVE.W}270 \&{void} (\,)@>
 
 @$kpse_set_program_name "<kpathsea/progname.h>" \zip@>
 @$kpse_find_file "<kpathsea/tex-file.h>" \zip@>

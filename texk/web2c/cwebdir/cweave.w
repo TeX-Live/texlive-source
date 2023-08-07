@@ -110,7 +110,8 @@ file |"common.h"|, which is also included in |"common.w"| to propagate
 possible changes from this \.{COMMON} interface consistently.
 
 @i common.h
-\.{CWEAVE} will use the |INT_MAX| limit in section
+
+@ \.{CWEAVE} will use the |INT_MAX| limit in section
 |@<Output the code for the beginning...@>| below.
 
 @<Incl...@>=
