@@ -51,6 +51,8 @@
 @$gettext "<libintl.h>" \zip@>
 @$textdomain "<libintl.h>" \zip@>
 
+@$INT_MAX "<limits.h>" \zip@>
+
 @$bindtextdomain "<locale.h>" \zip@>
 @$setlocale "<locale.h>" \zip@>
 @$LC_CTYPE "<locale.h>" \zip@>

@@ -110,6 +110,11 @@ file |"common.h"|, which is also included in |"common.w"| to propagate
 possible changes from this \.{COMMON} interface consistently.
 
 @i common.h
+\.{CWEAVE} will use the |INT_MAX| limit in section
+|@<Output the code for the beginning...@>| below.
+
+@<Incl...@>=
+#include <limits.h>
 
 @* Data structures exclusive to {\tt CWEAVE}.
 As explained in \.{common.w}, the field of a |name_info| structure
@@ -4237,7 +4242,7 @@ else {
   }
   else {
     for (sec_depth=0; xisdigit(*loc);loc++)
-      sec_depth = sec_depth*10 + (*loc) -'0';
+      if (sec_depth < INT_MAX / 10) sec_depth = sec_depth*10 + (*loc) -'0';
   }
   while (*loc == ' ') loc++; /* remove spaces before group title */
   group_found=true;
