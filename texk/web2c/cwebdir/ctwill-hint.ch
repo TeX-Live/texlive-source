@@ -38,8 +38,8 @@ Section 2.
 @y
 @ \.{CWEAVE} has a fairly straightforward outline.  It operates in
 @%
-@$show_banner {CTWILL}16 =\\{flags}[\.{'b'}]@>
-@$show_progress {CTWILL}16 =\\{flags}[\.{'p'}]@>
+@$show_banner {CTWILL}15 =\\{flags}[\.{'b'}]@>
+@$show_progress {CTWILL}15 =\\{flags}[\.{'p'}]@>
 @z
 
 Section 5.

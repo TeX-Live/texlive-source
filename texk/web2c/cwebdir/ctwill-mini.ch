@@ -1972,7 +1972,7 @@ Section 281.
   else {@+out_str("\\["); out_section(cur_val-def_flag); out(']');@+}
 @z
 
-Section 284.
+Section 285.
 
 @x
 @ @<Predecl...@>=@+static void section_print(name_pointer);
