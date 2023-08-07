@@ -1597,7 +1597,7 @@ new_meaning(
   }
 }
 
-@q Section 141->282/2. @>
+@q Section 141->281/2. @>
 @* Make ministrings.
  \.{CTWILL} needs the following procedure, which appends tokens of a
 translated text until coming to |tok_loc|, then suppresses text that may
