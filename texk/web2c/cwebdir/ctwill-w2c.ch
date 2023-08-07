@@ -967,6 +967,11 @@ static boolean temp_switch; /* has `\.{@@\%}' occurred recently? */
 @z
 
 @x
+If the section has changed, we put \.{\\*} just after the section number.
+@y
+@z
+
+@x
 if (*(loc-1)!='*') out_str("\\M");
 @y
 if (*(loc-1)!='*') {
