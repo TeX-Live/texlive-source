@@ -385,13 +385,6 @@ Section 109.
 @-n@>
 @z
 
-@x
-\yskip\noindent All of these tokens are removed from the \TEX/ output that
-@y
-\yskip\noindent All of these tokens are removed from the \TEX/ output that
-@-n@>
-@z
-
 Section 110.
 
 @x
@@ -960,7 +953,7 @@ Section 304.
 @$order_decl_stmt {CTWILL}304 =\\{flags}[\.{'o'}]@>
 @z
 
-Section 308.
+Section 310.
 
 @x l.116 of CTWILL-TEXLIVE.CH
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)

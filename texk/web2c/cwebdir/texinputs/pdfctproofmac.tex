@@ -452,7 +452,7 @@
 \setpage
 \vbox to \vsize{} % the first \topmark won't be null
 
-\def\mini{\Y\bgroup\obeylines}
+\def\mini{\Y\bgroup\obeylines\everypar={\hangindent.55\hsize}}
 {\obeylines
   \gdef\[#1 #2 #3
 {\noindent\kern.5\hsize #2\miniform#3, % mask line break!
