@@ -241,7 +241,7 @@ to one-letter identifiers or \CEE/'s reserved words.
 If the user has sent the |no_xref| flag (the \.{-x} option of the command line),
 it is unnecessary to keep track of cross-references for identifiers.
 If one were careful, one could probably make more changes around section
-115 to avoid a lot of identifier looking up.
+|@<Match a prod...@>| to avoid a lot of identifier looking up.
 
 @d append_xref(c) if (xref_ptr==xmem_end) overflow("cross-reference");
   else (++xref_ptr)->num=c
@@ -3810,7 +3810,7 @@ text_pointer p)
 {
   if (stack_ptr==stack_end) overflow("stack");
   if (stack_ptr>stack) /* save current state */
-    *stack_ptr = cur_state;
+    *stack_ptr = cur_state;@^system dependencies@>
   stack_ptr++;
   if (stack_ptr>max_stack_ptr) max_stack_ptr=stack_ptr;
   cur_tok=*p; cur_end=*(p+1);
@@ -3820,7 +3820,7 @@ text_pointer p)
 force when the current level was begun. This subroutine will never be
 called when |stack_ptr==1|. It is so simple, we declare it as a macro:
 
-@d pop_level() cur_state = *(--stack_ptr)
+@d pop_level() cur_state = *(--stack_ptr)@^system dependencies@>
 
 @ The |get_output| function returns the next byte of output that is not a
 reference to a token list. It returns the values |identifier| or |res_word|
@@ -4242,7 +4242,7 @@ else {
     loc++;
   }
   else {
-    for (sec_depth=0; xisdigit(*loc);loc++)
+    for (sec_depth=0; xisdigit(*loc);loc++)@^system dependencies@>
       if (sec_depth < INT_MAX / 10) sec_depth = sec_depth*10 + (*loc) -'0';
   }
   while (*loc == ' ') loc++; /* remove spaces before group title */
@@ -4666,7 +4666,7 @@ needs to be changed if ASCII code is not being used.
 @^high-bit character handling@>
 
 We initialize |collate| by copying a few characters at a time, because
-some \CEE/ compilers choke on long strings.
+some \CEE/ compilers choke on long strings.@^system dependencies@>
 
 @<Set init...@>=
 collate[0]=0;
@@ -4864,7 +4864,7 @@ void
 print_stats(void) {
   puts("\nMemory usage statistics:");
 @.Memory usage statistics:@>
-  printf("%td names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",@^system dependencies@>
             (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf("%td cross-references (out of %ld)\n",
             (ptrdiff_t)(xref_ptr-xmem),(long)max_refs);

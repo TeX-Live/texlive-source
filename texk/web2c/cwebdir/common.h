@@ -32,7 +32,7 @@ First comes general stuff:
 @d ctangle false
 @d cweave true
 
-@<Common code...@>=
+@<Common code...@>=@^system dependencies@>
 typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;

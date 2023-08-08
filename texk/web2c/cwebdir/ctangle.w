@@ -336,7 +336,7 @@ boolean flag) /* |flag==false| means we are in |output_defs| */
     cur_byte=cur_repl->tok_start; return;
   }
   stack_ptr--; /* go down to the previous level */
-  if (stack_ptr>stack) cur_state=*stack_ptr;
+  if (stack_ptr>stack) cur_state=*stack_ptr;@^system dependencies@>
 }
 
 @ The heart of the output procedure is the function |get_output|,
@@ -1534,7 +1534,7 @@ but not an |int|, we use \.{\%td} to print these quantities.
 void
 print_stats(void) {
   puts("\nMemory usage statistics:");
-  printf("%td names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",@^system dependencies@>
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf("%td replacement texts (out of %ld)\n",
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);

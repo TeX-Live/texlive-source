@@ -383,7 +383,7 @@ case output_defs_code: if (t!=section_name) err_print(_("! Misplaced @@h"));
 
 @x
   puts("\nMemory usage statistics:");
-  printf("%td names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",@^system dependencies@>
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf("%td replacement texts (out of %ld)\n",
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);
@@ -392,7 +392,7 @@ case output_defs_code: if (t!=section_name) err_print(_("! Misplaced @@h"));
   printf("%td tokens (out of %ld)\n",
 @y
   puts(_("\nMemory usage statistics:"));
-  printf(_("%td names (out of %ld)\n"),
+  printf(_("%td names (out of %ld)\n"),@^system dependencies@>
           (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf(_("%td replacement texts (out of %ld)\n"),
           (ptrdiff_t)(text_ptr-text_info),(long)max_texts);
@@ -459,7 +459,7 @@ do {
 } while(comparison && !feof(C_file) && !feof(check_file));
 
 @ Note the superfluous call to |remove| before |rename|.  We're using it to
-get around a bug in some implementations of |rename|.
+get around a bug in some implementations of |rename|.@^system dependencies@>
 
 @<Create the primary output...@>=
 if(comparison)

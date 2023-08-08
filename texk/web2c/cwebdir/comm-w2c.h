@@ -30,7 +30,7 @@ First comes general stuff:
 @i iso_types.w
 
 @s boolean bool
-@<Common code...@>=
+@<Common code...@>=@^system dependencies@>
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 typedef enum {
@@ -52,7 +52,7 @@ are placed in the context of the `|_|'~macro.  This is just a shortcut for the
 not have this library installed, we wrap things for neutral behavior without
 internationalization.
 For backward compatibility with pre-{\mc ANSI} compilers, we replace the
-``standard'' header file `\.{stdbool.h}' with the
+``standard'' header file `\.{stdbool.h}' with the@^system dependencies@>
 {\mc KPATHSEA\spacefactor1000} interface `\.{simpletypes.h}'.
 
 @d _(s) gettext(s)

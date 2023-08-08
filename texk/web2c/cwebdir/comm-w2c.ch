@@ -642,7 +642,7 @@ const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
 char cb_banner[max_banner];@/
 string texmf_locale;@/
 #ifndef SEPARATORS
-#define SEPARATORS "://"
+#define SEPARATORS "://"@^system dependencies@>
 #endif
 char separators[]=SEPARATORS;
 
@@ -819,7 +819,7 @@ Debugging output is always written to |stderr|, and begins with the string
 
 Modules for dealing with help messages and version info.
 
-@<Include files@>=
+@<Include files@>=@^system dependencies@>
 #define CWEB
 #include "help.h" /* |@!CTANGLEHELP|, |@!CWEAVEHELP|, |@!CTWILLHELP| */
 

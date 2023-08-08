@@ -1,3 +1,16 @@
+2023-08-08  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* common.h,
+	* ctang-w2c.ch,
+	* ctangle.w,
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Mark a few 'system dependencies' for the index.
+
 2023-08-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.c,

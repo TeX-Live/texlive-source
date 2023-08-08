@@ -574,7 +574,7 @@ if (check_for_change) @<Update the result when it has changed@>@;
 @x
   puts("\nMemory usage statistics:");
 @.Memory usage statistics:@>
-  printf("%td names (out of %ld)\n",
+  printf("%td names (out of %ld)\n",@^system dependencies@>
             (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf("%td cross-references (out of %ld)\n",
             (ptrdiff_t)(xref_ptr-xmem),(long)max_refs);
@@ -595,7 +595,7 @@ if (check_for_change) @<Update the result when it has changed@>@;
 @y
   puts(_("\nMemory usage statistics:"));
 @.Memory usage statistics:@>
-  printf(_("%td names (out of %ld)\n"),
+  printf(_("%td names (out of %ld)\n"),@^system dependencies@>
             (ptrdiff_t)(name_ptr-name_dir),(long)max_names);
   printf(_("%td cross-references (out of %ld)\n"),
             (ptrdiff_t)(xref_ptr-xmem),(long)max_refs);
@@ -685,7 +685,7 @@ do {
 } while(comparison && !feof(tex_file) && !feof(check_file));
 
 @ Note the superfluous call to |remove| before |rename|.  We're using it to
-get around a bug in some implementations of |rename|.
+get around a bug in some implementations of |rename|.@^system dependencies@>
 
 @<Take appropriate action...@>=
 if(comparison)
