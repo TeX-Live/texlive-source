@@ -16,6 +16,7 @@
 @$fflush "<stdio.h>" \zip@>
 @$fopen "<stdio.h>" \zip@>
 @$fprintf "<stdio.h>" \zip@>
+@$fputc "<stdio.h>" \zip@>
 @$fputs "<stdio.h>" \zip@>
 @$fread "<stdio.h>" \zip@>
 @$fwrite "<stdio.h>" \zip@>

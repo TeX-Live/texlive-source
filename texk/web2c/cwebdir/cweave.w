@@ -3887,10 +3887,10 @@ output_C(void) /* outputs the current token list */
   text_pointer p; /* translation of the \CEE/ text */
   next_control=ignore; p=C_translate();
   app(inner_tok_flag+(int)(p-tok_start));
-  if (make_pb) {
-    out_str("\\PB{"); make_output(); out('}');
+  if (make_pb) out_str("\\PB{");
 @.\\PB@>
-  }@+else make_output(); /* output the list */
+  make_output(); /* output the list */
+  if (make_pb) out('}');
   if (text_ptr>max_text_ptr) max_text_ptr=text_ptr;
   if (tok_ptr>max_tok_ptr) max_tok_ptr=tok_ptr;
   text_ptr=save_text_ptr; tok_ptr=save_tok_ptr; /* forget the tokens */
