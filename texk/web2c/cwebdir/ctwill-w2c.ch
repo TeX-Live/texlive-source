@@ -135,7 +135,7 @@ turned on during the first phase---NOT!
 @x
 @ @d max_refs 30000 /* number of cross-references; must be less than 65536 */
 @y
-@ @d max_refs 30000 /* number of cross-references; must be less than 65536 */
+@ @d max_refs 65535 /* number of cross-references; must be less than 65536 */
 @z
 
 @x
@@ -811,7 +811,7 @@ else if (cat1==ubinop && (cat2==ubinop || cat2==cast)) {
 version 3.6, because those productions bypass |decl_head| (thereby
 confusing |make_ministring|, which depends on the |decl_head| productions
 to deduce the type). We revert to an older syntax that was
-less friendly to \CPLUSPLUS/ but good enough for me.
+less friendly to \CPLUSPLUS/ but good enough for me.@^system dependencies@>
 
 @<Cases for |typedef_like|@>=
 if (cat1==decl_head) {
@@ -1103,14 +1103,12 @@ flush_buffer(out_ptr,false,false);
 @x
 out_str("\\fi"); finish_line();
 @.\\fi@>
-flush_buffer(out_buf,false,false); /* insert a blank line, it looks nice */
 @y
 finish_line(); out_str("\\mini"); finish_line();
 @.\\mini@>
 @<Output information about usage of id's defined in other sections@>@;
 out_str("}\\FI"); finish_line();
 @.\\FI@>
-flush_buffer(out_buf,false,false); /* insert a blank line, it looks nice */
 @z
 
 @x
