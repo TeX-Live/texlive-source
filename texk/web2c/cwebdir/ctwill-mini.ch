@@ -1952,15 +1952,17 @@ Section 278.
   next_name=sort_ptr->head;
 @y
 @ @<Split the list...@>= {@+
-  int c;
+  int c; @+
   next_name=sort_ptr->head;@/
 @z
 
 Section 279.
 
 @x
+@ @<Output index...@>= {
   cur_name=sort_ptr->head;
 @y
+@ @<Output index...@>= { @+
   cur_name=sort_ptr->head;@/
 @z
 

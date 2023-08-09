@@ -4772,12 +4772,14 @@ while (sort_ptr>scrap_info) {
 }
 
 @ @<Output the name...@>=
-switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
+switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
   case normal: case func_template:
     if (is_tiny(cur_name)) out_str("\\|");
     else {@+boolean all_caps=true;@+@t}\6{@>
-      for (j=cur_name->byte_start;j<(cur_name+1)->byte_start;j++)
-        if (xislower(*j)) all_caps=false;
+      for (p=cur_name->byte_start;p<(cur_name+1)->byte_start;p++)
+        if (xislower(*p)) { /* not entirely uppercase */
+          all_caps=false; break;
+        }
       out_str(all_caps ? "\\." : "\\\\");
     }
     break;
@@ -4791,8 +4793,8 @@ switch (cur_name->ilk) {@+char *j;@+@t}\6{\4@>
   case roman: not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom:
     out_str("$\\");
-    for (j=cur_name->byte_start;j<(cur_name+1)->byte_start;j++)
-      out(*j=='_'? 'x': *j=='$'? 'X': *j);
+    for (p=cur_name->byte_start;p<(cur_name+1)->byte_start;p++)
+      out(*p=='_'? 'x': *p=='$'? 'X': *p);
     out('$');
     goto name_done;
   default: out_str("\\&");
