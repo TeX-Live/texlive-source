@@ -1530,7 +1530,6 @@ new_meaning(
   name_pointer p)
 {
   struct perm_meaning *q=get_meaning(p);
-  ms_mode=false;
   if (q->stamp!=section_count) {
     if (*(ministring_ptr-1)==' ') ministring_ptr--;
     if (ministring_ptr>=ministring_buf_end)
@@ -1556,7 +1555,8 @@ new_meaning(
     name_pointer p=id_lookup(first,loc-1,normal);
     sixteen_bits t=title_lookup();
     if (*(loc-1)=='}')
-      while (xisdigit(*loc)) n=10*n+(*loc++)-'0';
+      while (xisdigit(*loc))@^system dependencies@>
+        if (n < INT_MAX / 10) n=10*n+(*loc++)-'0';
     if (*loc++!=' ')
       err_print(_("! Location in meaning should be followed by space"));
     else @<Digest the meaning of |p|, |t|, |n|@>@;
@@ -1782,6 +1782,7 @@ if ((aux_file=fopen(aux_file_name,"wb"))==NULL)
 @q Section 31->293. @>
 @ @<Write the new meaning to the \.{.aux} file@>=
 {@+int n=q->perm.prog_no;
+  ms_mode=false;@/
   fprintf(aux_file,"@@$%.*s %.*s",@|
     (int)length(p),p->byte_start,@|
     (int)length(title_code[n]),title_code[n]->byte_start);
