@@ -1347,9 +1347,8 @@ carried over to the next line (so that \TEX/ will ignore the completion
 of commented-out text).
 
 @d c_line_write(c) fflush(active_file),fwrite(out_buf+1,sizeof(char),c,active_file)
-@d tex_putc(c) putc(c,active_file)
-@d tex_new_line() putc('\n',active_file)
 @d tex_printf(c) fprintf(active_file,"%s",c)
+@d tex_putc(c) fputc(c,active_file)
 @d tex_puts(c) fputs(c,active_file)
 
 @<Predecl...@>=
@@ -1367,7 +1366,7 @@ boolean per_cent,boolean carryover)
     while (j>out_buf && *j==' ') j--;
   c_line_write(j-out_buf);
   if (per_cent) tex_putc('%');
-  tex_new_line(); out_line++;
+  tex_putc('\n'); out_line++;
   if (carryover)
     while (j>out_buf)
       if (*j--=='%' && (j==out_buf || *j!='\\')) {

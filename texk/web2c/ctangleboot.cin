@@ -143,7 +143,7 @@
 #define macro_end (cur_text+1) ->tok_start \
 
 #define C_printf(c,a) fprintf(C_file,c,a) 
-#define C_putc(c) putc((int) (c) ,C_file)  \
+#define C_putc(c) fputc((int) (c) ,C_file)  \
 
 #define translit_length 10 \
 
