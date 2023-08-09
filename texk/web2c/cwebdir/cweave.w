@@ -4241,8 +4241,8 @@ else {
     loc++;
   }
   else {
-    sec_depth=0; while (xisdigit(*loc))@^system dependencies@>
-      if (sec_depth < INT_MAX / 10) sec_depth = sec_depth*10 + (*loc++) -'0';
+    for (sec_depth=0; xisdigit(*loc);loc++)@^system dependencies@>
+      if (sec_depth < INT_MAX / 10) sec_depth = sec_depth*10 + (*loc) -'0';
   }
   while (*loc == ' ') loc++; /* remove spaces before group title */
   group_found=true;

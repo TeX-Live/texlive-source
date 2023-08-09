@@ -1555,8 +1555,8 @@ new_meaning(
     name_pointer p=id_lookup(first,loc-1,normal);
     sixteen_bits t=title_lookup();
     if (*(loc-1)=='}')
-      while (xisdigit(*loc))@^system dependencies@>
-        if (n < INT_MAX / 10) n=10*n+(*loc++)-'0';
+      for (;xisdigit(*loc);loc++)@^system dependencies@>
+        if (n < INT_MAX / 10) n=10*n+(*loc)-'0';
     if (*loc++!=' ')
       err_print(_("! Location in meaning should be followed by space"));
     else @<Digest the meaning of |p|, |t|, |n|@>@;
