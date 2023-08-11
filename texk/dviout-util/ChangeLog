@@ -3,7 +3,7 @@
 	* dvispc.c, chkdvifont.c, dd.h, msvcdir.h, Makefile.am:
 	Enable to build with MinGW & MSYS2 on Windows.
 	* dvispc.test, chkdvifont.test:
-	Enable to test on Windows.
+	Make easier to test on Windows.
 
 2022-08-30  Karl Berry  <karl@freefriends.org>
 
