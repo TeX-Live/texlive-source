@@ -81,10 +81,18 @@
 
 % A reward of $327.68 will be paid to the first finder of any remaining bug.
 
-% This is a beta version of 1.0 of Prote, developed during August 2021,
-% and corrected during september/october 2021.
+% This is the 1.1 version of Prote, developed during August 2021,
+% and corrected during september/october 2021 and amended in august 2023
+% for file primitives behavior matching input behavior.
 %
 % 1.0: adds primitives needed by LaTeX as listed in ltnews31.
+%    - 2022-07-21: tiddying formal fix: a spurious line was a left over
+%      of a removed paragraph (pointed by Martin Ruckert). Suppressed.
+%
+% 1.1: 2023-08-01: the new file primitives are used in LaTeX expecting
+%    the input behavior that ".tex" be appended if no extension. So
+%    modified to provide this.
+%
 %  History towards 1.0 release:
 %    0.99.4:
 %      - typos and style corrections provided by Martin Ruckert for
@@ -110,6 +118,8 @@
 %        xchg_buffer_length:=0 (caught by Martin Ruckert).
 %    0.99.10:
 %      - KerTeX Public License -> X11/MIT license.
+%    1.0:
+%      - Just naming the official release. No change.
 %
 % This work was done by Thierry Laronde and is under the MIT/X11
 % license.
@@ -358,9 +368,9 @@ known as `\Prote'.
 @#
 @d eTeX_states 1 /*number of \eTeX\ state variables in |eqtb|*/
 @#
-@d Prote_version_string "3.141592653-2.6-0.99.9" /*current \Prote\ version*/
-@d Prote_version 0 /* \.{\\Proteversion} */
-@d Prote_revision ".99.9" /* \.{\\Proterevision} */
+@d Prote_version_string "3.141592653-2.6-1.1.0" /*current \Prote\ version*/
+@d Prote_version 1 /* \.{\\Proteversion} */
+@d Prote_revision ".1.0" /* \.{\\Proterevision} */
 @#
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
@@ -29150,9 +29160,14 @@ old_setting=selector;selector=new_string;
 @*1 \Prote\ added strings routines.
 
 The next procedure sets |name_of_file| from the string given as an
-argument. It silently truncates if the length of the string exceeds the
-size of the name buffer and doesn't use |cur_area| and |cur_ext|: it
-takes the string as is and the string is not flushed.
+argument, mimicking the |input| primitive by adding an |.tex| extension
+if there is none. It silently truncates if the length of the string
+exceeds the size of the name buffer and doesn't use |cur_area| and
+|cur_ext|, but |name_length| is set to the real name length (without
+truncating) so a test about |k <= file_name_size| allows to detect the
+impossibility of opening the file without having to call external code.
+The string is not flushed: it is the responsability of the code calling
+the procedure to flush it if wanted.
 
 @<Declare \Prote\ procedures for strings@>=
 static void str_to_name(str_number @!s)
@@ -29587,6 +29602,7 @@ returned.
 @<Cases of `Scan the argument for command |c|'@>=
 case file_size_code: {@+scan_general_x_text();toks_to_str();
   s=info(garbage);flush_list(link(garbage));str_to_name(s);
+  cur_val=-1; /*invalid value if error*/
   cur_val=get_file_size();
   flush_string;
   } @+break;
@@ -29629,7 +29645,6 @@ If the length is $0$, nothing is printed.
 @<Cases of `Print the result of command |c|'@>=
 case file_mod_date_code: for (k=0; time_str[k]!='\0'; k++)
    print_char(time_str[k]);@+break;
-
 
 @ The primitive \.{\\filedump} expands to the dump of the first
  \.{length} bytes of the file, starting from \.{offset}. Offset and
@@ -29750,7 +29765,7 @@ it, as a binary file.
 @<Generate the MD5 hash for a file@>=
 {@+str_to_name(s);
 xchg_buffer_length=0; /*empty if file not opened*/
-if (b_open_in(&data_in)) {@+
+if ((name_length <= file_name_size)&&(b_open_in(&data_in))) {@+
   mdfive_init;
   r=false; /*reset it to indicate eof*/
   while (!r)
