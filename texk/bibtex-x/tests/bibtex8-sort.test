@@ -6,6 +6,10 @@
 
 # Using test data from Philipp Lehman <lehman@gmx.net>
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtex8=$BinDir/bibtex8$ExeExt
+
 test -d tests || mkdir -p tests
 
 rc=0
@@ -21,12 +25,12 @@ for i in 1 2 3; do
 
 ## test for sorting and change.case$
 cp $srcdir/tests/sort.aux tests/xsort$i.aux
-./bibtex8 --csfile sort$i.csf tests/xsort$i || rc=1
+$_bibtex8 --csfile sort$i.csf tests/xsort$i || rc=1
 diff $srcdir/tests/sort$i.bbl tests/xsort$i.bbl || rc=2
 
 ## test for change.case$
 cp $srcdir/tests/casea.aux tests/xcase$i.aux
-./bibtex8 --csfile sort$i.csf tests/xcase$i || rc=3
+$_bibtex8 --csfile sort$i.csf tests/xcase$i || rc=3
 diff $srcdir/tests/casea.bbl tests/xcase$i.bbl || rc=4
 
 done

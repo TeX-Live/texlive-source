@@ -4,6 +4,10 @@
 # You may freely use, modify and/or distribute this file.
 # Some actual sorting needed.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtexu=$BinDir/bibtexu$ExeExt
+
 test -d tests || mkdir -p tests
 
 testname=yannis
@@ -14,10 +18,12 @@ TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 BSTINPUTS=$srcdir/../web2c/tests; export BSTINPUTS
 BIBINPUTS=$srcdir/tests; export BIBINPUTS
 
-if ./bibtexu -t -d all -l fr -o fr tests/x$testname; then :; else
+if $_bibtexu -t -d all -l fr -o fr tests/x$testname; then :; else
   echo "*** bibtexu failed, tests/x$testname.blg is:" >&2
   cat tests/x$testname.blg >&2
   exit 1
 fi
 
 diff $srcdir/tests/$testname.bbl tests/x$testname.bbl || exit 1
+
+exit 0

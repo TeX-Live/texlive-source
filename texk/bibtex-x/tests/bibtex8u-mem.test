@@ -6,6 +6,11 @@
 
 # Using test data from Philipp Lehman <lehman@gmx.net>
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtex8=$BinDir/bibtex8$ExeExt
+_bibtexu=$BinDir/bibtexu$ExeExt
+
 test -d tests || mkdir -p tests
 
 # Create bib data
@@ -62,16 +67,16 @@ for t in 1 2 3; do
 
   eval $env \
     TEXMFCNF=$srcdir/../kpathsea \
-    BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
+    BSTINPUTS=$srcdir/../web2c/tests'\;'$srcdir/csf \
     BIBINPUTS=./tests \
-    ./bibtex8 -s tests/memtest$t || exit 1
+    $_bibtex8 -s tests/memtest$t || exit 1
 
   cp -p tests/memtest$t.aux tests/memtestu$t.aux
   eval $env \
     TEXMFCNF=$srcdir/../kpathsea \
-    BSTINPUTS=$srcdir/../web2c/tests:$srcdir/csf \
+    BSTINPUTS=$srcdir/../web2c/tests \
     BIBINPUTS=./tests \
-    ./bibtexu -s tests/memtestu$t || exit 2
+    $_bibtexu -s tests/memtestu$t || exit 2
 
 done
 

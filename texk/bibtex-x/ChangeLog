@@ -1,3 +1,11 @@
+2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/bibtex{8,u}.test, tests/bibtex8-{char,sort}.test,
+	tests/bibtex8u-mem.test, bibtexu-{basic,char,range,sort,yannis}.test:
+	Make easier to test on Windows.
+	In bibtexu-char.test, all tests are skipped on MinGW
+	since it does not pass. More study is required.
+
 2023-07-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:

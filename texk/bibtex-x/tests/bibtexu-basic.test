@@ -2,6 +2,10 @@
 # $Id: bibtexu-yannis.test 51452 2019-06-25 01:28:47Z karl $
 # Public domain. Originally written by Karl Berry, 2021.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtexu=$BinDir/bibtexu$ExeExt
+
 test -d tests || mkdir -p tests
 
 testname=ubasic
@@ -16,10 +20,13 @@ TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 BSTINPUTS=$srcdir/../tests/texmf; export BSTINPUTS
 BIBINPUTS=$srcdir/tests; export BIBINPUTS
 
-if ./bibtexu -t -d all tests/x$testname; then :; else
+
+if $_bibtexu -t -d all tests/x$testname; then :; else
   echo "*** bibtexu failed, tests/x$testname.blg is:" >&2
   cat tests/x$testname.blg >&2
-  exit 1
+  exit 2
 fi
 
-diff $srcdir/tests/$testname.bbl tests/x$testname.bbl || exit 1
+diff $srcdir/tests/$testname.bbl tests/x$testname.bbl || exit 3
+
+exit 0

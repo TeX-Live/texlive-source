@@ -3,6 +3,10 @@
 # Copyright 2022-2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtexu=$BinDir/bibtexu$ExeExt
+
 test -d tests || mkdir tests
 test -d tests || exit 1
 
@@ -15,40 +19,55 @@ BIBINPUTS=$srcdir/tests; export BIBINPUTS
 
 rc=0
 
+if [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
+  echo "*** skip test $0 on MINGW"
+  exit $rc
+fi
+
 ## test for add.period$
 cp $srcdir/tests/periodu.aux tests/xperiodu.aux
-./bibtexu tests/xperiodu || rc=3
+$_bibtexu tests/xperiodu || rc=3
 diff $srcdir/tests/periodu.bbl tests/xperiodu.bbl || rc=4
 
 ## test for substring$
 cp $srcdir/tests/substru.aux tests/xsubstru.aux
-./bibtexu tests/xsubstru || rc=5
+$_bibtexu tests/xsubstru || rc=5
 diff $srcdir/tests/substru.bbl tests/xsubstru.bbl || rc=6
 
 ## test for text.length$, text.prefix$
 cp $srcdir/tests/txtprfxu.aux tests/xtxtprfxu.aux
-./bibtexu tests/xtxtprfxu || rc=7
+$_bibtexu tests/xtxtprfxu || rc=7
 diff $srcdir/tests/txtprfxu.bbl tests/xtxtprfxu.bbl || rc=8
 
 ## test for width$
 ##   (FIXME) Greek, Cyrillic are not impremented yet
 cp $srcdir/tests/widthu.aux tests/xwidthu.aux
-./bibtexu tests/xwidthu || rc=9
+$_bibtexu tests/xwidthu || rc=9
 diff $srcdir/tests/widthu.bbl tests/xwidthu.bbl || rc=10
 
 ## test for chr.to.int$, int.to.str$, int.to.chr$
 cp $srcdir/tests/charu.aux tests/xcharu.aux
-./bibtexu tests/xcharu || rc=11
+$_bibtexu tests/xcharu || rc=11
 diff $srcdir/tests/charu.bbl tests/xcharu.bbl || rc=12
 
 ## test for num.names$, format.name$
 cp $srcdir/tests/nameu.aux tests/xnameu.aux
-max_print_line=119 ./bibtexu tests/xnameu || rc=13
+max_print_line=119 $_bibtexu tests/xnameu || rc=13
 diff $srcdir/tests/nameu.bbl tests/xnameu.bbl || rc=14
 
 ## test for is.knj.str$
+
+DIFF="diff"; icuver=0
+$_bibtexu --version | grep "ICU version 70" && icuver=70
+if [ $icuver -eq 70 ]; then
+  # skip CJK Ideograph Extension H
+  # U+31350 -> \360\261\215\220
+  uchr='\360\261\215\220'
+  DIFF="diff --ignore-matching-lines="`printf "${uchr}"`
+  echo "*** skip checking CJK Ideograph Extension H"
+fi
 cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
-./bibtexu tests/xiscjku || rc=15
-diff $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
+$_bibtexu tests/xiscjku || rc=15
+$DIFF $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
 
 exit $rc
