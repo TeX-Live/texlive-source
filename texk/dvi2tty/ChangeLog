@@ -1,3 +1,10 @@
+2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvi2tty.h:
+	Enable to build with MS Visual C on Windows.
+	* dvi2tty.test, disdvi.test:
+	Make easier to test on Windows.
+
 2022-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	dvi2tty-6.0.2.

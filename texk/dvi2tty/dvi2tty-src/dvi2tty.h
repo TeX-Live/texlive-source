@@ -40,8 +40,13 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #if (defined(WIN32) && !defined(__MINGW32__))
-# include <malloc.h>
+# include <fcntl.h>
+typedef void *HANDLE;
+typedef unsigned long DWORD;
+#define STD_OUTPUT_HANDLE  ((DWORD)-11)
+#define STD_ERROR_HANDLE   ((DWORD)-12)
 #endif
 
 #define nil         NULL
