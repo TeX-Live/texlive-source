@@ -1,0 +1,8 @@
+*.txt text eol=lf
+*.c   text eol=lf
+*.h   text eol=lf
+*.sh  text eol=lf
+
+## for adjust tex live svn repository:
+##   most *.bat are not with CRLF but with LF
+*.bat text eol=lf

@@ -1,0 +1,35 @@
+*.txt text eol=lf
+*.c   text eol=lf
+*.h   text eol=lf
+*.sh  text eol=lf
+*.bat text eol=crlf
+
+# for web2c
+*.gen text eol=lf
+*.tex text eol=lf
+*.pl  text eol=lf
+*.typ text eol=lf
+*.p   text eol=lf
+
+# for dvi2tty
+*.tty text eol=lf
+*.dis text eol=lf
+
+# for mendex, upmendex
+*.ind text eol=lf
+
+# for bibtex-x
+*.bbl text eol=lf
+
+# for dvipdfm-x
+*.bb  text eol=lf
+*.xbb text eol=lf
+
+# for dvips
+*.ps  text eol=lf
+*.xps text eol=lf
+/dvipsk/testdata/pfbincl.xps binary
+
+# for windows_wrapper
+/texlive/windows_wrapper/**/*.c   text eol=crlf
+/texlive/windows_wrapper/**/*.txt text eol=crlf
