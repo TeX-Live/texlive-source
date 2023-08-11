@@ -1,3 +1,11 @@
+2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvidvi.c:
+        Skip Unicode conversion if command line arguments are missing
+        in order to prevent unwanted looking for texmf.cnf. (Windows only)
+	* dvidvi.test:
+	Make easier to test on Windows.
+
 2021-02-19  Karl Berry  <karl@freefriends.org>
 
 	* dvidvi.test,
