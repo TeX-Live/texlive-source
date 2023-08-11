@@ -4,9 +4,15 @@
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=$srcdir/tests/cnfnewline; export TEXMFCNF
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
 
-val=`./kpsewhich --debug=-1 --var-value=lastvar`
+TEXMFCNF=$srcdir/tests/cnfnewline; export TEXMFCNF
+cnf_dir=$srcdir/tests/cnfnewline
+
+val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --debug=-1 --var-value=lastvar`
+if [ $ExeExt = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
 test x"$val" = xlastval || exit 1
 
 # verbose for testing.

@@ -1,3 +1,12 @@
+2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/{cnfline,cnfnewline,cnfnull,cnfprog,kpsestat,kpsewhich}.test:
+	Make easier to test on Windows.
+	{kpseaccess,kpsereadlink}.test are not modified since
+	they are not used for tests on Windows.
+	* tests/windows/texmf.cnf:
+	New cnf for testing windows MS Visual C build.
+
 2023-07-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* kpsewhich.c: Allow Unicode file name for bibtex8 and bibtexu

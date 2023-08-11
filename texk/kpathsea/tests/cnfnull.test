@@ -5,6 +5,10 @@
 # 
 # Test nul (zero) bytes in texmf.cnf.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
 cnf_dir=cnfnull
 cnf_file=$cnf_dir/texmf.cnf
 
@@ -13,10 +17,11 @@ cnf_file=$cnf_dir/texmf.cnf
 rm -rf $cnf_dir
 mkdir $cnf_dir
 test -d $cnf_dir || exit 1
-printf 'x\0=1\n\0' >$cnf_file || exit 1
+printf 'x\0=1\n\0' >$cnf_file || exit 2
 
-val=`./kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=x`
-test x"$val" = x1 || exit 1
+val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=x`
+if [ $exe = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
+test x"$val" = x1 || exit 3
 
 # Before we dropped nul bytes in 2020, kpse gave a warning:
 #   warning: cnfnull/texmf.cnf:1: (kpathsea) No cnf value on line: x.

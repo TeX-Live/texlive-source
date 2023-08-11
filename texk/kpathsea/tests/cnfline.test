@@ -3,29 +3,44 @@
 # Copyright 2019 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
 cnf_dir=$srcdir/tests/cnfline
 
 # just in case they are set in the environment
 unset maxpr
 unset othervar
 
+remove_cr() {
+  if [ $ExeExt = ".exe" ]; then
+    val=`echo $val | sed -e 's/\\r//'`
+  fi
+}
+
 # Just for fun, let's first try the --cnf-line feature to set TEXMFCNF.
-val=`./kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=othervar`
+val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=othervar`; remove_cr
 test x"$val" = x300 || exit 1
 
 # But for the rest, just use the environment, to keep things simpler.
 TEXMFCNF=$cnf_dir; export TEXMFCNF
+# In Windows, exe binaries fail to get environment variables from sh scripts
+# and still we need --cnf-line.
+if [ $ExeExt = ".exe" ]; then
+  _kpsewhich="$BinDir/kpsewhich$ExeExt --cnf-line=TEXMFCNF=$cnf_dir"
+fi
 
 # Make sure we get expected values from the test texmf.cnf.
-val=`./kpsewhich --var-value=maxpr`
-test x"$val" = x200 || exit 1
+val=`$_kpsewhich --var-value=maxpr`; remove_cr
+test x"$val" = x200 || exit 2
 #
-val=`./kpsewhich --progname=foo --var-value=maxpr`
-test x"$val" = x100 || exit 1
+val=`$_kpsewhich --progname=foo --var-value=maxpr`; remove_cr
+test x"$val" = x100 || exit 3
 #
-val=`./kpsewhich --var-value=othervar`
-test x"$val" = x300 || exit 1
+val=`$_kpsewhich --var-value=othervar`; remove_cr
+test x"$val" = x300 || exit 4
 
 # Now override on cmd line -- both texmf.cnf values should get overridden.
-val=`./kpsewhich --cnf-line=maxpr=99 --var-value=maxpr`
-test x"$val" = x99 || exit 1
+val=`$_kpsewhich --cnf-line=maxpr=99 --var-value=maxpr`; remove_cr
+test x"$val" = x99 || exit 5

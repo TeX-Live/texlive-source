@@ -1,0 +1,49 @@
+% Public domain.
+% This tiny texmf.cnf is for testing windows MS Visual C build
+
+TEXMFMAIN = $TEXMFCNF
+
+TEXINPUTS = .;$srcroot/texk/bibtex-x/tests
+TEXFONTS = .;$srcroot/texk/dvipsk/testdata
+
+% for web2c
+CWEBINPUTS = $srcroot/texk/web2c/ctiedir;$srcroot/texk/web2c/cwebdir//
+WEBINPUTS = $srcroot/texk/web2c/tiedir
+
+% for dvips
+TEXFONTMAPS.dvips = $srcroot/texk/dvipsk/testdata
+VFFONTS.dvips = .;$srcroot/texk/dvipsk/testdata
+TEXPSHEADERS.dvips = .;$srcroot/texk/dvipsk/testdata
+TEXFONTS.dvips = .;$srcroot/texk/dvipsk/testdata
+TFMFONTS.dvips = .;$srcroot/texk/{web2c/tests,dvipsk/testdata}//
+TEXFONTS.dvips = .;$srcroot/texk/{web2c/tests,dvipsk/testdata}//
+T1FONTS.dvips = .;$srcroot/texk/{web2c/tests,dvipsk/testdata}//
+AFMFONTS.afm2tfm = $srcroot/texk/tests/texmf
+
+% for dvipdfm-x
+TFMFONTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+T1FONTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+TTFONTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+PKFONTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+TEXFONTMAPS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+DVIPDFMXINPUTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests;$srcroot/texk/dvipdfm-x/data
+TEXPICTS.dvipdfmx = $srcroot/texk/dvipdfm-x/tests
+TEXFONTS.dvipdfmx = .;$srcroot/texk/dvipdfm-x/tests
+
+% for bibtex-x
+BIBINPUTS.bibtex8 = .;$srcroot/texk/web2c/tests;$srcroot/texk/bibtex-x/tests
+BSTINPUTS.bibtex8 = .;$srcroot/texk/tests/texmf;$srcroot/texk/web2c/tests;$srcroot/texk/bibtex-x/{tests,csf}
+BIBINPUTS.bibtexu = .;$srcroot/texk/web2c/tests;$srcroot/texk/bibtex-x/tests
+BSTINPUTS.bibtexu = .;$srcroot/texk/tests/texmf;$srcroot/texk/web2c/tests;$srcroot/texk/bibtex-x/tests
+
+% Guess input encoding (SJIS vs. Unicode, etc.) in pTeX and friends
+guess_input_kanji_encoding = 0
+guess_input_kanji_encoding.ptex = 1
+guess_input_kanji_encoding.eptex = 1
+guess_input_kanji_encoding.platex = 1
+guess_input_kanji_encoding.platex-dev = 1
+guess_input_kanji_encoding.pbibtex = 1
+guess_input_kanji_encoding.mendex = 1
+
+% command_line_encoding
+command_line_encoding = utf-8

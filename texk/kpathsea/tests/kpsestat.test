@@ -4,17 +4,20 @@
 # Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./kpsestat = nonesuch 2>/dev/null && exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsestat=$BinDir/kpsestat$ExeExt
+
+$_kpsestat = nonesuch 2>/dev/null && exit 1
 
 for f in . kpsestat kpsestat.o; do
-  echo "kpsestat = $f => `./kpsestat = $f`"
+  echo "kpsestat = $f => `$_kpsestat = $f`"
 done
 
 for m in -rw g-r u-w o+x -rw,u+s -rw,g+s -rw,o+t; do
-  echo "kpsestat $m kpsestat.o => `./kpsestat $m kpsestat.o`"
+  echo "kpsestat $m kpsestat.o => `$_kpsestat $m kpsestat.o`"
 done
 
-echo "kpsestat = \$srcdir => `./kpsestat = $srcdir`"
-echo "kpsestat = \$srcdir/ => `./kpsestat = $srcdir/`"
-echo "kpsestat = \$srcdir/kpsestat.c => `./kpsestat = $srcdir/kpsestat.c`"
-
+echo "kpsestat = \$srcdir => `$_kpsestat = $srcdir`"
+echo "kpsestat = \$srcdir/ => `$_kpsestat = $srcdir/`"
+echo "kpsestat = \$srcdir/kpsestat.c => `$_kpsestat = $srcdir/kpsestat.c`"
