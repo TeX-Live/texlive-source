@@ -4525,44 +4525,46 @@ contents.
 @c
 static void
 phase_three(void) {
-if (no_xref) {
-  finish_line();
+phase=3;
+finish_line(); /* the bulk of |tex_file| has been written */
+if (no_xref)
   out_str("\\end");
 @.\\end@>
-  finish_line();
-}
 else {
-  phase=3; if (show_progress) fputs("\nWriting the index...",stdout);
+  if (show_progress) fputs("\nWriting the index...",stdout);
 @.Writing the index...@>
-  finish_line();
-  if ((idx_file=fopen(idx_file_name,"wb"))==NULL)
-    fatal("! Cannot open index file ",idx_file_name);
-@.Cannot open index file@>
   if (change_exists) {
     @<Tell about changed sections@>@; finish_line(); finish_line();
   }
   out_str("\\inx"); finish_line();
 @.\\inx@>
+@#
+  if ((idx_file=fopen(idx_file_name,"wb"))==NULL)
+    fatal("! Cannot open index file ",idx_file_name);
+@.Cannot open index file@>
   active_file=idx_file; /* change active file to the index file */
   @<Do the first pass of sorting@>@;
   @<Sort and output the index@>@;
   finish_line(); fclose(active_file); /* finished with |idx_file| */
+@#
   active_file=tex_file; /* switch back to |tex_file| for a tic */
   out_str("\\fin"); finish_line();
 @.\\fin@>
+@#
   if ((scn_file=fopen(scn_file_name,"wb"))==NULL)
     fatal("! Cannot open section file ",scn_file_name);
 @.Cannot open section file@>
   active_file=scn_file; /* change active file to section listing file */
   @<Output all the section names@>@;
   finish_line(); fclose(active_file); /* finished with |scn_file| */
-  active_file=tex_file;
+@#
+  active_file=tex_file; /* switch back to |tex_file| for the last time */
   if (group_found) out_str("\\con");@+else out_str("\\end");
 @.\\con@>
 @.\\end@>
-  finish_line();
-  fclose(active_file);
 }
+finish_line();
+fclose(active_file);
 if (show_happiness) {
   if (show_progress) new_line();
   fputs("Done.",stdout);

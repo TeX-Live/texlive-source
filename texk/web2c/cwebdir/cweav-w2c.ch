@@ -515,24 +515,9 @@ if (show_progress) fputs(_("\nWriting the output file..."),stdout);
 @z
 
 @x
-if (no_xref) {
-  finish_line();
-  out_str("\\end");
-@.\\end@>
-  finish_line();
-}
+  if (show_progress) fputs("\nWriting the index...",stdout);
 @y
-if (no_xref) {
-  finish_line();
-  out_str("\\end");
-@.\\end@>
-}
-@z
-
-@x
-  phase=3; if (show_progress) fputs("\nWriting the index...",stdout);
-@y
-  phase=3; if (show_progress) fputs(_("\nWriting the index..."),stdout);
+  if (show_progress) fputs(_("\nWriting the index..."),stdout);
 @z
 
 @x
@@ -548,14 +533,9 @@ if (no_xref) {
 @z
 
 @x
-@.\\end@>
-  finish_line();
-  fclose(active_file);
-}
+fclose(active_file);
 @y
-@.\\end@>
-}
-finish_line(); fclose(active_file); active_file=tex_file=NULL;
+fclose(active_file); active_file=tex_file=NULL;
 if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
