@@ -3,10 +3,14 @@
 # Public domain. Various buffer overflows, reported by
 # Andy Nguyen of ETH Zurich. The program should detect and abort.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
 for tst in overflow-color-push overflow-epsfile \
            overflow-ifffile overflow-psbox; do
   :
-  if ./dvips $srcdir/testdata/$tst.dvi -o; then
+  if $_dvips $srcdir/testdata/$tst.dvi -o; then
     echo "$0: test $tst should have failed." >&2
     exit 1
   fi
@@ -15,7 +19,7 @@ done
 # overflow-keyword succeeds, because the special is ignored,
 # because the file (named with 999 a's) does not exist.
 tst=overflow-keyword
-./dvips $srcdir/testdata/$tst.dvi -o || exit 1
+$_dvips $srcdir/testdata/$tst.dvi -o || exit 1
 grep ' @setspecial' $tst.ps || exit 1
 
 exit 0

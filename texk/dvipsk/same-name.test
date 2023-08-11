@@ -3,9 +3,13 @@
 # Public domain.
 # Test oname == iname.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
 rm -f same-name.dvi same-name.out
 
-./dvips same-name.dvi -o same-name.dvi 2>same-name.out \
+$_dvips same-name.dvi -o same-name.dvi 2>same-name.out \
 	&& exit 1
 
 grep 'Output name should be different from input name' \

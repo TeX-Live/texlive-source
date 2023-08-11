@@ -4,8 +4,12 @@
 # ensure -K1 does not remove newline after %%BeginFont line.
 # Report from T S, 1 Jan 2010 16:32:16.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
 tst=beginfontk1
-./dvips -K1 $srcdir/testdata/$tst.dvi -o || exit 1
+$_dvips -K1 $srcdir/testdata/$tst.dvi -o || exit 1
 grep '^%%BeginFont: /MC1_ArialBold$' $tst.ps || exit 1
 
 exit 0

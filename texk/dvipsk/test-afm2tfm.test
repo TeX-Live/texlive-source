@@ -7,6 +7,10 @@
 # make -C $wp TESTS=test-afm2tfm.test check 
 # where wp=.../Work/texk/dvipsk
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_afm2tfm=$BinDir/afm2tfm$ExeExt
+
 test_file=afmtest.afm
 test_dir=$srcdir/../tests/texmf
 test_input=$test_dir/$test_file
@@ -34,7 +38,7 @@ do_check () {
   # could run tftopl, but let's not assume it.
 }
 
-do_check ./afm2tfm "$test_file"
-do_check ./afm2tfm "$test_file" -p $srcdir/testdata/8r.enc # options after
+do_check $_afm2tfm "$test_file"
+do_check $_afm2tfm "$test_file" -p $srcdir/testdata/8r.enc # options after
 
 exit 0

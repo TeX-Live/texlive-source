@@ -4,8 +4,12 @@
 # ensure we don't get nan from eepic doc.
 # Report from Stefan Moser to mactex-support, 20 Oct 2010 02:37:45.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
 tst=eepic-nan
-./dvips -Ppdf $srcdir/testdata/$tst.dvi -o || exit 1
+$_dvips -Ppdf $srcdir/testdata/$tst.dvi -o || exit 1
 grep ' nan ' $tst.ps && exit 1
 
 exit 0
