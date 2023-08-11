@@ -4,6 +4,10 @@
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea
 TFMFONTS="$srcdir/tests;$srcdir/data"
 T1FONTS="$srcdir/tests;$srcdir/data"
@@ -15,14 +19,14 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 failed=
 
 echo "*** xdvipdfmx -v -z0 -o ptex1.pdf ptex" && echo \
-	&& ./xdvipdfmx -v -z0 -o ptex1.pdf $srcdir/tests/ptex \
+	&& $_xdvipdfmx -v -z0 -o ptex1.pdf $srcdir/tests/ptex \
 	&& echo && echo "xdvipdfmx-ptex tests OK" && echo \
-	|| failed="$failed xdvipdfmx-ptex"	
+	|| failed="$failed xdvipdfmx-ptex"
 
 echo "*** xdvipdfmx -v -z0 <ptex.dvi >ptex2.pdf" && echo \
-	&& ./xdvipdfmx -v -z0 <$srcdir/tests/ptex.dvi >ptex2.pdf \
+	&& $_xdvipdfmx -v -z0 <$srcdir/tests/ptex.dvi >ptex2.pdf \
 	&& echo && echo "xdvipdfmx-ptex (stdin->stdout) tests OK" && echo \
-	|| failed="$failed xdvipdfmx-ptex (stdin->stdout)"	
+	|| failed="$failed xdvipdfmx-ptex (stdin->stdout)"
 
 test -z "$failed" && exit 0
 echo

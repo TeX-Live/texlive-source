@@ -4,6 +4,10 @@
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea
 TFMFONTS="$srcdir/tests;$srcdir/data"
 T1FONTS="$srcdir/tests;$srcdir/data"
@@ -20,12 +24,12 @@ for f in $list
 do
 
 echo "*** xdvipdfmx -v -z0 -o bad.pdf $f" && echo \
-	&& ./xdvipdfmx -v -z0 -o bad.pdf $srcdir/tests/$f \
+	&& $_xdvipdfmx -v -z0 -o bad.pdf $srcdir/tests/$f \
 	&& failed="$failed xdvipdfmx-$f" \
 	|| { echo && echo "xdvipdfmx-$f tests OK" && echo; }
 
 echo "*** xdvipdfmx -v -z0 -o bad.pdf <$f.dvi" && echo \
-	&& ./xdvipdfmx -v -z0 -o bad.pdf <$srcdir/tests/$f.dvi \
+	&& $_xdvipdfmx -v -z0 -o bad.pdf <$srcdir/tests/$f.dvi \
 	&& failed="$failed xdvipdfmx-$f (stdin)" \
 	|| { echo && echo "xdvipdfmx-$f (stdin) tests OK" && echo; }
 

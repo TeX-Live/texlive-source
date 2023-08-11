@@ -4,6 +4,10 @@
 # Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 DVIPDFMXINPUTS=$srcdir/tests:$srcdir/data; export DVIPDFMXINPUTS
@@ -22,19 +26,19 @@ for e in $ext; do
 done
 
 echo "*** xdvipdfmx --ebb --version" \
-	&& ./xdvipdfmx --ebb --version \
+	&& $_xdvipdfmx --ebb --version \
 	&& echo && echo "ebb-version tests OK" && echo \
 	|| failed="$failed ebb-version"
 
 echo "*** xdvipdfmx --ebb --help" \
-	&& ./xdvipdfmx --ebb --help \
+	&& $_xdvipdfmx --ebb --help \
 	&& echo && echo "ebb-help tests OK" && echo \
 	|| failed="$failed ebb-help"
 
 # get rid of both %%Creator: and %%CreationDate: lines.
 for e in $ext; do
 	echo "*** xdvipdfmx --ebb pic$e.$e" \
-	&& ./xdvipdfmx --ebb pic$e.$e \
+	&& $_xdvipdfmx --ebb pic$e.$e \
 	&& sed '/^%%Creat/d' pic$e.bb >pic$e.bbx \
 	&& diff $testsrc/pic$e.bb pic$e.bbx \
 	&& echo && echo "ebb-$e tests OK" && echo \
@@ -42,18 +46,18 @@ for e in $ext; do
 done
 
 echo "*** xdvipdfmx --xbb --version" \
-	&& ./xdvipdfmx --xbb --version \
+	&& $_xdvipdfmx --xbb --version \
 	&& echo && echo "xbb-version tests OK" && echo \
 	|| failed="$failed xbb-version"
 
 echo "*** xdvipdfmx --xbb --help" \
-	&& ./xdvipdfmx --xbb --help \
+	&& $_xdvipdfmx --xbb --help \
 	&& echo && echo "xbb-help tests OK" && echo \
 	|| failed="$failed xbb-help"
 
 for e in $ext; do
 	echo "*** xdvipdfmx --xbb img$e.$e" \
-	&& ./xdvipdfmx --xbb pic$e.$e \
+	&& $_xdvipdfmx --xbb pic$e.$e \
 	&& sed '/^%%Creat/d' pic$e.xbb >pic$e.xbbx \
 	&& diff $testsrc/pic$e.xbb pic$e.xbbx \
 	&& echo && echo "xbb-$e tests OK" && echo \

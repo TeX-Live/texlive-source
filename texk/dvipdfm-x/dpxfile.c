@@ -160,6 +160,8 @@ static char  _tmpbuf[PATH_MAX+1];
 #endif /* MIKTEX */
 
 #if defined(_WIN32)
+#undef stat
+#define stat _stat
 extern int utf8name_failed;
 int fsyscp_stat(const char *path, struct stat *buffer)
 {

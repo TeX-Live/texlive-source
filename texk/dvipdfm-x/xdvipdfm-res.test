@@ -4,6 +4,10 @@
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea
 TFMFONTS="$srcdir/tests;$srcdir/data"
 T1FONTS="$srcdir/tests;$srcdir/data"
@@ -15,9 +19,9 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 failed=
 
 echo "*** xdvipdfmx -v -z0 -o resrc2.pdf resrc" && echo \
-	&& ./xdvipdfmx -v -z0 -o resrc2.pdf $srcdir/tests/resrc \
+	&& $_xdvipdfmx -v -z0 -o resrc2.pdf $srcdir/tests/resrc \
 	&& echo && echo "xdvipdfmx-res tests OK" && echo \
-	|| failed="$failed xdvipdfmx-res"	
+	|| failed="$failed xdvipdfmx-res"
 
 test -z "$failed" && exit 0
 echo

@@ -4,6 +4,10 @@
 # Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea
 TEXFONTMAPS="$srcdir/tests;$srcdir/data"
 DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
@@ -15,27 +19,27 @@ export TEXMFCNF TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS PKFONTS
 failed=
 
 echo "*** xdvipdfmx --version" \
-	&& ./xdvipdfmx --version \
+	&& $_xdvipdfmx --version \
 	&& echo && echo "xdvipdfmx-version tests OK" && echo \
 	|| failed="$failed xdvipdfmx-version"
 
 echo "*** xdvipdfmx --help" \
-	&& ./xdvipdfmx --help \
+	&& $_xdvipdfmx --help \
 	&& echo && echo "xdvipdfmx-help tests OK" && echo \
 	|| failed="$failed xdvipdfmx-help"
 
 echo "*** xdvipdfmx --showpaper" \
-	&& ./xdvipdfmx --showpaper \
+	&& $_xdvipdfmx --showpaper \
 	&& echo && echo "xdvipdfmx-showpaper tests OK" && echo \
 	|| failed="$failed xdvipdfmx-showpaper"
 
 echo "*** xdvipdfmx -v -o image2.pdf image" && echo \
-	&& ./xdvipdfmx -v -o image2.pdf $srcdir/tests/image \
+	&& $_xdvipdfmx -v -o image2.pdf $srcdir/tests/image \
 	&& echo && echo "xdvipdfmx-image tests OK" && echo \
-	|| failed="$failed xdvipdfmx-image"	
+	|| failed="$failed xdvipdfmx-image"
 
 echo "*** xdvipdfmx -v -o xbmc2.pdf xbmc" && echo \
-	&& ./xdvipdfmx -v -o xbmc2.pdf  $srcdir/tests/xbmc \
+	&& $_xdvipdfmx -v -o xbmc2.pdf  $srcdir/tests/xbmc \
 	&& echo && echo "xdvipdfmx-xbmc tests OK" && echo \
 	|| failed="$failed xdvipdfmx-xbmc"
 
