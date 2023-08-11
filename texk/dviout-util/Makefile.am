@@ -3,7 +3,7 @@
 ## Copyright (C) 2018-2021 Japanese TeX Development Community <issue@texjp.org>
 ## You may freely use, modify and/or distribute this file.
 ##
-AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DPTEXENC
+AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES) -DKPATHSEA -DPTEXENC
 AM_CFLAGS = $(WARNING_CFLAGS)
 
 $(dviout_util_OBJECTS): $(KPATHSEA_DEPEND) $(PTEXENC_DEPEND)

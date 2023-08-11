@@ -1,7 +1,7 @@
 /*/msvcdir.h */
 
 #if !defined(MSVCDIR_H)
-#define MSVCDIR_H 
+#define MSVCDIR_H
 #include <stdlib.h>  /*_splitpath */
 #include <direct.h>
 #include <assert.h> /*assert */
@@ -29,4 +29,4 @@ void getftime(int handle, struct ftime *ft);
 #pragma warning( disable : 4244 4018 4102 4761 4146 4047 4305 4245 4113)
 #endif
 
-#endif MSVCDIR_H
+#endif /* MSVCDIR_H */

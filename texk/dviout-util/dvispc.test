@@ -3,6 +3,10 @@
 # Copyright 2018-2021 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvispc=$BinDir/dvispc$ExeExt
+
 testdir=$srcdir/tests
 
 DIFF="diff"
@@ -11,138 +15,147 @@ CMP="cmp"
 # but the output might be written in CRLF on some platform.
 # if 'diff --strip-trailing-cr' is available, exploit it.
 # (useful for tests on win32 binaries run on MSYS shell)
-$DIFF --strip-trailing-cr README README \
+$DIFF --strip-trailing-cr $0 $0 \
   && DIFF="diff --strip-trailing-cr" || echo
 
+#if [ "$(expr substr $(uname -s) 1 5)" == "MINGW" ]; then
+#  echo "*** skip test $0 on MINGW"
+#  exit 0
+#fi
+
+## show banner
+$_dvispc
+
+rc=0
 
 ## EXE2SPECIAL
 
-./dvispc -s $testdir/oldindep.dvi x0oldindep.spc && \
-  $DIFF $testdir/oldindep.spc x0oldindep.spc && echo || exit 1
+$_dvispc -s $testdir/oldindep.dvi x0oldindep.spc && \
+  $DIFF $testdir/oldindep.spc x0oldindep.spc && echo || rc=1
 
-./dvispc -s $testdir/oldindep.dvi > x1oldindep.spc && \
-  $DIFF $testdir/oldindep.spc x1oldindep.spc && echo || exit 2
+$_dvispc -s $testdir/oldindep.dvi > x1oldindep.spc && \
+  $DIFF $testdir/oldindep.spc x1oldindep.spc && echo || rc=2
 
 ## invalid usage
-#./dvispc -s < $testdir/oldindep.dvi x2oldindep.spc && \
-#  diff $testdir/oldindep.spc x2oldindep.spc && echo || exit 0
+#$_dvispc -s < $testdir/oldindep.dvi x2oldindep.spc && \
+#  diff $testdir/oldindep.spc x2oldindep.spc && echo || rc=3
 
 ## stdin is a DVI, random access may not be supported, no test
-#./dvispc -s < $testdir/oldindep.dvi > x3oldindep.spc && \
-#  diff $testdir/oldindep.spc x3oldindep.spc && echo || exit 3
+#$_dvispc -s < $testdir/oldindep.dvi > x3oldindep.spc && \
+#  diff $testdir/oldindep.spc x3oldindep.spc && echo || rc=4
 
 
 ## EXE2TEXT + EXE2DVI
 
-./dvispc -a $testdir/oldindep.dvi x0oldindepa.txt && \
-  ./dvispc -x x0oldindepa.txt x0oldindepax.dvi && \
-  $CMP $testdir/oldindep.dvi x0oldindepax.dvi && echo || exit 4
+$_dvispc -a $testdir/oldindep.dvi x0oldindepa.txt && \
+  $_dvispc -x x0oldindepa.txt x0oldindepax.dvi && \
+  $CMP $testdir/oldindep.dvi x0oldindepax.dvi && echo || rc=11
 
-./dvispc -a $testdir/oldindep.dvi > x1oldindepa.txt && \
-  ./dvispc -x < x1oldindepa.txt > x1oldindepax.dvi && \
-  $CMP $testdir/oldindep.dvi x1oldindepax.dvi && echo || exit 5
+$_dvispc -a $testdir/oldindep.dvi > x1oldindepa.txt && \
+  $_dvispc -x < x1oldindepa.txt > x1oldindepax.dvi && \
+  $CMP $testdir/oldindep.dvi x1oldindepax.dvi && echo || rc=12
 
 # not working as expected only for test (redirect??)
-#./dvispc -a $testdir/oldindep.dvi | ./dvispc -x x2oldindepax.dvi && \
-#  $CMP $testdir/oldindep.dvi x2oldindepax.dvi && echo || exit 6
+#$_dvispc -a $testdir/oldindep.dvi | $_dvispc -x x2oldindepax.dvi && \
+#  $CMP $testdir/oldindep.dvi x2oldindepax.dvi && echo || rc=13
 
-./dvispc -a $testdir/oldindep.dvi | ./dvispc -x > x3oldindepax.dvi && \
-  $CMP $testdir/oldindep.dvi x3oldindepax.dvi && echo || exit 7
+$_dvispc -a $testdir/oldindep.dvi | $_dvispc -x > x3oldindepax.dvi && \
+  $CMP $testdir/oldindep.dvi x3oldindepax.dvi && echo || rc=14
 
 
 ## EXE2MODIFY & EXE2CHECK (should be consistent)
 
-./dvispc -d $testdir/oldindep.dvi >x0oldindep.dry
-  $DIFF $testdir/oldindep.dry x0oldindep.dry && echo || exit 1
+$_dvispc -d $testdir/oldindep.dvi >x0oldindep.dry
+  $DIFF $testdir/oldindep.dry x0oldindep.dry && echo || rc=21
 
-./dvispc -c $testdir/oldindep.dvi x0oldindepout.dvi && \
-  $CMP $testdir/oldindepout.dvi x0oldindepout.dvi && echo || exit 1
+$_dvispc -c $testdir/oldindep.dvi x0oldindepout.dvi && \
+  $CMP $testdir/oldindepout.dvi x0oldindepout.dvi && echo || rc=22
 
-./dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
-  $CMP $testdir/oldindepout.dvi x1oldindepout.dvi && echo || exit 2
+$_dvispc -c $testdir/oldindep.dvi > x1oldindepout.dvi && \
+  $CMP $testdir/oldindepout.dvi x1oldindepout.dvi && echo || rc=23
 
 ## invalid usage
-#./dvispc -c < $testdir/oldindep.dvi x2oldindepout.dvi && \
-#  $CMP $testdir/oldindepout.dvi x2oldindepout.dvi && echo || exit 0
+#$_dvispc -c < $testdir/oldindep.dvi x2oldindepout.dvi && \
+#  $CMP $testdir/oldindepout.dvi x2oldindepout.dvi && echo || rc=24
 
 ## stdin is a DVI, random access may not be supported, no test
-#./dvispc -c < $testdir/oldindep.dvi > x3oldindepout.dvi && \
-#  $CMP $testdir/oldindepout.dvi x3oldindepout.dvi && echo || exit 3
+#$_dvispc -c < $testdir/oldindep.dvi > x3oldindepout.dvi && \
+#  $CMP $testdir/oldindepout.dvi x3oldindepout.dvi && echo || rc=25
 
 ## check default is -c
-./dvispc $testdir/oldindep.dvi x2oldindepout.dvi && \
-  $CMP $testdir/oldindepout.dvi x2oldindepout.dvi && echo || exit 4
+$_dvispc $testdir/oldindep.dvi x2oldindepout.dvi && \
+  $CMP $testdir/oldindepout.dvi x2oldindepout.dvi && echo || rc=26
 
 ## check default overwrite
 # not working as expected only for test (redirect??)
 #cp $testdir/oldindep.dvi x3write.dvi && \
-#  ./dvispc x3write.dvi
-#  $CMP $testdir/oldindepout.dvi x3write.dvi && echo || exit 5
+#  $_dvispc x3write.dvi
+#  $CMP $testdir/oldindepout.dvi x3write.dvi && echo || rc=31
 
 ## case of underflow
-./dvispc $testdir/under.dvi x0underout.dvi && \
-  $CMP $testdir/underout.dvi x0underout.dvi && echo || exit 6
+$_dvispc $testdir/under.dvi x0underout.dvi && \
+  $CMP $testdir/underout.dvi x0underout.dvi && echo || rc=32
 rm -f x1underout.dvi
-./dvispc x0underout.dvi x1underout.dvi && \
-  if test -f x1underout.dvi; then exit 1; else echo; fi || exit 6
+$_dvispc x0underout.dvi x1underout.dvi && \
+  if test -f x1underout.dvi; then exit 1; else echo; fi || rc=33
 
-./dvispc && echo || exit 0
+$_dvispc && echo || exit $rc
 
 # the following tests will not pass for old version written by SHIMA.
 # that version can be distinguished from the new version by
 # exit code 1 for usage without argument. (the above line did it!)
 
 # correction for tpicpn.dvi is needed but should be minimal
-./dvispc -d $testdir/tpicpn.dvi >x0tpicpn.dry
+$_dvispc -d $testdir/tpicpn.dvi >x0tpicpn.dry
   $DIFF $testdir/tpicpn.dry x0tpicpn.dry && echo || exit 1
-./dvispc $testdir/tpicpn.dvi x0tpicpnout.dvi && \
+$_dvispc $testdir/tpicpn.dvi x0tpicpnout.dvi && \
   $CMP $testdir/tpicpnout.dvi x0tpicpnout.dvi && echo || exit 1
 
 # correction for tpicsh.dvi is never needed, check no output
-./dvispc -d $testdir/tpicsh.dvi >x0tpicsh.dry
+$_dvispc -d $testdir/tpicsh.dvi >x0tpicsh.dry
   $DIFF $testdir/tpicsh.dry x0tpicsh.dry && echo || exit 1
 rm -f x0tpicshout.dvi
-./dvispc $testdir/tpicsh.dvi x0tpicshout.dvi && \
+$_dvispc $testdir/tpicsh.dvi x0tpicshout.dvi && \
   if test -f x0tpicshout.dvi; then exit 1; else echo; fi || exit 1
 
 ## page independence in reverse order which requires prior scanning
-./dvispc -d $testdir/reverse.dvi >xreverse.dry
+$_dvispc -d $testdir/reverse.dvi >xreverse.dry
   $DIFF $testdir/reverse.dry xreverse.dry && echo || exit 1
-./dvispc $testdir/reverse.dvi xreverseout.dvi && \
+$_dvispc $testdir/reverse.dvi xreverseout.dvi && \
   $CMP $testdir/reverseout.dvi xreverseout.dvi && echo || exit 1
 
 # prior scanning should not mess up
-./dvispc -d $testdir/first.dvi >xfirst.dry
+$_dvispc -d $testdir/first.dvi >xfirst.dry
   $DIFF $testdir/first.dry xfirst.dry && echo || exit 1
-./dvispc $testdir/first.dvi xfirstout.dvi && \
+$_dvispc $testdir/first.dvi xfirstout.dvi && \
   $CMP $testdir/firstout.dvi xfirstout.dvi && echo || exit 1
 
 # prior scanning should not mess up (no correction)
-./dvispc -d $testdir/firstpn.dvi >xfirstpn.dry
+$_dvispc -d $testdir/firstpn.dvi >xfirstpn.dry
   $DIFF $testdir/firstpn.dry xfirstpn.dry && echo || exit 1
 rm -f xfirstpn.dvi
-./dvispc $testdir/firstpn.dvi xfirstpn.dvi && \
+$_dvispc $testdir/firstpn.dvi xfirstpn.dvi && \
   if test -f xfirstpn.dvi; then exit 1; else echo; fi || exit 1
 
 # ==== future work start ====
 
 ## page independence of annotation
-#./dvispc -d $testdir/annot.dvi >xannot.dry
+#$_dvispc -d $testdir/annot.dvi >xannot.dry
 #  $DIFF $testdir/annot.dry xannot.dry && echo || exit 2
-#./dvispc $testdir/annot.dvi xannotout.dvi && \
+#$_dvispc $testdir/annot.dvi xannotout.dvi && \
 #  $CMP $testdir/annotout.dvi xannotout.dvi && echo || exit 2
 
 ## page independence of long (>255) specials (e.g. annotation)
 ## disabled because annotation is unsupported
-#./dvispc -d $testdir/longspec.dvi >xlongspec.dry
+#$_dvispc -d $testdir/longspec.dvi >xlongspec.dry
 #  $DIFF $testdir/longspec.dry xlongspec.dry && echo || exit 3
-#./dvispc $testdir/longspec.dvi xlongspecout.dvi && \
+#$_dvispc $testdir/longspec.dvi xlongspecout.dvi && \
 #  $CMP $testdir/longspecout.dvi xlongspecout.dvi && echo || exit 3
 
 ## flatten nested anotation
-#./dvispc -d $testdir/flatnest.dvi >xflatnest.dry
+#$_dvispc -d $testdir/flatnest.dvi >xflatnest.dry
 #  $DIFF $testdir/flatnest.dry xflatnest.dry && echo || exit 3
-#./dvispc $testdir/flatnest.dvi xflatnestout.dvi && \
+#$_dvispc $testdir/flatnest.dvi xflatnestout.dvi && \
 #  $CMP $testdir/flatnestout.dvi xflatnestout.dvi && echo || exit 4
 
 # ==== future work end ====
@@ -150,13 +163,13 @@ rm -f xfirstpn.dvi
 ## check -b backup works (old version did not!)
 # not working as expected only for test (redirect??)
 #cp $testdir/oldindep.dvi x4write.dvi && \
-#  ./dvispc -b x4write.dvi
+#  $_dvispc -b x4write.dvi
 #  $CMP $testdir/oldindepout.dvi x4write.dvi && echo || exit 1
 #  $CMP $testdir/oldindep.dvi x4write.dvi.bak && echo || exit 1
 
 ## without .dvi extension (old version missed for outfile!)
 cp $testdir/oldindep.dvi x5write.dvi && \
-  ./dvispc x5write x5writeout
+  $_dvispc x5write x5writeout
   $CMP $testdir/oldindepout.dvi x5writeout.dvi && echo || exit 2
 
 
@@ -164,50 +177,50 @@ cp $testdir/oldindep.dvi x5write.dvi && \
 
 ## EXE2TEXT + EXE2DVI: check for -J option
 
-./dvispc -a -Ju $testdir/jisx0208.dvi jisx0208.da.txt || exit 2
+$_dvispc -a -Ju $testdir/jisx0208.dvi jisx0208.da.txt || exit 2
 $DIFF $testdir/jisx0208.txt jisx0208.da.txt || exit 1
-./dvispc -x $testdir/jisx0208.txt jisx0208.da.dvi || exit 2
+$_dvispc -x $testdir/jisx0208.txt jisx0208.da.dvi || exit 2
 $CMP $testdir/jisx0208.dvi jisx0208.da.dvi || exit 1
 
-./dvispc -a -Js $testdir/jisx0208.dvi jisx0208-sjp.da.txt || exit 2
-./dvispc -a -Je $testdir/jisx0208.dvi jisx0208-ejp.da.txt || exit 2
+$_dvispc -a -Js $testdir/jisx0208.dvi jisx0208-sjp.da.txt || exit 2
+$_dvispc -a -Je $testdir/jisx0208.dvi jisx0208-ejp.da.txt || exit 2
 
 ## EXE2TEXT: printing ASCII/Japanese characters
-./dvispc -a -Ju $testdir/putj.dump.dvi putj.da.txt || exit 2
+$_dvispc -a -Ju $testdir/putj.dump.dvi putj.da.txt || exit 2
 $DIFF $testdir/putj.txt putj.da.txt || exit 1
-./dvispc -a -JU $testdir/put.dump.dvi put.da.txt || exit 2
+$_dvispc -a -JU $testdir/put.dump.dvi put.da.txt || exit 2
 $DIFF $testdir/put.txt put.da.txt || exit 1
 
 
 ## EXE2TEXT + EXE2DVI: different position of fntdef, nop
-./dvispc -a $testdir/fntdef0.dvi xfntdef0.txt || exit 2
+$_dvispc -a $testdir/fntdef0.dvi xfntdef0.txt || exit 2
 $DIFF $testdir/fntdef0.txt xfntdef0.txt || exit 1
-./dvispc -x xfntdef0.txt xfntdef0.dvi || exit 2
+$_dvispc -x xfntdef0.txt xfntdef0.dvi || exit 2
 $CMP $testdir/fntdef0.dvi xfntdef0.dvi || exit 1
 
-./dvispc -a $testdir/fntdef1.dvi xfntdef1.txt || exit 2
+$_dvispc -a $testdir/fntdef1.dvi xfntdef1.txt || exit 2
 $DIFF $testdir/fntdef1.txt xfntdef1.txt || exit 1
-./dvispc -x xfntdef1.txt xfntdef1.dvi || exit 2
+$_dvispc -x xfntdef1.txt xfntdef1.dvi || exit 2
 $CMP $testdir/fntdef1.dvi xfntdef1.dvi || exit 1
 
-./dvispc -a $testdir/fntdef2.dvi xfntdef2.txt || exit 2
+$_dvispc -a $testdir/fntdef2.dvi xfntdef2.txt || exit 2
 $DIFF $testdir/fntdef2.txt xfntdef2.txt || exit 1
-./dvispc -x xfntdef2.txt xfntdef2.dvi || exit 2
+$_dvispc -x xfntdef2.txt xfntdef2.dvi || exit 2
 $CMP $testdir/fntdef2.dvi xfntdef2.dvi || exit 1
 
-./dvispc -a $testdir/fntdef3.dvi xfntdef3.txt || exit 2
+$_dvispc -a $testdir/fntdef3.dvi xfntdef3.txt || exit 2
 $DIFF $testdir/fntdef3.txt xfntdef3.txt || exit 1
-./dvispc -x xfntdef3.txt xfntdef3.dvi || exit 2
+$_dvispc -x xfntdef3.txt xfntdef3.dvi || exit 2
 $CMP $testdir/fntdef3.dvi xfntdef3.dvi || exit 1
 
-./dvispc -a -t $testdir/fntdef0.dvi xfntdef0-dtl.txt || exit 2
+$_dvispc -a -t $testdir/fntdef0.dvi xfntdef0-dtl.txt || exit 2
 $DIFF $testdir/fntdef0-dtl.txt xfntdef0-dtl.txt || exit 1
-./dvispc -x xfntdef0-dtl.txt xfntdef0-dtl.dvi || exit 2
+$_dvispc -x xfntdef0-dtl.txt xfntdef0-dtl.dvi || exit 2
 $CMP $testdir/fntdef0.dvi xfntdef0-dtl.dvi || exit 1
 
-./dvispc -a -t $testdir/fntdef3.dvi xfntdef3-dtl.txt || exit 2
+$_dvispc -a -t $testdir/fntdef3.dvi xfntdef3-dtl.txt || exit 2
 $DIFF $testdir/fntdef3-dtl.txt xfntdef3-dtl.txt || exit 1
-./dvispc -x xfntdef3-dtl.txt xfntdef3-dtl.dvi || exit 2
+$_dvispc -x xfntdef3-dtl.txt xfntdef3-dtl.dvi || exit 2
 $CMP $testdir/fntdef3.dvi xfntdef3-dtl.dvi || exit 1
 
 

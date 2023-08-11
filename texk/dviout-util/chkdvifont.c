@@ -41,18 +41,15 @@
  *
  */
 
-#ifdef __GNUC__
-/* Validate in case of UNIX */
-#define UNIX 1
-#define GCC 1
-#else
-/* Win32 MSVC is assumed */
-#define WIN32 1
+#ifdef WIN32
 #define MSVC 1
+#else
+#define UNIX 1
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #ifndef UNIX
 #include <dos.h>
 #ifdef MSVC
@@ -62,10 +59,10 @@
 #endif
 #include <io.h>
 #endif
-#include <string.h>
 
-#ifdef GCC
+#ifdef __GNUC__
 #include <ctype.h>
+#define GCC 1
 #endif
 
 #include <config.h>

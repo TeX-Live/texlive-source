@@ -3,6 +3,10 @@
 # Copyright 2018-2021 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_chkdvifont=$BinDir/chkdvifont$ExeExt
+
 testdir=$srcdir/tests
 
 DIFF="diff"
@@ -11,24 +15,24 @@ CMP="cmp"
 # but the output might be written in CRLF on some platform.
 # if 'diff --strip-trailing-cr' is available, exploit it.
 # (useful for tests on win32 binaries run on MSYS shell)
-$DIFF --strip-trailing-cr README README \
+$DIFF --strip-trailing-cr $0 $0 \
   && DIFF="diff --strip-trailing-cr" || echo
 
 
 ## DVI mode
 
 cp $testdir/oldindep.dvi . && \
-  ./chkdvifont -c ./oldindep.dvi > xoldindep.cfn && \
+  $_chkdvifont -c ./oldindep.dvi > xoldindep.cfn && \
   $DIFF $testdir/oldindep.cfn xoldindep.cfn && echo || exit 1
 
 
 ## TFM/JFM mode
 
-./chkdvifont -c $testdir/jis.tfm > xjis.cfn && \
+$_chkdvifont -c $testdir/jis.tfm > xjis.cfn && \
   $DIFF $testdir/jis.cfn xjis.cfn && echo || exit 2
 
 # eufm10.tfm is "AMSTeX 2.0 or newer", exit code should be 4
-./chkdvifont -c $testdir/eufm10.tfm > xeufm10.cfn
+$_chkdvifont -c $testdir/eufm10.tfm > xeufm10.cfn
   if [ $? -ne 4 ]; then exit 3; fi
   sed 's!2.0/2.1!2.0 or newer!' xeufm10.cfn > xeufm10.ed.cfn
   $DIFF $testdir/eufm10.cfn xeufm10.ed.cfn && echo || exit 3
@@ -36,27 +40,27 @@ cp $testdir/oldindep.dvi . && \
 
 ## FONT mode
 
-./chkdvifont -c $testdir/cmr10.pk > xcmr10.cfn && \
+$_chkdvifont -c $testdir/cmr10.pk > xcmr10.cfn && \
   $DIFF $testdir/cmr10.cfn xcmr10.cfn && echo || exit 4
 
-echo M | ./chkdvifont && echo || exit 0
+echo M | $_chkdvifont && echo || exit 0
 
 # the following tests will not pass for old version written by SHIMA.
 # that version can be distinguished from the new version by
 # exit code 250 for usage with stdin M. (the above line did it!)
 
 # check VF format
-./chkdvifont -c $testdir/upjisr-h.vf > xupjisr-h.cfn && \
+$_chkdvifont -c $testdir/upjisr-h.vf > xupjisr-h.cfn && \
   $DIFF $testdir/upjisr-h.cfn xupjisr-h.cfn && echo || exit 5
 
 # detect new JFM format
-./chkdvifont -c $testdir/uparse.tfm > xuparse.cfn && \
+$_chkdvifont -c $testdir/uparse.tfm > xuparse.cfn && \
   $DIFF $testdir/uparse.cfn xuparse.cfn && echo || exit 6
-./chkdvifont -c $testdir/skipjfmp.tfm > xskipjfmp.cfn && \
+$_chkdvifont -c $testdir/skipjfmp.tfm > xskipjfmp.cfn && \
   $DIFF $testdir/skipjfmp.cfn xskipjfmp.cfn && echo || exit 7
-./chkdvifont -c $testdir/upphirakakuw3-h.tfm > xupp3-h.cfn && \
+$_chkdvifont -c $testdir/upphirakakuw3-h.tfm > xupp3-h.cfn && \
   $DIFF $testdir/upphirakakuw3-h.cfn xupp3-h.cfn && echo || exit 8
-./chkdvifont -c $testdir/upphirakakuw6-h.tfm > xupp6-h.cfn && \
+$_chkdvifont -c $testdir/upphirakakuw6-h.tfm > xupp6-h.cfn && \
   $DIFF $testdir/upphirakakuw6-h.cfn xupp6-h.cfn && echo || exit 9
 
 
