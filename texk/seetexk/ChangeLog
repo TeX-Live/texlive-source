@@ -1,3 +1,10 @@
+2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvibook.c, dviconcat.c:
+	Better handling of STDIN/STDOUT on Windows.
+	* seetexk.test:
+	Make easier to test on Windows.
+
 2023-07-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvibook.c, dviconcat.c, dviselect.c, dvitodvi.c:

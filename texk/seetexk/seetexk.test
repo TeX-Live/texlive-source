@@ -4,148 +4,197 @@
 # Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dviselect=$BinDir/dviselect$ExeExt
+_dvibook=$BinDir/dvibook$ExeExt
+_dviconcat=$BinDir/dviconcat$ExeExt
+_dvitodvi=$BinDir/dvitodvi$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
+# check whether the binaries are Windows exe or not
+run_stdio_test=1
+if [ $ExeExt = ".exe" ]; then
+  echo "*** We assume EXE on Windows."
+  run_stdio_test=0
+fi
+
+# for check version
+echo "*** Start seetex tests with::"
+$_dviselect
+if [ $run_stdio_test -gt 0 ]; then
+$_dvibook
+$_dviconcat
+fi
+$_dvitodvi
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+
+
 rm -rf play*
-./dviselect =25 $srcdir/tests/play.dvi playsel.dvi \
+$_dviselect =25 $srcdir/tests/play.dvi playsel.dvi \
 	2>playsel.2 \
 	&& exit 1
 	test -r playsel.dvi \
-	&& exit 1
-	diff playsel.2 $srcdir/tests/playnot.2 \
-	|| exit 1
+	&& exit 2
+	$DIFF playsel.2 $srcdir/tests/playnot.2 \
+	|| exit 3
 
 rm -rf play*
-./dviselect 15:25 $srcdir/tests/play.dvi playsel.dvi \
+$_dviselect 15:25 $srcdir/tests/play.dvi playsel.dvi \
 	2>playsel.2 \
-	&& diff playsel.2 $srcdir/tests/playsel.2 \
-	|| exit 1
+	&& $DIFF playsel.2 $srcdir/tests/playsel.2 \
+	|| exit 4
 
 rm -rf play*
-./dviselect =5:15 $srcdir/tests/play.dvi playsel.dvi \
+$_dviselect =5:15 $srcdir/tests/play.dvi playsel.dvi \
 	2>playsel.2 \
-	&& diff playsel.2 $srcdir/tests/playsel.2 \
-	|| exit 1
+	&& $DIFF playsel.2 $srcdir/tests/playsel.2 \
+	|| exit 5
 
 echo dviselect tests OK
 
 rm -rf play*
-cat $srcdir/tests/play.dvi | ./dviselect =25 >playsel.dvi \
+cat $srcdir/tests/play.dvi | $_dviselect =25 >playsel.dvi \
 	2>playsel.2 \
-	&& exit 1
+	&& exit 6
 	touch playnot.dvi \
-	&& diff playsel.dvi playnot.dvi \
-	&& diff playsel.2 $srcdir/tests/playnot.2 \
-	|| exit 1
+	&& $DIFF playsel.dvi playnot.dvi \
+	&& $DIFF playsel.2 $srcdir/tests/playnot.2 \
+	|| exit 7
 
 rm -rf play*
-cat $srcdir/tests/play.dvi | ./dviselect =5:15 >playsel.dvi \
+cat $srcdir/tests/play.dvi | $_dviselect =5:15 >playsel.dvi \
 	2>playsel.2 \
-	&& diff playsel.2 $srcdir/tests/playsel.2 \
-	|| exit 1
+	&& $DIFF playsel.2 $srcdir/tests/playsel.2 \
+	|| exit 8
 
 rm -rf play*
-./dviselect =25 <$srcdir/tests/play.dvi >playsel.dvi \
+$_dviselect =25 <$srcdir/tests/play.dvi >playsel.dvi \
 	2>playsel.2 \
-	&& exit 1
+	&& exit 9
 	touch playnot.dvi \
-	&& diff playsel.dvi playnot.dvi \
-	&& diff playsel.2 $srcdir/tests/playnot.2 \
-	|| exit 1
+	&& $DIFF playsel.dvi playnot.dvi \
+	&& $DIFF playsel.2 $srcdir/tests/playnot.2 \
+	|| exit 10
 
 rm -rf play*
-./dviselect =5:15 <$srcdir/tests/play.dvi >playsel.dvi \
+$_dviselect =5:15 <$srcdir/tests/play.dvi >playsel.dvi \
 	2>playsel.2 \
-	&& diff playsel.2 $srcdir/tests/playsel.2 \
-	|| exit 1
+	&& $DIFF playsel.2 $srcdir/tests/playsel.2 \
+	|| exit 11
 
 echo dviselect with stdin and stdout tests OK
 
-./dviselect =5:15 $srcdir/tests/playtate.dvi playselt.dvi \
+$_dviselect =5:15 $srcdir/tests/playtate.dvi playselt.dvi \
 	2>playsel.3 \
-	&& diff playsel.3 $srcdir/tests/playsel.3 \
-	|| exit 1
+	&& $DIFF playsel.3 $srcdir/tests/playsel.3 \
+	|| exit 12
 
 echo dviselect pTeX tests OK
 
-./dvibook -s4 playsel.dvi playbook.dvi \
+$_dvibook -s4 playsel.dvi playbook.dvi \
 	2>playbook.2 \
-	&& diff playbook.2 $srcdir/tests/playbook.2 \
-	|| exit 1
+	&& $DIFF playbook.2 $srcdir/tests/playbook.2 \
+	|| exit 13
 
 echo dvibook tests OK
 
-rm -f playbook.2
-cat playsel.dvi | ./dvibook -s4 >playbook.dvi \
-	2>playbook.2 \
-	&& diff playbook.2 $srcdir/tests/playbook.2 \
-	|| exit 1
+if [ $run_stdio_test -gt 0 ]; then
 
 rm -f playbook.2
-./dvibook -s4 <playsel.dvi >playbook.dvi \
+cat playsel.dvi | $_dvibook -s4 >playbook.dvi \
 	2>playbook.2 \
-	&& diff playbook.2 $srcdir/tests/playbook.2 \
-	|| exit 1
+	&& $DIFF playbook.2 $srcdir/tests/playbook.2 \
+	|| exit 14
+
+rm -f playbook.2
+$_dvibook -s4 <playsel.dvi >playbook.dvi \
+	2>playbook.2 \
+	&& $DIFF playbook.2 $srcdir/tests/playbook.2 \
+	|| exit 15
 
 echo dvibook with stdin and stdout tests OK
 
-./dvibook -s4 playselt.dvi playbook.dvi \
-	2>playbook.3 \
-	&& diff playbook.3 $srcdir/tests/playbook.3 \
-	|| exit 1
+else
 
-./dvibook -r -s4 playselt.dvi playbook.dvi \
+echo dvibook with stdin and stdout tests **SKIPPED**
+
+fi
+
+$_dvibook -s4 playselt.dvi playbook.dvi \
+	2>playbook.3 \
+	&& $DIFF playbook.3 $srcdir/tests/playbook.3 \
+	|| exit 16
+
+$_dvibook -r -s4 playselt.dvi playbook.dvi \
 	2>playbook.4 \
-	&& diff playbook.4 $srcdir/tests/playbook.4 \
-	|| exit 1
+	&& $DIFF playbook.4 $srcdir/tests/playbook.4 \
+	|| exit 17
 
 echo dvibook pTeX tests OK
 
-./dviselect =5:7 $srcdir/tests/play.dvi playsel1.dvi \
+$_dviselect =5:7 $srcdir/tests/play.dvi playsel1.dvi \
 	2>playconc.2 \
-	&& ./dviselect 23:25 $srcdir/tests/play.dvi playsel2.dvi \
+	&& $_dviselect 23:25 $srcdir/tests/play.dvi playsel2.dvi \
 	2>>playconc.2 \
-	&& ./dviconcat -o playconc.dvi playsel2.dvi playsel1.dvi \
+	&& $_dviconcat -o playconc.dvi playsel2.dvi playsel1.dvi \
 	2>>playconc.2 \
-	&& diff playconc.2 $srcdir/tests/playconc.2 \
-	|| exit 1
+	&& $DIFF playconc.2 $srcdir/tests/playconc.2 \
+	|| exit 18
 
 echo dviconcat tests OK
 
-./dviselect =5:7 $srcdir/tests/playtate.dvi playsel1.dvi \
+$_dviselect =5:7 $srcdir/tests/playtate.dvi playsel1.dvi \
 	2>playconc.3 \
-	&& ./dviselect 23:25 $srcdir/tests/playtate.dvi playsel2.dvi \
+	&& $_dviselect 23:25 $srcdir/tests/playtate.dvi playsel2.dvi \
 	2>>playconc.3 \
-	&& ./dviconcat -o playconc.dvi playsel2.dvi playsel1.dvi \
+	&& $_dviconcat -o playconc.dvi playsel2.dvi playsel1.dvi \
 	2>>playconc.3 \
-	&& diff playconc.3 $srcdir/tests/playconc.3 \
-	|| exit 1
+	&& $DIFF playconc.3 $srcdir/tests/playconc.3 \
+	|| exit 19
 
 echo dviconcat pTeX tests OK
 
-./dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' playsel.dvi playdvi.dvi \
+$_dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' playsel.dvi playdvi.dvi \
 	2>playdvi.2 \
-	&& diff playdvi.2 $srcdir/tests/playdvi.2 \
-	|| exit 1
+	&& $DIFF playdvi.2 $srcdir/tests/playdvi.2 \
+	|| exit 20
 
 echo dvitodvi tests OK
 
-rm -f playdvi.2
-cat playsel.dvi | ./dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' -o playdvi.dvi \
-	2>playdvi.2 \
-	&& diff playdvi.2 $srcdir/tests/playdvi.2 \
-	|| exit 1
+if [ $run_stdio_test -gt 0 ]; then
 
 rm -f playdvi.2
-./dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' -o playdvi.dvi <playsel.dvi \
+cat playsel.dvi | $_dvitodvi -o playdvi.dvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' \
 	2>playdvi.2 \
-	&& diff playdvi.2 $srcdir/tests/playdvi.2 \
-	|| exit 1
+	&& $DIFF playdvi.2 $srcdir/tests/playdvi.2 \
+	|| exit 21
+
+rm -f playdvi.2
+$_dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' >playdvi.dvi <playsel.dvi \
+	2>playdvi.2 \
+	&& $DIFF playdvi.2 $srcdir/tests/playdvi.2 \
+	|| exit 22
 
 echo dvitodvi reading stdin tests OK
 
-./dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' playselt.dvi playdvi.dvi \
+else
+
+echo dvitodvi reading stdin tests **SKIPPED**
+
+fi
+
+$_dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' playselt.dvi playdvi.dvi \
 	2>playdvi.3 \
-	&& diff playdvi.3 $srcdir/tests/playdvi.3 \
-	|| exit 1
+	&& $DIFF playdvi.3 $srcdir/tests/playdvi.3 \
+	|| exit 23
 
 echo dvitodvi pTeX tests OK
-
