@@ -4,6 +4,13 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 tests=omegaware/tests
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -11,34 +18,35 @@ OFMFONTS=".;./$tests"
 export TEXMFCNF OFMFONTS
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 echo 'opl2ofm -verbose vrepeat0 yrepeat0'
-./wopl2ofm -verbose $srcdir/$tests/vrepeat0 $tests/yrepeat0 && \
-  cmp $srcdir/$tests/vrepeat0.ofm $tests/yrepeat0.ofm && echo || exit 1
+$_wopl2ofm -verbose $srcdir/$tests/vrepeat0 $tests/yrepeat0 && \
+  cmp $srcdir/$tests/vrepeat0.ofm $tests/yrepeat0.ofm && echo || rc=1
 
 echo 'ofm2opl -verbose yrepeat0 yrepeat0'
-./wofm2opl -verbose $tests/yrepeat0 $tests/yrepeat0 && \
-  diff -u $srcdir/$tests/vrepeat0.opl $tests/yrepeat0.opl && echo || exit 1
+$_wofm2opl -verbose $tests/yrepeat0 $tests/yrepeat0 && \
+  diff -u $srcdir/$tests/vrepeat0.opl $tests/yrepeat0.opl && echo || rc=2
 
 echo 'ovp2ovf -verbose vrepeat1 yrepeat1'
-./wovp2ovf -verbose $srcdir/$tests/vrepeat1 $tests/yrepeat1 && \
+$_wovp2ovf -verbose $srcdir/$tests/vrepeat1 $tests/yrepeat1 && \
   cmp $srcdir/$tests/vrepeat1.ovf $tests/yrepeat1.ovf && \
-  cmp $srcdir/$tests/vrepeat1.ofm $tests/yrepeat1.ofm && echo || exit 1
+  cmp $srcdir/$tests/vrepeat1.ofm $tests/yrepeat1.ofm && echo || rc=3
 
 echo 'ovf2ovp -verbose yrepeat1 yrepeat1 yrepeat1'
-./wovf2ovp -verbose $tests/yrepeat1 yrepeat1 $tests/yrepeat1
-  diff -u $srcdir/$tests/vrepeat1.ovp $tests/yrepeat1.ovp && echo || exit 1
+$_wovf2ovp -verbose $tests/yrepeat1 yrepeat1 $tests/yrepeat1
+  diff -u $srcdir/$tests/vrepeat1.ovp $tests/yrepeat1.ovp && echo || rc=4
 
 echo 'ofm2opl -verbose yrepeat1 yrepeat1'
-./wofm2opl -verbose $tests/yrepeat1 $tests/yrepeat1 && \
-  diff -u $srcdir/$tests/vrepeat1.opl $tests/yrepeat1.opl && echo || exit 1
+$_wofm2opl -verbose $tests/yrepeat1 $tests/yrepeat1 && \
+  diff -u $srcdir/$tests/vrepeat1.opl $tests/yrepeat1.opl && echo || rc=5
 
 echo 'opl2ofm -verbose vrepeat1 yrepeat2'
-./wopl2ofm -verbose $srcdir/$tests/vrepeat1 $tests/yrepeat2 && \
-  cmp $srcdir/$tests/vrepeat1.ofm $tests/yrepeat2.ofm && echo || exit 1
+$_wopl2ofm -verbose $srcdir/$tests/vrepeat1 $tests/yrepeat2 && \
+  cmp $srcdir/$tests/vrepeat1.ofm $tests/yrepeat2.ofm && echo || rc=6
 
 echo 'ofm2opl -verbose yrepeat2 yrepeat2'
-./wofm2opl -verbose $tests/yrepeat2 $tests/yrepeat2 && \
-  diff -u $srcdir/$tests/vrepeat1.opl $tests/yrepeat2.opl && echo || exit 1
+$_wofm2opl -verbose $tests/yrepeat2 $tests/yrepeat2 && \
+  diff -u $srcdir/$tests/vrepeat1.opl $tests/yrepeat2.opl && echo || rc=7
 
-exit 0
+exit $rc

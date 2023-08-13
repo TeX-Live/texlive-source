@@ -4,62 +4,72 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$BinDir/pltotf$ExeExt
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../kpathsea
 OFMFONTS=".;./$tests"
 export TEXMFCNF OFMFONTS
 
 echo && echo "*** pltotf arabicr yarabicr"
-./pltotf $srcdir/$tests/arabicr $tests/yarabicr || exit 1
+$_pltotf $srcdir/$tests/arabicr $tests/yarabicr || rc=1
 
 echo && echo "*** opl2ofm arabicr.pl zyarabicr"
-./wopl2ofm $srcdir/$tests/arabicr.pl $tests/zyarabicr || exit 1
+$_wopl2ofm $srcdir/$tests/arabicr.pl $tests/zyarabicr || rc=2
 
 echo && echo "*** cmp yarabicr.tfm zyarabicr.ofm"
-cmp $tests/yarabicr.tfm $tests/zyarabicr.ofm || exit 1 
+cmp $tests/yarabicr.tfm $tests/zyarabicr.ofm || rc=3
 
 echo && echo "*** ofm2opl yarabicr.tfm xyarabicr"
-./wofm2opl $tests/yarabicr.tfm $tests/xyarabicr || exit 1
+$_wofm2opl $tests/yarabicr.tfm $tests/xyarabicr || rc=4
 
 echo && echo "*** ofm2opl zyarabicr zyarabicr"
-./wofm2opl $tests/zyarabicr $tests/zyarabicr || exit 1
+$_wofm2opl $tests/zyarabicr $tests/zyarabicr || rc=5
 
 echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
-diff $tests/xyarabicr.opl $tests/zyarabicr.opl || exit 1
+diff $tests/xyarabicr.opl $tests/zyarabicr.opl || rc=6
 
 echo && echo "*** ovp2ovf arabic yarabic yarabic"
-./wovp2ovf $srcdir/$tests/arabic $tests/yarabic $tests/yarabic || exit 1
+$_wovp2ovf $srcdir/$tests/arabic $tests/yarabic $tests/yarabic || rc=7
 
 echo && echo "*** ofm2opl yarabic xyarabic"
-./wofm2opl $tests/yarabic $tests/xyarabic || exit 1
+$_wofm2opl $tests/yarabic $tests/xyarabic || rc=8
 
 echo && echo "*** opl2ofm xyarabic xyarabic"
-./wopl2ofm $tests/xyarabic $tests/xyarabic || exit 1
+$_wopl2ofm $tests/xyarabic $tests/xyarabic || rc=9
 
 echo && echo "*** ofm2opl xyarabic yyarabic"
-./wofm2opl $tests/xyarabic $tests/yyarabic || exit 1
+$_wofm2opl $tests/xyarabic $tests/yyarabic || rc=10
 
 echo && echo "*** diff xyarabicr.opl yyarabicr.opl"
-diff $tests/xyarabic.opl $tests/yyarabic.opl || exit 1
+diff $tests/xyarabic.opl $tests/yyarabic.opl || rc=11
 
 echo && echo "*** ovf2ovp yarabic yarabic yyarabic"
-./wovf2ovp $tests/yarabic $tests/yarabic $tests/yyarabic || exit 1
+$_wovf2ovp $tests/yarabic $tests/yarabic $tests/yyarabic || rc=12
 
 echo && echo "*** ovp2ovf yyarabic yyarabic yyarabic"
-./wovp2ovf $tests/yyarabic $tests/yyarabic $tests/yyarabic || exit 1
+$_wovp2ovf $tests/yyarabic $tests/yyarabic $tests/yyarabic || rc=13
 
 echo && echo "*** ofm2opl yyarabic xyarabic"
-./wofm2opl $tests/yyarabic $tests/zyarabic || exit 1
+$_wofm2opl $tests/yyarabic $tests/zyarabic || rc=14
 
 echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
-diff $tests/xyarabic.opl $tests/zyarabic.opl || exit 1
+diff $tests/xyarabic.opl $tests/zyarabic.opl || rc=15
 
 echo && echo "*** ovf2ovp yyarabic yyarabic zyarabic"
-./wovf2ovp $tests/yyarabic $tests/yyarabic $tests/zyarabic || exit 1
+$_wovf2ovp $tests/yyarabic $tests/yyarabic $tests/zyarabic || rc=16
 
 echo && echo "*** diff yyarabicr.ovp yyarabicr.ovp"
-diff $tests/yyarabic.ovp $tests/zyarabic.ovp || exit 1
+diff $tests/yyarabic.ovp $tests/zyarabic.ovp || rc=17
 
+exit $rc

@@ -4,13 +4,20 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
 
-TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF 
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 OFMFONTS=".;./$tests"; export OFMFONTS
 
 ligfiles='ligall ligbch ligblb ligbdy'
@@ -18,58 +25,59 @@ ligfiles='ligall ligbch ligblb ligbdy'
 for f in $ligfiles; do
 
 echo && echo "*** opl2ofm $f x$f"
-./wopl2ofm $srcdir/$tests/$f $tests/x$f || exit 1
+$_wopl2ofm $srcdir/$tests/$f $tests/x$f || rc=1
 
 echo && echo "*** ofm2opl x$f x$f"
-./wofm2opl $tests/x$f $tests/x$f || exit 1
+$_wofm2opl $tests/x$f $tests/x$f || rc=2
 
 echo && echo "*** diff $f.opl x$f.opl"
-diff $srcdir/$tests/$f.opl $tests/x$f.opl || exit 1
+diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=3
 
 done
 
 echo && echo "*** ovp2ovf ligblv xligblv xligblv"
-./wovp2ovf $srcdir/$tests/ligblv $tests/xligblv $tests/xligblv || exit 1
+$_wovp2ovf $srcdir/$tests/ligblv $tests/xligblv $tests/xligblv || rc=4
 
 echo && echo "*** ofm2opl xligblv xligblv"
-./wofm2opl $tests/xligblv $tests/xligblv || exit 1
+$_wofm2opl $tests/xligblv $tests/xligblv || rc=5
 
 echo && echo "*** diff ligblv.opl xligblv.opl"
-diff $srcdir/$tests/ligblv.opl $tests/xligblv.opl || exit 1
+diff $srcdir/$tests/ligblv.opl $tests/xligblv.opl || rc=6
 
 echo && echo "*** ofm2opl ligloop1 xligloopx"
-./wofm2opl $srcdir/$tests/ligloop1 $tests/xligloopx || exit 1
+$_wofm2opl $srcdir/$tests/ligloop1 $tests/xligloopx || rc=7
 
 echo && echo "*** diff ligloop1.opl xligloopx.opl"
-diff $srcdir/$tests/ligloop1.opl $tests/xligloopx.opl || exit 1
+diff $srcdir/$tests/ligloop1.opl $tests/xligloopx.opl || rc=8
 
 echo && echo "*** sed xligloopx.opl >xligloop1.opl"
 sed -e '/INFINITE/d;/CHANGED/d' $tests/xligloopx.opl >$tests/xligloop1.opl
 
 echo && echo "*** opl2ofm xligloop1 xligloop1"
-./wopl2ofm $tests/xligloop1 $tests/xligloop1 || exit 1
+$_wopl2ofm $tests/xligloop1 $tests/xligloop1 || rc=9
 
 echo && echo "*** ofm2opl xligloop1 xligloop2"
-./wofm2opl $tests/xligloop1 $tests/xligloop2 || exit 1
+$_wofm2opl $tests/xligloop1 $tests/xligloop2 || rc=10
 
 echo && echo "*** diff ligloop2.opl xligloop2.opl"
-diff $srcdir/$tests/ligloop2.opl $tests/xligloop2.opl || exit 1
+diff $srcdir/$tests/ligloop2.opl $tests/xligloop2.opl || rc=11
 
 echo && echo "*** opl2ofm liguse xliguse1"
-./wopl2ofm $srcdir/$tests/liguse $tests/xliguse1 || exit 1
+$_wopl2ofm $srcdir/$tests/liguse $tests/xliguse1 || rc=12
 
 echo && echo "*** ofm2opl xliguse1 xliguse1"
-./wofm2opl $tests/xliguse1 $tests/xliguse1 || exit 1
+$_wofm2opl $tests/xliguse1 $tests/xliguse1 || rc=13
 
 echo && echo "*** diff liguse1.opl xliguse1.opl"
-diff $srcdir/$tests/liguse1.opl $tests/xliguse1.opl|| exit 1
+diff $srcdir/$tests/liguse1.opl $tests/xliguse1.opl || rc=14
 
 echo && echo "*** opl2ofm xliguse1 xliguse2"
-./wopl2ofm $tests/xliguse1 $tests/xliguse2 || exit 1
+$_wopl2ofm $tests/xliguse1 $tests/xliguse2 || rc=15
 
 echo && echo "*** ofm2opl xliguse2 xliguse2"
-./wofm2opl $tests/xliguse2 $tests/xliguse2 || exit 1
+./wofm2opl $tests/xliguse2 $tests/xliguse2 || rc=16
 
 echo && echo "*** diff liguse2.opl xliguse2.opl"
-diff $srcdir/$tests/liguse2.opl $tests/xliguse2.opl|| exit 1
+diff $srcdir/$tests/liguse2.opl $tests/xliguse2.opl || rc=17
 
+exit $rc

@@ -4,11 +4,15 @@
 # Copyright 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_otangle=$BinDir/otangle$ExeExt
+
 rm -rf ocftest.*
 cp $srcdir/cftests/cftest.web ./ocftest.web
 
-TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=.:$srcdir/cftests \
-  ./otangle ocftest cftest || exit 1
+TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=".;$srcdir/cftests" \
+  $_otangle ocftest cftest || exit 1
 
-diff ocftest.p $srcdir/cftests/ocftest.p || exit 1
+diff ocftest.p $srcdir/cftests/ocftest.p || exit 2
 

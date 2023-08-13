@@ -4,6 +4,15 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$BinDir/pltotf$ExeExt
+_odvitype=$BinDir/odvitype$ExeExt
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
@@ -12,16 +21,16 @@ TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
 echo && echo "pltotf $tests/shorten.opl $tests/shortend.tfm" && \
-  ./pltotf $srcdir/$tests/shorten.opl $tests/shortend.tfm || exit
+  $_pltotf $srcdir/$tests/shorten.opl $tests/shortend.tfm || exit
 
 echo && echo "wofm2opl $tests/shorten.tfm $tests/shortend.pl" && \
-  ./wofm2opl $tests/shortend.tfm $tests/shortend.pl || exit
+  $_wofm2opl $tests/shortend.tfm $tests/shortend.pl || exit
 
 echo && echo "wopl2ofm $tests/shorten $tests/shortend" && \
-  ./wopl2ofm $srcdir/$tests/shorten $tests/shortend || exit
+  $_wopl2ofm $srcdir/$tests/shorten $tests/shortend || exit
 
 echo && echo "wofm2opl $tests/shorten $tests/shortend" && \
-  ./wofm2opl $tests/shortend $tests/shortend || exit
+  $_wofm2opl $tests/shortend $tests/shortend || exit
 
 diff $tests/shortend.pl $tests/shortend.opl || exit
 

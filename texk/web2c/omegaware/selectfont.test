@@ -4,31 +4,48 @@
 # Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../kpathsea
 OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample0-h || exit 1
+$_wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample0-h || rc=1
 
-./wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample1-h || exit 1
+$_wopl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample1-h || rc=2
 
-./wofm2opl -verbose sample1-h $tests/sample1-h || exit 1
+$_wofm2opl -verbose sample1-h $tests/sample1-h || rc=3
 
-diff $srcdir/$tests/sample0-h.opl $tests/sample1-h.opl || exit 1
+diff $srcdir/$tests/sample0-h.opl $tests/sample1-h.opl || rc=4
 
-./wovp2ovf -verbose $srcdir/$tests/sample $tests/sample $tests/sample || exit 1
+$_wovp2ovf -verbose $srcdir/$tests/sample $tests/sample $tests/sample || rc=5
 
-./wovf2ovp -verbose $tests/sample sample $tests/xsample.out  || exit 1
+$_wovf2ovp -verbose $tests/sample sample $tests/xsample.out  || rc=6
 
-diff $srcdir/$tests/sample.out $tests/xsample.out || exit 1
+diff $srcdir/$tests/sample.out $tests/xsample.out || rc=7
 
-./wovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || exit 1
+$_wovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || rc=8
 
-./wovf2ovp -verbose $tests/sample2 sample2 >$tests/xsample2.out || exit 1
+$_wovf2ovp -verbose $tests/sample2 sample2 >$tests/xsample2.out || rc=9
 
-diff $srcdir/$tests/sample.out $tests/xsample2.out || exit 1
+$DIFF $srcdir/$tests/sample.out $tests/xsample2.out || rc=10
 
+exit $rc

@@ -4,27 +4,36 @@
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=./$tests \
-  ./wovp2ovf -verbose $srcdir/$tests/specialhex $tests/specialhex $tests/specialhex || exit 1
+  $_wovp2ovf -verbose $srcdir/$tests/specialhex $tests/specialhex $tests/specialhex || rc=1
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./wofm2opl -verbose $tests/specialhex $tests/specialhex || exit 1
+  $_wofm2opl -verbose $tests/specialhex $tests/specialhex || rc=2
 
-./wopl2ofm -verbose $tests/specialhex $tests/xspecialhex || exit 1
-
-TEXMFCNF=$srcdir/../kpathsea \
-  ./wofm2opl -verbose $tests/xspecialhex $tests/xspecialhex || exit 1
-
-diff $tests/specialhex.opl $tests/xspecialhex.opl || exit 1
+$_wopl2ofm -verbose $tests/specialhex $tests/xspecialhex || rc=3
 
 TEXMFCNF=$srcdir/../kpathsea \
-  OFMFONTS=.:./$tests \
-  ./wovf2ovp -verbose $tests/specialhex $tests/specialhex $tests/xspecialhex || exit 1
+  $_wofm2opl -verbose $tests/xspecialhex $tests/xspecialhex || rc=4
 
-diff $srcdir/$tests/specialhex.ovp $tests/xspecialhex.ovp || exit 1
+diff $tests/specialhex.opl $tests/xspecialhex.opl || rc=5
 
+TEXMFCNF=$srcdir/../kpathsea \
+  OFMFONTS=".;./$tests" \
+  $_wovf2ovp -verbose $tests/specialhex $tests/specialhex $tests/xspecialhex || rc=6
+
+diff $srcdir/$tests/specialhex.ovp $tests/xspecialhex.ovp || rc=7
+
+exit $rc

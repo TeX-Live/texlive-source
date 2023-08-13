@@ -4,6 +4,18 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_odvitype=$BinDir/odvitype$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=omegaware/tests
@@ -12,7 +24,7 @@ test -d $tests || mkdir -p $tests
 
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
-  ./odvitype $srcdir/$tests/ofontd0 | sed '1s/ (.*)$//' >$tests/xofontd0.typ || exit 1
+  $_odvitype $srcdir/$tests/ofontd0 | sed '1s/ (.*)$//' >$tests/xofontd0.typ || exit 1
 
-diff $srcdir/$tests/ofontd0.typ $tests/xofontd0.typ || exit 1
+$DIFF $srcdir/$tests/ofontd0.typ $tests/xofontd0.typ || exit 2
 

@@ -4,36 +4,45 @@
 # Copyright 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 grep -v 'CHARWD R' $srcdir/$tests/charwd-r.pl >$tests/charwdr.pl
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./wopl2ofm -verbose $tests/charwdr.pl $tests/charwdr.tfm || exit 1
+  $_wopl2ofm -verbose $tests/charwdr.pl $tests/charwdr.tfm || rc=1
 
 TEXMFCNF=$srcdir/../kpathsea \
-  OFMFONTS=.:$tests \
-  ./wofm2opl -verbose $tests/charwdr.tfm $tests/charwdr.xpl || exit 1
+  OFMFONTS=".;$tests" \
+  $_wofm2opl -verbose $tests/charwdr.tfm $tests/charwdr.xpl || rc=2
 
-diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || exit 1
+diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || rc=3
 
 grep -v 'CHARWD R' $srcdir/$tests/charwd-v.vpl >$tests/charwdv.vpl
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./wovp2ovf -verbose $tests/charwdv.vpl $tests/charwdv.vf $tests/charwdv.tfm || exit 1
+  $_wovp2ovf -verbose $tests/charwdv.vpl $tests/charwdv.vf $tests/charwdv.tfm || rc=4
 
 TEXMFCNF=$srcdir/../kpathsea \
-  OFMFONTS=.:$tests \
-  ./wofm2opl -verbose $tests/charwdr.tfm $tests/charwdr.xpl || exit 1
+  OFMFONTS=".;$tests" \
+  $_wofm2opl -verbose $tests/charwdr.tfm $tests/charwdr.xpl || rc=5
 
-diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || exit 1
+diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || rc=6
 
 TEXMFCNF=$srcdir/../kpathsea \
-  OFMFONTS=.:$tests \
+  OFMFONTS=".;$tests" \
   VFFONTS=$tests \
-  ./wovf2ovp -verbose $tests/charwdv.vf $tests/charwdv.tfm $tests/charwdv.xpl || exit 1
+  $_wovf2ovp -verbose $tests/charwdv.vf $tests/charwdv.tfm $tests/charwdv.xpl || rc=7
 
-diff $srcdir/$tests/charwd-v.vpl $tests/charwdv.xpl || exit 1
+diff $srcdir/$tests/charwd-v.vpl $tests/charwdv.xpl || rc=8
 
+exit $rc

@@ -4,28 +4,42 @@
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_odvicopy=$BinDir/odvicopy$ExeExt
+_odvitype=$BinDir/odvitype$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
+rc=0
 
 echo && echo "*** odvicopy -help"
-./odvicopy -help || exit 1
+$_odvicopy -help || rc=1
 
 echo && echo "*** odvicopy -version"
-./odvicopy -version || exit 1
+$_odvicopy -version || rc=2
 
 # Test page selection
 #
 echo && echo "*** odvicopy --p=*.*.2 --max=1 pagenum.dvi xpagenum.dvi >xpagenum.log"
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
-  ./odvicopy --p=\*.\*.2 --max=1 $srcdir/tests/pagenum.dvi $tests/xpagenum.dvi \
-    >$tests/xpagenum.log || exit 1
+  $_odvicopy --p=\*.\*.2 --max=1 $srcdir/tests/pagenum.dvi $tests/xpagenum.dvi \
+    >$tests/xpagenum.log || rc=3
 
 echo && echo "*** grep '1 page written\.$' xpagenum.log"
-grep '1 page written\.$' $tests/xpagenum.log || exit 1
+grep '1 page written\.$' $tests/xpagenum.log || rc=4
 
 # First a straight copy
 #
@@ -35,14 +49,14 @@ echo && echo "*** odvicopy ofontd0 xofontd1 (without VF/OVF files)"
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   OVFFONTS=. \
-  ./odvicopy $srcdir/$tests/ofontd0 $tests/xofontd1 || exit 1
+  $_odvicopy $srcdir/$tests/ofontd0 $tests/xofontd1 || rc=5
 
 echo && echo "*** odvitype xofontd1 >xofontd1.typ"
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
-  ./odvitype $tests/xofontd1 | sed '1s/ (.*)$//' >$tests/xofontd1.typ || exit 1
+  $_odvitype $tests/xofontd1 | sed '1s/ (.*)$//' >$tests/xofontd1.typ || rc=6
 
-diff $srcdir/$tests/ofontd1.typ $tests/xofontd1.typ || exit 1
+$DIFF $srcdir/$tests/ofontd1.typ $tests/xofontd1.typ || rc=7
 
 # Next with VF/OVF files for ofontv[4-6]
 #
@@ -52,14 +66,14 @@ echo && echo "*** odvicopy ofontd1 xofontd2 (with VF/OVF files for ofontv[4-6])"
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   OVFFONTS=. \
-  ./odvicopy $tests/xofontd1 $tests/xofontd2 || exit 1
+  $_odvicopy $tests/xofontd1 $tests/xofontd2 || rc=8
 
 echo && echo "*** odvitype xofontd2 >xofontd2.typ"
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
-  ./odvitype $tests/xofontd2 | sed '1s/ (.*)$//' >$tests/xofontd2.typ || exit 1
+  $_odvitype $tests/xofontd2 | sed '1s/ (.*)$//' >$tests/xofontd2.typ || rc=9
 
-diff $srcdir/$tests/ofontd2.typ $tests/xofontd2.typ || exit 1
+$DIFF $srcdir/$tests/ofontd2.typ $tests/xofontd2.typ || rc=10
 
 # Finally with VF/OVF files for ofontr[1-3] and ofontv[4-6]
 #
@@ -69,14 +83,14 @@ echo && echo "*** odvicopy ofontd0 xofontd3 (with VF/OVF files for ofontr[1-3] a
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   OVFFONTS=. \
-  ./odvicopy $srcdir/$tests/ofontd0 $tests/xofontd3 || exit 1
+  $_odvicopy $srcdir/$tests/ofontd0 $tests/xofontd3 || rc=11
 
 echo && echo "*** odvitype xofontd3 >xofontd3.typ"
 TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
-  ./odvitype $tests/xofontd3 | sed '1s/ (.*)$//' >$tests/xofontd3.typ || exit 1
+  $_odvitype $tests/xofontd3 | sed '1s/ (.*)$//' >$tests/xofontd3.typ || rc=12
 
-diff $srcdir/$tests/ofontd3.typ $tests/xofontd3.typ || exit 1
+$DIFF $srcdir/$tests/ofontd3.typ $tests/xofontd3.typ || rc=13
 
-exit 0
+exit $rc
 

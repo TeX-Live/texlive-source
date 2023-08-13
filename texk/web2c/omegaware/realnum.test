@@ -4,6 +4,11 @@
 # Copyright 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests
@@ -12,9 +17,9 @@ TEXMFCNF=$srcdir/../kpathsea
 OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./wopl2ofm -verbose $srcdir/$tests/realnum $tests/xrealnum || exit 1
+$_wopl2ofm -verbose $srcdir/$tests/realnum $tests/xrealnum || exit 1
 
-./wofm2opl -verbose xrealnum $tests/xrealnum || exit 1
+$_wofm2opl -verbose xrealnum $tests/xrealnum || exit 2
 
-diff $srcdir/$tests/realnum.out $tests/xrealnum.opl || exit 1
+diff $srcdir/$tests/realnum.out $tests/xrealnum.opl || exit 3
 

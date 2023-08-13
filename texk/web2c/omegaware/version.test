@@ -4,15 +4,21 @@
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_wofm2opl=$BinDir/wofm2opl$ExeExt
+_wopl2ofm=$BinDir/wopl2ofm$ExeExt
+_wovf2ovp=$BinDir/wovf2ovp$ExeExt
+_wovp2ovf=$BinDir/wovp2ovf$ExeExt
+
 echo && echo "*** ofm2opl -version"
-./wofm2opl -version || exit 1
+$_wofm2opl -version || exit 1
 
 echo && echo "*** opl2ofm -version"
-./wopl2ofm -version || exit 1
+$_wopl2ofm -version || exit 2
 
 echo && echo "*** ovf2ovp -version"
-./wovf2ovp -version || exit 1
+$_wovf2ovp -version || exit 3
 
 echo && echo "*** ovp2ovf -version"
-./wovp2ovf -version || exit 1
-
+$_wovp2ovf -version || exit 4
