@@ -4,6 +4,18 @@
 # Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ttfdump=$BinDir/ttfdump$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 TEXMFCNF=$srcdir/../kpathsea
 TTFONTS=$srcdir/tests
 export TEXMFCNF TTFONTS
@@ -18,50 +30,50 @@ rm -rf ttftest.*
 #cp $srcdir/tests/texmfhome.otf .
 
 echo "*** ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf" \
-        && ./ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf \
+        && $_ttfdump -t glyf -g 1 -o ttftest.glyf FonetikaDaniaIwonaeRegular.ttf \
 	&& diff -b $srcdir/tests/ttfdump.glyf ttftest.glyf \
 	&& echo "ttfdump.glyf tests OK" && echo \
 	|| failed="$failed ttfdump.glyf"
 
 echo "*** ttfdump -t GPOS -o ttftest.gpos FonetikaDaniaIwonaeRegular.ttf" \
-        && ./ttfdump -t GPOS -o ttftest.gpos FonetikaDaniaIwonaeRegular.ttf \
+        && $_ttfdump -t GPOS -o ttftest.gpos FonetikaDaniaIwonaeRegular.ttf \
 	&& diff -b $srcdir/tests/ttfdump.gpos ttftest.gpos \
 	&& echo "ttfdump.gpos tests OK" && echo \
 	|| failed="$failed ttfdump.gpos"
 
 echo "*** ttfdump -t GSUB -o ttftest.gsub FonetikaDaniaIwonaeRegular.ttf" \
-        && ./ttfdump -t GSUB -o ttftest.gsub FonetikaDaniaIwonaeRegular.ttf \
+        && $_ttfdump -t GSUB -o ttftest.gsub FonetikaDaniaIwonaeRegular.ttf \
 	&& diff -b $srcdir/tests/ttfdump.gsub ttftest.gsub \
 	&& echo "ttfdump.gsub tests OK" && echo \
 	|| failed="$failed ttfdump.gsub"
 
 echo "*** ttfdump -t head FonetikaDaniaIwonaeRegular.ttf >ttftest.head" \
-        && ./ttfdump -t head FonetikaDaniaIwonaeRegular.ttf >ttftest.head \
-	&& diff -b $srcdir/tests/ttfdump.head ttftest.head \
+        && $_ttfdump -t head FonetikaDaniaIwonaeRegular.ttf >ttftest.head \
+	&& $DIFF -b $srcdir/tests/ttfdump.head ttftest.head \
 	&& echo "ttfdump.head tests OK" && echo \
 	|| failed="$failed ttfdump.head"
 
 echo "*** ttfdump -t OS/2 texmfhome.otf >ttftest.os_2" \
-        && ./ttfdump -t OS/2 texmfhome.otf >ttftest.os_2 \
-	&& diff -b $srcdir/tests/ttfdump.os_2 ttftest.os_2 \
+        && $_ttfdump -t OS/2 texmfhome.otf >ttftest.os_2 \
+	&& $DIFF -b $srcdir/tests/ttfdump.os_2 ttftest.os_2 \
 	&& echo "ttfdump.os_2 tests OK" && echo \
 	|| failed="$failed ttfdump.os_2"
 
 echo "*** ttfdump -t OS/2 bad.otf >ttftest.bad" \
-        && ./ttfdump -t OS/2 bad.otf >ttftest.bad \
-	&& diff -b $srcdir/tests/ttfdump.bad ttftest.bad \
+        && $_ttfdump -t OS/2 bad.otf >ttftest.bad \
+	&& $DIFF -b $srcdir/tests/ttfdump.bad ttftest.bad \
 	&& echo "ttfdump.bad tests OK" && echo \
 	|| failed="$failed ttfdump.bad"
 
 echo "*** ttfdump -t gasp -c 0 test.ttc >ttftest.gasp" \
-	&& ./ttfdump -t gasp -c 0 test.ttc >ttftest.gasp \
-	&& diff -b $srcdir/tests/ttfdump.gasp ttftest.gasp \
+	&& $_ttfdump -t gasp -c 0 test.ttc >ttftest.gasp \
+	&& $DIFF -b $srcdir/tests/ttfdump.gasp ttftest.gasp \
 	&& echo "ttfdump.gasp tests OK" && echo \
 	|| failed="$failed ttfdump.gasp"
 
 echo "*** ttfdump -t maxp -c 1 test.ttc >ttftest.maxp" \
-	&& ./ttfdump -t maxp -c 1 test.ttc >ttftest.maxp \
-	&& diff -b $srcdir/tests/ttfdump.maxp ttftest.maxp \
+	&& $_ttfdump -t maxp -c 1 test.ttc >ttftest.maxp \
+	&& $DIFF -b $srcdir/tests/ttfdump.maxp ttftest.maxp \
 	&& echo "ttfdump.maxp tests OK" && echo \
 	|| failed="$failed ttfdump.maxp"
 
