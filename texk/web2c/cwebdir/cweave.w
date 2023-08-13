@@ -4534,7 +4534,9 @@ else {
   if (show_progress) fputs("\nWriting the index...",stdout);
 @.Writing the index...@>
   if (change_exists) {
-    @<Tell about changed sections@>@; finish_line(); finish_line();
+    @<Tell about changed sections@>@;
+    finish_line(); flush_buffer(out_buf,false,false);
+      /* insert a blank line, it looks nice */
   }
   out_str("\\inx"); finish_line();
 @.\\inx@>

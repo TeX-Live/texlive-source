@@ -1119,7 +1119,9 @@ out_str("}\\FI"); finish_line();
 
 @x
   if (change_exists) {
-    @<Tell about changed sections@>@; finish_line(); finish_line();
+    @<Tell about changed sections@>@;
+    finish_line(); flush_buffer(out_buf,false,false);
+      /* insert a blank line, it looks nice */
   }
 @y
 @z
