@@ -4,7 +4,19 @@
 # Copyright 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./bg5conv <$srcdir/tests/bg5conv.tex >bg5conv.cjk \
-	&& diff bg5conv.cjk $srcdir/tests/bg5conv.cjk \
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bg5conv=$BinDir/bg5conv$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
+$_bg5conv <$srcdir/tests/bg5conv.tex >bg5conv.cjk \
+	&& $DIFF bg5conv.cjk $srcdir/tests/bg5conv.cjk \
 	|| exit 1
 

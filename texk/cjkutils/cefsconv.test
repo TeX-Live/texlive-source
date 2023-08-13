@@ -4,19 +4,33 @@
 # Copyright 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_cefsconv=$BinDir/cefsconv$ExeExt
+_sjisconv=$BinDir/sjisconv$ExeExt
+_cefconv=$BinDir/cefconv$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
-./cefsconv <$srcdir/tests/cefsconv.tex >cefsconv.cjk \
-	&& diff cefsconv.cjk $srcdir/tests/cefsconv.cjk \
+$_cefsconv <$srcdir/tests/cefsconv.tex >cefsconv.cjk \
+	&& $DIFF cefsconv.cjk $srcdir/tests/cefsconv.cjk \
 	|| exit 1
 
-./sjisconv <$srcdir/tests/cefsconv.tex | ./cefconv \
+$_sjisconv <$srcdir/tests/cefsconv.tex | $_cefconv \
 	| sed 's/cefconv.*sjisconv/cefsconv/' >cefsconv.cjk \
-	&& diff cefsconv.cjk $srcdir/tests/cefsconv.cjk \
+	&& $DIFF cefsconv.cjk $srcdir/tests/cefsconv.cjk \
 	|| exit 1
 
-./cefconv <$srcdir/tests/cefsconv.tex | ./sjisconv \
+$_cefconv <$srcdir/tests/cefsconv.tex | $_sjisconv \
 	| sed 's/CJKpreproc.*CNSpreproc/CNSpreproc/;s/cefconv/cefsconv/' >cefsconv.cjk \
-	&& diff cefsconv.cjk $srcdir/tests/cefsconv.cjk \
+	&& $DIFF cefsconv.cjk $srcdir/tests/cefsconv.cjk \
 	|| exit 1
 

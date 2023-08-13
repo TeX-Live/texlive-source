@@ -4,7 +4,19 @@
 # Copyright 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./sjisconv <$srcdir/tests/sjisconv.tex >sjisconv.cjk \
-	&& diff sjisconv.cjk $srcdir/tests/sjisconv.cjk \
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_sjisconv=$BinDir/sjisconv$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
+$_sjisconv <$srcdir/tests/sjisconv.tex >sjisconv.cjk \
+	&& $DIFF sjisconv.cjk $srcdir/tests/sjisconv.cjk \
 	|| exit 1
 

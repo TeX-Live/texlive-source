@@ -1,3 +1,8 @@
+2023-08-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {bg5conv,cef5conv,cefconv,cefsconv,extconv,sjisconv}.test:
+	Make easier to test on Windows.
+
 2022-01-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Import cjk-4.8.5/utils as cjkutils-4.8.5.
