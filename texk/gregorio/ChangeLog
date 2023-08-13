@@ -1,3 +1,7 @@
+2023-08-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* gregorio.test: Make easier to test on Windows.
+
 2021-03-14  Karl Berry  <karl@tug.org>
 
 	* Import gregorio-6.0.0.
