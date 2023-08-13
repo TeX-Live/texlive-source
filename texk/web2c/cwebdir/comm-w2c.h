@@ -42,9 +42,6 @@ extern int phase; /* which phase are we in? */
 @ The procedure that gets everything rolling:
 @<Predecl...@>=
 extern void common_init(void);@/
-extern void cb_show_banner(void);
-@#
-extern void print_stats(void); /* defined in \.{ctangle.w} and \.{cweave.w} */
 
 @ You may have noticed that almost all \.{"strings"} in the \.{CWEB} sources
 are placed in the context of the `|_|'~macro.  This is just a shortcut for the
@@ -221,6 +218,10 @@ extern int wrap_up(void); /* indicate |history| and exit */
 extern void err_print(const char *); /* print error message and context */
 extern void fatal(const char *,const char *); /* issue error message and die */
 extern void overflow(const char *); /* succumb because a table has overflowed */
+@#
+extern void cb_show_banner(void); /* copy |banner| back to \.{common.w} */
+@#
+extern void print_stats(void); /* defined in \.{ctangle.w} and \.{cweave.w} */
 
 @ Code related to command line arguments:
 @d show_banner flags['b'] /* should the banner line be printed? */

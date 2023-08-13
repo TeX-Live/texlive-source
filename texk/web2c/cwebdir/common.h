@@ -42,7 +42,6 @@ extern int phase; /* which phase are we in? */
 @ The procedure that gets everything rolling:
 @<Predecl...@>=
 extern void common_init(void);@/
-extern void print_stats(void); /* defined in \.{ctangle.w} and \.{cweave.w} */
 
 @ Interface to the standard \CEE/ library:
 
@@ -199,6 +198,8 @@ extern int wrap_up(void); /* indicate |history| and exit */
 extern void err_print(const char *); /* print error message and context */
 extern void fatal(const char *,const char *); /* issue error message and die */
 extern void overflow(const char *); /* succumb because a table has overflowed */
+@#
+extern void print_stats(void); /* defined in \.{ctangle.w} and \.{cweave.w} */
 
 @ Code related to command line arguments:
 @d show_banner flags['b'] /* should the banner line be printed? */
