@@ -1,3 +1,9 @@
+2023-08-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* common.c,
+	* common.w: Section 36 of COMMON is system-dependent.
+
 2023-08-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.h,
