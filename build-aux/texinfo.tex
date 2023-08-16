@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2023-07-27.21}
+\def\texinfoversion{2023-08-13.14}
 %
 % Copyright 1985, 1986, 1988, 1990-2023 Free Software Foundation, Inc.
 %
@@ -5655,8 +5655,8 @@ might help (with 'rm \jobname.?? \jobname.??s')%
       % Determine how far we can stretch into the margin.
       % This allows, e.g., "Appendix H  GNU Free Documentation License" to
       % fit on one line in @letterpaper format.
-      \ifdim\entryrightmargin>2.1em
-        \dimen@i=2.1em
+      \ifdim\entryrightmargin>1.5em
+        \dimen@i=1.5em
       \else
         \dimen@i=0em
       \fi
@@ -5714,12 +5714,11 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \newskip\thinshrinkable
 \skip\thinshrinkable=.15em minus .15em
 
-% Like plain.tex's \dotfill, except uses up at least 1 em.
+% Like plain.tex's \dotfill, except uses up at least 0.5 em.
 % The filll stretch here overpowers both the fil and fill stretch to push
 % the page number to the right.
 \def\indexdotfill{\cleaders
-  \hbox{$\mathsurround=0pt \mkern1.5mu.\mkern1.5mu$}\hskip 1em plus 1filll}
-
+  \hbox{$\mathsurround=0pt \mkern1.5mu.\mkern1.5mu$}\hskip 0.5em plus 1filll}
 
 \def\primary #1{\line{#1\hfil}}
 
@@ -7709,9 +7708,13 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \def\deflineheader#1 #2 #3\endheader{%
   \printdefname{#1}{}{#2}\magicamp\defunargs{#3\unskip}%
 }
+
 \def\deftypeline{%
   \doingtypefntrue
-  \parseargusing\activeparens{\printdefunline\deflineheader}%
+  \parseargusing\activeparens{\printdefunline\deftypelineheader}%
+}
+\def\deftypelineheader#1 #2 #3 #4\endheader{%
+  \printdefname{#1}{#2}{#3}\magicamp\defunargs{#4\unskip}%
 }
 
 % \makedefun{deffoo} (\deffooheader parameters) { (\deffooheader expansion) }
@@ -8845,6 +8848,11 @@ might help (with 'rm \jobname.?? \jobname.??s')%
     \global\let\lastnode=\empty
   \fi
 }
+
+% @nodedescription, @nodedescriptionblock - do nothing for TeX
+\parseargdef\nodedescription{}
+\def\nodedescriptionblock{\doignore{nodedescriptionblock}}
+
 
 % @anchor{NAME} -- define xref target at arbitrary point.
 %
