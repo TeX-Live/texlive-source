@@ -132,7 +132,7 @@ Section 52.
 @d first_chunk(p) ((p)->byte_start+2)
 @z
 
-Section 54.
+Section 53.
 
 @x
   *dest='\0';
@@ -279,6 +279,8 @@ Section 96.
 @$CWEAVEHELP "help.h" \zip@>
 @-CWEB@>
 @z
+
+Section 85/102.
 
 @x
 @** Index.

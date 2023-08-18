@@ -26,7 +26,7 @@ is modified.
 @z
 
 
-@x Section 10.
+@x Section 11.
 @d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=

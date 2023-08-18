@@ -15,7 +15,7 @@ by using "huge" pointers.
 (Update attempt by Andreas Scherer, 31 Jan 2021.  Good luck!)
 
 
-@x Section 9.
+@x Section 10.
 @d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
 @<Common code...@>=
@@ -59,7 +59,7 @@ extern char huge* byte_mem_end; /* end of |byte_mem| */
 @z
 
 
-@x Section 39.
+@x Section 36.
     cur_file_name[l]='/'; /* \UNIX/ pathname separator */
 @y
     cur_file_name[l]='/'; /* A valid {\mc MSDOS} pathname separator */

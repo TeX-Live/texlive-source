@@ -194,28 +194,28 @@ max_tok_ptr=tok_mem+1; max_text_ptr=tok_start+1;
 @z
 
 
-@x Section 218.
+@x Section 217.
   char *p; /* index into |byte_mem| */
 @y
   char huge *p; /* index into |byte_mem| */
 @z
 
 
-@x Section 253.
+@x Section 252.
     if (cur_name->xref!=(void *)xmem) {
 @y
     if (cur_name->xref!=(void huge*)xmem) {
 @z
 
 
-@x Section 255.
+@x Section 254.
 static char *cur_byte; /* index into |byte_mem| */
 @y
 static char huge* cur_byte; /* index into |byte_mem| */
 @z
 
 
-@x Section 264.
+@x Section 263.
 switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
 @y
 switch (cur_name->ilk) {@+char huge* p; /* index into |byte_mem| */@+@t}\6{\4@>

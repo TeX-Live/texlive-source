@@ -9,7 +9,7 @@ Changes necessary for compiling with Borland C/C++
 @d banner "This is CTANGLE (Version 4.9win32)"
 @z
 
-@x
+@x section 24
 boolean names_match(
 name_pointer p, /* points to the proposed match */
 const char *first, /* position of first character of string */
@@ -23,7 +23,7 @@ size_t l, /* length of identifier */
 eight_bits t) /* not used by \.{CTANGLE} */
 @z
 
-@x
+@x section 25
 void
 init_node(
 name_pointer node)

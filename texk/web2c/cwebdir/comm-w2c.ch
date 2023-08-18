@@ -493,12 +493,10 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 @z
 
 @x
-      while (*s)
         if (*s=='.') dot_pos=s++;
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
         else s++;
 @y
-      while (*s)
         if (*s=='.') dot_pos=s++;
         else if (*s==DIR_SEPARATOR || *s==DEVICE_SEPARATOR || *s=='/')
           dot_pos=NULL,name_pos=++s;

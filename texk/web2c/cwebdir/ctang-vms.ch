@@ -15,7 +15,7 @@ created:
 @d banner "This is CTANGLE (VAX/VMS Version 4.9)"
 @z
 
-@x section 4 (01-FEB-1992 ST)
+@x section 5 (01-FEB-1992 ST)
 #include <ctype.h> /* definition of |@!isalpha|, |@!isdigit| and so on */
 #include <stdbool.h> /* definition of |@!bool|, |@!true| and |@!false| */
 #include <stddef.h> /* definition of |@!ptrdiff_t| */

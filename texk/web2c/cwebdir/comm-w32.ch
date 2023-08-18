@@ -34,7 +34,7 @@ header files to be safe.
 Admittedly, this is not vital for cweb, except that I build the whole texlive
 set of programs using the __fastcall convention.
 
-@x
+@x section 11
 extern boolean names_match(name_pointer,const char *,size_t,eight_bits);
 @y
 extern boolean __cdecl names_match(name_pointer,const char *,size_t,eight_bits);

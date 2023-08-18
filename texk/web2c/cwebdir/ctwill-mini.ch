@@ -284,7 +284,7 @@ Section 42.
 
 CTWILL hickups on comment and produces unmatched '$' in mini-index.
 
-@x l.646
+@x
 skip_TeX(void) /* skip past pure \TEX/ code */
 @y
 skip_TeX(void)
@@ -685,7 +685,7 @@ The raw input is converted into scraps according to the following table,
 \yskip\halign{\quad#\hfil&\quad#\hfil&\quad\hfil#\hfil\cr
 @z
 
-@x l.2137
+@x
 \.{\\hbox\{}\thinspace stuff\/\thinspace\.\} to the following scrap.
 @y
 \.{\\hbox\{}\thinspace stuff\/\thinspace\.\} to the following scrap.
@@ -1044,7 +1044,7 @@ Section 129.
 
 Section 130.
 
-@x l.2221
+@x
 @c
 @y
 @c
@@ -1366,7 +1366,7 @@ if (cat1==if_like || cat1==else_like || cat1==define_like) @/
 
 Section 178.
 
-@x l.3017
+@x
       app(opt); app('9'); reduce(pp,4,langle,0,153);
     }
     else reduce(pp,4,cast,-1,154);
@@ -1378,7 +1378,7 @@ Section 178.
 
 Section 179.
 
-@x l.3028
+@x
   big_app1_insert(pp,' '); reduce(pp,2,struct_like,0,155);
 }
 else reduce(pp,0,raw_int,0,91);
@@ -2222,7 +2222,7 @@ Section 322.
 
 Section 328.
 
-@x l.116 of CTWILL-TEXLIVE.CH
+@x l.102 of CTWILL-TEXLIVE.CH
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 @y
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)

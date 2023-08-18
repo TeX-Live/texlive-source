@@ -81,7 +81,7 @@ FILE *fp) /* what file to read from */
   @<Skip over comment lines in the change file; |return| if end of file@>@;
 @z
 
-@x section 39, declare colon as Mac's path separator
+@x section 36, declare colon as Mac's path separator
 (Colon-separated paths are not supported.)
 The remainder of the \.{@@i} line after the file name is ignored.
 
@@ -94,7 +94,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @d PATH_SEP ':'   /* MacOS pathname separator */
 @^system dependencies@>
 @z
-@x section 39, use the path separator constant
+@x section 36, use the path separator constant
     cur_file_name[l]='/'; /* \UNIX/ pathname separator */
 @y
     cur_file_name[l]=PATH_SEP; /* pathname separator */
