@@ -230,6 +230,9 @@ if ini_version then
 
 @!sup_hyph_size = ssup_hyph_size;
 @!inf_hyph_size = iinf_hyphen_size; {Must be not less than |hyph_prime|!}
+
+@!inf_expand_depth = 10;
+@!sup_expand_depth = 10000000;
 @z
 
 @x [1.12] l.427 - Constants that are WEB numeric macros.
@@ -466,6 +469,7 @@ tini@/
 @!save_size:integer; {space for saving values outside of current group; must be
   at most |max_halfword|}
 @!dvi_buf_size:integer; {size of the output buffer; must be a multiple of 8}
+@!expand_depth:integer; {limits recursive calls to the |expand| procedure}
 @!quoted_filename:boolean; {current filename is quoted}
 @z
 
@@ -1037,6 +1041,22 @@ begin input_ptr:=0; max_in_stack:=0;
 @y
 begin input_ptr:=0; max_in_stack:=0;
 source_filename_stack[0]:=0;full_source_filename_stack[0]:=0;
+@z
+
+@x [25.366] l.7672 - expansion depth overflow
+begin cv_backup:=cur_val; cvl_backup:=cur_val_level; radix_backup:=radix;
+@y
+begin
+incr(expand_depth_count);
+if expand_depth_count>=expand_depth then overflow("expansion depth",expand_depth);
+cv_backup:=cur_val; cvl_backup:=cur_val_level; radix_backup:=radix;
+@z
+
+@x [25.366] l.7678 - expansion depth overflow
+cur_order:=co_backup; link(backup_head):=backup_backup;
+@y
+cur_order:=co_backup; link(backup_head):=backup_backup;
+decr(expand_depth_count);
 @z
 
 % Original report: https://tex.stackexchange.com/questions/609423
@@ -2564,6 +2584,7 @@ begin @!{|start_here|}
   setup_bound_var (79)('error_line')(error_line);
   setup_bound_var (50)('half_error_line')(half_error_line);
   setup_bound_var (79)('max_print_line')(max_print_line);
+  setup_bound_var (10000)('expand_depth')(expand_depth);
   const_chk (main_memory);
 @+init
   if ini_version then begin
@@ -3020,6 +3041,28 @@ exit:end;
 begin
     get_nullstr := "";
 end;
+
+
+@* \[54/web2c] More changes for Web2c.
+% Related to [25.366] expansion depth check
+Sometimes, recursive calls to the |expand| routine may
+cause exhaustion of the run-time calling stack, resulting in
+forced execution stops by the operating system. To diminish the chance
+of this happening, a counter is used to keep track of the recursion
+depth, in conjunction with a constant called |expand_depth|.
+
+This does not catch all possible infinite recursion loops, just the ones
+that exhaust the application calling stack. The actual maximum value of
+|expand_depth| is outside of our control, but the initial setting of
+|10000| should be enough to prevent problems.
+@^system dependencies@>
+
+@<Global...@>=
+expand_depth_count:integer;
+
+@ @<Set init...@>=
+expand_depth_count:=0;
+
 
 @* \[54] System-dependent changes.
 @z

@@ -1,8 +1,6 @@
 @x
-@!dvi_buf_size:integer; {size of the output buffer; must be a multiple of 8}
 @!quoted_filename:boolean; {current filename is quoted}
 @y
-@!dvi_buf_size:integer; {size of the output buffer; must be a multiple of 8}
 @!quoted_filename:boolean; {current filename is quoted}
 @!special_loc:pointer;
 @!special_token:halfword;

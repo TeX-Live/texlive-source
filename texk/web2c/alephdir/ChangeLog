@@ -1,3 +1,10 @@
+2023-08-18  Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+
+	* com16bit.ch: Sync with tex.ch changes:
+	  - 2008-01-02 r6024 introduce expand_depth.
+	* eobase.ch: Sync with etex.ch changes:
+	  - 2021-02-22 r57850 avoid "expansion depth" overflow.
+
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.
