@@ -7512,7 +7512,8 @@ or |limit| or |line|.
 if (first==buf_size) overflow("buffer size", buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
 incr(in_open);push_input;index=in_open;@/
-source_filename_stack[index]=0; /* \TeX\ Live */
+source_filename_stack[index]=NULL; /* \TeX\ Live */
+full_source_filename_stack[index]=NULL; /* \TeX\ Live */
 eof_seen[index]=false;
 grp_stack[index]=cur_boundary;if_stack[index]=cond_ptr;
 line_stack[index]=line;start=first;state=mid_line;
@@ -10995,15 +10996,22 @@ loop@+{@+begin_file_reading(); /*set up |cur_file| and new level of input*/
   prompt_file_name("input file name",".tex");
   }
 done: name=a_make_name_string(&cur_file);@/
-source_filename_stack[in_open]=name; /* \TeX\ Live*/
+if (source_filename_stack[in_open]==NULL)
+  free(source_filename_stack[in_open]);
+source_filename_stack[in_open]=strdup(name_of_file+1); /*\TeX\ Live*/
+if (full_source_filename_stack[in_open]==NULL)
+  free(full_source_filename_stack[in_open]);
+full_source_filename_stack[in_open]=strdup(full_name_of_file);
 if (job_name==0)
   {@+if (c_job_name==NULL) job_name=cur_name;
      else job_name=s_no(c_job_name); open_log_file(); /* \TeX\ Live*/
   }  /*|open_log_file| doesn't |show_context|, so |limit|
     and |loc| needn't be set to meaningful values yet*/
-if (term_offset+length(name) > max_print_line-2) print_ln();
+if (term_offset+strlen(full_source_filename_stack[in_open]) > max_print_line-2)
+  print_ln();
 else if ((term_offset > 0)||(file_offset > 0)) print_char(' ');
-print_char('(');incr(open_parens);slow_print(name);update_terminal;
+print_char('(');incr(open_parens);
+print(full_source_filename_stack[in_open]);update_terminal;
 if (tracing_stack_levels > 0)
 {@+int v;
   begin_diagnostic();print_ln();
@@ -34927,10 +34935,11 @@ static int texmf_yesno(const char *var)
 
 @ We need a stack, matching the |line_stack| that
 contains the source file names;
-we postpone \TeX\ Live's |full_source_filename_stack| to a later time.
 
 @<Global...@>=
-static int @!source_filename_stack0[max_in_open], *const @!source_filename_stack = @!source_filename_stack0-1;
+static char * @!source_filename_stack0[max_in_open]={NULL}, **const @!source_filename_stack = @!source_filename_stack0-1;
+static char * @!full_source_filename_stack0[max_in_open]={NULL}, **const @!full_source_filename_stack = @!full_source_filename_stack0-1;
+static char *full_name_of_file=NULL;
 
 @ The function |print_file_line|
 prints ``file:line:error'' style messages using
@@ -34940,10 +34949,10 @@ falls back to the ``non-file:line:error'' style.
 @<Basic printing...@>=
 static void print_file_line(void)
 {@+int level=in_open;
-  while (level>0 && source_filename_stack[level]==0) level--;
+  while (level>0 && full_source_filename_stack[level]==NULL) level--;
   if (level==0) print_nl("! ");
   else
-  { print_nl(""); printn(source_filename_stack[level]); print_char(':');
+  { print_nl(""); print(full_source_filename_stack[level]); print_char(':');
     if (level==in_open) print_int(line);
     else print_int(line_stack[level]);
     print(": ");
@@ -35171,7 +35180,8 @@ static FILE*open_in(char*filename,kpse_file_format_type t,const char*rwb)
   {@+
     f= fopen(fname,rwb);
     if (f!=NULL) recorder_record_input(fname);
-    free(fname);@+
+    if (full_name_of_file!=NULL) free(full_name_of_file);
+    full_name_of_file=fname;@+
   }
   return f;
 }
