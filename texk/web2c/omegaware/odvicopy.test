@@ -9,14 +9,6 @@ ExeExt=${ExeExt:-}
 _odvicopy=$BinDir/odvicopy$ExeExt
 _odvitype=$BinDir/odvitype$ExeExt
 
-# pre-generated test results in the repository are stored in LF
-# but the output might be written in CRLF on some platform.
-# if 'diff --strip-trailing-cr' is available, exploit it.
-# (useful for tests on win32 binaries run on MSYS shell)
-DIFF="diff"
-$DIFF --strip-trailing-cr $0 $0 \
-  && DIFF="diff --strip-trailing-cr" || echo
-
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=omegaware/tests
@@ -56,7 +48,7 @@ TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   $_odvitype $tests/xofontd1 | sed '1s/ (.*)$//' >$tests/xofontd1.typ || rc=6
 
-$DIFF $srcdir/$tests/ofontd1.typ $tests/xofontd1.typ || rc=7
+diff $srcdir/$tests/ofontd1.typ $tests/xofontd1.typ || rc=7
 
 # Next with VF/OVF files for ofontv[4-6]
 #
@@ -73,7 +65,7 @@ TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   $_odvitype $tests/xofontd2 | sed '1s/ (.*)$//' >$tests/xofontd2.typ || rc=9
 
-$DIFF $srcdir/$tests/ofontd2.typ $tests/xofontd2.typ || rc=10
+diff $srcdir/$tests/ofontd2.typ $tests/xofontd2.typ || rc=10
 
 # Finally with VF/OVF files for ofontr[1-3] and ofontv[4-6]
 #
@@ -90,7 +82,7 @@ TEXMFCNF=$srcdir/../kpathsea \
   OFMFONTS=$srcdir/$tests \
   $_odvitype $tests/xofontd3 | sed '1s/ (.*)$//' >$tests/xofontd3.typ || rc=12
 
-$DIFF $srcdir/$tests/ofontd3.typ $tests/xofontd3.typ || rc=13
+diff $srcdir/$tests/ofontd3.typ $tests/xofontd3.typ || rc=13
 
 exit $rc
 

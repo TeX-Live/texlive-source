@@ -4,57 +4,70 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+W2CDir=${W2CDir:-..}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$W2CDir/pltotf$ExeExt
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS='.;./tests'
+OFMFONTS=".;./$tests"
 export TEXMFCNF OFMFONTS
 
 echo && echo "*** pltotf arabicr yarabicr"
-../pltotf $srcdir/tests/arabicr tests/yarabicr || exit 1
+$_pltotf $srcdir/$tests/arabicr $tests/yarabicr || rc=1
 
 echo && echo "*** opl2ofm arabicr.pl zyarabicr"
-./omfonts -opl2ofm -verbose $srcdir/tests/arabicr.pl tests/zyarabicr || exit 1
+$_omfonts -opl2ofm -verbose $srcdir/$tests/arabicr.pl $tests/zyarabicr || rc=2
+
+echo && echo "*** cmp yarabicr.tfm zyarabicr.ofm"
+cmp $tests/yarabicr.tfm $tests/zyarabicr.ofm || rc=3
 
 echo && echo "*** ofm2opl yarabicr.tfm xyarabicr"
-./omfonts -ofm2opl -verbose tests/yarabicr.tfm tests/xyarabicr || exit 1
+$_omfonts -ofm2opl -verbose $tests/yarabicr.tfm $tests/xyarabicr || rc=4
 
 echo && echo "*** ofm2opl zyarabicr zyarabicr"
-./omfonts -ofm2opl -verbose tests/zyarabicr tests/zyarabicr || exit 1
+$_omfonts -ofm2opl -verbose $tests/zyarabicr $tests/zyarabicr || rc=5
 
 echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
-diff tests/xyarabicr.opl tests/zyarabicr.opl || exit 1
+diff $tests/xyarabicr.opl $tests/zyarabicr.opl || rc=6
 
 echo && echo "*** ovp2ovf arabic yarabic yarabic"
-./omfonts -ovp2ovf -verbose $srcdir/tests/arabic tests/yarabic tests/yarabic || exit 1
+$_omfonts -ovp2ovf -verbose $srcdir/$tests/arabic $tests/yarabic $tests/yarabic || rc=7
 
 echo && echo "*** ofm2opl yarabic xyarabic"
-./omfonts -ofm2opl -verbose tests/yarabic tests/xyarabic || exit 1
+$_omfonts -ofm2opl -verbose $tests/yarabic $tests/xyarabic || rc=8
 
 echo && echo "*** opl2ofm xyarabic xyarabic"
-./omfonts -opl2ofm -verbose tests/xyarabic tests/xyarabic || exit 1
+$_omfonts -opl2ofm -verbose $tests/xyarabic $tests/xyarabic || rc=9
 
 echo && echo "*** ofm2opl xyarabic yyarabic"
-./omfonts -ofm2opl -verbose tests/xyarabic tests/yyarabic || exit 1
+$_omfonts -ofm2opl -verbose $tests/xyarabic $tests/yyarabic || rc=10
 
 echo && echo "*** diff xyarabicr.opl yyarabicr.opl"
-diff tests/xyarabic.opl tests/yyarabic.opl || exit 1
+diff $tests/xyarabic.opl $tests/yyarabic.opl || rc=11
 
 echo && echo "*** ovf2ovp yarabic yarabic yyarabic"
-./omfonts -ovf2ovp -verbose tests/yarabic tests/yarabic tests/yyarabic || exit 1
+$_omfonts -ovf2ovp -verbose $tests/yarabic $tests/yarabic $tests/yyarabic || rc=12
 
 echo && echo "*** ovp2ovf yyarabic yyarabic yyarabic"
-./omfonts -ovp2ovf -verbose tests/yyarabic tests/yyarabic tests/yyarabic || exit 1
+$_omfonts -ovp2ovf -verbose $tests/yyarabic $tests/yyarabic $tests/yyarabic || rc=13
 
 echo && echo "*** ofm2opl yyarabic xyarabic"
-./omfonts -ofm2opl -verbose tests/yyarabic tests/zyarabic || exit 1
+$_omfonts -ofm2opl -verbose $tests/yyarabic $tests/zyarabic || rc=14
 
 echo && echo "*** diff xyarabicr.opl zyarabicr.opl"
-diff tests/xyarabic.opl tests/zyarabic.opl || exit 1
+diff $tests/xyarabic.opl $tests/zyarabic.opl || rc=15
 
 echo && echo "*** ovf2ovp yyarabic yyarabic zyarabic"
-./omfonts -ovf2ovp -verbose tests/yyarabic tests/yyarabic tests/zyarabic || exit 1
+$_omfonts -ovf2ovp -verbose $tests/yyarabic $tests/yyarabic $tests/zyarabic || rc=16
 
 echo && echo "*** diff yyarabicr.ovp yyarabicr.ovp"
-diff tests/yyarabic.ovp tests/zyarabic.ovp || exit 1
+diff $tests/yyarabic.ovp $tests/zyarabic.ovp || rc=17
 
+exit $rc

@@ -4,13 +4,19 @@
 # Copyright 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -opl2ofm -verbose $srcdir/tests/level1 tests/xlevel1 || exit 1
+  $_omfonts -opl2ofm -verbose $srcdir/$tests/level1 $tests/xlevel1 || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose tests/xlevel1 tests/xlevel1 || exit 1
+  $_omfonts -ofm2opl -verbose $tests/xlevel1 $tests/xlevel1 || exit 2
 
-diff $srcdir/tests/level1.opl tests/xlevel1.opl || exit 1
+diff $srcdir/$tests/level1.opl $tests/xlevel1.opl || exit 3
 

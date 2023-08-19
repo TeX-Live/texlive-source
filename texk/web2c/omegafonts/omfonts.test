@@ -4,33 +4,44 @@
 # Copyright 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+W2CDir=${W2CDir:-..}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$W2CDir/pltotf$ExeExt
+_tftopl=$W2CDir/tftopl$ExeExt
+_omfonts=$BinDir/omfonts$ExeExt
 
-../pltotf $srcdir/tests/Cherokee tests/Cherokee || exit 1
+tests=tests
 
-TEXMFCNF=$srcdir/../../kpathsea \
-  ../tftopl tests/Cherokee tests/xCherokee || exit 1
+test -d $tests || mkdir -p $tests
+rc=0
 
-diff $srcdir/tests/Cherokee.pl tests/xCherokee.pl || exit 1
-
-TEXMFCNF=$srcdir/../../kpathsea \
-  OFMFONTS=tests \
-  ./omfonts -ovp2ovf -verbose $srcdir/tests/OCherokee tests/OCherokee tests/OCherokee || exit 1
-
-TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose tests/OCherokee tests/OCherokee || exit 1
+$_pltotf $srcdir/$tests/Cherokee $tests/Cherokee || rc=1
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -opl2ofm -verbose tests/OCherokee tests/xOCherokee || exit 1
+  $_tftopl $tests/Cherokee $tests/xCherokee || rc=2
+
+diff $srcdir/$tests/Cherokee.pl $tests/xCherokee.pl || rc=3
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose tests/xOCherokee tests/xOCherokee || exit 1
-
-diff tests/OCherokee.opl tests/xOCherokee.opl || exit 1
+  OFMFONTS=$tests \
+  $_omfonts -ovp2ovf -verbose $srcdir/$tests/OCherokee $tests/OCherokee $tests/OCherokee || rc=4
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  OFMFONTS=.:./tests \
-  ./omfonts -ovf2ovp -verbose tests/OCherokee tests/OCherokee tests/xOCherokee || exit 1
+  $_omfonts -ofm2opl -verbose $tests/OCherokee $tests/OCherokee || rc=5
 
-diff $srcdir/tests/OCherokee.ovp tests/xOCherokee.ovp || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  $_omfonts -opl2ofm -verbose $tests/OCherokee $tests/xOCherokee || rc=6
 
+TEXMFCNF=$srcdir/../../kpathsea \
+  $_omfonts -ofm2opl -verbose $tests/xOCherokee $tests/xOCherokee || rc=7
+
+diff $tests/OCherokee.opl $tests/xOCherokee.opl || rc=8
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  OFMFONTS=".;./$tests" \
+  $_omfonts -ovf2ovp -verbose $tests/OCherokee $tests/OCherokee $tests/xOCherokee || rc=9
+
+diff $srcdir/$tests/OCherokee.ovp $tests/xOCherokee.ovp || rc=10
+
+exit $rc

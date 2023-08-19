@@ -4,64 +4,73 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS='.;./tests'
+OFMFONTS=".;./$tests"
 export TEXMFCNF OFMFONTS
 
-for f in ligall ligbch ligblb ligbdy; do
+ligfiles='ligall ligbch ligblb ligbdy'
+
+for f in $ligfiles; do
 
 echo && echo "*** opl2ofm $f x$f"
-./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || exit 1
+$_omfonts -opl2ofm $srcdir/$tests/$f $tests/x$f || rc=1
 
 echo && echo "*** ofm2opl x$f x$f"
-./omfonts -ofm2opl tests/x$f tests/x$f || exit 1
+$_omfonts -ofm2opl $tests/x$f $tests/x$f || rc=2
 
 echo && echo "*** diff $f.opl x$f.opl"
-diff $srcdir/tests/$f.opl tests/x$f.opl || exit 1
+diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=3
 
 done
 
 echo && echo "*** ovp2ovf ligblv xligblv xligblv"
-./omfonts -ovp2ovf $srcdir/tests/ligblv tests/xligblv tests/xligblv || echo '*** failed ***'
+$_omfonts -ovp2ovf $srcdir/$tests/ligblv $tests/xligblv $tests/xligblv || { rc=4; echo '*** failed ***'; }
 
 echo && echo "*** ofm2opl xligblv xligblv"
-./omfonts -ofm2opl tests/xligblv tests/xligblv || echo '*** failed ***'
+$_omfonts -ofm2opl $tests/xligblv $tests/xligblv || { rc=5; echo '*** failed ***'; }
 
 echo && echo "*** diff ligblv.opl xligblv.opl"
-diff $srcdir/tests/ligblv.opl tests/xligblv.opl >/dev/null || echo '*** failed ***'
+diff $srcdir/$tests/ligblv.opl $tests/xligblv.opl >/dev/null || { rc=6; echo '*** failed ***'; }
 
 echo && echo "*** ofm2opl ligloop1 xligloop1"
-./omfonts -ofm2opl $srcdir/tests/ligloop1 tests/xligloop1 || exit 1
+$_omfonts -ofm2opl $srcdir/$tests/ligloop1 $tests/xligloop1 || rc=7
 
 echo && echo "*** diff ligloop1.opl xligloop1.opl"
-diff $srcdir/tests/ligloop1.opl tests/xligloop1.opl || exit 1
+diff $srcdir/$tests/ligloop1.opl $tests/xligloop1.opl || rc=8
 
 echo && echo "*** opl2ofm xligloop1 xligloop1"
-./omfonts -opl2ofm tests/xligloop1 tests/xligloop1 || exit 1
+$_omfonts -opl2ofm $tests/xligloop1 $tests/xligloop1 || rc=9
 
 echo && echo "*** ofm2opl xligloop1 xligloop2"
-./omfonts -ofm2opl tests/xligloop1 tests/xligloop2 || exit 1
+$_omfonts -ofm2opl $tests/xligloop1 $tests/xligloop2 || rc=10
 
-echo && echo "*** diff ligloop1.opl xligloop1.opl"
-diff $srcdir/tests/ligloop2.opl tests/xligloop2.opl || exit 1
+echo && echo "*** diff ligloop2.opl xligloop2.opl"
+diff $srcdir/$tests/ligloop2.opl $tests/xligloop2.opl || rc=11
 
 echo && echo "*** opl2ofm liguse xliguse1"
-./omfonts -opl2ofm $srcdir/tests/liguse tests/xliguse1 || exit 1
+$_omfonts -opl2ofm $srcdir/$tests/liguse $tests/xliguse1 || rc=12
 
 echo && echo "*** ofm2opl xliguse1 xliguse1"
-./omfonts -ofm2opl tests/xliguse1 tests/xliguse1 || exit 1
+$_omfonts -ofm2opl $tests/xliguse1 $tests/xliguse1 || rc=13
 
 echo && echo "*** diff liguse1.opl xliguse1.opl"
-diff $srcdir/tests/liguse1.opl tests/xliguse1.opl|| exit 1
+diff $srcdir/$tests/liguse1.opl $tests/xliguse1.opl || rc=14
 
 echo && echo "*** opl2ofm xliguse1 xliguse2"
-./omfonts -opl2ofm tests/xliguse1 tests/xliguse2 || exit 1
+$_omfonts -opl2ofm $tests/xliguse1 $tests/xliguse2 || rc=15
 
 echo && echo "*** ofm2opl xliguse2 xliguse2"
-./omfonts -ofm2opl tests/xliguse2 tests/xliguse2 || exit 1
+$_omfonts -ofm2opl $tests/xliguse2 $tests/xliguse2 || rc=16
 
 echo && echo "*** diff liguse2.opl xliguse2.opl"
-diff $srcdir/tests/liguse2.opl tests/xliguse2.opl|| exit 1
+diff $srcdir/$tests/liguse2.opl $tests/xliguse2.opl || rc=17
 
+exit $rc

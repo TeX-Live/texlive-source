@@ -4,50 +4,58 @@
 # Copyright 2013, 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
-test -d tests || mkdir -p tests
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS=./tests
+OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./omfonts -opl2ofm $srcdir/tests/inbmp tests/xinbmp || exit 1
+$_omfonts -opl2ofm $srcdir/$tests/inbmp $tests/xinbmp || rc=1
 
-./omfonts -ofm2opl xinbmp tests/xinbmp || exit 1
+$_omfonts -ofm2opl xinbmp $tests/xinbmp || rc=2
 
-diff $srcdir/tests/inbmp.opl tests/xinbmp.opl || exit 1
+diff $srcdir/$tests/inbmp.opl $tests/xinbmp.opl || rc=3
 
-./omfonts -ovp2ovf $srcdir/tests/overbmp.ovp tests/xoverbmp || exit 1
+$_omfonts -ovp2ovf $srcdir/$tests/overbmp.ovp $tests/xoverbmp || rc=4
 
-./omfonts -ofm2opl xoverbmp tests/xoverbmp || exit 1
+$_omfonts -ofm2opl xoverbmp $tests/xoverbmp || rc=5
 
-diff $srcdir/tests/overbmp.opl tests/xoverbmp.opl || exit 1
+diff $srcdir/$tests/overbmp.opl $tests/xoverbmp.opl || rc=6
 
-./omfonts -ovf2ovp tests/xoverbmp xoverbmp tests/xoverbmp.ovp || exit 1
+$_omfonts -ovf2ovp $tests/xoverbmp xoverbmp $tests/xoverbmp.ovp || rc=7
 
-diff $srcdir/tests/overbmp.ovp tests/xoverbmp.ovp || exit 1
+diff $srcdir/$tests/overbmp.ovp $tests/xoverbmp.ovp || rc=8
 
-sed -e '/OFMLEVEL/s/H 0/H 1/' tests/xinbmp.opl >tests/xinbmp1.opl
+sed -e '/OFMLEVEL/s/H 0/H 1/' $tests/xinbmp.opl >$tests/xinbmp1.opl
 
-./omfonts -opl2ofm tests/xinbmp1 tests/xinbmp1 || exit 1
+$_omfonts -opl2ofm $tests/xinbmp1 $tests/xinbmp1 || rc=9
 
-./omfonts -ofm2opl xinbmp1 tests/xinbmp2 || exit 1
+$_omfonts -ofm2opl xinbmp1 $tests/xinbmp2 || rc=10
 
-diff tests/xinbmp1.opl tests/xinbmp1.opl || exit 1
+diff $tests/xinbmp1.opl $tests/xinbmp1.opl || rc=11
 
 sed -e '/OFMLEVEL/s/H 1/H 0/' -e 's/xinbmp)/xinbmp1)/;s/xoverbmp)/xoverbmp1)/' \
-	tests/xoverbmp.ovp >tests/xoverbmp1.ovp
+	$tests/xoverbmp.ovp >$tests/xoverbmp1.ovp
 
-./omfonts -ovp2ovf tests/xoverbmp1.ovp tests/xoverbmp1 || exit 1
+$_omfonts -ovp2ovf $tests/xoverbmp1.ovp $tests/xoverbmp1 || rc=12
 
-sed -e '/OFMLEVEL/s/H 1/H 0/' tests/xoverbmp.opl >tests/xoverbmp1.opl
+sed -e '/OFMLEVEL/s/H 1/H 0/' $tests/xoverbmp.opl >$tests/xoverbmp1.opl
 
-./omfonts -ofm2opl xoverbmp1 tests/xoverbmp2 || exit 1
+$_omfonts -ofm2opl xoverbmp1 $tests/xoverbmp2 || rc=13
 
-diff tests/xoverbmp1.opl tests/xoverbmp2.opl || exit 1
+diff $tests/xoverbmp1.opl $tests/xoverbmp2.opl || rc=14
 
-./omfonts -ovf2ovp tests/xoverbmp1 xoverbmp1 tests/xoverbmp2 || exit 1
+$_omfonts -ovf2ovp $tests/xoverbmp1 xoverbmp1 $tests/xoverbmp2 || rc=15
 
-diff tests/xoverbmp1.ovp tests/xoverbmp2.ovp || exit 1
+diff $tests/xoverbmp1.ovp $tests/xoverbmp2.ovp || rc=16
 
+exit $rc

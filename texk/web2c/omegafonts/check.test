@@ -4,24 +4,32 @@
 # Copyright 2014, 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS=".;./tests"
+OFMFONTS=".;./$tests"
 export TEXMFCNF OFMFONTS
 
 echo && echo "*** ofm2opl check xcheck"
-./omfonts -ofm2opl $srcdir/tests/check tests/xcheck || exit 1
+$_omfonts -ofm2opl $srcdir/$tests/check $tests/xcheck || rc=1
 
 echo && echo "*** diff check.opl xcheck.opl"
-diff $srcdir/tests/check.opl tests/xcheck.opl || exit 1
+diff $srcdir/$tests/check.opl $tests/xcheck.opl || rc=2
 
 echo && echo "*** opl2ofm xcheck xchecked"
-./omfonts -opl2ofm tests/xcheck tests/xchecked || exit 1
+$_omfonts -opl2ofm $tests/xcheck $tests/xchecked || rc=3
 
 echo && echo "*** ofm2opl xchecked stdout (xchecked.opl)"
-./omfonts -ofm2opl tests/xchecked >tests/xchecked.opl || exit 1
+$_omfonts -ofm2opl $tests/xchecked >$tests/xchecked.opl || rc=4
 
 echo && echo "*** diff checked.opl xchecked.opl"
-diff $srcdir/tests/checked.opl tests/xchecked.opl || exit 1
+diff $srcdir/$tests/checked.opl $tests/xchecked.opl || rc=5
 
+exit $rc

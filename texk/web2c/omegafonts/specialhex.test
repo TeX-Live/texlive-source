@@ -4,26 +4,34 @@
 # Copyright 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  OFMFONTS=tests \
-  ./omfonts -ovp2ovf -verbose $srcdir/tests/specialhex tests/specialhex tests/specialhex || exit 1
+  OFMFONTS=./$tests \
+  $_omfonts -ovp2ovf -verbose $srcdir/$tests/specialhex $tests/specialhex $tests/specialhex || rc=1
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose tests/specialhex tests/specialhex || exit 1
+  $_omfonts -ofm2opl -verbose $tests/specialhex $tests/specialhex || rc=2
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -opl2ofm -verbose tests/specialhex tests/xspecialhex || exit 1
+  $_omfonts -opl2ofm -verbose $tests/specialhex $tests/xspecialhex || rc=3
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose tests/xspecialhex tests/xspecialhex || exit 1
+  $_omfonts -ofm2opl -verbose $tests/xspecialhex $tests/xspecialhex || rc=4
 
-diff tests/specialhex.opl tests/xspecialhex.opl || exit 1
+diff $tests/specialhex.opl $tests/xspecialhex.opl || rc=5
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  OFMFONTS=.:./tests \
-  ./omfonts -ovf2ovp -verbose tests/specialhex tests/specialhex tests/xspecialhex || exit 1
+  OFMFONTS=".;./$tests" \
+  $_omfonts -ovf2ovp -verbose $tests/specialhex $tests/specialhex $tests/xspecialhex || rc=6
 
-diff $srcdir/tests/specialhex.ovp tests/xspecialhex.ovp || exit 1
+diff $srcdir/$tests/specialhex.ovp $tests/xspecialhex.ovp || rc=7
 
+exit $rc

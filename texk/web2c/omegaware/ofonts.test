@@ -11,14 +11,6 @@ _wopl2ofm=$BinDir/wopl2ofm$ExeExt
 _wovf2ovp=$BinDir/wovf2ovp$ExeExt
 _wovp2ovf=$BinDir/wovp2ovf$ExeExt
 
-# pre-generated test results in the repository are stored in LF
-# but the output might be written in CRLF on some platform.
-# if 'diff --strip-trailing-cr' is available, exploit it.
-# (useful for tests on win32 binaries run on MSYS shell)
-DIFF="diff"
-$DIFF --strip-trailing-cr $0 $0 \
-  && DIFF="diff --strip-trailing-cr" || echo
-
 tests=omegaware/tests
 
 test -d $tests || mkdir -p $tests

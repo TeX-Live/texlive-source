@@ -4,50 +4,57 @@
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 VPL='ofontr1 ofontv4'
 OVP='ofontr2 ofontr3 ofontv5 ofontv6'
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS=.:$srcdir/tests
+OFMFONTS=".;$srcdir/$tests"
 export TEXMFCNF OFMFONTS
 
 for f in $VPL; do
-  ./omfonts -opl2ofm $srcdir/tests/$f.pl tests/x$f.tfm || exit 1
-  ./omfonts -ofm2opl tests/x$f.tfm tests/x$f.pl || exit 1
-  diff $srcdir/tests/$f.pl tests/x$f.pl || exit 1
+  $_omfonts -opl2ofm $srcdir/$tests/$f.pl $tests/x$f.tfm || rc=1
+  $_omfonts -ofm2opl $tests/x$f.tfm $tests/x$f.pl || rc=2
+  diff $srcdir/$tests/$f.pl $tests/x$f.pl || rc=3
 done
 
 for f in $OVP; do
-  ./omfonts -opl2ofm $srcdir/tests/$f tests/x$f || exit 1
-  ./omfonts -ofm2opl tests/x$f tests/x$f || exit 1
-  diff $srcdir/tests/$f.opl tests/x$f.opl || exit 1
+  $_omfonts -opl2ofm $srcdir/$tests/$f $tests/x$f || rc=4
+  $_omfonts -ofm2opl $tests/x$f $tests/x$f || rc=5
+  diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=6
 done
 
-rm -rf tests/xofontr* tests/xofontv*
+rm -rf $tests/xofontr* $tests/xofontv*
 
 for f in ofontr0; do
-  ./omfonts -opl2ofm $srcdir/tests/$f.pl tests/x$f.tfm || exit 1
-  ./omfonts -ofm2opl tests/x$f.tfm tests/x$f.pl || exit 1
-  diff $srcdir/tests/$f.pl tests/x$f.pl || exit 1
+  $_omfonts -opl2ofm $srcdir/$tests/$f.pl $tests/x$f.tfm || rc=7
+  $_omfonts -ofm2opl $tests/x$f.tfm $tests/x$f.pl || rc=8
+  diff $srcdir/$tests/$f.pl $tests/x$f.pl || rc=9
 done
 
 for f in $VPL; do
-  ./omfonts -ovp2ovf $srcdir/tests/$f.vpl tests/x$f.vf tests/x$f.tfm || exit 1
-  ./omfonts -ofm2opl tests/x$f.tfm tests/x$f.pl || exit 1
-  diff $srcdir/tests/$f.pl tests/x$f.pl || exit 1
-  ./omfonts -ovf2ovp tests/x$f.vf tests/x$f.tfm tests/x$f.vpl || exit 1
-  diff $srcdir/tests/$f.vpl tests/x$f.vpl || exit 1
+  $_omfonts -ovp2ovf $srcdir/$tests/$f.vpl $tests/x$f.vf $tests/x$f.tfm || rc=10
+  $_omfonts -ofm2opl $tests/x$f.tfm $tests/x$f.pl || rc=11
+  diff $srcdir/$tests/$f.pl $tests/x$f.pl || rc=12
+  $_omfonts -ovf2ovp $tests/x$f.vf $tests/x$f.tfm $tests/x$f.vpl || rc=13
+  diff $srcdir/$tests/$f.vpl $tests/x$f.vpl || rc=14
 done
 
 for f in $OVP; do
-  ./omfonts -ovp2ovf $srcdir/tests/$f tests/x$f tests/x$f || exit 1
-  ./omfonts -ofm2opl tests/x$f tests/x$f || exit 1
-  diff $srcdir/tests/$f.opl tests/x$f.opl || exit 1
-  ./omfonts -ovf2ovp tests/x$f tests/x$f tests/x$f || exit 1
-  diff $srcdir/tests/$f.ovp tests/x$f.ovp || exit 1
+  $_omfonts -ovp2ovf $srcdir/$tests/$f $tests/x$f $tests/x$f || rc=15
+  $_omfonts -ofm2opl $tests/x$f $tests/x$f || rc=16
+  diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=17
+  $_omfonts -ovf2ovp $tests/x$f $tests/x$f $tests/x$f || rc=18
+  diff $srcdir/$tests/$f.ovp $tests/x$f.ovp || rc=19
 done
 
-exit 0
+exit $rc
 

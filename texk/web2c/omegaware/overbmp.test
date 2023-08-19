@@ -11,14 +11,6 @@ _wopl2ofm=$BinDir/wopl2ofm$ExeExt
 _wovf2ovp=$BinDir/wovf2ovp$ExeExt
 _wovp2ovf=$BinDir/wovp2ovf$ExeExt
 
-# pre-generated test results in the repository are stored in LF
-# but the output might be written in CRLF on some platform.
-# if 'diff --strip-trailing-cr' is available, exploit it.
-# (useful for tests on win32 binaries run on MSYS shell)
-DIFF="diff"
-$DIFF --strip-trailing-cr $0 $0 \
-  && DIFF="diff --strip-trailing-cr" || echo
-
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=omegaware/tests
@@ -52,7 +44,7 @@ $_wopl2ofm -verbose $tests/xinbmp1 $tests/xinbmp1 || rc=9
 
 $_wofm2opl -verbose xinbmp1 $tests/xinbmp2 || rc=10
 
-$DIFF $tests/xinbmp1.opl $tests/xinbmp1.opl || rc=11
+diff $tests/xinbmp1.opl $tests/xinbmp1.opl || rc=11
 
 sed -e '/OFMLEVEL/s/H 1/H 0/' -e 's/xinbmp)/xinbmp1)/;s/xoverbmp)/xoverbmp1)/' \
 	$tests/xoverbmp.ovp >$tests/xoverbmp1.ovp
@@ -63,7 +55,7 @@ sed -e '/OFMLEVEL/s/H 1/H 0/' $tests/xoverbmp.opl >$tests/xoverbmp1.opl
 
 $_wofm2opl -verbose xoverbmp1 $tests/xoverbmp2 || rc=13
 
-$DIFF $tests/xoverbmp1.opl $tests/xoverbmp2.opl || rc=14
+diff $tests/xoverbmp1.opl $tests/xoverbmp2.opl || rc=14
 
 $_wovf2ovp -verbose $tests/xoverbmp1 xoverbmp1 $tests/xoverbmp2 || rc=15
 

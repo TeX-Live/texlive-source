@@ -4,34 +4,42 @@
 # Copyright 2010, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
 
-grep -v 'CHARWD R' $srcdir/tests/charwd-r.pl >tests/charwdr.pl
+tests=tests
 
-TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -opl2ofm tests/charwdr.pl tests/charwdr.tfm || exit 1
+test -d $tests || mkdir -p $tests
+rc=0
 
-TEXMFCNF=$srcdir/../../kpathsea \
-  TFMFONTS=tests \
-  ./omfonts -ofm2opl tests/charwdr.tfm tests/charwdr.xpl || exit 1
-
-diff $srcdir/tests/charwd-r.pl tests/charwdr.xpl || exit 1
-
-grep -v 'CHARWD R' $srcdir/tests/charwd-v.vpl >tests/charwdv.vpl
+grep -v 'CHARWD R' $srcdir/$tests/charwd-r.pl >$tests/charwdr.pl
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ovp2ovf tests/charwdv.vpl tests/charwdv.vf tests/charwdv.tfm || exit 1
+  $_omfonts -opl2ofm $tests/charwdr.pl $tests/charwdr.tfm || rc=1
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  TFMFONTS=tests \
-  ./omfonts -ofm2opl tests/charwdr.tfm tests/charwdr.xpl || exit 1
+  TFMFONTS=$tests \
+  $_omfonts -ofm2opl $tests/charwdr.tfm $tests/charwdr.xpl || rc=2
 
-diff $srcdir/tests/charwd-r.pl tests/charwdr.xpl || exit 1
+diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || rc=3
+
+grep -v 'CHARWD R' $srcdir/$tests/charwd-v.vpl >$tests/charwdv.vpl
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  TFMFONTS=tests \
-  VFFONTS=tests \
-  ./omfonts -ovf2ovp tests/charwdv.vf tests/charwdv.tfm tests/charwdv.xpl || exit 1
+  $_omfonts -ovp2ovf $tests/charwdv.vpl $tests/charwdv.vf $tests/charwdv.tfm || rc=4
 
-diff $srcdir/tests/charwd-v.vpl tests/charwdv.xpl || exit 1
+TEXMFCNF=$srcdir/../../kpathsea \
+  TFMFONTS=$tests \
+  $_omfonts -ofm2opl $tests/charwdr.tfm $tests/charwdr.xpl || rc=5
 
+diff $srcdir/$tests/charwd-r.pl $tests/charwdr.xpl || rc=6
+
+TEXMFCNF=$srcdir/../../kpathsea \
+  TFMFONTS=$tests \
+  VFFONTS=$tests \
+  $_omfonts -ovf2ovp $tests/charwdv.vf $tests/charwdv.tfm $tests/charwdv.xpl || rc=7
+
+diff $srcdir/$tests/charwd-v.vpl $tests/charwdv.xpl || rc=8
+
+exit $rc

@@ -4,29 +4,37 @@
 # Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d tests || mkdir -p tests
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_omfonts=$BinDir/omfonts$ExeExt
+
+tests=tests
+
+test -d $tests || mkdir -p $tests
+rc=0
 
 TEXMFCNF=$srcdir/../../kpathsea
-OFMFONTS=tests
+OFMFONTS=./$tests
 export TEXMFCNF OFMFONTS
 
-./omfonts -opl2ofm -verbose $srcdir/tests/sample0-h tests/sample0-h || exit 1
+$_omfonts -opl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample0-h || rc=1
 
-./omfonts -opl2ofm -verbose $srcdir/tests/sample0-h tests/sample1-h || exit 1
+$_omfonts -opl2ofm -verbose $srcdir/$tests/sample0-h $tests/sample1-h || rc=2
 
-./omfonts -ofm2opl -verbose sample1-h tests/sample1-h || exit 1
+$_omfonts -ofm2opl -verbose sample1-h $tests/sample1-h || rc=3
 
-diff $srcdir/tests/sample0-h.opl tests/sample1-h.opl || exit 1
+diff $srcdir/$tests/sample0-h.opl $tests/sample1-h.opl || rc=4
 
-./omfonts -ovp2ovf -verbose $srcdir/tests/sample tests/sample tests/sample || exit 1
+$_omfonts -ovp2ovf -verbose $srcdir/$tests/sample $tests/sample $tests/sample || rc=5
 
-./omfonts -ovf2ovp -verbose tests/sample sample tests/xsample.out || exit 1
+$_omfonts -ovf2ovp -verbose $tests/sample sample $tests/xsample.out || rc=6
 
-diff $srcdir/tests/sample.out tests/xsample.out || exit 1
+diff $srcdir/$tests/sample.out $tests/xsample.out || rc=7
 
-./omfonts -ovp2ovf -verbose $srcdir/tests/sample.ovp tests/sample2.ovf || exit 1
+$_omfonts -ovp2ovf -verbose $srcdir/$tests/sample.ovp $tests/sample2.ovf || rc=8
 
-./omfonts -ovf2ovp -verbose tests/sample2 sample2 >tests/xsample2.out || exit 1
+$_omfonts -ovf2ovp -verbose $tests/sample2 sample2 >$tests/xsample2.out || rc=9
 
-diff $srcdir/tests/sample.out tests/xsample2.out || exit 1
+diff $srcdir/$tests/sample.out $tests/xsample2.out || rc=10
 
+exit $rc

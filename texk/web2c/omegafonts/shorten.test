@@ -4,6 +4,12 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+W2CDir=${W2CDir:-..}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$W2CDir/pltotf$ExeExt
+_omfonts=$BinDir/omfonts$ExeExt
+
 tests=tests
 
 test -d $tests || mkdir -p $tests
@@ -12,16 +18,16 @@ TEXMFCNF=$srcdir/../../kpathsea
 export TEXMFCNF
 
 echo && echo "pltotf $tests/shorten.opl $tests/shortend.tfm" && \
-  ../pltotf $srcdir/$tests/shorten.opl $tests/shortend.tfm || exit
+  $_pltotf $srcdir/$tests/shorten.opl $tests/shortend.tfm || exit
 
 echo && echo "omfonts -ofm2opl $tests/shorten.tfm $tests/shortend.pl" && \
-  ./omfonts -ofm2opl $tests/shortend.tfm $tests/shortend.pl || exit
+  $_omfonts -ofm2opl $tests/shortend.tfm $tests/shortend.pl || exit
 
 echo && echo "omfonts -opl2ofm $tests/shorten $tests/shortend" && \
-  ./omfonts -opl2ofm $srcdir/$tests/shorten $tests/shortend || exit
+  $_omfonts -opl2ofm $srcdir/$tests/shorten $tests/shortend || exit
 
 echo && echo "omfonts -ofm2opl $tests/shorten $tests/shortend" && \
-  ./omfonts -ofm2opl $tests/shortend $tests/shortend || exit
+  $_omfonts -ofm2opl $tests/shortend $tests/shortend || exit
 
 diff $tests/shortend.pl $tests/shortend.opl || exit
 
