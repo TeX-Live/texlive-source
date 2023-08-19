@@ -4,6 +4,14 @@
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 testdir=$abs_srcdir/triptrap
@@ -22,6 +30,7 @@ cat >filter <<-\_EOF
 	s,^\*\*(trap\.mf,** \&trap  trap \
 	(trap.mf,
 	s/ (TeX Live 20[^)]*)//
+	s/ (Web2C 202[3-9])//
 	s/base=trap [^)][^)]*)/base=trap)/
 	s/)  [0-9A-Z: ]*$/)/
 	s/usage [1-9][0-9&]* ([1-9][0-9&]* still/usage XX\&XX (YYY\&YYYYY still/
@@ -71,11 +80,11 @@ diff $testdir/mftrap.log mftrap.log
 diff $testdir/mftrap.pl mftrap.pl || is_OK=false
 
 ../gftype -m -i ./trap.72270gf >trap.typ || exit 1
-diff $testdir/trap.typ trap.typ
+$DIFF $testdir/trap.typ trap.typ
 
 for f in mftrapin.log mftrap.fot mftrap.log trap.typ; do
-  sed $testdir/$f -f filter >a/$f
-  sed $f -f filter >b/$f
+  sed -f filter $testdir/$f >a/$f
+  sed -f filter $f >b/$f
   diff a/$f b/$f || is_OK=false
 done
 

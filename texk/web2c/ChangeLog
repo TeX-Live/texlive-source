@@ -1,3 +1,9 @@
+2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mftraptest.test,
+	* triptest.test: Filter Web2C year in banner.
+	Make easier to test on Windows.
+
 2023-08-19  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: CWEB 4.10 release.

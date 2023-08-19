@@ -14,6 +14,8 @@
 *.opl text eol=lf
 *.ovp text eol=lf
 *.out text eol=lf
+*.log text eol=lf
+*.typ text eol=lf
 
 # for dvi2tty
 *.tty text eol=lf
