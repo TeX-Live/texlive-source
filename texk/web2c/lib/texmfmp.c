@@ -174,6 +174,8 @@ FILE *Poptr;
 #undef xfopen
 #define fopen fsyscp_fopen
 #define xfopen fsyscp_xfopen
+#undef stat
+#define stat _stat
 #include <wchar.h>
 int
 fsyscp_stat(const char *path, struct stat *buffer)
