@@ -2,7 +2,7 @@
 % This program by Silvio Levy and Donald E. Knuth
 % is based on a program by Knuth.
 % It is distributed WITHOUT ANY WARRANTY, express or implied.
-% Version 4.9 --- May 2023
+% Version 4.10 --- August 2023
 
 % Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -27,11 +27,11 @@
 \mathchardef\RA="3221 % right arrow
 \mathchardef\BA="3224 % double arrow
 
-\def\title{CTANGLE (Version 4.9)}
+\def\title{CTANGLE (Version 4.10)}
 \def\topofcontents{\null\vfill
   \centerline{\titlefont The {\ttitlefont CTANGLE} processor}
   \vskip 15pt
-  \centerline{(Version 4.9)}
+  \centerline{(Version 4.10)}
   \vfill}
 \def\botofcontents{\vfill
 \noindent
@@ -61,7 +61,7 @@ Joachim Schrod, Lee Wittenberg, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.9)"
+@d banner "This is CTANGLE (Version 4.10)"
 
 @c
 @<Include files@>@/

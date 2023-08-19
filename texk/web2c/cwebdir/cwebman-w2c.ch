@@ -93,17 +93,17 @@
 @z
 
 @x
-\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.9)}
+\def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.10)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.9 [\TeX~Live])}
+\def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.10 [\TeX~Live])}
 @z
 
 @x
-\vskip 18pt\centerline{(Version 4.9 --- May 2023)}
+\vskip 18pt\centerline{(Version 4.10 --- August 2023)}
 @y
-\vskip 18pt\centerline{(Version 4.9 --- May 2023)%
-\footnote*{This document describes the extended \.{CWEB} (Version 4.9 [\TeX~Live]).}}
+\vskip 18pt\centerline{(Version 4.10 --- August 2023)%
+\footnote*{This document describes the extended \.{CWEB} (Version 4.10 [\TeX~Live]).}}
 @z
 
 @x
@@ -320,9 +320,9 @@ And here's what the same excerpt looks like when typeset.
 @z
 
 @x
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.9)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.10)\}{ }\\vfill\}}\cr}$$
 @y
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.9)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.10)\}{ }\\vfill\}}\cr}$$
 @z
 
 @x

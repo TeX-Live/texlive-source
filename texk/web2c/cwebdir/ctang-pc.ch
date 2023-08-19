@@ -9,9 +9,9 @@ that allows >64K arrays. If you need lots of bytes and toks, try the
 alternate change files with -bs suffix instead of -pc.
 
 @x section 1
-@d banner "This is CTANGLE (Version 4.9)"
+@d banner "This is CTANGLE (Version 4.10)"
 @y
-@d banner "This is CTANGLE (Version 4.9pc)"
+@d banner "This is CTANGLE (Version 4.10pc)"
 @z
 @x section 17
 @d max_bytes 100000 /* the number of bytes in identifiers,

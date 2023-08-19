@@ -1,6 +1,6 @@
 # This file is part of CWEB.
 # It is distributed WITHOUT ANY WARRANTY, express or implied.
-# Version 4.9 --- May 2023
+# Version 4.10 --- August 2023
 
 # Copyright (C) 1987,1990,1993,2000 Silvio Levy and Donald E. Knuth
 
@@ -205,6 +205,6 @@ tarball:
 	tar zcvhf /tmp/cweb.tgz $(ALL) examples
 
 ctan:
-	git archive -o ~/cweb-4.9.zip --prefix=cweb/ cweb-4.9
+	git archive -o ~/cweb-4.10.zip --prefix=cweb/ cweb-4.10
 	make PDF=pdf usermanual
-	cd ..; zip -r ~/cweb-4.9.zip cweb/cwebman.pdf
+	cd ..; zip -r ~/cweb-4.10.zip cweb/cwebman.pdf
