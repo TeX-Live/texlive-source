@@ -4,6 +4,11 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pmpost=$BinDir/pmpost$ExeExt
+_eptex=$BinDir/eptex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 tests=pmpostdir/tests
@@ -30,13 +35,13 @@ VFFONTS="$srcdir/$tests;`dirname $vfpath`"
 export TEXMFCNF TFMFONTS MPINPUTS TEXFONTMAPS T1FONTS VFFONTS
 
 # check that we have eptex at all.
-eptex -version >/dev/null 2>&1 || exit 77
+$_eptex -version >/dev/null 2>&1 || exit 77
 
 # ensure that eptex.fmt exists and can be read.
-eptex \\end >/dev/null 2>&1 || exit 77
+$_eptex \\end >/dev/null 2>&1 || exit 77
 
 echo 'input plain;' >pmpsamp.mp
 cat "$srcdir/$tests/psample.mp" >>pmpsamp.mp
 
-./pmpost -ini -kanji=utf8 -tex=eptex pmpsamp || exit 1
+$_pmpost -ini -kanji=utf8 -tex=eptex pmpsamp || exit 1
 

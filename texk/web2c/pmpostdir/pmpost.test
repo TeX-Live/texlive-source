@@ -4,11 +4,15 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./pmpost -version || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pmpost=$BinDir/pmpost$ExeExt
 
-./pmpost -help || exit 1
+$_pmpost -version || exit 1
 
-./pmpost -dvitomp -version || exit 1
+$_pmpost -help || exit 2
 
-./pmpost -dvitomp -help || exit 1
+$_pmpost -dvitomp -version || exit 3
+
+$_pmpost -dvitomp -help || exit 4
 

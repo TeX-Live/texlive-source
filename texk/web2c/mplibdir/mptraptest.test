@@ -1,6 +1,11 @@
 #! /bin/sh -vx
 # Public domain.
 
+BinDir=${BinDir:-..}
+ExeExt=${ExeExt:-}
+_mpost=$BinDir/mpost$ExeExt
+_pltotf=$BinDir/pltotf$ExeExt
+
 testdir=$abs_srcdir/triptrap
 
 TEXMFCNF=$testdir; export TEXMFCNF
@@ -16,12 +21,12 @@ echo ">>> See $testdir/mptrap.diffs for example of acceptable diffs." >&2
 
 set -x
 
-../pltotf $testdir/trapf.pl trapf.tfm
+$_pltotf $testdir/trapf.pl trapf.tfm
 
 # get same filename in log
 $LN_S $testdir/mtrap.mp . || exit 1
 
-../mpost --ini mtrap
+$_mpost --ini mtrap
 diff $testdir/mtrap.log mtrap.log
 diff $testdir/mtrap.0 mtrap.0
 diff $testdir/mtrap.1 mtrap.1
@@ -32,7 +37,7 @@ $LN_S $testdir/trap.mp . || exit 1
 $LN_S $testdir/trap.mpx . || exit 1
 
 ## Why is --jobname required? And why --ini?
-../mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
+$_mpost --ini --jobname=trap <$testdir/mptrap1.in >mptrapin.fot
 mv trap.log mptrapin.log || exit 1
 diff $testdir/mptrapin.log mptrapin.log
 

@@ -3,19 +3,23 @@
 # Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_mpost=$BinDir/mpost$ExeExt
+
 test -d tests || mkdir -p tests
 
 if tfmpath=`$KPSEWHICH cmbx10.tfm`; then
 
   TEXMFCNF=$srcdir/../kpathsea \
     TFMFONTS=`dirname "$tfmpath"` \
-    ./mpost --dvitomp $srcdir/tests/story.dvi tests/xstory.mpx || exit 1
+    $_mpost --dvitomp $srcdir/tests/story.dvi tests/xstory.mpx || exit 1
 
 fi
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
   VFFONTS=$srcdir/tests: \
-  ./mpost --dvitomp $srcdir/tests/ptmr ptmr.mpx && \
+  $_mpost --dvitomp $srcdir/tests/ptmr ptmr.mpx && \
   mv ptmr.mpx tests/xptmr.mpx || exit 1
 
