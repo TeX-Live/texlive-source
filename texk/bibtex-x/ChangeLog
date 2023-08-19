@@ -1,3 +1,8 @@
+2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* bibtex.c, sysdep.h: Avoid compiler warnings on Windows.
+	* tests/bibtex8u-mem.test: Tweak.
+
 2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/bibtex{8,u}.test, tests/bibtex8-{char,sort}.test,

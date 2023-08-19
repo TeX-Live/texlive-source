@@ -111,6 +111,11 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#include <kpathsea/progname.h>
+#include <kpathsea/variable.h>
+#endif
 
 /*-
 **============================================================================

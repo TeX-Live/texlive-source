@@ -100,12 +100,6 @@
 #include <config.h>
 #endif
 
-#ifdef KPATHSEA
-#include <kpathsea/config.h>
-#include <kpathsea/progname.h>
-#include <kpathsea/variable.h>
-#endif
-
 #include "sysdep.h"
 #include "bibtex.h"
 #include "datatype.h"
