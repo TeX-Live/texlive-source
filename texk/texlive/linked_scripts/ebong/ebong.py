@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # look in newbong
-import sre
+import re
 A='A'
 B='B'
 S='S'
@@ -163,77 +163,77 @@ CATCODES = {'SS'  :[S,'','','',1],
             'AX'  :[F,'','','',1]}
 
 def blocked(line):
-    #print '@ blocked', line , '->',
+    #print('@ blocked', line , '->',)
     m = sre.findall('@[^@]+@',line)
     outline = line
     if not m :
-        #print  outline
+        #print(outline)
         return(outline)
     else:
         for i in range(len(m)):
             s=m[i][:-1].replace(' ','%X%')
             outline = outline.replace(m[i],s,1)
-        #print outline
+        #print(outline)
         return(outline)
 
 def unblock(line):
-    #print '@unblock', line, '->',
+    #print('@unblock', line, '->',)
     m = sre.findall('@[^\s]+',line)
     outline = line
     if not m :
-        #print outline
+        #print(outline)
         return(outline)
     else:
         for i in range(len(m)):
             s=m[i].replace('@','').replace('%X%',' ')
             outline = outline.replace(m[i],s)
-        #print outline
+        #print(outline)
         return(outline)
 
 def printamp(line):
-    #print '@unblock', line, '->',
+    #print('@unblock', line, '->',)
     m = sre.findall('#AT',line)
     outline = line
     if not m :
-        #print outline
+        #print(outline)
         return(outline)
     else:
         for i in range(len(m)):
             outline = outline.replace('#AT','@')
-        #print outline
+        #print(outline)
         return(outline)
 
 def  readsyll(syll):
     syllparts=[]
     start = 0; end = len(syll)
     while syll[start : end]:
-	slice = syll[start : end]
-	#print slice
-	if AKSAR.has_key(slice):
-		syllparts.append(AKSAR[slice])
-		start = start + len(slice)
-		end = len(syll)
-	else :
-		end = end -1
+        slice = syll[start : end]
+        #print(slice)
+        if AKSAR.has_key(slice):
+                syllparts.append(AKSAR[slice])
+                start = start + len(slice)
+                end = len(syll)
+        else :
+                end = end -1
     return(syllparts)
 
 def fuse(list1,list2):
     global CCATCODE
-    #print list1,list2
+    #print(list1,list2)
     Type1 = list1[0]
     Type2 = list2[0]
 
     if Type2 == s:
        Type3 = str(list2[2])
     elif Type2 == X:
-	Type1=A
-	Type3=''
+        Type1=A
+        Type3=''
     else:
-	Type3 =''
+        Type3 =''
 
     Type = Type1+Type2+Type3
 
-    #print 'Type:', Type
+    #print('Type:', Type)
 
     try:
         CATCODE = CATCODES[Type]
@@ -243,8 +243,8 @@ def fuse(list1,list2):
         POSTFIX = CATCODE[3]
         FLAG = CATCODE[4]
 
-        #print 'TGT:', TARGET, PREFIX,MIDFIX,POSTFIX,FLAG
-        #print 'RAWC', AKSAR[list1[1]][1],AKSAR[list2[1]][1]
+        #print('TGT:', TARGET, PREFIX,MIDFIX,POSTFIX,FLAG)
+        #print('RAWC', AKSAR[list1[1]][1],AKSAR[list2[1]][1])
 
         c1=list1[1]
         c2=list2[1]
@@ -255,15 +255,15 @@ def fuse(list1,list2):
             c = PREFIX + c1 + MIDFIX + POSTFIX
 
         fused = [TARGET,c]
-        #print CATCODE
+        #print(CATCODE)
         return(fused)
     except KeyError:
-        print '\n ERROR AT LINE:', NCLINE, 'WORD:',NCWORD, '(',CWORD,')'
+        print('\n ERROR AT LINE:', NCLINE, 'WORD:',NCWORD, '(',CWORD,')')
         return(['ERROR','UNKNOWN CATCODE'])
 
 def fuseatoms(syll):
     slist=readsyll(syll);
-    #print slist
+    #print(slist)
     lslist=len(slist);
     l0=slist[0];
     for i in range(1,lslist):
@@ -281,7 +281,7 @@ def fuseword(wrd):
         syll=eachsyll
         thesyll = fuseatoms(syll)
         w0 = w0 + thesyll
-    #print 'FUSED WORD',w0
+    #print('FUSED WORD',w0)
     return(w0)
 
 def fuseline(line):
@@ -295,9 +295,9 @@ def fuseline(line):
         word = eachword
         CWORD=word
         theword=fuseword(word)
-        #print 'XX',theword
+        #print('XX',theword)
         l0=l0+' '+theword
-    #print 'FUSED LINE', l0
+    #print('FUSED LINE', l0)
     return(l0)
 
 # The main program
@@ -306,8 +306,8 @@ OK=1
 finnam = sys.argv[1]
 foutnam = finnam.split('.')[0] + '.' + 'tex'
 
-fin  = file(finnam,'rt')
-fout = file(foutnam,'wt')
+fin  = open(finnam,'rt')
+fout = open(foutnam,'wt')
 
 textin = fin.readlines()
 nlines = len(textin)
@@ -329,10 +329,10 @@ for eachline in textin:
                     line2   = blocked(line1)
                     lineout = fuseline(line2) + '\n'
                     lineout = lineout[1:]
-                    #print ':::', lineout
+                    #print(':::', lineout)
                 if lineout.find('UNKNOWN CATCODE') == -1 :
                     lineout = unblock(lineout)
-                    #print ':::', lineout
+                    #print(':::', lineout)
                     textout.append(printamp(lineout))
                 else :
                     OK = 0
@@ -341,6 +341,6 @@ for eachline in textin:
 if OK == 1:
     fout.writelines(textout)
     fout.close()
-    print 'done'
+    print('done')
 else:
-    print 'Unknown CATCODE, Fix The errors and try again'
+    print('Unknown CATCODE, Fix The errors and try again')
