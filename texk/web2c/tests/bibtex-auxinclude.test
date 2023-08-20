@@ -3,6 +3,10 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtex=$BinDir/bibtex$ExeExt
+
 test -d tests || mkdir -p tests
 
 # in case we're invoked standalone instead of from make.
@@ -19,4 +23,4 @@ cp $srcdir/tests/auxinclude2.aux tests/auxinclude2.aux || exit 1
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/tests \
   BIBINPUTS=$srcdir/tests \
-  ./bibtex tests/xauxinclude || exit 1
+  $_bibtex tests/xauxinclude || exit 1

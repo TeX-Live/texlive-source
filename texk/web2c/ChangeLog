@@ -1,7 +1,9 @@
 2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* mftraptest.test,
-	* triptest.test: Filter Web2C year in banner.
+	* {mftraptest,triptest}.test:
+	Filter Web2C year in banner.
+	* {mftraptest,triptest,bibtex}.test,
+	tests/{bibtex-{auxinclude,bibauth,mem},tex-closeout}.test:
 	Make easier to test on Windows.
 	* Makefile.in: Add tests {,e}uptexdir/wcfname0.test.
 

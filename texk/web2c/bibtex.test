@@ -4,16 +4,20 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtex=$BinDir/bibtex$ExeExt
+
 test -d tests || mkdir -p tests
 rm -f tests/xexampl.*
 
-./bibtex -version || exit 100
+$_bibtex -version || exit 100
 
 cp $srcdir/tests/exampl.aux tests/xexampl.aux
 
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/tests \
   BIBINPUTS=$srcdir/tests \
-  ./bibtex tests/xexampl || exit 1
+  $_bibtex tests/xexampl || exit 1
 diff $srcdir/tests/exampl.bbl tests/xexampl.bbl || exit 2
 

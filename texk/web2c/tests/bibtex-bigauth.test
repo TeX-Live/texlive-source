@@ -3,6 +3,10 @@
 # Copyright 2019 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_bibtex=$BinDir/bibtex$ExeExt
+
 test -d tests || mkdir -p tests
 
 # in case we're invoked standalone instead of from make.
@@ -21,7 +25,7 @@ cp $srcdir/tests/bibtex-bigauth.aux tests/xbigauth.aux || exit 1
 TEXMFCNF=$srcdir/../kpathsea \
   BSTINPUTS=$srcdir/../tests/texmf \
   BIBINPUTS=$srcdir/tests \
-  ./bibtex tests/xbigauth || exit 1
+  $_bibtex tests/xbigauth || exit 1
 
 # the final author, in case glob_str_size is insufficient.
 grep MeerKAT tests/xbigauth.bbl >/dev/null || exit 1
