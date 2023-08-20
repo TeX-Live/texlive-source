@@ -7,6 +7,10 @@
 
 # Using test data from Philipp Lehman <lehman@gmx.net>
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_upbibtex=$BinDir/upbibtex$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 # Create bib data
@@ -65,7 +69,7 @@ for t in 1 2 3; do
     TEXMFCNF=$srcdir/../kpathsea \
     BSTINPUTS=$srcdir/tests \
     BIBINPUTS=./uptests \
-    ./upbibtex uptests/memtest$t || exit 1
+    $_upbibtex uptests/memtest$t || exit $t
 
 done
 

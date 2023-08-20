@@ -3548,21 +3548,21 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tests/xptmr*.vpl badvpl.* tests/yptmr*.* pooltype.tex ctie.c \
 	cweave.c ctwill.c ctwill-refsort.c ctwill-twinx.c tie.c \
 	ctie.outc ctie.outm ham.aux ham.idx ham.scn ham.sref ham.tex \
-	ham-sorted.tex common.tex common.scn common.idx tie.outc \
-	tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c tex.p \
-	tex.pool tex-tangle trip.diffs write18-quote.log mftrap.diffs \
-	$(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c mf.p mf.pool \
-	mf-tangle mfluatrap.diffs $(nodist_libmflua_a_SOURCES) \
-	mflua.web mflua.ch mflua-web2c mflua.p mflua.pool mflua-tangle \
-	mfluatrap.diffs mfluajittrap.diffs \
-	$(nodist_libmfluajit_a_SOURCES) mfluajit.web mfluajit.ch \
-	mfluajit-web2c mfluajit.p mfluajit.pool mfluajit-tangle \
-	mfluajittrap.diffs $(nodist_mpost_SOURCES) mpxout-tangle \
-	mptrap.diffs ptmr.mpx tests/xptmr.mpx tests/xstory.mpx \
-	$(nodist_pmpost_SOURCES) pmp.w pmpost.w pmpxout.w ppsout.w \
-	psvgout.w ptfmin.w pmp-tangle pmpxout-tangle ppsout-tangle \
-	psvgout-tangle pmpsamp.* upmpsamp.* \
-	$(nodist_libmplibcore_a_SOURCES) \
+	ham-sorted.tex index.tex common.tex common.scn common.idx \
+	tie.outc tie.outm $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
+	tex.p tex.pool tex-tangle trip.diffs write18-quote.log \
+	mftrap.diffs $(nodist_libmf_a_SOURCES) mf-final.ch mf-web2c \
+	mf.p mf.pool mf-tangle mfluatrap.diffs \
+	$(nodist_libmflua_a_SOURCES) mflua.web mflua.ch mflua-web2c \
+	mflua.p mflua.pool mflua-tangle mfluatrap.diffs \
+	mfluajittrap.diffs $(nodist_libmfluajit_a_SOURCES) \
+	mfluajit.web mfluajit.ch mfluajit-web2c mfluajit.p \
+	mfluajit.pool mfluajit-tangle mfluajittrap.diffs \
+	$(nodist_mpost_SOURCES) mpxout-tangle mptrap.diffs ptmr.mpx \
+	tests/xptmr.mpx tests/xstory.mpx $(nodist_pmpost_SOURCES) \
+	pmp.w pmpost.w pmpxout.w ppsout.w psvgout.w ptfmin.w \
+	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle \
+	pmpsamp.* upmpsamp.* $(nodist_libmplibcore_a_SOURCES) \
 	$(nodist_libmplibextramath_a_SOURCES) \
 	$(nodist_libmplibbackends_a_SOURCES) mp-tangle mpmath-tangle \
 	mpmathdecimal-tangle mpmathdouble-tangle mpstrings-tangle \
@@ -4508,7 +4508,7 @@ uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/ptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test
+uptex_tests = uptexdir/uptriptest.test uptexdir/ptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test uptexdir/wcfname0.test
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/uppltotf.test uptexdir/uptftopl.test \
@@ -4566,7 +4566,7 @@ euptex_ch_srcs = \
 
 # e-upTeX Tests
 #
-euptex_tests = euptexdir/euptriptest.test euptexdir/eptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test euptexdir/wcfname.test
+euptex_tests = euptexdir/euptriptest.test euptexdir/eptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test euptexdir/wcfname.test euptexdir/wcfname0.test
 
 # At the moment, these are the only man pages handled in the
 # conglomerated web2c/Makefile[.am]. (All the others are in man/.)
@@ -22068,7 +22068,7 @@ uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie_m) tftopl.web tftopl.ch
 uptexdir/uptriptest.log uptexdir/ptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log: uptex$(EXEEXT)
+uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log uptexdir/wcfname0.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -22110,7 +22110,7 @@ euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
 	$(tie_c) euptex.web $(euptex_ch_srcs)
 euptexdir/euptriptest.log euptexdir/eptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
-euptexdir/eupver.log euptexdir/wcfname.log: euptex$(EXEEXT)
+euptexdir/eupver.log euptexdir/wcfname.log euptexdir/wcfname0.log: euptex$(EXEEXT)
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: euptrip-clean

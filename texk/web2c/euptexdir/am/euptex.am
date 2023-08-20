@@ -93,10 +93,10 @@ EXTRA_DIST += \
 
 # e-upTeX Tests
 #
-euptex_tests = euptexdir/euptriptest.test euptexdir/eptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test euptexdir/wcfname.test
+euptex_tests = euptexdir/euptriptest.test euptexdir/eptriptest.test euptexdir/pdfprimitive.test euptexdir/eupver.test euptexdir/wcfname.test euptexdir/wcfname0.test
 euptexdir/euptriptest.log euptexdir/eptriptest.log: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
-euptexdir/eupver.log euptexdir/wcfname.log: euptex$(EXEEXT)
+euptexdir/eupver.log euptexdir/wcfname.log euptexdir/wcfname0.log: euptex$(EXEEXT)
 
 EXTRA_DIST += $(euptex_tests)
 

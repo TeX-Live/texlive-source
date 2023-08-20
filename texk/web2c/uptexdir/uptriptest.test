@@ -4,6 +4,13 @@
 # Copyright 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-..}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+_pltotf=$BinDir/pltotf$ExeExt
+_tftopl=$BinDir/tftopl$ExeExt
+_dvitype=$BinDir/dvitype$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 testdir=$abs_srcdir/triptrap
@@ -30,9 +37,9 @@ set -x
 
 echo "*** TRIP test for upTeX ***."
 
-../pltotf $testdir/trip.pl trip.tfm || exit 1
+$_pltotf $testdir/trip.pl trip.tfm || exit 1
 
-../tftopl ./trip.tfm trip.pl || exit 1
+$_tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
@@ -40,7 +47,7 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 $LN_S $testdir/trip.tex .
 
 rm -f trip.log
-../uptex --progname=upinitex --ini <$testdir/trip1.in >uptripin.fot
+$_uptex --progname=upinitex --ini <$testdir/trip1.in >uptripin.fot
 if test ! -s trip.fmt; then
   echo "*** trip.fmt not created by trip1.in, investigate!" >&2
   exit 1
@@ -50,7 +57,7 @@ diff $testdir/tripin.log uptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-../uptex --progname=uptex <$testdir/trip2.in >uptrip.fot
+$_uptex --progname=uptex <$testdir/trip2.in >uptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > uptrip.log
 diff $testdir/trip.fot uptrip.fot
 
@@ -61,7 +68,7 @@ $DIFF $DIFFFLAGS $testdir/trip.log uptrip.log
 mv tripos.tex uptripos.tex
 diff $testdir/tripos.tex uptripos.tex || is_OK=false
 
-eval ../dvitype $dvitype_args trip.dvi >uptrip.typ || exit 1
+eval $_dvitype $dvitype_args trip.dvi >uptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ uptrip.typ
 
 $is_OK || {

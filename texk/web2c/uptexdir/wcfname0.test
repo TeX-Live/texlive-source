@@ -3,8 +3,8 @@
 # Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
-engine=euptex
-testdir=euptests
+engine=uptex
+testdir=up0tests
 
 KpsDir=${KpsDir:-../kpathsea}
 BinDir=${BinDir:-.}
@@ -15,7 +15,7 @@ _tex=$BinDir/$engine$ExeExt
 test -d $testdir || mkdir -p $testdir
 rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*.tex fn*.tex
 
-rc=0; err1=; err2=
+rc=0; err1=; err2=; err3=; err4=
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS="$testdir;."; export TEXINPUTS
@@ -46,9 +46,11 @@ fi
 if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
   echo "*** We guess OS is Windows."
   MyOS=Windows
+  try_ienc="sjis"
 else
   echo "*** We guess OS is not Windows."
   MyOS=nonWindows
+  try_ienc="euc sjis"
 fi
 if [ "$ExeExt" = ".exe" ]; then
   opt_win=-windows
@@ -64,21 +66,12 @@ fi
 
 # upTeX internal encoding
 fenc="utf8"
-for ienc in uptex; do
-for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc; do
-
-  if [ $ienc != uptex -a $doc = fn£¥µÆÇñß-$fenc ]; then
-    continue
-  fi
+for ienc in $try_ienc; do
+for doc in fn-$fenc fnさざ波-$fenc; do
 
   if [ $MyOS = Windows ]; then
-    if [ $ienc = uptex ]; then
-      command_line_encoding=utf8
-      export command_line_encoding
-    else
-      command_line_encoding=none
-      export command_line_encoding
-    fi
+    command_line_encoding=none
+    export command_line_encoding
   fi
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
@@ -91,6 +84,42 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc; do
   mv $doc-$ienc.txt $doc-$ienc.log $testdir/
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
+  rm -f $testdir/fn±×÷§¶-utf8-tmp.tex
+
+done
+done
+
+if [ $pret = 239 ]; then
+  echo "*** skip tests for Shift_JIS & EUC-JP."
+  exit 0
+fi
+
+
+# pTeX compatible mode, regacy encoding
+for fenc in sjis euc; do
+for doc in fnさざ波-$fenc; do
+
+  ienc=$fenc
+  if [ $MyOS = Windows ]; then
+    ienc="sjis"
+    command_line_encoding=none
+    export command_line_encoding
+  else
+    if [ $fenc != sjis ]; then ienc="euc"; fi
+  fi
+  guess_input_kanji_encoding=1
+  export guess_input_kanji_encoding
+
+  echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
+  $_kpsewhich -progname=$engine $doc.tex || rc=20
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=21
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+      { rc=3 ; err3=$err3" $fenc:$ienc:$doc" ; }
+  $_kpsewhich -progname=$engine $doc-tmp.tex || rc=22
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=23
+  mv $doc-$ienc.txt $doc-$ienc.log $testdir/
+  diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
+      { rc=4 ; err4=$err4" $fenc:$ienc:$doc" ; }
 
 done
 done
@@ -99,6 +128,8 @@ done
 if [ $rc -gt 0 ]; then
   if [ -n "$err1" ]; then echo ERROR1 $err1; fi
   if [ -n "$err2" ]; then echo ERROR2 $err2; fi
+  if [ -n "$err3" ]; then echo ERROR3 $err3; fi
+  if [ -n "$err4" ]; then echo ERROR4 $err4; fi
 else
   echo PASS
 fi

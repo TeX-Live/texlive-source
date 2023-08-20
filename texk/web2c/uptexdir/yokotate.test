@@ -5,6 +5,11 @@
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -16,10 +21,10 @@ testdir=$srcdir/uptexdir/tests
 # Testing upPLtoTF/upTFtoPL for umin10 (yoko=horiz) and utmin10 (tate=vert).
 for font in umin10 utmin10; do
 
-  ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
+  $_uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
-  ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
+  $_uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
     diff $testdir/$font.pl uptests/x$font.pl && echo || exit 2
 
 done
@@ -31,24 +36,24 @@ testdir=$srcdir/ptexdir/tests
 # Testing pPLtoTF/pTFtoPL compatible mode for character range & encoding.
 for font in chcode; do
 
-  ./uppltotf -kanji=utf8 $testdir/$font.pl uptests/x$font.tfm && \
+  $_uppltotf -kanji=utf8 $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 3
 
-  ./uptftopl -kanji=utf8 -charcode-format octal $testdir/$font.tfm uptests/x$font.pl && \
+  $_uptftopl -kanji=utf8 -charcode-format octal $testdir/$font.tfm uptests/x$font.pl && \
     diff $testdir/$font.pl uptests/x$font.pl && echo || exit 4
 
 for enc in utf8 euc sjis jis; do
 
-  ./uppltotf -kanji=$enc $testdir/$font-$enc.pl uptests/x$font-$enc.tfm && \
+  $_uppltotf -kanji=$enc $testdir/$font-$enc.pl uptests/x$font-$enc.tfm && \
     cmp $testdir/$font.tfm uptests/x$font-$enc.tfm && echo || exit 5
 
-  ./uptftopl -kanji=$enc $testdir/$font.tfm uptests/x$font-$enc.pl && \
+  $_uptftopl -kanji=$enc $testdir/$font.tfm uptests/x$font-$enc.pl && \
     if [ $enc = utf8 ]; then \
       perl -i".orig" -CD -pe "use utf8; tr/―～∥－￠￡￢/—〜‖−¢£¬/" uptests/x$font-$enc.pl; fi && \
     diff $testdir/$font-$enc.pl uptests/x$font-$enc.pl && echo || exit 6
 
   if [ $enc = utf8 ]; then
-    ./uppltotf -kanji=$enc uptests/x$font-$enc.pl.orig uptests/x$font-$enc.tfm && \
+    $_uppltotf -kanji=$enc uptests/x$font-$enc.pl.orig uptests/x$font-$enc.tfm && \
       cmp $testdir/$font.tfm uptests/x$font-$enc.tfm && echo || exit 7
   fi
 

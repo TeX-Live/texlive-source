@@ -3,13 +3,17 @@
 # Copyright 2019 Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=$srcdir/ptexdir/tests:.; export TEXINPUTS
+TEXINPUTS="$srcdir/ptexdir/tests;."; export TEXINPUTS
 
 # check consistency between runtime terminal and log
-./uptex -ini -interaction batchmode -jobname upver1-log pver1.tex >upver1-term.log || exit 1
+$_uptex -ini -interaction batchmode -jobname upver1-log pver1.tex >upver1-term.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   upver1-term.log >upver1-term_ed.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
@@ -17,13 +21,13 @@ sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
 diff upver1-term_ed.log upver1-log_ed.log || exit 2
 
 # check consistency between runtime and version output
-./uptex -version >upver2-self.log || exit 1
+$_uptex -version >upver2-self.log || exit 1
 sed -n '1 s/^\([-A-Za-z]*\) [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   upver2-self.log >upver2-self_ed.log || exit 1
 diff upver1-term_ed.log upver2-self_ed.log || exit 4
 
 # check consistency between version output and version primitives
-./uptex -ini -interaction batchmode -jobname upver2-prim pver2.tex || exit 1
+$_uptex -ini -interaction batchmode -jobname upver2-prim pver2.tex || exit 1
 sed -n 's/^Engine \([-A-Za-z]*\) \([^ ]*\) \(.*\)/\1 \2/p' \
   upver2-prim.log >upver2-prim_ed.log || exit 1
 diff upver2-self_ed.log upver2-prim_ed.log || exit 8

@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -s
 #
 # Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
@@ -9,6 +9,7 @@ use 5.008;
 use Encode;
 
 my $st = 0;
+our $windows; # option -windows
 
 foreach $_ (<DATA>) {
     chomp;
@@ -29,6 +30,7 @@ sub make_str ($$;$) {
     my ($src);
 
     my ($fnameT) = $fname0;
+    my $cmnt = $windows ? '%' : ''; # comment out if option -windows
     $fnameT =~ s/\.tex$/-tmp.tex/;
 
 $src = <<END;
@@ -48,7 +50,7 @@ $src = <<END;
 \\immediate\\closeout1
 
 % current directory
-\\input "|cat $fnameT"
+$cmnt\\input "|cat $fnameT"
 \\input $fnameT
 END
 

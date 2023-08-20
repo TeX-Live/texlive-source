@@ -3,17 +3,32 @@
 # Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d uptests || mkdir -p uptests
-rm -f uptests/fn*.log uptests/fn*.txt uptests/fn*.tex fn*.tex
+engine=uptex
+testdir=uptests
 
-rc=0
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_tex=$BinDir/$engine$ExeExt
+
+test -d $testdir || mkdir -p $testdir
+rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*.tex fn*.tex
+
+rc=0; err1=; err2=
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=uptests:.; export TEXINPUTS
+TEXINPUTS="$testdir;."; export TEXINPUTS
+
+$_kpsewhich -var-value=TEXMFCNF
+$_kpsewhich -progname=$engine -var-value=TEXINPUTS
+$_kpsewhich -progname=$engine -var-value=command_line_encoding
+$_kpsewhich -progname=$engine -var-value=guess_input_kanji_encoding
 
 for loc in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8 ja_JP.UTF-8 ja_JP.utf8; do
   locale -a | grep "^$loc\$"
   ret=$?
+  # For Slackware linux, we need to replace from utf8 to UTF-8
   if [ -f /etc/slackware-version ]; then
     loc=`echo $loc | sed -e "s/utf8/UTF-8/"`
   fi
@@ -28,23 +43,35 @@ if [ $ret != 0 ]; then
   LC_ALL=$loc; LANGUAGE=$loc; export LC_ALL LANGUAGE
 fi
 
-perl $srcdir/tests/fn-generate.perl uptests
+if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
+  echo "*** We guess OS is Windows."
+  MyOS=Windows
+else
+  echo "*** We guess OS is not Windows."
+  MyOS=nonWindows
+fi
+if [ "$ExeExt" = ".exe" ]; then
+  opt_win=-windows
+else
+  opt_win=
+fi
+
+perl -s $srcdir/tests/fn-generate.perl $opt_win $testdir
 pret=$?
 if [ $pret != 0 ] && [ $pret != 239 ]; then
-  exit 128
+  exit 77
 fi
 
 # upTeX internal encoding
 fenc="utf8"
-for ienc in euc sjis uptex; do
+for ienc in uptex; do
 for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc; do
 
   if [ $ienc != uptex -a $doc = fn£¥µÆÇñß-$fenc ]; then
     continue
   fi
 
-  if [ "$COMSPEC" != "" ]; then
-    echo "*** We guess OS is Windows."
+  if [ $MyOS = Windows ]; then
     if [ $ienc = uptex ]; then
       command_line_encoding=utf8
       export command_line_encoding
@@ -55,50 +82,24 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc; do
   fi
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
-  ./uptex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >uptests/$doc-$ienc-term.log || rc=1
-  mv $doc-$ienc.txt $doc-$ienc.log uptests/
-  diff uptests/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || rc=2
+  $_kpsewhich -progname=$engine $doc.tex || rc=10
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+      { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
+  $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
+  mv $doc-$ienc.txt $doc-$ienc.log $testdir/
+  diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
+      { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
 
 done
 done
 
-if [ $pret = 239 ]; then
-  echo "*** skip tests for Shift_JIS & EUC-JP."
-  exit 0
+
+if [ $rc -gt 0 ]; then
+  if [ -n "$err1" ]; then echo ERROR1 $err1; fi
+  if [ -n "$err2" ]; then echo ERROR2 $err2; fi
+else
+  echo PASS
 fi
-
-
-# pTeX compatible mode, regacy encoding
-for fenc in sjis euc; do
-for doc in fnさざ波-$fenc; do
-
-  ienc=$fenc
-  if [ "$COMSPEC" != "" ]; then
-    echo "*** We guess OS is Windows."
-    if [ $fenc != euc ]; then ienc="sjis"; fi
-    if [ $ienc = uptex ]; then
-      command_line_encoding=utf8
-      export command_line_encoding
-    else
-      command_line_encoding=none
-      export command_line_encoding
-    fi
-  else
-    echo "*** We guess OS is not Windows."
-    if [ $fenc != sjis ]; then ienc="euc"; fi
-  fi
-  if [ $ienc != uptex ]; then
-    guess_input_kanji_encoding=1
-    export guess_input_kanji_encoding
-  fi
-
-  echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
-  ./uptex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >uptests/$doc-$fenc-term.log || rc=3
-  mv $doc-$ienc.txt $doc-$ienc.log uptests/
-  diff uptests/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || rc=4
-
-done
-done
-
-
 exit $rc

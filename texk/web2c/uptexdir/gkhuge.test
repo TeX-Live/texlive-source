@@ -3,6 +3,11 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -17,8 +22,8 @@ for font in gkhugeok; do
 
   # This test is constructed as a cycle, since JPL source
   # of gkhugeok.tfm is so large.
-  ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
-  ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+  $_uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+  $_uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
   cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
 
 done
@@ -30,9 +35,9 @@ for font in gkhugeng; do
   # error message, instead of trying to allocate too much.
   # The invalid gkhugeng.tfm was erroneously created before
   # web2c/pltotf.ch change 2017-09-10, due to overflow
-  ./uptftopl $testdir/$font.tfm uptests/y$font.pl \
+  $_uptftopl $testdir/$font.tfm uptests/y$font.pl \
     2>uptests/y$font.err && exit 1 || echo
-  diff $testdir/$font.err uptests/y$font.err && echo || exit 1
+  diff $testdir/$font.err uptests/y$font.err && echo || exit 2
 
 done
 

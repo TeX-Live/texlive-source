@@ -3,13 +3,17 @@
 # Copyright 2019 Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=$srcdir/ptexdir/tests:.; export TEXINPUTS
+TEXINPUTS="$srcdir/ptexdir/tests;."; export TEXINPUTS
 
 # check consistency between runtime terminal and log
-./euptex -ini -etex -interaction batchmode -jobname eupver1-log pver1.tex >eupver1-term.log || exit 1
+$_euptex -ini -etex -interaction batchmode -jobname eupver1-log pver1.tex >eupver1-term.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   eupver1-term.log >eupver1-term_ed.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
@@ -17,13 +21,13 @@ sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
 diff eupver1-term_ed.log eupver1-log_ed.log || exit 2
 
 # check consistency between runtime and version output
-./euptex -version >eupver2-self.log || exit 1
+$_euptex -version >eupver2-self.log || exit 1
 sed -n '1 s/^\([-A-Za-z]*\) [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   eupver2-self.log >eupver2-self_ed.log || exit 1
 diff eupver1-term_ed.log eupver2-self_ed.log || exit 4
 
 # check consistency between version output and version primitives
-./euptex -ini -etex -interaction batchmode -jobname eupver2-prim pver2.tex || exit 1
+$_euptex -ini -etex -interaction batchmode -jobname eupver2-prim pver2.tex || exit 1
 sed -n 's/^Engine \([-A-Za-z]*\) \([^ ]*\) \(.*\)/\1 \2/p' \
   eupver2-prim.log >eupver2-prim_ed.log || exit 1
 diff eupver2-self_ed.log eupver2-prim_ed.log || exit 8

@@ -4,6 +4,9 @@
 # This test is intended to be used in a suitable temporary directory
 # after installing all engines. It should not be enabled in build stage.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+
 cat <<'EOF' > stress.tex
 \let\origdump=\dump\let\dump\relax
 \batchmode
@@ -39,14 +42,16 @@ EOF
 test0() {
   ENGINE=$1
   echo $ENGINE
+  $_engine=$BinDir/$ENGINE$ExeExt
+  if [ ! -e $_engine ]; then return 0; fi
   rm -f stress-$ENGINE.fmt test0.dvi test0.xdv &>/dev/null
-  $ENGINE -ini -etex -progname=$ENGINE -jobname=stress-$ENGINE stress &>/dev/null
+  $_engine -ini -etex -progname=$ENGINE -jobname=stress-$ENGINE stress &>/dev/null
   ls -l stress-$ENGINE.fmt
   if [[ $ENGINE = "xetex" ]]; then
-    $ENGINE -fmt=./stress-$ENGINE.fmt -no-pdf test0.tex &>/dev/null
+    $_engine -fmt=./stress-$ENGINE.fmt -no-pdf test0.tex &>/dev/null
     ls -l test0.xdv
   else
-    $ENGINE -fmt=./stress-$ENGINE.fmt test0.tex &>/dev/null
+    $_engine -fmt=./stress-$ENGINE.fmt test0.tex &>/dev/null
     ls -l test0.dvi
   fi
 }
@@ -76,14 +81,16 @@ EOF
 test1() {
   ENGINE=$1
   echo $ENGINE
+  $_engine=$BinDir/$ENGINE$ExeExt
+  if [ ! -e $_engine ]; then return 0; fi
   rm -f latex-$ENGINE.fmt test1.dvi test1.xdv &>/dev/null
-  $ENGINE -ini -etex -progname=latex-dev -jobname=latex-$ENGINE latex.ini &>/dev/null
+  $_engine -ini -etex -progname=latex-dev -jobname=latex-$ENGINE latex.ini &>/dev/null
   ls -l latex-$ENGINE.fmt
   if [[ $ENGINE = "xetex" ]]; then
-    $ENGINE -fmt=./latex-$ENGINE.fmt -no-pdf test1.tex &>/dev/null
+    $_engine -fmt=./latex-$ENGINE.fmt -no-pdf test1.tex &>/dev/null
     ls -l test1.xdv
   else
-    $ENGINE -fmt=./latex-$ENGINE.fmt test1.tex &>/dev/null
+    $_engine -fmt=./latex-$ENGINE.fmt test1.tex &>/dev/null
     ls -l test1.dvi
   fi
 }

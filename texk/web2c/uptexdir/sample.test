@@ -5,6 +5,10 @@
 # Copyright 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_updvitype=$BinDir/updvitype$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 tfmpath=`$KPSEWHICH cmbx10.tfm` || exit 77
@@ -16,8 +20,8 @@ tfmgrandparent=`dirname "$tfmparent"`
 testdir=$srcdir/ptexdir/tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  TFMFONTS=$testdir:`dirname "$tfmgrandparent"`// \
-  ./updvitype -kanji=utf8 -show-opcodes $testdir/sample >uptests/xsample.typ || exit 1
+  TFMFONTS="$testdir;"`dirname "$tfmgrandparent"`// \
+  $_updvitype -kanji=utf8 -show-opcodes $testdir/sample >uptests/xsample.typ || exit 1
 
 sed 1d uptests/xsample.typ >uptests/xsamplea.typ
 diff $testdir/samplea.typ uptests/xsamplea.typ || exit 1

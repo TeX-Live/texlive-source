@@ -4,8 +4,12 @@
 # Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./uptftopl -verbose $srcdir/tests/cmr10 uptests/xcmr10 || exit 1
+  $_uptftopl -verbose $srcdir/tests/cmr10 uptests/xcmr10 || exit 1
 

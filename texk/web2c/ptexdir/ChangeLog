@@ -1,3 +1,8 @@
+2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {ptriptest,pver,wcfname,zfmtcompress}.test:
+	Make easier to test on Windows.
+
 2023-04-15  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* ptex-base.ch: Update last_jchr in unpackage.

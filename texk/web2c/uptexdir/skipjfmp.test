@@ -4,6 +4,11 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 # Test inputs
@@ -12,11 +17,11 @@ testdir=$srcdir/ptexdir/tests
 # Testing pPLtoTF/pTFtoPL compatible mode for SKIP property in GLUEKERN.
 for font in skipjfmp; do
 
-  ./uppltotf -kanji=utf8 -verbose $testdir/$font.pl uptests/x$font.tfm && \
+  $_uppltotf -kanji=utf8 -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -kanji=utf8 -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
+    $_uptftopl -kanji=utf8 -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
     diff $testdir/$font.pl uptests/x$font.pl && echo || exit 1
 
 done

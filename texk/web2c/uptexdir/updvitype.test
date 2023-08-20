@@ -5,19 +5,25 @@
 # Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_updvitype=$BinDir/updvitype$ExeExt
+
 test -d uptests || mkdir -p uptests
+
+rc=0
 
 if tfmpath=`$KPSEWHICH cmbx10.tfm`; then
 
   TEXMFCNF=$srcdir/../kpathsea \
     TFMFONTS=`dirname "$tfmpath"` \
-    ./updvitype -show-opcodes $srcdir/tests/story >uptests/xstory.dvityp || exit 1
+    $_updvitype -show-opcodes $srcdir/tests/story >uptests/xstory.dvityp || rc=1
 
 fi
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
-  ./updvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >uptests/xpagenum.typ || exit 2
+  $_updvitype --p=\*.\*.2 $srcdir/tests/pagenum.dvi >uptests/xpagenum.typ || rc=2
 
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -26,14 +32,16 @@ export TEXMFCNF TFMFONTS
 
 for enc in utf8 jis; do
 for doc in ptex3 ptex4; do
-  ./updvitype -kanji=$enc $srcdir/ptexdir/tests/$doc.dvi >uptests/x$doc-$enc.typ || exit 3
+  $_updvitype -kanji=$enc $srcdir/ptexdir/tests/$doc.dvi >uptests/x$doc-$enc.typ || rc=3
   sed 1d uptests/x$doc-$enc.typ >uptests/x${doc}a-$enc.typ
-  diff $srcdir/ptexdir/tests/${doc}a-$enc.typ uptests/x${doc}a-$enc.typ || exit 4
+  diff $srcdir/ptexdir/tests/${doc}a-$enc.typ uptests/x${doc}a-$enc.typ || rc=4
 done
 done
 
 for doc in uptex3 uptex4; do
-  ./updvitype $srcdir/uptexdir/tests/$doc.dvi >uptests/x$doc.typ || exit 5
+  $_updvitype $srcdir/uptexdir/tests/$doc.dvi >uptests/x$doc.typ || rc=5
   sed 1d uptests/x$doc.typ >uptests/x${doc}a.typ
-  diff $srcdir/uptexdir/tests/${doc}a.typ uptests/x${doc}a.typ || exit 6
+  diff $srcdir/uptexdir/tests/${doc}a.typ uptests/x${doc}a.typ || rc=6
 done
+
+exit $rc

@@ -3,13 +3,17 @@
 # Copyright 2019 Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptex=$BinDir/ptex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=$srcdir/ptexdir/tests:.; export TEXINPUTS
+TEXINPUTS="$srcdir/ptexdir/tests;."; export TEXINPUTS
 
 # check consistency between runtime terminal and log
-./ptex -ini -interaction batchmode -jobname pver1-log pver1.tex >pver1-term.log || exit 1
+$_ptex -ini -interaction batchmode -jobname pver1-log pver1.tex >pver1-term.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   pver1-term.log >pver1-term_ed.log || exit 1
 sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
@@ -17,13 +21,13 @@ sed -n 's/^This is \([-A-Za-z]*\), Version [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
 diff pver1-term_ed.log pver1-log_ed.log || exit 2
 
 # check consistency between runtime and version output
-./ptex -version >pver2-self.log || exit 1
+$_ptex -version >pver2-self.log || exit 1
 sed -n '1 s/^\([-A-Za-z]*\) [^-]*-\([^ ]*\) \(.*\)/\1 \2/p' \
   pver2-self.log >pver2-self_ed.log || exit 1
 diff pver1-term_ed.log pver2-self_ed.log || exit 4
 
 # check consistency between version output and version primitives
-./ptex -ini -interaction batchmode -jobname pver2-prim pver2.tex || exit 1
+$_ptex -ini -interaction batchmode -jobname pver2-prim pver2.tex || exit 1
 sed -n 's/^Engine \([-A-Za-z]*\) \([^ ]*\) \(.*\)/\1 \2/p' \
   pver2-prim.log >pver2-prim_ed.log || exit 1
 diff pver2-self_ed.log pver2-prim_ed.log || exit 8

@@ -3,6 +3,11 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 # Test inputs
@@ -11,12 +16,12 @@ testdir=$srcdir/uptexdir/tests
 # Testing upPLtoTF/upTFtoPL for new JFM spec by texjporg.
 for font in testnewu; do
 
-  ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
+  $_uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
   TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
-    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 1
+    $_uptftopl -charcode-format octal -verbose $testdir/$font.tfm uptests/x$font.pl && \
+    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 2
 
 done
 

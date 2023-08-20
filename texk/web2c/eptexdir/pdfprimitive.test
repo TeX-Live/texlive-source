@@ -4,6 +4,10 @@
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_eptex=$BinDir/eptex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
@@ -15,7 +19,7 @@ FILE=pdfprimitive-eptex
 rm -f $FILE.*
 $LN_S $srcdir/eptexdir/tests/pdfprimitive-test.tex $FILE.tex
 
-./eptex -ini -etex $FILE && exit 1
+$_eptex -ini -etex $FILE && exit 1
 
 sed 1d $FILE.log >$FILE.out
 

@@ -1,3 +1,11 @@
+2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* am/uptex.am, {gkhuge,newjfm,nissya,ptriptest,
+	sample,skipjfmp,uparse,upbibtex-mem,upbibtex,updvitype,
+	upkcat,uppltotf,uptftopl,uptriptest,upver,
+	wcfname,wcfname0,yokotate}.test:
+	Make easier to test on Windows.
+
 2023-04-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upbibtex.ch: Fix bug of substring$

@@ -3,6 +3,11 @@
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
 test -d uptests || mkdir -p uptests
 
 # Test inputs
@@ -14,7 +19,7 @@ for font in uparse; do
 
   # allow hex kanji code with arbitary digits,
   # no error for no trailing spaces.
-  ./uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
+  $_uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
     cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 1
 
   # upTFtoPL should always print ASCII characters in charcode format,
@@ -23,9 +28,9 @@ for font in uparse; do
   # This test is constructed as a cycle, so that there is no
   # non-ASCII character inside test case distribution.
   TEXMFCNF=$srcdir/../kpathsea \
-    ./uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
-    ./uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
-    cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
+    $_uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+    $_uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+    cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 2
 
 done
 

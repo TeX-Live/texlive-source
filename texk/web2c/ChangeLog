@@ -3,6 +3,7 @@
 	* mftraptest.test,
 	* triptest.test: Filter Web2C year in banner.
 	Make easier to test on Windows.
+	* Makefile.in: Add tests {,e}uptexdir/wcfname0.test.
 
 2023-08-19  Andreas Scherer  <https://ascherer.github.io>
 
