@@ -5,5 +5,9 @@
 
 # Not really a test, just making sure the program executes.
 
-./xetex -version || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xetex=$BinDir/xetex$ExeExt
+
+$_xetex -version || exit 1
 
