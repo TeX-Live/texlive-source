@@ -3,37 +3,85 @@
 # Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
-test -d pdftests || mkdir -p pdftests
-rm -f pdftests/fn*.log pdftests/fn*.txt pdftests/fn*.tex fn*.tex
+engine=pdftex
+testdir=pdftests
 
-rc=0
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_tex=$BinDir/$engine$ExeExt
+
+test -d $testdir || mkdir -p $testdir
+rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*.tex fn*.tex
+
+rc=0; err1=; err2=
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=pdftests:.; export TEXINPUTS
+TEXINPUTS="$testdir;."; export TEXINPUTS
 
-perl $srcdir/tests/fn-generate.perl pdftests
-pret=$?
-if [ $pret != 0 ] && [ $pret != 239 ]; then
-  exit 128
+$_kpsewhich -var-value=TEXMFCNF
+$_kpsewhich -progname=$engine -var-value=TEXINPUTS
+$_kpsewhich -progname=$engine -var-value=command_line_encoding
+
+for loc in C.UTF-8 C.utf8 en_US.UTF-8 en_US.utf8 ja_JP.UTF-8 ja_JP.utf8; do
+  locale -a | grep "^$loc\$"
+  ret=$?
+  # For Slackware linux, we need to replace from utf8 to UTF-8
+  if [ -f /etc/slackware-version ]; then
+    loc=`echo $loc | sed -e "s/utf8/UTF-8/"`
+  fi
+  if [ $ret = 0 ]; then
+    LC_ALL=$loc; LANGUAGE=$loc; export LC_ALL LANGUAGE
+    break
+  fi
+done
+if [ $ret != 0 ]; then
+  # linux musl fails to run `locale -a` but seems to have C.UTF-8
+  loc=C.UTF-8
+  LC_ALL=$loc; LANGUAGE=$loc; export LC_ALL LANGUAGE
 fi
-rm -f pdftests/fn*-euc.tex pdftests/fn*-sjis.tex
 
-if [ "$COMSPEC" != "" ]; then
+if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
   echo "*** We guess OS is Windows."
   command_line_encoding=utf8
   export command_line_encoding
 fi
+if [ "$ExeExt" = ".exe" ]; then
+  opt_win=-windows
+else
+  opt_win=
+fi
+
+perl -s $srcdir/tests/fn-generate.perl $opt_win $testdir
+pret=$?
+if [ $pret != 0 ] && [ $pret != 239 ]; then
+  exit 77
+fi
+rm -f $testdir/fn*-euc.tex $testdir/fn*-sjis.tex
 
 fenc="utf8"
 for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc; do
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc
-  ./pdftex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >pdftests/$doc-term.log || rc=1
-  mv $doc.txt $doc.log pdftests/
+  $_kpsewhich -progname=$engine $doc.tex || rc=10
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
+  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >$testdir/$doc-term.log || \
+      { rc=1 ; err1=$err1" $fenc:$doc" ; }
+  $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
+  $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
+  mv $doc.txt $doc.log $testdir/
 ##   It does not work.
-##  diff pdftests/$doc.txt $srcdir/tests/fn-$enc.txt || rc=2
+##  diff $testdir/$doc.txt $srcdir/tests/fn-$fenc.txt || \
+##      { rc=2 ; err2=$err2" $fenc:$doc" ; }
 
 done
 
 
+if [ $rc -gt 0 ]; then
+  if [ -n "$err1" ]; then echo ERROR1 $err1; fi
+  if [ -n "$err2" ]; then echo ERROR2 $err2; fi
+else
+  echo PASS
+fi
 exit $rc

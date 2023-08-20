@@ -4,12 +4,16 @@
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pdftex=$BinDir/pdftex$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS=$srcdir/pdftexdir/tests:$srcdir/tests; export TEXINPUTS
+TEXINPUTS="$srcdir/pdftexdir/tests;$srcdir/tests"; export TEXINPUTS
 TEXFORMATS=.; export TEXFORMATS
 
-./pdftex -ini -interaction=batchmode pdfimage </dev/null || exit 1
+$_pdftex -ini -interaction=batchmode pdfimage </dev/null || exit 1
 
-./pdftex -fmt=pdfimage -interaction=batchmode pdfimage </dev/null || exit 1
+$_pdftex -fmt=pdfimage -interaction=batchmode pdfimage </dev/null || exit 2
 
 exit 0

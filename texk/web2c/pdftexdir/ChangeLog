@@ -1,3 +1,9 @@
+2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {expanded,pdfimage,pdftex,pdftosrc,ttf2afm,wcfname,
+	wprob}.test:
+	Make easier to test on Windows.
+
 2023-08-18  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* pdftex.web: minor cleanup (sync with etex.ch r24155)
