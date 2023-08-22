@@ -222,7 +222,7 @@ Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
-first, the along the normal search path.
+first, then along the normal search path.
 .TP
 .BI -output-format \ format
 Set the output format mode, where

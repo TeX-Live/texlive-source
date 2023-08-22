@@ -137,7 +137,7 @@ Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
-first, the along the normal search path.
+first, then along the normal search path.
 .TP
 .B --parse-first-line
 If the first line of the main input file begins with
