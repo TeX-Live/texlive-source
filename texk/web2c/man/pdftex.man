@@ -83,7 +83,7 @@ and
 graphics formats.  pdf\*(TX cannot include PostScript or Encapsulated
 PostScript (EPS) graphics files; first convert them to PDF using 
 .BR epstopdf (1).
-pdf\*(TX's handling of its command-line arguments is similar to that of
+pdf\*(TX's handling of its command-line arguments is similar to that
 of the other \*(TX programs in the
 .I web2c
 implementation.
