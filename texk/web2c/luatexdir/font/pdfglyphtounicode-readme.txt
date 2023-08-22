@@ -1,4 +1,4 @@
-In pdftex there is are some more heuristics going on when determining the
+In pdftex there are some more heuristics going on when determining the
 tounicode mapping:
 
 - more lookups using periods
