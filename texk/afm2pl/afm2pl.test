@@ -4,9 +4,13 @@
 # Copyright 2009, 2011 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_afm2pl=$BinDir/afm2pl$ExeExt
+
 rm -f logo10.*
 TEXMFCNF=$srcdir/../kpathsea \
-	./afm2pl -l 0 $srcdir/tests/logo10 ./logo10.pl \
+	$_afm2pl -l 0 $srcdir/tests/logo10 ./logo10.pl \
 	&& diff $srcdir/tests/logo10.pl logo10.pl \
 	&& diff $srcdir/tests/logo10.map logo10.map \
 	|| exit 1

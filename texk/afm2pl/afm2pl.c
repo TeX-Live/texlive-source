@@ -95,6 +95,14 @@ extern char ascii2ebcdic[];
 #define fopen cmsfopen
 #endif
 
+#ifdef WIN32
+#define R_MODE  "rb"
+#define W_MODE  "wb"
+#else
+#define R_MODE  "r"
+#define W_MODE  "w"
+#endif
+
 /* from dvips.h: */
 
 #ifdef VMS
@@ -473,10 +481,10 @@ openin(const char *fname, kpse_file_format_type format, const char *ext)
   const char *realfname;
 
   realfname = fname;
-  infile = fopen (realfname, "r");
+  infile = fopen (realfname, R_MODE);
   if (!infile && !find_suffix (realfname)) {
     realfname = concat (fname, ext);
-    infile = fopen (realfname, "r");
+    infile = fopen (realfname, R_MODE);
   }
   if (infile)
     return realfname;
@@ -522,7 +530,7 @@ openout(const char *fname, int based_on, const char *outext)
     else
       realfname = concat (fname, outext);
   }
-  outfile = fopen (realfname, "w");
+  outfile = fopen (realfname, W_MODE);
   /* afm2tfm uses WRITEBIN instead of "w" for some OS-es */
   if (outfile)
     return realfname;
@@ -1664,7 +1672,7 @@ static void
 writedump(void)
 {
   int i;
-  dmp = fopen (dmpname, "w");
+  dmp = fopen (dmpname, W_MODE);
   if (!dmp)
     error ("Cant open dump file");
   if (lbound) {
