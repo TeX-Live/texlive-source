@@ -4,29 +4,60 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./dt2dv $srcdir/edited.txt testfile.dvi || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dt2dv=$BinDir/dt2dv$ExeExt
+_dv2dt=$BinDir/dv2dt$ExeExt
 
-./dv2dt testfile.dvi testfile.dtl || exit 2
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
 
-./dt2dv testfile.dtl testfile.dvx || exit 3
+# check whether the binaries are Windows exe or not
+run_stdio_test=${run_stdio_test:-1}
+if [ "$ExeExt" = ".exe" ]; then
+  echo "*** We assume EXE on Windows."
+  run_stdio_test=0
+fi
 
-./dv2dt testfile.dvx testfile.dtx || exit 4
+rc=0
 
-cmp testfile.dvi testfile.dvx || exit 5
+$_dt2dv $srcdir/edited.txt testfile.dvi || rc=1
 
-diff testfile.dtl testfile.dtx || exit 6
+$_dv2dt testfile.dvi testfile.dtl || rc=2
 
-./dt2dv -so testfile.dtl > testfile1.dvi || exit 7
-./dt2dv -si testfile2.dvi < testfile.dtl || exit 8
-./dt2dv -so -si < testfile.dtl > testfile3.dvi || exit 9
+$_dt2dv testfile.dtl testfile.dvx || rc=3
 
-cmp testfile.dvi testfile1.dvi || exit 10
-cmp testfile.dvi testfile2.dvi || exit 11
-cmp testfile.dvi testfile3.dvi || exit 12
+$_dv2dt testfile.dvx testfile.dtx || rc=4
 
-./dv2dt < testfile.dvi > testfile1.dtl || exit 13
-cat testfile.dvi | ./dv2dt > testfile2.dtl || exit 14
+cmp testfile.dvi testfile.dvx || rc=5
 
-diff testfile.dtl testfile1.dtl || exit 15
-diff testfile.dtl testfile2.dtl || exit 16
+diff testfile.dtl testfile.dtx || rc=6
 
+$_dt2dv -so testfile.dtl > testfile1.dvi || rc=7
+$_dt2dv -si testfile2.dvi < testfile.dtl || rc=8
+$_dt2dv -so -si < testfile.dtl > testfile3.dvi || rc=9
+
+cmp testfile.dvi testfile1.dvi || rc=10
+cmp testfile.dvi testfile2.dvi || rc=11
+cmp testfile.dvi testfile3.dvi || rc=12
+
+if [ "$run_stdio_test" -gt 0 ]; then
+
+$_dv2dt < testfile.dvi > testfile1.dtl || rc=13
+cat testfile.dvi | $_dv2dt > testfile2.dtl || rc=14
+
+$DIFF testfile.dtl testfile1.dtl || rc=15
+$DIFF testfile.dtl testfile2.dtl || rc=16
+
+else
+
+echo dti with stdin and stdout tests **SKIPPED**
+
+fi
+
+exit $rc
