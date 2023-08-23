@@ -16,6 +16,7 @@ DIFF="diff"
 $DIFF --strip-trailing-cr $0 $0 \
   && DIFF="diff --strip-trailing-cr" || echo
 
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 
 rm -rf play*
 cp $srcdir/tests/play.dvi .
