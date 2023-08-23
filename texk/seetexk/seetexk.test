@@ -20,8 +20,8 @@ $DIFF --strip-trailing-cr $0 $0 \
   && DIFF="diff --strip-trailing-cr" || echo
 
 # check whether the binaries are Windows exe or not
-run_stdio_test=1
-if [ $ExeExt = ".exe" ]; then
+run_stdio_test=${run_stdio_test:-1}
+if [ "$ExeExt" = ".exe" ]; then
   echo "*** We assume EXE on Windows."
   run_stdio_test=0
 fi
@@ -29,7 +29,7 @@ fi
 # for check version
 echo "*** Start seetex tests with::"
 $_dviselect
-if [ $run_stdio_test -gt 0 ]; then
+if [ "$run_stdio_test" -gt 0 ]; then
 $_dvibook
 $_dviconcat
 fi
@@ -107,7 +107,7 @@ $_dvibook -s4 playsel.dvi playbook.dvi \
 
 echo dvibook tests OK
 
-if [ $run_stdio_test -gt 0 ]; then
+if [ "$run_stdio_test" -gt 0 ]; then
 
 rm -f playbook.2
 cat playsel.dvi | $_dvibook -s4 >playbook.dvi \
@@ -170,7 +170,7 @@ $_dvitodvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' playsel.dvi playdvi.dv
 
 echo dvitodvi tests OK
 
-if [ $run_stdio_test -gt 0 ]; then
+if [ "$run_stdio_test" -gt 0 ]; then
 
 rm -f playdvi.2
 cat playsel.dvi | $_dvitodvi -o playdvi.dvi '4:500@0+1(16.5cm,0)+2(0,28cm)+3(16.5cm,28cm)' \
