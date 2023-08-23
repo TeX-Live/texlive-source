@@ -4,6 +4,30 @@
 # Copyright 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_psselect=$BinDir/psselect$ExeExt
+_psbook=$BinDir/psbook$ExeExt
+_psresize=$BinDir/psresize$ExeExt
+_psnup=$BinDir/psnup$ExeExt
+_pstops=$BinDir/pstops$ExeExt
+_epsffit=$BinDir/epsffit$ExeExt
+
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
+# check whether the binaries are Windows exe or not
+run_stdio_test=${run_stdio_test:-1}
+if [ "$ExeExt" = ".exe" ]; then
+  echo "*** We assume EXE on Windows."
+  run_stdio_test=0
+fi
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
@@ -12,49 +36,64 @@ PSUTILSINPUTS=$srcdir/data; export PSUTILSINPUTS
 failed=
 
 rm -rf play*
-./psselect 5:15 $srcdir/tests/play.ps playsel.ps \
+$_psselect 5:15 $srcdir/tests/play.ps playsel.ps \
 	2>playsel.2 \
-	&& diff playsel.2 $srcdir/tests/playsel.2 \
+	&& $DIFF playsel.2 $srcdir/tests/playsel.2 \
 	&& echo "psselect tests OK" \
 	|| failed="$failed psselect"
 
-./psbook -s4 playsel.ps playbook.ps \
+$_psbook -s4 playsel.ps playbook.ps \
 	2>playbook.2 \
-	&& diff playbook.2 $srcdir/tests/playbook.2 \
+	&& $DIFF playbook.2 $srcdir/tests/playbook.2 \
 	&& echo "psbook tests OK" \
 	|| failed="$failed psbook"
 
-./psresize -Pa4 -pa5 playsel.ps \
+$_psresize -Pa4 -pa5 playsel.ps \
 	| sed -e 's/-0\.000000 /0.000000 /' >playres.ps \
-	&& diff playres.ps $srcdir/tests/playres.ps \
+	&& $DIFF playres.ps $srcdir/tests/playres.ps \
 	&& echo "psresize tests OK" \
 	|| failed="$failed psresize"
 
-./psnup -pa4 -2 playsel.ps playnup.ps \
+$_psnup -pa4 -2 playsel.ps playnup.ps \
 	2>playnup.2 \
-	&& diff playnup.2 $srcdir/tests/playnup.2 \
+	&& $DIFF playnup.2 $srcdir/tests/playnup.2 \
 	&& echo "psnup tests OK" \
 	|| failed="$failed psnup"
 
-./psselect 1:18 $srcdir/tests/play.ps 2>playsel1.2 \
-	| ./psnup -pa4 -18 >playnup1.ps 2>playnup1.2 \
-	&& diff playsel1.2 $srcdir/tests/playsel1.2 \
-	&& diff playnup1.2 $srcdir/tests/playnup1.2 \
+$_psselect 1:18 $srcdir/tests/play.ps playsel0.ps 2>playsel0.2 \
+	&& $_psnup -pa4 -18 playsel0.ps playnup0.ps 2>playnup0.2 \
+	&& $DIFF playsel0.2 $srcdir/tests/playsel1.2 \
+	&& $DIFF playnup0.2 $srcdir/tests/playnup1.2 \
+	&& echo "psnup0 tests OK" \
+	|| failed="$failed psnup0"
+
+if [ "$run_stdio_test" -gt 0 ]; then
+
+$_psselect 1:18 $srcdir/tests/play.ps 2>playsel1.2 \
+	| $_psnup -pa4 -18 >playnup1.ps 2>playnup1.2 \
+	&& $DIFF playsel1.2 $srcdir/tests/playsel1.2 \
+	&& $DIFF playnup1.2 $srcdir/tests/playnup1.2 \
 	&& echo "psnup1 tests OK" \
 	|| failed="$failed psnup1"
 
-./pstops -pa4 '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
+else
+
+echo psutils with stdin and stdout tests **SKIPPED**
+
+fi
+
+$_pstops -pa4 '2:0L@.7(21cm,0)+1L@.7(21cm,14.85cm)' playsel.ps playps.ps \
 	2>playps.2 \
-	&& diff playps.2 $srcdir/tests/playps.2 \
+	&& $DIFF playps.2 $srcdir/tests/playps.2 \
 	&& echo "pstops tests OK" \
 	|| failed="$failed pstops"
 
 rm -rf plot*
-./epsffit -c 0 0 600 368 $srcdir/tests/plot.eps ploth.eps \
+$_epsffit -c 0 0 600 368 $srcdir/tests/plot.eps ploth.eps \
 	&& diff ploth.eps $srcdir/tests/ploth.eps \
-	&& ./epsffit -c 0 0 500 400 $srcdir/tests/plot.eps plotv.eps \
+	&& $_epsffit -c 0 0 500 400 $srcdir/tests/plot.eps plotv.eps \
 	&& diff plotv.eps $srcdir/tests/plotv.eps \
-	&& ./epsffit -m 0 0 368 500 $srcdir/tests/plot.eps plotm.eps \
+	&& $_epsffit -m 0 0 368 500 $srcdir/tests/plot.eps plotm.eps \
 	&& diff plotm.eps $srcdir/tests/plotm.eps \
 	&& echo "epsffit tests OK" \
 	|| failed="$failed epsffit"
