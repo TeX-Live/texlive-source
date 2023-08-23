@@ -4,6 +4,14 @@
 # Copyright 2010 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 #srcdir='../../../source/libs/pplib'
 #PPLIB_TREE=pplib-src
 
@@ -13,12 +21,12 @@ mkdir test
 cp $srcdir/$PPLIB_TREE/test/luaimage.pdf test
 
 (cd test && ../pptest1 luaimage.pdf | sed -e 's/memused.*$//;s/memwaste.*$//;' >out1 || exit 1) \
-&& (cd test && ../pptest2 luaimage.pdf >out2 || exit 1) \
-&& (cd test && ../pptest3  luaimage.pdf >out3 || exit 1) || exit 1
+&& (cd test && ../pptest2 luaimage.pdf >out2 || exit 2) \
+&& (cd test && ../pptest3 luaimage.pdf >out3 || exit 3) || exit 4
 
 
-diff $srcdir/$PPLIB_TREE/test/out1 test/out1 || exit 1
-diff $srcdir/$PPLIB_TREE/test/out2 test/out2 || exit 1
-diff $srcdir/$PPLIB_TREE/test/luaimage.pdf.out test/luaimage.pdf.out || exit 1
-diff $srcdir/$PPLIB_TREE/test/out3 test/out3 || exit 1
+diff $srcdir/$PPLIB_TREE/test/out1 test/out1 || exit 5
+$DIFF $srcdir/$PPLIB_TREE/test/out2 test/out2 || exit 6
+diff $srcdir/$PPLIB_TREE/test/luaimage.pdf.out test/luaimage.pdf.out || exit 7
+$DIFF $srcdir/$PPLIB_TREE/test/out3 test/out3 || exit 8
 
