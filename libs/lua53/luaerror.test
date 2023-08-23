@@ -7,9 +7,7 @@ LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 ./luatry -e "error('test')" 2>error.tmp && exit 1
 
-sed -e 's/lt-luatry/luatry/;s,^.*/luatry,./luatry,' error.tmp >error.out
+sed -e 's/lt-luatry/luatry/;s,^.*/luatry\(\.exe\)*,./luatry,' error.tmp >error.out
 
-diff $srcdir/error.exp error.out || exit 1
-
-
+diff $srcdir/error.exp error.out || exit 2
 

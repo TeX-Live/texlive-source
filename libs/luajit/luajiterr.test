@@ -7,10 +7,7 @@ LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 ./luajittry -e "error('test')" 2>jiterr.tmp && exit 1
 
-sed -e 's/lt-luajittry/luajittry/;s,^.*/luajittry,./luajittry,' \
+sed -e 's/lt-luajittry/luajittry/;s,^.*/luajittry\(\.exe\)*,./luajittry,' \
     -e '/\[C]: at 0x/d' jiterr.tmp >jiterr.out
 
-diff $srcdir/jiterr.exp jiterr.out || exit 1
-
-
-
+diff $srcdir/jiterr.exp jiterr.out || exit 2
