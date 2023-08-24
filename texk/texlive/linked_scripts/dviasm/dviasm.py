@@ -6,7 +6,7 @@
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 # Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 # Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
-# Copyright (C) 2019-2022 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+# Copyright (C) 2019-2023 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import sys, os.path
 from optparse import OptionParser
@@ -315,8 +315,7 @@ class DVI(object):
     id = GetByte(fp)
     if not ValidID(id):
       warning("ID byte is %d; use the default %d!" % (id, DVI_ID))
-    else:
-      self.id = id
+    self.id = id
     numerator = SignedQuad(fp)
     if numerator <= 0:
       warning('numerator is %d; use the default 25400000!' % numerator)
@@ -1169,13 +1168,13 @@ def ProcessOptions():
 DVIasm is a Python script to support changing or creating DVI files
 via disassembling into text, editing, and then reassembling into
 binary format. It is fully documented at
-  http://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf
+  https://tug.org/TUGboat/Articles/tb28-2/tb89cho.pdf
   http://ajt.ktug.kr/assets/2008/5/1/0201cho.pdf
 
 Please report bugs to
   https://github.com/aminophen/dviasm"""
 
-  version = """This is %prog-20220918
+  version = """This is %prog-20230823
 
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
