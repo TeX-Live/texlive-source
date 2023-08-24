@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "6 August 2019" "Web2C @VERSION@"
+.TH PDFTEX 1 "24 August 2023" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -83,7 +83,7 @@ and
 graphics formats.  pdf\*(TX cannot include PostScript or Encapsulated
 PostScript (EPS) graphics files; first convert them to PDF using 
 .BR epstopdf (1).
-pdf\*(TX's handling of its command-line arguments is similar to that of
+pdf\*(TX's handling of its command-line arguments is similar to that
 of the other \*(TX programs in the
 .I web2c
 implementation.
@@ -222,7 +222,7 @@ Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
-first, the along the normal search path.
+first, then along the normal search path.
 .TP
 .BI -output-format \ format
 Set the output format mode, where
