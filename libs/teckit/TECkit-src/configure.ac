@@ -1,5 +1,5 @@
 AC_PREREQ(2.54)
-AC_INIT(teckit, 2.5.11, wstech@sil.org)
+AC_INIT(teckit, 2.5.12, wstech@sil.org)
 AM_CONFIG_HEADER([config.h])
 AC_CONFIG_SRCDIR([source/UnicodeNames.cpp])
 AC_CONFIG_MACRO_DIR([m4])
@@ -43,9 +43,9 @@ if test x$enable_tetex_build = xyes; then
   ZLIBDIR=../zlib
 else
   AC_MSG_NOTICE([Not doing a teTeX/TeXLive-style build])
-  sinclude(zlib-1.2.11/withenable.ac)
-  sinclude(zlib-1.2.11/zlib.ac)
-  ZLIBDIR=zlib-1.2.11
+  sinclude(zlib-1.2.13/withenable.ac)
+  sinclude(zlib-1.2.13/zlib.ac)
+  ZLIBDIR=zlib-1.2.13
 fi
 AC_SUBST(ZLIBDIR)
 

@@ -1,3 +1,8 @@
+2023-08-26  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import TECkit-2.5.12.
+	* version.ac: Adjust.
+
 2021-11-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import TECkit-2.5.11.

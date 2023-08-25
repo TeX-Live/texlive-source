@@ -1,6 +1,6 @@
-diff -ur teckit-2.5.11/source/Compiler.cpp teckit-src/source/Compiler.cpp
---- teckit-2.5.11/source/Compiler.cpp	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Compiler.cpp	Tue Nov 09 14:46:23 2021
+diff -ur teckit-2.5.12/source/Compiler.cpp teckit-src/source/Compiler.cpp
+--- teckit-2.5.12/source/Compiler.cpp	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Compiler.cpp	Sat Aug 26 07:13:28 2023
 @@ -189,7 +189,7 @@
  		free(table);
  }
@@ -10,9 +10,9 @@ diff -ur teckit-2.5.11/source/Compiler.cpp teckit-src/source/Compiler.cpp
  WINAPI
  TECkit_GetUnicodeName(UInt32 usv)
  {
-diff -ur teckit-2.5.11/source/Compiler.h teckit-src/source/Compiler.h
---- teckit-2.5.11/source/Compiler.h	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Compiler.h	Tue Nov 09 14:47:44 2021
+diff -ur teckit-2.5.12/source/Compiler.h teckit-src/source/Compiler.h
+--- teckit-2.5.12/source/Compiler.h	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Compiler.h	Sat Aug 26 07:14:29 2023
 @@ -229,7 +229,7 @@
  		vector<UInt32>		byteClassLines;
  		vector<UInt32>		uniClassLines;
@@ -22,9 +22,9 @@ diff -ur teckit-2.5.11/source/Compiler.h teckit-src/source/Compiler.h
  		UInt32				uniDefault;
  		UInt8				byteDefault;
  		bool				supplementaryChars;
-diff -ur teckit-2.5.11/source/Engine.cpp teckit-src/source/Engine.cpp
---- teckit-2.5.11/source/Engine.cpp	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Engine.cpp	Tue Nov 09 14:49:06 2021
+diff -ur teckit-2.5.12/source/Engine.cpp teckit-src/source/Engine.cpp
+--- teckit-2.5.12/source/Engine.cpp	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Engine.cpp	Sat Aug 26 07:16:02 2023
 @@ -51,12 +51,6 @@
  #	define NOSERVICE
  #	define NOMCX
@@ -38,9 +38,9 @@ diff -ur teckit-2.5.11/source/Engine.cpp teckit-src/source/Engine.cpp
  #endif
  
  #include "Engine.h"
-diff -ur teckit-2.5.11/source/Public-headers/TECkit_Compiler.h teckit-src/source/Public-headers/TECkit_Compiler.h
---- teckit-2.5.11/source/Public-headers/TECkit_Compiler.h	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Public-headers/TECkit_Compiler.h	Tue Nov 09 14:52:58 2021
+diff -ur teckit-2.5.12/source/Public-headers/TECkit_Compiler.h teckit-src/source/Public-headers/TECkit_Compiler.h
+--- teckit-2.5.12/source/Public-headers/TECkit_Compiler.h	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Public-headers/TECkit_Compiler.h	Sat Aug 26 07:20:29 2023
 @@ -29,6 +29,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */
@@ -69,9 +69,9 @@ diff -ur teckit-2.5.11/source/Public-headers/TECkit_Compiler.h teckit-src/source
  WINAPI EXPORTED
  TECkit_GetUnicodeName(UInt32 usv);
  	/* returns the Unicode name of usv, if available, else NULL */
-diff -ur teckit-2.5.11/source/Public-headers/TECkit_Engine.h teckit-src/source/Public-headers/TECkit_Engine.h
---- teckit-2.5.11/source/Public-headers/TECkit_Engine.h	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Public-headers/TECkit_Engine.h	Tue Nov 09 14:54:20 2021
+diff -ur teckit-2.5.12/source/Public-headers/TECkit_Engine.h teckit-src/source/Public-headers/TECkit_Engine.h
+--- teckit-2.5.12/source/Public-headers/TECkit_Engine.h	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Public-headers/TECkit_Engine.h	Sat Aug 26 07:22:22 2023
 @@ -79,6 +79,9 @@
  #ifdef _WIN32
  /* MS compiler has predefined _WIN32, so assume Windows target  */
@@ -82,9 +82,9 @@ diff -ur teckit-2.5.11/source/Public-headers/TECkit_Engine.h teckit-src/source/P
  #else
  /* not the MS compiler, so try Metrowerks' platform macros */
  #ifndef __APPLE__
-diff -ur teckit-2.5.11/source/Sample-tools/TECkit_Compile.cpp teckit-src/source/Sample-tools/TECkit_Compile.cpp
---- teckit-2.5.11/source/Sample-tools/TECkit_Compile.cpp	Thu Jul 30 04:27:12 2020
-+++ teckit-src/source/Sample-tools/TECkit_Compile.cpp	Tue Nov 09 14:56:58 2021
+diff -ur teckit-2.5.12/source/Sample-tools/TECkit_Compile.cpp teckit-src/source/Sample-tools/TECkit_Compile.cpp
+--- teckit-2.5.12/source/Sample-tools/TECkit_Compile.cpp	Thu Sep 08 00:26:50 2022
++++ teckit-src/source/Sample-tools/TECkit_Compile.cpp	Sat Aug 26 07:25:27 2023
 @@ -24,13 +24,13 @@
  #endif
  

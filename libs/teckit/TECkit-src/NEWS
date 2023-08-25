@@ -1,3 +1,9 @@
+2023-08-25
+    Version 2.5.12
+    Updated Unicode character names and normalization data to 15.0.0
+    Updated zlib to version 1.2.13
+    Updated documentation
+
 2021-11-08
     Version 2.5.11
     Updated Unicode character names and normalization data to 14.0.0
