@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2023 Karl Berry <tex-live@tug.org>
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 

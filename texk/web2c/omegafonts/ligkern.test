@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2023 Karl Berry <tex-live@tug.org>
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -18,17 +18,17 @@ export TEXMFCNF OFMFONTS
 
 ligfiles='ligall ligbch ligblb ligbdy'
 
+rc=0
+
 for f in $ligfiles; do
+  echo && echo "*** opl2ofm $f x$f"
+  $_omfonts -opl2ofm $srcdir/$tests/$f $tests/x$f || rc=1
 
-echo && echo "*** opl2ofm $f x$f"
-$_omfonts -opl2ofm $srcdir/$tests/$f $tests/x$f || rc=1
+  echo && echo "*** ofm2opl x$f x$f"
+  $_omfonts -ofm2opl $tests/x$f $tests/x$f || rc=2
 
-echo && echo "*** ofm2opl x$f x$f"
-$_omfonts -ofm2opl $tests/x$f $tests/x$f || rc=2
-
-echo && echo "*** diff $f.opl x$f.opl"
-diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=3
-
+  echo && echo "*** diff $f.opl x$f.opl"
+  diff $srcdir/$tests/$f.opl $tests/x$f.opl || rc=3
 done
 
 echo && echo "*** ovp2ovf ligblv xligblv xligblv"
