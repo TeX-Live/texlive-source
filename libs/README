@@ -46,7 +46,7 @@ lua 5.3.6 - checked 04oct20
 luajit 2.1.0-beta3 - checked 20jun17
   http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
 
-mpfr 4.2.0 - checked 12jan23
+mpfr 4.2.1 - checked 26aug23
   http://ftp.gnu.org/gnu/mpfr/
 
 pixman 0.42.2 - checked 03nov22
