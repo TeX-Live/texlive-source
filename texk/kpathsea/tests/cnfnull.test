@@ -20,7 +20,7 @@ test -d $cnf_dir || exit 1
 printf 'x\0=1\n\0' >$cnf_file || exit 2
 
 val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=x`
-if [ $exe = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
+if [ "$ExeExt" = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
 test x"$val" = x1 || exit 3
 
 # Before we dropped nul bytes in 2020, kpse gave a warning:
