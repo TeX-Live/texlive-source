@@ -4,5 +4,9 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-./synctex help || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_synctex=$BinDir/synctex$ExeExt
+
+$_synctex help || exit 1
 
