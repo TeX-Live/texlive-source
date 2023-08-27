@@ -3,12 +3,16 @@
 # Public domain. Originally written by Karl Berry
 # Basic check that --cnf-line does something.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pdftex=$BinDir/pdftex$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 TEXINPUTS=$srcdir/pdftexdir/tests; export TEXINPUTS
 
-./pdftex -ini --interaction=nonstopmode \
+$_pdftex -ini --interaction=nonstopmode \
   --cnf-line=max_print_line=500 cnfline.tex || exit $?
 
 if grep 'those hyphens are' cnfline.log >/dev/null; then
