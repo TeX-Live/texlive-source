@@ -4,23 +4,27 @@
 # Copyright 2012 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_makeindex=$BinDir/makeindex$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
 rm -f sample.* range*.* pprec*.* romalp*.*
 rc=0
 
-./makeindex $srcdir/tests/sample.idx -o sample.ind1 -t sample.ilg1 \
+$_makeindex $srcdir/tests/sample.idx -o sample.ind1 -t sample.ilg1 \
 	&& diff $srcdir/tests/sample.ind sample.ind1 || rc=1
 
-cat $srcdir/tests/sample.idx | ./makeindex >sample.ind2 2>sample.ilg2 \
+cat $srcdir/tests/sample.idx | $_makeindex >sample.ind2 2>sample.ilg2 \
 	&& diff $srcdir/tests/sample.ind sample.ind2 || rc=2
 
 
 # test for range suffix_2p, suffix_3p, suffix_mp
 
 for num in 1 2 3; do
-./makeindex -s $srcdir/tests/range$num.ist $srcdir/tests/range.idx \
+$_makeindex -s $srcdir/tests/range$num.ist $srcdir/tests/range.idx \
 	-o range$num.ind1 -t range$num.ilg \
 	&& diff $srcdir/tests/range$num.ind range$num.ind1 || rc=3
 done
@@ -30,13 +34,13 @@ done
 
 sfx=A
 for num in 0 1 2; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
 	-o pprec$sfx-$num.ind1 -t pprec$sfx-$num.ilg \
 	&& diff $srcdir/tests/pprec$sfx-$num.ind pprec$sfx-$num.ind1 || rc=4
 done
 sfx=B
 for num in 0 3 4; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/pprec$sfx.idx \
 	-o pprec$sfx-$num.ind1 -t pprec$sfx-$num.ilg \
 	&& diff $srcdir/tests/pprec$sfx-$num.ind pprec$sfx-$num.ind1 || rc=5
 done
@@ -46,25 +50,25 @@ done
 
 sfx=A
 for num in 5 6; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
 	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
 	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=6
 done
 sfx=B
 for num in 5 6 7; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
 	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
 	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=7
 done
 sfx=C
 for num in 5; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
 	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
 	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=8
 done
 sfx=D
 for num in 5 6 7; do
-./makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
+$_makeindex -s $srcdir/tests/pprec$num.ist $srcdir/tests/romalp$sfx.idx \
 	-o romalp$sfx-$num.ind1 -t romalp$sfx-$num.ilg \
 	&& diff $srcdir/tests/romalp$sfx-$num.ind romalp$sfx-$num.ind1 || rc=9
 done
