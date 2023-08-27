@@ -4,6 +4,14 @@
 # Copyright 2012-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pfb2pfa=$BinDir/pfb2pfa$ExeExt
+_ps2pk=$BinDir/ps2pk$ExeExt
+_pk2bm=$BinDir/pk2bm$ExeExt
+_pktest=$BinDir/pktest$ExeExt
+_mag=$BinDir/mag$ExeExt
+
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
@@ -11,33 +19,36 @@ TEXFONTS=.; export TEXFONTS
 
 rm -f Symbol*
 
+rc=0
+
 cp $srcdir/tests/Symbol.afm $srcdir/tests/Symbol.pfb .
 
-./pfb2pfa -v Symbol.pfb || exit 1
-diff $srcdir/tests/Symbol.pfa Symbol.pfa || exit 1
+$_pfb2pfa -v Symbol.pfb || rc=1
+diff $srcdir/tests/Symbol.pfa Symbol.pfa || rc=2
 
-./ps2pk -v Symbol.pfa || exit 1
-diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || exit 1
+$_ps2pk -v Symbol.pfa || rc=3
+diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || rc=4
 
 rm -f Symbol10.300pk
-./ps2pk -v Symbol.pfb || exit 1
-diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || exit 1
+$_ps2pk -v Symbol.pfb || rc=5
+diff $srcdir/tests/Symbol10.300pk Symbol10.300pk || rc=6
 
-./pk2bm -h -ca Symbol10.300pk >Symbol.alpha.hex || exit 1
-diff $srcdir/tests/Symbol.alpha.hex Symbol.alpha.hex || exit 1
+$_pk2bm -h -ca Symbol10.300pk >Symbol.alpha.hex || rc=7
+diff $srcdir/tests/Symbol.alpha.hex Symbol.alpha.hex || rc=8
 
-./pk2bm -b -o141 Symbol10.300pk >Symbol.alpha.pix || exit 1
-diff $srcdir/tests/Symbol.alpha.pix Symbol.alpha.pix || exit 1
-./pktest -ca -W24 -H22 Symbol.alpha.pk <Symbol.alpha.pix || exit 1
-./pk2bm -b -ca Symbol.alpha.pk | \
-  sed 's/yoff : 28/yoff : 21/' >Symbol.alpha.out || exit 1
-diff Symbol.alpha.pix Symbol.alpha.out || exit 1
+$_pk2bm -b -o141 Symbol10.300pk >Symbol.alpha.pix || rc=9
+diff $srcdir/tests/Symbol.alpha.pix Symbol.alpha.pix || rc=10
+$_pktest -ca -W24 -H22 Symbol.alpha.pk <Symbol.alpha.pix || rc=11
+$_pk2bm -b -ca Symbol.alpha.pk | \
+  sed 's/yoff : 28/yoff : 21/' >Symbol.alpha.out || rc=12
+diff Symbol.alpha.pix Symbol.alpha.out || rc=13
 
 val1='167 240 263 288'
-val2=`./mag -r -R240 $val1` || exit 1
-val3=`./mag -R240 $val2` || exit 1
+val2=`$_mag -r -R240 $val1` || rc=14
+val3=`$_mag -R240 $val2` || rc=15
 
-echo "./mag -r -R240 $val1 => $val2"
-echo "./mag -R240 $val2 => $val3"
-test "x$val1" = "x$val3"  || exit 1
+echo "$_mag -r -R240 $val1 => $val2"
+echo "$_mag -R240 $val2 => $val3"
+test "x$val1" = "x$val3"  || rc=16
 
+exit $rc

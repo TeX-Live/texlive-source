@@ -4,6 +4,10 @@
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ps2pk=$BinDir/ps2pk$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea
@@ -19,6 +23,6 @@ AFMFONTS="`dirname $afmpath`"
 
 export TEXMFCNF ENCFONTS T1FONTS AFMFONTS
 
-./ps2pk -elm-mathit.enc -X600 -Y600 -R600 -S0 -E1 -P12.0 lmmi12.pfb lmmi12.600pk || exit 1
+$_ps2pk -elm-mathit.enc -X600 -Y600 -R600 -S0 -E1 -P12.0 lmmi12.pfb lmmi12.600pk || exit 1
 diff $srcdir/tests/lmmi12.600pk lmmi12.600pk || exit 1
 
