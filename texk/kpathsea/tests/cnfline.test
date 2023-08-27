@@ -14,7 +14,7 @@ unset maxpr
 unset othervar
 
 remove_cr() {
-  if [ $ExeExt = ".exe" ]; then
+  if [ "$ExeExt" = ".exe" ]; then
     val=`echo $val | sed -e 's/\\r//'`
   fi
 }
@@ -27,7 +27,7 @@ test x"$val" = x300 || exit 1
 TEXMFCNF=$cnf_dir; export TEXMFCNF
 # In Windows, exe binaries fail to get environment variables from sh scripts
 # and still we need --cnf-line.
-if [ $ExeExt = ".exe" ]; then
+if [ "$ExeExt" = ".exe" ]; then
   _kpsewhich="$BinDir/kpsewhich$ExeExt --cnf-line=TEXMFCNF=$cnf_dir"
 fi
 

@@ -16,7 +16,7 @@ TEXMFCNF=$cnf_dir; export TEXMFCNF
 # Make sure we get expected values from the test texmf.cnf.
 errfile=cnfprog.err
 val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=noequals 2>$errfile`
-if [ $ExeExt = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
+if [ "$ExeExt" = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi
 
 # the vaiable should not have any value.
 test -z "$val" || exit 1
