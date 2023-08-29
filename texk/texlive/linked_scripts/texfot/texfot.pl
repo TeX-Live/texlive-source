@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.48 2022/12/16 02:15:30 karl Exp $
+# $Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.48 2022/12/16 02:15:30 karl Exp $';
+my $ident = '$Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -266,9 +266,8 @@ any engine and any command line options.
 
 C<texfot> does not look at the log file or any other possible output
 file(s); it only looks at the standard output and standard error from
-the command. stdout is processed first, then stderr. Lines from stderr
-have an identifying prefix. C<texfot> writes all accepted lines to its
-stdout.
+the command. stdout is processed first, then stderr. C<texfot> writes
+all accepted lines to its stdout.
 
 The messages shown are intended to be those which likely need action by
 the author: error messages, overfull and underfull boxes, undefined
@@ -310,14 +309,28 @@ Otherwise, if the line matches the list of regexps to show, show it.
 =item 6.
 
 Otherwise, the default: if the line came from stdout, ignore it; if the
-line came from stderr, print it (to stdout). This distinction is made
-because TeX engines write relatively few messages to stderr, and it's
-likely that any such should be considered.
+line came from stderr, print it (to stdout), with the prefix
+S<C<[stderr] >>. This distinction is made because TeX engines write
+relatively few messages to stderr, and it's likely that any such should
+be considered.
 
 =back
 
 Once a particular check matches, the program moves on to process the
 next line.
+
+C<texfot> matches exclusively line-by-line; however, TeX itself folds
+output lines, typically at column 79. This means matches might fail
+because the text being matched was split over two lines. To work around
+this, you can effectively turn off TeX's folding by setting the
+C<max_print_line> parameter to a large number, either in the environment
+or on the command:
+
+  # When errors are missed due to TeX's folding of lines:
+  texfot pdftex --cnf-line max_print_line=999 file.tex
+  
+  # Equivalently:
+  env max_print_line=999 texfot pdftex file.tex
 
 Don't hesitate to peruse the source to the script, which is essentially
 a straightforward loop matching against the different lists as above.
@@ -333,14 +346,15 @@ anything else as verbose as TeX to make that useful).
 =head1 OPTIONS
 
 The following are the options to C<texfot> itself (not the TeX engine
-being invoked; consult the TeX documentation or the engine's C<--help>
-output for that).
+being invoked; consult the engine documentation or C<--help> output for
+that).
 
 The first non-option terminates C<texfot>'s option parsing, and the
 remainder of the command line is invoked as the TeX command, without
 further parsing. For example, C<texfot --debug tex
 --debug> will output debugging information from both C<texfot> and
-C<tex>.
+C<tex>. TeX engines, unlike many standard programs, require that options
+be specified before the input filename or text.
 
 Options may start with either - or --, and may be unambiguously
 abbreviated. It is best to use the full option name in scripts, though,
@@ -381,11 +395,11 @@ is never entered. Giving C<--interactive> allows interaction to happen.
 =item C<--no-quiet>
 
 By default, the TeX command being invoked is reported on standard
-output. C<--quiet> omits that reporting. To get a completely silent run,
+output; C<--quiet> omits that reporting. To get a completely silent run,
 redirect standard output: S<C<texfot ... E<gt>/dev/null>>. (The only
 messages to standard error should be errors from C<texfot> itself, so it
-shouldn't be necessary to redirect that, but of course that can be done
-as well.)
+shouldn't be necessary to redirect that, but of course that could be
+done as well.)
 
 =item C<--stderr>
 
@@ -422,7 +436,7 @@ Display this help and exit successfully.
 =head1 RATIONALE
 
 I wrote this because, in my work as a TUGboat editor
-(L<https://tug.org/TUGboat>, journal submissions always welcome!), I run
+(L<https://tug.org/TUGboat>, article submissions always welcome!), I run
 and rerun many documents, many times each. It was easy to lose warnings
 I needed to see in the mass of unvarying and uninteresting output from
 TeX, such as style files being read and fonts being used. I wanted to
@@ -431,7 +445,7 @@ see all and only those messages which needed some action by me.
 I found some other programs of a similar nature, the LaTeX package
 C<silence>, and plenty of other (La)TeX wrappers, but it seemed none of
 them did what I wanted. Either they read the log file (I wanted to look
-at only the online output), or they output more or less than I wanted,
+at only the online output), or they output more, or less, than I wanted,
 or they required invoking TeX differently (I wanted to keep my build
 process exactly the same, most critically the TeX invocation, which can
 get complicated). Hence I wrote this little script.
@@ -457,6 +471,6 @@ are released to the public domain. Email C<karl@freefriends.org> with
 bug reports. It has no home page beyond the package page on CTAN:
 L<https://ctan.org/pkg/texfot>.
 
-  $Id: texfot,v 1.48 2022/12/16 02:15:30 karl Exp $
+  $Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $
 
 =cut
