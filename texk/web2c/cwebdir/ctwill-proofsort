@@ -9,12 +9,17 @@ use File::Basename;
 use Getopt::Long qw(:config no_ignore_case bundling);
 use Pod::Usage;
 
-my $progname = basename $0;
+my $progname;
+my $collator;
 
 BEGIN {
+  $progname = basename $0;
   # Unicode::Collate has been around a long time,
   # but it's not part of core Perl.
-  my $rc = eval { require Unicode::Collate; };
+  my $rc = eval {
+    require Unicode::Collate;
+    $collator = Unicode::Collate->new();
+  };
   die "$progname: the Unicode::Collate module is required\n" unless $rc;
 }
 
@@ -52,7 +57,6 @@ open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
 
 my %mini_index; # storage for index entries of a section
 my $print_index = 0; # do we collect and print a mini-index?
-my $collator = Unicode::Collate->new();
 
 # Scroll through the input file and look for blocks like
 # \mini
@@ -71,7 +75,9 @@ foreach my $line (<TEX>)
 		$print_index = 1;
 		%mini_index = (); # reset mini-index storage
 	} elsif ("}\\FI\n" eq $line) { # end of mini-index
-		foreach my $key ($collator->sort(keys %mini_index)) {
+		foreach my $key ($collator ?
+			$collator->sort(keys %mini_index) :
+			sort {"\L$a" cmp "\L$b"} keys %mini_index) {
 			print $mini_index{$key};
 		}
 		$print_index = 0;
