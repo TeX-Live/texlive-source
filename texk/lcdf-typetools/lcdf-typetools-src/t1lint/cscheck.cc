@@ -1,6 +1,6 @@
 /* cscheck.{cc,hh} -- checking Type 1 charstrings for validity
  *
- * Copyright (c) 1999-2019 Eddie Kohler
+ * Copyright (c) 1999-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,8 +21,8 @@
 
 using namespace Efont;
 
-#define CHECK_STACK_GE(numargs)	do { if (size() < numargs) return error(errUnderflow, cmd); } while (0)
-#define CHECK_STACK_EQ(numargs)	do { CHECK_STACK_GE(numargs); if (size() > numargs) _errh->warning("too many arguments to %<%s%> (have %d, expected %d)", Charstring::command_name(cmd).c_str(), size(), numargs); } while (0)
+#define CHECK_STACK_GE(numargs) do { if (size() < numargs) return error(errUnderflow, cmd); } while (0)
+#define CHECK_STACK_EQ(numargs) do { CHECK_STACK_GE(numargs); if (size() > numargs) _errh->warning("too many arguments to %<%s%> (have %d, expected %d)", Charstring::command_name(cmd).c_str(), size(), numargs); } while (0)
 #define CHECK_STACK_CPEQ(numargs) do { CHECK_STACK_EQ(numargs); if (!_cp_exists) return error(errCurrentPoint, cmd); } while (0)
 
 
@@ -46,15 +46,15 @@ CharstringChecker::stem(double y, double dy, const char *cmd_name)
     Vector<double> &hints = (is_v ? _h_vstem : _h_hstem);
     const char *dimen_name = (is_v ? "x" : "y");
     if (dy < 0) {
-	y += dy;
-	dy = -dy;
+        y += dy;
+        dy = -dy;
     }
     if (dy < 0.5)
-	_errh->warning("small delta-%s in %<%s%> (%g)", dimen_name, cmd_name, dy);
+        _errh->warning("small delta-%s in %<%s%> (%g)", dimen_name, cmd_name, dy);
     for (int i = 0; i < hints.size(); i += 2)
-	if ((hints[i] >= y && hints[i+1] <= y)
-	    || (hints[i] >= y+dy && hints[i+1] <= y+dy))
-	    _errh->warning("overlapping %<%s%> hints", cmd_name);
+        if ((hints[i] >= y && hints[i+1] <= y)
+            || (hints[i] >= y+dy && hints[i+1] <= y+dy))
+            _errh->warning("overlapping %<%s%> hints", cmd_name);
     hints.push_back(y);
     hints.push_back(y+dy);
 }
@@ -70,35 +70,35 @@ CharstringChecker::check_stem3(const char *cmd_name)
     // sort hints
     int i0, i1, i2;
     if (hints[0] > hints[2])
-	i0 = 2, i1 = 0;
+        i0 = 2, i1 = 0;
     else
-	i0 = 0, i1 = 2;
+        i0 = 0, i1 = 2;
     if (hints[4] < hints[i0])
-	i2 = i1, i1 = i0, i0 = 4;
+        i2 = i1, i1 = i0, i0 = 4;
     else if (hints[4] < hints[i1])
-	i2 = i1, i1 = 4;
+        i2 = i1, i1 = 4;
     else
-	i2 = 4;
+        i2 = 4;
 
     // check constraints. count "almost equal" as equal
     double stemw0 = hints[i0+1] - hints[i0];
     double stemw2 = hints[i2+1] - hints[i2];
     if ((int)(1024*(stemw0 - stemw2) + .5) != 0)
-	_errh->error("bad %<%s%>: extreme stem widths unequal (%g, %g)", cmd_name, stemw0, stemw2);
+        _errh->error("bad %<%s%>: extreme stem widths unequal (%g, %g)", cmd_name, stemw0, stemw2);
 
     double c0 = (hints[i0] + hints[i0+1])/2;
     double c1 = (hints[i1] + hints[i1+1])/2;
     double c2 = (hints[i2] + hints[i2+1])/2;
     if ((int)(1024*((c1 - c0) - (c2 - c1)) + .5) != 0)
-	_errh->error("bad %<%s%>: stem gaps unequal (%g, %g)", cmd_name, c1-c0, c2-c1);
+        _errh->error("bad %<%s%>: stem gaps unequal (%g, %g)", cmd_name, c1-c0, c2-c1);
 
     // compare to old hints
     if (old_hints.size()) {
-	for (int i = 0; i < old_hints.size(); i++)
-	    if (hints[i] != old_hints[i]) {
-		_errh->warning("%<%s%> conflicts with old %<%s%>", cmd_name, cmd_name);
-		break;
-	    }
+        for (int i = 0; i < old_hints.size(); i++)
+            if (hints[i] != old_hints[i]) {
+                _errh->warning("%<%s%> conflicts with old %<%s%>", cmd_name, cmd_name);
+                break;
+            }
     }
     old_hints = hints;
 }
@@ -240,7 +240,7 @@ CharstringChecker::callothersubr()
         retval = mm_command(othersubrnum, n);
         goto skip_pop;
 
-    default:			// unknown
+    default:                    // unknown
     unknown:
         _errh->warning("unknown callothersubr %<%d%>", othersubrnum);
         ps_clear();
@@ -266,20 +266,20 @@ bool
 CharstringChecker::type1_command(int cmd)
 {
     if (_subrno < 0)
-	++_ncommand;
+        ++_ncommand;
     if (cmd == Cs::cCallsubr) {
-	int old_subrno = _subrno;
-	_subrno = (size() > 1 ? (int) top(0) : -300);
-	bool result = callsubr_command();
-	_subrno = old_subrno;
-	return result;
+        int old_subrno = _subrno;
+        _subrno = (size() > 1 ? (int) top(0) : -300);
+        bool result = callsubr_command();
+        _subrno = old_subrno;
+        return result;
     } else if (cmd == Cs::cCallothersubr) {
-	CHECK_STACK_GE(2);
-	return callothersubr();
+        CHECK_STACK_GE(2);
+        return callothersubr();
     } else if (cmd == Cs::cReturn) {
-	return false;
+        return false;
     } else if (cmd == Cs::cPop || cmd == Cs::cDiv) {
-	return arith_command(cmd);
+        return arith_command(cmd);
     }
 
     if (cmd != Cs::cHsbw && cmd != Cs::cSbw) {
@@ -528,11 +528,11 @@ CharstringSubrChecker::type1_command(int cmd)
 {
     switch (cmd) {
     case Cs::cReturn:
-	_returned = true;
-	return false;
+        _returned = true;
+        return false;
     default:
-	clear();
-	return true;
+        clear();
+        return true;
     }
 }
 
@@ -548,6 +548,6 @@ CharstringSubrChecker::check(const CharstringContext &g, ErrorHandler *errh)
     CharstringInterp::interpret(g);
 
     if (!_returned)
-	_errh->error("subroutine does not return");
+        _errh->error("subroutine does not return");
     return errh->nerrors() == old_errors;
 }

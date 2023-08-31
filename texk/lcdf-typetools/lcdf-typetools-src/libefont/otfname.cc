@@ -114,7 +114,7 @@ Name::name(const_iterator i) const
 String
 Name::utf8_name(const_iterator i) const
 {
-    // This code can handle Microsoft Unicode BMP and Mac Roman encodings,
+    // This code can handle Microsoft Unicode and Mac Roman encodings,
     // but that's it
     if (!(i < end()))
         return String();
@@ -125,10 +125,22 @@ Name::utf8_name(const_iterator i) const
         return String();
     const unsigned char *begins = _str.udata() + stringOffset + offset;
     const unsigned char *ends = begins + length;
-    if (platform(*i) == P_MICROSOFT && encoding(*i) == E_MS_UNICODE_BMP) {
+    if (platform(*i) == P_MICROSOFT
+        && (encoding(*i) == E_MS_UNICODE_BMP || encoding(*i) == E_MS_UNICODE_FULL)) {
         StringAccum sa;
-        for (const unsigned char *s = begins; s + 1 < ends; s += 2)
-            sa.append_utf8(Data::u16(s));
+        for (const unsigned char *s = begins; s + 1 < ends; s += 2) {
+            unsigned d = Data::u16(s), d2;
+            if (d >= 0xD800 && d < 0xE000) {
+                if (d < 0xDC00 && s + 3 < ends
+                    && (d2 = Data::u16(s + 2)) >= 0xDC00 && d2 < 0xE000) {
+                    d = 0x10000 + ((d - 0xD800) << 10) + (d2 - 0xDC00);
+                    s += 2;
+                } else {
+                    d = 0xFFFD; // REPLACEMENT CHARACTER
+                }
+            }
+            sa.append_utf8(d);
+        }
         return sa.take_string();
     } else if (platform(*i) == P_MACINTOSH && encoding(*i) == E_MAC_ROMAN) {
         StringAccum sa;
@@ -153,6 +165,8 @@ Name::english_name(int nameid) const
 {
     const_iterator end = this->end();
     const_iterator it = std::find_if(begin(), end, PlatformPred(nameid, P_MICROSOFT, E_MS_UNICODE_BMP, L_MS_ENGLISH_AMERICAN));
+    if (it == end)
+        it = std::find_if(begin(), end, PlatformPred(nameid, P_MICROSOFT, E_MS_UNICODE_FULL, L_MS_ENGLISH_AMERICAN));
     if (it == end)
         it = std::find_if(begin(), end, PlatformPred(nameid, P_MACINTOSH, E_MAC_ROMAN, 0));
     return utf8_name(it);

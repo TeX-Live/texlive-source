@@ -11,7 +11,7 @@ template <typename T>
 class CharstringCheckerErrorHandler : public ErrorVeneer { public:
 
     CharstringCheckerErrorHandler(ErrorHandler *errh, T *checker)
-	: ErrorVeneer(errh), _checker(checker) {
+        : ErrorVeneer(errh), _checker(checker) {
     }
 
     String decorate(const String &str);
@@ -34,10 +34,10 @@ class CharstringChecker : public Efont::CharstringInterp { public:
     bool check(const Efont::CharstringContext &, ErrorHandler *);
 
     int ncommand() const {
-	return _ncommand;
+        return _ncommand;
     }
     int subrno() const {
-	return _subrno;
+        return _subrno;
     }
 
   private:
@@ -88,10 +88,10 @@ class CharstringSubrChecker : public Efont::CharstringInterp { public:
     bool check(const Efont::CharstringContext &, ErrorHandler *);
 
     int ncommand() const {
-	return -1;
+        return -1;
     }
     int subrno() const {
-	return -1;
+        return -1;
     }
 
   private:
@@ -109,27 +109,27 @@ CharstringCheckerErrorHandler<T>::decorate(const String &str)
     StringAccum sa;
     const char *s = skip_anno(str.begin(), str.end());
     while (s < str.end() && isspace((unsigned char) *s))
-	++s;
+        ++s;
     sa.append(str.begin(), s);
     if (_checker->subrno() >= 0)
-	sa << "called from ";
+        sa << "called from ";
     if (_checker->ncommand() >= 0)
-	sa << "command " << (_checker->ncommand() - 1) << ':';
+        sa << "command " << (_checker->ncommand() - 1) << ':';
     if (sa)
-	sa << ' ';
+        sa << ' ';
     if (s + 11 < str.end() && memcmp(s, "charstring ", 11) == 0) {
-	bool quote_parity = 0;
-	const char *last = s + 11;
-	for (const char *x = last; x != str.end(); ++x)
-	    if (*x == '\'') {
-		sa.append(last, x);
-		sa << format(quote_parity ? "%>" : "%<");
-		quote_parity = !quote_parity;
-		last = x + 1;
-	    }
-	sa.append(last, str.end());
+        bool quote_parity = 0;
+        const char *last = s + 11;
+        for (const char *x = last; x != str.end(); ++x)
+            if (*x == '\'') {
+                sa.append(last, x);
+                sa << format(quote_parity ? "%>" : "%<");
+                quote_parity = !quote_parity;
+                last = x + 1;
+            }
+        sa.append(last, str.end());
     } else
-	sa.append(s, str.end());
+        sa.append(s, str.end());
     return ErrorVeneer::decorate(sa.take_string());
 }
 

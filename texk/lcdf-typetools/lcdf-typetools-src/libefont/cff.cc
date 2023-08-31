@@ -1320,6 +1320,8 @@ Cff::Font::parse_encoding(int pos, ErrorHandler *errh)
         for (int i = 0; i < n; i++, p += 2) {
             int first = p[0];
             int nLeft = p[1];
+            if (first + nLeft > 255)
+                return errh->error("Encoding[1] has out-of-range component"), -EINVAL;
             for (int e = first; e <= first + nLeft; e++) {
                 if (_encoding[e])
                     retval = 1;
@@ -1327,11 +1329,13 @@ Cff::Font::parse_encoding(int pos, ErrorHandler *errh)
             }
         }
 
-    } else
+    } else {
         return errh->error("unknown Encoding format %d", format), -EINVAL;
+    }
 
-    if (g > _charset.nglyphs())
+    if (g > _charset.nglyphs()) {
         return errh->error("Encoding glyph %d out of range", g), -EINVAL;
+    }
 
     // check supplements
     if (supplemented) {

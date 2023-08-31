@@ -16,6 +16,7 @@
 #endif
 #ifdef WIN32
 # define _USE_MATH_DEFINES
+# include <io.h>
 #endif
 #include <efont/psres.hh>
 #include <efont/t1rw.hh>
@@ -62,9 +63,6 @@
 #endif
 #ifdef HAVE_FCNTL_H
 # include <fcntl.h>
-#endif
-#ifdef _MSC_VER
-# include <io.h>
 #endif
 
 using namespace Efont;
@@ -314,6 +312,7 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
         errh->xmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
+    va_end(val);
 }
 
 void
@@ -567,7 +566,7 @@ String Printer::render(double value) const {
         return String(value);
     else {
         char buf[128];
-        sprintf(buf, "%.4f", value);
+        snprintf(buf, sizeof(buf), "%.4f", value);
         return String(buf);
     }
 }
@@ -2267,7 +2266,7 @@ main(int argc, char *argv[])
 
           case VERSION_OPT:
             printf("otftotfm (LCDF typetools) %s\n", VERSION);
-            printf("Copyright (C) 2002-2019 Eddie Kohler\n\
+            printf("Copyright (C) 2002-2023 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");

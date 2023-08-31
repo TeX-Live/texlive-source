@@ -117,7 +117,6 @@ class AmfmReader { public:
     typedef Vector<double> NumVector;
 
     AmfmMetrics *_amfm;
-    MetricsFinder *_finder;
     AfmParser &_l;
     MultipleMasterSpace *_mmspace;
     ErrorHandler *_errh;

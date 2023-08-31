@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([lcdf-typetools], [2.108])
+AC_INIT([lcdf-typetools],[2.110])
 AC_CONFIG_SRCDIR([NEWS.md])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([autoconf.h])
@@ -32,11 +32,7 @@ if test "$enable_adobe_code" = yes; then
 fi
 
 
-dnl AN_MAKEVAR([AR], [AC_PROG_AR])
-dnl AN_PROGRAM([ar], [AC_PROG_AR])
-dnl AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
-dnl AC_PROG_AR
-
+AM_PROG_AR
 AC_PROG_RANLIB
 
 
@@ -115,8 +111,9 @@ dnl standard headers
 dnl (Though obsolete, AC_HEADER_STC changes the standard includes.)
 dnl
 
-AC_LANG_C
-AC_HEADER_STDC
+AC_LANG([C])
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h sys/wait.h])
 
@@ -125,13 +122,13 @@ dnl
 dnl <new> and/or <new.h>
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([whether <new> works], ac_cv_good_new_hdr,
-[AC_TRY_LINK([#include <new>], [
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <new>]], [[
   int a;
   int *b = new(&a) int;
   return 0;
-], ac_cv_good_new_hdr=yes, ac_cv_good_new_hdr=no)])
+]])],[ac_cv_good_new_hdr=yes],[ac_cv_good_new_hdr=no])])
 if test "$ac_cv_good_new_hdr" = yes; then
    AC_DEFINE([HAVE_NEW_HDR], [1], [Define if <new> exists and works.])
 fi
@@ -151,43 +148,41 @@ dnl functions such as strerror, working strtod, working strnlen, strtoul,
 dnl time headers such as unistd.h
 dnl
 
-AC_LANG_C
+AC_LANG([C])
 need_fixlibc=0
 AC_CHECK_FUNCS([strerror], [], [need_fixlibc=1])
 
 AC_CACHE_CHECK([for broken strtod], [ac_cv_broken_strtod],
-[AC_TRY_RUN([#include <stdio.h>
+[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
 #include <stdlib.h>
 int main(int c, char **v) {
   char s[] = "12 ";
   char *endp;
   double d = strtod(s, &endp);
   return (s + 2) == endp;
-}], [ac_cv_broken_strtod=yes], [ac_cv_broken_strtod=no],
-[ac_cv_broken_strtod=no])])
+}]])],[ac_cv_broken_strtod=yes],[ac_cv_broken_strtod=no],[ac_cv_broken_strtod=no])])
 if test "x$ac_cv_broken_strtod" = xyes; then
     need_fixlibc=1
     AC_DEFINE([HAVE_BROKEN_STRTOD], [1], [Define if strtod is broken.])
 fi
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CHECK_DECLS([strnlen], [], [], [#include <string.h>])
 AC_CHECK_FUNCS([strnlen], [have_strnlen=1], [need_fixlibc=1])
 if test "x$have_strnlen" = x1; then
     AC_CACHE_CHECK([for broken strnlen], [ac_cv_broken_strnlen],
-    [AC_TRY_RUN([#include <string.h>
+    [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <string.h>
 #include <stdio.h>
 int main(int c, char **v) {
   char s[] = "01234567891";
   return strnlen(s, 10) == 10;
-}], [ac_cv_broken_strnlen=yes], [ac_cv_broken_strnlen=no],
-[ac_cv_broken_strnlen=no])])
+}]])],[ac_cv_broken_strnlen=yes],[ac_cv_broken_strnlen=no],[ac_cv_broken_strnlen=no])])
     if test "x$ac_cv_broken_strnlen" = xyes; then
 	need_fixlibc=1
 	AC_DEFINE([HAVE_BROKEN_STRNLEN], [1], [Define if strnlen is broken.])
     fi
 fi
-AC_LANG_C
+AC_LANG([C])
 
 AC_CHECK_FUNCS([ctime ftruncate mkstemp sigaction strdup strtoul vsnprintf waitpid])
 AC_CHECK_FUNC([floor], [], [AC_CHECK_LIB([m], [floor])])
@@ -247,7 +242,7 @@ dnl
 dnl ntohs, ntohl (need them in C++ code)
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C])
 AC_CHECK_HEADERS([byteorder.h netinet/in.h sys/param.h])
 AC_MSG_CHECKING([whether ntohs and ntohl are defined])
 ac_ntoh_defined=no
@@ -296,7 +291,7 @@ Cannot find a definition for ntohs and/or ntohl!
 
 =========================================])
 fi
-AC_LANG_C
+AC_LANG([C])
 AC_SEARCH_LIBS([ntohs], [-lnet -lwinsock32])
 
 
@@ -304,10 +299,10 @@ dnl
 dnl is va_list addressable?
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([for addressable va_list type],
     ac_cv_va_list_addr,
-    [AC_TRY_COMPILE([#include <stdarg.h>
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
 void f(va_list *) {
 }
 void g(va_list val) {
@@ -318,7 +313,7 @@ void h(int a, ...) {
     va_start(val, a);
     g(val);
     va_end(val);
-}], [h(2, 3, 4);], ac_cv_va_list_addr=yes, ac_cv_va_list_addr=no)])
+}]], [[h(2, 3, 4);]])],[ac_cv_va_list_addr=yes],[ac_cv_va_list_addr=no])])
 if test "x$ac_cv_va_list_addr" = xyes; then
     AC_DEFINE(HAVE_ADDRESSABLE_VA_LIST, 1, [Define if the va_list type is addressable.])
 fi
@@ -331,13 +326,11 @@ dnl
 m4_include([m4/lcdf-typetools.m4])
 
 SELECTED_SUBDIRS=
-AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
-           [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
+m4_foreach_w([Kpse_Prog],kpse_lcdf_typetools_progs,[test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
 ])
 AC_SUBST(SELECTED_SUBDIRS)
 
-AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
-           [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
+m4_foreach_w([Kpse_Opt],kpse_otftotfm_auto_opts,[AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
                   [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
                              [Define to run ]Kpse_Opt[ from otftotfm.])])
 ])
@@ -511,4 +504,5 @@ dnl
 dnl Output
 dnl
 
-AC_OUTPUT(Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1rawafm/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile)
+AC_CONFIG_FILES([Makefile liblcdf/Makefile libefont/Makefile cfftot1/Makefile mmafm/Makefile mmpfb/Makefile otfinfo/Makefile otftotfm/Makefile t1dotlessj/Makefile t1lint/Makefile t1rawafm/Makefile t1reencode/Makefile t1testpage/Makefile ttftotype42/Makefile])
+AC_OUTPUT

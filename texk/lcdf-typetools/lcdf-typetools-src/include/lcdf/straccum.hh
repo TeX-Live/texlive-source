@@ -27,7 +27,7 @@ class StringAccum { public:
 
     inline StringAccum();
     explicit inline StringAccum(int capacity);
-    explicit inline StringAccum(const char *cstr);
+    explicit inline StringAccum(const char* cstr);
     inline StringAccum(const char* s, int len);
     inline StringAccum(const String& str);
     inline StringAccum(const StringAccum& x);
@@ -64,7 +64,7 @@ class StringAccum { public:
      * length(), and later append() and similar operations can overwrite it.
      * If appending the null character fails, the StringAccum becomes
      * out-of-memory and the returned value is a null string. */
-    const char *c_str();
+    const char* c_str();
 
 
     inline char operator[](int i) const;
@@ -107,7 +107,7 @@ class StringAccum { public:
     inline void append(const unsigned char* begin, const unsigned char* end);
 
     // word joining
-    void append_break_lines(const String &text, int linelen, const String &leftmargin = String());
+    void append_break_lines(const String& text, int linelen, const String& leftmargin = String());
 
     /** @brief Append result of snprintf() to this StringAccum.
      * @param n maximum number of characters to print
@@ -121,7 +121,7 @@ class StringAccum { public:
      * should make sure that the printf() invocation represented by your
      * arguments will never write more than @a n characters, not including the
      * terminating null. */
-    StringAccum &snprintf(int n, const char *format, ...) LCDF_SNPRINTF_ATTR;
+    StringAccum& snprintf(int n, const char* format, ...) LCDF_SNPRINTF_ATTR;
 
 
     /** @brief Return a String object with this StringAccum's contents.
@@ -137,9 +137,11 @@ class StringAccum { public:
     inline StringAccum& operator=(const StringAccum& x);
 
     /** @brief Swap this StringAccum's contents with @a x. */
-    void swap(StringAccum &x);
+    void swap(StringAccum& x);
 
     // see also operator<< declarations below
+
+    static const char* double_format;
 
   private:
 
@@ -147,42 +149,42 @@ class StringAccum { public:
         MEMO_SPACE = String::MEMO_SPACE
     };
 
-    unsigned char *_s;
+    unsigned char* _s;
     int _len;
     int _cap;
 
-    char *grow(int);
+    char* grow(int);
     void assign_out_of_memory();
 
-    char *hard_extend(int nadjust, int nreserve);
-    void hard_append(const char *s, int len);
+    char* hard_extend(int nadjust, int nreserve);
+    void hard_append(const char* s, int len);
     void append_utf8_hard(unsigned ch);
 
-    friend StringAccum &operator<<(StringAccum &sa, const char *s);
-    friend StringAccum &operator<<(StringAccum &sa, const String &str);
+    friend StringAccum& operator<<(StringAccum& sa, const char* s);
+    friend StringAccum& operator<<(StringAccum& sa, const String& str);
 #if HAVE_PERMSTRING
-    friend StringAccum &operator<<(StringAccum &sa, PermString s);
+    friend StringAccum& operator<<(StringAccum& sa, PermString s);
 #endif
 
 };
 
-inline StringAccum &operator<<(StringAccum &, char);
-inline StringAccum &operator<<(StringAccum &, unsigned char);
-inline StringAccum &operator<<(StringAccum &, const char *);
-inline StringAccum &operator<<(StringAccum &, const String &);
-inline StringAccum &operator<<(StringAccum &, const StringAccum &);
+inline StringAccum& operator<<(StringAccum&, char);
+inline StringAccum& operator<<(StringAccum&, unsigned char);
+inline StringAccum& operator<<(StringAccum&, const char*);
+inline StringAccum& operator<<(StringAccum&, const String&);
+inline StringAccum& operator<<(StringAccum&, const StringAccum&);
 #ifdef HAVE_PERMSTRING
-inline StringAccum &operator<<(StringAccum &, PermString);
+inline StringAccum& operator<<(StringAccum&, PermString);
 #endif
 
-inline StringAccum &operator<<(StringAccum &, bool);
-inline StringAccum &operator<<(StringAccum &, short);
-inline StringAccum &operator<<(StringAccum &, unsigned short);
-inline StringAccum &operator<<(StringAccum &, int);
-inline StringAccum &operator<<(StringAccum &, unsigned);
-StringAccum &operator<<(StringAccum &, long);
-StringAccum &operator<<(StringAccum &, unsigned long);
-StringAccum &operator<<(StringAccum &, double);
+inline StringAccum& operator<<(StringAccum&, bool);
+inline StringAccum& operator<<(StringAccum&, short);
+inline StringAccum& operator<<(StringAccum&, unsigned short);
+inline StringAccum& operator<<(StringAccum&, int);
+inline StringAccum& operator<<(StringAccum&, unsigned);
+StringAccum& operator<<(StringAccum&, long);
+StringAccum& operator<<(StringAccum&, unsigned long);
+StringAccum& operator<<(StringAccum&, double);
 
 
 /** @brief Construct an empty StringAccum (with length 0). */
@@ -211,25 +213,25 @@ inline StringAccum::StringAccum(int capacity)
 }
 
 /** @brief Construct a StringAccum containing the characters in @a s. */
-inline StringAccum::StringAccum(const char *cstr)
+inline StringAccum::StringAccum(const char* cstr)
     : _s(0), _len(0), _cap(0) {
     append(cstr);
 }
 
 /** @brief Construct a StringAccum containing the characters in @a s. */
-inline StringAccum::StringAccum(const char *s, int len)
+inline StringAccum::StringAccum(const char* s, int len)
     : _s(0), _len(0), _cap(0) {
     append(s, len);
 }
 
 /** @brief Construct a StringAccum containing the characters in @a str. */
-inline StringAccum::StringAccum(const String &str)
+inline StringAccum::StringAccum(const String& str)
     : _s(0), _len(0), _cap(0) {
     append(str.begin(), str.end());
 }
 
 /** @brief Construct a StringAccum containing a copy of @a x. */
-inline StringAccum::StringAccum(const StringAccum &x)
+inline StringAccum::StringAccum(const StringAccum& x)
     : _s(0), _len(0), _cap(0) {
     append(x.data(), x.length());
 }
@@ -247,12 +249,12 @@ inline StringAccum::~StringAccum() {
  * The returned data() value points to writable memory (unless the
  * StringAccum itself is const). */
 inline const char* StringAccum::data() const {
-    return reinterpret_cast<const char *>(_s);
+    return reinterpret_cast<const char*>(_s);
 }
 
 /** @overload */
 inline char* StringAccum::data() {
-    return reinterpret_cast<char *>(_s);
+    return reinterpret_cast<char*>(_s);
 }
 
 inline const unsigned char* StringAccum::udata() const {
@@ -333,7 +335,7 @@ inline char StringAccum::operator[](int i) const {
  * @pre 0 <= @a i < length() */
 inline char& StringAccum::operator[](int i) {
     assert((unsigned) i < (unsigned) _len);
-    return reinterpret_cast<char &>(_s[i]);
+    return reinterpret_cast<char&>(_s[i]);
 }
 
 /** @brief Return the first character in the string.
@@ -347,7 +349,7 @@ inline char StringAccum::front() const {
  * @pre length() > 0 */
 inline char& StringAccum::front() {
     assert(_len > 0);
-    return reinterpret_cast<char &>(_s[0]);
+    return reinterpret_cast<char&>(_s[0]);
 }
 
 /** @brief Return the last character in the string.
@@ -361,7 +363,7 @@ inline char StringAccum::back() const {
  * @pre length() > 0 */
 inline char& StringAccum::back() {
     assert(_len > 0);
-    return reinterpret_cast<char &>(_s[_len - 1]);
+    return reinterpret_cast<char&>(_s[_len - 1]);
 }
 
 /** @brief Clear the StringAccum's comments.
@@ -391,7 +393,7 @@ inline void StringAccum::clear() {
 inline char* StringAccum::reserve(int n) {
     assert(n >= 0);
     if (_len + n <= _cap)
-        return reinterpret_cast<char *>(_s + _len);
+        return reinterpret_cast<char*>(_s + _len);
     else
         return grow(_len + n);
 }
@@ -429,7 +431,7 @@ inline void StringAccum::adjust_length(int delta) {
 inline char* StringAccum::extend(int nadjust, int nreserve) {
     assert(nadjust >= 0 && nreserve >= 0);
     if (_len + nadjust + nreserve <= _cap) {
-        char *x = reinterpret_cast<char *>(_s + _len);
+        char* x = reinterpret_cast<char*>(_s + _len);
         _len += nadjust;
         return x;
     } else
@@ -481,7 +483,7 @@ inline void StringAccum::append(const char* s, int len) {
 
 /** @overload */
 inline void StringAccum::append(const unsigned char* s, int len) {
-    append(reinterpret_cast<const char *>(s), len);
+    append(reinterpret_cast<const char*>(s), len);
 }
 
 /** @brief Append the data from @a begin to @a end to the end of this
@@ -514,8 +516,8 @@ inline StringAccum& StringAccum::operator=(const StringAccum& x) {
     @brief Append character @a c to StringAccum @a sa.
     @return @a sa
     @note Same as @a sa.append(@a c). */
-inline StringAccum &
-operator<<(StringAccum &sa, char c)
+inline StringAccum&
+operator<<(StringAccum& sa, char c)
 {
     sa.append(c);
     return sa;
@@ -525,8 +527,8 @@ operator<<(StringAccum &sa, char c)
     @brief Append character @a c to StringAccum @a sa.
     @return @a sa
     @note Same as @a sa.append(@a c). */
-inline StringAccum &
-operator<<(StringAccum &sa, unsigned char c)
+inline StringAccum&
+operator<<(StringAccum& sa, unsigned char c)
 {
     sa.append(c);
     return sa;
@@ -536,8 +538,8 @@ operator<<(StringAccum &sa, unsigned char c)
     @brief Append null-terminated C string @a cstr to StringAccum @a sa.
     @return @a sa
     @note Same as @a sa.append(@a cstr). */
-inline StringAccum &
-operator<<(StringAccum &sa, const char *cstr)
+inline StringAccum&
+operator<<(StringAccum& sa, const char* cstr)
 {
     sa.append(cstr);
     return sa;
@@ -546,8 +548,8 @@ operator<<(StringAccum &sa, const char *cstr)
 /** @relates StringAccum
     @brief Append "true" or "false" to @a sa, depending on @a b.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, bool b)
+inline StringAccum&
+operator<<(StringAccum& sa, bool b)
 {
     static const char truefalse[] = "truefalse";
     if (b)
@@ -560,8 +562,8 @@ operator<<(StringAccum &sa, bool b)
 /** @relates StringAccum
     @brief Append decimal representation of @a i to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, short i)
+inline StringAccum&
+operator<<(StringAccum& sa, short i)
 {
     return sa << static_cast<long>(i);
 }
@@ -569,8 +571,8 @@ operator<<(StringAccum &sa, short i)
 /** @relates StringAccum
     @brief Append decimal representation of @a u to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, unsigned short u)
+inline StringAccum&
+operator<<(StringAccum& sa, unsigned short u)
 {
     return sa << static_cast<unsigned long>(u);
 }
@@ -578,8 +580,8 @@ operator<<(StringAccum &sa, unsigned short u)
 /** @relates StringAccum
     @brief Append decimal representation of @a i to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, int i)
+inline StringAccum&
+operator<<(StringAccum& sa, int i)
 {
     return sa << static_cast<long>(i);
 }
@@ -587,8 +589,8 @@ operator<<(StringAccum &sa, int i)
 /** @relates StringAccum
     @brief Append decimal representation of @a u to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, unsigned u)
+inline StringAccum&
+operator<<(StringAccum& sa, unsigned u)
 {
     return sa << static_cast<unsigned long>(u);
 }
@@ -596,8 +598,8 @@ operator<<(StringAccum &sa, unsigned u)
 /** @relates StringAccum
     @brief Append the contents of @a str to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, const String &str)
+inline StringAccum&
+operator<<(StringAccum& sa, const String& str)
 {
     if (!str.out_of_memory())
         sa.hard_append(str.begin(), str.length());
@@ -607,8 +609,8 @@ operator<<(StringAccum &sa, const String &str)
 }
 
 #ifdef HAVE_PERMSTRING
-inline StringAccum &
-operator<<(StringAccum &sa, PermString s)
+inline StringAccum&
+operator<<(StringAccum& sa, PermString s)
 {
     sa.append(s.c_str(), s.length());
     return sa;
@@ -618,21 +620,21 @@ operator<<(StringAccum &sa, PermString s)
 /** @relates StringAccum
     @brief Append the contents of @a sb to @a sa.
     @return @a sa */
-inline StringAccum &
-operator<<(StringAccum &sa, const StringAccum &sb)
+inline StringAccum&
+operator<<(StringAccum& sa, const StringAccum& sb)
 {
     sa.append(sb.begin(), sb.end());
     return sa;
 }
 
 inline bool
-operator==(StringAccum &sa, const char *s)
+operator==(StringAccum& sa, const char* s)
 {
     return strcmp(sa.c_str(), s) == 0;
 }
 
 inline bool
-operator!=(StringAccum &sa, const char *s)
+operator!=(StringAccum& sa, const char* s)
 {
     return strcmp(sa.c_str(), s) != 0;
 }

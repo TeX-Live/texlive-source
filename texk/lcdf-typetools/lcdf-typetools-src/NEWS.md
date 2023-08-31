@@ -1,6 +1,22 @@
 LCDF Typetools NEWS
 ===================
 
+## Version 2.110 – 30.Aug.2023
+
+* Support `otfinfo --var`, which prints information about variable fonts.
+
+* `otfinfo -u` reports all Unicode code positions, not just the BMP.
+
+* `otfinfo -i` reports embedding permissions.
+
+* Update feature, language, and script descriptions.
+
+
+## Version 2.109 – 29.Aug.2023
+
+* Change output to avoid triggering pdftex bug.
+
+
 ## Version 2.108 – 27.Jan.2019
 
 * Handle more fonts.

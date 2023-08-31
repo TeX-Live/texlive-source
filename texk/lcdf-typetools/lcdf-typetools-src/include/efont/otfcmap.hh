@@ -23,17 +23,18 @@ class Cmap { public:
     String _str;
     int _error;
     int _ntables;
-    mutable int _first_unicode_table;
+    mutable int _best_unicode_table;
     mutable Vector<int> _table_error;
 
     enum { HEADER_SIZE = 4, ENCODING_SIZE = 8,
            HIBYTE_SUBHEADERS = 524 };
     enum Format { F_BYTE = 0, F_HIBYTE = 2, F_SEGMENTED = 4, F_TRIMMED = 6,
-                  F_HIBYTE32 = 8, F_TRIMMED32 = 10, F_SEGMENTED32 = 12 };
-    enum { USE_FIRST_UNICODE_TABLE = -2 };
+                  F_HIBYTE32 = 8, F_TRIMMED32 = 10, F_SEGMENTED32 = 12,
+                  F_MANYTOONE = 13 };
+    enum { USE_BEST_UNICODE_TABLE = -2 };
 
     int parse_header(ErrorHandler *);
-    int first_unicode_table() const     { return _first_unicode_table; }
+    int best_unicode_table() const      { return _best_unicode_table; }
     int first_table(int platform, int encoding) const;
     int check_table(int t, ErrorHandler * = 0) const;
     Glyph map_table(int t, uint32_t, ErrorHandler * = 0) const;
@@ -44,11 +45,11 @@ class Cmap { public:
 
 
 inline Glyph Cmap::map_uni(uint32_t c) const {
-    return map_table(USE_FIRST_UNICODE_TABLE, c, ErrorHandler::default_handler());
+    return map_table(USE_BEST_UNICODE_TABLE, c, ErrorHandler::default_handler());
 }
 
 inline void Cmap::unmap_all(Vector<std::pair<uint32_t, Glyph> > &ugp) const {
-    dump_table(USE_FIRST_UNICODE_TABLE, ugp, ErrorHandler::default_handler());
+    dump_table(USE_BEST_UNICODE_TABLE, ugp, ErrorHandler::default_handler());
 }
 
 inline const uint8_t* Cmap::table_data(int t) const {

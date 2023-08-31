@@ -2,7 +2,7 @@
 
 /* landmark.{cc,hh} -- FILE:LINE type landmarks
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,15 +22,15 @@ Landmark
 operator+(const Landmark &landmark, int offset)
 {
     if (landmark.has_line())
-	return Landmark(landmark.file(), landmark.line() + offset);
+        return Landmark(landmark.file(), landmark.line() + offset);
     else
-	return landmark;
+        return landmark;
 }
 
 Landmark::operator String() const
 {
     if (_file && has_line())
-	return _file + ":" + String(_line);
+        return _file + ":" + String(_line);
     else
-	return _file;
+        return _file;
 }

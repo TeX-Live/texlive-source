@@ -16,6 +16,7 @@ libefont_a_SOURCES = \
 	otfcmap.cc \
 	otfdata.cc \
 	otfdescrip.cc \
+	otffvar.cc \
 	otfgpos.cc \
 	otfgsub.cc \
 	otfname.cc \

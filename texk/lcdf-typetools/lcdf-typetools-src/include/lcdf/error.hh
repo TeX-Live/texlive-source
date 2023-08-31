@@ -7,13 +7,13 @@
 #endif
 #include <stdarg.h>
 #if HAVE_ADDRESSABLE_VA_LIST
-# define VA_LIST_REF_T		va_list *
-# define VA_LIST_DEREF(val)	(*(val))
-# define VA_LIST_REF(val)	(&(val))
+# define VA_LIST_REF_T          va_list *
+# define VA_LIST_DEREF(val)     (*(val))
+# define VA_LIST_REF(val)       (&(val))
 #else
-# define VA_LIST_REF_T		va_list
-# define VA_LIST_DEREF(val)	(val)
-# define VA_LIST_REF(val)	(val)
+# define VA_LIST_REF_T          va_list
+# define VA_LIST_DEREF(val)     (val)
+# define VA_LIST_REF(val)       (val)
 #endif
 #if __GNUC__ <= 3
 # define ERRH_SENTINEL
@@ -92,36 +92,36 @@ class ErrorHandler { public:
      * level, the exit status is the absolute value of the
      * error level. */
     enum Level {
-	el_abort = -999,	///< Error level that triggers abort().
-	el_fatal = -1,		///< Fatal exit error level.
-				///  Exit status equals -(level).
-	el_emergency = 0,	///< Emergency error level: system is unusable.
-	el_alert = 1,		///< Alert error level: action must be taken.
-	el_critical = 2,	///< Error level for critical conditions.
-	el_error = 3,		///< Error level for normal error conditions.
-	el_warning = 4,		///< Error level for warning conditions.
-	el_notice = 5,		///< Error level for normal, but significant
-				///  conditions.
-	el_info = 6,		///< Error level for informational messages.
-	el_debug = 7		///< Error level for debug messages.
+        el_abort = -999,        ///< Error level that triggers abort().
+        el_fatal = -1,          ///< Fatal exit error level.
+                                ///  Exit status equals -(level).
+        el_emergency = 0,       ///< Emergency error level: system is unusable.
+        el_alert = 1,           ///< Alert error level: action must be taken.
+        el_critical = 2,        ///< Error level for critical conditions.
+        el_error = 3,           ///< Error level for normal error conditions.
+        el_warning = 4,         ///< Error level for warning conditions.
+        el_notice = 5,          ///< Error level for normal, but significant
+                                ///  conditions.
+        el_info = 6,            ///< Error level for informational messages.
+        el_debug = 7            ///< Error level for debug messages.
     };
 
     /** @brief Error level indicators. */
     static const char e_abort[],
-	e_fatal[],
-	e_emergency[],
-	e_alert[],
-	e_critical[],
-	e_error[],
-	e_warning[],
-	e_warning_annotated[],
-	e_notice[],
-	e_info[],
-	e_debug[];
+        e_fatal[],
+        e_emergency[],
+        e_alert[],
+        e_critical[],
+        e_error[],
+        e_warning[],
+        e_warning_annotated[],
+        e_notice[],
+        e_info[],
+        e_debug[];
 
     /** @brief Construct an ErrorHandler. */
     ErrorHandler()
-	: _nerrors(0) {
+        : _nerrors(0) {
     }
 
     virtual ~ErrorHandler() {
@@ -153,7 +153,7 @@ class ErrorHandler { public:
     /** @brief Return the default ErrorHandler.
      * @sa static_initialize() */
     static ErrorHandler *default_handler() {
-	return the_default_handler;
+        return the_default_handler;
     }
 
     /** @brief Set the default ErrorHandler to @a errh.
@@ -165,14 +165,14 @@ class ErrorHandler { public:
 
     /** @brief Return the global silent ErrorHandler. */
     static ErrorHandler *silent_handler() {
-	return the_silent_handler;
+        return the_silent_handler;
     }
 
 
-    static const int ok_result;		///< Equals 0, used for error levels
-					///  <5> and above
-    static const int error_result;	///< Equals -EINVAL, used for error
-					///  levels <4> and below
+    static const int ok_result;         ///< Equals 0, used for error levels
+                                        ///  <5> and above
+    static const int error_result;      ///< Equals -EINVAL, used for error
+                                        ///  levels <4> and below
 
 
     /** @brief Print a debug message (level el_debug).
@@ -226,7 +226,7 @@ class ErrorHandler { public:
      *
      * Shorthand for xmessage(combine_anno(@a str, @a anno)). */
     int xmessage(const String &anno, const String &str) {
-	return xmessage(combine_anno(str, anno));
+        return xmessage(combine_anno(str, anno));
     }
     /** @brief Format and print an error message, adding annotations.
      * @param anno annotations
@@ -235,7 +235,7 @@ class ErrorHandler { public:
      *
      * Shorthand for xmessage(@a anno, vformat(@a fmt, @a val)). */
     int xmessage(const String &anno, const char *fmt, va_list val) {
-	return xmessage(anno, vformat(fmt, val));
+        return xmessage(anno, vformat(fmt, val));
     }
     /** @brief Print an error message, adding landmark and other annotations.
      * @param landmark landmark annotation
@@ -245,8 +245,8 @@ class ErrorHandler { public:
      * Shorthand for xmessage(combine_anno(@a anno, make_landmark_anno(@a
      * landmark)), @a str). */
     int xmessage(const String &landmark, const String &anno,
-		 const String &str) {
-	return xmessage(combine_anno(anno, make_landmark_anno(landmark)), str);
+                 const String &str) {
+        return xmessage(combine_anno(anno, make_landmark_anno(landmark)), str);
     }
     /** @brief Format and print an error message, adding landmark and other
      * annotations.
@@ -258,8 +258,8 @@ class ErrorHandler { public:
      * Shorthand for xmessage(@a landmark, @a anno, vformat(@a fmt, @a
      * val)). */
     int xmessage(const String &landmark, const String &anno,
-		 const char *fmt, va_list val) {
-	return xmessage(landmark, anno, vformat(fmt, val));
+                 const char *fmt, va_list val) {
+        return xmessage(landmark, anno, vformat(fmt, val));
     }
 
 
@@ -280,7 +280,7 @@ class ErrorHandler { public:
      *
      * @sa account, clear */
     int nerrors() const {
-	return _nerrors;
+        return _nerrors;
     }
 
 
@@ -349,7 +349,7 @@ class ErrorHandler { public:
     static String xformat(const char *fmt, ...);
     /** @overload */
     static String vxformat(const char *fmt, va_list val) {
-	return vxformat(0, fmt, val);
+        return vxformat(0, fmt, val);
     }
 
 
@@ -436,7 +436,7 @@ class ErrorHandler { public:
      *
      * The default implementation sets the nerrors() counter to zero. */
     virtual void clear() {
-	_nerrors = 0;
+        _nerrors = 0;
     }
 
 
@@ -506,7 +506,7 @@ class ErrorHandler { public:
      *     // Results: s points to "error message\n", level_str == 4
      * @endcode */
     static const char *parse_anno(const String &str,
-		const char *begin, const char *end, ...) ERRH_SENTINEL;
+                const char *begin, const char *end, ...) ERRH_SENTINEL;
 
     /** @brief Skip a string's error annotations.
      * @param begin pointer to start of string
@@ -517,12 +517,12 @@ class ErrorHandler { public:
      * Use this function to skip an error line's annotation area.  The error
      * line is defined as a pair of iterators. */
     static const char *skip_anno(const char *begin, const char *end) {
-	String name, value;
-	const char *x = begin;
-	do {
-	    x = skip_anno(String(), x, end, &name, &value, false);
-	} while (name);
-	return x;
+        String name, value;
+        const char *x = begin;
+        do {
+            x = skip_anno(String(), x, end, &name, &value, false);
+        } while (name);
+        return x;
     }
 
 
@@ -533,12 +533,12 @@ class ErrorHandler { public:
      * like a formatted annotation (it starts with an open brace), returns @a
      * x unchanged.  Otherwise, returns make_anno("l", @a x). */
     static String make_landmark_anno(const String &x) {
-	if (x && x[0] == '{')
-	    return x;
-	else if (x)
-	    return make_anno("l", x);
-	else
-	    return String();
+        if (x && x[0] == '{')
+            return x;
+        else if (x)
+            return make_anno("l", x);
+        else
+            return String();
     }
 
     /** @brief Clean the @a landmark.
@@ -555,16 +555,16 @@ class ErrorHandler { public:
     struct Conversion;
     typedef String (*ConversionFunction)(int flags, VA_LIST_REF_T);
     enum ConversionFlags {
-	cf_zero_pad = 1,	///< Set for conversions using the '0' flag.
-	cf_plus_positive = 2,	///< Set for conversions using the '+' flag.
-	cf_space_positive = 4,	///< Set for conversions using the ' ' flag.
-	cf_left_just = 8,	///< Set for conversions using the '-' flag.
-	cf_alternate_form = 16,	///< Set for conversions using the '#' flag.
-	cf_singlequote = 32,	///< Set for conversions using the '\'' flag.
-	cf_uppercase = 64,	///< Set for 'X' conversions (not 'x').
-	cf_signed = 128,	///< Set for conversions of signed numbers.
-	cf_negative = 256,	///< Set for conversions of negative numbers.
-	cf_utf8 = 1024		///< Set to use UTF-8 characters on output.
+        cf_zero_pad = 1,        ///< Set for conversions using the '0' flag.
+        cf_plus_positive = 2,   ///< Set for conversions using the '+' flag.
+        cf_space_positive = 4,  ///< Set for conversions using the ' ' flag.
+        cf_left_just = 8,       ///< Set for conversions using the '-' flag.
+        cf_alternate_form = 16, ///< Set for conversions using the '#' flag.
+        cf_singlequote = 32,    ///< Set for conversions using the '\'' flag.
+        cf_uppercase = 64,      ///< Set for 'X' conversions (not 'x').
+        cf_signed = 128,        ///< Set for conversions of signed numbers.
+        cf_negative = 256,      ///< Set for conversions of negative numbers.
+        cf_utf8 = 1024          ///< Set to use UTF-8 characters on output.
     };
     static Conversion *add_conversion(const String &name, ConversionFunction func);
     static int remove_conversion(Conversion *conversion);
@@ -577,9 +577,9 @@ class ErrorHandler { public:
     static ErrorHandler *the_silent_handler;
 
     static const char *skip_anno(const String &str,
-				 const char *begin, const char *end,
-				 String *name_result, String *value_result,
-				 bool raw);
+                                 const char *begin, const char *end,
+                                 String *name_result, String *value_result,
+                                 bool raw);
 
 };
 
@@ -615,7 +615,7 @@ class ErrorVeneer : public ErrorHandler { public:
      * If @a errh is 0, then the ErrorVeneer acts like a
      * SilentErrorHandler. */
     ErrorVeneer(ErrorHandler *errh)
-	: _errh(errh) {
+        : _errh(errh) {
     }
 
     String vformat(const char *fmt, va_list val);
@@ -645,7 +645,7 @@ class FileErrorHandler : public ErrorHandler { public:
     FileErrorHandler(FILE *f, const String &prefix = String());
 
     void set_default_flags(int default_flags) {
-	_default_flags = default_flags;
+        _default_flags = default_flags;
     }
 
     String vformat(const char *fmt, va_list val);
@@ -679,7 +679,7 @@ class LocalErrorHandler : public ErrorVeneer { public:
 
     /** @brief Construct a LocalErrorHandler. */
     LocalErrorHandler(ErrorHandler *errh)
-	: ErrorVeneer(errh) {
+        : ErrorVeneer(errh) {
     }
 
 };
@@ -737,17 +737,17 @@ class ContextErrorHandler : public ErrorVeneer { public:
 
     /** @brief Return true iff the context has already been printed. */
     bool context_printed() const {
-	return _context_printed;
+        return _context_printed;
     }
 
     /** @brief Set whether the context has been printed. */
     void set_context_printed(bool x) {
-	_context_printed = x;
+        _context_printed = x;
     }
 
     /** @brief Set the context string to @a str. */
     void set_context(const String &str) {
-	_context = str;
+        _context = str;
     }
 
     /** @brief Set the indent string to @a str.
@@ -756,7 +756,7 @@ class ContextErrorHandler : public ErrorVeneer { public:
      * contain landmarks as well as non-landmark text.  The default indent
      * string is "  " (two spaces). */
     void set_indent(const String &str) {
-	_indent = str;
+        _indent = str;
     }
 
     /** @brief Set the context landmark to @a str.
@@ -768,7 +768,7 @@ class ContextErrorHandler : public ErrorVeneer { public:
      * @note The input @a str is passed to
      * ErrorHandler::make_landmark_anno(). */
     void set_context_landmark(const String &str) {
-	_context_landmark = make_landmark_anno(str);
+        _context_landmark = make_landmark_anno(str);
     }
 
     String decorate(const String &str);
@@ -836,7 +836,7 @@ class LandmarkErrorHandler : public ErrorVeneer { public:
 
     /** @brief Set the default landmark applied to error messages. */
     void set_landmark(const String &landmark) {
-	_landmark = make_landmark_anno(landmark);
+        _landmark = make_landmark_anno(landmark);
     }
 
     String decorate(const String &str);

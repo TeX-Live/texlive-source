@@ -2,7 +2,7 @@
 
 /* t1font.{cc,hh} -- Type 1 font
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -78,7 +78,7 @@ Type1Font::set_item(int i, Type1Item *it)
 }
 
 static const char * const dict_starters[] = {
-    "0 dict begin", "/FontInfo 0 dict dup begin", "dup /Private 0 dict dup begin", "/Blend 0 dict dup begin", 0, 0
+    "0 dict dup begin", "/FontInfo 0 dict dup begin", "dup /Private 0 dict dup begin", "/Blend 0 dict dup begin", 0, 0
 };
 
 void
@@ -850,7 +850,8 @@ Type1Font::create_mmspace(ErrorHandler *errh) const
 
     int nmasters = master_positions.size();
     if (nmasters <= 0) {
-        errh->error("bad BlendDesignPositions");
+        if (errh)
+            errh->error("bad BlendDesignPositions");
         return 0;
     }
     int naxes = master_positions[0].size();

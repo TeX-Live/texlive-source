@@ -1,6 +1,6 @@
 Summary: Programs to manipulate OpenType and multiple-master fonts
 Name: lcdf-typetools
-Version: 2.108
+Version: 2.110
 Copyright: GPL
 Vendor: Little Cambridgeport Design Factory <http://www.lcdf.org/>
 Group: Utilities/Printing

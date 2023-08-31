@@ -37,7 +37,6 @@ class AfmParser { public:
   private:
 
     Slurper &_slurper;
-    bool _save_line;
 
     unsigned char *_line;
     unsigned char *_pos;

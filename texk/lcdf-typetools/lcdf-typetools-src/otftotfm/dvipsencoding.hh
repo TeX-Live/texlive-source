@@ -5,7 +5,7 @@
 #include <lcdf/hashmap.hh>
 class Metrics;
 class Secondary;
-class FontInfo;
+struct FontInfo;
 
 class DvipsEncoding { public:
 

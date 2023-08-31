@@ -25,8 +25,8 @@ class Cff { public:
     bool ok() const                     { return _error >= 0; }
     int error() const                   { return _error; }
 
-    const String &data_string() const   { return _data_string; }
-    const uint8_t *data() const         { return _data; }
+    const String& data_string() const   { return _data_string; }
+    const uint8_t* data() const         { return _data; }
     int length() const                  { return _len; }
 
     int nfonts() const                  { return _name_index.size(); }
@@ -40,7 +40,7 @@ class Cff { public:
     PermString sid_permstring(int sid) const;
 
     int ngsubrs() const                 { return _gsubrs_index.nitems(); }
-    Charstring *gsubr(int i);
+    Charstring* gsubr(int i);
 
     unsigned units_per_em() const       { return _units_per_em; }
 
@@ -72,14 +72,14 @@ class Cff { public:
         tTypeMask = 0x7F, tPrivate = 0x80, tP = tPrivate
     };
 
-    static const char * const operator_names[];
+    static const char* const operator_names[];
     static const int operator_types[];
 
 
     class IndexIterator { public:
 
         IndexIterator()         : _offset(0), _last_offset(0), _offsize(-1) { }
-        IndexIterator(const uint8_t *, int, int, ErrorHandler * = 0, const char *index_name = "INDEX");
+        IndexIterator(const uint8_t*, int, int, ErrorHandler* = 0, const char* index_name = "INDEX");
 
         int error() const       { return (_offsize < 0 ? _offsize : 0); }
 
@@ -90,28 +90,28 @@ class Cff { public:
         }
         int nitems() const;
 
-        inline const uint8_t *operator*() const;
-        inline const uint8_t *operator[](int) const;
-        const uint8_t *index_end() const;
+        inline const uint8_t* operator*() const;
+        inline const uint8_t* operator[](int) const;
+        const uint8_t* index_end() const;
 
         void operator++()       { _offset += _offsize; }
         void operator++(int)    { ++(*this); }
 
       private:
 
-        const uint8_t *_contents;
-        const uint8_t *_offset;
-        const uint8_t *_last_offset;
+        const uint8_t* _contents;
+        const uint8_t* _offset;
+        const uint8_t* _last_offset;
         int _offsize;
 
-        inline uint32_t offset_at(const uint8_t *) const;
+        inline uint32_t offset_at(const uint8_t*) const;
 
     };
 
   private:
 
     String _data_string;
-    const uint8_t *_data;
+    const uint8_t* _data;
     int _len;
 
     int _error;
@@ -130,7 +130,7 @@ class Cff { public:
 
     unsigned _units_per_em;
 
-    int parse_header(ErrorHandler *);
+    int parse_header(ErrorHandler*);
 
     enum { HEADER_SIZE = 4 };
 
@@ -140,28 +140,28 @@ class Cff { public:
 class Cff::Dict { public:
 
     Dict();
-    Dict(Cff *, int pos, int dict_len, ErrorHandler * = 0, const char *dict_name = "DICT");
-    int assign(Cff *, int pos, int dict_len, ErrorHandler * = 0, const char *dict_name = "DICT");
+    Dict(Cff*, int pos, int dict_len, ErrorHandler* = 0, const char* dict_name = "DICT");
+    int assign(Cff*, int pos, int dict_len, ErrorHandler* = 0, const char* dict_name = "DICT");
 
     bool ok() const                     { return _error >= 0; }
     int error() const                   { return _error; }
 
-    int check(bool is_private, ErrorHandler * = 0, const char *dict_name = "DICT") const;
+    int check(bool is_private, ErrorHandler* = 0, const char* dict_name = "DICT") const;
 
     bool has(DictOperator) const;
     inline bool has_first(DictOperator) const;
-    bool xvalue(DictOperator, Vector<double> &) const;
-    bool xvalue(DictOperator, int *) const;
-    bool xvalue(DictOperator, double *) const;
-    bool value(DictOperator, Vector<double> &) const;
-    bool value(DictOperator, int *) const;
-    bool value(DictOperator, double *) const;
+    bool xvalue(DictOperator, Vector<double>&) const;
+    bool xvalue(DictOperator, int*) const;
+    bool xvalue(DictOperator, double*) const;
+    bool value(DictOperator, Vector<double>&) const;
+    bool value(DictOperator, int*) const;
+    bool value(DictOperator, double*) const;
 
-    void unparse(ErrorHandler *, const char *) const;
+    void unparse(ErrorHandler*, const char*) const;
 
   private:
 
-    Cff *_cff;
+    Cff* _cff;
     int _pos;
     Vector<int> _operators;
     Vector<int> _pointers;
@@ -173,8 +173,8 @@ class Cff::Dict { public:
 class Cff::Charset { public:
 
     Charset()                           : _error(-1) { }
-    Charset(const Cff *, int pos, int nglyphs, int max_sid, ErrorHandler * = 0);
-    void assign(const Cff *, int pos, int nglyphs, int max_sid, ErrorHandler * = 0);
+    Charset(const Cff*, int pos, int nglyphs, int max_sid, ErrorHandler* = 0);
+    void assign(const Cff*, int pos, int nglyphs, int max_sid, ErrorHandler* = 0);
 
     int error() const                   { return _error; }
 
@@ -190,8 +190,8 @@ class Cff::Charset { public:
     Vector<int> _gids;
     int _error;
 
-    void assign(const int *, int, int);
-    int parse(const Cff *, int pos, int nglyphs, int max_sid, ErrorHandler *);
+    void assign(const int*, int, int);
+    int parse(const Cff*, int pos, int nglyphs, int max_sid, ErrorHandler*);
 
 };
 
@@ -199,7 +199,7 @@ class Cff::FDSelect { public:
 
     FDSelect()                          : _fds(0), _my_fds(false), _nglyphs(0), _error(-1) { }
     ~FDSelect();
-    void assign(const Cff *, int pos, int nglyphs, ErrorHandler * = 0);
+    void assign(const Cff*, int pos, int nglyphs, ErrorHandler* = 0);
 
     int error() const                   { return _error; }
 
@@ -208,14 +208,14 @@ class Cff::FDSelect { public:
 
   private:
 
-    const uint8_t *_fds;
+    const uint8_t* _fds;
     bool _my_fds;
     int _nglyphs;
     int _error;
 
-    FDSelect(const FDSelect &);
-    FDSelect &operator=(const FDSelect &);
-    int parse(const Cff *, int pos, int nglyphs, ErrorHandler *);
+    FDSelect(const FDSelect&);
+    FDSelect& operator=(const FDSelect&);
+    int parse(const Cff*, int pos, int nglyphs, ErrorHandler*);
 
 };
 
@@ -229,7 +229,7 @@ class Cff::FontParent : public CharstringProgram { public:
 
     int ngsubrs_x() const               { return _cff->ngsubrs(); }
     int ngsubrs() const                 { return ngsubrs_x(); }
-    Charstring *gsubr(int) const;
+    Charstring* gsubr(int) const;
     int gsubr_bias() const;
 
   private:
@@ -239,10 +239,10 @@ class Cff::FontParent : public CharstringProgram { public:
     int _error;
     int _font_index;
 
-    FontParent(const FontParent &);
-    FontParent &operator=(const FontParent &);
+    FontParent(const FontParent&);
+    FontParent& operator=(const FontParent&);
 
-    Charstring *charstring(const IndexIterator &, int) const;
+    Charstring* charstring(const IndexIterator&, int) const;
 
     friend class Cff;
     friend class Cff::Font;
@@ -253,7 +253,7 @@ class Cff::FontParent : public CharstringProgram { public:
 
 class Cff::CIDFont : public Cff::FontParent { public:
 
-    CIDFont(Cff* cff, PermString, const Dict &, ErrorHandler *);
+    CIDFont(Cff* cff, PermString, const Dict&, ErrorHandler*);
     ~CIDFont();
 
     PermString font_name() const        { return _font_name; }
@@ -261,17 +261,17 @@ class Cff::CIDFont : public Cff::FontParent { public:
 
     int nglyphs() const                 { return _charstrings_index.nitems(); }
     PermString glyph_name(int) const;
-    void glyph_names(Vector<PermString> &) const;
-    Charstring *glyph(int) const;
-    Charstring *glyph(PermString) const;
+    void glyph_names(Vector<PermString>&) const;
+    Charstring* glyph(int) const;
+    Charstring* glyph(PermString) const;
     int glyphid(PermString) const;
-    const CharstringProgram *child_program(int) const;
+    const CharstringProgram* child_program(int) const;
 
     bool dict_has(DictOperator) const;
     String dict_string(DictOperator) const;
-    bool dict_value(DictOperator, double *) const;
-    bool dict_xvalue(DictOperator, double, double *) const;
-    bool dict_value(DictOperator, Vector<double> &) const;
+    bool dict_value(DictOperator, double*) const;
+    bool dict_xvalue(DictOperator, double, double*) const;
+    bool dict_value(DictOperator, Vector<double>&) const;
 
   private:
 
@@ -283,18 +283,18 @@ class Cff::CIDFont : public Cff::FontParent { public:
     Cff::Charset _charset;
 
     IndexIterator _charstrings_index;
-    mutable Vector<Charstring *> _charstrings_cs;
+    mutable Vector<Charstring*> _charstrings_cs;
 
-    Vector<ChildFont *> _child_fonts;
+    Vector<ChildFont*> _child_fonts;
     Cff::FDSelect _fdselect;
 
-    const Dict &dict_of(DictOperator) const;
+    const Dict& dict_of(DictOperator) const;
 
 };
 
 class Cff::ChildFont : public Cff::FontParent { public:
 
-    ChildFont(Cff* cff, Cff::CIDFont *, int charstring_type, const Dict &, ErrorHandler * = 0);
+    ChildFont(Cff* cff, Cff::CIDFont*, int charstring_type, const Dict&, ErrorHandler* = 0);
     ~ChildFont();
 
     bool ok() const                     { return _error >= 0; }
@@ -307,34 +307,34 @@ class Cff::ChildFont : public Cff::FontParent { public:
 
     int nsubrs_x() const                { return _subrs_index.nitems(); }
     int nsubrs() const                  { return nsubrs_x(); }
-    Charstring *subr(int) const;
+    Charstring* subr(int) const;
     int subr_bias() const;
 
     int nglyphs() const                 { return _parent->nglyphs(); }
     PermString glyph_name(int gi) const { return _parent->glyph_name(gi); }
-    void glyph_names(Vector<PermString> &v) const { _parent->glyph_names(v); }
-    Charstring *glyph(int gi) const     { return _parent->glyph(gi); }
-    Charstring *glyph(PermString n) const { return _parent->glyph(n); }
+    void glyph_names(Vector<PermString>& v) const { _parent->glyph_names(v); }
+    Charstring* glyph(int gi) const     { return _parent->glyph(gi); }
+    Charstring* glyph(PermString n) const { return _parent->glyph(n); }
 
     double global_width_x(bool) const;
 
   private:
 
-    Cff::CIDFont *_parent;
+    Cff::CIDFont* _parent;
 
     Dict _top_dict;
     Dict _private_dict;
 
     IndexIterator _subrs_index;
-    mutable Vector<Charstring *> _subrs_cs;
+    mutable Vector<Charstring*> _subrs_cs;
 
     double _default_width_x;
     double _nominal_width_x;
 
-    ChildFont(const ChildFont &); // does not exist
-    ChildFont &operator=(const ChildFont &); // does not exist
+    ChildFont(const ChildFont&); // does not exist
+    ChildFont& operator=(const ChildFont&); // does not exist
 
-    Charstring *charstring(const IndexIterator &, int) const;
+    Charstring* charstring(const IndexIterator&, int) const;
 
     friend class Cff::Font;
 
@@ -342,7 +342,7 @@ class Cff::ChildFont : public Cff::FontParent { public:
 
 class Cff::Font : public Cff::ChildFont { public:
 
-    Font(Cff* cff, PermString, const Dict &, ErrorHandler *);
+    Font(Cff* cff, PermString, const Dict&, ErrorHandler*);
     ~Font();
 
     PermString font_name() const        { return _font_name; }
@@ -350,19 +350,19 @@ class Cff::Font : public Cff::ChildFont { public:
 
     int nglyphs() const                 { return _charstrings_index.nitems(); }
     PermString glyph_name(int) const;
-    void glyph_names(Vector<PermString> &) const;
-    Charstring *glyph(int) const;
-    Charstring *glyph(PermString) const;
+    void glyph_names(Vector<PermString>&) const;
+    Charstring* glyph(int) const;
+    Charstring* glyph(PermString) const;
     int glyphid(PermString) const;
 
-    Type1Encoding *type1_encoding() const;
-    Type1Encoding *type1_encoding_copy() const;
+    Type1Encoding* type1_encoding() const;
+    Type1Encoding* type1_encoding_copy() const;
 
     bool dict_has(DictOperator) const;
     String dict_string(DictOperator) const;
-    inline bool dict_value(DictOperator, double *) const;
-    inline bool dict_value(DictOperator, Vector<double> &) const;
-    const Dict &top_dict() const        { return _top_dict; }
+    inline bool dict_value(DictOperator, double*) const;
+    inline bool dict_value(DictOperator, Vector<double>&) const;
+    const Dict& top_dict() const        { return _top_dict; }
 
   private:
 
@@ -371,21 +371,21 @@ class Cff::Font : public Cff::ChildFont { public:
     Cff::Charset _charset;
 
     IndexIterator _charstrings_index;
-    mutable Vector<Charstring *> _charstrings_cs;
+    mutable Vector<Charstring*> _charstrings_cs;
 
     int _encoding_pos;
     int _encoding[256];
-    mutable Type1Encoding *_t1encoding;
+    mutable Type1Encoding* _t1encoding;
 
-    int parse_encoding(int pos, ErrorHandler *);
-    int assign_standard_encoding(const int *standard_encoding);
+    int parse_encoding(int pos, ErrorHandler*);
+    int assign_standard_encoding(const int* standard_encoding);
 
-    inline const Dict &dict_of(DictOperator) const;
+    inline const Dict& dict_of(DictOperator) const;
 
 };
 
 
-inline uint32_t Cff::IndexIterator::offset_at(const uint8_t *x) const
+inline uint32_t Cff::IndexIterator::offset_at(const uint8_t* x) const
 {
     switch (_offsize) {
       case 0:
@@ -401,13 +401,13 @@ inline uint32_t Cff::IndexIterator::offset_at(const uint8_t *x) const
     }
 }
 
-inline const uint8_t *Cff::IndexIterator::operator*() const
+inline const uint8_t* Cff::IndexIterator::operator*() const
 {
     assert(live());
     return _contents + offset_at(_offset);
 }
 
-inline const uint8_t *Cff::IndexIterator::operator[](int which) const
+inline const uint8_t* Cff::IndexIterator::operator[](int which) const
 {
     assert(live() && _offset + which * _offsize <= _last_offset);
     return _contents + offset_at(_offset + which * _offsize);
@@ -442,17 +442,17 @@ inline bool Cff::Dict::has_first(DictOperator op) const
     return _operators.size() && _operators[0] == op;
 }
 
-inline const Cff::Dict &Cff::Font::dict_of(DictOperator op) const
+inline const Cff::Dict& Cff::Font::dict_of(DictOperator op) const
 {
     return (op >= 0 && op <= oLastOperator && (operator_types[op] & tP) ? _private_dict : _top_dict);
 }
 
-inline bool Cff::Font::dict_value(DictOperator op, double *val) const
+inline bool Cff::Font::dict_value(DictOperator op, double* val) const
 {
     return dict_of(op).value(op, val);
 }
 
-inline bool Cff::Font::dict_value(DictOperator op, Vector<double> &val) const
+inline bool Cff::Font::dict_value(DictOperator op, Vector<double>& val) const
 {
     return dict_of(op).value(op, val);
 }

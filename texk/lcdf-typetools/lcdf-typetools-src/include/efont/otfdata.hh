@@ -82,6 +82,8 @@ class Data {
     static inline int32_t s32(const unsigned char* s);
     static inline int32_t s32_aligned16(const unsigned char* s);
     static inline int32_t s32_aligned(const unsigned char* s);
+    static inline double fixed_aligned16(const unsigned char* s);
+    static inline double fixed_aligned(const unsigned char* s);
 
     inline uint8_t operator[](unsigned offset) const;
     inline uint16_t u16(unsigned offset) const;
@@ -157,6 +159,14 @@ inline int32_t Data::s32_aligned16(const unsigned char* s) {
 inline int32_t Data::s32_aligned(const unsigned char* s) {
     efont_precondition((reinterpret_cast<uintptr_t>(s) & 3) == 0);
     return ntohl(*reinterpret_cast<const int32_t*>(s));
+}
+
+inline double Data::fixed_aligned16(const unsigned char* s) {
+    return s32_aligned16(s) / 65536.;
+}
+
+inline double Data::fixed_aligned(const unsigned char* s) {
+    return s32_aligned(s) / 65536.;
 }
 
 inline uint16_t Data::u16(unsigned offset) const {

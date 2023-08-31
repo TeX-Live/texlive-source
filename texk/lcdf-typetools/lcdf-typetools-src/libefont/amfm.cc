@@ -108,7 +108,7 @@ AmfmMetrics::master(int m, ErrorHandler *errh)
 
         if (!afm) {
             if (errh)
-                errh->error("%s: can't find AFM file for master `%s'",
+                errh->error("%s: can%,t find AFM file for master %<%s%>",
                             _font_name.c_str(), master.font_name.c_str());
 
         } else if (!strcompat(afm->font_name(), master.font_name)
@@ -116,7 +116,7 @@ AmfmMetrics::master(int m, ErrorHandler *errh)
                    || !strcompat(afm->full_name(), master.full_name)
                    || !strcompat(afm->version(), master.version)) {
             if (errh)
-                errh->error("%s: AFM for master `%s' doesn't match AMFM",
+                errh->error("%s: AFM for master %<%s%> doesn%,t match AMFM",
                             _font_name.c_str(), master.font_name.c_str());
 
         } else if (!_sanity_afm) {
@@ -131,19 +131,19 @@ AmfmMetrics::master(int m, ErrorHandler *errh)
             buf[0] = 0;
 
             if (afm->nglyphs() != _sanity_afm->nglyphs())
-                sprintf(buf, "glyph count (%d vs. %d)", afm->nglyphs(), _sanity_afm->nglyphs());
-            if (afm->nfd() != _sanity_afm->nfd())
-                sprintf(buf, "fd count (%d vs. %d)", afm->nfd(), _sanity_afm->nfd());
-            if (afm->nkv() != _sanity_afm->nkv())
-                sprintf(buf, "kv count (%d vs. %d)", afm->nkv(), _sanity_afm->nkv());
-            if (pairp->op_count() != sanity_pairp->op_count())
-                sprintf(buf, "pair op count (%d vs. %d)", pairp->op_count(), sanity_pairp->op_count());
+                snprintf(buf, sizeof(buf), "glyph count (%d vs. %d)", afm->nglyphs(), _sanity_afm->nglyphs());
+            else if (afm->nfd() != _sanity_afm->nfd())
+                snprintf(buf, sizeof(buf), "fd count (%d vs. %d)", afm->nfd(), _sanity_afm->nfd());
+            else if (afm->nkv() != _sanity_afm->nkv())
+                snprintf(buf, sizeof(buf), "kv count (%d vs. %d)", afm->nkv(), _sanity_afm->nkv());
+            else if (pairp->op_count() != sanity_pairp->op_count())
+                snprintf(buf, sizeof(buf), "pair op count (%d vs. %d)", pairp->op_count(), sanity_pairp->op_count());
 
             if (!buf[0]) {
                 master.afm = afm;
                 afm->use();
             } else if (errh)
-                errh->error("%s: AFM for master `%s' failed sanity checks (%s)", _font_name.c_str(), master.font_name.c_str(), buf);
+                errh->error("%s: AFM for master %<%s%> failed sanity checks (%s)", _font_name.c_str(), master.font_name.c_str(), buf);
         }
     }
 
@@ -243,8 +243,7 @@ AmfmMetrics::interpolate(const Vector<double> &design_vector,
  **/
 
 AmfmReader::AmfmReader(AfmParser &afmp, AmfmMetrics *amfm, ErrorHandler *errh)
-    : _amfm(amfm), _finder(amfm->_finder), _l(afmp),
-      _mmspace(amfm->_mmspace)
+    : _amfm(amfm), _l(afmp), _mmspace(amfm->_mmspace)
 {
     _errh = errh ? errh : ErrorHandler::silent_handler();
 }
@@ -306,12 +305,12 @@ AmfmReader::no_match_warning(const char *context) const
     PermString keyword = _l.keyword();
     if (!keyword) return;
     if (_l.key_matched()) {
-        lwarning(context ? "bad `%s' command in %s:"
-                 : "bad `%s' command:", keyword.c_str(), context);
+        lwarning(context ? "bad %<%s%> command in %s:"
+                 : "bad %<%s%> command:", keyword.c_str(), context);
         lwarning("field %d %s", _l.fail_field(), _l.message().c_str());
     } else
-        lwarning(context ? "unknown command `%s' in %s"
-                 : "unknown command `%s'", keyword.c_str(), context);
+        lwarning(context ? "unknown command %<%s%> in %s"
+                 : "unknown command %<%s%>", keyword.c_str(), context);
     _l.clear_message();
 }
 
@@ -491,7 +490,7 @@ AmfmReader::read()
 
   done:
     if (!_mmspace) {
-        _errh->error("`%s' is not an AMFM file", String(_l.landmark().file()).c_str());
+        _errh->error("%<%s%> is not an AMFM file", String(_l.landmark().file()).c_str());
         return false;
     }
 

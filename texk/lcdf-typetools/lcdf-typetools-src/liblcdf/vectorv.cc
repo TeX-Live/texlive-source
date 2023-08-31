@@ -37,7 +37,7 @@ Vector<void*>::operator=(const Vector<void*> &o)
 {
     if (&o != this) {
         _n = 0;
-        if (reserve(o._n)) {
+        if (reserve(o._n) && o._n) {
             _n = o._n;
             memcpy(_l, o._l, sizeof(void *) * _n);
         }

@@ -395,9 +395,10 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
         // boundary char setting
         if (v[0] == "||" && v[1] == "=") {
             char *endptr;
+            long boundary_char = strtol(v[2].c_str(), &endptr, 10);
             if (override > 0 || _boundary_char < 0)
-                _boundary_char = strtol(v[2].c_str(), &endptr, 10);
-            if (*endptr == 0 && _boundary_char < _e.size())
+                _boundary_char = boundary_char;
+            if (*endptr == 0 && boundary_char < _e.size())
                 return 0;
             else
                 return errh->error("parse error in boundary character assignment");
@@ -405,9 +406,10 @@ DvipsEncoding::parse_ligkern_words(Vector<String> &v, int override, ErrorHandler
         // altselector char setting
         if (v[0] == "^^" && v[1] == "=") {
             char *endptr;
+            long altselector_char = strtol(v[2].c_str(), &endptr, 10);
             if (override > 0 || _altselector_char < 0)
-                _altselector_char = strtol(v[2].c_str(), &endptr, 10);
-            if (*endptr == 0 && _altselector_char < _e.size())
+                _altselector_char = altselector_char;
+            if (*endptr == 0 && altselector_char < _e.size())
                 return 0;
             else
                 return errh->error("parse error in altselector character assignment");

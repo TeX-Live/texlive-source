@@ -1,6 +1,6 @@
 /* secondary.{cc,hh} -- code for generating fake glyphs
  *
- * Copyright (c) 2003-2019 Eddie Kohler
+ * Copyright (c) 2003-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -238,7 +238,7 @@ double FontInfo::x_height(const Transform& font_xform) const {
         if (!warned) {
             ErrorHandler* errh = ErrorHandler::default_handler();
             errh->warning("font x-height and height of %<x%> differ by %d%%", (int) (fabs(x1 - x2) * 100 / units_per_em()));
-            errh->message("(The height of %<x%> is usually more reliable than the x-height, so I%,m\nusing that. Or try --use-x-height or --no-use-x-height.)\n");
+            errh->message("(The height of %<x%> is usually more reliable than the x-height, so I%,m\nusing that. Or try `--x-height=font` or `--x-height=x`.)\n");
             warned = true;
         }
         return x1;

@@ -62,7 +62,8 @@ Cmap::parse_header(ErrorHandler *errh)
     int last_platform = -1;
     int last_encoding = -1;
     int last_language = -1;
-    _first_unicode_table = -1;
+    _best_unicode_table = -1;
+    int best_unicode_priority = 0;
     for (int i = 0; i < _ntables; i++) {
         int loc = HEADER_SIZE + ENCODING_SIZE * i;
         int platform = USHORT_AT(data + loc);
@@ -92,10 +93,24 @@ Cmap::parse_header(ErrorHandler *errh)
                       || (encoding == last_encoding
                           && language > last_language)))))
             errh->warning("unsorted cmap encoding records at entry %d (%d,%d,%d follows %d,%d,%d)", i, platform, encoding, language, last_platform, last_encoding, last_language);
-        if ((platform == 0 || (platform == 3 && encoding == 1))
-            && _first_unicode_table < 0)
-            _first_unicode_table = i;
-        last_platform = platform, last_encoding = encoding, last_language = language;
+        int unicode_priority = -1;
+        if (platform == 0 && encoding == 4)
+            unicode_priority = 5;
+        else if (platform == 3 && encoding == 10)
+            unicode_priority = 4;
+        else if (platform == 0 && encoding == 6)
+            unicode_priority = 1;
+        else if ((platform == 0 && encoding != 5) || (platform == 3 && encoding == 1))
+            unicode_priority = 3;
+        else
+            unicode_priority = 0;
+        if (unicode_priority > best_unicode_priority) {
+            _best_unicode_table = i;
+            best_unicode_priority = unicode_priority;
+        }
+        last_platform = platform;
+        last_encoding = encoding;
+        last_language = language;
     }
 
     _table_error.assign(_ntables, -2);
@@ -122,12 +137,12 @@ Cmap::check_table(int t, ErrorHandler *errh) const
 {
     if (!errh)
         errh = ErrorHandler::silent_handler();
-    if (t == USE_FIRST_UNICODE_TABLE && _first_unicode_table == -1) {
+    if (t == USE_BEST_UNICODE_TABLE && _best_unicode_table == -1) {
         errh->warning("font appears not to support Unicode");
-        _first_unicode_table = 0;
+        _best_unicode_table = 0;
     }
-    if (t == USE_FIRST_UNICODE_TABLE)
-        t = _first_unicode_table;
+    if (t == USE_BEST_UNICODE_TABLE)
+        t = _best_unicode_table;
     if (_error < 0 || t < 0 || t >= _ntables)
         return errh->error("no such table");
     if (_table_error[t] != -2)
@@ -224,7 +239,8 @@ Cmap::check_table(int t, ErrorHandler *errh) const
           break;
       }
 
-      case F_SEGMENTED32: {
+      case F_SEGMENTED32:
+      case F_MANYTOONE: {
           if (left < 8
               || (length = ULONG_AT(data + 4)) > left
               || length < 16)
@@ -349,6 +365,24 @@ Cmap::map_table(int t, uint32_t uni, ErrorHandler *errh) const
         return 0;
     }
 
+    case F_MANYTOONE: {
+        uint32_t nGroups = ULONG_AT2(data + 12);
+        uint32_t l = 0, r = nGroups;
+        const uint8_t *groups = data + 16;
+        while (l < r) {
+            uint32_t m = l + (r - l) / 2;
+            uint32_t startCharCode = ULONG_AT2(groups + m * 12);
+            uint32_t endCharCode = ULONG_AT2(groups + m * 12 + 4);
+            if (uni < startCharCode)
+                r = m;
+            else if (uni <= endCharCode)
+                return ULONG_AT2(groups + m * 12 + 8);
+            else
+                l = m + 1;
+        }
+        return 0;
+    }
+
     default:
         return 0;
 
@@ -441,6 +475,19 @@ Cmap::dump_table(int t, Vector<std::pair<uint32_t, Glyph> > &ugp, ErrorHandler *
         break;
     }
 
+    case F_MANYTOONE: {
+        uint32_t nGroups = ULONG_AT2(data + 12);
+        const uint8_t *groups = data + 16;
+        for (uint32_t i = 0; i < nGroups; i++, groups += 12) {
+            uint32_t startCharCode = ULONG_AT2(groups);
+            uint32_t nCharCodes = ULONG_AT2(groups + 4) - startCharCode;
+            Glyph glyphID = ULONG_AT2(groups + 8);
+            for (uint32_t i = 0; i <= nCharCodes; i++)
+                ugp.push_back(std::make_pair(startCharCode + i, glyphID));
+        }
+        break;
+    }
+
     default:
         break;
 
@@ -451,7 +498,7 @@ int
 Cmap::map_uni(const Vector<uint32_t> &vin, Vector<Glyph> &vout) const
 {
     int t;
-    if ((t = check_table(USE_FIRST_UNICODE_TABLE)) < 0)
+    if ((t = check_table(USE_BEST_UNICODE_TABLE)) < 0)
         return -1;
     vout.resize(vin.size(), 0);
     for (int i = 0; i < vin.size(); i++)

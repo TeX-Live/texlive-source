@@ -121,13 +121,13 @@ am_libefont_a_OBJECTS = afm.$(OBJEXT) afmparse.$(OBJEXT) \
 	afmw.$(OBJEXT) amfm.$(OBJEXT) cff.$(OBJEXT) encoding.$(OBJEXT) \
 	findmet.$(OBJEXT) metrics.$(OBJEXT) otf.$(OBJEXT) \
 	otfcmap.$(OBJEXT) otfdata.$(OBJEXT) otfdescrip.$(OBJEXT) \
-	otfgpos.$(OBJEXT) otfgsub.$(OBJEXT) otfname.$(OBJEXT) \
-	otfos2.$(OBJEXT) otfpost.$(OBJEXT) pairop.$(OBJEXT) \
-	psres.$(OBJEXT) t1bounds.$(OBJEXT) t1cs.$(OBJEXT) \
-	t1csgen.$(OBJEXT) t1interp.$(OBJEXT) t1item.$(OBJEXT) \
-	t1font.$(OBJEXT) t1fontskel.$(OBJEXT) t1mm.$(OBJEXT) \
-	t1rw.$(OBJEXT) t1unparser.$(OBJEXT) ttfcs.$(OBJEXT) \
-	ttfhead.$(OBJEXT) ttfkern.$(OBJEXT)
+	otffvar.$(OBJEXT) otfgpos.$(OBJEXT) otfgsub.$(OBJEXT) \
+	otfname.$(OBJEXT) otfos2.$(OBJEXT) otfpost.$(OBJEXT) \
+	pairop.$(OBJEXT) psres.$(OBJEXT) t1bounds.$(OBJEXT) \
+	t1cs.$(OBJEXT) t1csgen.$(OBJEXT) t1interp.$(OBJEXT) \
+	t1item.$(OBJEXT) t1font.$(OBJEXT) t1fontskel.$(OBJEXT) \
+	t1mm.$(OBJEXT) t1rw.$(OBJEXT) t1unparser.$(OBJEXT) \
+	ttfcs.$(OBJEXT) ttfhead.$(OBJEXT) ttfkern.$(OBJEXT)
 libefont_a_OBJECTS = $(am_libefont_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -149,14 +149,15 @@ am__depfiles_remade = ./$(DEPDIR)/afm.Po ./$(DEPDIR)/afmparse.Po \
 	./$(DEPDIR)/encoding.Po ./$(DEPDIR)/findmet.Po \
 	./$(DEPDIR)/metrics.Po ./$(DEPDIR)/otf.Po \
 	./$(DEPDIR)/otfcmap.Po ./$(DEPDIR)/otfdata.Po \
-	./$(DEPDIR)/otfdescrip.Po ./$(DEPDIR)/otfgpos.Po \
-	./$(DEPDIR)/otfgsub.Po ./$(DEPDIR)/otfname.Po \
-	./$(DEPDIR)/otfos2.Po ./$(DEPDIR)/otfpost.Po \
-	./$(DEPDIR)/pairop.Po ./$(DEPDIR)/psres.Po \
-	./$(DEPDIR)/t1bounds.Po ./$(DEPDIR)/t1cs.Po \
-	./$(DEPDIR)/t1csgen.Po ./$(DEPDIR)/t1font.Po \
-	./$(DEPDIR)/t1fontskel.Po ./$(DEPDIR)/t1interp.Po \
-	./$(DEPDIR)/t1item.Po ./$(DEPDIR)/t1mm.Po ./$(DEPDIR)/t1rw.Po \
+	./$(DEPDIR)/otfdescrip.Po ./$(DEPDIR)/otffvar.Po \
+	./$(DEPDIR)/otfgpos.Po ./$(DEPDIR)/otfgsub.Po \
+	./$(DEPDIR)/otfname.Po ./$(DEPDIR)/otfos2.Po \
+	./$(DEPDIR)/otfpost.Po ./$(DEPDIR)/pairop.Po \
+	./$(DEPDIR)/psres.Po ./$(DEPDIR)/t1bounds.Po \
+	./$(DEPDIR)/t1cs.Po ./$(DEPDIR)/t1csgen.Po \
+	./$(DEPDIR)/t1font.Po ./$(DEPDIR)/t1fontskel.Po \
+	./$(DEPDIR)/t1interp.Po ./$(DEPDIR)/t1item.Po \
+	./$(DEPDIR)/t1mm.Po ./$(DEPDIR)/t1rw.Po \
 	./$(DEPDIR)/t1unparser.Po ./$(DEPDIR)/ttfcs.Po \
 	./$(DEPDIR)/ttfhead.Po ./$(DEPDIR)/ttfkern.Po
 am__mv = mv -f
@@ -363,6 +364,7 @@ libefont_a_SOURCES = \
 	otfcmap.cc \
 	otfdata.cc \
 	otfdescrip.cc \
+	otffvar.cc \
 	otfgpos.cc \
 	otfgsub.cc \
 	otfname.cc \
@@ -447,6 +449,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfcmap.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfdata.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfdescrip.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otffvar.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfgpos.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfgsub.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/otfname.Po@am__quote@ # am--include-marker
@@ -641,6 +644,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/otfcmap.Po
 	-rm -f ./$(DEPDIR)/otfdata.Po
 	-rm -f ./$(DEPDIR)/otfdescrip.Po
+	-rm -f ./$(DEPDIR)/otffvar.Po
 	-rm -f ./$(DEPDIR)/otfgpos.Po
 	-rm -f ./$(DEPDIR)/otfgsub.Po
 	-rm -f ./$(DEPDIR)/otfname.Po
@@ -718,6 +722,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/otfcmap.Po
 	-rm -f ./$(DEPDIR)/otfdata.Po
 	-rm -f ./$(DEPDIR)/otfdescrip.Po
+	-rm -f ./$(DEPDIR)/otffvar.Po
 	-rm -f ./$(DEPDIR)/otfgpos.Po
 	-rm -f ./$(DEPDIR)/otfgsub.Po
 	-rm -f ./$(DEPDIR)/otfname.Po

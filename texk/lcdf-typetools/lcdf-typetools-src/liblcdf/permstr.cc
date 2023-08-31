@@ -2,7 +2,7 @@
 
 /* permstr.{cc,hh} -- permanent strings
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -33,8 +33,8 @@ PermString::Initializer::Initializer()
 {
     static int initialized = 0;
     if (!initialized) {
-	PermString::static_initialize();
-	initialized = 1;
+        PermString::static_initialize();
+        initialized = 1;
     }
 }
 
@@ -42,10 +42,10 @@ void
 PermString::static_initialize()
 {
     for (int i = 0; i < 256; i++) {
-	one_char_doodad[i].next = 0;
-	one_char_doodad[i].length = 1;
-	one_char_doodad[i].data[0] = i;
-	one_char_doodad[i].data[1] = 0;
+        one_char_doodad[i].next = 0;
+        one_char_doodad[i].length = 1;
+        one_char_doodad[i].data[0] = i;
+        one_char_doodad[i].data[1] = 0;
     }
 }
 
@@ -114,28 +114,28 @@ PermString::initialize(const char* s, int length)
     const unsigned char* mm;
 
     if (length < 0)
-	length = (s ? strlen(s) : 0);
+        length = (s ? strlen(s) : 0);
 
     if (length == 0) {
-	_rep = zero_char_doodad.data;
-	return;
+        _rep = zero_char_doodad.data;
+        return;
     } else if (length == 1) {
-	_rep = one_char_doodad[m[0]].data;
-	return;
+        _rep = one_char_doodad[m[0]].data;
+        return;
     }
 
     unsigned hash;
     int l;
     for (hash = 0, l = length, mm = m; l; mm++, l--)
-	hash = (hash << 1) + scatter[*mm];
+        hash = (hash << 1) + scatter[*mm];
     hash &= (NHASH - 1);
 
     Doodad *buck;
     for (buck = buckets[hash]; buck; buck = buck->next)
-	if (length == buck->length && memcmp(s, buck->data, length) == 0) {
-	    _rep = buck->data;
-	    return;
-	}
+        if (length == buck->length && memcmp(s, buck->data, length) == 0) {
+            _rep = buck->data;
+            return;
+        }
 
     // CANNOT USE new because the structure has variable size.
     buck = (Doodad *)malloc(sizeof(Doodad) + length - 1);
@@ -156,8 +156,8 @@ static void
 append(const char *s, int len)
 {
     if (pspos + len >= pscap) {
-	pscap *= 2;
-	psc = (char *)realloc(psc, pscap);
+        pscap *= 2;
+        psc = (char *)realloc(psc, pscap);
     }
     memcpy(psc + pspos, s, len);
     pspos += len;
@@ -167,8 +167,8 @@ inline static void
 extend(int len)
 {
     while (pspos + len >= pscap) {
-	pscap *= 2;
-	psc = (char *)realloc(psc, pscap);
+        pscap *= 2;
+        psc = (char *)realloc(psc, pscap);
     }
 }
 
@@ -178,118 +178,117 @@ vpermprintf(const char *s, va_list val)
     pspos = 0;
     while (1) {
 
-	const char *pct = strchr(s, '%');
-	if (!pct) {
-	    if (*s)
-		append(s, strlen(s));
-	    break;
-	}
-	if (pct != s) {
-	    append(s, pct - s);
-	    s = pct;
-	}
+        const char *pct = strchr(s, '%');
+        if (!pct) {
+            if (*s)
+                append(s, strlen(s));
+            break;
+        }
+        if (pct != s) {
+            append(s, pct - s);
+            s = pct;
+        }
 
-	int iflag = -1;
-	while (1)
-	    switch (*++s) {
+        int iflag = -1;
+        while (1)
+            switch (*++s) {
 
-	      case '0':
-		/* zeroflag = 1; */
-		break;
+              case '0':
+                /* zeroflag = 1; */
+                break;
 
-	      case '1': case '2': case '3': case '4': case '5':
-	      case '6': case '7': case '8': case '9':
-		assert(iflag == -1 /* Too many decimal flags in permprintf */);
-		iflag = 0;
-		while (*s >= '0' && *s <= '9') {
-		    iflag = iflag * 10 + *s - '0';
-		    s++;
-		}
-		break;
+              case '1': case '2': case '3': case '4': case '5':
+              case '6': case '7': case '8': case '9':
+                assert(iflag == -1 /* Too many decimal flags in permprintf */);
+                iflag = 0;
+                while (*s >= '0' && *s <= '9') {
+                    iflag = iflag * 10 + *s - '0';
+                    s++;
+                }
+                break;
 
-	      case '*':
-		assert(iflag == -1 /* iflag given */);
-		iflag = va_arg(val, int);
-		break;
+              case '*':
+                assert(iflag == -1 /* iflag given */);
+                iflag = va_arg(val, int);
+                break;
 
-	      case 's': {
-		  const char *x = va_arg(val, const char *);
-		  if (x) {
-		      if (iflag < 0)
-			  append(x, strlen(x));
-		      else
-			  append(x, iflag);
-		  }
-		  goto pctdone;
-	      }
+              case 's': {
+                  const char *x = va_arg(val, const char *);
+                  if (x) {
+                      if (iflag < 0)
+                          append(x, strlen(x));
+                      else
+                          append(x, iflag);
+                  }
+                  goto pctdone;
+              }
 
-	      case 'c': {
-		  char c = (char)(va_arg(val, int) & 0xFF);
-		  append(&c, 1);
-		  goto pctdone;
-	      }
+              case 'c': {
+                  char c = (char)(va_arg(val, int) & 0xFF);
+                  append(&c, 1);
+                  goto pctdone;
+              }
 
-	      case 'p': {
-		  PermString::Capsule x = va_arg(val, PermString::Capsule);
-		  PermString px;
-		  if (x)
-		      px = PermString::decapsule(x);
-		  if (iflag < 0 || iflag > px.length())
-		      append(px.c_str(), px.length());
-		  else
-		      append(px.c_str(), iflag);
-		  goto pctdone;
-	      }
+              case 'p': {
+                  PermString::Capsule x = va_arg(val, PermString::Capsule);
+                  PermString px;
+                  if (x)
+                      px = PermString::decapsule(x);
+                  if (iflag < 0 || iflag > px.length())
+                      append(px.c_str(), px.length());
+                  else
+                      append(px.c_str(), iflag);
+                  goto pctdone;
+              }
 
-	      case 'd': {
-		  // FIXME FIXME rewrite for sense
-		  int x = va_arg(val, int);
-		  if (pspos == pscap)
-		      extend(1);
+              case 'd': {
+                  // FIXME FIXME rewrite for sense
+                  int x = va_arg(val, int);
+                  if (pspos == pscap)
+                      extend(1);
 
-		  // FIXME -2^31
-		  unsigned int ux = x;
-		  if (x < 0) {
-		      psc[pspos++] = '-';
-		      ux = -x;
-		  }
+                  // FIXME -2^31
+                  unsigned int ux = x;
+                  if (x < 0) {
+                      psc[pspos++] = '-';
+                      ux = -x;
+                  }
 
-		  int numdigits = 0;
-		  for (unsigned digcountx = ux; digcountx > 9; digcountx /= 10)
-		      numdigits++;
+                  int numdigits = 0;
+                  for (unsigned digcountx = ux; digcountx > 9; digcountx /= 10)
+                      numdigits++;
 
-		  extend(numdigits + 1);
-		  int digit = numdigits;
-		  do {
-		      psc[pspos + digit] = (ux % 10) + '0';
-		      ux /= 10;
-		      digit--;
-		  } while (ux);
-		  pspos += numdigits + 1;
+                  extend(numdigits + 1);
+                  int digit = numdigits;
+                  do {
+                      psc[pspos + digit] = (ux % 10) + '0';
+                      ux /= 10;
+                      digit--;
+                  } while (ux);
+                  pspos += numdigits + 1;
 
-		  goto pctdone;
-	      }
+                  goto pctdone;
+              }
 
-	      case 'g': {
-		  // FIXME FIXME rewrite for sense
-		  double x = va_arg(val, double);
-		  char buffer[1000];
-		  int len;
-		  sprintf(buffer, "%.10g%n", x, &len);
-		  extend(len);
-		  strcpy(psc + pspos, buffer);
-		  pspos += len;
-		  goto pctdone;
-	      }
+              case 'g': {
+                  // FIXME FIXME rewrite for sense
+                  double x = va_arg(val, double);
+                  char buffer[1000];
+                  int len = snprintf(buffer, sizeof(buffer), "%.10g", x);
+                  extend(len);
+                  strcpy(psc + pspos, buffer);
+                  pspos += len;
+                  goto pctdone;
+              }
 
-	      default:
-		assert(0 /* Bad % in permprintf */);
-		goto pctdone;
+              default:
+                assert(0 /* Bad % in permprintf */);
+                goto pctdone;
 
-	    }
+            }
 
       pctdone:
-	s++;
+        s++;
     }
 
     return PermString(psc, pspos);
@@ -307,7 +306,7 @@ PermString permprintf(const char *s, ...)
 PermString permcat(PermString a, PermString b)
 {
     if (!a || !b)
-	return a ? a : b;
+        return a ? a : b;
     unsigned al = a.length();
     unsigned bl = b.length();
     char *s = new char[al + bl];

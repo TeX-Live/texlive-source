@@ -102,9 +102,11 @@ CharstringUnparser::type2_command(int cmd, const unsigned char *data, int *left)
 void
 CharstringUnparser::act_hintmask(int, const unsigned char *data, int nhints)
 {
+    static const char hexdig[] = "0123456789ABCDEF";
     _sa << '[';
-    for (int i = 0; i < nhints; i++, data++)
-        sprintf(_sa.extend(2), "%02X", *data);
+    for (int i = 0; i < nhints; i++, data++) {
+        _sa << hexdig[(unsigned) ((*data >> 4) & 15)] << hexdig[(unsigned) (*data & 15)];
+    }
     _sa << ']';
 }
 

@@ -2,7 +2,7 @@
 
 /* t1item.{cc,hh} -- items in a Type 1 font
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,7 +37,7 @@ namespace Efont {
  **/
 
 void
-Type1NullItem::gen(Type1Writer &)
+Type1NullItem::gen(Type1Writer&)
 {
 }
 
@@ -46,7 +46,7 @@ Type1NullItem::gen(Type1Writer &)
  **/
 
 void
-Type1CopyItem::gen(Type1Writer &w)
+Type1CopyItem::gen(Type1Writer& w)
 {
     w << _value << '\n';
 }
@@ -57,7 +57,7 @@ Type1CopyItem::gen(Type1Writer &w)
  **/
 
 void
-Type1EexecItem::gen(Type1Writer &w)
+Type1EexecItem::gen(Type1Writer& w)
 {
     if (_eexec_on)
         w << "currentfile eexec\n";
@@ -72,25 +72,25 @@ Type1EexecItem::gen(Type1Writer &w)
 typedef Vector<double> NumVector;
 
 
-Type1Definition::Type1Definition(PermString n, const String &v, PermString d)
+Type1Definition::Type1Definition(PermString n, const String& v, PermString d)
     : _name(n), _val(v), _definer(d)
 {
     _val.c_str();               // ensure it ends with '\0'
 }
 
-Type1Definition *
-Type1Definition::make_string(PermString n, const String &v, PermString d)
+Type1Definition*
+Type1Definition::make_string(PermString n, const String& v, PermString d)
 {
-    Type1Definition *t1d = new Type1Definition(n, "", d);
+    Type1Definition* t1d = new Type1Definition(n, "", d);
     t1d->set_string(v);
     return t1d;
 }
 
 int
-Type1Definition::slurp_string(StringAccum &accum, int pos, Type1Reader *reader)
+Type1Definition::slurp_string(StringAccum& accum, int pos, Type1Reader* reader)
 {
     int paren_level = 0;
-    char *s = accum.data() + pos;
+    char* s = accum.data() + pos;
 
     do {
         switch (*s++) {
@@ -112,11 +112,11 @@ Type1Definition::slurp_string(StringAccum &accum, int pos, Type1Reader *reader)
 }
 
 int
-Type1Definition::slurp_proc(StringAccum &accum, int pos, Type1Reader *reader)
+Type1Definition::slurp_proc(StringAccum& accum, int pos, Type1Reader* reader)
 {
     int paren_level = 0;
     int brace_level = 0;
-    char *s = accum.data() + pos;
+    char* s = accum.data() + pos;
 
     do {
         switch (*s++) {
@@ -144,11 +144,11 @@ Type1Definition::slurp_proc(StringAccum &accum, int pos, Type1Reader *reader)
     return s - accum.data();
 }
 
-Type1Definition *
-Type1Definition::make(StringAccum &accum, Type1Reader *reader,
+Type1Definition*
+Type1Definition::make(StringAccum& accum, Type1Reader* reader,
                       bool force_definition)
 {
-    char *s = accum.data();
+    char* s = accum.data();
     while (isspace((unsigned char) *s))
         s++;
     if (*s != '/')
@@ -213,20 +213,20 @@ Type1Definition::make(StringAccum &accum, Type1Reader *reader,
 }
 
 void
-Type1Definition::gen(Type1Writer &w)
+Type1Definition::gen(Type1Writer& w)
 {
     w << '/' << _name << ' ' << _val << ' ' << _definer << '\n';
 }
 
 void
-Type1Definition::gen(StringAccum &sa)
+Type1Definition::gen(StringAccum& sa)
 {
     sa << '/' << _name << ' ' << _val << ' ' << _definer;
 }
 
 
 bool
-Type1Definition::value_bool(bool &b) const
+Type1Definition::value_bool(bool& b) const
 {
     if (_val == "true") {
         b = true;
@@ -239,23 +239,23 @@ Type1Definition::value_bool(bool &b) const
 }
 
 bool
-Type1Definition::value_int(int &i) const
+Type1Definition::value_int(int& i) const
 {
-    char *s;
+    char* s;
     i = strtol(_val.data(), &s, 10);
     return (*s == 0);
 }
 
 bool
-Type1Definition::value_num(double &d) const
+Type1Definition::value_num(double& d) const
 {
-    char *s;
+    char* s;
     d = strtonumber(_val.data(), &s);
     return (*s == 0);
 }
 
 bool
-Type1Definition::value_string(String &str) const
+Type1Definition::value_string(String& str) const
 {
     if (_val.length() == 0 || _val[0] != '(' || _val.back() != ')')
         return false;
@@ -315,7 +315,7 @@ Type1Definition::value_string(String &str) const
 }
 
 bool
-Type1Definition::value_name(PermString &str) const
+Type1Definition::value_name(PermString& str) const
 {
     if (_val.length() == 0 || _val[0] != '/')
         return false;
@@ -328,10 +328,10 @@ Type1Definition::value_name(PermString &str) const
 }
 
 static bool
-strtonumvec(const char *f, const char **endf, NumVector &v)
+strtonumvec(const char* f, const char** endf, NumVector& v)
 {
     v.clear();
-    char *s = (char *)f;
+    char* s = (char*) f;
     if (*s != '[' && *s != '{')
         return false;
     s++;
@@ -349,16 +349,16 @@ strtonumvec(const char *f, const char **endf, NumVector &v)
 }
 
 bool
-Type1Definition::value_numvec(NumVector &v) const
+Type1Definition::value_numvec(NumVector& v) const
 {
     return strtonumvec(_val.data(), 0, v);
 }
 
 static bool
-strtonumvec_vec(const char *f, const char **endf, Vector<NumVector> &v)
+strtonumvec_vec(const char* f, const char** endf, Vector<NumVector>& v)
 {
     v.clear();
-    const char *s = f;
+    const char* s = f;
     if (*s != '[' && *s != '{')
         return false;
     s++;
@@ -379,18 +379,18 @@ strtonumvec_vec(const char *f, const char **endf, Vector<NumVector> &v)
 }
 
 bool
-Type1Definition::value_numvec_vec(Vector<NumVector> &v) const
+Type1Definition::value_numvec_vec(Vector<NumVector>& v) const
 {
     return strtonumvec_vec(_val.data(), 0, v);
 }
 
 bool
-Type1Definition::value_normalize(Vector<NumVector> &in,
-                                 Vector<NumVector> &out) const
+Type1Definition::value_normalize(Vector<NumVector>& in,
+                                 Vector<NumVector>& out) const
 {
     in.clear();
     out.clear();
-    const char *s = _val.data();
+    const char* s = _val.data();
     if (*s++ != '[')
         return false;
     while (1) {
@@ -417,10 +417,10 @@ Type1Definition::value_normalize(Vector<NumVector> &in,
 }
 
 bool
-Type1Definition::value_namevec(Vector<PermString> &v) const
+Type1Definition::value_namevec(Vector<PermString>& v) const
 {
     v.clear();
-    const char *s = _val.data();
+    const char* s = _val.data();
     if (*s++ != '[')
         return false;
     while (1) {
@@ -429,7 +429,7 @@ Type1Definition::value_namevec(Vector<PermString> &v) const
         if (*s == '/')
             s++;
         if (isalnum((unsigned char) *s)) {
-            const char *start = s;
+            const char* start = s;
             while (*s && !isspace((unsigned char) *s) && *s != ']' && *s != '/')
                 s++;
             v.push_back(PermString(start, s - start));
@@ -458,9 +458,9 @@ Type1Definition::set_num(double n)
 }
 
 void
-Type1Definition::set_string(const String &v)
+Type1Definition::set_string(const String& v)
 {
-    const char *s = v.data();
+    const char* s = v.data();
     int len = v.length();
     int left = 0;
     StringAccum sa;
@@ -471,7 +471,7 @@ Type1Definition::set_string(const String &v)
             if (s[pos] == '(' || s[pos] == ')' || s[pos] == '\\')
                 sa << s[pos];
             else
-                sprintf(sa.reserve(8), "%03o", (unsigned char) (s[pos]));
+                snprintf(sa.extend(3, 1), 4, "%03o", (unsigned char) (s[pos]));
             left = pos + 1;
         }
     sa << v.substring(left) << ')';
@@ -489,7 +489,7 @@ Type1Definition::set_name(PermString str, bool name)
 }
 
 static void
-accum_numvec(StringAccum &sa, const NumVector &nv, bool executable)
+accum_numvec(StringAccum& sa, const NumVector& nv, bool executable)
 {
     char open = (executable ? '{' : '[');
     for (int i = 0; i < nv.size(); i++)
@@ -498,7 +498,7 @@ accum_numvec(StringAccum &sa, const NumVector &nv, bool executable)
 }
 
 void
-Type1Definition::set_numvec(const NumVector &nv, bool executable)
+Type1Definition::set_numvec(const NumVector& nv, bool executable)
 {
     StringAccum sa;
     accum_numvec(sa, nv, executable);
@@ -506,7 +506,7 @@ Type1Definition::set_numvec(const NumVector &nv, bool executable)
 }
 
 void
-Type1Definition::set_numvec_vec(const Vector<NumVector> &nv)
+Type1Definition::set_numvec_vec(const Vector<NumVector>& nv)
 {
     StringAccum sa;
     sa << '[';
@@ -517,14 +517,14 @@ Type1Definition::set_numvec_vec(const Vector<NumVector> &nv)
 }
 
 void
-Type1Definition::set_normalize(const Vector<NumVector> &vin,
-                               const Vector<NumVector> &vout)
+Type1Definition::set_normalize(const Vector<NumVector>& vin,
+                               const Vector<NumVector>& vout)
 {
     StringAccum sa;
     sa << '[';
     for (int i = 0; i < vin.size(); i++) {
-        const NumVector &vini = vin[i];
-        const NumVector &vouti = vout[i];
+        const NumVector& vini = vin[i];
+        const NumVector& vouti = vout[i];
         sa << '[';
         for (int j = 0; j < vini.size(); j++)
             sa << '[' << vini[j] << ' ' << vouti[j] << ']';
@@ -535,7 +535,7 @@ Type1Definition::set_normalize(const Vector<NumVector> &vin,
 }
 
 void
-Type1Definition::set_namevec(const Vector<PermString> &v, bool executable)
+Type1Definition::set_namevec(const Vector<PermString>& v, bool executable)
 {
     StringAccum sa;
     sa << '[';
@@ -564,7 +564,7 @@ Type1Encoding::Type1Encoding()
         _v[i] = dot_notdef;
 }
 
-Type1Encoding::Type1Encoding(const Type1Encoding &o)
+Type1Encoding::Type1Encoding(const Type1Encoding& o)
     : Type1Item(), _definer(o._definer)
 {
     if (o._copy_of) {
@@ -578,7 +578,7 @@ Type1Encoding::Type1Encoding(const Type1Encoding &o)
     }
 }
 
-Type1Encoding::Type1Encoding(Type1Encoding *copy_of)
+Type1Encoding::Type1Encoding(Type1Encoding* copy_of)
     : _v(copy_of->_v), _copy_of(copy_of), _definer(copy_of->_definer)
 {
 }
@@ -593,7 +593,7 @@ void
 Type1Encoding::unshare()
 {
     if (_copy_of) {
-        PermString *new_v = new PermString[256];
+        PermString* new_v = new PermString[256];
         memcpy(new_v, _v, sizeof(PermString) * 256);
         _v = new_v;
         _copy_of = 0;
@@ -609,9 +609,9 @@ Type1Encoding::clear()
 }
 
 
-static Type1Encoding *canonical_standard_encoding;
+static Type1Encoding* canonical_standard_encoding;
 
-Type1Encoding *
+Type1Encoding*
 Type1Encoding::standard_encoding()
 {
     if (!canonical_standard_encoding) {
@@ -626,7 +626,7 @@ Type1Encoding::standard_encoding()
 
 
 void
-Type1Encoding::gen(Type1Writer &w)
+Type1Encoding::gen(Type1Writer& w)
 {
     if (_copy_of && _copy_of == canonical_standard_encoding)
         w << "/Encoding StandardEncoding def\n";
@@ -645,19 +645,19 @@ Type1Encoding::gen(Type1Writer &w)
  **/
 
 Type1Subr::Type1Subr(PermString n, int num, PermString definer,
-                     int lenIV, const String &s)
+                     int lenIV, const String& s)
     : _name(n), _subrno(num), _definer(definer), _cs(lenIV, s)
 {
 }
 
 Type1Subr::Type1Subr(PermString n, int num, PermString definer,
-                     const Type1Charstring &t1cs)
+                     const Type1Charstring& t1cs)
     : _name(n), _subrno(num), _definer(definer), _cs(t1cs)
 {
 }
 
-Type1Subr *
-Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
+Type1Subr*
+Type1Subr::make(const char* s_in, int s_len, int cs_pos, int cs_len, int lenIV)
 {
     /* USAGE NOTE: You must ensure that s_in contains a valid subroutine string
        before calling Type1Subr::make. Type1Reader::was_charstring() is a good
@@ -666,13 +666,13 @@ Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
        /[char_name] ### charstring_start ........
        dup [subrno] ### charstring_start .... */
 
-    const char *s = s_in;
+    const char* s = s_in;
     PermString name;
     int subrno = 0;
 
     // Force literal spaces rather than isspace().
     if (*s == '/') {
-        const char *nstart = ++s;
+        const char* nstart = ++s;
         while (!isspace((unsigned char) *s) && *s)
             s++;
         name = PermString(nstart, s - nstart);
@@ -692,24 +692,24 @@ Type1Subr::make(const char *s_in, int s_len, int cs_pos, int cs_len, int lenIV)
     return new Type1Subr(name, subrno, definer, lenIV, String(s, cs_len));
 }
 
-Type1Subr *
-Type1Subr::make_subr(int subrno, const Type1Charstring &cs, PermString definer)
+Type1Subr*
+Type1Subr::make_subr(int subrno, const Type1Charstring& cs, PermString definer)
 {
     return new Type1Subr(PermString(), subrno, definer, cs);
 }
 
-Type1Subr *
-Type1Subr::make_glyph(PermString glyph, const Type1Charstring &cs, PermString definer)
+Type1Subr*
+Type1Subr::make_glyph(PermString glyph, const Type1Charstring& cs, PermString definer)
 {
     return new Type1Subr(glyph, -1, definer, cs);
 }
 
 
 void
-Type1Subr::gen(Type1Writer &w)
+Type1Subr::gen(Type1Writer& w)
 {
     int len = _cs.length();
-    const unsigned char *data = _cs.data();
+    const unsigned char* data = _cs.data();
 
     if (is_subr())
         w << "dup " << _subrno << ' ' << len + w.lenIV() << w.charstring_start();
@@ -724,8 +724,8 @@ Type1Subr::gen(Type1Writer &w)
         // PERFORMANCE NOTE: Putting the charstring in a buffer of known length
         // and printing that buffer rather than one char at a time is an OK
         // optimization. (around 10%)
-        unsigned char *buf = new unsigned char[len + w.lenIV()];
-        unsigned char *t = buf;
+        unsigned char* buf = new unsigned char[len + w.lenIV()];
+        unsigned char* t = buf;
 
         int r = t1R_cs;
         for (int i = 0; i < w.lenIV(); i++) {
@@ -750,27 +750,27 @@ Type1Subr::gen(Type1Writer &w)
  * Type1SubrGroupItem
  **/
 
-Type1SubrGroupItem::Type1SubrGroupItem(Type1Font *font, bool is_subrs, const String &value)
+Type1SubrGroupItem::Type1SubrGroupItem(Type1Font* font, bool is_subrs, const String& value)
     : _font(font), _is_subrs(is_subrs), _value(value)
 {
 }
 
-Type1SubrGroupItem::Type1SubrGroupItem(const Type1SubrGroupItem &from, Type1Font *font)
+Type1SubrGroupItem::Type1SubrGroupItem(const Type1SubrGroupItem& from, Type1Font* font)
     : _font(font), _is_subrs(from._is_subrs),
       _value(from._value), _end_text(from._end_text)
 {
 }
 
 void
-Type1SubrGroupItem::add_end_text(const String &s)
+Type1SubrGroupItem::add_end_text(const String& s)
 {
     _end_text += s + "\n";
 }
 
 void
-Type1SubrGroupItem::gen(Type1Writer &w)
+Type1SubrGroupItem::gen(Type1Writer& w)
 {
-    Type1Font *font = _font;
+    Type1Font* font = _font;
 
     int pos = _value.find_left(_is_subrs ? " array" : " dict");
     if (pos >= 1 && isdigit((unsigned char) _value[pos - 1])) {
@@ -795,12 +795,12 @@ Type1SubrGroupItem::gen(Type1Writer &w)
     if (_is_subrs) {
         int count = font->nsubrs();
         for (int i = 0; i < count; i++)
-            if (Type1Subr *g = font->subr_x(i))
+            if (Type1Subr* g = font->subr_x(i))
                 g->gen(w);
     } else {
         int count = font->nglyphs();
         for (int i = 0; i < count; i++)
-            if (Type1Subr *g = font->glyph_x(i))
+            if (Type1Subr* g = font->glyph_x(i))
                 g->gen(w);
     }
 
@@ -811,7 +811,7 @@ Type1SubrGroupItem::gen(Type1Writer &w)
  * Type1IncludedFont
  **/
 
-Type1IncludedFont::Type1IncludedFont(Type1Font *font, int unique_id)
+Type1IncludedFont::Type1IncludedFont(Type1Font* font, int unique_id)
     : _included_font(font), _unique_id(unique_id)
 {
 }
@@ -822,9 +822,9 @@ Type1IncludedFont::~Type1IncludedFont()
 }
 
 void
-Type1IncludedFont::gen(Type1Writer &w)
+Type1IncludedFont::gen(Type1Writer& w)
 {
-    FILE *f = tmpfile();
+    FILE* f = tmpfile();
     if (!f)
         return;
 

@@ -144,7 +144,7 @@ TrueTypeBoundsCharstringProgram::glyph_name(int gi) const
 
     if (gi >= 0 && gi < _unicodes.size() && _unicodes[gi] > 0 && _unicodes[gi] <= 0xFFFF) {
         char buf[10];
-        sprintf(buf, "uni%04X", _unicodes[gi]);
+        snprintf(buf, sizeof(buf), "uni%04X", _unicodes[gi]);
         return PermString(buf);
     } else
         return permprintf("index%d", gi);

@@ -211,8 +211,9 @@ InstanceMetricsFinder::find_metrics_instance(PermString name,
 
     MultipleMasterSpace *mmspace = amfm->mmspace();
     if (!mmspace->check_intermediate() && _call_mmpfb) {
-        char *buf = new char[amfm->font_name().length() + 30];
-        sprintf(buf, "mmpfb -q --amcp-info '%s'", amfm->font_name().c_str());
+        size_t bufsz = amfm->font_name().length() + 30;
+        char *buf = new char[bufsz];
+        snprintf(buf, bufsz, "mmpfb -q --amcp-info '%s'", amfm->font_name().c_str());
 
         FILE *f = popen(buf, "r");
         if (f) {

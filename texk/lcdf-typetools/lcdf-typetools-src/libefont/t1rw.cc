@@ -30,16 +30,31 @@ unsigned char *Type1Reader::xvalue = &Type1Reader::xvalue_store[1];
 void
 Type1Reader::static_initialize()
 {
-    if (xvalue['A'])
-        return;
     // rely on static data being initialized to 0
-    xvalue['0'] = 0;  xvalue['1'] = 1;  xvalue['2'] = 2;  xvalue['3'] = 3;
-    xvalue['4'] = 4;  xvalue['5'] = 5;  xvalue['6'] = 6;  xvalue['7'] = 7;
-    xvalue['8'] = 8;  xvalue['9'] = 9;
-    xvalue['A'] = 10; xvalue['B'] = 11; xvalue['C'] = 12; xvalue['D'] = 13;
-    xvalue['E'] = 14; xvalue['F'] = 15;
-    xvalue['a'] = 10; xvalue['b'] = 11; xvalue['c'] = 12; xvalue['d'] = 13;
-    xvalue['e'] = 14; xvalue['f'] = 15;
+    if (!xvalue[(unsigned char) 'A']) {
+        xvalue[(unsigned char) '0'] = 0;
+        xvalue[(unsigned char) '1'] = 1;
+        xvalue[(unsigned char) '2'] = 2;
+        xvalue[(unsigned char) '3'] = 3;
+        xvalue[(unsigned char) '4'] = 4;
+        xvalue[(unsigned char) '5'] = 5;
+        xvalue[(unsigned char) '6'] = 6;
+        xvalue[(unsigned char) '7'] = 7;
+        xvalue[(unsigned char) '8'] = 8;
+        xvalue[(unsigned char) '9'] = 9;
+        xvalue[(unsigned char) 'A'] = 10;
+        xvalue[(unsigned char) 'B'] = 11;
+        xvalue[(unsigned char) 'C'] = 12;
+        xvalue[(unsigned char) 'D'] = 13;
+        xvalue[(unsigned char) 'E'] = 14;
+        xvalue[(unsigned char) 'F'] = 15;
+        xvalue[(unsigned char) 'a'] = 10;
+        xvalue[(unsigned char) 'b'] = 11;
+        xvalue[(unsigned char) 'c'] = 12;
+        xvalue[(unsigned char) 'd'] = 13;
+        xvalue[(unsigned char) 'e'] = 14;
+        xvalue[(unsigned char) 'f'] = 15;
+    }
 }
 
 
@@ -489,8 +504,8 @@ Type1Writer &
 Type1Writer::operator<<(int x)
 {
     char str[128];
-    sprintf(str, "%d", x);
-    print(str, strlen(str));
+    size_t len = snprintf(str, sizeof(str), "%d", x);
+    print(str, len);
     return *this;
 }
 
@@ -499,8 +514,8 @@ Type1Writer &
 Type1Writer::operator<<(double x)
 {
     char str[256];
-    sprintf(str, "%g", x);
-    print(str, strlen(str));
+    size_t len = snprintf(str, sizeof(str), "%g", x);
+    print(str, len);
     return *this;
 }
 

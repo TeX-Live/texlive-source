@@ -27,6 +27,7 @@
 #define SHORT_AT(d)             (Data::s16_aligned(d))
 #define ULONG_AT(d)             (Data::u32_aligned(d))
 #define LONG_AT(d)              (Data::s32_aligned(d))
+#define FIXED_AT(d)             (Data::fixed_aligned(d))
 
 namespace Efont { namespace OpenType {
 
@@ -159,7 +160,7 @@ Post::italic_angle() const
 {
     if (error() < 0)
         return -1;
-    return (double) LONG_AT(_str.udata() + 4) / 65536.;
+    return FIXED_AT(_str.udata() + 4);
 }
 
 bool

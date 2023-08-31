@@ -1,6 +1,6 @@
 /* t1dotlessj.cc -- driver for creating dotlessj characters from Type 1 fonts
  *
- * Copyright (c) 2003-2019 Eddie Kohler
+ * Copyright (c) 2003-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -43,13 +43,13 @@ enum { EXIT_NORMAL = 0, EXIT_DOTLESSJ_EXISTS = 1, EXIT_J_NODOT = 2,
 
 using namespace Efont;
 
-#define VERSION_OPT	301
-#define HELP_OPT	302
-#define QUIET_OPT	303
-#define PFA_OPT		304
-#define PFB_OPT		305
-#define OUTPUT_OPT	306
-#define NAME_OPT	307
+#define VERSION_OPT     301
+#define HELP_OPT        302
+#define QUIET_OPT       303
+#define PFA_OPT         304
+#define PFB_OPT         305
+#define OUTPUT_OPT      306
+#define NAME_OPT        307
 
 const Clp_Option options[] = {
     { "help", 'h', HELP_OPT, 0, 0 },
@@ -71,11 +71,12 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     va_list val;
     va_start(val, error_message);
     if (!error_message)
-	errh->message("Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]", program_name);
+        errh->message("Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]", program_name);
     else
-	errh->xmessage(ErrorHandler::e_error, error_message, val);
+        errh->xmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(EXIT_ERROR);
+    va_end(val);
 }
 
 void
@@ -192,17 +193,17 @@ Sectioner::undot(PermString font_name, ErrorHandler *errh)
     //    fprintf(stderr, "%d  %s\n", s - _sections.begin(), CharstringUnparser::unparse(Type1Charstring(*s)).c_str());
 
     if (_sections.size() < 3)
-	errh->fatal("<%d>%s: %<j%> is already dotless", -EXIT_J_NODOT, font_name.c_str());
+        errh->fatal("<%d>%s: %<j%> is already dotless", -EXIT_J_NODOT, font_name.c_str());
 
     int topmost = -1;
     for (int i = 0; i < _sections.size() - 1; i++)
-	if (topmost < 0 || _bounds[i*4 + 1] > _bounds[topmost*4 + 1])
-	    topmost = i;
+        if (topmost < 0 || _bounds[i*4 + 1] > _bounds[topmost*4 + 1])
+            topmost = i;
 
     // check if any sections are below this
     for (int i = 0; i < _sections.size() - 1; i++)
-	if (_bounds[i*4 + 1] < _bounds[topmost*4 + 1])
-	    goto found_below;
+        if (_bounds[i*4 + 1] < _bounds[topmost*4 + 1])
+            goto found_below;
     errh->fatal("<%d>%s: %<j%> is already dotless", -EXIT_J_NODOT, font_name.c_str());
 
   found_below:
@@ -214,7 +215,7 @@ Sectioner::gen(Type1Font *font)
 {
     StringAccum sa;
     for (String *s = _sections.begin(); s < _sections.end(); s++)
-	sa << *s;
+        sa << *s;
     Type1Charstring in(sa.take_string()), out;
     Type1CharstringGenInterp gen(precision());
     gen.set_hint_replacement_storage(font);
@@ -230,36 +231,36 @@ do_file(const char *filename, PsresDatabase *psres, ErrorHandler *errh)
 {
     FILE *f;
     if (!filename || strcmp(filename, "-") == 0) {
-	f = stdin;
-	filename = "<stdin>";
+        f = stdin;
+        filename = "<stdin>";
 #if defined(_MSDOS) || defined(_WIN32)
-	_setmode(_fileno(f), _O_BINARY);
+        _setmode(_fileno(f), _O_BINARY);
 #endif
     } else
-	f = fopen(filename, "rb");
+        f = fopen(filename, "rb");
 
     if (!f) {
-	// check for PostScript name
-	Filename fn = psres->filename_value("FontOutline", filename);
-	f = fn.open_read();
+        // check for PostScript name
+        Filename fn = psres->filename_value("FontOutline", filename);
+        f = fn.open_read();
     }
 
     if (!f)
-	errh->fatal("<%d>%s: %s", -EXIT_ERROR, filename, strerror(errno));
+        errh->fatal("<%d>%s: %s", -EXIT_ERROR, filename, strerror(errno));
 
     Type1Reader *reader;
     int c = getc(f);
     ungetc(c, f);
     if (c == EOF)
-	errh->fatal("<%d>%s: empty file", -EXIT_ERROR, filename);
+        errh->fatal("<%d>%s: empty file", -EXIT_ERROR, filename);
     if (c == 128)
-	reader = new Type1PFBReader(f);
+        reader = new Type1PFBReader(f);
     else
-	reader = new Type1PFAReader(f);
+        reader = new Type1PFAReader(f);
 
     Type1Font *font = new Type1Font(*reader);
     if (!font->ok())
-	errh->fatal("<%d>%s: no glyphs in font", -EXIT_ERROR, filename);
+        errh->fatal("<%d>%s: no glyphs in font", -EXIT_ERROR, filename);
 
     delete reader;
     return font;
@@ -272,7 +273,7 @@ main(int argc, char *argv[])
     psres->add_psres_path(getenv("PSRESOURCEPATH"), 0, false);
 
     Clp_Parser *clp =
-	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
+        Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
 
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr));
@@ -283,103 +284,103 @@ main(int argc, char *argv[])
     const char *font_name = 0;
 
     while (1) {
-	int opt = Clp_Next(clp);
-	switch (opt) {
+        int opt = Clp_Next(clp);
+        switch (opt) {
 
-	  case QUIET_OPT:
-	    if (clp->negated)
-		errh = ErrorHandler::default_handler();
-	    else
-		errh = new SilentErrorHandler;
-	    break;
+          case QUIET_OPT:
+            if (clp->negated)
+                errh = ErrorHandler::default_handler();
+            else
+                errh = new SilentErrorHandler;
+            break;
 
-	  case NAME_OPT:
-	    font_name = clp->vstr;
-	    break;
+          case NAME_OPT:
+            font_name = clp->vstr;
+            break;
 
-	  case PFA_OPT:
-	    binary = false;
-	    break;
+          case PFA_OPT:
+            binary = false;
+            break;
 
-	  case PFB_OPT:
-	    binary = true;
-	    break;
+          case PFB_OPT:
+            binary = true;
+            break;
 
-	  case OUTPUT_OPT:
-	  output_file:
-	    if (outputf)
-		usage_error(errh, "output file specified twice");
-	    if (strcmp(clp->vstr, "-") == 0)
-		outputf = stdout;
-	    else if (!(outputf = fopen(clp->vstr, "wb")))
-		errh->fatal("<%d>%s: %s", -EXIT_ERROR, clp->vstr, strerror(errno));
-	    break;
+          case OUTPUT_OPT:
+          output_file:
+            if (outputf)
+                usage_error(errh, "output file specified twice");
+            if (strcmp(clp->vstr, "-") == 0)
+                outputf = stdout;
+            else if (!(outputf = fopen(clp->vstr, "wb")))
+                errh->fatal("<%d>%s: %s", -EXIT_ERROR, clp->vstr, strerror(errno));
+            break;
 
-	  case VERSION_OPT:
-	    printf("t1dotlessj (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2003-2019 Eddie Kohler\n\
+          case VERSION_OPT:
+            printf("t1dotlessj (LCDF typetools) %s\n", VERSION);
+            printf("Copyright (C) 2003-2023 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
-	    exit(0);
-	    break;
+            exit(0);
+            break;
 
-	  case HELP_OPT:
-	    usage();
-	    exit(0);
-	    break;
+          case HELP_OPT:
+            usage();
+            exit(0);
+            break;
 
-	  case Clp_NotOption:
-	    if (input_file && outputf)
-		usage_error(errh, "too many arguments");
-	    else if (input_file)
-		goto output_file;
-	    else
-		input_file = clp->vstr;
-	    break;
+          case Clp_NotOption:
+            if (input_file && outputf)
+                usage_error(errh, "too many arguments");
+            else if (input_file)
+                goto output_file;
+            else
+                input_file = clp->vstr;
+            break;
 
-	  case Clp_Done:
-	    goto done;
+          case Clp_Done:
+            goto done;
 
-	  case Clp_BadOption:
-	    usage_error(errh, 0);
-	    break;
+          case Clp_BadOption:
+            usage_error(errh, 0);
+            break;
 
-	  default:
-	    break;
+          default:
+            break;
 
-	}
+        }
     }
 
   done:
     Type1Font *font = do_file(input_file, psres, errh);
     if (!input_file || strcmp(input_file, "-") == 0)
-	input_file = "<stdin>";
+        input_file = "<stdin>";
 
     // check for existing dotlessj
     if (font->glyph("dotlessj"))
-	errh->fatal("<%d>%s: already has a %<dotlessj%> glyph", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
+        errh->fatal("<%d>%s: already has a %<dotlessj%> glyph", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
     else if (font->glyph("uni0237"))
-	errh->fatal("<%d>%s: already has a dotlessj glyph at %<uni0237%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
+        errh->fatal("<%d>%s: already has a dotlessj glyph at %<uni0237%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
     else if (font->glyph("u0237"))
-	errh->fatal("<%d>%s: already has a dotlessj glyph at %<u0237%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
+        errh->fatal("<%d>%s: already has a dotlessj glyph at %<u0237%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str());
     else if (private_use_dotlessj && font->glyph(private_use_dotlessj))
-	errh->fatal("<%d>%s: already has a dotlessj glyph at %<%s%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str(), private_use_dotlessj);
+        errh->fatal("<%d>%s: already has a dotlessj glyph at %<%s%>", -EXIT_DOTLESSJ_EXISTS, font->font_name().c_str(), private_use_dotlessj);
 
     // check for j
     Type1Charstring *j_cs = font->glyph("j");
     if (!j_cs)
-	j_cs = font->glyph("uni006A");
+        j_cs = font->glyph("uni006A");
     if (!j_cs)
-	j_cs = font->glyph("u006A");
+        j_cs = font->glyph("u006A");
     if (!j_cs)
-	errh->fatal("<%d>%s: has no %<j%> glyph to make dotless", -EXIT_NO_J, font->font_name().c_str());
+        errh->fatal("<%d>%s: has no %<j%> glyph to make dotless", -EXIT_NO_J, font->font_name().c_str());
 
     // make new font
     String actual_font_name = (font_name ? String(font_name) : font->font_name() + String("LCDFJ"));
     if (actual_font_name.length() > 29 && !font_name) {
-	errh->warning("derived font name %<%s%> longer than 29 characters", actual_font_name.c_str());
-	errh->message("(Use the %<--name%> option to supply your own name.)");
+        errh->warning("derived font name %<%s%> longer than 29 characters", actual_font_name.c_str());
+        errh->message("(Use the %<--name%> option to supply your own name.)");
     }
 
     Vector<double> xuid_extension;
@@ -389,10 +390,10 @@ particular purpose.\n");
 
     // copy space and .notdef
     if (Type1Charstring *notdef = font->glyph(".notdef"))
-	dotless_font->add_glyph(Type1Subr::make_glyph(".notdef", *notdef, " |-"));
+        dotless_font->add_glyph(Type1Subr::make_glyph(".notdef", *notdef, " |-"));
     if (Type1Charstring *space = font->glyph("space")) {
-	dotless_font->add_glyph(Type1Subr::make_glyph("space", *space, " |-"));
-	dotless_font->type1_encoding()->put(' ', "space");
+        dotless_font->add_glyph(Type1Subr::make_glyph("space", *space, " |-"));
+        dotless_font->type1_encoding()->put(' ', "space");
     }
 
     // create dotless j
@@ -409,16 +410,16 @@ particular purpose.\n");
 
     // write it to output
     if (!outputf)
-	outputf = stdout;
+        outputf = stdout;
 #if defined(_MSDOS) || defined(_WIN32)
     _setmode(_fileno(outputf), _O_BINARY);
 #endif
     if (binary) {
-	Type1PFBWriter w(outputf);
-	dotless_font->write(w);
+        Type1PFBWriter w(outputf);
+        dotless_font->write(w);
     } else {
-	Type1PFAWriter w(outputf);
-	dotless_font->write(w);
+        Type1PFAWriter w(outputf);
+        dotless_font->write(w);
     }
 
     return (errh->nerrors() == 0 ? EXIT_NORMAL : EXIT_ERROR);

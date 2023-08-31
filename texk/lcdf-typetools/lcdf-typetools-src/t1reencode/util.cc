@@ -1,6 +1,6 @@
 /* util.{cc,hh} -- various bits
  *
- * Copyright (c) 2003-2019 Eddie Kohler
+ * Copyright (c) 2003-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -31,30 +31,30 @@ read_file(String filename, ErrorHandler *errh, bool warning)
 {
     FILE *f;
     if (!filename || filename == "-") {
-	filename = "<stdin>";
-	f = stdin;
+        filename = "<stdin>";
+        f = stdin;
 #if defined(_MSDOS) || defined(_WIN32)
-	// Set the file mode to binary
-	_setmode(_fileno(f), _O_BINARY);
+        // Set the file mode to binary
+        _setmode(_fileno(f), _O_BINARY);
 #endif
     } else if (!(f = fopen(filename.c_str(), "rb"))) {
-	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
-	return String();
+        errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
+        return String();
     }
 
     StringAccum sa;
     int amt;
     do {
-	if (char *x = sa.reserve(8192)) {
-	    amt = fread(x, 1, 8192, f);
-	    sa.adjust_length(amt);
-	} else
-	    amt = 0;
+        if (char *x = sa.reserve(8192)) {
+            amt = fread(x, 1, 8192, f);
+            sa.adjust_length(amt);
+        } else
+            amt = 0;
     } while (amt != 0);
     if (!feof(f) || ferror(f))
-	errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
+        errh->xmessage((warning ? errh->e_warning : errh->e_error) + ErrorHandler::make_landmark_anno(filename), strerror(errno));
     if (f != stdin)
-	fclose(f);
+        fclose(f);
     return sa.take_string();
 }
 
@@ -62,9 +62,9 @@ String
 printable_filename(const String &s)
 {
     if (!s || s == "-")
-	return String::make_stable("<stdin>");
+        return String::make_stable("<stdin>");
     else
-	return s;
+        return s;
 }
 
 String
@@ -72,7 +72,7 @@ pathname_filename(const String &path)
 {
     int slash = path.find_right('/');
     if (slash >= 0 && slash != path.length() - 1)
-	return path.substring(slash + 1);
+        return path.substring(slash + 1);
     else
-	return path;
+        return path;
 }

@@ -2,7 +2,7 @@
 #define OTFTOTFM_OTFTOTFM_HH
 #include <lcdf/string.hh>
 class Metrics;
-class FontInfo;
+struct FontInfo;
 class StringAccum;
 class ErrorHandler;
 

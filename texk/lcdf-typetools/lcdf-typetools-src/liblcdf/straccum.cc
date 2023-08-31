@@ -4,7 +4,7 @@
  * Eddie Kohler
  *
  * Copyright (c) 1999-2000 Massachusetts Institute of Technology
- * Copyright (c) 2001-2019 Eddie Kohler
+ * Copyright (c) 2001-2023 Eddie Kohler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -55,6 +55,7 @@
  * Out-of-memory StringAccum objects have length zero.
  */
 
+const char* StringAccum::double_format = "%.12g";
 
 void
 StringAccum::assign_out_of_memory()
@@ -62,12 +63,12 @@ StringAccum::assign_out_of_memory()
     assert(_cap >= 0);
     if (_cap > 0)
         delete[] (_s - MEMO_SPACE);
-    _s = reinterpret_cast<unsigned char *>(const_cast<char *>(String::out_of_memory_data()));
+    _s = reinterpret_cast<unsigned char*>(const_cast<char*>(String::out_of_memory_data()));
     _cap = -1;
     _len = 0;
 }
 
-char *
+char*
 StringAccum::grow(int want)
 {
     // can't append to out-of-memory strings
@@ -80,7 +81,7 @@ StringAccum::grow(int want)
     while (ncap <= want)
         ncap = (ncap + MEMO_SPACE) * 2 - MEMO_SPACE;
 
-    unsigned char *n = new unsigned char[ncap + MEMO_SPACE];
+    unsigned char* n = new unsigned char[ncap + MEMO_SPACE];
     if (!n) {
         assign_out_of_memory();
         errno = ENOMEM;
@@ -94,7 +95,7 @@ StringAccum::grow(int want)
     }
     _s = n;
     _cap = ncap;
-    return reinterpret_cast<char *>(_s + _len);
+    return reinterpret_cast<char*>(_s + _len);
 }
 
 int
@@ -109,27 +110,27 @@ StringAccum::resize(int len)
     }
 }
 
-char *
+char*
 StringAccum::hard_extend(int nadjust, int nreserve)
 {
-    char *x = grow(_len + nadjust + nreserve);
+    char* x = grow(_len + nadjust + nreserve);
     if (x)
         _len += nadjust;
     return x;
 }
 
-const char *
+const char*
 StringAccum::c_str()
 {
     if (_len < _cap || grow(_len))
         _s[_len] = '\0';
-    return reinterpret_cast<char *>(_s);
+    return reinterpret_cast<char*>(_s);
 }
 
 void
 StringAccum::append_fill(int c, int len)
 {
-    if (char *s = extend(len))
+    if (char* s = extend(len))
         memset(s, c, len);
 }
 
@@ -155,11 +156,11 @@ StringAccum::append_utf8_hard(unsigned ch)
 }
 
 void
-StringAccum::hard_append(const char *s, int len)
+StringAccum::hard_append(const char* s, int len)
 {
     // We must be careful about calls like "sa.append(sa.begin(), sa.end())";
     // a naive implementation might use sa's data after freeing it.
-    const char *my_s = reinterpret_cast<char *>(_s);
+    const char* my_s = reinterpret_cast<char*>(_s);
 
     if (len <= 0) {
         // do nothing
@@ -171,14 +172,14 @@ StringAccum::hard_append(const char *s, int len)
         if (grow(_len + len))
             goto success;
     } else {
-        unsigned char *old_s = _s;
+        unsigned char* old_s = _s;
         int old_len = _len;
 
         _s = 0;
         _len = 0;
         _cap = 0;
 
-        if (char *new_s = extend(old_len + len)) {
+        if (char* new_s = extend(old_len + len)) {
             memcpy(new_s, old_s, old_len);
             memcpy(new_s + old_len, s, len);
         }
@@ -188,7 +189,7 @@ StringAccum::hard_append(const char *s, int len)
 }
 
 void
-StringAccum::append(const char *s)
+StringAccum::append(const char* s)
 {
     hard_append(s, strlen(s));
 }
@@ -198,7 +199,7 @@ StringAccum::take_string()
 {
     int len = length();
     int cap = _cap;
-    char *str = reinterpret_cast<char *>(_s);
+    char* str = reinterpret_cast<char*>(_s);
     if (len > 0) {
         _s = 0;
         _len = _cap = 0;
@@ -212,9 +213,9 @@ StringAccum::take_string()
 }
 
 void
-StringAccum::swap(StringAccum &o)
+StringAccum::swap(StringAccum& o)
 {
-    unsigned char *os = o._s;
+    unsigned char* os = o._s;
     int olen = o._len, ocap = o._cap;
     o._s = _s;
     o._len = _len, o._cap = _cap;
@@ -225,11 +226,11 @@ StringAccum::swap(StringAccum &o)
 /** @relates StringAccum
     @brief Append decimal representation of @a i to @a sa.
     @return @a sa */
-StringAccum &
-operator<<(StringAccum &sa, long i)
+StringAccum&
+operator<<(StringAccum& sa, long i)
 {
-    if (char *x = sa.reserve(24)) {
-        int len = sprintf(x, "%ld", i);
+    if (char* x = sa.reserve(24)) {
+        int len = snprintf(x, 24, "%ld", i);
         sa.adjust_length(len);
     }
     return sa;
@@ -238,32 +239,32 @@ operator<<(StringAccum &sa, long i)
 /** @relates StringAccum
     @brief Append decimal representation of @a u to @a sa.
     @return @a sa */
-StringAccum &
-operator<<(StringAccum &sa, unsigned long u)
+StringAccum&
+operator<<(StringAccum& sa, unsigned long u)
 {
-    if (char *x = sa.reserve(24)) {
-        int len = sprintf(x, "%lu", u);
+    if (char* x = sa.reserve(24)) {
+        int len = snprintf(x, 24, "%lu", u);
         sa.adjust_length(len);
     }
     return sa;
 }
 
-StringAccum &
-operator<<(StringAccum &sa, double d)
+StringAccum&
+operator<<(StringAccum& sa, double d)
 {
-    if (char *x = sa.reserve(256)) {
-        int len = sprintf(x, "%.12g", d);
+    if (char* x = sa.reserve(256)) {
+        int len = snprintf(x, 256, StringAccum::double_format, d);
         sa.adjust_length(len);
     }
     return sa;
 }
 
-StringAccum &
-StringAccum::snprintf(int n, const char *format, ...)
+StringAccum&
+StringAccum::snprintf(int n, const char* format, ...)
 {
     va_list val;
     va_start(val, format);
-    if (char *x = reserve(n + 1)) {
+    if (char* x = reserve(n + 1)) {
 #if HAVE_VSNPRINTF
         int len = vsnprintf(x, n + 1, format, val);
 #else
@@ -277,7 +278,7 @@ StringAccum::snprintf(int n, const char *format, ...)
 }
 
 void
-StringAccum::append_break_lines(const String& text, int linelen, const String &leftmargin)
+StringAccum::append_break_lines(const String& text, int linelen, const String& leftmargin)
 {
     if (text.length() == 0)
         return;

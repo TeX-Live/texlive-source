@@ -9,10 +9,10 @@ class Type1MMRemover { public:
     Type1MMRemover(Efont::Type1Font *, const Vector<double> &weight_vec, int, ErrorHandler *);
     ~Type1MMRemover();
 
-    Efont::CharstringProgram *program() const	{ return _font; }
+    Efont::CharstringProgram *program() const   { return _font; }
     const Vector<double> &weight_vector() const { return _weight_vector; }
-    int nmasters() const		{ return _weight_vector.size(); }
-    int precision() const			{ return _precision; }
+    int nmasters() const                { return _weight_vector.size(); }
+    int precision() const                       { return _precision; }
 
     Efont::Type1Charstring *subr_prefix(int);
     Efont::Type1Charstring *subr_expander(int);
@@ -42,10 +42,10 @@ class Type1SubrRemover { public:
     Type1SubrRemover(Efont::Type1Font *, ErrorHandler *);
     ~Type1SubrRemover();
 
-    Efont::CharstringProgram *program() const	{ return _font; }
-    ErrorHandler *errh() const			{ return _errh; }
+    Efont::CharstringProgram *program() const   { return _font; }
+    ErrorHandler *errh() const                  { return _errh; }
 
-    int save_count() const			{ return _save_count; }
+    int save_count() const                      { return _save_count; }
 
     bool run(int);
 

@@ -14,8 +14,8 @@ class Tag {
   public:
     Tag()                               : _tag(0U) { }
     explicit Tag(uint32_t tag)          : _tag(tag) { }
-    Tag(const char *name);
-    Tag(const String &name);
+    Tag(const char* name);
+    Tag(const String& name);
     // default destructor
 
     static Tag head_tag()               { return Tag(0x68656164U); }

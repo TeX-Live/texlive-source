@@ -1,6 +1,6 @@
 /* cfftot1.cc -- driver for translating CFF fonts to Type 1 fonts
  *
- * Copyright (c) 2002-2019 Eddie Kohler
+ * Copyright (c) 2002-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -38,13 +38,13 @@
 
 using namespace Efont;
 
-#define VERSION_OPT	301
-#define HELP_OPT	302
-#define QUIET_OPT	303
-#define PFB_OPT		304
-#define PFA_OPT		305
-#define OUTPUT_OPT	306
-#define NAME_OPT	307
+#define VERSION_OPT     301
+#define HELP_OPT        302
+#define QUIET_OPT       303
+#define PFB_OPT         304
+#define PFA_OPT         305
+#define OUTPUT_OPT      306
+#define NAME_OPT        307
 
 const Clp_Option options[] = {
     { "ascii", 'a', PFA_OPT, 0, 0 },
@@ -69,11 +69,12 @@ usage_error(ErrorHandler *errh, const char *error_message, ...)
     va_list val;
     va_start(val, error_message);
     if (!error_message)
-	errh->message("Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]", program_name);
+        errh->message("Usage: %s [OPTIONS] [FONTFILE [OUTPUTFILE]]", program_name);
     else
-	errh->xmessage(ErrorHandler::e_error, error_message, val);
+        errh->xmessage(ErrorHandler::e_error, error_message, val);
     errh->message("Type %s --help for more information.", program_name);
     exit(1);
+    va_end(val);
 }
 
 void
@@ -108,13 +109,13 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
 {
     FILE *f;
     if (!infn || strcmp(infn, "-") == 0) {
-	f = stdin;
-	infn = "<stdin>";
+        f = stdin;
+        infn = "<stdin>";
 #if defined(_MSDOS) || defined(_WIN32)
-	_setmode(_fileno(f), _O_BINARY);
+        _setmode(_fileno(f), _O_BINARY);
 #endif
     } else if (!(f = fopen(infn, "rb")))
-	errh->fatal("%s: %s", infn, strerror(errno));
+        errh->fatal("%s: %s", infn, strerror(errno));
 
     int c = getc(f);
     ungetc(c, f);
@@ -122,23 +123,23 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
     Cff::Font *font = 0;
 
     if (c == EOF)
-	errh->fatal("%s: empty file", infn);
+        errh->fatal("%s: empty file", infn);
     if (c != 1 && c != 'O')
-	errh->fatal("%s: not a CFF or OpenType/CFF font", infn);
+        errh->fatal("%s: not a CFF or OpenType/CFF font", infn);
 
     StringAccum sa(150000);
     int amt;
     do {
-	if (char *x = sa.reserve(32768)) {
-	    amt = fread(x, 1, 32768, f);
-	    sa.adjust_length(amt);
-	} else
-	    amt = 0;
+        if (char *x = sa.reserve(32768)) {
+            amt = fread(x, 1, 32768, f);
+            sa.adjust_length(amt);
+        } else
+            amt = 0;
     } while (amt != 0);
     if (!feof(f) || ferror(f))
-	errh->lerror(infn, "%s", strerror(errno));
+        errh->lerror(infn, "%s", strerror(errno));
     if (f != stdin)
-	fclose(f);
+        fclose(f);
 
     ContextErrorHandler cerrh(errh, "While processing %s:", infn);
     cerrh.set_indent(0);
@@ -146,47 +147,47 @@ do_file(const char *infn, const char *outfn, PermString name, ErrorHandler *errh
     unsigned units_per_em = 0;
     if (c == 'O') {
         Efont::OpenType::Font font(data, &cerrh);
-	data = font.table("CFF");
+        data = font.table("CFF");
         units_per_em = font.units_per_em();
     }
 
     Cff *cff = new Cff(data, units_per_em, &cerrh);
     Cff::FontParent *fp = cff->font(name, &cerrh);
     if (errh->nerrors() == 0
-	&& !(font = dynamic_cast<Cff::Font *>(fp)))
-	errh->fatal("%s: CID-keyed fonts not supported", infn);
+        && !(font = dynamic_cast<Cff::Font *>(fp)))
+        errh->fatal("%s: CID-keyed fonts not supported", infn);
 
     if (errh->nerrors() > 0)
-	return;
+        return;
 
     Type1Font *font1 = create_type1_font(font, &cerrh);
 
     if (!outfn || strcmp(outfn, "-") == 0) {
-	f = stdout;
-	outfn = "<stdout>";
+        f = stdout;
+        outfn = "<stdout>";
     } else if (!(f = fopen(outfn, "wb")))
-	errh->fatal("%s: %s", outfn, strerror(errno));
+        errh->fatal("%s: %s", outfn, strerror(errno));
 
     if (binary) {
 #if defined(_MSDOS) || defined(_WIN32)
-	_setmode(_fileno(f), _O_BINARY);
+        _setmode(_fileno(f), _O_BINARY);
 #endif
-	Type1PFBWriter t1w(f);
-	font1->write(t1w);
+        Type1PFBWriter t1w(f);
+        font1->write(t1w);
     } else {
-	Type1PFAWriter t1w(f);
-	font1->write(t1w);
+        Type1PFAWriter t1w(f);
+        font1->write(t1w);
     }
 
     if (f != stdout)
-	fclose(f);
+        fclose(f);
 }
 
 int
 main(int argc, char *argv[])
 {
     Clp_Parser *clp =
-	Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
+        Clp_NewParser(argc, (const char * const *)argv, sizeof(options) / sizeof(options[0]), options);
     program_name = Clp_ProgramName(clp);
 
     ErrorHandler *errh = ErrorHandler::static_initialize(new FileErrorHandler(stderr, String(program_name) + ": "));
@@ -195,71 +196,71 @@ main(int argc, char *argv[])
     const char *font_name = 0;
 
     while (1) {
-	int opt = Clp_Next(clp);
-	switch (opt) {
+        int opt = Clp_Next(clp);
+        switch (opt) {
 
-	  case PFA_OPT:
-	    binary = false;
-	    break;
+          case PFA_OPT:
+            binary = false;
+            break;
 
-	  case PFB_OPT:
-	    binary = true;
-	    break;
+          case PFB_OPT:
+            binary = true;
+            break;
 
-	  case NAME_OPT:
-	    if (font_name)
-		usage_error(errh, "font name specified twice");
-	    font_name = clp->vstr;
-	    break;
+          case NAME_OPT:
+            if (font_name)
+                usage_error(errh, "font name specified twice");
+            font_name = clp->vstr;
+            break;
 
-	  case QUIET_OPT:
-	    if (clp->negated)
-		errh = ErrorHandler::default_handler();
-	    else
-		errh = new SilentErrorHandler;
-	    break;
+          case QUIET_OPT:
+            if (clp->negated)
+                errh = ErrorHandler::default_handler();
+            else
+                errh = new SilentErrorHandler;
+            break;
 
-	  case VERSION_OPT:
-	    printf("cfftot1 (LCDF typetools) %s\n", VERSION);
-	    printf("Copyright (C) 2002-2019 Eddie Kohler\n\
+          case VERSION_OPT:
+            printf("cfftot1 (LCDF typetools) %s\n", VERSION);
+            printf("Copyright (C) 2002-2023 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
-	    exit(0);
-	    break;
+            exit(0);
+            break;
 
-	  case HELP_OPT:
-	    usage();
-	    exit(0);
-	    break;
+          case HELP_OPT:
+            usage();
+            exit(0);
+            break;
 
-	  case OUTPUT_OPT:
-	  output_file:
-	    if (output_file)
-		usage_error(errh, "output file specified twice");
-	    output_file = clp->vstr;
-	    break;
+          case OUTPUT_OPT:
+          output_file:
+            if (output_file)
+                usage_error(errh, "output file specified twice");
+            output_file = clp->vstr;
+            break;
 
-	  case Clp_NotOption:
-	    if (input_file && output_file)
-		usage_error(errh, "too many arguments");
-	    else if (input_file)
-		goto output_file;
-	    else
-		input_file = clp->vstr;
-	    break;
+          case Clp_NotOption:
+            if (input_file && output_file)
+                usage_error(errh, "too many arguments");
+            else if (input_file)
+                goto output_file;
+            else
+                input_file = clp->vstr;
+            break;
 
-	  case Clp_Done:
-	    goto done;
+          case Clp_Done:
+            goto done;
 
-	  case Clp_BadOption:
-	    usage_error(errh, 0);
-	    break;
+          case Clp_BadOption:
+            usage_error(errh, 0);
+            break;
 
-	  default:
-	    break;
+          default:
+            break;
 
-	}
+        }
     }
 
   done:

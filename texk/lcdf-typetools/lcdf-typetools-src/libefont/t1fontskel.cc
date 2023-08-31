@@ -1,6 +1,6 @@
 /* t1fontskel.cc -- Type 1 font skeleton
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -28,10 +28,10 @@ namespace Efont {
 
 static const char* othersubrs_code =
 // This version of the OtherSubrs code for old PostScript interpreters comes from
-// https://github.com/adobe-type-tools/afdko/blob/master/FDK/Tools/Programs/public/lib/source/t1write/t1write_flexothers.txt
-// (commit 3f4eeec). The Adobe Font Development Kit is licensed by the Apache
+// https://github.com/adobe-type-tools/afdko:c/shared/source/t1write/t1write_flexothers.h
+// (commit 26761e9). The Adobe Font Development Kit is licensed by the Apache
 // License, 2.0, which permits this embedding.
-"% Copyright 1987-1990 Adobe Systems Incorporated. All rights reserved.\n"
+"% Copyright 2014 Adobe Systems Incorporated. All rights reserved.\n"
 "/OtherSubrs[systemdict/internaldict known{1183615869 systemdict/internaldict\n"
 "get exec/FlxProc known{save true}{false}ifelse}{userdict/internaldict known\n"
 "not{userdict/internaldict{count 0 eq{/internaldict errordict/invalidaccess get\n"
@@ -113,24 +113,19 @@ Type1Font::skeleton_make(PermString font_name, const String &version)
 {
     Type1Font *output = new Type1Font(font_name);
 
-    // %!PS-Adobe-Font comment
+    // %!PS-AdobeFont comment
     StringAccum sa;
-    sa << "%!PS-AdobeFont-1.0: " << font_name;
-    if (version)
+    sa << "%!FontType1-1.1: " << font_name;
+    if (version) {
         sa << ' ' << version;
+    }
     output->add_item(new Type1CopyItem(sa.take_string()));
+    // XXX %%BeginResource: font FontName
 
-    output->_dict_deltas[dF] = 3; // Private, FontInfo, Encoding
+    output->_dict_deltas[dF] = 4; // Private, FontInfo, Encoding, FID
     output->_dict_deltas[dP] = 3; // OtherSubrs, Subrs, CharStrings
 
     return output;
-}
-
-void
-Type1Font::skeleton_comments_end()
-{
-    // count members of font dictionary
-    add_definition(dF, new Type1Definition("FontName", "/" + String(_font_name), "def"));
 }
 
 void
@@ -146,7 +141,7 @@ void
 Type1Font::skeleton_fontdict_end()
 {
     // switch to eexec
-    add_item(new Type1CopyItem("currentdict end"));
+    add_item(new Type1CopyItem("end"));
     add_item(new Type1EexecItem(true));
 
     // Private dictionary
@@ -238,7 +233,7 @@ Type1Font::skeleton_make_copy(const Type1Font *font, PermString font_name, const
     Type1Font *output = skeleton_make(font_name, version);
 
     // other comments from font header
-    for (int i = 0; i < font->nitems(); i++)
+    for (int i = 0; i < font->nitems(); i++) {
         if (Type1CopyItem *c = font->item(i)->cast_copy()) {
             if (c->length() > 1 && c->value()[0] == '%') {
                 if (c->value()[1] != '!')
@@ -247,8 +242,12 @@ Type1Font::skeleton_make_copy(const Type1Font *font, PermString font_name, const
                 break;
         } else
             break;
+    }
 
-    output->skeleton_comments_end();
+    add_number_def(output, dF, "FontType", font);
+    output->add_definition(dF, new Type1Definition("FontName", "/" + String(font_name), "def"));
+    add_number_def(output, dF, "PaintType", font);
+    add_copy_def(output, dF, "FontMatrix", font, "readonly def");
 
     // FontInfo dictionary
     if (version)
@@ -275,9 +274,6 @@ Type1Font::skeleton_make_copy(const Type1Font *font, PermString font_name, const
 
     // Encoding, other font dictionary entries
     output->add_type1_encoding(new Type1Encoding(*font->type1_encoding()));
-    add_number_def(output, dF, "PaintType", font);
-    add_number_def(output, dF, "FontType", font);
-    add_copy_def(output, dF, "FontMatrix", font, "readonly def");
     add_number_def(output, dF, "StrokeWidth", font);
     if (!xuid_extension)
         add_number_def(output, dF, "UniqueID", font);

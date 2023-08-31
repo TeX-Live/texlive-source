@@ -25,7 +25,7 @@ class Charstring { public:
     Charstring()                                { }
     virtual ~Charstring();
 
-    virtual bool process(CharstringInterp &) const = 0;
+    virtual bool process(CharstringInterp&) const = 0;
 
     enum Commands {
         cError          = 0,
@@ -122,9 +122,9 @@ class Charstring { public:
     };
 
     static String command_name(int);
-    static const char * const command_names[];
+    static const char* const command_names[];
 
-    static const char * const standard_encoding[256];
+    static const char* const standard_encoding[256];
 
 };
 
@@ -132,25 +132,25 @@ class Charstring { public:
 class Type1Charstring : public Charstring { public:
 
     Type1Charstring()                           { }
-    inline Type1Charstring(const String &);     // unencrypted
-    Type1Charstring(int lenIV, const String &); // encrypted
+    inline Type1Charstring(const String&);      // unencrypted
+    Type1Charstring(int lenIV, const String&);  // encrypted
     // default copy constructor
     // default destructor
     // default assignment operator
 
-    inline const uint8_t *data() const;
+    inline const uint8_t* data() const;
     int length() const                          { return _s.length(); }
     operator String::unspecified_bool_type() const { return _s; }
 
-    inline const String &data_string() const;
+    inline const String& data_string() const;
     inline String substring(int pos, int len) const;
     int first_caret_after(int pos) const;
 
-    inline void assign(const String &);
-    void prepend(const Type1Charstring &);
-    void assign_substring(int pos, int len, const String &);
+    inline void assign(const String&);
+    void prepend(const Type1Charstring&);
+    void assign_substring(int pos, int len, const String&);
 
-    bool process(CharstringInterp &) const;
+    bool process(CharstringInterp&) const;
 
   private:
 
@@ -165,15 +165,15 @@ class Type1Charstring : public Charstring { public:
 class Type2Charstring : public Charstring { public:
 
     Type2Charstring()                           { }
-    inline Type2Charstring(const String &);
+    inline Type2Charstring(const String&);
     // default copy constructor
     // default destructor
     // default assignment operator
 
-    inline const uint8_t *data() const;
+    inline const uint8_t* data() const;
     int length() const                          { return _s.length(); }
 
-    bool process(CharstringInterp &) const;
+    bool process(CharstringInterp&) const;
 
   private:
 
@@ -184,14 +184,14 @@ class Type2Charstring : public Charstring { public:
 
 struct CharstringContext {
 
-    CharstringContext(const CharstringProgram *program_, const Charstring *cs_) : program(program_), cs(cs_) { }
+    CharstringContext(const CharstringProgram* program_, const Charstring* cs_) : program(program_), cs(cs_) { }
 
     operator String::unspecified_bool_type() const {
         return cs != 0 ? &String::length : 0;
     }
 
-    const CharstringProgram *program;
-    const Charstring *cs;
+    const CharstringProgram* program;
+    const Charstring* cs;
 
 };
 
@@ -205,38 +205,38 @@ class CharstringProgram { public:
     virtual void font_matrix(double[6]) const;
     unsigned units_per_em() const               { return _units_per_em; }
 
-    inline const CharstringProgram *program(int) const;
-    virtual const CharstringProgram *child_program(int) const;
+    inline const CharstringProgram* program(int) const;
+    virtual const CharstringProgram* child_program(int) const;
     bool parent_program() const                 { return _parent_program; }
     void set_parent_program(bool pp)            { _parent_program = pp; }
 
     virtual int nsubrs() const                  { return 0; }
-    virtual Charstring *subr(int) const         { return 0; }
+    virtual Charstring* subr(int) const         { return 0; }
     virtual int subr_bias() const               { return 0; }
 
     virtual int ngsubrs() const                 { return 0; }
-    virtual Charstring *gsubr(int) const        { return 0; }
+    virtual Charstring* gsubr(int) const        { return 0; }
     virtual int gsubr_bias() const              { return 0; }
 
     inline int nxsubrs(bool g) const;
-    inline Charstring *xsubr(bool g, int) const;
+    inline Charstring* xsubr(bool g, int) const;
     inline int xsubr_bias(bool g) const;
 
     virtual int nglyphs() const                 { return 0; }
     virtual PermString glyph_name(int) const    { return PermString(); }
-    virtual void glyph_names(Vector<PermString> &) const;
-    virtual Charstring *glyph(int) const        { return 0; }
-    virtual Charstring *glyph(PermString) const { return 0; }
+    virtual void glyph_names(Vector<PermString>&) const;
+    virtual Charstring* glyph(int) const        { return 0; }
+    virtual Charstring* glyph(PermString) const { return 0; }
 
     inline CharstringContext glyph_context(int) const;
     inline CharstringContext glyph_context(PermString) const;
 
     virtual bool is_mm() const                  { return mmspace() != 0; }
-    virtual MultipleMasterSpace *mmspace() const        { return 0; }
+    virtual MultipleMasterSpace* mmspace() const        { return 0; }
     enum VectorType { VEC_WEIGHT = 0, VEC_NORM_DESIGN = 1, VEC_DESIGN = 2 };
-    virtual Vector<double> *mm_vector(VectorType, bool writable) const;
+    virtual Vector<double>* mm_vector(VectorType, bool writable) const;
 
-    virtual Type1Encoding *type1_encoding() const       { return 0; }
+    virtual Type1Encoding* type1_encoding() const       { return 0; }
 
     virtual double global_width_x(bool is_nominal) const;
 
@@ -257,25 +257,25 @@ enum Type1Defs {
 };
 
 
-inline Type1Charstring::Type1Charstring(const String &s)
+inline Type1Charstring::Type1Charstring(const String& s)
     : Charstring(), _s(s), _key(-1)
 {
 }
 
-inline void Type1Charstring::assign(const String &s)
+inline void Type1Charstring::assign(const String& s)
 {
     _s = s;
     _key = -1;
 }
 
-inline const uint8_t *Type1Charstring::data() const
+inline const uint8_t* Type1Charstring::data() const
 {
     if (_key >= 0)
         decrypt();
-    return reinterpret_cast<const uint8_t *>(_s.data());
+    return reinterpret_cast<const uint8_t*>(_s.data());
 }
 
-inline const String &Type1Charstring::data_string() const
+inline const String& Type1Charstring::data_string() const
 {
     if (_key >= 0)
         decrypt();
@@ -289,20 +289,20 @@ inline String Type1Charstring::substring(int pos, int len) const
     return _s.substring(pos, len);
 }
 
-inline bool operator==(const Type1Charstring &a, const Type1Charstring &b)
+inline bool operator==(const Type1Charstring& a, const Type1Charstring& b)
 {
     return a.data_string() == b.data_string();
 }
 
 
-inline Type2Charstring::Type2Charstring(const String &s)
+inline Type2Charstring::Type2Charstring(const String& s)
     : _s(s)
 {
 }
 
-inline const uint8_t *Type2Charstring::data() const
+inline const uint8_t* Type2Charstring::data() const
 {
-    return reinterpret_cast<const uint8_t *>(_s.data());
+    return reinterpret_cast<const uint8_t*>(_s.data());
 }
 
 
@@ -311,7 +311,7 @@ inline int CharstringProgram::nxsubrs(bool g) const
     return (g ? ngsubrs() : nsubrs());
 }
 
-inline Charstring *CharstringProgram::xsubr(bool g, int i) const
+inline Charstring* CharstringProgram::xsubr(bool g, int i) const
 {
     return (g ? gsubr(i) : subr(i));
 }
@@ -321,7 +321,7 @@ inline int CharstringProgram::xsubr_bias(bool g) const
     return (g ? gsubr_bias() : subr_bias());
 }
 
-inline const CharstringProgram *CharstringProgram::program(int gi) const
+inline const CharstringProgram* CharstringProgram::program(int gi) const
 {
     return (_parent_program ? child_program(gi) : this);
 }
@@ -330,7 +330,7 @@ inline CharstringContext CharstringProgram::glyph_context(int gi) const
 {
     if (!_parent_program)
         return CharstringContext(this, glyph(gi));
-    else if (const CharstringProgram *p = child_program(gi))
+    else if (const CharstringProgram* p = child_program(gi))
         return CharstringContext(p, p->glyph(gi));
     else
         return CharstringContext(0, 0);

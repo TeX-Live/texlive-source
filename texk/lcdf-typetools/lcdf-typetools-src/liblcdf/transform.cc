@@ -2,7 +2,7 @@
 
 /* transform.{cc,hh} -- planar affine transformations
  *
- * Copyright (c) 2000-2019 Eddie Kohler
+ * Copyright (c) 2000-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -39,7 +39,7 @@ Transform::Transform(const double m[6])
 }
 
 Transform::Transform(double m0, double m1, double m2,
-		     double m3, double m4, double m5)
+                     double m3, double m4, double m5)
 {
     _m[0] = m0;
     _m[1] = m1;
@@ -54,8 +54,8 @@ void
 Transform::check_null(double tolerance)
 {
     _null = (fabs(_m[0] - 1) < tolerance && fabs(_m[1]) < tolerance
-	     && fabs(_m[2]) < tolerance && fabs(_m[3] - 1) < tolerance
-	     && fabs(_m[4]) < tolerance && fabs(_m[5]) < tolerance);
+             && fabs(_m[2]) < tolerance && fabs(_m[3] - 1) < tolerance
+             && fabs(_m[4]) < tolerance && fabs(_m[5]) < tolerance);
 }
 
 
@@ -68,7 +68,7 @@ Transform::scale(double x, double y)
     _m[3] *= y;
 
     if (x != 1 || y != 1)
-	_null = false;
+        _null = false;
 }
 
 void
@@ -86,7 +86,7 @@ Transform::rotate(double r)
     _m[3] = b*c - a*s;
 
     if (r != 0)
-	_null = false;
+        _null = false;
 }
 
 void
@@ -96,7 +96,7 @@ Transform::translate(double x, double y)
     _m[5] += _m[1]*x + _m[3]*y;
 
     if (x != 0 || y != 0)
-	_null = false;
+        _null = false;
 }
 
 void Transform::raw_translate(double x, double y) {
@@ -144,17 +144,17 @@ Point
 Transform::real_apply(const Point &p) const
 {
     return Point(p.x*_m[0] + p.y*_m[2] + _m[4],
-		 p.x*_m[1] + p.y*_m[3] + _m[5]);
+                 p.x*_m[1] + p.y*_m[3] + _m[5]);
 }
 
 Bezier &
 operator*=(Bezier &b, const Transform &t)
 {
     if (!t.null()) {
-	b.mpoint(0) *= t;
-	b.mpoint(1) *= t;
-	b.mpoint(2) *= t;
-	b.mpoint(3) *= t;
+        b.mpoint(0) *= t;
+        b.mpoint(1) *= t;
+        b.mpoint(2) *= t;
+        b.mpoint(3) *= t;
     }
     return b;
 }
@@ -163,8 +163,8 @@ Bezier
 operator*(const Bezier &b, const Transform &t)
 {
     return (t.null()
-	    ? b
-	    : Bezier(b.point(0) * t, b.point(1) * t, b.point(2) * t, b.point(3) * t));
+            ? b
+            : Bezier(b.point(0) * t, b.point(1) * t, b.point(2) * t, b.point(3) * t));
 }
 
 String
@@ -173,9 +173,9 @@ Transform::unparse() const
     StringAccum sa;
     sa << '[';
     for (int i = 0; i < 6; i++) {
-	if (i)
-	    sa << ',' << ' ';
-	sa << _m[i];
+        if (i)
+            sa << ',' << ' ';
+        sa << _m[i];
     }
     sa << ']';
     return sa.take_string();

@@ -1,6 +1,6 @@
 /* main.cc -- driver for mmpfb program
  *
- * Copyright (c) 1997-2019 Eddie Kohler
+ * Copyright (c) 1997-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -36,24 +36,24 @@
 # include <io.h>
 #endif
 
-#define WEIGHT_OPT	300
-#define WIDTH_OPT	301
-#define OPSIZE_OPT	302
-#define STYLE_OPT	303
-#define N1_OPT		304
-#define N2_OPT		305
-#define N3_OPT		306
-#define N4_OPT		307
-#define VERSION_OPT	308
-#define AMCP_INFO_OPT	309
-#define HELP_OPT	310
-#define PFA_OPT		311
-#define PFB_OPT		312
-#define OUTPUT_OPT	313
-#define QUIET_OPT	314
-#define PRECISION_OPT	315
-#define SUBRS_OPT	316
-#define MINIMIZE_OPT	317
+#define WEIGHT_OPT      300
+#define WIDTH_OPT       301
+#define OPSIZE_OPT      302
+#define STYLE_OPT       303
+#define N1_OPT          304
+#define N2_OPT          305
+#define N3_OPT          306
+#define N4_OPT          307
+#define VERSION_OPT     308
+#define AMCP_INFO_OPT   309
+#define HELP_OPT        310
+#define PFA_OPT         311
+#define PFB_OPT         312
+#define OUTPUT_OPT      313
+#define QUIET_OPT       314
+#define PRECISION_OPT   315
+#define SUBRS_OPT       316
+#define MINIMIZE_OPT    317
 
 const Clp_Option options[] = {
   { "1", '1', N1_OPT, Clp_ValDouble, 0 },
@@ -101,6 +101,7 @@ usage_error(const char *error_message, ...)
     errh->xmessage(ErrorHandler::e_error, error_message, val);
   errh->message("Type %s --help for more information.", program_name);
   exit(1);
+  va_end(val);
 }
 
 void
@@ -176,12 +177,12 @@ do_file(const char *filename, PsresDatabase *psres)
     const char *underscore = strchr(filename, '_');
     if (!fn && underscore) {
       fn = psres->filename_value
-	("FontOutline", PermString(filename, underscore - filename));
+        ("FontOutline", PermString(filename, underscore - filename));
       int i = 0;
       while (underscore[0] == '_' && underscore[1]) {
-	double x = strtod(underscore + 1, const_cast<char **>(&underscore));
-	set_design(i, x);
-	i++;
+        double x = strtod(underscore + 1, const_cast<char **>(&underscore));
+        set_design(i, x);
+        i++;
       }
     }
     f = fn.open_read();
@@ -219,18 +220,18 @@ static void
 print_conversion_program(FILE *f, const Type1Charstring &cs, PermString name)
 {
     if (cs) {
-	const unsigned char *data = cs.data();
-	for (int i = 0; i < cs.length(); ) {
-	    int l = cs.length() - i;
-	    if (l > 32)
-		l = 32;
-	    fprintf(f, "%s <", name.c_str());
-	    for (int j = 0; j < l; j++)
-		fprintf(f, "%02X", data[j]);
-	    fprintf(f, ">\n");
-	    data += l;
-	    i += l;
-	}
+        const unsigned char *data = cs.data();
+        for (int i = 0; i < cs.length(); ) {
+            int l = cs.length() - i;
+            if (l > 32)
+                l = 32;
+            fprintf(f, "%s <", name.c_str());
+            for (int j = 0; j < l; j++)
+                fprintf(f, "%02X", data[j]);
+            fprintf(f, ">\n");
+            data += l;
+            i += l;
+        }
     }
 }
 
@@ -242,10 +243,10 @@ print_amcp_info(MultipleMasterSpace *mmspace, FILE *f)
   const Type1Charstring &cdv = mmspace->cdv();
   if (!ndv && !cdv)
     fprintf(stderr, "%s does not have conversion programs.\n",
-	    mmspace->font_name().c_str());
+            mmspace->font_name().c_str());
   else {
     fprintf(f, "StartConversionPrograms %d %d\n", ndv.length(),
-	    cdv.length());
+            cdv.length());
     print_conversion_program(f, ndv, "NDV");
     print_conversion_program(f, cdv, "CDV");
     fprintf(f, "EndConversionPrograms\n");
@@ -313,49 +314,49 @@ main(int argc, char *argv[])
 
      case PRECISION_OPT:
       if (clp->val.i > 107) {
-	  errh->warning("precision lowered to 107");
-	  precision = 107;
+          errh->warning("precision lowered to 107");
+          precision = 107;
       } else if (clp->val.i < 1) {
-	  errh->warning("precision raised to 1");
-	  precision = 1;
+          errh->warning("precision raised to 1");
+          precision = 1;
       } else
-	  precision = clp->val.i;
+          precision = clp->val.i;
       break;
 
      case SUBRS_OPT:
       if (clp->negated)
-	subr_count = -1;
+        subr_count = -1;
       else if (clp->val.i <= 0)
-	errh->warning("subr count too small");
+        errh->warning("subr count too small");
       else
-	subr_count = clp->val.i;
+        subr_count = clp->val.i;
       break;
 
       case MINIMIZE_OPT:
-	minimize = !clp->negated;
-	break;
+        minimize = !clp->negated;
+        break;
 
      case QUIET_OPT:
        if (clp->negated)
-	   errh = ErrorHandler::default_handler();
+           errh = ErrorHandler::default_handler();
        else
-	   errh = new SilentErrorHandler;
+           errh = new SilentErrorHandler;
        break;
 
      case OUTPUT_OPT:
       if (outfile) errh->fatal("output file already specified");
       if (strcmp(clp->vstr, "-") == 0)
-	outfile = stdout;
+        outfile = stdout;
       else {
-	outfile = fopen(clp->vstr, "wb");
-	if (!outfile)
-	    errh->fatal("%s: %s", clp->vstr, strerror(errno));
+        outfile = fopen(clp->vstr, "wb");
+        if (!outfile)
+            errh->fatal("%s: %s", clp->vstr, strerror(errno));
       }
       break;
 
      case VERSION_OPT:
       printf("mmpfb (LCDF typetools) %s\n", VERSION);
-      printf("Copyright (C) 1997-2019 Eddie Kohler\n\
+      printf("Copyright (C) 1997-2023 Eddie Kohler\n\
 This is free software; see the source for copying conditions.\n\
 There is NO warranty, not even for merchantability or fitness for a\n\
 particular purpose.\n");
@@ -373,7 +374,7 @@ particular purpose.\n");
 
      case Clp_Done:
       if (!font)
-	  usage_error("missing font argument");
+          usage_error("missing font argument");
       goto done;
 
      case Clp_BadOption:
@@ -406,7 +407,7 @@ particular purpose.\n");
   for (int i = 0; i < mmspace->naxes(); i++)
     if (!KNOWN(design[i]) && KNOWN(default_design[i])) {
       errh->warning("using default value %g for %s%,s %s", default_design[i],
-		    font->font_name().c_str(), mmspace->axis_type(i).c_str());
+                    font->font_name().c_str(), mmspace->axis_type(i).c_str());
       design[i] = default_design[i];
     }
 
@@ -435,12 +436,13 @@ particular purpose.\n");
     time_t cur_time = time(0);
     char *time_str = ctime(&cur_time);
     int time_len = strlen(time_str) - 1;
-    char *buf = new char[strlen(VERSION) + time_len + 100];
-    sprintf(buf, "%%%% Interpolated by mmpfb-%s on %.*s.", VERSION,
-	    time_len, time_str);
+    size_t bufsz = strlen(VERSION) + time_len + 100;
+    char* buf = new char[bufsz];
+    snprintf(buf, bufsz, "%%%% Interpolated by mmpfb-%s on %.*s.", VERSION,
+             time_len, time_str);
 #else
-    char *buf = new char[strlen(VERSION) + 100];
-    sprintf(buf, "%%%% Interpolated by mmpfb-%s.", VERSION);
+    char* buf = new char[strlen(VERSION) + 100];
+    snprintf(buf, strlen(VERSION) + 100, "%%%% Interpolated by mmpfb-%s.", VERSION);
 #endif
 
     t1font->add_header_comment(buf);

@@ -1,6 +1,6 @@
 /* kpseinterface.{c,h} -- interface with the kpathsea library
  *
- * Copyright (c) 2003-2019 Eddie Kohler
+ * Copyright (c) 2003-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,9 +21,7 @@
 #include <kpathsea/expand.h>
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/tex-file.h>
-#ifdef W32TEX
 #include <kpathsea/variable.h>
-#endif
 #include "kpseinterface.h"
 
 int kpsei_env_sep_char = ENV_SEP;
@@ -53,34 +51,40 @@ kpsei_path_expand(const char* path)
 }
 
 char*
+kpsei_var_value(const char *name)
+{
+    return kpse_var_value(name);
+}
+
+char*
 kpsei_find_file(const char* name, int format)
 {
     char *result;
     switch (format) {
       case KPSEI_FMT_WEB2C:
-	return kpse_find_file(name, kpse_web2c_format, true);
+        return kpse_find_file(name, kpse_web2c_format, true);
     case KPSEI_FMT_ENCODING:
 #if HAVE_DECL_KPSE_ENC_FORMAT
-	if ((result = kpse_find_file(name, kpse_enc_format, true)))
-	    return result;
+        if ((result = kpse_find_file(name, kpse_enc_format, true)))
+            return result;
 #endif
-	return kpse_find_file(name, kpse_tex_ps_header_format, true);
+        return kpse_find_file(name, kpse_tex_ps_header_format, true);
       case KPSEI_FMT_TYPE1:
-	return kpse_find_file(name, kpse_type1_format, false);
+        return kpse_find_file(name, kpse_type1_format, false);
       case KPSEI_FMT_TYPE42:
-	return kpse_find_file(name, kpse_type42_format, false);
+        return kpse_find_file(name, kpse_type42_format, false);
       case KPSEI_FMT_TRUETYPE:
-	return kpse_find_file(name, kpse_truetype_format, false);
+        return kpse_find_file(name, kpse_truetype_format, false);
 #if HAVE_DECL_KPSE_OPENTYPE_FORMAT
       case KPSEI_FMT_OPENTYPE:
-	return kpse_find_file(name, kpse_opentype_format, false);
+        return kpse_find_file(name, kpse_opentype_format, false);
 #endif
       case KPSEI_FMT_OTHER_TEXT:
-	return kpse_find_file(name, kpse_program_text_format, true);
+        return kpse_find_file(name, kpse_program_text_format, true);
       case KPSEI_FMT_MAP:
-	return kpse_find_file(name, kpse_fontmap_format, true);
+        return kpse_find_file(name, kpse_fontmap_format, true);
       default:
-	return 0;
+        return 0;
     }
 }
 
@@ -89,11 +93,3 @@ kpsei_set_debug_flags(unsigned flags)
 {
     kpathsea_debug = flags;
 }
-
-#ifdef W32TEX
-char*
-kpsei_var_value(const char *name)
-{
-    return kpse_var_value(name);
-}
-#endif

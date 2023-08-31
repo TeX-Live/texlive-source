@@ -2,7 +2,7 @@
 
 /* slurper.{cc,hh} -- reading from files a line at a time
  *
- * Copyright (c) 1998-2019 Eddie Kohler
+ * Copyright (c) 1998-2023 Eddie Kohler
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,8 +19,8 @@
 #include <lcdf/slurper.hh>
 #include <string.h>
 
-static const int DefChunkCap	= 2048;
-static const int WorthMoving	= 256;
+static const int DefChunkCap    = 2048;
+static const int WorthMoving    = 256;
 
 
 Slurper::Slurper(const Filename &filename, FILE *f)
@@ -88,7 +88,7 @@ Slurper::get_line_at(unsigned pos)
   while (1) {
     for (; pos < _len; pos++)
       if (_data[pos] == '\n' || _data[pos] == '\r')
-	goto line_ends_at_pos;
+        goto line_ends_at_pos;
 
     // no line end? look for more data. save and reset `pos', since _pos
     // may change.
@@ -107,10 +107,10 @@ Slurper::get_line_at(unsigned pos)
   unsigned next_pos;
 
   // Find beginning of next line. 3 cases:
-  // 1. line ends in \r\n	-> _pos = pos + 2;
-  // 2. line ends in \r OR \n	-> _pos = pos + 1;
-  // 3. neither			-> must be last line in file; _pos = pos,
-  //				   since pos == _len
+  // 1. line ends in \r\n       -> _pos = pos + 2;
+  // 2. line ends in \r OR \n   -> _pos = pos + 1;
+  // 3. neither                 -> must be last line in file; _pos = pos,
+  //                               since pos == _len
   if (pos == _len) {
     // last line in file didn't end in `\n': must have no data left
     // ensure we have enough space for terminating nul

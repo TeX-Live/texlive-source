@@ -7,13 +7,13 @@
 
 class Bezier { public:
 
-    Bezier()				: _bb(-1) { }
+    Bezier()                            : _bb(-1) { }
     inline Bezier(Point p[4]) noexcept;
     inline Bezier(const Point &, const Point &, const Point &, const Point &) noexcept;
 
-    const Point *points() const		{ return _p; }
-    const Point &point(int i) const	{ assert(i>=0&&i<4); return _p[i]; }
-    Point &mpoint(int i)		{ assert(i>=0&&i<4); _bb = -1; return _p[i]; }
+    const Point *points() const         { return _p; }
+    const Point &point(int i) const     { assert(i>=0&&i<4); return _p[i]; }
+    Point &mpoint(int i)                { assert(i>=0&&i<4); _bb = -1; return _p[i]; }
     void set_point(int i, const Point &p) { mpoint(i) = p; }
 
     Point eval(double) const noexcept;
@@ -72,7 +72,7 @@ inline void
 Bezier::ensure_bb() const noexcept
 {
     if (_bb < 0)
-	make_bb();
+        make_bb();
 }
 
 inline double
