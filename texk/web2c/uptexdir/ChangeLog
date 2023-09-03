@@ -1,3 +1,8 @@
+2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {ptriptest,uptriptest,upver}.test:
+	Update tests for Windows.
+
 2023-09-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uptex-m.ch: Proper support for \kchar in math mode.

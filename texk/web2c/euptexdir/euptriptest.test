@@ -5,12 +5,12 @@
 # Copyright 2010 Hironori Kitagawa <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-..}
+W2CDir=${W2CDir:-..}
 ExeExt=${ExeExt:-}
-_euptex=$BinDir/euptex$ExeExt
-_pltotf=$BinDir/pltotf$ExeExt
-_tftopl=$BinDir/tftopl$ExeExt
-_dvitype=$BinDir/dvitype$ExeExt
+_euptex=$W2CDir/euptex$ExeExt
+_pltotf=$W2CDir/pltotf$ExeExt
+_tftopl=$W2CDir/tftopl$ExeExt
+_dvitype=$W2CDir/dvitype$ExeExt
 
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
@@ -40,9 +40,9 @@ set -x
 
 echo "*** TRIP test for e-upTeX in compatibility mode ***."
 
-../pltotf $testdir/trip.pl trip.tfm || exit 1
+$_pltotf $testdir/trip.pl trip.tfm || exit 1
 
-../tftopl ./trip.tfm trip.pl || exit 1
+$_tftopl ./trip.tfm trip.pl || exit 1
 
 diff $testdir/trip.pl trip.pl || is_OK=false
 
@@ -50,7 +50,7 @@ diff $testdir/trip.pl trip.pl || is_OK=false
 $LN_S $testdir/trip.tex .
 
 rm -f trip.log
-../euptex --progname=eupinitex --ini <$testdir/trip1.in >cuptripin.fot
+$_euptex --progname=eupinitex --ini <$testdir/trip1.in >cuptripin.fot
 if test ! -s trip.fmt; then
   echo "*** trip.fmt not created by trip1.in, investigate!" >&2
   exit 1
@@ -60,7 +60,7 @@ diff $testdir/tripin.log cuptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-../euptex --progname=euptex <$testdir/trip2.in >cuptrip.fot
+$_euptex --progname=euptex <$testdir/trip2.in >cuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > cuptrip.log
 diff $testdir/trip.fot cuptrip.fot
 
@@ -71,7 +71,7 @@ $DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log
 mv tripos.tex cuptripos.tex
 diff $testdir/tripos.tex cuptripos.tex
 
-eval ../dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
+eval $_dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
 
 mv trip.fmt ctrip.fmt
@@ -81,7 +81,7 @@ mv trip.fmt ctrip.fmt
 echo "*** TRIP test for e-upTeX in extended mode ***."
 
 rm -f trip.log
-../euptex --progname=eupinitex --ini <$etestdir/etrip1.in >xuptripin.fot
+$_euptex --progname=eupinitex --ini <$etestdir/etrip1.in >xuptripin.fot
 if test ! -s trip.fmt; then
   echo "*** trip.fmt not created by etrip1.in, investigate!" >&2
   exit 1
@@ -91,7 +91,7 @@ diff $testdir/tripin.log xuptripin.log
 
 # May as well test non-ini second time through.
 rm -f trip.log
-../euptex --progname=euptex <$etestdir/trip2.in >xuptrip.fot
+$_euptex --progname=euptex <$etestdir/trip2.in >xuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > xuptrip.log
 diff $testdir/trip.fot xuptrip.fot
 
@@ -102,7 +102,7 @@ $DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log
 mv tripos.tex xuptripos.tex
 diff $testdir/tripos.tex xuptripos.tex
 
-eval ../dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
+eval $_dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
 $DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
 
 mv trip.fmt xtrip.fmt

@@ -1,3 +1,8 @@
+2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {eptriptest,euptriptest,eupver}.test:
+	Update tests for Windows.
+
 2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/euptex.am, {eptriptest,euptriptest,eupver,

@@ -5,12 +5,12 @@
 # Copyright 2010 Hironori Kitagawa <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-..}
+W2CDir=${W2CDir:-..}
 ExeExt=${ExeExt:-}
-_eptex=$BinDir/eptex$ExeExt
-_pltotf=$BinDir/pltotf$ExeExt
-_tftopl=$BinDir/tftopl$ExeExt
-_dvitype=$BinDir/dvitype$ExeExt
+_eptex=$W2CDir/eptex$ExeExt
+_pltotf=$W2CDir/pltotf$ExeExt
+_tftopl=$W2CDir/tftopl$ExeExt
+_dvitype=$W2CDir/dvitype$ExeExt
 
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 

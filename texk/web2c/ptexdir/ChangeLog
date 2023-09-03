@@ -1,3 +1,8 @@
+2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {ptriptest,pver}.test:
+	Update tests for Windows.
+
 2023-08-22  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* ptex-base.ch: Clean up unnecessary lines.
