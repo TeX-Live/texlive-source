@@ -8,6 +8,14 @@ BinDir=${BinDir:-.}
 ExeExt=${ExeExt:-}
 _omfonts=$BinDir/omfonts$ExeExt
 
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 tests=tests
 
 test -d $tests || mkdir -p $tests
@@ -30,6 +38,6 @@ echo && echo "*** ofm2opl xchecked stdout (xchecked.opl)"
 $_omfonts -ofm2opl $tests/xchecked >$tests/xchecked.opl || rc=4
 
 echo && echo "*** diff checked.opl xchecked.opl"
-diff $srcdir/$tests/checked.opl $tests/xchecked.opl || rc=5
+$DIFF $srcdir/$tests/checked.opl $tests/xchecked.opl || rc=5
 
 exit $rc

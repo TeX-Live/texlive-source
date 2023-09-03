@@ -13,10 +13,10 @@ tests=tests
 test -d $tests || mkdir -p $tests
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -opl2ofm -verbose $srcdir/$tests/repeat $tests/xrepeated || exit 1
+  $_omfonts -opl2ofm -verbose $srcdir/$tests/repeat $tests/xrepeated || exit 1
 
 TEXMFCNF=$srcdir/../../kpathsea \
-  ./omfonts -ofm2opl -verbose $tests/xrepeated $tests/xrepeated || exit 2
+  $_omfonts -ofm2opl -verbose $tests/xrepeated $tests/xrepeated || exit 2
 
 diff $srcdir/$tests/repeated.opl $tests/xrepeated.opl || exit 3
 
