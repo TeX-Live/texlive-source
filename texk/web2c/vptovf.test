@@ -4,26 +4,30 @@
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_vptovf=$BinDir/vptovf$ExeExt
+
 test -d tests || mkdir -p tests
 
-./vptovf -help || exit 1
+$_vptovf -help || exit 1
 
-./vptovf -version || exit 1
+$_vptovf -version || exit 2
 
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-./vptovf -verbose $srcdir/tests/badvpl && exit 1
+$_vptovf -verbose $srcdir/tests/badvpl && exit 3
 
-./vptovf -verbose $srcdir/tests/ptmr tests/yptmr tests/yptmr || exit 1
+$_vptovf -verbose $srcdir/tests/ptmr tests/yptmr tests/yptmr || exit 4
 
-cmp $srcdir/tests/ptmr.vf tests/yptmr.vf || exit 1
+cmp $srcdir/tests/ptmr.vf tests/yptmr.vf || exit 5
 
-cmp $srcdir/tests/ptmr.tfm tests/yptmr.tfm || exit 1
+cmp $srcdir/tests/ptmr.tfm tests/yptmr.tfm || exit 6
 
-./vptovf -verbose $srcdir/tests/ptmr tests/yptmr2.vf || exit 1
+$_vptovf -verbose $srcdir/tests/ptmr tests/yptmr2.vf || exit 7
 
-cmp $srcdir/tests/ptmr.vf tests/yptmr2.vf || exit 1
+cmp $srcdir/tests/ptmr.vf tests/yptmr2.vf || exit 8
 
-cmp $srcdir/tests/ptmr.tfm tests/yptmr2.tfm || exit 1
+cmp $srcdir/tests/ptmr.tfm tests/yptmr2.tfm || exit 9
 

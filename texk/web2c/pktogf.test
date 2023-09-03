@@ -4,11 +4,15 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pktogf=$BinDir/pktogf$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./pktogf -verbose $srcdir/tests/cmr10.pk tests/xcmr10.600gf || exit 1
+  $_pktogf -verbose $srcdir/tests/cmr10.pk tests/xcmr10.600gf || exit 1
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./pktogf $srcdir/tests/cmr10.pk && rm cmr10.gf || exit 1
+  $_pktogf $srcdir/tests/cmr10.pk && rm cmr10.gf || exit 2
 

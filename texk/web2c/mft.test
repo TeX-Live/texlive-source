@@ -4,9 +4,13 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_mft=$BinDir/mft$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea \
   MFTINPUTS=$srcdir/tests \
-  ./mft $srcdir/tests/io && mv -f io.tex tests/io.tex || exit 1
+  $_mft $srcdir/tests/io && mv -f io.tex tests/io.tex || exit 1
 

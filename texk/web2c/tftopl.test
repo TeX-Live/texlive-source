@@ -4,22 +4,34 @@
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_tftopl=$BinDir/tftopl$ExeExt
+
 test -d tests || mkdir -p tests
 
-./tftopl -char=foo -help || exit 1
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
 
-./tftopl -version || exit 1
+$_tftopl -char=foo -help || exit 1
+
+$_tftopl -version || exit 2
 
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-./tftopl -verbose $srcdir/tests/badtfm && exit 1
+$_tftopl -verbose $srcdir/tests/badtfm && exit 3
 
-./tftopl -verbose $srcdir/tests/cmr10 tests/xcmr10a || exit 1
+$_tftopl -verbose $srcdir/tests/cmr10 tests/xcmr10a || exit 4
 
-diff $srcdir/tests/cmr10.pl tests/xcmr10a.pl || exit 1
+diff $srcdir/tests/cmr10.pl tests/xcmr10a.pl || exit 5
 
-./tftopl -verbose $srcdir/tests/cmr10 >tests/xcmr10b.pl || exit 1
+$_tftopl -verbose $srcdir/tests/cmr10 >tests/xcmr10b.pl || exit 6
 
-diff $srcdir/tests/cmr10.pl tests/xcmr10b.pl || exit 1
+$DIFF $srcdir/tests/cmr10.pl tests/xcmr10b.pl || exit 7
 

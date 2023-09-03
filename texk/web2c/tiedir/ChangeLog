@@ -1,3 +1,7 @@
+2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tie.test: Make easier to test on Windows.
+
 2023-05-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Handle deletion of last line in 'master' file.

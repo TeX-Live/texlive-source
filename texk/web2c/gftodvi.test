@@ -4,10 +4,14 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_gftodvi=$BinDir/gftodvi$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS=$srcdir/tests \
-  ./gftodvi -verbose $srcdir/tests/cmr10.600gf && \
+  $_gftodvi -verbose $srcdir/tests/cmr10.600gf && \
   mv cmr10.dvi tests/xcmr10.dvi|| exit 1
 

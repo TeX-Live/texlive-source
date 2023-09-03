@@ -4,15 +4,19 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=$srcdir/../kpathsea \
-  WEBINPUTS=$srcdir/tiedir \
-  ./tie -c tie.outc tie.tie tie.cf1 tie.cf2 tie.cf3 || exit 1
-
-diff tie.outc $srcdir/tiedir/tie.chf.gen || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_tie=$BinDir/tie$ExeExt
 
 TEXMFCNF=$srcdir/../kpathsea \
   WEBINPUTS=$srcdir/tiedir \
-  ./tie -m tie.outm tie.tie tie.cf1 tie.cf2 tie.cf3 || exit 1
+  $_tie -c tie.outc tie.tie tie.cf1 tie.cf2 tie.cf3 || exit 1
 
-diff tie.outm $srcdir/tiedir/tie.master.gen || exit 1
+diff tie.outc $srcdir/tiedir/tie.chf.gen || exit 2
+
+TEXMFCNF=$srcdir/../kpathsea \
+  WEBINPUTS=$srcdir/tiedir \
+  $_tie -m tie.outm tie.tie tie.cf1 tie.cf2 tie.cf3 || exit 3
+
+diff tie.outm $srcdir/tiedir/tie.master.gen || exit 4
 

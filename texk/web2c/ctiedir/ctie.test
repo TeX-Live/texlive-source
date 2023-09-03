@@ -4,17 +4,21 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
-TEXMFCNF=$srcdir/../kpathsea \
-  CWEBINPUTS=$srcdir/ctiedir \
-  ./ctie -c ctie.outc ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 1
-
-
-diff ctie.outc $srcdir/ctiedir/ctie.chf.gen || exit 1
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ctie=$BinDir/ctie$ExeExt
 
 TEXMFCNF=$srcdir/../kpathsea \
   CWEBINPUTS=$srcdir/ctiedir \
-  ./ctie -m ctie.outm ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 1
+  $_ctie -c ctie.outc ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 1
 
 
-diff ctie.outm $srcdir/ctiedir/ctie.master.gen || exit 1
+diff ctie.outc $srcdir/ctiedir/ctie.chf.gen || exit 2
+
+TEXMFCNF=$srcdir/../kpathsea \
+  CWEBINPUTS=$srcdir/ctiedir \
+  $_ctie -m ctie.outm ctie.tie ctie.cf1 ctie.cf2 ctie.cf3 || exit 3
+
+
+diff ctie.outm $srcdir/ctiedir/ctie.master.gen || exit 4
 

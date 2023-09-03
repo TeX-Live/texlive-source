@@ -4,23 +4,35 @@
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_vftovp=$BinDir/vftovp$ExeExt
+
 test -d tests || mkdir -p tests
 
-./vftovp -char=bar -help  || exit 1
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
 
-./vftovp -version  || exit 1
+$_vftovp -char=bar -help  || exit 1
+
+$_vftovp -version  || exit 2
 
 TEXMFCNF=$srcdir/../kpathsea
 TFMFONTS=$srcdir/tests
 export TEXMFCNF TFMFONTS
 
-./vftovp -verbose  $srcdir/tests/badvf && exit 1
+$_vftovp -verbose  $srcdir/tests/badvf && exit 3
 
-./vftovp -verbose $srcdir/tests/ptmr ptmr tests/xptmra || exit 1
+$_vftovp -verbose $srcdir/tests/ptmr ptmr tests/xptmra || exit 4
 
-diff $srcdir/tests/ptmr.vpl tests/xptmra.vpl || exit 1
+diff $srcdir/tests/ptmr.vpl tests/xptmra.vpl || exit 5
 
-./vftovp -verbose $srcdir/tests/ptmr ptmr >tests/xptmrb.vpl || exit 1
+$_vftovp -verbose $srcdir/tests/ptmr ptmr >tests/xptmrb.vpl || exit 6
 
-diff $srcdir/tests/ptmr.vpl tests/xptmrb.vpl || exit 1
+$DIFF $srcdir/tests/ptmr.vpl tests/xptmrb.vpl || exit 7
 

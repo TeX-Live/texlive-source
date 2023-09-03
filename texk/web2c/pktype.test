@@ -4,8 +4,12 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pktype=$BinDir/pktype$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea \
-  ./pktype $srcdir/tests/cmr10.pk >tests/xcmr10.pktyp || exit 1
+  $_pktype $srcdir/tests/cmr10.pk >tests/xcmr10.pktyp || exit 1
 

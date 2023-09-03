@@ -4,6 +4,10 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_cweave=$BinDir/cweave$ExeExt
+
 TEXMFCNF=$srcdir/../kpathsea \
-  CWEBINPUTS=$srcdir/cwebdir ./cweave common.w || exit 1
+  CWEBINPUTS=$srcdir/cwebdir $_cweave common.w || exit 1
 

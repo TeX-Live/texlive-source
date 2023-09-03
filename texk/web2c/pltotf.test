@@ -4,15 +4,19 @@
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pltotf=$BinDir/pltotf$ExeExt
+
 test -d tests || mkdir -p tests
 
-./pltotf -help || exit 1
+$_pltotf -help || exit 1
 
-./pltotf -version || exit 1
+$_pltotf -version || exit 2
 
-./pltotf -verbose $srcdir/tests/badpl && exit 1
+$_pltotf -verbose $srcdir/tests/badpl && exit 3
 
-./pltotf -verbose $srcdir/tests/cmr10 tests/xcmr10 || exit 1
+$_pltotf -verbose $srcdir/tests/cmr10 tests/xcmr10 || exit 4
 
-cmp $srcdir/tests/cmr10.tfm tests/xcmr10.tfm || exit 1
+cmp $srcdir/tests/cmr10.tfm tests/xcmr10.tfm || exit 5
 
