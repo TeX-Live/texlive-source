@@ -21,6 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# 2023-09-03 0.0.15
 package bibcop;
 
 use warnings;
@@ -40,6 +41,7 @@ my %blessed = (
   'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?', 'url?'],
 );
 
+# See https://research.arizona.edu/faq/what-do-you-mean-when-you-say-use-title-case-proposalproject-titles
 my %minors = map { $_ => 1 } qw/in of at to by the a an and or as if up via yet nor but off on for into/;
 
 # Check the presence of mandatory tags.
@@ -130,9 +132,6 @@ sub check_author {
     return;
   }
   my $author = clean_tex($entry{'author'});
-  if (index($author, '{') != -1) {
-    return;
-  }
   my @authors = split(/\s+and\s+/, $author);
   my $pos = 0;
   for my $a (@authors) {
@@ -140,11 +139,25 @@ sub check_author {
     if ($a eq 'others') {
       next;
     }
-    if (not $a =~ /^[A-Z][^ .]+( [A-Z][^ .]+)*(,( [A-Z][^ ]+)+)?$/) {
-      return "The format of @{[as_position($pos)]} 'author' is wrong, use something like 'Knuth, Donald E. and Duane, Bibby'"
+    if (index($a, ' ') != -1 and index($a, ',') == -1) {
+      return "The last name should go first, all other names must follow, after a comma in @{[as_position($pos)]} 'author', as in 'Knuth, Donald E.'";
     }
-    if ($author =~ /.*[A-Z]([ ,]|$).*/) {
-      return "A shortened name must have a tailing dot in @{[as_position($pos)]} 'author', as in 'Knuth, Donald E.'"
+    my $npos = 0;
+    for my $name (split(/[ ,]+/, $a)) {
+      $npos += 1;
+      if (index($name, '{') != -1) {
+        next;
+      }
+      if ($name =~ /^[A-Z]\.$/) {
+        next;
+      }
+      if ($name =~ /^[A-Z][^.]+$/) {
+        next
+      }
+      if ($name =~ /^[A-Z]$/) {
+        return "A shortened name must have a tailing dot in @{[as_position($pos)]} 'author', as in 'Knuth, Donald E.'";
+      }
+      return "In @{[as_position($pos)]} 'author' @{[as_position($npos)]} name looks suspicious ($name), use something like 'Knuth, Donald E. and Duane, Bibby'";
     }
   }
 }
@@ -386,7 +399,7 @@ sub check_doi {
   my (%entry) = @_;
   if (exists $entry{'doi'}) {
     my $doi = $entry{'doi'};
-    if (not $doi =~ /^[0-9a-zA-Z.]+\/[0-9a-zA-Z._\-)(]+$/) {
+    if (not $doi =~ /^[0-9a-zA-Z.]+\/[0-9a-zA-Z._\-)(><:;]+$/) {
       return "The format of the 'doi' is wrong"
     }
   }
@@ -553,9 +566,26 @@ sub fix_pages {
   if ($value =~ /^[1-9][0-9]*$/) {
     return $value;
   }
-  my ($left, $right) = split(/---|--|-|—|\s/, $value);
+  my ($left, $right) = split(/---|--|-|–|—|\s/, $value);
+  if ($left eq '') {
+    $left = $right;
+  }
+  if ($right eq '') {
+    $right = $left;
+  }
   $left =~ s/^0+//g;
   $right =~ s/^0+//g;
+  if ($left !~ /^[0-9]*$/ or $right !~ /^[0-9]*$/) {
+    return $value;
+  }
+  if ($left + 0 gt $right + 0) {
+    my $tmp = $left;
+    $left = $right;
+    $right = $tmp;
+  }
+  if ($left eq $right) {
+    return $left;
+  }
   return $left . '--' . $right;
 }
 
@@ -604,8 +634,10 @@ sub entries {
     if ($char eq ' ') {
       # ignore the white space
     } elsif ($char eq '%' and not($s eq 'quote')) {
-      $interrupted = $s;
-      $s = 'comment';
+      if ($pos eq 0 or substr($bib, $pos - 1, 1) ne '\\') {
+        $interrupted = $s;
+        $s = 'comment';
+      }
     } elsif ($char eq "\n") {
       # ignore the EOL
       $lineno = $lineno + 1;
@@ -620,7 +652,7 @@ sub entries {
         $s = 'start';
         $acc = '';
       } else {
-        warning("Each BibTeX entry must start with '\@', what is '$char'?");
+        warning("Each BibTeX entry must start with '\@', what is '$char' at line no.$lineno?");
         last;
       }
     } elsif ($char =~ /[a-zA-Z]/ and $s eq 'start') {
@@ -642,7 +674,7 @@ sub entries {
     } elsif ($char eq '=' and $s eq 'tag') {
       my $t = lc($acc);
       if (exists $entry{$t}) {
-        warning("The tag '$t' is seen more than once");
+        warning("The tag '$t' is seen more than once at line no.$lineno");
       }
       $tag = $t;
       $s = 'value';
@@ -829,9 +861,9 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.14');
+  info('0.0.15 2023-09-03');
 } else {
-  my ($file) = grep { not($_ =~ /^--.*$/) } @ARGV;
+  my ($file) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $file) {
     error('File name must be specified');
   }
@@ -903,4 +935,5 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   }
 }
 
+# In order to finish it with success:
 1;
