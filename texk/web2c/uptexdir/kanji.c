@@ -16,7 +16,7 @@ boolean check_kanji (integer c)
 {
     if (c >= CS_TOKEN_FLAG) return false;
     else if (!(XXHi(c)>=KCAT_KANJI && XXHi(c)<=KCAT_HANGUL)) return false;
-    else return is_char_kanji(c);
+    else return is_char_kanji(c & CJK_TOKEN_FLAG);
 }
 
 boolean is_char_ascii(integer c)
@@ -27,7 +27,7 @@ boolean is_char_ascii(integer c)
 boolean is_char_kanji(integer c)
 {
     if (is_internalUPTEX()) 
-        return (c >= 0);
+        return ((c >= 0)&&(c<CJK_CHAR_LIMIT));
     else
         return iskanji1(Hi(c)) && iskanji2(Lo(c));
 }

@@ -670,7 +670,6 @@ while k<pool_ptr do
 @z
 
 @x
-
 @d ptex_revision_code=14 {command code for \.{\\ptexrevision}}
 @d ptex_convert_codes=15 {end of \pTeX's command codes}
 @y
@@ -783,22 +782,6 @@ if (cur_cmd>=kanji)and(cur_cmd<=hangul) then
 @z
 
 @x
-loop@+  begin get_x_token;
-  reswitch: case cur_cmd of
-  letter,other_char,char_given:@<Append a new letter or hyphen@>;
-  char_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=char_given;
-    goto reswitch;
-    end;
-@y
-loop@+  begin get_x_token;
-  reswitch: case cur_cmd of
-  letter,other_char,char_given,kchar_given:@<Append a new letter or hyphen@>;
-  char_num,kchar_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=char_given;
-    goto reswitch;
-    end;
-@z
-
-@x
 hmode+kanji,hmode+kana,hmode+other_kchar: goto main_loop_j;
 hmode+char_given:
   if is_char_ascii(cur_chr) then goto main_loop else goto main_loop_j;
@@ -811,11 +794,11 @@ hmode+no_boundary: begin get_x_token;
    (cur_cmd=char_given)or(cur_cmd=char_num) then cancel_boundary:=true;
 @y
 hmode+kanji,hmode+kana,hmode+other_kchar,hmode+hangul: goto main_loop_j;
-hmode+kchar_given:
-  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr)); goto main_loop_j; end;
 hmode+char_given:
   if check_echar_range(cur_chr) then goto main_loop
   else begin cur_cmd:=kcat_code(kcatcodekey(cur_chr)); goto main_loop_j; end;
+hmode+kchar_given:
+  begin cur_cmd:=kcat_code(kcatcodekey(cur_chr)); goto main_loop_j; end;
 hmode+char_num: begin scan_char_num; cur_chr:=cur_val;
   if check_echar_range(cur_chr) then goto main_loop
   else begin cur_cmd:=kcat_code(kcatcodekey(cur_chr)); goto main_loop_j; end;
@@ -874,6 +857,9 @@ if cur_cmd=char_given then
   begin if check_echar_range(cur_chr) then goto main_loop_lookahead+1
   else begin cur_cmd:=kcat_code(kcatcodekey(cur_chr)); @<goto |main_lig_loop|@>; end;
   end;
+if cur_cmd=kchar_given then
+  begin cur_chr:=cur_chr mod max_cjk_val;
+  cur_cmd:=kcat_code(kcatcodekey(cur_chr)); @<goto |main_lig_loop|@>; end;
 if cur_cmd=char_num then
   begin scan_char_num; cur_chr:=cur_val;
   if check_echar_range(cur_chr) then goto main_loop_lookahead+1
@@ -995,11 +981,20 @@ letter,other_char,char_given:
 @x
     KANJI(cx):=cur_chr;
 kanji,kana,other_kchar: cx:=cur_chr;
+char_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=char_given;
+  goto reswitch;
+  end;
 @y
     KANJI(cx):=cur_chr;
+kanji,kana,other_kchar,hangul: cx:=cur_chr;
 kchar_given:
   KANJI(cx):=cur_chr;
-kanji,kana,other_kchar,hangul: cx:=cur_chr;
+char_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=char_given;
+  goto reswitch;
+  end;
+kchar_num: begin scan_char_num; cur_chr:=cur_val; cur_cmd:=kchar_given;
+  goto reswitch;
+  end;
 @z
 
 @x

@@ -1,3 +1,10 @@
+2023-09-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* uptex-m.ch: Proper support for \kchar in math mode.
+	https://github.com/texjporg/tex-jp-build/pull/159
+	* kanji.c: Check character code range < 2^24.
+	https://github.com/texjporg/tex-jp-build/issues/160
+
 2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/uptex.am, {gkhuge,newjfm,nissya,ptriptest,
