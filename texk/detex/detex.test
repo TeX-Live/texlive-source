@@ -18,15 +18,20 @@ $DIFF --strip-trailing-cr $0 $0 \
 
 echo '#' >texmf.cnf
 
+rc=0
+
+$_detex -v
+
 $_detex $srcdir/test.tex >test.out \
 	&& $DIFF test.out $srcdir/test.lout \
-	|| exit 1
+	|| rc=1
 
 $_detex -l $srcdir/test.tex >test.out \
 	&& $DIFF test.out $srcdir/test.lout \
-	|| exit 2
+	|| rc=2
 
 $_detex -t $srcdir/test.tex >test.out \
 	&& $DIFF test.out $srcdir/test.tout \
-	|| exit 3
+	|| rc=3
 
+exit $rc
