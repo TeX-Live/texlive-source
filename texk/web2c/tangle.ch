@@ -202,6 +202,12 @@ rewrite (Pascal_file, pascal_name);
       begin while not eoln(f) do vgetc(f);
 @z
 
+@x [31] Fix typo as in weave.web.
+procedure error; {prints '\..' and location of error message}
+@y
+procedure error; {prints `\..' and location of error message}
+@z
+
 @x [34] Fix `jump_out'.
 and jumps out of the program. This is the only non-local |goto| statement
 in \.{TANGLE}. It is used when no recovery from a particular error has
