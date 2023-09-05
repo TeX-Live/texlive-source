@@ -19729,6 +19729,62 @@ fi
 
 
 
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for nullptr" >&5
+printf %s "checking for nullptr... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  int* x = nullptr;
+  return !!x;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: supported" >&5
+printf "%s\n" "supported" >&6; }
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not supported" >&5
+printf "%s\n" "not supported" >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for nullptr with -std=gnu++11" >&5
+printf %s "checking for nullptr with -std=gnu++11... " >&6; }
+  OLD_CXX="$CXX"
+  CXX="$CXX -std=gnu++11"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+    int* x = nullptr;
+    return !!x;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: supported" >&5
+printf "%s\n" "supported" >&6; }
+else $as_nop
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not supported" >&5
+printf "%s\n" "not supported" >&6; }
+    as_fn_error $? "The $OLD_CXX compiler does not support the C++11 \`nullptr\` keyword." "$LINENO" 5
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+
+
 
 printf "%s\n" "#define WORDS_BIGENDIAN_SET 1" >>confdefs.h
 

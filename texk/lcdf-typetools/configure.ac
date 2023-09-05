@@ -14,8 +14,8 @@ dnl
 dnl *********************************************************************
 dnl
 m4_include([version.ac])[] dnl define lcdf_typetools_version
-AC_INIT([LCDF typetools (TeX Live)], lcdf_typetools_version, [tex-k@tug.org])
-AC_PREREQ([2.65])
+AC_INIT([LCDF typetools (TeX Live)],[lcdf_typetools_version],[tex-k@tug.org])
+AC_PREREQ([2.71])
 AC_CONFIG_SRCDIR([lcdf-typetools-src/NEWS.md])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
@@ -43,7 +43,7 @@ AC_ARG_ENABLE([adobe-code],
   [AS_HELP_STRING([--disable-adobe-code], [do not include Adobe code])],
   [], [enable_adobe_code=yes])
 if test "$enable_adobe_code" = yes; then
-   AC_DEFINE([HAVE_ADOBE_CODE], [1], [Define to incldue Adobe code in output fonts.])
+   AC_DEFINE([HAVE_ADOBE_CODE], [1], [Define to include Adobe code in output fonts.])
 fi
 
 AC_CXX_TEMPLATE_OBJS
@@ -55,7 +55,7 @@ dnl
 dnl directory searching
 dnl
 
-AC_LANG_C
+AC_LANG([C])
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([fcntl.h unistd.h sys/time.h sys/wait.h])
 
@@ -64,17 +64,36 @@ dnl
 dnl <new> and/or <new.h>
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([whether <new> works], ac_cv_good_new_hdr,
-[AC_TRY_LINK([#include <new>], [
+[AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <new>]], [[
   int a;
   int *b = new(&a) int;
   return 0;
-], ac_cv_good_new_hdr=yes, ac_cv_good_new_hdr=no)])
+]])],[ac_cv_good_new_hdr=yes],[ac_cv_good_new_hdr=no])])
 if test "$ac_cv_good_new_hdr" = yes; then
    AC_DEFINE([HAVE_NEW_HDR], [1], [Define if <new> exists and works.])
 fi
 AC_CHECK_HEADERS([new.h])
+
+
+dnl
+dnl `nullptr`
+dnl
+
+AC_MSG_CHECKING([for nullptr])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
+  int* x = nullptr;
+  return !!x;
+]])],[AC_MSG_RESULT([supported])],[AC_MSG_RESULT([not supported])
+  AC_MSG_CHECKING([for nullptr with -std=gnu++11])
+  OLD_CXX="$CXX"
+  CXX="$CXX -std=gnu++11"
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([], [[
+    int* x = nullptr;
+    return !!x;
+  ]])],[AC_MSG_RESULT([supported])],[AC_MSG_RESULT([not supported])
+    AC_MSG_ERROR([The $OLD_CXX compiler does not support the C++11 `nullptr` keyword.])])])
 
 
 dnl
@@ -90,43 +109,41 @@ dnl functions such as strerror, working strtod, working strnlen, strtoul,
 dnl time headers such as unistd.h
 dnl
 
-AC_LANG_C
+AC_LANG([C])
 need_fixlibc=0
 AC_CHECK_FUNCS([strerror], [], [need_fixlibc=1])
 
 AC_CACHE_CHECK([for broken strtod], [ac_cv_broken_strtod],
-[AC_TRY_RUN([#include <stdio.h>
+[AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <stdio.h>
 #include <stdlib.h>
 int main(int c, char **v) {
   char s[] = "12 ";
   char *endp;
   double d = strtod(s, &endp);
   return (s + 2) == endp;
-}], [ac_cv_broken_strtod=yes], [ac_cv_broken_strtod=no],
-[ac_cv_broken_strtod=no])])
+}]])],[ac_cv_broken_strtod=yes],[ac_cv_broken_strtod=no],[ac_cv_broken_strtod=no])])
 if test "x$ac_cv_broken_strtod" = xyes; then
     need_fixlibc=1
     AC_DEFINE([HAVE_BROKEN_STRTOD], [1], [Define if strtod is broken.])
 fi
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CHECK_DECLS([strnlen], [], [], [#include <string.h>])
 AC_CHECK_FUNCS([strnlen], [have_strnlen=1], [need_fixlibc=1])
 if test "x$have_strnlen" = x1; then
     AC_CACHE_CHECK([for broken strnlen], [ac_cv_broken_strnlen],
-    [AC_TRY_RUN([#include <string.h>
+    [AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <string.h>
 #include <stdio.h>
 int main(int c, char **v) {
   char s[] = "01234567891";
   return strnlen(s, 10) == 10;
-}], [ac_cv_broken_strnlen=yes], [ac_cv_broken_strnlen=no],
-[ac_cv_broken_strnlen=no])])
+}]])],[ac_cv_broken_strnlen=yes],[ac_cv_broken_strnlen=no],[ac_cv_broken_strnlen=no])])
     if test "x$ac_cv_broken_strnlen" = xyes; then
 	need_fixlibc=1
 	AC_DEFINE([HAVE_BROKEN_STRNLEN], [1], [Define if strnlen is broken.])
     fi
 fi
-AC_LANG_C
+AC_LANG([C])
 
 AC_CHECK_FUNCS([ctime ftruncate mkstemp sigaction strdup strtoul vsnprintf waitpid])
 AC_CHECK_FUNC([floor], [], [AC_CHECK_LIB([m], [floor])])
@@ -186,7 +203,7 @@ dnl
 dnl ntohs, ntohl (need them in C++ code)
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CHECK_HEADERS(byteorder.h netinet/in.h sys/param.h)
 AC_MSG_CHECKING([whether ntohs and ntohl are defined])
 ac_ntoh_defined=no
@@ -238,7 +255,7 @@ Cannot find a definition for ntohs and/or ntohl!
     AC_MSG_ERROR([exiting])
   fi
 fi
-AC_LANG_C
+AC_LANG([C])
 AC_SEARCH_LIBS([ntohs], [-lnet -lwinsock32])
 
 KPSE_CHECK_WIN32
@@ -250,10 +267,10 @@ dnl
 dnl is va_list addressable?
 dnl
 
-AC_LANG_CPLUSPLUS
+AC_LANG([C++])
 AC_CACHE_CHECK([for addressable va_list type],
     ac_cv_va_list_addr,
-    [AC_TRY_COMPILE([#include <stdarg.h>
+    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>
 void f(va_list *) {
 }
 void g(va_list val) {
@@ -264,7 +281,7 @@ void h(int a, ...) {
     va_start(val, a);
     g(val);
     va_end(val);
-}], [h(2, 3, 4);], ac_cv_va_list_addr=yes, ac_cv_va_list_addr=no)])
+}]], [[h(2, 3, 4);]])],[ac_cv_va_list_addr=yes],[ac_cv_va_list_addr=no])])
 if test "x$ac_cv_va_list_addr" = xyes; then
     AC_DEFINE(HAVE_ADDRESSABLE_VA_LIST, 1, [Define if the va_list type is addressable.])
 fi
@@ -277,13 +294,11 @@ dnl
 m4_include([ac/lcdf-typetools.ac])
 
 SELECTED_SUBDIRS=
-AC_FOREACH([Kpse_Prog], kpse_lcdf_typetools_progs,
-           [test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
+m4_foreach_w([Kpse_Prog],[kpse_lcdf_typetools_progs],[test "x$enable_[]Kpse_Prog" = xno || SELECTED_SUBDIRS="$SELECTED_SUBDIRS Kpse_Prog"
 ])
 AC_SUBST(SELECTED_SUBDIRS)
 
-AC_FOREACH([Kpse_Opt], kpse_otftotfm_auto_opts,
-           [AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
+m4_foreach_w([Kpse_Opt],[kpse_otftotfm_auto_opts],[AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
                   [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
                              [Define to run ]Kpse_Opt[ from otftotfm.])])
 ])
@@ -421,7 +436,6 @@ dnl
 AC_SUBST([LCDF_TYPETOOLS_TREE], [lcdf-typetools-src])
 
 AC_CONFIG_FILES([Makefile lcdf-typetools-src/Makefile])
-AC_FOREACH([Kpse_Prog], [liblcdf libefont] kpse_lcdf_typetools_progs,
-           [AC_CONFIG_FILES([lcdf-typetools-src/]Kpse_Prog[/Makefile])])
+m4_foreach_w([Kpse_Prog],[liblcdf libefont kpse_lcdf_typetools_progs],[AC_CONFIG_FILES([lcdf-typetools-src/]Kpse_Prog[/Makefile])])
 
 AC_OUTPUT
