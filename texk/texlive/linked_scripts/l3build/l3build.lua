@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-07-20"
+release_date = "2023-09-05"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -117,6 +117,17 @@ if options["epoch"] then
   forcedocepoch   = true
 end
 epoch = normalise_epoch(epoch)
+-- LuaTeX needs the `-utc` option
+if next(specialformats) and next(specialformats.latex)
+  and next (specialformats.latex.luatex) then
+  local options = specialformats.latex.luatex.options
+  specialformats.latex.luatex.options = (options and (options .. " ") or "") .. "-utc"
+end
+if next(specialformats) and next(specialformats["latex-dev"])
+  and next (specialformats["latex-dev"].luatex) then
+  local options = specialformats["latex-dev"].luatex.options
+  specialformats["latex-dev"].luatex.options = (options and (options .. " ") or "") .. "-utc"
+end
 
 --
 -- Deal with multiple configs for tests
