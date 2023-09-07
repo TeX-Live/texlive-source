@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-09-05"
+release_date = "2023-09-07"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -118,15 +118,22 @@ if options["epoch"] then
 end
 epoch = normalise_epoch(epoch)
 -- LuaTeX needs the `-utc` option
-if next(specialformats) and next(specialformats.latex)
-  and next (specialformats.latex.luatex) then
-  local options = specialformats.latex.luatex.options
-  specialformats.latex.luatex.options = (options and (options .. " ") or "") .. "-utc"
+if forcecheckepoch then
+  if next(specialformats) and next(specialformats.latex)
+    and next (specialformats.latex.luatex) then
+    local options = specialformats.latex.luatex.options
+    specialformats.latex.luatex.options = (options and (options .. " ") or "") .. "-utc"
+  end
+  if next(specialformats) and next(specialformats["latex-dev"])
+    and next (specialformats["latex-dev"].luatex) then
+    local options = specialformats["latex-dev"].luatex.options
+    specialformats["latex-dev"].luatex.options = (options and (options .. " ") or "") .. "-utc"
+  end
 end
-if next(specialformats) and next(specialformats["latex-dev"])
-  and next (specialformats["latex-dev"].luatex) then
-  local options = specialformats["latex-dev"].luatex.options
-  specialformats["latex-dev"].luatex.options = (options and (options .. " ") or "") .. "-utc"
+if forcedocepoch then
+  if match(typesetexe,"luatex") or match(typesetexe,"lualatex") then
+    typesetopts = typsetopts .. " -utc"
+  end
 end
 
 --
