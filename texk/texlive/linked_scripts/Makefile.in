@@ -427,6 +427,7 @@ texmf_other_scripts = \
 	pythontex/depythontex.py \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
+	runtexshebang/runtexshebang.lua \
 	spix/spix.py \
 	splitindex/splitindex.pl \
 	srcredact/srcredact.pl \
