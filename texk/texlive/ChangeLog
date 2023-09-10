@@ -1,3 +1,11 @@
+2023-09-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* windows_wrapper/{calldll,callexe,runscript_dll,runscript_exe,
+	wrunscript_exe}.c, windows_wrapper/{readme,tlmgr-gui}.txt,
+	windows_wrapper/context/mtxrun_{dll,exe}.c,
+	windows_wrapper/context/readme.txt:
+	Convert newline from CRLF to LF.
+
 2023-02-28  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* Makefile.am (EXTRA_DIST): now just windows_wrapper.
