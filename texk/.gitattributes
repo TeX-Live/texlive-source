@@ -61,7 +61,3 @@
 *.bad  text eol=lf
 *.gasp text eol=lf
 *.maxp text eol=lf
-
-# for windows_wrapper
-/texlive/windows_wrapper/**/*.c   text eol=crlf
-/texlive/windows_wrapper/**/*.txt text eol=crlf
