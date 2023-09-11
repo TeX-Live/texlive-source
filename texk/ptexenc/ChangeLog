@@ -1,3 +1,7 @@
+2023-09-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* unicode.c (UPTEXtoUCS): if >=UCS_MAX not >UCS_MAX.
+
 2023-02-09  Karl Berry  <karl@tug.org>
 
 	* version.ac: remove /dev, for TL23.
