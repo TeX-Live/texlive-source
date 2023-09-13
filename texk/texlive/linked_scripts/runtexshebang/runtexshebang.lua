@@ -22,15 +22,61 @@
 -- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 -- THE SOFTWARE.
 
-if not ( #arg == 1 ) then
-   print("runtexshebang 20230909 v0.3")
-   print("")
-   print("Usage:	runtexshebang  [input.tex]")
-   os.exit(0)
+NAME = "runtexshebang"
+VERSION = "20230913 v0.4"
+USAGE = [[
+Usage:	runtexshebang [input.tex]
+
+Options:
+	-h, --help	print help
+	-v, --version	print version
+
+See also:
+The command
+	texdoc runtexshebang
+should give you access to the README.
+]]
+
+function whoami()
+  print(NAME .. " " .. VERSION)
 end
 
-local line_ctr = 0
-for line in io.lines(arg[1]) do
+function help()
+   whoami()
+   print()
+   print(USAGE)
+end
+
+if #arg == 0 then
+  help()
+  os.exit(0)
+end
+
+--
+texfilename = ""
+narg = 1
+repeat
+  this_arg = arg[narg]
+  -- replace double dash by single dash at the beginning
+  this_arg = string.gsub(this_arg, "^%-%-", "-")
+
+  if this_arg == "-h" or this_arg == "-help" then
+     help()
+     os.exit(0)
+  elseif this_arg == "-v" or this_arg == "-version" then
+     whoami()
+     os.exit(0)
+  else
+     texfilename = this_arg
+  end --if this_arg == ...
+  narg = narg+1
+until narg > #arg
+
+-- main process
+whoami()
+
+line_ctr = 0
+for line in io.lines(texfilename) do
    line_ctr = line_ctr + 1
    if line_ctr > 20 then break end
 
