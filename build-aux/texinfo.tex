@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2023-08-13.14}
+\def\texinfoversion{2023-09-12.17}
 %
 % Copyright 1985, 1986, 1988, 1990-2023 Free Software Foundation, Inc.
 %
@@ -11867,9 +11867,13 @@ directory should work if nowhere else does.}
   \def\c{\loadconf\c}%
   % Definition for the first newline read in the file
   \def ^^M{\loadconf}%
-  % In case the first line has a whole-line command on it
+  % In case the first line has a whole-line or environment command on it
   \let\originalparsearg\parsearg%
   \def\parsearg{\loadconf\originalparsearg}%
+  %
+  % \startenvironment is in the expansion of commands defined with \envdef
+  \let\originalstartenvironment\startenvironment%
+  \def\startenvironment{\loadconf\startenvironment}%
 }}
 
 
@@ -11897,6 +11901,7 @@ directory should work if nowhere else does.}
   \enableemergencynewline
   \let\c=\comment
   \let\parsearg\originalparsearg
+  \let\startenvironment\originalstartenvironment
   %
   % Also turn back on active characters that might appear in the input
   % file name, in case not using a pre-dumped format.
