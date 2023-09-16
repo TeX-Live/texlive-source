@@ -1,3 +1,9 @@
+2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uniblock.c: Update references Unicode blocks Blocks-15.1.0.txt
+	and CMap Adobe-GB1-6.
+	* version.h, configure.ac: Bump version to 20230916.
+
 2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* makejvf.test:

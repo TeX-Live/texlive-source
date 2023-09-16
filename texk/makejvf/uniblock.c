@@ -16,14 +16,14 @@ struct ublock {
 /*
  References:
  [1] http://www.unicode.org/Public/UNIDATA/Blocks.txt
-        Blocks-15.0.0.txt
-        Date: 2022-01-28, 20:58:00 GMT [KW]
+        Blocks-15.1.0.txt
+        Date: 2023-07-28, 15:47:20 GMT
  [2] CMap files
      https://github.com/adobe-type-tools/cmap-resources/
      Adobe-CNS1-7/                  Adobe-CNS1-7 materials
         cid2code.txt (Version 10/24/2017)
-     Adobe-GB1-5/                   Adobe-GB1-5 materials
-        cid2code.txt (Version 12/05/2017)
+     Adobe-GB1-6/                   Adobe-GB1-6 materials
+        cid2code.txt (Version 04/20/2023)
      Adobe-Japan1-7/                Adobe-Japan1-7 materials
         cid2code.txt (Version 05/18/2022)
      Adobe-Korea1-2/                Adobe-Korea1-2 materials
@@ -355,10 +355,11 @@ static struct ublock ublock_data[] = {
   {0x1FA70, 0x1FAFF, ENTRY_NO  , 0}, /* Symbols and Pictographs Extended-A */
   {0x1FB00, 0x1FBFF, ENTRY_NO  , 0}, /* Symbols for Legacy Computing */
   {0x20000, 0x2A6DF, ENTRY_GCJ , 1}, /* CJK Unified Ideographs Extension B */
-  {0x2A700, 0x2B73F, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension C */
-  {0x2B740, 0x2B81F, ENTRY_J   , 1}, /* CJK Unified Ideographs Extension D */
-  {0x2B820, 0x2CEAF, ENTRY_C   , 1}, /* CJK Unified Ideographs Extension E */
+  {0x2A700, 0x2B73F, ENTRY_GCJ , 1}, /* CJK Unified Ideographs Extension C */
+  {0x2B740, 0x2B81F, ENTRY_GJ  , 1}, /* CJK Unified Ideographs Extension D */
+  {0x2B820, 0x2CEAF, ENTRY_GC  , 1}, /* CJK Unified Ideographs Extension E */
   {0x2CEB0, 0x2EBEF, ENTRY_CJ  , 1}, /* CJK Unified Ideographs Extension F */
+  {0x2EBF0, 0x2EE5F, ENTRY_NO  , 1}, /* CJK Unified Ideographs Extension I */
   {0x2F800, 0x2FA1F, ENTRY_CJ  , 1}, /* CJK Compatibility Ideographs Supplement */
   {0x30000, 0x3134F, ENTRY_NO  , 1}, /* CJK Unified Ideographs Extension G */
   {0x31350, 0x323AF, ENTRY_NO  , 1}, /* CJK Unified Ideographs Extension H */
