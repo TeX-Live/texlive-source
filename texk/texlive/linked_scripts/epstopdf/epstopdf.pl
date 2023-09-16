@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 67585 2023-07-08 21:10:52Z karl $
+# $Id: epstopdf.pl 68289 2023-09-15 22:17:54Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,10 @@
 #
 # emacs-page
 #
-my $ver = "2.32";
+my $ver = "2.33";
+#  2023/09/15 2.33 (Karl Berry)
+#    * Cygwin PATH separator is :. Report from Alois Steindl,
+#    https://tug.org/pipermail/tex-live/2023-September/049474.html
 #  2023/07/08 2.32 (Karl Berry)
 #    * check that kpsewhich and gs are in PATH.
 #    * correct TL path for kpsewhich to bin/windows.
@@ -200,7 +203,7 @@ my $ver = "2.32";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 67585 2023-07-08 21:10:52Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 68289 2023-09-15 22:17:54Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2023 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -542,7 +545,7 @@ sub check_prog_exists {
   }
 
   # not absolute, check path
-  for my $dir (split ($on_windows_or_cygwin ? ";" : ":", $ENV{"PATH"})) {
+  for my $dir (split ($on_windows ? ";" : ":", $ENV{"PATH"})) {
     $dir = "." if $dir eq ""; # empty path element
     debug " Checking dir $dir";
     if (-x "$dir/$prog") {
