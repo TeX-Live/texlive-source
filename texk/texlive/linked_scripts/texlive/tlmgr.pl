@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 66798 2023-04-08 00:15:21Z preining $
+# $Id: tlmgr.pl 68283 2023-09-15 13:11:11Z preining $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 66798 $';
-my $datrev = '$Date: 2023-04-08 02:15:21 +0200 (Sat, 08 Apr 2023) $';
+my $svnrev = '$Revision: 68283 $';
+my $datrev = '$Date: 2023-09-15 15:11:11 +0200 (Fri, 15 Sep 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -3371,8 +3371,11 @@ sub action_update {
       if ($pkg =~ m/$CriticalPackagesRegexp/) {
         debug("Not removing critical package $pkg\n");
       } else {
-        $localtlpdb->remove_package($pkg, 
-          "remove-warn-files" => \%do_warn_on_move);
+        if (! $localtlpdb->remove_package($pkg, 
+                "remove-warn-files" => \%do_warn_on_move)) {
+          info("aborted\n") unless $::machinereadable;
+          next;
+        }
       }
       if ($remotetlpdb->install_package($pkg, $localtlpdb)) {
         # installation succeeded because we got a reference
@@ -10243,7 +10246,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 66798 2023-04-08 00:15:21Z preining $
+$Id: tlmgr.pl 68283 2023-09-15 13:11:11Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
@@ -10253,4 +10256,4 @@ $Id: tlmgr.pl 66798 2023-04-08 00:15:21Z preining $
 ### tab-width: 2
 ### indent-tabs-mode: nil
 ### End:
-# vim:set tabstop=2 expandtab: #
+# vim:set tabstop=2 shiftwidth=2 expandtab: #
