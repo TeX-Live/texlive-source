@@ -1,3 +1,12 @@
+2022-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, uptex_version.h:
+	upTeX version u1.30.
+	* uptex-m.ch, upbibtex.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-15.1.0.txt Date: 2023-07-28, 15:47:20 GMT".
+	* tests/kcat.tex, tests/upkcat.txt: Update a test.
+
 2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {ptriptest,uptriptest,upver}.test:

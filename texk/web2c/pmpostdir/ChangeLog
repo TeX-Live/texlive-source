@@ -1,3 +1,7 @@
+2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pmp.ch: Bump upmpost version to 2.02-0.04-u1.30.
+
 2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {,u}{pmpost,pmpsamp}.test:
@@ -6,6 +10,10 @@
 2023-03-09  Karl Berry  <karl@tug.org>
 
 	* TL'23 release.
+
+2022-07-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pmp.ch: Bump upmpost version to 2.02-0.04-u1.29.
 
 2022-03-21  Karl Berry  <karl@tug.org>
 
