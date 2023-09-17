@@ -4,6 +4,12 @@
 # Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+W2CDir=${W2CDir:-..}
+ExeExt=${ExeExt:-}
+_mf=$W2CDir/mf$ExeExt
+_tftopl=$W2CDir/tftopl$ExeExt
+_gftype=$W2CDir/gftype$ExeExt
+
 # pre-generated test results in the repository are stored in LF
 # but the output might be written in CRLF on some platform.
 # if 'diff --strip-trailing-cr' is available, exploit it.
@@ -62,7 +68,7 @@ rm -f trap.mf
 $LN_S $testdir/trap.mf . || exit 1
 
 rm -f trap.base
-../mf --progname=inimf <$testdir/mftrap1.in >mftrapin.fot
+$_mf --progname=inimf <$testdir/mftrap1.in >mftrapin.fot
 if test ! -s trap.base; then
   echo "*** trap.base not created by mftrap1.in, investigate!" >&2
   exit 1
@@ -70,16 +76,16 @@ fi
 mv trap.log mftrapin.log || exit 1
 diff $testdir/mftrapin.log mftrapin.log
 
-../mf --progname=inimf <$testdir/mftrap2.in >mftrap.fot
+$_mf --progname=inimf <$testdir/mftrap2.in >mftrap.fot
 mv trap.log mftrap.log || exit 1
 mv trap.tfm mftrap.tfm || exit 1
 diff $testdir/mftrap.fot mftrap.fot
 diff $testdir/mftrap.log mftrap.log
 
-../tftopl ./mftrap.tfm mftrap.pl || exit 1
+$_tftopl ./mftrap.tfm mftrap.pl || exit 1
 diff $testdir/mftrap.pl mftrap.pl || is_OK=false
 
-../gftype -m -i ./trap.72270gf >trap.typ || exit 1
+$_gftype -m -i ./trap.72270gf >trap.typ || exit 1
 $DIFF $testdir/trap.typ trap.typ
 
 for f in mftrapin.log mftrap.fot mftrap.log trap.typ; do

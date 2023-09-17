@@ -1,3 +1,8 @@
+2023-09-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* mptraptest.test:
+	Make easier to test on Windows.
+
 2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mp.w: Fixed a buffer overflow.

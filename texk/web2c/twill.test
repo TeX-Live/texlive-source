@@ -5,8 +5,12 @@
 # Copyright 2009 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_twill=$BinDir/twill$ExeExt
+
 test -d tests || mkdir -p tests
 
 TEXMFCNF=$srcdir/../kpathsea WEBINPUTS=$srcdir \
-  ./twill pooltype || exit 1
+  $_twill pooltype || exit 1
 

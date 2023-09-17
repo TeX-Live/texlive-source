@@ -4,12 +4,17 @@
 # Copyright 2011-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_etex=$BinDir/etex$ExeExt
+
 rm -rf ewprob.*
 cp $srcdir/tests/wprob.tex ./ewprob.tex
 
 TEXMFCNF=$srcdir/../kpathsea \
-	./etex --ini --etex --file-line-error --interaction=nonstopmode ewprob.tex
+	$_etex --ini --etex --file-line-error --interaction=nonstopmode ewprob.tex
 
 grep '^\./ewprob\.tex:12: Could not open file NoSuchFile\.eps\.$' \
 	ewprob.log || exit 1
 
+exit 0

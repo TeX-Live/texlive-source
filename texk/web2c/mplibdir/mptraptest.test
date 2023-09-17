@@ -6,6 +6,14 @@ ExeExt=${ExeExt:-}
 _mpost=$BinDir/mpost$ExeExt
 _pltotf=$BinDir/pltotf$ExeExt
 
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 testdir=$abs_srcdir/triptrap
 
 TEXMFCNF=$testdir; export TEXMFCNF
@@ -28,10 +36,10 @@ $LN_S $testdir/mtrap.mp . || exit 1
 
 $_mpost --ini mtrap
 diff $testdir/mtrap.log mtrap.log
-diff $testdir/mtrap.0 mtrap.0
-diff $testdir/mtrap.1 mtrap.1
-diff $testdir/writeo writeo
-diff $testdir/writeo.2 writeo.2
+$DIFF $testdir/mtrap.0 mtrap.0
+$DIFF $testdir/mtrap.1 mtrap.1
+$DIFF $testdir/writeo writeo
+$DIFF $testdir/writeo.2 writeo.2
 
 $LN_S $testdir/trap.mp . || exit 1
 $LN_S $testdir/trap.mpx . || exit 1
