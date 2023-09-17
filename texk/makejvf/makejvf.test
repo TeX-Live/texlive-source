@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2023 Karl Berry <tex-live@tug.org>
 # Copyright 2010-2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -25,13 +25,21 @@ $_makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf $srcdir/tests/gkhugeok urml
   cmp $srcdir/tests/gkhugeok.vf gkhugeok.vf && \
   cmp $srcdir/tests/rml.tfm urml.tfm || exit 4
 
+$_makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf $srcdir/tests/gk256g urml && \
+  cmp $srcdir/tests/gk256.vf gk256g.vf && \
+  cmp $srcdir/tests/rml.tfm urml.tfm || exit 5
+
+$_makejvf -e -i -u custom -t $srcdir/tests/uni10.cnf $srcdir/tests/gk256k urml && \
+  cmp $srcdir/tests/gk256.vf gk256k.vf && \
+  cmp $srcdir/tests/rml.tfm urml.tfm || exit 6
+
 $_makejvf -e $srcdir/tests/skipjfmp rml && \
   cmp $srcdir/tests/skipjfmp.vf skipjfmp.vf && \
-  cmp $srcdir/tests/rml.tfm rml.tfm || exit 5
+  cmp $srcdir/tests/rml.tfm rml.tfm || exit 7
 
 $_makejvf -e -O $srcdir/tests/skipjfmp rml && \
   cmp $srcdir/tests/skipjfmp_omit.vf skipjfmp.vf && \
-  cmp $srcdir/tests/rml.tfm rml.tfm || exit 6
+  cmp $srcdir/tests/rml.tfm rml.tfm || exit 8
 
 TEXMFCNF=$srcdir/../kpathsea \
 	$_makejvf -k0 -a abc && exit 100

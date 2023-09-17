@@ -1,3 +1,8 @@
+2023-09-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* ptex-base.ch: Support more than 256 different glue/kern.
+	* ptex_version.h: Version p4.1.1.
+
 2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {ptriptest,pver}.test:

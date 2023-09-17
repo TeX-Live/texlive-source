@@ -1,0 +1,66 @@
+%#!uptex
+
+%% まずは kern が 256 を超える時：
+%   * (u)pPLtoTF はエラー発生しないが正常に格納できず→修正
+%   * (u)pTFtoPL は元々読み出し OK
+%   * (u)pTeX は元々読み出し OK
+%  ※オリジナルの TeX は max_kerns=5000 まで許容
+
+\prebreakpenalty`…=0
+\prebreakpenalty`・=0
+\prebreakpenalty`。=0
+
+\tracingonline1
+\showboxdepth10000
+\showboxbreadth10000
+\ptextracingfonts2
+
+\font\x=upjisr-h\x
+\setbox0=\hbox{あ……あ}\showbox0
+\box0
+
+\font\y=gk-over256-kern\y
+\setbox2=\hbox{あ……あ}\showbox2
+\box2
+
+\newfam\mx
+\newfam\my
+\textfont\mx=\x \scriptfont\mx=\x \scriptscriptfont\mx=\x
+\textfont\my=\y \scriptfont\my=\y \scriptscriptfont\my=\y
+
+\jfam\mx
+\setbox4=\hbox{$あ……あ$}\showbox4
+\box4
+
+\jfam\my
+\setbox6=\hbox{$あ……あ$}\showbox6
+\box6
+
+%% 次に glue が 256 を超える時：
+%   * (u)pPLtoTF は 256 を超えるとエラー→修正
+%   * (u)pTFtoPL は読み出せず→修正
+%   * (u)pTeX も正常に読み出せず→修正
+%  →新しい (u)pTeX では max_kerns*3 = 15000 まで許容してみた
+
+\font\z=upjisg-h\z
+\setbox0=\hbox{あ・・あ。あ}\showbox0
+\box0
+
+\font\w=gk-over256-glue\w
+\setbox2=\hbox{あ・・あ。あ}\showbox2
+\box2
+
+\newfam\mz
+\newfam\mw
+\textfont\mz=\z \scriptfont\mz=\z \scriptscriptfont\mz=\z
+\textfont\mw=\w \scriptfont\mw=\w \scriptscriptfont\mw=\w
+
+\jfam\mz
+\setbox4=\hbox{$あ・・あ。あ$}\showbox4
+\box4
+
+\jfam\mw
+\setbox6=\hbox{$あ・・あ。あ$}\showbox6
+\box6
+
+\bye

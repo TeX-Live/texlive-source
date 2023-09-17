@@ -38,11 +38,11 @@ int jfmread(int kcode)
 				if (glue_kern[(gk_ind+i)*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == ctype) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
-						gk2_ind = glue_kern[(gk_ind+i)*4+3];
+						gk2_ind = (glue_kern[(gk_ind+i)*4+2]-128)*256+glue_kern[(gk_ind+i)*4+3];
 						ll = kern[gk2_ind];
 					}
 					else {
-						gk2_ind = glue_kern[(gk_ind+i)*4+3];
+						gk2_ind = glue_kern[(gk_ind+i)*4+2]*256+glue_kern[(gk_ind+i)*4+3];
 						ll = glue[3*gk2_ind];
 					}
 					break;
@@ -64,11 +64,11 @@ int jfmread(int kcode)
 				if (glue_kern[(gk_ind+i)*4] > 128) break; /* ... skip loop */
 				if (glue_kern[(gk_ind+i)*4+1] == 0) {
 					if (glue_kern[(gk_ind+i)*4+2] >= 128) {
-						gk2_ind = glue_kern[(gk_ind+i)*4+3];
+						gk2_ind = (glue_kern[(gk_ind+i)*4+2]-128)*256+glue_kern[(gk_ind+i)*4+3];
 						rr = kern[gk2_ind];
 					}
 					else {
-						gk2_ind = glue_kern[(gk_ind+i)*4+3];
+						gk2_ind = glue_kern[(gk_ind+i)*4+2]*256+glue_kern[(gk_ind+i)*4+3];
 						rr = glue[3*gk2_ind];
 					}
 					break;

@@ -1,3 +1,9 @@
+2023-09-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* tfmread.c: Support more than 256 different glue/kern.
+	* makejvf.test: Add new tests.
+	* gk256[gk].tfm, gk256.vf: New tests.
+
 2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c: Update references Unicode blocks Blocks-15.1.0.txt

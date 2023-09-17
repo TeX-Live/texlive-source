@@ -1,4 +1,10 @@
-2022-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+2023-09-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* uppltotf.ch, uptftopl.ch: Version p230917.
+	  - Support more than 256 different glue/kern.
+	* gk256.test, tests/gk256[gk].{tex,tfm}: New tests.
+
+2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch, upbibtex.ch, uptex_version.h:
 	upTeX version u1.30.

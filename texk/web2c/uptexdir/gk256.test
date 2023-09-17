@@ -1,0 +1,30 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2023 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uppltotf=$BinDir/uppltotf$ExeExt
+_uptftopl=$BinDir/uptftopl$ExeExt
+
+test -d uptests || mkdir -p uptests
+
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
+
+# Test inputs
+testdir=$srcdir/uptexdir/tests
+
+# Testing upPLtoTF/upTFtoPL for huge GLUEKERN table
+# with over 256 different glue/kern.
+for font in gk256g gk256k; do
+
+  # This test is constructed as a cycle, since JPL source
+  # of gkhugeok.tfm is so large.
+  $_uptftopl -verbose $testdir/$font.tfm uptests/y$font.pl && \
+  $_uppltotf -verbose uptests/y$font.pl uptests/y$font.tfm && \
+  cmp $testdir/$font.tfm uptests/y$font.tfm && echo || exit 1
+
+done
+

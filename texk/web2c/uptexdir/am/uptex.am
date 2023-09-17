@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/uptexdir/am/uptex.am: Makefile fragment for upTeX.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2023 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -161,11 +161,14 @@ bin_links += uptftopl$(EXEEXT):ptftopl
 ##
 EXTRA_DIST += \
 	uptexdir/COPYRIGHT \
-	uptexdir/COPYRIGHT.jis \
+	uptexdir/COPYRIGHT.ja \
 	uptexdir/ChangeLog
 
 # upTeX Tests
-uptex_tests = uptexdir/uptriptest.test uptexdir/ptriptest.test uptexdir/upver.test uptexdir/upkcat.test uptexdir/wcfname.test uptexdir/wcfname0.test
+uptex_tests = \
+	uptexdir/uptriptest.test uptexdir/ptriptest.test \
+	uptexdir/upver.test uptexdir/upkcat.test \
+	uptexdir/wcfname.test uptexdir/wcfname0.test
 uptexdir/uptriptest.log uptexdir/ptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log uptexdir/wcfname0.log: uptex$(EXEEXT)
 upweb_tests = \
@@ -183,7 +186,8 @@ upweb_tests += \
 # uppPLtoTF/upTFtoPL
 upweb_tests += \
 	uptexdir/yokotate.test uptexdir/skipjfmp.test \
-	uptexdir/newjfm.test uptexdir/uparse.test uptexdir/gkhuge.test
+	uptexdir/newjfm.test uptexdir/uparse.test \
+	uptexdir/gkhuge.test uptexdir/gk256.test
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -192,7 +196,8 @@ uptexdir/upbibtex-openout-test.log uptexdir/upbibtex-longline-test.log \
 	uptexdir/upbibtex-mem.log uptexdir/nissya.log: upbibtex$(EXEEXT)
 uptexdir/sample.log: updvitype$(EXEEXT)
 uptexdir/yokotate.log uptexdir/skipjfmp.log \
-	uptexdir/newjfm.log uptexdir/uparse.log uptexdir/gkhuge.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+	uptexdir/newjfm.log uptexdir/uparse.log \
+	uptexdir/gkhuge.log uptexdir/gk256.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 
 EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \
@@ -241,6 +246,9 @@ DISTCLEANFILES += uptests/xuparse.* uptests/yuparse.*
 ## uptexdir/gkhuge.test
 EXTRA_DIST += uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err
 DISTCLEANFILES += uptests/ygkhuge*.*
+## uptexdir/gk256.test
+EXTRA_DIST += uptexdir/tests/gk256g.tfm uptexdir/tests/gk256k.tfm
+DISTCLEANFILES += uptests/ygk256*.*
 ## uptexdir/skipjfmp.test
 DISTCLEANFILES += uptests/xskipjfmp.*
 ## uptexdir/uptriptest

@@ -1,7 +1,7 @@
 ## Makefile.am for the TeX Live subdirectory texk/makejvfk/
 ##
 ## Copyright (C) 2010-2015 Peter Breitenlohner <tex-live@tug.org>
-## Copyright (C) 2016-2018 Japanese TeX Development Community <issue@texjp.org>
+## Copyright (C) 2016-2023 Japanese TeX Development Community <issue@texjp.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(PTEXENC_INCLUDES) $(KPATHSEA_INCLUDES)
@@ -21,7 +21,7 @@ LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 @KPATHSEA_RULE@
 @PTEXENC_RULE@
 
-EXTRA_DIST = COPYRIGHT COPYRIGHT.jis Changes.txt README.txt
+EXTRA_DIST = COPYRIGHT COPYRIGHT.ja Changes.txt README.txt
 
 dist_check_SCRIPTS = makejvf.test
 
@@ -41,6 +41,9 @@ EXTRA_DIST += \
 	tests/testnewu.vf \
 	tests/gkhugeok.tfm \
 	tests/gkhugeok.vf \
+	tests/gk256g.tfm \
+	tests/gk256k.tfm \
+	tests/gk256.vf \
 	tests/skipjfmp.tfm \
 	tests/skipjfmp.vf \
 	tests/skipjfmp_omit.vf
