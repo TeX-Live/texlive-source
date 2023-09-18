@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 kpse.set_program_name("luatex")
 -- ctanbib -- export ctan entries to bib format
--- Copyright: Michal Hoftich <michal.h21@gmail.com> (2014-2021)
+-- Copyright: Michal Hoftich <michal.h21@gmail.com> (2014-2023)
 --
 -- This work may be distributed and/or modified under the
 -- conditions of the LaTeX Project Public License, either version 1.3
@@ -27,6 +27,7 @@ Available options:
   -C,--ctanpath   Use package's CTAN path as URL
   -e,--entrytype  (default manual)  Change entry type
   -h,--help       Print this message
+  -p,--pkgname    Put the package name in a \ctanbibpkgname command
   -v,--version    Print version info
   ]]
 local args = lapp(msg)
@@ -34,7 +35,7 @@ if args.help then
   print(msg)
   os.exit(0)
 elseif args.version then
-  print "ctanbib version 0.2b"
+  print "ctanbib version 0.2c"
   os.exit(0)
 elseif args.ctan then
   pkgurl = true
@@ -73,6 +74,13 @@ date = {$date},
 version = {$version},
 }
 ]]
+
+if args.pkgname then
+  titleformat = "The \\ctanbibpkgname{%s} package"
+  preamble = [[@preamble{ "\providecommand\ctanbibpkgname[1]{\textsl{#1}}" }
+]] 
+  bibtexformat = preamble .. bibtexformat
+end
 
 local dom = require('luaxml-domobject')
 
@@ -158,7 +166,8 @@ local get_title = function(record)
   local title = record:query_selector("name")[1]
   if title then
     title = title:get_text()
-    title = title:gsub("^(.)", function(a) return unicode.utf8.upper(a) end)
+    -- don't uppercase package name, as suggested by Karl Berry and Boris Veytsman
+    -- title = title:gsub("^(.)", function(a) return unicode.utf8.upper(a) end)
   else
     title = pkgname
   end
