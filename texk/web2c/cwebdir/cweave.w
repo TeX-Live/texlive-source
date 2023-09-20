@@ -646,7 +646,7 @@ skip_TeX(void) /* skip past pure \TEX/ code */
   }
 }
 
-@*1 Inputting the next token.
+@* Inputting the next token.
 As stated above, \.{CWEAVE}'s most interesting lexical scanning routine is the
 |get_next| function that inputs the next token of \CEE/ input. However,
 |get_next| is not especially complicated.
@@ -911,7 +911,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     if (++id_loc<=section_text_end) *id_loc=c;
   }
   if (id_loc>=section_text_end) {
-    fputs("\n! String too long: ",stdout);
+    printf("%s","\n! String too long: ");
 @.String too long@>
     term_write(section_text+1,25);
     printf("..."); mark_error();
@@ -981,7 +981,7 @@ while (true) {
 *k=c;
 }
 if (k>=section_text_end) {
-  fputs("\n! Section name too long: ",stdout);
+  printf("%s","\n! Section name too long: ");
 @.Section name too long@>
   term_write(section_text+1,25);
   printf("..."); mark_harmless();
@@ -1302,13 +1302,13 @@ name_pointer p) /* print anomalies in subtree |p| */
     cur_xref=(xref_pointer)p->xref;
     if ((an_output=(cur_xref->num==file_flag))==true) cur_xref=cur_xref->xlink;
     if (cur_xref->num <def_flag) {
-      fputs("\n! Never defined: <",stdout);
+      printf("%s","\n! Never defined: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @.Never defined: <section name>@>
     }
     while (cur_xref->num >=cite_flag) cur_xref=cur_xref->xlink;
     if (cur_xref==xmem && !an_output) {
-      fputs("\n! Never used: <",stdout);
+      printf("%s","\n! Never used: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @.Never used: <section name>@>
     }
@@ -4130,7 +4130,7 @@ while (k<k_limit) {
 
 @ @<Skip next char...@>=
 if (*k++!='@@') {
-  fputs("\n! Illegal control code in section name: <",stdout);
+  printf("%s","\n! Illegal control code in section name: <");
 @.Illegal control code...@>
   print_section_name(cur_section_name); printf("> "); mark_error();
 }
@@ -4145,7 +4145,7 @@ equals the delimiter that began the string being copied.
 j=limit+1; *j='|'; delim=0;
 while (true) {
   if (k>=k_limit) {
-    fputs("\n! C text in section name didn't end: <",stdout);
+    printf("%s","\n! C text in section name didn't end: <");
 @.C text...didn't end@>
     print_section_name(cur_section_name); printf("> "); mark_error(); break;
   }
@@ -4180,7 +4180,7 @@ actually output the \TEX/ material instead of merely looking at the
 static void
 phase_two(void) {
 phase=2; reset_input();
-if (show_progress) fputs("\nWriting the output file...",stdout);
+if (show_progress) printf("%s","\nWriting the output file...");
 @.Writing the output file...@>
 section_count=0; format_visible=true; copy_limbo();
 finish_line(); flush_buffer(out_buf,false,false);
@@ -4249,8 +4249,10 @@ else {
   out_str("\\N");
 @.\\N@>
   {@+ char s[32];@+snprintf(s,32,"{%d}",sec_depth+1);@+out_str(s);@+}
-  if (show_progress)
-  printf("*%d",(int)section_count); update_terminal(); /* print a progress report */
+  if (show_progress) {
+    printf("*%d",(int)section_count);
+    update_terminal(); /* print a progress report */
+  }
 }
 out('{'); out_section(section_count); out('}');
 
@@ -4531,7 +4533,7 @@ if (no_xref)
   out_str("\\end");
 @.\\end@>
 else {
-  if (show_progress) fputs("\nWriting the index...",stdout);
+  if (show_progress) printf("%s","\nWriting the index...");
 @.Writing the index...@>
   if (change_exists) {
     @<Tell about changed sections@>@;
@@ -4569,7 +4571,7 @@ finish_line();
 fclose(active_file);
 if (show_happiness) {
   if (show_progress) new_line();
-  fputs("Done.",stdout);
+  printf("%s","Done.");
 }
 check_complete(); /* was all of the change file used? */
 }

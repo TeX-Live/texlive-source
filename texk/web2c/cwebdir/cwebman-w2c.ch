@@ -241,10 +241,10 @@ As an example of a real program written in \.{CWEB}, \Appendix A
 @z
 
 @x
-Appendix B is the file that sets \TEX/ up to accept
+Appendix B displays the files that set \TEX/ up to accept
 the output of \.{CWEAVE}, and Appendix~C discusses how to use some of those
 @y
-\Appendix B is the file that sets \TEX/ up to accept
+\Appendix B displays the files that set \TEX/ up to accept
 the output of \.{CWEAVE}, and \Appendix C discusses how to use some of those
 @z
 
@@ -327,10 +327,16 @@ And here's what the same excerpt looks like when typeset.
 
 @x
 if you have a duplex printer. Appendices D, E, and F of the complete
+version of this manual are printed using a commented-out option that
+substitutes `$\gets$' for `$=$' in the program listings. Looking at those
 @y
 if you have a duplex printer. Appendices \pdfURL{D}{common.pdf},
 \pdfURL{E}{ctangle.pdf}, and \pdfURL{F}{cweave.pdf}\cwebfootnote{And
 \pdfURL{Appendix~G}{ctwill.pdf}.} of the complete
+version of this manual are printed using a commented-out option that
+substitutes `$\gets$' for `$=$' in the program listings.\cwebfootnote{They
+also make use of the alternative format for \CEE/ comments.}
+Looking at those
 @z
 
 @x

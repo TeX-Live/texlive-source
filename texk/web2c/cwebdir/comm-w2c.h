@@ -41,7 +41,7 @@ extern int phase; /* which phase are we in? */
 
 @ The procedure that gets everything rolling:
 @<Predecl...@>=
-extern void common_init(void);@/
+extern void common_init(void);
 
 @ You may have noticed that almost all \.{"strings"} in the \.{CWEB} sources
 are placed in the context of the `|_|'~macro.  This is just a shortcut for the

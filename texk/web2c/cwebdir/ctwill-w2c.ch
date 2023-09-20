@@ -305,9 +305,9 @@ part of all meanings.
 @z
 
 @x
-    fputs("\n! String too long: ",stdout);
+    printf("%s","\n! String too long: ");
 @y
-    fputs(_("\n! String too long: "),stdout);
+    printf("%s",_("\n! String too long: "));
 @z
 
 @x
@@ -338,9 +338,9 @@ part of all meanings.
 @z
 
 @x
-  fputs("\n! Section name too long: ",stdout);
+  printf("%s","\n! Section name too long: ");
 @y
-  fputs(_("\n! Section name too long: "),stdout);
+  printf("%s",_("\n! Section name too long: "));
 @z
 
 @x
@@ -445,18 +445,18 @@ if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 @z
 
 @x
-      fputs("\n! Never defined: <",stdout);
+      printf("%s","\n! Never defined: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @y
-      fputs(_("\n! Never defined: <"),stdout);
+      printf("%s",_("\n! Never defined: <"));
       print_section_name(p); putchar('>'); mark_harmless();
 @z
 
 @x
-      fputs("\n! Never used: <",stdout);
+      printf("%s","\n! Never used: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @y
-      fputs(_("\n! Never used: <"),stdout);
+      printf("%s",_("\n! Never used: <"));
       print_section_name(p); putchar('>'); mark_harmless();
 @z
 
@@ -912,15 +912,15 @@ to \.{\\PB}.  Although \.{ctwimac} ignores \.{\\PB}, other macro packages
 @z
 
 @x
-  fputs("\n! Illegal control code in section name: <",stdout);
+  printf("%s","\n! Illegal control code in section name: <");
 @y
-  fputs(_("\n! Illegal control code in section name: <"),stdout);
+  printf("%s",_("\n! Illegal control code in section name: <"));
 @z
 
 @x
-    fputs("\n! C text in section name didn't end: <",stdout);
+    printf("%s","\n! C text in section name didn't end: <");
 @y
-    fputs(_("\n! C text in section name didn't end: <"),stdout);
+    printf("%s",_("\n! C text in section name didn't end: <"));
 @z
 
 @x
@@ -936,9 +936,9 @@ to \.{\\PB}.  Although \.{ctwimac} ignores \.{\\PB}, other macro packages
 @z
 
 @x
-if (show_progress) fputs("\nWriting the output file...",stdout);
+if (show_progress) printf("%s","\nWriting the output file...");
 @y
-if (show_progress) fputs(_("\nWriting the output file..."),stdout);
+if (show_progress) printf("%s",_("\nWriting the output file..."));
 @z
 
 @x
@@ -1112,9 +1112,9 @@ out_str("}\\FI"); finish_line();
 @z
 
 @x
-  if (show_progress) fputs("\nWriting the index...",stdout);
+  if (show_progress) printf("%s","\nWriting the index...");
 @y
-  if (show_progress) fputs(_("\nWriting the index..."),stdout);
+  if (show_progress) printf("%s",_("\nWriting the index..."));
 @z
 
 @x
@@ -1146,9 +1146,9 @@ if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
 @x
-  fputs("Done.",stdout);
+  printf("%s","Done.");
 @y
-  fputs(_("Done."),stdout);
+  printf("%s",_("Done."));
 @z
 
 @x

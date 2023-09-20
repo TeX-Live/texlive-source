@@ -80,9 +80,9 @@
 @z
 
 @x
-    fputs("\n! Not present: <",stdout);
+    printf("%s","\n! Not present: <");
 @y
-    fputs(_("\n! Not present: <"),stdout);
+    printf("%s",_("\n! Not present: <"));
 @z
 
 @x
@@ -92,9 +92,9 @@
 @z
 
 @x
-    fputs("\n! No program text was specified.",stdout); mark_harmless();
+    printf("%s","\n! No program text was specified."); mark_harmless();
 @y
-    fputs(_("\n! No program text was specified."),stdout); mark_harmless();
+    printf("%s",_("\n! No program text was specified.")); mark_harmless();
 @z
 
 @x
@@ -106,9 +106,9 @@
 @z
 
 @x
-      fputs("Done.",stdout);
+      printf("%s","Done.");
 @y
-      fputs(_("Done."),stdout);
+      printf("%s",_("Done."));
 @z
 
 @x
@@ -242,9 +242,9 @@ quarter) with its two-byte encoding \.{c2 bc}.
 @z
 
 @x
-    fputs("\n! String too long: ",stdout);
+    printf("%s","\n! String too long: ");
 @y
-    fputs(_("\n! String too long: "),stdout);
+    printf("%s",_("\n! String too long: "));
 @z
 
 @x
@@ -278,9 +278,9 @@ quarter) with its two-byte encoding \.{c2 bc}.
 @z
 
 @x
-  fputs("\n! Section name too long: ",stdout);
+  printf("%s","\n! Section name too long: ");
 @y
-  fputs(_("\n! Section name too long: "),stdout);
+  printf("%s",_("\n! Section name too long: "));
 @z
 
 @x

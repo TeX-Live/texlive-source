@@ -401,7 +401,7 @@ or the \CEE/ text may have been associated with a different name by mistake.
   a-=024000;
   if ((a+name_dir)->equiv!=(void *)text_info) push_level(a+name_dir);
   else if (a!=0) {
-    fputs("\n! Not present: <",stdout);
+    printf("%s","\n! Not present: <");
     print_section_name(a+name_dir); err_print(">");
 @.Not present: <section name>@>
   }
@@ -515,7 +515,7 @@ phase_two (void) {
   @<Initialize the output stacks@>@;
   @<Output macro definitions if appropriate@>@;
   if (text_info->text_link==macro && cur_out_file==end_output_files) {
-    fputs("\n! No program text was specified.",stdout); mark_harmless();
+    printf("%s","\n! No program text was specified."); mark_harmless();
 @.No program text...@>
   }
   else {
@@ -533,7 +533,7 @@ phase_two (void) {
     @<Write all the named output files@>@;
     if (show_happiness) {
       if (show_progress) new_line();
-      fputs("Done.",stdout);
+      printf("%s","Done.");
     }
   }
 }
@@ -1018,7 +1018,7 @@ convention, but do not allow the string to be longer than |longest_name|.
     if (++id_loc<=section_text_end) *id_loc=(char)c;
   }
   if (id_loc>=section_text_end) {
-    fputs("\n! String too long: ",stdout);
+    printf("%s","\n! String too long: ");
 @.String too long@>
     term_write(section_text+1,25);
     err_print("...");
@@ -1113,7 +1113,7 @@ while (true) {
 *k=(char)c;
 }
 if (k>=section_text_end) {
-  fputs("\n! Section name too long: ",stdout);
+  printf("%s","\n! Section name too long: ");
 @.Section name too long@>
   term_write(section_text+1,25);
   printf("..."); mark_harmless();

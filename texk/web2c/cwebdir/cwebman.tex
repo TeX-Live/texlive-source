@@ -1187,7 +1187,7 @@ contains an excerpt from the \.{CWEB} program itself.  The reader who
 examines the listings in this appendix carefully will get a good
 feeling for the basic ideas of \.{CWEB}.
 
-Appendix B is the file that sets \TEX/ up to accept
+Appendix B displays the files that set \TEX/ up to accept
 the output of \.{CWEAVE}, and Appendix~C discusses how to use some of those
 macros to vary the output formats.
 
@@ -1524,20 +1524,28 @@ features needed by the output of \.{CWEAVE}.
 
 \vskip6pt
 \begingroup \def\tt{\eighttt} \baselineskip9pt
-\def\printmacs{\begingroup
+\def\printmacs#1{\begingroup
   \def\do##1{\catcode`##1=12 } \dospecials
   \parskip 0pt \parindent 0pt
   \catcode`\ =13 \catcode`\^^M=13
-  \tt \verbatimdefs \input cwebmac \endgroup}
-\printmacs
+  \tt \verbatimdefs \input cweb#1mac \endgroup}
+\printmacs{\empty}
+
+\vskip6pt \baselineskip12pt
+\noindent And here comes the file that extends \.{cwebmac.tex} in order to
+support the ``hypertext'' features needed by the enhanced \TEX/ engines when
+processing the output of \.{CWEAVE}.
+
+\vskip6pt \baselineskip9pt
+\printmacs{acro}
 \endgroup
 \vfill\eject
 
 \def\runninghead{APPENDIX C --- NOTES ON FORMATTING}
 \section Appendix C: How to use \.{CWEB} macros.
-The macros in \.{cwebmac} make it possible to produce a variety of formats
-without editing the output of \.{CWEAVE}, and the purpose of this appendix
-is to explain some of the possibilities.
+The macros in \.{cwebmac} and \.{cwebacromac} make it possible to produce a
+variety of formats without editing the output of \.{CWEAVE}, and the purpose
+of this appendix is to explain some of the possibilities.
 
 \def\point#1.{\yskip\indent#1.\quad\ignorespaces}
 
@@ -1615,8 +1623,8 @@ contents page.
 \point 9. Data for the table of contents is written to a file that
 is read after the indexes have been \TEX/ed; there's one line of data
 for every starred section. The file \.{common.toc} might look like this:
-$$\lpile{\.{\\ZZ \{Introduction\}\{0\}\{1\}\{29\}\{\}}\cr
-  \.{\\ZZ \{The character set\}\{1\}\{21\}\{35\}\{\}}\cr}$$
+$$\lpile{\.{\\ZZ \{Introduction\}\{1\}\{1\}\{30\}\{\}}\cr
+  \.{\\ZZ \{The character set\}\{1\}\{21\}\{36\}\{\}}\cr}$$
 and so on. The \.{\\topofcontents} macro could
 redefine \.{\\ZZ} so that the information appears in any desired format.
 (See also point~19 below.)
@@ -1752,7 +1760,7 @@ Moreover, the final group title, `Names of the sections',
 can be opened up to list every section name; Acrobat users can therefore
 navigate easily to any desired section.
 
-The macros of \.{cwebmac.tex} are careful to ``sanitize'' all the names
+The macros of \.{cwebacromac.tex} are careful to ``sanitize'' all the names
 that appear as bookmarks, by removing special characters and
 formatting codes that are inappropriate for the limited typographic
 capabilities of {\mc PDF} outlines. For example, one section of \.{CWEAVE}

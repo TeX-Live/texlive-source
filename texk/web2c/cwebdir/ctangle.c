@@ -620,7 +620,7 @@ else/*40:*/
 a-= 024000;
 if((a+name_dir)->equiv!=(void*)text_info)push_level(a+name_dir);
 else if(a!=0){
-fputs("\n! Not present: <",stdout);
+printf("%s","\n! Not present: <");
 print_section_name(a+name_dir);err_print(">");
 
 }
@@ -680,7 +680,7 @@ output_defs();
 #line 516 "ctangle.w"
 
 if(text_info->text_link==macro&&cur_out_file==end_output_files){
-fputs("\n! No program text was specified.",stdout);mark_harmless();
+printf("%s","\n! No program text was specified.");mark_harmless();
 
 }
 else{
@@ -720,7 +720,7 @@ flush_buffer();
 
 if(show_happiness){
 if(show_progress)new_line();
-fputs("Done.",stdout);
+printf("%s","Done.");
 }
 }
 }
@@ -1034,7 +1034,7 @@ c= (eight_bits)*loc++;
 if(++id_loc<=section_text_end)*id_loc= (char)c;
 }
 if(id_loc>=section_text_end){
-fputs("\n! String too long: ",stdout);
+printf("%s","\n! String too long: ");
 
 term_write(section_text+1,25);
 err_print("...");
@@ -1119,7 +1119,7 @@ c= (eight_bits)' ';if(*(k-1)==' ')k--;
 *k= (char)c;
 }
 if(k>=section_text_end){
-fputs("\n! Section name too long: ",stdout);
+printf("%s","\n! Section name too long: ");
 
 term_write(section_text+1,25);
 printf("...");mark_harmless();

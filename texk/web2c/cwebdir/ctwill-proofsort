@@ -16,11 +16,10 @@ BEGIN {
   $progname = basename $0;
   # Unicode::Collate has been around a long time,
   # but it's not part of core Perl.
-  my $rc = eval {
+  eval {
     require Unicode::Collate;
     $collator = Unicode::Collate->new();
   };
-  die "$progname: the Unicode::Collate module is required\n" unless $rc;
 }
 
 # We expect a TeX file as the single command-line parameter.

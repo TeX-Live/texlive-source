@@ -328,39 +328,39 @@ else if (strlen(found_filename) < max_file_name_length) {
 @z
 
 @x
-      fputs("\n! Ambiguous prefix: matches <",stdout);
+      printf("%s","\n! Ambiguous prefix: matches <");
 @y
-      fputs(_("\n! Ambiguous prefix: matches <"),stdout);
+      printf("%s",_("\n! Ambiguous prefix: matches <"));
 @z
 
 @x
-      fputs(">\n and <",stdout);
+      printf("%s",">\n and <");
 @y
-      fputs(_(">\n and <"),stdout);
+      printf("%s",_(">\n and <"));
 @z
 
 @x
-      fputs("\n! New name is a prefix of <",stdout);
+      printf("%s","\n! New name is a prefix of <");
 @y
-      fputs(_("\n! New name is a prefix of <"),stdout);
+      printf("%s",_("\n! New name is a prefix of <"));
 @z
 
 @x
-      fputs("\n! New name extends <",stdout);
+      printf("%s","\n! New name extends <");
 @y
-      fputs(_("\n! New name extends <"),stdout);
+      printf("%s",_("\n! New name extends <"));
 @z
 
 @x
-    fputs("\n! Section name incompatible with <",stdout);
+    printf("%s","\n! Section name incompatible with <");
 @y
-    fputs(_("\n! Section name incompatible with <"),stdout);
+    printf("%s",_("\n! Section name incompatible with <"));
 @z
 
 @x
-    fputs(">,\n which abbreviates <",stdout);
+    printf("%s",">,\n which abbreviates <");
 @y
-    fputs(_(">,\n which abbreviates <"),stdout);
+    printf("%s",_(">,\n which abbreviates <"));
 @z
 
 @x

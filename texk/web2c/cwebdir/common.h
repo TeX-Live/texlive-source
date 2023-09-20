@@ -41,7 +41,7 @@ extern int phase; /* which phase are we in? */
 
 @ The procedure that gets everything rolling:
 @<Predecl...@>=
-extern void common_init(void);@/
+extern void common_init(void);
 
 @ Interface to the standard \CEE/ library:
 

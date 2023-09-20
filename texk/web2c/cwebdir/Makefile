@@ -77,13 +77,15 @@ CTANGLE = ./ctangle
 SOURCES = cweave.w common.w ctangle.w
 ALL =  common.w ctangle.w cweave.w prod.w \
 	Makefile README common.c common.h ctangle.c \
-	cwebman.tex cwebmac.tex comm-vms.ch ctang-vms.ch \
-	cweav-vms.ch comm-man.ch ctang-man.ch cweav-man.ch \
-	comm-pc.ch ctang-pc.ch cweav-pc.ch comm-amiga.ch \
+	cwebman.tex cwebacromac.tex cwebmac.tex \
+	cweb.1 cweb.el c++lib.w iso_types.w \
+	comm-man.ch ctang-man.ch cweav-man.ch \
 	comm-bs.ch ctang-bs.ch cweav-bs.ch makefile.bs \
+	comm-pc.ch ctang-pc.ch cweav-pc.ch comm-amiga.ch \
 	comm-ql.ch ctang-ql.ch cweav-ql.ch readme.ql \
+	comm-vms.ch ctang-vms.ch cweav-vms.ch \
 	comm-w32.ch ctang-w32.ch cweav-w32.ch \
-	comm-os2.ch comm-mac.ch cweb.1 cweb.el c++lib.w iso_types.w
+	comm-os2.ch comm-mac.ch
 
 .SUFFIXES: .dvi .tex .w .pdf
 
@@ -178,6 +180,8 @@ install: all
 	$(CP) cweb.1 $(MANDIR)/cweb.$(MANEXT)
 	chmod 644 $(MANDIR)/cweb.$(MANEXT)
 	- mkdir $(MACROSDIR)
+	$(CP) cwebacromac.tex $(MACROSDIR)
+	chmod 644 $(MACROSDIR)/cwebacromac.tex
 	$(CP) cwebmac.tex $(MACROSDIR)
 	chmod 644 $(MACROSDIR)/cwebmac.tex
 	- mkdir $(EMACSDIR)
