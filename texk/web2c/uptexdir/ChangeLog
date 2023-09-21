@@ -1,3 +1,8 @@
+2023-09-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* uptex-m.ch: Clean up changes on 2023-09-03.
+	* unibib.test: New test for upbibtex.
+
 2023-09-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uppltotf.ch, uptftopl.ch: Version p230917.

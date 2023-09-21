@@ -102,7 +102,10 @@ EXTRA_DIST += \
 
 # pTeX Tests
 #
-ptex_tests = ptexdir/ptriptest.test ptexdir/pver.test ptexdir/wcfname.test
+ptex_tests = \
+	ptexdir/ptriptest.test \
+	ptexdir/pver.test \
+	ptexdir/wcfname.test
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
 
@@ -125,8 +128,10 @@ endif PWEB
 EXTRA_DIST += ptexdir/tests/nissya.bst ptexdir/tests/sample.bib
 DISTCLEANFILES += ptests/nissya_bib.*
 ## ptexdir/pbibtex.test
-EXTRA_DIST += tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
-	tests/enc-euc.bib tests/enc-utf8.bib tests/enc-utf8a.bib tests/enc-utf8b.bib \
+EXTRA_DIST += tests/testfield.bst \
+	tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
+	tests/enc-euc.bib tests/enc-utf8.bib \
+	tests/enc-utf8a.bib tests/enc-utf8b.bib \
 	tests/enc-amb0.bib tests/enc-amb1.bib tests/enc-amb2.bib \
 	tests/enc.aux tests/enc-e.aux tests/enc-s.aux tests/enc-u.aux \
 	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl tests/enc-up.bbl

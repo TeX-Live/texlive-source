@@ -1,0 +1,28 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2023 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_upbibtex=$BinDir/upbibtex$ExeExt
+
+test -d uptests || mkdir -p uptests
+
+# Test inputs
+testdir=$srcdir/uptexdir/tests
+
+rc=0
+
+TEXMFCNF=$srcdir/../kpathsea
+BSTINPUTS=$testdir
+BIBINPUTS=$testdir
+export TEXMFCNF BSTINPUTS BIBINPUTS
+
+cp $testdir/unibib.aux uptests/xunibib.aux
+
+$_upbibtex uptests/xunibib || rc=1
+diff $testdir/unibib.bbl uptests/xunibib.bbl || rc=2
+
+exit $rc
+

@@ -167,10 +167,13 @@ EXTRA_DIST += \
 # upTeX Tests
 uptex_tests = \
 	uptexdir/uptriptest.test uptexdir/ptriptest.test \
-	uptexdir/upver.test uptexdir/upkcat.test \
+	uptexdir/upver.test \
+	uptexdir/upkcat.test \
 	uptexdir/wcfname.test uptexdir/wcfname0.test
-uptexdir/uptriptest.log uptexdir/ptriptest.log: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-uptexdir/upver.log uptexdir/upkcat.log uptexdir/wcfname.log uptexdir/wcfname0.log: uptex$(EXEEXT)
+uptexdir/uptriptest.log uptexdir/ptriptest.log: \
+	uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+uptexdir/upver.log uptexdir/upkcat.log \
+	uptexdir/wcfname.log uptexdir/wcfname0.log: uptex$(EXEEXT)
 upweb_tests = \
 	uptexdir/upbibtex.test \
 	uptexdir/updvitype.test \
@@ -179,7 +182,8 @@ upweb_tests = \
 ## upBibTeX
 upweb_tests += \
 	uptexdir/upbibtex-openout-test.pl uptexdir/upbibtex-longline-test.pl \
-	uptexdir/upbibtex-mem.test uptexdir/nissya.test
+	uptexdir/upbibtex-mem.test uptexdir/nissya.test \
+	uptexdir/unibib.test
 ## upDviType
 upweb_tests += \
 	uptexdir/sample.test
@@ -193,7 +197,8 @@ uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
 uptexdir/uptftopl.log: uptftopl$(EXEEXT)
 uptexdir/upbibtex-openout-test.log uptexdir/upbibtex-longline-test.log \
-	uptexdir/upbibtex-mem.log uptexdir/nissya.log: upbibtex$(EXEEXT)
+	uptexdir/upbibtex-mem.log uptexdir/nissya.log \
+	uptexdir/unibib.log: upbibtex$(EXEEXT)
 uptexdir/sample.log: updvitype$(EXEEXT)
 uptexdir/yokotate.log uptexdir/skipjfmp.log \
 	uptexdir/newjfm.log uptexdir/uparse.log \
