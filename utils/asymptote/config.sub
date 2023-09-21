@@ -4,7 +4,7 @@
 
 # shellcheck disable=SC2006,SC2268 # see below for rationale
 
-timestamp='2023-09-15'
+timestamp='2023-09-19'
 
 # This file is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -1825,7 +1825,7 @@ case $kernel-$os-$obj in
 		;;
 	managarm-mlibc*- | managarm-kernel*- )
 		;;
-	windows*-gnu*- | windows*-msvc*-)
+	windows*-msvc*-)
 		;;
 	-dietlibc*- | -newlib*- | -musl*- | -relibc*- | -uclibc*- | -mlibc*- )
 		# These are just libc implementations, not actual OSes, and thus
