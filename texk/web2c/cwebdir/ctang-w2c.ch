@@ -122,12 +122,8 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
 @.Cannot open output file@>
     if (show_progress) { printf("\n(%s)",output_file_name); update_terminal(); }
     cur_line=1;
-    stack_ptr=stack+1;
-    cur_name=*an_output_file;
-    cur_repl=(text_pointer)cur_name->equiv;
-    cur_byte=cur_repl->tok_start;
-    while (stack_ptr > stack) get_output();
-    flush_buffer();
+    @<Initialize the secondary output@>@;
+    @<Output material...@>@;
 }
 @y
 @<Write all the named output files@>=
@@ -147,12 +143,8 @@ for (an_output_file=end_output_files; an_output_file>cur_out_file;) {
   }
   if (show_progress) { printf("\n(%s)",output_file_name); update_terminal(); }
   cur_line=1;
-  stack_ptr=stack+1;
-  cur_name=*an_output_file;
-  cur_repl=(text_pointer)cur_name->equiv;
-  cur_byte=cur_repl->tok_start;
-  while (stack_ptr > stack) get_output();
-  flush_buffer();
+  @<Initialize the secondary output@>@;
+  @<Output material...@>@;
   if (check_for_change) {
     fclose(C_file); C_file=NULL;
     @<Update the secondary results when they have changed@>@;
