@@ -1413,7 +1413,7 @@ Section 202.
 @x
 @ @<Print a snapsh...@>=
 @y
-@ @<Print a snapsh...@>=
+@r @ @<Print a snapsh...@>=
 @-n@>
 @%
 @$n {CTWILL}197 \&{short}@>
