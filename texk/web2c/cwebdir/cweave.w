@@ -3204,7 +3204,7 @@ scrap_pointer j, short k,
 eight_bits c,
 short d, short n)
 {
-  scrap_pointer i, i1; /* pointers into scrap memory */
+  scrap_pointer i, o; /* pointers into scrap memory */
   j->cat=c;
   if (k>0) {
     j->trans=text_ptr;
@@ -3212,10 +3212,8 @@ short d, short n)
     freeze_text();
   }
   if (k>1) {
-    for (i=j+k, i1=j+1; i<=lo_ptr; i++, i1++) {
-      i1->cat=i->cat; i1->trans=i->trans;
-      i1->mathness=i->mathness;
-    }
+    for (i=j+k, o=j+1; i<=lo_ptr; i++, o++)
+      *o=*i;@^system dependencies@>
     lo_ptr=lo_ptr-k+1;
   }
   pp=(pp+d<scrap_base? scrap_base: pp+d);
@@ -3277,10 +3275,8 @@ stored, since zero does not match anything in a production.
 
 @<Make sure the entries...@>=
 if (lo_ptr<pp+3) {
-  while (hi_ptr<=scrap_ptr && lo_ptr!=pp+3) {
-    (++lo_ptr)->cat=hi_ptr->cat; lo_ptr->mathness=hi_ptr->mathness;
-    lo_ptr->trans=(hi_ptr++)->trans;
-  }
+  while (hi_ptr<=scrap_ptr && lo_ptr!=pp+3)
+    *(++lo_ptr)=*(hi_ptr++);@^system dependencies@>
   for (i=lo_ptr+1;i<=pp+3;i++) i->cat=0;
 }
 
