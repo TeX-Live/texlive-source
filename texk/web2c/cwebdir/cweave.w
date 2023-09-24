@@ -3195,7 +3195,8 @@ static void reduce(scrap_pointer,short,eight_bits,short,short);@/
 static void squash(scrap_pointer,short,eight_bits,short,short);
 
 @ Now here's the |reduce| procedure used in our code for productions,
-which takes advantage of the simplification that occurs when |k==0|.
+which takes advantage of the simplifications that occur when |k==0|
+or |k==1|.
 
 @c
 static void
@@ -3204,7 +3205,7 @@ scrap_pointer j, short k,
 eight_bits c,
 short d, short n)
 {
-  scrap_pointer i, o; /* pointers into scrap memory */
+  scrap_pointer i; /* pointer into scrap memory */
   j->cat=c;
   if (k>0) {
     j->trans=text_ptr;
@@ -3212,8 +3213,8 @@ short d, short n)
     freeze_text();
   }
   if (k>1) {
-    for (i=j+k, o=j+1; i<=lo_ptr; i++, o++)
-      *o=*i;@^system dependencies@>
+    for (i=j+k; i<=lo_ptr; i++)
+      *(i-k+1)=*i;@^system dependencies@>
     lo_ptr=lo_ptr-k+1;
   }
   pp=(pp+d<scrap_base? scrap_base: pp+d);
@@ -3294,15 +3295,14 @@ static int tracing=off; /* can be used to show parsing details */
 
 @ @<Print a snapsh...@>=
 if (tracing==fully) {
-  scrap_pointer k; /* pointer into |scrap_info|; shadows |short k| */
   printf("\n%d:",n);
-  for (k=scrap_base; k<=lo_ptr; k++) {
-    if (k==pp) putchar('*'); else putchar(' ');
-    if (k->mathness %4 == yes_math) putchar('+');
-    else if (k->mathness %4 == no_math) putchar('-');
-    print_cat(k->cat);
-    if (k->mathness /4 == yes_math) putchar('+');
-    else if (k->mathness /4 == no_math) putchar('-');
+  for (i=scrap_base; i<=lo_ptr; i++) {
+    putchar(i==pp?'*':' ');
+    if (i->mathness %4 == yes_math) putchar('+');
+    else if (i->mathness %4 == no_math) putchar('-');
+    print_cat(i->cat);
+    if (i->mathness /4 == yes_math) putchar('+');
+    else if (i->mathness /4 == no_math) putchar('-');
   }
   if (hi_ptr<=scrap_ptr) printf("..."); /* indicate that more is coming */
 }
