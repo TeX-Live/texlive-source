@@ -1,6 +1,7 @@
 2023-09-24  Andreas Scherer  <https://ascherer.github.io>
 
-	* cweave.w: Purge two scrap pointers.
+	* ctwill-{hint,mini}.ch,
+	* cweave.w: Disentangle 'reduce' and 'translate'.
 
 2023-09-23  Andreas Scherer  <https://ascherer.github.io>
 

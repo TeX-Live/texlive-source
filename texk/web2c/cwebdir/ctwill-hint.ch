@@ -539,7 +539,7 @@ Section 155.
 @$force_lines {CTWILL}155 =\\{flags}[\.{'f'}]@>
 @z
 
-Section 187.
+Section 185.
 
 @x
 @ @<Print a snapsh...@>=
@@ -548,7 +548,17 @@ Section 187.
 @-n@>
 @%
 @$n {CTWILL}182 \&{short}@>
-@$n {CTWILL}183 \&{short}@>
+@z
+
+Section 187.
+
+@x
+@ If we get to the end of the scrap list, category codes equal to zero are
+@y
+@ If we get to the end of the scrap list, category codes equal to zero are
+@-j@>
+@%
+@$j {CTWILL}188 \&{scrap\_pointer}@>
 @z
 
 Section 189.

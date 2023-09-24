@@ -1408,16 +1408,26 @@ Section 197.
 @r @ Now here's the |reduce| procedure used in our code for productions,
 @z
 
-Section 202.
+Section 200.
 
 @x
 @ @<Print a snapsh...@>=
 @y
-@r @ @<Print a snapsh...@>=
+@ @<Print a snapsh...@>=
 @-n@>
 @%
 @$n {CTWILL}197 \&{short}@>
-@$n {CTWILL}198 \&{short}@>
+@z
+
+Section 202.
+
+@x
+@ If we get to the end of the scrap list, category codes equal to zero are
+@y
+@r @ If we get to the end of the scrap list, category codes equal to zero are
+@-j@>
+@%
+@$j {CTWILL}203 \&{scrap\_pointer}@>
 @z
 
 Section 204.

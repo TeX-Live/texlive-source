@@ -3242,6 +3242,32 @@ short d, short n)
   reduce(j,k,c,d,n);
 }
 
+@ If \.{CWEAVE} is being run in debugging mode, the production numbers and
+current stack categories will be printed out when |tracing| is set to |fully|;
+a sequence of two or more irreducible scraps will be printed out when
+|tracing| is set to |partly|.
+
+@d off 0
+@d partly 1
+@d fully 2
+
+@<Private...@>=
+static int tracing=off; /* can be used to show parsing details */
+
+@ @<Print a snapsh...@>=
+if (tracing==fully) {
+  printf("\n%d:",n);
+  for (i=scrap_base; i<=lo_ptr; i++) {
+    putchar(i==pp?'*':' ');
+    if (i->mathness %4 == yes_math) putchar('+');
+    else if (i->mathness %4 == no_math) putchar('-');
+    print_cat(i->cat);
+    if (i->mathness /4 == yes_math) putchar('+');
+    else if (i->mathness /4 == no_math) putchar('-');
+  }
+  if (hi_ptr<=scrap_ptr) printf("..."); /* indicate that more is coming */
+}
+
 @ And here now is the code that applies productions as long as possible.
 Before applying the production mechanism, we must make sure
 it has good input (at least four scraps, the length of the lhs of the
@@ -3278,33 +3304,7 @@ stored, since zero does not match anything in a production.
 if (lo_ptr<pp+3) {
   while (hi_ptr<=scrap_ptr && lo_ptr!=pp+3)
     *(++lo_ptr)=*(hi_ptr++);@^system dependencies@>
-  for (i=lo_ptr+1;i<=pp+3;i++) i->cat=0;
-}
-
-@ If \.{CWEAVE} is being run in debugging mode, the production numbers and
-current stack categories will be printed out when |tracing| is set to |fully|;
-a sequence of two or more irreducible scraps will be printed out when
-|tracing| is set to |partly|.
-
-@d off 0
-@d partly 1
-@d fully 2
-
-@<Private...@>=
-static int tracing=off; /* can be used to show parsing details */
-
-@ @<Print a snapsh...@>=
-if (tracing==fully) {
-  printf("\n%d:",n);
-  for (i=scrap_base; i<=lo_ptr; i++) {
-    putchar(i==pp?'*':' ');
-    if (i->mathness %4 == yes_math) putchar('+');
-    else if (i->mathness %4 == no_math) putchar('-');
-    print_cat(i->cat);
-    if (i->mathness /4 == yes_math) putchar('+');
-    else if (i->mathness /4 == no_math) putchar('-');
-  }
-  if (hi_ptr<=scrap_ptr) printf("..."); /* indicate that more is coming */
+  for (j=lo_ptr+1;j<=pp+3;j++) j->cat=0;
 }
 
 @ The |translate| function assumes that scraps have been stored in
@@ -3324,7 +3324,6 @@ for overflow.
 static text_pointer
 translate(void) /* converts a sequence of scraps */
 {
-  scrap_pointer i; /* index into |cat| */
   scrap_pointer j; /* runs through final scraps */
   pp=scrap_base; lo_ptr=pp-1; hi_ptr=pp;
   @<If tracing, print an indication of where we are@>@;
