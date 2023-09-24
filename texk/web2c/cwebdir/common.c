@@ -197,7 +197,7 @@ extern name_pointer name_dir_end;
 extern name_pointer name_ptr;
 extern name_pointer hash[];
 extern hash_pointer hash_end;
-extern hash_pointer h;
+extern hash_pointer hash_ptr;
 
 /*:10*//*12:*/
 #line 193 "common.h"
@@ -304,7 +304,7 @@ name_pointer name_ptr;
 
 name_pointer hash[hash_size];
 hash_pointer hash_end= hash+hash_size-1;
-hash_pointer h;
+hash_pointer hash_ptr;
 
 /*:46*//*65:*/
 #line 1002 "common.w"
@@ -418,7 +418,7 @@ root= NULL;
 /*:45*//*47:*/
 #line 628 "common.w"
 
-for(h= hash;h<=hash_end;*h++= NULL);
+for(hash_ptr= hash;hash_ptr<=hash_end;*hash_ptr++= NULL);
 
 /*:47*/
 #line 99 "common.w"

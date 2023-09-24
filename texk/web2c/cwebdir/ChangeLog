@@ -1,5 +1,18 @@
 2023-09-24  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-bs.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill.bux,
+	* cweav-bs.ch,
+	* cweave.w: Avoid shadow variables.
+
+2023-09-24  Andreas Scherer  <https://ascherer.github.io>
+
 	* ctwill-{hint,mini}.ch,
 	* cweave.w: Disentangle 'reduce' and 'translate'.
 

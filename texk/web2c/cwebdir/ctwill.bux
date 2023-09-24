@@ -44,7 +44,7 @@
 
 @$hash {COMMON.W}46 \&{name\_pointer} [\,]@>
 @$hash_end {COMMON.W}46 \&{hash\_pointer}@>
-@$h {COMMON.W}46 \&{hash\_pointer}@>
+@$hash_ptr {COMMON.W}46 \&{hash\_pointer}@>
 
 @$id_lookup {COMMON.W}48 \&{name\_pointer} (\,)@>
 

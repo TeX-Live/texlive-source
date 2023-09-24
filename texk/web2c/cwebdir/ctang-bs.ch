@@ -48,9 +48,6 @@ extern char *byte_ptr; /* first unused position in |byte_mem| */
 extern name_info name_dir[]; /* information about names */
 extern name_pointer name_dir_end; /* end of |name_dir| */
 extern name_pointer name_ptr; /* first unused position in |name_dir| */
-extern name_pointer hash[]; /* heads of hash lists */
-extern hash_pointer hash_end; /* end of |hash| */
-extern hash_pointer h; /* index into hash-head array */
 @y
 @d ilk dummy.Ilk /* used by \.{CWEAVE} only */
 
@@ -78,9 +75,6 @@ extern name_info name_dir[]; /* information about names */
 extern name_pointer name_dir_end; /* end of |name_dir| */
 extern name_pointer name_ptr; /* first unused position in |name_dir| */
 extern char huge* byte_ptr; /* first unused position in |byte_mem| */
-extern name_pointer hash[]; /* heads of hash lists */
-extern hash_pointer hash_end; /* end of |hash| */
-extern hash_pointer h; /* index into hash-head array */
 @z
 
 

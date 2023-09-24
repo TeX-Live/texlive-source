@@ -621,12 +621,12 @@ it is inserted into the table.
 @<Global var...@>=
 name_pointer hash[hash_size]; /* heads of hash lists */
 hash_pointer hash_end = hash+hash_size-1; /* end of |hash| */
-hash_pointer h; /* index into hash-head array */
+hash_pointer hash_ptr; /* index into hash-head array */
 
 @ Initially all the hash lists are empty.
 
 @<Init...@>=
-for (h=hash; h<=hash_end; *h++=NULL) ;
+for (hash_ptr=hash; hash_ptr<=hash_end; *hash_ptr++=NULL) ;
 
 @ Here is the main procedure for finding identifiers:
 
@@ -638,7 +638,7 @@ const char *last, /* last character of string plus one */
 eight_bits t) /* the |ilk|; used by \.{CWEAVE} only */
 {
   const char *i=first; /* position in |buffer| */
-  int h; /* hash code; shadows |hash_pointer h| */
+  int h; /* hash code */
   size_t l; /* length of the given identifier */
   name_pointer p; /* where the identifier is being sought */
   if (last==NULL) for (last=first; *last!='\0'; last++);

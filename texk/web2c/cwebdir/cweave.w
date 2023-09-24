@@ -4612,8 +4612,8 @@ having a nonempty cross-reference list into the proper bucket.
 @<Do the first pass...@>= {
 int c;
 for (c=0; c<256; c++) bucket[c]=NULL;
-for (h=hash; h<=hash_end; h++) {
-  next_name=*h;
+for (hash_ptr=hash; hash_ptr<=hash_end; hash_ptr++) {
+  next_name=*hash_ptr;
   while (next_name) {
     cur_name=next_name; next_name=cur_name->link;
     if (cur_name->xref!=(void *)xmem) {

@@ -882,6 +882,7 @@ get_next(void) /* produces the next input token */
       if (preprocessing && *(limit-1)!='\\') preprocessing=false;
       if (get_line()==false) return new_section;
       else if (print_where && !no_where) {
+          sixteen_bits a;
           print_where=false;
           @<Insert the line number into |tok_mem|@>@;
         }
@@ -1219,7 +1220,6 @@ file name.
 
 @<Insert the line...@>=
 {
-  eight_bits a; /* shadow variable |a| */
   store_two_bytes(0150000);
   if (changing && include_depth==change_depth) { /* correction made Feb 2017 */
     id_first=change_file_name;
