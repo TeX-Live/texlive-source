@@ -1,3 +1,9 @@
+2023-09-25  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.h,
+	* common.c,
+	* common.w: Check for available input.
+
 2023-09-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.h,

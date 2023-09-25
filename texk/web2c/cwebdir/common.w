@@ -1030,10 +1030,12 @@ has special line-numbering conventions.
 
 @<Print error location based on input buffer@>=
 {char *k,*l; /* pointers into |buffer| */
-if (changing && include_depth==change_depth)
+if (changing && include_depth==change_depth && change_line>0)
   printf(". (l. %d of change file)\n", change_line);
-else if (include_depth==0) printf(". (l. %d)\n", cur_line);
+else if (cur_line>0) {
+  if (include_depth==0) printf(". (l. %d)\n", cur_line);
   else printf(". (l. %d of include file %s)\n", cur_line, cur_file_name);
+}
 l= (loc>=limit? limit: loc);
 if (l>buffer) {
   for (k=buffer; k<l; k++)

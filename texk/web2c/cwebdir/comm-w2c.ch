@@ -365,11 +365,13 @@ else if (strlen(found_filename) < max_file_name_length) {
 
 @x
   printf(". (l. %d of change file)\n", change_line);
-else if (include_depth==0) printf(". (l. %d)\n", cur_line);
+else if (cur_line>0) {
+  if (include_depth==0) printf(". (l. %d)\n", cur_line);
   else printf(". (l. %d of include file %s)\n", cur_line, cur_file_name);
 @y
   printf(_(". (l. %d of change file)\n"), change_line);
-else if (include_depth==0) printf(_(". (l. %d)\n"), cur_line);
+else if (cur_line>0) {
+  if (include_depth==0) printf(_(". (l. %d)\n"), cur_line);
   else printf(_(". (l. %d of include file %s)\n"), cur_line, cur_file_name);
 @z
 
