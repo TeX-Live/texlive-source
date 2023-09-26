@@ -225,6 +225,14 @@ to suppress the extra space globally.}
 @z
 
 @x
+from \.{https://hint.userweb.mwn.de/hint/hintview.html}.
+@y
+from
+\pdfURL{\.{https://hint.userweb.mwn.de/hint/hintview.html}}%
+          {https://hint.userweb.mwn.de/hint/hintview.html}.%
+@z
+
+@x
 the program sources at \.{ftp://ftp.cs.stanford.edu/pub/ctwill}.
 @y
 the program sources at
