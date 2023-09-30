@@ -1,3 +1,17 @@
+2023-09-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* ctwill-mini.ch,
+	* cwebacromac.tex,
+	* cwebmac.tex,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* texinputs/dcwebmac.tex,
+	* texinputs/fcwebmac.tex,
+	* texinputs/icwebmac.tex,
+	* texinputs/pdfctproofmac.tex,
+	* texinputs/pdfctwimac.tex: Add support for LuaTeX.
+
 2023-09-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch,

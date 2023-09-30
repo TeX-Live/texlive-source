@@ -1,20 +1,21 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.10 --- August 2023
+% Version 4.11 --- September 2023
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CWEB4.10}
-\chardef\cwebversion=4 \chardef\cwebrevision=10
+\xdef\fmtversion{\fmtversion+CWEB4.11}
+\chardef\cwebversion=4 \chardef\cwebrevision=11
 \input iftex.sty % TeX engine tests
 \ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
 \ifxetex\pdftrue\fi % XeTeX produces PDF output
-\ifpdftex % pdfTeX produces PDF output if \pdfoutput>0
+\let\ifacro=\ifpdf
+\newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
+\newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
+\ifpdflua % luaTeX and pdfTeX produce PDF output if \pdfoutput>0
   \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
-\let\ifacro=\ifpdf
-\newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -136,7 +137,7 @@
 
 \ifacrohint \input cwebacromac \fi % load hypertext macros
 
-\def\pdfURL#1#2{\ifpdf \ifpdftex\pdfannotlink height \theheight depth \thedepth
+\def\pdfURL#1#2{\ifpdf \ifpdflua\pdfannotlink height \theheight depth \thedepth
     attr {/Border [0 0 0]} user { /Type /Annot /Subtype /Link /A
       << /S /URI /URI (#2) >>}\Blue #1\Black \pdfendlink % changed in 3.69
   \else {\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
@@ -153,7 +154,7 @@
   \ifhint\HINTlabel\fi% Start page before section
   \noindent{\let\*=\lapstar\bf\secstar.\quad}%
   \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
-    \ifpdftex \pdfdest num \secstar fith%
+    \ifpdflua \pdfdest num \secstar fith%
     \else \special{pdf: dest (\romannumeral\secstar)
       [ @thispage /FitH @ypos ]}\fi}}\fi}
 \let\startsection=\stsec
@@ -194,7 +195,7 @@
   \edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
   \edef\next{\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
    {\noexpand\the\pageno}{\the\toksE}}}\next % \ZZ{title}{depth}{sec}{page}{ss}
-  \ifpdf \ifpdftex\expandafter\xdef\csname curr#1\endcsname{\secno}
+  \ifpdf \ifpdflua\expandafter\xdef\csname curr#1\endcsname{\secno}
     \ifnum#1>0\countB=#1 \advance\countB by-1
       \advancenumber{chunk\the\countB.\expnumber{curr\the\countB}}\fi
   \else \special{pdf: outline #1 << /Title (\the\toksE)
@@ -275,7 +276,7 @@
 \def\title{\expandafter\uppercase\expandafter{\jobname}}
 \def\topofcontents{\centerline{\titlefont\title}\vskip.7in
   \vfill} % this material will start the table of contents page
-\def\startpdf{\ifpdf \ifpdftex\pdfcatalog{/PageMode /UseOutlines}
+\def\startpdf{\ifpdf \ifpdflua\pdfcatalog{/PageMode /UseOutlines}
   \else {\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
 \def\botofcontents{\vfill
   \centerline{\covernote}} % this material will end the table of contents page
@@ -337,7 +338,7 @@
 \def\fin{\par\vfill\eject % this is done when we are ending the index
   \ifpagesaved\null\vfill\eject\fi % output a null index column
   \if L\lr\else\null\vfill\eject\fi % finish the current page
-  \ifpdf \ifpdftex \makebookmarks % added in Version 3.68
+  \ifpdf \ifpdflua \makebookmarks % added in Version 3.68
     \countsections \fi\fi % and in Version 4.9
   \parfillskip 0pt plus 1fil
   \def\grouptitle{NAMES OF THE SECTIONS}
@@ -352,8 +353,8 @@
   \def\Us{\note{Used in sections}} % crossref for uses of a section
   \def\I{\par\hangindent 2em}\let\*=*
   \ifacro \def\outsecname{Names of the sections} \let\Xpdf\X
-%  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
-  \ifpdftex \pdfdest name {NOS} fith % changed in version 3.69
+%  \ifpdflua \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
+  \ifpdflua \pdfdest name {NOS} fith % changed in version 3.69
     \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%

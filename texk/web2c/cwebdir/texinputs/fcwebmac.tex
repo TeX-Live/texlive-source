@@ -74,7 +74,7 @@
 \def\fin{\par\vfill\eject % this is done when we are ending the index
   \ifpagesaved\null\vfill\eject\fi % output a null index column
   \if L\lr\else\null\vfill\eject\fi % finish the current page
-  \ifpdf \ifpdftex \makebookmarks % added in Version 3.68
+  \ifpdf \ifpdflua \makebookmarks % added in Version 3.68
     \countsections \fi\fi % and in Version 4.9
   \parfillskip 0pt plus 1fil
   \def\grouptitle{NOMS DES SECTIONS}
@@ -89,8 +89,8 @@
   \def\Us{\note{Utilis\'e dans les sections}} % crossref for uses of a section
   \def\I{\par\hangindent 2em}\let\*=*
   \ifpdf \def\outsecname{Noms des sections} \let\Xpdf\X
-%  \ifpdftex \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
-  \ifpdftex \pdfdest name {NOS} fith % changed in version 3.69
+%  \ifpdflua \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
+  \ifpdflua \pdfdest name {NOS} fith % changed in version 3.69
     \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%

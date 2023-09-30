@@ -1,27 +1,28 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.10 --- August 2023
+% Version 4.11 --- September 2023
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+', 'pdftex', and 'xetex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL4.10+LNCS+PDF}
+\xdef\fmtversion{\fmtversion+CTWILL4.11+LNCS+PDF}
 \input iftex.sty % TeX engine tests
 \ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
 \def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
 \ifxetex\pdftrue\fi % XeTeX produces PDF output
-\ifpdftex % pdfTeX produces PDF output if \pdfoutput>0
-  \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
-  \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
-\fi
 \let\ifacro=\ifpdf
 \ifhint\message{These macros are not suitable for HiTeX.}
   \message{Please use 'ctwill +P [+lpdf]' instead.}
   \end
 \fi
 \newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
+\newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
+\ifpdflua % luaTeX and pdfTeX produce PDF output if \pdfoutput>0
+  \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
+  \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
+\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -258,7 +259,7 @@
   \sfcode`;=1500 \pretolerance 200 \hyphenpenalty 50 \exhyphenpenalty 50
   \noindent\strut{\let\*=\lapstar\bf\secno.\quad}%
   \ifacro \smash{\raise\baselineskip\hbox to0pt{\let\*=\empty
-    \ifpdftex \pdfdest num \secstar fith%
+    \ifpdflua \pdfdest num \secstar fith%
     \else \special{pdf: dest (\romannumeral\secstar)
       [ @thispage /FitH @ypos ]}\fi}}\fi}
 \def\startsection{\titletrue
@@ -309,7 +310,7 @@
       \gdef\rrhead{\let\i=I\uppercase{\ignorespaces#3}}
   \fi
   \message{*\secno} % progress report
-  \ifpdf \ifpdftex\def\stripprefix##1>{}\def\gtitletoks{#3}%
+  \ifpdf \ifpdflua\def\stripprefix##1>{}\def\gtitletoks{#3}%
     \edef\gtitletoks{\expandafter\stripprefix\meaning\gtitletoks}%
     {\immediate\write\cont{\ZZ{\gtitletoks}{#1}{\secno}% write to contents file
       {\noexpand\the\pageno}{\the\toksE}}} % \ZZ{title}{depth}{sec}{page}{ss}
@@ -513,7 +514,7 @@
   %\global\advance\pageno by1}
 %\def\topofcontents{\centerline{\titlefont\title}\vskip.7in
   %\vfill} % this material will start the table of contents page
-%\def\startpdf{\ifpdf \ifpdftex\pdfcatalog{/PageMode /UseOutlines}
+%\def\startpdf{\ifpdf \ifpdflua\pdfcatalog{/PageMode /UseOutlines}
   %\else {\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
 %\def\botofcontents{\vfill
   %\centerline{\covernote}} % this material will end the table of contents page
@@ -527,13 +528,13 @@
 \def\readsections{\input \jobname.scn}
 
 \newwrite\cont
-\ifpdftex
+\ifpdflua
   \immediate\openout\cont=\contentsfile
   \immediate\write\cont{\catcode `\noexpand\@=11\relax} % \makeatletter
 \fi
 
 \def\inx{\flushout % No full index at the end
-  \ifpdftex
+  \ifpdflua
     \immediate\write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
     \immediate\closeout\cont % the contents information has been fully gathered
   \fi}
@@ -541,7 +542,7 @@
   \def\U##1.{} \def\Us##1.{} \def\Q##1.{} \def\Qs##1.{} \let\I=\relax \let\*=*
   \newrefs={} \output={\shipout\box255}
   \def\outsecname{Names of the sections}
-  \ifpdftex \makebookmarks \countsections
+  \ifpdflua \makebookmarks \countsections
     \pdfdest name {NOS} fith
     \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
     \def\X##1:##2\X{\firstsecno##1.%
