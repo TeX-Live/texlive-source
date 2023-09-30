@@ -114,6 +114,7 @@ ALL =  common.w ctangle.w cweave.w prod.w \
 	 pdftex ) pdftex $* ;; \
 	 xetex ) xetex $* ;; \
 	 hitex ) hitex $* ;; \
+	 luatex ) luatex $* ;; \
 	esac
 
 all: ctangle cweave
