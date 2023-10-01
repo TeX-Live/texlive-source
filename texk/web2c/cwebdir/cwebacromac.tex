@@ -52,16 +52,18 @@
     \ifx\nxt~\addF\space
     \else\ifx\nxt\onespace\addF\space
     \else\the\usersanitizer
-    \iftokprocessed\else\makeolproctokctli
-    \iftokprocessed\else\makeolproctokctlii
-    \iftokprocessed\else\makeolproctokctliii % if not recognised, skip it
-    \fi\fi\fi\fi\fi
-   \else  % we don't have a control sequence, it's an ordinary char
+      \iftokprocessed\else\makeolproctokctli
+      \iftokprocessed\else\makeolproctokctlii
+      \iftokprocessed\else\makeolproctokctliii % if not recognised, skip it
+      \fi\fi\fi
+    \fi\fi
+  \else  % we don't have a control sequence, it's an ordinary char
     \ifx/\nxt \addF{\string\/}% quote chars special to PDF with backslash
     \else\ifx(\nxt \addF{\string\(}\else\ifx)\nxt \addF{\string\)}%
     \else\ifx[\nxt \addF{\string\[}\else\ifx]\nxt \addF{\string\]}%
     \else\expandafter\makeolproctokchar\meaning\nxt
-   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+    \fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi \fi\fi\fi
   \next
 }
 \def\makeolproctokchar#1 #2 #3{\addF{#3}}
@@ -85,7 +87,9 @@
   \else\ifx\nxt\{\addF\lbchar       \else\ifx\nxt\}\addF\rbchar
   \else\ifx\nxt\ \addF\space        \else\ifx\nxt\#\addF{\string\#}%
   \else\ifx\nxt\PP\addF{++}\else\ifx\nxt\MM\addF{--}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
+  \fi\fi
 }
 \def\makeolproctokctlii{%
   \ifx\nxt\MG\addF{->}\else\ifx\nxt\GG\addF{>>}%
@@ -105,7 +109,7 @@
   \else\ifx\nxt\AM\addF&\else\ifx\nxt\%\addF{\string\%}%
   \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
   \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
-  \fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi \fi
 }
 \def\makeolproctokctliii{%
   \ifx\nxt\V\addF{||}\else\ifx\nxt\W\addF{&&}\else\ifx\nxt\Z\addF{<=}%
@@ -120,7 +124,7 @@
   \else\ifx\nxt\Xorxeq\addF{\space or_eq\space}%
   \else\ifx\nxt\Xxor\addF{\space xor\space}%
   \else\ifx\nxt\Xxorxeq\addF{\space xor_eq\space}%
-  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
   \fi\fi\fi\fi\fi
 }
 \def\outlinedone{\edef\outlinest{\global\noexpand\toksE={\the\toksF}}%
