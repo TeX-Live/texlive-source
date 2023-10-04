@@ -1,0 +1,35 @@
+#! /bin/sh -vx
+# luaoutputdir.test - check that Lua-level kpse.* reads from -output-directory.
+# Public domain. Originally written by Karl Berry, 2023.
+# https://github.com/latex3/latex3/issues/1070
+
+BinDir=${BinDir:-.} # ordinarily run from the web2c builddir
+ExeExt=${ExeExt:-}
+_luatex=$BinDir/luatex$ExeExt
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+
+outdir=tests/outdirlua
+outfile=outfileLUA.tex
+rm -rf $outdir  # don't let previous runs interfere
+mkdir $outdir || exit 1
+
+$_luatex -ini -output-directory=$outdir '\immediate\openout1='$outfile'\end' \
+|| exit 3
+
+ls -l $outdir/$outfile || exit 7
+
+# Then we should be able to read it back in TeX.
+$_luatex -ini -output-directory=$outdir '\input '$outfile' \end' || exit 9
+
+# And we should also be able to read it back in Lua.
+$_luatex -ini -output-directory=$outdir \
+'\catcode123=1 \catcode125=2
+ \directlua{local file=kpse.find_file("'$outfile'");
+            if (file == nil) then os.exit(1); end}
+ \end
+' || exit 11
+
+exit 0

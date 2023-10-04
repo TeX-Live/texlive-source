@@ -232,8 +232,11 @@ endif WIN32
 
 # LuaTeX/LuaJITTeX Tests
 #
-luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
-luatexdir/luatex.log luatexdir/luaimage.log: luatex$(EXEEXT)
+luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test \
+               luatexdir/luaoutputdir.test
+luatexdir/luatex.log luatexdir/luaimage.log luatexdir/luaoutputdir.log: \
+  luatex$(EXEEXT)
+#
 luahbtex_tests = luatexdir/luatex.test luatexdir/luaimage.test
 luatexdir/luahbtex.log luatexdir/luahbimage.log: luahbtex$(EXEEXT)
 

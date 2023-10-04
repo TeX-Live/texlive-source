@@ -5337,7 +5337,10 @@ call_luajithbtex_LDADD =
 
 # LuaTeX/LuaJITTeX Tests
 #
-luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test
+luatex_tests = luatexdir/luatex.test luatexdir/luaimage.test \
+               luatexdir/luaoutputdir.test
+
+#
 luahbtex_tests = luatexdir/luatex.test luatexdir/luaimage.test
 luajittex_tests = luatexdir/luajittex.test luatexdir/luajitimage.test
 luajithbtex_tests = luatexdir/luajittex.test luatexdir/luajitimage.test
@@ -22324,7 +22327,8 @@ $(luajithbtex_OBJECTS): libluajittex.a
 @MINGW32_FALSE@@WIN32_TRUE@uninstall-luajithbtex-links:
 @MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajit$(EXEEXT)
 @MINGW32_FALSE@@WIN32_TRUE@	rm -f $(DESTDIR)$(bindir)/texluajitc$(EXEEXT)
-luatexdir/luatex.log luatexdir/luaimage.log: luatex$(EXEEXT)
+luatexdir/luatex.log luatexdir/luaimage.log luatexdir/luaoutputdir.log: \
+  luatex$(EXEEXT)
 luatexdir/luahbtex.log luatexdir/luahbimage.log: luahbtex$(EXEEXT)
 luatexdir/luajittex.log luatexdir/luajitimage.log: luajittex$(EXEEXT)
 luatexdir/luajithbtex.log luatexdir/luajithbimage.log: luajithbtex$(EXEEXT)
