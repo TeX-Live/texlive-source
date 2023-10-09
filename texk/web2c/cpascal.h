@@ -2,8 +2,8 @@
    we use in the change files.  Public domain.
    
    This is the top-level include file for all the web2c-generated C
-   programs except TeX and Metafont themselves, which use texmf.h.  It's
-   not included by the web2c programs, though.  */
+   programs except TeX and Metafont themselves, which use texmf.h.
+   It's not included by the web2c programs themselves.  */
 
 #ifndef CPASCAL_H
 #define CPASCAL_H
@@ -191,7 +191,7 @@ typedef FILE *text;
   fprintf (logfile, "Reallocated %s (elt_size=%ld) to %ld items from %ld.\n", \
            array_name, (long) (length + 1), (long) new_size, (long) size_var); \
   XRETALLOC (array_var, (new_size) * (length + 1), ASCIIcode)
-  
+
 /* Need precisely int for getopt, etc. */
 #define cinttype int
 
@@ -303,7 +303,7 @@ typedef struct option getoptstruct;
 #endif
 
 /* Apparently POSIX 2008 has getline and glibc 2.9.90 exports it.
-   tangle, weave, et al. use that symbol; try to define it away so
+   tangle, weave, et al. use that symbol; try to define it away to
    something that a standard won't usurp.  */
 #ifdef getline
 #undef getline
