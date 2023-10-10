@@ -1,7 +1,8 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2019-2023 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
+# Check for a double free bug.
 
 BinDir=${BinDir:-.}
 ExeExt=${ExeExt:-}
@@ -11,8 +12,9 @@ _tex=$BinDir/tex$ExeExt
 test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 
-# Resulted in a double free with glibc on x86_64-linux.
-fail=2
+# Resulted in a double free with glibc on x86_64-linux ca.2019.
+# We expect TeX to exit with bad status since the \openout
+# of /tmp/a should not be allowed.
 $_tex -ini '\batchmode \immediate\openout1=b \openout1=/tmp/a \end'
 
 # If TeX crashed, we won't get here. The exit status will be something
@@ -20,4 +22,3 @@ $_tex -ini '\batchmode \immediate\openout1=b \openout1=/tmp/a \end'
 fail=0
 
 exit $fail
-

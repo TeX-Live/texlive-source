@@ -1,5 +1,22 @@
 2023-10-09  Karl Berry  <karl@freefriends.org>
 
+	* lib/texmfmp.c (parse_options): if --output-directory was
+	specified, putenv the value to TEXMF_OUTPUT_DIRECTORY.
+	If --output-directory was not specified, and
+	TEXMF_OUTPUT_DIRECTORY is set in the environment (not config file),
+	set the output_directory variable to its value.
+	* tests/outputdir.test: new test.
+	* am/texmf.am (tex_tests): add it.
+	* doc/web2c.texi (Output file location),
+	* NEWS: document this.
+	* bibtex.ch: mention failure to implement TEXMF_OUTPUT_DIRECTORY.
+
+	* doc/web2c.texi (Shell escape commands): xref kpathsea doc
+	on output paranoia.
+	* tests/tex-closeout.test: tweak description.
+
+2023-10-09  Karl Berry  <karl@freefriends.org>
+
 	* cpascal.h: typo.
 
 2023-09-24  Andreas Scherer  <https://ascherer.github.io>

@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.3.5, released in February 2023.
+corresponds to version 6.3.5, released in October 2023.
 
 * Menu:
 
@@ -62,7 +62,7 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 6.3.5 of the Kpathsea library,
-released in February 2023.
+released in October 2023.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -1235,9 +1235,10 @@ filename, and returns the first file found.
      '-D' is a synonym, for compatibility with Dvips.  Default is 600.
 
 '--engine=NAME'
-     Set the engine name to NAME.  By default it is not set.  The engine
-     name is used in some search paths to allow files with the same name
-     but used by different engines to coexist.
+     Set the engine name to NAME.  By default it is not set in
+     'kpsewhich' (TeX engines set it to the appropriate string).  The
+     engine name is used in some search paths to allow files with the
+     same name but used by different engines to coexist.
 
      In particular, since the memory dump files ('.fmt'/'.base'/'.mem')
      are now stored in subdirectories named for the engine ('tex',
@@ -1473,9 +1474,9 @@ their corresponding format:
 
    A user-specified format will override the above defaults.
 
-   Another useful configuration file in this regard is 'tcfmgr.map',
-found in 'texmf/texconfig/tcfmgr.map', which records various information
-about the above configuration files (among others).
+   Another reference for information about TeX's many special files is
+'tcfmgr.map', found in 'texmf/texconfig/tcfmgr.map', which records
+various information about the above configuration files (among others).
 
 
 File: kpathsea.info,  Node: Auxiliary tasks,  Next: Standard options,  Prev: Specially-recognized files,  Up: Invoking kpsewhich
@@ -2289,17 +2290,20 @@ file types which support runtime generation.
      ('.tfm') TFM files.
 
 These names can be overridden by an environment variable specific to the
-program--for example, 'DVIPSMAKEPK' for Dvipsk.
+program; for example, 'DVIPSMAKEPK' for Dvipsk.
 
    If a 'mktex...' script fails, the invocation is appended to a file
-'missfont.log' (by default) in the current directory.  You can then
-execute the log file to create the missing files after fixing the
-problem.
+'missfont.log' (by default) in the current directory.  After fixing the
+problem, you can then execute the log file to create the missing files.
 
-   If the current directory is not writable and the environment variable
-or configuration file value 'TEXMFOUTPUT' is set, its value is used.
-Otherwise, nothing is written.  The name 'missfont.log' is overridden by
-the 'MISSFONT_LOG' environment variable or configuration file value.
+   If the environment variable 'TEXMF_OUTPUT_DIRECTORY' is set,
+'missfont.log' is first tried to be written there; if it's not set, the
+current directory is tried first.  If that first write fails and the
+environment variable or configuration file value 'TEXMFOUTPUT' is set,
+we try to write 'missfont.log' there.  Otherwise nothing is written.
+
+   The base filename 'missfont.log' is overridden by the 'MISSFONT_LOG'
+environment variable or configuration file value.
 
 
 File: kpathsea.info,  Node: mktex script arguments,  Prev: mktex script names,  Up: mktex scripts
@@ -2482,31 +2486,49 @@ this:
      etc.).  In other words, if you are looking up a VF or some other
      file that need not exist, don't use this.
 
-  9. TeX can write output files, via the '\openout' primitive; this
-     opens a security hole vulnerable to Trojan horse attack: an
-     unwitting user could run a TeX program that overwrites, say,
-     '~/.rhosts'.  Analogous security holes exist for many other
-     programs.  To alleviate this, there is a configuration variable
-     'openout_any', which selects one of three levels of security.  When
-     it is set to 'a' (for "any"), no restrictions are imposed.  When it
-     is set to 'r' (for "restricted"), filenames beginning with '.' are
-     disallowed (except '.tex' because LaTeX needs it).  When it is set
-     to 'p' (for "paranoid") additional restrictions are imposed: an
-     absolute filename must refer to a file in (a subdirectory) of
-     'TEXMFOUTPUT', and any attempt to go up a directory level is
-     forbidden (that is, paths may not contain a '..' component).  The
-     paranoid setting is the default.  (For backwards compatibility, 'y'
-     and '1' are synonyms of 'a', while 'n' and '0' are synonyms for
-     'r'.)  The function 'kpathsea_out_name_ok', with a filename as
-     second argument, returns 'true' if that filename is acceptable to
-     be opend for output or 'false' otherwise.
+  9. TeX can write output files, via the '\openout' primitive.  This
+     opens a security vulnerability: an unwitting user could run a TeX
+     document that overwrites, say, '~/.profile'.  Analogous
+     vulnerabilities exist for almost any program that can write files,
+     but since users expect TeX to typeset documents, not overwrite
+     personal files, it's desirable to handle this.  To alleviate it,
+     there is a configuration variable 'openout_any', which selects one
+     of three levels of security:
+
+        * When set to 'a' (for "any"), no restrictions are imposed.
+
+        * When is set to 'r' (for "restricted"), filenames beginning
+          with '.' are disallowed (except '.tex', because LaTeX needs
+          it).
+
+        * When set to 'p' (for "paranoid"), additional restrictions are
+          imposed.  First, an absolute filename must refer to a file in
+          (or in a subdirectory of) either the 'TEXMF_OUTPUT_DIRECTORY'
+          environment variable or the 'TEXMFOUTPUT' environment variable
+          or configuration file setting.  Second, any attempt to go up a
+          directory level is forbidden; that is, paths may not contain a
+          '..' component.
+
+        * For backwards compatibility, 'y' and '1' are synonyms of 'a',
+          while 'n' and '0' are synonyms for 'r'.
+
+     The paranoid setting is the default.  Any program intended to be
+     safely called from TeX should implement the same measures, one way
+     or another.  *Note (web2c)Shell escapes::.
+
+     The function 'kpathsea_out_name_ok', with a filename as second
+     argument, returns 'true' if that filename is acceptable to be
+     opened for output or 'false' otherwise.  The Kpsewhich program has
+     options '--safe-in-name' and '--safe-out-name' to provide a command
+     line interface for the checking.
 
   10. Similarly, the function 'kpathsea_in_name_ok', with a filename as
      second argument, returns 'true' if that filename is acceptable to
      be opend for input or 'false' otherwise, depending on the value of
-     the configuration variable 'openin_any' (with 'a' as default).
+     the configuration variable 'openin_any' (with 'a' as default; too
+     many system directories are involved to make 'p' feasible).
 
-  11. To close the kpathsea library instance you are using, call
+  11. To close the Kpathsea library instance you are using, call
      'kpathsea_finish'.  This function closes any open log files and
      frees the memory used by the instance.
 
@@ -3054,30 +3076,30 @@ Index
 * --expand-path=STRING:                  Auxiliary tasks.     (line  16)
 * --expand-var=STRING:                   Auxiliary tasks.     (line  34)
 * --format=NAME:                         Path searching options.
-                                                              (line  69)
+                                                              (line  70)
 * --help:                                Standard options.    (line   8)
 * --help-formats:                        Auxiliary tasks.     (line  42)
 * --interactive:                         Path searching options.
-                                                              (line 151)
+                                                              (line 152)
 * --mktex=FILETYPE:                      Path searching options.
-                                                              (line 156)
+                                                              (line 157)
 * --mode=STRING:                         Path searching options.
-                                                              (line 162)
+                                                              (line 163)
 * --must-exist:                          Path searching options.
-                                                              (line 167)
+                                                              (line 168)
 * --no-casefold-search:                  Path searching options.
                                                               (line  19)
 * --no-mktex=FILETYPE:                   Path searching options.
-                                                              (line 156)
+                                                              (line 157)
 * --path=STRING:                         Path searching options.
-                                                              (line 172)
+                                                              (line 173)
 * --progname=NAME:                       Path searching options.
-                                                              (line 180)
+                                                              (line 181)
 * --safe-in-name=NAME:                   Auxiliary tasks.     (line  48)
 * --safe-out-name=NAME:                  Auxiliary tasks.     (line  48)
 * --show-path=NAME:                      Auxiliary tasks.     (line  54)
 * --subdir=STRING:                       Path searching options.
-                                                              (line 185)
+                                                              (line 186)
 * --var-brace-value=VARIABLE:            Auxiliary tasks.     (line  60)
 * --var-value=VARIABLE:                  Auxiliary tasks.     (line  74)
 * --version:                             Standard options.    (line  11)
@@ -3255,7 +3277,7 @@ Index
 * arguments to mktex:                    mktex script arguments.
                                                               (line   6)
 * argv[0]:                               Calling sequence.    (line  14)
-* autoconf, recommended:                 Calling sequence.    (line 117)
+* autoconf, recommended:                 Calling sequence.    (line 135)
 * automounter, and ls-R:                 ls-R.                (line  46)
 * auxiliary tasks:                       Auxiliary tasks.     (line   6)
 * Bach, Johann Sebastian:                Default expansion.   (line  41)
@@ -3279,7 +3301,7 @@ Index
 * bug checklist:                         Bug checklist.       (line   6)
 * bug mailing list:                      Mailing lists.       (line   6)
 * bugs, reporting:                       Reporting bugs.      (line   6)
-* c-*.h:                                 Calling sequence.    (line 117)
+* c-*.h:                                 Calling sequence.    (line 135)
 * c-auto.h:                              Programming overview.
                                                               (line  35)
 * cache of fonts, local:                 Security.            (line  22)
@@ -3482,7 +3504,7 @@ Index
 * group-writable directories:            Security.            (line  40)
 * GSFTOPK_DEBUG (128):                   Debugging.           (line  88)
 * hash table buckets, printing:          Debugging.           (line 105)
-* hash table routines:                   Calling sequence.    (line 110)
+* hash table routines:                   Calling sequence.    (line 128)
 * hash_summary_only variable for debugging: Debugging.        (line 105)
 * history of Kpathsea:                   History.             (line   6)
 * Hoekwater, Taco:                       History.             (line  78)
@@ -3492,9 +3514,9 @@ Index
 * include fontmap directive:             Fontmap.             (line  36)
 * INDEXSTYLE:                            Supported file formats.
                                                               (line  84)
-* input lines, reading:                  Calling sequence.    (line 110)
+* input lines, reading:                  Calling sequence.    (line 128)
 * interactive query:                     Path searching options.
-                                                              (line 151)
+                                                              (line 152)
 * interface, not frozen:                 Introduction.        (line  29)
 * introduction:                          Introduction.        (line   6)
 * kdebug::                               Debugging.           (line 105)
@@ -3511,10 +3533,10 @@ Index
 * kpathsea_find_file:                    File lookup.         (line  38)
 * kpathsea_find_file <1>:                Calling sequence.    (line  62)
 * kpathsea_find_glyph:                   Glyph lookup.        (line  26)
-* kpathsea_finish:                       Calling sequence.    (line 106)
+* kpathsea_finish:                       Calling sequence.    (line 124)
 * kpathsea_init_prog:                    Fallback font.       (line  15)
 * kpathsea_init_prog <1>:                Calling sequence.    (line  53)
-* kpathsea_in_name_ok:                   Calling sequence.    (line 101)
+* kpathsea_in_name_ok:                   Calling sequence.    (line 118)
 * kpathsea_new:                          Calling sequence.    (line   9)
 * kpathsea_open_file:                    Calling sequence.    (line  74)
 * kpathsea_out_name_ok:                  Calling sequence.    (line  82)
@@ -3551,7 +3573,7 @@ Index
 * license for using the library:         Introduction.        (line  32)
 * LIGFONTS:                              Supported file formats.
                                                               (line  88)
-* lines, reading arbitrary-length:       Calling sequence.    (line 110)
+* lines, reading arbitrary-length:       Calling sequence.    (line 128)
 * Linux File System Standard:            mktex configuration. (line 113)
 * local cache of fonts:                  Security.            (line  22)
 * log file:                              Logging.             (line   6)
@@ -3574,7 +3596,7 @@ Index
 * mailing lists:                         Mailing lists.       (line   6)
 * MAKETEX_DEBUG (512):                   Debugging.           (line  91)
 * MAKETEX_FINE_DEBUG (1024):             Debugging.           (line 100)
-* memory allocation routines:            Calling sequence.    (line 110)
+* memory allocation routines:            Calling sequence.    (line 128)
 * metafont driver files:                 mktex configuration. (line  93)
 * Metafont failures:                     TeX or Metafont failing.
                                                               (line   6)
@@ -3597,7 +3619,7 @@ Index
 * mismatched checksum warnings:          Suppressing warnings.
                                                               (line  17)
 * missfont.log:                          mktex script names.  (line  35)
-* MISSFONT_LOG:                          mktex script names.  (line  40)
+* MISSFONT_LOG:                          mktex script names.  (line  45)
 * missing character warnings:            Suppressing warnings.
                                                               (line  20)
 * mkocp:                                 mktex script names.  (line  18)
@@ -3651,6 +3673,7 @@ Index
                                                               (line 145)
 * online Metafont display, spurious:     Unable to generate fonts.
                                                               (line  36)
+* openout_any:                           Calling sequence.    (line  82)
 * OPENTYPEFONTS:                         Supported file formats.
                                                               (line 149)
 * optimization caveat:                   TeX or Metafont failing.
@@ -3665,6 +3688,7 @@ Index
                                                               (line 158)
 * OVPFONTS:                              Supported file formats.
                                                               (line 161)
+* paranoid mode, for output files:       Calling sequence.    (line  97)
 * path expansion:                        Path expansion.      (line   6)
 * path searching:                        Path searching.      (line   6)
 * path searching options:                Path searching options.
@@ -3713,7 +3737,7 @@ Index
                                                               (line  16)
 * readable:                              Suppressing warnings.
                                                               (line  26)
-* reading arbitrary-length lines:        Calling sequence.    (line 110)
+* reading arbitrary-length lines:        Calling sequence.    (line 128)
 * recording successful searches:         Logging.             (line   6)
 * relative filenames:                    Searching overview.  (line  58)
 * reporting bugs:                        Reporting bugs.      (line   6)
@@ -3721,6 +3745,7 @@ Index
 * resolution, setting:                   Path searching options.
                                                               (line  49)
 * resolutions, last-resort:              Fallback font.       (line   6)
+* restricted mode, for output files:     Calling sequence.    (line  93)
 * retrieving TeX:                        unixtex.ftp.         (line   6)
 * right-hand side of variable assignments: Config files.      (line  57)
 * RISINPUTS:                             Supported file formats.
@@ -3763,7 +3788,7 @@ Index
 * standard error and debugging output:   Debugging.           (line  27)
 * standard options:                      Standard options.    (line   6)
 * startup time, excessive:               Slow path searching. (line   6)
-* string routines:                       Calling sequence.    (line 110)
+* string routines:                       Calling sequence.    (line 128)
 * strip:                                 mktex configuration. (line 107)
 * stripsupplier:                         mktex configuration. (line 101)
 * striptypeface:                         mktex configuration. (line 104)
@@ -3867,12 +3892,17 @@ Index
 * TEXMFINI <2>:                          Supported file formats.
                                                               (line 101)
 * TEXMFLOG:                              Logging.             (line  10)
-* TEXMFOUTPUT:                           mktex script names.  (line  40)
+* TEXMFOUTPUT, and missfont.log:         mktex script names.  (line  39)
+* TEXMFOUTPUT, and paranoid output files: Calling sequence.   (line  97)
 * TEXMFSCRIPTS:                          Supported file formats.
                                                               (line 195)
 * texmfvar:                              mktex configuration. (line 122)
 * TEXMFVAR:                              mktex configuration. (line 123)
 * texmf_casefold_search:                 Casefolding search.  (line  12)
+* TEXMF_OUTPUT_DIRECTORY, and missfont.log: mktex script names.
+                                                              (line  39)
+* TEXMF_OUTPUT_DIRECTORY, and paranoid output files: Calling sequence.
+                                                              (line  97)
 * TEXPICTS:                              Supported file formats.
                                                               (line  79)
 * TEXPKS:                                Supported file formats.
@@ -3921,6 +3951,7 @@ Index
 * unreadable file warnings:              Suppressing warnings.
                                                               (line  27)
 * unreadable files:                      Searching overview.  (line  63)
+* unrestricted mode, for output files:   Calling sequence.    (line  91)
 * unusable ls-R warning:                 ls-R.                (line  51)
 * usage patterns, finding:               Logging.             (line   6)
 * USERPROFILE, as ~ expansion:           Tilde expansion.     (line   6)
@@ -3967,61 +3998,62 @@ Index
 
 Tag Table:
 Node: Top1480
-Node: Introduction2263
-Node: History4333
-Node: unixtex.ftp8929
-Node: Security10399
-Node: TeX directory structure12903
-Node: Path searching16942
-Node: Searching overview17900
-Node: Path sources21719
-Node: Config files22945
-Node: Path expansion27817
-Node: Default expansion28770
-Node: Variable expansion30840
-Node: Tilde expansion32241
-Node: Brace expansion33221
-Node: KPSE_DOT expansion34160
-Node: Subdirectory expansion34673
-Node: Casefolding search37021
-Node: Casefolding rationale37790
-Node: Casefolding examples39136
-Node: Filename database44182
-Node: ls-R45164
-Node: Filename aliases48840
-Node: Database format50018
-Node: Invoking kpsewhich51031
-Node: Path searching options51986
-Node: Specially-recognized files61589
-Node: Auxiliary tasks62944
-Node: Standard options66669
-Node: TeX support67025
-Node: Supported file formats68379
-Node: File lookup76198
-Node: Glyph lookup77947
-Node: Basic glyph lookup79071
-Node: Fontmap79951
-Node: Fallback font82461
-Node: Suppressing warnings83373
-Node: mktex scripts84500
-Node: mktex configuration85715
-Node: mktex script names91518
-Node: mktex script arguments92904
-Node: Programming93783
-Node: Programming overview94356
-Node: Calling sequence97217
-Node: Program-specific files103746
-Node: Programming with config files104769
-Node: Reporting bugs106356
-Node: Bug checklist107034
-Node: Mailing lists110503
-Node: Debugging111180
-Node: Logging116257
-Node: Common problems118124
-Node: Unable to find files118601
-Node: Slow path searching121011
-Node: Unable to generate fonts122386
-Node: TeX or Metafont failing124858
-Node: Index126060
+Node: Introduction2262
+Node: History4331
+Node: unixtex.ftp8927
+Node: Security10397
+Node: TeX directory structure12901
+Node: Path searching16940
+Node: Searching overview17898
+Node: Path sources21717
+Node: Config files22943
+Node: Path expansion27815
+Node: Default expansion28768
+Node: Variable expansion30838
+Node: Tilde expansion32239
+Node: Brace expansion33219
+Node: KPSE_DOT expansion34158
+Node: Subdirectory expansion34671
+Node: Casefolding search37019
+Node: Casefolding rationale37788
+Node: Casefolding examples39134
+Node: Filename database44180
+Node: ls-R45162
+Node: Filename aliases48838
+Node: Database format50016
+Node: Invoking kpsewhich51029
+Node: Path searching options51984
+Node: Specially-recognized files61654
+Node: Auxiliary tasks63025
+Node: Standard options66750
+Node: TeX support67106
+Node: Supported file formats68460
+Node: File lookup76279
+Node: Glyph lookup78028
+Node: Basic glyph lookup79152
+Node: Fontmap80032
+Node: Fallback font82542
+Node: Suppressing warnings83454
+Node: mktex scripts84581
+Node: mktex configuration85796
+Node: mktex script names91599
+Node: mktex script arguments93170
+Node: Programming94049
+Node: Programming overview94622
+Node: Calling sequence97483
+Ref: openout_any101641
+Node: Program-specific files104692
+Node: Programming with config files105715
+Node: Reporting bugs107302
+Node: Bug checklist107980
+Node: Mailing lists111449
+Node: Debugging112126
+Node: Logging117203
+Node: Common problems119070
+Node: Unable to find files119547
+Node: Slow path searching121957
+Node: Unable to generate fonts123332
+Node: TeX or Metafont failing125804
+Node: Index127006
 
 End Tag Table

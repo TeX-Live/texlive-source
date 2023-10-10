@@ -688,8 +688,18 @@ TEXMF_RESTRICTED_SCRIPTS = \
 openin_any = a
 openout_any = p
 
-% Write .log/.dvi/.aux/etc. files here, if the current directory is unwritable.
+% Write .log/.dvi/.aux/etc. files here, if they can't be written in the
+% current directory.
+% 
+% Best to use this only when a particular job requires it, not set
+% globally in a configuration file or the environment.
 %TEXMFOUTPUT = /tmp
+%
+% A related environment variable is TEXMF_OUTPUT_DIRECTORY.  It
+% overrides the current directory for all output files in TeX and the other
+% engines. It cannot be set in a configuration file. And it's even more
+% important to use it only temporarily, when required, to avoid massive
+% confusion about where the output files are ending up.
 
 % If a dynamic file creation fails, log the command to this file, in
 % either the current directory or TEXMFOUTPUT.  Set to the

@@ -1,0 +1,63 @@
+#! /bin/sh -vx
+# qqq also check propagated to subprog
+# $Id$
+# outputdir.test - check that TEXMF_OUTPUT_DIRECTORY works.
+# Public domain. Originally written by Karl Berry, 2023.
+
+BinDir=${BinDir:-..} # ordinarily run from the web2c/tests subdir in build
+ExeExt=${ExeExt:-}
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+
+(
+# We have to cd so we can make an output directory
+# that would normally be disallowed.
+cd tests || exit 1
+pwd
+
+outdir=../outdirtest
+TEXMF_OUTPUT_DIRECTORY=$outdir; export TEXMF_OUTPUT_DIRECTORY
+
+outfile=outfile.tex
+rm -rf $outdir $outfile  # don't let previous runs interfere
+mkdir $outdir || exit 1
+
+for engine in tex; do # luatex mpost
+  _engine=$BinDir/$engine$ExeExt
+
+  # The output file should be written to outdir (not .), because of the
+  # envvar. Ordinarily a .. path would be rejected for writing.
+  $_engine -ini '\immediate\openout1='$outfile'\end' || exit 3
+
+  set -x
+  ls -l $outdir/$outfile || exit 5      # ensure it got written,
+  ls -l $outfile && exit 7              # and not to cwd.
+
+  # Then we should be able to read it back in TeX, implicitly from outdir.
+  $_engine -ini '\input '$outfile' \end' || exit 9
+  
+  # The log file should also have been written to outdir.
+  ls -l $outdir/`basename $outfile .tex`.log || exit 11
+done
+
+) # end subshell in tests subdir
+exit $? # must be the next line to propagate status
+
+# We could test that it propagates to subprograms with something like
+# tex -ini --shell-restricted '\catcode123=1 \catcode125=2 \immediate\write18{kpsewhich --var-value TEXMF_OUTPUT_DIRECTORY}\end'
+# but since it requires so much config file stuff, let's not bother.
+
+# In theory we should run this with all the tex engines + mf,
+# but it just doesn't seem worth the time or trouble.  After it's
+# implemented in LuaTeX and MetaPost, would be worth it there since it's
+# independent code.
+
+# BibTeX requires implementing the output directory stuff; see bibtex.ch.
+# If that's ever done, a test invocation, within the subshell above,
+# could look like:
+#  TEXMFCNF=$srcdir/../kpathsea \
+#    BSTINPUTS=$srcdir/tests \
+#    BIBINPUTS=$srcdir/tests \
+#  $_bibtex $srcdir/tests/exampl.aux || exit 1

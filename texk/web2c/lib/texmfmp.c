@@ -2048,6 +2048,19 @@ parse_options (int argc, string *argv)
 
     } /* Else it was a flag; getopt has already done the assignment.  */
   }
+
+  if (output_directory) {
+    /* If they specified --output-directory, save it in an envvar
+       so that subprocesses called with \write18 can get the value.  */
+    xputenv ("TEXMF_OUTPUT_DIRECTORY", output_directory);
+  
+  } else if (getenv ("TEXMF_OUTPUT_DIRECTORY")) {
+    /* If the option wasn't specified, but the envvar is set (i.e., by
+       the user), save the envvar value in our global variable so the
+       rest of our code will use it.  */
+    output_directory = getenv ("TEXMF_OUTPUT_DIRECTORY");
+
+  } /* Else neither option nor envvar was set; do nothing.  */
 }
 
 #if defined(TeX)

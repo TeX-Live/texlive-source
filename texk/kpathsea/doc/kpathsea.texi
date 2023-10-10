@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.3.5
-@set month-year February 2023
+@set month-year October 2023
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1535,9 +1535,10 @@ Dvips.  Default is 600.
 @item --engine=@var{name}
 @opindex --engine=@var{name}
 @cindex engine name
-Set the engine name to @var{name}.  By default it is not set.  The
-engine name is used in some search paths to allow files with the same
-name but used by different engines to coexist.
+Set the engine name to @var{name}.  By default it is not set in
+@code{kpsewhich} (@TeX{} engines set it to the appropriate string).
+The engine name is used in some search paths to allow files with the
+same name but used by different engines to coexist.
 
 In particular, since the memory dump files
 (@file{.fmt}/@file{.base}/@file{.mem}) are now stored in
@@ -1822,9 +1823,10 @@ look for the file @file{pdftexconfig.tex} instead.)
 A user-specified format will override the above defaults.
 
 @flindex tcfmgr.map
-Another useful configuration file in this regard is @file{tcfmgr.map},
-found in @file{texmf/texconfig/tcfmgr.map}, which records various
-information about the above configuration files (among others).
+Another reference for information about @TeX{}'s many special files is
+@file{tcfmgr.map}, found in @file{texmf/texconfig/tcfmgr.map}, which
+records various information about the above configuration files (among
+others).
 
 
 @node Auxiliary tasks
@@ -3018,23 +3020,28 @@ formats.  This script is also named @command{fmtutil}, and reads
 @vindex XDVIMAKEPK
 @vindex DVILJMAKEPK
 @noindent These names can be overridden by an environment variable specific
-to the program---for example, @code{DVIPSMAKEPK} for Dvipsk.
+to the program; for example, @code{DVIPSMAKEPK} for Dvipsk.
 
 @comment next two paragraphs are repeated in dvips.texi
 @flindex missfont.log
 @cindex failed @code{mktex@dots{}} script invocation
 If a @code{mktex@dots{}} script fails, the invocation is appended to a
-file @file{missfont.log} (by default) in the current directory.  You can
-then execute the log file to create the missing files after fixing the
-problem.
+file @file{missfont.log} (by default) in the current directory.  After
+fixing the problem, you can then execute the log file to create the
+missing files.
 
-@vindex TEXMFOUTPUT
+@vindex TEXMF_OUTPUT_DIRECTORY@r{, and @file{missfont.log}}
+@vindex TEXMFOUTPUT@r{, and @file{missfont.log}}
+If the environment variable @code{TEXMF_OUTPUT_DIRECTORY} is set,
+@file{missfont.log} is first tried to be written there; if it's not
+set, the current directory is tried first.  If that first write fails
+and the environment variable or configuration file value
+@code{TEXMFOUTPUT} is set, we try to write @file{missfont.log} there.
+Otherwise nothing is written.
+
 @vindex MISSFONT_LOG
-If the current directory is not writable and the environment variable or
-configuration file value @code{TEXMFOUTPUT} is set, its value is
-used.  Otherwise, nothing is written.  The name @samp{missfont.log} is
-overridden by the @code{MISSFONT_LOG} environment variable or
-configuration file value.
+The base filename @samp{missfont.log} is overridden by the
+@code{MISSFONT_LOG} environment variable or configuration file value.
 
 
 @node mktex script arguments
@@ -3261,34 +3268,67 @@ exist, don't use this.
 
 @item
 @findex kpathsea_out_name_ok
-@TeX{} can write output files, via the @code{\openout} primitive; this opens
-a security hole vulnerable to Trojan horse attack: an unwitting user could
-run a @TeX{} program that overwrites, say, @file{~/.rhosts}.  Analogous
-security holes exist for many other programs.  To alleviate this, there is a
-configuration variable @code{openout_any}, which selects one of three levels
-of security.  When it is set to @samp{a} (for ``any''), no restrictions are
-imposed.  When it is set to @samp{r} (for ``restricted''), filenames
-beginning with @samp{.} are disallowed (except @file{.tex} because @LaTeX{}
-needs it).  When it is set to @samp{p} (for ``paranoid'') additional
-restrictions are imposed: an absolute filename must refer to a file in (a
-subdirectory) of @code{TEXMFOUTPUT}, and any attempt to go up a directory
-level is forbidden (that is, paths may not contain a @samp{..} component). 
-The paranoid setting is the default.  (For backwards compatibility, @samp{y}
-and @samp{1} are synonyms of @samp{a}, while @samp{n} and @samp{0} are
-synonyms for @samp{r}.) The function @code{kpathsea_out_name_ok}, with a
-filename as second argument, returns @code{true} if that filename is
-acceptable to be opend for output or @code{false} otherwise.
+@vindex openout_any
+@anchor{openout_any}
+@TeX{} can write output files, via the @code{\openout} primitive. This
+opens a security vulnerability: an unwitting user could run a @TeX{}
+document that overwrites, say, @file{~/.profile}.  Analogous
+vulnerabilities exist for almost any program that can write files, but
+since users expect @TeX{} to typeset documents, not overwrite personal
+files, it's desirable to handle this. To alleviate it, there is a
+configuration variable @code{openout_any}, which selects one of three
+levels of security:
+
+@itemize
+@item
+@cindex unrestricted mode, for output files
+When set to @samp{a} (for ``any''), no restrictions are imposed.
+
+@item
+@cindex restricted mode, for output files
+When is set to @samp{r} (for ``restricted''), filenames beginning
+with @samp{.}  are disallowed (except @file{.tex}, because @LaTeX{}
+needs it).
+
+@item
+@cindex paranoid mode, for output files
+@vindex TEXMF_OUTPUT_DIRECTORY@r{, and paranoid output files}
+@vindex TEXMFOUTPUT@r{, and paranoid output files}
+When set to @samp{p} (for ``paranoid''), additional restrictions are
+imposed. First, an absolute filename must refer to a file in (or in a
+subdirectory of) either the @code{TEXMF_OUTPUT_DIRECTORY} environment
+variable or the @code{TEXMFOUTPUT} environment variable or
+configuration file setting. Second, any attempt to go up a directory
+level is forbidden; that is, paths may not contain a @samp{..}
+component.
+
+@item
+For backwards compatibility, @samp{y} and @samp{1} are synonyms of
+@samp{a}, while @samp{n} and @samp{0} are synonyms for @samp{r}.
+
+@end itemize
+
+The paranoid setting is the default. Any program intended to be safely
+called from @TeX{} should implement the same measures, one way or
+another.  @xref{Shell escapes,,, web2c, Web2c}.
+
+The function @code{kpathsea_out_name_ok}, with a filename as second
+argument, returns @code{true} if that filename is acceptable to be
+opened for output or @code{false} otherwise.  The Kpsewhich program
+has options @samp{--safe-in-name} and @samp{--safe-out-name} to
+provide a command line interface for the checking.
 
 @item
 @findex kpathsea_in_name_ok
 Similarly, the function @code{kpathsea_in_name_ok}, with a filename as
 second argument, returns @code{true} if that filename is acceptable to be
 opend for input or @code{false} otherwise, depending on the value of the
-configuration variable @code{openin_any} (with @samp{a} as default).
+configuration variable @code{openin_any} (with @samp{a} as default;
+too many system directories are involved to make @samp{p} feasible).
 
 @item
 @findex kpathsea_finish
-To close the kpathsea library instance you are using, call
+To close the Kpathsea library instance you are using, call
 @code{kpathsea_finish}.  This function closes any open log files and
 frees the memory used by the instance.
 

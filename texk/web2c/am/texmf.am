@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -77,9 +77,11 @@ DISTCLEANFILES += $(nodist_tex_SOURCES) tex-final.ch tex-web2c \
 
 # TeX tests
 #
-tex_tests = triptest.test tests/write18-quote-test.pl tests/tex-closeout.test
+tex_tests = triptest.test tests/outputdir.test tests/tex-closeout.test \
+  tests/write18-quote-test.pl
 triptest.log: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-tests/write18-quote-test.log tests/tex-closeout.test: tex$(EXEEXT)
+tests/outputdir.log tests/tex-closeout.log \
+  tests/write18-quote-test.log: tex$(EXEEXT)
 EXTRA_DIST += $(tex_tests)
 EXTRA_DIST += tests/write18-quote.tex
 if TEX

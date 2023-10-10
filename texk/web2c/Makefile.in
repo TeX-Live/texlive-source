@@ -3851,7 +3851,9 @@ tex_ch_srcs = \
 
 # TeX tests
 #
-tex_tests = triptest.test tests/write18-quote-test.pl tests/tex-closeout.test
+tex_tests = triptest.test tests/outputdir.test tests/tex-closeout.test \
+  tests/write18-quote-test.pl
+
 call_mf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
 nodist_call_mf_SOURCES = callexe.c
 call_mf_LDADD = 
@@ -21597,7 +21599,8 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie_c) $(tex_ch_srcs)
 triptest.log: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-tests/write18-quote-test.log tests/tex-closeout.test: tex$(EXEEXT)
+tests/outputdir.log tests/tex-closeout.log \
+  tests/write18-quote-test.log: tex$(EXEEXT)
 
 trip.diffs: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@

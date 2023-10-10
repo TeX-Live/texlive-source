@@ -1055,11 +1055,20 @@ if (last_cite = max_cites) then
 % Don't use a path to search for subsidiary aux files,
 % but do check the directory of the main .aux file.
 % 
-% This last is useful, for example, when --output-dir is used and the
+% This last is useful, for example, when --output-dir is used with TeX and the
 % .aux file has an \@input directive resulting from a LaTeX \include;
 % see bibtex-auxinclude.test. It's necessary because BibTeX itself does
-% not have --output-directory. Maybe it would be (have been?) better to
-% add it, but seems too intrusive now? Different bbl location.
+% not have --output-directory.
+%
+% We should probably implement the --output-directory option and
+% TEXMF_OUTPUT_DIRECTORY envvar in BibTeX. What this amounts to is
+% changing the add_extension function to look for those overrides to the
+% aux file dirname, so that when we call kpse_*_name_ok below, we're
+% calling it on the actual file that will be used.
+% 
+% And we need to call kpse_*_name_ok because bibtex is included in the
+% shell_escape_commands list that can be invoked by TeX in restricted mode.
+%
 @x
 while (name_ptr <= file_name_size) do   {pad with blanks}
     begin

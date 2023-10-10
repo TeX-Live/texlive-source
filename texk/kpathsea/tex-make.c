@@ -1,6 +1,6 @@
 /* tex-make.c: run external programs to make TeX-related files.
 
-   Copyright 1993, 1994, 1995, 1996, 1997, 2008-2020 Karl Berry.
+   Copyright 1993, 1994, 1995, 1996, 1997, 2008-2023 Karl Berry.
    Copyright 1997, 1998, 2001-05 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
 
 #include <kpathsea/config.h>
 
+#include <kpathsea/absolute.h>
 #include <kpathsea/c-fopen.h>
 #include <kpathsea/c-pathch.h>
 #include <kpathsea/db.h>
@@ -106,7 +107,9 @@ misstex (kpathsea kpse, kpse_file_format_type format,  string *args)
   /* If this is the first time, have to open the log file.  But don't
      bother logging anything if they were discarding errors.  */
   if (!kpse->missfont && !kpse->make_tex_discard_errors) {
+    string first_name;
     const_string missfont_name = kpathsea_var_value (kpse, "MISSFONT_LOG");
+
     if (!missfont_name || *missfont_name == '1') {
       missfont_name = "missfont.log"; /* take default name */
     } else if (missfont_name
@@ -114,9 +117,25 @@ misstex (kpathsea kpse, kpse_file_format_type format,  string *args)
       missfont_name = NULL; /* user requested no missfont.log */
     } /* else use user's name */
 
+    /* If the given name is not already absolute,
+       and TEXMF_OUTPUT_DIRECTORY is set, use that instead of cwd.
+       This is only an envvar, not a config file value.  */
+    if (!kpathsea_absolute_p (kpse, missfont_name, false)
+        && getenv ("TEXMF_OUTPUT_DIRECTORY")) {
+      first_name = concat3 (getenv ("TEXMF_OUTPUT_DIRECTORY"),
+                            DIR_SEP_STRING, missfont_name);
+    } else {
+      first_name = xstrdup (missfont_name);
+    }
     kpse->missfont
-      = missfont_name ? fopen (missfont_name, FOPEN_A_MODE) : NULL;
-    if (!kpse->missfont && kpathsea_var_value (kpse, "TEXMFOUTPUT")) {
+      = missfont_name ? fopen (first_name, FOPEN_A_MODE) : NULL;
+    
+    /* If that succeeded, save the name for output below.  */
+    if (kpse->missfont) {
+      missfont_name = first_name;
+
+    /* If that failed, try TEXMFOUTPUT.  */
+    } else if (kpathsea_var_value (kpse, "TEXMFOUTPUT")) {
       missfont_name = concat3 (kpathsea_var_value (kpse, "TEXMFOUTPUT"),
                                DIR_SEP_STRING, missfont_name);
       kpse->missfont = fopen (missfont_name, FOPEN_A_MODE);
@@ -125,6 +144,9 @@ misstex (kpathsea kpse, kpse_file_format_type format,  string *args)
     if (kpse->missfont)
       fprintf (stderr, "kpathsea: Appending font creation commands to %s.\n",
                missfont_name);
+
+    /* Uselessly save memory.  */
+    free (first_name);
   }
 
   /* Write the command if we have a log file.  */
@@ -530,15 +552,23 @@ int
 main (int argc, char **argv)
 {
   kpathsea kpse = xcalloc(1, sizeof(kpathsea_instance));
-  kpathsea_set_program_name(kpse, argv[0], NULL);
+  kpathsea_set_program_name (kpse, argv[0], NULL);
   kpathsea_xputenv (kpse, "KPATHSEA_DPI", "781"); /* call mktexpk */
   kpathsea_xputenv (kpse,"MAKETEX_BASE_DPI", "300"); /* call mktexpk */
-  kpathsea_set_program_enabled(kpse, kpse_pk_format, 1, kpse_src_env);
+  kpathsea_set_program_enabled (kpse, kpse_pk_format, 1, kpse_src_env);
+
+  /* Succeed.  */
   test_make_tex (kpse, kpse_pk_format, "cmr10");
 
-  /* Fail with mktextfm.  */
-  kpathsea_set_program_enabled(kpse, kpse_tfm_format, 1, kpse_src_env);
-  test_make_tex (kpse, kpse_tfm_format, "foozler99");
+  /* Fail with mktextfm, writing missfont.log to a different directory.  */
+  kpathsea_set_program_enabled (kpse, kpse_tfm_format, 1, kpse_src_env);
+  kpathsea_xputenv (kpse,"TEXMF_OUTPUT_DIRECTORY", "/tmp");
+  test_make_tex (kpse, kpse_tfm_format, "foozout99");
+
+  /* Since the missfont.log descriptor is cached, can only save in one
+     place in a given run, so don't bother doing it twice.
+  test_make_tex (kpse, kpse_tfm_format, "foozler98");
+  */
 
   /* Call something disabled.  */
   test_make_tex (kpse, kpse_bst_format, "no-way");
@@ -551,6 +581,6 @@ main (int argc, char **argv)
 
 /*
 Local variables:
-standalone-compile-command: "gcc -g -I. -I.. -DTEST tex-make.c kpathsea.a"
+standalone-compile-command: "gcc -g -I. -I.. -I$wk/.. -DTEST -DMAKE_KPSE_DLL tex-make.c $wk/.libs/libkpathsea.a && ./a.out" 
 End:
 */

@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-             2012, 2014, 2016, 2017, 2019 Karl Berry.
+             2012, 2014, 2016, 2017, 2019, 2023 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -1194,11 +1194,14 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
      'r' (restricted) means disallowing special file names.
      'p' (paranoid)   means being really paranoid: disallowing special file
                       names and restricting output files to be in or below
-                      the working directory or $TEXMFOUTPUT, while input files
-                      must be below the current directory, $TEXMFOUTPUT, or
-                      (implicitly) in the system areas.
+                      the working directory or $TEXMFOUTPUT or
+                      $TEXMF_OUTPUT_DIRECTORY, while input files
+                      must be below the current directory, the envvars, or
+                      (only implicitly) in the system areas.
      We default to "paranoid".  The error messages from TeX may be puzzling.
-     This function contains several return and goto statements, be careful.  */
+     This function contains several return and goto statements, be careful.
+     
+     Paranoia originally supplied by Charles Karney.  */
 
   const_string open_choice = kpathsea_var_value (kpse, check_var);
 
@@ -1231,16 +1234,31 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
     return true;
 
-  /* Paranoia originally supplied by Charles Karney.  */
   if (kpathsea_absolute_p (kpse, fname, false)) {
-    const_string texmfoutput = kpathsea_var_value (kpse, "TEXMFOUTPUT");
-    /* Absolute pathname is only OK if TEXMFOUTPUT is set, it's not empty,
-       fname begins the TEXMFOUTPUT, and is followed by / */
-    if (!texmfoutput || *texmfoutput == '\0'
-        || fname != strstr (fname, texmfoutput)
-        || !IS_DIR_SEP (fname[strlen (texmfoutput)]))
-      goto not_ok;
+
+    /* fname can be an absolute pathname only if one of the TEXMF*
+       variables is set, is non-empty, the value is the beginning of
+       fname, and the next character in fname is a directory separator.  */
+
+    /* We'll check TEXMF_OUTPUT_DIRECTORY first.  This must be an
+       environment variable, not a configuration file setting.  */
+    const_string texmfoutdir = getenv ("TEXMF_OUTPUT_DIRECTORY");
+    if (!texmfoutdir || *texmfoutdir == '\0'
+        || fname != strstr (fname, texmfoutdir)
+        || !IS_DIR_SEP (fname[strlen (texmfoutdir)])) {
+       
+      /* Ok, that didn't work. Check TEXMFOUTPUT in exactly the same
+         way, except it can be in the configuration file.  */
+      const_string texmfoutput
+        = kpathsea_var_value (kpse, "TEXMFOUTPUT");
+      if (!texmfoutput || *texmfoutput == '\0'
+          || fname != strstr (fname, texmfoutput)
+          || !IS_DIR_SEP (fname[strlen (texmfoutput)])) {
+          goto not_ok;
+      }
+    }
   }
+
   /* For all pathnames, we disallow "../" at the beginning or "/../"
      anywhere.  */
   if (fname[0] == '.' && fname[1] == '.' && IS_DIR_SEP(fname[2]))

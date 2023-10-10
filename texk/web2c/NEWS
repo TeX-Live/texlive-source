@@ -1,6 +1,16 @@
 This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
+* For all engines: If the --output-directory option is given, its value
+  is saved in the enviroment variable TEXMF_OUTPUT_DIRECTORY, for the
+  benefit of subprograms (called with \write18).
+
+  Furthermore, if the --output-directory option is not given, but
+  the TEXMF_OUTPUT_DIRECTORY environment variable is set, that is used
+  for all output files, as if it had been the value given to the
+  --output-directory option. More details:
+  https://tug.org/texinfohtml/web2c.html#Output-file-location
+
 
 2023 (for TeX Live 2023, 9 March 2023)
 

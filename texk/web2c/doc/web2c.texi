@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2023
-@set month-year February 2022
+@set month-year October 2023
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -63,7 +63,7 @@ This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009, 2010-2022 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009, 2010--2023 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -399,7 +399,8 @@ to get all available output.
 @cindex output directory, specifying
 Specify the directory @var{dirname} to which output files are written.
 Also look for input files in @var{dirname} first, before looking along
-the normal search path.  @xref{Output file location}.
+the normal search path.  Input files are only looked for as specified;
+no default extension is added.  @xref{Output file location}.
 
 @item -parse-first-line
 @opindex -parse-first-line
@@ -494,36 +495,80 @@ names.
 @cindex output file location
 @cindex current directory, used for output
 @flindex .@r{, used for output}
-All the programs generally follow the usual convention for output files.
-Namely, they are placed in the directory current when the program is
-run, regardless of any input file location; or, in a few cases, output
-is to standard output.
+All the programs generally follow the usual convention for output
+files; namely, they are placed in the directory current when the
+program is run, regardless of any input file location; or, in a few
+cases, output is to standard output.  The main programs (@TeX{},
+Metafont, MetaPost) provide several ways to override this, as
+explained below.
 
-For example, if you run @samp{tex /tmp/foo}, for example, the output
+For example, if you run @samp{tex /tmp/foo}, by default the output
 will be in @file{./foo.dvi} and @file{./foo.log}, not
 @file{/tmp/foo.dvi} and @file{/tmp/foo.log}.
 
+@cindex input from the output directory
+@cindex reading from the output directory
+An explicitly-given output location is also checked for input files,
+as @TeX{} often generates files that need to be subsequently read.
+For input, the input filename is simply checked as given.  No
+suffixes, such as @samp{.tex}, are added by default, and no exhaustive
+path searching is done.
+
+@subheading Override 1: @samp{-output-directory} option
+
 @opindex -output-directory
 @cindex output directory, specifying
-@cindex readonly directory, running @TeX{} in
-You can use the @samp{-output-directory} option to cause all output
-files that would normally be written in the current directory to be
-written in the specified directory instead.  @xref{Common options}.
+If the @samp{-output-directory} option is specified, all output files
+that would normally be written in the current directory are written in
+the specified directory instead.  @xref{Common options}.
+
+@subheading Override 2: @code{TEXMF_OUTPUT_DIRECTORY} environment variable
+
+@vindex TEXMF_OUTPUT_DIRECTORY
+@findex \write18@r{, output location for}
+
+Furthermore, if the @samp{-output-directory} option is specified, its
+argument is saved in the environment variable
+@code{TEXMF_OUTPUT_DIRECTORY}. This is for the benefit of any
+subprograms that might be called via @code{\write18} (@pxref{Shell
+escapes}), such as @command{kpsewhich} (@pxref{Invoking
+kpsewhich,,,kpathsea,Kpathsea}).  (This feature was added in @TeX{}
+Live 2024.)
+
+If the @samp{-output-directory} option is not specified, but the
+environment variable @code{TEXMF_OUTPUT_DIRECTORY} is set, then the
+environment variable value is used just as if it had been given to the
+option.
+
+Warning: we most strongly recommend always setting
+@code{TEXMF_OUTPUT_DIRECTORY} temporarily, for a given run. It has
+great potential for confusion, since with it set, output files will
+not be in the expected place. To reduce this chance somewhat,
+@code{TEXMF_OUTPUT_DIRECTORY} must be set in the environment, not a
+configuration file.
+
+@subheading Override 3: @code{TEXMFOUTPUT} environment variable
 
 @vindex TEXMFOUTPUT@r{, used if @samp{.} unwritable}
 @cindex readonly directory, running @TeX{} in
-If the current directory is not writable, and @samp{-output-directory}
-is not specified, the main programs (@TeX{}, Metafont, MetaPost, and
-Bib@TeX{}) make an exception: if the config file or environment
-variable value @code{TEXMFOUTPUT} is set (it is not by default),
-output files are written to the directory specified.
+@cindex readonly directory, running @TeX{} in
 
-@vindex TEXMFOUTPUT@r{, used for reading}
-@code{TEXMFOUTPUT} is also checked for input files, as @TeX{} often
-generates files that need to be subsequently read; for input, no
-suffixes (such as @samp{.tex}) are added by default and no exhaustive
-path searching is done, the input name is
-simply checked as given.
+Finally, if neither @samp{-output-directory} nor
+@code{TEXMF_OUTPUT_DIRECTORY} is set, @emph{and} an output file is not
+writable, then the main programs (@TeX{}, Metafont, MetaPost), plus
+Bib@TeX{} for this one case, make an exception: if the config file or
+environment variable value @code{TEXMFOUTPUT} is set (it is not by
+default), the output file is written to the directory specified.
+Usually this is because the current directory is not writable, and
+thus all output files are written to @code{TEXMFOUTPUT}, but
+technically it works on a file-by-file basis.
+
+None of these explicitly-given output locations are checked until (and
+unless) the program actually needs to write a file.  For example, the
+invocation@*
+@code{tex --output-directory=/nonesuch \\end}@*
+won't generate an error until @TeX{} tries to write the log file:@*
+@samp{! I can't write on file `texput.log'.}.
 
 
 @node Three programs
@@ -1131,7 +1176,7 @@ if the first non-option argument begins with a @TeX{} escape character
 arguments as a line of regular @TeX{} input.
 
 If no arguments or options are specified, @TeX{} prompts for an
-input file name with @samp{**}.
+input filename with @samp{**}.
 
 @flindex texput
 @TeX{} writes the main DVI output to the file
@@ -1271,7 +1316,7 @@ options.)  @xref{Shell escapes}.
 @cindex generating source specials
 This option makes @TeX{} output specific source information using
 @samp{\special} commands in the DVI file. These @samp{\special} track
-the current file name and line number.
+the current filename and line number.
 
 Using the first form of this option, the @samp{\special} commands are
 inserted automatically.
@@ -1845,10 +1890,10 @@ always be used in the argument to @code{\write18} where quoting of
 arguments is needed, as in the example above.  This is to achieve some
 measure of system independence.  On Unix systems, these are replaced
 with single quote (@verb{|'|}) characters to avoid insecure further
-expansion.  Care is also taken on Windows to avoid additional
-expansions (from, e.g., @verb{|`...`|}).  Mismatched quotation marks
-in the command string result in a diagnostic message in the log file;
-no execution is performed.
+expansion (from, e.g., @verb{|`...`|}).  Care is also taken on Windows
+to avoid additional expansions.  Mismatched quotation marks in the
+command string result in a diagnostic message in the log file, and no
+execution is performed.
 
 @findex shell_escape_commands
 After quotation processing, if the first word (delimited by a space or
@@ -1860,7 +1905,7 @@ the log file.
 The @code{shell_escape_commands} value is a comma-separated list of
 words.  Whitespace is significant, and typically should not be
 present.  The default definition in @file{texmf.cnf} looks like this,
-but with more commands included:
+with more commands included:
 
 @example
 shell_escape_commands = bibtex,kpsewhich,repstopdf,...
@@ -1883,9 +1928,12 @@ enabled with restrictions.
 The purpose of this feature is to make it possible for @TeX{}
 documents to perform useful external actions in the common case of an
 individual user running a known document on his or her own machine.
-In such environments as CGI scripts or wikis where the input has to be
+In environments such as CGI scripts or wikis where the input has to be
 considered untrustworthy, shell escapes should be completely disabled.
 
+Programs intended to be called from @TeX{} in restricted should
+implement the ``paranoid'' safety measures regarding output files that
+@TeX{} itself does.  @xref{Calling sequence,,, kpathsea, Kpathsea}.
 
 @node IPC and TeX
 @section IPC and @TeX{}
@@ -2319,7 +2367,10 @@ filename.  Contributed by Mathias Herberts.
 @item mftalk
 @opindex --enable-mftalkwin
 (@samp{--enable-mftalkwin}) Generic window server (see
-@file{web2c/window/mftalk.c}).
+@file{web2c/window/mftalk.c}). @c insignificantly overfull:
+@tex
+\hfuzz=1.7pt\par
+@end tex
 
 @item next
 @pindex DrawingServant
