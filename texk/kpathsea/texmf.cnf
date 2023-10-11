@@ -653,6 +653,8 @@ extractbb,\
 gregorio,\
 kpsewhich,\
 makeindex,\
+memoize-extract.pl,
+memoize-extract.py,\
 repstopdf,\
 r-mpost,\
 texosquery-jre8,\
@@ -692,14 +694,16 @@ openout_any = p
 % current directory.
 % 
 % Best to use this only when a particular job requires it, not set
-% globally in a configuration file or the environment.
+% globally in a configuration file or the environment. We recommend
+% using it transiently for particular jobs, not making a permanent setting.
 %TEXMFOUTPUT = /tmp
-%
-% A related environment variable is TEXMF_OUTPUT_DIRECTORY.  It
-% overrides the current directory for all output files in TeX and the other
-% engines. It cannot be set in a configuration file. And it's even more
-% important to use it only temporarily, when required, to avoid massive
-% confusion about where the output files are ending up.
+
+% As of TeX Live 2024, a related environment variable is
+% TEXMF_OUTPUT_DIRECTORY. It overrides the current directory for all
+% output files in TeX and the other engines. It cannot be set in a
+% configuration file. And it's even more important to use it only
+% temporarily, when required, to avoid massive confusion about where the
+% output files are ending up.
 
 % If a dynamic file creation fails, log the command to this file, in
 % either the current directory or TEXMFOUTPUT.  Set to the
