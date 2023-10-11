@@ -398,6 +398,10 @@ texmf_other_scripts = \
 	make4ht/make4ht \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \
+	memoize/memoize-clean.pl \
+	memoize/memoize-clean.py \
+	memoize/memoize-extract.pl \
+	memoize/memoize-extract.py \
 	mf2pt1/mf2pt1.pl \
 	mkgrkindex/mkgrkindex \
 	mkjobtexmf/mkjobtexmf.pl \
