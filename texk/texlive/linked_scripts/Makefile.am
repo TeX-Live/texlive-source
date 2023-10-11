@@ -137,6 +137,7 @@ texmf_other_scripts = \
 	dosepsbin/dosepsbin.pl \
 	dviasm/dviasm.py \
 	dviinfox/dviinfox.pl \
+	easydtx/edtx2dtx.pl \
 	ebong/ebong.py \
 	epspdf/epspdf.tlu \
 	epspdf/epspdftk.tcl \
