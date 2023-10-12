@@ -653,7 +653,7 @@ extractbb,\
 gregorio,\
 kpsewhich,\
 makeindex,\
-memoize-extract.pl,
+memoize-extract.pl,\
 memoize-extract.py,\
 repstopdf,\
 r-mpost,\
