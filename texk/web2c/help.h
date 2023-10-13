@@ -639,6 +639,7 @@ const_string WEAVEHELP[] = {
     "  unless otherwise specified by OUTFILE;",
     "  in this case, '-' specifies a null CHANGEFILE.",
     "",
+    "-p          use alternative macros for PDF output",
     "-x          omit cross-reference information",
     "-help       display this help and exit",
     "-version    output version information and exit",

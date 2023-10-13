@@ -1,4 +1,4 @@
-.TH WEAVE 1 "02 March 2022" "Web2C @VERSION@"
+.TH WEAVE 1 "13 October 2023" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -19,7 +19,7 @@
 weave \- translate WEB to TeX
 .SH SYNOPSIS
 .PP
-\f[B]weave\f[R] [\f[B]-x\f[R]]
+\f[B]weave\f[R] [\f[B]-p\f[R]] [\f[B]-x\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
 [{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
@@ -38,7 +38,9 @@ layout and the use of indentation, italics, boldface, etc., and it supplies
 extensive cross-index information that it gathers automatically.
 The command line arguments are the same as for
 .B tangle
-except for the option:
+except for the options:
+.B \-p
+says to use alternative macros more suited for PDF output.
 .B \-x
 says to omit the index, module name list, and table of contents pages.
 (A
@@ -74,6 +76,10 @@ for the details of the searching.
 \*(TX macros used by
 .B weave
 output.
+.TP \w'@@'u+2n
+.I $TEXMFMAIN/tex/plain/pwebmac/pwebmac.tex
+alternative
+\*(TX macros used for PDF output.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tangle (1)
