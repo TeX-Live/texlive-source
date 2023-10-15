@@ -52,7 +52,7 @@
         \centerline{\sectionfont\def\.##1{{\twelvett##1}}
   \ifacro\vbox to 0pt{\kern-2.5ex\relax
     \ifpdflua\pdfdest num \destcount fith\relax
-    \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
+    \else\special{pdf: dest (\the\destcount) [ @thispage /FitH @ypos ]}\fi
     \def\.##1{##1}\def\TeX{TeX}%
     \ifpdflua\pdfoutline goto num \destcount
       \ifnum\subsections>0 count -\subsections\fi {#1}\relax
@@ -85,7 +85,7 @@
 \outer\def\subsection #1.{\ifacro
     \ifpdflua\pdfdest num \subdestcount fith\relax
       \pdfoutline goto num \subdestcount {#1}\relax
-    \else\special{pdf: dest (\the\subdestcount) [ @thispage /FitBH @ypos ]}%
+    \else\special{pdf: dest (\the\subdestcount) [ @thispage /FitH @ypos ]}%
       \special{pdf: outline 1 << /Title (#1)
         /A << /S /GoTo /D (\the\subdestcount) >> >>}\fi
     \global\advance\subdestcount by 1\relax
