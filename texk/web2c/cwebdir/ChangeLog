@@ -1,3 +1,7 @@
+2023-10-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Fix display in Skim and Acrobat Reader on macOS.
+
 2023-09-30  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

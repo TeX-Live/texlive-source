@@ -51,7 +51,7 @@
 \outer\def\section #1.{\penalty-500\bigskip
         \centerline{\sectionfont\def\.##1{{\twelvett##1}}
   \ifacro\vbox to 0pt{\kern-2.5ex\relax
-    \ifpdflua\pdfdest num \destcount fitbh\relax
+    \ifpdflua\pdfdest num \destcount fith\relax
     \else\special{pdf: dest (\the\destcount) [ @thispage /FitBH @ypos ]}\fi
     \def\.##1{##1}\def\TeX{TeX}%
     \ifpdflua\pdfoutline goto num \destcount
@@ -83,7 +83,7 @@
 \newcount\subdestcount \subdestcount=151\relax
 
 \outer\def\subsection #1.{\ifacro
-    \ifpdflua\pdfdest num \subdestcount fitbh\relax
+    \ifpdflua\pdfdest num \subdestcount fith\relax
       \pdfoutline goto num \subdestcount {#1}\relax
     \else\special{pdf: dest (\the\subdestcount) [ @thispage /FitBH @ypos ]}%
       \special{pdf: outline 1 << /Title (#1)
