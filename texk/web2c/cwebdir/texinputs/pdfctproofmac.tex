@@ -9,8 +9,8 @@
 \ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
 % Uncomment the following line if you want PDF goodies to be the default
 %\ifx\pdf-\else\pdftrue\fi
-\def\pdflinkcolor{0 0 1} % the RGB values for hyperlink color
 \ifxetex\pdftrue\fi % XeTeX produces PDF output
+\ifpdf \def\pdflinkcolor{0 0 1} \fi % the RGB values for hyperlink color
 \let\ifacro=\ifpdf
 \newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 \newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
