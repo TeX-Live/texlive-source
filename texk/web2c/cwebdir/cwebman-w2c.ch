@@ -359,16 +359,16 @@ Looking at those
 @y
 \point 21. With modern \TeX\ engines like `\.{luatex}', `\.{pdftex}', and
 `\.{xetex}' (but \\{not} with classic `\.{tex}') you can say `\.{\\input
-pdfwebtocfront}' as the last command in limbo and run \TeX\ \\{twice} on your
-woven document, in order to shift the table-of-contents to the front of the
-{\mc PDF} output.
+pdfwebtocfront}' as the last command in the limbo section and run \TeX\
+\\{twice} on your woven \.{CWEB} document, in order to shift the
+table-of-contents to the front of the {\mc PDF} output.
 
 \point 22. You are advised to use the command line option `\.{--shell-escape}'
 with \.{pdftex} and \.{luatex} in order to receive ``valid'' PDF output from
 your \.{CWEB} source file; otherwise, the internal counter for the ``Names of
-the sections'' part in the PDF ``bookmarks'' will be incorrect. (`\.{xetex}'
-and `\.{tex "\\let\\pdf+..."}' take a different approach that is correct by
-design.)
+the sections'' part in the {\mc PDF} ``bookmarks'' will be incorrect.
+(`\.{xetex}' and `\.{tex "\\let\\pdf+..."}' take a different approach that is
+correct by design.)
 
 \vfill\end
 @z
