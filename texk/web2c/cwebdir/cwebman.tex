@@ -57,9 +57,6 @@
 \noindent
 \TeX\ is a trademark of the American Mathematical Society.
 
-\noindent
-Acrobat Reader is a trademark of Adobe Systems Incorporated.
-
 \bigskip\noindent
 The printed form of this manual is copyright \copyright\ 1994
   by Addison-Wesley Publishing Company, Inc.  All rights reserved.
@@ -1147,16 +1144,15 @@ the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.
 
 Many people have of course noticed analogies between \.{CWEB} and the
 World Wide Web. The \.{CWEB} macros are in fact set up so that the output of
-\.{CWEAVE} can be converted easily into Portable Document Format,
-with clickable hyperlinks that can be read with Adobe's Acrobat Reader,
+\.{CWEAVE} can be converted easily into Portable Document Format, with
+clickable hyperlinks that can be read with your favorite {\mc PDF} viewer,
 using a widely available open-source program called \.{dvipdfm} developed
 by Mark~A. Wicks. After using \.{CWEAVE} to convert \.{cob.w} into
 \.{cob.tex}, you can prepare and view a hypertext version of the program
 by giving the commands
 $$\vbox{\halign{\.{#}\hfil\cr
 tex "\\let\\pdf+ \\input cob"\cr
-dvipdfm cob\cr
-acroread cob.pdf\cr}}$$
+dvipdfm cob\cr}}$$
 instead of invoking \TeX\ in the normal way. (Thanks to Hans Hagen,
 C\'esar Augusto Rorato Crusius, and Julian Gilbey
 for the macros that make this work.)
@@ -1743,9 +1739,9 @@ You can send email to
  \\pdfURL\{the author\}\{mailto:andreas\\UNDER/github@@freenet.de\}\cr
 or visit \\pdfURL\{his home page\}\{https://github.com/ascherer\}\cr}}$$
 In a {\mc PDF} document, the first argument will appear in blue as
-clickable text; the Acrobat reader, if correctly configured, will then
-redirect those links to the user's browser and open either the
-email client or the HTML viewer. In a hardcopy document, both arguments
+clickable text; the {\mc PDF} viewer, if correctly configured, will then
+redirect those links to the user's browser and open either the email client
+or the {\mc HTML} viewer. In a hardcopy document, both arguments
 will be printed ({\tt the second in parentheses and typewriter type}).
 Certain special characters in an Internet address need to be handled
 in a somewhat awkward way, so that \.{CWEAVE} and/or \TeX\
@@ -1757,7 +1753,7 @@ titles in the table of contents, some of which will be subsidiary to
 others if the depth feature of \.{@*} has been used.
 Such bookmark entries are also known as ``outlines.''
 Moreover, the final group title, `Names of the sections',
-can be opened up to list every section name; Acrobat users can therefore
+can be opened up to list every section name; users can therefore
 navigate easily to any desired section.
 
 The macros of \.{cwebacromac.tex} are careful to ``sanitize'' all the names
