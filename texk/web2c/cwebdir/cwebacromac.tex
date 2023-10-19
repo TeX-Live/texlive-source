@@ -1,6 +1,6 @@
 % hypertext macros for CWEB listings (in addition to cwebmac.tex)
 % Version 1.1 --- September 2023
-\ifx\acrohint\undefined\else\endinput\fi % these are not standalone macros
+\ifx\ifacrohint\undefined\endinput\fi % these are not standalone macros
 \ifluatex % LuaTeX is almost like pdfTeX
 \protected\def\pdfliteral   {\pdfextension literal}
 \protected\def\pdfstartlink {\pdfextension startlink\space}
