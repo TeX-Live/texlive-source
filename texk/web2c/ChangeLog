@@ -1,3 +1,10 @@
+2023-10-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* tangleboot.pin,
+	* tangle.ch,
+	* weav-twill.ch,
+	* weave.ch: 'current_option' runs from '0..n_options'.
+
 2023-10-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* help.h,

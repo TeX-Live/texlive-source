@@ -61,7 +61,7 @@ end{:32}else{33:}begin writeln(stdout,'. (l.',line:1,')');
 for j:=1 to outptr do write(stdout,xchr[outbuf[j-1]]);
 write(stdout,'... ');end{:33};fflush(stdout);history:=2;
 {debugskipped:=debugcycle;debughelp;}end;
-{:31}{188:}procedure parsearguments;const noptions=10;
+{:31}{188:}procedure parsearguments;const noptions=9;
 var longoptions:array[0..noptions]of getoptstruct;
 getoptreturnval:integer;optionindex:cinttype;currentoption:0..noptions;
 len:integer;begin{190:}currentoption:=0;

@@ -563,7 +563,7 @@ Parse a Unix-style command line.
 
 @<Define |parse_arguments|@> =
 procedure parse_arguments;
-const n_options = 5; {Pascal won't count array lengths for us.}
+const n_options = 4; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;
     @!getopt_return_val: integer;
     @!option_index: c_int_type;

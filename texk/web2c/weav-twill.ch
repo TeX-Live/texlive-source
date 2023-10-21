@@ -692,9 +692,9 @@ var lhs:integer;
 Section 264.
 
 @x WEAVE.CH
-const n_options = 5; {Pascal won't count array lengths for us.}
-@y
 const n_options = 4; {Pascal won't count array lengths for us.}
+@y
+const n_options = 3; {Pascal won't count array lengths for us.}
 @z
 
 @x WEAVE.CH
