@@ -555,7 +555,7 @@ end
 -- program name
 
 -- lower arg[0] : get file name part : remove extension 
-local progname, substcount = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.[^.]*$', '')
+local progname, substcount = string.lower(arg[0]):gsub('^.*[\\/]', ''):gsub('%.exe$', '')
 -- special behaviour when called under 'runscript' name
 if (progname == 'runscript') then
   -- we are called as: runscript progname ...
