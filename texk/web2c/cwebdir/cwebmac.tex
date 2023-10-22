@@ -13,7 +13,7 @@
 \newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 \newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
 \ifpdflua % luaTeX and pdfTeX produce PDF output if \pdfoutput>0 (default)
-  \def\Black{\pdfliteral{0 g 0 G}}  % use rgb colors for direct PDF output too
+  \def\Black{\pdfliteral{0 g 0 G}} % use rgb colors for direct PDF output too
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
 
@@ -298,7 +298,7 @@
 \newwrite\cont
 \output{\setbox0=\page % the first page is garbage
   \openout\cont=\contentsfile
-       \write\cont{\catcode `\noexpand\@=11\relax}   % \makeatletter
+       \write\cont{\catcode `\noexpand\@=11\relax} % \makeatletter
   \global\output{\normaloutput\page\lheader\rheader}}
 \setpage
 \vbox to \vsize{} % the first \topmark won't be null
@@ -310,7 +310,7 @@
 \def\inx{\par\vskip6pt plus 1fil % we are beginning the index
   \def\page{\box255 } \normalbottom
   \write\cont{} % ensure that the contents file isn't empty
-       \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
+       \write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
   \closeout\cont % the contents information has been fully gathered
   \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
     \global\setbox\sbox=\page \global\pagesavedtrue \mark{\topmark}}
