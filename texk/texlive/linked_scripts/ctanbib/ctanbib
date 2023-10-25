@@ -21,21 +21,31 @@ local bibtype = "manual"
 local pkgurl = false
 local msg = [[ctanbib - convert ctan package information to bibtex format
 Usage:
-ctanbib [options] name1 name2 ...
+ctanbib [options] PKGNAME1 PKGNAME2 ...
+
+Look up the Catalogue entry for each PKGNAME on CTAN (at
+https://ctan.org/xml/2.0/pkg/PKGNAME), and convert relevant information
+to a BibTeX entry.
+
+By default, the url field in the output entry is the package's home
+field value if that is specified in the Catalogue entry; if it isn't,
+https://ctan.org/pkg/PKGNAME is used.
+
 Available options:
-  -c,--ctan       Use CTAN URL instead of the package homepage 
-  -C,--ctanpath   Use package's CTAN path as URL
+  -c,--ctan       Always use CTAN /pkg/ url instead of the package homepage 
+  -C,--ctanpath   Use the package's CTAN path as url (e.g.: /support/ctanbib)
   -e,--entrytype  (default manual)  Change entry type
   -h,--help       Print this message
-  -p,--pkgname    Put the package name in a \ctanbibpkgname command
+  -p,--pkgname    Wrap the package name in a \ctanbibpkgname command
   -v,--version    Print version info
-  ]]
+
+ctanbib package page: https://ctan.org/pkg/ctanbib]]
 local args = lapp(msg)
 if args.help then
   print(msg)
   os.exit(0)
 elseif args.version then
-  print "ctanbib version 0.2c"
+  print "ctanbib version 0.2d"
   os.exit(0)
 elseif args.ctan then
   pkgurl = true
@@ -58,20 +68,20 @@ if not pkgname then
 end
 
 local authors_url = "https://ctan.org/xml/2.0/authors"
-local license_url = "http://www.ctan.org/xml/2.0/licenses"
+local license_url = "https://www.ctan.org/xml/2.0/licenses"
 
 -- change that for different title scheme
 local titleformat = "The %s package"
 
 local bibtexformat = [[
 @manual{$package,
-title = {$title},
-subtitle = {$subtitle},
-author = {$author},
-url = {$url},
-urldate = {$urldate}, 
-date = {$date},
-version = {$version},
+  title = {$title},
+  subtitle = {$subtitle},
+  author = {$author},
+  url = {$url},
+  urldate = {$urldate}, 
+  date = {$date},
+  version = {$version},
 }
 ]]
 
@@ -159,6 +169,10 @@ local get_authors = function(a)
   for _, author in ipairs(a) do
     table.insert(retrieved_authors, get_author(author))
   end
+  -- CTAN returns authors in the random order. to fix that, we sort them. 
+  -- I know that it is not a good solution for non-latin and accented names.
+  -- We could use Lua-UCA for the sorting, but I feel it is a bit of overkill.
+  table.sort(retrieved_authors)
   return table.concat(retrieved_authors," and ")
 end
 
@@ -198,6 +212,23 @@ local get_version = function(record)
     return version:get_attribute("number"), version:get_attribute("date")
   end
 end
+
+
+local get_copyright_date = function(record)
+  -- we must get the latest <copyright>, because it contains the latest date
+  local copyright_tbl = record:query_selector("copyright")
+  local copyright = copyright_tbl[#copyright_tbl]
+  if copyright  then
+    local year = copyright:get_attribute("year") 
+    if year then
+      -- year can hold a range of year. we will chose the newest date
+      return year:match("(%d+)$")
+    end
+
+  end
+  
+end
+
 
 local ctan_url = function(record, pkgname)
   return "https://ctan.org/pkg/"..pkgname
@@ -244,6 +275,9 @@ for _, pkgname in ipairs(args) do
     e.url = ctan_path(record)
   end
   e.version, e.date = get_version(record)
+  if not e.date then 
+    e.date = get_copyright_date(record)
+  end
   e.urldate = os.date("%Y-%m-%d")
 
   local result = compile(bibtexformat, e)
