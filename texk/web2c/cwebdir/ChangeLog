@@ -1,3 +1,9 @@
+2023-10-25  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebmac.tex,
+	* texinputs/pdfctproofmac.tex,
+	* texinputs/pdfctwimac.tex: Bring PDF/HINT macros together.
+
 2023-10-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebmac.tex,

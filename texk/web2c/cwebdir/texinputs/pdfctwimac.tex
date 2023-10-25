@@ -1,28 +1,11 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.11 --- September 2023
+% Version 4.11 --- October 2023
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+' or '{lua|pdf|xe}tex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CTWILL4.11+LNCS+PDF}
-\input iftex.sty % TeX engine tests
-\ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
-% Uncomment the following line if you want PDF goodies to be the default
-%\ifx\pdf-\else\pdftrue\fi
-\ifxetex\pdftrue\fi % XeTeX produces PDF output
-\ifpdf \def\pdflinkcolor{0 0 1} \fi % the RGB values for hyperlink color
-\let\ifacro=\ifpdf
-\ifhint\message{These macros are not suitable for HiTeX.}
-  \message{Please use 'ctwill +P [+lpdf]' instead.}
-  \end
-\fi
-\newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
-\newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
-\ifpdflua % luaTeX and pdfTeX produce PDF output if \pdfoutput>0
-  \def\Black{\pdfliteral{0 g 0 G}} % use rgb colors for direct PDF output too
-  \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
-\fi
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -252,6 +235,24 @@
 \newif\iftokprocessed \newif\ifTnum \newif\ifinstr
 {\def\\{\global\let\spacechar= }\\ }
 
+% Here we decide the output format, depending on the TeX engine in use:
+\input iftex.sty % TeX engine tests
+\ifx\pdf+\pdftrue\fi % for plain TeX in combination with dvipdfm
+% Uncomment the following line if you want PDF goodies to be the default
+%\ifx\pdf-\else\pdftrue\fi
+\ifxetex\pdftrue\fi % XeTeX produces PDF output
+\ifpdf \def\pdflinkcolor{0 0 1} \fi % the RGB values for hyperlink color
+\let\ifacro=\ifpdf
+\ifhint\message{These macros are not suitable for HiTeX.}
+  \message{Please use 'ctwill +P [+lpdf]' instead.}
+  \end
+\fi
+\newif\ifacrohint \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
+\newif\ifpdflua \ifluatex\pdfluatrue\fi \ifpdftex\pdfluatrue\fi
+\ifpdflua % luaTeX and pdfTeX produce PDF output if \pdfoutput>0
+  \def\Black{\pdfliteral{0 g 0 G}} % use rgb colors for direct PDF output too
+  \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
+\fi
 \ifacrohint \input cwebacromac \fi % load hypertext macros
 
 \def\lapstar{\rlap{*}}
