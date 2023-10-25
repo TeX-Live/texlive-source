@@ -429,8 +429,8 @@ Section 124.
 @.\\input webmac@>
 @.webmac@>
 
-If the user has sent the |pdf_output| flag (the -p option of the command
-line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
+If the user has sent the |pdf_output| flag (the `\.{-p}' option of the
+command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.\\input pwebmac@>
 @.pwebmac@>
 @y
