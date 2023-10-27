@@ -414,8 +414,8 @@ Section 115.
         def_val[lhs]:=scan_exp;
         def_name:=def_val[lhs]; def_type:=dtype_const;
         xref_switch:=def_flag;
-        if abs(def_name)>=65536 then def_type:=dtype_macro
-        else if def_name<0 then def_name:=def_name+131072;
+        if abs(def_name)>=32768 then def_type:=dtype_macro
+        else if def_name<0 then def_name:=def_name+65536;
         new_xref(lhs);
         end;
       end;
@@ -819,8 +819,8 @@ if next_control=identifier then
   end;
 if start_of_num(next_control) then
   begin def_subname:=scan_exp; def_subtype:=dtype_colon_const_dots;
-  if abs(def_subname)>=65536 then goto not_found;
-  if def_subname<0 then def_subname:=def_subname+131072;
+  if abs(def_subname)>=32768 then goto not_found;
+  if def_subname<0 then def_subname:=def_subname+65536;
   goto found;
   end;
 goto not_found;
@@ -850,8 +850,8 @@ begin def_name:=scan_exp;
 if next_control<>double_dot then
   if eq=1 then found_it(dtype_equal_bold; def_name:=const_name)
   else goto not_found;
-if abs(def_name)>=65536 then goto not_found;
-if def_name<0 then def_name:=def_name+131072;
+if abs(def_name)>=32768 then goto not_found;
+if def_name<0 then def_name:=def_name+65536;
 def_type:=dtype_colon_const_dots+eq;
 end
 
@@ -941,7 +941,7 @@ procedure out_const(@!n:sixteen_bits);
 var a,k:integer;
 begin a:=n; k:=0;
 if a>=32768 then
-  begin out("-"); a:=131072-a;
+  begin out("-"); a:=65536-a;
   end;
 repeat dig[k]:=a mod 10; a:=a div 10; incr(k);
 until a=0;

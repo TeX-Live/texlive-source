@@ -1,7 +1,3 @@
-2023-10-27  Andreas Scherer  <https://ascherer.github.io>
-
-	* weav-twill.ch: Make TWILL handle type 'sixteen_bits'.
-
 2023-10-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Fine print for command-line options.
