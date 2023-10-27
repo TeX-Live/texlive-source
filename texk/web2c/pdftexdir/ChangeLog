@@ -1,3 +1,10 @@
+2023-10-27  Thanh Han The  <hanthethanh@gmail.com>
+
+	* tounicode.c (deftounicode): sscanf %lX into unsigned long to
+	avoid failure in text extraction on BigEndian systems. Report
+	from hille42,
+	https://tug.org/pipermail/pdftex/2023-October/009342.html.
+
 2023-09-01  Karl Berry  <karl@freefriends.org>
 
 	* ptexmac.h (cmp_return): a few words of documentation about
