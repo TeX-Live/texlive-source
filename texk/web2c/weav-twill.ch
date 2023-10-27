@@ -940,7 +940,7 @@ exit:end;
 procedure out_const(@!n:sixteen_bits);
 var a,k:integer;
 begin a:=n; k:=0;
-if a>=65536 then
+if a>=32768 then
   begin out("-"); a:=131072-a;
   end;
 repeat dig[k]:=a mod 10; a:=a div 10; incr(k);
