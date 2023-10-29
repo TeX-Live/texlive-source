@@ -142,8 +142,11 @@ Use the \f[B]kpsewhich\f[R] utility to find their locations.
 \f[B]cwebmac.tex\f[R]: The default TeX\ macros \f[B]\[rs]input\f[R] in
 the first line of the \f[B]cweave\f[R] output file.
 .IP \[bu] 2
-\f[B]cwebman.tex\f[R]: The CWEB user manual, available in PDF from
-CTAN (https://ctan.org/pkg/cweb).
+\f[B]cwebman.tex\f[R]: The CWEB user manual, available in PDF from \c
+.UR https://ctan.org/pkg/cweb
+CTAN
+.UE \c
+\&.
 .SH SEE ALSO
 .IP \[bu] 2
 The CWEB System of Structured Documentation: by Donald E.\ Knuth and

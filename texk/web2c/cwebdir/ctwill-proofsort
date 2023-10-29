@@ -22,17 +22,9 @@ BEGIN {
   };
 }
 
-# We expect a TeX file as the single command-line parameter.
-my $usage = "Usage: $progname input_file\n";
-if (@ARGV > 1) {
-  my $first = shift @ARGV;
-  $usage .= "extra file argument(s): @ARGV\n";
-  unshift @ARGV, $first;
-}
-$usage .= "try --help if you need it.\n";
+my $usage = "Usage: $progname < input_file > output_file\n";
 
-die $usage unless scalar @ARGV == 1;
-
+# Standard options for TeX Live.
 Getopt::Long::GetOptions(
   'help|?'  => \&help_handler,
   'version' => sub { print version(); exit 0; }
@@ -50,14 +42,7 @@ sub version {
   return $progname.' $Revision$ $Date$'."\n";
 }
 
-my $tex = $ARGV[0];
-
-open(TEX, $tex) or die "$0: Could not open input file $tex.\n";
-
-my %mini_index; # storage for index entries of a section
-my $print_index = 0; # do we collect and print a mini-index?
-
-# Scroll through the input file and look for blocks like
+# Read input from the console and look for blocks like
 # \mini
 # [LOCATION KEY TEXPART]*
 # }\FI
@@ -68,7 +53,9 @@ my $print_index = 0; # do we collect and print a mini-index?
 # or as a single identifier in $math_mode$; the latter come from '@f'ormat
 # definitions. All internal backslashes are removed from the KEY before it
 # is used in the storage.
-foreach my $line (<TEX>)
+my %mini_index; # storage for index entries of a section
+my $print_index = 0; # do we collect and print a mini-index?
+foreach my $line (<STDIN>)
 {
 	if ("\\mini\n" eq $line) { # start of mini-index
 		$print_index = 1;
@@ -92,8 +79,6 @@ foreach my $line (<TEX>)
 	print $line;
 }
 
-close(TEX);
-
 exit 0;
 
 =pod
@@ -109,12 +94,13 @@ ctwill-proofsort - Sort mini-indexes alphabetically
 This small Perl script 'ctwill-proofsort' sorts the mini-indexes for each
 section in the TeX file created by 'ctwill +P', i.e., prior to
 formatting with the 'ctproofmac.tex' macros.
+It reads its input from <STDIN> and writes its output to <STDOUT>.
 
 =over
 
 =item Run CTWILL twice on your 'input_file'.w, creating 'input_file'.tex
 
-=item Invoke "ctwill-proofsort 'input_file'.tex > 'input_file'-sorted.tex"
+=item Invoke "ctwill-proofsort < 'input_file'.tex > 'input_file'-sorted.tex"
 
 =item Invoke "mv 'input_file'-sorted.tex 'input_file'.tex"
 
@@ -135,7 +121,7 @@ Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
 
 =item $ ctwill +P -x mmotype mmotype-twill (run this two times)
 
-=item $ ctwill-proofsort mmotype.tex > mmotype-sorted.tex
+=item $ ctwill-proofsort < mmotype.tex > mmotype-sorted.tex
 
 =item $ mv mmotype-sorted.tex mmotype.tex
 

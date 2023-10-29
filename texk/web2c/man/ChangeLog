@@ -1,3 +1,8 @@
+2023-10-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man: Regenerate with Pandoc 3.1.9.
+	* ctwill.man: Make 'proofsort' like 'refsort'.
+
 2023-10-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.man: Add option '-p' to '\input pwebmac'.
