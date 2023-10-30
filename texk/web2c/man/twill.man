@@ -1,4 +1,4 @@
-.TH WEAVE 1 "02 April 2022" "Web2C @VERSION@"
+.TH TWILL 1 "30 October 2023" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -16,13 +16,19 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-twill \- translate WEB to TeX
+twill, twill-refsort \- translate \*(WB to \*(TX with mini-indexes
 .SH SYNOPSIS
 .PP
 \f[B]twill\f[R] [\f[B]-x\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
 [{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
+.PD 0
+.PP
+\f[B]twill-refsort\f[R] <
+\f[I]reffile\f[B].ref\f[R] >
+\f[I]sreffile\f[B].sref\f[R]
+.PD
 .\"=====================================================================
 .SH DESCRIPTION
 The
@@ -34,8 +40,8 @@ extensive cross-index information in the form of 'mini-indexes' for each
 spread of pages and a 'master index' at the end that it gathers automatically.
 .PP
 The command line arguments are the same as for
-.B tangle
-except for the option:
+.B weave
+including the option:
 .B \-x
 says to omit the indexes, module name list, and table of contents pages.
 (A
@@ -49,14 +55,30 @@ The output \*(TX file name is formed by adding
 .B .tex
 to the root of the \*(WB file name.
 .PP
-There are several macros
-that probably should be redefined by
+There are several macros that probably should be redefined by
 the programmer at the beginning of the \*(WB file.
-It is a good idea to set \\title
-to the name of the program.
-And, to cause output of only changed modules, one can say
-\\let\\maybe=\\iffalse (usually as the first change in the
-change file).
+It is a good idea to set \\title to the name of the program.
+.PP
+.B twill
+is exactly like
+.B weave
+except that it produces better documentation, for which you must work harder.
+You should run
+.B twill
+twice, once to prime the pump and once to get decent answers.
+Moreover, you must run the output twice through \*(TX.
+.PP
+After
+.B tex foo
+you will have output that looks like final pages
+except that the entries of mini-indexes won\[cq]t be alphabetized.
+The first run produces a weird file called
+.B foo.ref.
+Say
+.B twill-refsort < foo.ref > foo.sref
+and then another
+.B tex foo
+will produce alphabetized output.
 .\"=====================================================================
 .SH ENVIRONMENT
 The environment variable WEBINPUTS is used to search for the input files,
@@ -66,7 +88,7 @@ for the details of the searching.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
-.I $TEXMFMAIN/tex/plain/knuth-lib/twimac-web.tex
+.I $TEXMFMAIN/tex/plain/cweb/cwebbin/twimac-web.tex
 \*(TX macros used by
 .B twill
 output.

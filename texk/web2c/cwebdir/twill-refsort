@@ -1,0 +1,117 @@
+#!/usr/bin/env perl
+# $Id$
+# Public domain.  Originally written by Andreas Scherer, 2023.
+
+use strict;
+use warnings;
+
+use File::Basename;
+use Getopt::Long qw(:config no_ignore_case bundling);
+use Pod::Usage;
+
+my $progname;
+my $collator;
+
+BEGIN {
+  $progname = basename $0;
+  # Unicode::Collate has been around a long time,
+  # but it's not part of core Perl.
+  eval {
+    require Unicode::Collate;
+    $collator = Unicode::Collate->new();
+  };
+}
+
+my $usage = "Usage: $progname < foo.ref > foo.sref\n";
+
+# Standard options for TeX Live.
+Getopt::Long::GetOptions(
+  'help|?'  => \&help_handler,
+  'version' => sub { print version(); exit 0; }
+) or die $usage;
+## help_handler()
+sub help_handler {
+  open(my $pipe, '|-', $ENV{PAGER} || 'less -e') or exit 1;
+  pod2usage(-message => version(), -output => $pipe,
+    -verbose => 99, -sections => "SHORT DESCRIPTION|COPYRIGHT");
+  close $pipe;
+  exit 0;
+}
+## version()
+sub version {
+  return $progname.' $Revision$ $Date$'."\n";
+}
+
+# Read input lines from the console and look for blocks like
+# !127
+# [+ KEY LOCATION TEXPART]*
+# and sort them alphabetically by the KEYs.
+#
+# Every KEY consists of a single PASCAL identifier (variable, type, function,
+# etc.) after an initial '+ ' marker. This marker is replaced with the '\['
+# macro (i.e., '\makeref') to help TeX format the mini-index.
+#
+# The page number in the '!\d+' indicator is appended as argument of the
+# '\donewithpage' macro.
+my %mini_index; # storage for index entries of a two-page spread
+my $donewithpage; # recto page number of a two-page spread
+foreach my $line (<STDIN>)
+{
+  if ($line =~ m/\!(\d+)/) { # start of a new two-page spread
+    if ($donewithpage) { # skip over first indicator line
+      foreach my $key ($collator ?
+        $collator->sort(keys %mini_index) :
+        sort {"\L$a" cmp "\L$b"} keys %mini_index) {
+        print $mini_index{$key};
+      }
+      %mini_index = (); # reset mini-index storage
+      print "\\donewithpage$donewithpage\n"; # done with current spread
+    }
+    $donewithpage = $1; # start of next spread
+  } else { # mini-index entry
+    my (undef,$key) = split / /, $line; # 2nd column is the key
+    $line =~ s/^\+ /\\\[/; # add \makeref macro
+    $mini_index{$key} = $line; # store index entry
+    next; # print later
+  }
+}
+
+print "\\donewithpage$donewithpage\n"; # done with current spread
+
+exit 0;
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+twill-refsort - Sort mini-indexes alphabetically
+
+=head1 SHORT DESCRIPTION
+
+This small Perl script 'twill-refsort' sorts the mini-indexes for each section
+in the '.ref' file created by 'twill foo' (twice) and 'tex foo' (first run).
+It reads its input from STDIN and writes its output to STDOUT.
+
+=over
+
+=item Run TWILL twice on your 'foo'.w, creating 'foo'.tex
+
+=item Invoke "tex 'foo'.tex", creating 'foo'.ref
+
+=item Invoke "$progname < 'foo'.ref > 'foo'.sref"
+
+=item Run TeX on 'foo'.tex a second time
+
+=back
+
+See also "man twill" for more information on how to use the TWILL system.
+
+=head1 COPYRIGHT
+
+Public domain.  Originally written by Andreas Scherer, 2023.
+
+Contemporary development on https://github.com/ascherer/cwebbin.
+
+=cut
