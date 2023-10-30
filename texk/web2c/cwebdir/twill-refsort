@@ -100,7 +100,7 @@ It reads its input from STDIN and writes its output to STDOUT.
 
 =item Invoke "tex 'foo'.tex", creating 'foo'.ref
 
-=item Invoke "$progname < 'foo'.ref > 'foo'.sref"
+=item Invoke "twill-refsort < 'foo'.ref > 'foo'.sref"
 
 =item Run TeX on 'foo'.tex a second time
 
