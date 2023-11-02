@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 65989 2023-02-20 21:52:59Z karl $
+# $Id: fmtutil.pl 68715 2023-11-01 17:28:01Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 65989 2023-02-20 21:52:59Z karl $';
-my $lastchdate = '$Date: 2023-02-20 22:52:59 +0100 (Mon, 20 Feb 2023) $';
+my $svnid = '$Id: fmtutil.pl 68715 2023-11-01 17:28:01Z karl $';
+my $lastchdate = '$Date: 2023-11-01 18:28:01 +0100 (Wed, 01 Nov 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 65989 $';
+my $svnrev = '$Revision: 68715 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -382,6 +382,11 @@ sub log_to_status {
 #
 sub callback_build_formats {
   my ($what, $whatarg) = @_;
+
+  # sometimes (missing, all) there is no argument passed.
+  # Avoid warning from undef value being logged.
+  # https://tug.org/pipermail/tex-live/2023-September/049526.html
+  $whatarg = "" if ! defined $whatarg;
 
   # set up a tmp dir
   # On W32 it seems that File::Temp creates restrictive permissions (ok)
@@ -1478,7 +1483,7 @@ Options:
   --force                 (does nothing, exists for compatibility)
   --test                  (does nothing, exists for compatibility)
 
-Commands:
+Commands (exactly one must be specified):
   --all                   recreate all format files
   --missing               create all missing format files
   --byengine ENGINE       (re)create formats built with ENGINE
