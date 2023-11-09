@@ -42,8 +42,8 @@ use warnings;
 
 $my_name = 'latexmk';
 $My_name = 'Latexmk';
-$version_num = '4.80';
-$version_details = "$My_name, John Collins, 4 Apr. 2023. Version $version_num";
+$version_num = '4.81';
+$version_details = "$My_name, John Collins, 6 Nov. 2023. Version $version_num";
 
 use Config;
 use File::Basename;
@@ -82,7 +82,7 @@ use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd.
 use Digest::MD5;
 
 # **WARNING**: Don't import time; that overrides core function time(), and messes up
-#  
+#  somethings
 use Time::HiRes;
 
 #################################################
@@ -312,6 +312,7 @@ sub fprint8 {
 # v. pdflatexmk, etc):
 (our $invoked_name) = fileparseA($0);
 
+# Save name, since I override it if I don't recognize it
 our $invoked_kind = $invoked_name;
 print "$My_name: Invoked as '$invoked_name'\n"
     if ($invoked_name ne 'latexmk');
@@ -360,6 +361,11 @@ else {
 # It is the parameter max_print_line in the TeX program.  (tex.web)
 $log_wrap = 79;
 
+# Expected biggest construct in log file in bytes.
+# Use to limit number of (potentially) wrapped lines to combine into single line.
+$max_log_construct = 600;
+
+
 #########################################################################
 ## Default parsing and file-handling settings
 
@@ -372,8 +378,8 @@ $log_wrap = 79;
 ##     push @file_not_found, '^No data file found `([^\\\']*)\\\'';
 ## will give match to line starting "No data file found `filename'"
 @file_not_found = (
-    '^No file\\s*(.*)\\.$',
-    '^No file\\s*(.+)\s*$',
+    '^No file\\s+(.*)\\.$',
+    '^No file\\s+(.+)\s*$',
     '^\\! LaTeX Error: File `([^\\\']*)\\\' not found\\.',
     '^\\! I can\\\'t find file `([^\\\']*)\\\'\\.',
     '.*?:\\d*: LaTeX Error: File `([^\\\']*)\\\' not found\\.',
@@ -559,7 +565,7 @@ $input_extensions{xelatex} = $input_extensions{pdflatex};
 #       and because of the possibility of extra bibtex/biber rules with
 #       non-standard basename.
 @generated_exts = ( 'aux', 'bcf', 'fls', 'idx', 'ind', 'lof', 'lot', 
-                    'out', 'toc',
+                    'out', 'run.xml', 'toc',
                     'blg', 'ilg', 'log',
                     'xdv'
                   );
@@ -1459,7 +1465,7 @@ our $times_are_clock = ($^O eq "MSWin32" );
 
 
 # Data for 1 run and global (ending in '0'):
-our ( $processing_time1, $processing_time0, @timings1, @timings0);
+our ( $clock1, $processing_time1, $processing_time0, @timings1, @timings0);
 &init_timing_all;
 
 
@@ -1913,8 +1919,21 @@ elsif ($HOME ne '') {
 %rc_files_read2 = (); # Map **abs** filename to 1; used to check duplicate reads.
 
 # Options that are to be obeyed before rc files are read:
+# Also under MSWin32 and msys, CL arguments sometimes get quotes in them.
+# (Specific example: TeXLive 2023 with msys's perl and arguments containing
+# both non-ASCII character, when latexmk.exe invoked from cmd.exe. In some
+# other situations (powershell and msys's terminal+bash), it seems that both
+# space and non-ASCII character are needed to trigger a problem.)
 foreach $_ ( @ARGV )
 {
+    if ( ($^O eq "MSWin32") || ($^O eq 'msys') ) {
+        # "arg" -> arg.
+        # -..="arg" -> -..=arg.
+        # In both cases, only do this if there are no other ".  Otherwise I
+        # my run afoul of " that are intended to be there. 
+        s/^\"([^\"]+)\"$/$1/;
+        s/^(-[^\"=]+=)\"([^\"]+)\"$/$1$2/;
+    }
     if (/^-{1,2}norc$/ ) {
         $auto_rc_use = 0;
     }
@@ -2020,8 +2039,18 @@ while (defined($_ = $ARGV[0])) {
   elsif (/^-diagnostics/) { $diagnostics = 1; }
   elsif (/^-dir-report$/)    { $aux_out_dir_report = 1; }
   elsif (/^-dir-report-$/)   { $aux_out_dir_report = 0; }
-  elsif (/^-dvi$/)    { $dvi_mode = 1; }
-  elsif (/^-dvilua$/) { $dvi_mode = 2; }
+  elsif (/^-dvi$/)    { $dvi_mode = 1;
+                        if ( ($pdf_mode != 2) && ($pdf_mode != 3) ) {
+                            # if pdf_mode is not via dvi or pdf, turn it off
+                            $pdf_mode = 0;
+                        }
+                      }
+  elsif (/^-dvilua$/) { $dvi_mode = 2;
+                        if ( ($pdf_mode != 2) && ($pdf_mode != 3) ) {
+                            # if pdf_mode is not via dvi or pdf, turn it off
+                            $pdf_mode = 0;
+                        }
+                      }
   elsif (/^-dvi-$/)   { $dvi_mode = 0; }
   elsif ( /^-dvilualatex=(.*)$/ ) {
       $dvilualatex = $1;
@@ -2101,7 +2130,10 @@ while (defined($_ = $ARGV[0])) {
       my $format = $1;
       if ($format eq 'dvi' ) {
           $dvi_mode = 1;
-          $pdf_mode = $postscript_mode = 0;
+          if ( ($pdf_mode != 2) && ($pdf_mode != 3) ) {
+              # if pdf_mode is not via dvi or pdf, turn it off
+              $pdf_mode = 0;
+          }
       }
       elsif ($format eq 'pdf' ) {
           $pdf_mode = 1;
@@ -2117,12 +2149,12 @@ while (defined($_ = $ARGV[0])) {
                        $preview_mode = 0;  
                      }
   elsif (/^-p-$/)    { $printout_mode = 0; }
-  elsif (/^-pdf$/)   { $pdf_mode = 1; }
+  elsif (/^-pdf$/)   { $pdf_mode = 1; $dvi_mode = $postscript_mode = 0; }
   elsif (/^-pdf-$/)  { $pdf_mode = 0; }
   elsif (/^-pdfdvi$/){ $pdf_mode = 3; }
-  elsif (/^-pdflua$/){ $pdf_mode = 4; }
+  elsif (/^-pdflua$/){ $pdf_mode = 4; $dvi_mode = $postscript_mode = 0; }
   elsif (/^-pdfps$/) { $pdf_mode = 2; }
-  elsif (/^-pdfxe$/) { $pdf_mode = 5; }
+  elsif (/^-pdfxe$/) { $pdf_mode = 5; $dvi_mode = $postscript_mode = 0; }
   elsif (/^-pdflatex$/) {
       $pdflatex = "pdflatex %O %S";
       $pdf_mode = 1;
@@ -2150,7 +2182,12 @@ while (defined($_ = $ARGV[0])) {
           &exit_help("$My_name: unknown print type '$value' in option '$_'");
       }
   }
-  elsif (/^-ps$/)    { $postscript_mode = 1; }
+  elsif (/^-ps$/)    { $postscript_mode = 1;
+                       if ( ($pdf_mode != 2) && ($pdf_mode != 3) ) {
+                           # if pdf_mode is not via dvi or pdf, turn it off
+                           $pdf_mode = 0;
+                       }
+                      }
   elsif (/^-ps-$/)   { $postscript_mode = 0; }
   elsif (/^-pv$/)    { $preview_mode = 1; 
                        $preview_continuous_mode = 0; # to avoid conflicts
@@ -2391,7 +2428,10 @@ else {
         push( @file_list, $file)  unless ( exists $excl{$file} );
     }    
     if ( !@file_list ) {
-        &exit_help( "No file name specified, and I couldn't find any");
+        &exit_help(
+           "No file name(s) specified on command line, and no files match the\n".
+           "patterns in the default list."
+        );
     }
 }
 
@@ -2715,10 +2755,17 @@ foreach $filename ( @file_list )
     $failure_msg = '';   # Indicate reason for failure
 
     if ( $do_cd ) {
-       ($filename, $path) = fileparse( $filename );
-       print "$My_name: Changing directory to '$path'\n"
-           if !$silent;
-       pushd( dirname_no_tail( $path ) );
+        # Use my fileparse routine rather than the built-in one, otherwise
+        # under msys, a directory separator \ won't be recognized by fileparse.
+        # My routines fix that.  At this point, $filename ought to have had its
+        # \s changed to /s.  But I won't leave boobytrapped code.
+        # I use fileparseB rather than fileparseA, because fileparseA changes
+        # path './' to '', but fileparseB keeps the fileparse behavior there.
+        # I have to supply an explicit pattern of '' to keep extension in $filename.
+        ($filename, $path) = fileparseB( $filename, '' );
+        print "$My_name: Changing directory to '$path'\n"
+            if !$silent;
+        pushd( dirname_no_tail( $path ) );
     }
     else {
         $path = '';
@@ -2853,7 +2900,7 @@ foreach $filename ( @file_list )
     &init_timing1;
 
     if ($compiling_cmd) { Run_subst( $compiling_cmd ); }
-    $failure = &rdb_make;
+    $failure = rdb_make();
     if ( ( $failure <= 0 ) || $force_mode ) {
       rdb_for_some( [keys %one_time], \&rdb_run1 );
     }
@@ -2896,7 +2943,7 @@ continue {
         push @failed_primaries, $filename;
     }
     &ifcd_popd;
-    if ($show_time) { &show_timing1; };
+    if ($show_time && ! $preview_continuous_mode) { &show_timing1; };
     print "\n";
 }
 close($deps_handle) if ( $deps_handle );
@@ -2981,6 +3028,7 @@ sub init_timing1 {
     # Initialize timing for one run.
     @timings1 = ();
     $processing_time1 = processing_time();    
+    $clock1 = Time::HiRes::time();
 }
 
 ############################
@@ -2997,8 +3045,17 @@ sub init_timing_all {
 sub show_timing1 {
     # Show timing for one run.
     my $processing_time = processing_time() - $processing_time1;
+    my $invoked_time = 0;
+    for (@timings1) {
+        if (/: time = (.*)\s$/) {
+            $invoked_time += $1;
+    }}
     print @timings1, "Processing time = ",
-          sprintf('%.2f', $processing_time), "\n";
+        sprintf('%.2f', $processing_time),
+        ", of which invoked processes = $invoked_time, other = ",
+        sprintf( '%.2f', $processing_time-$invoked_time ), ".\n";
+    print "Elapsed clock time = ",
+          sprintf( '%.2f', Time::HiRes::time()-$clock1 ), ".\n";
     print "Number of rules run = ", 1+$#timings1, "\n";
 }
 
@@ -4194,7 +4251,7 @@ CHANGE:
         if ($compiling_cmd) {
             Run_subst( $compiling_cmd );
         }
-        $failure = &rdb_make;
+        $failure = rdb_make();
 
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
             $SIG{BREAK} = $SIG{INT} = 'DEFAULT';
@@ -4381,7 +4438,16 @@ sub process_rc_file {
     my ($rc_file, $repeat_reaction) = @_;
     my $abs_rc = abs_path($rc_file);
     my $ret_code = 0;
-    if ( exists $rc_files_read2{$abs_rc} ) {
+    if ( (!-e $rc_file) || ( ! defined $abs_rc ) ) {
+        warn "$My_name: The rc-file '$rc_file' does not exist\n";
+        return 1;
+    }
+    elsif ( -d $rc_file ) {
+        warn "$My_name: The supposed rc-file '$rc_file' is a directory; but it\n",
+             "          should be a normal text file\n";
+        return 1;
+    }
+    elsif ( exists $rc_files_read2{$abs_rc} ) {
         if ( $repeat_reaction ) { 
             warn
                 "$My_name: A user -r option asked me to process an rc file an extra time.\n",
@@ -4407,16 +4473,7 @@ sub process_rc_file {
     #    current versions of Perl (Nov. 2022), so "do latexmkrc;" for
     #    latexmkrc in cwd fails.
     # So I'll read the rc file and eval its contents.
-    if ( !-e $rc_file ) {
-        warn "$My_name: The rc-file '$rc_file' does not exist\n";
-        return 1;
-    }
-    elsif ( -d $rc_file ) {
-        warn "$My_name: The supposed rc-file '$rc_file' is a directory; but it\n",
-             "          should be a normal text file\n";
-        return 1;
-    }
-    elsif ( open( my $RCH, "<", $rc_file ) ) {
+    if ( open( my $RCH, "<", $rc_file ) ) {
         my $code = '';
         # Read all contents of file into $code:
         { local $/ = undef; $code = <$RCH>;}
@@ -5188,7 +5245,7 @@ sub set_names {
 
 #**************************************************
 
-sub correct_aux_out_files {
+sub correct_locations {
     # Deal with situations after a *latex run where files are in different
     # directories than expected (specifically aux v. output directory).
     # Do minimal fix ups to allow latexmk to analyze dependencies with log
@@ -5279,7 +5336,7 @@ sub correct_aux_out_files {
             warn "$My_name: fls file doesn't appear to have been made.\n";
         }
     }
-} # END correct_aux_out_files
+} # END correct_locations
 
 #-----------------
 
@@ -6197,28 +6254,68 @@ sub get_log_file {
     #                    ref to array to receive lines,
     #                    ref to hash to receive diagnostic etc informaion )
     # 3rd argument is optional
-    # Lines are unwrapped and converted to CS_system.
+    # Lines are unwrapped and converted to the CS_system coding system (so
+    #   that filenames are suitable for use in file opening calls and on
+    #   command line to invoked programs).
+    #
+    # **Complication**: When writing to the .log file, *latex converts
+    #   lines longer than a given length (by default, 79) to a sequence
+    #   of lines with at most the maximum length.
+    #   This subroutine converts such sequences of lines to the original
+    #   unwrapped form.
+    #   **However**,
+    #   1. The algorithm for line wrapping differs between all of pdflatex,
+    #      xelatex, and lualatex.  See below for details.
+    #   2. It is possible to write an unwrapped line L1 of a relevant
+    #      length followed by a shorter line L2, such that it is impossible
+    #      to distingish it from a wrapped line whose contents were those
+    #      of L1 concatenated with L2.
+    #   So when it is determined that a line is potentially wrapped,
+    #   several possibilities for the unwrapped lines are added to the
+    #   output array of lines (referenced by the second argument), so that
+    #   subsequent scanning of the lines in the subroutine parse_log picks
+    #   up the possible diagnostic messages independently of complications
+    #   in identifying wrapped lines versus unwrapped lines.
     
     my ($file, $PAlines, $PHinfo) = @_;
-
     # Where lines are wrapped at.  We'll sometimes override.
     local $log_wrap = $log_wrap;
 
+    # Lines held for wrapping:
+    my @held_lines = ();
+    # Routine for setting wrapped lines; setup by assignment to keep visibility
+    # in the enclosing subroutine, and to access its my-variables:
+    my $Pwrap_sub =
+    sub {
+        for ( my $i=0; $i <= $#held_lines; $i++ ) {
+            my $line = '';
+            for ( my $j=$i; $j <= $#held_lines; $j++ ) {
+                last if ($j-$i > 1 + ($max_log_construct /$log_wrap) );
+                $line .= $held_lines[$j];
+                push @$PAlines, $line;
+            }
+        }
+        @held_lines = ();
+    };
+
+
     my $engine = '';
     my $tex_distribution = '';
-    my ($line_num, $cont, $max_len) = ( 0, 0, 0 );
+    my ($line_num, $max_len) = ( 0, 0 );
     my $lua_mode = 0;  # Whether to use luatex-specific wrapping method.
-    my $byte_wrapping = 1;  # *latex does byte wrapping.  Modify if we find
-                            # log file is generated by a tex program that
-                            # wrapping by Unicode code points.
-
+    my $byte_wrapping = 1;  # Assume by default that the wrapping occurs at
+                            # a certain number of bytes. Modify this
+                            # variable if we find that the log file was
+                            # generated by a tex program that does wrapping
+                            # at a certain number of Unicode code points. 
+    # The details for the different programs (underlying the *latex programs):
     # File encoding: pdftex: UTF-8 but with wrapping at $log_wrap BYTES.
     #                        (So individual wrapped lines can be malformed
     #                        UTF-8, but we get valid UTF-8 after unwrapping.)
     #                luatex: UTF-8 but with wrapping at APPROXIMATELY
     #                        $log_wrap bytes. Rest as pdftex
     #                xetex:  UTF-8 with wrapping at $log_wrap codepoints.
-    # So we read file as bytes
+    # So we read file as bytes.  Then
     #   first line gives which program was used and hence whether to wrap
     #     according to byte or codepoint count.
     #   wrapping is always performed on the encoded byte strings, but the
@@ -6262,17 +6359,46 @@ sub get_log_file {
         }
         if ($len > $max_len) { $max_len = $len }
 
-        # Is this line continuation of previous line?
-        if ($cont) { $$PAlines[$#$PAlines] .= $_; }
-        else { push @$PAlines, $_ }
-
         # Is this line wrapped? I.e., is next line to be appended to it?
-        # Allow for fact that luatex doesn't reliably wrap at std place, e.g., 79.
-        $cont = ($len == $log_wrap)
+        # 2 cases:
+        #     pdflatex and xelatex wrap at exactly length $log_wrap 
+        #         (default 79), and normally append empty line when line
+        #         is exactly of the maximimum length (so we shouldn't have a
+        #         problem of distinguishing a wrapped line from a line of
+        #         length exactly $log_wrap).
+        #     lualatex: Wrap at a variable position dependent in a complicated
+        #         way on contents.  With default settings, wrapping occurs
+        #         between 77 and 80 bytes, according to my tests.  It preserves
+        #         UTF-8 coding, and doesn't split multi-byte UTF-8 coding of
+        #         a code point between lines, unlike pdflatex. But details
+        #         of exactly where a line is wrapped is not clear.
+        #         It is not possible in all cases to distinguish whether
+        #         a pair of lines arise from wrapping of a longer line
+        #         or from actual writing of a pair of lines.
+        # Determine whether line is potentially wrapped:
+        my $cont = ($len == $log_wrap)
             || ( $lua_mode && ($len >= $log_wrap-2) && ($len <= $log_wrap+1) );
-        if ($cont && $diagnostics ) {
-            print "====Continuing line $line_num of length $len\n$_\n";
+        if ($cont) {
+            # Save lines that may be continued onto @held_lines
+            print "====Continuing line $line_num of length $len\n$_\n"
+            if $diagnostics;
+            push @held_lines, $_;
         }
+        elsif (@held_lines) {
+            # No more continuation lines after this:
+            push @held_lines, $_;
+            # Put possibilities for lines before wrapping onto the main
+            # array and then clear @held_lines
+            &$Pwrap_sub();
+        }
+        else {   
+            push @$PAlines, $_;
+        }
+    }
+    if (@held_lines) {
+        # Get here if the last line of the file is of a length that
+        # it may be a wrapped.
+        &$Pwrap_sub();
     }
     close($fh);
     foreach (@$PAlines) { $_ = utf8_to_mine($_); }
@@ -6330,7 +6456,7 @@ sub parse_fls {
         #  is produced by MS-Windows program (e.g., in MiKTeX) with CRLF line ends,
         #  but is read by Unix Perl (which treats LF as line end, and preserves CRLF
         #  in read-in lines):
-        # And convert '\'
+        # And convert '\' to '/'
         s/\r?\n$//;
         s[\\][/]g;
         $line_no++;
@@ -6340,10 +6466,17 @@ sub parse_fls {
         }
         else {
             # Deal with MS-Win issues when system CP isn't UTF-8
-            if ( ($^O eq 'MSWin32') && /PWD/ && ! is_valid_utf8($_) ) {
-                # TeXLive on MSWin produces PWD in CS_system not UTF-8.
-                # ???? Later get tex_distribution before analyzing fls file, so do better test.
-                print "PWD line not in UTF-8.  This is normal for TeXLive. I will handle it.\n";
+            # Situation is that the fls file should be in UTF-8 and
+            # needs to be converted to system CP to fit with latexmk's
+            # convention (determined by file-system calls).
+            # However, under Windows' TeXLive 2021 (and maybe earlier) the
+            # PWD uses the system CP while the rest of the file is UTF-8.
+            # In TeXLive 2022 and 2023, the whole file, including the PWD
+            # line is UTF-8. 
+            # So give special treatment to PWD line under Windows.
+            # Also to guard against any other problems, check for non-UTF-8 lines. 
+            if ( ($^O eq 'MSWin32') && /PWD/ && ! is_valid_utf8($_) ) {                               print
+                  "PWD line not in UTF-8.  This is normal for older TeXLives (2021 and earlier).\n".                                                                                        "I will handle it.\n";
                 # Assume in CS_system, no change needed.
             }
             elsif ( ! is_valid_utf8($_) ) {
@@ -6548,8 +6681,12 @@ sub normalize_filename {
 sub normalize_filename_abs {
     # Convert filename to be either
     # absolute path in canonical form
-    # or relative to cwd.
-    return normalize_filename( abs_path($_[0]) );
+    # or relative to cwd, if possible.
+    # abs_path returns undef if it doesn't know how to get an absolute path.
+    # Just work with the original path in that case.
+    my $abs = abs_path($_[0]);
+    if (! defined $abs) { $abs = $_[0]; }
+    return normalize_filename( $abs );
 }
 
 #-----------------------------
@@ -6770,7 +6907,7 @@ sub parse_bcf {
         return 2;
     }
 
-    show_array( "$My_name: Bibliography file(s) form .bcf file:", @$Pbib_files )
+    show_array( "$My_name: Bibliography file(s) from .bcf file:", @$Pbib_files )
         unless $silent;
     if (@not_found_bib) {
         show_array(
@@ -8175,6 +8312,10 @@ DEP:
                    "   I'll try making it with allowed extensions \n";
              foreach my $try_ext ( keys %$Pinput_extensions ) {
                  my $new_dest = "$file.$try_ext";
+                 if (-e $new_dest) {
+                     # A file that exists cannot have been the missing file.
+                     next;
+                 }
                  &Run_subst( "$make $quote$new_dest$quote" );
                  if ( -e $new_dest ) {
                      print "SUCCESS in making '$new_dest'\n",
@@ -8462,31 +8603,27 @@ sub rdb_make {
     #        no error in the run, the source-file-state is **not** updated
     #        after the rule is run.  Then on a subsequent pass through
     #        rdb_make's main loop, when the rule is tested for a rerun, any
-    #        change in source file contents is cause for running the rule
-    #        again.
-    #    8.  But after a run giving an error, the state of the generated
-    #        files (i.e., non-user files) is updated to the current state.
-    #        This is because the error (under normal circumstances) must be
-    #        corrected by user action: e.g., correcting a source file, and
-    #        possibly deleting some corrupted auxiliary file.  Files (e.g.,
-    #        .aux by *latex) generated by the rule just run may well have
-    #        changed, so updating their state to the current state prevents
-    #        another run before a user change.  If a file was generated by
-    #        another rule, it won't have changed its state, so updating its
-    #        state won't matter.  But a non-generated file is a
-    #        user-created file, and a rerun is entailed if its contents
-    #        changed compared with the start of the run; it's the
-    #        start-of-run contents that were used in the error run.
-    #    9.  Note: an error may be caused by a problem with a file
-    #        generated by another rule, e.g., a bbl file created by bibtex
-    #        and read by *latex, but with no error reported by bibtex.  To
-    #        correct the error a source file (possibly more than once
-    #        removed must be changed).  That triggers a rerun of the
-    #        producing rule, and after that the resulting change causes a
-    #        rerun of the original rule that had the error.  E.g.,
-    #        correcting a .bib file causes bibtex to run, producing a
-    #        corrected .bbl file, after which *latex is caused to be run.
-    #    10. With circular dependencies, there is a choice of which order
+    #        change in source file contents since the start of the previous
+    #        run is cause for running the rule again.
+    #    8.  When there is an error, and force_mode is off, processing of
+    #        all further rules is terminated.  A problem is then caused for
+    #        a later invocation of latexmk (or, in -pvc mode, the next
+    #        scanning of source-file status): It may be that a generated
+    #        file from a run of some rule changed compared with its status
+    #        before the run.  Because of the termination of processing
+    #        there was no rerun of the rule. New runs should only be made
+    #        after a change in the user-written files, which give the
+    #        possibility of correcting the error.  But on a subsequent
+    #        invocation of latexmk it could appear that some rule(s) is/are
+    #        out-of-date because of the changed generated files, which
+    #        would result in unneeded extra runs, which will tend to
+    #        pollute the screen output with misleading downstream
+    #        consequences of the original error.
+    #        To avoid this problem, after an error-generating round of
+    #        compilations, the cached state of generated files is updated
+    #        to their state after the compilations.  Then only user-caused
+    #        file changes will be cause for new runs.
+    #    9.  With circular dependencies, there is a choice of which order
     #        to examine the rules.  Generally, primary rules are more 
     #        time-consuming than most others, so the choice of the order of
     #        examination of rules to check out-of-dateness is to try to
@@ -8495,7 +8632,7 @@ sub rdb_make {
     #        graphics. These are normally outside a dependency loop, so
     #        those are left to last.  Even if they are inside a dependency
     #        loop, they need the primary rule to have been run first.
-    #    11. After rdb_make is run, all non-user source files are updated
+    #    10. After rdb_make is run, all non-user source files are updated
     #        to their current state.  Rules are considered up-to-date
     #        here. On a subsequent call to rdb_make, subsequent changes are
     #        relevant to what is to be done.  Note: the states of user
@@ -8625,7 +8762,7 @@ sub rdb_make {
         }
         if ( ($runs > 0) && ! $too_many_passes ) {
             $retry_msg = 0;
-            if ( $force_mode || (! $failure) || $switched_primary_output ) {
+            if ( $force_mode || (! $failure) ) {
                 next PASS;
             }
             # Get here on failure, without being in force_mode
@@ -8673,7 +8810,31 @@ sub rdb_make {
          # but do not change primaries.
          # Problem is that %current_primaries gets altered
          &rdb_set_rule_net;
-    }  #End PASS
+     }  #End PASS
+
+    if ($failure ) {
+        # Update state of generated source files, but not non-generated,
+        # i.e., user source files.  Without that, when there was a termination of
+        # processing because of an error, it could be some generated files changed
+        # without reruns of the relevant rule(s) being triggered; that's because
+        # with an error and with force_mode off, the reruns are blocked.
+        # But that situation would cause reruns either when latexmk is reinvoked
+        # or at the next examination of file state (in -pvc mode). But those runs
+        # (almost certainly) won't improve the error situation in the absence of
+        # a change in user files, since the error is ultimately due to a problem
+        # with a user file.
+        # By updating the state of generated source files, reruns are not
+        # triggered until a user file is changed.
+        # Also turn $$Pout_of_date off for the rules.  It may have been set
+        # at some point to trigger a rerun, but that information is now
+        # out-of-date, given that an error occurred.
+        rdb_for_some( [&rdb_accessible()],
+                      sub{ 
+                           &rdb_update_gen_files;
+                           $$Pout_of_date = 0;
+                      }
+                    ); 
+    }
 
     rdb_for_some( [@unusual_one_time], \&rdb_make1 );
 
@@ -8839,7 +9000,7 @@ sub rdb_make1 {
     # Is this needed?  Yes; rdb_make1 is called on a sequence of rules and
     # if one gives an error, then it provides source files directly or
     # indirectly to later rules, which should not be run.
-    if ($failure & ! $force_mode) {return;}
+    if ($failure && ! $force_mode) {return;}
 
     # Rule may have been created since last run.  Just in case we didn't,
     # define $pass{$rule} elsewhere, do it here:
@@ -8922,6 +9083,7 @@ sub rdb_make1 {
         warn_running( "Run number $pass{$rule} of rule '$rule'" );
         $return = &rdb_run1;
     }
+
     if ($$Pchanged) {
         $newrule_nofile = 1;
         $return = 0;
@@ -8972,15 +9134,6 @@ sub rdb_make1 {
         if ( !$$Plast_message ) {
             $$Plast_message = "Run of rule '$rule' gave a non-zero error code";
         }
-        # Update state of generated source files, but not non-generated,
-        # i.e., user source files. Thus any change in the rule's own
-        # generated source files during the run will not cause a
-        # rerun. Files generated by another rule should not have been
-        # changed during the run, so updating their saved state in this
-        # rule is a NOP.  But any change in user files since the **start**
-        # of the run is a cause for a rerun, so their saved state must not
-        # be updated.
-        rdb_update_gen_files();
     }
     foreach ( keys %$PHsource_rules ) {
         $$PHsource_rules{$_} = $pass{$_};
@@ -9074,7 +9227,7 @@ sub rdb_run1 {
     #
     $$Pout_of_date = $$Pout_of_date_user = 0;
     if ($latex_like) {
-        &correct_aux_out_files;
+        &correct_locations;
         run_hooks( 'after_xlatex' );
         $return = analyze_latex_run( $return );
         run_hooks( 'after_xlatex_analysis' );
@@ -9490,7 +9643,6 @@ sub rdb_rerun_needed {
     #
     # ???!!!!
     # Check all uses!!!!!!!!!!!!!
-
     our ($rule, %pass);
 
     local our $PHchanges = shift;
@@ -9628,9 +9780,7 @@ sub rdb_rerun_needed {
     }
     $$Pno_history = 0;    # See comments in definition of %rule_db.
     if ($rerun_needed) {
-        $$Pout_of_date = 1;
         push @{$$PHchanges{rules_to_apply}}, $rule;
-        if (@{$$PHchanges{changed_user}}) {$$Pout_of_date_user = 1;}
     }
     return $rerun_needed;
 } #END rdb_rerun_needed
@@ -10500,37 +10650,6 @@ sub Parray {
 
 #************************************************************
 
-sub analyze_string {
-    # Show information about string: utf8 flag or not, length(s!), byte content
-    my ($m,$s) = @_;
-
-    print "=== $m ";
-    my $length = length($s);
-    if (utf8::is_utf8($s)) {
-        my $encoded = encode( $CS_system, $s, Encode::FB_WARN | Encode::LEAVE_SRC );
-        my $len_chars = 0;
-        my $len_bytes = 0;
-        { no bytes; $len_chars = length($s); }
-        { use bytes; $len_bytes = length($s); }
-        print "'$encoded':\n",
-            "utf8, len = $length; chars = $len_chars; bytes = $len_bytes\n";
-    }
-    else {
-        print "'$s':\n",
-              "NOT utf8, len = $length\n";
-    }
-
-    print join ' ', to_hex($s), "\n";
-}
-
-#----------------------------
-
-sub to_hex {
-    return map { sprintf('%4X', $_) }  unpack( 'U*', shift );
-}
-
-#==================
-
 sub glob_list1 {
     # Glob a collection of filenames.  
     # But no sorting or elimination of duplicates
@@ -10691,24 +10810,30 @@ sub get_checksum_md5 {
         # We won't use checksum for directory
         return 0;
     }
-    else {
-        open( $input, '<:bytes', $source )
-        or return 0;
-        my ($base, $path, $ext) = fileparseA( $source );
-        $ext =~ s/^\.//;
-        if ( exists $hash_calc_ignore_pattern{$ext} ) {
-            $ignore_pattern = $hash_calc_ignore_pattern{$ext};
-        }
+    open( $input, '<:bytes', $source )
+    or return 0;
+    my ($base, $path, $ext) = fileparseA( $source );
+    $ext =~ s/^\.//;
+    if ( exists $hash_calc_ignore_pattern{$ext} ) {
+        $ignore_pattern = $hash_calc_ignore_pattern{$ext};
     }
-    if ( defined $ignore_pattern ) {
-        while (<$input>) {
-            if ( ! /$ignore_pattern/ ){
-                $md5->add($_);
+    eval {
+        # Trap any errors that occur during reading, even though the file
+        # was successfully opened.
+        # Such errors have been known to occur under OneDrive on macOS.
+        if ( defined $ignore_pattern ) {
+            while (<$input>) {
+                if ( ! /$ignore_pattern/ ){
+                    $md5->add($_);
+                }
             }
         }
-    }
-    else {
-        $md5->addfile($input);
+        else {
+            $md5->addfile($input);
+        }
+    };
+    if ($@) {
+        warn "$My_name: Attempt to get md5 of '$source' failed.  Error=\n$@";
     }
     close $input;
     return $md5->hexdigest();
@@ -11184,7 +11309,12 @@ sub ext_no_period {
 sub fileparseA {
     # Like fileparse but replace $path for current dir ('./' or '.\') by ''
     # Also default second argument to get normal extension.
+    # With msys, change all \ to / in given name since with msys, fileparse
+    # doesn't recognize \ as directory separator.
     my $given = $_[0];
+    if ( $^O eq 'msys' ) {
+        $given =~ s[\\][/]g;
+    }
     my $pattern = '\.[^\.]*';
     if  ($#_ > 0 ) { $pattern = $_[1]; }
     my ($base_name, $path, $ext) = fileparse( $given, $pattern );
@@ -11198,7 +11328,12 @@ sub fileparseA {
 
 sub fileparseB {
     # Like fileparse but with default second argument for normal extension
+    # With msys, change all \ to / in given name since with msys, fileparse
+    # doesn't recognize \ as directory separator.
     my $given = $_[0];
+    if ( $^O eq 'msys' ) {
+        $given =~ s[\\][/]g;
+    }
     my $pattern = '\.[^\.]*';
     if  ($#_ > 0 ) { $pattern = $_[1]; }
     my ($base_name, $path, $ext) = fileparse( $given, $pattern );
@@ -11551,7 +11686,11 @@ sub cache_good_cwd {
     }
     # Normalized
     if ($normalize_names) {
-        $cwd = abs_path($cwd);
+        my $abs = abs_path($cwd);
+        # It's conceivable that abs_path doesn't know how to convert to an
+        # absolute path of a standard normalization.  Then it returns undef.
+        # In that case, it's probably good not to try normalizing $cwd.
+        if (defined $abs) { $cwd = $abs; }
     }
     $cache{cwd} = $cwd;
 }  # END cache_good_cwd
