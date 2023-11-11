@@ -1167,11 +1167,6 @@ main (int ac, string *av)
   av[0] = kpse_program_basename (av[0]);
   _setmaxstdio(2048);
   setmode(fileno(stdin), _O_BINARY);
-#endif
-
-  maininit (ac, av);
-
-#ifdef WIN32
   if (ac > 1) {
     char *pp;
     if ((strlen(av[ac-1]) > 2) &&
@@ -1189,6 +1184,8 @@ main (int ac, string *av)
     }
   }
 #endif
+
+  maininit (ac, av);
 
   /* Call the real main program.  */
   mainbody ();
