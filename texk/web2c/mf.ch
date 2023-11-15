@@ -1853,6 +1853,15 @@ if mem_min+1100>mem_top then goto off_base;
 mem:=xmalloc_array (memory_word, mem_max - mem_min + 1);
 @z
 
+@x [48.1195] l.22714 - Check that p did not become corrupt.
+if (p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto off_base;
+@y
+{If the base file is messed up, that addition to |p| might cause it to
+ become garbage. Report from Gregory James DUCK to Karl, 14 Sep 2023.
+ Found with a fuzz tester similar to AFL-fuzz. Also changed in \TeX.}
+if (p<mem_min)or(p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto off_base;
+@z
+
 @x [48.1199] l.22750 - Allow command line to override dumped value.
 undump(batch_mode)(error_stop_mode)(interaction);
 @y

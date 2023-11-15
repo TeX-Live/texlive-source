@@ -3653,6 +3653,15 @@ repeat for k:=p to q+1 do undump_wd(mem[k]);
 repeat undump_things(mem[p], q+2-p);
 @z
 
+@x [50.1312] l.23955 - Check that p did not become corrupt.
+if (p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto bad_fmt;
+@y
+{If the format file is messed up, that addition to |p| might cause it to
+ become garbage. Report from Gregory James DUCK to Karl, 14 Sep 2023.
+ Found with a fuzz tester similar to AFL-fuzz. Also changed in \MF.}
+if (p<mem_min)or(p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto bad_fmt;
+@z
+
 @x [50.1312] l.23878 - Make dumping/undumping more efficient.
 for k:=p to lo_mem_max do undump_wd(mem[k]);
 @y

@@ -1,3 +1,11 @@
+2023-11-15  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch,
+	* mf.ch (Undump the dynamic memory): check that p does not
+	become too small, due to fmt/base corruption.
+	Report from Gregory James DUCK to Karl, 14 Sep 2023.
+	Found with a fuzz tester similar to AFL-fuzz. 
+
 2023-10-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Fine print for command-line options.
