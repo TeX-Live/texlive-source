@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 68283 2023-09-15 13:11:11Z preining $
+# $Id: tlmgr.pl 68818 2023-11-12 00:30:53Z preining $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 68283 $';
-my $datrev = '$Date: 2023-09-15 15:11:11 +0200 (Fri, 15 Sep 2023) $';
+my $svnrev = '$Revision: 68818 $';
+my $datrev = '$Date: 2023-11-12 01:30:53 +0100 (Sun, 12 Nov 2023) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7340,6 +7340,32 @@ and the repository are not compatible:
     }
   }
 
+  # check for remote main db being *older* than what we have seen before
+  # The check we employ is heuristic: texlive-scripts is updated practically
+  # every day. We compare the locally installed texlive-scripts with the
+  # remove revision, and if that does not line up, we error out.
+  # Alternative approaches
+  # - loop over all installed packages and take the maximum of the found revisions
+  # - on every update, save the last seen remote main revision into 00texlive.installation
+  #
+  if ($is_main) {
+    my $remote_revision = $remotetlpdb->config_revision;
+    my $tlp = $localtlpdb->get_package("texlive-scripts");
+    my $local_revision;
+    if (!defined($tlp)) {
+      info("texlive-scripts not found, not doing revision consistency check\n");
+      $local_revision = 0;
+    } else {
+      $local_revision = $tlp->revision;
+    }
+    if ($local_revision > $remote_revision) {
+      info("fail load $location\n") if ($::machinereadable);
+      return(undef, "Remote database (rev $remote_revision) seems to be older than local (rev $local_revision), please use different mirror or wait a bit.")
+    } else {
+      debug("Remote database revision $remote_revision, texlive-scripts local revision $local_revision\n");
+    }
+  }
+
   # check for being frozen
   if ($remotetlpdb->config_frozen) {
     my $frozen_msg = <<FROZEN;
@@ -10246,7 +10272,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 68283 2023-09-15 13:11:11Z preining $
+$Id: tlmgr.pl 68818 2023-11-12 00:30:53Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
