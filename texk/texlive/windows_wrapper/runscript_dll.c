@@ -24,6 +24,174 @@ char msg_buf[MAX_MSG];
 
 __declspec(dllimport) int dllluatexmain( int argc, char *argv[] );
 
+int
+isknj(int c)
+{
+  int cp;
+
+  cp = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  c &= 0xff;
+  switch (cp) {
+  case 932:
+    return((c>=0x81 && c<=0x9f) || (c>=0xe0 && c<=0xfc));
+  case 936:
+    return(c>=0x81 && c<=0xfe);
+  case 950:
+    return((c>=0xa1 && c<=0xc6) || (c>=0xc9 && c<=0xf9));
+  default:
+    return(0);
+  }
+}
+
+int
+isknj2(int c)
+{
+  int cp;
+
+  cp = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  c &= 0xff;
+  switch (cp) {
+  case 932:
+    return(c>=0x40 && c<=0xfc && c!=0x7f);
+  case 936:
+    return(c>=0x40 && c<=0xfe && c!=0x7f);
+  case 950:
+    return((c>=0x40 && c<=0x7e) || (c>=0xa1 && c<=0xfe));
+  default:
+    return(0);
+  }
+}
+
+int
+IS_KANJI(const char *p)
+{
+  int cp;
+  int cp932_system = 0;
+  int ret;
+
+  cp = AreFileApisANSI() ? GetACP() : GetOEMCP();
+  if (cp == 932 || cp == 936 || cp == 950) {
+    cp932_system = cp;
+  }
+  ret = cp932_system && isknj(*(p)) &&
+        isknj2(*(p+1));
+  return ret;
+}
+
+int getlongpath(char *buff, char *input, int len)
+{
+   HANDLE hnd;
+   WIN32_FIND_DATA ffd;
+   int  cnt = 0;
+   char *p, *q, *r;
+
+   buff[0] = '\0';
+/*
+temporarily change directory separators into back slashs
+*/
+   for(p = input; *p; p++) {
+      if(*p == '/')
+         *p = '\\';
+   }
+
+   p = q = input;
+   r = buff;
+
+/*
+UNC name
+*/
+   if(q[0] == '\\' && q[1] == '\\') {
+      cnt += 2;
+      if(cnt > len) return 0;
+      buff[0] = '/';
+      buff[1] = '/';
+      p += 2;
+      r += 2;
+      while(*p != '\\' && *p) {
+         if (IS_KANJI(p)) {
+            cnt++;
+            if(cnt > len) return 0;
+            *r++ = *p++;
+         }
+         cnt++;
+         if(cnt > len) return 0;
+         *r++ = *p++;
+      }
+      cnt++;
+      if(cnt > len) return 0;
+      *r++ = '/';
+      if(*p) p++;
+      while(*p != '\\' && *p) {
+         if (IS_KANJI(p)) {
+            cnt++;
+            if(cnt > len) return 0;
+            *r++ = *p++;
+         }
+         cnt++;
+         if(cnt > len) return 0;
+         *r++ = *p++;
+      }
+      cnt++;
+      if(cnt > len) return 0;
+      *r++ = '/';
+      *r= '\0';
+      if(*p) p++;
+/*
+drive name
+*/
+   } else if(isalpha(q[0]) && q[1] == ':' && q[2] == '\\') {
+      *r++ = q[0];
+      *r++ = ':';
+      *r++ = '/';
+      *r = '\0';
+      p += 3;
+      cnt += 3;
+      if(cnt > len) return 0;
+   }
+
+   for( ; *p; p++) {
+      if(IS_KANJI(p)) {
+         p++;
+         continue;
+      }
+      if(*p == '\\') {
+         *p = '\0';
+         if((*(p-2) == '\\' || p-1 == q) && *(p-1) == '.') {
+            cnt += 2;
+            if(cnt > len) return 0;
+            strcat(buff, "./");
+         } else if((*(p-3) == '\\' || p-2 == q) && *(p-2) == '.' && *(p-1) == '.') {
+            cnt += 3;
+            if(cnt > len) return 0;
+            strcat(buff, "../");
+         } else {
+            if((hnd = FindFirstFile(q, &ffd)) == INVALID_HANDLE_VALUE) {
+               return 0;
+            }
+            FindClose(hnd);
+            cnt += strlen(ffd.cFileName);
+            cnt++;
+            if(cnt > len) return 0;
+            strcat(buff, ffd.cFileName);
+            strcat(buff, "/");
+         }
+         *p = '\\';
+      }
+   }
+
+/*
+file itself
+*/
+   if((hnd = FindFirstFile(q, &ffd)) == INVALID_HANDLE_VALUE) {
+      return 0;
+   }
+   FindClose(hnd);
+   cnt += strlen(ffd.cFileName);
+   if(cnt > len) return 0;
+   strcat(buff, ffd.cFileName);
+   return 1;
+}
+
 __declspec(dllexport) int dllrunscript( int argc, char *argv[] ) 
 {
   static char own_path[MAX_PATH];
@@ -31,6 +199,22 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   char *fname, *argline, **lua_argv;
   int k, quoted, lua_argc;
   HMODULE module_handle = NULL;
+
+/* change argv[0] into long file name */
+
+  char buff[260];
+  char infile[260];
+  char *fp;
+
+  if (argc) {
+    k = SearchPath(NULL, argv[0], ".exe", 260, infile, &fp);
+    if (!k)
+      DIE("cannot find %s\n", argv[0]);
+    k = getlongpath(buff, infile, 260);
+    if (!k)
+      DIE("cannot find %s\n", argv[0]);
+    argv[0] = buff;
+  }
 
   // file path of the executable
   k = (int) GetModuleFileName(NULL, own_path, MAX_PATH);
@@ -77,8 +261,10 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   return k;
 
 DIE:
-  fprintf(stderr, "%s: ", module_name);
-  fprintf(stderr, msg_buf);
+  if (*subsys_mode != 'G') {
+    fprintf(stderr, "%s: ", module_name);
+    fprintf(stderr, msg_buf);
+  }
   if (*subsys_mode == 'G')
     MessageBox( NULL, msg_buf, module_name, MB_ICONERROR | MB_SETFOREGROUND );
   return 1;
@@ -88,8 +274,16 @@ void finalize( void )
 {
   // check for and display error message if any
   char *err_msg;
-  if ( err_msg = (char *) getenv(err_env_var) )
-    MessageBox( NULL, err_msg, script_name, MB_ICONERROR | MB_SETFOREGROUND );
+  if (*subsys_mode == 'G') {
+    if ( err_msg = (char *) getenv(err_env_var) )
+      MessageBox( NULL, err_msg, script_name, MB_ICONERROR | MB_SETFOREGROUND );
+  }
+  if (*subsys_mode != 'G') {
+    if ( err_msg = (char *) getenv(err_env_var) ) {
+      fprintf(stderr, "%s: ", script_name);
+      fprintf(stderr, "%s\n", err_msg);
+    }
+  }
 }
 
 __declspec(dllexport) int dllwrunscript( 
@@ -117,5 +311,3 @@ __declspec(dllexport) int dllwrunscript(
   return dllrunscript( 0, NULL );
 #endif
 }
-
-
