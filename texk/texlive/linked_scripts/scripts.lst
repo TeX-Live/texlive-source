@@ -53,6 +53,7 @@ authorindex/authorindex
 bib2gls/bib2gls.sh
 bib2gls/convertgls2bib.sh
 bibcop/bibcop.pl
+bibtexperllibs/ltx2unitxt
 bundledoc/arlatex
 bundledoc/bundledoc
 cachepic/cachepic.tlu

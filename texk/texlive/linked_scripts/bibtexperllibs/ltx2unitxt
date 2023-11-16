@@ -1,0 +1,169 @@
+#!/usr/bin/env perl
+# Use the LaTeX::ToUnicode module (also in the bibtexperllibs
+# repository/package, like this script) to convert LaTeX to Unicode.
+# 
+# We work on fragments of text, not whole documents, the goal being to
+# replace LaTeX commands and syntax with obvious plain text equivalents,
+# or remove them.
+
+use strict;
+use warnings;
+
+use Cwd;
+use File::Basename;
+use File::Spec;
+
+BEGIN {
+    # find files relative to our installed location within TeX Live
+    chomp(my $TLMaster = `kpsewhich -var-value=SELFAUTOPARENT`); # TL root
+    if (length($TLMaster)) {
+        unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
+    }
+    # find development bibtexperllibs in sibling checkout to this script,
+    # even if $0 is a symlink. Irrelevant when using from an installation.
+    my $real0 = Cwd::abs_path($0);
+    my $scriptdir = File::Basename::dirname($real0);
+    my $dev_btxperllibs = Cwd::abs_path("$scriptdir/../..");
+
+    # we need the lib/ subdirectories inside ...
+    unshift (@INC, glob ("$dev_btxperllibs/*/lib")) if -d $dev_btxperllibs;
+
+}
+
+use LaTeX::ToUnicode;
+
+our %opts;
+local *OUT; # output filehandle
+
+exit(main());
+
+sub main {
+    init();
+
+    # by paragraph?
+    while (<>) {
+        print OUT (convert($_));
+    }
+
+    return 0;
+}
+
+sub convert {
+    my ($in) = @_;
+
+    my @args = (); # what we'll pass to the convert() fn.
+    #
+    if (defined(&{"LaTeX_ToUnicode_convert_hook"})) {
+      push (@args, "hook" => \&LaTeX_ToUnicode_convert_hook); }
+    if ($opts{e}) { push (@args, "entities" => 1); }
+    if ($opts{g}) { push (@args, "german" => 1); }
+    if ($opts{h}) { push (@args, "html" => 1); }
+
+    LaTeX::ToUnicode::debuglevel($opts{v});
+    my $out = LaTeX::ToUnicode::convert($in, @args);
+
+    #warn "out=$out";
+    return $out;
+}
+
+
+# Command line options, etc.
+# 
+sub init {
+    my $USAGE = <<END;
+Usage: $0 [-c CONFIG] [-o OUTPUT] [--html] [...] [INFILE]...
+
+Convert the LaTeX source in INFILE (or standard input) to plain text
+using Unicode code points for accents and other special characters; or,
+optionally, output HTML with simple translations for font changes and url
+commands.
+
+Common accent sequences, special characters, and simple markup commands
+are translated, but there is no attempt at completeness. Math, tables,
+figures, sectioning, etc., are not handled in any way, and mostly left
+in their TeX form in the output. The translations assume standard LaTeX
+meanings for characters and control sequences; macros in the input are
+not considered.
+
+The input can be a fragment of text, not a full document, as the purpose
+of this script was to handle bibliography entries and abstracts (for the
+ltx2crossrefxml script that is part of the crossrefware package).
+Patches to extend this script are welcome. It uses the LaTeX::ToUnicode
+Perl library for the conversion; see its documentation for details.
+
+Conversion is currently done line by line, so TeX constructs that cross
+multiple lines are not handled properly. If it turns out to be useful,
+conversion could be done by paragraph instead.
+
+The config file is read as a Perl source file. It can define a function
+`LaTeX_ToUnicode_convert_hook()' which will be called early; the value
+it returns (which must be a string) will then be subject to the standard
+conversion.
+
+For an example of using this script and associated code, see the TUGboat
+processing at
+https://github.com/TeXUsersGroup/tugboat/tree/trunk/capsules/crossref.
+
+Options:
+  -c, --config=FILE  read (Perl) config FILE for a hook, as explained above
+  -e, --entities     output entities &#xNNNN; instead of literal characters
+  -g, --german       handle some features of the german package
+  -h, --html         output simplistic HTML instead of plain text
+  -o, --output=FILE  output to FILE instead of stdout
+  -v, --verbose      be verbose
+  -V, --version      output version information and exit
+  -?, --help         display this help and exit
+
+Options can be abbreviated unambiguously, and start with either - or --.
+
+Dev sources, bug tracker: https://github.com/borisveytsman/bibtexperllibs
+Releases: https://ctan.org/pkg/bibtexperllibs
+END
+
+ my $VERSION = <<END;
+ltx2unitxt (bibtexperllibs) 0.51
+Copyright 2023 Karl Berry.
+This is free software: you can redistribute it and/or
+modify it under the same terms as Perl itself.
+END
+
+    use Getopt::Long qw(:config no_ignore_case); # otherwise v|V is the same
+
+    GetOptions(
+      "config|c=s" => \($opts{c}),
+      "entities|e" => \($opts{e}),
+      "german|g"   => \($opts{g}),
+      "html|h"     => \($opts{h}),
+      "output|o=s" => \($opts{o}),
+      "verbose|v"  => \($opts{v}),
+      "version|V"  => \($opts{V}),
+      "help|?"     => \($opts{help}))
+    || die "Try $0 --help for more information.\n";
+
+    if ($opts{help}) { print "$USAGE\n$VERSION"; exit 0; } 
+    if ($opts{V}) { print $VERSION; exit 0; } 
+
+    binmode(STDOUT, ":utf8");
+    *OUT = *STDOUT;
+
+    if (defined($opts{o})) {
+         open(OUT, ">$opts{o}") || die "open(>$opts{o}) failed: $!\n";
+        binmode(OUT, ":utf8")
+    }
+
+    if ($opts{c}) {
+        if (-r $opts{c}) {
+        # if config arg is absolute, fine; if not, prepend "./" as slightly
+          # less troublesome than putting "." in the @INC path.
+          my $rel = (File::Spec->file_name_is_absolute($opts{c}) ? "" : "./");
+          my $cnffile = "$rel$opts{c}";
+          verbose("requiring config file: $cnffile");
+          require $cnffile;
+        } else {
+          die "open config file ($opts{c}) for reading failed: $!\n";
+      }
+    }
+}
+
+
+sub verbose { print @_ if $::opts{v}; }
