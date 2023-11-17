@@ -23,11 +23,12 @@
 -- THE SOFTWARE.
 
 NAME = "runtexshebang"
-VERSION = "20230913 v0.4"
+VERSION = "20231117 v0.5"
 USAGE = [[
 Usage:	runtexshebang [input.tex]
 
 Options:
+	--dry-run	print the TeX-style shebang line of [input.tex]
 	-h, --help	print help
 	-v, --version	print version
 
@@ -53,6 +54,7 @@ if #arg == 0 then
 end
 
 --
+is_dryrun = false
 texfilename = ""
 narg = 1
 repeat
@@ -66,6 +68,8 @@ repeat
   elseif this_arg == "-v" or this_arg == "-version" then
      whoami()
      os.exit(0)
+  elseif this_arg == "-dry-run" then
+     is_dryrun = true
   else
      texfilename = this_arg
   end --if this_arg == ...
@@ -75,6 +79,11 @@ until narg > #arg
 -- main process
 whoami()
 
+if ( texfilename == "" ) then
+   print("No filename argument given, exiting.\n")
+   os.exit(1)
+end
+
 line_ctr = 0
 for line in io.lines(texfilename) do
    line_ctr = line_ctr + 1
@@ -82,6 +91,12 @@ for line in io.lines(texfilename) do
 
    if string.match(line, "^%%#!") then
       tex_cmd, err=string.gsub(line, "%%#!", "")
+
+      if is_dryrun then
+         print(tex_cmd .. "\n")
+         os.exit(0)
+      end
+
       tex_return = os.execute(tex_cmd)
 
       -- if os.execute(texcmd) returns -1 on Windows, then
