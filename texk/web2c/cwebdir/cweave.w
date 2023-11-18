@@ -4606,7 +4606,7 @@ static name_pointer blink[max_names]; /* links in the buckets */
 @ To begin the sorting, we go through all the hash lists and put each entry
 having a nonempty cross-reference list into the proper bucket.
 
-@<Do the first pass...@>= {
+@<Do the first pass...@>=
 for (hash_ptr=hash; hash_ptr<=hash_end; hash_ptr++) {
   next_name=*hash_ptr;
   while (next_name) {
@@ -4617,7 +4617,6 @@ for (hash_ptr=hash; hash_ptr<=hash_end; hash_ptr++) {
       blink[cur_name-name_dir]=bucket[c]; bucket[c]=cur_name;
     }
   }
-}
 }
 
 @ During the sorting phase we shall use the |cat| and |trans| arrays from
