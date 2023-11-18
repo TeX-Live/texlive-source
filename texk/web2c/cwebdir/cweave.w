@@ -564,12 +564,9 @@ scanning routines.
 representation by means of the table |ccode|.
 
 @<Private...@>=
-static eight_bits ccode[256]; /* meaning of a char following \.{@@} */
+static eight_bits ccode[256]={ignore}; /* meaning of a char following \.{@@} */
 
-@ @<Set ini...@>= {
-  int c; /* must be |int| so the |for| loop will end */
-  for (c=0; c<256; c++) ccode[c]=ignore;
-}
+@ @<Set ini...@>=
 ccode[' ']=ccode['\t']=ccode['\n']=ccode['\v']=ccode['\r']=ccode['\f']
   =ccode['*']=new_section;
 ccode['@@']='@@'; /* `quoted' at sign */
@@ -4602,7 +4599,7 @@ list for character |c| begins at location |bucket[c]| and continues through
 the |blink| array.
 
 @<Private...@>=
-static name_pointer bucket[256];
+static name_pointer bucket[256]={NULL};
 static name_pointer next_name; /* successor of |cur_name| when sorting */
 static name_pointer blink[max_names]; /* links in the buckets */
 
@@ -4610,14 +4607,12 @@ static name_pointer blink[max_names]; /* links in the buckets */
 having a nonempty cross-reference list into the proper bucket.
 
 @<Do the first pass...@>= {
-int c;
-for (c=0; c<256; c++) bucket[c]=NULL;
 for (hash_ptr=hash; hash_ptr<=hash_end; hash_ptr++) {
   next_name=*hash_ptr;
   while (next_name) {
     cur_name=next_name; next_name=cur_name->link;
     if (cur_name->xref!=(void *)xmem) {
-      c=(cur_name->byte_start)[0];
+      int c=(cur_name->byte_start)[0];
       if (xisupper(c)) c=tolower(c);
       blink[cur_name-name_dir]=bucket[c]; bucket[c]=cur_name;
     }
@@ -4751,11 +4746,8 @@ while (sort_ptr>scrap_info) {
     cur_name=next_name; next_name=blink[cur_name-name_dir];
     cur_byte=cur_name->byte_start+cur_depth;
     if (cur_byte==(cur_name+1)->byte_start) c=0; /* hit end of the name */
-    else {
-      c=*cur_byte;
-      if (xisupper(c)) c=tolower(c);
-    }
-  blink[cur_name-name_dir]=bucket[c]; bucket[c]=cur_name;
+    else if (xisupper(c=*cur_byte)) c=tolower(c);
+    blink[cur_name-name_dir]=bucket[c]; bucket[c]=cur_name;
   } while (next_name);
   --sort_ptr; unbucket(cur_depth+1);
 }

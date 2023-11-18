@@ -768,12 +768,9 @@ milestones.
 @d new_section 0312 /* control code for `\.{@@\ }' and `\.{@@*}' */
 
 @<Private...@>=
-static eight_bits ccode[256]; /* meaning of a char following \.{@@} */
+static eight_bits ccode[256]={ignore}; /* meaning of a char following \.{@@} */
 
-@ @<Set ini...@>= {
-  int c; /* must be |int| so the |for| loop will end */
-  for (c=0; c<256; c++) ccode[c]=ignore;
-}
+@ @<Set ini...@>=
 ccode[' ']=ccode['\t']=ccode['\n']=ccode['\v']=ccode['\r']=ccode['\f']
   =ccode['*']=new_section;
 ccode['@@']=(eight_bits)'@@'; ccode['=']=string;

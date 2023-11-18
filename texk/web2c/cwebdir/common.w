@@ -619,14 +619,11 @@ it is inserted into the table.
 @d hash_size 353 /* should be prime */
 
 @<Global var...@>=
-name_pointer hash[hash_size]; /* heads of hash lists */
+name_pointer hash[hash_size]={NULL}; /* heads of hash lists */
 hash_pointer hash_end = hash+hash_size-1; /* end of |hash| */
 hash_pointer hash_ptr; /* index into hash-head array */
 
 @ Initially all the hash lists are empty.
-
-@<Init...@>=
-for (hash_ptr=hash; hash_ptr<=hash_end; *hash_ptr++=NULL) ;
 
 @ Here is the main procedure for finding identifiers:
 

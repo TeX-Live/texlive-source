@@ -496,6 +496,14 @@ with |next_control| |!='|'| and ends with |next_control>=format_code|.
 Thus, it handles \CEE/ text with embedded comments.
 @z
 
+Section 75.
+
+@x
+@ @<Replace `\.{@@@@}' by `\.{@@}'@>=
+@y
+@r @ @<Replace `\.{@@@@}' by `\.{@@}'@>=
+@z
+
 Section 80.
 
 @x
@@ -1906,7 +1914,7 @@ Section 268.
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
 @y
-@r @ A left-to-right radix sorting method is used, since this makes it easy to
+@ A left-to-right radix sorting method is used, since this makes it easy to
 @-c@>
 @z
 

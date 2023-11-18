@@ -1,3 +1,12 @@
+2023-11-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* common.w,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-mini.ch,
+	* cweave.w: Use zero-initialisation.
+
 2023-10-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-proofsort,
