@@ -1,3 +1,12 @@
+2023-11-18  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
+
+	* cidtype2.c, unicode.c: Support for new Adobe-Japan1-UCS2 CMap.
+	Ignore variation selectors, when mapping from CID to Unicode.
+	Converts CJK Unified Ideographs with variant selectors to
+	CJK Compatibility Ideographs, if possible.
+	https://github.com/texjporg/tex-jp-build/issues/155
+	* configure.ac: version 20231118.
+
 2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dpxfile.c: Avoid compiler warning on MinGW.
