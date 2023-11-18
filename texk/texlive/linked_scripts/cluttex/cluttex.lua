@@ -1272,6 +1272,21 @@ texio.write = function(...)
   return texio_write(...)
 end
 ]==])
+
+  -- Fix "arg" to make luamplib work
+  initscript:write([==[
+if string.match(arg[0], "^%-%-lua=") then
+  local minindex = 0
+  while arg[minindex - 1] ~= nil do
+    minindex = minindex - 1
+  end
+  local arg2 = {}
+  for i = 0, #arg - minindex do
+    arg2[i] = arg[i + minindex]
+  end
+  arg = arg2
+end
+]==])
   initscript:close()
 end
 
@@ -1369,7 +1384,7 @@ return {
 end
 package.preload["texrunner.handleoption"] = function(...)
 local COPYRIGHT_NOTICE = [[
-Copyright (C) 2016-2021  ARATA Mizuki
+Copyright (C) 2016-2023  ARATA Mizuki
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -1417,8 +1432,9 @@ Options:
                                  cross-references.  [default: 3]
       --start-with-draft       Start with draft mode.
       --[no-]change-directory  Change directory before running TeX.
-      --watch                  Watch input files for change.  Requires fswatch
-                                 program to be installed.
+      --watch[=ENGINE]         Watch input files for change.  Requires fswatch
+                                 or inotifywait to be installed. ENGINE is one of
+                                 `fswatch', `inotifywait' or `auto' [default: `auto']
       --tex-option=OPTION      Pass OPTION to TeX as a single option.
       --tex-options=OPTIONs    Pass OPTIONs to TeX as multiple options.
       --dvipdfmx-option[s]=OPTION[s]  Same for dvipdfmx.
@@ -1492,6 +1508,8 @@ local option_spec = {
   },
   {
     long = "watch",
+    param = true,
+    default = "auto",
   },
   {
     short = "h",
@@ -1682,7 +1700,7 @@ local function handle_cluttex_options(arg)
 
     elseif name == "watch" then
       assert(options.watch == nil, "multiple --watch options")
-      options.watch = true
+      options.watch = param
 
     elseif name == "help" then
       usage(arg)
@@ -1839,6 +1857,15 @@ local function handle_cluttex_options(arg)
   end
 
   set_default_values(options)
+
+  -- parameter validy check TODO should this be organized as function like
+  -- set_default_values and with a key in the option spec (list or function)?
+  if options.watch then
+	  if options.watch ~= "fswatch" and options.watch ~= "inotifywait" then
+		message.error("Unknown wait engine '", options.watch, "'.")
+		os.exit(1)
+	  end
+  end
 
   if options.output_format == "pdf" then
     if options.check_driver ~= nil then
@@ -2933,7 +2960,7 @@ return {
 }
 end
 --[[
-  Copyright 2016-2021 ARATA Mizuki
+  Copyright 2016-2023 ARATA Mizuki
 
   This file is part of ClutTeX.
 
@@ -2951,7 +2978,7 @@ end
   along with ClutTeX.  If not, see <http://www.gnu.org/licenses/>.
 ]]
 
-CLUTTEX_VERSION = "v0.5.1"
+CLUTTEX_VERSION = "v0.6"
 
 -- Standard libraries
 local coroutine = coroutine
@@ -3051,9 +3078,13 @@ end
 local original_wd = filesys.currentdir()
 if options.change_directory then
   local TEXINPUTS = os.getenv("TEXINPUTS") or ""
-  filesys.chdir(options.output_directory)
+  local LUAINPUTS = os.getenv("LUAINPUTS") or ""
+  assert(filesys.chdir(options.output_directory))
   options.output = pathutil.abspath(options.output, original_wd)
   os.setenv("TEXINPUTS", original_wd .. pathsep .. TEXINPUTS)
+  os.setenv("LUAINPUTS", original_wd .. pathsep .. LUAINPUTS)
+  -- after changing the pwd, '.' is always the output_directory (needed for some path generation)
+  options.output_directory = "."
 end
 if options.bibtex or options.biber then
   local BIBINPUTS = os.getenv("BIBINPUTS") or ""
@@ -3063,14 +3094,15 @@ end
 
 -- Set `max_print_line' environment variable if not already set.
 if os.getenv("max_print_line") == nil then
-  os.setenv("max_print_line", "65536")
+  os.setenv("max_print_line", "16384")
 end
--- TODO: error_line, half_error_line
 --[[
   According to texmf.cnf:
     45 < error_line < 255,
     30 < half_error_line < error_line - 15,
     60 <= max_print_line.
+
+  On TeX Live 2023, (u)(p)bibtex fails if max_print_line >= 20000.
 ]]
 
 local function path_in_output_directory(ext)
@@ -3102,6 +3134,11 @@ if engine.is_luatex then
   local initscriptfile = path_in_output_directory("cluttexinit.lua")
   luatexinit.create_initialization_script(initscriptfile, tex_options)
   tex_options.lua_initialization_script = initscriptfile
+end
+
+-- handle change_directory properly (needs to be after initscript gen)
+if options.change_directory then
+  tex_options.output_directory = nil
 end
 
 -- Run TeX command (*tex, *latex)
@@ -3299,7 +3336,7 @@ local function single_run(auxstatus, iteration)
       bibtex_aux_hash2 = md5.sum(table.concat(biblines2, "\n"))
     end
     local output_bbl = path_in_output_directory("bbl")
-    if bibtex_aux_hash ~= bibtex_aux_hash2 or reruncheck.comparefiletime(mainauxfile, output_bbl, auxstatus) then
+    if bibtex_aux_hash ~= bibtex_aux_hash2 or reruncheck.comparefiletime(pathutil.abspath(mainauxfile), output_bbl, auxstatus) then
       -- The input for BibTeX command has changed...
       local bibtex_command = {
         "cd", shellutil.escape(options.output_directory), "&&",
@@ -3318,18 +3355,41 @@ local function single_run(auxstatus, iteration)
     end
   elseif options.biber then
     for _,file in ipairs(filelist) do
+      -- usual compilation with biber
+      -- tex     -> pdflatex tex -> aux,bcf,pdf,run.xml
+      -- bcf     -> biber bcf    -> bbl
+      -- tex,bbl -> pdflatex tex -> aux,bcf,pdf,run.xml
       if pathutil.ext(file.path) == "bcf" then
         -- Run biber if the .bcf file is new or updated
         local bcffileinfo = {path = file.path, abspath = file.abspath, kind = "auxiliary"}
         local output_bbl = pathutil.replaceext(file.abspath, "bbl")
-        if reruncheck.comparefileinfo({bcffileinfo}, auxstatus) or reruncheck.comparefiletime(file.abspath, output_bbl, auxstatus) then
-          local bbl_dir = pathutil.dirname(file.abspath)
+        local updated_dot_bib = false
+        -- get the .bib files, the bcf uses as input
+        for l in io.lines(file.abspath) do
+            local bib = l:match("<bcf:datasource .*>(.*)</bcf:datasource>") -- might be unstable if biblatex adds e.g. a linebreak
+            if bib then
+              local bibfile = pathutil.join(original_wd, bib)
+              local succ, err = io.open(bibfile, "r") -- check if file is present, don't use touch to avoid triggering a rerun
+              if succ then
+                succ:close()
+                local updated_dot_bib_tmp = not reruncheck.comparefiletime(pathutil.abspath(mainauxfile), bibfile, auxstatus)
+                if updated_dot_bib_tmp then
+                    message.info(bibfile.." is newer than aux")
+                end
+                updated_dot_bib = updated_dot_bib_tmp or updated_dot_bib
+              else
+                message.warn(bibfile .. " is not accessible (" .. err .. ")")
+              end
+            end
+        end
+        if updated_dot_bib or reruncheck.comparefileinfo({bcffileinfo}, auxstatus) or reruncheck.comparefiletime(file.abspath, output_bbl, auxstatus) then
           local biber_command = {
             options.biber, -- Do not escape options.biber to allow additional options
             "--output-directory", shellutil.escape(options.output_directory),
             pathutil.basename(file.abspath)
           }
           coroutine.yield(table.concat(biber_command, " "))
+          -- watch for changes in the bbl
           table.insert(filelist, {path = output_bbl, abspath = output_bbl, kind = "auxiliary"})
         else
           local succ, err = filesys.touch(output_bbl)
@@ -3492,7 +3552,7 @@ if options.watch then
       watcher:close()
       return true
     end
-  elseif shellutil.has_command("fswatch") then
+  elseif shellutil.has_command("fswatch") and (options.watch == "auto" or options.watch == "fswatch")  then
     if CLUTTEX_VERBOSITY >= 2 then
       message.info("Using `fswatch' command")
     end
@@ -3516,7 +3576,7 @@ if options.watch then
       end
       return false
     end
-  elseif shellutil.has_command("inotifywait") then
+  elseif shellutil.has_command("inotifywait") and (options.watch == "auto" or options.watch == "inotifywait") then
     if CLUTTEX_VERBOSITY >= 2 then
       message.info("Using `inotifywait' command")
     end
@@ -3541,7 +3601,13 @@ if options.watch then
       return false
     end
   else
-    message.error("Could not watch files because neither `fswatch' nor `inotifywait' was installed.")
+    if options.watch == "auto" then
+      message.error("Could not watch files because neither `fswatch' nor `inotifywait' was installed.")
+    elseif options.watch == "fswatch" then
+      message.error("Could not watch files because your selected engine `fswatch' was not installed.")
+    elseif options.watch == "inotifywait" then
+      message.error("Could not watch files because your selected engine `inotifywait' was not installed.")
+    end
     message.info("See ClutTeX's manual for details.")
     os.exit(1)
   end
