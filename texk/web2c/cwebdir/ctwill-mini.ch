@@ -2196,8 +2196,8 @@ Section 310.
 @y
 @ @<Write the new meaning to the \.{.aux} file@>=
 @%
-@$p {CTWILL}293 \&{name\_pointer}@>
-@$q {CTWILL}293 \&{struct perm\_meaning} ${}{*}{}$@>
+@$p {CTWILL}294 \&{name\_pointer}@>
+@$q {CTWILL}294 \&{struct perm\_meaning} ${}{*}{}$@>
 @z
 
 Section 311.
@@ -2207,7 +2207,7 @@ Section 311.
 @y
 @<Flag the usage of this identifier, for the mini-index@>=
 @%
-@$p {CTWILL}217 \&{name\_pointer}@>
+@$p {CTWILL}218 \&{name\_pointer}@>
 @z
 
 Section 314.
