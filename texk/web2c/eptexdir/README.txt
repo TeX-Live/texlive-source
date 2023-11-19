@@ -24,7 +24,7 @@ Yusuke Kuroki and others for many help.
 
                                              Hironori Kitagawa (H7K)
                                           h_kitagawa2001 at yahoo.co.jp
-               (in Japanese) http://sourceforge.jp/projects/eptex/wiki/
+(in Japanese) https://github.com/h-kitagawa/eptex-wiki/blob/main/README.md
 
 
 
