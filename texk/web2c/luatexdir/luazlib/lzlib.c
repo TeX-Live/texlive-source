@@ -544,14 +544,6 @@ LUALIB_API int luaopen_zlib(lua_State *L)
 
     /* ====================================================================== */
 
-    /* make sure header and library version are consistent */
-    const char* version = zlibVersion();
-    if (strncmp(version, ZLIB_VERSION, 4))
-    {
-        lua_pushfstring(L, "zlib library version does not match - header: %s, library: %s", ZLIB_VERSION, version);
-        lua_error(L);
-    }
-
     /* create new metatable for zlib compression structures */
     luaL_newmetatable(L, ZSTREAMMETA);
     lua_pushliteral(L, "__index");
