@@ -1,5 +1,13 @@
 2023-11-19  Andreas Scherer  <https://ascherer.github.io>
 
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w: Make 'k_section' block-local.
+
+2023-11-19  Andreas Scherer  <https://ascherer.github.io>
+
 	* common.c,
 	* common.w,
 	* ctangle.c,

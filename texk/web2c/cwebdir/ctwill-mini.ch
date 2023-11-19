@@ -32,14 +32,14 @@ Section 1.
 
 @x
 A kind of ``user manual'' for \.{CTWILL} can be found in the appendix
-\X271:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
+\X270:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
 additional material specific to \.{CTWILL}. % FIXME
 Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 @y
 A kind of ``user manual'' for \.{CTWILL} can be found in section~%
-\X288:Mogrify {\tentex CWEAVE} into {\tentex CTWILL}\X~and beyond,
+\X287:Mogrify {\tentex CWEAVE} into {\tentex CTWILL}\X~and beyond,
 together with additional material specific to \.{CTWILL}. % FIXME
 \bigskip
 {\font\itt=cmitt10 \font\bit=cmbxti10
@@ -1909,7 +1909,7 @@ Section 265.
 @-phase_three@>
 @z
 
-Section 268.
+Section 267.
 
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
@@ -1918,7 +1918,14 @@ Section 268.
 @-c@>
 @z
 
-Section 270.
+@x l.4596
+the |blink| array.
+@y
+the |blink| array.
+\vadjust{\goodbreak}%
+@z
+
+Section 269.
 
 @x
 @<Rest of |trans_plus| union@>=
@@ -1928,7 +1935,7 @@ Section 270.
 @-k@>
 @z
 
-Section 271.
+Section 270.
 
 @x
 @ @d depth cat /* reclaims memory that is no longer needed for parsing */
@@ -1938,12 +1945,12 @@ Section 271.
 @-head@>
 @-sort_ptr@>
 @-max_sorts@>
-@$depth {CTWILL}271 =\\{cat}@>
-@$head {CTWILL}271 =\\{trans\_plus}.\\{Head}@>
-@$sort_ptr {CTWILL}271 =\\{scrap\_ptr}@>
+@$depth {CTWILL}270 =\\{cat}@>
+@$head {CTWILL}270 =\\{trans\_plus}.\\{Head}@>
+@$sort_ptr {CTWILL}270 =\\{scrap\_ptr}@>
 @z
 
-Section 273.
+Section 272.
 
 @x
 $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
@@ -1951,26 +1958,26 @@ $|collate|[0]<|collate|[1]<\cdots<|collate|[100]$.
 |collate[0]| ${}<{}$|collate[1]|${}<\cdots<{}$|collate[100]|.
 @z
 
+Section 274.
+
+@x
+@ Procedure |unbucket| goes through the buckets and adds nonempty lists
+@y
+@ Procedure |unbucket| goes through the buckets and adds nonempty lists
+@-unbucket@>
+@$unbucket {CTWILL}274 \&{static} \&{void} (\,)@>
+@z
+
 Section 275.
 
 @x
-@ Procedure |unbucket| goes through the buckets and adds nonempty lists
-@y
-@ Procedure |unbucket| goes through the buckets and adds nonempty lists
-@-unbucket@>
-@$unbucket {CTWILL}275 \&{static} \&{void} (\,)@>
-@z
-
-Section 276.
-
-@x
 @ @<Predecl...@>=@+static void unbucket(eight_bits);
 @y
 @ @<Predecl...@>=@+static void unbucket(eight_bits);
 @-unbucket@>
 @z
 
-Section 278.
+Section 277.
 
 @x
 @ @<Split the list...@>= {
@@ -1982,7 +1989,7 @@ Section 278.
   next_name=sort_ptr->head;@/
 @z
 
-Section 279.
+Section 278.
 
 @x
 @ @<Output index...@>= {
@@ -1992,7 +1999,7 @@ Section 279.
   cur_name=sort_ptr->head;@/
 @z
 
-Section 281.
+Section 280.
 
 @x
   else {out_str("\\["); out_section(cur_val-def_flag); out(']');}
@@ -2000,7 +2007,7 @@ Section 281.
   else {@+out_str("\\["); out_section(cur_val-def_flag); out(']');@+}
 @z
 
-Section 285.
+Section 284.
 
 @x
 @ @<Predecl...@>=@+static void section_print(name_pointer);
@@ -2009,7 +2016,7 @@ Section 285.
 @-section_print@>
 @z
 
-Section 287.
+Section 286.
 
 @x
   puts(_("\nMemory usage statistics:"));
@@ -2073,7 +2080,7 @@ Section 287.
             @t\5\5\5\5@>(long)max_scraps);
 @z
 
-Section 288.
+Section 287.
 
 @x
 @** Mogrify {\tentex CWEAVE} into {\tentex CTWILL}.  The following sections
@@ -2081,9 +2088,9 @@ introduce material that is specific to \.{CTWILL}.
 
 Care has been taken to keep the original section numbering of \.{CWEAVE}
 up to this point intact, so this new material should nicely integrate
-with the original ``\&{271.~Index}.''
+with the original ``\&{270.~Index}.''
 
-@q Section 2->272. @>
+@q Section 2->271. @>
 @* {\tentex CTWILL} user manual.
 Here is a sort of user manual for \.{CTWILL}---which is exactly like
 @y
@@ -2101,7 +2108,7 @@ give it the necessary hints in other places via your change file.
 @-x@>
 @z
 
-Section 289--290.
+Section 288--289.
 
 @x
 The current meaning of every identifier is initially `\.{\\uninitialized}'.
@@ -2126,17 +2133,17 @@ must have fewer than 80 characters.
 @y
 @z
 
-Section 292.
+Section 291.
 
 @x
 static struct perm_meaning {
 @y
 static struct perm_meaning {
 @-perm_meaning@>
-@$perm_meaning {CTWILL}292 \&{static} \&{struct}@>
+@$perm_meaning {CTWILL}291 \&{static} \&{struct}@>
 @z
 
-Section 301.
+Section 300.
 
 @x
 @ @<Predec...@>=@+static boolean app_supp(text_pointer);
@@ -2145,7 +2152,7 @@ Section 301.
 @-app_supp@>
 @z
 
-Section 302.
+Section 301.
 
 @x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
@@ -2156,10 +2163,10 @@ Section 302.
 @-c@>
 @-l@>
 @-make_ministring@>
-@$make_ministring {CTWILL}302 \&{static} \&{void} (\,)@>
+@$make_ministring {CTWILL}301 \&{static} \&{void} (\,)@>
 @z
 
-Section 303.
+Section 302.
 
 @x
 @ @<Predec...@>=@+static void make_ministring(scrap_pointer);
@@ -2168,7 +2175,7 @@ Section 303.
 @-make_ministring@>
 @z
 
-Section 306.
+Section 305.
 
 @x
 @ @<Append tokens for type |q|@>=
@@ -2182,28 +2189,28 @@ Section 306.
    @|&& *(*r+1)=='{') app(**q); /* |struct_like| identifier */
 @z
 
+Section 310.
+
+@x
+@ @<Write the new meaning to the \.{.aux} file@>=
+@y
+@ @<Write the new meaning to the \.{.aux} file@>=
+@%
+@$p {CTWILL}293 \&{name\_pointer}@>
+@$q {CTWILL}293 \&{struct perm\_meaning} ${}{*}{}$@>
+@z
+
 Section 311.
 
 @x
-@ @<Write the new meaning to the \.{.aux} file@>=
-@y
-@ @<Write the new meaning to the \.{.aux} file@>=
-@%
-@$p {CTWILL}295 \&{name\_pointer}@>
-@$q {CTWILL}295 \&{struct perm\_meaning} ${}{*}{}$@>
-@z
-
-Section 312.
-
-@x
 @<Flag the usage of this identifier, for the mini-index@>=
 @y
 @<Flag the usage of this identifier, for the mini-index@>=
 @%
-@$p {CTWILL}218 \&{name\_pointer}@>
+@$p {CTWILL}217 \&{name\_pointer}@>
 @z
 
-Section 315.
+Section 314.
 
 @x
 @ @<Predec...@>=@+static void out_mini(meaning_struct *);
@@ -2212,7 +2219,7 @@ Section 315.
 @-out_mini@>
 @z
 
-Section 318.
+Section 317.
 
 @x
 @ @<Predec...@>=@+static sixteen_bits title_lookup(void);
@@ -2221,27 +2228,27 @@ Section 318.
 @-title_lookup@>
 @z
 
-Section 321.
+Section 320.
 
 @x
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 @y
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 @-indent_param_decl@>
-@$indent_param_decl {CTWILL}321 =\\{flags}[\.{'i'}]@>
+@$indent_param_decl {CTWILL}320 =\\{flags}[\.{'i'}]@>
 @z
 
-Section 322.
+Section 321.
 
 @x
 @d order_decl_stmt flags['o'] /* should declarations and statements be separated? */
 @y
 @d order_decl_stmt flags['o'] /* should declarations and statements be separated? */
 @-order_decl_stmt@>
-@$order_decl_stmt {CTWILL}322 =\\{flags}[\.{'o'}]@>
+@$order_decl_stmt {CTWILL}321 =\\{flags}[\.{'o'}]@>
 @z
 
-Section 328.
+Section 327.
 
 @x l.102 of CTWILL-TEXLIVE.CH
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
@@ -2250,7 +2257,7 @@ Section 328.
 @-name@>
 @z
 
-Section 330.
+Section 329.
 
 @x
 @** Index.

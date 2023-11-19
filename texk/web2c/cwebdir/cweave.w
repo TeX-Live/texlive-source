@@ -4573,12 +4573,9 @@ check_complete(); /* was all of the change file used? */
 @ Just before the index comes a list of all the changed sections, including
 the index section itself.
 
-@<Private...@>=
-static sixteen_bits k_section; /* runs through the sections */
-
-@ @<Tell about changed sections@>=
+@<Tell about changed sections@>=
 /* remember that the index is already marked as changed */
-k_section=0;
+sixteen_bits k_section=0; /* runs through the sections */
 while (!changed_section[++k_section]);
 out_str("\\ch ");
 @.\\ch@>

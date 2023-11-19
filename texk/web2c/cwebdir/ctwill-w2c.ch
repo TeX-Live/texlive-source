@@ -94,7 +94,7 @@ can be found in Knuth's article ``Mini-indexes for literate programs,''
 reprinted in {\sl Digital Typography\/} (1999), 225--245.
 
 A kind of ``user manual'' for \.{CTWILL} can be found in the appendix
-\X271:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
+\X270:Mogrify \.{CWEAVE} into \.{CTWILL}\X~and beyond, together with
 additional material specific to \.{CTWILL}. % FIXME
 Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 
@@ -1154,16 +1154,9 @@ if (check_for_change) @<Update the result when it has changed@>@;
 @x
 the index section itself.
 
-@<Private...@>=
-static sixteen_bits k_section; /* runs through the sections */
-@y
-the index section itself---NOT!
-@z
-
-@x
-@ @<Tell about changed sections@>=
+@<Tell about changed sections@>=
 /* remember that the index is already marked as changed */
-k_section=0;
+sixteen_bits k_section=0; /* runs through the sections */
 while (!changed_section[++k_section]);
 out_str("\\ch ");
 @.\\ch@>
@@ -1174,7 +1167,7 @@ while (k_section<section_count) {
 }
 out('.');
 @y
-@ No need to tell about changed sections.
+the index section itself---NOT!
 @z
 
 @x
@@ -1280,15 +1273,15 @@ out_name(cur_name,proofing);
 @x
 @** Index.
 @y
-@q Section 271. @>
+@q Section 270. @>
 @** Mogrify {\tentex CWEAVE} into {\tentex CTWILL}.  The following sections
 introduce material that is specific to \.{CTWILL}.
 
 Care has been taken to keep the original section numbering of \.{CWEAVE}
 up to this point intact, so this new material should nicely integrate
-with the original ``\&{271.~Index}.''
+with the original ``\&{270.~Index}.''
 
-@q Section 2->272. @>
+@q Section 2->271. @>
 @* {\tentex CTWILL} user manual.
 Here is a sort of user manual for \.{CTWILL}---which is exactly like
 \.{CWEAVE} except that it produces much better documentation, for which you
@@ -1449,7 +1442,7 @@ which are quite different from the change files you set up for tangling.
 
 @d max_tex_chars 80 /* limit on the \TeX\ part of a meaning */
 
-@q Section 25->273. @>
+@q Section 25->272. @>
 @* Temporary and permanent meanings.
 \.{CTWILL} has special data structures to keep track of current
 and temporary meanings. These structures were not designed for maximum
@@ -1467,7 +1460,7 @@ typedef struct {
   char tex_part[max_tex_chars]; /* \TeX\ part of meaning */
 } meaning_struct;
 
-@q Section 26->274. @>
+@q Section 26->273. @>
 @ @<Private...@>=
 static struct perm_meaning {
   meaning_struct perm; /* current meaning of an identifier */
@@ -1490,16 +1483,16 @@ static char *ministring_buf_end=ministring_buf+max_tex_chars-1;
 static char *ministring_ptr; /* first available slot in |ministring_buf| */
 static boolean ms_mode; /* are we outputting to |ministring_buf|? */
 
-@q Section 27->275. @>
+@q Section 27->274. @>
 @ @<Set init...@>=
 max_temp_meaning_ptr=temp_meaning_stack;
 title_code_ptr=title_code;
 ms_mode=false;
 
-@q Section 276. @>
+@q Section 275. @>
 @ @<Predec...@>=@+static void new_meaning(name_pointer);
 
-@q Section 30->277. @>
+@q Section 30->276. @>
 @ The |new_meaning| routine changes the current ``permanent meaning''
 when an identifier is redeclared. It gets the |tex_part| from
 |ministring_buf|.
@@ -1523,7 +1516,7 @@ new_meaning(
   @<Write the new meaning to the \.{.aux} file@>@;
 }
 
-@q Section 75->278. @>
+@q Section 75->277. @>
 @ @<Process a user-generated meaning@>=
 { char *first=id_first;
   while (xisspace(*first)) first++;
@@ -1544,7 +1537,7 @@ new_meaning(
   loc=id_loc+2;
 }
 
-@q Section 76->279. @>
+@q Section 76->278. @>
 @ @<Suppress mini-index entry@>=
 { char *first=id_first,*last=id_loc;
   while (xisspace(*first)) first++;
@@ -1555,7 +1548,7 @@ new_meaning(
   }
 }
 
-@q Section 77->280. @>
+@q Section 77->279. @>
 @ @<Digest...@>=
 { meaning_struct *m;
   struct perm_meaning *q=get_meaning(p);
@@ -1578,7 +1571,7 @@ new_meaning(
   }
 }
 
-@q Section 141->281/2. @>
+@q Section 141->280/1. @>
 @* Make ministrings.
  \.{CTWILL} needs the following procedure, which appends tokens of a
 translated text until coming to |tok_loc|, then suppresses text that may
@@ -1608,10 +1601,10 @@ static boolean app_supp(
 catch14: return *(*(p+1)-1)=='9'; /* was production 14 used? */
 }
 
-@q Section 283. @>
+@q Section 282. @>
 @ @<Predec...@>=@+static boolean app_supp(text_pointer);
 
-@q Section 142->284. @>
+@q Section 142->283. @>
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
 with offset $l\in\{0,1,2\}$, which tries to figure out a symbolic form of
 definition after |make_underlined(pp+l)| has been called. We rely heavily
@@ -1639,14 +1632,14 @@ make_ministring(scrap_pointer p)
   cur_mathness=maybe_math; /* restore it */
 }
 
-@q Section 285. @>
+@q Section 284. @>
 @ @<Predec...@>=@+static void make_ministring(scrap_pointer);
 
-@q Section 43->286. @>
+@q Section 43->285. @>
 @ @<Private...@>=
 static sixteen_bits int_loc, ext_loc; /* locations of special reserved words */
 
-@q Section 143->287. @>
+@q Section 143->286. @>
 @ Here we use the fact that a |decl_head| comes from |int_like| only in
 production~27, whose translation is fairly easy to recognize. (Well,
 production 28 has been added for \CPLUSPLUS/, but we hope that doesn't
@@ -1687,7 +1680,7 @@ else {
   @<Append tokens for type |q|@>@;
 }
 
-@q Section 144->288. @>
+@q Section 144->287. @>
 @ @<Append tokens for type |q|@>=
 cur_mathness=no_math; /* it was |maybe_math| */
 if (*(q+1)==*q+8 && *(*q+1)==' ' && *(*q+3)==' ') {
@@ -1699,13 +1692,13 @@ while (ast_count) {
   big_app('{');@+app('*');@+app('}');@+ast_count--;
 }
 
-@q Section 253->289. @>
+@q Section 253->288. @>
 @ @<Private...@>=
 static boolean is_macro; /* it's a macro def, not a format def */
 static boolean def_diff; /* |false| iff the current macro has parameters */
 static name_pointer id_being_defined; /* the definee */
 
-@q Section 257->290. @>
+@q Section 257->289. @>
 @ @<Make ministring for a new macro@>=
 {
   ms_mode=true; ministring_ptr=ministring_buf;
@@ -1723,14 +1716,14 @@ static name_pointer id_being_defined; /* the definee */
   new_meaning(id_being_defined);
 }
 
-@q Section 246->291. @>
+@q Section 246->290. @>
 @* Process {\tentex .aux} files.
 
 @<Private...@>=
 static FILE *aux_file;
 static char aux_file_name[max_file_name_length]; /* name of \.{.aux} file */
 
-@q Section 247->292. @>
+@q Section 247->291. @>
 @ @<Read the \.{.aux} file, if present; then open it for output@>=
 memcpy(aux_file_name,tex_file_name,strlen(tex_file_name)-4);
 strcat(aux_file_name,".bux");
@@ -1759,7 +1752,7 @@ if (include_depth) { /* at least one new file was opened */
 if ((aux_file=fopen(aux_file_name,"wb"))==NULL)
   fatal(_("! Cannot open aux output file "),aux_file_name);
 
-@q Section 31->293. @>
+@q Section 31->292. @>
 @ @<Write the new meaning to the \.{.aux} file@>=
 {@+int n=q->perm.prog_no;
   ms_mode=false;@/
@@ -1770,7 +1763,7 @@ if ((aux_file=fopen(aux_file_name,"wb"))==NULL)
   fprintf(aux_file," %s@@>\n",q->perm.tex_part);
 }
 
-@q Section 268->294. @>
+@q Section 268->293. @>
 @* Usage of identifiers.
 The following code is performed for each identifier parsed during
 a section. Variable |top_usage| is always nonzero; it has the sentinel
@@ -1789,7 +1782,7 @@ placed on the list, unless they are reserved and their current
     }
 }
 
-@q Section 269->295. @>
+@q Section 269->294. @>
 @ @<Output information about usage of id's defined in other sections@>=
 { struct perm_meaning *q;
   while (temp_meaning_ptr>temp_meaning_stack) {
@@ -1805,7 +1798,7 @@ placed on the list, unless they are reserved and their current
   }
 }
 
-@q Section 270->296. @>
+@q Section 270->295. @>
 @ @c static void
 out_mini(
   meaning_struct *m)
@@ -1824,10 +1817,10 @@ out_mini(
   out(' '); out_str(m->tex_part); finish_line();
 }
 
-@q Section 271->297. @>
+@q Section 270->296. @>
 @ @<Predec...@>=@+static void out_mini(meaning_struct *);
 
-@q Section 272->298. @>
+@q Section 271->297. @>
 @ Compare this code with section |@<Output the name...@>|.
 
 @<Mini-output...@>=
@@ -1862,7 +1855,7 @@ switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
 out_name(cur_name,true);
 name_done:@;
 
-@q Section 28->299. @>
+@q Section 28->298. @>
 @* Handle program title.
 Here's a routine that converts a program title from the buffer
 into an internal number for the |prog_no| field of a meaning.
@@ -1892,10 +1885,10 @@ It advances |loc| past the title found.
   return p-title_code;
 }
 
-@q Section 300. @>
+@q Section 299. @>
 @ @<Predec...@>=@+static sixteen_bits title_lookup(void);
 
-@q Section 29->301. @>
+@q Section 29->300. @>
 @ @<Give a default title to the program, if necessary@>=
 if (title_code_ptr==title_code) { /* no \.{\\def\\title} found in limbo */
   char *saveloc=loc,*savelimit=limit; /* save */
@@ -1908,7 +1901,7 @@ if (title_code_ptr==title_code) { /* no \.{\\def\\title} found in limbo */
   loc=saveloc; limit=savelimit; /* restore */
 }
 
-@q Section 302. @>
+@q Section 301. @>
 @** Extensions to {\tentex CWEB}.  The following sections introduce new or
 improved features that have been created by numerous contributors over the
 course of a quarter century.

@@ -707,7 +707,7 @@ Section 248.
 @-phase_three@>
 @z
 
-Section 251.
+Section 250.
 
 @x
 @ A left-to-right radix sorting method is used, since this makes it easy to
@@ -716,7 +716,7 @@ Section 251.
 @-c@>
 @z
 
-Section 253.
+Section 252.
 
 @x
 @<Rest of |trans_plus| union@>=
@@ -726,7 +726,7 @@ Section 253.
 @-k@>
 @z
 
-Section 254.
+Section 253.
 
 @x
 @ @d depth cat /* reclaims memory that is no longer needed for parsing */
@@ -736,31 +736,31 @@ Section 254.
 @-head@>
 @-sort_ptr@>
 @-max_sorts@>
-@$depth {CTWILL}254 =\\{cat}@>
-@$head {CTWILL}254 =\\{trans\_plus}.\\{Head}@>
-@$sort_ptr {CTWILL}254 =\\{scrap\_ptr}@>
+@$depth {CTWILL}253 =\\{cat}@>
+@$head {CTWILL}253 =\\{trans\_plus}.\\{Head}@>
+@$sort_ptr {CTWILL}253 =\\{scrap\_ptr}@>
+@z
+
+Section 257.
+
+@x
+@ Procedure |unbucket| goes through the buckets and adds nonempty lists
+@y
+@ Procedure |unbucket| goes through the buckets and adds nonempty lists
+@-unbucket@>
+@$unbucket {CTWILL}257 \&{static} \&{void} (\,)@>
 @z
 
 Section 258.
 
 @x
-@ Procedure |unbucket| goes through the buckets and adds nonempty lists
-@y
-@ Procedure |unbucket| goes through the buckets and adds nonempty lists
-@-unbucket@>
-@$unbucket {CTWILL}258 \&{static} \&{void} (\,)@>
-@z
-
-Section 259.
-
-@x
 @ @<Predecl...@>=@+static void unbucket(eight_bits);
 @y
 @ @<Predecl...@>=@+static void unbucket(eight_bits);
 @-unbucket@>
 @z
 
-Section 261.
+Section 260.
 
 @x
   next_name=sort_ptr->head;
@@ -768,7 +768,7 @@ Section 261.
   next_name=sort_ptr->head;@/
 @z
 
-Section 262.
+Section 261.
 
 @x
   cur_name=sort_ptr->head;
@@ -776,7 +776,7 @@ Section 262.
   cur_name=sort_ptr->head;@/
 @z
 
-Section 268.
+Section 267.
 
 @x
 @ @<Predecl...@>=@+static void section_print(name_pointer);
@@ -785,7 +785,7 @@ Section 268.
 @-section_print@>
 @z
 
-Section 270.
+Section 269.
 
 @x
   puts(_("\nMemory usage statistics:"));
@@ -849,10 +849,10 @@ Section 270.
             @t\5\5\5\5@>(long)max_scraps);
 @z
 
-Section 272.
+Section 271.
 
 @x
-@q Section 2->272. @>
+@q Section 2->271. @>
 @* {\tentex CTWILL} user manual.
 @y
 @* {\tentex CTWILL} user manual.
@@ -862,17 +862,17 @@ Section 272.
 @-printf@>
 @z
 
-Section 274.
+Section 273.
 
 @x
 static struct perm_meaning {
 @y
 static struct perm_meaning {
 @-perm_meaning@>
-@$perm_meaning {CTWILL}274 \&{static} \&{struct}@>
+@$perm_meaning {CTWILL}273 \&{static} \&{struct}@>
 @z
 
-Section 283.
+Section 282.
 
 @x
 @ @<Predec...@>=@+static boolean app_supp(text_pointer);
@@ -881,7 +881,7 @@ Section 283.
 @-app_supp@>
 @z
 
-Section 284.
+Section 283.
 
 @x
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
@@ -892,10 +892,10 @@ Section 284.
 @-c@>
 @-l@>
 @-make_ministring@>
-@$make_ministring {CTWILL}284 \&{static} \&{void} (\,)@>
+@$make_ministring {CTWILL}283 \&{static} \&{void} (\,)@>
 @z
 
-Section 285.
+Section 284.
 
 @x
 @ @<Predec...@>=@+static void make_ministring(scrap_pointer);
@@ -904,18 +904,18 @@ Section 285.
 @-make_ministring@>
 @z
 
-Section 293.
+Section 292.
 
 @x
 @ @<Write the new meaning to the \.{.aux} file@>=
 @y
 @ @<Write the new meaning to the \.{.aux} file@>=
 @%
-@$p {CTWILL}277 \&{name\_pointer}@>
-@$q {CTWILL}277 \&{struct perm\_meaning} ${}{*}{}$@>
+@$p {CTWILL}276 \&{name\_pointer}@>
+@$q {CTWILL}276 \&{struct perm\_meaning} ${}{*}{}$@>
 @z
 
-Section 294.
+Section 293.
 
 @x
 @<Flag the usage of this identifier, for the mini-index@>=
@@ -925,7 +925,7 @@ Section 294.
 @$p {CTWILL}202 \&{name\_pointer}@>
 @z
 
-Section 297.
+Section 296.
 
 @x
 @ @<Predec...@>=@+static void out_mini(meaning_struct *);
@@ -934,7 +934,7 @@ Section 297.
 @-out_mini@>
 @z
 
-Section 300.
+Section 299.
 
 @x
 @ @<Predec...@>=@+static sixteen_bits title_lookup(void);
@@ -943,27 +943,27 @@ Section 300.
 @-title_lookup@>
 @z
 
-Section 303.
+Section 302.
 
 @x
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 @y
 @d indent_param_decl flags['i'] /* should formal parameter declarations be indented? */
 @-indent_param_decl@>
-@$indent_param_decl {CTWILL}303 =\\{flags}[\.{'i'}]@>
+@$indent_param_decl {CTWILL}302 =\\{flags}[\.{'i'}]@>
 @z
 
-Section 304.
+Section 303.
 
 @x
 @d order_decl_stmt flags['o'] /* should declarations and statements be separated? */
 @y
 @d order_decl_stmt flags['o'] /* should declarations and statements be separated? */
 @-order_decl_stmt@>
-@$order_decl_stmt {CTWILL}304 =\\{flags}[\.{'o'}]@>
+@$order_decl_stmt {CTWILL}303 =\\{flags}[\.{'o'}]@>
 @z
 
-Section 310.
+Section 309.
 
 @x l.102 of CTWILL-TEXLIVE.CH
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
