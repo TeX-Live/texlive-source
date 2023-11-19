@@ -1854,12 +1854,19 @@ mem:=xmalloc_array (memory_word, mem_max - mem_min + 1);
 @z
 
 @x [48.1195] l.22714 - Check that p did not become corrupt.
+p:=q+node_size(q);
 if (p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto off_base;
 @y
 {If the base file is messed up, that addition to |p| might cause it to
  become garbage. Report from Gregory James DUCK to Karl, 14 Sep 2023.
- Found with a fuzz tester similar to AFL-fuzz. Also changed in \TeX.}
-if (p<mem_min)or(p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto off_base;
+ Also changed in \MF. Fix from DRF, who explains: we test before doing the
+ addition to avoid assuming silent wrap-around overflow, and also to to
+ catch cases where |node_size| was, say, bogusly the equivalent of $-1$
+ and thus |p+node_size| would still look valid.}
+if (node_size(q)>lo_mem_max-q) or (rlink(q)>lo_mem_max)
+   or ((q>=rlink(q))and(rlink(q)<>rover))
+then goto off_base;
+p:=q+node_size(q);
 @z
 
 @x [48.1199] l.22750 - Allow command line to override dumped value.

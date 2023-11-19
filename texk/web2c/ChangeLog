@@ -1,3 +1,9 @@
+2023-11-19  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch,
+	* mf.ch (Undump the dynamic memory): improve fmt/base corruption
+	tests, from DRF.
+
 2023-11-19  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
