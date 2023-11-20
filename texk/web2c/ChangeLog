@@ -2,7 +2,7 @@
 
 	* tex.ch,
 	* mf.ch (Undump the dynamic memory): improve fmt/base corruption
-	tests, from DRF.
+	checks, from DRF.
 
 2023-11-19  Andreas Scherer  <https://ascherer.github.io>
 

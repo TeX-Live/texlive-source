@@ -1,3 +1,12 @@
+2023-11-20  Karl Berry  <karl@freefriends.org>
+
+	* luazlib/lzlib.c: relax zlib version check to just checking
+	the major version, since (it turns out) zlib 1.3 is compatible
+	with 1.2.
+	https://github.com/TeX-Live/texlive-source/pull/62
+	https://lists.debian.org/debian-tex-maint/2010/06/msg00074.html
+	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=581818
+
 2023-10-04  Karl Berry  <karl@freefriends.org>
 
 	* luaoutputdir.test: new test for Lua-level reading from a given
