@@ -8884,12 +8884,12 @@ See \`config.log' for more details" "$LINENO" 5; }
   rm -f conftest-deps.mk
 }
  ;;
-    "include/zzip/_config.h":C) ac_prefix_conf_OUT=`echo include/zzip/_config.h`
-ac_prefix_conf_DEF=`echo _$ac_prefix_conf_OUT | sed -e "y:abcdefghijklmnopqrstuvwxyz:ABCDEFGHIJKLMNOPQRSTUVWXYZ:" -e "s/[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g"`
-ac_prefix_conf_PKG=`echo zzip`
-ac_prefix_conf_LOW=`echo _$ac_prefix_conf_PKG | sed -e "y:ABCDEFGHIJKLMNOPQRSTUVWXYZ-:abcdefghijklmnopqrstuvwxyz_:"`
-ac_prefix_conf_UPP=`echo $ac_prefix_conf_PKG | sed -e "y:abcdefghijklmnopqrstuvwxyz-:ABCDEFGHIJKLMNOPQRSTUVWXYZ_:"  -e "/^[0123456789]/s/^/_/"`
-ac_prefix_conf_INP=`echo "config.h" | sed -e 's/ *//'`
+    "include/zzip/_config.h":C) ac_prefix_conf_OUT=`$as_echo include/zzip/_config.h`
+ac_prefix_conf_DEF=`$as_echo _$ac_prefix_conf_OUT | sed -e "y:abcdefghijklmnopqrstuvwxyz:ABCDEFGHIJKLMNOPQRSTUVWXYZ:" -e "s/[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g"`
+ac_prefix_conf_PKG=`$as_echo zzip`
+ac_prefix_conf_LOW=`$as_echo _$ac_prefix_conf_PKG | sed -e "y:ABCDEFGHIJKLMNOPQRSTUVWXYZ-:abcdefghijklmnopqrstuvwxyz_:"`
+ac_prefix_conf_UPP=`$as_echo $ac_prefix_conf_PKG | sed -e "y:abcdefghijklmnopqrstuvwxyz-:ABCDEFGHIJKLMNOPQRSTUVWXYZ_:"  -e "/^[0123456789]/s/^/_/"`
+ac_prefix_conf_INP=`$as_echo "config.h" | sed -e 's/ *//'`
 if test ".$ac_prefix_conf_INP" = "."; then
    for ac_file in : $CONFIG_HEADERS; do test "_$ac_file" = _: && continue
      case "$ac_file" in
@@ -8903,7 +8903,7 @@ if test ".$ac_prefix_conf_INP" = "."; then
    case "$ac_prefix_conf_OUT" in
       */*) ac_prefix_conf_INP=`basename "$ac_prefix_conf_OUT"`
       ;;
-      *-*) ac_prefix_conf_INP=`echo "$ac_prefix_conf_OUT" | sed -e "s/[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*-//"`
+      *-*) ac_prefix_conf_INP=`$as_echo "$ac_prefix_conf_OUT" | sed -e "s/[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*-//"`
       ;;
       *) ac_prefix_conf_INP=config.h
       ;;
@@ -8918,24 +8918,24 @@ else
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines" >&5
 printf "%s\n" "$as_me: creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines" >&6;}
   if test -f $ac_prefix_conf_INP ; then
-    echo "s/^#undef  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_]\\)/#undef $ac_prefix_conf_UPP""_\\1/" > conftest.prefix
-    echo "s/^#undef  *\\([abcdefghijklmnopqrstuvwxyz]\\)/#undef $ac_prefix_conf_LOW""_\\1/" >> conftest.prefix
-    echo "s/^#define  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_UPP""_\\1 \\" >> conftest.prefix
-    echo "#define $ac_prefix_conf_UPP""_\\1 \\2 \\" >> conftest.prefix
-    echo "#endif/" >>conftest.prefix
-    echo "s/^#define  *\\([abcdefghijklmnopqrstuvwxyz][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_LOW""_\\1 \\" >> conftest.prefix
-    echo "#define $ac_prefix_conf_LOW""_\\1 \\2 \\" >> conftest.prefix
-    echo "#endif/" >> conftest.prefix
+    $as_echo "s/^#undef  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_]\\)/#undef $ac_prefix_conf_UPP""_\\1/" > conftest.prefix
+    $as_echo "s/^#undef  *\\([abcdefghijklmnopqrstuvwxyz]\\)/#undef $ac_prefix_conf_LOW""_\\1/" >> conftest.prefix
+    $as_echo "s/^#define  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_UPP""_\\1 \\" >> conftest.prefix
+    $as_echo "#define $ac_prefix_conf_UPP""_\\1 \\2 \\" >> conftest.prefix
+    $as_echo "#endif/" >>conftest.prefix
+    $as_echo "s/^#define  *\\([abcdefghijklmnopqrstuvwxyz][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_LOW""_\\1 \\" >> conftest.prefix
+    $as_echo "#define $ac_prefix_conf_LOW""_\\1 \\2 \\" >> conftest.prefix
+    $as_echo "#endif/" >> conftest.prefix
     # now executing _script on _DEF input to create _OUT output file
-    echo "#ifndef $ac_prefix_conf_DEF"      >$tmp/pconfig.h
-    echo "#define $ac_prefix_conf_DEF 1" >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
+    $as_echo "#ifndef $ac_prefix_conf_DEF"      >$tmp/pconfig.h
+    $as_echo "#define $ac_prefix_conf_DEF 1" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
 
     sed -f conftest.prefix $ac_prefix_conf_INP >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo '/* once:' $ac_prefix_conf_DEF '*/' >>$tmp/pconfig.h
-    echo "#endif" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo '/* once:' $ac_prefix_conf_DEF '*/' >>$tmp/pconfig.h
+    $as_echo "#endif" >>$tmp/pconfig.h
     if cmp -s $ac_prefix_conf_OUT $tmp/pconfig.h 2>/dev/null; then
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: $ac_prefix_conf_OUT is unchanged" >&5
 printf "%s\n" "$as_me: $ac_prefix_conf_OUT is unchanged" >&6;}
@@ -8974,12 +8974,12 @@ printf "%s\n" X"$ac_prefix_conf_OUT" |
   rm -f conftest.*
 fi
  ;;
-    "include/zzip/_msvc.h":C) ac_prefix_conf_OUT=`echo include/zzip/_msvc.h`
-ac_prefix_conf_DEF=`echo _$ac_prefix_conf_OUT | sed -e "y:abcdefghijklmnopqrstuvwxyz:ABCDEFGHIJKLMNOPQRSTUVWXYZ:" -e "s/[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g"`
-ac_prefix_conf_PKG=`echo zzip`
-ac_prefix_conf_LOW=`echo _$ac_prefix_conf_PKG | sed -e "y:ABCDEFGHIJKLMNOPQRSTUVWXYZ-:abcdefghijklmnopqrstuvwxyz_:"`
-ac_prefix_conf_UPP=`echo $ac_prefix_conf_PKG | sed -e "y:abcdefghijklmnopqrstuvwxyz-:ABCDEFGHIJKLMNOPQRSTUVWXYZ_:"  -e "/^[0123456789]/s/^/_/"`
-ac_prefix_conf_INP=`echo "include/_msvc.in" | sed -e 's/ *//'`
+    "include/zzip/_msvc.h":C) ac_prefix_conf_OUT=`$as_echo include/zzip/_msvc.h`
+ac_prefix_conf_DEF=`$as_echo _$ac_prefix_conf_OUT | sed -e "y:abcdefghijklmnopqrstuvwxyz:ABCDEFGHIJKLMNOPQRSTUVWXYZ:" -e "s/[^abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ]/_/g"`
+ac_prefix_conf_PKG=`$as_echo zzip`
+ac_prefix_conf_LOW=`$as_echo _$ac_prefix_conf_PKG | sed -e "y:ABCDEFGHIJKLMNOPQRSTUVWXYZ-:abcdefghijklmnopqrstuvwxyz_:"`
+ac_prefix_conf_UPP=`$as_echo $ac_prefix_conf_PKG | sed -e "y:abcdefghijklmnopqrstuvwxyz-:ABCDEFGHIJKLMNOPQRSTUVWXYZ_:"  -e "/^[0123456789]/s/^/_/"`
+ac_prefix_conf_INP=`$as_echo "include/_msvc.in" | sed -e 's/ *//'`
 if test ".$ac_prefix_conf_INP" = "."; then
    for ac_file in : $CONFIG_HEADERS; do test "_$ac_file" = _: && continue
      case "$ac_file" in
@@ -8993,7 +8993,7 @@ if test ".$ac_prefix_conf_INP" = "."; then
    case "$ac_prefix_conf_OUT" in
       */*) ac_prefix_conf_INP=`basename "$ac_prefix_conf_OUT"`
       ;;
-      *-*) ac_prefix_conf_INP=`echo "$ac_prefix_conf_OUT" | sed -e "s/[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*-//"`
+      *-*) ac_prefix_conf_INP=`$as_echo "$ac_prefix_conf_OUT" | sed -e "s/[abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*-//"`
       ;;
       *) ac_prefix_conf_INP=config.h
       ;;
@@ -9008,24 +9008,24 @@ else
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines" >&5
 printf "%s\n" "$as_me: creating $ac_prefix_conf_OUT - prefix $ac_prefix_conf_UPP for $ac_prefix_conf_INP defines" >&6;}
   if test -f $ac_prefix_conf_INP ; then
-    echo "s/^#undef  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_]\\)/#undef $ac_prefix_conf_UPP""_\\1/" > conftest.prefix
-    echo "s/^#undef  *\\([abcdefghijklmnopqrstuvwxyz]\\)/#undef $ac_prefix_conf_LOW""_\\1/" >> conftest.prefix
-    echo "s/^#define  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_UPP""_\\1 \\" >> conftest.prefix
-    echo "#define $ac_prefix_conf_UPP""_\\1 \\2 \\" >> conftest.prefix
-    echo "#endif/" >>conftest.prefix
-    echo "s/^#define  *\\([abcdefghijklmnopqrstuvwxyz][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_LOW""_\\1 \\" >> conftest.prefix
-    echo "#define $ac_prefix_conf_LOW""_\\1 \\2 \\" >> conftest.prefix
-    echo "#endif/" >> conftest.prefix
+    $as_echo "s/^#undef  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_]\\)/#undef $ac_prefix_conf_UPP""_\\1/" > conftest.prefix
+    $as_echo "s/^#undef  *\\([abcdefghijklmnopqrstuvwxyz]\\)/#undef $ac_prefix_conf_LOW""_\\1/" >> conftest.prefix
+    $as_echo "s/^#define  *\\([ABCDEFGHIJKLMNOPQRSTUVWXYZ_][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_UPP""_\\1 \\" >> conftest.prefix
+    $as_echo "#define $ac_prefix_conf_UPP""_\\1 \\2 \\" >> conftest.prefix
+    $as_echo "#endif/" >>conftest.prefix
+    $as_echo "s/^#define  *\\([abcdefghijklmnopqrstuvwxyz][abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]*\\)\\(.*\\)/#ifndef $ac_prefix_conf_LOW""_\\1 \\" >> conftest.prefix
+    $as_echo "#define $ac_prefix_conf_LOW""_\\1 \\2 \\" >> conftest.prefix
+    $as_echo "#endif/" >> conftest.prefix
     # now executing _script on _DEF input to create _OUT output file
-    echo "#ifndef $ac_prefix_conf_DEF"      >$tmp/pconfig.h
-    echo "#define $ac_prefix_conf_DEF 1" >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
+    $as_echo "#ifndef $ac_prefix_conf_DEF"      >$tmp/pconfig.h
+    $as_echo "#define $ac_prefix_conf_DEF 1" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo /'*' $ac_prefix_conf_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
 
     sed -f conftest.prefix $ac_prefix_conf_INP >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo '/* once:' $ac_prefix_conf_DEF '*/' >>$tmp/pconfig.h
-    echo "#endif" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo '/* once:' $ac_prefix_conf_DEF '*/' >>$tmp/pconfig.h
+    $as_echo "#endif" >>$tmp/pconfig.h
     if cmp -s $ac_prefix_conf_OUT $tmp/pconfig.h 2>/dev/null; then
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: $ac_prefix_conf_OUT is unchanged" >&5
 printf "%s\n" "$as_me: $ac_prefix_conf_OUT is unchanged" >&6;}

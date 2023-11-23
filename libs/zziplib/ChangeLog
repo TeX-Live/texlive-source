@@ -1,3 +1,11 @@
+2023-11-23  Karl Berry  <karl@freefriends.org>
+
+	* m4/ax_prefix_config_h.m4: use $as_echo instead of echo,
+	since echo "\\1" outputs a CTRL-A under dash.
+	Report from Vincent Lefevre:
+	https://tug.org/pipermail/tlbuild/2023q4/005345.html
+	* configure: rebuild.
+
 2022-09-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import zziplib-0.13.72.

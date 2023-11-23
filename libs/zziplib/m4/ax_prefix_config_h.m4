@@ -1,3 +1,4 @@
+dnl $Id$
 dnl @synopsis AX_PREFIX_CONFIG_H [(OUTPUT-HEADER [,PREFIX [,ORIG-HEADER]])]
 dnl
 dnl This is a new variant from ac_prefix_config_ this one will use a
@@ -95,12 +96,12 @@ AS_VAR_PUSHDEF([_UPP],[ac_prefix_conf_UPP])dnl
 AS_VAR_PUSHDEF([_INP],[ac_prefix_conf_INP])dnl
 m4_pushdef([_script],[conftest.prefix])dnl
 m4_pushdef([_symbol],[m4_cr_Letters[]m4_cr_digits[]_])dnl
-_OUT=`echo ifelse($1, , $PACKAGE-config.h, $1)`
-_DEF=`echo _$_OUT | sed -e "y:m4_cr_letters:m4_cr_LETTERS[]:" -e "s/@<:@^m4_cr_Letters@:>@/_/g"`
-_PKG=`echo ifelse($2, , $PACKAGE, $2)`
-_LOW=`echo _$_PKG | sed -e "y:m4_cr_LETTERS-:m4_cr_letters[]_:"`
-_UPP=`echo $_PKG | sed -e "y:m4_cr_letters-:m4_cr_LETTERS[]_:"  -e "/^@<:@m4_cr_digits@:>@/s/^/_/"`
-_INP=`echo "ifelse($3,,,$3)" | sed -e 's/ *//'`
+_OUT=`$as_echo ifelse($1, , $PACKAGE-config.h, $1)`
+_DEF=`$as_echo _$_OUT | sed -e "y:m4_cr_letters:m4_cr_LETTERS[]:" -e "s/@<:@^m4_cr_Letters@:>@/_/g"`
+_PKG=`$as_echo ifelse($2, , $PACKAGE, $2)`
+_LOW=`$as_echo _$_PKG | sed -e "y:m4_cr_LETTERS-:m4_cr_letters[]_:"`
+_UPP=`$as_echo $_PKG | sed -e "y:m4_cr_letters-:m4_cr_LETTERS[]_:"  -e "/^@<:@m4_cr_digits@:>@/s/^/_/"`
+_INP=`$as_echo "ifelse($3,,,$3)" | sed -e 's/ *//'`
 if test ".$_INP" = "."; then
    for ac_file in : $CONFIG_HEADERS; do test "_$ac_file" = _: && continue
      case "$ac_file" in
@@ -114,7 +115,7 @@ if test ".$_INP" = "."; then
    case "$_OUT" in
       */*) _INP=`basename "$_OUT"`
       ;;
-      *-*) _INP=`echo "$_OUT" | sed -e "s/@<:@_symbol@:>@*-//"`
+      *-*) _INP=`$as_echo "$_OUT" | sed -e "s/@<:@_symbol@:>@*-//"`
       ;;
       *) _INP=config.h
       ;;
@@ -128,24 +129,24 @@ else
   fi fi
   AC_MSG_NOTICE(creating $_OUT - prefix $_UPP for $_INP defines)
   if test -f $_INP ; then
-    echo "s/^@%:@undef  *\\(@<:@m4_cr_LETTERS[]_@:>@\\)/@%:@undef $_UPP""_\\1/" > _script
-    echo "s/^@%:@undef  *\\(@<:@m4_cr_letters@:>@\\)/@%:@undef $_LOW""_\\1/" >> _script
-    echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_LETTERS[]_@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_UPP""_\\1 \\" >> _script
-    echo "@%:@def[]ine $_UPP""_\\1 \\2 \\" >> _script
-    echo "@%:@endif/" >>_script
-    echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_letters@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_LOW""_\\1 \\" >> _script
-    echo "@%:@define $_LOW""_\\1 \\2 \\" >> _script
-    echo "@%:@endif/" >> _script
+    $as_echo "s/^@%:@undef  *\\(@<:@m4_cr_LETTERS[]_@:>@\\)/@%:@undef $_UPP""_\\1/" > _script
+    $as_echo "s/^@%:@undef  *\\(@<:@m4_cr_letters@:>@\\)/@%:@undef $_LOW""_\\1/" >> _script
+    $as_echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_LETTERS[]_@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_UPP""_\\1 \\" >> _script
+    $as_echo "@%:@def[]ine $_UPP""_\\1 \\2 \\" >> _script
+    $as_echo "@%:@endif/" >>_script
+    $as_echo "s/^@%:@def[]ine  *\\(@<:@m4_cr_letters@:>@@<:@_symbol@:>@*\\)\\(.*\\)/@%:@ifndef $_LOW""_\\1 \\" >> _script
+    $as_echo "@%:@define $_LOW""_\\1 \\2 \\" >> _script
+    $as_echo "@%:@endif/" >> _script
     # now executing _script on _DEF input to create _OUT output file
-    echo "@%:@ifndef $_DEF"      >$tmp/pconfig.h
-    echo "@%:@def[]ine $_DEF 1" >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo /'*' $_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
+    $as_echo "@%:@ifndef $_DEF"      >$tmp/pconfig.h
+    $as_echo "@%:@def[]ine $_DEF 1" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo /'*' $_OUT. Generated automatically at end of configure. '*'/ >>$tmp/pconfig.h
 
     sed -f _script $_INP >>$tmp/pconfig.h
-    echo ' ' >>$tmp/pconfig.h
-    echo '/* once:' $_DEF '*/' >>$tmp/pconfig.h
-    echo "@%:@endif" >>$tmp/pconfig.h
+    $as_echo ' ' >>$tmp/pconfig.h
+    $as_echo '/* once:' $_DEF '*/' >>$tmp/pconfig.h
+    $as_echo "@%:@endif" >>$tmp/pconfig.h
     if cmp -s $_OUT $tmp/pconfig.h 2>/dev/null; then
       AC_MSG_NOTICE([$_OUT is unchanged])
     else
@@ -178,4 +179,8 @@ dnl for replacement mit printf. Some old systems had problems with that
 dnl one either. However, the latest libtool (!) release does export an $ECHO 
 dnl (and $echo) that does the right thing - just one question is left: what 
 dnl was the first version to have it? Is it greater 2.58 ? 
-
+dnl
+dnl 23nov23 karl: dash helpfully outpus a CTRL-A from echo "\\1":
+dnl https://tug.org/pipermail/tlbuild/2023q4/005345.html
+dnl Switch to using $as_echo (-> printf), which the configure script
+dnl thankfully still defines.
