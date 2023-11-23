@@ -21,14 +21,15 @@
 -- <http://www.latex-project.org/lppl.txt> for additional
 -- information.
 -- 
--- This work has the LPPL maintenance status `maintained'.
+-- This work has the LPPL maintenance status `unmaintained'.
 -- 
--- The Current Maintainer of this work is Markus Kohm.
+-- 
+-- This package is currently unmaintained.
 -- 
 -- The list of files belonging to the work `pfarrei' is given in
 -- the file `pfarrei.dtx'.
 -- 
--- $Id: pfarrei.dtx 36 2013-10-16 18:54:26Z mjk $
+-- $Id: pfarrei.dtx 37 2023-11-22 18:54:26Z ps $
 
 kpse.set_program_name(arg[-1], 'a5toa4')
 require('pfarrei.pfarrei')

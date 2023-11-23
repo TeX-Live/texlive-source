@@ -21,14 +21,15 @@
 -- <http://www.latex-project.org/lppl.txt> for additional
 -- information.
 -- 
--- This work has the LPPL maintenance status `maintained'.
+-- This work has the LPPL maintenance status `unmaintained'.
 -- 
--- The Current Maintainer of this work is Markus Kohm.
+-- 
+-- This package is currently unmaintained.
 -- 
 -- The list of files belonging to the work `pfarrei' is given in
 -- the file `pfarrei.dtx'.
 -- 
-local version_number = string.sub( '$Revision: 36 $', 12, -2 )
+local version_number = string.sub( '$Revision: 37 $', 12, -2 )
 local action_version = ' r' .. version_number .. '\n' .. [[
 
 Copyright (c) 2013 Markus Kohm.
@@ -100,11 +101,15 @@ while arg[i] do
       -- build the temporary tex file
       local tmpdir = os.tmpdir("pfarrei.XXXXXX" )
       local tmpfile = string.match( arg[i], '.*/(.*)$') or arg[i]
+      -- pdflatex's -output-directory search for source pdf works with path specification but fails
+      -- when simple file name in the current working directory is provided, we need to provide '../' then
+      local local_source=''
+      if tmpfile == arg[i] then local_source = '../' end
       local basename = string.match( tmpfile,'(.*)%.[^.]*$') or tmpfile
       tmpfile = tmpdir..'/'..basename..'.tex'
       local file = assert( io.open( tmpfile, 'w' ) )
       if booklet then assert( file:write("\\PassOptionsToPackage{booklet}{pfarrei}\n") ) end
-      assert( file:write("\\def\\OriginalFile{",arg[i],"}\n") )
+      assert( file:write("\\def\\OriginalFile{"..local_source,arg[i],"}\n") )
       assert( file:write("\\input{a5toa4.tex}\n") )
       assert( file:flush() )
       file:close()
