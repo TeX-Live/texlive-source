@@ -6,6 +6,7 @@
 	* ptriptest.test, uptriptest.test:
 	Check diffs of trip.{fot,typ} with ignoring trivial changes
 	in trip tests.
+	* gkhuge.test: Update test for Windows.
 
 2023-09-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 

@@ -13,6 +13,14 @@ test -d uptests || mkdir -p uptests
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
+DIFF="diff"
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 # Test inputs
 testdir=$srcdir/uptexdir/tests
 
@@ -37,7 +45,7 @@ for font in gkhugeng; do
   # web2c/pltotf.ch change 2017-09-10, due to overflow
   $_uptftopl $testdir/$font.tfm uptests/y$font.pl \
     2>uptests/y$font.err && exit 1 || echo
-  diff $testdir/$font.err uptests/y$font.err && echo || exit 2
+  $DIFF $testdir/$font.err uptests/y$font.err && echo || exit 2
 
 done
 
