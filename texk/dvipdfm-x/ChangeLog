@@ -1,3 +1,8 @@
+2023-11-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+	* dpxutil.c: Calculate time zone offset in the same way as
+	in pdftex.
+	* configure.ac: version 20231124.
+
 2023-11-18  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
 
 	* cidtype2.c, unicode.c: Support for new Adobe-Japan1-UCS2 CMap.
