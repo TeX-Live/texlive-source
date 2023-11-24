@@ -1,3 +1,9 @@
+2023-11-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test: Add test for file names with over-BMP
+	(4byte UTF-8).
+	https://tug.org/pipermail/tex-live/2023-November/049685.html
+
 2023-09-21  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* uptex-m.ch: Clean up changes on 2023-09-03.
