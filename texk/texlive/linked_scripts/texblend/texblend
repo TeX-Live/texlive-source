@@ -1,0 +1,280 @@
+#!/usr/bin/env texlua
+kpse.set_program_name "luatex"
+
+-- TeXBlend -- Compile Segments of LaTeX Documents
+-- Copyright: Michal Hoftich <michal.h21@gmail.com> (2023)
+-- 
+-- This work may be distributed and/or modified under the
+-- conditions of the LaTeX Project Public License, either version 1.3
+-- of this license or (at your option) any later version.
+-- The latest version of this license is in
+--   http://www.latex-project.org/lppl.txt
+-- and version 1.3 or later is part of all distributions of LaTeX
+-- version 2005/12/01 or later.
+-- 
+-- This work has the LPPL maintenance status `maintained'.
+-- 
+-- The Current Maintainer of this work is Michal Hoftich
+
+local lapp    = require "lapp-mk4"
+-- mkutils needs the logging library
+logging       = require "make4ht-logging"
+local mkutils = require "mkutils"
+local log = logging.new("TeXBlend")
+
+local version_info = "TeXBlend version v0.1"
+local cmd_options = [[TeXBlend: Compile Segments of LaTeX Documents
+
+This tool compiles individual files that are included as parts of larger documents. 
+It utilizes the preamble of the main document but disregards all other included files.
+
+Usage: 
+
+$ texblend [options] filename
+
+Available options:
+-e,--expand                   Expand variables in the template
+-h,--help                     Print the help message
+-H,--HTML                     Compile to HTML using TeX4ht
+-l,--lualatex                 Select lualatex as compiler explicitly
+-o,--output (default "")      Set the output file name
+-O,--texoptions (default "")  Extra options that should be passed to the LaTeX compiler
+-p,--pdflatex                 Select pdflatex as compiler explicitly
+-P,--print                    Don't compile the document, print the expanded template instead
+-s,--shell-escape             Enable execution of external commands in LaTeX
+-t,--template (default "")    Use explicit template instead of the one provided in the input file
+-v,--version                  Print version info
+-x,--xelatex                  Select xelatex as compiler explicitly
+<filename> (string)           Use "-" if you want to pass document from the standard input
+
+Documentation:                https://www.kodymirus.cz/texblend/
+Bug reports and development:  https://github.com/michal-h21/texblend
+]]
+
+
+local default_template = [[\documentclass{article}
+\begin{document}
+\end{document}
+]]
+
+
+
+local function exit_on_error(status, msg)
+  -- function that tests function results
+  -- it prints error messages and exits if there was an error
+  if not status then 
+    log:error( msg)
+    os.exit(1)
+  end
+end
+
+local function get_preamble(text)
+  -- try to get the document preamble
+  local preamble = {}
+  local found_begin = false
+  for line in text:gmatch("([^\n]*)") do
+    -- \begin{document} must be on a separate line, preceded only by whitespace
+    if line:match("^%s*\\begin{document}") then 
+      found_begin = true 
+      break
+    end
+    preamble[#preamble + 1] = line
+  end
+  if found_begin then
+    return table.concat(preamble, "\n")
+  end
+  return nil, "Cannot find \\begin{document} in the template. It must be placed on a separate line."
+end
+
+-- 
+local function prepare_template(document, template)
+  -- try to read document preamble from the template
+  local preamble, msg = get_preamble(template)
+  if not preamble then return nil, msg end
+  -- fill template with the document
+  return string.format("%s\n\\begin{document}\n%s\n\\end{document}\n", preamble, document)
+end
+
+local function get_metadata(content)
+  -- for now, we support only TeXShop's style of metadata:
+  -- % !TeX program = program 
+  -- % !TeX root = root
+  -- also variant with  % !TEX TS-var is supported
+  -- program is used for the compilation and root is the template document
+  local metadata = {}
+  for key, value in content:gmatch("%%%s*![Tt][Ee][Xx] T?S?%-?(.-)%s*=%s*([^\n]+)") do
+    metadata[key] = value
+  end
+  metadata.program = metadata.program or "pdflatex"
+  -- remove possible white space at the end of root filename
+  if metadata.root then metadata.root = metadata.root:gsub("%s*$", "") end
+  return metadata
+end
+
+local function use_arguments(metadata, arguments)
+  -- this function modifies metadata using command line arguments
+  -- remove empty strings from arguments
+  for k, v in pairs(arguments) do
+    if v == '""' then arguments[k] = nil end
+  end
+  -- handle output file name
+  if arguments.output then
+    metadata.output = mkutils.remove_extension(arguments.output)
+  else
+    -- base output filename on the input filename if we don't get explicit filename
+    metadata.output = mkutils.remove_extension(arguments.filename)
+  end
+  -- handle program
+  metadata.program = arguments.pdflatex and "pdflatex" or metadata.program
+  metadata.program = arguments.lualatex and "lualatex" or metadata.program
+  metadata.program = arguments.xelatex and "xelatex" or metadata.program
+  -- handle the template
+  metadata.root = arguments.template or metadata.root
+  -- pass other useful flags
+  metadata.shell_escape = arguments["shell-escape"]
+  metadata.html = arguments.HTML
+  metadata.options = arguments.texoptions
+  return metadata
+end
+
+local function expand(metadata, template)
+  -- expand {{variablename}} tags in the template. The variablename key must exitst
+  -- in the metadata table. If the variable doesn't exist, nothing is rendered
+  local expanded = template:gsub("{{([%a%d}]-)}}", function(key)
+    return metadata[key] or ""
+  end)
+  return expanded
+end
+
+local function load_file(filename)
+  -- universal function to read files
+  if not filename then return nil, "No filename passed" end
+  local f = io.open(filename, "r")
+  if not f then return nil, string.format("Cannot open file: %s", filename) end
+  local content = f:read("*all")
+  f:close()
+  return content
+end
+
+local function load_template(filename)
+  -- with kpse, we can use root files in the local TEXMF tree, like ~/tex/latex/tpl/template.tex
+  local filename = kpse.find_file(filename, "tex")
+  return load_file(filename)
+end
+
+local function load_document(filename)
+  -- load the input file and its metadata
+  local content, msg = load_file(filename)
+  if not content then return content, msg end
+  return get_metadata(content), content
+end
+
+
+local function prepare_command(metadata,arguments)
+  -- prepare CLI program to be executed 
+  local options = {}
+  local command 
+  -- we support HTML creation thanks to make4ht
+  if metadata.html then
+    command = "make4ht"
+    options[#options + 1] = "-j " .. metadata.output
+    options[#options + 1] = metadata.shell_escape and "-s" or nil
+    if metadata.program == "lualatex" then
+      options[#options + 1] = "-l"
+    elseif metadata.program == "xelatex" then
+      options[#options + 1] = "-x"
+    end
+    local texoptions = metadata.options
+    options[#options+1] = texoptions
+    texoptions = texoptions or ""
+    -- if texoptions already contain the - character, don't add it
+    if not texoptions:match("%-%s") and not texoptions:match("%-$") then
+      options[#options+1] = "-"
+    end
+  else
+    command = metadata.program
+    options[#options + 1] = "-jobname=" .. metadata.output
+    options[#options + 1] = metadata.shell_escape and "-shell-escape" or nil
+    options[#options+1] = metadata.options
+  end
+  return string.format("%s %s", command, table.concat(options, " "))
+end
+
+local function compile(command, document)
+  -- execute the command
+  local cmd = io.popen(command, "w")
+  if not cmd then
+    exit_on_error(nil, "Cannot run command")
+  end
+  cmd:write(document)
+  cmd:close()
+end
+
+local arguments 
+-- you can set the _G.test=true if you want to load texblend as a library for testing
+if not __test__ then
+  -- process command line options
+  arguments = lapp(cmd_options)
+
+  -- handle non file actions
+  -- arguments.help is handled automatically by lapp
+  if arguments.version then
+    print(version_info)
+    os.exit()
+  end
+
+
+  local metadata, document 
+  local filename = arguments.filename
+  if filename == "-" then
+    -- read from the standard input if the filename is - 
+    document = io.read("*all")
+    metadata = get_metadata(document)
+  else
+    -- otherwise, load the input file and get metadata
+    metadata, document = load_document(filename)
+  end
+
+  exit_on_error(metadata, document)
+
+  -- enrich metadata with command line arguments
+  metadata = use_arguments(metadata, arguments)
+
+  -- user needs to add explicit output filename when dealing with the standard input
+  if metadata.output == "-" then
+    exit_on_error(nil, "Empty output filename. Use the -o option")
+  end
+
+  metadata.template, msg = metadata.root and load_template(metadata.root) or default_template
+
+  exit_on_error(metadata.template, msg)
+
+  if arguments.expand then
+    metadata.template = expand(metadata,metadata.template)
+  end
+
+  local full_document, msg = prepare_template(document, metadata.template)
+
+  exit_on_error(full_document, msg)
+
+  if arguments.print then
+    print(full_document)
+    os.exit()
+  end
+
+  local command = prepare_command(metadata, arguments)
+
+  log:info(command)
+  compile(command, full_document)
+else
+  return {
+     prepare_command  = prepare_command
+    ,prepare_template = prepare_template
+    ,get_metadata     = get_metadata
+    ,use_arguments    = use_arguments
+    ,get_preamble     = get_preamble
+    ,expand           = expand
+  }
+end
+
+

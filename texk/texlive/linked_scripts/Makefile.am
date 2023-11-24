@@ -225,6 +225,7 @@ texmf_other_scripts = \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
 	tex4ebook/tex4ebook \
+	texblend/texblend \
 	texcount/texcount.pl \
 	texdef/texdef.pl \
 	texdiff/texdiff \
