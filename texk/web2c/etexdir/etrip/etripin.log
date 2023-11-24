@@ -1,8 +1,8 @@
-This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (INITEX)  22 JAN 2014 11:25
+This is e-TeX, Version 3.141592653-2.6 (TeX Live 2023) (INITEX)  22 JAN 2023 11:25
 entering extended mode
 ***etrip
 (./etrip.tex
-This is the e-Trip test [2014-01-22] for e-TeX v3.14159265-2.6.
+This is the e-Trip test [2021-01-28] for e-TeX v3.141592653-2.6.
 (You are using e-TeX version/revision 2.6)
 e-IniTeX: Assigning category codes, tracing switches, other codes,
 definitions for e-VirTeX e-Trip test run, constants and registers,
@@ -23,9 +23,9 @@ Proceed; I'll ignore the character I just read.
 enable e-TeX enhancements (TeXXeT),
 prepare saved items (not to be dumped), everyjob ...dumped. )
 Beginning to dump on file etrip.fmt
- (preloaded format=etrip 2014.1.22)
-1491 strings of total length 26258
-281 memory locations dumped; current usage is 36&167
+ (preloaded format=etrip 2023.1.22)
+1492 strings of total length 26298
+282 memory locations dumped; current usage is 36&168
 408 multiletter control sequences
 \font\nullfont=nullfont
 \font\trip=etrip

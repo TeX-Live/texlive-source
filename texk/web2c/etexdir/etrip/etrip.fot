@@ -1,7 +1,7 @@
-This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etex)
+This is e-TeX, Version 3.141592653-2.6 (TeX Live 2023) (preloaded format=etex)
 **entering extended mode
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2014-01-22] for e-TeX v3.14159265-2.6.
+This is the e-Trip test [2021-01-28] for e-TeX v3.141592653-2.6.
 (You are using e-TeX version/revision 2.6)
 Missing character: There is no c in font nullfont!
 
@@ -42,6 +42,4 @@ current interactionmode (l.247): errorstop
 current interactionmode (l.247): scroll
 
 current interactionmode (l.247): nonstop
-
-\openout1 = `etrip.out'.
 

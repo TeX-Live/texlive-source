@@ -1,5 +1,6 @@
 #! /bin/sh -vx
 # $Id$
+# Copyright 2023 Japanese TeX Development Community <issue@texjp.org>
 # Copyright 2017-2018 Karl Berry <tex-live@tug.org>
 # Copyright 2011-2014 Peter Breitenlohner <tex-live@tug.org>
 # Copyright 2010 Hironori Kitagawa <tex-live@tug.org>
@@ -24,6 +25,58 @@ TEXMFCNF=$euptestdir; export TEXMFCNF
 rm -rf euptripdir
 mkdir euptripdir
 cd euptripdir
+mkdir -p a b
+
+# TeX Live generic
+cat >filter <<-\_EOF
+	/^\*\* \&trip  trip/d
+	/^\*\*entering extended mode/d
+	s,^(trip\.tex ##,**(./trip.tex ##,
+	s,^## (\./trip\.tex,**(./trip.tex ##,
+	s/ (TeX Live 20[^)]*)//
+	s/ (Web2C 202[3-9])//
+	s/(preloaded format=.*tex)/(INITEX)/
+	s/format=trip [^)][^)]*)/format=trip)/
+	s/)  [0-9A-Z: ]*$/)/
+	s,^(\./,(,
+	s/[1-9][0-9]* strings out of [1-9].*/XX strings out of YYY/
+	s/[1-9][0-9]* string characters out of [1-9].*/XXX string characters out of YYYY/
+	s/sequences out of [1-9].*/sequences out of YYYY/
+	s/[1-9] hyphenation exceptions* out of [1-9].*/X hyphenation exceptions out of YYY/
+	s/[1-9][0-9]* strings of total length [1-9].*/XXXX strings of total length YYYYY/
+	s/9 ops out of [1-9][0-9]*/9 ops out of YYY/
+	s/TeX output ....\...\...:..../TeX output YYYY.MM.DD:hhmm/
+	_EOF
+
+# x86 glue rounding
+cat >>filter <<-\_EOF
+	s/ 16341\.999.*fil/ 16342.0fil/
+	s/ 16238\.999.*fil/ 16239.0fil/
+	s/ 16317\.999.*fil/ 16318.0fil/
+	s/ 16330\.999.*fil/ 16331.0fil/
+	s/ 16331\.999.*fil/ 16332.0fil/
+	s/ 16343\.999.*fil/ 16344.0fil/
+	s/ 9737\.587..fil/ 9737.58789fil/
+	s/down4 639342.../down4 639342208/
+	s/y4 2039217../y4 203921760/
+	s/y0 2039217../y0 203921760/
+	_EOF
+
+# epTeX
+cat >>filter <<-\_EOF
+	s/This is .*TeX,/This is *TeX,/
+	s/(utf8[^)]*) //
+	s/ Version 3\.141592653[^(]*(/ Version 3.141592653* (/
+	s/ before: [1-9][0-9][0-9][0-9]*&[1-9][0-9][0-9][0-9]*; / before: XXX\&YYY; /
+	s/ after: [1-9][0-9][0-9][0-9]*&[1-9][0-9][0-9][0-9]*; / after: XXX\&YYY; /
+	s/ still untouched: [1-9][0-9][0-9][0-9]*/ still untouched: XXX/
+	_EOF
+cat >filter1 <<-\_EOF
+	:l
+	N
+	$!b l
+	s/ inside a group at level 1).*bottom level/ inside a group at level 1)/
+	_EOF
 
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
@@ -62,17 +115,23 @@ diff $testdir/tripin.log cuptripin.log
 rm -f trip.log
 $_euptex --progname=euptex <$testdir/trip2.in >cuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > cuptrip.log
-diff $testdir/trip.fot cuptrip.fot
+#diff $testdir/trip.fot cuptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log 
+$DIFF $DIFFFLAGS $testdir/trip.log cuptrip.log
 
 mv tripos.tex cuptripos.tex
 diff $testdir/tripos.tex cuptripos.tex
 
 eval $_dvitype $dvitype_args trip.dvi >cuptrip.typ || exit 1
-$DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
+#$DIFF $DIFFFLAGS $testdir/trip.typ cuptrip.typ
+
+for f in trip.fot trip.typ; do
+  sed -f filter $testdir/$f >a/$f
+  sed -f filter cup$f >b/$f
+  diff a/$f b/$f || is_OK=false
+done
 
 mv trip.fmt ctrip.fmt
 
@@ -93,17 +152,23 @@ diff $testdir/tripin.log xuptripin.log
 rm -f trip.log
 $_euptex --progname=euptex <$etestdir/trip2.in >xuptrip.fot
 sed "$P_SED1;$P_SED2" trip.log > xuptrip.log
-diff $testdir/trip.fot xuptrip.fot
+#diff $testdir/trip.fot xuptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log 
+$DIFF $DIFFFLAGS $testdir/trip.log xuptrip.log
 
 mv tripos.tex xuptripos.tex
 diff $testdir/tripos.tex xuptripos.tex
 
 eval $_dvitype $dvitype_args trip.dvi >xuptrip.typ || exit 1
-$DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
+#$DIFF $DIFFFLAGS $testdir/trip.typ xuptrip.typ
+
+for f in trip.fot trip.typ; do
+  sed -f filter $testdir/$f >a/x$f
+  sed -f filter xup$f | sed -f filter1 >b/x$f
+  diff a/x$f b/x$f || is_OK=false
+done
 
 mv trip.fmt xtrip.fmt
 
@@ -131,7 +196,7 @@ diff $etestdir/etripin.log euptripin.log
 # May as well test non-ini second time through.
 $_euptex --progname=euptex <$etestdir/etrip3.in >euptrip.fot
 sed "$P_SED1;$P_SED2" etrip.log > euptrip.log
-diff $etestdir/etrip.fot euptrip.fot
+#diff $etestdir/etrip.fot euptrip.fot
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
@@ -141,7 +206,13 @@ mv etrip.out euptrip.out
 diff $etestdir/etrip.out euptrip.out
 
 eval $_dvitype $dvitype_args etrip.dvi >euptrip.typ || exit 1
-$DIFF $DIFFFLAGS $etestdir/etrip.typ euptrip.typ
+#$DIFF $DIFFFLAGS $etestdir/etrip.typ euptrip.typ
+
+for f in trip.fot trip.typ; do
+  sed -f filter $etestdir/e$f >a/e$f
+  sed -f filter eup$f >b/e$f
+  diff a/e$f b/e$f || is_OK=false
+done
 
 $is_OK || {
   echo ">>> There were some errors." >&2

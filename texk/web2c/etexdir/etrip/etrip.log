@@ -1,8 +1,8 @@
-This is e-TeX, Version 3.14159265-2.6 (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
+This is e-TeX, Version 3.141592653-2.6 (TeX Live 2023) (preloaded format=etrip 2023.1.22)  22 JAN 2023 11:25
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2014-01-22] for e-TeX v3.14159265-2.6.
+This is the e-Trip test [2021-01-28] for e-TeX v3.141592653-2.6.
 (You are using e-TeX version/revision 2.6)
 Missing character: There is no b in font nullfont!
 
@@ -689,9 +689,7 @@ Completed box being shipped out [1]
 .\write1{\unexpanded \expandafter {\1}}
 .\closeout1
 
-\openout1 = `etrip.out'.
-
-Memory usage before: 52&184; after: 36&178; still untouched: 1672
+Memory usage before: 52&185; after: 36&179; still untouched: 1671
 (./etrip.out) ( 
 Warning: end of semi simple group (level 3) entered at line 433 of a dif
 ferent file
@@ -1423,7 +1421,7 @@ you left one out. Proceed, with fingers crossed.
 ### math mode entered at line 524
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1447,7 +1445,7 @@ this will be denominator of:
 ### math mode entered at line 517
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1494,7 +1492,7 @@ l.525 ...      \over r\showlists
 ### math mode entered at line 517
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1542,7 +1540,7 @@ l.526 ...      \right]\showlists
 ../.\fam1 r
 ..\right"162362
 .\right"162362
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -2717,9 +2715,9 @@ since the result is out of range.
 
 Expr fraction rounding 3 OK
 [1]
-Memory usage before: 53&322; after: 44&322; still untouched: 835
+Memory usage before: 53&323; after: 44&323; still untouched: 834
 [1]
-Memory usage before: 53&322; after: 44&322; still untouched: 835
+Memory usage before: 53&323; after: 44&323; still untouched: 834
 Checking \mutoglue and \gluetomu:
 ! You can't use `\mutoglue' in vertical mode.
 l.905   \mutoglue
@@ -4418,9 +4416,9 @@ Overfull \hbox (12.0pt too wide) in paragraph at lines 1256--1256
 
  ) 
 Here is how much of TeX's memory you used:
- 19 strings out of 1809
- 145 string characters out of 7742
- 3164 words of memory out of 3999
+ 19 strings out of 1808
+ 145 string characters out of 7702
+ 3165 words of memory out of 3999
  409 multiletter control sequences out of 15000+0
  3796 words of font info for 5 fonts, out of 20000 for 75
  10 hyphenation exceptions out of 659

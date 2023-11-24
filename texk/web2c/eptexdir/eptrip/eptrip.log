@@ -1,8 +1,8 @@
-This is e-pTeX, Version 3.14159265-p3.4-130605-2.6 (utf8.euc) (TeX Live 2014) (preloaded format=etrip 2014.1.22)  22 JAN 2014 11:25
+This is e-pTeX, Version 3.141592653-p4.1.1-230214-2.6 (utf8.euc) (TeX Live 2023) (preloaded format=etrip 2023.2.14)  14 FEB 2023 11:25
 entering extended mode
 **&etrip etrip
 (./etrip.tex e-IniTeX: e-Trip format loaded.
-This is the e-Trip test [2014-01-22] for e-TeX v3.14159265-2.6.
+This is the e-Trip test [2021-01-28] for e-TeX v3.141592653-2.6.
 (You are using e-TeX version/revision 2.6)
 Missing character: There is no b in font nullfont!
 
@@ -1423,7 +1423,7 @@ you left one out. Proceed, with fingers crossed.
 ### math mode entered at line 524
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1447,7 +1447,7 @@ this will be denominator of:
 ### math mode entered at line 517
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1494,7 +1494,7 @@ l.525 ...      \over r\showlists
 ### math mode entered at line 517
 \mathord
 .\fam1 r
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
@@ -1542,7 +1542,7 @@ l.526 ...      \right]\showlists
 ../.\fam1 r
 ..\right"162362
 .\right"162362
-this will be denominator of:
+this will begin denominator of:
 \fraction, thickness = default
 \\left"161361
 \\mathord
