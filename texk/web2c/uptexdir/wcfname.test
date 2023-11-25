@@ -84,11 +84,11 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc fnΔДदダ打다�
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
-  mv $doc-$ienc.txt $doc-$ienc.log $testdir/
+  mv $doc-$ienc.txt $doc-$ienc.log $doc-$ienc.fls $testdir/ || rc=14
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
 

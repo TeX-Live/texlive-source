@@ -66,11 +66,11 @@ for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc; do
   echo '>>> Document:'$doc '  File Encoding:'$fenc
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape $doc.tex >$testdir/$doc-term.log || \
+  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape --recorder $doc.tex >$testdir/$doc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
-  mv $doc.txt $doc.log $testdir/
+  mv $doc.txt $doc.log $doc.fls $testdir/ || rc=14
   diff $testdir/$doc.txt $srcdir/tests/fn-utf8.txt || \
       { rc=2 ; err2=$err2" $fenc:$doc" ; }
 

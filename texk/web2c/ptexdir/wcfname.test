@@ -72,11 +72,12 @@ for doc in fn-$fenc fnさざ波-$fenc; do
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
-  mv $doc-$ienc.txt $doc-$ienc.log $testdir/
+  mv $doc-$ienc.txt $doc-$ienc.log $testdir/ || rc=14
+  mv $doc-$ienc.fls $testdir/ || : echo "FIXME" # check *.fls
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
   rm -f $testdir/fn±×÷§¶-utf8-tmp.tex
@@ -104,11 +105,12 @@ for doc in fnさざ波-$fenc; do
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   $_kpsewhich -progname=$engine $doc.tex || rc=20
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=21
-  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=3 ; err3=$err3" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=22
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=23
-  mv $doc-$ienc.txt $doc-$ienc.log $testdir/
+  mv $doc-$ienc.txt $doc-$ienc.log $testdir/ || rc=24
+  mv $doc-$ienc.fls $testdir/ || : echo "FIXME" # check *.fls
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=4 ; err4=$err4" $fenc:$ienc:$doc" ; }
 

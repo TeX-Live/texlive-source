@@ -47,7 +47,7 @@ test0() {
   rm -f stress-$ENGINE.fmt test0.dvi test0.xdv &>/dev/null
   $_engine -ini -etex -progname=$ENGINE -jobname=stress-$ENGINE stress &>/dev/null
   ls -l stress-$ENGINE.fmt
-  if [[ $ENGINE = "xetex" ]]; then
+  if [[ "$ENGINE" = "xetex" ]]; then
     $_engine -fmt=./stress-$ENGINE.fmt -no-pdf test0.tex &>/dev/null
     ls -l test0.xdv
   else
@@ -86,7 +86,7 @@ test1() {
   rm -f latex-$ENGINE.fmt test1.dvi test1.xdv &>/dev/null
   $_engine -ini -etex -progname=latex-dev -jobname=latex-$ENGINE latex.ini &>/dev/null
   ls -l latex-$ENGINE.fmt
-  if [[ $ENGINE = "xetex" ]]; then
+  if [[ "$ENGINE" = "xetex" ]]; then
     $_engine -fmt=./latex-$ENGINE.fmt -no-pdf test1.tex &>/dev/null
     ls -l test1.xdv
   else

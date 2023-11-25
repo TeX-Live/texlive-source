@@ -1,3 +1,7 @@
+2023-11-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* wcfname.test: Add tests for --recorder and *.fls.
+
 2023-08-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {wcfname,xetex-bug73,xetex-filedump,xetex}.test:
