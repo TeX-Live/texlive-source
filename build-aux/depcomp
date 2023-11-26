@@ -1,7 +1,7 @@
 #! /bin/sh
 # depcomp - compile a program generating dependencies as side-effects
 
-scriptversion=2022-09-18.14; # UTC
+scriptversion=2023-11-23.18; # UTC
 
 # Copyright (C) 1999-2023 Free Software Foundation, Inc.
 
@@ -47,6 +47,8 @@ Environment variables:
   libtool     Whether libtool is used (yes/no).
 
 Report bugs to <bug-automake@gnu.org>.
+GNU Automake home page: <https://www.gnu.org/software/automake/>.
+General help using GNU software: <https://www.gnu.org/gethelp/>.
 EOF
     exit $?
     ;;
