@@ -10993,9 +10993,9 @@ of string pool space; but that can confuse the interactive `\.E' option.
 @p static void start_input(void) /*\TeX\ will \.{\\input} something*/
 {@+
 scan_file_name(); /*set |cur_name| to desired file name*/
-pack_cur_name(".tex");
+pack_cur_name("");
 loop@+{@+begin_file_reading(); /*set up |cur_file| and new level of input*/
-  if (a_open_in(&cur_file)) goto done;
+  if (kpse_in_name_ok((char*)name_of_file+1) && a_open_in(&cur_file)) goto done;
   end_file_reading(); /*remove the level that didn't work*/
   prompt_file_name("input file name",".tex");
   }
