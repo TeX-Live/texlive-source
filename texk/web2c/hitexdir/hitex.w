@@ -7527,6 +7527,10 @@ is finished:
 {@+first=start;line=line_stack[index];
 if ((name==18)||(name==19)) pseudo_close();else
 if (name > 17) a_close(&cur_file); /*forget it*/
+if (full_source_filename_stack[in_open]!=NULL)
+{ free(full_source_filename_stack[in_open]);
+  full_source_filename_stack[in_open]=NULL;
+}
 pop_input;decr(in_open);
 }
 
@@ -10996,10 +11000,10 @@ loop@+{@+begin_file_reading(); /*set up |cur_file| and new level of input*/
   prompt_file_name("input file name",".tex");
   }
 done: name=a_make_name_string(&cur_file);@/
-if (source_filename_stack[in_open]==NULL)
+if (source_filename_stack[in_open]!=NULL)
   free(source_filename_stack[in_open]);
 source_filename_stack[in_open]=strdup((char *)name_of_file+1); /*\TeX\ Live*/
-if (full_source_filename_stack[in_open]==NULL)
+if (full_source_filename_stack[in_open]!=NULL)
   free(full_source_filename_stack[in_open]);
 full_source_filename_stack[in_open]=strdup(full_name_of_file);
 if (job_name==0)
@@ -34886,6 +34890,10 @@ static char *find_file(char *fname, kpse_file_format_type t, int mx)
         fname++;
   }
   filename = kpse_find_file(fname, t, mx);
+  if (full_name_of_file!=NULL)
+  { free(full_name_of_file); full_name_of_file=NULL;}
+  if (filename!=NULL)
+    full_name_of_file=strdup(filename);
   if (quoted) {
         /* Undo modifications */
         fname--;
@@ -34948,7 +34956,8 @@ static int texmf_yesno(const char *var)
 }
 
 @ We need a stack, matching the |line_stack| that
-contains the source file names;
+contains the source file names. For the full source filenames we use
+poiters to |char| because these names are just used for output.
 
 @<Global...@>=
 static char * @!source_filename_stack0[max_in_open]={NULL}, **const @!source_filename_stack = @!source_filename_stack0-1;
