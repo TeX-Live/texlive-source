@@ -1,3 +1,7 @@
+2023-12-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin: CWEB 4.11 release.
+
 2023-11-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/fn-generate.perl: Add test for file names with

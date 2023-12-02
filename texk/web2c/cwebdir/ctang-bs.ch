@@ -17,12 +17,12 @@ by using "huge" pointers.
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.10)"
+@d banner "This is CTANGLE (Version 4.11)"
 @y
 The ``banner line'' defined here should be changed whenever \.{CTANGLE}
 is modified.
 
-@d banner "This is CTANGLE (Version 4.10pc/big)"
+@d banner "This is CTANGLE (Version 4.11pc/big)"
 @z
 
 
