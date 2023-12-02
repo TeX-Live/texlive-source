@@ -31644,7 +31644,7 @@ static pointer vpackage(pointer p, scaled h, scaled hf, scaled vf, small_number 
                           if (image_xheight(p)!=null)
                           { pointer r=image_xheight(p);
                             if (xdimen_hfactor(r)==0 && xdimen_vfactor(r)==0)
-			    {  x= x+d+xdimen_width(p);d=0;}
+			    {  x= x+d+xdimen_width(r);d=0;}
                             else goto repack;
                           }
 			}
