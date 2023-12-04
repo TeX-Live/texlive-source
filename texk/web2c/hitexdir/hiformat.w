@@ -156,8 +156,8 @@ ISBN-13: 979-854992684-4\par
 First printing: August 2019\par
 Second edition: August 2021\par
 \medskip
-\def\lastrevision{Date: Mon Nov 27 12:09:01 2023}
-\lastrevision\par
+Last commit: Mon Dec 4 15:00:09 2023
+\par
 }
 }
 \endgroup
