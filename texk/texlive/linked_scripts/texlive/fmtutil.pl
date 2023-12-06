@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 68715 2023-11-01 17:28:01Z karl $
+# $Id: fmtutil.pl 68962 2023-11-24 23:01:43Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 68715 2023-11-01 17:28:01Z karl $';
-my $lastchdate = '$Date: 2023-11-01 18:28:01 +0100 (Wed, 01 Nov 2023) $';
+my $svnid = '$Id: fmtutil.pl 68962 2023-11-24 23:01:43Z karl $';
+my $lastchdate = '$Date: 2023-11-25 00:01:43 +0100 (Sat, 25 Nov 2023) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 68715 $';
+my $svnrev = '$Revision: 68962 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -1610,6 +1610,12 @@ Supporting development binaries:
   the respective directory with the -dev stripped.  This allows for
   easily running development binaries in parallel with the released
   binaries.
+
+Environment:
+
+  This script runs TeX and Metafont to generate the fmt/base file, and
+  thus all normal environment variables and search path rules for TeX/MF
+  apply.
 
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <https://tug.org/texlive/>
