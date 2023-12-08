@@ -2,7 +2,7 @@
 
 -- texlogsieve - filter and summarize LaTeX log files
 --
--- Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>
+-- Copyright (C) 2021-2023 Nelson Lago <lago@ime.usp.br>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -815,6 +815,7 @@ function registerHandlers()
   table.insert(anywhereHandlers, closeParensHandler)
   table.insert(anywhereHandlers, openSquareBracketHandler)
   table.insert(anywhereHandlers, closeSquareBracketHandler)
+  table.insert(anywhereHandlers, shipoutFilesHandler)
 
   for _, handler in ipairs(beginningOfLineHandlers) do
       handler:init()
@@ -934,6 +935,7 @@ Options:
                                          cite-detail at once
   --heartbeat, --no-heartbeat            enable/disable progress gauge
   --color, --no-color                    enable/disable colored output
+  --tips, --no-tips                      enable/disable suggesting fixes
   -l LEVEL, --minlevel=LEVEL             filter out messages with severity
                                          level lower than [LEVEL]. Valid
                                          levels are DEBUG, INFO, WARNING,
@@ -972,8 +974,8 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.3.1
-Copyright (C) 2021, 2022 Nelson Lago <lago@ime.usp.br>
+texlogsieve 1.4.0
+Copyright (C) 2021-2023 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.]]
@@ -992,6 +994,7 @@ function processCommandLine(args)
   DETAILED_UNDEROVER_SUMMARY = true
   DETAILED_REFERENCE_SUMMARY = true
   DETAILED_CITATION_SUMMARY = true
+  TIPS = true
 
   COLOR = false
 
@@ -1295,6 +1298,18 @@ function processCommandLine(args)
   vars['no-color'] = nil
 
 
+  --no-tips
+  --tips
+  --tips=true/false
+  if vars['no-tips'] or vars.tips ~= nil and not vars.tips then
+      TIPS = false
+  end
+  if vars.tips then TIPS = true end
+
+  vars.tips = nil
+  vars['no-tips'] = nil
+
+
   if vars.filename == nil then
       logfile = io.stdin
   else
@@ -1511,6 +1526,7 @@ function adjustSeverity(msg)
     'Unused \\captionsetup%b[]',
     "Unknown feature `' in font %b`'", -- empty feature, not a problem
     "Package refcheck Warning: Unused label %b`'", -- we process these specially
+    "Token not allowed in a PDF string %(Unicode%):",
   }
 
   DEFAULT_FORCED_WARNING = {}
@@ -1602,10 +1618,49 @@ function adjustSeverity(msg)
 end
 
 
+function addTip(msg)
+  formatted = trim(msg:realToString())
+  if formatted == "" then return end
+
+  tips = {
+      ["multiple pdfs with page group included"] =
+                   '** The message above is usually harmless\n'
+                .. '** (check https://tex.stackexchange.com/questions/76273 );\n'
+                .. '** processing your included PDF files (images etc.) with\n'
+                .. '** "gs -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite '
+                .. '-dCompatibilityLevel=1.5 -sOutputFile=out.pdf in.pdf"\n'
+                .. '** usually eliminates this warning with no ill effects.\n'
+                .. '** If that does not work, try 1.3 instead of 1.5 (note\n'
+                .. '** that 1.3 may affect output quality and file size).',
+      ["found PDF version %b<>, but at most version %b<> allowed"] =
+                   "** The message above is usually harmless;\n"
+                .. "** you may want to add \\pdfminorversion=7 (pdflatex) or\n"
+                .. "** \\pdfvariable minorversion 7 (lualatex) before\n"
+                .. "** \\documentclass in your document.",
+      ["I've expected \\MT_cramped_internal:Nn to have\nthe meaning"] =
+                   "** The message above indicates a bug that was fixed\n"
+                .. "** in version 1.26 of package mathtools together with\n"
+                .. "** version 1.10 of package lualatex-math (both from\n"
+                .. "** March/2021).",
+      ["Unable to apply patch `footnote' on input line"] =
+                   "** The message above indicates a bug in microtype\n"
+                .. "** fixed in version 3.0e (from June/2022)."
+  }
+
+  for msgtext, tip in pairs(tips) do
+      if string.find(formatted, msgtext) or string.find(msg.content, msgtext) then
+          msg.content = msg.content .. "\n** texlogsieve tip:\n" .. tip
+      end
+  end
+end
+
+
 function processMessage(msg)
   SHOULD_RERUN_LATEX = SHOULD_RERUN_LATEX or msg:checkMatch(msg.rerunMessages)
 
   adjustSeverity(msg)
+
+  if TIPS then addTip(msg) end
 
   if ONLY_SUMMARY or PAGE_DELAY then
       heartbeat:tick()
@@ -2712,6 +2767,8 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   '^Lua module: microtype ' .. datepat .. ' %S+ microtype module%.',
 
+  '^luaotfload | main : initialization completed in [%d.]+ seconds',
+
   '^luaotfload | init : Context OpenType loader version.*',
 
   '^luaotfload | init : Loading fontloader '
@@ -2731,6 +2788,7 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   '^Lua%-only attribute.-=%s*%S+',
   "^Inserting %b`' at position .- in %b`'%.",
+  "^Inserting %b`' in %b`'%.",
   "^Removing +%b`' from %b`'%.",
 
   "^For additional information on amsmath, use the `%?' option%.",
@@ -2791,6 +2849,21 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^Lua module: luaotfload%-multiscript ' .. datepat
                    .. ' [%d%.]+ luaotfload submodule / multiscript',
 
+  '^Lua module: luaotfload%-harf%-define ' .. datepat
+                   .. ' [%d%.]+ luaotfload submodule / database',
+
+  '^Lua module: luaotfload%-script ' .. datepat
+                   .. ' [%d%.]+ luaotfload submodule / Script helpers',
+
+  '^Lua module: luaotfload%-harf%-plug ' .. datepat
+                   .. ' [%d%.]+ luaotfload submodule / database',
+
+  '^Lua module: luaotfload%-fallback ' .. datepat
+                   .. ' [%d%.]+ luaotfload submodule / fallback',
+
+  '^Lua module: luaotfload%-tounicode ' .. datepat
+                   .. ' [%d%.]+ luaotfload submodule / tounicode',
+
   '^' .. string.rep('%*', 37) .. '\n'
       .. '%* Using libertinus math %*\n'
       .. string.rep('%*', 37),
@@ -2831,6 +2904,9 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   -- refcheck
   '^options: showrefs, showcites, msgs, chckunlbld',
+
+  "^`newtxtext' v[%d%.]+, " .. datepat .. " Text macros taking advantage of "
+              .. "TeXGyre Termes and its extensions %(msharpe%)",
 }
 
 
@@ -2848,6 +2924,8 @@ anywhereDebugStringsHandler.patterns = {
   '^%s*ABD: EverySelectfont initializing macros',
   '^%s*ABD: EveryShipout initializing macros',
 
+  '^%s*<<.-%.cmap>>',
+
   '^%s*' .. string.rep('%*', 65) .. '%s*\n'
          .. 'GFS%-Solomos style file by A%. Tsolomitis%s*\n'
          .. string.rep('%*', 65),
@@ -2855,7 +2933,6 @@ anywhereDebugStringsHandler.patterns = {
   -- <blah.jpg, id=555, [...,] 722.7pt x 722.7pt>
   '^%s*%<' .. filepat .. ', id=.- [%d%.]+pt x [%d%.]+pt%>',
   '^%s*%<use ' .. filepat .. '%>', -- <use blah.jpg>
-  '^%s*%<' .. filepat .. '%>', -- <blah.jpg>
 
   "^%s*`Fixed Point Package', .- %(C%) Michael Mehlich",
 
@@ -2900,6 +2977,7 @@ beginningOfLineInfoStringsHandler.patterns = {
   "^%*geometry%* driver:.*",
   "^%*geometry%* detected driver:.*",
   "^Driver file for pgf:.*%.def",
+  "^Package pgfplots: loading complementary utilities for your pgf version%.%.%.",
   "^%s*file:line:error style messages enabled%.",
   "^Applying: %b[] float order in 2%-column on input line .-%.",
   "^Already applied: %b[] float order in 2%-column on input line .-%.",
@@ -2973,6 +3051,8 @@ beginningOfLineInfoStringsHandler.patterns = {
    .. '======================================================================',
   "^Label %b`' newly defined as it shall be overriden\n"
    .. "although it is yet undefined",
+
+   '^%* %* %* LNI %* %* %*',
 }
 
 
@@ -2988,22 +3068,27 @@ anywhereInfoStringsHandler.patterns = {
   "^%s*German Hyphenation Patterns %(Traditional Orthography%) "
                             .. "`dehyphts?%-x' " .. datepat .. " %(WL%)",
 
-  '^%s*UTF%-8 German hyphenation patterns %(traditional orthography%)',
-  '^%s*EC German hyphenation patterns %(traditional orthography%)',
-  '^%s*German Hyphenation Patterns %(Traditional Orthography%)',
+  '^%s*UTF%-8 German hyphenation patterns %(.- orthography%)',
+  '^%s*EC German hyphenation patterns %(.- orthography%)',
+  '^%s*German Hyphenation Patterns %(.- Orthography%)',
 
-  "^%s*Swiss%-German Hyphenation Patterns %(Traditional Orthography%) "
+  "^%s*Swiss%-German Hyphenation Patterns %(.- Orthography%) "
                             .. "`dehyphts?%-x' " .. datepat .. " %(WL%)",
 
-  '^%s*UTF%-8 Swiss%-German hyphenation patterns %(traditional orthography%)',
-  '^%s*EC Swiss%-German hyphenation patterns %(traditional orthography%)',
-  '^%s*Swiss%-German Hyphenation Patterns %(Traditional Orthography%)',
+  "^%s*German Hyphenation Patterns %(.- Orthography.-%) "
+                            .. "`dehyphn%-x' " .. datepat .. " %(WL%)",
+
+  '^%s*UTF%-8 Swiss%-German hyphenation patterns %(.- orthography%)',
+  '^%s*EC Swiss%-German hyphenation patterns %(.- orthography%)',
+  '^%s*Swiss%-German Hyphenation Patterns %(.- Orthography%)',
+  "^%s*dehyph%-exptl: using a TeX engine with native UTF%-8 support%.",
 
   '^%s*ASCII Hyphenation patterns for American English',
   '^%s*UTF%-8 %S+ hyphenation patterns',
   '^%s*EC %S+ hyphenation patterns',
 
-  "^%s*<Requested QR version '[^']+' is too small for desired text%.%s?Version increased to '[^']+' to fit text%.>",
+  "^%s*<Requested QR version '[^']+' is too small for desired "
+              .. "text%.%s?Version increased to '[^']+' to fit text%.>",
 
 }
 
@@ -3051,6 +3136,9 @@ beginningOfLineWarningStringsHandler.patterns = {
   '^%*%* WARNING: \\IEEEPARstart is locked out for technotes %(line %S+%)%.',
   '^%*%* WARNING: %S+ is locked out when in conference mode %(line %S+%)%.',
   '^%*%* ATTENTION: %S+ is deprecated %(line %S+%)%. Use %S+ instead%.',
+
+  '^%a+TeX warning: %a+tex %(file ' .. filepat .. '%): PDF inclusion: '
+               .. 'multiple pdfs with page group included in a single page',
 }
 
 
@@ -3964,6 +4052,92 @@ function closeSquareBracketHandler:doit()
       msg.physicalPage = numShipouts
       dispatch(msg)
   end
+end
+
+-- During a shipout, TeX sometimes puts some filenames inside a pair of
+-- "{}" or "<>" characters. Since there are no other messages inside these
+-- opening and closing characters, this handler may be simple: find the
+-- opening character and unwrap lines until finding the closing character.
+-- We even check for "{<" and "}>" at the same time, without verifying if
+-- they are actually paired, because they really should be.
+shipoutFilesHandler = HandlerPrototype:new()
+shipoutFilesHandler.strictPattern = "^(%s*)[%{%<]"
+shipoutFilesHandler.loosePattern = "%s*[%{%<]"
+shipoutFilesHandler.pattern = shipoutFilesHandler.strictPattern
+shipoutFilesHandler.closingPattern = "[%}%>]"
+
+-- Read the comment right before "closeParensHandler:lookahead()"
+--
+-- This handler only processes stuff if there is a pending shipout in the
+-- shipouts stack. However, we cannot check for this in lookahead() because
+-- the shipout may not have been processed yet. As a result, lookahead()
+-- may answer "yes" when in reality the handler won't do anything. This has
+-- a nasty consequence: if there is a { or < character at the beginning
+-- of a line, doit() may not handle it, but lookahead() may answer "yes",
+-- causing an endless loop. We solve this by answering "yes" ONLY if the
+-- open character is NOT at the beginning of the line.
+function shipoutFilesHandler:lookahead()
+  local line = Lines:get(0)
+  if line == nil then return false, {} end
+
+  local first = string.find(line, self.loosePattern)
+  if first == nil then return false, {} end
+
+  local strictFirst = string.find(line, self.pattern)
+  if first == strictFirst then return false, {} end
+
+  return true, {first = first}
+end
+
+function shipoutFilesHandler:canDoit(position)
+  if position == nil then position = 0 end
+  local line = Lines:get(position)
+  if line == nil then return false, {} end
+  if position == 0 and shipouts:size() == 0 then return false, {} end
+
+  local first, last = string.find(line, self.pattern)
+  if first == nil then return false, {} end
+
+  return true, {first = first}
+end
+
+function shipoutFilesHandler:doit()
+  local myTurn, data = self:canDoit()
+  if not myTurn then return false end
+
+  -- Look for the matching close character. It really
+  -- should be there and there should not be any nesting,
+  -- so no need to be overly cautious.
+  local last
+  for i = 0, 4 do -- 4 lines ahead is plenty!
+      line = Lines:get(i)
+      if line == nil then break end
+      _, last = string.find(line, self.closingPattern)
+      if last ~= nil then break end
+  end
+  if last == nil then return false end -- should never happen
+
+  local _, last, spaces = string.find(Lines.current, self.pattern)
+  unrecognizedBuffer = unrecognizedBuffer .. spaces
+
+  -- skip the spaces and the opening character
+  Lines:handledChars(last)
+  flushUnrecognizedMessages()
+
+  _, last = string.find(Lines.current, self.closingPattern)
+  while last == nil do
+      Lines:unwrapOneLine()
+      _, last = string.find(Lines.current, self.closingPattern)
+  end
+
+  local msg = shipoutFilesMessage:new()
+  msg.content = "Loading file at shipout: "
+  -- "-1" so that we do not include the closing character
+  msg.content = msg.content .. string.sub(Lines.current, 1, last -1)
+  Lines:handledChars(last)
+  dispatch(msg)
+
+  return true
 end
 
 
@@ -4940,6 +5114,8 @@ function unusedLabelMessage:toSummary()
   unusedLabelsSummary:add(self)
 end
 
+shipoutFilesMessage = Message:new()
+shipoutFilesMessage.severity = DEBUG
 
 --[[ ##################################################################### ]]--
 --[[ ############################ SUMMARIES ############################## ]]--
