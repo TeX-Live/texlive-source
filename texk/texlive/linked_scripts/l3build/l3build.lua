@@ -1,3 +1,5 @@
+#!/usr/bin/env texlua
+
 --[[
 
 File l3build.lua Copyright (C) 2014-2022 The LaTeX Project
@@ -23,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-12-12"
+release_date = "2023-12-13-2"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
