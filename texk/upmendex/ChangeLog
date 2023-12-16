@@ -1,3 +1,14 @@
+2023-12-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.08  Stable version.
+	* configure.ac: Bump version.
+	* sort.c: Warn if remaining buffer is small for custom collation rules
+	when "icu_locale" and "icu_rules" are specified in style file.
+	Add CJK Unified Ideograph Extension I in Unicode 15.1.
+	It works with ICU 74.1 or later.
+	* tests/upmendex.test, tests/locale3.ist, tests/locale3-rule.ind,
+	Makefile.am: Update tests.
+
 2023-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/upmendex.test:

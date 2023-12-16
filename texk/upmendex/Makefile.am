@@ -70,7 +70,8 @@ EXTRA_DIST += tests/foo.idx tests/foo.ind \
 	tests/romalpC.idx tests/romalpC-5.ind \
 	tests/romalpD.idx tests/romalpD-5.ind tests/romalpD-6.ind tests/romalpD-7.ind
 DISTCLEANFILES = foo.* uni.* range*.* pprec*.* romalp*.*
-EXTRA_DIST += tests/locale1.ist tests/locale2.ist tests/rule.idx \
-	tests/attr1.ist tests/attr1.ind tests/locale1.ind tests/locale2-rule.ind \
+EXTRA_DIST += tests/locale1.ist tests/locale2.ist tests/locale3.ist tests/rule.idx \
+	tests/attr1.ist tests/attr1.ind tests/locale1.ind \
+	tests/locale2-rule.ind tests/locale3-rule.ind \
 	tests/rule1.ist tests/rule2.ist tests/rule3.ist tests/rule4.ist rule.ind
 DISTCLEANFILES += locale*.* attr*.* rule*.*

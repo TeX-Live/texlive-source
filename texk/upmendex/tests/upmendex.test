@@ -1,5 +1,6 @@
 #! /bin/sh -vx
 # $Id$
+# Copyright 2021-2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
@@ -126,6 +127,10 @@ fi
 $_upmendex -s $srcdir/tests/uni.ist -s $srcdir/tests/locale2.ist -s $srcdir/tests/rule1.ist $srcdir/tests/rule.idx \
 	-o locale2-rule1.ind1 -t locale2-rule1.ilg \
 	&& diff $srcdir/tests/locale2-rule.ind locale2-rule1.ind1 || rc=55
+
+$_upmendex -s $srcdir/tests/uni.ist -s $srcdir/tests/locale3.ist -s $srcdir/tests/rule1.ist $srcdir/tests/rule.idx \
+	-o locale3-rule1.ind1 -t locale3-rule1.ilg \
+	&& diff $srcdir/tests/locale3-rule.ind locale3-rule1.ind1 || rc=56
 
 
 exit $rc
