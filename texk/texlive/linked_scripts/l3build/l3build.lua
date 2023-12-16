@@ -9,7 +9,7 @@ LaTeX Project Public License (LPPL), either version 1.3c of this
 license or (at your option) any later version.  The latest version
 of this license is in the file
 
-   http://www.latex-project.org/lppl.txt
+   https://www.latex-project.org/lppl.txt
 
 This file is part of the "l3build bundle" (The Work in LPPL)
 and all files in that bundle must be distributed together.
@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-12-13-2"
+release_date = "2023-12-15"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
