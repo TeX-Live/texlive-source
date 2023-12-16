@@ -7,8 +7,7 @@ BinDir=${BinDir:-.}
 ExeExt=${ExeExt:-}
 _bibtexu=$BinDir/bibtexu$ExeExt
 
-test -d tests || mkdir tests
-test -d tests || exit 1
+test -d tests || mkdir -p tests
 
 LC_ALL=C; export LC_ALL; LANGUAGE=C; export LANGUAGE
 #
@@ -54,20 +53,5 @@ diff $srcdir/tests/charu.bbl tests/xcharu.bbl || rc=12
 cp $srcdir/tests/nameu.aux tests/xnameu.aux
 max_print_line=119 $_bibtexu tests/xnameu || rc=13
 diff $srcdir/tests/nameu.bbl tests/xnameu.bbl || rc=14
-
-## test for is.knj.str$
-
-DIFF="diff"; icuver=0
-$_bibtexu --version | grep "ICU version 70" && icuver=70
-if [ $icuver -eq 70 ]; then
-  # skip CJK Ideograph Extension H
-  # U+31350 -> \360\261\215\220
-  uchr='\360\261\215\220'
-  DIFF="diff --ignore-matching-lines="`printf "${uchr}"`
-  echo "*** skip checking CJK Ideograph Extension H"
-fi
-cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
-$_bibtexu tests/xiscjku || rc=15
-$DIFF $srcdir/tests/iscjku.bbl tests/xiscjku.bbl || rc=16
 
 exit $rc

@@ -1,3 +1,14 @@
+2023-12-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Bump version to 4.02 (16 dec 2023).
+	* bibtex-4.c:
+	Support characters defined by Unicode 15.1.
+	It works with ICU 74.1 or later.
+	* tests/bibtexu-{char,iscjk}.test,
+	tests/iscjku.bbl, tests/testiscjku.bib, Makefile.am:
+	Update tests.
+
 2023-08-30  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/{bibtex8u-mem,bibtexu-char}.test:

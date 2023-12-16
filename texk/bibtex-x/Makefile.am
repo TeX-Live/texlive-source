@@ -94,7 +94,8 @@ bibtex8_tests = tests/bibtex8.test tests/bibtex8u-mem.test \
                 tests/bibtex8-sort.test tests/bibtex8-char.test
 bibtexu_tests = tests/bibtexu.test tests/bibtexu-basic.test \
                 tests/bibtexu-range.test tests/bibtexu-yannis.test \
-                tests/bibtexu-sort.test tests/bibtexu-char.test
+                tests/bibtexu-sort.test tests/bibtexu-char.test \
+                tests/bibtexu-iscjk.test
 
 TESTS =
 if BIBTEX8
@@ -166,15 +167,17 @@ EXTRA_DIST += tests/periodu.aux tests/periodu.bbl tests/testperiodu.bib \
 	tests/txtprfxu.aux tests/txtprfxu.bbl \
 	tests/widthu.aux tests/widthu.bbl tests/testwidthu.bib \
 	tests/charu.aux tests/charu.bbl tests/testcharu.bib \
-	tests/nameu.aux tests/nameu.bbl tests/mlgbib.bib \
-	tests/iscjku.aux tests/iscjku.bbl tests/testiscjku.bib tests/testiscjk.bst
+	tests/nameu.aux tests/nameu.bbl tests/mlgbib.bib
 DISTCLEANFILES += tests/xperiodu.aux tests/xperiodu.bbl tests/xperiodu.blg \
 	tests/xsubstru.aux tests/xsubstru.bbl tests/xsubstru.blg \
 	tests/xtxtprfxu.aux tests/txtprfxu.bbl tests/xtxtprfxu.blg \
 	tests/xwidthu.aux tests/widthu.bbl tests/xwidthu.blg \
 	tests/xcharu.aux tests/xcharu.bbl tests/xcharu.blg \
-	tests/xnameu.aux tests/xnameu.bbl tests/xnameu.blg \
-	tests/xiscjku.aux tests/xiscjku.bbl tests/xiscjku.blg
+	tests/xnameu.aux tests/xnameu.bbl tests/xnameu.blg
+##
+## tests/bibtexu-iscjk.test
+EXTRA_DIST += tests/iscjku.aux tests/iscjku.bbl tests/testiscjku.bib tests/testiscjk.bst
+DISTCLEANFILES += tests/xiscjku.aux tests/xiscjku.bbl tests/xiscjku.blg
 
 ## Not used
 ##
