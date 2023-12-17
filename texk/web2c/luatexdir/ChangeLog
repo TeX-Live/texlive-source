@@ -1,3 +1,10 @@
+2023-12-17  Karl Berry  <karl@freefriends.org>
+
+	* tex/mainbody.c (close_files_and_terminate): complain if
+	more than 2^16 pages in DVI mode, since DVI format is limited
+	to that many. Report from Nasser Abbasi for tex4ht:
+	https://puszcza.gnu.org.ua/bugs/?618
+
 2023-11-20  Karl Berry  <karl@freefriends.org>
 
 	* luazlib/lzlib.c: relax zlib version check to just checking

@@ -650,6 +650,16 @@ void close_files_and_terminate(void)
         }
     }
     wake_up_terminal();
+    /* DVI format only supports 2^16 pages. If we have more than that,
+       give an error. Original TeX does not, but nowadays people might
+       have larger files, especially with tex4ht, which makes profligate
+       use of pages, so it's useful to explicitly complain.
+    */
+    if (get_o_mode() == OMODE_DVI && total_pages > 65536) {
+        formatted_error("dvi backend",
+          "more than 65536 pages is unsupported: %d", total_pages);
+        history = fatal_error_stop;
+    }
     /*tex
         Rubish, these \PDF arguments, passed, needs to be fixed, e.g. with a
         dummy in \DVI.
