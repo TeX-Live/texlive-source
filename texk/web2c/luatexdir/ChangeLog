@@ -1,18 +1,25 @@
-2023-12-17  Karl Berry  <karl@freefriends.org>
+2023-12-21  Luigi Scarso <luigi.scarso@gmail.com> 
+        * LuaTeX 1.17.1	
+        * New commandline switch --[no-]check-dvi-total-pages  exit when DVI exceeds 65535 pages (default: check).
+          This breaks backward compatibility.
 
-	* tex/mainbody.c (close_files_and_terminate): complain if
-	more than 2^16 pages in DVI mode, since DVI format is limited
-	to that many. Report from Nasser Abbasi for tex4ht:
-	https://puszcza.gnu.org.ua/bugs/?618
 
 2023-11-20  Karl Berry  <karl@freefriends.org>
 
-	* luazlib/lzlib.c: relax zlib version check to just checking
-	the major version, since (it turns out) zlib 1.3 is compatible
-	with 1.2.
-	https://github.com/TeX-Live/texlive-source/pull/62
-	https://lists.debian.org/debian-tex-maint/2010/06/msg00074.html
-	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=581818
+        * luazlib/lzlib.c: relax zlib version check to just checking
+        the major version, since (it turns out) zlib 1.3 is compatible
+        with 1.2.
+        https://github.com/TeX-Live/texlive-source/pull/62
+        https://lists.debian.org/debian-tex-maint/2010/06/msg00074.html
+        https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=581818
+
+2023-11-05  Luigi Scarso <luigi.scarso@gmail.com> 
+	* New binding for in_name_ok, out_name_ok from kpathsea. 
+	* When status.kpse_used = 1 io.open checks if the filename is ok
+          with in_name_ok or out_name_ok.
+
+2023-11-02  Luigi Scarso <luigi.scarso@gmail.com> 
+	* Fix for dubious cff fonts (not following the 1000 unit recommendation) (Hans Hagen).
 
 2023-10-04  Karl Berry  <karl@freefriends.org>
 
