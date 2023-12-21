@@ -1,3 +1,8 @@
+2023-12-21  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_COMMON): remove AC_HEADER_STDC, an obsolete
+	no-op as of autoconf 2.70.
+
 2023-06-18  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (KPSE_BASIC, KPSE_COMMON): more tldbg.

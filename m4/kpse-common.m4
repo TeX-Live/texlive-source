@@ -257,7 +257,6 @@ AC_SYS_LARGEFILE
 AC_FUNC_FSEEKO
 dnl
 AC_HEADER_DIRENT
-AC_HEADER_STDC
 AC_FUNC_CLOSEDIR_VOID
 AC_CHECK_HEADERS([assert.h float.h limits.h pwd.h stdlib.h sys/param.h])
 dnl
