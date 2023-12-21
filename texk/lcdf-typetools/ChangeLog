@@ -1,3 +1,11 @@
+2023-12-21  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_CONFIG_FILES): write out all the
+	<subdir>/Makefile values separately (as the original configure.ac
+	does), instead of using an m4_foreach_w loop. Automake has given
+	an error with the creation via the loop for many versions now, and
+	we just never noticed.
+
 2023-09-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import lcdf-typetools-2.110.

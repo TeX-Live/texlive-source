@@ -3,7 +3,7 @@
 # This "reautoconf" script at the root of the TeX Live source tree 
 # runs autoreconf (from PATH) in all relevant TL directories.
 #
-# Copyright 2008-2021 Karl Berry.
+# Copyright 2008-2023 Karl Berry.
 # Copyright 2004-2009 Peter Breitenlohner.
 # Copyright 2005 Olaf Weber.
 #
@@ -29,7 +29,7 @@ usage="Usage: $0 [OPTION]... [DIR]...
   By default, also pass -Wno-obsolete, because Autoconf 2.70
   and later deprecated many widely used macros. See Build/m4/README for
   a lengthy discussion of this. To see the obsolete warnings (perhaps
-  because you want to spend time fixing them), use --warn-obsolete here.
+  because you want to spend time fixing them), use --warn-obsolete.
 
 Options:
   -h, --help      display this help and exit successfully
@@ -104,10 +104,12 @@ ACLOCAL=$TL_ACLOCAL
 export AUTOCONF AUTOHEADER AUTOMAKE ACLOCAL
 
 do_it () {
+  test x"$do_say" = x: || printf "\f "
   $do_say "$0: running \"$@\""
   $do_cmd "$@"
   if test $? -ne 0; then
-    echo "exit status of $*: $?" >&2
+    echo "$0: goodbye, exit status of $*: $?" >&2
+    exit 1
   fi
 }
 
@@ -116,7 +118,7 @@ if test "x$list" = x; then
         `find libs utils texk -type d -name ac | sed 's,/ac\$,,'`"
 fi
 
-# Autoreconf in all directories
+# Run autoreconf in all directories.
 for dir in $list; do
 
   if test ! -d "$dir"; then

@@ -1,3 +1,7 @@
+2023-12-21  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf (do_it): abort the run if any command fails.
+
 2023-02-25  Karl Berry  <karl@tug.org>
 
 	* Build: show full uname -a.
