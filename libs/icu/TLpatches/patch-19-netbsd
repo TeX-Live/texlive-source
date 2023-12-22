@@ -2,8 +2,8 @@
 	From: Marc Baudoin <babafou@babafou.eu.org>
 	tlbuild
 
---- source/common/uposixdefs.h~	2022-10-18 17:53:21.000000000 -0700
-+++ source/common/uposixdefs.h	2023-01-07 15:09:54.231770013 -0800
+--- source/common/uposixdefs.h~	2023-12-11 14:27:41.000000000 -0800
++++ source/common/uposixdefs.h	2023-12-22 09:06:04.056017024 -0800
 @@ -75,3 +75,7 @@
  #endif
  

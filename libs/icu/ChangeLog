@@ -1,3 +1,8 @@
+2023-12-22  Karl Berry  <karl@freefriends.org>
+
+	* Import 74.2.
+	(version.ac): update.
+
 2023-01-07  Karl Berry  <karl@freefriends.org>
 
 	* Import 72.1.

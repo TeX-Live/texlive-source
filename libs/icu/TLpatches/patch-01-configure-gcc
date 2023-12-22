@@ -1,8 +1,8 @@
 	For TL, we do not want to prefer clang(++) for ICU
 	when the whole rest of the tree prefers gcc.
 
---- source/configure~	2022-10-18 17:53:21.000000000 -0700
-+++ source/configure	2023-01-07 15:09:32.437894684 -0800
+--- source/configure~	2023-12-11 14:27:41.000000000 -0800
++++ source/configure	2023-12-22 09:03:59.452738354 -0800
 @@ -2925,5 +2925,5 @@
  ac_compiler_gnu=$ac_cv_c_compiler_gnu
  if test -n "$ac_tool_prefix"; then
