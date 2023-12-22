@@ -1,5 +1,17 @@
 2023-12-21  Karl Berry  <karl@freefriends.org>
 
+	* configure.ac: do not [quote] kpse_otftotfm_auto_opts,
+	to avoid running together 
+	HAVE_AUTO_CFFTOT1_T1DOTLESSJ_TTFTOTYPE42_UPDMAP
+	in autoconf.h.in, which ultimately causes tfm.test to fail.
+	See thread starting at:
+	https://lists.gnu.org/archive/html/bug-autoconf/2023-12/msg00166.html
+	Original lcdf-typetools-src/configure.ac does not quote it, either.
+	* ac/lcdf-typetools.ac: use m4_foreach_w instead of the obsolete
+	AC_FOREACH.
+
+2023-12-21  Karl Berry  <karl@freefriends.org>
+
 	* configure.ac (AC_CONFIG_FILES): write out all the
 	<subdir>/Makefile values separately (as the original configure.ac
 	does), instead of using an m4_foreach_w loop. Automake has given

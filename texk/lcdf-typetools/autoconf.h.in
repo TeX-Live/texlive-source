@@ -12,7 +12,7 @@
 /* Define if the va_list type is addressable. */
 #undef HAVE_ADDRESSABLE_VA_LIST
 
-/* Define to incldue Adobe code in output fonts. */
+/* Define to include Adobe code in output fonts. */
 #undef HAVE_ADOBE_CODE
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */

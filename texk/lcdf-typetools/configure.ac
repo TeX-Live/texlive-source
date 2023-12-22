@@ -300,7 +300,7 @@ m4_foreach_w([Kpse_Prog],[kpse_lcdf_typetools_progs],[test "x$enable_[]Kpse_Prog
 ])
 AC_SUBST(SELECTED_SUBDIRS)
 
-m4_foreach_w([Kpse_Opt],[kpse_otftotfm_auto_opts],[AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
+m4_foreach_w([Kpse_Opt],kpse_otftotfm_auto_opts,[AS_IF([test "x$enable_auto_]Kpse_Opt[" != xno],
                   [AC_DEFINE([HAVE_AUTO_]AS_TR_CPP(Kpse_Opt), 1,
                              [Define to run ]Kpse_Opt[ from otftotfm.])])
 ])
