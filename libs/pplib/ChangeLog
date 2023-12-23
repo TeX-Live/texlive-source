@@ -1,3 +1,11 @@
+2023-12-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pplib-src/src/util/README.md,
+	pplib-src/doc/{ppapi-{1,2}.x,ppcode,pplib,ppnew}.rst,
+	pplib-src/doc/_build/html/_source/{ppapi-{1,2}.x,ppcode,pplib,ppnew}.rst.txt,
+	doc/_build/html/_static/pygments.css, .gitattributes:
+	Convert newline from CRLF to LF.
+
 2023-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pplib.test: Make easier to test on Windows.

@@ -2,9 +2,7 @@
 *.h text=auto eol=lf
 Makefile text=auto eol=lf
 
-*.rst binary
 *.png binary
 *.jpg binary
-*.css binary
 *.html binary
 *.js binary
