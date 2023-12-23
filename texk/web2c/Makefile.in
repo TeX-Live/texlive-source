@@ -125,10 +125,10 @@ TESTS = tangle.test $(am__EXEEXT_45) ctiedir/ctie.test \
 	$(am__append_34) $(am__append_42) $(am__append_55) \
 	$(am__append_56) $(am__append_58) $(am__append_62) \
 	$(am__EXEEXT_46) $(am__append_68) $(am__append_73) \
-	$(am__append_76) $(am__append_79) $(am__append_84) \
-	$(am__append_87) $(am__append_108) $(am__append_109) \
-	$(am__append_110) $(am__append_111) $(am__append_119) \
-	$(am__append_121) $(am__append_123) $(am__append_150) \
+	$(am__append_76) $(am__append_81) $(am__append_86) \
+	$(am__append_89) $(am__append_110) $(am__append_111) \
+	$(am__append_112) $(am__append_113) $(am__append_121) \
+	$(am__append_123) $(am__append_125) $(am__append_152) \
 	libmd5/md5.test
 @WEB_TRUE@am__append_1 = $(web_programs)
 @WEB_TRUE@am__append_2 = $(web_tests)
@@ -212,135 +212,137 @@ TESTS = tangle.test $(am__EXEEXT_45) ctiedir/ctie.test \
 @UPWEB_TRUE@am__append_76 = $(upweb_tests)
 @EUPTEX_TRUE@am__append_77 = euptex
 @EUPTEX_TRUE@@UPTEX_FALSE@am__append_78 = euptex$(EXEEXT):uptex
-@EUPTEX_TRUE@am__append_79 = $(euptex_tests)
-@EUPTEX_TRUE@am__append_80 = euptrip.diffs
-@EUPTEX_TRUE@am__append_81 = euptrip-clean
-@HITEX_TRUE@am__append_82 = hitex hishrink histretch
-@HITEX_TRUE@am__append_83 = himktables
-@HITEX_TRUE@am__append_84 = $(hitex_tests)
-@MINGW32_TRUE@am__append_85 = \
+@EPTEX_FALSE@@EUPTEX_TRUE@am__append_79 = euptex$(EXEEXT):eptex
+@EPTEX_FALSE@@EUPTEX_TRUE@@PTEX_FALSE@am__append_80 = euptex$(EXEEXT):ptex
+@EUPTEX_TRUE@am__append_81 = $(euptex_tests)
+@EUPTEX_TRUE@am__append_82 = euptrip.diffs
+@EUPTEX_TRUE@am__append_83 = euptrip-clean
+@HITEX_TRUE@am__append_84 = hitex hishrink histretch
+@HITEX_TRUE@am__append_85 = himktables
+@HITEX_TRUE@am__append_86 = $(hitex_tests)
+@MINGW32_TRUE@am__append_87 = \
 @MINGW32_TRUE@	pdftexdir/regex/regex.c \
 @MINGW32_TRUE@	pdftexdir/regex/regex.h
 
-@PDFTEX_TRUE@am__append_86 = pdftex ttf2afm pdftosrc
-@PDFTEX_TRUE@am__append_87 = $(pdftex_tests) $(ttf2afm_tests) \
+@PDFTEX_TRUE@am__append_88 = pdftex ttf2afm pdftosrc
+@PDFTEX_TRUE@am__append_89 = $(pdftex_tests) $(ttf2afm_tests) \
 @PDFTEX_TRUE@	$(pdftosrc_tests)
-@LUATEX_TRUE@am__append_88 = luatex
-@LUATEX_TRUE@@WIN32_TRUE@am__append_89 = call_luatex
-@LUATEX_TRUE@@WIN32_TRUE@am__append_90 = install-luatex-links
-@LUATEX_TRUE@@WIN32_TRUE@am__append_91 = uninstall-luatex-links
-@LUATEX_TRUE@@WIN32_FALSE@am__append_92 = luatex$(EXEEXT):texlua luatex$(EXEEXT):texluac
-@LUAHBTEX_TRUE@am__append_93 = luahbtex
-@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_94 = call_luahbtex
-@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_95 = install-luahbtex-links
-@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_96 = uninstall-luahbtex-links
+@LUATEX_TRUE@am__append_90 = luatex
+@LUATEX_TRUE@@WIN32_TRUE@am__append_91 = call_luatex
+@LUATEX_TRUE@@WIN32_TRUE@am__append_92 = install-luatex-links
+@LUATEX_TRUE@@WIN32_TRUE@am__append_93 = uninstall-luatex-links
+@LUATEX_TRUE@@WIN32_FALSE@am__append_94 = luatex$(EXEEXT):texlua luatex$(EXEEXT):texluac
+@LUAHBTEX_TRUE@am__append_95 = luahbtex
+@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_96 = call_luahbtex
+@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_97 = install-luahbtex-links
+@LUAHBTEX_TRUE@@WIN32_TRUE@am__append_98 = uninstall-luahbtex-links
 # keep texlua[c] as links to luatex unless luatex is not installed.
-@LUAHBTEX_TRUE@@LUATEX_FALSE@@WIN32_FALSE@am__append_97 = luahbtex$(EXEEXT):texlua luahbtex$(EXEEXT):texluac
-@LUAJITTEX_TRUE@am__append_98 = luajittex
-@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_99 = call_luajittex
-@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_100 = install-luajittex-links
-@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_101 = uninstall-luajittex-links
-@LUAJITTEX_TRUE@@WIN32_FALSE@am__append_102 = luajittex$(EXEEXT):texluajit luajittex$(EXEEXT):texluajitc
-@LUAJITHBTEX_TRUE@am__append_103 = luajithbtex
-@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_104 = call_luajithbtex
-@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_105 = install-luajithbtex-links
-@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_106 = uninstall-luajithbtex-links
+@LUAHBTEX_TRUE@@LUATEX_FALSE@@WIN32_FALSE@am__append_99 = luahbtex$(EXEEXT):texlua luahbtex$(EXEEXT):texluac
+@LUAJITTEX_TRUE@am__append_100 = luajittex
+@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_101 = call_luajittex
+@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_102 = install-luajittex-links
+@LUAJITTEX_TRUE@@WIN32_TRUE@am__append_103 = uninstall-luajittex-links
+@LUAJITTEX_TRUE@@WIN32_FALSE@am__append_104 = luajittex$(EXEEXT):texluajit luajittex$(EXEEXT):texluajitc
+@LUAJITHBTEX_TRUE@am__append_105 = luajithbtex
+@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_106 = call_luajithbtex
+@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_107 = install-luajithbtex-links
+@LUAJITHBTEX_TRUE@@WIN32_TRUE@am__append_108 = uninstall-luajithbtex-links
 # keep texluajit[c] as links to luajittex unless luajittex is not installed.
-@LUAJITHBTEX_TRUE@@LUAJITTEX_FALSE@@WIN32_FALSE@am__append_107 = luajithbtex$(EXEEXT):texluajit luajithbtex$(EXEEXT):texluajitc
-@LUATEX_TRUE@am__append_108 = $(luatex_tests)
-@LUAHBTEX_TRUE@am__append_109 = $(luahbtex_tests)
-@LUAJITTEX_TRUE@am__append_110 = $(luajittex_tests)
-@LUAJITHBTEX_TRUE@am__append_111 = $(luajithbtex_tests)
-@XETEX_TRUE@am__append_112 = xetex
-@XETEX_MACOSX_TRUE@am__append_113 = -DXETEX_MAC
-@XETEX_MACOSX_TRUE@am__append_114 = -std=c++11
-@XETEX_MACOSX_FALSE@am__append_115 = $(FONTCONFIG_INCLUDES)
-@XETEX_MACOSX_FALSE@am__append_116 = $(FONTCONFIG_LIBS)
-@XETEX_MACOSX_TRUE@am__append_117 = \
+@LUAJITHBTEX_TRUE@@LUAJITTEX_FALSE@@WIN32_FALSE@am__append_109 = luajithbtex$(EXEEXT):texluajit luajithbtex$(EXEEXT):texluajitc
+@LUATEX_TRUE@am__append_110 = $(luatex_tests)
+@LUAHBTEX_TRUE@am__append_111 = $(luahbtex_tests)
+@LUAJITTEX_TRUE@am__append_112 = $(luajittex_tests)
+@LUAJITHBTEX_TRUE@am__append_113 = $(luajithbtex_tests)
+@XETEX_TRUE@am__append_114 = xetex
+@XETEX_MACOSX_TRUE@am__append_115 = -DXETEX_MAC
+@XETEX_MACOSX_TRUE@am__append_116 = -std=c++11
+@XETEX_MACOSX_FALSE@am__append_117 = $(FONTCONFIG_INCLUDES)
+@XETEX_MACOSX_FALSE@am__append_118 = $(FONTCONFIG_LIBS)
+@XETEX_MACOSX_TRUE@am__append_119 = \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontInst_Mac.cpp \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontInst_Mac.h \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontMgr_Mac.mm \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeXFontMgr_Mac.h \
 @XETEX_MACOSX_TRUE@	xetexdir/XeTeX_mac.c
 
-@XETEX_MACOSX_FALSE@am__append_118 = \
+@XETEX_MACOSX_FALSE@am__append_120 = \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.cpp \
 @XETEX_MACOSX_FALSE@	xetexdir/XeTeXFontMgr_FC.h
 
-@XETEX_TRUE@am__append_119 = $(xetex_tests)
-@OTANGLE_TRUE@am__append_120 = $(omegaware_programs)
-@OTANGLE_TRUE@am__append_121 = $(OTANGLE_tests) $(OMFONTS_tests)
-@ALEPH_TRUE@am__append_122 = aleph
-@ALEPH_TRUE@am__append_123 = $(aleph_tests)
-@SYNCTEX_TRUE@am__append_124 = synctex
-@SYNCTEX_TRUE@am__append_125 = $(LTLIBSYNCTEX)
-@SYNCTEX_TRUE@am__append_126 = $(LIBSYNCTEX)
-@MINGW32_TRUE@am__append_127 = $(KPATHSEA_INCLUDES)
-@MINGW32_TRUE@am__append_128 = -lshlwapi $(KPATHSEA_LIBS)
-@MINGW32_TRUE@am__append_129 = -lshlwapi
-@TEX_SYNCTEX_TRUE@am__append_130 = -I$(srcdir)/synctexdir \
+@XETEX_TRUE@am__append_121 = $(xetex_tests)
+@OTANGLE_TRUE@am__append_122 = $(omegaware_programs)
+@OTANGLE_TRUE@am__append_123 = $(OTANGLE_tests) $(OMFONTS_tests)
+@ALEPH_TRUE@am__append_124 = aleph
+@ALEPH_TRUE@am__append_125 = $(aleph_tests)
+@SYNCTEX_TRUE@am__append_126 = synctex
+@SYNCTEX_TRUE@am__append_127 = $(LTLIBSYNCTEX)
+@SYNCTEX_TRUE@am__append_128 = $(LIBSYNCTEX)
+@MINGW32_TRUE@am__append_129 = $(KPATHSEA_INCLUDES)
+@MINGW32_TRUE@am__append_130 = -lshlwapi $(KPATHSEA_LIBS)
+@MINGW32_TRUE@am__append_131 = -lshlwapi
+@TEX_SYNCTEX_TRUE@am__append_132 = -I$(srcdir)/synctexdir \
 @TEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @TEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-tex.h\"
-@TEX_SYNCTEX_TRUE@am__append_131 = $(ZLIB_LIBS)
-@TEX_SYNCTEX_TRUE@am__append_132 = $(ZLIB_DEPEND)
-@TEX_SYNCTEX_TRUE@am__append_133 = \
+@TEX_SYNCTEX_TRUE@am__append_133 = $(ZLIB_LIBS)
+@TEX_SYNCTEX_TRUE@am__append_134 = $(ZLIB_DEPEND)
+@TEX_SYNCTEX_TRUE@am__append_135 = \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @TEX_SYNCTEX_TRUE@	synctexdir/synctex-tex.h
 
-@ETEX_SYNCTEX_TRUE@am__append_134 = -I$(srcdir)/synctexdir \
+@ETEX_SYNCTEX_TRUE@am__append_136 = -I$(srcdir)/synctexdir \
 @ETEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @ETEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-etex.h\"
-@ETEX_SYNCTEX_TRUE@am__append_135 = $(ZLIB_LIBS)
-@ETEX_SYNCTEX_TRUE@am__append_136 = $(ZLIB_DEPEND)
-@ETEX_SYNCTEX_TRUE@am__append_137 = \
+@ETEX_SYNCTEX_TRUE@am__append_137 = $(ZLIB_LIBS)
+@ETEX_SYNCTEX_TRUE@am__append_138 = $(ZLIB_DEPEND)
+@ETEX_SYNCTEX_TRUE@am__append_139 = \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @ETEX_SYNCTEX_TRUE@	synctexdir/synctex-etex.h
 
-@EPTEX_SYNCTEX_TRUE@am__append_138 = -I$(srcdir)/synctexdir \
+@EPTEX_SYNCTEX_TRUE@am__append_140 = -I$(srcdir)/synctexdir \
 @EPTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @EPTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-eptex.h\"
-@EPTEX_SYNCTEX_TRUE@am__append_139 = $(ZLIB_LIBS)
-@EPTEX_SYNCTEX_TRUE@am__append_140 = $(ZLIB_DEPEND)
-@EPTEX_SYNCTEX_TRUE@am__append_141 = \
+@EPTEX_SYNCTEX_TRUE@am__append_141 = $(ZLIB_LIBS)
+@EPTEX_SYNCTEX_TRUE@am__append_142 = $(ZLIB_DEPEND)
+@EPTEX_SYNCTEX_TRUE@am__append_143 = \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/synctex-eptex.h
 
-@EUPTEX_SYNCTEX_TRUE@am__append_142 = -I$(srcdir)/synctexdir \
+@EUPTEX_SYNCTEX_TRUE@am__append_144 = -I$(srcdir)/synctexdir \
 @EUPTEX_SYNCTEX_TRUE@	$(ZLIB_INCLUDES) -D__SyncTeX__ \
 @EUPTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-euptex.h\"
-@EUPTEX_SYNCTEX_TRUE@am__append_143 = $(ZLIB_LIBS)
-@EUPTEX_SYNCTEX_TRUE@am__append_144 = $(ZLIB_DEPEND)
-@EUPTEX_SYNCTEX_TRUE@am__append_145 = \
+@EUPTEX_SYNCTEX_TRUE@am__append_145 = $(ZLIB_LIBS)
+@EUPTEX_SYNCTEX_TRUE@am__append_146 = $(ZLIB_DEPEND)
+@EUPTEX_SYNCTEX_TRUE@am__append_147 = \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/synctex-euptex.h
 
-@PDFTEX_SYNCTEX_TRUE@am__append_146 = -I$(srcdir)/synctexdir \
+@PDFTEX_SYNCTEX_TRUE@am__append_148 = -I$(srcdir)/synctexdir \
 @PDFTEX_SYNCTEX_TRUE@	-D__SyncTeX__ \
 @PDFTEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-pdftex.h\"
-@PDFTEX_SYNCTEX_TRUE@am__append_147 = \
+@PDFTEX_SYNCTEX_TRUE@am__append_149 = \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/synctex-pdftex.h
 
-@XETEX_SYNCTEX_TRUE@am__append_148 = -I$(srcdir)/synctexdir \
+@XETEX_SYNCTEX_TRUE@am__append_150 = -I$(srcdir)/synctexdir \
 @XETEX_SYNCTEX_TRUE@	-D__SyncTeX__ \
 @XETEX_SYNCTEX_TRUE@	-DSYNCTEX_ENGINE_H=\"synctex-xetex.h\"
-@XETEX_SYNCTEX_TRUE@am__append_149 = \
+@XETEX_SYNCTEX_TRUE@am__append_151 = \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex.c \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex.h \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-common.h \
 @XETEX_SYNCTEX_TRUE@	synctexdir/synctex-xetex.h
 
-@SYNCTEX_TRUE@am__append_150 = $(synctex_tests)
+@SYNCTEX_TRUE@am__append_152 = $(synctex_tests)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -2981,7 +2983,7 @@ NM = @NM@
 NMEDIT = @NMEDIT@
 OBJCXX = @OBJCXX@
 OBJCXXDEPMODE = @OBJCXXDEPMODE@
-OBJCXXFLAGS = @OBJCXXFLAGS@ $(am__append_114)
+OBJCXXFLAGS = @OBJCXXFLAGS@ $(am__append_116)
 OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OTANGLE = @OTANGLE@
@@ -3128,8 +3130,8 @@ EXTRA_LIBRARIES = libmf.a libmflua.a libmfluaotfcc.a libmfluapotrace.a \
 	libluaharfbuzz.a libluajitharfbuzz.a libxetex.a libsynctex.a \
 	libmd5.a
 EXTRA_LTLIBRARIES = libsynctex.la
-lib_LIBRARIES = $(am__append_126)
-lib_LTLIBRARIES = $(am__append_125)
+lib_LIBRARIES = $(am__append_128)
+lib_LTLIBRARIES = $(am__append_127)
 dist_man_MANS = synctexdir/man1/synctex.1 synctexdir/man5/synctex.5
 nodist_man_MANS = 
 TEST_EXTENSIONS = .pl .test
@@ -3631,26 +3633,27 @@ CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
 	$(am__append_64) $(am__append_70) $(am__append_75) \
-	$(am__append_81)
+	$(am__append_83)
 TRIPTRAP = $(am__append_7) $(am__append_17) $(am__append_26) \
 	$(am__append_35) $(am__append_43) $(am__append_59) \
 	$(am__append_63) $(am__append_69) $(am__append_74) \
-	$(am__append_80)
+	$(am__append_82)
 bin_links = $(am__append_5) $(am__append_14) $(am__append_15) \
 	$(am__append_24) $(am__append_33) $(am__append_41) \
 	$(am__append_49) $(am__append_54) $(am__append_67) \
 	upbibtex$(EXEEXT):pbibtex updvitype$(EXEEXT):pdvitype \
 	uppltotf$(EXEEXT):ppltotf uptftopl$(EXEEXT):ptftopl \
-	$(am__append_78) $(am__append_92) $(am__append_97) \
-	$(am__append_102) $(am__append_107)
+	$(am__append_78) $(am__append_79) $(am__append_80) \
+	$(am__append_94) $(am__append_99) $(am__append_104) \
+	$(am__append_109)
 install_exe_links = $(am__append_12) $(am__append_22) $(am__append_31) \
 	$(am__append_39) $(am__append_47) $(am__append_52) \
-	$(am__append_90) $(am__append_95) $(am__append_100) \
-	$(am__append_105)
+	$(am__append_92) $(am__append_97) $(am__append_102) \
+	$(am__append_107)
 uninstall_exe_links = $(am__append_13) $(am__append_23) \
 	$(am__append_32) $(am__append_40) $(am__append_48) \
-	$(am__append_53) $(am__append_91) $(am__append_96) \
-	$(am__append_101) $(am__append_106)
+	$(am__append_53) $(am__append_93) $(am__append_98) \
+	$(am__append_103) $(am__append_108)
 NEVER_DIST = `find . $(NEVER_NAMES)` cwebdir/cweave.log \
 	cwebdir/cweave.trs cwebdir/ctwill.log cwebdir/ctwill.trs \
 	cwebdir/refsort.log cwebdir/refsort.trs cwebdir/twinx.log \
@@ -3827,18 +3830,18 @@ tie_CPPFLAGS = $(AM_CPPFLAGS) -DNOT_WEB2C
 initex_CPPFLAGS = -DEXEPROG=\"tex.exe\"
 nodist_initex_SOURCES = callexe.c
 initex_LDADD = 
-tex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_130)
+tex_CPPFLAGS = $(AM_CPPFLAGS) $(am__append_132)
 
 # With --enable-ipc, TeX may need to link with -lsocket.
-tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_131)
+tex_LDADD = $(LDADD) $(ipc_socketlibs) $(am__append_133)
 
 # TeX C sources
 tex_c_h = texini.c tex0.c texcoerce.h texd.h
 nodist_tex_SOURCES = $(tex_c_h) tex-pool.c
-dist_tex_SOURCES = texextra.c $(am__append_133)
+dist_tex_SOURCES = texextra.c $(am__append_135)
 
 # We must create texd.h before building the tex_OBJECTS.
-tex_prereq = texd.h $(am__append_132)
+tex_prereq = texd.h $(am__append_134)
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -4336,21 +4339,21 @@ libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
 	mplibdir/pngout.w mplibdir/mpmath.w mplibdir/mpmathbinary.w \
 	mplibdir/mpmathdecimal.w mplibdir/mpmathdouble.w \
 	mplibdir/mpstrings.w mplibdir/tfmin.w
-etex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(am__append_134)
+etex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(am__append_136)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
-etex_LDADD = $(LDADD) $(ZLIB_LIBS) $(ipc_socketlibs) $(am__append_135)
+etex_LDADD = $(LDADD) $(ZLIB_LIBS) $(ipc_socketlibs) $(am__append_137)
 etex_DEPENDENCIES = $(ZLIB_DEPEND)
 
 # e-TeX C sources
 etex_c_h = etexini.c etex0.c etexcoerce.h etexd.h
 nodist_etex_SOURCES = $(etex_c_h) etex-pool.c
 dist_etex_SOURCES = etexdir/etexextra.c etexdir/etexextra.h \
-	etexdir/etex_version.h $(am__append_137)
+	etexdir/etex_version.h $(am__append_139)
 
 # We must create etexd.h and etexdir/etex_version.h before building the
 # etex_OBJECTS.
-etex_prereq = etexd.h etexdir/etex_version.h $(am__append_136)
+etex_prereq = etexd.h etexdir/etex_version.h $(am__append_138)
 etex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch
@@ -4416,22 +4419,22 @@ ptex_tests = \
 	ptexdir/wcfname.test
 
 eptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/libmd5 \
-	$(ZLIB_INCLUDES) $(am__append_138)
+	$(ZLIB_INCLUDES) $(am__append_140)
 
 # With --enable-ipc, e-pTeX may need to link with -lsocket.
 eptex_LDADD = libkanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
-	$(ipc_socketlibs) libmd5.a $(ZLIB_LIBS) $(am__append_139)
+	$(ipc_socketlibs) libmd5.a $(ZLIB_LIBS) $(am__append_141)
 eptex_DEPENDENCIES = libkanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies) libmd5.a $(ZLIB_DEPEND)
 
 # e-pTeX C sources
 eptex_c_h = eptexini.c eptex0.c eptexcoerce.h eptexd.h
 nodist_eptex_SOURCES = $(eptex_c_h) eptex-pool.c
 dist_eptex_SOURCES = eptexdir/eptexextra.c eptexdir/eptexextra.h \
-	eptexdir/eptex_version.h $(am__append_141)
+	eptexdir/eptex_version.h $(am__append_143)
 
 # We must create eptexd.h and eptexdir/eptex_version.h before building the eptex_OBJECTS.
 eptex_prereq = eptexd.h etexdir/etex_version.h ptexdir/ptex_version.h \
-	eptexdir/eptex_version.h $(am__append_140)
+	eptexdir/eptex_version.h $(am__append_142)
 eptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -4536,23 +4539,23 @@ upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/newjfm.test uptexdir/uparse.test uptexdir/gkhuge.test \
 	uptexdir/gk256.test
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
-	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_142)
+	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_144)
 
 # With --enable-ipc, e-upTeX may need to link with -lsocket.
 euptex_LDADD = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) \
-	$(ipc_socketlibs) libmd5.a $(ZLIB_LIBS) $(am__append_143)
+	$(ipc_socketlibs) libmd5.a $(ZLIB_LIBS) $(am__append_145)
 euptex_DEPENDENCIES = libukanji.a $(pproglib) $(PTEXENC_DEPEND) $(default_dependencies) libmd5.a $(ZLIB_DEPEND)
 
 # e-upTeX C sources
 euptex_c_h = euptexini.c euptex0.c euptexcoerce.h euptexd.h
 nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
 dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
-	$(am__append_145)
+	$(am__append_147)
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
 euptex_prereq = euptexd.h etexdir/etex_version.h \
 	ptexdir/ptex_version.h eptexdir/eptex_version.h \
-	uptexdir/uptex_version.h $(am__append_144)
+	uptexdir/uptex_version.h $(am__append_146)
 euptex_web_srcs = \
 	tex.web \
 	etexdir/etex.ch \
@@ -4670,7 +4673,7 @@ libpdftex_a_SOURCES = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writejbig2.c pdftexdir/writejpg.c \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
-	$(am__append_85)
+	$(am__append_87)
 @MINGW32_TRUE@REGEX_INCLUDES = -I$(srcdir)/pdftexdir/regex
 EXTRA_libpdftex_a_SOURCES = pdftexdir/macnames.c \
 	pdftexdir/regex/regcomp.c pdftexdir/regex/regex_internal.c \
@@ -4686,7 +4689,7 @@ pdftex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) \
 # Force Automake to use CXXLD for linking
 nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 pdf_tangle = WEBINPUTS=.:$(srcdir)/pdftexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(TANGLE)
-pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_146)
+pdftex_CPPFLAGS = $(pdftex_cppflags) $(am__append_148)
 pdftex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
 # With --enable-ipc, pdfTeX may need to link with -lsocket.
@@ -4699,7 +4702,7 @@ pdftex_c_h = pdftexini.c pdftex0.c pdftexcoerce.h pdftexd.h
 nodist_pdftex_SOURCES = $(pdftex_c_h) pdftex-pool.c
 dist_pdftex_SOURCES = pdftexdir/pdftexextra.c pdftexdir/pdftexextra.h \
 	pdftexdir/pdftex_version.h pdftexdir/etex_version.h \
-	$(am__append_147)
+	$(am__append_149)
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
@@ -5379,18 +5382,18 @@ libxetex = libxetex.a
 xetex_cppflags = $(AM_CPPFLAGS) -I$(srcdir)/xetexdir $(ICU_INCLUDES) \
 	$(FREETYPE2_INCLUDES) $(TECKIT_INCLUDES) $(HARFBUZZ_INCLUDES) \
 	$(GRAPHITE2_INCLUDES) $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) \
-	$(PPLIB_INCLUDES) -I$(srcdir)/libmd5 $(am__append_113) \
-	$(am__append_115)
+	$(PPLIB_INCLUDES) -I$(srcdir)/libmd5 $(am__append_115) \
+	$(am__append_117)
 xetex_ldadd = $(libxetex) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) \
 	$(ICU_LIBS) $(ICU_LIBS_EXTRA) $(TECKIT_LIBS) $(LIBPNG_LIBS) \
 	$(FREETYPE2_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS) libmd5.a \
-	$(am__append_116)
+	$(am__append_118)
 xetex_dependencies = $(proglib) $(KPATHSEA_DEPEND) $(ICU_DEPEND) \
 	$(TECKIT_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) \
 	$(LIBPNG_DEPEND) $(FREETYPE2_DEPEND) $(ZLIB_DEPEND) \
 	$(PPLIB_DEPEND) libmd5.a
 @XETEX_MACOSX_TRUE@xetex_LDFLAGS = -framework ApplicationServices -framework Cocoa
-xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_148)
+xetex_CPPFLAGS = $(xetex_cppflags) $(am__append_150)
 xetex_CFLAGS = $(WARNING_CFLAGS)
 xetex_CXXFLAGS = # $(WARNING_CXXFLAGS)
 xetex_LDADD = $(xetex_ldadd) $(LDADD) $(ipc_socketlibs)
@@ -5399,7 +5402,7 @@ xetex_c_h = xetexini.c xetex0.c xetexcoerce.h xetexd.h
 nodist_xetex_SOURCES = $(xetex_c_h) xetex-pool.c
 dist_xetex_SOURCES = xetexdir/xetexextra.c xetexdir/xetexextra.h \
 	xetexdir/etex_version.h xetexdir/xetex_version.h \
-	$(am__append_149)
+	$(am__append_151)
 xetex_ch_srcs = \
 	xetexdir/xetex.web \
 	xetexdir/tex.ch0 \
@@ -5431,7 +5434,7 @@ libxetex_a_SOURCES = xetexdir/XeTeXFontInst.cpp \
 	xetexdir/image/jpegimage.h xetexdir/image/mfileio.c \
 	xetexdir/image/mfileio.h xetexdir/image/numbers.c \
 	xetexdir/image/numbers.h xetexdir/image/pngimage.c \
-	xetexdir/image/pngimage.h $(am__append_117) $(am__append_118)
+	xetexdir/image/pngimage.h $(am__append_119) $(am__append_120)
 
 # We must create xetexd.h etc. before building the libxetex_a_OBJECTS.
 libxetex_prereq = xetexd.h $(xetex_dependencies)
@@ -5537,13 +5540,13 @@ aleph_tests = alephdir/aleph.test
 synctex_SOURCES = \
 	synctexdir/synctex_main.c
 
-synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(am__append_127)
-synctex_LDADD = $(libsynctex) $(ZLIB_LIBS) $(am__append_128)
+synctex_CPPFLAGS = -I$(srcdir)/synctexdir $(am__append_129)
+synctex_LDADD = $(libsynctex) $(ZLIB_LIBS) $(am__append_130)
 libsynctex = $(LTLIBSYNCTEX) $(LIBSYNCTEX)
 libsynctex_la_CPPFLAGS = -I$(srcdir)/synctexdir $(ZLIB_INCLUDES) -DSYNCTEX_USE_LOCAL_HEADER
 libsynctex_a_CPPFLAGS = $(libsynctex_la_CPPFLAGS)
 libsynctex_la_LDFLAGS = -rpath @libdir@ -bindir @bindir@ -no-undefined -version-info $(SYNCTEX_LT_VERSINFO)
-libsynctex_la_LIBADD = $(ZLIB_LIBS) $(am__append_129)
+libsynctex_la_LIBADD = $(ZLIB_LIBS) $(am__append_131)
 libsynctex_la_SOURCES = \
 	synctexdir/synctex_parser.c \
 	synctexdir/synctex_parser_local.h \

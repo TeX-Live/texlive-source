@@ -32,7 +32,7 @@ m4_define([kpse_tex_progs], [dnl
 [[tex],       [yes], [no],  [TeX],        []],
 [[etex],      [no],  [yes], [e-TeX],      [zlib]],
 [[ptex],      [no],  [yes], [pTeX],       [ptexenc zlib]],
-[[eptex],     [yes], [yes], [e-pTeX],     [ptexenc zlib]],
+[[eptex],     [no],  [yes], [e-pTeX],     [ptexenc zlib]],
 [[uptex],     [no],  [yes], [upTeX],      [ptexenc zlib]],
 [[euptex],    [yes], [yes], [e-upTeX],    [ptexenc zlib]],
 [[aleph],     [yes], [],    [Aleph],      []],
