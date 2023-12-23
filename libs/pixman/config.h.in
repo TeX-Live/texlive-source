@@ -9,7 +9,7 @@
 /* Whether the tool chain supports __float128 */
 #undef HAVE_FLOAT128
 
-/* Define to 1 if you have the `getisax' function. */
+/* Define to 1 if you have the 'getisax' function. */
 #undef HAVE_GETISAX
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -66,13 +66,13 @@
 /* enable TIMER_BEGIN/TIMER_END macros */
 #undef PIXMAN_TIMERS
 
-/* The size of `long', as computed by sizeof. */
+/* The size of 'long', as computed by sizeof. */
 #undef SIZEOF_LONG
 
 /* Define to `((size_t)-1)' if <stdint.h> does not define it. */
 #undef SIZE_MAX
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -125,7 +125,7 @@
 # endif
 #endif
 
-/* Define to `__inline__' or `__inline' if that's what the C compiler
+/* Define to '__inline__' or '__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
 #undef inline

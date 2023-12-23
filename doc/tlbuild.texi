@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2023
-@set month-year June 2023
+@set month-year December 2023
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -402,11 +402,16 @@ and @code{convert}) creates several output files.  This allows for
 parallel builds (@code{make -j @var{n}} with @math{@var{n}>1} or even
 @code{make -j}) that can considerably speed up the TL build.
 
+@vindex TL_MAKE_FLAGS
+If you're using TL's @code{Build} script, you can enable @code{-j}
+with the environment variable @code{TL_MAKE_FLAGS}, as in:
+@samp{env TL_MAKE_FLAGS=-j`nproc` ./Build}.
+
 @cindex cache file, for @code{configure}
 @vindex -C configure @r{option}
-Incidentally, a noticeable speed-up can be independently gained by
-using a configure cache file, i.e., specifying the @code{configure}
-option @code{-C} (recommended).
+Independently, a noticeable speed-up can also be gained by using a
+configure cache file, i.e., specifying the @code{configure} option
+@code{-C} (recommended).
 
 @node Build distribution
 @section Build distribution

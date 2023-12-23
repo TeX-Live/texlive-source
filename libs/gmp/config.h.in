@@ -35,10 +35,10 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `memset' function. */
+/* Define to 1 if you have the 'memset' function. */
 #undef HAVE_MEMSET
 
-/* Define to 1 if you have the `raise' function. */
+/* Define to 1 if you have the 'raise' function. */
 #undef HAVE_RAISE
 
 /* Define to 1 if you have the <stdint.h> header file. */
@@ -50,7 +50,7 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strchr' function. */
+/* Define to 1 if you have the 'strchr' function. */
 #undef HAVE_STRCHR
 
 /* Define to 1 if you have the <strings.h> header file. */
@@ -89,25 +89,25 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `mp_limb_t', as computed by sizeof. */
+/* The size of 'mp_limb_t', as computed by sizeof. */
 #undef SIZEOF_MP_LIMB_T
 
-/* The size of `unsigned', as computed by sizeof. */
+/* The size of 'unsigned', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED
 
-/* The size of `unsigned long', as computed by sizeof. */
+/* The size of 'unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
 
-/* The size of `unsigned long long', as computed by sizeof. */
+/* The size of 'unsigned long long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG_LONG
 
-/* The size of `unsigned short', as computed by sizeof. */
+/* The size of 'unsigned short', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_SHORT
 
-/* The size of `void *', as computed by sizeof. */
+/* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -119,7 +119,7 @@
 #undef WANT_TMP_ALLOCA
 #undef WANT_TMP_REENTRANT
 
-/* Define to `__inline__' or `__inline' if that's what the C compiler
+/* Define to '__inline__' or '__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
 #undef inline

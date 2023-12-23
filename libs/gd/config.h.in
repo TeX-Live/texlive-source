@@ -75,12 +75,12 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
-/* Define to 1 if your <sys/time.h> declares `struct tm'. */
+/* Define to 1 if your <sys/time.h> declares 'struct tm'. */
 #undef TM_IN_SYS_TIME
 
 /* Version number of package */
@@ -89,10 +89,10 @@
 /* Define to 1 if <zlib.h> declares 'z_const'. */
 #undef ZLIB_CONST
 
-/* Define to empty if `const' does not conform to ANSI C. */
+/* Define to empty if 'const' does not conform to ANSI C. */
 #undef const
 
-/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* Define as 'unsigned int' if <stddef.h> doesn't define. */
 #undef size_t
 
 /* Define as empty if not declared in <zlib.h>. */

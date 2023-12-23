@@ -18,7 +18,7 @@
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
 
-/* Define to 1 if you have the `strerror' function. */
+/* Define to 1 if you have the 'strerror' function. */
 #undef HAVE_STRERROR
 
 /* Define to 1 if you have the <strings.h> header file. */
@@ -27,7 +27,7 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strtoul' function. */
+/* Define to 1 if you have the 'strtoul' function. */
 #undef HAVE_STRTOUL
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
@@ -36,7 +36,7 @@
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if the system has the type `uintptr_t'. */
+/* Define to 1 if the system has the type 'uintptr_t'. */
 #undef HAVE_UINTPTR_T
 
 /* Define to 1 if you have the <unistd.h> header file. */
@@ -66,16 +66,16 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `unsigned int', as computed by sizeof. */
+/* The size of 'unsigned int', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_INT
 
-/* The size of `unsigned long', as computed by sizeof. */
+/* The size of 'unsigned long', as computed by sizeof. */
 #undef SIZEOF_UNSIGNED_LONG
 
-/* The size of `void *', as computed by sizeof. */
+/* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -83,7 +83,7 @@
 /* Version number of package */
 #undef VERSION
 
-/* Define to empty if `const' does not conform to ANSI C. */
+/* Define to empty if 'const' does not conform to ANSI C. */
 #undef const
 
 #include <lcdf/inttypes.h>

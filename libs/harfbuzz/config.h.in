@@ -1,9 +1,9 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* The normal alignment of `struct{char;}', in bytes. */
+/* The normal alignment of 'struct{char;}', in bytes. */
 #undef ALIGNOF_STRUCT_CHAR__
 
-/* Define to 1 if you have the `atexit' function. */
+/* Define to 1 if you have the 'atexit' function. */
 #undef HAVE_ATEXIT
 
 /* Use cairo graphics library */
@@ -18,11 +18,11 @@
 /* define if the compiler supports basic C++11 syntax */
 #undef HAVE_CXX11
 
-/* Define to 1 if you have the declaration of `round', and to 0 if you don't.
+/* Define to 1 if you have the declaration of 'round', and to 0 if you don't.
    */
 #undef HAVE_DECL_ROUND
 
-/* Define to 1 if you have the `getpagesize' function. */
+/* Define to 1 if you have the 'getpagesize' function. */
 #undef HAVE_GETPAGESIZE
 
 /* Use glib2 library */
@@ -43,28 +43,28 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `isatty' function. */
+/* Define to 1 if you have the 'isatty' function. */
 #undef HAVE_ISATTY
 
-/* Define to 1 if you have the `mmap' function. */
+/* Define to 1 if you have the 'mmap' function. */
 #undef HAVE_MMAP
 
-/* Define to 1 if you have the `mprotect' function. */
+/* Define to 1 if you have the 'mprotect' function. */
 #undef HAVE_MPROTECT
 
-/* Define to 1 if you have the `newlocale' function. */
+/* Define to 1 if you have the 'newlocale' function. */
 #undef HAVE_NEWLOCALE
 
 /* Use native OpenType Layout backend */
 #undef HAVE_OT
 
-/* Define to 1 if you have the `posix_memalign' function. */
+/* Define to 1 if you have the 'posix_memalign' function. */
 #undef HAVE_POSIX_MEMALIGN
 
 /* Use POSIX threads */
 #undef HAVE_PTHREAD
 
-/* Define to 1 if you have the `round' function. */
+/* Define to 1 if you have the 'round' function. */
 #undef HAVE_ROUND
 
 /* Define to 1 if you have the <stdbool.h> header file. */
@@ -85,10 +85,10 @@
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
 
-/* Define to 1 if you have the `strtod_l' function. */
+/* Define to 1 if you have the 'strtod_l' function. */
 #undef HAVE_STRTOD_L
 
-/* Define to 1 if you have the `sysconf' function. */
+/* Define to 1 if you have the 'sysconf' function. */
 #undef HAVE_SYSCONF
 
 /* Define to 1 if you have the <sys/mman.h> header file. */
@@ -127,7 +127,7 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS

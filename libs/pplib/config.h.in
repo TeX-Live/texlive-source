@@ -3,7 +3,7 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+/* Define to 1 if fseeko (and ftello) are declared in stdio.h. */
 #undef HAVE_FSEEKO
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -57,10 +57,10 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* The size of `void *', as computed by sizeof. */
+/* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -74,11 +74,17 @@
 /* Number of bits in a file offset, on hosts where this is settable. */
 #undef _FILE_OFFSET_BITS
 
-/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+/* Define to 1 if necessary to make fseeko visible. */
 #undef _LARGEFILE_SOURCE
 
-/* Define for large files, on AIX-style hosts. */
+/* Define to 1 on platforms where this makes off_t a 64-bit type. */
 #undef _LARGE_FILES
+
+/* Number of bits in time_t, on hosts where this is settable. */
+#undef _TIME_BITS
+
+/* Define to 1 on platforms where this makes time_t a 64-bit type. */
+#undef __MINGW_USE_VC2005_COMPAT
 
 /* Define as empty if not declared in <zlib.h>. */
 #undef z_const
