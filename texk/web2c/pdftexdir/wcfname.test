@@ -64,15 +64,16 @@ fenc="utf8"
 for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc fnΔДदダ打다𝕯🎉-$fenc; do
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc
+  job=$doc-pdf
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  rm -f $testdir/$doc-tmp.tex $testdir/$doc.txt $testdir/$doc.log $testdir/$doc.fls
-  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-term.log || \
+  rm -f $testdir/$doc-tmp.tex $testdir/$job.txt $testdir/$job.log $testdir/$job.fls
+  $_tex -ini -interaction nonstopmode -jobname=$job --shell-escape -etex --recorder $doc.tex >$testdir/$doc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
-  cp -p $doc.txt $doc.log $doc.fls $testdir/ || rc=14
+  mv $job.txt $job.log $job.fls $testdir/ || rc=14
 ##   It does not work.
-##  diff $testdir/$doc.txt $srcdir/tests/fn-$fenc.txt || \
+##  diff $testdir/$job.txt $srcdir/tests/fn-$fenc.txt || \
 ##      { rc=2 ; err2=$err2" $fenc:$doc" ; }
 
 done

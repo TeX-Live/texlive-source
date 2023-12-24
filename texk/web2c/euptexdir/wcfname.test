@@ -82,14 +82,15 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc fnΔДदダ打다�
   fi
 
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
+  job=$doc-$ienc-eup
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  rm -f $testdir/$doc-tmp.tex $testdir/$doc-$ienc.txt $testdir/$doc-$ienc.log $testdir/$doc-$ienc.fls
-  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+  rm -f $testdir/$doc-tmp.tex $testdir/$job.txt $testdir/$job.log $testdir/$job.fls
+  $_tex -ini -interaction nonstopmode -jobname=$job -kanji=$fenc --kanji-internal=$ienc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
-  cp -p $doc-$ienc.txt $doc-$ienc.log $doc-$ienc.fls $testdir/ || rc=14
-  diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
+  mv $job.txt $job.log $job.fls $testdir/ || rc=14
+  diff $testdir/$job.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
 
 done
