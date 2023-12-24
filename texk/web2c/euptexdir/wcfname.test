@@ -88,7 +88,7 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc fnΔДदダ打다�
   $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
-  mv $doc-$ienc.txt $doc-$ienc.log $doc-$ienc.fls $testdir/ || rc=14
+  cp -p $doc-$ienc.txt $doc-$ienc.log $doc-$ienc.fls $testdir/ || rc=14
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
 
