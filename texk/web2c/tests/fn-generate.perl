@@ -10,6 +10,7 @@ use Encode;
 
 my $st = 0;
 our $windows; # option -windows
+our $randgen; # option -randgen
 
 foreach $_ (<DATA>) {
     chomp;
@@ -27,11 +28,13 @@ exit($st ? 239 : 0);
 
 sub make_str ($$;$) {
     my ($encname, $fname0, $fname1) = @_;
-    my ($src);
+    my ($src, $rand) = ('', '');
 
     my ($fnameT) = $fname0;
     my $cmnt = $windows ? '%' : ''; # comment out if option -windows
-    $fnameT =~ s/\.tex$/-tmp.tex/;
+
+    $rand= '\rnd' if (!$fname1 && $randgen);
+    $fnameT =~ s/\.tex$/-tmp$rand.tex/;
 
 $src = <<END;
 \% $fname0
@@ -44,6 +47,14 @@ $src = <<END;
 \\immediate\\openout0=\\jobname.txt
 \\immediate\\write0{abc αβγ абв あア※￥ 天地人}
 \\immediate\\closeout0
+END
+
+$src .= <<END if (!$fname1 && $randgen);
+
+\\edef\\rnd{\\the\\numexpr\\${randgen}900000+100000\\relax}
+END
+
+$src .= <<END;
 
 \\immediate\\openout1=$fnameT
 \\immediate\\write1{\\relax}

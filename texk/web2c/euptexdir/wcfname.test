@@ -13,7 +13,7 @@ _kpsewhich=$KpsDir/kpsewhich$ExeExt
 _tex=$BinDir/$engine$ExeExt
 
 test -d $testdir || mkdir -p $testdir
-rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*.tex fn*.tex
+rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*-tmp*.tex
 
 rc=0; err1=; err2=
 
@@ -56,7 +56,7 @@ else
   opt_win=
 fi
 
-perl -s $srcdir/tests/fn-generate.perl $opt_win $testdir
+perl -s $srcdir/tests/fn-generate.perl $opt_win -randgen=pdfuniformdeviate $testdir
 pret=$?
 if [ $pret != 0 ] && [ $pret != 239 ]; then
   exit 77
@@ -84,10 +84,10 @@ for doc in fn-$fenc fnさざ波-$fenc fn£¥µÆÇñß-$fenc fnΔДदダ打다�
   echo '>>> Document:'$doc '  File Encoding:'$fenc '  Internal Encoding:'$ienc
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
+  rm -f $testdir/$doc-tmp.tex $testdir/$doc-$ienc.txt $testdir/$doc-$ienc.log $testdir/$doc-$ienc.fls
+  $_tex -ini -interaction nonstopmode -jobname=$doc-$ienc -kanji=$fenc --kanji-internal=$ienc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-$fenc-$ienc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
-  $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
   mv $doc-$ienc.txt $doc-$ienc.log $doc-$ienc.fls $testdir/ || rc=14
   diff $testdir/$doc-$ienc.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }

@@ -1,3 +1,8 @@
+2023-12-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/fn-generate.perl:
+	Add option -randgen for parallel tests.
+
 2023-12-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* Makefile.in, ac/web2c.ac (eptex):

@@ -13,7 +13,7 @@ _kpsewhich=$KpsDir/kpsewhich$ExeExt
 _tex=$BinDir/$engine$ExeExt
 
 test -d $testdir || mkdir -p $testdir
-rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*.tex fn*.tex
+rm -f $testdir/fn*.log $testdir/fn*.txt $testdir/fn*-tmp*.tex
 
 rc=0; err1=; err2=
 
@@ -53,7 +53,7 @@ else
   opt_win=
 fi
 
-perl -s $srcdir/tests/fn-generate.perl $opt_win $testdir
+perl -s $srcdir/tests/fn-generate.perl $opt_win -randgen=pdfuniformdeviate $testdir
 pret=$?
 if [ $pret != 0 ] && [ $pret != 239 ]; then
   exit 77
@@ -66,10 +66,10 @@ for doc in fn-$fenc fn£¥µÆÇñß-$fenc fnさざ波-$fenc fnΔДदダ打다�
   echo '>>> Document:'$doc '  File Encoding:'$fenc
   $_kpsewhich -progname=$engine $doc.tex || rc=10
   $_kpsewhich -progname=$engine fn±×÷§¶-utf8.tex || rc=11
-  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape --recorder $doc.tex >$testdir/$doc-term.log || \
+  rm -f $testdir/$doc-tmp.tex $testdir/$doc.txt $testdir/$doc.log $testdir/$doc.fls
+  $_tex -ini -interaction nonstopmode -jobname=$doc --shell-escape -etex --recorder $doc.tex >$testdir/$doc-term.log || \
       { rc=1 ; err1=$err1" $fenc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
-  $_kpsewhich -progname=$engine fn±×÷§¶-utf8-tmp.tex || rc=13
   mv $doc.txt $doc.log $doc.fls $testdir/ || rc=14
 ##   It does not work.
 ##  diff $testdir/$doc.txt $srcdir/tests/fn-$fenc.txt || \
