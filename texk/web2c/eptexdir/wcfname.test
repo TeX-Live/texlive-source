@@ -78,7 +78,7 @@ for doc in fn-$fenc fnさざ波-$fenc; do
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
   mv $job.txt $job.log $testdir/ || rc=14
-  mv $job.txt $testdir/ || : echo "FIXME" # check *.fls
+  mv $job.fls $testdir/ || : echo "FIXME" # check *.fls
   diff $testdir/$job.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
   rm -f $testdir/fn±×÷§¶-utf8-tmp.tex
