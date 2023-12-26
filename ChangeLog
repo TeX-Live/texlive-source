@@ -1,3 +1,9 @@
+2023-12-26  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf: don't bother with environment variables;
+	because the autotools have many subprograms, setting PATH
+	is what makes sense.
+
 2023-12-23  Karl Berry  <karl@tug.org>
 
 	* reautoconf with autoconf-2.72.

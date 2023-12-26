@@ -38,11 +38,7 @@ Options:
   -v, --verbose   verbosely report processing (default)
       --warn-obsolete  do not pass -Wno-obsolete
 
-Environment variables:
-  TL_AUTOCONF:   program to use instead of autoconf from PATH
-  TL_AUTOHEADER: program to use instead of autoheader from PATH
-  TL_AUTOMAKE:   program to use instead of automake from PATH
-  TL_ACLOCAL:    program to use instead of aclocal from PATH
+All programs are found along PATH.
 
 This script should be invoked only from the top level of the TeX Live
 source tree.
@@ -81,27 +77,16 @@ if test ! -f ./m4/kpse-setup.m4; then
   exit 1
 fi
 
-: ${TL_AUTOCONF=autoconf}
-echo "$0: using \"$TL_AUTOCONF\" = `$TL_AUTOCONF --version | sed 1q`"
-: ${TL_AUTOHEADER=autoheader}
-echo "$0: using \"$TL_AUTOHEADER\" = `$TL_AUTOHEADER --version | sed 1q`"
-: ${TL_AUTOMAKE=automake}
-echo "$0: using \"$TL_AUTOMAKE\" = `$TL_AUTOMAKE --version | sed 1q`"
-: ${TL_ACLOCAL=aclocal}
-echo "$0: using \"$TL_ACLOCAL\" = `$TL_ACLOCAL --version | sed 1q`"
-echo "$0:       if you want to use different versions, set TL_AUTOCONF,"
-echo "$0:               TL_AUTOHEADER, TL_AUTOMAKE, and/or TL_ACLOCAL."
+echo "$0: using `autoconf --version | sed 1q`"
+echo "$0: using `autoheader --version | sed 1q`"
+echo "$0: using `autom4te --version | sed 1q`"
+echo "$0: using `automake --version | sed 1q`"
+echo "$0: using `aclocal --version | sed 1q`"
+echo "$0:       if you want to use different versions, set PATH."
 
-# Give users a chance to quit here
-# and set TL_AUTOCONF, TL_AUTOHEADER, TL_AUTOMAKE, and/or TL_ACLOCAL
+# Give users a chance to quit here.
 $do_cmd sleep 4
 $do_say "$0: starting at `date`."
-
-AUTOCONF=$TL_AUTOCONF
-AUTOHEADER=$TL_AUTOHEADER
-AUTOMAKE=$TL_AUTOMAKE
-ACLOCAL=$TL_ACLOCAL
-export AUTOCONF AUTOHEADER AUTOMAKE ACLOCAL
 
 do_it () {
   test x"$do_say" = x: || printf "\f "
