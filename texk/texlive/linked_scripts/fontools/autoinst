@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20230914';
+my $VERSION = '20231230';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -168,6 +168,7 @@ my %FULL_FORM = (
     comp    =>  'compressed',
     cond    =>  'condensed',
     demi    =>  'demibold',
+    exp     =>  'expanded',
     extcond =>  'extracondensed',
     hair    =>  'hairline',
     incline =>  'inclined',
@@ -175,6 +176,9 @@ my %FULL_FORM = (
     ita     =>  'italic',
     md      =>  'medium',
     slant   =>  'slanted',
+    smbold  =>  'semibold',
+    smcond  =>  'semicondensed',
+    smexp   =>  'semiexpanded',
     ultra   =>  'ultrablack',
 );
 
@@ -4298,7 +4302,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20230914.
+This document describes B<autoinst> version 20231230.
 
 
 =head1 RECENT CHANGES
@@ -4306,6 +4310,10 @@ This document describes B<autoinst> version 20230914.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2023-12-30>
+
+Bugfix: font info parsing now works for Junicode 2.
 
 =item I<2023-09-14>
 
@@ -4329,6 +4337,13 @@ mechanism to use these figures
 Fixed a few bugs in metadata parsing, style file generation
 and the C<-t1suffix> option, so that the latter also works
 for dvips and dvipdfmx.
+
+=back
+
+
+=begin Really_old_history
+
+=over 12
 
 =item I<2021-11-15>
 
@@ -4359,13 +4374,6 @@ Font info parsing failed for Microsoft Sitka and LucasFonts Thesis.
 The I<-encoding> option now also accepts filenames of encoding files
 in directories other than the current directory.
 Directory names containing spaces do (or at least should) also work.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2020-12-18>
 
