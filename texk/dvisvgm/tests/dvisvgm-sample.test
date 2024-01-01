@@ -1,0 +1,54 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+# We run tests in the original source at dvisvgm-src/tests/data/sample*
+
+BinDir=${BinDir:-./dvisvgm-src/src}
+ExeExt=${ExeExt:-}
+_dvisvgm=$BinDir/dvisvgm$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/dvisvgm-src/tests/data"
+T1FONTS="$srcdir/dvisvgm-src/tests/data"
+TEXFONTMAPS="$srcdir/dvisvgm-src/tests/data"
+PSHEADERS="$srcdir/../dvipsk/testdata"
+
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS PSHEADERS
+
+rm -f ./sample*.svg
+failed=
+
+echo "*** dvisvgm: test for sample_v2" && echo \
+	&& $_dvisvgm --verbosity=7 -m dvips_test.map -o sample_v2-wf.svg $srcdir/dvisvgm-src/tests/data/sample_v2.dvi \
+	&& echo || failed="$failed sample_v2-wf"
+
+diff ./sample_v2-wf.svg $srcdir/tests/sample_v2-wf.svg || failed="$failed sample_v2-wf-cmp"
+
+
+echo "*** dvisvgm: test for sample_v2 -n" && echo \
+	&& $_dvisvgm --verbosity=7 -m dvips_test.map -n -o sample_v2-nf.svg $srcdir/dvisvgm-src/tests/data/sample_v2.dvi \
+	&& echo || failed="$failed sample_v2-nf"
+
+diff ./sample_v2-wf.svg $srcdir/tests/sample_v2-wf.svg || failed="$failed sample_v2-nf-cmp"
+
+
+echo "*** dvisvgm: test for sample_v3" && echo \
+	&& $_dvisvgm --verbosity=7 -m dvips_test.map -o sample_v3-wf.svg $srcdir/dvisvgm-src/tests/data/sample_v3.dvi \
+	&& echo || failed="$failed sample_v3-wf"
+
+diff ./sample_v3-wf.svg $srcdir/tests/sample_v3-wf.svg || failed="$failed sample_v3-wf-cmp"
+
+
+echo "*** dvisvgm: test for sample_v3 -n" && echo \
+	&& $_dvisvgm --verbosity=7 -m dvips_test.map -n -o sample_v3-nf.svg $srcdir/dvisvgm-src/tests/data/sample_v3.dvi \
+	&& echo || failed="$failed sample_v3-nf"
+
+diff ./sample_v3-nf.svg $srcdir/tests/sample_v3-nf.svg || failed="$failed sample_v3-nf-cmp"
+
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

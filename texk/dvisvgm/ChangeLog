@@ -1,3 +1,13 @@
+2024-01-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/dvisvgm.test: Make easier to test on Windows.
+	* tests/dvisvgm-sample.test, tests/sample_v{2,3}_{nf,wf}.svg:
+	New tests using samples in the original source.
+	* tests/dvisvgm-uptex.test, tests/upjf.dvi, tests/upj{f,v}{,-{r,g}}.tfm,
+	tests/upj{f,v}-{r,g}00.ofm, tests/upj{f{,1},v}_{full,omit}.vf,
+	upjf{,_hara}.map, upjf{,1}.svg: New tests for upTeX DVIs.
+	* Makefile.am: Adjusted.
+
 2023-06-18  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: no more AM_PROG_AR, it's in KPSE_COMMON now.

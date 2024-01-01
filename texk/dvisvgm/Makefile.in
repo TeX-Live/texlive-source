@@ -601,7 +601,16 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . $(DVISVGM_TREE)
 DIST_SUBDIRS = $(SUBDIRS)
-EXTRA_DIST = $(DVISVGM_TREE) TLpatches $(TESTS)
+EXTRA_DIST = $(DVISVGM_TREE) TLpatches $(TESTS) tests/sample_v2-nf.svg \
+	tests/sample_v2-wf.svg tests/sample_v3-nf.svg \
+	tests/sample_v3-wf.svg tests/upjf.dvi tests/upjf.tfm \
+	tests/upjv.tfm tests/upjf-r.tfm tests/upjf-g.tfm \
+	tests/upjv-r.tfm tests/upjv-g.tfm tests/upjf-r00.ofm \
+	tests/upjf-g00.ofm tests/upjv-r00.ofm tests/upjv-g00.ofm \
+	tests/upjf_full.vf tests/upjf_omit.vf tests/upjv_full.vf \
+	tests/upjv_omit.vf tests/upjf1_full.vf tests/upjf1_omit.vf \
+	tests/upjf.svg tests/upjf1.svg tests/upjf.map \
+	tests/upjf-hara.map
 
 # We want to install the man page, but the upstream doc/Makefile.am
 # does lots of other stuff.
@@ -614,8 +623,8 @@ NEVER_NAMES_SUB = -o -name .deps -o -name .dirstamp -o -name '*.$(OBJEXT)'
 NEVER_NAMES_LT = -o -name .libs -o -name '*.lo'
 dvisvgm_dependencies = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
 #
-DISTCLEANFILES = config.force CXXLD.sh
-TESTS = tests/dvisvgm.test
+DISTCLEANFILES = config.force CXXLD.sh sample*.svg upjf*.svg
+TESTS = tests/dvisvgm.test tests/dvisvgm-sample.test tests/dvisvgm-uptex.test
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -1328,6 +1337,8 @@ config.force: $(dvisvgm_dependencies)
 	echo timestamp >config.force
 	$(SHELL) ./config.status --recheck
 tests/dvisvgm.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
+tests/dvisvgm-sample.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
+tests/dvisvgm-uptex.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

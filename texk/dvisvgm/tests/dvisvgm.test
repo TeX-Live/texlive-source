@@ -6,4 +6,8 @@
 
 # Not really a test, just making sure the program executes.
 
-./dvisvgm-src/src/dvisvgm -Vyes || exit 1
+BinDir=${BinDir:-./dvisvgm-src/src}
+ExeExt=${ExeExt:-}
+_dvisvgm=$BinDir/dvisvgm$ExeExt
+
+$_dvisvgm -Vyes || exit 1
