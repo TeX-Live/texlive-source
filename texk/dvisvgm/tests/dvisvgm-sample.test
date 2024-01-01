@@ -31,7 +31,7 @@ echo "*** dvisvgm: test for sample_v2 -n" && echo \
 	&& $_dvisvgm --verbosity=7 -m dvips_test.map -n -o sample_v2-nf.svg $srcdir/dvisvgm-src/tests/data/sample_v2.dvi \
 	&& echo || failed="$failed sample_v2-nf"
 
-diff ./sample_v2-wf.svg $srcdir/tests/sample_v2-wf.svg || failed="$failed sample_v2-nf-cmp"
+diff ./sample_v2-nf.svg $srcdir/tests/sample_v2-nf.svg || failed="$failed sample_v2-nf-cmp"
 
 
 echo "*** dvisvgm: test for sample_v3" && echo \
