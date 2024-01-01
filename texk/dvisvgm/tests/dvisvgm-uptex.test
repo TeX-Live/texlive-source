@@ -43,8 +43,8 @@ test -n "$failed" && { echo; echo "failed tests:$failed"; exit 1; }
 
 #####  following tests require Haranoaji fonts  #####
 
-$_kpsewhich -format='opentype fonts' HaranoAjiMincho-Regular.otf
-otfpath=`$_kpsewhich -format='opentype fonts' HaranoAjiMincho-Regular.otf` || exit 77
+$_kpsewhich HaranoAjiMincho-Regular.otf
+otfpath=`$_kpsewhich HaranoAjiMincho-Regular.otf` || exit 77
 OPENTYPEFONTS=`echo $otfpath | sed -e 's,HaranoAjiMincho-Regular\.otf,,' -e 's,/fonts/opentype/.*$,/fonts/opentype//,'`
 export OPENTYPEFONTS
 
