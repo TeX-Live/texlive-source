@@ -2,7 +2,7 @@
 
 --[[
 
-File l3build.lua Copyright (C) 2014-2022 The LaTeX Project
+File l3build.lua Copyright (C) 2014-2024 The LaTeX Project
 
 It may be distributed and/or modified under the conditions of the
 LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -25,14 +25,13 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2023-12-15"
+release_date = "2024-01-04"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
 
 -- Local access to functions
 
-local assert           = assert
 local ipairs           = ipairs
 local insert           = table.insert
 local lookup           = kpse.lookup
@@ -40,11 +39,8 @@ local match            = string.match
 local gsub             = string.gsub
 local next             = next
 local print            = print
-local select           = select
-local tonumber         = tonumber
 local exit             = os.exit
 local open             = io.open
-local stdout           = io.stdout
 
 -- l3build setup and functions
 kpse.set_program_name("kpsewhich")
@@ -181,11 +177,11 @@ if #checkconfigs > 1 then
             exit(2)
           end
           for line in f:lines() do
-             if line == "" then break end
-             savecmds = savecmds .. "  " .. line .. "\n"
+            if line == "" then break end
+            savecmds = savecmds .. "  " .. line .. "\n"
           end
           for line in f:lines() do
-             recheckcmds = recheckcmds .. "  " .. line .. "\n"
+            recheckcmds = recheckcmds .. "  " .. line .. "\n"
           end
           f:close()
         end
