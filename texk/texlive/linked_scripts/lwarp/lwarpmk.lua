@@ -1,8 +1,8 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016-2023 Brian Dunn
+-- Copyright 2016-2024 Brian Dunn
 
-printversion = "v0.912"
+printversion = "v0.913"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
