@@ -55,7 +55,7 @@ texmfdir = $(datarootdir)/$(scriptsdir)
 nodist_texmf_SCRIPTS = $(perl_scripts:=.pl)
 
 %.pl: $(XINDY_TREE)/user-commands/%.in
-	$(AM_V_GEN)sed -e 's:@is_TL\@:yes:' $< >$@
+	$(AM_V_GEN)sed -e 's:@is_TL@:yes:' $< >$@
 	$(AM_V_at)chmod +x $@
 
 CLEANFILES = $(nodist_bin_SCRIPTS) $(nodist_texmf_SCRIPTS)

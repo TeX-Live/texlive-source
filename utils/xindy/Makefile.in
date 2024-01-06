@@ -984,7 +984,7 @@ uninstall-hook: uninstall-links
 @CLISP_RUNTIME_TRUE@	rm -f "$(DESTDIR)$(bindir)/$(XINDY_RUN)"
 
 %.pl: $(XINDY_TREE)/user-commands/%.in
-	$(AM_V_GEN)sed -e 's:@is_TL\@:yes:' $< >$@
+	$(AM_V_GEN)sed -e 's:@is_TL@:yes:' $< >$@
 	$(AM_V_at)chmod +x $@
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

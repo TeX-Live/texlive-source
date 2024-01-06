@@ -1,3 +1,9 @@
+2024-01-06  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (%.pl): @ not \@ in sed command.
+	Report from Peter Dyballa,
+	https://tug.org/pipermail/tlbuild/2024q1/005351.html
+
 2021-07-10  Karl Berry  <karl@freefriends.org>
 
 	* xindy-src/user-commands/xindy.in: append TL svn revision to
