@@ -32,6 +32,7 @@ usage="Usage: $0 [OPTION]... [DIR]...
   because you want to spend time fixing them), use --warn-obsolete.
 
 Options:
+  -f, --force     pass --force to autoreconf
   -h, --help      display this help and exit successfully
   -n, --dry-run   don't run any commands; just print them
   -q, --quiet     don't echo commands
@@ -51,6 +52,7 @@ Version: $Id$
 
 do_cmd=eval
 do_say=echo
+force=
 verbose=-v
 warn_obsolete=-Wno-obsolete
 
@@ -59,6 +61,7 @@ list=
 for option
 do
   case $option in
+    -f | --force) force=--force              ;;
     -h | --help | --version) echo "$usage"; exit 0 ;;
     -n | --dry-run)  do_cmd=:                ;;
     -q | --quiet)    do_say=:;    verbose=   ;;
@@ -120,7 +123,8 @@ for dir in $list; do
   else
     extra_dirs=
   fi
-  do_it autoreconf $verbose --no-recursive $warn_obsolete $dir $extra_dirs
+  do_it autoreconf $verbose --no-recursive \
+                   $warn_obsolete $force $dir $extra_dirs
 done
 
 echo "$0: done at `date`."

@@ -1550,7 +1550,7 @@ Optional Features:
   --disable-etex-synctex      build e-TeX without SyncTeX support
   --enable-ptex             compile and install pTeX
   --disable-ptex-synctex      build pTeX without SyncTeX support
-  --disable-eptex           do not compile and install e-pTeX
+  --enable-eptex            compile and install e-pTeX
   --disable-eptex-synctex     build e-pTeX without SyncTeX support
   --enable-uptex            compile and install upTeX
   --disable-uptex-synctex     build upTeX without SyncTeX support
@@ -4552,7 +4552,7 @@ case $enable_eptex in #(
   yes | no) :
      ;; #(
   *) :
-    enable_eptex=yes ;;
+    enable_eptex=no ;;
 esac
 
 # Check whether --enable-eptex-synctex was given.
