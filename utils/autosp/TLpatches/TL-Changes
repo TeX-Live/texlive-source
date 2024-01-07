@@ -1,0 +1,12 @@
+Changes applied to the autosp 2023-10-07 tree as obtained from:
+	https://ctan.org/tex-archive/support/autosp
+
+Remove:
+	Makefile.in
+	aclocal.m4
+	compile
+	configure
+	depcomp
+	install-sh
+	missing
+	test-driver

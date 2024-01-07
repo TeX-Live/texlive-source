@@ -1,5 +1,5 @@
 .\" This manpage is licensed under the GNU Public License
-.TH AUTOSP 1 2021-01-07  "" ""
+.TH AUTOSP 1 2023-09-01  "" ""
 
 .SH NAME
 autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
@@ -16,7 +16,7 @@ autosp \- preprocessor to generate note-spacing commands for MusiXTeX scores
 
 .SH DESCRIPTION
 This program makes it easier to create MusiXTeX scores by converting (non-standard) commands of the 
-form \\anotes ... \\en into one or more conventional
+form \\anotes ... \\en (or \\an ... \\en) into one or more conventional
 note-spacing commands (\\notes \\Notes \\NOtes ...), 
 determined by the actual note values, with \\sk spacing commands inserted as necessary.
 The coding
@@ -69,7 +69,7 @@ the line breaks and spaces will be elided from the output.
 For example, 
 .nf
 
-  \\anotes
+  \\an
     \\ibl0K0\\qb0K\\nbbl0\\qb0{.K}\\tbbbl0\\tbbl0\\tql0L&
     \\ibbl1m{-2}\\qb1{.m}\\tbbbl1\\tbbl1\\qb1l\\tql1k\\en
 
@@ -138,7 +138,7 @@ any of the
 .I explicit 
 accidental commands: \\sh, \\fl, \\na, \\smallsh, \\bigsh, etc.
 If the automatic spacing is insufficient, the spacing may be increased by adding sufficient commas or 
-using a conventional notes command instead of \\anotes.  
+using a conventional notes command instead of \\an.  
 
 
 A note segment can be completely empty, but if a note segment should start

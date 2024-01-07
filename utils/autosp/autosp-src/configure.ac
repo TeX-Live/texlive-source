@@ -1,5 +1,5 @@
 AC_PREREQ(2.63)
-AC_INIT([autosp],[2021-01-07],[rdt@cs.queensu.ca])
+AC_INIT([autosp],[2023-10-07],[rdtennent@gmail.com])
 AC_CONFIG_AUX_DIR([.])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])

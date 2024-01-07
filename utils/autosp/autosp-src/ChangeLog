@@ -1,5 +1,11 @@
 AUTOSP
 
+2023-10-07
+
+  support for musixmtab commands
+  allowed for numerical notes >=10 in function collective()
+  allowed \an as abbreviation for \anotes
+
 2021-01-07
 
   allowed \Cp as an abbreviation for \Cpause
