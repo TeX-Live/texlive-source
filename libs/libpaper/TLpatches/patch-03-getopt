@@ -1,6 +1,6 @@
-diff -ur libpaper-1.1.28.orig/man/paperconf.1.in libpaper-1.1.28/man/paperconf.1.in
---- libpaper-1.1.28.orig/man/paperconf.1.in	2022-09-10 19:09:11.000000000 +0900
-+++ libpaper-1.1.28/man/paperconf.1.in	2022-09-10 19:15:12.000000000 +0900
+diff -ur libpaper-1.1.29/man/paperconf.1.in libpaper-src/man/paperconf.1.in
+--- libpaper-1.1.29/man/paperconf.1.in	2024-01-07 11:40:25.000000000 +0900
++++ libpaper-src/man/paperconf.1.in	2024-01-07 11:40:56.000000000 +0900
 @@ -3,39 +3,12 @@
  .B paperconf
  \- print paper configuration information

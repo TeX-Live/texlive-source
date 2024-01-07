@@ -1,6 +1,12 @@
+2024-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* Import libpaper-1.1.29 from debian.
+	version.ac: Adapted.
+
 2022-09-10  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import libpaper-1.1.28 from debian.
+	version.ac: Adapted.
 
 2021-07-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 

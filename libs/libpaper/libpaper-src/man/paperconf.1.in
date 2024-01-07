@@ -66,7 +66,7 @@ Use millimetres as unit for paper size.
 Use inches as unit for paper size.
 
 .SH ENVIRONMENT
-.TP 20            
+.TP 20
 .B @PAPERSIZEVAR@
 Paper size to use.
 .SH AUTHOR

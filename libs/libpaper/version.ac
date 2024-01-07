@@ -9,4 +9,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current libpaper version
-m4_define([libpaper_version], [1.1.28])
+m4_define([libpaper_version], [1.1.29])

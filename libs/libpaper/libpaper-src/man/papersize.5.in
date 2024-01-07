@@ -17,24 +17,25 @@ string found; the case in the name of the paper does not import (see
 section however).
 .SH "PAPER NAMES"
 The following names are commonly understood by programs:
-.B a3\fP,\fB a4\fP,\fB a5\fP,
-.B b5\fP,\fB letter\fP,\fB legal\fP,\fB executive\fP,\fB note\fP
+.BR a3 ", " a4 ", " a5 ", " b5 ", " letter ", " legal ", " executive ,
+.B note
 and
 .BR 11x17 .
 .PP
 Additional paper names that one may encounter are:
-.B a0\fP,\fB a1\fP,\fB a2\fP,\fB a6\fP,\fB a7\fP,\fB a8\fP,\fB a9\fP,\fB a10\fP,
-.B b0\fP,\fB b1\fP,\fB b2\fP,\fB b3\fP,\fB b4\fP,\fB tabloid\fP,
-.B statement\fP,\fB note\fP,
-.B halfletter\fP,\fB halfexecutive\fP,\fB folio\fP,\fB quarto\fP,\fB ledger\fP,
-.B archA\fP,\fB archB\fP,\fB archC\fP,\fB archD\fP,\fB archE\fP,\fB flsa\fP,
-.B flse\fP,\fB csheet\fP,\fB dsheet\fP,\fB esheet\fP
-and       
+.BR a0 ", " a1 ", " a2 ", " a6 ", " a7 ", " a8 ", " a9 ", " a10 ,
+.BR b0 ", " b1 ", " b2 ", " b3 ", " b4 ", " tabloid ,
+.BR statement ", " note ,
+.BR halfletter ", " halfexecutive ", " folio ", " quarto ", " ledger ,
+.BR archA ", " archB ", " archC ", " archD ", " archE ", " flsa ,
+.BR flse ", " csheet ", " dsheet ,
+.B esheet
+and
 .BR 10x14 .
 .PP
 The value of the
 .B papersize
-file can be overrideen by
+file can be overridden by
 looking in order at the
 .B @PAPERSIZEVAR@
 environment variable, then at the contents of the file specified by the

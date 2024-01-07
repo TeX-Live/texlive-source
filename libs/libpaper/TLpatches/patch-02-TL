@@ -1,6 +1,6 @@
-diff -ur libpaper-1.1.28.orig/lib/paper.c libpaper-1.1.28/lib/paper.c
---- libpaper-1.1.28.orig/lib/paper.c	2018-12-03 06:15:41.000000000 +0900
-+++ libpaper-1.1.28/lib/paper.c	2022-09-10 19:13:15.000000000 +0900
+diff -ur libpaper-1.1.29/lib/paper.c libpaper-src/lib/paper.c
+--- libpaper-1.1.29/lib/paper.c	2018-12-03 06:15:41.000000000 +0900
++++ libpaper-src/lib/paper.c	2024-01-07 11:32:25.000000000 +0900
 @@ -87,24 +87,11 @@
  }
  
@@ -121,10 +121,9 @@ diff -ur libpaper-1.1.28.orig/lib/paper.c libpaper-1.1.28/lib/paper.c
      paperdef = defaultpapername();
      paperstr = malloc((strlen(paperdef) + 1) * sizeof(char));
      
-Only in libpaper-1.1.28/lib: paper.c.orig
-diff -ur libpaper-1.1.28.orig/man/paperconf.1.in libpaper-1.1.28/man/paperconf.1.in
---- libpaper-1.1.28.orig/man/paperconf.1.in	2012-05-04 04:05:12.000000000 +0900
-+++ libpaper-1.1.28/man/paperconf.1.in	2022-09-10 19:09:11.000000000 +0900
+diff -ur libpaper-1.1.29/man/paperconf.1.in libpaper-src/man/paperconf.1.in
+--- libpaper-1.1.29/man/paperconf.1.in	2023-03-17 22:35:38.000000000 +0900
++++ libpaper-src/man/paperconf.1.in	2024-01-07 11:36:12.000000000 +0900
 @@ -1,4 +1,4 @@
 -.TH PAPERCONF 1 "24 April 2001"
 +.TH PAPERCONF 1 "25 October 2013"
@@ -150,13 +149,13 @@ diff -ur libpaper-1.1.28.orig/man/paperconf.1.in libpaper-1.1.28/man/paperconf.1
  .TP
 @@ -98,21 +95,9 @@
  .SH ENVIRONMENT
- .TP 20            
+ .TP 20
  .B @PAPERSIZEVAR@
 -Paper size to use regardless of what the papersize file contains.
 -.TP 20
 -.B @PAPERCONFVAR@
 -Full path to a file containing the paper size to use.
--.SH FILES         
+-.SH FILES
 -.TP 20
 -.B @PAPERCONF@
 -Contains the name of the system-wide default paper size to be used

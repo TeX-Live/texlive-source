@@ -6,13 +6,14 @@
 .SH SYNOPSIS
 .B paperconfig
 [
-.BR \-v\fP, \fB\-\-version
+.BR \-v ", " \-\-version
 ]
 [
-.BR \-h\fP, \fB\-\-help
+.BR \-h ", " \-\-help
 ]
 [
-.BI "\-p\fP, \fB\-\-paper" " papername"
+.BR \-p ", " \-\-paper
+.I papername
 |
 .B \-\-force
 ]
@@ -31,18 +32,20 @@ notifies other packages of the change by running the scripts in the
 directory.
 .SH OPTIONS
 .TP
-.BR \-v\fP, \fB\-\-version
+.BR \-v ", " \-\-version
 Print the version of
 .B paperconfig
 and exit.
 .TP
-.BR \-h\fP, \fB\-\-help
+.BR \-h ", " \-\-help
 Print help about usage and exit.
 .TP
-.BI "\-p\fP, \fB\-\-paper" " papername"
+.BR \-p ", " \-\-paper\c
+.I papername
 Use
 .I papername
-if possible. If
+if possible.
+If
 .I papername
 is not a valid paper, print an error message and exit.
 .TP
@@ -65,7 +68,7 @@ variable is not set.
 Directory of scripts to run after the paper size has been changed.
 This package puts no scripts here, but other packages may.
 .B run-parts
-is used to run the scripts, therefore their names must comply with 
+is used to run the scripts, therefore their names must comply with
 .B run-part's
 naming requirements.
 .SH AUTHOR

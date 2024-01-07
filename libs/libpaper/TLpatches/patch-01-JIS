@@ -1,6 +1,6 @@
-diff -ur libpaper-1.1.28.orig/lib/paperspecs libpaper-1.1.28/lib/paperspecs
---- libpaper-1.1.28.orig/lib/paperspecs	2016-07-16 23:10:58.000000000 +0900
-+++ libpaper-1.1.28/lib/paperspecs	2022-09-10 19:05:40.000000000 +0900
+diff -ur libpaper-1.1.29/lib/paperspecs libpaper-src/lib/paperspecs
+--- libpaper-1.1.29/lib/paperspecs	2016-07-16 23:10:58.000000000 +0900
++++ libpaper-src/lib/paperspecs	2024-01-07 11:30:24.000000000 +0900
 @@ -40,6 +40,18 @@
  c6 114 162 mm
  c7 81 114 mm
@@ -20,9 +20,9 @@ diff -ur libpaper-1.1.28.orig/lib/paperspecs libpaper-1.1.28/lib/paperspecs
  DL 110 220 mm
  Comm10 297 684
  Monarch 279 540
-diff -ur libpaper-1.1.28.orig/lib/paperspecs.h libpaper-1.1.28/lib/paperspecs.h
---- libpaper-1.1.28.orig/lib/paperspecs.h	2016-07-17 05:21:02.000000000 +0900
-+++ libpaper-1.1.28/lib/paperspecs.h	2022-09-10 19:05:40.000000000 +0900
+diff -ur libpaper-1.1.29/lib/paperspecs.h libpaper-src/lib/paperspecs.h
+--- libpaper-1.1.29/lib/paperspecs.h	2016-07-17 05:21:02.000000000 +0900
++++ libpaper-src/lib/paperspecs.h	2024-01-07 11:30:24.000000000 +0900
 @@ -43,6 +43,18 @@
      { "c6", 323.149606, 459.212598 },
      { "c7", 229.606299, 323.149606 },

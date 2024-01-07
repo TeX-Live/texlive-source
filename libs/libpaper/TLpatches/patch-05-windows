@@ -1,6 +1,6 @@
-diff -ur libpaper-1.1.28.orig/src/paperconf.c libpaper-1.1.28/src/paperconf.c
---- libpaper-1.1.28.orig/src/paperconf.c	2022-09-10 19:16:05.000000000 +0900
-+++ libpaper-1.1.28/src/paperconf.c	2022-09-10 19:17:11.000000000 +0900
+diff -ur libpaper-1.1.29/src/paperconf.c libpaper-src/src/paperconf.c
+--- libpaper-1.1.29/src/paperconf.c	2024-01-07 11:43:15.000000000 +0900
++++ libpaper-src/src/paperconf.c	2024-01-07 11:43:48.000000000 +0900
 @@ -3,9 +3,14 @@
  #include "config.h"
  #endif

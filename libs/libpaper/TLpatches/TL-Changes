@@ -1,24 +1,8 @@
-Changes applied to libpaper_1.1.28.tar.gz as obtained from:
+Changes applied to libpaper_1.1.29.tar.gz as obtained from:
 	http://ftp.debian.org/debian/pool/main/libp/libpaper/
 
 Renamed and reserved:
 	debian/changelog -> changelog.debian
-
-Removed unused files:
-	Makefile.in
-	aclocal.m4
-	compile
-	config.guess
-	config.sub
-	configure
-	depcomp
-	install-sh
-	ltmain.sh
-	missing
-	mkinstalldirs
-	lib/Makefile.in
-	man/Makefile.in
-	src/Makefile.in
 
 Removed empty files:
 	AUTHORS
