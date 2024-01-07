@@ -5,11 +5,11 @@
 /*
  * Copyright (c) 1986-2007 Purdue University
  * All rights reserved.
- * 
+ *
  * Developed by:  Daniel Trinkle
  *                Department of Computer Science, Purdue University
  *                http://www.cs.purdue.edu/
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal with the Software without restriction, including
@@ -17,19 +17,19 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * o Redistributions of source code must retain the above copyright
  *   notice, this list of conditions and the following disclaimers.
- * 
+ *
  * o Redistributions in binary form must reproduce the above copyright
  *   notice, this list of conditions and the following disclaimers in the
  *   documentation and/or other materials provided with the distribution.
- * 
+ *
  * o Neither the names of Daniel Trinkle, Purdue University, nor the
  *   names of its contributors may be used to endorse or promote products
  *   derived from this Software without specific prior written
  *   permission.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -205,7 +205,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 
 %Start Define Display IncludeOnly Input Math Normal Control
 %Start LaBegin LaDisplay LaEnd LaEnv LaFormula LaInclude LaSubfile
-%Start LaMacro LaOptArg LaMacro2 LaOptArg2 LaVerbatim 
+%Start LaMacro LaOptArg LaMacro2 LaOptArg2 LaVerbatim
 %start LaBreak LaPicture
 
 %%
@@ -217,9 +217,9 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 
 <LaBegin>{S}"{"{S}"verbatim"{S}"}"		{ if (BeginEnv("verbatim"))
 							BEGIN LaEnv;
-						    else
+						else
 							BEGIN LaVerbatim;
-						    IGNORE;
+						IGNORE;
 						}
 
 <LaVerbatim>"\\end"{S}"{"{S}"verbatim"{S}"}" /* verbatim mode */	{BEGIN Normal; IGNORE;}
@@ -227,34 +227,34 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 <LaVerbatim>.					ECHO;
 
 <LaBegin>{S}"{"{S}"minipage"{S}"}"		{ KILLARGS(1);
-						  if (BeginEnv("minipage"))
+						if (BeginEnv("minipage"))
 							BEGIN LaEnv;
-						  else
+						else
 							BEGIN LaMacro; /* Normal; */
-						  IGNORE;
+							IGNORE;
 						}
 
 <LaBegin>{S}"{"{S}"table"{S}"}"{S}"["{P}"]"		{
-						  if (BeginEnv("table"))
+						if (BeginEnv("table"))
 							BEGIN LaEnv;
-						  else
+						else
 							BEGIN Normal;
-						  IGNORE;
-						}
+						IGNORE;
+	}
 
 <LaBegin>{S}"{"{S}"figure"{S}"}"{S}"["{P}"]"		{
-						  if (BeginEnv("figure"))
+						if (BeginEnv("figure"))
 							BEGIN LaEnv;
-						  else
+						else
 							BEGIN Normal;
-						  IGNORE;
+						IGNORE;
 						}
-						
+
 <LaBegin>{W}					{ if (BeginEnv(yytext))
 							BEGIN LaEnv;
-						    else
+						else
 							BEGIN Normal;
-						    IGNORE;
+							IGNORE;
 						}
 	/*<LaBegin>"\n"					NEWLINE;*/
 <LaBegin>.					{INCRLINENO;}
@@ -265,7 +265,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 
 <LaEnd>{W}		 /* end environment */	{   if (EndEnv(yytext))
 							BEGIN Normal;
-						    IGNORE;
+							IGNORE;
 						}
 <LaEnd>"}"					{BEGIN LaEnv; IGNORE;}
 	/*<LaEnd>"\n"					NEWLINE;*/
@@ -349,31 +349,22 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 							footnoteLevel = currBracesLevel;
 							++currBracesLevel;
 							}
-<Normal>"\\verb" /* ignore \verb<ch>...<ch> */	{
-  /* Sorry to use different formatting, but it seemed better not
-     to cram all this code over in the rightmost 20 chars. */
-  if (fLatex) {
-    char verbchar, c;
-    verbchar = input();
-    if (verbchar != EOF) {
-      while ((c = input()) != verbchar && c != '\n' && c != EOF) {
-        putchar(c);
-      }
-    }
-    /* would be nice to include input filenames and line numbers */
-    if (verbchar == EOF || c == EOF) {
-      /* do this test first in case verbchar is eof */
-      ErrorExit("\\verb not complete before eof");
-    }
-    if (c == '\n') {
-      char delim[2];
-      delim[0] = verbchar;
-      delim[1] = 0;
-      Warning("\\verb not terminated before eol, delimiter", delim);
-    }
-  }
-  IGNORE;
-						}
+<Normal>"\\verb" /* ignore \verb<ch>...<ch> */ {
+	if (fLatex) {
+		char verbchar, c;
+		verbchar = input();
+		if (verbchar < ' ') {
+			/* would be nice to include input filenames and line numbers */
+			ErrorExit("\\verb not complete before eof");
+		}
+		while ((c = input()) != verbchar && c != '\n' && c != EOF && c != 0) {
+			putchar(c);
+		}
+		if (c != verbchar) {
+			ErrorExit("\\verb not complete before eof");
+		}
+	}
+}
 
 <Normal>"\\newcommand"				{ LATEX; KILLARGS(2); }
 <Normal>"\\renewcommand"			{ LATEX; KILLARGS(2); }
@@ -411,7 +402,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 
 <Normal>"\\include"	/* process files */	{LaBEGIN LaInclude; IGNORE;}
 <LaInclude>[^{ \t\n}]+				{   IncludeFile(yytext);
-						    BEGIN Normal;
+							BEGIN Normal;
 						}
 <LaInclude>"\n"+					NEWLINE;
 <LaInclude>.					;
@@ -420,21 +411,21 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 <IncludeOnly>[^{ \t,\n}]+			AddInclude(yytext);
 <IncludeOnly>"}"				{   if (csbIncList == 0)
 							rgsbIncList[csbIncList++] = '\0';
-						    BEGIN Normal;
+							BEGIN Normal;
 						}
 <IncludeOnly>"\n"+				NEWLINE;
 <IncludeOnly>.					;
 
 <Normal>"\\subfile"	/* process files */	{LaBEGIN LaSubfile; IGNORE;}
 <LaSubfile>[^{ \t\n}]+				{   IncludeFile(yytext);
-						    BEGIN Normal;
+							BEGIN Normal;
 						}
 <LaSubfile>"\n"+					NEWLINE;
 <LaSubfile>.					;
 
 <Normal>"\\input"				{BEGIN Input; IGNORE;}
 <Input>[^{ \t\n}]+				{   InputFile(yytext);
-						    BEGIN Normal;
+							BEGIN Normal;
 						}
 <Input>"\n"+					NEWLINE;
 <Input>.					;
@@ -485,7 +476,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 							}
 <Normal>{W}[']*{W}				{   if (fWord)
 							(void)printf("%s\n", yytext);
-						    else
+							else
 							ECHO;
 						}
 <Normal>[0-9]+					if (!fWord) ECHO;
@@ -496,30 +487,30 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 <LaMacro>"\["					{ BEGIN LaOptArg; }
 <LaMacro>"{"					{ cOpenBrace++; }
 <LaMacro>"}""\n"{0,1}				{   cOpenBrace--; INCRLINENO;
-						    if (cOpenBrace == 0)
-						    {
+							if (cOpenBrace == 0)
+							{
 							if (--cArgs==0)
 							BEGIN Normal;
-						    }
+							}
 						}
 <LaMacro>.					;
-<LaOptArg>"\]"					BEGIN LaMacro;	
+<LaOptArg>"\]"					BEGIN LaMacro;
 <LaOptArg>[^\]]*				;
 
 <LaMacro2>"\["					{ BEGIN LaOptArg2; }
 <LaMacro2>"{"				        { if (cOpenBrace == 0)
-						    {
+							{
 							if (--cArgs==0)
 							{
-							    BEGIN Normal;
-							    cOpenBrace--;
+								BEGIN Normal;
+								cOpenBrace--;
 							}
-						    }
-						  cOpenBrace++;
+							}
+							cOpenBrace++;
 						}
 <LaMacro2>"}"					{   cOpenBrace--; }
 <LaMacro2>.					;
-<LaOptArg2>"\]"					BEGIN LaMacro2;	
+<LaOptArg2>"\]"					BEGIN LaMacro2;
 <LaOptArg2>.					;
 %%
 
@@ -547,7 +538,7 @@ main(int cArgs, char *rgsbArgs[])
 	char	*pch, sbBadOpt[2];
 	const char *sbEnvList = DEFAULTENV;
 	int	fSawFile = 0, iArgs = 1;
-	
+
 	/* get base name and decide what we are doing, detex or delatex */
 #ifdef OS2
 	char drive[_MAX_DRIVE], dir[_MAX_DIR];
@@ -563,12 +554,12 @@ main(int cArgs, char *rgsbArgs[])
 	sbProgName = kpse_program_name;
 #else
 	if ((sbProgName = strrchr(rgsbArgs[0], '/')) != NULL)
-	    sbProgName++;
+		sbProgName++;
 	else
-	    sbProgName = rgsbArgs[0];
+		sbProgName = rgsbArgs[0];
 #endif
 	if (strcmp("delatex",sbProgName) == 0)
-	    fLatex = 1;
+		fLatex = 1;
 
 #ifndef KPATHSEA
 	/* set rgsbInputPaths for use with TexOpen() */
@@ -578,29 +569,29 @@ main(int cArgs, char *rgsbArgs[])
 	/* process command line options */
 	while (iArgs < cArgs && *(pch = rgsbArgs[iArgs]) == CHOPT) {
 		while (*++pch)
-		    switch (*pch) {
-		    case CHCITEOPT:
+			switch (*pch) {
+			case CHCITEOPT:
 			fCite = 1;
 			break;
-		    case CHENVOPT:
+			case CHENVOPT:
 			if (++iArgs >= cArgs) {
 				ErrorExit("-e option requires an argument");
 			}
 			sbEnvList = rgsbArgs[iArgs];
 			break;
-		    case CHLATEXOPT:
+			case CHLATEXOPT:
 			fLatex = 1;
 			break;
-		    case CHNOFOLLOWOPT:
+			case CHNOFOLLOWOPT:
 			fFollow = 0;
 			break;
-		    case CHSPACEOPT:
+			case CHSPACEOPT:
 			fSpace = 1;
 			break;
-		    case CHTEXOPT:
+			case CHTEXOPT:
 			fForcetex = 1;
 			break;
-		    case CHWORDOPT:
+			case CHWORDOPT:
 			fWord = 1;
 			break;
 			case CHREPLACE:
@@ -612,12 +603,12 @@ main(int cArgs, char *rgsbArgs[])
 			case CHSRCLOC:
 			fSrcLoc = 1;
 			break;
-		    default:
+			default:
 			sbBadOpt[0] = *pch;
 			sbBadOpt[1] = '\0';
 			Warning("unknown option ignored -", sbBadOpt);
 			UsageExit();
-		    }
+			}
 		iArgs++;
 	}
 	SetEnvIgnore(sbEnvList);
@@ -628,30 +619,30 @@ main(int cArgs, char *rgsbArgs[])
 
 	/* process input files */
 	for (; iArgs < cArgs; iArgs++) {
-	    fSawFile++;
-	    if ((yyin = TexOpen(rgsbArgs[iArgs])) == NULL) {
+		fSawFile++;
+		if ((yyin = TexOpen(rgsbArgs[iArgs])) == NULL) {
 		Warning("can't open file", rgsbArgs[iArgs]);
 		continue;;
-	    }
+		}
 		fFileNames[csb] = rgsbArgs[iArgs];
 		fFileLines[csb] = 1;
-	    BEGIN Normal;
-	    (void)yylex();
+		BEGIN Normal;
+		(void)yylex();
 	}
 
 	/* if there were no input files, assume stdin */
 	if (!fSawFile) {
-	    yyin = stdin;
+		yyin = stdin;
 #ifdef OS2
-	    if (isatty(fileno(stdin)))
+		if (isatty(fileno(stdin)))
 		OS2UsageExit();
 #endif
-	    BEGIN Normal;
-	    (void)yylex();
+		BEGIN Normal;
+		(void)yylex();
 	}
 #ifndef FLEX_SCANNER
 	if (YYSTATE != Normal)
-	    ErrorExit("input contains an unterminated mode or environment");
+		ErrorExit("input contains an unterminated mode or environment");
 #endif
 	return(0);
 }
@@ -671,7 +662,7 @@ yywrap(void)
 {
 	(void)fclose(yyin);
 #ifdef FLEX_SCANNER
-        /* Pop context state */
+		/* Pop context state */
 	if (csb > 0) {
 		free(fFileNames[csb]);
 		yy_delete_buffer( YY_CURRENT_BUFFER );
@@ -679,8 +670,8 @@ yywrap(void)
 	}
 #endif /* FLEX_SCANNER */
 	if (cfp > 0) {
-	    yyin = rgfp[--cfp];
-	    return(0);
+		yyin = rgfp[--cfp];
+		return(0);
 	}
 	return(1);
 }
@@ -732,7 +723,7 @@ LineBreak()
 }
 
 /******
-** Echo -- If we are at column 0 and have specified '-1'; output 
+** Echo -- If we are at column 0 and have specified '-1'; output
 **	the source location information.
 ******/
 
@@ -764,7 +755,7 @@ IncrLineNo()
 **	cannot just ignore text. We must at least increase the linenumber counter.
 ******/
 
-void 
+void
 Ignore()
 {
 	IncrLineNo();
@@ -783,10 +774,10 @@ SetEnvIgnore(const char *sbEnvList)
 	sb = SafeMalloc(strlen(sbEnvList) + 1, "malloc for SetEnvIgnore failed");
 	(void) strcpy(sb, sbEnvList);
 
-	
+
 	csbEnvIgnore = SeparateList(sb, rgsbEnvIgnore, CHENVSEP, MAXENVS);
 	if (csbEnvIgnore == my_ERROR)
-	    ErrorExit("The environment list contains too many environments");
+		ErrorExit("The environment list contains too many environments");
 }
 
 /******
@@ -801,10 +792,10 @@ BeginEnv(const char *sbEnv)
 
 	if (!fLatex) return(0);
 	for (i = 0; i < csbEnvIgnore; ++i)
-	    if (strcmp(sbEnv, rgsbEnvIgnore[i]) == 0) {
+		if (strcmp(sbEnv, rgsbEnvIgnore[i]) == 0) {
 			(void)strcpy(sbCurrentIgnoredEnv, sbEnv);
 			return(1);
-	    }
+		}
 	return(0);
 }
 
@@ -817,7 +808,7 @@ EndEnv(const char *sbEnv)
 {
 	if (!fLatex) return(0);
 	if (strcmp(sbEnv, sbCurrentIgnoredEnv) == 0)
-	    return(1);
+		return(1);
 	return(0);
 }
 
@@ -833,13 +824,13 @@ InputFile(char *sbFile)
 	FILE	*TexOpen();
 
 	if (!fFollow)
-	    return;
+		return;
 	rgfp[cfp++] = yyin;
 	if ((yyin = TexOpen(sbFile)) == NULL) {
-	    Warning("can't open \\input file", sbFile);
-	    yyin = rgfp[--cfp];
-            return;
-	} 
+		Warning("can't open \\input file", sbFile);
+		yyin = rgfp[--cfp];
+		return;
+	}
 #ifdef FLEX_SCANNER
 	rgsb[csb++]     = YY_CURRENT_BUFFER;
 	fFileLines[csb] = 1;
@@ -859,14 +850,14 @@ IncludeFile(char *sbFile)
 	FILE	*TexOpen();
 
 	if (!fFollow)
-	    return;
+		return;
 	if (!InList(sbFile))
-	    return;
+		return;
 	rgfp[cfp++] = yyin;
 	if ((yyin = TexOpen(sbFile)) == NULL) {
-	    Warning("can't open \\include file", sbFile);
-	    yyin = rgfp[--cfp];
-            return;
+		Warning("can't open \\include file", sbFile);
+		yyin = rgfp[--cfp];
+		return;
 	}
 #ifdef FLEX_SCANNER
 	rgsb[csb++]     = YY_CURRENT_BUFFER;
@@ -885,9 +876,9 @@ void
 AddInclude(char *sbFile)
 {
 	if (!fFollow)
-	    return;
+		return;
 	if (csbIncList >= MAXINCLIST)
-	    Warning("\\includeonly list is too long, ignoring", sbFile);
+		Warning("\\includeonly list is too long, ignoring", sbFile);
 	rgsbIncList[csbIncList] = SafeMalloc(strlen(sbFile) + 1, "malloc for AddInclude failed");
 	(void)strcpy(rgsbIncList[csbIncList++], sbFile);
 }
@@ -904,14 +895,14 @@ InList(char *sbFile)
 	int	i;
 
 	if (csbIncList == 0)	/* no list */
-	    return(1);
+		return(1);
 	(void)strcpy(sbBase, sbFile);
 	if ((pch = strrchr(sbBase, '.')) != NULL)
-	    *pch = '\0';
+		*pch = '\0';
 	i = 0;
 	while ((i < csbIncList) && rgsbIncList[i])
-	    if (strcmp(rgsbIncList[i++], sbBase) == 0)
-	        return(1);
+		if (strcmp(rgsbIncList[i++], sbBase) == 0)
+			return(1);
 	return(0);
 }
 
@@ -936,27 +927,27 @@ SetInputPaths(void)
 #ifdef OS2
 	if ((sb = getenv("TEXINPUT")) == NULL)
 #endif
-	    if ((sb = getenv("TEXINPUTS")) == NULL)
+		if ((sb = getenv("TEXINPUTS")) == NULL)
 		sb = DEFAULTINPUTS;
 	cchPaths = strlen(sb);
 	if (sb[0] == CHPATHSEP)
-	    cchPaths += cchDefaults;
+		cchPaths += cchDefaults;
 	if (sb[strlen(sb) - 1] == CHPATHSEP)
-	    cchPaths += cchDefaults;
+		cchPaths += cchDefaults;
 	sbPaths = SafeMalloc(cchPaths + 1, "malloc for SetInputPaths failed");
 	sbPaths[0] = '\0';
 	if (sb[0] == CHPATHSEP)
-	    (void)strcat(sbPaths, DEFAULTINPUTS);
+		(void)strcat(sbPaths, DEFAULTINPUTS);
 	(void)strcat(sbPaths, sb);
 	if (sb[strlen(sb) - 1] == CHPATHSEP)
-	    (void)strcat(sbPaths, DEFAULTINPUTS);
+		(void)strcat(sbPaths, DEFAULTINPUTS);
 
 	csbInputPaths = SeparateList(sbPaths, rgsbInputPaths, CHPATHSEP, MAXINPUTPATHS);
 	if (csbInputPaths == my_ERROR)
 #ifdef OS2
-	    ErrorExit("TEXINPUT(S) environment variable has too many paths");
+		ErrorExit("TEXINPUT(S) environment variable has too many paths");
 #else
-	    ErrorExit("TEXINPUTS environment variable has too many paths");
+		ErrorExit("TEXINPUTS environment variable has too many paths");
 #endif
 }
 #endif
@@ -974,8 +965,8 @@ SeparateList(char *sbList, char *rgsbList[], char chSep, int csbMax)
 	int	csbList = 0;
 
 	while (sbList && *sbList && csbList < csbMax) {
-	    rgsbList[csbList++] = sbList;
-	    if ((sbList = strchr(sbList, chSep))) {
+		rgsbList[csbList++] = sbList;
+		if ((sbList = strchr(sbList, chSep))) {
 			*sbList++ = '\0';
 		}
 	}
@@ -1006,52 +997,52 @@ TexOpen(char *sbFile)
 
 	for (iPath = 0; iPath < csbInputPaths; iPath++) {
 #ifdef OS2
-	    if (*sbFile == '/' || *sbFile == '\\' || strchr(sbFile, ':')) {	/* absolute path */
+		if (*sbFile == '/' || *sbFile == '\\' || strchr(sbFile, ':')) {	/* absolute path */
 #else
-	    if (*sbFile == '/') {	/* absolute path */
+		if (*sbFile == '/') {	/* absolute path */
 #endif
 			(void)snprintf(sbFullPath, PATH_MAX-1, "%s", sbFile);
 			iPath = csbInputPaths;	/* only check once */
-	    } else {
+		} else {
 			(void)snprintf(sbFullPath, PATH_MAX-1, "%s/%s", rgsbInputPaths[iPath], sbFile);
 		}
 #ifdef OS2
-	    pch = sbFullPath;
-	    while (pch = strchr(pch, '\\')) {
+		pch = sbFullPath;
+		while (pch = strchr(pch, '\\')) {
 			*pch = '/';
 		}
 #endif
 
-	    /* If sbFile ends in .tex then it must be there */
-	    if ((pch = strrchr(sbFullPath, '.')) != NULL
+		/* If sbFile ends in .tex then it must be there */
+		if ((pch = strrchr(sbFullPath, '.')) != NULL
 			&& (strcmp(pch, ".tex") == 0)) {
 			if ((fp = fopen(sbFullPath, "r")) != NULL)
 				return(fp);
 			else
 				continue;
-	    }
+		}
 
-	    /* if .<ext> then try to open it.  the '.' represents   */
-	    /* the beginning of an extension if it is not the first */
-	    /* character and it does not follow a '.' or a '/'      */
-	    if (pch != NULL && pch > &(sbFullPath[0])
-                    && *(pch - 1) != '.' && *(pch - 1) != '/'
-		    && (fp = fopen(sbFullPath, "r")) != NULL) {
+		/* if .<ext> then try to open it.  the '.' represents   */
+		/* the beginning of an extension if it is not the first */
+		/* character and it does not follow a '.' or a '/'      */
+		if (pch != NULL && pch > &(sbFullPath[0])
+				&& *(pch - 1) != '.' && *(pch - 1) != '/'
+				&& (fp = fopen(sbFullPath, "r")) != NULL) {
 			return(fp);
 		}
 
-	    /* just base name, add .tex to the name */
-	    sbNew = SafeMalloc(strlen(sbFullPath) + 5, "malloc for TexOpen failed");
-	    (void)strcpy(sbNew, sbFullPath);
-	    (void)strcat(sbNew, ".tex");
-	    if ((fp = fopen(sbNew, "r")) != NULL) {
+		/* just base name, add .tex to the name */
+		sbNew = SafeMalloc(strlen(sbFullPath) + 5, "malloc for TexOpen failed");
+		(void)strcpy(sbNew, sbFullPath);
+		(void)strcat(sbNew, ".tex");
+		if ((fp = fopen(sbNew, "r")) != NULL) {
 			free(sbNew);
 			return(fp);
 		}
 		free(sbNew);
 
-	    /* try sbFile regardless */
-	    if ((fp = fopen(sbFullPath, "r")) != NULL)
+		/* try sbFile regardless */
+		if ((fp = fopen(sbFullPath, "r")) != NULL)
 			return(fp);
 	}
 	return NULL;
@@ -1059,7 +1050,7 @@ TexOpen(char *sbFile)
 	sbNew = kpse_find_file (sbFile, kpse_tex_format, false);
 
 	if (sbNew == NULL)
-	    return NULL;
+		return NULL;
 
 	return fopen (sbNew, "r");
 #endif
@@ -1075,7 +1066,7 @@ SafeMalloc(int cch, const char *sbMessage)
 	char *sb;
 
 	if ((sb = (char *)malloc((unsigned)cch)) == NULL)
-	    ErrorExit(sbMessage);
+		ErrorExit(sbMessage);
 	return(sb);
 }
 
@@ -1124,7 +1115,6 @@ UsageExit(void)
 -v  show program version and exit\n\
 \n\
 opendetex home page: https://github.com/pkubowicz/opendetex");
-	(void)printf("opendetex version %s\n", VERSION);
 	exit(0);
 }
 
@@ -1135,6 +1125,7 @@ opendetex home page: https://github.com/pkubowicz/opendetex");
 void
 VersionExit(void)
 {
-	(void)printf("\nopendetex version %s\n", VERSION);
+	(void)printf("\nOpenDetex version %s\nhttps://github.com/pkubowicz/opendetex\n",
+		VERSION);
 	exit(0);
 }

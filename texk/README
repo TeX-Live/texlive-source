@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2023 TeX Users Group.
+Copyright 2006-2024 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -33,10 +33,8 @@ cjkutils 4.8.5 - checked 22jan22
   http://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
   http://www.nongnu.org/cjk/
 
-detex 2.8.9 - maintained here
-  maintained for a time (untouched since 2020, checked 14sep22):
-    https://github.com/pkubowicz/opendetex/releases
-    (would be useful to look at open issues there for bugs)
+detex 2.8.11 - checked 07jan24
+  https://github.com/pkubowicz/opendetex/releases
   original author: http://www.cs.purdue.edu/homes/trinkle/detex/
 
 dtl - maintained here, by Takuji

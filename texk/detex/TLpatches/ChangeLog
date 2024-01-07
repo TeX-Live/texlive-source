@@ -1,3 +1,8 @@
+2024-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	Adapt to opendetex-2.8.11.
+	* Patches removed (handled upstream).
+
 2020-12-03  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Remove patch-01-support-old-compiler, which is applied in the upstream.

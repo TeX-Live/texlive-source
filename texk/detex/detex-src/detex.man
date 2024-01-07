@@ -1,9 +1,10 @@
-.TH DETEX 1 "15 September 2022" "TeX Live"
+.TH DETEX 1 "August 12, 1993" "Purdue University"
 .SH NAME
 detex \- a filter to strip \fITeX\fP commands from a .tex file.
 .SH SYNOPSIS
 .B detex
-[ \fB\-clnstw\fR ] [ \fB\-e\fI environment-list\fR ] [ \fIfilename\fR[.tex] ... ]
+[ \fB\-clnstw\fR ] [ \fB\-e\fI environment-list\fR ]
+[ \fIfilename\fR[.tex] ... ]
 .SH DESCRIPTION
 .I Detex
 reads each file in sequence, removes all comments and
@@ -13,18 +14,18 @@ and writes the remainder on the standard output.
 All text in math mode and display mode is removed.
 By default,
 .I detex
-follows \\input commands.
+follows \einput commands.
 If a file cannot be opened, a warning message is
 printed and the command is ignored.
 If the
 .B \-n
-option is used, no \\input or \\include commands will be processed.
+option is used, no \einput or \einclude commands will be processed.
 This allows single file processing.
 If no input file is given on the command line,
 .I detex
 reads from standard input.
 .PP
-If the magic sequence ``\\begin{document}'' appears in the text,
+If the magic sequence ``\ebegin{document}'' appears in the text,
 .I detex
 assumes it is dealing with
 .I LaTeX
@@ -32,7 +33,7 @@ source and
 .I detex
 recognizes additional constructs used in
 .IR LaTeX .
-These include the \\include and \\includeonly commands.
+These include the \einclude and \eincludeonly commands.
 The
 .B \-l
 option can be used to force
@@ -57,8 +58,8 @@ The
 .B \-c
 option can be used in
 .I LaTeX
-mode to have detex echo the arguments to \\cite,
-\\ref, and \\pageref macros.  This can be useful when sending the output to
+mode to have detex echo the arguments to \ecite,
+\eref, and \epageref macros.  This can be useful when sending the output to
 a style checker.
 .PP
 .I Detex
@@ -72,7 +73,7 @@ environments.
 .PP
 The
 .B \-r
-option tries to naively replace $..$, $$..$$, \\(..\\) and \\[..\\]
+option tries to naively replace $..$, $$..$$, \e(..\e) and \e[..\e]
 with nouns and verbs (in particular, "noun" and "verbs")
 in a way that keeps sentences readable.
 .PP
@@ -86,20 +87,21 @@ with the deletions mentioned above.  Newline characters are
 preserved where possible
 so that the lines of output match the input as closely as possible.
 .PP
-The 
+The
 .B \-1
 option will prefix each printed line with `filename:linenumber:` indicating
 where that line is coming from in terms of the original (La)TeX document.
 .PP
-The TEXINPUTS environment variable is used to find \\input and \\include
+The TEXINPUTS environment variable is used to find \einput and \einclude
 files.  Like \fITeX\fP, it interprets a leading or trailing `:' as the default
-TEXINPUTS.  It does \fInot\fP support the `//' directory expansion magic sequence.
+TEXINPUTS.
+It does \fInot\fP support the `//' directory expansion magic sequence.
 .PP
 Detex now handles the basic \fITeX\fP ligatures as a special case, replacing the
-ligatures with acceptable character substitutes.  This eliminates
+ligatures with acceptable character4 substitutes.  This eliminates
 spelling errors introduced by merely removing them.  The ligatures are
-\\aa, \\ae, \\oe, \\ss, \\o, \\l (and their upper-case
-equivalents).  The special "dotless" characters \\i and \\j are also
+\eaa, \eae, \eoe, \ess, \eo, \el (and their upper-case
+equivalents).  The special "dotless" characters \ei and \ej are also
 replaced with i and j respectively.
 .PP
 Note that previous versions of
@@ -113,9 +115,9 @@ The old functionality can be essentially duplicated by using the
 .B \-s
 option.
 .SH SEE ALSO
-tex(1)
+.BR tex(1)
 .SH DIAGNOSTICS
-Nesting of \\input is allowed but the number of opened files must not
+Nesting of \einput is allowed but the number of opened files must not
 exceed the system's limit on the number of simultaneously opened files.
 .I Detex
 ignores unrecognized option characters after printing a warning message.
@@ -133,7 +135,7 @@ it is easily confused by some constructs. Most errors result in too much
 rather than too little output.
 .PP
 Running \fILaTeX\fR
-source without a ``\\begin{document}''
+source without a ``\ebegin{document}''
 through \fIdetex\fR may produce
 errors.
 .PP

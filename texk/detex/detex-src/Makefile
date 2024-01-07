@@ -1,10 +1,10 @@
 # Copyright (c) 1986-2007 Purdue University
 # All rights reserved.
-# 
+#
 # Developed by:  Daniel Trinkle
 #                Department of Computer Science, Purdue University
 #                http://www.cs.purdue.edu/
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal with the Software without restriction, including
@@ -12,19 +12,19 @@
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject to
 # the following conditions:
-# 
+#
 # o Redistributions of source code must retain the above copyright
 #   notice, this list of conditions and the following disclaimers.
-# 
+#
 # o Redistributions in binary form must reproduce the above copyright
 #   notice, this list of conditions and the following disclaimers in the
 #   documentation and/or other materials provided with the distribution.
-# 
+#
 # o Neither the names of Daniel Trinkle, Purdue University, nor the
 #   names of its contributors may be used to endorse or promote products
 #   derived from this Software without specific prior written
 #   permission.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -71,7 +71,7 @@ DEFS	=
 #
 #DEFS	+= ${DEFS} -DNO_MALLOC_DECL
 #
-CFLAGS	= -O -DVERSION=\"${VERSION}\" ${DEFS} -Wall
+CFLAGS	+= -O -DVERSION=\"${VERSION}\" ${DEFS} -Wall
 
 # Use your favorite lexical scanner
 #
@@ -105,7 +105,7 @@ SRC	= detex.l
 #
 D_OBJ	= detex.o
 
-VERSION = 2.8.9
+VERSION = 2.8.11
 
 all:	${PROGS}
 
@@ -158,3 +158,7 @@ package: clean detex.c
 detex.c: detex.h
 detex.c: detex.l
 
+inpdf:
+	cd test && xelatex -interaction=nonstopmode in.tex || echo there were errors
+	rm -f test/*.toc test/*.log test/*.aux
+	mv test/in.pdf .
