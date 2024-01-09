@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 68903 2023-11-19 18:53:19Z karl $
+# $Id: tlmgr.pl 69327 2024-01-07 11:10:51Z preining $
 # Copyright 2008-2023 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 68903 $';
-my $datrev = '$Date: 2023-11-19 19:53:19 +0100 (Sun, 19 Nov 2023) $';
+my $svnrev = '$Revision: 69327 $';
+my $datrev = '$Date: 2024-01-07 12:10:51 +0100 (Sun, 07 Jan 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -690,7 +690,9 @@ for the full story.\n";
   # if we are asked to use persistent connections try to start it here
   ddebug("tlmgr:main: do persistent downloads = $opts{'persistent-downloads'}\n");
   if ($opts{'persistent-downloads'}) {
-    TeXLive::TLUtils::setup_persistent_downloads() ;
+    TeXLive::TLUtils::setup_persistent_downloads(
+      "$Master/tlpkg/installer/curl/curl-ca-bundle.crt"
+    ) ;
   }
   if (!defined($::tldownload_server)) {
     debug("tlmgr:main: ::tldownload_server not defined\n");
@@ -10279,7 +10281,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 68903 2023-11-19 18:53:19Z karl $
+$Id: tlmgr.pl 69327 2024-01-07 11:10:51Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
