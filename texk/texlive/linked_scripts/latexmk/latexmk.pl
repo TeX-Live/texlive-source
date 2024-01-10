@@ -2,6 +2,9 @@
 use warnings;
 
 
+#  9, 10 Jan 2024  Fix localization of $_ in while loops that read file.
+#              That fixes problems with use of %hash_calc_ignore_pattern,
+#              which gave uninitialized $_ warnings.
 
 ## Copyright John Collins 1998-2023
 ##           (username jcc8 at node psu.edu)
@@ -47,8 +50,8 @@ BEGIN {
     # blocks.
     $my_name = 'latexmk';
     $My_name = 'Latexmk';
-    $version_num = '4.82';
-    $version_details = "$My_name, John Collins, 24 Dec. 2023. Version $version_num";
+    $version_num = '4.82a';
+    $version_details = "$My_name, John Collins, 10 Jan. 2024. Version $version_num";
 }
 
 use Config;
@@ -366,7 +369,7 @@ use vars qw( $dvi_update_command $ps_update_command $pdf_update_command
 %signo = ();
 @signame = ();
 if ( defined $Config{sig_name} ) {
-   $i = 0;
+   my $i = 0;
    foreach $name (split('\s+', $Config{sig_name})) {
       $signo{$name} = $i;
       $signame[$i] = $name;
@@ -2082,8 +2085,7 @@ if ( $auto_rc_use ) {
 ## Process command line args.
 @command_line_file_list = ();
 $bad_options = 0;
-
-while (defined($_ = $ARGV[0])) {
+while (defined(local $_ = $ARGV[0])) {
   # Make -- and - equivalent at beginning of option,
   # but save original for possible use in *latex command line
   $original = $_;
@@ -5124,7 +5126,7 @@ sub check_biber_log {
     my @not_found = ();             # Files, normally .bib files, not found.
     my @missing_citations = ();
     
-    while (<$blg_file>) {
+    while (local $_= <$blg_file>) {
         $_ = utf8_to_mine($_);
         if (/> WARN /) { 
             print "Biber warning: $_"; 
@@ -5369,7 +5371,7 @@ sub check_bibtex_log {
     my @missing_aux = ();
     my @missing_bib = ();
     my $error_count = 0;
-    while (<$blg_file>) {
+    while (local $_ = <$blg_file>) {
         $_ = utf8_to_mine($_);
         if (/^Warning--/) { 
             #print "Bibtex warning: $_"; 
@@ -6639,7 +6641,7 @@ sub get_log_file {
     open( my $fh, '<', $file )
         or return 0;
   LINE:
-    while (<$fh> ) {
+    while (local $_ = <$fh> ) {
         $line_num++;
         s/\r?\n$//;
         if ($line_num == 1) {
@@ -7158,7 +7160,7 @@ sub parse_aux1
    }
    push @$Paux_files, $aux_file;
 AUX_LINE:
-   while (<$aux_fh>) {
+   while (local $_ = <$aux_fh>) {
        if ( /\^\^/ ) {
            warn "$My_name: Line in '$aux_file' uses ^^ notation, which may\n".
                 "  cause trouble to bibtex:\n   $_";
@@ -7253,7 +7255,7 @@ sub parse_bcf {
         warn "$My_name: Couldn't find bcf file '$bcf_file'\n";
     };
     $$Pstatus = 1;
-    while ( <$bcf_fh> ) {
+    while (local $_ = <$bcf_fh>) {
         $_ = utf8_to_mine($_);
         if (eof($bcf_fh)) {
             if ( ! /^\s*<\/bcf:controlfile>/ ) {
@@ -7339,7 +7341,7 @@ sub incomplete_bcf {
        warn "$My_name: Couldn't find bcf file '$bcf_file'\n";
        return 0; 
     };
-    while ( <$bcf_fh> ) {
+    while (local $_ = <$bcf_fh>) {
         if (eof($bcf_fh)) { $last_line = $_; }
     }
     close $bcf_fh;
@@ -7520,7 +7522,7 @@ sub rdb_read {
     local %new_sources = ();  # Hash: rule => { file=>[ time, size, md5, fromrule ] }
     my $new_source = undef;   # Reference to hash of sources for current rule
 LINE:
-    while ( <$in_handle> ) {        
+    while (local $_ = <$in_handle>) {
         # Remove leading and trailing white space.
         s/^\s*//;
         s/\s*$//;
@@ -11316,7 +11318,7 @@ sub get_checksum_md5 {
         # was successfully opened.
         # Such errors have been known to occur under OneDrive on macOS.
         if ( defined $ignore_pattern ) {
-            while (<$input>) {
+            while (local $_ = <$input>) {
                 if ( ! /$ignore_pattern/ ){
                     $md5->add($_);
                 }
@@ -11503,7 +11505,7 @@ sub kpsewhich {
     }
     open $fh, "$cmd|"
         or die "Cannot open pipe for \"$cmd\"\n";
-    while ( <$fh> ) {
+    while (local $_ = <$fh>) {
         s/\r?\n$//;
         push @found, $_;
     }
