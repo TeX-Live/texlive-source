@@ -82,6 +82,7 @@ dviasm/dviasm.py
 dviinfox/dviinfox.pl
 easydtx/edtx2dtx.pl
 ebong/ebong.py
+eolang/eolang.pl
 epspdf/epspdf.tlu
 epspdf/epspdftk.tcl
 epstopdf/epstopdf.pl
