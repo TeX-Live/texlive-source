@@ -865,8 +865,8 @@ AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
 #
 TESTS = tests/cnfline.test tests/cnfnewline.test tests/cnfnull.test \
 	tests/cnfprog.test tests/kpseaccess.test \
-	tests/kpsereadlink.test tests/kpsestat.test \
-	tests/kpsewhich.test
+	tests/kpsereadlink.test tests/kpsesafe.test \
+	tests/kpsestat.test tests/kpsewhich.test
 
 # Rebuild
 rebuild_prereq = 
@@ -2437,7 +2437,7 @@ uninstall-local:
 	done
 #
 tests/cnfline.log tests/cnfnewline.log tests/cnfnull.log tests/cnfprog.log \
-  tests/kpsewhich.log: kpsewhich$(EXEEXT)
+  tests/kpsesafe.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
 tests/kpsestat.log: kpsestat$(EXEEXT)

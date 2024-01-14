@@ -2,13 +2,13 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.3.5
-@set month-year October 2023
+@set version 6.4.0
+@set month-year January 2024
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2023 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2024 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -285,29 +285,78 @@ None of the programs in the @TeX{} system require any special system
 privileges, so there's no first-level security concern of people gaining
 illegitimate root access.
 
-@cindex trojan horse attack
-@flindex .rhosts@r{, writable by @TeX{}}
-A @TeX{} document, however, can write to arbitrary files, e.g.,
-@file{~/.rhosts}, and thus an unwitting user who runs @TeX{} on a random
-document is vulnerable to a trojan horse attack.  This loophole is
-closed by default, but you can be permissive if you so desire in
-@file{texmf.cnf}.  @xref{tex invocation,,, web2c, Web2c}.  MetaPost has
-the same issue.
+Thus, the general goal of our security measures is to make an
+untrusted @TeX{} document safe to execute, in the sense of no document
+being able to change the system or user configuration, or somehow
+transmit information to an attacker.  Here are some of the steps that
+have been taken to make the @TeX{} system safe in this regard:
 
-Dvips, Xdvi, and @TeX{} can also execute shell commands under some
-circumstances.  To disable this, see the @samp{-R} option in @ref{Option
+@itemize
+@item
+@cindex trojan horse attack
+@flindex .profile@r{, (un)writable by @TeX{}}
+@findex \openout
+A @TeX{} document can write to arbitrary files via @code{\openout},
+e.g., @file{~/.profile}, and thus an unwitting user who runs @TeX{} on
+an untrusted document is vulnerable to a trojan horse attack.  This
+loophole is closed by default, but you can be permissive if you so
+desire in @file{texmf.cnf}.  @xref{tex invocation,,, web2c, Web2c}.
+MetaPost has the same issue.
+
+@item
+@cindex shell commands, security
+Dvips, Xdvi, @TeX{}, and others can execute shell commands.  By
+default, only a handful of commands that are believed to be safe (to
+the best of our ability to check) are allowed.  For the list, see the
+@code{shell_escape_commands} variable in @file{texmf.cnf}
+(@pxref{Shell escapes,,, web2c, Web2c}).  For more information, e.g.,
+to disable this completely, see the @samp{-R} option in @ref{Option
 details,,, dvips, Dvips}, the xdvi man page, and @ref{tex
 invocation,,, web2c, Web2c}, respectively.
 
+@item
+@cindex Lua@TeX{} and security
+@cindex kpse mode of Lua@TeX{}
+Lua@TeX{} is a special case.  Since Lua is a general-purpose
+programming language, it has all the usual functionality for writing
+files, executing shell commands, and plenty more.  When Lua@TeX{} is
+used in its so-called ``kpse'' mode, as with Lua@LaTeX{}, we have
+nevertheless done our best to also make it safe to execute by default,
+by disabling or restricting the various problematic Lua features.
+@xref{Safe filenames}, for a bit more about this.  (By the way, when
+Lua@TeX{} is run in non-kpse mode, as with Con@TeX{}t MkIV, everything
+is allowed; thus, untrusted documents should not be processed without
+checking.)
+
+@item
+@cindex crashes of @TeX{} and security
+There are some well-known ways to crash @TeX{}, using (deliberately
+unchecked) arithmetic overflow and other nefarious constructs (some
+are listed at @url{https://tug.org/texmfbug/nobug.html}.  While
+disturbing, @TeX{} has no special system access and so these crashes
+don't present a security risk.
+
+@item
+One more issue is the desire for a globally writable font cache
+directory; see the section below for this (@ref{Global font cache and
+security}).
+@end itemize
+
+@menu
+* Global font cache and security::
+@end menu
+
+@node Global font cache and security
+@section Global font cache and security
+
 @cindex local cache of fonts
 @cindex cache of fonts, local
-Another security issue arises because it's very useful---almost
-necessary---to make arbitrary fonts on user demand with @code{mktexpk}
+It's useful to make arbitrary fonts on user demand with @code{mktexpk}
 and friends.  Where do these files get installed?  By default, the
 @code{mktexpk} distributed with Kpathsea assumes a world-writable
-@file{/var/tmp} directory; this is a simple and convenient approach, but
-it may not suit your situation because it means that a local cache of
-fonts is created on every machine.
+@file{/var/tmp} directory; this is a simple and convenient approach,
+but it does not suit all situations, because it means that a local
+cache of fonts is created on every user's system.
 
 @cindex globally writable directories
 To avoid this duplication, many people consider a shared, globally
@@ -342,6 +391,10 @@ Any directories created by the @file{mktex@dots{}} scripts have the
 same permissions as their parent directory, unless the
 @code{appendonlydir} feature is used, in which case the sticky bit is
 always set.
+
+Nowadays, with bitmap files rarely used, and with individual systems
+being so much more powerful, this is less of an issue than it was in
+the past. But the question still comes up occasionally.
 
 
 @node TeX directory structure
@@ -1882,12 +1935,20 @@ Output information about each supported format (@pxref{Supported file
 formats}), including the names and abbreviations, variables
 looked for, and the original path.
 
+@item --safe-extended-in-name=@var{name}
+@itemx --safe-extended-out-name=@var{name}
+@opindex --safe-extended-in-name=@var{name}
+@opindex --safe-extended-out-name=@var{name}
+As with @samp{--safe-in-name} and @samp{--safe-out-name} (next item),
+but also allow files under the variables @code{TEXMFVAR} and
+@code{TEXMFSYSVAR} (@pxref{Calling sequence}).
+
 @item --safe-in-name=@var{name}
 @itemx --safe-out-name=@var{name}
 @opindex --safe-in-name=@var{name}
 @opindex --safe-out-name=@var{name}
 Exit successfully if @var{name} is safe to open for reading or
-writing, respectively, else unsuccessfully.  No output is written.
+writing, respectively, else unsuccessfully.  No errors are output.
 These tests take account of the related Kpathsea configuration
 settings (@pxref{Calling sequence}).
 
@@ -3083,6 +3144,7 @@ short, it is released under LGPLv2.1 or later).
 @menu
 * Overview: Programming overview.         Introduction.
 * Calling sequence::                      Specifics of what to call.
+* Safe filenames::                        Only opening allowed files.
 * Program-specific files::                How to handle these.
 * Config: Programming with config files.  Getting info from texmf.cnf.
 @end menu
@@ -3131,9 +3193,9 @@ depend on each other, it is recommended to use @code{#include
 
 @flindex config.h
 @flindex c-auto.h
-If you want to include only specific headers, you should still consider
-including @file{kpathsea/config.h} before including any other Kpathsea
-header, as it provides symbols used in the other headers.  Note that
+If you want to include only specific headers, you should still
+consider including @file{kpathsea/config.h} before including any other
+Kpathsea header, as it provides symbols used in the other headers;
 @file{kpathsea/config.h} includes @file{kpathsea/c-auto.h}, which is
 generated by Autoconf.
 
@@ -3141,16 +3203,16 @@ generated by Autoconf.
 The library provides no way for an external program to register new file
 types: @file{tex-file.[ch]} must be modified to do this. For example,
 Kpathsea has support for looking up Dvips config files, even though no
-program other than Dvips will likely ever want to do so.  I felt this
+program other than Dvips is likely to ever want to do so.  I felt this
 was acceptable, since along with new file types should also come new
 defaults in @file{texmf.cnf} (and its descendant @file{paths.h}), since
 it's simplest for users if they can modify one configuration file for
 all kinds of paths.
 
 Kpathsea does not parse any formats itself; it barely opens any files.
-Its primary purpose is to return filenames.  The GNU font utilities does
-contain libraries to read TFM, GF, and PK files, as do the programs
-above, of course.
+Its primary purpose is to return filenames.  The GNU font utilities
+package contains libraries to read TFM, GF, and PK files, as do the
+programs above, of course.
 
 
 @node Calling sequence
@@ -3211,12 +3273,13 @@ values.
 @item
 @vindex kpse->debug @r{variable}
 @cindex debugging options, in Kpathsea-using program
-Set debugging options. @xref{Debugging}.  If your program doesn't have a
-debugging option already, you can define one and set
+Set debugging options. @xref{Debugging}.  If your program doesn't have
+a debugging option already, you can define one and set
 @code{kpse->debug} to the number that the user supplies (as in Dviljk
-and Web2c), or you can just omit this altogether (people can always set
-@code{KPATHSEA_DEBUG}).  If you do have runtime debugging already, you
-need to merge Kpathsea's options with yours (as in Dvipsk and Xdvik).
+and Web2c), or you can just omit this altogether (users can always set
+the @code{KPATHSEA_DEBUG} environment variable).  If you do have
+runtime debugging already, you need to merge Kpathsea's options with
+yours (as in Dvipsk and Xdvik).
 
 @item
 @vindex client_path @r{in @code{kpse->format_info}}
@@ -3232,13 +3295,15 @@ array is indexed by file type; see @file{tex-file.h}.)  See
 @item
 @findex kpathsea_init_prog
 @flindex proginit.h
-Call @code{kpathsea_init_prog} (see @file{proginit.c}). It's useful for the
-DVI drivers, at least, but for other programs it may be simpler to
-extract the parts of it that actually apply.  This does not initialize
-any paths, it just looks for (and sets) certain environment variables
-and other random information.  (A search path is always initialized at
-the first call to find a file of that type; this eliminates much useless
-work, e.g., initializing the Bib@TeX{} search paths in a DVI driver.)
+Call @code{kpathsea_init_prog} (see @file{proginit.c}). It's useful
+for the DVI drivers, at least, but for other programs it may be
+simpler to extract the parts of it that actually apply.  This does not
+initialize any paths, it just looks for (and sets) certain environment
+variables and other random information.  Search paths are always
+initialized at the first call to find a file of a given type, not
+requiring an explicit initialization call; this eliminates much
+useless work, e.g., initializing the Bib@TeX{} search paths in a DVI
+driver.
 
 @item
 @findex kpathsea_find_file
@@ -3250,11 +3315,16 @@ initialization steps above---Kpathsea automatically reads the
 and does expansions at the first lookup.
 
 @item
+@findex kpathsea_find_glyph
 To find PK and/or GF bitmap fonts, the routine
 is @code{kpathsea_find_glyph}, defined in
 @file{tex-glyph.h}. This returns a structure in addition to the
 resultant filename, because fonts can be found in so many ways. See the
 documentation in the source.
+
+@item
+Before opening a file, especially for writing, you should check if the
+filename is acceptable.  See the next section (@pxref{Safe filenames}).
 
 @item
 @findex kpathsea_open_file
@@ -3265,66 +3335,6 @@ It always assumes the file must exist, and thus will search the disk if
 necessary (unless the search path specified @samp{!!}, etc.).  In other
 words, if you are looking up a VF or some other file that need not
 exist, don't use this.
-
-@item
-@findex kpathsea_out_name_ok
-@vindex openout_any
-@anchor{openout_any}
-@TeX{} can write output files, via the @code{\openout} primitive. This
-opens a security vulnerability: an unwitting user could run a @TeX{}
-document that overwrites, say, @file{~/.profile}.  Analogous
-vulnerabilities exist for almost any program that can write files, but
-since users expect @TeX{} to typeset documents, not overwrite personal
-files, it's desirable to handle this. To alleviate it, there is a
-configuration variable @code{openout_any}, which selects one of three
-levels of security:
-
-@itemize
-@item
-@cindex unrestricted mode, for output files
-When set to @samp{a} (for ``any''), no restrictions are imposed.
-
-@item
-@cindex restricted mode, for output files
-When is set to @samp{r} (for ``restricted''), filenames beginning
-with @samp{.}  are disallowed (except @file{.tex}, because @LaTeX{}
-needs it).
-
-@item
-@cindex paranoid mode, for output files
-@vindex TEXMF_OUTPUT_DIRECTORY@r{, and paranoid output files}
-@vindex TEXMFOUTPUT@r{, and paranoid output files}
-When set to @samp{p} (for ``paranoid''), additional restrictions are
-imposed. First, an absolute filename must refer to a file in (or in a
-subdirectory of) either the @code{TEXMF_OUTPUT_DIRECTORY} environment
-variable or the @code{TEXMFOUTPUT} environment variable or
-configuration file setting. Second, any attempt to go up a directory
-level is forbidden; that is, paths may not contain a @samp{..}
-component.
-
-@item
-For backwards compatibility, @samp{y} and @samp{1} are synonyms of
-@samp{a}, while @samp{n} and @samp{0} are synonyms for @samp{r}.
-
-@end itemize
-
-The paranoid setting is the default. Any program intended to be safely
-called from @TeX{} should implement the same measures, one way or
-another.  @xref{Shell escapes,,, web2c, Web2c}.
-
-The function @code{kpathsea_out_name_ok}, with a filename as second
-argument, returns @code{true} if that filename is acceptable to be
-opened for output or @code{false} otherwise.  The Kpsewhich program
-has options @samp{--safe-in-name} and @samp{--safe-out-name} to
-provide a command line interface for the checking.
-
-@item
-@findex kpathsea_in_name_ok
-Similarly, the function @code{kpathsea_in_name_ok}, with a filename as
-second argument, returns @code{true} if that filename is acceptable to be
-opend for input or @code{false} otherwise, depending on the value of the
-configuration variable @code{openin_any} (with @samp{a} as default;
-too many system directories are involved to make @samp{p} feasible).
 
 @item
 @findex kpathsea_finish
@@ -3344,8 +3354,7 @@ Kpathsea also provides many utility routines. Some are generic: hash
 tables, memory allocation, string concatenation and copying, string
 lists, reading input lines of arbitrary length, etc. Others are
 filename-related: default path, tilde, and variable expansion,
-@code{stat} calls, etc. (Perhaps someday I'll move the former to a
-separate library.)
+@code{stat} calls, etc.
 
 @flindex c-*.h
 @pindex autoconf@r{, recommended}
@@ -3354,6 +3363,121 @@ different systems.  You will almost certainly want to use Autoconf and
 probably Automake for configuring and building your software if you use
 Kpathsea; I strongly recommend using Autoconf and Automake regardless.
 They are available from @url{https://gnu.org/software}.
+
+
+@node Safe filenames
+@section Safe filenames
+
+@vindex openout_any
+@anchor{openout_any}
+@cindex trojan horse
+@xref{Security}, for some general security considerations with the
+@TeX{} system.
+
+In the implementation, the main security feature to disallow writing
+to potentially dangerous files is a configuration variable
+@code{openout_any}. It specifies one of three levels:
+
+@itemize
+@item
+@cindex unrestricted mode, for output files
+When set to @samp{a} (for ``any''), no restrictions are imposed.
+
+@item
+@cindex restricted mode, for output files
+When is set to @samp{r} (for ``restricted''), filenames beginning
+with @samp{.} are disallowed (except @file{.tex}, because @LaTeX{}
+needs it).
+
+@item
+@cindex paranoid mode, for output files
+When set to @samp{p} (for ``paranoid''), additional restrictions are
+imposed.
+
+@enumerate
+@item
+@vindex TEXMF_OUTPUT_DIRECTORY@r{, and paranoid output files}
+@vindex TEXMFOUTPUT@r{, and paranoid output files}
+First, an absolute filename must refer to a file in (or in a
+subdirectory of) either the @code{TEXMF_OUTPUT_DIRECTORY} environment
+variable or the @code{TEXMFOUTPUT} environment variable or
+configuration file setting.
+
+@item
+@vindex TEXMFSYSVAR
+@vindex TEXMFVAR
+@findex luaotfload
+Lua@TeX{} uses a so-called ``extended'' mode, in which the values of
+@code{TEXMFVAR} and @code{TEXMFSYSVAR} are also checked for absolute
+filenames.  This is done because, in practice, fundamental parts of
+the Lua@LaTeX{} system (notably @code{luaotfload}) need a cache
+directory, and historically the @code{TEXMF[SYS]VAR} variables are
+what has been used. We neither recommend nor expect any other programs
+to need this.
+
+@item 
+Finally, any attempt to go up a directory level is forbidden; that is,
+paths may not contain a @samp{..} component.
+
+@end enumerate
+@end itemize
+
+The paranoid setting is the default. Any program intended to be safely
+called from @TeX{} should implement the same measures, one way or
+another.  @xref{Shell escapes,,, web2c, Web2c}.
+
+Kpathsea does not resolve @samp{..} components, or symbolic links, to
+see if the final result is an acceptable directory; they are simply
+forbidden.  That is, Kpathsea merely considers the value as a string,
+not looking on the filesystem at all.  (However, if another program
+wants to do such resolutions and check the result, that's ok.)
+
+For backwards compatibility, @samp{y} and @samp{1} are synonyms of
+@samp{a}, while @samp{n} and @samp{0} are synonyms for @samp{r}.
+
+@findex kpathsea_out_name_ok
+The function @code{kpathsea_out_name_ok}, with a filename as second
+argument, returns @code{true} if that filename is acceptable to be
+opened for output or @code{false} otherwise.  The Kpsewhich program
+has an option (@samp{--safe-out-name}) providing a command line
+interface for the check.
+
+@findex kpathsea_out_name_ok_extended
+For Lua@TeX{}'s extended mode, the function is
+@code{kpathsea_out_name_ok_extended}, and the Kpsewhich option is
+@samp{--safe-extended-out-name}.
+
+@findex kpathsea_in_name_ok
+@findex kpathsea_in_name_ok_extended
+Similarly, the function @code{kpathsea_in_name_ok} (resp.@:
+@code{_extended}, with a filename as second argument, returns
+@code{true} if that filename is acceptable to be opend for input or
+@code{false} otherwise, depending on the value of the configuration
+variable @code{openin_any}.  Unfortunately, for reading, @samp{a} is
+the default default; too many system directories and files get
+involved to make @samp{r} or @samp{p} feasible.
+
+The functions above write a message to standard error if the usage is
+forbidden (so every caller does not have to do so).  Each function has
+a @code{_silent} counterpart which does not write the message; this is
+what Kpsewhich calls, since messages would be counterproductive in
+that case. Thus:
+
+@findex kpathsea_out_name_ok_silent
+@findex kpathsea_out_name_ok_silent_extended
+@findex kpathsea_in_name_ok_silent
+@findex kpathsea_in_name_ok_silent_extended
+
+@example
+kpathsea_out_name_ok_silent
+kpathsea_out_name_ok_silent_extended
+kpathsea_in_name_ok_silent
+kpathsea_in_name_ok_silent_extended
+@end example
+
+Sorry for the combinatorial explosion, but we hope no further options
+will ever be needed.  If so, we'll likely provide a more generic
+interface as well as the above.
 
 
 @node Program-specific files

@@ -1,0 +1,41 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
+TEXMFCNF=$srcdir; export TEXMFCNF
+
+echo "cwd ok."
+$_kpsewhich --safe-in-name=ifoo.tex || exit 1
+$_kpsewhich --safe-out-name=ofoo.tex || exit 2
+
+echo "./cwd ok."
+$_kpsewhich --safe-in-name=./ifoo.tex || exit 3
+$_kpsewhich --safe-out-name=./ofoo.tex || exit 4
+
+echo "/rootdir ok for reading, not writing."
+$_kpsewhich --safe-in-name=/ifoo.tex || exit 5
+$_kpsewhich --safe-out-name=/ofoo.tex && exit 6
+
+echo "TEXMF_OUTPUT_DIRECTORY and TEXMFOUTPUT ok for writing."
+TEXMF_OUTPUT_DIRECTORY=/xdir \
+  $_kpsewhich --safe-out-name=/xdir/ofoo.tex || exit 7
+TEXMFOUTPUT=/ydir \
+  $_kpsewhich --safe-out-name=/ydir/ofoo.tex || exit 8
+
+echo "TEXMFVAR and TEXMFSYSVAROUTPUT ok for writing only if extended."
+TEXMFVAR=/xvar \
+  $_kpsewhich --safe-out-name=/xvar/ofoo.tex && exit 9
+TEXMFSYSVAR=/yvar \
+  $_kpsewhich --safe-out-name=/yvar/ofoo.tex && exit 10
+#
+TEXMFVAR=/avar \
+  $_kpsewhich --safe-extended-out-name=/avar/ofoo.tex || exit 11
+TEXMFSYSVAR=/bvar \
+  $_kpsewhich --safe-extended-out-name=/bvar/ofoo.tex || exit 12
+
+: # exit successfully if get to the end.

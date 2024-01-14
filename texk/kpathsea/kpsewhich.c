@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
    Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright 1995-2023 Karl Berry & Olaf Weber.
+   Copyright 1995-2024 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -62,9 +62,13 @@ boolean must_exist = false;
 /* The program name, for `.PROG' construct in texmf.cnf.  (-program) */
 string progname = NULL;
 
-/* Safe input and output names to check.  (-safe-in-name and -safe-out-name) */
+/* Safe input and output names to check. (-safe-in-name, -safe-out-name) */
 string safe_in_name = NULL;
 string safe_out_name = NULL;
+
+/* Check TEXMF[SYS]VAR too. (-safe-extended-in-name,-safe-extended-out-name) */
+string safe_extended_in_name = NULL;
+string safe_extended_out_name = NULL;
 
 /* Return all matches, not just the first one?  (-all) */
 boolean show_all = false;
@@ -497,6 +501,8 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -progname=STRING       set program name to STRING.\n\
 -safe-in-name=STRING   check if STRING is ok to open for input.\n\
 -safe-out-name=STRING  check if STRING is ok to open for output.\n\
+-safe-extended-in-name=STRING   also check TEXMF[SYS]VAR].\n\
+-safe-extended-out-name=STRING  also check TEXMF[SYS]VAR].\n\
 -show-path=TYPE        output search path for file type TYPE\n\
                          (list shown by -help-formats).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
@@ -620,6 +626,8 @@ static struct option long_options[]
       { "no-casefold-search",   0, 0, 0 },
       { "no-mktex",             1, 0, 0 },
       { "progname",             1, 0, 0 },
+      { "safe-extended-in-name",1, 0, 0 },
+      { "safe-extended-out-name",1,0, 0 },
       { "safe-in-name",         1, 0, 0 },
       { "safe-out-name",        1, 0, 0 },
       { "subdir",               1, 0, 0 },
@@ -711,6 +719,14 @@ read_command_line (kpathsea kpse, int argc, string *argv)
     } else if (ARGUMENT_IS ("progname")) {
       progname = optarg;
 
+    } else if (ARGUMENT_IS ("safe-extended-in-name")) {
+      ENSURE_NONEMPTY_STRING (optarg);
+      safe_extended_in_name = optarg;
+
+    } else if (ARGUMENT_IS ("safe-extended-out-name")) {
+      ENSURE_NONEMPTY_STRING (optarg);
+      safe_extended_out_name = optarg;
+
     } else if (ARGUMENT_IS ("safe-in-name")) {
       ENSURE_NONEMPTY_STRING (optarg);
       safe_in_name = optarg;
@@ -757,6 +773,7 @@ There is NO WARRANTY, to the extent permitted by law.\n");
   if (optind == argc
       && !var_to_expand && !braces_to_expand && !path_to_expand
       && !path_to_show && !var_to_value && !var_to_brace_value
+      && !safe_extended_in_name && !safe_extended_out_name
       && !safe_in_name && !safe_out_name) {
     fputs ("Missing argument. Try `kpsewhich --help' for more information.\n",
            stderr);
@@ -913,6 +930,16 @@ main (int argc,  string *argv)
 
   if (safe_out_name) {
     if (!kpathsea_out_name_ok_silent (kpse, safe_out_name))
+      unfound++;
+  }
+
+  if (safe_extended_in_name) {
+    if (!kpathsea_in_name_ok_silent_extended (kpse, safe_extended_in_name))
+      unfound++;
+  }
+
+  if (safe_extended_out_name) {
+    if (!kpathsea_out_name_ok_silent_extended (kpse, safe_extended_out_name))
       unfound++;
   }
 

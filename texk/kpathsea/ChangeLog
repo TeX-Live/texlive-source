@@ -1,3 +1,23 @@
+2024-01-14  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: bump to 6.4.0/dev.
+
+	* tex-file.h (kpathsea_{in,out}_name_ok{,_silent}_extended):
+	four more declarations for extended access checks including
+	TEXMF[SYS]VAR (needed for luaotfload and hence LuaLaTeX).
+	* tex-file.c (abs_fname_ok): new helper fn.
+	(kpathsea_name_ok): new parameter, extended.
+	(kpathsea_{in,out}_ok_name{,_silent}): pass additional false arg.
+	(kpathsea_{in,out}_ok_name{,_silent}{,_extended}): new fns,
+	passing true.
+	* kpsewhich.c (-safe-extended-in-name, -safe-extended-out-name):
+	new options, corresponding variables, calls.	
+	* doc/kpathsea.texi (Safe filenames): new node to document this.
+	(Security): update.
+	(Global font cache and security): split off new node from Security.
+	* Makefile.am (TESTS): add kpsesafe.test.
+	* tests/kpsesafe.test: new test.
+
 2023-10-11  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): add memoize-extract.pl and .py,

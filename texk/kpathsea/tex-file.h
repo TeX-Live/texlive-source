@@ -1,7 +1,7 @@
 /* tex-file.h: find files in a particular format.
 
    Copyright 1993, 1994, 1995, 1996, 2007, 2008, 2009, 2010, 2013,
-   2014 Karl Berry.
+             2014-2024 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -80,7 +80,7 @@ extern KPSEDLL string *kpathsea_find_file_generic (kpathsea kpse,
 /* Return true if FNAME is acceptable to open for reading or writing.
    If not acceptable, write a message to stderr.  */
 extern KPSEDLL boolean kpathsea_in_name_ok (kpathsea kpse, const_string fname);
-extern KPSEDLL boolean kpathsea_out_name_ok (kpathsea kpse, const_string fname);
+extern KPSEDLL boolean kpathsea_out_name_ok(kpathsea kpse, const_string fname);
 
 /* As above, but no error message.  */
 extern KPSEDLL boolean kpathsea_in_name_ok_silent
@@ -88,7 +88,18 @@ extern KPSEDLL boolean kpathsea_in_name_ok_silent
 extern KPSEDLL boolean kpathsea_out_name_ok_silent
    (kpathsea kpse, const_string fname);
 
-/* Don't just look up the name, actually open the file.  */
+/* Four more name-checking routines, this time with the "extended" 
+   parameter set, which also checks TEXMF[SYS]VAR (see the Kpathsea manual).
+   Hopefully we won't need to add yet more options .  */
+extern KPSEDLL boolean kpathsea_in_name_ok_extended (kpathsea, const_string);
+extern KPSEDLL boolean kpathsea_out_name_ok_extended (kpathsea, const_string);
+extern KPSEDLL boolean kpathsea_in_name_ok_silent_extended
+   (kpathsea kpse, const_string fname);
+extern KPSEDLL boolean kpathsea_out_name_ok_silent_extended
+   (kpathsea kpse, const_string fname);
+
+/* Don't just look up a name, actually open a file.  The name_ok
+   functions are not called, this just does the file opening.  */
 extern KPSEDLL FILE *kpathsea_open_file (kpathsea kpse, const_string name,
                                          kpse_file_format_type format);
 

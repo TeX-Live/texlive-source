@@ -1,7 +1,7 @@
 /* tex-file.c: high-level file searching by format.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2007, 2008, 2009, 2010, 2011
-             2012, 2014, 2016, 2017, 2019, 2023 Karl Berry.
+             2012, 2014, 2016, 2017, 2019, 2024 Karl Berry.
    Copyright 1998-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -1172,9 +1172,7 @@ kpse_find_file_generic (const_string name,  kpse_file_format_type format,
 #endif
 
 
-
-/* Return true if FNAME is acceptable to open for reading or writing.  */
-
+/* Helper types for kpathsea_name_ok, just below.  */
 typedef enum ok_type {
     ok_reading,
     ok_writing
@@ -1185,29 +1183,71 @@ static const_string ok_type_name[] = {
     "writing to"
 };
 
+
+/* Helper subroutine to check if absolute pathname FNAME is acceptable
+   in CHECKDIR. An absolute pathname is ok only if
+   CHECKDIR is set,
+   CHECKDIR is non-empty,
+   CHECKDIR is the beginning of FNAME
+     (e.g., disallow /somedir/file.tex against /anotherdir), and
+   the next character in FNAME is a directory separator
+     (e.g., disallow /somedirx/file.tex against /somedir).  */
+
+static boolean
+abs_fname_ok (const_string fname, const_string checkdir)
+{
+  return
+    checkdir             /* checkdir must be non-null */
+    && *checkdir != '\0' /* checkdir must be non-empty */
+    && fname == strstr (fname, checkdir)      /* fname must begin checkdir */
+    && IS_DIR_SEP (fname[strlen (checkdir)]); /* and be followed by /. */
+}
+
+/* Here is the general internal subroutine, kpathsea_name_ok, for
+   checking if a filename is acceptable to open for reading or writing.
+   Parameters:
+  kpse - the usual structure.
+  fname - the filename to check.
+  check_var - the config variable to check, openin_any or openout_any.
+  default_choice - if the variable is not set, one of the settings below.
+  action - what to check for: either ok_reading or ok_writing.
+  silent - whether to write a message to stderr if not ok.
+  extended - whether to also allow TEXMF[SYS]VAR; see comments below for more.
+  
+   The public functions below (and declared in tex-file.h), provide
+   convenience calls with defaults for the various combinations.
+   
+   The general idea is described in the Kpathsea manual, node Calling sequence.
+*/
+
+
 static boolean
 kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
-                  const_string default_choice, ok_type action, boolean silent)
+                  const_string default_choice, ok_type action,
+                  boolean silent, boolean extended)
 {
   /* We distinguish three cases:
      'a' (any)        allows any file to be opened.
-     'r' (restricted) means disallowing special file names.
-     'p' (paranoid)   means being really paranoid: disallowing special file
-                      names and restricting output files to be in or below
-                      the working directory or $TEXMFOUTPUT or
-                      $TEXMF_OUTPUT_DIRECTORY, while input files
-                      must be below the current directory, the envvars, or
-                      (only implicitly) in the system areas.
-     We default to "paranoid".  The error messages from TeX may be puzzling.
+     'r' (restricted) means disallowing special filenames.
+     'p' (paranoid)   means being really paranoid: disallowing special
+                      filenames and restricting output files to be in or
+                      below the working directory or $TEXMFOUTPUT or
+                      $TEXMF_OUTPUT_DIRECTORY; and, if EXTENDED is true,
+                      $TEXMFVAR and $TEXMFSYSVAR.
+                        Input files must be below the current directory,
+                      the envvars, or (only implicitly) in the system
+                      areas. Unfortunately, in practice this does not
+                      suffice to make TeX usable, so we allow anything.
+     We default to "paranoid" for writing and "any" for reading. 
+
      This function contains several return and goto statements, be careful.
-     
      Paranoia originally supplied by Charles Karney.  */
 
   const_string open_choice = kpathsea_var_value (kpse, check_var);
-
   if (!open_choice)
     open_choice = default_choice;
 
+  /* If setting is a(nything), we're done.  This is the case for reading. */
   if (*open_choice == 'a' || *open_choice == 'y' || *open_choice == '1')
     return true;
 
@@ -1231,36 +1271,45 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   /* Other OSs don't have special names? */
 #endif
 
+  /* If setting is only r(estricted), we're done.  (Not a useful setting
+     in practice, but no reason to take it out now.)  */
   if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
     return true;
 
   if (kpathsea_absolute_p (kpse, fname, false)) {
-
-    /* fname can be an absolute pathname only if one of the TEXMF*
-       variables is set, is non-empty, the value is the beginning of
-       fname, and the next character in fname is a directory separator.  */
-
     /* We'll check TEXMF_OUTPUT_DIRECTORY first.  This must be an
        environment variable, not a configuration file setting.  */
     const_string texmfoutdir = getenv ("TEXMF_OUTPUT_DIRECTORY");
-    if (!texmfoutdir || *texmfoutdir == '\0'
-        || fname != strstr (fname, texmfoutdir)
-        || !IS_DIR_SEP (fname[strlen (texmfoutdir)])) {
-       
-      /* Ok, that didn't work. Check TEXMFOUTPUT in exactly the same
-         way, except it can be in the configuration file.  */
-      const_string texmfoutput
-        = kpathsea_var_value (kpse, "TEXMFOUTPUT");
-      if (!texmfoutput || *texmfoutput == '\0'
-          || fname != strstr (fname, texmfoutput)
-          || !IS_DIR_SEP (fname[strlen (texmfoutput)])) {
-          goto not_ok;
+    if (!abs_fname_ok (fname, texmfoutdir)) {
+      /* That failed. Next, check TEXMFOUTPUT, but this can be in the
+         configuration file (i.e., call kpse_var_value instead of getenv).  */
+      const_string texmfoutput = kpathsea_var_value (kpse, "TEXMFOUTPUT");
+      if (!abs_fname_ok (fname, texmfoutput)) {
+        /* That failed too.  If `extended' is set, try TEXMFVAR and
+           TEXMFSYSVAR.  */
+        if (extended) {
+          const_string texmfvar = kpathsea_var_value (kpse, "TEXMFVAR");
+          if (!abs_fname_ok (fname, texmfvar)) {
+            const_string texmfsysvar
+              = kpathsea_var_value (kpse, "TEXMFSYSVAR");
+            if (!abs_fname_ok (fname, texmfsysvar)) {
+              goto not_ok; /* nothing left to check.  */
+            }
+          }
+        } else {
+          goto not_ok; /* not extended */
+        }
       }
     }
   }
 
   /* For all pathnames, we disallow "../" at the beginning or "/../"
-     anywhere.  */
+     anywhere. We need to check this for absolute paths, so fall through
+     from above if the absolute check succeeded.
+     
+     We don't try to resolve relative path elements and see if we end up
+     in an acceptable directory, but rather simply consider the value as
+     a string. (It's ok if other programs do such resolution, though.)  */
   if (fname[0] == '.' && fname[1] == '.' && IS_DIR_SEP(fname[2]))
     goto not_ok;
   else {
@@ -1282,27 +1331,44 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 
  not_ok: /* Some test failed.  */
   if (!silent)
-    fprintf (stderr, "\n%s: Not %s %s (%s = %s).\n",
+    fprintf (stderr, "\n%s: Not %s %s (%s = %s; %s extended check).\n",
              kpse->invocation_name, ok_type_name[action], fname,
-             check_var, open_choice);
+             check_var, open_choice, extended ? "" : "no ");
   return false;
 }
 
-/* For input default to all. */
+/* For input, default to anything being ok. */
 
 boolean
 kpathsea_in_name_ok_silent (kpathsea kpse, const_string fname)
 {
-  return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, true);
+  return
+   kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, true, false);
 }
 
 boolean
 kpathsea_in_name_ok (kpathsea kpse, const_string fname)
 {
-  return kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, false);
+  return
+   kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, false, false);
 }
 
+boolean
+kpathsea_in_name_ok_silent_extended (kpathsea kpse, const_string fname)
+{
+  return
+   kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, true, true);
+}
 
+boolean
+kpathsea_in_name_ok_extended (kpathsea kpse, const_string fname)
+{
+  return
+   kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, false, true);
+}
+
+
+/* Output name checks. */
 #if defined(WIN32) || defined(__CYGWIN__)
 static int
 Isspace (char c)
@@ -1366,7 +1432,8 @@ executable_filep (kpathsea kpse, const_string fname, boolean silent)
 #endif /* WIN32 || __CYGWIN__ */
 
 static boolean
-kpathsea_out_name_ok_1 (kpathsea kpse, const_string fname, boolean silent)
+kpathsea_out_name_ok_1 (kpathsea kpse, const_string fname,
+                        boolean silent, boolean extended)
 {
 #if defined(WIN32) || defined(__CYGWIN__)
   /* Output of an executable file is restricted on Windows */
@@ -1374,19 +1441,32 @@ kpathsea_out_name_ok_1 (kpathsea kpse, const_string fname, boolean silent)
     return false;
 #endif /* WIN32 || __CYGWIN__ */
   /* For output, default to paranoid. */
-  return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing,silent);
+  return kpathsea_name_ok (kpse, fname, "openout_any", "p", ok_writing,
+                           silent, extended);
 }
 
 boolean
 kpathsea_out_name_ok_silent (kpathsea kpse, const_string fname)
 {
-  return kpathsea_out_name_ok_1 (kpse, fname, true);
+  return kpathsea_out_name_ok_1 (kpse, fname, true, false);
 }
 
 boolean
 kpathsea_out_name_ok (kpathsea kpse, const_string fname)
 {
-  return kpathsea_out_name_ok_1 (kpse, fname, false);
+  return kpathsea_out_name_ok_1 (kpse, fname, false, false);
+}
+
+boolean
+kpathsea_out_name_ok_silent_extended (kpathsea kpse, const_string fname)
+{
+  return kpathsea_out_name_ok_1 (kpse, fname, true, true);
+}
+
+boolean
+kpathsea_out_name_ok_extended (kpathsea kpse, const_string fname)
+{
+  return kpathsea_out_name_ok_1 (kpse, fname, false, true);
 }
 
 #if defined (KPSE_COMPAT_API)
