@@ -32,85 +32,46 @@ on: [push]
 
 
 jobs:
-  docker_linux_32bit_job:
+  build_job:
     runs-on: ubuntu-latest
-    name: i386-linux build job
+    name: Build on ${{ matrix.arch }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: i386-linux
+          - arch: x86_64-linux
+          - arch: x86_64-linuxmusl
+
     steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: checkout
-        uses: actions/checkout@v3
+      - name: checkout-main
+        uses: actions/checkout@v4
+      - name: checkout-build-action
+        uses: actions/checkout@v4
         with:
           repository: TeX-Live/tl-build-docker-action
           ref: v4
           path: actions/TeX-Live/tl-build-docker-action
       - name: Update Dockerfile
-        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.i386-linux actions/TeX-Live/tl-build-docker-action/Dockerfile
+        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.${{ matrix.arch }} actions/TeX-Live/tl-build-docker-action/Dockerfile
       - name: Run docker image
         uses: ./actions/TeX-Live/tl-build-docker-action
         with:
-          arch: 'i386-linux'
+          arch: ${{ matrix.arch }}
       - name: find file step
         run: ls -l
+      - name: save artifact
+        uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: texlive-bin-{{ matrix.arch }}.tar.gz
+          path: texlive-bin-{{ matrix.arch }}.tar.gz
+          compression-level: 0
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: texlive-bin-i386-linux.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  docker_linux_64bit_job:
-    runs-on: ubuntu-latest
-    name: x86_64-linux build job
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          repository: TeX-Live/tl-build-docker-action
-          ref: v4
-          path: actions/TeX-Live/tl-build-docker-action
-      - name: Update Dockerfile
-        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.x86_64-linux actions/TeX-Live/tl-build-docker-action/Dockerfile
-      - name: Run docker image
-        uses: ./actions/TeX-Live/tl-build-docker-action
-        with:
-          arch: 'x86_64-linux'
-      - name: find file step
-        run: ls -l
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: texlive-bin-x86_64-linux.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  docker_linuxmusl_64bit_job:
-    runs-on: ubuntu-latest
-    name: x86_64-linuxmusl build job
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: checkout
-        uses: actions/checkout@v3
-        with:
-          repository: TeX-Live/tl-build-docker-action
-          ref: v4
-          path: actions/TeX-Live/tl-build-docker-action
-      - name: Update Dockerfile
-        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.x86_64-linuxmusl actions/TeX-Live/tl-build-docker-action/Dockerfile
-      - name: Run docker image
-        uses: ./actions/TeX-Live/tl-build-docker-action
-        with:
-          arch: 'x86_64-linuxmusl'
-      - name: find file step
-        run: ls -l
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: texlive-bin-x86_64-linuxmusl.tar.gz
+          files: texlive-bin-{{ matrix.arch }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
