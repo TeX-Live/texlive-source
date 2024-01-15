@@ -37,6 +37,7 @@ jobs:
     name: Build on ${{ matrix.arch }}
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: i386-linux
