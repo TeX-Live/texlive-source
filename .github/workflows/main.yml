@@ -56,7 +56,6 @@ jobs:
         # https://github.com/actions/checkout/issues/334#issuecomment-1241306390
         uses: actions/checkout@v1
       - name: install-deps
-        shell: bash
         run: |
           case "${{ matrix.image }}" in
             i386/ubuntu:*) .github/scripts/install-deps.ubuntu.sh ;;
