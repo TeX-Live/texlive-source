@@ -144,8 +144,13 @@ jobs:
             else
               TL_MAKE_FLAGS="-j 2"
             fi
+            if [ $arch = aarch64 ] ; then
+              BUILDARGS="--enable-arm-neon=on"
+            else
+              BUILDARGS=""
+            fi
             export TL_MAKE_FLAGS
-            ./Build -C
+            ./Build -C $BUILDARGS
             mv inst/bin/* $arch
             tar czvf /artifacts/texlive-bin-${arch}-linux.tar.gz $arch
       - name: find file step
