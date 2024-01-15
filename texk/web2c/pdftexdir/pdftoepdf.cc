@@ -1,5 +1,5 @@
 /*
-Copyright 1996-2016 Han The Thanh, <thanh@pdftex.org>
+Copyright 1996-2024 Han The Thanh, <thanh@pdftex.org>
 
 This file is part of pdfTeX.
 
@@ -1026,9 +1026,6 @@ void write_epdf(void)
         pdfendstream();
     }
 
-    // write out all indirect objects
-    writeRefs();
-
     // write out all used encodings (and delete list)
     writeEncodings();
 
@@ -1041,6 +1038,9 @@ void write_epdf(void)
         pdfpagegroupval = 0;    // only the 1st included pdf on a page gets its
                                 // Group included in the Page dict
     }
+
+    // write out all indirect objects
+    writeRefs();
 
     // save object list, xref
     pdf_doc->inObjList = inObjList;

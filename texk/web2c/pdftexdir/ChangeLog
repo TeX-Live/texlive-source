@@ -1,3 +1,10 @@
+2024-01-14  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftoepdf.cc (write_epdf): call writeRefs at the end, to write
+	all indirect objects after writing everything else.
+	From pdftex r916 (and test in r915). Original report:
+	https://bugs.ghostscript.com/show_bug.cgi?id=706940
+
 2023-12-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test:
@@ -29,7 +36,7 @@
 2023-08-28  Karl Berry  <karl@freefriends.org>
 
 	* tounicode.c (undump_to_unicode): check that gu->name
-	(and gu->unicode_seq) did not undumped as NULL.
+	(and gu->unicode_seq) did not get undumped as NULL.
 	Report from Gregory DUCK,
 	https://tug.org/pipermail/tex-live/2023-August/049406.html.
 
