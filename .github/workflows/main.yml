@@ -40,29 +40,33 @@ jobs:
       matrix:
         include:
           - arch: i386-linux
+            image: i386/ubuntu:xenial
           - arch: x86_64-linux
+            image: centos:7
           - arch: x86_64-linuxmusl
+            image: alpine:3.5
+
+    container:
+      image: ${{ matrix.image }}
 
     steps:
       - name: checkout-main
         uses: actions/checkout@v4
-      - name: checkout-build-action
-        uses: actions/checkout@v4
-        with:
-          repository: TeX-Live/tl-build-docker-action
-          ref: v4
-          path: actions/TeX-Live/tl-build-docker-action
-      - name: Update Dockerfile
-        run: cp actions/TeX-Live/tl-build-docker-action/Dockerfile.${{ matrix.arch }} actions/TeX-Live/tl-build-docker-action/Dockerfile
-      - name: Run docker image
-        uses: ./actions/TeX-Live/tl-build-docker-action
-        with:
-          arch: ${{ matrix.arch }}
+      - name: install-deps
+        shell: bash
+        run: |
+          case "${{ matrix.image }}" in
+            i386/ubuntu:*) .github/scripts/install-deps.ubuntu.sh ;;
+            centos:*) .github/scripts/install-deps.centos.sh ;;
+            alpine:*) .github/scripts/install-deps.alpine.sh ;;
+          esac
+      - name: run build
+        shell: bash
+        run: .github/scripts/build-tl.sh ${{ matrix.arch }}
       - name: find file step
         run: ls -l
       - name: save artifact
         uses: actions/upload-artifact@v4
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           name: texlive-bin-{{ matrix.arch }}.tar.gz
           path: texlive-bin-{{ matrix.arch }}.tar.gz
@@ -84,17 +88,13 @@ jobs:
         include:
           - arch: aarch64
             distro: buster
+            tl_name: aarch64-linux
           - arch: armv7
             distro: buster
+            tl_name: armhf-linux
     steps:
       - name: checkout-main
         uses: actions/checkout@v4
-      - name: checkout-build-action
-        uses: actions/checkout@v4
-        with:
-          repository: TeX-Live/tl-build-docker-action
-          ref: v4
-          path: actions/TeX-Live/tl-build-docker-action
       - uses: uraimo/run-on-arch-action@v2
         name: Build artifact
         id: build
@@ -112,60 +112,22 @@ jobs:
           shell: /bin/bash
           install: |
             case "${{ matrix.distro }}" in
-              buster)
-                apt-get update -q -y
-                apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
-                ;;
+              buster) .github/scripts/install-deps.ubuntu.sh ;;
             esac
-          run: |
-            echo "Build on ${arch} / ${distro}"
-            find . -name \*.info -exec touch '{}' \;
-            touch ./texk/detex/detex-src/detex.c
-            touch ./texk/detex/detex-src/detex.h
-            touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
-            touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
-            touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
-            touch ./texk/web2c/omegafonts/pl-lexer.c
-            touch ./texk/web2c/omegafonts/pl-parser.c
-            touch ./texk/web2c/omegafonts/pl-parser.h
-            touch ./texk/web2c/otps/otp-lexer.c
-            touch ./texk/web2c/otps/otp-parser.c
-            touch ./texk/web2c/otps/otp-parser.h
-            touch ./texk/web2c/web2c/web2c-lexer.c
-            touch ./texk/web2c/web2c/web2c-parser.c
-            touch ./texk/web2c/web2c/web2c-parser.h
-            touch ./utils/asymptote/camp.tab.cc
-            touch ./utils/asymptote/camp.tab.h
-            touch ./utils/lacheck/lacheck.c
-            touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
-
-            if [ $arch = armhf-linux ] ; then
-              TL_MAKE_FLAGS="-j 1"
-            else
-              TL_MAKE_FLAGS="-j 2"
-            fi
-            if [ $arch = aarch64 ] ; then
-              BUILDARGS="--enable-arm-neon=on"
-            else
-              BUILDARGS=""
-            fi
-            export TL_MAKE_FLAGS
-            ./Build -C $BUILDARGS
-            mv inst/bin/* $arch
-            tar czvf /artifacts/texlive-bin-${arch}-linux.tar.gz $arch
+          run: .github/scripts/build-tl.sh ${{ matrix.tl_name }} /artifacts
       - name: find file step
         run: ls -l ${PWD}/artifacts
       - name: save artifact
         uses: actions/upload-artifact@v4
         with:
-          name: texlive-bin-{{ matrix.arch }}-linux.tar.gz
-          path: ${PWD}/artifacts/texlive-bin-{{ matrix.arch }}.tar.gz
+          name: texlive-bin-{{ matrix.tl_name }}.tar.gz
+          path: ${PWD}/artifacts/texlive-bin-{{ matrix.tl_name }}.tar.gz
           compression-level: 0
           retention-days: 5
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${PWD}/artifacts/texlive-bin-{{ matrix.arch }}.tar.gz
+          files: ${PWD}/artifacts/texlive-bin-{{ matrix.tl_name }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
