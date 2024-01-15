@@ -51,7 +51,10 @@ jobs:
 
     steps:
       - name: checkout-main
-        uses: actions/checkout@v4
+        # we cannot use > v1 due to node being used then, and in 
+        # non standard setup node fails, see
+        # https://github.com/actions/checkout/issues/334#issuecomment-1241306390
+        uses: actions/checkout@v1
       - name: install-deps
         shell: bash
         run: |
@@ -111,8 +114,20 @@ jobs:
             distro: ${{ matrix.distro }}
           shell: /bin/bash
           install: |
+            # this does not work because during install the
+            # checkout is not available!!!
+            # https://github.com/uraimo/run-on-arch-action/issues/54
+            # case "${{ matrix.distro }}" in
+            #   buster) .github/scripts/install-deps.ubuntu.sh ;;
+            # esac
             case "${{ matrix.distro }}" in
-              buster) .github/scripts/install-deps.ubuntu.sh ;;
+              buster)
+               export DEBIAN_FRONTEND=noninteractive
+               export LANG=C.UTF-8
+               export LC_ALL=C.UTF-8
+               apt-get update -q -y
+               apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+               ;;
             esac
           run: .github/scripts/build-tl.sh ${{ matrix.tl_name }} /artifacts
       - name: find file step
