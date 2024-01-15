@@ -112,7 +112,7 @@ jobs:
           shell: /bin/bash
           install: |
             case "${{ matrix.distro }}" in
-              debian*)
+              buster)
                 apt-get update -q -y
                 apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
                 ;;
@@ -147,16 +147,16 @@ jobs:
             export TL_MAKE_FLAGS
             ./Build -C
             mv inst/bin/* $arch
-            tar czvf /artifacts/texlive-bin-$arch.tar.gz $arch
+            tar czvf /artifacts/texlive-bin-${arch}-linux.tar.gz $arch
       - name: find file step
         run: ls -l ${PWD}/artifacts
       - name: save artifact
         uses: actions/upload-artifact@v4
-        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: texlive-bin-{{ matrix.arch }}.tar.gz
+          name: texlive-bin-{{ matrix.arch }}-linux.tar.gz
           path: ${PWD}/artifacts/texlive-bin-{{ matrix.arch }}.tar.gz
           compression-level: 0
+          retention-days: 5
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
