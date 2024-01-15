@@ -71,14 +71,14 @@ jobs:
       - name: save artifact
         uses: actions/upload-artifact@v4
         with:
-          name: texlive-bin-{{ matrix.arch }}.tar.gz
-          path: texlive-bin-{{ matrix.arch }}.tar.gz
+          name: texlive-bin-${{ matrix.arch }}.tar.gz
+          path: texlive-bin-${{ matrix.arch }}.tar.gz
           compression-level: 0
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: texlive-bin-{{ matrix.arch }}.tar.gz
+          files: texlive-bin-${{ matrix.arch }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
