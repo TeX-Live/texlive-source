@@ -2,7 +2,7 @@
 
 -- texlogsieve - filter and summarize LaTeX log files
 --
--- Copyright (C) 2021-2023 Nelson Lago <lago@ime.usp.br>
+-- Copyright (C) 2021-2024 Nelson Lago <lago@ime.usp.br>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -974,8 +974,8 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.4.0
-Copyright (C) 2021-2023 Nelson Lago <lago@ime.usp.br>
+texlogsieve 1.4.1
+Copyright (C) 2021-2024 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.]]
@@ -1527,6 +1527,10 @@ function adjustSeverity(msg)
     "Unknown feature `' in font %b`'", -- empty feature, not a problem
     "Package refcheck Warning: Unused label %b`'", -- we process these specially
     "Token not allowed in a PDF string %(Unicode%):",
+    "Font shape `[^']*/m/[^']*' in size %b<> not available.*"
+            .. "Font shape `[^']*/regular/[^']*' tried instead",
+    "Font shape `[^']*/b/[^']*' in size %b<> not available.*"
+            .. "Font shape `[^']*/bold/[^']*' tried instead",
   }
 
   DEFAULT_FORCED_WARNING = {}
@@ -2633,7 +2637,7 @@ end
 
 -- The pattern we want to check may stretch over several lines. This
 -- function recursively checks each line of the pattern against the
--- corresponding input line, but only up to three lines, as that is
+-- corresponding input line, but only up to five lines, as that is
 -- enough to make sure the pattern really matches.
 function stringsHandler:canDoitRecursive(patternLines,
                                              position, offset, depth)
@@ -2655,7 +2659,7 @@ function stringsHandler:canDoitRecursive(patternLines,
       -- see comment below about "nextline, patternLine"
       if first ~= nil and not string.find(nextline, patternLine) then
           -- Found it!
-          if depth > 2 -- 3 lines matched, that is enough
+          if depth > 4 -- 5 lines matched, that is enough
                        or #patternLines == 1 -- no more pattern lines
                        or Lines:get(position +1) == nil -- no more input lines
 
@@ -2972,6 +2976,7 @@ anywhereDebugStringsHandler.patterns = {
 beginningOfLineInfoStringsHandler = stringsHandler:new()
 beginningOfLineInfoStringsHandler.severity = INFO
 beginningOfLineInfoStringsHandler.patterns = {
+  "^%s*system commands enabled%.",
   "^Writing index file.*%.idx",
   "^Writing glossary file.*%.glo",
   "^%*geometry%* driver:.*",
@@ -2988,6 +2993,8 @@ beginningOfLineInfoStringsHandler.patterns = {
   "^No file .-%.bbl%.",
   "^No file .-%.gls%.",
 
+  "^runsystem%b()%.%.%.executed",
+
   'luaotfload | db : Reload initiated %(formats: .-%); reason: Font ".-" not found%.',
 
   "^reledmac reminder:%s*\n"
@@ -2999,9 +3006,26 @@ beginningOfLineInfoStringsHandler.patterns = {
 
   "^ ?LaTeX document class for Lecture Notes in Computer Science",
 
-  "^%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*%*\n"
+  -- Remember that order matters here!
+  "^" .. string.rep("%*", 37) .. "%*?%*?\n"
           .. "%* Local config file " .. filepat .. " used\n"
-          .. "%*",
+          .. string.rep("%*", 37) .. "%*?%*?\n",
+
+  "^" .. string.rep("%*", 38) .. "\n"
+          .. "%*\n"
+          .. "%* Local config file " .. filepat .. " used\n"
+          .. "%*\n"
+          .. string.rep("%*", 38) .. "\n",
+
+  "^" .. string.rep("%*", 37) .. "%*?%*?\n"
+          .. "%* Local config file " .. filepat .. " used\n"
+          .. "%*\n",
+
+  "^" .. string.rep("%=", 36) .. "\n"
+          .. "%s*Local config file " .. filepat .. " used\n"
+          .. string.rep("%=", 36) .. "%=?\n",
+
+  "^Local config file " .. filepat .. " used\n",
 
   "^=== Package selnolig, Version %S+, Date " .. datepat .. " ===",
 
