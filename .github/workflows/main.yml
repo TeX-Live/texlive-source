@@ -134,14 +134,14 @@ jobs:
       - name: save artifact
         uses: actions/upload-artifact@v4
         with:
-          name: texlive-bin-{{ matrix.tl_name }}.tar.gz
-          path: ${PWD}/artifacts/texlive-bin-{{ matrix.tl_name }}.tar.gz
+          name: texlive-bin-${{ matrix.tl_name }}.tar.gz
+          path: ${PWD}/artifacts/texlive-bin-${{ matrix.tl_name }}.tar.gz
           compression-level: 0
           retention-days: 5
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: ${PWD}/artifacts/texlive-bin-{{ matrix.tl_name }}.tar.gz
+          files: ${PWD}/artifacts/texlive-bin-${{ matrix.tl_name }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
