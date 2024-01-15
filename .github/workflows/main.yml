@@ -83,9 +83,9 @@ jobs:
       matrix:
         include:
           - arch: aarch64
-            distro: debian-buster
+            distro: buster
           - arch: armv7
-            distro: debian-buster
+            distro: buster
     steps:
       - name: checkout-main
         uses: actions/checkout@v4
