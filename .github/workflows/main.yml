@@ -75,3 +75,92 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  build_job_qemu:
+    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.arch }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            distro: debian-buster
+          - arch: armv7
+            distro: debian-buster
+    steps:
+      - name: checkout-main
+        uses: actions/checkout@v4
+      - name: checkout-build-action
+        uses: actions/checkout@v4
+        with:
+          repository: TeX-Live/tl-build-docker-action
+          ref: v4
+          path: actions/TeX-Live/tl-build-docker-action
+      - uses: uraimo/run-on-arch-action@v2
+        name: Build artifact
+        id: build
+        with:
+          arch: ${{ matrix.arch }}
+          githubToken: ${{ github.token }}
+
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          env: |
+            arch: ${{ matrix.arch }}
+            distro: ${{ matrix.distro }}
+          shell: /bin/bash
+          install: |
+            case "${{ matrix.distro }}" in
+              debian*)
+                apt-get update -q -y
+                apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+                ;;
+            esac
+          run: |
+            echo "Build on ${arch} / ${distro}"
+            find . -name \*.info -exec touch '{}' \;
+            touch ./texk/detex/detex-src/detex.c
+            touch ./texk/detex/detex-src/detex.h
+            touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
+            touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
+            touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
+            touch ./texk/web2c/omegafonts/pl-lexer.c
+            touch ./texk/web2c/omegafonts/pl-parser.c
+            touch ./texk/web2c/omegafonts/pl-parser.h
+            touch ./texk/web2c/otps/otp-lexer.c
+            touch ./texk/web2c/otps/otp-parser.c
+            touch ./texk/web2c/otps/otp-parser.h
+            touch ./texk/web2c/web2c/web2c-lexer.c
+            touch ./texk/web2c/web2c/web2c-parser.c
+            touch ./texk/web2c/web2c/web2c-parser.h
+            touch ./utils/asymptote/camp.tab.cc
+            touch ./utils/asymptote/camp.tab.h
+            touch ./utils/lacheck/lacheck.c
+            touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
+
+            if [ $arch = armhf-linux ] ; then
+              TL_MAKE_FLAGS="-j 1"
+            else
+              TL_MAKE_FLAGS="-j 2"
+            fi
+            export TL_MAKE_FLAGS
+            ./Build -C
+            mv inst/bin/* $arch
+            tar czvf /artifacts/texlive-bin-$arch.tar.gz $arch
+      - name: find file step
+        run: ls -l ${PWD}/artifacts
+      - name: save artifact
+        uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: texlive-bin-{{ matrix.arch }}.tar.gz
+          path: ${PWD}/artifacts/texlive-bin-{{ matrix.arch }}.tar.gz
+          compression-level: 0
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${PWD}/artifacts/texlive-bin-{{ matrix.arch }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
