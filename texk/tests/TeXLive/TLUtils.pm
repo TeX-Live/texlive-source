@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 68283 $';
+my $svnrev = '$Revision: 69327 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -4228,6 +4228,7 @@ false.
 =cut
 
 sub setup_persistent_downloads {
+  my $certs = shift;
   if ($TeXLive::TLDownload::net_lib_avail) {
     ddebug("setup_persistent_downloads has net_lib_avail set\n");
     if ($::tldownload_server) {
@@ -4235,10 +4236,10 @@ sub setup_persistent_downloads {
         debug("stop retrying to initialize LWP after 10 failures\n");
         return 0;
       } else {
-        $::tldownload_server->reinit();
+        $::tldownload_server->reinit(certificates => $certs);
       }
     } else {
-      $::tldownload_server = TeXLive::TLDownload->new;
+      $::tldownload_server = TeXLive::TLDownload->new(certificates => $certs);
     }
     if (!defined($::tldownload_server)) {
       ddebug("TLUtils:setup_persistent_downloads: failed to get ::tldownload_server\n");
