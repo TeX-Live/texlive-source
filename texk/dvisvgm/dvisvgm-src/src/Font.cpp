@@ -2,7 +2,7 @@
 ** Font.cpp                                                             **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -112,13 +112,14 @@ const FontMetrics* TFMFont::getMetrics () const {
 		try {
 			_metrics = FontMetrics::read(_fontname);
 			if (!_metrics) {
-				_metrics = util::make_unique<NullFontMetric>();
+				_metrics = util::make_unique<NullFontMetrics>();
 				Message::wstream(true) << "can't find "+_fontname+".tfm\n";
 			}
 		}
 		catch (FontMetricException &e) {
-			_metrics = util::make_unique<NullFontMetric>();
-			Message::wstream(true) << e.what() << " in " << _fontname << ".tfm\n";
+			const char *ext = (_metrics && _metrics->isOFM()) ? ".ofm" : ".tfm";
+			_metrics = util::make_unique<NullFontMetrics>();
+			Message::wstream(true) << e.what() << " in " << _fontname << ext << "\n";
 		}
 	}
 	return _metrics.get();
@@ -453,14 +454,17 @@ bool PhysicalFont::getExactGlyphBox (int c, GlyphMetrics &metrics, bool vertical
 	BoundingBox charbox;
 	if (!getExactGlyphBox(c, charbox, cb))
 		return false;
-	if ((metrics.wl = -charbox.minX()) < 0) metrics.wl=0;
-	if ((metrics.wr = charbox.maxX()) < 0)  metrics.wr=0;
-	if ((metrics.h = charbox.maxY()) < 0)   metrics.h=0;
-	if ((metrics.d = -charbox.minY()) < 0)  metrics.d=0;
+	metrics.wl = -charbox.minX();
+	metrics.wr = charbox.maxX();
+	metrics.h = charbox.maxY();
+	metrics.d = -charbox.minY();
 	if (vertical) {  // vertical text orientation
 		if (verticalLayout()) {  // font designed for vertical layout?
-			metrics.wl = metrics.wr = (metrics.wl+metrics.wr)/2;
-			metrics.d += metrics.h;
+			double wl = max(0.0, metrics.wl);
+			double wr = max(0.0, metrics.wr);
+			double h = max(0.0, metrics.h);
+			metrics.wl = metrics.wr = (wl+wr)/2;
+			metrics.d += h;
 			metrics.h = 0;
 		}
 		else {

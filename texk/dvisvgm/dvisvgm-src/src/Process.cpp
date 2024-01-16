@@ -2,7 +2,7 @@
 ** Process.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -74,13 +74,13 @@ string Subprocess::read (const SearchPattern &pattern, bool *error) {
 	const size_t bytesRead = readFromPipe(&_rdbuf[_bufstartpos], _rdbuf.size()-_bufstartpos, error);
 	const size_t bufendpos = _bufstartpos + bytesRead;
 	smatch matches;
-	size_t matchendpos= bufendpos;  // buffer position after last match
+	size_t matchendpos = bufendpos;  // buffer position after last match
 	if (pattern.search.empty())
 		result.assign(_rdbuf.data(), matchendpos);
 	else {
 		bool matched=false;
 		regex re(pattern.search);
-		for (auto it = cregex_iterator(&_rdbuf[0], &_rdbuf[bufendpos], re); it != cregex_iterator(); ++it) {
+		for (auto it = cregex_iterator(&_rdbuf[0], &_rdbuf[0]+bufendpos, re); it != cregex_iterator(); ++it) {
 			result += it->format(pattern.replace, regex_constants::format_no_copy);
 			matchendpos = it->position() + it->length();
 			matched = true;
@@ -121,11 +121,8 @@ bool Process::run (string *out, const SearchPattern &pattern, PipeFlags flags) {
 	if (out)
 		out->clear();
 	for (;;) {
-		if (out) {
-			string chunk;
-			subprocess.readFromPipe(chunk, pattern);
-			*out += chunk;
-		}
+		if (out)
+			subprocess.readFromPipe(*out, pattern);
 		Subprocess::State state = subprocess.state();
 		if (state != Subprocess::State::RUNNING)
 			return state == Subprocess::State::FINISHED;

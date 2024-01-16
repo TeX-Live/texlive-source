@@ -1,19 +1,17 @@
+## This file is part of dvisvgm
+## Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
+
 if !HAVE_BROTLI
 BROTLI_CFLAGS += -I$(dvisvgm_srcdir)/libs/brotli/include
 BROTLI_LIBS += ../libs/brotli/libbrotli.a
 endif
 
 if !HAVE_POTRACE
-# Gets automake warnings:
-#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
-#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
-#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
-#if !TEXLIVE_BUILD
-#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-#POTRACE_LIBS = ../libs/potrace/libpotrace.a
-#else
 POTRACE_CFLAGS = $(POTRACE_INCLUDES)
-#endif TEXLIVE_BUILD
+endif
+#
+if TEXLIVE_BUILD
+POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 endif
 
 if !HAVE_WOFF2

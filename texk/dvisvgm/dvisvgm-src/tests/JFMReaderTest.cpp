@@ -2,7 +2,7 @@
 ** JFMReaderTest.cpp                                                    **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -40,7 +40,8 @@ class JFMReaderTest : public ::testing::Test {
 			string fname = string(SRCDIR)+"/data/cidjmgr0-h.tfm";
 			ifstream ifs(fname, ios::binary);
 			ASSERT_TRUE(ifs.is_open()) << "failed opening " << fname;
-			jfm = util::make_unique<JFM>(ifs);
+			jfm = util::make_unique<JFM>();
+			jfm->read(ifs);
 		}
 
 	protected:
@@ -51,8 +52,8 @@ class JFMReaderTest : public ::testing::Test {
 TEST_F(JFMReaderTest, properties) {
 	EXPECT_EQ(jfm->getChecksum(), 0u);
 	EXPECT_FALSE(jfm->verticalLayout());
-	EXPECT_EQ(jfm->firstChar(), 0);
-	EXPECT_EQ(jfm->lastChar(), 1);
+	EXPECT_EQ(jfm->firstChar(), 0u);
+	EXPECT_EQ(jfm->lastChar(), 1u);
 	EXPECT_EQ(jfm->minChar(), 13143u);
 	EXPECT_EQ(jfm->maxChar(), 14696u);
 	EXPECT_DOUBLE_EQ(jfm->getDesignSize(), 10.0*72.0/72.27);

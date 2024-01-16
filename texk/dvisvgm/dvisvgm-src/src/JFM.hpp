@@ -2,7 +2,7 @@
 ** JFM.hpp                                                              **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,7 +27,8 @@
 
 class JFM : public TFM {
 	public:
-		explicit JFM (std::istream &is);
+		JFM () =default;
+		void read (std::istream &is) override;
 		bool verticalLayout () const  override {return _vertical;}
 		bool isJFM () const override {return true;}
 		uint32_t minChar () const {return _minchar;}
@@ -35,11 +36,11 @@ class JFM : public TFM {
 
 	protected:
 		void readTables (StreamReader &reader, int nt, int nw, int nh, int nd, int ni);
-		int charIndex (int c) const override;
+		size_t charIndex (int c) const override;
 
 	private:
-		uint32_t _minchar;  ///< character code of first entry in character type table
-		bool _vertical;     ///< true if metrics refer to vertical text layout
+		uint32_t _minchar=0;   ///< character code of first entry in character type table
+		bool _vertical=false;  ///< true if metrics refer to vertical text layout
 		std::vector<uint8_t> _charTypeTable;
 };
 

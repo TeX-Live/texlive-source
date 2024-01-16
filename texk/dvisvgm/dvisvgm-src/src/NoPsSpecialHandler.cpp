@@ -2,7 +2,7 @@
 ** NoPsSpecialHandler.cpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -39,7 +39,7 @@ void NoPsSpecialHandler::dviEndPage (unsigned pageno, SpecialActions &actions) {
 }
 
 
-vector<const char*> NoPsSpecialHandler::prefixes() const {
+vector<const char*> NoPsSpecialHandler::prefixes () const {
 	vector<const char*> pfx {"header=", "psfile=", "PSfile=", "ps:", "ps::", "!", "\""};
 	return pfx;
 }

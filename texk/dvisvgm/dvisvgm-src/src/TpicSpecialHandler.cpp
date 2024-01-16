@@ -2,7 +2,7 @@
 ** TpicSpecialHandler.cpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -354,7 +354,7 @@ bool TpicSpecialHandler::process (const string &prefix, istream &is, SpecialActi
 }
 
 
-vector<const char*> TpicSpecialHandler::prefixes() const {
+vector<const char*> TpicSpecialHandler::prefixes () const {
 	vector<const char*> pfx {"ar", "bk", "da", "dt", "fp", "ia", "ip", "pa", "pn", "sh", "sp", "tx", "wh"};
 	return pfx;
 }

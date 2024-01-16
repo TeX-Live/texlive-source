@@ -2,7 +2,7 @@
 ** FontCache.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -281,7 +281,7 @@ bool FontCache::fontinfo (const string &dirname, vector<FontInfo> &infos, vector
 				string path = dirname+"/"+(fname.substr(1));
 				ifstream ifs(path, ios::binary);
 				if (fontinfo(ifs, info))
-					infos.push_back(move(info));
+					infos.push_back(std::move(info));
 				else
 					invalid.push_back(fname.substr(1));
 			}

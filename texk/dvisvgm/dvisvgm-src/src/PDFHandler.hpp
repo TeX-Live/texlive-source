@@ -2,7 +2,7 @@
 ** PDFHandler.hpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -58,6 +58,7 @@ class PDFHandler {
 		std::unique_ptr<SVGElement> convert (const std::string &fname, int pageno, std::unique_ptr<SVGElement> context=nullptr);
 		static std::string mutoolVersion ();
 		static bool available () {return !mutoolVersion().empty();}
+		static int numberOfPages (const std::string &fname);
 
 	protected:
 		static std::string mutool (const std::string &cmd, bool readFromStderr=false);

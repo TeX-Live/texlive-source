@@ -121,8 +121,7 @@ am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 = 
 libmd5_a_AR = $(AR) $(ARFLAGS)
 libmd5_a_LIBADD =
-am__libmd5_a_SOURCES_DIST = md5.c md5.h
-@USE_BUNDLED_MD5_TRUE@am_libmd5_a_OBJECTS = md5.$(OBJEXT)
+am_libmd5_a_OBJECTS = md5.$(OBJEXT)
 libmd5_a_OBJECTS = $(am_libmd5_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -164,7 +163,7 @@ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
 SOURCES = $(libmd5_a_SOURCES)
-DIST_SOURCES = $(am__libmd5_a_SOURCES_DIST)
+DIST_SOURCES = $(libmd5_a_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -346,9 +345,9 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-@USE_BUNDLED_MD5_TRUE@noinst_LIBRARIES = libmd5.a
-@USE_BUNDLED_MD5_TRUE@libmd5_a_SOURCES = md5.c md5.h
-@USE_BUNDLED_MD5_TRUE@AM_CXXFLAGS = -Wall
+noinst_LIBRARIES = libmd5.a
+libmd5_a_SOURCES = md5.c md5.h
+AM_CXXFLAGS = -Wall
 CLEANFILES = *.gcda *.gcno
 all: all-am
 
@@ -645,7 +644,7 @@ uninstall-am:
 .PRECIOUS: Makefile
 
 
-@USE_BUNDLED_MD5_TRUE@md5.c: md5.h
+md5.c: md5.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

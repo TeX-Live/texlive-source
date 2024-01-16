@@ -2,7 +2,7 @@
 ** DvisvgmSpecialHandler.hpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -73,11 +73,12 @@ class DvisvgmSpecialHandler : public SpecialHandler {
 
 	public:
 		DvisvgmSpecialHandler ();
-		const char* name () const override {return "dvisvgm";}
-		const char* info () const override {return "special set for embedding raw SVG snippets";}
-		std::vector<const char*> prefixes() const override;
 		void preprocess (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
 		bool process (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
+		const char* info () const override {return "special set for embedding raw SVG snippets";}
+		const char* name () const override {return handlerName();}
+		static const char* handlerName ()  {return "dvisvgm";}
+		std::vector<const char*> prefixes () const override;
 
 	protected:
 		void preprocessRaw (InputReader &ir);
@@ -92,6 +93,8 @@ class DvisvgmSpecialHandler : public SpecialHandler {
 		void processRawPut (InputReader &ir, SpecialActions &actions);
 		void processBBox (InputReader &ir, SpecialActions &actions);
 		void processImg (InputReader &ir, SpecialActions &actions);
+		void processCurrentColor (InputReader &ir, SpecialActions &actions);
+		void processMessage (InputReader &ir, SpecialActions &actions);
 		void dviPreprocessingFinished () override;
 		void dviBeginPage (unsigned pageno, SpecialActions &actions) override;
 		void dviEndPage (unsigned pageno, SpecialActions &actions) override;

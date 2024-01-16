@@ -2,7 +2,7 @@
 ** SVGTree.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -92,8 +92,8 @@ class SVGTree {
 
 	private:
 		XMLDocument _doc;
-		SVGElement *_root, *_page, *_defs;
-		XMLCData *_styleCDataNode;
+		SVGElement *_root=nullptr, *_page=nullptr, *_defs=nullptr;
+		XMLCData *_styleCDataNode=nullptr;
 		std::unique_ptr<SVGCharHandler> _charHandler;
 		std::stack<SVGElement*> _defsContextStack;
 		std::stack<SVGElement*> _pageContextStack;

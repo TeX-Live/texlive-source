@@ -2,7 +2,7 @@
 ** TpicSpecialHandler.hpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -28,10 +28,11 @@
 class TpicSpecialHandler : public SpecialHandler {
 	public:
 		TpicSpecialHandler ();
-		const char* info () const override {return "TPIC specials";}
-		const char* name () const override {return "tpic";}
-		std::vector<const char*> prefixes() const override;
 		bool process (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
+		const char* info () const override {return "TPIC specials";}
+		const char* name () const override {return handlerName();}
+		static const char* handlerName ()  {return "tpic";}
+		std::vector<const char*> prefixes () const override;
 		double penwidth () const  {return _penwidth;}
 		double grayLevel () const {return _grayLevel;}
 		Color fillColor (bool grayOnly) const;

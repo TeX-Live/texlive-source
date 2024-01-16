@@ -1,16 +1,18 @@
 # This file is part of dvisvgm
-# Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
+# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
 #
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([dvisvgm],[3.0.3],[martin.gieseking@uos.de])
-DATE="February 2023"
+AC_INIT([dvisvgm],[3.2],[martin.gieseking@uos.de])
+DATE="January 2024"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_HOST
 AM_INIT_AUTOMAKE([subdir-objects dist-xz])
+
+AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
 
 AH_TEMPLATE([HOST_SYSTEM], [The machine triplet of the host system])
 AC_DEFINE_UNQUOTED([HOST_SYSTEM], ["$host"])
@@ -135,10 +137,6 @@ AS_IF([test "x$enable_woff" != "xyes"],
 				[AC_MSG_NOTICE([enabled dynamic loading of ttfautohint])],
 				[AC_MSG_WARN([disabled ttfautohint support])])])]
 		[AC_SUBST(TTFAUTOHINT_CFLAGS) AC_SUBST(TTFAUTOHINT_LIBS)])])
-
-AC_CHECK_HEADERS([openssl/md5.h])
-PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [HAVE_LIBCRYPTO=1], [HAVE_LIBCRYPTO=0])
-AM_CONDITIONAL([USE_BUNDLED_MD5], [test "$HAVE_LIBCRYPTO" -eq 0])
 
 AC_CHECK_LIB(z, gzopen)
 

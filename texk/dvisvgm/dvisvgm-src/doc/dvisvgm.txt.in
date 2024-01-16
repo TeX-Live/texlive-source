@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 // This file is part of dvisvgm -- a fast DVI to SVG converter          //
-// Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   //
+// Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   //
 //                                                                      //
 // This program is free software; you can redistribute it and/or        //
 // modify it under the terms of the GNU General Public License as       //
@@ -22,7 +22,7 @@ Martin Gieseking <@PACKAGE_BUGREPORT@>
 :man source: dvisvgm
 :man version: @VERSION@
 :man manual: dvisvgm Manual
-:revdate: 2022-10-14 12:56 +0200
+:revdate: 2024-01-06 14:30 +0100
 
 Name
 ----
@@ -206,7 +206,17 @@ In order to apply these color names rather than their RGB values, call dvisvgm w
 Adds comments with further information about selected data to the SVG file. Currently, only
 font elements and font CSS rules related to native fonts are annotated.
 
-*embed-bitmaps*::
+*--currentcolor*[='color']::
+This option tells dvisvgm to replace the specified color with CSS variable `currentColor` which
+holds the current foreground color set by CSS property `color`. This way an application or website
+can change the color via CSS without the need to modify the SVG code.
++
+The optional argument of `--currentcolor` specifies the RGB color value to be replaced and must
+be given as either https://www.w3.org/TR/css-color/#typedef-hex-color[six or three digit hex color value]
+preceded by character `#`, e.g. `#0000ff` or `#00f` for blue. If the optional argument is omitted, black
+is assumed.
+
+*--embed-bitmaps*::
 Embeds the contents of bitmap files into the generated SVG files instead of adding file references.
 Because of the base64-encoded data, the SVG files are usually much bigger but at the same time
 more portable because they don't rely on external bitmap files.
@@ -229,6 +239,9 @@ dimensions, they don't necessarily correspond with the bounds of the visual glyp
 and/or height of some glyphs may be larger (or smaller) than the respective TFM values. As a result,
 this can lead to clipped characters at the bounds of the SVG graphics. With option *--exact-bbox*
 given, dvisvgm analyzes the actual shape of each character and derives a usually tight bounding box.
++
+This option only affects the processing of DVI files. When converting EPS or PDF files, the bounding
+box information stored in these files are used to derive the SVG bounding box.
 
 *-f, --font-format*='format'::
 Selects the file format used to embed font data into the generated SVG output when converting DVI
@@ -380,6 +393,15 @@ The larger this value, the better the tracing results. Nevertheless, large magni
 can cause Metafont arithmetic errors due to number overflows. So, use this option with care.
 The default setting usually produces nice results.
 
+*--message*='text'::
+Prints a given message to the console after an SVG file has been written. Argument 'text' may consist
+of static text and the macros listed below in the description of special command +dvisvgm:raw+.
+For example, +--message="page {?pageno} written to {?svgfile}"+ prints the message with the macros
+expanded after the conversion of each page of a DVI or PDF file or after processing an EPS file.
++
+The output of option *--message* is not affected by the specified verbosity level, i.e. it prints
+the text even with +--verbosity=0+.
+
 *--no-merge*::
 Puts every single character in a separate 'text' element with corresponding 'x' and 'y' attributes.
 By default, new 'text' or 'tspan' elements are only created if a string starts at a location that
@@ -420,6 +442,10 @@ are performed by running separate optimizer modules specified by optional argume
 It may consist of a single module name or a comma-separated list of several module names.
 The corresponding modules are executed one by one in the given order and thus transform the
 XML tree gradually.
+A leading hyphen (+-+) can be used to exclude a module from processing. For example
++-Oall,-collapse-groups+ performs all optimizations except +collapse-groups+. If the first
+module name in the list starts with a hyphen, dvisvgm automatically inserts +all+ at the
+beginning, i.e. +-O-collapse-groups+ is identical to +-Oall,-collapse-groups+.
 +
 The following list describes the currently available optimizer modules.
 
@@ -432,8 +458,8 @@ The following list describes the currently available optimizer modules.
 
   *all*;;
   Performs all optimizations listed below. This is also the default if option *--optimize* is
-  used without argument. The modules are executed in a predefined order that usually leads to the
-  best results. *all* can't be combined with other module names.
+  used without any arguments. The modules are executed in a predefined order that usually leads
+  to the best results. *all* must be the only or the first entry in the list of module names.
 
   *collapse-groups*;;
   Combines nested group elements (+<g>+...+</g>+) that contain only a single group each. If possible,
@@ -572,16 +598,17 @@ If this option is given, dvisvgm does not expect a DVI but a PDF input file, and
 it to SVG. Similar to the conversion of DVI files, only the first page is processed by default.
 Option *--page* can be used to select different pages, page ranges, and/or page sequences.
 +
-If a Ghostcript version < 10.1.0 is found, dvisvgm uses Ghostscript to process the PDF file. In
+If a Ghostcript version < 10.01.0 is found, dvisvgm uses Ghostscript to process the PDF file. In
 this case, the conversion is realized by creating a single 'pdffile' special command which is
 forwarded to dvisvgm's PostScript special handler. Therefore, this option is only available if
 dvisvgm was built with PostScript support enabled, and requires Ghostscript to be accessible.
 See option *--libgs* for further information.
 +
-As of Ghostscript 10.1.0, this will no longer work due to the introduction of a new PDF interpreter.
-Therefore, an alternative conversion module based on https://mupdf.com/docs/mutool.html[mutool]
-has been introduced. It's automatically invoked if Ghostscript can't be used and if a working
-+mutool+ executable is present in a directory which is part of the system's search path.
+As of Ghostscript 10.01.0, this will no longer work due to the introduction of a new PDF interpreter.
+Therefore, an alternative conversion module based on _mutool_, a utility which is part of the
+https://mupdf.com[MuPDF] package, has been introduced. It's automatically invoked if Ghostscript
+can't be used and if a working +mutool+ executable is present in a directory which is part of the
+system's search path.
 +
 Alternatively, environment variable +DVISVGM_PDF_PROC+ can be used to select the PDF processor.
 The currently supported values are +gs+ and +mutool+.
@@ -731,10 +758,11 @@ Controls the type of messages printed during a dvisvgm run:
   *1*;; error messages only
   *2*;; warning messages only
   *4*;; informational messages only
+  *8*;; user messages only (e.g. created by special +dvisvgm:message+)
 
 +
 [NOTE]
-By adding these values you can combine the categories. The default level is 7, i.e. all
+By adding these values you can combine the categories. The default level is 15, i.e. all
 messages are printed.
 +
 
@@ -762,7 +790,7 @@ DVI file and delegates its execution to the DVI driver. The DVI driver can then 
 ignore it, depending on the supported statements. The parameter of TeX's +\special+ command is given in curly
 braces and may consist of an arbitrary character sequence representing the actual instruction, for example
 +color Red+.
-+
+
 dvisvgm delegates the evaluation of special commands to dedicated handlers. Each handler is responsible for
 all special statements of the same command set, i.e. commands usually &#x2013; but not necessarily &#x2013;
 beginning with a common prefix. For example, all PDF specials start with the prefix +pdf:+, while the TPIC
@@ -792,8 +820,10 @@ dvisvgm offers its own small set of specials. The following list gives a brief o
   that the resulting SVG is still valid. Opening and closing tags may be distributed among different 'raw'
   specials. The tags themselves can also be split but must be continued with the immediately following 'raw'
   special. Both syntactically incorrect and wrongly nested tags lead to error messages.
-  Parameter 'text' may also contain the expressions *{?x}*, *{?y}*, *{?color}*, and *{?matrix}* that expand to
-  the current 'x' or 'y' coordinate, the current color, and current transformation matrix, respectively.
+  Parameter 'text' may also contain the expressions *{?x}*, *{?y}*, *{?color}*, *{?matrix}*, *{?pageno}*,
+  *{?svgfile}*, and *{?svgpath}* that expand to the current 'x' or 'y' coordinate, the current color, the
+  current transformation matrix, the current page number, and the relative and absolute path of the SVG file
+  being created, respectively.
   Character sequence *{?nl}* expands to a newline character. Finally, constructions of the form *{?(__expr__)}*
   enable the evaluation of mathematical expressions which may consist of basic arithmetic operations including
   modulo. Like above, the variables 'x' and 'y' represent the current coordinates.
@@ -882,6 +912,15 @@ The following TeX snippet adds two raw SVG elements to the output and updates th
 \special{dvisvgm:bbox abs 10bp 200bp 100bp 250bp transform}
 -------------------------------------------------------------------------------------
 +
+  *dvisvgm:currentcolor* [on|off];;
+  This special works similar to option `--currentcolor` but doesn't require an explicit color argument. Instead,
+  it takes the currently active color and replaces it with `currentColor`. Therefore, the result depends on the
+  placement of the special and the preceding color changes. Argument `on` &#x2013; which activates the 'currentColor'
+  functionality &#x2013; can be omitted. When called with argument `off`, the functionality is deactivated again.
+
+  *dvisvgm:message* 'msg';;
+  Prints the given text 'msg' to the console. It may also contain the macros '{?...}' mentioned above
+  (see *dvisvgm:raw*).
 
 *em*::
 These specials were introduced with the 'emTeX' distribution by Eberhard Mattes. They provide line drawing
@@ -911,7 +950,7 @@ only 'pdf:mapfile', 'pdf:mapline', 'pdf:pagesize', and PDF hyperlink specials ar
 The latter are the PDF pendants to the HTML HyperTeX specials generated by the hyperref package in PDF mode.
 +
 'pdf:pagesize' is similar to the 'papersize' special (see above) which specifies the size of the current
-and all folowing pages. In order to actually apply the extents to the generated SVG files,
+and all following pages. In order to actually apply the extents to the generated SVG files,
 option *--bbox=papersize* must be given.
 +
 'pdf:mapfile' and 'pdf:mapline' allow for modifying the font map tree while processing the DVI file.
@@ -1025,7 +1064,7 @@ All malformed entries in the list are silently ignored.
 of progress indicators (+pi+) to cyan (+5+) on default background (+*+).
 
 Variable *DVISVGM_PDF_PROC* allows you to select the desired PDF processor. dvisvgm requires either
-Ghostscript (version < 10.1.0) or mutool to process PDF files. IF *DVISVGM_PDF_PROC* is not set, dvisvgm
+Ghostscript (version < 10.01.0) or mutool to process PDF files. IF *DVISVGM_PDF_PROC* is not set, dvisvgm
 tries to detect the available processors. See option *--pdf* for further information. To select a
 specific PDF processor, you can set *DVISVGM_PDF_PROC* to +gs+ or +mutool+ which forces the use of
 Ghostscript and mutool respectively.
@@ -1065,7 +1104,7 @@ Written by {author} <{email}>
 
 Copying
 -------
-Copyright (C) 2005-2023 Martin Gieseking. Free use of this software is
+Copyright (C) 2005-2024 Martin Gieseking. Free use of this software is
 granted under the terms of the GNU General Public License (GPL) version 3
 or, (at your option) any later version.
 

@@ -1,16 +1,16 @@
---- dvisvgm-3.0.3/configure.ac	2023-02-21 02:44:31.000000000 -0800
-+++ ./configure.ac	2023-02-21 17:44:53.885508429 -0800
-@@ -1,15 +1,32 @@
+--- dvisvgm-3.2/configure.ac	2024-01-11 00:52:01.000000000 -0800
++++ ./configure.ac	2024-01-16 09:29:40.201424363 -0800
+@@ -1,18 +1,31 @@
 -# This file is part of dvisvgm
--# Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>
+-# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
-+dnl $Id: configure.ac 65593 2023-01-20 01:55:04Z karl $
++dnl $Id: configure.ac 67404 2023-06-18 22:03:59Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
-+dnl   Copyright 2015-2023 Karl Berry <tex-live@tug.org>
++dnl   Copyright 2015-2024 Karl Berry <tex-live@tug.org>
 +dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 +dnl
 +dnl   This file is free software; the copyright holder
@@ -18,13 +18,13 @@
 +dnl   with or without modifications, as long as this notice is preserved.
 +dnl
 +dnl  Adapted for TeX Live from original dvisvgm configure.ac
-+dnl  Copyright 2005-2023 Martin Gieseking
++dnl  Copyright 2005-2024 Martin Gieseking
 +dnl
  AC_PREREQ([2.69])
--AC_INIT([dvisvgm],[3.0.3],[martin.gieseking@uos.de])
+-AC_INIT([dvisvgm],[3.2],[martin.gieseking@uos.de])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="February 2023"
+ DATE="January 2024"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])
@@ -34,20 +34,18 @@
 +AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR
 +AC_CONFIG_MACRO_DIRS([dvisvgm-src/m4])dnl ax_gcc_builtin
 +AC_CONFIG_AUX_DIR([../../build-aux])
-+
-+AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
-+
-+# Common code for all programs using libkpathsea.
-+# PROG_AR must be run before KPSE_COMMON, since the latter calls LT_INIT.
-+AM_PROG_AR
-+KPSE_COMMON([dvisvgm])
  
+ AM_CONDITIONAL([TEXLIVE_BUILD], [test "x$enable_texlive_build" = xyes])
+ 
++# Common code for all programs using libkpathsea.
++KPSE_COMMON([dvisvgm])
++
  AH_TEMPLATE([HOST_SYSTEM], [The machine triplet of the host system])
-@@ -20,60 +37,35 @@
+ AC_DEFINE_UNQUOTED([HOST_SYSTEM], ["$host"])
+@@ -22,60 +35,34 @@
  AC_PROG_CXX
  AX_CXX_COMPILE_STDCXX([11])
 -AM_PROG_AR
-+dnl AM_PROG_AR is above.
  LT_INIT
 +KPSE_CXX_HACK
  
@@ -124,27 +122,13 @@
 +fi
  AS_IF([test "x$have_libgs" = "xno"],
  	# Ghostscript not found, check for dlopen
-@@ -81,69 +73,89 @@
+@@ -83,65 +70,89 @@
  		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
  		[AC_MSG_WARN(PostScript support disabled)])])
 +fi
  
 -# Check for pkg-config
 -PKG_PROG_PKG_CONFIG
--
--# Check for libraries.
--PKG_CHECK_MODULES([FREETYPE], [freetype2])
--
--AC_ARG_ENABLE([woff],
--	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
--	[],
--	[enable_woff=yes])
--AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
--
--AC_ARG_WITH([ttfautohint],
--	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
--	[with_ttfautohint="$withval"],
--	[with_ttfautohint=no])
 +if test -z "$HAVE_LIBGS" || test "$HAVE_LIBGS" -eq 0; then
 +  AC_MSG_NOTICE([not linking to libgs, trying to arrange for dynamic loading])
 +  # Windows (native or MinGW32) has neither <dlfcn.h> nor dlopen().
@@ -209,6 +193,20 @@
 +AC_CHECK_FUNC([kpse_set_program_name], [],
 +              [AC_MSG_ERROR([cannot find/use libkpathsea])])
  
+-# Check for libraries.
+-PKG_CHECK_MODULES([FREETYPE], [freetype2])
+-
+-AC_ARG_ENABLE([woff],
+-	[AS_HELP_STRING([--disable-woff], [Disable WOFF support @<:@default=no@:>@])],
+-	[],
+-	[enable_woff=yes])
+-AM_CONDITIONAL([ENABLE_WOFF], [test "x$enable_woff" = "xyes"])
+-
+-AC_ARG_WITH([ttfautohint],
+-	[AS_HELP_STRING([--with-ttfautohint@<:@=prefix@:>@], [enable ttfautohint support (disabled by default)])],
+-	[with_ttfautohint="$withval"],
+-	[with_ttfautohint=no])
+-
 -# Add option to enable linking of bundled libraries (brotli, potrace, woff2, xxhash).
 -AC_ARG_ENABLE([bundled-libs],
 -	[AS_HELP_STRING([--enable-bundled-libs], [use bundled libraries instead of the system ones @<:@default=no@:>@])])
@@ -255,10 +253,6 @@
 -				[AC_MSG_NOTICE([enabled dynamic loading of ttfautohint])],
 -				[AC_MSG_WARN([disabled ttfautohint support])])])]
 -		[AC_SUBST(TTFAUTOHINT_CFLAGS) AC_SUBST(TTFAUTOHINT_LIBS)])])
--
--AC_CHECK_HEADERS([openssl/md5.h])
--PKG_CHECK_MODULES([LIBCRYPTO], [libcrypto], [HAVE_LIBCRYPTO=1], [HAVE_LIBCRYPTO=0])
--AM_CONDITIONAL([USE_BUNDLED_MD5], [test "$HAVE_LIBCRYPTO" -eq 0])
 +echo timestamp >config.force
 +fi
  
@@ -272,7 +266,7 @@
 +AC_HEADER_STDC
  AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
  
-@@ -158,81 +170,82 @@
+@@ -156,81 +167,82 @@
  AX_GCC_BUILTIN(__builtin_clz)
  
 -# add options for selection of "optional" library locations

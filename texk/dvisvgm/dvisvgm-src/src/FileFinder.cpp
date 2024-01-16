@@ -2,7 +2,7 @@
 ** FileFinder.cpp                                                       **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -161,6 +161,7 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 #ifndef MIKTEX
 	static std::map<std::string, kpse_file_format_type> types = {
 		{"tfm",  kpse_tfm_format},
+		{"ofm",  kpse_ofm_format},
 		{"pfb",  kpse_type1_format},
 		{"vf",   kpse_vf_format},
 		{"mf",   kpse_mf_format},

@@ -1,3 +1,60 @@
+dvisvgm-3.2 (2024-01-11)
+- PDF handler: fixed a rounding issue that could lead to slightly bigger
+  text extents (GH issue #256)
+- added macros {?pageno}, {?svgfile}, and {?svgpath} to the dvisvgm special
+  commands
+- added separate verbosity flag 8 for user messages printed by special
+  dvisvgm:message
+- added command-line option --message to allow for printing user messages
+  after writing an SVG file (GH issue #258)
+- applied upstream patch regarding undefined type punning to the bundled
+  woff2 library
+- few improvements of the manual page  
+
+dvisvgm-3.1.2 (2023-10-12)
+- improved evaluation of graphic extents created by the 'preview' package
+  (GH issue #246)
+- fixed computation of character boxes when using --exact-bbox (GH issue #248)	
+- fixed memory error in optimizer module (GH issue #250)
+- updated bundled brotli library to version 1.1.0
+
+dvisvgm-3.1.1 (2023-08-29)
+- added evaluation of optional dash prefixes to command-line option --optimize
+  to exclude selected optimizer modules
+- fixed invalid removal of clipping paths referenced in 'defs' section
+- fixed automatic calls of optimizer module 'remove-clippaths'
+- suppress Ghostscript warning about deprecated option -dNEWPDF (GH issue #245)
+- updated bundled xxHash library to version 0.8.2
+- few fixes in the manual page
+
+dvisvgm-3.1 (2023-07-06)
+- added command-line option --currentcolor to replace a given color with
+  CSS variable 'currentColor' (GH issue #214)
+- added special dvisvgm:currentcolor to replace the currently active color
+  with CSS variable 'currentColor' (GH issue #214)
+- added special 'dvisvgm:message' to print given texts to the console
+- added support for Omega Font Metric (OFM) files
+- added fallback mechanism for missing characters in OFM-based virtual fonts
+  proposed by Takuji Tanaka (GH issue #241)
+- fixed handling of whitespace in PDF file paths (GH issue #233)
+- fixed vertical placement of "vertical fonts" in horizontal mode
+  (GH issue #235)
+- fixed parsing of floating point numbers occurred with libc++ (GH issue #240)
+- fixed potential segmentation faults triggered by missing font files
+  (GH issue #241)
+- fixed GLIBCXX assertion error in new PDF handler (GH issue #242)
+- improved handling of font subset prefixes in new, mutool-based PDF handler
+  (GH issue #242)
+- several minor code improvements
+
+dvisvgm-3.0.4 (2023-03-10)
+- fixed issue that could prevent reading the output of subprocesses
+  (GH issue #232)
+- removed optional dependency on libcrypto (OpenSSL) because the MD5 functions
+  have been deprecated (always using the bundled MD5 function now)
+- added TeX Live conditionals to the build system (patch by Karl Berry)
+- small code and manual page improvements
+
 dvisvgm-3.0.3 (2023-02-21)
 - fixed resetting of character contexts (GH issue #227)
 - added missing #includes required for GCC 13
@@ -6,7 +63,7 @@ dvisvgm-3.0.2 (2023-01-30)
 - fixed computation of font sizes in new PDF handler (GH issue #220)
 - fixed viewBox coordinates determined by new PDF handler (GH issue #223)
 - improved detection of font names used in PDF files (GH issue #224)
-- minor code improvements	
+- minor code improvements
 
 dvisvgm-3.0.1 (2023-01-10)
 - added support for the 64-bit GS library in TeX Live
@@ -20,9 +77,9 @@ dvisvgm-3.0.1 (2023-01-10)
 - improved processing of fonts when using the new PDF handler
 
 dvisvgm-3.0 (2022-10-16)
-- added new PDF handler based on mutool to keep the PDF functionality available
-  which can't no longer be realized with as of Ghostscript 10.1.0 due to the
-  replacement of its PDF interpreter
+- added a new PDF handler based on mutool to keep the PDF functionality
+  available which can no longer be realized with Ghostscript 10.1.0 due to
+  the replacement of its PostScript-based PDF interpreter
 - replaced the bundled minimal Fontforge library (ff-woff) with a dedicated,
   newly implemented library for embedding TTF/WOFF data into the SVG files
 - added option --embed-bitmaps to embed bitmaps into the generated SVG files

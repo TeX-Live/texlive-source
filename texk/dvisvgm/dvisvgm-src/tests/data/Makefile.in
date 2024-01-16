@@ -190,8 +190,6 @@ KPSE_LIBS = @KPSE_LIBS@
 LCOV = @LCOV@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
-LIBCRYPTO_CFLAGS = @LIBCRYPTO_CFLAGS@
-LIBCRYPTO_LIBS = @LIBCRYPTO_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -301,13 +299,15 @@ EXTRA_DIST = \
 	frktest-nf-cmp.svg \
 	frktest-wf-cmp.svg \
 	lmmono12-regular.otf \
+	omarab.ofm \
+	ot1.cmap \
 	sample.dvi \
 	sample-nf-cmp.svg \
 	sample.sfd \
 	sample-wf-cmp.svg \
 	sample_v2.dvi \
 	sample_v3.dvi \
-	ot1.cmap
+	upjf-g.ofm
 
 all: all-am
 

@@ -92,7 +92,6 @@ host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
-#endif TEXLIVE_BUILD
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 @ENABLE_WOFF_TRUE@am__append_5 = ttf
@@ -100,16 +99,37 @@ bin_PROGRAMS = dvisvgm$(EXEEXT)
 @ENABLE_WOFF_TRUE@	$(WOFF2_LIBS) \
 @ENABLE_WOFF_TRUE@	$(BROTLI_LIBS)
 
-@USE_BUNDLED_MD5_TRUE@am__append_7 = ../libs/md5/libmd5.a
-@USE_BUNDLED_MD5_FALSE@am__append_8 = $(LIBCRYPTO_LIBS)
-@TEXLIVE_BUILD_TRUE@am__append_9 = $(POTRACE_DEPEND)
+@TEXLIVE_BUILD_TRUE@am__append_7 = \
+@TEXLIVE_BUILD_TRUE@	$(KPATHSEA_LIBS) \
+@TEXLIVE_BUILD_TRUE@	$(FREETYPE2_LIBS) \
+@TEXLIVE_BUILD_TRUE@	$(ZLIB_LIBS)
+
+@TEXLIVE_BUILD_FALSE@am__append_8 = \
+@TEXLIVE_BUILD_FALSE@	$(FREETYPE_LIBS) \
+@TEXLIVE_BUILD_FALSE@	$(ZLIB_LIBS)
+
+@TEXLIVE_BUILD_TRUE@am__append_9 = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) \
+@TEXLIVE_BUILD_TRUE@	$(FREETYPE2_DEPEND) $(POTRACE_DEPEND)
 @ENABLE_WOFF_TRUE@am__append_10 = ttf/libttf.la
-@WIN32_TRUE@am__append_11 = -DTEXLIVEWIN32
-@ENABLE_WOFF_TRUE@am__append_12 = $(TTFAUTOHINT_CFLAGS) \
+@TEXLIVE_BUILD_TRUE@am__append_11 = \
+@TEXLIVE_BUILD_TRUE@	$(KPATHSEA_INCLUDES) \
+@TEXLIVE_BUILD_TRUE@	$(POTRACE_INCLUDES) \
+@TEXLIVE_BUILD_TRUE@	$(FREETYPE2_INCLUDES) \
+@TEXLIVE_BUILD_TRUE@	$(ZLIB_INCLUDES) \
+@TEXLIVE_BUILD_TRUE@	$(CODE_COVERAGE_CFLAGS)
+
+@TEXLIVE_BUILD_FALSE@am__append_12 = \
+@TEXLIVE_BUILD_FALSE@	$(KPSE_CFLAGS) \
+@TEXLIVE_BUILD_FALSE@	$(FREETYPE_CFLAGS) \
+@TEXLIVE_BUILD_FALSE@	$(ZLIB_CFLAGS) \
+@TEXLIVE_BUILD_FALSE@	$(CODE_COVERAGE_CFLAGS)
+
+@WIN32_TRUE@am__append_13 = -DTEXLIVEWIN32
+@ENABLE_WOFF_TRUE@am__append_14 = $(TTFAUTOHINT_CFLAGS) \
 @ENABLE_WOFF_TRUE@	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
-@ENABLE_WOFF_TRUE@am__append_13 = $(TTFAUTOHINT_LIBS)
-@USE_BUNDLED_MD5_TRUE@am__append_14 = -I$(dvisvgm_srcdir)/libs/md5
-@USE_BUNDLED_MD5_FALSE@am__append_15 = $(LIBCRYPTO_CFLAGS)
+
+# TL: do not try to rebuild these source files.
+@ENABLE_WOFF_TRUE@@TEXLIVE_BUILD_FALSE@am__append_15 = $(TTFAUTOHINT_LIBS)
 subdir = dvisvgm-src/src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
@@ -153,14 +173,15 @@ am_libdvisvgm_la_OBJECTS = BasicDVIReader.lo Bezier.lo \
 	Ghostscript.lo HashFunction.lo HtmlSpecialHandler.lo \
 	HyperlinkManager.lo ImageToSVG.lo InputBuffer.lo \
 	InputReader.lo JFM.lo Length.lo MapLine.lo Matrix.lo \
-	Message.lo MetafontWrapper.lo NoPsSpecialHandler.lo Opacity.lo \
-	PageRanges.lo PageSize.lo PapersizeSpecialHandler.lo \
-	PathClipper.lo PDFHandler.lo PDFParser.lo PdfSpecialHandler.lo \
-	PDFToSVG.lo PreScanDVIReader.lo Process.lo psdefs.lo \
-	PSInterpreter.lo PSPattern.lo PSPreviewFilter.lo \
-	PsSpecialHandler.lo RangeMap.lo ShadingPatch.lo \
-	SignalHandler.lo SourceInput.lo SpecialManager.lo \
-	StreamReader.lo StreamWriter.lo Subfont.lo SVGCharHandler.lo \
+	Message.lo MetafontWrapper.lo NoPsSpecialHandler.lo OFM.lo \
+	Opacity.lo PageRanges.lo PageSize.lo \
+	PapersizeSpecialHandler.lo PathClipper.lo PDFHandler.lo \
+	PDFParser.lo PdfSpecialHandler.lo PDFToSVG.lo \
+	PreScanDVIReader.lo Process.lo psdefs.lo PSInterpreter.lo \
+	PSPattern.lo PSPreviewHandler.lo PsSpecialHandler.lo \
+	RangeMap.lo ShadingPatch.lo SignalHandler.lo SourceInput.lo \
+	SpecialActions.lo SpecialManager.lo StreamReader.lo \
+	StreamWriter.lo Subfont.lo SVGCharHandler.lo \
 	SVGCharHandlerFactory.lo SVGCharPathHandler.lo \
 	SVGCharTspanTextHandler.lo SVGElement.lo SVGOutput.lo \
 	SVGSingleCharTextHandler.lo SVGTree.lo System.lo \
@@ -180,6 +201,10 @@ am__DEPENDENCIES_2 = $(am__append_4)
 am__DEPENDENCIES_3 = $(am__append_2)
 @ENABLE_WOFF_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) \
 @ENABLE_WOFF_TRUE@	$(am__DEPENDENCIES_3)
+@TEXLIVE_BUILD_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1) \
+@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_1) \
+@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_1)
+@TEXLIVE_BUILD_FALSE@am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -222,11 +247,12 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Plo \
 	./$(DEPDIR)/JFM.Plo ./$(DEPDIR)/Length.Plo \
 	./$(DEPDIR)/MapLine.Plo ./$(DEPDIR)/Matrix.Plo \
 	./$(DEPDIR)/Message.Plo ./$(DEPDIR)/MetafontWrapper.Plo \
-	./$(DEPDIR)/NoPsSpecialHandler.Plo ./$(DEPDIR)/Opacity.Plo \
-	./$(DEPDIR)/PDFHandler.Plo ./$(DEPDIR)/PDFParser.Plo \
-	./$(DEPDIR)/PDFToSVG.Plo ./$(DEPDIR)/PSInterpreter.Plo \
-	./$(DEPDIR)/PSPattern.Plo ./$(DEPDIR)/PSPreviewFilter.Plo \
-	./$(DEPDIR)/PageRanges.Plo ./$(DEPDIR)/PageSize.Plo \
+	./$(DEPDIR)/NoPsSpecialHandler.Plo ./$(DEPDIR)/OFM.Plo \
+	./$(DEPDIR)/Opacity.Plo ./$(DEPDIR)/PDFHandler.Plo \
+	./$(DEPDIR)/PDFParser.Plo ./$(DEPDIR)/PDFToSVG.Plo \
+	./$(DEPDIR)/PSInterpreter.Plo ./$(DEPDIR)/PSPattern.Plo \
+	./$(DEPDIR)/PSPreviewHandler.Plo ./$(DEPDIR)/PageRanges.Plo \
+	./$(DEPDIR)/PageSize.Plo \
 	./$(DEPDIR)/PapersizeSpecialHandler.Plo \
 	./$(DEPDIR)/PathClipper.Plo ./$(DEPDIR)/PdfSpecialHandler.Plo \
 	./$(DEPDIR)/PreScanDVIReader.Plo ./$(DEPDIR)/Process.Plo \
@@ -239,11 +265,11 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Plo \
 	./$(DEPDIR)/SVGSingleCharTextHandler.Plo \
 	./$(DEPDIR)/SVGTree.Plo ./$(DEPDIR)/ShadingPatch.Plo \
 	./$(DEPDIR)/SignalHandler.Plo ./$(DEPDIR)/SourceInput.Plo \
-	./$(DEPDIR)/SpecialManager.Plo ./$(DEPDIR)/StreamReader.Plo \
-	./$(DEPDIR)/StreamWriter.Plo ./$(DEPDIR)/Subfont.Plo \
-	./$(DEPDIR)/System.Plo ./$(DEPDIR)/TFM.Plo \
-	./$(DEPDIR)/TensorProductPatch.Plo ./$(DEPDIR)/Terminal.Plo \
-	./$(DEPDIR)/ToUnicodeMap.Plo \
+	./$(DEPDIR)/SpecialActions.Plo ./$(DEPDIR)/SpecialManager.Plo \
+	./$(DEPDIR)/StreamReader.Plo ./$(DEPDIR)/StreamWriter.Plo \
+	./$(DEPDIR)/Subfont.Plo ./$(DEPDIR)/System.Plo \
+	./$(DEPDIR)/TFM.Plo ./$(DEPDIR)/TensorProductPatch.Plo \
+	./$(DEPDIR)/Terminal.Plo ./$(DEPDIR)/ToUnicodeMap.Plo \
 	./$(DEPDIR)/TpicSpecialHandler.Plo \
 	./$(DEPDIR)/TriangularPatch.Plo ./$(DEPDIR)/Unicode.Plo \
 	./$(DEPDIR)/VFReader.Plo ./$(DEPDIR)/XMLDocument.Plo \
@@ -359,7 +385,7 @@ ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
 AM_CPPFLAGS = @AM_CPPFLAGS@
 AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
-AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_13)
+AM_LDFLAGS = $(KPSE_LIBS) $(CODE_COVERAGE_LDFLAGS) $(am__append_15)
 AR = @AR@
 AS = @AS@
 AUTOCONF = @AUTOCONF@
@@ -517,24 +543,15 @@ dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
-
-# Gets automake warnings:
-#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
-#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
-#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
-#if !TEXLIVE_BUILD
-#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-#POTRACE_LIBS = ../libs/potrace/libpotrace.a
-#else
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
+#
+@TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
 dvisvgm_LDADD = $(noinst_LTLIBRARIES) ../libs/clipper/libclipper.a \
-	$(POTRACE_LIBS) $(XXHASH_LIBS) $(am__append_6) $(am__append_7) \
-	$(am__append_8) $(KPATHSEA_LIBS) $(FREETYPE2_LIBS) \
-	$(ZLIB_LIBS) $(LIBGS_LIBS)
-dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES) $(KPATHSEA_DEPEND) \
-	$(ZLIB_DEPEND) $(FREETYPE2_DEPEND) $(am__append_9)
+	../libs/md5/libmd5.a $(POTRACE_LIBS) $(XXHASH_LIBS) \
+	$(am__append_6) $(am__append_7) $(am__append_8)
+dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES) $(am__append_9)
 libdvisvgm_la_SOURCES = \
 	AGLTable.hpp \
 	BasicDVIReader.hpp           BasicDVIReader.cpp \
@@ -603,6 +620,7 @@ libdvisvgm_la_SOURCES = \
 	MetafontWrapper.hpp          MetafontWrapper.cpp \
 	NoPsSpecialHandler.hpp       NoPsSpecialHandler.cpp \
 	NumericRanges.hpp \
+	OFM.hpp                      OFM.cpp \
 	Opacity.hpp                  Opacity.cpp \
 	PageRanges.hpp               PageRanges.cpp \
 	PageSize.hpp                 PageSize.cpp \
@@ -616,16 +634,15 @@ libdvisvgm_la_SOURCES = \
 	PreScanDVIReader.hpp         PreScanDVIReader.cpp \
 	Process.hpp                  Process.cpp \
 	psdefs.cpp \
-	PSFilter.hpp \
 	PSInterpreter.hpp            PSInterpreter.cpp \
 	PSPattern.hpp                PSPattern.cpp \
-	PSPreviewFilter.hpp          PSPreviewFilter.cpp \
+	PSPreviewHandler.hpp         PSPreviewHandler.cpp \
 	PsSpecialHandler.hpp         PsSpecialHandler.cpp \
 	RangeMap.hpp                 RangeMap.cpp \
 	ShadingPatch.hpp             ShadingPatch.cpp \
 	SignalHandler.hpp            SignalHandler.cpp \
 	SourceInput.hpp              SourceInput.cpp \
-	SpecialActions.hpp \
+	SpecialActions.hpp           SpecialActions.cpp \
 	SpecialHandler.hpp \
 	SpecialManager.hpp           SpecialManager.cpp \
 	StreamReader.hpp             StreamReader.cpp \
@@ -664,16 +681,13 @@ libdvisvgm_la_LIBADD = fonts/libbase14fonts.la \
 	optimizer/liboptimizer.la $(am__append_10)
 EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
 AM_CFLAGS = $(WARNING_CFLAGS) \
-	$(ZLIB_INCLUDES) \
+	$(ZLIB_CFLAGS) \
 	$(CODE_COVERAGE_CFLAGS)
 
-AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
-	-I$(dvisvgm_srcdir)/libs/clipper \
+AM_CXXFLAGS = $(WARNING_CXXFLAGS) -I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
-	$(XXHASH_CFLAGS) $(KPATHSEA_INCLUDES) $(POTRACE_INCLUDES) \
-	$(FREETYPE2_INCLUDES) $(ZLIB_INCLUDES) $(LIBGS_INCLUDES) \
-	$(CODE_COVERAGE_CFLAGS) $(am__append_11) $(am__append_12) \
-	$(am__append_14) $(am__append_15)
+	$(XXHASH_CFLAGS) $(am__append_11) $(am__append_12) \
+	$(am__append_13) $(am__append_14) -I$(dvisvgm_srcdir)/libs/md5
 CLEANFILES = *.gcda *.gcno
 all: all-recursive
 
@@ -836,13 +850,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Message.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MetafontWrapper.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NoPsSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OFM.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Opacity.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFHandler.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFParser.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PDFToSVG.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSInterpreter.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPattern.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPreviewFilter.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPreviewHandler.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageRanges.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PageSize.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PapersizeSpecialHandler.Plo@am__quote@ # am--include-marker
@@ -863,6 +878,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ShadingPatch.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SignalHandler.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SourceInput.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialActions.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SpecialManager.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamReader.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StreamWriter.Plo@am__quote@ # am--include-marker
@@ -1172,13 +1188,14 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/Message.Plo
 	-rm -f ./$(DEPDIR)/MetafontWrapper.Plo
 	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/OFM.Plo
 	-rm -f ./$(DEPDIR)/Opacity.Plo
 	-rm -f ./$(DEPDIR)/PDFHandler.Plo
 	-rm -f ./$(DEPDIR)/PDFParser.Plo
 	-rm -f ./$(DEPDIR)/PDFToSVG.Plo
 	-rm -f ./$(DEPDIR)/PSInterpreter.Plo
 	-rm -f ./$(DEPDIR)/PSPattern.Plo
-	-rm -f ./$(DEPDIR)/PSPreviewFilter.Plo
+	-rm -f ./$(DEPDIR)/PSPreviewHandler.Plo
 	-rm -f ./$(DEPDIR)/PageRanges.Plo
 	-rm -f ./$(DEPDIR)/PageSize.Plo
 	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Plo
@@ -1199,6 +1216,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/ShadingPatch.Plo
 	-rm -f ./$(DEPDIR)/SignalHandler.Plo
 	-rm -f ./$(DEPDIR)/SourceInput.Plo
+	-rm -f ./$(DEPDIR)/SpecialActions.Plo
 	-rm -f ./$(DEPDIR)/SpecialManager.Plo
 	-rm -f ./$(DEPDIR)/StreamReader.Plo
 	-rm -f ./$(DEPDIR)/StreamWriter.Plo
@@ -1315,13 +1333,14 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/Message.Plo
 	-rm -f ./$(DEPDIR)/MetafontWrapper.Plo
 	-rm -f ./$(DEPDIR)/NoPsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/OFM.Plo
 	-rm -f ./$(DEPDIR)/Opacity.Plo
 	-rm -f ./$(DEPDIR)/PDFHandler.Plo
 	-rm -f ./$(DEPDIR)/PDFParser.Plo
 	-rm -f ./$(DEPDIR)/PDFToSVG.Plo
 	-rm -f ./$(DEPDIR)/PSInterpreter.Plo
 	-rm -f ./$(DEPDIR)/PSPattern.Plo
-	-rm -f ./$(DEPDIR)/PSPreviewFilter.Plo
+	-rm -f ./$(DEPDIR)/PSPreviewHandler.Plo
 	-rm -f ./$(DEPDIR)/PageRanges.Plo
 	-rm -f ./$(DEPDIR)/PageSize.Plo
 	-rm -f ./$(DEPDIR)/PapersizeSpecialHandler.Plo
@@ -1342,6 +1361,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/ShadingPatch.Plo
 	-rm -f ./$(DEPDIR)/SignalHandler.Plo
 	-rm -f ./$(DEPDIR)/SourceInput.Plo
+	-rm -f ./$(DEPDIR)/SpecialActions.Plo
 	-rm -f ./$(DEPDIR)/SpecialManager.Plo
 	-rm -f ./$(DEPDIR)/StreamReader.Plo
 	-rm -f ./$(DEPDIR)/StreamWriter.Plo
@@ -1401,8 +1421,6 @@ uninstall-am: uninstall-binPROGRAMS
 .PRECIOUS: Makefile
 
 
-# TL: do not try to rebuild these source files.
-
 # the command-line parser class is generated from options.xml by opt2cpp
 @TEXLIVE_BUILD_FALSE@$(srcdir)/CommandLine.hpp: options.xml
 @TEXLIVE_BUILD_FALSE@	rm -f $@
@@ -1415,6 +1433,15 @@ uninstall-am: uninstall-binPROGRAMS
 @TEXLIVE_BUILD_FALSE@	fi
 
 @TEXLIVE_BUILD_FALSE@psdefs.ps: ;
+
+# Rebuild libkpathsea:
+@TEXLIVE_BUILD_TRUE@@KPATHSEA_RULE@
+# Rebuild libfreetype:
+@TEXLIVE_BUILD_TRUE@@FREETYPE2_RULE@
+# Rebuild libz:
+@TEXLIVE_BUILD_TRUE@@ZLIB_RULE@
+# Rebuild potrace:
+@TEXLIVE_BUILD_TRUE@@POTRACE_RULE@
 
 # Rebuild libkpathsea:
 @TEXLIVE_BUILD_TRUE@@KPATHSEA_RULE@

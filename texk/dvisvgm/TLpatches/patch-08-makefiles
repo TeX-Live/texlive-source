@@ -1,5 +1,5 @@
---- dvisvgm-3.0.3/./Makefile.am	2023-02-03 04:02:06.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2023-02-21 17:45:25.221197991 -0800
+--- dvisvgm-3.2/./Makefile.am	2024-01-03 02:50:11.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2024-01-16 09:31:00.523974816 -0800
 @@ -4,9 +4,9 @@
  ## Process this file with automake.
  
@@ -12,27 +12,8 @@
 +SUBDIRS = libs src #not for TL: m4 tests doc
  ACLOCAL_AMFLAGS = -I m4
  
---- dvisvgm-3.0.3/./libs/defs.am	2019-03-09 04:09:01.000000000 -0800
-+++ dvisvgm-src/./libs/defs.am	2023-02-21 17:45:25.221197991 -0800
-@@ -5,6 +5,14 @@
- 
- if !HAVE_POTRACE
--POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
--POTRACE_LIBS = ../libs/potrace/libpotrace.a
-+# Gets automake warnings:
-+#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
-+#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
-+#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
-+#if !TEXLIVE_BUILD
-+#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-+#POTRACE_LIBS = ../libs/potrace/libpotrace.a
-+#else
-+POTRACE_CFLAGS = $(POTRACE_INCLUDES)
-+#endif TEXLIVE_BUILD
- endif
- 
---- dvisvgm-3.0.3/./libs/Makefile.am	2023-02-03 04:02:06.000000000 -0800
-+++ dvisvgm-src/./libs/Makefile.am	2023-02-21 17:45:25.221197991 -0800
+--- dvisvgm-3.2/./libs/Makefile.am	2024-01-03 02:50:11.000000000 -0800
++++ dvisvgm-src/./libs/Makefile.am	2024-01-16 09:31:00.524974811 -0800
 @@ -4,5 +4,9 @@
  ## Process this file with automake.
  
@@ -44,11 +25,32 @@
 +endif
  
  if ENABLE_WOFF
---- dvisvgm-3.0.3/./src/Makefile.am	2023-02-03 04:02:06.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2023-02-21 17:45:25.221197991 -0800
-@@ -17,8 +17,6 @@
- 	$(noinst_LTLIBRARIES) \
+--- dvisvgm-3.2/./libs/defs.am	2024-01-03 02:50:11.000000000 -0800
++++ dvisvgm-src/./libs/defs.am	2024-01-16 09:49:05.754922928 -0800
+@@ -8,6 +8,9 @@
+ 
+ if !HAVE_POTRACE
+-POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+-POTRACE_LIBS = ../libs/potrace/libpotrace.a
++POTRACE_CFLAGS = $(POTRACE_INCLUDES)
++endif
++#
++if TEXLIVE_BUILD
++POTRACE_CFLAGS = $(POTRACE_INCLUDES)
+ endif
+ 
+--- dvisvgm-3.2/./src/ttf/Makefile.am	2023-01-10 05:20:29.000000000 -0800
++++ dvisvgm-src/./src/ttf/Makefile.am	2024-01-16 09:31:00.524974811 -0800
+@@ -23,3 +23,4 @@
+ 	-I$(dvisvgm_srcdir)/libs/boost \
+ 	-I$(dvisvgm_srcdir)/libs/variant/include \
++        $(ZLIB_INCLUDES) \
+ 	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
+--- dvisvgm-3.2/./src/Makefile.am	2024-01-11 00:52:01.000000000 -0800
++++ dvisvgm-src/./src/Makefile.am	2024-01-16 09:53:07.401546123 -0800
+@@ -18,8 +18,6 @@
  	../libs/clipper/libclipper.a \
+ 	../libs/md5/libmd5.a \
 -	$(FREETYPE_LIBS) \
  	$(POTRACE_LIBS) \
 -	$(XXHASH_LIBS) \
@@ -56,74 +58,81 @@
 +	$(XXHASH_LIBS)
  
  if ENABLE_WOFF
-@@ -36,5 +34,16 @@
- endif
- 
+@@ -29,5 +27,16 @@
+ 	$(WOFF2_LIBS) \
+ 	$(BROTLI_LIBS)
+-endif
++endif ENABLE_WOFF
++
++if TEXLIVE_BUILD
 +dvisvgm_LDADD += \
 +	$(KPATHSEA_LIBS) \
 +	$(FREETYPE2_LIBS) \
-+	$(ZLIB_LIBS) \
-+	$(LIBGS_LIBS)
-+
- dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
-+dvisvgm_DEPENDENCIES += $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) $(FREETYPE2_DEPEND)
-+
-+if TEXLIVE_BUILD
-+dvisvgm_DEPENDENCIES += $(POTRACE_DEPEND)
-+endif
++	$(ZLIB_LIBS)
++else
++dvisvgm_LDADD += \
++	$(FREETYPE_LIBS) \
++	$(ZLIB_LIBS)
++endif !TEXLIVE_BUILD
  
- libdvisvgm_la_SOURCES = \
-@@ -171,19 +180,25 @@
+ dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
+@@ -171,9 +180,4 @@
  EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
  
--AM_CFLAGS = -Wall \
--	$(ZLIB_CFLAGS) \
-+AM_CFLAGS = $(WARNING_CFLAGS) \
-+	$(ZLIB_INCLUDES) \
- 	$(CODE_COVERAGE_CFLAGS)
- 
--AM_CXXFLAGS = -Wall -Wnon-virtual-dtor \
-+AM_CXXFLAGS = $(WARNING_CXXFLAGS) -Wnon-virtual-dtor \
+-if !TEXLIVE_BUILD
+-WARNING_CFLAGS = -Wall
+-WARNING_CXXFLAGS = -Wall -Wnon-virtual-dtor
+-endif
+-
+ AM_CFLAGS = $(WARNING_CFLAGS) \
+ 	$(ZLIB_CFLAGS) \
+@@ -182,13 +186,28 @@
+ AM_CXXFLAGS = $(WARNING_CXXFLAGS) \
  	-I$(dvisvgm_srcdir)/libs/clipper \
 -	-I$(dvisvgm_srcdir)/libs/variant/include \
--	$(KPSE_CFLAGS) \
--	$(FREETYPE_CFLAGS) \
--	$(ZLIB_CFLAGS) \
--	$(CODE_COVERAGE_CFLAGS)
 +	-I$(dvisvgm_srcdir)/libs/variant/include
- 
- AM_CXXFLAGS += \
- 	$(POTRACE_CFLAGS) \
--	$(XXHASH_CFLAGS)
-+	$(XXHASH_CFLAGS) \
++
++AM_CXXFLAGS += \
++	$(POTRACE_CFLAGS) \
++	$(XXHASH_CFLAGS)
++
++if TEXLIVE_BUILD
++AM_CXXFLAGS += \
 +	$(KPATHSEA_INCLUDES) \
 +	$(POTRACE_INCLUDES) \
 +	$(FREETYPE2_INCLUDES) \
 +	$(ZLIB_INCLUDES) \
-+	$(LIBGS_INCLUDES) \
 +	$(CODE_COVERAGE_CFLAGS)
-+
++else
++AM_CXXFLAGS += \
+ 	$(KPSE_CFLAGS) \
+ 	$(FREETYPE_CFLAGS) \
+ 	$(ZLIB_CFLAGS) \
+ 	$(CODE_COVERAGE_CFLAGS)
++endif !TEXLIVE_BUILD
+ 
+-AM_CXXFLAGS += \
+-	$(POTRACE_CFLAGS) \
+-	$(XXHASH_CFLAGS)
 +if WIN32
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
  
  AM_LDFLAGS = \
-@@ -207,5 +222,6 @@
- endif
+@@ -203,6 +222,9 @@
+ 	$(WOFF2_CFLAGS)
  
--
 +# TL: do not try to rebuild these source files.
 +if !TEXLIVE_BUILD
- 
- # the command-line parser class is generated from options.xml by opt2cpp
-@@ -221,4 +237,16 @@
- 
- psdefs.ps: ;
+ AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
+-endif
 +endif !TEXLIVE_BUILD
++endif ENABLE_WOFF
  
- CLEANFILES = *.gcda *.gcno
-+
-+if TEXLIVE_BUILD
+ AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
+@@ -226,4 +248,15 @@
+ 
+ if TEXLIVE_BUILD
 +# Rebuild libkpathsea:
 +@KPATHSEA_RULE@
 +# Rebuild libfreetype:
@@ -133,12 +142,7 @@
 +# Rebuild potrace:
 +@POTRACE_RULE@
 +endif TEXLIVE_BUILD
-
---- dvisvgm-3.0.3/src/ttf/Makefile.am	(revision 66252)
-+++ dvisvgm-src/src/ttf/Makefile.am	(working copy)
-@@ -22,4 +22,5 @@ include ../../libs/defs.am
- AM_CXXFLAGS = \
- 	-I$(dvisvgm_srcdir)/libs/boost \
- 	-I$(dvisvgm_srcdir)/libs/variant/include \
-+        $(ZLIB_INCLUDES) \
- 	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
++
++if TEXLIVE_BUILD
+ # Rebuild libkpathsea:
+ @KPATHSEA_RULE@

@@ -2,7 +2,7 @@
 ** DvisvgmSpecialHandler.cpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -18,7 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <array>
 #include <cstring>
 #include <utility>
 #include "Calculator.hpp"
@@ -27,6 +26,7 @@
 #include "InputBuffer.hpp"
 #include "InputReader.hpp"
 #include "Length.hpp"
+#include "Message.hpp"
 #include "SpecialActions.hpp"
 #include "SVGTree.hpp"
 #include "utility.hpp"
@@ -95,24 +95,23 @@ DvisvgmSpecialHandler::DvisvgmSpecialHandler () : _currentMacro(_macros.end())
 
 
 void DvisvgmSpecialHandler::preprocess (const string&, istream &is, SpecialActions&) {
-	struct Command {
+	constexpr struct Command {
 		const char *name;
 		void (DvisvgmSpecialHandler::*handler)(InputReader&);
-	};
-	constexpr array<Command, 5> commands {{
+	} commands[] = {
 		{"raw",       &DvisvgmSpecialHandler::preprocessRaw},
 		{"rawdef",    &DvisvgmSpecialHandler::preprocessRawDef},
 		{"rawset",    &DvisvgmSpecialHandler::preprocessRawSet},
 		{"endrawset", &DvisvgmSpecialHandler::preprocessEndRawSet},
 		{"rawput",    &DvisvgmSpecialHandler::preprocessRawPut}
-	}};
+	};
 
 	StreamInputReader ir(is);
 	const string cmdstr = ir.getWord();
-	auto it = find_if(commands.begin(), commands.end(), [&](const Command &cmd) {
+	auto it = find_if(begin(commands), end(commands), [&](const Command &cmd) {
 		return cmd.name == cmdstr;
 	});
-	if (it != commands.end()) {
+	if (it != end(commands)) {
 		ir.skipSpace();
 		(this->*it->handler)(ir);
 	}
@@ -172,103 +171,30 @@ void DvisvgmSpecialHandler::preprocessRawPut (InputReader &ir) {
  *  @param[in] is the special statement is read from this stream
  *  @param[in] actions object providing the actions that can be performed by the SpecialHandler */
 bool DvisvgmSpecialHandler::process (const string &prefix, istream &is, SpecialActions &actions) {
-	struct Command {
+	constexpr struct Command {
 		const char *name;
 		void (DvisvgmSpecialHandler::*handler)(InputReader&, SpecialActions&);
+	} commands[] = {
+		{"raw",          &DvisvgmSpecialHandler::processRaw},
+		{"rawdef",       &DvisvgmSpecialHandler::processRawDef},
+		{"rawset",       &DvisvgmSpecialHandler::processRawSet},
+		{"endrawset",    &DvisvgmSpecialHandler::processEndRawSet},
+		{"rawput",       &DvisvgmSpecialHandler::processRawPut},
+		{"bbox",         &DvisvgmSpecialHandler::processBBox},
+		{"img",          &DvisvgmSpecialHandler::processImg},
+		{"currentcolor", &DvisvgmSpecialHandler::processCurrentColor},
+		{"message",      &DvisvgmSpecialHandler::processMessage}
 	};
-	constexpr array<Command, 7> commands {{
-		{"raw",       &DvisvgmSpecialHandler::processRaw},
-		{"rawdef",    &DvisvgmSpecialHandler::processRawDef},
-		{"rawset",    &DvisvgmSpecialHandler::processRawSet},
-		{"endrawset", &DvisvgmSpecialHandler::processEndRawSet},
-		{"rawput",    &DvisvgmSpecialHandler::processRawPut},
-		{"bbox",      &DvisvgmSpecialHandler::processBBox},
-		{"img",       &DvisvgmSpecialHandler::processImg}
-	}};
 	StreamInputReader ir(is);
 	const string cmdstr = ir.getWord();
-	auto it = find_if(commands.begin(), commands.end(), [&](const Command &cmd) {
+	auto it = find_if(begin(commands), end(commands), [&](const Command &cmd) {
 		return cmd.name == cmdstr;
 	});
-	if (it != commands.end()) {
+	if (it != end(commands)) {
 		ir.skipSpace();
 		(this->*it->handler)(ir, actions);
 	}
 	return true;
-}
-
-
-/** Replaces constants of the form {?name} by their corresponding value.
- *  @param[in,out] str text to expand
- *  @param[in] actions interfcae to the world outside the special handler */
-static void expand_constants (string &str, SpecialActions &actions) {
-	bool repl_bbox = true;
-	while (repl_bbox) {
-		const auto pos = str.find("{?bbox ");
-		if (pos == string::npos)
-			repl_bbox = false;
-		else {
-			auto endpos = pos+7;
-			while (endpos < str.length() && isalnum(str[endpos]))
-				++endpos;
-			if (str[endpos] != '}')
-				repl_bbox = false;
-			else {
-				BoundingBox &box = actions.bbox(str.substr(pos+7, endpos-pos-7));
-				str.replace(pos, endpos-pos+1, box.svgViewBoxString());
-			}
-		}
-	}
-	struct Constant {
-		const char *name;
-		string val;
-	};
-	const array<Constant, 5> constants {{
-		{"x",      XMLString(actions.getX())},
-		{"y",      XMLString(actions.getY())},
-		{"color",  actions.getColor().svgColorString()},
-		{"matrix", actions.getMatrix().toSVG()},
-		{"nl",    "\n"},
-	}};
-	for (const Constant &constant : constants) {
-		const string pattern = string("{?")+constant.name+"}";
-		auto pos = str.find(pattern);
-		while (pos != string::npos) {
-			str.replace(pos, strlen(constant.name)+3, constant.val);
-			pos = str.find(pattern, pos+constant.val.length());  // look for further matches
-		}
-	}
-}
-
-
-/** Evaluates substrings of the form {?(expr)} where 'expr' is a math expression,
- *  and replaces the substring by the computed value.
- *  @param[in,out] str string to scan for expressions */
-static void evaluate_expressions (string &str, const SpecialActions &actions) {
-	auto left = str.find("{?(");             // start position of expression macro
-	while (left != string::npos) {
-		auto right = str.find(")}", left+2);  // end position of expression macro
-		if (right == string::npos)
-			break;
-		Calculator calc;
-		calc.setVariable("x", actions.getX());
-		calc.setVariable("y", actions.getY());
-		string expr = str.substr(left+3, right-left-3);  // math expression to evaluate
-		if (util::normalize_space(expr).empty())         // no expression given, e.g. {?( )}
-			str.erase(left, right-left+2);                // => replace with empty string
-		else {
-			try {
-				double val = calc.eval(expr);
-				XMLString valstr(val);
-				str.replace(left, right-left+2, valstr);
-				right = left+valstr.length()-1;
-			}
-			catch (CalculatorException &e) {
-				throw SpecialException(string(e.what())+" in '{?("+expr+")}'");
-			}
-		}
-		left = str.find("{?(", right+1);  // find next expression macro
-	}
 }
 
 
@@ -281,8 +207,7 @@ void DvisvgmSpecialHandler::processRaw (InputReader &ir, SpecialActions &actions
 	if (_nestingLevel == 0) {
 		string xml = ir.getLine();
 		if (!xml.empty()) {
-			evaluate_expressions(xml, actions);
-			expand_constants(xml, actions);
+			xml = actions.expandText(xml);
 			_pageParser.parse(std::move(xml));
 		}
 	}
@@ -293,8 +218,7 @@ void DvisvgmSpecialHandler::processRawDef (InputReader &ir, SpecialActions &acti
 	if (_nestingLevel == 0) {
 		string xml = ir.getLine();
 		if (!xml.empty()) {
-			evaluate_expressions(xml, actions);
-			expand_constants(xml, actions);
+			xml = actions.expandText(xml);
 			_defsParser.parse(std::move(xml));
 		}
 	}
@@ -325,7 +249,7 @@ void DvisvgmSpecialHandler::processRawPut (InputReader &ir, SpecialActions &acti
 		char &type = defstr[0];
 		string def = defstr.substr(1);
 		if ((type == 'P' || type == 'D') && !def.empty()) {
-			expand_constants(def, actions);
+			def = actions.expandText(def);
 			if (type == 'P')
 				_pageParser.parse(std::move(def));
 			else {          // type == 'D'
@@ -452,6 +376,32 @@ void DvisvgmSpecialHandler::processImg (InputReader &ir, SpecialActions &actions
 }
 
 
+void DvisvgmSpecialHandler::processCurrentColor (InputReader &ir, SpecialActions &actions) {
+	string param = ir.getString();
+	Color color = actions.getColor();
+	if (param.empty() || param == "on") {
+		SVGElement::CURRENTCOLOR = color;
+		SVGElement::USE_CURRENTCOLOR = true;
+	}
+	else if (param == "off") {
+		if (SVGElement::USE_CURRENTCOLOR) {
+			// force a color change to get the new currentColor setting recognized
+			actions.setColor(Color{uint32_t(color)+1});
+			actions.setColor(color);
+			SVGElement::USE_CURRENTCOLOR = false;
+		}
+	}
+	else
+		throw SpecialException("currentcolor: unknown parameter '"+param+"'");
+}
+
+
+void DvisvgmSpecialHandler::processMessage (InputReader &ir, SpecialActions &actions) {
+	string message = actions.expandText(ir.getLine());
+	Message::ustream() << message << "\n";
+}
+
+
 void DvisvgmSpecialHandler::dviPreprocessingFinished () {
 	string id;
 	if (_currentMacro != _macros.end())
@@ -486,7 +436,7 @@ void DvisvgmSpecialHandler::dviEndPage (unsigned, SpecialActions &actions) {
 }
 
 
-vector<const char*> DvisvgmSpecialHandler::prefixes() const {
+vector<const char*> DvisvgmSpecialHandler::prefixes () const {
 	vector<const char*> pfx {"dvisvgm:"};
 	return pfx;
 }

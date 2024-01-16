@@ -90,7 +90,6 @@ build_triplet = @build@
 host_triplet = @host@
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
-#endif TEXLIVE_BUILD
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 subdir = dvisvgm-src/src/optimizer
@@ -383,16 +382,9 @@ liboptimizer_la_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
 	WSNodeRemover.hpp           WSNodeRemover.cpp
 
-
-# Gets automake warnings:
-#   dvisvgm-src/src/../libs/defs.am:9: warning: POTRACE_LIBS was already defined in condition TRUE, which includes condition !HAVE_POTRACE and !TEXLIVE_BUILD ...
-#   dvisvgm-src/src/Makefile.am:14:   'dvisvgm-src/src/../libs/defs.am' included from here
-#   configure.ac:51: ... 'POTRACE_LIBS' previously defined here
-#if !TEXLIVE_BUILD
-#POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-#POTRACE_LIBS = ../libs/potrace/libpotrace.a
-#else
 @HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
+#
+@TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
 AM_CXXFLAGS = -I$(dvisvgm_srcdir)/libs/variant/include $(XXHASH_CFLAGS)

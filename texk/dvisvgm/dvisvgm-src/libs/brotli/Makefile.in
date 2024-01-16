@@ -124,15 +124,16 @@ libbrotli_a_LIBADD =
 am__libbrotli_a_SOURCES_DIST = common/constants.c common/constants.h \
 	common/context.c common/context.h common/dictionary.c \
 	common/dictionary.h common/platform.c common/platform.h \
-	common/transform.c common/transform.h common/version.h \
-	enc/backward_references.c enc/backward_references.h \
-	enc/backward_references_hq.c enc/backward_references_hq.h \
-	enc/backward_references_inc.h enc/bit_cost.c enc/bit_cost.h \
-	enc/bit_cost_inc.h enc/block_encoder_inc.h \
-	enc/block_splitter.c enc/block_splitter.h \
-	enc/block_splitter_inc.h enc/brotli_bit_stream.c \
-	enc/brotli_bit_stream.h enc/cluster.c enc/cluster.h \
-	enc/cluster_inc.h enc/command.c enc/command.h \
+	common/shared_dictionary_internal.h common/transform.c \
+	common/transform.h common/version.h enc/backward_references.c \
+	enc/backward_references.h enc/backward_references_hq.c \
+	enc/backward_references_hq.h enc/backward_references_inc.h \
+	enc/bit_cost.c enc/bit_cost.h enc/bit_cost_inc.h \
+	enc/block_encoder_inc.h enc/block_splitter.c \
+	enc/block_splitter.h enc/block_splitter_inc.h \
+	enc/brotli_bit_stream.c enc/brotli_bit_stream.h enc/cluster.c \
+	enc/cluster.h enc/cluster_inc.h enc/command.c enc/command.h \
+	enc/compound_dictionary.c enc/compound_dictionary.h \
 	enc/compress_fragment.c enc/compress_fragment.h \
 	enc/compress_fragment_two_pass.c \
 	enc/compress_fragment_two_pass.h enc/dictionary_hash.c \
@@ -147,11 +148,11 @@ am__libbrotli_a_SOURCES_DIST = common/constants.c common/constants.h \
 	enc/histogram_inc.h enc/literal_cost.c enc/literal_cost.h \
 	enc/memory.c enc/memory.h enc/metablock.c enc/metablock.h \
 	enc/metablock_inc.h enc/params.h enc/prefix.h enc/quality.h \
-	enc/ringbuffer.h enc/static_dict.c enc/static_dict.h \
-	enc/static_dict_lut.h enc/utf8_util.c enc/utf8_util.h \
-	enc/write_bits.h include/brotli/decode.h \
+	enc/ringbuffer.h enc/state.h enc/static_dict.c \
+	enc/static_dict.h enc/static_dict_lut.h enc/utf8_util.c \
+	enc/utf8_util.h enc/write_bits.h include/brotli/decode.h \
 	include/brotli/encode.h include/brotli/port.h \
-	include/brotli/types.h
+	include/brotli/shared_dictionary.h include/brotli/types.h
 am__dirstamp = $(am__leading_dot)dirstamp
 @HAVE_BROTLI_FALSE@am_libbrotli_a_OBJECTS =  \
 @HAVE_BROTLI_FALSE@	common/constants.$(OBJEXT) \
@@ -165,6 +166,7 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @HAVE_BROTLI_FALSE@	enc/block_splitter.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/brotli_bit_stream.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/cluster.$(OBJEXT) enc/command.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/compound_dictionary.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/dictionary_hash.$(OBJEXT) \
@@ -201,7 +203,8 @@ am__depfiles_remade = common/$(DEPDIR)/constants.Po \
 	enc/$(DEPDIR)/backward_references_hq.Po \
 	enc/$(DEPDIR)/bit_cost.Po enc/$(DEPDIR)/block_splitter.Po \
 	enc/$(DEPDIR)/brotli_bit_stream.Po enc/$(DEPDIR)/cluster.Po \
-	enc/$(DEPDIR)/command.Po enc/$(DEPDIR)/compress_fragment.Po \
+	enc/$(DEPDIR)/command.Po enc/$(DEPDIR)/compound_dictionary.Po \
+	enc/$(DEPDIR)/compress_fragment.Po \
 	enc/$(DEPDIR)/compress_fragment_two_pass.Po \
 	enc/$(DEPDIR)/dictionary_hash.Po enc/$(DEPDIR)/encode.Po \
 	enc/$(DEPDIR)/encoder_dict.Po enc/$(DEPDIR)/entropy_encode.Po \
@@ -425,6 +428,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	common/dictionary.h \
 @HAVE_BROTLI_FALSE@	common/platform.c \
 @HAVE_BROTLI_FALSE@	common/platform.h \
+@HAVE_BROTLI_FALSE@	common/shared_dictionary_internal.h \
 @HAVE_BROTLI_FALSE@	common/transform.c \
 @HAVE_BROTLI_FALSE@	common/transform.h \
 @HAVE_BROTLI_FALSE@	common/version.h \
@@ -447,6 +451,8 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/cluster_inc.h \
 @HAVE_BROTLI_FALSE@	enc/command.c \
 @HAVE_BROTLI_FALSE@	enc/command.h \
+@HAVE_BROTLI_FALSE@	enc/compound_dictionary.c \
+@HAVE_BROTLI_FALSE@	enc/compound_dictionary.h \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.c \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment.h \
 @HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.c \
@@ -484,6 +490,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/prefix.h \
 @HAVE_BROTLI_FALSE@	enc/quality.h \
 @HAVE_BROTLI_FALSE@	enc/ringbuffer.h \
+@HAVE_BROTLI_FALSE@	enc/state.h \
 @HAVE_BROTLI_FALSE@	enc/static_dict.c \
 @HAVE_BROTLI_FALSE@	enc/static_dict.h \
 @HAVE_BROTLI_FALSE@	enc/static_dict_lut.h \
@@ -493,6 +500,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	include/brotli/decode.h \
 @HAVE_BROTLI_FALSE@	include/brotli/encode.h \
 @HAVE_BROTLI_FALSE@	include/brotli/port.h \
+@HAVE_BROTLI_FALSE@	include/brotli/shared_dictionary.h \
 @HAVE_BROTLI_FALSE@	include/brotli/types.h
 
 @HAVE_BROTLI_FALSE@AM_CFLAGS = -Wall -I$(srcdir)/include
@@ -570,6 +578,8 @@ enc/cluster.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/command.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
+enc/compound_dictionary.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
 enc/compress_fragment.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/compress_fragment_two_pass.$(OBJEXT): enc/$(am__dirstamp) \
@@ -622,6 +632,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/brotli_bit_stream.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/cluster.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/command.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compound_dictionary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compress_fragment.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/compress_fragment_two_pass.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/dictionary_hash.Po@am__quote@ # am--include-marker
@@ -813,6 +824,7 @@ distclean: distclean-am
 	-rm -f enc/$(DEPDIR)/brotli_bit_stream.Po
 	-rm -f enc/$(DEPDIR)/cluster.Po
 	-rm -f enc/$(DEPDIR)/command.Po
+	-rm -f enc/$(DEPDIR)/compound_dictionary.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment_two_pass.Po
 	-rm -f enc/$(DEPDIR)/dictionary_hash.Po
@@ -883,6 +895,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f enc/$(DEPDIR)/brotli_bit_stream.Po
 	-rm -f enc/$(DEPDIR)/cluster.Po
 	-rm -f enc/$(DEPDIR)/command.Po
+	-rm -f enc/$(DEPDIR)/compound_dictionary.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment.Po
 	-rm -f enc/$(DEPDIR)/compress_fragment_two_pass.Po
 	-rm -f enc/$(DEPDIR)/dictionary_hash.Po

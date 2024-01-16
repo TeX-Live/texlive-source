@@ -10,50 +10,55 @@ bypassing or using the original one.
 See also comments in ../texk/README.
 
 cairo 1.16.0 - checked 20oct18
-  http://cairographics.org/releases/
+  https://cairographics.org/releases/
+  There are later releases than this, but they removed autotools support.
+  Since cairo is only used by MetaPost (for png output), and 1.16.0
+  seems fine for that, not taking the time and trouble to update.
 
 freetype2 2.13.2 - checked 26aug23
-  http://download.savannah.gnu.org/releases/freetype/
+  https://download.savannah.gnu.org/releases/freetype/
 
 gd 2.3.3 - checked 13sep21
   https://github.com/libgd/libgd/releases
 
 gmp 6.2.1 - checked 15nov20
-  http://ftp.gnu.org/gnu/gmp/
+  https://ftp.gnu.org/gnu/gmp/
 
 graphite2 1.3.14 - checked 10apr20
-  http://sourceforge.net/projects/silgraphite/files/graphite2/
+  https://sourceforge.net/projects/silgraphite/files/graphite2/
   (requires C++11)
 
 harfbuzz 8.3.0 - checked 12nov23
-  https://github.com/harfbuzz/harfbuzz/releases/tag/8.3.0
+  https://github.com/harfbuzz/harfbuzz/releases/latest
 
 icu 74.2 - checked 22dec23
   https://github.com/unicode-org/icu/releases/
 
 libpaper 1.1.29 - checked 07jan24
-  http://ftp.debian.org/debian/pool/main/libp/libpaper/
+  https://ftp.debian.org/debian/pool/main/libp/libpaper/
 
 libpng 1.6.40 - checked 22jun23
   https://sourceforge.net/projects/libpng/files/ - used by many
 
-lua 5.2.4 - checked 11mar15
-  http://www.lua.org/ftp/
-
+lua 5.2.4
 lua 5.3.6 - checked 04oct20
-  http://www.lua.org/ftp/
+  https://www.lua.org/ftp/
+  Lua updates must be done carefully, by the LuaTeX maintainer,
+  since Lua changes generally imply new incompatibilities.
 
 luajit 2.1.0-beta3 - checked 20jun17
-  http://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+  https://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
+  As with Lua.
 
 mpfr 4.2.1 - checked 26aug23
-  http://ftp.gnu.org/gnu/mpfr/
+  https://ftp.gnu.org/gnu/mpfr/
 
 pixman 0.42.2 - checked 03nov22
-  http://cairographics.org/releases/
+  https://cairographics.org/releases/
+  See cairo above.
 
 potrace 1.16 - checked 29aug22
-  http://potrace.sourceforge.net
+  https://potrace.sourceforge.net/
 
 pplib 2.05.0 - checked 21apr20
   https://github.com/contextgarden/pplib
@@ -62,11 +67,11 @@ teckit 2.5.12 - checked 26aug23
   https://github.com/silnrsi/teckit/archive/2.5.12.tar.gz
 
 xpdf 4.04 - checked 24apr22
-  http://www.xpdfreader.com/download.html
+  https://www.xpdfreader.com/download.html
   with modifications for pdftex
 
 zlib 1.3.0 - checked 26aug23
-  http://www.zlib.net/ - used by many
+  https://www.zlib.net/ - used by many
 
 zziplib 0.13.72 - checked 10sep22
   https://github.com/gdraheim/zziplib/releases

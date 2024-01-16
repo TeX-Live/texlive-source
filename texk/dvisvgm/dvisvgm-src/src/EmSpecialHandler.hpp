@@ -2,7 +2,7 @@
 ** EmSpecialHandler.hpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -38,10 +38,11 @@ class EmSpecialHandler : public SpecialHandler {
 	};
 
 	public:
-		const char* name () const override {return "em";}
-		const char* info () const override {return "line drawing statements of the emTeX special set";}
-		std::vector<const char*> prefixes() const override;
 		bool process (const std::string &prefix, std::istream &in, SpecialActions &actions) override;
+		const char* info () const override {return "line drawing statements of the emTeX special set";}
+		const char* name () const override {return handlerName();}
+		static const char* handlerName ()  {return "em";}
+		std::vector<const char*> prefixes () const override;
 
 	protected:
 		void dviEndPage (unsigned pageno, SpecialActions &actions) override;

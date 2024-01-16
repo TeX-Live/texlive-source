@@ -2,7 +2,7 @@
 ** DVIReader.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -206,8 +206,11 @@ void DVIReader::putVFChar (Font *font, uint32_t c) {
 		FontManager &fm = FontManager::instance();
 		const vector<uint8_t> *dvi = vf->getDVI(c);    // try to get DVI snippet that represents character c
 		Font *firstFont = fm.vfFirstFont(vf);
-		if (!dvi && (!firstFont || !firstFont->getMetrics()->isJFM()))
-			return;
+		if (!dvi) {
+			const FontMetrics *ffm = firstFont ? firstFont->getMetrics() : nullptr;
+			if (!ffm || (!ffm->isJFM() && !ffm->isOFM()))
+				return;
+		}
 		fm.enterVF(vf);                              // enter VF font number context
 		int savedFontNum = _currFontNum;             // save current font number
 		setFont(fm.vfFirstFontNum(vf), SetFontMode::VF_ENTER);

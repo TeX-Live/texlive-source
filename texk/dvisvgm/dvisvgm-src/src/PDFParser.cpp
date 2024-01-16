@@ -2,7 +2,7 @@
 ** PDFParser.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2023 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -275,7 +275,7 @@ static PDFStream parse_stream (InputReader &ir, const char *delim) {
 	do
 		ir.skipUntil("endstream");
 	while (ir.peek() >= 0 && !strchr(delim, ir.peek()));  // ensure delimiter after "endstream"
-	return PDFStream();
+	return {};
 }
 
 
@@ -289,7 +289,7 @@ static PDFIndirectObject parse_indirect_object (InputReader &ir, const char *del
 		const int *objno = objects.back().get<int>();
 		objects.pop_back();
 		if (objno && genno)
-			return PDFIndirectObject(*objno, *genno);
+			return {*objno, *genno};
 	}
 	throw PDFException("object and generation number expected before 'obj'");
 }
@@ -302,7 +302,7 @@ static PDFObjectRef parse_object_ref (vector<PDFObject> &objects) {
 		const int *objno = objects.back().get<int>();
 		objects.pop_back();
 		if (objno && genno)
-			return PDFObjectRef(*objno, *genno);
+			return {*objno, *genno};
 	}
 	throw PDFException("object and generation number expected before 'R'");
 }
