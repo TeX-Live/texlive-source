@@ -79,6 +79,7 @@ jobs:
             cd /work/repo
             case "${{ matrix.image }}" in
               i386/ubuntu:*) .github/scripts/install-deps.ubuntu.sh ;;
+              */debian:*) .github/scripts/install-deps.ubuntu.sh ;;
               centos:*) .github/scripts/install-deps.centos.sh ;;
               alpine:*) .github/scripts/install-deps.alpine.sh ;;
             esac
