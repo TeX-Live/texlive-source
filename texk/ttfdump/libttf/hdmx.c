@@ -44,7 +44,11 @@ static void ttfLoadHDMX (FILE *fp,HDMXPtr hdmx,ULONG offset)
 	    hdmx->Records[i].PixelSize = ttfGetBYTE(fp);
 	    hdmx->Records[i].MaxWidth = ttfGetBYTE(fp);
 	    hdmx->Records[i].Width = XCALLOC (hdmx->size, BYTE);
-	    fread ((hdmx->Records+i)->Width, sizeof(BYTE), hdmx->numGlyphs+1,fp);
+	    //if hdmx->numGlyphs+1 > hdmx->size,it will coredump,so we read min(hdmx->numGlyphs+1,hdmx->size) and truncate the remainder.
+	    if (hdmx->numGlyphs+1 <= hdmx->size)
+	    	fread ((hdmx->Records+i)->Width, sizeof(BYTE), hdmx->numGlyphs+1,fp);
+	    else
+		fread ((hdmx->Records+i)->Width, sizeof(BYTE), hdmx->size,fp);
 	}
 }
 
