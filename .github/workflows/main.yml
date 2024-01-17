@@ -28,8 +28,15 @@
 # * it would be nice if we could adjust the docker action usage
 #   to override the dockerfile but this seems not to be possible at the moment
 
-on: [push]
+# only build on pushed to trunk
+on:
+  push:
+    branches:
+      - trunk
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build_job:
