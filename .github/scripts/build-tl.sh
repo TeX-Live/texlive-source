@@ -1,5 +1,7 @@
 #!/bin/sh -l
 
+set -e
+
 arch="$1"
 echo "Building TL for arch = $arch"
 
