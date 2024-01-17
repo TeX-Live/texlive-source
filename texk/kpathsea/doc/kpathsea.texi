@@ -3475,6 +3475,11 @@ kpathsea_in_name_ok_silent
 kpathsea_in_name_ok_silent_extended
 @end example
 
+Furthermore, there are @code{kpse_...} versions of all the above
+functions (as usual), with the default library instance implicitly
+passed as the first argument.  Lua@TeX{} provides both @code{kpse.*}
+and @code{kpathsea.*} bindings, so it's good to always have both.
+	
 Sorry for the combinatorial explosion, but we hope no further options
 will ever be needed.  If so, we'll likely provide a more generic
 interface as well as the above.

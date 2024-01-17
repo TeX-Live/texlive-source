@@ -112,6 +112,7 @@ extern KPSEDLL void kpathsea_reset_program_name (kpathsea kpse,
 
 #if defined (KPSE_COMPAT_API)
 
+/* Abbreviations without the initial kpathsea argument.  */
 extern void kpse_init_fallback_resolutions (string envvar);
 
 extern KPSEDLL void kpse_set_program_enabled (kpse_file_format_type fmt,
@@ -133,6 +134,15 @@ extern KPSEDLL string *kpse_find_file_generic
 
 extern KPSEDLL boolean kpse_in_name_ok (const_string fname);
 extern KPSEDLL boolean kpse_out_name_ok (const_string fname);
+
+extern KPSEDLL boolean kpse_in_name_ok_silent (const_string fname);
+extern KPSEDLL boolean kpse_out_name_ok_silent (const_string fname);
+
+extern KPSEDLL boolean kpse_in_name_ok_extended (const_string fname);
+extern KPSEDLL boolean kpse_out_name_ok_extended (const_string fname);
+
+extern KPSEDLL boolean kpse_in_name_ok_silent_extended (const_string fname);
+extern KPSEDLL boolean kpse_out_name_ok_silent_extended (const_string fname);
 
 /* Here are some abbreviations.  */
 #define kpse_find_mf(name)   kpse_find_file (name, kpse_mf_format, true)

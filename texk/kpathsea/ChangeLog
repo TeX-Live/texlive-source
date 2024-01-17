@@ -1,3 +1,12 @@
+2024-01-17  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (kpse_{in,out}_name_ok{,_silent}_extended):
+	declare the kpse_* abbreviations of the new (and old) kpathsea_* 
+	functions. LuaTeX provides both kpse.* and kpathsea.* bindings,
+	so it's good to always have both.
+	* tex-file.h: declare them.
+	* doc/kpathsea.texi (Safe filenames): mention them.
+
 2024-01-14  Karl Berry  <karl@freefriends.org>
 
 	* version.ac: bump to 6.4.0/dev.

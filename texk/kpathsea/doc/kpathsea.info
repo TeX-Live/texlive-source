@@ -2635,6 +2635,11 @@ Thus:
      kpathsea_in_name_ok_silent
      kpathsea_in_name_ok_silent_extended
 
+   Furthermore, there are ‘kpse_...’ versions of all the above functions
+(as usual), with the default library instance implicitly passed as the
+first argument.  LuaTeX provides both ‘kpse.*’ and ‘kpathsea.*’
+bindings, so it's good to always have both.
+
    Sorry for the combinatorial explosion, but we hope no further options
 will ever be needed.  If so, we'll likely provide a more generic
 interface as well as the above.
@@ -4166,19 +4171,19 @@ Node: Programming overview100844
 Node: Calling sequence103755
 Node: Safe filenames109092
 Ref: openout_any109251
-Node: Program-specific files112839
-Node: Programming with config files113892
-Node: Reporting bugs115539
-Node: Bug checklist116217
-Node: Mailing lists119774
-Node: Debugging120451
-Node: Logging125708
-Node: Common problems127615
-Node: Unable to find files128092
-Node: Slow path searching130548
-Node: Unable to generate fonts131943
-Node: TeX or Metafont failing134479
-Node: Index135681
+Node: Program-specific files113104
+Node: Programming with config files114157
+Node: Reporting bugs115804
+Node: Bug checklist116482
+Node: Mailing lists120039
+Node: Debugging120716
+Node: Logging125973
+Node: Common problems127880
+Node: Unable to find files128357
+Node: Slow path searching130813
+Node: Unable to generate fonts132208
+Node: TeX or Metafont failing134744
+Node: Index135946
 
 End Tag Table
 

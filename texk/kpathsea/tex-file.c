@@ -1342,6 +1342,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 boolean
 kpathsea_in_name_ok_silent (kpathsea kpse, const_string fname)
 {
+  /* For input default to all. */
   return
    kpathsea_name_ok (kpse, fname, "openin_any", "a", ok_reading, true, false);
 }
@@ -1470,20 +1471,31 @@ kpathsea_out_name_ok_extended (kpathsea kpse, const_string fname)
 }
 
 #if defined (KPSE_COMPAT_API)
-boolean
-kpse_in_name_ok (const_string fname)
-{
-  /* For input default to all. */
-  return kpathsea_in_name_ok (kpse_def, fname);
-}
+boolean kpse_in_name_ok (const_string fname)
+{ return kpathsea_in_name_ok (kpse_def, fname); }
 
-boolean
-kpse_out_name_ok (const_string fname)
-{
-  /* For output, default to paranoid. */
-  return kpathsea_out_name_ok (kpse_def, fname);
-}
-#endif
+boolean kpse_out_name_ok (const_string fname)
+{ return kpathsea_out_name_ok (kpse_def, fname); }
+
+boolean kpse_in_name_ok_silent (const_string fname)
+{ return kpathsea_in_name_ok_silent (kpse_def, fname); }
+
+boolean kpse_out_name_ok_silent (const_string fname)
+{ return kpathsea_out_name_ok_silent (kpse_def, fname); }
+
+boolean kpse_in_name_ok_extended (const_string fname)
+{ return kpathsea_in_name_ok_extended (kpse_def, fname); }
+
+boolean kpse_out_name_ok_extended (const_string fname)
+{ return kpathsea_out_name_ok_extended (kpse_def, fname); }
+
+boolean kpse_in_name_ok_silent_extended (const_string fname)
+{ return kpathsea_in_name_ok_silent_extended (kpse_def, fname); }
+
+boolean kpse_out_name_ok_silent_extended (const_string fname)
+{ return kpathsea_out_name_ok_silent_extended (kpse_def, fname); }
+
+#endif /* KPSE_COMPAT_API */
 
 
 
