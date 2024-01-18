@@ -1,12 +1,12 @@
 --- dvisvgm-3.2/configure.ac	2024-01-11 00:52:01.000000000 -0800
-+++ ./configure.ac	2024-01-16 09:29:40.201424363 -0800
++++ ./configure.ac	2024-01-16 10:32:10.211225839 -0800
 @@ -1,18 +1,31 @@
 -# This file is part of dvisvgm
 -# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
-+dnl $Id: configure.ac 67404 2023-06-18 22:03:59Z karl $
++dnl $Id: configure.ac 69453 2024-01-16 18:32:08Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
@@ -122,7 +122,7 @@
 +fi
  AS_IF([test "x$have_libgs" = "xno"],
  	# Ghostscript not found, check for dlopen
-@@ -83,65 +70,89 @@
+@@ -83,65 +70,88 @@
  		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
  		[AC_MSG_WARN(PostScript support disabled)])])
 +fi
@@ -263,10 +263,9 @@
  # Check for header files.
  AC_HEADER_DIRENT
 -
-+AC_HEADER_STDC
  AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
  
-@@ -156,81 +167,82 @@
+@@ -156,81 +166,82 @@
  AX_GCC_BUILTIN(__builtin_clz)
  
 -# add options for selection of "optional" library locations

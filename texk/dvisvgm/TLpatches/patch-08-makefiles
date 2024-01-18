@@ -47,7 +47,7 @@
 +        $(ZLIB_INCLUDES) \
  	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
 --- dvisvgm-3.2/./src/Makefile.am	2024-01-11 00:52:01.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2024-01-16 09:53:07.401546123 -0800
++++ dvisvgm-src/./src/Makefile.am	2024-01-18 09:44:09.359399768 -0800
 @@ -18,8 +18,6 @@
  	../libs/clipper/libclipper.a \
  	../libs/md5/libmd5.a \
@@ -86,16 +86,20 @@
 -
  AM_CFLAGS = $(WARNING_CFLAGS) \
  	$(ZLIB_CFLAGS) \
-@@ -182,13 +186,28 @@
+@@ -182,9 +186,5 @@
  AM_CXXFLAGS = $(WARNING_CXXFLAGS) \
  	-I$(dvisvgm_srcdir)/libs/clipper \
 -	-I$(dvisvgm_srcdir)/libs/variant/include \
+-	$(KPSE_CFLAGS) \
+-	$(FREETYPE_CFLAGS) \
+-	$(ZLIB_CFLAGS) \
+-	$(CODE_COVERAGE_CFLAGS)
 +	-I$(dvisvgm_srcdir)/libs/variant/include
-+
-+AM_CXXFLAGS += \
-+	$(POTRACE_CFLAGS) \
-+	$(XXHASH_CFLAGS)
-+
+ 
+ AM_CXXFLAGS += \
+@@ -192,4 +192,22 @@
+ 	$(XXHASH_CFLAGS)
+ 
 +if TEXLIVE_BUILD
 +AM_CXXFLAGS += \
 +	$(KPATHSEA_INCLUDES) \
@@ -103,23 +107,20 @@
 +	$(FREETYPE2_INCLUDES) \
 +	$(ZLIB_INCLUDES) \
 +	$(CODE_COVERAGE_CFLAGS)
-+else
-+AM_CXXFLAGS += \
- 	$(KPSE_CFLAGS) \
- 	$(FREETYPE_CFLAGS) \
- 	$(ZLIB_CFLAGS) \
- 	$(CODE_COVERAGE_CFLAGS)
-+endif !TEXLIVE_BUILD
- 
--AM_CXXFLAGS += \
--	$(POTRACE_CFLAGS) \
--	$(XXHASH_CFLAGS)
 +if WIN32
 +AM_CXXFLAGS += -DTEXLIVEWIN32
 +endif WIN32
- 
++else
++AM_CXXFLAGS += \
++	$(KPSE_CFLAGS) \
++	$(FREETYPE_CFLAGS) \
++	$(ZLIB_CFLAGS) \
++	$(CODE_COVERAGE_CFLAGS)
++endif !TEXLIVE_BUILD
++
  AM_LDFLAGS = \
-@@ -203,6 +222,9 @@
+ 	$(KPSE_LIBS) \
+@@ -203,6 +221,9 @@
  	$(WOFF2_CFLAGS)
  
 +# TL: do not try to rebuild these source files.
@@ -130,7 +131,7 @@
 +endif ENABLE_WOFF
  
  AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
-@@ -226,4 +248,15 @@
+@@ -226,4 +247,15 @@
  
  if TEXLIVE_BUILD
 +# Rebuild libkpathsea:

@@ -1,3 +1,15 @@
+2024-01-18  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* Makefile.am,
+	* TLpatches/patch-04-configure,
+	* TLpatches/patch-08-makefiles: tweaks from Martin for non-TL build.
+	https://github.com/mgieseki/dvisvgm/issues/259
+
+2024-01-18  Karl Berry  <karl@freefriends.org>
+
+	* Import dvisvgm-3.2.
+
 2024-01-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/dvisvgm.test: Make easier to test on Windows.
