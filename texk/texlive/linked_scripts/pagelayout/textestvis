@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2022-2023 by Friedemann Bartels
+# Copyright (c) 2022-2024 by Friedemann Bartels
 #
 # This file may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either
@@ -13,7 +13,7 @@
 # LaTeX version 2008/05/04 or later.
 #
 
-version=1.0.5
+version=1.1.0
 
 OK="$( tput setaf 2 )•$( tput sgr0 )"
 FAILED="$( tput setaf 1 )$( tput bold )x$( tput sgr0 )"

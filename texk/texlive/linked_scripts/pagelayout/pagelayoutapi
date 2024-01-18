@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2022-2023 by Friedemann Bartels
+# Copyright (c) 2022-2024 by Friedemann Bartels
 #
 # This file may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either
@@ -13,7 +13,7 @@
 # LaTeX version 2008/05/04 or later.
 #
 
-version=1.0.5
+version=1.1.0
 
 _convert() {
   turbo=$1
@@ -181,7 +181,7 @@ makeshadow() {
           </filter>
         </defs>
         <rect
-          style='filter:url(#blur);opacity:$opacity;fill:$fill'
+          style='filter:url(#blur);opacity:$opacity;fill:rgb($fill)'
           width='$framewidth'
           height='$frameheight'
           x='$frameborder'
@@ -272,7 +272,11 @@ batchoptimize() {
   [ ! -d cache ] && mkdir cache
 
   length=$(( $# / 15 ))
-  cores=$( nproc )
+  if command -v nproc >/dev/null 2>&1; then
+    cores=$( nproc )
+  else
+    cores=1
+  fi
   [ $cores -gt $length ] && cores=$length
 
   while [ $length -gt 0 ]; do
