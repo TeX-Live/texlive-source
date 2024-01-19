@@ -1,3 +1,8 @@
+2024-01-20  Karl Berry  <karl@tug.org>
+
+	* dvisvgm-src/src/Makefile.am (dvisvgm_LDADD) [TEXLIVE_BUILD]:
+	forgot LIBGS_LIBS, i.e., -ldl.
+
 2024-01-18  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac,
