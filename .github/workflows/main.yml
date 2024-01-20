@@ -80,6 +80,9 @@ jobs:
           platforms: ${{ matrix.qemu_arch }}
       - name: build
         uses: addnab/docker-run-action@v3
+        if: |
+          startsWith(github.ref, 'refs/tags/') ||
+          (startsWith(matrix.image, 'arm') == false)
         with: 
           image: ${{ matrix.image }}
           options: -v ${{ github.workspace }}:/work --platform linux/${{ matrix.platform }}
