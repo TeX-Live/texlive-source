@@ -48,6 +48,10 @@ case "$arch" in
   aarch64-linux)
     BUILDARGS="--enable-arm-neon=on"
     ;;
+  *-solaris)
+    export CC="/path/to/gcc-5.5 -m64"
+    export CXX="/path/to/g++-5.5 -m64"
+    ;;
 esac
 export TL_MAKE_FLAGS
 
