@@ -43,7 +43,7 @@ static void ttfLoadHDMX (FILE *fp,HDMXPtr hdmx,ULONG offset)
 	{
 	    hdmx->Records[i].PixelSize = ttfGetBYTE(fp);
 	    hdmx->Records[i].MaxWidth = ttfGetBYTE(fp);
-	    hdmx->Records[i].Width = XCALLOC (hdmx->size, BYTE);
+	    hdmx->Records[i].Width = XCALLOC (hdmx->numGlyphs+1, BYTE);
 	    fread ((hdmx->Records+i)->Width, sizeof(BYTE), hdmx->numGlyphs+1,fp);
 	}
 }
