@@ -144,7 +144,7 @@ jobs:
           path: 'repo'
       - name: build freebsd
         uses: vmactions/freebsd-vm@v1
-        if: matrix.os == 'freebsd'
+        if: ${{ matrix.os == 'freebsd' && (matrix.ci_build || matrix.release_build) }}
         with: 
           usesh: true
           run: |
@@ -153,7 +153,7 @@ jobs:
             sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }}
       - name: build netbsd
         uses: vmactions/netbsd-vm@v1
-        if: matrix.os == 'netbsd'
+        if: ${{ matrix.os == 'netbsd' && (matrix.ci_build || matrix.release_build) }}
         with: 
           usesh: true
           run: |
@@ -162,7 +162,7 @@ jobs:
             sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }}
       - name: build solaris
         uses: vmactions/solaris-vm@v1
-        if: matrix.os == 'solaris'
+        if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
         with: 
           usesh: true
           run: |
