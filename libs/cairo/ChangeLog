@@ -1,3 +1,11 @@
+2024-01-21  Karl Berry  <karl@freefriends.org>
+
+	* cairo-src/src/cairo-image-source.c: cast
+	__pixman_{transparent,black,white}_image pointers to void**
+	to placate -Wincompatible-pointer-types, which is likely
+	to become an error in GCC 14.
+	https://tug.org/pipermail/tex-live/2024-January/049794.html
+
 2021-02-28  David Seifert  <soap@gentoo.org>
 
 	* m4/float.m4: allow users to override 'strings', e.g.,
