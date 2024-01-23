@@ -132,9 +132,15 @@ jobs:
       matrix: 
         arch: [ i386, amd64 ]
         os: [ freebsd, netbsd, solaris ]
-        ci_build: [ true ]
         release_build: 
           - ${{ startsWith(github.ref, 'refs/tags/') }}
+        include:
+          - os: freebsd
+            ci_build: true
+          - os: netbsd
+            ci_build: false
+          - os: solaris
+            ci_build: false
 
     steps:
       - name: checkout-main
@@ -161,7 +167,7 @@ jobs:
             sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: build solaris
         uses: vmactions/solaris-vm@v1
-        if: ${{ false && matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
+        if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
         with: 
           usesh: true
           run: |
