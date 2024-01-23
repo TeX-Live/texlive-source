@@ -57,28 +57,33 @@ jobs:
             platform: 386
             ci_build: true
             use_qemu: false
+            buildsys: ubuntu
           - tl_name: x86_64-linux
             image: centos:7
             platform: amd64
             ci_build: true
             use_qemu: false
+            buildsys: centos
           - tl_name: x86_64-linuxmusl
             image: alpine:3.5
             platform: amd64
             ci_build: true
             use_qemu: false
+            buildsys: alpine
           - tl_name: aarch64-linux
             image: arm64v8/debian:buster
             platform: aarch64
             ci_build: false
             use_qemu: true
             qemu_arch: aarch64
+            buildsys: debian
           - tl_name: armhf-linux
             image: arm32v7/debian:buster
             platform: arm/v7
             ci_build: false
             use_qemu: true
             qemu_arch: arm
+            buildsys: debian
 
     steps:
       - name: checkout-main
@@ -98,13 +103,7 @@ jobs:
           options: -v ${{ github.workspace }}:/work --platform linux/${{ matrix.platform }}
           run: |
             cd /work/repo
-            case "${{ matrix.image }}" in
-              i386/ubuntu:*) .github/scripts/install-deps.ubuntu.sh ;;
-              */debian:*) .github/scripts/install-deps.ubuntu.sh ;;
-              centos:*) .github/scripts/install-deps.centos.sh ;;
-              alpine:*) .github/scripts/install-deps.alpine.sh ;;
-            esac
-            .github/scripts/build-tl.sh ${{ matrix.tl_name }}
+            .github/scripts/build-tl.sh ${{ matrix.tl_name }} ${{ matrix.buildsys }}
       - name: find file step
         if: ${{ matrix.ci_build || matrix.release_build }}
         run: ls -l $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
@@ -149,8 +148,7 @@ jobs:
           usesh: true
           run: |
             cd repo
-            sh .github/scripts/install-deps.bsd.sh
-            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }}
+            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: build netbsd
         uses: vmactions/netbsd-vm@v1
         if: ${{ matrix.os == 'netbsd' && (matrix.ci_build || matrix.release_build) }}
@@ -158,8 +156,7 @@ jobs:
           usesh: true
           run: |
             cd repo
-            sh .github/scripts/install-deps.bsd.sh
-            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }}
+            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: build solaris
         uses: vmactions/solaris-vm@v1
         if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
@@ -167,8 +164,7 @@ jobs:
           usesh: true
           run: |
             cd repo
-            sh .github/scripts/install-deps.solaris.sh
-            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }}
+            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: find file step
         if: ${{ matrix.ci_build || matrix.release_build }}
         run: ls -l $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.arch }}-${{ matrix.os }}.tar.gz
