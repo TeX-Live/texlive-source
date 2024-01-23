@@ -39,6 +39,7 @@ then
        yum update -y
        yum install -y centos-release-scl
        yum install -y devtoolset-9 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       . /opt/rh/devtoolset-9/enable
        ;;
      alpine)
        apk update
@@ -54,15 +55,6 @@ then
        echo "Unsupported build system: $buildsys" >&2
        exit 1
   esac
-
-
-  # for CentOS we need to activate gcc-9
-  if [ -f /opt/rh/devtoolset-9/enable ]
-  then
-    # we cannot call scl enable devtoolset-9 here since we need
-    # the settings in the running shell
-    . /opt/rh/devtoolset-9/enable
-  fi
 fi
 
 if [[ "$STEPS" == *,build,* ]]
