@@ -145,7 +145,7 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         if: ${{ matrix.os == 'freebsd' && (matrix.ci_build || matrix.release_build) }}
         with: 
-          release: 13.2
+          release: '13.2'
           usesh: true
           run: |
             cd repo
@@ -154,7 +154,7 @@ jobs:
         uses: vmactions/netbsd-vm@v1
         if: ${{ matrix.os == 'netbsd' && (matrix.ci_build || matrix.release_build) }}
         with: 
-          release:  9.0
+          release:  '9.0'
           usesh: true
           run: |
             cd repo
