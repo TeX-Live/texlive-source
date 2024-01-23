@@ -138,6 +138,10 @@ jobs:
         include:
           - os: solaris
             ci_build: false
+            arch: i386
+          - os: solaris
+            ci_build: false
+            arch: amd64
 
     steps:
       - name: checkout-main
