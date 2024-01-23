@@ -43,10 +43,10 @@ then
        apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
-       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig
+       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl
        ;;
      netbsd)
-       pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig
+       pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl
        ;;
      solaris)
        echo "Solaris support is WIP, please help!" >&2
