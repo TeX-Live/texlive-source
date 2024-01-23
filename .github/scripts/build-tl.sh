@@ -22,7 +22,14 @@ then
   STEPS=",prepare,build,"
 fi
 
-if [[ "$STEPS" == *,prepare,* ]]
+do_prepare=0
+do_build=0
+case "$STEPS" in
+  *,prepare,*) do_prepare=1 ;;
+  *,build,*) do_build=1 ;;
+esac
+
+if [ $do_prepare = 1 ]
 then
   case $buildsys in 
      ubuntu|debian)
@@ -56,7 +63,7 @@ then
   esac
 fi
 
-if [[ "$STEPS" == *,build,* ]]
+if [ $do_build = 1 ]
 then
   find . -name \*.info -exec touch '{}' \;
   touch ./texk/detex/detex-src/detex.c
