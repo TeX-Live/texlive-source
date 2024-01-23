@@ -17,7 +17,7 @@ echo "Building on $buildsys"
 shift
 
 STEPS=",$1,"
-if [ "x$STEPS" = "x" ]
+if [ "$STEPS" = ",," ]
 then
   STEPS=",prepare,build,"
 fi
@@ -48,9 +48,11 @@ then
      solaris)
        echo "Solaris support is WIP, please help!" >&2
        exit 1
+       ;;
      *)
        echo "Unsupported build system: $buildsys" >&2
        exit 1
+       ;;
   esac
 fi
 
