@@ -17,13 +17,9 @@ echo "Building on $buildsys"
 shift
 
 STEPS=",$1,"
-shift
 if [ "x$STEPS" = "x" ]
   STEPS=",prepare,build,"
 fi
-
-destdir="$1"
-shift
 
 if [[ "$STEPS" == *,prepare,* ]]
 then
