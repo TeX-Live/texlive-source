@@ -18,6 +18,7 @@ shift
 
 STEPS=",$1,"
 if [ "x$STEPS" = "x" ]
+then
   STEPS=",prepare,build,"
 fi
 
