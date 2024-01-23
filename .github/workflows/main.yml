@@ -136,8 +136,6 @@ jobs:
         release_build: 
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:
-          - os: netbsd
-            ci_build: false
           - os: solaris
             ci_build: false
 

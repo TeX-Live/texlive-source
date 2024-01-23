@@ -46,8 +46,7 @@ then
        env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig
        ;;
      netbsd)
-       echo "NetBSD support is WIP, please help!" >&2
-       exit 1
+       pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig
        ;;
      solaris)
        echo "Solaris support is WIP, please help!" >&2
