@@ -132,7 +132,7 @@ jobs:
       matrix: 
         arch: [ i386, amd64 ]
         os: [ freebsd, netbsd, solaris ]
-        ci_build: [ false ]
+        ci_build: [ true ]
         release_build: 
           - ${{ startsWith(github.ref, 'refs/tags/') }}
 
