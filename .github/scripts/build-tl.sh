@@ -42,8 +42,12 @@ then
        apk update
        apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
-     freebsd|netbsd)
-       pkg install gmake gcc pkgconf libX11 libXt libXaw fontconfig
+     freebsd)
+       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig
+       ;;
+     netbsd)
+       echo "NetBSD support is WIP, please help!" >&2
+       exit 1
        ;;
      solaris)
        echo "Solaris support is WIP, please help!" >&2
