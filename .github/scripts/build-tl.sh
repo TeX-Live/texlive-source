@@ -4,7 +4,7 @@ set -e
 
 if [ "x$2" = "x" ]
 then
-  echo "Usage: `basename $0` arch buildsys [steps]" >&2
+  echo "Usage: `basename $0` arch buildsys [no-prepare]" >&2
   exit 1
 fi
 
@@ -16,18 +16,11 @@ buildsys=$1
 echo "Building on $buildsys"
 shift
 
-STEPS=",$1,"
-if [ "$STEPS" = ",," ]
+do_prepare=1
+if [ "$1" = "no-prepare" ]
 then
-  STEPS=",prepare,build,"
+  do_prepare=0
 fi
-
-do_prepare=0
-do_build=0
-case "$STEPS" in
-  *,prepare,*) do_prepare=1 ;;
-  *,build,*) do_build=1 ;;
-esac
 
 if [ $do_prepare = 1 ]
 then
@@ -63,56 +56,53 @@ then
   esac
 fi
 
-if [ $do_build = 1 ]
-then
-  find . -name \*.info -exec touch '{}' \;
-  touch ./texk/detex/detex-src/detex.c
-  touch ./texk/detex/detex-src/detex.h
-  touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
-  touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
-  touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
-  touch ./texk/web2c/omegafonts/pl-lexer.c
-  touch ./texk/web2c/omegafonts/pl-parser.c
-  touch ./texk/web2c/omegafonts/pl-parser.h
-  touch ./texk/web2c/otps/otp-lexer.c
-  touch ./texk/web2c/otps/otp-parser.c
-  touch ./texk/web2c/otps/otp-parser.h
-  touch ./texk/web2c/web2c/web2c-lexer.c
-  touch ./texk/web2c/web2c/web2c-parser.c
-  touch ./texk/web2c/web2c/web2c-parser.h
-  touch ./utils/asymptote/camp.tab.cc
-  touch ./utils/asymptote/camp.tab.h
-  touch ./utils/lacheck/lacheck.c
-  touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
-  
-  # default settings
-  TL_MAKE_FLAGS="-j 2"
-  BUILDARGS=""
-  
-  # special cases
-  case "$arch" in
-    armhf-linux)
-      TL_MAKE_FLAGS="-j 1"
-      ;;
-    aarch64-linux)
-      BUILDARGS="--enable-arm-neon=on"
-      ;;
-    *-solaris)
-      export CC="/path/to/gcc-5.5 -m64"
-      export CXX="/path/to/g++-5.5 -m64"
-      ;;
-    *-freebsd)
-      export TL_MAKE=gmake
-      export CC=gcc 
-      export CXX=g++
-      export CFLAGS=-D_NETBSD_SOURCE
-      export CXXFLAGS='-D_NETBSD_SOURCE -std=c++11'
-      ;;
-  esac
-  export TL_MAKE_FLAGS
-  
-  ./Build -C $BUILDARGS
-  
-  mv inst/bin/* $arch
-  tar czvf texlive-bin-$arch.tar.gz $arch
-fi
+find . -name \*.info -exec touch '{}' \;
+touch ./texk/detex/detex-src/detex.c
+touch ./texk/detex/detex-src/detex.h
+touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
+touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
+touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
+touch ./texk/web2c/omegafonts/pl-lexer.c
+touch ./texk/web2c/omegafonts/pl-parser.c
+touch ./texk/web2c/omegafonts/pl-parser.h
+touch ./texk/web2c/otps/otp-lexer.c
+touch ./texk/web2c/otps/otp-parser.c
+touch ./texk/web2c/otps/otp-parser.h
+touch ./texk/web2c/web2c/web2c-lexer.c
+touch ./texk/web2c/web2c/web2c-parser.c
+touch ./texk/web2c/web2c/web2c-parser.h
+touch ./utils/asymptote/camp.tab.cc
+touch ./utils/asymptote/camp.tab.h
+touch ./utils/lacheck/lacheck.c
+touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
+
+# default settings
+TL_MAKE_FLAGS="-j 2"
+BUILDARGS=""
+
+# special cases
+case "$arch" in
+  armhf-linux)
+    TL_MAKE_FLAGS="-j 1"
+    ;;
+  aarch64-linux)
+    BUILDARGS="--enable-arm-neon=on"
+    ;;
+  *-solaris)
+    export CC="/path/to/gcc-5.5 -m64"
+    export CXX="/path/to/g++-5.5 -m64"
+    ;;
+  *-freebsd)
+    export TL_MAKE=gmake
+    export CC=gcc 
+    export CXX=g++
+    export CFLAGS=-D_NETBSD_SOURCE
+    export CXXFLAGS='-D_NETBSD_SOURCE -std=c++11'
+    ;;
+esac
+export TL_MAKE_FLAGS
+
+./Build -C $BUILDARGS
+
+mv inst/bin/* $arch
+tar czvf texlive-bin-$arch.tar.gz $arch
