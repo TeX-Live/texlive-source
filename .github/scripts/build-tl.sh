@@ -52,8 +52,6 @@ then
        pkg install pkg://solaris/developer/gcc-5
        # maybe only the following is enough, and fortran and gobjc needs not be installed?
        # pkg install pkg://solaris/developer/gcc/gcc-c++-5 pkg://solaris/developer/gcc/gcc-c++-5
-       echo "Solaris support is WIP, please help!" >&2
-       exit 1
        ;;
      *)
        echo "Unsupported build system: $buildsys" >&2
