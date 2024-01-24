@@ -2,16 +2,16 @@
 .\"
 .TH "CTWILL" "1" "December 02, 2023" "Web2c @VERSION@" "General Commands Manual"
 .SH NAME
-ctwill, ctwill-proofsort, ctwill-refsort, ctwill-twinx - translate CWEB to TeX with
-mini-indexes
+ctwill, ctwill-proofsort, ctwill-refsort, ctwill-twinx \- translate CWEB to TeX with
+mini\-indexes
 .SH SYNOPSIS
 \f[B]ctwill\f[R] [\f[I]options\f[R]] \f[I]webfile\f[R][.w]
-[{\f[I]changefile\f[R][.ch]|-} [\f[I]outfile\f[R][.tex]]]
+[{\f[I]changefile\f[R][.ch]|\-} [\f[I]outfile\f[R][.tex]]]
 .PD 0
 .P
 .PD
 \f[B]ctwill-proofsort\f[R] < \f[I]texfile\f[R].tex >
-\f[I]texfile\f[R]-sorted.tex
+\f[I]texfile\f[R]\-sorted.tex
 .PD 0
 .P
 .PD
@@ -26,12 +26,12 @@ The \f[B]ctwill\f[R] program converts a CWEB source document into a
 TeX\ file that may be formatted and printed in the usual way.
 It takes appropriate care of typographic details like page layout and
 the use of indentation, \f[I]italics\f[R], \f[B]boldface\f[R], etc., and
-it supplies extensive cross-index information that it gathers
+it supplies extensive cross\-index information that it gathers
 automatically.
 .PP
 CWEB allows you to prepare a single document containing all the
 information that is needed both to produce a compilable C/C++\ program
-and to produce a well-formatted document describing the program in as
+and to produce a well\-formatted document describing the program in as
 much detail as the writer may desire.
 The user of CWEB ought to be familiar with TeX as well as C/C++.
 .SH USAGE
@@ -46,7 +46,7 @@ If there is a third name, it overrides the default name of the output
 file, which is ordinarily the same as the name of the input file (but on
 the current directory) with the extension \f[B].tex\f[R].
 If you just want to change the output file name, but don\[cq]t have a
-change file to apply, you can use `\f[B]-\f[R]' as the second argument.
+change file to apply, you can use `\f[B]\-\f[R]' as the second argument.
 .PP
 \f[B]ctwill\f[R] is exactly like \f[B]cweave\f[R] except that it
 produces much better documentation, for which you must work much harder.
@@ -55,7 +55,7 @@ to get decent answers.
 Moreover, you must run the output twice through TeX.
 .PP
 After \f[B]tex foo\f[R] you will have output that looks like final pages
-except that the entries of mini-indexes won\[cq]t be alphabetized.
+except that the entries of mini\-indexes won\[cq]t be alphabetized.
 The first run produces a weird file called \f[B]foo.ref\f[R].
 Say \f[B]ctwill-refsort < foo.ref > foo.sref\f[R] and then another \f[B]tex
 foo\f[R] will produce alphabetized output.
@@ -67,11 +67,11 @@ The individual programs should define their names with a line of the
 form \f[B]\[rs]def\[rs]title{NAME}\f[R].
 For your convenience, \f[B]ctwill-twinx\f[R] grabs the first \[lq]word\[rq] in
 \f[B]\[rs]title\f[R] and turns it into uppercase form.
-You should adapt file \f[B]twinx-startup.tex\f[R] for the first page of
+You should adapt file \f[B]ctwill-twinx\-startup.tex\f[R] for the first page of
 the master index.
 .PP
-The mini-indexes list identifiers that are used but not defined on each
-two-page spread.
+The mini\-indexes list identifiers that are used but not defined on each
+two\-page spread.
 At the end of each section, \f[B]ctwill\f[R] gives TeX a list of
 identifiers used in that section and information about where they are
 defined.
@@ -86,7 +86,7 @@ for a file called \f[B]system.bux\f[R], which will be read if present.
 And after \f[B]foo.aux\f[R], a third possibility is \f[B]foo.bux\f[R].
 The general convention is to put definitions of system procedures such
 as \f[I]printf\f[R] into \f[B]system.bux\f[R], and to put definitions
-found in specifically foo-ish header files into \f[B]foo.bux\f[R].
+found in specifically foo\-ish header files into \f[B]foo.bux\f[R].
 Like the \f[B].aux\f[R] files, \f[B].bux\f[R] files should contain only
 \f[B]\[at]$\f[R] specifications.
 .PP
@@ -95,10 +95,10 @@ components: an identifier (followed by space), a program name (enclosed
 in braces), a section number (followed by space), and a TeX\ part.
 .PP
 A special \f[I]proofmode\f[R] is provided so that you can check
-\f[B]ctwill\f[R]\[cq]s conclusions about cross-references.
+\f[B]ctwill\f[R]\[cq]s conclusions about cross\-references.
 Run \f[B]ctwill\f[R] with the flag \f[B]+P\f[R], and TeX will produce a
-specially formatted document with mini-indexes for each section, so that
-you can check that your specifications are correct.
+specially formatted document with mini\-indexes for each section, so
+that you can check that your specifications are correct.
 .PP
 This \f[I]proofmode\f[R] format is used in conjunction with
 \f[B]pdfctproofmac.tex\f[R] that creates active hyperlinks in PDF and HINT
@@ -107,31 +107,31 @@ You can use \f[B]ctwill-proofsort\f[R] to get the index entries in alphabetical
 order; just invoke
 .IP \[bu] 2
 \f[B]ctwill-proofsort\f[R] < \f[I]texfile\f[R].tex >
-\f[I]texfile\f[R]-sorted.tex
+\f[I]texfile\f[R]\-sorted.tex
 .IP \[bu] 2
-\f[B]mv\f[R] \f[I]texfile\f[R]-sorted.tex \f[I]texfile\f[R].tex
+\f[B]mv\f[R] \f[I]texfile\f[R]\-sorted.tex \f[I]texfile\f[R].tex
 .PP
 after invoking \f[B]ctwill\f[R] (twice), but before invoking TeX (once).
 .PP
 More details how to use \f[B]ctwill\f[R] can be found in the first
 sections of its source code, respectively the change file
-\f[B]cweav-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
+\f[B]cweav\-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
 A complete example with all bells and whistles is described in
-\f[B]Mini-Indexes for Literate Programs\f[R], pages 225\[en]245 of
+\f[B]Mini\-Indexes for Literate Programs\f[R], pages 225\[en]245 of
 Knuth\[cq]s \f[B]Digital Typography\f[R] (\f[I]CSLI\f[R], 1999).
 .SH DIFFERENCES TO ORIGINAL CTWILL
 The present incarnation of \f[B]ctwill\f[R] and its utilities tries hard
-to be a drop-in replacement for the original package.
+to be a drop\-in replacement for the original package.
 There are, however, a few differences worth noting:
 .IP \[bu] 2
 This version is based on the most recent version of CWEB (4.11).
 .IP \[bu] 2
-In TeX\ Live the utility programs are prefixed with \f[B]ctwill-\f[R]
+In TeX\ Live the utility programs are prefixed with \f[B]ctwill\-\f[R]
 and the macro files with \f[B]ct\f[R] for technical reasons.
 .IP \[bu] 2
-Options \f[B]--help\f[R], \f[B]--quiet\f[R], \f[B]--verbose\f[R],
-\f[B]--version\f[R], and flags \f[B]+c\f[R], \f[B]-i\f[R], \f[B]-o\f[R],
-and \f[B]+lX\f[R] are new in CWEBbin and TeX\ Live.
+Options \f[B]\-\-help\f[R], \f[B]\-\-quiet\f[R], \f[B]\-\-verbose\f[R],
+\f[B]\-\-version\f[R], and flags \f[B]+c\f[R], \f[B]\-i\f[R],
+\f[B]\-o\f[R], and \f[B]+lX\f[R] are new in CWEBbin and TeX\ Live.
 .IP \[bu] 2
 Option \f[B]+lX\f[R] is accompanied by example wrapper files for
 \f[B]ctwimac.tex\f[R] and \f[B]ctproofmac.tex\f[R] with translated
@@ -142,21 +142,21 @@ Option \f[B]+lX\f[R] is also accompanied by an extended
 active hyperlinks (\f[B]+lpdf\f[R]).
 .IP \[bu] 2
 \f[B]ctwill\f[R] in TeX\ Live operates silently by default; use the
-\f[B]--verbose\f[R] option to get the original behavior.
+\f[B]\-\-verbose\f[R] option to get the original behavior.
 .IP \[bu] 2
 File lookup with the environment variable CWEBINPUTS is extended to
-permit several, colon-separated, paths; see ENVIRONMENT below.
+permit several, colon\-separated, paths; see ENVIRONMENT below.
 .IP \[bu] 2
 If properly configured, the main program \f[B]ctwill\f[R] is localized
 with the \[lq]GNU gettext utilities\[rq].
 .SH OPTIONS
-Options on the command line may be either turned off with `\f[B]-\f[R]'
+Options on the command line may be either turned off with `\f[B]\-\f[R]'
 (if they are on by default) or turned on with `\f[B]+\f[R]' (if they are
 off by default).
 In fact, the options are processed from left to right, so a sequence
-like \f[B]--verbose -h\f[R] will only show the \f[B]banner line\f[R]
+like \f[B]\-\-verbose \-h\f[R] will only show the \f[B]banner line\f[R]
 (\f[B]+b\f[R]) and the \f[B]progress report\f[R] (\f[B]+p\f[R]), but
-leave out the \f[B]happy message\f[R] (\f[B]-h\f[R]).
+leave out the \f[B]happy message\f[R] (\f[B]\-h\f[R]).
 .IP \[bu] 2
 \f[B]+b\f[R]: print banner line on terminal
 .IP \[bu] 2
@@ -164,29 +164,30 @@ leave out the \f[B]happy message\f[R] (\f[B]-h\f[R]).
 .IP \[bu] 2
 \f[B]+p\f[R]: print progress report messages
 .IP \[bu] 2
-\f[B]+q\f[R]/\f[B]-q\f[R]: shortcut for \f[B]-bhp\f[R]; also
-\f[B]--quiet\f[R] (default)
+\f[B]+q\f[R]/\f[B]\-q\f[R]: shortcut for \f[B]\-bhp\f[R]; also
+\f[B]\-\-quiet\f[R] (default)
 .IP \[bu] 2
-\f[B]+v\f[R]/\f[B]-v\f[R]: shortcut for \f[B]+bhp\f[R]; also
-\f[B]--verbose\f[R]
+\f[B]+v\f[R]/\f[B]\-v\f[R]: shortcut for \f[B]+bhp\f[R]; also
+\f[B]\-\-verbose\f[R]
 .IP \[bu] 2
 \f[B]+c\f[R]: check temporary output for changes
 .IP \[bu] 2
-\f[B]-e\f[R]: do not enclose C/C++\ material in \f[B]\[rs]PB{\&...}\f[R]
+\f[B]\-e\f[R]: do not enclose C/C++\ material in
+\f[B]\[rs]PB{\&...}\f[R]
 .IP \[bu] 2
-\f[B]-f\f[R]: do not force a newline after every C/C++\ statement in
+\f[B]\-f\f[R]: do not force a newline after every C/C++\ statement in
 output
 .IP \[bu] 2
-\f[B]-i\f[R]: suppress indentation of parameter declarations
+\f[B]\-i\f[R]: suppress indentation of parameter declarations
 .IP \[bu] 2
-\f[B]-o\f[R]: suppress separation of declarations and statements
+\f[B]\-o\f[R]: suppress separation of declarations and statements
 .IP \[bu] 2
-\f[B]-x\f[R]: omit indices, section names, table of contents
+\f[B]\-x\f[R]: omit indices, section names, table of contents
 .IP \[bu] 2
 \f[B]+P\f[R]: \f[B]\[rs]input ctproofmac.tex\f[R] instead of
 \f[B]ctwimac.tex\f[R]
 .IP \[bu] 2
-\f[B]+lX\f[R]/\f[B]-lX\f[R]: use macros for language \f[I]X\f[R] as of
+\f[B]+lX\f[R]/\f[B]\-lX\f[R]: use macros for language \f[I]X\f[R] as of
 \f[I]X\f[R]{\f[B]ctwimac\f[R]|\f[B]ctproofmac\f[R]}\f[B].tex\f[R]
 .IP \[bu] 2
 \f[B]+s\f[R]: print usage statistics
@@ -194,9 +195,9 @@ output
 \f[B]+t\f[R]: treat \f[B]typename\f[R] in a template like
 \f[B]typedef\f[R]
 .IP \[bu] 2
-\f[B]--help\f[R]: display help message and exit
+\f[B]\-\-help\f[R]: display help message and exit
 .IP \[bu] 2
-\f[B]--version\f[R]: output version information and exit
+\f[B]\-\-version\f[R]: output version information and exit
 .SH ENVIRONMENT
 The environment variable CWEBINPUTS is used to search for the input
 files, or the system default if CWEBINPUTS is not set.

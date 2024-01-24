@@ -1,3 +1,8 @@
+2024-01-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* cweb.man: Regenerate with Pandoc 3.1.11.1.
+
 2023-12-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man: CWEB 4.11 release.

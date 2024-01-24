@@ -1,3 +1,11 @@
+2024-01-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweave.w,
+	* cwebmac.tex,
+	* prod-cweave.w,
+	* prod-twill.w,
+	* prod.w: Changes for CWEB 4.12 (dev).
+
 2023-12-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

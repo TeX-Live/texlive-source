@@ -185,7 +185,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
 \+& |if_head| \alt|stmt| |exp| & |else_head| \alt|stmt| |exp|
     & $\!\!$ \&{if} ($x$) ${}\{\,y\,\}{}$\cr
 \advance\midcol20pt
-\+& |do_like| |stmt| |else_like| |semi| & |stmt| \hfill
+\+\dagit& |do_like| |stmt| |else_like| |semi| & |stmt| \hfill
       $D\,\\{bsp}\,|noop|\,|cancel|\,S\,|cancel|\,|noop|\,\\{bsp}\,ES$%
       & \&{do} $f$($x$); \&{while} ($g$($x$));\cr
 \advance\midcol-20pt
@@ -333,6 +333,8 @@ Rules 35, 117: The |exp| must not be immediately followed by |lpar|, |lbrack|,
 |exp|, or~|cast|.
 
 Rule 48: The |exp| or |int_like| must not be immediately followed by |base|.
+
+Rule 69: The $|do|\ldots|while|$ loop is wrapped in |force| if \.{CWEAVE} is invoked with the \.{-f} option.
 
 Rule 76: The |force| in the |stmt| line becomes \\{bsp} if \.{CWEAVE} has
 been invoked with the \.{-f} option.

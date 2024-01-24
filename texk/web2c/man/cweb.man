@@ -2,15 +2,15 @@
 .\"
 .TH "CWEB" "1" "August 20, 2022" "Web2c @VERSION@" "General Commands Manual"
 .SH NAME
-ctangle, cweave - translate CWEB to C/C++ and/or TeX
+ctangle, cweave \- translate CWEB to C/C++ and/or TeX
 .SH SYNOPSIS
 \f[B]ctangle\f[R] [\f[I]options\f[R]] \f[I]webfile\f[R][.w]
-[{\f[I]changefile\f[R][.ch]|-} [\f[I]outfile\f[R][.c]]]
+[{\f[I]changefile\f[R][.ch]|\-} [\f[I]outfile\f[R][.c]]]
 .PD 0
 .P
 .PD
 \f[B]cweave\f[R] [\f[I]options\f[R]] \f[I]webfile\f[R][.w]
-[{\f[I]changefile\f[R][.ch]|-} [\f[I]outfile\f[R][.tex]]]
+[{\f[I]changefile\f[R][.ch]|\-} [\f[I]outfile\f[R][.tex]]]
 .SH DESCRIPTION
 The \f[B]ctangle\f[R] program converts a CWEB source document into a
 C/C++\ program that may be compiled in the usual way.
@@ -21,12 +21,12 @@ The \f[B]cweave\f[R] program converts the same CWEB file into a
 TeX\ file that may be formatted and printed in the usual way.
 It takes appropriate care of typographic details like page layout and
 the use of indentation, \f[I]italics\f[R], \f[B]boldface\f[R], etc., and
-it supplies extensive cross-index information that it gathers
+it supplies extensive cross\-index information that it gathers
 automatically.
 .PP
 CWEB allows you to prepare a single document containing all the
 information that is needed both to produce a compilable C/C++\ program
-and to produce a well-formatted document describing the program in as
+and to produce a well\-formatted document describing the program in as
 much detail as the writer may desire.
 The user of CWEB ought to be familiar with TeX as well as C/C++.
 .SH USAGE
@@ -41,37 +41,38 @@ If there is a third name, it overrides the default name of the output
 file, which is ordinarily the same as the name of the input file (but on
 the current directory) with the extension \f[B].tex\f[R].
 If you just want to change the output file name, but don\[cq]t have a
-change file to apply, you can use `\f[B]-\f[R]' as the second argument.
+change file to apply, you can use `\f[B]\-\f[R]' as the second argument.
 .SH DIFFERENCES TO ORIGINAL CWEB
-CWEBbin tries hard to be a drop-in replacement for CWEB, so in general
+CWEBbin tries hard to be a drop\-in replacement for CWEB, so in general
 you should not notice any differences in invoking the programs nor in
 the resulting output.
 There are, however, a few differences worth noting:
 .IP \[bu] 2
-Options \f[B]--help\f[R], \f[B]--quiet\f[R], \f[B]--verbose\f[R],
-\f[B]--version\f[R], and flags \f[B]+c\f[R], \f[B]-i\f[R], \f[B]-o\f[R],
-\f[B]+u\f[R], and \f[B]+lX\f[R] are new in CWEBbin and TeX\ Live.
+Options \f[B]\-\-help\f[R], \f[B]\-\-quiet\f[R], \f[B]\-\-verbose\f[R],
+\f[B]\-\-version\f[R], and flags \f[B]+c\f[R], \f[B]\-i\f[R],
+\f[B]\-o\f[R], \f[B]+u\f[R], and \f[B]+lX\f[R] are new in CWEBbin and
+TeX\ Live.
 .IP \[bu] 2
 Option \f[B]+lX\f[R] is accompanied by several wrapper files for
 \f[B]cwebmac.tex\f[R] with translated captions for German
 (\f[B]+ld\f[R]), French (\f[B]+lf\f[R]), and Italian (\f[B]+li\f[R]).
 .IP \[bu] 2
 CWEB in TeX\ Live operates silently by default (as of 2019); use the
-\f[B]--verbose\f[R] option to get the original behavior.
+\f[B]\-\-verbose\f[R] option to get the original behavior.
 .IP \[bu] 2
 File lookup with the environment variable CWEBINPUTS is extended to
-permit several, colon-separated, paths; see ENVIRONMENT below.
+permit several, colon\-separated, paths; see ENVIRONMENT below.
 .IP \[bu] 2
 If properly configured, the main programs \f[B]ctangle\f[R] and
 \f[B]cweave\f[R] are localized with the \[lq]GNU gettext utilities\[rq].
 .SH OPTIONS
-Options on the command line may be either turned off with `\f[B]-\f[R]'
+Options on the command line may be either turned off with `\f[B]\-\f[R]'
 (if they are on by default) or turned on with `\f[B]+\f[R]' (if they are
 off by default).
 In fact, the options are processed from left to right, so a sequence
-like \f[B]--verbose -h\f[R] will only show the \f[B]banner line\f[R]
+like \f[B]\-\-verbose \-h\f[R] will only show the \f[B]banner line\f[R]
 (\f[B]+b\f[R]) and the \f[B]progress report\f[R] (\f[B]+p\f[R]), but
-leave out the \f[B]happy message\f[R] (\f[B]-h\f[R]).
+leave out the \f[B]happy message\f[R] (\f[B]\-h\f[R]).
 .PP
 The first batch of options are common to both \f[B]ctangle\f[R] and
 \f[B]cweave\f[R]:
@@ -82,40 +83,41 @@ The first batch of options are common to both \f[B]ctangle\f[R] and
 .IP \[bu] 2
 \f[B]+p\f[R]: print progress report messages
 .IP \[bu] 2
-\f[B]+q\f[R]/\f[B]-q\f[R]: shortcut for \f[B]-bhp\f[R]; also
-\f[B]--quiet\f[R] (default)
+\f[B]+q\f[R]/\f[B]\-q\f[R]: shortcut for \f[B]\-bhp\f[R]; also
+\f[B]\-\-quiet\f[R] (default)
 .IP \[bu] 2
-\f[B]+v\f[R]/\f[B]-v\f[R]: shortcut for \f[B]+bhp\f[R]; also
-\f[B]--verbose\f[R]
+\f[B]+v\f[R]/\f[B]\-v\f[R]: shortcut for \f[B]+bhp\f[R]; also
+\f[B]\-\-verbose\f[R]
 .IP \[bu] 2
 \f[B]+c\f[R]: check temporary output for changes
 .IP \[bu] 2
 \f[B]+s\f[R]: print usage statistics
 .IP \[bu] 2
-\f[B]--help\f[R]: display help message and exit
+\f[B]\-\-help\f[R]: display help message and exit
 .IP \[bu] 2
-\f[B]--version\f[R]: output version information and exit
+\f[B]\-\-version\f[R]: output version information and exit
 .PP
 There is one other option applicable to \f[B]ctangle\f[R] only:
 .IP \[bu] 2
 \f[B]+k\f[R]: keep separators in numeric literals in the output
 .IP \[bu] 2
-\f[B]+u\f[R]: transliterate UTF-8 charcters in C code
+\f[B]+u\f[R]: transliterate UTF\-8 charcters in C code
 .PP
 There are seven other options applicable to \f[B]cweave\f[R] only:
 .IP \[bu] 2
-\f[B]-e\f[R]: do not enclose C/C++\ material in \f[B]\[rs]PB{\&...}\f[R]
+\f[B]\-e\f[R]: do not enclose C/C++\ material in
+\f[B]\[rs]PB{\&...}\f[R]
 .IP \[bu] 2
-\f[B]-f\f[R]: do not force a newline after every C/C++\ statement in
+\f[B]\-f\f[R]: do not force a newline after every C/C++\ statement in
 output
 .IP \[bu] 2
-\f[B]-i\f[R]: suppress indentation of parameter declarations
+\f[B]\-i\f[R]: suppress indentation of parameter declarations
 .IP \[bu] 2
-\f[B]-o\f[R]: suppress separation of declarations and statements
+\f[B]\-o\f[R]: suppress separation of declarations and statements
 .IP \[bu] 2
-\f[B]-x\f[R]: omit indices, section names, table of contents
+\f[B]\-x\f[R]: omit indices, section names, table of contents
 .IP \[bu] 2
-\f[B]+lX\f[R]/\f[B]-lX\f[R]: use macros for language \f[I]X\f[R] as of
+\f[B]+lX\f[R]/\f[B]\-lX\f[R]: use macros for language \f[I]X\f[R] as of
 \f[I]X\f[R]\f[B]cwebmac.tex\f[R]
 .IP \[bu] 2
 \f[B]+t\f[R]: treat \f[B]typename\f[R] in a template like

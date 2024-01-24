@@ -1813,6 +1813,10 @@ static char cat_name[256][12]; /* |12==strlen("struct_head")+1| */
     strcpy(cat_name[typedef_like],"typedef");
     strcpy(cat_name[define_like],"define");
     strcpy(cat_name[template_like],"template");
+    strcpy(cat_name[alignas_like],"alignas");
+    strcpy(cat_name[using_like],"using");
+    strcpy(cat_name[default_like],"default");
+    strcpy(cat_name[attr],"attr");
     strcpy(cat_name[ftemplate],"ftemplate");
     strcpy(cat_name[new_exp],"new_exp");
     strcpy(cat_name[begin_arg],"@@["@q]@>);
@@ -1820,10 +1824,6 @@ static char cat_name[256][12]; /* |12==strlen("struct_head")+1| */
     strcpy(cat_name[lbrack],"[");
     strcpy(cat_name[rbrack],"]");
     strcpy(cat_name[attr_head],"attr_head");
-    strcpy(cat_name[attr],"attr");
-    strcpy(cat_name[alignas_like],"alignas");
-    strcpy(cat_name[using_like],"using");
-    strcpy(cat_name[default_like],"default");
     strcpy(cat_name[0],"zero");
 
 @ This code allows \.{CWEAVE} to display its parsing steps.
@@ -2917,9 +2917,12 @@ if (cat1==stmt || cat1==exp) {
 
 @ @<Cases for |do_like|@>=
 if (cat1==stmt && cat2==else_like && cat3==semi) {
+  if (!force_lines) big_app(force);
   big_app1(pp); big_app(break_space); app(noop); big_app(cancel);
   big_app1(pp+1); big_app(cancel); app(noop); big_app(break_space);
-  big_app2(pp+2); reduce(pp,4,stmt,-1,69);
+  big_app2(pp+2);
+  if (!force_lines) big_app(force);
+  reduce(pp,4,stmt,-1,69);
 }
 
 @ @<Cases for |case_like|@>=
