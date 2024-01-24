@@ -79,6 +79,9 @@ touch ./utils/asymptote/camp.tab.cc
 touch ./utils/asymptote/camp.tab.h
 touch ./utils/lacheck/lacheck.c
 touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
+# sometimes dvipng.1 seems to be outdated
+touch ./texk/dvipng/doc/dvipng.1
+touch ./texk/dvipng/dvipng-src/dvipng.1
 
 # default settings
 TL_MAKE_FLAGS="-j 2"
