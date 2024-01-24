@@ -49,6 +49,9 @@ then
        pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
      solaris)
+       pkg install pkg://solaris/developer/gcc-5
+       # maybe only the following is enough, and fortran and gobjc needs not be installed?
+       # pkg install pkg://solaris/developer/gcc/gcc-c++-5 pkg://solaris/developer/gcc/gcc-c++-5
        echo "Solaris support is WIP, please help!" >&2
        exit 1
        ;;
@@ -92,8 +95,16 @@ case "$arch" in
     BUILDARGS="--enable-arm-neon=on"
     ;;
   *-solaris)
-    export CC="/path/to/gcc-5.5 -m64"
-    export CXX="/path/to/g++-5.5 -m64"
+    export PATH=/opt/csw/bin:$PATH
+    export TL_MAKE=gmake
+    if [ $arch = "i386-solaris" ]
+    then
+      export CC="gcc -m32"
+      export CXX="g++ -m32"
+    else
+      export CC="gcc -m64"
+      export CXX="g++ -m64"
+    fi
     ;;
   *-freebsd)
     export TL_MAKE=gmake
