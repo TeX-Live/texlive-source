@@ -134,7 +134,7 @@ jobs:
           - os: netbsd
             ci_build: false
           - os: solaris
-            ci_build: false
+            ci_build: true
 
     steps:
       - name: checkout-main
