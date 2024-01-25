@@ -49,9 +49,9 @@ then
        pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
      solaris)
-       pkg install pkg://solaris/developer/gcc-5
+       # pkg install pkg://solaris/developer/gcc-5
        # maybe only the following is enough, and fortran and gobjc needs not be installed?
-       # pkg install pkg://solaris/developer/gcc/gcc-c++-5 pkg://solaris/developer/gcc/gcc-c++-5
+       pkg install pkg://solaris/developer/gcc/gcc-c++-5
        ;;
      *)
        echo "Unsupported build system: $buildsys" >&2

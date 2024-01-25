@@ -164,6 +164,7 @@ jobs:
         if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
         with: 
           usesh: true
+          release: '11.4-gcc'
           run: |
             cd repo
             sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
