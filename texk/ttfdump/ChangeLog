@@ -5,9 +5,11 @@
 	is numGlyphs+1 and not numGlyphs, per
 https://developer.apple.com/fonts/TrueType-Reference-Manual/RM06/Chap6hdmx.html
 	but since the program has always read numGlyphs+1, just leaving it.
-	Report (and alternate fix) from attackoncs,
-	https://github.com/TeX-Live/texlive-source/pull/63
-
+	Report from Dongzhuozhao, working with ADlab of Venustech,
+	https://bugs.launchpad.net/ubuntu/+source/texlive-bin/+bug/2047912
+        and also reported (with alternate fix) from attackoncs,
+	https://github.com/TeX-Live/texlive-source/pull/63.
+	
 2023-08-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/ttfdump.test: Make easier to test on Windows.
