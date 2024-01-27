@@ -21,8 +21,16 @@ rc=0
 ## test for is.knj.str$
 
 icuver=1000
-$_bibtexu --version | grep 'ICU version' | sed -E 's/.*ICU version ([1-9][0-9])\..*/\1/' > tests/icuver.txt
+$_bibtexu --version | sed -n 's/.*ICU version \([1-9][0-9]\)\..*/\1/p' \
+  >tests/icuver.txt
 icuver=`cat tests/icuver.txt`
+if test -z "$icuver"; then
+  echo "$0: quitting, could not determine icu version from bibtexu" >&2
+  echo "$0: ($_bibtexu --version)" >&2
+  $_bibtexu --version >&2
+  exit 1
+fi
+
 echo "*** icuver="$icuver
 if [ $icuver -lt 74 ]; then
   # skip CJK Ideograph Extension I

@@ -1,3 +1,8 @@
+2024-01-27  Karl Berry  <karl@freefriends.org>
+
+	* tests/bibtexu-iscjk.test: sed -E is not portable to Solaris 10
+	(and other systems); also, use sed -n .../p instead of grep.
+
 2023-12-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:
