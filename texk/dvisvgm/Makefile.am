@@ -36,10 +36,11 @@ DISTCLEANFILES = config.force CXXLD.sh
 
 ## Tests (our trivial one and additions, not the original full test suite).
 ##
-TESTS = tests/dvisvgm.test tests/dvisvgm-sample.test tests/dvisvgm-uptex.test
+TESTS = tests/dvisvgm.test tests/dvisvgm-sample.test tests/dvisvgm-uptex.test tests/dvisvgm-hara.test
 tests/dvisvgm.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
 tests/dvisvgm-sample.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
 tests/dvisvgm-uptex.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
+tests/dvisvgm-hara.log: $(DVISVGM_TREE)/src/dvisvgm$(EXEEXT)
 EXTRA_DIST += $(TESTS)
 
 ## dvisvgm-sample.test
@@ -47,7 +48,7 @@ EXTRA_DIST += tests/sample_v2-nf.svg tests/sample_v2-wf.svg \
 	tests/sample_v3-nf.svg tests/sample_v3-wf.svg
 DISTCLEANFILES += sample*.svg
 
-## dvisvgm-uptex.test
+## dvisvgm-uptex.test, dvisvgm-hara.test
 EXTRA_DIST += tests/upjf.dvi tests/upjf.tfm tests/upjv.tfm \
 	tests/upjf-r.tfm tests/upjf-g.tfm tests/upjv-r.tfm tests/upjv-g.tfm \
 	tests/upjf-r00.ofm tests/upjf-g00.ofm tests/upjv-r00.ofm tests/upjv-g00.ofm \
