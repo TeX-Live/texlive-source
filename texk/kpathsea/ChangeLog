@@ -1,3 +1,11 @@
+2024-01-27  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (kpathsea_name_ok): 
+	* tests/kpsesafe.test: kpse_expand (variable and ~ expansion)
+	input name when needed; don't reject /dir/.foo if extended
+	and it matches TEXMF[SYS]VAR, since TEXMFVAR=~/.texliveYYYY is the
+	case that matters in practice. Report from Marcel.
+
 2024-01-17  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpse_{in,out}_name_ok{,_silent}_extended):

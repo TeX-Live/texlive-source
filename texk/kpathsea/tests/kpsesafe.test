@@ -21,21 +21,37 @@ echo "/rootdir ok for reading, not writing."
 $_kpsewhich --safe-in-name=/ifoo.tex || exit 5
 $_kpsewhich --safe-out-name=/ofoo.tex && exit 6
 
+echo ".dotfile and .dotdir/file not ok for writing."
+$_kpsewhich --safe-out-name=.ifoo.tex && exit 7
+$_kpsewhich --safe-out-name=.idir/ifoo.tex && exit 8
+
 echo "TEXMF_OUTPUT_DIRECTORY and TEXMFOUTPUT ok for writing."
 TEXMF_OUTPUT_DIRECTORY=/xdir \
-  $_kpsewhich --safe-out-name=/xdir/ofoo.tex || exit 7
+  $_kpsewhich --safe-out-name=/xdir/ofoo.tex || exit 9
 TEXMFOUTPUT=/ydir \
-  $_kpsewhich --safe-out-name=/ydir/ofoo.tex || exit 8
+  $_kpsewhich --safe-out-name=/ydir/ofoo.tex || exit 10
 
-echo "TEXMFVAR and TEXMFSYSVAROUTPUT ok for writing only if extended."
+echo "TEXMF[SYS]VAR ok for writing only if extended."
 TEXMFVAR=/xvar \
-  $_kpsewhich --safe-out-name=/xvar/ofoo.tex && exit 9
+  $_kpsewhich --safe-out-name=/xvar/ofoo.tex && exit 11
 TEXMFSYSVAR=/yvar \
-  $_kpsewhich --safe-out-name=/yvar/ofoo.tex && exit 10
+  $_kpsewhich --safe-out-name=/yvar/ofoo.tex && exit 12
 #
 TEXMFVAR=/avar \
-  $_kpsewhich --safe-extended-out-name=/avar/ofoo.tex || exit 11
+  $_kpsewhich --safe-extended-out-name=/avar/ofoo.tex || exit 13
 TEXMFSYSVAR=/bvar \
-  $_kpsewhich --safe-extended-out-name=/bvar/ofoo.tex || exit 12
+  $_kpsewhich --safe-extended-out-name=/bvar/ofoo.tex || exit 14
+
+# In practice, TEXMFVAR=~/.texliveYYYY, so this is the case that matters,
+# but in principle it should work for TEXMFSYSVAR too.
+echo "TEXMF[SYS]VAR ok for writing when if set to ~/.something."
+TEXMFVAR='~/.xvar' \
+  $_kpsewhich --safe-extended-out-name='~/.xvar/ofoo.tex' || exit 15
+TEXMFSYSVAR='~/.yvar' \
+  $_kpsewhich --safe-extended-out-name='~/.yvar/ofoo.tex' || exit 16
+
+echo "~/.ssh not ok for writing if TEXMF[SYS]VAR is set ~/.foo."
+TEXMFVAR='~/.foo' \
+  $_kpsewhich --safe-extended-out-name='~/.ssh/ofoo.tex' && exit 17
 
 : # exit successfully if get to the end.

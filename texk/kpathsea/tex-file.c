@@ -1200,7 +1200,7 @@ abs_fname_ok (const_string fname, const_string checkdir)
     checkdir             /* checkdir must be non-null */
     && *checkdir != '\0' /* checkdir must be non-empty */
     && fname == strstr (fname, checkdir)      /* fname must begin checkdir */
-    && IS_DIR_SEP (fname[strlen (checkdir)]); /* and be followed by /. */
+    && IS_DIR_SEP (fname[strlen (checkdir)]); /* and be followed by / */
 }
 
 /* Here is the general internal subroutine, kpathsea_name_ok, for
@@ -1226,6 +1226,8 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
                   const_string default_choice, ok_type action,
                   boolean silent, boolean extended)
 {
+  const_string expanded_fname = NULL;
+
   /* We distinguish three cases:
      'a' (any)        allows any file to be opened.
      'r' (restricted) means disallowing special filenames.
@@ -1251,17 +1253,34 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (*open_choice == 'a' || *open_choice == 'y' || *open_choice == '1')
     return true;
 
+  /* Now we need to expand FNAME before doing the absolute-path checks,
+     since TEXMFVAR is typically ~/.texliveYYYY, and we want to allow it.  */
+  expanded_fname = kpathsea_expand (kpse, fname);
+
 #if defined (unix) && !defined (MSDOS)
   {
     /* Disallow .rhosts, .login, .ssh/, ..somefile, ..somedir/somefile,
-       etc.  But allow .tex (for base LaTeX).  */
+       etc.  But allow .tex (for base LaTeX).  Also specially allow
+       /foo/.whatever if extended, since it might match against
+       TEXMF[SYS]VAR below.  */
     const_string q;
     const_string qq = fname;
-    while ((q = strchr (qq, '.'))) {            /* at each dot */
+    while ((q = strchr (qq, '.'))) {            /* at each dot              */
       if ((q == fname || IS_DIR_SEP (*(q - 1))) /* start or / precedes dot? */
-          && !IS_DIR_SEP (*(q + 1))             /* ok if /./ */
-          && !(*(q + 1) == '.' && IS_DIR_SEP (*(q + 2))) /* ok  if /../ */
-          && !STREQ (q, ".tex")) {              /* specially allow .tex */
+          && !IS_DIR_SEP (*(q + 1))             /* ok if /./                */
+          && !(*(q + 1) == '.' && IS_DIR_SEP (*(q + 2))) /* ok if /../      */
+          && !STREQ (q, ".tex")                 /* specially allow .tex     */
+          && !(extended && kpathsea_absolute_p (kpse, expanded_fname, false))
+               /* Don't quit if EXTENDED and the input is absolute,
+                  because we want to allow TEXMFVAR=~/.texliveYYYY.  This
+                  is safe because absolute input paths will be checked
+                  below, and relative input paths will still be rejected here.
+                     
+                  This does not allow the case where TEXMFVAR=.foo and
+                  the input is .foo/bar, which in principle should be
+                  accepted, but since that's not useful in practice,
+                  let's not worry about it.  */
+         ) {
         goto not_ok;
       }
       qq = q + 1;
@@ -1276,23 +1295,23 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
     return true;
 
-  if (kpathsea_absolute_p (kpse, fname, false)) {
+  if (kpathsea_absolute_p (kpse, expanded_fname, false)) {
     /* We'll check TEXMF_OUTPUT_DIRECTORY first.  This must be an
        environment variable, not a configuration file setting.  */
     const_string texmfoutdir = getenv ("TEXMF_OUTPUT_DIRECTORY");
-    if (!abs_fname_ok (fname, texmfoutdir)) {
+    if (!abs_fname_ok (expanded_fname, texmfoutdir)) {
       /* That failed. Next, check TEXMFOUTPUT, but this can be in the
          configuration file (i.e., call kpse_var_value instead of getenv).  */
       const_string texmfoutput = kpathsea_var_value (kpse, "TEXMFOUTPUT");
-      if (!abs_fname_ok (fname, texmfoutput)) {
+      if (!abs_fname_ok (expanded_fname, texmfoutput)) {
         /* That failed too.  If `extended' is set, try TEXMFVAR and
            TEXMFSYSVAR.  */
         if (extended) {
           const_string texmfvar = kpathsea_var_value (kpse, "TEXMFVAR");
-          if (!abs_fname_ok (fname, texmfvar)) {
+          if (!abs_fname_ok (expanded_fname, texmfvar)) {
             const_string texmfsysvar
               = kpathsea_var_value (kpse, "TEXMFSYSVAR");
-            if (!abs_fname_ok (fname, texmfsysvar)) {
+            if (!abs_fname_ok (expanded_fname, texmfsysvar)) {
               goto not_ok; /* nothing left to check.  */
             }
           }
@@ -1302,6 +1321,11 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
       }
     }
   }
+  /* else {
+      fprintf (stderr, "kpathsea_name_ok: not absolute %s\n", expanded_fname);
+    }
+  fprintf (stderr, "passed check abs_fname_ok(%s)\n", expanded_fname);
+  */
 
   /* For all pathnames, we disallow "../" at the beginning or "/../"
      anywhere. We need to check this for absolute paths, so fall through
@@ -1309,7 +1333,10 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
      
      We don't try to resolve relative path elements and see if we end up
      in an acceptable directory, but rather simply consider the value as
-     a string. (It's ok if other programs do such resolution, though.)  */
+     a string. (It's ok if other programs do such resolution, though.)
+     
+     Here it does not matter in practice if we check against the
+     original or expanded FNAME, so just use the original.  */
   if (fname[0] == '.' && fname[1] == '.' && IS_DIR_SEP(fname[2]))
     goto not_ok;
   else {
@@ -1327,6 +1354,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   }
 
   /* We passed all tests.  */
+  if (expanded_fname) free ((void *) expanded_fname);
   return true;
 
  not_ok: /* Some test failed.  */
@@ -1334,6 +1362,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
     fprintf (stderr, "\n%s: Not %s %s (%s = %s; %s extended check).\n",
              kpse->invocation_name, ok_type_name[action], fname,
              check_var, open_choice, extended ? "" : "no ");
+  if (expanded_fname) free ((void *) expanded_fname);
   return false;
 }
 
