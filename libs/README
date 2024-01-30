@@ -70,7 +70,7 @@ xpdf 4.04 - checked 24apr22
   https://www.xpdfreader.com/download.html
   with modifications for pdftex
 
-zlib 1.3.0 - checked 26aug23
+zlib 1.3.1 - checked 30jan24
   https://www.zlib.net/ - used by many
 
 zziplib 0.13.72 - checked 10sep22
