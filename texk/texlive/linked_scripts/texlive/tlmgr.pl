@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 69413 2024-01-13 22:43:25Z karl $
+# $Id: tlmgr.pl 69534 2024-01-22 17:55:49Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 69413 $';
-my $datrev = '$Date: 2024-01-13 23:43:25 +0100 (Sat, 13 Jan 2024) $';
+my $svnrev = '$Revision: 69534 $';
+my $datrev = '$Date: 2024-01-22 18:55:49 +0100 (Mon, 22 Jan 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -622,7 +622,9 @@ for the full story.\n";
     tldie("$prg: Try --help if you need it.\n");
   }
 
-  #
+  # nice to have the version if debugging.
+  debug("tlmgr version $tlmgrversion\n");
+
   # the main tree we will be working on
   $::maintree = $Master;
   if ($opts{"usermode"}) {
@@ -634,6 +636,7 @@ for the full story.\n";
       chomp($::maintree = `kpsewhich -var-value TEXMFHOME`);
     }
   }
+  debug("maintree=$::maintree\n");
 
   # besides doing normal logging if -logfile is specified, we try to log
   # package related actions (install, remove, update) to
@@ -10297,7 +10300,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 69413 2024-01-13 22:43:25Z karl $
+$Id: tlmgr.pl 69534 2024-01-22 17:55:49Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
