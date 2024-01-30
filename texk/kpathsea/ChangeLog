@@ -1,3 +1,9 @@
+2024-01-30  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (kpathsea_name_ok) [MSDOS]: remove [unix] from cpp
+	test, since it's not defined by clang. See thread surrounding
+	https://tug.org/pipermail/tlbuild/2024q1/005408.html.
+
 2024-01-27  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_name_ok): 
