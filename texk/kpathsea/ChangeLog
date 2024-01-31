@@ -1,3 +1,9 @@
+2024-01-31  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* tex-file.c (kpathsea_name_ok) [MSDOS]: change #ifndef MSDOS
+	to #if !defined(MSDOS) && !defined(_WIN32) because MSDOS is not
+	defined in the current Windows build.
+
 2024-01-30  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_name_ok) [MSDOS]: remove [unix] from cpp

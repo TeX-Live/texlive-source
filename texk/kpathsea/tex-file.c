@@ -1257,7 +1257,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
      since TEXMFVAR is typically ~/.texliveYYYY, and we want to allow it.  */
   expanded_fname = kpathsea_expand (kpse, fname);
 
-#ifndef MSDOS
+#if !defined(MSDOS) && !defined(_WIN32)
   { /* On non-Windows ... */
     /* Disallow .rhosts, .login, .ssh/, ..somefile, ..somedir/somefile,
        etc.  But allow .tex (for base LaTeX).  Also specially allow
@@ -1286,9 +1286,9 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
       qq = q + 1;
     }
   }
-#else /* MSDOS */
+#else /* !MSDOS && !_WIN32 */
   /* Other OSs don't have special names? */
-#endif /* MSDOS */
+#endif /* !MSDOS && !_WIN32 */
 
   /* If setting is only r(estricted), we're done.  (Not a useful setting
      in practice, but no reason to take it out now.)  */
