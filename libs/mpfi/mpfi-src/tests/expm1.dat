@@ -1,0 +1,36 @@
+# data file for mpfi_expm1
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                  -1                       53  nan -inf
+0 53 -0x1ff887a518f6d6p-53  nan                     53 -7    nan
+0 53  nan                  -0                       53  nan -0
+0 53 +0                     nan                     53 +0    nan
+0 53  nan                   0x1b7e151628aed3p-52    53  nan  1
+0 53 +inf                   nan                     53 +inf  nan
+0 53 -1                    -1                       53 -inf -inf
+2 53 -1                    -0x1ff887a518f6d5p-53    53 -inf -7
+0 53 -1                    -0                       53 -inf -0
+2 53 -1                     0x1b7e151628aed3p-52    53 -inf  1
+0 53 -1                    +inf                     53 -inf +inf
+0 53 +0                    -0                       53 +0   -0
+2 53 +0                     0x1b7e151628aed3p-52    53 +0    1
+0 53 +0                    +inf                     53 +0   +inf
+0 53 +inf                  +inf                     53 +inf +inf
+
+# regular values
+3 53 -0x1ffffffffffffep-53 -0x1ffffffffffffdp-53    53 -36      -36
+3 53 -0x1e14aed893eef4p-56  0x122d78f0fa061ap-54    53 -0.125    0.25
+1 53 -0x1e14aed893eef4p-56 -0                       53 -0.125   -0
+2 53 +0                     0x122d78f0fa061ap-54    53 +0        0.25
+3 53  0x140000000000c8p-96  0x160000000000f3p-96    53  0xap-47  0xbp-47

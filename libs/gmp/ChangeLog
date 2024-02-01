@@ -1,3 +1,9 @@
+2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* Makefile.am (mpn_sources): move mod_1.c from mpn_unused.
+	(mpz_sources): move cdiv_qr_ui.c et al. from mpz_unused.
+	This is to support libs/mpfi and interval arithmetic in mpost.
+
 2020-11-15  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import gmp-6.2.1.

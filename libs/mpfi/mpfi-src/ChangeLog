@@ -1,0 +1,364 @@
+2009-04-28 03:00  clauter
+
+	* configure.ac, doc/mpfi.info, doc/mpfi.texi: Changed version
+	  number to something greater than all different version numbers in
+	  the doc etc. Adapted documentation.
+
+2009-04-28 02:04  clauter
+
+	* ChangeLog, NEWS, README: Some history editing for releasing
+
+2009-04-22 19:07  schevill
+
+	* README: reverted nothing
+
+2009-04-22 19:05  schevill
+
+	* README: nothing
+
+2009-04-22 19:02  schevill
+
+	* configure.ac:
+
+2009-04-22 19:00  schevill
+
+	* configure.ac: temporary situation with configure.ac
+
+2009-04-22 17:42  schevill
+
+	* LinSys: Initial repository, after having created the branch for
+	  Diep
+
+2009-04-22 17:22  schevill
+
+	* AUTHORS: back to a clean situation
+
+2009-04-22 17:18  schevill
+
+	* AUTHORS:
+
+2009-04-22 17:11  schevill
+
+	* testFile:
+
+2009-04-22 17:08  schevill
+
+	* testFile:
+
+2009-04-22 17:00  schevill
+
+	* testFile:
+
+2009-04-22 16:58  schevill
+
+	* testFile:
+
+2009-04-22 16:53  schevill
+
+	* testFile:
+
+2009-04-22 16:19  schevill
+
+	* testFile: removed testFile
+
+2009-04-22 16:16  schevill
+
+	* testFile: added a file just for testing purpose
+
+2009-04-22 16:15  schevill
+
+	* AUTHORS: True list of authors
+
+2009-04-22 15:47  schevill
+
+	* AUTHORS:
+
+2009-04-22 15:47  schevill
+
+	* AUTHORS:
+
+2009-04-22 15:46  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:48  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:48  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:46  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:46  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:41  schevill
+
+	* AUTHORS:
+
+2009-04-22 14:36  schevill
+
+	* AUTHORS: Back to something clean
+
+2009-04-22 14:17  schevill
+
+	* AUTHORS:
+
+2009-04-22 13:58  schevill
+
+	* AUTHORS: Another try
+
+2009-04-22 13:57  schevill
+
+	* AUTHORS: Back to a clean version
+
+2009-04-22 13:48  schevill
+
+	* AUTHORS:
+
+2009-04-22 13:43  schevill
+
+	* AUTHORS:
+
+2009-04-22 13:41  schevill
+
+	* AUTHORS: Another try
+
+2009-04-22 13:24  schevill
+
+	* AUTHORS: Added Christoph as an author
+
+2009-04-22 13:08  schevill
+
+	* AUTHORS: Added myself as an author for testing purpose
+
+2008-07-15 11:13  hnguyen
+
+	* LinSys/src/mpfr_mat.c: change the cancellation test of all the
+	  mpfr matrix operations. Return if encounter nan flag or overflow
+	  flag. The result returned is the flags
+
+2008-07-07 08:52  hnguyen
+
+	* LinSys/src/matrix_generator.c: read matrix from file
+
+2008-07-07 08:39  hnguyen
+
+	* LinSys/src/mpfr_mat.c: test initialisation status
+
+2008-07-07 08:37  hnguyen
+
+	* LinSys/src/mpfr_mat.c, LinSys/src/mpfr_mat.h: test initialisation
+	  status
+
+2008-06-06 11:04  schevill
+
+	* LinSys/tests/test_mpfi_mat.c, LinSys/tests/test_mpfr_mat.c:
+	  corrected the address of the FSF
+
+2008-06-06 10:52  schevill
+
+	* COPYING, NEWS, depcomp, missing, src/mpfi-impl.h, src/mpfi.c,
+	  src/mpfi.h, src/mpfi_io.c, src/mpfi_io.h, src/mpfi_trigo.c,
+	  tests/test_mpfi.c, tests/test_trigo.c: corrected the address of
+	  the FSF
+
+2008-05-30 11:19  hnguyen
+
+	* configure.ac: add LinSys to the compile source
+
+2008-05-26 14:07  hnguyen
+
+	* LinSys/tests, LinSys/tests/Makefile.am,
+	  LinSys/tests/test_mpfi_mat.c, LinSys/tests/test_mpfr_mat.c:
+	  initial commit for the LinSys module's test
+
+2008-05-26 14:05  hnguyen
+
+	* LinSys, LinSys/src, LinSys/src/Makefile.am,
+	  LinSys/src/matrix_generator.c, LinSys/src/matrix_generator.h,
+	  LinSys/src/mpfi_mat.c, LinSys/src/mpfi_mat.h,
+	  LinSys/src/mpfi_mat_io.c, LinSys/src/mpfi_mat_lss.c,
+	  LinSys/src/mpfi_mat_norm.c, LinSys/src/mpfr_mat.c,
+	  LinSys/src/mpfr_mat.h: initial commit for the LinSys module
+
+2007-11-27 11:42  schevill
+
+	* src/mpfi.c: Put back the previous version of functions modified
+	  by C. Q. Lauter
+	  (modifications were useless).
+
+2007-11-27 09:30  schevill
+
+	* tests/test_mpfi, tests/test_trigo: Removed binary files that
+	  should not be in the CVS repository.
+
+2007-11-26 17:04  clauter
+
+	* src/mpfi.c, tests/test_mpfi, tests/test_trigo: Corrected
+	  precision issues in si and d. Todo: z and q.
+
+2007-11-23 16:49  clauter
+
+	* src/mpfi.c, tests/test_mpfi, tests/test_trigo: Corrected three
+	  bugs in ui - functions.
+
+2007-11-23 15:57  clauter
+
+	* src/mpfi.c, tests/test_mpfi, tests/test_trigo: Added a / in
+	  beginning of mpfi.c for making compilation possible
+
+2007-11-23 15:17  schevill
+
+	* src/mpfi.c: In mpfi_diam_rel, replaced an assignment in variable
+	  diam by an
+	  assignment in a temporary variable to avoid possible conflict
+	  between
+	  input and output variables.
+
+2007-11-23 13:12  schevill
+
+	* src/mpfi_io.c, tests/test_mpfi, tests/test_trigo: Added
+	  suggestion of Carl Witty for mpfi_set_str (strlen is now computed
+	  only once ; a test asserts that the input string is not too long
+	  for the
+	  buffer).
+
+2007-11-22 16:31  schevill
+
+	* README: Added an instruction about LD_LIBRARY_PATH in README.
+	  I personnally did not know that I had to add /usr/local/lib to my
+	  LD_LIBRARY_PATH in order for mpfi to run.
+	  
+	  Note that this concerns shared library only. Since we now compile
+	  both
+	  shared and static library, the error may happen for former users
+	  when
+	  upgrading their installation. That is why I think it is important
+	  to
+	  inform users in README.
+
+2007-11-22 15:33  schevill
+
+	* Makefile.in, aclocal.m4, config.guess, config.sub, configure,
+	  doc/Makefile.in, src/Makefile.in, tests/Makefile.in: Removing
+	  files that should not be in a CVS repository: this files are
+	  automatically generated and their content depends on the
+	  configuration
+	  of each user.
+
+2007-11-22 15:08  schevill
+
+	* src/mpfi_io.c, tests/test_mpfi, tests/test_trigo: Fixed bug 1847
+	  submitted by Julien Clement concerning mpfi_set_str when
+	  a single number was passed as argument. I am not totally
+	  convinced that
+	  this function is correct when a number is stored in an interval
+	  with
+	  more precision at its left endpoint than at its right endpoint.
+	  Should
+	  be checked.
+
+2007-11-21 18:26  schevill
+
+	* src/mpfi.c, tests/test_mpfi, tests/test_trigo: Fixed bug 2004:
+	  mpfi_diam_rel used to compute an absolute diameter.
+	  There remain mysteries about this function.
+
+2007-11-21 17:48  schevill
+
+	* src/mpfi.c, tests/test_mpfi, tests/test_trigo: mpfi.c: fixed a
+	  bug in mpfi_ui_sub in the case a-0.
+
+2007-11-21 09:38  schevill
+
+	* src/mpfi.c: Fixed bug number 4219 about incorrect bounds in
+	  mpfi_ui_sub.
+
+2007-11-16 10:21  schevill
+
+	* src/mpfi-impl.h, src/mpfi.c, src/mpfi.h, src/mpfi_trigo.c,
+	  tests/test_mpfi, tests/test_trigo: Corrected a bug reported by
+	  Carl Witty: MPFR_SIGN and mpfr_sgn do not have the same behavior
+	  on 0. The right function to use was mpfr_sgn
+	  Replaced mpfi_mpz_exact_set_fr by mpfr_get_z that have exactly
+	  the same semantic.
+
+2007-10-29 13:18  schevill
+
+	* Makefile.in, aclocal.m4, autogen.sh, config.guess, config.sub,
+	  configure, configure.ac, doc/Makefile.in, mpfi_config.h.in,
+	  src/Makefile.am, src/Makefile.in, src/mpfi_trigo.c,
+	  tests/Makefile.am, tests/Makefile.in, tests/test_mpfi,
+	  tests/test_trigo: Added autogen.sh: just run ./autogen.sh to
+	  generate a new configure file after having
+	  modified a Makefile.am or configure.ac
+	  
+	  The configure file in CVS is now up to date
+	  
+	  Patched a bug in mpfi_trigo.c affecting mpfi_sin when called on a
+	  symetrical
+	  interval
+	  
+	  Patched an old bug in mpfi_trigo.c in function
+	  mpfi_mpz_exact_set_fr
+	  This bug had already been patched once since the RC available as
+	  a tgz on mpfi's
+	  web page is correct.
+	  It is quite surprising to find this bug in the CVS...
+	  
+	  Corrected the version number in configure.ac
+	  
+	  Patched configure.ac and some Makefile.am in order to use libtool
+	  to
+	  generate a dynamic library.
+	  
+	  Warning: the libraries are now compiled in src/.libs/
+
+2006-06-07 21:21  rouillie
+
+	* src/mpfi.h, src/mpfi_io.h: *** empty log message ***
+
+2006-01-03 09:09  rouillie
+
+	* configure, configure.ac, doc/mpfi.info, doc/mpfi.texi,
+	  src/mpfi-impl.h, src/mpfi.c, src/mpfi.h: *configure.ac : modify
+	  the help for --with-mpfr-dir option
+	  *mpfi-impl.h/mpfi.h : put the flags return by mpfi function into
+	  mpfi.h
+	  *modify the documentation of mpfi_cmp
+	  *add the function char * mpfi_get_version()
+
+2005-11-22 16:23  rouillie
+
+	* configure, configure.ac, doc/mpfi.info, src/mpfi.c,
+	  src/mpfi_io.c, src/mpfi_trigo.c: Some *_ui* functions have been
+	  upgraded
+
+2005-11-20 06:55  rouillie
+
+	* AUTHORS, Makefile.in, aclocal.m4, configure, configure.ac,
+	  doc/Makefile.in, src/Makefile.in, src/mpfi-impl.h, src/mpfi.c,
+	  src/mpfi_io.c, src/mpfi_io.h, tests/Makefile.in,
+	  tests/test_mpfi.c, tests/test_trigo.c: Modifications suggested by
+	  the SPACES project.
+	  MPFI is now compatible with mpfr-2.2.0
+
+2005-11-08 17:24  rouillie
+
+	* ., AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am,
+	  Makefile.in, NEWS, README, aclocal.m4, config.guess, config.sub,
+	  configure, configure.ac, depcomp, doc, doc/Makefile.am,
+	  doc/Makefile.in, doc/mpfi.info, doc/mpfi.texi, install-sh,
+	  missing, mkinstalldirs, mpfi_config.h.in, src, src/Makefile.am,
+	  src/Makefile.in, src/mpfi-impl.h, src/mpfi.c, src/mpfi.h,
+	  src/mpfi_io.c, src/mpfi_io.h, src/mpfi_trigo.c, tests,
+	  tests/Makefile.am, tests/Makefile.in, tests/test_mpfi,
+	  tests/test_mpfi.c, tests/test_trigo, tests/test_trigo.c: Initial
+	  Release
+

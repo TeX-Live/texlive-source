@@ -1,0 +1,58 @@
+* set_sj and set_uj 
+  2018-31-07
+I tried... and failed, to add mpfi_set_sj and mpfi_set_uj:
+setting an interval from a huge interval. Pb with compilation: apparently I did not get how to test whether 
+the corresponding types (intmax_t and uintmax_t) are known, or not, by the compiler.
+Everything is ready: the code for these functions, some tests (actually, the same as for set_si and set_ui,
+thus more cases, and especially cornercases, should be added) and the lines in the Makefile.am. Makefile.in
+are already written. But it does not compile... so far.
+
+* Fix predicates
+From: "Sisyphus" <sisyphus1@optusnet.com.au>
+To: "philippe theveny" <philippe.theveny@inrialpes.fr>,
+        <Nathalie.Revol@ens-lyon.fr>
+Subject: mpfi-1.4: Some surprises wrt nans
+Date: Mon, 1 Feb 2010 21:26:01 +1100
+
+Hi,
+
+Here's the demo prog:
+
+###############################
+#include <stdio.h>
+#include <mpfi.h>
+#include <mpfi_io.h>
+
+int main(void) {
+mpfi_t x;
+
+mpfi_init(x);
+mpfi_out_str(stdout, 10, 0, x);
+
+printf("\n%d %d %d %d %d %d\n",
+        mpfi_is_pos(x),
+        mpfi_is_strictly_pos(x),
+        mpfi_is_nonneg(x),
+        mpfi_is_neg(x),
+        mpfi_is_strictly_neg(x),
+        mpfi_is_nonpos(x));
+
+return 0;
+}
+
+###############################
+
+It shows that mpfi_is_pos(), mpfi_is_strictly_pos(), mpfi_is_nonneg(), 
+mpfi_is_neg(), mpfi_is_strictly_neg() and mpfi_is_nonpos() all return true 
+for nans.
+
+I expected that they all would return false .... though there might be some 
+room for debate on that as regards nonpos and nonneg.
+
+(Btw, there's no need for any patches - I can wait for the next release. 
+Main purpose of this post is just to make sure you're aware of this 
+behaviour.)
+
+Cheers,
+Rob 
+------

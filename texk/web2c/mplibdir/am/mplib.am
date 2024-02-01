@@ -21,7 +21,7 @@ endif MP
 EXTRA_PROGRAMS += mpost
 
 mpost_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) -I$(srcdir)/mplibdir
-mpost_LDADD = libmplibcore.a libmplibextramath.a libmplibbackends.a  $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+mpost_LDADD = libmplibcore.a libmplibextramath.a libmplibbackends.a  $(KPATHSEA_LIBS) $(MPFI_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
 	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
 
 

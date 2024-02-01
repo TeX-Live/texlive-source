@@ -1,0 +1,43 @@
+# data file for mpfi_asin
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                   nan                     53  nan -inf
+0 53  nan                   nan                     53   -7  nan
+0 53  nan                  -0                       53  nan   -0
+0 53 +0                     nan                     53   +0  nan
+0 53  nan                   0x1921fb54442d19p-52    53  nan   +1
+0 53  nan                   nan                     53 +inf  nan
+0 53  nan                   nan                     53 -inf -inf
+0 53  nan                   nan                     53 -inf   -7
+0 53  nan                  -0                       53 -inf   -0
+0 53  nan                   nan                     53 -inf   +8
+0 53  nan                   nan                     53 -inf +inf
+1 53 -0x1921fb54442d19p-52 -0                       53   -1   -0
+0 53 +0                    -0                       53   +0   -0
+2 53 +0                     0x1921fb54442d19p-52    53   +0   +1
+0 53 +0                     nan                     53   +0   +8
+0 53 +0                     nan                     53   +0 +inf
+0 53  nan                   nan                     53 +inf +inf
+
+# regular values
+0 53  nan                   nan                     53 -6     -4
+0 53  nan                  -0x10c152382d7365p-53    53 -2     -0.5
+3 53 -0x1921fb54442d19p-52 -0x10c152382d7365p-53    53 -1     -0.5
+3 53 -0x1b235315c680ddp-53 -0x102be9ce0b87cdp-54    53 -0.75  -0.25
+3 53 -0x860a91c16b9b3p-52   0x860a91c16b9b3p-52     53 -0.5    0.5
+3 53  0x102be9ce0b87cdp-54  0x159aad71ced00fp-53    53  0.25   0.625
+3 53 -0x1921fb54442d19p-52  0x1921fb54442d19p-52    53 -1      1
+0 53  0x8055f06094f0fp-54   nan                     53  0.125  17
+0 53  nan                   nan                     53  17     42
+0 53  nan                   nan                     53 -42     17

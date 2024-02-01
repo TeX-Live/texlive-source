@@ -1,0 +1,39 @@
+# data file for mpfi_exp2m1
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                  -1                       53  nan -inf
+0 53  1                     nan                     53  1    nan
+0 53  nan                  -0                       53  nan -0
+0 53 +0                     nan                     53 +0    nan
+0 53  nan                   -0.5                    53  nan -1
+0 53 +inf                   nan                     53 +inf  nan
+0 53 -1                    -1                       53 -inf -inf
+0 53 -1                    -0.5                     53 -inf -1
+0 53 -1                    -0                       53 -inf -0
+0 53 -1                     1                       53 -inf  1
+0 53 -1                    +inf                     53 -inf +inf
+0 53 +0                    -0                       53 +0   -0
+2 53 +0                     0x3.06fe0a31b7154p-4    53 +0    0.25
+0 53 +0                    +inf                     53 +0   +inf
+0 53 +inf                  +inf                     53 +inf +inf
+
+# regular values
+2 53 -0xfp-4		    0x3.06fe0a31b7154p-4    53 -0x4p+0 	 0x4p-4
+2 53 -0xfp-4		    0x3.06fe0a31b7154p-4    53 -4 	 0.25
+1 52 0x3.06fe0a31b715p-4    0x1.fp+4    	    53  0x4p-4 	 0x5p+0
+1 52 0x3.06fe0a31b715p-4    0x1.fp+4    	    53  0.25 	 5
+0 53 -0xfp-4                0x1.fp+4                53 -4        5
+2 53 +0                     0x3.06fe0a31b7154p-4    53 +0        0.25
+3 336  0x6.a09e667f3bcc908b2fb1366ea957d3e3adec17512775099da2f590b0667322a95f906087571458751638p-4   0x6.a09e667f3bcc908b2fb1366ea957d3e3adec17512775099da2f590b0667322a95f90608757145875164p-4 53 0.5 0.5
+3 336 -0x4.afb0ccc06219b7ba682764c8ab54160e2909f4576c457b312e8537a7ccc66eab5037cfbc5475d3c574e8p-4   -0x4.afb0ccc06219b7ba682764c8ab54160e2909f4576c457b312e8537a7ccc66eab5037cfbc5475d3c574ep-4 53 -0.5 -0.5

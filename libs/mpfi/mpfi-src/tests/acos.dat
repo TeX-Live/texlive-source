@@ -1,0 +1,43 @@
+# data file for mpfi_acos
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                   nan                     53  nan -inf
+0 53  nan                   nan                     53   -7  nan
+0 53  0x3243f6a8885a3p-49   nan                     53  nan   -0
+0 53  nan                   0x1921fb54442d19p-52    53   +0  nan
+0 53  0                     nan                     53  nan   +1
+0 53  nan                   nan                     53 +inf  nan
+0 53  nan                   nan                     53 -inf -inf
+0 53  nan                   nan                     53 -inf   -7
+0 53  0x3243f6a8885a3p-49   nan                     53 -inf   -0
+0 53  nan                   nan                     53 -inf   +8
+0 53  nan                   nan                     53 -inf +inf
+3 53  0x3243f6a8885a3p-49   0x1921fb54442d19p-51    53   -1   -0
+3 53  0x3243f6a8885a3p-49   0x1921fb54442d19p-52    53   +0   -0
+2 53  0                     0x1921fb54442d19p-52    53   +0   +1
+0 53  nan                   0x1921fb54442d19p-52    53   +0   +8
+0 53  nan                   0x1921fb54442d19p-52    53   +0 +inf
+0 53  nan                   nan                     53 +inf +inf
+
+# regular values
+0 53  nan                   nan                     53 -6     -4
+0 53  0x10c152382d7365p-51  nan                     53 -2     -0.5
+3 53  0x10c152382d7365p-51  0x1921fb54442d19p-51    53 -1     -0.5
+3 53  0x1d2cf5c7c70f0bp-52  0x4d6749be4edb1p-49     53 -0.75  -0.25
+3 53  0x10c152382d7365p-52  0x860a91c16b9b3p-50     53 -0.5    0.5
+3 53  0x1ca94936b98a21p-53  0x151700e0c14b25p-52    53  0.25   0.625
+2 53  0                     0x1921fb54442d19p-51    53 -1      1
+0 53  nan                   0x1720a392c1d955p-52    53  0.125  17
+0 53  nan                   nan                     53  17     42
+0 53  nan                   nan                     53 -42     17

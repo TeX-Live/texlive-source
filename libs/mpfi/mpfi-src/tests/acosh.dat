@@ -1,0 +1,42 @@
+# data file for mpfi_acosh
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                    nan                     53  nan  nan
+0 53  nan                    nan                     53  nan -inf
+0 53  nan                    nan                     53 -7    nan
+0 53  nan                    nan                     53  nan -0
+0 53  nan                    nan                     53 +0    nan
+0 53  nan                   -0                       53  nan +1
+0 53 +inf                    nan                     53 +inf  nan
+0 53  nan                    nan                     53 -inf -inf
+0 53  nan                    nan                     53 -inf -7
+0 53  nan                    nan                     53 -inf -0
+0 53  nan                   -0                       53 -inf +1
+0 53  nan                    0x5898db90230cfp-49     53 -inf +8
+0 53  nan                   +inf                     53 -inf +inf
+0 53  nan                    nan                     53 -1   -0
+0 53  nan                    nan                     53 +0   -0
+0 53  nan                   -0                       53 +0   +1
+0 53  nan                    0x5898db90230cfp-49     53 +0   +8
+
+0 53  nan                   +inf                     53 +0   +inf
+0 53 +0                     +inf                     53 +1   +inf
+1 53  0x1ecc2caec51609p-53  +inf                     53 +1.5 +inf
+0 53 +inf                   +inf                     53 +inf +inf
+
+# regular values
+0 53  nan                    nan                     53 -6   -4
+0 53  nan                    0xf661657628b05p-52     53 -2    1.5
+2 53 +0                      0xf661657628b05p-52     53  1    1.5
+3 53  0x1ecc2caec51609p-53   0xf661657628b05p-52     53  1.5  1.5
+3 53  0x544909c66010dp-50    0x799d4ba2a13b5p-48     53  2    1000

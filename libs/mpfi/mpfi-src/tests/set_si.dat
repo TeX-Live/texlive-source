@@ -1,0 +1,40 @@
+# data file for mpfi_set_si
+#
+# fields:
+# 1: initial precision of interval
+# 2: initial left point value of interval
+# 3: initial right endpoint value of interval
+#
+# 4: inexact flag (returned value)
+# 5: precision of result (must be the same as in field 1)
+# 6: left endpoint value of result
+# 7: right endpoint value of result
+#
+# 8: precision of argument
+# 9: value of argument
+
+# special values
+53  nan  nan     0 53   -8   -8      -8
+53  nan  nan     0 53   +0   -0      -0
+53  nan  nan     0 53   +0   -0      +0
+53  nan  nan     0 53   +5   +5      +5
+53 -inf -inf     0 53   -8   -8      -8
+53 -inf -inf     0 53   +0   -0      -0
+53 -inf -inf     0 53   +0   -0      +0
+53 -inf -inf     0 53   +5   +5      +5
+53   +0   -0     0 53   -8   -8      -8
+53   +0   -0     0 53   +0   -0      -0
+53   +0   -0     0 53   +0   -0      +0
+53   +0   -0     0 53   +5   +5      +5
+53 +inf +inf     0 53   -8   -8      -8
+53 +inf +inf     0 53   +0   -0      -0
+53 +inf +inf     0 53   +0   -0      +0
+53 +inf +inf     0 53   +5   +5      +5
+
+# regular values
+53 +10              +20    0 53 +5               +5    +5
+16 +0x123400   0xdada00    3 16 +0x111100 +0x111120    +0x111101
+53 -0x888888  -0x888887    0 53 -0xbaffe0 -0xbaffe0    -0xbaffe0
+16 -0x888800  -0x888700    3 16 -0x888900 -0x888800    -0x888801
+16 -0x888800       +0x1    0 16 -0xfedc00 -0xfedc00    -0xfedc00
+16 -0x888800       +0x1    3 16 +0xfedb00 +0xfedc00    +0xfedb01

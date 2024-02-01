@@ -1,0 +1,77 @@
+# data file for mpfi_put_fr
+#
+# fields:
+# 1: initial precision of interval
+# 2: initial left point value of interval
+# 3: initial right endpoint value of interval
+#
+# 4: inexact flag (returned value)
+# 5: precision of result (must be the same as in field 1)
+# 6: left endpoint value of result
+# 7: right endpoint value of result
+#
+# 8: precision of argument
+# 9: value of argument
+
+# special values
+53  nan  nan     0 53  nan  nan    53 -inf
+53  nan  nan     0 53  nan  nan    53   -8
+53  nan  nan     0 53  nan  nan    53   -0
+53  nan  nan     0 53  nan  nan    53   +0
+53  nan  nan     0 53  nan  nan    53   +5
+53  nan  nan     0 53  nan  nan    53 +inf
+53  nan  nan     0 53  nan  nan    53  nan
+53 -inf -inf     0 53 -inf -inf    53 -inf
+53 -inf -inf     0 53 -inf   -8    53   -8
+53 -inf -inf     0 53 -inf   -0    53   -0
+53 -inf -inf     0 53 -inf   -0    53   +0
+53 -inf -inf     0 53 -inf   +5    53   +5
+53 -inf -inf     0 53 -inf +inf    53 +inf
+53 -inf -inf     0 53  nan  nan    53  nan
+53   +0   -0     0 53 -inf   -0    53 -inf
+53   +0   -0     0 53   -8   -0    53   -8
+53   +0   -0     0 53   +0   -0    53   -0
+53   +0   -0     0 53   +0   -0    53   +0
+53   +0   -0     0 53   +0   +5    53   +5
+53   +0   -0     0 53   +0 +inf    53 +inf
+53   +0   -0     0 53  nan  nan    53  nan
+53 +inf +inf     0 53 -inf +inf    53 -inf
+53 +inf +inf     0 53   -8 +inf    53   -8
+53 +inf +inf     0 53   +0 +inf    53   -0
+53 +inf +inf     0 53   +0 +inf    53   +0
+53 +inf +inf     0 53   +5 +inf    53   +5
+53 +inf +inf     0 53 +inf +inf    53 +inf
+53 +inf +inf     0 53  nan  nan    53  nan
+
+# regular values
+  53 +0x123456789abcdep+17 +0x1fedcba9876543p+19
+0 53 +0x11111111111111p+17 +0x1fedcba9876543p+19 53 +0x11111111111111p+17
+  53 +0x123456789abcdep+17 +0x1fedcba9876543p+19
+1 53 +0x11111111111111p+17 +0x1fedcba9876543p+19 64 +0x11111111111111002p+5
+  53 +0x123456789abcdep+17 +0x1fedcba9876543p+19
+0 53 +0x123456789abcdep+17 +0x1fedcba9876543p+19 53 +0x1aaaaaaaaaaaaap+17
+  53 +0x123456789abcdep+17 +0x1fedcba9876543p+19
+0 53 +0x123456789abcdep+17 +0x1fffffffffffffp+19 53 +0x1fffffffffffffp+19
+  53 +0x123456789abcdep+17 +0x1fedcba9876543p+19
+2 53 +0x123456789abcdep+17 +0x1fffffffffffffp+19 64 +0x1ffffffffffffe002p+7
+  53 -0x1fedcba9876543         -0x123456789abcde
+0 53 -0x1fffffffffffff         -0x123456789abcde 53 -0x1fffffffffffff
+  53 -0x1fedcba9876543         -0x123546789abcde
+1 53 -0x1p+65                  -0x123546789abcde 64 -0x1fffffffffffff002
+  53 -0x1fedcba9876543                        -1
+0 53 -0x1fedcba9876543                        -1 53 -0xaaaaaaaaaaaaa
+  53 -0x123456789abcde         -0x11111111111111
+0 53 -0x123456789abcde                        -1 53 -1
+  53 -0x123456789abcde     -0x1fedcba9876543p-19
+2 53 -0x123456789abcde     -0x1fffffffffffffp-53 64 -0xffffffffffffffffp-64
+
+  53 -0x1        		            +0x1
+0 53 -0x2        		            +0x1 53 -0x2
+  53 -0x1                                   +0x1
+1 53 -0x2                                   +0x1 64 -0x1fffffffffffffffep-64
+  53 -0x1                                   +0x1
+0 53 -0x1                                   +0x1 64 -0x1fffffffffffffffep-65
+  53 -0x1                                   +0x1
+0 53 -0x1                                   +0x2 53 +0x2
+  53 -0x1                                   +0x1
+2 53 -0x1                                   +0x2 64 +0x1fffffffffffffffep-64

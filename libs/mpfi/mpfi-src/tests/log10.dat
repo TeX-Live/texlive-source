@@ -1,0 +1,42 @@
+# data file for mpfi_log10
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan  nan    53  nan  nan
+0 53  nan  nan    53  nan -inf
+0 53  nan  nan    53 -7    nan
+0 53  nan -inf    53  nan -0
+0 53 -inf  nan    53 +0    nan
+0 53  nan -0      53  nan  1
+0 53 +inf  nan    53 +inf  nan
+0 53  nan  nan    53 -inf -inf
+0 53  nan  nan    53 -inf -7
+0 53  nan -inf    53 -inf -0
+0 53  nan -0      53 -inf  1
+0 53  nan +inf    53 -inf +inf
+0 53  nan -inf    53 -1   -0
+0 53 -inf -inf    53 +0   -0
+0 53 -inf -0      53 +0    1
+0 53 -inf +inf    53 +0   +inf
+0 53 +inf +inf    53 +inf +inf
+
+# regular values
+0 53 +0                    -0
+ 53   1                     1
+3 53  0x159753104a9401p-49  0x1716c01a04b570p-49
+ 53   0x3a2a08c23afe3p-14   0x1463ceb440d6bdp-14
+1 53 -0x12f043ec00f8d6p-55 -0
+ 53   0xb616ab8b683b5p-52   1
+2 53  2                     0x1221cc590b9946p-49
+ 53   100                   0x8ac74d932fae3p-21
+3 53  0x149f1d70168f49p-49  0x17a543a94fb65ep-49
+ 53   0x4c322657ec89bp-16   0x4d68ba5f26bf1p-11

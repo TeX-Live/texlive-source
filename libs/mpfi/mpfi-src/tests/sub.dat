@@ -1,0 +1,62 @@
+# data file for mpfi_sub
+#
+# column fields: see add.dat
+
+# special values
+0 53  nan  nan    53  nan  nan 53 -inf   -7
+0 53  nan  nan    53  nan  nan 53   -8   +1
+0 53  nan  nan    53  nan  nan 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0  nan
+0 53  nan  nan    53  nan  nan 53   +5 +inf
+0 53  nan  nan    53  nan  nan 53 +inf +inf
+0 53  nan  nan    53  nan  nan 53  nan   -0
+0 53  nan +inf    53  nan   -0 53 -inf   -7
+0 53  nan   +8    53  nan   -0 53   -8   +1
+0 53  nan +inf    53  nan +inf 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0   +7
+0 53  nan -inf    53  nan -inf 53   +5 +inf
+0 53  nan -inf    53  nan   -7 53 +inf +inf
+0 53  nan  nan    53  nan   +1 53  nan   -0
+0 53  nan  nan    53 -inf -inf 53 -inf -inf
+0 53 -inf   -6    53 -inf   -7 53   -1   +8
+0 53 -inf   -8    53 -inf   -0 53   +8 +inf
+0 53 -inf -inf    53 -inf   -0 53 +inf +inf
+0 53 -inf   +8    53 -inf   +8 53   +0   +8
+0 53 -inf +inf    53 -inf +inf 53   +0   +8
+0 53   +7 +inf    53   +0   -0 53 -inf   -7
+0 53   +0  +15    53   +0   +8 53   -7   -0
+0 53   -8   -0    53   +0   -0 53   +0   +8
+0 53   -8 +inf    53   +0 +inf 53   +0   +8
+0 53 -inf   -8    53   +0   -0 53   +8 +inf
+0 53  nan -inf    53   +0   +8 53 +inf  nan
+0 53 -inf +inf    53   +0   -0 53 -inf +inf
+0 53   -8  +15    53   +0   +8 53   -7   +8
+0 53   +0   -0    53   +0   -0 53   +0   -0
+0 53   -8 +inf    53   +0 +inf 53   +0   +8
+0 53 -inf  nan    53   +0  nan 53   +8 +inf
+0 53 -inf -inf    53   +0   +8 53 +inf +inf
+0 53 +inf +inf    53 +inf +inf 53 -inf   +3
+0 53  nan +inf    53 +inf +inf 53   +0 +inf
+0 53  nan +inf    53 +inf +inf 53   +3  nan
+0 53 +inf  nan    53 +inf  nan 53 -inf   -7
+0 53  nan  nan    53 +inf  nan 53 +inf +inf
+0 53 +inf  nan    53 +inf  nan 53   -3   +7
+
+# regular values
+0 53 -86   42     53 -5    59  53  17   81
+1 53 -0x10000000000001p-93  0x123456789abcd
+  53 -0x1p-300              0x123456p+28
+  53 -0x789abcd             0x10000000000000p-93
+2 53 -0x123456791abcdp-17   0x8f596b3002c1bp+947
+  53 -4                     7
+  53 -3e300                 0x123456789abcdp-17
+3 53 -0x10101010101011p+4   0x8f596b3002c1bp+947
+  53 -0x1000100010001p+8    0x1p+60
+  53 -3e300                 0x1000100010001
+
+1 53 -0x10000000000001p+18 -0
+  53 -5                     1
+  53  1                     0x1p+70
+2 53 +0                     0x1p+70
+  53  5                     0x1p+70
+  53  3                     5

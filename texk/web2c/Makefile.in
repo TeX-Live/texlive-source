@@ -367,6 +367,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-lua53-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-macos-framework.m4 \
+	$(top_srcdir)/../../m4/kpse-mpfi-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-mpfr-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-pixman-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-potrace-flags.m4 \
@@ -1120,7 +1121,9 @@ libmplibcore_a_OBJECTS = $(nodist_libmplibcore_a_OBJECTS)
 libmplibextramath_a_AR = $(AR) $(ARFLAGS)
 libmplibextramath_a_LIBADD =
 am__objects_25 = libmplibextramath_a-mpmathbinary.$(OBJEXT)
-nodist_libmplibextramath_a_OBJECTS = $(am__objects_25)
+am__objects_26 = libmplibextramath_a-mpmathinterval.$(OBJEXT)
+nodist_libmplibextramath_a_OBJECTS = $(am__objects_25) \
+	$(am__objects_26)
 libmplibextramath_a_OBJECTS = $(nodist_libmplibextramath_a_OBJECTS)
 libmputil_a_AR = $(AR) $(ARFLAGS)
 libmputil_a_LIBADD =
@@ -1142,7 +1145,7 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
 	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
-@MINGW32_TRUE@am__objects_26 =  \
+@MINGW32_TRUE@am__objects_27 =  \
 @MINGW32_TRUE@	pdftexdir/regex/libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-avlstuff.$(OBJEXT) \
@@ -1163,13 +1166,13 @@ am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet1.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet3.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writettf.$(OBJEXT) \
-	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_26)
+	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_27)
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libsynctex_a_AR = $(AR) $(ARFLAGS)
 libsynctex_a_LIBADD =
-am__objects_27 = synctexdir/libsynctex_a-synctex_parser.$(OBJEXT) \
+am__objects_28 = synctexdir/libsynctex_a-synctex_parser.$(OBJEXT) \
 	synctexdir/libsynctex_a-synctex_parser_utils.$(OBJEXT)
-nodist_libsynctex_a_OBJECTS = $(am__objects_27)
+nodist_libsynctex_a_OBJECTS = $(am__objects_28)
 libsynctex_a_OBJECTS = $(nodist_libsynctex_a_OBJECTS)
 libukanji_a_AR = $(AR) $(ARFLAGS)
 libukanji_a_LIBADD =
@@ -1209,10 +1212,10 @@ am__libxetex_a_SOURCES_DIST = xetexdir/XeTeXFontInst.cpp \
 	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
 	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeX_mac.c \
 	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h
-@XETEX_MACOSX_TRUE@am__objects_28 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
+@XETEX_MACOSX_TRUE@am__objects_29 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
-@XETEX_MACOSX_FALSE@am__objects_29 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
+@XETEX_MACOSX_FALSE@am__objects_30 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
 am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT) \
@@ -1226,8 +1229,8 @@ am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/image/libxetex_a-jpegimage.$(OBJEXT) \
 	xetexdir/image/libxetex_a-mfileio.$(OBJEXT) \
 	xetexdir/image/libxetex_a-numbers.$(OBJEXT) \
-	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_28) \
-	$(am__objects_29)
+	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_29) \
+	$(am__objects_30)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 am__DEPENDENCIES_1 =
 libsynctex_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -1245,8 +1248,8 @@ libsynctex_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 	alephdir/aleph-alephbis.$(OBJEXT) \
 	alephdir/aleph-alephextra.$(OBJEXT)
-am__objects_30 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_30) aleph-aleph-pool.$(OBJEXT)
+am__objects_31 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_31) aleph-aleph-pool.$(OBJEXT)
 aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
 aleph_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -1323,34 +1326,34 @@ am__dist_eptex_SOURCES_DIST = eptexdir/eptexextra.c \
 	eptexdir/eptexextra.h eptexdir/eptex_version.h \
 	synctexdir/synctex.c synctexdir/synctex.h \
 	synctexdir/synctex-common.h synctexdir/synctex-eptex.h
-@EPTEX_SYNCTEX_TRUE@am__objects_31 =  \
+@EPTEX_SYNCTEX_TRUE@am__objects_32 =  \
 @EPTEX_SYNCTEX_TRUE@	synctexdir/eptex-synctex.$(OBJEXT)
 dist_eptex_OBJECTS = eptexdir/eptex-eptexextra.$(OBJEXT) \
-	$(am__objects_31)
-am__objects_32 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
-nodist_eptex_OBJECTS = $(am__objects_32) eptex-eptex-pool.$(OBJEXT)
+	$(am__objects_32)
+am__objects_33 = eptex-eptexini.$(OBJEXT) eptex-eptex0.$(OBJEXT)
+nodist_eptex_OBJECTS = $(am__objects_33) eptex-eptex-pool.$(OBJEXT)
 eptex_OBJECTS = $(dist_eptex_OBJECTS) $(nodist_eptex_OBJECTS)
 @EPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
 	etexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-etex.h
-@ETEX_SYNCTEX_TRUE@am__objects_33 = synctexdir/etex-synctex.$(OBJEXT)
-dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_33)
-am__objects_34 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_34) etex-etex-pool.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_34 = synctexdir/etex-synctex.$(OBJEXT)
+dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_34)
+am__objects_35 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_35) etex-etex-pool.$(OBJEXT)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
 am__dist_euptex_SOURCES_DIST = euptexdir/euptexextra.c \
 	euptexdir/euptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-euptex.h
-@EUPTEX_SYNCTEX_TRUE@am__objects_35 =  \
+@EUPTEX_SYNCTEX_TRUE@am__objects_36 =  \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/euptex-synctex.$(OBJEXT)
 dist_euptex_OBJECTS = euptexdir/euptex-euptexextra.$(OBJEXT) \
-	$(am__objects_35)
-am__objects_36 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
-nodist_euptex_OBJECTS = $(am__objects_36) euptex-euptex-pool.$(OBJEXT)
+	$(am__objects_36)
+am__objects_37 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
+nodist_euptex_OBJECTS = $(am__objects_37) euptex-euptex-pool.$(OBJEXT)
 euptex_OBJECTS = $(dist_euptex_OBJECTS) $(nodist_euptex_OBJECTS)
 @EUPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
 am_gftodvi_OBJECTS =
@@ -1378,16 +1381,16 @@ hishrink_OBJECTS = $(nodist_hishrink_OBJECTS)
 nodist_histretch_OBJECTS = histretch-hitables.$(OBJEXT) \
 	histretch-histretch.$(OBJEXT)
 histretch_OBJECTS = $(nodist_histretch_OBJECTS)
-am__objects_37 = hitex-hitex.$(OBJEXT)
+am__objects_38 = hitex-hitex.$(OBJEXT)
 nodist_hitex_OBJECTS = hitex-hitables.$(OBJEXT) hitex-hiput.$(OBJEXT) \
-	$(am__objects_37)
+	$(am__objects_38)
 hitex_OBJECTS = $(nodist_hitex_OBJECTS)
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
-am__objects_38 = luatexdir/luahbtex-luatex.$(OBJEXT) \
+am__objects_39 = luatexdir/luahbtex-luatex.$(OBJEXT) \
 	mplibdir/luahbtex-lmplib.$(OBJEXT)
-nodist_luahbtex_OBJECTS = $(am__objects_38)
+nodist_luahbtex_OBJECTS = $(am__objects_39)
 luahbtex_OBJECTS = $(nodist_luahbtex_OBJECTS)
 am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
@@ -1398,16 +1401,16 @@ am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luahbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luahbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luahbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_39 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
+am__objects_40 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
 	mplibdir/luajithbtex-lmplib.$(OBJEXT)
-nodist_luajithbtex_OBJECTS = $(am__objects_39)
+nodist_luajithbtex_OBJECTS = $(am__objects_40)
 luajithbtex_OBJECTS = $(nodist_luajithbtex_OBJECTS)
 luajithbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luajithbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luajithbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_40 = luatexdir/luajittex-luatex.$(OBJEXT) \
+am__objects_41 = luatexdir/luajittex-luatex.$(OBJEXT) \
 	mplibdir/luajittex-lmplib.$(OBJEXT)
-nodist_luajittex_OBJECTS = $(am__objects_40)
+nodist_luajittex_OBJECTS = $(am__objects_41)
 luajittex_OBJECTS = $(nodist_luajittex_OBJECTS)
 am__DEPENDENCIES_8 = libmplibcore.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1416,9 +1419,9 @@ am__DEPENDENCIES_8 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luajittex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(luajittex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_41 = luatexdir/luatex-luatex.$(OBJEXT) \
+am__objects_42 = luatexdir/luatex-luatex.$(OBJEXT) \
 	mplibdir/luatex-lmplib.$(OBJEXT)
-nodist_luatex_OBJECTS = $(am__objects_41)
+nodist_luatex_OBJECTS = $(am__objects_42)
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 luatex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -1446,8 +1449,8 @@ mflua_DEPENDENCIES = libmflua.a libmfluaotfcc.a libmfluapotrace.a \
 mflua_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mflua_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_42 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
-nodist_mflua_nowin_OBJECTS = $(am__objects_42)
+am__objects_43 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
+nodist_mflua_nowin_OBJECTS = $(am__objects_43)
 mflua_nowin_OBJECTS = $(nodist_mflua_nowin_OBJECTS)
 mflua_nowin_DEPENDENCIES = libmflua.a libmfluaotfcc.a \
 	libmfluapotrace.a libmflualpeg.a $(am__DEPENDENCIES_2) \
@@ -1464,8 +1467,8 @@ mfluajit_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 mfluajit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mfluajit_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_43 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
-nodist_mfluajit_nowin_OBJECTS = $(am__objects_43)
+am__objects_44 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
+nodist_mfluajit_nowin_OBJECTS = $(am__objects_44)
 mfluajit_nowin_OBJECTS = $(nodist_mfluajit_nowin_OBJECTS)
 mfluajit_nowin_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 	libmfluapotrace.a libmfluajitlpeg.a $(am__DEPENDENCIES_2) \
@@ -1478,14 +1481,14 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_44 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_44)
+am__objects_45 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_45)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 mpost_DEPENDENCIES = libmplibcore.a libmplibextramath.a \
 	libmplibbackends.a $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) libmputil.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmputil.a
 nodist_odvicopy_OBJECTS = odvicopy.$(OBJEXT)
 odvicopy_OBJECTS = $(nodist_odvicopy_OBJECTS)
 odvicopy_LDADD = $(LDADD)
@@ -1507,12 +1510,12 @@ am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
-@PDFTEX_SYNCTEX_TRUE@am__objects_45 =  \
+@PDFTEX_SYNCTEX_TRUE@am__objects_46 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
-	$(am__objects_45)
-am__objects_46 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_46) pdftex-pdftex-pool.$(OBJEXT)
+	$(am__objects_46)
+am__objects_47 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_47) pdftex-pdftex-pool.$(OBJEXT)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_10 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a
@@ -1536,33 +1539,35 @@ nodist_pltotf_OBJECTS = pltotf.$(OBJEXT)
 pltotf_OBJECTS = $(nodist_pltotf_OBJECTS)
 pltotf_LDADD = $(LDADD)
 pltotf_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_47 = pmpost-pmp.$(OBJEXT)
-am__objects_48 = pmpost-pmpmath.$(OBJEXT)
-am__objects_49 = pmpost-pmpmathbinary.$(OBJEXT)
-am__objects_50 = pmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_51 = pmpost-pmpmathdouble.$(OBJEXT)
-am__objects_52 = pmpost-pmpstrings.$(OBJEXT)
-am__objects_53 = pmpost-pmpxout.$(OBJEXT)
-am__objects_54 = pmpost-ppngout.$(OBJEXT)
-am__objects_55 = pmpost-ppsout.$(OBJEXT)
-am__objects_56 = pmpost-psvgout.$(OBJEXT)
-nodist_pmpost_OBJECTS = $(am__objects_47) $(am__objects_48) \
-	$(am__objects_49) $(am__objects_50) $(am__objects_51) \
-	pmpost-pmpost.$(OBJEXT) $(am__objects_52) $(am__objects_53) \
-	$(am__objects_54) $(am__objects_55) $(am__objects_56) \
-	pmpost-ptfmin.$(OBJEXT)
+am__objects_48 = pmpost-pmp.$(OBJEXT)
+am__objects_49 = pmpost-pmpmath.$(OBJEXT)
+am__objects_50 = pmpost-pmpmathinterval.$(OBJEXT)
+am__objects_51 = pmpost-pmpmathbinary.$(OBJEXT)
+am__objects_52 = pmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_53 = pmpost-pmpmathdouble.$(OBJEXT)
+am__objects_54 = pmpost-pmpstrings.$(OBJEXT)
+am__objects_55 = pmpost-pmpxout.$(OBJEXT)
+am__objects_56 = pmpost-ppngout.$(OBJEXT)
+am__objects_57 = pmpost-ppsout.$(OBJEXT)
+am__objects_58 = pmpost-psvgout.$(OBJEXT)
+nodist_pmpost_OBJECTS = $(am__objects_48) $(am__objects_49) \
+	$(am__objects_50) $(am__objects_51) $(am__objects_52) \
+	$(am__objects_53) pmpost-pmpost.$(OBJEXT) $(am__objects_54) \
+	$(am__objects_55) $(am__objects_56) $(am__objects_57) \
+	$(am__objects_58) pmpost-ptfmin.$(OBJEXT)
 pmpost_OBJECTS = $(nodist_pmpost_OBJECTS)
 pmpost_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmputil.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) libmputil.a
 nodist_pooltype_OBJECTS = pooltype.$(OBJEXT)
 pooltype_OBJECTS = $(nodist_pooltype_OBJECTS)
 pooltype_LDADD = $(LDADD)
 pooltype_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
 dist_ptex_OBJECTS = ptexdir/ptex-ptexextra.$(OBJEXT)
-am__objects_57 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
-nodist_ptex_OBJECTS = $(am__objects_57) ptex-ptex-pool.$(OBJEXT)
+am__objects_59 = ptex-ptexini.$(OBJEXT) ptex-ptex0.$(OBJEXT)
+nodist_ptex_OBJECTS = $(am__objects_59) ptex-ptex-pool.$(OBJEXT)
 ptex_OBJECTS = $(dist_ptex_OBJECTS) $(nodist_ptex_OBJECTS)
 am__DEPENDENCIES_11 = libkanji.a $(pproglib) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -1582,10 +1587,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_58 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_58)
-am__objects_59 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_59) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_60 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_60)
+am__objects_61 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_61) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1614,33 +1619,36 @@ am_updvitype_OBJECTS =
 nodist_updvitype_OBJECTS = updvitype-updvitype.$(OBJEXT)
 updvitype_OBJECTS = $(am_updvitype_OBJECTS) \
 	$(nodist_updvitype_OBJECTS)
-am__objects_60 = upmpost-pmp.$(OBJEXT)
-am__objects_61 = upmpost-pmpmath.$(OBJEXT)
-am__objects_62 = upmpost-pmpmathbinary.$(OBJEXT)
-am__objects_63 = upmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_64 = upmpost-pmpmathdouble.$(OBJEXT)
-am__objects_65 = upmpost-pmpstrings.$(OBJEXT)
-am__objects_66 = upmpost-pmpxout.$(OBJEXT)
-am__objects_67 = upmpost-ppngout.$(OBJEXT)
-am__objects_68 = upmpost-ppsout.$(OBJEXT)
-am__objects_69 = upmpost-psvgout.$(OBJEXT)
-am__objects_70 = $(am__objects_60) $(am__objects_61) $(am__objects_62) \
-	$(am__objects_63) $(am__objects_64) upmpost-pmpost.$(OBJEXT) \
+am__objects_62 = upmpost-pmp.$(OBJEXT)
+am__objects_63 = upmpost-pmpmath.$(OBJEXT)
+am__objects_64 = upmpost-pmpmathinterval.$(OBJEXT)
+am__objects_65 = upmpost-pmpmathbinary.$(OBJEXT)
+am__objects_66 = upmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_67 = upmpost-pmpmathdouble.$(OBJEXT)
+am__objects_68 = upmpost-pmpstrings.$(OBJEXT)
+am__objects_69 = upmpost-pmpxout.$(OBJEXT)
+am__objects_70 = upmpost-ppngout.$(OBJEXT)
+am__objects_71 = upmpost-ppsout.$(OBJEXT)
+am__objects_72 = upmpost-psvgout.$(OBJEXT)
+am__objects_73 = $(am__objects_62) $(am__objects_63) $(am__objects_64) \
 	$(am__objects_65) $(am__objects_66) $(am__objects_67) \
-	$(am__objects_68) $(am__objects_69) upmpost-ptfmin.$(OBJEXT)
-nodist_upmpost_OBJECTS = $(am__objects_70)
+	upmpost-pmpost.$(OBJEXT) $(am__objects_68) $(am__objects_69) \
+	$(am__objects_70) $(am__objects_71) $(am__objects_72) \
+	upmpost-ptfmin.$(OBJEXT)
+nodist_upmpost_OBJECTS = $(am__objects_73)
 upmpost_OBJECTS = $(nodist_upmpost_OBJECTS)
 am__DEPENDENCIES_16 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) libmputil.a
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) libmputil.a
 upmpost_DEPENDENCIES = $(am__DEPENDENCIES_16)
 am_uppltotf_OBJECTS =
 nodist_uppltotf_OBJECTS = uppltotf-uppltotf.$(OBJEXT)
 uppltotf_OBJECTS = $(am_uppltotf_OBJECTS) $(nodist_uppltotf_OBJECTS)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT)
-am__objects_71 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_71) uptex-uptex-pool.$(OBJEXT)
+am__objects_74 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_74) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 am_uptftopl_OBJECTS =
 nodist_uptftopl_OBJECTS = uptftopl-uptftopl.$(OBJEXT)
@@ -1678,12 +1686,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_72 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_75 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_72)
-am__objects_73 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_73) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_75)
+am__objects_76 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_76) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_17 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_18 = $(libxetex) $(am__DEPENDENCIES_1) \
@@ -1766,6 +1774,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/libmplibcore_a-psout.Po \
 	./$(DEPDIR)/libmplibcore_a-tfmin.Po \
 	./$(DEPDIR)/libmplibextramath_a-mpmathbinary.Po \
+	./$(DEPDIR)/libmplibextramath_a-mpmathinterval.Po \
 	./$(DEPDIR)/luahbtex-dummy.Po ./$(DEPDIR)/luajithbtex-dummy.Po \
 	./$(DEPDIR)/mf-mfextra.Po ./$(DEPDIR)/mf-pool.Po \
 	./$(DEPDIR)/mf0.Po ./$(DEPDIR)/mf_nowin-mfextra.Po \
@@ -1783,6 +1792,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/pmpost-pmpmathbinary.Po \
 	./$(DEPDIR)/pmpost-pmpmathdecimal.Po \
 	./$(DEPDIR)/pmpost-pmpmathdouble.Po \
+	./$(DEPDIR)/pmpost-pmpmathinterval.Po \
 	./$(DEPDIR)/pmpost-pmpost.Po ./$(DEPDIR)/pmpost-pmpstrings.Po \
 	./$(DEPDIR)/pmpost-pmpxout.Po ./$(DEPDIR)/pmpost-ppngout.Po \
 	./$(DEPDIR)/pmpost-ppsout.Po ./$(DEPDIR)/pmpost-psvgout.Po \
@@ -1799,6 +1809,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/upmpost-pmpmathbinary.Po \
 	./$(DEPDIR)/upmpost-pmpmathdecimal.Po \
 	./$(DEPDIR)/upmpost-pmpmathdouble.Po \
+	./$(DEPDIR)/upmpost-pmpmathinterval.Po \
 	./$(DEPDIR)/upmpost-pmpost.Po \
 	./$(DEPDIR)/upmpost-pmpstrings.Po \
 	./$(DEPDIR)/upmpost-pmpxout.Po ./$(DEPDIR)/upmpost-ppngout.Po \
@@ -2976,6 +2987,9 @@ MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
+MPFI_DEPEND = @MPFI_DEPEND@
+MPFI_INCLUDES = @MPFI_INCLUDES@
+MPFI_LIBS = @MPFI_LIBS@
 MPFR_DEPEND = @MPFR_DEPEND@
 MPFR_INCLUDES = @MPFR_INCLUDES@
 MPFR_LIBS = @MPFR_LIBS@
@@ -4248,7 +4262,7 @@ libmfluajitlpeg_a_SOURCES = \
 	mfluadir/luapeg/lpeg.h 
 
 mpost_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) -I$(srcdir)/mplibdir
-mpost_LDADD = libmplibcore.a libmplibextramath.a libmplibbackends.a  $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+mpost_LDADD = libmplibcore.a libmplibextramath.a libmplibbackends.a  $(KPATHSEA_LIBS) $(MPFI_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
 	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
 
 call_mpost_CPPFLAGS = -DEXEPROG=\"mpost.exe\"
@@ -4269,10 +4283,10 @@ call_pmpost_LDADD =
 call_upmpost_CPPFLAGS = -DEXEPROG=\"upmpost.exe\"
 nodist_call_upmpost_SOURCES = callexe.c
 call_upmpost_LDADD = 
-pmpost_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+pmpost_CPPFLAGS = $(MPFI_INCLUDES) $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
-pmpost_LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+pmpost_LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS) $(MPFI_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
 	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
 
 upmpost_CPPFLAGS = -DUPMP $(pmpost_CPPFLAGS)
@@ -4282,7 +4296,7 @@ upmpost_LDADD = $(pmpost_LDADD)
 pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
 # Creating several files: need stamp file and two rules with identical recipes
 pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
-nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) \
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) $(pmpmathbinary_c_h) \
         $(pmpmathdecimal_c_h) \
 	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
 	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
@@ -4290,6 +4304,7 @@ nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) \
 #
 pmp_c_h = pmp.c pmplib.h pmpmp.h
 pmpmath_c_h = pmpmath.c pmpmath.h
+pmpmathinterval_c_h = pmpmathinterval.c pmpmathinterval.h
 pmpmathbinary_c_h = pmpmathbinary.c pmpmathbinary.h
 pmpmathdecimal_c_h = pmpmathdecimal.c pmpmathdecimal.h
 pmpmathdouble_c_h = pmpmathdouble.c pmpmathdouble.h
@@ -4317,28 +4332,29 @@ libmputil_a_SOURCES = mplibdir/avl.h mplibdir/avl.c mplibdir/decNumber.c mplibdi
 	mplibdir/decNumberLocal.h mplibdir/decContext.h mplibdir/decContext.c
 
 libmplibcore_a_CPPFLAGS = $(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
-libmplibextramath_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) -I${top_builddir}/../../libs   $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
-libmplibbackends_a_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+libmplibextramath_a_CPPFLAGS = $(MPFI_INCLUDES) $(MPFR_INCLUDES) $(GMP_INCLUDES) -I${top_builddir}/../../libs   $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
+libmplibbackends_a_CPPFLAGS = $(MPFI_INCLUDES) $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
 
 nodist_libmplibcore_a_SOURCES = tfmin.c $(mp_c_h) $(mpmath_c_h) $(mpmathdecimal_c_h) \
 	$(mpmathdouble_c_h) $(mpstrings_c_h) $(psout_c_h) 
 
-nodist_libmplibextramath_a_SOURCES = $(mpmathbinary_c_h)
+nodist_libmplibextramath_a_SOURCES = $(mpmathbinary_c_h) $(mpmathinterval_c_h)
 nodist_libmplibbackends_a_SOURCES = $(pngout_c_h)  $(svgout_c_h)
 mp_c_h = mp.c mplib.h mpmp.h
 mpmath_c_h = mpmath.h mpmath.c
 mpmathbinary_c_h = mpmathbinary.h mpmathbinary.c
 mpmathdecimal_c_h = mpmathdecimal.h mpmathdecimal.c
 mpmathdouble_c_h = mpmathdouble.h mpmathdouble.c
+mpmathinterval_c_h = mpmathinterval.h mpmathinterval.c
 mpstrings_c_h = mpstrings.h mpstrings.c
 psout_c_h = mplibps.h mppsout.h psout.c
 svgout_c_h = mplibsvg.h mpsvgout.h svgout.c
 pngout_c_h = mplibpng.h mppngout.h pngout.c
 libmplib_web = mplibdir/mp.w mplibdir/psout.w mplibdir/svgout.w \
 	mplibdir/pngout.w mplibdir/mpmath.w mplibdir/mpmathbinary.w \
-	mplibdir/mpmathdecimal.w mplibdir/mpmathdouble.w \
-	mplibdir/mpstrings.w mplibdir/tfmin.w
+	mplibdir/mpmathinterval.w mplibdir/mpmathdecimal.w \
+	mplibdir/mpmathdouble.w mplibdir/mpstrings.w mplibdir/tfmin.w
 etex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(am__append_136)
 
 # With --enable-ipc, e-TeX may need to link with -lsocket.
@@ -8564,6 +8580,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplibcore_a-psout.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplibcore_a-tfmin.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplibextramath_a-mpmathbinary.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libmplibextramath_a-mpmathinterval.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/luahbtex-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/luajithbtex-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mf-mfextra.Po@am__quote@ # am--include-marker
@@ -8595,6 +8612,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpmathbinary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpmathdecimal.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpmathdouble.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpmathinterval.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpost.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpstrings.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pmpost-pmpxout.Po@am__quote@ # am--include-marker
@@ -8622,6 +8640,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpmathbinary.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpmathdecimal.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpmathdouble.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpmathinterval.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpost.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpstrings.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/upmpost-pmpxout.Po@am__quote@ # am--include-marker
@@ -16365,6 +16384,20 @@ libmplibextramath_a-mpmathbinary.obj: mpmathbinary.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibextramath_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplibextramath_a-mpmathbinary.obj `if test -f 'mpmathbinary.c'; then $(CYGPATH_W) 'mpmathbinary.c'; else $(CYGPATH_W) '$(srcdir)/mpmathbinary.c'; fi`
 
+libmplibextramath_a-mpmathinterval.o: mpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibextramath_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplibextramath_a-mpmathinterval.o -MD -MP -MF $(DEPDIR)/libmplibextramath_a-mpmathinterval.Tpo -c -o libmplibextramath_a-mpmathinterval.o `test -f 'mpmathinterval.c' || echo '$(srcdir)/'`mpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmplibextramath_a-mpmathinterval.Tpo $(DEPDIR)/libmplibextramath_a-mpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpmathinterval.c' object='libmplibextramath_a-mpmathinterval.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibextramath_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplibextramath_a-mpmathinterval.o `test -f 'mpmathinterval.c' || echo '$(srcdir)/'`mpmathinterval.c
+
+libmplibextramath_a-mpmathinterval.obj: mpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibextramath_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libmplibextramath_a-mpmathinterval.obj -MD -MP -MF $(DEPDIR)/libmplibextramath_a-mpmathinterval.Tpo -c -o libmplibextramath_a-mpmathinterval.obj `if test -f 'mpmathinterval.c'; then $(CYGPATH_W) 'mpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/mpmathinterval.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libmplibextramath_a-mpmathinterval.Tpo $(DEPDIR)/libmplibextramath_a-mpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='mpmathinterval.c' object='libmplibextramath_a-mpmathinterval.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmplibextramath_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libmplibextramath_a-mpmathinterval.obj `if test -f 'mpmathinterval.c'; then $(CYGPATH_W) 'mpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/mpmathinterval.c'; fi`
+
 mplibdir/libmputil_a-avl.o: mplibdir/avl.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libmputil_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mplibdir/libmputil_a-avl.o -MD -MP -MF mplibdir/$(DEPDIR)/libmputil_a-avl.Tpo -c -o mplibdir/libmputil_a-avl.o `test -f 'mplibdir/avl.c' || echo '$(srcdir)/'`mplibdir/avl.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) mplibdir/$(DEPDIR)/libmputil_a-avl.Tpo mplibdir/$(DEPDIR)/libmputil_a-avl.Po
@@ -17989,6 +18022,20 @@ pmpost-pmpmath.obj: pmpmath.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pmpost-pmpmath.obj `if test -f 'pmpmath.c'; then $(CYGPATH_W) 'pmpmath.c'; else $(CYGPATH_W) '$(srcdir)/pmpmath.c'; fi`
 
+pmpost-pmpmathinterval.o: pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pmpost-pmpmathinterval.o -MD -MP -MF $(DEPDIR)/pmpost-pmpmathinterval.Tpo -c -o pmpost-pmpmathinterval.o `test -f 'pmpmathinterval.c' || echo '$(srcdir)/'`pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pmpost-pmpmathinterval.Tpo $(DEPDIR)/pmpost-pmpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pmpmathinterval.c' object='pmpost-pmpmathinterval.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pmpost-pmpmathinterval.o `test -f 'pmpmathinterval.c' || echo '$(srcdir)/'`pmpmathinterval.c
+
+pmpost-pmpmathinterval.obj: pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pmpost-pmpmathinterval.obj -MD -MP -MF $(DEPDIR)/pmpost-pmpmathinterval.Tpo -c -o pmpost-pmpmathinterval.obj `if test -f 'pmpmathinterval.c'; then $(CYGPATH_W) 'pmpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/pmpmathinterval.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pmpost-pmpmathinterval.Tpo $(DEPDIR)/pmpost-pmpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pmpmathinterval.c' object='pmpost-pmpmathinterval.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o pmpost-pmpmathinterval.obj `if test -f 'pmpmathinterval.c'; then $(CYGPATH_W) 'pmpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/pmpmathinterval.c'; fi`
+
 pmpost-pmpmathbinary.o: pmpmathbinary.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT pmpost-pmpmathbinary.o -MD -MP -MF $(DEPDIR)/pmpost-pmpmathbinary.Tpo -c -o pmpost-pmpmathbinary.o `test -f 'pmpmathbinary.c' || echo '$(srcdir)/'`pmpmathbinary.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pmpost-pmpmathbinary.Tpo $(DEPDIR)/pmpost-pmpmathbinary.Po
@@ -18366,6 +18413,20 @@ upmpost-pmpmath.obj: pmpmath.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pmpmath.c' object='upmpost-pmpmath.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o upmpost-pmpmath.obj `if test -f 'pmpmath.c'; then $(CYGPATH_W) 'pmpmath.c'; else $(CYGPATH_W) '$(srcdir)/pmpmath.c'; fi`
+
+upmpost-pmpmathinterval.o: pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT upmpost-pmpmathinterval.o -MD -MP -MF $(DEPDIR)/upmpost-pmpmathinterval.Tpo -c -o upmpost-pmpmathinterval.o `test -f 'pmpmathinterval.c' || echo '$(srcdir)/'`pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/upmpost-pmpmathinterval.Tpo $(DEPDIR)/upmpost-pmpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pmpmathinterval.c' object='upmpost-pmpmathinterval.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o upmpost-pmpmathinterval.o `test -f 'pmpmathinterval.c' || echo '$(srcdir)/'`pmpmathinterval.c
+
+upmpost-pmpmathinterval.obj: pmpmathinterval.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT upmpost-pmpmathinterval.obj -MD -MP -MF $(DEPDIR)/upmpost-pmpmathinterval.Tpo -c -o upmpost-pmpmathinterval.obj `if test -f 'pmpmathinterval.c'; then $(CYGPATH_W) 'pmpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/pmpmathinterval.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/upmpost-pmpmathinterval.Tpo $(DEPDIR)/upmpost-pmpmathinterval.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='pmpmathinterval.c' object='upmpost-pmpmathinterval.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o upmpost-pmpmathinterval.obj `if test -f 'pmpmathinterval.c'; then $(CYGPATH_W) 'pmpmathinterval.c'; else $(CYGPATH_W) '$(srcdir)/pmpmathinterval.c'; fi`
 
 upmpost-pmpmathbinary.o: pmpmathbinary.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(upmpost_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT upmpost-pmpmathbinary.o -MD -MP -MF $(DEPDIR)/upmpost-pmpmathbinary.Tpo -c -o upmpost-pmpmathbinary.o `test -f 'pmpmathbinary.c' || echo '$(srcdir)/'`pmpmathbinary.c
@@ -19861,6 +19922,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/libmplibcore_a-psout.Po
 	-rm -f ./$(DEPDIR)/libmplibcore_a-tfmin.Po
 	-rm -f ./$(DEPDIR)/libmplibextramath_a-mpmathbinary.Po
+	-rm -f ./$(DEPDIR)/libmplibextramath_a-mpmathinterval.Po
 	-rm -f ./$(DEPDIR)/luahbtex-dummy.Po
 	-rm -f ./$(DEPDIR)/luajithbtex-dummy.Po
 	-rm -f ./$(DEPDIR)/mf-mfextra.Po
@@ -19892,6 +19954,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathbinary.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathdecimal.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathdouble.Po
+	-rm -f ./$(DEPDIR)/pmpost-pmpmathinterval.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpost.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpstrings.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpxout.Po
@@ -19919,6 +19982,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathbinary.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathdecimal.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathdouble.Po
+	-rm -f ./$(DEPDIR)/upmpost-pmpmathinterval.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpost.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpstrings.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpxout.Po
@@ -20639,6 +20703,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/libmplibcore_a-psout.Po
 	-rm -f ./$(DEPDIR)/libmplibcore_a-tfmin.Po
 	-rm -f ./$(DEPDIR)/libmplibextramath_a-mpmathbinary.Po
+	-rm -f ./$(DEPDIR)/libmplibextramath_a-mpmathinterval.Po
 	-rm -f ./$(DEPDIR)/luahbtex-dummy.Po
 	-rm -f ./$(DEPDIR)/luajithbtex-dummy.Po
 	-rm -f ./$(DEPDIR)/mf-mfextra.Po
@@ -20670,6 +20735,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathbinary.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathdecimal.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpmathdouble.Po
+	-rm -f ./$(DEPDIR)/pmpost-pmpmathinterval.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpost.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpstrings.Po
 	-rm -f ./$(DEPDIR)/pmpost-pmpxout.Po
@@ -20697,6 +20763,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathbinary.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathdecimal.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpmathdouble.Po
+	-rm -f ./$(DEPDIR)/upmpost-pmpmathinterval.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpost.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpstrings.Po
 	-rm -f ./$(DEPDIR)/upmpost-pmpxout.Po
@@ -21383,6 +21450,7 @@ $(proglib): $(proglib_sources)
 @POTRACE_RULE@
 @GMP_RULE@
 @MPFR_RULE@
+@MPFI_RULE@
 @XPDF_RULE@
 @PPLIB_RULE@
 @ZZIPLIB_RULE@
@@ -21799,6 +21867,10 @@ pmpmath.c: mpmath.c
 	$(AM_V_GEN)$(pmp_sed) mpmath.c >$@
 pmpmath.h: mpmath.h
 	$(AM_V_GEN)$(pmp_sed) mpmath.h >$@
+pmpmathinterval.c: mpmathinterval.c
+	$(AM_V_GEN)$(pmp_sed) mpmathinterval.c >$@
+pmpmathinterval.h: mpmathinterval.h
+	$(AM_V_GEN)$(pmp_sed) mpmathinterval.h >$@
 pmpmathbinary.c: mpmathbinary.c
 	$(AM_V_GEN)$(pmp_sed) mpmathbinary.c >$@
 pmpmathbinary.h: mpmathbinary.h
@@ -21860,7 +21932,7 @@ psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
 	$(pmp_ctangle_sh) psvgout psvgout
 
 $(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
-	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFI_DEPEND) $(MPFR_DEPEND)
 pmpostdir/pmpost.log pmpostdir/pmpsamp.log: pmpost$(EXEEXT)
 pmpostdir/upmpost.log pmpostdir/upmpsamp.log: upmpost$(EXEEXT)
 
@@ -21885,6 +21957,11 @@ $(mpmathbinary_c_h): mpmathbinary-tangle mp-tangle
 	$(mp_ctangle_sh) mpmathbinary
 mpmathbinary-tangle: ctangle$(EXEEXT) mplibdir/mpmathbinary.w tangle-sh
 	$(mp_ctangle_sh) mpmathbinary
+
+$(mpmathinterval_c_h): mpmathinterval-tangle mp-tangle
+	$(mp_ctangle_sh) mpmathinterval
+mpmathinterval-tangle: ctangle$(EXEEXT) mplibdir/mpmathinterval.w tangle-sh
+	$(mp_ctangle_sh) mpmathinterval
 
 $(mpmathdecimal_c_h): mpmathdecimal-tangle mp-tangle
 	$(mp_ctangle_sh) mpmathdecimal
@@ -21916,11 +21993,11 @@ $(svgout_c_h): svgout-tangle
 svgout-tangle: ctangle$(EXEEXT) mplibdir/svgout.w tangle-sh
 	$(mp_ctangle_sh) svgout
 
-$(nodist_libmplibcore_a_SOURCES): $(mpmathbinary_c_h) $(svgout_c_h) $(pngout_c_h)
+$(nodist_libmplibcore_a_SOURCES): $(mpmathbinary_c_h) $(mpmathinterval_c_h) $(svgout_c_h) $(pngout_c_h)
 
 $(libmplibcore_a_OBJECTS): $(nodist_libmplibcore_a_SOURCES) $(KPATHSEA_DEPEND)  
-$(libmplibextramath_a_OBJECTS): $(nodist_libmplibextramath_a_SOURCES) $(KPATHSEA_DEPEND)  $(MPFR_DEPEND)
-$(libmplibbackends_a_OBJECTS): $(nodist_libmplibbackends_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+$(libmplibextramath_a_OBJECTS): $(nodist_libmplibextramath_a_SOURCES) $(KPATHSEA_DEPEND)  $(MPFI_DEPEND) $(MPFR_DEPEND)
+$(libmplibbackends_a_OBJECTS): $(nodist_libmplibbackends_a_SOURCES) $(KPATHSEA_DEPEND) $(CAIRO_DEPEND) $(MPFI_DEPEND) $(MPFR_DEPEND)
 
 # (end of libmplib.am)
 $(etex_OBJECTS): $(etex_prereq)

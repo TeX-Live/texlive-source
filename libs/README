@@ -9,7 +9,7 @@ bypassing or using the original one.
 
 See also comments in ../texk/README.
 
-cairo 1.16.0 - checked 20oct18
+cairo 1.16.0 - no longer checked
   https://cairographics.org/releases/
   There are later releases than this, but they removed autotools support.
   Since cairo is only used by MetaPost (for png output), and 1.16.0
@@ -50,10 +50,13 @@ luajit 2.1.0-beta3 - checked 20jun17
   https://luajit.org/download/LuaJIT-2.1.0-beta3.tar.gz
   As with Lua.
 
-mpfr 4.2.1 - checked 26aug23
+mpfi 1.5.4 - checked 1feb24
+  https://perso.ens-lyon.fr/nathalie.revol/software.html#download
+  
+mpfr 4.2.1 - checked 1feb24
   https://ftp.gnu.org/gnu/mpfr/
 
-pixman 0.42.2 - checked 03nov22
+pixman 0.42.2 - no longer checked
   https://cairographics.org/releases/
   See cairo above.
 

@@ -1,0 +1,64 @@
+# data file for mpfi_add
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of second parameter
+# 8: precision of second parameter
+# 9: left endpoint value of second parameter
+# 10: right endpoint value of second parameter
+
+# special values
+0 53  nan  nan    53  nan  nan 53 -inf   -7
+0 53  nan  nan    53  nan  nan 53   -8   +1
+0 53  nan  nan    53  nan  nan 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0  nan
+0 53  nan  nan    53  nan  nan 53   +5 +inf
+0 53  nan  nan    53  nan  nan 53 +inf +inf
+0 53  nan  nan    53  nan  nan 53  nan   -0
+0 53  nan   -7    53  nan   -0 53 -inf   -7
+0 53  nan   +1    53  nan   -0 53   -8   +1
+0 53  nan +inf    53  nan +inf 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0   +7
+0 53  nan  nan    53  nan -inf 53   +5 +inf
+0 53  nan +inf    53  nan   -7 53 +inf +inf
+0 53  nan   +1    53  nan   +1 53  nan   -0
+0 53 -inf -inf    53 -inf -inf 53 -inf -inf
+0 53 -inf   +1    53 -inf   -7 53   -1   +8
+0 53 -inf +inf    53 -inf   -0 53   +8 +inf
+0 53  nan +inf    53 -inf   -0 53 +inf +inf
+0 53 -inf  +16    53 -inf   +8 53   +0   +8
+0 53 -inf +inf    53 -inf +inf 53   +0   +8
+0 53 -inf   -7    53   +0   -0 53 -inf   -7
+0 53   -7   +8    53   +0   +8 53   -7   -0
+0 53   +0   +8    53   +0   -0 53   +0   +8
+0 53   +0 +inf    53   +0 +inf 53   +0   +8
+0 53   +8 +inf    53   +0   -0 53   +8 +inf
+0 53 +inf  nan    53   +0   +8 53 +inf  nan
+0 53 -inf +inf    53   +0   -0 53 -inf +inf
+0 53   +0  +16    53   +0   +8 53   +0   +8
+0 53   +0   -0    53   +0   -0 53   +0   -0
+0 53   -7 +inf    53   +0 +inf 53   -7   +8
+0 53   +8  nan    53   +0  nan 53   +8 +inf
+0 53 +inf +inf    53   +0   +8 53 +inf +inf
+0 53  nan +inf    53 +inf +inf 53 -inf   +3
+0 53 +inf +inf    53 +inf +inf 53   +0 +inf
+0 53 +inf  nan    53 +inf +inf 53   +3  nan
+0 53  nan  nan    53 +inf  nan 53 -inf   -7
+0 53 +inf  nan    53 +inf  nan 53 +inf +inf
+0 53 +inf  nan    53 +inf  nan 53   -3   +7
+
+# regular values
+0 53              -0x1p-1           -0x187p-256    53              -0.375 -0x10187p-256 53                -0.125 0x1p-240
+1 53 -0x10000000000001p-93 0x123456789abcd         53           -0x1p-300  0x123456p+28 53 -0x10000000000000p-93 0x789abcd
+2 53  -0x123456791abcdp-17 0x8f596b3002c1bp+947    53                  -4            +7 53 -0x123456789abcdp-17  3e300
+3 53  +0x1010101010101p+8  0x8f596b3002c1bp+947    53  0x1000100010001p+8       0x1p+60 53  0x1000100010001      3e300
+
+# signed zeros
+0 53   +0   +6    53   +4   +8 53   -4   -2
+0 53   -5   -0    53   +4   +8 53   -9   -8

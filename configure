@@ -931,6 +931,9 @@ with_system_icu
 with_system_teckit
 with_system_graphite2
 with_system_zziplib
+with_system_mpfi
+with_mpfi_includes
+with_mpfi_libdir
 with_system_mpfr
 with_mpfr_includes
 with_mpfr_libdir
@@ -1803,6 +1806,10 @@ Optional Packages:
                           (requires pkg-config)
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
+  --with-system-mpfi      use installed mpfi headers and library
+  --with-mpfi-includes=DIR
+                          mpfi headers installed in DIR
+  --with-mpfi-libdir=DIR  mpfi library installed in DIR
   --with-system-mpfr      use installed mpfr headers and library
   --with-mpfr-includes=DIR
                           mpfr headers installed in DIR
@@ -5697,6 +5704,7 @@ case $enable_mp in #(
 esac
 
 test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -5714,6 +5722,7 @@ case $enable_pmp in #(
 esac
 
 test "x$enable_web2c:$enable_pmp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -5732,6 +5741,7 @@ case $enable_upmp in #(
 esac
 
 test "x$enable_web2c:$enable_upmp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -7022,6 +7032,63 @@ printf "%s\n" "$as_me: Using \`xpdf' headers and library from TL tree" >&6;}
     ac_configure_args="$ac_configure_args '--without-system-xpdf'"
   fi
 fi
+
+## libs/mpfi/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfi/
+## configure options and TL libraries required for mpfi
+
+# Check whether --with-system-mpfi was given.
+if test ${with_system_mpfi+y}
+then :
+  withval=$with_system_mpfi;
+fi
+
+# Check whether --with-mpfi-includes was given.
+if test ${with_mpfi_includes+y}
+then :
+  withval=$with_mpfi_includes;
+fi
+
+# Check whether --with-mpfi-libdir was given.
+if test ${with_mpfi_libdir+y}
+then :
+  withval=$with_mpfi_libdir;
+fi
+if test "x$with_system_mpfi" = x; then
+  if test -f $srcdir/libs/mpfi/configure; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`mpfi' headers and library from TL tree" >&5
+printf "%s\n" "$as_me: Assuming \`mpfi' headers and library from TL tree" >&6;}
+    with_system_mpfi=no
+  else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming installed \`mpfi' headers and library" >&5
+printf "%s\n" "$as_me: Assuming installed \`mpfi' headers and library" >&6;}
+    with_system_mpfi=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-mpfi=$with_system_mpfi'"
+elif test "x$with_system_mpfi" = xyes; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Using installed \`mpfi' headers and library" >&5
+printf "%s\n" "$as_me: Using installed \`mpfi' headers and library" >&6;}
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Using \`mpfi' headers and library from TL tree" >&5
+printf "%s\n" "$as_me: Using \`mpfi' headers and library from TL tree" >&6;}
+  if test "x$with_system_mpfi" != xno; then
+    with_system_mpfi=no
+    ac_configure_args="$ac_configure_args '--without-system-mpfi'"
+  fi
+fi
+if test "x$with_system_mpfi" = xyes; then
+  if test "x$with_system_mpfr" = x; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}:   ->  installed \`mpfr' headers and library" >&5
+printf "%s\n" "$as_me:   ->  installed \`mpfr' headers and library" >&6;}
+    with_system_mpfr=yes
+    ac_configure_args="$ac_configure_args '--with-system-mpfr'"
+  elif test "x$with_system_mpfr" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-mpfi' requires \`--with-system-mpfr'" "$LINENO" 5
+  fi
+fi
+
+test "x$need_mpfi" = xyes && {
+  need_mpfr=yes
+}
 
 ## libs/mpfr/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfr/
 ## configure options and TL libraries required for mpfr
@@ -23597,6 +23664,15 @@ fi
 MPFR_LIBS="-lmpfr"
 if test "x$with_mpfr_libdir" != x && test "x$with_mpfr_libdir" != xyes; then
   MPFR_LIBS="-L$with_mpfr_libdir $MPFR_LIBS"
+fi
+
+##tldbg _KPSE_LIB_FLAGS_SYSTEM: mpfi (mpfi).
+if test "x$with_mpfi_includes" != x && test "x$with_mpfi_includes" != xyes; then
+  MPFI_INCLUDES="-I$with_mpfi_includes"
+fi
+MPFI_LIBS="-lmpfi"
+if test "x$with_mpfi_libdir" != x && test "x$with_mpfi_libdir" != xyes; then
+  MPFI_LIBS="-L$with_mpfi_libdir $MPFI_LIBS"
 fi
 
 : "kpse_xpdf_system_flags - no-op"

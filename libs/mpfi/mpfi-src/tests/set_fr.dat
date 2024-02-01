@@ -1,0 +1,48 @@
+# data file for mpfi_set_fr
+#
+# column fields:
+# 1: initial precision of interval
+# 2: initial left point value of interval
+# 3: initial right endpoint value of interval
+#
+# 4: inexact flag (returned value)
+# 5: precision of result (must be the same as in field 1)
+# 6: left endpoint value of result
+# 7: right endpoint value of result
+#
+# 8: precision of argument
+# 9: value of argument
+
+# special values
+53  nan  nan     0 53 -inf -inf    53 -inf
+53 -inf -inf     0 53   -8   -8    53   -8
+53  nan  nan     0 53   +0   -0    53   -0
+53  nan  nan     0 53   +0   -0    53   +0
+53  nan  nan     0 53   +5   +5    53   +5
+53  nan  nan     0 53 +inf +inf    53 +inf
+53 -inf -0       0 53  nan  nan    53  nan
+53  nan  nan     0 53 -inf -inf    53 -inf
+53 -inf -inf     0 53   -8   -8    53   -8
+53 -inf -inf     0 53   +0   -0    53   -0
+53 -inf -inf     0 53   +0   -0    53   +0
+53 -inf -inf     0 53   +5   +5    53   +5
+53 -inf -inf     0 53 +inf +inf    53 +inf
+53 -inf -inf     0 53  nan  nan    53  nan
+53 +0   -0       0 53 -inf -inf    53 -inf
+53 +0   -0       0 53   -8   -8    53   -8
+53 +0   -0       0 53   +0   -0    53   -0
+53 +0   -0       0 53   +0   -0    53   +0
+53 +0   -0       0 53   +5   +5    53   +5
+53 +0   -0       0 53 +inf +inf    53 +inf
+53 +0   -0       0 53  nan  nan    53  nan
+53 +inf +inf     0 53 -inf -inf    53 -inf
+53 +inf +inf     0 53   -8   -8    53   -8
+53 +inf +inf     0 53   +0   -0    53   -0
+53 +inf +inf     0 53   +0   -0    53   +0
+53 +inf +inf     0 53   +5   +5    53   +5
+53 -inf +inf     0 53 +inf +inf    53 +inf
+53 +inf +inf     0 53  nan  nan    53  nan
+
+# regular values
+53 nan  nan     0 53 0x1999999999999a@-14 0x1999999999999a@-14   53 0.1
+ 2 nan  nan     3  2 0x18@-2                            0x2@-1   53 0.1

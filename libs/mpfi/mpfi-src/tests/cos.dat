@@ -1,0 +1,73 @@
+# data file for mpfi_cos
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                   nan                     53  nan -inf
+0 53  nan                   nan                     53   -7  nan
+0 53  nan                   nan                     53  nan   -0
+0 53  nan                   nan                     53   +0  nan
+0 53  nan                   nan                     53 -inf  nan
+0 53  nan                   nan                     53 -inf -inf
+0 53 -1                     1                       53 -inf   -7
+0 53 -1                     1                       53 -inf   -0
+0 53 -1                     1                       53 -inf   +8
+0 53 -1                     1                       53 -inf +inf
+1 53  0x114a280fb5068bp-53  1                       53   -1   -0
+0 53  1                     1                       53   +0   -0
+1 53  0x114a280fb5068bp-53  1                       53   +0   +1
+0 53 -1                     1                       53   +0   +8
+0 53 -1                     1                       53   +0 +inf
+0 53  nan                   nan                     53 +inf +inf
+
+# regular values
+3 53 -0x1aa22657537205p-54  0x1c1528065b7d5p-49     53 -2     -0.5
+3 53  0x114a280fb5068bp-53  0xf80aa4fbef751p-52     53 -1     -0.25
+1 53  0x1c1528065b7d4fp-53  1                       53 -0.5    0.5
+0 53 -1                     1                       53 -4.5    0.625
+3 53 -1                     0x4528a03ed41a3p-51     53  1      0x3243f6a8885a3p-48
+0 53 -1                     1                       53  0.125  17
+0 53 -1                     1                       53  17     42
+
+0 53 -1                     1                       53 -7      1
+0 53 -1                     1                       53 -7     -0
+0 53 -1                     1                       53 -7     -1
+0 53 -1                     1                       53 -7     -2
+0 53 -1                     1                       53 -7     -3
+1 53 -0x14eaa606db24c1p-53  1                       53 -7     -4
+1 53  0x122785706b4ad9p-54  1                       53 -7     -5
+1 53  0x181ff79ed92017p-53  1                       53 -7     -6
+3 53  0x181ff79ed92017p-53  0x181ff79ed92018p-53    53 -7     -7
+
+0 53 -1                     1                       53 -6      1
+0 53 -1                     1                       53 -6     -0
+2 53 -1                     0x1eb9b7097822f6p-53    53 -6     -1
+2 53 -1                     0x1eb9b7097822f6p-53    53 -6     -2
+2 53 -1                     0x1eb9b7097822f6p-53    53 -6     -3
+3 53 -0x14eaa606db24c1p-53  0x1eb9b7097822f6p-53    53 -6     -4
+3 53  0x122785706b4ad9p-54  0x1eb9b7097822f6p-53    53 -6     -5
+3 53  0x1eb9b7097822f5p-53  0x1eb9b7097822f6p-53    53 -6     -6
+
+0 53 -1                     1                       53 -5      1
+0 53 -1                     1                       53 -5     -0
+2 53 -1                     0x114a280fb5068cp-53    53 -5     -1
+2 53 -1                     0x122785706b4adap-54    53 -5     -2
+2 53 -1                     0x122785706b4adap-54    53 -5     -3
+3 53 -0x14eaa606db24c1p-53  0x122785706b4adap-54    53 -5     -4
+3 53  0x122785706b4ad9p-54  0x122785706b4adap-54    53 -5     -5
+
+0 53 -1                     1                       53 -4      1
+0 53 -1                     1                       53 -4     -0
+2 53 -1                     0x114a280fb5068cp-53    53 -4     -1
+2 53 -1                    -0x1aa22657537204p-54    53 -4     -2
+2 53 -1                    -0x14eaa606db24c0p-53    53 -4     -3
+3 53 -0x14eaa606db24c1p-53 -0x14eaa606db24c0p-53    53 -4     -4

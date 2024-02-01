@@ -1,0 +1,63 @@
+# data file for mpfi_div_ui
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of first parameter
+# 8: second parameter value
+
+# special values
+0 53  nan  nan    53  nan  nan  0
+0 53  nan  nan    53  nan  nan  1
+0 53  nan  nan    53  nan -inf  0
+0 53  nan  nan    53  nan -inf  3
+0 53  nan  nan    53  nan -7    0
+0 53  nan  nan    53  nan -7    7
+0 53  nan  nan    53  nan -0    0
+0 53  nan  nan    53  nan -0    15
+0 53  nan  nan    53  nan  1    0
+0 53  nan  nan    53  nan  1    31
+0 53  nan  nan    53  nan +inf  0
+0 53  nan  nan    53  nan +inf  63
+0 53 -inf +inf    53 -inf -inf  0
+0 53 -inf -inf    53 -inf -inf +2
+0 53 -inf +inf    53 -inf -1    0
+0 53 -inf -.25    53 -inf -1    4
+0 53 -inf  nan    53 -inf -0    0
+0 53 -inf -0      53 -inf -0    8
+0 53 -inf +inf    53 -inf +8    0
+0 53 -inf  0.5    53 -inf +8    16
+0 53 -inf +inf    53 -inf +inf  0
+0 53 -inf +inf    53 -inf +inf +32
+0 53  nan  nan    53 -inf  nan  0
+0 53  nan  nan    53 -inf  nan +64
+0 53  nan  nan    53 +0   -0    0
+0 53 +0   -0      53 +0   -0    1
+0 53  nan +inf    53 +0   +8    0
+0 53 +0    2      53 +0   +8    4
+0 53  nan +inf    53 +0   +inf  0
+0 53 +0   +inf    53 +0   +inf  7
+0 53 -inf +inf    53 +inf +inf  0
+0 53 +inf +inf    53 +inf +inf  1
+0 53  nan  nan    53 +inf  nan  0
+0 53  nan  nan    53 +inf  nan  1
+
+# regular values
+0 53 -1                    -0x11p-5
+  53 -32                   -17                    32
+1 53 -0x1e1e1e1e1e1e1fp-52 -1
+  53 -32                   -17                    17
+
+0 53  0x123456789abcdfp-61  0x123456789abcdfp-8
+  53  0x123456789abcdfp-53  0x123456789abcdf      256
+1 53  0x15555555555555p-54  1
+  53  1                     3                     3
+2 53 -3                     0x15555555555556p-54
+  53 -9                     1                     3
+3 53 -0x1ccccccccccccdp-52  0x1ccccccccccccdp-52
+  53 -9                     9                     5

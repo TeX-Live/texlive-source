@@ -1,0 +1,7 @@
+Changes applied to the mpfi source tree as obtained from:
+	https://perso.ens-lyon.fr/nathalie.revol/software.html#download
+
+Removed:
+  COPYING COPYING.LESSER INSTALL Makefile.in aclocal.m4 ar-lib compile
+  config.guess config.sub configure depcomp install-sh ltmain.sh missing
+  test-driver

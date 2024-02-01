@@ -106,6 +106,8 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/set_d.c \
 	@MPFR_TREE@/src/set_dfl_prec.c \
 	@MPFR_TREE@/src/set_f.c \
+	@MPFR_TREE@/src/set_inf.c \
+	@MPFR_TREE@/src/set_nan.c \
 	@MPFR_TREE@/src/set_prec.c \
 	@MPFR_TREE@/src/set_q.c \
 	@MPFR_TREE@/src/set_rnd.c \
@@ -255,9 +257,7 @@ unused_sources = \
 	@MPFR_TREE@/src/set_exp.c \
 	@MPFR_TREE@/src/set_flt.c \
 	@MPFR_TREE@/src/set_float128.c \
-	@MPFR_TREE@/src/set_inf.c \
 	@MPFR_TREE@/src/set_ld.c \
-	@MPFR_TREE@/src/set_nan.c \
 	@MPFR_TREE@/src/set_prc_raw.c \
 	@MPFR_TREE@/src/set_si.c \
 	@MPFR_TREE@/src/set_sj.c \

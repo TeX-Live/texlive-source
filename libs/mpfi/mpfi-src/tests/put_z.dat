@@ -1,0 +1,51 @@
+# data file for mpfi_put_z
+#
+# fields:
+# 1: initial precision of interval
+# 2: initial left point value of interval
+# 3: initial right endpoint value of interval
+#
+# 4: inexact flag (returned value)
+# 5: precision of result (must be the same as in field 1)
+# 6: left endpoint value of result
+# 7: right endpoint value of result
+#
+# 8: precision of argument
+# 9: value of argument
+
+# special values
+53  nan  nan     0 53  nan  nan      -8
+53  nan  nan     0 53  nan  nan      -0
+53  nan  nan     0 53  nan  nan       0
+53  nan  nan     0 53  nan  nan       5
+53 -inf -inf     0 53 -inf   -8      -8
+53 -inf -inf     0 53 -inf   -0      -0
+53 -inf -inf     0 53 -inf   -0       0
+53 -inf -inf     0 53 -inf   +5       5
+53   +0   -0     0 53   -8   -0      -8
+53   +0   -0     0 53   +0   -0      -0
+53   +0   -0     0 53   +0   -0       0
+53   +0   -0     0 53   +0   +5       5
+53 +inf +inf     0 53   -8 +inf      -8
+53 +inf +inf     0 53   +0 +inf      -0
+53 +inf +inf     0 53   +0 +inf       0
+53 +inf +inf     0 53   +5 +inf       5
+
+# regular values
+53 +10              +20    0 53 +5               +20  5
+16 +0x123400   0xdada00    1 16 +0x111100   0xdada00  0x111101
+53 +10              +20    0 53 +10              +20  15
+16 +0x123400   0xdada00    0 16 +0x123400   0xdddd00  0xdddd00
+16 +0x123400   0xdada00    2 16 +0x123400   0xdadb00  0xdadada
+
+53 -0x888888  -0x888887    0 53 -0xbaffe0  -0x888887 -0xbaffe0
+16 -0x888800  -0x888700    1 16 -0x888900  -0x888700 -0x888801
+53 -0x888800  -0x888700    0 53 -0x888800  -0x888700 -0x888701
+16 -0x888800  -0x888700    0 16 -0x888800  -0x100000 -0x100000
+16 -0x888800  -0x888700    2 16 -0x888800  -0x100000 -0x100001
+
+16 -0x888800       +0x1    0 16 -0xfedc00       +0x1 -0xfedc00
+16 -0x888800       +0x1    1 16 -0xfedc00       +0x1 -0xfedb01
+16 -0x888800       +0x1    0 16 -0x888800       +0x1 -1
+16 -0x888800       +0x1    0 16 -0x888800  +0x888800  0x888800
+16 -0x888800       +0x1    2 16 -0x888800  +0x888900  0x888801

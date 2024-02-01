@@ -1,0 +1,199 @@
+# data file for mpfi_div
+#
+# for a description of the fields: see add.dat
+
+# special values
+0 53  nan  nan    53  nan  nan 53 -inf   -7
+0 53  nan  nan    53  nan  nan 53   -8   +1
+0 53  nan  nan    53  nan  nan 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0  nan
+0 53  nan  nan    53  nan  nan 53   +5 +inf
+0 53  nan  nan    53  nan  nan 53 +inf +inf
+0 53  nan  nan    53  nan  nan 53  nan   -0
+0 53  nan  nan    53  nan   -0 53 -inf   -7
+0 53  nan  nan    53  nan   -0 53   -8   +1
+0 53  nan  nan    53  nan +inf 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0   +7
+0 53  nan  nan    53  nan -inf 53   +5 +inf
+0 53  nan  nan    53  nan   -7 53 +inf +inf
+0 53  nan  nan    53  nan   +1 53  nan   -0
+0 53  nan  nan    53 -inf -inf 53 -inf -inf
+0 53 -inf +inf    53 -inf   -7 53   -1   +8
+0 53 -inf   -0    53 -inf   -0 53   +8 +inf
+0 53  nan   -0    53 -inf   -0 53 +inf +inf
+0 53 -inf +inf    53 -inf   +8 53   +0   +8
+0 53 -inf +inf    53 -inf +inf 53   +0   +8
+0 53   +0   -0    53   +0   -0 53 -inf   -7
+0 53 -inf   -0    53   +0   +8 53   -7   -0
+0 53   +0 +inf    53   +0   -0 53   +0   +8
+0 53   +0 +inf    53   +0 +inf 53   +0   +8
+0 53   +0   -0    53   +0   -0 53   +8 +inf
+0 53  nan  nan    53   +0   +8 53 +inf  nan
+0 53 -inf +inf    53   +0   -0 53 -inf +inf
+0 53 -inf +inf    53   +0   +8 53   -7   +8
+0 53  nan +inf    53   +0   -0 53   +0   -0
+0 53   +0 +inf    53   +0 +inf 53   +0   +8
+0 53  nan  nan    53   +0  nan 53   +8 +inf
+0 53   +0   -0    53   +0   +8 53 +inf +inf
+0 53 -inf +inf    53 +inf +inf 53 -inf   +3
+0 53  nan +inf    53 +inf +inf 53   +0 +inf
+0 53  nan  nan    53 +inf +inf 53   +3  nan
+0 53  nan  nan    53 +inf  nan 53 -inf   -7
+0 53  nan  nan    53 +inf  nan 53 +inf +inf
+0 53  nan  nan    53 +inf  nan 53   -3   +7
+
+# regular value
+0 53  0x69                              0xd14fad
+  53 -0x75bcd15                          -0x754e
+  53 -0x11e                                 -0x9
+1 53  0x7.0ef61537b1704p-12             0xd14fad
+  53 -0x75bcd15            -0x1.489c07caba163p-4
+  53 -0x2.e8e36e560704ap+4                  -0x9
+2 53  0x69p-16              0x2.30ee5eef9c36cp+4
+  53 -0x1.02f0415f9f596p+0           -0x754ep-16
+  53 -0x11e                -0x7.62ce64fbacd2cp-8
+3 53  0x7.0ef61537b1704p-8  0x2.30ee5eef9c36cp+4
+  53 -0x1.02f0415f9f596p+0 -0x1.489c07caba163p-4
+  53 -0x2.e8e36e560704ap+0 -0x7.62ce64fbacd2cp-8
+0 53  0xff                                  +inf
+  53 -0xacbp+256                          -0x6f9
+  53 -0x7                                     -0
+1 53  0x9.e9f24790445fp-4                   +inf
+  53 -0x100                 -0xe.bb80d0a0824ep-4
+  53 -0x1.7c6d760a831fap+0                    -0
+0 53 -inf                                   +inf
+  53 -0x1.25f2d73472753p+0 -0x9.9a19fd3c1fc18p-4
+  53 -0x9.3b0c8074ccc18p-4 +0x4.788df5d72af78p-4
+0 53 -inf                                     -5
+  53 -100                                    -15
+  53 +0                                       +3
+2 53 -inf                  -0x1.fd8457415f917p+0
+  53 -2                    -0x1.25f2d73472753p+0
+  53 +0                    +0x9.3b0c8074ccc18p-4
+0 53 -0x480b3b                             -0x69
+  53 -0x123456789                     -0x754ep+4
+  53  0x40b                             0x11ep+4
+1 53 -0x2.f5008d2df94ccp-4            -0x69p-254
+  53 -0xd.67775e4b8588p-4            -0x754ep-53
+  53  0x4.887091874ffc8p+0            0x11ep+201
+2 53 -0x480b3bp+17          -0xa.fc5e7338f3e4p+0
+  53 -0x123456789          -0x1.b0a62934c76e9p+0
+  53  0x40bp-17             0x2.761ec797697a4p-4
+3 53 -0x2.f5008d2df94ccp+4  -0xa.fc5e7338f3e4p-8
+  53 -0xd.67775e4b8588p+0  -0x1.b0a62934c76e9p+0
+  53  0x4.887091874ffc8p-4  0x2.761ec797697a4p+4
+
+0 53 +0                                 0xd14fad
+  53 -0x75bcd15                               -0
+  53 -0x90                                  -0x9
+2 53 +0                     0x1.4fdb41a33d6cep+4
+  53 -0x1.4298b2138f2a7p-4                    -0
+  53 -0x1p-8               -0xf.5e4900c9c19fp-12
+0 53 +0                                     +inf
+  53 -0xeeeeeeeee                             -0
+  53 -0xaaaaaaaaa                             -0
+0 53 -inf                                   +inf
+  53 -0x1.25f2d73472753p+0                    -0
+  53 -0x9.3b0c8074ccc18p-4 +0x4.788df5d72af78p-4
+0 53 -inf                                     -0
+  53 -0xeeeeeeeee                             -0
+  53 +0                                     +0x3
+0 53 -0xd14fad                                -0
+  53 -0x75bcd15                               -0
+  53  0x9                                   0x90
+1 53 -0x1.4fdb41a33d6cep+4                    -0
+  53 -0x1.4298b2138f2a7p-4                    -0
+  53  0xf.5e4900c9c19fp-12                   0x9
+
+0 53 -0x1280                            0xd14fad
+  53 -0x75bcd15                           0xa680
+  53 -0xaf6                                 -0x9
+1 53 -0x1.c71c71c71c71d                        2
+  53 -0x12                                  0x10
+  53 -0xbbbbbbbbbb                          -0x9
+2 53 -0x69p-16              0xe.525982af70c9p-12
+  53 -0x1                             0x754ep-16
+  53 -0xcccccccccc                        -0x11e
+3 53 -0x8.85e40b3c3f63p+0   0xe.071cbfa1de788p-4
+  53 -0xb.5b90b4d32136p-4   0x6.e694ac6767394p+0
+  53 -0xddddddddddd        -0xc.f459be9e80108p-4
+0 53 -inf                                   +inf
+  53 -0xacbp+256                           0x6f9
+  53 -0x7                                     -0
+0 53 -inf                                   +inf
+  53 -0x1.25f2d73472753p+0 +0x9.9a19fd3c1fc18p-4
+  53 -0x9.3b0c8074ccc18p-4 +0x4.788df5d72af78p-4
+0 53 -inf                                   +inf
+  53 +0                                      +15
+  53 -3                                       +3
+0 53 -0x69                           0xbaffep+12
+  53 -0x754e                       0xd0e9dc4p+12
+  53  0x11e                                0xbbb
+1 53 -0xe.525982af70c9p-8            0xbaffep+12
+  53 -0x10		           0xd0e9dc4p+12
+  53  0x11e		                   0xbbb
+2 53 -0x69                   0xe.525982af70c9p-2
+  53 -0x754e                             0x1p+10
+  53  0x11e                                0xbbb
+3 53 -0xf.3d2f5db8ec728p-4  0x1.cf8fa732de129p+0
+  53 -0x1.18333622af827p+0   0x2.14b836907297p+0
+  53  0x1.263147d1f4bcbp+0                 0x111
+
+0 53 -0xd14fad                                -0
+  53 +0                                0x75bcd15
+  53 -0xa                                   -0x9
+1 53 -0x1.e1bb896bfda07p+0                    -0
+  53 +0                     0x1.acbf1702af6edp+0
+  53 -0x0.f                 -0xe.3d7a59e2bdacp-4
+0 53 -inf                                     -0
+  53 +0                                      0xa
+  53 -0x9                                     -0
+0 53 -inf                                   +inf
+  53 +0                                      0xa
+  53 -1                                       +1
+0 53 +0                                 0xd14fad
+  53 +0                                0x75bcd15
+  53 +0x9                                   +0xa
+2 53 +0                       0x9.deb65b02baep-4
+  53 +0                     0x1.5f6b03dc8c66fp+0
+  53 +0x2.39ad24e812dcep+0                   0xa
+
+0 53 -0xd14fad                             -0x69
+  53  0x754e                           0x75bcd15
+  53 -0x11e                                 -0x9
+1 53 -0x7.02d3edfbc8b6p+0              -0x69p-16
+  53  0x754ep-16            0x1.008a3accc766dp+4
+  53 -0x11e                -0x2.497403b31d32ap+0
+2 53 -0xd14fad             -0x7.52680a49e5d68p-8
+  53  0x9.ac412ff1f1478p-4             0x75bcd15
+  53 -0x1.5232c83a0e726p+4                  -0x9
+3 53 -0x5.c1d97d57d81ccp+0 -0x2.c9a600c455f5ap+0
+  53  0xe.1552a314d629p-4   0x1.064c5adfd0042p+0
+  53 -0x5.0d4d319a50b04p-4 -0x2.d8f51df1e322ep-4
+0 53 -inf                                  -0x69
+  53  0x754e                              0xeeee
+  53 -0x11e                                   -0
+2 53 -inf                  -0x1.df1cc82e6a583p-4
+  53  0x1.a9016514490e6p-4                0xeeee
+  53 -0xe.316e87be0b24p-4                     -0
+0 53 -inf                                   +inf
+  53  5                                        6
+  53 -0x5.0d4d319a50b04p-4  0x2.d8f51df1e322ep-4
+0 53  0x69                                  +inf
+  53  0x754e                            +0xeeeee
+  53 +0                                   +0x11e
+1 53  0x1.2a4fcda56843p+0                   +inf
+  53  0x1.7f03f2a978865p+0               0xeeeee
+  53 +0                     0x1.48b08624606b9p+0
+0 53  0xb2                                 0x93d
+  53  0x5efc1492                     0x1ba2dc763
+  53  0x2fdd1f                          0x889b71
+1 53  0x2.120d75be74b54p-12            0x93dp+20
+  53  0x1.d7c06f9ff0706p-8           0x1ba2dc763
+  53  0x2fdd1fp-20           0xe.3d7a59e2bdacp+0
+2 53  0xb.2p-8               0x7.02d3edfbc8b6p-4
+  53  0x5.efc1492p-4        0x1.008a3accc766dp+0
+  53  0x2.497403b31d32ap+0          0x8.89b71p+0
+3 53  0xa.f3518768b206p-8   0x7.0e2acad54859cp+0
+  53  0x8.440e7d65be6bp-8   0x3.99982e9eae09ep+0
+  53  0x8.29fa8d0659e48p-4  0xc.13d2fd762e4a8p-4

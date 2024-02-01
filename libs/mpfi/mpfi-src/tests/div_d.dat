@@ -1,0 +1,92 @@
+# data file for mpfi_div_d
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of first parameter
+# 8: second parameter value
+
+#WARNING:
+# double values are read by the test suite with rounding towards minus
+# infinity to a machine-dependant precision (whereas the mpfi data are read
+# at the given precision with rounding to the nearest).
+# So as to ensure portability, use test values that are representable with a
+# 53 bit-significand which corresponds to the minimum default precision for
+# a double in the test suite.
+
+# special values
+0 53  nan  nan                      53  nan  nan   -0x170ef54646d497p-109
+0 53  nan  nan                      53  nan  nan    0.0
+0 53  nan  nan                      53  nan  nan    0x170ef54646d497p-109
+0 53  nan  nan                      53  nan -inf   -0x114b37f4b51f71p-107
+0 53  nan  nan                      53  nan -inf    0.0
+0 53  nan  nan                      53  nan -inf    0x114b37f4b51f71p-107
+0 53  nan  nan                      53  nan -7     -0xfc339ab0a6b53p-99
+0 53  nan  nan                      53  nan -7      0.0
+0 53  nan  nan                      53  nan -7      7.0
+0 53  nan  nan                      53  nan -0     -15.0
+0 53  nan  nan                      53  nan -0      0.0
+0 53  nan  nan                      53  nan -0      15.0
+0 53  nan  nan                      53  nan +1     -0xb2b3ece0a4ef9p-103
+0 53  nan  nan                      53  nan +1      0.0
+0 53  nan  nan                      53  nan +1      0xb2b3ece0a4ef9p-103
+0 53  nan  nan                      53  nan +inf   -0x5acae5c4b6e51p-101
+0 53  nan  nan                      53  nan +inf    0.0
+0 53  nan  nan                      53  nan +inf    0x5acae5c4b6e51p-101
+0 53 +inf +inf                      53 -inf -inf   -0x170ef54646d497p-108
+0 53 -inf +inf                      53 -inf -inf    0.0
+0 53 -inf -inf                      53 -inf -inf    0x170ef54646d497p-108
+0 53  1   +inf                      53 -inf -7     -7.0
+0 53 -inf +inf                      53 -inf -7      0.0
+0 53 -inf -1                        53 -inf -7      7.0
+0 53 +0   +inf                      53 -inf -0     -0x170ef54646d497p-106
+0 53 -inf  nan                      53 -inf -0      0.0
+0 53 -inf -0                        53 -inf -0      0x170ef54646d497p-106
+1 53 -0x15555555555556p-51 +inf     53 -inf 8      -3.0
+0 53 -inf +inf                      53 -inf 8       0.0
+2 53 -inf  0x15555555555556p-51     53 -inf 8       3.0
+0 53 -inf +inf                      53 -inf +inf   -0x170ef54646d497p-105
+0 53 -inf +inf                      53 -inf +inf    0.0e-17
+0 53 -inf +inf                      53 -inf +inf   +0x170ef54646d497p-105
+0 53  nan  nan                      53 -inf  nan   -0x170ef54646d497p-104
+0 53  nan  nan                      53 -inf  nan    0.0e-17
+0 53  nan  nan                      53 -inf  nan   +0x170ef54646d497p-104
+0 53 +0   -0                        53 +0   -0     -0x170ef54646d497p-109
+0 53  nan  nan                      53 +0   -0      0.0
+0 53 +0   -0                        53 +0   -0      0x170ef54646d497p-109
+1 53 -0x1d9b1f5d20d556p+5  -0       53 +0    8     -0x114b37f4b51f71p-107
+0 53  nan +inf                      53 +0    8      0.0
+2 53 +0    0x1d9b1f5d20d556p+5      53 +0    8      0x114b37f4b51f71p-107
+0 53 -inf -0                        53 +0   +inf   -0x50b45a75f7e81p-104
+0 53  nan +inf                      53 +0   +inf    0.0
+0 53 +0   +inf                      53 +0   +inf    0x142d169d7dfa03p-106
+0 53 -inf -inf                      53 +inf +inf   -0x170ef54646d497p-109
+0 53 -inf +inf                      53 +inf +inf    0.0
+0 53 +inf +inf                      53 +inf +inf    0x170ef54646d497p-109
+0 53  nan  nan                      53 +inf  nan   -0x170ef54646d497p-109
+0 53  nan  nan                      53 +inf  nan    0.0
+0 53  nan  nan                      53 +inf  nan    0x170ef54646d497p-109
+
+# regular values
+0 53  0x10000000000001p-53   0x10000000000001p-20
+  53 -0x10000000000001p-20  -0x10000000000001p-53  -1
+1 53 -0x10000000000001p-19  -1
+  53 -0x10000000000002p-20  -0x10000000000001p-53   0x10000000000001p-53
+2 53 -0x1p+33               -0x1000001fffffffp-52
+  53 -0x10000000000001p-20  -0x10000020000001p-53   0x10000000000001p-53
+3 53 -0x10000000000001p-19  -0x1000001fffffffp-52
+  53 -0x10000000000002p-20  -0x10000020000001p-53   0x10000000000001p-53
+
+0 53 -0x1p-7                 0x1p-53
+  53 -0x123456789abcdfp-53   0x123456789abcdfp-7   -0x123456789abcdf
+1 53 -0x1c200000000002p-106  0x1p-53
+  53 -0x123456789abcdfp-53   0x10000000000001p-53  -0x123456789abcdf
+2 53 -0x1p-7                 0x1c200000000001p-105
+  53 -1                      0x123456789abcdfp-7   -0x123456789abcdf
+3 53 -0x1c200000000002p-106  0x1c200000000001p-105
+  53 -1                      0x10000000000001p-53  -0x123456789abcdf

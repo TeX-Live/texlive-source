@@ -1,0 +1,41 @@
+# data file for mpfi_abs
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan  nan    53  nan  nan
+0 53  nan  nan    53  nan -inf
+0 53  nan  nan    53   -7  nan
+0 53  nan  nan    53  nan   -0
+0 53  nan  nan    53   +0  nan
+0 53  nan  nan    53  nan   +1
+0 53  nan  nan    53 +inf  nan
+0 53 +inf +inf    53 -inf -inf
+0 53   +7 +inf    53 -inf   -7
+0 53   +0 +inf    53 -inf   -0
+0 53   +0 +inf    53 -inf   -0
+0 53   +0 +inf    53 -inf   +8
+0 53   +0 +inf    53 -inf +inf
+0 53   +0   -0    53   +0   -0
+0 53   +0   +8    53   +0   +8
+0 53   +0 +inf    53   +0 +inf
+0 53   +0   +8    53   +0   +8
+0 53   +0 +inf    53   +0 +inf
+0 53 +inf +inf    53 +inf +inf
+
+# regular values
+0 53  0x123456789p-16  0x123456799p-16 53  0x123456789p-16 0x123456799p-16
+1 12  0x888p+21              0x222p+24 53  0x111111111           0x222p+24
+2 12  0xaaa                   0xaabp+4 53 -0xaaa1                   -0xaaa
+3 12  0xaaa0                    0xb6d0 53 -0xb6c1                  -0xaaa1
+
+0 53 +0                0x123456799p-16 53 -0x123456789p-16 0x123456799p-16
+2 12 +0                       0xaabp+4 53 -0xaaa1                    0xaaa

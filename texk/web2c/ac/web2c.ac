@@ -1,7 +1,7 @@
 dnl $Id$
 # texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
 dnl
-dnl Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+dnl Copyright 2015-2024 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
@@ -42,9 +42,9 @@ m4_define([kpse_tex_progs], [dnl
 [[luajittex], [yes], [],    [LuaJITTeX],  [pplib libpng zziplib luajit]],
 [[luahbtex],    [yes], [],    [LuaHBTeX],     [pplib libpng zziplib lua53 harfbuzz]],
 [[luajithbtex], [yes], [],    [LuaHBJITTeX],  [pplib libpng zziplib luajit harfbuzz]],
-[[mp],        [yes], [],    [MetaPost],   [mpfr cairo libpng]],
-[[pmp],       [yes], [],    [pMetaPost],  [mpfr cairo libpng ptexenc]],
-[[upmp],      [yes], [],    [upMetaPost], [mpfr cairo libpng ptexenc]],
+[[mp],        [yes], [],    [MetaPost],   [mpfi mpfr cairo libpng]],
+[[pmp],       [yes], [],    [pMetaPost],  [mpfi mpfr cairo libpng ptexenc]],
+[[upmp],      [yes], [],    [upMetaPost], [mpfi mpfr cairo libpng ptexenc]],
 [[xetex],     [yes], [yes], [XeTeX],      [pplib libpng freetype2 teckit harfbuzz]],
 ])[]dnl
 m4_foreach([Kpse_Prog], [kpse_tex_progs],

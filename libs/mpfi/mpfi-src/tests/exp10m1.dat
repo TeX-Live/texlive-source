@@ -1,0 +1,47 @@
+# data file for mpfi_exp10m1
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                  -1                       53  nan -inf
+0 53  9                     nan                     53  1    nan
+0 53  nan                  -0                       53  nan -0
+0 53 +0                     nan                     53 +0    nan
+0 53  nan                  99                       53  nan  2
+0 53 +inf                   nan                     53 +inf  nan
+0 53 -1                    -1                       53 -inf -inf
+0 53 -1                   999                       53 -inf  3
+0 53 -1                    -0                       53 -inf -0
+0 53 -1                     9                       53 -inf  1
+0 53 -1                    +inf                     53 -inf +inf
+0 53 +0                    -0                       53 +0   -0
+2 53 +0                     0xc.73d51c54470e8p-4    53 +0    0.25
+0 53 +0                    +inf                     53 +0   +inf
+0 53 +inf                  +inf                     53 +inf +inf
+
+# regular values
+3 53 -0xf.ff972474538fp-4   0xc.73d51c54470e8p-4    53 -0x4p+0 	 0x4p-4
+3 53 -0xf.ff972474538fp-4   0xc.73d51c54470e8p-4    53 -4 	 0.25
+1 53 0xc.73d51c54470ep-4    0x1.869fp+16    	    53  0x4p-4 	 0x5p+0
+1 53 0xc.73d51c54470ep-4    0x1.869fp+16    	    53  0.25 	 5
+1 53 -0xf.ff972474538fp-4   -0                      53 -4       -0 
+2 53 +0                     0xc.73d51c54470e8p-4    53 +0        0.25
+1 53 0xc.73d51c54470ep-4    0x1.869fp+16            53	0.25     5
+1 53 -0xf.ff972474538fp-4   0x1.869fp+16            53 -4        5
+3 335 0x2.298b075b4b6a5240945790619b37fd4ab4e0abaf86001c5757f5084b17271500da279bd14e9aaf95937p+0    0x2.298b075b4b6a5240945790619b37fd4ab4e0abaf86001c5757f5084b17271500da279bd14e9aaf959378p+0	53 0.5 0.5
+3 335 -0xa.f0bb276dedbc493245da4c30a140045544feed4d8fffd2a77344bf87daf4ab31d62706b11bd54d77142p-4  -0xa.f0bb276dedbc493245da4c30a140045544feed4d8fffd2a77344bf87daf4ab31d62706b11bd54d7714p-4 53 -0.5 -0.5
+0 12 0x6.3p+4               0x6.3p+4                53  2        2
+3 12 0x5.f58p+24            0x5.f6p+24              53  8        8 
+3 12 0x3.b98p+28            0x3.b9cp+28             53  9        9
+3 12 -0xf.d8p-4            -0xf.d7p-4               12 -2       -2
+3 12 -0x1p+0               -0xf.ffp-4               12 -8       -8
+3 12 -0x1p+0               -0xf.ffp-4               12 -9       -9

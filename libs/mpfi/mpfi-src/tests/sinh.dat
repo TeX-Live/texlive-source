@@ -1,0 +1,36 @@
+# data file for mpfi_sinh
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                   nan                     53  nan  nan
+0 53  nan                  -inf                     53  nan -inf
+0 53 -0x1122876ba380cap-43  nan                     53   -7  nan
+0 53  nan                  -0                       53  nan   -0
+0 53 +0                     nan                     53   +0  nan
+0 53 -inf                   nan                     53 -inf  nan
+0 53 -inf                  -inf                     53 -inf -inf
+2 53 -inf                  -0x1122876ba380c9p-43    53 -inf   -7
+0 53 -inf                  -0                       53 -inf   -0
+2 53 -inf                   0x1749ea514eca66p-42    53 -inf   +8
+0 53 -inf                  +inf                     53 -inf +inf
+1 53 -0x12cd9fc44eb983p-52 -0                       53   -1   -0
+0 53 +0                    -0                       53   +0   -0
+2 53 +0                     0x12cd9fc44eb983p-52    53   +0   +1
+2 53 +0                     0x1749ea514eca66p-42    53   +0   +8
+0 53 +0                    +inf                     53   +0 +inf
+0 53 +inf                  +inf                     53 +inf +inf
+
+# regular values
+1 53 -0x100aaccd00d2f1p-55 -0                       53 -0.125 -0
+2 53 +0                     0x10acd00fe63b98p-53    53  0      0x10000000000001p-53
+3 53 -0x168062ab5fa9fdp-47 -0x1553e795dc19ccp-53    53 -4.5   -0.625
+3 53  0x12cd9fc44eb982p-52  0x140926e70949aep-49    53  1      3

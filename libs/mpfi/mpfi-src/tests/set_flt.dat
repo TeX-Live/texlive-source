@@ -1,0 +1,37 @@
+# data file for mpfi_set_flt
+#
+# fields: see put_ui.dat
+
+# special values
+24  nan  nan     0 24 -inf -inf    -inf
+24  nan  nan     0 24   -8   -8      -8
+24  nan  nan     0 24   +0   -0      -0
+24  nan  nan     0 24   +0   -0      +0
+24  nan  nan     0 24   +5   +5      +5
+24 +7   -7       0 24 +inf +inf    +inf
+24 +7   -7       0 24  nan  nan     nan
+24 +7   -7       0 24 -inf -inf    -inf
+24 +7   -7       0 24   -8   -8      -8
+24 +7   -7       0 24   +0   -0      -0
+24  nan  nan     0 24   +0   -0      +0
+24  nan  nan     0 24   +5   +5      +5
+24  nan  nan     0 24 +inf +inf    +inf
+24 +0   -0       0 24  nan  nan     nan
+24 +0   -0       0 24 -inf -inf    -inf
+24  nan  nan     0 24   -8   -8      -8
+24  nan  nan     0 24   +0   -0      -0
+24  nan  nan     0 24   +0   -0      +0
+24  nan  nan     0 24   +5   +5      +5
+24  nan  nan     0 24 +inf +inf    +inf
+24 -1   +1       0 24  nan  nan     nan
+24 -1   +1       0 24 -inf -inf    -inf
+24 -1   +1       0 24   -8   -8      -8
+24 -1   +1       0 24   +0   -0      -0
+24  nan  nan     0 24   +0   -0      +0
+24  nan  nan     0 24   +5   +5      +5
+24  nan  nan     0 24 +inf +inf    +inf
+24 +0   +1       0 24  nan  nan     nan
+
+# regular values
+  24 +0x123456p-16 +0xfedcbap-16	 0 24 +0x111111      +0x111111 +0x111111
+  20 +0x123456p-57  +0xfedcbap+33	 3 20 +0x1.111110      +0x1.111112 +0x1.111111

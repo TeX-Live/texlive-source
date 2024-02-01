@@ -1,0 +1,41 @@
+# data file for mpfi_nan_p
+#
+# column fields:
+# 1: return value (0: false, +: true)
+# 2: precision of argument
+# 3: left endpoint value of argument
+# 4: right endpoint value of argument
+#
+
+# special values
++ 53  nan -inf
++ 53  nan -8
++ 53 -8    nan
++ 53  nan -0
++ 53 +0    nan
++ 53  nan  5
++ 53  5    nan
++ 53  nan +inf
++ 53  nan  nan
+0 53 -inf -inf
+0 53 -inf -8
+0 53 -inf -0
+0 53 -inf  5
+0 53 -inf +inf
++ 53 -inf  nan
+0 53 -8   -0
+0 53 +0   -0
+0 53 +0    5
+0 53 +0   +inf
+0 53  5   +inf
+0 53 +inf +inf
++ 53 +inf  nan
+
+# regular values
+0  8 -34                   -17
+0  8 -8                    -1
+0  8 -34                    17
+0 53 -0x1921fb54442d18p-51  0x1921fb54442d19p-51
+0 53  0x1921fb54442d18p-51  0x1921fb54442d19p-51
+0 53 +8                    +0x7fffffffffffbp+51
+0 53 +0x1fffffffffffffp-53  2

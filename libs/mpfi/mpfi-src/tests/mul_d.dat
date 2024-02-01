@@ -1,0 +1,123 @@
+# data file for mpfi_add_d
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of second parameter
+# 8: second parameter value
+
+#WARNING:
+# double values are read by the test suite with rounding towards minus
+# infinity to a machine-dependant precision (whereas the mpfi data are read
+# at the given precision with rounding to the nearest).
+# So as to ensure portability, use test values that are representable with a
+# 53 bit-significand which corresponds to the minimum default precision for
+# a double in the test suite.
+
+# special values
+0 53  nan    nan                      53  nan  nan   -0x170ef54646d497p-109
+0 53  nan    nan                      53  nan  nan    0.0
+0 53  nan    nan                      53  nan  nan    0x170ef54646d497p-109
+0 53  nan    nan                      53  nan -inf   -0x114b37f4b51f71p-107
+0 53  nan    nan                      53  nan -inf    0.0
+0 53  nan    nan                      53  nan -inf    0x114b37f4b51f71p-107
+0 53  nan    nan                      53  nan -7     -0xfc339ab0a6b53p-99
+0 53  nan    nan                      53  nan -7      0.0
+0 53  nan    nan                      53  nan -7      7.0
+0 53  nan    nan                      53  nan -0     -15.0
+0 53  nan    nan                      53  nan -0      0.0
+0 53  nan    nan                      53  nan -0      15.0
+0 53  nan    nan                      53  nan  1     -0xb2b3ece0a4ef9p-103
+0 53  nan    nan                      53  nan  1      0.0
+0 53  nan    nan                      53  nan  1      0xb2b3ece0a4ef9p-103
+0 53  nan    nan                      53  nan +inf   -0x5acae5c4b6e51p-101
+0 53  nan    nan                      53  nan +inf    0.0
+0 53  nan    nan                      53  nan +inf    0x5acae5c4b6e51p-101
+0 53 +inf   +inf                      53 -inf -inf   -0x170ef54646d497p-108
+0 53 +0     -0                        53 -inf -inf    0.0
+0 53 -inf   -inf                      53 -inf -inf    0x170ef54646d497p-108
+0 53 +0xa1  +inf                      53 -inf -7     -0x17
+0 53 +0     -0                        53 -inf -7      0.0
+2 53 -inf   -0xa168b4ebefd020p-107    53 -inf -7      0x170ef54646d497p-107
+0 53 +0     +inf                      53 -inf -0     -0x170ef54646d497p-106
+0 53 +0     -0                        53 -inf -0      0.0
+0 53 -inf   -0                        53 -inf -0      0x170ef54646d497p-106
+0 53 -0xb1a2bc2ec5000000     +inf     53 -inf  8     -0x16345785d8a00000
+0 53 +0     -0                        53 -inf  8      0.0
+0 53 -inf    0xb1a2bc2ec5000000       53 -inf  8      0x16345785d8a00000
+0 53 -inf   +inf                      53 -inf +inf   -0x170ef54646d497p-105
+0 53 +0     -0                        53 -inf +inf    0.0e-17
+0 53 -inf   +inf                      53 -inf +inf   +0x170ef54646d497p-105
+0 53  nan    nan                      53 -inf  nan   -0x170ef54646d497p-104
+0 53  nan    nan                      53 -inf  nan    0.0e-17
+0 53  nan    nan                      53 -inf  nan   +0x170ef54646d497p-104
+0 53 +0     -0                        53 +0   -0     -0x170ef54646d497p-109
+0 53 +0     -0                        53 +0   -0      0.0
+0 53 +0     -0                        53 +0   -0      0x170ef54646d497p-109
+1 53 -0x790e87b0f3dc18p-107  -0       53 +0    7     -0x114b37f4b51f71p-107
+0 53 +0     -0                        53 +0    8      0.0
+2 53 +0      0x9ba4f79a5e1b00p-103    53 +0    9      0x114b37f4b51f71p-103
+0 53 -inf   -0                        53 +0   +inf   -0x50b45a75f7e81p-104
+0 53 +0     -0                        53 +0   +inf    0.0
+0 53 +0     +inf                      53 +0   +inf    0x142d169d7dfa03p-106
+0 53 -inf   -inf                      53 +inf +inf   -0x170ef54646d497p-109
+0 53 +0     -0                        53 +inf +inf    0.0
+0 53 +inf   +inf                      53 +inf +inf    0x170ef54646d497p-109
+0 53  nan    nan                      53 +inf  nan   -0x170ef54646d497p-109
+0 53  nan    nan                      53 +inf  nan    0.0
+0 53  nan    nan                      53 +inf  nan    0x170ef54646d497p-109
+
+# regular values
+0 53  0xfffffffffffffp-123   0x22a2a28
+  53 -0x1717170             -0xaaaaaaaaaaaaap-123    -1.5
+0 53 -0x22a2a28p+401         0xfffffffffffff
+  53 -0xaaaaaaaaaaaaa        0x1717170p+401          -1.5
+0 53 -0x1222222222221p+654  -0x22000000000022
+  53  0x10000000000010       0x888888888888p+654     -2.125
+0 53 -0x22a2a28             -0xfffffffffffffp-123
+  53 -0x1717170             -0xaaaaaaaaaaaaap-123     1.5
+0 53 -0xfffffffffffff        0x22a2a28p+401
+  53 -0xaaaaaaaaaaaaa        0x1717170p+401           1.5
+0 53  0x22000000000022       0x1222222222221p+654
+  53  0x10000000000010       0x888888888888p+654      2.125
+1 53  0x18000000000001       0x22a2a28p+36
+  53 -0x1717170p+36         -0x10000000000001        -1.5
+1 53 -0x18000000000002       0xfffffffffffff
+  53 -0xaaaaaaaaaaaaa        0x10000000000001        -1.5
+1 53 -0x12222222222223p+1   -0x22000000000022
+  53  0x10000000000010       0x11111111111111        -2.125
+1 53 -0x18000000000002      -0xfffffffffffffp-123
+  53 -0x10000000000001      -0xaaaaaaaaaaaaap-123     1.5
+1 53 -0x10000000000001       0x22a2a28p+401
+  53 -0xaaaaaaaaaaaab        0x1717170p+401           1.5
+1 53  0x22000000000002       0x1222222222221p+654
+  53  0x10000000000001       0x888888888888p+654      2.125
+2 53  0xfffffffffffffp-123   0x1a2a2a2a2a2a2a
+  53 -0x11717171717171      -0xaaaaaaaaaaaaap-123    -1.5
+2 53 -0x22a2a28p+401         0x18000000000002
+  53 -0x10000000000001       0x1717170p+401          -1.5
+2 53 -0x1222222222221p+654  -0x22000000000002
+  53  0x10000000000001       0x888888888888p+654     -2.125
+2 53 -0x22a2a28             -0x27fffffffffffep-123
+  53 -0x1717170             -0x1aaaaaaaaaaaaap-123    1.5
+2 53 -0xfffffffffffff        0x1a2a2a2a2a2a2a
+  53 -0xaaaaaaaaaaaaa        0x11717171717171         1.5
+2 53  0x22000000000022       0x34222222222224
+  53  0x10000000000010       0x18888888888889         2.125
+3 53  0x18000000000001       0x1a2a2a2a2a2a2a
+  53 -0x11717171717171      -0x10000000000001        -1.5
+3 53 -0x18000000000002       0x18000000000002
+  53 -0x10000000000001       0x10000000000001        -1.5
+3 53 -0x12222222222223p+1   -0x22000000000002
+  53  0x10000000000001       0x11111111111111        -2.125
+3 53 -0x18000000000002      -0x27fffffffffffep-123
+  53 -0x10000000000001      -0x1aaaaaaaaaaaaap-123    1.5
+3 53 -0x10000000000001       0x1a2a2a2a2a2a2a
+  53 -0xaaaaaaaaaaaab        0x11717171717171         1.5
+3 53  0x22000000000002       0x34222222222224
+  53  0x10000000000001       0x18888888888889         2.125

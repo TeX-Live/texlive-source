@@ -187,6 +187,8 @@ nodist_libmpfr_a_OBJECTS = @MPFR_TREE@/src/abort_prec_max.$(OBJEXT) \
 	@MPFR_TREE@/src/set_d.$(OBJEXT) \
 	@MPFR_TREE@/src/set_dfl_prec.$(OBJEXT) \
 	@MPFR_TREE@/src/set_f.$(OBJEXT) \
+	@MPFR_TREE@/src/set_inf.$(OBJEXT) \
+	@MPFR_TREE@/src/set_nan.$(OBJEXT) \
 	@MPFR_TREE@/src/set_prec.$(OBJEXT) \
 	@MPFR_TREE@/src/set_q.$(OBJEXT) \
 	@MPFR_TREE@/src/set_rnd.$(OBJEXT) \
@@ -311,6 +313,8 @@ am__depfiles_remade = ./$(DEPDIR)/mpfrtest-mpfrtest.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_d.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_dfl_prec.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_f.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/set_inf.Po \
+	@MPFR_TREE@/src/$(DEPDIR)/set_nan.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_prec.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_q.Po \
 	@MPFR_TREE@/src/$(DEPDIR)/set_rnd.Po \
@@ -857,6 +861,8 @@ nodist_libmpfr_a_SOURCES = \
 	@MPFR_TREE@/src/set_d.c \
 	@MPFR_TREE@/src/set_dfl_prec.c \
 	@MPFR_TREE@/src/set_f.c \
+	@MPFR_TREE@/src/set_inf.c \
+	@MPFR_TREE@/src/set_nan.c \
 	@MPFR_TREE@/src/set_prec.c \
 	@MPFR_TREE@/src/set_q.c \
 	@MPFR_TREE@/src/set_rnd.c \
@@ -1006,9 +1012,7 @@ unused_sources = \
 	@MPFR_TREE@/src/set_exp.c \
 	@MPFR_TREE@/src/set_flt.c \
 	@MPFR_TREE@/src/set_float128.c \
-	@MPFR_TREE@/src/set_inf.c \
 	@MPFR_TREE@/src/set_ld.c \
-	@MPFR_TREE@/src/set_nan.c \
 	@MPFR_TREE@/src/set_prc_raw.c \
 	@MPFR_TREE@/src/set_si.c \
 	@MPFR_TREE@/src/set_sj.c \
@@ -1283,6 +1287,10 @@ clean-noinstLIBRARIES:
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/set_f.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/set_inf.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@MPFR_TREE@/src/set_nan.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
+	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/set_prec.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
 	@MPFR_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @MPFR_TREE@/src/set_q.$(OBJEXT): @MPFR_TREE@/src/$(am__dirstamp) \
@@ -1436,6 +1444,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_d.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_dfl_prec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_f.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_inf.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_nan.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_prec.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_q.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@MPFR_TREE@/src/$(DEPDIR)/set_rnd.Po@am__quote@ # am--include-marker
@@ -2092,6 +2102,8 @@ distclean: distclean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_dfl_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_f.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_inf.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_nan.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_q.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_rnd.Po
@@ -2245,6 +2257,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_d.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_dfl_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_f.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_inf.Po
+	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_nan.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_prec.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_q.Po
 	-rm -f @MPFR_TREE@/src/$(DEPDIR)/set_rnd.Po

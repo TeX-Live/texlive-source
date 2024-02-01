@@ -1,0 +1,50 @@
+# data file for mpfi_cot
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                     nan                     53  nan  nan
+0 53  nan                     nan                     53  nan -inf
+0 53  nan                     nan                     53   -7  nan
+0 53  nan                     nan                     53  nan   -0
+0 53  nan                     nan                     53   +0  nan
+0 53  nan                     nan                     53 -inf  nan
+0 53  nan                     nan                     53 -inf -inf
+0 53 -inf                    +inf                     53 -inf   -7
+0 53 -inf                    +inf                     53 -inf   -0
+0 53 -inf                    +inf                     53 -inf   +8
+0 53 -inf                    +inf                     53 -inf +inf
+0 53 -inf                    +inf                     53   -8   -0
+2 53 -inf                     0xe07cf2eb32f0bp-49     53   -3   -0
+2 53 -inf                    -0x148c05d04e1cfdp-53    53   -1   -0
+0 53  nan                     nan                     53   +0   -0
+1 53  0x148c05d04e1cfdp-53   +inf                     53   +0   +1
+1 53 -0xe07cf2eb32f0bp-49    +inf                     53   +0   +3
+0 53 -inf                    +inf                     53   +0   +8
+0 53 -inf                    +inf                     53   +0 +inf
+0 53  nan                     nan                     53 +inf +inf
+
+# regular values
+
+3 53  0x1d4a42e92faa4dp-54    0xe07cf2eb32f0bp-49     53 -3     -2
+3 53  0x5cb3b399d747fp-103    0xe07cf2eb32f0bp-49
+  53 -3                      -0x1921fb54442d19p-52
+0 53 -inf                    +inf
+  53 -2                       0x1921fb54442d19p-52
+3 53  0xea4d6bf23e051p-51     0x1fd549f047f2bbp-50    53  0.125  0.5
+3 53 -0x172cece675d1fdp-105   0x1fd549f047f2bbp-50
+  53  0.125                   0x1921fb54442d19p-52
+0 53 -inf                    +inf
+  53  0x1921fb54442d19p-52    4
+3 53 -0x1d02967c31cdb5p-1     0x1ba35ba1c6b75dp-53
+  53  4                       0x3243f6a8885a3p-47
+3 53  0x148c05d04e1fb7p-53    0x1cefdde7c84c27p-4
+  53  0x13a28c59d5433bp-44    0x9d9462ceaa19dp-43

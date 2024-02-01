@@ -1,0 +1,129 @@
+# data file for mpfi_q_sub
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: first parameter value
+# 6: precision of second parameter
+# 7: left endpoint value of second parameter
+# 8: right endpoint value of second parameter
+
+# special values
+0 53  nan  nan    -1/1   53  nan  nan
+0 53  nan  nan     0     53  nan  nan
+0 53  nan  nan     1/1   53  nan  nan
+0 53 +inf  nan    -3/1   53  nan -inf
+0 53 +inf  nan     0     53  nan -inf
+0 53 +inf  nan     3/1   53  nan -inf
+0 53 +0    nan    -7/1   53  nan -7
+0 53  7    nan     0     53  nan -7
+0 53  14   nan     7/1   53  nan -7
+0 53 -15   nan    -15/1  53  nan -0
+0 53 +0    nan     0     53  nan -0
+0 53  15   nan     15/1  53  nan -0
+0 53 -32   nan    -31/1  53  nan  1
+0 53 -1    nan     0     53  nan  1
+0 53  30   nan     31/1  53  nan  1
+0 53 -inf  nan    -63/1  53  nan +inf
+0 53 -inf  nan     0     53  nan +inf
+0 53 -inf  nan     63/1  53  nan +inf
+0 53 +inf +inf    -2/1   53 -inf -inf
+0 53 +inf +inf     0     53 -inf -inf
+0 53 +inf +inf     2/1   53 -inf -inf
+0 53  3   +inf    -4/1   53 -inf -7
+0 53  7   +inf     0     53 -inf -7
+0 53  11  +inf     4/1   53 -inf -7
+
+1 53  0x1b6db6db6db6dbp-50 +inf
+     -1/7
+  53 -inf                  -7
+1 53  0x1c924924924924p-50 +inf
+      1/7
+  53 -inf                  -7
+1 53  0x1fffffffffffffp+17 +inf
+     -7/1
+  53 -inf                  -0x1p+70
+1 53  0x1p+70              +inf
+      7/1
+  53 -inf                  -0x1p+70
+
+0 53 -8   +inf    -8/1   53 -inf -0
+0 53 +0   +inf     0     53 -inf -0
+0 53  8   +inf     8/1   53 -inf -0
+0 53 -24  +inf    -16/1  53 -inf  8
+0 53 -8   +inf     0     53 -inf  8
+0 53  8   +inf     16/1  53 -inf  8
+0 53 -inf +inf    -32/1  53 -inf +inf
+0 53 -inf +inf     0     53 -inf +inf
+0 53 -inf +inf     32/1  53 -inf +inf
+0 53  nan +inf    -64/1  53 -inf  nan
+0 53  nan +inf     0     53 -inf  nan
+0 53  nan +inf     64/1  53 -inf  nan
+0 53 -1   -1      -1/1   53 +0   -0
+0 53 +0   -0       0     53 +0   -0
+0 53  1    1       1/1   53 +0   -0
+0 53 -11  -3      -3/1   53 +0    8
+0 53 -8   -0       0     53 +0    8
+0 53 -5    3       3/1   53 +0    8
+0 53 -inf -7      -7/1   53 +0   +inf
+0 53 -inf -0       0     53 +0   +inf
+0 53 -inf +7       7/1   53 +0   +inf
+
+2 53 -inf                  -0x12492492492492p-55
+     -1/7
+  53 +0                    +inf
+2 53 -inf                   0x12492492492493p-55
+     1/7
+  53 +0                    +inf
+2 53 -inf                  -0x1p+70
+     -7/1
+  53  0x1p+70              +inf
+2 53 -inf                  -0x1fffffffffffffp+17
+      7/1
+  53  0x1p+70              +inf
+
+0 53 -inf -inf    -1/1   53 +inf +inf
+0 53 -inf -inf     0     53 +inf +inf
+0 53 -inf -inf     1/1   53 +inf +inf
+0 53  nan -inf    -1/1   53 +inf  nan
+0 53  nan -inf     0     53 +inf  nan
+0 53  nan -inf     1/1   53 +inf  nan
+
+# regular values
+0 53 -15  -0      -32/1  53 -32  -17
+0 53  49   64      32/1  53 -32  -17
+0 53  34   49      17/1  53 -32  -17
+
+0 53 -0x123456789abce2     -0x153456789abcdfp-48
+     -3/1
+  53  0x123456789abcdfp-48  0x123456789abcdf
+1 53 -0x10123456789abdp-44 -1
+     -256/1
+  53 -0xff                  0x123456789abcdfp-52
+2 53 -0x123456789abce2     -0x3123456789abcdp-52
+     -3/1
+  53  0x123456789abcdfp-56  0x123456789abcdf
+3 53 -0x1001               -0xfff
+     -0x1001/1
+  53 -0x1fffffffffffffp-52 -0x1p-550
+
+0 53 -0x123456789abcdc     -0xf3456789abcdfp-48
+      3/1
+  53  0x123456789abcdfp-48  0x123456789abcdf
+1 53  0xfedcba9876543p-44   0x1ff
+      256/1
+  53 -0xff                  0x123456789abcdfp-52
+2 53 -0x123456789abcdc      0x2edcba98765433p-52
+      3/1
+  53  0x123456789abcdfp-56  0x123456789abcdf
+3 53  0x1001                0x1003
+      0x1001/1
+  53 -0x1fffffffffffffp-52 -0x1p-550
+
+# check if a double rounding occurs
+3  4 -16  -0.3125      -97/3  53 -32  -17
+3  4 -0.34375 15       -52/3  53 -32  -17
+0  4  1    15          -17/1  53 -32  -18

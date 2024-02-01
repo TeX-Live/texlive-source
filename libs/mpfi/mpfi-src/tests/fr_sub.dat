@@ -1,0 +1,115 @@
+# data file for mpfi_fr_sub
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: value of first parameter
+# 7: precision of second parameter
+# 8: left endpoint value of second parameter
+# 9: right endpoint value of second parameter
+
+# special values
+0 53  nan  nan                      53 -0x170ef54646d497p-109  53  nan  nan
+0 53  nan  nan                      53  0.0                    53  nan  nan
+0 53  nan  nan                      53  0x170ef54646d497p-109  53  nan  nan
+0 53 +inf  nan                      53 -0x114b37f4b51f71p-107  53  nan -inf
+0 53 +inf  nan                      53  0.0                    53  nan -inf
+0 53 +inf  nan                      53  0x114b37f4b51f71p-107  53  nan -inf
+0 53  0x1bfffffffffff8p-50   nan    53 -0xfc339ab0a6b53p-99    53  nan -7
+0 53  7    nan                      53  0.0                    53  nan -7
+0 53  0x1c000000000007p-50   nan    53  0xfc339ab0a6b53p-99    53  nan -7
+0 53 -15   nan                      53 -15.0                   53  nan -0
+0 53 +0    nan                      53  0.0                    53  nan -0
+0 53  15   nan                      53  15.0                   53  nan -0
+0 53 -0x8000000000001p-51    nan    53 -0xb2b3ece0a4ef9p-103   53  nan  1
+0 53 -1    nan                      53  0.0                    53  nan  1
+0 53 -0xfffffffffffffp-52    nan    53  0xb2b3ece0a4ef9p-103   53  nan  1
+0 53 -inf  nan                      53 -0x5acae5c4b6e51p-101   53  nan +inf
+0 53 -inf  nan                      53  0.0                    53  nan +inf
+0 53 -inf  nan                      53  0x5acae5c4b6e51p-101   53  nan +inf
+0 53 +inf +inf                      53 -0x170ef54646d497p-108  53 -inf -inf
+0 53 +inf +inf                      53  0.0                    53 -inf -inf
+0 53 +inf +inf                      53  0x170ef54646d497p-108  53 -inf -inf
+1 53  0x1bffffffffffffp-50  +inf    53 -0x170ef54646d497p-107  53 -inf -7
+0 53  7   +inf                      53  0.0                    53 -inf -7
+1 53  7   +inf                      53  0x170ef54646d497p-107  53 -inf -7
+0 53 -0x170ef54646d497p-96  +inf    53 -0x170ef54646d497p-96   53 -inf -0
+0 53 +0   +inf                      53  0.0                    53 -inf -0
+0 53  0x170ef54646d497p-96  +inf    53  0x170ef54646d497p-96   53 -inf -0
+1 53 -0x16345785d8a00100    +inf    53 -0x16345785d8a00000     53 -inf  8
+0 53 -8   +inf                      53  0.0                    53 -inf  8
+1 53  0x16345785d89fff00    +inf    53  0x16345785d8a00000     53 -inf  8
+0 53 -inf +inf                      53 -0x170ef54646d497p-105  53 -inf +inf
+0 53 -inf +inf                      53  0.0e-17                53 -inf +inf
+0 53 -inf +inf                      53  0x170ef54646d497p-105  53 -inf +inf
+0 53  nan +inf                      53 -0x170ef54646d497p-104  53 -inf  nan
+0 53  nan +inf                      53  0.0e-17                53 -inf  nan
+0 53  nan +inf                      53  0x170ef54646d497p-104  53 -inf  nan
+0 53 -0x170ef54646d497p-109 -0x170ef54646d497p-109
+  53 -0x170ef54646d497p-109
+  53 +0                     -0
+0 53 +0   -0                        53  0.0                    53 +0   -0
+0 53  0x170ef54646d497p-109  0x170ef54646d497p-109
+  53  0x170ef54646d497p-109
+  53 +0                     -0
+1 53 -0x10000000000001p-49  -0x114b37f4b51f71p-107
+  53 -0x114b37f4b51f71p-107
+  53 +0                      8
+0 53 -8   -0                        53  0.0                    53 +0    8
+1 53 -8                      0x114b37f4b51f71p-107
+  53  0x114b37f4b51f71p-107
+  53 +0                      8
+0 53 -inf                   -0x50b45a75f7e81p-104
+  53 -0x50b45a75f7e81p-104
+  53 +0                     +inf
+0 53 -inf -0                        53  0.0                    53 +0   +inf
+0 53 -inf                   -0x142d169d7dfa03p-106
+  53 -0x142d169d7dfa03p-106
+  53 +0                     +inf
+0 53 -inf -inf                      53  0x142d169d7dfa03p-106  53 +inf +inf
+0 53 -inf -inf                      53 -0x170ef54646d497p-109  53 +inf +inf
+0 53 -inf -inf                      53  0.0                    53 +inf +inf
+0 53  nan -inf                      53  0x170ef54646d497p-109  53 +inf  nan
+0 53  nan -inf                      53 -0x170ef54646d497p-109  53 +inf  nan
+0 53  nan -inf                      53  0.0                    53 +inf  nan
+
+# regular values
+0 53 -0x1fb53d14aa9c2fp-47  -0x18353d14aa9c2fp-47
+  53 -0xfb53d14aa9c2fp-47
+  53  17                     32
+0 53 +0                      0x7353d14aa9c2fp-47
+  53  0xfb53d14aa9c2fp-47
+  53  17                     0xfb53d14aa9c2fp-47
+0 53 -0x104ac2eb5563d1p-48  -0
+  53  0xfb53d14aa9c2fp-48
+  53  0xfb53d14aa9c2fp-48    32
+
+0 53  0x15b456789abcdfp-48   0x123456789abd17p-4
+  53  3.5
+  53 -0x123456789abcdfp-4   -0x123456789abcdfp-48
+1 53  0x3923456789abcdp-52   0x123456789abd17p-4
+  53  3.5
+  53 -0x123456789abcdfp-4   -0x123456789abcdfp-56
+2 53  0x18p-4                0x101a3456789abdp-44
+  53  256.5
+  53 -0x123456789abcdfp-52   0xff
+3 53  0xfff8p-4              0x10018p-4
+  53  4097.5
+  53  0x1p-550               0x1fffffffffffffp-52
+
+0 53  0xeb456789abcdfp-48    0x123456789abca7p-4
+  53 -3.5
+  53 -0x123456789abcdfp-4   -0x123456789abcdfp-48
+1 53 -0x36dcba98765434p-52   0x123456789abca7p-4
+  53 -3.5
+  53 -0x123456789abcdfp-4   -0x123456789abcdfp-56
+2 53 -0x1ff8p-4             -0xff5cba9876543p-44
+  53 -256.5
+  53 -0x123456789abcdfp-52   0xff
+3 53 -0x10038p-4            -0x10018p-4
+  53 -4097.5
+  53  0x1p-550               0x1fffffffffffffp-52

@@ -1,0 +1,41 @@
+# data file for mpfi_bounded_p
+#
+# column fields:
+# 1: return value (0: false, +: true)
+# 2: precision of argument
+# 3: left endpoint value of argument
+# 4: right endpoint value of argument
+#
+
+# special values
+0 53  nan -inf
+0 53  nan -8
+0 53 -8    nan
+0 53  nan -0
+0 53 +0    nan
+0 53  nan  5
+0 53  5    nan
+0 53  nan +inf
+0 53  nan  nan
+0 53 -inf -inf
+0 53 -inf -8
+0 53 -inf -0
+0 53 -inf  5
+0 53 -inf +inf
+0 53 -inf  nan
++ 53 -8   -0
++ 53 +0   -0
++ 53 +0    5
+0 53 +0   +inf
+0 53  5   +inf
+0 53 +inf +inf
+0 53 +inf  nan
+
+# regular values
++  8 -34                   -17
++  8 -8                    -1
++  8 -34                    17
++ 53 -0x1921fb54442d18p-51  0x1921fb54442d19p-51
++ 53  0x1921fb54442d18p-51  0x1921fb54442d19p-51
++ 53 +8                    +0x7fffffffffffbp+51
++ 53 +0x1fffffffffffffp-53  2

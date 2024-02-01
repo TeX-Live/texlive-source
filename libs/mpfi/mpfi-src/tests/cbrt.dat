@@ -1,0 +1,31 @@
+# data file for mpfi_cbrt
+#
+# column fields: see neg.dat
+
+# special values
+0 53  nan  nan    53  nan  nan
+0 53  nan -inf    53  nan -inf
+0 53   -4  nan    53  -64  nan
+0 53  nan   -0    53  nan   -0
+0 53   +0  nan    53   +0  nan
+0 53  nan   +1    53  nan   +1
+0 53 +inf  nan    53 +inf  nan
+0 53 -inf -inf    53 -inf -inf
+0 53 -inf   -5    53 -inf -125
+0 53 -inf   -0    53 -inf   -0
+0 53 -inf   +4    53 -inf  +64
+0 53 -inf +inf    53 -inf +inf
+0 53   +0   -0    53   +0   -0
+0 53   +0   +3    53   +0  +27
+0 53   +0 +inf    53   +0 +inf
+0 53 +inf +inf    53 +inf +inf
+
+# regular values
+0 53  4                                           5
+  53  0x40                                     0x7d
+1 53 -0x2e5e58c0083b7bp-154                       6
+  53 -0x1856e4be527197p-354                    0xd8
+2 53 -3                       0x23f19d36b0a0bbp-459
+  53 -0x1b                   0x16acbb5e3f08a3p-1270
+3 53 0x2b8172e535d44dp-385     0x24cbd1c55aaa1p-258
+  53 0x141a9019a2184dp-1047    0xc29c78c66ac0fp-678

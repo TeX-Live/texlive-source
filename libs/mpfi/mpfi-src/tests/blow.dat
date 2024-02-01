@@ -1,0 +1,106 @@
+# data file for mpfi_blow
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of second parameter
+# 8: second parameter value
+
+#WARNING:
+# double values are read by the test suite with rounding towards minus
+# infinity to a machine-dependant precision (whereas the mpfi data are read
+# at the given precision with rounding to the nearest).
+# So as to ensure portability, use test values that are representable with a
+# 53 bit-significand which corresponds to the minimum default precision for
+# a double in the test suite.
+
+# special values
+0 53  nan  nan                      53  nan  nan   -0x170ef54646d497p-109
+0 53  nan  nan                      53  nan  nan    0.0
+0 53  nan  nan                      53  nan  nan    0x170ef54646d497p-109
+0 53  nan  nan                      53  nan -inf   -0x114b37f4b51f71p-107
+0 53  nan  nan                      53  nan -inf    0.0
+0 53  nan  nan                      53  nan -inf    0x114b37f4b51f71p-107
+0 53  nan  nan                      53  nan -7     -0xfc339ab0a6b53p-99
+0 53  nan  nan                      53  nan -7      0.0
+0 53  nan  nan                      53  nan -7      7.0
+0 53  nan  nan                      53  nan -0     -15.0
+0 53  nan  nan                      53  nan -0      0.0
+0 53  nan  nan                      53  nan -0      15.0
+0 53  nan  nan                      53  nan +1     -0xb2b3ece0a4ef9p-103
+0 53  nan  nan                      53  nan +1      0.0
+0 53  nan  nan                      53  nan +1      0xb2b3ece0a4ef9p-103
+0 53  nan  nan                      53  nan +inf   -0x5acae5c4b6e51p-101
+0 53  nan  nan                      53  nan +inf    0.0
+0 53  nan  nan                      53  nan +inf    0x5acae5c4b6e51p-101
+
+#no definite center in infinite intervals
+0 53  nan  nan                      53 -inf -inf   -0x170ef54646d497p-108
+0 53  nan  nan                      53 -inf -inf    0.0
+0 53  nan  nan                      53 -inf -inf    0x170ef54646d497p-108
+0 53 -inf  nan                      53 -inf -7     -0x170ef54646d497p-107
+0 53 -inf  nan                      53 -inf -7      0.0
+0 53 -inf  nan                      53 -inf -7      0x170ef54646d497p-107
+0 53 -inf  nan                      53 -inf -0     -0x170ef54646d497p-106
+0 53 -inf  nan                      53 -inf -0      0.0
+0 53 -inf  nan                      53 -inf -0      0x170ef54646d497p-106
+0 53 -inf  nan                      53 -inf 8      -0x16345785d8a00000
+0 53 -inf  nan                      53 -inf 8       0.0
+0 53 -inf  nan                      53 -inf 8       0x16345785d8a00000
+0 53  nan  nan                      53 -inf +inf   -0x170ef54646d497p-105
+0 53  nan  nan                      53 -inf +inf    0.0e-17
+0 53  nan  nan                      53 -inf +inf   +0x170ef54646d497p-105
+0 53  nan  nan                      53 -inf  nan   -0x170ef54646d497p-104
+0 53  nan  nan                      53 -inf  nan    0.0e-17
+0 53  nan  nan                      53 -inf  nan   +0x170ef54646d497p-104
+
+0 53 +0                     -0
+  53 +0                     -0                     -0x170ef54646d497p-109
+0 53 +0                     -0
+  53 +0                     -0                      0.0
+0 53 +0                     -0
+  53 +0                     -0                      0x170ef54646d497p-109
+3 53 -0x1p-49                0x10000000000001p-49
+  53 +0                      8                     -0x3p-53
+3 53 -0x1p-50                0x10000000000001p-49
+  53 +0                      8                     -0x1p-53
+3 53 -0x1p-50                0x10000000000001p-49
+  53 +0                      8                     -0x114b37f4b51f71p-107
+0 53 +0                      8
+  53 +0                      8                      0.0
+0 53 -1                      9
+  53 +0                      8                      0.25
+3 53 -0x1p-50                0x10000000000001p-49
+  53 +0                      8                      0x114b37f4b51f7p-103
+
+#no definite center in infinite intervals
+0 53  nan +inf                      53 +0   +inf   -0x50b45a75f7e81p-104
+0 53  nan +inf                      53 +0   +inf    0.0
+0 53  nan +inf                      53 +0   +inf    0x142d169d7dfa03p-106
+0 53  nan  nan                      53 +inf +inf   -0x170ef54646d497p-109
+0 53  nan  nan                      53 +inf +inf    0.0
+0 53  nan  nan                      53 +inf +inf    0x170ef54646d497p-109
+0 53  nan  nan                      53 +inf  nan   -0x170ef54646d497p-109
+0 53  nan  nan                      53 +inf  nan    0.0
+0 53  nan  nan                      53 +inf  nan    0x170ef54646d497p-109
+
+# regular values
+0 53 -48                    -0
+  53 -32                    -16                    -2.0
+3 53 -0x10000000000002p-51   0x10000000000001p-51
+  53 -0x10000000000001p-52   1                      1.0
+
+0 04 -8                      8
+  53 -1                      1                      7.0
+1 04 -18                     3
+  53 -15                     1                      0.25
+
+0 53  0                      4
+  53  0x3p-1                 0x5p-1                 3.0
+2 53  0x1p-1                 0x10000000000002
+  53  0x1                    0x10000000000001       0x1p-52

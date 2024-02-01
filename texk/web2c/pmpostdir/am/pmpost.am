@@ -39,9 +39,9 @@ call_upmpost_CPPFLAGS = -DEXEPROG=\"upmpost.exe\"
 nodist_call_upmpost_SOURCES = callexe.c
 call_upmpost_LDADD =
 
-pmpost_CPPFLAGS = $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
+pmpost_CPPFLAGS = $(MPFI_INCLUDES) $(MPFR_INCLUDES) $(GMP_INCLUDES) $(CAIRO_INCLUDES) $(PIXMAN_INCLUDES) \
 	$(LIBPNG_INCLUDES) $(ZLIB_INCLUDES) $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) -I$(srcdir)/mplibdir
-pmpost_LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
+pmpost_LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS) $(MPFI_LIBS) $(MPFR_LIBS) $(GMP_LIBS) \
 	$(CAIRO_LIBS) $(PIXMAN_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) libmputil.a
 
 upmpost_CPPFLAGS = -DUPMP $(pmpost_CPPFLAGS)
@@ -65,13 +65,14 @@ pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
 pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## pMetaPost C sources
-nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathbinary_c_h) \
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) $(pmpmathbinary_c_h) \
         $(pmpmathdecimal_c_h) \
 	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
 	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
 #
 pmp_c_h =  pmp.c pmplib.h pmpmp.h
 pmpmath_c_h = pmpmath.c pmpmath.h
+pmpmathinterval_c_h = pmpmathinterval.c pmpmathinterval.h
 pmpmathbinary_c_h = pmpmathbinary.c pmpmathbinary.h
 pmpmathdecimal_c_h = pmpmathdecimal.c pmpmathdecimal.h
 pmpmathdouble_c_h = pmpmathdouble.c pmpmathdouble.h
@@ -98,6 +99,10 @@ pmpmath.c: mpmath.c
 	$(AM_V_GEN)$(pmp_sed) mpmath.c >$@
 pmpmath.h: mpmath.h
 	$(AM_V_GEN)$(pmp_sed) mpmath.h >$@
+pmpmathinterval.c: mpmathinterval.c
+	$(AM_V_GEN)$(pmp_sed) mpmathinterval.c >$@
+pmpmathinterval.h: mpmathinterval.h
+	$(AM_V_GEN)$(pmp_sed) mpmathinterval.h >$@
 pmpmathbinary.c: mpmathbinary.c
 	$(AM_V_GEN)$(pmp_sed) mpmathbinary.c >$@
 pmpmathbinary.h: mpmathbinary.h
@@ -163,7 +168,7 @@ pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir
 	pmpostdir/psvgout.ch pmpostdir/ptfmin.ch
 
 $(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
-	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFR_DEPEND)
+	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFI_DEPEND) $(MPFR_DEPEND)
 	
 EXTRA_DIST += pmpostdir/ChangeLog $(pmpost_web)	
 

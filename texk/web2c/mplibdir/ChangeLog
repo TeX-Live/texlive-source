@@ -1,3 +1,28 @@
+2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* final integration and commit of mpfi into (u)(p)mpost.
+	* am/libmplib.am,
+	* am/mplib.am: link with mpfi.
+	* mplibdir/mp.w: support mpfi; version 2.10.
+	* mplibdir/mpmathinterval.w: new file.
+	* mplibdir/mpost.w: new option --numbersystem=interval.
+	
+2024-01-26 Luigi Scarso <luigi.scarso@gmail.com>
+	* Added  source/libs/mpfi/TLpatches and source/libs/mpfi/m4
+
+2024-01-03 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed "++" and "+-+" by replacing a*a with sqr(a). Better error message for square root of negative numbers.
+
+2024-01-02 Luigi Scarso <luigi.scarso@gmail.com>
+	*  fixed negate for mpfi.
+
+2023-12-31 Luigi Scarso <luigi.scarso@gmail.com>
+	* fixed check interval for square root
+
+2023-12-30 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed allocation of the buffer for the file extension.
+	* Fixed position of verbatim_written in mpxout.w
+
 2023-09-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mptraptest.test:

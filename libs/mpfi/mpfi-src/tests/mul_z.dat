@@ -1,0 +1,99 @@
+# data file for mpfi_mul_z
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of first parameter
+# 8: second parameter value
+
+# special values
+0 53  nan  nan    53  nan  nan -1
+0 53  nan  nan    53  nan  nan  0
+0 53  nan  nan    53  nan  nan  1
+0 53  nan  nan    53  nan -inf -3
+0 53  nan  nan    53  nan -inf  0
+0 53  nan  nan    53  nan -inf  3
+0 53  nan  nan    53  nan -7   -7
+0 53  nan  nan    53  nan -7    0
+0 53  nan  nan    53  nan -7    7
+0 53  nan  nan    53  nan -0   -15
+0 53  nan  nan    53  nan -0    0
+0 53  nan  nan    53  nan -0    15
+0 53  nan  nan    53  nan  1   -31
+0 53  nan  nan    53  nan  1    0
+0 53  nan  nan    53  nan  1    31
+0 53  nan  nan    53  nan +inf -63
+0 53  nan  nan    53  nan +inf  0
+0 53  nan  nan    53  nan +inf  63
+0 53 +inf +inf    53 -inf -inf -2
+0 53 +0   -0      53 -inf -inf  0
+0 53 -inf -inf    53 -inf -inf  2
+
+1 53 -0x14000000000002p+2 +inf
+  53 -inf                  0x10000000000001      -5
+0 53 +0   -0      53 -inf -1    0
+2 53 -inf                  0xa000000000001p+3
+  53 -inf                  0x10000000000001       5
+
+0 53 +0   +inf    53 -inf -0   -8
+0 53 +0   -0      53 -inf -0    0
+0 53 -inf -0      53 -inf -0    8
+0 53 -128 +inf    53 -inf +8   -16
+0 53 +0   -0      53 -inf +8    0
+0 53 -inf  128    53 -inf +8    16
+0 53 -inf +inf    53 -inf +inf -32
+0 53 +0   -0      53 -inf +inf  0
+0 53 -inf +inf    53 -inf +inf  32
+0 53  nan  nan    53 -inf  nan -64
+0 53  nan  nan    53 -inf  nan  0
+0 53  nan  nan    53 -inf  nan  64
+0 53 +0   -0      53 +0   -0   -1
+0 53 +0   -0      53 +0   -0    0
+0 53 +0   -0      53 +0   -0    1
+
+1 53 -0x18000000000002p+1  -0
+  53 +0                     0x10000000000001     -3
+0 53 +0   -0      53 +0    8    0
+2 53 +0                     0x18000000000002p+1
+  53 +0                     0x10000000000001      3
+
+0 53 -inf -0      53 +0   +inf -7
+0 53 +0   -0      53 +0   +inf  0
+0 53 +0   +inf    53 +0   +inf  7
+
+2 53 -inf                  -0x1c000000000001p+2
+  53 +0x10000000000001     +inf                  -7
+0 53 +0   -0      53 +0   +inf  0
+1 53 +0x1c000000000001p+2  +inf
+  53 +0x10000000000001     +inf                   7
+
+0 53 -inf -inf    53 +inf +inf -1
+0 53 +0   -0      53 +inf +inf  0
+0 53 +inf +inf    53 +inf +inf  1
+0 53  nan  nan    53 +inf  nan -1
+0 53  nan  nan    53 +inf  nan  0
+0 53  nan  nan    53 +inf  nan  1
+
+# regular values
+0 53  0x123456789abcdfp-45  0x123456789abcdfp+8
+  53  0x123456789abcdfp-53  0x123456789abcdf      256
+1 53  0x18000000000001p-52  9
+  53  0x10000000000001p-53  3                     3
+2 53 -27                    0x18000000000002p-52
+  53 -9                     0x10000000000001p-53  3
+3 53 -0xa000000000001p-50   0xa000000000001p-50
+  53 -0x10000000000001p-53  0x10000000000001p-53  5
+
+0 53 -0x123456789abcdfp+8  -0x123456789abcdfp-45
+  53  0x123456789abcdfp-53  0x123456789abcdf     -256
+1 53 -0x18000000000002p-52  27
+  53 -9                     0x10000000000001p-53 -3
+2 53 -9                    -0x18000000000001p-52
+  53  0x10000000000001p-53  3                    -3
+3 53 -0x16c16c16c16c17p+2   0x16c16c16c16c17p+2
+  53 -0x123456789abcdf      0x123456789abcdf     -5

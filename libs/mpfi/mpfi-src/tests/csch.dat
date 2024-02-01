@@ -1,0 +1,40 @@
+# data file for mpfi_csch
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                     nan                     53  nan  nan
+0 53  nan                     nan                     53  nan -inf
+0 53  nan                     nan                     53   -7  nan
+0 53  nan                     nan                     53  nan   -0
+0 53  nan                     nan                     53   +0  nan
+0 53  nan                     nan                     53 -inf  nan
+0 53 +0                      -0                       53 -inf -inf
+1 53 -0x1de16d3cffcd54p-62   -0                       53 -inf   -7
+0 53 -inf                    -0                       53 -inf   -0
+0 53 -inf                    +inf                     53 -inf   +8
+0 53 -inf                    +inf                     53 -inf +inf
+2 53 -inf                    -0x15fc212d92371ap-63    53   -8   -0
+2 53 -inf                    -0x198de80929b901p-56    53   -3   -0
+2 53 -inf                    -0x1b3ab8a78b90c0p-53    53   -1   -0
+0 53 -inf                    +inf                     53   +0   -0
+1 53  0x1b3ab8a78b90c0p-53   +inf                     53   +0   +1
+1 53  0x198de80929b901p-56   +inf                     53   +0   +3
+1 53  0x15fc212d92371ap-63   +inf                     53   +0   +8
+0 53 +0                      +inf                     53   +0 +inf
+0 53 +0                      -0                       53 +inf +inf
+
+# regular values
+0 53 -inf                     +inf                    53 -3      2
+3 53 -0x15fc212d92371bp-63    -0x17cd79b63733a0p-66   53 -10    -8
+3 53  0x1639e3175a68a7p-76     0x1de16d3cffcd54p-62   53  7      17
+3 53  0x1eb45dc88defeap-52     0x3fff555693e722p-48
+  53  0x10000000000001p-58     0x10000000000001p-53

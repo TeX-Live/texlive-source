@@ -1,0 +1,54 @@
+# data file for mpfi_div_2ui
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of first parameter
+# 6: left endpoint value of first parameter
+# 7: right endpoint value of first parameter
+# 8: second parameter value
+
+# special values
+0 53  nan  nan    53  nan  nan  0
+0 53  nan  nan    53  nan  nan  1
+0 53  nan -inf    53  nan -inf  0
+0 53  nan -inf    53  nan -inf  3
+0 53  nan -7      53  nan -7    0
+0 53  nan -1.75   53  nan -7    2
+0 53  nan -0      53  nan -0    0
+0 53  nan -0      53  nan -0    15
+0 53  nan  1      53  nan  1    0
+0 53  nan  .125   53  nan  1    3
+0 53  nan +inf    53  nan +inf  0
+0 53  nan +inf    53  nan +inf  63
+0 53 -inf -inf    53 -inf -inf  0
+0 53 -inf -inf    53 -inf -inf  2
+0 53 -inf -1      53 -inf -1    0
+0 53 -inf -.25    53 -inf -1    2
+0 53 -inf -0      53 -inf -0    0
+0 53 -inf -0      53 -inf -0    8
+0 53 -inf  8      53 -inf  8    0
+0 53 -inf  0.5    53 -inf  8    4
+0 53 -inf +inf    53 -inf +inf  0
+0 53 -inf +inf    53 -inf +inf  32
+0 53 -inf  nan    53 -inf  nan  0
+0 53 -inf  nan    53 -inf  nan  64
+0 53 +0   -0      53 +0   -0    0
+0 53 +0   -0      53 +0   -0    1
+0 53 +0    8      53 +0    8    0
+0 53 +0    .5     53 +0    8    4
+0 53 +0   +inf    53 +0   +inf  0
+0 53 +0   +inf    53 +0   +inf  7
+0 53 +inf +inf    53 +inf +inf  0
+0 53 +inf +inf    53 +inf +inf  1
+0 53 +inf  nan    53 +inf  nan  0
+0 53 +inf  nan    53 +inf  nan  1
+
+# regular values
+0 53 -0x20p-32             -0x11p-32
+  53 -32                   -17                    32
+0 53  0x123456789abcdfp-78  0x123456789abcdfp-25
+  53  0x123456789abcdfp-53  0x123456789abcdf      25

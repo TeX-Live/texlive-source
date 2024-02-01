@@ -697,6 +697,10 @@ XPDF_RULE
 XPDF_DEPEND
 XPDF_LIBS
 XPDF_INCLUDES
+MPFI_RULE
+MPFI_DEPEND
+MPFI_LIBS
+MPFI_INCLUDES
 MPFR_RULE
 MPFR_DEPEND
 MPFR_LIBS
@@ -1089,6 +1093,9 @@ with_gmp_libdir
 with_system_mpfr
 with_mpfr_includes
 with_mpfr_libdir
+with_system_mpfi
+with_mpfi_includes
+with_mpfi_libdir
 with_system_zziplib
 with_system_teckit
 with_system_graphite2
@@ -1863,6 +1870,10 @@ Optional Packages:
   --with-mpfr-includes=DIR
                           mpfr headers installed in DIR
   --with-mpfr-libdir=DIR  mpfr library installed in DIR
+  --with-system-mpfi      use installed mpfi headers and library
+  --with-mpfi-includes=DIR
+                          mpfi headers installed in DIR
+  --with-mpfi-libdir=DIR  mpfi library installed in DIR
   --with-system-zziplib   use installed zziplib headers and library (requires
                           pkg-config)
   --with-system-teckit    use installed teckit headers and library (requires
@@ -20485,6 +20496,7 @@ case $enable_mp in #(
 esac
 
 test "x$enable_web2c:$enable_mp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -20502,6 +20514,7 @@ case $enable_pmp in #(
 esac
 
 test "x$enable_web2c:$enable_pmp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -20520,6 +20533,7 @@ case $enable_upmp in #(
 esac
 
 test "x$enable_web2c:$enable_upmp" = xyes:yes && {
+  need_mpfi=yes
   need_mpfr=yes
   need_cairo=yes
   need_libpng=yes
@@ -28031,6 +28045,47 @@ $(MPFR_DEPEND): ${top_builddir}/../../libs/mpfr/include/mpfr.h
 	cd ${top_builddir}/../../libs/mpfr && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/mpfr/include/mpfr.h:
 	cd ${top_builddir}/../../libs/mpfr && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
+
+##tldbg _KPSE_LIB_FLAGS: Setup mpfi (-lmpfi) flags.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=mpfi, libname=mpfi, options=, tlincl=-IBLD/libs/mpfi/include, tllib=BLD/libs/mpfi/libmpfi.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/mpfi/include/mpfi.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: mpfi (mpfi) .
+
+# Check whether --with-system-mpfi was given.
+if test ${with_system_mpfi+y}
+then :
+  withval=$with_system_mpfi;
+fi
+
+# Check whether --with-mpfi-includes was given.
+if test ${with_mpfi_includes+y}
+then :
+  withval=$with_mpfi_includes;
+fi
+
+# Check whether --with-mpfi-libdir was given.
+if test ${with_mpfi_libdir+y}
+then :
+  withval=$with_mpfi_libdir;
+fi
+if test "x$with_system_mpfi" = xyes; then
+  ##tldbg _KPSE_LIB_FLAGS_SYSTEM: mpfi (mpfi).
+if test "x$with_mpfi_includes" != x && test "x$with_mpfi_includes" != xyes; then
+  MPFI_INCLUDES="-I$with_mpfi_includes"
+fi
+MPFI_LIBS="-lmpfi"
+if test "x$with_mpfi_libdir" != x && test "x$with_mpfi_libdir" != xyes; then
+  MPFI_LIBS="-L$with_mpfi_libdir $MPFI_LIBS"
+fi
+else
+  MPFI_INCLUDES="-I$kpse_BLD/libs/mpfi/include"
+  MPFI_LIBS="$kpse_BLD/libs/mpfi/libmpfi.a"
+  MPFI_DEPEND='${top_builddir}/../../libs/mpfi/libmpfi.a'
+  MPFI_RULE='# Rebuild libmpfi
+$(MPFI_DEPEND): ${top_builddir}/../../libs/mpfi/include/mpfi.h
+	cd ${top_builddir}/../../libs/mpfi && $(MAKE) $(AM_MAKEFLAGS) rebuild
+${top_builddir}/../../libs/mpfi/include/mpfi.h:
+	cd ${top_builddir}/../../libs/mpfi && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
 ##tldbg _KPSE_LIB_FLAGS: Setup xpdf (-lxpdf) flags.

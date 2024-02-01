@@ -1,0 +1,41 @@
+# data file for mpfi_coth
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: precision of input parameter
+# 6: left endpoint value of input parameter
+# 7: right endpoint value of input parameter
+
+# special values
+0 53  nan                     nan                     53  nan  nan
+0 53  nan                     nan                     53  nan -inf
+0 53  nan                     nan                     53   -7  nan
+0 53  nan                     nan                     53  nan   -0
+0 53  nan                     nan                     53   +0  nan
+0 53  nan                     nan                     53 -inf  nan
+0 53 -1                      -1                       53 -inf -inf
+1 53 -0x100001be6c882fp-52   -1                       53 -inf   -7
+# Note: mpfr_coth(+/- 0) returned a wrong value up to mpfr-2.4.2
+0 53 -inf                    -1                       53 -inf   -0
+0 53 -inf                    +inf                     53 -inf   +8
+0 53 -inf                    +inf                     53 -inf +inf
+2 53 -inf                    -0x1000003c6ab7e7p-52    53   -8   -0
+2 53 -inf                    -0x10145b3cc9964bp-52    53   -3   -0
+2 53 -inf                    -0x150231499b6b1dp-52    53   -1   -0
+0 53 -inf                    +inf                     53   +0   -0
+1 53  0x150231499b6b1dp-52   +inf                     53   +0   +1
+1 53  0x10145b3cc9964bp-52   +inf                     53   +0   +3
+1 53  0x1000003c6ab7e7p-52   +inf                     53   +0   +8
+0 53  1                      +inf                     53   +0 +inf
+0 53  1                       1                       53 +inf +inf
+
+# regular values
+0 53 -inf                     +inf                    53 -3      2
+3 53 -0x1000003c6ab7e8p-52    -0x100000011b4865p-52   53 -10    -8
+3 53  0x1000000000000fp-52     0x100001be6c882fp-52   53  7      17
+3 53  0x114fc6ceb099bdp-51     0x10005554fa502fp-46
+  53  0x10000000000001p-58     0x10000000000001p-53

@@ -1,3 +1,9 @@
+2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* kpse-pkgs.m4 (kpse_libs_pkgs): add mpfi (new subdir).
+	(KPSE_ALL_SYSTEM_FLAGS): add AC_REQUIRE([KPSE_MPFI_SYSTEM_FLAGS]).
+	* kpse-mpfi-flags.m4: new file.
+
 2023-12-21  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (KPSE_COMMON): remove AC_HEADER_STDC, an obsolete

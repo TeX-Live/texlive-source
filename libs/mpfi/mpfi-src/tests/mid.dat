@@ -1,0 +1,57 @@
+# data file for mpfi_mid
+#
+# column fields:
+# 1: error direction (0: result is exact, +: result is overestimated)
+# 2: precision of result
+# 3: value of result
+#
+# 5: precision of argument
+# 6: left endpoint value of argument
+# 7: right endpoint value of argument
+#
+
+# special values
+0 53  nan    53  nan -inf
+0 53  nan    53  nan -8
+0 53  nan    53 -8    nan
+0 53  nan    53  nan -0
+0 53  nan    53 +0    nan
+0 53  nan    53  nan  5
+0 53  nan    53  5    nan
+0 53  nan    53  nan +inf
+0 53  nan    53  nan  nan
+0 53 -inf    53 -inf -inf
+0 53 -inf    53 -inf -8
+0 53 -inf    53 -inf -0
+0 53 -inf    53 -inf  5
+0 53  nan    53 -inf +inf
+0 53  nan    53 -inf  nan
+0 53 -4      53 -8   -0
+0 53 +0      53 +0   -0
+0 53 +2.5    53 +0    5
+0 53 +inf    53 +0   +inf
+0 53  nan    53 +0    nan
+0 53 +inf    53  5   +inf
+0 53 +inf    53 +inf +inf
+0 53  nan    53 +inf  nan
+
+# regular values
+0 53 -0x33p-1
+  53 -34  -17
+
+-  4 -26     53 -34  -17
+0 53 -8.5    53 -34   17
++  4 -8      53 -34   17
+0 53 +0x123456789abcdp-3
+  53 +0   +0x123456789abcdp-2
+- 53  0x1921fb54442d18p-51
+  53  0x1921fb54442d18p-51  0x1921fb54442d19p-51
++ 53 -0x1921fb54442d18p-51
+  53 -0x1921fb54442d19p-51 -0x1921fb54442d18p-51
++ 53 -0x27fffffffffffbp-52
+  53 -4                    -0x7fffffffffffdp-51
+- 53 -0x47fffffffffffbp-52
+  53 -8                    -0x7fffffffffffbp-51
+
+- 53  0.5
+  53 -0x1fffffffffffffp-53  2

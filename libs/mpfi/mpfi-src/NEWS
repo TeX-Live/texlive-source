@@ -1,0 +1,91 @@
+Copyright 1999, 2000, 2001, 2002 - 2009, 2010, 2018
+                     OURAGAN project, Inria Paris, France
+                     and ARIC project, Inria Rhone-Alpes, France
+                     and Lab. ANO, USTL (Univ. of Lille),  France
+
+
+This file is part of the MPFI Library.
+
+The MPFI Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or (at your
+option) any later version.
+
+The MPFI Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the MPFI Library; see the file COPYING.LIB.  If not, write to
+the Free Software Foundation, Inc.,  51 Franklin St, Fifth Floor, Boston,
+MA 02110-1301, USA
+
+Changes between MPFI version 1.5.3 and 1.5.4
+* MPFI now requires MPFR 3.0 or higher
+* mp_exp_t replaced by mpfr_exp_t, mp_prec_t replaced by mpfr_prec_t, mp_rnd_t replaced by mpfr_rnd_t
+  GMP_RNDx replaced by MPFR_RNDx
+* incorporation of "new" functionalities offered by MPFR since MPFR version 2.4.2:
+
+Changes between MPFI version 1.5.2 and 1.5.3
+* compatible with MPFR version 4.0.0
+* minor warnings removed
+
+Changes between MPFI version 1.5 and 1.5.2
+* allow compilation as a DLL with Cygwin and Mingw on windows platforms
+ (reported by Jean-Pierre Flori)
+* fix documentation of comparison functions (reported by Keith BRIGGS)
+* fix bug in mpfi_sub_fr (reported by Takayuki YAMAGUCHI)
+* now require at least GMP version 4.1.0 and MPFR version 2.4.2
+* new symbols MPFI_VERSION_MAJOR, MPFI_VERSION_MINOR, MPFI_VERSION_PATCHLEVEL,
+  and MPFI_VERSION_STRING in mpfi.h
+* detect availability of mpfr_z_sub, mpfr_z_div, and mpfr_q_sub and use a
+  custom implementation for the ones not provided by MPFR (mpfr_z_sub appeared
+  in MPFR 3.1.0, the other ones are used in tests only)
+* code cleanup (unused variables)
+* tadd_q does no more check overflow by default (required too much memory)
+* sign of zeros choice documented
+
+Changes between MPFI version 1.4 and 1.5
+
+* new functions : Catalan's constant, cubic root, secant, cosecant, cotangent
+  and hyperbolic counterparts, atan2, hypot, get_version, urandom
+* new test suite (99.7% LOC)
+* can now be compiled outside the source directory
+* change configure options to be consistent with the ones in MPFR and MPC:
+  --with-gmp-dir=DIR changed to --with-gmp=DIR
+  --with-gmp-libpath=DIR changed to --with-gmp-lib=DIR
+  --with-gmp-incpath=DIR changed to --with-gmp-include=DIR
+  --with-mpfr-dir=DIR changed to --with-mpfr=DIR
+  --with-mpfr-libpath=DIR changed to --with-mpfr-lib=DIR
+  --with-mpfr-incpath=DIR changed to --with-mpfr-include=DIR
+* now require at least GMP version 4.1.0 and MPFR version 2.4.0
+* each function is in its own file (compile_time *= 8;)
+* limitation to 1000 characters in mpfi_set_str removed.
+* fix documentation for functions mpfi_blow, mpfi_is_inside at least.
+* fix bug in mpfi_ui_sub when reusing a variable (bug reported by
+  Sisyphus 2010-01-19).
+* fix bug in mpfi_blow: the result could be underestimated when the factor was
+  small compared to 1.
+* fix double rounding error in basic arithmetic functions with a non-interval
+  parameter (like mpfi_add_si).
+* the following functions now return 0 (false) if one or more of their
+  operands is NaN or has a NaN as an endpoint : mpfi_is_inside,
+  mpfi_is_inside_d, mpfi_is_inside_ui, mpfi_is_inside_si, mpfi_is_inside_z,
+  mpfi_is_inside_q, mpfi_is_inside_fr, mpfi_is_pos, mpfi_is_strictly_pos,
+  mpfi_is_nonneg, mpfi_is_neg, mpfi_is_strictly_neg, mpfi_is_nonpos,
+  mpfi_inf_p, mpfi_bounded_p
+
+Changes between MPFI 1.3.4-RC3 and 1.4
+
+* bugfixes for trigonometric functions
+* add compilation for a shared library
+
+Changes between MPFI version 1.1 and 1.3.4-RC3
+
+* mainly, keep on par with new developments in MPFR during these years
+
+Changes between MPFI version 1.0 and 1.1
+
+* GNU autoconf/automake standards
+* mpfi-impl.h (non exported internal macros)

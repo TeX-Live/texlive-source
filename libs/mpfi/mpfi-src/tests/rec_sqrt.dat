@@ -1,0 +1,31 @@
+# data file for mpfi_rec_sqrt
+#
+# column fields: see neg.dat
+
+# special values
+0 53   nan   nan    53  nan  nan
+0 53   nan   nan    53  nan -inf
+0 53   nan   nan    53   -7  nan
+0 53  -inf   nan    53  nan   -0
+0 53   nan  +inf    53   +0  nan
+0 53    +1   nan    53  nan   +1
+0 53   nan    +0    53 +inf  nan
+0 53   nan   nan    53 -inf -inf
+0 53   nan   nan    53 -inf   -7
+0 53   nan    -0    53 -inf   -0
+0 53   nan    -0    53 -inf   -0
+0 53   nan    +3    53 -inf   +9
+0 53   nan  +inf    53 -inf +inf
+0 53  +inf  +inf    53   +0   -0
+0 53 +0.25  +inf    53   +0  +16
+0 53    +0  +inf    53   +0 +inf
+0 53    +0 +0.25    53  +16 +inf
+0 53  +inf  +inf    53 +inf +inf
+
+# regular values
+0 53  +0.25 			+0.5
+  53  +4                        +16
+1 53  +0.5			+0xb.504f333f9de68p-1
+  53  +2			+4
+2 53  +0x9.3cd3a2c8198ep-1 	+0xb.504f333f9de68p-1
+  53  +2			+3

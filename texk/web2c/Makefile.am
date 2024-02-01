@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/web2c/.
 ##
-## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2024 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -131,6 +131,8 @@ $(proglib): $(proglib_sources)
 @GMP_RULE@
 ## Rebuild libmpfr
 @MPFR_RULE@
+## Rebuild libmpfi
+@MPFI_RULE@
 ## Rebuild libxpdf
 @XPDF_RULE@
 ## Rebuild pplib

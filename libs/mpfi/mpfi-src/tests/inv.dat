@@ -1,0 +1,31 @@
+# data file for mpfi_inv
+#
+# column fields: see neg.dat
+
+# special values
+0 53  nan  nan    53  nan  nan
+0 53  nan  nan    53  nan -inf
+0 53  nan  nan    53  -64  nan
+0 53  nan  nan    53  nan   -0
+0 53  nan  nan    53   +0  nan
+0 53  nan  nan    53  nan   +1
+0 53  nan  nan    53 +inf  nan
+0 53   +0   -0    53 -inf -inf
+0 53   -4   -0    53 -inf -.25
+0 53 -inf   -0    53 -inf   -0
+0 53 -inf +inf    53 -inf   +4
+0 53 -inf +inf    53 -inf +inf
+0 53 -inf +inf    53   +0   -0
+0 53  +.5 +inf    53   +0   +2
+0 53   +0 +inf    53   +0 +inf
+0 53   +0   -0    53 +inf +inf
+
+# regular values
+0 53 -.5                                  -0.125
+  53 -8                                       -2
+1 53  0x1947bfce1bc417p-52                  0x10
+  53  0x1p-4                0x1440c131282cd9p-53
+2 53  0.015625              0x13bc205a76b3fdp-50
+  53  0x19f1a539c91fddp-55                   +64
+3 53 -0x1480a9b5772a23p-50 -0x177887d65484c9p-52
+  53 -0xae83b95effd69p-52   -0x63e3cb4ed72a3p-53

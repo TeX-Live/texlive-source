@@ -172,6 +172,7 @@ am__objects_2 = mp_bases.$(OBJEXT) popcount.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/lshiftc.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/matrix22_mul.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/matrix22_mul1_inverse_vector.$(OBJEXT) \
+	@GMP_TREE@/mpn/generic/mod_1.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mu_bdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mu_div_q.$(OBJEXT) \
 	@GMP_TREE@/mpn/generic/mu_div_qr.$(OBJEXT) \
@@ -244,6 +245,8 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/add.$(OBJEXT) @GMP_TREE@/mpz/add_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/aorsmul.$(OBJEXT) \
 	@GMP_TREE@/mpz/aorsmul_i.$(OBJEXT) \
+	@GMP_TREE@/mpz/cdiv_qr_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/cdiv_q_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.$(OBJEXT) \
 	@GMP_TREE@/mpz/clear.$(OBJEXT) @GMP_TREE@/mpz/cmp.$(OBJEXT) \
 	@GMP_TREE@/mpz/cmp_ui.$(OBJEXT) \
@@ -251,6 +254,7 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/divexact.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_q.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_q_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/fdiv_r_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/fdiv_qr.$(OBJEXT) \
 	@GMP_TREE@/mpz/fits_slong.$(OBJEXT) \
 	@GMP_TREE@/mpz/gcdext.$(OBJEXT) \
@@ -263,7 +267,8 @@ am__objects_3 = @GMP_TREE@/mpz/abs.$(OBJEXT) \
 	@GMP_TREE@/mpz/mul_si.$(OBJEXT) \
 	@GMP_TREE@/mpz/mul_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/n_pow_ui.$(OBJEXT) @GMP_TREE@/mpz/neg.$(OBJEXT) \
-	@GMP_TREE@/mpz/powm.$(OBJEXT) @GMP_TREE@/mpz/powm_ui.$(OBJEXT) \
+	@GMP_TREE@/mpz/pow_ui.$(OBJEXT) @GMP_TREE@/mpz/powm.$(OBJEXT) \
+	@GMP_TREE@/mpz/powm_ui.$(OBJEXT) \
 	@GMP_TREE@/mpz/realloc.$(OBJEXT) \
 	@GMP_TREE@/mpz/realloc2.$(OBJEXT) \
 	@GMP_TREE@/mpz/scan0.$(OBJEXT) @GMP_TREE@/mpz/scan1.$(OBJEXT) \
@@ -359,6 +364,7 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/lshiftc.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul1_inverse_vector.Po \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/mod_1.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_bdiv_q.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_q.Po \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_qr.Po \
@@ -432,6 +438,8 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/add_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/aorsmul.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/aorsmul_i.Po \
+	@GMP_TREE@/mpz/$(DEPDIR)/cdiv_q_ui.Po \
+	@GMP_TREE@/mpz/$(DEPDIR)/cdiv_qr_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/cfdiv_q_2exp.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/clear.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/cmp.Po \
@@ -441,6 +449,7 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/fdiv_qr.Po \
+	@GMP_TREE@/mpz/$(DEPDIR)/fdiv_r_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/get_si.Po \
@@ -457,6 +466,7 @@ am__depfiles_remade = ./$(DEPDIR)/gmptest-gmptest.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/mul_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/n_pow_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/neg.Po \
+	@GMP_TREE@/mpz/$(DEPDIR)/pow_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/powm.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/powm_ui.Po \
 	@GMP_TREE@/mpz/$(DEPDIR)/realloc.Po \
@@ -997,6 +1007,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/lshiftc.c \
 	@GMP_TREE@/mpn/generic/matrix22_mul.c \
 	@GMP_TREE@/mpn/generic/matrix22_mul1_inverse_vector.c \
+	@GMP_TREE@/mpn/generic/mod_1.c \
 	@GMP_TREE@/mpn/generic/mu_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/mu_div_q.c \
 	@GMP_TREE@/mpn/generic/mu_div_qr.c \
@@ -1105,7 +1116,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/jacbase.c \
 	@GMP_TREE@/mpn/generic/jacobi.c \
 	@GMP_TREE@/mpn/generic/jacobi_2.c \
-	@GMP_TREE@/mpn/generic/mod_1.c \
 	@GMP_TREE@/mpn/generic/mod_1_1.c \
 	@GMP_TREE@/mpn/generic/mod_1_2.c \
 	@GMP_TREE@/mpn/generic/mod_1_3.c \
@@ -1149,6 +1159,8 @@ mpz_sources = \
 	@GMP_TREE@/mpz/add_ui.c \
 	@GMP_TREE@/mpz/aorsmul.c \
 	@GMP_TREE@/mpz/aorsmul_i.c \
+	@GMP_TREE@/mpz/cdiv_qr_ui.c \
+	@GMP_TREE@/mpz/cdiv_q_ui.c \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.c \
 	@GMP_TREE@/mpz/clear.c \
 	@GMP_TREE@/mpz/cmp.c \
@@ -1157,6 +1169,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/divexact.c \
 	@GMP_TREE@/mpz/fdiv_q.c \
 	@GMP_TREE@/mpz/fdiv_q_ui.c \
+	@GMP_TREE@/mpz/fdiv_r_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr.c \
 	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
@@ -1174,6 +1187,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/mul_ui.c \
 	@GMP_TREE@/mpz/n_pow_ui.c \
 	@GMP_TREE@/mpz/neg.c \
+	@GMP_TREE@/mpz/pow_ui.c \
 	@GMP_TREE@/mpz/powm.c \
 	@GMP_TREE@/mpz/powm_ui.c \
 	@GMP_TREE@/mpz/realloc.c \
@@ -1204,9 +1218,7 @@ mpz_unused = \
 	@GMP_TREE@/mpz/bin_ui.c \
 	@GMP_TREE@/mpz/bin_uiui.c \
 	@GMP_TREE@/mpz/cdiv_q.c \
-	@GMP_TREE@/mpz/cdiv_q_ui.c \
 	@GMP_TREE@/mpz/cdiv_qr.c \
-	@GMP_TREE@/mpz/cdiv_qr_ui.c \
 	@GMP_TREE@/mpz/cdiv_r.c \
 	@GMP_TREE@/mpz/cdiv_r_ui.c \
 	@GMP_TREE@/mpz/cdiv_ui.c \
@@ -1232,7 +1244,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/fac_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr_ui.c \
 	@GMP_TREE@/mpz/fdiv_r.c \
-	@GMP_TREE@/mpz/fdiv_r_ui.c \
 	@GMP_TREE@/mpz/fdiv_ui.c \
 	@GMP_TREE@/mpz/fib2_ui.c \
 	@GMP_TREE@/mpz/fib_ui.c \
@@ -1278,7 +1289,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/perfpow.c \
 	@GMP_TREE@/mpz/perfsqr.c \
 	@GMP_TREE@/mpz/popcount.c \
-	@GMP_TREE@/mpz/pow_ui.c \
 	@GMP_TREE@/mpz/powm_sec.c \
 	@GMP_TREE@/mpz/pprime_p.c \
 	@GMP_TREE@/mpz/primorial_ui.c \
@@ -1549,6 +1559,9 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpn/generic/matrix22_mul1_inverse_vector.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpn/generic/mod_1.$(OBJEXT):  \
+	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
+	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpn/generic/mu_bdiv_q.$(OBJEXT):  \
 	@GMP_TREE@/mpn/generic/$(am__dirstamp) \
 	@GMP_TREE@/mpn/generic/$(DEPDIR)/$(am__dirstamp)
@@ -1769,6 +1782,10 @@ clean-noinstLIBRARIES:
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/aorsmul_i.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/cdiv_qr_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/cdiv_q_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/cfdiv_q_2exp.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/clear.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
@@ -1784,6 +1801,8 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpz/fdiv_q.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/fdiv_q_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/fdiv_r_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/fdiv_qr.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
@@ -1818,6 +1837,8 @@ clean-noinstLIBRARIES:
 @GMP_TREE@/mpz/n_pow_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/neg.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
+	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
+@GMP_TREE@/mpz/pow_ui.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
 @GMP_TREE@/mpz/powm.$(OBJEXT): @GMP_TREE@/mpz/$(am__dirstamp) \
 	@GMP_TREE@/mpz/$(DEPDIR)/$(am__dirstamp)
@@ -1942,6 +1963,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/lshiftc.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul1_inverse_vector.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/mod_1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_bdiv_q.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_q.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_qr.Po@am__quote@ # am--include-marker
@@ -2015,6 +2037,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/add_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/aorsmul.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/aorsmul_i.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cdiv_q_ui.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cdiv_qr_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cfdiv_q_2exp.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/clear.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/cmp.Po@am__quote@ # am--include-marker
@@ -2024,6 +2048,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_q_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_qr.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fdiv_r_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/get_si.Po@am__quote@ # am--include-marker
@@ -2040,6 +2065,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/mul_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/n_pow_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/neg.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/pow_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/powm.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/powm_ui.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@GMP_TREE@/mpz/$(DEPDIR)/realloc.Po@am__quote@ # am--include-marker
@@ -2676,6 +2702,7 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/lshiftc.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul1_inverse_vector.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mod_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_bdiv_q.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_q.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_qr.Po
@@ -2749,6 +2776,8 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/add_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/aorsmul.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/aorsmul_i.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cdiv_q_ui.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cdiv_qr_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cfdiv_q_2exp.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/clear.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cmp.Po
@@ -2758,6 +2787,7 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_q.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_q_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_qr.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_r_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/get_si.Po
@@ -2774,6 +2804,7 @@ distclean: distclean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/mul_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/n_pow_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/neg.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/pow_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/powm.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/powm_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/realloc.Po
@@ -2903,6 +2934,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/lshiftc.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/matrix22_mul1_inverse_vector.Po
+	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mod_1.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_bdiv_q.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_q.Po
 	-rm -f @GMP_TREE@/mpn/generic/$(DEPDIR)/mu_div_qr.Po
@@ -2976,6 +3008,8 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/add_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/aorsmul.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/aorsmul_i.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cdiv_q_ui.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cdiv_qr_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cfdiv_q_2exp.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/clear.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/cmp.Po
@@ -2985,6 +3019,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_q.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_q_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_qr.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fdiv_r_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/fits_slong.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/gcdext.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/get_si.Po
@@ -3001,6 +3036,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/mul_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/n_pow_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/neg.Po
+	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/pow_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/powm.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/powm_ui.Po
 	-rm -f @GMP_TREE@/mpz/$(DEPDIR)/realloc.Po

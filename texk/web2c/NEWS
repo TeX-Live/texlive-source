@@ -11,6 +11,9 @@ See also */NEWS, */ChangeLog, etc.
   --output-directory option. More details:
   https://tug.org/texinfohtml/web2c.html#Output-file-location
 
+* mpost: new option --numbersystem=interval to support interval
+  arithmetic, via the mpfi library.
+
 
 2023 (for TeX Live 2023, 9 March 2023)
 

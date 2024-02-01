@@ -1,0 +1,54 @@
+# data file for mpfi_atan2
+#
+# for a description of the fields: see add.dat
+
+# special values
+0 53  nan  nan    53  nan  nan 53 -inf   -7
+0 53  nan  nan    53  nan  nan 53   -8   +1
+0 53  nan  nan    53  nan  nan 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0  nan
+0 53  nan  nan    53  nan  nan 53   +5 +inf
+0 53  nan  nan    53  nan  nan 53 +inf +inf
+0 53  nan  nan    53  nan  nan 53  nan   -0
+0 53  nan  nan    53  nan   -0 53 -inf   -7
+0 53  nan  nan    53  nan   -0 53   -8   +1
+0 53  nan  nan    53  nan +inf 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0   +7
+0 53  nan  nan    53  nan -inf 53   +5 +inf
+0 53  nan  nan    53  nan   -7 53 +inf +inf
+0 53  nan  nan    53  nan   +1 53  nan   -0
+3 53 -0x12d97c7f3321d3p-51 -0x96cbe3f9990e9p-50     53 -inf -inf 53 -inf -inf
+3 53 -0x6d9cc4b34bd0dp-50  -0x1700a7c5784633p-53    53 -inf   -7 53   -1   +8
+1 53 -0x1921fb54442d19p-52 -0                       53 -inf   -0 53   +8 +inf
+1 53 -0x1921fb54442d19p-53 -0                       53 -inf   -0 53 +inf +inf
+3 53 -0x1921fb54442d19p-52  0x1921fb54442d19p-52    53 -inf   +8 53   +0   +8
+3 53 -0x1921fb54442d19p-52  0x1921fb54442d19p-52    53 -inf +inf 53   +0   +8
+3 53 -0x1921fb54442d19p-51  0x1921fb54442d19p-51    53   +0   -0 53 -inf   -7
+3 53  0x3243f6a8885a3p-49   0x1921fb54442d19p-51    53   +0   +8 53   -7   -0
+0 53 +0                    -0                       53   +0   -0 53   +0   +8
+2 53 +0                     0x1921fb54442d19p-52    53   +0 +inf 53   +0   +8
+0 53 +0                    -0                       53   +0   -0 53   +8 +inf
+0 53  nan                   nan                     53   +0   +8 53 +inf  nan
+3 53 -0x1921fb54442d19p-51  0x1921fb54442d19p-51    53   +0   -0 53 -inf +inf
+2 53 +0                     0x1921fb54442d19p-51    53   +0   +8 53   -7   +8
+3 53 -0x1921fb54442d19p-51  0x1921fb54442d19p-51    53   +0   -0 53   +0   -0
+2 53 +0                     0x1921fb54442d19p-52    53   +0 +inf 53   +0   +8
+0 53  nan                   nan                     53   +0  nan 53   +8 +inf
+0 53 +0                    -0                       53   +0   +8 53 +inf +inf
+3 53  0x3243f6a8885a3p-49   0x12d97c7f3321d3p-51    53 +inf +inf 53 -inf   +3
+3 53  0x3243f6a8885a3p-50   0x1921fb54442d19p-52    53 +inf +inf 53   +0 +inf
+0 53  nan                   nan                     53 +inf +inf 53   +3  nan
+0 53  nan                   nan                     53 +inf  nan 53 -inf   -7
+0 53  nan                   nan                     53 +inf  nan 53 +inf +inf
+0 53  nan                   nan                     53 +inf  nan 53   -3   +7
+
+# regular values
+3 53 -0x191f6c4c09a81bp-51 -0x1a12a5465464cfp-52    53 -17  -5   53 -4002 -1
+3 12 -0xc9p-6              -0x2bfp-9                53 -17  -5   53 -4002  1
+3 53 -0x1831516233f561p-52 -0xa3c20ea13f5e5p-61     12 -17  -5   53  1     4002
+3 12 -0xc19p-11             0xafdp-11               12 -17   5   53  1     4002
+3 53  0xa3c20ea13f5e5p-61   0x1831516233f561p-52    53  5    17  12  1     4002
+3 12  0x2bfp-9              0xc9p-6                 53  5    17  12 -4002  1
+3 53  0x1a12a5465464cfp-52  0x191f6c4c09a81bp-51    12  5    17  12 -4002 -1
+3 12 -0xc91p-10             0xc91p-10               12 -17   5   12 -4002 -1
+3 53 -0x1921fb54442d19p-51  0x1921fb54442d19p-51    53 -17   5   53 -4002  1

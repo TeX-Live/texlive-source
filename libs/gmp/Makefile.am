@@ -1,7 +1,7 @@
 ## $Id$
 ## Proxy Makefile.am to build GNU MP for TeX Live.
 ##
-##   Copyright 2016-2017 Karl Berry <tex-live@tug.org>
+##   Copyright 2016-2024 Karl Berry <tex-live@tug.org>
 ##   Copyright 2014-2015 Peter Breitenlohner <tex-live@tug.org>
 ##   Copyright 2014 Taco Hoekwater <taco@metatex.org>
 ##
@@ -121,6 +121,7 @@ mpn_sources = \
 	@GMP_TREE@/mpn/generic/lshiftc.c \
 	@GMP_TREE@/mpn/generic/matrix22_mul.c \
 	@GMP_TREE@/mpn/generic/matrix22_mul1_inverse_vector.c \
+	@GMP_TREE@/mpn/generic/mod_1.c \
 	@GMP_TREE@/mpn/generic/mu_bdiv_q.c \
 	@GMP_TREE@/mpn/generic/mu_div_q.c \
 	@GMP_TREE@/mpn/generic/mu_div_qr.c \
@@ -229,7 +230,6 @@ mpn_unused = \
 	@GMP_TREE@/mpn/generic/jacbase.c \
 	@GMP_TREE@/mpn/generic/jacobi.c \
 	@GMP_TREE@/mpn/generic/jacobi_2.c \
-	@GMP_TREE@/mpn/generic/mod_1.c \
 	@GMP_TREE@/mpn/generic/mod_1_1.c \
 	@GMP_TREE@/mpn/generic/mod_1_2.c \
 	@GMP_TREE@/mpn/generic/mod_1_3.c \
@@ -273,6 +273,8 @@ mpz_sources = \
 	@GMP_TREE@/mpz/add_ui.c \
 	@GMP_TREE@/mpz/aorsmul.c \
 	@GMP_TREE@/mpz/aorsmul_i.c \
+	@GMP_TREE@/mpz/cdiv_qr_ui.c \
+	@GMP_TREE@/mpz/cdiv_q_ui.c \
 	@GMP_TREE@/mpz/cfdiv_q_2exp.c \
 	@GMP_TREE@/mpz/clear.c \
 	@GMP_TREE@/mpz/cmp.c \
@@ -281,6 +283,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/divexact.c \
 	@GMP_TREE@/mpz/fdiv_q.c \
 	@GMP_TREE@/mpz/fdiv_q_ui.c \
+	@GMP_TREE@/mpz/fdiv_r_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr.c \
 	@GMP_TREE@/mpz/fits_slong.c \
 	@GMP_TREE@/mpz/gcdext.c \
@@ -298,6 +301,7 @@ mpz_sources = \
 	@GMP_TREE@/mpz/mul_ui.c \
 	@GMP_TREE@/mpz/n_pow_ui.c \
 	@GMP_TREE@/mpz/neg.c \
+	@GMP_TREE@/mpz/pow_ui.c \
 	@GMP_TREE@/mpz/powm.c \
 	@GMP_TREE@/mpz/powm_ui.c \
 	@GMP_TREE@/mpz/realloc.c \
@@ -328,9 +332,7 @@ mpz_unused = \
 	@GMP_TREE@/mpz/bin_ui.c \
 	@GMP_TREE@/mpz/bin_uiui.c \
 	@GMP_TREE@/mpz/cdiv_q.c \
-	@GMP_TREE@/mpz/cdiv_q_ui.c \
 	@GMP_TREE@/mpz/cdiv_qr.c \
-	@GMP_TREE@/mpz/cdiv_qr_ui.c \
 	@GMP_TREE@/mpz/cdiv_r.c \
 	@GMP_TREE@/mpz/cdiv_r_ui.c \
 	@GMP_TREE@/mpz/cdiv_ui.c \
@@ -356,7 +358,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/fac_ui.c \
 	@GMP_TREE@/mpz/fdiv_qr_ui.c \
 	@GMP_TREE@/mpz/fdiv_r.c \
-	@GMP_TREE@/mpz/fdiv_r_ui.c \
 	@GMP_TREE@/mpz/fdiv_ui.c \
 	@GMP_TREE@/mpz/fib2_ui.c \
 	@GMP_TREE@/mpz/fib_ui.c \
@@ -402,7 +403,6 @@ mpz_unused = \
 	@GMP_TREE@/mpz/perfpow.c \
 	@GMP_TREE@/mpz/perfsqr.c \
 	@GMP_TREE@/mpz/popcount.c \
-	@GMP_TREE@/mpz/pow_ui.c \
 	@GMP_TREE@/mpz/powm_sec.c \
 	@GMP_TREE@/mpz/pprime_p.c \
 	@GMP_TREE@/mpz/primorial_ui.c \

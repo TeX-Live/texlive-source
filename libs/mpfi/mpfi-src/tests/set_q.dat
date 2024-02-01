@@ -1,0 +1,35 @@
+# data file for mpfi_set_q
+#
+# column fields:
+# 1: initial precision of interval
+# 2: initial left point value of interval
+# 3: initial right endpoint value of interval
+#
+# 4: inexact flag (returned value)
+# 5: precision of result (must be the same as in field 1)
+# 6: left endpoint value of result
+# 7: right endpoint value of result
+#
+# 8: value of argument
+
+# special values in initial interval
+53  nan  nan     0 53   -8   -8    -8/1
+53  nan  nan     0 53   +0   -0    -0/1
+53  nan  nan     0 53   +0   -0     0/1
+53  nan  nan     0 53   +5   +5     5/1
+53 -inf -inf     0 53   -8   -8    -8/1
+53 -inf -inf     0 53   +0   -0    -0/1
+53 -inf -inf     0 53   +0   -0     0/1
+53 -inf -inf     0 53   +5   +5     5/1
+53   +0   -0     0 53   -8   -8    -8/1
+53   +0   -0     0 53   +0   -0    -0/1
+53   +0   -0     0 53   +0   -0     0/1
+53   +0   -0     0 53   +5   +5     5/1
+53 +inf +inf     0 53   -8   -8    -8/1
+53 +inf +inf     0 53   +0   -0    -0/1
+53 +inf +inf     0 53   +0   -0     0/1
+53 +inf +inf     0 53   +5   +5     5/1
+
+# regular values
+53 nan  nan     3 53 0x19999999999999@-14 0x1999999999999a@-14    1/10
+ 2 nan  nan     3  2 0x18@-2                            0x2@-1    1/10

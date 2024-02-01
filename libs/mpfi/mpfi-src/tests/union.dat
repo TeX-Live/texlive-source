@@ -1,0 +1,49 @@
+# data file for mpfi_union
+#
+# for a description of the fields: see add.dat
+
+# special values
+0 53  nan  nan    53  nan  nan 53 -inf   -7
+0 53  nan  nan    53  nan  nan 53   -8   +1
+0 53  nan  nan    53  nan  nan 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0  nan
+0 53  nan  nan    53  nan  nan 53   +5 +inf
+0 53  nan  nan    53  nan  nan 53 +inf +inf
+0 53  nan  nan    53  nan  nan 53  nan   -0
+0 53  nan  nan    53  nan   -0 53 -inf   -7
+0 53  nan  nan    53  nan   -0 53   -8   +1
+0 53  nan  nan    53  nan +inf 53   +0 +inf
+0 53  nan  nan    53  nan  nan 53   +0   +7
+0 53  nan  nan    53  nan -inf 53   +5 +inf
+0 53  nan  nan    53  nan   -7 53 +inf +inf
+0 53  nan  nan    53  nan   +1 53  nan   -0
+0 53 -inf -inf    53 -inf -inf 53 -inf -inf
+0 53 -inf   +8    53 -inf   -7 53   -1   +8
+0 53 -inf +inf    53 -inf   -0 53   +8 +inf
+0 53 -inf +inf    53 -inf   -0 53 +inf +inf
+0 53 -inf   +8    53 -inf   +8 53   +0   +8
+0 53 -inf +inf    53 -inf +inf 53   +0   +8
+0 53 -inf   -0    53   +0   -0 53 -inf   -7
+0 53   -7   +8    53   +0   +8 53   -7   -0
+0 53   +0   +8    53   +0   -0 53   +0   +8
+0 53   +0 +inf    53   +0 +inf 53   +0   +8
+0 53   +0 +inf    53   +0   -0 53   +8 +inf
+0 53  nan  nan    53   +0   +8 53 +inf  nan
+0 53 -inf +inf    53   +0   -0 53 -inf +inf
+0 53   -7   +8    53   +0   +8 53   -7   +8
+0 53   +0   -0    53   +0   -0 53   +0   -0
+0 53   +0 +inf    53   +0 +inf 53   +0   +8
+0 53  nan  nan    53   +0  nan 53   +8 +inf
+0 53   +0 +inf    53   +0   +8 53 +inf +inf
+0 53 -inf +inf    53 +inf +inf 53 -inf   +3
+0 53   +0 +inf    53 +inf +inf 53   +0 +inf
+0 53  nan  nan    53 +inf +inf 53   +3  nan
+0 53  nan  nan    53 +inf  nan 53 -inf   -7
+0 53  nan  nan    53 +inf  nan 53 +inf +inf
+0 53  nan  nan    53 +inf  nan 53   -3   +7
+
+# regular values
+0 53 -0x0d       0x90          53  0x12      0x90    53 -0x0d            0x34
+1 12 -0x8.f0p-8  0xa0          53  0x0d      0x34    53 -0x8.ef7p-8      0xa0
+2 12 -0x2fp+12   0x1.f3p+24    53 -0x2fp+12 -0x9p-32 53 -0x12            0x1.f2ffffffp+24
+3 12 -0x1.a12p-4 0x4.e78p-4    53  0x00      0x0.037 53 -0x1.a100001p-4  0x4.e7249961p-4

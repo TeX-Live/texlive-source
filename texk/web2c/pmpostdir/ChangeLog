@@ -1,3 +1,8 @@
+2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* pmp.ch: bump MetaPost version to 2.10 for mpfi.
+	* am/pmpost.am: link with mpfi.
+
 2023-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pmp.ch: Bump upmpost version to 2.02-0.04-u1.30.

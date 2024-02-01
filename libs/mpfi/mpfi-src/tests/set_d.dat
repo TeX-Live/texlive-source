@@ -1,0 +1,39 @@
+# data file for mpfi_set_d
+#
+# fields: see put_ui.dat
+
+# special values
+53  nan  nan     0 53 -inf -inf    -inf
+53  nan  nan     0 53   -8   -8      -8
+53  nan  nan     0 53   +0   -0      -0
+53  nan  nan     0 53   +0   -0      +0
+53  nan  nan     0 53   +5   +5      +5
+53 +7   -7       0 53 +inf +inf    +inf
+53 +7   -7       0 53  nan  nan     nan
+53 +7   -7       0 53 -inf -inf    -inf
+53 +7   -7       0 53   -8   -8      -8
+53 +7   -7       0 53   +0   -0      -0
+53  nan  nan     0 53   +0   -0      +0
+53  nan  nan     0 53   +5   +5      +5
+53  nan  nan     0 53 +inf +inf    +inf
+53 +0   -0       0 53  nan  nan     nan
+53 +0   -0       0 53 -inf -inf    -inf
+53  nan  nan     0 53   -8   -8      -8
+53  nan  nan     0 53   +0   -0      -0
+53  nan  nan     0 53   +0   -0      +0
+53  nan  nan     0 53   +5   +5      +5
+53  nan  nan     0 53 +inf +inf    +inf
+53 -1   +1       0 53  nan  nan     nan
+53 -1   +1       0 53 -inf -inf    -inf
+53 -1   +1       0 53   -8   -8      -8
+53 -1   +1       0 53   +0   -0      -0
+53  nan  nan     0 53   +0   -0      +0
+53  nan  nan     0 53   +5   +5      +5
+53  nan  nan     0 53 +inf +inf    +inf
+53 +0   +1       0 53  nan  nan     nan
+
+# regular values
+  53 +0x123456789abcdep-16 +0x1fedcba9876543p-16
+0 53 +0x11111111111111     +0x11111111111111 +0x11111111111111
+  49 +0x123456789abcdp-57  +0x1fedcba987654p+33
+3 49 +0x1111111111111      +0x1111111111112 +0x11111111111111p-4

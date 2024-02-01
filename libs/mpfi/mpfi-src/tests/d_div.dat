@@ -1,0 +1,86 @@
+# data file for mpfi_d_div
+#
+# column fields:
+# 1: inexact flag (returned value)
+# 2: precision of result
+# 3: left endpoint value of result
+# 4: right endpoint value of result
+#
+# 5: first parameter value
+# 6: precision of second parameter
+# 7: left endpoint value of second parameter
+# 8: right endpoint value of second parameter
+
+#WARNING:
+# double values are read by the test suite with rounding towards minus
+# infinity to a machine-dependant precision (whereas the mpfi data are read
+# at the given precision with rounding to the nearest).
+# So as to ensure portability, use test values that are representable with a
+# 53 bit-significand which corresponds to the minimum default precision for
+# a double in the test suite.
+
+# special values
+0 53  nan  nan                       -0x170ef54646d497p-109  53  nan  nan
+0 53  nan  nan                        0.0                    53  nan  nan
+0 53  nan  nan                        0x170ef54646d497p-109  53  nan  nan
+0 53  nan  nan                       -0x114b37f4b51f71p-107  53  nan -inf
+0 53  nan  nan                        0.0                    53  nan -inf
+0 53  nan  nan                        0x114b37f4b51f71p-107  53  nan -inf
+0 53  nan  nan                       -0xfc339ab0a6b53p-99    53  nan -7
+0 53  nan  nan                        0.0                    53  nan -7
+0 53  nan  nan                        7.0                    53  nan -7
+0 53  nan  nan                       -15.0                   53  nan -0
+0 53  nan  nan                        0.0                    53  nan -0
+0 53  nan  nan                        15.0                   53  nan -0
+0 53  nan  nan                       -0xb2b3ece0a4ef9p-103   53  nan  1
+0 53  nan  nan                        0.0                    53  nan  1
+0 53  nan  nan                        0xb2b3ece0a4ef9p-103   53  nan  1
+0 53  nan  nan                       -0x5acae5c4b6e51p-101   53  nan +inf
+0 53  nan  nan                        0.0                    53  nan +inf
+0 53  nan  nan                        0x5acae5c4b6e51p-101   53  nan +inf
+0 53 +0   -0                         -0x170ef54646d497p-108  53 -inf -inf
+0 53 +0   -0                          0.0                    53 -inf -inf
+0 53 +0   -0                          0x170ef54646d497p-108  53 -inf -inf
+2 53 +0    0x1a5a3ce29a1787p-110     -0x170ef54646d496p-107  53 -inf -7
+0 53 +0   -0                          0.0                    53 -inf -7
+1 53 -0x1a5a3ce29a1787p-110 -0        0x170ef54646d496p-107  53 -inf -7
+0 53 +0   +inf                       -0x170ef54646d497p-106  53 -inf -0
+0 53 +0   -0                          0.0                    53 -inf -0
+0 53 -inf -0                          0x170ef54646d497p-106  53 -inf -0
+0 53 -inf +inf                       -0x16345785d8a00000     53 -inf  8
+0 53 -inf +inf                        0.0                    53 -inf  8
+0 53 -inf +inf                        0x16345785d8a00000     53 -inf  8
+0 53 -inf +inf                       -0x170ef54646d497p-105  53 -inf +inf
+0 53 -inf +inf                        0.0e-17                53 -inf +inf
+0 53 -inf +inf                       +0x170ef54646d497p-105  53 -inf +inf
+0 53  nan  nan                       -0x170ef54646d497p-104  53 -inf  nan
+0 53  nan  nan                        0.0e-17                53 -inf  nan
+0 53  nan  nan                       +0x170ef54646d497p-104  53 -inf  nan
+0 53 -inf +inf                       -0x170ef54646d497p-109  53 +0   -0
+0 53 +0   -0                          0.0                    53 +0   -0
+0 53 -inf +inf                        0x170ef54646d497p-109  53 +0   -0
+2 53 -inf -0x13c3ada9f391a5p-110     -0x114b37f4b51f71p-107  53 +0    7
+0 53 +0   -0                          0.0                    53 +0    7
+1 53  0x13c3ada9f391a5p-110 +inf      0x114b37f4b51f71p-107  53 +0    7
+0 53 -inf -0                         -0x50b45a75f7e81p-104   53 +0   +inf
+0 53 +0   -0                          0.0                    53 +0   +inf
+0 53 +0   +inf                        0x142d169d7dfa03p-106  53 +0   +inf
+0 53 +0   -0                         -0x170ef54646d497p-109  53 +inf +inf
+0 53 +0   -0                          0.0                    53 +inf +inf
+0 53 +0   -0                          0x170ef54646d497p-109  53 +inf +inf
+0 53  nan  nan                       -0x170ef54646d497p-109  53 +inf  nan
+0 53  nan  nan                        0.0                    53 +inf  nan
+0 53  nan  nan                        0x170ef54646d497p-109  53 +inf  nan
+
+# regular values
+0 53 -inf     +inf                                     -2.5  53 -8    8
+
+0 53  0x5p-4                0.5                        -2.5  53 -8   -5
+1 53 -0x1999999999999ap-56 -0x1p-4                     -2.5  53  25   40
+2 53  0x5p-5                0x16db6db6db6db7p-54       -2.5  53 -16  -7
+3 53 -0x1d1745d1745d18p-55 -0x11e6efe35b4cfap-58       -2.5  53  11   143
+
+0 53  0x1p-4                4                        33.125  53  8.28125 530
+1 53 -0x11111111111112p-56 -0x1p-4                   33.125  53 -530 -496.875
+2 53  0.125                 0x13a12f684bda13p-53     33.125  53  54   265
+3 53  0x13a12f684bda12p-53  0x14627627627628p-53     33.125  53  52   54
