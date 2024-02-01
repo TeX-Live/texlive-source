@@ -1,0 +1,77 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+# Not really a test, just making sure the program executes.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptekf=$BinDir/ptekf$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+web2cdir=$srcdir/../web2c
+
+export TEXMFCNF
+
+rm -f ./enc-*.bib.out*
+
+cp $web2cdir/tests/enc-*.bib .
+
+for sfx in amb0 amb1 euc jis sjis utf8 utf8a utf8b; do
+
+  $_ptekf --guess -u ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-utf8 || exit 1
+  $_ptekf --guess --buffer ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-utf8 || exit 2
+  if [ $sfx = euc ]; then
+    $_ptekf -E -u ./enc-$sfx.bib
+    diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-utf8 || exit 3
+  fi
+  if [ $sfx = jis ]; then
+    $_ptekf -J -u ./enc-$sfx.bib
+    diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-utf8 || exit 4
+  fi
+  if [ $sfx = sjis ]; then
+    $_ptekf -S -u ./enc-$sfx.bib
+    diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-utf8 || exit 5
+  fi
+
+done
+
+for sfx in amb0 amb1 utf8 utf8a utf8b; do
+
+  $_ptekf -U -b ./enc-$sfx.bib
+  mv enc-$sfx.bib.out enc-$sfx.bib.out-buf
+  diff enc-$sfx.bib.out-buf $srcdir/tests/enc-$sfx.bib-utf8 || exit 11
+  $_ptekf -U -e ./enc-$sfx.bib
+  mv enc-$sfx.bib.out enc-$sfx.bib.out-euc
+  diff enc-$sfx.bib.out-euc $srcdir/tests/enc-$sfx.bib-euc || exit 12
+  $_ptekf -U -j ./enc-$sfx.bib
+  mv enc-$sfx.bib.out enc-$sfx.bib.out-jis
+  diff enc-$sfx.bib.out-jis $srcdir/tests/enc-$sfx.bib-jis || exit 13
+  $_ptekf -U -s ./enc-$sfx.bib
+  mv enc-$sfx.bib.out enc-$sfx.bib.out-sjis
+  diff enc-$sfx.bib.out-sjis $srcdir/tests/enc-$sfx.bib-sjis || exit 14
+
+done
+
+for sfx in amb0 amb2; do
+
+  $_ptekf -E -u ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-euc-utf8 || exit 21
+  $_ptekf -E --buffer ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-euc-utf8 || exit 22
+
+done
+
+for sfx in amb1 amb2; do
+
+  cp $web2cdir/tests/enc-$sfx.bib .
+
+  $_ptekf -S -u ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-sjis-utf8 || exit 23
+  $_ptekf -S --buffer ./enc-$sfx.bib
+  diff enc-$sfx.bib.out $srcdir/tests/enc-$sfx.bib-sjis-utf8 || exit 24
+
+done

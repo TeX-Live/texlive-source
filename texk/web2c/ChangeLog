@@ -1,3 +1,9 @@
+2024-02-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/enc-utf8.bib, tests/enc-{,e,s}[pu].bbl:
+	Add tests for guess encodings & upBibTeX &
+	Kana (semi)voiced sounds.
+
 2023-12-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/fn-generate.perl:

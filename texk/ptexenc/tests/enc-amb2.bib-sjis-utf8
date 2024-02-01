@@ -1,0 +1,13 @@
+% ambiguous: EUC-JP or Shift_JIS
+@Type{ambiguos-a100, field = {E0Ax: 爍爐爛爨爭爬爰爲爻爼爿牀牆牋牘}, }
+@Type{ambiguos-a101, field = {E2Ax: 筍笋筌筅筵筥筴筧筰筱筬筮箝箘箟}, }
+@Type{ambiguos-a102, field = {E4Ax: 茖茲茱荀茹荐荅茯茫茗茘莅莚莪莟}, }
+@Type{ambiguos-a103, field = {E6Ax: 譯譴譽讀讌讎讒讓讖讙讚谺豁谿豈}, }
+@Type{ambiguos-a104, field = {E8Ax: 陦陲陬隍隘隕隗險隧隱隲隰隴隶隸}, }
+@Type{ambiguos-a105, field = {EAAx: 遙瑤凜熙}, }
+@Type{ambiguos-a106, field = {coffee: 珎瑕 珈琲}, }
+@Type{ambiguos-a107, field = {amber: 琲珮 琥珀}, }
+@Type{ambiguos-a108, field = {dotage: 賽糂 耄碌}, }
+@Type{ambiguos-a109, field = {konjak: 韈韭 蒟蒻}, }
+@Type{ambiguos-a110, field = {rampant: 猴獨 猖獗}, }
+

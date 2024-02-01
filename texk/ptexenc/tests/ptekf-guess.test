@@ -1,0 +1,20 @@
+#! /bin/sh -v
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+# Not really a test, just making sure the program executes.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptekf=$BinDir/ptekf$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+web2cdir=$srcdir/../web2c
+bibtexxdir=$srcdir/../bibtex-x
+
+export TEXMFCNF
+
+
+$_ptekf --guess $web2cdir/tests/*.bib || exit 1
+$_ptekf --guess $bibtexxdir/tests/*.bib || exit 2

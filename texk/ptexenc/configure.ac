@@ -50,6 +50,10 @@ AH_TOP([/* ptexenc/c-auto.h: defines for ptexenc, as determined by configure. */
 #define PTEXENCVERSION "ptexenc version] ptexenc_version["])
 AH_BOTTOM([#endif /* !PTEXENC_C_AUTO_H */])
 
+m4_include([../../version.ac])[] dnl define tex_live_version
+AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
+          [Define to the current TeX Live version string.])
+
 AC_CONFIG_FILES([Makefile ptexenc.pc])
 
 AC_OUTPUT

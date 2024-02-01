@@ -1,0 +1,5 @@
+@Type{ascii-s001, field = {ABC xyz}, }
+@Type{greek-s001, field = {ΑΒΓ χψω}, }
+@Type{cyrillic-s001, field = {АБВ эюя}, }
+@Type{kana-s001, field = {あいうえお}, }
+@Type{hanzi-s001, field = {一二三四五}, }

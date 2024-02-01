@@ -6,7 +6,7 @@
 #define PTEXENC_C_AUTO_H
 
 /* ptexenc: the version string. */
-#define PTEXENCVERSION "ptexenc version 1.4.4/dev"
+#define PTEXENCVERSION "ptexenc version 1.4.5/dev"
 
 /* Define to 1 if the 'closedir' function returns void instead of int. */
 #undef CLOSEDIR_VOID
@@ -154,6 +154,9 @@
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
+
+/* Define to the current TeX Live version string. */
+#undef TL_VERSION
 
 /* Version number of package */
 #undef VERSION

@@ -1,3 +1,21 @@
+2024-02-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptexenc.c, ptexenc/ptexenc.h, kanjicnv.c, ptexenc/kanjicnv.h:
+	Add to support ISO-8859 in guessing input file encodings.
+	* ptekf.c: Add a new simple encoding conversion utility "ptekf"
+	to analyze file encoding conversion procedure.
+	* tests/ptekf-{smoke,guess,conv}.test,
+	tests/enc-amb0.bib-{euc,euc-utf8,jis,sjis,sjis-utf8,utf8},
+	tests/enc-amb1.bib-{euc,jis,sjis,sjis-utf8,utf8},
+	tests/enc-amb2,bib_{euc,sjis}-utf8,
+	tests/enc-{euc,jis,sjis}.bib-utf8,
+	tests/enc-utf8{,a,b}.bib-{euc,jis,sjis,utf8}:
+	New tests to guess/convert encoding.
+	https://github.com/texjporg/tex-jp-build/issues/142
+	* configure.ac, Makefile.am: Adjust.
+	* version.ac, COPYRIGHT: Update copyright year.
+	* version.ac: Bump to 1.4.5/dev.
+
 2023-09-11  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* unicode.c (UPTEXtoUCS): if >=UCS_MAX not >UCS_MAX.

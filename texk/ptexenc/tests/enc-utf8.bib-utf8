@@ -2,5 +2,5 @@
 @Type{greek-u001, field = {ΑΒΓ χψω}, }
 @Type{cyrillic-u001, field = {АБВ эюя}, }
 @Type{kana-u001, field = {あいうえお}, }
-@Type{kana-u002, field = {ハハババパパ}, }
+@Type{kana-u002, field = {ハハババパパ}, }
 @Type{hanzi-u001, field = {一二三四五}, }

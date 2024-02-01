@@ -1,0 +1,7 @@
+% UTF-8 with BOM
+@Type{ascii-v002, field = {ABC xyz}, }
+@Type{ambiguos-v003, field = {C2Ax: ¡ñ¡ò¡ï¡ø¡¯¢Ì}, }
+@Type{ambiguos-v006, field = {CEBx: ¦Á¦Â¦Ã¦Ä¦Å¦Æ¦Ç¦È¦É¦Ê¦Ë¦Ì¦Í¦Î¦Ï}, }
+@Type{ambiguos-v008, field = {D0Bx: §Ñ§Ò§Ó§Ô§Õ§Ö§Ø§Ù§Ú§Û§Ü§Ý§Þ§ß§à§á}, }
+@Type{ambiguos-v009, field = {²Â¿Í ÂçÀ¼ Ë´¼º ÂÐ²Á ÍÄ½÷ µ¢Ç¤ ¿®¶Ä È¼Î· »³³Ù Ç¯Êð Ê¿¾ï ±ä¿­ ÏÉÂë}, }
+

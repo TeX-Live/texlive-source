@@ -1,0 +1,14 @@
+#! /bin/sh
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+# Not really a test, just making sure the program executes.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptekf=$BinDir/ptekf$ExeExt
+
+$_ptekf --version || exit 1
+echo ''
+$_ptekf --help || exit 2

@@ -1,0 +1,6 @@
+@Type{ascii-u001, field = {ABC xyz}, }
+@Type{greek-u001, field = {¦¡¦¢¦£ ¦Ö¦×¦Ø}, }
+@Type{cyrillic-u001, field = {§¡§¢§£ §ï§ð§ñ}, }
+@Type{kana-u001, field = {¤¢¤¤¤¦¤¨¤ª}, }
+@Type{kana-u002, field = {¥Ï¥Ï¥Ð¥Ð¥Ñ¥Ñ}, }
+@Type{hanzi-u001, field = {°ìÆó»°»Í¸Þ}, }

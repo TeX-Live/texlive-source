@@ -1,0 +1,13 @@
+% ambiguous: UTF-8 or EUC-JP
+@Type{ambiguos-a001, field = {C2Ax: ¢£¥§¨¬}, }
+@Type{ambiguos-a002, field = {C2Bx: °±¶÷}, }
+@Type{ambiguos-a005, field = {CEAx: ΡΣΤΥΦΧΨΩ}, }
+@Type{ambiguos-a006, field = {CEBx: αβγδεζηθικλμνξο}, }
+@Type{ambiguos-a007, field = {D0Ax: СТУФХЦЧШЩЪЫЬЭЮЯ}, }
+@Type{ambiguos-a008, field = {D0Bx: абвгдежзийклмноп}, }
+@Type{ambiguos-a009, field = {佳人 大声 亡失 対価 幼女 帰任 信仰 伴侶 山岳 年俸 平常 延伸 鷲鷹}, }
+@Type{ambiguos-a011, field = {F0A3B3BE: 𣳾}, }
+@Type{ambiguos-a012, field = {F0A5B6A1: 𥶡}, }
+@Type{ambiguos-a013, field = {F0A1B6B7: 𡶷}, }
+@Type{ambiguos-a020, field = {ξΩ ΥΦ ®ã ŷЧ Сб άå º°}, }
+
