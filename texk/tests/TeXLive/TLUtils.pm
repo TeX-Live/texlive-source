@@ -1,5 +1,5 @@
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2023 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2024 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 69327 $';
+my $svnrev = '$Revision: 69653 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -40,6 +40,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::wsystem($msg,@args);
   TeXLive::TLUtils::xsystem(@args);
   TeXLive::TLUtils::run_cmd($cmd [, @envvars ]);
+  TeXLive::TLUtils::run_cmd_with_log($cmd, $logfn);
   TeXLive::TLUtils::system_pipe($prog, $infile, $outfile, $removeIn, @args);
   TeXLive::TLUtils::diskfree($path);
   TeXLive::TLUtils::get_user_home();
@@ -79,6 +80,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::time_estimate($totalsize, $donesize, $starttime)
   TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc, $retry, $continue);
   TeXLive::TLUtils::do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script);
+  TeXLive::TLUtils::update_context_cache($plat_bindir);
   TeXLive::TLUtils::announce_execute_actions($how, @executes, $what);
   TeXLive::TLUtils::add_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
   TeXLive::TLUtils::remove_symlinks($root, $arch, $sys_bin, $sys_man, $sys_info);
@@ -144,7 +146,8 @@ our $PERL_SINGLE_QUOTE; # we steal code from Text::ParseWords
 # We use myriad global and package-global variables, unfortunately.
 # To avoid "used only once" warnings, we must use the variable names again.
 # 
-# This ugly repetition in the BEGIN block works with all Perl versions.
+# This ugly repetition in the BEGIN block works with all Perl versions;
+# cleaner/fancier ways of handling this don't.
 BEGIN {
   $::LOGFILE = $::LOGFILE;
   $::LOGFILENAME = $::LOGFILENAME;
@@ -161,6 +164,7 @@ BEGIN {
   $::machinereadable = $::machinereadable;
   $::no_execute_actions = $::no_execute_actions;
   $::regenerate_all_formats = $::regenerate_all_formats;
+  $::context_cache_update_needed = $::context_cache_update_needed;
   #
   $JSON::false = $JSON::false;
   $JSON::true = $JSON::true;
@@ -245,6 +249,7 @@ BEGIN {
     &wsystem
     &xsystem
     &run_cmd
+    &run_cmd_with_log
     &system_pipe
     &diskfree
     &get_user_home
@@ -768,8 +773,9 @@ sub xsystem {
 
 =item C<run_cmd($cmd, @envvars)>
 
-Run shell command C<$cmd> and captures its output. Returns a list with CMD's
-output as the first element and the return value (exit code) as second.
+Run shell command C<$cmd> and captures its standard output (not standard
+error). Returns a list with CMD's output as the first element and its
+return value (exit code) as second.
 
 If given, C<@envvars> is a list of environment variable name / value
 pairs set in C<%ENV> for the call and reset to their original value (or
@@ -804,6 +810,36 @@ sub run_cmd {
   }
   return ($output,$retval);
 }
+
+=item C<run_cmd_with_log($cmd, $logfn)>
+
+Run shell command C<$cmd> and captures both standard output and standard
+error (as one string), passing them to C<$logfn>. The return value is
+the exit status of C<$cmd>. Environment variable overrides cannot be
+passed. (This is used for running special post-installation commands in
+install-tl and tlmgr.)
+
+The C<info> function is called to report what is happening.
+
+=cut
+
+sub run_cmd_with_log {
+  my ($cmd,$logfn) = @_;
+  
+  info ("running $cmd ...");
+  my ($out,$ret) = TeXLive::TLUtils::run_cmd ("$cmd 2>&1");
+  if ($ret == 0) {
+    info ("done\n");
+  } else {
+    info ("failed\n");
+    tlwarn ("$0: $cmd failed (status $ret): $!\n");
+    $ret = 1;
+  }
+  &$logfn ($out); # log the output
+  
+  return $ret;
+} # run_cmd_with_log
+
 
 =item C<system_pipe($prog, $infile, $outfile, $removeIn, @extraargs)>
 
@@ -2197,6 +2233,10 @@ sub _do_postaction_shortcut {
   return 1;
 }
 
+=item C<parse_into_keywords>
+
+=cut
+
 sub parse_into_keywords {
   my ($str, @keys) = @_;
   my @words = quotewords('\s+', 0, $str);
@@ -2221,25 +2261,92 @@ sub parse_into_keywords {
   return($error, %ret);
 }
 
-=item C<announce_execute_actions($how, $tlpobj, $what)>
+=item C<update_context_cache($bindir,$progext,$run_postinst_cmd)>
 
-Announces that the actions given in C<$tlpobj> should be executed
-after all packages have been unpacked. C<$what> provides 
-additional information.
+Run the ConTeXt cache generation commands, using C<$bindir> and
+C<$progext> to check if commands can be run. Use the function reference
+C<$run_postinst_cmd> to actually run the commands. The return status is
+zero if all succeeded, nonzero otherwise. If the main ConTeXt program
+(C<luametatex>) cannot be run at all, the return status is status.
+
+Functions C<info> and C<debug> are called with status reports.
+
+=cut
+
+sub update_context_cache {
+  my ($bindir,$progext,$run_postinst_cmd) = @_;
+  
+  my $errcount = 0;
+
+  # The story here is that in 2023, the provided lmtx binary for
+  # x86_64-linux was too new to run on the system where we build TL.
+  # (luametatex: /lib64/libm.so.6: version `GLIBC_2.23' not found)
+  # So we have to try running the binary to see if it works, not just
+  # test for its existence. And since it exits nonzero given no args, we
+  # have to specify --version. Hope it keeps working like that ...
+  # 
+  # If lmtx is not runnable, don't consider that an error, since nothing
+  # can be done about it.
+  my $lmtx = "$bindir/luametatex$progext";
+  if (TeXLive::TLUtils::system_ok("$lmtx --version")) {
+    info("setting up ConTeXt cache: ");
+    $errcount += &$run_postinst_cmd("mtxrun --generate");
+    #
+    # If mtxrun failed, don't bother trying more.
+    if ($errcount == 0) {
+      $errcount += &$run_postinst_cmd("context --luatex --generate");
+      #
+      # If context succeeded too, try luajittex. Missing on some platforms.
+      # Although we build luajittex normally, instead of importing the
+      # binary, testing for file existence should suffice, we may as
+      # well test execution since it's just as easy.
+      # 
+      if ($errcount == 0) {
+        my $luajittex = "$bindir/luajittex$progext";
+        if (TeXLive::TLUtils::system_ok("$luajittex --version")) {
+          $errcount += &$run_postinst_cmd("context --luajittex --generate");
+        } else {
+          debug("skipped luajittex cache setup, can't run $luajittex\n");
+        }
+      }
+    }
+  }
+  return $errcount;
+}
+
+=item C<announce_execute_actions($how, [$tlpobj[, $what]])>
+
+Announces (records) that the actions, usually given in C<$tlpobj> (but
+can be omitted for global actions), should be executed after all
+packages have been unpacked. The optional C<$what> depends on the
+action, e.g., a parse_AddFormat_line reference for formats; not sure if
+it's used for anything else.
+
+This is called for every package that gets installed.
 
 =cut
 
 sub announce_execute_actions {
-  my ($type, $tlp, $what) = @_;
-  # do simply return immediately if execute actions are suppressed
+  my ($type,$tlp,$what) = @_;
+  # return immediately if execute actions are suppressed
   return if $::no_execute_actions;
-
+  
+  # since we're called for every package with "enable",
+  # it's not helpful to report that again.
+  if ($type ne "enable") {
+    my $forpkg = $tlp ? ("for " . $tlp->name) : "no package";
+    debug("announce_execute_actions: given $type ($forpkg)\n");
+  }
   if (defined($type) && ($type eq "regenerate-formats")) {
     $::regenerate_all_formats = 1;
     return;
   }
   if (defined($type) && ($type eq "files-changed")) {
     $::files_changed = 1;
+    return;
+  }
+  if (defined($type) && ($type eq "context-cache")) {
+    $::context_cache_update_needed = 1;
     return;
   }
   if (defined($type) && ($type eq "rebuild-format")) {
@@ -2251,17 +2358,18 @@ sub announce_execute_actions {
   if (!defined($type) || (($type ne "enable") && ($type ne "disable"))) {
     die "announce_execute_actions: enable or disable, not type $type";
   }
-  my (@maps, @formats, @dats);
   if ($tlp->runfiles || $tlp->srcfiles || $tlp->docfiles) {
     $::files_changed = 1;
   }
-  $what = "map format hyphen" if (!defined($what));
+  #
+  $what = "map format hyphen" if (!defined($what)); # do all by default
   foreach my $e ($tlp->executes) {
     if ($e =~ m/^add((Mixed|Kanji)?Map)\s+([^\s]+)\s*$/) {
       # save the refs as we have another =~ grep in the following lines
       my $a = $1;
       my $b = $3;
       $::execute_actions{$type}{'maps'}{$b} = $a if ($what =~ m/map/);
+
     } elsif ($e =~ m/^AddFormat\s+(.*)\s*$/) {
       my %r = TeXLive::TLUtils::parse_AddFormat_line("$1");
       if (defined($r{"error"})) {
@@ -2270,6 +2378,7 @@ sub announce_execute_actions {
         $::execute_actions{$type}{'formats'}{$r{'name'}} = \%r
           if ($what =~ m/format/);
       }
+
     } elsif ($e =~ m/^AddHyphen\s+(.*)\s*$/) {
       my %r = TeXLive::TLUtils::parse_AddHyphen_line("$1");
       if (defined($r{"error"})) {
@@ -2278,6 +2387,7 @@ sub announce_execute_actions {
         $::execute_actions{$type}{'hyphens'}{$r{'name'}} = \%r
           if ($what =~ m/hyphen/);
       }
+
     } else {
       tlwarn("Unknown execute $e in ", $tlp->name, "\n");
     }

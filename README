@@ -48,9 +48,10 @@ x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
     LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
   ./Build
   
-i386-freebsd, amd64-freebsd:
+i386-freebsd amd64-freebsd:
   Built on contextgarden, see below.
   FreeBSD 11.4
+  upstream: https://www.freshports.org/devel/tex-web2c/
 
 i386-linux: see travis below.
 
