@@ -1,12 +1,8 @@
 #!/usr/bin/env perl
 use warnings;
+use strict;
 
-
-#  9, 10 Jan 2024  Fix localization of $_ in while loops that read file.
-#              That fixes problems with use of %hash_calc_ignore_pattern,
-#              which gave uninitialized $_ warnings.
-
-## Copyright John Collins 1998-2023
+## Copyright John Collins 1998-2024
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
 ##           for suggestions) 
@@ -45,13 +41,14 @@ use warnings;
 ##             20 = probable bug
 ##             or retcode from called program.
 
+our ($my_name, $My_name, $version_num, $version_details);
 BEGIN {
     # Make sure the following are available when printing diagnostics in BEGIN
     # blocks.
     $my_name = 'latexmk';
     $My_name = 'Latexmk';
-    $version_num = '4.82a';
-    $version_details = "$My_name, John Collins, 10 Jan. 2024. Version $version_num";
+    $version_num = '4.83';
+    $version_details = "$My_name, John Collins, 31 Jan. 2024. Version $version_num";
 }
 
 use Config;
@@ -63,7 +60,7 @@ use File::Spec::Functions qw( catfile file_name_is_absolute rel2abs );
 # It's either File::Glob::bsd_glob or File::Glob::glob
 # The first does not exist in old versions of Perl, while the second
 # is deprecated in more recent versions and will be removed
-$have_bsd_glob = 0;
+our $have_bsd_glob = 0;
 use File::Glob;
 if ( eval{ File::Glob->import('bsd_glob'); 1; } ) {
     # Success in importing bsd_glob
@@ -116,7 +113,8 @@ BEGIN {
 #
 use Encode qw( decode encode );
 use Unicode::Normalize;
-use utf8;  # For UTF-8 strings in **this** script
+use utf8;  # Strings are coded in UTF-8 in this file, stored internally
+           # decoded into Perl's internal character representation.
 use feature 'unicode_strings';
 use feature 'say';
 
@@ -149,8 +147,7 @@ use feature 'say';
 
 
 # My default CSs: UTF-8
-our $CS_system;
-$CS_system = 'UTF-8';
+our $CS_system = 'UTF-8';
 # Quick short cut for tests of whether conversions needed:
 our $no_CP_conversions = 1;
 
@@ -205,138 +202,13 @@ END {
 
 ########################################################
 
-#************************************************************
-#************************************************************
-#            Unicode manipuation and normalization
-# Notes about Perl strings:
-# 1. Strings have a flag utf8.
-#    a. If the utf8 flag is on, the string is to be interpreted as a sequence
-#       of code points.
-#       When "use utf8;" is used, a string containing non-ASCII characters
-#       has the utf8 flag set.
-#       If 'no bytes;' is in effect, the ordinal value for each item in the
-#       string is the Unicode code point value.
-#    b. If the utf8 flag is off for a string, the string is a sequence of
-#       bytes, to be interpreted according to whatever CS the user happens
-#       to choose to use.
-#    c. The utf8 flag is NOT to be interpreted as saying that the string is
-#       encoded as UTF-8, even though under the hood that may be the case.
-#    d. Indeed, setting 'use bytes;' appears to expose the internal
-#       byte-level representation of a string with the utf8 flag set, and
-#       that appears to be UTF-8.
-# 2. The utf8 flag is quite confusing in its meaning.
-# 3. When encode is applied to a string whose utf8 flag is on, the result
-#    is a string with the utf8 flag off, and the result consists of a sequence
-#    of bytes in the chosen encoding scheme, which may be chosen as UTF-8.
-# 4. Strings received from the command line have the utf8 flag off and are
-#    encoded in whatever CS the OS/terminal is using.
-# 5. When a string is supplied to print (or c), by default:
-#    a. If the utf8 flag is off or if 'use bytes;' is in effect, then the
-#       string is sent as a sequence of bytes.  They are UTF-8 coded if
-#       the utf8 flag is on and 'use bytes;' is in effect.
-#    b. If the utf8 flag is on and if 'no bytes;' is in effect, then mostly
-#       garbage results for non-ASCII characters; the string must first be
-#       encoded as a byte string, in the CS suitable for the OS.
-#    c. Correct results are obtained when the utf8 flag is on and 'no bytes'
-#       is used when the binmode for the file handle is set suitably.
-# 6. Generally OS calls and interactions with the OS need encoded byte strings.
-# 7. Even more generally, interaction with the external world, including file
-#    contents is in terms of byte strings, with some CS chosen by default, by
-#    the user, or the OS.  Unix-like OSs: Default is UTF-8, but as much by
-#    convention as by a requirement of the OS.
-
-#-------------------------------------
-
-sub utf8_to_mine {
-    # Given string encoded in UTF-8, return encoded string in my current CS.
-    # Don't use Encode::from_to, which does in-place conversion.
-    if  ($no_CP_conversions) { return $_[0]; }
-    else { return  encode( $CS_system, decode('UTF-8', $_[0])); }  
-}
-
-#-------------------------------------
-
-sub utf8_to_mine_errors {
-    # Given string encoded in UTF-8, return encoded string in my current CS.
-    # Don't use Encode::from_to, which does in-place conversion.
-    # Assume coding of input string is correctly UTF-8, but
-    # check for correct encoding in CS_system.
-    # Error message is returned in $@.  No error => $@ is null string.
-    # (Same style as eval!)
-    $@ = '';
-    if  ($no_CP_conversions) { return $_[0]; }
-    else {
-        my $result = '';
-        eval {
-            $result = encode( $CS_system,
-                              decode('UTF-8', $_[0]),
-                              Encode::FB_CROAK | Encode::LEAVE_SRC
-                      );
-        };
-        return $result;
-    }  
-}
-
-#-------------------------------------
-
-sub config_to_mine {
-    # Ensure that configuration strings about files and directories are
-    # encoded in system CS.
-    # Configuration strings set in an rc file SHOULD either be:
-    #   a. ASCII only, with Perl's utf8 flag off.
-    #   b. Containing non-ASCII characters, with utf8 flag on.
-    #      These need to be converted to encoded strings in system CS (and
-    #      hence with utf8 flag off).
-    # Configuration variables set from the command line, e.g., from an
-    # -outdir=... option, are already in the system CS, because that is
-    # how strings are passed on  the command line.
-    # So we just need to do a conversion for strings with utf8 flag on:
-    foreach ( $out_dir, $aux_dir, @default_files, @default_excluded_files ) {
-        if (utf8::is_utf8($_)) { $_ = encode( $CS_system, $_ ); }
-    }
-} #END config_to_mine
-
-#************************************************************
-
-sub mine_to_utf8 {
-    # Given string encoded in my current CS, return utf-8 encoded string.
-    # Don't use Encode::from_to, which does in-place conversion.
-    if  ($no_CP_conversions) { return $_[0]; }
-    else { return  encode( 'UTF-8', decode($CS_system, $_[0])); }
-}
-
-#-------------------------------------
-
-sub is_valid_utf8 {
-   eval { decode( 'UTF-8', $_[0], (Encode::FB_CROAK | Encode::LEAVE_SRC ) ); };
-   if ($@) { return 0; }
-   else { return 1; }
-}
-
-#-------------------------------------
-
-sub fprint8 {
-    # Usage: fprint8( handle, data array)
-    # Write to file converting from my CS to UTF-8
-    my $fh = shift;
-    print $fh mine_to_utf8( join( '', @_ ) );
-}
-
-#-------------------------------------
-
-################################################################
-
-
-
-
 ################################################################
 ################################################################
 #============ Deal with how I'm invoked: name and CL args:
 
 # Name that I'm invoked with indicates default behavior (latexmk
 # v. pdflatexmk, etc):
-(our $invoked_name) = fileparseA($0);
-
+our ($invoked_name) = fileparseA($0);
 # Save name, since I override it if I don't recognize it
 our $invoked_kind = $invoked_name;
 print "$My_name: Invoked as '$invoked_name'\n"
@@ -347,7 +219,7 @@ print "$My_name: Invoked as '$invoked_name'\n"
 # rc files and CL args, no values are set for any of these variables.
 # Thus default compilation for latexmk is by latex,
 #                          for pdflatexmk is by pdflatex, etc.
-%compilation_defaults =
+our %compilation_defaults =
     ( 'latexmk' => [1,0,0,0],
       'lualatexmk' => [0,0,4,0],
       'pdflatexmk' => [0,0,1,0],
@@ -360,17 +232,13 @@ unless (exists $compilation_defaults{$invoked_name}) { $invoked_name = 'latexmk'
 
 ################################################################
 ################################################################
-# The following variables are assigned once and then used in symbolic 
-#     references, so we need to avoid warnings 'name used only once':
-use vars qw( $dvi_update_command $ps_update_command $pdf_update_command
-             $aux_dir_requested $out_dir_requested );
 
 # Translation of signal names to numbers and vv:
-%signo = ();
-@signame = ();
+our %signo = ();
+our @signame = ();
 if ( defined $Config{sig_name} ) {
    my $i = 0;
-   foreach $name (split('\s+', $Config{sig_name})) {
+   foreach my $name (split('\s+', $Config{sig_name})) {
       $signo{$name} = $i;
       $signame[$i] = $name;
       $i++;
@@ -384,11 +252,11 @@ else {
 # Line length in log file that indicates wrapping.  
 # This number EXCLUDES line-end characters, and is one-based.
 # It is the parameter max_print_line in the TeX program.  (tex.web)
-$log_wrap = 79;
+our $log_wrap = 79;
 
 # Expected biggest construct in log file in bytes.
 # Use to limit number of (potentially) wrapped lines to combine into single line.
-$max_log_construct = 600;
+our $max_log_construct = 600;
 
 # Whether to search for ^^ notation in log file for non-7-bit characters,
 # and convert to bytes.  (Note: ^^ notation is produced by hilatex in
@@ -397,7 +265,7 @@ $max_log_construct = 600;
 # gives it if -translate-file=empty is used.)
 # Should also do same with aux files, but I've not done that yet. ????
 # fls file is always UTF-8.
-$conv_hathat = 1;
+our $conv_hathat = 1;
 
 #########################################################################
 ## Default parsing and file-handling settings
@@ -410,7 +278,7 @@ $conv_hathat = 1;
 ## Add items by push, e.g.,
 ##     push @file_not_found, '^No data file found `([^\\\']*)\\\'';
 ## will give match to line starting "No data file found `filename'"
-@file_not_found = (
+our @file_not_found = (
     '^No file\\s+(.*)\\.$',
     '^No file\\s+(.+)\s*$',
     '^\\! LaTeX Error: File `([^\\\']*)\\\' not found\\.',
@@ -428,13 +296,13 @@ $conv_hathat = 1;
 # that we will call bad warnings.  They are not treated as errors by
 # *latex, but depending on the $bad_warning_is_error setting 
 # we will treat as if they were actual errors.
-@bad_warnings = (
+our @bad_warnings = (
     # Remember: \\ in perl inside single quotes gives a '\', so we need
     # '\\\\' to get '\\' in the regexp.
     '^\(\\\\end occurred when .* was incomplete\)',
     '^\(\\\\end occurred inside .*\)',
 );
-$bad_warning_is_error = 0; 
+our $bad_warning_is_error = 0; 
 
 # Characters that we won't allow in the name of a TeX file.
 # Notes: Some are disallowed by TeX itself.
@@ -442,12 +310,12 @@ $bad_warning_is_error = 0;
 #        '$' results in possible variable substitution by kpsewhich called from tex.
 #        '"' gets special treatment.
 #        See subroutine test_fix_texnames and its call for their use.
-$illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
+our $illegal_in_texname = "\x00\t\f\n\r\$%\\~\x7F";
 
 # Whether to normalize aux_dir and out_dir where possible.
 # This is important when these directories aren't subdirectories of the cwd,
 # and TeXLive's makeindex and/or bibtex are used.
-$normalize_names = 2;  # Strongest kind.
+our $normalize_names = 2;  # Strongest kind.
 
 ## Hash mapping file extension (w/o period, e.g., 'eps') to a single regexp,
 #  whose matching by a line in a file with that extension indicates that the 
@@ -463,13 +331,13 @@ $normalize_names = 2;  # Strongest kind.
 #    or (b) its hash changes
 #  So it is useful to ignore lines in the hash calculation only if they
 #  are of a fixed size (as with a date/time stamp).
-%hash_calc_ignore_pattern =();
+our %hash_calc_ignore_pattern =();
 
 # Specification of templates for extra rules.
 # See subroutine rdb_initialize_rules for examples of rule templates, and
 # how they get used to construct rules.
 # (Documentation obviously needs to be improved!)
-%extra_rule_spec = ();
+our %extra_rule_spec = ();
 
 
 #??????? !!!!!!!!! If @aux_hooks and @latex_file_hooks are still needed,
@@ -513,42 +381,44 @@ $hooks{latex_file_hooks} = \@latex_file_hooks;
 ## Which TeX distribution is being used
 ## E.g., "MiKTeX 2.9", "TeX Live 2018"
 ## "" means not determined. Obtain from first line of .log file.
-$tex_distribution = '';
+our $tex_distribution = '';
 
 # List of known *latex rules:
-%possible_primaries = ( 'dvilualatex'  => 'primary', 'hilatex'  => 'primary',
+our %possible_primaries = ( 'dvilualatex'  => 'primary', 'hilatex'  => 'primary',
                         'latex'  => 'primary',
                         'lualatex'  => 'primary', 'pdflatex'  => 'primary',
-                        'xelatex'  => 'primary' );
+                            'xelatex'  => 'primary' );
+# Command strings for them:
+our ($dvilualatex, $hilatex, $latex, $lualatex, $pdflatex, $xelatex );
 std_tex_cmds();
 
 # Possible code to execute by *latex before inputting source file.
 # Not used by default.
-$pre_tex_code = '';
+our $pre_tex_code = '';
 
 ## Default switches:
-$hilatex_default_switches = '';
-$latex_default_switches = '';
-$pdflatex_default_switches = '';
-$dvilualatex_default_switches = '';
-$lualatex_default_switches = '';
+our $hilatex_default_switches = '';
+our $latex_default_switches = '';
+our $pdflatex_default_switches = '';
+our $dvilualatex_default_switches = '';
+our $lualatex_default_switches = '';
     # Note that xelatex is used to give xdv file, not pdf file, hence 
     # we need the -no-pdf option.
-$xelatex_default_switches = '-no-pdf';
+our $xelatex_default_switches = '-no-pdf';
 
 ## Switch(es) to make them silent:
-$hilatex_silent_switch  = '-interaction=batchmode';
-$latex_silent_switch  = '-interaction=batchmode';
-$pdflatex_silent_switch  = '-interaction=batchmode';
-$dvilualatex_silent_switch  = '-interaction=batchmode';
-$lualatex_silent_switch  = '-interaction=batchmode';
-$xelatex_silent_switch  = '-interaction=batchmode';
+our $hilatex_silent_switch  = '-interaction=batchmode';
+our $latex_silent_switch  = '-interaction=batchmode';
+our $pdflatex_silent_switch  = '-interaction=batchmode';
+our $dvilualatex_silent_switch  = '-interaction=batchmode';
+our $lualatex_silent_switch  = '-interaction=batchmode';
+our $xelatex_silent_switch  = '-interaction=batchmode';
 
 # Whether to emulate -aux-directory, so we can use it on system(s) (TeXLive)
 # that don't support it:
-$emulate_aux = 1;
+our $emulate_aux = 1;
 # Whether emulate_aux had to be switched on during a run:
-$emulate_aux_switched = 0;
+our $emulate_aux_switched = 0;
 
 #--------------------
 # Specification of extensions/files that need special treatment,
@@ -557,25 +427,25 @@ $emulate_aux_switched = 0;
 # %input_extensions maps primary_rule_name to pointer to hash of file extensions
 #    used for extensionless files specified in the source file by constructs
 #    like \input{file}  \includegraphics{file}
-%input_extensions = ();
+our %input_extensions = ();
 set_input_ext( 'latex', 'tex', 'eps' );
 set_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf', 'png' );
 $input_extensions{lualatex} = $input_extensions{pdflatex};
 $input_extensions{xelatex} = $input_extensions{pdflatex};
 # Save these values as standards to be used when switching output,
 # i.e., when actual primary rule differs from standard.
-%standard_input_extensions = %input_extensions;
+our %standard_input_extensions = %input_extensions;
 
 # Possible extensions for main output file of *latex:
-%allowed_output_ext = ( ".dvi" => 1, ".xdv" => 1, ".pdf" => 1 );
+our %allowed_output_ext = ( ".dvi" => 1, ".xdv" => 1, ".pdf" => 1 );
 
 # Extensions etc, of special use by latexmk
-$save_error_suffix = '-SAVE-ERROR';  # Suffix to be added to filename, when an
+our $save_error_suffix = '-SAVE-ERROR';  # Suffix to be added to filename, when an
                           # erroneous file is saved insted of being deleted.
-$fdb_ext = 'fdb_latexmk'; # Extension for the file for latexmk's
+our $fdb_ext = 'fdb_latexmk'; # Extension for the file for latexmk's
                           # file-database
                           # Make it long to avoid possible collisions.
-$fdb_ver = 4;             # Version number for kind of fdb_file.
+our $fdb_ver = 4;             # Version number for kind of fdb_file.
 
 
 # Variables relevant to specifying cleanup.
@@ -609,28 +479,28 @@ $fdb_ver = 4;             # Version number for kind of fdb_file.
 #   bbl files get special treatment because their deletion is conditional
 #       and because of the possibility of extra bibtex/biber rules with
 #       non-standard basename.
-@generated_exts = ( 'aux', 'bcf', 'bcf'.$save_error_suffix, 'fls',
+our @generated_exts = ( 'aux', 'bcf', 'bcf'.$save_error_suffix, 'fls',
                     'idx', 'ind', 'lof', 'lot',  
                     'out', 'run.xml', 'toc',
                     'blg', 'ilg', 'log',
                     'xdv'
                   );
                   # N.B. 'out' is generated by hyperref package
-$clean_ext = "";        # For backward compatibility: Space separated 
+our $clean_ext = "";        # For backward compatibility: Space separated 
                         # extensions to be added to @generated_exts after
                         # startup (and rc file reading).
 # Extensions of files to be deleted by -C, but aren't normally included
 # in the small clean up by -c.  Analogous to @generated_exts and $clean_ext,
 # except that pattern rules (with %R) aren't applied.
-@final_output_exts = ( 'dvi', 'dviF', 'hnt', 'ps', 'psF', 'pdf',
+our @final_output_exts = ( 'dvi', 'dviF', 'hnt', 'ps', 'psF', 'pdf',
                         'synctex', 'synctex.gz' );
-$clean_full_ext = "";
+our $clean_full_ext = "";
 
 
 # Set of extra specific files to be deleted in small cleanup. These are
 #  ones that get generated under some kinds of error conditions.  All cases:
 #   Relative to current directory, and relative to aux and out directories.
-@std_small_cleanup_files = ( 'texput.log', "texput.aux", "missfont.log" );
+our @std_small_cleanup_files = ( 'texput.log', "texput.aux", "missfont.log" );
 
 #-------------------------
 
@@ -639,8 +509,8 @@ $clean_full_ext = "";
 # Option without arg. maps to itself.
 # Option with arg. maps the option part to the full specification
 #  e.g., -kpathsea-debug => -kpathsea-debug=NUMBER
-%allowed_latex_options = ();
-%allowed_latex_options_with_arg = ();
+our %allowed_latex_options = ();
+our %allowed_latex_options_with_arg = ();
 foreach ( 
   #####
   # TeXLive options
@@ -770,21 +640,21 @@ foreach (
 # These need to be stored until after the command line parsing is finished,
 #  in case the values of $latex and/or $pdflatex change after an option
 #  is added.
-@extra_dvilualatex_options = ();
-@extra_hilatex_options = ();
-@extra_latex_options = ();
-@extra_pdflatex_options = ();
-@extra_lualatex_options = ();
-@extra_xelatex_options = ();
+our @extra_dvilualatex_options = ();
+our @extra_hilatex_options = ();
+our @extra_latex_options = ();
+our @extra_pdflatex_options = ();
+our @extra_lualatex_options = ();
+our @extra_xelatex_options = ();
 
 
 ## Command to invoke biber & bibtex
-$biber  = 'biber %O %S';
-$bibtex  = 'bibtex %O %S';
+our $biber  = 'biber %O %S';
+our $bibtex  = 'bibtex %O %S';
 # Switch(es) to make biber & bibtex silent:
-$biber_silent_switch  = '--onlylog';
-$bibtex_silent_switch  = '-terse';
-$bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
+our $biber_silent_switch  = '--onlylog';
+our $bibtex_silent_switch  = '-terse';
+our $bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
                    # This variable is also used in deciding whether to
                    #   delete bbl files in clean up operations.
                    # 0:  Never run bibtex.
@@ -802,7 +672,7 @@ $bibtex_use = 1;   # Whether to actually run bibtex to update bbl files.
                    #
                    # In any event bibtex is only run if the log file
                    #   indicates that the document uses bbl files.
-$bibtex_fudge = 1; #  Whether or not to cd to aux dir when running bibtex.
+our $bibtex_fudge = 1; #  Whether or not to cd to aux dir when running bibtex.
                    #  If the cd is not done, and bibtex is passed a
                    #  filename with a path component, then it can easily
                    #  happen that (a) bibtex refuses to write bbl and blg
@@ -812,10 +682,10 @@ $bibtex_fudge = 1; #  Whether or not to cd to aux dir when running bibtex.
                    #  method fails. 
 
 ## Command to invoke makeindex
-$makeindex  = 'makeindex %O -o %D %S';
+our $makeindex  = 'makeindex %O -o %D %S';
 # Switch(es) to make makeinex silent:
-$makeindex_silent_switch  = '-q';
-$makeindex_fudge = 1; # Whether or not to cd to aux dir when running makeindex.
+our $makeindex_silent_switch  = '-q';
+our $makeindex_fudge = 1; # Whether or not to cd to aux dir when running makeindex.
                       # Set to 1 to avoid security-related prohibition on
                       # makeindex writing to aux_dir when it is not specified
                       # as a subdirectory of cwd.
@@ -823,73 +693,95 @@ $makeindex_fudge = 1; # Whether or not to cd to aux dir when running makeindex.
 ## Command to convert dvi file to pdf file directly.
 #   Use option -dALLOWPSTRANSPARENCY so that it works with documents
 #   using pstricks etc:
-$dvipdf  = 'dvipdf -dALLOWPSTRANSPARENCY %O %S %D';
+our $dvipdf  = 'dvipdf -dALLOWPSTRANSPARENCY %O %S %D';
 # N.B. Standard dvipdf runs dvips and gs with their silent switch, so for
 #      standard dvipdf $dvipdf_silent_switch is unneeded, but innocuous. 
 #      But dvipdfmx can be used instead, and it has a silent switch (-q).
 #      So implementing $dvipdf_silent_switch is useful.
-$dvipdf_silent_switch  = '-q';
+our $dvipdf_silent_switch  = '-q';
 
 ## Command to convert dvi file to ps file:
-$dvips  = 'dvips %O -o %D %S';
+our $dvips  = 'dvips %O -o %D %S';
 ## Command to convert dvi file to ps file in landscape format:
-$dvips_landscape = 'dvips -tlandscape %O -o %D %S';
+our $dvips_landscape = 'dvips -tlandscape %O -o %D %S';
 # Switch(es) to get dvips to make ps file suitable for conversion to good pdf:
 #    (If this is not used, ps file and hence pdf file contains bitmap fonts
 #       (type 3), which look horrible under acroread.  An appropriate switch
 #       ensures type 1 fonts are generated.  You can put this switch in the 
 #       dvips command if you prefer.)
-$dvips_pdf_switch = '-P pdf';
+our $dvips_pdf_switch = '-P pdf';
 # Switch(es) to make dvips silent:
-$dvips_silent_switch  = '-q';
+our $dvips_silent_switch  = '-q';
 
 ## Command to convert ps file to pdf file.
 #   Use option -dALLOWPSTRANSPARENCY so that it works with documents
 #   using pstricks etc:
-$ps2pdf = 'ps2pdf -dALLOWPSTRANSPARENCY %O %S %D';
+our $ps2pdf = 'ps2pdf -dALLOWPSTRANSPARENCY %O %S %D';
 
 ## Command to convert xdv file to pdf file
-$xdvipdfmx  = 'xdvipdfmx -E -o %D %O %S';
-$xdvipdfmx_silent_switch  = '-q';
+our $xdvipdfmx  = 'xdvipdfmx -E -o %D %O %S';
+our $xdvipdfmx_silent_switch  = '-q';
 
 
 ## Command to search for tex-related files
-$kpsewhich = 'kpsewhich %S';
+our $kpsewhich = 'kpsewhich %S';
 
 ## Command to run make:
-$make = 'make';
+our $make = 'make';
 
 ##Printing:
-$print_type = 'auto';   # When printing, print the postscript file.
+our $print_type = 'auto';   # When printing, print the postscript file.
                         # Possible values: 'dvi', 'ps', 'pdf', 'auto', 'none'
                         # 'auto' ==> set print type according to the printable
                         # file(s) being made: priority 'ps', 'pdf', 'dvi'
 
 # Viewers.  These are system dependent, so default to none:
+our ( $pdf_previewer, $ps_previewer, $ps_previewer_landscape, $dvi_previewer,
+      $dvi_previewer_landscape, $hnt_previewer );
 $pdf_previewer = $ps_previewer  = $ps_previewer_landscape  = $dvi_previewer  = $dvi_previewer_landscape = $hnt_previewer = "NONE";
 
-$dvi_update_signal = undef;
-$ps_update_signal = undef;
-$pdf_update_signal = undef;
+# The following variables are assigned once and then used in symbolic 
+#     references, so we need to avoid warnings 'name used only once':
+our ( $aux_dir_requested, $out_dir_requested );
 
-$dvi_update_command = undef;
-$ps_update_command = undef;
-$pdf_update_command = undef;
+our $dvi_update_signal = undef;
+our $ps_update_signal = undef;
+our $pdf_update_signal = undef;
 
-$allow_subdir_creation = 1;
+our $dvi_update_command = undef;
+our $ps_update_command = undef;
+our $pdf_update_command = undef;
+    # Viewer update methods: 
+    #    0 => auto update: viewer watches file (e.g., gv)
+    #    1 => manual update: user must do something: e.g., click on window.
+    #         (e.g., ghostview, MSWIN previewers, acroread under UNIX)
+    #    2 => send signal.  Number of signal in $dvi_update_signal,
+    #                         $ps_update_signal, $pdf_update_signal
+    #    3 => viewer can't update, because it locks the file and the file 
+    #         cannot be updated.  (acroread under MSWIN)
+    #    4 => run a command to force the update.  The commands are 
+    #         specified by the variables $dvi_update_command, 
+    #         $ps_update_command, $pdf_update_command
+our $dvi_update_method = 1;
+our $hnt_update_method = 1;
+our $ps_update_method = 1;
+our $pdf_update_method = 1;
 
-$new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
+our $allow_subdir_creation = 1;
+
+our $new_viewer_always = 0;     # If 1, always open a new viewer in pvc mode.
                             # If 0, only open a new viewer if no previous
                             #     viewer for the same file is detected.
 
 # Commands for use in pvc mode for compiling, success, warnings, and failure;
 # they default to empty, i.e., not to use:
-$compiling_cmd = $success_cmd = $warning_cmd = $failure_cmd = "";
+our ($compiling_cmd, $success_cmd, $warning_cmd, $failure_cmd) =
+    ( '', '', '', '' );
 
 # Commands for printing are highly system dependent, so default to NONE:
-$lpr = 'NONE $lpr variable is not configured to allow printing of ps files';
-$lpr_dvi = 'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
-$lpr_pdf = 'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
+our $lpr = 'NONE $lpr variable is not configured to allow printing of ps files';
+our $lpr_dvi = 'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
+our $lpr_pdf = 'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
 
 
 # The $pscmd below holds a **system-dependent** command to list running
@@ -898,24 +790,24 @@ $lpr_pdf = 'NONE $lpr_pdf variable is not configured to allow printing of pdf fi
 # process number and the command line of the processes, since the
 # relevant process is identified by the name of file to be viewed.
 # Its use is not essential.
-$pscmd =  'NONE $pscmd variable is not configured to detect running processes';
-$pid_position = -1;     # offset of PID in output of pscmd.  
+our $pscmd =  'NONE $pscmd variable is not configured to detect running processes';
+our $pid_position = -1; # offset of PID in output of pscmd.  
                         # Negative means I cannot use ps
 
 
-$quote_filenames = 1;       # Quote filenames in external commands
+our $quote_filenames = 1;       # Quote filenames in external commands
 
-$del_dir = '';        # Directory into which cleaned up files are to be put.
+our $del_dir = '';        # Directory into which cleaned up files are to be put.
                       # If $del_dir is '', just delete the files in a clean up.
 
-@rc_system_files = ();
+our @rc_system_files = ();
 
 #########################################################################
 
 ################################################################
 ##  Special variables for system-dependent fudges, etc.
 #    ???????? !!!!!!!!!!
-$log_file_binary = 0;   # Whether to treat log file as binary
+our $log_file_binary = 0; # Whether to treat log file as binary
                         # Normally not, since the log file SHOULD be pure text.
                         # But Miktex 2.7 sometimes puts binary characters
                         #    in it.  (Typically in construct \OML ... after
@@ -923,7 +815,7 @@ $log_file_binary = 0;   # Whether to treat log file as binary
                         # Sometimes there is ctrl/Z, which is not only non-text, 
                         #    but is end-of-file marker for MS-Win in text mode.  
 
-$MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
+our $MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
                         #    in -pvc mode under MSWin
                         # Under MSWin32 (at least with perl 5.8 and WinXP)
                         #   when latexmk is running another program, and the 
@@ -953,14 +845,14 @@ $MSWin_fudge_break = 1; # Give special treatment to ctrl/C and ctrl/break
 
 ## Substitute backslashes in file and directory names for
 ##  MSWin command line
-$MSWin_back_slash = 0;
+our $MSWin_back_slash = 0;
 
 ## Separator of elements in search_path.  Default is unix value
-$search_path_separator = ':'; 
+our $search_path_separator = ':'; 
 
 
 # Directory for temporary files.  Default to current directory.
-$tmpdir = ".";
+our $tmpdir = ".";
 
 
 # Latexmk does tests on whether a particular generated file, e.g., log or
@@ -1051,6 +943,7 @@ our $filetime_offset_report_threshold = 10; # Threshold beyond which filetime of
 #   are those of Windows.  (The test for USERNAME as well as USER was
 #   to make latexmk work under MSYS's perl.)
 #
+our  $start_NT = 'NONE';   
 if ( $^O eq "MSWin32" ) {
     # Pure MSWindows configuration
 
@@ -1075,20 +968,6 @@ if ( $^O eq "MSWin32" ) {
     $dvi_previewer  = 'start %O %S';
     $dvi_previewer_landscape = "$dvi_previewer";
     $hnt_previewer = 'start %O %S';
-    # Viewer update methods: 
-    #    0 => auto update: viewer watches file (e.g., gv)
-    #    1 => manual update: user must do something: e.g., click on window.
-    #         (e.g., ghostview, MSWIN previewers, acroread under UNIX)
-    #    2 => send signal.  Number of signal in $dvi_update_signal,
-    #                         $ps_update_signal, $pdf_update_signal
-    #    3 => viewer can't update, because it locks the file and the file 
-    #         cannot be updated.  (acroread under MSWIN)
-    #    4 => run a command to force the update.  The commands are 
-    #         specified by the variables $dvi_update_command, 
-    #         $ps_update_command, $pdf_update_command
-    $dvi_update_method = 1;
-    $hnt_update_method = 1;
-    $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
 }
 elsif ( $^O eq "cygwin" ) {
@@ -1187,9 +1066,6 @@ elsif ( $^O eq "cygwin" ) {
     #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
-    $dvi_update_method = 1;
-    $hnt_update_method = 1;
-    $ps_update_method = 1;
     $pdf_update_method = 3; # acroread locks the pdf file
 }
 elsif ( $^O eq "msys" ) {
@@ -1335,8 +1211,8 @@ else {
 }
 
 ## default parameters
-$auto_rc_use = 1;       # Whether to read rc files automatically
-$user_deleted_file_treated_as_changed = 0; # Whether when testing for changed
+our $auto_rc_use = 1;       # Whether to read rc files automatically
+our $user_deleted_file_treated_as_changed = 0; # Whether when testing for changed
                # files, a user file that changes status from existing
                # to non-existing should be regarded as changed.
                # Value 1: only in non-preview-continuous mode.
@@ -1345,7 +1221,7 @@ $user_deleted_file_treated_as_changed = 0; # Whether when testing for changed
                # compilation of .tex file tests for file existence and
                # adjusts behavior accordingly, instead of simply giving an
                # error. 
-$max_repeat = 5;        # Maximum times I repeat latex.  Normally
+our $max_repeat = 5;        # Maximum times I repeat latex.  Normally
                         # 3 would be sufficient: 1st run generates aux file,
                         # 2nd run picks up aux file, and maybe toc, lof which 
                         # contain out-of-date information, e.g., wrong page
@@ -1363,18 +1239,18 @@ $max_repeat = 5;        # Maximum times I repeat latex.  Normally
                         # usually an indication of a problem; further
                         # runs may not resolve the problem, and
                         # instead could cause an infinite loop.
-@cus_dep_list = ();     # Custom dependency list
-@default_files = ( '*.tex' );   # Array of LaTeX files to process when 
+our @cus_dep_list = ();     # Custom dependency list
+our @default_files = ( '*.tex' );   # Array of LaTeX files to process when 
                         # no files are specified on the command line.
                         # Wildcards allowed
                         # Best used for project specific files.
-@default_excluded_files = ( );   
+our @default_excluded_files = ( );   
                         # Array of LaTeX files to exclude when using
                         # @default_files, i.e., when no files are specified
                         # on the command line.
                         # Wildcards allowed
                         # Best used for project specific files.
-$texfile_search = "";   # Specification for extra files to search for
+our $texfile_search = "";   # Specification for extra files to search for
                         # when no files are specified on the command line
                         # and the @default_files variable is empty.
                         # Space separated, and wildcards allowed.
@@ -1383,7 +1259,7 @@ $texfile_search = "";   # Specification for extra files to search for
                         # This variable is obsolete, and only in here for
                         # backward compatibility.
 
-$jobname = '';          # Jobname: as with current tex, etc indicates
+our $jobname = '';          # Jobname: as with current tex, etc indicates
                         # basename of generated files.  Defined so
                         # that --jobname=STRING on latexmk's command
                         # line has same effect as with current tex,
@@ -1396,33 +1272,35 @@ $jobname = '';          # Jobname: as with current tex, etc indicates
                         # dependent on name of main TeX file; this is
                         # useful when a jobname is used and latexmk is
                         # invoked on multiple files.
-$out_dir = '';          # Directory for output files.  
+our $out_dir = '';      # Directory for output files.  
                         # Cf. --output-directory of current *latex
                         # Blank means default, i.e., cwd.
-$aux_dir = '';          # Directory for aux files (log, aux, etc).
+our $aux_dir = '';      # Directory for aux files (log, aux, etc).
                         # Cf. --aux-directory of current *latex in MiKTeX.
                         # Blank means default, i.e., same as $out_dir.
                         # Note that these values get modified when
                         # processing a .tex file.
+# Corresponding forms that can be concatenated (e.g., when $aux_dir is '.', $aux_dir1 is './').
+our $aux_dir1 = '';
+our $out_dir1 = '';
 
 ## default flag settings.
-$recorder = 1;          # Whether to use recorder option on latex/pdflatex
-$silent = 0;            # Whether fo silence latex's messages (and others)
-$warnings_as_errors = 0;# Treat warnings as errors and exit with non-zero exit code
-$silence_logfile_warnings = 0; # Do list warnings in log file
+our $recorder = 1;          # Whether to use recorder option on latex/pdflatex
+our $silent = 0;            # Whether fo silence latex's messages (and others)
+our $warnings_as_errors = 0;# Treat warnings as errors and exit with non-zero exit code
+our $silence_logfile_warnings = 0; # Do list warnings in log file
                         # The warnings reported are those about undefined refs
                         # and citations, and the like.
-$max_logfile_warnings = 7; # Max. # number of log file warnings to report
-$rc_report = 1;         # Whether to report on rc files read
-$aux_out_dir_report = 0; # Whether to report on aux_dir & out_dir after
+our $max_logfile_warnings = 7; # Max. # number of log file warnings to report
+our $rc_report = 1;         # Whether to report on rc files read
+our $aux_out_dir_report = 0; # Whether to report on aux_dir & out_dir after
                          # initialization and normalization.
                          # When $aux_out_dir_report is set to 2, latexmk
                          # does no further processing after the report of
                          # the aux and out directories.
 
-$kpsewhich_show = 0;    # Show calls to and results from kpsewhich
-$landscape_mode = 0;    # default to portrait mode
-$analyze_input_log_always = 1; # Always analyze .log for input files in the
+our $kpsewhich_show = 0;    # Show calls to and results from kpsewhich
+our $analyze_input_log_always = 1; # Always analyze .log for input files in the
                         #  <...> and (...) constructions.  Otherwise, only
                         # do the analysis when fls file doesn't exist or is
                         # out of date.
@@ -1442,7 +1320,7 @@ $analyze_input_log_always = 1; # Always analyze .log for input files in the
                         # To keep backward compatibility with older versions
                         # of latexmk, the default is to set
                         # $analyze_input_log_always to 1.
-$fls_uses_out_dir = 0;  # Whether fls file is to be in out directory (as with
+our $fls_uses_out_dir = 0;  # Whether fls file is to be in out directory (as with
                         # pre-Oct-2020 MiKTeX), or in aux directory (as with
                         # newer versions of MiKTeX).
                         # If the implementation of *latex puts the fls file in
@@ -1452,7 +1330,7 @@ $fls_uses_out_dir = 0;  # Whether fls file is to be in out directory (as with
 
 # Which kinds of file do I have requests to make?
 our ($dvi_mode, $hnt_mode, $pdf_mode, $postscript_mode, $xdv_mode,
-     $cleanup_mode, $force_mode, $go_mode, $landscape_mode, $preview_mode, $preview_continuous_mode, $printout_mode );
+     $landscape_mode );
 # If no requests at all are made, then I will make dvi file
 # If particular requests are made then other files may also have to be
 # made.  E.g., ps file requires a dvi file
@@ -1472,59 +1350,60 @@ $pdf_mode = 0;          # No pdf file requested to be made by pdflatex
                         #     4 to create pdf file by lualatex
                         #     5 to create pdf file by xelatex + xdvipdfmx
 $xdv_mode = 0;          # No xdv file requested
+$landscape_mode = 0;    # default to portrait mode
 
-$view = 'default';      # Default preview is of highest of dvi, ps, pdf
-$min_sleep_time = 0.01; # Minimum non-zero sleep time
-$sleep_time = 2;        # time to sleep b/w checks for file changes in -pvc mode
-$banner = 0;            # Non-zero if we have a banner to insert
-$banner_scale = 220;    # Original default scale
-$banner_intensity = 0.95;  # Darkness of the banner message
-$banner_message = 'DRAFT'; # Original default message
-$do_cd = 0;     # Do not do cd to directory of source file.
+our $view = 'default';      # Default preview is of highest of dvi, ps, pdf
+our $min_sleep_time = 0.01; # Minimum non-zero sleep time
+our $sleep_time = 2;        # time to sleep b/w checks for file changes in -pvc mode
+our $banner = 0;            # Non-zero if we have a banner to insert
+our $banner_scale = 220;    # Original default scale
+our $banner_intensity = 0.95;  # Darkness of the banner message
+our $banner_message = 'DRAFT'; # Original default message
+our $do_cd = 0;     # Do not do cd to directory of source file.
                 #   Thus behave like latex.
-$dependents_list = 0;   # Whether to display list(s) of dependencies
-$dependents_phony = 0;  # Whether list(s) of dependencies includes phony targets
+our $dependents_list = 0;   # Whether to display list(s) of dependencies
+our $dependents_phony = 0;  # Whether list(s) of dependencies includes phony targets
                         # (as with 'gcc -MP').
-$deps_file = '-';       # File for dependency list output.  Default stdout.
-$rules_list = 0;        # Whether to display list(s) of dependencies
+our $deps_file = '-';       # File for dependency list output.  Default stdout.
+our $rules_list = 0;        # Whether to display list(s) of dependencies
 # Kind of escaping in names of files written to deps file.
-$deps_escape = 'none';
+our $deps_escape = 'none';
 # Allowed kinds of escape:
-%deps_escape_kinds =  ( 'none' => ' ', 'unix' => '\ ', 'nmake' => '^ ');
+our %deps_escape_kinds =  ( 'none' => ' ', 'unix' => '\ ', 'nmake' => '^ ');
 
-@dir_stack = ();        # Stack of pushed directories, each of form of 
+our @dir_stack = ();    # Stack of pushed directories, each of form of 
                         # pointer to array  [ cwd, good_cwd ], where
                         # good_cwd differs from cwd by being converted
                         # to native MSWin path when cygwin is used.
-$cleanup_mode = 0;      # No cleanup of nonessential LaTex-related files.
+our $cleanup_mode = 0;  # No cleanup of nonessential LaTex-related files.
                         # $cleanup_mode = 0: no cleanup
                         # $cleanup_mode = 1: full cleanup 
                         # $cleanup_mode = 2: cleanup except for dvi,
                         #                    dviF, pdf, ps, psF & xdv
-$cleanup_fdb  = 0;      # On normal run, no removal of file for latexmk's file-database
-$cleanup_only = 0;      # When doing cleanup, do not go on to making files
-$cleanup_includes_generated = 0; 
+our $cleanup_fdb  = 0;  # On normal run, no removal of file for latexmk's file-database
+our $cleanup_only = 0;  # When doing cleanup, do not go on to making files
+our $cleanup_includes_generated = 0; 
                         # Determines whether cleanup deletes files generated by
                         #    *latex (found from \openout lines in log file).
                         # It's more than that.  BUG
-$cleanup_includes_cusdep_generated = 0;
+our $cleanup_includes_cusdep_generated = 0;
                         # Determines whether cleanup deletes files generated by
                         #    custom dependencies
-$diagnostics = 0;
-$dvi_filter = '';       # DVI filter command
-$ps_filter = '';        # Postscript filter command
+our $diagnostics = 0;
+our $dvi_filter = '';   # DVI filter command
+our $ps_filter = '';    # Postscript filter command
 
-$force_mode = 0;        # =1: to force processing past errors
-$go_mode = 0;           # =1: to force processing regardless of time-stamps
+our $force_mode = 0;    # =1: to force processing past errors
+our $go_mode = 0;       # =1: to force processing regardless of time-stamps
                         # =2: full clean-up first
                         # =3: Just force primary rule(s) to run
-$preview_mode = 0;
-$preview_continuous_mode  = 0;
-$printout_mode = 0;     # Don't print the file
+our $preview_mode = 0;
+our $preview_continuous_mode  = 0;
+our $printout_mode = 0; # Don't print the file
 
 ## Control pvc inactivity timeout:
-$pvc_timeout = 0;
-$pvc_timeout_mins = 30;
+our $pvc_timeout = 0;
+our $pvc_timeout_mins = 30;
 
 # Timing information
 # Whether to report processing time: 
@@ -1542,39 +1421,42 @@ our ( $clock1, $processing_time1, $processing_time0, @timings1, @timings0);
 &init_timing_all;
 
 
-$use_make_for_missing_files = 0;   # Whether to use make to try to make missing files.
+our $use_make_for_missing_files = 0; # Whether to use make to try to make missing files.
 
 # Do we make view file in temporary then move to final destination?
 #  (To avoid premature updating by viewer).
-$always_view_file_via_temporary = 0;      # Set to 1 if  viewed file is always
+our $always_view_file_via_temporary = 0; # Set to 1 if  viewed file is always
                                    #    made through a temporary.
-$pvc_view_file_via_temporary = 1;  # Set to 1 if only in -pvc mode is viewed 
+our $pvc_view_file_via_temporary = 1; # Set to 1 if only in -pvc mode is viewed 
                                    #    file made through a temporary.
 
 # State variables initialized here:
 
-$updated = 0;           # Flags whether something has been remade in this round
+our $updated = 0;       # Flags whether something has been remade in this round
                         # of compilation. 
-$waiting = 0;           # Flags whether we are in loop waiting for an event
+our $failure = 0;       # Set nonzero to indicate failure at some point of 
+                        # a make.  Use value as exit code if I exit.
+our $failure_msg = '';  # Indicate reason for failure
+our $waiting = 0;       # Flags whether we are in loop waiting for an event
                         # Used to avoid unnecessary repeated o/p in wait loop
 
 # The following are used for some results of parsing log file
 # Global variables, so results can be reported in main program. 
-$reference_changed = 0;
-$mult_defined = 0;
-$bad_reference = 0;
-$bad_character = 0;
-$bad_citation = 0;
-@primary_warning_summary = ();
+our $reference_changed = 0;
+our $mult_defined = 0;
+our $bad_reference = 0;
+our $bad_character = 0;
+our $bad_citation = 0;
+our @primary_warning_summary = ();
 
 # Cache of expensive-to-compute state variables, e.g., cwd in form
 # fixed to deal with cygwin issues.
-%cache = ();
+our %cache = ();
 &cache_good_cwd;
 
 # Set search paths for includes.
 # Set them early so that they can be overridden
-$BIBINPUTS = $ENV{'BIBINPUTS'};
+our $BIBINPUTS = $ENV{'BIBINPUTS'};
 if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 
 # ???!!! 
@@ -1594,7 +1476,7 @@ if (!$BIBINPUTS) { $BIBINPUTS = '.'; }
 # directory.  After these operations, @BIBINPUTS  should
 # have all the directories that need to be searched
 #
-@BIBINPUTS = find_dirs1( $BIBINPUTS );
+our @BIBINPUTS = find_dirs1( $BIBINPUTS );
 our @BIBINPUTS_SAVE = @BIBINPUTS;
 our $BIBINPUTS_ENV_SAVE = $ENV{BIBINPUTS};
 
@@ -1713,34 +1595,34 @@ our $BIBINPUTS_ENV_SAVE = $ENV{BIBINPUTS};
 
 # Hashes, whose keys give names of particular kinds of rule, and targets.
 # We use hashes for ease of lookup.
-%possible_one_time = ( 'view' => 1, 'print' => 1, 'update_view' => 1,  );
-%target_files      = (); # Hash for target files.
+our %possible_one_time = ( 'view' => 1, 'print' => 1, 'update_view' => 1,  );
+our %target_files = (); # Hash for target files.
                     # The keys are the filenames and the value is 
                     # currently irrelevant.
-%target_rules      = (); # Hash for target rules beyond those corresponding to files.
+our %target_rules = (); # Hash for target rules beyond those corresponding to files.
                     # The keys are the rule names and the value is 
                     # currently irrelevant.
 # The target **files** can only be set inside the FILE loop.
-$current_primary  = 'latex';   # Rule to compile .tex file.
+our $current_primary  = 'latex';# Rule to compile .tex file.
                     # It will be overridden at rule-initialization time, and
                     # is subject to document-dependent override if .tex document
                     # uses metcommands and obeying them is implemented/enabled.
-$pdf_method       = '';  # How to make pdf file.  '' if not requested,
+our $pdf_method       = '';  # How to make pdf file.  '' if not requested,
                     # else 'ps2pdf', 'dvipdf', 'pdflatex', 'lualatex' or 'xelatex'
                     # Subject to document-dependent override if .tex document
                     #uses \pdfoutput or c.
-%requested_filetypes = (); # Hash of requested file types (dvi, dviF, etc)
-%one_time = ();     # Hash for requested one-time-only rules, currently
+our %requested_filetypes = (); # Hash of requested file types (dvi, dviF, etc)
+our %one_time = (); # Hash for requested one-time-only rules, currently
                     # possible values 'print' and 'view'.  
 
-%actives = ();      # Hash of active rules
+our %actives = ();  # Hash of active rules
 
-$allow_switch = 1;  # Allow switch of rule structure to accommodate
+our $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     # changed output file name of primary. Even if
                     # this flag is set on, the switch may be
                     # prohibited by other issues.
 
-%rule_db = ();      # Database of all rules:
+our %rule_db = ();  # Database of all rules:
                     # Hash: rulename -> [array of rule data]
                     # Rule data:
                     #   0: [ cmd_type, ext_cmd, int_cmd, no_history, 
@@ -1948,10 +1830,10 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
                     #      The aim of this item is for flexible
                     #      rule-dependent add-ons.
 
-%fdb_current = ();  # Hash of information for all files used.
+our %fdb_current = ();  # Hash of information for all files used.
                     # It maps filename to a reference to an array
                     #  (time, size, md5_checksum).
-@nofile = (0,-1,0); # What we use for initializing a new entry in fdb
+our @nofile = (0,-1,0); # What we use for initializing a new entry in fdb
                     # or flagging non-existent file.
 
 # The following are variables which are set by the routine rdb_set_rule_net.
@@ -1960,25 +1842,33 @@ $allow_switch = 1;  # Allow switch of rule structure to accommodate
 # information is in a form useful for using the network of rules.
 
 # For recursing backwards through the network of rules:
-%from_rules = ();        # This maps file names to rule names.
+our %from_rules = ();    # This maps file names to rule names.
                          # $from_rules{'File'} is the name of the rule that
                          # generates file 'File'.  If there is no rule to
                          # generate the file, then $from_rules{'File'} is
                          # not defined (or possibly the null string '').
 
 # Classification of rules, for determining order of application
-@pre_primary = ();         # Array of rules that are thought of as pre-primary,
+our @pre_primary = ();     # Array of rules that are thought of as pre-primary,
                            # Should be in an appropriate order for invoking
                            # them, to optimize making.
-@post_primary = ();        # Array of rules that are thought of as post-primary.
+our @post_primary = ();    # Array of rules that are thought of as post-primary.
                            # In suitable order for invocation
-@unusual_one_time = ();    # Array of rules that are special cases of
+our @unusual_one_time = ();# Array of rules that are special cases of
                            # one-time rules.
                            # Currently not used.
 
-
+# Variables set in applying rules:
+our ($rule, $PA_extra_gen, $PAint_cmd, $PArule_data, $Pbase, $Pchanged,
+     $Pcheck_time, $Pcmd_type, $Pdest, $Pext_cmd, 
+     $PHdest, $PHextra, $PHrewritten_before_read, $PHsource, $PHsource_rules,
+     $Plast_message, $Plast_result, $Plast_result_info, 
+     $Pno_history, $Pout_of_date, $Pout_of_date_user, $Prun_time, $Psource,
+     $file, $PAfile_data, $Ptime, $Psize, $Pmd5, $DUMMY, $Pcorrect_after_primary
+);
+           
 # User's home directory
-$HOME = '';
+our $HOME = '';
 if (exists $ENV{'HOME'} ) {
     $HOME = $ENV{'HOME'};
 }
@@ -1986,7 +1876,7 @@ elsif (exists $ENV{'USERPROFILE'} ) {
     $HOME = $ENV{'USERPROFILE'};
 }
 # XDG configuration home
-$XDG_CONFIG_HOME = '';
+our $XDG_CONFIG_HOME = '';
 if (exists $ENV{'XDG_CONFIG_HOME'} ) {
     $XDG_CONFIG_HOME = $ENV{'XDG_CONFIG_HOME'};
 }
@@ -2000,8 +1890,8 @@ elsif ($HOME ne '') {
 #==================================================
 
 # Which rc files did I read?
-@rc_files_read = ();  # In order of reading
-%rc_files_read2 = (); # Map **abs** filename to 1; used to check duplicate reads.
+our @rc_files_read = ();  # In order of reading
+our %rc_files_read2 = (); # Map **abs** filename to 1; used to check duplicate reads.
 
 # Options that are to be obeyed before rc files are read:
 # Also under MSWin32 and msys, CL arguments sometimes get quotes in them.
@@ -2064,7 +1954,7 @@ if ( $auto_rc_use ) {
 }
 if ( $auto_rc_use && ($HOME ne "" ) ) {
     # User rc file:
-    @user_rc = ();
+    my @user_rc = ();
     if ( $XDG_CONFIG_HOME ) { 
        push @user_rc, "$XDG_CONFIG_HOME/latexmk/latexmkrc";
     }
@@ -2083,12 +1973,13 @@ if ( $auto_rc_use ) {
 
 
 ## Process command line args.
-@command_line_file_list = ();
-$bad_options = 0;
+our @command_line_file_list = ();
+our $bad_options = 0;
+
 while (defined(local $_ = $ARGV[0])) {
   # Make -- and - equivalent at beginning of option,
   # but save original for possible use in *latex command line
-  $original = $_;
+  my $original = $_;
   s/^--/-/;
   shift;
   if ( /^-aux-directory=(.*)$/ || /^-auxdir=(.*)$/ ) {
@@ -2265,7 +2156,7 @@ while (defined(local $_ = $ARGV[0])) {
       $pre_tex_code = $1;
   }
   elsif (/^-print=(.*)$/) {
-      $value = $1;
+      my $value = $1;
       if ( $value =~ /^dvi$|^ps$|^pdf$|^auto$/ ) {
           $print_type = $value;
           $printout_mode = 1;
@@ -2314,7 +2205,7 @@ while (defined(local $_ = $ARGV[0])) {
            "appear in the following list\n",
            "NOTE ALSO: Not all of these options are supported by all versions of *latex.\n",
            "\n";
-     foreach $option ( sort( keys %allowed_latex_options, keys %allowed_latex_options_with_arg ) ) {
+     foreach my $option ( sort( keys %allowed_latex_options, keys %allowed_latex_options_with_arg ) ) {
        if (exists $allowed_latex_options{$option} ) { print "   $allowed_latex_options{$option}\n"; }
        if (exists $allowed_latex_options_with_arg{$option} ) { print "   $allowed_latex_options_with_arg{$option}\n"; }
      }
@@ -2475,6 +2366,7 @@ if ( $texfile_search ne "" ) {
 #                      (OS detected as cygwin)
 #          (3) UNIX               Don't glob (cmd interpreter does it)
 #                      (Currently, I assume this is everything else)
+our @file_list;
 if ( ($^O eq "MSWin32") || ($^O eq "cygwin") ) {
     # Preserve ordering of files
     @file_list = glob_list1(@command_line_file_list);
@@ -2529,8 +2421,8 @@ else {
     }
 }
 
-$num_files = $#file_list + 1;
-$num_specified = $#command_line_file_list + 1;
+our $num_files = $#file_list + 1;
+our $num_specified = $#command_line_file_list + 1;
 
 #print "Command line file list:\n";
 #for ($i = 0; $i <= $#command_line_file_list; $i++ ) {  print "$i: '$command_line_file_list[$i]'\n"; }
@@ -2746,7 +2638,7 @@ if ( $printout_mode ) {
 }
 if ( $preview_continuous_mode || $preview_mode ) { $one_time{'view'} = 1; }
 
-$can_switch = $allow_switch;
+our $can_switch = $allow_switch;
 if ( $dvi_mode || $hnt_mode || $postscript_mode || $xdv_mode
      || ( $printout_mode && ($print_type eq 'ps') || ($print_type eq 'dvi') )
      || ( ($preview_mode || $preview_continuous_mode)  &&  ( ($view eq 'ps') || ($view eq 'dvi') ) )
@@ -2792,15 +2684,15 @@ push @final_output_exts,  split('\s+',$clean_full_ext);
 
 # Convert the arrays to hashes, for ease of deletion:
 # Keep extension without period!
-%generated_exts = ();
+our %generated_exts = ();
 foreach (@generated_exts ) { $generated_exts{$_} = 1; }
 
-$quell_uptodate_msgs = $silent; 
+our $quell_uptodate_msgs = $silent; 
    # Whether to quell informational messages when files are uptodate
    # Will turn off in -pvc mode
 
-$failure_count = 0;
-@failed_primaries = ();
+our $failure_count = 0;
+our @failed_primaries = ();
 
 if ($deps_file eq '' ) {
     # Standardize name used for stdout
@@ -2826,7 +2718,7 @@ if ( ($cleanup_mode > 0) &&  $dependents_list && ( $deps_file ne '-' ) ) {
 #   been opened and therefore being available to be written to after
 #   compiling a file.
 
-$deps_handle = undef;
+our $deps_handle = undef;
 if ( $dependents_list
      && ! $preview_continuous_mode
      && ( ($cleanup_mode == 0) || ($go_mode == 2) )
@@ -2840,17 +2732,30 @@ if ( $dependents_list
 # Deal with illegal and problematic characters in filename:
 test_fix_texnames( @file_list );
 
-$quote = $quote_filenames ? '"' : '';
-
+our $quote = $quote_filenames ? '"' : '';
+# Primary filename and path are variables of overall context, and hence global.
+our $filename;
+our $path;
+# Other globals
+our ( @default_includes, $texfile_name, $root_filename, $log_name,
+      $tex_basename, $fls_name, $fls_name_alt, $fdb_name, $aux_main,
+      $dvi_name, $dviF_name, $hnt_name, $ps_name, $psF_name, $pdf_name,
+      $xdv_name, 
+      $dvi_final, $hnt_final, $ps_final, $pdf_final, $xdv_final,
+      $view_file,
+      %rule_list,
+      $missing_dvi_pdf, $switched_primary_output
+);
 FILE:
 foreach $filename ( @file_list )
 {
     # Global variables for making of current file:
     $updated = 0;
-    $failure = 0;        # Set nonzero to indicate failure at some point of 
-                         # a make.  Use value as exit code if I exit.
+    $failure = 0;  # Set nonzero to indicate failure at some point of 
+                   # a make.  Use value as exit code if I exit.
     $failure_msg = '';   # Indicate reason for failure
 
+    my $path = '';
     if ( $do_cd ) {
         # Use my fileparse routine rather than the built-in one, otherwise
         # under msys, a directory separator \ won't be recognized by fileparse.
@@ -2863,9 +2768,6 @@ foreach $filename ( @file_list )
         print "$My_name: Changing directory to '$path'\n"
             if !$silent;
         pushd( dirname_no_tail( $path ) );
-    }
-    else {
-        $path = '';
     }
 
     # Localize the following, because they may get changed because of
@@ -2958,12 +2860,12 @@ foreach $filename ( @file_list )
     if ($go_mode == 3) {
         # Force primaries to be remade.
         if (!$silent) { print "Force *latex to be remade.\n"; }
-        rdb_for_some( [keys %possible_primaries], sub{$$Pout_of_date=1;}  );
+        rdb_for_some( [keys %possible_primaries], sub{$$Pout_of_date = 'go_mode=3';}  );
     }
     elsif ($go_mode) {
         # Force everything to be remade.
         if (!$silent) { print "Force everything to be remade.\n"; }
-        rdb_recurse( [ &rdb_target_array], sub{$$Pout_of_date=1;}  );
+        rdb_recurse( [ &rdb_target_array], sub{$$Pout_of_date = 'go_mode';}  );
     }
 
 
@@ -2997,7 +2899,6 @@ foreach $filename ( @file_list )
     $failure_msg = '';
     &init_timing1;
 
-    if ($compiling_cmd) { Run_subst( $compiling_cmd ); }
     $failure = rdb_make();
     if ( ( $failure <= 0 ) || $force_mode ) {
       rdb_for_some( [keys %one_time], \&rdb_run1 );
@@ -3023,7 +2924,7 @@ continue {
     # mode, since the rules list has already been printed.
     if ($rules_list && ! $preview_continuous_mode) { rdb_list(); }
     # Handle any errors
-    $error_message_count = rdb_show_rule_errors();
+    my $error_message_count = rdb_show_rule_errors();
     if ( ($error_message_count == 0) || ($failure > 0) ) {
         if ( $failure_msg ) {
             #Remove trailing space
@@ -3179,6 +3080,7 @@ sub set_tex_cmds {
     # Usage, e.g., set_tex_cmds( '%O %S' )
     #             or  set_tex_cmds( '%C-dev %O %S' )
     my $args = $_[0];
+    no strict "refs";
     foreach my $cmd ( keys %possible_primaries ) {
         my $spec = $args;
         if ( $spec =~ /%C/ ) { $spec =~ s/%C/$cmd/g; }
@@ -3504,6 +3406,7 @@ sub fix_cmds {
 sub add_option {
     # Call add_option( $opt, \$cmd ... )
     # Add option to one or more commands
+    no strict "refs";
     my $option = shift;
     while (@_) {
         if ( ${$_[0]} !~ /%/ ) { &fix_cmds; }
@@ -3585,7 +3488,7 @@ sub rdb_initialize_rules {
     if ($hnt_mode) { $current_primary = 'hilatex'; }
 
     rdb_activate( $current_primary );
-    
+
     if ($dvi_mode) { $target_files{$dvi_final} = 1; }
     if ($hnt_mode) { $target_files{$hnt_final} = 1; }
     if ($postscript_mode) { $target_files{$ps_final} = 1; }
@@ -3628,7 +3531,8 @@ sub rdb_set_rule_templates {
     my $viewer_update_signal = undef;
     my $viewer_update_command = undef;
 
-    if ( ($view eq 'dvi') || ($view eq 'hnt') || ($view eq 'pdf') || ($view eq 'ps') ) { 
+    if ( ($view eq 'dvi') || ($view eq 'hnt') || ($view eq 'pdf') || ($view eq 'ps') ) {
+        no strict "refs";
         $view_file = ${$view.'_final'};
         $viewer = ${$view.'_previewer'};
         $viewer_update_method = ${$view.'_update_method'};
@@ -3642,7 +3546,7 @@ sub rdb_set_rule_templates {
 
     %rule_list = (
         'dvilualatex'  => [ 'primary',  "$dvilualatex",  '',      "%T",        $dvi_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
-        'hilatex'   => [ 'primary',  "$hilatex",     '',            "%T",      $hnt_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
+        'hilatex'   => [ 'primary',  "$hilatex",     '',          "%T",        $hnt_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
         'latex'     => [ 'primary',  "$latex",     '',            "%T",        $dvi_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
         'lualatex'  => [ 'primary',  "$lualatex",  '',            "%T",        $pdf_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
         'pdflatex'  => [ 'primary',  "$pdflatex",  '',            "%T",        $pdf_name,  "%R",   1, [$aux_main, $log_name], [$aux_main] ],
@@ -3679,6 +3583,7 @@ sub rdb_set_rule_net {
     #  it doesn't exist.  Later a rule is created by latexmk to make that
     #  file.  Then the rule's main destination file should have priority
     #  over non-main generated files from other rules.
+    our %from_rules_old;
     local %from_rules_old = %from_rules;
     %from_rules = ();     # File to rule.
     rdb_for_actives( \&set_file_links_for_rule );
@@ -3738,6 +3643,7 @@ sub rdb_set_source_rules {
     # in rdb_make etc.
     #
     my ($base, $path, $ext) = fileparseA( $$Psource );
+    our %from_rules_old;
     if ( ($ext eq '.dvi') || ($ext eq '.dviF') || ($ext eq '.xdv') ) {
         # Rules that use .dvi, .dviF, .xdv don't get all dependencies,
         # notably about included graphics files.
@@ -3774,7 +3680,8 @@ sub rdb_classify_rules {
     #    @unusual_one_time     # Array of rules
     # @pre_primary and @post_primary are in natural order of application.
 
-    local @requested_targets = &rdb_target_array;
+    my @requested_targets = &rdb_target_array;
+    our (@classify_stack, $state);
     local $state = 0;       # Post-primary
     local @classify_stack = ();
 
@@ -3806,6 +3713,7 @@ sub rdb_classify1 {
     # Helper routine for rdb_classify_rules
     # Applied as rule_act1 in recursion over rules
     # Assumes rule context, and local variables from rdb_classify_rules
+    our (@classify_stack, $state, $depth);
     push @classify_stack, [$state];
     if ( exists $possible_one_time{$rule} ) {
         # Normally, we will have already extracted the one_time rules,
@@ -3836,6 +3744,7 @@ sub rdb_classify2 {
     # Helper routine for rdb_classify_rules
     # Applied as rule_act2 in recursion over rules
     # Assumes rule context
+    our (@classify_stack, $state);
     ($state) = @{ pop @classify_stack };
 } #END rdb_classify2
 
@@ -3856,15 +3765,15 @@ sub set_trivial_aux_fdb {
 
     open( my $aux_file, '>', $aux_main )
         or die "Cannot write file '$aux_main'\n";
-    fprint8 $aux_file, "\\relax \n";
+    fprint8( $aux_file, "\\relax \n" );
     # The following is added by recent versions of latex for a
     # one page document
-    fprint8 $aux_file, "\\gdef \\\@abspage\@last{1}\n";
+    fprint8( $aux_file, "\\gdef \\\@abspage\@last{1}\n" );
     close($aux_file);
 
     foreach my $rule (keys %possible_primaries ) { 
         rdb_one_rule(  $rule,  
-                       sub{ $$Pout_of_date = 1; }
+                       sub{ $$Pout_of_date = 'Initial setup'; }
                     );
     }
     &rdb_write( $fdb_name );
@@ -3879,7 +3788,7 @@ sub do_cleanup {
     my $kind = $_[0];
     if (! $kind ) { return; }
     my @files_to_delete = ();
-    @dirs = ($aux_dir1);
+    my @dirs = ($aux_dir1);
     if ($out_dir1 ne $aux_dir1) { push @dirs, $out_dir1; }
 
     push @files_to_delete, &get_small_cleanup;
@@ -3888,7 +3797,7 @@ sub do_cleanup {
             push @files_to_delete, cleanup_get1( $dir1, @final_output_exts );
         }
     }
-    #    show_array( "Files to delete", sort @files_to_delete );
+    # show_array( "Files to delete", sort @files_to_delete );
 
     # Names of contents of directory are longer than the name of the directory,
     # but contain the directory name as an initial segment.
@@ -3896,8 +3805,6 @@ sub do_cleanup {
     # sort deletes contents of directory before attempting to delete the
     # directory:
     unlink_or_move( reverse sort @files_to_delete );
-
-
     
     # If the fdb file (or log, fls and/or aux files) exist, it/they will have
     #   been used to make a changed rule database.  But a cleanup implies
@@ -3936,6 +3843,8 @@ sub cleanup_get1 {
 sub get_small_cleanup {
     # Get list of files to be deleted in a small cleanup.
     # Assume dependency information from previous run has been obtained.
+
+    my @files = ();
     my %other_generated = ();
     my %cusdep_generated = ();
     my @index_bibtex_generated = ();
@@ -4066,6 +3975,7 @@ sub do_cusdep {
     # argument is the name of the subroutine to apply
     my $func_name = $_[0];
     my $return = 0;
+    no strict "refs";
     if ( !-e $$Psource ) {
         # Source does not exist.  Users of this rule will need to turn
         # it off when custom dependencies are reset
@@ -4217,12 +4127,12 @@ sub find_basename {
     #  Returns non-zero if tex file does not exist
 
     my $fail = 0;
-    local ( $given_name, $base_name, $ext, $path, $tex_name, $source_name );
+    my ( $given_name, $base_name, $ext, $path, $tex_name, $source_name );
     $given_name = $_[0];
+
     $source_name = '';
     $tex_name = $given_name;   # Default name if I don't find the tex file
     ($base_name, $path, $ext) = fileparseB( $given_name );
-
     # Treatment of extensions (in TeXLive 2019), with omission of path search:
     # Exists: always means exists as a file, i.e., not as a directory.
     #  A. Finding of tex file:
@@ -4244,7 +4154,6 @@ sub find_basename {
     # 3. If that also fails, use kpsewhich on given_name to find the tex
     #      file
     # 4. If that also fails, report non-existent tex file.
-
 
     if ( ($ext eq '.tex') && (-f $given_name) ) {
        $tex_name = "$given_name";
@@ -4315,10 +4224,10 @@ sub make_preview_continuous {
 
     my $viewer_running = 0;    # No viewer known to be running yet
     # Get information from update_view rule
-    local $viewer_update_method = 0;
+    my $viewer_update_method = 0;
     # Pointers so we can update the following:
-    local $Pviewer_process = undef;    
-    local $Pneed_to_get_viewer_process = undef;
+    my $Pviewer_process = undef;    
+    my $Pneed_to_get_viewer_process = undef;
     rdb_one_rule( 'update_view', 
                   sub{ $viewer_update_method = $$PAint_cmd[1]; 
                        $Pviewer_process = \$$PAint_cmd[3]; 
@@ -4361,9 +4270,6 @@ CHANGE:
             #   $MSWin_fudge_break.
             $SIG{BREAK} = $SIG{INT} = 'IGNORE';
         }
-        if ($compiling_cmd) {
-            Run_subst( $compiling_cmd );
-        }
         $failure = rdb_make();
 
         if ( $MSWin_fudge_break && ($^O eq "MSWin32") ) {
@@ -4391,7 +4297,7 @@ CHANGE:
                          "------------\n";
                }
             }
-            local $retcode = 0;
+            my $retcode = 0;
             rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
             if ( $retcode != 0 ) {
                 if ($force_mode) {
@@ -4477,7 +4383,8 @@ CHANGE:
         #   command line to work:
         #          latexmk -pvc foo; cleanup;
         &catch_break;
-        $have_break = 0;
+        our $have_break;
+        local $have_break = 0;
         $last_action_time = time();
         $waiting = 1;
         rdb_for_some(
@@ -4504,8 +4411,8 @@ CHANGE:
            #  Don't count waiting time in processing:
            $processing_time1 = processing_time();
         # Does this do this job????!!!
-           local $new_files = 0;
-           rdb_for_some( [keys %current_primaries], sub{ $new_files += &rdb_find_new_files } );
+           my $new_files = 0;
+           rdb_for_some( [$current_primary], sub{ $new_files += &rdb_find_new_files } );
            if ($new_files > 0) {
                print "$My_name: New file(s) found.\n";
                last WAIT; 
@@ -4597,6 +4504,8 @@ sub process_rc_file {
         }
         my $BOM = Encode::encode( 'UTF-8', "\N{U+FEFF}" );
         $code =~ s/^$BOM//;
+        no strict;
+        # !!!??? For backward compatibility, turn off strictness for evaluating rc files.
         eval $code;
     }
     else {
@@ -4628,7 +4537,10 @@ sub execute_code_string {
     print "$My_name: Executing initialization code specified by -e:\n",
          "   '$code'...\n" 
         if  $diagnostics;
+    {
+    no strict;
     eval $code;
+    }
     # The return value from the eval is not useful, since it is the value of 
     #    the last expression evaluated, which could be anything.
     # The correct test of errors is on the value of $@.
@@ -5003,8 +4915,7 @@ sub after_biber {
     our ( $rule, $Pbase, $Pdest, $PHextra, $Plast_message, $Plast_result,
           $Pout_of_date, $Psource, $PHsource );
     # Global variables used
-    our ( %current_primaries, $diagnostics, $My_name, $save_error_suffix,
-          $silent );
+    our ( $diagnostics, $My_name, $save_error_suffix, $silent );
     my $Preturn = $_[0];
     my @biber_datasource = ( );
     my @biber_remote = ();
@@ -5024,7 +4935,7 @@ sub after_biber {
             print "Source '$$Psource' for '$rule' doesn't exist,\n",
                 "so I'll force *latex to run to try and make it.\n";
         }
-        rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+        rdb_for_some( [$current_primary], sub{ $$Pout_of_date = "to make '$$Psource' for '$rule'"; } );
     }
     rdb_set_source_here( @biber_datasource, $$Psource );
    
@@ -5034,7 +4945,7 @@ sub after_biber {
         print "$My_name: bibtex control file missing.  Since that can\n",
               "   be recreated, I'll try to do so.\n";
         $$Preturn = -2;
-        rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+        rdb_for_some( [$current_primary], sub{ $$Pout_of_date = "to make missing control file"; } );
     }
     elsif ($retcode == 4) {
         $$Plast_result = 2;
@@ -5125,8 +5036,8 @@ sub check_biber_log {
     my $control_file_malformed = 0;
     my @not_found = ();             # Files, normally .bib files, not found.
     my @missing_citations = ();
-    
-    while (local $_= <$blg_file>) {
+
+    while (local $_ = <$blg_file>) {
         $_ = utf8_to_mine($_);
         if (/> WARN /) { 
             print "Biber warning: $_"; 
@@ -5303,7 +5214,7 @@ sub after_bibtex {
     our ( $rule, $Pbase, $Pdest, $Plast_message, $Plast_result,
           $Pout_of_date, $Psource );
     # Global variables used
-    our ( %current_primaries, $diagnostics, $failure, $My_name, $silent );
+    our ( $diagnostics, $failure, $My_name, $silent );
 
     my $Preturn = $_[0];
     my $retcode = check_bibtex_log($$Pbase);
@@ -5315,7 +5226,7 @@ sub after_bibtex {
             print "Source '$$Psource' for '$rule' doesn't exist,\n",
                 "so I'll force *latex to run to try and make it.\n";
         }
-        rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+        rdb_for_some( [$current_primary], sub{ $$Pout_of_date = "to make '$$Psource' for '$rule'"; } );
     }
     if ($retcode == 3) {
         $$Plast_result = 2;
@@ -5359,7 +5270,7 @@ sub check_bibtex_log {
     # Variable used in context of a rule action
     our ( $Pout_of_date );
     # Global variables used
-    our ( %current_primaries, $My_name );
+    our ( $My_name );
 
     my $base = $_[0];
     my $blg_name = "$base.blg";
@@ -5371,6 +5282,7 @@ sub check_bibtex_log {
     my @missing_aux = ();
     my @missing_bib = ();
     my $error_count = 0;
+
     while (local $_ = <$blg_file>) {
         $_ = utf8_to_mine($_);
         if (/^Warning--/) { 
@@ -5398,7 +5310,7 @@ sub check_bibtex_log {
         # Need to make the missing files.
         print "$My_name: One or more aux files is missing for bibtex. I'll try\n",
              "          to get *latex to remake them.\n";
-        rdb_for_some( [keys %current_primaries], sub{ $$Pout_of_date = 1; } );
+        rdb_for_some( [$current_primary], sub{ $$Pout_of_date = "to get missing aux file(s) made"; } );
     }
     #print "Bibtex errors = $error_count, missing aux files and citations = $missing\n";
     if ($have_error && ($error_count <= $weak_errors )
@@ -5536,7 +5448,7 @@ sub set_names {
     if ( length($ps_filter) > 0) {
         $ps_final = $psF_name;
     }
-}
+} #END set_names
 
 #**************************************************
 
@@ -5551,6 +5463,9 @@ sub correct_locations {
     # of -aux-directory option.  This is to be done first, since a run of
     # *latex always produces a log file unless there is a bad error, so
     # this gives the best chance of diagnosing errors.
+
+    # Assumes rule context.
+    
     my $where_log = &find_set_log;
     if ( $emulate_aux && ($aux_dir ne $out_dir) ) {
         # Move output files from aux_dir to out_dir
@@ -5558,8 +5473,8 @@ sub correct_locations {
         # Omit 'xdv', that goes to aux_dir (as with MiKTeX). It's not final output.
         foreach my $ext ( 'fls', 'dvi', 'hnt', 'pdf', 'ps', 'synctex', 'synctex.gz' ) {
             if ( ($ext eq 'fls') && ! $fls_uses_out_dir ) {next;}
-            my $from =  "$aux_dir1$root_filename.$ext";
-            my $to = "$out_dir1$root_filename.$ext" ;
+            my $from =  "$aux_dir1$$Pbase.$ext";
+            my $to = "$out_dir1$$Pbase.$ext" ;
             if ( test_gen_file_time( $from ) ) {
                 if (! $silent) { print "$My_name: Moving '$from' to '$to'\n"; }
                 my $ret = move( $from, $to );
@@ -5572,7 +5487,7 @@ sub correct_locations {
     if ($recorder) {
         # Deal with following special cases:
         #   1. Some implemenations of *latex give fls files of name latex.fls
-        #      or pdflatex.fls instead of $root_filename.fls.
+        #      or pdflatex.fls instead of $$Pbase.fls.
         #   2. In some implementations, the writing of the fls file (memory
         #      of old implementations) may not respect the -output-directory
         #      and -aux-directory options.
@@ -5606,7 +5521,7 @@ sub correct_locations {
             push @other_fls_names, "latex.fls";
         }
         if ( $aux_dir1 ne '' ) {
-            push @other_fls_names, "$root_filename.fls";
+            push @other_fls_names, "$$Pbase.fls";
             # The fls file may be in the opposite directory to the
             # one configured by $fls_uses_out_dir:
             push @other_fls_names, $fls_name_alt;
@@ -5636,6 +5551,7 @@ sub correct_locations {
 
 sub find_log {
     # Locate log file generated on this run.
+    # Usage find_log( $log_aux, $log_out, $log_cwd)
     # Side effect: measure filetime offset if necessary.
     # Don't take other actions.
     # Returns 
@@ -5649,11 +5565,9 @@ sub find_log {
     #             (only applies if $emulate_aux off)
     #    6 log file is in ., but out-of-date
 
-
+    # Assumes rule context.
+    my ( $log_aux, $log_out, $log_cwd ) = @_;
     my $where_log = -1; # Nothing analyzed yet
-    my $log_aux = "$aux_dir1$root_filename.log";
-    my $log_out = "$out_dir1$root_filename.log";
-    my $log_cwd = "./$root_filename.log";
 
     # Basic tests first that assume accuracy of time of file system:
     if ( test_gen_file_time( $log_aux ) ) {
@@ -5699,7 +5613,9 @@ sub find_log {
         return 6;
     }
     return 0;
-}
+} #END find_log
+
+#---------------------
 
 sub find_set_log {
     # Locate the log file, generated on this run.
@@ -5734,13 +5650,11 @@ sub find_set_log {
     # Cases: 0, 4, 5, 6 are error conditions to be handled by caller
     #        2 is to be handled by caller by a rerun
     #        1 is success.
+    my $log_aux = "$aux_dir1$$Pbase.log";
+    my $log_out = "$out_dir1$$Pbase.log";
+    my $log_cwd = "./$$Pbase.log";
 
-
-    my $log_aux = "$aux_dir1$root_filename.log";
-    my $log_out = "$out_dir1$root_filename.log";
-    my $log_cwd = "./$root_filename.log";
-
-    my $where_log = &find_log;
+    my $where_log = find_log( $log_aux, $log_out, $log_cwd );
     my $good_log_found = 0;
 
     if ($where_log == 1 ) {
@@ -5752,7 +5666,7 @@ sub find_set_log {
              "   But emulate_aux is off.  So I'll turn it on.\n",
              "   I'll copy the log file to the correct place.\n",
              "   The next run of *latex **SHOULD** not have this problem.\n";
-        copy( "$out_dir1$root_filename.log", "$aux_dir1$root_filename.log" );
+        copy( $log_out, $log_aux );
         $where_log = 2;
         $emulate_aux = 1;
         $emulate_aux_switched = 1;
@@ -5768,8 +5682,8 @@ sub find_set_log {
         # .log file is not in out_dir nor in aux_dir, but is in cwd.
         # Presumably there is a configuration error
         # that prevents the directories from being used by latex.
-        die "$My_name: The log file found was '$root_filename.log' instead of\n",
-            "  '$aux_dir1$root_filename.log'.  Probably a configuration error\n",
+        die "$My_name: The log file found was '$log_cwd' instead of\n",
+            "  '$log_aux'.  Probably a configuration error\n",
             "  prevented the use of the -aux-directory and/or the -output-directory\n",
             "  options with the *latex command.\n",
             "  I'll stop.\n";
@@ -5800,7 +5714,7 @@ sub find_set_log {
         $failure = 1;
         $$Plast_result = 2;
         $failure_msg 
-            = "*LaTeX didn't generate the expected log file '$log_name'\n";
+            = "*LaTeX didn't generate the expected log file '$log_aux'\n";
     }
     
     return $where_log;
@@ -5865,8 +5779,9 @@ sub parse_log {
 #
 # Input globals: $primary_out, $fls_file_analyzed
 #
-
     my ($log_name, $PAlines, $PHinfo) = @_;
+    our ( $primary_out, $fls_file_analyzed, %generated_log, %idx_files,
+          %dependents, @bbl_files, %log_info, @missing_subdirs, %conversions );
    
     # Give a quick way of looking up custom-dependency extensions
     my %cusdep_from = ();
@@ -5899,7 +5814,8 @@ sub parse_log {
     my $tex_distribution = $$PHinfo{distribution};
 
     # Now analyze the result:
-    $line_num = 0;
+    my $line_num = 0;
+    my @pwd_log = ();   # Working directory as reported.  !!?? CHECK CORRECTNESS
     my $state = 0;   # 0 => before ** line,
                      # 1 => after **filename line, before next line (first file-reading line)
                      # 2 => pwd_log determined.
@@ -5915,6 +5831,8 @@ sub parse_log {
                                  #    data structure until block is ended.)
     my %new_conversions = ();
     my $log_silent = ($silent ||  $silence_logfile_warnings);
+    my $source_log;    #Name of tex file that .log file reports as being on cmd line
+    our @warning_list;
     @warning_list = ();   # Warnings about undefined citations and the like
 
 LINE:
@@ -6398,7 +6316,7 @@ LINE:
     # Default includes are always definitive:
     foreach (@default_includes) { $dependents{$_} = 4; }
 
-    my @misparsed = ();
+    my @misparse = ();
     my @missing = ();
     my @not_found = ();
 
@@ -7069,10 +6987,11 @@ sub parse_aux {
     #    Return 3 if I couldn't locate all the bib_files
     # Set @new_aux_files to aux files parsed
 
+    our $Paux_files;
     my $aux_file = $_[0];
-    local $Pbib_files = $_[1];
+    my $Pbib_files = $_[1];
     local $Paux_files = $_[2];
-    local $Pbst_files = $_[3];
+    my $Pbst_files = $_[3];
     # Default return values
     @$Pbib_files = ();
     @$Pbst_files = ();
@@ -7080,6 +6999,7 @@ sub parse_aux {
 
 
     # Map file specs (in \bibdata and \bibstyle lines) to actual filenames:
+    our ( %bib_files, %bst_files, @bad_bib_data );
     local %bib_files = ();
     local %bst_files = ();
       
@@ -7152,6 +7072,7 @@ sub parse_aux1
 #   Return 1 if success in opening $aux_file_name and parsing it
 #   Return 0 if fail to open it
 {
+   our ( %bib_files, %bst_files, @bad_bib_data, $Paux_files );
    my $aux_file = $_[0];
    my $aux_fh;
    if (! open($aux_fh, $aux_file) ) { 
@@ -7159,9 +7080,10 @@ sub parse_aux1
        return 0; 
    }
    push @$Paux_files, $aux_file;
+
 AUX_LINE:
    while (local $_ = <$aux_fh>) {
-       if ( /\^\^/ ) {
+       if ( /\^\^[[:xdigit:]]{2}/ ) {
            warn "$My_name: Line in '$aux_file' uses ^^ notation, which may\n".
                 "  cause trouble to bibtex:\n   $_";
            # At least I need to be able to handle the line:
@@ -7234,7 +7156,6 @@ sub parse_bcf {
     # Win32 platform.  To avoid requiring the installation, just search the
     # .bcf file for the relevant lines.
     #
-    #  !!!!!!!!!!!!!!!!!??????????? Allow for remote bib files.
 
     use strict;
     # Global variables used
@@ -7490,7 +7411,9 @@ sub rdb_read {
     #       may/should be in the future.)
     #   (e) Something else, e.g., copying/editing of fdb_latexmk file.
     #
-    local ($in_name, $inhibit_output_switch) = @_;
+
+    our ( $dest, $run_time, $check_time, $inhibit_output_switch, $last_result );
+    ( my  $in_name, local $inhibit_output_switch ) = @_;
 
     my $in_handle;
     if ( ! -e $in_name ) {
@@ -7499,7 +7422,7 @@ sub rdb_read {
         return -2;   
     }
     if ( ! open( $in_handle, '<', $in_name ) ) {
-        warn "$My_name: Couldn't read '$fdb_name' even though it exists\n";
+        warn "$My_name: Couldn't read '$in_name' even though it exists\n";
         return -1;
     }
     print "$My_name: Examining fdb file '$fdb_name' for cached rules ...\n"
@@ -7515,11 +7438,11 @@ sub rdb_read {
     my $rule = '';
     local $run_time = 0;
     local $last_result = -1;
-    local $source = '';
+    my $source = '';
     local $dest = '';
     my $base = '';
     my %old_actives = (); # Hash: keys are rules in fdb_latexmk file
-    local %new_sources = ();  # Hash: rule => { file=>[ time, size, md5, fromrule ] }
+    my %new_sources = ();  # Hash: rule => { file=>[ time, size, md5, fromrule ] }
     my $new_source = undef;   # Reference to hash of sources for current rule
 LINE:
     while (local $_ = <$in_handle>) {
@@ -7633,6 +7556,7 @@ LINE:
                 print "$My_name: File-database '$in_name': setting rule '$rule'\n"
                    if $diagnostics;
                 my $cmd_type = 'external';
+                no strict "refs";
                 my $ext_cmd = ${$rule_generic};
                 print "  Rule kind = '$rule_generic'; ext_cmd = '$ext_cmd';\n",
                      "  int_cmd = '$int_cmd';\n",
@@ -7718,8 +7642,10 @@ LINE:
 sub rdb_read_set_rule {
     # Makes some settings for rule from data as read from .fdb_latexmk.
     # Rule context assumed.  Implicit passing of $dest, $run_time, $check_time,
-    # $in_name used as local variables in calling routine rdb_read.
+    # $inhibit_output_switch, $last_result used as local variables in calling
+    # routine rdb_read.
     #
+    our ( $dest, $run_time, $check_time, $inhibit_output_switch, $last_result );
     $$Pno_history = 0;
     $$Prun_time = $run_time;
     $$Pcheck_time = $check_time;
@@ -7784,9 +7710,9 @@ sub rdb_write {
     # Writes to the given file name the database of file and rule data
     #   for all rules needed to make final output
     # Returns 1 on success, 0 if file couldn't be opened.
-    local $out_name = $_[0];
+    my $out_name = $_[0];
 
-    local $out_handle;
+    my $out_handle;
     if ( ($out_name eq "") || ($out_name eq "-") ) {
         # Open STDOUT
         open( $out_handle, '>-' );
@@ -7807,7 +7733,7 @@ sub rdb_write {
            # Omit data on a unused and never-run primary rule:
            if ( ($$Prun_time == 0) 
                 && exists( $possible_primaries{$rule} )
-                && ! exists( $current_primaries{$rule} )
+                && ($rule ne $current_primary )
               )
            { 
                return;
@@ -7945,12 +7871,11 @@ sub rdb_set_latex_deps {
     #     see pythontex-latexmk) for subroutine called to process a .tex to add items to
     #     %PHdest. So initializing here is too late.
 
-    local ($inhibit_output_switch) = @_;
-    # Rules should only be primary
+    my ($inhibit_output_switch) = @_;
     if ( $$Pcmd_type ne 'primary' ) {
         warn "\n$My_name: ==========$My_name: Probable BUG======= \n   ",
              "   rdb_set_latex_deps called to set files ",
-             "for non-primary rule '$rule'\n\n";
+             "for non-latex-like rule '$rule'\n\n";
         return;
     }
 
@@ -7959,6 +7884,9 @@ sub rdb_set_latex_deps {
 
     # Parse fls and log files to find relevant filenames
     # Result in the following variables:
+    our ( %dependents, @bbl_files, %idx_files, %generated_log, %generated_fls,
+          %source_fls, %first_read_after_write, %log_info, $pwd_latex, $primary_out,
+          @missing_subdirs, %conversions );
     local %dependents = ();    # Maps files to status
     local @bbl_files = ();
     local %idx_files = ();     # Maps idx_file to (ind_file, base)
@@ -7966,8 +7894,8 @@ sub rdb_set_latex_deps {
     local %generated_fls = (); # Lists generated files found in fls file
     local %source_fls = ();    # Lists source files found in fls file
     local %first_read_after_write = (); # Lists source files that are only read
-                                  # after being written (so are not true
-                                  # source files).
+                               # after being written (so are not true
+                               # source files).
     local $primary_out = $$Pdest;  # output file (dvi or pdf)
     local %conversions = ();   # *latex-performed conversions.
                      # Maps output file created and read by *latex
@@ -7976,7 +7904,7 @@ sub rdb_set_latex_deps {
 
     local $pwd_latex = undef;     # Cwd as reported in fls file by *latex
 
-    local %created_rules = ();    # Maps files to rules existing or created to
+    my %created_rules = ();       # Maps files to rules existing or created to
                                   #  make them. Use to avoid misunderstood
                                   #  dependencies when a package creates a
                                   #  missing file during *latex compliation
@@ -7999,7 +7927,7 @@ sub rdb_set_latex_deps {
                       # can be set to use another program.)
     our $tex_distribution = '';
     local %log_info = (); # Info. returned by get_log_file
-    local @log_lines = ();  # Lines in log file after unwrapping and converting
+    my @log_lines = ();  # Lines in log file after unwrapping and converting
                             # to use my internal CS.
     # Get lines from log file now, with side effect of setting $engine and
     #  $tex_distribution, so parse_fls can adjust its behavior if necessary).
@@ -8012,11 +7940,11 @@ sub rdb_set_latex_deps {
         $tex_distribution = $log_info{distribution};
     }
 
-
-    
+   
     # Analyze fls file first.  It tells us the working directory as seen by *latex
     # But we'll use the results later, so that they take priority over the findings
     # from the log file.
+    our $fls_file_analyzed;
     local $fls_file_analyzed = 0;
     if ($recorder && test_gen_file_time($fls_name) ) {
         $fls_file_analyzed = 
@@ -8187,7 +8115,7 @@ sub rdb_set_latex_deps {
         $created_rules{$ind_file} = $from_rule;
     } # end IDX_FILE
 
-    local %processed_aux_files = ();
+    my %processed_aux_files = ();
   BBL_FILE:
     foreach my $bbl_file ( uniqs( @bbl_files ) ) {
         my ($bbl_base, $bbl_path, $bbl_ext) = fileparseA( $bbl_file );
@@ -8351,7 +8279,6 @@ NEW_SOURCE:
             rdb_one_file( $new_source, sub{ $$Pcorrect_after_primary = 1; } );
         }
         elsif ( $dependents{$new_source} == 8 )  {
-            print "=================  REWRITE '$new_source'\n";
             # File was read only after being written
             # and the file existed at the beginning of the run
             rdb_ensure_file( $rule, $new_source );
@@ -8494,6 +8421,7 @@ sub test_gen_file {
     #   file being listed in %generated_log or %generated_fls
     # Assumes context for primary rule.
     my $file = shift;
+    our ( %generated_fls, %generated_log );
     return exists $generated_log{$file} || $generated_fls{$file}
           || test_gen_file_time($file);
 }
@@ -8601,7 +8529,7 @@ MISSING_FILE:
 #       if ( $file =~ /\"/ ) {next; }
         my $stripped = $file;
         $stripped =~ s{^\./}{};
-        if ( exists $PHsource{$file} ) {
+        if ( exists $$PHsource{$file} ) {
             delete $new_includes{$file};
         }
         else {
@@ -8621,6 +8549,7 @@ MISSING_FILE:
 sub rdb_set_dependents {
     # Call rdb_set_dependents( rules ...)
     # Returns array (sorted), of new source files for the given rules.
+    our ( @new_sources, @deletions );
     local @new_sources = ();
     local @deletions = ();
 
@@ -8664,7 +8593,8 @@ sub rdb_one_dep {
     if ( (! exists $possible_primaries{$rule}) && ($rule !~ /^cusdep/) ) {
         return;
     }
-    local $new_dest = $file;
+    our ( @new_sources, @deletions );
+    my $new_dest = $file;
     if ($$PHdest{$new_dest} ) {
         # We already have a way of making the file.
         # No need to find another one.
@@ -8697,13 +8627,13 @@ DEP:
                     rdb_ensure_file( $rule, $new_new_dest );
                     $new_dest = $new_new_dest;
                 }
-                local @PAnew_cmd = ( 'do_cusdep', $func_name );
+                my @Anew_cmd = ( 'do_cusdep', $func_name );
                 if ( !-e $new_dest ) {
                     push @new_sources, $new_dest;
                 }
                 if (! rdb_rule_exists( $from_rule ) ) {
                     print "$My_name: === Creating rule '$from_rule'\n" if $diagnostics;
-                    rdb_create_rule( $from_rule, 'cusdep', '', \@PAnew_cmd, 3, 
+                    rdb_create_rule( $from_rule, 'cusdep', '', \@Anew_cmd, 3, 
                                      $source, $new_dest, $base_name, 0 );
                 }
                 return;
@@ -8748,10 +8678,10 @@ DEP:
                 push @new_sources, $new_dest;
                 print "$My_name: Ensuring rule for '$from_rule', to make '$new_dest'\n"
                     if $diagnostics > -1;
-                local @PAnew_cmd = ( 'do_cusdep', $func_name );
+                my @Anew_cmd = ( 'do_cusdep', $func_name );
                 if (! rdb_rule_exists( $from_rule ) ) {
                     print "$My_name: === Creating rule '$from_rule'\n" if $diagnostics;
-                    rdb_create_rule( $from_rule, 'cusdep', '', \@PAnew_cmd, 3, 
+                    rdb_create_rule( $from_rule, 'cusdep', '', \@Anew_cmd, 3, 
                                      $source, $new_dest, $base_name, 0 );
                 }
                 rdb_ensure_file( $rule, $new_dest, $from_rule );
@@ -8794,7 +8724,7 @@ DEP:
                      push @deletions, [$rule, $file];
                      # Flag need for a new run of *latex despite
                      # the error due to a missing file.
-                     $$Pout_of_date_user = 1;
+                     $$Pout_of_date_user = "Missing file '$new_dest' now exists";
                      return;
                  }
            }
@@ -8808,7 +8738,7 @@ sub rdb_list {
     # Call: rdb_list()
     # List rules and their source files
     print "===Rules:\n";
-    local $count_rules = 0;
+    my $count_rules = 0;
     my @accessible_all = &rdb_accessible;
     rdb_for_some( 
         \@accessible_all,
@@ -8833,7 +8763,7 @@ sub deps_list {
     # Call: deps_list(fh)
     # List dependent files to file open on fh
     my $fh = $_[0];
-    fprint8 $fh, "#===Dependents, and related info, for $filename:\n";
+    fprint8( $fh, "#===Dependents, and related info, for $filename:\n" );
     my @dest_exts = ();
     if ($pdf_mode) {push @dest_exts, '.pdf';}
     if ($dvi_mode) {push @dest_exts, '.dvi';}
@@ -8843,7 +8773,7 @@ sub deps_list {
     my $deps_space = ' ';
     if ($deps_escape eq 'unix' ) { $deps_space = '\ '; }
     elsif ($deps_escape eq 'nmake' ) { $deps_space = '^ '; }
-    $Pescape = sub { 
+    my $Pescape = sub { 
                     my $name = shift;
                     $name =~ s/ /$deps_space/g;
                     return $name;
@@ -8876,19 +8806,19 @@ sub deps_list {
          # deps file out-of-date are the same as those that make the real
          # target file (e.g., .pdf) out-of-date. So the GNU method seems
          # completely unnecessary.
-       fprint8 $fh, &$Pescape(${out_dir1}.${root_filename}.${ext}), " :";
+       fprint8( $fh, &$Pescape(${out_dir1}.${root_filename}.${ext}), " :" );
        foreach (sort keys %source) {
-           fprint8 $fh, "\\\n    ", &$Pescape($_);
+           fprint8( $fh, "\\\n    ", &$Pescape($_) );
        }
-       fprint8 $fh, "\n";
+       fprint8( $fh, "\n" );
     }
-    fprint8 $fh, "#===End dependents for $filename:\n";
+    fprint8( $fh, "#===End dependents for $filename:\n" );
     if ($dependents_phony) {
-        fprint8 $fh, "\n#===Phony rules for $filename:\n\n";
+        fprint8( $fh, "\n#===Phony rules for $filename:\n\n" );
         foreach (sort keys %source) {
-            fprint8 $fh, "$_ :\n\n";
+            fprint8( $fh, "$_ :\n\n" );
         }
-        fprint8 $fh, "#===End phony rules for $filename:\n";
+        fprint8( $fh, "#===End phony rules for $filename:\n" );
     }
 } #END deps_list
 
@@ -8899,7 +8829,7 @@ sub rdb_show {
     # Displays contents of rule data base.
     # Side effect: Exercises access routines!
     print "===Rules:\n";
-    local $count_rules = 0;
+    my $count_rules = 0;
     rdb_for_actives( 
         sub{ $count_rules++; 
              my @int_cmd = @$PAint_cmd;
@@ -8943,7 +8873,7 @@ sub rdb_accessible {
     # Call: &rdb_accessible
     # Returns array of rules accessible from target rules and rules to make target files
 
-    local %accessible_rules = &rdb_target_hash;
+    my %accessible_rules = &rdb_target_hash;
     rdb_recurse( [keys %accessible_rules], sub{ $accessible_rules{$rule} = 1; } );
     return keys %accessible_rules;
 } #END rdb_accessible
@@ -9167,9 +9097,11 @@ sub rdb_make {
     #        they are run by the calling routines, since the needs may be
     #        quite special.
 
-    # ???!!! Overkill?
+    if ($compiling_cmd) { Run_subst( $compiling_cmd ); }
+    # ???!!! Overkill?  No.  $compiling_cmd might have injected something.
     &rdb_set_rule_net;
 
+    our %pass;
     local %pass = ();     # Counts runs on each rule: Used for testing for
                           # exceeding maximum runs and for determining
                           # whether to run rules that have a list of source
@@ -9187,12 +9119,14 @@ sub rdb_make {
                   }
         );
 
+    our ($runs, $runs_total, $too_many_passes, $newrule_nofile);
     local $failure = 0;        # General accumulated error flag
     local $missing_dvi_pdf = ''; # Did primary run fail to make its output file?
     local $runs = 0;
     local $runs_total = 0;
     local $too_many_passes = 0;
     local $switched_primary_output = 0;
+    our @warning_list;
     local @warning_list = ();  # Undef refs etc reported in last primary run
     my $retry_msg = 0;         # Did I earlier say I was going to attempt 
                                # another pass after a failure?
@@ -9275,7 +9209,7 @@ sub rdb_make {
      continue {
          # Re-evaluate rule classification and accessibility,
          # but do not change primaries.
-         # Problem is that %current_primaries gets altered
+         # Problem is that $current_primary gets altered
          &rdb_set_rule_net;
      }  #End PASS
 
@@ -9412,21 +9346,14 @@ sub rdb_make {
             print "$My_name: Errors, so I did not complete making targets\n";
         }
         else {
-#            local @dests = ( keys %current_primaries, @pre_primary, @post_primary, @unusual_one_time );
-            local @rules = ( keys %current_primaries, @post_primary, @unusual_one_time );
-            local @dests = ();
+#            local @dests = ( $current_primary, @pre_primary, @post_primary, @unusual_one_time );
+            my @rules = ( $current_primary, @post_primary, @unusual_one_time );
+            my @dests = ();
             rdb_for_some( [@rules], sub{ push @dests, $$Pdest if ($$Pdest); } );
             print "$My_name: All targets (@dests) are up-to-date\n";
         }
     }
 
-    # ???!!! Rethink use of %pass, and it's scoping.
-    # Currently %pass is local in rdb_make and is used only to determine
-    # whether a rule needs to be run because a source rule has been run,
-    # and this would be within the same call to rdb_make.
-    # OLD COMMENT: Update source_rules.  Is this too late?  I don't think so, it's
-    # internal to make and to multiple calls to it (pvc).  Is this
-    # necessary?
     rdb_for_some( [keys %rule_db],
                    sub{ 
                         foreach my $s_rule (keys %$PHsource_rules) {
@@ -9440,8 +9367,8 @@ sub rdb_make {
 #-------------------
 
 sub rdb_show_rule_errors {
-    local @errors = ();
-    local @warnings = ();
+    my @errors = ();
+    my @warnings = ();
     rdb_for_actives( 
         sub {
             my $message_tail = "";
@@ -9489,7 +9416,8 @@ sub rdb_make1 {
     # Assumes contexts for recursion, make, and rule, and
     # assumes that source files for the rule are to be considered
     # up-to-date.
-    our $rule;
+    our ($rule, %pass, $runs, $runs_total, $too_many_passes, $newrule_nofile);
+    
     if ($diagnostics) { print "  Make for rule '$rule'\n"; }
     # Is this needed?  Yes; rdb_make1 is called on a sequence of rules and
     # if one gives an error, then it provides source files directly or
@@ -9620,7 +9548,7 @@ sub rdb_run1 {
     $$Plast_result_info = 'CURR';
     $$Plast_message = '';
     my $latex_like = ($$Pcmd_type eq 'primary'); 
-
+    
     # Return value for external command:
     my $return = 0;
 
@@ -9663,6 +9591,7 @@ sub rdb_run1 {
     if ($int_cmd) {
         print "For rule '$rule', use internal command '\&$int_cmd( @int_args_for_printing )' ...\n"
             if $diagnostics;
+    no strict "refs";
         $return = &$int_cmd( @int_args ); 
     }
     elsif ($$Pext_cmd) {
@@ -9689,7 +9618,7 @@ sub rdb_run1 {
     #
     $$Pout_of_date = $$Pout_of_date_user = 0;
     if ($latex_like) {
-        &correct_locations;
+        correct_locations();
         run_hooks( 'after_xlatex' );
         $return = analyze_latex_run( $return );
         run_hooks( 'after_xlatex_analysis' );
@@ -9838,7 +9767,7 @@ sub analyze_latex_run {
     if (-e $$Pdest) { $missing_dvi_pdf = '';}
     
     # Find current set of source files:
-    my ($missing_dirs, $PA_missing_subdirs, $bad_warnings) = &rdb_set_latex_deps;
+    my ($missing_dirs, $PA_missing_subdirs, $bad_warnings) = rdb_set_latex_deps();
     if ($bad_warning_is_error && $bad_warnings) {
         warn "$My_name: Serious warnings in .log configured to be errors\n";
         $return ||= $bad_warnings;
@@ -9965,7 +9894,8 @@ sub rdb_user_changes {
                      @{$changes_rule{changed_user}};
                 push @{$$PHchanges{rules_to_apply}}, $rule;
                 $user_changes = 1;
-                $$Pout_of_date = $$Pout_of_date_user = $user_changes;
+                if ($user_changes) { $$Pout_of_date = $$Pout_of_date_user = 'Changed user file';  }
+                else { $$Pout_of_date = $$Pout_of_date_user = 0;  }
              }
         }
      );
@@ -9989,15 +9919,12 @@ sub rdb_rerun_needed {
     # make_preview_continuous. Otherwise use rerun criterion suitable for
     # with rdb_make's looping through rules. 
     #
-    # ???!!!!
-    # Check all uses!!!!!!!!!!!!!
     our ($rule, %pass);
 
     local our $PHchanges = shift;
     local our $outside_make_loop = shift;
 
     my $bibx_rule = ( $rule =~ /^(biber|bibtex)/ );
-    
 
     # File level routine reports its results in %$PHchanges: maps kind of
     # change to ref to array of files with that kind of change.  
@@ -10010,7 +9937,7 @@ sub rdb_rerun_needed {
     my $rerun_needed = $$Pout_of_date;
     if ($rerun_needed) {
         push @{$$PHchanges{other}},
-            "Rerun of '$rule' forced or previously required";
+            "Rerun of '$rule' forced or previously required:\n    Reason or flag: '$rerun_needed'";
         goto rdb_rerun_needed_CLEAN_UP;
     }
 
@@ -10022,6 +9949,7 @@ sub rdb_rerun_needed {
     
     $$Pcheck_time = time();
 
+    our $dest_mtime;
     local $dest_mtime = 0;
     $dest_mtime = get_mtime($$Pdest) if ($$Pdest);
 
@@ -10106,15 +10034,7 @@ sub rdb_rerun_needed {
         # rerun rule until there's a change in source file(s), which
         # presumably contain the cause of the error.
         # But there are other reasons for not rerunning:
-            if ( $$Psource && (! -e $$Psource)
-                 && ( $$Pcmd_type ne 'primary' )
-               ) {
-                # Main source file doesn't exist, and rule is NOT primary.
-                # No action, since a run is pointless.  Primary is different:
-                # file might be found elsewhere (by kpsearch from *latex),
-                # while non-existence of main source file is a clear error.
-            }
-            elsif ( $$Pcmd_type eq 'delegated' ) {
+            if ( $$Pcmd_type eq 'delegated' ) {
                 # Delegate to destination rule
             }
             elsif ( $$PHextra{bibx_vetoed} ) {
@@ -10129,16 +10049,19 @@ sub rdb_rerun_needed {
     }
 
   rdb_rerun_needed_CLEAN_UP:
+    if ( $$Psource && (! -e $$Psource)  && ( $$Pcmd_type ne 'primary' ) ) {
+        # Main source file doesn't exist, and rule is NOT primary.
+        # No action, since a run is pointless.  Primary is different:
+        # file might be found elsewhere (by kpsearch from *latex),
+        # while non-existence of main source file is a clear error.
+        $rerun_needed = 0;
+    }
     foreach my $file ( @{$$PHchanges{changed}} ) {
         if ( ! $from_rules{$file} ) {
             push @{$$PHchanges{changed_user}}, $file; 
         }
     }
     $$Pno_history = 0;    # See comments in definition of %rule_db.
-    if ( $$Psource && (! -e $$Psource) ) {
-#           print "================In '$rule', no source '$$Psource'\n";
-    }
-
     if ( $bibx_rule ) {
         # Check whether run of biber/bibtex rule is to be vetoed.
         # Default to no veto:
@@ -10184,7 +10107,7 @@ sub rdb_file_change1 {
     # Call: &rdb_file_change1
     # Assumes rule and file context.  Assumes $dest_mtime set.
     # Flag whether $file in $rule has changed or disappeared.
-    our ($rule, $file, $PHchanges);
+    our ($rule, $file, $PHchanges, $outside_make_loop, $dest_mtime);
 
     my $check_time_argument =
         ($outside_make_loop ? 0 : max($$Pcheck_time, $$Prun_time) );
@@ -10367,6 +10290,7 @@ sub rdb_recurse {
     # This routine sets a context for anything recursive, with @heads,
     # %visited  and $depth being set as local variables.
 
+    our ($depth, @heads, %visited);
     local @heads = ();
     my $rules = shift;
 
@@ -10417,6 +10341,7 @@ sub rdb_for_some {
     # Rule data and file data are made available in local variables 
     # for access by the subroutines.
 
+    our (@heads);
     local @heads = ();
     my $rules = shift;
     # Distinguish between single rule (a string) and a reference to an
@@ -10432,18 +10357,6 @@ sub rdb_for_some {
 
 #************************************************************
 
-sub rdb_for_one_file {
-    # Use : rdb_for_one_file( rule, file, ref to action subroutine )
-    my $rule = shift;
-    # Avoid name collisions with general recursion and iteraction routines:
-    local $file1 = shift;
-    local $action1 = shift;
-    rdb_for_some( $rule, sub{rdb_one_file($file1,$action1)} );
-} #END rdb_for_one_file
-
-
-#************************************************************
-
 #   Routines for inner part of recursion and iterations
 
 #************************************************************
@@ -10455,10 +10368,13 @@ sub rdb_recurse_rule {
     # the sources of the rules.
     # Assumes recursion context, i.e. that %visited, @heads, $depth.
     # We are overriding actions:
-    my ($rule, $rule_act1, $new_file_act1, $new_file_act2, $rule_act2)
+    our (%visited,  @heads, $depth);
+    our ($rule, $rule_act1, $new_file_act1, $new_file_act2, $rule_act2);
+    local ($rule, $rule_act1, $new_file_act1, $new_file_act2, $rule_act2)
         = @_;
     if (! rdb_is_active($rule)) { return; }
     # and must propagate the file actions:
+    our ( $file_act1, $file_act2 );
     local $file_act1 = $new_file_act1;
     local $file_act2 = $new_file_act2;
     # Prevent loops:
@@ -10481,6 +10397,7 @@ sub rdb_recurse_file {
     # This has no arguments, since it is used as an action subroutine,
     # passed as a reference in calls in higher-level subroutine.
     # Assumes contexts set for: Recursion, rule, and file
+    our ( $file_act1, $file_act2, $rule_act1, $rule_act2 );
     &$file_act1 if $file_act1;
     my $from_rule = $from_rules{$file} || '';
     rdb_recurse_rule( $from_rule, $rule_act1, $file_act1, $file_act2,
@@ -10494,9 +10411,9 @@ sub rdb_recurse_file {
 sub rdb_do_files {
     # Assumes rule context, including $PHsource.
     # Applies an action to all the source files of the rule.
-    local $file_act = shift;
+    my $file_act = shift;
     my @file_list = sort keys %$PHsource;
-    foreach my $file ( @file_list ){
+    foreach my $file ( @file_list ) {
         rdb_one_file( $file, $file_act );
     }
 } #END rdb_do_files
@@ -10514,7 +10431,8 @@ sub rdb_one_rule {
     # Sets context for rule and carries out the actions.
 #===== Accesses rule part of database structure =======
 
-    local ( $rule, $rule_act1, $file_act, $rule_act2 ) = @_;
+    local $rule = shift;
+    my ( $rule_act1, $file_act, $rule_act2 ) = @_;
     if ( (! $rule) || ! rdb_rule_exists($rule) ) {
         die_trace( "$My_name: BUG in call to rdb_one_rule: non-existent rule '$rule'" );
     }
@@ -10592,7 +10510,8 @@ sub rdb_one_file {
     # Call: rdb_one_file($file, $file_act)
     # Sets context for file and carries out the action.
     # Assumes $rule context set.
-#===== Accesses file part of database structure =======
+    #===== Accesses file part of database structure =======
+    our $file_act;
     local ($file, $file_act) = @_;
     if ( (!$file) ||(!exists ${$PHsource}{$file}) ) { return; }
     local $PAfile_data = ${$PHsource}{$file};
@@ -10645,6 +10564,7 @@ sub rdb_create_rule {
     foreach ( $needs_making, $run_time, $check_time, $DUMMY ) {
         if (! defined $_) { $_ = 0; }
     }
+    if ($needs_making) {$needs_making = 'Initial set up of rule'; }
     foreach ( $cmd_type, $ext_cmd, $PAint_cmd, $source, $dest, $base, 
               $set_file_not_exists ) {
         if (! defined $_) { $_ = ''; }
@@ -10758,8 +10678,7 @@ sub rdb_ensure_file {
     #         (2) When initializing rules, when there is no previous
     #             known run under the control of latexmk.
 #============ NOTE: rule and file data set here ===============================
-    my $rule = shift;
-    local ( $new_file, $new_from_rule, $set_not_exists ) = @_;
+    my ( $rule, $new_file, $new_from_rule, $set_not_exists ) = @_;
     if ( ! rdb_rule_exists( $rule ) ) {
         die_trace( "$My_name: BUG in call to rdb_ensure_file: non-existent rule '$rule'" );
     }
@@ -10799,18 +10718,19 @@ sub rdb_ensure_files_here {
     # as is appropriate if the file was read in latest run of rule
     use strict;
     our ($rule, $My_name, $PHsource, $Prun_time);
-    foreach (@_) {
-        if ( /\"/ ) {
+    foreach my $file (@_) {
+        # Use $file, not $_, since called subroutine may change it!
+        if ( $file =~ /\"/ ) {
              warn "$My_name: in rdb_ensure_files_here for rule '$rule', there\n",
-                  "  is a double quote in the filename: '$_'.\n",
+                  "  is a double quote in the filename: '$file'.\n",
                   "  I cannot handle this, will ignore this file.\n";
              next;
         }
-        if (! exists ${$PHsource}{$_} ) {
-            ${$PHsource}{$_} = [fdb_get($_, $$Prun_time), '', 0];
+        if (! exists ${$PHsource}{$file} ) {
+            ${$PHsource}{$file} = [fdb_get($file, $$Prun_time), '', 0];
         }
     }
-} #DN rdb_ensure_files_here
+} #END rdb_ensure_files_here
 
 #************************************************************
 
@@ -10822,18 +10742,18 @@ sub rdb_ensure_new_files_here {
     # as is appropriate if the file is new to the rule
     use strict;
     our ($rule, $My_name, $PHsource, @nofile);
-    foreach (@_) {
-        if ( /\"/ ) {
+    foreach my $file (@_) {
+        if ( $file =~ /\"/ ) {
              warn "$My_name: in rdb_ensure_new_files_here for rule '$rule', there\n",
-                  "  is a double quote in the filename: '$_'.\n",
+                  "  is a double quote in the filename: '$file'.\n",
                   "  I cannot handle this, will ignore this file.\n";
              next;
         }
-        if (! exists ${$PHsource}{$_} ) {
-            ${$PHsource}{$_} = [@nofile, '', 0];
+        if (! exists ${$PHsource}{$file} ) {
+            ${$PHsource}{$file} = [@nofile, '', 0];
         }
     }
-}
+} #END rdb_ensure_new_files_here
 
 #************************************************************
 
@@ -10842,7 +10762,7 @@ sub rdb_remove_files {
     # Removes file(s) for the rule.
     my $rule = shift;
     if (!$rule) { return; }
-    local @files = @_;
+    my @files = @_;
     rdb_one_rule( $rule, 
                   sub{ foreach (@files) { delete ${$PHsource}{$_}; }  }
     );
@@ -10943,7 +10863,7 @@ sub rdb_file_exists {
     # Call rdb_file_exists($rule, $file): 
     # Returns whether source file item in rule exists.
     local ( $rule, $file ) = @_;
-    local $exists = 0;
+    my $exists = 0;
     rdb_one_rule( $rule, 
                   sub{ $exists =  exists( ${$PHsource}{$file} ) ? 1:0; } 
                 );
@@ -10985,12 +10905,12 @@ sub rdb_update1 {
 #************************************************************
 
 sub rdb_set_file1 {
-    # Call: fdb_file1(rule, file, new_time, new_size, new_md5)
-    # Sets file time, size and md5.
-    my $rule = shift;
-    my $file = shift;
-    local @new_file_data = @_;
-    rdb_for_one_file( $rule, $file, sub{ ($$Ptime,$$Psize,$$Pmd5)=@new_file_data; } );
+    # Call: rdb_set_file1(rule, file, new_time, new_size, new_md5)
+    # Sets file time, size and md5, in rule data.
+    my ( $rule, $file, @new_file_data ) = @_;
+    rdb_for_some( $rule,
+                  sub{ rdb_one_file($file, sub{ ($$Ptime,$$Psize,$$Pmd5)=@new_file_data; } );  }
+     );
 }
 
 #************************************************************
@@ -11045,11 +10965,11 @@ sub cus_dep_require_primary_run {
     # It is assumed that the resulting file will be read by the
     #   primary run.
 
-    local $cus_dep_target = $$Pdest;
+    my $cus_dep_target = $$Pdest;
     # Loop over all active rules and source files:
     rdb_for_actives( 0, 
                  sub { if ($file eq $cus_dep_target) {
-                            $$Pout_of_date = 1;
+                            $$Pout_of_date = "A new file has been made";
                             $$Pcorrect_after_primary = 1;
                        }
                      }
@@ -11499,7 +11419,7 @@ sub kpsewhich {
     $cmd =~ s/%[RBTDO]//g;
     $cmd =~ s/%S/@args/g;
     my @found = ();
-    local $fh;
+    my $fh;
     if ( $kpsewhich_show || $diagnostics ) {
         print "$My_name.kpsewhich: Running '$cmd'...\n";
     }
@@ -11576,8 +11496,9 @@ sub find_cus_dep {
 ####################################################
 
 sub add_hook {
-    # Usage: add_book( name of stack, name of orpointer to subroutine )
+    # Usage: add_book( name of stack, name of or pointer to subroutine )
     # Return 1 for success, 0 for failure.
+    no strict "refs";
     our %hooks;
     my ($stack, $routine ) = @_;
     unless ( exists $hooks{$stack} ) {
@@ -11694,7 +11615,7 @@ sub find_dirs {
 #         is added to the list.
 #   Non-existent directories and non-directories are removed from the list
 #   Trailing "/"s and "\"s are removed
-    local @result = ();
+    my @result = ();
     my $find_action 
         = sub 
           { ## Subroutine for use in File::find
@@ -11855,7 +11776,7 @@ sub split_search_path
         push @list, "";
     }
     # Replace each blank argument (default) by current directory:
-    for ($i = 0; $i <= $#list ; $i++ ) {
+    for (my $i = 0; $i <= $#list ; $i++ ) {
         if ($list[$i] eq "") {$list[$i] = $default;}
     }
     return @list;
@@ -12006,12 +11927,14 @@ sub Run {
         my @args = parse_quotes( $2 );
         print "$My_name: calling $routine( $2 )\n"
             if (! $silent);
+        no strict "refs";
         return ( 0, &$routine( @args ) );
     }
     elsif ( $cmd_line =~ /^internal\s+([a-zA-Z_]\w*)\s*$/ ) {
         my $routine = $1;
         print "$My_name: calling $routine()\n"
             if (! $silent);
+        no strict "refs";
         return ( 0, &$routine() );
     }
     elsif ( $cmd_line =~ /^NONE/ ) {
@@ -12207,7 +12130,7 @@ sub good_cwd {
 sub pushd {
     push @dir_stack, [cwd(), $cache{cwd}];
     if ( $#_ > -1) {
-        local $ret = 0;
+        my $ret = 0;
         eval {
             if ( -d $_[0] ) {
                 $ret = chdir dirname_no_tail( $_[0] );
@@ -12261,6 +12184,7 @@ sub end_wait {
     #  Handler for break: Set global variable $have_break to 1.
     # Some systems (e.g., MSWin reset) appear to reset the handler.
     # So I'll re-enable it
+    our $have_break;
     &catch_break;
     $have_break = 1;
 }
@@ -12289,3 +12213,128 @@ sub default_break {
 
 #************************************************************
 #************************************************************
+
+#************************************************************
+#************************************************************
+#            Unicode manipuation and normalization
+# Notes about Perl strings:
+# 1. Strings have a flag utf8.
+#    a. If the utf8 flag is on, the string is to be interpreted as a sequence
+#       of code points.
+#       When "use utf8;" is used, a string containing non-ASCII characters
+#       has the utf8 flag set.
+#       If 'no bytes;' is in effect, the ordinal value for each item in the
+#       string is the Unicode code point value.
+#    b. If the utf8 flag is off for a string, the string is a sequence of
+#       bytes, to be interpreted according to whatever CS the user happens
+#       to choose to use.
+#    c. The utf8 flag is NOT to be interpreted as saying that the string is
+#       encoded as UTF-8, even though under the hood that may be the case.
+#    d. Indeed, setting 'use bytes;' appears to expose the internal
+#       byte-level representation of a string with the utf8 flag set, and
+#       that appears to be UTF-8.
+# 2. The utf8 flag is quite confusing in its meaning.
+# 3. When encode is applied to a string whose utf8 flag is on, the result
+#    is a string with the utf8 flag off, and the result consists of a sequence
+#    of bytes in the chosen encoding scheme, which may be chosen as UTF-8.
+# 4. Strings received from the command line have the utf8 flag off and are
+#    encoded in whatever CS the OS/terminal is using.
+# 5. When a string is supplied to print (or c), by default:
+#    a. If the utf8 flag is off or if 'use bytes;' is in effect, then the
+#       string is sent as a sequence of bytes.  They are UTF-8 coded if
+#       the utf8 flag is on and 'use bytes;' is in effect.
+#    b. If the utf8 flag is on and if 'no bytes;' is in effect, then mostly
+#       garbage results for non-ASCII characters; the string must first be
+#       encoded as a byte string, in the CS suitable for the OS.
+#    c. Correct results are obtained when the utf8 flag is on and 'no bytes'
+#       is used when the binmode for the file handle is set suitably.
+# 6. Generally OS calls and interactions with the OS need encoded byte strings.
+# 7. Even more generally, interaction with the external world, including file
+#    contents is in terms of byte strings, with some CS chosen by default, by
+#    the user, or the OS.  Unix-like OSs: Default is UTF-8, but as much by
+#    convention as by a requirement of the OS.
+
+#-------------------------------------
+
+sub utf8_to_mine {
+    # Given string encoded in UTF-8, return encoded string in my current CS.
+    # Don't use Encode::from_to, which does in-place conversion.
+    if  ($no_CP_conversions) { return $_[0]; }
+    else { return  encode( $CS_system, decode('UTF-8', $_[0])); }  
+}
+
+#-------------------------------------
+
+sub utf8_to_mine_errors {
+    # Given string encoded in UTF-8, return encoded string in my current CS.
+    # Don't use Encode::from_to, which does in-place conversion.
+    # Assume coding of input string is correctly UTF-8, but
+    # check for correct encoding in CS_system.
+    # Error message is returned in $@.  No error => $@ is null string.
+    # (Same style as eval!)
+    $@ = '';
+    if  ($no_CP_conversions) { return $_[0]; }
+    else {
+        my $result = '';
+        eval {
+            $result = encode( $CS_system,
+                              decode('UTF-8', $_[0]),
+                              Encode::FB_CROAK | Encode::LEAVE_SRC
+                      );
+        };
+        return $result;
+    }  
+}
+
+#-------------------------------------
+
+sub config_to_mine {
+    # Ensure that configuration strings about files and directories are
+    # encoded in system CS.
+    # Configuration strings set in an rc file SHOULD either be:
+    #   a. ASCII only, with Perl's utf8 flag off.
+    #   b. Containing non-ASCII characters, with utf8 flag on.
+    #      These need to be converted to encoded strings in system CS (and
+    #      hence with utf8 flag off).
+    # Configuration variables set from the command line, e.g., from an
+    # -outdir=... option, are already in the system CS, because that is
+    # how strings are passed on  the command line.
+    # So we just need to do a conversion for strings with utf8 flag on:
+    foreach ( $out_dir, $aux_dir, @default_files, @default_excluded_files ) {
+        if (utf8::is_utf8($_)) { $_ = encode( $CS_system, $_ ); }
+    }
+} #END config_to_mine
+
+#************************************************************
+
+sub mine_to_utf8 {
+    # Given string encoded in my current CS, return utf-8 encoded string.
+    # Don't use Encode::from_to, which does in-place conversion.
+    if  ($no_CP_conversions) { return $_[0]; }
+    else { return  encode( 'UTF-8', decode($CS_system, $_[0])); }
+}
+
+#-------------------------------------
+
+sub is_valid_utf8 {
+   eval { decode( 'UTF-8', $_[0], (Encode::FB_CROAK | Encode::LEAVE_SRC ) ); };
+   if ($@) { return 0; }
+   else { return 1; }
+}
+
+#-------------------------------------
+
+sub fprint8 {
+    # Usage: fprint8( handle, data array)
+    # Write to file converting from my CS to UTF-8
+    my $fh = shift;
+    print $fh mine_to_utf8( join( '', @_ ) );
+}
+
+#-------------------------------------
+
+################################################################
+
+
+
+
