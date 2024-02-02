@@ -5,7 +5,9 @@ Distributed under the 3-Clause BSD License.
 
 */
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,7 +15,12 @@ Distributed under the 3-Clause BSD License.
 #include <kpathsea/getopt.h>
 #include <kpathsea/progname.h>
 #include <kpathsea/lib.h>
-
+#ifdef _WIN32
+#include <kpathsea/knj.h>
+#ifndef CP_UTF8
+#define CP_UTF8 65001
+#endif
+#endif
 #include <ptexenc/ptexenc.h>
 #include <c-auto.h>
 
@@ -65,7 +72,7 @@ const char  *infname;
 char        *outfname;
 FILE        *infp, *outfp;
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #define R_MODE "rb"
 #define W_MODE "wb"
 #else
@@ -101,10 +108,10 @@ main (int argc,  char **argv)
     return 0;
   }
   kpse_set_program_name(argv[0], "ptekf");
-#if defined(WIN32)
+#if defined(_WIN32)
   {
     int ac;
-    char **av, *enc;
+    char **av;
     file_system_codepage = CP_UTF8;
     is_cp932_system = 0;
     if (get_command_line_args_utf8("utf-8", &ac, &av)) {
