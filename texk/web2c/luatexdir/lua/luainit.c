@@ -96,6 +96,7 @@ const_string LUATEX_IHELP[] = {
     "   --safer                       disable easily exploitable lua commands",
     "   --[no-]shell-escape           disable/enable system commands",
     "   --shell-restricted            restrict system commands to a list of commands given in texmf.cnf",
+    "   --luadebug                    enable lua debug library",
     "   --synctex=NUMBER              enable synctex (see man synctex)",
     "   --utc                         init time to UTC",
     "   --version                     display version and exit",
@@ -221,6 +222,7 @@ int nosocket_cli_option = 0;
 int yessocket_cli_option = 0; 
 int socket_bitmask = 0; 
 int utc_option = 0;
+int luadebug_option = 0;
 
 /*tex We use a bitmask for the socket library: |0000| and |1xxx| implies |--nosocket|,
   otherwise the socket library is enabled. Default value is |0000|, i.e. |--nosocket|.
@@ -266,6 +268,7 @@ static struct option long_options[] = {
     {"jithash", 1, 0, 0},
 #endif
     {"safer", 0, &safer_option, 1},
+    {"luadebug", 0, &luadebug_option, 1},
     {"utc", 0, &utc_option, 1},
     {"nosocket", 0, &nosocket_cli_option, 1},
     {"no-socket", 0, &nosocket_cli_option, 1},
@@ -1013,6 +1016,7 @@ void lua_initialize(int ac, char **av)
         restrictedshell = false;
         safer_option = 0;
 	nosocket_option = 0;
+	luadebug_option = true;
     }
     /*tex
         Get the current locale (it should be |C|) and save |LC_CTYPE|, |LC_COLLATE|
@@ -1224,6 +1228,15 @@ void lua_initialize(int ac, char **av)
         init_kpse();
         kpse_init = 1;
         fix_dumpname();
+    }
+    if (output_directory) {
+      xputenv ("TEXMF_OUTPUT_DIRECTORY", output_directory);
+    } else if (getenv ("TEXMF_OUTPUT_DIRECTORY")) {
+      output_directory = getenv ("TEXMF_OUTPUT_DIRECTORY");
+    }
+    /* the lua debug library is enabled if shell escape permits everything */
+    if (shellenabledp && restrictedshell != 1) {
+      luadebug_option = 1 ;      
     }
     /*tex Here we load luatex-core.lua which takes care of some protection on demand. */
     if (load_luatex_core_lua(Luas)) {

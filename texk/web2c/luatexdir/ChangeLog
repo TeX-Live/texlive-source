@@ -1,3 +1,24 @@
+2024-01-24  Luigi Scarso <luigi.scarso@gmail.com>
+        * New 	kpse.in_name_ok_silent_extended and kpse.in_name_ok_silent_extended
+        * In kpse mode
+	  os.rename,
+          os.remove
+          lfs.attributes,
+	  lfs.chdir,
+	  lfs.lock_dir,
+	  lfs.dir,
+	  lfs.link ,
+	  lfs.mkdir,
+	  lfs.rmdir,
+	  lfs.symlinkattributes,
+	  lfs.touch 
+        are now checked with kpse.in_name_ok_silent_extended  *and* kpse.out_name_ok_silent_extended
+
+
+2024-01-04  Luigi Scarso <luigi.scarso@gmail.com> 
+        * With --safer now each function in debug is nil as also package.loaded.debug = nil and  debug = nil 
+
+
 2023-12-21  Luigi Scarso <luigi.scarso@gmail.com> 
         * LuaTeX 1.17.1	
         * New commandline switch --[no-]check-dvi-total-pages  exit when DVI exceeds 65535 pages (default: check).

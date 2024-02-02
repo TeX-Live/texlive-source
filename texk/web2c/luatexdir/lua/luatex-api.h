@@ -240,7 +240,9 @@ extern char *startup_filename;
 extern int safer_option;
 extern int nosocket_option;
 extern int utc_option;
+extern int luadebug_option;
 
+extern char *output_directory;
 extern char *last_source_name;
 extern int last_lineno;
 
