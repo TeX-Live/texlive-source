@@ -86,7 +86,7 @@ jobs:
           path: 'repo'
       - name: Setup QEMU
         if: matrix.use_qemu
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
         with:
           platforms: ${{ matrix.qemu_arch }}
       - name: build
