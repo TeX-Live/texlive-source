@@ -159,6 +159,7 @@ extern int font_parameters_to_lua(lua_State * L, int f);
 extern int font_to_lua(lua_State * L, int f, int usecache);
 extern int font_from_lua(lua_State * L, int f); /* return is boolean */
 extern int characters_from_lua(lua_State * L, int f); /* return is boolean */
+extern void glyph_unicode_new(void); /* ensures that glyph_unicode_tree is not null */
 
 extern int luaopen_token(lua_State * L);
 extern void tokenlist_to_lua(lua_State * L, int p);

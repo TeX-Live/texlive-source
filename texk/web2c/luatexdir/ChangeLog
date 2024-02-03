@@ -1,3 +1,6 @@
+2024-03-24  Luigi Scarso <luigi.scarso@gmail.com>
+	* Ensures that setgentounicode has a glyph_unicode_tree not NULL
+
 2024-01-24  Luigi Scarso <luigi.scarso@gmail.com>
         * New 	kpse.in_name_ok_silent_extended and kpse.in_name_ok_silent_extended
         * In kpse mode
