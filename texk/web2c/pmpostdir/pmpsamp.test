@@ -15,7 +15,8 @@ tests=pmpostdir/tests
 
 test -d $tests || mkdir -p $tests
 
-TEXMFCNF=$srcdir/../kpathsea
+TEXMFCNF=${TEXMFCNF:-$srcdir/../kpathsea}
+export TEXMFCNF
 
 tfmpath=`$KPSEWHICH cmr10.tfm` || exit 77
 TFMFONTS="$srcdir/$tests;`echo $tfmpath | sed 's,/fonts/tfm/.*$,/fonts/tfm//,'`"
@@ -32,7 +33,7 @@ T1FONTS="$srcdir/$tests;`echo $t1path | sed 's,/fonts/type1/.*$,/fonts/type1//,'
 vfpath=`$KPSEWHICH min10.vf` || exit 77
 VFFONTS="$srcdir/$tests;`dirname $vfpath`"
 
-export TEXMFCNF TFMFONTS MPINPUTS TEXFONTMAPS T1FONTS VFFONTS
+export TFMFONTS MPINPUTS TEXFONTMAPS T1FONTS VFFONTS
 
 # check that we have eptex at all.
 $_eptex -version >/dev/null 2>&1 || exit 77
@@ -43,5 +44,5 @@ $_eptex \\end >/dev/null 2>&1 || exit 77
 echo 'input plain;' >pmpsamp.mp
 cat "$srcdir/$tests/psample.mp" >>pmpsamp.mp
 
-$_pmpost -ini -kanji=utf8 -tex=eptex pmpsamp || exit 1
+$_pmpost -ini -kanji=utf8 -tex=$_eptex pmpsamp || exit 1
 
