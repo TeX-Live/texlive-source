@@ -1,3 +1,10 @@
+2024-02-04  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]26 for TL23.
+
 2024-01-14  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftoepdf.cc (write_epdf): call writeRefs at the end, to write
@@ -127,7 +134,7 @@
 	* mapfile.c (hasspacechar, pdfmaplinesp): new fns.
 	* NEWS: mention new behavior.
 
-2021-02-17  Karl Berry  <karl@tug.org>
+2023-02-17  Karl Berry  <karl@tug.org>
 
         * NEWS,
         * pdftex_version.h,

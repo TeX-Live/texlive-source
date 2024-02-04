@@ -1,8 +1,8 @@
-(TeX Live 2024)
+pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024)
 - bugfixes:
   - more reliable text extraction on BigEndian systems.
   - more checks against corrupt pfb, fmt, pdf, files.
-  - avoid writing a corrupt pdf with unusual pdf inclusions.
+  - avoid writing a corrupt pdf given unusual pdf inclusions.
 
 pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023) (March 9, 2023)
 - changes:
