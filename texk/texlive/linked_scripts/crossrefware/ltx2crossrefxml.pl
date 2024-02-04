@@ -230,8 +230,15 @@ this same format.
 
 Feature request: if anyone is interested in figuring out how to generate
 structured citations
-(L<https://data.crossref.org/reports/help/schema_doc/4.4.2/schema_4_4_2.html#citation>)
-instead of these flat text dumps, that would be great.
+(L<https://data.crossref.org/reports/help/schema_doc/5.3.1/schema_5_3_1.html#citation>)
+instead of these flat text dumps, that would be great. Except the schema
+seems to support much less than described at
+L<https://www.crossref.org/documentation/principles-practices/best-practices/bibliographic/>?
+Anyway, the most viable approach is probably to change tugboat.bst to
+output no-op TeX commands like \tubibauthor, \tubibtitle, etc. (a la
+biblatex), and use those commands to discern the various crossref field
+values. We can't start from the .bib because then we'd have to
+reimplement Bib(La)TeX.
 
 =head1 EXAMPLES
 
@@ -246,7 +253,7 @@ Boris Veytsman L<https://github.com/borisveytsman/crossrefware>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2012-2022  Boris Veytsman
+Copyright (C) 2012-2024  Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License (any version)
@@ -318,7 +325,7 @@ the terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html (any version).
 There is NO WARRANTY, to the extent permitted by law.
 
-Written by Boris Veytsman with many additions by Karl Berry
+Written by Boris Veytsman.
 END
  use Getopt::Long;
  my %opts;
@@ -347,7 +354,7 @@ END
      binmode(OUT, ":utf8")
  }
 
-
+ our $ERROR_COUNT = 0;
  our $depositorName = 'DEPOSITOR_NAME';
  our $depositorEmail = 'DEPOSITOR_EMAIL';
  our $registrant = 'REGISTRANT';
@@ -360,7 +367,6 @@ END
  # for every submission to crossref by a given publisher.
  # https://data.crossref.org/reports/help/schema_doc/4.4.2/schema_4_4_2.html#doi_batch_id
  our $batchId="ltx2crossref-$timestamp-$$";
-
 
  if ($opts{c}) {
      if (-r $opts{c}) {
@@ -392,7 +398,7 @@ END
              #warn "papers for year=$year,  volume=$volume, issue=$issue\n";
              # Nice to have the issue.xml in some stable order, so sort
              # by starting page. Doesn't matter if it's not perfect.
-	     foreach my $paper (sort { $a->{startpage} cmp $b->{startpage} }
+	     foreach my $paper (sort { $a->{startpage} <=> $b->{startpage} }
 				     @{$paperList}) {
 		 PrintPaper($paper);
 	     }
@@ -401,7 +407,7 @@ END
  }
 
  PrintTail();
- exit(0);
+ exit($ERROR_COUNT);
 
 
 #####################################################
@@ -520,7 +526,8 @@ sub AddBibliography {
 	#
 	# allow empty \bibitem key for the sake of handwritten bbls.
 	# Similarly, might be more stuff on the line when handwritten.
-	if (s/^\s*\\bibitem(?:\[.*?\])?+\s*\{(.*?)\}//) {
+	# Ignore a TeX %comment following.
+	if (s/^\s*\\bibitem(?:\[.*?\])?+\s*\{(.*?)\}\s*(%.*$)?//) {
 	    my $newkey = $1;
 	    if ($insidebibliography) {
 		if ($currpaper) {
@@ -564,10 +571,11 @@ sub AddBibliography {
     
     # We look in the .rpi files too, which will generally have none.
     if (@result == 0 && $bibfile =~ /\.bbl$/) {
-        warn "$0: *** no \\bibitems found in: $bibfile\n";
+        warn "$0: *** no \\bibitems found in: $bibfile; check if ok\n";
     } elsif ($insidebibliography) {
         warn "$0: *** no \\end{thebibliography} found in: $bibfile\n";
         warn "$0:       so the last bib entry is missing!\n";
+        $ERROR_COUNT++;
     }
     return @result;
 }

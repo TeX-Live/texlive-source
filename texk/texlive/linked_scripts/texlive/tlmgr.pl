@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 69653 2024-01-31 21:52:46Z karl $
+# $Id: tlmgr.pl 69686 2024-02-03 07:34:54Z preining $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 69653 $';
-my $datrev = '$Date: 2024-01-31 22:52:46 +0100 (Wed, 31 Jan 2024) $';
+my $svnrev = '$Revision: 69686 $';
+my $datrev = '$Date: 2024-02-03 08:34:54 +0100 (Sat, 03 Feb 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7469,12 +7469,17 @@ FROZEN_MSG
   # save remote database if it is a net location
   # make sure that the writeout of the tlpdb is done in UNIX mode
   # since otherwise the checksum will change.
+  # For the main tlnet and tlcontrib, both of which are distributed
+  # via mirror.ctan, we make sure that we have only one hashed version
+  # of the tlpdb saved locally.
   if (!$local_copy_tlpdb_used && $location =~ m;^(https?|ftp)://;) {
     my $loc_digest = TeXLive::TLCrypto::tl_short_digest($location);
     my $loc_copy_of_remote_tlpdb =
       ($is_main ? 
         "$Master/$InfraLocation/texlive.tlpdb.main.$loc_digest" :
-        "$Master/$InfraLocation/texlive.tlpdb.$loc_digest");
+        ($location =~ m;texlive/tlcontrib/?$; ?
+          "$Master/$InfraLocation/texlive.tlpdb.tlcontrib.$loc_digest" :
+          "$Master/$InfraLocation/texlive.tlpdb.$loc_digest"));
     my $tlfh;
     if (!open($tlfh, ">:unix", $loc_copy_of_remote_tlpdb)) {
       # that should be only a debug statement, since a user without
@@ -7489,6 +7494,13 @@ FROZEN_MSG
       # are used $Master/$InfraLocation/texlive.tlpdb.main.$loc_digest
       if ($is_main) {
         for my $fn (<"$Master/$InfraLocation/texlive.tlpdb.main.*">) {
+          next if ($fn eq $loc_copy_of_remote_tlpdb);
+          unlink($fn);
+        }
+      }
+      # Do the same for tlcontrib, which is also distributed via mirror.
+      if ($location =~ m;texlive/tlcontrib/?$;) {
+        for my $fn (<"$Master/$InfraLocation/texlive.tlpdb.tlcontrib.*">) {
           next if ($fn eq $loc_copy_of_remote_tlpdb);
           unlink($fn);
         }
@@ -10364,7 +10376,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 69653 2024-01-31 21:52:46Z karl $
+$Id: tlmgr.pl 69686 2024-02-03 07:34:54Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
