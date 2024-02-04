@@ -1,6 +1,9 @@
 2024-04-24  Luigi Scarso <luigi.scarso@gmail.com>
-	* Character index within the  limits in defining a Type 3 font (H.Hagen). Thanks M. Chernoff.
+	* LuaTeX 1.18.0.
 
+
+2024-04-24  Luigi Scarso <luigi.scarso@gmail.com>
+	* Character index within the  limits in defining a Type 3 font (H.Hagen). Thanks M. Chernoff.
 	
 2024-03-24  Luigi Scarso <luigi.scarso@gmail.com>
 	* Ensures that setgentounicode has a glyph_unicode_tree not NULL (thanks M. Chernoff)
