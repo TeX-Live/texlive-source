@@ -1,5 +1,9 @@
+2024-04-24  Luigi Scarso <luigi.scarso@gmail.com>
+	* Character index within the  limits in defining a Type 3 font (H.Hagen). Thanks M. Chernoff.
+
+	
 2024-03-24  Luigi Scarso <luigi.scarso@gmail.com>
-	* Ensures that setgentounicode has a glyph_unicode_tree not NULL
+	* Ensures that setgentounicode has a glyph_unicode_tree not NULL (thanks M. Chernoff)
 
 2024-01-24  Luigi Scarso <luigi.scarso@gmail.com>
         * New 	kpse.in_name_ok_silent_extended and kpse.in_name_ok_silent_extended
