@@ -1,4 +1,9 @@
 ==============================================================
+XeTeX 0.999996 (February 2024)
+
+* only Kpathsea and other cross-engine updates.
+
+==============================================================
 XeTeX 0.999995 (February 2023)
 
 * new keyword `shipout' for \special and \pdfliteral, delaying

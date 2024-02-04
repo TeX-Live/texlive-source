@@ -1,3 +1,10 @@
+2024-02-04  Karl Berry  <karl@tug.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999996 for TL24.
+
 2023-12-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname.test:
