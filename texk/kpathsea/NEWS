@@ -2,11 +2,12 @@ $Id$
 This file records noteworthy changes.  (Public domain.)
 
 6.4.0 (for TeX Live 2024)
-* Support an extended check for safe filenames, also allowing
+* Support an extended check for safe filenames which also allows
   TEXMF[SYS]VAR, for Lua(La)TeX; new functions and corresponding
   kpsewhich options.
-* Allow the new variable TEXMF_OUTPUT_DIRECTORY (as well as TEXMFOUTPUT),
-  so that subprograms can have access to an --output-directory setting.
+* Support a new variable TEXMF_OUTPUT_DIRECTORY (alongside the
+  traditional TEXMFOUTPUT), so that subprograms can have access to an
+  --output-directory setting in an engine invocation.
 
 6.3.5 (for TeX Live 2023, 9 March 2023)
 * Support guessing input file encodings for Unix-ish platforms, as on

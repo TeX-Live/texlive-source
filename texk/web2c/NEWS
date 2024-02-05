@@ -1,7 +1,9 @@
 This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
-* For all engines: If the --output-directory option is given, its value
+2024 (for TeX Live 2024)
+
+* For all engines: if the --output-directory option is given, its value
   is saved in the enviroment variable TEXMF_OUTPUT_DIRECTORY, for the
   benefit of subprograms (called with \write18).
 

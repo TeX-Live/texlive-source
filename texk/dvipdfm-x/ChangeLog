@@ -1,3 +1,9 @@
+2024-02-05  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* xbb.c (show_version),
+	* dvipdfmx.c (show_version): copyright 2024, version 20240205.
+
 2023-11-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 	* dpxutil.c: Calculate time zone offset in the same way as
 	in pdftex.

@@ -1,6 +1,6 @@
 This is dvips.info, produced by makeinfo version 6.5 from dvips.texi.
 
-This manual documents Dvips version 2023.1 (February 2022), a program to
+This manual documents Dvips version 2024.1 (February 2024), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 INFO-DIR-SECTION TeX
@@ -16,7 +16,7 @@ File: dvips.info,  Node: Top,  Next: Why Dvips,  Up: (dir)
 Dvips
 *****
 
-This manual documents Dvips version 2023.1 (February 2022), a program to
+This manual documents Dvips version 2024.1 (February 2024), a program to
 translate a DVI file into PostScript.  You may freely use, modify and/or
 distribute this file.
 
