@@ -1,12 +1,23 @@
-2024-04-24  Luigi Scarso <luigi.scarso@gmail.com>
+2024-02-04  Luigi Scarso <luigi.scarso@gmail.com>
 	* LuaTeX 1.18.0.
 
 
-2024-04-24  Luigi Scarso <luigi.scarso@gmail.com>
+2024-02-04  Luigi Scarso <luigi.scarso@gmail.com>
 	* Character index within the  limits in defining a Type 3 font (H.Hagen). Thanks M. Chernoff.
+
 	
-2024-03-24  Luigi Scarso <luigi.scarso@gmail.com>
+2024-02-03  Luigi Scarso <luigi.scarso@gmail.com>
 	* Ensures that setgentounicode has a glyph_unicode_tree not NULL (thanks M. Chernoff)
+
+
+2024-01-28  Luigi Scarso <luigi.scarso@gmail.com>
+	* By default now debug.traceback is not nil.
+
+	
+2024-01-27  Luigi Scarso <luigi.scarso@gmail.com>
+	* lfs.attributes, lfs.dir and lfs.symlinkattributes are now checked
+	  only against kpse.in_name_ok_silent_extended
+	
 
 2024-01-24  Luigi Scarso <luigi.scarso@gmail.com>
         * New 	kpse.in_name_ok_silent_extended and kpse.in_name_ok_silent_extended
