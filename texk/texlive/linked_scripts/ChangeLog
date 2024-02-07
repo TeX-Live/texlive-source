@@ -1,3 +1,9 @@
+2024-02-08  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): add texlive/mktexlsr.pl,
+	since it is used by fmtutil.pl.
+	https://github.com/TeX-Live/texlive-source/pull/63#issuecomment-1932342880
+
 2023-02-28  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (install-data-hook) [WIN32]: don't install

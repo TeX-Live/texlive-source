@@ -238,6 +238,7 @@ texmf_other_scripts = \
 	texlive/fmtutil-user.sh \
 	texlive/fmtutil.pl \
 	texlive/mktexlsr \
+	texlive/mktexlsr.pl \
 	texlive/mktexmf \
 	texlive/mktexpk \
 	texlive/mktextfm \
