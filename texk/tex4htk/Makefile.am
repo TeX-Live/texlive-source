@@ -27,7 +27,7 @@ LDADD = $(KPATHSEA_LIBS)
 @KPATHSEA_RULE@
 
 perl_scripts = mk4ht
-shell_scripts = ht htcontext htlatex htmex httex httexi \
+shell_scripts = ht htlatex htmex httex httexi \
   htxelatex htxetex xhlatex
 
 scriptsdir = texmf-dist/scripts/tex4ht

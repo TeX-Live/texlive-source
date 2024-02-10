@@ -130,8 +130,8 @@ am_tex4ht_OBJECTS = tex4ht.$(OBJEXT)
 tex4ht_OBJECTS = $(am_tex4ht_OBJECTS)
 tex4ht_LDADD = $(LDADD)
 tex4ht_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am__dist_bin_SCRIPTS_DIST = ht.bat htcontext.bat htlatex.bat htmex.bat \
-	httex.bat httexi.bat htxelatex.bat htxetex.bat xhlatex.bat
+am__dist_bin_SCRIPTS_DIST = ht.bat htlatex.bat htmex.bat httex.bat \
+	httexi.bat htxelatex.bat htxetex.bat xhlatex.bat
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -412,7 +412,7 @@ t4ht_SOURCES = t4ht.c
 tex4ht_SOURCES = tex4ht.c
 LDADD = $(KPATHSEA_LIBS)
 perl_scripts = mk4ht
-shell_scripts = ht htcontext htlatex htmex httex httexi \
+shell_scripts = ht htlatex htmex httex httexi \
   htxelatex htxetex xhlatex
 
 scriptsdir = texmf-dist/scripts/tex4ht

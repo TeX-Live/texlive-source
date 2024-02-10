@@ -37,7 +37,8 @@ jobs:
       matrix:
         # we need to list the archs here, otherwise the matrix contains only
         # one element release_build and that is overwritten by the include statements
-        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl, aarch64-linux, armhf-linux ]
+        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl ]
+#        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl, aarch64-linux, armhf-linux ]
         release_build:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:

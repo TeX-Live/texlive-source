@@ -1,3 +1,7 @@
+2023-02-10  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2024.
+
 2024-01-31  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* tex-file.c (kpathsea_name_ok) [MSDOS]: change #ifndef MSDOS

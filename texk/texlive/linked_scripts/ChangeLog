@@ -1,3 +1,9 @@
+2024-02-11  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): whoops, undo
+	mktexlsr.pl, it's overwriting the sh version. Something
+	to look at later.
+
 2024-02-08  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): add texlive/mktexlsr.pl,
