@@ -24,6 +24,10 @@
 
 # only build on pushed to trunk
 on:
+  release:
+    types:
+      - released
+      - prereleased
   push:
     branches:
       - trunk
