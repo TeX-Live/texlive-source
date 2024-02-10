@@ -1,0 +1,65 @@
+.TH PTEKF 1
+\"=====================================================================
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+\"=====================================================================
+.SH NAME
+ptekf \- p\*(TX-enc Kanji Filter
+.SH SYNOPSIS
+.HP
+\fBptekf\fR [\fIoptions\fR] [\fB\-\-\fR] \fIin_file1\fR [\fIin_file2 ...\fR]
+.HP
+\fBptekf\fR \-\-help | \-\-version
+.SH DESCRIPTION
+\fBptekf\fR is a simple character encoding converter for input/output files of p\*(TX-family programs.
+This utility can be used to check procedures of character encoding conversion and guessing encoding \
+which are impremented in p\*(TX-family i.e. \fB(e)(u)ptex\fR, \fB(u)pbibtex\fR, \fBmendex\fR and so on.
+.SH OPTIONS
+.PP
+.TP
+\fB\-j\fR
+Specify output encoding ISO-2022-JP.
+.TP
+\fB\-s\fR
+Specify output encoding Shift_JIS.
+.TP
+\fB\-e\fR
+Specify output encoding EUC-JP.
+.TP
+\fB\-u\fR
+Specify output encoding UTF-8.
+.TP
+\fB\-J\fR
+Specify input encoding ISO-2022-JP.
+.TP
+\fB\-S\fR
+Specify input encoding Shift_JIS.
+.TP
+\fB\-E\fR
+Specify input encoding EUC-JP.
+.TP
+\fB\-U\fR
+Specify input encoding UTF-8.
+.TP
+\fB\-g\fR  \fB\-\-guess\fR
+Guess the input encoding (no conversion).
+.TP
+\fB\-G\fR
+Guess the input encoding and output to stdout or files.
+.TP
+\fB\-b\fR  \fB\-\-buffer\fR
+Output internal buffer without code conversion.
+.TP
+\fB\-v\fR  \fB\-\-version\fR
+Print version number.
+.TP
+\fB\-h\fR  \fB\-\-help\fR
+Print help message.
+.TP
+Default input/output encoding depends on kpathsearch parameters \fBPTEX_KANJI_ENC\fR and \fBguess_input_kanji_encoding\fR.
+.SH SEE ALSO
+eptex(1), euptex(1), pbibtex(1), upbibtex(1), mendex(1)
+.SH AUTHOR
+This manual page was written by Japanese \*(TX Development Community \
+<https://texjp.org>. For more information, see GitHub repository \
+<https://github.com/texjporg/tex-jp-build>.

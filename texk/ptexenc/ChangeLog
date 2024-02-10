@@ -1,3 +1,9 @@
+2024-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptekf.1: Add command line manual.
+	* ptekf.c: Tweak command line help message.
+	* Makefile.am: Adjust.
+
 2023-02-09  Karl Berry  <karl@tug.org>
 
 	* version.ac: remove /dev, for TL24.

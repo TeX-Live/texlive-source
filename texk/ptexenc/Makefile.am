@@ -43,6 +43,7 @@ EXTRA_DIST = COPYRIGHT ChangeLog.jp
 ## The programs
 bin_PROGRAMS = ptekf
 ptekf_LDADD = libptexenc.la
+man1_MANS = ptekf.1
 
 LDADD = $(KPATHSEA_LIBS)
 
