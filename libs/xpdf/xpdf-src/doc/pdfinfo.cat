@@ -4,7 +4,7 @@ pdfinfo(1)                  General Commands Manual                 pdfinfo(1)
 
 NAME
        pdfinfo - Portable Document Format (PDF) document information extractor
-       (version 4.04)
+       (version 4.05)
 
 SYNOPSIS
        pdfinfo [options] [PDF-file]
@@ -33,7 +33,8 @@ DESCRIPTION
               print and copy permissions (if encrypted)
               page size and rotation
               file size
-              linearized (yes/no)
+              optimized (aka linearized) (yes/no)
+              uses JavaScript (yes/no)
               PDF version
               metadata (only if requested)
 
@@ -50,10 +51,10 @@ OPTIONS
        corresponding command line option.
 
        -f number
-              Specifies  the  first  page  to  examine.  If multiple pages are
-              requested using the "-f" and "-l"  options,  the  size  of  each
-              requested  page  (and,  optionally,  the bounding boxes for each
-              requested page) are printed.  Otherwise, only page one is  exam-
+              Specifies  the first page to examine.  If multiple pages are re-
+              quested using the "-f" and "-l" options, the size  of  each  re-
+              quested  page  (and, optionally, the bounding boxes for each re-
+              quested page) are printed.  Otherwise, only page  one  is  exam-
               ined.
 
        -l number
@@ -69,14 +70,18 @@ OPTIONS
               Prints  the  raw (undecoded) date strings, directly from the PDF
               file.
 
+       -custom
+              Prints any custom (non-standard) entries in the  'Info'  dictio-
+              nary.
+
        -enc encoding-name
-              Sets the encoding to use for  text  output.   The  encoding-name
-              must  be  defined  with  the unicodeMap command (see xpdfrc(5)).
+              Sets  the  encoding  to  use for text output.  The encoding-name
+              must be defined with the  unicodeMap  command  (see  xpdfrc(5)).
               This defaults to "Latin1" (which is a built-in encoding).  [con-
               fig file: textEncoding]
 
        -opw password
-              Specify  the  owner  password  for the PDF file.  Providing this
+              Specify the owner password for the  PDF  file.   Providing  this
               will bypass all security restrictions.
 
        -upw password
@@ -101,17 +106,19 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The  pdfinfo software and documentation are copyright 1996-2022 Glyph &
+       The pdfinfo software and documentation are copyright 1996-2024 Glyph  &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1), pdftops(1), pdftotext(1),  pdftohtml(1),  pdffonts(1),  pdfde-
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1), pdffonts(1), pdfde-
        tach(1), pdftoppm(1), pdftopng(1), pdfimages(1), xpdfrc(5)
        http://www.xpdfreader.com/
 
 
 
-                                  18 Apr 2022                       pdfinfo(1)
+                                  08 Feb 2024                       pdfinfo(1)

@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stddef.h>
 #include <math.h>
 #include <string.h>
@@ -936,15 +932,15 @@ GfxColorSpace *GfxICCBasedColorSpace::parse(Array *arr,
   }
   nCompsA = obj2.getInt();
   obj2.free();
-  if (nCompsA > 4) {
-    error(errSyntaxError, -1,
-	  "ICCBased color space with too many ({0:d} > 4) components",
-	  nCompsA);
-    nCompsA = 4;
-  }
-  if (dict->lookup("Alternate", &obj2)->isNull() ||
-      !(altA = GfxColorSpace::parse(&obj2,
-				    recursion + 1))) {
+  if (!dict->lookup("Alternate", &obj2)->isNull() &&
+      (altA = GfxColorSpace::parse(&obj2,
+				   recursion + 1))) {
+    if (altA->getNComps() != nCompsA) {
+      error(errSyntaxError, -1,
+	    "Number of components in ICCBased color space doesn't match alternate color space");
+      nCompsA = altA->getNComps();
+    }
+  } else {
     switch (nCompsA) {
     case 1:
       altA = GfxColorSpace::create(csDeviceGray);
@@ -1782,6 +1778,258 @@ GfxTilingPattern::~GfxTilingPattern() {
 GfxPattern *GfxTilingPattern::copy() {
   return new GfxTilingPattern(paintType, tilingType, bbox, xStep, yStep,
 			      &resDict, matrix, &contentStreamRef);
+}
+
+GBool GfxTilingPattern::usesBlendMode(XRef *xref) {
+  char *scannedObjs = (char *)gmalloc(xref->getNumObjects());
+  memset(scannedObjs, 0, xref->getNumObjects());
+  GBool ret = scanResourcesForBlendMode(&resDict, scannedObjs, xref);
+  gfree(scannedObjs);
+  return ret;
+}
+
+GBool GfxTilingPattern::scanResourcesForBlendMode(Object *resDict2,
+						  char *scannedObjs,
+						  XRef *xref) {
+  Object ref1, obj1, obj2;
+
+  if (!resDict2->isDict()) {
+    return gFalse;
+  }
+
+  //----- ExtGStates
+  resDict2->dictLookupNF("ExtGState", &ref1);
+  if (!ref1.isRef() || (ref1.getRefNum() < xref->getNumObjects() &&
+			!scannedObjs[ref1.getRefNum()])) {
+    if (ref1.isRef()) {
+      scannedObjs[ref1.getRefNum()] = 1;
+      ref1.fetch(xref, &obj1);
+    } else {
+      ref1.copy(&obj1);
+    }
+    if (obj1.isDict()) {
+      for (int i = 0; i < obj1.dictGetLength(); ++i) {
+	if (scanExtGStateForBlendMode(obj1.dictGetValNF(i, &obj2),
+				      scannedObjs, xref)) {
+	  obj2.free();
+	  obj1.free();
+	  ref1.free();
+	  return gTrue;
+	}
+	obj2.free();
+      }
+    }
+    obj1.free();
+  }
+  ref1.free();
+
+  //----- patterns
+  resDict2->dictLookupNF("Pattern", &ref1);
+  if (!ref1.isRef() || (ref1.getRefNum() < xref->getNumObjects() &&
+			!scannedObjs[ref1.getRefNum()])) {
+    if (ref1.isRef()) {
+      scannedObjs[ref1.getRefNum()] = 1;
+      ref1.fetch(xref, &obj1);
+    } else {
+      ref1.copy(&obj1);
+    }
+    if (obj1.isDict()) {
+      for (int i = 0; i < obj1.dictGetLength(); ++i) {
+	if (scanPatternForBlendMode(obj1.dictGetValNF(i, &obj2),
+				    scannedObjs, xref)) {
+	  obj2.free();
+	  obj1.free();
+	  ref1.free();
+	  return gTrue;
+	}
+	obj2.free();
+      }
+    }
+    obj1.free();
+  }
+  ref1.free();
+
+  //----- XObjects
+  resDict2->dictLookupNF("XObject", &ref1);
+  if (!ref1.isRef() || (ref1.getRefNum() < xref->getNumObjects() &&
+			!scannedObjs[ref1.getRefNum()])) {
+    if (ref1.isRef()) {
+      scannedObjs[ref1.getRefNum()] = 1;
+      ref1.fetch(xref, &obj1);
+    } else {
+      ref1.copy(&obj1);
+    }
+    if (obj1.isDict()) {
+      for (int i = 0; i < obj1.dictGetLength(); ++i) {
+	if (scanXObjectForBlendMode(obj1.dictGetValNF(i, &obj2),
+				    scannedObjs, xref)) {
+	  obj2.free();
+	  obj1.free();
+	  ref1.free();
+	  return gTrue;
+	}
+	obj2.free();
+      }
+    }
+    obj1.free();
+  }
+  ref1.free();
+
+  return gFalse;
+}
+
+GBool GfxTilingPattern::scanExtGStateForBlendMode(Object *gsObj,
+						  char *scannedObjs,
+						  XRef *xref) {
+  Object gsDict, obj1;
+
+  if (gsObj->isRef()) {
+    if (gsObj->getRefNum() >= xref->getNumObjects() ||
+	scannedObjs[gsObj->getRefNum()]) {
+      return gFalse;
+    }
+    scannedObjs[gsObj->getRefNum()] = 1;
+    gsObj->fetch(xref, &gsDict);
+  } else {
+    gsObj->copy(&gsDict);
+  }
+  if (!gsDict.isDict()) {
+    gsDict.free();
+    return gFalse;
+  }
+
+  gsDict.dictLookup("BM", &obj1);
+  if (obj1.isName() && !obj1.isName("Normal")) {
+    obj1.free();
+    gsDict.free();
+    return gTrue;
+  }
+  obj1.free();
+
+  if (!gsDict.dictLookupNF("SMask", &obj1)->isNull()) {
+    if (scanSoftMaskForBlendMode(&obj1, scannedObjs, xref)) {
+      obj1.free();
+      gsDict.free();
+      return gTrue;
+    }
+  }
+  obj1.free();
+
+  gsDict.free();
+
+  return gFalse;
+}
+
+GBool GfxTilingPattern::scanSoftMaskForBlendMode(Object *softMaskObj,
+						 char *scannedObjs,
+						 XRef *xref) {
+  Object softMaskDict, obj1;
+
+  if (softMaskObj->isRef()) {
+    if (softMaskObj->getRefNum() >= xref->getNumObjects() ||
+	scannedObjs[softMaskObj->getRefNum()]) {
+      return gFalse;
+    }
+    scannedObjs[softMaskObj->getRefNum()] = 1;
+    softMaskObj->fetch(xref, &softMaskDict);
+  } else {
+    softMaskObj->copy(&softMaskDict);
+  }
+  if (!softMaskDict.isDict()) {
+    softMaskDict.free();
+    return gFalse;
+  }
+
+  if (!softMaskDict.dictLookupNF("G", &obj1)->isNull()) {
+    if (scanXObjectForBlendMode(&obj1, scannedObjs, xref)) {
+      obj1.free();
+      softMaskDict.free();
+      return gTrue;
+    }
+  }
+  obj1.free();
+
+  softMaskDict.free();
+
+  return gFalse;
+}
+
+GBool GfxTilingPattern::scanPatternForBlendMode(Object *patternObj,
+						char *scannedObjs,
+						XRef *xref) {
+  Object patternObj2, obj1;
+  Dict *patternDict;
+
+  if (patternObj->isRef()) {
+    if (patternObj->getRefNum() >= xref->getNumObjects() ||
+	scannedObjs[patternObj->getRefNum()]) {
+      return gFalse;
+    }
+    scannedObjs[patternObj->getRefNum()] = 1;
+    patternObj->fetch(xref, &patternObj2);
+  } else {
+    patternObj->copy(&patternObj2);
+  }
+  if (patternObj2.isDict()) {
+    patternDict = patternObj2.getDict();
+  } else if (patternObj2.isStream()) {
+    patternDict = patternObj2.streamGetDict();
+  } else {
+    patternObj2.free();
+    return gFalse;
+  }
+
+  if (!patternDict->lookupNF("Resources", &obj1)->isNull()) {
+    if (scanResourcesForBlendMode(&obj1, scannedObjs, xref)) {
+      obj1.free();
+      patternObj2.free();
+      return gTrue;
+    }
+  }
+  obj1.free();
+
+  patternObj2.free();
+
+  return gFalse;
+}
+
+GBool GfxTilingPattern::scanXObjectForBlendMode(Object *xObj,
+						char *scannedObjs,
+						XRef *xref) {
+  Object xObj2, obj1;
+  Dict *dict;
+
+  if (xObj->isRef()) {
+    if (xObj->getRefNum() >= xref->getNumObjects() ||
+	scannedObjs[xObj->getRefNum()]) {
+      return gFalse;
+    }
+    scannedObjs[xObj->getRefNum()] = 1;
+    xObj->fetch(xref, &xObj2);
+  } else {
+    xObj->copy(&xObj2);
+  }
+  if (xObj2.isDict()) {
+    dict = xObj2.getDict();
+  } else if (xObj2.isStream()) {
+    dict = xObj2.streamGetDict();
+  } else {
+    xObj2.free();
+    return gFalse;
+  }
+
+  if (!dict->lookupNF("Resources", &obj1)->isNull()) {
+    if (scanResourcesForBlendMode(&obj1, scannedObjs, xref)) {
+      obj1.free();
+      xObj2.free();
+      return gTrue;
+    }
+  }
+  obj1.free();
+
+  xObj2.free();
+
+  return gFalse;
 }
 
 //------------------------------------------------------------------------
@@ -2963,8 +3211,8 @@ void GfxGouraudTriangleShading::getTriangle(
   }
 }
 
-void GfxGouraudTriangleShading::getBBox(double *xMin, double *yMin,
-					double *xMax, double *yMax) {
+void GfxGouraudTriangleShading::getBBox(double *xMinA, double *yMinA,
+					double *xMaxA, double *yMaxA) {
   double xxMin = 0;
   double yyMin = 0;
   double xxMax = 0;
@@ -2985,10 +3233,10 @@ void GfxGouraudTriangleShading::getBBox(double *xMin, double *yMin,
       yyMax = vertices[i].y;
     }
   }
-  *xMin = xxMin;
-  *yMin = yyMin;
-  *xMax = xxMax;
-  *yMax = yyMax;
+  *xMinA = xxMin;
+  *yMinA = yyMin;
+  *xMaxA = xxMax;
+  *yMaxA = yyMax;
 }
 
 void GfxGouraudTriangleShading::getColor(double *in, GfxColor *out) {
@@ -3621,8 +3869,8 @@ GfxShading *GfxPatchMeshShading::copy() {
   return new GfxPatchMeshShading(this);
 }
 
-void GfxPatchMeshShading::getBBox(double *xMin, double *yMin,
-				  double *xMax, double *yMax) {
+void GfxPatchMeshShading::getBBox(double *xMinA, double *yMinA,
+				  double *xMaxA, double *yMaxA) {
   double xxMin = 0;
   double yyMin = 0;
   double xxMax = 0;
@@ -3647,10 +3895,10 @@ void GfxPatchMeshShading::getBBox(double *xMin, double *yMin,
       }
     }
   }
-  *xMin = xxMin;
-  *yMin = yyMin;
-  *xMax = xxMax;
-  *yMax = yyMax;
+  *xMinA = xxMin;
+  *yMinA = yyMin;
+  *xMaxA = xxMax;
+  *yMaxA = yyMax;
 }
 
 void GfxPatchMeshShading::getColor(double *in, GfxColor *out) {
@@ -4651,35 +4899,36 @@ void GfxState::clipToStrokePath() {
   // There are two cases for each point on the path:
   // (1) miter join, under miter limit => compute the miter point
   // (2) all other joins and caps => use the path point +/- 0.5 * line width
-  double xMin = 0, yMin = 0, xMax = 0, yMax = 0;
+  double uxMin = 0, uyMin = 0, uxMax = 0, uyMax = 0;
   double w = 0.5 * lineWidth;
   for (int i = 0; i < path->getNumSubpaths(); ++i) {
     GfxSubpath *subpath = path->getSubpath(i);
-    for (int j = 0; j < subpath->getNumPoints(); ++j) {
+    int nPoints;
+    if (subpath->isClosed()) {
+      nPoints = subpath->getNumPoints() - 1;
+    } else {
+      nPoints = subpath->getNumPoints();
+    }
+    for (int j = 0; j < nPoints; ++j) {
       double x1 = subpath->getX(j);
       double y1 = subpath->getY(j);
       if (i == 0 && j == 0) {
-	xMin = xMax = x1;
-	yMin = yMax = y1;
+	uxMin = uxMax = x1;
+	uyMin = uyMax = y1;
       }
       GBool useMiter = gFalse;
       if (lineJoin == 0 &&  // miter join
-	  ((j > 0 && j < subpath->getNumPoints() - 1) || subpath->isClosed())) {
+	  (subpath->isClosed() || (j > 0 && j < subpath->getNumPoints() - 1))) {
 	double x0, y0, x2, y2;
-	if (j > 0) {
+	if (j == 0) {
+	  x0 = subpath->getX(nPoints - 1);
+	  y0 = subpath->getY(nPoints - 1);
+	} else {
 	  x0 = subpath->getX(j - 1);
 	  y0 = subpath->getY(j - 1);
-	} else {
-	  x0 = subpath->getLastX();
-	  y0 = subpath->getLastY();
 	}
-	if (j < subpath->getNumPoints() - 1) {
-	  x2 = subpath->getX(j + 1);
-	  y2 = subpath->getY(j + 1);
-	} else {
-	  x2 = subpath->getX(0);
-	  y2 = subpath->getY(0);
-	}
+	x2 = subpath->getX(j + 1);
+	y2 = subpath->getY(j + 1);
 	if ((fabs(x1 - x0) > 0.0001 || fabs(y1 - y0) > 0.0001) &&
 	    (fabs(x2 - x1) > 0.0001 || fabs(y2 - y1) > 0.0001)) {
 	  double d01 = 1 / sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
@@ -4704,15 +4953,15 @@ void GfxState::clipToStrokePath() {
 	      }
 	      double mx = ax + m * w * ux;
 	      double my = ay + m * w * uy;
-	      if (mx < xMin) {
-		xMin = mx;
-	      } else if (mx > xMax) {
-		xMax = mx;
+	      if (mx < uxMin) {
+		uxMin = mx;
+	      } else if (mx > uxMax) {
+		uxMax = mx;
 	      }
-	      if (my < yMin) {
-		yMin = my;
-	      } else if (my > yMax) {
-		yMax = my;
+	      if (my < uyMin) {
+		uyMin = my;
+	      } else if (my > uyMax) {
+		uyMax = my;
 	      }
 	      useMiter = gTrue;
 	    }
@@ -4720,66 +4969,71 @@ void GfxState::clipToStrokePath() {
 	}
       }
       if (!useMiter) {
-	if (x1 - w < xMin) {
-	  xMin = x1 - w;
+	if (x1 - w < uxMin) {
+	  uxMin = x1 - w;
 	}
-	if (x1 + w > xMax) {
-	  xMax = x1 + w;
+	if (x1 + w > uxMax) {
+	  uxMax = x1 + w;
 	}
-	if (y1 - w < yMin) {
-	  yMin = y1 - w;
+	if (y1 - w < uyMin) {
+	  uyMin = y1 - w;
 	}
-	if (y1 + w > yMax) {
-	  yMax = y1 + w;
+	if (y1 + w > uyMax) {
+	  uyMax = y1 + w;
 	}
       }
     }
   }
 
-  double xx, yy;
-  transform(xMin, yMin, &xx, &yy);
-  if (xx < clipXMin) {
-    clipXMin = xx;
-  } else if (xx > clipXMax) {
-    clipXMax = xx;
+  double dxMin, dyMin, dxMax, dyMax, xx, yy;
+  transform(uxMin, uyMin, &xx, &yy);
+  dxMin = dxMax = xx;
+  dyMin = dyMax = yy;
+  transform(uxMin, uyMax, &xx, &yy);
+  if (xx < dxMin) {
+    dxMin = xx;
+  } else if (xx > dxMax) {
+    dxMax = xx;
   }
-  if (yy < clipYMin) {
-    clipYMin = yy;
-  } else if (yy > clipYMax) {
-    clipYMax = yy;
+  if (yy < dyMin) {
+    dyMin = yy;
+  } else if (yy > dyMax) {
+    dyMax = yy;
   }
-  transform(xMin, yMax, &xx, &yy);
-  if (xx < clipXMin) {
-    clipXMin = xx;
-  } else if (xx > clipXMax) {
-    clipXMax = xx;
+  transform(uxMax, uyMin, &xx, &yy);
+  if (xx < dxMin) {
+    dxMin = xx;
+  } else if (xx > dxMax) {
+    dxMax = xx;
   }
-  if (yy < clipYMin) {
-    clipYMin = yy;
-  } else if (yy > clipYMax) {
-    clipYMax = yy;
+  if (yy < dyMin) {
+    dyMin = yy;
+  } else if (yy > dyMax) {
+    dyMax = yy;
   }
-  transform(xMax, yMin, &xx, &yy);
-  if (xx < clipXMin) {
-    clipXMin = xx;
-  } else if (xx > clipXMax) {
-    clipXMax = xx;
+  transform(uxMax, uyMax, &xx, &yy);
+  if (xx < dxMin) {
+    dxMin = xx;
+  } else if (xx > dxMax) {
+    dxMax = xx;
   }
-  if (yy < clipYMin) {
-    clipYMin = yy;
-  } else if (yy > clipYMax) {
-    clipYMax = yy;
+  if (yy < dyMin) {
+    dyMin = yy;
+  } else if (yy > dyMax) {
+    dyMax = yy;
   }
-  transform(xMax, yMax, &xx, &yy);
-  if (xx < clipXMin) {
-    clipXMin = xx;
-  } else if (xx > clipXMax) {
-    clipXMax = xx;
+
+  if (dxMin > clipXMin) {
+    clipXMin = dxMin;
   }
-  if (yy < clipYMin) {
-    clipYMin = yy;
-  } else if (yy > clipYMax) {
-    clipYMax = yy;
+  if (dyMin > clipYMin) {
+    clipYMin = dyMin;
+  }
+  if (dxMax < clipXMax) {
+    clipXMax = dxMax;
+  }
+  if (dyMax < clipYMax) {
+    clipYMax = dyMax;
   }
 }
 

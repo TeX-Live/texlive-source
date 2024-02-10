@@ -1,11 +1,11 @@
 Xpdf
 ====
 
-version 4.04
-2022-apr-18
+version 4.05
+2024-feb-08
 
 The Xpdf software and documentation are
-copyright 1996-2022 Glyph & Cog, LLC.
+copyright 1996-2024 Glyph & Cog, LLC.
 
 Email: xpdf@xpdfreader.com
 WWW: http://www.xpdfreader.com/
@@ -34,8 +34,8 @@ different systems.
     - CMake 2.8.8 or newer
     - FreeType 2.0.5 or newer
     - Qt 5.x or 6.x (for xpdf only)
-    - libpng (for pdftoppm and pdftohtml)
-    - zlib (for pdftoppm and pdftohtml)
+    - libpng (for pdftopng and pdftohtml)
+    - zlib (for pdftopng and pdftohtml)
 
   If Qt isn't found, the GUI viewer (xpdf) won't be built, but the
   command line tools will still be built.
@@ -119,6 +119,12 @@ different systems.
         The ${DATADIR} variable in xpdfrc config files will expand to
         this string.
 
+    -DBASE14_FONT_DIR="/usr/share/fonts/type1"
+        By default, Xpdf will look for the URW Type 1 fonts in several
+        quasi-standard directories on Linux/Mac systems.  This option
+        adds another directory to that search path.  On Windows, this
+        does the same thing, except for the system TrueType fonts.
+
     -DCMAKE_DISABLE_FIND_PACKAGE_Qt4=1
     -DCMAKE_DISABLE_FIND_PACKAGE_Qt5Widgets=1
         Do not search for the Qt4/Qt5 libraries.  This will disable
@@ -140,6 +146,11 @@ different systems.
     -DCMAKE_INSTALL_MANDIR
         Set the man directory, relative to CMAKE_INSTALL_PREFIX
         (typically "man" or "share/man").
+
+    -DCMAKE_CXX_FLAGS="... -DDISABLE_SESSION_MANAGEMENT"
+        Disable the session manager interface, i.e., do not
+        automatically save and restore sessions under control of the
+        session manager.
 
 * Build:
 

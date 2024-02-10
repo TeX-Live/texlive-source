@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #if HAVE_STD_SORT
@@ -21,6 +17,7 @@
 #include "gmempp.h"
 #include "SplashMath.h"
 #include "SplashPath.h"
+#include "SplashClip.h"
 #include "SplashXPath.h"
 
 //------------------------------------------------------------------------
@@ -83,7 +80,8 @@ void SplashXPath::clampCoords(SplashCoord *x, SplashCoord *y) {
 SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
 			 SplashCoord flatness, GBool closeSubpaths,
 			 GBool simplify,
-			 SplashStrokeAdjustMode strokeAdjMode) {
+			 SplashStrokeAdjustMode strokeAdjMode,
+			 SplashClip *clip) {
   SplashXPathPoint *pts;
   SplashCoord x0, y0, x1, y1, x2, y2, x3, y3, xsp, ysp, t;
   int curSubpath, firstSegInSubpath, i;
@@ -99,7 +97,7 @@ SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
   //--- do stroke adjustment
   if (path->hints) {
     adjusted = strokeAdjust(pts, path->hints, path->hintsLength,
-			    strokeAdjMode);
+			    strokeAdjMode, clip);
   } else {
     adjusted = gFalse;
   }
@@ -227,7 +225,8 @@ SplashXPath::SplashXPath(SplashPath *path, SplashCoord *matrix,
 
 GBool SplashXPath::strokeAdjust(SplashXPathPoint *pts,
 				SplashPathHint *hints, int nHints,
-				SplashStrokeAdjustMode strokeAdjMode) {
+				SplashStrokeAdjustMode strokeAdjMode,
+				SplashClip *clip) {
   SplashXPathAdjust *adjusts, *adjust;
   SplashPathHint *hint;
   SplashCoord x0, y0, x1, y1, x2, y2, x3, y3;
@@ -237,6 +236,28 @@ GBool SplashXPath::strokeAdjust(SplashXPathPoint *pts,
   GBool adjusted;
 
   adjusted = gFalse;
+
+  // With CAD-mode stroke adjustment, and a simple rectangular clip
+  // region, stroke-adjusted edges that fall slightly outside the clip
+  // region are adjusted back inside the clip region.  This avoids
+  // problems with narrow lines in slightly mismatched clip
+  // rectangles, which appear to be generated somewhat commonly by
+  // buggy CAD software.  (Note: [clip] is NULL when called to build a
+  // clip path.)
+  GBool clipTweak = clip && clip->getIsSimple() &&
+                    strokeAdjMode == splashStrokeAdjustCAD;
+  SplashCoord cx0 = 0, cx1 = 0, cy0 = 0, cy1 = 0;
+  int cxi0 = 0, cxi1 = 0, cyi0 = 0, cyi1 = 0;
+  if (clipTweak) {
+    cx0 = clip->getXMin();
+    cx1 = clip->getXMax();
+    cy0 = clip->getYMin();
+    cy1 = clip->getYMax();
+    cxi0 = clip->getXMinI(strokeAdjMode);
+    cxi1 = clip->getXMaxI(strokeAdjMode);
+    cyi0 = clip->getYMinI(strokeAdjMode);
+    cyi1 = clip->getYMaxI(strokeAdjMode);
+  }
 
   // set up the stroke adjustment hints
   adjusts = (SplashXPathAdjust *)gmallocn(nHints, sizeof(SplashXPathAdjust));
@@ -282,6 +303,32 @@ GBool SplashXPath::strokeAdjust(SplashXPathPoint *pts,
     adjusts[i].x1a = adj1 - d;
     adjusts[i].x1b = adj1 + d;
     splashStrokeAdjust(adj0, adj1, &xi0, &xi1, strokeAdjMode, w);
+    if (clipTweak) {
+      SplashCoord c0, c1;
+      int ci0, ci1;
+      if (adjusts[i].vert) {
+	c0 = cx0;
+	c1 = cx1;
+	ci0 = cxi0;
+	ci1 = cxi1;
+      } else {
+	c0 = cy0;
+	c1 = cy1;
+	ci0 = cyi0;
+	ci1 = cyi1;
+      }
+      if (adj0 < c0 && c0 < adj1 && adj1 < c1 &&
+	  adj1 - c0 > (adj1 - adj0) * 0.2 &&
+	  xi1 <= ci0) {
+	xi0 = ci0;
+	xi1 = xi0 + 1;
+      } else if (c0 < adj0 && adj0 < c1 && c1 < adj1 &&
+		 c1 - adj0 > (adj1 - adj0) * 0.2 &&
+		 ci1 < xi0) {
+	xi0 = ci1;
+	xi1 = ci1 + 1;
+      }
+    }
     adjusts[i].x0 = (SplashCoord)xi0;
     // the "minus epsilon" thing here is needed when vector
     // antialiasing is turned off -- otherwise stroke adjusted lines

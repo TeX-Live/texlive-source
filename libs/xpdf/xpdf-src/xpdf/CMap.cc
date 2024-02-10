@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

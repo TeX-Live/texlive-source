@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "Object.h"
 #include "Function.h"
@@ -663,6 +659,7 @@ public:
     { return resDict.isDict() ? resDict.getDict() : (Dict *)NULL; }
   double *getMatrix() { return matrix; }
   Object *getContentStreamRef() { return &contentStreamRef; }
+  GBool usesBlendMode(XRef *xref);
 
 private:
 
@@ -670,6 +667,16 @@ private:
 		   double *bboxA, double xStepA, double yStepA,
 		   Object *resDictA, double *matrixA,
 		   Object *contentStreamA);
+  GBool scanResourcesForBlendMode(Object *resDict2,
+				  char *scannedObjs, XRef *xref);
+  GBool scanExtGStateForBlendMode(Object *gsObj,
+				  char *scannedObjs, XRef *xref);
+  GBool scanSoftMaskForBlendMode(Object *softMaskObj,
+				 char *scannedObjs, XRef *xref);
+  GBool scanPatternForBlendMode(Object *patternObj,
+				char *scannedObjs, XRef *xref);
+  GBool scanXObjectForBlendMode(Object *xObj,
+				char *scannedObjs, XRef *xref);
 
   int paintType;
   int tilingType;
@@ -883,7 +890,7 @@ public:
   void getTriangle(int i, double *x0, double *y0, double *color0,
 		   double *x1, double *y1, double *color1,
 		   double *x2, double *y2, double *color2);
-  void getBBox(double *xMin, double *yMin, double *xMax, double *yMax);
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA);
   void getColor(double *in, GfxColor *out);
 
 private:
@@ -923,7 +930,7 @@ public:
   int getNComps() { return nComps; }
   int getNPatches() { return nPatches; }
   GfxPatch *getPatch(int i) { return &patches[i]; }
-  void getBBox(double *xMin, double *yMin, double *xMax, double *yMax);
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA);
   void getColor(double *in, GfxColor *out);
 
 private:

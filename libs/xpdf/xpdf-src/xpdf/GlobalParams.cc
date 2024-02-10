@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -44,10 +40,12 @@
 #include "GlobalParams.h"
 
 #ifdef _WIN32
+#ifndef __GNUC__
 #  undef strcasecmp
 #  undef strncasecmp
 #  define strcasecmp _stricmp
 #  define strncasecmp _strnicmp
+#endif
 #else
 #  include <strings.h>
 #endif
@@ -105,14 +103,14 @@ static struct {
   {NULL}
 };
 
-#ifdef _WIN32
 static const char *displayFontDirs[] = {
+#ifdef BASE14_FONT_DIR
+  BASE14_FONT_DIR,
+#endif
+#ifdef _WIN32
   "c:/windows/fonts",
   "c:/winnt/fonts",
-  NULL
-};
-#else
-static const char *displayFontDirs[] = {
+#else // _WIN32
   "/usr/share/ghostscript/fonts",
   "/usr/local/share/ghostscript/fonts",
   "/usr/share/fonts/default/Type1",
@@ -121,9 +119,9 @@ static const char *displayFontDirs[] = {
 #if defined(__sun) && defined(__SVR4)
   "/usr/sfw/share/ghostscript/fonts",
 #endif
+#endif // _WIN32
   NULL
 };
-#endif
 
 #ifdef __APPLE__
 static const char *macSystemFontPath = "/System/Library/Fonts";
@@ -183,7 +181,7 @@ public:
   ~SysFontInfo();
   GString *mungeName1(GString *in);
   GString *mungeName2(GString *in);
-  void mungeName3(GString *name, GBool *bold, GBool *italic);
+  void mungeName3(GString *nameA, GBool *bold, GBool *italic);
   int match(GString *nameA);
 };
 
@@ -260,24 +258,24 @@ GString *SysFontInfo::mungeName2(GString *in) {
 
 // Remove trailing bold/italic/regular/roman tags from the name.
 // (Note: the names have already been uppercased by mungeName1/2.)
-void SysFontInfo::mungeName3(GString *name, GBool *bold, GBool *italic) {
+void SysFontInfo::mungeName3(GString *nameA, GBool *bold, GBool *italic) {
   *bold = gFalse;
   *italic = gFalse;
-  int n = name->getLength();
+  int n = nameA->getLength();
   while (1) {
-    if (n >= 4 && !strcmp(name->getCString() + n - 4, "BOLD")) {
-      name->del(n - 4, 4);
+    if (n >= 4 && !strcmp(nameA->getCString() + n - 4, "BOLD")) {
+      nameA->del(n - 4, 4);
       n -= 4;
       *bold = gTrue;
-    } else if (n >= 6 && !strcmp(name->getCString() + n - 6, "ITALIC")) {
-      name->del(n - 6, 6);
+    } else if (n >= 6 && !strcmp(nameA->getCString() + n - 6, "ITALIC")) {
+      nameA->del(n - 6, 6);
       n -= 6;
       *italic = gTrue;
-    } else if (n >= 7 && !strcmp(name->getCString() + n - 7, "REGULAR")) {
-      name->del(n - 7, 7);
+    } else if (n >= 7 && !strcmp(nameA->getCString() + n - 7, "REGULAR")) {
+      nameA->del(n - 7, 7);
       n -= 7;
-    } else if (n >= 5 && !strcmp(name->getCString() + n - 5, "ROMAN")) {
-      name->del(n - 5, 5);
+    } else if (n >= 5 && !strcmp(nameA->getCString() + n - 5, "ROMAN")) {
+      nameA->del(n - 5, 5);
       n -= 5;
     } else {
       break;
@@ -659,7 +657,7 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   base14SysFonts = new GHash(gTrue);
   sysFonts = new SysFontList();
 #if HAVE_PAPER_H
-  char *paperName;
+  const char *paperName;
   const struct paper *paperType;
   paperinit();
   if ((paperName = systempapername())) {
@@ -715,6 +713,21 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   textKeepTinyChars = gTrue;
   initialZoom = new GString("125");
   defaultFitZoom = 0;
+  zoomScaleFactor = 1;
+  zoomValues = new GList();
+  zoomValues->append(new GString("25"));
+  zoomValues->append(new GString("50"));
+  zoomValues->append(new GString("75"));
+  zoomValues->append(new GString("100"));
+  zoomValues->append(new GString("110"));
+  zoomValues->append(new GString("125"));
+  zoomValues->append(new GString("150"));
+  zoomValues->append(new GString("175"));
+  zoomValues->append(new GString("200"));
+  zoomValues->append(new GString("300"));
+  zoomValues->append(new GString("400"));
+  zoomValues->append(new GString("600"));
+  zoomValues->append(new GString("800"));
   initialDisplayMode = new GString("continuous");
   initialToolbarState = gTrue;
   initialSidebarState = gTrue;
@@ -748,6 +761,7 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   fullScreenMatteColor = new GString("#000000");
   selectionColor = new GString("#8080ff");
   reverseVideoInvertImages = gFalse;
+  allowLinksToChangeZoom = gTrue;
   launchCommand = NULL;
   movieCommand = NULL;
   defaultPrinter = NULL;
@@ -755,10 +769,15 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   mapUnknownCharNames = gFalse;
   mapExtTrueTypeFontsViaUnicode = gTrue;
   useTrueTypeUnicodeMapping = gFalse;
+  ignoreWrongSizeToUnicode = gFalse;
   droppedFonts = new GHash(gTrue);
+  separateRotatedText = gFalse;
   createDefaultKeyBindings();
   popupMenuCmds = new GList();
-  tabStateFile = appendToPath(getHomeDir(), ".xpdf.tab-state");
+#ifndef PDF_PARSER_ONLY
+  initStateFilePaths();
+#endif
+  saveSessionOnQuit = gTrue;
   savePageNumbers = gTrue;
   printCommands = gFalse;
   printStatusInfo = gFalse;
@@ -1017,6 +1036,27 @@ void GlobalParams::createDefaultKeyBindings() {
 				     xpdfKeyContextAny, "zoomFitWidth"));
 }
 
+#ifndef PDF_PARSER_ONLY
+void GlobalParams::initStateFilePaths() {
+#ifdef _WIN32
+  char path[MAX_PATH];
+  if (SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
+		       SHGFP_TYPE_CURRENT, path) != S_OK) {
+    return;
+  }
+  GString *dir = appendToPath(new GString(path), "xpdf");
+  CreateDirectoryA(dir->getCString(), NULL);
+  pagesFile = appendToPath(dir->copy(), "xpdf.pages");
+  tabStateFile = appendToPath(dir->copy(), "xpdf.tab-state");
+  sessionFile = appendToPath(dir, "xpdf.session");
+#else
+  pagesFile = appendToPath(getHomeDir(), ".xpdf.pages");
+  tabStateFile = appendToPath(getHomeDir(), ".xpdf.tab-state");
+  sessionFile = appendToPath(getHomeDir(), ".xpdf.session");
+#endif
+}
+#endif
+
 void GlobalParams::parseFile(GString *fileName, FILE *f) {
   int line;
   char buf[512];
@@ -1157,6 +1197,10 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
       parseString("initialZoom", &initialZoom, tokens, fileName, line);
     } else if (!cmd->cmp("defaultFitZoom")) {
       parseInteger("defaultFitZoom", &defaultFitZoom, tokens, fileName, line);
+    } else if (!cmd->cmp("zoomScaleFactor")) {
+      parseZoomScaleFactor(tokens, fileName, line);
+    } else if (!cmd->cmp("zoomValues")) {
+      parseZoomValues(tokens, fileName, line);
     } else if (!cmd->cmp("initialDisplayMode")) {
       parseString("initialDisplayMode", &initialDisplayMode,
 		  tokens, fileName, line);
@@ -1244,6 +1288,9 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
     } else if (!cmd->cmp("reverseVideoInvertImages")) {
       parseYesNo("reverseVideoInvertImages", &reverseVideoInvertImages,
 		 tokens, fileName, line);
+    } else if (!cmd->cmp("allowLinksToChangeZoom")) {
+      parseYesNo("allowLinksToChangeZoom", &allowLinksToChangeZoom,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("launchCommand")) {
       parseString("launchCommand", &launchCommand, tokens, fileName, line);
     } else if (!cmd->cmp("movieCommand")) {
@@ -1261,11 +1308,16 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
 		 &mapExtTrueTypeFontsViaUnicode,
 		 tokens, fileName, line);
     } else if (!cmd->cmp("useTrueTypeUnicodeMapping")) {
-      parseYesNo("useTrueTypeUnicodeMapping",
-		 &useTrueTypeUnicodeMapping,
+      parseYesNo("useTrueTypeUnicodeMapping", &useTrueTypeUnicodeMapping,
+		 tokens, fileName, line);
+    } else if (!cmd->cmp("ignoreWrongSizeToUnicode")) {
+      parseYesNo("ignoreWrongSizeToUnicode", &ignoreWrongSizeToUnicode,
 		 tokens, fileName, line);
     } else if (!cmd->cmp("dropFont")) {
       parseDropFont(tokens, fileName, line);
+    } else if (!cmd->cmp("separateRotatedText")) {
+      parseYesNo("separateRotatedText", &separateRotatedText,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("bind")) {
       parseBind(tokens, fileName, line);
     } else if (!cmd->cmp("unbind")) {
@@ -1274,6 +1326,11 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
       parsePopupMenuCmd(tokens, fileName, line);
     } else if (!cmd->cmp("tabStateFile")) {
       parseString("tabStateFile", &tabStateFile, tokens, fileName, line);
+    } else if (!cmd->cmp("sessionFile")) {
+      parseString("sessionFile", &sessionFile, tokens, fileName, line);
+    } else if (!cmd->cmp("saveSessionOnQuit")) {
+      parseYesNo("saveSessionOnQuit", &saveSessionOnQuit,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("savePageNumbers")) {
       parseYesNo("savePageNumbers", &savePageNumbers, tokens, fileName, line);
     } else if (!cmd->cmp("printCommands")) {
@@ -1973,6 +2030,59 @@ void GlobalParams::parsePopupMenuCmd(GList *tokens,
 					 cmds));
 }
 
+void GlobalParams::parseZoomScaleFactor(GList *tokens,
+					GString *fileName, int line) {
+  if (tokens->getLength() != 2) {
+    error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  GString *tok = (GString *)tokens->get(1);
+  if (tok->getLength() == 0) {
+    error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  if (tok->cmp("actual") == 0) {
+    zoomScaleFactor = -1;
+  } else {
+    for (int i = 0; i < tok->getLength(); ++i) {
+      if (!((tok->getChar(i) >= '0' && tok->getChar(i) <= '9') ||
+	    tok->getChar(i) == '.')) {
+	error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	      fileName, line);
+	return;
+      }
+    }
+    zoomScaleFactor = atof(tok->getCString());
+  }
+}
+
+void GlobalParams::parseZoomValues(GList *tokens,
+				   GString *fileName, int line) {
+  if (tokens->getLength() < 2) {
+    error(errConfig, -1, "Bad 'zoomValues' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  for (int i = 1; i < tokens->getLength(); ++i) {
+    GString *tok = (GString *)tokens->get(i);
+    for (int j = 0; j < tok->getLength(); ++j) {
+      if (tok->getChar(j) < '0' || tok->getChar(j) > '9') {
+	error(errConfig, -1, "Bad 'zoomValues' config file command ({0:t}:{1:d})",
+	      fileName, line);
+	return;
+      }
+    }
+  }
+  deleteGList(zoomValues, GString);
+  zoomValues = new GList();
+  for (int i = 1; i < tokens->getLength(); ++i) {
+    GString *tok = (GString *)tokens->get(i);
+    zoomValues->append(tok->copy());
+  }
+}
+
 void GlobalParams::parseYesNo(const char *cmdName, GBool *flag,
 			      GList *tokens, GString *fileName, int line) {
   GString *tok;
@@ -2104,6 +2214,7 @@ GlobalParams::~GlobalParams() {
   deleteGList(psResidentFontsCC, PSFontParam16);
   delete textEncoding;
   delete initialZoom;
+  deleteGList(zoomValues, GString);
   delete initialDisplayMode;
   delete initialSelectMode;
   if (paperColor) {
@@ -2130,7 +2241,9 @@ GlobalParams::~GlobalParams() {
   delete droppedFonts;
   deleteGList(keyBindings, KeyBinding);
   deleteGList(popupMenuCmds, PopupMenuCmd);
+  delete pagesFile;
   delete tabStateFile;
+  delete sessionFile;
   delete debugLogFile;
 
   cMapDirs->startIter(&iter);
@@ -2959,6 +3072,19 @@ int GlobalParams::getDefaultFitZoom() {
   return z;
 }
 
+double GlobalParams::getZoomScaleFactor() {
+  double z;
+
+  lockGlobalParams;
+  z = zoomScaleFactor;
+  unlockGlobalParams;
+  return z;
+}
+
+GList *GlobalParams::getZoomValues() {
+  return zoomValues;
+}
+
 GString *GlobalParams::getInitialDisplayMode() {
   GString *s;
 
@@ -3250,6 +3376,15 @@ GBool GlobalParams::getReverseVideoInvertImages() {
   return invert;
 }
 
+GBool GlobalParams::getAllowLinksToChangeZoom() {
+  GBool allow;
+
+  lockGlobalParams;
+  allow = allowLinksToChangeZoom;
+  unlockGlobalParams;
+  return allow;
+}
+
 GString *GlobalParams::getDefaultPrinter() {
   GString *s;
 
@@ -3295,6 +3430,15 @@ GBool GlobalParams::getUseTrueTypeUnicodeMapping() {
   return use;
 }
 
+GBool GlobalParams::getIgnoreWrongSizeToUnicode() {
+  GBool ignore;
+
+  lockGlobalParams;
+  ignore = ignoreWrongSizeToUnicode;
+  unlockGlobalParams;
+  return ignore;
+}
+
 GBool GlobalParams::isDroppedFont(const char *fontName) {
   GBool isDropped;
 
@@ -3302,6 +3446,15 @@ GBool GlobalParams::isDroppedFont(const char *fontName) {
   isDropped = droppedFonts->lookupInt(fontName) != 0;
   unlockGlobalParams;
   return isDropped;
+}
+
+GBool GlobalParams::getSeparateRotatedText() {
+  GBool sep;
+
+  lockGlobalParams;
+  sep = separateRotatedText;
+  unlockGlobalParams;
+  return sep;
 }
 
 GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
@@ -3356,6 +3509,15 @@ PopupMenuCmd *GlobalParams::getPopupMenuCmd(int idx) {
   return cmd;
 }
 
+GString *GlobalParams::getPagesFile() {
+  GString *s;
+
+  lockGlobalParams;
+  s = pagesFile->copy();
+  unlockGlobalParams;
+  return s;
+}
+
 GString *GlobalParams::getTabStateFile() {
   GString *s;
 
@@ -3365,11 +3527,29 @@ GString *GlobalParams::getTabStateFile() {
   return s;
 }
 
+GString *GlobalParams::getSessionFile() {
+  GString *s;
+
+  lockGlobalParams;
+  s = sessionFile->copy();
+  unlockGlobalParams;
+  return s;
+}
+
 GBool GlobalParams::getSavePageNumbers() {
   GBool s;
 
   lockGlobalParams;
   s = savePageNumbers;
+  unlockGlobalParams;
+  return s;
+}
+
+GBool GlobalParams::getSaveSessionOnQuit() {
+  GBool s;
+
+  lockGlobalParams;
+  s = saveSessionOnQuit;
   unlockGlobalParams;
   return s;
 }
@@ -3712,6 +3892,12 @@ void GlobalParams::setInitialZoom(char *s) {
   unlockGlobalParams;
 }
 
+void GlobalParams::setDefaultFitZoom(int z) {
+  lockGlobalParams;
+  defaultFitZoom = z;
+  unlockGlobalParams;
+}
+
 GBool GlobalParams::setEnableFreeType(char *s) {
   GBool ok;
 
@@ -3812,6 +3998,13 @@ void GlobalParams::setTabStateFile(char *tabStateFileA) {
   lockGlobalParams;
   delete tabStateFile;
   tabStateFile = new GString(tabStateFileA);
+  unlockGlobalParams;
+}
+
+void GlobalParams::setSessionFile(char *sessionFileA) {
+  lockGlobalParams;
+  delete sessionFile;
+  sessionFile = new GString(sessionFileA);
   unlockGlobalParams;
 }
 

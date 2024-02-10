@@ -9,10 +9,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 
 class GString;
@@ -110,6 +106,7 @@ private:
   void parsePI(ZxNode *par);
   GString *parseName();
   GString *parseQuotedString();
+  void parseBOM();
   void parseSpace();
   bool match(const char *s);
 

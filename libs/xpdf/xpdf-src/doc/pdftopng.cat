@@ -4,7 +4,7 @@ pdftopng(1)                 General Commands Manual                pdftopng(1)
 
 NAME
        pdftopng  - Portable Document Format (PDF) to Portable Network Graphics
-       (PNG) converter (version 4.04)
+       (PNG) converter (version 4.05)
 
 SYNOPSIS
        pdftopng [options] PDF-file PNG-root
@@ -76,6 +76,10 @@ OPTIONS
 
        -q     Don't print any messages or errors.  [config file: errQuiet]
 
+       -cfg config-file
+              Read config-file in place of ~/.xpdfrc or the system-wide config
+              file.
+
        -v     Print copyright and version information.
 
        -h     Print usage information.  (-help and --help are equivalent.)
@@ -91,17 +95,19 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The pdftopng software and documentation are copyright 1996-2022 Glyph &
+       The pdftopng software and documentation are copyright 1996-2024 Glyph &
        Cog, LLC.
 
 SEE ALSO
-       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdfimages(1), xpdfrc(5)
        http://www.xpdfreader.com/
 
 
 
-                                  18 Apr 2022                      pdftopng(1)
+                                  08 Feb 2024                      pdftopng(1)

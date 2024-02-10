@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "CharTypes.h"
 
@@ -99,6 +95,10 @@ public:
   // End a page.
   virtual void endPage() {}
 
+  // Start/end a sub-page stream (Form XObject, annotation).
+  virtual void startStream(Ref streamRef, GfxState *state) {}
+  virtual void endStream(Ref streamRef) {}
+
   //----- coordinate conversion
 
   // Convert between device and user coordinates.
@@ -147,13 +147,12 @@ public:
   virtual void updateHorizScaling(GfxState *state) {}
   virtual void updateTextPos(GfxState *state) {}
   virtual void updateTextShift(GfxState *state, double shift) {}
-  virtual void saveTextPos(GfxState *state) {}
-  virtual void restoreTextPos(GfxState *state) {}
 
   //----- path painting
   virtual void stroke(GfxState *state) {}
   virtual void fill(GfxState *state) {}
   virtual void eoFill(GfxState *state) {}
+  virtual void fillStroke(GfxState *state, GBool eo);
   virtual void tilingPatternFill(GfxState *state, Gfx *gfx, Object *strRef,
 				 int paintType, int tilingType, Dict *resDict,
 				 double *mat, double *bbox,
@@ -175,8 +174,17 @@ public:
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode code, int nBytes, Unicode *u, int uLen) {}
-  virtual void drawString(GfxState *state, GString *s) {}
+			CharCode code, int nBytes, Unicode *u, int uLen,
+			GBool fill, GBool stroke, GBool makePath) {}
+  virtual void drawString(GfxState *state, GString *s,
+			  GBool fill, GBool stroke, GBool makePath) {}
+  virtual void fillTextPath(GfxState *state) {}
+  virtual void strokeTextPath(GfxState *state) {}
+  virtual void clipToTextPath(GfxState *state) {}
+  virtual void clipToTextStrokePath(GfxState *state) {}
+  virtual void clearTextPath(GfxState *state) {}
+  virtual void addTextPathToSavedClipPath(GfxState *state) {}
+  virtual void clipToSavedClipPath(GfxState *state) {}
   virtual GBool beginType3Char(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
@@ -241,6 +249,10 @@ public:
 
   //----- links
   virtual void processLink(Link *link) {}
+
+  //----- structure tree
+  virtual void beginStructureItem(const char *tag, int mcid, Dict *dict) {}
+  virtual void endStructureItem() {}
 
 private:
 

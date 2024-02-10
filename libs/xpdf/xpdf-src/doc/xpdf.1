@@ -1,7 +1,7 @@
-.\" Copyright 1996-2022 Glyph & Cog, LLC
-.TH xpdf 1 "18 Apr 2022"
+.\" Copyright 1996-2024 Glyph & Cog, LLC
+.TH xpdf 1 "08 Feb 2024"
 .SH NAME
-xpdf \- Portable Document Format (PDF) file viewer (version 4.04)
+xpdf \- Portable Document Format (PDF) file viewer (version 4.05)
 .SH SYNOPSIS
 .B xpdf
 [options]
@@ -146,7 +146,7 @@ password.
 Open xpdf in full-screen mode, useful for presentations.
 .TP
 .BI \-remote " remote-name"
-Start Xpdf in remote server mode.  See the REMOVE SERVER MODE section.
+Start Xpdf in remote server mode.  See the REMOTE SERVER MODE section.
 .TP
 .BI \-display " display"
 Set the X display (only available with X11).
@@ -221,8 +221,9 @@ Find the next occurrence of the search string.
 Find the previous occurrence of the search string.
 .TP
 .B "find settings button"
-Display the current find settings: case sensitive (on/off), find whole
-words (on/off).
+Display the current find settings: case insensitive, case sensitive,
+smart case (case sensitive only if the search string contains
+uppercase characters), find whole words.
 .PP
 .SS Menu bar
 The menu bar is above the toolbar.  The menu items should be
@@ -564,6 +565,10 @@ Switch to horizontal continuous view mode.
 Set linear selection mode.  In this mode, the selection follows text.
 Non-text regions cannot be selected.
 .TP
+.B loadSession
+Load the session from the session save file.  The path for the session file is specified with the sessionFile setting (see
+.BR xpdfrc (5)).
+.TP
 .BI loadTabState
 Load the tab state file (which was written via the saveTabState
 command), and restore the tabs listed in that file.  The path for the
@@ -729,6 +734,13 @@ Save PDF via a file requester.
 .TP
 .B saveImage
 Open the \'save image' dialog.
+.TP
+.B saveSession
+Save the current session, consisting of all open windows and tabs, to
+the session save file.  This file can be loaded later with the
+loadSession command.  The path for the session file is specified with
+the sessionFile setting (see
+.BR xpdfrc (5)).
 .TP
 .BI saveTabState
 Save a list of all tabs open in this window to the tab state file.
@@ -948,7 +960,7 @@ Error related to PDF permissions.
 99
 Other error.
 .SH AUTHOR
-The xpdf software and documentation are copyright 1996-2022 Glyph &
+The xpdf software and documentation are copyright 1996-2024 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR pdftops (1),

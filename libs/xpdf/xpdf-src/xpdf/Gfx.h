@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "gfile.h"
 #include "GfxState.h"
@@ -106,6 +102,8 @@ private:
 enum GfxMarkedContentKind {
   gfxMCOptionalContent,
   gfxMCActualText,
+  gfxMCStructureItem,
+  gfxMCStructureItemAndActualText,
   gfxMCOther
 };
 
@@ -194,6 +192,7 @@ private:
 
   GfxState *state;		// current graphics state
   GBool fontChanged;		// set if font or text matrix has changed
+  GBool haveSavedClipPath;
   GfxClipType clip;		// do a clip?
   int ignoreUndef;		// current BX/EX nesting level
   double baseMatrix[6];		// default matrix for most recent
@@ -273,7 +272,7 @@ private:
   void opCloseEOFillStroke(Object args[], int numArgs);
   void doPatternFill(GBool eoFill);
   void doPatternStroke();
-  void doPatternText();
+  void doPatternText(GBool stroke);
   void doPatternImageMask(Object *ref, Stream *str, int width, int height,
 			  GBool invert, GBool inlineImg, GBool interpolate);
   void doTilingPatternFill(GfxTilingPattern *tPat,

@@ -3,7 +3,7 @@ xpdfrc(5)                     File Formats Manual                    xpdfrc(5)
 
 
 NAME
-       xpdfrc - configuration file for Xpdf tools (version 4.04)
+       xpdfrc - configuration file for Xpdf tools (version 4.05)
 
 DESCRIPTION
        All of the Xpdf tools read a single configuration file.
@@ -18,8 +18,8 @@ DESCRIPTION
        (pdftotext.exe, xpdf.exe, etc.)
 
        The xpdfrc file consists of a series of configuration options, one  per
-       line.   Blank  lines  and  lines  starting  with  a  '#' (comments) are
-       ignored.
+       line.   Blank  lines  and  lines starting with a '#' (comments) are ig-
+       nored.
 
        Arguments can be single-quoted or double-quoted, e.g., for  file  names
        that contain spaces ("aaa bbb", 'aaa bbb').  This quoting does not pro-
@@ -49,8 +49,8 @@ INCLUDE FILES
 GENERAL FONT CONFIGURATION
        fontFile PDF-font-name font-file
               Maps  a  PDF font, PDF-font-name, to a font for display or Post-
-              Script output.  The  font  file,  font-file,  can  be  any  type
-              allowed  in  a  PDF file.  This command can be used for 8-bit or
+              Script output.  The font file, font-file, can be  any  type  al-
+              lowed  in  a  PDF  file.   This command can be used for 8-bit or
               16-bit (CID) fonts.
 
        fontDir dir
@@ -80,8 +80,8 @@ POSTSCRIPT FONT CONFIGURATION
               When the 8-bit font PDF-font-name is used (without embedding) in
               a PDF file,  it  will  be  translated  to  the  PostScript  font
               PS-font-name,  which  is  assumed to be resident in the printer.
-              Typically, PDF-font-name and  PS-font-name  are  the  same.   By
-              default, only the Base-14 fonts are assumed to be resident.
+              Typically, PDF-font-name and PS-font-name are the same.  By  de-
+              fault, only the Base-14 fonts are assumed to be resident.
 
        psResidentFont16 PDF-font-name wMode PS-font-name encoding
               When the 16-bit (CID) font PDF-font-name with writing mode wMode
@@ -140,8 +140,8 @@ POSTSCRIPT CONTROL
               gers  are the coordinates of the lower-left and upper-right cor-
               ners of the imageable region, specified in points (with the ori-
               gin being the lower-left corner of the paper).  This defaults to
-              the full paper size;  the  psPaperSize  option  will  reset  the
-              imageable area coordinates.
+              the full paper size; the psPaperSize option will reset  the  im-
+              ageable area coordinates.
 
        psCrop yes | no
               If  set  to  "yes",  PostScript output is cropped to the CropBox
@@ -166,8 +166,8 @@ POSTSCRIPT CONTROL
        psCenter yes | no
               If  set  to yes, PDF pages smaller than the PostScript imageable
               area (after any scaling) are centered  in  the  imageable  area.
-              Otherwise,  they  are  aligned  at  the lower-left corner of the
-              imageable area.  This defaults to "yes".
+              Otherwise,  they are aligned at the lower-left corner of the im-
+              ageable area.  This defaults to "yes".
 
        psDuplex yes | no
               If set to "yes", the generated PostScript will set the  "Duplex"
@@ -187,9 +187,9 @@ POSTSCRIPT CONTROL
               of a long document.  This defaults to "no".
 
        psOPI yes | no
-              If set to "yes",  generates  PostScript  OPI  comments  for  all
-              images  and  forms  which  have OPI information.  This option is
-              only available if the Xpdf tools were compiled with OPI support.
+              If set to "yes", generates PostScript OPI comments for  all  im-
+              ages  and forms which have OPI information.  This option is only
+              available if the Xpdf tools  were  compiled  with  OPI  support.
               This defaults to "no".
 
        psASCIIHex yes | no
@@ -237,8 +237,8 @@ POSTSCRIPT CONTROL
               set to "yes", rasterization is disabled:  pages  will  never  be
               rasterized, even if they contain transparency.  This will likely
               result in incorrect output for PDF files that use  transparency,
-              and  a  warning  message  to  that effect will be printed.  This
-              defaults to "no".
+              and  a warning message to that effect will be printed.  This de-
+              faults to "no".
 
        fontDir dir
               See the description above, in the DISPLAY FONTS section.
@@ -251,8 +251,8 @@ TEXT CONTROL AND CHARACTER MAPPING
               above).  This defaults to "Latin1".
 
        textEOL unix | dos | mac
-              Sets  the  end-of-line  convention  to use for text output.  The
-              options are:
+              Sets the end-of-line convention to use for text output.  The op-
+              tions are:
 
                   unix = LF
                   dos  = CR+LF
@@ -269,8 +269,8 @@ TEXT CONTROL AND CHARACTER MAPPING
        textKeepTinyChars yes | no
               If  set  to "yes", text extraction will keep all characters.  If
               set to "no", text extraction will discard tiny (smaller  than  3
-              point)  characters  after  the  first  50000  per page, avoiding
-              extremely slow run times for PDF files that use special fonts to
+              point)  characters  after the first 50000 per page, avoiding ex-
+              tremely slow run times for PDF files that use special  fonts  to
               do shading or cross-hatching.  This defaults to "yes".
 
        nameToUnicode map-file
@@ -312,9 +312,9 @@ TEXT CONTROL AND CHARACTER MAPPING
                   in-hex out-hex1 out-hex2 ...
 
               The in-hex field is an input (incorrect) Unicode index, and  the
-              rest  of  the  fields  are  one or more output (correct) Unicode
-              indexes.  Each occurrence of in-hex will  be  converted  to  the
-              specified output sequence.
+              rest  of the fields are one or more output (correct) Unicode in-
+              dexes.  Each occurrence of in-hex will be converted to the spec-
+              ified output sequence.
 
        unicodeRemapping remap-file
               Remap Unicode characters when doing text extraction.  This spec-
@@ -344,8 +344,8 @@ TEXT CONTROL AND CHARACTER MAPPING
               The in-start-hex and in-end-hex fields  (or  the  single  in-hex
               field)  specify  the Unicode range.  The out-start-hex field (or
               the out-hex field) specifies the start of  the  output  encoding
-              range.   The  length  of  the  out-start-hex (or out-hex) string
-              determines the length of the output characters (e.g., UTF-8 uses
+              range.   The length of the out-start-hex (or out-hex) string de-
+              termines the length of the output characters (e.g.,  UTF-8  uses
               different  numbers of bytes to represent characters in different
               ranges).  Entries must be given  in  increasing  Unicode  order.
               Only  one  file is allowed per encoding; the last specified file
@@ -354,8 +354,8 @@ TEXT CONTROL AND CHARACTER MAPPING
 
        cMapDir registry-ordering dir
               Specifies  a  search  directory,  dir,  for  CMaps  for the reg-
-              istry-ordering character  collection.   There  can  be  multiple
-              directories  for  a particular collection.  There are no default
+              istry-ordering character collection.  There can be multiple  di-
+              rectories  for  a  particular  collection.  There are no default
               CMap directories.
 
        toUnicodeDir dir
@@ -364,16 +364,16 @@ TEXT CONTROL AND CHARACTER MAPPING
               ToUnicode directories.
 
        mapNumericCharNames yes | no
-              If set to "yes", the Xpdf tools  will  attempt  to  map  various
-              numeric character names sometimes used in font subsets.  In some
+              If set to "yes", the Xpdf tools will attempt to map various  nu-
+              meric  character  names sometimes used in font subsets.  In some
               cases this leads to usable text, and in other cases it leads  to
               gibberish -- there is no way for Xpdf to tell.  This defaults to
               "yes".
 
        mapUnknownCharNames yes | no
               If set to "yes", and mapNumericCharNames is  set  to  "no",  the
-              Xpdf  tools  will  apply  a simple pass-through mapping (Unicode
-              index = character code) for all unrecognized glyph names.   (For
+              Xpdf tools will apply a simple pass-through mapping (Unicode in-
+              dex = character code) for all unrecognized  glyph  names.   (For
               CID  fonts, setting mapNumericCharNames to "no" is unnecessary.)
               In some cases, this leads to usable text, and in other cases  it
               leads  to  gibberish  -- there is no way for Xpdf to tell.  This
@@ -395,6 +395,13 @@ TEXT CONTROL AND CHARACTER MAPPING
               override  the PDF ToUnicode maps.  Otherwise, the ToUnicode maps
               are always used when present.  This defaults to "no".
 
+       ignoreWrongSizeToUnicode yes | no
+              If set to "yes", Xpdf will ignore any ToUnicode CMaps that don't
+              match  the  font  type (8-bit vs 16-bit).  The PDF spec requires
+              ToUnicode CMaps match, and Adobe appears to  ignore  CMaps  that
+              don't  match.   This  defaults to "no" (for backward compatibil-
+              ity).
+
        dropFont font-name
               Drop all text drawn in the specified font.  To drop  text  drawn
               in unnamed fonts, use:
@@ -403,122 +410,140 @@ TEXT CONTROL AND CHARACTER MAPPING
 
               There can be any number of dropFont commands.
 
+       separateRotatedText yes | no
+              If  set  to  "no",  pdftotext will attempt to place rotated text
+              into the "correct" location in the output. If set to "yes", when
+              using  reading order mode, pdftotext will append rotated text to
+              the end, after unrotated text. This defaults to "no".
+
 RASTERIZER SETTINGS
        enableFreeType yes | no
-              Enables  or  disables  use of FreeType (a TrueType / Type 1 font
+              Enables or disables use of FreeType (a TrueType /  Type  1  font
               rasterizer).  This is only relevant if the Xpdf tools were built
               with  FreeType  support.   ("enableFreeType"  replaces  the  old
               "freetypeControl" option.)  This option defaults to "yes".
 
        disableFreeTypeHinting yes | no
-              If this is set to "yes", FreeType hinting will  be  forced  off.
+              If  this  is  set to "yes", FreeType hinting will be forced off.
               This option defaults to "no".
 
        antialias yes | no
-              Enables  or  disables  font anti-aliasing in the PDF rasterizer.
+              Enables or disables font anti-aliasing in  the  PDF  rasterizer.
               This option affects all font rasterizers.  ("antialias" replaces
               the anti-aliasing control provided by the old "t1libControl" and
               "freetypeControl" options.)  This default to "yes".
 
        vectorAntialias yes | no
-              Enables or disables anti-aliasing of vector graphics in the  PDF
+              Enables  or disables anti-aliasing of vector graphics in the PDF
               rasterizer.  This defaults to "yes".
 
        imageMaskAntialias yes | no
-              Enables  or disables anti-aliasing of image masks (when downsam-
-              pling or upsampling) in the PDF rasterizer.   This  defaults  to
+              Enables or disables anti-aliasing of image masks (when  downsam-
+              pling  or  upsampling)  in the PDF rasterizer.  This defaults to
               "yes".
 
        antialiasPrinting yes | no
-              If   this  is  "yes",  bitmaps  sent  to  the  printer  will  be
-              antialiased (according to the "antialias" and  "vectorAntialias"
-              settings).   If  this  is  "no",  printed  bitmaps  will  not be
-              antialiased.  This defaults to "no".
+              If this is "yes", bitmaps  sent  to  the  printer  will  be  an-
+              tialiased  (according  to  the "antialias" and "vectorAntialias"
+              settings).  If this is "no", printed bitmaps  will  not  be  an-
+              tialiased.  This defaults to "no".
 
        strokeAdjust yes | no | cad
-              Sets the stroke adjustment mode.  If  set  to  "no",  no  stroke
-              adjustment will be done.  If set to "yes", normal stroke adjust-
-              ment will be done: horizontal and vertical lines will  be  moved
-              by  up  to  half  a  pixel to make them look cleaner when vector
+              Sets  the stroke adjustment mode.  If set to "no", no stroke ad-
+              justment will be done.  If set to "yes", normal  stroke  adjust-
+              ment  will  be done: horizontal and vertical lines will be moved
+              by up to half a pixel to make  them  look  cleaner  when  vector
               anti-aliasing is enabled.  If set to "cad", a slightly different
               stroke adjustment algorithm will be used to ensure that lines of
               the same original width will always have the same adjusted width
-              (at  the  expense of allowing gaps and overlaps between adjacent
+              (at the expense of allowing gaps and overlaps  between  adjacent
               lines).  This defaults to "yes".
 
        forceAccurateTiling yes | no
-              If this is set to "yes", the TilingType is forced to 2 (no  dis-
-              tortion)  for  all tiling patterns, regardless of the setting in
+              If  this is set to "yes", the TilingType is forced to 2 (no dis-
+              tortion) for all tiling patterns, regardless of the  setting  in
               the pattern dictionary.  This defaults to "no".
 
        screenType dispersed | clustered | stochasticClustered
-              Sets the halftone screen type, which will be used when  generat-
-              ing  a  monochrome  (1-bit)  bitmap.  The three options are dis-
-              persed-dot dithering, clustered-dot dithering (with a round  dot
-              and   45-degree  screen  angle),  and  stochastic  clustered-dot
-              dithering.  By default, "stochasticClustered" is used for  reso-
+              Sets  the halftone screen type, which will be used when generat-
+              ing a monochrome (1-bit) bitmap.  The  three  options  are  dis-
+              persed-dot  dithering, clustered-dot dithering (with a round dot
+              and  45-degree  screen  angle),  and  stochastic   clustered-dot
+              dithering.   By default, "stochasticClustered" is used for reso-
               lutions of 300 dpi and higher, and "dispersed" is used for reso-
               lutions lower then 300 dpi.
 
        screenSize integer
-              Sets the size of the (square) halftone screen threshold  matrix.
-              By  default, this is 4 for dispersed-dot dithering, 10 for clus-
-              tered-dot  dithering,  and  100  for  stochastic   clustered-dot
+              Sets  the size of the (square) halftone screen threshold matrix.
+              By default, this is 4 for dispersed-dot dithering, 10 for  clus-
+              tered-dot   dithering,  and  100  for  stochastic  clustered-dot
               dithering.
 
        screenDotRadius integer
-              Sets  the  halftone  screen  dot radius.  This is only used when
-              screenType is set to stochasticClustered, and it defaults to  2.
-              In  clustered-dot  mode,  the  dot  radius is half of the screen
+              Sets the halftone screen dot radius.  This  is  only  used  when
+              screenType  is set to stochasticClustered, and it defaults to 2.
+              In clustered-dot mode, the dot radius  is  half  of  the  screen
               size.  Dispersed-dot dithering doesn't have a dot radius.
 
        screenGamma float
               Sets the halftone screen gamma correction parameter.  Gamma val-
-              ues  greater  than 1 make the output brighter; gamma values less
+              ues greater than 1 make the output brighter; gamma  values  less
               than 1 make it darker.  The default value is 1.
 
        screenBlackThreshold float
-              When halftoning, all values below this threshold are  forced  to
+              When  halftoning,  all values below this threshold are forced to
               solid black.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 0.
 
        screenWhiteThreshold float
-              When halftoning, all values above this threshold are  forced  to
+              When  halftoning,  all values above this threshold are forced to
               solid white.  This parameter is a floating point value between 0
               (black) and 1 (white).  The default value is 1.
 
        minLineWidth float
-              Set the minimum line width, in device pixels.  This affects  the
-              rasterizer  only,  not  the PostScript converter (except when it
-              uses rasterization to handle transparency).  The  default  value
+              Set  the minimum line width, in device pixels.  This affects the
+              rasterizer only, not the PostScript converter  (except  when  it
+              uses  rasterization  to handle transparency).  The default value
               is 0 (no minimum).
 
        enablePathSimplification yes | no
-              If  set  to  "yes",  simplify  paths by removing points where it
-              won't make a significant difference to the shape.   The  default
+              If set to "yes", simplify paths  by  removing  points  where  it
+              won't  make  a significant difference to the shape.  The default
               value is "no".
 
        overprintPreview yes | no
               If set to "yes", generate overprint preview output, honoring the
-              OP/op/OPM settings in the PDF file.  Ignored for  non-CMYK  out-
+              OP/op/OPM  settings  in the PDF file.  Ignored for non-CMYK out-
               put.  The default value is "no".
 
 VIEWER SETTINGS
        These settings only apply to the Xpdf GUI PDF viewer.
 
        initialZoom percentage | page | width
-              Sets  the  initial  zoom factor.  A number specifies a zoom per-
-              centage, where 100 means 72 dpi.  You may also  specify  'page',
-              to  fit the page to the window size, or 'width', to fit the page
+              Sets the initial zoom factor.  A number specifies  a  zoom  per-
+              centage,  where  100 means 72 dpi.  You may also specify 'page',
+              to fit the page to the window size, or 'width', to fit the  page
               width to the window width.
 
        defaultFitZoom percentage
               If xpdf is started with fit-page or fit-width zoom and no window
-              geometry,  it  will calculate a desired window size based on the
-              PDF page size and this defaultFitZoom value.  I.e.,  the  window
-              size  will  be chosen such that exactly one page will fit in the
-              window at this zoom factor (which must be  a  percentage).   The
+              geometry, it will calculate a desired window size based  on  the
+              PDF  page  size and this defaultFitZoom value.  I.e., the window
+              size will be chosen such that exactly one page will fit  in  the
+              window  at  this  zoom factor (which must be a percentage).  The
               default value is based on the screen resolution.
+
+       zoomScaleFactor ratio | actual
+              Zoom percentages will be scaled by  this  factor.   By  default,
+              100% zoom corresponds to 72 dpi.  Setting zoomScaleFactor to 1.5
+              will make 100% zoom 1.5x larger, i.e., 108dpi.  If this  is  set
+              to 'actual', the zoom scale factor will be computed based on the
+              screen resolution. The default value is 1.0.
+
+       zoomValues zoom1 zoom2 zoom3 ...
+              Sets the list of zoom values (percentages) displayed in the zoom
+              combo  box.   The  default list is: 25 50 75 100 110 125 150 175
+              200 300 400 600 800.
 
        initialDisplayMode single | continuous | sideBySideSingle | sideBySide-
        Continuous | horizontalContinuous
@@ -530,23 +555,23 @@ VIEWER SETTINGS
               "no", xpdf opens with the toolbar hidden.  The default is "yes".
 
        initialSidebarState yes | no
-              If set to "yes", xpdf opens with  the  sidebar  (tabs,  outline,
-              etc.)   visible.   If  set  to "no", xpdf opens with the sidebar
+              If  set  to  "yes",  xpdf opens with the sidebar (tabs, outline,
+              etc.)  visible.  If set to "no", xpdf  opens  with  the  sidebar
               collapsed.  The default is "yes".
 
        initialSidebarWidth width
-              Sets the initial sidebar width, in pixels.  This is  only  rele-
-              vant  if  initialSidebarState  is  "yes".   The default value is
+              Sets  the  initial sidebar width, in pixels.  This is only rele-
+              vant if initialSidebarState is  "yes".   The  default  value  is
               zero, which tells xpdf to use an internal default size.
 
        initialSelectMode block | linear
-              Sets the initial selection mode.  The default setting  is  "lin-
+              Sets  the  initial selection mode.  The default setting is "lin-
               ear".
 
        paperColor color
               Set the "paper color", i.e., the background of the page display.
-              The color can be #RRGGBB (hexadecimal) or a named  color.   This
-              option  will  not  work  well with PDF files that do things like
+              The  color  can be #RRGGBB (hexadecimal) or a named color.  This
+              option will not work well with PDF files  that  do  things  like
               filling in white behind the text.
 
        matteColor color
@@ -555,7 +580,7 @@ VIEWER SETTINGS
               a named color.
 
        fullScreenMatteColor color
-              Set the matte color for full-screen  mode.   The  color  can  be
+              Set  the  matte  color  for  full-screen mode.  The color can be
               #RRGGBB (hexadecimal) or a named color.
 
        selectionColor color
@@ -563,14 +588,14 @@ VIEWER SETTINGS
               or a named color.
 
        reverseVideoInvertImages yes | no
-              If set to "no", xpdf's reverse-video mode inverts text and  vec-
-              tor  graphic  content,  but  not  images.  If set to "yes", xpdf
-              inverts images as well.  The default is "no".
+              If  set to "no", xpdf's reverse-video mode inverts text and vec-
+              tor graphic content, but not images.  If set to "yes", xpdf  in-
+              verts images as well.  The default is "no".
 
        popupMenuCmd title command ...
-              Add a command to the popup menu.  Title is the text to  be  dis-
-              played  in  the  menu.  Command is an Xpdf command (see the COM-
-              MANDS section of the xpdf(1) man page  for  details).   Multiple
+              Add  a  command to the popup menu.  Title is the text to be dis-
+              played in the menu.  Command is an Xpdf command  (see  the  COM-
+              MANDS  section  of  the xpdf(1) man page for details).  Multiple
               commands are separated by whitespace.
 
        maxTileWidth pixels
@@ -578,16 +603,22 @@ VIEWER SETTINGS
               ing pages.  This defaults to 1500.
 
        maxTileHeight pixels
-              Set the maximum height of tiles to be used by xpdf when  raster-
+              Set  the maximum height of tiles to be used by xpdf when raster-
               izing pages.  This defaults to 1500.
 
        tileCacheSize tiles
-              Set  the  maximum number of tiles to be cached by xpdf when ras-
+              Set the maximum number of tiles to be cached by xpdf  when  ras-
               terizing pages.  This defaults to 10.
 
        workerThreads numThreads
               Set the number of worker threads to be used by xpdf when raster-
               izing pages.  This defaults to 1.
+
+       allowLinksToChangeZoom yes | no
+              PDF links, including outline  items,  can  include  a  new  zoom
+              level.   If  this  setting  is "yes", Xpdf changes the zoom when
+              links are clicked; if "no", Xpdf moves to  the  destination  but
+              does not change the zoom.  This defaults to "yes".
 
        launchCommand command
               Sets  the  command  executed  when  you click on a "launch"-type
@@ -676,7 +707,19 @@ VIEWER SETTINGS
 
        tabStateFile path
               Sets the file used by the loadTabState and saveTabState commands
-              (see the xpdf(1) man page for more information).
+              (see the xpdf(1) man page for more  information).   The  default
+              path is ~/.xpdf.tabstate.
+
+       sessionFile path
+              Sets  the  file used by the saveSession and loadSession commands
+              (see the xpdf(1) man page for more  information).   The  default
+              path is ~/.xpdf.session.  When xpdf automatically saves the ses-
+              sion via a session manager, it appends ".managed" to the path.
+
+       saveSessionOnQuit yes | no
+              If set to "yes", xpdf will automatically save the  current  ses-
+              sion  (equivalent to the saveSession command) when quitting (via
+              the menu or a key binding).  The default value is "yes".
 
 MISCELLANEOUS SETTINGS
        drawAnnotations yes | no
@@ -773,7 +816,7 @@ FILES
               read in place of the system-wide file.
 
 AUTHOR
-       The  Xpdf  software  and  documentation are copyright 1996-2022 Glyph &
+       The  Xpdf  software  and  documentation are copyright 1996-2024 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -783,4 +826,4 @@ SEE ALSO
 
 
 
-                                  18 Apr 202                         xpdfrc(5)
+                                  08 Feb 2024                        xpdfrc(5)

@@ -4,7 +4,7 @@ pdftops(1)                  General Commands Manual                 pdftops(1)
 
 NAME
        pdftops  - Portable Document Format (PDF) to PostScript converter (ver-
-       sion 4.04)
+       sion 4.05)
 
 SYNOPSIS
        pdftops [options] [PDF-file [PS-file]]
@@ -40,8 +40,8 @@ OPTIONS
               Generate Level 1 PostScript.   The  resulting  PostScript  files
               will  be significantly larger (if they contain images), but will
               print on Level 1 printers.  This also  converts  all  images  to
-              black  and  white.   No  more  than  one of the PostScript level
-              options  (-level1,  -level1sep,  -level2,  -level2sep,  -level3,
+              black  and  white.  No more than one of the PostScript level op-
+              tions  (-level1,  -level1sep,  -level2,   -level2sep,   -level3,
               -level3sep) may be given.  [config file: psLevel]
 
        -level1sep
@@ -147,8 +147,8 @@ OPTIONS
               maller]
 
        -noshrink
-              Don't scale PDF pages which  are  larger  than  the  paper.   By
-              default, pages larger than the paper are shrunk to fit.  [config
+              Don't scale PDF pages which are larger than the paper.   By  de-
+              fault,  pages  larger than the paper are shrunk to fit.  [config
               file: psShrinkLarger]
 
        -nocenter
@@ -162,8 +162,8 @@ OPTIONS
               Box is used as the page size.  [config file: psUseCropBoxAsPage]
 
        -userunit
-              Honor  the  UserUnit  settings  on  PDF  pages  when   computing
-              page/paper size.  By default, pdftops ignores UserUnit.
+              Honor the UserUnit settings on PDF pages when computing page/pa-
+              per size.  By default, pdftops ignores UserUnit.
 
        -duplex
               Set  the  Duplex  pagedevice entry in the PostScript file.  This
@@ -202,10 +202,12 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The pdftops software and documentation are copyright 1996-2022 Glyph  &
+       The pdftops software and documentation are copyright 1996-2024 Glyph  &
        Cog, LLC.
 
 SEE ALSO
@@ -215,4 +217,4 @@ SEE ALSO
 
 
 
-                                  18 Apr 2022                       pdftops(1)
+                                  08 Feb 2024                       pdftops(1)

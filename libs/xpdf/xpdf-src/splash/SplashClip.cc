@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include "gmem.h"
@@ -210,7 +206,7 @@ SplashError SplashClip::clipToPath(SplashPath *path, SplashCoord *matrix,
 
   xPath = new SplashXPath(path, matrix, flatness, gTrue,
 			  enablePathSimplification,
-			  strokeAdjust);
+			  strokeAdjust, NULL);
 
   // check for an empty path
   if (xPath->length == 0) {

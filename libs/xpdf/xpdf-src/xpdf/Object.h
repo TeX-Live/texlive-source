@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include "gtypes.h"
@@ -71,7 +67,7 @@ enum ObjType {
 // Object
 //------------------------------------------------------------------------
 
-#ifdef DEBUG_MEM
+#ifdef DEBUG_OBJECT_MEM
 #  if MULTITHREADED
 #    define initObj(t) gAtomicIncrement(&numAlloc[type = t])
 #  else
@@ -216,7 +212,7 @@ private:
     char *cmd;			//   command
   };
 
-#ifdef DEBUG_MEM
+#ifdef DEBUG_OBJECT_MEM
 #if MULTITHREADED
   static GAtomicCounter		// number of each type of object
     numAlloc[numObjTypes];	//   currently allocated

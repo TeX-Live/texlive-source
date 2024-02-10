@@ -1,8 +1,8 @@
-.\" Copyright 1999-2022 Glyph & Cog, LLC
-.TH pdfinfo 1 "18 Apr 2022"
+.\" Copyright 1999-2024 Glyph & Cog, LLC
+.TH pdfinfo 1 "08 Feb 2024"
 .SH NAME
 pdfinfo \- Portable Document Format (PDF) document information
-extractor (version 4.04)
+extractor (version 4.05)
 .SH SYNOPSIS
 .B pdfinfo
 [options]
@@ -63,7 +63,10 @@ page size and rotation
 file size
 .RE
 .RS
-linearized (yes/no)
+optimized (aka linearized) (yes/no)
+.RE
+.RS
+uses JavaScript (yes/no)
 .RE
 .RS
 PDF version
@@ -102,6 +105,9 @@ the PDF file's Catalog object.)
 .TP
 .B \-rawdates
 Prints the raw (undecoded) date strings, directly from the PDF file.
+.TP
+.B \-custom
+Prints any custom (non-standard) entries in the \'Info' dictionary.
 .TP
 .BI \-enc " encoding-name"
 Sets the encoding to use for text output.  The
@@ -147,10 +153,13 @@ Error opening an output file.
 3
 Error related to PDF permissions.
 .TP
+98
+Out of memory.
+.TP
 99
 Other error.
 .SH AUTHOR
-The pdfinfo software and documentation are copyright 1996-2022 Glyph &
+The pdfinfo software and documentation are copyright 1996-2024 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

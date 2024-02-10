@@ -3,7 +3,7 @@ xpdf(1)                     General Commands Manual                    xpdf(1)
 
 
 NAME
-       xpdf - Portable Document Format (PDF) file viewer (version 4.04)
+       xpdf - Portable Document Format (PDF) file viewer (version 4.05)
 
 SYNOPSIS
        xpdf [options] [PDF-file [:page | +dest]] ...
@@ -45,12 +45,12 @@ CONFIGURATION FILE
        Xpdf reads a configuration file at startup.  It first tries to find the
        user's private config file, ~/.xpdfrc.  If that doesn't exist, it looks
        for a system-wide config file, typically /etc/xpdfrc (but this location
-       can be changed when xpdf is built).  See the  xpdfrc(5)  man  page  for
-       details.
+       can be changed when xpdf is built).  See the xpdfrc(5) man page for de-
+       tails.
 
 OPTIONS
-       The  following  command  line  options are available.  All command line
-       options must come before any PDF files to be opened.
+       The following command line options are available.  All command line op-
+       tions must come before any PDF files to be opened.
 
        Many of the options can be set with configuration file commands.  These
        are listed in square brackets with the description of the corresponding
@@ -124,7 +124,7 @@ OPTIONS
               Open xpdf in full-screen mode, useful for presentations.
 
        -remote remote-name
-              Start Xpdf in remote server mode.  See the  REMOVE  SERVER  MODE
+              Start Xpdf in remote server mode.  See the  REMOTE  SERVER  MODE
               section.
 
        -display display
@@ -194,53 +194,54 @@ CONTROLS
               Find the previous occurrence of the search string.
 
        find settings button
-              Display the current find settings: case sensitive (on/off), find
-              whole words (on/off).
+              Display the current find settings: case insensitive, case sensi-
+              tive,  smart case (case sensitive only if the search string con-
+              tains uppercase characters), find whole words.
 
    Menu bar
-       The  menu  bar  is  above  the toolbar.  The menu items should be self-
-       explanatory.
+       The menu bar is above the toolbar.  The menu items should  be  self-ex-
+       planatory.
 
    Tab list
        The tab list is on the left, just below the toolbar.  It lists all open
        tabs.
 
    Outline/layers/attachments pane
-       This  pane is on the left, below the tab list.  The popup allows you to
+       This pane is on the left, below the tab list.  The popup allows you  to
        select from outline, layers, or attachments.
 
-       The outline is a tree-like structure of bookmarks  that  allows  moving
+       The  outline  is  a tree-like structure of bookmarks that allows moving
        within the PDF file.  Not all PDF files have outlines.
 
-       Layers  (a.k.a.  optional content) allow parts of the PDF content to be
+       Layers (a.k.a. optional content) allow parts of the PDF content  to  be
        shown or hidden.  Not all PDF files have layers.
 
-       Attachments are other files embedded within the PDF file.  There  is  a
-       'save'  button  for each attached file.  Not all PDF files have attach-
+       Attachments  are  other files embedded within the PDF file.  There is a
+       'save' button for each attached file.  Not all PDF files  have  attach-
        ments.
 
    Text selection
-       In block selection mode, dragging the mouse with the left  button  held
+       In  block  selection mode, dragging the mouse with the left button held
        down will highlight an arbitrary rectangle.  Shift-clicking will extend
        the selection.
 
-       In linear selection mode, dragging with the left button will  highlight
-       text  in reading order.  Double-clicking or triple-clicking will select
-       a word or a line, respectively.  Shift-clicking will extend the  selec-
+       In  linear selection mode, dragging with the left button will highlight
+       text in reading order.  Double-clicking or triple-clicking will  select
+       a  word or a line, respectively.  Shift-clicking will extend the selec-
        tion.
 
-       Selected  text  can be copied to the clipboard (with the edit/copy menu
+       Selected text can be copied to the clipboard (with the  edit/copy  menu
        item).  On X11, selected text will be available in the X selection buf-
        fer.
 
    Links
-       When  the mouse is over a hyperlink, the link target will be shown in a
+       When the mouse is over a hyperlink, the link target will be shown in  a
        popup near the bottom of the window.
 
        Clicking on a hyperlink will jump to the link's destination.  A link to
-       another  PDF  document  will  make xpdf load that document.  A 'launch'
-       link to an executable program will display a dialog, and if  you  click
-       'ok',  execute the program.  URL links are opened in a system-dependent
+       another PDF document will make xpdf load  that  document.   A  'launch'
+       link  to  an executable program will display a dialog, and if you click
+       'ok', execute the program.  URL links are opened in a  system-dependent
        way.  (On UNIX, Qt uses the $BROWSER environment variable.)
 
    Mouse bindings
@@ -250,19 +251,19 @@ CONTROLS
 
        Dragging the mouse with the middle button held down pans the window.
 
-       The right  mouse  button  opens  a  popup  menu  (see  popupMenuCmd  in
+       The  right  mouse  button  opens  a  popup  menu  (see  popupMenuCmd in
        xpdfrc(5)).
 
    Key bindings
-       This  section  lists the default key bindings.  Bindings can be changed
+       This section lists the default key bindings.  Bindings can  be  changed
        using the config file (see xpdfrc(5)).
 
        control-o
               Open a new PDF file via a file requester.
 
        control-r
-              Reload the current PDF file.  Note that  Xpdf  will  reload  the
-              file  automatically  (on  a  page  change  or  redraw) if it has
+              Reload  the  current  PDF  file.  Note that Xpdf will reload the
+              file automatically (on a  page  change  or  redraw)  if  it  has
               changed since it was last loaded.
 
        control-f
@@ -296,8 +297,8 @@ CONTROLS
               Open a new window.
 
        control-w
-              Close the current tab.  Closes the window if this was  the  last
-              open  tab.  Quits the application if this was the last open win-
+              Close  the  current tab.  Closes the window if this was the last
+              open tab.  Quits the application if this was the last open  win-
               dow.
 
        control-l
@@ -332,11 +333,11 @@ CONTROLS
               Go to the last page.
 
        <space> or <PageDown>
-              Scroll down on the current page; if already at bottom,  move  to
+              Scroll  down  on the current page; if already at bottom, move to
               next page.
 
        control-<PageDown> or control-<down-arrow>
-              Go  to the next page.  If <ScrollLock> is active, this maintains
+              Go to the next page.  If <ScrollLock> is active, this  maintains
               the relative position on the page.
 
        <PageUp>
@@ -344,7 +345,7 @@ CONTROLS
               ous page.
 
        control-<PageUp> or control-<up-arrow>
-              Go  to the previous page.  If <ScrollLock> is active, this main-
+              Go to the previous page.  If <ScrollLock> is active, this  main-
               tains the relative position on the page.
 
        <esc>  Exit full-screen mode.
@@ -358,26 +359,26 @@ CONTROLS
        w      Set the zoom factor to 'width' (fit page width to window).
 
 Full-screen mode
-       Xpdf can be placed into full-screen mode via  the  -fullscreen  command
-       line  option,  the  'full  screen'  menu  item,  or  a  binding  to the
+       Xpdf  can  be  placed into full-screen mode via the -fullscreen command
+       line option,  the  'full  screen'  menu  item,  or  a  binding  to  the
        fullScreenMode or toggleFullScreenMode command.
 
-       Entering full-screen mode automatically switches  to  single-page  view
+       Entering  full-screen  mode  automatically switches to single-page view
        mode and to the fit-page zoom factor.
 
-       Full-screen  mode  can  be exited via the default <esc> key binding, or
+       Full-screen mode can be exited via the default <esc>  key  binding,  or
        via a binding to the windowMode or toggleFullScreenModecommand.
 
 COMMANDS
        Xpdf's key and mouse bindings are user-configurable, using the bind and
-       unbind  commands  in the config file (see xpdfrc(5)).  The bind command
-       allows you to bind a key or mouse button to a sequence of one  or  more
+       unbind commands in the config file (see xpdfrc(5)).  The  bind  command
+       allows  you  to bind a key or mouse button to a sequence of one or more
        commands.
 
-       In  commands  that take arguments (inside parentheses), special charac-
-       ters (namely '(', ')', ',', and '\x01') can  be  escaped  by  preceding
-       them  with  a  '\x01'  character.  This is mostly useful in things like
-       scripts that need to be able to open arbitrary  PDF  files,  using  the
+       In commands that take arguments (inside parentheses),  special  charac-
+       ters  (namely  '(',  ')',  ',', and '\x01') can be escaped by preceding
+       them with a '\x01' character.  This is mostly  useful  in  things  like
+       scripts  that  need  to  be able to open arbitrary PDF files, using the
        'openFile' command.
 
        The following commands are supported:
@@ -393,11 +394,11 @@ COMMANDS
               Check that file is open in the current tab, and open it if not.
 
        checkOpenFileAtDest(file,dest)
-              Check  that file is open in the current tab, and open it if not.
+              Check that file is open in the current tab, and open it if  not.
               In either case go to the specified named destination.
 
        checkOpenFileAtPage(file,page)
-              Check that file is open in the current tab, and open it if  not.
+              Check  that file is open in the current tab, and open it if not.
               In either case go to the specified page.
 
        closeSidebar
@@ -425,7 +426,7 @@ COMMANDS
        copy   Copy selected text to the clipboard.
 
        copyLinkTarget
-              Copy  the target of the link under the mouse cursor to the clip-
+              Copy the target of the link under the mouse cursor to the  clip-
               board.
 
        endPan End a pan operation.
@@ -455,30 +456,30 @@ COMMANDS
               Set keyboard focus to the page number text box.
 
        followLink
-              Follow  a  hyperlink  (does  nothing  if the mouse is not over a
+              Follow a hyperlink (does nothing if the  mouse  is  not  over  a
               link).
 
        followLinkInNewTab
               Follow a hyperlink, opening PDF files in a new tab (does nothing
-              if  the  mouse is not over a link).  For links to non-PDF files,
+              if the mouse is not over a link).  For links to  non-PDF  files,
               this command is identical to followLink.
 
        followLinkInNewTabNoSel
-              Same as followLinkInNewTab, but does nothing if there is a  non-
+              Same  as followLinkInNewTab, but does nothing if there is a non-
               empty selection.  (This is useful as a mouse button binding.)
 
        followLinkInNewWin
-              Follow  a  hyperlink,  opening  PDF  files in a new window (does
-              nothing if the mouse is not over a link).  For links to  non-PDF
+              Follow a hyperlink, opening PDF files  in  a  new  window  (does
+              nothing  if the mouse is not over a link).  For links to non-PDF
               files, this command is identical to followLink.
 
        followLinkInNewWinNoSel
-              Same  as followLinkInNewWin, but does nothing if there is a non-
+              Same as followLinkInNewWin, but does nothing if there is a  non-
               empty selection.  (This is useful as a mouse button binding.)
 
        followLinkNoSel
-              Same as followLink, but does nothing if  there  is  a  non-empty
-              selection.  (This is useful as a mouse button binding.)
+              Same as followLink, but does nothing if there is a non-empty se-
+              lection.  (This is useful as a mouse button binding.)
 
        fullScreenMode
               Go to full-screen mode.
@@ -510,13 +511,18 @@ COMMANDS
               Switch to horizontal continuous view mode.
 
        linearSelectMode
-              Set  linear selection mode.  In this mode, the selection follows
+              Set linear selection mode.  In this mode, the selection  follows
               text.  Non-text regions cannot be selected.
 
+       loadSession
+              Load  the  session from the session save file.  The path for the
+              session file is specified  with  the  sessionFile  setting  (see
+              xpdfrc(5)).
+
        loadTabState
-              Load the tab state file (which was written via the  saveTabState
-              command),  and  restore  the tabs listed in that file.  The path
-              for the tab state file is specified with the  tabStateFile  set-
+              Load  the tab state file (which was written via the saveTabState
+              command), and restore the tabs listed in that  file.   The  path
+              for  the  tab state file is specified with the tabStateFile set-
               ting (see xpdfrc(5)).
 
        newTab Open an empty new tab.
@@ -543,26 +549,26 @@ COMMANDS
 
        openFile2(file,page,dest,passwd,location)
               Open the specified file.  If dest is not empty, go to the speci-
-              fied named destination.  Else, if page is not empty, go  to  the
-              specified  page number.  If password is not empty, it is used as
-              the PDF password.  If location is "win", open the file in a  new
-              window;  if  it  is  "tab", open in a new tab; if it is "check",
-              open in the current tab, but only  if  the  specified  PDF  file
-              isn't  already  open;  else open in the current tab.  Any/all of
+              fied  named  destination.  Else, if page is not empty, go to the
+              specified page number.  If password is not empty, it is used  as
+              the  PDF password.  If location is "win", open the file in a new
+              window; if it is "tab", open in a new tab;  if  it  is  "check",
+              open  in  the  current  tab,  but only if the specified PDF file
+              isn't already open; else open in the current  tab.   Any/all  of
               the arguments, other than file, can be empty strings.  For exam-
               ple:
               openFile2(test.pdf,7,,,tab)
 
        openFileAtDest(file,dest)
-              Open  the  specified  file  in  the current tab at the specified
+              Open the specified file in the  current  tab  at  the  specified
               named destination.
 
        openFileAtDestIn(file,dest,location)
-              Open the specified file  at  the  specified  named  destination.
-              Location must be "win" for a new window or "tab" for a new tab.
+              Open the specified file at the specified named destination.  Lo-
+              cation must be "win" for a new window or "tab" for a new tab.
 
        openFileAtPage(file,page)
-              Open  the  specified  file  in  the current tab at the specified
+              Open the specified file in the  current  tab  at  the  specified
               page.
 
        openFileAtPageIn(file,page,location)
@@ -570,23 +576,23 @@ COMMANDS
               "win" for a new window or "tab" for a new tab.
 
        openFileIn(file,location)
-              Open  the specified file.  Location must be "win" for a new win-
+              Open the specified file.  Location must be "win" for a new  win-
               dow or "tab" for a new tab.
 
        openIn(location)
-              Open a PDF file, using the open dialog.  Location must be  "win"
+              Open  a PDF file, using the open dialog.  Location must be "win"
               for a new window or "tab" for a new tab.
 
        openSidebar
               Open the sidebar.
 
        openSidebarMoveResizeWin
-              Open  the sidebar, resizing the window so that the document size
+              Open the sidebar, resizing the window so that the document  size
               doesn't change, and moving the window so that the document stays
               in the same place on the screen.
 
        openSidebarResizeWin
-              Open  the sidebar, resizing the window so that the document size
+              Open the sidebar, resizing the window so that the document  size
               doesn't change.
 
        pageDown
@@ -601,7 +607,7 @@ COMMANDS
               Go to the previous page.
 
        prevPageNoScroll
-              Go to the previous page, with the current relative scroll  posi-
+              Go  to the previous page, with the current relative scroll posi-
               tion.
 
        prevTab
@@ -622,7 +628,7 @@ COMMANDS
               Rotate the page 90 degrees clockwise.
 
        run(external-command-string)
-              Run  an  external command.  The following escapes are allowed in
+              Run an external command.  The following escapes are  allowed  in
               the command string:
 
                   %f => PDF file name (or an empty string if no
@@ -647,20 +653,26 @@ COMMANDS
                   %k => y coordinate of the mouse pointer
                   %% => %
 
-              The external command string will often contain  spaces,  so  the
+              The  external  command  string will often contain spaces, so the
               whole command must be quoted in the xpdfrc file:
 
                   bind x "run(ls -l)"
 
               The command string may not be run through a shell.  It is recom-
-              mended to keep the command simple, so that it doesn't depend  on
-              specific  shell functionality.  For complex things, you can have
+              mended  to keep the command simple, so that it doesn't depend on
+              specific shell functionality.  For complex things, you can  have
               the command string run a shell script.
 
        saveAs Save PDF via a file requester.
 
        saveImage
               Open the 'save image' dialog.
+
+       saveSession
+              Save  the  current  session,  consisting of all open windows and
+              tabs, to the session save file.  This file can be  loaded  later
+              with  the loadSession command.  The path for the session file is
+              specified with the sessionFile setting (see xpdfrc(5)).
 
        saveTabState
               Save a list of all tabs open in this window  to  the  tab  state
@@ -858,7 +870,7 @@ EXIT CODES
        99     Other error.
 
 AUTHOR
-       The  xpdf  software  and  documentation are copyright 1996-2022 Glyph &
+       The  xpdf  software  and  documentation are copyright 1996-2024 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -868,4 +880,4 @@ SEE ALSO
 
 
 
-                                  18 Apr 2022                          xpdf(1)
+                                  08 Feb 2024                          xpdf(1)

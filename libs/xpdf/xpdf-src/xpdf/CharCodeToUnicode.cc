@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include "gmem.h"
@@ -274,7 +270,18 @@ GBool CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
   pst = new PSTokenizer(getCharFunc, data);
   pst->getToken(tok1, sizeof(tok1), &n1);
   while (pst->getToken(tok2, sizeof(tok2), &n2)) {
-    if (!strcmp(tok2, "usecmap")) {
+    if (!strcmp(tok1, "begincodespacerange")) {
+      if (globalParams->getIgnoreWrongSizeToUnicode() &&
+	  tok2[0] == '<' && tok2[n2 - 1] == '>' &&
+	  n2 - 2 != nBits / 4) {
+	error(errSyntaxWarning, -1,
+	      "Incorrect character size in ToUnicode CMap");
+	ok = gFalse;
+	break;
+      }
+      while (pst->getToken(tok1, sizeof(tok1), &n1) &&
+	     strcmp(tok1, "endcodespacerange")) ;
+    } else if (!strcmp(tok2, "usecmap")) {
       if (tok1[0] == '/') {
 	name = new GString(tok1 + 1);
 	if ((f = globalParams->findToUnicodeFile(name))) {
@@ -465,6 +472,7 @@ GBool CharCodeToUnicode::parseCMap1(int (*getCharFunc)(void *), void *data,
       pst->getToken(tok1, sizeof(tok1), &n1);
     } else {
       strcpy(tok1, tok2);
+      n1 = n2;
     }
   }
   delete pst;

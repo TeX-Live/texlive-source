@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -133,7 +129,7 @@ public:
 
   // Create an object stream, using object number <objStrNum>,
   // generation 0.
-  ObjectStream(XRef *xref, int objStrNumA);
+  ObjectStream(XRef *xref, int objStrNumA, int recursion);
 
   GBool isOk() { return ok; }
 
@@ -155,7 +151,7 @@ private:
   GBool ok;
 };
 
-ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
+ObjectStream::ObjectStream(XRef *xref, int objStrNumA, int recursion) {
   Stream *str;
   Lexer *lexer;
   Parser *parser;
@@ -169,7 +165,7 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   objNums = NULL;
   ok = gFalse;
 
-  if (!xref->fetch(objStrNum, 0, &objStr)->isStream()) {
+  if (!xref->fetch(objStrNum, 0, &objStr, recursion)->isStream()) {
     goto err1;
   }
 
@@ -234,11 +230,10 @@ ObjectStream::ObjectStream(XRef *xref, int objStrNumA) {
   lexer->skipToEOF();
   delete parser;
 
-  // skip to the first object - this shouldn't be necessary because
-  // the First key is supposed to be equal to offsets[0], but just in
-  // case...
-  if (first < offsets[0]) {
-    objStr.getStream()->discardChars(offsets[0] - first);
+  // skip to the first object - this generally shouldn't be needed,
+  // because offsets[0] is normally 0, but just in case...
+  if (offsets[0] > 0) {
+    objStr.getStream()->discardChars(offsets[0]);
   }
 
   // parse the objects
@@ -880,6 +875,7 @@ GBool XRef::constructXRef() {
   char *p = buf;
   char *end = buf;
   GBool startOfLine = gTrue;
+  GBool space = gTrue;
   GBool eof = gFalse;
   while (1) {
     if (end - p < 256 && !eof) {
@@ -900,6 +896,7 @@ GBool XRef::constructXRef() {
       constructTrailerDict((GFileOffset)(bufPos + (p + 7 - buf)));
       p += 7;
       startOfLine = gFalse;
+      space = gFalse;
     } else if (startOfLine && !strncmp(p, "endstream", 9)) {
       if (streamEndsLen == streamEndsSize) {
 	streamEndsSize += 64;
@@ -909,19 +906,23 @@ GBool XRef::constructXRef() {
       streamEnds[streamEndsLen++] = (GFileOffset)(bufPos + (p - buf));
       p += 9;
       startOfLine = gFalse;
-    } else if (startOfLine && *p >= '0' && *p <= '9') {
+      space = gFalse;
+    } else if (space && *p >= '0' && *p <= '9') {
       p = constructObjectEntry(p, (GFileOffset)(bufPos + (p - buf)),
 			       &lastObjNum);
       startOfLine = gFalse;
+      space = gFalse;
     } else if (p[0] == '>' && p[1] == '>') {
       p += 2;
       startOfLine = gFalse;
+      space = gFalse;
       // skip any PDF whitespace except for '\0'
       while (*p == '\t' || *p == '\n' || *p == '\x0c' ||
 	     *p == '\r' || *p == ' ') {
 	if (*p == '\n' || *p == '\r') {
 	  startOfLine = gTrue;
 	}
+	space = gTrue;
 	++p;
       }
       if (!strncmp(p, "stream", 6)) {
@@ -935,12 +936,17 @@ GBool XRef::constructXRef() {
 	}
 	p += 6;
 	startOfLine = gFalse;
+	space = gFalse;
       }
     } else {
       if (*p == '\n' || *p == '\r') {
 	startOfLine = gTrue;
-      } else if (!Lexer::isSpace(*p & 0xff)) {
+	space = gTrue;
+      } else if (Lexer::isSpace(*p & 0xff)) {
+	space = gTrue;
+      } else {
 	startOfLine = gFalse;
+	space = gFalse;
       }
       ++p;
     }
@@ -1263,7 +1269,7 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
       error(errSyntaxError, -1, "Invalid object stream");
       goto err;
     }
-    if (!getObjectStreamObject((int)e->offset, e->gen, num, obj)) {
+    if (!getObjectStreamObject((int)e->offset, e->gen, num, obj, recursion)) {
       goto err;
     }
     break;
@@ -1297,20 +1303,37 @@ Object *XRef::fetch(int num, int gen, Object *obj, int recursion) {
 }
 
 GBool XRef::getObjectStreamObject(int objStrNum, int objIdx,
-				  int objNum, Object *obj) {
-  ObjectStream *objStr;
-
+				  int objNum, Object *obj, int recursion) {
+  // check for a cached ObjectStream
 #if MULTITHREADED
   gLockMutex(&objStrsMutex);
 #endif
-  if (!(objStr = getObjectStream(objStrNum))) {
+  ObjectStream *objStr = getObjectStreamFromCache(objStrNum);
+  GBool found = gFalse;
+  if (objStr) {
+    objStr->getObject(objIdx, objNum, obj);
+    cleanObjectStreamCache();
+    found = gTrue;
+  }
 #if MULTITHREADED
-    gUnlockMutex(&objStrsMutex);
+  gUnlockMutex(&objStrsMutex);
 #endif
+  if (found) {
+    return gTrue;
+  }
+
+  // load a new ObjectStream
+  objStr = new ObjectStream(this, objStrNum, recursion);
+  if (!objStr->isOk()) {
+    delete objStr;
     return gFalse;
   }
-  cleanObjectStreamCache();
   objStr->getObject(objIdx, objNum, obj);
+#if MULTITHREADED
+  gLockMutex(&objStrsMutex);
+#endif
+  addObjectStreamToCache(objStr);
+  cleanObjectStreamCache();
 #if MULTITHREADED
   gUnlockMutex(&objStrsMutex);
 #endif
@@ -1318,22 +1341,19 @@ GBool XRef::getObjectStreamObject(int objStrNum, int objIdx,
 }
 
 // NB: objStrsMutex must be locked when calling this function.
-ObjectStream *XRef::getObjectStream(int objStrNum) {
-  ObjectStream *objStr;
-  int i, j;
-
+ObjectStream *XRef::getObjectStreamFromCache(int objStrNum) {
   // check the MRU entry in the cache
   if (objStrs[0] && objStrs[0]->getObjStrNum() == objStrNum) {
-    objStr = objStrs[0];
+    ObjectStream *objStr = objStrs[0];
     objStrLastUse[0] = objStrTime++;
     return objStr;
   }
 
   // check the rest of the cache
-  for (i = 1; i < objStrCacheLength; ++i) {
+  for (int i = 1; i < objStrCacheLength; ++i) {
     if (objStrs[i] && objStrs[i]->getObjStrNum() == objStrNum) {
-      objStr = objStrs[i];
-      for (j = i; j > 0; --j) {
+      ObjectStream *objStr = objStrs[i];
+      for (int j = i; j > 0; --j) {
 	objStrs[j] = objStrs[j - 1];
 	objStrLastUse[j] = objStrLastUse[j - 1];
       }
@@ -1343,33 +1363,30 @@ ObjectStream *XRef::getObjectStream(int objStrNum) {
     }
   }
 
-  // load a new ObjectStream
-  objStr = new ObjectStream(this, objStrNum);
-  if (!objStr->isOk()) {
-    delete objStr;
-    return NULL;
-  }
+  return NULL;
+}
 
+// NB: objStrsMutex must be locked when calling this function.
+void XRef::addObjectStreamToCache(ObjectStream *objStr) {
   // add to the cache
   if (objStrCacheLength == objStrCacheSize) {
     delete objStrs[objStrCacheSize - 1];
     --objStrCacheLength;
   }
-  for (j = objStrCacheLength; j > 0; --j) {
+  for (int j = objStrCacheLength; j > 0; --j) {
     objStrs[j] = objStrs[j - 1];
     objStrLastUse[j] = objStrLastUse[j - 1];
   }
   ++objStrCacheLength;
   objStrs[0] = objStr;
   objStrLastUse[0] = objStrTime++;
-
-  return objStr;
 }
 
 // If the oldest (least recently used) entry in the object stream
 // cache is more than objStrCacheTimeout accesses old (hasn't been
 // used in the last objStrCacheTimeout accesses), eject it from the
 // cache.
+// NB: objStrsMutex must be locked when calling this function.
 void XRef::cleanObjectStreamCache() {
   // NB: objStrTime and objStrLastUse[] are unsigned ints, so the
   // mod-2^32 arithmetic makes the subtraction work out, even if the

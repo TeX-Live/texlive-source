@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -22,6 +18,7 @@
 #include "config.h"
 #include "Error.h"
 #include "GfxState.h"
+#include "Gfx.h"
 #include "Object.h"
 #include "Stream.h"
 #include "ImageOutputDev.h"
@@ -52,7 +49,8 @@ void ImageOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
 				       double *mat, double *bbox,
 				       int x0, int y0, int x1, int y1,
 				       double xStep, double yStep) {
-  // do nothing -- this avoids the potentially slow loop in Gfx.cc
+  // draw the tile once, just in case it contains image(s)
+  gfx->drawForm(strRef, resDict, mat, bbox);
 }
 
 void ImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,

@@ -1,8 +1,8 @@
-.\" Copyright 1997-2022 Glyph & Cog, LLC
-.TH pdftohtml 1 "18 Apr 2022"
+.\" Copyright 1997-2024 Glyph & Cog, LLC
+.TH pdftohtml 1 "08 Feb 2024"
 .SH NAME
 pdftohtml \- Portable Document Format (PDF) to HTML converter
-(version 4.04)
+(version 4.05)
 .SH SYNOPSIS
 .B pdftohtml
 [options]
@@ -84,11 +84,20 @@ Convert AcroForm text and checkbox fields to HTML input elements.
 This also removes text (e.g., underscore characters) and erases
 background image content (e.g., lines or boxes) in the field areas.
 .TP
+.B \-meta
+Include PDF document metadata as 'meta' elements in the HTML header.
+.TP
 .B \-table
 Use table mode when performing the underlying text extraction.  This
 will generally produce better output when the PDF content is a
 full-page table.  NB: This does not generate HTML tables; it just
 changes the way text is split up.
+.TP
+.B \-overwrite
+By default pdftohtml will not overwrite the specified output
+directory.  If the directory already exists, pdftohtml will exit with
+an error.  This option tells pdftohtml to instead overwrite the
+existing directory.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -138,10 +147,13 @@ Error opening an output file.
 3
 Error related to PDF permissions.
 .TP
+98
+Out of memory.
+.TP
 99
 Other error.
 .SH AUTHOR
-The pdftohtml software and documentation are copyright 1996-2022 Glyph
+The pdftohtml software and documentation are copyright 1996-2024 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

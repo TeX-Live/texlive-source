@@ -10,10 +10,6 @@
 
 #if HAVE_FREETYPE_H
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include "gmem.h"
 #include "gmempp.h"
 #include "GString.h"

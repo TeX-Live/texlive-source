@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stddef.h>
 #include "gmempp.h"
 #include "Object.h"
@@ -74,6 +70,15 @@ void OutputDev::updateAll(GfxState *state) {
   updateOverprintMode(state);
   updateTransfer(state);
   updateFont(state);
+}
+
+void OutputDev::fillStroke(GfxState *state, GBool eo) {
+  if (eo) {
+    eoFill(state);
+  } else {
+    fill(state);
+  }
+  stroke(state);
 }
 
 GBool OutputDev::beginType3Char(GfxState *state, double x, double y,

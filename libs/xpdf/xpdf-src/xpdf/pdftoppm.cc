@@ -98,6 +98,10 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   PDFDoc *doc;
   char *fileName;
   char *ppmRoot;
@@ -277,4 +281,11 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }

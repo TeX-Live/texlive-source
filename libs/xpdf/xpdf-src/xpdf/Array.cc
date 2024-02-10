@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <stddef.h>
 #include "gmem.h"
@@ -53,7 +49,7 @@ void Array::add(Object *elem) {
 
 Object *Array::get(int i, Object *obj, int recursion) {
   if (i < 0 || i >= length) {
-#ifdef DEBUG_MEM
+#ifdef DEBUG_OBJECT_MEM
     abort();
 #else
     return obj->initNull();
@@ -64,7 +60,7 @@ Object *Array::get(int i, Object *obj, int recursion) {
 
 Object *Array::getNF(int i, Object *obj) {
   if (i < 0 || i >= length) {
-#ifdef DEBUG_MEM
+#ifdef DEBUG_OBJECT_MEM
     abort();
 #else
     return obj->initNull();

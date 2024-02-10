@@ -21,10 +21,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <png.h>
 #include "gmem.h"
@@ -35,6 +31,7 @@
 #include "PDFDoc.h"
 #include "GfxFont.h"
 #include "AcroForm.h"
+#include "TextString.h"
 #include "TextOutputDev.h"
 #include "SplashOutputDev.h"
 #include "ErrorCodes.h"
@@ -42,8 +39,10 @@
 #include "HTMLGen.h"
 
 #ifdef _WIN32
+#ifndef __GNUC__
 #  define strcasecmp stricmp
 #  define strncasecmp strnicmp
+#endif
 #endif
 
 //------------------------------------------------------------------------
@@ -297,6 +296,7 @@ HTMLGen::HTMLGen(double backgroundResolutionA, GBool tableMode) {
   convertFormFields = gFalse;
   embedBackgroundImage = gFalse;
   embedFonts = gFalse;
+  includeMetadata = gFalse;
 
   // set up the TextOutputDev
   textOutControl.mode = tableMode ? textOutTableLayout : textOutReadingOrder;
@@ -312,6 +312,10 @@ HTMLGen::HTMLGen(double backgroundResolutionA, GBool tableMode) {
   splashOut = new SplashOutputDev(splashModeRGB8, 1, gFalse, paperColor);
 
   fontDefns = NULL;
+
+  nVisibleChars = 0;
+  nInvisibleChars = 0;
+  nRemovedDupChars = 0;
 }
 
 HTMLGen::~HTMLGen() {
@@ -462,11 +466,11 @@ int HTMLGen::convertPage(
 	    llyI = bitmap->getHeight() - 1;
 	  }
 	  if (uryI <= llyI && llxI <= urxI) {
-	    SplashColorPtr p = bitmap->getDataPtr()
-	                         + uryI * bitmap->getRowSize() + llxI * 3;
-	    for (int y = uryI; y <= llyI; ++y) {
-	      memset(p, 0xff, (urxI - llxI + 1) * 3);
-	      p += bitmap->getRowSize();
+	    SplashColorPtr pix = bitmap->getDataPtr()
+	                           + uryI * bitmap->getRowSize() + llxI * 3;
+	    for (y = uryI; y <= llyI; ++y) {
+	      memset(pix, 0xff, (urxI - llxI + 1) * 3);
+	      pix += bitmap->getRowSize();
 	    }
 	  }
 
@@ -483,6 +487,9 @@ int HTMLGen::convertPage(
   pr(writeHTML, htmlStream, "<html>\n");
   pr(writeHTML, htmlStream, "<head>\n");
   pr(writeHTML, htmlStream, "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n");
+  if (includeMetadata) {
+    genDocMetadata(writeHTML, htmlStream);
+  }
   pr(writeHTML, htmlStream, "<style type=\"text/css\">\n");
   pr(writeHTML, htmlStream, ".txt { white-space:nowrap; }\n");
   if (convertFormFields) {
@@ -571,6 +578,9 @@ int HTMLGen::convertPage(
   // generate the HTML text
   nextFieldID = 0;
   cols = text->makeColumns();
+  nVisibleChars = text->getNumVisibleChars();
+  nInvisibleChars = text->getNumInvisibleChars();
+  nRemovedDupChars = text->getNumRemovedDupChars();
   for (colIdx = 0; colIdx < cols->getLength(); ++colIdx) {
     col = (TextColumn *)cols->get(colIdx);
     pars = col->getParagraphs();
@@ -1117,4 +1127,48 @@ void HTMLGen::getFontDetails(TextFontInfo *font, const char **family,
   *family = fixedWidth ? "monospace" : serif ? "serif" : "sans-serif";
   *weight = bold ? "bold" : "normal";
   *style = italic ? "italic" : "normal";
+}
+
+void HTMLGen::genDocMetadata(int (*writeHTML)(void *stream,
+					      const char *data, int size),
+			     void *htmlStream) {
+  Object info;
+  doc->getDocInfo(&info);
+  if (info.isDict()) {
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Title");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Subject");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Keywords");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Author");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Creator");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "Producer");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "CreationDate");
+    genDocMetadataItem(writeHTML, htmlStream, info.getDict(), "ModDate");
+  }
+  info.free();
+}
+
+void HTMLGen::genDocMetadataItem(int (*writeHTML)(void *stream,
+						  const char *data, int size),
+				 void *htmlStream,
+				 Dict *infoDict, const char *key) {
+  Object val;
+  if (infoDict->lookup(key, &val)->isString()) {
+    GString *s = GString::format("<meta name=\"{0:s}\" content=\"", key);
+    TextString *ts = new TextString(val.getString());
+    Unicode *u = ts->getUnicode();
+    for (int i = 0; i < ts->getLength(); ++i) {
+      if (u[i] == '"') {
+	s->append("&quot;");
+      } else if (u[i] == '&') {
+	s->append("&amp;");
+      } else {
+	appendUTF8(u[i], s);
+      }
+    }
+    delete ts;
+    s->append("\">\n");
+    writeHTML(htmlStream, s->getCString(), s->getLength());
+    delete s;
+  }
+  val.free();
 }

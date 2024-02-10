@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include "gmem.h"
 #include "gmempp.h"
 #include "GList.h"
@@ -903,7 +899,7 @@ void TileMap::cvtDevToUser(int pg, int xd, int yd, double *xu, double *yu) {
 
 void TileMap::getWindowPageRange(int x, int y, int w, int h,
 				 int *firstPage, int *lastPage) {
-  GList *tiles;
+  GList *tiles2;
   PlacedTileDesc *tile;
   int i;
 
@@ -913,9 +909,9 @@ void TileMap::getWindowPageRange(int x, int y, int w, int h,
   }
   *firstPage = state->getDoc()->getNumPages();
   *lastPage = 0;
-  tiles = getTileList();
-  for (i = 0; i < tiles->getLength(); ++i) {
-    tile = (PlacedTileDesc *)tiles->get(i);
+  tiles2 = getTileList();
+  for (i = 0; i < tiles2->getLength(); ++i) {
+    tile = (PlacedTileDesc *)tiles2->get(i);
     if (tile->px < x + w &&
 	tile->px + tile->tw > x &&
 	tile->py < y + h &&
@@ -1352,7 +1348,7 @@ void TileMap::updatePageParams() {
       // rotate the page boxes
       if (page & 1) {
 	otherPage = page + 1;
-	if (otherPage >= state->getDoc()->getNumPages()) {
+	if (otherPage > state->getDoc()->getNumPages()) {
 	  otherPage = page;
 	}
       } else {

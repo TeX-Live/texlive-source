@@ -6,10 +6,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -278,6 +274,8 @@ bool ZxDoc::parse(const char *data, Guint dataLen) {
   parsePtr = data;
   parseEnd = data + dataLen;
   
+  parseSpace();
+  parseBOM();
   parseSpace();
   parseXMLDecl(this);
   parseMisc(this);
@@ -781,6 +779,12 @@ GString *ZxDoc::parseQuotedString() {
     s = new GString();
   }
   return s;
+}
+
+void ZxDoc::parseBOM() {
+  if (match("\xef\xbb\xbf")) {
+    parsePtr += 3;
+  }
 }
 
 void ZxDoc::parseSpace() {

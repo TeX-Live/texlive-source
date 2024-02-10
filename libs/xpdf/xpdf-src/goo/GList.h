@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 
 //------------------------------------------------------------------------
@@ -69,6 +65,9 @@ public:
   // NB: this sorts an array of pointers, so the pointer args need to
   // be double-dereferenced.
   void sort(int (*cmp)(const void *ptr1, const void *ptr2));
+
+  // Sort <n> items starting at <first>.
+  void sort(int first, int n, int (*cmp)(const void *ptr1, const void *ptr2));
 
   // Reverse the list.
   void reverse();

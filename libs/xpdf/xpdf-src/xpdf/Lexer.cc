@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -113,7 +109,7 @@ Object *Lexer::getObj(Object *obj) {
   char *p;
   int c, c2;
   GBool comment, neg, doubleMinus, done, invalid;
-  int numParen;
+  int numParen, nErrors;
   int xi;
   double xf, scale;
   GString *s;
@@ -434,7 +430,8 @@ Object *Lexer::getObj(Object *obj) {
       m = n = 0;
       c2 = 0;
       s = NULL;
-      while (1) {
+      nErrors = 0;
+      while (nErrors < 100) {
 	c = getChar();
 	if (c == '>') {
 	  break;
@@ -443,15 +440,17 @@ Object *Lexer::getObj(Object *obj) {
 	  break;
 	} else if (specialChars[c] != 1) {
 	  c2 = c2 << 4;
-	  if (c >= '0' && c <= '9')
+	  if (c >= '0' && c <= '9') {
 	    c2 += c - '0';
-	  else if (c >= 'A' && c <= 'F')
+	  } else if (c >= 'A' && c <= 'F') {
 	    c2 += c - 'A' + 10;
-	  else if (c >= 'a' && c <= 'f')
+	  } else if (c >= 'a' && c <= 'f') {
 	    c2 += c - 'a' + 10;
-	  else
+	  } else {
 	    error(errSyntaxError, getPos(),
 		  "Illegal character <{0:02x}> in hex string", c);
+	    ++nErrors;
+	  }
 	  if (++m == 2) {
 	    if (n == tokBufSize) {
 	      if (!s)

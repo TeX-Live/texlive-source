@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <math.h>
 #include "Trace.h"
 #include "GfxState.h"
@@ -68,6 +64,14 @@ SplashBitmap *ShadingImage::generateBitmap(GfxState *state,
   default:
     return NULL;
   }
+}
+
+static double max4(double x0, double x1, double x2, double x3) {
+  double t = x0;
+  t = (x1 > t) ? x1 : t;
+  t = (x2 > t) ? x2 : t;
+  t = (x3 > t) ? x3 : t;
+  return t;
 }
 
 SplashBitmap *ShadingImage::generateFunctionBitmap(GfxState *state,
@@ -204,7 +208,8 @@ SplashBitmap *ShadingImage::generateAxialBitmap(GfxState *state,
   // compute the inverse CTM
   double *ctm = state->getCTM();
   double det = ctm[0] * ctm[3] - ctm[1] * ctm[2];
-  if (fabs(det) < 0.000001) {
+  if (fabs(det) < 1e-10 * max4(fabs(ctm[0]), fabs(ctm[1]),
+			       fabs(ctm[2]), fabs(ctm[3]))) {
     return NULL;
   }
   det = 1 / det;
@@ -468,7 +473,8 @@ SplashBitmap *ShadingImage::generateRadialBitmap(GfxState *state,
   // compute the inverse CTM
   double *ctm = state->getCTM();
   double det = ctm[0] * ctm[3] - ctm[1] * ctm[2];
-  if (fabs(det) < 0.000001) {
+  if (fabs(det) < 1e-10 * max4(fabs(ctm[0]), fabs(ctm[1]),
+			       fabs(ctm[2]), fabs(ctm[3]))) {
     return NULL;
   }
   det = 1 / det;

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "Object.h"
 #include "Stream.h"
@@ -291,6 +287,7 @@ public:
   virtual GString *getPSFilter(int psLevel, const char *indent,
 			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
+  virtual GBool hasStrongCompression() { return gTrue; }
   virtual void getImageParams(int *bitsPerComponent,
 			      StreamColorSpaceMode *csMode);
   void reduceResolution(int reductionA) { reduction = reductionA; }

@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <limits.h>
 #include "gmem.h"
 #include "gmempp.h"
@@ -1117,6 +1113,7 @@ JPXDecodeResult JPXStream::readCodestream(Guint len) {
 	      "JPX COC marker segment before COD segment");
 	return jpxDecodeFatalError;
       }
+      comp = 0;
       if ((img.nComps > 256 && !readUWord(&comp)) ||
 	  (img.nComps <= 256 && !readUByte(&comp)) ||
 	  comp >= img.nComps ||
@@ -1269,6 +1266,7 @@ JPXDecodeResult JPXStream::readCodestream(Guint len) {
 	      "JPX QCC marker segment before QCD segment");
 	return jpxDecodeFatalError;
       }
+      comp = 0;
       if ((img.nComps > 256 && !readUWord(&comp)) ||
 	  (img.nComps <= 256 && !readUByte(&comp)) ||
 	  comp >= img.nComps ||
@@ -1641,6 +1639,7 @@ GBool JPXStream::readTilePart() {
 	error(errSyntaxError, getPos(), "Extraneous JPX COC marker segment");
 	return gFalse;
       }
+      comp = 0;
       if ((img.nComps > 256 && !readUWord(&comp)) ||
 	  (img.nComps <= 256 && !readUByte(&comp)) ||
 	  comp >= img.nComps ||
@@ -1774,6 +1773,7 @@ GBool JPXStream::readTilePart() {
 	error(errSyntaxError, getPos(), "Extraneous JPX QCC marker segment");
 	return gFalse;
       }
+      comp = 0;
       if ((img.nComps > 256 && !readUWord(&comp)) ||
 	  (img.nComps <= 256 && !readUByte(&comp)) ||
 	  comp >= img.nComps ||
@@ -2619,7 +2619,12 @@ GBool JPXStream::readCodeBlockData(JPXTileComp *tileComp,
 
   if (cb->arithDecoder) {
     cover(63);
-    cb->arithDecoder->restart(cb->dataLen[0]);
+    if (tileComp->codeBlockStyle & 0x04) {
+      cb->arithDecoder->setStream(bufStr, cb->dataLen[0]);
+      cb->arithDecoder->start();
+    } else {
+      cb->arithDecoder->restart(cb->dataLen[0]);
+    }
   } else {
     cover(64);
     cb->arithDecoder = new JArithmeticDecoder();
@@ -3319,7 +3324,7 @@ void JPXStream::inverseTransform1D(JPXTileComp *tileComp, int *data,
 // converts fixed point samples back to integers.
 GBool JPXStream::inverseMultiCompAndDC(JPXTile *tile) {
   JPXTileComp *tileComp;
-  int coeff, d0, d1, d2, t, minVal, maxVal, zeroVal;
+  int coeff, d0, d1, d2, t, minVal, maxVal, zeroVal, shift, rounding;
   int *dataPtr;
   Guint j, comp, x, y;
 
@@ -3404,12 +3409,14 @@ GBool JPXStream::inverseMultiCompAndDC(JPXTile *tile) {
       maxVal = (1 << tileComp->prec) - 1;
       zeroVal = 1 << (tileComp->prec - 1);
       dataPtr = tileComp->data;
+      shift = fracBits - tileComp->prec;
+      rounding = 1 << (shift - 1);
       for (y = 0; y < tileComp->h; ++y) {
 	for (x = 0; x < tileComp->w; ++x) {
 	  coeff = *dataPtr;
 	  if (tileComp->transform == 0) {
 	    cover(112);
-	    coeff >>= fracBits - tileComp->prec;
+	    coeff = (coeff + rounding) >> shift;
 	  }
 	  coeff += zeroVal;
 	  if (coeff < 0) {

@@ -64,6 +64,9 @@ extern GString *makePathAbsolute(GString *path);
 // Returns true if [path] exists and is a regular file.
 extern GBool pathIsFile(const char *path);
 
+// Returns true if [path] exists and is a directory.
+extern GBool pathIsDir(const char *path);
+
 // Get the modification time for <fileName>.  Returns 0 if there is an
 // error.
 extern time_t getModTime(char *fileName);
@@ -89,6 +92,9 @@ extern GString *fileNameToUTF8(char *path);
 
 // Convert a file name from UCS-2 to UTF-8.
 extern GString *fileNameToUTF8(wchar_t *path);
+
+// Convert a file name from the OEM code page to UTF-8.
+extern GString *fileNameMultiByteToUTF8(char *path);
 
 // Convert a file name from UTF-8 to UCS-2.  [out] has space for
 // [outSize] wchar_t elements (including the trailing zero).  Returns

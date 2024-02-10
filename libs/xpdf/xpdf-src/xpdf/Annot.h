@@ -2,7 +2,7 @@
 //
 // Annot.h
 //
-// Copyright 2000-2003 Glyph & Cog, LLC
+// Copyright 2000-2022 Glyph & Cog, LLC
 //
 //========================================================================
 
@@ -11,15 +11,12 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 class XRef;
 class Catalog;
 class Gfx;
 class GfxFontDict;
 class PDFDoc;
+class PageAnnots;
 
 //------------------------------------------------------------------------
 // AnnotBorderStyle
@@ -105,14 +102,14 @@ public:
   GBool match(Ref *refA)
     { return ref.num == refA->num && ref.gen == refA->gen; }
 
-  void generateAnnotAppearance();
+  void generateAnnotAppearance(Object *annotObj);
 
 private:
  
-  void generateLineAppearance();
-  void generatePolyLineAppearance();
-  void generatePolygonAppearance();
-  void generateFreeTextAppearance();
+  void generateLineAppearance(Object *annotObj);
+  void generatePolyLineAppearance(Object *annotObj);
+  void generatePolygonAppearance(Object *annotObj);
+  void generateFreeTextAppearance(Object *annotObj);
   void setLineStyle(AnnotBorderStyle *bs, double *lineWidth);
   void setStrokeColor(double *color, int nComps);
   GBool setFillColor(Object *colorObj);
@@ -152,34 +149,35 @@ private:
 class Annots {
 public:
 
-  // Build a list of Annot objects.
-  Annots(PDFDoc *docA, Object *annotsObj);
+  Annots(PDFDoc *docA);
 
   ~Annots();
 
-  // Iterate through list of annotations.
-  int getNumAnnots() { return nAnnots; }
-  Annot *getAnnot(int i) { return annots[i]; }
+  // Iterate over annotations on a specific page.
+  int getNumAnnots(int page);
+  Annot *getAnnot(int page, int idx);
 
-  // If point <x>,<y> is in an annotation, return the associated
-  // annotation; else return NULL.
-  Annot *find(double x, double y);
-  int findIdx(double x, double y);
+  // If point (<x>,<y>) is in an annotation, return the associated
+  // annotation (or annotation index); else return NULL (or -1).
+  Annot *find(int page, double x, double y);
+  int findIdx(int page, double x, double y);
+
+  // Add an annotation [annotObj] on page [page].
+  void add(int page, Object *annotObj);
 
   // Generate an appearance stream for any non-form-field annotation
-  // that is missing it.
-  void generateAnnotAppearances();
+  // on the specified page that is missing an appearance.
+  void generateAnnotAppearances(int page);
 
 private:
 
-  void scanFieldAppearances(Dict *node, Ref *ref, Dict *parent,
-			    Dict *acroForm);
-
-  Annot *findAnnot(Ref *ref);
+  void loadAnnots(int page);
+  void loadFormFieldRefs();
 
   PDFDoc *doc;
-  Annot **annots;
-  int nAnnots;
+  PageAnnots **pageAnnots;	// list of annots for each page
+  int formFieldRefsSize;	// number of entries in formFieldRefs[]
+  char *formFieldRefs;		// set of AcroForm field refs
 };
 
 #endif

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 class GString;
 class PDFDoc;
 class TextOutputDev;
@@ -61,12 +57,20 @@ public:
   void setEmbedFonts(GBool embedFontsA)
     { embedFonts = embedFontsA; }
 
+  void setIncludeMetadata(GBool includeMetadataA)
+    { includeMetadata = includeMetadataA; }
+
   void startDoc(PDFDoc *docA);
   int convertPage(int pg, const char *pngURL, const char *htmlDir,
 		  int (*writeHTML)(void *stream, const char *data, int size),
 		  void *htmlStream,
 		  int (*writePNG)(void *stream, const char *data, int size),
 		  void *pngStream);
+
+  // Get the counter values.
+  int getNumVisibleChars() { return nVisibleChars; }
+  int getNumInvisibleChars() { return nInvisibleChars; }
+  int getNumRemovedDupChars() { return nRemovedDupChars; }
 
 private:
 
@@ -82,6 +86,13 @@ private:
   void getFontDetails(TextFontInfo *font, const char **family,
 		      const char **weight, const char **style,
 		      double *scale);
+  void genDocMetadata(int (*writeHTML)(void *stream,
+				       const char *data, int size),
+		      void *htmlStream);
+  void genDocMetadataItem(int (*writeHTML)(void *stream,
+					   const char *data, int size),
+			  void *htmlStream,
+			  Dict *infoDict, const char *key);
 
   double backgroundResolution;
   double zoom;
@@ -92,6 +103,7 @@ private:
   GBool convertFormFields;
   GBool embedBackgroundImage;
   GBool embedFonts;
+  GBool includeMetadata;
 
   PDFDoc *doc;
   TextOutputDev *textOut;
@@ -106,6 +118,10 @@ private:
   TextFontInfo *formFieldFont;
   GList *formFieldInfo;		// [HTMLGenFormFieldInfo]
   int nextFieldID;
+
+  int nVisibleChars;		// number of visible chars on the page
+  int nInvisibleChars;		// number of invisible chars on the page
+  int nRemovedDupChars;		// number of duplicate chars removed
 
   GBool ok;
 };

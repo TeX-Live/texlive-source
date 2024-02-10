@@ -1,7 +1,7 @@
-.\" Copyright 2002-2022 Glyph & Cog, LLC
-.TH xpdfrc 5 "18 Apr 202"
+.\" Copyright 2002-2024 Glyph & Cog, LLC
+.TH xpdfrc 5 "08 Feb 2024"
 .SH NAME
-xpdfrc \- configuration file for Xpdf tools (version 4.04)
+xpdfrc \- configuration file for Xpdf tools (version 4.05)
 .SH DESCRIPTION
 All of the Xpdf tools read a single configuration file.
 .PP
@@ -448,6 +448,12 @@ information in TrueType fonts (16-bit only), if avaiable, to override
 the PDF ToUnicode maps.  Otherwise, the ToUnicode maps are always used
 when present.  This defaults to "no".
 .TP
+.BI ignoreWrongSizeToUnicode " yes | no"
+If set to "yes", Xpdf will ignore any ToUnicode CMaps that don't match
+the font type (8-bit vs 16-bit).  The PDF spec requires ToUnicode
+CMaps match, and Adobe appears to ignore CMaps that don't match.  This
+defaults to "no" (for backward compatibility).
+.TP
 .BI dropFont " font-name"
 Drop all text drawn in the specified font.  To drop text drawn in
 unnamed fonts, use:
@@ -457,6 +463,12 @@ unnamed fonts, use:
 
 .fi
 There can be any number of dropFont commands.
+.TP
+.BI separateRotatedText " yes | no"
+If set to "no", pdftotext will attempt to place rotated text into the
+"correct" location in the output. If set to "yes", when using reading
+order mode, pdftotext will append rotated text to the end, after
+unrotated text. This defaults to "no".
 .SH RASTERIZER SETTINGS
 .TP
 .BR enableFreeType " yes | no"
@@ -569,6 +581,17 @@ be chosen such that exactly one page will fit in the window at this
 zoom factor (which must be a percentage).  The default value is
 based on the screen resolution.
 .TP
+.BI zoomScaleFactor " \fIratio\fR | actual"
+Zoom percentages will be scaled by this factor.  By default, 100% zoom
+corresponds to 72 dpi.  Setting zoomScaleFactor to 1.5 will make 100%
+zoom 1.5x larger, i.e., 108dpi.  If this is set to \'actual', the zoom
+scale factor will be computed based on the screen resolution. The
+default value is 1.0.
+.TP
+.BI zoomValues " zoom1 zoom2 zoom3 ..."
+Sets the list of zoom values (percentages) displayed in the zoom combo box.
+The default list is: 25 50 75 100 110 125 150 175 200 300 400 600 800.
+.TP
 .BR initialDisplayMode " single | continuous | sideBySideSingle | sideBySideContinuous | horizontalContinuous"
 Sets the initial display mode.  The default setting is "continuous".
 .TP
@@ -637,6 +660,12 @@ pages.  This defaults to 10.
 .BI workerThreads " numThreads"
 Set the number of worker threads to be used by xpdf when rasterizing
 pages.  This defaults to 1.
+.TP
+.BI allowLinksToChangeZoom " yes | no"
+PDF links, including outline items, can include a new zoom level.  If
+this setting is "yes", Xpdf changes the zoom when links are clicked;
+if "no", Xpdf moves to the destination but does not change the zoom.
+This defaults to "yes".
 .TP
 .BI launchCommand " command"
 Sets the command executed when you click on a "launch"-type link.  The
@@ -740,7 +769,20 @@ want to create new key bindings for multiple contexts).
 Sets the file used by the loadTabState and saveTabState commands (see
 the
 .BR xpdf (1)
-man page for more information).
+man page for more information).  The default path is ~/.xpdf.tabstate.
+.TP
+.BI sessionFile " path"
+Sets the file used by the saveSession and loadSession commands (see
+the
+.BR xpdf (1)
+man page for more information).  The default path is ~/.xpdf.session.
+When xpdf automatically saves the session via a session manager, it
+appends ".managed" to the path.
+.TP
+.BI saveSessionOnQuit " yes | no"
+If set to "yes", xpdf will automatically save the current session
+(equivalent to the saveSession command) when quitting (via the menu or
+a key binding).  The default value is "yes".
 .SH MISCELLANEOUS SETTINGS
 .TP
 .BI drawAnnotations " yes | no"
@@ -837,7 +879,7 @@ Depending on build options, it may be placed elsewhere.
 This is the user's configuration file.  If it exists, it will be read
 in place of the system-wide file.
 .SH AUTHOR
-The Xpdf software and documentation are copyright 1996-2022 Glyph &
+The Xpdf software and documentation are copyright 1996-2024 Glyph &
 Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

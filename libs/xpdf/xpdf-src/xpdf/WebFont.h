@@ -13,10 +13,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "FoFiBase.h"
 #include "GfxFont.h"

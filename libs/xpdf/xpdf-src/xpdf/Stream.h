@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #if HAVE_JPEGLIB
 #include <jpeglib.h>
@@ -129,6 +125,10 @@ public:
 
   // Does this stream type potentially contain non-printable chars?
   virtual GBool isBinary(GBool last = gTrue) = 0;
+
+  // Does this stream include a "strong" compression filter (anything
+  // other than RLE)?
+  virtual GBool hasStrongCompression() { return gFalse; }
 
   // Get the BaseStream of this stream.
   virtual BaseStream *getBaseStream() = 0;
@@ -490,6 +490,7 @@ public:
   virtual GString *getPSFilter(int psLevel, const char *indent,
 			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
+  virtual GBool hasStrongCompression() { return gTrue; }
 
 private:
 
@@ -573,6 +574,7 @@ public:
   virtual GString *getPSFilter(int psLevel, const char *indent,
 			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
+  virtual GBool hasStrongCompression() { return gTrue; }
 
 private:
 
@@ -672,6 +674,7 @@ public:
   virtual GString *getPSFilter(int psLevel, const char *indent,
 			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
+  virtual GBool hasStrongCompression() { return gTrue; }
   Stream *getRawStream() { return str; }
 
 private:
@@ -813,6 +816,7 @@ public:
   virtual GString *getPSFilter(int psLevel, const char *indent,
 			       GBool okToReadStream);
   virtual GBool isBinary(GBool last = gTrue);
+  virtual GBool hasStrongCompression() { return gTrue; }
 
 private:
 

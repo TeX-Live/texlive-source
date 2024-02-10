@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #if HAVE_STD_SORT
@@ -405,7 +401,7 @@ int FoFiTrueType::mapCodeToGID(int i, int c) {
       // to be 0xffff
       return 0;
     }
-    // invariant: seg[a].end < code <= seg[b].end
+    // invariant: seg[a].end < c <= seg[b].end
     while (b - a > 1 && ok) {
       m = (a + b) / 2;
       segEnd = getU16BE(pos + 14 + 2*m, &ok);
@@ -438,6 +434,31 @@ int FoFiTrueType::mapCodeToGID(int i, int c) {
       return 0;
     }
     gid = getU16BE(pos + 10 + 2 * (c - cmapFirst), &ok);
+    break;
+  case 12:
+    segCnt = getU32BE(pos + 12, &ok);
+    a = -1;
+    b = segCnt - 1;
+    segEnd = getU32BE(pos + 16 + 12*b + 4, &ok);
+    if (c > segEnd) {
+      return 0;
+    }
+    // invariant: seg[a].end < c <= seg[b].end
+    while (b - a > 1 && ok) {
+      m = (a + b) / 2;
+      segEnd = getU32BE(pos + 16 + 12*m + 4, &ok);
+      if (segEnd < c) {
+	a = m;
+      } else {
+	b = m;
+      }
+    }
+    segStart = getU32BE(pos + 16 + 12*b, &ok);
+    if (c < segStart) {
+      return 0;
+    }
+    segOffset = getU32BE(pos + 16 + 12*b + 8, &ok);
+    gid = segOffset + (c - segStart);
     break;
   default:
     return 0;

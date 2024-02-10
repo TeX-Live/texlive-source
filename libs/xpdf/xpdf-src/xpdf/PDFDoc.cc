@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -26,6 +22,7 @@
 #include "GlobalParams.h"
 #include "Page.h"
 #include "Catalog.h"
+#include "Annot.h"
 #include "Stream.h"
 #include "XRef.h"
 #include "Link.h"
@@ -178,6 +175,7 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
   int i, j;
 #endif
 #endif /* 0 */
+
   init(coreA);
 
   fileName = new GString(fileNameA);
@@ -204,7 +202,7 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
     file = _wfopen(fileNameU, wfopenReadMode);
   } else {
 #endif /* 0 */
-    file = fopen(fileName->getCString(), fopenReadMode);
+  file = fopen(fileName->getCString(), fopenReadMode);
 #if 0
   }
 #endif /* 0 */
@@ -263,6 +261,7 @@ void PDFDoc::init(PDFCore *coreA) {
   str = NULL;
   xref = NULL;
   catalog = NULL;
+  annots = NULL;
 #ifndef DISABLE_OUTLINE
   outline = NULL;
 #endif
@@ -335,6 +334,9 @@ GBool PDFDoc::setup2(GString *ownerPassword, GString *userPassword,
     return gFalse;
   }
 
+  // initialize the Annots object
+  annots = new Annots(this);
+
   return gTrue;
 }
 
@@ -347,6 +349,9 @@ PDFDoc::~PDFDoc() {
     delete outline;
   }
 #endif
+  if (annots) {
+    delete annots;
+  }
   if (catalog) {
     delete catalog;
   }
@@ -484,6 +489,7 @@ void PDFDoc::displayPageSlice(OutputDev *out, int page,
 				       printing,
 				       abortCheckCbk, abortCheckCbkData);
 }
+
 
 Links *PDFDoc::getLinks(int page) {
   return catalog->getPage(page)->getLinks();

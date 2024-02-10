@@ -4,7 +4,7 @@ pdftohtml(1)                General Commands Manual               pdftohtml(1)
 
 NAME
        pdftohtml  -  Portable Document Format (PDF) to HTML converter (version
-       4.04)
+       4.05)
 
 SYNOPSIS
        pdftohtml [options] PDF-file HTML-dir
@@ -59,8 +59,8 @@ OPTIONS
               the HTML file, rather than storing it as a separate file.
 
        -nofonts
-              Disable extraction of embedded  fonts.   By  default,  pdftohtml
-              extracts  TrueType and OpenType fonts.  Disabling extraction can
+              Disable extraction of embedded fonts.  By default, pdftohtml ex-
+              tracts  TrueType  and  OpenType fonts.  Disabling extraction can
               work around problems with buggy fonts.
 
        -embedfonts
@@ -70,8 +70,8 @@ OPTIONS
        -skipinvisible
               Don't draw invisible text.  By default, invisible text (commonly
               used in OCR'ed PDF files) is drawn as transparent (alpha=0) HTML
-              text.   This  option  tells  pdftohtml to discard invisible text
-              entirely.
+              text.  This option tells pdftohtml to discard invisible text en-
+              tirely.
 
        -allinvisible
               Treat all text as invisible.  By default,  regular  (non-invisi-
@@ -86,10 +86,19 @@ OPTIONS
               erases background image content (e.g., lines or  boxes)  in  the
               field areas.
 
-       -table Use  table  mode when performing the underlying text extraction.
-              This will generally produce better output when the  PDF  content
-              is  a  full-page table.  NB: This does not generate HTML tables;
+       -meta  Include  PDF  document  metadata  as 'meta' elements in the HTML
+              header.
+
+       -table Use table mode when performing the underlying  text  extraction.
+              This  will  generally produce better output when the PDF content
+              is a full-page table.  NB: This does not generate  HTML  tables;
               it just changes the way text is split up.
+
+       -overwrite
+              By default pdftohtml will not overwrite the specified output di-
+              rectory.  If the directory already exists, pdftohtml  will  exit
+              with an error.  This option tells pdftohtml to instead overwrite
+              the existing directory.
 
        -opw password
               Specify the owner password for the  PDF  file.   Providing  this
@@ -128,10 +137,12 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The  pdftohtml software and documentation are copyright 1996-2022 Glyph
+       The  pdftohtml software and documentation are copyright 1996-2024 Glyph
        & Cog, LLC.
 
 SEE ALSO
@@ -141,4 +152,4 @@ SEE ALSO
 
 
 
-                                  18 Apr 2022                     pdftohtml(1)
+                                  08 Feb 2024                     pdftohtml(1)

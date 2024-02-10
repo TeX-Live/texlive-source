@@ -3,7 +3,7 @@ pdffonts(1)                 General Commands Manual                pdffonts(1)
 
 
 NAME
-       pdffonts - Portable Document Format (PDF) font analyzer (version 4.04)
+       pdffonts - Portable Document Format (PDF) font analyzer (version 4.05)
 
 SYNOPSIS
        pdffonts [options] [PDF-file]
@@ -14,8 +14,8 @@ DESCRIPTION
 
        The following information is listed for each font:
 
-       name   the font name, exactly as given in  the  PDF  file  (potentially
-              including a subset prefix)
+       name   the font name, exactly as given in the PDF file (potentially in-
+              cluding a subset prefix)
 
        type   the font type -- see below for details
 
@@ -102,10 +102,12 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The pdffonts software and documentation are copyright 1996-2022 Glyph &
+       The pdffonts software and documentation are copyright 1996-2024 Glyph &
        Cog, LLC.
 
 SEE ALSO
@@ -115,4 +117,4 @@ SEE ALSO
 
 
 
-                                  18 Apr 2022                      pdffonts(1)
+                                  08 Feb 2024                      pdffonts(1)

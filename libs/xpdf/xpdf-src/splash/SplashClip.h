@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "SplashTypes.h"
 #include "SplashMath.h"
 
@@ -100,6 +96,9 @@ public:
   // Get the number of arbitrary paths used by the clip region.
   int getNumPaths();
 
+  // Return true if the clip path is a simple rectangle.
+  GBool getIsSimple() { return isSimple; }
+
 private:
 
   SplashClip(SplashClip *clip);
@@ -110,10 +109,11 @@ private:
       hardXMax, hardYMax;	//   [hardXMin, hardXMax), [hardYMin, hardYMax)
 
   SplashCoord xMin, yMin,	// current clip bounding rectangle
-              xMax, yMax;	//   (these coordinates may be adjusted if
-				//   stroke adjustment is enabled)
+              xMax, yMax;
 
-  int xMinI, yMinI, xMaxI, yMaxI;
+  int xMinI, yMinI,		// integer clip bounding rectangle
+      xMaxI, yMaxI;		//   (these coordinates are adjusted if
+				//   stroke adjustment is enabled)
   GBool intBoundsValid;		// true if xMinI, etc. are valid
   GBool intBoundsStrokeAdjust;	// value of strokeAdjust used to compute
 				//   xMinI, etc.

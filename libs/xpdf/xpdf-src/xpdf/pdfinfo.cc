@@ -41,6 +41,7 @@ static void printInfoString(Object *infoDict, const char *infoKey,
 			    const char *xmpKey2,
 			    const char *text, GBool parseDate,
 			    UnicodeMap *uMap);
+static void printCustomInfo(Object *infoDict, UnicodeMap *uMap);
 static GString *parseInfoDate(GString *s);
 static GString *parseXMPDate(GString *s);
 static void printBox(const char *text, PDFRectangle *box);
@@ -50,6 +51,7 @@ static int lastPage = 0;
 static GBool printBoxes = gFalse;
 static GBool printMetadata = gFalse;
 static GBool rawDates = gFalse;
+static GBool printCustom = gFalse;
 static char textEncName[128] = "";
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
@@ -68,6 +70,8 @@ static ArgDesc argDesc[] = {
    "print the document metadata (XML)"},
   {"-rawdates", argFlag,   &rawDates,         0,
    "print the undecoded date strings directly from the PDF file"},
+  {"-custom", argFlag,     &printCustom,      0,
+   "print the custom info dictionary fields"},
   {"-enc",    argString,   textEncName,    sizeof(textEncName),
    "output text encoding name"},
   {"-opw",    argString,   ownerPassword,  sizeof(ownerPassword),
@@ -90,6 +94,10 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   PDFDoc *doc;
   char *fileName;
   GString *ownerPW, *userPW;
@@ -193,6 +201,9 @@ int main(int argc, char *argv[]) {
   printInfoString(&info, "Producer",     xmp, "pdf:Producer",    NULL,              "Producer:       ", gFalse,    uMap);
   printInfoString(&info, "CreationDate", xmp, "xap:CreateDate",  "xmp:CreateDate",  "CreationDate:   ", !rawDates, uMap);
   printInfoString(&info, "ModDate",      xmp, "xap:ModifyDate",  "xmp:ModifyDate",  "ModDate:        ", !rawDates, uMap);
+  if (printCustom) {
+    printCustomInfo(&info, uMap);
+  }
   info.free();
   if (xmp) {
     delete xmp;
@@ -304,6 +315,9 @@ int main(int argc, char *argv[]) {
   // print linearization info
   printf("Optimized:      %s\n", doc->isLinearized() ? "yes" : "no");
 
+  // print JavaScript info
+  printf("JavaScript:     %s\n", doc->usesJavaScript() ? "yes" : "no");
+
   // print PDF version
   printf("PDF version:    %.1f\n", doc->getPDFVersion());
 
@@ -333,6 +347,13 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }
 
 static void printInfoString(Object *infoDict, const char *infoKey,
@@ -397,7 +418,7 @@ static void printInfoString(Object *infoDict, const char *infoKey,
 	      if (!parseDate ||
 		  !(value = parseXMPDate(((ZxCharData *)node2)->getData()))) {
 		tmp = ((ZxCharData *)node2)->getData();
-		int i = 0;
+		i = 0;
 		value = new GString();
 		while (getUTF8(tmp, &i, &uu)) {
 		  n = uMap->mapUnicode(uu, buf, sizeof(buf));
@@ -414,9 +435,45 @@ static void printInfoString(Object *infoDict, const char *infoKey,
 
   if (value) {
     fputs(text, stdout);
-    fwrite(value->getCString(), 1, value->getLength(), stdout);
+   fwrite(value->getCString(), 1, value->getLength(), stdout);
     fputc('\n', stdout);
     delete value;
+  }
+}
+
+static void printCustomInfo(Object *infoDict, UnicodeMap *uMap) {
+  if (!infoDict->isDict()) {
+    return;
+  }
+  for (int i = 0; i < infoDict->dictGetLength(); ++i) {
+    char *key = infoDict->dictGetKey(i);
+    Object obj;
+    infoDict->dictGetVal(i, &obj);
+    if (obj.isString() &&
+	strcmp(key, "Title") &&
+	strcmp(key, "Subject") &&
+	strcmp(key, "Keywords") &&
+	strcmp(key, "Author") &&
+	strcmp(key, "Creator") &&
+	strcmp(key, "Producer") &&
+	strcmp(key, "CreationDate") &&
+	strcmp(key, "ModDate")) {
+      printf("%s: ", key);
+      int n = 14 - (int)strlen(key);
+      if (n > 0) {
+	printf("%*s", n, "");
+      }
+      TextString *s = new TextString(obj.getString());
+      Unicode *u = s->getUnicode();
+      char buf[8];
+      for (int j = 0; j < s->getLength(); ++j) {
+	n = uMap->mapUnicode(u[j], buf, sizeof(buf));
+	fwrite(buf, 1, n, stdout);
+      }
+      delete s;
+      printf("\n");
+    }
+    obj.free();
   }
 }
 

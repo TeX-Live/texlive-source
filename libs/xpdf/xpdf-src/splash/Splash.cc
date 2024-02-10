@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
@@ -4930,7 +4926,7 @@ void Splash::clear(SplashColorPtr color, Guchar alpha) {
 
 SplashError Splash::stroke(SplashPath *path) {
   SplashPath *path2, *dPath;
-  SplashCoord t0, t1, t2, t3, w, w2, lineDashMax, lineDashTotal;
+  SplashCoord w, w2, lineDashMax, lineDashTotal;
   int lineCap, lineJoin, i;
 
   if (debugMode) {
@@ -4941,6 +4937,9 @@ SplashError Splash::stroke(SplashPath *path) {
   opClipRes = splashClipAllOutside;
   if (path->length == 0) {
     return splashErrEmptyPath;
+  }
+  if (pathAllOutside(path, gTrue)) {
+    return splashOk;
   }
   path2 = flattenPath(path, state->matrix, state->flatness);
 
@@ -4953,15 +4952,13 @@ SplashError Splash::stroke(SplashPath *path) {
   //                                  [0 +/-s]     [+/-s 0]
   // well, and still does something reasonable for the uncommon
   // case transforms.
-  t0 = splashAbs(state->matrix[0]);
-  t1 = splashAbs(state->matrix[1]);
-  t2 = splashAbs(state->matrix[2]);
-  t3 = splashAbs(state->matrix[3]);
-  if (t0 * t3 >= t1 * t2) {
-    w = (t0 < t3) ? t0 : t3;
-  } else {
-    w = (t1 < t2) ? t1 : t2;
-  }
+  double t0 = splashAbs(state->matrix[0]);
+  double t1 = splashAbs(state->matrix[1]);
+  double t2 = splashAbs(state->matrix[2]);
+  double t3 = splashAbs(state->matrix[3]);
+  double t01 = t0 * t0 + t1 * t1;
+  double t23 = t2 * t2 + t3 * t3;
+  w = sqrt((t01 > t23) ? t01 : t23);
   w2 = w * state->lineWidth;
 
   // construct the dashed path
@@ -5056,7 +5053,7 @@ void Splash::strokeNarrow(SplashPath *path) {
 
   xPath = new SplashXPath(path, state->matrix, state->flatness, gFalse,
 			  state->enablePathSimplification,
-			  state->strokeAdjust);
+			  state->strokeAdjust, state->clip);
 
   pipeInit(&pipe, state->strokePattern,
 	   (Guchar)splashRound(state->strokeAlpha * 255),
@@ -5074,6 +5071,44 @@ void Splash::strokeNarrow(SplashPath *path) {
       x0 = splashFloor(seg->x1);
       x1 = splashFloor(seg->x0);
     }
+
+    // With CAD-mode stroke adjustment, and a simple rectangular clip
+    // region, horizontal and vertical stroke-adjusted edges that fall
+    // slightly outside the clip region are adjusted back inside the
+    // clip region.  This avoids problems with narrow lines in
+    // slightly mismatched clip rectangles, which appear to be
+    // generated somewhat commonly by buggy CAD software.  This is
+    // similar to the code in SplashXPath::strokeAdjust() -- narrow
+    // strokes aren't stroke-adjusted, so this tweak has to be done
+    // here.
+    if (y0 == y1 &&
+	seg->y0 == seg->y1 &&
+	state->clip->getIsSimple() &&
+	state->strokeAdjust == splashStrokeAdjustCAD) {
+      SplashCoord cy0 = state->clip->getYMin();
+      SplashCoord cy1 = state->clip->getYMax();
+      int cyi0 = state->clip->getYMinI(state->strokeAdjust);
+      int cyi1 = state->clip->getYMaxI(state->strokeAdjust);
+      if (y0 == cyi0 - 1 && cy0 - seg->y0 < 0.5) {
+	y0 = y1 = y0 + 1;
+      } else if (y0 == cyi1 + 1 && seg->y0 - cy1 < 0.5) {
+	y0 = y1 = y0 - 1;
+      }
+    } else if (x0 == x1 &&
+	seg->x0 == seg->x1 &&
+	state->clip->getIsSimple() &&
+	state->strokeAdjust == splashStrokeAdjustCAD) {
+      SplashCoord cx0 = state->clip->getXMin();
+      SplashCoord cx1 = state->clip->getXMax();
+      int cxi0 = state->clip->getXMinI(state->strokeAdjust);
+      int cxi1 = state->clip->getXMaxI(state->strokeAdjust);
+      if (x0 == cxi0 - 1 && cx0 - seg->x0 < 0.5) {
+	x0 = x1 = x0 + 1;
+      } else if (x0 == cxi1 + 1 && seg->x0 - cx1 < 0.5) {
+	x0 = x1 = x0 - 1;
+      }
+    }
+
     if ((clipRes = state->clip->testRect(x0 <= x1 ? x0 : x1, y0,
 					 x0 <= x1 ? x1 : x0, y1,
 					 state->strokeAdjust))
@@ -5083,6 +5118,18 @@ void Splash::strokeNarrow(SplashPath *path) {
 	  drawStrokeSpan(&pipe, x0, x1, y0, clipRes == splashClipAllInside);
 	} else {
 	  drawStrokeSpan(&pipe, x1, x0, y0, clipRes == splashClipAllInside);
+	}
+      } else if (x0 == x1) {
+	y = state->clip->getYMinI(state->strokeAdjust);
+	if (y0 < y) {
+	  y0 = y;
+	}
+	y = state->clip->getYMaxI(state->strokeAdjust);
+	if (y1 > y) {
+	  y1 = y;
+	}
+	for (y = y0; y <= y1; ++y) {
+	  drawStrokeSpan(&pipe, x0, x0, y, clipRes == splashClipAllInside);
 	}
       } else {
 	dxdy = seg->dxdy;
@@ -5094,7 +5141,7 @@ void Splash::strokeNarrow(SplashPath *path) {
 	y = state->clip->getYMaxI(state->strokeAdjust);
 	if (y1 > y) {
 	  y1 = y;
-	  x1 = splashFloor(seg->x0 + ((SplashCoord)y1 - seg->y0) * dxdy);
+	  x1 = splashFloor(seg->x0 + ((SplashCoord)y1 + 1 - seg->y0) * dxdy);
 	}
 	if (x0 <= x1) {
 	  xa = x0;
@@ -5135,6 +5182,7 @@ void Splash::strokeNarrow(SplashPath *path) {
     }
     ++nClipRes[clipRes];
   }
+
   if (nClipRes[splashClipPartial] ||
       (nClipRes[splashClipAllInside] && nClipRes[splashClipAllOutside])) {
     opClipRes = splashClipPartial;
@@ -5326,16 +5374,14 @@ SplashPath *Splash::makeDashedPath(SplashPath *path) {
     return new SplashPath();
   }
   lineDashStartPhase = state->lineDashPhase;
-  if (lineDashStartPhase > lineDashTotal * 2) {
-    i = splashFloor(lineDashStartPhase / (lineDashTotal * 2));
-    lineDashStartPhase -= lineDashTotal * i * 2;
-  } else if (lineDashStartPhase < 0) {
-    i = splashCeil(-lineDashStartPhase / (lineDashTotal * 2));
-    lineDashStartPhase += lineDashTotal * i * 2;
+  if (lineDashStartPhase > 0) {
+    i = splashFloor(lineDashStartPhase / lineDashTotal);
+    lineDashStartPhase -= lineDashTotal * i;
+  } else {
+    i = splashCeil(-lineDashStartPhase / lineDashTotal);
+    lineDashStartPhase += lineDashTotal * i;
   }
-  i = splashFloor(lineDashStartPhase / lineDashTotal);
-  lineDashStartPhase -= (SplashCoord)i * lineDashTotal;
-  lineDashStartOn = gTrue;
+  lineDashStartOn = !((state->lineDashLength & 1) && (i & 1));
   lineDashStartIdx = 0;
   if (lineDashStartPhase > 0) {
     while (lineDashStartPhase >= state->lineDash[lineDashStartIdx]) {
@@ -5376,6 +5422,14 @@ SplashPath *Splash::makeDashedPath(SplashPath *path) {
       x1 = path->pts[k+1].x;
       y1 = path->pts[k+1].y;
       segLen = splashDist(x0, y0, x1, y1);
+
+      // Special case for zero-length subpath: copy the zero-length
+      // segment into the dashed path so that the round line cap
+      // special case is handled.
+      if (j == i+1 && segLen == 0) {
+	dPath->moveTo(x0, y0);
+	dPath->lineTo(x0, y0);
+      }
 
       // process the segment
       while (segLen > 0) {
@@ -5477,6 +5531,13 @@ SplashError Splash::fill(SplashPath *path, GBool eo) {
     printf("fill [eo:%d]:\n", eo);
     dumpPath(path);
   }
+  if (path->length == 0) {
+    return splashErrEmptyPath;
+  }
+  if (pathAllOutside(path, gFalse)) {
+    opClipRes = splashClipAllOutside;
+    return splashOk;
+  }
   return fillWithPattern(path, eo, state->fillPattern, state->fillAlpha);
 }
 
@@ -5490,19 +5551,11 @@ SplashError Splash::fillWithPattern(SplashPath *path, GBool eo,
   int xMin, yMin, xMax, xMin2, xMax2, yMax, y, t;
   SplashClipResult clipRes;
 
-  if (path->length == 0) {
-    return splashErrEmptyPath;
-  }
-  if (pathAllOutside(path)) {
-    opClipRes = splashClipAllOutside;
-    return splashOk;
-  }
-
   path2 = tweakFillPath(path);
 
   xPath = new SplashXPath(path2, state->matrix, state->flatness, gTrue,
 			  state->enablePathSimplification,
-			  state->strokeAdjust);
+			  state->strokeAdjust, state->clip);
   if (path2 != path) {
     delete path2;
   }
@@ -5678,13 +5731,17 @@ SplashPath *Splash::tweakFillPath(SplashPath *path) {
   return path2;
 }
 
-GBool Splash::pathAllOutside(SplashPath *path) {
+// Returns true if [path] is entirely outside the current clipping
+// path.  The path coordinates have not been stroke adjusted, so we
+// compare against the floating point clip rect.  If [stroke] is true,
+// allow for the stroke width and miter limit.
+GBool Splash::pathAllOutside(SplashPath *path, GBool stroke) {
   SplashCoord xMin1, yMin1, xMax1, yMax1;
   SplashCoord xMin2, yMin2, xMax2, yMax2;
   SplashCoord x, y;
-  int xMinI, yMinI, xMaxI, yMaxI;
   int i;
 
+  //--- compute the path's bbox in user space
   xMin1 = xMax1 = path->pts[0].x;
   yMin1 = yMax1 = path->pts[0].y;
   for (i = 1; i < path->length; ++i) {
@@ -5700,6 +5757,19 @@ GBool Splash::pathAllOutside(SplashPath *path) {
     }
   }
 
+  //--- allow for stroke width and miter limit
+  if (stroke && state->lineWidth > 0) {
+    SplashCoord w = state->lineWidth * 0.5;
+    if (state->lineJoin == splashLineJoinMiter) {
+      w *= state->miterLimit;
+    }
+    xMin1 -= w;
+    yMin1 -= w;
+    xMax1 += w;
+    yMax1 += w;
+  }
+
+  //--- convert path bbox to device space
   transform(state->matrix, xMin1, yMin1, &x, &y);
   xMin2 = xMax2 = x;
   yMin2 = yMax2 = y;
@@ -5736,18 +5806,20 @@ GBool Splash::pathAllOutside(SplashPath *path) {
   } else if (y > yMax2) {
     yMax2 = y;
   }
-  // sanity-check the coordinates - xMinI/yMinI/xMaxI/yMaxI are
-  // 32-bit integers, so coords need to be < 2^31
-  SplashXPath::clampCoords(&xMin2, &yMin2);
-  SplashXPath::clampCoords(&xMax2, &yMax2);
-  xMinI = splashFloor(xMin2);
-  yMinI = splashFloor(yMin2);
-  xMaxI = splashFloor(xMax2);
-  yMaxI = splashFloor(yMax2);
 
-  return state->clip->testRect(xMinI, yMinI, xMaxI, yMaxI,
-			       state->strokeAdjust) ==
-         splashClipAllOutside;
+  //--- handle zero-width strokes
+  if (stroke && state->lineWidth == 0) {
+    xMin1 -= 1;
+    yMin1 -= 1;
+    xMax1 += 1;
+    yMax1 += 1;
+  }
+
+  //--- check against the clip rect
+  return xMin2 > state->clip->getXMax() ||
+         xMax2 < state->clip->getXMin() ||
+         yMin2 > state->clip->getYMax() ||
+         yMax2 < state->clip->getYMin();
 }
 
 SplashError Splash::fillChar(SplashCoord x, SplashCoord y,
@@ -6022,6 +6094,9 @@ SplashError Splash::fillImageMask(GString *imageTag,
   SplashClipResult clipRes =
       state->clip->testRect(xMin, yMin, xMax - 1, yMax - 1,
 			    state->strokeAdjust);
+  if (clipRes == splashClipAllOutside) {
+    return splashOk;
+  }
   // If the scaled mask is much wider and/or taller than the clip
   // region, we use the "arbitrary" scaling path, to avoid a
   // potentially very slow loop in the flips-only path (which scans
@@ -6054,92 +6129,88 @@ SplashError Splash::fillImageMask(GString *imageTag,
 
   //--- horizontal/vertical flips only
   if (flipsOnly && !veryLarge) {
-    if (clipRes != splashClipAllOutside) {
-      int scaledWidth = xMax - xMin;
-      int scaledHeight = yMax - yMin;
-      ImageMaskScaler scaler(src, srcData, w, h,
-			     scaledWidth, scaledHeight, interpolate, antialias);
-      Guchar *tmpLine = NULL;
-      if (horizFlip) {
-	tmpLine = (Guchar *)gmalloc(scaledWidth);
-      }
-      if (vertFlip) {
-	if (horizFlip) {    // bottom-up, mirrored
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler.nextLine();
-	    mirrorImageMaskRow(scaler.data(), tmpLine, scaledWidth);
-	    (this->*drawRowFunc)(&dd, tmpLine,
-				 xMin, yMax - 1 - y, scaledWidth);
-	  }
-	} else {            // bottom-up
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler.nextLine();
-	    (this->*drawRowFunc)(&dd, scaler.data(),
-				 xMin, yMax - 1 - y, scaledWidth);
-	  }
-	}
-      } else {
-	if (horizFlip) {    // top-down, mirrored
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler.nextLine();
-	    mirrorImageMaskRow(scaler.data(), tmpLine, scaledWidth);
-	    (this->*drawRowFunc)(&dd, tmpLine,
-				 xMin, yMin + y, scaledWidth);
-	  }
-	} else {            // top-down
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler.nextLine();
-	    (this->*drawRowFunc)(&dd, scaler.data(),
-				 xMin, yMin + y, scaledWidth);
-	  }
-	}
-      }
-      gfree(tmpLine);
+    int scaledWidth = xMax - xMin;
+    int scaledHeight = yMax - yMin;
+    ImageMaskScaler scaler(src, srcData, w, h,
+			   scaledWidth, scaledHeight, interpolate, antialias);
+    Guchar *tmpLine = NULL;
+    if (horizFlip) {
+      tmpLine = (Guchar *)gmalloc(scaledWidth);
     }
+    if (vertFlip) {
+      if (horizFlip) {    // bottom-up, mirrored
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler.nextLine();
+	  mirrorImageMaskRow(scaler.data(), tmpLine, scaledWidth);
+	  (this->*drawRowFunc)(&dd, tmpLine,
+			       xMin, yMax - 1 - y, scaledWidth);
+	}
+      } else {            // bottom-up
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler.nextLine();
+	  (this->*drawRowFunc)(&dd, scaler.data(),
+			       xMin, yMax - 1 - y, scaledWidth);
+	}
+      }
+    } else {
+      if (horizFlip) {    // top-down, mirrored
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler.nextLine();
+	  mirrorImageMaskRow(scaler.data(), tmpLine, scaledWidth);
+	  (this->*drawRowFunc)(&dd, tmpLine,
+			       xMin, yMin + y, scaledWidth);
+	}
+      } else {            // top-down
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler.nextLine();
+	  (this->*drawRowFunc)(&dd, scaler.data(),
+			       xMin, yMin + y, scaledWidth);
+	}
+      }
+    }
+    gfree(tmpLine);
 
   //--- 90/270 rotation
   } else if (rot90Only && !veryLarge) {
-    if (clipRes != splashClipAllOutside) {
 
-      // scale the mask
-      int scaledWidth = yMax - yMin;
-      int scaledHeight = xMax - xMin;
-      ImageMaskScaler scaler(src, srcData, w, h,
-			     scaledWidth, scaledHeight, interpolate, antialias);
-      Guchar *scaledMask = (Guchar *)gmallocn(scaledHeight, scaledWidth);
-      Guchar *ptr = scaledMask;
-      for (int y = 0; y < scaledHeight; ++y) {
-	scaler.nextLine();
-	memcpy(ptr, scaler.data(), scaledWidth);
-	ptr += scaledWidth;
-      }
-
-      // draw it
-      Guchar *tmpLine = (Guchar *)gmalloc(scaledHeight);
-      for (int y = 0; y < scaledWidth; ++y) {
-	if (vertFlip) {
-	  ptr = scaledMask + (scaledWidth - 1 - y);
-	} else {
-	  ptr = scaledMask + y;
-	}
-	if (horizFlip) {
-	  ptr += (scaledHeight - 1) * scaledWidth;
-	  for (int x = 0; x < scaledHeight; ++x) {
-	    tmpLine[x] = *ptr;
-	    ptr -= scaledWidth;
-	  }
-	} else {
-	  for (int x = 0; x < scaledHeight; ++x) {
-	    tmpLine[x] = *ptr;
-	    ptr += scaledWidth;
-	  }
-	}
-	(this->*drawRowFunc)(&dd, tmpLine, xMin, yMin + y, scaledHeight);
-      }
-
-      gfree(tmpLine);
-      gfree(scaledMask);
+    // scale the mask
+    int scaledWidth = yMax - yMin;
+    int scaledHeight = xMax - xMin;
+    ImageMaskScaler scaler(src, srcData, w, h,
+			   scaledWidth, scaledHeight, interpolate, antialias);
+    Guchar *scaledMask = (Guchar *)gmallocn64(scaledHeight, scaledWidth);
+    Guchar *ptr = scaledMask;
+    for (int y = 0; y < scaledHeight; ++y) {
+      scaler.nextLine();
+      memcpy(ptr, scaler.data(), scaledWidth);
+      ptr += scaledWidth;
     }
+
+    // draw it
+    Guchar *tmpLine = (Guchar *)gmalloc(scaledHeight);
+    for (int y = 0; y < scaledWidth; ++y) {
+      if (vertFlip) {
+	ptr = scaledMask + (scaledWidth - 1 - y);
+      } else {
+	ptr = scaledMask + y;
+      }
+      if (horizFlip) {
+	ptr += (scaledHeight - 1) * scaledWidth;
+	for (int x = 0; x < scaledHeight; ++x) {
+	  tmpLine[x] = *ptr;
+	  ptr -= scaledWidth;
+	}
+      } else {
+	for (int x = 0; x < scaledHeight; ++x) {
+	  tmpLine[x] = *ptr;
+	  ptr += scaledWidth;
+	}
+      }
+      (this->*drawRowFunc)(&dd, tmpLine, xMin, yMin + y, scaledHeight);
+    }
+
+    gfree(tmpLine);
+    gfree(scaledMask);
 
   //--- arbitrary transform
   } else {
@@ -6189,7 +6260,7 @@ SplashError Splash::fillImageMask(GString *imageTag,
 
     // if downscaling: store the downscaled image mask
     // if upscaling: store the unscaled image mask
-    Guchar *scaledMask = (Guchar *)gmallocn(scaledHeight, scaledWidth);
+    Guchar *scaledMask = (Guchar *)gmallocn64(scaledHeight, scaledWidth);
     if (downscaling) {
       ImageMaskScaler scaler(src, srcData, w, h,
 			     scaledWidth, scaledHeight, interpolate, antialias);
@@ -6271,7 +6342,7 @@ void Splash::drawImageMaskArbitraryNoInterp(
 			   + (SplashCoord)y * invMat[3] + invMat[5]);
       if (xx >= 0 && xx < scaledWidth &&
 	  yy >= 0 && yy < scaledHeight) {
-	Guchar *p = scaledMask + (yy * scaledWidth + xx);
+	Guchar *p = scaledMask + (yy * (SplashBitmapRowSize)scaledWidth + xx);
 	Guchar *q = buf + (x - xMin);
 	*q = *p;
 	if (x < rowMin) {
@@ -6349,10 +6420,10 @@ void Splash::drawImageMaskArbitraryInterp(
 	if (y1 >= scaledHeight) {
 	  y1 = scaledHeight - 1;
 	}
-	Guchar *p00 = scaledMask + (y0 * scaledWidth + x0);
-	Guchar *p10 = scaledMask + (y0 * scaledWidth + x1);
-	Guchar *p01 = scaledMask + (y1 * scaledWidth + x0);
-	Guchar *p11 = scaledMask + (y1 * scaledWidth + x1);
+	Guchar *p00 = scaledMask + (y0 * (SplashBitmapRowSize)scaledWidth + x0);
+	Guchar *p10 = scaledMask + (y0 * (SplashBitmapRowSize)scaledWidth + x1);
+	Guchar *p01 = scaledMask + (y1 * (SplashBitmapRowSize)scaledWidth + x0);
+	Guchar *p11 = scaledMask + (y1 * (SplashBitmapRowSize)scaledWidth + x1);
 	Guchar *q = buf + (x - xMin);
 	*q = (Guchar)(int)(sx0 * (sy0 * (int)*p00 + sy1 * (int)*p01) +
 			   sx1 * (sy0 * (int)*p10 + sy1 * (int)*p11));
@@ -6569,6 +6640,9 @@ SplashError Splash::drawImage(GString *imageTag,
   SplashClipResult clipRes =
       state->clip->testRect(xMin, yMin, xMax - 1, yMax - 1,
 			    state->strokeAdjust);
+  if (clipRes == splashClipAllOutside) {
+    return splashOk;
+  }
   // If the scaled image is much wider and/or taller than the clip
   // region, we use the arbitrary transform path, to avoid a
   // potentially very slow loop in the flips-only path (which scans
@@ -6616,136 +6690,133 @@ SplashError Splash::drawImage(GString *imageTag,
 
   //--- horizontal/vertical flips only
   if (flipsOnly && !veryLarge) {
-    if (clipRes != splashClipAllOutside) {
-      int scaledWidth = xMax - xMin;
-      int scaledHeight = yMax - yMin;
-      ImageScaler *scaler = getImageScaler(imageTag, src, srcData,
-					   w, h, nComps,
-					   scaledWidth, scaledHeight,
-					   srcMode, srcAlpha, interpolate);
-      Guchar *tmpLine = NULL;
-      Guchar *tmpAlphaLine = NULL;
-      if (horizFlip) {
-	tmpLine = (Guchar *)gmallocn(scaledWidth, nComps);
-	if (srcAlpha) {
-	  tmpAlphaLine = (Guchar *)gmalloc(scaledWidth);
-	}
+    int scaledWidth = xMax - xMin;
+    int scaledHeight = yMax - yMin;
+    ImageScaler *scaler = getImageScaler(imageTag, src, srcData,
+					 w, h, nComps,
+					 scaledWidth, scaledHeight,
+					 srcMode, srcAlpha, interpolate);
+    Guchar *tmpLine = NULL;
+    Guchar *tmpAlphaLine = NULL;
+    if (horizFlip) {
+      tmpLine = (Guchar *)gmallocn(scaledWidth, nComps);
+      if (srcAlpha) {
+	tmpAlphaLine = (Guchar *)gmalloc(scaledWidth);
       }
-      if (vertFlip) {
-	if (horizFlip) {    // bottom-up, mirrored
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler->nextLine();
-	    mirrorImageRow(scaler->colorData(), scaler->alphaData(),
-			   tmpLine, tmpAlphaLine,
-			   scaledWidth, nComps, srcAlpha);
-	    (this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
-				 xMin, yMax - 1 - y, scaledWidth);
-	  }
-	} else {            // bottom-up
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler->nextLine();
-	    (this->*drawRowFunc)(&dd, scaler->colorData(), scaler->alphaData(),
-				 xMin, yMax - 1 - y, scaledWidth);
-	  }
-	}
-      } else {
-	if (horizFlip) {    // top-down, mirrored
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler->nextLine();
-	    mirrorImageRow(scaler->colorData(), scaler->alphaData(),
-			   tmpLine, tmpAlphaLine,
-			   scaledWidth, nComps, srcAlpha);
-	    (this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
-				 xMin, yMin + y, scaledWidth);
-	  }
-	} else {            // top-down
-	  for (int y = 0; y < scaledHeight; ++y) {
-	    scaler->nextLine();
-	    (this->*drawRowFunc)(&dd, scaler->colorData(), scaler->alphaData(),
-				 xMin, yMin + y, scaledWidth);
-	  }
-	}
-      }
-      gfree(tmpLine);
-      gfree(tmpAlphaLine);
-      delete scaler;
     }
+    if (vertFlip) {
+      if (horizFlip) {    // bottom-up, mirrored
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler->nextLine();
+	  mirrorImageRow(scaler->colorData(), scaler->alphaData(),
+			 tmpLine, tmpAlphaLine,
+			 scaledWidth, nComps, srcAlpha);
+	  (this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
+			       xMin, yMax - 1 - y, scaledWidth);
+	}
+      } else {            // bottom-up
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler->nextLine();
+	  (this->*drawRowFunc)(&dd, scaler->colorData(), scaler->alphaData(),
+			       xMin, yMax - 1 - y, scaledWidth);
+	}
+      }
+    } else {
+      if (horizFlip) {    // top-down, mirrored
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler->nextLine();
+	  mirrorImageRow(scaler->colorData(), scaler->alphaData(),
+			 tmpLine, tmpAlphaLine,
+			 scaledWidth, nComps, srcAlpha);
+	  (this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
+			       xMin, yMin + y, scaledWidth);
+	}
+      } else {            // top-down
+	for (int y = 0; y < scaledHeight; ++y) {
+	  scaler->nextLine();
+	  (this->*drawRowFunc)(&dd, scaler->colorData(), scaler->alphaData(),
+			       xMin, yMin + y, scaledWidth);
+	}
+      }
+    }
+    gfree(tmpLine);
+    gfree(tmpAlphaLine);
+    delete scaler;
 
   //--- 90/270 rotation
   } else if (rot90Only && !veryLarge) {
-    if (clipRes != splashClipAllOutside) {
 
-      // scale the image
-      int scaledWidth = yMax - yMin;
-      int scaledHeight = xMax - xMin;
-      Guchar *scaledColor, *scaledAlpha;
-      GBool freeScaledImage;
-      getScaledImage(imageTag, src, srcData, w, h, nComps,
-		     scaledWidth, scaledHeight, srcMode, srcAlpha, interpolate,
-		     &scaledColor, &scaledAlpha, &freeScaledImage);
+    // scale the image
+    int scaledWidth = yMax - yMin;
+    int scaledHeight = xMax - xMin;
+    Guchar *scaledColor, *scaledAlpha;
+    GBool freeScaledImage;
+    getScaledImage(imageTag, src, srcData, w, h, nComps,
+		   scaledWidth, scaledHeight, srcMode, srcAlpha, interpolate,
+		   &scaledColor, &scaledAlpha, &freeScaledImage);
 
-      // draw it
-      Guchar *tmpLine = (Guchar *)gmallocn(scaledHeight, nComps);
-      Guchar *tmpAlphaLine = NULL;
-      if (srcAlpha) {
-	tmpAlphaLine = (Guchar *)gmalloc(scaledHeight);
+    // draw it
+    Guchar *tmpLine = (Guchar *)gmallocn(scaledHeight, nComps);
+    Guchar *tmpAlphaLine = NULL;
+    if (srcAlpha) {
+      tmpAlphaLine = (Guchar *)gmalloc(scaledHeight);
+    }
+    for (int y = 0; y < scaledWidth; ++y) {
+      Guchar *ptr = NULL;
+      Guchar *alphaPtr = NULL;
+      if (vertFlip) {
+	ptr = scaledColor + ((SplashBitmapRowSize)scaledWidth - 1 - y) * nComps;
+	if (srcAlpha) {
+	  alphaPtr = scaledAlpha + (scaledWidth - 1 - y);
+	}
+      } else {
+	ptr = scaledColor + y * nComps;
+	if (srcAlpha) {
+	  alphaPtr = scaledAlpha + y;
+	}
       }
-      for (int y = 0; y < scaledWidth; ++y) {
-	Guchar *ptr, *alphaPtr;
-	if (vertFlip) {
-	  ptr = scaledColor + (scaledWidth - 1 - y) * nComps;
-	  if (srcAlpha) {
-	    alphaPtr = scaledAlpha + (scaledWidth - 1 - y);
+      if (horizFlip) {
+	ptr += (scaledHeight - 1) * (SplashBitmapRowSize)scaledWidth * nComps;
+	Guchar *q = tmpLine;
+	for (int x = 0; x < scaledHeight; ++x) {
+	  for (int i = 0; i < nComps; ++i) {
+	    *q++ = ptr[i];
 	  }
-	} else {
-	  ptr = scaledColor + y * nComps;
-	  if (srcAlpha) {
-	    alphaPtr = scaledAlpha + y;
+	  ptr -= scaledWidth * nComps;
+	}
+	if (srcAlpha) {
+	  alphaPtr += (scaledHeight - 1) * (SplashBitmapRowSize)scaledWidth;
+	  q = tmpAlphaLine;
+	  for (int x = 0; x < scaledHeight; ++x) {
+	    *q++ = *alphaPtr;
+	    alphaPtr -= scaledWidth;
 	  }
 	}
-	if (horizFlip) {
-	  ptr += (scaledHeight - 1) * scaledWidth * nComps;
-	  Guchar *q = tmpLine;
+      } else {
+	Guchar *q = tmpLine;
+	for (int x = 0; x < scaledHeight; ++x) {
+	  for (int i = 0; i < nComps; ++i) {
+	    *q++ = ptr[i];
+	  }
+	  ptr += scaledWidth * nComps;
+	}
+	if (srcAlpha) {
+	  q = tmpAlphaLine;
 	  for (int x = 0; x < scaledHeight; ++x) {
-	    for (int i = 0; i < nComps; ++i) {
-	      *q++ = ptr[i];
-	    }
-	    ptr -= scaledWidth * nComps;
-	  }
-	  if (srcAlpha) {
-	    alphaPtr += (scaledHeight - 1) * scaledWidth;
-	    q = tmpAlphaLine;
-	    for (int x = 0; x < scaledHeight; ++x) {
-	      *q++ = *alphaPtr;
-	      alphaPtr -= scaledWidth;
-	    }
-	  }
-	} else {
-	  Guchar *q = tmpLine;
-	  for (int x = 0; x < scaledHeight; ++x) {
-	    for (int i = 0; i < nComps; ++i) {
-	      *q++ = ptr[i];
-	    }
-	    ptr += scaledWidth * nComps;
-	  }
-	  if (srcAlpha) {
-	    q = tmpAlphaLine;
-	    for (int x = 0; x < scaledHeight; ++x) {
-	      *q++ = *alphaPtr;
-	      alphaPtr += scaledWidth;
-	    }
+	    *q++ = *alphaPtr;
+	    alphaPtr += scaledWidth;
 	  }
 	}
-	(this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
-			     xMin, yMin + y, scaledHeight);
       }
+      (this->*drawRowFunc)(&dd, tmpLine, tmpAlphaLine,
+			   xMin, yMin + y, scaledHeight);
+    }
 
-      gfree(tmpLine);
-      gfree(tmpAlphaLine);
-      if (freeScaledImage) {
-	gfree(scaledColor);
-	gfree(scaledAlpha);
-      }
+    gfree(tmpLine);
+    gfree(tmpAlphaLine);
+    if (freeScaledImage) {
+      gfree(scaledColor);
+      gfree(scaledAlpha);
     }
 
   //--- arbitrary transform
@@ -6851,9 +6922,9 @@ ImageScaler *Splash::getImageScaler(GString *imageTag,
       } else {
 	lineSize = -1;
       }
-      imageCache->colorData = (Guchar *)gmallocn(scaledHeight, lineSize);
+      imageCache->colorData = (Guchar *)gmallocn64(scaledHeight, lineSize);
       if (srcAlpha) {
-	imageCache->alphaData = (Guchar *)gmallocn(scaledHeight, scaledWidth);
+	imageCache->alphaData = (Guchar *)gmallocn64(scaledHeight, scaledWidth);
       }
       return new SavingImageScaler(src, srcData,
 				   w, h, nComps, srcAlpha,
@@ -6894,9 +6965,9 @@ void Splash::getScaledImage(GString *imageTag,
     } else {
       lineSize = -1;
     }
-    *scaledColor = (Guchar *)gmallocn(scaledHeight, lineSize);
+    *scaledColor = (Guchar *)gmallocn64(scaledHeight, lineSize);
     if (srcAlpha) {
-      *scaledAlpha = (Guchar *)gmallocn(scaledHeight, scaledWidth);
+      *scaledAlpha = (Guchar *)gmallocn64(scaledHeight, scaledWidth);
     } else {
       *scaledAlpha = NULL;
     }
@@ -6938,9 +7009,9 @@ void Splash::getScaledImage(GString *imageTag,
       } else {
 	lineSize = -1;
       }
-      imageCache->colorData = (Guchar *)gmallocn(scaledHeight, lineSize);
+      imageCache->colorData = (Guchar *)gmallocn64(scaledHeight, lineSize);
       if (srcAlpha) {
-	imageCache->alphaData = (Guchar *)gmallocn(scaledHeight, scaledWidth);
+	imageCache->alphaData = (Guchar *)gmallocn64(scaledHeight, scaledWidth);
       }
       if (scaledWidth == w && scaledHeight == h) {
 	Guchar *colorPtr = imageCache->colorData;
@@ -7021,13 +7092,15 @@ void Splash::drawImageArbitraryNoInterp(Guchar *scaledColor,
 			   + (SplashCoord)y * invMat[3] + invMat[5]);
       if (xx >= 0 && xx < scaledWidth &&
 	  yy >= 0 && yy < scaledHeight) {
-	Guchar *p = scaledColor + (yy * scaledWidth + xx) * nComps;
+	Guchar *p = scaledColor +
+	              (yy * (SplashBitmapRowSize)scaledWidth + xx) * nComps;
 	Guchar *q = colorBuf + (x - xMin) * nComps;
 	for (int i = 0; i < nComps; ++i) {
 	  *q++ = *p++;
 	}
 	if (srcAlpha) {
-	  alphaBuf[x - xMin] = scaledAlpha[yy * scaledWidth + xx];
+	  alphaBuf[x - xMin] =
+	      scaledAlpha[yy * (SplashBitmapRowSize)scaledWidth + xx];
 	}
 	if (x < rowMin) {
 	  rowMin = x;
@@ -7111,20 +7184,24 @@ void Splash::drawImageArbitraryInterp(Guchar *scaledColor, Guchar *scaledAlpha,
 	if (y1 >= scaledHeight) {
 	  y1 = scaledHeight - 1;
 	}
-	Guchar *p00 = scaledColor + (y0 * scaledWidth + x0) * nComps;
-	Guchar *p10 = scaledColor + (y0 * scaledWidth + x1) * nComps;
-	Guchar *p01 = scaledColor + (y1 * scaledWidth + x0) * nComps;
-	Guchar *p11 = scaledColor + (y1 * scaledWidth + x1) * nComps;
+	Guchar *p00 = scaledColor +
+	                (y0 * (SplashBitmapRowSize)scaledWidth + x0) * nComps;
+	Guchar *p10 = scaledColor +
+	                (y0 * (SplashBitmapRowSize)scaledWidth + x1) * nComps;
+	Guchar *p01 = scaledColor +
+	                (y1 * (SplashBitmapRowSize)scaledWidth + x0) * nComps;
+	Guchar *p11 = scaledColor +
+	                (y1 * (SplashBitmapRowSize)scaledWidth + x1) * nComps;
 	Guchar *q = colorBuf + (x - xMin) * nComps;
 	for (int i = 0; i < nComps; ++i) {
 	  *q++ = (Guchar)(int)(sx0 * (sy0 * (int)*p00++ + sy1 * (int)*p01++) +
 			       sx1 * (sy0 * (int)*p10++ + sy1 * (int)*p11++));
 	}
 	if (srcAlpha) {
-	  p00 = scaledAlpha + (y0 * scaledWidth + x0);
-	  p10 = scaledAlpha + (y0 * scaledWidth + x1);
-	  p01 = scaledAlpha + (y1 * scaledWidth + x0);
-	  p11 = scaledAlpha + (y1 * scaledWidth + x1);
+	  p00 = scaledAlpha + (y0 * (SplashBitmapRowSize)scaledWidth + x0);
+	  p10 = scaledAlpha + (y0 * (SplashBitmapRowSize)scaledWidth + x1);
+	  p01 = scaledAlpha + (y1 * (SplashBitmapRowSize)scaledWidth + x0);
+	  p11 = scaledAlpha + (y1 * (SplashBitmapRowSize)scaledWidth + x1);
 	  q = alphaBuf + (x - xMin);
 	  *q = (Guchar)(int)(sx0 * (sy0 * (int)*p00 + sy1 * (int)*p01) +
 			     sx1 * (sy0 * (int)*p10 + sy1 * (int)*p11));

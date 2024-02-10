@@ -8,8 +8,6 @@
 #ifndef ACONF_H
 #define ACONF_H
 
-#include <aconf2.h>
-
 /*
  * Use A4 paper size instead of Letter for PostScript output.
  */

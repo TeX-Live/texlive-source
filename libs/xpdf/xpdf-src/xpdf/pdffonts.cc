@@ -96,6 +96,10 @@ static char *seenObjs;
 static int numObjects;
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   char *fileName;
   GString *ownerPW, *userPW;
   GBool ok;
@@ -174,22 +178,21 @@ int main(int argc, char *argv[]) {
   numObjects = doc->getXRef()->getNumObjects();
   seenObjs = (char *)gmalloc(numObjects);
   memset(seenObjs, 0, numObjects);
+  annots = doc->getAnnots();
   for (pg = firstPage; pg <= lastPage; ++pg) {
     page = doc->getCatalog()->getPage(pg);
     if ((resDict = page->getResourceDict())) {
       scanFonts(resDict, doc);
     }
-    annots = new Annots(doc, page->getAnnots(&obj1));
-    obj1.free();
-    for (i = 0; i < annots->getNumAnnots(); ++i) {
-      if (annots->getAnnot(i)->getAppearance(&obj1)->isStream()) {
+    int nAnnots = annots->getNumAnnots(pg);
+    for (i = 0; i < nAnnots; ++i) {
+      if (annots->getAnnot(pg, i)->getAppearance(&obj1)->isStream()) {
 	obj1.streamGetDict()->lookupNF("Resources", &obj2);
 	scanFonts(&obj2, doc);
 	obj2.free();
       }
       obj1.free();
     }
-    delete annots;
   }
   if ((form = doc->getCatalog()->getForm())) {
     for (i = 0; i < form->getNumFields(); ++i) {
@@ -222,6 +225,13 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }
 
 static void scanFonts(Object *obj, PDFDoc *doc) {

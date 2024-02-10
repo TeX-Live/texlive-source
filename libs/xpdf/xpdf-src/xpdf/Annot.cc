@@ -2,18 +2,15 @@
 //
 // Annot.cc
 //
-// Copyright 2000-2003 Glyph & Cog, LLC
+// Copyright 2000-2022 Glyph & Cog, LLC
 //
 //========================================================================
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <math.h>
+#include <limits.h>
 #include "gmem.h"
 #include "gmempp.h"
 #include "GList.h"
@@ -278,6 +275,8 @@ Annot::Annot(PDFDoc *docA, Dict *dict, Ref *refA) {
       obj3.free();
     } else if (obj2.isRef()) {
       obj2.copy(&appearance);
+    } else if (obj2.isStream()) {
+      obj2.copy(&appearance);
     }
     obj1.free();
     obj2.free();
@@ -306,29 +305,48 @@ Annot::~Annot() {
   ocObj.free();
 }
 
-void Annot::generateAnnotAppearance() {
+void Annot::generateAnnotAppearance(Object *annotObj) {
   Object obj;
-
   appearance.fetch(doc->getXRef(), &obj);
-  if (!obj.isStream()) {
-    if (type) {
-      if (!type->cmp("Line")) {
-	generateLineAppearance();
-      } else if (!type->cmp("PolyLine")) {
-	generatePolyLineAppearance();
-      } else if (!type->cmp("Polygon")) {
-	generatePolygonAppearance();
-      } else if (!type->cmp("FreeText")) {
-	generateFreeTextAppearance();
-      }
-    }
-  }
+  GBool alreadyHaveAppearance = obj.isStream();
   obj.free();
+  if (alreadyHaveAppearance) {
+    return;
+  }
+
+  if (!type || (type->cmp("Line") &&
+		type->cmp("PolyLine") &&
+		type->cmp("Polygon") &&
+		type->cmp("FreeText"))) {
+    return;
+  }
+
+  Object annotObj2;
+  if (!annotObj) {
+    getObject(&annotObj2);
+    annotObj = &annotObj2;
+  }
+  if (!annotObj->isDict()) {
+    annotObj2.free();
+    return;
+  }
+
+  if (!type->cmp("Line")) {
+    generateLineAppearance(annotObj);
+  } else if (!type->cmp("PolyLine")) {
+    generatePolyLineAppearance(annotObj);
+  } else if (!type->cmp("Polygon")) {
+    generatePolygonAppearance(annotObj);
+  } else if (!type->cmp("FreeText")) {
+    generateFreeTextAppearance(annotObj);
+  }
+
+  annotObj2.free();
 }
 
 //~ this doesn't draw the caption
-void Annot::generateLineAppearance() {
-  Object annotObj, gfxStateDict, appearDict, obj1, obj2;
+void Annot::generateLineAppearance(Object *annotObj) {
+  Object gfxStateDict, appearDict, obj1, obj2;
   MemStream *appearStream;
   double x1, y1, x2, y2, dx, dy, len, w;
   double lx1, ly1, lx2, ly2;
@@ -339,15 +357,10 @@ void Annot::generateLineAppearance() {
   AnnotLineEndType lineEnd1, lineEnd2;
   GBool fill;
 
-  if (!getObject(&annotObj)->isDict()) {
-    annotObj.free();
-    return;
-  }
-
   appearBuf = new GString();
 
   //----- check for transparency
-  if (annotObj.dictLookup("CA", &obj1)->isNum()) {
+  if (annotObj->dictLookup("CA", &obj1)->isNum()) {
     gfxStateDict.initDict(doc->getXRef());
     gfxStateDict.dictAdd(copyString("ca"), obj1.copy(&obj2));
     appearBuf->append("/GS1 gs\n");
@@ -358,7 +371,7 @@ void Annot::generateLineAppearance() {
   setLineStyle(borderStyle, &w);
   setStrokeColor(borderStyle->getColor(), borderStyle->getNumColorComps());
   fill = gFalse;
-  if (annotObj.dictLookup("IC", &obj1)->isArray()) {
+  if (annotObj->dictLookup("IC", &obj1)->isArray()) {
     if (setFillColor(&obj1)) {
       fill = gTrue;
     }
@@ -366,14 +379,14 @@ void Annot::generateLineAppearance() {
   obj1.free();
 
   //----- get line properties
-  if (annotObj.dictLookup("L", &obj1)->isArray() &&
+  if (annotObj->dictLookup("L", &obj1)->isArray() &&
       obj1.arrayGetLength() == 4) {
     if (obj1.arrayGet(0, &obj2)->isNum()) {
       x1 = obj2.getNum();
     } else {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     obj2.free();
     if (obj1.arrayGet(1, &obj2)->isNum()) {
@@ -381,7 +394,7 @@ void Annot::generateLineAppearance() {
     } else {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     obj2.free();
     if (obj1.arrayGet(2, &obj2)->isNum()) {
@@ -389,7 +402,7 @@ void Annot::generateLineAppearance() {
     } else {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     obj2.free();
     if (obj1.arrayGet(3, &obj2)->isNum()) {
@@ -397,16 +410,16 @@ void Annot::generateLineAppearance() {
     } else {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     obj2.free();
   } else {
     obj1.free();
-    goto err1;
+    return;
   }
   obj1.free();
   lineEnd1 = lineEnd2 = annotLineEndNone;
-  if (annotObj.dictLookup("LE", &obj1)->isArray() &&
+  if (annotObj->dictLookup("LE", &obj1)->isArray() &&
       obj1.arrayGetLength() == 2) {
     lineEnd1 = parseLineEndType(obj1.arrayGet(0, &obj2));
     obj2.free();
@@ -414,19 +427,19 @@ void Annot::generateLineAppearance() {
     obj2.free();
   }
   obj1.free();
-  if (annotObj.dictLookup("LL", &obj1)->isNum()) {
+  if (annotObj->dictLookup("LL", &obj1)->isNum()) {
     leaderLen = obj1.getNum();
   } else {
     leaderLen = 0;
   }
   obj1.free();
-  if (annotObj.dictLookup("LLE", &obj1)->isNum()) {
+  if (annotObj->dictLookup("LLE", &obj1)->isNum()) {
     leaderExtLen = obj1.getNum();
   } else {
     leaderExtLen = 0;
   }
   obj1.free();
-  if (annotObj.dictLookup("LLO", &obj1)->isNum()) {
+  if (annotObj->dictLookup("LLO", &obj1)->isNum()) {
     leaderOffLen = obj1.getNum();
   } else {
     leaderOffLen = 0;
@@ -513,27 +526,19 @@ void Annot::generateLineAppearance() {
 			       appearBuf->getLength(), &appearDict);
   appearance.free();
   appearance.initStream(appearStream);
-
- err1:
-  annotObj.free();
 }
 
 //~ this doesn't handle line ends (arrows)
-void Annot::generatePolyLineAppearance() {
-  Object annotObj, gfxStateDict, appearDict, obj1, obj2;
+void Annot::generatePolyLineAppearance(Object *annotObj) {
+  Object gfxStateDict, appearDict, obj1, obj2;
   MemStream *appearStream;
   double x1, y1, w;
   int i;
 
-  if (!getObject(&annotObj)->isDict()) {
-    annotObj.free();
-    return;
-  }
-
   appearBuf = new GString();
 
   //----- check for transparency
-  if (annotObj.dictLookup("CA", &obj1)->isNum()) {
+  if (annotObj->dictLookup("CA", &obj1)->isNum()) {
     gfxStateDict.initDict(doc->getXRef());
     gfxStateDict.dictAdd(copyString("ca"), obj1.copy(&obj2));
     appearBuf->append("/GS1 gs\n");
@@ -544,7 +549,7 @@ void Annot::generatePolyLineAppearance() {
   setLineStyle(borderStyle, &w);
   setStrokeColor(borderStyle->getColor(), borderStyle->getNumColorComps());
   // fill = gFalse;
-  // if (annotObj.dictLookup("IC", &obj1)->isArray()) {
+  // if (annotObj->dictLookup("IC", &obj1)->isArray()) {
   //   if (setFillColor(&obj1)) {
   //     fill = gTrue;
   //   }
@@ -552,22 +557,22 @@ void Annot::generatePolyLineAppearance() {
   // obj1.free();
 
   //----- draw line
-  if (!annotObj.dictLookup("Vertices", &obj1)->isArray()) {
+  if (!annotObj->dictLookup("Vertices", &obj1)->isArray()) {
     obj1.free();
-    goto err1;
+    return;
   }
   for (i = 0; i+1 < obj1.arrayGetLength(); i += 2) {
     if (!obj1.arrayGet(i, &obj2)->isNum()) {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     x1 = obj2.getNum();
     obj2.free();
     if (!obj1.arrayGet(i+1, &obj2)->isNum()) {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     y1 = obj2.getNum();
     obj2.free();
@@ -606,26 +611,18 @@ void Annot::generatePolyLineAppearance() {
 			       appearBuf->getLength(), &appearDict);
   appearance.free();
   appearance.initStream(appearStream);
-
- err1:
-  annotObj.free();
 }
 
-void Annot::generatePolygonAppearance() {
-  Object annotObj, gfxStateDict, appearDict, obj1, obj2;
+void Annot::generatePolygonAppearance(Object *annotObj) {
+  Object gfxStateDict, appearDict, obj1, obj2;
   MemStream *appearStream;
   double x1, y1;
   int i;
 
-  if (!getObject(&annotObj)->isDict()) {
-    annotObj.free();
-    return;
-  }
-
   appearBuf = new GString();
 
   //----- check for transparency
-  if (annotObj.dictLookup("CA", &obj1)->isNum()) {
+  if (annotObj->dictLookup("CA", &obj1)->isNum()) {
     gfxStateDict.initDict(doc->getXRef());
     gfxStateDict.dictAdd(copyString("ca"), obj1.copy(&obj2));
     appearBuf->append("/GS1 gs\n");
@@ -633,30 +630,30 @@ void Annot::generatePolygonAppearance() {
   obj1.free();
 
   //----- set fill color
-  if (!annotObj.dictLookup("IC", &obj1)->isArray()  ||
+  if (!annotObj->dictLookup("IC", &obj1)->isArray()  ||
       !setFillColor(&obj1)) {
     obj1.free();
-    goto err1;
+    return;
   }
   obj1.free();
 
   //----- fill polygon
-  if (!annotObj.dictLookup("Vertices", &obj1)->isArray()) {
+  if (!annotObj->dictLookup("Vertices", &obj1)->isArray()) {
     obj1.free();
-    goto err1;
+    return;
   }
   for (i = 0; i+1 < obj1.arrayGetLength(); i += 2) {
     if (!obj1.arrayGet(i, &obj2)->isNum()) {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     x1 = obj2.getNum();
     obj2.free();
     if (!obj1.arrayGet(i+1, &obj2)->isNum()) {
       obj2.free();
       obj1.free();
-      goto err1;
+      return;
     }
     y1 = obj2.getNum();
     obj2.free();
@@ -695,31 +692,23 @@ void Annot::generatePolygonAppearance() {
 			       appearBuf->getLength(), &appearDict);
   appearance.free();
   appearance.initStream(appearStream);
-
- err1:
-  annotObj.free();
 }
 
 //~ this doesn't handle rich text
 //~ this doesn't handle the callout
 //~ this doesn't handle the RD field
-void Annot::generateFreeTextAppearance() {
-  Object annotObj, gfxStateDict, appearDict, obj1, obj2;
+void Annot::generateFreeTextAppearance(Object *annotObj) {
+  Object gfxStateDict, appearDict, obj1, obj2;
   Object resources, gsResources, fontResources, defaultFont;
   GString *text, *da;
   double lineWidth;
   int quadding, rot;
   MemStream *appearStream;
 
-  if (!getObject(&annotObj)->isDict()) {
-    annotObj.free();
-    return;
-  }
-
   appearBuf = new GString();
 
   //----- check for transparency
-  if (annotObj.dictLookup("CA", &obj1)->isNum()) {
+  if (annotObj->dictLookup("CA", &obj1)->isNum()) {
     gfxStateDict.initDict(doc->getXRef());
     gfxStateDict.dictAdd(copyString("ca"), obj1.copy(&obj2));
     appearBuf->append("/GS1 gs\n");
@@ -727,19 +716,19 @@ void Annot::generateFreeTextAppearance() {
   obj1.free();
 
   //----- draw the text
-  if (annotObj.dictLookup("Contents", &obj1)->isString()) {
+  if (annotObj->dictLookup("Contents", &obj1)->isString()) {
     text = obj1.getString()->copy();
   } else {
     text = new GString();
   }
   obj1.free();
-  if (annotObj.dictLookup("Q", &obj1)->isInt()) {
+  if (annotObj->dictLookup("Q", &obj1)->isInt()) {
     quadding = obj1.getInt();
   } else {
     quadding = 0;
   }
   obj1.free();
-  if (annotObj.dictLookup("DA", &obj1)->isString()) {
+  if (annotObj->dictLookup("DA", &obj1)->isString()) {
     da = obj1.getString()->copy();
   } else {
     da = new GString();
@@ -747,7 +736,7 @@ void Annot::generateFreeTextAppearance() {
   obj1.free();
   // the "Rotate" field is not defined in the PDF spec, but Acrobat
   // looks at it
-  if (annotObj.dictLookup("Rotate", &obj1)->isInt()) {
+  if (annotObj->dictLookup("Rotate", &obj1)->isInt()) {
     rot = obj1.getInt();
   } else {
     rot = 0;
@@ -797,8 +786,6 @@ void Annot::generateFreeTextAppearance() {
 			       appearBuf->getLength(), &appearDict);
   appearance.free();
   appearance.initStream(appearStream);
-
-  annotObj.free();
 }
 
 void Annot::setLineStyle(AnnotBorderStyle *bs, double *lineWidth) {
@@ -1344,105 +1331,192 @@ Object *Annot::getObject(Object *obj) {
 }
 
 //------------------------------------------------------------------------
+// PageAnnots
+//------------------------------------------------------------------------
+
+class PageAnnots {
+public:
+
+  PageAnnots();
+  ~PageAnnots();
+
+  GList *annots;		// list of annots on the page [Annot]
+  GBool appearancesGenerated;	// set after appearances have been generated
+};
+
+PageAnnots::PageAnnots() {
+  annots = new GList();
+  appearancesGenerated = gFalse;
+}
+
+PageAnnots::~PageAnnots() {
+  deleteGList(annots, Annot);
+}
+
+//------------------------------------------------------------------------
 // Annots
 //------------------------------------------------------------------------
 
-Annots::Annots(PDFDoc *docA, Object *annotsObj) {
-  Annot *annot;
-  Object obj1, obj2;
-  Ref ref;
-  GBool drawWidgetAnnots;
-  int size;
-  int i;
-
+Annots::Annots(PDFDoc *docA) {
   doc = docA;
-  annots = NULL;
-  size = 0;
-  nAnnots = 0;
-
-  if (annotsObj->isArray()) {
-    // Kludge: some PDF files define an empty AcroForm, but still
-    // include Widget-type annotations -- in that case, we want to
-    // draw the widgets (since the form code won't).  This really
-    // ought to look for Widget-type annotations that are not included
-    // in any form field.
-    drawWidgetAnnots = !doc->getCatalog()->getForm() ||
-                       doc->getCatalog()->getForm()->getNumFields() == 0;
-    for (i = 0; i < annotsObj->arrayGetLength(); ++i) {
-      if (annotsObj->arrayGetNF(i, &obj1)->isRef()) {
-	ref = obj1.getRef();
-	obj1.free();
-	annotsObj->arrayGet(i, &obj1);
-      } else {
-	ref.num = ref.gen = -1;
-      }
-      if (obj1.isDict()) {
-	if (drawWidgetAnnots ||
-	    !obj1.dictLookup("Subtype", &obj2)->isName("Widget")) {
-	  annot = new Annot(doc, obj1.getDict(), &ref);
-	  if (annot->isOk()) {
-	    if (nAnnots >= size) {
-	      size += 16;
-	      annots = (Annot **)greallocn(annots, size, sizeof(Annot *));
-	    }
-	    annots[nAnnots++] = annot;
-	  } else {
-	    delete annot;
-	  }
-	}
-	obj2.free();
-      }
-      obj1.free();
-    }
+  pageAnnots = (PageAnnots **)gmallocn(doc->getNumPages(), sizeof(PageAnnots*));
+  for (int page = 1; page <= doc->getNumPages(); ++page) {
+    pageAnnots[page - 1] = NULL;
   }
+  formFieldRefsSize = 0;
+  formFieldRefs = NULL;
 }
 
 Annots::~Annots() {
-  int i;
-
-  for (i = 0; i < nAnnots; ++i) {
-    delete annots[i];
+  for (int page = 1; page <= doc->getNumPages(); ++page) {
+    delete pageAnnots[page - 1];
   }
-  gfree(annots);
+  gfree(pageAnnots);
+  gfree(formFieldRefs);
 }
 
-Annot *Annots::find(double x, double y) {
-  int i;
+void Annots::loadAnnots(int page) {
+  if (pageAnnots[page - 1]) {
+    return;
+  }
 
-  for (i = nAnnots - 1; i >= 0; --i) {
-    if (annots[i]->inRect(x, y)) {
-      return annots[i];
+  pageAnnots[page - 1] = new PageAnnots();
+
+  Object annotsObj;
+  doc->getCatalog()->getPage(page)->getAnnots(&annotsObj);
+  if (!annotsObj.isArray()) {
+    annotsObj.free();
+    return;
+  }
+
+  loadFormFieldRefs();
+
+  for (int i = 0; i < annotsObj.arrayGetLength(); ++i) {
+    Object annotObj;
+    Ref annotRef;
+    if (annotsObj.arrayGetNF(i, &annotObj)->isRef()) {
+      annotRef = annotObj.getRef();
+      annotObj.free();
+      annotsObj.arrayGet(i, &annotObj);
+    } else {
+      annotRef.num = annotRef.gen = -1;
+    }
+    if (!annotObj.isDict()) {
+      annotObj.free();
+      continue;
+    }
+
+    // skip any annotations which are used as AcroForm fields --
+    // they'll be rendered by the AcroForm module
+    if (annotRef.num >= 0 && annotRef.num < formFieldRefsSize &&
+	formFieldRefs[annotRef.num]) {
+      annotObj.free();
+      continue;
+    }
+
+    Annot *annot = new Annot(doc, annotObj.getDict(), &annotRef);
+    annotObj.free();
+    if (annot->isOk()) {
+      pageAnnots[page - 1]->annots->append(annot);
+    } else {
+      delete annot;
+    }
+  }
+
+  annotsObj.free();
+}
+
+// Build a set of object refs for AcroForm fields.
+void Annots::loadFormFieldRefs() {
+  if (formFieldRefs) {
+    return;
+  }
+
+  AcroForm *form = doc->getCatalog()->getForm();
+  if (!form) {
+    return;
+  }
+
+  int newFormFieldRefsSize = 256;
+  for (int i = 0; i < form->getNumFields(); ++i) {
+    AcroFormField *field = form->getField(i);
+    Object fieldRef;
+    field->getFieldRef(&fieldRef);
+    if (fieldRef.getRefNum() >= formFieldRefsSize) {
+      while (fieldRef.getRefNum() >= newFormFieldRefsSize &&
+	     newFormFieldRefsSize <= INT_MAX / 2) {
+	newFormFieldRefsSize *= 2;
+      }
+      if (fieldRef.getRefNum() >= newFormFieldRefsSize) {
+	continue;
+      }
+      formFieldRefs = (char *)grealloc(formFieldRefs, newFormFieldRefsSize);
+      for (int j = formFieldRefsSize; j < newFormFieldRefsSize; ++j) {
+	formFieldRefs[j] = (char)0;
+      }
+      formFieldRefsSize = newFormFieldRefsSize;
+    }
+    formFieldRefs[fieldRef.getRefNum()] = (char)1;
+    fieldRef.free();
+  }
+}
+
+int Annots::getNumAnnots(int page) {
+  loadAnnots(page);
+  return pageAnnots[page - 1]->annots->getLength();
+}
+
+Annot *Annots::getAnnot(int page, int idx) {
+  loadAnnots(page);
+  return (Annot *)pageAnnots[page - 1]->annots->get(idx);
+}
+
+Annot *Annots::find(int page, double x, double y) {
+  loadAnnots(page);
+  PageAnnots *pa = pageAnnots[page - 1];
+  for (int i = pa->annots->getLength() - 1; i >= 0; --i) {
+    Annot *annot = (Annot *)pa->annots->get(i);
+    if (annot->inRect(x, y)) {
+      return annot;
     }
   }
   return NULL;
 }
 
-int Annots::findIdx(double x, double y) {
-  int i;
-
-  for (i = nAnnots - 1; i >= 0; --i) {
-    if (annots[i]->inRect(x, y)) {
+int Annots::findIdx(int page, double x, double y) {
+  loadAnnots(page);
+  PageAnnots *pa = pageAnnots[page - 1];
+  for (int i = pa->annots->getLength() - 1; i >= 0; --i) {
+    Annot *annot = (Annot *)pa->annots->get(i);
+    if (annot->inRect(x, y)) {
       return i;
     }
   }
   return -1;
 }
 
-void Annots::generateAnnotAppearances() {
-  int i;
-
-  for (i = 0; i < nAnnots; ++i) {
-    annots[i]->generateAnnotAppearance();
+void Annots::add(int page, Object *annotObj) {
+  if (!annotObj->isDict()) {
+    return;
+  }
+  Ref annotRef = {-1, -1};
+  Annot *annot = new Annot(doc, annotObj->getDict(), &annotRef);
+  if (annot->isOk()) {
+    annot->generateAnnotAppearance(annotObj);
+    pageAnnots[page - 1]->annots->append(annot);
+  } else {
+    delete annot;
   }
 }
 
-Annot *Annots::findAnnot(Ref *ref) {
-  int i;
-
-  for (i = 0; i < nAnnots; ++i) {
-    if (annots[i]->match(ref)) {
-      return annots[i];
+void Annots::generateAnnotAppearances(int page) {
+  loadAnnots(page);
+  PageAnnots *pa = pageAnnots[page - 1];
+  if (!pa->appearancesGenerated) {
+    for (int i = 0; i < pa->annots->getLength(); ++i) {
+      Annot *annot = (Annot *)pa->annots->get(i);
+      annot->generateAnnotAppearance(NULL);
     }
+    pa->appearancesGenerated = gTrue;
   }
-  return NULL;
 }

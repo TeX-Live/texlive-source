@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <limits.h>
 #include "gmempp.h"
@@ -1798,6 +1794,11 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 	    break;
 	  }
 	}
+	if (refAggNum <= 0 || refAggNum > 10000) {
+	  error(errSyntaxError, getPos(),
+		"Invalid refinement/aggregation instance count in JBIG2 symbol dictionary");
+	  goto syntaxError;
+	}
 #if 0 //~ This special case was added about a year before the final draft
       //~ of the JBIG2 spec was released.  I have encountered some old
       //~ JBIG2 images that predate it.
@@ -2440,6 +2441,18 @@ JBIG2Bitmap *JBIG2Stream::readTextRegion(GBool huff, GBool refine,
 	  refDX = ((rdw >= 0) ? rdw : rdw - 1) / 2 + rdx;
 	  refDY = ((rdh >= 0) ? rdh : rdh - 1) / 2 + rdy;
 
+	  if (rdw > INT_MAX - syms[symID]->getWidth() ||
+	      rdh > INT_MAX - syms[symID]->getHeight()) {
+	    error(errSyntaxError, getPos(),
+		  "Invalid refinement size in JBIG2 text region");
+	    continue;
+	  }
+	  // sanity check
+	  if (rdw > 1000 || rdh > 1000) {
+	    error(errSyntaxError, getPos(),
+		  "Invalid refinement size in JBIG2 text region");
+	    continue;
+	  }
 	  symbolBitmap =
 	    readGenericRefinementRegion(rdw + syms[symID]->getWidth(),
 					rdh + syms[symID]->getHeight(),
@@ -2527,7 +2540,8 @@ void JBIG2Stream::readPatternDictSeg(Guint segNum, Guint length) {
       !readULong(&grayMax)) {
     goto eofError;
   }
-  if (patternW == 0 || patternH == 0) {
+  if (patternW == 0 || patternH == 0 ||
+      grayMax > UINT_MAX / patternW - 1) {
     error(errSyntaxError, getPos(),
 	  "Bad size in JBIG2 pattern dictionary segment");
     return;
@@ -3948,7 +3962,9 @@ void JBIG2Stream::readPageInfoSeg(Guint length) {
       !readUByte(&flags) || !readUWord(&striping)) {
     goto eofError;
   }
-  if (pageW == 0 || pageH == 0 || pageW > INT_MAX / pageW) {
+  if (pageW == 0 || pageH == 0 ||
+      pageW > INT_MAX || pageH > INT_MAX ||
+      pageH > INT_MAX / pageW) {
     error(errSyntaxError, getPos(), "Bad page size in JBIG2 stream");
     return;
   }

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include <limits.h>
 // older compilers won't define SIZE_MAX in stdint.h without this

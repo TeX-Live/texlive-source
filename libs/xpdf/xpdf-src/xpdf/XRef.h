@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "gfile.h"
 #include "Object.h"
@@ -183,8 +179,9 @@ private:
   GBool constructXRefEntry(int num, int gen, GFileOffset pos,
 			   XRefEntryType type);
   GBool getObjectStreamObject(int objStrNum, int objIdx,
-			      int objNum, Object *obj);
-  ObjectStream *getObjectStream(int objStrNum);
+			      int objNum, Object *obj, int recursion);
+  ObjectStream *getObjectStreamFromCache(int objStrNum);
+  void addObjectStreamToCache(ObjectStream *objStr);
   void cleanObjectStreamCache();
   GFileOffset strToFileOffset(char *s);
 };
