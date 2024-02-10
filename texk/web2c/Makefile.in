@@ -3280,10 +3280,10 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
 	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
 	euptexdir/ChangeLog euptexdir/EUPTEX.txt $(euptex_tests) \
-	eptexdir/eptrip/eptrip.log eptexdir/eptrip/eptrip.tex \
+	euptexdir/eptrip/eptrip.log euptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \
-	eptexdir/tests/pdfprimitive-test.tex \
+	euptexdir/tests/pdfprimitive-test.tex \
 	euptexdir/tests/pdfprimitive-euptex.log hitexdir/ChangeLog \
 	$(hitex_web) $(hitex_tests) hitexdir/tests/hello.tex \
 	hitexdir/tests/rule.tex pdftexdir/regex/COPYING.LIB \
@@ -4503,7 +4503,7 @@ nodist_uptex_SOURCES = $(uptex_c_h) uptex-pool.c
 dist_uptex_SOURCES = uptexdir/uptexextra.c uptexdir/uptexextra.h uptexdir/uptex_version.h
 
 # We must create uptexd.h and uptexdir/uptex_version.h before building the uptex_OBJECTS.
-uptex_prereq = uptexd.h ptexdir/ptex_version.h uptexdir/uptex_version.h
+uptex_prereq = uptexd.h uptexdir/ptex_version.h uptexdir/uptex_version.h
 uptex_web_srcs = \
 	tex.web \
 	tex.ch \
@@ -4512,7 +4512,7 @@ uptex_web_srcs = \
 	zlib-fmt.ch
 
 uptex_ch_srcs = \
-	ptexdir/ptex-base.ch \
+	uptexdir/ptex-base.ch \
 	uptexdir/uptex-m.ch \
 	$(uptex_ch_synctex) \
 	tex-binpool.ch
@@ -4570,7 +4570,7 @@ dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h \
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
 euptex_prereq = euptexd.h etexdir/etex_version.h \
-	ptexdir/ptex_version.h eptexdir/eptex_version.h \
+	uptexdir/ptex_version.h euptexdir/eptex_version.h \
 	uptexdir/uptex_version.h $(am__append_146)
 euptex_web_srcs = \
 	tex.web \
@@ -4584,20 +4584,20 @@ euptex_web_srcs = \
 	etexdir/tex.ech
 
 euptex_ch_srcs = \
-	eptexdir/etex.ch0 \
-	ptexdir/ptex-base.ch \
+	euptexdir/etex.ch0 \
+	uptexdir/ptex-base.ch \
 	uptexdir/uptex-m.ch \
 	euptexdir/euptex.ch0 \
-	eptexdir/eptex.ech \
-	eptexdir/etex.ch1 \
+	euptexdir/eptex.ech \
+	euptexdir/etex.ch1 \
 	euptexdir/euptex.ch1 \
 	$(euptex_ch_synctex) \
-	eptexdir/fam256.ch \
+	euptexdir/fam256.ch \
 	euptexdir/pdfstrcmp-eup-pre.ch \
-	eptexdir/pdfutils.ch \
+	euptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
-	eptexdir/suppresserrors.ch \
-	eptexdir/char-warning-eptex.ch \
+	euptexdir/suppresserrors.ch \
+	euptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
 

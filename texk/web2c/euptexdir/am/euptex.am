@@ -33,8 +33,8 @@ nodist_euptex_SOURCES = $(euptex_c_h) euptex-pool.c
 dist_euptex_SOURCES = euptexdir/euptexextra.c euptexdir/euptexextra.h
 
 # We must create euptexd.h and [eu]ptexdir/[eu]ptex_version.h before building the euptex_OBJECTS.
-euptex_prereq = euptexd.h etexdir/etex_version.h ptexdir/ptex_version.h \
-	eptexdir/eptex_version.h uptexdir/uptex_version.h
+euptex_prereq = euptexd.h etexdir/etex_version.h uptexdir/ptex_version.h \
+	euptexdir/eptex_version.h uptexdir/uptex_version.h
 $(euptex_OBJECTS): $(euptex_prereq)
 
 $(euptex_c_h): euptex-web2c
@@ -69,20 +69,20 @@ euptex_web_srcs = \
 euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
 	$(tie_c) euptex.web $(euptex_ch_srcs)
 euptex_ch_srcs = \
-	eptexdir/etex.ch0 \
-	ptexdir/ptex-base.ch \
+	euptexdir/etex.ch0 \
+	uptexdir/ptex-base.ch \
 	uptexdir/uptex-m.ch \
 	euptexdir/euptex.ch0 \
-	eptexdir/eptex.ech \
-	eptexdir/etex.ch1 \
+	euptexdir/eptex.ech \
+	euptexdir/etex.ch1 \
 	euptexdir/euptex.ch1 \
 	$(euptex_ch_synctex) \
-	eptexdir/fam256.ch \
+	euptexdir/fam256.ch \
 	euptexdir/pdfstrcmp-eup-pre.ch \
-	eptexdir/pdfutils.ch \
+	euptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
-	eptexdir/suppresserrors.ch \
-	eptexdir/char-warning-eptex.ch \
+	euptexdir/suppresserrors.ch \
+	euptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines
@@ -123,8 +123,8 @@ endif EUPTEX
 ##
 ## euptexdir/euptriptest.test
 EXTRA_DIST += \
-	eptexdir/eptrip/eptrip.log \
-	eptexdir/eptrip/eptrip.tex \
+	euptexdir/eptrip/eptrip.log \
+	euptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs \
 	euptexdir/euptrip/texmf.cnf
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
@@ -136,7 +136,7 @@ DISTCLEANFILES += euptrip.diffs
 ## euptexdir/pdfprimitive.test
 EXTRA_DIST += \
 	euptexdir/pdfprimitive.test \
-	eptexdir/tests/pdfprimitive-test.tex \
+	euptexdir/tests/pdfprimitive-test.tex \
 	euptexdir/tests/pdfprimitive-euptex.log
 DISTCLEANFILES += pdfprimitive-euptex.*
 

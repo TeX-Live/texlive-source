@@ -1,3 +1,13 @@
+2024-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* eptex_version.h, eptex.ech, etex.ch{0,1},
+	{char-warning-eptex,fam256,pdfutils,suppresserrors}.ch,
+	eptrip/eptrip.{diffs,log,tex}, eptrip/texmf.cnf,
+	tests/pdfprimitive-test.tex, am/euptex.am:
+	Copy eptex source files from ../eptexdir
+	to cleaning up building environment.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2023-12-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* wcfname{,0}.test:
