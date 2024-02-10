@@ -116,7 +116,7 @@ jobs:
         uses: AButler/upload-release-assets@v3.0
         if: matrix.release_build
         with:
-          files: $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
+          files: ${{ github.workspace }}/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
 
@@ -174,5 +174,5 @@ jobs:
         uses: AButler/upload-release-assets@v3.0
         if: matrix.release_build
         with:
-          files: $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.arch }}-${{ matrix.os }}.tar.gz
+          files: ${{ github.workspace }}/repo/texlive-bin-${{ matrix.arch }}-${{ matrix.os }}.tar.gz
           repo-token: ${{ secrets.GITHUB_TOKEN }}
