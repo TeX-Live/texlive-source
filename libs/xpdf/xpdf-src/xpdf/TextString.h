@@ -15,6 +15,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include "CharTypes.h"
 
 class GString;

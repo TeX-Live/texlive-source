@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <math.h>
 #include "gtypes.h"
 #include "GString.h"

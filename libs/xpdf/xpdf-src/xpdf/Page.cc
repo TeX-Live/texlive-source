@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <stddef.h>
 #include "gmempp.h"
 #include "Trace.h"
@@ -377,6 +381,7 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
   PDFRectangle box;
   Gfx *gfx;
   Object obj;
+  Annots *annotList;
   AcroForm *form;
   int i;
 
@@ -421,20 +426,21 @@ void Page::displaySlice(OutputDev *out, double hDPI, double vDPI,
 
   // draw (non-form) annotations
   if (globalParams->getDrawAnnotations()) {
-    Annots *annots2 = doc->getAnnots();
-    annots2->generateAnnotAppearances(num);
-    int n = annots2->getNumAnnots(num);
-    if (n > 0) {
+    annotList = new Annots(doc, getAnnots(&obj));
+    obj.free();
+    annotList->generateAnnotAppearances();
+    if (annotList->getNumAnnots() > 0) {
       if (globalParams->getPrintCommands()) {
 	printf("***** Annotations\n");
       }
-      for (i = 0; i < n; ++i) {
+      for (i = 0; i < annotList->getNumAnnots(); ++i) {
 	if (abortCheckCbk && (*abortCheckCbk)(abortCheckCbkData)) {
 	  break;
 	}
-	annots2->getAnnot(num, i)->draw(gfx, printing);
+	annotList->getAnnot(i)->draw(gfx, printing);
       }
     }
+    delete annotList;
   }
 
   // draw form fields
@@ -546,4 +552,3 @@ void Page::getDefaultCTM(double *ctm, double hDPI, double vDPI,
   delete state;
 #endif
 }
-

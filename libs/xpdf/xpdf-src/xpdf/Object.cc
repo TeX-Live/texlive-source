@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <stddef.h>
 #include "gmempp.h"
 #include "Object.h"
@@ -38,7 +42,7 @@ const char *objTypeNames[numObjTypes] = {
   "none"
 };
 
-#ifdef DEBUG_OBJECT_MEM
+#ifdef DEBUG_MEM
 #if MULTITHREADED
 GAtomicCounter Object::numAlloc[numObjTypes] =
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -46,7 +50,7 @@ GAtomicCounter Object::numAlloc[numObjTypes] =
 long Object::numAlloc[numObjTypes] =
   {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 #endif
-#endif // DEBUG_OBJECT_MEM
+#endif // DEBUG_MEM
 
 Object *Object::initArray(XRef *xref) {
   initObj(objArray);
@@ -97,7 +101,7 @@ Object *Object::copy(Object *obj) {
   default:
     break;
   }
-#ifdef DEBUG_OBJECT_MEM
+#ifdef DEBUG_MEM
 #if MULTITHREADED
   gAtomicIncrement(&numAlloc[type]);
 #else
@@ -139,7 +143,7 @@ void Object::free() {
   default:
     break;
   }
-#ifdef DEBUG_OBJECT_MEM
+#ifdef DEBUG_MEM
 #if MULTITHREADED
   gAtomicDecrement(&numAlloc[type]);
 #else
@@ -221,7 +225,7 @@ void Object::print(FILE *f) {
 }
 
 void Object::memCheck(FILE *f) {
-#ifdef DEBUG_OBJECT_MEM
+#ifdef DEBUG_MEM
   int i;
   long t;
 

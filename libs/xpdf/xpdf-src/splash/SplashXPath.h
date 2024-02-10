@@ -11,10 +11,13 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include "SplashTypes.h"
 
 class SplashPath;
-class SplashClip;
 struct SplashXPathPoint;
 struct SplashPathHint;
 
@@ -91,8 +94,7 @@ public:
   // subpaths.
   SplashXPath(SplashPath *path, SplashCoord *matrix,
 	      SplashCoord flatness, GBool closeSubpaths,
-	      GBool simplify, SplashStrokeAdjustMode strokeAdjMode,
-	      SplashClip *clip);
+	      GBool simplify, SplashStrokeAdjustMode strokeAdjMode);
 
   // Copy an expanded path.
   SplashXPath *copy() { return new SplashXPath(this); }
@@ -112,8 +114,7 @@ private:
 		 SplashCoord *xo, SplashCoord *yo);
   GBool strokeAdjust(SplashXPathPoint *pts,
 		     SplashPathHint *hints, int nHints,
-		     SplashStrokeAdjustMode strokeAdjMode,
-		     SplashClip *clip);
+		     SplashStrokeAdjustMode strokeAdjMode);
   void grow(int nSegs);
   void addCurve(SplashCoord x0, SplashCoord y0,
 		SplashCoord x1, SplashCoord y1,

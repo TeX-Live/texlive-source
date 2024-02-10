@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include "gtypes.h"
 #include "SplashTypes.h"
 #include "config.h"
@@ -125,15 +129,7 @@ public:
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode code, int nBytes, Unicode *u, int uLen,
-			GBool fill, GBool stroke, GBool makePath);
-  virtual void fillTextPath(GfxState *state);
-  virtual void strokeTextPath(GfxState *state);
-  virtual void clipToTextPath(GfxState *state);
-  virtual void clipToTextStrokePath(GfxState *state);
-  virtual void clearTextPath(GfxState *state);
-  virtual void addTextPathToSavedClipPath(GfxState *state);
-  virtual void clipToSavedClipPath(GfxState *state);
+			CharCode code, int nBytes, Unicode *u, int uLen);
   virtual GBool beginType3Char(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       CharCode code, Unicode *u, int uLen);
@@ -310,8 +306,7 @@ private:
 
   SplashFont *font;		// current font
   GBool needFontUpdate;		// set when the font needs to be updated
-  SplashPath *savedTextPath;	// path built for text string
-  SplashPath *savedClipPath;	// clipping path built with text object
+  SplashPath *textClipPath;	// clipping path built with text object
 
   SplashTransparencyGroup *	// transparency group stack
     transpGroupStack;

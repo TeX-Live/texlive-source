@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include <stdio.h>
 #include "gtypes.h"
 #include "OutputDev.h"

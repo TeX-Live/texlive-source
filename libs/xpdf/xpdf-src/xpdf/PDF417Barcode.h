@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 class GString;
 
 // Draw a PDF417 barcode:

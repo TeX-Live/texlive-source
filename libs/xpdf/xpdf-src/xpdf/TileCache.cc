@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include "gmem.h"
 #include "gmempp.h"
 #include "GList.h"
@@ -233,7 +237,7 @@ GThreadReturn TileCacheThreadPool::threadFunc(void *arg) {
 }
 
 void TileCacheThreadPool::worker() {
-  CachedTileDesc *ct = NULL;
+  CachedTileDesc *ct;
 
   while (1) {
     gLockMutex(&mutex);

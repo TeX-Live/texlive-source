@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #ifndef _WIN32

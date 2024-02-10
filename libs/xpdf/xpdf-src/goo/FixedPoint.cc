@@ -12,6 +12,10 @@
 
 #if USE_FIXEDPOINT
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include "gmempp.h"
 #include "FixedPoint.h"
 

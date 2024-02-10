@@ -9,6 +9,8 @@
 #ifndef ACONF_H
 #define ACONF_H
 
+#include <aconf2.h>
+
 /*
  * Enable C++ exceptions.
  */

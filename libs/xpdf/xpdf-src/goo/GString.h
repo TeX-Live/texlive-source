@@ -13,6 +13,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include <limits.h> // for LLONG_MAX and ULLONG_MAX
 #include <stdarg.h>
 #include "gtypes.h"

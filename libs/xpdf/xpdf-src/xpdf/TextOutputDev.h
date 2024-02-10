@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include <stdio.h>
 #include "gtypes.h"
 #include "GfxFont.h"
@@ -117,9 +121,6 @@ public:
 
   // Get the width of the 'm' character, if available.
   double getMWidth() { return mWidth; }
-
-  double getAscent() { return ascent; }
-  double getDescent() { return descent; }
 
   Ref getFontID() { return fontID; }
 
@@ -473,17 +474,9 @@ public:
   TextWordList *makeWordListForRect(double xMin, double yMin,
 				    double xMax, double yMax);
 
-  // Get the primary rotation of text on the page.
-  int getPrimaryRotation() { return primaryRot; }
-
   // Returns true if the primary character direction is left-to-right,
   // false if it is right-to-left.
   GBool primaryDirectionIsLR();
-
-  // Get the counter values.
-  int getNumVisibleChars() { return nVisibleChars; }
-  int getNumInvisibleChars() { return nInvisibleChars; }
-  int getNumRemovedDupChars() { return nRemovedDupChars; }
 
   // Returns true if any of the fonts used on this page are likely to
   // be problematic when converting text to Unicode.
@@ -564,7 +557,7 @@ private:
   GList *separateOverlappingText(GList *charsA);
   TextColumn *buildOverlappingTextColumn(GList *overlappingChars);
   TextBlock *splitChars(GList *charsA);
-  TextBlock *split(GList *charsA, int rot);
+  TextBlock *split(GList *charsA, int rot, GBool vertOnly);
   GList *getChars(GList *charsA, double xMin, double yMin,
 		  double xMax, double yMax);
   void findGaps(GList *charsA, int rot,
@@ -578,9 +571,7 @@ private:
   void insertLargeChars(GList *largeChars, TextBlock *blk);
   void insertLargeCharsInFirstLeaf(GList *largeChars, TextBlock *blk);
   void insertLargeCharInLeaf(TextChar *ch, TextBlock *blk);
-  void insertIntoTree(TextBlock *subtree, TextBlock *primaryTree,
-		      GBool doReorder);
-  void reorderBlocks(TextBlock *blk);
+  void insertIntoTree(TextBlock *subtree, TextBlock *primaryTree);
   void insertColumnIntoTree(TextBlock *column, TextBlock *tree);
   void insertClippedChars(GList *clippedChars, TextBlock *tree);
   TextBlock *findClippedCharLeaf(TextChar *ch, TextBlock *tree);
@@ -598,7 +589,6 @@ private:
 		      double xMin, double yMin, double xMax, double yMax);
   void getLineChars(TextBlock *blk, GList *charsA);
   double computeWordSpacingThreshold(GList *charsA, int rot);
-  void adjustCombiningChars(GList *charsA, int rot);
   int getCharDirection(TextChar *ch);
   int getCharDirection(TextChar *ch, TextChar *left, TextChar *right);
   int assignPhysLayoutPositions(GList *columns);
@@ -650,14 +640,9 @@ private:
   GList *chars;			// [TextChar]
   GList *fonts;			// all font info objects used on this
 				//   page [TextFontInfo]
-  int primaryRot;		// primary rotation
 
   GList *underlines;		// [TextUnderline]
   GList *links;			// [TextLink]
-
-  int nVisibleChars;		// number of visible chars on the page
-  int nInvisibleChars;		// number of invisible chars on the page
-  int nRemovedDupChars;		// number of duplicate chars removed
 
   GList *findCols;		// text used by the findText**/findPoint**
 				//   functions [TextColumn]
@@ -740,8 +725,7 @@ public:
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode c, int nBytes, Unicode *u, int uLen,
-			GBool fill, GBool stroke, GBool makePath);
+			CharCode c, int nBytes, Unicode *u, int uLen);
   virtual void incCharCount(int nChars);
   virtual void beginActualText(GfxState *state, Unicode *u, int uLen);
   virtual void endActualText(GfxState *state);
@@ -799,11 +783,6 @@ public:
 
   // Turn extra processing for HTML conversion on or off.
   void enableHTMLExtras(GBool html) { control.html = html; }
-
-  // Get the counter values.
-  int getNumVisibleChars() { return text->nVisibleChars; }
-  int getNumInvisibleChars() { return text->nInvisibleChars; }
-  int getNumRemovedDupChars() { return text->nRemovedDupChars; }
 
 private:
 

@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #if MULTITHREADED
 #include "GMutex.h"
 #endif
@@ -114,9 +118,6 @@ public:
 
   Object *getViewerPreferences() { return &viewerPrefs; }
 
-  // Return true if the document uses JavaScript.
-  GBool usesJavaScript();
-
 private:
 
   PDFDoc *doc;
@@ -145,23 +146,21 @@ private:
 
   Object *findDestInTree(Object *tree, GString *name, Object *obj);
   GBool readPageTree(Object *catDict);
-  int countPageTree(Object *pagesNodeRef, char *touchedObjs);
+  int countPageTree(Object *pagesObj);
   void loadPage(int pg);
   void loadPage2(int pg, int relPg, PageTreeNode *node);
   void readEmbeddedFileList(Dict *catDict);
-  void readEmbeddedFileTree(Object *nodeRef, char *touchedObjs);
+  void readEmbeddedFileTree(Object *node);
   void readFileAttachmentAnnots(Object *pageNodeRef,
 				char *touchedObjs);
   void readEmbeddedFile(Object *fileSpec, Object *name1);
   void readPageLabelTree(Object *root);
-  void readPageLabelTree2(Object *node, char *touchedObjs);
+  void readPageLabelTree2(Object *node);
   PageLabelNode *findPageLabel(int pageNum);
   GString *makeRomanNumeral(int num, GBool uppercase);
   GString *makeLetterLabel(int num, GBool uppercase);
   GBool convertPageLabelToInt(TextString *pageLabel, int prefixLength,
 			      char style, int *n);
-  GBool scanPageTreeForJavaScript(Object *pageNodeRef, char *touchedObjs);
-  GBool scanAAForJavaScript(Object *aaObj);
 };
 
 #endif

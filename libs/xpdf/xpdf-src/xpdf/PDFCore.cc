@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <math.h>
 #include "gmempp.h"
 #include "GString.h"
@@ -42,6 +46,9 @@ PDFCore::PDFCore(SplashColorMode colorMode, int bitmapRowPad,
 
   linksPage = 0;
   links = NULL;
+
+  annotsPage = 0;
+  annots = NULL;
 
   textPage = 0;
   textDPI = 0;
@@ -109,7 +116,6 @@ PDFCore::~PDFCore() {
   delete state;
   clearPage();
   if (doc) {
-    aboutToDeleteDoc();
     delete doc;
   }
   for (i = 0; i < pdfHistorySize; ++i) {
@@ -195,7 +201,6 @@ int PDFCore::loadFile2(PDFDoc *newDoc) {
   // NB: do not delete doc until after DisplayState::setDoc() returns
   state->setDoc(newDoc);
   if (doc) {
-    aboutToDeleteDoc();
     delete doc;
   }
   doc = newDoc;
@@ -214,7 +219,6 @@ void PDFCore::clear() {
   // no document
   // NB: do not delete doc until after DisplayState::setDoc() returns
   state->setDoc(NULL);
-  aboutToDeleteDoc();
   delete doc;
   doc = NULL;
   clearPage();
@@ -296,8 +300,6 @@ void PDFCore::displayDest(LinkDest *dest) {
     page = 1;
   }
 
-  GBool changeZoom = globalParams->getAllowLinksToChangeZoom();
-
   switch (dest->getKind()) {
   case destXYZ:
     cvtUserToDev(page, dest->getLeft(), dest->getTop(), &dx, &dy);
@@ -315,9 +317,7 @@ void PDFCore::displayDest(LinkDest *dest) {
     break;
   case destFit:
   case destFitB:
-    if (changeZoom) {
-      state->setZoom(zoomPage);
-    }
+    state->setZoom(zoomPage);
     scrollX = tileMap->getPageLeftX(page);
     scrollY = tileMap->getPageTopY(page);
     startUpdate();
@@ -326,9 +326,7 @@ void PDFCore::displayDest(LinkDest *dest) {
     break;
   case destFitH:
   case destFitBH:
-    if (changeZoom) {
-      state->setZoom(zoomWidth);
-    }
+    state->setZoom(zoomWidth);
     scrollX = tileMap->getPageLeftX(page);
     scrollY = tileMap->getPageTopY(page);
     if (dest->getChangeTop()) {
@@ -341,9 +339,7 @@ void PDFCore::displayDest(LinkDest *dest) {
     break;
   case destFitV:
   case destFitBV:
-    if (changeZoom) {
-      state->setZoom(zoomHeight);
-    }
+    state->setZoom(zoomHeight);
     scrollX = tileMap->getPageLeftX(page);
     scrollY = tileMap->getPageTopY(page);
     if (dest->getChangeTop()) {
@@ -355,13 +351,8 @@ void PDFCore::displayDest(LinkDest *dest) {
     finishUpdate(gTrue, gTrue);
     break;
   case destFitR:
-    if (changeZoom) {
-      zoomToRect(page, dest->getLeft(), dest->getTop(),
-		 dest->getRight(), dest->getBottom());
-    } else {
-      scrollToCentered(page, 0.5 * (dest->getLeft() + dest->getRight()),
-		       0.5 * (dest->getTop(), dest->getBottom()));
-    }
+    zoomToRect(page, dest->getLeft(), dest->getTop(),
+	       dest->getRight(), dest->getBottom());
     break;
   }
 }
@@ -435,16 +426,9 @@ void PDFCore::finishUpdate(GBool addToHist, GBool checkForChangedFile) {
   //   tileDone or tick (incremental update) to avoid "flashing" the
   //   screen (drawing a blank background, followed by the actual
   //   content slightly later)
-  // - this postponement actually causes flickering in certain cases
-  //   (the Qt QML backend) -- don't do it if alwaysInvalidateOnUpdate()
-  //   returns true
-  if (alwaysInvalidateOnUpdate()) {
+  getWindowBitmap(gTrue);
+  if (bitmapFinished) {
     invalidateWholeWindow();
-  } else {
-    getWindowBitmap(gTrue);
-    if (bitmapFinished) {
-      invalidateWholeWindow();
-    }
   }
   updateScrollbars();
 
@@ -1653,50 +1637,6 @@ GList *PDFCore::findAll(Unicode *u, int len, GBool caseSensitive,
   return results;
 }
 
-GList *AsyncFindAll::run(PDFDoc *doc, Unicode *u, int len, GBool caseSensitive,
-			 GBool wholeWord, int firstPage, int lastPage) {
-  GList *results = new GList();
-
-  TextOutputDev *textOut = new TextOutputDev(NULL, &core->textOutCtrl, gFalse);
-  if (!textOut->isOk()) {
-    delete textOut;
-    return results;
-  }
-
-  for (int pg = firstPage; pg <= lastPage && !canceled; ++pg) {
-    doc->displayPage(textOut, pg, 72, 72, 0, gFalse, gTrue, gFalse);
-    GBool first = gTrue;
-    while (!canceled) {
-      double xMin, yMin, xMax, yMax;
-      if (!textOut->findText(u, len, first, gTrue, !first, gFalse,
-			    caseSensitive, gFalse, wholeWord,
-			    &xMin, &yMin, &xMax, &yMax)) {
-	break;
-      }
-      double uxMin, uyMin, uxMax, uyMax, t;
-      textOut->cvtDevToUser(xMin, yMin, &uxMin, &uyMin);
-      textOut->cvtDevToUser(xMax, yMax, &uxMax, &uyMax);
-      if (uxMin > uxMax) {
-	t = uxMin;  uxMin = uxMax;  uxMax = t;
-      }
-      if (uyMin > uyMax) {
-	t = uyMin;  uyMin = uyMax;  uyMax = t;
-      }
-      results->append(new FindResult(pg, uxMin, uyMin, uxMax, uyMax));
-      first = gFalse;
-    }
-  }
-
-  delete textOut;
-
-  if (canceled) {
-    deleteGList(results, FindResult);
-    return NULL;
-  }
-
-  return results;
-}
-
 
 GBool PDFCore::cvtWindowToUser(int xw, int yw,
 			       int *pg, double *xu, double *yu) {
@@ -1811,11 +1751,23 @@ LinkAction *PDFCore::findLink(int pg, double x, double y) {
 }
 
 Annot *PDFCore::findAnnot(int pg, double x, double y) {
-  return doc->getAnnots()->find(pg, x, y);
+  loadAnnots(pg);
+  return annots->find(x, y);
 }
 
 int PDFCore::findAnnotIdx(int pg, double x, double y) {
-  return doc->getAnnots()->findIdx(pg, x, y);
+  loadAnnots(pg);
+  return annots->findIdx(x, y);
+}
+
+Annot *PDFCore::getAnnot(int idx) {
+  if (!annots) {
+    return NULL;
+  }
+  if (idx < 0 || idx >= annots->getNumAnnots()) {
+    return NULL;
+  }
+  return annots->getAnnot(idx);
 }
 
 AcroFormField *PDFCore::findFormField(int pg, double x, double y) {
@@ -1864,8 +1816,7 @@ void PDFCore::setWindowSize(int winWidth, int winHeight) {
 
   startUpdate();
 
-  page = wx0 = wy0 = 0; // make gcc happy
-  ux = uy = 0;
+  wx0 = wy0 = 0; // make gcc happy
   doScroll = gFalse;
   if (state->getZoom() < 0 && state->displayModeIsContinuous()) {
     // save the user coordinates of the appropriate edge of the window
@@ -1928,6 +1879,12 @@ void PDFCore::clearPage() {
   links = NULL;
   linksPage = 0;
 
+  if (annots) {
+    delete annots;
+  }
+  annots = NULL;
+  annotsPage = 0;
+
   if (text) {
     delete text;
   }
@@ -1947,6 +1904,22 @@ void PDFCore::loadLinks(int pg) {
   }
   links = doc->getLinks(pg);
   linksPage = pg;
+}
+
+// Load the annotations for <pg>.
+void PDFCore::loadAnnots(int pg) {
+  Object annotsObj;
+
+  if (annots && annotsPage == pg) {
+    return;
+  }
+  if (annots) {
+    delete annots;
+  }
+  doc->getCatalog()->getPage(pg)->getAnnots(&annotsObj);
+  annots = new Annots(doc, &annotsObj);
+  annotsObj.free();
+  annotsPage = pg;
 }
 
 // Extract text from <pg>.

@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <string.h>
 #include <math.h>
 #include <limits.h>
@@ -594,8 +598,6 @@ struct SplashTransparencyGroup {
   SplashBitmap *tBitmap;	// bitmap for transparency group
   GfxColorSpace *blendingColorSpace;
   GBool isolated;
-  GBool inSoftMask;		// true if this, or any containing
-				//   group, is a soft mask
 
   //----- modified region in tBitmap
   int modXMin, modYMin, modXMax, modYMax;
@@ -652,8 +654,7 @@ SplashOutputDev::SplashOutputDev(SplashColorMode colorModeA,
 
   font = NULL;
   needFontUpdate = gFalse;
-  savedTextPath = NULL;
-  savedClipPath = NULL;
+  textClipPath = NULL;
 
   transpGroupStack = NULL;
 
@@ -730,11 +731,8 @@ SplashOutputDev::~SplashOutputDev() {
   if (bitmap) {
     delete bitmap;
   }
-  if (savedTextPath) {
-    delete savedTextPath;
-  }
-  if (savedClipPath) {
-    delete savedClipPath;
+  if (textClipPath) {
+    delete textClipPath;
   }
 }
 
@@ -1076,10 +1074,7 @@ void SplashOutputDev::setOverprintMask(GfxState *state,
   Guint mask;
   GfxCMYK cmyk;
 
-  // Adobe ignores overprint in soft masks.
-  if (overprintFlag &&
-      !(transpGroupStack && transpGroupStack->inSoftMask) &&
-      globalParams->getOverprintPreview()) {
+  if (overprintFlag && globalParams->getOverprintPreview()) {
     mask = colorSpace->getOverprintMask();
     // The OPM (overprintMode) setting is only relevant when the color
     // space is DeviceCMYK or is "implicitly converted to DeviceCMYK".
@@ -2223,24 +2218,27 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       double originX, double originY,
 			       CharCode code, int nBytes,
-			       Unicode *u, int uLen,
-			       GBool fill, GBool stroke, GBool makePath) {
+			       Unicode *u, int uLen) {
+  SplashPath *path;
+  int render;
+  GBool doFill, doStroke, doClip;
+  SplashStrokeAdjustMode strokeAdjust;
+  double m[4];
+  GBool horiz;
+
   if (skipHorizText || skipRotatedText) {
-    double m[4];
     state->getFontTransMat(&m[0], &m[1], &m[2], &m[3]);
     // this matches the 'diagonal' test in TextPage::updateFont()
-    GBool horiz = m[0] > 0 && fabs(m[1]) < 0.001 &&
-                  fabs(m[2]) < 0.001 && m[3] < 0;
+    horiz = m[0] > 0 && fabs(m[1]) < 0.001 &&
+            fabs(m[2]) < 0.001 && m[3] < 0;
     if ((skipHorizText && horiz) || (skipRotatedText && !horiz)) {
       return;
     }
   }
 
-  fill = fill && !state->getFillColorSpace()->isNonMarking();
-  stroke = stroke && !state->getStrokeColorSpace()->isNonMarking();
-
   // check for invisible text -- this is used by Acrobat Capture
-  if (!fill && !stroke && !makePath) {
+  render = state->getRender();
+  if (render == 3) {
     return;
   }
 
@@ -2254,8 +2252,13 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
   x -= originX;
   y -= originY;
 
-  SplashPath *path = NULL;
-  if (stroke || makePath) {
+  doFill = !(render & 1) && !state->getFillColorSpace()->isNonMarking();
+  doStroke = ((render & 3) == 1 || (render & 3) == 2) &&
+             !state->getStrokeColorSpace()->isNonMarking();
+  doClip = render & 4;
+
+  path = NULL;
+  if (doStroke || doClip) {
     if ((path = font->getGlyphPath(code))) {
       path->offset((SplashCoord)x, (SplashCoord)y);
     }
@@ -2264,19 +2267,14 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
   // don't use stroke adjustment when stroking text -- the results
   // tend to be ugly (because characters with horizontal upper or
   // lower edges get misaligned relative to the other characters)
-  SplashStrokeAdjustMode savedStrokeAdjust = splashStrokeAdjustOff;
-  if (stroke) {
-    savedStrokeAdjust = splash->getStrokeAdjust();
+  strokeAdjust = splashStrokeAdjustOff; // make gcc happy
+  if (doStroke) {
+    strokeAdjust = splash->getStrokeAdjust();
     splash->setStrokeAdjust(splashStrokeAdjustOff);
   }
 
-  // the possible operations are:
-  //   - fill
-  //   - stroke
-  //   - fill + stroke
-  //   - makePath
-
-  if (fill && stroke) {
+  // fill and stroke
+  if (doFill && doStroke) {
     if (path) {
       setOverprintMask(state, state->getFillColorSpace(),
 		       state->getFillOverprint(), state->getOverprintMode(),
@@ -2288,105 +2286,42 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
       splash->stroke(path);
     }
 
-  } else if (fill) {
+  // fill
+  } else if (doFill) {
     setOverprintMask(state, state->getFillColorSpace(),
 		     state->getFillOverprint(), state->getOverprintMode(),
 		     state->getFillColor());
     splash->fillChar((SplashCoord)x, (SplashCoord)y, code, font);
 
-  } else if (stroke) {
+  // stroke
+  } else if (doStroke) {
     if (path) {
       setOverprintMask(state, state->getStrokeColorSpace(),
 		       state->getStrokeOverprint(), state->getOverprintMode(),
 		       state->getStrokeColor());
       splash->stroke(path);
     }
+  }
 
-  } else if (makePath) {
+  // clip
+  if (doClip) {
     if (path) {
-      if (savedTextPath) {
-	savedTextPath->append(path);
+      if (textClipPath) {
+	textClipPath->append(path);
       } else {
-	savedTextPath = path;
+	textClipPath = path;
 	path = NULL;
       }
     }
   }
 
-  if (stroke) {
-    splash->setStrokeAdjust(savedStrokeAdjust);
+  if (doStroke) {
+    splash->setStrokeAdjust(strokeAdjust);
   }
 
   if (path) {
     delete path;
   }
-}
-
-void SplashOutputDev::fillTextPath(GfxState *state) {
-  if (!savedTextPath) {
-    return;
-  }
-  setOverprintMask(state, state->getFillColorSpace(),
-		   state->getFillOverprint(), state->getOverprintMode(),
-		   state->getFillColor());
-  splash->fill(savedTextPath, gFalse);
-}
-
-void SplashOutputDev::strokeTextPath(GfxState *state) {
-  if (!savedTextPath) {
-    return;
-  }
-  setOverprintMask(state, state->getStrokeColorSpace(),
-		   state->getStrokeOverprint(), state->getOverprintMode(),
-		   state->getStrokeColor());
-  splash->stroke(savedTextPath);
-}
-
-void SplashOutputDev::clipToTextPath(GfxState *state) {
-  if (!savedTextPath) {
-    return;
-  }
-  splash->clipToPath(savedTextPath, gFalse);
-}
-
-void SplashOutputDev::clipToTextStrokePath(GfxState *state) {
-  if (!savedTextPath) {
-    return;
-  }
-  SplashPath *path = splash->makeStrokePath(savedTextPath,
-					    state->getLineWidth(),
-					    state->getLineCap(),
-					    state->getLineJoin());
-  splash->clipToPath(path, gFalse);
-  delete path;
-}
-
-void SplashOutputDev::clearTextPath(GfxState *state) {
-  if (savedTextPath) {
-    delete savedTextPath;
-    savedTextPath = NULL;
-  }
-}
-
-void SplashOutputDev::addTextPathToSavedClipPath(GfxState *state) {
-  if (savedTextPath) {
-    if (savedClipPath) {
-      savedClipPath->append(savedTextPath);
-      delete savedTextPath;
-    } else {
-      savedClipPath = savedTextPath;
-    }
-    savedTextPath = NULL;
-  }
-}
-
-void SplashOutputDev::clipToSavedClipPath(GfxState *state) {
-  if (!savedClipPath) {
-    return;
-  }
-  splash->clipToPath(savedClipPath, gFalse);
-  delete savedClipPath;
-  savedClipPath = NULL;
 }
 
 GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
@@ -2744,6 +2679,11 @@ void SplashOutputDev::drawType3Glyph(GfxState *state, T3FontCache *t3Font,
 }
 
 void SplashOutputDev::endTextObject(GfxState *state) {
+  if (textClipPath) {
+    splash->clipToPath(textClipPath, gFalse);
+    delete textClipPath;
+    textClipPath = NULL;
+  }
 }
 
 struct SplashOutImageMaskData {
@@ -3915,7 +3855,7 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   SplashBitmap *backdropBitmap;
   SplashColor color;
   double xMin, yMin, xMax, yMax, x, y;
-  int bw, bh, tx, ty, w, h, xx, yy, i;
+  int bw, bh, tx, ty, w, h, i;
 
   // transform the bbox
   state->transform(bbox[0], bbox[1], &x, &y);
@@ -3988,23 +3928,21 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   } else if (ty >= bh) {
     ty = bh - 1;
   }
-  xx = (int)ceil(xMax);
-  if (xx < tx) {
-    w = 1;
-  } else if (xx > bw - 1) {
-    // NB bw and tx are both non-negative, so 'bw - tx' can't overflow
+  w = (int)ceil(xMax) - tx + 1;
+  // NB bw and tx are both non-negative, so 'bw - tx' can't overflow
+  if (bw - tx < w) {
     w = bw - tx;
-  } else {
-    w = xx - tx + 1;
   }
-  yy = (int)ceil(yMax);
-  if (yy < ty) {
-    h = 1;
-  } else if (yy > bh - 1) {
-    // NB bh and ty are both non-negative, so 'bh - ty' can't overflow
+  if (w < 1) {
+    w = 1;
+  }
+  h = (int)ceil(yMax) - ty + 1;
+  // NB bh and ty are both non-negative, so 'bh - ty' can't overflow
+  if (bh - ty < h) {
     h = bh - ty;
-  } else {
-    h = yy - ty + 1;
+  }
+  if (h < 1) {
+    h = 1;
   }
 
   // optimization: a non-isolated group drawn with alpha=1 and
@@ -4035,8 +3973,6 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   transpGroup->ty = ty;
   transpGroup->blendingColorSpace = blendingColorSpace;
   transpGroup->isolated = isolated;
-  transpGroup->inSoftMask = (transpGroupStack && transpGroupStack->inSoftMask)
-                            || forSoftMask;
   transpGroup->next = transpGroupStack;
   transpGroupStack = transpGroup;
 

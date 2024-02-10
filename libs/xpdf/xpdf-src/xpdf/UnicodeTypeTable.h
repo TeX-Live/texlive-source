@@ -15,8 +15,6 @@ extern GBool unicodeTypeL(Unicode c);
 
 extern GBool unicodeTypeR(Unicode c);
 
-extern GBool unicodeTypeCombiningMark(Unicode c);
-
 extern GBool unicodeTypeDigit(Unicode c);
 
 extern GBool unicodeTypeNumSep(Unicode c);

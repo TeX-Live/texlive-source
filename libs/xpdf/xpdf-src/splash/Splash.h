@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include "SplashTypes.h"
 #include "SplashClip.h"
 
@@ -421,7 +425,7 @@ private:
   SplashError fillWithPattern(SplashPath *path, GBool eo,
 			      SplashPattern *pattern, SplashCoord alpha);
   SplashPath *tweakFillPath(SplashPath *path);
-  GBool pathAllOutside(SplashPath *path, GBool stroke);
+  GBool pathAllOutside(SplashPath *path);
   SplashError fillGlyph2(int x0, int y0, SplashGlyphBitmap *glyph);
   void getImageBounds(SplashCoord xyMin, SplashCoord xyMax,
 		      int *xyMinI, int *xyMaxI);

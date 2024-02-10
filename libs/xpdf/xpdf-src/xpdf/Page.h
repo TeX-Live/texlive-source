@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 #include "Object.h"
 
 class Dict;
@@ -187,7 +191,6 @@ public:
   // Get the page's default CTM.
   void getDefaultCTM(double *ctm, double hDPI, double vDPI,
 		     int rotate, GBool useMediaBox, GBool upsideDown);
-
 
 private:
 

@@ -10,6 +10,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
@@ -412,8 +416,6 @@ GString *GString::appendfv(const char *fmt, va_list argList) {
 
 	// format the argument
 	arg = args[idx];
-	str = NULL;
-	len = 0;
 	switch (ft) {
 	case fmtIntDecimal:
 	  formatInt(arg.i, buf, sizeof(buf), zeroFill, width, 10, &str, &len);

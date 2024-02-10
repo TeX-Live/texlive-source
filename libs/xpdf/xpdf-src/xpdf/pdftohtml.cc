@@ -38,9 +38,7 @@ static GBool embedFonts = gFalse;
 static GBool skipInvisible = gFalse;
 static GBool allInvisible = gFalse;
 static GBool formFields = gFalse;
-static GBool includeMetadata = gFalse;
 static GBool tableMode = gFalse;
-static GBool overwrite = gFalse;
 static char ownerPassword[33] = "\001";
 static char userPassword[33] = "\001";
 static GBool verbose = gFalse;
@@ -72,12 +70,8 @@ static ArgDesc argDesc[] = {
    "treat all text as invisible"},
   {"-formfields",       argFlag,   &formFields,      0,
    "convert form fields to HTML"},
-  {"-meta",             argFlag,   &includeMetadata, 0,
-   "include document metadata in the HTML output"},
   {"-table",            argFlag,   &tableMode,       0,
    "use table mode for text extraction"},
-  {"-overwrite",        argFlag,   &overwrite,       0,
-   "overwrite files in an existing output directory"},
   {"-opw",              argString, ownerPassword,    sizeof(ownerPassword),
    "owner password (for encrypted files)"},
   {"-upw",              argString, userPassword,     sizeof(userPassword),
@@ -108,10 +102,6 @@ static int writeToFile(void *file, const char *data, int size) {
 }
 
 int main(int argc, char *argv[]) {
-#if USE_EXCEPTIONS
-  try {
-#endif
-
   PDFDoc *doc;
   char *fileName;
   char *htmlDir;
@@ -194,19 +184,10 @@ int main(int argc, char *argv[]) {
 
   // create HTML directory
   if (makeDir(htmlDir, 0755)) {
-    if (pathIsDir(htmlDir)) {
-      if (!overwrite) {
-	error(errIO, -1, "HTML output directory '{0:s}' already exists (use '-overwrite' to overwrite it)",
-	      htmlDir);
-	exitCode = 2;
-	goto err1;
-      }
-    } else {
-      error(errIO, -1, "Couldn't create HTML output directory '{0:s}'",
-	    htmlDir);
-      exitCode = 2;
-      goto err1;
-    }
+    error(errIO, -1, "Couldn't create HTML output directory '{0:s}'",
+	  htmlDir);
+    exitCode = 2;
+    goto err1;
   }
 
   // set up the HTMLGen object
@@ -223,7 +204,6 @@ int main(int argc, char *argv[]) {
   htmlGen->setExtractFontFiles(!noFonts);
   htmlGen->setEmbedFonts(embedFonts);
   htmlGen->setConvertFormFields(formFields);
-  htmlGen->setIncludeMetadata(includeMetadata);
   htmlGen->startDoc(doc);
 
   // convert the pages
@@ -291,13 +271,6 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
-
-#if USE_EXCEPTIONS
-  } catch (GMemException e) {
-    fprintf(stderr, "Out of memory\n");
-    return 98;
-  }
-#endif
 }
 
 static GBool createIndex(char *htmlDir) {
@@ -307,12 +280,11 @@ static GBool createIndex(char *htmlDir) {
 
   htmlFileName = GString::format("{0:s}/index.html", htmlDir);
   html = openFile(htmlFileName->getCString(), "w");
+  delete htmlFileName;
   if (!html) {
     error(errIO, -1, "Couldn't open HTML file '{0:t}'", htmlFileName);
-    delete htmlFileName;
     return gFalse;
   }
-  delete htmlFileName;
 
   fprintf(html, "<html>\n");
   fprintf(html, "<body>\n");

@@ -8,6 +8,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma implementation
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -2669,7 +2673,6 @@ DCTStream::DCTStream(Stream *strA, GBool colorXformA):
     frameBuf[i] = NULL;
   }
   rowBuf = NULL;
-  memset(quantTables, 0, sizeof(quantTables));
   memset(dcHuffTables, 0, sizeof(dcHuffTables));
   memset(acHuffTables, 0, sizeof(acHuffTables));
 
@@ -2891,7 +2894,7 @@ void DCTStream::prepare() {
     bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
     bufHeight = ((height + mcuHeight - 1) / mcuHeight) * mcuHeight;
     if (bufWidth <= 0 || bufHeight <= 0 ||
-	bufWidth > INT_MAX / bufHeight / (int)sizeof(int)) {
+	bufWidth > INT_MAX / bufWidth / (int)sizeof(int)) {
       error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
       y = height;
       prepared = gTrue;
@@ -2939,13 +2942,7 @@ void DCTStream::prepare() {
 
     // allocate a buffer for one row of MCUs
     bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
-    if (bufWidth <= 0 || bufWidth > INT_MAX / numComps / mcuHeight) {
-      error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
-      y = height;
-      prepared = gTrue;
-      return;
-    }
-    rowBuf = (Guchar *)gmallocn(bufWidth, numComps * mcuHeight);
+    rowBuf = (Guchar *)gmallocn(numComps * mcuHeight, bufWidth);
     rowBufPtr = rowBufEnd = rowBuf;
 
     // initialize counters
@@ -3851,12 +3848,11 @@ int DCTStream::readBit() {
 }
 
 GBool DCTStream::readHeader(GBool frame) {
-  GBool haveSOF, doScan;
+  GBool doScan;
   int n, i;
   int c = 0;
 
   // read headers
-  haveSOF = gFalse;
   doScan = gFalse;
   while (!doScan) {
     c = readMarker();
@@ -3871,7 +3867,6 @@ GBool DCTStream::readHeader(GBool frame) {
       if (!readBaselineSOF()) {
 	return gFalse;
       }
-      haveSOF = gTrue;
       break;
     case 0xc2:			// SOF2 (progressive)
       if (!frame) {
@@ -3882,7 +3877,6 @@ GBool DCTStream::readHeader(GBool frame) {
       if (!readProgressiveSOF()) {
 	return gFalse;
       }
-      haveSOF = gTrue;
       break;
     case 0xc4:			// DHT
       if (!readHuffmanTables()) {
@@ -3899,10 +3893,6 @@ GBool DCTStream::readHeader(GBool frame) {
     case 0xd9:			// EOI
       return gFalse;
     case 0xda:			// SOS
-      if (frame && !haveSOF) {
-	error(errSyntaxError, getPos(), "Missing SOF in DCT stream");
-	return gFalse;
-      }
       if (!readScanInfo()) {
 	return gFalse;
       }

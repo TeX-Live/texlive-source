@@ -11,6 +11,10 @@
 
 #include <aconf.h>
 
+#ifdef USE_GCC_PRAGMAS
+#pragma interface
+#endif
+
 class TextString;
 class Gfx;
 class GfxFont;
@@ -43,7 +47,7 @@ private:
   AcroForm(PDFDoc *docA, Object *acroFormObjA);
   void buildAnnotPageList(Catalog *catalog);
   int lookupAnnotPage(Object *annotRef);
-  void scanField(Object *fieldRef, char *touchedObjs);
+  void scanField(Object *fieldRef);
 
   PDFDoc *doc;
   Object acroFormObj;

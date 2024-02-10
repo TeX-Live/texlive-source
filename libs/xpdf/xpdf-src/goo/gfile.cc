@@ -418,18 +418,6 @@ GBool pathIsFile(const char *path) {
 #endif
 }
 
-GBool pathIsDir(const char *path) {
-#ifdef _WIN32
-  wchar_t wPath[winMaxLongPath + 1];
-  fileNameToUCS2(path, wPath, winMaxLongPath + 1);
-  DWORD attr = GetFileAttributesW(wPath);
-  return attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY);
-#else
-  struct stat statBuf;
-  return stat(path, &statBuf) == 0 && S_ISDIR(statBuf.st_mode);
-#endif
-}
-
 time_t getModTime(char *fileName) {
 #ifdef _WIN32
   //~ should implement this, but it's (currently) only used in xpdf
@@ -614,17 +602,6 @@ GString *fileNameToUTF8(wchar_t *path) {
   return s;
 }
 
-GString *fileNameMultiByteToUTF8(char *path) {
-  wchar_t fileNameW[winMaxLongPath + 1];
-  if (MultiByteToWideChar(CP_OEMCP, 0, path, -1,
-			   fileNameW, sizeof(fileNameW) / sizeof(wchar_t))) {
-    return fileNameToUTF8(fileNameW);
-  } else {
-    // shouldn't happen, but just in case...
-    return new GString(path);
-  }
-}
-
 wchar_t *fileNameToUCS2(const char *path, wchar_t *out, size_t outSize) {
   const char *p;
   size_t i;
@@ -703,7 +680,7 @@ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
   }
   hres = persistFile->Load(wPath, STGM_READ);
   if (FAILED(hres)) {
-    fprintf(stderr, "IPersistFile.Load failed: 0x%08lx\n", hres);
+    fprintf(stderr, "IPersistFile.Load failed: 0x%08x\n", hres);
     exit(1);
   }
   wchar_t target[winMaxLongPath + 1];
