@@ -1,3 +1,11 @@
+2024-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* cidtype2.c: Fix an issue on glyph conversion of
+	characters over BMP.
+	Add conversion between "FULLWIDTH YEN SIGN" and "YEN SIGN".
+	https://github.com/texjporg/tex-jp-build/issues/165
+	* configure.ac: version 20240210.
+
 2024-02-05  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac,

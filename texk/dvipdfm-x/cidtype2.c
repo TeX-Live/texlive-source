@@ -418,6 +418,7 @@ fix_CJK_symbols (unsigned short code)
     {0xFFE0, 0x00A2}, /* FULLWIDTH CENT SIGN <-> CENT SIGN */
     {0xFFE1, 0x00A3}, /* FULLWIDTH POUND SIGN <-> POUND SIGN */
     {0xFFE2, 0x00AC}, /* FULLWIDTH NOT SIGN <-> NOT SIGN */
+    {0xFFE5, 0x00A5}, /* FULLWIDTH YEN SIGN <-> YEN SIGN */
     {0xFFFF, 0xFFFF}, /* EOD */
   };
 #define NUM_CJK_SYMBOLS (sizeof(CJK_Uni_symbols)/sizeof(CJK_Uni_symbols[0]))
@@ -827,7 +828,7 @@ CIDFont_type2_dofont (pdf_font *font)
         } else {
           gid  = tt_cmap_lookup(ttcmap, code);
 #ifdef FIX_CJK_UNIOCDE_SYMBOLS
-          if (gid == 0 && unicode_cmap) {
+          if (gid == 0 && unicode_cmap && code <= 0xFFFF) {
             int alt_code;
           
             alt_code = fix_CJK_symbols((unsigned short)code);
@@ -917,7 +918,7 @@ CIDFont_type2_dofont (pdf_font *font)
         } else {
           gid  = tt_cmap_lookup(ttcmap, code);
 #ifdef FIX_CJK_UNIOCDE_SYMBOLS
-          if (gid == 0 && unicode_cmap) {
+          if (gid == 0 && unicode_cmap && code <= 0xFFFF) {
             int alt_code;
           
             alt_code = fix_CJK_symbols((unsigned short)code);
