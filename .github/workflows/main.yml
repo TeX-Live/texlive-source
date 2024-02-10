@@ -113,12 +113,11 @@ jobs:
           path: ${{ github.workspace }}/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
           compression-level: 0
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: AButler/upload-release-assets@v3.0
         if: matrix.release_build
         with:
           files: $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
 
   vm_build_job:
@@ -183,10 +182,8 @@ jobs:
           path: ${{ github.workspace }}/repo/texlive-bin-${{ matrix.arch }}-${{ matrix.os }}.tar.gz
           compression-level: 0
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: AButler/upload-release-assets@v3.0
         if: matrix.release_build
         with:
           files: $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.arch }}-${{ matrix.os }}.tar.gz
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
