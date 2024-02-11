@@ -617,8 +617,8 @@ man1_MANS = ptekf.1
 LDADD = $(KPATHSEA_LIBS)
 
 #
-TESTS = tests/ptekf-smoke.test tests/ptekf-guess.test  tests/ptekf-conv.test
-DISTCLEANFILES = enc-*.bib*
+TESTS = tests/ptekf-smoke.test tests/ptekf-guess.test tests/ptekf-conv.test tests/ptekf-eol.test
+DISTCLEANFILES = enc-*.bib* saza-*.txt*
 
 # Rebuild
 rebuild_prereq = 
@@ -1486,7 +1486,7 @@ $(libptexenc_la_OBJECTS): $(KPATHSEA_DEPEND)
 
 @KPATHSEA_RULE@
 #
-tests/ptekf-smoke.log tests/ptekf-guess.log tests/ptekf-conv.log \
+tests/ptekf-smoke.log tests/ptekf-guess.log tests/ptekf-conv.log tests/ptekf-eol.log \
   : ptekf$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@

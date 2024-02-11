@@ -1,0 +1,58 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+# Not really a test, just making sure the program executes.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptekf=$BinDir/ptekf$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+web2cdir=$srcdir/../web2c
+
+export TEXMFCNF
+
+rm -f ./saza*.txt*
+
+#   "さざ波" -> \343\201\225\343\201\226\346\263\242
+jstr='\343\201\225\343\201\226\346\263\242'
+astr='Ripples'
+cr='\015'
+lf='\012'
+crlf='\015\012'
+
+printf "$astr$cr$jstr$cr$astr $jstr$cr$jstr" > saza-utf8-cr0.txt
+printf "$astr$lf$jstr$lf$astr $jstr$lf$jstr" > saza-utf8-lf0.txt
+printf "$astr$crlf$jstr$crlf$astr $jstr$crlf$jstr" > saza-utf8-crlf0.txt
+printf "$astr$cr$jstr$lf$astr $jstr$crlf$jstr" > saza-utf8-mix.txt
+printf "$astr$cr$jstr$cr$astr $jstr$cr$jstr$cr" > saza-utf8-cr1.txt
+printf "$astr$lf$jstr$lf$astr $jstr$lf$jstr$lf" > saza-utf8-lf1.txt
+printf "$astr$crlf$jstr$crlf$astr $jstr$crlf$jstr$crlf" > saza-utf8-crlf1.txt
+
+for nl in cr0 lf0 crlf0 cr1 lf1 crlf1 mix; do
+
+  $_ptekf --guess saza-utf8-$nl.txt || exit 1
+  $_ptekf -Gj saza-utf8-$nl.txt || exit 2
+  mv saza-utf8-$nl.txt.out saza-utf8-$nl-jis.txt
+  $_ptekf -Ge saza-utf8-$nl.txt || exit 3
+  mv saza-utf8-$nl.txt.out saza-utf8-$nl-euc.txt
+  $_ptekf -Gs saza-utf8-$nl.txt || exit 4
+  mv saza-utf8-$nl.txt.out saza-utf8-$nl-sjis.txt
+
+
+  for enc in jis euc sjis; do
+
+    $_ptekf -Gu saza-utf8-$nl-$enc.txt || exit 21
+    mv saza-utf8-$nl-$enc.txt.out saza-utf8-$nl-$enc-utf8.txt
+    diff saza-utf8-$nl.txt saza-utf8-$nl-$enc-utf8.txt || exit 22
+
+  done
+
+done
+
+$_ptekf --guess saza-utf8-*-jis.txt || exit 51
+$_ptekf --guess saza-utf8-*-euc.txt || exit 52
+$_ptekf --guess saza-utf8-*-sjis.txt || exit 53
+$_ptekf --guess saza-utf8-*-*-utf8.txt || exit 54

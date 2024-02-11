@@ -45,7 +45,7 @@ static struct option long_options[] = {
   {0, 0, 0, 0}
 };
 
-#define MY_VERSION   "20240201"
+#define MY_VERSION   "20240211"
 #define BUG_ADDRESS  "issue@texjp.org"
 
 static void show_version(void)
@@ -87,7 +87,7 @@ static char *mfgets(char *buff, int size, FILE *fp)
   if ((len = input_line2(fp, (unsigned char *)buff, NULL, 0, size, &c)) == 0
       && c != '\r' && c != '\n') return NULL;
   if (c == '\n' || c == '\r') {
-    if (len+1 < size) strcat(buff+len, "\n");
+    if (len+1 < size) { buff[len]=(unsigned char)c; buff[len+1]='\0'; }
     else ungetc(c, fp);
   }
   if (c == EOF) return NULL;
@@ -183,7 +183,7 @@ main (int argc,  char **argv)
       exit(32);
     }
     if (flg_guess_enc) {
-      genc = ptenc_guess_enc(infp, 1);
+      genc = ptenc_guess_enc(infp, 1, 1);
       printf("%s: %s\n", infname, genc);
       setinfileenc(infp, genc);
       free(genc);
@@ -211,6 +211,11 @@ main (int argc,  char **argv)
       }
       while ((ret = mfgets(buff, BUFFERLEN, infp)) != NULL) {
         (*fputs__)(buff, outfp);
+      }
+      if (ret == NULL && feof(infp)) {
+        c = buff[strlen(buff)-1];
+        if (c != '\n' && c != '\r')
+          (*fputs__)(buff, outfp);
       }
       if (fclose(infp)) {
         fprintf(stderr, "ERROR: fail to close input file [%s].", infname);
