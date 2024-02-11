@@ -1,3 +1,32 @@
+2024-02-11  Karl Berry  <karl@tug.org>
+
+	* am/cweb.am (dist_bin_SCRIPTS): add cwebdir/twill-refsort.
+	
+	* Add keyword expansion to files that had a literal $Id$:
+cwebdir/twill-refsort
+eptexdir/epver.test
+euptexdir/eptriptest.test
+euptexdir/eupver.test
+euptexdir/upkcat.test
+mplibdir/mpmathbinary.w
+mplibdir/mpmathdecimal.w
+mplibdir/mpmathinterval.w
+ptexdir/pver.test
+tests/expanded-overflow.tex
+twill.test
+uptexdir/gk256.test
+uptexdir/gkhuge.test
+uptexdir/nissya.test
+uptexdir/ptriptest.test
+uptexdir/sample.test
+uptexdir/skipjfmp.test
+uptexdir/unibib.test
+uptexdir/uparse.test
+uptexdir/upbibtex-mem.test
+uptexdir/upkcat.test
+uptexdir/upver.test
+web2c/Makefile.am
+
 2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* ac/web2c.ac (mp, pmp, upmp): depend on mpfi.

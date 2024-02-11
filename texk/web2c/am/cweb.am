@@ -1,12 +1,12 @@
 ## $Id$
 ## texk/web2c/am/cweb.am: Makefile fragment for cweb programs (except ctangle).
 ##
-## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie cweave ctwill ctwill-refsort ctwill-twinx tie
-dist_bin_SCRIPTS = cwebdir/ctwill-proofsort
+dist_bin_SCRIPTS = cwebdir/ctwill-proofsort cwebdir/twill-refsort
 EXTRA_DIST += ctiedir tiedir
 NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 
