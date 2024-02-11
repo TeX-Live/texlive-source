@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 65362 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2022-12-27 04:12:37 +0900 (火, 27 12 2022) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 69813 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2024-02-12 00:09:34 +0100 (Mon, 12 Feb 2024) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -275,7 +275,7 @@ local docstr = [[
         - support cluttex scripts
     2018/11/08
         - use included tcltk interpreter
-
+    (see vc log for later changes)
 ]]
 
 -- HELPER SUBROUTINES --
@@ -854,7 +854,7 @@ end
 if not ARGV then
   os.setenv('TEXMF', TEXMFDIST)
   local extlist = '.lua;.tlu;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;.texlua;\0'
-  local progfullname = search_path(progname, BINDIR, '.lua;.tlu;.bat;.cmd') or
+  local progfullname = search_path(progname, BINDIR, '.lua;.tlu;.bat;.cmd;.pl') or
                        find_texmfscript(progname, extlist)
   os.setenv('TEXMF', nil)
   if progfullname == nil then
