@@ -8,13 +8,19 @@
 #
 # This file controls CI testing via Github Actions of the
 # git-svn checkout of the TeX Live source directory
-# which is pushed to Github
+# which is pushed to Github at:
 #   https://github.com/TeX-Live/texlive-source
+#
 # The cron job that does the git svn up and git push is
 # running on texlive.info; see norbert cron there. Run cmd as norbert:
 #   /home/norbert/git-svn-repos/git-svn-syncer --new texlive-source
 #
-# See tlpkg/bin/tl-update-bindir for retrieving the binaries.
+# A build is started with every commit. If a commit happens while a
+# build is running, the build is cancelled and a new one started.
+# 
+# See tlpkg/bin/tl-update-bindir for retrieving the binaries, which is
+# done only when a release is tagged, not from the
+# commit-triggered builds here.
 
 # only build on push to trunk, not branch.
 on:
