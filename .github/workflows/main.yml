@@ -4,6 +4,8 @@
 # Norbert Preining
 # Public Domain
 #
+# See https://github.com/TeX-Live/texlive-source/actions for status.
+#
 # This file controls CI testing via Github Actions of the
 # git-svn checkout of the TeX Live source directory
 # which is pushed to Github
@@ -14,7 +16,7 @@
 #
 # See tlpkg/bin/tl-update-bindir for retrieving the binaries.
 
-# only build on push to trunk
+# only build on push to trunk, not branch.
 on:
   release:
     types:
@@ -38,9 +40,7 @@ jobs:
       matrix:
         # we need to list the archs here, otherwise the matrix contains only
         # one element release_build and that is overwritten by the include statements
-#        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl ]
-#        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl, aarch64-linux, armhf-linux ]
-        tl_name: [ aarch64-linux, armhf-linux ]
+        tl_name: [ i386-linux, x86_64-linux, x86_64-linuxmusl, aarch64-linux, armhf-linux ]
         release_build:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:
@@ -62,20 +62,20 @@ jobs:
             ci_build: true
             use_qemu: false
             buildsys: alpine
-#          - tl_name: aarch64-linux
-#            image: arm64v8/debian:buster
-#            platform: aarch64
-#            ci_build: false
-#            use_qemu: true
-#            qemu_arch: aarch64
-#            buildsys: debian
-#          - tl_name: armhf-linux
-#            image: arm32v7/debian:buster
-#            platform: arm/v7
-#            ci_build: false
-#            use_qemu: true
-#            qemu_arch: arm
-#            buildsys: debian
+          - tl_name: aarch64-linux
+            image: arm64v8/debian:buster
+            platform: aarch64
+            ci_build: false
+            use_qemu: true
+            qemu_arch: aarch64
+            buildsys: debian
+          - tl_name: armhf-linux
+            image: arm32v7/debian:buster
+            platform: arm/v7
+            ci_build: false
+            use_qemu: true
+            qemu_arch: arm
+            buildsys: debian
 
     steps:
       - name: checkout-main
