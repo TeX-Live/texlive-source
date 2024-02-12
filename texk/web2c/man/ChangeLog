@@ -1,3 +1,8 @@
+2024-02-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile.am,
+	* Makefile.in: Link TWILL manpage.
+
 2024-01-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,

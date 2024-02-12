@@ -15,6 +15,7 @@ man1_links += ctwill:ctwill-refsort ctwill:ctwill-twinx
 
 if WEB
 man_sources += $(web_man_sources)
+man1_links += twill:twill-refsort
 endif WEB
 EXTRA_DIST += $(web_man_sources)
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \
