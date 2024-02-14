@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# 2024-01-11 0.18.0
+# 2024-02-14 0.18.1
 package eolang;
 
 use warnings;
@@ -45,6 +45,8 @@ sub savefile {
   open(my $f, '>', $path) or error('Cannot open file for writing: ' . $path);
   print $f $content;
   close($f);
+  my $size = -s $path;
+  info("File saved to '$path' ($size bytes)");
 }
 
 # Print INFO message to the console.
@@ -78,7 +80,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --tmpdir=path    Temp directory with .tex files ('_eolang' by default)\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.18.0 2024-01-11');
+  info('0.18.1 2024-02-14');
 } else {
   my ($src, $target) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $src) {
@@ -146,7 +148,6 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   }
   debug('Target: ' . $target);
   savefile($target, $tex);
-  info("New TeX file save to: ". $target);
 }
 
 # In order to finish it with success:
