@@ -1,7 +1,13 @@
+2024-02-14  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile.am,
+	* Makefile.in,
+	* ctwill.man: Link CTWILL manpage for ctwill-proofsort.
+
 2024-02-12  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile.am,
-	* Makefile.in: Link TWILL manpage.
+	* Makefile.in: Link TWILL manpage for twill-refsort.
 
 2024-01-24  Andreas Scherer  <https://ascherer.github.io>
 

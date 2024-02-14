@@ -100,11 +100,9 @@ It reads its input from <STDIN> and writes its output to <STDOUT>.
 
 =item Run CTWILL twice on your 'input_file'.w, creating 'input_file'.tex
 
-=item Invoke "ctwill-proofsort < 'input_file'.tex > 'input_file'-sorted.tex"
+=item Invoke "( ctwill-proofsort < 'input_file'.tex ) 1<> 'input_file'.tex"
 
-=item Invoke "mv 'input_file'-sorted.tex 'input_file'.tex"
-
-=item Run TeX on 'input_file'.tex
+=item Run TeX on 'input_file'.tex once
 
 =back
 
@@ -121,9 +119,7 @@ Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
 
 =item $ ctwill +P -x mmotype mmotype-twill (run this two times)
 
-=item $ ctwill-proofsort < mmotype.tex > mmotype-sorted.tex
-
-=item $ mv mmotype-sorted.tex mmotype.tex
+=item $ ( ctwill-proofsort < mmotype.tex ) 1<> mmotype.tex
 
 =item $ tex mmotype
 
