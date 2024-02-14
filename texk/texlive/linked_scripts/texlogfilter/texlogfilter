@@ -16,7 +16,7 @@ use Getopt::Long;
 use Term::ANSIColor;
 
 my $name = "texlogfilter";
-my $version = "1.1";
+my $version = "1.2";
 
 # options
 my @userfilters;
@@ -192,7 +192,7 @@ while (<>) {
     # try to show usefull lines following some warnings or errors (starting with
     # whitespaces or package name)
     if ($currentpackage ne ""){
-        if (/(s+|\($currentpackage\))/){print $_;}
+        if (/^(\s{2}|\($currentpackage\))/){$nextlines = 1;}
         else {$currentpackage = ""; }
     }
 
@@ -200,7 +200,7 @@ while (<>) {
     if ($nextlines > 0) { $nextlines--; print $_; }
 
     # find errors
-    elsif (/^(!\s+|.*?:\d+:\s+)?(Class|Package) (\w+ )?Error/i)         { if ($3){$currentpackage=$3}  handle_error(0, "nofilename"); }
+    elsif (/^(!\s+|.*?:\d+:\s+)?(Class|Package)\s+(\S+)?\s*Error/i)     { if ($3){$currentpackage=$3}; handle_error(0, "nofilename"); }
     elsif (/^(!\s+)?LaTeX (?:Error)/i)                                  { handle_error(); }
     elsif (/^(!|.*?:\d+:) Undefined control sequence\./i)               { chomp; handle_error(4); }
     elsif (/^(!|.*?:\d+:) Use of (.*) doesn't match its definition\./i) { handle_error(3); }
@@ -209,13 +209,16 @@ while (<>) {
     elsif (/^No pages of output/i)                                      { handle_error(); }
 
     # find warning
-    elsif (/^(!\s+)?(Class|Package) (\w+ )?Warning/i)                   { if ($3){$currentpackage=$3}  handle_warning(0, "nofilename"); }
+    elsif (/^(!\s+)?(Class|Package)\s+(\S+)?\s*Warning/i)               { if ($3){$currentpackage=$3}; handle_warning(0, "nofilename"); }
     elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning: (Citation|Reference)/i)   { if ($showrefmsg) {handle_warning();} }
+    elsif (/^(!\s+)?(LaTeX|\* LaTeX) Font Warning/i)                    { $currentpackage="Font"; handle_warning(); }
     elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning/i)                         { handle_warning(); }
     elsif (/Runaway argument\?/i)                                       { handle_warning(1); }
     elsif (/(overfull|underfull|badbox)/i)                              { if ($showboxmsg){handle_warning(1);} }
 
     # find infos
+    elsif (/^(!\s+)?(Class|Package)\s+(\S+)?\s*Info/i)                  { if ($showinfomsg){ if ($3){$currentpackage=$3}; handle_info(); } }
+    elsif (/^(!\s+)?(LaTeX|\* LaTeX) Font Info/i)                       { if ($showinfomsg){ $currentpackage="Font"; handle_info(); } }
     elsif (/^(LaTeX) (\w+ )?Info/i)                                     { if ($showinfomsg){handle_info();} }
     elsif (/^(LaTeX)/i)                                                 { handle_info(); }
     elsif (/^Document Class/i)                                          { handle_info(); }
@@ -338,9 +341,12 @@ distributions of LaTeX version 2005/12/01 or later.
 
 =over
 
-=item * 2022, march, version 1.1 : add --info and --no-info options.
+=item * 2024, February, version 1.2 : fix duplicate or missing lines; handle
+package and class names with hyphen ; add info and warning patterns for fonts.
 
-=item * 2021, november, version 1.0 : initial version.
+=item * 2022, March, version 1.1 : add --info and --no-info options.
+
+=item * 2021, November, version 1.0 : initial version.
 
 =back
 
