@@ -16,7 +16,9 @@
 #   /home/norbert/git-svn-repos/git-svn-syncer --new texlive-source
 #
 # A build is started with every commit. If a commit happens while a
-# build is running, the build is cancelled and a new one started.
+# build is running, somtimes the build is cancelled and a new one
+# started, and other times the new build waits until the old one is
+# complete? Seems mysterious.
 # 
 # See tlpkg/bin/tl-update-bindir for retrieving the binaries, which is
 # done only when a release is tagged, not from the
