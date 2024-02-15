@@ -538,7 +538,7 @@ xaw_update_list(void)
     button_width = get_panel_width() - 2 * (resource.btn_side_spacing + resource.btn_border_width);
     /* delete and re-create list */
     ASSERT(total_pages <= (int)page_info.index_size, "");
-    XawListChange(LIST_WIDGET, page_info.page_labels, 0,
+    XawListChange(LIST_WIDGET, (_Xconst char**) page_info.page_labels, 0,
 		  MAX(button_width, pagelist_width), False);
     /* restore selected item */
     if (idx != XAW_LIST_NONE) {
