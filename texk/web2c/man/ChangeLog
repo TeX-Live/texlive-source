@@ -1,3 +1,8 @@
+2024-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* twill.man: Mask hyphen in manpage.
+
 2024-02-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile.am,
