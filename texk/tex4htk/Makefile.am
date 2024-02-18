@@ -1,6 +1,7 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/tex4htk/
 ##
-## Copyright 2016 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2024 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
