@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 69653 $';
+my $svnrev = '$Revision: 69980 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -4863,29 +4863,30 @@ sub report_tlpdb_differences {
 
   if (defined($ret{'removed_packages'})) {
     info ("removed packages from A to B:\n");
-    for my $f (@{$ret{'removed_packages'}}) {
+    for my $f (sort @{$ret{'removed_packages'}}) {
       info ("  $f\n");
     }
   }
   if (defined($ret{'added_packages'})) {
     info ("added packages from A to B:\n");
-    for my $f (@{$ret{'added_packages'}}) {
+    for my $f (sort @{$ret{'added_packages'}}) {
       info ("  $f\n");
     }
   }
   if (defined($ret{'different_packages'})) {
     info ("different packages from A to B:\n");
-    for my $p (keys %{$ret{'different_packages'}}) {
+    for my $p (sort keys %{$ret{'different_packages'}}) {
       info ("  $p\n");
-      for my $k (keys %{$ret{'different_packages'}->{$p}}) {
+      for my $k (sort keys %{$ret{'different_packages'}->{$p}}) {
         if ($k eq "revision") {
           info("    revision differ: $ret{'different_packages'}->{$p}->{$k}\n");
         } elsif ($k eq "removed" || $k eq "added") {
           info("    $k files:\n");
-          for my $f (@{$ret{'different_packages'}->{$p}->{$k}}) {
+          for my $f (sort @{$ret{'different_packages'}->{$p}->{$k}}) {
             info("      $f\n");
           }
         } else {
+          # e.g., fmttriggers; don't bother making a nice report.
           info("  unknown differ $k\n");
         }
       }

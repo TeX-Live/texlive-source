@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 69686 2024-02-03 07:34:54Z preining $
+# $Id: tlmgr.pl 69972 2024-02-18 23:03:48Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 69686 $';
-my $datrev = '$Date: 2024-02-03 08:34:54 +0100 (Sat, 03 Feb 2024) $';
+my $svnrev = '$Revision: 69972 $';
+my $datrev = '$Date: 2024-02-19 00:03:48 +0100 (Mon, 19 Feb 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -146,6 +146,9 @@ my %action_specification = (
     },
     "run-post" => 1,
     "function" => \&action_backup
+  },
+  "bug" => {
+    "function" => \&action_bug
   },
   "candidates" => {
     "run-post" => 0,
@@ -1851,10 +1854,9 @@ sub action_search {
   return ($F_OK | $F_NOPOSTACTION);
 }
 
-sub search_tlpdb {
+sub _search_tlpdb {
   my ($tlpdb, $what, $dofile, $dodesc, $inword) = @_;
-  my $retfile = '';
-  my $retdesc = '';
+  my %pkgs;
   foreach my $pkg ($tlpdb->list_packages) {
     my $tlp = $tlpdb->get_package($pkg);
     
@@ -1862,9 +1864,8 @@ sub search_tlpdb {
     if ($dofile) {
       my @ret = search_pkg_files($tlp, $what);
       if (@ret) {
-        $retfile .= "$pkg:\n";
         foreach (@ret) {
-          $retfile .= "\t$_\n";
+          $pkgs{$pkg}{'files'}{$_} = 1;
         }
       }
     }
@@ -1872,28 +1873,43 @@ sub search_tlpdb {
     # no options or --all -> search package names/descriptions
     if ($dodesc) {
       next if ($pkg =~ m/\./);
-      my $matched = search_pkg_desc($tlp, $what, $inword);
-      $retdesc .= "$matched\n" if ($matched);
+      my $t = "$pkg\n";
+      $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
+      $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
+      $t = $t . $tlp->cataloguedata->{'topics'} . "\n" if (defined($tlp->cataloguedata->{'topics'}));
+      my $pat = $what;
+      $pat = '\W' . $what . '\W' if ($inword);
+      my $matched = "";
+      if ($t =~ m/$pat/i) {
+        my $shortdesc = $tlp->shortdesc || "";
+        $pkgs{$pkg}{'desc'} = $shortdesc;
+      }
+    }
+  }
+  return \%pkgs;
+}
+
+
+sub search_tlpdb {
+  my ($tlpdb, $what, $dofile, $dodesc, $inword) = @_;
+  my $fndptr = _search_tlpdb($tlpdb, $what, $dofile, $dodesc, $inword);
+  # first report on $pkg - $shortdesc found
+  my $retfile = '';
+  my $retdesc = '';
+  for my $pkg (sort keys %$fndptr) {
+    if ($fndptr->{$pkg}{'desc'}) {
+      $retdesc .= "$pkg - " . $fndptr->{$pkg}{'desc'} . "\n";
+    }
+  }
+  for my $pkg (sort keys %$fndptr) {
+    if ($fndptr->{$pkg}{'files'}) {
+      $retfile .= "$pkg:\n";
+      for my $f (keys %{$fndptr->{$pkg}{'files'}}) {
+        $retfile .= "\t$f\n";
+      }
     }
   }
   return($retfile, $retdesc);
-}
-
-sub search_pkg_desc {
-  my ($tlp, $what, $inword) = @_;
-  my $pkg = $tlp->name;
-  my $t = "$pkg\n";
-  $t = $t . $tlp->shortdesc . "\n" if (defined($tlp->shortdesc));
-  $t = $t . $tlp->longdesc . "\n" if (defined($tlp->longdesc));
-  $t = $t . $tlp->cataloguedata->{'topics'} . "\n" if (defined($tlp->cataloguedata->{'topics'}));
-  my $pat = $what;
-  $pat = '\W' . $what . '\W' if ($inword);
-  my $matched = "";
-  if ($t =~ m/$pat/i) {
-    my $shortdesc = $tlp->shortdesc || "";
-    $matched .= "$pkg - $shortdesc";
-  }
-  return $matched;
 }
 
 sub search_pkg_files {
@@ -6930,6 +6946,151 @@ sub action_shell {
 }
 
 
+#  BUG
+# bug-reporting info, possibly interactive
+# 
+sub action_bug {
+  sub prompt_it {
+    my ($q, $required, $default) = @_;
+    print "$q ";
+    my $ans = <STDIN>;
+    if (!defined($ans)) {
+      if ($required) {
+        return $F_ERROR, "";
+      } else {
+        return $F_OK, $default;
+      }
+    }
+    chomp($ans);
+    return $F_OK, $ans;
+  }
+  my ($ans) = @ARGV;
+  init_local_db();
+  if (!$ans) {
+    my $ok;
+    ($ok, $ans) = prompt_it("Package or file to report a bug against:", 1);
+    if ($ok == $F_ERROR) {
+      print "Bailing out!\n";
+      return $F_ERROR;
+    }
+  }
+  # first search for packages that match $ans, and if not search for files
+  my $tlp = $localtlpdb->get_package($ans);
+  if ($tlp) {
+    return issue_bug_info_for_package($tlp);
+  }
+  # we are still here, so search for a file that matches
+  my $fndptr = _search_tlpdb($localtlpdb, $ans,
+    1, # search files,
+    1, # don't search descriptions
+    1  # don't search within words
+  );
+  my @deschit;
+  for my $pkg (sort keys %$fndptr) {
+    if ($fndptr->{$pkg}{'desc'}) {
+      push @deschit, [$pkg, "$pkg (" . $fndptr->{$pkg}{'desc'} . ")\n"] ;
+      # delete files if we found it already via description (which
+      # includes package name) since we don't want to show the same
+      # package twice times, and the files hit will be mostly based on the
+      # directory name.
+      delete $fndptr->{$pkg}{'files'};
+    } elsif ($pkg eq "00texlive.image") { # never a good match
+        delete $fndptr->{$pkg}{'files'};
+    }
+  }
+  my @filehit;
+  for my $pkg (sort keys %$fndptr) {
+    if ($fndptr->{$pkg}{'files'}) {
+      push @filehit, [$pkg, "$pkg\n\t"
+                      . join("\n\t", sort keys %{$fndptr->{$pkg}{'files'}})
+                      . "\n"];
+    }
+  }
+  my $nr_total_hit = $#deschit + 1 + $#filehit + 1;
+  my $pkg;
+  if ($nr_total_hit > 1) {
+    my $n = 1;
+    my $ndigits = $#deschit < 10 ? "1" : "2";
+    if ($#deschit >= 0) {
+      print "\nPackage matches (alphabetical):\n";
+      for my $i (0..$#deschit) {
+        printf "%" . $ndigits . "d %s", $n, $deschit[$i][1];
+        $n++;
+      }
+    }
+    if ($#filehit >= 0) {
+      print "\nFile matches (alphabetical by package):\n";
+      $ndigits = $n + $#filehit < 10 ? "1" : "2";
+      for my $i (0..$#filehit) {
+        printf "%" . $ndigits . "d %s", $n, $filehit[$i][1];
+        $n++;
+      }
+    }
+    print "\nSelect a package: ";
+    my $pkgidx = <STDIN>;
+    $pkgidx = "" if ! defined ($pkgidx); # if they hit eof
+    chomp($pkgidx);
+    if ($pkgidx !~ /^\d+$/) {
+      print "$prg: Not a positive integer, exiting: $pkgidx\n";
+      return $F_ERROR;
+    }
+    $pkgidx = int($pkgidx);
+    if (!defined($pkgidx) or $pkgidx < 1 or $pkgidx > $nr_total_hit) {
+      print "$prg: number out of range, exiting: $pkgidx\n";
+      return $F_ERROR;
+    }
+    # print "#deschit = $#deschit, #filehit = $#filehit, pkgidx = $pkgidx\n";
+    if ($pkgidx <= $#deschit + 1) {
+      $pkg = $deschit[$pkgidx - 1][0];
+    } else {
+      $pkg = $filehit[$pkgidx - 1 - $#deschit - 1][0];
+    }
+  } elsif ($nr_total_hit == 1) {
+    if ($#deschit == 0) {
+      $pkg = $deschit[0][0];
+    } else {
+      $pkg = $filehit[0][0];
+    }
+  } else {
+    print "$prg: Nothing found for: $ans\n";
+    return $F_OK;
+  }
+  $tlp = $localtlpdb->get_package($pkg);
+  return issue_bug_info_for_package($tlp);
+}
+
+sub issue_bug_info_for_package {
+  my $tlp = shift;
+  print "Package:        ", $tlp->name, "\n";
+  if (defined($tlp->cataloguedata->{'ctan'})) {
+    print "CTAN page:      https://ctan.org/pkg/" . $tlp->name . "\n";
+    print "CTAN directory: https://mirror.ctan.org"
+          . $tlp->cataloguedata->{'ctan'} . "\n";
+  }
+  my $output = '';
+  if (defined($tlp->cataloguedata->{'contact-bugs'})) {
+    $output .= "Bug contact:    " . $tlp->cataloguedata->{'contact-bugs'}
+               . "\n";
+  }
+  my $other_output = '';
+  for my $k (keys %{$tlp->cataloguedata}) {
+    if ($k =~ m/^contact-/) {
+      next if ($k eq 'contact-bugs');
+      $other_output .= "$k: " . $tlp->cataloguedata->{$k} . "\n";
+    }
+  }
+  if ($other_output) {
+    $output .= "\nOther contact points:\n$other_output\n";
+  }
+  if ($output) {
+    print $output;
+  } else {
+    print "No other information was found.\n";
+  }
+  return $F_OK;
+}
+
+
 
 # Subroutines galore.
 #
@@ -8277,6 +8438,12 @@ performed are written to the terminal.
 =back
 
 =back
+
+=head2 bug [I<search string>]
+
+Looks for I<search string> (prompted for, if not specified) as a package
+name or file name, and outputs bug-reporting and other information for
+the package selected from the results.
 
 =head2 candidates I<pkg>
 
@@ -10376,7 +10543,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 69686 2024-02-03 07:34:54Z preining $
+$Id: tlmgr.pl 69972 2024-02-18 23:03:48Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
