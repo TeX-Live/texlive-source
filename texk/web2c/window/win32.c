@@ -32,7 +32,7 @@ static void Win32Error(const char *caller);
 #undef  DEBUG
 /* #define DEBUG 1 */
 
-static char szTitle[] = " MetaFont V2.71828182 Online Display";
+static char szTitle[] = " METAFONT Online Display";
 static HWND my_window;
 static HDC my_dc;
 static HDC drawing_dc;
