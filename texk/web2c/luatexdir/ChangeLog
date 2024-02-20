@@ -1,3 +1,12 @@
+2024-02-20  Luigi Scarso <luigi.scarso@gmail.com>
+	* in kpse mode, --shell-escape enable the standard lfs.* and os.* functions otherwise protected
+        * fixed lfs.mkdirp return value
+
+
+2024-02-19  Luigi Scarso <luigi.scarso@gmail.com>
+        *  new function lfs.mkdirp -- make parent directories as needed.
+
+
 2024-02-04  Luigi Scarso <luigi.scarso@gmail.com>
 	* LuaTeX 1.18.0.
 
@@ -8,6 +17,10 @@
 	
 2024-02-03  Luigi Scarso <luigi.scarso@gmail.com>
 	* Ensures that setgentounicode has a glyph_unicode_tree not NULL (thanks M. Chernoff)
+
+	
+2024-01-29  Luigi Scarso <luigi.scarso@gmail.com>
+	*  Integrate interval mode of metapost (as binary, it's not used in luatex)
 
 
 2024-01-28  Luigi Scarso <luigi.scarso@gmail.com>
@@ -34,7 +47,17 @@
 	  lfs.symlinkattributes,
 	  lfs.touch 
         are now checked with kpse.in_name_ok_silent_extended  *and* kpse.out_name_ok_silent_extended
+        * TEXMF_OUTPUT_DIRECTORY and output_directory have the same value, output_directory (when not empty)
+          having higher priority than TEXMF_OUTPUT_DIRECTORY.
 
+2024-01-21  Luigi Scarso <luigi.scarso@gmail.com>
+	*  Fixed position of verbatim_written in mpxout.w
+
+
+2024-01-13  Luigi Scarso <luigi.scarso@gmail.com>
+	*  Added missed definition of P_tmpdir for  splinefont.c .
+
+	
 
 2024-01-04  Luigi Scarso <luigi.scarso@gmail.com> 
         * With --safer now each function in debug is nil as also package.loaded.debug = nil and  debug = nil 
