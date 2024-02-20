@@ -1,0 +1,1630 @@
+
+This file is public domain.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 2.10:
+----------------------------------------------------------------------
+* New interval number system based on MPFI. The implementation is somewhat experimental,
+  given the "unusual" nature of interval arithmetic. 
+  The internal functions are almost verbatim copies of the MPFR-based binary system
+  (on which MPFI is based).
+* Several bugs fixes.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 2.01:
+----------------------------------------------------------------------
+* It's a version needed to mark the patch mpx_copy_mpto.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 2.0rc2:
+----------------------------------------------------------------------
+
+* Small cleanup of the code
+* Bump to version 2.0rc2: the current version is 2.00
+* Added the envelope primitives to mpman
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 2.0rc1:
+----------------------------------------------------------------------
+
+* Mainly fixes for wrong path directions, minor issues on tfm and png
+  backend. The version says "2.000" to keep the version as a valid
+  number.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.9991:
+----------------------------------------------------------------------
+
+* Some issues fixed, but really this is in preparation of metapost 2.0.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.999:
+----------------------------------------------------------------------
+
+* The numbersystem 'binary' is now operational.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.902:
+----------------------------------------------------------------------
+
+* Fixed a crash in 'decimal' mode during choose_scale calculations.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.901:
+----------------------------------------------------------------------
+
+* Fixed a bug in 'decimal' mode that affected (among other things)
+  the directionpoint and bbox calculations.
+
+* Fixed a bug in 'decimal' mode calculation of sine / cosine that
+  affected the precision of the answer in situations where 
+  'numberprecision' was less than 34.
+
+* Updated the number parsing in 'decimal' mode to detect 'too precise'
+  input and optionally generate an error in that case (depends on
+  'warningcheck')
+
+* Fixed a bug in the svg output where it could crash in 'decimal' mode.
+
+* Fixed a bug in the png output where it could get confused if there
+  was more than one text label
+
+* Fixed a bug in the png output for stroked paths
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.900:
+----------------------------------------------------------------------
+
+* Updated the embedded libraries, and a few build system fixes.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.890:
+----------------------------------------------------------------------
+
+* The numbersystem 'decimal' is now operational.
+
+* New internal: 'numberprecision', for use with 'the 'decimal' number
+  system. The (numeric) value expresses the desired calculation precision, 
+  in decimal places.
+
+  system  default   min    max
+  ============================
+  scaled       10    10     10  (assignment effectively ignored)
+  double       16    16     16  (assignment effectively ignored)
+  decimal      34     1   1000 
+
+* Bug fix: in the 'double' numbersystem, 
+
+    if X = scantokens decimal X:
+
+  will now always be true, because the 'decimal' operator now has 
+  the same resolution as the scanning routine (which is two decimal
+  places more than in the previous release).
+
+* Fixed a bug in the handling of the / operator (wrong precendence).
+ 
+* Fixed a bug in arctime (did not handle negative values currectly).
+
+* Fixed TFM generation issues (various scale-related errors).
+
+* Fixed application crashes when there was no TEXMF tree to be found
+  anywhere.
+
+* It is no longer possible to assign to the 'numbersystem' internal.
+
+* There is a new definition of 'drawdot' in plain.mp.
+
+* PNG output did not output anything for draws of a single point.
+
+* Metapost now prints the full name of any preloaded files.
+
+* Fixed a bug in the handling of labels with embedded ascii zero(es).
+
+* Fixed handling of unknown command-line options, the reporting
+  on used libraries in the --version output, and the banner line.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.803:
+----------------------------------------------------------------------
+
+* Fixed a bug in the path tension handling that sometimes caused 
+  distorted output.
+
+* A number of small alterations to the build system making it easier
+  to integrate metapost with W32TEX.
+
+* Fix the internal rounding functions in --numbersystem=double so that
+  they round exactly like in --numbersystem=scaled mode.
+
+* From Elie Roux: a fix to graph.mp to prevent log-scaled graphs with 
+  large ranges from causing the "Value is too large" error.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.802:
+----------------------------------------------------------------------
+
+* Fixed a bug causing overly large characters in  SVG output mode when
+  prologues != 3.
+
+* Removed a crash during free-ing of TFM metric data at the end of the 
+  run.
+
+* Fixed a problem with colors in SVG output mode.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.801:
+----------------------------------------------------------------------
+
+* fixed an off-by-one error in the SVG output that prevented the last 
+  font's glyphs from actually being output to the svg file under
+  prologues:=3;
+
+* fixed a bug in bbox calculations in that caused the max y to be set
+  based on the maximum x coordinate internal value instead of the 
+  maximum y coordinate.
+
+* fixed a bug where metapost incorrectly produced a 'degenerate spec'
+  error.
+
+* build fixes for various platforms imported from TeXLive 2013, as
+  well as the latest kpathsea development etc.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.800:
+----------------------------------------------------------------------
+
+* A new string valued internal "outputformatoptions" is used by PNG
+  output mode to control the png file format. In the future, this
+  internal may also be used for options to the other output formats.
+
+  The syntax for "outputformatoptions" is a space-separated list of
+  settings. Individual settings are keyword+'='+value. The only
+  currently allowed ones are:
+    format=[rgba|rgb|graya|gray]
+    antialias=[none|fast|good|best]
+  No spaces are allowed on the left, nor on the right, of the equals 
+  sign inside a setting.
+
+  The assignment that would match the compiled-in default setup is:  
+    outputformatoptions := "format=rgba antialias=fast";
+  however, "outputformatoptions" is initially the empty string.
+
+  Some notes on the (new) PNG output formats:
+  - The 'rgb' and 'gray' subformats have a white background. The 
+    'rgba' and 'graya' subformats have a transparent background.
+  - Bitdepth is always 8.
+  - In all cases, the image is initially created in 8-bit RGB
+    mode. For 'gray' and 'graya', the RGB colors are reduced just 
+    before the actual PNG file is written, using a standard rule:
+      g = 0.2126*r + 0.7152*g + 0.0722*b
+  - CMYK colors are always converted to RGB during generation of 
+    the output image using:
+      r = 1 - (c+k>1 ? 1 : c+k);
+      g = 1 - (m+k>1 ? 1 : m+k);
+      b = 1 - (y+k>1 ? 1 : y+k);
+   - If you care about color conversions, you should be doing a 
+     "within <pic>" loop inside "extra_endfig". The built-in
+     conversions are more of a fallback.
+
+* A new string-valued internal "outputfilename", which is set by 
+  "shipout" to the value of the just created file name. Until the
+  first shipout has occurred, it is the empty string.
+
+
+* Fixed a number of bugs where Metapost loaded the default font map
+  file multiple times, resulting in lots of "fontmap entry for 
+  `<fontname>' already exists, duplicates ignored" warnings.
+
+* The "glyph <> of <>" operation could crash on fonts with empty 
+  subpaths in the charstrings.
+
+* Fixed a bug in the postscript encoding reader that caused a buffer
+  overflow (fatal error) for encoding files that do not end with a 
+  newline.
+
+* Sped up png creation a bit by using smarter libpng options.
+
+* In the 'double' numbersystem, lots of precision was lost due to a bad
+  internal conversion of fractions to scaled values. This affected the 
+  "rotated by", "directiontime", "sind" and "cosd" primitives, as well 
+  as internal dependency calculations.
+
+* In the 'double' numbersystem, an internal rounding error caused 
+  "directiontime" to return bad results for requests near zero.
+
+* There was a big scaling miscalculation while outputting glyphs in SVG
+  mode with "prologues:=3". The output labels were so big that they
+  fell completely outside of the generated image.
+
+* A problem resulting in 'This can't happen (endinput)' caused by a 
+  missing "end" at the end of the run was fixed.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.790:
+----------------------------------------------------------------------
+
+* Lots of speedups.
+
+* Fixed bug in division expressions that started with a literal number.
+
+* A few problems with bad deallocations were solved.
+
+* A bug where after saving and redefinition of primitives, they later
+  were restored to 'undefined' instead of to their primitive meaning.
+
+* The "double" literal number parser now only accepts scientific 
+  notation if the character following 'E' or 'e' is '+', '-', or 
+  a digit.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.780:
+----------------------------------------------------------------------
+
+* The turningnumber calculation in 1.770 was bugged.
+
+* The picture export in 1.770 forgot to add trailing zeroes to the
+  log and term output channel resulting in rubbish output.
+
+* The arguments of the PS "dtransform" operator have been fixed
+  (was wrong since 1.750).
+
+* The warning limit in numbersystem=double mode is now exactly 2**52.
+
+* A bunch of obvious memory leaks fixed. Not all yet, but now the 
+  MPlib seems to be usable even with many graphics.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.770:
+----------------------------------------------------------------------
+
+This is an alpha release for testing & debugging only!
+
+* The command line switch --numbersystem replaces --math.
+
+* Two new internals: numbersystem (string, read-only, either "scaled"
+  or "double" at the moment) and numberprecision (numeric, currently 
+  a no-op).
+
+* There is a new bitmap backend:
+
+    outputformat:="png";
+
+  This backend uses cairo and libpng to generate PNG bitmap data.
+  The created PNG used RGB + Alpha, with anti-aliasing, at 72dpi, 
+  and with a transparent background.
+
+* Associated with this, there are new internals "hppp" and "vppp",
+  that are used by the bitmap backend to decide on the scale of
+  the generated bitmap. Default value for both new internals is
+  "1.0", i.e. one pixel per Metapost point. 
+
+  The internal names come from metafont.
+
+* There are two new primitives for use with picture item objects:
+
+     prescriptpart
+     postscriptpart 
+
+* The C API has been extended to allow path control point resolution
+   without going through the Metapost input language, see
+   manual/mplibapi.tex for details.
+
+* The C API has been extended with a "math_mode" switch in the options
+  structure, and the memory size options as well as "ini_mode" have
+  been removed (the MPlib instance now always starts up in inimp mode)
+
+* The code for picture shipout now uses "double" for all floating point
+  values. This can give small differences in the actual output files in
+  traditional mode due to the required scaled -> double conversion, but
+  was necessary to support the new numerical backend code.
+
+* The Lua API internals have been updated to reflect the C API changes.
+
+* All known crashes in earlier versions of Metapost have been fixed. 
+
+Known issues:
+
+* The manual is not up-to-date yet on the metapost input language
+  changes.
+
+* There are various memory leaks. 
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.750:
+----------------------------------------------------------------------
+
+This is an alpha release for testing & debugging only!
+
+* mpost now accepts --math=double as an argument. This switches the
+  internal arithmetic functions from using a scaled 32-bit data type
+  to 64-bit floating point.
+
+* With --math=double, the input scanner has been changed to allow
+    a := 1.0E20 
+  as valid input format for a numerical value
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.504:
+----------------------------------------------------------------------
+
+* Small build system tweaks from TeXLive 2012.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.503:
+----------------------------------------------------------------------
+
+* String comparisons have been fixed, these were broken in previous 
+  1.50x versions.
+
+* verbatimtex ... etex processing had a horrible bug that is now
+  fixed.
+
+* A fix has been applied for a bug that made redeclared variable 
+  subscript tags disappear.
+
+* The behavior of the %{<internal>} escape sequence in 'outputtemplate'
+  changed (but not that of the single-letter shortcuts).  Internal
+  variables within %{...} are neither rounded nor zero-padded.
+
+* A very long list of improvements to the manual.
+
+* MetaPost now adheres to the openin_any / openout_any settings in 
+  texmf.cnf
+
+* The 'prologues:=3 output' with embedded labels was unreliable, 
+  especially when the resulting eps was included into a TeX document 
+  via dvips.
+
+* 'newinternal numeric' has been fixed, it generated an error in
+  metapost 1.211 and earlier 1.50x versions.
+ 
+* Label regeneration sometimes failed to run when the file time stamps
+  were close together.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.502:
+----------------------------------------------------------------------
+
+* New build system and kpathsea imported from TeX Live.
+
+* Various bugfixes.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.501:
+----------------------------------------------------------------------
+
+* The maximum number of variable instances has increased from approx.
+  33 million (2^25-1) to 2 billion (2^31-1).
+
+* New build system and kpathsea imported from TeX Live.
+
+* Many small bugfixes to 1.500.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.500:
+----------------------------------------------------------------------
+
+* Actual memory dump files do not exist any more. --mem=<MEM> and
+  all other methods of supplying a MEM file are now interpreted 
+  somewhat like this pseudo-metapost-code:
+
+    begingroup;
+    let dump = end;
+    input MEM[.mp];
+    endgroup;
+
+  this process is supposed to be transparent besides the facto that 
+  there is some extra terminal output and logging.
+
+* All memory is now allocated and freed dynamically. There are only
+  two remaining overflow errors(1):
+
+  "expansion depth" : this is a guard against infinite recursion,
+                      the value is 10000.
+  "sizes per font"  : this is maxed out for data-structure reasons, 
+                      the value is 32767.
+
+  from texmf.cnf, now only the "error_line", "half_error_line" and
+  "print_line settings" are used.
+
+  (1) but now you can reach the operating system limits, of course.
+
+* As this is an alpha release containing lots and lots of new code,
+  MetaPost starts up with the internal equivalent of 'loggingall;' 
+  in effect. This results in log files that can help in debugging.
+
+* Expect bugs and (minor) memory leaks.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.212:
+----------------------------------------------------------------------
+
+* Small build system tweaks from TeXLive 2011.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.211:
+----------------------------------------------------------------------
+
+* In previous 1.20X versions, the 'glyph infont' operator did not handle
+  fonts with seac (old-style composite characters) properly.
+
+* Incorporated the latest versions of kpathsea and the build system
+  from TeXLive.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.210:
+----------------------------------------------------------------------
+
+* In previous 1.20X versions, btex ... etex handling forgot to take 
+  the passed directory location of input-ed files into account.
+
+* verbatimtex ... etex is now copied as is. Whitespace stripping
+  and appending of % no longer happen. 
+
+* The mpost executable now always strips exactly one extension from 
+  the jobname (unless explicit --jobname was given)
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.209:
+----------------------------------------------------------------------
+
+* Previous 1.20X mem files were architecture-dependent.
+
+* Metapost now uses getopt once again, which makes the commandline
+  handling compatible with pre-1.20X versions. However, the syntax
+  -sprologues=1 is now no longer supported (the space between -s
+  prologues is now mandatory).
+
+* On some systems, metapost would crash inside the function that prints
+  the 'fatal error' message.
+
+* The 'glyph infont' operator would sometimes cause crashes, and in 
+  other cases it generated bad output.
+
+* There was a space missing in the generated output when mpprocset
+  was set. This was still legal PostScript, but it confused mptopdf.
+
+* In previous 1.20X versions, the font map file was read for each 
+  figure that contained a label, resulting in lots of harmless
+  but scary warnings being reported.
+
+* The --debug switch is now documented in the command-line help.
+
+* The help text now mentions the metapost version.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.208:
+----------------------------------------------------------------------
+
+* Previous versions of MetaPost 1.20x were overeager to remove file
+  extensions from the end of the jobname.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.207:
+----------------------------------------------------------------------
+
+* With the -file-line-error commandline option, MetaPost 1.20x always
+  reported the name of the most recently 'input' file instead of the
+  name of the actual current file.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.206:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* Many of the commands in the MP language cause strings in the string
+  pool to be printed to new strings that are also built up in the 
+  string pool. This could cause crashes when the new string wouldn't 
+  fit in the memory allocated.
+
+* Failure to initialize the jobname in the MP_options struct could 
+  cause crashes in library mode.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.205:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* Metapost did not handle well files with extensions other than .mp.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.204:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* Metapost could go into an endless output loop when characters in 
+  bitmap fonts where used, because it tried to limit the %*Font output
+  line to a specific number of bytes.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.203:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* Building version 1.202 for source required X11 headers to be installed.
+
+* Another infinite recursion trap added, now for erroneous vardefs
+  with suffixes (reported by Nicola Vitacolonna).
+
+* Fix infinite loop recursion on integer overflow (reported by Nicola 
+  Vitacolonna, fix based on a hint from Dan Luecking).
+
+* In version 1.202, setting "job_name" from lua code caused a crash.
+
+* The "filename" field on the lua figure object in 1.202 was just the
+  extension, instead of the whole file name.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.202:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* Fix greypart <numeric> (always returned 0).
+
+* Make 'withcolor true' explicitly reset the color model to uninitialized.
+
+* Report which mem file can't be found, and use 'plain' instead of PLAIN 
+  in the mem search warning messages.
+
+* Fix a crash on subsetting of some Type1 fonts because of a temporary
+  buffer overrun.
+
+* Correct a crash on SVG text output when the 8th bit is set.
+
+* Fix the use (reference) of 8-bit glyphs in SVG mode when prologues:=3.
+
+* Fix the output of text strings that reference the character at index 0.
+  
+* Use ".ps" as file extension for negative charcodes (backward compatility).
+
+* Metapost sometimes printed "mp_vacuous" instead of "vacuous".
+
+* Fix rounding of negative scaled and fraction values.
+
+* Restore the error for 'arctime' out-of-bounds.
+
+* Moved the "turningnumber algorithms do not agree" message out of reach
+  (now only printed if tracingchoices>2 )
+
+* Fix a problem with dash scaling during picture copying.
+
+* TFM header bytes were written out with an offset of one.
+
+* Updated the mptrap files.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.201:
+----------------------------------------------------------------------
+
+Bug fixes:
+
+* There was a bug where sometimes the outer contour of a glyph that was
+  asked for via 'glyph X of' was missing from te output, depending on 
+  the path drawing order inside the Type1 font.
+
+* Handling of MPTEXPRE label prefix files was broken.
+
+* Font subsetting for 8-bit characters in Type1 fonts was broken.
+
+* The use of "%{outputtemplate}" inside "outputtemplate" now generates
+  an error.
+
+* The first letter of the input file name was swallowed in the log file.
+
+* There is some rudimentary support for infinite recursion trapping now,
+  to help prevent segfaults&crashes due to C call stack exhaustion.
+
+* An unlucky change in glibc made compilation fail on new GNU/Linux
+  systems due to multiple incompatible definitions of 'getline()'.
+
+* There was a bug in the handling of quoted external commands for 
+  MPXCOMMAND | MPXMAINCMD | TEX.
+
+* The main input file's opening brace and filename were not shown in 
+  the log file output.
+
+* Non-colored picture objects (clipping and setbounds paths) are now 
+  ignored when the color part is asked from within "within", for 
+  backward compatibility reasons.
+
+* The trip and trap files are now part of the distribution and the 
+  mptrap files have been updated.
+
+* The standard web2c argv[0] mem file mimicri was broken: 1.200 was 
+  always looking for "mpost.mem" even when called under another name.
+
+* The manual pages for "mpost" and "dvitomp" have been updated, and the 
+  old "mp" manual page has been removed. 
+
+* The first letter of any missing input file name was not shown in the 
+  terminal error message.
+
+* Output files are now once again written in the current directory even
+  if an explicit source directory is given. This includes the creation
+  of mpx files, but some trickery is used so that up-to-date existing 
+  mpx files from the source directory take precedence.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.200:
+----------------------------------------------------------------------
+
+New features:
+
+* It is now possible to get the actual path drawing routines from a 
+  font glyph. The syntax is :
+
+    q := glyph 113 of "cmr10";
+    q := glyph "one.oldstyle" of "lmr10";
+
+  "glyph" is a primary binary operator (like "subpath") that accepts
+  a string or number and a string, and the result is a picture.
+
+  The second argument is a tfm name. This will be combined with
+  a fontmap entry to find the font's PostScript source file.
+
+  If the first argument is a string, then it should be a Charstring
+  name in the postscript font source. If the first argument is
+  an integer, it is an index into the encoding of the font, and
+  the Charstring that is mapped to that index is taken (it follows
+  that numeric values have to be integers between 0 and 255).
+
+  The returned picture can be empty (if the tfm or the pfb or the
+  encoding or the Charstring was not found), otherwise it consists
+  of a list of 'fill' objects that use the the 'grey' color model.
+  Counterclockwise paths receive the grey value matching 'white',
+  clockwise paths 'black'.
+
+* MetaPost now supports string valued internal variables. Three of 
+  these are predefined ("jobname", "outputformat", "outputtemplate"), 
+  you can add more of them via "newinternal". 
+  
+    newinternal string s;
+    s := "hello";
+  
+  The type of a new internal is either 'string' or 'numeric',
+  and defaults to numeric (this is for backward compatibility with
+  older versions of MetaPost). String internals are initialized to
+  the empty string, numeric internals are initialized to zero.
+ 
+* MetaPost now has a second backend that generates Scalable Vector
+  Graphics output. This new backend was requested by Dave Crossland, who 
+  also provided the funding to make it possible.  Dave, thank you again!
+
+  The default value of "outputformat" is "eps"; when you assign "svg" 
+  you will get SVG output.
+
+  If you use text labels with SVG, you will probably also want to set
+
+    prologues:=3;
+
+  With this setting, MetaPost will convert the font into curves
+  (of course you also need a correct font map line, just as for
+  PostScript output).
+
+  With any other value of "prologues" you will simply get the SVG
+  default text font in a system-dependant encoding. This is unlikely
+  to be what you want!
+
+  A simple example:
+
+    outputformat := "svg";
+    outputtemplate := "%j-%c.svg";
+    beginfig(1);
+    fill fullcircle scaled 100 withcolor .4red;
+    endfig;
+    end.
+
+  In the lua bindings, there is the new figure method "svg()", that 
+  gives back the SVG output string. This is subtly different from the
+  direct file output: the lua method does not prepend an XML declaration
+  (this makes embedded use of the generated XML easier).
+
+* The new internal string variable "outputtemplate" replaces
+  "filenametemplate". The big difference is that "outputtemplate"
+  is a true 'internal', so that you need a proper assignment.
+  On the positive side, this means that you can use its current 
+  value with e.g. show and message.
+
+* "outputtemplate" has a new type of replacement: internal variable
+  names. Instead of the short "%j.%c", you could write:
+
+     outputtemplate := "%{jobname}.%{charcode}" ;
+  
+  this type of replacement works for all internal variables, 
+  including those defined via "newinternal". 
+   
+* There are two new numeric internals: "hour" and "minute".
+  (these are a consequence of the outputtemplate change)
+
+* The primitive "jobname" is now a string internal instead of a 
+  special case. This implies you can assign to "jobname", but
+  such an assignment will only affect the picture output. The
+  job name for the purposes of log and mem file names is fixed
+  permanently at startup time and cannot be altered.
+
+* "mpost" can now pretend to be dvitomp. Either copy the executable
+  to the name "dvitomp", or pass the switch --dvitomp on the command
+  line. 
+
+* The command line option --halt-on-error has been reinstated.
+
+* There is a new -s<internal>=<value> command line switch that can
+  be used to setup run time values. Such assignment will be executed
+  after initialization is complete (i.e. after mem file loading) but
+  before any other code is executed.
+
+  This works for all internal variables, including one defined 
+  that may have been defined in the mem file via "newinternal". 
+
+* "tracingstats:=1;" now prints the highest and total input levels.
+
+Bug fixes:
+
+* The turningnumber calculation had a rounding error in the internal
+  arithmetic that could cause incorrect numbers to be calculated
+  (typically resulting in a 'turning numbers do not match' error).
+
+* The parsing of command line arguments with options was broken.
+
+* Reading of files with 8-bit names has been fixed.
+
+* A patch by Melissa O'Neill fixes inclusion of some special Type1
+  formats.
+
+* There was a bug where, when "prologues:=3;", the lists of the 
+  DocumentResources/DocumentSuppliedResources could appear in the eps
+  output partially uncommented.
+
+* Troff labels were completely broken in all MPlib-based versions.
+
+Other changes:
+
+* Many, many improvements to the manual and the tutorial. Sorry 
+  Stephan, I don't know enough to list them all!
+
+* The old executable build system has been replaced by the new build 
+  system from the TeXLive 2009 repository.
+
+* The MetaPost (and mplib) source code is now released under LGPL 
+  instead of GPL, and uses a derivative of PyAvl instead of GNU libavl.
+
+* The web2c 'mktexfmt' feature is enabled for the program "mpost" once 
+  again.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.102:
+----------------------------------------------------------------------
+
+* Printing of 8-bit string characters has been fixed.
+
+* In previous versions, TFM files and PFB fonts would not be read
+  properly on big-endian machines (e.g. powerpc)
+
+* The MetaPost distribution now contains "A Beginner's Guide to
+  MetaPost for Creating High-Quality Graphics" by Troy Henderson
+  and Stephan Hennig. This tutorial replaces Hobby's mpintro.tex.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.101:
+----------------------------------------------------------------------
+
+This is just a bugfix release. The following bugs / problem areas in
+MetaPost 1.100 have been fixed / improved:
+
+* TFM file generation was completely broken.
+
+* The job name discovery on the commandline has been improved.
+
+* Under some (rare) conditions MetaPost forgot to create a log file.
+
+* Labels containing char0 were exported to PostScript incorrectly.
+
+* On Windows, the DVI file that is the result from the internal call
+  to TeX for btex .. etex lables was not deleted automatically.
+
+----------------------------------------------------------------------
+What is new in MetaPost version 1.100:
+----------------------------------------------------------------------
+
+CHANGES compared to the previous release, 1.005:
+
+* This version is based on MPlib, the C conversion of MetaPost.
+
+  The one user-visible change is that the btex ... etex
+  label conversion is now handled internally instead of via
+  the external "mpware" programs. These programs are therefore
+  no longer distributed.
+
+* There is a new manual, mplibapi.pdf, that describes the internal
+  interface to MPlib.
+
+* The file 'mpintro' is no longer distributed because it is
+  obsolete (it has been that way for some time).
+
+* The distribution now includes Dan Luecking's mpsproof.tex.
+
+
+CHANGES compared to the previous beta, 1.091:
+
+* The DVI -> mpx converter was bugged when virtual fonts were used.
+
+* MP could crash when a string was added to the string pool that 
+  was too large to fit.
+
+* The string pool compaction routine was called much too often, thus
+  preventing unnecessary slowdowns.
+
+* Various problems with uninitialized option settings and missing mem
+  files or pfb files have been fixed.
+
+* There was a line buffer overrun possible in the file reader.
+
+* mpost now honours --recorder and --file-line-error.
+
+* MP now accepts file names with  paths (separator is /) and with
+  embedded spaces (using " for quoting)
+
+* There could be empty lines in the PS output.
+
+* Full 8-bit fonts (i.e. font using character slot 255) could create 
+  an eternal loop.
+
+* The handling of equations with addition or substractions between two 
+  unknowns in the right hand side was wrong.
+
+* The first line of the PS font encoding output could be broken 
+  inbetween a glyph name and its preceding slash.
+
+* Font inclusion in the PS backend would fail for all fonts that had 
+  glyph ids using the 8th bit.
+
+
+----------------------------------------------------------------------
+What is new in MetaPost beta version 1.091:
+----------------------------------------------------------------------
+
+* Dash lists were interfaced incorrectly by the lua bindings.
+
+* The Type 1 Font inclusion in the previous version produced invalid
+  subsets.
+
+* The configure script now also checks for sys/time.h
+
+* The error message you get for invalid mem files now mentions the
+  name of the file as well as the nature of the problem.
+
+----------------------------------------------------------------------
+What is new in MetaPost beta version 1.090:
+----------------------------------------------------------------------
+
+This MetaPost release is based on MPlib. For those of you who are not 
+aware of the MPlib project yet:
+
+MPlib is the name of the new, revamped version of the MetaPost
+interpreter. It is implemented in Cweb, and internally consists
+of a core library, an mpx generation library, and a frontend
+driver program (mpost).
+
+There are no changes to the MetaPost language, but nevertheless there
+are some minor differences with the last pascal-web based version of 
+MetaPost (1.005):
+
+* The MPlib distribution is released under the GPL version 2 or, 
+  at your option, any later version.
+
+* The commandline is slightly different, run mpost --help for details.
+
+* The mem file format is changed, you have to regenerate any 
+  existing ones.
+
+* The new mpx generation library includes the label generation
+  functionality that was previously provided by 'makempx', and
+  this internal code will be used instead of an external program.
+  That is, unless the MPXCOMMAND variable is set in the  environment 
+  or texmf.cnf. The 'mpware' programs became obsolete and are no 
+  longer included in the distribution.
+
+* Most of the memory configuration variables from texmf.cnf
+  have become obsolete due to dynamic reallocation. The four remaining 
+  ones are 'main_memory', 'hash_size', 'max_in_open', 'param_size'.
+  These are only taken into account at mem generation time, the
+  values are stored in and reloaded from the mem file.
+
+* The core MPlib library does not interpret an initial '&' as anything
+  special and it does not support re-initialization using a different
+  mem file either. The command line program mpost _does_ interpret '&' 
+  as an alias for the -mem switch to preserve (some) compatility.
+
+* The MPlib distribution includes lua script language bindings.
+
+Following are the NEWS items for the previous beta releases of MPlib.
+
+----------------------------------------------------------------------
+What is new in the beta release of MPlib 1.090:
+----------------------------------------------------------------------
+
+* The lua bindings to MPlib are added to the distribution, and
+  build.sh can now build an mplib.so loadable module for lua
+  (this needs an installed lua 5.1 distribution)
+
+* Some internal macros are renamed so that the exported C structure
+  fields could have better names, and a new document (mplibapi.tex)
+  provides the documentation of the C api and Lua bindings.
+
+* The texmf and manual trees are now included again.
+
+* (un)dumping mem files is delegated to a separate cweb source file.
+
+* All gcc-isms in the build and configure scripts have been removed.
+
+* The kpathsea library is updated.
+
+----------------------------------------------------------------------
+What is new in the beta release of MPlib 1.085:
+----------------------------------------------------------------------
+
+* Determination of the mem name to use in non-ini mode is now much 
+  closer to the web2c approach. 
+
+* There is now a magic word in the beginning of the mem file to make
+  sure it is written by the correct version of MPlib.
+
+* Fixed the disappearing comment sign in the to-be-typeset document 
+  created by the mpx generation subsystem.
+
+* Various identifiers have been renamed to avoid clashes (that prevented
+  the source from building correctly on many platforms)
+
+* A great many small changes and fixes have been added after running 
+  splint on the generated C source.
+
+
+----------------------------------------------------------------------
+What is new in the beta release of MPlib 1.080:
+----------------------------------------------------------------------
+
+* The MPlib distribution is released under the GPL version 2 or, at 
+  your option, any later version. The copyright statements in the source
+  files have been updated to reflect this.
+
+* The mpost program banner now contains the kpathsea version, and no 
+  longer mentions the fact that the source is now cweb at all.
+
+* The mpost program once again supports 'E' error responses.
+
+* There are some minor internal API changes, but there is still no 
+  documentation for the API, so that is not very interesting yet.
+
+
+----------------------------------------------------------------------
+What is new in the beta release of MPlib 1.060:
+----------------------------------------------------------------------
+
+* The MPlib distribution is released under the GPL version 2.
+
+* This release is the first that replaces the old metapost distribution
+  completely. The executable is now named 'mpost' with engine name
+  'metapost'.
+
+* The release now includes a cweb implementation of the makempx 
+  functionality that is linked into the mpost executable. 
+  This internal code will be used unless the MPXCOMMAND variable is set.
+  Because of this functionality, the mpware directory is no longer 
+  included and the standalone programs 'makempx', 'newer', 'mpto',
+  'dvitomp' and 'dmp'. are no longer maintained.
+
+* This is the first development release of the new cycle, and contains 
+  all of the functionality of Metapost 1.005. The mpost version is now 
+  1.060, and the special version number for the cweb version has been 
+  removed from the banner.
+  
+----------------------------------------------------------------------
+What is new in the alpha release of MPlib (0.20.0):
+----------------------------------------------------------------------
+
+* Two bugs in MP 1.002 were fixed by Giuseppe Bilotta, both fixes
+  are about polygonals pens and will be included in the upcoming 
+  MP 1.003 release also.
+
+* It is now possible to ask for the envelope of a path drawn as 
+  traced by a (non-elliptical) pen:
+
+    path p,q;
+    p = fullcircle scaled 30;
+    q = envelope pensquare of p;
+   
+* There is a lua interface now, and it is already used by luatex. 
+
+  To play with this, currently the best solution is to fetch the 
+  0.25.0 beta of luatex: http://foundry.supelec.fr/projects/luatex
+  This embeds MPlib 0.25.0 as well as its documentation. 
+
+* Many bugs were fixed.
+
+----------------------------------------------------------------------
+What is new in the alpha release of MPlib (0.10.0):
+----------------------------------------------------------------------
+
+* The source is converted to cweb, and split into a library part
+  (mpdir/lib/*.w) and a frontend executable (mpdir/mpost.w).
+
+* The front end executable is named "newmpost", this takes
+  care of configuring the MPlib library via C code, and uses
+  kpathsea for file searching. There is no change file involved, 
+  and the web2c runtime library is not used.
+
+* Some of the internal arrays now grow dynamically when needed:
+
+  * the input buffer
+  * the string pool and number of strings
+  * the font memory and number of fonts
+  * the number of "readfrom" and "write" files
+  * the path segment size
+  * the input nesting stack
+  * the number of new internals
+  * the TFM writing arrays (but these are limited by TFM format)
+
+  Still not doing that (so these can only be changed in --ini mode):
+
+  * the main memory
+  * the hash size
+  * the number of simultaneous macro parameters
+  * the level of "input" file nesting
+
+* The following command-line options are ignored by the front-end
+  command (for now):
+
+  -[no-]file-line-error
+  -halt-on-error
+  -output-directory=
+  -[no-]parse-first-line
+  -recorder
+  -translate-file=
+  -8bit
+  -T
+  
+  The other web2c command-line options should work as normal.
+
+* the mpware tools are not in this distribution, their functionality
+  will eventually be assimilated into the frontend application.
+
+* the build process depends on a local "ctangle" command being in the 
+  path, for now. The confiration and building system is not yet complete.
+
+* API documentation is still missing, but the MetaPost input language 
+  has not changed.
+
+
+----------------------------------------------------------------------
+What is new in version 1.005:
+----------------------------------------------------------------------
+
+* In MetaPost 1.004, mpost --version still incorrectly reported 1.003
+
+* C Compilation of MetaPost 1.004 was broken on MacOS X 10.5
+
+* The sources package did not contain mpboxes.pdf
+
+* Some last-minute fixes to the manual
+
+
+----------------------------------------------------------------------
+What is new in version 1.004:
+----------------------------------------------------------------------
+
+* The picture color component commands misbehaved in 1.003:
+   the current (default) colormodel was not taken into consideration,
+   so all colors had to be explicit for "redpart" etc. to work.
+   (this bug is the one broke the graph.mp package)
+
+   In 1.004 for "defaulted" colors, the suitable value in the current
+   (default) colormodel is returned without any errors. This change
+   also reverts to silently defaulting a 'black' color when asking
+   for the redpart etc. of an object that cannot be colored at all.
+
+* The picture color component commands misbehaved in 1.003 in
+   a different manner also: the defaults for uninitialized CMYK
+   color picture parts were still assuming 'black' was defined as
+   (1,1,1,1) instead of as (0,0,0,1).
+
+* The macro Gwithpc_ in the graph.mp package did not work properly
+   with non-rgb colormodel objects.
+
+* plain.mp has a new macro, 'colorpart', that returns the color
+   parts of a graphical object within a picture in a form suitable
+   for feeding it back to 'withcolor'.
+
+* The latest kpathsea library from TeXLive is included.
+
+* There is now a separate manual for the boxes package (mpboxes.pdf).
+
+
+----------------------------------------------------------------------
+What is new in version 1.003:
+----------------------------------------------------------------------
+
+* Polygonal pens now work better (bug #3 and #7 at supelec.fr).
+
+* When asking for a color part in a picture object, the color models
+   now have to match each other, otherwise an error will be reported
+   and the return value will be set to a 'black' part.
+
+* The Makefile fragment (metapost.mk) now defines a separate mpost
+   target for better integration in TeXLive.
+
+* There was a bug in the internal handling of withprescript and
+   withpostscript, resulting in incorrect output when paths using
+   such scripts were stored in picture variables.
+
+* A newline was missing from the PostScript output when the
+   procset internal variable was set, so the first line of that
+   accidentally became a PostScript comment.
+
+* Applicable changes from Knuth's updates for MetaFont 2.718281
+   are incorporated.
+
+* Mpto did not play nice with %&<format> verbatimtex lines, it now
+   automatically tries to detect comment-lines.
+
+* Dvitomp  1.003 has higher limits for some internal constants like
+   the number of allowed fonts in DVI files.
+
+* The manual is improved.
+
+
+
+----------------------------------------------------------------------
+What is new in version 1.002:
+----------------------------------------------------------------------
+
+* Version 1.001 introduced a memory allocation error in mpto that could
+  result in the program looping endlessly
+
+----------------------------------------------------------------------
+What is new in version 1.001:
+----------------------------------------------------------------------
+
+* The default cmyk 'black' color now uses only black, not all four
+  ink colors (after a discussion on the mailing list).
+
+* Some issues were reported with the new turningnumber algorithm,
+  all known problems are now fixed.
+
+* Gábor Braun discovered that mpost did not always download the font
+  encodings into all the created output files.
+
+* Akira Kakuto and Hartmut Henkel found some small issues in mpto
+  regarding trailing and leading whitespace.
+
+* A fix for the 'Helvetica' entries in trfonts.map was provided by
+  Werner Lemberg, and Michail Vidiassov supplied two extra font 
+  entries for troff.map (Symbol and ZapfDingbats). Karl Berry
+  provided the new file troff-updmap.map, to be used by the updmap 
+  tool in texlive.
+
+* Mpost now supports web2c's --output-directory option.
+
+* Any warnings about missing fonts and characters are now always 
+  written to the terminal as well as to the log.
+
+* Now that makempx is a C program, it needed a different install line
+  in build.sh. Also, Olaf Mersmann contributed a patch to recognize
+  'gmake' in build.sh
+
+* Luigi Scarso found some typing errors in the web source that prevented
+  clean weaving of the source.
+
+* Stephan Hennig fixed a number of problems in the manual (mpman.tex)
+  and the introduction paper (mpintro.tex). He also wrote new sections on 
+  how to preview metapost graphics and on how to use metapost graphics 
+  inside  other documents. On top of that, the manual is now hypertext-aware, 
+  and fixes for a whole series of small problems have been applied.
+
+----------------------------------------------------------------------
+What is new in version 1.000:
+----------------------------------------------------------------------
+
+*  The use of DSC (document structuring) comments has been
+   been cleaned up, thanks to comments by Michail Vidiassov.
+ 
+*  By setting prologues to 2 or 3, you can ask MetaPost to 
+   reencode and include the used labels fonts in the output,
+   thus creating proper Encapsulated PostScript files even
+   if labels are present.
+
+*  Support for greyscale and cmykcolor models is added.
+
+*  The new drawing options "withprescript" and withpostscript"
+   allow the user to attach PostSCript special text to a specific
+   drawing object.
+
+*  Setting the new internal "mpprocset" to 1 will make MetaPost
+   create a somewhat extended preamble that defines shortcuts
+   for the postscript commands (e..g "l" instead of "lineto").
+   For big images, this can help shrink the output a bit.
+
+*  The pool file is now integrated in the executable, so there
+   is not separate 'mp.pool' anymore, except at build time.
+
+*  Groff support is redone, and dmp now uses kpathsea searching.
+   Groff related changes are thanks to the efforts of Werner 
+   Lemberg and Michail Vidiassov 
+
+*  makempx is now a compiled executable on all systems,
+   thank you Akira Kakuto
+
+*  The error for 'special's longer then 255 characters
+   is removed, so specials can now be of any length.
+
+*  There is new turningnumber implementation that attempts
+   to find the mathematically correct "turningnumber" of a 
+   path. The formulae are derived from a mailinglist discussion
+   between (especially) Dan Luecking and Giuseppe Bilotta.
+
+*  The manual is updated and modernized. It is currently 
+   maintained by Stephan Hennig and Troy Henderson.
+
+------------------------------------------------------------------
+Changes in version 0.920:
+----------------------------------------------------------------------
+
+*  Fixed a long-standing bug in web2c where changing values of the
+   memory_size setting in web2c could cause crashes and other random
+   problems. The memory array size is now written to the dump file
+   and loading is aborted if the values do not match.
+*  Implement configurable figure output filename templates.
+*  Implement cmyk, greyscale, and marking only color models.
+*  The mpost executable is now version 0.920
+*  mpost no longer autoconverts r==g==b colors to grayscale in the
+   postscript output.
+  
+----------------------------------------------------------------------
+Changes in version 0.902:
+----------------------------------------------------------------------
+*  Fix a bug in mpto resulting in correctly placed labels (with
+   thanks to Dan Luecking)
+*  Fix a bug blocking compilation of dmp on MacOSX
+*  The mpost,dmp,mpto executables are now version 0.902
+
+
+----------------------------------------------------------------------
+Changes in version 0.901:
+----------------------------------------------------------------------
+*  A corrected bugfix for bug item 3 from version 0.9 (the old fix
+   made metapost fail the trap test)
+*  Included mpost.mp for mem generation
+*  Updated the trap test output.
+*  The mpost executable is now version 0.901
+
+----------------------------------------------------------------------
+What is new in version 0.9:
+----------------------------------------------------------------------
+1. There is a new internal quantity called mpversion that reports the 
+   current metapost version, and the version information is also written 
+   to the PostScript file.   
+2. The LaTeX sources of the mpman, mpintro, and mpgraph manuals have
+   become part of the distribution package.
+3. TEX.mp now has TeX format support through a pair of macros called 
+   TEXPRE() and TEXPOST(). This llows you to process the contents of 
+   the TEX() macro with, for example, LaTeX (instead of plain TeX).
+   An example is given in the manual.
+4. metapost now writes a %%HiReSBoundingBox comment
+5. The EPS output no longer contains actual spaces within PostScript 
+   strings as for example output by label("a space"), but their
+   octal escape (\040) instead.
+6. The EPS output now also has a %%BeginProlog DSC comment
+   as well as %%EndProlog
+7. The comments in the Web source have been changed to point out
+   that on modern machines, acquiring the random seed has actually
+   become a system-dependant operation (a granularity of whole seconds 
+   is not small enough on new machines).
+8. The 'newer' command now accepts more than 2 arguments, testing
+   each of the files in turn.
+
+----------------------------------------------------------------------
+Bugfixes in version 0.9:
+----------------------------------------------------------------------
+1. Documentation improvements: all known errata and typos have been 
+   removed, better explanations of e.g. dash patterns and dotlabel have
+   been provided, and a number of omissions has been rectified.
+2. The BoundingBox was not computed correctly when a filldraw command
+   with a noticeable pen size was used at the edge of the picture.
+3. Paths starting with degenerate constructions like (0,0)--(0,0)--(0,0) 
+   could overflow memory.
+4. The PostScript output could accidentally contain 8-bit characters 
+   within PostScript strings in previous versions because a test was
+   shared between terminal printing and PostScript printing.
+5. A bug has been found in the assignment of serial numbers to independant
+   variables in metafont 2.71828. This bug affected MP as well, and the
+   same patch has been applied.
+6. The turningnumber was sometimes wrong in unexpected ways. The new
+   implementation is still sometimes wrong (when there are strange path
+   segments involved), but in a much more predictable way: the new code
+   always draws straight lines between the actual points, and calculates 
+   the turningnumber based on that path instead of the actual path. The
+   effect is that cusps and loops within segments are now completely 
+   ignored. A more thorough fix of turningnumber is planned for the 
+   next release.
+7. There was an 'off by one' error in dvitomp wrt. the interpretation
+   of virtual fonts.
+8. mpto uses a new TeX macro for the generation of labels, making it
+   more robust wrt. strange user code within the actual label text.
+9. A missing colon in boxes.mp has been added
+10. A missing save in mfplain.mp has been added
+11. The generisize in boxes.mp has been fixed so that it now accepts [[ as 
+    a valid variable name
+
+----------------------------------------------------------------------
+Version 0.641:
+----------------------------------------------------------------------
+The only change was to fix the code for transforming a picture that
+contains a filldraw.  Version 0.64 introduced a bug that caused an
+inappropriate memory reference in that case.
+
+----------------------------------------------------------------------
+What is new in Version 0.64:
+----------------------------------------------------------------------
+1. A new primitive command  closefrom filename  closes a readfrom file
+   so that subsequent calls to readfrom with that file name will go back
+   to the beginning of the file.
+2. The ^^ notation for unprintable characters is now used only when printing
+   on the terminal or the log file.  Internal computations and the write
+   command are all 8-bit clean.  (This is partly due to material in mp.ch
+   that changes the initialization of the xchr array.  Without these
+   system-dependent changes, the write command would map all non-ascii
+   characters to spaces.)
+3. Arithmetic overflow during a comparison such as  20000>-20000 is now
+   ignored.  This avoids extraneous error message when using the graph.mp
+   macro package.
+4. Transformations with negative determinants now work properly on pictures
+   drawn with polygonal pens.
+5. When the readfrom operator is applied to a file that does not exist,
+   an attempt to close a non-open file could cause problems in some
+   implementations.  This has now been fixed.
+6. Using  draw picture_expression withpen  where the picture_expression
+   was a scaled picture containing dashed lines, the dash lengths would
+   change.  This bug has been fixed.
+7. The dashpart operator could return an invalid picture or a picture that
+   is not properly scaled.  This has also been fixed.
+8. The |char_base| variable could become negative when using fonts that
+   do not start at character 0.  There was also bad Pascal code in function
+   b_open_in.  This has all been fixed.
+9. Dvitomp has been fixed to avoid a font data structure problem that
+   could cause some characters to come out in the wrong font when you
+   mix virtual and non-virtual fonts.
+10. Dvitomp now correctly prints font names when there is a checksum
+   mismatch, and it aborts instead of just printing an error if a tfm
+   or vf file is bad.
+11. In plain.mp, the drawdblarrow macro now uses filldraw so that it works
+   better with large pen sizes.
+
+----------------------------------------------------------------------
+Version 0.632:
+----------------------------------------------------------------------
+When prologues is negative, the output files use full precision for
+coordinates in "%%BoundingBox" comments.  In btex..etex blocks,
+"number too large" and "invalid character" errors are suppressed.
+The result of btex..etex is now guaranteed to be in a setbounds path
+so that a for...within iteration will always treat it as a unit.
+
+There are also some obscure bug fixes involving string compaction when
+scanning a file name or when mp is compiled in debug mode.  Some possible
+identifier name conflicts and range check errors have also been fixed.
+
+
+----------------------------------------------------------------------
+Version 0.631:
+----------------------------------------------------------------------
+This version fixes an obscure bug that could cause certain perfectly valid
+strings to be printed as "???" or " NONEXISTENT".  It also includes a minor
+fix to the PATHEXPAND code that prevents running out of file descriptors.
+
+
+----------------------------------------------------------------------
+What is new in Version 0.63:
+----------------------------------------------------------------------
+1. Backslashes in the PostScript output are rendered correctly.  They used
+   to come out as (\) instead of (\\).
+2. Recycling an independent variable should no longer cause spurious overflows.
+   (This bug was recently found in mf.web.)
+3. Pythagorean addition should now be faster in certain trivial cases.
+4. Rotating text by arbitrary angles should no longer cause bad PostScript
+   output.  The problem was that arguments to "fshow" could be inaccurate.
+5. Obscure bugs inherited from mf.web are now fixed.  These involve
+   balancing parentheses showing on the terminal, reporting the correct
+   line number in case of buffer overflow, and removing spurious reference
+   counts that could effect end-of-job statistics.
+6. Fonts with ec=255 should no longer cause mp's PostScript output routines
+   to go into a loop.
+7. When mp's string mechanism was heavily used, file names could occaisonally
+   be printed on the terminal and log file as "(?)".  This has been fixed.
+8. Setting PATHEXPAND in site.h causes mp, dvitomp and dmp to understand "//"
+   in path variables as "search multiple levels of subdirectories".  This is
+   for compatibility with recent versions of the Web2c TeX distribution.
+9. A typo in mpware/makempx and mpware/troffmpx has been fixed.  Previous
+   versions of these scripts would not run on some systems.
+10. Data files *.d have been added to the doc directory.  These are used by
+   doc/mpgraph.mp which generates figures for "Drawing Graphs with MetaPost".
+11. Typos in mpintro.tex and mp.web's TeX material have been fixed.
+12. Files examples.mp, mpintro.tex and mpintro.bib have moved from mplib to
+    the doc directory.
+13. The author's email address now appears in the README file.
+
+
+----------------------------------------------------------------------
+Macros added to the mplib directory between Versions 0.50 and 0.62:
+----------------------------------------------------------------------
+rboxes.mp is a slightly more general version of boxes.mp
+TEX.mp provides a way of running tex dynamically instead of as a pre-processor
+graph.mp, format.mp, and sarith.mp are documented in doc/mpgraph.ps
+(This is the same as ftp://netlib.att.com/netlib/att/cs/cstr/164.ps.Z)
+marith.mp, string.mp, texnum.mp, and troffnum.mp are low-level packages
+used by graph.mp, format.mp, and sarith.mp.
+
+
+----------------------------------------------------------------------
+Other minor bug fixes subsequent to Version 0.60
+----------------------------------------------------------------------
+1. plain.mp has been fixed so that the x**y works properly when x<0 and y is
+   a negative integer.
+2. Programs mptotex.c and mptotr.c which extract btex..etex material have been
+   fixed so they work properly with input files that do not end with a newline
+   character.
+3. Program dmp.c which handles troff output from btex..etex blocks has been
+   modified to avoid outputting any non-ASCII characters that the C function
+   isprint() accepts.
+4. Program dmp.c no longer gets troff graphics specials confused with text.
+   This seldom matters because btex..etex blocks are unlikely to contain
+   troff graphics.
+5. Pictures containing clipped subpictures could come out with some colors
+   in the subpicture wrong.
+6. Colors in PostSript output were not being restricted to the standard 0..1
+   range.
+7. Transforming a path or a pen should no longer generate extraneous overflow
+   errors in certain unusual situations.
+8. Drawing with a degenerate 2-vertex polygonal pen such as penrazor should
+   no longer cause an infinite loop in certain unusual situations.
+9. There were some bugs in the mfplain macros.  (These macros are designed
+   to similate plain METAFONT.)  The drawing and filling macros now apply
+   currenttransform to the path but not the pen rather than vice versa.
+   The predefined modes now set o_correction to 1.0.
+10. For security reasons, mp can no longer read or write files whose names
+   begin with '.'
+
+
+----------------------------------------------------------------------
+Changes to the MetaPost language between Version 0.50 and Version 0.60
+----------------------------------------------------------------------
+1. New operator `readfrom <filename>' and new command
+   `write <string expression> to <filename>' do file I/O.  Plain defines
+   a special string EOF that readfrom returns to indicate end-of-file
+   and write..to understands as well.
+2. New iteration type `for p within <picture expression>: <loop text> endfor'
+   iterates through the interior components of the picture.  An `interior
+   component' is a single pen stroke, filled outline, or piece of typeset
+   text.  A part of the picture enclosed in a clipping or setbounds path
+   also counts as an interior component.  If the whole picture is enclosed
+   in such a path, the for..within iteration looks inside.  Note that a
+   picture generated by btex..etex is enclosed in a setbounds path.
+3. The length operator now applies to pictures.  It returns the number of
+   interior components.
+4. New boolean operators stroked, filled, textual, clipped, bounded test
+   the first component of a picture.  A picture enclosed in a clipping or
+   setbounds path counts as a single component.
+5. Part extraction operators now work for pictures.  Standard operators
+   redpart, greenpart, bluepart apply to the color of the first component
+   and xpart, ypart, xxpart, xypart, yxpart, yypart extract parts of the
+   tranformation that has been applied to a text component.  If `textual p'
+   is false, the transform components are all zero; if `clipped p' or
+   `bounded p' is true, the color parts are all zero.  Additional operators
+   fontpart, textpart, pathpart, penpart, dashpart extract other information
+   from the first component of a picture.  They all return null values when
+   the first component has the wrong type:  fontpart and textpart return
+   null strings; pathpart returns the path (0,0); penpart returns nullpen;
+   and dashpart returns nullpicture.
+6. The construction `dashed nullpicture' is now a no-op.  It used to be
+   an error.
+7. The clip and setbounds statements used to ignore operations on empty
+   pictures.  Now they do not.
+8. Structuring comments in the PostScript output are now based on EPSF-3.0
+   as described in the 2nd Edition of the PostScript Reference Manual.
+   When prologues is 0, some structuring comments are included but the
+   output is not flagged a `conforming document'.  Previous versions of
+   MetaPost behaved similarly but used slightly different structuring
+   comments.
+9. When warningcheck is 0, numeric tokens and results from the hex and
+   oct operators can be as large as 32767.99998.  The old limit of about
+   4096 applies only when warningcheck is positive.
+10. Various optimizations should make the output a little more compact.
+11. For PostScript engines that obey the scan-conversion rules documented
+   in the 2nd edition PostScript Language Reference Manual, hrules and
+   vrules in btex..etex blocks should now come out to exactly the right
+   number of pixels.  The change affects all pen strokes drawn in MetaPost
+   It is implemented via PostScripts dtransform and idtransform operators.
+12. A bug involving setbounds and MetaPost's corner operators has been fixed.
+13. Degenerate elliptical pens no longer cause PostScript to divide by zero.
+14. Fixed a very obscure bug involving readstring and end-of-file.
+15. String compaction statistics are now printed correctly when the job
+   terminates with tracingstats positive.
+
+
+
+----------------------------------------------------------------------
+Changes to the source files between Version 0.50 and Version 0.60
+----------------------------------------------------------------------
+
+CHANGES to ./README.MP
+The installation instructions should now be clearer.  They also explain
+how to cope with verious versions of WEB2C.
+
+CHANGES to ./site.h
+I removed unused entries and clarified instructions in commentary material.
+Confusing comments about possibly merging it with the WEB2C version of site.h
+were removed--I think such merging is a bad idea.
+
+CHANGES TO ./Makefile, mp/Makefile, mpware/Makefile:
+Improved default settings, simplified the `install' recipe,
+fixed a few missing depencies, portability problems, etc.
+
+RENAMED FILES
+   mp/mp.defines, mpware/mpware.defines, mpware/dvitompext.c
+TO mp/mp.def,     mpware/mpware.def,     mpware/dvimpext.c
+(The names also changed in the Makefiles and convert scripts)
+
+CHANGES TO mp/mp.web, mp/mp.ch, mp/mp.def, mp/mpext.c:
+Lots of new features were added as noted above.  The only new system-
+dependencies are for `readfrom' and `write...to'.
+The change file now increases max_read_files; it doesn't bother with
+max_write_files, but perhaps it should.  There is a new change entitled
+"Path selector for..readfrom file".  From the web2C sources I borrowed
+a change "`logname' is declared in <unistd.h> in some systems".  I also
+added a PASCAL-like eof() routine to mpext, removed a change entitled
+"avoid using eof() in read_psname_table" and added a new change
+"[48.1199] `eof'...[in read_mem_file]".
+
+Reorganization of math routines in the mp directory:
+I moved the floating-point math routines from mpext.c to mpath.c.  A
+C-language version of the standard math routines was moved from mpmath.c
+to a new file pmath.c for use in mathtest only.  This required chages to
+mathtest.c and time.c (also used only for mathtest).  The point of all
+this is that there is now just one copy of the floating-point math routines
+and it is used for mathtest and (optionally) for mp itself.
+
+Routines in doc and mp/trapdir:
+The output was updated to Version 0.60.  Another test file mptrap.mp
+tests new features.  There have also been minor updates to the manual,
+although the new features for Version 0.60 are not included yet.
+
+CHANGES to macros in mplib:
+A minor change to boxes.mp should make it more robust.  Changed default
+setting of tracinglostchars in mfplain.mp and plain.mp.  Added a string
+constant EOF to plain.mp for use with readfrom and write..to.
+Changed mproof.tex to make it more portable as suggested by Knuth.
+
+CHANGES to mpware/dvitomp.web, mpware/dvitomp.ch:
+The web file was changed to output rules as horizontal or vertical
+penstrokes with butt endcaps.  This also affected dvitomp.ch.  Also in
+dvitomp.ch, put terminal output on stdout instead of stderr and require
+the output file to be given on the command line.
+
+CHANGES to mpware/makempx, mpware/troffmpx:
+Added comments explaining what path names need fixing.  Portability improvements
+and dvitomp's output change affect makempx only.
+
+CHANGES to mpware/mptotex.c mpware/mptotr.c mpware/testex.err mpware/testex.mp:
+Ignore an initial newline in the TeX (or troff) material to avoid generating
+a blank line in the output file.  The test file now covers this case.
+
+CHANGE to mpware/newer.c
+Minor changes to make it compile in strict ANSI/POSIX environments.
