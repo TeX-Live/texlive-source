@@ -1,3 +1,7 @@
+2024-02-20  Karl Berry  <karl@tug.org>
+
+	* doc/web2c.texi: 2024.
+
 2024-02-11  Karl Berry  <karl@tug.org>
 
 	* am/cweb.am (dist_bin_SCRIPTS): add cwebdir/twill-refsort.

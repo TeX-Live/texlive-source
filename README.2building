@@ -50,9 +50,13 @@ rules when a tool (such as 'tangle', 'ctangle', and 'convert') creates
 several output files.  This allows for parallel builds ('make -j N' with
 N>1 or even 'make -j') that can considerably speed up the TL build.
 
-   Incidentally, a noticeable speed-up can be independently gained by
-using a configure cache file, i.e., specifying the 'configure' option
-'-C' (recommended).
+   If you're using TL's 'Build' script, you can enable '-j' with the
+environment variable 'TL_MAKE_FLAGS', as in: 'env
+TL_MAKE_FLAGS=-j`nproc` ./Build'.
+
+   Independently, a noticeable speed-up can also be gained by using a
+configure cache file, i.e., specifying the 'configure' option '-C'
+(recommended).
 
 4.3 Build distribution
 ======================
@@ -229,6 +233,11 @@ where '$ww' is the web2c build directory, that is,
 test name exactly as specified in the '.am' file:
 
      make -C $ww check SUBDIRS=. TESTS=hitexdir/tests/hello.test
+
+   Without the 'SUBDIRS=.', errors like this will show up, since 'make'
+will descend into every directory.
+
+     fatal: making test-suite.log: failed to create hitexdir/tests/hello.test
 
    If you get tired of looking at the 'Entering'/'Leaving directory'
 lines, you can add the (GNU) make option '--no-print-dir'.

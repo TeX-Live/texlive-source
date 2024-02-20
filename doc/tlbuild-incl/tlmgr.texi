@@ -74,6 +74,12 @@ repository (typically useful when updating from CTAN).
 Display detailed information about a package @emph{what}, such as the installation
 status and description, of searches for @emph{what} in all packages.
 
+@item @code{tlmgr bug} @emph{what}
+@anchor{tlmgr @code{tlmgr bug} @emph{what}}
+
+Display available bug-reporting information for @emph{what}, a package or
+file name.
+
 @end table
 
 For all the capabilities and details of @code{tlmgr}, please read the
@@ -403,6 +409,17 @@ performed are written to the terminal.
 @end table
 
 @end table
+
+@node tlmgr bug [@emph{search-string}]
+@appendixsubsec bug [@emph{search-string}]
+
+Searches for @emph{search-string} (prompted for, if not given) as a package
+name and in package descriptions, as complete words, and in filenames,
+as any substring, and outputs bug-reporting and other information for
+the package selected from the results.
+
+The search is equivalent to @code{tlmgr search --word --file @emph{search-string}.
+Thus, @emph{search-string} is interpreted as a (Perl) regular expression.}
 
 @node tlmgr candidates @emph{pkg}
 @appendixsubsec candidates @emph{pkg}
@@ -2683,5 +2700,18 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 66457 2023-03-07 23:07:12Z preining $
+$Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
+
+@node tlmgr POD ERRORS
+@appendixsec POD ERRORS
+
+Hey! @strong{The above document had some coding errors, which are explained below:}
+
+@table @asis
+@item Around line 8454:
+@anchor{tlmgr Around line 8454@asis{:}}
+
+Unterminated C<...> sequence
+
+@end table
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 69972 2024-02-18 23:03:48Z karl $
+# $Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 69972 $';
-my $datrev = '$Date: 2024-02-19 00:03:48 +0100 (Mon, 19 Feb 2024) $';
+my $svnrev = '$Revision: 70001 $';
+my $datrev = '$Date: 2024-02-20 00:17:07 +0100 (Tue, 20 Feb 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6982,7 +6982,7 @@ sub action_bug {
   # we are still here, so search for a file that matches
   my $fndptr = _search_tlpdb($localtlpdb, $ans,
     1, # search files,
-    1, # don't search descriptions
+    1, # search descriptions
     1  # don't search within words
   );
   my @deschit;
@@ -8144,6 +8144,11 @@ repository (typically useful when updating from CTAN).
 Display detailed information about a package I<what>, such as the installation
 status and description, of searches for I<what> in all packages.
 
+=item C<tlmgr bug> I<what>
+
+Display available bug-reporting information for I<what>, a package or
+file name.
+
 =back
 
 For all the capabilities and details of C<tlmgr>, please read the
@@ -8439,11 +8444,15 @@ performed are written to the terminal.
 
 =back
 
-=head2 bug [I<search string>]
+=head2 bug [I<search-string>]
 
-Looks for I<search string> (prompted for, if not specified) as a package
-name or file name, and outputs bug-reporting and other information for
+Searches for I<search-string> (prompted for, if not given) as a package
+name and in package descriptions, as complete words, and in filenames,
+as any substring, and outputs bug-reporting and other information for
 the package selected from the results.
+
+The search is equivalent to C<tlmgr search --word --file I<search-string>.
+Thus, I<search-string> is interpreted as a (Perl) regular expression.
 
 =head2 candidates I<pkg>
 
@@ -10543,7 +10552,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 69972 2024-02-18 23:03:48Z karl $
+$Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -1,8 +1,8 @@
 \input texinfo
 @setfilename tlbuild.info
 
-@set version 2023
-@set month-year December 2023
+@set version 2024
+@set month-year March 2024
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -15,7 +15,7 @@
 This file documents the @TL{} build system and more.
 
 @noindent
-Copyright @copyright{} 2016--2023 Karl Berry.@*
+Copyright @copyright{} 2016--2024 Karl Berry.@*
 Copyright @copyright{} 2013--2015 Karl Berry & Peter Breitenlohner.
 
 Permission is granted to make and distribute verbatim copies of this
