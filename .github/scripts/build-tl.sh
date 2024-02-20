@@ -114,6 +114,11 @@ case "$arch" in
     export CFLAGS=-D_NETBSD_SOURCE
     export CXXFLAGS='-D_NETBSD_SOURCE -std=c++11'
     ;;
+  *-netbsd)
+    export TL_MAKE=gmake
+    export CFLAGS=-D_NETBSD_SOURCE
+    export CXXFLAGS='-D_NETBSD_SOURCE -std=c++11'
+    ;;
 esac
 export TL_MAKE_FLAGS
 

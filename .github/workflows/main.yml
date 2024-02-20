@@ -130,11 +130,13 @@ jobs:
       fail-fast: false
       matrix: 
         arch: [ i386, amd64 ]
-        os: [ freebsd, solaris ]
+        os: [ netbsd, freebsd, solaris ]
         release_build: 
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:
           - os: freebsd
+            ci_build: true
+          - os: netbsd
             ci_build: true
           - os: solaris
             ci_build: true
@@ -144,6 +146,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: 'repo'
+      - name: build netbsd
+        uses: vmactions/netbsd-vm@v1
+        if: ${{ matrix.os == 'netbsd' && (matrix.ci_build || matrix.release_build) }}
+        with: 
+          release: '9.0'
+          usesh: true
+          run: |
+            cd repo
+            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: build freebsd
         uses: vmactions/freebsd-vm@v1
         if: ${{ matrix.os == 'freebsd' && (matrix.ci_build || matrix.release_build) }}
