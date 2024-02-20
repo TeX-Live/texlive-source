@@ -45,9 +45,6 @@ then
      freebsd)
        env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
-     openbsd)
-       pkg_add gmake libiconv libsigsegv
-       ;;
      netbsd)
        pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
@@ -109,9 +106,6 @@ case "$arch" in
       export CC="gcc -m64"
       export CXX="g++ -m64"
     fi
-    ;;
-  *-openbsd)
-    export TL_MAKE=gmake
     ;;
   *-freebsd)
     export TL_MAKE=gmake
