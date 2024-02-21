@@ -1,3 +1,9 @@
+2024-02-21  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* cweb.man,
+	* twill.man: Unmask hyphen in manpages.
+
 2024-02-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,

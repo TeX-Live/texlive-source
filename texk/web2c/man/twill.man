@@ -16,7 +16,7 @@
 .if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-twill, twill\-refsort \- translate \*(WB to \*(TX with mini\-indexes
+twill, twill-refsort \- translate \*(WB to \*(TX with mini-indexes
 .SH SYNOPSIS
 .PP
 \f[B]twill\f[R] [\f[B]\-x\f[R]]
@@ -25,7 +25,7 @@ twill, twill\-refsort \- translate \*(WB to \*(TX with mini\-indexes
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
 .PD 0
 .PP
-\f[B]twill\-refsort\f[R] <
+\f[B]twill-refsort\f[R] <
 \f[I]reffile\f[B].ref\f[R] >
 \f[I]sreffile\f[B].sref\f[R]
 .PD
@@ -36,7 +36,7 @@ The
 program is used to create a \*(TX file for viewing a \*(WB program.
 It takes appropriate care of typographic details like page
 layout and the use of indentation, italics, boldface, etc., and it supplies
-extensive cross\-index information in the form of 'mini\-indexes' for each
+extensive cross-index information in the form of 'mini-indexes' for each
 spread of pages and a 'master index' at the end that it gathers automatically.
 .PP
 The command line arguments are the same as for
@@ -48,7 +48,7 @@ says to omit the indexes, module name list, and table of contents pages.
 .I CONTENTS.tex
 file will still be written when the \*(TX file is processed,
 however, unless some macros in
-.I twimac\-web.tex
+.I twimac-web.tex
 are redefined.)
 .PP
 The output \*(TX file name is formed by adding
@@ -71,11 +71,11 @@ Moreover, you must run the output twice through \*(TX.
 After
 .B tex foo
 you will have output that looks like final pages
-except that the entries of mini\-indexes won\[cq]t be alphabetized.
+except that the entries of mini-indexes won\[cq]t be alphabetized.
 The first run produces a weird file called
 .B foo.ref.
 Say
-.B twill\-refsort < foo.ref > foo.sref
+.B twill-refsort < foo.ref > foo.sref
 and then another
 .B tex foo
 will produce alphabetized output.
@@ -88,7 +88,7 @@ for the details of the searching.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
-.I $TEXMFMAIN/tex/plain/cweb/cwebbin/twimac\-web.tex
+.I $TEXMFMAIN/tex/plain/cweb/cwebbin/twimac-web.tex
 \*(TX macros used by
 .B twill
 output.

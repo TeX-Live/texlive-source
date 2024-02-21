@@ -2,36 +2,36 @@
 .\"
 .TH "CTWILL" "1" "February 16, 2024" "Web2c @VERSION@" "General Commands Manual"
 .SH NAME
-ctwill, ctwill\-proofsort, ctwill\-refsort, ctwill\-twinx \- translate CWEB to TeX with
-mini\-indexes
+ctwill, ctwill-proofsort, ctwill-refsort, ctwill-twinx \- translate CWEB to TeX with
+mini-indexes
 .SH SYNOPSIS
 \f[B]ctwill\f[R] [\f[I]options\f[R]] \f[I]webfile\f[R][.w]
 [{\f[I]changefile\f[R][.ch]|\-} [\f[I]outfile\f[R][.tex]]]
 .PD 0
 .P
 .PD
-( \f[B]ctwill\-proofsort\f[R] < \f[I]texfile\f[R].tex ) 1<>
+( \f[B]ctwill-proofsort\f[R] < \f[I]texfile\f[R].tex ) 1<>
 \f[I]texfile\f[R].tex
 .PD 0
 .P
 .PD
-\f[B]ctwill\-refsort\f[R] < \f[I]indexfile\f[R].ref > \f[I]indexfile\f[R].sref
+\f[B]ctwill-refsort\f[R] < \f[I]indexfile\f[R].ref > \f[I]indexfile\f[R].sref
 .PD 0
 .P
 .PD
-\f[B]ctwill\-twinx\f[R] \f[I]outfile\f[R].tex [\f[I]outfile\f[R].tex \&...]
+\f[B]ctwill-twinx\f[R] \f[I]outfile\f[R].tex [\f[I]outfile\f[R].tex \&...]
 > index.tex
 .SH DESCRIPTION
 The \f[B]ctwill\f[R] program converts a CWEB source document into a
 TeX\ file that may be formatted and printed in the usual way.
 It takes appropriate care of typographic details like page layout and
 the use of indentation, \f[I]italics\f[R], \f[B]boldface\f[R], etc., and
-it supplies extensive cross\-index information that it gathers
+it supplies extensive cross-index information that it gathers
 automatically.
 .PP
 CWEB allows you to prepare a single document containing all the
 information that is needed both to produce a compilable C/C++\ program
-and to produce a well\-formatted document describing the program in as
+and to produce a well-formatted document describing the program in as
 much detail as the writer may desire.
 The user of CWEB ought to be familiar with TeX as well as C/C++.
 .SH USAGE
@@ -55,23 +55,23 @@ to get decent answers.
 Moreover, you must run the output twice through TeX.
 .PP
 After \f[B]tex foo\f[R] you will have output that looks like final pages
-except that the entries of mini\-indexes won\[cq]t be alphabetized.
+except that the entries of mini-indexes won\[cq]t be alphabetized.
 The first run produces a weird file called \f[B]foo.ref\f[R].
-Say \f[B]ctwill\-refsort < foo.ref > foo.sref\f[R] and then another \f[B]tex
+Say \f[B]ctwill-refsort < foo.ref > foo.sref\f[R] and then another \f[B]tex
 foo\f[R] will produce alphabetized output.
 .PP
-The \f[B]ctwill\-twinx\f[R] program compiles a master index for a set of related
+The \f[B]ctwill-twinx\f[R] program compiles a master index for a set of related
 programs that have been processed by \f[B]ctwill\f[R] (\f[I]not\f[R] by
 \f[B]cweave\f[R], mind you!).
 The individual programs should define their names with a line of the
 form \f[B]\[rs]def\[rs]title{NAME}\f[R].
-For your convenience, \f[B]ctwill\-twinx\f[R] grabs the first \[lq]word\[rq] in
+For your convenience, \f[B]ctwill-twinx\f[R] grabs the first \[lq]word\[rq] in
 \f[B]\[rs]title\f[R] and turns it into uppercase form.
-You should adapt file \f[B]ctwill\-twinx\-startup.tex\f[R] for the first page of
+You should adapt file \f[B]twinx-startup.tex\f[R] for the first page of
 the master index.
 .PP
-The mini\-indexes list identifiers that are used but not defined on each
-two\-page spread.
+The mini-indexes list identifiers that are used but not defined on each
+two-page spread.
 At the end of each section, \f[B]ctwill\f[R] gives TeX a list of
 identifiers used in that section and information about where they are
 defined.
@@ -86,7 +86,7 @@ for a file called \f[B]system.bux\f[R], which will be read if present.
 And after \f[B]foo.aux\f[R], a third possibility is \f[B]foo.bux\f[R].
 The general convention is to put definitions of system procedures such
 as \f[I]printf\f[R] into \f[B]system.bux\f[R], and to put definitions
-found in specifically foo\-ish header files into \f[B]foo.bux\f[R].
+found in specifically foo-ish header files into \f[B]foo.bux\f[R].
 Like the \f[B].aux\f[R] files, \f[B].bux\f[R] files should contain only
 \f[B]\[at]$\f[R] specifications.
 .PP
@@ -95,31 +95,31 @@ components: an identifier (followed by space), a program name (enclosed
 in braces), a section number (followed by space), and a TeX\ part.
 .PP
 A special \f[I]proofmode\f[R] is provided so that you can check
-\f[B]ctwill\f[R]\[cq]s conclusions about cross\-references.
+\f[B]ctwill\f[R]\[cq]s conclusions about cross-references.
 Run \f[B]ctwill\f[R] with the flag \f[B]+P\f[R], and TeX will produce a
-specially formatted document with mini\-indexes for each section, so
+specially formatted document with mini-indexes for each section, so
 that you can check that your specifications are correct.
 .PP
 This \f[I]proofmode\f[R] format is used in conjunction with
 \f[B]pdfctproofmac.tex\f[R] that creates active hyperlinks in PDF and HINT
 output.
-You can use \f[B]ctwill\-proofsort\f[R] to get the index entries in alphabetical
+You can use \f[B]ctwill-proofsort\f[R] to get the index entries in alphabetical
 order; just invoke
 .PP
-( \f[B]ctwill\-proofsort\f[R] < \f[I]texfile\f[R].tex ) 1<>
+( \f[B]ctwill-proofsort\f[R] < \f[I]texfile\f[R].tex ) 1<>
 \f[I]texfile\f[R].tex
 .PP
 after invoking \f[B]ctwill\f[R] (twice), but before invoking TeX (once).
 .PP
 More details how to use \f[B]ctwill\f[R] can be found in the first
 sections of its source code, respectively the change file
-\f[B]cweav\-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
+\f[B]cweav-twill.ch\f[R] applicable to the \f[B]cweave.w\f[R] source.
 A complete example with all bells and whistles is described in
-\f[B]Mini\-Indexes for Literate Programs\f[R], pages 225\[en]245 of
+\f[B]Mini-Indexes for Literate Programs\f[R], pages 225\[en]245 of
 Knuth\[cq]s \f[B]Digital Typography\f[R] (\f[I]CSLI\f[R], 1999).
 .SH DIFFERENCES TO ORIGINAL CTWILL
 The present incarnation of \f[B]ctwill\f[R] and its utilities tries hard
-to be a drop\-in replacement for the original package.
+to be a drop-in replacement for the original package.
 There are, however, a few differences worth noting:
 .IP \[bu] 2
 This version is based on the most recent version of CWEB (4.11).
@@ -143,7 +143,7 @@ active hyperlinks (\f[B]+lpdf\f[R]).
 \f[B]\-\-verbose\f[R] option to get the original behavior.
 .IP \[bu] 2
 File lookup with the environment variable CWEBINPUTS is extended to
-permit several, colon\-separated, paths; see ENVIRONMENT below.
+permit several, colon-separated, paths; see ENVIRONMENT below.
 .IP \[bu] 2
 If properly configured, the main program \f[B]ctwill\f[R] is localized
 with the \[lq]GNU gettext utilities\[rq].
