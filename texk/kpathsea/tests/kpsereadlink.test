@@ -6,9 +6,16 @@
 
 test "x$LN_S" = 'xln -s' || exit 77
 
-./kpsereadlink $LT_OBJDIR/libkpathsea.lai && exit 1
+rm -f _test_file _test_symlink
 
-link=`./kpsereadlink $LT_OBJDIR/libkpathsea.la` || exit 1
+touch _test_file
 
-test "x$link" = x../libkpathsea.la || exit 1
+$LN_S _test_file _test_symlink || exit 1
 
+./kpsereadlink _test_file && exit 1
+
+link=`./kpsereadlink _test_symlink` || exit 1
+
+test "x$link" = x_test_file || exit 1
+
+rm -f _test_file _test_symlink
