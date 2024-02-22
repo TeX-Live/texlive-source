@@ -1,3 +1,9 @@
+2024-02-22  Karl Berry  <karl@freefriends.org>
+
+	* tests/kpsereadlink.test: create and use our own test file and
+	symlink, instead of using libtool's, in case slibtool is in use.
+	From orbea, https://github.com/TeX-Live/texlive-source/pull/65.
+
 2023-02-10  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2024.
