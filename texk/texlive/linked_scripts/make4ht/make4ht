@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.3m"
+local version = "v0.4"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -38,6 +38,11 @@ local parameters = mkparams.process_args(args)
 
 log:status("Conversion started")
 log:status("Input file: " .. parameters.tex_file)
+
+
+if parameters.builddir and parameters.builddir ~= "" then
+  mkutils.make_path(parameters.builddir)
+end
 
 local mode = parameters.mode
 local build_file = parameters.build_file 
@@ -127,9 +132,10 @@ make:match(".*",function(filename,par)
     log:info("No output directory")
     return true
   end
-	log:info("outdir: "..outdir)
-	local outfilename = outdir .. filename
-	mkutils.copy(filename,outfilename)
+  log:info("outdir: "..outdir)
+  local outfilename = filename:gsub("^" .. (par.builddir or ""), "")
+  outfilename = outdir .. outfilename
+  mkutils.copy(filename,outfilename)
 	return true
 end)
 

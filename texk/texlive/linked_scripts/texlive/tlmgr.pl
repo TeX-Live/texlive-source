@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
+# $Id: tlmgr.pl 70080 2024-02-22 23:13:07Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 70001 $';
-my $datrev = '$Date: 2024-02-20 00:17:07 +0100 (Tue, 20 Feb 2024) $';
+my $svnrev = '$Revision: 70080 $';
+my $datrev = '$Date: 2024-02-23 00:13:07 +0100 (Fri, 23 Feb 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -8451,7 +8451,7 @@ name and in package descriptions, as complete words, and in filenames,
 as any substring, and outputs bug-reporting and other information for
 the package selected from the results.
 
-The search is equivalent to C<tlmgr search --word --file I<search-string>.
+The search is equivalent to C<tlmgr search --word --file> I<search-string>.
 Thus, I<search-string> is interpreted as a (Perl) regular expression.
 
 =head2 candidates I<pkg>
@@ -10552,7 +10552,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
+$Id: tlmgr.pl 70080 2024-02-22 23:13:07Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
