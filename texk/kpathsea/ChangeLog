@@ -1,3 +1,9 @@
+2024-02-23  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (XE_FONTCONFIG_PATH, XE_FC_CACHEDIR): rename from
+	FONTCONFIG_PATH resp. FC_CACHEDIR so we don't collide with
+	system directories specified by those paths, such as /etc/fonts.
+
 2024-02-22  Karl Berry  <karl@freefriends.org>
 
 	* tests/kpsereadlink.test: create and use our own test file and

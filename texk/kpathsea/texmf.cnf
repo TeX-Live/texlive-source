@@ -455,12 +455,12 @@ MIMELIBDIR = $TEXMFROOT/etc
 MAILCAPLIBDIR = $TEXMFROOT/etc
 
 % Default settings for the fontconfig library as used by the Windows
-% versions of xetex/xdvipdfmx.  Not used by xetex on Unixish systems.
-% ConTeXT MkIV (all platforms) also use these values.
+% versions of xetex/xdvipdfmx.  Not used by xetex itself on Unixish systems,
+% but the postaction for xetex uses all of these on all systems.
 % 
 FONTCONFIG_FILE = fonts.conf
-FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
-FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
+XE_FONTCONFIG_PATH = $TEXMFSYSVAR/fonts/conf
+XE_FC_CACHEDIR = $TEXMFSYSVAR/fonts/cache
 
 % TeX documentation and source files, for use with texdoc and kpsewhich.
 TEXDOCS = $TEXMF/doc//
