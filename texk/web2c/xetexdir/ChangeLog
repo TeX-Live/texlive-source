@@ -1,3 +1,13 @@
+2024-02-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* xetex.web, xetex.ch:
+	Accept file names with characters of over-BMP.
+	* wcfname.test:
+	Add tests for file names with characters of over-BMP.
+	https://tug.org/pipermail/tex-live/2023-November/049665.html
+	https://tug.org/pipermail/tex-live/2023-November/049685.html
+	https://github.com/texjporg/tex-jp-build/issues/164
+
 2024-02-04  Karl Berry  <karl@tug.org>
 
         * NEWS,
