@@ -383,13 +383,15 @@ if quote_char<>0 then print_char(quote_char);
 		name_of_file[k]:=@"E0 + c div @"1000; incr(k);
 		name_of_file[k]:=@"80 + (c mod @"1000) div @"40; incr(k);
 		name_of_file[k]:=@"80 + c mod @"40;
-      end else if (c < @"DC00) and (k<file_name_size) then begin
+      end else if (c < @"DC00) and (k+3<file_name_size) then begin
 		name_of_file[k]:=@"F0 + (c - @"D7C0) div @"1000; incr(k);
 		name_of_file[k]:=@"80 + ((c - @"D7C0) mod @"1000) div @"4; incr(k);
-		name_of_file[k]:=@"80 + (c - @"D7C0) mod @"4 * @"10;
-      end else if (c < @"E000) and (k>0) then begin
+		name_of_file[k]:=@"80 + (c - @"D7C0) mod @"4 * @"10; incr(k);
+		name_of_file[k]:=@"80;
+      end else if (c < @"E000) and (k>4) then begin
+		decr(k);
 		name_of_file[k-1]:=name_of_file[k-1] + (c - @"DC00) div @"40;
-		name_of_file[k]:=@"80 + (c - @"DC00) mod @"40;
+		name_of_file[k]  :=name_of_file[k]   + (c - @"DC00) mod @"40;
       end else if (c < @"10000) then begin
 		name_of_file[k]:=@"E0 + c div @"1000; incr(k);
 		name_of_file[k]:=@"80 + (c mod @"1000) div @"40; incr(k);
