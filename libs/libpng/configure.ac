@@ -9,8 +9,8 @@ dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
 m4_include([version.ac])[] dnl define libpng_version
-AC_INIT([libpng (TeX Live)], libpng_version, [tex-k@tug.org])
-AC_PREREQ([2.65])
+AC_INIT([libpng (TeX Live)],[libpng_version],[tex-k@tug.org])
+AC_PREREQ([2.72])
 AC_CONFIG_SRCDIR([libpng-src/pngget.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
@@ -49,7 +49,15 @@ AC_COMPILE_IFELSE(
 ])
 
 # Checks for header files.
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro 'STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  C89 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_CHECK_HEADERS([malloc.h stdlib.h string.h strings.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -60,8 +68,8 @@ AC_C_RESTRICT
 
 # Checks for library functions.
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([memset], , [AC_ERROR([memset not found in libc])])
-AC_SEARCH_LIBS([pow], [m], , [AC_ERROR([cannot find pow])])
+AC_CHECK_FUNCS([memset], , [AC_MSG_ERROR(memset not found in libc)])
+AC_SEARCH_LIBS([pow], [m], , [AC_MSG_ERROR(cannot find pow)])
 
 KPSE_ZLIB_FLAGS
 
@@ -70,7 +78,7 @@ AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
-AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
+AC_CHECK_FUNC([zlibVersion], , [AC_MSG_ERROR(zlib not found)])
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
