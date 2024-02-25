@@ -1,3 +1,9 @@
+2024-02-25  Max Chernoff  <mseven@telus.net>
+ 
+ 	* spc_util.{c,h}: Add "named" keyword to "pdf:image" special
+ 	* pdfdoc.{c,h}: Allow selecting a page by named destination
+ 	* {epdf,pdfximage,spc_pdfm,xbb}.{c,h}: Refactor to support above.
+ 
 2024-02-10  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
 
 	* cidtype2.c, sfnt.h, tt_cmap.{c,h}:
