@@ -1,3 +1,14 @@
+2024-02-25  Karl Berry  <karl@freefriends.org>
+
+	* locnull-optimize.ch: inner loop optimization (removing one
+	unnecessary condition) from DRF.
+	* eptexdir/am/eptex.am (eptex_web_srcs),
+	* euptexdir/am/euptex.am (euptex_web_srcs),
+	* pdftexdir/am/pdftex.am (pdftex_ch_srcs),
+	* ptexdir/am/ptex.am (ptex_web_srcs),
+	* uptexdir/am/uptex.am (uptex_web_srcs),
+	* xetexdir/am/xetex.am (xetex_ch_srcs): include locnull-optimize.ch.
+
 2024-02-20  Karl Berry  <karl@tug.org>
 
 	* doc/web2c.texi: 2024.

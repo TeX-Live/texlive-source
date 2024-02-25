@@ -88,28 +88,29 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @WEB_TRUE@am__append_1 = $(web_man_sources)
-@TEX_TRUE@am__append_2 = tex.man
-@TEX_TRUE@am__append_3 = tex:initex
-@MF_TRUE@am__append_4 = mf.man
-@MF_TRUE@am__append_5 = mf:inimf
-@MFN_TRUE@@MF_TRUE@am__append_6 = mf:mf-nowin
-@MP_TRUE@am__append_7 = mpost.man
-@ETEX_TRUE@am__append_8 = etex.man
-@PDFTEX_TRUE@am__append_9 = $(pdftex_man_sources)
-@PDFTEX_TRUE@am__append_10 = pdftex:pdflatex
-@EPTEX_TRUE@am__append_11 = ptex.man ppltotf.man ptftopl.man \
+@WEB_TRUE@am__append_2 = twill:twill-refsort
+@TEX_TRUE@am__append_3 = tex.man
+@TEX_TRUE@am__append_4 = tex:initex
+@MF_TRUE@am__append_5 = mf.man
+@MF_TRUE@am__append_6 = mf:inimf
+@MFN_TRUE@@MF_TRUE@am__append_7 = mf:mf-nowin
+@MP_TRUE@am__append_8 = mpost.man
+@ETEX_TRUE@am__append_9 = etex.man
+@PDFTEX_TRUE@am__append_10 = $(pdftex_man_sources)
+@PDFTEX_TRUE@am__append_11 = pdftex:pdflatex
+@EPTEX_TRUE@am__append_12 = ptex.man ppltotf.man ptftopl.man \
 @EPTEX_TRUE@	pbibtex.man
-@EPTEX_TRUE@am__append_12 = ptex:eptex ptex:euptex ptex:uptex \
+@EPTEX_TRUE@am__append_13 = ptex:eptex ptex:euptex ptex:uptex \
 @EPTEX_TRUE@	ppltotf:uppltotf ptftopl:uptftopl pbibtex:upbibtex
-@LUATEX_TRUE@am__append_13 = luatex.man
-@LUATEX_TRUE@am__append_14 = luatex:texlua luatex:texluac \
+@LUATEX_TRUE@am__append_14 = luatex.man
+@LUATEX_TRUE@am__append_15 = luatex:texlua luatex:texluac \
 @LUATEX_TRUE@  luatex:luahbtex luatex:luajittex \
 @LUATEX_TRUE@  luatex:dviluatex
 
-@XETEX_TRUE@am__append_15 = xetex.man
-@OTANGLE_TRUE@am__append_16 = $(otangle_man_sources)
-@OTANGLE_TRUE@am__append_17 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
-@ALEPH_TRUE@am__append_18 = aleph.man
+@XETEX_TRUE@am__append_16 = xetex.man
+@OTANGLE_TRUE@am__append_17 = $(otangle_man_sources)
+@OTANGLE_TRUE@am__append_18 = dvicopy:odvicopy dvitype:odvitype tangle:otangle
+@ALEPH_TRUE@am__append_19 = aleph.man
 subdir = man
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
@@ -456,10 +457,10 @@ top_srcdir = @top_srcdir@
 wlibs = @wlibs@
 x_ext_lib = @x_ext_lib@
 x_tool_libs = @x_tool_libs@
-man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_2) \
-	$(am__append_4) $(am__append_7) $(am__append_8) \
-	$(am__append_9) $(am__append_11) $(am__append_13) \
-	$(am__append_15) $(am__append_16) $(am__append_18) \
+man_sources = $(bootstrap_man_sources) $(am__append_1) $(am__append_3) \
+	$(am__append_5) $(am__append_8) $(am__append_9) \
+	$(am__append_10) $(am__append_12) $(am__append_14) \
+	$(am__append_16) $(am__append_17) $(am__append_19) \
 	$(misc_man_sources)
 EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) tex.man \
 	mf.man mpost.man etex.man $(pdftex_man_sources) ptex.man \
@@ -468,12 +469,11 @@ EXTRA_DIST = $(bootstrap_man_sources) $(web_man_sources) tex.man \
 bootstrap_man_sources = ctie.man cweb.man ctwill.man tangle.man tie.man
 
 # Symlinks within $(man1dir): FILE:LINK indicates LINK.1->FILE.1
-man1_links = cweb:ctangle cweb:cweave \
-	ctwill:ctwill-proofsort ctwill:ctwill-refsort \
-	ctwill:ctwill-twinx twill:twill-refsort $(am__append_3) \
-	$(am__append_5) $(am__append_6) $(am__append_10) \
-	$(am__append_12) $(am__append_14) $(am__append_17) \
-	latex-dev:pdflatex-dev latex-dev:xelatex-dev \
+man1_links = cweb:ctangle cweb:cweave ctwill:ctwill-proofsort \
+	ctwill:ctwill-refsort ctwill:ctwill-twinx $(am__append_2) \
+	$(am__append_4) $(am__append_6) $(am__append_7) \
+	$(am__append_11) $(am__append_13) $(am__append_15) \
+	$(am__append_18) latex-dev:pdflatex-dev latex-dev:xelatex-dev \
 	latex-dev:lualatex-dev latex-dev:dvilualatex-dev \
 	latex-dev:platex-dev latex-dev:uplatex-dev
 web_man_sources = bibtex.man dvicopy.man dvitomp.man dvitype.man gftodvi.man \

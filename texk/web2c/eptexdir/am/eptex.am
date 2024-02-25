@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/eptexdir/am/eptex.am: Makefile fragment for e-pTeX.
 ##
-## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -59,6 +59,7 @@ eptex_web_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech

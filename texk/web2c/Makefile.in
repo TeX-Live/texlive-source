@@ -4419,6 +4419,7 @@ ptex_web_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	zlib-fmt.ch
 
 ptex_ch_srcs = \
@@ -4458,6 +4459,7 @@ eptex_web_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
@@ -4509,6 +4511,7 @@ uptex_web_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	zlib-fmt.ch
 
 uptex_ch_srcs = \
@@ -4579,6 +4582,7 @@ euptex_web_srcs = \
 	tex.ch \
 	tracingstacklevels.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	zlib-fmt.ch \
 	etexdir/tex.ech
@@ -4726,6 +4730,7 @@ pdftex_ch_srcs = \
 	tracingstacklevels.ch \
 	partoken-102.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	zlib-fmt.ch \
 	enctexdir/enctex1.ch \
@@ -5426,6 +5431,7 @@ xetex_ch_srcs = \
 	tracingstacklevels.ch \
 	partoken-102.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \

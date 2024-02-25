@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2024 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -73,6 +73,7 @@ pdftex_ch_srcs = \
 	tracingstacklevels.ch \
 	partoken-102.ch \
 	partoken.ch \
+	locnull-optimize.ch \
 	showstream.ch \
 	zlib-fmt.ch \
 	enctexdir/enctex1.ch \
