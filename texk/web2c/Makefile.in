@@ -4736,6 +4736,7 @@ pdftex_ch_srcs = \
 	enctexdir/enctex1.ch \
 	enctexdir/enctex-pdftex.ch \
 	enctexdir/enctex2.ch \
+	unbalanced-braces.ch \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch \
 	pdftexdir/char-warning-pdftex.ch \
@@ -5432,6 +5433,7 @@ xetex_ch_srcs = \
 	partoken-102.ch \
 	partoken.ch \
 	locnull-optimize.ch \
+	unbalanced-braces.ch \
 	showstream.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \

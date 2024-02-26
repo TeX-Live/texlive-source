@@ -1,3 +1,11 @@
+2024-02-26  Karl Berry  <karl@freefriends.org>
+
+	* unbalanced-braces.ch: avoid crashing with devious uses of
+	\output and \write braces. From DRF.
+	* pdftexdir/am/pdftex.am (pdftex_ch_srcs),
+	* xetexdir/am/xetex.am (xetex_ch_srcs): include unbalanced-braces.ch.
+	* tests/unbalanced-braces.test: doc file for tests (not runnable).
+
 2024-02-25  Karl Berry  <karl@freefriends.org>
 
 	* locnull-optimize.ch: inner loop optimization (removing one

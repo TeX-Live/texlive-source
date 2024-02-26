@@ -79,6 +79,7 @@ pdftex_ch_srcs = \
 	enctexdir/enctex1.ch \
 	enctexdir/enctex-pdftex.ch \
 	enctexdir/enctex2.ch \
+	unbalanced-braces.ch \
 	$(pdftex_ch_synctex) \
 	pdftexdir/pdftex.ch \
 	pdftexdir/char-warning-pdftex.ch \

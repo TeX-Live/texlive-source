@@ -117,6 +117,7 @@ xetex_ch_srcs = \
 	partoken-102.ch \
 	partoken.ch \
 	locnull-optimize.ch \
+	unbalanced-braces.ch \
 	showstream.ch \
 	$(xetex_ch_synctex) \
 	xetexdir/xetex.ch \

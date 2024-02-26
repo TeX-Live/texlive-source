@@ -1,0 +1,73 @@
+$Id$
+
+This is (clearly) not an actual test file that can be run.
+It exists to record some of the nefarious input files that caused the
+problems that unbalanced-braces.ch tries to resolve.
+
+% https://tug.org/pipermail/tex-k/2022-July/003851.html
+% Tyge Tiessen
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\outer\def\someouter{}
+\def\weird{\expandafter\weirda\expandafter{\iffalse}\fi}
+\def\weirda#1{\ifx}
+\immediate\write16{\weird}\someouter
+
+% https://tex.stackexchange.com/questions/609423
+% user202729
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\def\weird{\expandafter\weirda\expandafter{\iffalse}\fi}
+\def\weirda#1{\expandafter\weirdb\noexpand}
+\def\weirdb#1{\iffalse{\fi}#1\edef\mycontainendwrite{\noexpand#1}}
+\immediate\write16{\weird}
+\expandafter\let\expandafter\myendwrite\mycontainendwrite
+\end
+
+% https://codegolf.stackexchange.com/questions/4399/shortest-code-that-raises-a-sigsegv/4409#4409
+% -> https://groups.google.com/g/comp.text.tex/c/SEHJUKtksU8
+% Bruno Le Floch
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6 \catcode`\~=13
+\def~#1{\meaning}\write0{\expandafter~\string}\end
+
+% https://topanswers.xyz/tex?q=5286#a5394
+% user202729
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\outer\def\a{}
+\def\weird{\expandafter\weirda\string}
+\def\weirda#1{\ifx}
+\immediate\write-1{\weird}\a
+\end
+
+% (From drf)
+% Below is the only test file I didn't get directly from others; the thing
+% I like about it is that it shows the case where the \extra token of the
+% \output routine has been "backed_up" so it's no longer part of the
+% output_text when we get to <Resume the page builder after an output
+% routine has come to an end>.  (The parsing of "\box255" reads the
+% following token, and sees it's not a digit, so pushes it back.) And if
+% you remove the "\extra", you get the case where the actual right brace
+% in the output routine is backed_up, which is legal and expected, so
+% shouldn't be messed up by my changes.
+%
+\catcode`\{=1 \catcode`\}=2
+\def\makepage{
+ \hrule width 2in height 1in
+ \vskip 1in plus 10in
+ \hrule width 2in height 1in
+ \penalty-10000
+}
+\output{\global\advance\count0 by 1 \shipout\box255\extra}
+\let\lb={
+\let\rb=}
+\message{RELAX}
+\let\extra=\relax
+\makepage
+\message{DONE_RELAX}
+\message{EXTRA_RIGHT_BRACE}
+\let\extra=}
+\makepage
+\message{DONE_EXTRA_RIGHTBRACE}
+\message{EXTRA_LEFT_BRACE}
+\let\extra={
+\makepage
+\message{DONE_EXTRA_LEFT_BRACE}
+\end
