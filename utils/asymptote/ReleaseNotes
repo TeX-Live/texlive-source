@@ -1,6 +1,33 @@
+Release Notes for Version 2.87
+
+Templated imports were implemented.
+An incorrect dvisvgm optimization is avoided.
+SVG gradient shading offsets were fixed.
+Integer are now implicitly formatted with full precision.
+Inferred assignment of void type is prohibited.
+An LSP segmentation fault was fixed.
+Repeated stripping of file extensions is avoided.
+The --output-directory option of latexmk is supported.
+The OSMesa compatibility profile is used for offscreen rendering.
+The fitscreen toggle is fixed. 
+The context menu in Xasy is now only opened for GUI-drawn items.
+A -v3d option allows embedding V3D content within a PDF file.
+A workaround was implemented for a MacOS libc++ parsing bug.
+The documentation was updated.
+
+Release Notes for Version 2.86
+
+PDF transfer functions are automatically applied;
+EPS output suppresses .setblendmode.
+NaN and inf values can be read in cvs mode.
+The OpenGL index buffer is properly initialized.
+WebGL and V3D primitives are used only when unscaled.
+Bugs in the inversion section of the geometry module were fixed.
+Portability issues were addressed.
+
 Release Notes for Version 2.85
 
-Intersections of 3D paths with Bezier triangles was implemented.
+Intersections of 3D paths with Bezier triangles were implemented.
 A workaround for broken offscreen graphics drivers was implemented.
 The icon resource file is now pregenerated. Uninitialized variables and
 a division by zero were fixed. The 3D animation timer and keyboard controls

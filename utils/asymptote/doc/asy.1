@@ -242,7 +242,7 @@ PostScript offset [(0,0)].
 Convert each output file to specified format.
 .TP
 .B \-o,\-outname name     
-Alternative output directory/filename.
+Alternative output directory/file prefix.
 .TP
 .B \-outpipe n           
 Output pipe [-1].
@@ -343,6 +343,9 @@ Use two-sided 3D lighting model for rendering [true].
 .B \-u,\-user str         
 General purpose user string.
 .TP
+.B \-v3d                 
+Embed 3D V3D graphics in PDF output [false].
+.TP
 .B \-v,\-verbose          
 Increase verbosity level (can specify multiple times) 0.
 .TP
@@ -368,7 +371,7 @@ Use webgl2 if available [false].
 Show where listed variables are declared [false].
 .TP
 .B \-wsl                 
-Run asy under the Windows Subsystem for Linux. [false].
+Run asy under the Windows Subsystem for Linux [false].
 .TP
 .B \-xasy                
 Interactive mode for xasy [false].

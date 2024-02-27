@@ -17,9 +17,9 @@
 %% Licence: GPL2+
 %% 
 \ProvidesPackage{asymptote}
-  [2021/12/29 v1.37 Asymptote style file for LaTeX]
+  [2024/02/26 v1.38 Asymptote style file for LaTeX]
 \def\Asymptote{{\tt Asymptote}}
-\InputIfFileExists{\jobname.pre}{}{}
+\InputIfFileExists{\jobname.pre}{}{\typeout{No file \jobname.pre.}}
 \newbox\ASYbox
 \newdimen\ASYdimen
 \newcounter{asy}

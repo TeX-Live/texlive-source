@@ -1,3 +1,1011 @@
+commit 1826b3b38064170d2484af6d9a5e5ac2abce9b77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 16:35:57 2024 -0800
+
+    Mark mapArray(string,string) as deprecated.
+
+commit 4ec87566c1204c55248ce57e38127fe583ab3337
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 15:50:12 2024 -0800
+
+    Improve compiler diagnosic.
+
+commit a89edb5736e69186339d1b799eb50a98d13fc7b2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 15:42:41 2024 -0800
+
+    Address issue #421: reduce redundant latexmk runs.
+
+commit 3b02ca59cd8f482f42c89d508795879a643d6195
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 15:33:30 2024 -0800
+
+    Address issue #424: Add support for latexmk -c.
+
+commit 7551b9e67293d2038a6e5d9c75d389a4cd28822a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 11:51:11 2024 -0800
+
+    Address issue #422: update .gitignore.
+
+commit 27d7d04d2ac279443249465b7090fdb8aea1ee1b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 11:40:56 2024 -0800
+
+    Address issue #423: give the temporary rendering window a distinctive name.
+
+commit 961f88aa6f754fdb57166cf121b4d707b54d6bcd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 25 23:19:48 2024 -0800
+
+    Add settings.v3d option to embed V3D content within a PDF file.
+
+commit 215f32fbf68ed4a2626e37a62552e2c0606744c9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 21 00:49:39 2024 -0800
+
+    Delete trailing whitespace.
+
+commit 80d5e62455a2ad2a20b27acf66a141149f4c1a59
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 21 00:10:10 2024 -0800
+
+    Improve error messages and documentation.
+
+commit 542d92da66d913edc425dab33beb3c187cf419f9
+Merge: c60f3b51 c551fa24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 18 23:50:08 2024 -0800
+
+    Merge branch 'master' into template.
+
+commit c551fa24a910dad4c456d8970f9a32ea1ebb632f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 16 22:09:44 2024 -0800
+
+    Open context menu only for GUI-drawn items.
+
+commit c60f3b513670f266a33c55dd0e11255d1ebaac8d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 12 21:24:21 2024 -0800
+
+    Rename index to sigHandle.
+
+commit b2c27b9c1a71b0b85b27624d33585dbd598810ed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 12 21:11:37 2024 -0800
+
+    Implement and use mem::pair instead of std::pair for importIndex_t.
+
+commit 4c731ad2b18686a7e046529a1f3aa26c06cd99b4
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 20:28:29 2024 -0800
+
+    Address some comments.
+
+commit 124722665617a004985dd3a59baaa41a49109611
+Merge: 167db8b8 d8fed60a
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 19:43:53 2024 -0800
+
+    Merge branch 'master' of https://github.com/vectorgraphics/asymptote into template
+
+commit 167db8b845afd10640316d87b893e37ea0bc8617
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 16:26:24 2024 -0800
+
+    No longer make typeParam copyable.
+
+commit be652a26a41501ccb7857d89993f67830302041c
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 16:10:08 2024 -0800
+
+    deduplicate intSymbol and templatedSymbol lookup
+
+commit 8a87711cc92c4e0d40f24b7066c4c8c3ddb9df49
+Merge: 24c9d634 df776148
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 13:09:32 2024 -0800
+
+    Merge branch 'templateVar' into template
+
+commit df77614820d4072a0070d6dbf5e84b84ce92d8e2
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 13:05:16 2024 -0800
+
+    In debug mode, do not stop trying to parse template file at the first error.
+
+commit 24c9d6340f924bd13a6a2700edf61729c90d51f4
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 09:52:17 2024 -0800
+
+    reword error message
+
+commit fa7da7c87ee397795becde4c3024ad7d7606d67f
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 09:46:19 2024 -0800
+
+    Rename getType to getAbsyntaxType
+
+commit 363353f4c816c1828e6bb83634604e82c7509ee3
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 09:24:58 2024 -0800
+
+    Use for(;;) rather than while(true) in C++ for consistency.
+
+commit 35c79ac9b513c39a42400b1a5646865b808ea284
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 12 09:10:55 2024 -0800
+
+    checkpoint
+
+commit dca44de27ef3aad88bae6bf760938e060bb33dc6
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 11 19:22:45 2024 -0800
+
+    Switch use of namedTyEntry to pointers
+
+commit 566207d2c701114b7b1a71813e7dc4ae69ca70da
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 11 18:45:07 2024 -0800
+
+    Replace use of std::pair with a new gc-enabled struct.
+
+commit 1b9b8ed09b0315284d9cbea0da4dd3050e198623
+Merge: 8463465a 034891bd
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 11 18:20:57 2024 -0800
+
+    Merge branch 'template' of https://github.com/vectorgraphics/asymptote into template
+
+commit 8463465a5f8c7e93f72d17e51649a3fee0793a8d
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 11 18:20:27 2024 -0800
+
+    fix errors from previous commit
+
+commit 1c2b6dc6d0dbf517f53f48bb1ccd95c95f954969
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 11 18:08:56 2024 -0800
+
+    Shorten lines longer than 79 columns.
+
+commit 034891bdb505ac9c7ee6c7a668c994110cb81ac3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 10 08:56:33 2024 -0800
+
+    Ignore map.asy when building asy-keywords.el.
+
+commit e58211a522e856a4f93d2ff29da25c00db35feca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 13:14:09 2024 -0800
+
+    Address issue #392.
+
+commit 91a5acbd6ac78ce44712cb486d5e97cf36077a24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 12:46:41 2024 -0800
+
+    Fix issue #419: suppress duplicate error message.
+
+commit bec734026b6af2fe3724cbc3104df9076c07c5ae
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Feb 10 13:28:39 2024 -0800
+
+    Document templated imports
+
+commit 5c811376a71496c2325f31e5aab12eb0b2cc6f16
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Feb 10 13:28:26 2024 -0800
+
+    Add wrapperWithEquals.asy (left out of previous commit)
+
+commit d8fed60a48d98cd290b14cba614c8d30ad4743ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 10 08:56:33 2024 -0800
+
+    Ignore map.asy when building asy-keywords.el.
+
+commit 647b6c5732ec94a48f0f0b2446f02c86888fe7e7
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 8 15:26:41 2024 -0800
+
+    Add TODO comments
+
+commit 9498f157a44bd9e96ffcefdde709da20110c2cca
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Feb 8 15:22:12 2024 -0800
+
+    tests with wrapper
+
+commit ee98d7193f93ace9ea168192ec32d31838e34025
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Feb 5 16:48:11 2024 -0800
+
+    template-based mapArray (with test but no doc yet)
+
+commit ea1f62e404b439528c4c25e390b7438bf4fb81cd
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 4 16:39:34 2024 -0800
+
+    Add two tests for templates (one of which fails).
+
+commit 6c84defa29e4e48e55e39fc75aec83dd746c687f
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Jan 21 09:05:09 2024 -0800
+
+    More natural error from camp.y.
+
+commit 9810e8b2d175837fd86d2e9051f1b9ab0644b85d
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Jan 20 14:33:18 2024 -0800
+
+    Added errortest cases to incorrectly import correct template.
+
+commit c6e405563c4cabcb6343e483b5fa20824bd4de05
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Jan 20 14:18:00 2024 -0800
+
+    Catch 'typedef import' in wrong order; add test for this.
+
+commit b627a2f427402d528a96e505222fd09db847d1a7
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri Jan 19 15:51:12 2024 -0800
+
+    Added some template-related tests to errortest.asy
+
+commit 484b430df6edc6d3f2410f840391b7b0172e1164
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 16:10:32 2024 -0800
+
+    Respect debug flag.
+
+commit dd702e6db7411b65e0265734b563bc56e634e04f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 14:21:04 2024 -0800
+
+    Add missing semicolon.
+
+commit 45126f4b984492c90ca11a4a93346ce2fe135cbc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 13:14:09 2024 -0800
+
+    Address issue #392.
+
+commit b96786e3014f6b3f0154e1ccb536cce823702965
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jan 18 12:46:41 2024 -0800
+
+    Fix issue #419: suppress duplicate error message.
+
+commit e7fc3aef8d0715408c95f0e2e6e4bb4da8ab71fb
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 17 21:50:52 2024 -0800
+
+    better error message for positional template arg
+
+commit db40b20dd93c78a1441a4a7d6acd4a4b24888c7a
+Merge: d34926df 5650e015
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 17 21:27:10 2024 -0800
+
+    Merge branch 'template' of https://github.com/vectorgraphics/asymptote into template
+
+commit 5650e0155f9b3411483dcc09dc72993f95768281
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 17 20:15:22 2024 -0800
+
+    Use a unique signature hash for identifying templated imports.
+
+commit d34926dfc945b03d1c1e8a950597ff2e8d18fa5e
+Merge: b5d3eb12 c66deaf2
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 17 18:04:05 2024 -0800
+
+    Merge remote-tracking branch 'origin/template' into template
+
+commit b5d3eb1212ab52edbdc75395cb2ba07ac6cee989
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 17 17:58:17 2024 -0800
+
+    Make 'from template access' work; a few changes regarding scopes and error handling
+
+commit c66deaf27e846314649f696418cd4cb6d6ba977b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jan 17 17:36:17 2024 -0800
+
+    Don't process templated imports with mismatched parameters.
+
+commit 492506c6009829ef64f738f0ed287c4042865fed
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 17 14:57:11 2024 -0800
+
+    checkpoint; extraneous errors fixed?
+
+commit 50961c069288547c1ca3431a225b274ad34154f2
+Merge: 3f55d6eb dd4b63cc
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Jan 16 18:52:03 2024 -0800
+
+    Merge branch 'master' into template
+    Incorporate fix to "from module access (type & method)".
+
+commit 3f55d6eba90de078fcdcd1b314a251c5aff48df2
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Jan 16 18:38:13 2024 -0800
+
+    checkpoint
+
+commit dd4b63cc1f7cf0c9bdb716db9963b4a0de8e7d27
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 16 17:27:00 2024 -0800
+
+    Suppress warning message regarding boolean operator.
+
+commit 8652763972c48b7675d7a8707499311c1d1a5030
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 16 17:23:33 2024 -0800
+
+    Revert "Fix boolean operator."
+    
+    This reverts commit fffdb62031f4f68007b2721bdd8ef86ef37d8e3d.
+
+commit 23ab319cc4d6a9b2c58ded0e44201a49744031c5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 15 20:29:12 2024 -0800
+
+    Use signature hash for indexing templated imports.
+
+commit 386da6bf46d8f05ba51425a66814dcd2bda0cd65
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Jan 15 19:24:05 2024 -0800
+
+    Seemingly working template declaration for the module to receive template parameters.
+
+commit 40d262ade847a245fe844733bd55f865d3e55556
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Jan 15 16:11:37 2024 -0800
+
+    Syntax to receive template params or supply header
+
+commit 6f04389e02b8eae711f200d942b15a05c42b38c1
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Jan 15 14:43:40 2024 -0800
+
+    Move 'add symbol' logic closer to module execution
+
+commit 3339ac1fe6ac80d4bb3f56c11b3bdd753275b934
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 14 23:57:41 2024 -0800
+
+    Allow multiple templated imports.
+
+commit 74ae11c4ff563a9ecc43f39f332f4399c939a44e
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Jan 14 13:47:05 2024 -0800
+
+    Template params are used on the first import only
+
+commit 4afba32597347b225164d284f2985e62c350dcba
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Jan 13 16:03:37 2024 -0800
+
+    Notation parses but always maps T to pair.
+
+commit 0c7fa4112d7ba8eb61ac0b3d83820136fc649af9
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sat Jan 13 15:41:25 2024 -0800
+
+    checkpoint
+
+commit 82c24dc684f7250a5e9a290e4459537ee1edc628
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Jan 11 14:32:16 2024 -0800
+
+    checkpoint
+
+commit 272274b2474264a1f6ba4fa84d6fb94305d71500
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 8 17:56:46 2024 -0800
+
+    Update fftw++.h and seconds.h.
+
+commit aa1cb4d1084c2eb54fccb89e1626d3340e948568
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Jan 8 14:35:52 2024 -0800
+
+    checkpoint
+
+commit df359f5d9a382f48caef4c0dc22c67165a7e182e
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Jan 4 15:47:18 2024 -0800
+
+    translate decdec to formal
+
+commit a9850d7d94a2b65ad3c38d1607d5d3850242a050
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri Dec 29 10:12:33 2023 -0800
+
+    dummy parse from Andy
+
+commit 98d66af9f0a7d942ffcf81a21d2d6aa9961bf12d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jan 2 17:06:05 2024 -0800
+
+    Improve diagnostic.
+
+commit 8c83a8e8710f245bab9833850fd8381c612ea1b9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 1 13:17:56 2024 -0800
+
+    Address issue #410: Support latexmk --output-directory.
+
+commit 112654bcf832c49ef7b24df4fe0c55d7362174cc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 31 22:20:22 2023 -0800
+
+    Fix issue #414: restore missing outpath.
+
+commit 4f4a3276fce7dab6b4ee2199fc90157fe91f9d92
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Dec 31 06:56:58 2023 -0800
+
+    Fix issue #412: prevent inferred assignment of void type.
+
+commit 8428d007fb9ea47f9531c679acf6bd8f58dcbba5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Dec 28 23:55:02 2023 -0800
+
+    Fix typo (issue #411).
+
+commit 2b4140b09ecf2df7312f93c59dff128b1a39c222
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Dec 20 00:10:13 2023 -0800
+
+    Fix outname.
+
+commit f25a3a9627adb94eef4d1fbe1c97c4702d8d282f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 19 23:45:03 2023 -0800
+
+    Fix bug #373: avoid repeated stripping of file extensions.
+
+commit 3cc421585211a3a55bc9ca90e3eab5db8ee18508
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 19 23:14:21 2023 -0800
+
+    Only output v3d format for 3D files.
+
+commit 35c261216d6e45593ccd13155ca0ab31652adaf6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 19 19:20:56 2023 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "1f397e56"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "1f397e56"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 081db9d0865403a5d82a749e58f035479193ca8a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Dec 19 19:17:52 2023 -0800
+
+    Fix LSP segmentation fault.
+
+commit 488d80962c76cc60629f590e34b350459ea59621
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Dec 18 22:33:47 2023 -0800
+
+    Fix bug #405: implicitly format integers with full precision.
+
+commit 6868ca1a66611d72f716e57617d1c9c6031d3fe7
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Dec 9 00:00:49 2023 -0700
+
+    Add LSPCPP_USEGC macro flag in case of gc.
+
+commit 4f0b79391800424a729ccd393f31d01cbb86bbb4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 18 19:38:00 2023 -0800
+
+    Fix fitscreen.
+
+commit fb0c259606b8323e8b5d223f2fe66a485fbe17ac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 18 16:21:56 2023 -0800
+
+    Fix warning message.
+
+commit 1007bd5d1e92e9d41577cf28f1d81fbd3de04fbf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Nov 18 12:29:00 2023 -0800
+
+    Remove unused include.
+
+commit b6e9a2c4ab8d06720bd28930b0c12589d7da19d5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Nov 15 15:42:37 2023 -0800
+
+    Fix URL.
+
+commit b706a4fd6718e1aa1b3ce06ca657b60fc54ea4c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Nov 6 23:44:14 2023 -0800
+
+    Implement mapArray via mapArrayString.
+
+commit e991c19bbb4318201be9e6d8fa11e58ff93c1183
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 3 23:49:52 2023 -0700
+
+    git subrepo pull (merge) --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "3bd6c6dc"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "3bd6c6dc"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 97af5c4c4d318c8c8642bf596506b79936312c36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Nov 3 23:42:04 2023 -0700
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "5f4a5990"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "5f4a5990"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 2cb894653a74235788ce33575f9a1af1ea15796b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Oct 10 23:14:04 2023 -0700
+
+    Fix SVG gradient shading offsets (issue #389).
+
+commit 75b1ffb846ef59051875147460815f6fab9dfad3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 9 23:50:57 2023 -0700
+
+    Fix issue #391: Workaround libc++ parsing bug under MacOS.
+
+commit 87195dbbf5fd698d7e07a148ff44473336fa141c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Oct 2 22:58:36 2023 -0700
+
+    Simplify bilinear interpolation of surfaces.
+
+commit cc79cc5253f4e9963c731f131ea00a3fea6cbc29
+Merge: 90bc314c 25be300d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Sep 25 16:12:50 2023 -0600
+
+    Merge pull request #390 from vectorgraphics/gitattribs
+    
+    Add .gitattributes file to help with windows/wsl build process.
+
+commit 90bc314c26833477c871adcebc817ef911190b91
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Sep 24 10:22:36 2023 -0700
+
+    Simplify examples.
+
+commit fa97fc830a6f76c8da820981ca7728e54b76f1db
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Sep 23 20:48:06 2023 -0700
+
+    Fix documentation of shipout (issue #396).
+
+commit 25be300d82227d14b5671241c3b9819c1a874f6e
+Author: Supakorn Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Aug 9 11:36:44 2023 -0600
+
+    Add .gitattributes file to help with windows/wsl build process.
+
+commit aa9f81bad9478bfe8b2ab5fc5376c19c6c79c708
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 29 23:25:54 2023 -0600
+
+    Fix bug 388: Avoid broken dvisvgm reassign-clippaths optimization.
+
+commit b069d8158e7921298b38874b4b2600de0fddf497
+Merge: 29caaed5 2a242c54
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 27 16:31:53 2023 -0600
+
+    Merge pull request #383 from cyrilled76/patch-1
+    
+    Fix doc
+
+commit 2a242c545a7c6bf8dc59bcb0bce4cbf66ba8695e
+Author: cyrilled76 <122608369+cyrilled76@users.noreply.github.com>
+Date:   Tue Jun 27 22:52:30 2023 +0200
+
+    Fix doc
+
+commit 29caaed5ead5a62787475286afd22e40585b8bb8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jun 14 22:36:35 2023 -0600
+
+    Fix --without-lsp (issue #379).
+
+commit e9e376538bf3899cd3dbd4ed9bd77ae04460baa9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 12 18:25:15 2023 -0600
+
+    Increment version to 2.87.
+
+commit 6c49014d0055d9dfdeb5dca5fb23a37a3ce1c9e3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 22:12:03 2023 -0600
+
+    Update HOWTO.
+
+commit 4d5224cf59d75f08c7360382bf7e7c12167ce35f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 19:59:30 2023 -0600
+
+    Update build script.
+
+commit 3c359d89cc4bfba685d5c29794af934e08c5329f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 17:15:36 2023 -0600
+
+    Fix type.
+
+commit 0104aea26bf8f76dc15f717a5ea78e0ff46b659f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 16:26:53 2023 -0600
+
+    Fix compilation under MSDOS.
+
+commit 13fac7197d9f62f890f3c78d40eda8f5b819c99c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 00:17:26 2023 -0600
+
+    Fix boost issues.
+
+commit fbe3f431adc74ff6ac307fd4868da8f8b363efaa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 6 00:00:47 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "9b0d99d1"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "9b0d99d1"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 728e00fa9dcc9d13f9fa5da82c2f901420485c61
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 5 22:47:35 2023 -0600
+
+    Fix std::optional compilation issues.
+
+commit c18c01677cfbeb3d956633df86a79e984a8f8255
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 5 22:47:05 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "1a04514e"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "1a04514e"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit b24fba5df113d4a5e7af41d01011b912916b2a06
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 5 01:36:17 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "97ccf8e9"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "97ccf8e9"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 346ec934bd279beaf1d1605d657fd8e15378022b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 5 01:10:41 2023 -0600
+
+    Work around unavailable clock_gettime under old versions of MacOS.
+
+commit 1d7caee225a5fe892c9ba2f7ffff1e63335352fa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 5 01:10:06 2023 -0600
+
+    Fix portability issue with GLSL_VERSION.
+
+commit e49ed605f0e13ff75ae21f5b653f3c4b319a33f6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 22:49:48 2023 -0600
+
+    Initialize spin counter; remove remaining gettimeofday calls.
+
+commit 59bb7930b9a08c530f66957c5c60f64b07a59374
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 15:53:40 2023 -0600
+
+    Update Boehm GC to 8.2.4.
+
+commit 4080bee015b099acd933bf40a89d2933c1edbdc2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 11:58:51 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "018aaca5"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "018aaca5"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 267922a9d8d7f9077d6d5bd7260e176cf200d010
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 11:36:51 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "6874d444"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "6874d444"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit 2d541360013d7357be3258c1ba6ea7ed98ae1e45
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 11:35:18 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "530bd22e"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "530bd22e"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit bd3813ca7592cc3dba43fa4007ff4f129d668f24
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 10:52:31 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "6c723f47"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "6c723f47"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit a3f45abc54caf855167b662ffd3717e2ab733289
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 4 10:51:34 2023 -0600
+
+    Revert "Revert "Change boost::optional to std::optional"."
+    
+    This reverts commit d6ddd54262b7bf61830572988e2f4bd953802a28.
+
+commit 6cb475a540d695b3fcee20252e2ffac2c8f1adb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 15:06:24 2023 -0600
+
+    git subrepo pull (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "acde1180"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "936b427d"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit d6ddd54262b7bf61830572988e2f4bd953802a28
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 14:55:20 2023 -0600
+
+    Revert "Change boost::optional to std::optional".
+    
+    This reverts commit 0de3cfdb930d53d9ea2c03674e8ab228bf31b0d1.
+
+commit 5a4f72184e494aafaf5298b0b51f7338d7fb97f0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 14:42:17 2023 -0600
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "f96a1ac0"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "f96a1ac0"
+    git-subrepo:
+      version:  "0.4.6"
+      origin:   "???"
+      commit:   "???"
+
+commit b3345619ab5aad88fcf229591c5a20f0d0864eaa
+Merge: 5c40136f 7366fe26
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 12:21:01 2023 -0600
+
+    Merge pull request #356 from yarusome/master
+    
+    Fixing bugs in the inversion section of the `geometry` module
+
+commit 5c40136f60cbeab6924626085c68cc161d0dae45
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 12:11:23 2023 -0600
+
+    Reformat code.
+
+commit 4709f6e6956d3f455c127fa5d44debf6f70d027e
+Merge: 456ae992 7f5cdf0b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jun 3 11:59:50 2023 -0600
+
+    Merge pull request #377 from LemonBoy/fix-io-read
+    
+    io: Fix reading of NaN and inf values
+
+commit 456ae99203a291f9c50128ec55965ad948e11971
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 2 21:42:12 2023 -0600
+
+    Remove lsp option when disabled.
+
+commit 214b8969a66af0dde0168ac17e2a343debb7d047
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 29 10:33:28 2023 -0600
+
+    Remove unused cast.
+
+commit 7f5cdf0b2c6aed2e26ff7310aa3d181419a6eea8
+Author: LemonBoy <thatlemon@gmail.com>
+Date:   Sun May 28 19:09:57 2023 +0200
+
+    io: Fix reading of NaN and inf values
+    
+    Previously asymptote would silently stop while trying to read a textual
+    dataset containing inf or nan values, while the language itself is
+    perfectly capable of handling such values.
+
+commit 43cf506b5bce0957205650246c8616b97e143133
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 14 13:54:15 2023 -0600
+
+    Remove unused variables.
+
+commit 494e8120ee967aa9c71ae26e2476b5632211b6e2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 17 21:23:57 2023 -0600
+
+    Fix compilation when configured with --disable-gl.
+
+commit 4715fea108852e25cd38a6a74079985f5fe91e7f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Apr 15 16:31:59 2023 -0600
+
+    Suppress .setblendmode for EPS output.
+
+commit 700aaec3a6d1fd3a78f04537a61bad82a5f07057
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 12 00:03:46 2023 -0700
+
+    Fix portability issues.
+
+commit fffdb62031f4f68007b2721bdd8ef86ef37d8e3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 11 23:42:20 2023 -0700
+
+    Fix boolean operator.
+
+commit da81bd59f89ba8be1131243f680f06ed57fee571
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 11 23:33:28 2023 -0700
+
+    Update config.guess.
+
+commit 65165fe1528692980fd52c7f1c3735c7ac5bd2c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 5 20:48:00 2023 -0700
+
+    Fix bug #370: automatically apply PDF transfer functions.
+
+commit 11c8cc57a4b66e5f04f3ab2f1cfd6f33d2c8d43d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 20 13:41:10 2023 -0700
+
+    Clear initial index buffer.
+
+commit 7623f325b1a370851db9559a5a058e552b71a2f6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 19 01:32:10 2023 -0700
+
+    Fix last revision.
+
+commit 0a248a219e44d2945bcc31c5424153ec1ace41bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 19 01:28:30 2023 -0700
+
+    Only output unscaled primitives.
+
+commit e8e88fb4412ce92acf222ceafe18e3be26984b90
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 8 23:39:44 2023 -0700
+
+    Increment version to 2.86.
+
 commit 9e242d4e7d6d79656c09d4f6c7c385dd7ea61bb3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Feb 8 21:30:27 2023 -0700
@@ -166,6 +1174,12 @@ Date:   Sun Jan 22 22:06:10 2023 -0700
 
     Increment version to 2.85.
 
+commit 7366fe26314370241c949921389492a4cb862f33
+Author: yarusome <97945148+yarusome@users.noreply.github.com>
+Date:   Mon Jan 23 12:15:54 2023 +0800
+
+    Fixing the use of `inverse()`
+
 commit 430c7a661c060568720f6d65e611a2087ea1dde6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 21 22:48:26 2023 -0700
@@ -217,6 +1231,22 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Dec 12 22:19:03 2022 -0700
 
     Avoid division by zero.
+
+commit 58af9b461ff373ec32e6d1db869c80cf3b6dd137
+Author: yarusome <97945148+yarusome@users.noreply.github.com>
+Date:   Sun Dec 11 13:59:36 2022 +0800
+
+    Simplifying the internal use of `inversion`
+    
+    This commit replaces `(real, point, ...)` with `(inversion, ...)` in the parameter list of internally-used functions in the inversion section, and simplifies the initializer definitions of `inversion` using `operator init`.
+
+commit 1fcc742a8e372b8280e92573a31542ed3cdc9117
+Author: yarusome <97945148+yarusome@users.noreply.github.com>
+Date:   Sun Dec 11 13:19:55 2022 +0800
+
+    Fixing the inversion section of the `geometry` module
+    
+    This commit fixes bugs related to coordinate systems in the inversion section, and all the returned `point`s are in `currentcoordsys` now.
 
 commit 46d6ea7351699bbed0418ec6d7f2195011178e5a
 Author: John Bowman <bowman@ualberta.ca>

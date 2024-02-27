@@ -1135,8 +1135,9 @@ void gen_runtime86(stack *Stack)
 void loadModule(stack *Stack)
 {
   string * index=vm::pop<string *>(Stack);
+  string * filename=vm::pop<string *>(Stack);
 #line 766 "runtime.in"
-  Stack->load(*index);
+  Stack->load(*filename,*index);
 }
 
 #line 770 "runtime.in"
@@ -1525,8 +1526,8 @@ void gen_runtime115(stack *Stack)
 
   ::times(&buf);
   array *t=new array(5);
-  (*t)[0]=cpuTime.seconds();
-  (*t)[1]=((real) buf.tms_stime)*ticktime;
+  (*t)[0]=cpuTime.seconds(); // Includes system time
+  (*t)[1]=0.0;
   (*t)[2]=((real) buf.tms_cutime)*ticktime;
   (*t)[3]=((real) buf.tms_cstime)*ticktime;
   (*t)[4]=wallClock.seconds();

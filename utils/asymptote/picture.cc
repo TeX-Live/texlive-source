@@ -310,7 +310,6 @@ bbox3 picture::bounds3()
     b3=bbox3();
 
   matrixstack ms;
-  size_t i=0;
   for(nodelist::const_iterator p=nodes.begin(); p != nodes.end(); ++p) {
     assert(*p);
     if((*p)->begingroup3())
@@ -319,7 +318,6 @@ bbox3 picture::bounds3()
       ms.pop();
     else
       (*p)->bounds(ms.T(),b3);
-    i++;
   }
 
   lastnumber3=n;
@@ -464,7 +462,7 @@ string dvisvgmCommand(mem::vector<string>& cmd, const string& outname)
   string libgs=getSetting<string>("libgs");
   if(!libgs.empty())
     cmd.push_back("--libgs="+libgs);
-  cmd.push_back("--optimize");
+  cmd.push_back("--optimize=collapse-groups,group-attributes,remove-clippaths,simplify-text,simplify-transform");
   push_split(cmd,getSetting<string>("dvisvgmOptions"));
   string outfile=stripDir(outname);
   if(!outfile.empty())
@@ -657,6 +655,7 @@ int picture::epstopdf(const string& epsname, const string& pdfname)
   cmd.push_back("-dEncodeColorImages="+compress);
   cmd.push_back("-dEncodeGrayImages="+compress);
   cmd.push_back("-dCompatibilityLevel=1.4");
+  cmd.push_back("-dTransferFunctionInfo=/Apply");
   if(!getSetting<bool>("autorotate"))
     cmd.push_back("-dAutoRotatePages=/None");
   cmd.push_back("-g"+String(max(ceil(getSetting<double>("paperwidth")),1.0))
@@ -977,10 +976,8 @@ bool picture::shipout(picture *preamble, const string& Prefix,
     else htmlformat=false;
   }
 
-#ifndef HAVE_LIBGLM
   if(outputformat == "v3d")
-    camp::reportError("to support V3D rendering, please install glm header files, then ./configure; make");
-#endif
+    camp::reportError("v3d format only supports 3D files");
 
   bool svgformat=outputformat == "svg";
   bool png=outputformat == "png";
@@ -1000,7 +997,7 @@ bool picture::shipout(picture *preamble, const string& Prefix,
   bool pdf=settings::pdf(texengine);
 
   bool standardout=Prefix == "-";
-  string prefix=standardout ? standardprefix : stripExt(Prefix);
+  string prefix=standardout ? standardprefix : Prefix;
 
   string preformat=nativeformat();
   bool epsformat=outputformat == "eps";
@@ -1363,10 +1360,14 @@ bool picture::shipout3(const string& prefix, const string& format,
   if(width <= 0 || height <= 0) return false;
 
   bool webgl=format == "html";
+  bool v3d=format == "v3d";
 
 #ifndef HAVE_LIBGLM
   if(webgl)
     camp::reportError("to support WebGL rendering, please install glm header files, then ./configure; make");
+
+  if(v3d)
+    camp::reportError("to support V3D rendering, please install glm header files, then ./configure; make");
 #endif
 
 #ifndef HAVE_LIBOSMESA
@@ -1421,7 +1422,6 @@ bool picture::shipout3(const string& prefix, const string& format,
 #endif
 #endif
 
-  bool v3d=format == "v3d";
   bool format3d=webgl || v3d;
 
   if(!format3d) {
@@ -1517,7 +1517,7 @@ bool picture::shipout3(const string& prefix, const string& format,
 
 #ifdef HAVE_GL
     if(format3dWait) {
-      gl::format3dWait=false;
+      format3dWait=false;
 #ifdef HAVE_PTHREAD
       endwait(initSignal,initLock);
 #endif
