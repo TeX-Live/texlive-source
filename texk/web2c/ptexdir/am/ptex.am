@@ -84,6 +84,7 @@ ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
 	$(tie_c) ptex.web $(ptex_ch_srcs)
 ptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
+	unbalanced-braces.ch \
 	$(ptex_ch_synctex) \
 	tex-binpool.ch
 

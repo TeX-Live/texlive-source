@@ -4424,6 +4424,7 @@ ptex_web_srcs = \
 
 ptex_ch_srcs = \
 	ptexdir/ptex-base.ch \
+	unbalanced-braces.ch \
 	$(ptex_ch_synctex) \
 	tex-binpool.ch
 
@@ -4474,6 +4475,7 @@ eptex_ch_srcs = \
 	eptexdir/fam256.ch \
 	eptexdir/pdfutils.ch \
 	eptexdir/suppresserrors.ch \
+	eptexdir/unbalanced-braces-eptex.ch \
 	eptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
@@ -4516,6 +4518,7 @@ uptex_web_srcs = \
 
 uptex_ch_srcs = \
 	uptexdir/ptex-base.ch \
+	unbalanced-braces.ch \
 	uptexdir/uptex-m.ch \
 	$(uptex_ch_synctex) \
 	tex-binpool.ch
@@ -4601,6 +4604,7 @@ euptex_ch_srcs = \
 	euptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
 	euptexdir/suppresserrors.ch \
+	eptexdir/unbalanced-braces-eptex.ch \
 	euptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 

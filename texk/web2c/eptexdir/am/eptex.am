@@ -77,6 +77,7 @@ eptex_ch_srcs = \
 	eptexdir/fam256.ch \
 	eptexdir/pdfutils.ch \
 	eptexdir/suppresserrors.ch \
+	eptexdir/unbalanced-braces-eptex.ch \
 	eptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 

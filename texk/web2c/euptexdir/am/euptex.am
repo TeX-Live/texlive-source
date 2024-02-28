@@ -83,6 +83,7 @@ euptex_ch_srcs = \
 	euptexdir/pdfutils.ch \
 	euptexdir/pdfstrcmp-eup-post.ch \
 	euptexdir/suppresserrors.ch \
+	eptexdir/unbalanced-braces-eptex.ch \
 	euptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 

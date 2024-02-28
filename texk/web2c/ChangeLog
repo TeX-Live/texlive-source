@@ -1,3 +1,14 @@
+2024-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* eptexdir/unbalanced-braces-eptex.ch: avoid crashing with devious
+	uses of \output and \write braces. Slightly modified one for
+	eptex and euptex.
+	* eptexdir/am/eptex.am (eptex_ch_srcs),
+	* euptexdir/am/euptex.am (euptex_ch_srcs) : include
+	eptexdir/unbalanced-braces-eptex.ch.
+	* ptexdir/am/ptex.am (ptex_ch_srcs),
+	* uptexdir/am/uptex.am (uptex_ch_srcs): include unbalanced-braces.ch.
+
 2024-02-26  Karl Berry  <karl@freefriends.org>
 
 	* unbalanced-braces.ch: avoid crashing with devious uses of
