@@ -31,7 +31,7 @@ TEXMF_OUTPUT_DIRECTORY=/xdir \
 TEXMFOUTPUT=/ydir \
   $_kpsewhich --safe-out-name=/ydir/ofoo.tex || exit 10
 
-echo "TEXMF[SYS]VAR ok for writing only if extended."
+echo "TEXMF[SYS]VAR not ok for writing unless extended."
 TEXMFVAR=/xvar \
   $_kpsewhich --safe-out-name=/xvar/ofoo.tex && exit 11
 TEXMFSYSVAR=/yvar \
@@ -41,17 +41,40 @@ TEXMFVAR=/avar \
   $_kpsewhich --safe-extended-out-name=/avar/ofoo.tex || exit 13
 TEXMFSYSVAR=/bvar \
   $_kpsewhich --safe-extended-out-name=/bvar/ofoo.tex || exit 14
+#
+# exact match should not be ok if not extended.
+TEXMFVAR=/xvar \
+  $_kpsewhich --safe-out-name=/xvar && exit 15
+TEXMFSYSVAR=/yvar \
+  $_kpsewhich --safe-out-name=/yvar && exit 16
 
 # In practice, TEXMFVAR=~/.texliveYYYY, so this is the case that matters,
 # but in principle it should work for TEXMFSYSVAR too.
-echo "TEXMF[SYS]VAR ok for writing when if set to ~/.something."
+echo "TEXMF[SYS]VAR ok for writing when if set to ~/.whatever."
 TEXMFVAR='~/.xvar' \
-  $_kpsewhich --safe-extended-out-name='~/.xvar/ofoo.tex' || exit 15
+  $_kpsewhich --safe-extended-out-name='~/.xvar/ofoo.tex' || exit 17
 TEXMFSYSVAR='~/.yvar' \
-  $_kpsewhich --safe-extended-out-name='~/.yvar/ofoo.tex' || exit 16
+  $_kpsewhich --safe-extended-out-name='~/.yvar/ofoo.tex' || exit 18
 
-echo "~/.ssh not ok for writing if TEXMF[SYS]VAR is set ~/.foo."
+echo "TEXMF[SYS]VAR exact string ok for writing if extended."
+TEXMFVAR='~/.xvar' \
+  $_kpsewhich --safe-extended-out-name='~/.xvar' || exit 21
+TEXMFSYSVAR='~/.yvar' \
+  $_kpsewhich --safe-extended-out-name='~/.yvar' || exit 22
+
+echo "TEXMF[SYS]VAR inexact string not ok for writing, even if extended."
+TEXMFVAR='~/.xvar' \
+  $_kpsewhich --safe-extended-out-name='~/.xvarx' && exit 23
+TEXMFSYSVAR='~/.yvar' \
+  $_kpsewhich --safe-extended-out-name='~/.yvarx' && exit 24
+#
+TEXMFVAR='~/.xvarx' \
+  $_kpsewhich --safe-extended-out-name='~/.xvar' && exit 25
+TEXMFSYSVAR='~/.yvarx' \
+  $_kpsewhich --safe-extended-out-name='~/.yvar' && exit 26
+
+echo "~/.ssh not ok for writing if TEXMF[SYS]VAR is set to ~/.foo."
 TEXMFVAR='~/.foo' \
-  $_kpsewhich --safe-extended-out-name='~/.ssh/ofoo.tex' && exit 17
+  $_kpsewhich --safe-extended-out-name='~/.ssh/ofoo.tex' && exit 31
 
 : # exit successfully if get to the end.

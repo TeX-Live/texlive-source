@@ -1,3 +1,9 @@
+2024-02-29  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (abs_fname_ok): if extended, allow a dir that is the
+	exact match of TEXMF[SYS]VAR, since luatex might want to mkdir it.
+	* tests/kpsesafe.test: test it, both positive and negative.
+
 2024-02-23  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (XE_FONTCONFIG_PATH, XE_FC_CACHEDIR): rename from

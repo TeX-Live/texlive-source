@@ -1186,12 +1186,18 @@ static const_string ok_type_name[] = {
 
 /* Helper subroutine to check if absolute pathname FNAME is acceptable
    in CHECKDIR. An absolute pathname is ok only if
-   CHECKDIR is set,
-   CHECKDIR is non-empty,
+   CHECKDIR is set, and
+   CHECKDIR is non-empty, and
    CHECKDIR is the beginning of FNAME
      (e.g., disallow /somedir/file.tex against /anotherdir), and
-   the next character in FNAME is a directory separator
-     (e.g., disallow /somedirx/file.tex against /somedir).  */
+   either the next character in FNAME is a directory separator
+     (e.g., disallow /somedirx/file.tex against /somedir).
+   or we're at the end of CHECKDIR
+     (e.g., allow /somedir against /somedir, without requiring /somedir/).
+   
+   This last case, of allowing FNAME == CHECKDIR, comes up with LuaTeX,
+   where we might want to lfs.mkdir(TEXMFVAR) within Lua, not
+   necessarily with a trailing /, although that suffices.  */
 
 static boolean
 abs_fname_ok (const_string fname, const_string checkdir)
@@ -1199,8 +1205,10 @@ abs_fname_ok (const_string fname, const_string checkdir)
   return
     checkdir             /* checkdir must be non-null */
     && *checkdir != '\0' /* checkdir must be non-empty */
-    && fname == strstr (fname, checkdir)      /* fname must begin checkdir */
-    && IS_DIR_SEP (fname[strlen (checkdir)]); /* and be followed by / */
+    && fname == strstr (fname, checkdir)       /* fname must begin checkdir */
+    && (IS_DIR_SEP (fname[strlen (checkdir)])  /* and be followed by /      */
+        || strlen (fname) == strlen (checkdir) /* or be the whole string    */
+       );
 }
 
 /* Here is the general internal subroutine, kpathsea_name_ok, for
