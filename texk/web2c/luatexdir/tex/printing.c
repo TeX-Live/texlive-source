@@ -1318,6 +1318,7 @@ void end_diagnostic(boolean blank_line)
 /*
     Indentation (based on a suggestion by PO on tex-implementors but adapted to
     out situation and with built-in limits and so.
+    It's possible to add  an extra newline with texconfig.trace_extra_newline = 1
 */
 
 void print_input_level(void)
@@ -1330,10 +1331,12 @@ void print_input_level(void)
                 tprint_nl(s);
                 free(s);
             } else {
-                print_ln();
+	      if (traceextranewline)
+		 print_ln();
             }
         } else {
-            print_ln();
+	  if (traceextranewline)
+             print_ln();
         }
     } else {
         int m = level_max;
@@ -1346,14 +1349,16 @@ void print_input_level(void)
                 print(']');
                 l = l % m;
             } else {
-                print_ln();
+	      if (traceextranewline)
+                 print_ln();
             }
             while (l > 0) {
                print(c);
                l--;
             }
         } else {
-            print_ln();
+	  if (traceextranewline)
+	     print_ln();
         }
     }
 }

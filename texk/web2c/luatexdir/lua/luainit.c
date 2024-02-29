@@ -998,6 +998,7 @@ void lua_initialize(int ac, char **av)
     haltonerrorp = false;
     haltingonerrorp = false;
     tracefilenames = 1;
+    traceextranewline = 0;
     dump_name = NULL;
     /*tex
         In the next option 0 means ``disable Synchronize TeXnology''. The
@@ -1166,6 +1167,8 @@ void lua_initialize(int ac, char **av)
         get_lua_boolean("texconfig", "check_dvi_total_pages", &check_dvi_total_pages);
         /*tex |prohibit_file_trace| (boolean) */
         get_lua_boolean("texconfig", "trace_file_names", &tracefilenames);
+        /*tex |trace_extra_newline| (boolean) */
+        get_lua_boolean("texconfig", "trace_extra_newline", &traceextranewline);
         /*tex |file_line_error| */
         get_lua_boolean("texconfig", "file_line_error", &filelineerrorstylep);
         /*tex |halt_on_error| */

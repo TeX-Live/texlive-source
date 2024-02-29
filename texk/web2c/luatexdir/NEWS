@@ -13,6 +13,9 @@ LuaTeX 1.18.0 2024-02-13
 - With --safer, all debug functions except traceback are nil 
 - New commandline switch --[no-]check-dvi-total-pages  exit when DVI exceeds 65535 pages (default: check).
   This breaks backward compatibility.
+- texconfig.trace_extra_newline adds a newline in \tracingmacros. Default is false, so the 
+  output match pdftex. Previously an extra newline was added and 
+  with texconfig.trace_extra_newline=true it is again inserted as before.
 - Some fixes, among others:  
   * setgentounicode has a glyph_unicode_tree not NULL (thanks M. Chernoff)
   * Character index within the  limits in defining a Type 3 font (H.Hagen). Thanks M. Chernoff.
