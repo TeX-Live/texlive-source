@@ -67,14 +67,14 @@ jobs:
           - tl_name: aarch64-linux
             image: arm64v8/debian:buster
             platform: aarch64
-            ci_build: false
+            ci_build: true
             use_qemu: true
             qemu_arch: aarch64
             buildsys: debian
           - tl_name: armhf-linux
             image: arm32v7/debian:buster
             platform: arm/v7
-            ci_build: false
+            ci_build: true
             use_qemu: true
             qemu_arch: arm
             buildsys: debian
