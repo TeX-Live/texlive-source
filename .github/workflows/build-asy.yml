@@ -86,18 +86,18 @@ jobs:
             .github/scripts/build-asy.sh ${{ matrix.tl_name }} ${{ matrix.buildsys }}
       - name: find file step
         if: ${{ matrix.ci_build || matrix.release_build }}
-        run: ls -l $GITHUB_WORKSPACE/repo/asy-${{ matrix.tl_name }}.tar.gz
+        run: ls -l $GITHUB_WORKSPACE/repo/asy-${{ matrix.tl_name }}
       - name: save artifact
         if: ${{ matrix.ci_build || matrix.release_build }}
         uses: actions/upload-artifact@v4
         with:
-          name: asy-${{ matrix.tl_name }}.tar.gz
-          path: ${{ github.workspace }}/repo/asy-${{ matrix.tl_name }}.tar.gz
+          name: asy-${{ matrix.tl_name }}
+          path: ${{ github.workspace }}/repo/asy-${{ matrix.tl_name }}
           compression-level: 0
       - name: Release
         uses: AButler/upload-release-assets@v3.0
         if: matrix.release_build
         with:
-          files: ${{ github.workspace }}/repo/asy-${{ matrix.tl_name }}.tar.gz
+          files: ${{ github.workspace }}/repo/asy-${{ matrix.tl_name }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 

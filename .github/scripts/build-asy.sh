@@ -51,4 +51,5 @@ sed -i -e 's/^LIBS = /LIBS = -static-libgcc -static-libstdc++ /' Makefile
 make -j2
 strip asy
 
-tar czvf ../../asy-$arch.tar.gz asy
+mv asy ../../asy-$arch
+
