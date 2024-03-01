@@ -121,26 +121,4 @@ export TL_MAKE_FLAGS
 
 mv inst/bin/* $arch
 
-#
-# Build asy if possible
-#
-case $buildsys in 
-   ubuntu|debian)
-     export DEBIAN_FRONTEND=noninteractive
-     apt-get install -y --no-install-recommends build-essential pkg-config libeigen3-dev libcurl4-openssl-dev libreadline-dev libboost-filesystem-dev libtirpc-dev flex libglu1-mesa-dev freeglut3-dev libosmesa6-dev libreadline6-dev zlib1g-dev bison libglm-dev libncurses-dev
-     cd utils/asymptote
-     # we don't have pyuic5 installed, do not try to update these files
-     touch GUI/pyUIClass/*
-     ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build CXXFLAGS=-std=c++11 --disable-gsl --disable-fftw --disable-lsp
-     sed -i -e 's/^LIBS = /LIBS = -static-libgcc -static-libstdc++ /' Makefile
-     make -j2
-     strip asy
-     cp asy ../../$arch.
-     ;;
-esac
-
-    
-
-
-
 tar czvf texlive-bin-$arch.tar.gz $arch
