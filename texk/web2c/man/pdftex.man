@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "24 August 2023" "Web2C @VERSION@"
+.TH PDFTEX 1 "2 March 2024" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -7,17 +7,17 @@
 .ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
 .el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if t .ds BX \fRB\s-2IB\s+2\fP\*(TX
 .if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s+2\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
 .if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
 .if n .ds AX AmSTeX
 .if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
 .if n .ds AY AmSLaTeX
 .if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
+.if t .ds WB W\s-2EB\s+2
 .\"=====================================================================
 .SH NAME
 pdftex \- PDF output from TeX
@@ -32,16 +32,16 @@ Run the pdf\*(TX typesetter on
 .IR file ,
 usually creating
 .IR file.pdf .
-If the file argument has no extension, ".tex" will be appended to it. 
+If the file argument has no extension, ".tex" will be appended to it.
 Instead of a filename, a set of pdf\*(TX commands can be given, the first
 of which must start with a backslash.
-With a 
+With a
 .BI & format
 argument pdf\*(TX uses a different set of precompiled commands,
 contained in
 .IR format\fB.fmt\fP ;
 it is usually better to use the
-.B -fmt
+.B \-fmt
 .I format
 option instead.
 .PP
@@ -58,7 +58,7 @@ command uses the equivalent of the plain \*(TX format, and the
 .B pdflatex
 command uses the equivalent of the \*(LX format.
 To generate formats, use the
-.B -ini
+.B \-ini
 switch.
 .PP
 The
@@ -81,7 +81,7 @@ In PDF mode, pdf\*(TX can natively handle the
 and
 .I PNG
 graphics formats.  pdf\*(TX cannot include PostScript or Encapsulated
-PostScript (EPS) graphics files; first convert them to PDF using 
+PostScript (EPS) graphics files; first convert them to PDF using
 .BR epstopdf (1).
 pdf\*(TX's handling of its command-line arguments is similar to that
 of the other \*(TX programs in the
@@ -95,47 +95,47 @@ extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See
 .SH OPTIONS
 This version of pdf\*(TX understands the following command line options.
 .TP
-.BI -cnf-line \ string
+.BI \-cnf-line \ string
 Parse
 .I string
 as a
 .I texmf.cnf
 configuration line.  See the Kpathsea manual.
 .TP
-.B -draftmode
+.B \-draftmode
 Sets \epdfdraftmode so pdf\*(TX doesn't write a PDF and doesn't read any
 included images, thus speeding up execution.
 .TP
-.B -enc
+.B \-enc
 Enable the enc\*(TX extensions.  This option is only effective in
 combination with
-.BR -ini .
+.BR \-ini .
 For documentation of the enc\*(TX extensions see
 http://www.olsak.net/enctex.html.
 .TP
-.B -etex
+.B \-etex
 Enable the e-\*(TX extensions.  This option is only effective in
 combination with
-.BR -ini .
+.BR \-ini .
 See
 .BR etex (1).
 .TP
-.B -file-line-error
+.B \-file-line-error
 Print error messages in the form
 .I file:line:error
 which is similar to the way many compilers format them.
 .TP
-.B -no-file-line-error
+.B \-no-file-line-error
 Disable printing error messages in the
 .I file:line:error
 style.
 .TP
-.B -file-line-error-style
+.B \-file-line-error-style
 This is the old name of the
-.B -file-line-error
+.B \-file-line-error
 option.
 .TP
-.BI -fmt \ format
+.BI \-fmt \ format
 Use
 .I format
 as the name of the format to be used, instead of the name by which
@@ -143,13 +143,13 @@ pdf\*(TX was called or a
 .I %&
 line.
 .TP
-.B -halt-on-error
+.B \-halt-on-error
 Exit with an error code when an error is encountered during processing.
 .TP
-.B -help
+.B \-help
 Print help message and exit.
 .TP
-.B -ini
+.B \-ini
 Start in
 .I INI
 mode, which is used to dump formats.  The
@@ -157,7 +157,7 @@ mode, which is used to dump formats.  The
 mode can be used for typesetting, but no format is preloaded, and
 basic initializations like setting catcodes may be required.
 .TP
-.BI -interaction \ mode
+.BI \-interaction \ mode
 Sets the interaction mode.  The mode can be either
 .IR batchmode ,
 .IR nonstopmode ,
@@ -167,27 +167,27 @@ and
 The meaning of these modes is the same as that of the corresponding
 \ecommands.
 .TP
-.B -ipc
+.B \-ipc
 Send DVI or PDF output to a socket as well as the usual output file.
 Whether this option is available is the choice of the installer.
 .TP
-.B -ipc-start
+.B \-ipc-start
 As
-.BR -ipc ,
+.BR \-ipc ,
 and starts the server at the other end as well.  Whether this option
 is available is the choice of the installer.
 .TP
-.BI -jobname \ name
+.BI \-jobname \ name
 Use
 .I name
 for the job name, instead of deriving it from the name of the input file.
 .TP
-.BI -kpathsea-debug \ bitmask
+.BI \-kpathsea-debug \ bitmask
 Sets path searching debugging flags according to the bitmask.  See the
 .I Kpathsea
 manual for details.
 .TP
-.BI -mktex \ fmt
+.BI \-mktex \ fmt
 Enable
 .RI mktex fmt ,
 where
@@ -197,11 +197,11 @@ must be either
 or
 .IR tfm .
 .TP
-.B -mltex
+.B \-mltex
 Enable ML\*(TX extensions.  Only effective in combination with
-.BR -ini .
+.BR \-ini .
 .TP
-.BI -no-mktex \ fmt
+.BI \-no-mktex \ fmt
 Disable
 .RI mktex fmt ,
 where
@@ -211,20 +211,20 @@ must be either
 or
 .IR tfm .
 .TP
-.BI -output-comment \ string
+.BI \-output-comment \ string
 In DVI mode, use
 .I string
 for the DVI file comment instead of the date. This option is ignored in
 PDF mode.
 .TP
-.BI -output-directory \ directory
+.BI \-output-directory \ directory
 Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
 first, then along the normal search path.
 .TP
-.BI -output-format \ format
+.BI \-output-format \ format
 Set the output format mode, where
 .I format
 must be either
@@ -233,28 +233,28 @@ or
 .IR dvi .
 This also influences the set of graphics formats understood by pdf\*(TX.
 .TP
-.B -parse-first-line
+.B \-parse-first-line
 If the first line of the main input file begins with
 .I %&
 parse it to look for a dump name or a
-.B -translate-file
+.B \-translate-file
 option.
 .TP
-.B -no-parse-first-line
+.B \-no-parse-first-line
 Disable parsing of the first line of the main input file.
 .TP
-.BI -progname \ name
+.BI \-progname \ name
 Pretend to be program
 .IR name .
 This affects both the format used and the search paths.
 .TP
-.B -recorder
+.B \-recorder
 Enable the filename recorder.
 This leaves a trace of the files opened for input and output
 in a file with extension
 .IR .fls .
 .TP
-.B -shell-escape
+.B \-shell-escape
 Enable the
 .RI \ewrite18{ command }
 construct.  The
@@ -262,23 +262,24 @@ construct.  The
 can be any shell command.  This construct is normally
 disallowed for security reasons.
 .TP
-.B -no-shell-escape
+.B \-no-shell-escape
 Disable the
 .RI \ewrite18{ command }
 construct, even if it is enabled in the
 .I texmf.cnf
 file.
 .TP
-.B -shell-restricted
+.B \-shell-restricted
 Enable restricted \ewrite18{}, as explained in the ``Shell escapes''
 section of the Web2c Texinfo manual.
 .TP
-.B -src-specials
-In DVI mode, insert source specials into the DVI file. This option is
-ignored in PDF mode.
+.B \-src-specials
+In DVI mode, insert source specials into the DVI file.
+This option is ignored in PDF mode.
 .TP
-.BI -src-specials \ where
-In DVI mode, insert source specials in certain places of the DVI file. The
+.BI \-src-specials \ where
+In DVI mode, insert source specials in certain places of the DVI file.
+The
 .I where
 argument is a comma-separated value list:
 .IR cr ,
@@ -291,28 +292,29 @@ or
 .IR vbox .
 This option is ignored in PDF mode.
 .TP
-.BI -synctex \ NUMBER
-generate SyncTeX data for previewers according to bits of NUMBER. See the
+.BI \-synctex \ NUMBER
+generate SyncTeX data for previewers according to bits of NUMBER.
+See the
 .I synctex
 manual page for details.
 .TP
-.BI -translate-file \ tcxname
+.BI \-translate-file \ tcxname
 Use the
 .I tcxname
 translation table to set the mapping of input characters and
 re-mapping of output characters.
 .TP
-.BI -default-translate-file \ tcxname
+.BI \-default-translate-file \ tcxname
 Like
-.B -translate-file
+.B \-translate-file
 except that a
 .I %&
 line can overrule this setting.
 .TP
-.B -version
+.B \-version
 Print version information and exit.
 .TP
-.B -8bit
+.B \-8bit
 make all characters printable by default.
 .\"=====================================================================
 .SH ENVIRONMENT
@@ -324,9 +326,8 @@ utility can be used to query the values of the variables.
 .PP
 One caveat: In most pdf\*(TX formats, you cannot use ~ in a filename you
 give directly to pdf\*(TX, because ~ is an active character in \*(TX,
-and hence is expanded, not taken as part of the filename. Other
-programs, such as \*(MF, do not have this problem.
-.PP
+and hence is expanded, not taken as part of the filename.
+Other programs, such as \*(MF, do not have this problem.
 .TP
 .B TEXMFOUTPUT
 Normally, pdf\*(TX puts its output files in the current directory.  If
@@ -414,7 +415,7 @@ Predigested pdf\*(TX format (.\|fmt) files.
 This version of pdf\*(TX fails to trap arithmetic overflow when
 dimensions are added or subtracted.  Cases where this occurs are rare,
 but when it does the generated
-DVI or PDF file will be invalid.  
+DVI or PDF file will be invalid.
 .\"=====================================================================
 .SH AVAILABILITY
 pdf\*(TX is available for a large variety of machine architectures
@@ -429,8 +430,8 @@ pdf\*(TX mailing list for all discussion: https://lists.tug.org/pdftex.
 .\"=====================================================================
 .SH "SEE ALSO"
 This manual page is not meant to be exhaustive.  The complete
-documentation for this version of pdf\*(TX can be found in the 
-.IR "pdf\*(TX user manual"
+documentation for this version of pdf\*(TX can be found in the
+.I "pdf\*(TX user manual"
 and the Texinfo manuals
 .IR "Kpathsea library" ,
 .IR "Web2C: A TeX implementation" .
@@ -447,10 +448,11 @@ Some related programs:
 .BR mf (1).
 .\"=====================================================================
 .SH AUTHORS
-The primary authors of pdf\*(TX are Han The Thanh, Petr Sojka,
-Jiri Zlatuska, and Peter Breitenlohner (e\*(TX).
+The primary author of pdf\*(TX is Han The Thanh, with major
+contributions from Petr Sojka, Jiri Zlatuska, and Peter Breitenlohner
+(e\*(TX).
 .PP
-\*(TX was designed by Donald E. Knuth,
+\*(TX was designed by Donald E.\& Knuth,
 who implemented it using his \*(WB system for Pascal programs.
 It was ported to Unix at Stanford by Howard Trickey, and
 at Cornell by Pavel Curtis.

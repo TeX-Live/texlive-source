@@ -1,3 +1,8 @@
+2024-03-02  Bjarni Ingi Gislason  <bjarniig@simnet.is>
+
+	* pdftex.man: whitespace, \-, etc. updates.
+	https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1065094
+
 2024-02-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,
