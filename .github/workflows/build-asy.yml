@@ -48,7 +48,7 @@ jobs:
       matrix:
         # we need to list the archs here, otherwise the matrix contains only
         # one element release_build and that is overwritten by the include statements
-        tl_name: [ i386-linux, x86_64-linux, aarch64-linux, armhf-linux ]
+        tl_name: [ i386-linux, x86_64-linux ]
         release_build:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:
@@ -64,20 +64,6 @@ jobs:
             ci_build: true
             use_qemu: false
             buildsys: ubuntu
-          - tl_name: aarch64-linux
-            image: arm64v8/debian:buster
-            platform: aarch64
-            ci_build: true
-            use_qemu: true
-            qemu_arch: aarch64
-            buildsys: debian
-          - tl_name: armhf-linux
-            image: arm32v7/debian:buster
-            platform: arm/v7
-            ci_build: true
-            use_qemu: true
-            qemu_arch: arm
-            buildsys: debian
 
     steps:
       - name: checkout-main
@@ -144,7 +130,7 @@ jobs:
           usesh: true
           run: |
             cd repo
-            sh .github/scripts/build-tl.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
+            sh .github/scripts/build-asy.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: build solaris
         uses: vmactions/solaris-vm@v1
         if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
