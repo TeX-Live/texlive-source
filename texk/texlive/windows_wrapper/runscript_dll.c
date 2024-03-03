@@ -39,7 +39,15 @@ __declspec(dllexport) int dllrunscript( int argc, char *argv[] )
   char *fp;
 
   if (argc) {
-    k = SearchPath(NULL, argv[0], ".exe", 260, infile, &fp);
+    char *pp;
+    char ppp[260];
+    strcpy(ppp, argv[0]);
+    pp = strrchr(ppp, '.');
+    if (!pp || stricmp(pp, ".exe")) {
+      strcat(ppp, ".exe");
+    }
+    argv[0] = ppp;
+    k = SearchPath(NULL, argv[0], NULL, 260, infile, &fp);
     if (!k)
       DIE("cannot find %s\n", argv[0]);
     k = GetLongPathNameA(infile, buff, 260);
