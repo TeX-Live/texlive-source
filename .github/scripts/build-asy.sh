@@ -43,6 +43,31 @@ then
   esac
 fi
 
+# special cases
+export TL_MAKE=make
+case "$arch" in
+  *-solaris)
+    export PATH=/opt/csw/bin:$PATH
+    export TL_MAKE=gmake
+    if [ $arch = "i386-solaris" ]
+    then
+      export CC="gcc -m32"
+      export CXX="g++ -m32"
+    else
+      export CC="gcc -m64"
+      export CXX="g++ -m64"
+    fi
+    ;;
+  *-freebsd)
+    export TL_MAKE=gmake
+    export CC=gcc
+    export CXX=g++
+    export CFLAGS=-D_NETBSD_SOURCE
+    export CXXFLAGS='-D_NETBSD_SOURCE -std=c++11'
+    ;;
+esac
+
+
 find . -name \*.info -exec touch '{}' \;
 touch ./utils/asymptote/camp.tab.cc
 touch ./utils/asymptote/camp.tab.h
@@ -51,7 +76,7 @@ touch ./utils/asymptote/GUI/pyUIClass/*
 cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build CXXFLAGS=-std=c++11 \
 	--disable-gsl --disable-fftw --disable-lsp --disable-curl
-make -j2
+$TL_MAKE -j2
 strip asy
 
 mv asy ../../asy-$arch
