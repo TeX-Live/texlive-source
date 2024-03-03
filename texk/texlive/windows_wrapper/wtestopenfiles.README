@@ -1,0 +1,13 @@
+This program can be used to prevent doomed TeX Live update attempts
+on windows by testing whether all files concerned can be opened with
+exclusive read/write access.
+
+It reads a list of absolute filepaths from stdin and errors out if
+any of them cannot be opened with exclusive read/write access.
+
+A -v option also produces status output on stdout.
+
+Cross-compiling under linux:
+
+  i686-w64-mingw32-gcc -o wtestopenfiles.exe wtestopenfiles.c
+  i686-w64-mingw32-strip wtestopenfiles.exe
