@@ -2,7 +2,7 @@
 -- -----------------------------------------------------------------
 -- checkcites.lua
 -- Copyright 2012, 2019, Enrico Gregorio, Paulo Cereda
--- Copyright 2022, Enrico Gregorio, Island of TeX
+-- Copyright 2024, Enrico Gregorio, Island of TeX
 --
 -- This work may be distributed and/or modified under the conditions
 -- of the LaTeX  Project Public License, either version  1.3 of this
@@ -486,9 +486,9 @@ print("|  _|   | -_|  _| '_|  _| |  _| -_|_ -|")
 print("|___|_|_|___|___|_,_|___|_|_| |___|___|")
 print()
   print(wrap('checkcites.lua -- a reference ' ..
-             'checker script (v2.6)', 74))
+             'checker script (v2.7)', 74))
   print(wrap('Copyright (c) 2012, 2019, Enrico Gregorio, Paulo Cereda', 74))
-  print(wrap('Copyright (c) 2022, Enrico Gregorio, Island of TeX', 74))
+  print(wrap('Copyright (c) 2024, Enrico Gregorio, Island of TeX', 74))
 end
 
 -- Operation namespace
@@ -498,6 +498,7 @@ local operations = {}
 -- @param citations Citations.
 -- @param references References.
 -- @return Integer representing the status.
+-- @return Table of unused references.
 operations.unused = function(citations, references, crossrefs)
   print()
   print(pad('-', 74))
@@ -521,16 +522,18 @@ operations.unused = function(citations, references, crossrefs)
   end
 
   local r = difference(references, citations)
+  local forJson = {}
   print()
   print(wrap('Unused references in your TeX document: ' ..
              tostring(#r), 74))
   if #r == 0 then
-    return 0
+    return 0, forJson
   else
     for _, v in ipairs(r) do
       print('=> ' .. v)
+      table.insert(forJson, v)
     end
-    return 1
+    return 1, forJson
   end
 end
 
@@ -538,6 +541,7 @@ end
 -- @param citations Citations.
 -- @param references References.
 -- @return Integer value indicating the status.
+-- @return Table of undefined references.
 operations.undefined = function(citations, references, crossrefs)
   print()
   print(pad('-', 74))
@@ -561,16 +565,18 @@ operations.undefined = function(citations, references, crossrefs)
   end
 
   local r = difference(citations, references)
+  local forJson = {}
   print()
   print(wrap('Undefined references in your TeX document: ' ..
         tostring(#r), 74))
   if #r == 0 then
-    return 0
+    return 0, forJson
   else
     for _, v in ipairs(r) do
       print('=> ' .. v)
+      table.insert(forJson, v)
     end
-    return 1
+    return 1, forJson
   end
 end
 
@@ -578,14 +584,16 @@ end
 -- @param citations Citations.
 -- @param references References.
 -- @return Integer value indicating the status.
+-- @return Table containing both unused and undefined references.
 operations.all = function(citations, references, crossrefs)
   local x, y
-  x = operations.unused(citations, references, crossrefs)
-  y = operations.undefined(citations, references, crossrefs)
+  local forJson = {}
+  x, forJson['unused'] = operations.unused(citations, references, crossrefs)
+  y, forJson['undefined'] = operations.undefined(citations, references, crossrefs)
   if x + y > 0 then
-    return 1
+    return 1, forJson
   else
-    return 0
+    return 0, forJson
   end
 end
 
@@ -612,6 +620,74 @@ local function validate(files, lib, enabled, extension)
   return bad, good
 end
 
+-- Converts a table of elements into a valid JSON array in
+-- a string format, where each item is enclosed by quotes.
+-- @param elements Table to be converted.
+-- @return A JSON array in a string format.
+local function toArray(elements)
+  if #elements ~=0 then
+    return '[ "' .. table.concat(elements, '", "') .. '" ]'
+  else
+    return '[]'
+  end
+end
+
+-- Gets a description of the operation being performed.
+-- @param check The operation name.
+-- @return The corresponding description.
+local function getOperation(check)
+  if check == 'unused' then
+    return 'list only unused references'
+  elseif check == 'undefined' then
+    return 'list only undefined references'
+  else
+    return 'list all unused and undefined references'
+  end
+end
+
+-- Writes the text to the file.
+-- @param file The file to be written into.
+-- @param text The text to be written.
+local function write(file, text)
+  local handler = io.open(file, 'w')
+  if handler then
+    handler:write(text)
+    handler:close()
+  end
+end
+
+-- Exports the report to a JSON file.
+-- @param file JSON file to be written.
+-- @param schema Table containing the report.
+local function toJson(file, schema)
+  local string = '{\n'
+  string = string .. '  "settings" : {\n'
+  string = string .. '    "backend" : "' .. schema['backend'] .. '",\n'
+  string = string .. '    "operation" : "' .. getOperation(schema['check']) .. '",\n'
+  string = string .. '    "crossrefs" : ' .. ((schema['crossrefs'] and 'true') or 'false') .. '\n'
+  string = string .. '  },\n'
+  string = string .. '  "project" : {\n'
+  string = string .. '    "forcibly_cite_all" : ' .. schema['asterisk'] .. ',\n'
+  string = string .. '    "bibliographies" : ' .. toArray(schema['bibliographies']) .. ',\n'
+  string = string .. '    "citations" : ' .. toArray(schema['citations']) .. ',\n'
+  string = string .. '    "crossrefs" : ' .. toArray(schema['crossrefs'] or {}) .. '\n'
+  string = string .. '  },\n'
+  string = string .. '  "results" : {\n'
+  string = string .. '    "unused" : {\n'
+  string = string .. '      "active" : ' .. (exists({'unused', 'all'}, schema['check'])
+                                             and 'true' or 'false') .. ',\n'
+  string = string .. '      "occurrences" : ' .. toArray(schema['unused']) .. '\n'
+  string = string .. '    },\n'
+  string = string .. '    "undefined" : {\n'
+  string = string .. '      "active" : ' .. (exists({'undefined', 'all'}, schema['check'])
+                                             and 'true' or 'false') .. ',\n'
+  string = string .. '      "occurrences" : ' .. toArray(schema['undefined']) .. '\n'
+  string = string .. '    }\n'
+  string = string .. '  }\n'
+  string = string .. '}'
+  write(file, string)
+end
+
 -- Main function.
 -- @param args Command line arguments.
 -- @return Integer value indicating the status
@@ -629,11 +705,14 @@ local function checkcites(args)
     { short = 'v', long = 'version', argument = false },
     { short = 'h', long = 'help', argument = false },
     { short = 'c', long = 'crossrefs', argument = false },
-    { short = 'b', long = 'backend', argument = true }
+    { short = 'b', long = 'backend', argument = true },
+    { short = 'j', long = 'json', argument = true }
   }
 
   local keys, err = parse(parameters, args)
   local check, backend = 'all', 'bibtex'
+
+  local json = {}
 
   if #err ~= 0 then
     print()
@@ -670,8 +749,8 @@ local function checkcites(args)
   if keys['version'] or keys['help'] then
     if keys['version'] then
       print()
-      print(wrap('checkcites.lua, version 2.6 (dated August ' ..
-                 '20, 2022)', 74))
+      print(wrap('checkcites.lua, version 2.7 (dated March ' ..
+                 '3, 2024)', 74))
 
       print(pad('-', 74))
       print(wrap('You can find more details about this ' ..
@@ -689,8 +768,8 @@ local function checkcites(args)
       print()
       print(wrap('Usage: ' .. args[0] .. ' [ [ --all | --unused | ' ..
                  '--undefined ] [ --backend <arg> ] <file> [ ' ..
-                 '<file 2> ... <file n> ] | --help | --version ' ..
-                 ']', 74))
+                 '<file 2> ... <file n> ] | --json <file> | ' ..
+                 '--help | --version ]', 74))
 
       print()
       print('-a,--all           list all unused and undefined references')
@@ -698,6 +777,7 @@ local function checkcites(args)
       print('-U,--undefined     list only undefined references in your TeX source file')
       print('-c,--crossrefs     enable cross-reference checks (disabled by default)')
       print('-b,--backend <arg> set the backend-based file lookup policy')
+      print('-j,--json <file>   export the generated report as a JSON file')
       print('-h,--help          print the help message')
       print('-v,--version       print the script version')
 
@@ -752,6 +832,9 @@ local function checkcites(args)
     end
   end
 
+  json['backend'] = backend
+  json['check'] = check
+
   local auxiliary = apply(keys['unpaired'], function(a)
                     return sanitize(a, (backend == 'bibtex'
                     and 'aux') or 'bcf') end)
@@ -793,6 +876,10 @@ local function checkcites(args)
 
   local lines = flatten(apply(auxiliary, read))
   local asterisk, citations, bibliography = backends[backend](lines, true)
+
+  json['citations'] = citations
+  json['bibliographies'] = bibliography
+  json['asterisk'] = (asterisk and 'true') or 'false'
 
   print()
   print(wrap('Great, I found ' .. tostring(#citations) .. ' ' ..
@@ -850,6 +937,12 @@ local function checkcites(args)
   local crossrefs = (keys['crossrefs'] and organize(apply(bibliography,
                     function(a) return crossref(read(a)) end))) or {}
 
+  json['references'] = references
+
+  if (keys['crossrefs']) then
+    json['crossrefs'] = crossrefs
+  end
+
   print()
   print(wrap('Fantastic, I found ' .. tostring(#references) ..
              ' ' .. plural(#references, 'reference',
@@ -859,7 +952,16 @@ local function checkcites(args)
              plural(((check == 'all' and 2) or 1), 'report is',
              'reports are') .. ' generated.', 74))
 
-  return operations[check](citations, references, crossrefs)
+  local status, result = operations[check](citations, references, crossrefs)
+
+  json['unused'] = result['unused'] or (check == 'unused') and result or {}
+  json['undefined'] = result['undefined'] or (check == 'undefined') and result or {}
+
+  if keys['json'] then
+    toJson(keys['json'][1], json)
+  end
+
+  return status
 end
 
 -- Call and exit
