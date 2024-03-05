@@ -1,5 +1,5 @@
---- dvisvgm-3.2/configure.ac	2024-01-11 00:52:01.000000000 -0800
-+++ ./configure.ac	2024-01-16 10:32:10.211225839 -0800
+--- dvisvgm-3.2.1/configure.ac	2024-02-29 00:19:44.000000000 -0800
++++ ./configure.ac	2024-03-05 14:59:41.578987696 -0800
 @@ -1,18 +1,31 @@
 -# This file is part of dvisvgm
 -# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
@@ -21,10 +21,10 @@
 +dnl  Copyright 2005-2024 Martin Gieseking
 +dnl
  AC_PREREQ([2.69])
--AC_INIT([dvisvgm],[3.2],[martin.gieseking@uos.de])
+-AC_INIT([dvisvgm],[3.2.1],[martin.gieseking@uos.de])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="January 2024"
+ DATE="February 2024"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])
@@ -122,7 +122,7 @@
 +fi
  AS_IF([test "x$have_libgs" = "xno"],
  	# Ghostscript not found, check for dlopen
-@@ -83,65 +70,88 @@
+@@ -83,68 +70,88 @@
  		[AC_DEFINE(DISABLE_GS, 1, [Set to 1 if PostScript support should be disabled])]
  		[AC_MSG_WARN(PostScript support disabled)])])
 +fi
@@ -235,6 +235,9 @@
 -AM_CONDITIONAL(HAVE_WOFF2, [test "x$have_woff2" = "xyes"])
 -AM_CONDITIONAL(HAVE_XXHASH, [test "x$have_xxhash" = "xyes"])
 -
+-# Dummy required for TL build sections in automake files
+-AM_CONDITIONAL(WIN32, false)
+-
 -AS_IF([test "x$enable_woff" != "xyes"],
 -	[AC_DEFINE([DISABLE_WOFF], 1, [Define if WOFF support is disabled])],
 -	[AS_IF([test "x$with_ttfautohint" != "xno"],
@@ -265,7 +268,7 @@
 -
  AC_CHECK_HEADERS_ONCE([libintl.h stdlib.h string.h strings.h unistd.h])
  
-@@ -156,81 +166,82 @@
+@@ -159,81 +166,82 @@
  AX_GCC_BUILTIN(__builtin_clz)
  
 -# add options for selection of "optional" library locations

@@ -120,8 +120,7 @@ TESTS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) BitmapTest$(EXEEXT) \
 	ToUnicodeMapTest$(EXEEXT) TpicSpecialTest$(EXEEXT) \
 	TriangularPatchTest$(EXEEXT) UnicodeTest$(EXEEXT) \
 	UtilityTest$(EXEEXT) VectorIteratorTest$(EXEEXT) \
-	VectorStreamTest$(EXEEXT) XMLNodeTest$(EXEEXT) \
-	XMLStringTest$(EXEEXT) check-conv
+	XMLNodeTest$(EXEEXT) XMLStringTest$(EXEEXT) check-conv
 check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	BitmapTest$(EXEEXT) BoundingBoxTest$(EXEEXT) \
 	CalculatorTest$(EXEEXT) CMapManagerTest$(EXEEXT) \
@@ -151,8 +150,7 @@ check_PROGRAMS = hashcheck$(EXEEXT) BezierTest$(EXEEXT) \
 	ToUnicodeMapTest$(EXEEXT) TpicSpecialTest$(EXEEXT) \
 	TriangularPatchTest$(EXEEXT) UnicodeTest$(EXEEXT) \
 	UtilityTest$(EXEEXT) VectorIteratorTest$(EXEEXT) \
-	VectorStreamTest$(EXEEXT) XMLNodeTest$(EXEEXT) \
-	XMLStringTest$(EXEEXT)
+	XMLNodeTest$(EXEEXT) XMLStringTest$(EXEEXT)
 subdir = tests
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ax_ac_append_to_file.m4 \
@@ -396,10 +394,6 @@ am_VectorIteratorTest_OBJECTS =  \
 	VectorIteratorTest-VectorIteratorTest.$(OBJEXT)
 VectorIteratorTest_OBJECTS = $(am_VectorIteratorTest_OBJECTS)
 VectorIteratorTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
-am_VectorStreamTest_OBJECTS =  \
-	VectorStreamTest-VectorStreamTest.$(OBJEXT)
-VectorStreamTest_OBJECTS = $(am_VectorStreamTest_OBJECTS)
-VectorStreamTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
 am_XMLNodeTest_OBJECTS = XMLNodeTest-XMLNodeTest.$(OBJEXT)
 XMLNodeTest_OBJECTS = $(am_XMLNodeTest_OBJECTS)
 XMLNodeTest_DEPENDENCIES = $(am__DEPENDENCIES_5)
@@ -482,7 +476,6 @@ am__depfiles_remade = ./$(DEPDIR)/BezierTest-BezierTest.Po \
 	./$(DEPDIR)/UnicodeTest-UnicodeTest.Po \
 	./$(DEPDIR)/UtilityTest-UtilityTest.Po \
 	./$(DEPDIR)/VectorIteratorTest-VectorIteratorTest.Po \
-	./$(DEPDIR)/VectorStreamTest-VectorStreamTest.Po \
 	./$(DEPDIR)/XMLNodeTest-XMLNodeTest.Po \
 	./$(DEPDIR)/XMLStringTest-XMLStringTest.Po \
 	./$(DEPDIR)/hashcheck-hashcheck.Po \
@@ -555,9 +548,8 @@ SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(TensorProductPatchTest_SOURCES) $(ToUnicodeMapTest_SOURCES) \
 	$(TpicSpecialTest_SOURCES) $(TriangularPatchTest_SOURCES) \
 	$(UnicodeTest_SOURCES) $(UtilityTest_SOURCES) \
-	$(VectorIteratorTest_SOURCES) $(VectorStreamTest_SOURCES) \
-	$(XMLNodeTest_SOURCES) $(XMLStringTest_SOURCES) \
-	$(nodist_hashcheck_SOURCES)
+	$(VectorIteratorTest_SOURCES) $(XMLNodeTest_SOURCES) \
+	$(XMLStringTest_SOURCES) $(nodist_hashcheck_SOURCES)
 DIST_SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(BitmapTest_SOURCES) $(BoundingBoxTest_SOURCES) \
 	$(CMapManagerTest_SOURCES) $(CMapReaderTest_SOURCES) \
@@ -588,8 +580,8 @@ DIST_SOURCES = $(libgtest_la_SOURCES) $(BezierTest_SOURCES) \
 	$(TensorProductPatchTest_SOURCES) $(ToUnicodeMapTest_SOURCES) \
 	$(TpicSpecialTest_SOURCES) $(TriangularPatchTest_SOURCES) \
 	$(UnicodeTest_SOURCES) $(UtilityTest_SOURCES) \
-	$(VectorIteratorTest_SOURCES) $(VectorStreamTest_SOURCES) \
-	$(XMLNodeTest_SOURCES) $(XMLStringTest_SOURCES)
+	$(VectorIteratorTest_SOURCES) $(XMLNodeTest_SOURCES) \
+	$(XMLStringTest_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -1031,8 +1023,9 @@ EXTRA_DIST = gtest/LICENSE gtest/include gtest/src/gtest.cc \
 	gtest/src/gtest-printers.cc gtest/src/gtest-test-part.cc \
 	gtest/src/gtest-typed-test.cc check-conv genhashcheck.py \
 	normalize.xsl
-@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-@HAVE_POTRACE_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+@TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
 LIBS_CFLAGS = $(XXHASH_CFLAGS) -I$(dvisvgm_srcdir)/libs/md5
@@ -1222,9 +1215,6 @@ UtilityTest_LDADD = $(TESTLIBS)
 VectorIteratorTest_SOURCES = VectorIteratorTest.cpp testutil.hpp
 VectorIteratorTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 VectorIteratorTest_LDADD = $(TESTLIBS)
-VectorStreamTest_SOURCES = VectorStreamTest.cpp testutil.hpp
-VectorStreamTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
-VectorStreamTest_LDADD = $(TESTLIBS)
 XMLNodeTest_SOURCES = XMLNodeTest.cpp testutil.hpp
 XMLNodeTest_CPPFLAGS = -I$(dvisvgm_srcdir)/tests/gtest/include $(LIBS_CFLAGS)
 XMLNodeTest_LDADD = $(TESTLIBS)
@@ -1530,10 +1520,6 @@ VectorIteratorTest$(EXEEXT): $(VectorIteratorTest_OBJECTS) $(VectorIteratorTest_
 	@rm -f VectorIteratorTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(VectorIteratorTest_OBJECTS) $(VectorIteratorTest_LDADD) $(LIBS)
 
-VectorStreamTest$(EXEEXT): $(VectorStreamTest_OBJECTS) $(VectorStreamTest_DEPENDENCIES) $(EXTRA_VectorStreamTest_DEPENDENCIES) 
-	@rm -f VectorStreamTest$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(VectorStreamTest_OBJECTS) $(VectorStreamTest_LDADD) $(LIBS)
-
 XMLNodeTest$(EXEEXT): $(XMLNodeTest_OBJECTS) $(XMLNodeTest_DEPENDENCIES) $(EXTRA_XMLNodeTest_DEPENDENCIES) 
 	@rm -f XMLNodeTest$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(XMLNodeTest_OBJECTS) $(XMLNodeTest_LDADD) $(LIBS)
@@ -1612,7 +1598,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnicodeTest-UnicodeTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UtilityTest-UtilityTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VectorIteratorTest-VectorIteratorTest.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/VectorStreamTest-VectorStreamTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLNodeTest-XMLNodeTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/XMLStringTest-XMLStringTest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hashcheck-hashcheck.Po@am__quote@ # am--include-marker
@@ -2475,20 +2460,6 @@ VectorIteratorTest-VectorIteratorTest.obj: VectorIteratorTest.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(VectorIteratorTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o VectorIteratorTest-VectorIteratorTest.obj `if test -f 'VectorIteratorTest.cpp'; then $(CYGPATH_W) 'VectorIteratorTest.cpp'; else $(CYGPATH_W) '$(srcdir)/VectorIteratorTest.cpp'; fi`
 
-VectorStreamTest-VectorStreamTest.o: VectorStreamTest.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(VectorStreamTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT VectorStreamTest-VectorStreamTest.o -MD -MP -MF $(DEPDIR)/VectorStreamTest-VectorStreamTest.Tpo -c -o VectorStreamTest-VectorStreamTest.o `test -f 'VectorStreamTest.cpp' || echo '$(srcdir)/'`VectorStreamTest.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/VectorStreamTest-VectorStreamTest.Tpo $(DEPDIR)/VectorStreamTest-VectorStreamTest.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='VectorStreamTest.cpp' object='VectorStreamTest-VectorStreamTest.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(VectorStreamTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o VectorStreamTest-VectorStreamTest.o `test -f 'VectorStreamTest.cpp' || echo '$(srcdir)/'`VectorStreamTest.cpp
-
-VectorStreamTest-VectorStreamTest.obj: VectorStreamTest.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(VectorStreamTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT VectorStreamTest-VectorStreamTest.obj -MD -MP -MF $(DEPDIR)/VectorStreamTest-VectorStreamTest.Tpo -c -o VectorStreamTest-VectorStreamTest.obj `if test -f 'VectorStreamTest.cpp'; then $(CYGPATH_W) 'VectorStreamTest.cpp'; else $(CYGPATH_W) '$(srcdir)/VectorStreamTest.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/VectorStreamTest-VectorStreamTest.Tpo $(DEPDIR)/VectorStreamTest-VectorStreamTest.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='VectorStreamTest.cpp' object='VectorStreamTest-VectorStreamTest.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(VectorStreamTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o VectorStreamTest-VectorStreamTest.obj `if test -f 'VectorStreamTest.cpp'; then $(CYGPATH_W) 'VectorStreamTest.cpp'; else $(CYGPATH_W) '$(srcdir)/VectorStreamTest.cpp'; fi`
-
 XMLNodeTest-XMLNodeTest.o: XMLNodeTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(XMLNodeTest_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT XMLNodeTest-XMLNodeTest.o -MD -MP -MF $(DEPDIR)/XMLNodeTest-XMLNodeTest.Tpo -c -o XMLNodeTest-XMLNodeTest.o `test -f 'XMLNodeTest.cpp' || echo '$(srcdir)/'`XMLNodeTest.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/XMLNodeTest-XMLNodeTest.Tpo $(DEPDIR)/XMLNodeTest-XMLNodeTest.Po
@@ -3215,13 +3186,6 @@ VectorIteratorTest.log: VectorIteratorTest$(EXEEXT)
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
-VectorStreamTest.log: VectorStreamTest$(EXEEXT)
-	@p='VectorStreamTest$(EXEEXT)'; \
-	b='VectorStreamTest'; \
-	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
-	--log-file $$b.log --trs-file $$b.trs \
-	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
-	"$$tst" $(AM_TESTS_FD_REDIRECT)
 XMLNodeTest.log: XMLNodeTest$(EXEEXT)
 	@p='XMLNodeTest$(EXEEXT)'; \
 	b='XMLNodeTest'; \
@@ -3422,7 +3386,6 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/UnicodeTest-UnicodeTest.Po
 	-rm -f ./$(DEPDIR)/UtilityTest-UtilityTest.Po
 	-rm -f ./$(DEPDIR)/VectorIteratorTest-VectorIteratorTest.Po
-	-rm -f ./$(DEPDIR)/VectorStreamTest-VectorStreamTest.Po
 	-rm -f ./$(DEPDIR)/XMLNodeTest-XMLNodeTest.Po
 	-rm -f ./$(DEPDIR)/XMLStringTest-XMLStringTest.Po
 	-rm -f ./$(DEPDIR)/hashcheck-hashcheck.Po
@@ -3531,7 +3494,6 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/UnicodeTest-UnicodeTest.Po
 	-rm -f ./$(DEPDIR)/UtilityTest-UtilityTest.Po
 	-rm -f ./$(DEPDIR)/VectorIteratorTest-VectorIteratorTest.Po
-	-rm -f ./$(DEPDIR)/VectorStreamTest-VectorStreamTest.Po
 	-rm -f ./$(DEPDIR)/XMLNodeTest-XMLNodeTest.Po
 	-rm -f ./$(DEPDIR)/XMLStringTest-XMLStringTest.Po
 	-rm -f ./$(DEPDIR)/hashcheck-hashcheck.Po

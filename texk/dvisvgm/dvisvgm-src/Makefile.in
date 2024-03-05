@@ -15,7 +15,7 @@
 @SET_MAKE@
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Thu Jan 11 09:52:29 CET 2024
+# from AX_AM_MACROS_STATIC on Thu Feb 29 09:20:58 CET 2024
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -90,6 +90,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
+@TEXLIVE_BUILD_FALSE@am__append_1 = m4 tests doc
 subdir = dvisvgm-src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
@@ -167,7 +168,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = $(SUBDIRS)
+DIST_SUBDIRS = libs src m4 tests doc
 am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/dvisvgm-src/aminclude_static.am AUTHORS COPYING \
 	INSTALL NEWS README
@@ -373,7 +374,7 @@ top_srcdir = @top_srcdir@
 @USE_BUNDLED_LIBS_TRUE@AM_DISTCHECK_CONFIGURE_FLAGS = --enable-bundled-libs
 AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
-SUBDIRS = libs src #not for TL: m4 tests doc
+SUBDIRS = libs src $(am__append_1)
 ACLOCAL_AMFLAGS = -I m4
 @CODE_COVERAGE_ENABLED_TRUE@lcov_dir = $(top_builddir)/lcov
 @CODE_COVERAGE_ENABLED_TRUE@lcov_file = $(lcov_dir)/lcov.info

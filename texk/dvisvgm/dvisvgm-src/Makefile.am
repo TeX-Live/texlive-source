@@ -7,7 +7,10 @@ include $(top_srcdir)/dvisvgm-src/aminclude_static.am
 
 AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
-SUBDIRS = libs src #not for TL: m4 tests doc
+SUBDIRS = libs src
+if !TEXLIVE_BUILD
+SUBDIRS += m4 tests doc
+endif
 ACLOCAL_AMFLAGS = -I m4
 
 if USE_BUNDLED_LIBS

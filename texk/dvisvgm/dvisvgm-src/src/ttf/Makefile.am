@@ -22,5 +22,4 @@ include ../../libs/defs.am
 AM_CXXFLAGS = \
 	-I$(dvisvgm_srcdir)/libs/boost \
 	-I$(dvisvgm_srcdir)/libs/variant/include \
-        $(ZLIB_INCLUDES) \
 	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)

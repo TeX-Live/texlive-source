@@ -133,6 +133,7 @@ libdvisvgm_la_SOURCES = \
 	PSPattern.hpp                PSPattern.cpp \
 	PSPreviewHandler.hpp         PSPreviewHandler.cpp \
 	PsSpecialHandler.hpp         PsSpecialHandler.cpp \
+	PsSpecialHandlerProxy.hpp    PsSpecialHandlerProxy.cpp \
 	RangeMap.hpp                 RangeMap.cpp \
 	ShadingPatch.hpp             ShadingPatch.cpp \
 	SignalHandler.hpp            SignalHandler.cpp \
@@ -161,7 +162,6 @@ libdvisvgm_la_SOURCES = \
 	Unicode.hpp                  Unicode.cpp \
 	utility.hpp                  utility.cpp \
 	VectorIterator.hpp \
-	VectorStream.hpp \
 	VFActions.hpp \
 	VFReader.hpp                 VFReader.cpp \
 	windows.hpp \
@@ -185,6 +185,7 @@ AM_CFLAGS = $(WARNING_CFLAGS) \
 	$(CODE_COVERAGE_CFLAGS)
 
 AM_CXXFLAGS = $(WARNING_CXXFLAGS) \
+	-I$(dvisvgm_srcdir)/libs/boost \
 	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include
 
@@ -245,17 +246,6 @@ psdefs.ps: ;
 endif !TEXLIVE_BUILD
 
 CLEANFILES = *.gcda *.gcno
-
-if TEXLIVE_BUILD
-# Rebuild libkpathsea:
-@KPATHSEA_RULE@
-# Rebuild libfreetype:
-@FREETYPE2_RULE@
-# Rebuild libz:
-@ZLIB_RULE@
-# Rebuild potrace:
-@POTRACE_RULE@
-endif TEXLIVE_BUILD
 
 if TEXLIVE_BUILD
 # Rebuild libkpathsea:

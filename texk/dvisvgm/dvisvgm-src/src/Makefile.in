@@ -92,6 +92,8 @@ host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
+# POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
+# POTRACE_LIBS = ../libs/potrace/libpotrace.a
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 @ENABLE_WOFF_TRUE@am__append_5 = ttf
@@ -180,12 +182,12 @@ am_libdvisvgm_la_OBJECTS = BasicDVIReader.lo Bezier.lo \
 	PDFParser.lo PdfSpecialHandler.lo PDFToSVG.lo \
 	PreScanDVIReader.lo Process.lo psdefs.lo PSInterpreter.lo \
 	PSPattern.lo PSPreviewHandler.lo PsSpecialHandler.lo \
-	RangeMap.lo ShadingPatch.lo SignalHandler.lo SourceInput.lo \
-	SpecialActions.lo SpecialManager.lo StreamReader.lo \
-	StreamWriter.lo Subfont.lo SVGCharHandler.lo \
-	SVGCharHandlerFactory.lo SVGCharPathHandler.lo \
-	SVGCharTspanTextHandler.lo SVGElement.lo SVGOutput.lo \
-	SVGSingleCharTextHandler.lo SVGTree.lo System.lo \
+	PsSpecialHandlerProxy.lo RangeMap.lo ShadingPatch.lo \
+	SignalHandler.lo SourceInput.lo SpecialActions.lo \
+	SpecialManager.lo StreamReader.lo StreamWriter.lo Subfont.lo \
+	SVGCharHandler.lo SVGCharHandlerFactory.lo \
+	SVGCharPathHandler.lo SVGCharTspanTextHandler.lo SVGElement.lo \
+	SVGOutput.lo SVGSingleCharTextHandler.lo SVGTree.lo System.lo \
 	TensorProductPatch.lo Terminal.lo TFM.lo ToUnicodeMap.lo \
 	TpicSpecialHandler.lo TriangularPatch.lo Unicode.lo utility.lo \
 	VFReader.lo XMLDocument.lo XMLNode.lo XMLParser.lo \
@@ -258,7 +260,8 @@ am__depfiles_remade = ./$(DEPDIR)/BasicDVIReader.Plo \
 	./$(DEPDIR)/PapersizeSpecialHandler.Plo \
 	./$(DEPDIR)/PathClipper.Plo ./$(DEPDIR)/PdfSpecialHandler.Plo \
 	./$(DEPDIR)/PreScanDVIReader.Plo ./$(DEPDIR)/Process.Plo \
-	./$(DEPDIR)/PsSpecialHandler.Plo ./$(DEPDIR)/RangeMap.Plo \
+	./$(DEPDIR)/PsSpecialHandler.Plo \
+	./$(DEPDIR)/PsSpecialHandlerProxy.Plo ./$(DEPDIR)/RangeMap.Plo \
 	./$(DEPDIR)/SVGCharHandler.Plo \
 	./$(DEPDIR)/SVGCharHandlerFactory.Plo \
 	./$(DEPDIR)/SVGCharPathHandler.Plo \
@@ -545,8 +548,6 @@ dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
-@HAVE_POTRACE_FALSE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
-#
 @TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a
@@ -640,6 +641,7 @@ libdvisvgm_la_SOURCES = \
 	PSPattern.hpp                PSPattern.cpp \
 	PSPreviewHandler.hpp         PSPreviewHandler.cpp \
 	PsSpecialHandler.hpp         PsSpecialHandler.cpp \
+	PsSpecialHandlerProxy.hpp    PsSpecialHandlerProxy.cpp \
 	RangeMap.hpp                 RangeMap.cpp \
 	ShadingPatch.hpp             ShadingPatch.cpp \
 	SignalHandler.hpp            SignalHandler.cpp \
@@ -668,7 +670,6 @@ libdvisvgm_la_SOURCES = \
 	Unicode.hpp                  Unicode.cpp \
 	utility.hpp                  utility.cpp \
 	VectorIterator.hpp \
-	VectorStream.hpp \
 	VFActions.hpp \
 	VFReader.hpp                 VFReader.cpp \
 	windows.hpp \
@@ -686,7 +687,8 @@ AM_CFLAGS = $(WARNING_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(CODE_COVERAGE_CFLAGS)
 
-AM_CXXFLAGS = $(WARNING_CXXFLAGS) -I$(dvisvgm_srcdir)/libs/clipper \
+AM_CXXFLAGS = $(WARNING_CXXFLAGS) -I$(dvisvgm_srcdir)/libs/boost \
+	-I$(dvisvgm_srcdir)/libs/clipper \
 	-I$(dvisvgm_srcdir)/libs/variant/include $(POTRACE_CFLAGS) \
 	$(XXHASH_CFLAGS) $(am__append_11) $(am__append_12) \
 	$(am__append_13) $(am__append_14) -I$(dvisvgm_srcdir)/libs/md5
@@ -868,6 +870,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PreScanDVIReader.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Process.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandler.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PsSpecialHandlerProxy.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RangeMap.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandler.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SVGCharHandlerFactory.Plo@am__quote@ # am--include-marker
@@ -1206,6 +1209,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/PreScanDVIReader.Plo
 	-rm -f ./$(DEPDIR)/Process.Plo
 	-rm -f ./$(DEPDIR)/PsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PsSpecialHandlerProxy.Plo
 	-rm -f ./$(DEPDIR)/RangeMap.Plo
 	-rm -f ./$(DEPDIR)/SVGCharHandler.Plo
 	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Plo
@@ -1351,6 +1355,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/PreScanDVIReader.Plo
 	-rm -f ./$(DEPDIR)/Process.Plo
 	-rm -f ./$(DEPDIR)/PsSpecialHandler.Plo
+	-rm -f ./$(DEPDIR)/PsSpecialHandlerProxy.Plo
 	-rm -f ./$(DEPDIR)/RangeMap.Plo
 	-rm -f ./$(DEPDIR)/SVGCharHandler.Plo
 	-rm -f ./$(DEPDIR)/SVGCharHandlerFactory.Plo
@@ -1435,15 +1440,6 @@ uninstall-am: uninstall-binPROGRAMS
 @TEXLIVE_BUILD_FALSE@	fi
 
 @TEXLIVE_BUILD_FALSE@psdefs.ps: ;
-
-# Rebuild libkpathsea:
-@TEXLIVE_BUILD_TRUE@@KPATHSEA_RULE@
-# Rebuild libfreetype:
-@TEXLIVE_BUILD_TRUE@@FREETYPE2_RULE@
-# Rebuild libz:
-@TEXLIVE_BUILD_TRUE@@ZLIB_RULE@
-# Rebuild potrace:
-@TEXLIVE_BUILD_TRUE@@POTRACE_RULE@
 
 # Rebuild libkpathsea:
 @TEXLIVE_BUILD_TRUE@@KPATHSEA_RULE@

@@ -1,6 +1,6 @@
---- dvisvgm-3.2/./Makefile.am	2024-01-03 02:50:11.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2024-01-16 09:31:00.523974816 -0800
-@@ -4,9 +4,9 @@
+--- dvisvgm-3.2.1/./Makefile.am	2024-01-03 02:50:11.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2024-03-05 15:17:38.259701130 -0800
+@@ -4,9 +4,12 @@
  ## Process this file with automake.
  
 -include $(top_srcdir)/aminclude_static.am
@@ -9,141 +9,36 @@
  AUTOMAKE_OPTIONS = foreign
  EXTRA_DIST = COPYING
 -SUBDIRS = libs src tests doc
-+SUBDIRS = libs src #not for TL: m4 tests doc
++SUBDIRS = libs src
++if !TEXLIVE_BUILD
++SUBDIRS += m4 tests doc
++endif
  ACLOCAL_AMFLAGS = -I m4
  
---- dvisvgm-3.2/./libs/Makefile.am	2024-01-03 02:50:11.000000000 -0800
-+++ dvisvgm-src/./libs/Makefile.am	2024-01-16 09:31:00.524974811 -0800
-@@ -4,5 +4,9 @@
- ## Process this file with automake.
- 
--SUBDIRS = boost clipper md5 potrace variant xxHash
-+SUBDIRS = boost clipper md5 variant xxHash
-+
-+if !TEXLIVE_BUILD
-+SUBDIRS += potrace
-+endif
- 
- if ENABLE_WOFF
---- dvisvgm-3.2/./libs/defs.am	2024-01-03 02:50:11.000000000 -0800
-+++ dvisvgm-src/./libs/defs.am	2024-01-16 09:49:05.754922928 -0800
-@@ -8,6 +8,9 @@
- 
+--- dvisvgm-3.2.1/./libs/defs.am	2024-01-22 05:46:24.000000000 -0800
++++ dvisvgm-src/./libs/defs.am	2024-03-05 15:20:00.075059010 -0800
+@@ -11,6 +11,6 @@
+ else
  if !HAVE_POTRACE
 -POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
 -POTRACE_LIBS = ../libs/potrace/libpotrace.a
-+POTRACE_CFLAGS = $(POTRACE_INCLUDES)
-+endif
-+#
-+if TEXLIVE_BUILD
-+POTRACE_CFLAGS = $(POTRACE_INCLUDES)
- endif
- 
---- dvisvgm-3.2/./src/ttf/Makefile.am	2023-01-10 05:20:29.000000000 -0800
-+++ dvisvgm-src/./src/ttf/Makefile.am	2024-01-16 09:31:00.524974811 -0800
-@@ -23,3 +23,4 @@
- 	-I$(dvisvgm_srcdir)/libs/boost \
- 	-I$(dvisvgm_srcdir)/libs/variant/include \
-+        $(ZLIB_INCLUDES) \
- 	$(BROTLI_CFLAGS) $(WOFF2_CFLAGS)
---- dvisvgm-3.2/./src/Makefile.am	2024-01-11 00:52:01.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2024-01-18 09:44:09.359399768 -0800
-@@ -18,8 +18,6 @@
- 	../libs/clipper/libclipper.a \
- 	../libs/md5/libmd5.a \
--	$(FREETYPE_LIBS) \
- 	$(POTRACE_LIBS) \
--	$(XXHASH_LIBS) \
--	$(ZLIB_LIBS)
-+	$(XXHASH_LIBS)
- 
- if ENABLE_WOFF
-@@ -29,5 +27,16 @@
- 	$(WOFF2_LIBS) \
- 	$(BROTLI_LIBS)
--endif
-+endif ENABLE_WOFF
-+
-+if TEXLIVE_BUILD
-+dvisvgm_LDADD += \
-+	$(KPATHSEA_LIBS) \
-+	$(FREETYPE2_LIBS) \
-+	$(ZLIB_LIBS)
-+else
-+dvisvgm_LDADD += \
-+	$(FREETYPE_LIBS) \
-+	$(ZLIB_LIBS)
-+endif !TEXLIVE_BUILD
- 
- dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES)
-@@ -171,9 +180,4 @@
- EXTRA_DIST = options.xml options.dtd iapi.h ierrors.h MiKTeXCom.hpp MiKTeXCom.cpp
- 
--if !TEXLIVE_BUILD
--WARNING_CFLAGS = -Wall
--WARNING_CXXFLAGS = -Wall -Wnon-virtual-dtor
--endif
++# POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
++# POTRACE_LIBS = ../libs/potrace/libpotrace.a
+ endif !HAVE_POTRACE
+ endif !TEXLIVE_BUILD
+--- dvisvgm-3.2.1/./src/Makefile.am	2024-02-29 00:19:44.000000000 -0800
++++ dvisvgm-src/./src/Makefile.am	2024-03-05 15:05:07.159805866 -0800
+@@ -258,13 +258,2 @@
+ @POTRACE_RULE@
+ endif TEXLIVE_BUILD
 -
- AM_CFLAGS = $(WARNING_CFLAGS) \
- 	$(ZLIB_CFLAGS) \
-@@ -182,9 +186,5 @@
- AM_CXXFLAGS = $(WARNING_CXXFLAGS) \
- 	-I$(dvisvgm_srcdir)/libs/clipper \
--	-I$(dvisvgm_srcdir)/libs/variant/include \
--	$(KPSE_CFLAGS) \
--	$(FREETYPE_CFLAGS) \
--	$(ZLIB_CFLAGS) \
--	$(CODE_COVERAGE_CFLAGS)
-+	-I$(dvisvgm_srcdir)/libs/variant/include
- 
- AM_CXXFLAGS += \
-@@ -192,4 +192,22 @@
- 	$(XXHASH_CFLAGS)
- 
-+if TEXLIVE_BUILD
-+AM_CXXFLAGS += \
-+	$(KPATHSEA_INCLUDES) \
-+	$(POTRACE_INCLUDES) \
-+	$(FREETYPE2_INCLUDES) \
-+	$(ZLIB_INCLUDES) \
-+	$(CODE_COVERAGE_CFLAGS)
-+if WIN32
-+AM_CXXFLAGS += -DTEXLIVEWIN32
-+endif WIN32
-+else
-+AM_CXXFLAGS += \
-+	$(KPSE_CFLAGS) \
-+	$(FREETYPE_CFLAGS) \
-+	$(ZLIB_CFLAGS) \
-+	$(CODE_COVERAGE_CFLAGS)
-+endif !TEXLIVE_BUILD
-+
- AM_LDFLAGS = \
- 	$(KPSE_LIBS) \
-@@ -203,6 +221,9 @@
- 	$(WOFF2_CFLAGS)
- 
-+# TL: do not try to rebuild these source files.
-+if !TEXLIVE_BUILD
- AM_LDFLAGS += $(TTFAUTOHINT_LIBS)
--endif
-+endif !TEXLIVE_BUILD
-+endif ENABLE_WOFF
- 
- AM_CXXFLAGS += -I$(dvisvgm_srcdir)/libs/md5
-@@ -226,4 +247,15 @@
- 
- if TEXLIVE_BUILD
-+# Rebuild libkpathsea:
-+@KPATHSEA_RULE@
-+# Rebuild libfreetype:
-+@FREETYPE2_RULE@
-+# Rebuild libz:
-+@ZLIB_RULE@
-+# Rebuild potrace:
-+@POTRACE_RULE@
-+endif TEXLIVE_BUILD
-+
-+if TEXLIVE_BUILD
- # Rebuild libkpathsea:
- @KPATHSEA_RULE@
+-if TEXLIVE_BUILD
+-# Rebuild libkpathsea:
+-@KPATHSEA_RULE@
+-# Rebuild libfreetype:
+-@FREETYPE2_RULE@
+-# Rebuild libz:
+-@ZLIB_RULE@
+-# Rebuild potrace:
+-@POTRACE_RULE@
+-endif TEXLIVE_BUILD

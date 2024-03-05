@@ -32,13 +32,14 @@ svn rm `!!`
 svn status | sed -n 's/^\!//p'  # rerun, should be empty now
 cd ..
 
-Update our ./configure.ac from upstream dvisvgm-src/configure.ac.
-See patch-04-configure for reference, but they won't apply as-is.
-Probably easiest to check dvisvgm-prev/configure.ac vs. new:
-diff dvisvgm-{prev,$ver}/configure.ac
-and then install the changes in our configure.ac by hand.
+# Update our ./configure.ac from upstream dvisvgm-src/configure.ac.
+# See patch-04-configure for reference, but won't apply if there are any
+# non-trivial changes. Best to check dvisvgm-prev/configure.ac vs. new:
+cd ..
+diff -u2 dvisvgm-{prev,$ver}/configure.ac
+# and then install the changes in our configure.ac by hand as needed.
 
-# patch to integrate into TL build; will likely need adjusting also.
+# patch to integrate into TL build; even more likely to need adjusting.
 patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles 
 
 # remake autostuff (then make, etc., with fingers crossed).
@@ -55,6 +56,12 @@ make -C ../../Work/texk/dvisvgm check
 \cp -f ../../Work/texk/dvisvgm/sample*.svg tests/
 \cp -f ../../Work/texk/dvisvgm/upjf_full.svg tests/upjf.svg
 \cp -f ../../Work/texk/dvisvgm/upjf1_full.svg tests/upjf1.svg
+#
+# check that only diffs are the version number:
+svn diff tests
+#
+# and rerun make check, should pass now:
+make -C ../../Work/texk/dvisvgm check
 
 # before committing, update patches:
 diff -u2 dvisvgm-$ver/configure.ac ./ >TLpatches/patch-04-configure

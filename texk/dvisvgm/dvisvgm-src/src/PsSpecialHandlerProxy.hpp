@@ -1,5 +1,5 @@
 /*************************************************************************
-** VectorStreamTest.cpp                                                 **
+** PsSpecialHandlerProxy.hpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
 ** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
@@ -18,46 +18,22 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <gtest/gtest.h>
-#include <vector>
-#include "VectorStream.hpp"
+#pragma once
 
-using std::string;
-using std::vector;
+#include "SpecialHandler.hpp"
 
-TEST(VectorStreamTest, read1) {
-	const char *str = "abcdefghijklm\0nopqrstuvwxyz";
-	vector<char> vec(str, str+27);
-	VectorInputStream<char> vs(vec);
-	for (unsigned count = 0; vs; count++) {
-		int c = vs.get();
-		if (count < vec.size()) {
-			EXPECT_EQ(c, str[count]) << "count=" << count;
-		}
-		else {
-			EXPECT_EQ(c, -1);
-		}
-	}
-}
+class PsSpecialHandlerProxy : public SpecialHandler {
+	public:
+		explicit PsSpecialHandlerProxy (bool pswarning) : _pswarning(pswarning) {}
+		void preprocess (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
+		bool process (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
+		const char* name () const override {return "ps";}
+		const char* info () const override;
+		std::vector<const char*> prefixes () const override;
 
+	protected:
+		SpecialHandler* replaceHandler ();
 
-TEST(VectorStreamTest, read2) {
-	vector<int> vec;
-	VectorInputStream<int> vs(vec);
-	EXPECT_EQ(vs.get(), -1);
-}
-
-
-TEST(VectorStreamTest, read3) {
-	vector<int> vec;
-	vec.push_back(-2);
-	vec.push_back(-1);
-	vec.push_back(0);
-	vec.push_back(1);
-	VectorInputStream<int> vs(vec);
-	EXPECT_EQ(vs.get(), 254);
-	EXPECT_EQ(vs.get(), 255);
-	EXPECT_EQ(vs.get(), 0);
-	EXPECT_EQ(vs.get(), 1);
-	EXPECT_EQ(vs.get(), -1);
-}
+	private:
+		bool _pswarning;
+};

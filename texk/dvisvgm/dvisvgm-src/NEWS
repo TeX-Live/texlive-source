@@ -1,3 +1,11 @@
+dvisvgm-3.2.1 (2024-02-29)
+- delayed loading of Ghostscript library to speed up the conversion of
+  DVI files	without PS specials (GH issue #262)
+- some improvements required for TeX Live builds
+  (patches by Karl Berry, GH issues #259, #260)
+- added more details to some DVI warning messages
+- added some further information to the manual page
+
 dvisvgm-3.2 (2024-01-11)
 - PDF handler: fixed a rounding issue that could lead to slightly bigger
   text extents (GH issue #256)
