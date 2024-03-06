@@ -1,6 +1,6 @@
 #!/usr/bin/env wish
 
-# Copyright 2017-2023 Siep Kroonenberg
+# Copyright 2017-2024 Siep Kroonenberg
 
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -2214,6 +2214,9 @@ proc do_package_popup_menu {x y X Y} {
     .pkg_popup add command -label [__ "Remove"] -command {
       remove_pkgs "focus"
     }
+  }
+  .pkg_popup add command -label [__ "Reporting bugs"] -command {
+    run_cmd "bug [.pkglist focus]" 1; vwait ::done_waiting
   }
   .pkg_popup post [expr {$X - 2}] [expr {$Y - 2}]
   focus .pkg_popup
