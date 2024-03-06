@@ -30,10 +30,11 @@ on:
     types:
       - released
       - prereleased
-  push:
-    branches:
-      - trunk
   workflow_dispatch:
+
+# push:
+#   branches:
+#     - trunk
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -56,13 +57,13 @@ jobs:
           - tl_name: i386-linux
             image: i386/debian:buster
             platform: 386
-            ci_build: false
+            ci_build: true
             use_qemu: false
             buildsys: ubuntu
           - tl_name: x86_64-linux
             image: debian:buster
             platform: amd64
-            ci_build: false
+            ci_build: true
             use_qemu: false
             buildsys: ubuntu
 
