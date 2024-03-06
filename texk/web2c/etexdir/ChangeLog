@@ -1,3 +1,23 @@
+2022-03-06  Karl Berry  <karl@tug.org>
+
+	* etex_man.tex: copyright attributions, tweak penalty array texts.
+
+2024-03-04 David Carlisle  <David.Carlisle@latex-project.org>
+
+	* etex_man.tex: add hyperref
+	* etex_man.tex: Use Knuth license per legal.html.
+
+2022-03-03  Karl Berry  <karl@tug.org>
+
+	* etex_man.tex, legal.html: editorial changes.
+
+2024-02-29 David Carlisle  <David.Carlisle@latex-project.org>
+
+	* legal.html: Use ctan.org/pkg/etex url for e-tex reference site
+	(rhbnc.ac.uk domain no longer functional).
+	* etex_man.tex: Adjust introductory notes re NTS, mention pdftex
+	manual, document \interlinepenalties reset at \par.
+
 2023-11-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* etriptest.test, etrip/etrip.{fot,log,typ}, etrip/etripin.log:

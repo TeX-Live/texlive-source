@@ -1,0 +1,18 @@
+$Id$
+The e-TeX engine is an extended TeX developed under the auspices of the
+NTS Group and implemented by Peter Breitenlohner (deceased 2015).
+The extensions are enabled by a leading "*" character at initex time.
+
+Further cross-engine extensions to TeX have been developed in the pdfTeX
+and other engines, keeping e-TeX stable.
+
+The "etex" executable provided in most distributions is an incarnation
+of pdfTeX running in DVI mode, in order for those additional extensions
+to also be available.
+
+LaTeX requires the functionality of both e-TeX extensions and some of the
+extensions beyond e-TeX.
+
+For more info, see the package page on CTAN: https://ctan.org/pkg/etex.
+
+(This README is public domain. Originally written by Karl Berry, 2024.)
