@@ -9,7 +9,7 @@ AUTOMAKE_OPTIONS = foreign
 EXTRA_DIST = COPYING
 SUBDIRS = libs src
 if !TEXLIVE_BUILD
-SUBDIRS += m4 tests doc
+SUBDIRS += tests doc
 endif
 ACLOCAL_AMFLAGS = -I m4
 

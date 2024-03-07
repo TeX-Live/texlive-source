@@ -90,8 +90,6 @@ build_triplet = @build@
 host_triplet = @host@
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
-# POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-# POTRACE_LIBS = ../libs/potrace/libpotrace.a
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 subdir = dvisvgm-src/src/optimizer
@@ -302,6 +300,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 POTRACE_DEPEND = @POTRACE_DEPEND@
 POTRACE_INCLUDES = @POTRACE_INCLUDES@
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
 POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
@@ -384,6 +383,7 @@ liboptimizer_la_SOURCES = \
 	TransformSimplifier.hpp     TransformSimplifier.cpp \
 	WSNodeRemover.hpp           WSNodeRemover.cpp
 
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
 @TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a

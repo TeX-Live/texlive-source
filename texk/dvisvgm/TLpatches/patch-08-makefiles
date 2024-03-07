@@ -1,44 +1,9 @@
---- dvisvgm-3.2.1/./Makefile.am	2024-01-03 02:50:11.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2024-03-05 15:17:38.259701130 -0800
-@@ -4,9 +4,12 @@
+--- dvisvgm-3.2.2/./Makefile.am	2024-03-07 03:04:19.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2024-03-07 14:43:29.913090622 -0800
+@@ -4,5 +4,5 @@
  ## Process this file with automake.
  
 -include $(top_srcdir)/aminclude_static.am
 +include $(top_srcdir)/dvisvgm-src/aminclude_static.am
  
  AUTOMAKE_OPTIONS = foreign
- EXTRA_DIST = COPYING
--SUBDIRS = libs src tests doc
-+SUBDIRS = libs src
-+if !TEXLIVE_BUILD
-+SUBDIRS += m4 tests doc
-+endif
- ACLOCAL_AMFLAGS = -I m4
- 
---- dvisvgm-3.2.1/./libs/defs.am	2024-01-22 05:46:24.000000000 -0800
-+++ dvisvgm-src/./libs/defs.am	2024-03-05 15:20:00.075059010 -0800
-@@ -11,6 +11,6 @@
- else
- if !HAVE_POTRACE
--POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
--POTRACE_LIBS = ../libs/potrace/libpotrace.a
-+# POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-+# POTRACE_LIBS = ../libs/potrace/libpotrace.a
- endif !HAVE_POTRACE
- endif !TEXLIVE_BUILD
---- dvisvgm-3.2.1/./src/Makefile.am	2024-02-29 00:19:44.000000000 -0800
-+++ dvisvgm-src/./src/Makefile.am	2024-03-05 15:05:07.159805866 -0800
-@@ -258,13 +258,2 @@
- @POTRACE_RULE@
- endif TEXLIVE_BUILD
--
--if TEXLIVE_BUILD
--# Rebuild libkpathsea:
--@KPATHSEA_RULE@
--# Rebuild libfreetype:
--@FREETYPE2_RULE@
--# Rebuild libz:
--@ZLIB_RULE@
--# Rebuild potrace:
--@POTRACE_RULE@
--endif TEXLIVE_BUILD

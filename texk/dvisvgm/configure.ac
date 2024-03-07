@@ -15,7 +15,7 @@ dnl
 AC_PREREQ([2.69])
 m4_include([version.ac])[] dnl define dvisvgm_version
 AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
-DATE="February 2024"
+DATE="March 2024"
 AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIRS([../../m4])dnl not just _DIR

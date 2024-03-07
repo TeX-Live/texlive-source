@@ -92,8 +92,6 @@ host_triplet = @host@
 bin_PROGRAMS = dvisvgm$(EXEEXT)
 @HAVE_BROTLI_FALSE@am__append_1 = -I$(dvisvgm_srcdir)/libs/brotli/include
 @HAVE_BROTLI_FALSE@am__append_2 = ../libs/brotli/libbrotli.a
-# POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
-# POTRACE_LIBS = ../libs/potrace/libpotrace.a
 @HAVE_WOFF2_FALSE@am__append_3 = -I$(dvisvgm_srcdir)/libs/woff2/include
 @HAVE_WOFF2_FALSE@am__append_4 = ../libs/woff2/libwoff2.a
 @ENABLE_WOFF_TRUE@am__append_5 = ttf
@@ -199,16 +197,17 @@ am__v_lt_0 = --silent
 am__v_lt_1 = 
 am_dvisvgm_OBJECTS = dvisvgm.$(OBJEXT)
 dvisvgm_OBJECTS = $(am_dvisvgm_OBJECTS)
-am__DEPENDENCIES_1 =
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@am__DEPENDENCIES_1 = ../libs/potrace/libpotrace.a
 am__DEPENDENCIES_2 = $(am__append_4)
 am__DEPENDENCIES_3 = $(am__append_2)
 @ENABLE_WOFF_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_2) \
 @ENABLE_WOFF_TRUE@	$(am__DEPENDENCIES_3)
-@TEXLIVE_BUILD_TRUE@am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1) \
-@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_1) \
-@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_1) \
-@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_1)
-@TEXLIVE_BUILD_FALSE@am__DEPENDENCIES_6 = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_5 =
+@TEXLIVE_BUILD_TRUE@am__DEPENDENCIES_6 = $(am__DEPENDENCIES_5) \
+@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_5) \
+@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_5) \
+@TEXLIVE_BUILD_TRUE@	$(am__DEPENDENCIES_5)
+@TEXLIVE_BUILD_FALSE@am__DEPENDENCIES_7 = $(am__DEPENDENCIES_5)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -473,6 +472,7 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 PKG_CONFIG = @PKG_CONFIG@
 POTRACE_DEPEND = @POTRACE_DEPEND@
 POTRACE_INCLUDES = @POTRACE_INCLUDES@
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_LIBS = ../libs/potrace/libpotrace.a
 POTRACE_LIBS = @POTRACE_LIBS@
 RANLIB = @RANLIB@
 SED = @SED@
@@ -548,6 +548,7 @@ dvisvgm_SOURCES = \
 	CommandLine.hpp \
 	dvisvgm.cpp
 
+@HAVE_POTRACE_FALSE@@TEXLIVE_BUILD_FALSE@POTRACE_CFLAGS = -I$(dvisvgm_srcdir)/libs/potrace
 @TEXLIVE_BUILD_TRUE@POTRACE_CFLAGS = $(POTRACE_INCLUDES)
 @HAVE_XXHASH_FALSE@XXHASH_CFLAGS = -I$(dvisvgm_srcdir)/libs/xxHash
 @HAVE_XXHASH_FALSE@XXHASH_LIBS = ../libs/xxHash/libxxhash.a

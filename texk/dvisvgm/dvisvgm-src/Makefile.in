@@ -15,7 +15,7 @@
 @SET_MAKE@
 
 # aminclude_static.am generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on Thu Feb 29 09:20:58 CET 2024
+# from AX_AM_MACROS_STATIC on Thu Mar  7 12:08:01 CET 2024
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -90,7 +90,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-@TEXLIVE_BUILD_FALSE@am__append_1 = m4 tests doc
+@TEXLIVE_BUILD_FALSE@am__append_1 = tests doc
 subdir = dvisvgm-src
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/dvisvgm-src/m4/ax_gcc_builtin.m4 \
@@ -168,7 +168,7 @@ am__define_uniq_tagged_files = \
   unique=`for i in $$list; do \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
-DIST_SUBDIRS = libs src m4 tests doc
+DIST_SUBDIRS = libs src tests doc
 am__DIST_COMMON = $(srcdir)/Makefile.in \
 	$(top_srcdir)/dvisvgm-src/aminclude_static.am AUTHORS COPYING \
 	INSTALL NEWS README

@@ -30,7 +30,6 @@ svn status | sed -n 's/^\?//p'  # rerun, should be empty now
 svn status | sed -n 's/^\!//p'
 svn rm `!!`
 svn status | sed -n 's/^\!//p'  # rerun, should be empty now
-cd ..
 
 # Update our ./configure.ac from upstream dvisvgm-src/configure.ac.
 # See patch-04-configure for reference, but won't apply if there are any
@@ -67,3 +66,6 @@ make -C ../../Work/texk/dvisvgm check
 diff -u2 dvisvgm-$ver/configure.ac ./ >TLpatches/patch-04-configure
 for m in `(cd ./dvisvgm-src && find -name Makefile.am -o -name defs.am)`; do \
   diff -u2 dvisvgm-{$ver,src}/$m; done >TLpatches/patch-08-makefiles
+
+# commit:
+svn commit -m"dvisvgm $ver" . ../README
