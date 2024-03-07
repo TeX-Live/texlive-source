@@ -80,6 +80,8 @@ $TL_MAKE -j2
 
 # relink with static libtirpc if possible
 sed -i -e '/^LFLAGS/s/-ltirpc/-Wl,-Bstatic -ltirpc -Wl,-Bdynamic/' Makefile
+# static linking of stdc++
+sed -i -e '/^LDFLAG/s/= /= -static-libgcc -static-libstdc++ /' Makefile
 $TL_MAKE
 
 strip asy
