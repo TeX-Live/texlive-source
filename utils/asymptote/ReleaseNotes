@@ -1,3 +1,10 @@
+Release Notes for Version 2.88
+
+Building against specific static libraries is supported again.
+An ambiguity in statistics.h was resolved.
+The output of dvisvgm is optimized by default.
+PDF 1.5 output is now generated.
+
 Release Notes for Version 2.87
 
 Templated imports were implemented.

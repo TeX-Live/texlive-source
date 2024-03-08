@@ -102,6 +102,9 @@
 /* Define to 1 if you have the `tinfo' library (-ltinfo). */
 #undef HAVE_LIBTINFO
 
+/* Define to 1 if you have the `tirpc' library (-ltirpc). */
+#undef HAVE_LIBTIRPC
+
 /* Define to 1 if you have the `z' library (-lz). */
 #undef HAVE_LIBZ
 
@@ -137,9 +140,6 @@
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
-
-/* Define to 1 if you have a working <tirpc/rpc/rpc.h> header. */
-#undef HAVE_RPC_RPC_H
 
 /* Define to 1 if you have GLSL shader storage buffer objects. */
 #undef HAVE_SSBO

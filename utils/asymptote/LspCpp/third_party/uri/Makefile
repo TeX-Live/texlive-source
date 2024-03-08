@@ -60,10 +60,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /usr/local/src/asymptote-2.87/LspCpp
+CMAKE_SOURCE_DIR = /usr/local/src/asymptote-2.88/LspCpp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /usr/local/src/asymptote-2.87/LspCpp
+CMAKE_BINARY_DIR = /usr/local/src/asymptote-2.88/LspCpp
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -135,14 +135,14 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(CMAKE_COMMAND) -E cmake_progress_start /usr/local/src/asymptote-2.87/LspCpp/CMakeFiles /usr/local/src/asymptote-2.87/LspCpp/third_party/uri//CMakeFiles/progress.marks
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /usr/local/src/asymptote-2.87/LspCpp/CMakeFiles 0
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(CMAKE_COMMAND) -E cmake_progress_start /usr/local/src/asymptote-2.88/LspCpp/CMakeFiles /usr/local/src/asymptote-2.88/LspCpp/third_party/uri//CMakeFiles/progress.marks
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /usr/local/src/asymptote-2.88/LspCpp/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/clean
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/clean
 .PHONY : clean
 
 # The main clean target
@@ -151,22 +151,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/preinstall
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/preinstall
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 third_party/uri/CMakeFiles/doc.dir/rule:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/CMakeFiles/doc.dir/rule
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 third_party/uri/CMakeFiles/doc.dir/rule
 .PHONY : third_party/uri/CMakeFiles/doc.dir/rule
 
 # Convenience name for target.
@@ -175,7 +175,7 @@ doc: third_party/uri/CMakeFiles/doc.dir/rule
 
 # fast build rule for target.
 doc/fast:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(MAKE) $(MAKESILENT) -f third_party/uri/CMakeFiles/doc.dir/build.make third_party/uri/CMakeFiles/doc.dir/build
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(MAKE) $(MAKESILENT) -f third_party/uri/CMakeFiles/doc.dir/build.make third_party/uri/CMakeFiles/doc.dir/build
 .PHONY : doc/fast
 
 # Help Target
@@ -202,6 +202,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /usr/local/src/asymptote-2.87/LspCpp && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /usr/local/src/asymptote-2.88/LspCpp && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

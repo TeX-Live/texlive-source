@@ -1,3 +1,57 @@
+commit 710f205a8f251c206c0204492fb54255f17feaf9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 8 00:13:46 2024 -0800
+
+    Rename HAVE_RPC_RPC_H to HAVE_LIBTIRPC; add --enable-xdr[=yes] configuration option.
+
+commit fa488f4aaf9f72687355855dd7e1db9415b8a29b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 7 23:09:23 2024 -0800
+
+    Support --enable-static again; allow static builds of libtirpc.
+
+commit 0e369f784e14183f99c82b63251579bd7c3e3d4d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 7 22:13:46 2024 -0800
+
+    Resolve ambiguity in statistics.h.
+
+commit 49eb2e457ad48228415ad596714bfdf19f4c8b30
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 6 10:30:48 2024 -0800
+
+    Remove unused declarations.
+
+commit 8e1d621208c054b4a53c05fbc2fd906b3827729c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 5 11:38:11 2024 -0800
+
+    Optimize dvisvgm output by default.
+
+commit 89ed2013c4d6fa715adc2067da2116166626ef7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 5 09:41:06 2024 -0800
+
+    Specify PDF 1.5 instead of 1.4.
+
+commit cd07b1d33a9a500e7a4a5835ad39168621ed255f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 28 11:31:53 2024 -0800
+
+    Fix documentation.
+
+commit b2d7d303271d137e77886bd071749bbbbbbe9c58
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Feb 28 11:26:37 2024 -0800
+
+    Disable dvisvgm optimization by default.
+
+commit 39a6232364a8cf27778224ec60327bfd8d9588e7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 26 18:06:22 2024 -0800
+
+    Increment version to 2.88.
+
 commit 1826b3b38064170d2484af6d9a5e5ac2abce9b77
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 26 16:35:57 2024 -0800

@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 7.0.2 from
 asymptote.texi.
 
-This file documents ‘Asymptote’, version 2.87.
+This file documents ‘Asymptote’, version 2.88.
 
    <https://asymptote.sourceforge.io>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Prev: (dir),  Up: (dir)
 Asymptote
 *********
 
-This file documents ‘Asymptote’, version 2.87.
+This file documents ‘Asymptote’, version 2.88.
 
    <https://asymptote.sourceforge.io>
 
@@ -8366,7 +8366,7 @@ Options (negate boolean options by replacing - with -no):
 -divisor n             Garbage collect using purge(divisor=n) [2]
 -dvipsOptions str      []
 -dvisvgmMultipleFiles  dvisvgm supports multiple files [true]
--dvisvgmOptions str    []
+-dvisvgmOptions str    [--optimize]
 -embed                 Embed rendered preview image [true]
 -e,-environment        Show summary of environment settings; command-line only
 -exitonEOF             Exit interactive mode on EOF [true]
@@ -8514,14 +8514,11 @@ tex engine and PDF for the ‘pdflatex’, ‘xelatex’, ‘context’, ‘luat
 and ‘lualatex’ tex engines.  Alternative output formats may be produced
 using the ‘-f’ option (or ‘outformat’ setting).
 
-   To produce SVG output, you will need ‘dvisvgm’ (version 2.6.3 or
-later) from <https://dvisvgm.de>.  You might need to adjust the
-configuration variable ‘libgs’ to point to the location of your
-‘Ghostscript’ library ‘libgs.so’ (or to an empty string, depending on
-how ‘dvisvgm’ was configured).  The 2.13.1 version (or later) of
-‘dvisvgm’ can display SVG output (used by the ‘xasy’ editor) for
-embedded EPS, PDF, PNG, and JPEG images included with the ‘graphic()’
-function.
+   To produce SVG output, you will need ‘dvisvgm’ (version 3.2.1 or
+later) from <https://dvisvgm.de>, which can display SVG output (used by
+the ‘xasy’ editor) for embedded EPS, PDF, PNG, and JPEG images included
+with the ‘graphic()’ function.  The generated output is optimized with
+the default setting ‘settings.dvisvgmOptions="--optimize"’.
 
    ‘Asymptote’ can also produce any output format supported by the
 ‘ImageMagick’ ‘convert’ program (version 6.3.5 or later recommended; an
@@ -9018,9 +9015,9 @@ Index
 * ---:                                   Bezier curves.      (line   84)
 * -=:                                    Self & prefix operators.
                                                              (line    6)
-* -c:                                    Options.            (line  227)
-* -l:                                    Options.            (line  246)
-* -u:                                    Options.            (line  237)
+* -c:                                    Options.            (line  224)
+* -l:                                    Options.            (line  243)
+* -u:                                    Options.            (line  234)
 * -V:                                    Configuring.        (line    6)
 * -V <1>:                                Drawing in batch mode.
                                                              (line   16)
@@ -9099,7 +9096,7 @@ Index
 * alias:                                 Structures.         (line   62)
 * alias <1>:                             Arrays.             (line  183)
 * Align:                                 label.              (line   12)
-* aligndir:                              Options.            (line  219)
+* aligndir:                              Options.            (line  216)
 * all:                                   Arrays.             (line  350)
 * Allow:                                 Pens.               (line  363)
 * and:                                   Bezier curves.      (line   56)
@@ -9853,7 +9850,6 @@ Index
 * lexorder:                              math.               (line   63)
 * lexorder <1>:                          math.               (line   66)
 * libcurl:                               Import.             (line   94)
-* libgs:                                 Options.            (line  193)
 * libm routines:                         Mathematical functions.
                                                              (line    6)
 * libsigsegv:                            Functions.          (line  100)
@@ -9996,7 +9992,7 @@ Index
 * None <1>:                              draw.               (line   26)
 * none:                                  Files.              (line   65)
 * normal:                                three.              (line  552)
-* nosafe:                                Options.            (line  214)
+* nosafe:                                Options.            (line  211)
 * NOT:                                   Arithmetic & logical.
                                                              (line   68)
 * notaknot:                              graph.              (line   36)
@@ -10017,7 +10013,7 @@ Index
 * obliqueZ:                              three.              (line  388)
 * ode:                                   ode.                (line    6)
 * offset:                                Pens.               (line  123)
-* offset <1>:                            Options.            (line  219)
+* offset <1>:                            Options.            (line  216)
 * OmitTick:                              graph.              (line  224)
 * OmitTickInterval:                      graph.              (line  224)
 * OmitTickIntervals:                     graph.              (line  224)
@@ -10236,7 +10232,7 @@ Index
 * runtime imports:                       Import.             (line  102)
 * Russian:                               Pens.               (line  238)
 * S:                                     Labels.             (line   18)
-* safe:                                  Options.            (line  214)
+* safe:                                  Options.            (line  211)
 * save:                                  Frames and pictures.
                                                              (line  288)
 * saveline:                              Files.              (line  139)
@@ -10387,7 +10383,7 @@ Index
 * surface <5>:                           graph3.             (line  128)
 * SVG:                                   Options.            (line  193)
 * system:                                Data types.         (line  354)
-* system <1>:                            Options.            (line  214)
+* system <1>:                            Options.            (line  211)
 * syzygy:                                syzygy.             (line    6)
 * tab:                                   Files.              (line   65)
 * tab completion:                        Drawing in interactive mode.
@@ -10747,22 +10743,22 @@ Node: smoothcontour3341561
 Node: slopefield343334
 Node: ode344879
 Node: Options345148
-Ref: configuration file353576
-Ref: settings353576
-Ref: texengines354926
-Ref: convert354926
-Node: Interactive mode358631
-Ref: history360860
-Node: GUI362233
-Node: GUI installation362803
-Node: GUI usage363799
-Node: Command-Line Interface364866
-Node: Language server protocol366354
-Node: PostScript to Asymptote367835
-Node: Help368665
-Node: Debugger370395
-Node: Credits372243
-Node: Index373504
+Ref: configuration file353586
+Ref: settings353586
+Ref: texengines354936
+Ref: convert354936
+Node: Interactive mode358492
+Ref: history360721
+Node: GUI362094
+Node: GUI installation362664
+Node: GUI usage363660
+Node: Command-Line Interface364727
+Node: Language server protocol366215
+Node: PostScript to Asymptote367696
+Node: Help368526
+Node: Debugger370256
+Node: Credits372104
+Node: Index373365
 
 End Tag Table
 

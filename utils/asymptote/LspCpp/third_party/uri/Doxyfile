@@ -128,7 +128,7 @@ FULL_PATH_NAMES        = YES
 # If left blank the directory from which doxygen is run is used as the
 # path to strip.
 
-STRIP_FROM_PATH        = /usr/local/src/asymptote-2.87/LspCpp/third_party/uri/include/
+STRIP_FROM_PATH        = /usr/local/src/asymptote-2.88/LspCpp/third_party/uri/include/
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of
 # the path mentioned in the documentation of a class, which tells
@@ -626,7 +626,7 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories
 # with spaces.
 
-INPUT                  = /usr/local/src/asymptote-2.87/LspCpp/third_party/uri/include
+INPUT                  = /usr/local/src/asymptote-2.88/LspCpp/third_party/uri/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
@@ -658,7 +658,7 @@ RECURSIVE              = YES
 # Note that relative paths are relative to the directory from which doxygen is
 # run.
 
-EXCLUDE                = /usr/local/src/asymptote-2.87/LspCpp/third_party/uri/include/network/uri/detail
+EXCLUDE                = /usr/local/src/asymptote-2.88/LspCpp/third_party/uri/include/network/uri/detail
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -821,7 +821,7 @@ COLS_IN_ALPHA_INDEX    = 5
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          = /usr/local/src/asymptote-2.87/LspCpp/third_party/uri/uri/src/
+IGNORE_PREFIX          = /usr/local/src/asymptote-2.88/LspCpp/third_party/uri/uri/src/
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
