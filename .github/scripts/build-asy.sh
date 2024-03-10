@@ -78,9 +78,8 @@ cd utils/asymptote
 	--disable-gsl --disable-fftw --disable-lsp --disable-curl
 $TL_MAKE -j2
 
-# not necessary anymore with 2.88
-## relink with static libtirpc if possible
-#sed -i -e '/^LFLAGS/s/-ltirpc/-Wl,-Bstatic -ltirpc -Wl,-Bdynamic/' Makefile
+# relink with static libtirpc if possible
+sed -i -e '/^LFLAGS/s/-ltirpc/-Wl,-Bstatic -ltirpc -Wl,-Bdynamic/' Makefile
 
 # as of 2.88 necessary
 # static linking of stdc++
