@@ -1,7 +1,7 @@
 This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
-2024 (for TeX Live 2024)
+2024 (for TeX Live 2024, 10 March 2024)
 
 * For all engines: if the --output-directory option is given, its value
   is saved in the enviroment variable TEXMF_OUTPUT_DIRECTORY, for the

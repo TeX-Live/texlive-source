@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.4.0 (for TeX Live 2024)
+6.4.0 (for TeX Live 2024, 10 March 2024)
 * Support an extended check for safe filenames which also allows
   TEXMF[SYS]VAR, for Lua(La)TeX; new functions and corresponding
   kpsewhich options.
